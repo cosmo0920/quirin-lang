@@ -827,6 +827,7 @@ impl super::Parser<'_> {
         }
         let read_access = |parser: &Self, bases: Vec<String>, chains, destination: &str| {
             LegacyInstruction::IndirectScalarAccess {
+                typed_alternative: None,
                 alias_reads: bases
                     .iter()
                     .filter_map(|base| parser.read_alias(Some(base)))
@@ -981,6 +982,7 @@ impl super::Parser<'_> {
         };
         self.element_origins.propose(&shape.destination, origin);
         Some(LegacyInstruction::IndirectScalarAccess {
+            typed_alternative: None,
             alias_reads: bases
                 .iter()
                 .filter_map(|base| self.read_alias(Some(base)))

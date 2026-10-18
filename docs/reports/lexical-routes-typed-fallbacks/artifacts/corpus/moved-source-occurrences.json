@@ -1,0 +1,2428 @@
+[
+  {
+    "key": [
+      "cmetrics",
+      "cmt_cat.c",
+      "cmt_cat_copy_map",
+      0
+    ],
+    "before": "Unknown",
+    "after": "Unknown",
+    "removed_source_occurrences": [
+      {
+        "origin": "cmt_cat.c:487",
+        "category": "unknown_alias",
+        "description": "unresolved resource identity `dst`",
+        "count": 1,
+        "source": "/home/cosmo/Documents/GitHub/qcore-c/build/cycle19/c-gateway-wave-pin/fluent-bit-clang-source/lib/cmetrics/src/cmt_cat.c",
+        "line": "dst->metric_static_set = CMT_TRUE;"
+      }
+    ]
+  },
+  {
+    "key": [
+      "cmetrics",
+      "cmt_decode_msgpack.c",
+      "unpack_basic_type_meta",
+      0
+    ],
+    "before": "Unknown",
+    "after": "Unknown",
+    "removed_source_occurrences": []
+  },
+  {
+    "key": [
+      "cmetrics",
+      "cmt_decode_msgpack.c",
+      "unpack_meta_aggregation_type",
+      0
+    ],
+    "before": "Safe",
+    "after": "Safe",
+    "removed_source_occurrences": []
+  },
+  {
+    "key": [
+      "cmetrics",
+      "cmt_decode_msgpack.c",
+      "unpack_metric",
+      0
+    ],
+    "before": "Unknown",
+    "after": "Unknown",
+    "removed_source_occurrences": [
+      {
+        "origin": "cmt_decode_msgpack.c:1236",
+        "category": "unknown_alias",
+        "description": "unresolved resource identity `decode_context`",
+        "count": 1,
+        "source": "/home/cosmo/Documents/GitHub/qcore-c/build/cycle19/c-gateway-wave-pin/fluent-bit-clang-source/lib/cmetrics/src/cmt_decode_msgpack.c",
+        "line": "if (decode_context->map->type == CMT_HISTOGRAM) {"
+      },
+      {
+        "origin": "cmt_decode_msgpack.c:1237",
+        "category": "unknown_alias",
+        "description": "unresolved resource identity `decode_context`",
+        "count": 1,
+        "source": "/home/cosmo/Documents/GitHub/qcore-c/build/cycle19/c-gateway-wave-pin/fluent-bit-clang-source/lib/cmetrics/src/cmt_decode_msgpack.c",
+        "line": "histogram = decode_context->map->parent;"
+      },
+      {
+        "origin": "cmt_decode_msgpack.c:1253",
+        "category": "unknown_alias",
+        "description": "unresolved resource identity `decode_context`",
+        "count": 1,
+        "source": "/home/cosmo/Documents/GitHub/qcore-c/build/cycle19/c-gateway-wave-pin/fluent-bit-clang-source/lib/cmetrics/src/cmt_decode_msgpack.c",
+        "line": "else if (decode_context->map->type == CMT_SUMMARY) {"
+      },
+      {
+        "origin": "cmt_decode_msgpack.c:1254",
+        "category": "unknown_alias",
+        "description": "unresolved resource identity `decode_context`",
+        "count": 1,
+        "source": "/home/cosmo/Documents/GitHub/qcore-c/build/cycle19/c-gateway-wave-pin/fluent-bit-clang-source/lib/cmetrics/src/cmt_decode_msgpack.c",
+        "line": "summary = decode_context->map->parent;"
+      }
+    ]
+  },
+  {
+    "key": [
+      "cmetrics",
+      "cmt_decode_msgpack.c",
+      "unpack_metric_value_int64",
+      0
+    ],
+    "before": "Unknown",
+    "after": "Unknown",
+    "removed_source_occurrences": [
+      {
+        "origin": "cmt_decode_msgpack.c:584",
+        "category": "unknown_alias",
+        "description": "unresolved resource identity `decode_context`",
+        "count": 1,
+        "source": "/home/cosmo/Documents/GitHub/qcore-c/build/cycle19/c-gateway-wave-pin/fluent-bit-clang-source/lib/cmetrics/src/cmt_decode_msgpack.c",
+        "line": "decode_context->metric_value_type_set = CMT_TRUE;"
+      }
+    ]
+  },
+  {
+    "key": [
+      "cmetrics",
+      "cmt_decode_msgpack.c",
+      "unpack_metric_value_uint64",
+      0
+    ],
+    "before": "Unknown",
+    "after": "Unknown",
+    "removed_source_occurrences": [
+      {
+        "origin": "cmt_decode_msgpack.c:607",
+        "category": "unknown_alias",
+        "description": "unresolved resource identity `decode_context`",
+        "count": 1,
+        "source": "/home/cosmo/Documents/GitHub/qcore-c/build/cycle19/c-gateway-wave-pin/fluent-bit-clang-source/lib/cmetrics/src/cmt_decode_msgpack.c",
+        "line": "decode_context->metric_value_type_set = CMT_TRUE;"
+      }
+    ]
+  },
+  {
+    "key": [
+      "cmetrics",
+      "cmt_decode_opentelemetry.c",
+      "decode_counter_entry",
+      0
+    ],
+    "before": "Unknown",
+    "after": "Unknown",
+    "removed_source_occurrences": [
+      {
+        "origin": "cmt_decode_opentelemetry.c:1182",
+        "category": "unknown_alias",
+        "description": "unresolved resource identity `counter`",
+        "count": 1,
+        "source": "/home/cosmo/Documents/GitHub/qcore-c/build/cycle19/c-gateway-wave-pin/fluent-bit-clang-source/lib/cmetrics/src/cmt_decode_opentelemetry.c",
+        "line": "counter->aggregation_type = CMT_AGGREGATION_TYPE_DELTA;"
+      },
+      {
+        "origin": "cmt_decode_opentelemetry.c:1185",
+        "category": "unknown_alias",
+        "description": "unresolved resource identity `counter`",
+        "count": 1,
+        "source": "/home/cosmo/Documents/GitHub/qcore-c/build/cycle19/c-gateway-wave-pin/fluent-bit-clang-source/lib/cmetrics/src/cmt_decode_opentelemetry.c",
+        "line": "counter->aggregation_type = CMT_AGGREGATION_TYPE_CUMULATIVE;"
+      },
+      {
+        "origin": "cmt_decode_opentelemetry.c:1188",
+        "category": "unknown_alias",
+        "description": "unresolved resource identity `counter`",
+        "count": 1,
+        "source": "/home/cosmo/Documents/GitHub/qcore-c/build/cycle19/c-gateway-wave-pin/fluent-bit-clang-source/lib/cmetrics/src/cmt_decode_opentelemetry.c",
+        "line": "counter->aggregation_type = CMT_AGGREGATION_TYPE_UNSPECIFIED;"
+      }
+    ]
+  },
+  {
+    "key": [
+      "cmetrics",
+      "cmt_decode_opentelemetry.c",
+      "decode_exponential_histogram_entry",
+      0
+    ],
+    "before": "Unknown",
+    "after": "Unknown",
+    "removed_source_occurrences": [
+      {
+        "origin": "cmt_decode_opentelemetry.c:1474",
+        "category": "unknown_alias",
+        "description": "unresolved resource identity `exp_histogram`",
+        "count": 1,
+        "source": "/home/cosmo/Documents/GitHub/qcore-c/build/cycle19/c-gateway-wave-pin/fluent-bit-clang-source/lib/cmetrics/src/cmt_decode_opentelemetry.c",
+        "line": "exp_histogram->aggregation_type = CMT_AGGREGATION_TYPE_DELTA;"
+      },
+      {
+        "origin": "cmt_decode_opentelemetry.c:1477",
+        "category": "unknown_alias",
+        "description": "unresolved resource identity `exp_histogram`",
+        "count": 1,
+        "source": "/home/cosmo/Documents/GitHub/qcore-c/build/cycle19/c-gateway-wave-pin/fluent-bit-clang-source/lib/cmetrics/src/cmt_decode_opentelemetry.c",
+        "line": "exp_histogram->aggregation_type = CMT_AGGREGATION_TYPE_CUMULATIVE;"
+      },
+      {
+        "origin": "cmt_decode_opentelemetry.c:1480",
+        "category": "unknown_alias",
+        "description": "unresolved resource identity `exp_histogram`",
+        "count": 1,
+        "source": "/home/cosmo/Documents/GitHub/qcore-c/build/cycle19/c-gateway-wave-pin/fluent-bit-clang-source/lib/cmetrics/src/cmt_decode_opentelemetry.c",
+        "line": "exp_histogram->aggregation_type = CMT_AGGREGATION_TYPE_UNSPECIFIED;"
+      }
+    ]
+  },
+  {
+    "key": [
+      "cmetrics",
+      "cmt_decode_opentelemetry.c",
+      "decode_histogram_entry",
+      0
+    ],
+    "before": "Unknown",
+    "after": "Unknown",
+    "removed_source_occurrences": [
+      {
+        "origin": "cmt_decode_opentelemetry.c:1259",
+        "category": "unknown_alias",
+        "description": "unresolved resource identity `histogram`",
+        "count": 1,
+        "source": "/home/cosmo/Documents/GitHub/qcore-c/build/cycle19/c-gateway-wave-pin/fluent-bit-clang-source/lib/cmetrics/src/cmt_decode_opentelemetry.c",
+        "line": "histogram->aggregation_type = CMT_AGGREGATION_TYPE_DELTA;"
+      },
+      {
+        "origin": "cmt_decode_opentelemetry.c:1262",
+        "category": "unknown_alias",
+        "description": "unresolved resource identity `histogram`",
+        "count": 1,
+        "source": "/home/cosmo/Documents/GitHub/qcore-c/build/cycle19/c-gateway-wave-pin/fluent-bit-clang-source/lib/cmetrics/src/cmt_decode_opentelemetry.c",
+        "line": "histogram->aggregation_type = CMT_AGGREGATION_TYPE_CUMULATIVE;"
+      },
+      {
+        "origin": "cmt_decode_opentelemetry.c:1265",
+        "category": "unknown_alias",
+        "description": "unresolved resource identity `histogram`",
+        "count": 1,
+        "source": "/home/cosmo/Documents/GitHub/qcore-c/build/cycle19/c-gateway-wave-pin/fluent-bit-clang-source/lib/cmetrics/src/cmt_decode_opentelemetry.c",
+        "line": "histogram->aggregation_type = CMT_AGGREGATION_TYPE_UNSPECIFIED;"
+      }
+    ]
+  },
+  {
+    "key": [
+      "cmetrics",
+      "cmt_decode_opentelemetry.c",
+      "decode_summary_entry",
+      0
+    ],
+    "before": "Unknown",
+    "after": "Unknown",
+    "removed_source_occurrences": [
+      {
+        "origin": "cmt_decode_opentelemetry.c:1229",
+        "category": "unknown_alias",
+        "description": "unresolved resource identity `summary`",
+        "count": 1,
+        "source": "/home/cosmo/Documents/GitHub/qcore-c/build/cycle19/c-gateway-wave-pin/fluent-bit-clang-source/lib/cmetrics/src/cmt_decode_opentelemetry.c",
+        "line": "summary->quantiles_count = 0;"
+      }
+    ]
+  },
+  {
+    "key": [
+      "cmetrics",
+      "cmt_encode_opentelemetry.c",
+      "apply_data_point_metadata_from_otlp_context",
+      0
+    ],
+    "before": "Unknown",
+    "after": "Unknown",
+    "removed_source_occurrences": [
+      {
+        "origin": "cmt_encode_opentelemetry.c:675",
+        "category": "unknown_alias",
+        "description": "unresolved resource identity `summary_data_point`",
+        "count": 1,
+        "source": "/home/cosmo/Documents/GitHub/qcore-c/build/cycle19/c-gateway-wave-pin/fluent-bit-clang-source/lib/cmetrics/src/cmt_encode_opentelemetry.c",
+        "line": "summary_data_point->start_time_unix_nano = uint64_value;"
+      },
+      {
+        "origin": "cmt_encode_opentelemetry.c:692",
+        "category": "unknown_alias",
+        "description": "unresolved resource identity `histogram_data_point`",
+        "count": 1,
+        "source": "/home/cosmo/Documents/GitHub/qcore-c/build/cycle19/c-gateway-wave-pin/fluent-bit-clang-source/lib/cmetrics/src/cmt_encode_opentelemetry.c",
+        "line": "histogram_data_point->start_time_unix_nano = uint64_value;"
+      },
+      {
+        "origin": "cmt_encode_opentelemetry.c:702",
+        "category": "unknown_alias",
+        "description": "unresolved resource identity `histogram_data_point`",
+        "count": 1,
+        "source": "/home/cosmo/Documents/GitHub/qcore-c/build/cycle19/c-gateway-wave-pin/fluent-bit-clang-source/lib/cmetrics/src/cmt_encode_opentelemetry.c",
+        "line": "histogram_data_point->has_sum = CMT_FALSE;"
+      },
+      {
+        "origin": "cmt_encode_opentelemetry.c:709",
+        "category": "unknown_alias",
+        "description": "unresolved resource identity `histogram_data_point`",
+        "count": 1,
+        "source": "/home/cosmo/Documents/GitHub/qcore-c/build/cycle19/c-gateway-wave-pin/fluent-bit-clang-source/lib/cmetrics/src/cmt_encode_opentelemetry.c",
+        "line": "histogram_data_point->has_min = CMT_TRUE;"
+      },
+      {
+        "origin": "cmt_encode_opentelemetry.c:710",
+        "category": "unknown_alias",
+        "description": "unresolved resource identity `histogram_data_point`",
+        "count": 1,
+        "source": "/home/cosmo/Documents/GitHub/qcore-c/build/cycle19/c-gateway-wave-pin/fluent-bit-clang-source/lib/cmetrics/src/cmt_encode_opentelemetry.c",
+        "line": "histogram_data_point->min = double_value;"
+      },
+      {
+        "origin": "cmt_encode_opentelemetry.c:718",
+        "category": "unknown_alias",
+        "description": "unresolved resource identity `histogram_data_point`",
+        "count": 1,
+        "source": "/home/cosmo/Documents/GitHub/qcore-c/build/cycle19/c-gateway-wave-pin/fluent-bit-clang-source/lib/cmetrics/src/cmt_encode_opentelemetry.c",
+        "line": "histogram_data_point->has_max = CMT_TRUE;"
+      },
+      {
+        "origin": "cmt_encode_opentelemetry.c:719",
+        "category": "unknown_alias",
+        "description": "unresolved resource identity `histogram_data_point`",
+        "count": 1,
+        "source": "/home/cosmo/Documents/GitHub/qcore-c/build/cycle19/c-gateway-wave-pin/fluent-bit-clang-source/lib/cmetrics/src/cmt_encode_opentelemetry.c",
+        "line": "histogram_data_point->max = double_value;"
+      },
+      {
+        "origin": "cmt_encode_opentelemetry.c:726",
+        "category": "unknown_alias",
+        "description": "unresolved resource identity `histogram_data_point`",
+        "count": 1,
+        "source": "/home/cosmo/Documents/GitHub/qcore-c/build/cycle19/c-gateway-wave-pin/fluent-bit-clang-source/lib/cmetrics/src/cmt_encode_opentelemetry.c",
+        "line": "histogram_data_point->n_exemplars = exemplar_count;"
+      },
+      {
+        "origin": "cmt_encode_opentelemetry.c:738",
+        "category": "unknown_alias",
+        "description": "unresolved resource identity `exp_data_point`",
+        "count": 1,
+        "source": "/home/cosmo/Documents/GitHub/qcore-c/build/cycle19/c-gateway-wave-pin/fluent-bit-clang-source/lib/cmetrics/src/cmt_encode_opentelemetry.c",
+        "line": "exp_data_point->start_time_unix_nano = uint64_value;"
+      },
+      {
+        "origin": "cmt_encode_opentelemetry.c:748",
+        "category": "unknown_alias",
+        "description": "unresolved resource identity `exp_data_point`",
+        "count": 1,
+        "source": "/home/cosmo/Documents/GitHub/qcore-c/build/cycle19/c-gateway-wave-pin/fluent-bit-clang-source/lib/cmetrics/src/cmt_encode_opentelemetry.c",
+        "line": "exp_data_point->has_sum = CMT_FALSE;"
+      },
+      {
+        "origin": "cmt_encode_opentelemetry.c:755",
+        "category": "unknown_alias",
+        "description": "unresolved resource identity `exp_data_point`",
+        "count": 1,
+        "source": "/home/cosmo/Documents/GitHub/qcore-c/build/cycle19/c-gateway-wave-pin/fluent-bit-clang-source/lib/cmetrics/src/cmt_encode_opentelemetry.c",
+        "line": "exp_data_point->has_min = CMT_TRUE;"
+      },
+      {
+        "origin": "cmt_encode_opentelemetry.c:756",
+        "category": "unknown_alias",
+        "description": "unresolved resource identity `exp_data_point`",
+        "count": 1,
+        "source": "/home/cosmo/Documents/GitHub/qcore-c/build/cycle19/c-gateway-wave-pin/fluent-bit-clang-source/lib/cmetrics/src/cmt_encode_opentelemetry.c",
+        "line": "exp_data_point->min = double_value;"
+      },
+      {
+        "origin": "cmt_encode_opentelemetry.c:764",
+        "category": "unknown_alias",
+        "description": "unresolved resource identity `exp_data_point`",
+        "count": 1,
+        "source": "/home/cosmo/Documents/GitHub/qcore-c/build/cycle19/c-gateway-wave-pin/fluent-bit-clang-source/lib/cmetrics/src/cmt_encode_opentelemetry.c",
+        "line": "exp_data_point->has_max = CMT_TRUE;"
+      },
+      {
+        "origin": "cmt_encode_opentelemetry.c:765",
+        "category": "unknown_alias",
+        "description": "unresolved resource identity `exp_data_point`",
+        "count": 1,
+        "source": "/home/cosmo/Documents/GitHub/qcore-c/build/cycle19/c-gateway-wave-pin/fluent-bit-clang-source/lib/cmetrics/src/cmt_encode_opentelemetry.c",
+        "line": "exp_data_point->max = double_value;"
+      },
+      {
+        "origin": "cmt_encode_opentelemetry.c:772",
+        "category": "unknown_alias",
+        "description": "unresolved resource identity `exp_data_point`",
+        "count": 1,
+        "source": "/home/cosmo/Documents/GitHub/qcore-c/build/cycle19/c-gateway-wave-pin/fluent-bit-clang-source/lib/cmetrics/src/cmt_encode_opentelemetry.c",
+        "line": "exp_data_point->n_exemplars = exemplar_count;"
+      }
+    ]
+  },
+  {
+    "key": [
+      "cmetrics",
+      "cmt_encode_prometheus_remote_write.c",
+      "append_metric_to_timeseries",
+      0
+    ],
+    "before": "Unknown",
+    "after": "Unknown",
+    "removed_source_occurrences": [
+      {
+        "origin": "cmt_encode_prometheus_remote_write.c:684",
+        "category": "unknown_alias",
+        "description": "unresolved resource identity `time_series`",
+        "count": 1,
+        "source": "/home/cosmo/Documents/GitHub/qcore-c/build/cycle19/c-gateway-wave-pin/fluent-bit-clang-source/lib/cmetrics/src/cmt_encode_prometheus_remote_write.c",
+        "line": "time_series->samples_capacity = new_capacity;"
+      }
+    ]
+  },
+  {
+    "key": [
+      "cmetrics",
+      "cmt_map.c",
+      "cmt_map_metrics_expire",
+      0
+    ],
+    "before": "Unknown",
+    "after": "Unknown",
+    "removed_source_occurrences": [
+      {
+        "origin": "cmt_map.c:562",
+        "category": "unknown_alias",
+        "description": "unresolved resource identity `map`",
+        "count": 1,
+        "source": "/home/cosmo/Documents/GitHub/qcore-c/build/cycle19/c-gateway-wave-pin/fluent-bit-clang-source/lib/cmetrics/src/cmt_map.c",
+        "line": "map->metric_static_set = CMT_FALSE;"
+      }
+    ]
+  },
+  {
+    "key": [
+      "cmetrics",
+      "cmt_map.c",
+      "metric_index_add",
+      0
+    ],
+    "before": "Unknown",
+    "after": "Unknown",
+    "removed_source_occurrences": [
+      {
+        "origin": "cmt_map.c:104",
+        "category": "unknown_alias",
+        "description": "unresolved resource identity `metric`",
+        "count": 1,
+        "source": "/home/cosmo/Documents/GitHub/qcore-c/build/cycle19/c-gateway-wave-pin/fluent-bit-clang-source/lib/cmetrics/src/cmt_map.c",
+        "line": "metric->hash_indexed = CMT_TRUE;"
+      }
+    ]
+  },
+  {
+    "key": [
+      "cmetrics",
+      "cmt_map.c",
+      "metric_index_resize",
+      0
+    ],
+    "before": "Unknown",
+    "after": "Unknown",
+    "removed_source_occurrences": [
+      {
+        "origin": "cmt_map.c:82",
+        "category": "unknown_alias",
+        "description": "unresolved resource identity `map`",
+        "count": 1,
+        "source": "/home/cosmo/Documents/GitHub/qcore-c/build/cycle19/c-gateway-wave-pin/fluent-bit-clang-source/lib/cmetrics/src/cmt_map.c",
+        "line": "map->metric_bucket_count = bucket_count;"
+      }
+    ]
+  },
+  {
+    "key": [
+      "ctraces",
+      "ctr_span.c",
+      "ctr_span_create",
+      0
+    ],
+    "before": "Unknown",
+    "after": "Unknown",
+    "removed_source_occurrences": [
+      {
+        "origin": "ctr_span.c:85",
+        "category": "unknown_alias",
+        "description": "unresolved resource identity `span`",
+        "count": 1,
+        "source": "/home/cosmo/Documents/GitHub/qcore-c/build/cycle19/c-gateway-wave-pin/fluent-bit-clang-source/lib/ctraces/src/ctr_span.c",
+        "line": "ctr_span_start(ctx, span);"
+      }
+    ]
+  },
+  {
+    "key": [
+      "librdkafka",
+      "lz4frame.c",
+      "LZ4F_compressBegin_usingCDict",
+      0
+    ],
+    "before": "Unknown",
+    "after": "Unknown",
+    "removed_source_occurrences": [
+      {
+        "origin": "lz4frame.c:733",
+        "category": "unknown_alias",
+        "description": "unresolved resource identity `cctxPtr`",
+        "count": 1,
+        "source": "/home/cosmo/Documents/GitHub/qcore-c/build/cycle19/c-gateway-wave-pin/fluent-bit-clang-source/lib/librdkafka-2.15.0/src/lz4frame.c",
+        "line": "cctxPtr->maxBufferSize = 0;"
+      },
+      {
+        "origin": "lz4frame.c:740",
+        "category": "unknown_alias",
+        "description": "unresolved resource identity `cctxPtr`",
+        "count": 1,
+        "source": "/home/cosmo/Documents/GitHub/qcore-c/build/cycle19/c-gateway-wave-pin/fluent-bit-clang-source/lib/librdkafka-2.15.0/src/lz4frame.c",
+        "line": "cctxPtr->tmpInSize = 0;"
+      },
+      {
+        "origin": "lz4frame.c:771",
+        "category": "unknown_alias",
+        "description": "unresolved resource identity `cctxPtr`",
+        "count": 1,
+        "source": "/home/cosmo/Documents/GitHub/qcore-c/build/cycle19/c-gateway-wave-pin/fluent-bit-clang-source/lib/librdkafka-2.15.0/src/lz4frame.c",
+        "line": "cctxPtr->totalInSize = 0;"
+      },
+      {
+        "origin": "lz4frame.c:783",
+        "category": "unknown_alias",
+        "description": "unresolved resource identity `cctxPtr`",
+        "count": 1,
+        "source": "/home/cosmo/Documents/GitHub/qcore-c/build/cycle19/c-gateway-wave-pin/fluent-bit-clang-source/lib/librdkafka-2.15.0/src/lz4frame.c",
+        "line": "cctxPtr->cStage = 1;   /* header written, now request input data block */"
+      }
+    ]
+  },
+  {
+    "key": [
+      "librdkafka",
+      "lz4frame.c",
+      "LZ4F_decodeHeader",
+      0
+    ],
+    "before": "Unknown",
+    "after": "Unknown",
+    "removed_source_occurrences": [
+      {
+        "origin": "lz4frame.c:1306",
+        "category": "unknown_alias",
+        "description": "unresolved resource identity `dctx`",
+        "count": 1,
+        "source": "/home/cosmo/Documents/GitHub/qcore-c/build/cycle19/c-gateway-wave-pin/fluent-bit-clang-source/lib/librdkafka-2.15.0/src/lz4frame.c",
+        "line": "dctx->tmpInSize = srcSize;"
+      },
+      {
+        "origin": "lz4frame.c:1307",
+        "category": "unknown_alias",
+        "description": "unresolved resource identity `dctx`",
+        "count": 1,
+        "source": "/home/cosmo/Documents/GitHub/qcore-c/build/cycle19/c-gateway-wave-pin/fluent-bit-clang-source/lib/librdkafka-2.15.0/src/lz4frame.c",
+        "line": "dctx->tmpInTarget = 8;"
+      },
+      {
+        "origin": "lz4frame.c:1344",
+        "category": "unknown_alias",
+        "description": "unresolved resource identity `dctx`",
+        "count": 1,
+        "source": "/home/cosmo/Documents/GitHub/qcore-c/build/cycle19/c-gateway-wave-pin/fluent-bit-clang-source/lib/librdkafka-2.15.0/src/lz4frame.c",
+        "line": "dctx->tmpInSize = srcSize;"
+      },
+      {
+        "origin": "lz4frame.c:1345",
+        "category": "unknown_alias",
+        "description": "unresolved resource identity `dctx`",
+        "count": 1,
+        "source": "/home/cosmo/Documents/GitHub/qcore-c/build/cycle19/c-gateway-wave-pin/fluent-bit-clang-source/lib/librdkafka-2.15.0/src/lz4frame.c",
+        "line": "dctx->tmpInTarget = frameHeaderSize;"
+      }
+    ]
+  },
+  {
+    "key": [
+      "librdkafka",
+      "lz4frame.c",
+      "LZ4F_updateDict",
+      0
+    ],
+    "before": "Unknown",
+    "after": "Unknown",
+    "removed_source_occurrences": [
+      {
+        "origin": "lz4frame.c:1520",
+        "category": "unknown_alias",
+        "description": "unresolved resource identity `dctx`",
+        "count": 1,
+        "source": "/home/cosmo/Documents/GitHub/qcore-c/build/cycle19/c-gateway-wave-pin/fluent-bit-clang-source/lib/librdkafka-2.15.0/src/lz4frame.c",
+        "line": "dctx->dictSize = preserveSize;"
+      },
+      {
+        "origin": "lz4frame.c:1533",
+        "category": "unknown_alias",
+        "description": "unresolved resource identity `dctx`",
+        "count": 1,
+        "source": "/home/cosmo/Documents/GitHub/qcore-c/build/cycle19/c-gateway-wave-pin/fluent-bit-clang-source/lib/librdkafka-2.15.0/src/lz4frame.c",
+        "line": "dctx->dictSize = preserveSize + dstSize;"
+      }
+    ]
+  },
+  {
+    "key": [
+      "librdkafka",
+      "nanopb/pb_common.c",
+      "load_descriptor_values",
+      0
+    ],
+    "before": "Unknown",
+    "after": "Unknown",
+    "removed_source_occurrences": [
+      {
+        "origin": "nanopb/pb_common.c:24",
+        "category": "unknown_alias",
+        "description": "unresolved resource identity `iter`",
+        "count": 1,
+        "source": "/home/cosmo/Documents/GitHub/qcore-c/build/cycle19/c-gateway-wave-pin/fluent-bit-clang-source/lib/librdkafka-2.15.0/src/nanopb/pb_common.c",
+        "line": "iter->array_size = 1;"
+      }
+    ]
+  },
+  {
+    "key": [
+      "librdkafka",
+      "rdkafka_request.c",
+      "rd_kafka_handle_idempotent_Produce_error",
+      0
+    ],
+    "before": "Unknown",
+    "after": "Unknown",
+    "removed_source_occurrences": [
+      {
+        "origin": "rdkafka_request.c:4126",
+        "category": "unknown_alias",
+        "description": "unresolved resource identity `perr`",
+        "count": 1,
+        "source": "/home/cosmo/Documents/GitHub/qcore-c/build/cycle19/c-gateway-wave-pin/fluent-bit-clang-source/lib/librdkafka-2.15.0/src/rdkafka_request.c",
+        "line": "perr->actions = RD_KAFKA_ERR_ACTION_PERMANENT;"
+      },
+      {
+        "origin": "rdkafka_request.c:4195",
+        "category": "unknown_alias",
+        "description": "unresolved resource identity `perr`",
+        "count": 1,
+        "source": "/home/cosmo/Documents/GitHub/qcore-c/build/cycle19/c-gateway-wave-pin/fluent-bit-clang-source/lib/librdkafka-2.15.0/src/rdkafka_request.c",
+        "line": "perr->actions = RD_KAFKA_ERR_ACTION_PERMANENT;"
+      },
+      {
+        "origin": "rdkafka_request.c:4197",
+        "category": "unknown_alias",
+        "description": "unresolved resource identity `perr`",
+        "count": 1,
+        "source": "/home/cosmo/Documents/GitHub/qcore-c/build/cycle19/c-gateway-wave-pin/fluent-bit-clang-source/lib/librdkafka-2.15.0/src/rdkafka_request.c",
+        "line": "perr->update_next_ack = rd_false;"
+      },
+      {
+        "origin": "rdkafka_request.c:4198",
+        "category": "unknown_alias",
+        "description": "unresolved resource identity `perr`",
+        "count": 1,
+        "source": "/home/cosmo/Documents/GitHub/qcore-c/build/cycle19/c-gateway-wave-pin/fluent-bit-clang-source/lib/librdkafka-2.15.0/src/rdkafka_request.c",
+        "line": "perr->update_next_err = rd_true;"
+      },
+      {
+        "origin": "rdkafka_request.c:4238",
+        "category": "unknown_alias",
+        "description": "unresolved resource identity `perr`",
+        "count": 1,
+        "source": "/home/cosmo/Documents/GitHub/qcore-c/build/cycle19/c-gateway-wave-pin/fluent-bit-clang-source/lib/librdkafka-2.15.0/src/rdkafka_request.c",
+        "line": "perr->incr_retry = 0;"
+      },
+      {
+        "origin": "rdkafka_request.c:4239",
+        "category": "unknown_alias",
+        "description": "unresolved resource identity `perr`",
+        "count": 1,
+        "source": "/home/cosmo/Documents/GitHub/qcore-c/build/cycle19/c-gateway-wave-pin/fluent-bit-clang-source/lib/librdkafka-2.15.0/src/rdkafka_request.c",
+        "line": "perr->actions    = RD_KAFKA_ERR_ACTION_RETRY;"
+      },
+      {
+        "origin": "rdkafka_request.c:4241",
+        "category": "unknown_alias",
+        "description": "unresolved resource identity `perr`",
+        "count": 1,
+        "source": "/home/cosmo/Documents/GitHub/qcore-c/build/cycle19/c-gateway-wave-pin/fluent-bit-clang-source/lib/librdkafka-2.15.0/src/rdkafka_request.c",
+        "line": "perr->update_next_ack = rd_false;"
+      },
+      {
+        "origin": "rdkafka_request.c:4242",
+        "category": "unknown_alias",
+        "description": "unresolved resource identity `perr`",
+        "count": 1,
+        "source": "/home/cosmo/Documents/GitHub/qcore-c/build/cycle19/c-gateway-wave-pin/fluent-bit-clang-source/lib/librdkafka-2.15.0/src/rdkafka_request.c",
+        "line": "perr->update_next_err = rd_true;"
+      },
+      {
+        "origin": "rdkafka_request.c:4275",
+        "category": "unknown_alias",
+        "description": "unresolved resource identity `perr`",
+        "count": 1,
+        "source": "/home/cosmo/Documents/GitHub/qcore-c/build/cycle19/c-gateway-wave-pin/fluent-bit-clang-source/lib/librdkafka-2.15.0/src/rdkafka_request.c",
+        "line": "perr->actions = RD_KAFKA_ERR_ACTION_PERMANENT;"
+      },
+      {
+        "origin": "rdkafka_request.c:4277",
+        "category": "unknown_alias",
+        "description": "unresolved resource identity `perr`",
+        "count": 1,
+        "source": "/home/cosmo/Documents/GitHub/qcore-c/build/cycle19/c-gateway-wave-pin/fluent-bit-clang-source/lib/librdkafka-2.15.0/src/rdkafka_request.c",
+        "line": "perr->update_next_ack = rd_false;"
+      },
+      {
+        "origin": "rdkafka_request.c:4278",
+        "category": "unknown_alias",
+        "description": "unresolved resource identity `perr`",
+        "count": 1,
+        "source": "/home/cosmo/Documents/GitHub/qcore-c/build/cycle19/c-gateway-wave-pin/fluent-bit-clang-source/lib/librdkafka-2.15.0/src/rdkafka_request.c",
+        "line": "perr->update_next_err = rd_false;"
+      },
+      {
+        "origin": "rdkafka_request.c:4309",
+        "category": "unknown_alias",
+        "description": "unresolved resource identity `perr`",
+        "count": 1,
+        "source": "/home/cosmo/Documents/GitHub/qcore-c/build/cycle19/c-gateway-wave-pin/fluent-bit-clang-source/lib/librdkafka-2.15.0/src/rdkafka_request.c",
+        "line": "perr->actions         = 0;"
+      },
+      {
+        "origin": "rdkafka_request.c:4311",
+        "category": "unknown_alias",
+        "description": "unresolved resource identity `perr`",
+        "count": 1,
+        "source": "/home/cosmo/Documents/GitHub/qcore-c/build/cycle19/c-gateway-wave-pin/fluent-bit-clang-source/lib/librdkafka-2.15.0/src/rdkafka_request.c",
+        "line": "perr->update_next_ack = rd_true;"
+      },
+      {
+        "origin": "rdkafka_request.c:4312",
+        "category": "unknown_alias",
+        "description": "unresolved resource identity `perr`",
+        "count": 1,
+        "source": "/home/cosmo/Documents/GitHub/qcore-c/build/cycle19/c-gateway-wave-pin/fluent-bit-clang-source/lib/librdkafka-2.15.0/src/rdkafka_request.c",
+        "line": "perr->update_next_err = rd_true;"
+      },
+      {
+        "origin": "rdkafka_request.c:4363",
+        "category": "unknown_alias",
+        "description": "unresolved resource identity `perr`",
+        "count": 1,
+        "source": "/home/cosmo/Documents/GitHub/qcore-c/build/cycle19/c-gateway-wave-pin/fluent-bit-clang-source/lib/librdkafka-2.15.0/src/rdkafka_request.c",
+        "line": "perr->incr_retry = 0;"
+      },
+      {
+        "origin": "rdkafka_request.c:4364",
+        "category": "unknown_alias",
+        "description": "unresolved resource identity `perr`",
+        "count": 1,
+        "source": "/home/cosmo/Documents/GitHub/qcore-c/build/cycle19/c-gateway-wave-pin/fluent-bit-clang-source/lib/librdkafka-2.15.0/src/rdkafka_request.c",
+        "line": "perr->actions    = RD_KAFKA_ERR_ACTION_PERMANENT;"
+      },
+      {
+        "origin": "rdkafka_request.c:4366",
+        "category": "unknown_alias",
+        "description": "unresolved resource identity `perr`",
+        "count": 1,
+        "source": "/home/cosmo/Documents/GitHub/qcore-c/build/cycle19/c-gateway-wave-pin/fluent-bit-clang-source/lib/librdkafka-2.15.0/src/rdkafka_request.c",
+        "line": "perr->update_next_ack = rd_false;"
+      },
+      {
+        "origin": "rdkafka_request.c:4367",
+        "category": "unknown_alias",
+        "description": "unresolved resource identity `perr`",
+        "count": 1,
+        "source": "/home/cosmo/Documents/GitHub/qcore-c/build/cycle19/c-gateway-wave-pin/fluent-bit-clang-source/lib/librdkafka-2.15.0/src/rdkafka_request.c",
+        "line": "perr->update_next_err = rd_true;"
+      },
+      {
+        "origin": "rdkafka_request.c:4392",
+        "category": "unknown_alias",
+        "description": "unresolved resource identity `perr`",
+        "count": 1,
+        "source": "/home/cosmo/Documents/GitHub/qcore-c/build/cycle19/c-gateway-wave-pin/fluent-bit-clang-source/lib/librdkafka-2.15.0/src/rdkafka_request.c",
+        "line": "perr->incr_retry = 0;"
+      },
+      {
+        "origin": "rdkafka_request.c:4393",
+        "category": "unknown_alias",
+        "description": "unresolved resource identity `perr`",
+        "count": 1,
+        "source": "/home/cosmo/Documents/GitHub/qcore-c/build/cycle19/c-gateway-wave-pin/fluent-bit-clang-source/lib/librdkafka-2.15.0/src/rdkafka_request.c",
+        "line": "perr->actions    = RD_KAFKA_ERR_ACTION_RETRY;"
+      },
+      {
+        "origin": "rdkafka_request.c:4395",
+        "category": "unknown_alias",
+        "description": "unresolved resource identity `perr`",
+        "count": 1,
+        "source": "/home/cosmo/Documents/GitHub/qcore-c/build/cycle19/c-gateway-wave-pin/fluent-bit-clang-source/lib/librdkafka-2.15.0/src/rdkafka_request.c",
+        "line": "perr->update_next_ack = rd_false;"
+      },
+      {
+        "origin": "rdkafka_request.c:4396",
+        "category": "unknown_alias",
+        "description": "unresolved resource identity `perr`",
+        "count": 1,
+        "source": "/home/cosmo/Documents/GitHub/qcore-c/build/cycle19/c-gateway-wave-pin/fluent-bit-clang-source/lib/librdkafka-2.15.0/src/rdkafka_request.c",
+        "line": "perr->update_next_err = rd_true;"
+      },
+      {
+        "origin": "rdkafka_request.c:4415",
+        "category": "unknown_alias",
+        "description": "unresolved resource identity `perr`",
+        "count": 1,
+        "source": "/home/cosmo/Documents/GitHub/qcore-c/build/cycle19/c-gateway-wave-pin/fluent-bit-clang-source/lib/librdkafka-2.15.0/src/rdkafka_request.c",
+        "line": "perr->actions         = RD_KAFKA_ERR_ACTION_PERMANENT;"
+      },
+      {
+        "origin": "rdkafka_request.c:4417",
+        "category": "unknown_alias",
+        "description": "unresolved resource identity `perr`",
+        "count": 1,
+        "source": "/home/cosmo/Documents/GitHub/qcore-c/build/cycle19/c-gateway-wave-pin/fluent-bit-clang-source/lib/librdkafka-2.15.0/src/rdkafka_request.c",
+        "line": "perr->update_next_ack = rd_false;"
+      },
+      {
+        "origin": "rdkafka_request.c:4418",
+        "category": "unknown_alias",
+        "description": "unresolved resource identity `perr`",
+        "count": 1,
+        "source": "/home/cosmo/Documents/GitHub/qcore-c/build/cycle19/c-gateway-wave-pin/fluent-bit-clang-source/lib/librdkafka-2.15.0/src/rdkafka_request.c",
+        "line": "perr->update_next_err = rd_true;"
+      }
+    ]
+  },
+  {
+    "key": [
+      "librdkafka",
+      "rdkafka_share_acknowledgement.c",
+      "rd_kafka_share_build_ack_details",
+      0
+    ],
+    "before": "Unknown",
+    "after": "Unknown",
+    "removed_source_occurrences": [
+      {
+        "origin": "rdkafka_share_acknowledgement.c:696",
+        "category": "unknown_alias",
+        "description": "unresolved resource identity `rkshare`",
+        "count": 1,
+        "source": "/home/cosmo/Documents/GitHub/qcore-c/build/cycle19/c-gateway-wave-pin/fluent-bit-clang-source/lib/librdkafka-2.15.0/src/rdkafka_share_acknowledgement.c",
+        "line": "rkshare->rkshare_unacked_cnt = 0;"
+      }
+    ]
+  },
+  {
+    "key": [
+      "librdkafka",
+      "rdunittest_acknowledge.c",
+      "ut_ack_clear_inflight_map",
+      0
+    ],
+    "before": "Unknown",
+    "after": "Unknown",
+    "removed_source_occurrences": [
+      {
+        "origin": "rdunittest_acknowledge.c:109",
+        "category": "unknown_alias",
+        "description": "unresolved resource identity `rkshare`",
+        "count": 1,
+        "source": "/home/cosmo/Documents/GitHub/qcore-c/build/cycle19/c-gateway-wave-pin/fluent-bit-clang-source/lib/librdkafka-2.15.0/src/rdunittest_acknowledge.c",
+        "line": "rkshare->rkshare_unacked_cnt = 0;"
+      }
+    ]
+  },
+  {
+    "key": [
+      "librdkafka",
+      "rdxxhash.c",
+      "XXH32_update_endian",
+      0
+    ],
+    "before": "Unknown",
+    "after": "Unknown",
+    "removed_source_occurrences": [
+      {
+        "origin": "rdxxhash.c:482",
+        "category": "unknown_alias",
+        "description": "unresolved resource identity `state`",
+        "count": 1,
+        "source": "/home/cosmo/Documents/GitHub/qcore-c/build/cycle19/c-gateway-wave-pin/fluent-bit-clang-source/lib/librdkafka-2.15.0/src/rdxxhash.c",
+        "line": "state->memsize = 0;"
+      },
+      {
+        "origin": "rdxxhash.c:499",
+        "category": "unknown_alias",
+        "description": "unresolved resource identity `state`",
+        "count": 1,
+        "source": "/home/cosmo/Documents/GitHub/qcore-c/build/cycle19/c-gateway-wave-pin/fluent-bit-clang-source/lib/librdkafka-2.15.0/src/rdxxhash.c",
+        "line": "state->v1 = v1;"
+      },
+      {
+        "origin": "rdxxhash.c:500",
+        "category": "unknown_alias",
+        "description": "unresolved resource identity `state`",
+        "count": 1,
+        "source": "/home/cosmo/Documents/GitHub/qcore-c/build/cycle19/c-gateway-wave-pin/fluent-bit-clang-source/lib/librdkafka-2.15.0/src/rdxxhash.c",
+        "line": "state->v2 = v2;"
+      },
+      {
+        "origin": "rdxxhash.c:501",
+        "category": "unknown_alias",
+        "description": "unresolved resource identity `state`",
+        "count": 1,
+        "source": "/home/cosmo/Documents/GitHub/qcore-c/build/cycle19/c-gateway-wave-pin/fluent-bit-clang-source/lib/librdkafka-2.15.0/src/rdxxhash.c",
+        "line": "state->v3 = v3;"
+      },
+      {
+        "origin": "rdxxhash.c:502",
+        "category": "unknown_alias",
+        "description": "unresolved resource identity `state`",
+        "count": 1,
+        "source": "/home/cosmo/Documents/GitHub/qcore-c/build/cycle19/c-gateway-wave-pin/fluent-bit-clang-source/lib/librdkafka-2.15.0/src/rdxxhash.c",
+        "line": "state->v4 = v4;"
+      }
+    ]
+  },
+  {
+    "key": [
+      "librdkafka",
+      "rdxxhash.c",
+      "XXH64_update_endian",
+      0
+    ],
+    "before": "Unknown",
+    "after": "Unknown",
+    "removed_source_occurrences": [
+      {
+        "origin": "rdxxhash.c:939",
+        "category": "unknown_alias",
+        "description": "unresolved resource identity `state`",
+        "count": 1,
+        "source": "/home/cosmo/Documents/GitHub/qcore-c/build/cycle19/c-gateway-wave-pin/fluent-bit-clang-source/lib/librdkafka-2.15.0/src/rdxxhash.c",
+        "line": "state->memsize = 0;"
+      },
+      {
+        "origin": "rdxxhash.c:956",
+        "category": "unknown_alias",
+        "description": "unresolved resource identity `state`",
+        "count": 1,
+        "source": "/home/cosmo/Documents/GitHub/qcore-c/build/cycle19/c-gateway-wave-pin/fluent-bit-clang-source/lib/librdkafka-2.15.0/src/rdxxhash.c",
+        "line": "state->v1 = v1;"
+      },
+      {
+        "origin": "rdxxhash.c:957",
+        "category": "unknown_alias",
+        "description": "unresolved resource identity `state`",
+        "count": 1,
+        "source": "/home/cosmo/Documents/GitHub/qcore-c/build/cycle19/c-gateway-wave-pin/fluent-bit-clang-source/lib/librdkafka-2.15.0/src/rdxxhash.c",
+        "line": "state->v2 = v2;"
+      },
+      {
+        "origin": "rdxxhash.c:958",
+        "category": "unknown_alias",
+        "description": "unresolved resource identity `state`",
+        "count": 1,
+        "source": "/home/cosmo/Documents/GitHub/qcore-c/build/cycle19/c-gateway-wave-pin/fluent-bit-clang-source/lib/librdkafka-2.15.0/src/rdxxhash.c",
+        "line": "state->v3 = v3;"
+      },
+      {
+        "origin": "rdxxhash.c:959",
+        "category": "unknown_alias",
+        "description": "unresolved resource identity `state`",
+        "count": 1,
+        "source": "/home/cosmo/Documents/GitHub/qcore-c/build/cycle19/c-gateway-wave-pin/fluent-bit-clang-source/lib/librdkafka-2.15.0/src/rdxxhash.c",
+        "line": "state->v4 = v4;"
+      }
+    ]
+  },
+  {
+    "key": [
+      "librdkafka",
+      "snappy.c",
+      "decompress_all_tags",
+      0
+    ],
+    "before": "Unknown",
+    "after": "Unknown",
+    "removed_source_occurrences": [
+      {
+        "origin": "snappy.c:1306",
+        "category": "unsupported",
+        "description": "call to uncontracted function `skip`",
+        "count": 1,
+        "source": "/home/cosmo/Documents/GitHub/qcore-c/build/cycle19/c-gateway-wave-pin/fluent-bit-clang-source/lib/librdkafka-2.15.0/src/snappy.c",
+        "line": "skip(d->reader, d->peeked);"
+      }
+    ]
+  },
+  {
+    "key": [
+      "librdkafka",
+      "snappy.c",
+      "exit_snappy_decompressor",
+      0
+    ],
+    "before": "Unknown",
+    "after": "Safe",
+    "removed_source_occurrences": [
+      {
+        "origin": "snappy.c:1213",
+        "category": "unsupported",
+        "description": "call to uncontracted function `skip`",
+        "count": 1,
+        "source": "/home/cosmo/Documents/GitHub/qcore-c/build/cycle19/c-gateway-wave-pin/fluent-bit-clang-source/lib/librdkafka-2.15.0/src/snappy.c",
+        "line": "skip(d->reader, d->peeked);"
+      }
+    ]
+  },
+  {
+    "key": [
+      "librdkafka",
+      "snappy.c",
+      "internal_uncompress",
+      0
+    ],
+    "before": "Unknown",
+    "after": "Unknown",
+    "removed_source_occurrences": [
+      {
+        "origin": "snappy.c:1419",
+        "category": "unsupported",
+        "description": "unmodeled call, aggregate or indirect access in branch condition",
+        "count": 1,
+        "source": "/home/cosmo/Documents/GitHub/qcore-c/build/cycle19/c-gateway-wave-pin/fluent-bit-clang-source/lib/librdkafka-2.15.0/src/snappy.c",
+        "line": "if (!read_uncompressed_length(&decompressor, &uncompressed_len))"
+      },
+      {
+        "origin": "snappy.c:1430",
+        "category": "unsupported",
+        "description": "call to uncontracted function `exit_snappy_decompressor`",
+        "count": 1,
+        "source": "/home/cosmo/Documents/GitHub/qcore-c/build/cycle19/c-gateway-wave-pin/fluent-bit-clang-source/lib/librdkafka-2.15.0/src/snappy.c",
+        "line": "exit_snappy_decompressor(&decompressor);"
+      }
+    ]
+  },
+  {
+    "key": [
+      "librdkafka",
+      "snappy.c",
+      "read_uncompressed_length",
+      0
+    ],
+    "before": "Unknown",
+    "after": "Safe",
+    "removed_source_occurrences": [
+      {
+        "origin": "snappy.c:1237",
+        "category": "unknown_alias",
+        "description": "unresolved resource identity `ip`",
+        "count": 1,
+        "source": "/home/cosmo/Documents/GitHub/qcore-c/build/cycle19/c-gateway-wave-pin/fluent-bit-clang-source/lib/librdkafka-2.15.0/src/snappy.c",
+        "line": "const unsigned char c = *(const unsigned char *)(ip);"
+      },
+      {
+        "origin": "snappy.c:1238",
+        "category": "unsupported",
+        "description": "call to uncontracted function `skip`",
+        "count": 1,
+        "source": "/home/cosmo/Documents/GitHub/qcore-c/build/cycle19/c-gateway-wave-pin/fluent-bit-clang-source/lib/librdkafka-2.15.0/src/snappy.c",
+        "line": "skip(d->reader, 1);"
+      }
+    ]
+  },
+  {
+    "key": [
+      "librdkafka",
+      "snappy.c",
+      "refill_tag",
+      0
+    ],
+    "before": "Unknown",
+    "after": "Unknown",
+    "removed_source_occurrences": [
+      {
+        "origin": "snappy.c:1351",
+        "category": "unsupported",
+        "description": "call to uncontracted function `skip`",
+        "count": 1,
+        "source": "/home/cosmo/Documents/GitHub/qcore-c/build/cycle19/c-gateway-wave-pin/fluent-bit-clang-source/lib/librdkafka-2.15.0/src/snappy.c",
+        "line": "skip(d->reader, d->peeked); /* All peeked bytes are used up */"
+      },
+      {
+        "origin": "snappy.c:1379",
+        "category": "unsupported",
+        "description": "call to uncontracted function `skip`",
+        "count": 1,
+        "source": "/home/cosmo/Documents/GitHub/qcore-c/build/cycle19/c-gateway-wave-pin/fluent-bit-clang-source/lib/librdkafka-2.15.0/src/snappy.c",
+        "line": "skip(d->reader, d->peeked); /* All peeked bytes are used up */"
+      },
+      {
+        "origin": "snappy.c:1380",
+        "category": "unknown_alias",
+        "description": "unresolved resource identity `d`",
+        "count": 1,
+        "source": "/home/cosmo/Documents/GitHub/qcore-c/build/cycle19/c-gateway-wave-pin/fluent-bit-clang-source/lib/librdkafka-2.15.0/src/snappy.c",
+        "line": "d->peeked = 0;"
+      },
+      {
+        "origin": "snappy.c:1389",
+        "category": "unsupported",
+        "description": "call to uncontracted function `skip`",
+        "count": 1,
+        "source": "/home/cosmo/Documents/GitHub/qcore-c/build/cycle19/c-gateway-wave-pin/fluent-bit-clang-source/lib/librdkafka-2.15.0/src/snappy.c",
+        "line": "skip(d->reader, to_add);"
+      },
+      {
+        "origin": "snappy.c:1400",
+        "category": "unsupported",
+        "description": "call to uncontracted function `skip`",
+        "count": 1,
+        "source": "/home/cosmo/Documents/GitHub/qcore-c/build/cycle19/c-gateway-wave-pin/fluent-bit-clang-source/lib/librdkafka-2.15.0/src/snappy.c",
+        "line": "skip(d->reader, d->peeked); /* All peeked bytes are used up */"
+      },
+      {
+        "origin": "snappy.c:1401",
+        "category": "unknown_alias",
+        "description": "unresolved resource identity `d`",
+        "count": 1,
+        "source": "/home/cosmo/Documents/GitHub/qcore-c/build/cycle19/c-gateway-wave-pin/fluent-bit-clang-source/lib/librdkafka-2.15.0/src/snappy.c",
+        "line": "d->peeked = 0;"
+      }
+    ]
+  },
+  {
+    "key": [
+      "librdkafka",
+      "snappy.c",
+      "skip",
+      0
+    ],
+    "before": "Unknown",
+    "after": "Safe",
+    "removed_source_occurrences": [
+      {
+        "origin": "snappy.c:396",
+        "category": "unknown_alias",
+        "description": "unresolved resource identity `s`",
+        "count": 1,
+        "source": "/home/cosmo/Documents/GitHub/qcore-c/build/cycle19/c-gateway-wave-pin/fluent-bit-clang-source/lib/librdkafka-2.15.0/src/snappy.c",
+        "line": "s->curoff = 0;"
+      }
+    ]
+  },
+  {
+    "key": [
+      "librdkafka",
+      "snappy.c",
+      "sn_compress",
+      0
+    ],
+    "before": "Unknown",
+    "after": "Unknown",
+    "removed_source_occurrences": [
+      {
+        "origin": "snappy.c:1467",
+        "category": "unsupported",
+        "description": "call to uncontracted function `skip`",
+        "count": 1,
+        "source": "/home/cosmo/Documents/GitHub/qcore-c/build/cycle19/c-gateway-wave-pin/fluent-bit-clang-source/lib/librdkafka-2.15.0/src/snappy.c",
+        "line": "skip(reader, bytes_read);"
+      },
+      {
+        "origin": "snappy.c:1476",
+        "category": "unsupported",
+        "description": "call to uncontracted function `skip`",
+        "count": 1,
+        "source": "/home/cosmo/Documents/GitHub/qcore-c/build/cycle19/c-gateway-wave-pin/fluent-bit-clang-source/lib/librdkafka-2.15.0/src/snappy.c",
+        "line": "skip(reader, n);"
+      },
+      {
+        "origin": "snappy.c:1506",
+        "category": "unsupported",
+        "description": "call to uncontracted function `skip`",
+        "count": 1,
+        "source": "/home/cosmo/Documents/GitHub/qcore-c/build/cycle19/c-gateway-wave-pin/fluent-bit-clang-source/lib/librdkafka-2.15.0/src/snappy.c",
+        "line": "skip(reader, pending_advance);"
+      }
+    ]
+  },
+  {
+    "key": [
+      "chunkio",
+      "cio_chunk.c",
+      "cio_chunk_is_up",
+      0
+    ],
+    "before": "Unknown",
+    "after": "Unknown",
+    "removed_source_occurrences": [
+      {
+        "origin": "cio_chunk.c:514",
+        "category": "unknown_alias",
+        "description": "unresolved resource identity `ch`",
+        "count": 1,
+        "source": "/home/cosmo/Documents/GitHub/qcore-c/build/cycle19/c-gateway-wave-pin/fluent-bit-clang-source/lib/chunkio/src/cio_chunk.c",
+        "line": "type = ch->st->type;"
+      },
+      {
+        "origin": "cio_chunk.c:519",
+        "category": "unknown_alias",
+        "description": "unresolved resource identity `ch`",
+        "count": 1,
+        "source": "/home/cosmo/Documents/GitHub/qcore-c/build/cycle19/c-gateway-wave-pin/fluent-bit-clang-source/lib/chunkio/src/cio_chunk.c",
+        "line": "cf = ch->backend;"
+      }
+    ]
+  },
+  {
+    "key": [
+      "chunkio",
+      "cio_file.c",
+      "_cio_file_up",
+      0
+    ],
+    "before": "Unknown",
+    "after": "Unknown",
+    "removed_source_occurrences": [
+      {
+        "origin": "cio_file.c:853",
+        "category": "unknown_alias",
+        "description": "unresolved resource identity `cf`",
+        "count": 1,
+        "source": "/home/cosmo/Documents/GitHub/qcore-c/build/cycle19/c-gateway-wave-pin/fluent-bit-clang-source/lib/chunkio/src/cio_file.c",
+        "line": "ret = cio_file_update_size(cf);"
+      }
+    ]
+  },
+  {
+    "key": [
+      "chunkio",
+      "cio_file.c",
+      "cio_file_calculate_checksum",
+      0
+    ],
+    "before": "Unknown",
+    "after": "Unknown",
+    "removed_source_occurrences": [
+      {
+        "origin": "cio_file.c:74",
+        "category": "unknown_alias",
+        "description": "unresolved resource identity `cf`",
+        "count": 1,
+        "source": "/home/cosmo/Documents/GitHub/qcore-c/build/cycle19/c-gateway-wave-pin/fluent-bit-clang-source/lib/chunkio/src/cio_file.c",
+        "line": "cio_file_update_size(cf);"
+      },
+      {
+        "origin": "cio_file.c:79",
+        "category": "unsupported",
+        "description": "indirect memory access is outside the resource projection",
+        "count": 1,
+        "source": "/home/cosmo/Documents/GitHub/qcore-c/build/cycle19/c-gateway-wave-pin/fluent-bit-clang-source/lib/chunkio/src/cio_file.c",
+        "line": "len += cio_file_st_get_meta_len(cf->map);"
+      }
+    ]
+  },
+  {
+    "key": [
+      "chunkio",
+      "cio_file.c",
+      "cio_file_down",
+      0
+    ],
+    "before": "Unknown",
+    "after": "Unknown",
+    "removed_source_occurrences": [
+      {
+        "origin": "cio_file.c:944",
+        "category": "unknown_alias",
+        "description": "unresolved resource identity `cf`",
+        "count": 1,
+        "source": "/home/cosmo/Documents/GitHub/qcore-c/build/cycle19/c-gateway-wave-pin/fluent-bit-clang-source/lib/chunkio/src/cio_file.c",
+        "line": "ret = cio_file_update_size(cf);"
+      }
+    ]
+  },
+  {
+    "key": [
+      "chunkio",
+      "cio_file.c",
+      "cio_file_open",
+      0
+    ],
+    "before": "Unknown",
+    "after": "Unknown",
+    "removed_source_occurrences": [
+      {
+        "origin": "cio_file.c:706",
+        "category": "unknown_alias",
+        "description": "unresolved resource identity `cf`",
+        "count": 1,
+        "source": "/home/cosmo/Documents/GitHub/qcore-c/build/cycle19/c-gateway-wave-pin/fluent-bit-clang-source/lib/chunkio/src/cio_file.c",
+        "line": "cio_file_update_size(cf);"
+      },
+      {
+        "origin": "cio_file.c:730",
+        "category": "unknown_alias",
+        "description": "unresolved resource identity `cf`",
+        "count": 1,
+        "source": "/home/cosmo/Documents/GitHub/qcore-c/build/cycle19/c-gateway-wave-pin/fluent-bit-clang-source/lib/chunkio/src/cio_file.c",
+        "line": "ret = cio_file_update_size(cf);"
+      }
+    ]
+  },
+  {
+    "key": [
+      "chunkio",
+      "cio_file.c",
+      "cio_file_sync",
+      0
+    ],
+    "before": "Unknown",
+    "after": "Unknown",
+    "removed_source_occurrences": [
+      {
+        "origin": "cio_file.c:1240",
+        "category": "unknown_alias",
+        "description": "unresolved resource identity `cf`",
+        "count": 1,
+        "source": "/home/cosmo/Documents/GitHub/qcore-c/build/cycle19/c-gateway-wave-pin/fluent-bit-clang-source/lib/chunkio/src/cio_file.c",
+        "line": "ret = cio_file_update_size(cf);"
+      }
+    ]
+  },
+  {
+    "key": [
+      "chunkio",
+      "cio_file.c",
+      "mmap_file",
+      0
+    ],
+    "before": "Unknown",
+    "after": "Unknown",
+    "removed_source_occurrences": [
+      {
+        "origin": "cio_file.c:359",
+        "category": "unknown_alias",
+        "description": "unresolved resource identity `cf`",
+        "count": 1,
+        "source": "/home/cosmo/Documents/GitHub/qcore-c/build/cycle19/c-gateway-wave-pin/fluent-bit-clang-source/lib/chunkio/src/cio_file.c",
+        "line": "cf->taint_flag = CIO_FALSE;"
+      },
+      {
+        "origin": "cio_file.c:386",
+        "category": "unknown_alias",
+        "description": "unresolved resource identity `cf`",
+        "count": 1,
+        "source": "/home/cosmo/Documents/GitHub/qcore-c/build/cycle19/c-gateway-wave-pin/fluent-bit-clang-source/lib/chunkio/src/cio_file.c",
+        "line": "cf->synced = CIO_TRUE;"
+      },
+      {
+        "origin": "cio_file.c:396",
+        "category": "unknown_alias",
+        "description": "unresolved resource identity `cf`",
+        "count": 1,
+        "source": "/home/cosmo/Documents/GitHub/qcore-c/build/cycle19/c-gateway-wave-pin/fluent-bit-clang-source/lib/chunkio/src/cio_file.c",
+        "line": "cf->synced = CIO_FALSE;"
+      }
+    ]
+  },
+  {
+    "key": [
+      "chunkio",
+      "cio_file_unix.c",
+      "cio_file_native_close",
+      0
+    ],
+    "before": "Unknown",
+    "after": "Unknown",
+    "removed_source_occurrences": [
+      {
+        "origin": "cio_file_unix.c:436",
+        "category": "unknown_alias",
+        "description": "unresolved resource identity `cf`",
+        "count": 1,
+        "source": "/home/cosmo/Documents/GitHub/qcore-c/build/cycle19/c-gateway-wave-pin/fluent-bit-clang-source/lib/chunkio/src/cio_file_unix.c",
+        "line": "cf->fd = -1;"
+      }
+    ]
+  },
+  {
+    "key": [
+      "chunkio",
+      "cio_file_unix.c",
+      "cio_file_native_map",
+      0
+    ],
+    "before": "Unknown",
+    "after": "Unknown",
+    "removed_source_occurrences": [
+      {
+        "origin": "cio_file_unix.c:108",
+        "category": "unknown_alias",
+        "description": "unresolved resource identity `cf`",
+        "count": 1,
+        "source": "/home/cosmo/Documents/GitHub/qcore-c/build/cycle19/c-gateway-wave-pin/fluent-bit-clang-source/lib/chunkio/src/cio_file_unix.c",
+        "line": "cf->alloc_size = map_size;"
+      }
+    ]
+  },
+  {
+    "key": [
+      "chunkio",
+      "cio_file_unix.c",
+      "cio_file_native_remap",
+      0
+    ],
+    "before": "Unknown",
+    "after": "Unknown",
+    "removed_source_occurrences": [
+      {
+        "origin": "cio_file_unix.c:142",
+        "category": "unknown_alias",
+        "description": "unresolved resource identity `cf`",
+        "count": 1,
+        "source": "/home/cosmo/Documents/GitHub/qcore-c/build/cycle19/c-gateway-wave-pin/fluent-bit-clang-source/lib/chunkio/src/cio_file_unix.c",
+        "line": "cf->alloc_size = new_size;"
+      }
+    ]
+  },
+  {
+    "key": [
+      "chunkio",
+      "cio_file_unix.c",
+      "cio_file_native_resize",
+      0
+    ],
+    "before": "Unknown",
+    "after": "Unknown",
+    "removed_source_occurrences": [
+      {
+        "origin": "cio_file_unix.c:542",
+        "category": "unknown_alias",
+        "description": "unresolved resource identity `cf`",
+        "count": 1,
+        "source": "/home/cosmo/Documents/GitHub/qcore-c/build/cycle19/c-gateway-wave-pin/fluent-bit-clang-source/lib/chunkio/src/cio_file_unix.c",
+        "line": "cf->allocate_strategy = CIO_FILE_LINUX_POSIX_FALLOCATE;"
+      },
+      {
+        "origin": "cio_file_unix.c:567",
+        "category": "unknown_alias",
+        "description": "unresolved resource identity `cf`",
+        "count": 1,
+        "source": "/home/cosmo/Documents/GitHub/qcore-c/build/cycle19/c-gateway-wave-pin/fluent-bit-clang-source/lib/chunkio/src/cio_file_unix.c",
+        "line": "cf->fs_size = new_size;"
+      }
+    ]
+  },
+  {
+    "key": [
+      "chunkio",
+      "cio_file_unix.c",
+      "cio_file_native_unmap",
+      0
+    ],
+    "before": "Unknown",
+    "after": "Unknown",
+    "removed_source_occurrences": [
+      {
+        "origin": "cio_file_unix.c:67",
+        "category": "unknown_alias",
+        "description": "unresolved resource identity `cf`",
+        "count": 1,
+        "source": "/home/cosmo/Documents/GitHub/qcore-c/build/cycle19/c-gateway-wave-pin/fluent-bit-clang-source/lib/chunkio/src/cio_file_unix.c",
+        "line": "cf->alloc_size = 0;"
+      },
+      {
+        "origin": "cio_file_unix.c:69",
+        "category": "unknown_alias",
+        "description": "unresolved resource identity `cf`",
+        "count": 1,
+        "source": "/home/cosmo/Documents/GitHub/qcore-c/build/cycle19/c-gateway-wave-pin/fluent-bit-clang-source/lib/chunkio/src/cio_file_unix.c",
+        "line": "cf->map_truncated_warned = CIO_FALSE;"
+      }
+    ]
+  },
+  {
+    "key": [
+      "chunkio",
+      "cio_memfs.c",
+      "cio_memfs_write",
+      0
+    ],
+    "before": "Unknown",
+    "after": "Unknown",
+    "removed_source_occurrences": [
+      {
+        "origin": "cio_memfs.c:108",
+        "category": "unknown_alias",
+        "description": "unresolved resource identity `mf`",
+        "count": 1,
+        "source": "/home/cosmo/Documents/GitHub/qcore-c/build/cycle19/c-gateway-wave-pin/fluent-bit-clang-source/lib/chunkio/src/cio_memfs.c",
+        "line": "mf->buf_size = new_size;"
+      }
+    ]
+  },
+  {
+    "key": [
+      "chunkio",
+      "cio_meta.c",
+      "cio_meta_cmp",
+      0
+    ],
+    "before": "Unknown",
+    "after": "Unknown",
+    "removed_source_occurrences": [
+      {
+        "origin": "cio_meta.c:142",
+        "category": "unknown_alias",
+        "description": "unresolved resource identity `ch`",
+        "count": 1,
+        "source": "/home/cosmo/Documents/GitHub/qcore-c/build/cycle19/c-gateway-wave-pin/fluent-bit-clang-source/lib/chunkio/src/cio_meta.c",
+        "line": "if (ch->st->type == CIO_STORE_MEM) {"
+      },
+      {
+        "origin": "cio_meta.c:143",
+        "category": "unknown_alias",
+        "description": "unresolved resource identity `ch`",
+        "count": 1,
+        "source": "/home/cosmo/Documents/GitHub/qcore-c/build/cycle19/c-gateway-wave-pin/fluent-bit-clang-source/lib/chunkio/src/cio_meta.c",
+        "line": "mf = (struct cio_memfs *) ch->backend;"
+      }
+    ]
+  },
+  {
+    "key": [
+      "chunkio",
+      "cio_meta.c",
+      "cio_meta_read",
+      0
+    ],
+    "before": "Unknown",
+    "after": "Unknown",
+    "removed_source_occurrences": [
+      {
+        "origin": "cio_meta.c:99",
+        "category": "unknown_alias",
+        "description": "unresolved resource identity `ch`",
+        "count": 1,
+        "source": "/home/cosmo/Documents/GitHub/qcore-c/build/cycle19/c-gateway-wave-pin/fluent-bit-clang-source/lib/chunkio/src/cio_meta.c",
+        "line": "if (ch->st->type == CIO_STORE_MEM) {"
+      },
+      {
+        "origin": "cio_meta.c:100",
+        "category": "unknown_alias",
+        "description": "unresolved resource identity `ch`",
+        "count": 1,
+        "source": "/home/cosmo/Documents/GitHub/qcore-c/build/cycle19/c-gateway-wave-pin/fluent-bit-clang-source/lib/chunkio/src/cio_meta.c",
+        "line": "mf = (struct cio_memfs *) ch->backend;"
+      },
+      {
+        "origin": "cio_meta.c:112",
+        "category": "unknown_alias",
+        "description": "unresolved resource identity `ch`",
+        "count": 1,
+        "source": "/home/cosmo/Documents/GitHub/qcore-c/build/cycle19/c-gateway-wave-pin/fluent-bit-clang-source/lib/chunkio/src/cio_meta.c",
+        "line": "else if (ch->st->type == CIO_STORE_FS) {"
+      }
+    ]
+  },
+  {
+    "key": [
+      "chunkio",
+      "cio_meta.c",
+      "cio_meta_size",
+      0
+    ],
+    "before": "Unknown",
+    "after": "Unknown",
+    "removed_source_occurrences": [
+      {
+        "origin": "cio_meta.c:76",
+        "category": "unknown_alias",
+        "description": "unresolved resource identity `ch`",
+        "count": 1,
+        "source": "/home/cosmo/Documents/GitHub/qcore-c/build/cycle19/c-gateway-wave-pin/fluent-bit-clang-source/lib/chunkio/src/cio_meta.c",
+        "line": "if (ch->st->type == CIO_STORE_MEM) {"
+      },
+      {
+        "origin": "cio_meta.c:77",
+        "category": "unknown_alias",
+        "description": "unresolved resource identity `ch`",
+        "count": 1,
+        "source": "/home/cosmo/Documents/GitHub/qcore-c/build/cycle19/c-gateway-wave-pin/fluent-bit-clang-source/lib/chunkio/src/cio_meta.c",
+        "line": "struct cio_memfs *mf = (struct cio_memfs *) ch->backend;"
+      },
+      {
+        "origin": "cio_meta.c:80",
+        "category": "unknown_alias",
+        "description": "unresolved resource identity `ch`",
+        "count": 1,
+        "source": "/home/cosmo/Documents/GitHub/qcore-c/build/cycle19/c-gateway-wave-pin/fluent-bit-clang-source/lib/chunkio/src/cio_meta.c",
+        "line": "else if (ch->st->type == CIO_STORE_FS) {"
+      }
+    ]
+  },
+  {
+    "key": [
+      "chunkio",
+      "cio_meta.c",
+      "cio_meta_write",
+      0
+    ],
+    "before": "Unknown",
+    "after": "Unknown",
+    "removed_source_occurrences": [
+      {
+        "origin": "cio_meta.c:54",
+        "category": "unknown_alias",
+        "description": "unresolved resource identity `ch`",
+        "count": 1,
+        "source": "/home/cosmo/Documents/GitHub/qcore-c/build/cycle19/c-gateway-wave-pin/fluent-bit-clang-source/lib/chunkio/src/cio_meta.c",
+        "line": "if (ch->st->type == CIO_STORE_MEM) {"
+      },
+      {
+        "origin": "cio_meta.c:55",
+        "category": "unknown_alias",
+        "description": "unresolved resource identity `ch`",
+        "count": 1,
+        "source": "/home/cosmo/Documents/GitHub/qcore-c/build/cycle19/c-gateway-wave-pin/fluent-bit-clang-source/lib/chunkio/src/cio_meta.c",
+        "line": "mf = (struct cio_memfs *) ch->backend;"
+      },
+      {
+        "origin": "cio_meta.c:69",
+        "category": "unknown_alias",
+        "description": "unresolved resource identity `ch`",
+        "count": 1,
+        "source": "/home/cosmo/Documents/GitHub/qcore-c/build/cycle19/c-gateway-wave-pin/fluent-bit-clang-source/lib/chunkio/src/cio_meta.c",
+        "line": "else if (ch->st->type == CIO_STORE_FS) {"
+      }
+    ]
+  },
+  {
+    "key": [
+      "fluent-bit-chunk",
+      "flb_input_chunk.c",
+      "flb_input_chunk_set_limits",
+      0
+    ],
+    "before": "Unknown",
+    "after": "Unknown",
+    "removed_source_occurrences": [
+      {
+        "origin": "flb_input_chunk.c:2977",
+        "category": "unknown_alias",
+        "description": "unresolved resource identity `in`",
+        "count": 1,
+        "source": "/home/cosmo/Documents/GitHub/qcore-c/build/cycle19/c-gateway-wave-pin/fluent-bit-clang-source/src/flb_input_chunk.c",
+        "line": "in->mem_chunks_size = total;"
+      },
+      {
+        "origin": "flb_input_chunk.c:2989",
+        "category": "unknown_alias",
+        "description": "unresolved resource identity `in`",
+        "count": 1,
+        "source": "/home/cosmo/Documents/GitHub/qcore-c/build/cycle19/c-gateway-wave-pin/fluent-bit-clang-source/src/flb_input_chunk.c",
+        "line": "if (flb_input_chunk_is_mem_overlimit(in) == FLB_FALSE &&"
+      },
+      {
+        "origin": "flb_input_chunk.c:2993",
+        "category": "unknown_alias",
+        "description": "unresolved resource identity `in`",
+        "count": 1,
+        "source": "/home/cosmo/Documents/GitHub/qcore-c/build/cycle19/c-gateway-wave-pin/fluent-bit-clang-source/src/flb_input_chunk.c",
+        "line": "in->mem_buf_status = FLB_INPUT_RUNNING;"
+      },
+      {
+        "origin": "flb_input_chunk.c:2996",
+        "category": "unknown_alias",
+        "description": "unresolved resource identity `in`",
+        "count": 1,
+        "source": "/home/cosmo/Documents/GitHub/qcore-c/build/cycle19/c-gateway-wave-pin/fluent-bit-clang-source/src/flb_input_chunk.c",
+        "line": "if (flb_input_chunk_is_storage_overlimit(in) == FLB_FALSE &&"
+      },
+      {
+        "origin": "flb_input_chunk.c:3000",
+        "category": "unknown_alias",
+        "description": "unresolved resource identity `in`",
+        "count": 1,
+        "source": "/home/cosmo/Documents/GitHub/qcore-c/build/cycle19/c-gateway-wave-pin/fluent-bit-clang-source/src/flb_input_chunk.c",
+        "line": "in->storage_buf_status = FLB_INPUT_RUNNING;"
+      }
+    ]
+  },
+  {
+    "key": [
+      "fluent-bit-chunk",
+      "flb_input_chunk.c",
+      "flb_input_chunk_set_up_down",
+      0
+    ],
+    "before": "Unknown",
+    "after": "Safe",
+    "removed_source_occurrences": [
+      {
+        "origin": "flb_input_chunk.c:3111",
+        "category": "unknown_alias",
+        "description": "unresolved resource identity `in`",
+        "count": 1,
+        "source": "/home/cosmo/Documents/GitHub/qcore-c/build/cycle19/c-gateway-wave-pin/fluent-bit-clang-source/src/flb_input_chunk.c",
+        "line": "in->mem_chunks_size = total;"
+      },
+      {
+        "origin": "flb_input_chunk.c:3119",
+        "category": "unknown_alias",
+        "description": "unresolved resource identity `in`",
+        "count": 1,
+        "source": "/home/cosmo/Documents/GitHub/qcore-c/build/cycle19/c-gateway-wave-pin/fluent-bit-clang-source/src/flb_input_chunk.c",
+        "line": "in->mem_chunks_size = total;"
+      }
+    ]
+  },
+  {
+    "key": [
+      "monkey-libevent",
+      "mk_core/mk_iov.c",
+      "mk_iov_free_marked",
+      0
+    ],
+    "before": "Unknown",
+    "after": "Unknown",
+    "removed_source_occurrences": [
+      {
+        "origin": "mk_core/mk_iov.c:148",
+        "category": "unknown_alias",
+        "description": "unresolved resource identity `mk_io`",
+        "count": 1,
+        "source": "/home/cosmo/Documents/GitHub/qcore-c/build/cycle19/c-gateway-wave-pin/fluent-bit-clang-source/lib/monkey/mk_core/mk_iov.c",
+        "line": "mk_io->iov_idx = 0;"
+      },
+      {
+        "origin": "mk_core/mk_iov.c:149",
+        "category": "unknown_alias",
+        "description": "unresolved resource identity `mk_io`",
+        "count": 1,
+        "source": "/home/cosmo/Documents/GitHub/qcore-c/build/cycle19/c-gateway-wave-pin/fluent-bit-clang-source/lib/monkey/mk_core/mk_iov.c",
+        "line": "mk_io->buf_idx = 0;"
+      },
+      {
+        "origin": "mk_core/mk_iov.c:150",
+        "category": "unknown_alias",
+        "description": "unresolved resource identity `mk_io`",
+        "count": 1,
+        "source": "/home/cosmo/Documents/GitHub/qcore-c/build/cycle19/c-gateway-wave-pin/fluent-bit-clang-source/lib/monkey/mk_core/mk_iov.c",
+        "line": "mk_io->total_len = 0;"
+      }
+    ]
+  },
+  {
+    "key": [
+      "monkey-libevent",
+      "mk_server/mk_config.c",
+      "mk_config_set_init_values",
+      0
+    ],
+    "before": "Unknown",
+    "after": "Unknown",
+    "removed_source_occurrences": [
+      {
+        "origin": "mk_server/mk_config.c:603",
+        "category": "unknown_alias",
+        "description": "unresolved resource identity `server`",
+        "count": 1,
+        "source": "/home/cosmo/Documents/GitHub/qcore-c/build/cycle19/c-gateway-wave-pin/fluent-bit-clang-source/lib/monkey/mk_server/mk_config.c",
+        "line": "server->is_seteuid = MK_FALSE;"
+      },
+      {
+        "origin": "mk_server/mk_config.c:604",
+        "category": "unknown_alias",
+        "description": "unresolved resource identity `server`",
+        "count": 1,
+        "source": "/home/cosmo/Documents/GitHub/qcore-c/build/cycle19/c-gateway-wave-pin/fluent-bit-clang-source/lib/monkey/mk_server/mk_config.c",
+        "line": "server->timeout = 15;"
+      },
+      {
+        "origin": "mk_server/mk_config.c:605",
+        "category": "unknown_alias",
+        "description": "unresolved resource identity `server`",
+        "count": 1,
+        "source": "/home/cosmo/Documents/GitHub/qcore-c/build/cycle19/c-gateway-wave-pin/fluent-bit-clang-source/lib/monkey/mk_server/mk_config.c",
+        "line": "server->hideversion = MK_FALSE;"
+      },
+      {
+        "origin": "mk_server/mk_config.c:606",
+        "category": "unknown_alias",
+        "description": "unresolved resource identity `server`",
+        "count": 1,
+        "source": "/home/cosmo/Documents/GitHub/qcore-c/build/cycle19/c-gateway-wave-pin/fluent-bit-clang-source/lib/monkey/mk_server/mk_config.c",
+        "line": "server->keep_alive = MK_TRUE;"
+      },
+      {
+        "origin": "mk_server/mk_config.c:607",
+        "category": "unknown_alias",
+        "description": "unresolved resource identity `server`",
+        "count": 1,
+        "source": "/home/cosmo/Documents/GitHub/qcore-c/build/cycle19/c-gateway-wave-pin/fluent-bit-clang-source/lib/monkey/mk_server/mk_config.c",
+        "line": "server->keep_alive_timeout = 15;"
+      },
+      {
+        "origin": "mk_server/mk_config.c:608",
+        "category": "unknown_alias",
+        "description": "unresolved resource identity `server`",
+        "count": 1,
+        "source": "/home/cosmo/Documents/GitHub/qcore-c/build/cycle19/c-gateway-wave-pin/fluent-bit-clang-source/lib/monkey/mk_server/mk_config.c",
+        "line": "server->max_keep_alive_request = 50;"
+      },
+      {
+        "origin": "mk_server/mk_config.c:609",
+        "category": "unknown_alias",
+        "description": "unresolved resource identity `server`",
+        "count": 1,
+        "source": "/home/cosmo/Documents/GitHub/qcore-c/build/cycle19/c-gateway-wave-pin/fluent-bit-clang-source/lib/monkey/mk_server/mk_config.c",
+        "line": "server->resume = MK_TRUE;"
+      },
+      {
+        "origin": "mk_server/mk_config.c:610",
+        "category": "unknown_alias",
+        "description": "unresolved resource identity `server`",
+        "count": 1,
+        "source": "/home/cosmo/Documents/GitHub/qcore-c/build/cycle19/c-gateway-wave-pin/fluent-bit-clang-source/lib/monkey/mk_server/mk_config.c",
+        "line": "server->standard_port = 80;"
+      },
+      {
+        "origin": "mk_server/mk_config.c:611",
+        "category": "unknown_alias",
+        "description": "unresolved resource identity `server`",
+        "count": 1,
+        "source": "/home/cosmo/Documents/GitHub/qcore-c/build/cycle19/c-gateway-wave-pin/fluent-bit-clang-source/lib/monkey/mk_server/mk_config.c",
+        "line": "server->symlink = MK_FALSE;"
+      },
+      {
+        "origin": "mk_server/mk_config.c:612",
+        "category": "unknown_alias",
+        "description": "unresolved resource identity `server`",
+        "count": 1,
+        "source": "/home/cosmo/Documents/GitHub/qcore-c/build/cycle19/c-gateway-wave-pin/fluent-bit-clang-source/lib/monkey/mk_server/mk_config.c",
+        "line": "server->nhosts = 0;"
+      },
+      {
+        "origin": "mk_server/mk_config.c:615",
+        "category": "unknown_alias",
+        "description": "unresolved resource identity `server`",
+        "count": 1,
+        "source": "/home/cosmo/Documents/GitHub/qcore-c/build/cycle19/c-gateway-wave-pin/fluent-bit-clang-source/lib/monkey/mk_server/mk_config.c",
+        "line": "server->open_flags = O_RDONLY; /* The only place this is effectively used (other than the sanity check)"
+      },
+      {
+        "origin": "mk_server/mk_config.c:619",
+        "category": "unknown_alias",
+        "description": "unresolved resource identity `server`",
+        "count": 1,
+        "source": "/home/cosmo/Documents/GitHub/qcore-c/build/cycle19/c-gateway-wave-pin/fluent-bit-clang-source/lib/monkey/mk_server/mk_config.c",
+        "line": "server->workers = 1;"
+      },
+      {
+        "origin": "mk_server/mk_config.c:624",
+        "category": "unknown_alias",
+        "description": "unresolved resource identity `server`",
+        "count": 1,
+        "source": "/home/cosmo/Documents/GitHub/qcore-c/build/cycle19/c-gateway-wave-pin/fluent-bit-clang-source/lib/monkey/mk_server/mk_config.c",
+        "line": "server->scheduler_mode = MK_SCHEDULER_REUSEPORT;"
+      },
+      {
+        "origin": "mk_server/mk_config.c:627",
+        "category": "unknown_alias",
+        "description": "unresolved resource identity `server`",
+        "count": 1,
+        "source": "/home/cosmo/Documents/GitHub/qcore-c/build/cycle19/c-gateway-wave-pin/fluent-bit-clang-source/lib/monkey/mk_server/mk_config.c",
+        "line": "server->scheduler_mode = MK_SCHEDULER_FAIR_BALANCING;"
+      },
+      {
+        "origin": "mk_server/mk_config.c:637",
+        "category": "unknown_alias",
+        "description": "unresolved resource identity `server`",
+        "count": 1,
+        "source": "/home/cosmo/Documents/GitHub/qcore-c/build/cycle19/c-gateway-wave-pin/fluent-bit-clang-source/lib/monkey/mk_server/mk_config.c",
+        "line": "server->safe_event_write = MK_FALSE;"
+      },
+      {
+        "origin": "mk_server/mk_config.c:638",
+        "category": "unknown_alias",
+        "description": "unresolved resource identity `server`",
+        "count": 1,
+        "source": "/home/cosmo/Documents/GitHub/qcore-c/build/cycle19/c-gateway-wave-pin/fluent-bit-clang-source/lib/monkey/mk_server/mk_config.c",
+        "line": "server->tls_mode = MK_FALSE;"
+      }
+    ]
+  },
+  {
+    "key": [
+      "monkey-libevent",
+      "mk_server/mk_config.c",
+      "mk_config_signature",
+      0
+    ],
+    "before": "Unknown",
+    "after": "Unknown",
+    "removed_source_occurrences": [
+      {
+        "origin": "mk_server/mk_config.c:517",
+        "category": "unknown_alias",
+        "description": "unresolved resource identity `server`",
+        "count": 1,
+        "source": "/home/cosmo/Documents/GitHub/qcore-c/build/cycle19/c-gateway-wave-pin/fluent-bit-clang-source/lib/monkey/mk_server/mk_config.c",
+        "line": "server->server_signature_header_len = len;"
+      }
+    ]
+  },
+  {
+    "key": [
+      "monkey-libevent",
+      "mk_server/mk_fifo.c",
+      "mk_fifo_worker_read",
+      0
+    ],
+    "before": "Unknown",
+    "after": "Unknown",
+    "removed_source_occurrences": [
+      {
+        "origin": "mk_server/mk_fifo.c:416",
+        "category": "unknown_alias",
+        "description": "unresolved resource identity `fw`",
+        "count": 1,
+        "source": "/home/cosmo/Documents/GitHub/qcore-c/build/cycle19/c-gateway-wave-pin/fluent-bit-clang-source/lib/monkey/mk_server/mk_fifo.c",
+        "line": "fw->buf_size = size;"
+      }
+    ]
+  },
+  {
+    "key": [
+      "monkey-libevent",
+      "mk_server/mk_header.c",
+      "mk_header_response_reset",
+      0
+    ],
+    "before": "Unknown",
+    "after": "Unknown",
+    "removed_source_occurrences": [
+      {
+        "origin": "mk_server/mk_header.c:430",
+        "category": "unknown_alias",
+        "description": "unresolved resource identity `header`",
+        "count": 1,
+        "source": "/home/cosmo/Documents/GitHub/qcore-c/build/cycle19/c-gateway-wave-pin/fluent-bit-clang-source/lib/monkey/mk_server/mk_header.c",
+        "line": "header->status = -1;"
+      },
+      {
+        "origin": "mk_server/mk_header.c:431",
+        "category": "unknown_alias",
+        "description": "unresolved resource identity `header`",
+        "count": 1,
+        "source": "/home/cosmo/Documents/GitHub/qcore-c/build/cycle19/c-gateway-wave-pin/fluent-bit-clang-source/lib/monkey/mk_server/mk_header.c",
+        "line": "header->sent = MK_FALSE;"
+      },
+      {
+        "origin": "mk_server/mk_header.c:434",
+        "category": "unknown_alias",
+        "description": "unresolved resource identity `header`",
+        "count": 1,
+        "source": "/home/cosmo/Documents/GitHub/qcore-c/build/cycle19/c-gateway-wave-pin/fluent-bit-clang-source/lib/monkey/mk_server/mk_header.c",
+        "line": "header->content_length = -1;"
+      },
+      {
+        "origin": "mk_server/mk_header.c:435",
+        "category": "unknown_alias",
+        "description": "unresolved resource identity `header`",
+        "count": 1,
+        "source": "/home/cosmo/Documents/GitHub/qcore-c/build/cycle19/c-gateway-wave-pin/fluent-bit-clang-source/lib/monkey/mk_server/mk_header.c",
+        "line": "header->connection = 0;"
+      },
+      {
+        "origin": "mk_server/mk_header.c:436",
+        "category": "unknown_alias",
+        "description": "unresolved resource identity `header`",
+        "count": 1,
+        "source": "/home/cosmo/Documents/GitHub/qcore-c/build/cycle19/c-gateway-wave-pin/fluent-bit-clang-source/lib/monkey/mk_server/mk_header.c",
+        "line": "header->transfer_encoding = -1;"
+      },
+      {
+        "origin": "mk_server/mk_header.c:437",
+        "category": "unknown_alias",
+        "description": "unresolved resource identity `header`",
+        "count": 1,
+        "source": "/home/cosmo/Documents/GitHub/qcore-c/build/cycle19/c-gateway-wave-pin/fluent-bit-clang-source/lib/monkey/mk_server/mk_header.c",
+        "line": "header->last_modified = -1;"
+      },
+      {
+        "origin": "mk_server/mk_header.c:438",
+        "category": "unknown_alias",
+        "description": "unresolved resource identity `header`",
+        "count": 1,
+        "source": "/home/cosmo/Documents/GitHub/qcore-c/build/cycle19/c-gateway-wave-pin/fluent-bit-clang-source/lib/monkey/mk_server/mk_header.c",
+        "line": "header->upgrade = -1;"
+      },
+      {
+        "origin": "mk_server/mk_header.c:439",
+        "category": "unknown_alias",
+        "description": "unresolved resource identity `header`",
+        "count": 1,
+        "source": "/home/cosmo/Documents/GitHub/qcore-c/build/cycle19/c-gateway-wave-pin/fluent-bit-clang-source/lib/monkey/mk_server/mk_header.c",
+        "line": "header->cgi = SH_NOCGI;"
+      }
+    ]
+  },
+  {
+    "key": [
+      "monkey-libevent",
+      "mk_server/mk_http.c",
+      "mk_http_request_init",
+      0
+    ],
+    "before": "Unknown",
+    "after": "Unknown",
+    "removed_source_occurrences": [
+      {
+        "origin": "mk_server/mk_http.c:68",
+        "category": "unknown_alias",
+        "description": "unresolved resource identity `request`",
+        "count": 1,
+        "source": "/home/cosmo/Documents/GitHub/qcore-c/build/cycle19/c-gateway-wave-pin/fluent-bit-clang-source/lib/monkey/mk_server/mk_http.c",
+        "line": "request->port = 0;"
+      },
+      {
+        "origin": "mk_server/mk_http.c:69",
+        "category": "unknown_alias",
+        "description": "unresolved resource identity `request`",
+        "count": 1,
+        "source": "/home/cosmo/Documents/GitHub/qcore-c/build/cycle19/c-gateway-wave-pin/fluent-bit-clang-source/lib/monkey/mk_server/mk_http.c",
+        "line": "request->status = MK_TRUE;"
+      },
+      {
+        "origin": "mk_server/mk_http.c:71",
+        "category": "unknown_alias",
+        "description": "unresolved resource identity `request`",
+        "count": 1,
+        "source": "/home/cosmo/Documents/GitHub/qcore-c/build/cycle19/c-gateway-wave-pin/fluent-bit-clang-source/lib/monkey/mk_server/mk_http.c",
+        "line": "request->method = MK_METHOD_UNKNOWN;"
+      },
+      {
+        "origin": "mk_server/mk_http.c:72",
+        "category": "unknown_alias",
+        "description": "unresolved resource identity `request`",
+        "count": 1,
+        "source": "/home/cosmo/Documents/GitHub/qcore-c/build/cycle19/c-gateway-wave-pin/fluent-bit-clang-source/lib/monkey/mk_server/mk_http.c",
+        "line": "request->protocol = MK_HTTP_PROTOCOL_UNKNOWN;"
+      },
+      {
+        "origin": "mk_server/mk_http.c:74",
+        "category": "unknown_alias",
+        "description": "unresolved resource identity `request`",
+        "count": 1,
+        "source": "/home/cosmo/Documents/GitHub/qcore-c/build/cycle19/c-gateway-wave-pin/fluent-bit-clang-source/lib/monkey/mk_server/mk_http.c",
+        "line": "request->file_fd        = -1;"
+      },
+      {
+        "origin": "mk_server/mk_http.c:76",
+        "category": "unknown_alias",
+        "description": "unresolved resource identity `request`",
+        "count": 1,
+        "source": "/home/cosmo/Documents/GitHub/qcore-c/build/cycle19/c-gateway-wave-pin/fluent-bit-clang-source/lib/monkey/mk_server/mk_http.c",
+        "line": "request->vhost_fdt_id = 0;"
+      },
+      {
+        "origin": "mk_server/mk_http.c:77",
+        "category": "unknown_alias",
+        "description": "unresolved resource identity `request`",
+        "count": 1,
+        "source": "/home/cosmo/Documents/GitHub/qcore-c/build/cycle19/c-gateway-wave-pin/fluent-bit-clang-source/lib/monkey/mk_server/mk_http.c",
+        "line": "request->vhost_fdt_hash = 0;"
+      },
+      {
+        "origin": "mk_server/mk_http.c:78",
+        "category": "unknown_alias",
+        "description": "unresolved resource identity `request`",
+        "count": 1,
+        "source": "/home/cosmo/Documents/GitHub/qcore-c/build/cycle19/c-gateway-wave-pin/fluent-bit-clang-source/lib/monkey/mk_server/mk_http.c",
+        "line": "request->vhost_fdt_enabled = MK_FALSE;"
+      },
+      {
+        "origin": "mk_server/mk_http.c:80",
+        "category": "unknown_alias",
+        "description": "unresolved resource identity `request`",
+        "count": 1,
+        "source": "/home/cosmo/Documents/GitHub/qcore-c/build/cycle19/c-gateway-wave-pin/fluent-bit-clang-source/lib/monkey/mk_server/mk_http.c",
+        "line": "request->stage30_blocked = MK_FALSE;"
+      }
+    ]
+  },
+  {
+    "key": [
+      "monkey-libevent",
+      "mk_server/mk_http_parser.c",
+      "header_lookup",
+      0
+    ],
+    "before": "Unknown",
+    "after": "Unknown",
+    "removed_source_occurrences": [
+      {
+        "origin": "mk_server/mk_http_parser.c:319",
+        "category": "unknown_alias",
+        "description": "unresolved resource identity `p`",
+        "count": 1,
+        "source": "/home/cosmo/Documents/GitHub/qcore-c/build/cycle19/c-gateway-wave-pin/fluent-bit-clang-source/lib/monkey/mk_server/mk_http_parser.c",
+        "line": "p->header_host_port = val;"
+      },
+      {
+        "origin": "mk_server/mk_http_parser.c:336",
+        "category": "unknown_alias",
+        "description": "unresolved resource identity `p`",
+        "count": 1,
+        "source": "/home/cosmo/Documents/GitHub/qcore-c/build/cycle19/c-gateway-wave-pin/fluent-bit-clang-source/lib/monkey/mk_server/mk_http_parser.c",
+        "line": "p->header_content_length = val;"
+      },
+      {
+        "origin": "mk_server/mk_http_parser.c:340",
+        "category": "unknown_alias",
+        "description": "unresolved resource identity `p`",
+        "count": 1,
+        "source": "/home/cosmo/Documents/GitHub/qcore-c/build/cycle19/c-gateway-wave-pin/fluent-bit-clang-source/lib/monkey/mk_server/mk_http_parser.c",
+        "line": "p->header_connection = MK_HTTP_PARSER_CONN_UNKNOWN;"
+      },
+      {
+        "origin": "mk_server/mk_http_parser.c:349",
+        "category": "unknown_alias",
+        "description": "unresolved resource identity `p`",
+        "count": 1,
+        "source": "/home/cosmo/Documents/GitHub/qcore-c/build/cycle19/c-gateway-wave-pin/fluent-bit-clang-source/lib/monkey/mk_server/mk_http_parser.c",
+        "line": "p->header_connection = MK_HTTP_PARSER_CONN_KA;"
+      },
+      {
+        "origin": "mk_server/mk_http_parser.c:356",
+        "category": "unknown_alias",
+        "description": "unresolved resource identity `p`",
+        "count": 1,
+        "source": "/home/cosmo/Documents/GitHub/qcore-c/build/cycle19/c-gateway-wave-pin/fluent-bit-clang-source/lib/monkey/mk_server/mk_http_parser.c",
+        "line": "p->header_connection = MK_HTTP_PARSER_CONN_CLOSE;"
+      },
+      {
+        "origin": "mk_server/mk_http_parser.c:360",
+        "category": "unknown_alias",
+        "description": "unresolved resource identity `p`",
+        "count": 1,
+        "source": "/home/cosmo/Documents/GitHub/qcore-c/build/cycle19/c-gateway-wave-pin/fluent-bit-clang-source/lib/monkey/mk_server/mk_http_parser.c",
+        "line": "p->header_connection = MK_HTTP_PARSER_CONN_UNKNOWN;"
+      },
+      {
+        "origin": "mk_server/mk_http_parser.c:370",
+        "category": "unknown_alias",
+        "description": "unresolved resource identity `p`",
+        "count": 1,
+        "source": "/home/cosmo/Documents/GitHub/qcore-c/build/cycle19/c-gateway-wave-pin/fluent-bit-clang-source/lib/monkey/mk_server/mk_http_parser.c",
+        "line": "p->header_connection = MK_HTTP_PARSER_CONN_UPGRADE;"
+      },
+      {
+        "origin": "mk_server/mk_http_parser.c:440",
+        "category": "unknown_alias",
+        "description": "unresolved resource identity `p`",
+        "count": 1,
+        "source": "/home/cosmo/Documents/GitHub/qcore-c/build/cycle19/c-gateway-wave-pin/fluent-bit-clang-source/lib/monkey/mk_server/mk_http_parser.c",
+        "line": "p->header_upgrade = MK_HTTP_PARSER_UPGRADE_H2C;"
+      }
+    ]
+  },
+  {
+    "key": [
+      "monkey-libevent",
+      "mk_server/mk_http_parser.c",
+      "mk_http_parser_ok",
+      0
+    ],
+    "before": "Unknown",
+    "after": "Unknown",
+    "removed_source_occurrences": [
+      {
+        "origin": "mk_server/mk_http_parser.c:786",
+        "category": "unknown_alias",
+        "description": "unresolved resource identity `p`",
+        "count": 1,
+        "source": "/home/cosmo/Documents/GitHub/qcore-c/build/cycle19/c-gateway-wave-pin/fluent-bit-clang-source/lib/monkey/mk_server/mk_http_parser.c",
+        "line": "p->level = REQ_LEVEL_BODY;"
+      }
+    ]
+  },
+  {
+    "key": [
+      "monkey-libevent",
+      "mk_server/mk_http_thread.c",
+      "mk_http_thread_purge",
+      0
+    ],
+    "before": "Unknown",
+    "after": "Unknown",
+    "removed_source_occurrences": [
+      {
+        "origin": "mk_server/mk_http_thread.c:244",
+        "category": "unknown_alias",
+        "description": "unresolved resource identity `mth`",
+        "count": 1,
+        "source": "/home/cosmo/Documents/GitHub/qcore-c/build/cycle19/c-gateway-wave-pin/fluent-bit-clang-source/lib/monkey/mk_server/mk_http_thread.c",
+        "line": "mth->close = close;"
+      }
+    ]
+  },
+  {
+    "key": [
+      "monkey-libevent",
+      "mk_server/mk_lib.c",
+      "mk_config_set_property",
+      0
+    ],
+    "before": "Unknown",
+    "after": "Unknown",
+    "removed_source_occurrences": [
+      {
+        "origin": "mk_server/mk_lib.c:324",
+        "category": "unknown_alias",
+        "description": "unresolved resource identity `server`",
+        "count": 1,
+        "source": "/home/cosmo/Documents/GitHub/qcore-c/build/cycle19/c-gateway-wave-pin/fluent-bit-clang-source/lib/monkey/mk_server/mk_lib.c",
+        "line": "server->workers = num;"
+      },
+      {
+        "origin": "mk_server/mk_lib.c:332",
+        "category": "unknown_alias",
+        "description": "unresolved resource identity `server`",
+        "count": 1,
+        "source": "/home/cosmo/Documents/GitHub/qcore-c/build/cycle19/c-gateway-wave-pin/fluent-bit-clang-source/lib/monkey/mk_server/mk_lib.c",
+        "line": "server->timeout = num;"
+      },
+      {
+        "origin": "mk_server/mk_lib.c:339",
+        "category": "unknown_alias",
+        "description": "unresolved resource identity `server`",
+        "count": 1,
+        "source": "/home/cosmo/Documents/GitHub/qcore-c/build/cycle19/c-gateway-wave-pin/fluent-bit-clang-source/lib/monkey/mk_server/mk_lib.c",
+        "line": "server->keep_alive = b;"
+      },
+      {
+        "origin": "mk_server/mk_lib.c:346",
+        "category": "unknown_alias",
+        "description": "unresolved resource identity `server`",
+        "count": 1,
+        "source": "/home/cosmo/Documents/GitHub/qcore-c/build/cycle19/c-gateway-wave-pin/fluent-bit-clang-source/lib/monkey/mk_server/mk_lib.c",
+        "line": "server->max_keep_alive_request = num;"
+      },
+      {
+        "origin": "mk_server/mk_lib.c:353",
+        "category": "unknown_alias",
+        "description": "unresolved resource identity `server`",
+        "count": 1,
+        "source": "/home/cosmo/Documents/GitHub/qcore-c/build/cycle19/c-gateway-wave-pin/fluent-bit-clang-source/lib/monkey/mk_server/mk_lib.c",
+        "line": "server->keep_alive_timeout = num;"
+      },
+      {
+        "origin": "mk_server/mk_lib.c:369",
+        "category": "unknown_alias",
+        "description": "unresolved resource identity `server`",
+        "count": 1,
+        "source": "/home/cosmo/Documents/GitHub/qcore-c/build/cycle19/c-gateway-wave-pin/fluent-bit-clang-source/lib/monkey/mk_server/mk_lib.c",
+        "line": "server->hideversion = b;"
+      },
+      {
+        "origin": "mk_server/mk_lib.c:376",
+        "category": "unknown_alias",
+        "description": "unresolved resource identity `server`",
+        "count": 1,
+        "source": "/home/cosmo/Documents/GitHub/qcore-c/build/cycle19/c-gateway-wave-pin/fluent-bit-clang-source/lib/monkey/mk_server/mk_lib.c",
+        "line": "server->resume = b;"
+      },
+      {
+        "origin": "mk_server/mk_lib.c:383",
+        "category": "unknown_alias",
+        "description": "unresolved resource identity `server`",
+        "count": 1,
+        "source": "/home/cosmo/Documents/GitHub/qcore-c/build/cycle19/c-gateway-wave-pin/fluent-bit-clang-source/lib/monkey/mk_server/mk_lib.c",
+        "line": "server->max_request_size = num;"
+      },
+      {
+        "origin": "mk_server/mk_lib.c:390",
+        "category": "unknown_alias",
+        "description": "unresolved resource identity `server`",
+        "count": 1,
+        "source": "/home/cosmo/Documents/GitHub/qcore-c/build/cycle19/c-gateway-wave-pin/fluent-bit-clang-source/lib/monkey/mk_server/mk_lib.c",
+        "line": "server->symlink = b;"
+      },
+      {
+        "origin": "mk_server/mk_lib.c:400",
+        "category": "unknown_alias",
+        "description": "unresolved resource identity `server`",
+        "count": 1,
+        "source": "/home/cosmo/Documents/GitHub/qcore-c/build/cycle19/c-gateway-wave-pin/fluent-bit-clang-source/lib/monkey/mk_server/mk_lib.c",
+        "line": "server->fdt = b;"
+      }
+    ]
+  },
+  {
+    "key": [
+      "monkey-libevent",
+      "mk_server/mk_scheduler.c",
+      "mk_sched_launch_thread",
+      0
+    ],
+    "before": "Unknown",
+    "after": "Unknown",
+    "removed_source_occurrences": [
+      {
+        "origin": "mk_server/mk_scheduler.c:431",
+        "category": "unknown_alias",
+        "description": "unresolved resource identity `server`",
+        "count": 1,
+        "source": "/home/cosmo/Documents/GitHub/qcore-c/build/cycle19/c-gateway-wave-pin/fluent-bit-clang-source/lib/monkey/mk_server/mk_scheduler.c",
+        "line": "server->pth_init = MK_FALSE;"
+      }
+    ]
+  },
+  {
+    "key": [
+      "monkey-libevent",
+      "mk_server/mk_user.c",
+      "mk_user_set_uidgid",
+      0
+    ],
+    "before": "Unknown",
+    "after": "Unknown",
+    "removed_source_occurrences": [
+      {
+        "origin": "mk_server/mk_user.c:127",
+        "category": "unknown_alias",
+        "description": "unresolved resource identity `server`",
+        "count": 1,
+        "source": "/home/cosmo/Documents/GitHub/qcore-c/build/cycle19/c-gateway-wave-pin/fluent-bit-clang-source/lib/monkey/mk_server/mk_user.c",
+        "line": "server->is_seteuid = MK_TRUE;"
+      }
+    ]
+  },
+  {
+    "key": [
+      "monkey-libevent",
+      "mk_server/mk_vhost.c",
+      "mk_vhost_fdt_close",
+      0
+    ],
+    "before": "Unknown",
+    "after": "Unknown",
+    "removed_source_occurrences": [
+      {
+        "origin": "mk_server/mk_vhost.c:273",
+        "category": "unknown_alias",
+        "description": "unresolved resource identity `sr`",
+        "count": 1,
+        "source": "/home/cosmo/Documents/GitHub/qcore-c/build/cycle19/c-gateway-wave-pin/fluent-bit-clang-source/lib/monkey/mk_server/mk_vhost.c",
+        "line": "sr->vhost_fdt_enabled = MK_FALSE;"
+      }
+    ]
+  },
+  {
+    "key": [
+      "monkey-libevent",
+      "mk_server/mk_vhost.c",
+      "mk_vhost_fdt_open",
+      0
+    ],
+    "before": "Unknown",
+    "after": "Unknown",
+    "removed_source_occurrences": [
+      {
+        "origin": "mk_server/mk_vhost.c:204",
+        "category": "unknown_alias",
+        "description": "unresolved resource identity `sr`",
+        "count": 1,
+        "source": "/home/cosmo/Documents/GitHub/qcore-c/build/cycle19/c-gateway-wave-pin/fluent-bit-clang-source/lib/monkey/mk_server/mk_vhost.c",
+        "line": "sr->vhost_fdt_id      = id;"
+      },
+      {
+        "origin": "mk_server/mk_vhost.c:205",
+        "category": "unknown_alias",
+        "description": "unresolved resource identity `sr`",
+        "count": 1,
+        "source": "/home/cosmo/Documents/GitHub/qcore-c/build/cycle19/c-gateway-wave-pin/fluent-bit-clang-source/lib/monkey/mk_server/mk_vhost.c",
+        "line": "sr->vhost_fdt_hash    = hash;"
+      },
+      {
+        "origin": "mk_server/mk_vhost.c:206",
+        "category": "unknown_alias",
+        "description": "unresolved resource identity `sr`",
+        "count": 1,
+        "source": "/home/cosmo/Documents/GitHub/qcore-c/build/cycle19/c-gateway-wave-pin/fluent-bit-clang-source/lib/monkey/mk_server/mk_vhost.c",
+        "line": "sr->vhost_fdt_enabled = MK_TRUE;"
+      },
+      {
+        "origin": "mk_server/mk_vhost.c:234",
+        "category": "unknown_alias",
+        "description": "unresolved resource identity `sr`",
+        "count": 1,
+        "source": "/home/cosmo/Documents/GitHub/qcore-c/build/cycle19/c-gateway-wave-pin/fluent-bit-clang-source/lib/monkey/mk_server/mk_vhost.c",
+        "line": "sr->vhost_fdt_id      = id;"
+      },
+      {
+        "origin": "mk_server/mk_vhost.c:235",
+        "category": "unknown_alias",
+        "description": "unresolved resource identity `sr`",
+        "count": 1,
+        "source": "/home/cosmo/Documents/GitHub/qcore-c/build/cycle19/c-gateway-wave-pin/fluent-bit-clang-source/lib/monkey/mk_server/mk_vhost.c",
+        "line": "sr->vhost_fdt_hash    = hash;"
+      },
+      {
+        "origin": "mk_server/mk_vhost.c:236",
+        "category": "unknown_alias",
+        "description": "unresolved resource identity `sr`",
+        "count": 1,
+        "source": "/home/cosmo/Documents/GitHub/qcore-c/build/cycle19/c-gateway-wave-pin/fluent-bit-clang-source/lib/monkey/mk_server/mk_vhost.c",
+        "line": "sr->vhost_fdt_enabled = MK_TRUE;"
+      }
+    ]
+  }
+]

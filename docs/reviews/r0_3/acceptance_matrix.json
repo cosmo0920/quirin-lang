@@ -195,7 +195,7 @@
   "ct_stage_names": 20,
   "ct_cells": 1000,
   "unverified_spec_items": 10,
-  "named_followups": 797
+  "named_followups": 798
  },
  "derivation": {
   "rule": "no count in a section this file marks `derived` is hand-copied from a status ledger; each is read from the manifest or validated run record named beside it. Sections marked `hand_maintained` are recorded analysis carried verbatim from the previous matrix, and `integrator_supplied` numbers name whether they were measured for this run or carried - see section_ownership.",
@@ -6753,11 +6753,11 @@
   "note": "providers/ is a separate Cargo workspace, excluded from the core workspace; P01 verified empirically that the core workspace builds and passes its full suite with providers/ moved out of the tree."
  },
  "validation": {
-  "note": "Fresh merged source 854920e3e12a86c34231d4b46fa42918e29044ca; W48 merge 654e2b7ee, RK merge 854920e3e. Standing private/w48-bottom-up-batch2/gate-integration-combined-1: all ten steps exit0, 513 units/526 summaries,8240 Rust passed/0failed/15ignored,338 Lean,374 Python. Fresh private/w48-batch2-rk-integration/gate-providers-1: all twelve steps exit0,133 provider Rust passed/0failed/1ignored,25 Python,5 packages built and verified. Earlier sandbox failure retained at gate-integration-w48-1; corrected full W48 gate at gate-integration-w48-2 passes every step. Clang bytes are the invocation recorded by this main-checkout standing gate. Measurement details are in docs/reports/w48-batch2-rk-integration/README.md.",
-  "workspace_tests": 8240,
+  "note": "LEXICAL-ROUTES-PREEMPT-TYPED-FALLBACKS clean standing gate3 at bd12e15e3f49dd384f0595b1cd18499aaf08094e; analyzer/proof/test source unchanged since 913a72a916242165ed0dc586fd1affdb3093fd65. All ten commands exited 0: 514 units/527 summaries, 8250 passed/0 failed/15 ignored; 339 Lean audits; 374 Python tests. Actual commands/exits/private logs are in artifacts/final-standing-gate/commands.json. Earlier failed gates are retained. Provider count 133 is explicitly borrowed from the integrator fresh combined base 854920e3e provider gate, /home/cosmo/Documents/GitHub/qcore-c/private/w48-batch2-rk-integration/gate-providers-1 (133 Rust/0 failed/1 ignored,25 Python,all five packages verified); provider-owned sources are unchanged here. Subsequent corpus/system/slice audits all exit0 under the original envelopes; complete review and post-matrix374Python also pass. The later RK outer-scope correction is outside these frozen measurements and awaits composed S3/integration validation.",
+  "workspace_tests": 8250,
   "provider_tests": 133,
   "python_evidence_validator_tests": 374,
-  "lean_audits": 338,
+  "lean_audits": 339,
   "lean_audit_files": [
    "AuditAbiEnumConstPointer.lean",
    "AuditAggregateOwnedField.lean",
@@ -7024,6 +7024,7 @@
    "AuditScalarObservationContracts.lean",
    "AuditScalarPayloads.lean",
    "AuditScalarPositions.lean",
+   "AuditScalarPrecedence.lean",
    "AuditScalarReturnValue.lean",
    "AuditScalarRouteExitEdge.lean",
    "AuditScalarTasks.lean",
@@ -7104,7 +7105,7 @@
   "cargo_clippy": "clean",
   "standing_gate": "complete",
   "full_language_conformance": false,
-  "measurement_provenance": "integrator_supplied (docs/reports/w48-batch2-rk-integration/gate.json)"
+  "measurement_provenance": "integrator_supplied (docs/reports/lexical-routes-typed-fallbacks/gate.json)"
  },
  "named_followups": [
   {
@@ -12620,13 +12621,6 @@
    "recorded_by": "RETENTION-UNMATCHED-REMOVAL-POISONS"
   },
   {
-   "id": "LEXICAL-ROUTES-PREEMPT-TYPED-FALLBACKS",
-   "title": "A lexical route whose flow check refuses an unsettled base runs before the Clang-typed fallback that decides the same statement",
-   "why": "Found by FB-LOOP-CHAIN-ACCESS-IDENTITY-BLOCKERS (README section 4.3). Rule 5g lowers `B->F = scalar` with may_bind(B) to ScalarMemberStore, whose flow check refuses unless B resolves to one settled live identity; W43's typed scalar statement and the W44 chain reading of a condition (such as `ins->p->flags & X`) carry per-base obligations of the same kind; all run before the statement's or operand's refusal reaches the Clang-typed reading (rule 10k), which decides the same text on its own premise (the root never bound by the custody closure). Where a lexical reader cannot type the record the fallback decides; where it can, the lexical route refuses. Measured when the card widened the reader: cio_options_init (memset(options, ...) then scalar stores) went Safe -> Unknown until rule 5g kept its domain of fully read declarations; on the slice flb_input_net_property_check gains two `unresolved resource identity ins` leaves at its conditions (W44) and flb_input_set_test, flb_output_set_http_test and flb_output_set_test_with_ctx_callback one each at a scalar store through a looked-up instance (W43, reachable once their function-pointer formals no longer refuse the function); all four rows Unknown before and after. The same precedence holds today on every fully read record (e.g. flb_engine_shutdown's `config->is_running = FLB_FALSE`). DISCHARGE: a decided precedence (the lexical route's flow refusal falls back to the typed reading where that reading's own premise holds, or a stated reason it must not), with Lean parity and a measured re-pin, every moved row read.",
-   "source": "docs/reports/fb-loop-chain-blockers/README.md",
-   "recorded_by": "FB-LOOP-CHAIN-ACCESS-IDENTITY-BLOCKERS"
-  },
-  {
    "id": "RK-INTERCEPTOR-STATIC-LIST-CLOSURE",
    "title": "Read exact interceptor list element and method-union candidate closure at static invocations",
    "why": "Narrowed by RK-PLUGIN-INTERCEPTOR-CANDIDATES. Its runtime-only source-pinned inventory defines 14 exact rd_kafka_conf_s interceptor lists and their 14 rd_kafka_s.rk_conf aliases with distinct rd_kafka_interceptor_method_s union arms, signatures, successful registration/lifecycle restrictions, borrowed neutral-custody callbacks and code/opaque lifetime premises. These are human review restrictions and do not establish static closure or type a list as a function pointer; rule 12n still refuses these invocations. Stateful freeing/retaining/transferring callbacks do not meet the neutral candidate. DISCHARGE: a sound source-derived list/element/union-arm closure over all registration and invocation sites, including aliasing, copying, teardown and lifetime, with candidate effect composition, matching Rust/Lean evidence, corpus/system/slice measurement and every moved row read. Missing or unsupported registrations remain Unknown and runtime review alone never makes a static Safe result.",
@@ -12646,6 +12640,20 @@
    "why": "OUTER-CONTRACT selects the projection (QCORE_OUTER_PROJECTION) on the pinned, configured and no-build routes only; a checkpointed run refuses it (checkpoint_run.rs, as it refuses the null and bounds selections), so a composed report has no runtime scope. DISCHARGE: the checkpoint carries the outer environment's identity and each loader's reach, the composer projects the composed rows exactly as a whole run does (or refuses when the checkpoints disagree), tested on a split run equal to the whole one.",
    "source": "docs/reports/outer-contract/README.md",
    "recorded_by": "OUTER-CONTRACT"
+  },
+  {
+   "id": "LEXICAL-SCALAR-NOOP-ALIAS-READ",
+   "title": "An older unbound scalar-field NoOp carries no same-type alias read after a peer release",
+   "why": "Observed during LEXICAL-ROUTES-PREEMPT-TYPED-FALLBACKS first focused fixture run on a dirty worktree after prediction commit 1f9e306a0: under synthetic q_base.qv custody assumptions (q_free releases nonnull), struct S { int x; struct S *next; }; void subject(struct S *p, struct S *peer) { q_free(peer); p->x = 1; } is Safe and the store is NoOp, while the release carries the peer/p alias class. This is an observed analyzer-boundary candidate, not a validated violation or upstream defect. NoOp is outside the scalar alternative card, which preserves its existing handling. DISCHARGE: reproduce at an exact baseline, decide and implement an alias-preserving reading of the older scalar-field no-op without erasing genuine alias/custody/null/effect refusals, with Rust, audited Lean, full gate and all-route re-pin; read every moved row. Exact source/profile/log provenance is in artifacts/noop-alias-observation.json.",
+   "source": "docs/reports/lexical-routes-typed-fallbacks/README.md",
+   "recorded_by": "LEXICAL-ROUTES-PREEMPT-TYPED-FALLBACKS"
+  },
+  {
+   "id": "LEXICAL-TYPED-TAIL-APPEND-ACTUAL-IDENTITY",
+   "title": "Tail append retains the actual-read file identity refusal after a lexical scalar route discharges",
+   "why": "Fresh slice34155955 on lexical implementation913a72a91 replaces the generic unsupported indirect-access leaf at plugins/in_tail/tail_file.c:1838, tail_signal_manager(file->config), with unresolved resource identity file. The row remains Unknown. The gate-built one-unit CFG probe (exit0) pins L20871/node94 Call tail_signal_manager(file->config) reads[file->config]; preceding flb_hash_table_add remains outside its declared literal-argument premise and the function retains168 diagnostics. This is an analyzer boundary, not a validated violation or upstream defect. DISCHARGE: independently trace and decide the actual file identity together with every preceding effect/literal-argument premise, preserving held/source/ABI/custody/alias/null guards, or state why refusal must remain; any semantic extension needs Rust/Lean, full gate and all-route repin with every moved row read. Exact source/config/binary/probe provenance is in artifacts/tail-append-actual/identity.json.",
+   "source": "docs/reports/lexical-routes-typed-fallbacks/README.md",
+   "recorded_by": "LEXICAL-ROUTES-PREEMPT-TYPED-FALLBACKS"
   }
  ],
  "updated": "2026-10-18 RK-PLUGIN-INTERCEPTOR-CANDIDATES completed the runtime-only source-pinned inventory (14 lists / 14 aliases) and paired registered envelopes. All fresh corpus/system/slice static and runtime verdicts are unchanged; no Pending becomes Safe, and the exact candidate digest plus all three loader pins are in force. The primary baseline at ad526b58 is reused with implementation/input equivalence to base 1543259f0 checked. Actual source revisions 66910c10 / 046accf6 / 34155955 are recorded separately. The full standing/provider gate passed 8,235 root Rust tests, 338 Lean audits, 133 provider Rust tests, 374 script Python tests, 25 provider Python tests and five package verifications; every required final exit is zero. The registered candidate entry narrows to RK-INTERCEPTOR-STATIC-LIST-CLOSURE (797 -> 797); arbitrary stateful callbacks remain outside the neutral review class. Previous checkpoint: 2026-10-17 RK-PLUGIN-LIBRARY-OUTER-ENVELOPE measured paired envelopes on corpus, system and slice with static statuses unchanged; the exact 32 all-loaded corpus custody Unknown rows become Pending, and the existing Fluent Bit Pending row remains Pending. The RK implementation entry is replaced by RK-PLUGIN-INTERCEPTOR-CANDIDATES for rd_list_t members lacking candidate callback contracts: 797 -> 797. Standing and provider gates remain to be recorded on this branch. 2026-09-12 (wave 27 complete: SIX pieces merged one at a time under the failure-gated chain, each under its own green gate. CT23-CREDIT-ERROR-PATH landed EpochCreditRecoveryV1 - the creator's own error edges over a flat epoch's credits, restored + spent = credit componentwise with abandonment and minting both REFUSALS, zero words and zero codes, Q637 deliberately NOT extended because the success exit's bound already covers every error edge, and the T07 seam measured and deliberately not crossed. DOCS-COMPACT-3 honoured the compaction cadence three waves on with 39 standing constraints in and 39 out, zero renumbered and 37 bodies byte-identical, refreshed README.md to the full route surface, corrected one drift (the binary is quirin-audit; qcore-audit is the package and library name), and carried the USER-DIRECTED examples style pass - 'pipe the flow, parenthesize the assembly' - five files respelled one commit each with byte identity MEASURED, nine examined and skipped with reasons, and the rule's one open case left for the user as EXAMPLES-STYLE-SLICE-FANOUT rather than repaired against the brief's direction. AGGREGATES-V1 is the wave's LANGUAGE HEAD: source.record.v1 on source.buffer.v1, zero reserved words because the obvious spelling `record` was REJECTED ON EVIDENCE (an archived one-line probe pinned to Q000 by two frozen reports, constraint 21), zero codes because Q051/Q052/Q053's conditions widened under the ice box, no line of name resolution changed, scalar-fields-only DECIDED BY MEASUREMENT against an ownership IR that addresses owners by plain names, and CT09's scenario executed and byte-compared. QUANT-REGION-SOURCE gave the kernel's quantitative region its first source path with the sealed pack as a LINEAR capability consumed exactly once, the region ERASING to byte-identical C, and the RegionOp::QuantOpen operation VARIANT measured unreachable-by-design rather than repaired; CT21 and CT22's archived reasons retire, with CT22 keeping a narrower scenario gap for a lane to publish in its own record. CT07-SLICE-PERMISSIONS lent a RANGE and corrected the recorded blocker: the footprint fraction STD-BUFFER-SLICE named is about the WRITE half, so a read lend needed no ownership-IR change, disjointness is DECIDED by max low < min high and proved to be the set-theoretic question itself, overlapping BORROWS are deliberately admitted and argued, and exactly one pre-card refusal moves code (Q078 -> Q077) - measured and pinned. THE WAVE RAN ONE ARBITER: GATEWAY-C-LOCATION presents the original pre-preprocessing file:line on 54,371 diagnostic rows with the L-numbers kept INTERNAL by the user's ruling, under a checked line pairing where no #line can forge a file spelling; its re-pin is PRESENTATION-ONLY and measured to be, the BEFORE run reproducing the preceding baseline byte for byte and the AFTER run moving no verdict, no leaf and no count - 185 units 2/42/137/4, 4,834 functions 150/84/4,600, leak 266, unknown_alias 4,344, unsupported 49,773 - so the corpus baseline moves to docs/reports/gateway-c-location/artifacts/ with every preceding archive frozen and constraint 7 gaining no sixth move. CT coverage is UNCHANGED at 36/50 mapped: the wave mapped nothing and edited no manifest row, and the CT08/CT09/CT21/CT22/CT23 readiness it produced is capability rather than conformance. Standing constraint 15h is AMENDED on the slice card's own proposal, and three new rules land in merge order - 15j, 15k, 15l - beside 12a for the arbiter's anti-forgery rule. Nothing is promoted; full language conformance stays false.)"

@@ -96,6 +96,7 @@ fn assert_safe_on(source: &str, variables: &[&str]) {
         AnalysisStatus::Safe,
         "{source}\n{outcome:?}"
     );
+    assert!(outcome.descriptions.is_empty(), "{source}\n{outcome:?}");
     let mut named = outcome
         .premises
         .iter()
@@ -164,23 +165,23 @@ fn every_other_obligation_is_decided_as_before() {
     let outcome =
         run("int subject(void) { struct S *p = q_alloc(); int v = p->a; q_free(p); return v; }");
     assert!(outcome.premises.is_empty(), "{outcome:?}");
-    // A store through the alias keeps W42's refusal of a store base that is
-    // not one live identity (a non-null target-free base refuses too).
-    let outcome =
-        run("int subject(struct S *a) { struct S *n = &a->next[a->a]; n->a = 1; return 0; }");
-    assert_ne!(outcome.status, AnalysisStatus::Safe, "{outcome:?}");
-    assert!(outcome.premises.is_empty(), "{outcome:?}");
-    assert_eq!(
-        outcome.descriptions,
-        vec!["UnknownAlias { variable: \"n\" }".to_owned()],
-        "{outcome:?}"
+    // Deliberate pin update, LEXICAL-ROUTES-PREEMPT-TYPED-FALLBACKS:
+    // W42's original store still refuses its unsettled base. An independent
+    // scalar-only Clang plan now discharges the access under the named null
+    // premise; the pointer itself stays nullable and custody positions below
+    // still refuse it. Syntax admission alone would not justify this result.
+    assert_safe_on(
+        "int subject(struct S *a) { struct S *n = &a->next[a->a]; n->a = 1; return 0; }",
+        &["n"],
     );
-    // A bound chain root needs rule 11d's per-path premise as a non-null one
-    // would: the base's premise is listed, the chain still refuses.
-    let outcome = run(
+    // Deliberate pin update for the same card's W44 chain alternative:
+    // Clang independently establishes this unique, non-address-taken root's
+    // bound-untracked eligibility, and every per-hop obligation discharges.
+    // The root remains nullable under the same explicitly named premise.
+    assert_safe_on(
         "int subject(struct S *a) { struct S *n = &a->next[a->a]; int v = n->a + n->next->a; return v; }",
+        &["n"],
     );
-    assert_ne!(outcome.status, AnalysisStatus::Safe, "{outcome:?}");
     // The alias stays possibly null for custody: releasing it discharges
     // nothing and is refused as before.
     let outcome = run("void subject(struct S *a) { struct S *n = &a->next[1]; q_free(n); }");

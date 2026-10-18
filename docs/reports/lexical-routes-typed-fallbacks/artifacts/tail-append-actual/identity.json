@@ -1,0 +1,24 @@
+{
+  "exit": 0,
+  "command": "QCORE_CLANG=/usr/lib/llvm-21/bin/clang QCORE_CROSS_UNIT_LINK_MAP=/tmp/qcore-lexical-typed-precedence/docs/reports/w48-bottom-up-batch2/link-map.corpus.json QCORE_PROBE_PREPROCESSED=/tmp/qcore-lexical-typed-precedence/private/lexical-typed/tail-append-probe.preprocessed.c target/debug/examples/alias_aggregate_probe /home/cosmo/Documents/GitHub/qcore-c/private/w47-tail/attempt-1/prep/fluent-bit-clang-production/compile_commands.json /home/cosmo/Documents/GitHub/qcore-c/private/w47-tail/attempt-1/prep/fluent-bit-clang-source/plugins/in_tail/tail_file.c flb_tail_file_append",
+  "binary": "/home/cosmo/Documents/GitHub/qcore-c/private/rk-interceptor-candidates-target/debug/examples/alias_aggregate_probe",
+  "binary_sha256": "e8ab11befb848b5c4af2f8206509bace25b95f49516b88ce1804623d6644f767",
+  "binary_build": "Already built by clean gate3 at bd12e15e3, implementation913a72a91; not rebuilt for this probe.",
+  "source": "/home/cosmo/Documents/GitHub/qcore-c/private/w47-tail/attempt-1/prep/fluent-bit-clang-source/plugins/in_tail/tail_file.c",
+  "raw_source_sha256": "fef252bfc26b2167080931f5c15549f8279f096251e5269df00f2c3e1bae4e4d",
+  "source_head": "34155955e4962a56d94eb23c03a002880899a0d1",
+  "compile_database": "/home/cosmo/Documents/GitHub/qcore-c/private/w47-tail/attempt-1/prep/fluent-bit-clang-production/compile_commands.json",
+  "compile_database_sha256": "faf446759b31f892c9ffe03c76719875e9910682515cdd9acc908dc5142f8157",
+  "profile": "contract/profiles/fluent-bit (unchanged base854 original outer envelopes)",
+  "status": "Unknown",
+  "diagnostics": 168,
+  "cfg": {
+    "preprocessed_line": 20871,
+    "node": 94,
+    "instruction": "Call tail_signal_manager(file->config) -> _ reads[\"file->config\"]",
+    "diagnostic": "unresolved resource identity file",
+    "origin": "plugins/in_tail/tail_file.c:1838"
+  },
+  "preceding_refusal": "L20864/n103: flb_hash_table_add outside declared literal-argument premise; remains Unknown.",
+  "meaning": "The generic unsupported indirect-access leaf becomes a conservative actual-read identity refusal at the same occurrence. No call effect, alias obligation or literal-argument premise is waived. This focused probe is attribution evidence, not a separate corpus verdict."
+}

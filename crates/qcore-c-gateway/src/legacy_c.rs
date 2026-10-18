@@ -56,6 +56,9 @@ pub(crate) mod enum_projection;
 #[path = "legacy_dialect_hook.rs"]
 mod dialect_hook;
 
+#[path = "legacy_scalar_precedence.rs"]
+mod scalar_precedence;
+
 pub use declared_abi::{AbiAgreementRow, AbiOutcome, AbiRefusal, declared_abi_census};
 
 #[path = "legacy_declared_modes.rs"]
@@ -626,6 +629,8 @@ pub enum LegacyInstruction {
     /// accepted store and a refusal carrying `UnknownAlias` preserve the
     /// pointer, custody, field-link and scalar-fact maps.
     ScalarMemberStore {
+        /// Independently checked scalar plan, selected only after its flow obligations discharge.
+        typed_alternative: Option<Box<LegacyInstruction>>,
         base: String,
         /// The same C02-P-ALIAS obligation as every other modeled read through
         /// a declared record pointer.
@@ -647,6 +652,8 @@ pub enum LegacyInstruction {
     /// settled states. Bounds are not decided: a subscript's index is read as
     /// a scalar and nothing is claimed about the object's extent.
     IndirectScalarAccess {
+        /// Bounded scalar alternative with exactly this destination and write frame.
+        typed_alternative: Option<Box<LegacyInstruction>>,
         bases: Vec<String>,
         /// The C02-P-ALIAS obligations of the bases read through `->`.
         alias_reads: Vec<AliasPeers>,
@@ -4689,6 +4696,7 @@ impl Parser<'_> {
             chains: plan.chains,
             borrowed_destination: plan.borrowed_destination,
             readback,
+            typed_alternative: None,
         };
         // Card CG11-POINTER-VALUED-STORES (rule 10v).
         Some(match plan.pointer_store {

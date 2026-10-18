@@ -704,6 +704,7 @@ impl Parser<'_> {
         let mut sequence = Vec::new();
         if !bases.is_empty() || !chains.is_empty() {
             sequence.push(LegacyInstruction::IndirectScalarAccess {
+                typed_alternative: None,
                 alias_reads: record_bases
                     .iter()
                     .filter_map(|base| self.read_alias(Some(base)))

@@ -1,0 +1,27 @@
+{
+  "source_head": "9e0258b257a59806d5f62b533c73674dee210bb0",
+  "overall_exit": 1,
+  "rust": {
+    "passed": 8250,
+    "failed": 0,
+    "ignored": 15,
+    "units": 514,
+    "summaries": 527
+  },
+  "lean_audits": 339,
+  "python_tests": 374,
+  "steps": {
+    "00-submodule": 0,
+    "01-tests": 0,
+    "02-fmt": 0,
+    "03-clippy": 101,
+    "04-probe": 0,
+    "05-followup": 0,
+    "06-lean": 0,
+    "07-python": 0,
+    "08-index": 0,
+    "09-clang": 0
+  },
+  "failure": "Clippy101: after replacing the old explicit diagnostic-string assertion, the existing Run.descriptions test-helper field became unread. Fixed by strengthening assert_safe_on to require empty diagnostics, preserving the field and the diagnostic contract. No production source change.",
+  "raw_logs": "private/lexical-typed/gate-standing-final-2"
+}

@@ -1,0 +1,46 @@
+{
+  "source_head": "fba489e49",
+  "root": "private/lexical-typed/gate-standing-final",
+  "overall_exit": 1,
+  "rust": {
+    "passed": 8247,
+    "failed": 2,
+    "ignored": 15,
+    "units": 514,
+    "summaries": 527
+  },
+  "lean_audits": 339,
+  "python_tests": 374,
+  "other_gate_steps": "all exit0",
+  "reason": "Two old pinned tests encode three lexical-only refusals now independently discharged by the bounded scalar alternative. No implementation gate failure is concealed; exact pinned changes are described below.",
+  "pins": [
+    {
+      "test": "event_loop_retention::a_removal_with_no_record_is_the_identity",
+      "case": "disable_then_store",
+      "before": "Unknown from older W42 store",
+      "after": "Safe static custody; removal with no held record remains the identity",
+      "ground": "independent scalar-only typed store through untracked borrowed formal after the neutral removal"
+    },
+    {
+      "test": "null_premise_custody::every_other_obligation_is_decided_as_before",
+      "case": "n->a=1 after n=&a->next[a->a]",
+      "before": "Unknown, no null premise",
+      "after": "Safe custody conditional on named null-deref premise for n",
+      "ground": "independently discharged W42 scalar-store alternative; null safety is separate"
+    },
+    {
+      "test": "null_premise_custody::every_other_obligation_is_decided_as_before",
+      "case": "int v=n->a+n->next->a after interior alias",
+      "before": "Unknown from older W44 chain root eligibility",
+      "after": "Safe custody conditional on named null-deref premise for n",
+      "ground": "independent AST establishes unique non-address-taken root eligibility, every chain hop discharges under bound-untracked premise; this third assertion was hidden by the first panic"
+    }
+  ],
+  "focused_replay": {
+    "command": "cargo test -p qcore-c-gateway --test event_loop_retention --test null_premise_custody --test scalar_precedence",
+    "exit": 0,
+    "passed": 23,
+    "logs": "private/lexical-typed/focused-final/pins2.log"
+  },
+  "new_control": "selected_w42_store_premise_is_rechecked_against_caller_held_context independently obtains expected source context before certificate analysis; removing the selected store null premise from the submitted certificate is rejected."
+}

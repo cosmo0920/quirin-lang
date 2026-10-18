@@ -1,0 +1,874 @@
+[
+  {
+    "key": [
+      "fluent-bit-system",
+      "src/flb_input_chunk.c",
+      "flb_input_chunk_set_limits",
+      0
+    ],
+    "before": "Unknown",
+    "after": "Unknown",
+    "source_occurrences": [
+      {
+        "direction": "removed",
+        "origin": "src/flb_input_chunk.c:3017",
+        "category": "unknown_alias",
+        "description": "unresolved resource identity `in`",
+        "count": 1,
+        "source": "/home/cosmo/Documents/GitHub/qcore-c/private/w45-fb/w46-external-callee-contracts/attempt-1/fluent-bit-clang-source/src/flb_input_chunk.c",
+        "line": "in->mem_chunks_size = total;"
+      },
+      {
+        "direction": "removed",
+        "origin": "src/flb_input_chunk.c:3029",
+        "category": "unknown_alias",
+        "description": "unresolved resource identity `in`",
+        "count": 1,
+        "source": "/home/cosmo/Documents/GitHub/qcore-c/private/w45-fb/w46-external-callee-contracts/attempt-1/fluent-bit-clang-source/src/flb_input_chunk.c",
+        "line": "if (flb_input_chunk_is_mem_overlimit(in) == FLB_FALSE &&"
+      },
+      {
+        "direction": "removed",
+        "origin": "src/flb_input_chunk.c:3033",
+        "category": "unknown_alias",
+        "description": "unresolved resource identity `in`",
+        "count": 1,
+        "source": "/home/cosmo/Documents/GitHub/qcore-c/private/w45-fb/w46-external-callee-contracts/attempt-1/fluent-bit-clang-source/src/flb_input_chunk.c",
+        "line": "in->mem_buf_status = FLB_INPUT_RUNNING;"
+      },
+      {
+        "direction": "removed",
+        "origin": "src/flb_input_chunk.c:3036",
+        "category": "unknown_alias",
+        "description": "unresolved resource identity `in`",
+        "count": 1,
+        "source": "/home/cosmo/Documents/GitHub/qcore-c/private/w45-fb/w46-external-callee-contracts/attempt-1/fluent-bit-clang-source/src/flb_input_chunk.c",
+        "line": "if (flb_input_chunk_is_storage_overlimit(in) == FLB_FALSE &&"
+      },
+      {
+        "direction": "removed",
+        "origin": "src/flb_input_chunk.c:3040",
+        "category": "unknown_alias",
+        "description": "unresolved resource identity `in`",
+        "count": 1,
+        "source": "/home/cosmo/Documents/GitHub/qcore-c/private/w45-fb/w46-external-callee-contracts/attempt-1/fluent-bit-clang-source/src/flb_input_chunk.c",
+        "line": "in->storage_buf_status = FLB_INPUT_RUNNING;"
+      }
+    ]
+  },
+  {
+    "key": [
+      "fluent-bit-system",
+      "src/flb_input_chunk.c",
+      "flb_input_chunk_set_up_down",
+      0
+    ],
+    "before": "Unknown",
+    "after": "Safe",
+    "source_occurrences": [
+      {
+        "direction": "removed",
+        "origin": "src/flb_input_chunk.c:3151",
+        "category": "unknown_alias",
+        "description": "unresolved resource identity `in`",
+        "count": 1,
+        "source": "/home/cosmo/Documents/GitHub/qcore-c/private/w45-fb/w46-external-callee-contracts/attempt-1/fluent-bit-clang-source/src/flb_input_chunk.c",
+        "line": "in->mem_chunks_size = total;"
+      },
+      {
+        "direction": "removed",
+        "origin": "src/flb_input_chunk.c:3159",
+        "category": "unknown_alias",
+        "description": "unresolved resource identity `in`",
+        "count": 1,
+        "source": "/home/cosmo/Documents/GitHub/qcore-c/private/w45-fb/w46-external-callee-contracts/attempt-1/fluent-bit-clang-source/src/flb_input_chunk.c",
+        "line": "in->mem_chunks_size = total;"
+      }
+    ]
+  },
+  {
+    "key": [
+      "fluent-bit-system",
+      "src/flb_input_chunk.c",
+      "flb_input_chunk_set_limits",
+      1
+    ],
+    "before": "Unknown",
+    "after": "Unknown",
+    "source_occurrences": [
+      {
+        "direction": "removed",
+        "origin": "src/flb_input_chunk.c:3017",
+        "category": "unknown_alias",
+        "description": "unresolved resource identity `in`",
+        "count": 1,
+        "source": "/home/cosmo/Documents/GitHub/qcore-c/private/w45-fb/w46-external-callee-contracts/attempt-1/fluent-bit-clang-source/src/flb_input_chunk.c",
+        "line": "in->mem_chunks_size = total;"
+      },
+      {
+        "direction": "removed",
+        "origin": "src/flb_input_chunk.c:3029",
+        "category": "unknown_alias",
+        "description": "unresolved resource identity `in`",
+        "count": 1,
+        "source": "/home/cosmo/Documents/GitHub/qcore-c/private/w45-fb/w46-external-callee-contracts/attempt-1/fluent-bit-clang-source/src/flb_input_chunk.c",
+        "line": "if (flb_input_chunk_is_mem_overlimit(in) == FLB_FALSE &&"
+      },
+      {
+        "direction": "removed",
+        "origin": "src/flb_input_chunk.c:3033",
+        "category": "unknown_alias",
+        "description": "unresolved resource identity `in`",
+        "count": 1,
+        "source": "/home/cosmo/Documents/GitHub/qcore-c/private/w45-fb/w46-external-callee-contracts/attempt-1/fluent-bit-clang-source/src/flb_input_chunk.c",
+        "line": "in->mem_buf_status = FLB_INPUT_RUNNING;"
+      },
+      {
+        "direction": "removed",
+        "origin": "src/flb_input_chunk.c:3036",
+        "category": "unknown_alias",
+        "description": "unresolved resource identity `in`",
+        "count": 1,
+        "source": "/home/cosmo/Documents/GitHub/qcore-c/private/w45-fb/w46-external-callee-contracts/attempt-1/fluent-bit-clang-source/src/flb_input_chunk.c",
+        "line": "if (flb_input_chunk_is_storage_overlimit(in) == FLB_FALSE &&"
+      },
+      {
+        "direction": "removed",
+        "origin": "src/flb_input_chunk.c:3040",
+        "category": "unknown_alias",
+        "description": "unresolved resource identity `in`",
+        "count": 1,
+        "source": "/home/cosmo/Documents/GitHub/qcore-c/private/w45-fb/w46-external-callee-contracts/attempt-1/fluent-bit-clang-source/src/flb_input_chunk.c",
+        "line": "in->storage_buf_status = FLB_INPUT_RUNNING;"
+      }
+    ]
+  },
+  {
+    "key": [
+      "fluent-bit-system",
+      "src/flb_input_chunk.c",
+      "flb_input_chunk_set_up_down",
+      1
+    ],
+    "before": "Unknown",
+    "after": "Safe",
+    "source_occurrences": [
+      {
+        "direction": "removed",
+        "origin": "src/flb_input_chunk.c:3151",
+        "category": "unknown_alias",
+        "description": "unresolved resource identity `in`",
+        "count": 1,
+        "source": "/home/cosmo/Documents/GitHub/qcore-c/private/w45-fb/w46-external-callee-contracts/attempt-1/fluent-bit-clang-source/src/flb_input_chunk.c",
+        "line": "in->mem_chunks_size = total;"
+      },
+      {
+        "direction": "removed",
+        "origin": "src/flb_input_chunk.c:3159",
+        "category": "unknown_alias",
+        "description": "unresolved resource identity `in`",
+        "count": 1,
+        "source": "/home/cosmo/Documents/GitHub/qcore-c/private/w45-fb/w46-external-callee-contracts/attempt-1/fluent-bit-clang-source/src/flb_input_chunk.c",
+        "line": "in->mem_chunks_size = total;"
+      }
+    ]
+  },
+  {
+    "key": [
+      "fluent-bit-system",
+      "src/flb_storage.c",
+      "flb_storage_create",
+      0
+    ],
+    "before": "Unknown",
+    "after": "Unknown",
+    "source_occurrences": []
+  },
+  {
+    "key": [
+      "fluent-bit-system",
+      "src/flb_storage.c",
+      "flb_storage_input_create",
+      0
+    ],
+    "before": "Unknown",
+    "after": "Unknown",
+    "source_occurrences": [
+      {
+        "direction": "removed",
+        "origin": "src/flb_storage.c:537",
+        "category": "unknown_alias",
+        "description": "unresolved resource identity `in`",
+        "count": 1,
+        "source": "/home/cosmo/Documents/GitHub/qcore-c/private/w45-fb/w46-external-callee-contracts/attempt-1/fluent-bit-clang-source/src/flb_storage.c",
+        "line": "if (in->config->storage_inherit == FLB_TRUE && in->config->storage_type != NULL) {"
+      },
+      {
+        "direction": "removed",
+        "origin": "src/flb_storage.c:538",
+        "category": "unknown_alias",
+        "description": "unresolved resource identity `in`",
+        "count": 1,
+        "source": "/home/cosmo/Documents/GitHub/qcore-c/private/w45-fb/w46-external-callee-contracts/attempt-1/fluent-bit-clang-source/src/flb_storage.c",
+        "line": "if (strcasecmp(in->config->storage_type, \"filesystem\") == 0) {"
+      },
+      {
+        "direction": "removed",
+        "origin": "src/flb_storage.c:539",
+        "category": "unknown_alias",
+        "description": "unresolved resource identity `in`",
+        "count": 1,
+        "source": "/home/cosmo/Documents/GitHub/qcore-c/private/w45-fb/w46-external-callee-contracts/attempt-1/fluent-bit-clang-source/src/flb_storage.c",
+        "line": "in->storage_type = FLB_STORAGE_FS;"
+      },
+      {
+        "direction": "removed",
+        "origin": "src/flb_storage.c:541",
+        "category": "unknown_alias",
+        "description": "unresolved resource identity `in`",
+        "count": 1,
+        "source": "/home/cosmo/Documents/GitHub/qcore-c/private/w45-fb/w46-external-callee-contracts/attempt-1/fluent-bit-clang-source/src/flb_storage.c",
+        "line": "else if (strcasecmp(in->config->storage_type, \"memory\") == 0) {"
+      },
+      {
+        "direction": "removed",
+        "origin": "src/flb_storage.c:542",
+        "category": "unknown_alias",
+        "description": "unresolved resource identity `in`",
+        "count": 1,
+        "source": "/home/cosmo/Documents/GitHub/qcore-c/private/w45-fb/w46-external-callee-contracts/attempt-1/fluent-bit-clang-source/src/flb_storage.c",
+        "line": "in->storage_type = FLB_STORAGE_MEM;"
+      },
+      {
+        "direction": "removed",
+        "origin": "src/flb_storage.c:544",
+        "category": "unknown_alias",
+        "description": "unresolved resource identity `in`",
+        "count": 1,
+        "source": "/home/cosmo/Documents/GitHub/qcore-c/private/w45-fb/w46-external-callee-contracts/attempt-1/fluent-bit-clang-source/src/flb_storage.c",
+        "line": "else if (strcasecmp(in->config->storage_type, \"memrb\") == 0) {"
+      },
+      {
+        "direction": "removed",
+        "origin": "src/flb_storage.c:545",
+        "category": "unknown_alias",
+        "description": "unresolved resource identity `in`",
+        "count": 1,
+        "source": "/home/cosmo/Documents/GitHub/qcore-c/private/w45-fb/w46-external-callee-contracts/attempt-1/fluent-bit-clang-source/src/flb_storage.c",
+        "line": "in->storage_type = FLB_STORAGE_MEMRB;"
+      },
+      {
+        "direction": "removed",
+        "origin": "src/flb_storage.c:554",
+        "category": "unknown_alias",
+        "description": "unresolved resource identity `in`",
+        "count": 1,
+        "source": "/home/cosmo/Documents/GitHub/qcore-c/private/w45-fb/w46-external-callee-contracts/attempt-1/fluent-bit-clang-source/src/flb_storage.c",
+        "line": "else if (in->config->storage_inherit == FLB_TRUE && in->config->storage_type == NULL) {"
+      },
+      {
+        "direction": "removed",
+        "origin": "src/flb_storage.c:562",
+        "category": "unknown_alias",
+        "description": "unresolved resource identity `in`",
+        "count": 1,
+        "source": "/home/cosmo/Documents/GitHub/qcore-c/private/w45-fb/w46-external-callee-contracts/attempt-1/fluent-bit-clang-source/src/flb_storage.c",
+        "line": "in->storage_type = FLB_STORAGE_MEM;"
+      }
+    ]
+  },
+  {
+    "key": [
+      "fluent-bit-system",
+      "src/flb_storage.c",
+      "flb_storage_create",
+      1
+    ],
+    "before": "Unknown",
+    "after": "Unknown",
+    "source_occurrences": []
+  },
+  {
+    "key": [
+      "fluent-bit-system",
+      "src/flb_storage.c",
+      "flb_storage_input_create",
+      1
+    ],
+    "before": "Unknown",
+    "after": "Unknown",
+    "source_occurrences": [
+      {
+        "direction": "removed",
+        "origin": "src/flb_storage.c:537",
+        "category": "unknown_alias",
+        "description": "unresolved resource identity `in`",
+        "count": 1,
+        "source": "/home/cosmo/Documents/GitHub/qcore-c/private/w45-fb/w46-external-callee-contracts/attempt-1/fluent-bit-clang-source/src/flb_storage.c",
+        "line": "if (in->config->storage_inherit == FLB_TRUE && in->config->storage_type != NULL) {"
+      },
+      {
+        "direction": "removed",
+        "origin": "src/flb_storage.c:538",
+        "category": "unknown_alias",
+        "description": "unresolved resource identity `in`",
+        "count": 1,
+        "source": "/home/cosmo/Documents/GitHub/qcore-c/private/w45-fb/w46-external-callee-contracts/attempt-1/fluent-bit-clang-source/src/flb_storage.c",
+        "line": "if (strcasecmp(in->config->storage_type, \"filesystem\") == 0) {"
+      },
+      {
+        "direction": "removed",
+        "origin": "src/flb_storage.c:539",
+        "category": "unknown_alias",
+        "description": "unresolved resource identity `in`",
+        "count": 1,
+        "source": "/home/cosmo/Documents/GitHub/qcore-c/private/w45-fb/w46-external-callee-contracts/attempt-1/fluent-bit-clang-source/src/flb_storage.c",
+        "line": "in->storage_type = FLB_STORAGE_FS;"
+      },
+      {
+        "direction": "removed",
+        "origin": "src/flb_storage.c:541",
+        "category": "unknown_alias",
+        "description": "unresolved resource identity `in`",
+        "count": 1,
+        "source": "/home/cosmo/Documents/GitHub/qcore-c/private/w45-fb/w46-external-callee-contracts/attempt-1/fluent-bit-clang-source/src/flb_storage.c",
+        "line": "else if (strcasecmp(in->config->storage_type, \"memory\") == 0) {"
+      },
+      {
+        "direction": "removed",
+        "origin": "src/flb_storage.c:542",
+        "category": "unknown_alias",
+        "description": "unresolved resource identity `in`",
+        "count": 1,
+        "source": "/home/cosmo/Documents/GitHub/qcore-c/private/w45-fb/w46-external-callee-contracts/attempt-1/fluent-bit-clang-source/src/flb_storage.c",
+        "line": "in->storage_type = FLB_STORAGE_MEM;"
+      },
+      {
+        "direction": "removed",
+        "origin": "src/flb_storage.c:544",
+        "category": "unknown_alias",
+        "description": "unresolved resource identity `in`",
+        "count": 1,
+        "source": "/home/cosmo/Documents/GitHub/qcore-c/private/w45-fb/w46-external-callee-contracts/attempt-1/fluent-bit-clang-source/src/flb_storage.c",
+        "line": "else if (strcasecmp(in->config->storage_type, \"memrb\") == 0) {"
+      },
+      {
+        "direction": "removed",
+        "origin": "src/flb_storage.c:545",
+        "category": "unknown_alias",
+        "description": "unresolved resource identity `in`",
+        "count": 1,
+        "source": "/home/cosmo/Documents/GitHub/qcore-c/private/w45-fb/w46-external-callee-contracts/attempt-1/fluent-bit-clang-source/src/flb_storage.c",
+        "line": "in->storage_type = FLB_STORAGE_MEMRB;"
+      },
+      {
+        "direction": "removed",
+        "origin": "src/flb_storage.c:554",
+        "category": "unknown_alias",
+        "description": "unresolved resource identity `in`",
+        "count": 1,
+        "source": "/home/cosmo/Documents/GitHub/qcore-c/private/w45-fb/w46-external-callee-contracts/attempt-1/fluent-bit-clang-source/src/flb_storage.c",
+        "line": "else if (in->config->storage_inherit == FLB_TRUE && in->config->storage_type == NULL) {"
+      },
+      {
+        "direction": "removed",
+        "origin": "src/flb_storage.c:562",
+        "category": "unknown_alias",
+        "description": "unresolved resource identity `in`",
+        "count": 1,
+        "source": "/home/cosmo/Documents/GitHub/qcore-c/private/w45-fb/w46-external-callee-contracts/attempt-1/fluent-bit-clang-source/src/flb_storage.c",
+        "line": "in->storage_type = FLB_STORAGE_MEM;"
+      }
+    ]
+  },
+  {
+    "key": [
+      "fluent-bit-system",
+      "src/flb_engine.c",
+      "flb_engine_adaptive_flush_update",
+      0
+    ],
+    "before": "Unknown",
+    "after": "Unknown",
+    "source_occurrences": [
+      {
+        "direction": "removed",
+        "origin": "src/flb_engine.c:404",
+        "category": "unknown_alias",
+        "description": "unresolved resource identity `config`",
+        "count": 1,
+        "source": "/home/cosmo/Documents/GitHub/qcore-c/private/w45-fb/w46-external-callee-contracts/attempt-1/fluent-bit-clang-source/src/flb_engine.c",
+        "line": "config->flush_adaptive_direction = 1;"
+      },
+      {
+        "direction": "removed",
+        "origin": "src/flb_engine.c:405",
+        "category": "unknown_alias",
+        "description": "unresolved resource identity `config`",
+        "count": 1,
+        "source": "/home/cosmo/Documents/GitHub/qcore-c/private/w45-fb/w46-external-callee-contracts/attempt-1/fluent-bit-clang-source/src/flb_engine.c",
+        "line": "config->flush_adaptive_hits = 0;"
+      },
+      {
+        "direction": "removed",
+        "origin": "src/flb_engine.c:412",
+        "category": "unknown_alias",
+        "description": "unresolved resource identity `config`",
+        "count": 1,
+        "source": "/home/cosmo/Documents/GitHub/qcore-c/private/w45-fb/w46-external-callee-contracts/attempt-1/fluent-bit-clang-source/src/flb_engine.c",
+        "line": "config->flush_adaptive_hits = 0;"
+      },
+      {
+        "direction": "removed",
+        "origin": "src/flb_engine.c:417",
+        "category": "unknown_alias",
+        "description": "unresolved resource identity `config`",
+        "count": 1,
+        "source": "/home/cosmo/Documents/GitHub/qcore-c/private/w45-fb/w46-external-callee-contracts/attempt-1/fluent-bit-clang-source/src/flb_engine.c",
+        "line": "config->flush_adaptive_direction = -1;"
+      },
+      {
+        "direction": "removed",
+        "origin": "src/flb_engine.c:418",
+        "category": "unknown_alias",
+        "description": "unresolved resource identity `config`",
+        "count": 1,
+        "source": "/home/cosmo/Documents/GitHub/qcore-c/private/w45-fb/w46-external-callee-contracts/attempt-1/fluent-bit-clang-source/src/flb_engine.c",
+        "line": "config->flush_adaptive_hits = 0;"
+      },
+      {
+        "direction": "removed",
+        "origin": "src/flb_engine.c:425",
+        "category": "unknown_alias",
+        "description": "unresolved resource identity `config`",
+        "count": 1,
+        "source": "/home/cosmo/Documents/GitHub/qcore-c/private/w45-fb/w46-external-callee-contracts/attempt-1/fluent-bit-clang-source/src/flb_engine.c",
+        "line": "config->flush_adaptive_hits = 0;"
+      },
+      {
+        "direction": "removed",
+        "origin": "src/flb_engine.c:429",
+        "category": "unknown_alias",
+        "description": "unresolved resource identity `config`",
+        "count": 1,
+        "source": "/home/cosmo/Documents/GitHub/qcore-c/private/w45-fb/w46-external-callee-contracts/attempt-1/fluent-bit-clang-source/src/flb_engine.c",
+        "line": "config->flush_adaptive_direction = 0;"
+      },
+      {
+        "direction": "removed",
+        "origin": "src/flb_engine.c:430",
+        "category": "unknown_alias",
+        "description": "unresolved resource identity `config`",
+        "count": 1,
+        "source": "/home/cosmo/Documents/GitHub/qcore-c/private/w45-fb/w46-external-callee-contracts/attempt-1/fluent-bit-clang-source/src/flb_engine.c",
+        "line": "config->flush_adaptive_hits = 0;"
+      },
+      {
+        "direction": "removed",
+        "origin": "src/flb_engine.c:434",
+        "category": "unknown_alias",
+        "description": "unresolved resource identity `config`",
+        "count": 1,
+        "source": "/home/cosmo/Documents/GitHub/qcore-c/private/w45-fb/w46-external-callee-contracts/attempt-1/fluent-bit-clang-source/src/flb_engine.c",
+        "line": "config->flush_adaptive_level = 0;"
+      },
+      {
+        "direction": "removed",
+        "origin": "src/flb_engine.c:437",
+        "category": "unknown_alias",
+        "description": "unresolved resource identity `config`",
+        "count": 1,
+        "source": "/home/cosmo/Documents/GitHub/qcore-c/private/w45-fb/w46-external-callee-contracts/attempt-1/fluent-bit-clang-source/src/flb_engine.c",
+        "line": "config->flush_adaptive_level = 3;"
+      }
+    ]
+  },
+  {
+    "key": [
+      "fluent-bit-system",
+      "src/flb_engine.c",
+      "flb_engine_shutdown",
+      0
+    ],
+    "before": "Unknown",
+    "after": "Unknown",
+    "source_occurrences": [
+      {
+        "direction": "removed",
+        "origin": "src/flb_engine.c:1669",
+        "category": "unknown_alias",
+        "description": "unresolved resource identity `config`",
+        "count": 1,
+        "source": "/home/cosmo/Documents/GitHub/qcore-c/private/w45-fb/w46-external-callee-contracts/attempt-1/fluent-bit-clang-source/src/flb_engine.c",
+        "line": "config->is_running = FLB_FALSE;"
+      },
+      {
+        "direction": "removed",
+        "origin": "src/flb_engine.c:1670",
+        "category": "unknown_alias",
+        "description": "unresolved resource identity `config`",
+        "count": 1,
+        "source": "/home/cosmo/Documents/GitHub/qcore-c/private/w45-fb/w46-external-callee-contracts/attempt-1/fluent-bit-clang-source/src/flb_engine.c",
+        "line": "config->is_ingestion_active = FLB_FALSE;"
+      }
+    ]
+  },
+  {
+    "key": [
+      "fluent-bit-system",
+      "src/flb_engine.c",
+      "flb_engine_start",
+      0
+    ],
+    "before": "Unknown",
+    "after": "Unknown",
+    "source_occurrences": [
+      {
+        "direction": "removed",
+        "origin": "src/flb_engine.c:1331",
+        "category": "unknown_alias",
+        "description": "unresolved resource identity `config`",
+        "count": 1,
+        "source": "/home/cosmo/Documents/GitHub/qcore-c/private/w45-fb/w46-external-callee-contracts/attempt-1/fluent-bit-clang-source/src/flb_engine.c",
+        "line": "flb_engine_adaptive_flush_init(config);"
+      },
+      {
+        "direction": "removed",
+        "origin": "src/flb_engine.c:1512",
+        "category": "unknown_alias",
+        "description": "unresolved resource identity `config`",
+        "count": 1,
+        "source": "/home/cosmo/Documents/GitHub/qcore-c/private/w45-fb/w46-external-callee-contracts/attempt-1/fluent-bit-clang-source/src/flb_engine.c",
+        "line": "config->grace_count++;"
+      }
+    ]
+  },
+  {
+    "key": [
+      "fluent-bit-system",
+      "src/flb_engine.c",
+      "flb_engine_stop_ingestion",
+      0
+    ],
+    "before": "Unknown",
+    "after": "Unknown",
+    "source_occurrences": [
+      {
+        "direction": "removed",
+        "origin": "src/flb_engine.c:1742",
+        "category": "unknown_alias",
+        "description": "unresolved resource identity `config`",
+        "count": 1,
+        "source": "/home/cosmo/Documents/GitHub/qcore-c/private/w45-fb/w46-external-callee-contracts/attempt-1/fluent-bit-clang-source/src/flb_engine.c",
+        "line": "config->is_ingestion_active = FLB_FALSE;"
+      },
+      {
+        "direction": "removed",
+        "origin": "src/flb_engine.c:1743",
+        "category": "unknown_alias",
+        "description": "unresolved resource identity `config`",
+        "count": 1,
+        "source": "/home/cosmo/Documents/GitHub/qcore-c/private/w45-fb/w46-external-callee-contracts/attempt-1/fluent-bit-clang-source/src/flb_engine.c",
+        "line": "config->is_shutting_down = FLB_TRUE;"
+      }
+    ]
+  },
+  {
+    "key": [
+      "fluent-bit-system",
+      "src/flb_engine.c",
+      "flb_engine_adaptive_flush_update",
+      1
+    ],
+    "before": "Unknown",
+    "after": "Unknown",
+    "source_occurrences": [
+      {
+        "direction": "removed",
+        "origin": "src/flb_engine.c:404",
+        "category": "unknown_alias",
+        "description": "unresolved resource identity `config`",
+        "count": 1,
+        "source": "/home/cosmo/Documents/GitHub/qcore-c/private/w45-fb/w46-external-callee-contracts/attempt-1/fluent-bit-clang-source/src/flb_engine.c",
+        "line": "config->flush_adaptive_direction = 1;"
+      },
+      {
+        "direction": "removed",
+        "origin": "src/flb_engine.c:405",
+        "category": "unknown_alias",
+        "description": "unresolved resource identity `config`",
+        "count": 1,
+        "source": "/home/cosmo/Documents/GitHub/qcore-c/private/w45-fb/w46-external-callee-contracts/attempt-1/fluent-bit-clang-source/src/flb_engine.c",
+        "line": "config->flush_adaptive_hits = 0;"
+      },
+      {
+        "direction": "removed",
+        "origin": "src/flb_engine.c:412",
+        "category": "unknown_alias",
+        "description": "unresolved resource identity `config`",
+        "count": 1,
+        "source": "/home/cosmo/Documents/GitHub/qcore-c/private/w45-fb/w46-external-callee-contracts/attempt-1/fluent-bit-clang-source/src/flb_engine.c",
+        "line": "config->flush_adaptive_hits = 0;"
+      },
+      {
+        "direction": "removed",
+        "origin": "src/flb_engine.c:417",
+        "category": "unknown_alias",
+        "description": "unresolved resource identity `config`",
+        "count": 1,
+        "source": "/home/cosmo/Documents/GitHub/qcore-c/private/w45-fb/w46-external-callee-contracts/attempt-1/fluent-bit-clang-source/src/flb_engine.c",
+        "line": "config->flush_adaptive_direction = -1;"
+      },
+      {
+        "direction": "removed",
+        "origin": "src/flb_engine.c:418",
+        "category": "unknown_alias",
+        "description": "unresolved resource identity `config`",
+        "count": 1,
+        "source": "/home/cosmo/Documents/GitHub/qcore-c/private/w45-fb/w46-external-callee-contracts/attempt-1/fluent-bit-clang-source/src/flb_engine.c",
+        "line": "config->flush_adaptive_hits = 0;"
+      },
+      {
+        "direction": "removed",
+        "origin": "src/flb_engine.c:425",
+        "category": "unknown_alias",
+        "description": "unresolved resource identity `config`",
+        "count": 1,
+        "source": "/home/cosmo/Documents/GitHub/qcore-c/private/w45-fb/w46-external-callee-contracts/attempt-1/fluent-bit-clang-source/src/flb_engine.c",
+        "line": "config->flush_adaptive_hits = 0;"
+      },
+      {
+        "direction": "removed",
+        "origin": "src/flb_engine.c:429",
+        "category": "unknown_alias",
+        "description": "unresolved resource identity `config`",
+        "count": 1,
+        "source": "/home/cosmo/Documents/GitHub/qcore-c/private/w45-fb/w46-external-callee-contracts/attempt-1/fluent-bit-clang-source/src/flb_engine.c",
+        "line": "config->flush_adaptive_direction = 0;"
+      },
+      {
+        "direction": "removed",
+        "origin": "src/flb_engine.c:430",
+        "category": "unknown_alias",
+        "description": "unresolved resource identity `config`",
+        "count": 1,
+        "source": "/home/cosmo/Documents/GitHub/qcore-c/private/w45-fb/w46-external-callee-contracts/attempt-1/fluent-bit-clang-source/src/flb_engine.c",
+        "line": "config->flush_adaptive_hits = 0;"
+      },
+      {
+        "direction": "removed",
+        "origin": "src/flb_engine.c:434",
+        "category": "unknown_alias",
+        "description": "unresolved resource identity `config`",
+        "count": 1,
+        "source": "/home/cosmo/Documents/GitHub/qcore-c/private/w45-fb/w46-external-callee-contracts/attempt-1/fluent-bit-clang-source/src/flb_engine.c",
+        "line": "config->flush_adaptive_level = 0;"
+      },
+      {
+        "direction": "removed",
+        "origin": "src/flb_engine.c:437",
+        "category": "unknown_alias",
+        "description": "unresolved resource identity `config`",
+        "count": 1,
+        "source": "/home/cosmo/Documents/GitHub/qcore-c/private/w45-fb/w46-external-callee-contracts/attempt-1/fluent-bit-clang-source/src/flb_engine.c",
+        "line": "config->flush_adaptive_level = 3;"
+      }
+    ]
+  },
+  {
+    "key": [
+      "fluent-bit-system",
+      "src/flb_engine.c",
+      "flb_engine_shutdown",
+      1
+    ],
+    "before": "Unknown",
+    "after": "Unknown",
+    "source_occurrences": [
+      {
+        "direction": "removed",
+        "origin": "src/flb_engine.c:1669",
+        "category": "unknown_alias",
+        "description": "unresolved resource identity `config`",
+        "count": 1,
+        "source": "/home/cosmo/Documents/GitHub/qcore-c/private/w45-fb/w46-external-callee-contracts/attempt-1/fluent-bit-clang-source/src/flb_engine.c",
+        "line": "config->is_running = FLB_FALSE;"
+      },
+      {
+        "direction": "removed",
+        "origin": "src/flb_engine.c:1670",
+        "category": "unknown_alias",
+        "description": "unresolved resource identity `config`",
+        "count": 1,
+        "source": "/home/cosmo/Documents/GitHub/qcore-c/private/w45-fb/w46-external-callee-contracts/attempt-1/fluent-bit-clang-source/src/flb_engine.c",
+        "line": "config->is_ingestion_active = FLB_FALSE;"
+      }
+    ]
+  },
+  {
+    "key": [
+      "fluent-bit-system",
+      "src/flb_engine.c",
+      "flb_engine_start",
+      1
+    ],
+    "before": "Unknown",
+    "after": "Unknown",
+    "source_occurrences": [
+      {
+        "direction": "removed",
+        "origin": "src/flb_engine.c:1331",
+        "category": "unknown_alias",
+        "description": "unresolved resource identity `config`",
+        "count": 1,
+        "source": "/home/cosmo/Documents/GitHub/qcore-c/private/w45-fb/w46-external-callee-contracts/attempt-1/fluent-bit-clang-source/src/flb_engine.c",
+        "line": "flb_engine_adaptive_flush_init(config);"
+      },
+      {
+        "direction": "removed",
+        "origin": "src/flb_engine.c:1512",
+        "category": "unknown_alias",
+        "description": "unresolved resource identity `config`",
+        "count": 1,
+        "source": "/home/cosmo/Documents/GitHub/qcore-c/private/w45-fb/w46-external-callee-contracts/attempt-1/fluent-bit-clang-source/src/flb_engine.c",
+        "line": "config->grace_count++;"
+      }
+    ]
+  },
+  {
+    "key": [
+      "fluent-bit-system",
+      "src/flb_engine.c",
+      "flb_engine_stop_ingestion",
+      1
+    ],
+    "before": "Unknown",
+    "after": "Unknown",
+    "source_occurrences": [
+      {
+        "direction": "removed",
+        "origin": "src/flb_engine.c:1742",
+        "category": "unknown_alias",
+        "description": "unresolved resource identity `config`",
+        "count": 1,
+        "source": "/home/cosmo/Documents/GitHub/qcore-c/private/w45-fb/w46-external-callee-contracts/attempt-1/fluent-bit-clang-source/src/flb_engine.c",
+        "line": "config->is_ingestion_active = FLB_FALSE;"
+      },
+      {
+        "direction": "removed",
+        "origin": "src/flb_engine.c:1743",
+        "category": "unknown_alias",
+        "description": "unresolved resource identity `config`",
+        "count": 1,
+        "source": "/home/cosmo/Documents/GitHub/qcore-c/private/w45-fb/w46-external-callee-contracts/attempt-1/fluent-bit-clang-source/src/flb_engine.c",
+        "line": "config->is_shutting_down = FLB_TRUE;"
+      }
+    ]
+  },
+  {
+    "key": [
+      "fluent-bit-system",
+      "src/flb_scheduler.c",
+      "schedule_request_now",
+      0
+    ],
+    "before": "Unknown",
+    "after": "Unknown",
+    "source_occurrences": [
+      {
+        "direction": "removed",
+        "origin": "src/flb_scheduler.c:138",
+        "category": "unknown_alias",
+        "description": "unresolved resource identity `request`",
+        "count": 1,
+        "source": "/home/cosmo/Documents/GitHub/qcore-c/private/w45-fb/w46-external-callee-contracts/attempt-1/fluent-bit-clang-source/src/flb_scheduler.c",
+        "line": "request->fd = fd;"
+      }
+    ]
+  },
+  {
+    "key": [
+      "fluent-bit-system",
+      "src/flb_scheduler.c",
+      "schedule_request_now",
+      1
+    ],
+    "before": "Unknown",
+    "after": "Unknown",
+    "source_occurrences": [
+      {
+        "direction": "removed",
+        "origin": "src/flb_scheduler.c:138",
+        "category": "unknown_alias",
+        "description": "unresolved resource identity `request`",
+        "count": 1,
+        "source": "/home/cosmo/Documents/GitHub/qcore-c/private/w45-fb/w46-external-callee-contracts/attempt-1/fluent-bit-clang-source/src/flb_scheduler.c",
+        "line": "request->fd = fd;"
+      }
+    ]
+  },
+  {
+    "key": [
+      "fluent-bit-system",
+      "src/flb_output.c",
+      "flb_output_exit",
+      0
+    ],
+    "before": "Unknown",
+    "after": "Unknown",
+    "source_occurrences": []
+  },
+  {
+    "key": [
+      "fluent-bit-system",
+      "src/flb_output.c",
+      "flb_output_flush_id_get",
+      0
+    ],
+    "before": "Unknown",
+    "after": "Unknown",
+    "source_occurrences": [
+      {
+        "direction": "removed",
+        "origin": "src/flb_output.c:264",
+        "category": "unknown_alias",
+        "description": "unresolved resource identity `ins`",
+        "count": 1,
+        "source": "/home/cosmo/Documents/GitHub/qcore-c/private/w45-fb/w46-external-callee-contracts/attempt-1/fluent-bit-clang-source/src/flb_output.c",
+        "line": "ins->flush_id = 0;"
+      }
+    ]
+  },
+  {
+    "key": [
+      "fluent-bit-system",
+      "src/flb_output.c",
+      "flb_output_exit",
+      1
+    ],
+    "before": "Unknown",
+    "after": "Unknown",
+    "source_occurrences": []
+  },
+  {
+    "key": [
+      "fluent-bit-system",
+      "src/flb_output.c",
+      "flb_output_flush_id_get",
+      1
+    ],
+    "before": "Unknown",
+    "after": "Unknown",
+    "source_occurrences": [
+      {
+        "direction": "removed",
+        "origin": "src/flb_output.c:264",
+        "category": "unknown_alias",
+        "description": "unresolved resource identity `ins`",
+        "count": 1,
+        "source": "/home/cosmo/Documents/GitHub/qcore-c/private/w45-fb/w46-external-callee-contracts/attempt-1/fluent-bit-clang-source/src/flb_output.c",
+        "line": "ins->flush_id = 0;"
+      }
+    ]
+  }
+]

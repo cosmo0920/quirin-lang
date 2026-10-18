@@ -178,6 +178,7 @@ impl Parser<'_> {
     /// decided.
     pub(super) fn condition_access(&self, condition: &[Token]) -> Option<Box<LegacyInstruction>> {
         let access = self.condition_access_routes(condition)?;
+        let access = Box::new(self.scalar_condition_alternative(condition, *access));
         // Card W47-ACCESS-PATH-POSITIONS: parity only.
         self.record_typed_position_legacy(condition, "condition", "condition-access", &access);
         Some(access)
@@ -213,6 +214,7 @@ impl Parser<'_> {
                 let base =
                     member_release::member_null_test(&texts, &self.typed_model, &self.typed_types)?;
                 return Some(Box::new(LegacyInstruction::IndirectScalarAccess {
+                    typed_alternative: None,
                     alias_reads: self.read_alias(Some(&base)).into_iter().collect(),
                     bases: vec![base],
                     destination: None,
@@ -225,6 +227,7 @@ impl Parser<'_> {
             return Some(Box::new(self.chain_access_instruction(chained, false)));
         };
         Some(Box::new(LegacyInstruction::IndirectScalarAccess {
+            typed_alternative: None,
             alias_reads: plan
                 .record_bases
                 .iter()

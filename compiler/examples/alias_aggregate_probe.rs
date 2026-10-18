@@ -242,11 +242,14 @@ fn instruction(instruction: &LegacyInstruction) -> String {
             alias_read.is_some()
         ),
         LegacyInstruction::VaArgPointer { destination } => format!("VaArgPointer {destination}"),
-        LegacyInstruction::ScalarMemberStore { base, alias_read } => format!(
+        LegacyInstruction::ScalarMemberStore {
+            base, alias_read, ..
+        } => format!(
             "ScalarMemberStore {base} alias_read={}",
             alias_read.is_some()
         ),
         LegacyInstruction::IndirectScalarAccess {
+            typed_alternative: _,
             bases,
             alias_reads,
             destination,

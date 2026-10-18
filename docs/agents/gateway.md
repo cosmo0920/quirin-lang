@@ -422,6 +422,29 @@ reaches a bound or a branch.
     `tests/function_pointer_declarators.rs` and the reader's unit tests;
     [report](../reports/fb-loop-chain-blockers/README.md).
 
+**Amendment (LEXICAL-ROUTES-PREEMPT-TYPED-FALLBACKS): a flow-refused scalar
+access may use an independently discharged Clang plan.** This narrowly amends
+the older-route precedence of this rule and rule 10k for `ScalarMemberStore`
+and `IndirectScalarAccess` whose destination is scalar, with no borrowed
+pointer destination or readback. The existing route remains stored and is
+selected unchanged whenever all its obligations discharge. Otherwise the same
+exact statement or call-free condition operand may carry a separate Clang
+plan, read under that reader's own declaration, occurrence, closure and
+per-hop premises. A candidate must have exactly the old scalar destination
+and refused-write frame, no pointer store/destination/readback, and every old
+same-type alias read in addition to its own. Syntax admission is not flow
+discharge: only zero diagnostics from the complete typed transfer on the same
+incoming state selects it. If it refuses, the exact old output and diagnostics
+are selected. Probes isolate pointer/custody state, diagnostics, null-premise
+frames and the consultation log; only the chosen outcome and its named premises
+are committed, with one scalar effect and no site allocation or call. All outer
+descriptor, in-place, iteration, formal-mutation, source/ABI and held-contract
+guards remain. No route is deleted; no null question, alias, custody effect or
+unresolved call is declared discharged by precedence. The existing Clang
+extraction and Rust–Lean correspondence premises remain stated rather than
+proved. `QCore.ScalarPrecedence` proves the bounded selection and same-effect
+model; [report](../reports/lexical-routes-typed-fallbacks/README.md).
+
 <a id="constraint-5h"></a>
 
 5h. **A desugared condition applies a call exactly where C evaluates it.**

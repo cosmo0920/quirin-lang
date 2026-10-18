@@ -61,6 +61,7 @@ impl Parser<'_> {
         saved: &probe_state::ParserProbeState,
     ) -> LegacyInstruction {
         let instruction = self.classify_simple_unguarded(tokens);
+        let instruction = self.scalar_statement_alternative(tokens, instruction);
         if self.descriptor_names.is_empty() {
             return instruction;
         }
@@ -279,6 +280,7 @@ impl Parser<'_> {
             );
         }
         LegacyInstruction::IndirectScalarAccess {
+            typed_alternative: None,
             alias_reads: plan
                 .record_bases
                 .iter()
@@ -442,6 +444,7 @@ impl Parser<'_> {
     ) -> LegacyInstruction {
         let plan = chained.plan;
         LegacyInstruction::IndirectScalarAccess {
+            typed_alternative: None,
             alias_reads: plan
                 .record_bases
                 .iter()
@@ -506,6 +509,7 @@ impl Parser<'_> {
             return None;
         }
         let mut sequence = vec![LegacyInstruction::IndirectScalarAccess {
+            typed_alternative: None,
             alias_reads: plan
                 .record_bases
                 .iter()
@@ -934,6 +938,7 @@ impl Parser<'_> {
             )
         {
             let instruction = LegacyInstruction::ScalarMemberStore {
+                typed_alternative: None,
                 base: base.to_owned(),
                 alias_read: self.read_alias(Some(base)),
             };

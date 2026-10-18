@@ -1,0 +1,21 @@
+{
+  "kind": "observed analyzer boundary candidate; not a validated violation or upstream defect",
+  "property": "static legacy-C resource custody",
+  "profile": "synthetic q_base.qv (q_free: released nonnull), empty entry annotation, Clang C11TranslationUnit defaults",
+  "entry": "subject",
+  "record": "struct S { int x; struct S *next; };",
+  "declaration": "void q_free(void *p);",
+  "source": "void subject(struct S *p, struct S *peer) { q_free(peer); p->x = 1; }",
+  "observed_status": "Safe",
+  "store_instruction": "NoOp",
+  "release_alias_read": {
+    "place": "peer",
+    "peers": [
+      "p"
+    ]
+  },
+  "source_state": "dirty worktree after prediction commit 1f9e306a0, first focused run; NoOp route unmodified by this card",
+  "raw_log": "private/lexical-typed/focused/scalar-precedence.log",
+  "raw_log_sha256": "e0db3b2c74699bfe7e742026045f0ea3f32578ed5083f1499b818d2363f1915a",
+  "scope": "This card consults only ScalarMemberStore and IndirectScalarAccess, never NoOp; exact-base reproduction and a separately reviewed alias-preserving route are follow-up work."
+}

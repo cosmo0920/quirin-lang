@@ -939,6 +939,7 @@ pub(super) fn oblige_member_null_tests(cfg: &mut LegacyCfg) {
             cfg,
             id,
             LegacyInstruction::IndirectScalarAccess {
+                typed_alternative: None,
                 bases,
                 alias_reads: Vec::new(),
                 destination: None,

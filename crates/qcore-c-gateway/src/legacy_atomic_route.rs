@@ -223,6 +223,7 @@ impl Parser<'_> {
     /// The typed reader's instruction for the routed access's dereference.
     fn atomic_path_instruction(&self, plan: &StatementPlan, write: bool) -> LegacyInstruction {
         LegacyInstruction::IndirectScalarAccess {
+            typed_alternative: None,
             alias_reads: plan
                 .scalar
                 .record_bases

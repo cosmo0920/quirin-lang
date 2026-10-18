@@ -63,6 +63,7 @@ impl Parser<'_> {
             return LegacyInstruction::NoOp;
         }
         LegacyInstruction::IndirectScalarAccess {
+            typed_alternative: None,
             alias_reads: plan
                 .scalar
                 .record_bases
@@ -217,6 +218,7 @@ impl Parser<'_> {
             }
         } else {
             LegacyInstruction::IndirectScalarAccess {
+                typed_alternative: None,
                 alias_reads: plan
                     .scalar
                     .record_bases

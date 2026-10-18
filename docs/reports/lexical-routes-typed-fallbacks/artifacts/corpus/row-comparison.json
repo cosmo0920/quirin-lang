@@ -1,0 +1,1386 @@
+{
+  "before": "/home/cosmo/Documents/GitHub/qcore-c/private/w48-batch2-rk-integration/measure-combined-1/corpus/resource-diagnostics.json",
+  "after": "/tmp/qcore-lexical-typed-precedence/private/lexical-typed/tip-corpus-1/corpus/resource-diagnostics.json",
+  "functions": 4834,
+  "transitions": [
+    {
+      "before": "Safe",
+      "after": "Safe",
+      "count": 959
+    },
+    {
+      "before": "Unknown",
+      "after": "Safe",
+      "count": 4
+    },
+    {
+      "before": "Unknown",
+      "after": "Unknown",
+      "count": 3862
+    },
+    {
+      "before": "Unsafe",
+      "after": "Unsafe",
+      "count": 9
+    }
+  ],
+  "removed_leaves": [
+    [
+      "unknown_alias",
+      "unresolved resource identity `cctxPtr`",
+      4
+    ],
+    [
+      "unknown_alias",
+      "unresolved resource identity `cf`",
+      16
+    ],
+    [
+      "unknown_alias",
+      "unresolved resource identity `ch`",
+      13
+    ],
+    [
+      "unknown_alias",
+      "unresolved resource identity `counter`",
+      3
+    ],
+    [
+      "unknown_alias",
+      "unresolved resource identity `d`",
+      2
+    ],
+    [
+      "unknown_alias",
+      "unresolved resource identity `dctx`",
+      6
+    ],
+    [
+      "unknown_alias",
+      "unresolved resource identity `decode_context`",
+      6
+    ],
+    [
+      "unknown_alias",
+      "unresolved resource identity `dst`",
+      1
+    ],
+    [
+      "unknown_alias",
+      "unresolved resource identity `exp_data_point`",
+      7
+    ],
+    [
+      "unknown_alias",
+      "unresolved resource identity `exp_histogram`",
+      3
+    ],
+    [
+      "unknown_alias",
+      "unresolved resource identity `fw`",
+      1
+    ],
+    [
+      "unknown_alias",
+      "unresolved resource identity `header`",
+      8
+    ],
+    [
+      "unknown_alias",
+      "unresolved resource identity `histogram_data_point`",
+      7
+    ],
+    [
+      "unknown_alias",
+      "unresolved resource identity `histogram`",
+      3
+    ],
+    [
+      "unknown_alias",
+      "unresolved resource identity `in`",
+      7
+    ],
+    [
+      "unknown_alias",
+      "unresolved resource identity `ip`",
+      1
+    ],
+    [
+      "unknown_alias",
+      "unresolved resource identity `iter`",
+      1
+    ],
+    [
+      "unknown_alias",
+      "unresolved resource identity `map`",
+      2
+    ],
+    [
+      "unknown_alias",
+      "unresolved resource identity `metric`",
+      1
+    ],
+    [
+      "unknown_alias",
+      "unresolved resource identity `mf`",
+      1
+    ],
+    [
+      "unknown_alias",
+      "unresolved resource identity `mk_io`",
+      3
+    ],
+    [
+      "unknown_alias",
+      "unresolved resource identity `mth`",
+      1
+    ],
+    [
+      "unknown_alias",
+      "unresolved resource identity `p`",
+      9
+    ],
+    [
+      "unknown_alias",
+      "unresolved resource identity `perr`",
+      25
+    ],
+    [
+      "unknown_alias",
+      "unresolved resource identity `request`",
+      9
+    ],
+    [
+      "unknown_alias",
+      "unresolved resource identity `rkshare`",
+      2
+    ],
+    [
+      "unknown_alias",
+      "unresolved resource identity `s`",
+      1
+    ],
+    [
+      "unknown_alias",
+      "unresolved resource identity `server`",
+      29
+    ],
+    [
+      "unknown_alias",
+      "unresolved resource identity `span`",
+      1
+    ],
+    [
+      "unknown_alias",
+      "unresolved resource identity `sr`",
+      7
+    ],
+    [
+      "unknown_alias",
+      "unresolved resource identity `state`",
+      10
+    ],
+    [
+      "unknown_alias",
+      "unresolved resource identity `summary_data_point`",
+      1
+    ],
+    [
+      "unknown_alias",
+      "unresolved resource identity `summary`",
+      1
+    ],
+    [
+      "unknown_alias",
+      "unresolved resource identity `time_series`",
+      1
+    ],
+    [
+      "unsupported",
+      "call to uncontracted function `exit_snappy_decompressor`",
+      1
+    ],
+    [
+      "unsupported",
+      "call to uncontracted function `skip`",
+      10
+    ],
+    [
+      "unsupported",
+      "indirect memory access is outside the resource projection",
+      1
+    ],
+    [
+      "unsupported",
+      "unmodeled call, aggregate or indirect access in branch condition",
+      1
+    ]
+  ],
+  "added_leaves": [],
+  "changed": [
+    {
+      "key": [
+        "cmetrics",
+        "cmt_cat.c",
+        "cmt_cat_copy_map",
+        0
+      ],
+      "before": "Unknown",
+      "after": "Unknown",
+      "removed_leaves": [
+        [
+          "unknown_alias",
+          "unresolved resource identity `dst`",
+          1
+        ]
+      ],
+      "added_leaves": []
+    },
+    {
+      "key": [
+        "cmetrics",
+        "cmt_decode_msgpack.c",
+        "unpack_metric",
+        0
+      ],
+      "before": "Unknown",
+      "after": "Unknown",
+      "removed_leaves": [
+        [
+          "unknown_alias",
+          "unresolved resource identity `decode_context`",
+          4
+        ]
+      ],
+      "added_leaves": []
+    },
+    {
+      "key": [
+        "cmetrics",
+        "cmt_decode_msgpack.c",
+        "unpack_metric_value_int64",
+        0
+      ],
+      "before": "Unknown",
+      "after": "Unknown",
+      "removed_leaves": [
+        [
+          "unknown_alias",
+          "unresolved resource identity `decode_context`",
+          1
+        ]
+      ],
+      "added_leaves": []
+    },
+    {
+      "key": [
+        "cmetrics",
+        "cmt_decode_msgpack.c",
+        "unpack_metric_value_uint64",
+        0
+      ],
+      "before": "Unknown",
+      "after": "Unknown",
+      "removed_leaves": [
+        [
+          "unknown_alias",
+          "unresolved resource identity `decode_context`",
+          1
+        ]
+      ],
+      "added_leaves": []
+    },
+    {
+      "key": [
+        "cmetrics",
+        "cmt_decode_opentelemetry.c",
+        "decode_counter_entry",
+        0
+      ],
+      "before": "Unknown",
+      "after": "Unknown",
+      "removed_leaves": [
+        [
+          "unknown_alias",
+          "unresolved resource identity `counter`",
+          3
+        ]
+      ],
+      "added_leaves": []
+    },
+    {
+      "key": [
+        "cmetrics",
+        "cmt_decode_opentelemetry.c",
+        "decode_exponential_histogram_entry",
+        0
+      ],
+      "before": "Unknown",
+      "after": "Unknown",
+      "removed_leaves": [
+        [
+          "unknown_alias",
+          "unresolved resource identity `exp_histogram`",
+          3
+        ]
+      ],
+      "added_leaves": []
+    },
+    {
+      "key": [
+        "cmetrics",
+        "cmt_decode_opentelemetry.c",
+        "decode_histogram_entry",
+        0
+      ],
+      "before": "Unknown",
+      "after": "Unknown",
+      "removed_leaves": [
+        [
+          "unknown_alias",
+          "unresolved resource identity `histogram`",
+          3
+        ]
+      ],
+      "added_leaves": []
+    },
+    {
+      "key": [
+        "cmetrics",
+        "cmt_decode_opentelemetry.c",
+        "decode_summary_entry",
+        0
+      ],
+      "before": "Unknown",
+      "after": "Unknown",
+      "removed_leaves": [
+        [
+          "unknown_alias",
+          "unresolved resource identity `summary`",
+          1
+        ]
+      ],
+      "added_leaves": []
+    },
+    {
+      "key": [
+        "cmetrics",
+        "cmt_encode_opentelemetry.c",
+        "apply_data_point_metadata_from_otlp_context",
+        0
+      ],
+      "before": "Unknown",
+      "after": "Unknown",
+      "removed_leaves": [
+        [
+          "unknown_alias",
+          "unresolved resource identity `exp_data_point`",
+          7
+        ],
+        [
+          "unknown_alias",
+          "unresolved resource identity `histogram_data_point`",
+          7
+        ],
+        [
+          "unknown_alias",
+          "unresolved resource identity `summary_data_point`",
+          1
+        ]
+      ],
+      "added_leaves": []
+    },
+    {
+      "key": [
+        "cmetrics",
+        "cmt_encode_prometheus_remote_write.c",
+        "append_metric_to_timeseries",
+        0
+      ],
+      "before": "Unknown",
+      "after": "Unknown",
+      "removed_leaves": [
+        [
+          "unknown_alias",
+          "unresolved resource identity `time_series`",
+          1
+        ]
+      ],
+      "added_leaves": []
+    },
+    {
+      "key": [
+        "cmetrics",
+        "cmt_map.c",
+        "cmt_map_metrics_expire",
+        0
+      ],
+      "before": "Unknown",
+      "after": "Unknown",
+      "removed_leaves": [
+        [
+          "unknown_alias",
+          "unresolved resource identity `map`",
+          1
+        ]
+      ],
+      "added_leaves": []
+    },
+    {
+      "key": [
+        "cmetrics",
+        "cmt_map.c",
+        "metric_index_add",
+        0
+      ],
+      "before": "Unknown",
+      "after": "Unknown",
+      "removed_leaves": [
+        [
+          "unknown_alias",
+          "unresolved resource identity `metric`",
+          1
+        ]
+      ],
+      "added_leaves": []
+    },
+    {
+      "key": [
+        "cmetrics",
+        "cmt_map.c",
+        "metric_index_resize",
+        0
+      ],
+      "before": "Unknown",
+      "after": "Unknown",
+      "removed_leaves": [
+        [
+          "unknown_alias",
+          "unresolved resource identity `map`",
+          1
+        ]
+      ],
+      "added_leaves": []
+    },
+    {
+      "key": [
+        "ctraces",
+        "ctr_span.c",
+        "ctr_span_create",
+        0
+      ],
+      "before": "Unknown",
+      "after": "Unknown",
+      "removed_leaves": [
+        [
+          "unknown_alias",
+          "unresolved resource identity `span`",
+          1
+        ]
+      ],
+      "added_leaves": []
+    },
+    {
+      "key": [
+        "librdkafka",
+        "lz4frame.c",
+        "LZ4F_compressBegin_usingCDict",
+        0
+      ],
+      "before": "Unknown",
+      "after": "Unknown",
+      "removed_leaves": [
+        [
+          "unknown_alias",
+          "unresolved resource identity `cctxPtr`",
+          4
+        ]
+      ],
+      "added_leaves": []
+    },
+    {
+      "key": [
+        "librdkafka",
+        "lz4frame.c",
+        "LZ4F_decodeHeader",
+        0
+      ],
+      "before": "Unknown",
+      "after": "Unknown",
+      "removed_leaves": [
+        [
+          "unknown_alias",
+          "unresolved resource identity `dctx`",
+          4
+        ]
+      ],
+      "added_leaves": []
+    },
+    {
+      "key": [
+        "librdkafka",
+        "lz4frame.c",
+        "LZ4F_updateDict",
+        0
+      ],
+      "before": "Unknown",
+      "after": "Unknown",
+      "removed_leaves": [
+        [
+          "unknown_alias",
+          "unresolved resource identity `dctx`",
+          2
+        ]
+      ],
+      "added_leaves": []
+    },
+    {
+      "key": [
+        "librdkafka",
+        "nanopb/pb_common.c",
+        "load_descriptor_values",
+        0
+      ],
+      "before": "Unknown",
+      "after": "Unknown",
+      "removed_leaves": [
+        [
+          "unknown_alias",
+          "unresolved resource identity `iter`",
+          1
+        ]
+      ],
+      "added_leaves": []
+    },
+    {
+      "key": [
+        "librdkafka",
+        "rdkafka_request.c",
+        "rd_kafka_handle_idempotent_Produce_error",
+        0
+      ],
+      "before": "Unknown",
+      "after": "Unknown",
+      "removed_leaves": [
+        [
+          "unknown_alias",
+          "unresolved resource identity `perr`",
+          25
+        ]
+      ],
+      "added_leaves": []
+    },
+    {
+      "key": [
+        "librdkafka",
+        "rdkafka_share_acknowledgement.c",
+        "rd_kafka_share_build_ack_details",
+        0
+      ],
+      "before": "Unknown",
+      "after": "Unknown",
+      "removed_leaves": [
+        [
+          "unknown_alias",
+          "unresolved resource identity `rkshare`",
+          1
+        ]
+      ],
+      "added_leaves": []
+    },
+    {
+      "key": [
+        "librdkafka",
+        "rdunittest_acknowledge.c",
+        "ut_ack_clear_inflight_map",
+        0
+      ],
+      "before": "Unknown",
+      "after": "Unknown",
+      "removed_leaves": [
+        [
+          "unknown_alias",
+          "unresolved resource identity `rkshare`",
+          1
+        ]
+      ],
+      "added_leaves": []
+    },
+    {
+      "key": [
+        "librdkafka",
+        "rdxxhash.c",
+        "XXH32_update_endian",
+        0
+      ],
+      "before": "Unknown",
+      "after": "Unknown",
+      "removed_leaves": [
+        [
+          "unknown_alias",
+          "unresolved resource identity `state`",
+          5
+        ]
+      ],
+      "added_leaves": []
+    },
+    {
+      "key": [
+        "librdkafka",
+        "rdxxhash.c",
+        "XXH64_update_endian",
+        0
+      ],
+      "before": "Unknown",
+      "after": "Unknown",
+      "removed_leaves": [
+        [
+          "unknown_alias",
+          "unresolved resource identity `state`",
+          5
+        ]
+      ],
+      "added_leaves": []
+    },
+    {
+      "key": [
+        "librdkafka",
+        "snappy.c",
+        "decompress_all_tags",
+        0
+      ],
+      "before": "Unknown",
+      "after": "Unknown",
+      "removed_leaves": [
+        [
+          "unsupported",
+          "call to uncontracted function `skip`",
+          1
+        ]
+      ],
+      "added_leaves": []
+    },
+    {
+      "key": [
+        "librdkafka",
+        "snappy.c",
+        "exit_snappy_decompressor",
+        0
+      ],
+      "before": "Unknown",
+      "after": "Safe",
+      "removed_leaves": [
+        [
+          "unsupported",
+          "call to uncontracted function `skip`",
+          1
+        ]
+      ],
+      "added_leaves": []
+    },
+    {
+      "key": [
+        "librdkafka",
+        "snappy.c",
+        "internal_uncompress",
+        0
+      ],
+      "before": "Unknown",
+      "after": "Unknown",
+      "removed_leaves": [
+        [
+          "unsupported",
+          "call to uncontracted function `exit_snappy_decompressor`",
+          1
+        ],
+        [
+          "unsupported",
+          "unmodeled call, aggregate or indirect access in branch condition",
+          1
+        ]
+      ],
+      "added_leaves": []
+    },
+    {
+      "key": [
+        "librdkafka",
+        "snappy.c",
+        "read_uncompressed_length",
+        0
+      ],
+      "before": "Unknown",
+      "after": "Safe",
+      "removed_leaves": [
+        [
+          "unknown_alias",
+          "unresolved resource identity `ip`",
+          1
+        ],
+        [
+          "unsupported",
+          "call to uncontracted function `skip`",
+          1
+        ]
+      ],
+      "added_leaves": []
+    },
+    {
+      "key": [
+        "librdkafka",
+        "snappy.c",
+        "refill_tag",
+        0
+      ],
+      "before": "Unknown",
+      "after": "Unknown",
+      "removed_leaves": [
+        [
+          "unknown_alias",
+          "unresolved resource identity `d`",
+          2
+        ],
+        [
+          "unsupported",
+          "call to uncontracted function `skip`",
+          4
+        ]
+      ],
+      "added_leaves": []
+    },
+    {
+      "key": [
+        "librdkafka",
+        "snappy.c",
+        "skip",
+        0
+      ],
+      "before": "Unknown",
+      "after": "Safe",
+      "removed_leaves": [
+        [
+          "unknown_alias",
+          "unresolved resource identity `s`",
+          1
+        ]
+      ],
+      "added_leaves": []
+    },
+    {
+      "key": [
+        "librdkafka",
+        "snappy.c",
+        "sn_compress",
+        0
+      ],
+      "before": "Unknown",
+      "after": "Unknown",
+      "removed_leaves": [
+        [
+          "unsupported",
+          "call to uncontracted function `skip`",
+          3
+        ]
+      ],
+      "added_leaves": []
+    },
+    {
+      "key": [
+        "chunkio",
+        "cio_chunk.c",
+        "cio_chunk_is_up",
+        0
+      ],
+      "before": "Unknown",
+      "after": "Unknown",
+      "removed_leaves": [
+        [
+          "unknown_alias",
+          "unresolved resource identity `ch`",
+          2
+        ]
+      ],
+      "added_leaves": []
+    },
+    {
+      "key": [
+        "chunkio",
+        "cio_file.c",
+        "_cio_file_up",
+        0
+      ],
+      "before": "Unknown",
+      "after": "Unknown",
+      "removed_leaves": [
+        [
+          "unknown_alias",
+          "unresolved resource identity `cf`",
+          1
+        ]
+      ],
+      "added_leaves": []
+    },
+    {
+      "key": [
+        "chunkio",
+        "cio_file.c",
+        "cio_file_calculate_checksum",
+        0
+      ],
+      "before": "Unknown",
+      "after": "Unknown",
+      "removed_leaves": [
+        [
+          "unknown_alias",
+          "unresolved resource identity `cf`",
+          1
+        ],
+        [
+          "unsupported",
+          "indirect memory access is outside the resource projection",
+          1
+        ]
+      ],
+      "added_leaves": []
+    },
+    {
+      "key": [
+        "chunkio",
+        "cio_file.c",
+        "cio_file_down",
+        0
+      ],
+      "before": "Unknown",
+      "after": "Unknown",
+      "removed_leaves": [
+        [
+          "unknown_alias",
+          "unresolved resource identity `cf`",
+          1
+        ]
+      ],
+      "added_leaves": []
+    },
+    {
+      "key": [
+        "chunkio",
+        "cio_file.c",
+        "cio_file_open",
+        0
+      ],
+      "before": "Unknown",
+      "after": "Unknown",
+      "removed_leaves": [
+        [
+          "unknown_alias",
+          "unresolved resource identity `cf`",
+          2
+        ]
+      ],
+      "added_leaves": []
+    },
+    {
+      "key": [
+        "chunkio",
+        "cio_file.c",
+        "cio_file_sync",
+        0
+      ],
+      "before": "Unknown",
+      "after": "Unknown",
+      "removed_leaves": [
+        [
+          "unknown_alias",
+          "unresolved resource identity `cf`",
+          1
+        ]
+      ],
+      "added_leaves": []
+    },
+    {
+      "key": [
+        "chunkio",
+        "cio_file.c",
+        "mmap_file",
+        0
+      ],
+      "before": "Unknown",
+      "after": "Unknown",
+      "removed_leaves": [
+        [
+          "unknown_alias",
+          "unresolved resource identity `cf`",
+          3
+        ]
+      ],
+      "added_leaves": []
+    },
+    {
+      "key": [
+        "chunkio",
+        "cio_file_unix.c",
+        "cio_file_native_close",
+        0
+      ],
+      "before": "Unknown",
+      "after": "Unknown",
+      "removed_leaves": [
+        [
+          "unknown_alias",
+          "unresolved resource identity `cf`",
+          1
+        ]
+      ],
+      "added_leaves": []
+    },
+    {
+      "key": [
+        "chunkio",
+        "cio_file_unix.c",
+        "cio_file_native_map",
+        0
+      ],
+      "before": "Unknown",
+      "after": "Unknown",
+      "removed_leaves": [
+        [
+          "unknown_alias",
+          "unresolved resource identity `cf`",
+          1
+        ]
+      ],
+      "added_leaves": []
+    },
+    {
+      "key": [
+        "chunkio",
+        "cio_file_unix.c",
+        "cio_file_native_remap",
+        0
+      ],
+      "before": "Unknown",
+      "after": "Unknown",
+      "removed_leaves": [
+        [
+          "unknown_alias",
+          "unresolved resource identity `cf`",
+          1
+        ]
+      ],
+      "added_leaves": []
+    },
+    {
+      "key": [
+        "chunkio",
+        "cio_file_unix.c",
+        "cio_file_native_resize",
+        0
+      ],
+      "before": "Unknown",
+      "after": "Unknown",
+      "removed_leaves": [
+        [
+          "unknown_alias",
+          "unresolved resource identity `cf`",
+          2
+        ]
+      ],
+      "added_leaves": []
+    },
+    {
+      "key": [
+        "chunkio",
+        "cio_file_unix.c",
+        "cio_file_native_unmap",
+        0
+      ],
+      "before": "Unknown",
+      "after": "Unknown",
+      "removed_leaves": [
+        [
+          "unknown_alias",
+          "unresolved resource identity `cf`",
+          2
+        ]
+      ],
+      "added_leaves": []
+    },
+    {
+      "key": [
+        "chunkio",
+        "cio_memfs.c",
+        "cio_memfs_write",
+        0
+      ],
+      "before": "Unknown",
+      "after": "Unknown",
+      "removed_leaves": [
+        [
+          "unknown_alias",
+          "unresolved resource identity `mf`",
+          1
+        ]
+      ],
+      "added_leaves": []
+    },
+    {
+      "key": [
+        "chunkio",
+        "cio_meta.c",
+        "cio_meta_cmp",
+        0
+      ],
+      "before": "Unknown",
+      "after": "Unknown",
+      "removed_leaves": [
+        [
+          "unknown_alias",
+          "unresolved resource identity `ch`",
+          2
+        ]
+      ],
+      "added_leaves": []
+    },
+    {
+      "key": [
+        "chunkio",
+        "cio_meta.c",
+        "cio_meta_read",
+        0
+      ],
+      "before": "Unknown",
+      "after": "Unknown",
+      "removed_leaves": [
+        [
+          "unknown_alias",
+          "unresolved resource identity `ch`",
+          3
+        ]
+      ],
+      "added_leaves": []
+    },
+    {
+      "key": [
+        "chunkio",
+        "cio_meta.c",
+        "cio_meta_size",
+        0
+      ],
+      "before": "Unknown",
+      "after": "Unknown",
+      "removed_leaves": [
+        [
+          "unknown_alias",
+          "unresolved resource identity `ch`",
+          3
+        ]
+      ],
+      "added_leaves": []
+    },
+    {
+      "key": [
+        "chunkio",
+        "cio_meta.c",
+        "cio_meta_write",
+        0
+      ],
+      "before": "Unknown",
+      "after": "Unknown",
+      "removed_leaves": [
+        [
+          "unknown_alias",
+          "unresolved resource identity `ch`",
+          3
+        ]
+      ],
+      "added_leaves": []
+    },
+    {
+      "key": [
+        "fluent-bit-chunk",
+        "flb_input_chunk.c",
+        "flb_input_chunk_set_limits",
+        0
+      ],
+      "before": "Unknown",
+      "after": "Unknown",
+      "removed_leaves": [
+        [
+          "unknown_alias",
+          "unresolved resource identity `in`",
+          5
+        ]
+      ],
+      "added_leaves": []
+    },
+    {
+      "key": [
+        "fluent-bit-chunk",
+        "flb_input_chunk.c",
+        "flb_input_chunk_set_up_down",
+        0
+      ],
+      "before": "Unknown",
+      "after": "Safe",
+      "removed_leaves": [
+        [
+          "unknown_alias",
+          "unresolved resource identity `in`",
+          2
+        ]
+      ],
+      "added_leaves": []
+    },
+    {
+      "key": [
+        "monkey-libevent",
+        "mk_core/mk_iov.c",
+        "mk_iov_free_marked",
+        0
+      ],
+      "before": "Unknown",
+      "after": "Unknown",
+      "removed_leaves": [
+        [
+          "unknown_alias",
+          "unresolved resource identity `mk_io`",
+          3
+        ]
+      ],
+      "added_leaves": []
+    },
+    {
+      "key": [
+        "monkey-libevent",
+        "mk_server/mk_config.c",
+        "mk_config_set_init_values",
+        0
+      ],
+      "before": "Unknown",
+      "after": "Unknown",
+      "removed_leaves": [
+        [
+          "unknown_alias",
+          "unresolved resource identity `server`",
+          16
+        ]
+      ],
+      "added_leaves": []
+    },
+    {
+      "key": [
+        "monkey-libevent",
+        "mk_server/mk_config.c",
+        "mk_config_signature",
+        0
+      ],
+      "before": "Unknown",
+      "after": "Unknown",
+      "removed_leaves": [
+        [
+          "unknown_alias",
+          "unresolved resource identity `server`",
+          1
+        ]
+      ],
+      "added_leaves": []
+    },
+    {
+      "key": [
+        "monkey-libevent",
+        "mk_server/mk_fifo.c",
+        "mk_fifo_worker_read",
+        0
+      ],
+      "before": "Unknown",
+      "after": "Unknown",
+      "removed_leaves": [
+        [
+          "unknown_alias",
+          "unresolved resource identity `fw`",
+          1
+        ]
+      ],
+      "added_leaves": []
+    },
+    {
+      "key": [
+        "monkey-libevent",
+        "mk_server/mk_header.c",
+        "mk_header_response_reset",
+        0
+      ],
+      "before": "Unknown",
+      "after": "Unknown",
+      "removed_leaves": [
+        [
+          "unknown_alias",
+          "unresolved resource identity `header`",
+          8
+        ]
+      ],
+      "added_leaves": []
+    },
+    {
+      "key": [
+        "monkey-libevent",
+        "mk_server/mk_http.c",
+        "mk_http_request_init",
+        0
+      ],
+      "before": "Unknown",
+      "after": "Unknown",
+      "removed_leaves": [
+        [
+          "unknown_alias",
+          "unresolved resource identity `request`",
+          9
+        ]
+      ],
+      "added_leaves": []
+    },
+    {
+      "key": [
+        "monkey-libevent",
+        "mk_server/mk_http_parser.c",
+        "header_lookup",
+        0
+      ],
+      "before": "Unknown",
+      "after": "Unknown",
+      "removed_leaves": [
+        [
+          "unknown_alias",
+          "unresolved resource identity `p`",
+          8
+        ]
+      ],
+      "added_leaves": []
+    },
+    {
+      "key": [
+        "monkey-libevent",
+        "mk_server/mk_http_parser.c",
+        "mk_http_parser_ok",
+        0
+      ],
+      "before": "Unknown",
+      "after": "Unknown",
+      "removed_leaves": [
+        [
+          "unknown_alias",
+          "unresolved resource identity `p`",
+          1
+        ]
+      ],
+      "added_leaves": []
+    },
+    {
+      "key": [
+        "monkey-libevent",
+        "mk_server/mk_http_thread.c",
+        "mk_http_thread_purge",
+        0
+      ],
+      "before": "Unknown",
+      "after": "Unknown",
+      "removed_leaves": [
+        [
+          "unknown_alias",
+          "unresolved resource identity `mth`",
+          1
+        ]
+      ],
+      "added_leaves": []
+    },
+    {
+      "key": [
+        "monkey-libevent",
+        "mk_server/mk_lib.c",
+        "mk_config_set_property",
+        0
+      ],
+      "before": "Unknown",
+      "after": "Unknown",
+      "removed_leaves": [
+        [
+          "unknown_alias",
+          "unresolved resource identity `server`",
+          10
+        ]
+      ],
+      "added_leaves": []
+    },
+    {
+      "key": [
+        "monkey-libevent",
+        "mk_server/mk_scheduler.c",
+        "mk_sched_launch_thread",
+        0
+      ],
+      "before": "Unknown",
+      "after": "Unknown",
+      "removed_leaves": [
+        [
+          "unknown_alias",
+          "unresolved resource identity `server`",
+          1
+        ]
+      ],
+      "added_leaves": []
+    },
+    {
+      "key": [
+        "monkey-libevent",
+        "mk_server/mk_user.c",
+        "mk_user_set_uidgid",
+        0
+      ],
+      "before": "Unknown",
+      "after": "Unknown",
+      "removed_leaves": [
+        [
+          "unknown_alias",
+          "unresolved resource identity `server`",
+          1
+        ]
+      ],
+      "added_leaves": []
+    },
+    {
+      "key": [
+        "monkey-libevent",
+        "mk_server/mk_vhost.c",
+        "mk_vhost_fdt_close",
+        0
+      ],
+      "before": "Unknown",
+      "after": "Unknown",
+      "removed_leaves": [
+        [
+          "unknown_alias",
+          "unresolved resource identity `sr`",
+          1
+        ]
+      ],
+      "added_leaves": []
+    },
+    {
+      "key": [
+        "monkey-libevent",
+        "mk_server/mk_vhost.c",
+        "mk_vhost_fdt_open",
+        0
+      ],
+      "before": "Unknown",
+      "after": "Unknown",
+      "removed_leaves": [
+        [
+          "unknown_alias",
+          "unresolved resource identity `sr`",
+          6
+        ]
+      ],
+      "added_leaves": []
+    }
+  ]
+}

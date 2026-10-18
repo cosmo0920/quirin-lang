@@ -617,6 +617,7 @@ impl Parser<'_> {
         let read = scalar_read(texts, &ParserNames { parser: self })?;
         Some((
             LegacyInstruction::IndirectScalarAccess {
+                typed_alternative: None,
                 alias_reads: read
                     .arrow_roots
                     .iter()

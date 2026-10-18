@@ -1,0 +1,36 @@
+{
+  "head": "854920e3e12a86c34231d4b46fa42918e29044ca",
+  "binary": "/home/cosmo/Documents/GitHub/qcore-c/target/release/quirin-audit",
+  "binary_sha256": "daf942d7d29cbf6e8460691b9683b458bae1804d75851ab9089c7d0a39b82727",
+  "command": [
+    "/home/cosmo/Documents/GitHub/qcore-c/target/release/quirin-audit",
+    "current",
+    "--checkout",
+    "/home/cosmo/Documents/GitHub/qcore-c/private/w47-tail/attempt-1/prep/fluent-bit-clang-source",
+    "--profile-directory",
+    "/home/cosmo/Documents/GitHub/qcore-c/contract/profiles/fluent-bit",
+    "--compile-database",
+    "/home/cosmo/Documents/GitHub/qcore-c/private/w47-tail/attempt-1/prep/fluent-bit-clang-production/compile_commands.json",
+    "--selection",
+    "/home/cosmo/Documents/GitHub/qcore-c/contract/profiles/fluent-bit/tail-pause-selection.json",
+    "--jobs",
+    "4",
+    "--report",
+    "/home/cosmo/Documents/GitHub/qcore-c/private/w48-batch2-rk-integration/measure-combined-1/slice/resource-diagnostics.json"
+  ],
+  "jobs": 4,
+  "link_map": "/home/cosmo/Documents/GitHub/qcore-c/docs/reports/w48-bottom-up-batch2/link-map.corpus.json",
+  "link_map_sha256": "3a0424cf3f447211ce8bf78679c396428ffed62ade14a75b99526ac9ddd1156d",
+  "environment": {
+    "QCORE_CROSS_UNIT_LINK_MAP": "/home/cosmo/Documents/GitHub/qcore-c/docs/reports/w48-bottom-up-batch2/link-map.corpus.json",
+    "QCORE_CLANG": "/usr/lib/llvm-21/bin/clang",
+    "QCORE_NULL_PROPERTY": "/home/cosmo/Documents/GitHub/qcore-c/private/w48-batch2-rk-integration/measure-combined-1/slice-null.jsonl",
+    "QCORE_OUTER_PROJECTION": "/home/cosmo/Documents/GitHub/qcore-c/private/w48-batch2-rk-integration/measure-combined-1/slice-outer.json"
+  },
+  "source_revision": "34155955e4962a56d94eb23c03a002880899a0d1",
+  "checkout": "/home/cosmo/Documents/GitHub/qcore-c/private/w47-tail/attempt-1/prep/fluent-bit-clang-source",
+  "compile_database": "/home/cosmo/Documents/GitHub/qcore-c/private/w47-tail/attempt-1/prep/fluent-bit-clang-production/compile_commands.json",
+  "compile_database_sha256": "faf446759b31f892c9ffe03c76719875e9910682515cdd9acc908dc5142f8157",
+  "selection": "/home/cosmo/Documents/GitHub/qcore-c/contract/profiles/fluent-bit/tail-pause-selection.json",
+  "selection_sha256": "11cc7e23b6e3e11a3b1b4443b51f2f4e12920a505e5a636ed586646b21f4d0af"
+}

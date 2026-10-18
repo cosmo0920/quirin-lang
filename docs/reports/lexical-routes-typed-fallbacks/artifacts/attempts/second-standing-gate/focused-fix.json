@@ -1,0 +1,9 @@
+{
+  "test_command": "cargo test -p qcore-c-gateway --test null_premise_custody --test scalar_precedence",
+  "tests_passed": 11,
+  "test_exit": 0,
+  "clippy_command": "cargo clippy --all-targets -- -D warnings",
+  "clippy_exit": 0,
+  "raw_logs": "private/lexical-typed/focused-final/lint-fix-{controls,clippy}.log",
+  "scope": "One added empty-diagnostics assertion in the existing Safe helper; production code unchanged. Clean full standing gate is still due after parent baseline."
+}

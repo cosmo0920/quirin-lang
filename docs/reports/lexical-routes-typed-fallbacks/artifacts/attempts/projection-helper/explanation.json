@@ -1,0 +1,20 @@
+{
+  "scope": "Report-only projection comparison helper; measured audit outputs were not changed.",
+  "attempts": [
+    {
+      "log": "projection-corpus.log.gz",
+      "exit": 1,
+      "cause": "The complete null-property stream includes 87 excluded custody records with null custody, so sorting mixed None/string transitions directly failed."
+    },
+    {
+      "log": "projection-corpus-final.log.gz",
+      "exit": 1,
+      "cause": "The null property dictionary names its result verdict, not status."
+    },
+    {
+      "private_log": "private/lexical-typed/projection-corpus-v3.log",
+      "exit": 0,
+      "correction": "Preserve None transitions as excluded custody records; sort using display keys without changing values, and read the documented verdict field."
+    }
+  ]
+}

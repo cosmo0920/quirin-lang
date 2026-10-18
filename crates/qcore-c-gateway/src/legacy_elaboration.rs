@@ -846,6 +846,7 @@ impl Parser<'_> {
     /// `typed_path_statement` lowers a W46 statement.
     fn path_instruction(&self, plan: &StatementPlan, write: bool) -> LegacyInstruction {
         LegacyInstruction::IndirectScalarAccess {
+            typed_alternative: None,
             alias_reads: plan
                 .scalar
                 .record_bases
