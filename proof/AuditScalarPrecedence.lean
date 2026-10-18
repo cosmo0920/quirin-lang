@@ -1,0 +1,9 @@
+import QCore.ScalarPrecedence
+#print axioms QCore.ScalarPrecedence.no_candidate_keeps_the_old_plan
+#print axioms QCore.ScalarPrecedence.refused_probe_keeps_the_old_plan
+#print axioms QCore.ScalarPrecedence.every_old_admission_stands
+#print axioms QCore.ScalarPrecedence.selection_preserves_the_effect
+#print axioms QCore.ScalarPrecedence.selected_typed_plan_retains_old_aliases
+#print axioms QCore.ScalarPrecedence.a_failed_original_alias_refuses_the_prepared_plan
+#print axioms QCore.ScalarPrecedence.effects_execute_once
+#print axioms QCore.ScalarPrecedence.a_changed_selection_is_fully_discharged

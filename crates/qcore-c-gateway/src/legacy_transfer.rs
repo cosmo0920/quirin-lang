@@ -3144,6 +3144,46 @@ pub(super) fn transfer_base(
     alias: &NodeAliasFacts,
     diagnostics: &mut BTreeSet<LegacyDiagnostic>,
 ) -> AbstractState {
+    // The old route stays authoritative wherever it discharges. Only its
+    // flow refusal consults the independently read scalar plan. Both probes
+    // start from the same state and isolate every observable they can move:
+    // state, diagnostics, null-premise frames and the consultation log. These
+    // scalar instructions allocate no site and invoke no call.
+    if let Some(candidate) = scalar_precedence::alternative(&node.instruction) {
+        let probe = |instruction: LegacyInstruction| {
+            let saved = qcore_schemas::contract_consultation::snapshot();
+            let mut local = BTreeSet::new();
+            let probe_node = LegacyCfgNode {
+                instruction,
+                ..node.clone()
+            };
+            let (output, premises) = crate::null_premise::collecting(|| {
+                transfer_base(
+                    function,
+                    &probe_node,
+                    state.clone(),
+                    acquisition_lines,
+                    context,
+                    alias,
+                    &mut local,
+                )
+            });
+            qcore_schemas::contract_consultation::restore(&saved);
+            (output, local, premises)
+        };
+        let original = probe(scalar_precedence::original(&node.instruction));
+        let (output, local, premises) = if original.1.is_empty() {
+            original
+        } else {
+            let typed = probe(candidate.clone());
+            if typed.1.is_empty() { typed } else { original }
+        };
+        diagnostics.extend(local);
+        for premise in premises {
+            crate::null_premise::note(function, premise.line, &premise.variable);
+        }
+        return output;
+    }
     // A slot name denotes the caller's original pointer only while that
     // formal is unchanged. Tracking its reassignment would need pointer-to-
     // pointer alias analysis; reject it rather than writing a fictitious slot.

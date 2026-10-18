@@ -182,6 +182,7 @@ impl Parser<'_> {
             };
         }
         LegacyInstruction::IndirectScalarAccess {
+            typed_alternative: None,
             alias_reads: plan
                 .scalar
                 .record_bases

@@ -142,6 +142,7 @@ impl Parser<'_> {
         }
         let plan = plan?;
         let read = LegacyInstruction::IndirectScalarAccess {
+            typed_alternative: None,
             alias_reads: plan
                 .record_bases
                 .iter()

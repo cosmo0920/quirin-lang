@@ -1,3 +1,4 @@
+import QCore.ScalarPrecedence
 import QCore.RuntimeImports
 import QCore.ReturnPositionEscape
 import QCore.ReturnExpressionEvaluation
