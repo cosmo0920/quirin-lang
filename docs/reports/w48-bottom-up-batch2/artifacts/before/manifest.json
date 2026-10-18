@@ -1,0 +1,10 @@
+{
+  "source": "/tmp/qcore-w48-bottom-up-batch2/private/w48-bottom-up-batch2/base-corpus/resource-diagnostics.json",
+  "sha256": "43e7a1d9a79bf0396ac8cf6c285663eec645f4836b1f30657f5f8d061423ba58",
+  "counts": {
+    "Unknown": 3870,
+    "Safe": 955,
+    "Unsafe": 9
+  },
+  "contracts_sha256": "208c8065e163ccfbc1f39ba341618a92294e4d429048c05ca14b6327a0faa5cd"
+}

@@ -1,0 +1,13 @@
+{
+ "note": "Final semantic source 78751c611fb4df63d076d03035775f34017389ba; private/w48-bottom-up-batch2/gate-final-v2, all ten steps exit0. Rust 513 units/526 summaries, 8235 passed/0 failed/15 ignored. Final builds disable debug symbols and incremental caching, preserving debug assertions and all test controls. Provider sources are byte-identical to stage2 a0ec4b37a; its 133-test provider measurement is borrowed, not a fresh provider gate. Initial pre-tightening gate, failing AST control and disk-exhausted compilation are retained separately under artifacts/attempts. Clang recorded in this worktree during this gate.",
+ "workspace_tests": 8235,
+ "provider_tests": 133,
+ "python_evidence_validator_tests": 374,
+ "lean_audits": 337,
+ "reevaluation_probe_exit": 0,
+ "reevaluation_followup_exit": 0,
+ "cargo_fmt": "clean",
+ "cargo_clippy": "clean",
+ "standing_gate": "complete",
+ "clang": "present: Ubuntu clang version 21.1.8 (6ubuntu1)"
+}

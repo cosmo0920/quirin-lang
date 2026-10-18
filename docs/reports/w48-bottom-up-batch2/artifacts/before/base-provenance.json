@@ -1,0 +1,27 @@
+{
+  "exact_base": "1543259f0e32c8a003a9062e7de7f59a42dd4519",
+  "launch_head": "0dc191d3f",
+  "launch_head_recording": "retrospective from tool launch transcript; no source changes at build or launch",
+  "code_equivalent_integration_tip": "ad526b5871c8cd05596c63d110932923431915d7",
+  "diff_paths": [
+    "docs/STATUS.md",
+    "docs/reports/INDEX.md",
+    "docs/reports/rk-plugin-library-outer-envelope/integration/clang-version.exit",
+    "docs/reports/rk-plugin-library-outer-envelope/integration/clang-version.txt",
+    "docs/reports/rk-plugin-library-outer-envelope/integration/gate.json",
+    "docs/reports/w44-cross-unit-summary/integration/clang-version.exit",
+    "docs/reports/w44-cross-unit-summary/integration/clang-version.txt",
+    "docs/reports/w44-cross-unit-summary/integration/gate.json",
+    "docs/reports/w48-pointer-return-readonly/integration/clang-version.exit",
+    "docs/reports/w48-pointer-return-readonly/integration/clang-version.txt",
+    "docs/reports/w48-pointer-return-readonly/integration/gate.json",
+    "docs/reports/w48-w44-rk-integration/README.md",
+    "docs/reports/w48-w44-rk-integration/clang-version.exit",
+    "docs/reports/w48-w44-rk-integration/clang-version.txt",
+    "docs/reports/w48-w44-rk-integration/gate.json",
+    "docs/reports/w48-w44-rk-integration/measure_routes.sh",
+    "docs/reports/w48-w44-rk-integration/write_gate.py",
+    "docs/reviews/r0_3/acceptance_matrix.json"
+  ],
+  "base_arbiter_command": "QCORE_CROSS_UNIT_LINK_MAP=$PWD/docs/reports/w44-cross-unit-summary/link-map.corpus.json python3 scripts/run_pinned_audit.py private/w48-bottom-up-batch2/base-corpus 66910c10 --inputs-root /home/cosmo/Documents/GitHub/qcore-c/build/cycle19 --jobs 4"
+}
