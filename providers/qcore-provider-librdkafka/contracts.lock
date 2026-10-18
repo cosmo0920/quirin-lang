@@ -343,6 +343,38 @@
       ]
     },
     {
+      "function": "cJSON_DetachItemViaPointer",
+      "module": "librdkafka/cjson.qv",
+      "contract_sha256": "878f8103527c43da2a5bb91d56ba60cd6b9e221a3dfb41723de90c36a94268ad",
+      "identities": [
+        {
+          "reviewed_at": [
+            {
+              "kind": "git",
+              "revision": "046accf6aded7906f66a1baf0202da349e521736"
+            },
+            {
+              "kind": "git",
+              "revision": "66910c10a4d7eafa810b84229cf2dcf7b0f26f97"
+            }
+          ],
+          "sites": [
+            {
+              "path": "lib/librdkafka-2.15.0/src/cJSON.c",
+              "kind": "definition",
+              "declaration_sha256": "cb628af5052405d572284a378e97683c47802e603c10b857898b3c801148a91f",
+              "body_sha256": "e29fa7de6028b572083e8b526ccda0c7aef8ddb3598ed5058c3e1869f2cdad82"
+            },
+            {
+              "path": "lib/librdkafka-2.15.0/src/cJSON.h",
+              "kind": "declaration",
+              "declaration_sha256": "cb628af5052405d572284a378e97683c47802e603c10b857898b3c801148a91f"
+            }
+          ]
+        }
+      ]
+    },
+    {
       "function": "cJSON_New_Item",
       "module": "librdkafka/cjson.qv",
       "contract_sha256": "9a660d1c34eb20b66ba733701f0384ba17b70265c2bb085c60bd768e651573d5",

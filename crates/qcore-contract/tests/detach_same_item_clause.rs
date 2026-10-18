@@ -54,3 +54,20 @@ fn unpaired_item_bad_owner_and_nullability_mismatch_refuse_the_module() {
         assert!(load(&text).is_err(), "{text}");
     }
 }
+
+#[test]
+fn removed_result_cannot_erase_conditional_or_registered_lifetime_effects() {
+    for text in [
+        CONTRACT.replace(
+            " requires resource_contract_v1;",
+            " requires resource_contract_v1; quant #threaded = (#parent.threaded != 0); quant #threaded in { requires resource_premise(detach_guard, \"The detach guard holds\"); }: [[local]];",
+        ),
+        CONTRACT.replace(
+            " requires resource_contract_v1;",
+            " requires resource_contract_v1; quant registered #entry: detach_node.next |-> detach_node.parent;",
+        ),
+    ] {
+        let error = load(&text).unwrap_err();
+        assert!(error.contains("local-condition-contract"), "{error}\n{text}");
+    }
+}

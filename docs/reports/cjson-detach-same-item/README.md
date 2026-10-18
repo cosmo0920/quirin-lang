@@ -98,3 +98,25 @@ result matches require migration. All active dependency/lock expectations
 move to 19. Provider inventory/pin refresh, the full standing/provider/package
 gates, all three fresh tip measurements and final tracking/increment/matrix
 reconciliation remain pending after rebase onto the integrator's final S3 base.
+
+## Integration addendum
+
+Rebased onto integrator base `94b3267f36a1d4a84c20f75226da836430f627b3`,
+which contains completed S3 and RK outer-scope receipts. The frozen prediction
+above remains the preimplementation record. The C04.18 conflict retains both
+S3's scoped/snapshot rules and this card's representation reader. S3's guarded
+partition, lifetime fields and summary refusal remain intact. A Removed
+result beside conditional or registered-lifetime syntax now rejects before
+it can enter a richer retaining carrier; dedicated negative controls require
+the expected boundary error. The compiler's stale outer-member comment is
+corrected from 12 to 8 without changing the retained count of 81 clauses.
+
+Generated source pins add only `cJSON_DetachItemViaPointer`, with identities
+reviewed at both `66910c10` and `046accf6`. Both strict checks,
+`pin --verify-contracts`, and provider inventory sync/check exit 0. Logs and
+exact commands are under `private/detach-same-item/pins-cumulative-1`.
+Preparation submodules, loader controls and debug audit build exit 0 in
+`prepare-cumulative-1`. The two initial preparation runner setup errors
+(missing plan-writer import, then absent plan) launched no checks and are
+retained in `prepare-setup-failures.json`. Cumulative full gates and
+measurements follow this source checkpoint.
