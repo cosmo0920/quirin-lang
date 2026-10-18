@@ -85,8 +85,8 @@ which is not a second authority.
     Every W4 route infers on a CFG built in the environment of the moment,
     which does not yet hold the candidate, while the reported run builds the
     body with the candidate in force. The body's construction reads the
-    function's own contract in two places: the protected formals (every formal
-    it does not declare `Borrowed`) and the descriptor names. The protected set
+    function's own contract through its non-`Borrowed` formal set (both the
+    protected roots and the immobile formal slots below) and descriptor names. The protected set
     seeds every typed-root premise, which are rule 10o's never-bound closure,
     `may_bind`, the declared locals and rule 10l's AST closure. A copy
     `const T *a = _a;` of a formal the candidate seeds was therefore a
@@ -121,6 +121,27 @@ which is not a second authority.
     the own contract nowhere else (trust boundary 28).
     `QCore.SummaryValidationPremises`;
     [report](../reports/w47-summary-validation-protected-formals/README.md).
+
+    **Amendment (W48-BOTTOM-UP-BATCH2): a scalar-pointer formal's own slot
+    may step only under a checked whole-body read frame.** After the old
+    classifier refuses, a complete typed self-step of one scalar-pointer
+    formal may use `PointerStep` when its own contract grants neither entry
+    custody nor an out slot. In the function's Clang AST every reference to
+    that exact formal declaration must occur in a scalar dereference's
+    lvalue-to-rvalue read or a self-increment/decrement. A pointer actual,
+    copy, address, pointee store, reassignment, shadowed reference or unknown
+    use keeps the refusal. This changes a by-value local parameter slot,
+    never the caller's slot; the existing step transfer preserves site status,
+    field links and containment, derives the new pointer and refuses losing
+    the sole name of a live object. The summary re-check reads the same
+    immobile set from its own candidate; every non-`Borrowed` mode refuses
+    the exception. Other formal-mutation shapes keep their old refusal;
+    this is not a general precedence change. Bounds and pointer arithmetic
+    validity remain outside custody. Faithful AST extraction and Rust–Lean
+    correspondence remain premises (28). `QCore.IndexTraversal`
+    (`a_checked_formal_step_preserves_custody_and_caller_slots`,
+    `a_read_only_unbound_formal_step_is_admitted`, the shared
+    `formalStepVectors`); [report](../reports/w48-bottom-up-batch2/README.md).
 
 <a id="constraint-4c"></a>
 

@@ -3521,6 +3521,8 @@ fn build_function_cfg_unscoped(
 ) -> Result<LegacyCfg, LegacyCError> {
     // Card W47-SUMMARY-VALIDATION-PROTECTED-FORMALS: the contract in force for
     // this function's own body, which its declaration decides when it has one.
+    // Its non-Borrowed modes also fix formal slots against the read-only
+    // formal-step exception (W48 bottom-up batch 2).
     let own_contract = contracts.contract(function).or(own);
     // Card RELATIONAL-REWRITE-LINE-ORDER: parity runs only.
     let census_stage = |stage: &str, before: &[Token], after: Option<&Vec<Token>>| {
@@ -3589,6 +3591,18 @@ fn build_function_cfg_unscoped(
     crate::contract_dependencies::body(function, tokens, body_start);
     let parameters = function_parameters(tokens, function).unwrap_or_default();
     let formal_parameters = parameters.iter().flatten().cloned().collect();
+    // W48 bottom-up batch 2: an entry custody/out-slot identity is immobile.
+    let fixed_formals = own_contract.map_or_else(BTreeSet::new, |contract| {
+        parameters
+            .iter()
+            .zip(&contract.parameters)
+            .filter_map(|(name, mode)| {
+                (!matches!(mode, ResourceParameterMode::Borrowed))
+                    .then(|| name.clone())
+                    .flatten()
+            })
+            .collect()
+    });
     let protected_formals =
         protected_resource_formals_under(tokens, body_start, &parameters, contracts, own_contract);
     let variadic_tails = declared_variadic_tails(contracts);
@@ -3710,6 +3724,7 @@ fn build_function_cfg_unscoped(
         contracts,
         next_site: 0,
         formal_parameters,
+        fixed_formals,
         protected_formals,
         typed_model,
         typed_types,
@@ -4463,6 +4478,7 @@ struct Parser<'a> {
     contracts: &'a ResourceContracts,
     next_site: usize,
     formal_parameters: BTreeSet<String>,
+    fixed_formals: BTreeSet<String>,
     protected_formals: BTreeSet<String>,
     /// Declaration facts of the enclosing translation unit and function, used
     /// only to admit the typed direct scalar-field whitelist of

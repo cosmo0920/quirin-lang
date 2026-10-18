@@ -53,3 +53,8 @@ import QCore.IndexTraversal
 #print axioms QCore.IndexTraversal.an_index_write_outside_the_shape_refuses
 #print axioms QCore.IndexTraversal.the_access_precedes_its_steps
 #print axioms QCore.IndexTraversal.a_full_stepped_candidate_is_admitted
+#print axioms QCore.IndexTraversal.a_fixed_formal_keeps_the_refusal
+#print axioms QCore.IndexTraversal.an_exposed_formal_keeps_the_refusal
+#print axioms QCore.IndexTraversal.a_checked_formal_step_preserves_custody_and_caller_slots
+#print axioms QCore.IndexTraversal.a_read_only_unbound_formal_step_is_admitted
+#print axioms QCore.IndexTraversal.formal_step_vectors_hold

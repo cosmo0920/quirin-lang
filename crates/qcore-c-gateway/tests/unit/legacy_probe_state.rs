@@ -125,6 +125,7 @@ fn bare<'a>(stream: &'a [Token], contracts: &'a ResourceContracts) -> Parser<'a>
         cursor: 0,
         contracts,
         next_site: 3,
+        fixed_formals: Default::default(),
         formal_parameters: BTreeSet::new(),
         protected_formals: BTreeSet::new(),
         typed_model: Default::default(),

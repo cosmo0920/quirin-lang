@@ -137,8 +137,10 @@ impl Parser<'_> {
         // copy (`q = p;` with `p` later released). A step of a local changes
         // no caller slot and no entry identity: the flow rule derives `q` from
         // its own binding and refuses a step that would lose a live object's
-        // only name. The gate keeps every formal parameter and every other
-        // shape; only a recognised pointer step of a non-formal passes it.
+        // only name. W48 bottom-up batch 2 additionally admits a self-step
+        // of a scalar-pointer formal whose AST uses it only in scalar reads
+        // and self-steps, with neither entry custody nor an out-slot contract.
+        // Every other formal and every other shape keeps the gate.
         if let LegacyInstruction::Unknown { description, .. } = &instruction
             && description == FORMAL_MUTATION_REFUSAL
             && !contains_call(tokens)
@@ -150,8 +152,23 @@ impl Parser<'_> {
                 .collect::<Vec<_>>();
             if let Some(step) =
                 crate::index_traversal::pointer_step(&texts, &self.typed_model, &self.typed_types)
-                && !self.formal_parameters.contains(&step.destination)
-                && !self.formal_parameters.contains(&step.source)
+                && ((!self.formal_parameters.contains(&step.destination)
+                    && !self.formal_parameters.contains(&step.source))
+                    || (step.destination == step.source
+                        && self.formal_parameters.contains(&step.source)
+                        && crate::index_traversal::formal_step_eligible(
+                            matches!(
+                                self.typed_types.pointer_kind(&step.source),
+                                Some(crate::typed_field_access::PointerKind::Scalar)
+                            ),
+                            self.fixed_formals.contains(&step.source),
+                            self.typed_positions_index().is_some_and(|index| {
+                                crate::index_traversal::read_only_formal(
+                                    &index.function,
+                                    &step.source,
+                                )
+                            }),
+                        )))
             {
                 let instruction = LegacyInstruction::PointerStep {
                     destination: step.destination,

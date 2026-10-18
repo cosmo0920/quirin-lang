@@ -289,6 +289,76 @@ pub(crate) fn stepped_access(
     Some((plan, effects))
 }
 
+/// W48 bottom-up batch 2: a scalar-pointer formal that the body only reads
+/// through and steps itself. No copy, address, call actual, store or other
+/// binding use is admitted. The caller additionally checks its own contract
+/// has no entry custody/out-slot mode and the declaration is a scalar pointer.
+pub(crate) fn read_only_formal(function: &serde_json::Value, name: &str) -> bool {
+    use crate::typed_c_ast::{children, kind};
+    use serde_json::Value;
+
+    fn peel(mut node: &Value) -> &Value {
+        while matches!(kind(node), "ImplicitCastExpr" | "ParenExpr") && children(node).len() == 1 {
+            node = &children(node)[0];
+        }
+        node
+    }
+    fn reference(node: &Value, id: &str) -> bool {
+        let node = peel(node);
+        kind(node) == "DeclRefExpr" && node["referencedDecl"]["id"].as_str() == Some(id)
+    }
+    fn walk(node: &Value, name: &str, id: &str) -> bool {
+        if kind(node) == "DeclRefExpr" && node["referencedDecl"]["name"].as_str() == Some(name) {
+            return false;
+        }
+        // Clang's lvalue-to-rvalue conversion is the distinction between a
+        // scalar read and a store/address of the dereferenced object.
+        if kind(node) == "ImplicitCastExpr"
+            && node["castKind"].as_str() == Some("LValueToRValue")
+            && children(node).len() == 1
+        {
+            let operand = peel(&children(node)[0]);
+            if kind(operand) == "UnaryOperator"
+                && operand["opcode"].as_str() == Some("*")
+                && children(operand).len() == 1
+                && reference(&children(operand)[0], id)
+            {
+                return true;
+            }
+        }
+        if kind(node) == "UnaryOperator"
+            && matches!(node["opcode"].as_str(), Some("++" | "--"))
+            && children(node).len() == 1
+            && reference(&children(node)[0], id)
+        {
+            return true;
+        }
+        children(node).iter().all(|child| walk(child, name, id))
+    }
+    let formals = children(function)
+        .iter()
+        .filter(|node| kind(node) == "ParmVarDecl" && node["name"].as_str() == Some(name))
+        .collect::<Vec<_>>();
+    let [formal] = formals.as_slice() else {
+        return false;
+    };
+    let Some(id) = formal["id"].as_str() else {
+        return false;
+    };
+    let Some(body) = children(function)
+        .iter()
+        .find(|node| kind(node) == "CompoundStmt")
+    else {
+        return false;
+    };
+    walk(body, name, id)
+}
+
+/// `QCore.IndexTraversal.formalStepEligible`, after exact self-step matching.
+pub(crate) fn formal_step_eligible(scalar_pointer: bool, fixed: bool, read_only: bool) -> bool {
+    scalar_pointer && !fixed && read_only
+}
+
 #[cfg(test)]
 mod tests {
     use super::*;
@@ -467,6 +537,37 @@ mod tests {
             "buf [ i ++ + 1 ] = 0",
         ] {
             assert_eq!(stepped(statement), None, "{statement}");
+        }
+    }
+}
+
+#[cfg(test)]
+mod formal_tests {
+    #[test]
+    fn formal_step_vectors_match_lean_and_cover_every_boolean_input() {
+        let lean = include_str!("../../../proof/QCore/IndexTraversal.lean");
+        let rows = lean
+            .split("def formalStepVectors")
+            .nth(1)
+            .unwrap()
+            .split("theorem formal_step_vectors_hold")
+            .next()
+            .unwrap();
+        let bits = rows
+            .split(|c: char| !c.is_alphabetic())
+            .filter_map(|word| match word {
+                "true" => Some(true),
+                "false" => Some(false),
+                _ => None,
+            })
+            .collect::<Vec<_>>();
+        assert_eq!(bits.len(), 32);
+        for (index, row) in bits.as_chunks::<4>().0.iter().enumerate() {
+            assert_eq!(
+                [row[0], row[1], row[2]],
+                [index & 4 != 0, index & 2 != 0, index & 1 != 0]
+            );
+            assert_eq!(super::formal_step_eligible(row[0], row[1], row[2]), row[3]);
         }
     }
 }

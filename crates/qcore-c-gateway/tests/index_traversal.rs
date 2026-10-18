@@ -362,12 +362,12 @@ fn a_stepped_and_a_declared_derivation_join_to_mixed() {
 // -- Refusals kept ---------------------------------------------------------------
 
 #[test]
-fn stepping_a_protected_formal_keeps_the_gate() {
+fn stepping_a_read_only_scalar_pointer_formal_certifies() {
     expect(
-        "`while (*s) s++;` on a dereferenced formal: W43-INDIRECT-PROTECTED-FORMAL-INCREMENT",
+        "W48 batch 2: a formal's slot is local and scalar reads expose no identity",
         "void w(const char *s) { while (*s) s++; }",
-        "Unknown",
-        &[GATE],
+        "Safe",
+        &[],
     );
 }
 
@@ -425,4 +425,75 @@ fn a_stepped_pointer_is_never_returned_or_published() {
         "Unknown",
         &["unknown_alias:q"],
     );
+}
+
+#[test]
+fn formal_steps_keep_calls_copies_addresses_and_pointee_writes_refused() {
+    for body in [
+        "void w(char *s) { while (*s) { x_note(s); s++; } }",
+        "void w(char *s) { char *q = s; while (*s) s++; x_note(q); }",
+        "void w(char *s) { while (*s) { *s = 0; s++; } }",
+        "void w(char *s) { while (*s) { x_note(&*s); s++; } }",
+        "void w(char *s) { while (*s) { char **q = &s; s++; } }",
+    ] {
+        let (status, diagnostics) = outcome(body);
+        assert_eq!(status, "Unknown", "{body}: {diagnostics:?}");
+        assert!(
+            diagnostics.iter().any(|d| d == GATE),
+            "{body}: {diagnostics:?}"
+        );
+    }
+}
+
+#[test]
+fn a_matrix_reader_body_and_its_caller_validate_bottom_up() {
+    expect(
+        "gf2_matrix_times shape: read scalar values, step the by-value formal",
+        "static unsigned helper(unsigned *mat, unsigned vec) { unsigned sum = 0; \
+         while (vec) { if (vec & 1) sum ^= *mat; vec >>= 1; mat++; } return sum; } \
+         unsigned w(unsigned *mat, unsigned vec) { return helper(mat, vec); }",
+        "Safe",
+        &[],
+    );
+}
+
+#[test]
+fn an_own_custody_or_out_slot_declaration_keeps_the_formal_gate() {
+    for (mode, parameter_type, c_type) in [
+        ("resource_owned(s, nonnull)", "ptr<mut, u8>", "char *"),
+        (
+            "resource_out(s, nonnull)",
+            "ptr<mut, ptr<mut, u8>>",
+            "char **",
+        ),
+    ] {
+        let specification = format!(
+            "{CONTRACTS}\nextern fn w(s: {parameter_type}) -> unit\ncontract {{ \
+            requires resource_contract_v1; ensures normal {mode}; \
+            ensures normal resource_return_none(); }};"
+        );
+        let env = load_resource_contract_sources(&BTreeMap::from([(
+            "formal.qv".to_owned(),
+            specification,
+        )]))
+        .unwrap();
+        let source = format!("void w({c_type}s) {{ while (*s) s++; }}");
+        let result = analyze_unrestricted_c11(
+            &C11TranslationUnit {
+                source: &source,
+                ..Default::default()
+            },
+            "w",
+            &env,
+        )
+        .unwrap();
+        let row = &program(&result).functions["w"];
+        assert_ne!(
+            row.status,
+            qcore_c_gateway::legacy_c::AnalysisStatus::Safe,
+            "{mode}: {row:?}"
+        );
+        assert!(row.diagnostics.iter().any(|diagnostic| matches!(&diagnostic.kind,
+            LegacyDiagnosticKind::Unsupported { description } if description == "unmodeled expression may mutate a formal resource identity")), "{mode}: {row:?}");
+    }
 }
