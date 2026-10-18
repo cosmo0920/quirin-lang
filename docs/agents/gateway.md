@@ -8333,7 +8333,8 @@ own anchor here.
 31. **An outer contract states what code loaded at runtime may do; the
     runtime projection joins each closed-world fact a row rests on with
     `Pending` where an in-force outer contract reaching it covers it and
-    `Unknown` where none does, beside the unchanged static verdicts.** Card
+    `Unknown` where an applicable envelope leaves it uncovered, beside the
+    unchanged static verdicts.** Card
     OUTER-CONTRACT (contract specification C04.20, grammar G05g; USER
     DECISIONS 2026-10-17, D1 "B: loader envelope", D2 "Yes, as proposed",
     D3 "Both from one run", D4 "Later"). The loader is
@@ -8370,7 +8371,11 @@ own anchor here.
     projection (only the dependency field's two member lists are new), and
     the projection is its own document. Fluent Bit (stage 1):
     `flb_external_plugin` on `flb_plugin_load` and `flb_plugin_proxy_create`,
-    envelope the four stable `flb_*_instance.p`; librdkafka's
+    envelope the four stable `flb_*_instance.p`. User direction 2026-10-18
+    removes those four promises from `rk_plugin_library`: reachability does
+    not require adding unrelated conditions, and a different envelope cannot
+    cover a missing promise on its behalf. The [scope correction](../reports/rk-outer-loader-scope/README.md) retains the
+    original checkpoint measurements. Librdkafka's
     `rk_plugin_callback_closure` replaces the retired no-library premise;
     `rk_plugin_library` and the extended `flb_external_plugin` cover it in a
     loaded scenario only where each pinned envelope stands and the named
