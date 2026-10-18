@@ -1,0 +1,586 @@
+{
+  "basis": "854920e3e root integration original envelopes; dependency census only, no recomputed verdict",
+  "routes": {
+    "corpus": {
+      "all": {
+        "rows_with_removed_RK_promise": [
+          {
+            "file": "flb_input_chunk.c",
+            "function": "flb_chunk_route_plugin_matches",
+            "library": "fluent-bit-chunk",
+            "occurrence": 0,
+            "part": "null",
+            "reasons": [
+              "rests on outer contract `flb_external_plugin@545119edfb1834a4b51d5a0003ca18acb648775b28c197b673ef6638662490f9` through stable:flb_output_instance.p (runtime projection, rule 31; outer-contract)",
+              "rests on outer contract `rk_plugin_library@881233254b57b87e68bc40c1b1bd19a5d01660e4d56c7e36a5f623396a734cfe` through stable:flb_output_instance.p (runtime projection, rule 31; outer-contract)"
+            ],
+            "runtime": "Pending",
+            "static": "Safe"
+          }
+        ],
+        "matching_combined_rows": [
+          {
+            "file": "flb_input_chunk.c",
+            "function": "flb_chunk_route_plugin_matches",
+            "library": "fluent-bit-chunk",
+            "occurrence": 0,
+            "part": "combined",
+            "runtime": "Pending",
+            "static": "Safe"
+          }
+        ]
+      },
+      "flb_external_plugin": {
+        "rows_with_removed_RK_promise": [],
+        "matching_combined_rows": []
+      },
+      "rk_plugin_library": {
+        "rows_with_removed_RK_promise": [
+          {
+            "file": "flb_input_chunk.c",
+            "function": "flb_chunk_route_plugin_matches",
+            "library": "fluent-bit-chunk",
+            "occurrence": 0,
+            "part": "null",
+            "reasons": [
+              "rests on outer contract `rk_plugin_library@881233254b57b87e68bc40c1b1bd19a5d01660e4d56c7e36a5f623396a734cfe` through stable:flb_output_instance.p (runtime projection, rule 31; outer-contract)"
+            ],
+            "runtime": "Pending",
+            "static": "Safe"
+          }
+        ],
+        "matching_combined_rows": [
+          {
+            "file": "flb_input_chunk.c",
+            "function": "flb_chunk_route_plugin_matches",
+            "library": "fluent-bit-chunk",
+            "occurrence": 0,
+            "part": "combined",
+            "runtime": "Pending",
+            "static": "Safe"
+          }
+        ]
+      }
+    },
+    "system": {
+      "all": {
+        "rows_with_removed_RK_promise": [
+          {
+            "file": "src/flb_input_chunk.c",
+            "function": "flb_chunk_route_plugin_matches",
+            "library": "fluent-bit-system",
+            "occurrence": 0,
+            "part": "null",
+            "reasons": [
+              "rests on outer contract `flb_external_plugin@545119edfb1834a4b51d5a0003ca18acb648775b28c197b673ef6638662490f9` through stable:flb_output_instance.p (runtime projection, rule 31; outer-contract)",
+              "rests on outer contract `rk_plugin_library@881233254b57b87e68bc40c1b1bd19a5d01660e4d56c7e36a5f623396a734cfe` through stable:flb_output_instance.p (runtime projection, rule 31; outer-contract)"
+            ],
+            "runtime": "Pending",
+            "static": "Safe"
+          },
+          {
+            "file": "src/flb_input_chunk.c",
+            "function": "flb_chunk_route_plugin_matches",
+            "library": "fluent-bit-system",
+            "occurrence": 1,
+            "part": "null",
+            "reasons": [
+              "rests on outer contract `flb_external_plugin@545119edfb1834a4b51d5a0003ca18acb648775b28c197b673ef6638662490f9` through stable:flb_output_instance.p (runtime projection, rule 31; outer-contract)",
+              "rests on outer contract `rk_plugin_library@881233254b57b87e68bc40c1b1bd19a5d01660e4d56c7e36a5f623396a734cfe` through stable:flb_output_instance.p (runtime projection, rule 31; outer-contract)"
+            ],
+            "runtime": "Pending",
+            "static": "Safe"
+          }
+        ],
+        "matching_combined_rows": [
+          {
+            "file": "src/flb_input_chunk.c",
+            "function": "flb_chunk_route_plugin_matches",
+            "library": "fluent-bit-system",
+            "occurrence": 0,
+            "part": "combined",
+            "runtime": "Pending",
+            "static": "Safe"
+          },
+          {
+            "file": "src/flb_input_chunk.c",
+            "function": "flb_chunk_route_plugin_matches",
+            "library": "fluent-bit-system",
+            "occurrence": 1,
+            "part": "combined",
+            "runtime": "Pending",
+            "static": "Safe"
+          }
+        ]
+      },
+      "flb_external_plugin": {
+        "rows_with_removed_RK_promise": [],
+        "matching_combined_rows": []
+      },
+      "rk_plugin_library": {
+        "rows_with_removed_RK_promise": [
+          {
+            "file": "src/flb_input_chunk.c",
+            "function": "flb_chunk_route_plugin_matches",
+            "library": "fluent-bit-system",
+            "occurrence": 0,
+            "part": "null",
+            "reasons": [
+              "rests on outer contract `rk_plugin_library@881233254b57b87e68bc40c1b1bd19a5d01660e4d56c7e36a5f623396a734cfe` through stable:flb_output_instance.p (runtime projection, rule 31; outer-contract)"
+            ],
+            "runtime": "Pending",
+            "static": "Safe"
+          },
+          {
+            "file": "src/flb_input_chunk.c",
+            "function": "flb_chunk_route_plugin_matches",
+            "library": "fluent-bit-system",
+            "occurrence": 1,
+            "part": "null",
+            "reasons": [
+              "rests on outer contract `rk_plugin_library@881233254b57b87e68bc40c1b1bd19a5d01660e4d56c7e36a5f623396a734cfe` through stable:flb_output_instance.p (runtime projection, rule 31; outer-contract)"
+            ],
+            "runtime": "Pending",
+            "static": "Safe"
+          }
+        ],
+        "matching_combined_rows": [
+          {
+            "file": "src/flb_input_chunk.c",
+            "function": "flb_chunk_route_plugin_matches",
+            "library": "fluent-bit-system",
+            "occurrence": 0,
+            "part": "combined",
+            "runtime": "Pending",
+            "static": "Safe"
+          },
+          {
+            "file": "src/flb_input_chunk.c",
+            "function": "flb_chunk_route_plugin_matches",
+            "library": "fluent-bit-system",
+            "occurrence": 1,
+            "part": "combined",
+            "runtime": "Pending",
+            "static": "Safe"
+          }
+        ]
+      }
+    },
+    "slice": {
+      "all": {
+        "rows_with_removed_RK_promise": [
+          {
+            "file": "src/flb_input.c",
+            "function": "flb_input_instance_exit",
+            "library": "fluent-bit-tail-pause",
+            "occurrence": 0,
+            "part": "null",
+            "reasons": [
+              "rests on outer contract `flb_external_plugin@545119edfb1834a4b51d5a0003ca18acb648775b28c197b673ef6638662490f9` through stable:flb_input_instance.p (runtime projection, rule 31; outer-contract)",
+              "rests on outer contract `rk_plugin_library@881233254b57b87e68bc40c1b1bd19a5d01660e4d56c7e36a5f623396a734cfe` through stable:flb_input_instance.p (runtime projection, rule 31; outer-contract)"
+            ],
+            "runtime": "Pending",
+            "static": "Safe"
+          },
+          {
+            "file": "src/flb_input.c",
+            "function": "flb_input_instance_pre_run",
+            "library": "fluent-bit-tail-pause",
+            "occurrence": 0,
+            "part": "null",
+            "reasons": [
+              "rests on outer contract `flb_external_plugin@545119edfb1834a4b51d5a0003ca18acb648775b28c197b673ef6638662490f9` through stable:flb_input_instance.p (runtime projection, rule 31; outer-contract)",
+              "rests on outer contract `rk_plugin_library@881233254b57b87e68bc40c1b1bd19a5d01660e4d56c7e36a5f623396a734cfe` through stable:flb_input_instance.p (runtime projection, rule 31; outer-contract)"
+            ],
+            "runtime": "Pending",
+            "static": "Safe"
+          },
+          {
+            "file": "src/flb_input.c",
+            "function": "flb_input_pause",
+            "library": "fluent-bit-tail-pause",
+            "occurrence": 0,
+            "part": "null",
+            "reasons": [
+              "rests on outer contract `flb_external_plugin@545119edfb1834a4b51d5a0003ca18acb648775b28c197b673ef6638662490f9` through stable:flb_input_instance.p (runtime projection, rule 31; outer-contract)",
+              "rests on outer contract `rk_plugin_library@881233254b57b87e68bc40c1b1bd19a5d01660e4d56c7e36a5f623396a734cfe` through stable:flb_input_instance.p (runtime projection, rule 31; outer-contract)"
+            ],
+            "runtime": "Pending",
+            "static": "Safe"
+          },
+          {
+            "file": "src/flb_input.c",
+            "function": "flb_input_rate_gate_maybe_resume",
+            "library": "fluent-bit-tail-pause",
+            "occurrence": 0,
+            "part": "null",
+            "reasons": [
+              "rests on outer contract `flb_external_plugin@545119edfb1834a4b51d5a0003ca18acb648775b28c197b673ef6638662490f9` through stable:flb_input_instance.p (runtime projection, rule 31; outer-contract)",
+              "rests on outer contract `rk_plugin_library@881233254b57b87e68bc40c1b1bd19a5d01660e4d56c7e36a5f623396a734cfe` through stable:flb_input_instance.p (runtime projection, rule 31; outer-contract)"
+            ],
+            "runtime": "Pending",
+            "static": "Safe"
+          },
+          {
+            "file": "src/flb_input.c",
+            "function": "flb_input_resume",
+            "library": "fluent-bit-tail-pause",
+            "occurrence": 0,
+            "part": "null",
+            "reasons": [
+              "rests on outer contract `flb_external_plugin@545119edfb1834a4b51d5a0003ca18acb648775b28c197b673ef6638662490f9` through stable:flb_input_instance.p (runtime projection, rule 31; outer-contract)",
+              "rests on outer contract `rk_plugin_library@881233254b57b87e68bc40c1b1bd19a5d01660e4d56c7e36a5f623396a734cfe` through stable:flb_input_instance.p (runtime projection, rule 31; outer-contract)"
+            ],
+            "runtime": "Pending",
+            "static": "Safe"
+          },
+          {
+            "file": "src/flb_input.c",
+            "function": "flb_input_instance_exit",
+            "library": "fluent-bit-tail-pause",
+            "occurrence": 1,
+            "part": "null",
+            "reasons": [
+              "rests on outer contract `flb_external_plugin@545119edfb1834a4b51d5a0003ca18acb648775b28c197b673ef6638662490f9` through stable:flb_input_instance.p (runtime projection, rule 31; outer-contract)",
+              "rests on outer contract `rk_plugin_library@881233254b57b87e68bc40c1b1bd19a5d01660e4d56c7e36a5f623396a734cfe` through stable:flb_input_instance.p (runtime projection, rule 31; outer-contract)"
+            ],
+            "runtime": "Pending",
+            "static": "Safe"
+          },
+          {
+            "file": "src/flb_input.c",
+            "function": "flb_input_instance_pre_run",
+            "library": "fluent-bit-tail-pause",
+            "occurrence": 1,
+            "part": "null",
+            "reasons": [
+              "rests on outer contract `flb_external_plugin@545119edfb1834a4b51d5a0003ca18acb648775b28c197b673ef6638662490f9` through stable:flb_input_instance.p (runtime projection, rule 31; outer-contract)",
+              "rests on outer contract `rk_plugin_library@881233254b57b87e68bc40c1b1bd19a5d01660e4d56c7e36a5f623396a734cfe` through stable:flb_input_instance.p (runtime projection, rule 31; outer-contract)"
+            ],
+            "runtime": "Pending",
+            "static": "Safe"
+          },
+          {
+            "file": "src/flb_input.c",
+            "function": "flb_input_pause",
+            "library": "fluent-bit-tail-pause",
+            "occurrence": 1,
+            "part": "null",
+            "reasons": [
+              "rests on outer contract `flb_external_plugin@545119edfb1834a4b51d5a0003ca18acb648775b28c197b673ef6638662490f9` through stable:flb_input_instance.p (runtime projection, rule 31; outer-contract)",
+              "rests on outer contract `rk_plugin_library@881233254b57b87e68bc40c1b1bd19a5d01660e4d56c7e36a5f623396a734cfe` through stable:flb_input_instance.p (runtime projection, rule 31; outer-contract)"
+            ],
+            "runtime": "Pending",
+            "static": "Safe"
+          },
+          {
+            "file": "src/flb_input.c",
+            "function": "flb_input_rate_gate_maybe_resume",
+            "library": "fluent-bit-tail-pause",
+            "occurrence": 1,
+            "part": "null",
+            "reasons": [
+              "rests on outer contract `flb_external_plugin@545119edfb1834a4b51d5a0003ca18acb648775b28c197b673ef6638662490f9` through stable:flb_input_instance.p (runtime projection, rule 31; outer-contract)",
+              "rests on outer contract `rk_plugin_library@881233254b57b87e68bc40c1b1bd19a5d01660e4d56c7e36a5f623396a734cfe` through stable:flb_input_instance.p (runtime projection, rule 31; outer-contract)"
+            ],
+            "runtime": "Pending",
+            "static": "Safe"
+          },
+          {
+            "file": "src/flb_input.c",
+            "function": "flb_input_resume",
+            "library": "fluent-bit-tail-pause",
+            "occurrence": 1,
+            "part": "null",
+            "reasons": [
+              "rests on outer contract `flb_external_plugin@545119edfb1834a4b51d5a0003ca18acb648775b28c197b673ef6638662490f9` through stable:flb_input_instance.p (runtime projection, rule 31; outer-contract)",
+              "rests on outer contract `rk_plugin_library@881233254b57b87e68bc40c1b1bd19a5d01660e4d56c7e36a5f623396a734cfe` through stable:flb_input_instance.p (runtime projection, rule 31; outer-contract)"
+            ],
+            "runtime": "Pending",
+            "static": "Safe"
+          },
+          {
+            "file": "src/flb_input_thread.c",
+            "function": "flb_input_thread_instance_exit",
+            "library": "fluent-bit-tail-pause",
+            "occurrence": 0,
+            "part": "null",
+            "reasons": [
+              "rests on outer contract `flb_external_plugin@545119edfb1834a4b51d5a0003ca18acb648775b28c197b673ef6638662490f9` through stable:flb_input_instance.p (runtime projection, rule 31; outer-contract)",
+              "rests on outer contract `rk_plugin_library@881233254b57b87e68bc40c1b1bd19a5d01660e4d56c7e36a5f623396a734cfe` through stable:flb_input_instance.p (runtime projection, rule 31; outer-contract)"
+            ],
+            "runtime": "Pending",
+            "static": "Safe"
+          },
+          {
+            "file": "src/flb_input_thread.c",
+            "function": "flb_input_thread_instance_pause",
+            "library": "fluent-bit-tail-pause",
+            "occurrence": 0,
+            "part": "null",
+            "reasons": [
+              "rests on outer contract `flb_external_plugin@545119edfb1834a4b51d5a0003ca18acb648775b28c197b673ef6638662490f9` through stable:flb_input_instance.p (runtime projection, rule 31; outer-contract)",
+              "rests on outer contract `rk_plugin_library@881233254b57b87e68bc40c1b1bd19a5d01660e4d56c7e36a5f623396a734cfe` through stable:flb_input_instance.p (runtime projection, rule 31; outer-contract)"
+            ],
+            "runtime": "Pending",
+            "static": "Safe"
+          },
+          {
+            "file": "src/flb_input_thread.c",
+            "function": "flb_input_thread_instance_resume",
+            "library": "fluent-bit-tail-pause",
+            "occurrence": 0,
+            "part": "null",
+            "reasons": [
+              "rests on outer contract `flb_external_plugin@545119edfb1834a4b51d5a0003ca18acb648775b28c197b673ef6638662490f9` through stable:flb_input_instance.p (runtime projection, rule 31; outer-contract)",
+              "rests on outer contract `rk_plugin_library@881233254b57b87e68bc40c1b1bd19a5d01660e4d56c7e36a5f623396a734cfe` through stable:flb_input_instance.p (runtime projection, rule 31; outer-contract)"
+            ],
+            "runtime": "Pending",
+            "static": "Safe"
+          },
+          {
+            "file": "src/flb_input_thread.c",
+            "function": "flb_input_thread_instance_exit",
+            "library": "fluent-bit-tail-pause",
+            "occurrence": 1,
+            "part": "null",
+            "reasons": [
+              "rests on outer contract `flb_external_plugin@545119edfb1834a4b51d5a0003ca18acb648775b28c197b673ef6638662490f9` through stable:flb_input_instance.p (runtime projection, rule 31; outer-contract)",
+              "rests on outer contract `rk_plugin_library@881233254b57b87e68bc40c1b1bd19a5d01660e4d56c7e36a5f623396a734cfe` through stable:flb_input_instance.p (runtime projection, rule 31; outer-contract)"
+            ],
+            "runtime": "Pending",
+            "static": "Safe"
+          },
+          {
+            "file": "src/flb_input_thread.c",
+            "function": "flb_input_thread_instance_pause",
+            "library": "fluent-bit-tail-pause",
+            "occurrence": 1,
+            "part": "null",
+            "reasons": [
+              "rests on outer contract `flb_external_plugin@545119edfb1834a4b51d5a0003ca18acb648775b28c197b673ef6638662490f9` through stable:flb_input_instance.p (runtime projection, rule 31; outer-contract)",
+              "rests on outer contract `rk_plugin_library@881233254b57b87e68bc40c1b1bd19a5d01660e4d56c7e36a5f623396a734cfe` through stable:flb_input_instance.p (runtime projection, rule 31; outer-contract)"
+            ],
+            "runtime": "Pending",
+            "static": "Safe"
+          },
+          {
+            "file": "src/flb_input_thread.c",
+            "function": "flb_input_thread_instance_resume",
+            "library": "fluent-bit-tail-pause",
+            "occurrence": 1,
+            "part": "null",
+            "reasons": [
+              "rests on outer contract `flb_external_plugin@545119edfb1834a4b51d5a0003ca18acb648775b28c197b673ef6638662490f9` through stable:flb_input_instance.p (runtime projection, rule 31; outer-contract)",
+              "rests on outer contract `rk_plugin_library@881233254b57b87e68bc40c1b1bd19a5d01660e4d56c7e36a5f623396a734cfe` through stable:flb_input_instance.p (runtime projection, rule 31; outer-contract)"
+            ],
+            "runtime": "Pending",
+            "static": "Safe"
+          }
+        ],
+        "matching_combined_rows": []
+      },
+      "flb_external_plugin": {
+        "rows_with_removed_RK_promise": [],
+        "matching_combined_rows": []
+      },
+      "rk_plugin_library": {
+        "rows_with_removed_RK_promise": [
+          {
+            "file": "src/flb_input.c",
+            "function": "flb_input_instance_exit",
+            "library": "fluent-bit-tail-pause",
+            "occurrence": 0,
+            "part": "null",
+            "reasons": [
+              "rests on outer contract `rk_plugin_library@881233254b57b87e68bc40c1b1bd19a5d01660e4d56c7e36a5f623396a734cfe` through stable:flb_input_instance.p (runtime projection, rule 31; outer-contract)"
+            ],
+            "runtime": "Pending",
+            "static": "Safe"
+          },
+          {
+            "file": "src/flb_input.c",
+            "function": "flb_input_instance_pre_run",
+            "library": "fluent-bit-tail-pause",
+            "occurrence": 0,
+            "part": "null",
+            "reasons": [
+              "rests on outer contract `rk_plugin_library@881233254b57b87e68bc40c1b1bd19a5d01660e4d56c7e36a5f623396a734cfe` through stable:flb_input_instance.p (runtime projection, rule 31; outer-contract)"
+            ],
+            "runtime": "Pending",
+            "static": "Safe"
+          },
+          {
+            "file": "src/flb_input.c",
+            "function": "flb_input_pause",
+            "library": "fluent-bit-tail-pause",
+            "occurrence": 0,
+            "part": "null",
+            "reasons": [
+              "rests on outer contract `rk_plugin_library@881233254b57b87e68bc40c1b1bd19a5d01660e4d56c7e36a5f623396a734cfe` through stable:flb_input_instance.p (runtime projection, rule 31; outer-contract)"
+            ],
+            "runtime": "Pending",
+            "static": "Safe"
+          },
+          {
+            "file": "src/flb_input.c",
+            "function": "flb_input_rate_gate_maybe_resume",
+            "library": "fluent-bit-tail-pause",
+            "occurrence": 0,
+            "part": "null",
+            "reasons": [
+              "rests on outer contract `rk_plugin_library@881233254b57b87e68bc40c1b1bd19a5d01660e4d56c7e36a5f623396a734cfe` through stable:flb_input_instance.p (runtime projection, rule 31; outer-contract)"
+            ],
+            "runtime": "Pending",
+            "static": "Safe"
+          },
+          {
+            "file": "src/flb_input.c",
+            "function": "flb_input_resume",
+            "library": "fluent-bit-tail-pause",
+            "occurrence": 0,
+            "part": "null",
+            "reasons": [
+              "rests on outer contract `rk_plugin_library@881233254b57b87e68bc40c1b1bd19a5d01660e4d56c7e36a5f623396a734cfe` through stable:flb_input_instance.p (runtime projection, rule 31; outer-contract)"
+            ],
+            "runtime": "Pending",
+            "static": "Safe"
+          },
+          {
+            "file": "src/flb_input.c",
+            "function": "flb_input_instance_exit",
+            "library": "fluent-bit-tail-pause",
+            "occurrence": 1,
+            "part": "null",
+            "reasons": [
+              "rests on outer contract `rk_plugin_library@881233254b57b87e68bc40c1b1bd19a5d01660e4d56c7e36a5f623396a734cfe` through stable:flb_input_instance.p (runtime projection, rule 31; outer-contract)"
+            ],
+            "runtime": "Pending",
+            "static": "Safe"
+          },
+          {
+            "file": "src/flb_input.c",
+            "function": "flb_input_instance_pre_run",
+            "library": "fluent-bit-tail-pause",
+            "occurrence": 1,
+            "part": "null",
+            "reasons": [
+              "rests on outer contract `rk_plugin_library@881233254b57b87e68bc40c1b1bd19a5d01660e4d56c7e36a5f623396a734cfe` through stable:flb_input_instance.p (runtime projection, rule 31; outer-contract)"
+            ],
+            "runtime": "Pending",
+            "static": "Safe"
+          },
+          {
+            "file": "src/flb_input.c",
+            "function": "flb_input_pause",
+            "library": "fluent-bit-tail-pause",
+            "occurrence": 1,
+            "part": "null",
+            "reasons": [
+              "rests on outer contract `rk_plugin_library@881233254b57b87e68bc40c1b1bd19a5d01660e4d56c7e36a5f623396a734cfe` through stable:flb_input_instance.p (runtime projection, rule 31; outer-contract)"
+            ],
+            "runtime": "Pending",
+            "static": "Safe"
+          },
+          {
+            "file": "src/flb_input.c",
+            "function": "flb_input_rate_gate_maybe_resume",
+            "library": "fluent-bit-tail-pause",
+            "occurrence": 1,
+            "part": "null",
+            "reasons": [
+              "rests on outer contract `rk_plugin_library@881233254b57b87e68bc40c1b1bd19a5d01660e4d56c7e36a5f623396a734cfe` through stable:flb_input_instance.p (runtime projection, rule 31; outer-contract)"
+            ],
+            "runtime": "Pending",
+            "static": "Safe"
+          },
+          {
+            "file": "src/flb_input.c",
+            "function": "flb_input_resume",
+            "library": "fluent-bit-tail-pause",
+            "occurrence": 1,
+            "part": "null",
+            "reasons": [
+              "rests on outer contract `rk_plugin_library@881233254b57b87e68bc40c1b1bd19a5d01660e4d56c7e36a5f623396a734cfe` through stable:flb_input_instance.p (runtime projection, rule 31; outer-contract)"
+            ],
+            "runtime": "Pending",
+            "static": "Safe"
+          },
+          {
+            "file": "src/flb_input_thread.c",
+            "function": "flb_input_thread_instance_exit",
+            "library": "fluent-bit-tail-pause",
+            "occurrence": 0,
+            "part": "null",
+            "reasons": [
+              "rests on outer contract `rk_plugin_library@881233254b57b87e68bc40c1b1bd19a5d01660e4d56c7e36a5f623396a734cfe` through stable:flb_input_instance.p (runtime projection, rule 31; outer-contract)"
+            ],
+            "runtime": "Pending",
+            "static": "Safe"
+          },
+          {
+            "file": "src/flb_input_thread.c",
+            "function": "flb_input_thread_instance_pause",
+            "library": "fluent-bit-tail-pause",
+            "occurrence": 0,
+            "part": "null",
+            "reasons": [
+              "rests on outer contract `rk_plugin_library@881233254b57b87e68bc40c1b1bd19a5d01660e4d56c7e36a5f623396a734cfe` through stable:flb_input_instance.p (runtime projection, rule 31; outer-contract)"
+            ],
+            "runtime": "Pending",
+            "static": "Safe"
+          },
+          {
+            "file": "src/flb_input_thread.c",
+            "function": "flb_input_thread_instance_resume",
+            "library": "fluent-bit-tail-pause",
+            "occurrence": 0,
+            "part": "null",
+            "reasons": [
+              "rests on outer contract `rk_plugin_library@881233254b57b87e68bc40c1b1bd19a5d01660e4d56c7e36a5f623396a734cfe` through stable:flb_input_instance.p (runtime projection, rule 31; outer-contract)"
+            ],
+            "runtime": "Pending",
+            "static": "Safe"
+          },
+          {
+            "file": "src/flb_input_thread.c",
+            "function": "flb_input_thread_instance_exit",
+            "library": "fluent-bit-tail-pause",
+            "occurrence": 1,
+            "part": "null",
+            "reasons": [
+              "rests on outer contract `rk_plugin_library@881233254b57b87e68bc40c1b1bd19a5d01660e4d56c7e36a5f623396a734cfe` through stable:flb_input_instance.p (runtime projection, rule 31; outer-contract)"
+            ],
+            "runtime": "Pending",
+            "static": "Safe"
+          },
+          {
+            "file": "src/flb_input_thread.c",
+            "function": "flb_input_thread_instance_pause",
+            "library": "fluent-bit-tail-pause",
+            "occurrence": 1,
+            "part": "null",
+            "reasons": [
+              "rests on outer contract `rk_plugin_library@881233254b57b87e68bc40c1b1bd19a5d01660e4d56c7e36a5f623396a734cfe` through stable:flb_input_instance.p (runtime projection, rule 31; outer-contract)"
+            ],
+            "runtime": "Pending",
+            "static": "Safe"
+          },
+          {
+            "file": "src/flb_input_thread.c",
+            "function": "flb_input_thread_instance_resume",
+            "library": "fluent-bit-tail-pause",
+            "occurrence": 1,
+            "part": "null",
+            "reasons": [
+              "rests on outer contract `rk_plugin_library@881233254b57b87e68bc40c1b1bd19a5d01660e4d56c7e36a5f623396a734cfe` through stable:flb_input_instance.p (runtime projection, rule 31; outer-contract)"
+            ],
+            "runtime": "Pending",
+            "static": "Safe"
+          }
+        ],
+        "matching_combined_rows": []
+      }
+    }
+  }
+}

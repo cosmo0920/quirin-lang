@@ -1,0 +1,14 @@
+{
+  "source": "functions tool result during root closeout, before final recorded commands",
+  "command": [
+    "python3",
+    "scripts/reconciliation_sweep.py",
+    ".",
+    "--since",
+    "1543259f0",
+    "--check",
+    "docs/reports/rk-outer-loader-scope/reconciliation.json"
+  ],
+  "exit": 1,
+  "reason": "The range includes three predecessor card reports omitted from the initial no_section map: rk-plugin-library-outer-envelope, w44-cross-unit-summary, w48-pointer-return-readonly. They were inspected and recorded; final check exits0. No source or assertion changed."
+}

@@ -1,0 +1,79 @@
+[
+  {
+    "step": "python-postmatrix",
+    "argv": [
+      "python3",
+      "-m",
+      "unittest",
+      "discover",
+      "-s",
+      "scripts/tests"
+    ],
+    "cwd": "/home/cosmo/Documents/GitHub/qcore-c",
+    "exit": 0,
+    "seconds": 28.003,
+    "log": "private/rk-outer-loader-scope/closeout-1/python-postmatrix.log"
+  },
+  {
+    "step": "docs-index",
+    "argv": [
+      "python3",
+      "scripts/build_docs_index.py",
+      "--check"
+    ],
+    "cwd": "/home/cosmo/Documents/GitHub/qcore-c",
+    "exit": 0,
+    "seconds": 0.051,
+    "log": "private/rk-outer-loader-scope/closeout-1/docs-index.log"
+  },
+  {
+    "step": "reconciliation",
+    "argv": [
+      "python3",
+      "scripts/reconciliation_sweep.py",
+      ".",
+      "--since",
+      "1543259f0",
+      "--check",
+      "docs/reports/rk-outer-loader-scope/reconciliation.json"
+    ],
+    "cwd": "/home/cosmo/Documents/GitHub/qcore-c",
+    "exit": 0,
+    "seconds": 0.11,
+    "log": "private/rk-outer-loader-scope/closeout-1/reconciliation.log"
+  },
+  {
+    "step": "residuals",
+    "argv": [
+      "python3",
+      "scripts/reconciliation_sweep.py",
+      ".",
+      "--cards",
+      "w48-bottom-up-batch2",
+      "rk-plugin-interceptor-candidates",
+      "w48-batch2-rk-integration",
+      "lexical-routes-typed-fallbacks",
+      "fb-event-loop-lifetime-s3",
+      "rk-outer-loader-scope",
+      "--residuals",
+      "--json"
+    ],
+    "cwd": "/home/cosmo/Documents/GitHub/qcore-c",
+    "exit": 0,
+    "seconds": 0.231,
+    "log": "private/rk-outer-loader-scope/closeout-1/residuals.log"
+  },
+  {
+    "step": "whitespace",
+    "argv": [
+      "git",
+      "diff",
+      "--cached",
+      "--check"
+    ],
+    "cwd": "/home/cosmo/Documents/GitHub/qcore-c",
+    "exit": 0,
+    "seconds": 0.011,
+    "log": "private/rk-outer-loader-scope/closeout-1/whitespace.log"
+  }
+]
