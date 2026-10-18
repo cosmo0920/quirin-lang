@@ -196,10 +196,10 @@ fn function(
                 aliases.insert(id.clone(), None);
                 continue;
             }
-            if let Some(p) = path(&values[0], &aliases) {
-                if p.root != *id {
-                    aliases.insert(id.clone(), Some(p));
-                }
+            if let Some(p) = path(&values[0], &aliases)
+                && p.root != *id
+            {
+                aliases.insert(id.clone(), Some(p));
             }
         }
         if aliases == before {
@@ -241,10 +241,10 @@ fn function(
                 || !condition_casts_preserve(&values[0])
             {
                 condition_aliases.insert(id.clone(), None);
-            } else if let Some(p) = path(&values[0], &condition_aliases) {
-                if p.root != *id {
-                    condition_aliases.insert(id.clone(), Some(p));
-                }
+            } else if let Some(p) = path(&values[0], &condition_aliases)
+                && p.root != *id
+            {
+                condition_aliases.insert(id.clone(), Some(p));
             }
         }
         if before == condition_aliases {
@@ -594,10 +594,10 @@ pub fn read_unit(
                     .filter(|n| kind(n) == "ParmVarDecl")
                     .collect::<Vec<_>>();
                 for clause in &declared.retentions {
-                    if let RetentionHolder::Parameter { index } = clause.holder {
-                        if let Some(tag) = parameters.get(index).and_then(|p| record(ty(p))) {
-                            holder_types.insert(tag);
-                        }
+                    if let RetentionHolder::Parameter { index } = clause.holder
+                        && let Some(tag) = parameters.get(index).and_then(|p| record(ty(p)))
+                    {
+                        holder_types.insert(tag);
                     }
                 }
             }
@@ -629,18 +629,17 @@ pub fn read_unit(
                         .as_u64()
                         .zip(node["range"]["end"]["tokLen"].as_u64()),
                 );
-                if let Some((start, (end, len))) = span {
-                    if let Some(text) = end
+                if let Some((start, (end, len))) = span
+                    && let Some(text) = end
                         .checked_add(len)
                         .and_then(|end| source.get(start as usize..end as usize))
-                    {
-                        facts.tokens_sha256 = tokens_digest(
-                            &crate::legacy_c::tokenize(text)
-                                .into_iter()
-                                .map(|t| t.text)
-                                .collect::<Vec<_>>(),
-                        );
-                    }
+                {
+                    facts.tokens_sha256 = tokens_digest(
+                        &crate::legacy_c::tokenize(text)
+                            .into_iter()
+                            .map(|t| t.text)
+                            .collect::<Vec<_>>(),
+                    );
                 }
                 if facts.tokens_sha256.is_empty() {
                     facts

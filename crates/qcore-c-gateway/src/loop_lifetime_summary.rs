@@ -155,10 +155,10 @@ pub fn path(events: &[Event]) -> Summary {
                 for release in &summary.may_release {
                     let mut composed = release.clone();
                     for ending in &out.must_end {
-                        if let Ending::Destroy(holder) = ending {
-                            if concrete(holder) {
-                                composed.destroyed_before.insert(holder.clone());
-                            }
+                        if let Ending::Destroy(holder) = ending
+                            && concrete(holder)
+                        {
+                            composed.destroyed_before.insert(holder.clone());
                         }
                     }
                     for record in &out.may_register {
@@ -332,10 +332,10 @@ pub fn substitute(
                 }
             }
             Ending::Destroy(h) => {
-                if let Some(holder) = sub(h) {
-                    if !matches!(holder.root, Root::Lifted(_)) {
-                        out.must_end.insert(Ending::Destroy(holder));
-                    }
+                if let Some(holder) = sub(h)
+                    && !matches!(holder.root, Root::Lifted(_))
+                {
+                    out.must_end.insert(Ending::Destroy(holder));
                 }
             }
         }
@@ -850,15 +850,15 @@ pub fn derive_source(
                             timed.push((
                                 op.offset,
                                 Event::Remove(
-                                    op.object.as_ref().and_then(&symbolic),
-                                    op.holder.as_ref().and_then(&symbolic),
+                                    op.object.as_ref().and_then(symbolic),
+                                    op.holder.as_ref().and_then(symbolic),
                                 ),
                             ));
                         }
                     }
                     OperationKind::Destroy => {
                         if !op.conditional {
-                            if let Some(holder) = op.holder.as_ref().and_then(&symbolic) {
+                            if let Some(holder) = op.holder.as_ref().and_then(symbolic) {
                                 timed.push((op.offset, Event::Destroy(holder)));
                             } else {
                                 open.insert("destroy has unresolved holder root".into());
@@ -897,7 +897,7 @@ pub fn derive_source(
                         let actuals = call
                             .typed_effect_actuals
                             .iter()
-                            .map(|p| p.as_ref().and_then(&symbolic))
+                            .map(|p| p.as_ref().and_then(symbolic))
                             .collect::<Vec<_>>();
                         let callee_scope = format!("{}:{}", unit.identity, call.callee);
                         // Different record types need different footprints;
