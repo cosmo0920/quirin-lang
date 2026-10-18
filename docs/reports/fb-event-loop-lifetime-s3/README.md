@@ -34,6 +34,33 @@ No dependent parser, contract or semantic implementation starts before the
 coordinator forwards the user's explicit D4 answer. Gate/push authorization
 is not a syntax answer.
 
+The proposed host is the existing pinned `flb_input_set_collector_time`
+declaration in `fluent_bit/input_collector_registration.qv`; that declaration
+already establishes the record via the checked `collector_create` helper.
+The new line is inside its existing contract, beside the id-forwarding line:
+
+```qcore
+extern fn flb_input_set_collector_time(ins: ptr<mut, u8>, cb_collect: fnptr, seconds: i64, nanoseconds: i64, config: ptr<mut, u8>) -> i32
+contract {
+    requires resource_contract_v1;
+    // Existing custody and callback-registration clauses remain here.
+    quant registered #coll: flb_input_collector.event |-> flb_input_collector.evl;
+};
+```
+
+This is a location fragment, not a full replacement contract. The footprint
+is type-wide and checked against every registration/store in the run, including
+the event and socket setters and start/resume bodies. Its provenance names the
+host's revision pin and a dedicated protocol clause/evidence kind; W4 custody
+evidence does not validate it. There is no standalone module-level `quant`
+grammar promise and no new custody declaration for `collector_create`.
+
+The conditional equality also names the existing explicit rule-10p premise
+that the threaded flag is immutable after initialization. Source has both
+initialization and a `threaded` property-setter write; absence of writes is
+not proved. Any writer outside that premise prevents the equality from
+discharging a dependent lifetime.
+
 ## Implementation acceptance
 
 The registered footprint is keyed by record/interior and holder path. Every
@@ -87,6 +114,18 @@ increment index/record. The coordinator integrates and pushes; this branch
 does neither. Advisory wall-clock budget: 90 minutes, not a stop rule.
 
 ## Follow-ons retained
+
+Preparation-only source census reran the historical `loop_member_census.py`
+`build` function over its three prepared exports, exit 0. Worktree-private
+output: `private/fb-lifetime-s3/preparation/source-census.json`. Each tree
+again has 19 loop members, 17 closed candidate sets, 7 allocation sites,
+51 registrations, 37 removals, 13 waits and 11 destroys. Collector scope has
+two holder stores, four registration sites (start/resume, two arms each), two
+matching pause removals and two destroy removals at `flb_config.evl`.
+This lexical census is source observation, not protocol validation or a
+verdict baseline. Submodule initialization completed exit 0 at
+`d82464a277d0f42703702c4dfd9af6af38595a83`. No gate has run on this
+preparation branch; no standing-gate completion is claimed.
 
 `FB-UNJOINED-TEARDOWN-READINGS` remains a reading under rules 10q/C5.
 `W47-LOOP-OWNER-UNDECLARABLE-OPERATIONS` is not discharged by a lifetime
