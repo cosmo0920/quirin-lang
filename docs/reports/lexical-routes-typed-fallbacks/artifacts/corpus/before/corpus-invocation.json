@@ -1,0 +1,26 @@
+{
+  "head": "854920e3e12a86c34231d4b46fa42918e29044ca",
+  "binary": "/home/cosmo/Documents/GitHub/qcore-c/target/release/quirin-audit",
+  "binary_sha256": "daf942d7d29cbf6e8460691b9683b458bae1804d75851ab9089c7d0a39b82727",
+  "command": [
+    "/usr/bin/python3",
+    "/home/cosmo/Documents/GitHub/qcore-c/scripts/run_pinned_audit.py",
+    "/home/cosmo/Documents/GitHub/qcore-c/private/w48-batch2-rk-integration/measure-combined-1/corpus",
+    "66910c10",
+    "--inputs-root",
+    "/home/cosmo/Documents/GitHub/qcore-c/build/cycle19",
+    "--jobs",
+    "4"
+  ],
+  "jobs": 4,
+  "link_map": "/home/cosmo/Documents/GitHub/qcore-c/docs/reports/w48-bottom-up-batch2/link-map.corpus.json",
+  "link_map_sha256": "3a0424cf3f447211ce8bf78679c396428ffed62ade14a75b99526ac9ddd1156d",
+  "environment": {
+    "QCORE_CROSS_UNIT_LINK_MAP": "/home/cosmo/Documents/GitHub/qcore-c/docs/reports/w48-bottom-up-batch2/link-map.corpus.json",
+    "QCORE_CLANG": "/usr/lib/llvm-21/bin/clang",
+    "QCORE_NULL_PROPERTY": "/home/cosmo/Documents/GitHub/qcore-c/private/w48-batch2-rk-integration/measure-combined-1/corpus-null.jsonl",
+    "QCORE_OUTER_PROJECTION": "/home/cosmo/Documents/GitHub/qcore-c/private/w48-batch2-rk-integration/measure-combined-1/corpus-outer.json"
+  },
+  "source_revision": "66910c10",
+  "inputs_root": "/home/cosmo/Documents/GitHub/qcore-c/build/cycle19"
+}

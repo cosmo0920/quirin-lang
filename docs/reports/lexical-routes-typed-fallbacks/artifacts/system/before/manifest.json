@@ -1,0 +1,49 @@
+{
+  "diagnostics": {
+    "present": true,
+    "source": "/home/cosmo/Documents/GitHub/qcore-c/private/w48-batch2-rk-integration/measure-combined-1/system/resource-diagnostics.json",
+    "sha256": "477d22031729a195c964e74cdc5181d56cd7586e663599831622cc06016ed71a",
+    "bytes": 1712337
+  },
+  "source": {
+    "present": false
+  },
+  "chunk-contracts": {
+    "present": true,
+    "source": "/home/cosmo/Documents/GitHub/qcore-c/private/w48-batch2-rk-integration/measure-combined-1/system/resource-diagnostics.chunk-contracts.json",
+    "sha256": "e7e0d254d9e7ee199672b981e3fc764b702b35a1757bb0f4570a9438e6b87922",
+    "bytes": 385
+  },
+  "source-effects": {
+    "present": true,
+    "source": "/home/cosmo/Documents/GitHub/qcore-c/private/w48-batch2-rk-integration/measure-combined-1/system/resource-diagnostics.source-effects.json",
+    "sha256": "e7e0d254d9e7ee199672b981e3fc764b702b35a1757bb0f4570a9438e6b87922",
+    "bytes": 385
+  },
+  "contracts": {
+    "present": true,
+    "source": "/home/cosmo/Documents/GitHub/qcore-c/private/w48-batch2-rk-integration/measure-combined-1/system/resource-diagnostics.contracts.json",
+    "sha256": "b94c5a6ea934d60737e9da966f5d0b643d6cb31757b032f409f6bc25f632ebfd",
+    "bytes": 1582776
+  },
+  "static_custody_counts": {
+    "Unknown": 347,
+    "Safe": 97,
+    "Unsafe": 4
+  },
+  "system-null.jsonl": {
+    "source": "/home/cosmo/Documents/GitHub/qcore-c/private/w48-batch2-rk-integration/measure-combined-1/system-null.jsonl",
+    "bytes": 1443447,
+    "sha256": "27382571f1ac4694ba0683cbb82f93071b9d6854f8f89138accf764cb816c16c"
+  },
+  "system-null.summary.json": {
+    "source": "/home/cosmo/Documents/GitHub/qcore-c/private/w48-batch2-rk-integration/measure-combined-1/system-null.summary.json",
+    "bytes": 64361,
+    "sha256": "5ed93acf649ea6d4fb030cac8d4e8627c0f0872f1c83dbc07aa3ef10faeabb3f"
+  },
+  "system-outer.json": {
+    "source": "/home/cosmo/Documents/GitHub/qcore-c/private/w48-batch2-rk-integration/measure-combined-1/system-outer.json",
+    "bytes": 67932,
+    "sha256": "cd77e52d53759109ab95b4d2be96a4bf22a98b67a07b93d4a06461f423407b1b"
+  }
+}

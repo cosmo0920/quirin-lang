@@ -1,0 +1,50 @@
+{
+  "diagnostics": {
+    "present": true,
+    "source": "/home/cosmo/Documents/GitHub/qcore-c/private/w48-batch2-rk-integration/measure-combined-1/slice/resource-diagnostics.json",
+    "sha256": "7773f0e6eb44abc803a6063ea3495d69d000c6bb43ebb11ee6f4be5bfe518079",
+    "bytes": 1703465
+  },
+  "source": {
+    "present": false
+  },
+  "chunk-contracts": {
+    "present": true,
+    "source": "/home/cosmo/Documents/GitHub/qcore-c/private/w48-batch2-rk-integration/measure-combined-1/slice/resource-diagnostics.chunk-contracts.json",
+    "sha256": "a97259087e4ad89a4662edcb494b27c27e80f06c62e404a19076224bbc0a2bd8",
+    "bytes": 385
+  },
+  "source-effects": {
+    "present": true,
+    "source": "/home/cosmo/Documents/GitHub/qcore-c/private/w48-batch2-rk-integration/measure-combined-1/slice/resource-diagnostics.source-effects.json",
+    "sha256": "a97259087e4ad89a4662edcb494b27c27e80f06c62e404a19076224bbc0a2bd8",
+    "bytes": 385
+  },
+  "contracts": {
+    "present": true,
+    "source": "/home/cosmo/Documents/GitHub/qcore-c/private/w48-batch2-rk-integration/measure-combined-1/slice/resource-diagnostics.contracts.json",
+    "sha256": "75f9605cea50c0b8cc24a0a511168b2d179d9add732afd81b51595f32eb6d5dc",
+    "bytes": 1560766
+  },
+  "static_custody_counts": {
+    "Unknown": 347,
+    "Safe": 52,
+    "Pending": 4,
+    "Unsafe": 1
+  },
+  "slice-null.jsonl": {
+    "source": "/home/cosmo/Documents/GitHub/qcore-c/private/w48-batch2-rk-integration/measure-combined-1/slice-null.jsonl",
+    "bytes": 1460626,
+    "sha256": "b25ca7f3e118c6e6f81a7c80854fae4a890afea0e71e2883099e528c5559c672"
+  },
+  "slice-null.summary.json": {
+    "source": "/home/cosmo/Documents/GitHub/qcore-c/private/w48-batch2-rk-integration/measure-combined-1/slice-null.summary.json",
+    "bytes": 64487,
+    "sha256": "35c5c57fd353a71ef31d57b40769be3e41c1af57b6229f89ae1ec8485cb1a27d"
+  },
+  "slice-outer.json": {
+    "source": "/home/cosmo/Documents/GitHub/qcore-c/private/w48-batch2-rk-integration/measure-combined-1/slice-outer.json",
+    "bytes": 90417,
+    "sha256": "fd8566a91c497cc423751420e43a98a37aecfcf12c0750bb02eeeb2f7fce91ad"
+  }
+}

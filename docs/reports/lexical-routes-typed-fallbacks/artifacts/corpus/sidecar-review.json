@@ -1,0 +1,125 @@
+{
+  "source_callbacks": {
+    "added": 0,
+    "after": 3,
+    "before": 3,
+    "changed": 0,
+    "removed": 0
+  },
+  "source_wrappers": {
+    "added": 0,
+    "after": 15,
+    "before": 15,
+    "changed": 0,
+    "removed": 0
+  },
+  "chunk_contract_results": {
+    "added": 0,
+    "after": 96,
+    "before": 96,
+    "changed": 0,
+    "removed": 0
+  },
+  "backend_teardown": {
+    "added": 0,
+    "after": 21,
+    "before": 21,
+    "changed": 0,
+    "removed": 0
+  },
+  "source_effects": [
+    {
+      "key": [
+        "chunkio",
+        "cio_chunk.c",
+        "cio_chunk_is_locked"
+      ],
+      "fields": [
+        "bounds",
+        "evidence",
+        "import_identity",
+        "task",
+        "witness"
+      ],
+      "identity_pairs": {
+        "9948d457f59f7f0a3b940eaa06c27a1d67b8620ca04c4faf01bd0ab27b42e89c": "5f5330dedadfbb666ed4795c6bab814f6b0be2e2ae6cb151ee25997d505c7ec6",
+        "942aa2ff37a0eeb55dc8a188d58297e018ccb6f3aaddf9ccd58113b4d2a38c80": "7c26050f56684009f0645d681ef06c695286e5dda2d5327bef1e32d83c1c3dc1",
+        "56400dc431c94efda814eb823b3096a9e9040f59886a8fe03e0215caaa58023d": "bc89329c94cac691dcc1187d93144d0655b0667228f0ba63935d11d4e3a65da4",
+        "resource_contracts:9ac7a1c2b131769a60cdd201": "resource_contracts:de2ad25808ca05526430e2fc"
+      },
+      "classification": "checkout/configuration and derived task/evidence identities; source, assumptions, bounds, witness paths unchanged"
+    },
+    {
+      "key": [
+        "chunkio",
+        "cio_chunk.c",
+        "cio_chunk_unlock"
+      ],
+      "fields": [
+        "bounds",
+        "evidence",
+        "import_identity",
+        "task",
+        "witness"
+      ],
+      "identity_pairs": {
+        "9948d457f59f7f0a3b940eaa06c27a1d67b8620ca04c4faf01bd0ab27b42e89c": "5f5330dedadfbb666ed4795c6bab814f6b0be2e2ae6cb151ee25997d505c7ec6",
+        "942aa2ff37a0eeb55dc8a188d58297e018ccb6f3aaddf9ccd58113b4d2a38c80": "7c26050f56684009f0645d681ef06c695286e5dda2d5327bef1e32d83c1c3dc1",
+        "b562fed2878dbbe3dcb6913b525fddfd7f23a335e6829785cd68061760dc13af": "8421c4ac9f5c70047c7abf50c420822e42d410fcca32319e80d703c2caecc869",
+        "resource_contracts:631562afdf6ef72f5370e971": "resource_contracts:01425a9a225908d88bc4d4a4"
+      },
+      "classification": "checkout/configuration and derived task/evidence identities; source, assumptions, bounds, witness paths unchanged"
+    },
+    {
+      "key": [
+        "fluent-bit-chunk",
+        "flb_input_chunk.c",
+        "flb_input_chunk_release_lock"
+      ],
+      "fields": [
+        "bounds",
+        "evidence",
+        "import_identity",
+        "task",
+        "witness"
+      ],
+      "identity_pairs": {
+        "902adea87cb33ffcbec59bdc47847facc55086ce2879f3dc052d2fe56f359025": "98caad76c2c16df793b3253600d2f45f0fa9d4140c487f3a9b870aac467448f0",
+        "be42bfa3a6f342c8682a047d730dff8f7e6646404e80068e3b7a0ea894223717": "23658245f2765d294023f5d2cfe2aa2a96ab708272152c7aa4ac577b3f8ea12a",
+        "47d618eccf056697f0dd34199de25a177e8fa181ae60a0ad8cc38aef76dfe0f6": "ae3f21759964e721f715522a3504a7d3d735dac9e93d968079caf9f61aa448da",
+        "resource_contracts:a2427b13a16ecb35496f0159": "resource_contracts:f90716bd17411f9483aa3880"
+      },
+      "classification": "checkout/configuration and derived task/evidence identities; source, assumptions, bounds, witness paths unchanged"
+    }
+  ],
+  "diagnostic_unit_fields": [
+    "cross_unit_link_resolution",
+    "diagnostic_counts",
+    "functions",
+    "reason"
+  ],
+  "contract_revision_boundary": "64 normalized source modules text-identical; 60 raw key renames retained in contract-leaf-review.json. Added contract dependency/null-premise rollups are semantic metadata, not identity-only.",
+  "unit_review": {
+    "units": 185,
+    "all_nonfunction_source_contract_scope_fields_unchanged_after_home_identity_mapping": true,
+    "allowed_other_fields": [
+      "functions (full duplicate-preserving row comparison)",
+      "diagnostic_counts",
+      "reason (diagnostic tally explanation)"
+    ],
+    "top_diagnostic_counts": {
+      "before": {
+        "leak": 40,
+        "summary_conflict": 2,
+        "unknown_alias": 11245,
+        "unsupported": 27676
+      },
+      "after": {
+        "leak": 40,
+        "summary_conflict": 2,
+        "unknown_alias": 11052,
+        "unsupported": 27663
+      }
+    }
+  }
+}

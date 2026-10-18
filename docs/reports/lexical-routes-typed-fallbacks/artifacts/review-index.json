@@ -1,0 +1,1848 @@
+{
+  "meaning": "Review index for every full changed row; exact full records, source occurrences, premises and dependency payloads remain under each route. This index does not substitute for the checker evidence.",
+  "summary": {
+    "corpus": {
+      "selected_rows": 4834,
+      "full_rows_reviewed": 65,
+      "status_or_diagnostic_rows": 63,
+      "removed_leaves": 206,
+      "added_leaves": 0,
+      "transitions": [
+        {
+          "before": "Safe",
+          "after": "Safe",
+          "count": 959
+        },
+        {
+          "before": "Unknown",
+          "after": "Safe",
+          "count": 4
+        },
+        {
+          "before": "Unknown",
+          "after": "Unknown",
+          "count": 3862
+        },
+        {
+          "before": "Unsafe",
+          "after": "Unsafe",
+          "count": 9
+        }
+      ],
+      "null_rows": 4921,
+      "all_null_dictionaries_identical": true,
+      "all_combined_verdicts_identical": true,
+      "all_runtime_moved_rows_identical": true
+    },
+    "system": {
+      "selected_rows": 448,
+      "full_rows_reviewed": 22,
+      "status_or_diagnostic_rows": 18,
+      "removed_leaves": 68,
+      "added_leaves": 0,
+      "transitions": [
+        {
+          "before": "Safe",
+          "after": "Safe",
+          "count": 97
+        },
+        {
+          "before": "Unknown",
+          "after": "Safe",
+          "count": 2
+        },
+        {
+          "before": "Unknown",
+          "after": "Unknown",
+          "count": 345
+        },
+        {
+          "before": "Unsafe",
+          "after": "Unsafe",
+          "count": 4
+        }
+      ],
+      "null_rows": 454,
+      "all_null_dictionaries_identical": true,
+      "all_combined_verdicts_identical": true,
+      "all_runtime_moved_rows_identical": true
+    },
+    "slice": {
+      "selected_rows": 404,
+      "full_rows_reviewed": 34,
+      "status_or_diagnostic_rows": 25,
+      "removed_leaves": 50,
+      "added_leaves": 1,
+      "transitions": [
+        {
+          "before": "Pending",
+          "after": "Pending",
+          "count": 4
+        },
+        {
+          "before": "Safe",
+          "after": "Safe",
+          "count": 52
+        },
+        {
+          "before": "Unknown",
+          "after": "Safe",
+          "count": 1
+        },
+        {
+          "before": "Unknown",
+          "after": "Unknown",
+          "count": 346
+        },
+        {
+          "before": "Unsafe",
+          "after": "Unsafe",
+          "count": 1
+        }
+      ],
+      "null_rows": 406,
+      "all_null_dictionaries_identical": true,
+      "all_combined_verdicts_identical": true,
+      "all_runtime_moved_rows_identical": true
+    }
+  },
+  "reviewed_rows": [
+    {
+      "route": "corpus",
+      "key": [
+        "cmetrics",
+        "cmt_cat.c",
+        "cmt_cat_copy_map",
+        0
+      ],
+      "fields": [
+        "diagnostics"
+      ],
+      "classification": "Scalar-plan flow refinement and its downstream identity/summary consequences; remaining refusals retained.",
+      "reviewed": true
+    },
+    {
+      "route": "corpus",
+      "key": [
+        "cmetrics",
+        "cmt_decode_msgpack.c",
+        "unpack_basic_type_meta",
+        0
+      ],
+      "fields": [
+        "contract_dependencies"
+      ],
+      "classification": "Dependency null-premise propagation only; public status, diagnostics and null-premise array unchanged.",
+      "reviewed": true
+    },
+    {
+      "route": "corpus",
+      "key": [
+        "cmetrics",
+        "cmt_decode_msgpack.c",
+        "unpack_meta_aggregation_type",
+        0
+      ],
+      "fields": [
+        "contract_dependencies"
+      ],
+      "classification": "Dependency null-premise propagation only; public status, diagnostics and null-premise array unchanged.",
+      "reviewed": true
+    },
+    {
+      "route": "corpus",
+      "key": [
+        "cmetrics",
+        "cmt_decode_msgpack.c",
+        "unpack_metric",
+        0
+      ],
+      "fields": [
+        "diagnostics"
+      ],
+      "classification": "Scalar-plan flow refinement and its downstream identity/summary consequences; remaining refusals retained.",
+      "reviewed": true
+    },
+    {
+      "route": "corpus",
+      "key": [
+        "cmetrics",
+        "cmt_decode_msgpack.c",
+        "unpack_metric_value_int64",
+        0
+      ],
+      "fields": [
+        "contract_dependencies",
+        "diagnostics",
+        "null_premises"
+      ],
+      "classification": "Scalar-plan flow refinement and its downstream identity/summary consequences; remaining refusals retained.",
+      "reviewed": true
+    },
+    {
+      "route": "corpus",
+      "key": [
+        "cmetrics",
+        "cmt_decode_msgpack.c",
+        "unpack_metric_value_uint64",
+        0
+      ],
+      "fields": [
+        "contract_dependencies",
+        "diagnostics",
+        "null_premises"
+      ],
+      "classification": "Scalar-plan flow refinement and its downstream identity/summary consequences; remaining refusals retained.",
+      "reviewed": true
+    },
+    {
+      "route": "corpus",
+      "key": [
+        "cmetrics",
+        "cmt_decode_opentelemetry.c",
+        "decode_counter_entry",
+        0
+      ],
+      "fields": [
+        "contract_dependencies",
+        "diagnostics",
+        "null_premises"
+      ],
+      "classification": "Scalar-plan flow refinement and its downstream identity/summary consequences; remaining refusals retained.",
+      "reviewed": true
+    },
+    {
+      "route": "corpus",
+      "key": [
+        "cmetrics",
+        "cmt_decode_opentelemetry.c",
+        "decode_exponential_histogram_entry",
+        0
+      ],
+      "fields": [
+        "contract_dependencies",
+        "diagnostics",
+        "null_premises"
+      ],
+      "classification": "Scalar-plan flow refinement and its downstream identity/summary consequences; remaining refusals retained.",
+      "reviewed": true
+    },
+    {
+      "route": "corpus",
+      "key": [
+        "cmetrics",
+        "cmt_decode_opentelemetry.c",
+        "decode_histogram_entry",
+        0
+      ],
+      "fields": [
+        "contract_dependencies",
+        "diagnostics",
+        "null_premises"
+      ],
+      "classification": "Scalar-plan flow refinement and its downstream identity/summary consequences; remaining refusals retained.",
+      "reviewed": true
+    },
+    {
+      "route": "corpus",
+      "key": [
+        "cmetrics",
+        "cmt_decode_opentelemetry.c",
+        "decode_summary_entry",
+        0
+      ],
+      "fields": [
+        "contract_dependencies",
+        "diagnostics",
+        "null_premises"
+      ],
+      "classification": "Scalar-plan flow refinement and its downstream identity/summary consequences; remaining refusals retained.",
+      "reviewed": true
+    },
+    {
+      "route": "corpus",
+      "key": [
+        "cmetrics",
+        "cmt_encode_opentelemetry.c",
+        "apply_data_point_metadata_from_otlp_context",
+        0
+      ],
+      "fields": [
+        "contract_dependencies",
+        "diagnostics",
+        "null_premises"
+      ],
+      "classification": "Scalar-plan flow refinement and its downstream identity/summary consequences; remaining refusals retained.",
+      "reviewed": true
+    },
+    {
+      "route": "corpus",
+      "key": [
+        "cmetrics",
+        "cmt_encode_prometheus_remote_write.c",
+        "append_metric_to_timeseries",
+        0
+      ],
+      "fields": [
+        "diagnostics"
+      ],
+      "classification": "Scalar-plan flow refinement and its downstream identity/summary consequences; remaining refusals retained.",
+      "reviewed": true
+    },
+    {
+      "route": "corpus",
+      "key": [
+        "cmetrics",
+        "cmt_map.c",
+        "cmt_map_metrics_expire",
+        0
+      ],
+      "fields": [
+        "diagnostics"
+      ],
+      "classification": "Scalar-plan flow refinement and its downstream identity/summary consequences; remaining refusals retained.",
+      "reviewed": true
+    },
+    {
+      "route": "corpus",
+      "key": [
+        "cmetrics",
+        "cmt_map.c",
+        "metric_index_add",
+        0
+      ],
+      "fields": [
+        "diagnostics"
+      ],
+      "classification": "Scalar-plan flow refinement and its downstream identity/summary consequences; remaining refusals retained.",
+      "reviewed": true
+    },
+    {
+      "route": "corpus",
+      "key": [
+        "cmetrics",
+        "cmt_map.c",
+        "metric_index_resize",
+        0
+      ],
+      "fields": [
+        "diagnostics"
+      ],
+      "classification": "Scalar-plan flow refinement and its downstream identity/summary consequences; remaining refusals retained.",
+      "reviewed": true
+    },
+    {
+      "route": "corpus",
+      "key": [
+        "ctraces",
+        "ctr_span.c",
+        "ctr_span_create",
+        0
+      ],
+      "fields": [
+        "diagnostics"
+      ],
+      "classification": "Scalar-plan flow refinement and its downstream identity/summary consequences; remaining refusals retained.",
+      "reviewed": true
+    },
+    {
+      "route": "corpus",
+      "key": [
+        "librdkafka",
+        "lz4frame.c",
+        "LZ4F_compressBegin_usingCDict",
+        0
+      ],
+      "fields": [
+        "diagnostics"
+      ],
+      "classification": "Scalar-plan flow refinement and its downstream identity/summary consequences; remaining refusals retained.",
+      "reviewed": true
+    },
+    {
+      "route": "corpus",
+      "key": [
+        "librdkafka",
+        "lz4frame.c",
+        "LZ4F_decodeHeader",
+        0
+      ],
+      "fields": [
+        "diagnostics"
+      ],
+      "classification": "Scalar-plan flow refinement and its downstream identity/summary consequences; remaining refusals retained.",
+      "reviewed": true
+    },
+    {
+      "route": "corpus",
+      "key": [
+        "librdkafka",
+        "lz4frame.c",
+        "LZ4F_updateDict",
+        0
+      ],
+      "fields": [
+        "diagnostics"
+      ],
+      "classification": "Scalar-plan flow refinement and its downstream identity/summary consequences; remaining refusals retained.",
+      "reviewed": true
+    },
+    {
+      "route": "corpus",
+      "key": [
+        "librdkafka",
+        "nanopb/pb_common.c",
+        "load_descriptor_values",
+        0
+      ],
+      "fields": [
+        "diagnostics"
+      ],
+      "classification": "Scalar-plan flow refinement and its downstream identity/summary consequences; remaining refusals retained.",
+      "reviewed": true
+    },
+    {
+      "route": "corpus",
+      "key": [
+        "librdkafka",
+        "rdkafka_request.c",
+        "rd_kafka_handle_idempotent_Produce_error",
+        0
+      ],
+      "fields": [
+        "diagnostics"
+      ],
+      "classification": "Scalar-plan flow refinement and its downstream identity/summary consequences; remaining refusals retained.",
+      "reviewed": true
+    },
+    {
+      "route": "corpus",
+      "key": [
+        "librdkafka",
+        "rdkafka_share_acknowledgement.c",
+        "rd_kafka_share_build_ack_details",
+        0
+      ],
+      "fields": [
+        "diagnostics"
+      ],
+      "classification": "Scalar-plan flow refinement and its downstream identity/summary consequences; remaining refusals retained.",
+      "reviewed": true
+    },
+    {
+      "route": "corpus",
+      "key": [
+        "librdkafka",
+        "rdunittest_acknowledge.c",
+        "ut_ack_clear_inflight_map",
+        0
+      ],
+      "fields": [
+        "diagnostics"
+      ],
+      "classification": "Scalar-plan flow refinement and its downstream identity/summary consequences; remaining refusals retained.",
+      "reviewed": true
+    },
+    {
+      "route": "corpus",
+      "key": [
+        "librdkafka",
+        "rdxxhash.c",
+        "XXH32_update_endian",
+        0
+      ],
+      "fields": [
+        "diagnostics"
+      ],
+      "classification": "Scalar-plan flow refinement and its downstream identity/summary consequences; remaining refusals retained.",
+      "reviewed": true
+    },
+    {
+      "route": "corpus",
+      "key": [
+        "librdkafka",
+        "rdxxhash.c",
+        "XXH64_update_endian",
+        0
+      ],
+      "fields": [
+        "diagnostics"
+      ],
+      "classification": "Scalar-plan flow refinement and its downstream identity/summary consequences; remaining refusals retained.",
+      "reviewed": true
+    },
+    {
+      "route": "corpus",
+      "key": [
+        "librdkafka",
+        "snappy.c",
+        "decompress_all_tags",
+        0
+      ],
+      "fields": [
+        "contract_dependencies",
+        "diagnostics"
+      ],
+      "classification": "Scalar-plan flow refinement and its downstream identity/summary consequences; remaining refusals retained.",
+      "reviewed": true
+    },
+    {
+      "route": "corpus",
+      "key": [
+        "librdkafka",
+        "snappy.c",
+        "exit_snappy_decompressor",
+        0
+      ],
+      "fields": [
+        "contract_dependencies",
+        "diagnostics",
+        "status"
+      ],
+      "classification": "Custody promotion independently reviewed with source and full premises; null and combined verdict unchanged.",
+      "reviewed": true
+    },
+    {
+      "route": "corpus",
+      "key": [
+        "librdkafka",
+        "snappy.c",
+        "internal_uncompress",
+        0
+      ],
+      "fields": [
+        "contract_dependencies",
+        "diagnostics"
+      ],
+      "classification": "Scalar-plan flow refinement and its downstream identity/summary consequences; remaining refusals retained.",
+      "reviewed": true
+    },
+    {
+      "route": "corpus",
+      "key": [
+        "librdkafka",
+        "snappy.c",
+        "read_uncompressed_length",
+        0
+      ],
+      "fields": [
+        "contract_dependencies",
+        "diagnostics",
+        "status"
+      ],
+      "classification": "Custody promotion independently reviewed with source and full premises; null and combined verdict unchanged.",
+      "reviewed": true
+    },
+    {
+      "route": "corpus",
+      "key": [
+        "librdkafka",
+        "snappy.c",
+        "refill_tag",
+        0
+      ],
+      "fields": [
+        "contract_dependencies",
+        "diagnostics"
+      ],
+      "classification": "Scalar-plan flow refinement and its downstream identity/summary consequences; remaining refusals retained.",
+      "reviewed": true
+    },
+    {
+      "route": "corpus",
+      "key": [
+        "librdkafka",
+        "snappy.c",
+        "skip",
+        0
+      ],
+      "fields": [
+        "diagnostics",
+        "status"
+      ],
+      "classification": "Custody promotion independently reviewed with source and full premises; null and combined verdict unchanged.",
+      "reviewed": true
+    },
+    {
+      "route": "corpus",
+      "key": [
+        "librdkafka",
+        "snappy.c",
+        "sn_compress",
+        0
+      ],
+      "fields": [
+        "contract_dependencies",
+        "diagnostics"
+      ],
+      "classification": "Scalar-plan flow refinement and its downstream identity/summary consequences; remaining refusals retained.",
+      "reviewed": true
+    },
+    {
+      "route": "corpus",
+      "key": [
+        "chunkio",
+        "cio_chunk.c",
+        "cio_chunk_is_up",
+        0
+      ],
+      "fields": [
+        "diagnostics"
+      ],
+      "classification": "Scalar-plan flow refinement and its downstream identity/summary consequences; remaining refusals retained.",
+      "reviewed": true
+    },
+    {
+      "route": "corpus",
+      "key": [
+        "chunkio",
+        "cio_file.c",
+        "_cio_file_up",
+        0
+      ],
+      "fields": [
+        "diagnostics"
+      ],
+      "classification": "Scalar-plan flow refinement and its downstream identity/summary consequences; remaining refusals retained.",
+      "reviewed": true
+    },
+    {
+      "route": "corpus",
+      "key": [
+        "chunkio",
+        "cio_file.c",
+        "cio_file_calculate_checksum",
+        0
+      ],
+      "fields": [
+        "diagnostics"
+      ],
+      "classification": "Scalar-plan flow refinement and its downstream identity/summary consequences; remaining refusals retained.",
+      "reviewed": true
+    },
+    {
+      "route": "corpus",
+      "key": [
+        "chunkio",
+        "cio_file.c",
+        "cio_file_down",
+        0
+      ],
+      "fields": [
+        "diagnostics"
+      ],
+      "classification": "Scalar-plan flow refinement and its downstream identity/summary consequences; remaining refusals retained.",
+      "reviewed": true
+    },
+    {
+      "route": "corpus",
+      "key": [
+        "chunkio",
+        "cio_file.c",
+        "cio_file_open",
+        0
+      ],
+      "fields": [
+        "diagnostics"
+      ],
+      "classification": "Scalar-plan flow refinement and its downstream identity/summary consequences; remaining refusals retained.",
+      "reviewed": true
+    },
+    {
+      "route": "corpus",
+      "key": [
+        "chunkio",
+        "cio_file.c",
+        "cio_file_sync",
+        0
+      ],
+      "fields": [
+        "diagnostics"
+      ],
+      "classification": "Scalar-plan flow refinement and its downstream identity/summary consequences; remaining refusals retained.",
+      "reviewed": true
+    },
+    {
+      "route": "corpus",
+      "key": [
+        "chunkio",
+        "cio_file.c",
+        "mmap_file",
+        0
+      ],
+      "fields": [
+        "contract_dependencies",
+        "diagnostics",
+        "null_premises"
+      ],
+      "classification": "Scalar-plan flow refinement and its downstream identity/summary consequences; remaining refusals retained.",
+      "reviewed": true
+    },
+    {
+      "route": "corpus",
+      "key": [
+        "chunkio",
+        "cio_file_unix.c",
+        "cio_file_native_close",
+        0
+      ],
+      "fields": [
+        "diagnostics"
+      ],
+      "classification": "Scalar-plan flow refinement and its downstream identity/summary consequences; remaining refusals retained.",
+      "reviewed": true
+    },
+    {
+      "route": "corpus",
+      "key": [
+        "chunkio",
+        "cio_file_unix.c",
+        "cio_file_native_map",
+        0
+      ],
+      "fields": [
+        "diagnostics"
+      ],
+      "classification": "Scalar-plan flow refinement and its downstream identity/summary consequences; remaining refusals retained.",
+      "reviewed": true
+    },
+    {
+      "route": "corpus",
+      "key": [
+        "chunkio",
+        "cio_file_unix.c",
+        "cio_file_native_remap",
+        0
+      ],
+      "fields": [
+        "diagnostics"
+      ],
+      "classification": "Scalar-plan flow refinement and its downstream identity/summary consequences; remaining refusals retained.",
+      "reviewed": true
+    },
+    {
+      "route": "corpus",
+      "key": [
+        "chunkio",
+        "cio_file_unix.c",
+        "cio_file_native_resize",
+        0
+      ],
+      "fields": [
+        "diagnostics"
+      ],
+      "classification": "Scalar-plan flow refinement and its downstream identity/summary consequences; remaining refusals retained.",
+      "reviewed": true
+    },
+    {
+      "route": "corpus",
+      "key": [
+        "chunkio",
+        "cio_file_unix.c",
+        "cio_file_native_unmap",
+        0
+      ],
+      "fields": [
+        "diagnostics"
+      ],
+      "classification": "Scalar-plan flow refinement and its downstream identity/summary consequences; remaining refusals retained.",
+      "reviewed": true
+    },
+    {
+      "route": "corpus",
+      "key": [
+        "chunkio",
+        "cio_memfs.c",
+        "cio_memfs_write",
+        0
+      ],
+      "fields": [
+        "contract_dependencies",
+        "diagnostics",
+        "null_premises"
+      ],
+      "classification": "Scalar-plan flow refinement and its downstream identity/summary consequences; remaining refusals retained.",
+      "reviewed": true
+    },
+    {
+      "route": "corpus",
+      "key": [
+        "chunkio",
+        "cio_meta.c",
+        "cio_meta_cmp",
+        0
+      ],
+      "fields": [
+        "diagnostics"
+      ],
+      "classification": "Scalar-plan flow refinement and its downstream identity/summary consequences; remaining refusals retained.",
+      "reviewed": true
+    },
+    {
+      "route": "corpus",
+      "key": [
+        "chunkio",
+        "cio_meta.c",
+        "cio_meta_read",
+        0
+      ],
+      "fields": [
+        "diagnostics"
+      ],
+      "classification": "Scalar-plan flow refinement and its downstream identity/summary consequences; remaining refusals retained.",
+      "reviewed": true
+    },
+    {
+      "route": "corpus",
+      "key": [
+        "chunkio",
+        "cio_meta.c",
+        "cio_meta_size",
+        0
+      ],
+      "fields": [
+        "diagnostics"
+      ],
+      "classification": "Scalar-plan flow refinement and its downstream identity/summary consequences; remaining refusals retained.",
+      "reviewed": true
+    },
+    {
+      "route": "corpus",
+      "key": [
+        "chunkio",
+        "cio_meta.c",
+        "cio_meta_write",
+        0
+      ],
+      "fields": [
+        "diagnostics"
+      ],
+      "classification": "Scalar-plan flow refinement and its downstream identity/summary consequences; remaining refusals retained.",
+      "reviewed": true
+    },
+    {
+      "route": "corpus",
+      "key": [
+        "fluent-bit-chunk",
+        "flb_input_chunk.c",
+        "flb_input_chunk_set_limits",
+        0
+      ],
+      "fields": [
+        "diagnostics"
+      ],
+      "classification": "Scalar-plan flow refinement and its downstream identity/summary consequences; remaining refusals retained.",
+      "reviewed": true
+    },
+    {
+      "route": "corpus",
+      "key": [
+        "fluent-bit-chunk",
+        "flb_input_chunk.c",
+        "flb_input_chunk_set_up_down",
+        0
+      ],
+      "fields": [
+        "contract_dependencies",
+        "diagnostics",
+        "null_premises",
+        "status"
+      ],
+      "classification": "Custody promotion independently reviewed with source and full premises; null and combined verdict unchanged.",
+      "reviewed": true
+    },
+    {
+      "route": "corpus",
+      "key": [
+        "monkey-libevent",
+        "mk_core/mk_iov.c",
+        "mk_iov_free_marked",
+        0
+      ],
+      "fields": [
+        "diagnostics"
+      ],
+      "classification": "Scalar-plan flow refinement and its downstream identity/summary consequences; remaining refusals retained.",
+      "reviewed": true
+    },
+    {
+      "route": "corpus",
+      "key": [
+        "monkey-libevent",
+        "mk_server/mk_config.c",
+        "mk_config_set_init_values",
+        0
+      ],
+      "fields": [
+        "diagnostics"
+      ],
+      "classification": "Scalar-plan flow refinement and its downstream identity/summary consequences; remaining refusals retained.",
+      "reviewed": true
+    },
+    {
+      "route": "corpus",
+      "key": [
+        "monkey-libevent",
+        "mk_server/mk_config.c",
+        "mk_config_signature",
+        0
+      ],
+      "fields": [
+        "diagnostics"
+      ],
+      "classification": "Scalar-plan flow refinement and its downstream identity/summary consequences; remaining refusals retained.",
+      "reviewed": true
+    },
+    {
+      "route": "corpus",
+      "key": [
+        "monkey-libevent",
+        "mk_server/mk_fifo.c",
+        "mk_fifo_worker_read",
+        0
+      ],
+      "fields": [
+        "contract_dependencies",
+        "diagnostics",
+        "null_premises"
+      ],
+      "classification": "Scalar-plan flow refinement and its downstream identity/summary consequences; remaining refusals retained.",
+      "reviewed": true
+    },
+    {
+      "route": "corpus",
+      "key": [
+        "monkey-libevent",
+        "mk_server/mk_header.c",
+        "mk_header_response_reset",
+        0
+      ],
+      "fields": [
+        "diagnostics"
+      ],
+      "classification": "Scalar-plan flow refinement and its downstream identity/summary consequences; remaining refusals retained.",
+      "reviewed": true
+    },
+    {
+      "route": "corpus",
+      "key": [
+        "monkey-libevent",
+        "mk_server/mk_http.c",
+        "mk_http_request_init",
+        0
+      ],
+      "fields": [
+        "diagnostics"
+      ],
+      "classification": "Scalar-plan flow refinement and its downstream identity/summary consequences; remaining refusals retained.",
+      "reviewed": true
+    },
+    {
+      "route": "corpus",
+      "key": [
+        "monkey-libevent",
+        "mk_server/mk_http_parser.c",
+        "header_lookup",
+        0
+      ],
+      "fields": [
+        "diagnostics"
+      ],
+      "classification": "Scalar-plan flow refinement and its downstream identity/summary consequences; remaining refusals retained.",
+      "reviewed": true
+    },
+    {
+      "route": "corpus",
+      "key": [
+        "monkey-libevent",
+        "mk_server/mk_http_parser.c",
+        "mk_http_parser_ok",
+        0
+      ],
+      "fields": [
+        "diagnostics"
+      ],
+      "classification": "Scalar-plan flow refinement and its downstream identity/summary consequences; remaining refusals retained.",
+      "reviewed": true
+    },
+    {
+      "route": "corpus",
+      "key": [
+        "monkey-libevent",
+        "mk_server/mk_http_thread.c",
+        "mk_http_thread_purge",
+        0
+      ],
+      "fields": [
+        "diagnostics"
+      ],
+      "classification": "Scalar-plan flow refinement and its downstream identity/summary consequences; remaining refusals retained.",
+      "reviewed": true
+    },
+    {
+      "route": "corpus",
+      "key": [
+        "monkey-libevent",
+        "mk_server/mk_lib.c",
+        "mk_config_set_property",
+        0
+      ],
+      "fields": [
+        "diagnostics"
+      ],
+      "classification": "Scalar-plan flow refinement and its downstream identity/summary consequences; remaining refusals retained.",
+      "reviewed": true
+    },
+    {
+      "route": "corpus",
+      "key": [
+        "monkey-libevent",
+        "mk_server/mk_scheduler.c",
+        "mk_sched_launch_thread",
+        0
+      ],
+      "fields": [
+        "diagnostics"
+      ],
+      "classification": "Scalar-plan flow refinement and its downstream identity/summary consequences; remaining refusals retained.",
+      "reviewed": true
+    },
+    {
+      "route": "corpus",
+      "key": [
+        "monkey-libevent",
+        "mk_server/mk_user.c",
+        "mk_user_set_uidgid",
+        0
+      ],
+      "fields": [
+        "diagnostics"
+      ],
+      "classification": "Scalar-plan flow refinement and its downstream identity/summary consequences; remaining refusals retained.",
+      "reviewed": true
+    },
+    {
+      "route": "corpus",
+      "key": [
+        "monkey-libevent",
+        "mk_server/mk_vhost.c",
+        "mk_vhost_fdt_close",
+        0
+      ],
+      "fields": [
+        "diagnostics"
+      ],
+      "classification": "Scalar-plan flow refinement and its downstream identity/summary consequences; remaining refusals retained.",
+      "reviewed": true
+    },
+    {
+      "route": "corpus",
+      "key": [
+        "monkey-libevent",
+        "mk_server/mk_vhost.c",
+        "mk_vhost_fdt_open",
+        0
+      ],
+      "fields": [
+        "diagnostics"
+      ],
+      "classification": "Scalar-plan flow refinement and its downstream identity/summary consequences; remaining refusals retained.",
+      "reviewed": true
+    },
+    {
+      "route": "system",
+      "key": [
+        "fluent-bit-system",
+        "src/flb_input_chunk.c",
+        "flb_input_chunk_set_limits",
+        0
+      ],
+      "fields": [
+        "diagnostics"
+      ],
+      "classification": "Scalar-plan flow refinement and its downstream identity/summary consequences; remaining refusals retained.",
+      "reviewed": true
+    },
+    {
+      "route": "system",
+      "key": [
+        "fluent-bit-system",
+        "src/flb_input_chunk.c",
+        "flb_input_chunk_set_up_down",
+        0
+      ],
+      "fields": [
+        "contract_dependencies",
+        "diagnostics",
+        "null_premises",
+        "status"
+      ],
+      "classification": "Custody promotion independently reviewed with source and full premises; null and combined verdict unchanged.",
+      "reviewed": true
+    },
+    {
+      "route": "system",
+      "key": [
+        "fluent-bit-system",
+        "src/flb_input_chunk.c",
+        "flb_input_chunk_set_limits",
+        1
+      ],
+      "fields": [
+        "diagnostics"
+      ],
+      "classification": "Scalar-plan flow refinement and its downstream identity/summary consequences; remaining refusals retained.",
+      "reviewed": true
+    },
+    {
+      "route": "system",
+      "key": [
+        "fluent-bit-system",
+        "src/flb_input_chunk.c",
+        "flb_input_chunk_set_up_down",
+        1
+      ],
+      "fields": [
+        "contract_dependencies",
+        "diagnostics",
+        "null_premises",
+        "status"
+      ],
+      "classification": "Custody promotion independently reviewed with source and full premises; null and combined verdict unchanged.",
+      "reviewed": true
+    },
+    {
+      "route": "system",
+      "key": [
+        "fluent-bit-system",
+        "src/flb_storage.c",
+        "flb_storage_create",
+        0
+      ],
+      "fields": [
+        "review_holds"
+      ],
+      "classification": "Held module checkout prefix only; every reason, marker and clause remains held.",
+      "reviewed": true
+    },
+    {
+      "route": "system",
+      "key": [
+        "fluent-bit-system",
+        "src/flb_storage.c",
+        "flb_storage_input_create",
+        0
+      ],
+      "fields": [
+        "diagnostics"
+      ],
+      "classification": "Scalar-plan flow refinement and its downstream identity/summary consequences; remaining refusals retained.",
+      "reviewed": true
+    },
+    {
+      "route": "system",
+      "key": [
+        "fluent-bit-system",
+        "src/flb_storage.c",
+        "flb_storage_create",
+        1
+      ],
+      "fields": [
+        "review_holds"
+      ],
+      "classification": "Held module checkout prefix only; every reason, marker and clause remains held.",
+      "reviewed": true
+    },
+    {
+      "route": "system",
+      "key": [
+        "fluent-bit-system",
+        "src/flb_storage.c",
+        "flb_storage_input_create",
+        1
+      ],
+      "fields": [
+        "diagnostics"
+      ],
+      "classification": "Scalar-plan flow refinement and its downstream identity/summary consequences; remaining refusals retained.",
+      "reviewed": true
+    },
+    {
+      "route": "system",
+      "key": [
+        "fluent-bit-system",
+        "src/flb_engine.c",
+        "flb_engine_adaptive_flush_update",
+        0
+      ],
+      "fields": [
+        "diagnostics"
+      ],
+      "classification": "Scalar-plan flow refinement and its downstream identity/summary consequences; remaining refusals retained.",
+      "reviewed": true
+    },
+    {
+      "route": "system",
+      "key": [
+        "fluent-bit-system",
+        "src/flb_engine.c",
+        "flb_engine_shutdown",
+        0
+      ],
+      "fields": [
+        "diagnostics"
+      ],
+      "classification": "Scalar-plan flow refinement and its downstream identity/summary consequences; remaining refusals retained.",
+      "reviewed": true
+    },
+    {
+      "route": "system",
+      "key": [
+        "fluent-bit-system",
+        "src/flb_engine.c",
+        "flb_engine_start",
+        0
+      ],
+      "fields": [
+        "diagnostics"
+      ],
+      "classification": "Scalar-plan flow refinement and its downstream identity/summary consequences; remaining refusals retained.",
+      "reviewed": true
+    },
+    {
+      "route": "system",
+      "key": [
+        "fluent-bit-system",
+        "src/flb_engine.c",
+        "flb_engine_stop_ingestion",
+        0
+      ],
+      "fields": [
+        "diagnostics"
+      ],
+      "classification": "Scalar-plan flow refinement and its downstream identity/summary consequences; remaining refusals retained.",
+      "reviewed": true
+    },
+    {
+      "route": "system",
+      "key": [
+        "fluent-bit-system",
+        "src/flb_engine.c",
+        "flb_engine_adaptive_flush_update",
+        1
+      ],
+      "fields": [
+        "diagnostics"
+      ],
+      "classification": "Scalar-plan flow refinement and its downstream identity/summary consequences; remaining refusals retained.",
+      "reviewed": true
+    },
+    {
+      "route": "system",
+      "key": [
+        "fluent-bit-system",
+        "src/flb_engine.c",
+        "flb_engine_shutdown",
+        1
+      ],
+      "fields": [
+        "diagnostics"
+      ],
+      "classification": "Scalar-plan flow refinement and its downstream identity/summary consequences; remaining refusals retained.",
+      "reviewed": true
+    },
+    {
+      "route": "system",
+      "key": [
+        "fluent-bit-system",
+        "src/flb_engine.c",
+        "flb_engine_start",
+        1
+      ],
+      "fields": [
+        "diagnostics"
+      ],
+      "classification": "Scalar-plan flow refinement and its downstream identity/summary consequences; remaining refusals retained.",
+      "reviewed": true
+    },
+    {
+      "route": "system",
+      "key": [
+        "fluent-bit-system",
+        "src/flb_engine.c",
+        "flb_engine_stop_ingestion",
+        1
+      ],
+      "fields": [
+        "diagnostics"
+      ],
+      "classification": "Scalar-plan flow refinement and its downstream identity/summary consequences; remaining refusals retained.",
+      "reviewed": true
+    },
+    {
+      "route": "system",
+      "key": [
+        "fluent-bit-system",
+        "src/flb_scheduler.c",
+        "schedule_request_now",
+        0
+      ],
+      "fields": [
+        "diagnostics"
+      ],
+      "classification": "Scalar-plan flow refinement and its downstream identity/summary consequences; remaining refusals retained.",
+      "reviewed": true
+    },
+    {
+      "route": "system",
+      "key": [
+        "fluent-bit-system",
+        "src/flb_scheduler.c",
+        "schedule_request_now",
+        1
+      ],
+      "fields": [
+        "diagnostics"
+      ],
+      "classification": "Scalar-plan flow refinement and its downstream identity/summary consequences; remaining refusals retained.",
+      "reviewed": true
+    },
+    {
+      "route": "system",
+      "key": [
+        "fluent-bit-system",
+        "src/flb_output.c",
+        "flb_output_exit",
+        0
+      ],
+      "fields": [
+        "review_holds"
+      ],
+      "classification": "Held module checkout prefix only; every reason, marker and clause remains held.",
+      "reviewed": true
+    },
+    {
+      "route": "system",
+      "key": [
+        "fluent-bit-system",
+        "src/flb_output.c",
+        "flb_output_flush_id_get",
+        0
+      ],
+      "fields": [
+        "diagnostics"
+      ],
+      "classification": "Scalar-plan flow refinement and its downstream identity/summary consequences; remaining refusals retained.",
+      "reviewed": true
+    },
+    {
+      "route": "system",
+      "key": [
+        "fluent-bit-system",
+        "src/flb_output.c",
+        "flb_output_exit",
+        1
+      ],
+      "fields": [
+        "review_holds"
+      ],
+      "classification": "Held module checkout prefix only; every reason, marker and clause remains held.",
+      "reviewed": true
+    },
+    {
+      "route": "system",
+      "key": [
+        "fluent-bit-system",
+        "src/flb_output.c",
+        "flb_output_flush_id_get",
+        1
+      ],
+      "fields": [
+        "diagnostics"
+      ],
+      "classification": "Scalar-plan flow refinement and its downstream identity/summary consequences; remaining refusals retained.",
+      "reviewed": true
+    },
+    {
+      "route": "slice",
+      "key": [
+        "fluent-bit-tail-pause",
+        "src/flb_input.c",
+        "flb_input_instance_exit",
+        0
+      ],
+      "fields": [
+        "review_holds"
+      ],
+      "classification": "Held module checkout prefix only; every reason, marker and clause remains held.",
+      "reviewed": true
+    },
+    {
+      "route": "slice",
+      "key": [
+        "fluent-bit-tail-pause",
+        "src/flb_input.c",
+        "flb_input_net_property_check",
+        0
+      ],
+      "fields": [
+        "diagnostics"
+      ],
+      "classification": "Scalar-plan flow refinement and its downstream identity/summary consequences; remaining refusals retained.",
+      "reviewed": true
+    },
+    {
+      "route": "slice",
+      "key": [
+        "fluent-bit-tail-pause",
+        "src/flb_input.c",
+        "flb_input_pause",
+        0
+      ],
+      "fields": [
+        "diagnostics"
+      ],
+      "classification": "Scalar-plan flow refinement and its downstream identity/summary consequences; remaining refusals retained.",
+      "reviewed": true
+    },
+    {
+      "route": "slice",
+      "key": [
+        "fluent-bit-tail-pause",
+        "src/flb_input.c",
+        "flb_input_rate_gate_maybe_resume",
+        0
+      ],
+      "fields": [
+        "diagnostics"
+      ],
+      "classification": "Scalar-plan flow refinement and its downstream identity/summary consequences; remaining refusals retained.",
+      "reviewed": true
+    },
+    {
+      "route": "slice",
+      "key": [
+        "fluent-bit-tail-pause",
+        "src/flb_input.c",
+        "flb_input_rate_gate_protect",
+        0
+      ],
+      "fields": [
+        "diagnostics"
+      ],
+      "classification": "Scalar-plan flow refinement and its downstream identity/summary consequences; remaining refusals retained.",
+      "reviewed": true
+    },
+    {
+      "route": "slice",
+      "key": [
+        "fluent-bit-tail-pause",
+        "src/flb_input.c",
+        "flb_input_rate_update",
+        0
+      ],
+      "fields": [
+        "diagnostics"
+      ],
+      "classification": "Scalar-plan flow refinement and its downstream identity/summary consequences; remaining refusals retained.",
+      "reviewed": true
+    },
+    {
+      "route": "slice",
+      "key": [
+        "fluent-bit-tail-pause",
+        "src/flb_input.c",
+        "flb_input_instance_exit",
+        1
+      ],
+      "fields": [
+        "review_holds"
+      ],
+      "classification": "Held module checkout prefix only; every reason, marker and clause remains held.",
+      "reviewed": true
+    },
+    {
+      "route": "slice",
+      "key": [
+        "fluent-bit-tail-pause",
+        "src/flb_input.c",
+        "flb_input_net_property_check",
+        1
+      ],
+      "fields": [
+        "diagnostics"
+      ],
+      "classification": "Scalar-plan flow refinement and its downstream identity/summary consequences; remaining refusals retained.",
+      "reviewed": true
+    },
+    {
+      "route": "slice",
+      "key": [
+        "fluent-bit-tail-pause",
+        "src/flb_input.c",
+        "flb_input_pause",
+        1
+      ],
+      "fields": [
+        "diagnostics"
+      ],
+      "classification": "Scalar-plan flow refinement and its downstream identity/summary consequences; remaining refusals retained.",
+      "reviewed": true
+    },
+    {
+      "route": "slice",
+      "key": [
+        "fluent-bit-tail-pause",
+        "src/flb_input.c",
+        "flb_input_rate_gate_maybe_resume",
+        1
+      ],
+      "fields": [
+        "diagnostics"
+      ],
+      "classification": "Scalar-plan flow refinement and its downstream identity/summary consequences; remaining refusals retained.",
+      "reviewed": true
+    },
+    {
+      "route": "slice",
+      "key": [
+        "fluent-bit-tail-pause",
+        "src/flb_input.c",
+        "flb_input_rate_gate_protect",
+        1
+      ],
+      "fields": [
+        "diagnostics"
+      ],
+      "classification": "Scalar-plan flow refinement and its downstream identity/summary consequences; remaining refusals retained.",
+      "reviewed": true
+    },
+    {
+      "route": "slice",
+      "key": [
+        "fluent-bit-tail-pause",
+        "src/flb_input.c",
+        "flb_input_rate_update",
+        1
+      ],
+      "fields": [
+        "diagnostics"
+      ],
+      "classification": "Scalar-plan flow refinement and its downstream identity/summary consequences; remaining refusals retained.",
+      "reviewed": true
+    },
+    {
+      "route": "slice",
+      "key": [
+        "fluent-bit-tail-pause",
+        "src/flb_input_thread.c",
+        "input_thread_instance_destroy",
+        0
+      ],
+      "fields": [
+        "diagnostics"
+      ],
+      "classification": "Scalar-plan flow refinement and its downstream identity/summary consequences; remaining refusals retained.",
+      "reviewed": true
+    },
+    {
+      "route": "slice",
+      "key": [
+        "fluent-bit-tail-pause",
+        "src/flb_input_thread.c",
+        "input_thread_instance_set_status",
+        0
+      ],
+      "fields": [
+        "contract_dependencies",
+        "diagnostics",
+        "null_premises"
+      ],
+      "classification": "Scalar-plan flow refinement and its downstream identity/summary consequences; remaining refusals retained.",
+      "reviewed": true
+    },
+    {
+      "route": "slice",
+      "key": [
+        "fluent-bit-tail-pause",
+        "src/flb_input_thread.c",
+        "input_thread_instance_destroy",
+        1
+      ],
+      "fields": [
+        "diagnostics"
+      ],
+      "classification": "Scalar-plan flow refinement and its downstream identity/summary consequences; remaining refusals retained.",
+      "reviewed": true
+    },
+    {
+      "route": "slice",
+      "key": [
+        "fluent-bit-tail-pause",
+        "src/flb_input_thread.c",
+        "input_thread_instance_set_status",
+        1
+      ],
+      "fields": [
+        "contract_dependencies",
+        "diagnostics",
+        "null_premises"
+      ],
+      "classification": "Scalar-plan flow refinement and its downstream identity/summary consequences; remaining refusals retained.",
+      "reviewed": true
+    },
+    {
+      "route": "slice",
+      "key": [
+        "fluent-bit-tail-pause",
+        "src/flb_lib.c",
+        "flb_create",
+        0
+      ],
+      "fields": [
+        "review_holds"
+      ],
+      "classification": "Held module checkout prefix only; every reason, marker and clause remains held.",
+      "reviewed": true
+    },
+    {
+      "route": "slice",
+      "key": [
+        "fluent-bit-tail-pause",
+        "src/flb_lib.c",
+        "flb_input",
+        0
+      ],
+      "fields": [
+        "review_holds"
+      ],
+      "classification": "Held module checkout prefix only; every reason, marker and clause remains held.",
+      "reviewed": true
+    },
+    {
+      "route": "slice",
+      "key": [
+        "fluent-bit-tail-pause",
+        "src/flb_lib.c",
+        "flb_service_set",
+        0
+      ],
+      "fields": [
+        "review_holds"
+      ],
+      "classification": "Held module checkout prefix only; every reason, marker and clause remains held.",
+      "reviewed": true
+    },
+    {
+      "route": "slice",
+      "key": [
+        "fluent-bit-tail-pause",
+        "src/flb_lib.c",
+        "flb_create",
+        1
+      ],
+      "fields": [
+        "review_holds"
+      ],
+      "classification": "Held module checkout prefix only; every reason, marker and clause remains held.",
+      "reviewed": true
+    },
+    {
+      "route": "slice",
+      "key": [
+        "fluent-bit-tail-pause",
+        "src/flb_lib.c",
+        "flb_input",
+        1
+      ],
+      "fields": [
+        "review_holds"
+      ],
+      "classification": "Held module checkout prefix only; every reason, marker and clause remains held.",
+      "reviewed": true
+    },
+    {
+      "route": "slice",
+      "key": [
+        "fluent-bit-tail-pause",
+        "src/flb_lib.c",
+        "flb_service_set",
+        1
+      ],
+      "fields": [
+        "review_holds"
+      ],
+      "classification": "Held module checkout prefix only; every reason, marker and clause remains held.",
+      "reviewed": true
+    },
+    {
+      "route": "slice",
+      "key": [
+        "fluent-bit-tail-pause",
+        "plugins/in_tail/tail_dockermode.c",
+        "flb_tail_dmode_create",
+        0
+      ],
+      "fields": [
+        "diagnostics"
+      ],
+      "classification": "Scalar-plan flow refinement and its downstream identity/summary consequences; remaining refusals retained.",
+      "reviewed": true
+    },
+    {
+      "route": "slice",
+      "key": [
+        "fluent-bit-tail-pause",
+        "plugins/in_tail/tail_file.c",
+        "dormant_detach_path",
+        0
+      ],
+      "fields": [
+        "diagnostics"
+      ],
+      "classification": "Scalar-plan flow refinement and its downstream identity/summary consequences; remaining refusals retained.",
+      "reviewed": true
+    },
+    {
+      "route": "slice",
+      "key": [
+        "fluent-bit-tail-pause",
+        "plugins/in_tail/tail_file.c",
+        "flb_tail_file_append",
+        0
+      ],
+      "fields": [
+        "diagnostics"
+      ],
+      "classification": "Two ctx scalar leaves removed; source1838 generic access refusal becomes conservative file actual-read refusal. Full CFG probe archived; row remains Unknown.",
+      "reviewed": true
+    },
+    {
+      "route": "slice",
+      "key": [
+        "fluent-bit-tail-pause",
+        "plugins/in_tail/tail_file.c",
+        "flb_tail_file_dormant_scan_begin",
+        0
+      ],
+      "fields": [
+        "diagnostics",
+        "status"
+      ],
+      "classification": "Custody promotion independently reviewed with source and full premises; null and combined verdict unchanged.",
+      "reviewed": true
+    },
+    {
+      "route": "slice",
+      "key": [
+        "fluent-bit-tail-pause",
+        "plugins/in_tail/tail_file.c",
+        "flb_tail_file_rotated",
+        0
+      ],
+      "fields": [
+        "diagnostics"
+      ],
+      "classification": "Scalar-plan flow refinement and its downstream identity/summary consequences; remaining refusals retained.",
+      "reviewed": true
+    },
+    {
+      "route": "slice",
+      "key": [
+        "fluent-bit-tail-pause",
+        "plugins/in_tail/tail_file.c",
+        "flb_tail_file_to_event",
+        0
+      ],
+      "fields": [
+        "diagnostics"
+      ],
+      "classification": "Scalar-plan flow refinement and its downstream identity/summary consequences; remaining refusals retained.",
+      "reviewed": true
+    },
+    {
+      "route": "slice",
+      "key": [
+        "fluent-bit-tail-pause",
+        "plugins/in_tail/tail_file_budget.c",
+        "flb_tail_file_budget_reserve",
+        0
+      ],
+      "fields": [
+        "diagnostics"
+      ],
+      "classification": "Scalar-plan flow refinement and its downstream identity/summary consequences; remaining refusals retained.",
+      "reviewed": true
+    },
+    {
+      "route": "slice",
+      "key": [
+        "fluent-bit-tail-pause",
+        "plugins/in_tail/tail_fs_inotify.c",
+        "flb_tail_fs_inotify_remove",
+        0
+      ],
+      "fields": [
+        "diagnostics"
+      ],
+      "classification": "Scalar-plan flow refinement and its downstream identity/summary consequences; remaining refusals retained.",
+      "reviewed": true
+    },
+    {
+      "route": "slice",
+      "key": [
+        "fluent-bit-tail-pause",
+        "plugins/in_tail/tail_fs_stat.c",
+        "flb_tail_fs_stat_init",
+        0
+      ],
+      "fields": [
+        "diagnostics"
+      ],
+      "classification": "Scalar-plan flow refinement and its downstream identity/summary consequences; remaining refusals retained.",
+      "reviewed": true
+    },
+    {
+      "route": "slice",
+      "key": [
+        "fluent-bit-tail-pause",
+        "plugins/in_tail/tail_fs_stat.c",
+        "tail_fs_event",
+        0
+      ],
+      "fields": [
+        "contract_dependencies"
+      ],
+      "classification": "Dependency null-premise propagation only; public status, diagnostics and null-premise array unchanged.",
+      "reviewed": true
+    },
+    {
+      "route": "slice",
+      "key": [
+        "fluent-bit-tail-pause",
+        "plugins/in_tail/tail_multiline.c",
+        "flb_tail_mult_create",
+        0
+      ],
+      "fields": [
+        "diagnostics"
+      ],
+      "classification": "Scalar-plan flow refinement and its downstream identity/summary consequences; remaining refusals retained.",
+      "reviewed": true
+    },
+    {
+      "route": "slice",
+      "key": [
+        "fluent-bit-tail-pause",
+        "plugins/in_tail/tail_multiline.c",
+        "flb_tail_mult_pack_line_body",
+        0
+      ],
+      "fields": [
+        "diagnostics"
+      ],
+      "classification": "Scalar-plan flow refinement and its downstream identity/summary consequences; remaining refusals retained.",
+      "reviewed": true
+    }
+  ]
+}

@@ -1,0 +1,4579 @@
+{
+  "meaning": "Comparison-only normalization; every raw artifact and full duplicate-preserving changed row remains archived",
+  "units": 15,
+  "configuration_rows": 448,
+  "configuration_identity_changes": [
+    {
+      "unit_index": 0,
+      "file": "plugins/in_storage_backlog/sb.c",
+      "identities": {
+        "740d0fe5957272cc28e7206d39529d62a00178bea58a1c1ed7d82ef93c8382dc": "193c72ab3c2a14196b164a4efd161e169f07fbce82ad7367000c64eb89721b99",
+        "e8b1bddfd4e70a7039fc7ff6f2235993d06b871d7dc03362b65e12d14345c86f": "5a98759448446bf45b884fb3010c7f70c22c7fe0f8075e1be285da00d92c2b16"
+      }
+    },
+    {
+      "unit_index": 1,
+      "file": "src/flb_input_chunk.c",
+      "identities": {
+        "740d0fe5957272cc28e7206d39529d62a00178bea58a1c1ed7d82ef93c8382dc": "193c72ab3c2a14196b164a4efd161e169f07fbce82ad7367000c64eb89721b99",
+        "b9ef51e48608657f2942bfeb7438736f875ca45ffae40b78c751d63ca09416de": "2a8decb4f72dc92cde1b2c3a20c15816f6e6390d1e3b1778f76773ea3534e7bd"
+      }
+    },
+    {
+      "unit_index": 2,
+      "file": "src/flb_input_chunk.c",
+      "identities": {
+        "740d0fe5957272cc28e7206d39529d62a00178bea58a1c1ed7d82ef93c8382dc": "193c72ab3c2a14196b164a4efd161e169f07fbce82ad7367000c64eb89721b99",
+        "cb601e4eb3a6c0d7e5650e87349cb4181aa36c542edd82012c52d9979edf974c": "e6137187203e882292044724674c3c370de502257263be70fa24c0088d9b2d0a"
+      }
+    },
+    {
+      "unit_index": 3,
+      "file": "src/flb_storage.c",
+      "identities": {
+        "740d0fe5957272cc28e7206d39529d62a00178bea58a1c1ed7d82ef93c8382dc": "193c72ab3c2a14196b164a4efd161e169f07fbce82ad7367000c64eb89721b99",
+        "ab96b212a09d3072854189f21a9b3ac993006ce10dfec6a182674e91eb93d1d5": "4ac917fbae78186ec4aca5f2bb4c9d3119ba31506230d08836b75daa2d783821"
+      }
+    },
+    {
+      "unit_index": 4,
+      "file": "src/flb_storage.c",
+      "identities": {
+        "740d0fe5957272cc28e7206d39529d62a00178bea58a1c1ed7d82ef93c8382dc": "193c72ab3c2a14196b164a4efd161e169f07fbce82ad7367000c64eb89721b99",
+        "a7f1e2919dca24e370752e025f792df3afc2502bce2f09ab6b6d35c7842aa842": "db611f7199b0940f0ee2f6ead1cc91101e01db634a4f31cece05534236e4197d"
+      }
+    },
+    {
+      "unit_index": 5,
+      "file": "src/flb_task.c",
+      "identities": {
+        "740d0fe5957272cc28e7206d39529d62a00178bea58a1c1ed7d82ef93c8382dc": "193c72ab3c2a14196b164a4efd161e169f07fbce82ad7367000c64eb89721b99",
+        "0e5eb3e4de49210ba990ad9561ef5dd80d8df32525efcb0a6e4af99eb8c9554f": "5c03f538b7ded29373797bde8ee19c0c9683d35a98f8716b6bf8f1a20f8524a5"
+      }
+    },
+    {
+      "unit_index": 6,
+      "file": "src/flb_task.c",
+      "identities": {
+        "740d0fe5957272cc28e7206d39529d62a00178bea58a1c1ed7d82ef93c8382dc": "193c72ab3c2a14196b164a4efd161e169f07fbce82ad7367000c64eb89721b99",
+        "64433222a6fbb4067d54ee08fd52b6787f456f25295f5a54d6c4b659276216fd": "a85e565f01e5ac4fdcde0bee903ee51873264b613e068091e46c08d4291d5683"
+      }
+    },
+    {
+      "unit_index": 7,
+      "file": "src/flb_engine.c",
+      "identities": {
+        "740d0fe5957272cc28e7206d39529d62a00178bea58a1c1ed7d82ef93c8382dc": "193c72ab3c2a14196b164a4efd161e169f07fbce82ad7367000c64eb89721b99",
+        "e7335c95b7fa84d5b1fa9b048908fe0557fe852017ab4d75069507869ab9bf8e": "1cfed01cf3a307ee7ab07c956b1129b77437db61c8c7dc5840ad650396e78428"
+      }
+    },
+    {
+      "unit_index": 8,
+      "file": "src/flb_engine.c",
+      "identities": {
+        "740d0fe5957272cc28e7206d39529d62a00178bea58a1c1ed7d82ef93c8382dc": "193c72ab3c2a14196b164a4efd161e169f07fbce82ad7367000c64eb89721b99",
+        "7b697cffa7faa6d17ca8aab9883028423408179fb84def48304fd0a407d2ff43": "cc16aa51d2875b64898897cc2294b587fde6c8231579b670045eea7b7916e4b7"
+      }
+    },
+    {
+      "unit_index": 9,
+      "file": "src/flb_engine_dispatch.c",
+      "identities": {
+        "740d0fe5957272cc28e7206d39529d62a00178bea58a1c1ed7d82ef93c8382dc": "193c72ab3c2a14196b164a4efd161e169f07fbce82ad7367000c64eb89721b99",
+        "d1ed759be26b5ebd84e6041b6a9b1cd41c0cf88f9e52a4364aa167d577844b92": "13d261b8d29d3c8bea1567dbf2c60de50cc20512019b64412d69dc90f643cde1"
+      }
+    },
+    {
+      "unit_index": 10,
+      "file": "src/flb_engine_dispatch.c",
+      "identities": {
+        "740d0fe5957272cc28e7206d39529d62a00178bea58a1c1ed7d82ef93c8382dc": "193c72ab3c2a14196b164a4efd161e169f07fbce82ad7367000c64eb89721b99",
+        "71810b66ab40920b757f398d7ca7409232af60554970497dc24e58f85b4fc7ff": "0f71b4e3554b24f3ee6b5038a0f30f04f239d78b3fdb8b3e62a8658ba2020295"
+      }
+    },
+    {
+      "unit_index": 11,
+      "file": "src/flb_scheduler.c",
+      "identities": {
+        "740d0fe5957272cc28e7206d39529d62a00178bea58a1c1ed7d82ef93c8382dc": "193c72ab3c2a14196b164a4efd161e169f07fbce82ad7367000c64eb89721b99",
+        "8c6a7932d194a00f68d8fc1734997f1a1b0a5e0d5058ff0616d7f0440cb42bd6": "501152e9492f8413e7efc5555b8e06435fb7dc33b3f7725f43201d48b2b8ea38"
+      }
+    },
+    {
+      "unit_index": 12,
+      "file": "src/flb_scheduler.c",
+      "identities": {
+        "740d0fe5957272cc28e7206d39529d62a00178bea58a1c1ed7d82ef93c8382dc": "193c72ab3c2a14196b164a4efd161e169f07fbce82ad7367000c64eb89721b99",
+        "08b9847375c9f626692a11e78628cbea3c1906892c7659372d79e225768415ca": "b2d3be2ccf38a7ebb9ad98ff5373d76586d43f1696bc5676b927096e16ec0567"
+      }
+    },
+    {
+      "unit_index": 13,
+      "file": "src/flb_output.c",
+      "identities": {
+        "740d0fe5957272cc28e7206d39529d62a00178bea58a1c1ed7d82ef93c8382dc": "193c72ab3c2a14196b164a4efd161e169f07fbce82ad7367000c64eb89721b99",
+        "5ef05beb12a223fba0ae1264c83d196d1533fe96ce45061cfa4d0c2f48dac4bb": "5b46b5eee9c3c9527fea5bea9234fdd9463211e605c0c38a47f8d339744194f9"
+      }
+    },
+    {
+      "unit_index": 14,
+      "file": "src/flb_output.c",
+      "identities": {
+        "740d0fe5957272cc28e7206d39529d62a00178bea58a1c1ed7d82ef93c8382dc": "193c72ab3c2a14196b164a4efd161e169f07fbce82ad7367000c64eb89721b99",
+        "4438f2f34c2f79b2389526c731ff16f28e9f7dcfd918cce99e922cb6482f318c": "92c3fa113a6c243ea1dba8b4779184fe36e29717c6118ce19a5a79f037e34f76"
+      }
+    }
+  ],
+  "held_contract_module_path_only": [
+    {
+      "unit_index": 3,
+      "file": "src/flb_storage.c",
+      "function": "flb_storage_create"
+    },
+    {
+      "unit_index": 4,
+      "file": "src/flb_storage.c",
+      "function": "flb_storage_create"
+    },
+    {
+      "unit_index": 13,
+      "file": "src/flb_output.c",
+      "function": "flb_output_exit"
+    },
+    {
+      "unit_index": 14,
+      "file": "src/flb_output.c",
+      "function": "flb_output_exit"
+    }
+  ],
+  "all_other_nonfunction_source_contract_scope_fields_unchanged": true,
+  "normalized_module_texts_identical": 64,
+  "raw_contract_keys": {
+    "before": [
+      "/home/cosmo/Documents/GitHub/qcore-c/contract/profiles/fluent-bit/../../../providers/qcore-provider-chunkio/contracts/chunkio/chunk_residency.qv",
+      "/home/cosmo/Documents/GitHub/qcore-c/contract/profiles/fluent-bit/../../../providers/qcore-provider-chunkio/contracts/chunkio/chunk_sizes.qv",
+      "/home/cosmo/Documents/GitHub/qcore-c/contract/profiles/fluent-bit/../../../providers/qcore-provider-chunkio/contracts/chunkio/resource_open_close.qv",
+      "/home/cosmo/Documents/GitHub/qcore-c/contract/profiles/fluent-bit/../../../providers/qcore-provider-cmetrics/contracts/cmetrics/context_lifetime.qv",
+      "/home/cosmo/Documents/GitHub/qcore-c/contract/profiles/fluent-bit/../../../providers/qcore-provider-cmetrics/contracts/cmetrics/metric_values.qv",
+      "/home/cosmo/Documents/GitHub/qcore-c/contract/profiles/fluent-bit/../../../providers/qcore-provider-cmetrics/contracts/cmetrics/mpack_utils.qv",
+      "/home/cosmo/Documents/GitHub/qcore-c/contract/profiles/fluent-bit/../../../providers/qcore-provider-ctraces/contracts/ctraces/context_lifetime.qv",
+      "/home/cosmo/Documents/GitHub/qcore-c/contract/profiles/fluent-bit/../../../providers/qcore-provider-libevent/contracts/monkey/event_loop.qv",
+      "/home/cosmo/Documents/GitHub/qcore-c/contract/profiles/fluent-bit/../../../providers/qcore-provider-libevent/contracts/monkey/intrusive_list.qv",
+      "/home/cosmo/Documents/GitHub/qcore-c/contract/profiles/fluent-bit/../../../providers/qcore-provider-libevent/contracts/monkey/logging.qv",
+      "/home/cosmo/Documents/GitHub/qcore-c/contract/profiles/fluent-bit/../../../providers/qcore-provider-libevent/contracts/monkey/scalar_observation.qv",
+      "/home/cosmo/Documents/GitHub/qcore-c/contract/profiles/fluent-bit/../../../providers/qcore-provider-libevent/contracts/monkey/string.qv",
+      "/home/cosmo/Documents/GitHub/qcore-c/contract/profiles/fluent-bit/../../../providers/qcore-provider-libevent/contracts/monkey/vhost_set.qv",
+      "/home/cosmo/Documents/GitHub/qcore-c/contract/profiles/fluent-bit/../../../providers/qcore-provider-librdkafka/contracts/librdkafka/cjson.qv",
+      "/home/cosmo/Documents/GitHub/qcore-c/contract/profiles/fluent-bit/../../../providers/qcore-provider-librdkafka/contracts/librdkafka/client.qv",
+      "/home/cosmo/Documents/GitHub/qcore-c/contract/profiles/fluent-bit/../../../providers/qcore-provider-librdkafka/contracts/librdkafka/kafka_mem.qv",
+      "/home/cosmo/Documents/GitHub/qcore-c/contract/profiles/fluent-bit/../../../providers/qcore-provider-librdkafka/contracts/librdkafka/lz4_stream.qv",
+      "/home/cosmo/Documents/GitHub/qcore-c/contract/profiles/fluent-bit/../../../providers/qcore-provider-librdkafka/contracts/librdkafka/topic_partition.qv",
+      "/home/cosmo/Documents/GitHub/qcore-c/contract/profiles/fluent-bit/../../../providers/quirin-provider-cfl/contracts/cfl/sds_lifetime.qv",
+      "/home/cosmo/Documents/GitHub/qcore-c/contract/profiles/fluent-bit/../../../providers/quirin-provider-cfl/contracts/cfl/time.qv",
+      "/home/cosmo/Documents/GitHub/qcore-c/contract/profiles/fluent-bit/../../../providers/quirin-provider-fluent-bit/contracts/fluent_bit/hash_table_publication.qv",
+      "/home/cosmo/Documents/GitHub/qcore-c/contract/profiles/fluent-bit/../../../providers/quirin-provider-fluent-bit/contracts/fluent_bit/input_chunk_destroy.qv",
+      "/home/cosmo/Documents/GitHub/qcore-c/contract/profiles/fluent-bit/../../../providers/quirin-provider-fluent-bit/contracts/fluent_bit/input_chunk_destroy_direct_routes.qv",
+      "/home/cosmo/Documents/GitHub/qcore-c/contract/profiles/fluent-bit/../../../providers/quirin-provider-fluent-bit/contracts/fluent_bit/input_chunk_helpers.qv",
+      "/home/cosmo/Documents/GitHub/qcore-c/contract/profiles/fluent-bit/../../../providers/quirin-provider-fluent-bit/contracts/fluent_bit/input_chunk_is_up.qv",
+      "/home/cosmo/Documents/GitHub/qcore-c/contract/profiles/fluent-bit/../../../providers/quirin-provider-fluent-bit/contracts/fluent_bit/input_chunk_name.qv",
+      "/home/cosmo/Documents/GitHub/qcore-c/contract/profiles/fluent-bit/../../../providers/quirin-provider-fluent-bit/contracts/fluent_bit/input_chunk_sizes.qv",
+      "/home/cosmo/Documents/GitHub/qcore-c/contract/profiles/fluent-bit/../../../providers/quirin-provider-fluent-bit/contracts/fluent_bit/input_chunk_total_size.qv",
+      "/home/cosmo/Documents/GitHub/qcore-c/contract/profiles/fluent-bit/../../../providers/quirin-provider-fluent-bit/contracts/fluent_bit/input_collector_registration.qv",
+      "/home/cosmo/Documents/GitHub/qcore-c/contract/profiles/fluent-bit/../../../providers/quirin-provider-fluent-bit/contracts/fluent_bit/input_instance.qv",
+      "/home/cosmo/Documents/GitHub/qcore-c/contract/profiles/fluent-bit/../../../providers/quirin-provider-fluent-bit/contracts/fluent_bit/lib_engine_thread.qv",
+      "/home/cosmo/Documents/GitHub/qcore-c/contract/profiles/fluent-bit/../../../providers/quirin-provider-fluent-bit/contracts/fluent_bit/logging.qv",
+      "/home/cosmo/Documents/GitHub/qcore-c/contract/profiles/fluent-bit/../../../providers/quirin-provider-fluent-bit/contracts/fluent_bit/loop_owner.qv",
+      "/home/cosmo/Documents/GitHub/qcore-c/contract/profiles/fluent-bit/../../../providers/quirin-provider-fluent-bit/contracts/fluent_bit/output_flush_id.qv",
+      "/home/cosmo/Documents/GitHub/qcore-c/contract/profiles/fluent-bit/../../../providers/quirin-provider-fluent-bit/contracts/fluent_bit/output_singleplex.qv",
+      "/home/cosmo/Documents/GitHub/qcore-c/contract/profiles/fluent-bit/../../../providers/quirin-provider-fluent-bit/contracts/fluent_bit/routes_mask.qv",
+      "/home/cosmo/Documents/GitHub/qcore-c/contract/profiles/fluent-bit/../../../providers/quirin-provider-fluent-bit/contracts/fluent_bit/storage_backlog.qv",
+      "/home/cosmo/Documents/GitHub/qcore-c/contract/profiles/fluent-bit/../../../providers/quirin-provider-fluent-bit/contracts/fluent_bit/task_route_queries.qv",
+      "/home/cosmo/Documents/GitHub/qcore-c/contract/profiles/fluent-bit/../../../providers/quirin-provider-fluent-bit/contracts/fluent_bit/task_users.qv",
+      "/home/cosmo/Documents/GitHub/qcore-c/contract/profiles/fluent-bit/../../../providers/quirin-provider-fluent-bit/contracts/fluent_bit/teardown_destroy.qv",
+      "/home/cosmo/Documents/GitHub/qcore-c/contract/profiles/fluent-bit/../../../providers/quirin-provider-fluent-bit/contracts/fluent_bit/time.qv",
+      "/home/cosmo/Documents/GitHub/qcore-c/contract/profiles/fluent-bit/../../../providers/quirin-provider-libc/contracts/libc/dirent.qv",
+      "/home/cosmo/Documents/GitHub/qcore-c/contract/profiles/fluent-bit/../../../providers/quirin-provider-libc/contracts/libc/dlfcn.qv",
+      "/home/cosmo/Documents/GitHub/qcore-c/contract/profiles/fluent-bit/../../../providers/quirin-provider-libc/contracts/libc/errno.qv",
+      "/home/cosmo/Documents/GitHub/qcore-c/contract/profiles/fluent-bit/../../../providers/quirin-provider-libc/contracts/libc/math.qv",
+      "/home/cosmo/Documents/GitHub/qcore-c/contract/profiles/fluent-bit/../../../providers/quirin-provider-libc/contracts/libc/memory.qv",
+      "/home/cosmo/Documents/GitHub/qcore-c/contract/profiles/fluent-bit/../../../providers/quirin-provider-libc/contracts/libc/process.qv",
+      "/home/cosmo/Documents/GitHub/qcore-c/contract/profiles/fluent-bit/../../../providers/quirin-provider-libc/contracts/libc/pthread_mutex.qv",
+      "/home/cosmo/Documents/GitHub/qcore-c/contract/profiles/fluent-bit/../../../providers/quirin-provider-libc/contracts/libc/pthread_sync.qv",
+      "/home/cosmo/Documents/GitHub/qcore-c/contract/profiles/fluent-bit/../../../providers/quirin-provider-libc/contracts/libc/regex.qv",
+      "/home/cosmo/Documents/GitHub/qcore-c/contract/profiles/fluent-bit/../../../providers/quirin-provider-libc/contracts/libc/socket.qv",
+      "/home/cosmo/Documents/GitHub/qcore-c/contract/profiles/fluent-bit/../../../providers/quirin-provider-libc/contracts/libc/stdio.qv",
+      "/home/cosmo/Documents/GitHub/qcore-c/contract/profiles/fluent-bit/../../../providers/quirin-provider-libc/contracts/libc/stdlib.qv",
+      "/home/cosmo/Documents/GitHub/qcore-c/contract/profiles/fluent-bit/../../../providers/quirin-provider-libc/contracts/libc/string.qv",
+      "/home/cosmo/Documents/GitHub/qcore-c/contract/profiles/fluent-bit/../../../providers/quirin-provider-libc/contracts/libc/sys_stat.qv",
+      "/home/cosmo/Documents/GitHub/qcore-c/contract/profiles/fluent-bit/../../../providers/quirin-provider-libc/contracts/libc/threads.qv",
+      "/home/cosmo/Documents/GitHub/qcore-c/contract/profiles/fluent-bit/../../../providers/quirin-provider-libc/contracts/libc/time.qv",
+      "/home/cosmo/Documents/GitHub/qcore-c/contract/profiles/fluent-bit/../../../providers/quirin-provider-libc/contracts/libc/unistd.qv",
+      "/home/cosmo/Documents/GitHub/qcore-c/contract/profiles/fluent-bit/../../../providers/quirin-provider-mpack/contracts/mpack/writer.qv",
+      "/home/cosmo/Documents/GitHub/qcore-c/contract/profiles/fluent-bit/../../../providers/quirin-provider-msgpack/contracts/msgpack/packer.qv",
+      "qcore-provider-libevent:monkey/memory.qv",
+      "qcore-provider-librdkafka:librdkafka/memory.qv",
+      "quirin-provider-fluent-bit:fluent_bit/resource_memory.qv",
+      "quirin-provider-fluent-bit:fluent_bit/resource_string.qv"
+    ],
+    "after": [
+      "/tmp/qcore-lexical-typed-precedence/contract/profiles/fluent-bit/../../../providers/qcore-provider-chunkio/contracts/chunkio/chunk_residency.qv",
+      "/tmp/qcore-lexical-typed-precedence/contract/profiles/fluent-bit/../../../providers/qcore-provider-chunkio/contracts/chunkio/chunk_sizes.qv",
+      "/tmp/qcore-lexical-typed-precedence/contract/profiles/fluent-bit/../../../providers/qcore-provider-chunkio/contracts/chunkio/resource_open_close.qv",
+      "/tmp/qcore-lexical-typed-precedence/contract/profiles/fluent-bit/../../../providers/qcore-provider-cmetrics/contracts/cmetrics/context_lifetime.qv",
+      "/tmp/qcore-lexical-typed-precedence/contract/profiles/fluent-bit/../../../providers/qcore-provider-cmetrics/contracts/cmetrics/metric_values.qv",
+      "/tmp/qcore-lexical-typed-precedence/contract/profiles/fluent-bit/../../../providers/qcore-provider-cmetrics/contracts/cmetrics/mpack_utils.qv",
+      "/tmp/qcore-lexical-typed-precedence/contract/profiles/fluent-bit/../../../providers/qcore-provider-ctraces/contracts/ctraces/context_lifetime.qv",
+      "/tmp/qcore-lexical-typed-precedence/contract/profiles/fluent-bit/../../../providers/qcore-provider-libevent/contracts/monkey/event_loop.qv",
+      "/tmp/qcore-lexical-typed-precedence/contract/profiles/fluent-bit/../../../providers/qcore-provider-libevent/contracts/monkey/intrusive_list.qv",
+      "/tmp/qcore-lexical-typed-precedence/contract/profiles/fluent-bit/../../../providers/qcore-provider-libevent/contracts/monkey/logging.qv",
+      "/tmp/qcore-lexical-typed-precedence/contract/profiles/fluent-bit/../../../providers/qcore-provider-libevent/contracts/monkey/scalar_observation.qv",
+      "/tmp/qcore-lexical-typed-precedence/contract/profiles/fluent-bit/../../../providers/qcore-provider-libevent/contracts/monkey/string.qv",
+      "/tmp/qcore-lexical-typed-precedence/contract/profiles/fluent-bit/../../../providers/qcore-provider-libevent/contracts/monkey/vhost_set.qv",
+      "/tmp/qcore-lexical-typed-precedence/contract/profiles/fluent-bit/../../../providers/qcore-provider-librdkafka/contracts/librdkafka/cjson.qv",
+      "/tmp/qcore-lexical-typed-precedence/contract/profiles/fluent-bit/../../../providers/qcore-provider-librdkafka/contracts/librdkafka/client.qv",
+      "/tmp/qcore-lexical-typed-precedence/contract/profiles/fluent-bit/../../../providers/qcore-provider-librdkafka/contracts/librdkafka/kafka_mem.qv",
+      "/tmp/qcore-lexical-typed-precedence/contract/profiles/fluent-bit/../../../providers/qcore-provider-librdkafka/contracts/librdkafka/lz4_stream.qv",
+      "/tmp/qcore-lexical-typed-precedence/contract/profiles/fluent-bit/../../../providers/qcore-provider-librdkafka/contracts/librdkafka/topic_partition.qv",
+      "/tmp/qcore-lexical-typed-precedence/contract/profiles/fluent-bit/../../../providers/quirin-provider-cfl/contracts/cfl/sds_lifetime.qv",
+      "/tmp/qcore-lexical-typed-precedence/contract/profiles/fluent-bit/../../../providers/quirin-provider-cfl/contracts/cfl/time.qv",
+      "/tmp/qcore-lexical-typed-precedence/contract/profiles/fluent-bit/../../../providers/quirin-provider-fluent-bit/contracts/fluent_bit/hash_table_publication.qv",
+      "/tmp/qcore-lexical-typed-precedence/contract/profiles/fluent-bit/../../../providers/quirin-provider-fluent-bit/contracts/fluent_bit/input_chunk_destroy.qv",
+      "/tmp/qcore-lexical-typed-precedence/contract/profiles/fluent-bit/../../../providers/quirin-provider-fluent-bit/contracts/fluent_bit/input_chunk_destroy_direct_routes.qv",
+      "/tmp/qcore-lexical-typed-precedence/contract/profiles/fluent-bit/../../../providers/quirin-provider-fluent-bit/contracts/fluent_bit/input_chunk_helpers.qv",
+      "/tmp/qcore-lexical-typed-precedence/contract/profiles/fluent-bit/../../../providers/quirin-provider-fluent-bit/contracts/fluent_bit/input_chunk_is_up.qv",
+      "/tmp/qcore-lexical-typed-precedence/contract/profiles/fluent-bit/../../../providers/quirin-provider-fluent-bit/contracts/fluent_bit/input_chunk_name.qv",
+      "/tmp/qcore-lexical-typed-precedence/contract/profiles/fluent-bit/../../../providers/quirin-provider-fluent-bit/contracts/fluent_bit/input_chunk_sizes.qv",
+      "/tmp/qcore-lexical-typed-precedence/contract/profiles/fluent-bit/../../../providers/quirin-provider-fluent-bit/contracts/fluent_bit/input_chunk_total_size.qv",
+      "/tmp/qcore-lexical-typed-precedence/contract/profiles/fluent-bit/../../../providers/quirin-provider-fluent-bit/contracts/fluent_bit/input_collector_registration.qv",
+      "/tmp/qcore-lexical-typed-precedence/contract/profiles/fluent-bit/../../../providers/quirin-provider-fluent-bit/contracts/fluent_bit/input_instance.qv",
+      "/tmp/qcore-lexical-typed-precedence/contract/profiles/fluent-bit/../../../providers/quirin-provider-fluent-bit/contracts/fluent_bit/lib_engine_thread.qv",
+      "/tmp/qcore-lexical-typed-precedence/contract/profiles/fluent-bit/../../../providers/quirin-provider-fluent-bit/contracts/fluent_bit/logging.qv",
+      "/tmp/qcore-lexical-typed-precedence/contract/profiles/fluent-bit/../../../providers/quirin-provider-fluent-bit/contracts/fluent_bit/loop_owner.qv",
+      "/tmp/qcore-lexical-typed-precedence/contract/profiles/fluent-bit/../../../providers/quirin-provider-fluent-bit/contracts/fluent_bit/output_flush_id.qv",
+      "/tmp/qcore-lexical-typed-precedence/contract/profiles/fluent-bit/../../../providers/quirin-provider-fluent-bit/contracts/fluent_bit/output_singleplex.qv",
+      "/tmp/qcore-lexical-typed-precedence/contract/profiles/fluent-bit/../../../providers/quirin-provider-fluent-bit/contracts/fluent_bit/routes_mask.qv",
+      "/tmp/qcore-lexical-typed-precedence/contract/profiles/fluent-bit/../../../providers/quirin-provider-fluent-bit/contracts/fluent_bit/storage_backlog.qv",
+      "/tmp/qcore-lexical-typed-precedence/contract/profiles/fluent-bit/../../../providers/quirin-provider-fluent-bit/contracts/fluent_bit/task_route_queries.qv",
+      "/tmp/qcore-lexical-typed-precedence/contract/profiles/fluent-bit/../../../providers/quirin-provider-fluent-bit/contracts/fluent_bit/task_users.qv",
+      "/tmp/qcore-lexical-typed-precedence/contract/profiles/fluent-bit/../../../providers/quirin-provider-fluent-bit/contracts/fluent_bit/teardown_destroy.qv",
+      "/tmp/qcore-lexical-typed-precedence/contract/profiles/fluent-bit/../../../providers/quirin-provider-fluent-bit/contracts/fluent_bit/time.qv",
+      "/tmp/qcore-lexical-typed-precedence/contract/profiles/fluent-bit/../../../providers/quirin-provider-libc/contracts/libc/dirent.qv",
+      "/tmp/qcore-lexical-typed-precedence/contract/profiles/fluent-bit/../../../providers/quirin-provider-libc/contracts/libc/dlfcn.qv",
+      "/tmp/qcore-lexical-typed-precedence/contract/profiles/fluent-bit/../../../providers/quirin-provider-libc/contracts/libc/errno.qv",
+      "/tmp/qcore-lexical-typed-precedence/contract/profiles/fluent-bit/../../../providers/quirin-provider-libc/contracts/libc/math.qv",
+      "/tmp/qcore-lexical-typed-precedence/contract/profiles/fluent-bit/../../../providers/quirin-provider-libc/contracts/libc/memory.qv",
+      "/tmp/qcore-lexical-typed-precedence/contract/profiles/fluent-bit/../../../providers/quirin-provider-libc/contracts/libc/process.qv",
+      "/tmp/qcore-lexical-typed-precedence/contract/profiles/fluent-bit/../../../providers/quirin-provider-libc/contracts/libc/pthread_mutex.qv",
+      "/tmp/qcore-lexical-typed-precedence/contract/profiles/fluent-bit/../../../providers/quirin-provider-libc/contracts/libc/pthread_sync.qv",
+      "/tmp/qcore-lexical-typed-precedence/contract/profiles/fluent-bit/../../../providers/quirin-provider-libc/contracts/libc/regex.qv",
+      "/tmp/qcore-lexical-typed-precedence/contract/profiles/fluent-bit/../../../providers/quirin-provider-libc/contracts/libc/socket.qv",
+      "/tmp/qcore-lexical-typed-precedence/contract/profiles/fluent-bit/../../../providers/quirin-provider-libc/contracts/libc/stdio.qv",
+      "/tmp/qcore-lexical-typed-precedence/contract/profiles/fluent-bit/../../../providers/quirin-provider-libc/contracts/libc/stdlib.qv",
+      "/tmp/qcore-lexical-typed-precedence/contract/profiles/fluent-bit/../../../providers/quirin-provider-libc/contracts/libc/string.qv",
+      "/tmp/qcore-lexical-typed-precedence/contract/profiles/fluent-bit/../../../providers/quirin-provider-libc/contracts/libc/sys_stat.qv",
+      "/tmp/qcore-lexical-typed-precedence/contract/profiles/fluent-bit/../../../providers/quirin-provider-libc/contracts/libc/threads.qv",
+      "/tmp/qcore-lexical-typed-precedence/contract/profiles/fluent-bit/../../../providers/quirin-provider-libc/contracts/libc/time.qv",
+      "/tmp/qcore-lexical-typed-precedence/contract/profiles/fluent-bit/../../../providers/quirin-provider-libc/contracts/libc/unistd.qv",
+      "/tmp/qcore-lexical-typed-precedence/contract/profiles/fluent-bit/../../../providers/quirin-provider-mpack/contracts/mpack/writer.qv",
+      "/tmp/qcore-lexical-typed-precedence/contract/profiles/fluent-bit/../../../providers/quirin-provider-msgpack/contracts/msgpack/packer.qv",
+      "qcore-provider-libevent:monkey/memory.qv",
+      "qcore-provider-librdkafka:librdkafka/memory.qv",
+      "quirin-provider-fluent-bit:fluent_bit/resource_memory.qv",
+      "quirin-provider-fluent-bit:fluent_bit/resource_string.qv"
+    ]
+  },
+  "contract_dependencies_before": {
+    "counts": {
+      "declarations_consulted": 118,
+      "declared_assumption": 99,
+      "held": 2,
+      "partly_validated": 8,
+      "rows_annotated": 448,
+      "validated": 9
+    },
+    "declarations": {
+      "__errno_location": {
+        "body_standing": "declared-assumption",
+        "contract_sha256": "d956f076f4c50c66a40cd75f0ed9a408668c3c05e41c4a001c5dded9a6ce9c9e",
+        "mode": "flexible",
+        "module": "$CHECKOUT/contract/profiles/fluent-bit/../../../providers/quirin-provider-libc/contracts/libc/errno.qv",
+        "premises": [
+          {
+            "name": "nested_call_admission",
+            "origin": "declared",
+            "statement": "a dereference of this call's result is read only where the gateway's nested-call admission holds at the call site (premises N1-N10 of cards O04-TRACE and CONSTRUCTOR-RESIDUALS, checked per site): the call is the statement's only nested call and a whole argument of a contracted call at a declared Borrowed position modulo the dereference wrapper (N4-D), its written arity is this declaration's, and the unit's own declaration of the callee returns exactly one pointer level over a scalar type (N10); under them the argument binds, releases, escapes and addresses nothing the projection tracks"
+          }
+        ],
+        "rows": 68,
+        "safe_rows": 6,
+        "status": "flexible-standing"
+      },
+      "append_to_ring_buffer": {
+        "bodies": {
+          "failed_by": [],
+          "failed_units": 0,
+          "unvalidated_units": 2,
+          "validated_by": [],
+          "validated_units": 0,
+          "withdrawn_units": 0
+        },
+        "body_standing": "declared-assumption",
+        "contract_sha256": "138998d93a8021db21225eeaf614c83d15d0b163cee23320608e680e87d1463d",
+        "mode": "pinned",
+        "module": "$CHECKOUT/contract/profiles/fluent-bit/../../../providers/quirin-provider-fluent-bit/contracts/fluent_bit/input_chunk_helpers.qv",
+        "premises": [],
+        "rows": 8,
+        "safe_rows": 0,
+        "status": "pinned-in-force"
+      },
+      "atoi": {
+        "body_standing": "declared-assumption",
+        "contract_sha256": "d2842cfc0c7cc4bfb763cb34df2f95582aee84c8608df0c5aa4346b984c40398",
+        "mode": "flexible",
+        "module": "$CHECKOUT/contract/profiles/fluent-bit/../../../providers/quirin-provider-libc/contracts/libc/stdlib.qv",
+        "premises": [],
+        "rows": 4,
+        "safe_rows": 0,
+        "status": "flexible-standing"
+      },
+      "cb_queue_chunks": {
+        "bodies": {
+          "failed_by": [
+            "C06.3"
+          ],
+          "failed_units": 1,
+          "unvalidated_units": 0,
+          "validated_by": [],
+          "validated_units": 0,
+          "withdrawn_units": 15
+        },
+        "body_standing": "declared-assumption",
+        "contract_sha256": "595296735868b877d3f3abdb66541ff9244460d13e698061bddaf8efd7c436e2",
+        "mode": "pinned",
+        "module": "$CHECKOUT/contract/profiles/fluent-bit/../../../providers/quirin-provider-fluent-bit/contracts/fluent_bit/storage_backlog.qv",
+        "premises": [],
+        "rows": 0,
+        "safe_rows": 0,
+        "status": "pinned-in-force",
+        "withdrawn_rows": 2
+      },
+      "cfl_list_size": {
+        "bodies": {
+          "failed_by": [],
+          "failed_units": 0,
+          "unvalidated_units": 2,
+          "validated_by": [],
+          "validated_units": 0,
+          "withdrawn_units": 0
+        },
+        "body_standing": "declared-assumption",
+        "contract_sha256": "c65ed775ff578e6d6b8104f582ced8bc2a9769f33ccaaede9f32d4ff3fd5bf0e",
+        "mode": "pinned",
+        "module": "$CHECKOUT/contract/profiles/fluent-bit/../../../providers/quirin-provider-cfl/contracts/cfl/sds_lifetime.qv",
+        "premises": [],
+        "rows": 2,
+        "safe_rows": 0,
+        "status": "pinned-in-force"
+      },
+      "cfl_time_now": {
+        "body_standing": "declared-assumption",
+        "contract_sha256": "6f320509501456d9b499e641f0b8ec8e7c905ad4c9e2ef0e2264c81c6d9f8466",
+        "mode": "pinned",
+        "module": "$CHECKOUT/contract/profiles/fluent-bit/../../../providers/quirin-provider-cfl/contracts/cfl/time.qv",
+        "premises": [],
+        "rows": 22,
+        "safe_rows": 0,
+        "status": "pinned-in-force"
+      },
+      "cio_chunk_close": {
+        "body_standing": "declared-assumption",
+        "contract_sha256": "4e05d5ca414bbb75d3dbbec8d81e23e030162acd061112f1ed0587cab39b59d8",
+        "mode": "pinned",
+        "module": "$CHECKOUT/contract/profiles/fluent-bit/../../../providers/qcore-provider-chunkio/contracts/chunkio/resource_open_close.qv",
+        "premises": [],
+        "rows": 13,
+        "safe_rows": 0,
+        "status": "pinned-in-force"
+      },
+      "cio_chunk_down": {
+        "body_standing": "declared-assumption",
+        "contract_sha256": "38dac558f5ddc758de78aaef0761d2c1f0ac7bcde051ee011424adda641935f9",
+        "mode": "pinned",
+        "module": "$CHECKOUT/contract/profiles/fluent-bit/../../../providers/qcore-provider-chunkio/contracts/chunkio/chunk_residency.qv",
+        "premises": [],
+        "rows": 18,
+        "safe_rows": 4,
+        "status": "pinned-in-force"
+      },
+      "cio_chunk_get_content_size": {
+        "body_standing": "declared-assumption",
+        "contract_sha256": "72654b936718cfdc4da1bf83f5b6ef0e9be6b25da1f6d4817baa27d5e8d350d9",
+        "mode": "pinned",
+        "module": "$CHECKOUT/contract/profiles/fluent-bit/../../../providers/qcore-provider-chunkio/contracts/chunkio/chunk_sizes.qv",
+        "premises": [],
+        "rows": 14,
+        "safe_rows": 4,
+        "status": "pinned-in-force"
+      },
+      "cio_chunk_is_up": {
+        "body_standing": "declared-assumption",
+        "contract_sha256": "cb3491ca510c7fff7f42e40c911e9e93ad583d96d96427e3c704f430840432c6",
+        "mode": "pinned",
+        "module": "$CHECKOUT/contract/profiles/fluent-bit/../../../providers/qcore-provider-chunkio/contracts/chunkio/chunk_residency.qv",
+        "premises": [],
+        "rows": 24,
+        "safe_rows": 4,
+        "status": "pinned-in-force"
+      },
+      "cio_chunk_open": {
+        "body_standing": "declared-assumption",
+        "contract_sha256": "a0d15039f2e8e7ad37c1c26fed6f61e8b9ab4264845ae0ba3b9a2f2ee6f849a6",
+        "mode": "pinned",
+        "module": "$CHECKOUT/contract/profiles/fluent-bit/../../../providers/qcore-provider-chunkio/contracts/chunkio/resource_open_close.qv",
+        "premises": [],
+        "rows": 4,
+        "safe_rows": 0,
+        "status": "pinned-in-force"
+      },
+      "cio_chunk_up_force": {
+        "body_standing": "declared-assumption",
+        "contract_sha256": "3d32f5993f3f654412f751c2ddaa8333a7a5ee74a49727537274866ac81240b8",
+        "mode": "pinned",
+        "module": "$CHECKOUT/contract/profiles/fluent-bit/../../../providers/qcore-provider-chunkio/contracts/chunkio/chunk_residency.qv",
+        "premises": [],
+        "rows": 14,
+        "safe_rows": 0,
+        "status": "pinned-in-force"
+      },
+      "cio_stream_size_chunks_up": {
+        "body_standing": "declared-assumption",
+        "contract_sha256": "e2312d911b12a290e0f22fba6a664c31bb6aad96359a45cc00121e5c9bc03c78",
+        "mode": "pinned",
+        "module": "$CHECKOUT/contract/profiles/fluent-bit/../../../providers/qcore-provider-chunkio/contracts/chunkio/chunk_sizes.qv",
+        "premises": [],
+        "rows": 2,
+        "safe_rows": 2,
+        "status": "pinned-in-force"
+      },
+      "close": {
+        "body_standing": "declared-assumption",
+        "contract_sha256": "0b4424f08d057594b5aeb04c54a41450b34fef63d3a9a21a216bc89b14e18e64",
+        "mode": "flexible",
+        "module": "$CHECKOUT/contract/profiles/fluent-bit/../../../providers/quirin-provider-libc/contracts/libc/unistd.qv",
+        "premises": [],
+        "rows": 4,
+        "safe_rows": 0,
+        "status": "flexible-standing"
+      },
+      "cmt_destroy": {
+        "body_standing": "declared-assumption",
+        "contract_sha256": "78afe929cbda4c4e30f9b70d537943e41cba9ee4ddf2e99231968df25a6cd54d",
+        "mode": "pinned",
+        "module": "$CHECKOUT/contract/profiles/fluent-bit/../../../providers/qcore-provider-cmetrics/contracts/cmetrics/context_lifetime.qv",
+        "premises": [],
+        "rows": 4,
+        "safe_rows": 0,
+        "status": "pinned-in-force"
+      },
+      "exit": {
+        "body_standing": "declared-assumption",
+        "contract_sha256": "fa3ecc2bc5a55155f16bc29d51953a33b8d83726905f2f5f377ada3b639b58f9",
+        "mode": "flexible",
+        "module": "$CHECKOUT/contract/profiles/fluent-bit/../../../providers/quirin-provider-libc/contracts/libc/stdlib.qv",
+        "premises": [],
+        "rows": 2,
+        "safe_rows": 0,
+        "status": "flexible-standing"
+      },
+      "fabs": {
+        "body_standing": "declared-assumption",
+        "contract_sha256": "61ab1e106ac2bdcc12c9b785a0babd530aa7ca982b10288295a1e7db4e3c630a",
+        "mode": "flexible",
+        "module": "$CHECKOUT/contract/profiles/fluent-bit/../../../providers/quirin-provider-libc/contracts/libc/math.qv",
+        "premises": [],
+        "rows": 4,
+        "safe_rows": 0,
+        "status": "flexible-standing"
+      },
+      "fcntl": {
+        "body_standing": "declared-assumption",
+        "contract_sha256": "6127a36d7da8666bdb538ee4aaf9bd53020d2ad0a5fe7bccb6f515eeaa57481d",
+        "mode": "flexible",
+        "module": "$CHECKOUT/contract/profiles/fluent-bit/../../../providers/quirin-provider-libc/contracts/libc/unistd.qv",
+        "premises": [
+          {
+            "name": "literal_argument",
+            "origin": "literal-argument",
+            "statement": "cmd = 2"
+          }
+        ],
+        "rows": 0,
+        "safe_rows": 0,
+        "status": "flexible-standing",
+        "withdrawn_rows": 2
+      },
+      "flb_calloc": {
+        "bodies": {
+          "failed_by": [],
+          "failed_units": 0,
+          "unvalidated_units": 0,
+          "validated_by": [
+            "W4"
+          ],
+          "validated_units": 11,
+          "withdrawn_units": 0
+        },
+        "body_standing": "validated",
+        "clauses": {
+          "resource_borrowed(#0)": "validated",
+          "resource_borrowed(#1)": "validated",
+          "resource_return_owned(nullable)": "validated"
+        },
+        "contract_sha256": "b5598ca7af3b38fd15290890bbd5041e7f92b9f20f6e4b7cf1492633fb6f90ac",
+        "mode": "pinned",
+        "module": "quirin-provider-fluent-bit:fluent_bit/resource_memory.qv",
+        "premises": [],
+        "rows": 33,
+        "safe_rows": 1,
+        "status": "pinned-in-force"
+      },
+      "flb_coro_destroy": {
+        "bodies": {
+          "failed_by": [],
+          "failed_units": 0,
+          "unvalidated_units": 4,
+          "validated_by": [],
+          "validated_units": 0,
+          "withdrawn_units": 0
+        },
+        "body_standing": "declared-assumption",
+        "contract_sha256": "ad70b8920c8f1c4da9034b851aa563c5c7c1cd3a38201760793ff1aad24e091b",
+        "mode": "pinned",
+        "module": "$CHECKOUT/contract/profiles/fluent-bit/../../../providers/quirin-provider-fluent-bit/contracts/fluent_bit/teardown_destroy.qv",
+        "premises": [],
+        "rows": 2,
+        "safe_rows": 0,
+        "status": "pinned-in-force"
+      },
+      "flb_errno_print": {
+        "body_standing": "declared-assumption",
+        "contract_sha256": "e57e0d609096b8f951295e88c3c3e0e6d56f3672cdd97088a11cdd319aeae26e",
+        "mode": "pinned",
+        "module": "$CHECKOUT/contract/profiles/fluent-bit/../../../providers/quirin-provider-fluent-bit/contracts/fluent_bit/logging.qv",
+        "premises": [],
+        "rows": 68,
+        "safe_rows": 6,
+        "status": "pinned-in-force"
+      },
+      "flb_event_chunk_destroy": {
+        "body_standing": "declared-assumption",
+        "contract_sha256": "1bac5fc9815d5df3462293938cb6e57d2b206bfbf51738b30bc5103153301efd",
+        "mode": "pinned",
+        "module": "$CHECKOUT/contract/profiles/fluent-bit/../../../providers/quirin-provider-fluent-bit/contracts/fluent_bit/teardown_destroy.qv",
+        "premises": [],
+        "rows": 4,
+        "safe_rows": 0,
+        "status": "pinned-in-force"
+      },
+      "flb_free": {
+        "bodies": {
+          "failed_by": [],
+          "failed_units": 0,
+          "unvalidated_units": 0,
+          "validated_by": [
+            "13m"
+          ],
+          "validated_units": 15,
+          "withdrawn_units": 0
+        },
+        "body_standing": "validated",
+        "clauses": {
+          "resource_released(#0, nullable)": "validated",
+          "resource_return_none()": "validated"
+        },
+        "contract_sha256": "ac614ad38ebf5f029c19d67e97fee05892cc13bd03c26f1f61f512aeffc74172",
+        "mode": "pinned",
+        "module": "quirin-provider-fluent-bit:fluent_bit/resource_memory.qv",
+        "premises": [],
+        "rows": 78,
+        "safe_rows": 1,
+        "status": "pinned-in-force"
+      },
+      "flb_hash_table_add": {
+        "body_standing": "declared-assumption",
+        "contract_sha256": "cc36eeb4be89d4656625eaaead16171b5023bd6f874a92f9f66dcacb04ea4b6c",
+        "mode": "pinned",
+        "module": "$CHECKOUT/contract/profiles/fluent-bit/../../../providers/quirin-provider-fluent-bit/contracts/fluent_bit/hash_table_publication.qv",
+        "premises": [
+          {
+            "name": "literal_argument",
+            "origin": "literal-argument",
+            "statement": "val_size = 0"
+          }
+        ],
+        "rows": 2,
+        "safe_rows": 0,
+        "status": "pinned-in-force",
+        "withdrawn_rows": 2
+      },
+      "flb_input_chunk_destroy": {
+        "bodies": {
+          "failed_by": [],
+          "failed_units": 0,
+          "unvalidated_units": 2,
+          "validated_by": [],
+          "validated_units": 0,
+          "withdrawn_units": 0
+        },
+        "body_standing": "declared-assumption",
+        "contract_sha256": "5fe7f48a4f15261dae3e2779b2521b2caa44b61b7442c950711c0d44f9141354",
+        "mode": "pinned",
+        "module": "$CHECKOUT/contract/profiles/fluent-bit/../../../providers/quirin-provider-fluent-bit/contracts/fluent_bit/input_chunk_destroy.qv",
+        "premises": [],
+        "rows": 14,
+        "safe_rows": 0,
+        "status": "pinned-in-force"
+      },
+      "flb_input_chunk_destroy_direct_routes": {
+        "bodies": {
+          "failed_by": [],
+          "failed_units": 0,
+          "unvalidated_units": 2,
+          "validated_by": [],
+          "validated_units": 0,
+          "withdrawn_units": 0
+        },
+        "body_standing": "declared-assumption",
+        "contract_sha256": "a13bbc5958e4ef6442b284e82ae98d43d3857cd78470882c598bda45ba154fa2",
+        "mode": "pinned",
+        "module": "$CHECKOUT/contract/profiles/fluent-bit/../../../providers/quirin-provider-fluent-bit/contracts/fluent_bit/input_chunk_destroy_direct_routes.qv",
+        "premises": [],
+        "rows": 8,
+        "safe_rows": 0,
+        "status": "pinned-in-force"
+      },
+      "flb_input_chunk_get_name": {
+        "bodies": {
+          "failed_by": [],
+          "failed_units": 0,
+          "unvalidated_units": 0,
+          "validated_by": [
+            "W4",
+            "entry"
+          ],
+          "validated_units": 2,
+          "withdrawn_units": 0
+        },
+        "body_standing": "partly-validated",
+        "clauses": {
+          "resource_borrowed(#0)": "validated",
+          "resource_premise(untracked_handback)": "declared-assumption",
+          "resource_return_none()": "validated"
+        },
+        "contract_sha256": "557d299c4f04809eb68f142519eefc6bc7913edd0e6bf751f852bdd533761a9a",
+        "mode": "pinned",
+        "module": "$CHECKOUT/contract/profiles/fluent-bit/../../../providers/quirin-provider-fluent-bit/contracts/fluent_bit/input_chunk_name.qv",
+        "premises": [
+          {
+            "name": "untracked_handback",
+            "origin": "declared",
+            "statement": "the result aliases into ic (it is ic->chunk->name) and this projection does not track it; resource_return_none is faithful only where the result is never bound or stored, which the gateway's admission of a call with a None result and only Borrowed parameters checks per site (card O04-TRACE premises N6 and N8); the alias itself is outside every claim here (O00 B03/R13, O04-TRACE-HANDBACK)"
+          }
+        ],
+        "rows": 24,
+        "safe_rows": 2,
+        "status": "pinned-in-force",
+        "uncovered_clauses": [
+          "resource_premise(untracked_handback)"
+        ]
+      },
+      "flb_input_chunk_get_real_size": {
+        "bodies": {
+          "failed_by": [],
+          "failed_units": 0,
+          "unvalidated_units": 2,
+          "validated_by": [],
+          "validated_units": 0,
+          "withdrawn_units": 0
+        },
+        "body_standing": "declared-assumption",
+        "contract_sha256": "cefdbb5fa8a0bbc2d4d7600fb8b8529809251988dbcaca71a0482f1379ce0d1b",
+        "mode": "pinned",
+        "module": "$CHECKOUT/contract/profiles/fluent-bit/../../../providers/quirin-provider-fluent-bit/contracts/fluent_bit/input_chunk_sizes.qv",
+        "premises": [],
+        "rows": 22,
+        "safe_rows": 0,
+        "status": "pinned-in-force"
+      },
+      "flb_input_chunk_get_size": {
+        "bodies": {
+          "failed_by": [],
+          "failed_units": 0,
+          "unvalidated_units": 0,
+          "validated_by": [
+            "W4",
+            "entry"
+          ],
+          "validated_units": 2,
+          "withdrawn_units": 0
+        },
+        "body_standing": "validated",
+        "clauses": {
+          "resource_borrowed(#0)": "validated",
+          "resource_return_none()": "validated"
+        },
+        "contract_sha256": "1f50bfd70bb0e590227f44e07d86679ede77d058b06aef942ca9e3afe21c9d75",
+        "mode": "pinned",
+        "module": "$CHECKOUT/contract/profiles/fluent-bit/../../../providers/quirin-provider-fluent-bit/contracts/fluent_bit/input_chunk_sizes.qv",
+        "premises": [],
+        "rows": 8,
+        "safe_rows": 2,
+        "status": "pinned-in-force"
+      },
+      "flb_input_chunk_is_mem_overlimit": {
+        "bodies": {
+          "failed_by": [],
+          "failed_units": 0,
+          "unvalidated_units": 0,
+          "validated_by": [
+            "W4"
+          ],
+          "validated_units": 2,
+          "withdrawn_units": 0
+        },
+        "body_standing": "partly-validated",
+        "clauses": {
+          "resource_borrowed(#0)": "validated",
+          "resource_return_none()": "validated",
+          "resource_user_neutral()": "declared-assumption"
+        },
+        "contract_sha256": "29043a1929ff30aae30e49d7f177d4ff307be80607c32d9f06ac17f67fdf77fb",
+        "mode": "pinned",
+        "module": "$CHECKOUT/contract/profiles/fluent-bit/../../../providers/quirin-provider-fluent-bit/contracts/fluent_bit/input_chunk_is_up.qv",
+        "premises": [],
+        "rows": 10,
+        "safe_rows": 2,
+        "status": "pinned-in-force",
+        "uncovered_clauses": [
+          "resource_user_neutral()"
+        ]
+      },
+      "flb_input_chunk_is_storage_overlimit": {
+        "bodies": {
+          "failed_by": [],
+          "failed_units": 0,
+          "unvalidated_units": 0,
+          "validated_by": [
+            "W4"
+          ],
+          "validated_units": 2,
+          "withdrawn_units": 0
+        },
+        "body_standing": "partly-validated",
+        "clauses": {
+          "resource_borrowed(#0)": "validated",
+          "resource_return_none()": "validated",
+          "resource_user_neutral()": "declared-assumption"
+        },
+        "contract_sha256": "c16780bab30058164f2b54d6a6c824fe5c40919a9650d4215d58d6e707fc2535",
+        "mode": "pinned",
+        "module": "$CHECKOUT/contract/profiles/fluent-bit/../../../providers/quirin-provider-fluent-bit/contracts/fluent_bit/input_chunk_is_up.qv",
+        "premises": [],
+        "rows": 6,
+        "safe_rows": 2,
+        "status": "pinned-in-force",
+        "uncovered_clauses": [
+          "resource_user_neutral()"
+        ]
+      },
+      "flb_input_chunk_is_up": {
+        "bodies": {
+          "failed_by": [],
+          "failed_units": 0,
+          "unvalidated_units": 0,
+          "validated_by": [
+            "W4"
+          ],
+          "validated_units": 2,
+          "withdrawn_units": 0
+        },
+        "body_standing": "partly-validated",
+        "clauses": {
+          "resource_borrowed(#0)": "validated",
+          "resource_return_none()": "validated",
+          "resource_user_neutral()": "declared-assumption"
+        },
+        "contract_sha256": "07bc9f4b74fdb2de4ba33f4be0561459a73a083bab725c2af65bbc750589e123",
+        "mode": "pinned",
+        "module": "$CHECKOUT/contract/profiles/fluent-bit/../../../providers/quirin-provider-fluent-bit/contracts/fluent_bit/input_chunk_is_up.qv",
+        "premises": [],
+        "rows": 6,
+        "safe_rows": 2,
+        "status": "pinned-in-force",
+        "uncovered_clauses": [
+          "resource_user_neutral()"
+        ]
+      },
+      "flb_input_chunk_release_route": {
+        "bodies": {
+          "failed_by": [],
+          "failed_units": 0,
+          "unvalidated_units": 2,
+          "validated_by": [],
+          "validated_units": 0,
+          "withdrawn_units": 0
+        },
+        "body_standing": "declared-assumption",
+        "contract_sha256": "a88ed4f52542f9b2751f3e4ad9fa074ae28b7ce58a7abcd7f12f62ba51bf7c98",
+        "mode": "pinned",
+        "module": "$CHECKOUT/contract/profiles/fluent-bit/../../../providers/quirin-provider-fluent-bit/contracts/fluent_bit/teardown_destroy.qv",
+        "premises": [],
+        "rows": 4,
+        "safe_rows": 0,
+        "status": "pinned-in-force"
+      },
+      "flb_input_chunk_total_size": {
+        "bodies": {
+          "failed_by": [],
+          "failed_units": 0,
+          "unvalidated_units": 0,
+          "validated_by": [
+            "W4",
+            "entry"
+          ],
+          "validated_units": 2,
+          "withdrawn_units": 0
+        },
+        "body_standing": "validated",
+        "clauses": {
+          "resource_borrowed(#0)": "validated",
+          "resource_return_none()": "validated"
+        },
+        "contract_sha256": "dde554289008ea4d237be5c4cdb949ae08642e5789a53570290d9159acf4f47b",
+        "mode": "pinned",
+        "module": "$CHECKOUT/contract/profiles/fluent-bit/../../../providers/quirin-provider-fluent-bit/contracts/fluent_bit/input_chunk_total_size.qv",
+        "premises": [],
+        "rows": 7,
+        "safe_rows": 2,
+        "status": "pinned-in-force"
+      },
+      "flb_input_collector_pause": {
+        "body_standing": "declared-assumption",
+        "contract_sha256": "a26a23bab549421566ada06c7afcf42763fbf4d9d9a5360fe865cea83f4b453e",
+        "mode": "pinned",
+        "module": "$CHECKOUT/contract/profiles/fluent-bit/../../../providers/quirin-provider-fluent-bit/contracts/fluent_bit/loop_owner.qv",
+        "premises": [],
+        "rows": 0,
+        "safe_rows": 0,
+        "status": "pinned-in-force",
+        "withdrawn_rows": 2
+      },
+      "flb_input_collector_resume": {
+        "body_standing": "declared-assumption",
+        "contract_sha256": "6ba11f4a24307590884ea12b68c191e43c09448b843e10d4d50749803ff7d763",
+        "mode": "pinned",
+        "module": "$CHECKOUT/contract/profiles/fluent-bit/../../../providers/quirin-provider-fluent-bit/contracts/fluent_bit/loop_owner.qv",
+        "premises": [
+          {
+            "name": "ingestion_active",
+            "origin": "declared",
+            "statement": "C3: the call returns 0 without resuming the collector while config->is_ingestion_active is false (src/flb_input.c:3221 at 66910c10, :3241 at 046accf6 and 34155955), otherwise it re-registers the collector's own event and sets running; a return of 0 means the collector runs only while ingestion is active"
+          }
+        ],
+        "rows": 0,
+        "safe_rows": 0,
+        "status": "pinned-in-force",
+        "withdrawn_rows": 1
+      },
+      "flb_input_new": {
+        "body_standing": "held",
+        "contract_sha256": "a83b673aad72b7c83a855038111907b5aaceaa2a5955951f08b4fcbdcd341054",
+        "held_rows": 2,
+        "mode": "pinned",
+        "module": "$CHECKOUT/contract/profiles/fluent-bit/../../../providers/quirin-provider-fluent-bit/contracts/fluent_bit/input_instance.qv",
+        "premises": [],
+        "rows": 0,
+        "safe_rows": 0,
+        "status": "pending-review"
+      },
+      "flb_input_set_collector_time": {
+        "body_standing": "declared-assumption",
+        "contract_sha256": "ec8be39af77338827eeb5ce896fa4f53886904409bd223142b145544adc9d167",
+        "mode": "pinned",
+        "module": "$CHECKOUT/contract/profiles/fluent-bit/../../../providers/quirin-provider-fluent-bit/contracts/fluent_bit/input_collector_registration.qv",
+        "premises": [],
+        "rows": 1,
+        "safe_rows": 0,
+        "status": "pinned-in-force"
+      },
+      "flb_log_check": {
+        "bodies": {
+          "failed_by": [],
+          "failed_units": 0,
+          "unvalidated_units": 15,
+          "validated_by": [],
+          "validated_units": 0,
+          "withdrawn_units": 0
+        },
+        "body_standing": "declared-assumption",
+        "contract_sha256": "055cebefa1d4d696bf7b9a25983eaeca44d800d670b222bdfd6819a19f51ee62",
+        "mode": "pinned",
+        "module": "$CHECKOUT/contract/profiles/fluent-bit/../../../providers/quirin-provider-fluent-bit/contracts/fluent_bit/logging.qv",
+        "premises": [],
+        "rows": 126,
+        "safe_rows": 4,
+        "status": "pinned-in-force"
+      },
+      "flb_log_print": {
+        "body_standing": "declared-assumption",
+        "contract_sha256": "3956a43708a52a21befa8a47e69b400e4ec304bf738b593d77bb14562299b32e",
+        "mode": "pinned",
+        "module": "$CHECKOUT/contract/profiles/fluent-bit/../../../providers/quirin-provider-fluent-bit/contracts/fluent_bit/logging.qv",
+        "premises": [],
+        "rows": 135,
+        "safe_rows": 4,
+        "status": "pinned-in-force"
+      },
+      "flb_malloc": {
+        "bodies": {
+          "failed_by": [],
+          "failed_units": 0,
+          "unvalidated_units": 0,
+          "validated_by": [
+            "W4"
+          ],
+          "validated_units": 12,
+          "withdrawn_units": 0
+        },
+        "body_standing": "validated",
+        "clauses": {
+          "resource_borrowed(#0)": "validated",
+          "resource_return_owned(nullable)": "validated"
+        },
+        "contract_sha256": "d95ce00637913918a595a5be535abab01a7dbc620e8790beffd313437dde4eb9",
+        "mode": "pinned",
+        "module": "quirin-provider-fluent-bit:fluent_bit/resource_memory.qv",
+        "premises": [],
+        "rows": 20,
+        "safe_rows": 2,
+        "status": "pinned-in-force"
+      },
+      "flb_output_flush_destroy": {
+        "bodies": {
+          "failed_by": [],
+          "failed_units": 0,
+          "unvalidated_units": 2,
+          "validated_by": [],
+          "validated_units": 0,
+          "withdrawn_units": 0
+        },
+        "body_standing": "declared-assumption",
+        "contract_sha256": "daa1e42204d8fe7759e395c609019509de8b98522a6b9aeef3ea0554132d7941",
+        "mode": "pinned",
+        "module": "$CHECKOUT/contract/profiles/fluent-bit/../../../providers/quirin-provider-fluent-bit/contracts/fluent_bit/teardown_destroy.qv",
+        "premises": [],
+        "rows": 4,
+        "safe_rows": 0,
+        "status": "pinned-in-force"
+      },
+      "flb_output_flush_id_get": {
+        "bodies": {
+          "failed_by": [],
+          "failed_units": 0,
+          "unvalidated_units": 2,
+          "validated_by": [],
+          "validated_units": 0,
+          "withdrawn_units": 0
+        },
+        "body_standing": "declared-assumption",
+        "contract_sha256": "32ce25a90e71d44b47dd12aee51f240ccf068fcc7570e1516771fa05e71b189d",
+        "mode": "pinned",
+        "module": "$CHECKOUT/contract/profiles/fluent-bit/../../../providers/quirin-provider-fluent-bit/contracts/fluent_bit/output_flush_id.qv",
+        "premises": [],
+        "rows": 2,
+        "safe_rows": 0,
+        "status": "pinned-in-force"
+      },
+      "flb_output_instance_destroy": {
+        "bodies": {
+          "failed_by": [],
+          "failed_units": 0,
+          "unvalidated_units": 2,
+          "validated_by": [],
+          "validated_units": 0,
+          "withdrawn_units": 0
+        },
+        "body_standing": "declared-assumption",
+        "contract_sha256": "296187b3fac77a9eef003cfadb40caa948226f51847b6af7bac397d8d8bbb8c0",
+        "mode": "pinned",
+        "module": "$CHECKOUT/contract/profiles/fluent-bit/../../../providers/quirin-provider-fluent-bit/contracts/fluent_bit/teardown_destroy.qv",
+        "premises": [],
+        "rows": 10,
+        "safe_rows": 0,
+        "status": "pinned-in-force"
+      },
+      "flb_output_task_flush": {
+        "bodies": {
+          "failed_by": [
+            "C06.4",
+            "C06.4-own"
+          ],
+          "failed_units": 15,
+          "unvalidated_units": 0,
+          "validated_by": [],
+          "validated_units": 0,
+          "withdrawn_units": 15
+        },
+        "body_standing": "declared-assumption",
+        "contract_sha256": "9743f0cb604ebce81b45d8a972ec9604e6d4d0711892f4e8c32f7fe094ce6ea6",
+        "mode": "pinned",
+        "module": "$CHECKOUT/contract/profiles/fluent-bit/../../../providers/quirin-provider-fluent-bit/contracts/fluent_bit/output_singleplex.qv",
+        "premises": [],
+        "rows": 0,
+        "safe_rows": 0,
+        "status": "pinned-in-force",
+        "withdrawn_rows": 8
+      },
+      "flb_output_task_singleplex_enqueue": {
+        "bodies": {
+          "failed_by": [
+            "C06.4",
+            "C06.4-own"
+          ],
+          "failed_units": 15,
+          "unvalidated_units": 0,
+          "validated_by": [],
+          "validated_units": 0,
+          "withdrawn_units": 15
+        },
+        "body_standing": "declared-assumption",
+        "contract_sha256": "21c5a1d7c7581d12b4a315b8638fb792ddd5e38b8ae1aa4295fa5c89cf2a85de",
+        "mode": "pinned",
+        "module": "$CHECKOUT/contract/profiles/fluent-bit/../../../providers/quirin-provider-fluent-bit/contracts/fluent_bit/output_singleplex.qv",
+        "premises": [
+          {
+            "name": "synchronous_output_reachability",
+            "origin": "declared",
+            "statement": "in-tree output plugins never set FLB_OUTPUT_SYNCHRONOUS, so this function runs in production only for an output (a proxy plugin) that does; any verdict on it holds under that premise"
+          }
+        ],
+        "rows": 0,
+        "safe_rows": 0,
+        "status": "pinned-in-force",
+        "withdrawn_rows": 6
+      },
+      "flb_output_thread_pool_destroy": {
+        "body_standing": "held",
+        "contract_sha256": "77b4ba40611c243b8161b81b7382076ff1d2c9c3f7da625eecd4f0b0996026f0",
+        "held_rows": 2,
+        "mode": "pinned",
+        "module": "$CHECKOUT/contract/profiles/fluent-bit/../../../providers/quirin-provider-fluent-bit/contracts/fluent_bit/lib_engine_thread.qv",
+        "premises": [],
+        "rows": 0,
+        "safe_rows": 0,
+        "status": "pending-review"
+      },
+      "flb_output_thread_pool_flush": {
+        "body_standing": "declared-assumption",
+        "contract_sha256": "79cfab237a788987dca51074ad1a7b29ec1adf0ba9966f302c26674de771f1a2",
+        "mode": "pinned",
+        "module": "$CHECKOUT/contract/profiles/fluent-bit/../../../providers/quirin-provider-fluent-bit/contracts/fluent_bit/task_users.qv",
+        "premises": [],
+        "rows": 2,
+        "safe_rows": 0,
+        "status": "pinned-in-force"
+      },
+      "flb_routes_mask_get_size": {
+        "body_standing": "declared-assumption",
+        "contract_sha256": "0992e1d46af0abf7c8b2d03e6d30c267ee1a8db1ecbe3674204db048f37a13b0",
+        "mode": "pinned",
+        "module": "$CHECKOUT/contract/profiles/fluent-bit/../../../providers/quirin-provider-fluent-bit/contracts/fluent_bit/routes_mask.qv",
+        "premises": [],
+        "rows": 4,
+        "safe_rows": 0,
+        "status": "pinned-in-force"
+      },
+      "flb_routes_mask_get_slots": {
+        "body_standing": "declared-assumption",
+        "contract_sha256": "afdfd4876dc6b4a913f0a228c5ecfddd8df5e19b6bce0db9394e5d3c85d00cbc",
+        "mode": "pinned",
+        "module": "$CHECKOUT/contract/profiles/fluent-bit/../../../providers/quirin-provider-fluent-bit/contracts/fluent_bit/routes_mask.qv",
+        "premises": [],
+        "rows": 2,
+        "safe_rows": 0,
+        "status": "pinned-in-force"
+      },
+      "flb_routes_mask_is_empty": {
+        "body_standing": "declared-assumption",
+        "contract_sha256": "abcf0840e0616ed4082a8af5d947558e2b93b81ecd58e82ad10ccb184e090172",
+        "mode": "pinned",
+        "module": "$CHECKOUT/contract/profiles/fluent-bit/../../../providers/quirin-provider-fluent-bit/contracts/fluent_bit/routes_mask.qv",
+        "premises": [],
+        "rows": 6,
+        "safe_rows": 0,
+        "status": "pinned-in-force"
+      },
+      "flb_routes_mask_set_by_tag": {
+        "body_standing": "declared-assumption",
+        "contract_sha256": "67d345215da3086b0958f2c11e20d55ce1891437eeac19e572226c8360271d55",
+        "mode": "pinned",
+        "module": "$CHECKOUT/contract/profiles/fluent-bit/../../../providers/quirin-provider-fluent-bit/contracts/fluent_bit/routes_mask.qv",
+        "premises": [],
+        "rows": 5,
+        "safe_rows": 0,
+        "status": "pinned-in-force"
+      },
+      "flb_sched_request_destroy": {
+        "bodies": {
+          "failed_by": [],
+          "failed_units": 0,
+          "unvalidated_units": 2,
+          "validated_by": [],
+          "validated_units": 0,
+          "withdrawn_units": 0
+        },
+        "body_standing": "declared-assumption",
+        "contract_sha256": "84f4984b7ada87ac2e79c25955e4b9bb47ff90e07c00cbea2c6b17e567ea5e23",
+        "mode": "pinned",
+        "module": "$CHECKOUT/contract/profiles/fluent-bit/../../../providers/quirin-provider-fluent-bit/contracts/fluent_bit/teardown_destroy.qv",
+        "premises": [],
+        "rows": 8,
+        "safe_rows": 0,
+        "status": "pinned-in-force"
+      },
+      "flb_sched_timer_destroy": {
+        "bodies": {
+          "failed_by": [],
+          "failed_units": 0,
+          "unvalidated_units": 2,
+          "validated_by": [],
+          "validated_units": 0,
+          "withdrawn_units": 0
+        },
+        "body_standing": "declared-assumption",
+        "contract_sha256": "e16500f08d92bce9d8e01e9944c05024dc25831e7f2f7a545cb788d060f8e1f7",
+        "mode": "pinned",
+        "module": "$CHECKOUT/contract/profiles/fluent-bit/../../../providers/quirin-provider-fluent-bit/contracts/fluent_bit/teardown_destroy.qv",
+        "premises": [],
+        "rows": 18,
+        "safe_rows": 2,
+        "status": "pinned-in-force"
+      },
+      "flb_sds_create_len": {
+        "body_standing": "declared-assumption",
+        "contract_sha256": "23e59794820125ede3722ee0ef0d655eb0d42ffa963391f25b1a67beed87e8b8",
+        "mode": "pinned",
+        "module": "quirin-provider-fluent-bit:fluent_bit/resource_memory.qv",
+        "premises": [],
+        "rows": 6,
+        "safe_rows": 0,
+        "status": "pinned-in-force"
+      },
+      "flb_sds_destroy": {
+        "body_standing": "declared-assumption",
+        "contract_sha256": "3b4c7733df6161663673f9cdfb28e0f3ad4dcadc92b1dd2d7b59771eddcd4715",
+        "mode": "pinned",
+        "module": "quirin-provider-fluent-bit:fluent_bit/resource_memory.qv",
+        "premises": [],
+        "rows": 14,
+        "safe_rows": 0,
+        "status": "pinned-in-force"
+      },
+      "flb_strdup": {
+        "bodies": {
+          "failed_by": [],
+          "failed_units": 0,
+          "unvalidated_units": 0,
+          "validated_by": [
+            "W4"
+          ],
+          "validated_units": 4,
+          "withdrawn_units": 0
+        },
+        "body_standing": "validated",
+        "clauses": {
+          "resource_borrowed(#0)": "validated",
+          "resource_return_owned(nullable)": "validated"
+        },
+        "contract_sha256": "172ff1988e8a5c65692080ef54f640da5c2bfdaf786039cf14e6faff7f448b4a",
+        "mode": "pinned",
+        "module": "quirin-provider-fluent-bit:fluent_bit/resource_string.qv",
+        "premises": [],
+        "rows": 4,
+        "safe_rows": 0,
+        "status": "pinned-in-force"
+      },
+      "flb_strndup": {
+        "bodies": {
+          "failed_by": [],
+          "failed_units": 0,
+          "unvalidated_units": 0,
+          "validated_by": [
+            "W4"
+          ],
+          "validated_units": 4,
+          "withdrawn_units": 0
+        },
+        "body_standing": "validated",
+        "clauses": {
+          "resource_borrowed(#0)": "validated",
+          "resource_borrowed(#1)": "validated",
+          "resource_return_owned(nullable)": "validated"
+        },
+        "contract_sha256": "32b13404eecd505b8a2530e1250ff81bc989c09bae244460b0744e48545e8a81",
+        "mode": "pinned",
+        "module": "quirin-provider-fluent-bit:fluent_bit/resource_string.qv",
+        "premises": [],
+        "rows": 0,
+        "safe_rows": 0,
+        "status": "pinned-in-force"
+      },
+      "flb_task_destroy": {
+        "bodies": {
+          "failed_by": [],
+          "failed_units": 0,
+          "unvalidated_units": 2,
+          "validated_by": [],
+          "validated_units": 0,
+          "withdrawn_units": 0
+        },
+        "body_standing": "declared-assumption",
+        "contract_sha256": "503889ed37a5f8eb467490a0154fb5e7f5e37258c82e09edbdd48b8c03ad7d32",
+        "mode": "pinned",
+        "module": "$CHECKOUT/contract/profiles/fluent-bit/../../../providers/quirin-provider-fluent-bit/contracts/fluent_bit/teardown_destroy.qv",
+        "premises": [],
+        "rows": 14,
+        "safe_rows": 0,
+        "status": "pinned-in-force"
+      },
+      "flb_task_get_route_status": {
+        "bodies": {
+          "failed_by": [],
+          "failed_units": 0,
+          "unvalidated_units": 0,
+          "validated_by": [
+            "W4"
+          ],
+          "validated_units": 2,
+          "withdrawn_units": 0
+        },
+        "body_standing": "partly-validated",
+        "clauses": {
+          "resource_borrowed(#0)": "validated",
+          "resource_borrowed(#1)": "validated",
+          "resource_return_none()": "validated",
+          "resource_user_neutral()": "declared-assumption"
+        },
+        "contract_sha256": "a550a297d0cd64ad0ce7b946f229144944a35b0a68de24e11c7ddea6830105a5",
+        "mode": "pinned",
+        "module": "$CHECKOUT/contract/profiles/fluent-bit/../../../providers/quirin-provider-fluent-bit/contracts/fluent_bit/task_route_queries.qv",
+        "premises": [],
+        "rows": 4,
+        "safe_rows": 2,
+        "status": "pinned-in-force",
+        "uncovered_clauses": [
+          "resource_user_neutral()"
+        ]
+      },
+      "flb_task_queue_destroy": {
+        "bodies": {
+          "failed_by": [],
+          "failed_units": 0,
+          "unvalidated_units": 2,
+          "validated_by": [],
+          "validated_units": 0,
+          "withdrawn_units": 0
+        },
+        "body_standing": "declared-assumption",
+        "contract_sha256": "31303d6c83b78a27600b3d17d535662efe6e87bca03a51170fac68eaf77beea9",
+        "mode": "pinned",
+        "module": "$CHECKOUT/contract/profiles/fluent-bit/../../../providers/quirin-provider-fluent-bit/contracts/fluent_bit/teardown_destroy.qv",
+        "premises": [],
+        "rows": 6,
+        "safe_rows": 0,
+        "status": "pinned-in-force"
+      },
+      "flb_task_retry_count": {
+        "bodies": {
+          "failed_by": [
+            "conflict"
+          ],
+          "failed_units": 2,
+          "unvalidated_units": 0,
+          "validated_by": [],
+          "validated_units": 0,
+          "withdrawn_units": 0
+        },
+        "body_standing": "declared-assumption",
+        "contract_sha256": "b3a70a50c492eaa0672943dbae8c3e5fe8e02117d2114e325b0e565ddff1f8ca",
+        "mode": "pinned",
+        "module": "$CHECKOUT/contract/profiles/fluent-bit/../../../providers/quirin-provider-fluent-bit/contracts/fluent_bit/task_route_queries.qv",
+        "premises": [],
+        "rows": 4,
+        "safe_rows": 0,
+        "status": "pinned-in-force"
+      },
+      "flb_task_retry_destroy": {
+        "bodies": {
+          "failed_by": [],
+          "failed_units": 0,
+          "unvalidated_units": 2,
+          "validated_by": [],
+          "validated_units": 0,
+          "withdrawn_units": 0
+        },
+        "body_standing": "declared-assumption",
+        "contract_sha256": "c90a2e6a3e19fa762f53187b874a94fb8e7610a3fb7c8f54592231009f634b06",
+        "mode": "pinned",
+        "module": "$CHECKOUT/contract/profiles/fluent-bit/../../../providers/quirin-provider-fluent-bit/contracts/fluent_bit/task_users.qv",
+        "premises": [],
+        "rows": 20,
+        "safe_rows": 2,
+        "status": "pinned-in-force"
+      },
+      "flb_task_running_count": {
+        "bodies": {
+          "failed_by": [],
+          "failed_units": 0,
+          "unvalidated_units": 2,
+          "validated_by": [],
+          "validated_units": 0,
+          "withdrawn_units": 0
+        },
+        "body_standing": "declared-assumption",
+        "contract_sha256": "6fb4954e34bc36e0d5adf3af8a4457eb0df99ecff15c2ae8546475e83f806911",
+        "mode": "pinned",
+        "module": "$CHECKOUT/contract/profiles/fluent-bit/../../../providers/quirin-provider-fluent-bit/contracts/fluent_bit/task_route_queries.qv",
+        "premises": [],
+        "rows": 4,
+        "safe_rows": 0,
+        "status": "pinned-in-force"
+      },
+      "flb_task_set_route_status": {
+        "bodies": {
+          "failed_by": [],
+          "failed_units": 0,
+          "unvalidated_units": 0,
+          "validated_by": [
+            "W4"
+          ],
+          "validated_units": 4,
+          "withdrawn_units": 0
+        },
+        "body_standing": "partly-validated",
+        "clauses": {
+          "resource_borrowed(#0)": "validated",
+          "resource_borrowed(#1)": "validated",
+          "resource_borrowed(#2)": "validated",
+          "resource_return_none()": "validated",
+          "resource_user_neutral()": "declared-assumption"
+        },
+        "contract_sha256": "33d638ede574d3cfd63b6aa672a0bf8b9fffcf6adc8bac9383884331acc479f9",
+        "mode": "pinned",
+        "module": "$CHECKOUT/contract/profiles/fluent-bit/../../../providers/quirin-provider-fluent-bit/contracts/fluent_bit/task_route_queries.qv",
+        "premises": [],
+        "rows": 6,
+        "safe_rows": 2,
+        "status": "pinned-in-force",
+        "uncovered_clauses": [
+          "resource_user_neutral()"
+        ]
+      },
+      "flb_task_users_dec": {
+        "bodies": {
+          "failed_by": [],
+          "failed_units": 0,
+          "unvalidated_units": 4,
+          "validated_by": [],
+          "validated_units": 0,
+          "withdrawn_units": 0
+        },
+        "body_standing": "declared-assumption",
+        "contract_sha256": "535551ccaf9404e3952b47c630a4b7cb2386a9c3b97103483f748a840e17e538",
+        "mode": "pinned",
+        "module": "$CHECKOUT/contract/profiles/fluent-bit/../../../providers/quirin-provider-fluent-bit/contracts/fluent_bit/task_users.qv",
+        "premises": [
+          {
+            "name": "literal_argument",
+            "origin": "literal-argument",
+            "statement": "release_check = 0"
+          }
+        ],
+        "rows": 6,
+        "safe_rows": 0,
+        "status": "pinned-in-force",
+        "withdrawn_rows": 2
+      },
+      "flb_task_users_inc": {
+        "bodies": {
+          "failed_by": [],
+          "failed_units": 0,
+          "unvalidated_units": 0,
+          "validated_by": [
+            "W4"
+          ],
+          "validated_units": 2,
+          "withdrawn_units": 0
+        },
+        "body_standing": "partly-validated",
+        "clauses": {
+          "resource_borrowed(#0)": "validated",
+          "resource_return_none()": "validated",
+          "resource_user_added(#0, users)": "declared-assumption"
+        },
+        "contract_sha256": "2c6086c0624fe127986f9a557f8d959de268bca7ad50b9f7327bd6d1dc7b87b2",
+        "mode": "pinned",
+        "module": "$CHECKOUT/contract/profiles/fluent-bit/../../../providers/quirin-provider-fluent-bit/contracts/fluent_bit/task_users.qv",
+        "premises": [],
+        "rows": 4,
+        "safe_rows": 0,
+        "status": "pinned-in-force",
+        "uncovered_clauses": [
+          "resource_user_added(#0, users)"
+        ]
+      },
+      "flb_time_now": {
+        "body_standing": "declared-assumption",
+        "contract_sha256": "4979b0c2d32b0e3a072bfb8a5a701d1123b7488af618f9c4ff69fa0f7400fca7",
+        "mode": "pinned",
+        "module": "$CHECKOUT/contract/profiles/fluent-bit/../../../providers/quirin-provider-fluent-bit/contracts/fluent_bit/time.qv",
+        "premises": [],
+        "rows": 4,
+        "safe_rows": 0,
+        "status": "pinned-in-force"
+      },
+      "floor": {
+        "body_standing": "declared-assumption",
+        "contract_sha256": "785690073ee50f28e2e0aa91c03bda020089e2213c2482e3874ee81920c67690",
+        "mode": "flexible",
+        "module": "$CHECKOUT/contract/profiles/fluent-bit/../../../providers/quirin-provider-libc/contracts/libc/math.qv",
+        "premises": [],
+        "rows": 2,
+        "safe_rows": 0,
+        "status": "flexible-standing"
+      },
+      "fprintf": {
+        "body_standing": "declared-assumption",
+        "contract_sha256": "9d44f6233231b057a3f99433bffc41bdcca554df782463d14032a6a2e9e3f69e",
+        "mode": "flexible",
+        "module": "$CHECKOUT/contract/profiles/fluent-bit/../../../providers/quirin-provider-libc/contracts/libc/stdio.qv",
+        "premises": [],
+        "rows": 2,
+        "safe_rows": 0,
+        "status": "flexible-standing"
+      },
+      "generate_chunk_name": {
+        "bodies": {
+          "failed_by": [],
+          "failed_units": 0,
+          "unvalidated_units": 2,
+          "validated_by": [],
+          "validated_units": 0,
+          "withdrawn_units": 0
+        },
+        "body_standing": "declared-assumption",
+        "contract_sha256": "41c12f61c53960bac2fb70dcf99a75c59409b73202fef5bd9f5fa95d73f96979",
+        "mode": "pinned",
+        "module": "$CHECKOUT/contract/profiles/fluent-bit/../../../providers/quirin-provider-fluent-bit/contracts/fluent_bit/input_chunk_helpers.qv",
+        "premises": [],
+        "rows": 4,
+        "safe_rows": 0,
+        "status": "pinned-in-force"
+      },
+      "getpeername": {
+        "bodies": {
+          "failed_by": [
+            "abi"
+          ],
+          "failed_units": 5,
+          "unvalidated_units": 0,
+          "validated_by": [],
+          "validated_units": 0,
+          "withdrawn_units": 5
+        },
+        "body_standing": "declared-assumption",
+        "contract_sha256": "886a32d461d5b3175a62eeeb65f827ca8b6aca7d4ea0bc0761ac2ddb88a90484",
+        "mode": "flexible",
+        "module": "$CHECKOUT/contract/profiles/fluent-bit/../../../providers/quirin-provider-libc/contracts/libc/socket.qv",
+        "premises": [],
+        "rows": 0,
+        "safe_rows": 0,
+        "status": "flexible-standing"
+      },
+      "input_chunk_has_magic_bytes": {
+        "bodies": {
+          "failed_by": [
+            "conflict"
+          ],
+          "failed_units": 2,
+          "unvalidated_units": 0,
+          "validated_by": [],
+          "validated_units": 0,
+          "withdrawn_units": 0
+        },
+        "body_standing": "declared-assumption",
+        "contract_sha256": "25a03a767543f2e6060862a0374c519df31d04fe10ccc704cc808cf164e34312",
+        "mode": "pinned",
+        "module": "$CHECKOUT/contract/profiles/fluent-bit/../../../providers/quirin-provider-fluent-bit/contracts/fluent_bit/input_chunk_is_up.qv",
+        "premises": [],
+        "rows": 6,
+        "safe_rows": 0,
+        "status": "pinned-in-force"
+      },
+      "input_chunk_write_header": {
+        "bodies": {
+          "failed_by": [],
+          "failed_units": 0,
+          "unvalidated_units": 2,
+          "validated_by": [],
+          "validated_units": 0,
+          "withdrawn_units": 0
+        },
+        "body_standing": "declared-assumption",
+        "contract_sha256": "756424bcff1f9779b1cea8687faf2a9e1b18c060503b772aa567df41d19c586b",
+        "mode": "pinned",
+        "module": "$CHECKOUT/contract/profiles/fluent-bit/../../../providers/quirin-provider-fluent-bit/contracts/fluent_bit/input_chunk_helpers.qv",
+        "premises": [],
+        "rows": 4,
+        "safe_rows": 0,
+        "status": "pinned-in-force"
+      },
+      "listen": {
+        "body_standing": "declared-assumption",
+        "contract_sha256": "3fc18d3b40796f1e8297afa490eda1ec1e11834a0404c5a67747798ee617f739",
+        "mode": "flexible",
+        "module": "$CHECKOUT/contract/profiles/fluent-bit/../../../providers/quirin-provider-libc/contracts/libc/socket.qv",
+        "premises": [],
+        "rows": 2,
+        "safe_rows": 0,
+        "status": "flexible-standing"
+      },
+      "memchr": {
+        "body_standing": "declared-assumption",
+        "contract_sha256": "34fd29a1b0213b2cb5e472926dad4d0a51e717aa83ccfde23bccda720eadb000",
+        "mode": "flexible",
+        "module": "$CHECKOUT/contract/profiles/fluent-bit/../../../providers/quirin-provider-libc/contracts/libc/string.qv",
+        "premises": [],
+        "rows": 6,
+        "safe_rows": 0,
+        "status": "flexible-standing"
+      },
+      "memcpy": {
+        "body_standing": "declared-assumption",
+        "contract_sha256": "883bfc1a1628516ad622404650dee0f7a490033179c4b0be01ed125987428074",
+        "mode": "flexible",
+        "module": "$CHECKOUT/contract/profiles/fluent-bit/../../../providers/quirin-provider-libc/contracts/libc/string.qv",
+        "premises": [],
+        "rows": 12,
+        "safe_rows": 0,
+        "status": "flexible-standing"
+      },
+      "memset": {
+        "body_standing": "declared-assumption",
+        "contract_sha256": "05ca1acccd0a9a43f068f546434b67bf47c4e984a041fb900518835cb13e2233",
+        "mode": "flexible",
+        "module": "$CHECKOUT/contract/profiles/fluent-bit/../../../providers/quirin-provider-libc/contracts/libc/string.qv",
+        "premises": [],
+        "rows": 7,
+        "safe_rows": 0,
+        "status": "flexible-standing"
+      },
+      "mk_event_channel_create": {
+        "body_standing": "declared-assumption",
+        "contract_sha256": "589f2b0bd92b09dae566fd3939375dbeee04a2e1eadcfc3511cdb58cf116bcfb",
+        "mode": "pinned",
+        "module": "$CHECKOUT/contract/profiles/fluent-bit/../../../providers/qcore-provider-libevent/contracts/monkey/event_loop.qv",
+        "premises": [
+          {
+            "name": "mk_event_descriptors",
+            "origin": "declared",
+            "statement": "P-MK-EVENT-DESCRIPTORS: the two descriptors the call creates are written through r_fd and w_fd, which v1 custody does not track (a descriptor has no out slot); mk_event_channel_destroy closes them"
+          }
+        ],
+        "rows": 6,
+        "safe_rows": 0,
+        "status": "pinned-in-force"
+      },
+      "mk_event_channel_destroy": {
+        "body_standing": "declared-assumption",
+        "contract_sha256": "ca523a47a4f0fca8260c4e131393ab2a2e5225840cf9e1f59b41c846e16a39b6",
+        "mode": "pinned",
+        "module": "$CHECKOUT/contract/profiles/fluent-bit/../../../providers/qcore-provider-libevent/contracts/monkey/event_loop.qv",
+        "premises": [
+          {
+            "name": "mk_event_descriptors",
+            "origin": "declared",
+            "statement": "P-MK-EVENT-DESCRIPTORS: the call closes r_fd and w_fd only when the event's descriptor is r_fd; v1 custody tracks neither"
+          }
+        ],
+        "rows": 4,
+        "safe_rows": 0,
+        "status": "pinned-in-force"
+      },
+      "mk_event_loop_create": {
+        "body_standing": "declared-assumption",
+        "contract_sha256": "6060d7c3beff934866328944e660de729c6c2442d15cabf860fdc7fc30226887",
+        "mode": "pinned",
+        "module": "$CHECKOUT/contract/profiles/fluent-bit/../../../providers/qcore-provider-libevent/contracts/monkey/event_loop.qv",
+        "premises": [],
+        "rows": 2,
+        "safe_rows": 0,
+        "status": "pinned-in-force"
+      },
+      "mk_event_timeout_create": {
+        "body_standing": "declared-assumption",
+        "contract_sha256": "7f3d018731119527167718d01bc21f2af40cbe3346da5551e89229b12722bc96",
+        "mode": "pinned",
+        "module": "$CHECKOUT/contract/profiles/fluent-bit/../../../providers/qcore-provider-libevent/contracts/monkey/event_loop.qv",
+        "premises": [
+          {
+            "name": "mk_event_descriptors",
+            "origin": "declared",
+            "statement": "P-MK-EVENT-DESCRIPTORS: the descriptor the call creates lives in the registered event (event->fd), which v1 custody does not track; mk_event_timeout_destroy closes it"
+          }
+        ],
+        "rows": 10,
+        "safe_rows": 0,
+        "status": "pinned-in-force"
+      },
+      "mk_event_timeout_destroy": {
+        "body_standing": "declared-assumption",
+        "contract_sha256": "0cb6e7b7eabe335702d51bef34061b8ba5add3d806f39670816097dcb38c09b9",
+        "mode": "pinned",
+        "module": "$CHECKOUT/contract/profiles/fluent-bit/../../../providers/qcore-provider-libevent/contracts/monkey/event_loop.qv",
+        "premises": [
+          {
+            "name": "mk_event_descriptors",
+            "origin": "declared",
+            "statement": "P-MK-EVENT-DESCRIPTORS: the call closes the descriptor held in the event (event->fd), which v1 custody does not track"
+          }
+        ],
+        "rows": 14,
+        "safe_rows": 2,
+        "status": "pinned-in-force"
+      },
+      "mk_event_wait": {
+        "body_standing": "declared-assumption",
+        "contract_sha256": "71ff6949f549c0ca1eb99bf1dea5dff5724c6d105f6eb64635b089cd74af05f4",
+        "mode": "pinned",
+        "module": "$CHECKOUT/contract/profiles/fluent-bit/../../../providers/qcore-provider-libevent/contracts/monkey/event_loop.qv",
+        "premises": [],
+        "rows": 2,
+        "safe_rows": 0,
+        "status": "pinned-in-force"
+      },
+      "mk_list_add": {
+        "bodies": {
+          "failed_by": [],
+          "failed_units": 0,
+          "unvalidated_units": 11,
+          "validated_by": [],
+          "validated_units": 0,
+          "withdrawn_units": 0
+        },
+        "body_standing": "declared-assumption",
+        "contract_sha256": "748bf3d90bd350fe94aeb48d10bcd5efab02f4cbbec9c2093d113352288bf493",
+        "mode": "pinned",
+        "module": "$CHECKOUT/contract/profiles/fluent-bit/../../../providers/qcore-provider-libevent/contracts/monkey/intrusive_list.qv",
+        "premises": [],
+        "rows": 36,
+        "safe_rows": 4,
+        "status": "pinned-in-force"
+      },
+      "mk_list_del": {
+        "bodies": {
+          "failed_by": [],
+          "failed_units": 0,
+          "unvalidated_units": 13,
+          "validated_by": [],
+          "validated_units": 0,
+          "withdrawn_units": 0
+        },
+        "body_standing": "declared-assumption",
+        "contract_sha256": "507931da3352aced60a7f9f6956c920fbde74253949416a2eb473f52304c48a1",
+        "mode": "pinned",
+        "module": "$CHECKOUT/contract/profiles/fluent-bit/../../../providers/qcore-provider-libevent/contracts/monkey/intrusive_list.qv",
+        "premises": [],
+        "rows": 32,
+        "safe_rows": 0,
+        "status": "pinned-in-force"
+      },
+      "msgpack_packer_init": {
+        "bodies": {
+          "failed_by": [],
+          "failed_units": 0,
+          "unvalidated_units": 0,
+          "validated_by": [
+            "13y"
+          ],
+          "validated_units": 15,
+          "withdrawn_units": 0
+        },
+        "body_standing": "partly-validated",
+        "clauses": {
+          "resource_borrowed(#0)": "declared-assumption",
+          "resource_borrowed(#1)": "declared-assumption",
+          "resource_borrowed(#2)": "declared-assumption",
+          "resource_callback_registered(#2, #0)": "validated",
+          "resource_retained_by(#1, #0)": "declared-assumption",
+          "resource_return_none()": "declared-assumption"
+        },
+        "contract_sha256": "fa858925a2fbeab537ee10b169d24c2b12e4d5b33134960c918aabb47e65ff29",
+        "mode": "pinned",
+        "module": "$CHECKOUT/contract/profiles/fluent-bit/../../../providers/quirin-provider-msgpack/contracts/msgpack/packer.qv",
+        "premises": [],
+        "rows": 6,
+        "safe_rows": 0,
+        "status": "pinned-in-force",
+        "uncovered_clauses": [
+          "resource_borrowed(#0)",
+          "resource_borrowed(#1)",
+          "resource_borrowed(#2)",
+          "resource_retained_by(#1, #0)",
+          "resource_return_none()"
+        ]
+      },
+      "pthread_mutex_lock": {
+        "body_standing": "declared-assumption",
+        "contract_sha256": "4e9a0d63356ce1dfa2a3b52a95533ea94e7d53acb2a2639ca5c66cdf8ede7e7c",
+        "mode": "flexible",
+        "module": "$CHECKOUT/contract/profiles/fluent-bit/../../../providers/quirin-provider-libc/contracts/libc/pthread_mutex.qv",
+        "premises": [],
+        "rows": 22,
+        "safe_rows": 2,
+        "status": "flexible-standing"
+      },
+      "pthread_mutex_unlock": {
+        "body_standing": "declared-assumption",
+        "contract_sha256": "10ca8768c486406e29d97f6dd13213f0d33a58dfb808662bee1798b6a7c3551e",
+        "mode": "flexible",
+        "module": "$CHECKOUT/contract/profiles/fluent-bit/../../../providers/quirin-provider-libc/contracts/libc/pthread_mutex.qv",
+        "premises": [],
+        "rows": 22,
+        "safe_rows": 2,
+        "status": "flexible-standing"
+      },
+      "pthread_once": {
+        "body_standing": "declared-assumption",
+        "contract_sha256": "9a8845656ca97df78c6ba94adef9868c404b68635fe964e75aab702cacb94200",
+        "mode": "flexible",
+        "module": "$CHECKOUT/contract/profiles/fluent-bit/../../../providers/quirin-provider-libc/contracts/libc/threads.qv",
+        "premises": [],
+        "rows": 2,
+        "safe_rows": 0,
+        "status": "flexible-trusted"
+      },
+      "read": {
+        "body_standing": "declared-assumption",
+        "contract_sha256": "807198c5edc86ea3d3a87eadbc52b522566a8770ade01c9db0e18935fe69ec6b",
+        "mode": "flexible",
+        "module": "$CHECKOUT/contract/profiles/fluent-bit/../../../providers/quirin-provider-libc/contracts/libc/unistd.qv",
+        "premises": [],
+        "rows": 16,
+        "safe_rows": 6,
+        "status": "flexible-standing"
+      },
+      "sb_allocate_backlogs": {
+        "bodies": {
+          "failed_by": [
+            "C06.3"
+          ],
+          "failed_units": 1,
+          "unvalidated_units": 0,
+          "validated_by": [],
+          "validated_units": 0,
+          "withdrawn_units": 15
+        },
+        "body_standing": "declared-assumption",
+        "contract_sha256": "53161949fef18d454fab6cf5bbfd0d5e494181efa43d89d775a34a8ab33a61b8",
+        "mode": "pinned",
+        "module": "$CHECKOUT/contract/profiles/fluent-bit/../../../providers/quirin-provider-fluent-bit/contracts/fluent_bit/storage_backlog.qv",
+        "premises": [],
+        "rows": 0,
+        "safe_rows": 0,
+        "status": "pinned-in-force",
+        "withdrawn_rows": 2
+      },
+      "sb_allocate_chunk": {
+        "bodies": {
+          "failed_by": [],
+          "failed_units": 0,
+          "unvalidated_units": 0,
+          "validated_by": [
+            "W4",
+            "entry"
+          ],
+          "validated_units": 1,
+          "withdrawn_units": 14
+        },
+        "body_standing": "validated",
+        "clauses": {
+          "resource_borrowed(#0)": "validated",
+          "resource_borrowed(#1)": "validated",
+          "resource_borrowed(#2)": "validated",
+          "resource_return_owned(nullable)": "validated"
+        },
+        "contract_sha256": "a38e962421ae34edd8857eeeea4e4a6d06bfa708faca32f381341dc34201eb66",
+        "mode": "pinned",
+        "module": "$CHECKOUT/contract/profiles/fluent-bit/../../../providers/quirin-provider-fluent-bit/contracts/fluent_bit/storage_backlog.qv",
+        "premises": [],
+        "rows": 2,
+        "safe_rows": 1,
+        "status": "pinned-in-force"
+      },
+      "sb_append_chunk_to_segregated_backlog": {
+        "bodies": {
+          "failed_by": [
+            "C06.3"
+          ],
+          "failed_units": 1,
+          "unvalidated_units": 0,
+          "validated_by": [],
+          "validated_units": 0,
+          "withdrawn_units": 15
+        },
+        "body_standing": "declared-assumption",
+        "contract_sha256": "7dd643ba5a72bc63af85a12b8d6ee8e408ee171383677838c0a6f9e9b42e8838",
+        "mode": "pinned",
+        "module": "$CHECKOUT/contract/profiles/fluent-bit/../../../providers/quirin-provider-fluent-bit/contracts/fluent_bit/storage_backlog.qv",
+        "premises": [],
+        "rows": 0,
+        "safe_rows": 0,
+        "status": "pinned-in-force",
+        "withdrawn_rows": 2
+      },
+      "sb_append_chunk_to_segregated_backlogs": {
+        "bodies": {
+          "failed_by": [
+            "C06.3"
+          ],
+          "failed_units": 1,
+          "unvalidated_units": 0,
+          "validated_by": [],
+          "validated_units": 0,
+          "withdrawn_units": 15
+        },
+        "body_standing": "declared-assumption",
+        "contract_sha256": "2d4aff08af834082498b4a3dab7d6dcbfa8d08e0f3491f3b3686d7669b5804b7",
+        "mode": "pinned",
+        "module": "$CHECKOUT/contract/profiles/fluent-bit/../../../providers/quirin-provider-fluent-bit/contracts/fluent_bit/storage_backlog.qv",
+        "premises": [],
+        "rows": 0,
+        "safe_rows": 0,
+        "status": "pinned-in-force",
+        "withdrawn_rows": 2
+      },
+      "sb_destroy_backlog": {
+        "bodies": {
+          "failed_by": [
+            "C06.3"
+          ],
+          "failed_units": 1,
+          "unvalidated_units": 0,
+          "validated_by": [],
+          "validated_units": 0,
+          "withdrawn_units": 15
+        },
+        "body_standing": "declared-assumption",
+        "contract_sha256": "e7f8bb4389bdd42ca39c7b1b8aaee161e34632401d3ea23c001c01fce1d5c357",
+        "mode": "pinned",
+        "module": "$CHECKOUT/contract/profiles/fluent-bit/../../../providers/quirin-provider-fluent-bit/contracts/fluent_bit/storage_backlog.qv",
+        "premises": [],
+        "rows": 0,
+        "safe_rows": 0,
+        "status": "pinned-in-force",
+        "withdrawn_rows": 2
+      },
+      "sb_destroy_backlogs": {
+        "bodies": {
+          "failed_by": [
+            "C06.3"
+          ],
+          "failed_units": 1,
+          "unvalidated_units": 0,
+          "validated_by": [],
+          "validated_units": 0,
+          "withdrawn_units": 15
+        },
+        "body_standing": "declared-assumption",
+        "contract_sha256": "4f8f50dc435d32486fe308c4a0ab01f70a08e726e10b6d068b77fdfaa3c2eaf4",
+        "mode": "pinned",
+        "module": "$CHECKOUT/contract/profiles/fluent-bit/../../../providers/quirin-provider-fluent-bit/contracts/fluent_bit/storage_backlog.qv",
+        "premises": [],
+        "rows": 0,
+        "safe_rows": 0,
+        "status": "pinned-in-force",
+        "withdrawn_rows": 3
+      },
+      "sb_destroy_chunk": {
+        "bodies": {
+          "failed_by": [],
+          "failed_units": 0,
+          "unvalidated_units": 0,
+          "validated_by": [
+            "W4",
+            "entry"
+          ],
+          "validated_units": 1,
+          "withdrawn_units": 14
+        },
+        "body_standing": "validated",
+        "clauses": {
+          "resource_released(#0, nonnull)": "validated",
+          "resource_return_none()": "validated"
+        },
+        "contract_sha256": "e0c87b2d070dd160eedf2237895dbce220266ab01b9aa45ccb14cc56d43134e0",
+        "mode": "pinned",
+        "module": "$CHECKOUT/contract/profiles/fluent-bit/../../../providers/quirin-provider-fluent-bit/contracts/fluent_bit/storage_backlog.qv",
+        "premises": [],
+        "rows": 2,
+        "safe_rows": 1,
+        "status": "pinned-in-force"
+      },
+      "sb_release_output_queue_space": {
+        "bodies": {
+          "failed_by": [
+            "C06.3"
+          ],
+          "failed_units": 1,
+          "unvalidated_units": 0,
+          "validated_by": [],
+          "validated_units": 0,
+          "withdrawn_units": 15
+        },
+        "body_standing": "declared-assumption",
+        "contract_sha256": "53f4c9bb9d6040bcff9c34d3e3004f302e3752eb397f3241a43f9e2877340cdd",
+        "mode": "pinned",
+        "module": "$CHECKOUT/contract/profiles/fluent-bit/../../../providers/quirin-provider-fluent-bit/contracts/fluent_bit/storage_backlog.qv",
+        "premises": [],
+        "rows": 0,
+        "safe_rows": 0,
+        "status": "pinned-in-force",
+        "withdrawn_rows": 3
+      },
+      "sb_remove_chunk_from_segregated_backlog": {
+        "bodies": {
+          "failed_by": [
+            "C06.3"
+          ],
+          "failed_units": 1,
+          "unvalidated_units": 0,
+          "validated_by": [],
+          "validated_units": 0,
+          "withdrawn_units": 15
+        },
+        "body_standing": "declared-assumption",
+        "contract_sha256": "64eb3dfdd53ba4c2be3983e9585dfa3039ac0b16391eaf73c10bc277ec88282c",
+        "mode": "pinned",
+        "module": "$CHECKOUT/contract/profiles/fluent-bit/../../../providers/quirin-provider-fluent-bit/contracts/fluent_bit/storage_backlog.qv",
+        "premises": [],
+        "rows": 0,
+        "safe_rows": 0,
+        "status": "pinned-in-force",
+        "withdrawn_rows": 2
+      },
+      "sb_remove_chunk_from_segregated_backlogs": {
+        "bodies": {
+          "failed_by": [
+            "C06.3"
+          ],
+          "failed_units": 1,
+          "unvalidated_units": 0,
+          "validated_by": [],
+          "validated_units": 0,
+          "withdrawn_units": 15
+        },
+        "body_standing": "declared-assumption",
+        "contract_sha256": "453aeb30c928efa32ca6d53e5cb9513155e85b5e5f2d9ff97b1b238cf40471bf",
+        "mode": "pinned",
+        "module": "$CHECKOUT/contract/profiles/fluent-bit/../../../providers/quirin-provider-fluent-bit/contracts/fluent_bit/storage_backlog.qv",
+        "premises": [],
+        "rows": 0,
+        "safe_rows": 0,
+        "status": "pinned-in-force",
+        "withdrawn_rows": 4
+      },
+      "sb_segregate_chunks": {
+        "bodies": {
+          "failed_by": [
+            "C06.3"
+          ],
+          "failed_units": 1,
+          "unvalidated_units": 0,
+          "validated_by": [],
+          "validated_units": 0,
+          "withdrawn_units": 15
+        },
+        "body_standing": "declared-assumption",
+        "contract_sha256": "b2115acb6fde1c2d8edd0526e02eb92ecf4ddfc1f220b72c8a921b4ec57f622b",
+        "mode": "pinned",
+        "module": "$CHECKOUT/contract/profiles/fluent-bit/../../../providers/quirin-provider-fluent-bit/contracts/fluent_bit/storage_backlog.qv",
+        "premises": [],
+        "rows": 0,
+        "safe_rows": 0,
+        "status": "pinned-in-force",
+        "withdrawn_rows": 3
+      },
+      "sleep": {
+        "body_standing": "declared-assumption",
+        "contract_sha256": "6a5334fff099770761d1306ba3f7545dfef4ccd5026481501768798c68917e4b",
+        "mode": "flexible",
+        "module": "$CHECKOUT/contract/profiles/fluent-bit/../../../providers/quirin-provider-libc/contracts/libc/unistd.qv",
+        "premises": [],
+        "rows": 4,
+        "safe_rows": 0,
+        "status": "flexible-standing"
+      },
+      "snprintf": {
+        "body_standing": "declared-assumption",
+        "contract_sha256": "d5c61911c447ef2eafd9412d53ad1816e481d95e812097bc64d09dc0f8fbee0b",
+        "mode": "flexible",
+        "module": "$CHECKOUT/contract/profiles/fluent-bit/../../../providers/quirin-provider-libc/contracts/libc/stdio.qv",
+        "premises": [],
+        "rows": 8,
+        "safe_rows": 0,
+        "status": "flexible-standing"
+      },
+      "srand": {
+        "body_standing": "declared-assumption",
+        "contract_sha256": "560f7b7f86f425094587a0c95f021bca9b14c353ec4f5d075cc16a0d995ecbc7",
+        "mode": "flexible",
+        "module": "$CHECKOUT/contract/profiles/fluent-bit/../../../providers/quirin-provider-libc/contracts/libc/stdlib.qv",
+        "premises": [],
+        "rows": 2,
+        "safe_rows": 0,
+        "status": "flexible-standing"
+      },
+      "strcasecmp": {
+        "body_standing": "declared-assumption",
+        "contract_sha256": "a59e46ac4e1077a9fae5e5d7dd677ba38bfc13f44439dffa8d0c695f7c646e4d",
+        "mode": "flexible",
+        "module": "$CHECKOUT/contract/profiles/fluent-bit/../../../providers/quirin-provider-libc/contracts/libc/string.qv",
+        "premises": [],
+        "rows": 6,
+        "safe_rows": 0,
+        "status": "flexible-standing"
+      },
+      "strcmp": {
+        "body_standing": "declared-assumption",
+        "contract_sha256": "6eb73531dcc1f710f2c7053827851dcb9ad8577784c45f221701f022e141cfdc",
+        "mode": "flexible",
+        "module": "$CHECKOUT/contract/profiles/fluent-bit/../../../providers/quirin-provider-libc/contracts/libc/string.qv",
+        "premises": [],
+        "rows": 7,
+        "safe_rows": 2,
+        "status": "flexible-standing"
+      },
+      "strerror_r": {
+        "bodies": {
+          "failed_by": [
+            "abi"
+          ],
+          "failed_units": 5,
+          "unvalidated_units": 0,
+          "validated_by": [],
+          "validated_units": 0,
+          "withdrawn_units": 5
+        },
+        "body_standing": "declared-assumption",
+        "contract_sha256": "7b799c7cebd71e54947ec327931c15f552f70c0792116d8b52768e6ccd2ff5bb",
+        "mode": "flexible",
+        "module": "$CHECKOUT/contract/profiles/fluent-bit/../../../providers/quirin-provider-libc/contracts/libc/string.qv",
+        "premises": [],
+        "rows": 0,
+        "safe_rows": 0,
+        "status": "flexible-standing"
+      },
+      "strlen": {
+        "body_standing": "declared-assumption",
+        "contract_sha256": "20462f0cfea207b0091240c32529c73c8554328ada0e30ff6256b2cfd1bde3fd",
+        "mode": "flexible",
+        "module": "$CHECKOUT/contract/profiles/fluent-bit/../../../providers/quirin-provider-libc/contracts/libc/string.qv",
+        "premises": [],
+        "rows": 26,
+        "safe_rows": 2,
+        "status": "flexible-standing"
+      },
+      "strncmp": {
+        "body_standing": "declared-assumption",
+        "contract_sha256": "502ba704d738d3b0debce91b5a754edcf37b4e0348fbbfe8df8cb09040196ebc",
+        "mode": "flexible",
+        "module": "$CHECKOUT/contract/profiles/fluent-bit/../../../providers/quirin-provider-libc/contracts/libc/string.qv",
+        "premises": [],
+        "rows": 6,
+        "safe_rows": 2,
+        "status": "flexible-standing"
+      },
+      "strnlen": {
+        "body_standing": "declared-assumption",
+        "contract_sha256": "019e2bcb27088183f30ec41efde8c7129538ce236c339ecc85e92023aff5650d",
+        "mode": "flexible",
+        "module": "$CHECKOUT/contract/profiles/fluent-bit/../../../providers/quirin-provider-libc/contracts/libc/string.qv",
+        "premises": [],
+        "rows": 4,
+        "safe_rows": 0,
+        "status": "flexible-standing"
+      },
+      "strrchr": {
+        "body_standing": "declared-assumption",
+        "contract_sha256": "4a81fc626ff6c0cce286e8d9ab1a3cd3deba557c98d12bdf7011c08d407866bd",
+        "mode": "flexible",
+        "module": "$CHECKOUT/contract/profiles/fluent-bit/../../../providers/quirin-provider-libc/contracts/libc/string.qv",
+        "premises": [],
+        "rows": 2,
+        "safe_rows": 0,
+        "status": "flexible-standing"
+      },
+      "strstr": {
+        "body_standing": "declared-assumption",
+        "contract_sha256": "14ce1db84cd91074b6d909b758ba5903a510f3d6f8183bed3f5e5f8aafb7e4a4",
+        "mode": "flexible",
+        "module": "$CHECKOUT/contract/profiles/fluent-bit/../../../providers/quirin-provider-libc/contracts/libc/string.qv",
+        "premises": [],
+        "rows": 4,
+        "safe_rows": 0,
+        "status": "flexible-standing"
+      },
+      "strtoll": {
+        "bodies": {
+          "failed_by": [
+            "abi"
+          ],
+          "failed_units": 15,
+          "unvalidated_units": 0,
+          "validated_by": [],
+          "validated_units": 0,
+          "withdrawn_units": 15
+        },
+        "body_standing": "declared-assumption",
+        "contract_sha256": "de8c73ec3944e6c5eae09c263febc5704f554300f878e3e12764c4dd95e90916",
+        "mode": "flexible",
+        "module": "$CHECKOUT/contract/profiles/fluent-bit/../../../providers/quirin-provider-libc/contracts/libc/stdlib.qv",
+        "premises": [],
+        "rows": 0,
+        "safe_rows": 0,
+        "status": "flexible-trusted"
+      },
+      "strtoull": {
+        "bodies": {
+          "failed_by": [
+            "abi"
+          ],
+          "failed_units": 15,
+          "unvalidated_units": 0,
+          "validated_by": [],
+          "validated_units": 0,
+          "withdrawn_units": 15
+        },
+        "body_standing": "declared-assumption",
+        "contract_sha256": "97b1539630ad51f5c46a7b092da08971fc127c4d3574592d6148c292aca0de62",
+        "mode": "flexible",
+        "module": "$CHECKOUT/contract/profiles/fluent-bit/../../../providers/quirin-provider-libc/contracts/libc/stdlib.qv",
+        "premises": [],
+        "rows": 0,
+        "safe_rows": 0,
+        "status": "flexible-trusted"
+      },
+      "time": {
+        "body_standing": "declared-assumption",
+        "contract_sha256": "0d1f335080f344836bd108e9633c4702179532729762c9a53951c64f1493486a",
+        "mode": "flexible",
+        "module": "$CHECKOUT/contract/profiles/fluent-bit/../../../providers/quirin-provider-libc/contracts/libc/time.qv",
+        "premises": [],
+        "rows": 8,
+        "safe_rows": 0,
+        "status": "flexible-standing"
+      },
+      "usleep": {
+        "body_standing": "declared-assumption",
+        "contract_sha256": "3d52495590e0892e2f80e6a6625c63859d69b342cd38cc6b91e55a5158349570",
+        "mode": "flexible",
+        "module": "$CHECKOUT/contract/profiles/fluent-bit/../../../providers/quirin-provider-libc/contracts/libc/unistd.qv",
+        "premises": [],
+        "rows": 2,
+        "safe_rows": 0,
+        "status": "flexible-standing"
+      },
+      "write": {
+        "body_standing": "declared-assumption",
+        "contract_sha256": "1cc311b830803db70cd25cf721bdae0fc7907a5c3ba25a0d4dda86ba00d11180",
+        "mode": "flexible",
+        "module": "$CHECKOUT/contract/profiles/fluent-bit/../../../providers/quirin-provider-libc/contracts/libc/unistd.qv",
+        "premises": [],
+        "rows": 14,
+        "safe_rows": 6,
+        "status": "flexible-standing"
+      }
+    },
+    "meaning": "the contract declarations each published row's derivation consulted (rule 13f): every name a lookup of the row's own work asked for, every callee its solved CFG applies a contract of, and transitively those of every in-unit summary it consulted; over-approximated, never omitted. `body_standing` (rules 13g, 13i-13k): evidence covers the clauses it compares or reads (an equal W4 summary, and the body under the declaration's entry custody matching every exit and Safe, on a reported row (`entry`) or on a body whose W4 summary only refines the declaration (rule 13m, which then records no conflict failure): every parameter and result mode with its kind; rule 11r: every exit class; 12w: the guards of retentions; 13a: slot moves, derived out slots and a borrowed result; 13c: reference keeps and drops; 13d: a returned reference); no evidence covers a container or counted-user clause, a retention, a holder reset, a named premise, a variadic tail or a no-return clause. A clause is `validated` where every unit that examined a body of the declared function validated the declaration, at least one did, and every such unit's evidence covered the clause; a declaration is `validated` only when every clause is, `partly-validated` when some but not all are (`uncovered_clauses`), `held` when held for a human act, and otherwise `declared-assumption` (contract specification C06): there is no analysed body, a body did not validate it, or no clause is covered everywhere. `resting_only_on_validated_declarations` counts Safe rows whose every declaration is fully validated. Premises are the named assumptions a declaration states (`resource_premise`), its literal-argument premises, and the premises a rule states for its clause (rule 13e for a result holder). A row's `null_premises` (rule 14n) are the named null premises (`null-deref:FUNCTION:LINE:VARIABLE`) its derivation and its in-unit summaries' relied on, decision 1's moved NULL question; `resting_only_on_a_null_premise` counts Safe rows with no declaration and at least one, `carrying_a_null_premise` every Safe row with one, and neither is ever counted as resting on nothing. Evidence only: no verdict reads this section or the row fields",
+    "safe_rollup": {
+      "carrying_a_null_premise": 2,
+      "consulting_a_held_or_withdrawn_declaration": 0,
+      "partly_validated_declarations": [
+        {
+          "function": "flb_input_chunk_get_name",
+          "safe_rows": 2,
+          "uncovered_clauses": [
+            "resource_premise(untracked_handback)"
+          ]
+        },
+        {
+          "function": "flb_input_chunk_is_mem_overlimit",
+          "safe_rows": 2,
+          "uncovered_clauses": [
+            "resource_user_neutral()"
+          ]
+        },
+        {
+          "function": "flb_input_chunk_is_storage_overlimit",
+          "safe_rows": 2,
+          "uncovered_clauses": [
+            "resource_user_neutral()"
+          ]
+        },
+        {
+          "function": "flb_input_chunk_is_up",
+          "safe_rows": 2,
+          "uncovered_clauses": [
+            "resource_user_neutral()"
+          ]
+        },
+        {
+          "function": "flb_task_get_route_status",
+          "safe_rows": 2,
+          "uncovered_clauses": [
+            "resource_user_neutral()"
+          ]
+        },
+        {
+          "function": "flb_task_set_route_status",
+          "safe_rows": 2,
+          "uncovered_clauses": [
+            "resource_user_neutral()"
+          ]
+        },
+        {
+          "function": "flb_task_users_inc",
+          "safe_rows": 0,
+          "uncovered_clauses": [
+            "resource_user_added(#0, users)"
+          ]
+        },
+        {
+          "function": "msgpack_packer_init",
+          "safe_rows": 0,
+          "uncovered_clauses": [
+            "resource_borrowed(#0)",
+            "resource_borrowed(#1)",
+            "resource_borrowed(#2)",
+            "resource_retained_by(#1, #0)",
+            "resource_return_none()"
+          ]
+        }
+      ],
+      "resting_on_a_declared_assumption": 40,
+      "resting_on_a_partly_validated_declaration": 6,
+      "resting_on_no_declaration": 49,
+      "resting_only_on_a_null_premise": 0,
+      "resting_only_on_validated_declarations": 2,
+      "safe_rows": 97,
+      "top_declared_assumptions": [
+        {
+          "function": "__errno_location",
+          "mode": "flexible",
+          "premises": [
+            {
+              "name": "nested_call_admission",
+              "origin": "declared",
+              "statement": "a dereference of this call's result is read only where the gateway's nested-call admission holds at the call site (premises N1-N10 of cards O04-TRACE and CONSTRUCTOR-RESIDUALS, checked per site): the call is the statement's only nested call and a whole argument of a contracted call at a declared Borrowed position modulo the dereference wrapper (N4-D), its written arity is this declaration's, and the unit's own declaration of the callee returns exactly one pointer level over a scalar type (N10); under them the argument binds, releases, escapes and addresses nothing the projection tracks"
+            }
+          ],
+          "safe_rows": 6,
+          "status": "flexible-standing"
+        },
+        {
+          "function": "flb_errno_print",
+          "mode": "pinned",
+          "premises": [],
+          "safe_rows": 6,
+          "status": "pinned-in-force"
+        },
+        {
+          "function": "read",
+          "mode": "flexible",
+          "premises": [],
+          "safe_rows": 6,
+          "status": "flexible-standing"
+        },
+        {
+          "function": "write",
+          "mode": "flexible",
+          "premises": [],
+          "safe_rows": 6,
+          "status": "flexible-standing"
+        },
+        {
+          "function": "cio_chunk_down",
+          "mode": "pinned",
+          "premises": [],
+          "safe_rows": 4,
+          "status": "pinned-in-force"
+        },
+        {
+          "function": "cio_chunk_get_content_size",
+          "mode": "pinned",
+          "premises": [],
+          "safe_rows": 4,
+          "status": "pinned-in-force"
+        },
+        {
+          "function": "cio_chunk_is_up",
+          "mode": "pinned",
+          "premises": [],
+          "safe_rows": 4,
+          "status": "pinned-in-force"
+        },
+        {
+          "function": "flb_log_check",
+          "mode": "pinned",
+          "premises": [],
+          "safe_rows": 4,
+          "status": "pinned-in-force"
+        },
+        {
+          "function": "flb_log_print",
+          "mode": "pinned",
+          "premises": [],
+          "safe_rows": 4,
+          "status": "pinned-in-force"
+        },
+        {
+          "function": "mk_list_add",
+          "mode": "pinned",
+          "premises": [],
+          "safe_rows": 4,
+          "status": "pinned-in-force"
+        },
+        {
+          "function": "cio_stream_size_chunks_up",
+          "mode": "pinned",
+          "premises": [],
+          "safe_rows": 2,
+          "status": "pinned-in-force"
+        },
+        {
+          "function": "flb_sched_timer_destroy",
+          "mode": "pinned",
+          "premises": [],
+          "safe_rows": 2,
+          "status": "pinned-in-force"
+        },
+        {
+          "function": "flb_task_retry_destroy",
+          "mode": "pinned",
+          "premises": [],
+          "safe_rows": 2,
+          "status": "pinned-in-force"
+        },
+        {
+          "function": "mk_event_timeout_destroy",
+          "mode": "pinned",
+          "premises": [
+            {
+              "name": "mk_event_descriptors",
+              "origin": "declared",
+              "statement": "P-MK-EVENT-DESCRIPTORS: the call closes the descriptor held in the event (event->fd), which v1 custody does not track"
+            }
+          ],
+          "safe_rows": 2,
+          "status": "pinned-in-force"
+        },
+        {
+          "function": "pthread_mutex_lock",
+          "mode": "flexible",
+          "premises": [],
+          "safe_rows": 2,
+          "status": "flexible-standing"
+        },
+        {
+          "function": "pthread_mutex_unlock",
+          "mode": "flexible",
+          "premises": [],
+          "safe_rows": 2,
+          "status": "flexible-standing"
+        },
+        {
+          "function": "strcmp",
+          "mode": "flexible",
+          "premises": [],
+          "safe_rows": 2,
+          "status": "flexible-standing"
+        },
+        {
+          "function": "strlen",
+          "mode": "flexible",
+          "premises": [],
+          "safe_rows": 2,
+          "status": "flexible-standing"
+        },
+        {
+          "function": "strncmp",
+          "mode": "flexible",
+          "premises": [],
+          "safe_rows": 2,
+          "status": "flexible-standing"
+        }
+      ]
+    }
+  },
+  "contract_dependencies_after": {
+    "counts": {
+      "declarations_consulted": 118,
+      "declared_assumption": 99,
+      "held": 2,
+      "partly_validated": 8,
+      "rows_annotated": 448,
+      "validated": 9
+    },
+    "declarations": {
+      "__errno_location": {
+        "body_standing": "declared-assumption",
+        "contract_sha256": "d956f076f4c50c66a40cd75f0ed9a408668c3c05e41c4a001c5dded9a6ce9c9e",
+        "mode": "flexible",
+        "module": "$CHECKOUT/contract/profiles/fluent-bit/../../../providers/quirin-provider-libc/contracts/libc/errno.qv",
+        "premises": [
+          {
+            "name": "nested_call_admission",
+            "origin": "declared",
+            "statement": "a dereference of this call's result is read only where the gateway's nested-call admission holds at the call site (premises N1-N10 of cards O04-TRACE and CONSTRUCTOR-RESIDUALS, checked per site): the call is the statement's only nested call and a whole argument of a contracted call at a declared Borrowed position modulo the dereference wrapper (N4-D), its written arity is this declaration's, and the unit's own declaration of the callee returns exactly one pointer level over a scalar type (N10); under them the argument binds, releases, escapes and addresses nothing the projection tracks"
+          }
+        ],
+        "rows": 68,
+        "safe_rows": 6,
+        "status": "flexible-standing"
+      },
+      "append_to_ring_buffer": {
+        "bodies": {
+          "failed_by": [],
+          "failed_units": 0,
+          "unvalidated_units": 2,
+          "validated_by": [],
+          "validated_units": 0,
+          "withdrawn_units": 0
+        },
+        "body_standing": "declared-assumption",
+        "contract_sha256": "138998d93a8021db21225eeaf614c83d15d0b163cee23320608e680e87d1463d",
+        "mode": "pinned",
+        "module": "$CHECKOUT/contract/profiles/fluent-bit/../../../providers/quirin-provider-fluent-bit/contracts/fluent_bit/input_chunk_helpers.qv",
+        "premises": [],
+        "rows": 8,
+        "safe_rows": 0,
+        "status": "pinned-in-force"
+      },
+      "atoi": {
+        "body_standing": "declared-assumption",
+        "contract_sha256": "d2842cfc0c7cc4bfb763cb34df2f95582aee84c8608df0c5aa4346b984c40398",
+        "mode": "flexible",
+        "module": "$CHECKOUT/contract/profiles/fluent-bit/../../../providers/quirin-provider-libc/contracts/libc/stdlib.qv",
+        "premises": [],
+        "rows": 4,
+        "safe_rows": 0,
+        "status": "flexible-standing"
+      },
+      "cb_queue_chunks": {
+        "bodies": {
+          "failed_by": [
+            "C06.3"
+          ],
+          "failed_units": 1,
+          "unvalidated_units": 0,
+          "validated_by": [],
+          "validated_units": 0,
+          "withdrawn_units": 15
+        },
+        "body_standing": "declared-assumption",
+        "contract_sha256": "595296735868b877d3f3abdb66541ff9244460d13e698061bddaf8efd7c436e2",
+        "mode": "pinned",
+        "module": "$CHECKOUT/contract/profiles/fluent-bit/../../../providers/quirin-provider-fluent-bit/contracts/fluent_bit/storage_backlog.qv",
+        "premises": [],
+        "rows": 0,
+        "safe_rows": 0,
+        "status": "pinned-in-force",
+        "withdrawn_rows": 2
+      },
+      "cfl_list_size": {
+        "bodies": {
+          "failed_by": [],
+          "failed_units": 0,
+          "unvalidated_units": 2,
+          "validated_by": [],
+          "validated_units": 0,
+          "withdrawn_units": 0
+        },
+        "body_standing": "declared-assumption",
+        "contract_sha256": "c65ed775ff578e6d6b8104f582ced8bc2a9769f33ccaaede9f32d4ff3fd5bf0e",
+        "mode": "pinned",
+        "module": "$CHECKOUT/contract/profiles/fluent-bit/../../../providers/quirin-provider-cfl/contracts/cfl/sds_lifetime.qv",
+        "premises": [],
+        "rows": 2,
+        "safe_rows": 0,
+        "status": "pinned-in-force"
+      },
+      "cfl_time_now": {
+        "body_standing": "declared-assumption",
+        "contract_sha256": "6f320509501456d9b499e641f0b8ec8e7c905ad4c9e2ef0e2264c81c6d9f8466",
+        "mode": "pinned",
+        "module": "$CHECKOUT/contract/profiles/fluent-bit/../../../providers/quirin-provider-cfl/contracts/cfl/time.qv",
+        "premises": [],
+        "rows": 22,
+        "safe_rows": 0,
+        "status": "pinned-in-force"
+      },
+      "cio_chunk_close": {
+        "body_standing": "declared-assumption",
+        "contract_sha256": "4e05d5ca414bbb75d3dbbec8d81e23e030162acd061112f1ed0587cab39b59d8",
+        "mode": "pinned",
+        "module": "$CHECKOUT/contract/profiles/fluent-bit/../../../providers/qcore-provider-chunkio/contracts/chunkio/resource_open_close.qv",
+        "premises": [],
+        "rows": 13,
+        "safe_rows": 0,
+        "status": "pinned-in-force"
+      },
+      "cio_chunk_down": {
+        "body_standing": "declared-assumption",
+        "contract_sha256": "38dac558f5ddc758de78aaef0761d2c1f0ac7bcde051ee011424adda641935f9",
+        "mode": "pinned",
+        "module": "$CHECKOUT/contract/profiles/fluent-bit/../../../providers/qcore-provider-chunkio/contracts/chunkio/chunk_residency.qv",
+        "premises": [],
+        "rows": 18,
+        "safe_rows": 6,
+        "status": "pinned-in-force"
+      },
+      "cio_chunk_get_content_size": {
+        "body_standing": "declared-assumption",
+        "contract_sha256": "72654b936718cfdc4da1bf83f5b6ef0e9be6b25da1f6d4817baa27d5e8d350d9",
+        "mode": "pinned",
+        "module": "$CHECKOUT/contract/profiles/fluent-bit/../../../providers/qcore-provider-chunkio/contracts/chunkio/chunk_sizes.qv",
+        "premises": [],
+        "rows": 14,
+        "safe_rows": 4,
+        "status": "pinned-in-force"
+      },
+      "cio_chunk_is_up": {
+        "body_standing": "declared-assumption",
+        "contract_sha256": "cb3491ca510c7fff7f42e40c911e9e93ad583d96d96427e3c704f430840432c6",
+        "mode": "pinned",
+        "module": "$CHECKOUT/contract/profiles/fluent-bit/../../../providers/qcore-provider-chunkio/contracts/chunkio/chunk_residency.qv",
+        "premises": [],
+        "rows": 24,
+        "safe_rows": 6,
+        "status": "pinned-in-force"
+      },
+      "cio_chunk_open": {
+        "body_standing": "declared-assumption",
+        "contract_sha256": "a0d15039f2e8e7ad37c1c26fed6f61e8b9ab4264845ae0ba3b9a2f2ee6f849a6",
+        "mode": "pinned",
+        "module": "$CHECKOUT/contract/profiles/fluent-bit/../../../providers/qcore-provider-chunkio/contracts/chunkio/resource_open_close.qv",
+        "premises": [],
+        "rows": 4,
+        "safe_rows": 0,
+        "status": "pinned-in-force"
+      },
+      "cio_chunk_up_force": {
+        "body_standing": "declared-assumption",
+        "contract_sha256": "3d32f5993f3f654412f751c2ddaa8333a7a5ee74a49727537274866ac81240b8",
+        "mode": "pinned",
+        "module": "$CHECKOUT/contract/profiles/fluent-bit/../../../providers/qcore-provider-chunkio/contracts/chunkio/chunk_residency.qv",
+        "premises": [],
+        "rows": 14,
+        "safe_rows": 0,
+        "status": "pinned-in-force"
+      },
+      "cio_stream_size_chunks_up": {
+        "body_standing": "declared-assumption",
+        "contract_sha256": "e2312d911b12a290e0f22fba6a664c31bb6aad96359a45cc00121e5c9bc03c78",
+        "mode": "pinned",
+        "module": "$CHECKOUT/contract/profiles/fluent-bit/../../../providers/qcore-provider-chunkio/contracts/chunkio/chunk_sizes.qv",
+        "premises": [],
+        "rows": 2,
+        "safe_rows": 2,
+        "status": "pinned-in-force"
+      },
+      "close": {
+        "body_standing": "declared-assumption",
+        "contract_sha256": "0b4424f08d057594b5aeb04c54a41450b34fef63d3a9a21a216bc89b14e18e64",
+        "mode": "flexible",
+        "module": "$CHECKOUT/contract/profiles/fluent-bit/../../../providers/quirin-provider-libc/contracts/libc/unistd.qv",
+        "premises": [],
+        "rows": 4,
+        "safe_rows": 0,
+        "status": "flexible-standing"
+      },
+      "cmt_destroy": {
+        "body_standing": "declared-assumption",
+        "contract_sha256": "78afe929cbda4c4e30f9b70d537943e41cba9ee4ddf2e99231968df25a6cd54d",
+        "mode": "pinned",
+        "module": "$CHECKOUT/contract/profiles/fluent-bit/../../../providers/qcore-provider-cmetrics/contracts/cmetrics/context_lifetime.qv",
+        "premises": [],
+        "rows": 4,
+        "safe_rows": 0,
+        "status": "pinned-in-force"
+      },
+      "exit": {
+        "body_standing": "declared-assumption",
+        "contract_sha256": "fa3ecc2bc5a55155f16bc29d51953a33b8d83726905f2f5f377ada3b639b58f9",
+        "mode": "flexible",
+        "module": "$CHECKOUT/contract/profiles/fluent-bit/../../../providers/quirin-provider-libc/contracts/libc/stdlib.qv",
+        "premises": [],
+        "rows": 2,
+        "safe_rows": 0,
+        "status": "flexible-standing"
+      },
+      "fabs": {
+        "body_standing": "declared-assumption",
+        "contract_sha256": "61ab1e106ac2bdcc12c9b785a0babd530aa7ca982b10288295a1e7db4e3c630a",
+        "mode": "flexible",
+        "module": "$CHECKOUT/contract/profiles/fluent-bit/../../../providers/quirin-provider-libc/contracts/libc/math.qv",
+        "premises": [],
+        "rows": 4,
+        "safe_rows": 0,
+        "status": "flexible-standing"
+      },
+      "fcntl": {
+        "body_standing": "declared-assumption",
+        "contract_sha256": "6127a36d7da8666bdb538ee4aaf9bd53020d2ad0a5fe7bccb6f515eeaa57481d",
+        "mode": "flexible",
+        "module": "$CHECKOUT/contract/profiles/fluent-bit/../../../providers/quirin-provider-libc/contracts/libc/unistd.qv",
+        "premises": [
+          {
+            "name": "literal_argument",
+            "origin": "literal-argument",
+            "statement": "cmd = 2"
+          }
+        ],
+        "rows": 0,
+        "safe_rows": 0,
+        "status": "flexible-standing",
+        "withdrawn_rows": 2
+      },
+      "flb_calloc": {
+        "bodies": {
+          "failed_by": [],
+          "failed_units": 0,
+          "unvalidated_units": 0,
+          "validated_by": [
+            "W4"
+          ],
+          "validated_units": 11,
+          "withdrawn_units": 0
+        },
+        "body_standing": "validated",
+        "clauses": {
+          "resource_borrowed(#0)": "validated",
+          "resource_borrowed(#1)": "validated",
+          "resource_return_owned(nullable)": "validated"
+        },
+        "contract_sha256": "b5598ca7af3b38fd15290890bbd5041e7f92b9f20f6e4b7cf1492633fb6f90ac",
+        "mode": "pinned",
+        "module": "quirin-provider-fluent-bit:fluent_bit/resource_memory.qv",
+        "premises": [],
+        "rows": 33,
+        "safe_rows": 1,
+        "status": "pinned-in-force"
+      },
+      "flb_coro_destroy": {
+        "bodies": {
+          "failed_by": [],
+          "failed_units": 0,
+          "unvalidated_units": 4,
+          "validated_by": [],
+          "validated_units": 0,
+          "withdrawn_units": 0
+        },
+        "body_standing": "declared-assumption",
+        "contract_sha256": "ad70b8920c8f1c4da9034b851aa563c5c7c1cd3a38201760793ff1aad24e091b",
+        "mode": "pinned",
+        "module": "$CHECKOUT/contract/profiles/fluent-bit/../../../providers/quirin-provider-fluent-bit/contracts/fluent_bit/teardown_destroy.qv",
+        "premises": [],
+        "rows": 2,
+        "safe_rows": 0,
+        "status": "pinned-in-force"
+      },
+      "flb_errno_print": {
+        "body_standing": "declared-assumption",
+        "contract_sha256": "e57e0d609096b8f951295e88c3c3e0e6d56f3672cdd97088a11cdd319aeae26e",
+        "mode": "pinned",
+        "module": "$CHECKOUT/contract/profiles/fluent-bit/../../../providers/quirin-provider-fluent-bit/contracts/fluent_bit/logging.qv",
+        "premises": [],
+        "rows": 68,
+        "safe_rows": 6,
+        "status": "pinned-in-force"
+      },
+      "flb_event_chunk_destroy": {
+        "body_standing": "declared-assumption",
+        "contract_sha256": "1bac5fc9815d5df3462293938cb6e57d2b206bfbf51738b30bc5103153301efd",
+        "mode": "pinned",
+        "module": "$CHECKOUT/contract/profiles/fluent-bit/../../../providers/quirin-provider-fluent-bit/contracts/fluent_bit/teardown_destroy.qv",
+        "premises": [],
+        "rows": 4,
+        "safe_rows": 0,
+        "status": "pinned-in-force"
+      },
+      "flb_free": {
+        "bodies": {
+          "failed_by": [],
+          "failed_units": 0,
+          "unvalidated_units": 0,
+          "validated_by": [
+            "13m"
+          ],
+          "validated_units": 15,
+          "withdrawn_units": 0
+        },
+        "body_standing": "validated",
+        "clauses": {
+          "resource_released(#0, nullable)": "validated",
+          "resource_return_none()": "validated"
+        },
+        "contract_sha256": "ac614ad38ebf5f029c19d67e97fee05892cc13bd03c26f1f61f512aeffc74172",
+        "mode": "pinned",
+        "module": "quirin-provider-fluent-bit:fluent_bit/resource_memory.qv",
+        "premises": [],
+        "rows": 78,
+        "safe_rows": 1,
+        "status": "pinned-in-force"
+      },
+      "flb_hash_table_add": {
+        "body_standing": "declared-assumption",
+        "contract_sha256": "cc36eeb4be89d4656625eaaead16171b5023bd6f874a92f9f66dcacb04ea4b6c",
+        "mode": "pinned",
+        "module": "$CHECKOUT/contract/profiles/fluent-bit/../../../providers/quirin-provider-fluent-bit/contracts/fluent_bit/hash_table_publication.qv",
+        "premises": [
+          {
+            "name": "literal_argument",
+            "origin": "literal-argument",
+            "statement": "val_size = 0"
+          }
+        ],
+        "rows": 2,
+        "safe_rows": 0,
+        "status": "pinned-in-force",
+        "withdrawn_rows": 2
+      },
+      "flb_input_chunk_destroy": {
+        "bodies": {
+          "failed_by": [],
+          "failed_units": 0,
+          "unvalidated_units": 2,
+          "validated_by": [],
+          "validated_units": 0,
+          "withdrawn_units": 0
+        },
+        "body_standing": "declared-assumption",
+        "contract_sha256": "5fe7f48a4f15261dae3e2779b2521b2caa44b61b7442c950711c0d44f9141354",
+        "mode": "pinned",
+        "module": "$CHECKOUT/contract/profiles/fluent-bit/../../../providers/quirin-provider-fluent-bit/contracts/fluent_bit/input_chunk_destroy.qv",
+        "premises": [],
+        "rows": 14,
+        "safe_rows": 0,
+        "status": "pinned-in-force"
+      },
+      "flb_input_chunk_destroy_direct_routes": {
+        "bodies": {
+          "failed_by": [],
+          "failed_units": 0,
+          "unvalidated_units": 2,
+          "validated_by": [],
+          "validated_units": 0,
+          "withdrawn_units": 0
+        },
+        "body_standing": "declared-assumption",
+        "contract_sha256": "a13bbc5958e4ef6442b284e82ae98d43d3857cd78470882c598bda45ba154fa2",
+        "mode": "pinned",
+        "module": "$CHECKOUT/contract/profiles/fluent-bit/../../../providers/quirin-provider-fluent-bit/contracts/fluent_bit/input_chunk_destroy_direct_routes.qv",
+        "premises": [],
+        "rows": 8,
+        "safe_rows": 0,
+        "status": "pinned-in-force"
+      },
+      "flb_input_chunk_get_name": {
+        "bodies": {
+          "failed_by": [],
+          "failed_units": 0,
+          "unvalidated_units": 0,
+          "validated_by": [
+            "W4",
+            "entry"
+          ],
+          "validated_units": 2,
+          "withdrawn_units": 0
+        },
+        "body_standing": "partly-validated",
+        "clauses": {
+          "resource_borrowed(#0)": "validated",
+          "resource_premise(untracked_handback)": "declared-assumption",
+          "resource_return_none()": "validated"
+        },
+        "contract_sha256": "557d299c4f04809eb68f142519eefc6bc7913edd0e6bf751f852bdd533761a9a",
+        "mode": "pinned",
+        "module": "$CHECKOUT/contract/profiles/fluent-bit/../../../providers/quirin-provider-fluent-bit/contracts/fluent_bit/input_chunk_name.qv",
+        "premises": [
+          {
+            "name": "untracked_handback",
+            "origin": "declared",
+            "statement": "the result aliases into ic (it is ic->chunk->name) and this projection does not track it; resource_return_none is faithful only where the result is never bound or stored, which the gateway's admission of a call with a None result and only Borrowed parameters checks per site (card O04-TRACE premises N6 and N8); the alias itself is outside every claim here (O00 B03/R13, O04-TRACE-HANDBACK)"
+          }
+        ],
+        "rows": 24,
+        "safe_rows": 2,
+        "status": "pinned-in-force",
+        "uncovered_clauses": [
+          "resource_premise(untracked_handback)"
+        ]
+      },
+      "flb_input_chunk_get_real_size": {
+        "bodies": {
+          "failed_by": [],
+          "failed_units": 0,
+          "unvalidated_units": 2,
+          "validated_by": [],
+          "validated_units": 0,
+          "withdrawn_units": 0
+        },
+        "body_standing": "declared-assumption",
+        "contract_sha256": "cefdbb5fa8a0bbc2d4d7600fb8b8529809251988dbcaca71a0482f1379ce0d1b",
+        "mode": "pinned",
+        "module": "$CHECKOUT/contract/profiles/fluent-bit/../../../providers/quirin-provider-fluent-bit/contracts/fluent_bit/input_chunk_sizes.qv",
+        "premises": [],
+        "rows": 22,
+        "safe_rows": 0,
+        "status": "pinned-in-force"
+      },
+      "flb_input_chunk_get_size": {
+        "bodies": {
+          "failed_by": [],
+          "failed_units": 0,
+          "unvalidated_units": 0,
+          "validated_by": [
+            "W4",
+            "entry"
+          ],
+          "validated_units": 2,
+          "withdrawn_units": 0
+        },
+        "body_standing": "validated",
+        "clauses": {
+          "resource_borrowed(#0)": "validated",
+          "resource_return_none()": "validated"
+        },
+        "contract_sha256": "1f50bfd70bb0e590227f44e07d86679ede77d058b06aef942ca9e3afe21c9d75",
+        "mode": "pinned",
+        "module": "$CHECKOUT/contract/profiles/fluent-bit/../../../providers/quirin-provider-fluent-bit/contracts/fluent_bit/input_chunk_sizes.qv",
+        "premises": [],
+        "rows": 8,
+        "safe_rows": 2,
+        "status": "pinned-in-force"
+      },
+      "flb_input_chunk_is_mem_overlimit": {
+        "bodies": {
+          "failed_by": [],
+          "failed_units": 0,
+          "unvalidated_units": 0,
+          "validated_by": [
+            "W4"
+          ],
+          "validated_units": 2,
+          "withdrawn_units": 0
+        },
+        "body_standing": "partly-validated",
+        "clauses": {
+          "resource_borrowed(#0)": "validated",
+          "resource_return_none()": "validated",
+          "resource_user_neutral()": "declared-assumption"
+        },
+        "contract_sha256": "29043a1929ff30aae30e49d7f177d4ff307be80607c32d9f06ac17f67fdf77fb",
+        "mode": "pinned",
+        "module": "$CHECKOUT/contract/profiles/fluent-bit/../../../providers/quirin-provider-fluent-bit/contracts/fluent_bit/input_chunk_is_up.qv",
+        "premises": [],
+        "rows": 10,
+        "safe_rows": 4,
+        "status": "pinned-in-force",
+        "uncovered_clauses": [
+          "resource_user_neutral()"
+        ]
+      },
+      "flb_input_chunk_is_storage_overlimit": {
+        "bodies": {
+          "failed_by": [],
+          "failed_units": 0,
+          "unvalidated_units": 0,
+          "validated_by": [
+            "W4"
+          ],
+          "validated_units": 2,
+          "withdrawn_units": 0
+        },
+        "body_standing": "partly-validated",
+        "clauses": {
+          "resource_borrowed(#0)": "validated",
+          "resource_return_none()": "validated",
+          "resource_user_neutral()": "declared-assumption"
+        },
+        "contract_sha256": "c16780bab30058164f2b54d6a6c824fe5c40919a9650d4215d58d6e707fc2535",
+        "mode": "pinned",
+        "module": "$CHECKOUT/contract/profiles/fluent-bit/../../../providers/quirin-provider-fluent-bit/contracts/fluent_bit/input_chunk_is_up.qv",
+        "premises": [],
+        "rows": 6,
+        "safe_rows": 2,
+        "status": "pinned-in-force",
+        "uncovered_clauses": [
+          "resource_user_neutral()"
+        ]
+      },
+      "flb_input_chunk_is_up": {
+        "bodies": {
+          "failed_by": [],
+          "failed_units": 0,
+          "unvalidated_units": 0,
+          "validated_by": [
+            "W4"
+          ],
+          "validated_units": 2,
+          "withdrawn_units": 0
+        },
+        "body_standing": "partly-validated",
+        "clauses": {
+          "resource_borrowed(#0)": "validated",
+          "resource_return_none()": "validated",
+          "resource_user_neutral()": "declared-assumption"
+        },
+        "contract_sha256": "07bc9f4b74fdb2de4ba33f4be0561459a73a083bab725c2af65bbc750589e123",
+        "mode": "pinned",
+        "module": "$CHECKOUT/contract/profiles/fluent-bit/../../../providers/quirin-provider-fluent-bit/contracts/fluent_bit/input_chunk_is_up.qv",
+        "premises": [],
+        "rows": 6,
+        "safe_rows": 2,
+        "status": "pinned-in-force",
+        "uncovered_clauses": [
+          "resource_user_neutral()"
+        ]
+      },
+      "flb_input_chunk_release_route": {
+        "bodies": {
+          "failed_by": [],
+          "failed_units": 0,
+          "unvalidated_units": 2,
+          "validated_by": [],
+          "validated_units": 0,
+          "withdrawn_units": 0
+        },
+        "body_standing": "declared-assumption",
+        "contract_sha256": "a88ed4f52542f9b2751f3e4ad9fa074ae28b7ce58a7abcd7f12f62ba51bf7c98",
+        "mode": "pinned",
+        "module": "$CHECKOUT/contract/profiles/fluent-bit/../../../providers/quirin-provider-fluent-bit/contracts/fluent_bit/teardown_destroy.qv",
+        "premises": [],
+        "rows": 4,
+        "safe_rows": 0,
+        "status": "pinned-in-force"
+      },
+      "flb_input_chunk_total_size": {
+        "bodies": {
+          "failed_by": [],
+          "failed_units": 0,
+          "unvalidated_units": 0,
+          "validated_by": [
+            "W4",
+            "entry"
+          ],
+          "validated_units": 2,
+          "withdrawn_units": 0
+        },
+        "body_standing": "validated",
+        "clauses": {
+          "resource_borrowed(#0)": "validated",
+          "resource_return_none()": "validated"
+        },
+        "contract_sha256": "dde554289008ea4d237be5c4cdb949ae08642e5789a53570290d9159acf4f47b",
+        "mode": "pinned",
+        "module": "$CHECKOUT/contract/profiles/fluent-bit/../../../providers/quirin-provider-fluent-bit/contracts/fluent_bit/input_chunk_total_size.qv",
+        "premises": [],
+        "rows": 7,
+        "safe_rows": 4,
+        "status": "pinned-in-force"
+      },
+      "flb_input_collector_pause": {
+        "body_standing": "declared-assumption",
+        "contract_sha256": "a26a23bab549421566ada06c7afcf42763fbf4d9d9a5360fe865cea83f4b453e",
+        "mode": "pinned",
+        "module": "$CHECKOUT/contract/profiles/fluent-bit/../../../providers/quirin-provider-fluent-bit/contracts/fluent_bit/loop_owner.qv",
+        "premises": [],
+        "rows": 0,
+        "safe_rows": 0,
+        "status": "pinned-in-force",
+        "withdrawn_rows": 2
+      },
+      "flb_input_collector_resume": {
+        "body_standing": "declared-assumption",
+        "contract_sha256": "6ba11f4a24307590884ea12b68c191e43c09448b843e10d4d50749803ff7d763",
+        "mode": "pinned",
+        "module": "$CHECKOUT/contract/profiles/fluent-bit/../../../providers/quirin-provider-fluent-bit/contracts/fluent_bit/loop_owner.qv",
+        "premises": [
+          {
+            "name": "ingestion_active",
+            "origin": "declared",
+            "statement": "C3: the call returns 0 without resuming the collector while config->is_ingestion_active is false (src/flb_input.c:3221 at 66910c10, :3241 at 046accf6 and 34155955), otherwise it re-registers the collector's own event and sets running; a return of 0 means the collector runs only while ingestion is active"
+          }
+        ],
+        "rows": 0,
+        "safe_rows": 0,
+        "status": "pinned-in-force",
+        "withdrawn_rows": 1
+      },
+      "flb_input_new": {
+        "body_standing": "held",
+        "contract_sha256": "a83b673aad72b7c83a855038111907b5aaceaa2a5955951f08b4fcbdcd341054",
+        "held_rows": 2,
+        "mode": "pinned",
+        "module": "$CHECKOUT/contract/profiles/fluent-bit/../../../providers/quirin-provider-fluent-bit/contracts/fluent_bit/input_instance.qv",
+        "premises": [],
+        "rows": 0,
+        "safe_rows": 0,
+        "status": "pending-review"
+      },
+      "flb_input_set_collector_time": {
+        "body_standing": "declared-assumption",
+        "contract_sha256": "ec8be39af77338827eeb5ce896fa4f53886904409bd223142b145544adc9d167",
+        "mode": "pinned",
+        "module": "$CHECKOUT/contract/profiles/fluent-bit/../../../providers/quirin-provider-fluent-bit/contracts/fluent_bit/input_collector_registration.qv",
+        "premises": [],
+        "rows": 1,
+        "safe_rows": 0,
+        "status": "pinned-in-force"
+      },
+      "flb_log_check": {
+        "bodies": {
+          "failed_by": [],
+          "failed_units": 0,
+          "unvalidated_units": 15,
+          "validated_by": [],
+          "validated_units": 0,
+          "withdrawn_units": 0
+        },
+        "body_standing": "declared-assumption",
+        "contract_sha256": "055cebefa1d4d696bf7b9a25983eaeca44d800d670b222bdfd6819a19f51ee62",
+        "mode": "pinned",
+        "module": "$CHECKOUT/contract/profiles/fluent-bit/../../../providers/quirin-provider-fluent-bit/contracts/fluent_bit/logging.qv",
+        "premises": [],
+        "rows": 126,
+        "safe_rows": 4,
+        "status": "pinned-in-force"
+      },
+      "flb_log_print": {
+        "body_standing": "declared-assumption",
+        "contract_sha256": "3956a43708a52a21befa8a47e69b400e4ec304bf738b593d77bb14562299b32e",
+        "mode": "pinned",
+        "module": "$CHECKOUT/contract/profiles/fluent-bit/../../../providers/quirin-provider-fluent-bit/contracts/fluent_bit/logging.qv",
+        "premises": [],
+        "rows": 135,
+        "safe_rows": 4,
+        "status": "pinned-in-force"
+      },
+      "flb_malloc": {
+        "bodies": {
+          "failed_by": [],
+          "failed_units": 0,
+          "unvalidated_units": 0,
+          "validated_by": [
+            "W4"
+          ],
+          "validated_units": 12,
+          "withdrawn_units": 0
+        },
+        "body_standing": "validated",
+        "clauses": {
+          "resource_borrowed(#0)": "validated",
+          "resource_return_owned(nullable)": "validated"
+        },
+        "contract_sha256": "d95ce00637913918a595a5be535abab01a7dbc620e8790beffd313437dde4eb9",
+        "mode": "pinned",
+        "module": "quirin-provider-fluent-bit:fluent_bit/resource_memory.qv",
+        "premises": [],
+        "rows": 20,
+        "safe_rows": 2,
+        "status": "pinned-in-force"
+      },
+      "flb_output_flush_destroy": {
+        "bodies": {
+          "failed_by": [],
+          "failed_units": 0,
+          "unvalidated_units": 2,
+          "validated_by": [],
+          "validated_units": 0,
+          "withdrawn_units": 0
+        },
+        "body_standing": "declared-assumption",
+        "contract_sha256": "daa1e42204d8fe7759e395c609019509de8b98522a6b9aeef3ea0554132d7941",
+        "mode": "pinned",
+        "module": "$CHECKOUT/contract/profiles/fluent-bit/../../../providers/quirin-provider-fluent-bit/contracts/fluent_bit/teardown_destroy.qv",
+        "premises": [],
+        "rows": 4,
+        "safe_rows": 0,
+        "status": "pinned-in-force"
+      },
+      "flb_output_flush_id_get": {
+        "bodies": {
+          "failed_by": [],
+          "failed_units": 0,
+          "unvalidated_units": 2,
+          "validated_by": [],
+          "validated_units": 0,
+          "withdrawn_units": 0
+        },
+        "body_standing": "declared-assumption",
+        "contract_sha256": "32ce25a90e71d44b47dd12aee51f240ccf068fcc7570e1516771fa05e71b189d",
+        "mode": "pinned",
+        "module": "$CHECKOUT/contract/profiles/fluent-bit/../../../providers/quirin-provider-fluent-bit/contracts/fluent_bit/output_flush_id.qv",
+        "premises": [],
+        "rows": 2,
+        "safe_rows": 0,
+        "status": "pinned-in-force"
+      },
+      "flb_output_instance_destroy": {
+        "bodies": {
+          "failed_by": [],
+          "failed_units": 0,
+          "unvalidated_units": 2,
+          "validated_by": [],
+          "validated_units": 0,
+          "withdrawn_units": 0
+        },
+        "body_standing": "declared-assumption",
+        "contract_sha256": "296187b3fac77a9eef003cfadb40caa948226f51847b6af7bac397d8d8bbb8c0",
+        "mode": "pinned",
+        "module": "$CHECKOUT/contract/profiles/fluent-bit/../../../providers/quirin-provider-fluent-bit/contracts/fluent_bit/teardown_destroy.qv",
+        "premises": [],
+        "rows": 10,
+        "safe_rows": 0,
+        "status": "pinned-in-force"
+      },
+      "flb_output_task_flush": {
+        "bodies": {
+          "failed_by": [
+            "C06.4",
+            "C06.4-own"
+          ],
+          "failed_units": 15,
+          "unvalidated_units": 0,
+          "validated_by": [],
+          "validated_units": 0,
+          "withdrawn_units": 15
+        },
+        "body_standing": "declared-assumption",
+        "contract_sha256": "9743f0cb604ebce81b45d8a972ec9604e6d4d0711892f4e8c32f7fe094ce6ea6",
+        "mode": "pinned",
+        "module": "$CHECKOUT/contract/profiles/fluent-bit/../../../providers/quirin-provider-fluent-bit/contracts/fluent_bit/output_singleplex.qv",
+        "premises": [],
+        "rows": 0,
+        "safe_rows": 0,
+        "status": "pinned-in-force",
+        "withdrawn_rows": 8
+      },
+      "flb_output_task_singleplex_enqueue": {
+        "bodies": {
+          "failed_by": [
+            "C06.4",
+            "C06.4-own"
+          ],
+          "failed_units": 15,
+          "unvalidated_units": 0,
+          "validated_by": [],
+          "validated_units": 0,
+          "withdrawn_units": 15
+        },
+        "body_standing": "declared-assumption",
+        "contract_sha256": "21c5a1d7c7581d12b4a315b8638fb792ddd5e38b8ae1aa4295fa5c89cf2a85de",
+        "mode": "pinned",
+        "module": "$CHECKOUT/contract/profiles/fluent-bit/../../../providers/quirin-provider-fluent-bit/contracts/fluent_bit/output_singleplex.qv",
+        "premises": [
+          {
+            "name": "synchronous_output_reachability",
+            "origin": "declared",
+            "statement": "in-tree output plugins never set FLB_OUTPUT_SYNCHRONOUS, so this function runs in production only for an output (a proxy plugin) that does; any verdict on it holds under that premise"
+          }
+        ],
+        "rows": 0,
+        "safe_rows": 0,
+        "status": "pinned-in-force",
+        "withdrawn_rows": 6
+      },
+      "flb_output_thread_pool_destroy": {
+        "body_standing": "held",
+        "contract_sha256": "77b4ba40611c243b8161b81b7382076ff1d2c9c3f7da625eecd4f0b0996026f0",
+        "held_rows": 2,
+        "mode": "pinned",
+        "module": "$CHECKOUT/contract/profiles/fluent-bit/../../../providers/quirin-provider-fluent-bit/contracts/fluent_bit/lib_engine_thread.qv",
+        "premises": [],
+        "rows": 0,
+        "safe_rows": 0,
+        "status": "pending-review"
+      },
+      "flb_output_thread_pool_flush": {
+        "body_standing": "declared-assumption",
+        "contract_sha256": "79cfab237a788987dca51074ad1a7b29ec1adf0ba9966f302c26674de771f1a2",
+        "mode": "pinned",
+        "module": "$CHECKOUT/contract/profiles/fluent-bit/../../../providers/quirin-provider-fluent-bit/contracts/fluent_bit/task_users.qv",
+        "premises": [],
+        "rows": 2,
+        "safe_rows": 0,
+        "status": "pinned-in-force"
+      },
+      "flb_routes_mask_get_size": {
+        "body_standing": "declared-assumption",
+        "contract_sha256": "0992e1d46af0abf7c8b2d03e6d30c267ee1a8db1ecbe3674204db048f37a13b0",
+        "mode": "pinned",
+        "module": "$CHECKOUT/contract/profiles/fluent-bit/../../../providers/quirin-provider-fluent-bit/contracts/fluent_bit/routes_mask.qv",
+        "premises": [],
+        "rows": 4,
+        "safe_rows": 0,
+        "status": "pinned-in-force"
+      },
+      "flb_routes_mask_get_slots": {
+        "body_standing": "declared-assumption",
+        "contract_sha256": "afdfd4876dc6b4a913f0a228c5ecfddd8df5e19b6bce0db9394e5d3c85d00cbc",
+        "mode": "pinned",
+        "module": "$CHECKOUT/contract/profiles/fluent-bit/../../../providers/quirin-provider-fluent-bit/contracts/fluent_bit/routes_mask.qv",
+        "premises": [],
+        "rows": 2,
+        "safe_rows": 0,
+        "status": "pinned-in-force"
+      },
+      "flb_routes_mask_is_empty": {
+        "body_standing": "declared-assumption",
+        "contract_sha256": "abcf0840e0616ed4082a8af5d947558e2b93b81ecd58e82ad10ccb184e090172",
+        "mode": "pinned",
+        "module": "$CHECKOUT/contract/profiles/fluent-bit/../../../providers/quirin-provider-fluent-bit/contracts/fluent_bit/routes_mask.qv",
+        "premises": [],
+        "rows": 6,
+        "safe_rows": 0,
+        "status": "pinned-in-force"
+      },
+      "flb_routes_mask_set_by_tag": {
+        "body_standing": "declared-assumption",
+        "contract_sha256": "67d345215da3086b0958f2c11e20d55ce1891437eeac19e572226c8360271d55",
+        "mode": "pinned",
+        "module": "$CHECKOUT/contract/profiles/fluent-bit/../../../providers/quirin-provider-fluent-bit/contracts/fluent_bit/routes_mask.qv",
+        "premises": [],
+        "rows": 5,
+        "safe_rows": 0,
+        "status": "pinned-in-force"
+      },
+      "flb_sched_request_destroy": {
+        "bodies": {
+          "failed_by": [],
+          "failed_units": 0,
+          "unvalidated_units": 2,
+          "validated_by": [],
+          "validated_units": 0,
+          "withdrawn_units": 0
+        },
+        "body_standing": "declared-assumption",
+        "contract_sha256": "84f4984b7ada87ac2e79c25955e4b9bb47ff90e07c00cbea2c6b17e567ea5e23",
+        "mode": "pinned",
+        "module": "$CHECKOUT/contract/profiles/fluent-bit/../../../providers/quirin-provider-fluent-bit/contracts/fluent_bit/teardown_destroy.qv",
+        "premises": [],
+        "rows": 8,
+        "safe_rows": 0,
+        "status": "pinned-in-force"
+      },
+      "flb_sched_timer_destroy": {
+        "bodies": {
+          "failed_by": [],
+          "failed_units": 0,
+          "unvalidated_units": 2,
+          "validated_by": [],
+          "validated_units": 0,
+          "withdrawn_units": 0
+        },
+        "body_standing": "declared-assumption",
+        "contract_sha256": "e16500f08d92bce9d8e01e9944c05024dc25831e7f2f7a545cb788d060f8e1f7",
+        "mode": "pinned",
+        "module": "$CHECKOUT/contract/profiles/fluent-bit/../../../providers/quirin-provider-fluent-bit/contracts/fluent_bit/teardown_destroy.qv",
+        "premises": [],
+        "rows": 18,
+        "safe_rows": 2,
+        "status": "pinned-in-force"
+      },
+      "flb_sds_create_len": {
+        "body_standing": "declared-assumption",
+        "contract_sha256": "23e59794820125ede3722ee0ef0d655eb0d42ffa963391f25b1a67beed87e8b8",
+        "mode": "pinned",
+        "module": "quirin-provider-fluent-bit:fluent_bit/resource_memory.qv",
+        "premises": [],
+        "rows": 6,
+        "safe_rows": 0,
+        "status": "pinned-in-force"
+      },
+      "flb_sds_destroy": {
+        "body_standing": "declared-assumption",
+        "contract_sha256": "3b4c7733df6161663673f9cdfb28e0f3ad4dcadc92b1dd2d7b59771eddcd4715",
+        "mode": "pinned",
+        "module": "quirin-provider-fluent-bit:fluent_bit/resource_memory.qv",
+        "premises": [],
+        "rows": 14,
+        "safe_rows": 0,
+        "status": "pinned-in-force"
+      },
+      "flb_strdup": {
+        "bodies": {
+          "failed_by": [],
+          "failed_units": 0,
+          "unvalidated_units": 0,
+          "validated_by": [
+            "W4"
+          ],
+          "validated_units": 4,
+          "withdrawn_units": 0
+        },
+        "body_standing": "validated",
+        "clauses": {
+          "resource_borrowed(#0)": "validated",
+          "resource_return_owned(nullable)": "validated"
+        },
+        "contract_sha256": "172ff1988e8a5c65692080ef54f640da5c2bfdaf786039cf14e6faff7f448b4a",
+        "mode": "pinned",
+        "module": "quirin-provider-fluent-bit:fluent_bit/resource_string.qv",
+        "premises": [],
+        "rows": 4,
+        "safe_rows": 0,
+        "status": "pinned-in-force"
+      },
+      "flb_strndup": {
+        "bodies": {
+          "failed_by": [],
+          "failed_units": 0,
+          "unvalidated_units": 0,
+          "validated_by": [
+            "W4"
+          ],
+          "validated_units": 4,
+          "withdrawn_units": 0
+        },
+        "body_standing": "validated",
+        "clauses": {
+          "resource_borrowed(#0)": "validated",
+          "resource_borrowed(#1)": "validated",
+          "resource_return_owned(nullable)": "validated"
+        },
+        "contract_sha256": "32b13404eecd505b8a2530e1250ff81bc989c09bae244460b0744e48545e8a81",
+        "mode": "pinned",
+        "module": "quirin-provider-fluent-bit:fluent_bit/resource_string.qv",
+        "premises": [],
+        "rows": 0,
+        "safe_rows": 0,
+        "status": "pinned-in-force"
+      },
+      "flb_task_destroy": {
+        "bodies": {
+          "failed_by": [],
+          "failed_units": 0,
+          "unvalidated_units": 2,
+          "validated_by": [],
+          "validated_units": 0,
+          "withdrawn_units": 0
+        },
+        "body_standing": "declared-assumption",
+        "contract_sha256": "503889ed37a5f8eb467490a0154fb5e7f5e37258c82e09edbdd48b8c03ad7d32",
+        "mode": "pinned",
+        "module": "$CHECKOUT/contract/profiles/fluent-bit/../../../providers/quirin-provider-fluent-bit/contracts/fluent_bit/teardown_destroy.qv",
+        "premises": [],
+        "rows": 14,
+        "safe_rows": 0,
+        "status": "pinned-in-force"
+      },
+      "flb_task_get_route_status": {
+        "bodies": {
+          "failed_by": [],
+          "failed_units": 0,
+          "unvalidated_units": 0,
+          "validated_by": [
+            "W4"
+          ],
+          "validated_units": 2,
+          "withdrawn_units": 0
+        },
+        "body_standing": "partly-validated",
+        "clauses": {
+          "resource_borrowed(#0)": "validated",
+          "resource_borrowed(#1)": "validated",
+          "resource_return_none()": "validated",
+          "resource_user_neutral()": "declared-assumption"
+        },
+        "contract_sha256": "a550a297d0cd64ad0ce7b946f229144944a35b0a68de24e11c7ddea6830105a5",
+        "mode": "pinned",
+        "module": "$CHECKOUT/contract/profiles/fluent-bit/../../../providers/quirin-provider-fluent-bit/contracts/fluent_bit/task_route_queries.qv",
+        "premises": [],
+        "rows": 4,
+        "safe_rows": 2,
+        "status": "pinned-in-force",
+        "uncovered_clauses": [
+          "resource_user_neutral()"
+        ]
+      },
+      "flb_task_queue_destroy": {
+        "bodies": {
+          "failed_by": [],
+          "failed_units": 0,
+          "unvalidated_units": 2,
+          "validated_by": [],
+          "validated_units": 0,
+          "withdrawn_units": 0
+        },
+        "body_standing": "declared-assumption",
+        "contract_sha256": "31303d6c83b78a27600b3d17d535662efe6e87bca03a51170fac68eaf77beea9",
+        "mode": "pinned",
+        "module": "$CHECKOUT/contract/profiles/fluent-bit/../../../providers/quirin-provider-fluent-bit/contracts/fluent_bit/teardown_destroy.qv",
+        "premises": [],
+        "rows": 6,
+        "safe_rows": 0,
+        "status": "pinned-in-force"
+      },
+      "flb_task_retry_count": {
+        "bodies": {
+          "failed_by": [
+            "conflict"
+          ],
+          "failed_units": 2,
+          "unvalidated_units": 0,
+          "validated_by": [],
+          "validated_units": 0,
+          "withdrawn_units": 0
+        },
+        "body_standing": "declared-assumption",
+        "contract_sha256": "b3a70a50c492eaa0672943dbae8c3e5fe8e02117d2114e325b0e565ddff1f8ca",
+        "mode": "pinned",
+        "module": "$CHECKOUT/contract/profiles/fluent-bit/../../../providers/quirin-provider-fluent-bit/contracts/fluent_bit/task_route_queries.qv",
+        "premises": [],
+        "rows": 4,
+        "safe_rows": 0,
+        "status": "pinned-in-force"
+      },
+      "flb_task_retry_destroy": {
+        "bodies": {
+          "failed_by": [],
+          "failed_units": 0,
+          "unvalidated_units": 2,
+          "validated_by": [],
+          "validated_units": 0,
+          "withdrawn_units": 0
+        },
+        "body_standing": "declared-assumption",
+        "contract_sha256": "c90a2e6a3e19fa762f53187b874a94fb8e7610a3fb7c8f54592231009f634b06",
+        "mode": "pinned",
+        "module": "$CHECKOUT/contract/profiles/fluent-bit/../../../providers/quirin-provider-fluent-bit/contracts/fluent_bit/task_users.qv",
+        "premises": [],
+        "rows": 20,
+        "safe_rows": 2,
+        "status": "pinned-in-force"
+      },
+      "flb_task_running_count": {
+        "bodies": {
+          "failed_by": [],
+          "failed_units": 0,
+          "unvalidated_units": 2,
+          "validated_by": [],
+          "validated_units": 0,
+          "withdrawn_units": 0
+        },
+        "body_standing": "declared-assumption",
+        "contract_sha256": "6fb4954e34bc36e0d5adf3af8a4457eb0df99ecff15c2ae8546475e83f806911",
+        "mode": "pinned",
+        "module": "$CHECKOUT/contract/profiles/fluent-bit/../../../providers/quirin-provider-fluent-bit/contracts/fluent_bit/task_route_queries.qv",
+        "premises": [],
+        "rows": 4,
+        "safe_rows": 0,
+        "status": "pinned-in-force"
+      },
+      "flb_task_set_route_status": {
+        "bodies": {
+          "failed_by": [],
+          "failed_units": 0,
+          "unvalidated_units": 0,
+          "validated_by": [
+            "W4"
+          ],
+          "validated_units": 4,
+          "withdrawn_units": 0
+        },
+        "body_standing": "partly-validated",
+        "clauses": {
+          "resource_borrowed(#0)": "validated",
+          "resource_borrowed(#1)": "validated",
+          "resource_borrowed(#2)": "validated",
+          "resource_return_none()": "validated",
+          "resource_user_neutral()": "declared-assumption"
+        },
+        "contract_sha256": "33d638ede574d3cfd63b6aa672a0bf8b9fffcf6adc8bac9383884331acc479f9",
+        "mode": "pinned",
+        "module": "$CHECKOUT/contract/profiles/fluent-bit/../../../providers/quirin-provider-fluent-bit/contracts/fluent_bit/task_route_queries.qv",
+        "premises": [],
+        "rows": 6,
+        "safe_rows": 2,
+        "status": "pinned-in-force",
+        "uncovered_clauses": [
+          "resource_user_neutral()"
+        ]
+      },
+      "flb_task_users_dec": {
+        "bodies": {
+          "failed_by": [],
+          "failed_units": 0,
+          "unvalidated_units": 4,
+          "validated_by": [],
+          "validated_units": 0,
+          "withdrawn_units": 0
+        },
+        "body_standing": "declared-assumption",
+        "contract_sha256": "535551ccaf9404e3952b47c630a4b7cb2386a9c3b97103483f748a840e17e538",
+        "mode": "pinned",
+        "module": "$CHECKOUT/contract/profiles/fluent-bit/../../../providers/quirin-provider-fluent-bit/contracts/fluent_bit/task_users.qv",
+        "premises": [
+          {
+            "name": "literal_argument",
+            "origin": "literal-argument",
+            "statement": "release_check = 0"
+          }
+        ],
+        "rows": 6,
+        "safe_rows": 0,
+        "status": "pinned-in-force",
+        "withdrawn_rows": 2
+      },
+      "flb_task_users_inc": {
+        "bodies": {
+          "failed_by": [],
+          "failed_units": 0,
+          "unvalidated_units": 0,
+          "validated_by": [
+            "W4"
+          ],
+          "validated_units": 2,
+          "withdrawn_units": 0
+        },
+        "body_standing": "partly-validated",
+        "clauses": {
+          "resource_borrowed(#0)": "validated",
+          "resource_return_none()": "validated",
+          "resource_user_added(#0, users)": "declared-assumption"
+        },
+        "contract_sha256": "2c6086c0624fe127986f9a557f8d959de268bca7ad50b9f7327bd6d1dc7b87b2",
+        "mode": "pinned",
+        "module": "$CHECKOUT/contract/profiles/fluent-bit/../../../providers/quirin-provider-fluent-bit/contracts/fluent_bit/task_users.qv",
+        "premises": [],
+        "rows": 4,
+        "safe_rows": 0,
+        "status": "pinned-in-force",
+        "uncovered_clauses": [
+          "resource_user_added(#0, users)"
+        ]
+      },
+      "flb_time_now": {
+        "body_standing": "declared-assumption",
+        "contract_sha256": "4979b0c2d32b0e3a072bfb8a5a701d1123b7488af618f9c4ff69fa0f7400fca7",
+        "mode": "pinned",
+        "module": "$CHECKOUT/contract/profiles/fluent-bit/../../../providers/quirin-provider-fluent-bit/contracts/fluent_bit/time.qv",
+        "premises": [],
+        "rows": 4,
+        "safe_rows": 0,
+        "status": "pinned-in-force"
+      },
+      "floor": {
+        "body_standing": "declared-assumption",
+        "contract_sha256": "785690073ee50f28e2e0aa91c03bda020089e2213c2482e3874ee81920c67690",
+        "mode": "flexible",
+        "module": "$CHECKOUT/contract/profiles/fluent-bit/../../../providers/quirin-provider-libc/contracts/libc/math.qv",
+        "premises": [],
+        "rows": 2,
+        "safe_rows": 0,
+        "status": "flexible-standing"
+      },
+      "fprintf": {
+        "body_standing": "declared-assumption",
+        "contract_sha256": "9d44f6233231b057a3f99433bffc41bdcca554df782463d14032a6a2e9e3f69e",
+        "mode": "flexible",
+        "module": "$CHECKOUT/contract/profiles/fluent-bit/../../../providers/quirin-provider-libc/contracts/libc/stdio.qv",
+        "premises": [],
+        "rows": 2,
+        "safe_rows": 0,
+        "status": "flexible-standing"
+      },
+      "generate_chunk_name": {
+        "bodies": {
+          "failed_by": [],
+          "failed_units": 0,
+          "unvalidated_units": 2,
+          "validated_by": [],
+          "validated_units": 0,
+          "withdrawn_units": 0
+        },
+        "body_standing": "declared-assumption",
+        "contract_sha256": "41c12f61c53960bac2fb70dcf99a75c59409b73202fef5bd9f5fa95d73f96979",
+        "mode": "pinned",
+        "module": "$CHECKOUT/contract/profiles/fluent-bit/../../../providers/quirin-provider-fluent-bit/contracts/fluent_bit/input_chunk_helpers.qv",
+        "premises": [],
+        "rows": 4,
+        "safe_rows": 0,
+        "status": "pinned-in-force"
+      },
+      "getpeername": {
+        "bodies": {
+          "failed_by": [
+            "abi"
+          ],
+          "failed_units": 5,
+          "unvalidated_units": 0,
+          "validated_by": [],
+          "validated_units": 0,
+          "withdrawn_units": 5
+        },
+        "body_standing": "declared-assumption",
+        "contract_sha256": "886a32d461d5b3175a62eeeb65f827ca8b6aca7d4ea0bc0761ac2ddb88a90484",
+        "mode": "flexible",
+        "module": "$CHECKOUT/contract/profiles/fluent-bit/../../../providers/quirin-provider-libc/contracts/libc/socket.qv",
+        "premises": [],
+        "rows": 0,
+        "safe_rows": 0,
+        "status": "flexible-standing"
+      },
+      "input_chunk_has_magic_bytes": {
+        "bodies": {
+          "failed_by": [
+            "conflict"
+          ],
+          "failed_units": 2,
+          "unvalidated_units": 0,
+          "validated_by": [],
+          "validated_units": 0,
+          "withdrawn_units": 0
+        },
+        "body_standing": "declared-assumption",
+        "contract_sha256": "25a03a767543f2e6060862a0374c519df31d04fe10ccc704cc808cf164e34312",
+        "mode": "pinned",
+        "module": "$CHECKOUT/contract/profiles/fluent-bit/../../../providers/quirin-provider-fluent-bit/contracts/fluent_bit/input_chunk_is_up.qv",
+        "premises": [],
+        "rows": 6,
+        "safe_rows": 0,
+        "status": "pinned-in-force"
+      },
+      "input_chunk_write_header": {
+        "bodies": {
+          "failed_by": [],
+          "failed_units": 0,
+          "unvalidated_units": 2,
+          "validated_by": [],
+          "validated_units": 0,
+          "withdrawn_units": 0
+        },
+        "body_standing": "declared-assumption",
+        "contract_sha256": "756424bcff1f9779b1cea8687faf2a9e1b18c060503b772aa567df41d19c586b",
+        "mode": "pinned",
+        "module": "$CHECKOUT/contract/profiles/fluent-bit/../../../providers/quirin-provider-fluent-bit/contracts/fluent_bit/input_chunk_helpers.qv",
+        "premises": [],
+        "rows": 4,
+        "safe_rows": 0,
+        "status": "pinned-in-force"
+      },
+      "listen": {
+        "body_standing": "declared-assumption",
+        "contract_sha256": "3fc18d3b40796f1e8297afa490eda1ec1e11834a0404c5a67747798ee617f739",
+        "mode": "flexible",
+        "module": "$CHECKOUT/contract/profiles/fluent-bit/../../../providers/quirin-provider-libc/contracts/libc/socket.qv",
+        "premises": [],
+        "rows": 2,
+        "safe_rows": 0,
+        "status": "flexible-standing"
+      },
+      "memchr": {
+        "body_standing": "declared-assumption",
+        "contract_sha256": "34fd29a1b0213b2cb5e472926dad4d0a51e717aa83ccfde23bccda720eadb000",
+        "mode": "flexible",
+        "module": "$CHECKOUT/contract/profiles/fluent-bit/../../../providers/quirin-provider-libc/contracts/libc/string.qv",
+        "premises": [],
+        "rows": 6,
+        "safe_rows": 0,
+        "status": "flexible-standing"
+      },
+      "memcpy": {
+        "body_standing": "declared-assumption",
+        "contract_sha256": "883bfc1a1628516ad622404650dee0f7a490033179c4b0be01ed125987428074",
+        "mode": "flexible",
+        "module": "$CHECKOUT/contract/profiles/fluent-bit/../../../providers/quirin-provider-libc/contracts/libc/string.qv",
+        "premises": [],
+        "rows": 12,
+        "safe_rows": 0,
+        "status": "flexible-standing"
+      },
+      "memset": {
+        "body_standing": "declared-assumption",
+        "contract_sha256": "05ca1acccd0a9a43f068f546434b67bf47c4e984a041fb900518835cb13e2233",
+        "mode": "flexible",
+        "module": "$CHECKOUT/contract/profiles/fluent-bit/../../../providers/quirin-provider-libc/contracts/libc/string.qv",
+        "premises": [],
+        "rows": 7,
+        "safe_rows": 0,
+        "status": "flexible-standing"
+      },
+      "mk_event_channel_create": {
+        "body_standing": "declared-assumption",
+        "contract_sha256": "589f2b0bd92b09dae566fd3939375dbeee04a2e1eadcfc3511cdb58cf116bcfb",
+        "mode": "pinned",
+        "module": "$CHECKOUT/contract/profiles/fluent-bit/../../../providers/qcore-provider-libevent/contracts/monkey/event_loop.qv",
+        "premises": [
+          {
+            "name": "mk_event_descriptors",
+            "origin": "declared",
+            "statement": "P-MK-EVENT-DESCRIPTORS: the two descriptors the call creates are written through r_fd and w_fd, which v1 custody does not track (a descriptor has no out slot); mk_event_channel_destroy closes them"
+          }
+        ],
+        "rows": 6,
+        "safe_rows": 0,
+        "status": "pinned-in-force"
+      },
+      "mk_event_channel_destroy": {
+        "body_standing": "declared-assumption",
+        "contract_sha256": "ca523a47a4f0fca8260c4e131393ab2a2e5225840cf9e1f59b41c846e16a39b6",
+        "mode": "pinned",
+        "module": "$CHECKOUT/contract/profiles/fluent-bit/../../../providers/qcore-provider-libevent/contracts/monkey/event_loop.qv",
+        "premises": [
+          {
+            "name": "mk_event_descriptors",
+            "origin": "declared",
+            "statement": "P-MK-EVENT-DESCRIPTORS: the call closes r_fd and w_fd only when the event's descriptor is r_fd; v1 custody tracks neither"
+          }
+        ],
+        "rows": 4,
+        "safe_rows": 0,
+        "status": "pinned-in-force"
+      },
+      "mk_event_loop_create": {
+        "body_standing": "declared-assumption",
+        "contract_sha256": "6060d7c3beff934866328944e660de729c6c2442d15cabf860fdc7fc30226887",
+        "mode": "pinned",
+        "module": "$CHECKOUT/contract/profiles/fluent-bit/../../../providers/qcore-provider-libevent/contracts/monkey/event_loop.qv",
+        "premises": [],
+        "rows": 2,
+        "safe_rows": 0,
+        "status": "pinned-in-force"
+      },
+      "mk_event_timeout_create": {
+        "body_standing": "declared-assumption",
+        "contract_sha256": "7f3d018731119527167718d01bc21f2af40cbe3346da5551e89229b12722bc96",
+        "mode": "pinned",
+        "module": "$CHECKOUT/contract/profiles/fluent-bit/../../../providers/qcore-provider-libevent/contracts/monkey/event_loop.qv",
+        "premises": [
+          {
+            "name": "mk_event_descriptors",
+            "origin": "declared",
+            "statement": "P-MK-EVENT-DESCRIPTORS: the descriptor the call creates lives in the registered event (event->fd), which v1 custody does not track; mk_event_timeout_destroy closes it"
+          }
+        ],
+        "rows": 10,
+        "safe_rows": 0,
+        "status": "pinned-in-force"
+      },
+      "mk_event_timeout_destroy": {
+        "body_standing": "declared-assumption",
+        "contract_sha256": "0cb6e7b7eabe335702d51bef34061b8ba5add3d806f39670816097dcb38c09b9",
+        "mode": "pinned",
+        "module": "$CHECKOUT/contract/profiles/fluent-bit/../../../providers/qcore-provider-libevent/contracts/monkey/event_loop.qv",
+        "premises": [
+          {
+            "name": "mk_event_descriptors",
+            "origin": "declared",
+            "statement": "P-MK-EVENT-DESCRIPTORS: the call closes the descriptor held in the event (event->fd), which v1 custody does not track"
+          }
+        ],
+        "rows": 14,
+        "safe_rows": 2,
+        "status": "pinned-in-force"
+      },
+      "mk_event_wait": {
+        "body_standing": "declared-assumption",
+        "contract_sha256": "71ff6949f549c0ca1eb99bf1dea5dff5724c6d105f6eb64635b089cd74af05f4",
+        "mode": "pinned",
+        "module": "$CHECKOUT/contract/profiles/fluent-bit/../../../providers/qcore-provider-libevent/contracts/monkey/event_loop.qv",
+        "premises": [],
+        "rows": 2,
+        "safe_rows": 0,
+        "status": "pinned-in-force"
+      },
+      "mk_list_add": {
+        "bodies": {
+          "failed_by": [],
+          "failed_units": 0,
+          "unvalidated_units": 11,
+          "validated_by": [],
+          "validated_units": 0,
+          "withdrawn_units": 0
+        },
+        "body_standing": "declared-assumption",
+        "contract_sha256": "748bf3d90bd350fe94aeb48d10bcd5efab02f4cbbec9c2093d113352288bf493",
+        "mode": "pinned",
+        "module": "$CHECKOUT/contract/profiles/fluent-bit/../../../providers/qcore-provider-libevent/contracts/monkey/intrusive_list.qv",
+        "premises": [],
+        "rows": 36,
+        "safe_rows": 4,
+        "status": "pinned-in-force"
+      },
+      "mk_list_del": {
+        "bodies": {
+          "failed_by": [],
+          "failed_units": 0,
+          "unvalidated_units": 13,
+          "validated_by": [],
+          "validated_units": 0,
+          "withdrawn_units": 0
+        },
+        "body_standing": "declared-assumption",
+        "contract_sha256": "507931da3352aced60a7f9f6956c920fbde74253949416a2eb473f52304c48a1",
+        "mode": "pinned",
+        "module": "$CHECKOUT/contract/profiles/fluent-bit/../../../providers/qcore-provider-libevent/contracts/monkey/intrusive_list.qv",
+        "premises": [],
+        "rows": 32,
+        "safe_rows": 0,
+        "status": "pinned-in-force"
+      },
+      "msgpack_packer_init": {
+        "bodies": {
+          "failed_by": [],
+          "failed_units": 0,
+          "unvalidated_units": 0,
+          "validated_by": [
+            "13y"
+          ],
+          "validated_units": 15,
+          "withdrawn_units": 0
+        },
+        "body_standing": "partly-validated",
+        "clauses": {
+          "resource_borrowed(#0)": "declared-assumption",
+          "resource_borrowed(#1)": "declared-assumption",
+          "resource_borrowed(#2)": "declared-assumption",
+          "resource_callback_registered(#2, #0)": "validated",
+          "resource_retained_by(#1, #0)": "declared-assumption",
+          "resource_return_none()": "declared-assumption"
+        },
+        "contract_sha256": "fa858925a2fbeab537ee10b169d24c2b12e4d5b33134960c918aabb47e65ff29",
+        "mode": "pinned",
+        "module": "$CHECKOUT/contract/profiles/fluent-bit/../../../providers/quirin-provider-msgpack/contracts/msgpack/packer.qv",
+        "premises": [],
+        "rows": 6,
+        "safe_rows": 0,
+        "status": "pinned-in-force",
+        "uncovered_clauses": [
+          "resource_borrowed(#0)",
+          "resource_borrowed(#1)",
+          "resource_borrowed(#2)",
+          "resource_retained_by(#1, #0)",
+          "resource_return_none()"
+        ]
+      },
+      "pthread_mutex_lock": {
+        "body_standing": "declared-assumption",
+        "contract_sha256": "4e9a0d63356ce1dfa2a3b52a95533ea94e7d53acb2a2639ca5c66cdf8ede7e7c",
+        "mode": "flexible",
+        "module": "$CHECKOUT/contract/profiles/fluent-bit/../../../providers/quirin-provider-libc/contracts/libc/pthread_mutex.qv",
+        "premises": [],
+        "rows": 22,
+        "safe_rows": 2,
+        "status": "flexible-standing"
+      },
+      "pthread_mutex_unlock": {
+        "body_standing": "declared-assumption",
+        "contract_sha256": "10ca8768c486406e29d97f6dd13213f0d33a58dfb808662bee1798b6a7c3551e",
+        "mode": "flexible",
+        "module": "$CHECKOUT/contract/profiles/fluent-bit/../../../providers/quirin-provider-libc/contracts/libc/pthread_mutex.qv",
+        "premises": [],
+        "rows": 22,
+        "safe_rows": 2,
+        "status": "flexible-standing"
+      },
+      "pthread_once": {
+        "body_standing": "declared-assumption",
+        "contract_sha256": "9a8845656ca97df78c6ba94adef9868c404b68635fe964e75aab702cacb94200",
+        "mode": "flexible",
+        "module": "$CHECKOUT/contract/profiles/fluent-bit/../../../providers/quirin-provider-libc/contracts/libc/threads.qv",
+        "premises": [],
+        "rows": 2,
+        "safe_rows": 0,
+        "status": "flexible-trusted"
+      },
+      "read": {
+        "body_standing": "declared-assumption",
+        "contract_sha256": "807198c5edc86ea3d3a87eadbc52b522566a8770ade01c9db0e18935fe69ec6b",
+        "mode": "flexible",
+        "module": "$CHECKOUT/contract/profiles/fluent-bit/../../../providers/quirin-provider-libc/contracts/libc/unistd.qv",
+        "premises": [],
+        "rows": 16,
+        "safe_rows": 6,
+        "status": "flexible-standing"
+      },
+      "sb_allocate_backlogs": {
+        "bodies": {
+          "failed_by": [
+            "C06.3"
+          ],
+          "failed_units": 1,
+          "unvalidated_units": 0,
+          "validated_by": [],
+          "validated_units": 0,
+          "withdrawn_units": 15
+        },
+        "body_standing": "declared-assumption",
+        "contract_sha256": "53161949fef18d454fab6cf5bbfd0d5e494181efa43d89d775a34a8ab33a61b8",
+        "mode": "pinned",
+        "module": "$CHECKOUT/contract/profiles/fluent-bit/../../../providers/quirin-provider-fluent-bit/contracts/fluent_bit/storage_backlog.qv",
+        "premises": [],
+        "rows": 0,
+        "safe_rows": 0,
+        "status": "pinned-in-force",
+        "withdrawn_rows": 2
+      },
+      "sb_allocate_chunk": {
+        "bodies": {
+          "failed_by": [],
+          "failed_units": 0,
+          "unvalidated_units": 0,
+          "validated_by": [
+            "W4",
+            "entry"
+          ],
+          "validated_units": 1,
+          "withdrawn_units": 14
+        },
+        "body_standing": "validated",
+        "clauses": {
+          "resource_borrowed(#0)": "validated",
+          "resource_borrowed(#1)": "validated",
+          "resource_borrowed(#2)": "validated",
+          "resource_return_owned(nullable)": "validated"
+        },
+        "contract_sha256": "a38e962421ae34edd8857eeeea4e4a6d06bfa708faca32f381341dc34201eb66",
+        "mode": "pinned",
+        "module": "$CHECKOUT/contract/profiles/fluent-bit/../../../providers/quirin-provider-fluent-bit/contracts/fluent_bit/storage_backlog.qv",
+        "premises": [],
+        "rows": 2,
+        "safe_rows": 1,
+        "status": "pinned-in-force"
+      },
+      "sb_append_chunk_to_segregated_backlog": {
+        "bodies": {
+          "failed_by": [
+            "C06.3"
+          ],
+          "failed_units": 1,
+          "unvalidated_units": 0,
+          "validated_by": [],
+          "validated_units": 0,
+          "withdrawn_units": 15
+        },
+        "body_standing": "declared-assumption",
+        "contract_sha256": "7dd643ba5a72bc63af85a12b8d6ee8e408ee171383677838c0a6f9e9b42e8838",
+        "mode": "pinned",
+        "module": "$CHECKOUT/contract/profiles/fluent-bit/../../../providers/quirin-provider-fluent-bit/contracts/fluent_bit/storage_backlog.qv",
+        "premises": [],
+        "rows": 0,
+        "safe_rows": 0,
+        "status": "pinned-in-force",
+        "withdrawn_rows": 2
+      },
+      "sb_append_chunk_to_segregated_backlogs": {
+        "bodies": {
+          "failed_by": [
+            "C06.3"
+          ],
+          "failed_units": 1,
+          "unvalidated_units": 0,
+          "validated_by": [],
+          "validated_units": 0,
+          "withdrawn_units": 15
+        },
+        "body_standing": "declared-assumption",
+        "contract_sha256": "2d4aff08af834082498b4a3dab7d6dcbfa8d08e0f3491f3b3686d7669b5804b7",
+        "mode": "pinned",
+        "module": "$CHECKOUT/contract/profiles/fluent-bit/../../../providers/quirin-provider-fluent-bit/contracts/fluent_bit/storage_backlog.qv",
+        "premises": [],
+        "rows": 0,
+        "safe_rows": 0,
+        "status": "pinned-in-force",
+        "withdrawn_rows": 2
+      },
+      "sb_destroy_backlog": {
+        "bodies": {
+          "failed_by": [
+            "C06.3"
+          ],
+          "failed_units": 1,
+          "unvalidated_units": 0,
+          "validated_by": [],
+          "validated_units": 0,
+          "withdrawn_units": 15
+        },
+        "body_standing": "declared-assumption",
+        "contract_sha256": "e7f8bb4389bdd42ca39c7b1b8aaee161e34632401d3ea23c001c01fce1d5c357",
+        "mode": "pinned",
+        "module": "$CHECKOUT/contract/profiles/fluent-bit/../../../providers/quirin-provider-fluent-bit/contracts/fluent_bit/storage_backlog.qv",
+        "premises": [],
+        "rows": 0,
+        "safe_rows": 0,
+        "status": "pinned-in-force",
+        "withdrawn_rows": 2
+      },
+      "sb_destroy_backlogs": {
+        "bodies": {
+          "failed_by": [
+            "C06.3"
+          ],
+          "failed_units": 1,
+          "unvalidated_units": 0,
+          "validated_by": [],
+          "validated_units": 0,
+          "withdrawn_units": 15
+        },
+        "body_standing": "declared-assumption",
+        "contract_sha256": "4f8f50dc435d32486fe308c4a0ab01f70a08e726e10b6d068b77fdfaa3c2eaf4",
+        "mode": "pinned",
+        "module": "$CHECKOUT/contract/profiles/fluent-bit/../../../providers/quirin-provider-fluent-bit/contracts/fluent_bit/storage_backlog.qv",
+        "premises": [],
+        "rows": 0,
+        "safe_rows": 0,
+        "status": "pinned-in-force",
+        "withdrawn_rows": 3
+      },
+      "sb_destroy_chunk": {
+        "bodies": {
+          "failed_by": [],
+          "failed_units": 0,
+          "unvalidated_units": 0,
+          "validated_by": [
+            "W4",
+            "entry"
+          ],
+          "validated_units": 1,
+          "withdrawn_units": 14
+        },
+        "body_standing": "validated",
+        "clauses": {
+          "resource_released(#0, nonnull)": "validated",
+          "resource_return_none()": "validated"
+        },
+        "contract_sha256": "e0c87b2d070dd160eedf2237895dbce220266ab01b9aa45ccb14cc56d43134e0",
+        "mode": "pinned",
+        "module": "$CHECKOUT/contract/profiles/fluent-bit/../../../providers/quirin-provider-fluent-bit/contracts/fluent_bit/storage_backlog.qv",
+        "premises": [],
+        "rows": 2,
+        "safe_rows": 1,
+        "status": "pinned-in-force"
+      },
+      "sb_release_output_queue_space": {
+        "bodies": {
+          "failed_by": [
+            "C06.3"
+          ],
+          "failed_units": 1,
+          "unvalidated_units": 0,
+          "validated_by": [],
+          "validated_units": 0,
+          "withdrawn_units": 15
+        },
+        "body_standing": "declared-assumption",
+        "contract_sha256": "53f4c9bb9d6040bcff9c34d3e3004f302e3752eb397f3241a43f9e2877340cdd",
+        "mode": "pinned",
+        "module": "$CHECKOUT/contract/profiles/fluent-bit/../../../providers/quirin-provider-fluent-bit/contracts/fluent_bit/storage_backlog.qv",
+        "premises": [],
+        "rows": 0,
+        "safe_rows": 0,
+        "status": "pinned-in-force",
+        "withdrawn_rows": 3
+      },
+      "sb_remove_chunk_from_segregated_backlog": {
+        "bodies": {
+          "failed_by": [
+            "C06.3"
+          ],
+          "failed_units": 1,
+          "unvalidated_units": 0,
+          "validated_by": [],
+          "validated_units": 0,
+          "withdrawn_units": 15
+        },
+        "body_standing": "declared-assumption",
+        "contract_sha256": "64eb3dfdd53ba4c2be3983e9585dfa3039ac0b16391eaf73c10bc277ec88282c",
+        "mode": "pinned",
+        "module": "$CHECKOUT/contract/profiles/fluent-bit/../../../providers/quirin-provider-fluent-bit/contracts/fluent_bit/storage_backlog.qv",
+        "premises": [],
+        "rows": 0,
+        "safe_rows": 0,
+        "status": "pinned-in-force",
+        "withdrawn_rows": 2
+      },
+      "sb_remove_chunk_from_segregated_backlogs": {
+        "bodies": {
+          "failed_by": [
+            "C06.3"
+          ],
+          "failed_units": 1,
+          "unvalidated_units": 0,
+          "validated_by": [],
+          "validated_units": 0,
+          "withdrawn_units": 15
+        },
+        "body_standing": "declared-assumption",
+        "contract_sha256": "453aeb30c928efa32ca6d53e5cb9513155e85b5e5f2d9ff97b1b238cf40471bf",
+        "mode": "pinned",
+        "module": "$CHECKOUT/contract/profiles/fluent-bit/../../../providers/quirin-provider-fluent-bit/contracts/fluent_bit/storage_backlog.qv",
+        "premises": [],
+        "rows": 0,
+        "safe_rows": 0,
+        "status": "pinned-in-force",
+        "withdrawn_rows": 4
+      },
+      "sb_segregate_chunks": {
+        "bodies": {
+          "failed_by": [
+            "C06.3"
+          ],
+          "failed_units": 1,
+          "unvalidated_units": 0,
+          "validated_by": [],
+          "validated_units": 0,
+          "withdrawn_units": 15
+        },
+        "body_standing": "declared-assumption",
+        "contract_sha256": "b2115acb6fde1c2d8edd0526e02eb92ecf4ddfc1f220b72c8a921b4ec57f622b",
+        "mode": "pinned",
+        "module": "$CHECKOUT/contract/profiles/fluent-bit/../../../providers/quirin-provider-fluent-bit/contracts/fluent_bit/storage_backlog.qv",
+        "premises": [],
+        "rows": 0,
+        "safe_rows": 0,
+        "status": "pinned-in-force",
+        "withdrawn_rows": 3
+      },
+      "sleep": {
+        "body_standing": "declared-assumption",
+        "contract_sha256": "6a5334fff099770761d1306ba3f7545dfef4ccd5026481501768798c68917e4b",
+        "mode": "flexible",
+        "module": "$CHECKOUT/contract/profiles/fluent-bit/../../../providers/quirin-provider-libc/contracts/libc/unistd.qv",
+        "premises": [],
+        "rows": 4,
+        "safe_rows": 0,
+        "status": "flexible-standing"
+      },
+      "snprintf": {
+        "body_standing": "declared-assumption",
+        "contract_sha256": "d5c61911c447ef2eafd9412d53ad1816e481d95e812097bc64d09dc0f8fbee0b",
+        "mode": "flexible",
+        "module": "$CHECKOUT/contract/profiles/fluent-bit/../../../providers/quirin-provider-libc/contracts/libc/stdio.qv",
+        "premises": [],
+        "rows": 8,
+        "safe_rows": 0,
+        "status": "flexible-standing"
+      },
+      "srand": {
+        "body_standing": "declared-assumption",
+        "contract_sha256": "560f7b7f86f425094587a0c95f021bca9b14c353ec4f5d075cc16a0d995ecbc7",
+        "mode": "flexible",
+        "module": "$CHECKOUT/contract/profiles/fluent-bit/../../../providers/quirin-provider-libc/contracts/libc/stdlib.qv",
+        "premises": [],
+        "rows": 2,
+        "safe_rows": 0,
+        "status": "flexible-standing"
+      },
+      "strcasecmp": {
+        "body_standing": "declared-assumption",
+        "contract_sha256": "a59e46ac4e1077a9fae5e5d7dd677ba38bfc13f44439dffa8d0c695f7c646e4d",
+        "mode": "flexible",
+        "module": "$CHECKOUT/contract/profiles/fluent-bit/../../../providers/quirin-provider-libc/contracts/libc/string.qv",
+        "premises": [],
+        "rows": 6,
+        "safe_rows": 0,
+        "status": "flexible-standing"
+      },
+      "strcmp": {
+        "body_standing": "declared-assumption",
+        "contract_sha256": "6eb73531dcc1f710f2c7053827851dcb9ad8577784c45f221701f022e141cfdc",
+        "mode": "flexible",
+        "module": "$CHECKOUT/contract/profiles/fluent-bit/../../../providers/quirin-provider-libc/contracts/libc/string.qv",
+        "premises": [],
+        "rows": 7,
+        "safe_rows": 2,
+        "status": "flexible-standing"
+      },
+      "strerror_r": {
+        "bodies": {
+          "failed_by": [
+            "abi"
+          ],
+          "failed_units": 5,
+          "unvalidated_units": 0,
+          "validated_by": [],
+          "validated_units": 0,
+          "withdrawn_units": 5
+        },
+        "body_standing": "declared-assumption",
+        "contract_sha256": "7b799c7cebd71e54947ec327931c15f552f70c0792116d8b52768e6ccd2ff5bb",
+        "mode": "flexible",
+        "module": "$CHECKOUT/contract/profiles/fluent-bit/../../../providers/quirin-provider-libc/contracts/libc/string.qv",
+        "premises": [],
+        "rows": 0,
+        "safe_rows": 0,
+        "status": "flexible-standing"
+      },
+      "strlen": {
+        "body_standing": "declared-assumption",
+        "contract_sha256": "20462f0cfea207b0091240c32529c73c8554328ada0e30ff6256b2cfd1bde3fd",
+        "mode": "flexible",
+        "module": "$CHECKOUT/contract/profiles/fluent-bit/../../../providers/quirin-provider-libc/contracts/libc/string.qv",
+        "premises": [],
+        "rows": 26,
+        "safe_rows": 2,
+        "status": "flexible-standing"
+      },
+      "strncmp": {
+        "body_standing": "declared-assumption",
+        "contract_sha256": "502ba704d738d3b0debce91b5a754edcf37b4e0348fbbfe8df8cb09040196ebc",
+        "mode": "flexible",
+        "module": "$CHECKOUT/contract/profiles/fluent-bit/../../../providers/quirin-provider-libc/contracts/libc/string.qv",
+        "premises": [],
+        "rows": 6,
+        "safe_rows": 2,
+        "status": "flexible-standing"
+      },
+      "strnlen": {
+        "body_standing": "declared-assumption",
+        "contract_sha256": "019e2bcb27088183f30ec41efde8c7129538ce236c339ecc85e92023aff5650d",
+        "mode": "flexible",
+        "module": "$CHECKOUT/contract/profiles/fluent-bit/../../../providers/quirin-provider-libc/contracts/libc/string.qv",
+        "premises": [],
+        "rows": 4,
+        "safe_rows": 0,
+        "status": "flexible-standing"
+      },
+      "strrchr": {
+        "body_standing": "declared-assumption",
+        "contract_sha256": "4a81fc626ff6c0cce286e8d9ab1a3cd3deba557c98d12bdf7011c08d407866bd",
+        "mode": "flexible",
+        "module": "$CHECKOUT/contract/profiles/fluent-bit/../../../providers/quirin-provider-libc/contracts/libc/string.qv",
+        "premises": [],
+        "rows": 2,
+        "safe_rows": 0,
+        "status": "flexible-standing"
+      },
+      "strstr": {
+        "body_standing": "declared-assumption",
+        "contract_sha256": "14ce1db84cd91074b6d909b758ba5903a510f3d6f8183bed3f5e5f8aafb7e4a4",
+        "mode": "flexible",
+        "module": "$CHECKOUT/contract/profiles/fluent-bit/../../../providers/quirin-provider-libc/contracts/libc/string.qv",
+        "premises": [],
+        "rows": 4,
+        "safe_rows": 0,
+        "status": "flexible-standing"
+      },
+      "strtoll": {
+        "bodies": {
+          "failed_by": [
+            "abi"
+          ],
+          "failed_units": 15,
+          "unvalidated_units": 0,
+          "validated_by": [],
+          "validated_units": 0,
+          "withdrawn_units": 15
+        },
+        "body_standing": "declared-assumption",
+        "contract_sha256": "de8c73ec3944e6c5eae09c263febc5704f554300f878e3e12764c4dd95e90916",
+        "mode": "flexible",
+        "module": "$CHECKOUT/contract/profiles/fluent-bit/../../../providers/quirin-provider-libc/contracts/libc/stdlib.qv",
+        "premises": [],
+        "rows": 0,
+        "safe_rows": 0,
+        "status": "flexible-trusted"
+      },
+      "strtoull": {
+        "bodies": {
+          "failed_by": [
+            "abi"
+          ],
+          "failed_units": 15,
+          "unvalidated_units": 0,
+          "validated_by": [],
+          "validated_units": 0,
+          "withdrawn_units": 15
+        },
+        "body_standing": "declared-assumption",
+        "contract_sha256": "97b1539630ad51f5c46a7b092da08971fc127c4d3574592d6148c292aca0de62",
+        "mode": "flexible",
+        "module": "$CHECKOUT/contract/profiles/fluent-bit/../../../providers/quirin-provider-libc/contracts/libc/stdlib.qv",
+        "premises": [],
+        "rows": 0,
+        "safe_rows": 0,
+        "status": "flexible-trusted"
+      },
+      "time": {
+        "body_standing": "declared-assumption",
+        "contract_sha256": "0d1f335080f344836bd108e9633c4702179532729762c9a53951c64f1493486a",
+        "mode": "flexible",
+        "module": "$CHECKOUT/contract/profiles/fluent-bit/../../../providers/quirin-provider-libc/contracts/libc/time.qv",
+        "premises": [],
+        "rows": 8,
+        "safe_rows": 0,
+        "status": "flexible-standing"
+      },
+      "usleep": {
+        "body_standing": "declared-assumption",
+        "contract_sha256": "3d52495590e0892e2f80e6a6625c63859d69b342cd38cc6b91e55a5158349570",
+        "mode": "flexible",
+        "module": "$CHECKOUT/contract/profiles/fluent-bit/../../../providers/quirin-provider-libc/contracts/libc/unistd.qv",
+        "premises": [],
+        "rows": 2,
+        "safe_rows": 0,
+        "status": "flexible-standing"
+      },
+      "write": {
+        "body_standing": "declared-assumption",
+        "contract_sha256": "1cc311b830803db70cd25cf721bdae0fc7907a5c3ba25a0d4dda86ba00d11180",
+        "mode": "flexible",
+        "module": "$CHECKOUT/contract/profiles/fluent-bit/../../../providers/quirin-provider-libc/contracts/libc/unistd.qv",
+        "premises": [],
+        "rows": 14,
+        "safe_rows": 6,
+        "status": "flexible-standing"
+      }
+    },
+    "meaning": "the contract declarations each published row's derivation consulted (rule 13f): every name a lookup of the row's own work asked for, every callee its solved CFG applies a contract of, and transitively those of every in-unit summary it consulted; over-approximated, never omitted. `body_standing` (rules 13g, 13i-13k): evidence covers the clauses it compares or reads (an equal W4 summary, and the body under the declaration's entry custody matching every exit and Safe, on a reported row (`entry`) or on a body whose W4 summary only refines the declaration (rule 13m, which then records no conflict failure): every parameter and result mode with its kind; rule 11r: every exit class; 12w: the guards of retentions; 13a: slot moves, derived out slots and a borrowed result; 13c: reference keeps and drops; 13d: a returned reference); no evidence covers a container or counted-user clause, a retention, a holder reset, a named premise, a variadic tail or a no-return clause. A clause is `validated` where every unit that examined a body of the declared function validated the declaration, at least one did, and every such unit's evidence covered the clause; a declaration is `validated` only when every clause is, `partly-validated` when some but not all are (`uncovered_clauses`), `held` when held for a human act, and otherwise `declared-assumption` (contract specification C06): there is no analysed body, a body did not validate it, or no clause is covered everywhere. `resting_only_on_validated_declarations` counts Safe rows whose every declaration is fully validated. Premises are the named assumptions a declaration states (`resource_premise`), its literal-argument premises, and the premises a rule states for its clause (rule 13e for a result holder). A row's `null_premises` (rule 14n) are the named null premises (`null-deref:FUNCTION:LINE:VARIABLE`) its derivation and its in-unit summaries' relied on, decision 1's moved NULL question; `resting_only_on_a_null_premise` counts Safe rows with no declaration and at least one, `carrying_a_null_premise` every Safe row with one, and neither is ever counted as resting on nothing. Evidence only: no verdict reads this section or the row fields",
+    "safe_rollup": {
+      "carrying_a_null_premise": 4,
+      "consulting_a_held_or_withdrawn_declaration": 0,
+      "partly_validated_declarations": [
+        {
+          "function": "flb_input_chunk_is_mem_overlimit",
+          "safe_rows": 4,
+          "uncovered_clauses": [
+            "resource_user_neutral()"
+          ]
+        },
+        {
+          "function": "flb_input_chunk_get_name",
+          "safe_rows": 2,
+          "uncovered_clauses": [
+            "resource_premise(untracked_handback)"
+          ]
+        },
+        {
+          "function": "flb_input_chunk_is_storage_overlimit",
+          "safe_rows": 2,
+          "uncovered_clauses": [
+            "resource_user_neutral()"
+          ]
+        },
+        {
+          "function": "flb_input_chunk_is_up",
+          "safe_rows": 2,
+          "uncovered_clauses": [
+            "resource_user_neutral()"
+          ]
+        },
+        {
+          "function": "flb_task_get_route_status",
+          "safe_rows": 2,
+          "uncovered_clauses": [
+            "resource_user_neutral()"
+          ]
+        },
+        {
+          "function": "flb_task_set_route_status",
+          "safe_rows": 2,
+          "uncovered_clauses": [
+            "resource_user_neutral()"
+          ]
+        },
+        {
+          "function": "flb_task_users_inc",
+          "safe_rows": 0,
+          "uncovered_clauses": [
+            "resource_user_added(#0, users)"
+          ]
+        },
+        {
+          "function": "msgpack_packer_init",
+          "safe_rows": 0,
+          "uncovered_clauses": [
+            "resource_borrowed(#0)",
+            "resource_borrowed(#1)",
+            "resource_borrowed(#2)",
+            "resource_retained_by(#1, #0)",
+            "resource_return_none()"
+          ]
+        }
+      ],
+      "resting_on_a_declared_assumption": 42,
+      "resting_on_a_partly_validated_declaration": 6,
+      "resting_on_no_declaration": 49,
+      "resting_only_on_a_null_premise": 0,
+      "resting_only_on_validated_declarations": 2,
+      "safe_rows": 99,
+      "top_declared_assumptions": [
+        {
+          "function": "__errno_location",
+          "mode": "flexible",
+          "premises": [
+            {
+              "name": "nested_call_admission",
+              "origin": "declared",
+              "statement": "a dereference of this call's result is read only where the gateway's nested-call admission holds at the call site (premises N1-N10 of cards O04-TRACE and CONSTRUCTOR-RESIDUALS, checked per site): the call is the statement's only nested call and a whole argument of a contracted call at a declared Borrowed position modulo the dereference wrapper (N4-D), its written arity is this declaration's, and the unit's own declaration of the callee returns exactly one pointer level over a scalar type (N10); under them the argument binds, releases, escapes and addresses nothing the projection tracks"
+            }
+          ],
+          "safe_rows": 6,
+          "status": "flexible-standing"
+        },
+        {
+          "function": "cio_chunk_down",
+          "mode": "pinned",
+          "premises": [],
+          "safe_rows": 6,
+          "status": "pinned-in-force"
+        },
+        {
+          "function": "cio_chunk_is_up",
+          "mode": "pinned",
+          "premises": [],
+          "safe_rows": 6,
+          "status": "pinned-in-force"
+        },
+        {
+          "function": "flb_errno_print",
+          "mode": "pinned",
+          "premises": [],
+          "safe_rows": 6,
+          "status": "pinned-in-force"
+        },
+        {
+          "function": "read",
+          "mode": "flexible",
+          "premises": [],
+          "safe_rows": 6,
+          "status": "flexible-standing"
+        },
+        {
+          "function": "write",
+          "mode": "flexible",
+          "premises": [],
+          "safe_rows": 6,
+          "status": "flexible-standing"
+        },
+        {
+          "function": "cio_chunk_get_content_size",
+          "mode": "pinned",
+          "premises": [],
+          "safe_rows": 4,
+          "status": "pinned-in-force"
+        },
+        {
+          "function": "flb_log_check",
+          "mode": "pinned",
+          "premises": [],
+          "safe_rows": 4,
+          "status": "pinned-in-force"
+        },
+        {
+          "function": "flb_log_print",
+          "mode": "pinned",
+          "premises": [],
+          "safe_rows": 4,
+          "status": "pinned-in-force"
+        },
+        {
+          "function": "mk_list_add",
+          "mode": "pinned",
+          "premises": [],
+          "safe_rows": 4,
+          "status": "pinned-in-force"
+        },
+        {
+          "function": "cio_stream_size_chunks_up",
+          "mode": "pinned",
+          "premises": [],
+          "safe_rows": 2,
+          "status": "pinned-in-force"
+        },
+        {
+          "function": "flb_sched_timer_destroy",
+          "mode": "pinned",
+          "premises": [],
+          "safe_rows": 2,
+          "status": "pinned-in-force"
+        },
+        {
+          "function": "flb_task_retry_destroy",
+          "mode": "pinned",
+          "premises": [],
+          "safe_rows": 2,
+          "status": "pinned-in-force"
+        },
+        {
+          "function": "mk_event_timeout_destroy",
+          "mode": "pinned",
+          "premises": [
+            {
+              "name": "mk_event_descriptors",
+              "origin": "declared",
+              "statement": "P-MK-EVENT-DESCRIPTORS: the call closes the descriptor held in the event (event->fd), which v1 custody does not track"
+            }
+          ],
+          "safe_rows": 2,
+          "status": "pinned-in-force"
+        },
+        {
+          "function": "pthread_mutex_lock",
+          "mode": "flexible",
+          "premises": [],
+          "safe_rows": 2,
+          "status": "flexible-standing"
+        },
+        {
+          "function": "pthread_mutex_unlock",
+          "mode": "flexible",
+          "premises": [],
+          "safe_rows": 2,
+          "status": "flexible-standing"
+        },
+        {
+          "function": "strcmp",
+          "mode": "flexible",
+          "premises": [],
+          "safe_rows": 2,
+          "status": "flexible-standing"
+        },
+        {
+          "function": "strlen",
+          "mode": "flexible",
+          "premises": [],
+          "safe_rows": 2,
+          "status": "flexible-standing"
+        },
+        {
+          "function": "strncmp",
+          "mode": "flexible",
+          "premises": [],
+          "safe_rows": 2,
+          "status": "flexible-standing"
+        }
+      ]
+    }
+  },
+  "all_other_contract_sidecar_fields_unchanged_after_checkout_normalization": true,
+  "byte_identical_artifacts": [
+    "chunk-contracts",
+    "source-effects"
+  ],
+  "source_artifact": "not emitted by current route; absence recorded on both sides"
+}

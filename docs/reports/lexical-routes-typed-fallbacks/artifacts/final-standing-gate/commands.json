@@ -12,7 +12,7 @@
       "private_log": "/tmp/qcore-lexical-typed-precedence/private/lexical-typed/gate-standing-final-3/00-submodule.log"
     },
     {
-      "command": "python3 scripts/run_test_binaries.py --log-dir private/lexical-typed/gate-standing-final-3/test-binaries",
+      "command": "python3 scripts/run_test_binaries.py --log-dir /tmp/qcore-lexical-typed-precedence/private/lexical-typed/gate-standing-final-3/test-binaries",
       "exit": 0,
       "private_log": "/tmp/qcore-lexical-typed-precedence/private/lexical-typed/gate-standing-final-3/01-tests.log"
     },

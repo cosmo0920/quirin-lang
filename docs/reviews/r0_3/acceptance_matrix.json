@@ -6753,8 +6753,8 @@
   "note": "providers/ is a separate Cargo workspace, excluded from the core workspace; P01 verified empirically that the core workspace builds and passes its full suite with providers/ moved out of the tree."
  },
  "validation": {
-  "note": "RK-PLUGIN-INTERCEPTOR-CANDIDATES on base 1543259f0; tested implementation d899486b47a582707d015a070c9e83e82a99a5a4; worktree-private logs in private/rk-interceptor-candidates/gate-standing-final, gate-providers-final, gate-docs-final; standing tests 513 units/526 summaries/8235 passed/0 failed/15 ignored; Lean 338 audits; provider Rust 133 passed, provider Python 25 and scripts Python 374 tests; every required final gate step exited 0; corrected diagnostic attempts remain in the report. Source pins and per-route arbiter exits are separately recorded in the card report.",
-  "workspace_tests": 8235,
+  "note": "LEXICAL-ROUTES-PREEMPT-TYPED-FALLBACKS clean standing gate3 at bd12e15e3f49dd384f0595b1cd18499aaf08094e; analyzer/proof/test source unchanged since 913a72a916242165ed0dc586fd1affdb3093fd65. All ten commands exited 0: 514 units/527 summaries, 8250 passed/0 failed/15 ignored; 339 Lean audits; 374 Python tests. Actual commands/exits/private logs are in artifacts/final-standing-gate/commands.json. Earlier failed gates are retained. Provider count 133 is explicitly borrowed from the integrator fresh combined base 854920e3e provider gate, /home/cosmo/Documents/GitHub/qcore-c/private/w48-batch2-rk-integration/gate-providers-1 (133 Rust/0 failed/1 ignored,25 Python,all five packages verified); provider-owned sources are unchanged here. Corpus/system/slice tip repin remains pending at this gate receipt.",
+  "workspace_tests": 8250,
   "provider_tests": 133,
   "python_evidence_validator_tests": 374,
   "lean_audits": 339,
@@ -7105,7 +7105,7 @@
   "cargo_clippy": "clean",
   "standing_gate": "complete",
   "full_language_conformance": false,
-  "measurement_provenance": "carried_from_previous_matrix: these numbers were NOT measured for this regeneration; pass --gate PATH with the standing-gate results of this checkpoint to replace them"
+  "measurement_provenance": "integrator_supplied (docs/reports/lexical-routes-typed-fallbacks/gate.json)"
  },
  "named_followups": [
   {
@@ -12621,13 +12621,6 @@
    "recorded_by": "RETENTION-UNMATCHED-REMOVAL-POISONS"
   },
   {
-   "id": "LEXICAL-ROUTES-PREEMPT-TYPED-FALLBACKS",
-   "title": "A lexical route whose flow check refuses an unsettled base runs before the Clang-typed fallback that decides the same statement",
-   "why": "Found by FB-LOOP-CHAIN-ACCESS-IDENTITY-BLOCKERS (README section 4.3). Rule 5g lowers `B->F = scalar` with may_bind(B) to ScalarMemberStore, whose flow check refuses unless B resolves to one settled live identity; W43's typed scalar statement and the W44 chain reading of a condition (such as `ins->p->flags & X`) carry per-base obligations of the same kind; all run before the statement's or operand's refusal reaches the Clang-typed reading (rule 10k), which decides the same text on its own premise (the root never bound by the custody closure). Where a lexical reader cannot type the record the fallback decides; where it can, the lexical route refuses. Measured when the card widened the reader: cio_options_init (memset(options, ...) then scalar stores) went Safe -> Unknown until rule 5g kept its domain of fully read declarations; on the slice flb_input_net_property_check gains two `unresolved resource identity ins` leaves at its conditions (W44) and flb_input_set_test, flb_output_set_http_test and flb_output_set_test_with_ctx_callback one each at a scalar store through a looked-up instance (W43, reachable once their function-pointer formals no longer refuse the function); all four rows Unknown before and after. The same precedence holds today on every fully read record (e.g. flb_engine_shutdown's `config->is_running = FLB_FALSE`). DISCHARGE: a decided precedence (the lexical route's flow refusal falls back to the typed reading where that reading's own premise holds, or a stated reason it must not), with Lean parity and a measured re-pin, every moved row read.",
-   "source": "docs/reports/fb-loop-chain-blockers/README.md",
-   "recorded_by": "FB-LOOP-CHAIN-ACCESS-IDENTITY-BLOCKERS"
-  },
-  {
    "id": "RK-INTERCEPTOR-STATIC-LIST-CLOSURE",
    "title": "Read exact interceptor list element and method-union candidate closure at static invocations",
    "why": "Narrowed by RK-PLUGIN-INTERCEPTOR-CANDIDATES. Its runtime-only source-pinned inventory defines 14 exact rd_kafka_conf_s interceptor lists and their 14 rd_kafka_s.rk_conf aliases with distinct rd_kafka_interceptor_method_s union arms, signatures, successful registration/lifecycle restrictions, borrowed neutral-custody callbacks and code/opaque lifetime premises. These are human review restrictions and do not establish static closure or type a list as a function pointer; rule 12n still refuses these invocations. Stateful freeing/retaining/transferring callbacks do not meet the neutral candidate. DISCHARGE: a sound source-derived list/element/union-arm closure over all registration and invocation sites, including aliasing, copying, teardown and lifetime, with candidate effect composition, matching Rust/Lean evidence, corpus/system/slice measurement and every moved row read. Missing or unsupported registrations remain Unknown and runtime review alone never makes a static Safe result.",
@@ -12652,6 +12645,13 @@
    "id": "LEXICAL-SCALAR-NOOP-ALIAS-READ",
    "title": "An older unbound scalar-field NoOp carries no same-type alias read after a peer release",
    "why": "Observed during LEXICAL-ROUTES-PREEMPT-TYPED-FALLBACKS first focused fixture run on a dirty worktree after prediction commit 1f9e306a0: under synthetic q_base.qv custody assumptions (q_free releases nonnull), struct S { int x; struct S *next; }; void subject(struct S *p, struct S *peer) { q_free(peer); p->x = 1; } is Safe and the store is NoOp, while the release carries the peer/p alias class. This is an observed analyzer-boundary candidate, not a validated violation or upstream defect. NoOp is outside the scalar alternative card, which preserves its existing handling. DISCHARGE: reproduce at an exact baseline, decide and implement an alias-preserving reading of the older scalar-field no-op without erasing genuine alias/custody/null/effect refusals, with Rust, audited Lean, full gate and all-route re-pin; read every moved row. Exact source/profile/log provenance is in artifacts/noop-alias-observation.json.",
+   "source": "docs/reports/lexical-routes-typed-fallbacks/README.md",
+   "recorded_by": "LEXICAL-ROUTES-PREEMPT-TYPED-FALLBACKS"
+  },
+  {
+   "id": "LEXICAL-TYPED-TAIL-APPEND-ACTUAL-IDENTITY",
+   "title": "Tail append retains the actual-read file identity refusal after a lexical scalar route discharges",
+   "why": "Fresh slice34155955 on lexical implementation913a72a91 replaces the generic unsupported indirect-access leaf at plugins/in_tail/tail_file.c:1838, tail_signal_manager(file->config), with unresolved resource identity file. The row remains Unknown. The gate-built one-unit CFG probe (exit0) pins L20871/node94 Call tail_signal_manager(file->config) reads[file->config]; preceding flb_hash_table_add remains outside its declared literal-argument premise and the function retains168 diagnostics. This is an analyzer boundary, not a validated violation or upstream defect. DISCHARGE: independently trace and decide the actual file identity together with every preceding effect/literal-argument premise, preserving held/source/ABI/custody/alias/null guards, or state why refusal must remain; any semantic extension needs Rust/Lean, full gate and all-route repin with every moved row read. Exact source/config/binary/probe provenance is in artifacts/tail-append-actual/identity.json.",
    "source": "docs/reports/lexical-routes-typed-fallbacks/README.md",
    "recorded_by": "LEXICAL-ROUTES-PREEMPT-TYPED-FALLBACKS"
   }

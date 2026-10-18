@@ -1,0 +1,534 @@
+{
+  "before": "/home/cosmo/Documents/GitHub/qcore-c/private/w48-batch2-rk-integration/measure-combined-1/slice/resource-diagnostics.json",
+  "after": "/tmp/qcore-lexical-typed-precedence/private/lexical-typed/tip-slice-1/resource-diagnostics.json",
+  "functions": 404,
+  "transitions": [
+    {
+      "before": "Pending",
+      "after": "Pending",
+      "count": 4
+    },
+    {
+      "before": "Safe",
+      "after": "Safe",
+      "count": 52
+    },
+    {
+      "before": "Unknown",
+      "after": "Safe",
+      "count": 1
+    },
+    {
+      "before": "Unknown",
+      "after": "Unknown",
+      "count": 346
+    },
+    {
+      "before": "Unsafe",
+      "after": "Unsafe",
+      "count": 1
+    }
+  ],
+  "removed_leaves": [
+    [
+      "unknown_alias",
+      "unresolved resource identity `ctx`",
+      9
+    ],
+    [
+      "unknown_alias",
+      "unresolved resource identity `file`",
+      9
+    ],
+    [
+      "unknown_alias",
+      "unresolved resource identity `ins`",
+      26
+    ],
+    [
+      "unknown_alias",
+      "unresolved resource identity `thi`",
+      4
+    ],
+    [
+      "unsupported",
+      "indirect memory access is outside the resource projection",
+      2
+    ]
+  ],
+  "added_leaves": [
+    [
+      "unknown_alias",
+      "unresolved resource identity `file`",
+      1
+    ]
+  ],
+  "changed": [
+    {
+      "key": [
+        "fluent-bit-tail-pause",
+        "src/flb_input.c",
+        "flb_input_net_property_check",
+        0
+      ],
+      "before": "Unknown",
+      "after": "Unknown",
+      "removed_leaves": [
+        [
+          "unknown_alias",
+          "unresolved resource identity `ins`",
+          2
+        ]
+      ],
+      "added_leaves": []
+    },
+    {
+      "key": [
+        "fluent-bit-tail-pause",
+        "src/flb_input.c",
+        "flb_input_pause",
+        0
+      ],
+      "before": "Unknown",
+      "after": "Unknown",
+      "removed_leaves": [
+        [
+          "unknown_alias",
+          "unresolved resource identity `ins`",
+          1
+        ]
+      ],
+      "added_leaves": []
+    },
+    {
+      "key": [
+        "fluent-bit-tail-pause",
+        "src/flb_input.c",
+        "flb_input_rate_gate_maybe_resume",
+        0
+      ],
+      "before": "Unknown",
+      "after": "Unknown",
+      "removed_leaves": [
+        [
+          "unknown_alias",
+          "unresolved resource identity `ins`",
+          1
+        ]
+      ],
+      "added_leaves": []
+    },
+    {
+      "key": [
+        "fluent-bit-tail-pause",
+        "src/flb_input.c",
+        "flb_input_rate_gate_protect",
+        0
+      ],
+      "before": "Unknown",
+      "after": "Unknown",
+      "removed_leaves": [
+        [
+          "unknown_alias",
+          "unresolved resource identity `ins`",
+          1
+        ]
+      ],
+      "added_leaves": []
+    },
+    {
+      "key": [
+        "fluent-bit-tail-pause",
+        "src/flb_input.c",
+        "flb_input_rate_update",
+        0
+      ],
+      "before": "Unknown",
+      "after": "Unknown",
+      "removed_leaves": [
+        [
+          "unknown_alias",
+          "unresolved resource identity `ins`",
+          8
+        ]
+      ],
+      "added_leaves": []
+    },
+    {
+      "key": [
+        "fluent-bit-tail-pause",
+        "src/flb_input.c",
+        "flb_input_net_property_check",
+        1
+      ],
+      "before": "Unknown",
+      "after": "Unknown",
+      "removed_leaves": [
+        [
+          "unknown_alias",
+          "unresolved resource identity `ins`",
+          2
+        ]
+      ],
+      "added_leaves": []
+    },
+    {
+      "key": [
+        "fluent-bit-tail-pause",
+        "src/flb_input.c",
+        "flb_input_pause",
+        1
+      ],
+      "before": "Unknown",
+      "after": "Unknown",
+      "removed_leaves": [
+        [
+          "unknown_alias",
+          "unresolved resource identity `ins`",
+          1
+        ]
+      ],
+      "added_leaves": []
+    },
+    {
+      "key": [
+        "fluent-bit-tail-pause",
+        "src/flb_input.c",
+        "flb_input_rate_gate_maybe_resume",
+        1
+      ],
+      "before": "Unknown",
+      "after": "Unknown",
+      "removed_leaves": [
+        [
+          "unknown_alias",
+          "unresolved resource identity `ins`",
+          1
+        ]
+      ],
+      "added_leaves": []
+    },
+    {
+      "key": [
+        "fluent-bit-tail-pause",
+        "src/flb_input.c",
+        "flb_input_rate_gate_protect",
+        1
+      ],
+      "before": "Unknown",
+      "after": "Unknown",
+      "removed_leaves": [
+        [
+          "unknown_alias",
+          "unresolved resource identity `ins`",
+          1
+        ]
+      ],
+      "added_leaves": []
+    },
+    {
+      "key": [
+        "fluent-bit-tail-pause",
+        "src/flb_input.c",
+        "flb_input_rate_update",
+        1
+      ],
+      "before": "Unknown",
+      "after": "Unknown",
+      "removed_leaves": [
+        [
+          "unknown_alias",
+          "unresolved resource identity `ins`",
+          8
+        ]
+      ],
+      "added_leaves": []
+    },
+    {
+      "key": [
+        "fluent-bit-tail-pause",
+        "src/flb_input_thread.c",
+        "input_thread_instance_destroy",
+        0
+      ],
+      "before": "Unknown",
+      "after": "Unknown",
+      "removed_leaves": [
+        [
+          "unknown_alias",
+          "unresolved resource identity `thi`",
+          1
+        ]
+      ],
+      "added_leaves": []
+    },
+    {
+      "key": [
+        "fluent-bit-tail-pause",
+        "src/flb_input_thread.c",
+        "input_thread_instance_set_status",
+        0
+      ],
+      "before": "Unknown",
+      "after": "Unknown",
+      "removed_leaves": [
+        [
+          "unknown_alias",
+          "unresolved resource identity `thi`",
+          1
+        ]
+      ],
+      "added_leaves": []
+    },
+    {
+      "key": [
+        "fluent-bit-tail-pause",
+        "src/flb_input_thread.c",
+        "input_thread_instance_destroy",
+        1
+      ],
+      "before": "Unknown",
+      "after": "Unknown",
+      "removed_leaves": [
+        [
+          "unknown_alias",
+          "unresolved resource identity `thi`",
+          1
+        ]
+      ],
+      "added_leaves": []
+    },
+    {
+      "key": [
+        "fluent-bit-tail-pause",
+        "src/flb_input_thread.c",
+        "input_thread_instance_set_status",
+        1
+      ],
+      "before": "Unknown",
+      "after": "Unknown",
+      "removed_leaves": [
+        [
+          "unknown_alias",
+          "unresolved resource identity `thi`",
+          1
+        ]
+      ],
+      "added_leaves": []
+    },
+    {
+      "key": [
+        "fluent-bit-tail-pause",
+        "plugins/in_tail/tail_dockermode.c",
+        "flb_tail_dmode_create",
+        0
+      ],
+      "before": "Unknown",
+      "after": "Unknown",
+      "removed_leaves": [
+        [
+          "unknown_alias",
+          "unresolved resource identity `ctx`",
+          2
+        ]
+      ],
+      "added_leaves": []
+    },
+    {
+      "key": [
+        "fluent-bit-tail-pause",
+        "plugins/in_tail/tail_file.c",
+        "dormant_detach_path",
+        0
+      ],
+      "before": "Unknown",
+      "after": "Unknown",
+      "removed_leaves": [
+        [
+          "unknown_alias",
+          "unresolved resource identity `file`",
+          1
+        ]
+      ],
+      "added_leaves": []
+    },
+    {
+      "key": [
+        "fluent-bit-tail-pause",
+        "plugins/in_tail/tail_file.c",
+        "flb_tail_file_append",
+        0
+      ],
+      "before": "Unknown",
+      "after": "Unknown",
+      "removed_leaves": [
+        [
+          "unknown_alias",
+          "unresolved resource identity `ctx`",
+          2
+        ],
+        [
+          "unsupported",
+          "indirect memory access is outside the resource projection",
+          1
+        ]
+      ],
+      "added_leaves": [
+        [
+          "unknown_alias",
+          "unresolved resource identity `file`",
+          1
+        ]
+      ]
+    },
+    {
+      "key": [
+        "fluent-bit-tail-pause",
+        "plugins/in_tail/tail_file.c",
+        "flb_tail_file_dormant_scan_begin",
+        0
+      ],
+      "before": "Unknown",
+      "after": "Safe",
+      "removed_leaves": [
+        [
+          "unknown_alias",
+          "unresolved resource identity `ctx`",
+          1
+        ],
+        [
+          "unknown_alias",
+          "unresolved resource identity `file`",
+          2
+        ]
+      ],
+      "added_leaves": []
+    },
+    {
+      "key": [
+        "fluent-bit-tail-pause",
+        "plugins/in_tail/tail_file.c",
+        "flb_tail_file_rotated",
+        0
+      ],
+      "before": "Unknown",
+      "after": "Unknown",
+      "removed_leaves": [
+        [
+          "unsupported",
+          "indirect memory access is outside the resource projection",
+          1
+        ]
+      ],
+      "added_leaves": []
+    },
+    {
+      "key": [
+        "fluent-bit-tail-pause",
+        "plugins/in_tail/tail_file.c",
+        "flb_tail_file_to_event",
+        0
+      ],
+      "before": "Unknown",
+      "after": "Unknown",
+      "removed_leaves": [
+        [
+          "unknown_alias",
+          "unresolved resource identity `file`",
+          1
+        ]
+      ],
+      "added_leaves": []
+    },
+    {
+      "key": [
+        "fluent-bit-tail-pause",
+        "plugins/in_tail/tail_file_budget.c",
+        "flb_tail_file_budget_reserve",
+        0
+      ],
+      "before": "Unknown",
+      "after": "Unknown",
+      "removed_leaves": [
+        [
+          "unknown_alias",
+          "unresolved resource identity `ctx`",
+          1
+        ]
+      ],
+      "added_leaves": []
+    },
+    {
+      "key": [
+        "fluent-bit-tail-pause",
+        "plugins/in_tail/tail_fs_inotify.c",
+        "flb_tail_fs_inotify_remove",
+        0
+      ],
+      "before": "Unknown",
+      "after": "Unknown",
+      "removed_leaves": [
+        [
+          "unknown_alias",
+          "unresolved resource identity `file`",
+          1
+        ]
+      ],
+      "added_leaves": []
+    },
+    {
+      "key": [
+        "fluent-bit-tail-pause",
+        "plugins/in_tail/tail_fs_stat.c",
+        "flb_tail_fs_stat_init",
+        0
+      ],
+      "before": "Unknown",
+      "after": "Unknown",
+      "removed_leaves": [
+        [
+          "unknown_alias",
+          "unresolved resource identity `ctx`",
+          2
+        ]
+      ],
+      "added_leaves": []
+    },
+    {
+      "key": [
+        "fluent-bit-tail-pause",
+        "plugins/in_tail/tail_multiline.c",
+        "flb_tail_mult_create",
+        0
+      ],
+      "before": "Unknown",
+      "after": "Unknown",
+      "removed_leaves": [
+        [
+          "unknown_alias",
+          "unresolved resource identity `ctx`",
+          1
+        ]
+      ],
+      "added_leaves": []
+    },
+    {
+      "key": [
+        "fluent-bit-tail-pause",
+        "plugins/in_tail/tail_multiline.c",
+        "flb_tail_mult_pack_line_body",
+        0
+      ],
+      "before": "Unknown",
+      "after": "Unknown",
+      "removed_leaves": [
+        [
+          "unknown_alias",
+          "unresolved resource identity `file`",
+          4
+        ]
+      ],
+      "added_leaves": []
+    }
+  ]
+}

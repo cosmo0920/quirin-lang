@@ -1,0 +1,515 @@
+{
+  "normalized_modules": 64,
+  "module_texts_identical": true,
+  "raw_keys_added": [
+    "/tmp/qcore-lexical-typed-precedence/compiler/../contract/profiles/fluent-bit/../../../providers/qcore-provider-chunkio/contracts/chunkio/chunk_residency.qv",
+    "/tmp/qcore-lexical-typed-precedence/compiler/../contract/profiles/fluent-bit/../../../providers/qcore-provider-chunkio/contracts/chunkio/chunk_sizes.qv",
+    "/tmp/qcore-lexical-typed-precedence/compiler/../contract/profiles/fluent-bit/../../../providers/qcore-provider-chunkio/contracts/chunkio/resource_open_close.qv",
+    "/tmp/qcore-lexical-typed-precedence/compiler/../contract/profiles/fluent-bit/../../../providers/qcore-provider-cmetrics/contracts/cmetrics/context_lifetime.qv",
+    "/tmp/qcore-lexical-typed-precedence/compiler/../contract/profiles/fluent-bit/../../../providers/qcore-provider-cmetrics/contracts/cmetrics/metric_values.qv",
+    "/tmp/qcore-lexical-typed-precedence/compiler/../contract/profiles/fluent-bit/../../../providers/qcore-provider-cmetrics/contracts/cmetrics/mpack_utils.qv",
+    "/tmp/qcore-lexical-typed-precedence/compiler/../contract/profiles/fluent-bit/../../../providers/qcore-provider-ctraces/contracts/ctraces/context_lifetime.qv",
+    "/tmp/qcore-lexical-typed-precedence/compiler/../contract/profiles/fluent-bit/../../../providers/qcore-provider-libevent/contracts/monkey/event_loop.qv",
+    "/tmp/qcore-lexical-typed-precedence/compiler/../contract/profiles/fluent-bit/../../../providers/qcore-provider-libevent/contracts/monkey/intrusive_list.qv",
+    "/tmp/qcore-lexical-typed-precedence/compiler/../contract/profiles/fluent-bit/../../../providers/qcore-provider-libevent/contracts/monkey/logging.qv",
+    "/tmp/qcore-lexical-typed-precedence/compiler/../contract/profiles/fluent-bit/../../../providers/qcore-provider-libevent/contracts/monkey/scalar_observation.qv",
+    "/tmp/qcore-lexical-typed-precedence/compiler/../contract/profiles/fluent-bit/../../../providers/qcore-provider-libevent/contracts/monkey/string.qv",
+    "/tmp/qcore-lexical-typed-precedence/compiler/../contract/profiles/fluent-bit/../../../providers/qcore-provider-libevent/contracts/monkey/vhost_set.qv",
+    "/tmp/qcore-lexical-typed-precedence/compiler/../contract/profiles/fluent-bit/../../../providers/qcore-provider-librdkafka/contracts/librdkafka/cjson.qv",
+    "/tmp/qcore-lexical-typed-precedence/compiler/../contract/profiles/fluent-bit/../../../providers/qcore-provider-librdkafka/contracts/librdkafka/client.qv",
+    "/tmp/qcore-lexical-typed-precedence/compiler/../contract/profiles/fluent-bit/../../../providers/qcore-provider-librdkafka/contracts/librdkafka/kafka_mem.qv",
+    "/tmp/qcore-lexical-typed-precedence/compiler/../contract/profiles/fluent-bit/../../../providers/qcore-provider-librdkafka/contracts/librdkafka/lz4_stream.qv",
+    "/tmp/qcore-lexical-typed-precedence/compiler/../contract/profiles/fluent-bit/../../../providers/qcore-provider-librdkafka/contracts/librdkafka/topic_partition.qv",
+    "/tmp/qcore-lexical-typed-precedence/compiler/../contract/profiles/fluent-bit/../../../providers/quirin-provider-cfl/contracts/cfl/sds_lifetime.qv",
+    "/tmp/qcore-lexical-typed-precedence/compiler/../contract/profiles/fluent-bit/../../../providers/quirin-provider-cfl/contracts/cfl/time.qv",
+    "/tmp/qcore-lexical-typed-precedence/compiler/../contract/profiles/fluent-bit/../../../providers/quirin-provider-fluent-bit/contracts/fluent_bit/hash_table_publication.qv",
+    "/tmp/qcore-lexical-typed-precedence/compiler/../contract/profiles/fluent-bit/../../../providers/quirin-provider-fluent-bit/contracts/fluent_bit/input_chunk_destroy.qv",
+    "/tmp/qcore-lexical-typed-precedence/compiler/../contract/profiles/fluent-bit/../../../providers/quirin-provider-fluent-bit/contracts/fluent_bit/input_chunk_destroy_direct_routes.qv",
+    "/tmp/qcore-lexical-typed-precedence/compiler/../contract/profiles/fluent-bit/../../../providers/quirin-provider-fluent-bit/contracts/fluent_bit/input_chunk_helpers.qv",
+    "/tmp/qcore-lexical-typed-precedence/compiler/../contract/profiles/fluent-bit/../../../providers/quirin-provider-fluent-bit/contracts/fluent_bit/input_chunk_is_up.qv",
+    "/tmp/qcore-lexical-typed-precedence/compiler/../contract/profiles/fluent-bit/../../../providers/quirin-provider-fluent-bit/contracts/fluent_bit/input_chunk_name.qv",
+    "/tmp/qcore-lexical-typed-precedence/compiler/../contract/profiles/fluent-bit/../../../providers/quirin-provider-fluent-bit/contracts/fluent_bit/input_chunk_sizes.qv",
+    "/tmp/qcore-lexical-typed-precedence/compiler/../contract/profiles/fluent-bit/../../../providers/quirin-provider-fluent-bit/contracts/fluent_bit/input_chunk_total_size.qv",
+    "/tmp/qcore-lexical-typed-precedence/compiler/../contract/profiles/fluent-bit/../../../providers/quirin-provider-fluent-bit/contracts/fluent_bit/input_collector_registration.qv",
+    "/tmp/qcore-lexical-typed-precedence/compiler/../contract/profiles/fluent-bit/../../../providers/quirin-provider-fluent-bit/contracts/fluent_bit/input_instance.qv",
+    "/tmp/qcore-lexical-typed-precedence/compiler/../contract/profiles/fluent-bit/../../../providers/quirin-provider-fluent-bit/contracts/fluent_bit/lib_engine_thread.qv",
+    "/tmp/qcore-lexical-typed-precedence/compiler/../contract/profiles/fluent-bit/../../../providers/quirin-provider-fluent-bit/contracts/fluent_bit/logging.qv",
+    "/tmp/qcore-lexical-typed-precedence/compiler/../contract/profiles/fluent-bit/../../../providers/quirin-provider-fluent-bit/contracts/fluent_bit/loop_owner.qv",
+    "/tmp/qcore-lexical-typed-precedence/compiler/../contract/profiles/fluent-bit/../../../providers/quirin-provider-fluent-bit/contracts/fluent_bit/output_flush_id.qv",
+    "/tmp/qcore-lexical-typed-precedence/compiler/../contract/profiles/fluent-bit/../../../providers/quirin-provider-fluent-bit/contracts/fluent_bit/output_singleplex.qv",
+    "/tmp/qcore-lexical-typed-precedence/compiler/../contract/profiles/fluent-bit/../../../providers/quirin-provider-fluent-bit/contracts/fluent_bit/routes_mask.qv",
+    "/tmp/qcore-lexical-typed-precedence/compiler/../contract/profiles/fluent-bit/../../../providers/quirin-provider-fluent-bit/contracts/fluent_bit/storage_backlog.qv",
+    "/tmp/qcore-lexical-typed-precedence/compiler/../contract/profiles/fluent-bit/../../../providers/quirin-provider-fluent-bit/contracts/fluent_bit/task_route_queries.qv",
+    "/tmp/qcore-lexical-typed-precedence/compiler/../contract/profiles/fluent-bit/../../../providers/quirin-provider-fluent-bit/contracts/fluent_bit/task_users.qv",
+    "/tmp/qcore-lexical-typed-precedence/compiler/../contract/profiles/fluent-bit/../../../providers/quirin-provider-fluent-bit/contracts/fluent_bit/teardown_destroy.qv",
+    "/tmp/qcore-lexical-typed-precedence/compiler/../contract/profiles/fluent-bit/../../../providers/quirin-provider-fluent-bit/contracts/fluent_bit/time.qv",
+    "/tmp/qcore-lexical-typed-precedence/compiler/../contract/profiles/fluent-bit/../../../providers/quirin-provider-libc/contracts/libc/dirent.qv",
+    "/tmp/qcore-lexical-typed-precedence/compiler/../contract/profiles/fluent-bit/../../../providers/quirin-provider-libc/contracts/libc/dlfcn.qv",
+    "/tmp/qcore-lexical-typed-precedence/compiler/../contract/profiles/fluent-bit/../../../providers/quirin-provider-libc/contracts/libc/errno.qv",
+    "/tmp/qcore-lexical-typed-precedence/compiler/../contract/profiles/fluent-bit/../../../providers/quirin-provider-libc/contracts/libc/math.qv",
+    "/tmp/qcore-lexical-typed-precedence/compiler/../contract/profiles/fluent-bit/../../../providers/quirin-provider-libc/contracts/libc/memory.qv",
+    "/tmp/qcore-lexical-typed-precedence/compiler/../contract/profiles/fluent-bit/../../../providers/quirin-provider-libc/contracts/libc/process.qv",
+    "/tmp/qcore-lexical-typed-precedence/compiler/../contract/profiles/fluent-bit/../../../providers/quirin-provider-libc/contracts/libc/pthread_mutex.qv",
+    "/tmp/qcore-lexical-typed-precedence/compiler/../contract/profiles/fluent-bit/../../../providers/quirin-provider-libc/contracts/libc/pthread_sync.qv",
+    "/tmp/qcore-lexical-typed-precedence/compiler/../contract/profiles/fluent-bit/../../../providers/quirin-provider-libc/contracts/libc/regex.qv",
+    "/tmp/qcore-lexical-typed-precedence/compiler/../contract/profiles/fluent-bit/../../../providers/quirin-provider-libc/contracts/libc/socket.qv",
+    "/tmp/qcore-lexical-typed-precedence/compiler/../contract/profiles/fluent-bit/../../../providers/quirin-provider-libc/contracts/libc/stdio.qv",
+    "/tmp/qcore-lexical-typed-precedence/compiler/../contract/profiles/fluent-bit/../../../providers/quirin-provider-libc/contracts/libc/stdlib.qv",
+    "/tmp/qcore-lexical-typed-precedence/compiler/../contract/profiles/fluent-bit/../../../providers/quirin-provider-libc/contracts/libc/string.qv",
+    "/tmp/qcore-lexical-typed-precedence/compiler/../contract/profiles/fluent-bit/../../../providers/quirin-provider-libc/contracts/libc/sys_stat.qv",
+    "/tmp/qcore-lexical-typed-precedence/compiler/../contract/profiles/fluent-bit/../../../providers/quirin-provider-libc/contracts/libc/threads.qv",
+    "/tmp/qcore-lexical-typed-precedence/compiler/../contract/profiles/fluent-bit/../../../providers/quirin-provider-libc/contracts/libc/time.qv",
+    "/tmp/qcore-lexical-typed-precedence/compiler/../contract/profiles/fluent-bit/../../../providers/quirin-provider-libc/contracts/libc/unistd.qv",
+    "/tmp/qcore-lexical-typed-precedence/compiler/../contract/profiles/fluent-bit/../../../providers/quirin-provider-mpack/contracts/mpack/writer.qv",
+    "/tmp/qcore-lexical-typed-precedence/compiler/../contract/profiles/fluent-bit/../../../providers/quirin-provider-msgpack/contracts/msgpack/packer.qv"
+  ],
+  "raw_keys_removed": [
+    "/home/cosmo/Documents/GitHub/qcore-c/compiler/../contract/profiles/fluent-bit/../../../providers/qcore-provider-chunkio/contracts/chunkio/chunk_residency.qv",
+    "/home/cosmo/Documents/GitHub/qcore-c/compiler/../contract/profiles/fluent-bit/../../../providers/qcore-provider-chunkio/contracts/chunkio/chunk_sizes.qv",
+    "/home/cosmo/Documents/GitHub/qcore-c/compiler/../contract/profiles/fluent-bit/../../../providers/qcore-provider-chunkio/contracts/chunkio/resource_open_close.qv",
+    "/home/cosmo/Documents/GitHub/qcore-c/compiler/../contract/profiles/fluent-bit/../../../providers/qcore-provider-cmetrics/contracts/cmetrics/context_lifetime.qv",
+    "/home/cosmo/Documents/GitHub/qcore-c/compiler/../contract/profiles/fluent-bit/../../../providers/qcore-provider-cmetrics/contracts/cmetrics/metric_values.qv",
+    "/home/cosmo/Documents/GitHub/qcore-c/compiler/../contract/profiles/fluent-bit/../../../providers/qcore-provider-cmetrics/contracts/cmetrics/mpack_utils.qv",
+    "/home/cosmo/Documents/GitHub/qcore-c/compiler/../contract/profiles/fluent-bit/../../../providers/qcore-provider-ctraces/contracts/ctraces/context_lifetime.qv",
+    "/home/cosmo/Documents/GitHub/qcore-c/compiler/../contract/profiles/fluent-bit/../../../providers/qcore-provider-libevent/contracts/monkey/event_loop.qv",
+    "/home/cosmo/Documents/GitHub/qcore-c/compiler/../contract/profiles/fluent-bit/../../../providers/qcore-provider-libevent/contracts/monkey/intrusive_list.qv",
+    "/home/cosmo/Documents/GitHub/qcore-c/compiler/../contract/profiles/fluent-bit/../../../providers/qcore-provider-libevent/contracts/monkey/logging.qv",
+    "/home/cosmo/Documents/GitHub/qcore-c/compiler/../contract/profiles/fluent-bit/../../../providers/qcore-provider-libevent/contracts/monkey/scalar_observation.qv",
+    "/home/cosmo/Documents/GitHub/qcore-c/compiler/../contract/profiles/fluent-bit/../../../providers/qcore-provider-libevent/contracts/monkey/string.qv",
+    "/home/cosmo/Documents/GitHub/qcore-c/compiler/../contract/profiles/fluent-bit/../../../providers/qcore-provider-libevent/contracts/monkey/vhost_set.qv",
+    "/home/cosmo/Documents/GitHub/qcore-c/compiler/../contract/profiles/fluent-bit/../../../providers/qcore-provider-librdkafka/contracts/librdkafka/cjson.qv",
+    "/home/cosmo/Documents/GitHub/qcore-c/compiler/../contract/profiles/fluent-bit/../../../providers/qcore-provider-librdkafka/contracts/librdkafka/client.qv",
+    "/home/cosmo/Documents/GitHub/qcore-c/compiler/../contract/profiles/fluent-bit/../../../providers/qcore-provider-librdkafka/contracts/librdkafka/kafka_mem.qv",
+    "/home/cosmo/Documents/GitHub/qcore-c/compiler/../contract/profiles/fluent-bit/../../../providers/qcore-provider-librdkafka/contracts/librdkafka/lz4_stream.qv",
+    "/home/cosmo/Documents/GitHub/qcore-c/compiler/../contract/profiles/fluent-bit/../../../providers/qcore-provider-librdkafka/contracts/librdkafka/topic_partition.qv",
+    "/home/cosmo/Documents/GitHub/qcore-c/compiler/../contract/profiles/fluent-bit/../../../providers/quirin-provider-cfl/contracts/cfl/sds_lifetime.qv",
+    "/home/cosmo/Documents/GitHub/qcore-c/compiler/../contract/profiles/fluent-bit/../../../providers/quirin-provider-cfl/contracts/cfl/time.qv",
+    "/home/cosmo/Documents/GitHub/qcore-c/compiler/../contract/profiles/fluent-bit/../../../providers/quirin-provider-fluent-bit/contracts/fluent_bit/hash_table_publication.qv",
+    "/home/cosmo/Documents/GitHub/qcore-c/compiler/../contract/profiles/fluent-bit/../../../providers/quirin-provider-fluent-bit/contracts/fluent_bit/input_chunk_destroy.qv",
+    "/home/cosmo/Documents/GitHub/qcore-c/compiler/../contract/profiles/fluent-bit/../../../providers/quirin-provider-fluent-bit/contracts/fluent_bit/input_chunk_destroy_direct_routes.qv",
+    "/home/cosmo/Documents/GitHub/qcore-c/compiler/../contract/profiles/fluent-bit/../../../providers/quirin-provider-fluent-bit/contracts/fluent_bit/input_chunk_helpers.qv",
+    "/home/cosmo/Documents/GitHub/qcore-c/compiler/../contract/profiles/fluent-bit/../../../providers/quirin-provider-fluent-bit/contracts/fluent_bit/input_chunk_is_up.qv",
+    "/home/cosmo/Documents/GitHub/qcore-c/compiler/../contract/profiles/fluent-bit/../../../providers/quirin-provider-fluent-bit/contracts/fluent_bit/input_chunk_name.qv",
+    "/home/cosmo/Documents/GitHub/qcore-c/compiler/../contract/profiles/fluent-bit/../../../providers/quirin-provider-fluent-bit/contracts/fluent_bit/input_chunk_sizes.qv",
+    "/home/cosmo/Documents/GitHub/qcore-c/compiler/../contract/profiles/fluent-bit/../../../providers/quirin-provider-fluent-bit/contracts/fluent_bit/input_chunk_total_size.qv",
+    "/home/cosmo/Documents/GitHub/qcore-c/compiler/../contract/profiles/fluent-bit/../../../providers/quirin-provider-fluent-bit/contracts/fluent_bit/input_collector_registration.qv",
+    "/home/cosmo/Documents/GitHub/qcore-c/compiler/../contract/profiles/fluent-bit/../../../providers/quirin-provider-fluent-bit/contracts/fluent_bit/input_instance.qv",
+    "/home/cosmo/Documents/GitHub/qcore-c/compiler/../contract/profiles/fluent-bit/../../../providers/quirin-provider-fluent-bit/contracts/fluent_bit/lib_engine_thread.qv",
+    "/home/cosmo/Documents/GitHub/qcore-c/compiler/../contract/profiles/fluent-bit/../../../providers/quirin-provider-fluent-bit/contracts/fluent_bit/logging.qv",
+    "/home/cosmo/Documents/GitHub/qcore-c/compiler/../contract/profiles/fluent-bit/../../../providers/quirin-provider-fluent-bit/contracts/fluent_bit/loop_owner.qv",
+    "/home/cosmo/Documents/GitHub/qcore-c/compiler/../contract/profiles/fluent-bit/../../../providers/quirin-provider-fluent-bit/contracts/fluent_bit/output_flush_id.qv",
+    "/home/cosmo/Documents/GitHub/qcore-c/compiler/../contract/profiles/fluent-bit/../../../providers/quirin-provider-fluent-bit/contracts/fluent_bit/output_singleplex.qv",
+    "/home/cosmo/Documents/GitHub/qcore-c/compiler/../contract/profiles/fluent-bit/../../../providers/quirin-provider-fluent-bit/contracts/fluent_bit/routes_mask.qv",
+    "/home/cosmo/Documents/GitHub/qcore-c/compiler/../contract/profiles/fluent-bit/../../../providers/quirin-provider-fluent-bit/contracts/fluent_bit/storage_backlog.qv",
+    "/home/cosmo/Documents/GitHub/qcore-c/compiler/../contract/profiles/fluent-bit/../../../providers/quirin-provider-fluent-bit/contracts/fluent_bit/task_route_queries.qv",
+    "/home/cosmo/Documents/GitHub/qcore-c/compiler/../contract/profiles/fluent-bit/../../../providers/quirin-provider-fluent-bit/contracts/fluent_bit/task_users.qv",
+    "/home/cosmo/Documents/GitHub/qcore-c/compiler/../contract/profiles/fluent-bit/../../../providers/quirin-provider-fluent-bit/contracts/fluent_bit/teardown_destroy.qv",
+    "/home/cosmo/Documents/GitHub/qcore-c/compiler/../contract/profiles/fluent-bit/../../../providers/quirin-provider-fluent-bit/contracts/fluent_bit/time.qv",
+    "/home/cosmo/Documents/GitHub/qcore-c/compiler/../contract/profiles/fluent-bit/../../../providers/quirin-provider-libc/contracts/libc/dirent.qv",
+    "/home/cosmo/Documents/GitHub/qcore-c/compiler/../contract/profiles/fluent-bit/../../../providers/quirin-provider-libc/contracts/libc/dlfcn.qv",
+    "/home/cosmo/Documents/GitHub/qcore-c/compiler/../contract/profiles/fluent-bit/../../../providers/quirin-provider-libc/contracts/libc/errno.qv",
+    "/home/cosmo/Documents/GitHub/qcore-c/compiler/../contract/profiles/fluent-bit/../../../providers/quirin-provider-libc/contracts/libc/math.qv",
+    "/home/cosmo/Documents/GitHub/qcore-c/compiler/../contract/profiles/fluent-bit/../../../providers/quirin-provider-libc/contracts/libc/memory.qv",
+    "/home/cosmo/Documents/GitHub/qcore-c/compiler/../contract/profiles/fluent-bit/../../../providers/quirin-provider-libc/contracts/libc/process.qv",
+    "/home/cosmo/Documents/GitHub/qcore-c/compiler/../contract/profiles/fluent-bit/../../../providers/quirin-provider-libc/contracts/libc/pthread_mutex.qv",
+    "/home/cosmo/Documents/GitHub/qcore-c/compiler/../contract/profiles/fluent-bit/../../../providers/quirin-provider-libc/contracts/libc/pthread_sync.qv",
+    "/home/cosmo/Documents/GitHub/qcore-c/compiler/../contract/profiles/fluent-bit/../../../providers/quirin-provider-libc/contracts/libc/regex.qv",
+    "/home/cosmo/Documents/GitHub/qcore-c/compiler/../contract/profiles/fluent-bit/../../../providers/quirin-provider-libc/contracts/libc/socket.qv",
+    "/home/cosmo/Documents/GitHub/qcore-c/compiler/../contract/profiles/fluent-bit/../../../providers/quirin-provider-libc/contracts/libc/stdio.qv",
+    "/home/cosmo/Documents/GitHub/qcore-c/compiler/../contract/profiles/fluent-bit/../../../providers/quirin-provider-libc/contracts/libc/stdlib.qv",
+    "/home/cosmo/Documents/GitHub/qcore-c/compiler/../contract/profiles/fluent-bit/../../../providers/quirin-provider-libc/contracts/libc/string.qv",
+    "/home/cosmo/Documents/GitHub/qcore-c/compiler/../contract/profiles/fluent-bit/../../../providers/quirin-provider-libc/contracts/libc/sys_stat.qv",
+    "/home/cosmo/Documents/GitHub/qcore-c/compiler/../contract/profiles/fluent-bit/../../../providers/quirin-provider-libc/contracts/libc/threads.qv",
+    "/home/cosmo/Documents/GitHub/qcore-c/compiler/../contract/profiles/fluent-bit/../../../providers/quirin-provider-libc/contracts/libc/time.qv",
+    "/home/cosmo/Documents/GitHub/qcore-c/compiler/../contract/profiles/fluent-bit/../../../providers/quirin-provider-libc/contracts/libc/unistd.qv",
+    "/home/cosmo/Documents/GitHub/qcore-c/compiler/../contract/profiles/fluent-bit/../../../providers/quirin-provider-mpack/contracts/mpack/writer.qv",
+    "/home/cosmo/Documents/GitHub/qcore-c/compiler/../contract/profiles/fluent-bit/../../../providers/quirin-provider-msgpack/contracts/msgpack/packer.qv"
+  ],
+  "home_environment_identity_pairs": {
+    "b6d976c4bed56d1a202f432e108e0bb84598da66e1c07f56ec630ae35880f617": "e3714b6f296778696c4fb2f7ea60d5203d154fea25fc688c7667afde8d774a25"
+  },
+  "nonpath_changes": [
+    {
+      "path": [
+        "contract_dependencies",
+        "safe_rollup",
+        "top_declared_assumptions",
+        4,
+        "safe_rows"
+      ],
+      "before": 20,
+      "after": 23
+    },
+    {
+      "path": [
+        "contract_dependencies",
+        "safe_rollup",
+        "partly_validated_declarations",
+        8,
+        "uncovered_clauses"
+      ],
+      "before": [
+        "resource_borrowed(#0)",
+        "resource_borrowed(#1)",
+        "resource_borrowed(#2)",
+        "resource_premise(rk_plugin_callback_closure)",
+        "resource_return_none()"
+      ],
+      "after": [
+        "resource_user_neutral()"
+      ]
+    },
+    {
+      "path": [
+        "contract_dependencies",
+        "safe_rollup",
+        "partly_validated_declarations",
+        8,
+        "function"
+      ],
+      "before": "rd_kafka_DeleteRecords_leaders_queried_cb",
+      "after": "flb_input_chunk_is_mem_overlimit"
+    },
+    {
+      "path": [
+        "contract_dependencies",
+        "safe_rollup",
+        "partly_validated_declarations",
+        9,
+        "function"
+      ],
+      "before": "rd_kafka_ListOffsets_leaders_queried_cb",
+      "after": "rd_kafka_DeleteRecords_leaders_queried_cb"
+    },
+    {
+      "path": [
+        "contract_dependencies",
+        "safe_rollup",
+        "partly_validated_declarations",
+        10,
+        "uncovered_clauses"
+      ],
+      "before": [
+        "resource_callback_member_invoked(#0, rd_kafka_op_s.rko_op_cb, _, _, #0)",
+        "resource_premise(rk_plugin_callback_closure)",
+        "resource_released(#0, nonnull)",
+        "resource_return_none()"
+      ],
+      "after": [
+        "resource_borrowed(#0)",
+        "resource_borrowed(#1)",
+        "resource_borrowed(#2)",
+        "resource_premise(rk_plugin_callback_closure)",
+        "resource_return_none()"
+      ]
+    },
+    {
+      "path": [
+        "contract_dependencies",
+        "safe_rollup",
+        "partly_validated_declarations",
+        10,
+        "function"
+      ],
+      "before": "rd_kafka_op_destroy",
+      "after": "rd_kafka_ListOffsets_leaders_queried_cb"
+    },
+    {
+      "path": [
+        "contract_dependencies",
+        "safe_rollup",
+        "partly_validated_declarations",
+        11,
+        "uncovered_clauses"
+      ],
+      "before": [
+        "resource_borrowed(#0)",
+        "resource_borrowed(#1)",
+        "resource_borrowed(#2)",
+        "resource_premise(rk_plugin_callback_closure)",
+        "resource_return_none()"
+      ],
+      "after": [
+        "resource_callback_member_invoked(#0, rd_kafka_op_s.rko_op_cb, _, _, #0)",
+        "resource_premise(rk_plugin_callback_closure)",
+        "resource_released(#0, nonnull)",
+        "resource_return_none()"
+      ]
+    },
+    {
+      "path": [
+        "contract_dependencies",
+        "safe_rollup",
+        "partly_validated_declarations",
+        11,
+        "function"
+      ],
+      "before": "rd_kafka_share_commit_async_fanout_op",
+      "after": "rd_kafka_op_destroy"
+    },
+    {
+      "path": [
+        "contract_dependencies",
+        "safe_rollup",
+        "partly_validated_declarations",
+        12,
+        "function"
+      ],
+      "before": "rd_kafka_share_commit_sync_fanout_op",
+      "after": "rd_kafka_share_commit_async_fanout_op"
+    },
+    {
+      "path": [
+        "contract_dependencies",
+        "safe_rollup",
+        "partly_validated_declarations",
+        13,
+        "uncovered_clauses"
+      ],
+      "before": [
+        "resource_borrowed(#0)",
+        "resource_borrowed(#1)",
+        "resource_borrowed(#2)",
+        "resource_premise(rk_plugin_callback_closure)",
+        "resource_premise(share_ack_batches_nonempty)",
+        "resource_return_none()"
+      ],
+      "after": [
+        "resource_borrowed(#0)",
+        "resource_borrowed(#1)",
+        "resource_borrowed(#2)",
+        "resource_premise(rk_plugin_callback_closure)",
+        "resource_return_none()"
+      ]
+    },
+    {
+      "path": [
+        "contract_dependencies",
+        "safe_rollup",
+        "partly_validated_declarations",
+        13,
+        "function"
+      ],
+      "before": "rd_kafka_share_fetch_fanout_op",
+      "after": "rd_kafka_share_commit_sync_fanout_op"
+    },
+    {
+      "path": [
+        "contract_dependencies",
+        "safe_rollup",
+        "partly_validated_declarations",
+        14,
+        "uncovered_clauses"
+      ],
+      "before": [
+        "resource_borrowed(#0)",
+        "resource_borrowed(#1)",
+        "resource_owned(#2, nonnull)",
+        "resource_premise(rk_plugin_callback_closure)",
+        "resource_return_none()"
+      ],
+      "after": [
+        "resource_borrowed(#0)",
+        "resource_borrowed(#1)",
+        "resource_borrowed(#2)",
+        "resource_premise(rk_plugin_callback_closure)",
+        "resource_premise(share_ack_batches_nonempty)",
+        "resource_return_none()"
+      ]
+    },
+    {
+      "path": [
+        "contract_dependencies",
+        "safe_rollup",
+        "partly_validated_declarations",
+        14,
+        "function"
+      ],
+      "before": "rd_kafka_topic_partition_list_query_leaders_async_worker_op_cb",
+      "after": "rd_kafka_share_fetch_fanout_op"
+    },
+    {
+      "path": [
+        "contract_dependencies",
+        "safe_rollup",
+        "partly_validated_declarations",
+        15,
+        "uncovered_clauses"
+      ],
+      "before": [
+        "resource_borrowed(#0)",
+        "resource_borrowed(#1)",
+        "resource_borrowed(#2)",
+        "resource_return_none()"
+      ],
+      "after": [
+        "resource_borrowed(#0)",
+        "resource_borrowed(#1)",
+        "resource_owned(#2, nonnull)",
+        "resource_premise(rk_plugin_callback_closure)",
+        "resource_return_none()"
+      ]
+    },
+    {
+      "path": [
+        "contract_dependencies",
+        "safe_rollup",
+        "partly_validated_declarations",
+        15,
+        "function"
+      ],
+      "before": "rd_slice_reader0",
+      "after": "rd_kafka_topic_partition_list_query_leaders_async_worker_op_cb"
+    },
+    {
+      "path": [
+        "contract_dependencies",
+        "safe_rollup",
+        "partly_validated_declarations",
+        16,
+        "uncovered_clauses"
+      ],
+      "before": [
+        "resource_premise(untracked_handback)"
+      ],
+      "after": [
+        "resource_borrowed(#0)",
+        "resource_borrowed(#1)",
+        "resource_borrowed(#2)",
+        "resource_return_none()"
+      ]
+    },
+    {
+      "path": [
+        "contract_dependencies",
+        "safe_rollup",
+        "partly_validated_declarations",
+        16,
+        "safe_rows"
+      ],
+      "before": 1,
+      "after": 2
+    },
+    {
+      "path": [
+        "contract_dependencies",
+        "safe_rollup",
+        "partly_validated_declarations",
+        16,
+        "function"
+      ],
+      "before": "flb_input_chunk_get_name",
+      "after": "rd_slice_reader0"
+    },
+    {
+      "path": [
+        "contract_dependencies",
+        "safe_rollup",
+        "partly_validated_declarations",
+        17,
+        "uncovered_clauses",
+        0
+      ],
+      "before": "resource_user_neutral()",
+      "after": "resource_premise(untracked_handback)"
+    },
+    {
+      "path": [
+        "contract_dependencies",
+        "safe_rollup",
+        "partly_validated_declarations",
+        17,
+        "function"
+      ],
+      "before": "flb_input_chunk_is_mem_overlimit",
+      "after": "flb_input_chunk_get_name"
+    },
+    {
+      "path": [
+        "contract_dependencies",
+        "safe_rollup",
+        "resting_on_a_declared_assumption"
+      ],
+      "before": 392,
+      "after": 396
+    },
+    {
+      "path": [
+        "contract_dependencies",
+        "safe_rollup",
+        "safe_rows"
+      ],
+      "before": 959,
+      "after": 963
+    },
+    {
+      "path": [
+        "contract_dependencies",
+        "safe_rollup",
+        "carrying_a_null_premise"
+      ],
+      "before": 32,
+      "after": 37
+    },
+    {
+      "path": [
+        "contract_dependencies",
+        "declarations",
+        "__assert_fail",
+        "safe_rows"
+      ],
+      "before": 20,
+      "after": 23
+    },
+    {
+      "path": [
+        "contract_dependencies",
+        "declarations",
+        "__assert_fail",
+        "rows"
+      ],
+      "before": 544,
+      "after": 546
+    },
+    {
+      "path": [
+        "contract_dependencies",
+        "declarations",
+        "cio_chunk_is_up",
+        "safe_rows"
+      ],
+      "before": 4,
+      "after": 5
+    },
+    {
+      "path": [
+        "contract_dependencies",
+        "declarations",
+        "flb_input_chunk_is_mem_overlimit",
+        "safe_rows"
+      ],
+      "before": 1,
+      "after": 2
+    },
+    {
+      "path": [
+        "contract_dependencies",
+        "declarations",
+        "cio_chunk_down",
+        "safe_rows"
+      ],
+      "before": 1,
+      "after": 2
+    },
+    {
+      "path": [
+        "contract_dependencies",
+        "declarations",
+        "flb_input_chunk_total_size",
+        "safe_rows"
+      ],
+      "before": 1,
+      "after": 2
+    }
+  ]
+}

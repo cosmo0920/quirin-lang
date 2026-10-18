@@ -1,0 +1,860 @@
+[
+  {
+    "key": [
+      "fluent-bit-tail-pause",
+      "src/flb_input.c",
+      "flb_input_instance_exit",
+      0
+    ],
+    "before": "Unknown",
+    "after": "Unknown",
+    "source_occurrences": []
+  },
+  {
+    "key": [
+      "fluent-bit-tail-pause",
+      "src/flb_input.c",
+      "flb_input_net_property_check",
+      0
+    ],
+    "before": "Unknown",
+    "after": "Unknown",
+    "source_occurrences": [
+      {
+        "direction": "removed",
+        "origin": "src/flb_input.c:1410",
+        "category": "unknown_alias",
+        "description": "unresolved resource identity `ins`",
+        "count": 1,
+        "source": "/home/cosmo/Documents/GitHub/qcore-c/private/w47-tail/attempt-1/prep/fluent-bit-clang-source/src/flb_input.c",
+        "line": "if (ins->p->flags & FLB_INPUT_NET_SERVER) {"
+      },
+      {
+        "direction": "removed",
+        "origin": "src/flb_input.c:1417",
+        "category": "unknown_alias",
+        "description": "unresolved resource identity `ins`",
+        "count": 1,
+        "source": "/home/cosmo/Documents/GitHub/qcore-c/private/w47-tail/attempt-1/prep/fluent-bit-clang-source/src/flb_input.c",
+        "line": "else if (ins->p->flags & FLB_INPUT_NET) {"
+      }
+    ]
+  },
+  {
+    "key": [
+      "fluent-bit-tail-pause",
+      "src/flb_input.c",
+      "flb_input_pause",
+      0
+    ],
+    "before": "Unknown",
+    "after": "Unknown",
+    "source_occurrences": [
+      {
+        "direction": "removed",
+        "origin": "src/flb_input.c:3077",
+        "category": "unknown_alias",
+        "description": "unresolved resource identity `ins`",
+        "count": 1,
+        "source": "/home/cosmo/Documents/GitHub/qcore-c/private/w47-tail/attempt-1/prep/fluent-bit-clang-source/src/flb_input.c",
+        "line": "if (flb_input_buf_paused(ins) &&"
+      }
+    ]
+  },
+  {
+    "key": [
+      "fluent-bit-tail-pause",
+      "src/flb_input.c",
+      "flb_input_rate_gate_maybe_resume",
+      0
+    ],
+    "before": "Unknown",
+    "after": "Unknown",
+    "source_occurrences": [
+      {
+        "direction": "removed",
+        "origin": "src/flb_input.c:2777",
+        "category": "unknown_alias",
+        "description": "unresolved resource identity `ins`",
+        "count": 1,
+        "source": "/home/cosmo/Documents/GitHub/qcore-c/private/w47-tail/attempt-1/prep/fluent-bit-clang-source/src/flb_input.c",
+        "line": "flb_input_rate_gate_collect_backpressure(ins);"
+      }
+    ]
+  },
+  {
+    "key": [
+      "fluent-bit-tail-pause",
+      "src/flb_input.c",
+      "flb_input_rate_gate_protect",
+      0
+    ],
+    "before": "Unknown",
+    "after": "Unknown",
+    "source_occurrences": [
+      {
+        "direction": "removed",
+        "origin": "src/flb_input.c:2725",
+        "category": "unknown_alias",
+        "description": "unresolved resource identity `ins`",
+        "count": 1,
+        "source": "/home/cosmo/Documents/GitHub/qcore-c/private/w47-tail/attempt-1/prep/fluent-bit-clang-source/src/flb_input.c",
+        "line": "flb_input_rate_gate_collect_backpressure(ins);"
+      }
+    ]
+  },
+  {
+    "key": [
+      "fluent-bit-tail-pause",
+      "src/flb_input.c",
+      "flb_input_rate_update",
+      0
+    ],
+    "before": "Unknown",
+    "after": "Unknown",
+    "source_occurrences": [
+      {
+        "direction": "removed",
+        "origin": "src/flb_input.c:2829",
+        "category": "unknown_alias",
+        "description": "unresolved resource identity `ins`",
+        "count": 1,
+        "source": "/home/cosmo/Documents/GitHub/qcore-c/private/w47-tail/attempt-1/prep/fluent-bit-clang-source/src/flb_input.c",
+        "line": "ins->rate_window_start = timestamp;"
+      },
+      {
+        "direction": "removed",
+        "origin": "src/flb_input.c:2838",
+        "category": "unknown_alias",
+        "description": "unresolved resource identity `ins`",
+        "count": 1,
+        "source": "/home/cosmo/Documents/GitHub/qcore-c/private/w47-tail/attempt-1/prep/fluent-bit-clang-source/src/flb_input.c",
+        "line": "ins->rate_window_start = timestamp;"
+      },
+      {
+        "direction": "removed",
+        "origin": "src/flb_input.c:2839",
+        "category": "unknown_alias",
+        "description": "unresolved resource identity `ins`",
+        "count": 1,
+        "source": "/home/cosmo/Documents/GitHub/qcore-c/private/w47-tail/attempt-1/prep/fluent-bit-clang-source/src/flb_input.c",
+        "line": "ins->rate_window_records = 0;"
+      },
+      {
+        "direction": "removed",
+        "origin": "src/flb_input.c:2840",
+        "category": "unknown_alias",
+        "description": "unresolved resource identity `ins`",
+        "count": 1,
+        "source": "/home/cosmo/Documents/GitHub/qcore-c/private/w47-tail/attempt-1/prep/fluent-bit-clang-source/src/flb_input.c",
+        "line": "ins->rate_window_bytes = 0;"
+      },
+      {
+        "direction": "removed",
+        "origin": "src/flb_input.c:2841",
+        "category": "unknown_alias",
+        "description": "unresolved resource identity `ins`",
+        "count": 1,
+        "source": "/home/cosmo/Documents/GitHub/qcore-c/private/w47-tail/attempt-1/prep/fluent-bit-clang-source/src/flb_input.c",
+        "line": "ins->rate_records = 0.0;"
+      },
+      {
+        "direction": "removed",
+        "origin": "src/flb_input.c:2842",
+        "category": "unknown_alias",
+        "description": "unresolved resource identity `ins`",
+        "count": 1,
+        "source": "/home/cosmo/Documents/GitHub/qcore-c/private/w47-tail/attempt-1/prep/fluent-bit-clang-source/src/flb_input.c",
+        "line": "ins->rate_bytes = 0.0;"
+      },
+      {
+        "direction": "removed",
+        "origin": "src/flb_input.c:2852",
+        "category": "unknown_alias",
+        "description": "unresolved resource identity `ins`",
+        "count": 1,
+        "source": "/home/cosmo/Documents/GitHub/qcore-c/private/w47-tail/attempt-1/prep/fluent-bit-clang-source/src/flb_input.c",
+        "line": "ins->rate_records = 0.0;"
+      },
+      {
+        "direction": "removed",
+        "origin": "src/flb_input.c:2853",
+        "category": "unknown_alias",
+        "description": "unresolved resource identity `ins`",
+        "count": 1,
+        "source": "/home/cosmo/Documents/GitHub/qcore-c/private/w47-tail/attempt-1/prep/fluent-bit-clang-source/src/flb_input.c",
+        "line": "ins->rate_bytes = 0.0;"
+      }
+    ]
+  },
+  {
+    "key": [
+      "fluent-bit-tail-pause",
+      "src/flb_input.c",
+      "flb_input_instance_exit",
+      1
+    ],
+    "before": "Unknown",
+    "after": "Unknown",
+    "source_occurrences": []
+  },
+  {
+    "key": [
+      "fluent-bit-tail-pause",
+      "src/flb_input.c",
+      "flb_input_net_property_check",
+      1
+    ],
+    "before": "Unknown",
+    "after": "Unknown",
+    "source_occurrences": [
+      {
+        "direction": "removed",
+        "origin": "src/flb_input.c:1410",
+        "category": "unknown_alias",
+        "description": "unresolved resource identity `ins`",
+        "count": 1,
+        "source": "/home/cosmo/Documents/GitHub/qcore-c/private/w47-tail/attempt-1/prep/fluent-bit-clang-source/src/flb_input.c",
+        "line": "if (ins->p->flags & FLB_INPUT_NET_SERVER) {"
+      },
+      {
+        "direction": "removed",
+        "origin": "src/flb_input.c:1417",
+        "category": "unknown_alias",
+        "description": "unresolved resource identity `ins`",
+        "count": 1,
+        "source": "/home/cosmo/Documents/GitHub/qcore-c/private/w47-tail/attempt-1/prep/fluent-bit-clang-source/src/flb_input.c",
+        "line": "else if (ins->p->flags & FLB_INPUT_NET) {"
+      }
+    ]
+  },
+  {
+    "key": [
+      "fluent-bit-tail-pause",
+      "src/flb_input.c",
+      "flb_input_pause",
+      1
+    ],
+    "before": "Unknown",
+    "after": "Unknown",
+    "source_occurrences": [
+      {
+        "direction": "removed",
+        "origin": "src/flb_input.c:3077",
+        "category": "unknown_alias",
+        "description": "unresolved resource identity `ins`",
+        "count": 1,
+        "source": "/home/cosmo/Documents/GitHub/qcore-c/private/w47-tail/attempt-1/prep/fluent-bit-clang-source/src/flb_input.c",
+        "line": "if (flb_input_buf_paused(ins) &&"
+      }
+    ]
+  },
+  {
+    "key": [
+      "fluent-bit-tail-pause",
+      "src/flb_input.c",
+      "flb_input_rate_gate_maybe_resume",
+      1
+    ],
+    "before": "Unknown",
+    "after": "Unknown",
+    "source_occurrences": [
+      {
+        "direction": "removed",
+        "origin": "src/flb_input.c:2777",
+        "category": "unknown_alias",
+        "description": "unresolved resource identity `ins`",
+        "count": 1,
+        "source": "/home/cosmo/Documents/GitHub/qcore-c/private/w47-tail/attempt-1/prep/fluent-bit-clang-source/src/flb_input.c",
+        "line": "flb_input_rate_gate_collect_backpressure(ins);"
+      }
+    ]
+  },
+  {
+    "key": [
+      "fluent-bit-tail-pause",
+      "src/flb_input.c",
+      "flb_input_rate_gate_protect",
+      1
+    ],
+    "before": "Unknown",
+    "after": "Unknown",
+    "source_occurrences": [
+      {
+        "direction": "removed",
+        "origin": "src/flb_input.c:2725",
+        "category": "unknown_alias",
+        "description": "unresolved resource identity `ins`",
+        "count": 1,
+        "source": "/home/cosmo/Documents/GitHub/qcore-c/private/w47-tail/attempt-1/prep/fluent-bit-clang-source/src/flb_input.c",
+        "line": "flb_input_rate_gate_collect_backpressure(ins);"
+      }
+    ]
+  },
+  {
+    "key": [
+      "fluent-bit-tail-pause",
+      "src/flb_input.c",
+      "flb_input_rate_update",
+      1
+    ],
+    "before": "Unknown",
+    "after": "Unknown",
+    "source_occurrences": [
+      {
+        "direction": "removed",
+        "origin": "src/flb_input.c:2829",
+        "category": "unknown_alias",
+        "description": "unresolved resource identity `ins`",
+        "count": 1,
+        "source": "/home/cosmo/Documents/GitHub/qcore-c/private/w47-tail/attempt-1/prep/fluent-bit-clang-source/src/flb_input.c",
+        "line": "ins->rate_window_start = timestamp;"
+      },
+      {
+        "direction": "removed",
+        "origin": "src/flb_input.c:2838",
+        "category": "unknown_alias",
+        "description": "unresolved resource identity `ins`",
+        "count": 1,
+        "source": "/home/cosmo/Documents/GitHub/qcore-c/private/w47-tail/attempt-1/prep/fluent-bit-clang-source/src/flb_input.c",
+        "line": "ins->rate_window_start = timestamp;"
+      },
+      {
+        "direction": "removed",
+        "origin": "src/flb_input.c:2839",
+        "category": "unknown_alias",
+        "description": "unresolved resource identity `ins`",
+        "count": 1,
+        "source": "/home/cosmo/Documents/GitHub/qcore-c/private/w47-tail/attempt-1/prep/fluent-bit-clang-source/src/flb_input.c",
+        "line": "ins->rate_window_records = 0;"
+      },
+      {
+        "direction": "removed",
+        "origin": "src/flb_input.c:2840",
+        "category": "unknown_alias",
+        "description": "unresolved resource identity `ins`",
+        "count": 1,
+        "source": "/home/cosmo/Documents/GitHub/qcore-c/private/w47-tail/attempt-1/prep/fluent-bit-clang-source/src/flb_input.c",
+        "line": "ins->rate_window_bytes = 0;"
+      },
+      {
+        "direction": "removed",
+        "origin": "src/flb_input.c:2841",
+        "category": "unknown_alias",
+        "description": "unresolved resource identity `ins`",
+        "count": 1,
+        "source": "/home/cosmo/Documents/GitHub/qcore-c/private/w47-tail/attempt-1/prep/fluent-bit-clang-source/src/flb_input.c",
+        "line": "ins->rate_records = 0.0;"
+      },
+      {
+        "direction": "removed",
+        "origin": "src/flb_input.c:2842",
+        "category": "unknown_alias",
+        "description": "unresolved resource identity `ins`",
+        "count": 1,
+        "source": "/home/cosmo/Documents/GitHub/qcore-c/private/w47-tail/attempt-1/prep/fluent-bit-clang-source/src/flb_input.c",
+        "line": "ins->rate_bytes = 0.0;"
+      },
+      {
+        "direction": "removed",
+        "origin": "src/flb_input.c:2852",
+        "category": "unknown_alias",
+        "description": "unresolved resource identity `ins`",
+        "count": 1,
+        "source": "/home/cosmo/Documents/GitHub/qcore-c/private/w47-tail/attempt-1/prep/fluent-bit-clang-source/src/flb_input.c",
+        "line": "ins->rate_records = 0.0;"
+      },
+      {
+        "direction": "removed",
+        "origin": "src/flb_input.c:2853",
+        "category": "unknown_alias",
+        "description": "unresolved resource identity `ins`",
+        "count": 1,
+        "source": "/home/cosmo/Documents/GitHub/qcore-c/private/w47-tail/attempt-1/prep/fluent-bit-clang-source/src/flb_input.c",
+        "line": "ins->rate_bytes = 0.0;"
+      }
+    ]
+  },
+  {
+    "key": [
+      "fluent-bit-tail-pause",
+      "src/flb_input_thread.c",
+      "input_thread_instance_destroy",
+      0
+    ],
+    "before": "Unknown",
+    "after": "Unknown",
+    "source_occurrences": [
+      {
+        "direction": "removed",
+        "origin": "src/flb_input_thread.c:202",
+        "category": "unknown_alias",
+        "description": "unresolved resource identity `thi`",
+        "count": 1,
+        "source": "/home/cosmo/Documents/GitHub/qcore-c/private/w47-tail/attempt-1/prep/fluent-bit-clang-source/src/flb_input_thread.c",
+        "line": "thi->notification_channels_initialized = FLB_FALSE;"
+      }
+    ]
+  },
+  {
+    "key": [
+      "fluent-bit-tail-pause",
+      "src/flb_input_thread.c",
+      "input_thread_instance_set_status",
+      0
+    ],
+    "before": "Unknown",
+    "after": "Unknown",
+    "source_occurrences": [
+      {
+        "direction": "removed",
+        "origin": "src/flb_input_thread.c:691",
+        "category": "unknown_alias",
+        "description": "unresolved resource identity `thi`",
+        "count": 1,
+        "source": "/home/cosmo/Documents/GitHub/qcore-c/private/w47-tail/attempt-1/prep/fluent-bit-clang-source/src/flb_input_thread.c",
+        "line": "thi->init_status = status;"
+      }
+    ]
+  },
+  {
+    "key": [
+      "fluent-bit-tail-pause",
+      "src/flb_input_thread.c",
+      "input_thread_instance_destroy",
+      1
+    ],
+    "before": "Unknown",
+    "after": "Unknown",
+    "source_occurrences": [
+      {
+        "direction": "removed",
+        "origin": "src/flb_input_thread.c:202",
+        "category": "unknown_alias",
+        "description": "unresolved resource identity `thi`",
+        "count": 1,
+        "source": "/home/cosmo/Documents/GitHub/qcore-c/private/w47-tail/attempt-1/prep/fluent-bit-clang-source/src/flb_input_thread.c",
+        "line": "thi->notification_channels_initialized = FLB_FALSE;"
+      }
+    ]
+  },
+  {
+    "key": [
+      "fluent-bit-tail-pause",
+      "src/flb_input_thread.c",
+      "input_thread_instance_set_status",
+      1
+    ],
+    "before": "Unknown",
+    "after": "Unknown",
+    "source_occurrences": [
+      {
+        "direction": "removed",
+        "origin": "src/flb_input_thread.c:691",
+        "category": "unknown_alias",
+        "description": "unresolved resource identity `thi`",
+        "count": 1,
+        "source": "/home/cosmo/Documents/GitHub/qcore-c/private/w47-tail/attempt-1/prep/fluent-bit-clang-source/src/flb_input_thread.c",
+        "line": "thi->init_status = status;"
+      }
+    ]
+  },
+  {
+    "key": [
+      "fluent-bit-tail-pause",
+      "src/flb_lib.c",
+      "flb_create",
+      0
+    ],
+    "before": "Unknown",
+    "after": "Unknown",
+    "source_occurrences": []
+  },
+  {
+    "key": [
+      "fluent-bit-tail-pause",
+      "src/flb_lib.c",
+      "flb_input",
+      0
+    ],
+    "before": "Pending",
+    "after": "Pending",
+    "source_occurrences": []
+  },
+  {
+    "key": [
+      "fluent-bit-tail-pause",
+      "src/flb_lib.c",
+      "flb_service_set",
+      0
+    ],
+    "before": "Pending",
+    "after": "Pending",
+    "source_occurrences": []
+  },
+  {
+    "key": [
+      "fluent-bit-tail-pause",
+      "src/flb_lib.c",
+      "flb_create",
+      1
+    ],
+    "before": "Unknown",
+    "after": "Unknown",
+    "source_occurrences": []
+  },
+  {
+    "key": [
+      "fluent-bit-tail-pause",
+      "src/flb_lib.c",
+      "flb_input",
+      1
+    ],
+    "before": "Pending",
+    "after": "Pending",
+    "source_occurrences": []
+  },
+  {
+    "key": [
+      "fluent-bit-tail-pause",
+      "src/flb_lib.c",
+      "flb_service_set",
+      1
+    ],
+    "before": "Pending",
+    "after": "Pending",
+    "source_occurrences": []
+  },
+  {
+    "key": [
+      "fluent-bit-tail-pause",
+      "plugins/in_tail/tail_dockermode.c",
+      "flb_tail_dmode_create",
+      0
+    ],
+    "before": "Unknown",
+    "after": "Unknown",
+    "source_occurrences": [
+      {
+        "direction": "removed",
+        "origin": "plugins/in_tail/tail_dockermode.c:57",
+        "category": "unknown_alias",
+        "description": "unresolved resource identity `ctx`",
+        "count": 1,
+        "source": "/home/cosmo/Documents/GitHub/qcore-c/private/w47-tail/attempt-1/prep/fluent-bit-clang-source/plugins/in_tail/tail_dockermode.c",
+        "line": "ctx->docker_mode_flush = FLB_TAIL_DMODE_FLUSH;"
+      },
+      {
+        "direction": "removed",
+        "origin": "plugins/in_tail/tail_dockermode.c:62",
+        "category": "unknown_alias",
+        "description": "unresolved resource identity `ctx`",
+        "count": 1,
+        "source": "/home/cosmo/Documents/GitHub/qcore-c/private/w47-tail/attempt-1/prep/fluent-bit-clang-source/plugins/in_tail/tail_dockermode.c",
+        "line": "ctx->docker_mode_flush = 1;"
+      }
+    ]
+  },
+  {
+    "key": [
+      "fluent-bit-tail-pause",
+      "plugins/in_tail/tail_file.c",
+      "dormant_detach_path",
+      0
+    ],
+    "before": "Unknown",
+    "after": "Unknown",
+    "source_occurrences": [
+      {
+        "direction": "removed",
+        "origin": "plugins/in_tail/tail_file.c:357",
+        "category": "unknown_alias",
+        "description": "unresolved resource identity `file`",
+        "count": 1,
+        "source": "/home/cosmo/Documents/GitHub/qcore-c/private/w47-tail/attempt-1/prep/fluent-bit-clang-source/plugins/in_tail/tail_file.c",
+        "line": "file->seen_path = FLB_FALSE;"
+      }
+    ]
+  },
+  {
+    "key": [
+      "fluent-bit-tail-pause",
+      "plugins/in_tail/tail_file.c",
+      "flb_tail_file_append",
+      0
+    ],
+    "before": "Unknown",
+    "after": "Unknown",
+    "source_occurrences": [
+      {
+        "direction": "removed",
+        "origin": "plugins/in_tail/tail_file.c:1828",
+        "category": "unknown_alias",
+        "description": "unresolved resource identity `ctx`",
+        "count": 1,
+        "source": "/home/cosmo/Documents/GitHub/qcore-c/private/w47-tail/attempt-1/prep/fluent-bit-clang-source/plugins/in_tail/tail_file.c",
+        "line": "ctx->files_static_count++;"
+      },
+      {
+        "direction": "removed",
+        "origin": "plugins/in_tail/tail_file.c:1838",
+        "category": "unsupported",
+        "description": "indirect memory access is outside the resource projection",
+        "count": 1,
+        "source": "/home/cosmo/Documents/GitHub/qcore-c/private/w47-tail/attempt-1/prep/fluent-bit-clang-source/plugins/in_tail/tail_file.c",
+        "line": "tail_signal_manager(file->config);"
+      },
+      {
+        "direction": "removed",
+        "origin": "plugins/in_tail/tail_file.c:1950",
+        "category": "unknown_alias",
+        "description": "unresolved resource identity `ctx`",
+        "count": 1,
+        "source": "/home/cosmo/Documents/GitHub/qcore-c/private/w47-tail/attempt-1/prep/fluent-bit-clang-source/plugins/in_tail/tail_file.c",
+        "line": "ctx->files_static_count--;"
+      },
+      {
+        "direction": "added",
+        "origin": "plugins/in_tail/tail_file.c:1838",
+        "category": "unknown_alias",
+        "description": "unresolved resource identity `file`",
+        "count": 1,
+        "source": "/home/cosmo/Documents/GitHub/qcore-c/private/w47-tail/attempt-1/prep/fluent-bit-clang-source/plugins/in_tail/tail_file.c",
+        "line": "tail_signal_manager(file->config);"
+      }
+    ]
+  },
+  {
+    "key": [
+      "fluent-bit-tail-pause",
+      "plugins/in_tail/tail_file.c",
+      "flb_tail_file_dormant_scan_begin",
+      0
+    ],
+    "before": "Unknown",
+    "after": "Safe",
+    "source_occurrences": [
+      {
+        "direction": "removed",
+        "origin": "plugins/in_tail/tail_file.c:416",
+        "category": "unknown_alias",
+        "description": "unresolved resource identity `ctx`",
+        "count": 1,
+        "source": "/home/cosmo/Documents/GitHub/qcore-c/private/w47-tail/attempt-1/prep/fluent-bit-clang-source/plugins/in_tail/tail_file.c",
+        "line": "ctx->dormant_scan_failed = FLB_FALSE;"
+      },
+      {
+        "direction": "removed",
+        "origin": "plugins/in_tail/tail_file.c:419",
+        "category": "unknown_alias",
+        "description": "unresolved resource identity `file`",
+        "count": 1,
+        "source": "/home/cosmo/Documents/GitHub/qcore-c/private/w47-tail/attempt-1/prep/fluent-bit-clang-source/plugins/in_tail/tail_file.c",
+        "line": "file->seen_path = FLB_FALSE;"
+      },
+      {
+        "direction": "removed",
+        "origin": "plugins/in_tail/tail_file.c:420",
+        "category": "unknown_alias",
+        "description": "unresolved resource identity `file`",
+        "count": 1,
+        "source": "/home/cosmo/Documents/GitHub/qcore-c/private/w47-tail/attempt-1/prep/fluent-bit-clang-source/plugins/in_tail/tail_file.c",
+        "line": "file->seen_inode = FLB_FALSE;"
+      }
+    ]
+  },
+  {
+    "key": [
+      "fluent-bit-tail-pause",
+      "plugins/in_tail/tail_file.c",
+      "flb_tail_file_rotated",
+      0
+    ],
+    "before": "Unknown",
+    "after": "Unknown",
+    "source_occurrences": [
+      {
+        "direction": "removed",
+        "origin": "plugins/in_tail/tail_file.c:2804",
+        "category": "unsupported",
+        "description": "indirect memory access is outside the resource projection",
+        "count": 1,
+        "source": "/home/cosmo/Documents/GitHub/qcore-c/private/w47-tail/attempt-1/prep/fluent-bit-clang-source/plugins/in_tail/tail_file.c",
+        "line": "tail_signal_manager(file->config);"
+      }
+    ]
+  },
+  {
+    "key": [
+      "fluent-bit-tail-pause",
+      "plugins/in_tail/tail_file.c",
+      "flb_tail_file_to_event",
+      0
+    ],
+    "before": "Unknown",
+    "after": "Unknown",
+    "source_occurrences": [
+      {
+        "direction": "removed",
+        "origin": "plugins/in_tail/tail_file.c:2560",
+        "category": "unknown_alias",
+        "description": "unresolved resource identity `file`",
+        "count": 1,
+        "source": "/home/cosmo/Documents/GitHub/qcore-c/private/w47-tail/attempt-1/prep/fluent-bit-clang-source/plugins/in_tail/tail_file.c",
+        "line": "file->pending_bytes = 0;"
+      }
+    ]
+  },
+  {
+    "key": [
+      "fluent-bit-tail-pause",
+      "plugins/in_tail/tail_file_budget.c",
+      "flb_tail_file_budget_reserve",
+      0
+    ],
+    "before": "Unknown",
+    "after": "Unknown",
+    "source_occurrences": [
+      {
+        "direction": "removed",
+        "origin": "plugins/in_tail/tail_file_budget.c:152",
+        "category": "unknown_alias",
+        "description": "unresolved resource identity `ctx`",
+        "count": 1,
+        "source": "/home/cosmo/Documents/GitHub/qcore-c/private/w47-tail/attempt-1/prep/fluent-bit-clang-source/plugins/in_tail/tail_file_budget.c",
+        "line": "ctx->files_deferred = FLB_TRUE;"
+      }
+    ]
+  },
+  {
+    "key": [
+      "fluent-bit-tail-pause",
+      "plugins/in_tail/tail_fs_inotify.c",
+      "flb_tail_fs_inotify_remove",
+      0
+    ],
+    "before": "Unknown",
+    "after": "Unknown",
+    "source_occurrences": [
+      {
+        "direction": "removed",
+        "origin": "plugins/in_tail/tail_fs_inotify.c:496",
+        "category": "unknown_alias",
+        "description": "unresolved resource identity `file`",
+        "count": 1,
+        "source": "/home/cosmo/Documents/GitHub/qcore-c/private/w47-tail/attempt-1/prep/fluent-bit-clang-source/plugins/in_tail/tail_fs_inotify.c",
+        "line": "file->watch_fd = -1;"
+      }
+    ]
+  },
+  {
+    "key": [
+      "fluent-bit-tail-pause",
+      "plugins/in_tail/tail_fs_stat.c",
+      "flb_tail_fs_stat_init",
+      0
+    ],
+    "before": "Unknown",
+    "after": "Unknown",
+    "source_occurrences": [
+      {
+        "direction": "removed",
+        "origin": "plugins/in_tail/tail_fs_stat.c:211",
+        "category": "unknown_alias",
+        "description": "unresolved resource identity `ctx`",
+        "count": 1,
+        "source": "/home/cosmo/Documents/GitHub/qcore-c/private/w47-tail/attempt-1/prep/fluent-bit-clang-source/plugins/in_tail/tail_fs_stat.c",
+        "line": "ctx->coll_fd_fs1 = ret;"
+      },
+      {
+        "direction": "removed",
+        "origin": "plugins/in_tail/tail_fs_stat.c:219",
+        "category": "unknown_alias",
+        "description": "unresolved resource identity `ctx`",
+        "count": 1,
+        "source": "/home/cosmo/Documents/GitHub/qcore-c/private/w47-tail/attempt-1/prep/fluent-bit-clang-source/plugins/in_tail/tail_fs_stat.c",
+        "line": "ctx->coll_fd_fs2 = ret;"
+      }
+    ]
+  },
+  {
+    "key": [
+      "fluent-bit-tail-pause",
+      "plugins/in_tail/tail_fs_stat.c",
+      "tail_fs_event",
+      0
+    ],
+    "before": "Unknown",
+    "after": "Unknown",
+    "source_occurrences": []
+  },
+  {
+    "key": [
+      "fluent-bit-tail-pause",
+      "plugins/in_tail/tail_multiline.c",
+      "flb_tail_mult_create",
+      0
+    ],
+    "before": "Unknown",
+    "after": "Unknown",
+    "source_occurrences": [
+      {
+        "direction": "removed",
+        "origin": "plugins/in_tail/tail_multiline.c:56",
+        "category": "unknown_alias",
+        "description": "unresolved resource identity `ctx`",
+        "count": 1,
+        "source": "/home/cosmo/Documents/GitHub/qcore-c/private/w47-tail/attempt-1/prep/fluent-bit-clang-source/plugins/in_tail/tail_multiline.c",
+        "line": "ctx->multiline_flush = 1;"
+      }
+    ]
+  },
+  {
+    "key": [
+      "fluent-bit-tail-pause",
+      "plugins/in_tail/tail_multiline.c",
+      "flb_tail_mult_pack_line_body",
+      0
+    ],
+    "before": "Unknown",
+    "after": "Unknown",
+    "source_occurrences": [
+      {
+        "direction": "removed",
+        "origin": "plugins/in_tail/tail_multiline.c:471",
+        "category": "unknown_alias",
+        "description": "unresolved resource identity `file`",
+        "count": 1,
+        "source": "/home/cosmo/Documents/GitHub/qcore-c/private/w47-tail/attempt-1/prep/fluent-bit-clang-source/plugins/in_tail/tail_multiline.c",
+        "line": "file->mult_firstline = FLB_FALSE;"
+      },
+      {
+        "direction": "removed",
+        "origin": "plugins/in_tail/tail_multiline.c:472",
+        "category": "unknown_alias",
+        "description": "unresolved resource identity `file`",
+        "count": 1,
+        "source": "/home/cosmo/Documents/GitHub/qcore-c/private/w47-tail/attempt-1/prep/fluent-bit-clang-source/plugins/in_tail/tail_multiline.c",
+        "line": "file->mult_skipping = FLB_FALSE;"
+      },
+      {
+        "direction": "removed",
+        "origin": "plugins/in_tail/tail_multiline.c:473",
+        "category": "unknown_alias",
+        "description": "unresolved resource identity `file`",
+        "count": 1,
+        "source": "/home/cosmo/Documents/GitHub/qcore-c/private/w47-tail/attempt-1/prep/fluent-bit-clang-source/plugins/in_tail/tail_multiline.c",
+        "line": "file->mult_keys = 0;"
+      },
+      {
+        "direction": "removed",
+        "origin": "plugins/in_tail/tail_multiline.c:474",
+        "category": "unknown_alias",
+        "description": "unresolved resource identity `file`",
+        "count": 1,
+        "source": "/home/cosmo/Documents/GitHub/qcore-c/private/w47-tail/attempt-1/prep/fluent-bit-clang-source/plugins/in_tail/tail_multiline.c",
+        "line": "file->mult_flush_timeout = 0;"
+      }
+    ]
+  }
+]

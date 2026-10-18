@@ -1,0 +1,53 @@
+{
+  "post_matrix_python": {
+    "command": "python3 -m unittest discover -s scripts/tests",
+    "exit": 0,
+    "tests": 374,
+    "seconds": 26.133,
+    "private_log": "/tmp/qcore-lexical-typed-precedence/private/lexical-typed/post-matrix-python.log"
+  },
+  "matrix": {
+    "command": "python3 docs/reports/remaining-d02/build_matrix.py . --gate docs/reports/lexical-routes-typed-fallbacks/gate.json",
+    "exit": 0,
+    "private_log": "/tmp/qcore-lexical-typed-precedence/private/lexical-typed/matrix-final.log"
+  },
+  "report_index": {
+    "command": "python3 scripts/build_docs_index.py --check",
+    "exit": 0
+  },
+  "diff_check": {
+    "command": "git diff --check",
+    "exit": 0
+  },
+  "implementation_equivalence": {
+    "command": "git diff --exit-code 913a72a916242165ed0dc586fd1affdb3093fd65 HEAD -- compiler crates proof providers contract scripts",
+    "exit": 0
+  },
+  "reconciliation": {
+    "command": "python3 scripts/reconciliation_sweep.py . --cards lexical-routes-typed-fallbacks --json",
+    "exit": 0
+  },
+  "residual_sweep": {
+    "command": "python3 scripts/reconciliation_sweep.py . --cards lexical-routes-typed-fallbacks --residuals --json",
+    "exit": 0,
+    "before": 192,
+    "after": 192,
+    "new_untracked_names": []
+  },
+  "reconciliation_usage_attempt": {
+    "command": "python3 scripts/reconciliation_sweep.py . --residuals --json",
+    "exit": 1,
+    "reason": "Missing required cards/since/range selection; corrected invocation above."
+  },
+  "ledger": {
+    "base": 797,
+    "tip": 798,
+    "retired": [
+      "LEXICAL-ROUTES-PREEMPT-TYPED-FALLBACKS"
+    ],
+    "retained_or_registered": [
+      "LEXICAL-SCALAR-NOOP-ALIAS-READ",
+      "LEXICAL-TYPED-TAIL-APPEND-ACTUAL-IDENTITY"
+    ]
+  }
+}
