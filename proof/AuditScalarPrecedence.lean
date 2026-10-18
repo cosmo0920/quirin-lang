@@ -7,3 +7,4 @@ import QCore.ScalarPrecedence
 #print axioms QCore.ScalarPrecedence.a_failed_original_alias_refuses_the_prepared_plan
 #print axioms QCore.ScalarPrecedence.effects_execute_once
 #print axioms QCore.ScalarPrecedence.a_changed_selection_is_fully_discharged
+#print axioms QCore.ScalarPrecedence.independent_readers_compose

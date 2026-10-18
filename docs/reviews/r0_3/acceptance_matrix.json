@@ -195,7 +195,7 @@
   "ct_stage_names": 20,
   "ct_cells": 1000,
   "unverified_spec_items": 10,
-  "named_followups": 797
+  "named_followups": 798
  },
  "derivation": {
   "rule": "no count in a section this file marks `derived` is hand-copied from a status ledger; each is read from the manifest or validated run record named beside it. Sections marked `hand_maintained` are recorded analysis carried verbatim from the previous matrix, and `integrator_supplied` numbers name whether they were measured for this run or carried - see section_ownership.",
@@ -6757,7 +6757,7 @@
   "workspace_tests": 8235,
   "provider_tests": 133,
   "python_evidence_validator_tests": 374,
-  "lean_audits": 338,
+  "lean_audits": 339,
   "lean_audit_files": [
    "AuditAbiEnumConstPointer.lean",
    "AuditAggregateOwnedField.lean",
@@ -7024,6 +7024,7 @@
    "AuditScalarObservationContracts.lean",
    "AuditScalarPayloads.lean",
    "AuditScalarPositions.lean",
+   "AuditScalarPrecedence.lean",
    "AuditScalarReturnValue.lean",
    "AuditScalarRouteExitEdge.lean",
    "AuditScalarTasks.lean",
@@ -7104,7 +7105,7 @@
   "cargo_clippy": "clean",
   "standing_gate": "complete",
   "full_language_conformance": false,
-  "measurement_provenance": "integrator_supplied (docs/reports/rk-plugin-interceptor-candidates/gate.json)"
+  "measurement_provenance": "carried_from_previous_matrix: these numbers were NOT measured for this regeneration; pass --gate PATH with the standing-gate results of this checkpoint to replace them"
  },
  "named_followups": [
   {
@@ -12646,6 +12647,13 @@
    "why": "OUTER-CONTRACT selects the projection (QCORE_OUTER_PROJECTION) on the pinned, configured and no-build routes only; a checkpointed run refuses it (checkpoint_run.rs, as it refuses the null and bounds selections), so a composed report has no runtime scope. DISCHARGE: the checkpoint carries the outer environment's identity and each loader's reach, the composer projects the composed rows exactly as a whole run does (or refuses when the checkpoints disagree), tested on a split run equal to the whole one.",
    "source": "docs/reports/outer-contract/README.md",
    "recorded_by": "OUTER-CONTRACT"
+  },
+  {
+   "id": "LEXICAL-SCALAR-NOOP-ALIAS-READ",
+   "title": "An older unbound scalar-field NoOp carries no same-type alias read after a peer release",
+   "why": "Observed during LEXICAL-ROUTES-PREEMPT-TYPED-FALLBACKS first focused fixture run on a dirty worktree after prediction commit 1f9e306a0: under synthetic q_base.qv custody assumptions (q_free releases nonnull), struct S { int x; struct S *next; }; void subject(struct S *p, struct S *peer) { q_free(peer); p->x = 1; } is Safe and the store is NoOp, while the release carries the peer/p alias class. This is an observed analyzer-boundary candidate, not a validated violation or upstream defect. NoOp is outside the scalar alternative card, which preserves its existing handling. DISCHARGE: reproduce at an exact baseline, decide and implement an alias-preserving reading of the older scalar-field no-op without erasing genuine alias/custody/null/effect refusals, with Rust, audited Lean, full gate and all-route re-pin; read every moved row. Exact source/profile/log provenance is in artifacts/noop-alias-observation.json.",
+   "source": "docs/reports/lexical-routes-typed-fallbacks/README.md",
+   "recorded_by": "LEXICAL-ROUTES-PREEMPT-TYPED-FALLBACKS"
   }
  ],
  "updated": "2026-10-18 RK-PLUGIN-INTERCEPTOR-CANDIDATES completed the runtime-only source-pinned inventory (14 lists / 14 aliases) and paired registered envelopes. All fresh corpus/system/slice static and runtime verdicts are unchanged; no Pending becomes Safe, and the exact candidate digest plus all three loader pins are in force. The primary baseline at ad526b58 is reused with implementation/input equivalence to base 1543259f0 checked. Actual source revisions 66910c10 / 046accf6 / 34155955 are recorded separately. The full standing/provider gate passed 8,235 root Rust tests, 338 Lean audits, 133 provider Rust tests, 374 script Python tests, 25 provider Python tests and five package verifications; every required final exit is zero. The registered candidate entry narrows to RK-INTERCEPTOR-STATIC-LIST-CLOSURE (797 -> 797); arbitrary stateful callbacks remain outside the neutral review class. Previous checkpoint: 2026-10-17 RK-PLUGIN-LIBRARY-OUTER-ENVELOPE measured paired envelopes on corpus, system and slice with static statuses unchanged; the exact 32 all-loaded corpus custody Unknown rows become Pending, and the existing Fluent Bit Pending row remains Pending. The RK implementation entry is replaced by RK-PLUGIN-INTERCEPTOR-CANDIDATES for rd_list_t members lacking candidate callback contracts: 797 -> 797. Standing and provider gates remain to be recorded on this branch. 2026-09-12 (wave 27 complete: SIX pieces merged one at a time under the failure-gated chain, each under its own green gate. CT23-CREDIT-ERROR-PATH landed EpochCreditRecoveryV1 - the creator's own error edges over a flat epoch's credits, restored + spent = credit componentwise with abandonment and minting both REFUSALS, zero words and zero codes, Q637 deliberately NOT extended because the success exit's bound already covers every error edge, and the T07 seam measured and deliberately not crossed. DOCS-COMPACT-3 honoured the compaction cadence three waves on with 39 standing constraints in and 39 out, zero renumbered and 37 bodies byte-identical, refreshed README.md to the full route surface, corrected one drift (the binary is quirin-audit; qcore-audit is the package and library name), and carried the USER-DIRECTED examples style pass - 'pipe the flow, parenthesize the assembly' - five files respelled one commit each with byte identity MEASURED, nine examined and skipped with reasons, and the rule's one open case left for the user as EXAMPLES-STYLE-SLICE-FANOUT rather than repaired against the brief's direction. AGGREGATES-V1 is the wave's LANGUAGE HEAD: source.record.v1 on source.buffer.v1, zero reserved words because the obvious spelling `record` was REJECTED ON EVIDENCE (an archived one-line probe pinned to Q000 by two frozen reports, constraint 21), zero codes because Q051/Q052/Q053's conditions widened under the ice box, no line of name resolution changed, scalar-fields-only DECIDED BY MEASUREMENT against an ownership IR that addresses owners by plain names, and CT09's scenario executed and byte-compared. QUANT-REGION-SOURCE gave the kernel's quantitative region its first source path with the sealed pack as a LINEAR capability consumed exactly once, the region ERASING to byte-identical C, and the RegionOp::QuantOpen operation VARIANT measured unreachable-by-design rather than repaired; CT21 and CT22's archived reasons retire, with CT22 keeping a narrower scenario gap for a lane to publish in its own record. CT07-SLICE-PERMISSIONS lent a RANGE and corrected the recorded blocker: the footprint fraction STD-BUFFER-SLICE named is about the WRITE half, so a read lend needed no ownership-IR change, disjointness is DECIDED by max low < min high and proved to be the set-theoretic question itself, overlapping BORROWS are deliberately admitted and argued, and exactly one pre-card refusal moves code (Q078 -> Q077) - measured and pinned. THE WAVE RAN ONE ARBITER: GATEWAY-C-LOCATION presents the original pre-preprocessing file:line on 54,371 diagnostic rows with the L-numbers kept INTERNAL by the user's ruling, under a checked line pairing where no #line can forge a file spelling; its re-pin is PRESENTATION-ONLY and measured to be, the BEFORE run reproducing the preceding baseline byte for byte and the AFTER run moving no verdict, no leaf and no count - 185 units 2/42/137/4, 4,834 functions 150/84/4,600, leak 266, unknown_alias 4,344, unsupported 49,773 - so the corpus baseline moves to docs/reports/gateway-c-location/artifacts/ with every preceding archive frozen and constraint 7 gaining no sixth move. CT coverage is UNCHANGED at 36/50 mapped: the wave mapped nothing and edited no manifest row, and the CT08/CT09/CT21/CT22/CT23 readiness it produced is capability rather than conformance. Standing constraint 15h is AMENDED on the slice card's own proposal, and three new rules land in merge order - 15j, 15k, 15l - beside 12a for the arbiter's anti-forgery rule. Nothing is promoted; full language conformance stays false.)"

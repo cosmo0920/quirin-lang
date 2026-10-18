@@ -10,6 +10,8 @@ cd "$repo" || exit 2
 binary="$repo/target/release/quirin-audit"
 export QCORE_CROSS_UNIT_LINK_MAP="$repo/$map"
 export QCORE_CLANG=/usr/lib/llvm-21/bin/clang
+export QCORE_NULL_PROPERTY="$out/$mode-null.jsonl"
+export QCORE_OUTER_PROJECTION="$out/$mode-outer.json"
 git rev-parse HEAD > "$out/head"
 sha256sum "$binary" > "$out/binary.sha256"
 sha256sum "$QCORE_CROSS_UNIT_LINK_MAP" > "$out/link-map.sha256"

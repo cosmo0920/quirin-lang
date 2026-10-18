@@ -84,6 +84,27 @@ theorem a_changed_selection_is_fully_discharged (old : Plan) (typed : Option Pla
       · simp [hd]
       · simp [hd] at hc
 
+/-- Composition needs each reader's own soundness premise; the old reader's
+failed obligation is never taken as evidence for the independent reader. -/
+theorem independent_readers_compose (SoundRead : Plan → Prop) (old : Plan)
+    (typed : Option Plan)
+    (oldSound : discharged old = true → SoundRead old)
+    (typedSound : ∀ t, candidate old typed = some t → discharged t = true → SoundRead t)
+    (hd : discharged (select old typed) = true) : SoundRead (select old typed) := by
+  by_cases ho : discharged old = true
+  · rw [every_old_admission_stands old typed ho]
+    exact oldSound ho
+  · unfold select at hd ⊢
+    simp only [ho] at hd ⊢
+    cases hc : candidate old typed with
+    | none => simp [hc, ho] at hd
+    | some t =>
+      simp only [hc] at hd ⊢
+      by_cases ht : discharged t = true
+      · simp only [ht, ↓reduceIte]
+        exact typedSound t hc ht
+      · simp [ht, ho] at hd
+
 theorem selected_typed_plan_retains_old_aliases (old typed : Plan)
     (a : Bool) (ha : a ∈ old.aliases) : a ∈ (prepared old typed).aliases := by
   exact List.mem_append_right _ ha
