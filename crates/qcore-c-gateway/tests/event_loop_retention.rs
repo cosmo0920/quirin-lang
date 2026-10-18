@@ -200,11 +200,12 @@ fn a_removal_with_no_record_is_the_identity() {
     assert!(rows["stop"].safe(), "{:?}", rows["stop"]);
     // The loop two members deep: the removal with no record is the identity.
     assert!(rows["disable"].safe(), "{:?}", rows["disable"]);
-    // flb_sched_timer_cb_disable's own shape stores through the formal after
-    // the call: an older rule refuses that store (it does for a plain borrowed
-    // callee too), so the removal frees nothing there.
+    // Deliberate pin update, LEXICAL-ROUTES-PREEMPT-TYPED-FALLBACKS:
+    // the no-record removal is still the identity, and its following scalar
+    // store now has an independently discharged Clang plan. W42's old base
+    // refusal no longer preempts that plan; no retention record is erased.
     assert!(
-        !rows["disable_then_store"].safe(),
+        rows["disable_then_store"].safe(),
         "{:?}",
         rows["disable_then_store"]
     );

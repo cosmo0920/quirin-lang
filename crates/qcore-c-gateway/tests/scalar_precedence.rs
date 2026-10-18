@@ -1,14 +1,15 @@
 //! Bounded independent scalar alternatives. Synthetic q_* declarations are
 //! trusted test assumptions; every Safe certificate is independently replayed.
 use qcore_c_gateway::legacy_c::{
-    AnalysisStatus, C11TranslationUnit, LegacyInstruction, LegacyProgramSummary,
-    UnrestrictedLegacyResult, analyze_unrestricted_c11, check_legacy_safety_certificate,
+    AnalysisStatus, C11TranslationUnit, LegacyInstruction, LegacyProgramSummary, ResourceContracts,
+    UnrestrictedLegacyResult, analyze_unrestricted_c11, check_legacy_safety_certificate_for,
+    legacy_certificate_expected_context,
 };
 use qcore_contract::contract_loader::load_resource_contract_sources;
 use std::collections::BTreeMap;
 
-fn run(body: &str) -> LegacyProgramSummary {
-    let contracts = load_resource_contract_sources(&BTreeMap::from([
+fn contracts() -> ResourceContracts {
+    load_resource_contract_sources(&BTreeMap::from([
         (
             "base.qv".into(),
             format!("{}\nextern fn q_observe(p: ptr<mut, u8>) -> unit contract {{ requires resource_contract_v1; ensures normal resource_borrowed(p); ensures normal resource_return_none(); }};", include_str!("fixtures/contracts/q_base.qv")),
@@ -18,7 +19,11 @@ fn run(body: &str) -> LegacyProgramSummary {
             include_str!("fixtures/contracts/bound_untracked.qv").into(),
         ),
     ]))
-    .expect("fixture declarations load");
+    .expect("fixture declarations load")
+}
+
+fn run(body: &str) -> LegacyProgramSummary {
+    let contracts = contracts();
     let source = format!(
         "\
 struct S {{ int x; struct S *next; }};
@@ -26,18 +31,16 @@ void *q_alloc(void); void q_free(void *p); void q_observe(void *p);
 void *bu_get(void *p); void unknown(void *p);
 {body}"
     );
-    let result = analyze_unrestricted_c11(
-        &C11TranslationUnit {
-            source: &source,
-            ..Default::default()
-        },
-        "subject",
-        &contracts,
-    )
-    .expect("valid fixture C");
+    let unit = C11TranslationUnit {
+        source: &source,
+        ..Default::default()
+    };
+    let expected = legacy_certificate_expected_context(&unit).expect("caller-held source scope");
+    let result = analyze_unrestricted_c11(&unit, "subject", &contracts).expect("valid fixture C");
     match result {
         UnrestrictedLegacyResult::Safe(certificate) => {
-            check_legacy_safety_certificate(&certificate).expect("independent replay");
+            check_legacy_safety_certificate_for(&certificate, &expected)
+                .expect("independent source-bound replay");
             certificate.summary
         }
         UnrestrictedLegacyResult::Unsafe(summary) => summary,
@@ -158,5 +161,44 @@ fn a_declined_typed_probe_keeps_no_speculative_null_premise() {
             }
         )),
         "{row:?}"
+    );
+}
+
+#[test]
+fn selected_w42_store_premise_is_rechecked_against_caller_held_context() {
+    let source = "struct S { int x; struct S *next; };
+void subject(struct S *root) { struct S *p = root->next; p->x = 1; }";
+    let unit = C11TranslationUnit {
+        source,
+        ..Default::default()
+    };
+    let expected = legacy_certificate_expected_context(&unit).expect("independent input context");
+    let result = analyze_unrestricted_c11(&unit, "subject", &contracts()).expect("fixture C");
+    let UnrestrictedLegacyResult::Safe(certificate) = result else {
+        panic!("{result:?}")
+    };
+    let row = &certificate.summary.functions["subject"];
+    assert_eq!(row.null_premises.len(), 1, "{row:?}");
+    assert_eq!(row.null_premises[0].variable, "p");
+    assert!(row.cfg.nodes.iter().any(|node| matches!(
+        node.instruction,
+        LegacyInstruction::ScalarMemberStore {
+            typed_alternative: Some(_),
+            ..
+        }
+    )));
+    check_legacy_safety_certificate_for(&certificate, &expected)
+        .expect("declared premise rechecks");
+    let mut stripped = certificate;
+    stripped
+        .summary
+        .functions
+        .get_mut("subject")
+        .expect("subject")
+        .null_premises
+        .clear();
+    assert!(
+        check_legacy_safety_certificate_for(&stripped, &expected).is_err(),
+        "a selected scalar store cannot hide its new null assumption"
     );
 }

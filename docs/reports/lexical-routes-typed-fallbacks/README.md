@@ -36,9 +36,24 @@ alias, null, released/owned resources, pointer stores, unresolved calls,
 scalar-fact forgetting, candidate effect mismatches and speculative null-premise
 rollback. Fixtures use synthetic contracts, not production library claims.
 
-Validation and corpus/system/slice measurements are pending; no count or
-completion claim is made by this draft. Raw attempts and focused results are
-worktree-private under `private/lexical-typed/`.
+The first complete standing gate retained a Rust exit 101 (**8,247 passed /
+2 failed / 15 ignored**, 514 units / 527 summaries); all other steps passed,
+including **339 Lean audits / 374 Python tests**. The two failing tests encoded
+three lexical-only refusal assertions: `disable_then_store` after a removal
+with no record, a scalar store through a target-free interior alias, and a
+chain read through that alias. Each is now independently discharged by the
+new rule. The latter two custody decisions retain their named null premise;
+none establishes null safety. The three pins were deliberately amended with
+source comments, while genuine literal-null, tracked, released, alias, pointer
+store and unresolved-effect controls remain. The caller-held-context
+certificate control additionally rejects omission of the selected W42 store's
+new null premise. All 23 pin/certificate-focused cases pass. The original gate,
+latent third assertion's failed focused replay, and exact reasons remain under
+[attempts](artifacts/attempts/first-standing-gate/explanation.json) and private logs.
+
+A fresh final standing gate and corpus/system/slice measurements are pending;
+no completion claim is made by this draft. Raw logs are worktree-private under
+`private/lexical-typed/`.
 
 ## Follow-ons and integration
 
