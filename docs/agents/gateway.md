@@ -5932,7 +5932,8 @@ own anchor here.
     holder dies, and a tracked holder still holding refuses. **Do not** read
     a retained pointer as borrowed, decide a holder the caller supplied,
     accept a static object other than a literal without a storage reading,
-    accuse a release while held, or forward a retention into a summary.
+    accuse a release while held, or forward a retention into an ordinary
+    summary (the S3 exception below carries its obligation explicitly).
     Premises stated, not proved: faithful extraction (trust boundary 28),
     the declared retentions (constraint 4; `RETAINED-BY-BODY-CHECK`), and
     P-RETAINED-LITERAL (the lexer's `__qcore_literal__` at a pointer position
@@ -6008,14 +6009,15 @@ own anchor here.
     loop: a derived equality (D3, "derived only") is the follow-up
     `RETENTION-DERIVED-LOOP-PATH-EQUALITIES`. (3) A release
     or transfer of an identity while an interior of it is held refuses. A
-    retention is still never forwarded into a summary, so every Fluent Bit
-    registration (each removal is in another function, the census's §1.4)
-    refuses at its registering function's exit
-    (`FB-EVENT-LOOP-CROSS-FUNCTION-LIFETIME`). **Do not** resolve a path
+    retention without the bounded S3 evidence below is never forwarded into
+    a summary. The original measurement therefore refused every Fluent Bit
+    registration at its registering function's exit (each removal is in
+    another function, the census's §1.4;
+    `FB-EVENT-LOOP-CROSS-FUNCTION-LIFETIME`). **Do not** resolve a path
     below a local or a call's result, match a removal to a record by its
     holder alone, end a poisoned record by any removal, read two distinct
-    paths as one loop without a derivation, or forward a retention into a
-    summary. Declarations: Monkey's seven event-loop
+    paths as one loop without a derivation, or forward a retention into an
+    ordinary summary. Declarations: Monkey's seven event-loop
     operations in `qcore-provider-libevent` (`monkey/event_loop.qv`, pinned
     at 66910c10, 046accf6 and the 90978ac6 export; descriptor effects under
     the named premise `mk_event_descriptors`), and the loop's create and
@@ -6032,6 +6034,48 @@ own anchor here.
     `tests/event_loop_retention.rs`;
     [report](../reports/fb-event-loop-retention/README.md),
     [poisoning report](../reports/retention-unmatched-removal-poisons/README.md).
+    **S3 amendment (FB-EVENT-LOOP-CROSS-FUNCTION-LIFETIME, user direction
+    2026-10-18; C04.21):** an unconditional declared record footprint may
+    forward an exact caller-owned record at a typed interior/holder path.
+    The first source route supports a self-record below an unrebound formal
+    and bounded same-unit calls. The record and its poison remain present;
+    a separate proof names its exact origin, source-qualified paths and
+    protocol identity. At a join, every arm where that record is present
+    must prove its forwarding; an ended/re-registered record needs new
+    evidence. Body admission exports the outstanding obligation and its
+    named protocol assumption, not a claim that every caller meets it.
+    Callers must discharge or forward it, and unresolved roots remain
+    Unknown. Source/configuration/function-qualified summary and certificate
+    replay retain/rederive these effects; ordinary W4 records and declared
+    borrow-only custody cannot erase them. Cross-unit import refuses until
+    the richer evidence can be retained and replayed.
+
+    Every available registration/store site participates in protocol standing:
+    a contradiction withdraws the clause; an uncheckable closure is an
+    attributed DeclaredAssumption (rule 13i), never a validated closure.
+    An unused footprint supplies no premise to ordinary custody/callback use.
+    Holder equality is still derived-only (D3). Closed allocation candidates
+    supply neither runtime equality nor universal destroy evidence. Call
+    composition retains may-release ordering: only a concrete must-destroy
+    proved before release can discharge an incoming record, never a later
+    destroy or an unordered removal. Unsupported control flow, member stores
+    and unread call frames withhold must-ending/prefix evidence; a custody
+    contract is no heap frame proof. Exact source/type/object/snapshot
+    extraction remains trust boundary 28, not a theorem about Clang.
+
+    The accompanying local-condition route checks conditional prerequisites
+    at caller uses; unknown conditions preserve both feasible cases. A body
+    may use its own active conditional requires with exact substituted
+    object/member/polarity and the named snapshot premise. An annotation alone
+    creates no external caller fact. Guarded declarations remain outside
+    unaware effect tables and ordinary summary publication, including after
+    withdrawal/pin withholding; unsupported structured mixtures and conditional
+    type-wide record correlation refuse. New member/protocol facts remain
+    runtime dependencies under rule 31, without new envelope coverage.
+    `QCore.LocalCondition`, `QCore.LoopLifetimeSummary` and their registered
+    audits cover the abstract decisions and ordering boundaries, with shared
+    Rust vectors; [the S3 report](../reports/fb-event-loop-lifetime-s3/README.md)
+    owns the source controls, evidence boundaries and measurements.
 
 <a id="constraint-12u"></a>
 

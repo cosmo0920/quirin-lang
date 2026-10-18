@@ -105,6 +105,9 @@ its separately pinned scope.
 
 The isolated [lexical scalar precedence rule](reports/lexical-routes-typed-fallbacks/README.md) at implementation `913a72a91` preserves every older admission and consults a separately discharged typed plan only after the matching scalar flow refusal, with the same effect frame and all old alias obligations. Rust and audited Lean retain rollback, guards and named null assumptions. Against the integrator's fresh exact base `854920e3e`, custody is corpus **959 → 963 Safe / 9 provisional Unsafe / 3,866 → 3,862 Unknown** (4,834 functions), system **97 → 99 / 4 / 347 → 345** (448 configuration rows), slice **52 → 53 / 4 Pending / 1 / 347 → 346** (404 rows). No Safe regresses or new Unsafe appears. All 5,781 null dictionaries and every combined verdict are unchanged; corpus all-loaded runtime custody is **931 Safe / 32 Pending / 3,862 Unknown / 9 provisional Unsafe**, with identical runtime moved rows and no new deployment claim. Full gate: **8,250 Rust / 339 Lean / 374 Python**, all ten steps zero; failed earlier attempts are retained. These frozen runs use the original base854 outer envelopes; the later user-requested rk envelope scope correction needs its own integration measurement. The older scalar NoOp alias-reading candidate and the conservative tail-append actual-identity refusal remain registered, with source/CFG provenance.
 
+The [S3 lifetime checkpoint](reports/fb-event-loop-lifetime-s3/README.md) at analyzer/proof source `d0a48bfd6` implements scoped conditional prerequisites and exact same-unit declared registration forwarding, with independent source replay and audited Lean. Fresh composed corpus/system/slice audits all exit 0 against the frozen lexical baseline: custody **961 Safe / 9 provisional Unsafe / 3,864 Unknown**, **99 / 4 / 345**, and **53 / 1 / 346 / 4 Pending**. The two corpus Safe → Unknown wrappers (`rd_kafka_event_destroy`, `ut_op_destroy_free`) follow the existing global unread callback-closure policy after new lifetime tokens expose 36 unread units; they are a tracked precision limit, not lifetime violations. All 5,781 static null dictionaries are unchanged. The separately directed RK envelope correction accounts exactly for runtime null Pending → Unknown **1/2/16** and combined **1/2/0** rows under all-loaded and RK-only; FLB-only is unchanged by that correction. Corpus all-loaded runtime custody is **931 Safe / 30 Pending / 3,864 Unknown / 9 provisional Unsafe**. Conditional record correlation, derived-only loop equalities, rich cross-unit replay and threaded teardown remain unresolved. Full semantic gate: **8,307 Rust / 341 Lean / 374 Python**, fresh provider **133 Rust / 25 Python**, five schema-18 packages verified; failed earlier attempts and the two extra strict slice outer-pin preflights (exit 1 despite reviewed-body reuse) remain disclosed. This unpublished schema-18 checkpoint is **not the final publishable compatibility state**: final cumulative schema-19 migration, gates, packages and audits with detach are required before push.
+
+
 **Partly implemented (CG16-INDEX-AND-OFFSET-EXTENTS, 2026-10-02):**
 [reviewed index/extent contracts](QCORE_CONTRACT_SPEC_r0_3.md#c091-reviewed-index-and-extent-contracts-planned)
 specify a separate existing-C bounds property, `c.bounds.index-extent.v1`.
@@ -282,18 +285,16 @@ latest completed integration measurement.
 
 ## Latest validated gate
 
-The latest completed validation is the [W48 batch 2 / RK integration](reports/w48-batch2-rk-integration/gate.json)
-on merged source `854920e3e`: **8,240 core Rust passed, 0 failed, 15 ignored
-over 513 units / 526 summaries; 338 Lean audits; 374 root Python tests**.
-The complete standing gate is one clean full-suite invocation on that source:
-submodules, formatting, Clippy with warnings denied, both reevaluation probes,
-documentation index and Clang checks also exit 0. Builds omit debug symbols and
-incremental caches; debug assertions and test controls are unchanged. Earlier
-isolated-card failures and the integration's sandbox-restricted attempt are
-retained separately; the complete host-access reruns pass. Clang 21.1.8 was
-recorded in this worktree. A fresh provider gate passes **133 Rust tests,
-0 failed, 1 ignored; 25 Python tests**, workspace check/format/Clippy,
-contract inventory check and build/verification of **all five packages**.
+The latest semantic checkpoint is the [S3 lifetime report](reports/fb-event-loop-lifetime-s3/README.md)
+on frozen analyzer/proof source `d0a48bfd6`: **8,307 core Rust passed, 0 failed,
+15 ignored over 516 units / 529 summaries; 341 Lean audits; 374 root Python
+tests**. Host-access standing commands, submodules, formatting, Clippy, both
+reevaluation probes, documentation index and actual Clang 21.1.8 checks exit 0.
+The fresh provider gate passes **133 Rust / 0 failed / 1 ignored**, **25 Python**,
+format/Clippy, contract sync/check and all five package verifications. Earlier
+failed attempts remain retained. This is a schema-18 semantic checkpoint;
+coordinated cumulative schema-19 compatibility migration and final gates,
+packages and audits with detach remain required before publication.
 
 The five provider crates own **73** canonical contract modules; **48** shared or
 application-level modules live in six `providers/quirin-provider-*` crates: five

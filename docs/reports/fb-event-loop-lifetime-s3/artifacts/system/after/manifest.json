@@ -1,0 +1,49 @@
+{
+  "diagnostics": {
+    "present": true,
+    "source": "/tmp/qcore-fb-lifetime-s3/private/fb-lifetime-s3/measure-final-1/system/resource-diagnostics.json",
+    "sha256": "261ee4ab2079c284e2890fd987c49956f23b72df2cf35063edbbb5951e52f7df",
+    "bytes": 1698706
+  },
+  "source": {
+    "present": false
+  },
+  "chunk-contracts": {
+    "present": true,
+    "source": "/tmp/qcore-fb-lifetime-s3/private/fb-lifetime-s3/measure-final-1/system/resource-diagnostics.chunk-contracts.json",
+    "sha256": "e7e0d254d9e7ee199672b981e3fc764b702b35a1757bb0f4570a9438e6b87922",
+    "bytes": 385
+  },
+  "source-effects": {
+    "present": true,
+    "source": "/tmp/qcore-fb-lifetime-s3/private/fb-lifetime-s3/measure-final-1/system/resource-diagnostics.source-effects.json",
+    "sha256": "e7e0d254d9e7ee199672b981e3fc764b702b35a1757bb0f4570a9438e6b87922",
+    "bytes": 385
+  },
+  "contracts": {
+    "present": true,
+    "source": "/tmp/qcore-fb-lifetime-s3/private/fb-lifetime-s3/measure-final-1/system/resource-diagnostics.contracts.json",
+    "sha256": "d21ad38167f1b7a883baf669cd3927f4e0fc5765d33e613d4cc9ef07f275eeb0",
+    "bytes": 7071380
+  },
+  "static_custody_counts": {
+    "Unknown": 345,
+    "Safe": 99,
+    "Unsafe": 4
+  },
+  "system-null.jsonl": {
+    "source": "/tmp/qcore-fb-lifetime-s3/private/fb-lifetime-s3/measure-final-1/system/system-null.jsonl",
+    "bytes": 1444109,
+    "sha256": "94bb889e9c8daf05492fa310e94427cec9b8b7f0a9e619827ae0267f0fffb6c3"
+  },
+  "system-null.summary.json": {
+    "source": "/tmp/qcore-fb-lifetime-s3/private/fb-lifetime-s3/measure-final-1/system/system-null.summary.json",
+    "bytes": 64362,
+    "sha256": "3b6f7952527929102b032a1c9c944c3c6615006f6ff560105871e83886931b0f"
+  },
+  "system-outer.json": {
+    "source": "/tmp/qcore-fb-lifetime-s3/private/fb-lifetime-s3/measure-final-1/system/system-outer.json",
+    "bytes": 67204,
+    "sha256": "0d6a17e207487ef544379b10e1d5e6ad6b15e1c792f4f1e11fb606f67f8f4977"
+  }
+}

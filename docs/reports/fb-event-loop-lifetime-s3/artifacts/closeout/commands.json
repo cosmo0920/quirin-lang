@@ -1,0 +1,30 @@
+[
+  {
+    "name": "docs-index-build",
+    "command": "python3 scripts/build_docs_index.py",
+    "exit": 0,
+    "private_log": "/tmp/qcore-fb-lifetime-s3/private/fb-lifetime-s3/docs-index-build-1.log",
+    "archived_log": "docs-index-build.log.gz"
+  },
+  {
+    "name": "matrix-build",
+    "command": "python3 docs/reports/remaining-d02/build_matrix.py . --gate docs/reports/fb-event-loop-lifetime-s3/gate.json",
+    "exit": 0,
+    "private_log": "/tmp/qcore-fb-lifetime-s3/private/fb-lifetime-s3/matrix-build-1.log",
+    "archived_log": "matrix-build.log.gz"
+  },
+  {
+    "name": "python-postmatrix",
+    "command": "python3 -m unittest discover -s scripts/tests",
+    "exit": 0,
+    "private_log": "/tmp/qcore-fb-lifetime-s3/private/fb-lifetime-s3/python-postmatrix-1.log",
+    "archived_log": "python-postmatrix.log.gz"
+  },
+  {
+    "name": "docs-index-check",
+    "command": "python3 scripts/build_docs_index.py --check",
+    "exit": 0,
+    "private_log": "/tmp/qcore-fb-lifetime-s3/private/fb-lifetime-s3/docs-index-check-1.log",
+    "archived_log": "docs-index-check.log.gz"
+  }
+]

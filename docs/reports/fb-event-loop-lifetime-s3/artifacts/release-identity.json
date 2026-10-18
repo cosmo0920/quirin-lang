@@ -1,0 +1,11 @@
+{
+  "head": "14dfc6aac79070f3c1d946e22c1247addf7978e8",
+  "implementation_source": "d0a48bfd612e875254e72a4852e6930e718159cf",
+  "binary": "/tmp/qcore-fb-lifetime-s3/target/release/quirin-audit",
+  "retained_binary": "/tmp/qcore-fb-lifetime-s3/private/fb-lifetime-s3/quirin-audit-s3",
+  "sha256": "f5ca84194827defe0c5dc36f59d7424ccf1e91eb252e324e0e2d5c458eedd974",
+  "build_exit": 0,
+  "build_private_log": "/tmp/qcore-fb-lifetime-s3/private/fb-lifetime-s3/release-build-1.log",
+  "schema_major": 18,
+  "compatibility_closeout": "Pending final cumulative coordinated schema19 gates/packages/audits before publication; this is a frozen18 semantic checkpoint."
+}

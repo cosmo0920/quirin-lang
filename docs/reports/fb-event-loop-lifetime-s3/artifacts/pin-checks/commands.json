@@ -1,0 +1,147 @@
+{
+  "steps": [
+    {
+      "name": "corpus-time",
+      "command": [
+        "/tmp/qcore-fb-lifetime-s3/target/release/quirin-audit",
+        "pin",
+        "--source-root",
+        "/home/cosmo/Documents/GitHub/qcore-c/build/cycle19/c-gateway-wave-pin/fluent-bit-clang-source",
+        "--check",
+        "--crate",
+        "quirin-provider-fluent-bit",
+        "--function",
+        "flb_input_set_collector_time"
+      ],
+      "exit": 0,
+      "private_log": "/tmp/qcore-fb-lifetime-s3/private/fb-lifetime-s3/pin-checks-1/corpus-time.log"
+    },
+    {
+      "name": "corpus-flb-outer",
+      "command": [
+        "/tmp/qcore-fb-lifetime-s3/target/release/quirin-audit",
+        "pin",
+        "--source-root",
+        "/home/cosmo/Documents/GitHub/qcore-c/build/cycle19/c-gateway-wave-pin/fluent-bit-clang-source",
+        "--check",
+        "--outer",
+        "--crate",
+        "quirin-provider-fluent-bit"
+      ],
+      "exit": 0,
+      "private_log": "/tmp/qcore-fb-lifetime-s3/private/fb-lifetime-s3/pin-checks-1/corpus-flb-outer.log"
+    },
+    {
+      "name": "corpus-rk-outer",
+      "command": [
+        "/tmp/qcore-fb-lifetime-s3/target/release/quirin-audit",
+        "pin",
+        "--source-root",
+        "/home/cosmo/Documents/GitHub/qcore-c/build/cycle19/c-gateway-wave-pin/fluent-bit-clang-source",
+        "--check",
+        "--outer",
+        "--crate",
+        "qcore-provider-librdkafka"
+      ],
+      "exit": 0,
+      "private_log": "/tmp/qcore-fb-lifetime-s3/private/fb-lifetime-s3/pin-checks-1/corpus-rk-outer.log"
+    },
+    {
+      "name": "system-time",
+      "command": [
+        "/tmp/qcore-fb-lifetime-s3/target/release/quirin-audit",
+        "pin",
+        "--source-root",
+        "/home/cosmo/Documents/GitHub/qcore-c/private/w45-fb/w46-external-callee-contracts/attempt-1/fluent-bit-clang-source",
+        "--check",
+        "--crate",
+        "quirin-provider-fluent-bit",
+        "--function",
+        "flb_input_set_collector_time"
+      ],
+      "exit": 0,
+      "private_log": "/tmp/qcore-fb-lifetime-s3/private/fb-lifetime-s3/pin-checks-1/system-time.log"
+    },
+    {
+      "name": "system-flb-outer",
+      "command": [
+        "/tmp/qcore-fb-lifetime-s3/target/release/quirin-audit",
+        "pin",
+        "--source-root",
+        "/home/cosmo/Documents/GitHub/qcore-c/private/w45-fb/w46-external-callee-contracts/attempt-1/fluent-bit-clang-source",
+        "--check",
+        "--outer",
+        "--crate",
+        "quirin-provider-fluent-bit"
+      ],
+      "exit": 0,
+      "private_log": "/tmp/qcore-fb-lifetime-s3/private/fb-lifetime-s3/pin-checks-1/system-flb-outer.log"
+    },
+    {
+      "name": "system-rk-outer",
+      "command": [
+        "/tmp/qcore-fb-lifetime-s3/target/release/quirin-audit",
+        "pin",
+        "--source-root",
+        "/home/cosmo/Documents/GitHub/qcore-c/private/w45-fb/w46-external-callee-contracts/attempt-1/fluent-bit-clang-source",
+        "--check",
+        "--outer",
+        "--crate",
+        "qcore-provider-librdkafka"
+      ],
+      "exit": 0,
+      "private_log": "/tmp/qcore-fb-lifetime-s3/private/fb-lifetime-s3/pin-checks-1/system-rk-outer.log"
+    },
+    {
+      "name": "slice-time",
+      "command": [
+        "/tmp/qcore-fb-lifetime-s3/target/release/quirin-audit",
+        "pin",
+        "--source-root",
+        "/home/cosmo/Documents/GitHub/qcore-c/private/w47-tail/attempt-1/prep/fluent-bit-clang-source",
+        "--check",
+        "--crate",
+        "quirin-provider-fluent-bit",
+        "--function",
+        "flb_input_set_collector_time"
+      ],
+      "exit": 0,
+      "private_log": "/tmp/qcore-fb-lifetime-s3/private/fb-lifetime-s3/pin-checks-1/slice-time.log"
+    },
+    {
+      "name": "slice-flb-outer",
+      "command": [
+        "/tmp/qcore-fb-lifetime-s3/target/release/quirin-audit",
+        "pin",
+        "--source-root",
+        "/home/cosmo/Documents/GitHub/qcore-c/private/w47-tail/attempt-1/prep/fluent-bit-clang-source",
+        "--check",
+        "--outer",
+        "--crate",
+        "quirin-provider-fluent-bit"
+      ],
+      "exit": 1,
+      "private_log": "/tmp/qcore-fb-lifetime-s3/private/fb-lifetime-s3/pin-checks-1/slice-flb-outer.log"
+    },
+    {
+      "name": "slice-rk-outer",
+      "command": [
+        "/tmp/qcore-fb-lifetime-s3/target/release/quirin-audit",
+        "pin",
+        "--source-root",
+        "/home/cosmo/Documents/GitHub/qcore-c/private/w47-tail/attempt-1/prep/fluent-bit-clang-source",
+        "--check",
+        "--outer",
+        "--crate",
+        "qcore-provider-librdkafka"
+      ],
+      "exit": 1,
+      "private_log": "/tmp/qcore-fb-lifetime-s3/private/fb-lifetime-s3/pin-checks-1/slice-rk-outer.log"
+    }
+  ],
+  "non_green_extra_preflights": [
+    "slice-flb-outer",
+    "slice-rk-outer"
+  ],
+  "interpretation": "These strict outer checks require this exact git revision in reviewed_at. Both slice checks are non-green because 34155955 is unrecorded, while the logs report all 3 identities in force through identical reviewed 046/669 bodies, 0 not in force, 0 stale. They are additional preflights, not mandatory exact-revision recording gates. Actual slice runtime inventory must independently retain 3 in force / 0 held. Changed S3 time declaration checks on all 3 trees are 0."
+}

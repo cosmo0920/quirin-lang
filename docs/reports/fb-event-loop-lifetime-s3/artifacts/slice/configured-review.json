@@ -1,0 +1,184 @@
+{
+  "meaning": "Raw differences remain archived. All configured custody rows agree after checkout-path normalization; no changed compile/source/scope field is discarded.",
+  "route": "slice",
+  "units": 16,
+  "configuration_rows": 404,
+  "configuration_identity_changes": [
+    {
+      "unit_index": 0,
+      "file": "src/flb_input.c",
+      "digest_mapping": {
+        "193c72ab3c2a14196b164a4efd161e169f07fbce82ad7367000c64eb89721b99": "c71a6b057343a3678427f77c32a22b211e47c5a28032a64e2687ddf591de5082",
+        "ac649bd66f18bdf2f01f3bd9a459d430e75af2a8465385c86a3e41e9259af7b7": "333ef20f1a43d8b9557ecd8037c3ead3c5c8d02051181ae32789ab72370ac3d0"
+      }
+    },
+    {
+      "unit_index": 1,
+      "file": "src/flb_input.c",
+      "digest_mapping": {
+        "193c72ab3c2a14196b164a4efd161e169f07fbce82ad7367000c64eb89721b99": "c71a6b057343a3678427f77c32a22b211e47c5a28032a64e2687ddf591de5082",
+        "81e5a6aa186e3abbf93deea14af8bec933c8721d0e81071a8caaa319568fa656": "97a1c025289dfc247bf100c4beca4c55bbfd003d08e15be7dbfc581ee782c0e4"
+      }
+    },
+    {
+      "unit_index": 2,
+      "file": "src/flb_input_thread.c",
+      "digest_mapping": {
+        "193c72ab3c2a14196b164a4efd161e169f07fbce82ad7367000c64eb89721b99": "c71a6b057343a3678427f77c32a22b211e47c5a28032a64e2687ddf591de5082",
+        "7c8a4bbd20fb8f07ade121d92c03e04616ad9775173ae3851e1503caf9a1b3ca": "c4a2d98ac5ea12f8100f9fa14140d968fac6f991c30802ce2fb516f755603a43"
+      }
+    },
+    {
+      "unit_index": 3,
+      "file": "src/flb_input_thread.c",
+      "digest_mapping": {
+        "193c72ab3c2a14196b164a4efd161e169f07fbce82ad7367000c64eb89721b99": "c71a6b057343a3678427f77c32a22b211e47c5a28032a64e2687ddf591de5082",
+        "9dd35aa011b6b5fb791064dc17cd7b56b227dbc69f97411fb8e77b37a9805cb8": "39923297837f13f0461fa4c49f0937725f018d5287c1b75328fb30abb0c7d907"
+      }
+    },
+    {
+      "unit_index": 4,
+      "file": "src/flb_lib.c",
+      "digest_mapping": {
+        "193c72ab3c2a14196b164a4efd161e169f07fbce82ad7367000c64eb89721b99": "c71a6b057343a3678427f77c32a22b211e47c5a28032a64e2687ddf591de5082",
+        "8205e35f3f24574ffd0d011ffb08fda5732be0edf33f36e584d003763db66650": "6dbbe79e083136658e06acd664868968303a4b773871a02a39f41de84b190216"
+      }
+    },
+    {
+      "unit_index": 5,
+      "file": "src/flb_lib.c",
+      "digest_mapping": {
+        "193c72ab3c2a14196b164a4efd161e169f07fbce82ad7367000c64eb89721b99": "c71a6b057343a3678427f77c32a22b211e47c5a28032a64e2687ddf591de5082",
+        "6372fa5b297ca0a96f187ee06ef16a8a052b2b23b1981400c5e8a44a94126bd9": "743f9e2f4f2e7118bbc1da7c575848e42c83a335d7564733061876991dab94b2"
+      }
+    },
+    {
+      "unit_index": 6,
+      "file": "plugins/in_tail/tail.c",
+      "digest_mapping": {
+        "193c72ab3c2a14196b164a4efd161e169f07fbce82ad7367000c64eb89721b99": "c71a6b057343a3678427f77c32a22b211e47c5a28032a64e2687ddf591de5082",
+        "c44b19d9d256d51914e079e4db920959e7381067c52fe0420ae5fb272d3e7a31": "5019292f1c4112db018d28597a2330420859d5696908d82e95566b0bc0c044d1"
+      }
+    },
+    {
+      "unit_index": 7,
+      "file": "plugins/in_tail/tail_config.c",
+      "digest_mapping": {
+        "193c72ab3c2a14196b164a4efd161e169f07fbce82ad7367000c64eb89721b99": "c71a6b057343a3678427f77c32a22b211e47c5a28032a64e2687ddf591de5082",
+        "724b36f8b928ca1336c0b152bad1ffafc21e4a9fdbf29c0cd0c049b31d078dee": "f2474d9990826d2b348fcacd146cdb7cdb2ede8a3fbf1faa8d79828d76a7813e"
+      }
+    },
+    {
+      "unit_index": 8,
+      "file": "plugins/in_tail/tail_db.c",
+      "digest_mapping": {
+        "193c72ab3c2a14196b164a4efd161e169f07fbce82ad7367000c64eb89721b99": "c71a6b057343a3678427f77c32a22b211e47c5a28032a64e2687ddf591de5082",
+        "1d6614d6e1f58902dfc790cb711cb660167acbc2729cfe678b9b09918d0a9f69": "2692acd4c775543c903b33b473be119bb8f7a67e863e502cb5e48d65daf9062b"
+      }
+    },
+    {
+      "unit_index": 9,
+      "file": "plugins/in_tail/tail_dockermode.c",
+      "digest_mapping": {
+        "193c72ab3c2a14196b164a4efd161e169f07fbce82ad7367000c64eb89721b99": "c71a6b057343a3678427f77c32a22b211e47c5a28032a64e2687ddf591de5082",
+        "560a60e7ff3b7bf34b9f64fd869e12a5205d1f6e864abcb5f192aede608c0178": "f8d819c7ce49531cd22788275ec3304752dcc312ee7a540d82bed8cc49486bf1"
+      }
+    },
+    {
+      "unit_index": 10,
+      "file": "plugins/in_tail/tail_file.c",
+      "digest_mapping": {
+        "193c72ab3c2a14196b164a4efd161e169f07fbce82ad7367000c64eb89721b99": "c71a6b057343a3678427f77c32a22b211e47c5a28032a64e2687ddf591de5082",
+        "9ae95a454306de3439d4b79872463efc0d66f1e462d618e3d568362f64ba7533": "4bf6b7d6efe22e9ce6851c93a5bfd3ced859d4c4bd5b3a9f519a8d3ac7b72184"
+      }
+    },
+    {
+      "unit_index": 11,
+      "file": "plugins/in_tail/tail_file_budget.c",
+      "digest_mapping": {
+        "193c72ab3c2a14196b164a4efd161e169f07fbce82ad7367000c64eb89721b99": "c71a6b057343a3678427f77c32a22b211e47c5a28032a64e2687ddf591de5082",
+        "2c557a735d8701d44d2f2242fda0effcbef5593f20b0fd9e2ee5ad74ba8c3a5a": "41af092202ac005bbaa74e61006a2fcf046c552237905c99ab6bed965c0488d2"
+      }
+    },
+    {
+      "unit_index": 12,
+      "file": "plugins/in_tail/tail_fs_inotify.c",
+      "digest_mapping": {
+        "193c72ab3c2a14196b164a4efd161e169f07fbce82ad7367000c64eb89721b99": "c71a6b057343a3678427f77c32a22b211e47c5a28032a64e2687ddf591de5082",
+        "8acc9f978c798fe897430fd8a76a3cc0ab562ffb9d74065f5c9f0bd70f5a53ee": "63e9715aa9421eedc8f1e489e4ff1aff94d03847dbe8559b627c8f476423d620"
+      }
+    },
+    {
+      "unit_index": 13,
+      "file": "plugins/in_tail/tail_fs_stat.c",
+      "digest_mapping": {
+        "193c72ab3c2a14196b164a4efd161e169f07fbce82ad7367000c64eb89721b99": "c71a6b057343a3678427f77c32a22b211e47c5a28032a64e2687ddf591de5082",
+        "72c453a13b15c1f474aee0a4be27e8e85481ebbe7ef04d67448c467bad1ed73f": "1eb3cf644e6bbf872b75ac68da983b49df3f25c4a7502120b11411a110fc1513"
+      }
+    },
+    {
+      "unit_index": 14,
+      "file": "plugins/in_tail/tail_multiline.c",
+      "digest_mapping": {
+        "193c72ab3c2a14196b164a4efd161e169f07fbce82ad7367000c64eb89721b99": "c71a6b057343a3678427f77c32a22b211e47c5a28032a64e2687ddf591de5082",
+        "21bfc4fcf159aef76491d4660d6b1554307ec02f1a10e2086e87f97965b85389": "0310faf0880711401b9f56fc96030149585ec7e159bcfc703c4cb5b40d5f6a91"
+      }
+    },
+    {
+      "unit_index": 15,
+      "file": "plugins/in_tail/tail_scan.c",
+      "digest_mapping": {
+        "193c72ab3c2a14196b164a4efd161e169f07fbce82ad7367000c64eb89721b99": "c71a6b057343a3678427f77c32a22b211e47c5a28032a64e2687ddf591de5082",
+        "0758dda2b6161a94d5405a74f35fcba1be7e975b62d5f71bb8de6168ccfbfbf3": "920e7c4a683e948964ac728c93d418820cb8ae431cb36899a0f30b61d79b4dc6"
+      }
+    }
+  ],
+  "new_uncovered_protocol_clauses": [
+    {
+      "unit_index": 0,
+      "file": "src/flb_input.c",
+      "host": "flb_input_set_collector_time",
+      "clause": "quant registered #coll: flb_input_collector.event |-> flb_input_collector.evl",
+      "evidence": [],
+      "meaning": "new protocol clause is explicitly uncovered; ordinary W4 evidence does not validate it"
+    },
+    {
+      "unit_index": 1,
+      "file": "src/flb_input.c",
+      "host": "flb_input_set_collector_time",
+      "clause": "quant registered #coll: flb_input_collector.event |-> flb_input_collector.evl",
+      "evidence": [],
+      "meaning": "new protocol clause is explicitly uncovered; ordinary W4 evidence does not validate it"
+    }
+  ],
+  "changed_contract_fields": [
+    "callback_members",
+    "contract_dependencies",
+    "contract_revision",
+    "contracts"
+  ],
+  "changed_module_texts": {
+    "$CHECKOUT/contract/profiles/fluent-bit/../../../providers/quirin-provider-fluent-bit/contracts/fluent_bit/input_collector_registration.qv": [
+      "--- before\n",
+      "+++ after\n",
+      "@@ -42,6 +42,11 @@\n",
+      "     ensures normal resource_borrowed(nanoseconds);",
+      "     ensures normal resource_borrowed(config);",
+      "     ensures normal resource_callback_member_registered(#id, flb_input_collector.cb_collect, cb_collect) where #id = #result in ins.collectors;",
+      "+    // S3: exact self-record lifetime footprint, shared by all collector kinds.",
+      "+    // Unchecked registration/store closure is a named DeclaredAssumption;",
+      "+    // this line neither equates evl to config/worker loops nor discharges",
+      "+    // caller release obligations, and does not assert a checked thread join.",
+      "+    quant registered #coll: flb_input_collector.event |-> flb_input_collector.evl;",
+      "     ensures normal resource_return_none();",
+      " };",
+      " "
+    ]
+  },
+  "all_other_fields_unchanged": true,
+  "byte_identical_artifacts": [
+    "chunk-contracts",
+    "source-effects"
+  ],
+  "source_artifact": "not emitted on either configured route"
+}

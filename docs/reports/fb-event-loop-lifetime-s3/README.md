@@ -8,7 +8,9 @@ teardown remain unresolved; syntax alone never supplies either proof.
 Preparation base: `654e2b7eed72374b02ea39ef41059f7a9149b776`; integration
 base: `e8b9ff07d`; frozen analyzer/proof source: `d0a48bfd6`. Branch:
 `codex/fb-lifetime-s3`, isolated at `/tmp/qcore-fb-lifetime-s3`.
-Fresh production measurements and final record reconciliation are pending.
+Fresh corpus, system and slice measurements all exit 0. This is the frozen
+schema-18 semantic checkpoint; the coordinated unpublished schema-19 event
+with the detach card must close compatibility before push.
 
 The task is the existing ledger entry `FB-EVENT-LOOP-CROSS-FUNCTION-LIFETIME`:
 implement the user's S3 declared lifetime protocols after the access/identity
@@ -102,6 +104,63 @@ model identifiers do not prove production canonicalization: exact typed source,
 condition/member identity, formal-to-actual substitution and stable object/value
 snapshots remain explicit extraction premises. The source route rechecks its
 bounded evidence and refuses unsupported correspondence.
+
+## Compatibility boundary
+
+The running semantic checkpoint and its package artifacts use unpublished
+`qcore-schemas 18.0.0`. S3 adds two public Rust struct fields:
+
+| Field | Migration for existing construction | Absent-field wire behavior |
+|---|---|---|
+| `ResourceSummaryRecord.lifetime_effects: Vec<ForwardedLifetime>` | Add `Vec::new()` or use `ResourceSummaryRecord::new` | Defaults empty; omitted when empty |
+| `RetainingContract.lifetime: Option<LoopLifetimeContract>` | Add `None` or use `RetainingContract::custody_only` | Defaults absent; omitted when absent |
+
+Old wire bytes remain unchanged for declarations/summaries using no new
+feature. That does not make public Rust struct additions source-compatible:
+the schema README's 2.0/3.0 precedents require a major compatibility event.
+This omission was found after the schema18 gate/package checkpoint and is
+explicitly not waived. The coordinator selected one unpublished schema19
+compatibility event covering these fields and the concurrent detach card's
+new return-mode variant. Its final cumulative gates, all five package
+rebuilds/verifies and production audits are required before push. S3's
+schema18 results are a frozen semantic checkpoint, not the final publishable
+compatibility state. No unmerged detach variant or version is inserted into
+the running measurement.
+
+## Validation checkpoint
+
+The frozen analyzer/proof source `d0a48bfd6` passes the host-access standing
+phase: **8,307 Rust passed / 0 failed / 15 ignored** (516 units, 529 summaries),
+format, clippy, both reevaluation examples and **341 Lean audits** all exit 0.
+The [actual commands and private paths](artifacts/final-standing-gate/commands.json)
+retain the exact source and full runner summary. Post-reconciliation matrix
+regeneration, all **374 root Python tests** (26.229s) and the documentation
+index check also exit 0; [closeout receipts](artifacts/closeout/commands.json)
+record their exact private paths.
+
+The [provider gate](artifacts/provider-gate/commands.json) passes contract
+sync/check, **133 Rust tests / 0 failed / 1 ignored** (43 summaries), format,
+clippy and **25 Python tests**, package build and all five explicit verifies,
+all exits 0. These are the schema18 checkpoint packages; the coordinated
+schema19 event requires fresh cumulative packages before publication.
+
+[Earlier attempts](artifacts/attempts/) remain separate: the first full build
+stopped at an exhaustive test match for the new frontend variants, then clippy
+style findings; the first host suite passed all 8,307 tests but exposed further
+style findings. The final frozen gate supersedes those failures. Preparation
+compiler/proof/fixture and provider-sync failures are retained with their
+actual exits/private logs, including the misplaced initial provider line that
+was corrected before pinning. No safety boundary, sanitizer setting or negative-control verdict
+requirement was weakened. The sandboxed submodule config failure 128 and host retry 0 are
+retained; actual native suites run with host access.
+
+The changed time-host [source-pin checks](artifacts/pin-checks/commands.json)
+pass on all three prepared trees. Corpus/system outer checks pass; the two
+extra strict slice outer checks return 1 because its git revision is not
+recorded in `reviewed_at`, while every loader body identity is in force through
+the reviewed 669/046 bytes (0 stale, 0 not in force). Those checks are recorded
+as non-green, not waived mandatory gates or all-green pin checks. The fresh
+slice runtime inventory must independently confirm 3 in force / 0 held.
 
 ## Measurement and completion
 
@@ -213,3 +272,83 @@ interface. They grant no entry premise or effect. Only an active declaration
 can supply its body's conditional requires. The publication policy has shared
 Rust/Lean vectors, and three-function controls check both missing and matching
 guarded caller contexts.
+
+## Composed production measurement
+
+The retained binary SHA-256 is
+`f5ca84194827defe0c5dc36f59d7424ccf1e91eb252e324e0e2d5c458eedd974`.
+Invocations record documentation checkpoint `14dfc6aac`; analyzer/proof source
+is frozen at `d0a48bfd6`. Exact commands, source/configuration/link-map hashes,
+times and all primary artifacts are in [measurement.json](artifacts/measurement.json)
+and each route's `before`/`after` manifests. The baseline remains lexical
+`913a72a91`, with its original RK envelope. This measures the composed S3 and
+RK scope correction, using the source-equivalence argument above; it is not
+an isolated S3 runtime experiment.
+
+| Route | Rows | Safe before → after | Unknown before → after | Other statuses | Audit |
+| --- | ---: | ---: | ---: | --- | --- |
+| Corpus | 4,834 | 963 → 961 | 3,862 → 3,864 | 9 provisional Unsafe unchanged | exit 0, 51m 27s |
+| System | 448 configurations | 99 → 99 | 345 → 345 | 4 provisional Unsafe unchanged | exit 0, 6m 43s |
+| Slice | 404 configurations | 53 → 53 | 346 → 346 | 4 Pending, 1 Unsafe unchanged | exit 0, 5m 39s |
+
+All 5,781 static null-property dictionaries are identical. No production row
+is promoted by a lifetime assumption. The corpus loses two admissions:
+`rd_kafka_event_destroy` and `ut_op_destroy_free`, direct wrappers around
+`rd_kafka_op_destroy`. New lifetime tokens `event`, `evl` and
+`flb_input_collector` expand the existing member pre-pass. Corpus reads change
+from 987/0 unread to 1,059/36 unread over 1,444 units; system from 966/0 to
+1,038/36 over 1,419, and slice from 968/0 to 1,040/36 over 1,421. Every route
+takes 2 → 4 rounds and retains 100 → 12 scope exclusions, with 88 dropped:
+77 cite `minilua.c` naming `event`, 11 cite `flb_config.h` naming `event`/`evl`.
+The 36 unread entries comprise two C++ units and 34 preprocessing failures,
+including missing generated files/headers. Existing run-global unread policy
+therefore opens every callback closure, including `rd_kafka_op_s.rko_op_cb`.
+This is conservative source-read exposure, not a lifetime violation.
+`prepass-review.json` retains all unread reasons, exclusions, changed closures
+and the existing exercised Rust/Lean refusal controls. Restoring precision
+requires independently proved graph isolation or readable inputs under
+`S3-PREPASS-UNREAD-GRAPH-ISOLATION`; unread input cannot be ignored.
+
+Every changed row is retained and reviewed: corpus has 89 diagnostic changes,
+all librdkafka closure consequences, and seven additional dependency-only rows
+after `ut_op_destroy_free` loses its inferred summary. Both demoted source
+bodies were read. The configured routes retain every custody diagnostic;
+their four/eight raw row changes are review-hold checkout paths. Slice adds
+the new protocol clause with an **empty** body-evidence list in both
+`flb_input.c` configurations. W4 does not validate that clause. The run's
+protocol remains a named DeclaredAssumption with explicitly unchecked sites,
+not a validated global protocol. Supported same-unit forwarding, independent
+replay and conditional prerequisite positives/negatives are exercised by the
+green Rust/Lean gate; unresolved production callers stay unresolved.
+
+The five artifact families are accounted separately. Source wrappers and
+chunk contracts are unchanged; the sole resource module text change is the
+collector registration declaration. All 185 corpus cross-unit resolution
+changes are environment hashes, with identical functions, home paths and
+raw/preprocessed sources. Three source-effect results have only 17 SHA-256
+scalar changes and derived obligation-ID changes; all other normalized values
+and structure agree. Full raw differences and comparison-only normalized
+reviews remain archived. The first slice postprocessing check failed because
+it expected no body-evidence additions; its log is retained, and the corrected
+check explicitly requires the new clause's empty evidence rather than
+silently discarding it.
+
+RK scope attribution matches the historical four-key dependency census:
+under both all-loaded and RK-only, null Pending → Unknown is **1/2/16** rows
+and combined Pending → Unknown **1/2/0**, corpus/system/slice. Fluent Bit-only
+null and combined projections are unchanged by that envelope correction.
+Every affected null reason explicitly says RK lacks the corresponding
+`#kept` line. Corpus additionally removes the two demoted bodies' custody and
+combined Pending moves in every scenario. All-loaded corpus custody is
+**931 Safe / 30 Pending / 3,864 Unknown / 9 provisional Unsafe**; null is
+**2,386 / 162 / 2,355 / 18**, combined **808 / 30 / 4,056 / 27** in
+Safe/Pending/Unknown/Unsafe order. Digest-only RK reason changes are retained
+separately in each `runtime-attribution.json`. Every fresh projection has two
+outer contracts in force and all three loaders without a pin hold, including
+slice's reviewed-body identity reuse; the extra strict slice outer CLI
+preflights still exit 1 as disclosed above.
+
+The original committed prediction is preserved. Its lack of predicted
+production promotions holds, but the two callback-closure demotions were not
+predicted release obligations and are an explicit precision residual. No
+unjoined teardown reading is validated and no deployment claim follows.

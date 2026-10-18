@@ -1,0 +1,13 @@
+{
+  "note": "FB-EVENT-LOOP-LIFETIME-S3 frozen schema 18 semantic checkpoint at analyzer/proof d0a48bfd6 on integration base e8b9ff07d. Host-access standing gate 3: 516 units/529 summaries, 8307 passed/0 failed/15 ignored; 341 Lean; 374 root Python after matrix regeneration. Fresh provider gate 133 Rust/0 failed/1 ignored, 25 Python,all five schema 18 packages verified. All three composed production audits exit 0. Exact commands/exits/private logs and earlier failures retained in report artifacts; extra strict slice outer pin preflights exit 1 and are disclosed. This is not final publishable compatibility state: coordinated unpublished schema 19 migration plus final cumulative detach gates/packages/audits required before push.",
+  "workspace_tests": 8307,
+  "provider_tests": 133,
+  "python_evidence_validator_tests": 374,
+  "reevaluation_probe_exit": 0,
+  "reevaluation_followup_exit": 0,
+  "cargo_fmt": "clean",
+  "cargo_clippy": "clean",
+  "standing_gate": "complete",
+  "lean_audits": 341,
+  "clang": "present: Ubuntu clang version 21.1.8 (6ubuntu1)"
+}
