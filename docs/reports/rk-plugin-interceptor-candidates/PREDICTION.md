@@ -1,0 +1,5 @@
+# RK-PLUGIN-INTERCEPTOR-CANDIDATES prediction
+
+Base `1543259f0e32c8a003a9062e7de7f59a42dd4519`. This card reads public interceptor registration and list identities at both audited revisions, declares only expressible callback candidates, and extends both runtime outer envelopes only under explicit reviewable restrictions. Unsupported members remain Unknown. No deployment is certified and Pending is never promoted to Safe.
+
+Prediction before implementation: static corpus, system and slice verdicts stay identical. Candidate-backed interceptor facts may move runtime Unknown to Pending under the paired outer envelopes; zero movement is acceptable where another independent blocker remains. The existing 32 runtime custody Pending rows stay non-Safe. Every actual move will be read and its assumptions recorded. All-standing and full provider gates are required. Scope excludes W48 body summaries, lexical precedence and S3 syntax. Common integration files are STATUS, the acceptance matrix and the current increment record. No main merge or push.
