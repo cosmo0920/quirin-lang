@@ -657,6 +657,9 @@ impl<'f> Reader<'f> {
         if matches!(facts.result, ResourceReturnMode::Reallocated { .. }) {
             return Err(Refusal::Clause(callee, "a reallocated result"));
         }
+        if matches!(facts.result, ResourceReturnMode::Removed { .. }) {
+            return Err(Refusal::Clause(callee, "a same-item removed result"));
+        }
         if actuals.len() != facts.modes.len() && !(facts.tail && actuals.len() > facts.modes.len())
         {
             return Err(Refusal::Arity(callee));

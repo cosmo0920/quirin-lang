@@ -6292,6 +6292,23 @@ own anchor here.
     in every other unit. Unit tests in `legacy_slot_move_borrow.rs`, the
     withdrawal control in `tests/slot_move_interior_borrow.rs`; [report](../reports/slot-move-and-interior-borrow/README.md).
 
+**Amendment (CJSON-DETACH-SAME-ITEM, user decision 2026-10-18):** the bounded
+`resource_return_removed(item, n)` result returns the same checked-contained
+identity, never fresh custody. `legacy_detach` checks sole-owner membership,
+settled identity and a unique live parent before any call effects; NULL item
+moves nothing. In a defining unit it checks the complete physical unlink
+frame and same-record `child`/`next`/`prev` layout, under the exact named
+`detach_list_representation` premise (contract spec C04.3.5). The premise states
+finite acyclic child/next representation, first.prev = tail including singleton,
+predecessor links, last.next = NULL and no concurrent writer. It never supplies
+membership, alias or return identity evidence, remains DeclaredAssumption and
+is retained in dependent results/replay. No successful template check is full
+body safety or validation of that premise. Wrong parent, borrowed-only
+provenance and ambiguous/unknown relations refuse; whole-return and passed
+consumers restricted to fresh results still refuse. Ordinary W4 never forgets
+the effect into borrowed-only custody. `QCore.DetachSameItem`; the report
+`docs/reports/cjson-detach-same-item/README.md` records the measured boundary.
+
 <a id="constraint-13b"></a>
 
 13b. **A reference count is a resource kind: each function balances the

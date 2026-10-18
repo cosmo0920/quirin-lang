@@ -1597,6 +1597,23 @@ impl Parser<'_> {
                         writes: self.refused_writes(&texts),
                     };
                 }
+                // A proved null actual of the removed result is a value,
+                // not a missing argument. `0` cannot name a C object. Raw
+                // NULL identifiers are excluded: preprocessing must establish
+                // their value before this new route interprets them.
+                if let ResourceReturnMode::Removed { parameter, .. } = contract.result
+                    && raw_arguments
+                        .as_ref()
+                        .and_then(|args| args.get(parameter))
+                        .is_some_and(|argument| {
+                            !argument
+                                .iter()
+                                .any(|word| matches!(*word, "NULL" | "nullptr"))
+                                && return_call::is_null_pointer_constant(argument)
+                        })
+                {
+                    arguments[parameter] = Some("0".to_owned());
+                }
                 // Card W43-LIBC-RESULT-ALIAS: a derived result names its base,
                 // and the base must be something this projection can look up.
                 // `derived_base` reads a place, a place plus or minus one
@@ -1658,7 +1675,9 @@ impl Parser<'_> {
                 };
                 let produced_count = usize::from(!matches!(
                     contract.result,
-                    ResourceReturnMode::None | ResourceReturnMode::Derived { .. }
+                    ResourceReturnMode::None
+                        | ResourceReturnMode::Derived { .. }
+                        | ResourceReturnMode::Removed { .. }
                 )) + contract
                     .parameters
                     .iter()

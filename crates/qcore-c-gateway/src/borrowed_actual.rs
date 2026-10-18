@@ -318,6 +318,7 @@ fn result_code(result: qcore_schemas::contract::ResourceReturnMode) -> &'static 
         qcore_schemas::contract::ResourceReturnMode::Owned { .. } => "owned",
         qcore_schemas::contract::ResourceReturnMode::Reallocated { .. } => "reallocated",
         qcore_schemas::contract::ResourceReturnMode::Derived { .. } => "derived",
+        qcore_schemas::contract::ResourceReturnMode::Removed { .. } => "removed",
     }
 }
 

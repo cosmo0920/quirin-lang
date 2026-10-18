@@ -232,6 +232,7 @@ Exactly one result predicate is required:
 |---|---|
 | `resource_return_none()` | No fresh or replacement custody is returned. The ordinary ABI result may still carry scalar data. |
 | `resource_return_owned(n)` | A non-null modeled result establishes fresh custody; the declared nullability controls the null branch. |
+| `resource_return_removed(p, n)` | The exact item `p` is restored from its checked parent and returned with its existing identity. NULL item transfers nothing. No fresh site is created. See §C04.3.5. |
 | `resource_return_reallocated(p, n)` | The incoming `p` MUST be `Owned`. A null failure preserves that incoming custody; a successful replacement consumes/replaces the old resource exactly once and establishes the result identity. |
 | `resource_return_alias(p, n)` | The result is the value of `p` itself (`memcpy` returns `dst`). With `nullable` the call may return NULL instead; with `nonnull` it never substitutes NULL. The result owns nothing. See §C04.3.1. |
 | `resource_return_interior(p, n)` | The result points into the object `p` points to (`strchr`, `memchr`), or is NULL when `n` is `nullable`. The result owns nothing. See §C04.3.1. |
@@ -353,6 +354,59 @@ contract {
 **Relation to the arena reading.** The interim `cfl_arena_calloc` reading (`resource_return_interior(arena, nullable)`, W47-ARENA-INTERIOR-READING, the user's decision of 2026-09-28) is unchanged: an arena result stays an interior result of C04.3.1, invalidated by the arena's release, and the pool resource kind remains the target (`W47-ARENA-POOL-RESULT-MODE`). A borrowed result is the stricter reading of the same relation (it also ends at a mutation and is never accused); nothing here reads an arena result as borrowed.
 
 **Checked against bodies (rule 13a).** In a unit that defines the declared function, the declaration stands only when the body validates it structurally: the base formal is never assigned and its whole address never taken, and every `return` is NULL or a pointer reached from the base by member reads (through casts, parentheses and offsets), through locals every assignment of which is so reached, or a local assigned from a call whose result the body stores into a member of a reached name before returning it (the lazily created child). A body that does not validate withdraws the declaration in that unit (every call there sees an uncontracted callee, and an inferred summary of the body governs). The Lean model is `QCore.InteriorBorrow`.
+
+### C04.3.5. Checked same-item detach results
+
+Card CJSON-DETACH-SAME-ITEM, user decision 2026-10-18. A declaration MAY state
+`resource_return_removed(item, n)` only beside
+`resource_removed(item, parent, n)` with exactly matching nullability and
+`resource_owned(parent, nonnull)`. The item, parent and result MUST be mutable
+depth-one heap pointers; parent and item MUST be distinct parameters. Every
+other parameter MUST be borrowed. Container/counted-user effects, retaining
+and other rich clause families, variadic tails and no-return clauses are not
+admitted beside this bounded result.
+
+Before applying any effect or rebinding the destination, the caller MUST
+establish a single live settled parent identity and either a proved NULL item
+under `nullable`, or one settled contained item identity whose sole containing
+owner is that parent. A borrowed-from provenance, non-NULL test, list invariant,
+joined owners or undecided relation MUST NOT establish that membership. Missing
+identity, wrong parent, a dead or nullable parent, an already removed item and
+unsettled effects refuse. On success the existing item's binding becomes the
+result and its obligation becomes directly held; no site is created, no other
+child leaves the parent and no existing alias becomes a separate obligation.
+On the NULL item branch nothing transfers. This initial surface conservatively
+refuses NULL parent even where the C API itself accepts it.
+
+In a defining unit, the bounded physical adapter checks the complete unlink
+statement/control/write sequence, up to parameter renaming and actual zero
+constant spellings, on a complete unambiguous record whose `child`, `next` and
+`prev` are ordinary same-record pointers. The sequence updates predecessor and
+successor links, adjusts parent.child or its tail link, clears item's links and
+returns that same item. Missing/extra/misdirected effects or unreadable layouts
+withdraw the declaration before callers or summary inference consult it.
+
+The check additionally requires the exact named premise
+`detach_list_representation` with the standardized statement retained in the
+provider declaration and `legacy_detach::REPRESENTATION_STATEMENT`. It states
+the physical/abstract relation: a finite acyclic child/next chain represents
+exactly the parent's owned children, first.prev is the tail (self for a
+singleton), every other prev is its predecessor, last.next is NULL, child
+identities are distinct from each other and parent, all link targets are live
+children in that list, and no concurrent writer mutates the links during the
+call. This is an explicit conditional representation assumption, not a proof
+of membership or the unlink's conclusion. It remains an uncovered named
+DeclaredAssumption on every dependent verdict and certificate. Template and
+layout checking do not make the full C body Safe or the premise Validated.
+This is a narrowly specified semantic reader of a named premise; ordinary
+C04.18 premises remain metadata. No runtime outer envelope is widened by it.
+
+Consumers restricted to fresh or resource-free results MUST refuse this result
+until they preserve the relation explicitly. In particular, the initial
+whole-return and passed-result routes refuse rather than coerce it into
+fresh-owned or neutral borrowed custody. The source-language FFI bridge does
+not admit this result. Independent legacy certificate replay repeats the same
+body/premise and call-state checks from retained evidence.
 
 ### C04.4. Unsupported semantics and false declarations
 
@@ -894,7 +948,7 @@ contract {
 
 **Loading.** Total-or-reject (C04). `NAME` is a lowercase identifier (`[a-z][a-z0-9_]*`) and `STATEMENT` one plain string literal, not blank, with no escape and no control character; a second premise of the same name on one declaration, any other argument shape, and the clause under `ensures` each reject the **whole module**. A declaration MAY carry several premises of distinct names. The grammar is [G05](QCORE_IMPLEMENTED_GRAMMARS_r0_3.md#g05-resource-loader-v1).
 
-**Meaning.** An ordinary unconditional premise changes no mode and applies or withdraws nothing: the function map is the map the declaration has without it, and no consumer that decides a verdict reads it. The only S3 exceptions are the scoped prerequisite atoms and the exact recognized entry-snapshot premise specified by C04.21; those are semantic obligations with explicitly attributed assumptions, not unconditional facts inferred from English prose. They do not change any custody mode. Premise metadata is rederived from the retained texts (`declaration_premises`, `declared_premises`), as the literal-argument premise (C04.5) and the checked-specification marker (C06.3) are, and published with every row that rests on the declaration (C06.5). Because the clause is part of the declaration's text, the declaration's contract digest — and so its pin (C06.2) — covers it: adding, removing or rewording a premise takes a pinned declaration out of force until it is reviewed and pinned again. Each literal-argument premise (C04.5) is reported as the premise `literal_argument` (`p = LITERAL`), and the premises a rule states for a clause are reported with it (rule 13e's `P-RESULT-HOLDER-LAST-DROP` and `P-RETAINED-PREDEFINED` for `resource_retained_by(p, result)`).
+**Meaning.** Except for the explicitly specified conditional representation reader of C04.3.5, an ordinary unconditional premise changes no mode and applies or withdraws nothing: the function map is the map the declaration has without it, and no consumer that decides a verdict reads it. The S3 exceptions are the scoped prerequisite atoms and the exact recognized entry-snapshot premise specified by C04.21; those are semantic obligations with explicitly attributed assumptions, not unconditional facts inferred from English prose. They do not change any custody mode. Premise metadata is rederived from the retained texts (`declaration_premises`, `declared_premises`), as the literal-argument premise (C04.5) and the checked-specification marker (C06.3) are, and published with every row that rests on the declaration (C06.5). Because the clause is part of the declaration's text, the declaration's contract digest — and so its pin (C06.2) — covers it: adding, removing or rewording a premise takes a pinned declaration out of force until it is reviewed and pinned again. Each literal-argument premise (C04.5) is reported as the premise `literal_argument` (`p = LITERAL`), and the premises a rule states for a clause are reported with it (rule 13e's `P-RESULT-HOLDER-LAST-DROP` and `P-RETAINED-PREDEFINED` for `resource_retained_by(p, result)`).
 
 **Inheritance (C15).** Elaboration copies a parent's clauses, premises included, and the agreement check compares them, so a child never sheds its parent's premise.
 

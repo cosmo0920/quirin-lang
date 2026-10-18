@@ -21,6 +21,7 @@ fn result(code: &str) -> ResultClass {
         "derived" => ResultClass::Derived,
         "owned" => ResultClass::Owned,
         "reallocated" => ResultClass::Reallocated,
+        "removed" => ResultClass::Removed,
         other => panic!("unknown result {other}"),
     }
 }
@@ -78,6 +79,7 @@ fn a_tested_value_is_accepted_exactly_as_the_condition_gate_takes_it() {
             ResultClass::Derived,
             ResultClass::Owned,
             ResultClass::Reallocated,
+            ResultClass::Removed,
         ] {
             for identity in [false, true] {
                 let condition_gate = standing != Standing::Recursive && result.resource_free();

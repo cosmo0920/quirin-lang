@@ -1196,6 +1196,9 @@ const EXPECTED_CONTRACTS: &[(&str, &str, usize)] = &[
     // condition `while (item != NULL)` precedes every dereference, and the
     // three call sites do reach the null path.
     ("librdkafka/cjson.qv", "cJSON_Delete", 3),
+    // Checked same-item detach: marker, explicit representation premise,
+    // live parent, checked removed item and the same identity as result.
+    ("librdkafka/cjson.qv", "cJSON_DetachItemViaPointer", 5),
     // Card W45-CALLEE-CASCADE-RESIDUAL: the node constructor (`:241-250`):
     // marker, borrowed hook table, an owned nullable result.
     // Card VERDICT-CONTRACT-PREMISE-ANNOTATIONS: `requires resource_premise(cjson_allocator_hooks, ...)`
@@ -1926,7 +1929,7 @@ const EXPECTED_CONTRACTS: &[(&str, &str, usize)] = &[
         3,
     ),
     // RK-PLUGIN-LIBRARY-OUTER-ENVELOPE: selector, definition, runtime guard,
-    // 34 callback registrations, 12 kept members and 8 premises.
+    // 34 callback registrations, 8 kept members and 8 premises.
     ("librdkafka/outer.qv", "rd_kafka_plugin_new", 81),
     // Card LIBRDKAFKA-PLUGIN-PREMISE-REMAINDER: 6 -> 7, the model contract names
     // `rk_no_plugin_library` (user decision 2026-10-15, "Add premise support").

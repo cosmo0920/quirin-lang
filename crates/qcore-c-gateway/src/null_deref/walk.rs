@@ -2126,7 +2126,7 @@ impl<'a> Walker<'a> {
                 Some(base) => core::offset(&base.null),
                 None => Nullness::maybe(Source::NullableResult(callee_name.clone())),
             },
-            Some(ResourceReturnMode::None) | None => {
+            Some(ResourceReturnMode::None | ResourceReturnMode::Removed { .. }) | None => {
                 Nullness::maybe(Source::UncontractedResult(callee_name.clone()))
             }
         };

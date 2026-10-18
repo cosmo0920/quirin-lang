@@ -1425,7 +1425,7 @@ impl<'a, 'e> Run<'a, 'e> {
                 Some(V::Ptr(P::NonNull, _)) => P::NonNull,
                 _ => P::Opaque(Origin::Other(format!("derived:{callee_name}")), true),
             },
-            Some(ResourceReturnMode::None) | None => {
+            Some(ResourceReturnMode::None | ResourceReturnMode::Removed { .. }) | None => {
                 P::Opaque(Origin::Uncontracted(callee_name), false)
             }
         };

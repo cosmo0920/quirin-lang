@@ -1,4 +1,4 @@
-# qcore-schemas 18.0.0
+# qcore-schemas 19.0.0
 
 The published, versioned schema surface of the QCore verifier ecosystem
 (layer L0 of `docs/GENERALIZATION_PLAN.md` §3.1). This crate holds the data
@@ -26,10 +26,13 @@ The crate is semver-versioned independently of the compiler:
   protocol-version negotiation):** removing or renaming a public type, field,
   or variant; changing a serde representation (field name, tag, transparent
   wrapper); tightening a validation rule so previously valid data is
-  rejected; changing the meaning of an existing field.
-- **Additive (minor bump):** new types, new optional fields with defaults,
-  new enum variants on non-exhaustive wire enums, new capabilities announced
-  through the existing negotiation.
+  rejected; changing the meaning of an existing field; adding a field to a
+  publicly constructible exhaustive Rust struct or a variant to an exhaustive
+  Rust enum. Optional serde defaults do not prevent that Rust source break.
+- **Additive (minor bump):** new types, wire-additive optional/default fields
+  whose Rust carriers remain source-compatible (for example private fields
+  or non-exhaustive carriers), new enum variants on non-exhaustive wire enums,
+  new capabilities announced through the existing negotiation.
 - Data files (contracts, profiles) validated against this crate are *trusted
   assumptions*, not verified facts; certificates must record which ones were
   assumed (plan invariant 6).
@@ -501,3 +504,36 @@ unchanged**: no existing reason text classifies differently (the new marker,
 `rests on outer contract`, is spelled by no earlier site), and no static
 verdict reads the new reason. Plugin protocol 1 and evidence versions 1 and 2
 are unchanged.
+
+## Checked same-item detach results (19.0.0)
+
+The unpublished S3 lifetime and CJSON-DETACH-SAME-ITEM cards share one major
+compatibility event; neither creates a separate version 20 release.
+
+| Public addition | Migration for existing Rust consumers |
+|---|---|
+| `RetainingContract.lifetime: Option<LoopLifetimeContract>` (S3) | Add `lifetime: None` to old exhaustive literals, or use `RetainingContract::custody_only`. |
+| `ResourceSummaryRecord.lifetime_effects: Vec<loop_lifetime::ForwardedLifetime>` (S3) | Add `lifetime_effects: Vec::new()`, or use `ResourceSummaryRecord::new`. |
+| `ResourceReturnMode::Removed { parameter, nullable }` (detach) | Handle the relation explicitly in exhaustive matches, or refuse it; no fresh-owned or neutral fallback. |
+
+The S3 fields have serde defaults and skip empty/None. That preserves old
+absent-field wire bytes, while new public fields still break Rust struct
+literals and therefore require a major version under the policy above.
+S3's frozen schema 18 measurements are its semantic checkpoint; final
+publishable compatibility requires cumulative schema 19 gates, measurements
+and all five rebuilt/verified provider packages after integration.
+
+Card CJSON-DETACH-SAME-ITEM (C04.3.5, user decision 2026-10-18) adds
+`ResourceReturnMode::Removed { parameter, nullable }` to the exhaustive result
+enum. It returns the same identity restored by a matching Removed parameter
+from a distinct nonnull Owned parent. Caller membership is checked; no fresh
+site is allocated. The representation premise and complete physical-body
+adapter remain separate evidence and trust obligations.
+
+This is a major bump by the exhaustive-variant precedent. Existing enum
+variants retain their serialized representations; an older consumer rejects
+the new `removed` variant, and an older resource loader rejects the new
+`resource_return_removed` predicate. No unknown-result fallback is added.
+Plugin protocol 1 and evidence versions 1 and 2 are unchanged. All workspace
+consumers and standalone providers update their schema dependency; all five
+provider packages must be rebuilt and verified under constraint 18.

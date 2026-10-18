@@ -1639,7 +1639,10 @@ fn load_function_in(
         }
         let base = crate::local_condition::without_local(decl, None)?;
         let mut loaded = load_function_in(&base, aliases)?;
-        if loaded.relational.is_some() || loaded.ffi.is_some() {
+        if loaded.relational.is_some()
+            || loaded.ffi.is_some()
+            || matches!(loaded.contract.result, ResourceReturnMode::Removed { .. })
+        {
             return Err(
                 "local-condition-contract: incompatible conditional ABI or return disposition"
                     .into(),
@@ -2147,6 +2150,16 @@ fn load_function_in(
                 let (nullable, word) = validity(null)?;
                 Some((ResourceReturnMode::Owned { nullable }, Some(word)))
             }
+            ["resource_return_removed", parameter, null] => {
+                let (nullable, word) = validity(null)?;
+                Some((
+                    ResourceReturnMode::Removed {
+                        parameter: index(parameter)?,
+                        nullable,
+                    },
+                    Some(word),
+                ))
+            }
             ["resource_return_reallocated", parameter, null] => {
                 let (nullable, word) = validity(null)?;
                 Some((
@@ -2392,6 +2405,36 @@ fn load_function_in(
             }
             *const_dropped = parameter_types[parameter] == "ptr<const, u8>"
                 && return_type.starts_with("ptr<mut,");
+        }
+        if let ResourceReturnMode::Removed {
+            parameter,
+            nullable,
+        } = result
+        {
+            let ResourceParameterMode::Removed {
+                owner_parameter,
+                nullable: input_nullable,
+            } = parameters[parameter]
+            else {
+                return Err("a removed result requires the same removed parameter".into());
+            };
+            if !kinds.parameter_kind(owner_parameter).is_heap()
+                || !kinds.parameter_kind(parameter).is_heap()
+                || !collected.container_effects.is_empty()
+                || !collected.users.is_empty()
+                || input_nullable != nullable
+                || parameters[owner_parameter] != (ResourceParameterMode::Owned { nullable: false })
+                || parameter_types[parameter] != "ptr<mut, u8>"
+                || parameter_types[owner_parameter] != "ptr<mut, u8>"
+                || return_type != "ptr<mut, u8>"
+                || parameters.iter().enumerate().any(|(i, mode)| {
+                    i != parameter
+                        && i != owner_parameter
+                        && *mode != ResourceParameterMode::Borrowed
+                })
+            {
+                return Err("a removed result requires matching nullability, mutable depth-one pointers, a distinct nonnull owned parent and no other custody effects".into());
+            }
         }
         for (i, mode) in parameters.iter().enumerate() {
             let ty = token_kinds(&decl.parameters[i].type_source)?;
@@ -2783,6 +2826,19 @@ fn load_function_in(
         declared.member_paths = member_paths;
         Some(declared)
     };
+    if matches!(contract.result, ResourceReturnMode::Removed { .. })
+        && (retaining.is_some()
+            || loop_owner.is_some()
+            || thread_sync.is_some()
+            || lifecycle.is_some()
+            || variadic_data_tail
+            || variadic_borrowed_tail)
+    {
+        return Err(
+            "a removed result stands only beside plain custody predicates and named premises"
+                .into(),
+        );
+    }
     Ok(LoadedDeclaration {
         relational,
         retaining,

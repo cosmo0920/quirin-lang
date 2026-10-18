@@ -226,7 +226,7 @@ const fn return_mode(mode: ResourceReturnMode) -> Option<ContractReturnMode> {
             parameter,
             nullable,
         }),
-        ResourceReturnMode::Derived { .. } => None,
+        ResourceReturnMode::Derived { .. } | ResourceReturnMode::Removed { .. } => None,
     }
 }
 

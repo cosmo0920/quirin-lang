@@ -344,6 +344,8 @@ pub(crate) mod retained_by_route;
 #[path = "legacy_retention_guard.rs"]
 pub(crate) mod retention_guard;
 // Card SLOT-MOVE-AND-INTERIOR-BORROW (rules 12x, 12y, 12z, 13a).
+#[path = "legacy_detach.rs"]
+mod detach_route;
 #[path = "legacy_slot_move_borrow.rs"]
 pub(crate) mod slot_move_route;
 // Card REFCOUNT-RESOURCE-KIND (rules 13b, 13c): reference counts (the
@@ -2307,6 +2309,8 @@ fn analyze_legacy_c_tokens_under_holds(
     let contracts = slots_settled.as_ref().unwrap_or(contracts);
     // Card REFCOUNT-RESOURCE-KIND (rule 13c): a reference declaration whose
     // body this unit defines stands only when the body validates it.
+    let detach_settled = detach_route::settle(tokens, contracts);
+    let contracts = detach_settled.as_ref().unwrap_or(contracts);
     let references_settled = reference_route::settle(tokens, contracts);
     let contracts = references_settled.as_ref().unwrap_or(contracts);
     // Card CG22-CALLBACK-REGISTRY-CONTRACT (rule 13y): a callback declaration
@@ -3004,6 +3008,8 @@ pub(crate) fn recursive_component_census(
     let contracts = slots_settled.as_ref().unwrap_or(contracts);
     // Card REFCOUNT-RESOURCE-KIND (rule 13c): a reference declaration whose
     // body this unit defines stands only when the body validates it.
+    let detach_settled = detach_route::settle(&tokens, contracts);
+    let contracts = detach_settled.as_ref().unwrap_or(contracts);
     let references_settled = reference_route::settle(&tokens, contracts);
     let contracts = references_settled.as_ref().unwrap_or(contracts);
     // Card CG22-CALLBACK-REGISTRY-CONTRACT (rule 13y): a callback declaration
@@ -3162,6 +3168,8 @@ fn analyze_translation_unit_under_holds(
     let contracts = slots_settled.as_ref().unwrap_or(contracts);
     // Card REFCOUNT-RESOURCE-KIND (rule 13c): a reference declaration whose
     // body this unit defines stands only when the body validates it.
+    let detach_settled = detach_route::settle(&tokens, contracts);
+    let contracts = detach_settled.as_ref().unwrap_or(contracts);
     let references_settled = reference_route::settle(&tokens, contracts);
     let contracts = references_settled.as_ref().unwrap_or(contracts);
     // Card CG22-CALLBACK-REGISTRY-CONTRACT (rule 13y): a callback declaration

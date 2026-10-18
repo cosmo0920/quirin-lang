@@ -87,6 +87,7 @@ pub(crate) enum ResultClass {
     Derived,
     Owned,
     Reallocated,
+    Removed,
 }
 
 impl ResultClass {
@@ -96,6 +97,7 @@ impl ResultClass {
             ResourceReturnMode::Derived { .. } => Self::Derived,
             ResourceReturnMode::Owned { .. } => Self::Owned,
             ResourceReturnMode::Reallocated { .. } => Self::Reallocated,
+            ResourceReturnMode::Removed { .. } => Self::Removed,
         }
     }
 
@@ -105,6 +107,7 @@ impl ResultClass {
             Self::Derived => "derived",
             Self::Owned => "owned",
             Self::Reallocated => "reallocated",
+            Self::Removed => "removed",
         }
     }
 
@@ -236,7 +239,7 @@ pub(crate) fn accept(
             if identity && result == ResultClass::None {
                 // Card B04: the identity with no result.
                 Ok(())
-            } else if result != ResultClass::Reallocated {
+            } else if !matches!(result, ResultClass::Reallocated | ResultClass::Removed) {
                 // Card CG05-NESTED-CALL-EFFECTS (rule 10y): a non-identity
                 // call whose value is bound to a fresh reserved place (or is
                 // data), applied inside-out under the footprint order check.
@@ -257,6 +260,16 @@ pub(crate) fn accept(
 /// `proof/QCore/CallInstantiation.lean` (`acceptanceVectors`).
 #[cfg(test)]
 pub(crate) const ACCEPTANCE_VECTORS: &[(&str, &str, bool, &str, &str)] = &[
+    ("declared", "removed", false, "stored", "accept"),
+    (
+        "declared",
+        "removed",
+        false,
+        "passed",
+        "passed-reallocation",
+    ),
+    ("declared", "removed", false, "returned", "returned-alias"),
+    ("declared", "removed", false, "discarded", "custody-result"),
     ("declared", "none", true, "tested", "accept"),
     ("validated", "none", false, "tested", "accept"),
     ("validated", "derived", true, "tested", "accept"),

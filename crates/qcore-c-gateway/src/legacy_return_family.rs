@@ -702,6 +702,7 @@ impl Parser<'_> {
                                 )
                         }
                         ResourceReturnMode::Reallocated { .. }
+                        | ResourceReturnMode::Removed { .. }
                         | ResourceReturnMode::Derived { .. } => false,
                     }
                 }
