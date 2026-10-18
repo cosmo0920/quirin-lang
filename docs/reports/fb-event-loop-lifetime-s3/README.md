@@ -34,6 +34,12 @@ No dependent parser, contract or semantic implementation starts before the
 coordinator forwards the user's explicit D4 answer. Gate/push authorization
 is not a syntax answer.
 
+The later user proposal for `quant #threaded in { … }: [[local]]` and its
+`quant not` complement is addressed in
+[LOCAL-CONDITIONS-DESIGN.md](LOCAL-CONDITIONS-DESIGN.md). It proposes explicit
+typed condition binding and scoped conditional prerequisites, and records the
+remaining choices; it does not treat that design question as syntax approval.
+
 The proposed host is the existing pinned `flb_input_set_collector_time`
 declaration in `fluent_bit/input_collector_registration.qv`; that declaration
 already establishes the record via the checked `collector_create` helper.
