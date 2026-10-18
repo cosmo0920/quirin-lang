@@ -28,3 +28,15 @@ Expected effects, conditional on approved syntax and validated declarations:
 
 Fresh baseline and after artifacts are pending the coordinator's heavy slot.
 The arbiter comparison, not this prediction, determines actual movement.
+
+## Implementation direction after the scoped-condition proposal
+
+Before semantic code, the implementation is rebased onto `854920e3e`.
+The user's local-condition blocks are implemented for conditional
+prerequisites and lifetime-protocol clauses, with explicit read-only typed
+condition bindings. Unsupported consumers and clause combinations refuse;
+unknown conditions preserve both cases. Type-wide footprints do not inherit
+one host call's instance condition. This extends parser/model scope but does
+not predict extra corpus Safe movements or any null-property movement.
+The earlier source census remains a source observation, not a fresh verdict
+baseline on the rebased source.

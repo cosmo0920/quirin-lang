@@ -1,6 +1,6 @@
 # FB-EVENT-LOOP-CROSS-FUNCTION-LIFETIME: S3 implementation brief
 
-Preparation base: `654e2b7eed72374b02ea39ef41059f7a9149b776`.
+Preparation base: `654e2b7eed72374b02ea39ef41059f7a9149b776`; implementation rebased onto `854920e3e`.
 Branch: `codex/fb-lifetime-s3`, isolated at `/tmp/qcore-fb-lifetime-s3`.
 This preparation is not a completed implementation or a measured safety gain.
 
@@ -13,32 +13,25 @@ stores and immutable flags; D6 orders the blockers first. Removal poisoning
 and loop destroy ending records already belong to the separate
 RETENTION-UNMATCHED-REMOVAL-POISONS card and must be preserved.
 
-## Required decision
+## User direction and implementation grammar
 
-D4 is still unanswered at preparation time. The coordinator has asked whether
-to approve both the new registered clause and integer member guards, only the
-registered clause, or a revision. The proposed clause is:
+The user supplied scoped conditions, `quant #threaded in { … }: [[local]];`
+and `quant not #threaded in { … }: [[local]];`, in response to the S3
+condition question. The coordinator directed implementation of this form
+with an explicit read-only condition binding, such as
+`quant #threaded = (#ins.is_threaded != 0);`. This is the chosen local
+binding grammar; it is an implementation choice, not an extra Boolean
+assumption. The first supported blocks contain conditional prerequisites and
+lifetime-protocol clauses. Unsupported inner clauses reject the module.
+`requires resource_contract_v1` stays unconditional. The new footprint is
+`quant registered #coll: flb_input_collector.event |-> flb_input_collector.evl;`.
 
-```qcore
-quant registered #coll: flb_input_collector.event |-> flb_input_collector.evl;
-```
-
-The member guard spelling is `when #coll.instance.is_threaded == 0`.
-Approving that spelling does not authorize declared loop equalities. The
-historical `quant live` equality example is superseded by D3: the equality
-must be derived from stores and an immutable flag. The existing outer-contract
-`#registered` value (C04.20) describes loaded-code callback envelopes and has
-different syntax and meaning; the S3 clause does not reuse its semantics.
-
-No dependent parser, contract or semantic implementation starts before the
-coordinator forwards the user's explicit D4 answer. Gate/push authorization
-is not a syntax answer.
-
-The later user proposal for `quant #threaded in { … }: [[local]]` and its
-`quant not` complement is addressed in
-[LOCAL-CONDITIONS-DESIGN.md](LOCAL-CONDITIONS-DESIGN.md). It proposes explicit
-typed condition binding and scoped conditional prerequisites, and records the
-remaining choices; it does not treat that design question as syntax approval.
+[LOCAL-CONDITIONS-DESIGN.md](LOCAL-CONDITIONS-DESIGN.md) preserves the design
+and boundaries discussed before implementation. Its outstanding-choice text
+records that earlier checkpoint; this paragraph records the instruction to
+proceed. Equalities remain derived-only under D3, and neither unknown
+conditions nor local prerequisites are assumed true. This feature is
+separate from C04.20 outer-contract static/runtime scenarios.
 
 The proposed host is the existing pinned `flb_input_set_collector_time`
 declaration in `fluent_bit/input_collector_registration.qv`; that declaration
