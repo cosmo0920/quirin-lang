@@ -139,7 +139,7 @@ impl Parser<'_> {
         // its own binding and refuses a step that would lose a live object's
         // only name. W48 bottom-up batch 2 additionally admits a self-step
         // of a scalar-pointer formal whose AST uses it only in scalar reads
-        // and self-steps, with neither entry custody nor an out-slot contract.
+        // and discarded self-steps, with neither entry custody nor an out-slot contract.
         // Every other formal and every other shape keeps the gate.
         if let LegacyInstruction::Unknown { description, .. } = &instruction
             && description == FORMAL_MUTATION_REFUSAL

@@ -290,7 +290,7 @@ pub(crate) fn stepped_access(
 }
 
 /// W48 bottom-up batch 2: a scalar-pointer formal that the body only reads
-/// through and steps itself. No copy, address, call actual, store or other
+/// through and steps itself with the result discarded. No copy, address, call actual, store or other
 /// binding use is admitted. The caller additionally checks its own contract
 /// has no entry custody/out-slot mode and the declaration is a scalar pointer.
 pub(crate) fn read_only_formal(function: &serde_json::Value, name: &str) -> bool {
@@ -307,7 +307,7 @@ pub(crate) fn read_only_formal(function: &serde_json::Value, name: &str) -> bool
         let node = peel(node);
         kind(node) == "DeclRefExpr" && node["referencedDecl"]["id"].as_str() == Some(id)
     }
-    fn walk(node: &Value, name: &str, id: &str) -> bool {
+    fn walk(node: &Value, name: &str, id: &str, discarded: bool) -> bool {
         if kind(node) == "DeclRefExpr" && node["referencedDecl"]["name"].as_str() == Some(name) {
             return false;
         }
@@ -331,9 +331,33 @@ pub(crate) fn read_only_formal(function: &serde_json::Value, name: &str) -> bool
             && children(node).len() == 1
             && reference(&children(node)[0], id)
         {
-            return true;
+            return discarded;
         }
-        children(node).iter().all(|child| walk(child, name, id))
+        // A step's pointer result may not be handed to a call, binding,
+        // return or store. Track only whole discarded statement positions;
+        // nested steps (including `*s++`) are outside this bounded frame.
+        let inner = children(node);
+        inner.iter().enumerate().all(|(index, child)| {
+            let statement = discarded
+                && match kind(node) {
+                    "CompoundStmt" => true,
+                    "IfStmt" => {
+                        let arms = if node["hasElse"].as_bool() == Some(true) {
+                            2
+                        } else {
+                            1
+                        };
+                        index >= inner.len().saturating_sub(arms)
+                    }
+                    "ForStmt" => inner.len() == 5 && matches!(index, 0 | 3 | 4),
+                    "WhileStmt" | "SwitchStmt" | "LabelStmt" | "CaseStmt" | "DefaultStmt"
+                    | "AttributedStmt" => index + 1 == inner.len(),
+                    "DoStmt" => index == 0,
+                    "ParenExpr" => inner.len() == 1,
+                    _ => false,
+                };
+            walk(child, name, id, statement)
+        })
     }
     let formals = children(function)
         .iter()
@@ -351,7 +375,7 @@ pub(crate) fn read_only_formal(function: &serde_json::Value, name: &str) -> bool
     else {
         return false;
     };
-    walk(body, name, id)
+    walk(body, name, id, true)
 }
 
 /// `QCore.IndexTraversal.formalStepEligible`, after exact self-step matching.
@@ -543,6 +567,40 @@ mod tests {
 
 #[cfg(test)]
 mod formal_tests {
+    #[test]
+    fn a_formal_frame_requires_each_step_result_to_be_discarded() {
+        if let Err(reason) = crate::clang::command() {
+            assert!(std::env::var_os("QCORE_CLANG").is_none(), "{reason}");
+            eprintln!("skipping Clang-dependent formal frame test: {reason}");
+            return;
+        }
+        for (definition, expected) in [
+            ("void w(char *s) { while (*s) s++; }", true),
+            ("void w(char *s) { for (; *s; s++) {} }", true),
+            ("void w(char *s) { if (*s) s++; else s--; }", true),
+            ("void w(char *s) { do { s++; } while (*s); }", true),
+            ("void w(char *s) { note(s++); }", false),
+            ("void w(char *s) { char *q = s++; }", false),
+            ("void w(char *s) { global = s++; }", false),
+            ("char *w(char *s) { return s++; }", false),
+            ("void w(char *s) { int x = *s++; }", false),
+        ] {
+            let source = format!("void note(char *); char *global; {definition}");
+            let _scope = crate::typed_access_path::enter_source(
+                &source,
+                crate::legacy_c::CCompilerDialect::Gnu17,
+                None,
+            );
+            let index = crate::typed_access_path::StatementIndex::read("w")
+                .unwrap_or_else(|| panic!("no function AST: {source}"));
+            assert_eq!(
+                super::read_only_formal(&index.function, "s"),
+                expected,
+                "{source}"
+            );
+        }
+    }
+
     #[test]
     fn formal_step_vectors_match_lean_and_cover_every_boolean_input() {
         let lean = include_str!("../../../proof/QCore/IndexTraversal.lean");

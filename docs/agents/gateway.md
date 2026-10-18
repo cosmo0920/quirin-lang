@@ -128,7 +128,8 @@ which is not a second authority.
     formal may use `PointerStep` when its own contract grants neither entry
     custody nor an out slot. In the function's Clang AST every reference to
     that exact formal declaration must occur in a scalar dereference's
-    lvalue-to-rvalue read or a self-increment/decrement. A pointer actual,
+    lvalue-to-rvalue read or a self-increment/decrement whose result is
+    discarded in a complete statement or for clause. A nested step, pointer actual,
     copy, address, pointee store, reassignment, shadowed reference or unknown
     use keeps the refusal. This changes a by-value local parameter slot,
     never the caller's slot; the existing step transfer preserves site status,

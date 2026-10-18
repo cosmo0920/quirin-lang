@@ -523,7 +523,8 @@ namespace QCore.IndexTraversal
 
 /-! W48 bottom-up batch 2. The formal slot is a by-value C parameter.
 The caller separately holds its own slot; the exact AST use classifier
-certifies only scalar dereference reads and self-steps. This extraction
+certifies only scalar dereference reads and self-steps whose pointer result
+is discarded. This extraction
 predicate and Rust correspondence remain premises, as in the base module. -/
 
 def formalStepEligible (scalarPointer fixed readOnly : Bool) : Bool :=
