@@ -174,6 +174,8 @@ pub struct RowDependencies {
     /// S3 member/stability facts, including inferred summaries' dependencies.
     pub lifetime_members: BTreeSet<String>,
     pub lifetime_prerequisites: BTreeSet<String>,
+    pub lifetime_effects: BTreeSet<crate::loop_lifetime_summary::ForwardedLifetime>,
+    pub lifetime_roots: BTreeSet<String>,
     /// Declarations in force at the consultation.
     pub declarations: BTreeSet<String>,
     /// Declarations held (awaiting review, or a pin mismatch).
@@ -442,6 +444,8 @@ fn in_force(environment: &ResourceContracts, name: &str) -> bool {
     environment.functions().contains_key(name)
         || environment.relational().contains_key(name)
         || environment.retaining().contains_key(name)
+        || environment.guarded_retaining().contains_key(name)
+        || environment.inferred_lifetimes().contains_key(name)
 }
 
 /// Whether `environment` holds `name` for a human act.
@@ -631,6 +635,16 @@ pub fn row_dependencies(
                         .extend(prerequisites.iter().cloned());
                 }
                 if let Some(row) = summary.functions.get(&current) {
+                    dependencies
+                        .lifetime_effects
+                        .extend(row.lifetime_effects.iter().cloned());
+                    for effect in &row.lifetime_effects {
+                        if let crate::loop_lifetime_summary::Root::Formal { scope, .. } =
+                            &effect.registration.object.root
+                        {
+                            dependencies.lifetime_roots.insert(scope.clone());
+                        }
+                    }
                     dependencies.null_premises.extend(
                         row.null_premises
                             .iter()
@@ -704,6 +718,7 @@ pub(crate) fn withdrawn_between(
         .keys()
         .chain(before.relational().keys())
         .chain(before.retaining().keys())
+        .chain(before.guarded_retaining().keys())
         .filter(|name| !in_force(after, name))
         .cloned()
         .collect::<BTreeSet<_>>();

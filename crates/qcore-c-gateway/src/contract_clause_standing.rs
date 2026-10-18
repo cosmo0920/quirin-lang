@@ -426,7 +426,11 @@ pub fn declaration_clauses(environment: &ResourceContracts, name: &str) -> Vec<C
             })
             .collect();
     }
-    let Some(declared) = environment.retaining().get(name) else {
+    let Some(declared) = environment
+        .retaining()
+        .get(name)
+        .or_else(|| environment.guarded_retaining().get(name))
+    else {
         return Vec::new();
     };
     let mut clauses = contract_clauses(&declared.contract, false);

@@ -3,6 +3,27 @@ not an assumed proof. Unknown conditions preserve both feasible branches.
 Facts retain exact binder/object identity; joining paths drops one-sided facts.
 Executable counterpart: crates/qcore-core/src/local_condition.rs. -/
 namespace QCore.LocalCondition
+/-- Guarded declarations live in the explicit S3 table, never the raw table
+that unaware effect prepasses read. Canonical source replay checks partition. -/
+def visibleUnaware (hasBinding hasBlock : Bool) : Bool := !(hasBinding || hasBlock)
+
+theorem a_bound_condition_is_not_visible_to_an_unaware_consumer (hasBlock : Bool) :
+    visibleUnaware true hasBlock = false := by simp [visibleUnaware]
+
+theorem a_condition_block_is_not_visible_to_an_unaware_consumer (hasBinding : Bool) :
+    visibleUnaware hasBinding true = false := by simp [visibleUnaware]
+
+def ordinaryPublicationAllowed (guarded discharged : Bool) : Bool := !guarded && discharged
+
+theorem a_guarded_interface_never_publishes_an_ordinary_summary (discharged : Bool) :
+    ordinaryPublicationAllowed true discharged = false := by simp [ordinaryPublicationAllowed]
+
+def publicationVectors : List (Bool × Bool × Bool) :=
+  [(false,false,false),(false,true,true),(true,false,false),(true,true,false)]
+
+theorem shared_publication_vectors_hold :
+    publicationVectors.all (fun (guarded,discharged,expected) => ordinaryPublicationAllowed guarded discharged == expected) = true := by decide
+
 inductive Truth where
   | yes | no | unknown
   deriving DecidableEq, Repr

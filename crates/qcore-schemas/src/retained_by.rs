@@ -302,6 +302,13 @@ pub struct RetainingContract {
 }
 
 impl RetainingContract {
+    /// A condition-bearing declaration is visible only to the S3 consumer.
+    #[must_use]
+    pub fn is_condition_bearing(&self) -> bool {
+        self.lifetime
+            .as_ref()
+            .is_some_and(|l| !l.bindings.is_empty() || !l.blocks.is_empty())
+    }
     /// An initially empty side declaration, withheld from the function map.
     #[must_use]
     pub fn custody_only(contract: ResourceFunctionContract) -> Self {

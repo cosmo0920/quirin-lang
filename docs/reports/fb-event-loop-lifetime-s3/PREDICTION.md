@@ -40,3 +40,13 @@ one host call's instance condition. This extends parser/model scope but does
 not predict extra corpus Safe movements or any null-property movement.
 The earlier source census remains a source observation, not a fresh verdict
 baseline on the rebased source.
+
+## Integration addendum — 2026-10-18
+
+The first production footprint is limited to the collector record; scheduler
+footprints are not added by this batch. The selected S3 route permits an
+explicitly attributed unchecked protocol assumption, while contradictions
+withdraw it. Holder equality/stability is never supplied by that assumption.
+The final immediate baseline includes the lexical integration and the user's
+outer-envelope correction; their effects must be attributed separately from
+S3. The historical854 baseline remains cumulative evidence only.

@@ -95,8 +95,8 @@ decision and trace vectors bind the executable model to its proof.
 
 ## Measurement and completion
 
-[PREDICTION.md](PREDICTION.md) is committed before implementation. Reuse the coordinator’s exact `854920e3e` baseline artifacts for
-corpus `66910c10`, system `046accf6` and slice `90978ac6` and capture after comparisons with exact binary/source identities, jobs, exits and worktree-private
+[PREDICTION.md](PREDICTION.md) is committed before implementation. The coordinator’s exact historical `854920e3e` baseline artifacts cover
+corpus `66910c10`, system `046accf6` and slice `34155955e4962a56d94eb23c03a002880899a0d1` ; the immediate S3 baseline will be the merged lexical integration, with comparisons recording exact binary/source identities, jobs, exits and worktree-private
 logs. Read every moved row. Null-property parity and no unexplained Safe
 regressions are required. Do not turn the unjoined teardown readings into
 validated upstream defects or claim deployments satisfy declared premises.
@@ -129,3 +129,64 @@ preparation branch; no standing-gate completion is claimed.
 protocol. Open HTTP-server member candidate sets remain open. List membership,
 event-loop round ordering and release through erased record types require
 their own evidence; no scope expansion is implicit.
+
+## Implementation boundaries under validation
+
+The local conditional path rederives its typed source/call evidence during
+standalone certificate replay. It does not borrow ambient run facts. Active
+named prerequisites have a supported Hoare entry path: the caller body's own
+matching conditional prerequisite, exact substituted object/member/polarity,
+and explicit `s3_condition_snapshot_stable` premise. Unsupported owner/thread/
+lifecycle discharge and conditional type-protocol correlation remain Unknown.
+The local type reader refuses narrowing getters, volatile/atomic fields and
+pointer retyping, while may-effects retain physical pointer erasure separately.
+
+An unconditional exact self-record footprint can forward a caller-owned
+registration under `loop-protocol-declared:HOST:DIGEST:INTERIOR|->HOLDER`.
+This is a named DeclaredAssumption, not proof of a global closure or of all
+callers meeting release obligations. The local CFG retains the outstanding
+record and poison bit; settled exits export it, with the exact formal/member
+paths and declaration identity, into the function and inference records.
+Forwarding proof joins require proof on every arm where a record is present;
+an unproved new registration cannot reuse an ended record's old evidence.
+Source/configuration-qualified run roots and caller graphs demote unresolved
+roots/callers; no source census substitutes for complete must-ending evidence.
+
+Bounded same-unit summary transport carries custody and lifetime effects as
+one separately routed record, rederived during certificate replay. Ordinary
+borrow-only W4 records cannot erase these effects. Cross-unit retaining import
+remains refused until its home/effect evidence is retained and independently
+replayed. Unjoined worker teardown, unknown actuals and unproved holder
+identities retain their obligations. Model controls preserve may-release
+ordering: destroy-before-release can discharge an exact concrete holder;
+release-before-destroy and lifted-footprint prefixes cannot.
+
+New lifetime members and qualified guarded/protocol assumptions are dependency
+and runtime outer facts. Existing envelopes are unchanged. Protocol identifiers
+containing source digests are not expressible by current `#premise NAME` and
+therefore remain runtime Unknown; a follow-on must define a reviewable outer
+identity/envelope surface before these facts gain runtime coverage. This is
+`S3-RUNTIME-PROTOCOL-ENVELOPE-IDENTITY`, not a build/tracking exception.
+
+The source summary withholds both must endings and release prefixes across
+member stores, unread call frames, or incomplete control flow. Custody-only
+contracts do not establish heap frames. Direct, typed, complete no-store
+traces retain their exact ending evidence; the symbolic model assumes stable
+object/value snapshots, whose source correspondence remains an explicit
+extraction obligation. A protocol assumption supplies no arbitrary equality
+or stability.
+
+Condition-bearing declarations live in an exclusive guarded schema table.
+Raw retaining-table prepasses cannot read them. Pin withholding/restoration,
+withdrawal, source replay, inheritance, and ABI/dependency enumeration preserve
+that partition. Forged placement or missing identity rejects; an ordinary
+overlay cannot replace the guarded interface. Structured
+callback/reference/handoff mixtures remain refused at the S3 use gate until
+guard-aware body/effect consumers exist (`LOCAL-CONDITION-STRUCTURED-EFFECT-CONSUMERS`).
+
+Declared guarded interface names remain identity metadata after withdrawal or
+a pin hold, preventing a bare W4/import/ordinary overlay from erasing that
+interface. They grant no entry premise or effect. Only an active declaration
+can supply its body's conditional requires. The publication policy has shared
+Rust/Lean vectors, and three-function controls check both missing and matching
+guarded caller contexts.

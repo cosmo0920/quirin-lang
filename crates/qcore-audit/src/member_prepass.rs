@@ -657,9 +657,8 @@ pub fn run(
         .flatten()
         .collect::<BTreeSet<_>>();
     let lifetime = contracts
-        .retaining()
-        .values()
-        .filter_map(|d| d.lifetime.as_ref())
+        .lifetime_declarations()
+        .filter_map(|(_, d)| d.lifetime.as_ref())
         .collect::<Vec<_>>();
     let mut lifetime_tokens = BTreeSet::new();
     for declared in &lifetime {

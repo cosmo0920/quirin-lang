@@ -238,10 +238,29 @@ impl AuditReport {
         if let (Some((_, prepass)), false) = (&self.member_prepass, section.is_null()) {
             section["prepass"] = prepass.clone();
         }
+        let (lifetimes, lifetime_demoted) = crate::loop_lifetime_fold::fold(
+            &mut self.units,
+            contracts,
+            self.member_prepass
+                .as_ref()
+                .map(|(facts, _)| facts.as_ref()),
+            &mut self.diagnostic_counts,
+        );
+        if !lifetimes.is_null() {
+            if section.is_null() {
+                section = serde_json::json!({});
+            }
+            section["lifetime_protocols"] = lifetimes;
+        }
         // Card OP-CONSTRUCTOR-DECLARATIONS: a function the fold demoted is
         // demoted in the property rows' custody column too, and their
         // combined verdict recomputed, so no combined row reads a custody
         // verdict the published custody row no longer has.
+        crate::loop_lifetime_fold::demote_properties(
+            &mut self.null,
+            &mut self.bounds,
+            &lifetime_demoted,
+        );
         let demoted = crate::callback_member_fold::demoted_functions(&section);
         if !demoted.is_empty() {
             crate::callback_member_fold::demote_property_rows(
@@ -713,6 +732,9 @@ impl AuditReport {
                     "status": format!("{:?}", function.status),
                     "diagnostics": diagnostics,
                 });
+                if let Some(scope) = qcore_c_gateway::loop_lifetime_summary::body_scope(function) {
+                    row["lifetime_scope"] = scope.into();
+                }
                 // Card NULL-SAFETY-PROPERTY (rule 14n): every dereference
                 // this verdict read non-null under decision 1's moved
                 // question, a named premise. Omitted when there is none, so

@@ -118,9 +118,16 @@ pub fn row_field(dependencies: &RowDependencies) -> Value {
     if !dependencies.lifetime_prerequisites.is_empty() {
         field[LIFETIME_PREREQUISITES_KEY] = names(&dependencies.lifetime_prerequisites);
     }
+    if !dependencies.lifetime_effects.is_empty() {
+        field[LIFETIME_EFFECTS_KEY] = serde_json::to_value(&dependencies.lifetime_effects)
+            .expect("lifetime effects contain only JSON data");
+        field[LIFETIME_ROOTS_KEY] = names(&dependencies.lifetime_roots);
+    }
     field
 }
 
+pub const LIFETIME_ROOTS_KEY: &str = "lifetime_roots";
+pub const LIFETIME_EFFECTS_KEY: &str = "lifetime_effects";
 pub const LIFETIME_PREREQUISITES_KEY: &str = "lifetime_prerequisites";
 
 /// S3 member/stability facts. Loaded code must be covered by a kept envelope.
@@ -272,7 +279,11 @@ pub fn premises(contracts: &ResourceContracts) -> Result<Value, String> {
                 })
             }));
     }
-    for (name, retaining) in contracts.retaining() {
+    for (name, retaining) in contracts
+        .retaining()
+        .iter()
+        .chain(contracts.guarded_retaining())
+    {
         if retaining
             .retentions
             .iter()

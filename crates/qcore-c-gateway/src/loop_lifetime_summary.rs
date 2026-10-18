@@ -7,23 +7,7 @@ use qcore_schemas::loop_lifetime::RegisteredProtocol;
 use serde::{Deserialize, Serialize};
 use std::collections::{BTreeMap, BTreeSet};
 
-#[derive(Clone, Debug, PartialEq, Eq, PartialOrd, Ord, Serialize, Deserialize)]
-pub enum Root {
-    Formal { scope: String, index: usize },
-    Result { scope: String },
-    Lifted(String),
-}
-#[derive(Clone, Debug, PartialEq, Eq, PartialOrd, Ord, Serialize, Deserialize)]
-pub struct Path {
-    pub root: Root,
-    pub fields: Vec<String>,
-}
-#[derive(Clone, Debug, PartialEq, Eq, PartialOrd, Ord, Serialize, Deserialize)]
-pub struct Registration {
-    pub object: Path,
-    pub holder: Path,
-    pub poisoned: bool,
-}
+pub use qcore_schemas::loop_lifetime::{ForwardedLifetime, Path, Registration, Root};
 #[derive(Clone, Debug, PartialEq, Eq, PartialOrd, Ord, Serialize, Deserialize)]
 pub enum Ending {
     Remove(Path, Path),
@@ -220,8 +204,12 @@ pub fn path(events: &[Event]) -> Summary {
                         out.must_end.insert(ending.clone());
                     }
                 }
-                out.may_register
-                    .extend(summary.may_register.iter().cloned());
+                for record in &summary.may_register {
+                    // Just as for a local Register, a new registration after
+                    // a destroy makes that earlier ending insufficient.
+                    out.must_end.remove(&Ending::Destroy(record.holder.clone()));
+                    out.may_register.insert(record.clone());
+                }
             }
         }
     }
@@ -407,6 +395,7 @@ pub fn standing(
             }
         }
         for (function, facts) in &unit.functions {
+            reasons.extend(facts.open.iter().map(|why| format!("{function}: {why}")));
             for op in &facts.operations {
                 if op.kind == OperationKind::Register {
                     match &op.object {
@@ -415,6 +404,14 @@ pub fn standing(
                                 && object.fields == protocol.interior =>
                         {
                             registrations += 1;
+                            if facts
+                                .calls
+                                .iter()
+                                .filter(|call| call.offset == op.offset)
+                                .any(|call| call.actuals != call.typed_effect_actuals)
+                            {
+                                reasons.insert(format!("{function}: registration field interpretation is not independently typed"));
+                            }
                             match &op.holder {
                                 Some(holder)
                                     if holder.root == object.root
@@ -435,6 +432,11 @@ pub fn standing(
                 }
             }
             for (target, _) in &facts.stores {
+                if target.is_none() {
+                    reasons.insert(format!(
+                        "{function}: unresolved member store cannot exclude the declared holder"
+                    ));
+                }
                 if target
                     .as_ref()
                     .is_some_and(|p| p.record == protocol.record && p.fields == protocol.holder)
@@ -513,6 +515,28 @@ mod tests {
             holder: p(0, "evl"),
             poisoned: false,
         }
+    }
+    #[test]
+    fn a_callee_registration_invalidates_an_earlier_destroy_like_a_local_one() {
+        let r = reg();
+        let local = path(&[
+            Event::Destroy(r.holder.clone()),
+            Event::Register(r.clone()),
+            Event::Release(r.object.clone()),
+        ]);
+        let called = path(&[
+            Event::Destroy(r.holder.clone()),
+            Event::Call(path(&[Event::Register(r.clone())])),
+            Event::Release(r.object.clone()),
+        ]);
+        assert_eq!(local, called);
+        assert!(!called.requirements.is_empty());
+        assert!(
+            called
+                .may_release
+                .iter()
+                .all(|r| r.destroyed_before.is_empty())
+        );
     }
     #[test]
     fn unmatched_then_matched_removal_keeps_poison_until_destroy() {
@@ -711,7 +735,7 @@ pub fn derive_source(
     unit: &SourceFacts,
     protocols: &[RegisteredProtocol],
     closed: &BTreeSet<String>,
-    contracts: &qcore_schemas::contract::ResourceContracts,
+    _contracts: &qcore_schemas::contract::ResourceContracts,
 ) -> BTreeMap<String, Summary> {
     let key =
         |p: &RegisteredProtocol| format!("{}:{}.{}", unit.identity, p.record, p.interior.join("."));
@@ -744,6 +768,7 @@ pub fn derive_source(
         }
     }
     let mut summaries = BTreeMap::new();
+    let mut converged = false;
     for _ in 0..unit.functions.len().saturating_add(1) {
         let before = summaries.clone();
         for (name, f) in &unit.functions {
@@ -779,6 +804,9 @@ pub fn derive_source(
             };
             let mut timed: Vec<(u64, Event)> = Vec::new();
             let mut open = f.open.clone();
+            if !f.stores.is_empty() {
+                open.insert("member stores prevent holder snapshot stability".into());
+            }
             let primitive_offsets = f
                 .operations
                 .iter()
@@ -867,7 +895,7 @@ pub fn derive_source(
                 if relevant.contains(&call.callee) {
                     if let Some(callee) = before.get(&call.callee) {
                         let actuals = call
-                            .actuals
+                            .typed_effect_actuals
                             .iter()
                             .map(|p| p.as_ref().and_then(&symbolic))
                             .collect::<Vec<_>>();
@@ -884,22 +912,38 @@ pub fn derive_source(
                     } else {
                         open.insert(format!("lifetime summary unavailable for {}", call.callee));
                     }
-                } else if contracts.contract(&call.callee).is_none()
-                    && contracts.retaining_contract(&call.callee).is_none()
-                {
-                    open.insert(format!("unresolved call effects: {}", call.callee));
+                } else {
+                    // Custody-only declarations are not heap frame proofs.
+                    // An unread call may change the record's holder member.
+                    open.insert(format!(
+                        "unproved holder frame across call: {}",
+                        call.callee
+                    ));
                 }
             }
             timed.sort_by_key(|(offset, _)| *offset);
             let mut summary = path(&timed.into_iter().map(|(_, e)| e).collect::<Vec<_>>());
             summary.open.extend(open);
-            if (!f.complete_straight_line || !summary.open.is_empty())
-                && !summary.must_end.is_empty()
-            {
+            if !f.complete_straight_line || !summary.open.is_empty() {
+                let had_ending = !summary.must_end.is_empty()
+                    || summary
+                        .may_release
+                        .iter()
+                        .any(|effect| !effect.destroyed_before.is_empty());
                 summary.must_end.clear();
-                summary
-                    .open
-                    .insert("must-ending needs complete supported CFG exit coverage".into());
+                summary.may_release = summary
+                    .may_release
+                    .into_iter()
+                    .map(|mut effect| {
+                        effect.destroyed_before.clear();
+                        effect
+                    })
+                    .collect();
+                if had_ending {
+                    summary.open.insert(
+                        "must-ending/prefix needs complete CFG and stable holder snapshots".into(),
+                    );
+                }
             }
             for (released, interior, holder) in release_footprints {
                 if summary.may_release.iter().any(|effect| {
@@ -914,7 +958,16 @@ pub fn derive_source(
             summaries.insert(name.clone(), summary);
         }
         if summaries == before {
+            converged = true;
             break;
+        }
+    }
+    if !converged {
+        for summary in summaries.values_mut() {
+            summary.open.insert(
+                "lifetime summary fixed point did not converge within its function bound".into(),
+            );
+            summary.must_end.clear();
         }
     }
     summaries
@@ -951,7 +1004,7 @@ pub fn run_evidence(
         .filter_map(|u| u.lifetime_source.as_ref())
         .collect::<Vec<_>>();
     let mut out = RunEvidence::default();
-    for (host, declared) in contracts.retaining() {
+    for (host, declared) in contracts.lifetime_declarations() {
         let Some(lifetime) = &declared.lifetime else {
             continue;
         };
@@ -1024,6 +1077,35 @@ pub fn run_evidence(
             }
         }
     }
-    out.refused = fold(&BTreeSet::new(), &qualified, &out.callers);
+    let unresolved_roots = qualified
+        .iter()
+        .filter(|(key, summary)| {
+            !summary.may_register.is_empty() && !out.callers.contains_key(*key)
+        })
+        .map(|(key, _)| key.clone())
+        .collect();
+    out.refused = fold(&unresolved_roots, &qualified, &out.callers);
     out
+}
+
+/// Exact occurrence/configuration namespace carried by this body's scoped
+/// effect operands, including when its outgoing effects were later ended.
+pub fn body_scope(body: &crate::legacy_c::LegacyFunctionSummary) -> Option<String> {
+    let mut scopes = BTreeSet::new();
+    for node in &body.cfg.nodes {
+        if let crate::legacy_c::LegacyInstruction::ContractCall {
+            retention: Some(operands),
+            ..
+        } = &node.instruction
+        {
+            for proof in operands.forwarded.values() {
+                if let Root::Formal { scope, .. } = &proof.registration.object.root {
+                    scopes.insert(scope.clone());
+                }
+            }
+        }
+    }
+    (scopes.len() == 1)
+        .then(|| scopes.into_iter().next())
+        .flatten()
 }

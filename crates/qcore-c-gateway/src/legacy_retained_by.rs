@@ -74,6 +74,8 @@ pub enum HolderSpelling {
 pub struct Operands {
     /// `(retained, its spelling, holder, its spelling)`.
     pub retentions: Vec<(RetainedSpelling, String, HolderSpelling, String)>,
+    pub forwarded:
+        std::collections::BTreeMap<usize, crate::loop_lifetime_summary::ForwardedLifetime>,
     pub resets: Vec<HolderSpelling>,
     /// Card **SLOT-MOVE-AND-INTERIOR-BORROW** (rules 12x, 12z): the slot
     /// operands, applied after the retentions ([`super::slot_move_route`]).
@@ -105,6 +107,9 @@ impl std::fmt::Debug for Operands {
         if let Some(callbacks) = &self.callbacks {
             out.field("callbacks", callbacks);
         }
+        if !self.forwarded.is_empty() {
+            out.field("forwarded_lifetimes", &self.forwarded);
+        }
         if !self.removals.is_empty() {
             out.field("removals", &self.removals);
         }
@@ -120,20 +125,27 @@ pub(super) fn retaining_environment(
     contracts: &ResourceContracts,
 ) -> Option<ResourceContracts> {
     let retaining = contracts.retaining();
-    if retaining.is_empty()
-        || !tokens
-            .iter()
-            .any(|token| retaining.contains_key(&token.text))
+    if (retaining.is_empty()
+        && contracts.guarded_retaining().is_empty()
+        && contracts.inferred_lifetimes().is_empty())
+        || !tokens.iter().any(|token| {
+            retaining.contains_key(&token.text)
+                || contracts.guarded_retaining().contains_key(&token.text)
+                || contracts.inferred_lifetimes().contains_key(&token.text)
+        })
     {
         return None;
     }
     let mut environment = contracts.clone();
-    for (name, declaration) in retaining {
+    for (name, declaration) in retaining.iter().chain(contracts.guarded_retaining()) {
         // Card REFCOUNT-RESOURCE-KIND: a keep's alias result is the route's.
         environment.insert_contract(
             retained_name(name),
             super::reference_route::custody_contract(declaration),
         );
+    }
+    for (name, summary) in contracts.inferred_lifetimes() {
+        environment.insert_contract(retained_name(name), summary.contract.clone());
     }
     Some(environment)
 }
@@ -289,8 +301,40 @@ impl Parser<'_> {
         call_index: usize,
         function: &str,
     ) -> Option<LegacyInstruction> {
-        let declaration = if let Some(scoped) = self.contracts.lifetime_contract(function).cloned()
+        let refuse = |this: &Self, description: String| LegacyInstruction::Unknown {
+            description,
+            writes: this.refused_writes(texts),
+        };
+        let inferred = self.contracts.inferred_lifetimes().get(function).cloned();
+        let declaration = if let Some(summary) = &inferred {
+            qcore_schemas::contract_consultation::note_relied(function);
+            qcore_schemas::retained_by::RetainingContract::custody_only(summary.contract.clone())
+        } else if let Some(scoped) = self
+            .contracts
+            .lifetime_contract(function)
+            .filter(|c| {
+                c.lifetime
+                    .as_ref()
+                    .is_some_and(|l| !l.blocks.is_empty() || !l.bindings.is_empty())
+            })
+            .cloned()
         {
+            // Legacy structured-effect prepasses cannot establish body
+            // standing under a scoped prerequisite. Keep these declarations
+            // hidden and refuse the combined use until that consumer exists.
+            let mut unscoped = scoped.clone();
+            unscoped.lifetime = None;
+            if unscoped
+                != qcore_schemas::retained_by::RetainingContract::custody_only(
+                    scoped.contract.clone(),
+                )
+            {
+                return Some(refuse(
+                    self,
+                    "conditional structured effects require a guard-aware body/effect consumer"
+                        .into(),
+                ));
+            }
             let lifetime = scoped
                 .lifetime
                 .as_ref()
@@ -350,10 +394,6 @@ impl Parser<'_> {
         } else {
             self.contracts.retaining_contract(function)?.clone()
         };
-        let refuse = |this: &Self, description: String| LegacyInstruction::Unknown {
-            description,
-            writes: this.refused_writes(texts),
-        };
         let Some(spans) = super::call_argument_spans(texts, call_index) else {
             return Some(refuse(self, undecided_description(function, "?", "?")));
         };
@@ -386,6 +426,7 @@ impl Parser<'_> {
         };
         let mut operands = Operands {
             retentions: Vec::new(),
+            forwarded: Default::default(),
             resets: Vec::new(),
             slots: Vec::new(),
             references: Vec::new(),
@@ -471,6 +512,66 @@ impl Parser<'_> {
                         undecided_description(function, &retained_text, &holder_text),
                     ));
                 }
+            }
+        }
+        if self.contracts.retaining().values().any(|d| {
+            d.lifetime
+                .as_ref()
+                .is_some_and(|l| !l.registered.is_empty())
+        }) {
+            for (index, (retained, _, holder, _)) in operands.retentions.iter().enumerate() {
+                if let (
+                    RetainedSpelling::Interior(root, interior, true),
+                    HolderSpelling::Path(holder_root, holder_fields),
+                ) = (retained, holder)
+                    && root == holder_root
+                    && let Some(proof) = crate::loop_lifetime_source::forwarding_at_source_call(
+                        &self.typed_path_function,
+                        function,
+                        tokens.get(call_index).map_or(0, |t| t.line),
+                        root,
+                        interior,
+                        holder_fields,
+                        self.contracts,
+                    )
+                {
+                    operands.forwarded.insert(index, proof);
+                }
+            }
+        }
+        if let Some(summary) = &inferred {
+            for effect in &summary.effects {
+                let crate::loop_lifetime_summary::Root::Formal { index, .. } =
+                    &effect.registration.object.root
+                else {
+                    return Some(refuse(self, "lifetime-precondition-undischarged: inferred effect has no exact formal root".into()));
+                };
+                let Some(RetainedSpelling::Formal(root)) = self.retained_spelling(actual(*index))
+                else {
+                    return Some(refuse(self, "lifetime-precondition-undischarged: inferred effect actual is not an exact caller formal".into()));
+                };
+                let Some(proof) = crate::loop_lifetime_source::substitute_forwarded_call(
+                    &self.typed_path_function,
+                    function,
+                    tokens.get(call_index).map_or(0, |t| t.line),
+                    &root,
+                    effect,
+                    self.contracts,
+                ) else {
+                    return Some(refuse(self, "lifetime-precondition-undischarged: inferred effect home, actual or source identity is unresolved".into()));
+                };
+                let position = operands.retentions.len();
+                operands.retentions.push((
+                    RetainedSpelling::Interior(
+                        root.clone(),
+                        proof.registration.object.fields.clone(),
+                        true,
+                    ),
+                    format!("{}.{}", root, proof.registration.object.fields.join(".")),
+                    HolderSpelling::Path(root.clone(), proof.registration.holder.fields.clone()),
+                    format!("{}.{}", root, proof.registration.holder.fields.join(".")),
+                ));
+                operands.forwarded.insert(position, proof);
             }
         }
         // Card FB-EVENT-LOOP-RETENTION-AND-REGISTRATION (rule 12t): a
@@ -794,14 +895,34 @@ pub(super) fn apply(
         let key = removal_key(&object, &holder);
         remove(&mut state.retained, &mut state.poisoned, &key);
     }
-    for (retained, retained_text, holder, holder_text) in &operands.retentions {
+    for (index, (retained, retained_text, holder, holder_text)) in
+        operands.retentions.iter().enumerate()
+    {
         match decide(
             &retained_class(state, retained),
             &holder_class(state, holder, destination),
         ) {
             Decision::Outlives => {}
             Decision::Record(object, by) => {
-                state.retained.insert((object, by));
+                let record = (object, by);
+                // A new origin cannot inherit a proof left by an ended or
+                // previously proven registration with the same spelling.
+                state.forwarded_lifetimes.remove(&record);
+                if operands
+                    .forwarded
+                    .get(&index)
+                    .is_some_and(|proof| proof.registration.poisoned)
+                {
+                    state.poisoned.insert(record.clone());
+                }
+                if let Some(proof) = operands.forwarded.get(&index)
+                    && matches!(&record, (HeldObject::Name(_), HeldBy::Path(..)))
+                {
+                    state
+                        .forwarded_lifetimes
+                        .insert(record.clone(), proof.clone());
+                }
+                state.retained.insert(record);
             }
             Decision::Undecided => {
                 diagnostics.insert(LegacyDiagnostic {
@@ -882,7 +1003,9 @@ pub(super) fn report_exit(
     diagnostics: &mut BTreeSet<LegacyDiagnostic>,
 ) {
     for record @ (object, by) in &state.retained {
-        if matches!(by, HeldBy::Site(_) | HeldBy::Path(..)) {
+        if matches!(by, HeldBy::Site(_) | HeldBy::Path(..))
+            && !state.forwarded_lifetimes.contains_key(record)
+        {
             let name = match object {
                 HeldObject::Name(name) => name.clone(),
                 HeldObject::Site(_) | HeldObject::SiteInterior(..) => {
@@ -944,5 +1067,107 @@ mod tests {
         );
         assert_eq!(member_chain(&["->", "a"]), Some(vec!["a".to_owned()]));
         assert_eq!(member_chain(&["[", "0", "]"]), None);
+    }
+}
+
+#[cfg(test)]
+mod forwarding_tests {
+    use super::*;
+    use std::collections::{BTreeMap, BTreeSet};
+    fn record(field: &str) -> crate::retained_by::Record {
+        (
+            HeldObject::Name(format!("coll.{field}")),
+            HeldBy::Path(
+                crate::retained_by::PathRoot::Formal("coll".into()),
+                vec!["evl".into()],
+            ),
+        )
+    }
+    fn proof() -> crate::loop_lifetime_summary::ForwardedLifetime {
+        use crate::loop_lifetime_summary::{ForwardedLifetime, Path, Registration, Root};
+        ForwardedLifetime {
+            host: "host".into(),
+            premise: "declared exact protocol".into(),
+            registration: Registration {
+                object: Path {
+                    root: Root::Formal {
+                        scope: "source-config:f".into(),
+                        index: 0,
+                    },
+                    fields: vec!["event".into()],
+                },
+                holder: Path {
+                    root: Root::Formal {
+                        scope: "source-config:f".into(),
+                        index: 0,
+                    },
+                    fields: vec!["evl".into()],
+                },
+                poisoned: false,
+            },
+        }
+    }
+    fn proven() -> AbstractState {
+        AbstractState {
+            retained: BTreeSet::from([record("event")]),
+            forwarded_lifetimes: BTreeMap::from([(record("event"), proof())]),
+            ..Default::default()
+        }
+    }
+    #[test]
+    fn forwarding_join_needs_proof_on_every_arm_where_the_record_is_present() {
+        let mut joined = proven();
+        let unproved = AbstractState {
+            retained: BTreeSet::from([record("event")]),
+            ..Default::default()
+        };
+        joined.join(&unproved, &BTreeSet::new());
+        assert!(joined.forwarded_lifetimes.is_empty());
+        let mut diagnostics = BTreeSet::new();
+        report_exit("f", 1, &joined, &mut diagnostics);
+        assert_eq!(diagnostics.len(), 1);
+        let mut absent = proven();
+        absent.join(&AbstractState::default(), &BTreeSet::new());
+        assert_eq!(absent.forwarded_lifetimes.len(), 1);
+    }
+    #[test]
+    fn one_interior_protocol_cannot_waive_another_interior_of_the_same_root() {
+        let mut state = proven();
+        state.retained.insert(record("other_event"));
+        let mut diagnostics = BTreeSet::new();
+        report_exit("f", 1, &state, &mut diagnostics);
+        assert_eq!(diagnostics.len(), 1);
+        assert!(format!("{diagnostics:?}").contains("other_event"));
+    }
+    #[test]
+    fn ending_and_reregistering_cannot_reuse_stale_forwarding_evidence() {
+        let mut state = proven();
+        holder_ended(
+            &mut state,
+            &HeldBy::Path(
+                crate::retained_by::PathRoot::Formal("coll".into()),
+                vec!["evl".into()],
+            ),
+        );
+        assert!(state.retained.is_empty());
+        let operands = Operands {
+            retentions: vec![(
+                RetainedSpelling::Interior("coll".into(), vec!["event".into()], true),
+                "coll.event".into(),
+                HolderSpelling::Path("coll".into(), vec!["evl".into()]),
+                "coll.evl".into(),
+            )],
+            forwarded: BTreeMap::new(),
+            resets: Vec::new(),
+            slots: Vec::new(),
+            references: Vec::new(),
+            callbacks: None,
+            removals: Vec::new(),
+        };
+        let mut diagnostics = BTreeSet::new();
+        apply("f", 1, "add", &operands, None, &mut state, &mut diagnostics);
+        assert!(state.forwarded_lifetimes.is_empty());
+        report_exit("f", 2, &state, &mut diagnostics);
+        assert_eq!(diagnostics.len(), 1);
     }
 }

@@ -15,7 +15,7 @@ proved equal. A condition must select the matching obligations and effects,
 without assuming the condition or its prerequisites merely because they are
 written in a local block.
 
-## Current grammar and source binding
+## Grammar before this card and source binding
 
 `SourceContractClauseKind` in `qcore-frontend/src/frontend.rs` distinguishes
 `requires`, exit-selected `ensures`/`quant`, checks, deref/live and outer
@@ -32,7 +32,7 @@ provide an enclosing context for `requires`. Existing `where` uses bind
 quantitative type indices, id forwarding or outer reachability; none already
 binds a local Boolean name to a source member.
 
-Source grounding at the prepared 90978ac6 export:
+Source grounding at the prepared slice revision `34155955e4962a56d94eb23c03a002880899a0d1` (the historical report called its export lineage `90978ac6`):
 
 * `include/fluent-bit/flb_input.h:395`: `int is_threaded` in
   `struct flb_input_instance`.

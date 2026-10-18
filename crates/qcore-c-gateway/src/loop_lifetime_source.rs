@@ -40,6 +40,12 @@ pub struct ConditionFact {
 pub struct CallSite {
     pub callee: String,
     pub actuals: Vec<Option<Path>>,
+    /// Typed guard interpretation never follows integer narrowing or pointer
+    /// retyping, even when may-effects retain the physical pointer identity.
+    pub condition_actuals: Vec<Option<Path>>,
+    /// Field interpretation stays typed; an outer conversion of an already
+    /// grounded physical address to void* does not reinterpret its fields.
+    pub typed_effect_actuals: Vec<Option<Path>>,
     pub conditions: Vec<ConditionFact>,
     pub pure_operands: bool,
     pub conditional: bool,
@@ -200,6 +206,51 @@ fn function(
             break;
         }
     }
+    // A may-effect alias may preserve an erased physical pointer. A typed
+    // condition needs its own stricter alias closure, so an earlier void*/
+    // incompatible-pointer bridge cannot be hidden behind a later plain name.
+    let mut initialized = BTreeSet::new();
+    let mut addressed = BTreeSet::new();
+    walk(body, &mut |node| {
+        if kind(node) == "VarDecl"
+            && ty(node).contains('*')
+            && !children(node).is_empty()
+            && let Some(id) = node["id"].as_str()
+        {
+            initialized.insert(id.to_owned());
+        }
+        if kind(node) == "UnaryOperator"
+            && node["opcode"].as_str() == Some("&")
+            && let Some(value) = children(node).first().map(strip)
+            && kind(value) == "DeclRefExpr"
+            && let Some(id) = value["referencedDecl"]["id"].as_str()
+        {
+            addressed.insert(id.to_owned());
+        }
+    });
+    let mut condition_aliases = BTreeMap::new();
+    for _ in 0..writes.len().saturating_add(1) {
+        let before = condition_aliases.clone();
+        for (id, values) in &writes {
+            if parameters.contains(id) {
+                continue;
+            }
+            if values.len() != 1
+                || !initialized.contains(id)
+                || addressed.contains(id)
+                || !condition_casts_preserve(&values[0])
+            {
+                condition_aliases.insert(id.clone(), None);
+            } else if let Some(p) = path(&values[0], &condition_aliases) {
+                if p.root != *id {
+                    condition_aliases.insert(id.clone(), Some(p));
+                }
+            }
+        }
+        if before == condition_aliases {
+            break;
+        }
+    }
     let mut complete_straight_line = true;
     walk(body, &mut |n| {
         if matches!(
@@ -245,6 +296,7 @@ fn function(
         node: &Value,
         conditional: bool,
         aliases: &BTreeMap<String, Option<Path>>,
+        condition_aliases: &BTreeMap<String, Option<Path>>,
         contracts: &ResourceContracts,
         holder_types: &BTreeSet<String>,
         out: &mut FunctionFacts,
@@ -281,6 +333,12 @@ fn function(
                     .map(|n| path(n, aliases))
                     .collect::<Vec<_>>();
                 let arg = |i: usize| args.get(i).cloned().flatten();
+                let typed_args = children(node)
+                    .iter()
+                    .skip(1)
+                    .map(|arg| typed_effect_path(arg, condition_aliases))
+                    .collect::<Vec<_>>();
+                let typed_arg = |i: usize| typed_args.get(i).cloned().flatten();
                 let offset = node["range"]["begin"]["offset"].as_u64().unwrap_or(0);
                 let mut classified = false;
                 if let Some(declared) = contracts.retaining_contract(name) {
@@ -301,8 +359,8 @@ fn function(
                         out.operations.push(Operation {
                             kind: OperationKind::Remove,
                             callee: name.into(),
-                            object: arg(removed.retained),
-                            holder: arg(removed.holder),
+                            object: typed_arg(removed.retained),
+                            holder: typed_arg(removed.holder),
                             conditional,
                             offset,
                         });
@@ -315,7 +373,9 @@ fn function(
                             let value = arg(index);
                             let destroy =
                                 record(ty(strip(children(node).get(index + 1).unwrap_or(node))))
-                                    .is_some_and(|r| holder_types.contains(&r));
+                                    .is_some_and(|r| holder_types.contains(&r))
+                                    && value.is_some()
+                                    && typed_arg(index) == value;
                             out.operations.push(Operation {
                                 kind: if destroy {
                                     OperationKind::Destroy
@@ -334,6 +394,16 @@ fn function(
                 }
                 out.calls.push(CallSite {
                     callee: name.into(),
+                    condition_actuals: children(node)
+                        .iter()
+                        .skip(1)
+                        .map(|arg| {
+                            condition_casts_preserve(arg)
+                                .then(|| path(arg, condition_aliases))
+                                .flatten()
+                        })
+                        .collect(),
+                    typed_effect_actuals: typed_args,
                     actuals: args,
                     conditions: Vec::new(),
                     pure_operands: children(node).iter().all(pure_call_expression),
@@ -365,10 +435,26 @@ fn function(
                 .insert(format!("unresolved {} in lifetime body", kind(node)));
         }
         for child in children(node) {
-            visit(child, conditional, aliases, contracts, holder_types, out)
+            visit(
+                child,
+                conditional,
+                aliases,
+                condition_aliases,
+                contracts,
+                holder_types,
+                out,
+            )
         }
     }
-    visit(body, false, &aliases, contracts, holder_types, &mut out);
+    visit(
+        body,
+        false,
+        &aliases,
+        &condition_aliases,
+        contracts,
+        holder_types,
+        &mut out,
+    );
     // Clang declaration ids are process addresses. Canonical roots use only
     // source coordinates and positions, never unstable AST pointer spellings.
     let mut roots = out
@@ -407,9 +493,15 @@ fn function(
         canonical(lhs);
         canonical(rhs);
     }
-    let evidence = condition_calls(body, &aliases, getters);
+    let evidence = condition_calls(body, &condition_aliases, getters);
     for call in &mut out.calls {
         for actual in &mut call.actuals {
+            canonical(actual);
+        }
+        for actual in &mut call.condition_actuals {
+            canonical(actual);
+        }
+        for actual in &mut call.typed_effect_actuals {
             canonical(actual);
         }
         call.conditions = evidence
@@ -458,10 +550,9 @@ pub fn read_unit(
             pending.extend(children(node).iter().map(|child| (child, depth + 1)));
         }
         let mut descriptor = format!(
-            "{:?}\0{:?}\0{:?}\0{:?}\0{:?}\0{:?}\0",
+            "{:?}\0{:?}\0{:?}\0{:?}\0{:?}\0",
             unit.input,
             unit.dialect,
-            unit.function_scope,
             unit.include_paths,
             unit.definitions,
             unit.preprocessor_options
@@ -474,6 +565,24 @@ pub fn read_unit(
             source_sha256: qcore_schemas::sha256_hex(source.as_bytes()),
             ..Default::default()
         };
+        // Tag spelling alone cannot distinguish block-scoped declarations.
+        // Refuse this bounded reader's typed interpretations when multiple
+        // complete declarations share a tag, even if field types coincide.
+        let mut definitions = BTreeMap::<String, usize>::new();
+        walk(&ast, &mut |node| {
+            if kind(node) == "RecordDecl"
+                && node["completeDefinition"].as_bool() == Some(true)
+                && let Some(tag) = node["name"].as_str()
+            {
+                *definitions.entry(tag.into()).or_default() += 1;
+            }
+        });
+        for (tag, count) in definitions {
+            if count > 1 {
+                out.open
+                    .insert(format!("ambiguous scoped record declaration {tag}"));
+            }
+        }
         let mut holder_types = BTreeSet::new();
         for node in children(&ast).iter().filter(|n| kind(n) == "FunctionDecl") {
             if let Some(declared) = node["name"]
@@ -572,6 +681,11 @@ pub fn read_unit(
 fn getter_definitions(ast: &Value) -> BTreeMap<String, (usize, Vec<String>)> {
     let mut getters = BTreeMap::new();
     for node in children(ast).iter().filter(|n| kind(n) == "FunctionDecl") {
+        // A read of this exact body is not a proof about an interposable
+        // external symbol. The initial getter route is static source only.
+        if node["storageClass"].as_str() != Some("static") {
+            continue;
+        }
         let Some(body) = children(node).iter().find(|n| kind(n) == "CompoundStmt") else {
             continue;
         };
@@ -582,6 +696,9 @@ fn getter_definitions(ast: &Value) -> BTreeMap<String, (usize, Vec<String>)> {
         let [value] = children(returned) else {
             continue;
         };
+        if !condition_casts_preserve(value) || !integer_value_type(value) {
+            continue;
+        }
         let Some(value) = path(value, &BTreeMap::new()) else {
             continue;
         };
@@ -602,11 +719,59 @@ fn getter_definitions(ast: &Value) -> BTreeMap<String, (usize, Vec<String>)> {
     }
     getters
 }
+/// Strict zero/nonzero and typed-object correspondence. A may-effect can
+/// survive void* erasure, but a guard cannot interpret fields through it.
+fn integer_value_type(node: &Value) -> bool {
+    let words = ty(node).split_whitespace().collect::<Vec<_>>();
+    !words.is_empty()
+        && words.iter().all(|word| {
+            matches!(
+                *word,
+                "const" | "signed" | "unsigned" | "char" | "short" | "int" | "long" | "_Bool"
+            )
+        })
+}
+fn condition_casts_preserve(node: &Value) -> bool {
+    if ty(node).contains("volatile") || ty(node).contains("_Atomic") {
+        return false;
+    }
+    match kind(node) {
+        "CStyleCastExpr" => false,
+        "ImplicitCastExpr"
+            if !matches!(
+                node["castKind"].as_str(),
+                Some("LValueToRValue" | "NoOp" | "FunctionToPointerDecay")
+            ) =>
+        {
+            false
+        }
+        _ => children(node).iter().all(condition_casts_preserve),
+    }
+}
+fn typed_effect_path(mut node: &Value, aliases: &BTreeMap<String, Option<Path>>) -> Option<Path> {
+    // A C API may erase an address to void*. This outer conversion preserves
+    // the physical address, but no void/retyping alias can supply field layout.
+    while kind(node) == "ParenExpr" {
+        node = children(node).first()?;
+    }
+    if kind(node) == "ImplicitCastExpr"
+        && node["castKind"].as_str() == Some("BitCast")
+        && ty(node).split_whitespace().collect::<String>() == "void*"
+    {
+        node = children(node).first()?;
+    }
+    condition_casts_preserve(node)
+        .then(|| path(node, aliases))
+        .flatten()
+}
 fn condition(
     node: &Value,
     aliases: &BTreeMap<String, Option<Path>>,
     getters: &BTreeMap<String, (usize, Vec<String>)>,
 ) -> Option<ConditionFact> {
+    if !condition_casts_preserve(node) || !integer_value_type(node) {
+        return None;
+    }
     let node = strip(node);
     if kind(node) == "UnaryOperator" && node["opcode"].as_str() == Some("!") {
         let mut c = condition(children(node).first()?, aliases, getters)?;
@@ -813,7 +978,10 @@ pub fn condition_at(
     units: &[&SourceFacts],
 ) -> qcore_core::local_condition::Truth {
     use qcore_core::local_condition::Truth;
-    let Some(Some(actual)) = call.actuals.get(binding.parameter) else {
+    if units.iter().any(|unit| !unit.open.is_empty()) {
+        return Truth::Unknown;
+    }
+    let Some(Some(actual)) = call.condition_actuals.get(binding.parameter) else {
         return Truth::Unknown;
     };
     let mut target = actual.clone();
@@ -880,7 +1048,10 @@ fn binding_members(
     call: &CallSite,
     units: &[&SourceFacts],
 ) -> Result<BTreeSet<String>, String> {
-    let Some(Some(actual)) = call.actuals.get(binding.parameter) else {
+    if units.iter().any(|unit| !unit.open.is_empty()) {
+        return Err("condition source/type declarations are open".into());
+    }
+    let Some(Some(actual)) = call.condition_actuals.get(binding.parameter) else {
         return Err("condition actual root is unresolved".into());
     };
     let mut tag = actual.record.clone();
@@ -949,7 +1120,7 @@ fn entry_discharges(
     {
         return false;
     }
-    let Some(Some(actual)) = call.actuals.get(binding.parameter) else {
+    let Some(Some(actual)) = call.condition_actuals.get(binding.parameter) else {
         return false;
     };
     let full_members = actual
@@ -981,11 +1152,11 @@ pub fn call_ready(
     use qcore_core::local_condition::Truth;
     let mut members = BTreeSet::new();
     for protocol in &lifetime.registered {
-        if !matches!(
+        if matches!(
             crate::loop_lifetime_summary::standing(protocol, units, &run.unread),
-            crate::loop_lifetime_summary::Standing::Validated
+            crate::loop_lifetime_summary::Standing::Withdrawn { .. }
         ) {
-            return Err("registered footprint is withdrawn or requires an explicitly attributed unresolved run premise".into());
+            return Err("registered footprint is contradicted and withdrawn".into());
         }
         members.insert(format!(
             "{}.{}",
@@ -1045,18 +1216,17 @@ pub(crate) fn ready_at_source_call(
     lifetime: &qcore_schemas::loop_lifetime::LoopLifetimeContract,
     contracts: &ResourceContracts,
 ) -> Result<BTreeSet<String>, String> {
-    // Standalone certificates do not retain global source closures. Only the
-    // local prerequisite subset is admitted here, rebuilt from retained source.
-    if !lifetime.registered.is_empty()
-        || lifetime.blocks.iter().any(|block| {
-            block.clauses.iter().any(|clause| {
-                matches!(
-                    clause,
-                    qcore_schemas::loop_lifetime::LocalClause::Registered(_)
-                )
-            })
+    // Unconditional protocols may be explicit declared assumptions; this
+    // never claims global closure. Conditional type protocols still need an
+    // independently checked record-to-host correlation.
+    if lifetime.blocks.iter().any(|block| {
+        block.clauses.iter().any(|clause| {
+            matches!(
+                clause,
+                qcore_schemas::loop_lifetime::LocalClause::Registered(_)
+            )
         })
-    {
+    }) {
         return Err(
             "global registered protocol lacks retained independently replayable run evidence"
                 .into(),
@@ -1108,6 +1278,26 @@ pub(crate) fn ready_at_source_call(
             .and_then(|c| c.lifetime.as_ref());
         let entry = own.map(|lifetime| EntryContext { lifetime, body });
         members.extend(call_ready(lifetime, call, &units, &run, entry.as_ref())?);
+        if !lifetime.registered.is_empty() {
+            let digest = qcore_schemas::sha256_hex(
+                &serde_json::to_vec(contracts.source_assumptions()).map_err(|e| e.to_string())?,
+            );
+            let assumptions = lifetime
+                .registered
+                .iter()
+                .map(|p| {
+                    format!(
+                        "loop-protocol-declared:{callee}:{digest}:{}.{}|->{}.{}",
+                        p.record,
+                        p.interior.join("."),
+                        p.record,
+                        p.holder.join(".")
+                    )
+                })
+                .collect();
+            crate::contract_dependencies::lifetime_entry_evidence(function, assumptions);
+            qcore_schemas::contract_consultation::note_relied(callee);
+        }
         if let Some(entry) = entry.as_ref() {
             let mut prerequisites = BTreeSet::new();
             if entry.lifetime.entry_snapshot_stable {
@@ -1148,4 +1338,245 @@ pub(crate) fn ready_at_source_call(
         return Err("no unique matching source call in the run's exact function readings".into());
     }
     Ok(members)
+}
+
+/// Bounded unconditional self-record forwarding, independently rebuilt from
+/// retained source on certificate replay. The protocol is an attributed
+/// DeclaredAssumption, never a claim that ambient run closure was proved.
+pub(crate) fn forwarding_at_source_call(
+    function_name: &str,
+    callee: &str,
+    line: usize,
+    formal: &str,
+    interior: &[String],
+    holder_fields: &[String],
+    contracts: &ResourceContracts,
+) -> Option<crate::loop_lifetime_summary::ForwardedLifetime> {
+    use crate::loop_lifetime_summary::{
+        ForwardedLifetime, Path as SymbolicPath, Registration, Root, Standing,
+    };
+    let index = crate::typed_access_path::with_indirect_call_unit(|unit| {
+        children(unit.function(function_name)?)
+            .iter()
+            .filter(|n| kind(n) == "ParmVarDecl")
+            .position(|p| p["name"].as_str() == Some(formal))
+    })
+    .flatten()?;
+    let source = crate::typed_access_path::current_lifetime_source(contracts).ok()?;
+    if !source.open.is_empty() {
+        return None;
+    }
+    let body = source.functions.get(function_name)?;
+    if !body.open.is_empty() {
+        return None;
+    }
+    let root = body.parameters.get(index)?;
+    let calls = body
+        .calls
+        .iter()
+        .filter(|c| c.callee == callee && c.line == line)
+        .collect::<Vec<_>>();
+    let [call] = calls.as_slice() else {
+        return None;
+    };
+    if !call.pure_operands {
+        return None;
+    }
+    let operation = body.operations.iter().find(|op| {
+        op.offset == call.offset
+            && op.kind == OperationKind::Register
+            && op
+                .object
+                .as_ref()
+                .is_some_and(|p| p.root == *root && p.fields == interior)
+            && op
+                .holder
+                .as_ref()
+                .is_some_and(|p| p.root == *root && p.fields == holder_fields)
+    })?;
+    let object = operation.object.as_ref()?;
+    let holder = operation.holder.as_ref()?;
+    let typed_pair = contracts
+        .retaining_contract(callee)?
+        .retentions
+        .iter()
+        .any(|retained| {
+            let RetentionHolder::Parameter { index } = retained.holder else {
+                return false;
+            };
+            call.typed_effect_actuals
+                .get(retained.retained)
+                .and_then(Option::as_ref)
+                == Some(object)
+                && call
+                    .typed_effect_actuals
+                    .get(index)
+                    .and_then(Option::as_ref)
+                    == Some(holder)
+        });
+    if !typed_pair {
+        return None;
+    }
+    if object.record != holder.record {
+        return None;
+    }
+    let digest =
+        qcore_schemas::sha256_hex(&serde_json::to_vec(contracts.source_assumptions()).ok()?);
+    for (host, declaration) in contracts.lifetime_declarations() {
+        let Some(lifetime) = &declaration.lifetime else {
+            continue;
+        };
+        for protocol in &lifetime.registered {
+            if protocol.record != object.record
+                || protocol.interior != interior
+                || protocol.holder != holder_fields
+            {
+                continue;
+            }
+            if matches!(
+                crate::loop_lifetime_summary::standing(protocol, &[&source], &BTreeMap::new()),
+                Standing::Withdrawn { .. }
+            ) {
+                continue;
+            }
+            // This does not equate the holder to an engine/worker loop or
+            // another record. Both operands are this one exact caller root.
+            let scope = format!("{}:{function_name}", source.identity);
+            let premise = format!(
+                "loop-protocol-declared:{host}:{digest}:{}.{}|->{}.{}",
+                protocol.record,
+                interior.join("."),
+                protocol.record,
+                holder_fields.join(".")
+            );
+            qcore_schemas::contract_consultation::note_relied(host);
+            crate::contract_dependencies::lifetime_evidence(
+                function_name,
+                BTreeSet::from([
+                    format!("{}.{}", protocol.record, interior.join(".")),
+                    format!("{}.{}", protocol.record, holder_fields.join(".")),
+                ]),
+            );
+            crate::contract_dependencies::lifetime_entry_evidence(
+                function_name,
+                BTreeSet::from([premise.clone()]),
+            );
+            return Some(ForwardedLifetime {
+                host: host.clone(),
+                premise,
+                registration: Registration {
+                    object: SymbolicPath {
+                        root: Root::Formal {
+                            scope: scope.clone(),
+                            index,
+                        },
+                        fields: interior.to_vec(),
+                    },
+                    holder: SymbolicPath {
+                        root: Root::Formal { scope, index },
+                        fields: holder_fields.to_vec(),
+                    },
+                    poisoned: false,
+                },
+            });
+        }
+    }
+    None
+}
+
+/// Import only a source-rederived same-unit outgoing registration. Bounded
+/// substitution requires an exact current caller formal and unchanged members;
+/// no lookup by callee spelling alone or closed-type lifting establishes it.
+pub(crate) fn substitute_forwarded_call(
+    caller: &str,
+    callee: &str,
+    line: usize,
+    actual_name: &str,
+    effect: &crate::loop_lifetime_summary::ForwardedLifetime,
+    contracts: &ResourceContracts,
+) -> Option<crate::loop_lifetime_summary::ForwardedLifetime> {
+    use crate::loop_lifetime_summary::{Path as SymbolicPath, Root};
+    let source = crate::typed_access_path::current_lifetime_source(contracts).ok()?;
+    if !source.open.is_empty() || !source.functions.contains_key(callee) {
+        return None;
+    }
+    let body = source.functions.get(caller)?;
+    if !body.open.is_empty() {
+        return None;
+    }
+    let caller_index = crate::typed_access_path::with_indirect_call_unit(|unit| {
+        children(unit.function(caller)?)
+            .iter()
+            .filter(|n| kind(n) == "ParmVarDecl")
+            .position(|p| p["name"].as_str() == Some(actual_name))
+    })
+    .flatten()?;
+    let Root::Formal { scope, index } = &effect.registration.object.root else {
+        return None;
+    };
+    if effect.registration.holder.root != effect.registration.object.root
+        || *scope != format!("{}:{callee}", source.identity)
+    {
+        return None;
+    }
+    let calls = body
+        .calls
+        .iter()
+        .filter(|c| c.callee == callee && c.line == line)
+        .collect::<Vec<_>>();
+    let [call] = calls.as_slice() else {
+        return None;
+    };
+    if !call.pure_operands {
+        return None;
+    }
+    let actual = call.condition_actuals.get(*index)?.as_ref()?;
+    if body.parameters.get(caller_index) != Some(&actual.root) || !actual.fields.is_empty() {
+        return None;
+    }
+    let host = contracts.lifetime_contract(&effect.host)?;
+    let protocol = host.lifetime.as_ref()?.registered.iter().find(|p| {
+        p.record == actual.record
+            && p.interior == effect.registration.object.fields
+            && p.holder == effect.registration.holder.fields
+    })?;
+    let digest =
+        qcore_schemas::sha256_hex(&serde_json::to_vec(contracts.source_assumptions()).ok()?);
+    let expected = format!(
+        "loop-protocol-declared:{}:{digest}:{}.{}|->{}.{}",
+        effect.host,
+        protocol.record,
+        protocol.interior.join("."),
+        protocol.record,
+        protocol.holder.join(".")
+    );
+    if effect.premise != expected {
+        return None;
+    }
+    let mut forwarded = effect.clone();
+    let root = Root::Formal {
+        scope: format!("{}:{caller}", source.identity),
+        index: caller_index,
+    };
+    forwarded.registration.object = SymbolicPath {
+        root: root.clone(),
+        fields: effect.registration.object.fields.clone(),
+    };
+    forwarded.registration.holder = SymbolicPath {
+        root,
+        fields: effect.registration.holder.fields.clone(),
+    };
+    qcore_schemas::contract_consultation::note_relied(&effect.host);
+    crate::contract_dependencies::lifetime_evidence(
+        caller,
+        BTreeSet::from([
+            format!("{}.{}", protocol.record, protocol.interior.join(".")),
+            format!("{}.{}", protocol.record, protocol.holder.join(".")),
+        ]),
+    );
+    crate::contract_dependencies::lifetime_entry_evidence(
+        caller,
+        BTreeSet::from([forwarded.premise.clone()]),
+    );
+    Some(forwarded)
 }

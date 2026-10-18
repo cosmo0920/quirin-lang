@@ -13,3 +13,9 @@ import QCore.LocalCondition
 #print axioms QCore.LocalCondition.leaving_scope_never_exports_a_fresh_fact
 
 #print axioms QCore.LocalCondition.a_matching_conditional_entry_precondition_discharges_the_body_use
+
+#print axioms QCore.LocalCondition.a_bound_condition_is_not_visible_to_an_unaware_consumer
+#print axioms QCore.LocalCondition.a_condition_block_is_not_visible_to_an_unaware_consumer
+
+#print axioms QCore.LocalCondition.a_guarded_interface_never_publishes_an_ordinary_summary
+#print axioms QCore.LocalCondition.shared_publication_vectors_hold

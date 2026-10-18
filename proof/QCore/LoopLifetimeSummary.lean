@@ -4,6 +4,10 @@ import QCore.LocalCondition
 trust boundary. Keys include source/configuration/function scope; no candidate
 site overlap supplies runtime equality. Endings across a call use only must
 destroys: unordered removals cannot reconstruct incoming poisoning or order.
+Symbolic paths denote the same object/value snapshot throughout a model trace.
+Their extraction must establish that correspondence; source member stores,
+unread call frames and unsupported exits withhold must endings and all release
+prefixes. A custody-only declaration supplies no heap frame proof.
 Rust: loop_lifetime_summary.rs and loop_lifetime_source.rs. -/
 namespace QCore.LoopLifetimeSummary
 inductive Root where
@@ -31,6 +35,16 @@ def mayAlias (_left _right : Path) : Bool := true
 def destroy (holder : Path) (rs : List Registration) : List Registration :=
   if concrete holder then rs.filter (fun r => r.holder != holder) else rs
 
+/-- Every newly registered holder invalidates an earlier must-destroy,
+whether the registration is local or imported from a callee's may effects. -/
+def afterRegister (holder : Path) (destroyedBefore : List Path) : List Path :=
+  destroyedBefore.filter fun p => p != holder
+
+theorem a_new_registration_invalidates_its_earlier_destroy
+    (holder : Path) (destroyedBefore : List Path) :
+    holder ∉ afterRegister holder destroyedBefore := by
+  simp [afterRegister]
+
 structure ReleaseEffect where
   object : Path
   destroyedBefore : List Path
@@ -41,6 +55,14 @@ Only holders already destroyed before that release discharge it. -/
 def releaseRefuses (effect : ReleaseEffect) (record : Registration) : Bool :=
   mayAlias effect.object record.object &&
     !(concrete record.holder && effect.destroyedBefore.contains record.holder)
+
+def withoutHolderFrame (effect : ReleaseEffect) : ReleaseEffect :=
+  { effect with destroyedBefore := [] }
+
+theorem an_unproved_holder_frame_cannot_discharge_an_incoming_record
+    (effect : ReleaseEffect) (record : Registration) :
+    releaseRefuses (withoutHolderFrame effect) record = true := by
+  simp [releaseRefuses, withoutHolderFrame, mayAlias]
 
 theorem a_release_without_an_earlier_ending_refuses_every_incoming_record
     (object : Path) (record : Registration) :
@@ -61,6 +83,46 @@ theorem a_lifted_prefix_never_discharges_a_release
     (effect : ReleaseEffect) (record : Registration)
     (unknownHolder : concrete record.holder = false) : releaseRefuses effect record = true := by
   simp [releaseRefuses, mayAlias, unknownHolder]
+
+/-- Proof presence is required on every branch where the record is present;
+absence of a record differs from its unproved presence. Exact member paths
+remain part of the record key. -/
+def joinForwarded (leftRecords rightRecords leftProofs rightProofs : List Registration) : List Registration :=
+  (leftProofs ++ rightProofs).filter fun record =>
+    (!leftRecords.contains record || leftProofs.contains record) &&
+    (!rightRecords.contains record || rightProofs.contains record)
+
+theorem a_join_forwarded_on_two_present_arms_has_both_proofs
+    (leftRecords rightRecords leftProofs rightProofs : List Registration)
+    (record : Registration) (leftPresent : record ∈ leftRecords)
+    (rightPresent : record ∈ rightRecords)
+    (forwarded : record ∈ joinForwarded leftRecords rightRecords leftProofs rightProofs) :
+    record ∈ leftProofs ∧ record ∈ rightProofs := by
+  have gates := (List.mem_filter.mp forwarded).2
+  simpa [leftPresent, rightPresent, List.contains_iff_mem] using gates
+
+def exitOwed (records proofs : List Registration) : List Registration :=
+  records.filter fun record => !proofs.contains record
+
+def exitForwarded (records proofs : List Registration) : List Registration :=
+  records.filter fun record => proofs.contains record
+
+theorem every_retained_record_remains_owed_or_explicitly_forwarded
+    (records proofs : List Registration) (record : Registration) (present : record ∈ records) :
+    record ∈ exitOwed records proofs ∨ record ∈ exitForwarded records proofs := by
+  by_cases proven : record ∈ proofs
+  · right; simp [exitForwarded, present, proven]
+  · left; simp [exitOwed, present, proven]
+
+theorem forwarding_does_not_invent_or_remove_its_retained_record
+    (records proofs : List Registration) (record : Registration)
+    (forwarded : record ∈ exitForwarded records proofs) : record ∈ records := by
+  exact (List.mem_filter.mp forwarded).1
+
+theorem an_unproved_record_is_still_an_exit_obligation
+    (records proofs : List Registration) (record : Registration)
+    (present : record ∈ records) (unproved : record ∉ proofs) :
+    record ∈ exitOwed records proofs := by simp [exitOwed, present, unproved]
 
 def mayJoin (left right : List Registration) : List Registration := left ++ right
 

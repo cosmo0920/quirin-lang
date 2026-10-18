@@ -51,3 +51,37 @@ pub struct LoopLifetimeContract {
     pub blocks: Vec<LocalBlock>,
     pub registered: Vec<RegisteredProtocol>,
 }
+
+#[derive(Clone, Debug, PartialEq, Eq, PartialOrd, Ord, Serialize, Deserialize)]
+pub enum Root {
+    Formal { scope: String, index: usize },
+    Result { scope: String },
+    Lifted(String),
+}
+#[derive(Clone, Debug, PartialEq, Eq, PartialOrd, Ord, Serialize, Deserialize)]
+pub struct Path {
+    pub root: Root,
+    pub fields: Vec<String>,
+}
+#[derive(Clone, Debug, PartialEq, Eq, PartialOrd, Ord, Serialize, Deserialize)]
+pub struct Registration {
+    pub object: Path,
+    pub holder: Path,
+    pub poisoned: bool,
+}
+/// A body forwards this exact caller-owned registration under an explicitly
+/// attributed declared protocol. It is not a discharged caller release check.
+#[derive(Clone, Debug, PartialEq, Eq, PartialOrd, Ord, Serialize, Deserialize)]
+pub struct ForwardedLifetime {
+    pub host: String,
+    pub premise: String,
+    pub registration: Registration,
+}
+
+/// Same-unit inference retains custody and its outgoing lifetime effects as
+/// one record. Ordinary custody consumers cannot read this as a bare borrow.
+#[derive(Clone, Debug, PartialEq, Eq, PartialOrd, Ord, Serialize, Deserialize)]
+pub struct InferredLifetimeSummary {
+    pub contract: crate::contract::ResourceFunctionContract,
+    pub effects: Vec<ForwardedLifetime>,
+}

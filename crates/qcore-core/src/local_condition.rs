@@ -2,6 +2,12 @@
 //! complement. Conditions are keyed by both binder and runtime object root;
 //! no fact or premise is global merely because a block is written locally.
 
+/// Ordinary lookup/summary publication cannot erase a guarded interface.
+#[must_use]
+pub const fn ordinary_publication_allowed(guarded: bool, discharged: bool) -> bool {
+    !guarded && discharged
+}
+
 #[derive(Clone, Copy, Debug, PartialEq, Eq)]
 pub enum Truth {
     Yes,
@@ -76,6 +82,17 @@ pub const VECTORS: [(Truth, bool, bool); 6] = [
 #[cfg(test)]
 mod tests {
     use super::*;
+    #[test]
+    fn guarded_publication_vectors() {
+        for (guarded, discharged, allowed) in [
+            (false, false, false),
+            (false, true, true),
+            (true, false, false),
+            (true, true, false),
+        ] {
+            assert_eq!(ordinary_publication_allowed(guarded, discharged), allowed);
+        }
+    }
     #[test]
     fn shared_vectors() {
         for (t, d, want) in VECTORS {

@@ -191,6 +191,18 @@ pub fn read(decl: &SourceDeclaration) -> Result<LoopLifetimeContract, String> {
             out.bindings.push(b);
         }
     }
+    // C04.18 retains whole-declaration premise-name uniqueness, including
+    // scoped prerequisites; validating clauses one at a time must not relax it.
+    let mut premise_names = contract
+        .clauses
+        .iter()
+        .filter_map(|clause| {
+            (clause.value.kind == SourceContractClauseKind::Requires)
+                .then(|| named_prerequisite(&clause.value.expression_source))
+                .flatten()
+                .map(|(name, _)| name)
+        })
+        .collect::<BTreeSet<_>>();
     let mut blocks = BTreeSet::new();
     let mut footprints = BTreeSet::new();
     for c in &contract.clauses {
@@ -217,7 +229,13 @@ pub fn read(decl: &SourceDeclaration) -> Result<LoopLifetimeContract, String> {
                     .iter()
                     .map(|c| match c.value.kind {
                         SourceContractClauseKind::Requires => {
-                            prerequisite(&c.value.expression_source).map(LocalClause::Prerequisite)
+                            let text = prerequisite(&c.value.expression_source)?;
+                            if let Some((name, _)) = named_prerequisite(&text)
+                                && !premise_names.insert(name)
+                            {
+                                return Err("local-prerequisite-duplicate: resource_premise name repeats in this declaration".into());
+                            }
+                            Ok(LocalClause::Prerequisite(text))
                         }
                         SourceContractClauseKind::QuantRegistered => {
                             registered(&c.value.expression_source).map(LocalClause::Registered)

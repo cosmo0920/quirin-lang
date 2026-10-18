@@ -280,6 +280,8 @@ pub(super) struct AbstractState {
     /// arriving path stays poisoned. Empty in every function that calls no
     /// removal, which keeps the join as it was.
     pub(super) poisoned: BTreeSet<crate::retained_by::Record>,
+    pub(super) forwarded_lifetimes:
+        BTreeMap<crate::retained_by::Record, crate::loop_lifetime_summary::ForwardedLifetime>,
     /// Card **SLOT-MOVE-AND-INTERIOR-BORROW** (rules 12x, 12y): names whose
     /// value a slot move or a borrow's end invalidated; a read refuses.
     /// Joined by union; empty in every function that calls no slot-moving or
@@ -433,6 +435,24 @@ impl AbstractState {
         in_place_custody::join_witnesses(&mut self.status_witnesses, &incoming.status_witnesses);
         self.retained.extend(incoming.retained.iter().cloned());
         self.poisoned.extend(incoming.poisoned.iter().cloned());
+        self.forwarded_lifetimes.clear();
+        for record in &self.retained {
+            let left = before.forwarded_lifetimes.get(record);
+            let right = incoming.forwarded_lifetimes.get(record);
+            let proof = match (
+                before.retained.contains(record),
+                incoming.retained.contains(record),
+            ) {
+                (true, true) => left.filter(|proof| Some(*proof) == right),
+                (true, false) => left,
+                (false, true) => right,
+                (false, false) => None,
+            };
+            if let Some(proof) = proof {
+                self.forwarded_lifetimes
+                    .insert(record.clone(), proof.clone());
+            }
+        }
         slot_move_route::join(self, incoming);
         reference_route::join(self, incoming);
         callback_route::join(&mut self.registries, &incoming.registries);
@@ -2110,6 +2130,7 @@ fn analyze_cfg_with_entry_collected(
     // this pass only observes.
     let mut observations = Vec::new();
     let mut exits = Vec::new();
+    let mut lifetime_effects = BTreeSet::new();
     let mut withheld = Vec::new();
     for (node_id, node) in cfg.nodes.iter().enumerate() {
         if !node.is_exit {
@@ -2148,6 +2169,13 @@ fn analyze_cfg_with_entry_collected(
             &acquisition_lines,
             &mut diagnostics,
         );
+        for record in &output.retained {
+            if let Some(proof) = output.forwarded_lifetimes.get(record) {
+                let mut proof = proof.clone();
+                proof.registration.poisoned |= output.poisoned.contains(record);
+                lifetime_effects.insert(proof);
+            }
+        }
         observations.push(observe_exit(
             node,
             &output,
@@ -2193,6 +2221,7 @@ fn analyze_cfg_with_entry_collected(
             counted_users: Vec::new(),
             refutations: Vec::new(),
             null_premises: Vec::new(),
+            lifetime_effects,
         },
         observations,
     )

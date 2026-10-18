@@ -5,7 +5,7 @@
 //! `docs/GENERALIZATION_PLAN.md`). Types only: the analyzer and the
 //! source-assumption recheck stay in the compiler crate.
 
-use std::collections::BTreeMap;
+use std::collections::{BTreeMap, BTreeSet};
 
 use serde::{Deserialize, Serialize};
 
@@ -586,6 +586,8 @@ pub struct PendingHumanReview {
 /// can route them by trust label rather than by origin-specific types.
 #[derive(Clone, Debug, PartialEq, Eq, PartialOrd, Ord, Serialize, Deserialize)]
 pub struct ResourceSummaryRecord {
+    #[serde(default, skip_serializing_if = "Vec::is_empty")]
+    pub lifetime_effects: Vec<crate::loop_lifetime::ForwardedLifetime>,
     pub function: String,
     pub trust: ContractTrust,
     pub contract: ResourceFunctionContract,
@@ -602,6 +604,7 @@ impl ResourceSummaryRecord {
             function: function.into(),
             trust,
             contract,
+            lifetime_effects: Vec::new(),
         }
     }
 }
@@ -734,6 +737,16 @@ pub struct ResourceContracts {
     /// never reads a retained pointer as borrowed. Omitted when empty.
     #[serde(default, skip_serializing_if = "BTreeMap::is_empty")]
     retaining: BTreeMap<String, crate::retained_by::RetainingContract>,
+    /// S3-only declarations. Unaware raw retaining-table consumers cannot
+    /// project away conditional prerequisites through another effect route.
+    #[serde(default, skip_serializing_if = "BTreeMap::is_empty")]
+    guarded_retaining: BTreeMap<String, crate::retained_by::RetainingContract>,
+    /// Declaration identity survives withdrawal; it grants no prerequisite
+    /// or effect, and prevents an ordinary summary from erasing its interface.
+    #[serde(default, skip_serializing_if = "BTreeSet::is_empty")]
+    declared_guarded: BTreeSet<String>,
+    #[serde(default, skip_serializing_if = "BTreeMap::is_empty")]
+    inferred_lifetimes: BTreeMap<String, crate::loop_lifetime::InferredLifetimeSummary>,
 }
 
 impl ResourceContracts {
@@ -755,16 +768,23 @@ impl ResourceContracts {
             refuted_by_body: BTreeMap::new(),
             relational: BTreeMap::new(),
             retaining: BTreeMap::new(),
+            guarded_retaining: BTreeMap::new(),
+            declared_guarded: BTreeSet::new(),
+            inferred_lifetimes: BTreeMap::new(),
         }
     }
 
     pub fn insert(&mut self, name: impl Into<String>, kind: ResourceApiKind) {
-        self.functions
-            .insert(name.into(), ResourceFunctionContract::from(kind));
+        self.insert_contract(name, ResourceFunctionContract::from(kind));
     }
 
     pub fn insert_contract(&mut self, name: impl Into<String>, contract: ResourceFunctionContract) {
-        self.functions.insert(name.into(), contract);
+        let name = name.into();
+        // An ordinary overlay has no representation of guarded entry
+        // obligations. Withdrawal must be explicit before replacing one.
+        if !self.has_guarded_interface(&name) {
+            self.functions.insert(name, contract);
+        }
     }
 
     /// Install the contracts of independently replayable cross-unit imports.
@@ -924,7 +944,11 @@ impl ResourceContracts {
                 .map(|class| class.contract.clone())
                 .ok_or_else(|| format!("`{name}` states no return-code class"))?;
             (first, Some(relational), None)
-        } else if let Some(retaining) = self.retaining.remove(name) {
+        } else if let Some(retaining) = self
+            .retaining
+            .remove(name)
+            .or_else(|| self.guarded_retaining.remove(name))
+        {
             (retaining.contract.clone(), None, Some(retaining))
         } else {
             return Err(format!("`{name}` is not a contract in force"));
@@ -989,7 +1013,7 @@ impl ResourceContracts {
             if let Some(relational) = withheld.relational {
                 resolved.relational.insert(name, relational);
             } else if let Some(retaining) = withheld.retaining {
-                resolved.retaining.insert(name, retaining);
+                resolved.insert_retaining(name, retaining);
             } else {
                 resolved.functions.insert(name, withheld.contract);
             }
@@ -1005,10 +1029,13 @@ impl ResourceContracts {
     pub fn contract(&self, name: &str) -> Option<&ResourceFunctionContract> {
         // A declared contract always wins, even if a redundant import was
         // offered. The gateway refuses conflicting evidence at admission.
-        let found = self
-            .functions
-            .get(name)
-            .or_else(|| self.inferred_imports.get(name));
+        let found = if self.has_guarded_interface(name) {
+            None
+        } else {
+            self.functions
+                .get(name)
+                .or_else(|| self.inferred_imports.get(name))
+        };
         crate::contract_consultation::note(name, found.is_some());
         found
     }
@@ -1063,12 +1090,94 @@ impl ResourceContracts {
         &self.retaining
     }
 
+    /// Explicit S3/introspection access. This table supplies no ready effects.
+    #[must_use]
+    pub fn guarded_retaining(&self) -> &BTreeMap<String, crate::retained_by::RetainingContract> {
+        &self.guarded_retaining
+    }
+    pub fn carry_guarded_identities(&mut self, from: &Self) {
+        self.declared_guarded
+            .extend(from.declared_guarded.iter().cloned());
+    }
+    #[must_use]
+    pub fn declared_guarded(&self) -> &BTreeSet<String> {
+        &self.declared_guarded
+    }
+    #[must_use]
+    pub fn has_guarded_interface(&self, name: &str) -> bool {
+        self.declared_guarded.contains(name)
+            || self.guarded_retaining.contains_key(name)
+            || self
+                .pin_mismatch
+                .get(name)
+                .and_then(|p| p.retaining.as_ref())
+                .is_some_and(|c| c.is_condition_bearing())
+    }
+    pub fn lifetime_declarations(
+        &self,
+    ) -> impl Iterator<Item = (&String, &crate::retained_by::RetainingContract)> {
+        self.retaining
+            .iter()
+            .chain(&self.guarded_retaining)
+            .filter(|(_, c)| c.lifetime.is_some())
+    }
+    /// Enforce the partition even for deserialized inputs, before any legacy
+    /// prepass can read the raw retaining table.
+    pub fn validate_lifetime_partition(&self) -> Result<(), String> {
+        if self.retaining.values().any(|c| c.is_condition_bearing())
+            || self.declared_guarded.iter().any(|name| {
+                self.functions.contains_key(name)
+                    || self.inferred_lifetimes.contains_key(name)
+                    || self.retaining.contains_key(name)
+            })
+            || self.pin_mismatch.iter().any(|(name, p)| {
+                p.retaining
+                    .as_ref()
+                    .is_some_and(|c| c.is_condition_bearing())
+                    && !self.declared_guarded.contains(name)
+            })
+            || self.guarded_retaining.iter().any(|(name, c)| {
+                !c.is_condition_bearing()
+                    || !self.declared_guarded.contains(name)
+                    || self.functions.contains_key(name)
+                    || self.inferred_lifetimes.contains_key(name)
+                    || self.retaining.contains_key(name)
+            })
+        {
+            return Err("guarded lifetime declarations are not in their exclusive S3 table".into());
+        }
+        Ok(())
+    }
+
+    #[must_use]
+    pub fn inferred_lifetimes(
+        &self,
+    ) -> &BTreeMap<String, crate::loop_lifetime::InferredLifetimeSummary> {
+        &self.inferred_lifetimes
+    }
+    pub fn insert_inferred_lifetime(
+        &mut self,
+        name: String,
+        summary: crate::loop_lifetime::InferredLifetimeSummary,
+    ) {
+        if self.has_guarded_interface(&name) {
+            return;
+        }
+        self.functions.remove(&name);
+        self.inferred_lifetimes.insert(name, summary);
+    }
+
     /// The retaining declaration of `name`, if it has one.
     #[must_use]
     pub fn retaining_contract(&self, name: &str) -> Option<&crate::retained_by::RetainingContract> {
-        // Legacy consumers cannot discharge local prerequisites. The S3
-        // source adapter reads `lifetime_contract` explicitly instead.
-        let found = self.retaining.get(name).filter(|c| c.lifetime.is_none());
+        // Conditional prerequisites require the explicit S3 consumer. An
+        // unconditional type footprint changes no custody/callback effect;
+        // only the forwarding reader consumes that separately scoped assertion.
+        let found = self.retaining.get(name).filter(|c| {
+            c.lifetime
+                .as_ref()
+                .is_none_or(|l| l.blocks.is_empty() && l.bindings.is_empty())
+        });
         crate::contract_consultation::note(name, found.is_some());
         found
     }
@@ -1077,7 +1186,11 @@ impl ResourceContracts {
     /// Reading this table is not evidence that its guarded obligations hold.
     #[must_use]
     pub fn lifetime_contract(&self, name: &str) -> Option<&crate::retained_by::RetainingContract> {
-        let found = self.retaining.get(name).filter(|c| c.lifetime.is_some());
+        let found = self
+            .guarded_retaining
+            .get(name)
+            .or_else(|| self.retaining.get(name))
+            .filter(|c| c.lifetime.is_some());
         crate::contract_consultation::note(name, found.is_some());
         found
     }
@@ -1088,14 +1201,22 @@ impl ResourceContracts {
     /// (a unit's withdrawals) keeps them this way, so a withdrawal of one name
     /// never drops every other declaration of those tables.
     pub fn carry_side_declarations(&mut self, from: &Self, withdrawn: impl Fn(&str) -> bool) {
+        self.declared_guarded
+            .extend(from.declared_guarded.iter().cloned());
+        self.inferred_lifetimes.extend(
+            from.inferred_lifetimes
+                .iter()
+                .filter(|(name, _)| !withdrawn(name))
+                .map(|(name, summary)| (name.clone(), summary.clone())),
+        );
         for (name, contract) in &from.relational {
             if !withdrawn(name) {
                 self.relational.insert(name.clone(), contract.clone());
             }
         }
-        for (name, contract) in &from.retaining {
+        for (name, contract) in from.retaining.iter().chain(&from.guarded_retaining) {
             if !withdrawn(name) {
-                self.retaining.insert(name.clone(), contract.clone());
+                self.insert_retaining(name.clone(), contract.clone());
             }
         }
     }
@@ -1106,8 +1227,10 @@ impl ResourceContracts {
     /// for a translation unit whose own body of `name` does not validate a
     /// declared slot or borrowed-result clause.
     pub fn withdraw_declaration(&mut self, name: &str) {
+        self.inferred_lifetimes.remove(name);
         self.functions.remove(name);
         self.retaining.remove(name);
+        self.guarded_retaining.remove(name);
     }
 
     /// Install a retaining declaration for `name`. The name leaves the
@@ -1118,7 +1241,18 @@ impl ResourceContracts {
         contract: crate::retained_by::RetainingContract,
     ) {
         let name = name.into();
+        if !contract.is_condition_bearing() && self.has_guarded_interface(&name) {
+            return;
+        }
         self.functions.remove(&name);
-        self.retaining.insert(name, contract);
+        self.inferred_lifetimes.remove(&name);
+        if contract.is_condition_bearing() {
+            self.declared_guarded.insert(name.clone());
+            self.retaining.remove(&name);
+            self.guarded_retaining.insert(name, contract);
+        } else {
+            self.guarded_retaining.remove(&name);
+            self.retaining.insert(name, contract);
+        }
     }
 }

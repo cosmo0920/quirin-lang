@@ -589,7 +589,7 @@ const EXPECTED_CONTRACTS: &[(&str, &str, usize)] = &[
     (
         "fluent_bit/input_collector_registration.qv",
         "flb_input_set_collector_time",
-        8,
+        9,
     ),
     (
         "fluent_bit/input_collector_registration.qv",
