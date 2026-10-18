@@ -120,3 +120,12 @@ Preparation submodules, loader controls and debug audit build exit 0 in
 (missing plan-writer import, then absent plan) launched no checks and are
 retained in `prepare-setup-failures.json`. Cumulative full gates and
 measurements follow this source checkpoint.
+
+Standing attempt `gate-host-1` at `772e19f46` records Rust-build and Clippy
+exit 101: the existing `clang_gap_phase4` extent-vocabulary test exhaustively
+listed the old four result modes. Its deliberate schema-19 migration adds
+Removed as the fifth result mode without changing the assertion that derived
+extents carry no offset or length. No Rust suite count follows from that
+failed build. Submodules, recorded Clang, fmt and both reevaluation examples
+exit 0; all 342 full Lean audits pass with the pinned toolchain. The complete
+attempt remains retained; a repaired source checkpoint and full gate follow.
