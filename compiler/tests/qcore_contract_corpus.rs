@@ -1927,7 +1927,7 @@ const EXPECTED_CONTRACTS: &[(&str, &str, usize)] = &[
     ),
     // RK-PLUGIN-LIBRARY-OUTER-ENVELOPE: selector, definition, runtime guard,
     // 34 callback registrations, 12 kept members and 8 premises.
-    ("librdkafka/outer.qv", "rd_kafka_plugin_new", 85),
+    ("librdkafka/outer.qv", "rd_kafka_plugin_new", 81),
     // Card LIBRDKAFKA-PLUGIN-PREMISE-REMAINDER: 6 -> 7, the model contract names
     // `rk_no_plugin_library` (user decision 2026-10-15, "Add premise support").
     (

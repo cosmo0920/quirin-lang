@@ -58,6 +58,59 @@ fn stable(key: &str) -> Fact {
 }
 
 #[test]
+fn rk_loader_does_not_vouch_for_fluent_bit_instance_members() {
+    let sources = std::collections::BTreeMap::from([
+        (
+            "fluent_bit/outer.qv".into(),
+            include_str!(
+                "../../../providers/quirin-provider-fluent-bit/contracts/fluent_bit/outer.qv"
+            )
+            .into(),
+        ),
+        (
+            "librdkafka/outer.qv".into(),
+            include_str!(
+                "../../../providers/qcore-provider-librdkafka/contracts/librdkafka/outer.qv"
+            )
+            .into(),
+        ),
+    ]);
+    let loaded = qcore_contract::outer_contract::load_outer_contract_sources(&sources).unwrap();
+    let scenario = |name: &str| ScenarioContract {
+        name: name.into(),
+        identity: loaded.identity(name).unwrap(),
+        in_force: true,
+        envelope: loaded.contracts[name].envelope.clone(),
+        reach: all(),
+    };
+    let fluent_bit = scenario("flb_external_plugin");
+    let rk = scenario("rk_plugin_library");
+    for tag in ["input", "output", "filter", "processor"] {
+        let fact = stable(&format!("flb_{tag}_instance.p"));
+        assert_eq!(
+            contribution(&fact, &fluent_bit).unwrap().verdict,
+            Verdict::Pending
+        );
+        assert_eq!(contribution(&fact, &rk).unwrap().verdict, Verdict::Unknown);
+        assert_eq!(
+            runtime_verdict(
+                Verdict::Safe,
+                &BTreeSet::from([fact]),
+                &[fluent_bit.clone(), rk.clone()]
+            )
+            .0,
+            Verdict::Unknown
+        );
+    }
+    assert_eq!(
+        contribution(&stable("rd_kafka_broker_s.rkb_rk"), &rk)
+            .unwrap()
+            .verdict,
+        Verdict::Pending
+    );
+}
+
+#[test]
 fn facts_are_read_from_the_dependency_record() {
     let null = json!({
         "contract_dependencies": ["stable:instance.p", "member:topic.rk", "inferred:f", "scope_fn"],
