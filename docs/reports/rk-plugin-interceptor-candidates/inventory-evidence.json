@@ -267,5 +267,17 @@
       ],
       "excluded_non_callback_list": "rd_kafka_conf_s.interceptors.config holds rd_strtup_t configuration values, not public interceptor callback registrations"
     }
-  ]
+  ],
+  "configured_slice": {
+    "revision": "34155955e4962a56d94eb23c03a002880899a0d1",
+    "sources": {
+      "lib/librdkafka-2.15.0/src/rdkafka_interceptor.c": "f6bdee517cbc9d21a13cdc461daf23a02f2baeeb05fede6488f3651843111834",
+      "lib/librdkafka-2.15.0/src/rdkafka_interceptor.h": "f87ddba2f1b1c71ac6800fcbfe5b183285056ca8e337f87018d6f427477d5694",
+      "lib/librdkafka-2.15.0/src/rdkafka_conf.h": "66b50a23015293089970cc5ace148ca62757d752607cb0533aaf26a8d8f64e27",
+      "lib/librdkafka-2.15.0/src/rdkafka.h": "33cca14d9fc87117100ce90bd84f2006b8ba521c788055db6af614d0f2f7ca2f",
+      "lib/librdkafka-2.15.0/src/rdlist.h": "9e820273add1503102190cd59586e78c674265bdd869a065519b1a9e072ae025",
+      "lib/librdkafka-2.15.0/src/rdlist.c": "179c025751cdcdbe2f59abe21b29bfa5efca1b1a018b3f51228af509a7206f9c"
+    },
+    "standing": "all six exact source files match the reviewed byte set; this is not equality of the entire source revision"
+  }
 }

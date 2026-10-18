@@ -23,7 +23,7 @@ only under those review restrictions. Static rule 12n remains unchanged.
 ## Source and registration reading
 
 The [inventory evidence](inventory-evidence.json), reproduced by
-`python3 docs/reports/rk-plugin-interceptor-candidates/inventory_evidence.py`,
+`inventory_evidence.py CORPUS_SOURCE SYSTEM_SOURCE SLICE_SOURCE`,
 checks all callback arms and six exact source files at each audited revision:
 `66910c10a4d7eafa810b84229cf2dcf7b0f26f97` and
 `046accf6aded7906f66a1baf0202da349e521736`. These six files have identical
@@ -88,8 +88,10 @@ and the declared base `1543259f0e32c8a003a9062e7de7f59a42dd4519`.
 The W44 cross-unit map remains an explicit linked-program resolution,
 compatible-type/calling-convention and interposition premise; its SHA-256 is
 `ddd0576cde87a5782f1fe0b9c4ce4efad4042b1ee54a483a471a3576f0698e7e`.
-The corpus uses source 66910c10, and the configured system and tail-pause slice
-use source 046accf6. Runtime envelopes require review of the deployed plugin
+The corpus uses source 66910c10, the configured system uses 046accf6 and
+the tail-pause slice uses `34155955e4962a56d94eb23c03a002880899a0d1`.
+The slice's six relevant source files exactly match the reviewed byte set;
+this does not assert equality of the entire source revision. Runtime envelopes require review of the deployed plugin
 class. These are separate assumptions and do not certify a deployment.
 
 The 32 baseline runtime custody Pending rows were read individually. Their

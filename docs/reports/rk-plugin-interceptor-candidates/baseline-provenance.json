@@ -22,5 +22,10 @@
     "system",
     "slice"
   ],
+  "source_revisions": {
+    "corpus": "66910c10a4d7eafa810b84229cf2dcf7b0f26f97",
+    "system": "046accf6aded7906f66a1baf0202da349e521736",
+    "slice": "34155955e4962a56d94eb23c03a002880899a0d1"
+  },
   "assumptions": "same pinned/configured source inputs and W44 linked-program resolution/type/calling-convention/interposition premise; runtime envelopes remain conditional on review"
 }

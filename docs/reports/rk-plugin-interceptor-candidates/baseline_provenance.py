@@ -27,5 +27,6 @@ result = {'declared_base': base, 'primary_measured_source': measured,
           'primary_binary_sha256': (primary / 'binary.sha256').read_text().split()[0],
           'link_map_sha256': link_hash,
           'routes': ['corpus', 'system', 'slice'],
+          'source_revisions': {route: json.loads((primary / route / 'resource-diagnostics.json').read_text())['fluent_bit_revision'] for route in ('corpus', 'system', 'slice')},
           'assumptions': 'same pinned/configured source inputs and W44 linked-program resolution/type/calling-convention/interposition premise; runtime envelopes remain conditional on review'}
 print(json.dumps(result, indent=2))
