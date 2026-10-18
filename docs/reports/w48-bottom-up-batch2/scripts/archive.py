@@ -33,8 +33,9 @@ def archive(label, path):
             counts[row["status"]] = counts.get(row["status"], 0) + 1
     manifest = {"source": str(path), "sha256": digest(data), "counts": counts}
     for name in ["run.json", "invocation.json", "head", "binary.sha256", "link-map.sha256"]:
-        candidate = path.parent / name
-        if candidate.exists():
+        candidates = [path.parent / name, path.parent.parent / name]
+        candidate = next((p for p in candidates if p.exists()), None)
+        if candidate is not None:
             (out / name).write_bytes(candidate.read_bytes())
     contracts = path.with_suffix(".contracts.json")
     if contracts.exists():

@@ -254,8 +254,9 @@ mod tests {
     /// A definition whose `else if` chain has `arms` arms; Clang nests each
     /// arm's `IfStmt` two JSON levels inside the previous one.
     fn chain(arms: usize) -> String {
-        let mut body =
-            String::from("int chain(int x) {\n    int shadow = x;\n    if (x == 0) return 0;\n");
+        let mut body = String::from(
+            "int chain(int x, const char *p) {\n    int shadow = x;\n    if (x == 0) return 0;\n",
+        );
         for arm in 1..arms {
             body.push_str(&format!("    else if (x == {arm}) return {arm};\n"));
         }
@@ -270,7 +271,9 @@ mod tests {
         for arm in (0..arms).rev() {
             expression = format!("(x == {arm} ? {arm} : {expression})");
         }
-        format!("int chain(int x) {{\n    int shadow = x;\n    return {expression};\n}}\n")
+        format!(
+            "int chain(int x, const char *p) {{\n    int shadow = x;\n    return {expression};\n}}\n"
+        )
     }
 
     /// The filtered stream of `chain` in `source`, with its depth.
@@ -352,6 +355,11 @@ mod tests {
                         )
                         .is_some()
                     });
+                    // An unused formal forces the read-frame reader through the
+                    // entire deepest admitted tree, without an early refusal.
+                    let formal_frame = ast
+                        .as_ref()
+                        .map(|ast| crate::index_traversal::read_only_formal(ast, "p"));
                     let shadowed = crate::legacy_c::retention_guard::shadowed_in("chain", "shadow");
                     let unshadowed =
                         crate::legacy_c::retention_guard::shadowed_in("chain", "other");
@@ -365,13 +373,20 @@ mod tests {
                         "chain",
                     )
                     .is_ok();
-                    (ast.is_some(), extension, shadowed, unshadowed, importer)
+                    (
+                        ast.is_some(),
+                        extension,
+                        formal_frame,
+                        shadowed,
+                        unshadowed,
+                        importer,
+                    )
                 })
             };
             let (admitted, kib) = read(shape(arms));
             assert_eq!(
                 admitted,
-                (true, Some(false), true, false, false),
+                (true, Some(false), Some(true), true, false, false),
                 "{arms} arms"
             );
             let kib = kib.expect("pagemap readable");
@@ -382,7 +397,7 @@ mod tests {
             // (`true` for any name), as before the card.
             assert_eq!(
                 beyond,
-                (false, None, true, true, false),
+                (false, None, None, true, true, false),
                 "{} arms",
                 arms + 1
             );
