@@ -609,6 +609,7 @@ mod tests {
     fn cyclic_cfg(acquire_at: usize) -> LegacyCfg {
         let plain = |successors: Vec<usize>| LegacyCfgNode {
             lookup: None,
+            lookup_read: None,
             instruction: LegacyInstruction::NoOp,
             successors,
             line: 0,
@@ -657,6 +658,7 @@ mod tests {
     fn long_cyclic_cfg(chain: usize) -> LegacyCfg {
         let plain = |successors: Vec<usize>| LegacyCfgNode {
             lookup: None,
+            lookup_read: None,
             instruction: LegacyInstruction::NoOp,
             successors,
             line: 0,
@@ -1039,6 +1041,7 @@ mod tests {
         // call cleared the relation and node 2 carried nothing.
         let plain = |instruction, successors: Vec<usize>| LegacyCfgNode {
             lookup: None,
+            lookup_read: None,
             instruction,
             successors,
             line: 0,

@@ -6323,7 +6323,12 @@ the effect into borrowed-only custody. `QCore.DetachSameItem`; the report
 indexed `child`/`next` frame can establish a nullable Borrowed result through
 ordinary fresh-run derived-summary validation (rule4b). Both original
 source-bound typed reads must exist; an opaque lexical refusal without retained
-Clang context does not fall back. Assigned direct decimal0–255 calls retain
+Clang context does not fall back. Original typed reads and their alias/base/
+chain obligations remain intact. Only status-free name-only inference sites
+may use a checked untracked view at the exact read point; real, unresolved,
+nullable or conflicting parent bindings never gain that exception. The cursor
+is narrowed only under its source-proven non-NULL while-body guard. A released
+peer prevents the view. Assigned direct decimal0–255 calls retain
 ordinary ContractCall visibility and carry independently rederived CFG metadata.
 An identity refinement additionally needs explicit must-held physical links,
 a live parent and an existing settled child uniquely contained by that parent;

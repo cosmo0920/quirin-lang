@@ -649,7 +649,6 @@ fn mutation(instruction: &LegacyInstruction) -> Mutation {
         | LegacyInstruction::PointerStep { .. }
         | LegacyInstruction::CountedLoopHeader { .. }
         | LegacyInstruction::CountedLoopStep { .. }
-        | LegacyInstruction::CheckedLookupRead { .. }
         | LegacyInstruction::NoOp => Mutation::None,
         _ => Mutation::Unseen,
     }

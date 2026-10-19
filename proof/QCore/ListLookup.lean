@@ -121,6 +121,56 @@ theorem coherent_prefix_selects_the_same_list_identity (xs : List Nat) (n : Nat)
     | succ n => simpa [walk, lookup, live, fresh] using ih n (next x) (x :: seen) tail
 
 
+/-- The read view concerns only name-only inference sites, never a tracked
+    object. Source guard extraction and alias checks remain separate. -/
+structure ReadViewFacts where
+  virtualSite : Bool
+  trackedStatus : Bool
+  unresolved : Bool
+  conflict : Bool
+  cursorRelation : Bool
+  deriving DecidableEq, Repr
+
+def allowReadView (f : ReadViewFacts) : Bool :=
+  f.virtualSite && !f.trackedStatus && !f.unresolved && !f.conflict && f.cursorRelation
+
+theorem a_view_never_hides_a_tracked_site (f : ReadViewFacts)
+    (h : allowReadView f = true) : f.trackedStatus = false := by
+  rcases f with ⟨v, t, u, c, r⟩
+  cases v <;> cases t <;> cases u <;> cases c <;> cases r <;> simp_all [allowReadView]
+
+def readObligation (f : ReadViewFacts) (original borrowed : Bool) : Bool :=
+  if allowReadView f then borrowed else original
+
+theorem a_real_site_keeps_its_original_obligation (f : ReadViewFacts)
+    (tracked : f.trackedStatus = true) (original borrowed : Bool) :
+    readObligation f original borrowed = original := by
+  have refused : allowReadView f = false := by
+    cases h : allowReadView f
+    · rfl
+    · have absent := a_view_never_hides_a_tracked_site f h
+      simp [tracked] at absent
+  simp [readObligation, refused]
+
+def guardedRead (aliasesClear : Bool) (f : ReadViewFacts) (original borrowed : Bool) : Bool :=
+  aliasesClear && readObligation f original borrowed
+
+theorem a_released_peer_cannot_be_erased (f : ReadViewFacts) (original borrowed : Bool) :
+    guardedRead false f original borrowed = false := by simp [guardedRead]
+
+def readViewVectors : List (ReadViewFacts × Bool) := [
+  (⟨true, false, false, false, true⟩, true),
+  (⟨false, false, false, false, true⟩, false),
+  (⟨true, true, false, false, true⟩, false),
+  (⟨true, false, true, false, true⟩, false),
+  (⟨true, false, false, true, true⟩, false),
+  (⟨true, false, false, false, false⟩, false),
+  (⟨false, true, true, true, false⟩, false)
+]
+theorem read_view_vectors_hold :
+    readViewVectors.all (fun (f, result) => allowReadView f == result) = true := by decide
+
+
 def nextOf : List Nat → Nat → Option (Option Nat)
   | [], _ => none
   | x :: xs, item => if x == item then some xs.head? else nextOf xs item

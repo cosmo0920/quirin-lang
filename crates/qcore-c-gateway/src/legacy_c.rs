@@ -473,12 +473,6 @@ pub struct NestedContractCall {
 #[allow(clippy::large_enum_variant)]
 #[derive(Clone, Debug, PartialEq, Eq)]
 pub enum LegacyInstruction {
-    /// Read-only child/next lookup provenance, admitted only by an exact
-    /// complete typed source frame. This is never a child resource identity.
-    CheckedLookupRead {
-        parent: String,
-        destination: String,
-    },
     Acquire {
         destination: String,
         site: usize,
@@ -1105,11 +1099,21 @@ pub struct CheckedLookupCall {
     pub index: usize,
 }
 
+/// A read point in the exact retained indexed lookup frame. The ordinary
+/// IndirectScalarAccess and every original obligation remain intact.
+#[derive(Clone, Debug, PartialEq, Eq)]
+pub struct CheckedLookupRead {
+    pub parent: String,
+    pub cursor: String,
+    pub guarded_cursor: bool,
+}
+
 #[derive(Clone, Debug, PartialEq, Eq)]
 pub struct LegacyCfgNode {
     /// Exact retained assigned-call/callee frame, rederived during replay.
     /// Absence never supplies a child identity or membership fact.
     pub lookup: Option<CheckedLookupCall>,
+    pub lookup_read: Option<CheckedLookupRead>,
     pub instruction: LegacyInstruction,
     pub successors: Vec<LegacyNodeId>,
     pub line: usize,

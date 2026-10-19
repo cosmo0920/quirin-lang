@@ -525,6 +525,7 @@ pub(crate) fn combine(mut zero: LegacyCfg, mut nonzero: LegacyCfg) -> LegacyCfg 
     zero.entry = zero.nodes.len();
     zero.nodes.push(LegacyCfgNode {
         lookup: None,
+        lookup_read: None,
         instruction: LegacyInstruction::NoOp,
         successors: entries,
         line: 0,

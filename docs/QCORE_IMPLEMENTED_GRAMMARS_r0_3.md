@@ -4991,6 +4991,11 @@ or atomic types refuse. Only zero and its parenthesized/void-pointer NULL forms
 are normalized. Added calls/writes, different guards/steps/returns, deeper
 pointers, qualified links and ambiguous/anonymous records refuse. Both original
 source-bound typed reads must be present under the retained Clang context.
+The original typed reads and alias/base/chain obligations remain intact. An
+inference-only name-only site with no resource/status or conflicting facts may
+be viewed as untracked at its source-bound read; only the cursor's checked
+non-NULL while-body point supplies its narrowing. Real tracked sites keep
+their original obligations, and a released peer prevents any borrowed view.
 The inferred result is Borrowed,parent0,nullable,const_dropped, validated by
 ordinary derived-result inference; it never becomes a fresh allocation.
 

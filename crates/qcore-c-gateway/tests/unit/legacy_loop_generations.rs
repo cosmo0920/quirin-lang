@@ -15,6 +15,7 @@ const SITE: usize = 3;
 fn acquire_node() -> LegacyCfgNode {
     LegacyCfgNode {
         lookup: None,
+        lookup_read: None,
         instruction: LegacyInstruction::Acquire {
             destination: "p".to_owned(),
             site: SITE,

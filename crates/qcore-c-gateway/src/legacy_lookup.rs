@@ -238,23 +238,169 @@ pub(super) fn settle(cfg: &mut super::LegacyCfg, tokens: &[Token], function: &st
         .iter()
         .enumerate()
         .filter_map(|(id, node)| {
-            matches!(&node.instruction, super::LegacyInstruction::IndirectScalarAccess {
-            destination: Some(destination), borrowed_destination: true, frame: None, ..
-        } if destination == &frame.cursor && frame.read_lines.contains(&node.line))
-            .then_some(id)
+            let super::LegacyInstruction::IndirectScalarAccess {
+                destination: Some(destination),
+                borrowed_destination: true,
+                frame: None,
+                readback: None,
+                bases,
+                chains,
+                ..
+            } = &node.instruction
+            else {
+                return None;
+            };
+            let [base] = bases.as_slice() else {
+                return None;
+            };
+            let [chain] = chains.as_slice() else {
+                return None;
+            };
+            if destination != &frame.cursor
+                || !chain.dereferenced_root
+                || !chain.links.is_empty()
+                || chain.root != *base
+            {
+                return None;
+            }
+            let guarded_cursor = if base == &frame.parent
+                && chain.member == "child"
+                && node.line == frame.read_lines[0]
+            {
+                false
+            } else if base == &frame.cursor
+                && chain.member == "next"
+                && node.line == frame.read_lines[1]
+            {
+                true
+            } else {
+                return None;
+            };
+            Some((id, guarded_cursor))
         })
         .collect::<Vec<_>>();
-    // In particular, lexical-only opaque typedef refusals do not fall back to
-    // this route. Both original source-bound typed reads must be present.
-    if candidates.len() != 2 {
+    if candidates.len() != 2 || candidates.iter().filter(|(_, guarded)| *guarded).count() != 1 {
         return;
     }
-    for id in candidates {
-        cfg.nodes[id].instruction = super::LegacyInstruction::CheckedLookupRead {
+    for (id, guarded_cursor) in candidates {
+        cfg.nodes[id].lookup_read = Some(super::CheckedLookupRead {
             parent: frame.parent.clone(),
-            destination: frame.cursor.clone(),
-        };
+            cursor: frame.cursor.clone(),
+            guarded_cursor,
+        });
     }
+}
+
+/// A name-only borrowed formal is not a tracked object. Present that virtual
+/// relation as untracked only at this exact read point; never hide a resource,
+/// invalidation, conflicting member binding, or unresolved/nullable parent.
+/// The cursor's non-NULL fact comes from the checked while-body guard.
+pub(super) fn read_view(
+    node: &super::LegacyCfgNode,
+    state: &super::AbstractState,
+    virtual_sites: &std::collections::BTreeSet<usize>,
+) -> Option<super::AbstractState> {
+    let description = node.lookup_read.as_ref()?;
+    let super::LegacyInstruction::IndirectScalarAccess {
+        typed_alternative: None,
+        destination: Some(destination),
+        bases,
+        chains,
+        borrowed_destination: true,
+        frame: None,
+        readback: None,
+        ..
+    } = &node.instruction
+    else {
+        return None;
+    };
+    let [base] = bases.as_slice() else {
+        return None;
+    };
+    let [chain] = chains.as_slice() else {
+        return None;
+    };
+    let expected = if description.guarded_cursor {
+        &description.cursor
+    } else {
+        &description.parent
+    };
+    let member = if description.guarded_cursor {
+        "next"
+    } else {
+        "child"
+    };
+    if base != expected
+        || chain.root != *base
+        || !chain.dereferenced_root
+        || !chain.links.is_empty()
+        || chain.member != member
+        || destination != &description.cursor
+        || state.unmodeled
+        || state.widened
+    {
+        return None;
+    }
+    let parent = state.pointers.get(&description.parent)?;
+    let site = identity(parent)?;
+    let cursor_relation = !description.guarded_cursor
+        || state
+            .pointers
+            .get(&description.cursor)
+            .is_some_and(|cursor| {
+                !cursor.unknown
+                    && cursor.targets == parent.targets
+                    && matches!(
+                        cursor.derivation,
+                        super::Derivation::Derived {
+                            extent: super::DerivedExtent::Borrowed,
+                            ..
+                        }
+                    )
+                    && !state.invalidated.contains_key(&description.cursor)
+            });
+    let facts = crate::list_lookup::ReadViewFacts {
+        virtual_site: virtual_sites.contains(&site),
+        tracked_status: state.resources.contains_key(&site),
+        unresolved: state.nullable_sites.contains(&site)
+            || state.unresolved_effect_sites.contains(&site)
+            || state.conditional_replacements.contains_key(&site)
+            || state
+                .conditional_replacements
+                .values()
+                .any(|sites| sites.contains(&site)),
+        conflict: state.field_links.contains_key(&site)
+            || state
+                .field_links
+                .values()
+                .flat_map(|fields| fields.values())
+                .any(|children| children.contains(&site))
+            || state
+                .lookup_links
+                .iter()
+                .any(|((owner, _), child)| *owner == site || *child == Some(site))
+            || state.borrows.contains_key(&description.parent)
+            || state.borrows.contains_key(&description.cursor)
+            || state
+                .contained
+                .iter()
+                .any(|(owner, children)| *owner == site || children.contains(&site))
+            || state.invalidated.contains_key(&description.parent)
+            || state.pointers.keys().any(|place| {
+                crate::aggregate_store::place_owner(place)
+                    .is_some_and(|owner| owner == description.parent || owner == description.cursor)
+            }),
+        cursor_relation,
+    };
+    if !crate::list_lookup::allow_read_view(facts) {
+        return None;
+    }
+    let mut view = state.clone();
+    let pointer = view.pointers.get_mut(expected)?;
+    pointer.targets.clear();
+    pointer.unknown = true;
+    pointer.may_be_null = false;
+    Some(view)
 }
 
 /// Re-derive assigned direct constant-index calls. A nested call, whole return,
@@ -605,6 +751,7 @@ mod flow_controls {
         state.lookup_links.insert((1, "child".to_owned()), Some(2));
         let node = LegacyCfgNode {
             lookup: None,
+            lookup_read: None,
             instruction: LegacyInstruction::OpaqueValue {
                 destination: "p->child".to_owned(),
                 alias_read: None,
@@ -633,5 +780,216 @@ mod flow_controls {
         null.lookup_links.insert(key.clone(), None);
         null.join(&AbstractState::default(), &BTreeSet::new());
         assert!(!null.lookup_links.contains_key(&key));
+    }
+}
+
+#[cfg(test)]
+mod read_obligation_controls {
+    use super::super::{
+        AliasPeers, CheckedLookupRead, Derivation, DerivedExtent, NodeAliasFacts, TransferContext,
+    };
+    use super::*;
+    fn node() -> LegacyCfgNode {
+        LegacyCfgNode {
+            lookup: None,
+            lookup_read: Some(CheckedLookupRead {
+                parent: "array".to_owned(),
+                cursor: "current_child".to_owned(),
+                guarded_cursor: false,
+            }),
+            instruction: LegacyInstruction::IndirectScalarAccess {
+                typed_alternative: None,
+                bases: vec!["array".to_owned()],
+                alias_reads: vec![AliasPeers {
+                    place: "array".to_owned(),
+                    peers: vec!["peer".to_owned()],
+                }],
+                destination: Some("current_child".to_owned()),
+                frame: None,
+                chains: vec![crate::indirect_chain_access::AccessChain {
+                    root: "array".to_owned(),
+                    dereferenced_root: true,
+                    root_never_bound: true,
+                    root_bound_untracked: false,
+                    root_untracked_only: false,
+                    links: vec![],
+                    member: "child".to_owned(),
+                }],
+                borrowed_destination: true,
+                readback: None,
+            },
+            successors: vec![],
+            line: 1,
+            is_exit: false,
+            loop_exit_edge: None,
+        }
+    }
+    fn pointer() -> AbstractPointer {
+        AbstractPointer {
+            targets: BTreeSet::from([1]),
+            ..Default::default()
+        }
+    }
+    fn run(
+        node: &LegacyCfgNode,
+        state: AbstractState,
+        alias: &NodeAliasFacts,
+    ) -> (AbstractState, BTreeSet<super::super::LegacyDiagnostic>) {
+        let context = TransferContext {
+            derived_bases: BTreeSet::from([1]),
+            caller_sites: BTreeSet::from([1]),
+            ..Default::default()
+        };
+        let mut diagnostics = BTreeSet::new();
+        let output = super::super::transfer_base(
+            "get_array_item",
+            node,
+            state,
+            &Default::default(),
+            &context,
+            alias,
+            &mut diagnostics,
+        );
+        (output, diagnostics)
+    }
+    #[test]
+    fn real_null_unresolved_and_released_peer_reads_match_original_diagnostics_and_state() {
+        for guarded_cursor in [false, true] {
+            let mut enhanced = node();
+            if guarded_cursor {
+                enhanced.lookup_read.as_mut().unwrap().guarded_cursor = true;
+                if let LegacyInstruction::IndirectScalarAccess {
+                    bases,
+                    chains,
+                    alias_reads,
+                    ..
+                } = &mut enhanced.instruction
+                {
+                    bases[0] = "current_child".to_owned();
+                    chains[0].root = "current_child".to_owned();
+                    chains[0].member = "next".to_owned();
+                    alias_reads[0].place = "current_child".to_owned();
+                }
+            }
+            let mut original = enhanced.clone();
+            original.lookup_read = None;
+            for case in 0..10 {
+                let mut state = AbstractState::default();
+                let mut parent = pointer();
+                let mut aliases = NodeAliasFacts::default();
+                match case {
+                    0 => {
+                        state.resources.insert(1, super::super::LIVE);
+                    }
+                    1 => {
+                        state.resources.insert(1, super::super::RELEASED);
+                    }
+                    2 => {
+                        parent.targets.clear();
+                        parent.may_be_null = true;
+                    }
+                    3 => {
+                        parent.unknown = true;
+                    }
+                    4 => {
+                        parent.may_be_null = true;
+                    }
+                    5 => {
+                        state.unresolved_effect_sites.insert(1);
+                    }
+                    6 => {
+                        state.nullable_sites.insert(1);
+                    }
+                    7 => {
+                        parent.derivation = Derivation::Mixed;
+                    }
+                    8 => {
+                        state.pointers.insert("array->child".to_owned(), pointer());
+                    }
+                    9 => {
+                        aliases.released.insert("peer".to_owned());
+                        state.resources.insert(2, super::super::RELEASED);
+                        state.pointers.insert(
+                            "peer".to_owned(),
+                            AbstractPointer {
+                                targets: BTreeSet::from([2]),
+                                ..Default::default()
+                            },
+                        );
+                    }
+                    _ => unreachable!(),
+                }
+                if guarded_cursor {
+                    let mut cursor = parent.clone();
+                    cursor.may_be_null = true;
+                    cursor.derivation = Derivation::Derived {
+                        extent: DerivedExtent::Borrowed,
+                        const_dropped: true,
+                        nullable: true,
+                        stepped: super::super::Stepped::No,
+                    };
+                    state.pointers.insert("current_child".to_owned(), cursor);
+                }
+                state.pointers.insert("array".to_owned(), parent);
+                let baseline = run(&original, state.clone(), &aliases);
+                let current = run(&enhanced, state, &aliases);
+                assert_eq!(current, baseline, "negative read case {case}");
+                if case != 0 {
+                    assert!(!current.1.is_empty(), "negative case {case} must refuse");
+                }
+                if case == 9 {
+                    assert!(current.1.iter().any(|d| matches!(&d.kind,
+                super::super::LegacyDiagnosticKind::UnknownAlias { variable } if variable == if guarded_cursor { "current_child/peer" } else { "array/peer" })));
+                }
+            }
+        }
+    }
+
+    #[test]
+    fn only_a_guarded_name_only_site_gains_nonowning_provenance() {
+        for guarded_cursor in [false, true] {
+            let mut read = node();
+            let mut state = AbstractState::default();
+            state.pointers.insert("array".to_owned(), pointer());
+            if guarded_cursor {
+                read.lookup_read.as_mut().unwrap().guarded_cursor = true;
+                if let LegacyInstruction::IndirectScalarAccess {
+                    bases,
+                    chains,
+                    alias_reads,
+                    ..
+                } = &mut read.instruction
+                {
+                    bases[0] = "current_child".to_owned();
+                    chains[0].root = "current_child".to_owned();
+                    chains[0].member = "next".to_owned();
+                    alias_reads[0].place = "current_child".to_owned();
+                }
+                let mut cursor = super::super::derive_pointer(
+                    state.pointers.get("array"),
+                    DerivedExtent::Borrowed,
+                    true,
+                    true,
+                );
+                cursor.may_be_null = true;
+                state.pointers.insert("current_child".to_owned(), cursor);
+            }
+            let before = state.clone();
+            let (after, diagnostics) = run(&read, state, &NodeAliasFacts::default());
+            assert!(diagnostics.is_empty(), "{diagnostics:?}");
+            assert_eq!(after.resources, before.resources);
+            assert_eq!(after.contained, before.contained);
+            assert_eq!(after.pointers["array"], before.pointers["array"]);
+            let cursor = &after.pointers["current_child"];
+            assert_eq!(cursor.targets, BTreeSet::from([1]));
+            assert!(matches!(
+                cursor.derivation,
+                Derivation::Derived {
+                    extent: DerivedExtent::Borrowed,
+                    ..
+                }
+            ));
+            assert!(!cursor.unknown);
+        }
     }
 }

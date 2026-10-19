@@ -968,6 +968,7 @@ fn insert_before(cfg: &mut LegacyCfg, id: usize, instruction: LegacyInstruction,
     let inserted = cfg.nodes.len();
     cfg.nodes.push(LegacyCfgNode {
         lookup: None,
+        lookup_read: None,
         instruction,
         successors: vec![id],
         line,

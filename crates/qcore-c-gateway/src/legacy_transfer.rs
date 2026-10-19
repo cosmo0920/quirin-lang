@@ -638,7 +638,6 @@ pub(super) fn rebound_names(instruction: &LegacyInstruction) -> Vec<&str> {
         | LegacyInstruction::VaArgPointer { destination }
         | LegacyInstruction::ForgetScalar { destination }
         | LegacyInstruction::PointerStep { destination, .. }
-        | LegacyInstruction::CheckedLookupRead { destination, .. }
         | LegacyInstruction::Clear { destination } => vec![destination.as_str()],
         LegacyInstruction::IndirectScalarAccess {
             destination: Some(destination),
@@ -3251,7 +3250,6 @@ pub(super) fn transfer_base(
         | LegacyInstruction::VaArgPointer { destination }
         | LegacyInstruction::ForgetScalar { destination }
         | LegacyInstruction::PointerStep { destination, .. }
-        | LegacyInstruction::CheckedLookupRead { destination, .. }
         | LegacyInstruction::Clear { destination } => Some(destination.as_str()),
         LegacyInstruction::ContractCall { destination, .. }
         | LegacyInstruction::IndirectScalarAccess { destination, .. } => destination.as_deref(),
@@ -3665,20 +3663,6 @@ pub(super) fn transfer_base(
     // decision, so a `*B` store naming one refuses. Admitted or refused, the
     // statement writes only a scalar, so every projection map is preserved;
     // the one effect is forgetting the scalar destination's old fact.
-    if let LegacyInstruction::CheckedLookupRead {
-        parent,
-        destination,
-    } = &node.instruction
-    {
-        let pointer = derive_pointer(
-            state.pointers.get(parent),
-            DerivedExtent::Borrowed,
-            true,
-            true,
-        );
-        state.pointers.insert(destination.clone(), pointer);
-        return state;
-    }
     if let LegacyInstruction::IndirectScalarAccess {
         bases,
         destination,
@@ -3686,9 +3670,32 @@ pub(super) fn transfer_base(
         chains,
         borrowed_destination,
         readback,
+        alias_reads,
         ..
     } = &node.instruction
     {
+        // Keep the original instruction and all read obligations. A checked
+        // borrowed view can expose only name-only inference sites, and only
+        // after the original-state alias obligation has discharged.
+        let mut alias_failures = BTreeSet::new();
+        if node.lookup_read.is_some() {
+            require_unaliased_reads(
+                function,
+                node.line,
+                alias_reads,
+                &state,
+                &context.caller_sites,
+                alias,
+                &mut alias_failures,
+            );
+        }
+        let view = alias_failures
+            .is_empty()
+            .then(|| lookup_route::read_view(node, &state, &context.derived_bases))
+            .flatten();
+        let read_state = view.as_ref().unwrap_or(&state);
+        let mut read_failed = !alias_failures.is_empty();
+        diagnostics.extend(alias_failures);
         // Card CG12-VOID-VIEW-READBACK (rule 11j): the member's identity,
         // read on the state entering the node, where the readback resolves.
         let read_back = readback
@@ -3701,7 +3708,10 @@ pub(super) fn transfer_base(
             let sanctioned = context.sanctioned.contains(format!("*{base}").as_str());
             // Card NULL-SAFETY-PROPERTY (rule 14n): a premised base is read
             // non-null here, under a named premise.
-            if sanctioned || !null_premise_route::base_resolves(function, node.line, &state, base) {
+            if sanctioned
+                || !null_premise_route::base_resolves(function, node.line, read_state, base)
+            {
+                read_failed = true;
                 diagnostics.insert(LegacyDiagnostic {
                     function: function.to_owned(),
                     line: node.line,
@@ -3716,8 +3726,9 @@ pub(super) fn transfer_base(
         // `indirect_chain_access::chain_resolves`, over this state read-only.
         for chain in chains {
             if let Err(variable) =
-                null_premise_route::chain_resolves_premised(function, node.line, &state, chain)
+                null_premise_route::chain_resolves_premised(function, node.line, read_state, chain)
             {
+                read_failed = true;
                 diagnostics.insert(LegacyDiagnostic {
                     function: function.to_owned(),
                     line: node.line,
@@ -3725,11 +3736,23 @@ pub(super) fn transfer_base(
                 });
             }
         }
+        let lookup_binding = if !read_failed && view.is_some() {
+            node.lookup_read.as_ref().map(|description| {
+                derive_pointer(
+                    state.pointers.get(&description.parent),
+                    DerivedExtent::Borrowed,
+                    true,
+                    true,
+                )
+            })
+        } else {
+            None
+        };
         if let Some(destination) = destination {
             if *borrowed_destination {
                 state.pointers.insert(
                     destination.clone(),
-                    read_back.unwrap_or(AbstractPointer {
+                    lookup_binding.or(read_back).unwrap_or(AbstractPointer {
                         targets: BTreeSet::new(),
                         unknown: true,
                         may_be_null: true,
@@ -4264,7 +4287,7 @@ pub(super) fn transfer_base(
                 }
             }
         }
-        LegacyInstruction::NoOp | LegacyInstruction::CheckedLookupRead { .. } => {}
+        LegacyInstruction::NoOp => {}
         // Card W43-INDEXED-RESOURCE-COLLECTIONS: decided by [`transfer`]
         // before this function is reached; as a base instruction a counted
         // loop's header is a `NoOp` and its step a forget.

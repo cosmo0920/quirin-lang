@@ -34,9 +34,67 @@ pub fn resolve_prefix(
     }
 }
 
+/// Conditions for a source-guarded inference view. A name-only site may be
+/// viewed as untracked; the view never hides a real ownership/status entry.
+#[derive(Clone, Copy, Debug, PartialEq, Eq)]
+pub struct ReadViewFacts {
+    pub virtual_site: bool,
+    pub tracked_status: bool,
+    pub unresolved: bool,
+    pub conflict: bool,
+    pub cursor_relation: bool,
+}
+#[must_use]
+pub const fn allow_read_view(f: ReadViewFacts) -> bool {
+    f.virtual_site && !f.tracked_status && !f.unresolved && !f.conflict && f.cursor_relation
+}
+
 #[cfg(test)]
 mod tests {
     use super::*;
+    #[test]
+    fn lean_borrowed_view_vectors_match_the_rust_decision() {
+        let lean = include_str!("../../../proof/QCore/ListLookup.lean");
+        let table = lean
+            .split("def readViewVectors : List (ReadViewFacts × Bool) := [")
+            .nth(1)
+            .unwrap()
+            .split("\n]")
+            .next()
+            .unwrap();
+        let mut count = 0;
+        for line in table
+            .lines()
+            .map(str::trim)
+            .filter(|line| line.starts_with("(⟨"))
+        {
+            let (facts, result) = line.trim_start_matches("(⟨").split_once("⟩,").unwrap();
+            let values = facts
+                .split(',')
+                .map(|s| match s.trim() {
+                    "true" => true,
+                    "false" => false,
+                    other => panic!("{other}"),
+                })
+                .collect::<Vec<_>>();
+            assert_eq!(values.len(), 5);
+            let expected = result.trim().trim_end_matches(',').trim_end_matches(')');
+            let f = ReadViewFacts {
+                virtual_site: values[0],
+                tracked_status: values[1],
+                unresolved: values[2],
+                conflict: values[3],
+                cursor_relation: values[4],
+            };
+            assert_eq!(allow_read_view(f), expected == "true");
+            assert!(matches!(expected, "true" | "false"));
+            if f.tracked_status {
+                assert!(!allow_read_view(f));
+            }
+            count += 1;
+        }
+        assert_eq!(count, 7);
+    }
     #[test]
     fn lean_vectors_execute_both_rust_lookup_models() {
         let lean = include_str!("../../../proof/QCore/ListLookup.lean");

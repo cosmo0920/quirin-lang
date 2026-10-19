@@ -97,3 +97,44 @@ integrator's exclusive native/full-gate slot; no native result is claimed yet.
 The general Lean representation theorem already compiles0 under pinned4.35.0,
 and states a separate finite concrete/list relation before proving the indexed
 identity, rather than assuming the lookup conclusion.
+
+## Read-obligation implementation repair (before production)
+
+The integrator's source review found that the initial WIP instruction replaced
+the original typed reads without carrying their alias/base/chain obligations.
+The green narrow receipts above are retained as superseded implementation
+checkpoints, not production safety evidence. No production audit or release
+claim used that WIP. The repair removes the instruction variant and retains
+each original IndirectScalarAccess unchanged, with optional source-bound
+`lookup_read` metadata on its CFG node.
+
+Original-state alias checks run first. Every original base and chain obligation
+still executes. Only a status-free name-only formal site used by derived-summary
+inference can have a borrowed untracked view at its exact checked read point;
+its parent is already non-NULL, and the cursor is narrowed only at the exact
+non-NULL while-body guard. Any real tracked/status entry, unknown/nullable/
+unresolved parent, conflicting member/containment/link/borrow or stale source
+shape withholds that view. Original physical sites therefore keep their exact
+old obligations. Refinement occurs only after these obligations discharge,
+returns provenance over the original virtual parent site, and changes no
+resource or containment state. A released peer prevents the view before any
+base/chain reading. The null-property CFG also retains the original reads.
+
+Initial repair control1 passed2/failed0: ten head-read negative or real-site
+states compare enhanced versus metadata-absent original diagnostics AND full
+output state for exact equality, including a released same-type peer, tracked
+live/released, explicit NULL, unknown, nullable, unresolved/mixed and conflicting
+member binding. Subsequent controls extend that comparison to both read sites.
+The matching Lean theorem proves a borrowed view cannot hide a tracked site,
+that a real site's original obligation is preserved, and that a released-peer
+refusal cannot be erased. Pinned Lean repair attempt1 compiles0; source/replay
+and both-read controls must pass before the production hold is lifted.
+
+Repair control2 passed2/failed0 with both read sites: twenty baseline-versus-
+enhanced negative/real-site comparisons retain exactly equal diagnostics and
+full output states. The two positive virtual-read points retain the original
+parent binding and every resource/containment map; only non-owning cursor
+provenance changes. Raw logs: `lookup-read-repair-{1,2}.log`. Source reads with
+an alternative plan receive no metadata, avoiding any scalar-precedence route
+interaction. Full actual-source inference/replay is rerun on the repaired
+frozen checkpoint before production measurements.
