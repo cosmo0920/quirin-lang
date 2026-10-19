@@ -1,0 +1,99 @@
+{
+  "initial_setup": {
+    "git_branch_and_submodule": "first unprivileged attempts failed on shared Git metadata permissions; authorized escalated retry passed; individual first-attempt exits were not separately captured",
+    "reading_packet": "initial broad render was output-truncated; exact packet is retained in /tmp/hypothesis-packet.json",
+    "gate_wrapper": "a relative-path preparation command was issued from the private gate snapshot and failed FileNotFoundError; shell continued into the original wrapper; its actual nested private log path is retained"
+  },
+  "cancelled_standing_1": {
+    "source": "12e8b7e81",
+    "reason": "host memory 57Gi/60Gi with full swap; concurrent compilations were serialized and source subsequently strengthened",
+    "task_handle": 75670,
+    "exit": 130,
+    "evidence": "tools.write_stdin Ctrl-C result; cancelled during compilation, no suite count claimed",
+    "logs": "private/contract-hypothesis-graph-v1/gate-source/private/contract-hypothesis-graph-v1/standing-1/"
+  },
+  "baseline_build_provenance": {
+    "initial": "archive source exact base, but build.rs could discover enclosing card HEAD; binary excluded from measurements",
+    "replacement": "rebuilt with explicit QCORE_AUDIT_BUILD_COMMIT=198f6fc4349d3a47591a2378835ae9286859d918; build exit 0"
+  },
+  "provider_1": {
+    "rust_exit": 101,
+    "fmt_exit": 1,
+    "cancelled_clippy_wrapper_exit": 130,
+    "reason": "source changed during preliminary validation; a package contract-check subprocess saw the old qcore-contract API while audit referenced new append_legacy",
+    "logs": "private/contract-hypothesis-graph-v1/provider-1/",
+    "not_final_evidence": true
+  },
+  "concurrent_contract_probe": {
+    "task_handle": 54194,
+    "exit": 130,
+    "log": "private/contract-hypothesis-graph-v1/provider-contract-check.log"
+  },
+  "standing_2": {
+    "exit_by_step": {
+      "clang": 0,
+      "rust": 101,
+      "fmt": 0,
+      "clippy": 101,
+      "probe": 0,
+      "followup": 0,
+      "lean": 0
+    },
+    "rust": {
+      "passed": 8254,
+      "failed": 110,
+      "ignored": 15,
+      "units": 522,
+      "summaries": 535
+    },
+    "known_failure_categories": [
+      "LeakSanitizer under ptrace",
+      "confinement/PID namespace controls",
+      "current_cli comparison included additive context",
+      "Clippy items_after_test_module"
+    ],
+    "resolution": "Host execution for final gate; current_cli erasure migration and helper placement committed before final source freeze. No claim that every failure was independently classified.",
+    "logs": "private/contract-hypothesis-graph-v1/standing-2"
+  },
+  "provider_2": {
+    "exit_by_step": {
+      "check": 0,
+      "rust": 101,
+      "fmt": 0,
+      "clippy": 0,
+      "contracts": 0,
+      "python": 0,
+      "build": 0,
+      "qcore.libevent": 0,
+      "qcore.chunkio": 0,
+      "qcore.cmetrics": 0,
+      "qcore.ctraces": 0,
+      "qcore.librdkafka": 0
+    },
+    "rust_failure": "configured_audit equality included additive build identity; migrated to assert context difference then compare full erased legacy report",
+    "logs": "private/contract-hypothesis-graph-v1/provider-2"
+  },
+  "standing_3": {
+    "rust_exit": 101,
+    "rust": {
+      "passed": 8363,
+      "failed": 1,
+      "ignored": 15,
+      "units": 522,
+      "summaries": 535
+    },
+    "failure": "standalone w3 provider Cargo.lock retained qcore-schemas19.0.0 while its manifest required19.1.0; --locked correctly refused",
+    "repair_commit": "5b5a8c0f0",
+    "logs": "private/contract-hypothesis-graph-v1/standing-3/",
+    "exit_by_step": {
+      "submodules": 0,
+      "clang": 0,
+      "rust": 101,
+      "fmt": 0,
+      "clippy": 0,
+      "probe": 0,
+      "followup": 0,
+      "lean": 0
+    }
+  }
+}

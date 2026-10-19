@@ -3,12 +3,12 @@
 Work in progress on `codex/contract-hypothesis-graph-v1`, based on
 `198f6fc4349d3a47591a2378835ae9286859d918`. Design and the zero-movement
 prediction were committed as `1a2e40c95` before implementation. The current
-frozen implementation source is `69f13d6b9`; no completion or corpus-parity
+frozen implementation source is `5b5a8c0f0`; no completion or corpus-parity
 claim is made until the receipts below are filled from completed commands.
 
 The schema adds declaration-local opaque atoms, conjunction-only premises,
 separate disposition and warrant, complete instance contexts and evidence
-references. `qcore-schemas` moves additively from19.0.0 to19.1.0; existing
+references. `qcore-schemas` moves additively from 19.0.0 to 19.1.0; existing
 protocol/evidence versions and fields remain unchanged. No typed predicate is
 registered. Unknown typed predicates reject instead of becoming opaque text.
 The graph remains evidence-only because no separately reviewed typed consumer
@@ -52,7 +52,7 @@ without changing that fixture. Its actual Clang recording and command receipts
 are local to the clone's run. Final Rust/provider/Python/Lean counts and corpus,
 system, slice, null and runtime erasure comparisons remain pending.
 
-Superseded attempts are retained: malformed initial custody fixture syntax
+Superseded attempts are retained in [validation-attempts.json](validation-attempts.json): malformed initial custody fixture syntax
 (four failing new tests, subsequently corrected); an inheritance ID/formal
 collision (five passed/one failed before graph-symbol substitution was fixed);
 initial shared Git metadata permission failures (authorized retries passed);
