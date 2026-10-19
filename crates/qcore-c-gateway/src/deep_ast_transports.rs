@@ -330,7 +330,10 @@ mod tests {
     /// the walks, the drop) stays within the budget. One arm deeper, the
     /// stream is beyond the bound and nothing is read (the refusing answer).
     #[test]
-    #[cfg_attr(windows, ignore = "Windows has no /proc/self/pagemap stack measurement")]
+    #[cfg_attr(
+        windows,
+        ignore = "Windows has no /proc/self/pagemap stack measurement"
+    )]
     fn the_analysed_unit_readers_fit_at_the_bound() {
         if !clang_available() {
             return;
@@ -454,9 +457,7 @@ int consume(void) {
         if !clang_available() {
             return;
         }
-        if !crate::clang_version()
-            .is_ok_and(|version| version.supports_cg19_atomic_ast())
-        {
+        if !crate::clang_version().is_ok_and(|version| version.supports_cg19_atomic_ast()) {
             return;
         }
         let shallow = atomic(ATOMIC).expect("the shallow unit is certified");
@@ -560,7 +561,10 @@ int consume(void) {
     /// The measurement itself: a closure that recurses deeper uses more
     /// stack, and the figure is in the right range.
     #[test]
-    #[cfg_attr(windows, ignore = "Windows has no /proc/self/pagemap stack measurement")]
+    #[cfg_attr(
+        windows,
+        ignore = "Windows has no /proc/self/pagemap stack measurement"
+    )]
     fn the_high_water_mark_measures_recursion() {
         #[inline(never)]
         fn recurse(levels: usize) -> usize {

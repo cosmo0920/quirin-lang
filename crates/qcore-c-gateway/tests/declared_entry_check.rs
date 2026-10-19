@@ -168,7 +168,10 @@ fn a_nullable_release_wrapper_is_validated_by_its_declared_entry_check() {
 }
 
 #[test]
-#[cfg_attr(windows, ignore = "glibc __assert_fail wrapper is not a Windows source shape")]
+#[cfg_attr(
+    windows,
+    ignore = "glibc __assert_fail wrapper is not a Windows source shape"
+)]
 fn a_nullable_result_wrapper_is_validated_by_its_declared_entry_check() {
     if !clang_available() {
         return;

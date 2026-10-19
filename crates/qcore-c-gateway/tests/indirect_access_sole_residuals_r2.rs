@@ -161,9 +161,7 @@ fn rule_14b_reads_an_interior_pointer_of_a_never_bound_root() {
     }
     assert_safe("void subject(struct S *a) { struct S *n = &a->next[a->a]; n = 0; }");
     assert_safe("void subject(struct S *a) { char *p = a->name + a->a; p = 0; }");
-    assert_safe(
-        "void subject(struct S *a) { __INT64_TYPE__ *c; c = &a->counts[2]; c = 0; }",
-    );
+    assert_safe("void subject(struct S *a) { __INT64_TYPE__ *c; c = &a->counts[2]; c = 0; }");
     // The alias is target-free and possibly null, exactly as a pointer read
     // binds it: a dereference through it is decided by its own rule, never
     // by the gate. Card NULL-SAFETY-PROPERTY (rule 14n, decision 1): that
@@ -196,8 +194,12 @@ fn rule_14c_reads_a_scalar_element_address_at_a_borrowed_actual() {
     if !clang_available() {
         return;
     }
-    assert_safe("__INT64_TYPE__ subject(struct S *a, int i) { __INT64_TYPE__ v = rr_load(&a->counts[i]); return v; }");
-    assert_safe("__INT64_TYPE__ subject(struct S *a, int i) { __INT64_TYPE__ v = rr_load(&a->arr[i]); return v; }");
+    assert_safe(
+        "__INT64_TYPE__ subject(struct S *a, int i) { __INT64_TYPE__ v = rr_load(&a->counts[i]); return v; }",
+    );
+    assert_safe(
+        "__INT64_TYPE__ subject(struct S *a, int i) { __INT64_TYPE__ v = rr_load(&a->arr[i]); return v; }",
+    );
 }
 
 #[test]

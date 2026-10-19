@@ -71,8 +71,7 @@ impl ClangVersion {
             .ok_or("Clang version banner has no release number")?;
         let mut parts = token.split('.');
         let parse = |part: Option<&str>| {
-            part
-                .unwrap_or("0")
+            part.unwrap_or("0")
                 .chars()
                 .take_while(|ch| ch.is_ascii_digit())
                 .collect::<String>()
@@ -88,7 +87,11 @@ impl ClangVersion {
 
     /// Clang 17 and earlier spell the finalized C23 mode `c2x`.
     pub fn c23_argument(self) -> &'static str {
-        if self.major >= 18 { "-std=c23" } else { "-std=c2x" }
+        if self.major >= 18 {
+            "-std=c23"
+        } else {
+            "-std=c2x"
+        }
     }
 
     /// The C2y driver spelling used by the gateway is available from Clang 19.
@@ -630,10 +633,7 @@ mod tests {
     #[test]
     fn release_numbers_are_parsed_without_confusing_vendor_text() {
         assert_eq!(
-            ClangVersion::parse(
-                "clang version 17.0.3\nTarget: aarch64-pc-windows-msvc\n"
-            )
-            .unwrap(),
+            ClangVersion::parse("clang version 17.0.3\nTarget: aarch64-pc-windows-msvc\n").unwrap(),
             ClangVersion {
                 major: 17,
                 minor: 0,

@@ -32,14 +32,12 @@ pub fn tracked_files(directory: &Path) -> Vec<PathBuf> {
                 directory.display()
             )
         });
-    let canonical_checkout = checkout
-        .canonicalize()
-        .unwrap_or_else(|error| {
-            panic!(
-                "cannot canonicalize git checkout {}: {error} (W45-TEST-HYGIENE)",
-                checkout.display()
-            )
-        });
+    let canonical_checkout = checkout.canonicalize().unwrap_or_else(|error| {
+        panic!(
+            "cannot canonicalize git checkout {}: {error} (W45-TEST-HYGIENE)",
+            checkout.display()
+        )
+    });
     let canonical_text = canonical_checkout.to_string_lossy();
     let safe_directory = canonical_text
         .strip_prefix(r"\\?\")

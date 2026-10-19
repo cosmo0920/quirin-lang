@@ -165,6 +165,8 @@ Regenerate with `python3 scripts/build_docs_index.py`; validate with `--check`.
 
 | [cg30-dialects-flags-types](cg30-dialects-flags-types/README.md) | CG30-DIALECTS-FLAGS-TYPES: dialect, target and type identities, and refused extensions |
 
+| [cg30-type-identity-fixture](cg30-type-identity-fixture/README.md) | CG30 type-identity fixture correction |
+
 | [chunkio-meta-len-bounds-contracts](chunkio-meta-len-bounds-contracts/README.md) | CHUNKIO-META-LEN-BOUNDS-CONTRACTS |
 
 | [cjson-detach-same-item](cjson-detach-same-item/README.md) | Checked same-item detach |

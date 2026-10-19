@@ -240,13 +240,7 @@ fn validate_syntax(
             .clang_invocation_argument()
             .map_err(LegacyCError::ProductionParserUnavailable)?;
         let mut child = command
-            .args([
-                "-x",
-                "c",
-                dialect,
-                "-fsyntax-only",
-                "-",
-            ])
+            .args(["-x", "c", dialect, "-fsyntax-only", "-"])
             .stdin(Stdio::piped())
             .stdout(Stdio::null())
             .stderr(Stdio::piped())
