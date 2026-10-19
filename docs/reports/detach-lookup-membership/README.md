@@ -138,3 +138,26 @@ provenance changes. Raw logs: `lookup-read-repair-{1,2}.log`. Source reads with
 an alternative plan receive no metadata, avoiding any scalar-precedence route
 interaction. Full actual-source inference/replay is rerun on the repaired
 frozen checkpoint before production measurements.
+
+Repaired frozen source `da24ec588930d47566b38cf9c07fa0082ec8f365` then
+passed all seven commands in `narrow-3/commands.json`: Clang21.1.8, formatting,
+pure model/correspondence4, reader/flow/both-read parity5, exact full retained
+production selected-function inference1, absent-source lexical refusal1 and
+source/independent-replay6. All exited0, failed0/ignored0. Native1 is explicitly
+filtered and deferred, not counted. The exact repaired Lean source plus14 axiom
+prints exits0 (`lookup-lean-repaired-receipt.json`); this is targeted evidence,
+not the full Lean standing gate. The integrator accepted these controls as
+lifting the implementation hold; full validation and production remain queued.
+
+The inference view applies only to the analyzer's existing name-only site
+seeded to identify a Borrowed formal, with no resource/status or conflicting
+ownership, field, link or borrow fact. The parent is already non-NULL from its
+source branch; the cursor is narrowed only at the exact non-NULL while-body
+read. This virtual site is neither a live allocation nor a child identity.
+Original-state alias checks and all original base/chain obligations must
+discharge before non-owning provenance over the unchanged parent site is
+retained. Physical tracked sites receive no view. Source extraction and
+Rust/Lean correspondence remain boundary28 premises; validity of untracked
+memory stays outside custody. The detach representation stays a separate
+DeclaredAssumption and supplies none of these facts. No new human contract
+premise is inserted.
