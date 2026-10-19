@@ -375,11 +375,12 @@ impl Parser<'_> {
             let forecast = census::Forecast {
                 contains_call,
                 scalar_field_noop: !contains_call
-                    && crate::typed_field_access::is_scalar_field_noop(
+                    && crate::typed_field_access::scalar_field_noop_pointer_bases(
                         texts,
                         &self.typed_model,
                         &self.typed_types,
-                    ),
+                    )
+                    .is_some(),
                 scalar_member_store: !contains_call
                     && crate::typed_field_access::scalar_member_store_base(
                         texts,
