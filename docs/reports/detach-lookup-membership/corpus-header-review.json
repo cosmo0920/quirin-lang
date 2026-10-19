@@ -1,0 +1,493 @@
+{
+  "diagnostics": {
+    "other": [
+      {
+        "path": [
+          "diagnostic_counts",
+          "unknown_alias"
+        ],
+        "before": 11055,
+        "after": 11052
+      },
+      {
+        "path": [
+          "diagnostic_counts",
+          "unsupported"
+        ],
+        "before": 27797,
+        "after": 27796
+      },
+      {
+        "path": [
+          "units",
+          48,
+          "diagnostic_counts",
+          "unknown_alias"
+        ],
+        "before": 199,
+        "after": 196
+      },
+      {
+        "path": [
+          "units",
+          48,
+          "diagnostic_counts",
+          "unsupported"
+        ],
+        "before": 321,
+        "after": 320
+      },
+      {
+        "path": [
+          "units",
+          48,
+          "functions",
+          38,
+          "contract_dependencies",
+          "null_premises"
+        ],
+        "before": null,
+        "after": [
+          "null-deref:get_array_item:2770:current_child"
+        ],
+        "before_present": false,
+        "after_present": true
+      },
+      {
+        "path": [
+          "units",
+          48,
+          "functions",
+          38,
+          "contract_dependencies",
+          "summaries"
+        ],
+        "before": null,
+        "after": [
+          "get_array_item"
+        ],
+        "before_present": false,
+        "after_present": true
+      },
+      {
+        "path": [
+          "units",
+          48,
+          "functions",
+          44,
+          "contract_dependencies",
+          "null_premises"
+        ],
+        "before": null,
+        "after": [
+          "null-deref:get_array_item:2770:current_child"
+        ],
+        "before_present": false,
+        "after_present": true
+      },
+      {
+        "path": [
+          "units",
+          48,
+          "functions",
+          44,
+          "contract_dependencies",
+          "summaries"
+        ],
+        "before": null,
+        "after": [
+          "get_array_item"
+        ],
+        "before_present": false,
+        "after_present": true
+      },
+      {
+        "path": [
+          "units",
+          48,
+          "functions",
+          44,
+          "diagnostics"
+        ],
+        "before": [
+          {
+            "category": "unsupported",
+            "description": "call to uncontracted function `get_array_item`",
+            "line": 2780,
+            "origin": "cJSON.c:1933"
+          }
+        ],
+        "after": []
+      },
+      {
+        "path": [
+          "units",
+          48,
+          "functions",
+          44,
+          "status"
+        ],
+        "before": "Unknown",
+        "after": "Safe"
+      },
+      {
+        "path": [
+          "units",
+          48,
+          "functions",
+          53,
+          "contract_dependencies",
+          "null_premises"
+        ],
+        "before": null,
+        "after": [
+          "null-deref:get_array_item:2770:current_child"
+        ],
+        "before_present": false,
+        "after_present": true
+      },
+      {
+        "path": [
+          "units",
+          48,
+          "functions",
+          53,
+          "contract_dependencies",
+          "summaries"
+        ],
+        "before": null,
+        "after": [
+          "get_array_item"
+        ],
+        "before_present": false,
+        "after_present": true
+      },
+      {
+        "path": [
+          "units",
+          48,
+          "functions",
+          53,
+          "diagnostics"
+        ],
+        "before": [
+          {
+            "category": "unsupported",
+            "description": "call to uncontracted function `get_array_item`",
+            "line": 3086,
+            "origin": "cJSON.c:2328"
+          },
+          {
+            "category": "unknown_alias",
+            "description": "unresolved resource identity `after_inserted`",
+            "line": 3087,
+            "origin": "cJSON.c:2329"
+          },
+          {
+            "category": "unsupported",
+            "description": "call to `add_item_to_array` whose return-code disposition needs its returned value tested against a constant where it stands (relational-untested)",
+            "line": 3089,
+            "origin": "cJSON.c:2331"
+          },
+          {
+            "category": "unknown_alias",
+            "description": "unresolved resource identity `after_inserted`",
+            "line": 3091,
+            "origin": "cJSON.c:2334"
+          },
+          {
+            "category": "unknown_alias",
+            "description": "unresolved resource identity `array`",
+            "line": 3091,
+            "origin": "cJSON.c:2334"
+          },
+          {
+            "category": "unsupported",
+            "description": "indirect memory access is outside the resource projection",
+            "line": 3094,
+            "origin": "cJSON.c:2339"
+          },
+          {
+            "category": "unsupported",
+            "description": "indirect memory access is outside the resource projection",
+            "line": 3095,
+            "origin": "cJSON.c:2340"
+          },
+          {
+            "category": "unsupported",
+            "description": "indirect memory access is outside the resource projection",
+            "line": 3096,
+            "origin": "cJSON.c:2341"
+          },
+          {
+            "category": "unknown_alias",
+            "description": "unresolved resource identity `array`",
+            "line": 3097,
+            "origin": "cJSON.c:2342"
+          },
+          {
+            "category": "unsupported",
+            "description": "indirect memory access is outside the resource projection",
+            "line": 3099,
+            "origin": "cJSON.c:2344"
+          },
+          {
+            "category": "unsupported",
+            "description": "indirect memory access is outside the resource projection",
+            "line": 3103,
+            "origin": "cJSON.c:2348"
+          }
+        ],
+        "after": [
+          {
+            "category": "unsupported",
+            "description": "call to `add_item_to_array` whose return-code disposition needs its returned value tested against a constant where it stands (relational-untested)",
+            "line": 3089,
+            "origin": "cJSON.c:2331"
+          },
+          {
+            "category": "unknown_alias",
+            "description": "unresolved resource identity `after_inserted`",
+            "line": 3091,
+            "origin": "cJSON.c:2334"
+          },
+          {
+            "category": "unsupported",
+            "description": "use of `after_inserted` after its object moved or its parent changed (interior-borrow-ended)",
+            "line": 3091,
+            "origin": "cJSON.c:2334"
+          },
+          {
+            "category": "unsupported",
+            "description": "use of `after_inserted` after its object moved or its parent changed (interior-borrow-ended)",
+            "line": 3094,
+            "origin": "cJSON.c:2339"
+          },
+          {
+            "category": "unsupported",
+            "description": "indirect memory access is outside the resource projection",
+            "line": 3095,
+            "origin": "cJSON.c:2340"
+          },
+          {
+            "category": "unsupported",
+            "description": "indirect memory access is outside the resource projection",
+            "line": 3096,
+            "origin": "cJSON.c:2341"
+          },
+          {
+            "category": "unknown_alias",
+            "description": "unresolved resource identity `array`",
+            "line": 3097,
+            "origin": "cJSON.c:2342"
+          },
+          {
+            "category": "unsupported",
+            "description": "indirect memory access is outside the resource projection",
+            "line": 3099,
+            "origin": "cJSON.c:2344"
+          },
+          {
+            "category": "unsupported",
+            "description": "indirect memory access is outside the resource projection",
+            "line": 3103,
+            "origin": "cJSON.c:2348"
+          }
+        ]
+      },
+      {
+        "path": [
+          "units",
+          48,
+          "functions",
+          74,
+          "contract_dependencies",
+          "null_premises"
+        ],
+        "before": null,
+        "after": [
+          "null-deref:get_array_item:2770:current_child"
+        ],
+        "before_present": false,
+        "after_present": true
+      },
+      {
+        "path": [
+          "units",
+          48,
+          "functions",
+          74,
+          "contract_dependencies",
+          "summaries"
+        ],
+        "before": null,
+        "after": [
+          "get_array_item"
+        ],
+        "before_present": false,
+        "after_present": true
+      },
+      {
+        "path": [
+          "units",
+          48,
+          "functions",
+          89,
+          "diagnostics"
+        ],
+        "before": [
+          {
+            "category": "unknown_alias",
+            "description": "unresolved resource identity `current_child`",
+            "line": 2772,
+            "origin": "cJSON.c:1923"
+          }
+        ],
+        "after": []
+      },
+      {
+        "path": [
+          "units",
+          48,
+          "functions",
+          89,
+          "null_premises"
+        ],
+        "before": [
+          {
+            "line": 2770,
+            "name": "null-deref:get_array_item:2770:current_child",
+            "origin": "cJSON.c:1920",
+            "variable": "current_child"
+          }
+        ],
+        "after": null,
+        "before_present": true,
+        "after_present": false
+      },
+      {
+        "path": [
+          "units",
+          48,
+          "functions",
+          89,
+          "status"
+        ],
+        "before": "Unknown",
+        "after": "Safe"
+      },
+      {
+        "path": [
+          "units",
+          48,
+          "reason"
+        ],
+        "before": "resource projection unresolved: 321 unsupported operation(s), 199 unresolved alias(es), 0 custody summary conflict(s)",
+        "after": "resource projection unresolved: 320 unsupported operation(s), 196 unresolved alias(es), 0 custody summary conflict(s)"
+      }
+    ],
+    "linked_home_environment": {
+      "count": 1110,
+      "exact_pairs": [
+        [
+          "\"1a8943fc5856263477878ea5ff12444167d38b0ed381245b8e859907e95b2e80\"",
+          "\"0dfa6fd2ee97322b9eea7045d6ff8c5f3175b9908b34dd33300dcf4d85498e9e\""
+        ]
+      ]
+    }
+  },
+  "contracts": {
+    "empty_lifetime_key_rename": [
+      {
+        "path": [
+          "callback_members",
+          "lifetime_protocols",
+          "evidence",
+          "summaries",
+          "a45dbd127a1e428eeb9b80fc4cae65f8cbb5658af9df395fa1fd12fd315e06de"
+        ],
+        "before": null,
+        "after": {},
+        "before_present": false,
+        "after_present": true
+      },
+      {
+        "path": [
+          "callback_members",
+          "lifetime_protocols",
+          "evidence",
+          "summaries",
+          "b2cfb510ab41aa376a9fd5dbf612f71ba1a975e8e01f858b8cb3ddcba1192d84"
+        ],
+        "before": {},
+        "after": null,
+        "before_present": true,
+        "after_present": false
+      },
+      {
+        "path": [
+          "callback_members",
+          "prepass",
+          "lifetime_protocols",
+          "summaries",
+          "a45dbd127a1e428eeb9b80fc4cae65f8cbb5658af9df395fa1fd12fd315e06de"
+        ],
+        "before": null,
+        "after": {},
+        "before_present": false,
+        "after_present": true
+      },
+      {
+        "path": [
+          "callback_members",
+          "prepass",
+          "lifetime_protocols",
+          "summaries",
+          "b2cfb510ab41aa376a9fd5dbf612f71ba1a975e8e01f858b8cb3ddcba1192d84"
+        ],
+        "before": {},
+        "after": null,
+        "before_present": true,
+        "after_present": false
+      }
+    ],
+    "other": [
+      {
+        "path": [
+          "contract_dependencies",
+          "safe_rollup",
+          "carrying_a_null_premise"
+        ],
+        "before": 37,
+        "after": 39
+      },
+      {
+        "path": [
+          "contract_dependencies",
+          "safe_rollup",
+          "resting_only_on_a_null_premise"
+        ],
+        "before": 24,
+        "after": 26
+      },
+      {
+        "path": [
+          "contract_dependencies",
+          "safe_rollup",
+          "safe_rows"
+        ],
+        "before": 961,
+        "after": 963
+      }
+    ],
+    "linked_home_environment": {
+      "count": 6,
+      "exact_pairs": [
+        [
+          "\"1a8943fc5856263477878ea5ff12444167d38b0ed381245b8e859907e95b2e80\"",
+          "\"0dfa6fd2ee97322b9eea7045d6ff8c5f3175b9908b34dd33300dcf4d85498e9e\""
+        ]
+      ]
+    }
+  }
+}

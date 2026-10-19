@@ -1,0 +1,138 @@
+{
+  "before": "/tmp/qcore-lexical-scalar-noop-alias-read/private/noop-alias/tip-2/corpus/corpus/resource-diagnostics.json",
+  "after": "/tmp/qcore-detach-lookup-membership/private/detach-lookup-membership/measure-final-1/corpus/corpus/resource-diagnostics.json",
+  "functions": 4834,
+  "transitions": [
+    {
+      "before": "Safe",
+      "after": "Safe",
+      "count": 961
+    },
+    {
+      "before": "Unknown",
+      "after": "Safe",
+      "count": 2
+    },
+    {
+      "before": "Unknown",
+      "after": "Unknown",
+      "count": 3862
+    },
+    {
+      "before": "Unsafe",
+      "after": "Unsafe",
+      "count": 9
+    }
+  ],
+  "removed_leaves": [
+    [
+      "unknown_alias",
+      "unresolved resource identity `after_inserted`",
+      1
+    ],
+    [
+      "unknown_alias",
+      "unresolved resource identity `array`",
+      1
+    ],
+    [
+      "unknown_alias",
+      "unresolved resource identity `current_child`",
+      1
+    ],
+    [
+      "unsupported",
+      "call to uncontracted function `get_array_item`",
+      2
+    ],
+    [
+      "unsupported",
+      "indirect memory access is outside the resource projection",
+      1
+    ]
+  ],
+  "added_leaves": [
+    [
+      "unsupported",
+      "use of `after_inserted` after its object moved or its parent changed (interior-borrow-ended)",
+      2
+    ]
+  ],
+  "changed": [
+    {
+      "key": [
+        "librdkafka",
+        "cJSON.c",
+        "cJSON_GetArrayItem",
+        0
+      ],
+      "before": "Unknown",
+      "after": "Safe",
+      "removed_leaves": [
+        [
+          "unsupported",
+          "call to uncontracted function `get_array_item`",
+          1
+        ]
+      ],
+      "added_leaves": []
+    },
+    {
+      "key": [
+        "librdkafka",
+        "cJSON.c",
+        "cJSON_InsertItemInArray",
+        0
+      ],
+      "before": "Unknown",
+      "after": "Unknown",
+      "removed_leaves": [
+        [
+          "unknown_alias",
+          "unresolved resource identity `after_inserted`",
+          1
+        ],
+        [
+          "unknown_alias",
+          "unresolved resource identity `array`",
+          1
+        ],
+        [
+          "unsupported",
+          "call to uncontracted function `get_array_item`",
+          1
+        ],
+        [
+          "unsupported",
+          "indirect memory access is outside the resource projection",
+          1
+        ]
+      ],
+      "added_leaves": [
+        [
+          "unsupported",
+          "use of `after_inserted` after its object moved or its parent changed (interior-borrow-ended)",
+          2
+        ]
+      ]
+    },
+    {
+      "key": [
+        "librdkafka",
+        "cJSON.c",
+        "get_array_item",
+        0
+      ],
+      "before": "Unknown",
+      "after": "Safe",
+      "removed_leaves": [
+        [
+          "unknown_alias",
+          "unresolved resource identity `current_child`",
+          1
+        ]
+      ],
+      "added_leaves": []
+    }
+  ]
+}

@@ -16,17 +16,18 @@ Analysis paths: [GATEWAY-ANALYSIS-PATH-OPTIMIZATION](reports/gateway-analysis-pa
 
 Audit tooling: the bounded [CPU/memory optimization](reports/audit-memory-performance/README.md) preserves four verdict artifacts byte for byte on three Fluent Bit selections. The four-worker sample took 64.67 → 20.63 seconds with 21.0% lower maximum RSS; shared-host observations, not whole-corpus throughput or safety coverage.
 
-Current corpus and system-slice figures were measured on 2026-09-27 by
-W46-CONTRACT-ACCESS-EXPANSION at merged `e6e31f49`. Its
-[report](reports/w46-contract-access-expansion/README.md) separates fresh baseline, contract-only,
-isolated statement-card and combined measurements. Source-pinned contracts
-are premises, not proofs of their C bodies. CT rows come from the manifest;
-follow-ups from the matrix; module/declaration counts from tracked provider
-sources and pinned tests. Rows naming older cards retain their bounded
-measurements. Projection is not safety coverage. This is the current status
-authority; history belongs in [increment records](development/increments/README.md).
+The latest corpus and configured-route measurements are the 2026-10-19
+[checked array lookup receipt](reports/detach-lookup-membership/README.md),
+semantic source `b92688d22` on completed alias base `f35b5cf4b`. Source-pinned
+contracts and named null premises remain assumptions, not C-body proofs.
+Older rows and reports retain their dated checkpoint evidence. CT mapping,
+model proof, native observations and loaded-runtime projections are separate;
+projection is not safety coverage. Current tracking is the acceptance matrix,
+and history belongs in [increment records](development/increments/README.md).
 
 ## Coverage
+
+The [checked array lookup card](reports/detach-lookup-membership/README.md) retains the exact read-only `get_array_item` frame, original typed read/call obligations and source-bound canonical record identity. Assigned constant-index controls recover an existing contained head only from explicit checked link/membership facts, with write/call invalidation and audited Rust/Lean; Borrowed provenance alone supplies no membership. Fresh pinned audits at `b92688d22` all exit0: corpus **963Safe/3862Unknown/9provisionalUnsafe** (exactly `get_array_item` and `cJSON_GetArrayItem` promoted under the existing named null premise); system **99/345/4** and slice **53Safe/346Unknown/4Pending/1provisionalUnsafe** unchanged. No Safe regression; all5781 null dictionaries and every runtime moved record unchanged. All six detach/delete wrappers remain Unknown, and the detach declaration remains pinned-in-force/DeclaredAssumption, unvalidated1/validated0. Fresh bottom-up plan is256 single-body waits/2222 candidate bodies/362 hypothetical ceiling, with no-extra-body same/cross closure6/6; these are not Safe promises. General successor/object lookup and whole-return/nested Removed transport remain registered. Final gate:8349Rust/344Lean, provider133Rust/25Python/five rebuilt+verified packages, and authoritative post-matrix Python in the report.
 
 The [scalar NoOp alias-read repair](reports/lexical-scalar-noop-alias-read/README.md) reproduces the older route's synthetic trusted-release gap at exact base `b5a00e7dc2`: the analyzer accepted `q_free(peer); p->x = 1` as source-bound Safe/NoOp while Clang AddressSanitizer reports a use-after-free for `subject(p,p)`. The repaired route carries each accepted record-pointer scalar base into the existing alias/liveness transfer, with matching audited Lean. Three fresh pinned audits at source/proof `11e3e135f3e3` all exit 0 and retain **961 Safe / 3,864 Unknown / 9 provisional Unsafe** corpus functions, **99 / 345 / 4** system rows and **53 Safe / 346 Unknown / 4 Pending / 1 provisional Unsafe** slice rows. No status or full diagnostic changes; all 5,781 null-property rows, combined verdicts and runtime moved records are unchanged. The first fresh corpus attempt failed on an uninitialized Libevent submodule and is excluded from coverage. This is a synthetic soundness repair with no new production Safe claim. The full gate passes 8,328 Rust tests, 343 Lean audits and 374 post-matrix Python tests; exact commands and artifacts are in the report.
 

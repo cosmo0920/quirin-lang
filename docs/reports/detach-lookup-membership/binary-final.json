@@ -1,0 +1,10 @@
+{
+  "source": "b92688d220e1e62cffdcdb6ccc46476df0f406fd",
+  "baseline": "f35b5cf4b596e1ad2f5bdec6a0c203e2fd987287",
+  "binary": "/tmp/qcore-detach-lookup-membership/private/detach-lookup-membership/release-2/quirin-audit-b92688d22",
+  "sha256": "2e07fff03663ae6188dcab97f0a97b850593cbf80ea76ef4bec87c8262a11ced",
+  "mutable_target_binary": "/home/cosmo/Documents/GitHub/qcore-c/private/detach-same-item-target/release/quirin-audit",
+  "release_exit": 0,
+  "core": "gate-host-3/commands.json all8 exits0; Python deferred to final matrix",
+  "provider": "gate-providers-2/commands.json all13 exits0"
+}

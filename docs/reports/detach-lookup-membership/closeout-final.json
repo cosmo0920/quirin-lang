@@ -1,0 +1,92 @@
+{
+  "cwd": "/tmp/qcore-detach-lookup-membership",
+  "tested_head": "b92688d220e1e62cffdcdb6ccc46476df0f406fd",
+  "environment": {
+    "CARGO_TARGET_DIR": null,
+    "CARGO_INCREMENTAL": null,
+    "CARGO_PROFILE_DEV_DEBUG": null,
+    "CARGO_PROFILE_TEST_DEBUG": null,
+    "CARGO_BUILD_JOBS": null,
+    "QCORE_CLANG": null,
+    "QCORE_LOOKUP_PRODUCTION_INPUT": null
+  },
+  "steps": [
+    {
+      "name": "matrix",
+      "command": [
+        "python3",
+        "docs/reports/remaining-d02/build_matrix.py",
+        ".",
+        "--gate",
+        "docs/reports/detach-lookup-membership/gate.json"
+      ],
+      "exit": 0,
+      "elapsed_seconds": 0.067,
+      "private_log": "/tmp/qcore-detach-lookup-membership/private/detach-lookup-membership/closeout-2/matrix.log"
+    },
+    {
+      "name": "python",
+      "command": [
+        "python3",
+        "-m",
+        "unittest",
+        "discover",
+        "-s",
+        "scripts/tests"
+      ],
+      "exit": 0,
+      "elapsed_seconds": 26.714,
+      "private_log": "/tmp/qcore-detach-lookup-membership/private/detach-lookup-membership/closeout-2/python.log"
+    },
+    {
+      "name": "index-build",
+      "command": [
+        "python3",
+        "scripts/build_docs_index.py"
+      ],
+      "exit": 0,
+      "elapsed_seconds": 0.043,
+      "private_log": "/tmp/qcore-detach-lookup-membership/private/detach-lookup-membership/closeout-2/index-build.log"
+    },
+    {
+      "name": "index-check",
+      "command": [
+        "python3",
+        "scripts/build_docs_index.py",
+        "--check"
+      ],
+      "exit": 0,
+      "elapsed_seconds": 0.044,
+      "private_log": "/tmp/qcore-detach-lookup-membership/private/detach-lookup-membership/closeout-2/index-check.log"
+    },
+    {
+      "name": "reconciliation",
+      "command": [
+        "python3",
+        "scripts/reconciliation_sweep.py",
+        ".",
+        "--cards",
+        "detach-lookup-membership",
+        "--json"
+      ],
+      "exit": 0,
+      "elapsed_seconds": 0.032,
+      "private_log": "/tmp/qcore-detach-lookup-membership/private/detach-lookup-membership/closeout-2/reconciliation.log"
+    },
+    {
+      "name": "residuals",
+      "command": [
+        "python3",
+        "scripts/reconciliation_sweep.py",
+        ".",
+        "--cards",
+        "detach-lookup-membership",
+        "--residuals",
+        "--json"
+      ],
+      "exit": 0,
+      "elapsed_seconds": 0.219,
+      "private_log": "/tmp/qcore-detach-lookup-membership/private/detach-lookup-membership/closeout-2/residuals.log"
+    }
+  ]
+}

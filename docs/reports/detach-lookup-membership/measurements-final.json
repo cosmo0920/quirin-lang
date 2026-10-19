@@ -1,0 +1,51 @@
+{
+  "cwd": "/tmp/qcore-detach-lookup-membership",
+  "tested_head": "b92688d220e1e62cffdcdb6ccc46476df0f406fd",
+  "environment": {
+    "CARGO_TARGET_DIR": "/home/cosmo/Documents/GitHub/qcore-c/private/detach-same-item-target",
+    "CARGO_INCREMENTAL": "0",
+    "CARGO_PROFILE_DEV_DEBUG": "0",
+    "CARGO_PROFILE_TEST_DEBUG": "0",
+    "CARGO_BUILD_JOBS": "1",
+    "QCORE_CLANG": "/usr/lib/llvm-21/bin/clang",
+    "QCORE_LOOKUP_PRODUCTION_INPUT": null
+  },
+  "steps": [
+    {
+      "name": "corpus",
+      "command": [
+        "python3",
+        "docs/reports/detach-lookup-membership/scripts/measure.py",
+        "corpus",
+        "private/detach-lookup-membership/measure-final-1/corpus"
+      ],
+      "exit": 0,
+      "elapsed_seconds": 3271.752,
+      "private_log": "/tmp/qcore-detach-lookup-membership/private/detach-lookup-membership/measurements-1/corpus.log"
+    },
+    {
+      "name": "system",
+      "command": [
+        "python3",
+        "docs/reports/detach-lookup-membership/scripts/measure.py",
+        "system",
+        "private/detach-lookup-membership/measure-final-1/system"
+      ],
+      "exit": 0,
+      "elapsed_seconds": 403.727,
+      "private_log": "/tmp/qcore-detach-lookup-membership/private/detach-lookup-membership/measurements-1/system.log"
+    },
+    {
+      "name": "slice",
+      "command": [
+        "python3",
+        "docs/reports/detach-lookup-membership/scripts/measure.py",
+        "slice",
+        "private/detach-lookup-membership/measure-final-1/slice"
+      ],
+      "exit": 0,
+      "elapsed_seconds": 334.42,
+      "private_log": "/tmp/qcore-detach-lookup-membership/private/detach-lookup-membership/measurements-1/slice.log"
+    }
+  ]
+}

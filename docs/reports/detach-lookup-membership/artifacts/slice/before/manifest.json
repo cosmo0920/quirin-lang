@@ -1,0 +1,50 @@
+{
+  "diagnostics": {
+    "present": true,
+    "source": "/tmp/qcore-lexical-scalar-noop-alias-read/private/noop-alias/tip-2/slice/resource-diagnostics.json",
+    "sha256": "71f916365e9cce44b60221435ff0196bd976d2bfc8d96b5371eb54fe4e13a921",
+    "bytes": 1693653
+  },
+  "source": {
+    "present": false
+  },
+  "chunk-contracts": {
+    "present": true,
+    "source": "/tmp/qcore-lexical-scalar-noop-alias-read/private/noop-alias/tip-2/slice/resource-diagnostics.chunk-contracts.json",
+    "sha256": "a97259087e4ad89a4662edcb494b27c27e80f06c62e404a19076224bbc0a2bd8",
+    "bytes": 385
+  },
+  "source-effects": {
+    "present": true,
+    "source": "/tmp/qcore-lexical-scalar-noop-alias-read/private/noop-alias/tip-2/slice/resource-diagnostics.source-effects.json",
+    "sha256": "a97259087e4ad89a4662edcb494b27c27e80f06c62e404a19076224bbc0a2bd8",
+    "bytes": 385
+  },
+  "contracts": {
+    "present": true,
+    "source": "/tmp/qcore-lexical-scalar-noop-alias-read/private/noop-alias/tip-2/slice/resource-diagnostics.contracts.json",
+    "sha256": "27a31c899fed132d8c0ec002c66bb72dccae53d8abcf3567f0163d170d3ae12b",
+    "bytes": 7076117
+  },
+  "static_custody_counts": {
+    "Unknown": 346,
+    "Safe": 53,
+    "Pending": 4,
+    "Unsafe": 1
+  },
+  "slice-null.jsonl": {
+    "source": "/tmp/qcore-lexical-scalar-noop-alias-read/private/noop-alias/tip-2/slice/slice-null.jsonl",
+    "bytes": 1460997,
+    "sha256": "6eb1cd7b55ff9467ea72fa7ae9029e98db5d37f8c85e0994872a71693aa91ccf"
+  },
+  "slice-null.summary.json": {
+    "source": "/tmp/qcore-lexical-scalar-noop-alias-read/private/noop-alias/tip-2/slice/slice-null.summary.json",
+    "bytes": 64487,
+    "sha256": "4f765339b3ef087cc3d47ec9231eb7960393d2c1c5dd927c22d3a09f489faa49"
+  },
+  "slice-outer.json": {
+    "source": "/tmp/qcore-lexical-scalar-noop-alias-read/private/noop-alias/tip-2/slice/slice-outer.json",
+    "bytes": 88759,
+    "sha256": "22c035f7c4c0cae98f99fea4a27343cd7ab02d125d495f6526a2708b1fd9144f"
+  }
+}

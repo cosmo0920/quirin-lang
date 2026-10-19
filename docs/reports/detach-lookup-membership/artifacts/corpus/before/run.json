@@ -1,0 +1,24 @@
+{
+  "command": [
+    "/tmp/qcore-lexical-scalar-noop-alias-read/target/release/quirin-audit",
+    "pinned",
+    "--jobs",
+    "4",
+    "/home/cosmo/Documents/GitHub/qcore-c/build/cycle19/c-gateway-wave-pin/fluent-bit-clang-source",
+    "/home/cosmo/Documents/GitHub/qcore-c/build/cycle19/c-gateway-wave-pin/monkey/monkey-build/compile_commands.json",
+    "/tmp/qcore-lexical-scalar-noop-alias-read/private/noop-alias/tip-2/corpus/corpus/monkey-source.json",
+    "/tmp/qcore-lexical-scalar-noop-alias-read/private/noop-alias/tip-2/corpus/corpus/resource-diagnostics.json"
+  ],
+  "source_commit": "66910c10",
+  "binary_sha256": "5d78c38e8db8d0e35439f312d31ff3cbf378e8653a595c42a85b97443be84de1",
+  "environment": {
+    "QCORE_CLANG": "/usr/bin/clang",
+    "QCORE_CHUNKIO_PACKAGE": "/home/cosmo/Documents/GitHub/qcore-c/build/cycle19/provider-packages-wave20/qcore.chunkio",
+    "QCORE_SOURCE_CONTRACTS": "unset",
+    "QCORE_RETURN_CENSUS": "unset",
+    "QCORE_AUDIT_JOBS": "4"
+  },
+  "start": "2026-10-19T04:54:42.507286+00:00",
+  "exit": 0,
+  "end": "2026-10-19T05:47:22.597361+00:00"
+}

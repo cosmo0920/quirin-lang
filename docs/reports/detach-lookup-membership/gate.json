@@ -1,0 +1,13 @@
+{
+  "note": "DETACH-LOOKUP-MEMBERSHIP final semantic source b92688d220e1e62cffdcdb6ccc46476df0f406fd on completed alias base f35b5cf4b596e1ad2f5bdec6a0c203e2fd987287. Core actual gate-host-3 records520units/533summaries,8349passed/0failed/15ignored/0filtered and344Lean audits; provider2 records133Rust/0failed/1ignored doctest,25Python and all5rebuilt+verified packages. All3fresh final audits exit0: corpus963Safe/3862Unknown/9provisionalUnsafe (two existing-null-premise promotions),system99/345/4,slice53/346/4Pending/1. Null5781dicts and runtime moved records unchanged. The authoritative post-matrix rootPython suite passed374/0failed in26.523s at closeout-1; the early gate-host-1 stale343\u2192344 matrix failure is retained and superseded. Final receipt confirmation after this note regeneration is closeout-2. Current report/tracking edits are documentation-only; source/proof remains equal to frozen measured b926. Actual Clang recording comes from this worktree gate-host-3. Superseded failures and gate2cancellation retained.",
+  "workspace_tests": 8349,
+  "provider_tests": 133,
+  "python_evidence_validator_tests": 374,
+  "reevaluation_probe_exit": 0,
+  "reevaluation_followup_exit": 0,
+  "cargo_fmt": "clean",
+  "cargo_clippy": "clean",
+  "standing_gate": "complete",
+  "lean_audits": 344,
+  "clang": "present: Ubuntu clang version 21.1.8 (6ubuntu1)"
+}

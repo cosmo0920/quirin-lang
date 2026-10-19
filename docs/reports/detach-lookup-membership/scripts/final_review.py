@@ -37,7 +37,7 @@ for route in routes:
     paths = [root / route / ('corpus/resource-diagnostics.json' if route == 'corpus'
                              else 'resource-diagnostics.json')
              for root in [args.baseline, args.tip]]
-    assert int((args.tip / (route + '.exit')).read_text()) == 0
+    assert int((args.tip / route / (route + '.exit')).read_text()) == 0
     run(route + '-archive', [sys.executable, str(REPORT / 'scripts/archive.py'),
                             *map(str, paths), route])
     for tool in ['review_fields', 'review_precise']:

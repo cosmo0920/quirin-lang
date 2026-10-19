@@ -1,0 +1,24 @@
+{
+  "command": [
+    "/tmp/qcore-detach-lookup-membership/target/release/quirin-audit",
+    "pinned",
+    "--jobs",
+    "4",
+    "/home/cosmo/Documents/GitHub/qcore-c/build/cycle19/c-gateway-wave-pin/fluent-bit-clang-source",
+    "/home/cosmo/Documents/GitHub/qcore-c/build/cycle19/c-gateway-wave-pin/monkey/monkey-build/compile_commands.json",
+    "/tmp/qcore-detach-lookup-membership/private/detach-lookup-membership/measure-final-1/corpus/corpus/monkey-source.json",
+    "/tmp/qcore-detach-lookup-membership/private/detach-lookup-membership/measure-final-1/corpus/corpus/resource-diagnostics.json"
+  ],
+  "source_commit": "66910c10",
+  "binary_sha256": "2e07fff03663ae6188dcab97f0a97b850593cbf80ea76ef4bec87c8262a11ced",
+  "environment": {
+    "QCORE_CLANG": "/usr/bin/clang",
+    "QCORE_CHUNKIO_PACKAGE": "/home/cosmo/Documents/GitHub/qcore-c/build/cycle19/provider-packages-wave20/qcore.chunkio",
+    "QCORE_SOURCE_CONTRACTS": "unset",
+    "QCORE_RETURN_CENSUS": "unset",
+    "QCORE_AUDIT_JOBS": "4"
+  },
+  "start": "2026-10-19T07:47:19.434841+00:00",
+  "exit": 0,
+  "end": "2026-10-19T08:41:50.993537+00:00"
+}
