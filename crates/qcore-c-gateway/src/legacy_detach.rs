@@ -6,6 +6,90 @@ use crate::detach_same_item::{Decision, Facts, decide};
 use qcore_schemas::contract::{ResourceFunctionContract, ResourceKind, ResourceParameterMode};
 use std::collections::BTreeSet;
 
+pub(super) fn checked(
+    arguments: &[Option<String>],
+    contract: &ResourceFunctionContract,
+    parameter: usize,
+    nullable: bool,
+    state: &AbstractState,
+) -> Option<AbstractPointer> {
+    let ResourceParameterMode::Removed {
+        owner_parameter,
+        nullable: input_nullable,
+    } = *contract.parameters.get(parameter)?
+    else {
+        return None;
+    };
+    if parameter == owner_parameter
+        || input_nullable != nullable
+        || contract.result_kind != ResourceKind::Heap
+        || contract.parameter_kind(parameter) != ResourceKind::Heap
+        || contract.parameter_kind(owner_parameter) != ResourceKind::Heap
+        || contract.parameters.get(owner_parameter)
+            != Some(&ResourceParameterMode::Owned { nullable: false })
+        || contract.parameters.iter().enumerate().any(|(i, mode)| {
+            i != parameter && i != owner_parameter && *mode != ResourceParameterMode::Borrowed
+        })
+    {
+        return None;
+    }
+    let item_name = arguments.get(parameter)?.as_ref()?;
+    let item = if item_name == "0" {
+        AbstractPointer {
+            may_be_null: true,
+            ..Default::default()
+        }
+    } else {
+        state.pointers.get(item_name)?.clone()
+    };
+    let parent = state
+        .pointers
+        .get(arguments.get(owner_parameter)?.as_ref()?)?;
+    let parent_site = parent.targets.first().copied();
+    let item_site = item.targets.first().copied();
+    let owners = item_site.map(|site| {
+        state
+            .contained
+            .iter()
+            .filter_map(|(owner, children)| children.contains(&site).then_some(*owner))
+            .collect::<BTreeSet<_>>()
+    });
+    let pending = |site| {
+        state.conditional_replacements.contains_key(&site)
+            || state
+                .conditional_replacements
+                .values()
+                .any(|old| old.contains(&site))
+    };
+    let facts = Facts {
+        parent_live_identity: !parent.unknown
+            && parent.derivation.is_identity()
+            && !parent.may_be_null
+            && parent.targets.len() == 1
+            && parent_site.is_some_and(|site| {
+                state.resources.get(&site) == Some(&super::LIVE)
+                    && !state.nullable_sites.contains(&site)
+                    && !state.unresolved_effect_sites.contains(&site)
+                    && !pending(site)
+            }),
+        item_identity: !item.unknown && item.derivation.is_identity() && item.targets.len() <= 1,
+        nullable,
+        item_null: item.targets.is_empty() && item.may_be_null,
+        item_may_be_null: item.may_be_null,
+        exact_membership: parent_site != item_site
+            && parent_site.is_some_and(|parent| owners == Some(BTreeSet::from([parent]))),
+        item_settled: item_site.is_some_and(|site| {
+            state.resources.get(&site) == Some(&super::CONTAINED)
+                && !state.unresolved_effect_sites.contains(&site)
+                && !pending(site)
+        }),
+    };
+    match decide(facts) {
+        Decision::Nothing | Decision::Restore => Some(item),
+        Decision::Refuse => None,
+    }
+}
+
 #[allow(clippy::too_many_arguments)]
 pub(super) fn prepare(
     function: &str,
@@ -18,85 +102,7 @@ pub(super) fn prepare(
     state: &mut AbstractState,
     diagnostics: &mut BTreeSet<LegacyDiagnostic>,
 ) -> Option<AbstractPointer> {
-    let checked = (|| {
-        let ResourceParameterMode::Removed {
-            owner_parameter,
-            nullable: input_nullable,
-        } = *contract.parameters.get(parameter)?
-        else {
-            return None;
-        };
-        if parameter == owner_parameter
-            || input_nullable != nullable
-            || contract.result_kind != ResourceKind::Heap
-            || contract.parameter_kind(parameter) != ResourceKind::Heap
-            || contract.parameter_kind(owner_parameter) != ResourceKind::Heap
-            || contract.parameters.get(owner_parameter)
-                != Some(&ResourceParameterMode::Owned { nullable: false })
-            || contract.parameters.iter().enumerate().any(|(i, mode)| {
-                i != parameter && i != owner_parameter && *mode != ResourceParameterMode::Borrowed
-            })
-        {
-            return None;
-        }
-        let item_name = arguments.get(parameter)?.as_ref()?;
-        let item = if item_name == "0" {
-            AbstractPointer {
-                may_be_null: true,
-                ..Default::default()
-            }
-        } else {
-            state.pointers.get(item_name)?.clone()
-        };
-        let parent = state
-            .pointers
-            .get(arguments.get(owner_parameter)?.as_ref()?)?;
-        let parent_site = parent.targets.first().copied();
-        let item_site = item.targets.first().copied();
-        let owners = item_site.map(|site| {
-            state
-                .contained
-                .iter()
-                .filter_map(|(owner, children)| children.contains(&site).then_some(*owner))
-                .collect::<BTreeSet<_>>()
-        });
-        let pending = |site| {
-            state.conditional_replacements.contains_key(&site)
-                || state
-                    .conditional_replacements
-                    .values()
-                    .any(|old| old.contains(&site))
-        };
-        let facts = Facts {
-            parent_live_identity: !parent.unknown
-                && parent.derivation.is_identity()
-                && !parent.may_be_null
-                && parent.targets.len() == 1
-                && parent_site.is_some_and(|site| {
-                    state.resources.get(&site) == Some(&super::LIVE)
-                        && !state.nullable_sites.contains(&site)
-                        && !state.unresolved_effect_sites.contains(&site)
-                        && !pending(site)
-                }),
-            item_identity: !item.unknown
-                && item.derivation.is_identity()
-                && item.targets.len() <= 1,
-            nullable,
-            item_null: item.targets.is_empty() && item.may_be_null,
-            item_may_be_null: item.may_be_null,
-            exact_membership: parent_site != item_site
-                && parent_site.is_some_and(|parent| owners == Some(BTreeSet::from([parent]))),
-            item_settled: item_site.is_some_and(|site| {
-                state.resources.get(&site) == Some(&super::CONTAINED)
-                    && !state.unresolved_effect_sites.contains(&site)
-                    && !pending(site)
-            }),
-        };
-        match decide(facts) {
-            Decision::Nothing | Decision::Restore => Some(item),
-            Decision::Refuse => None,
-        }
-    })();
+    let checked = checked(arguments, contract, parameter, nullable, state);
     if checked.is_none() {
         diagnostics.insert(LegacyDiagnostic { function: function.to_owned(), line,
             kind: LegacyDiagnosticKind::Unsupported { description: format!("call to `{called}`: same-item detach membership, identity or live parent is not established") } });

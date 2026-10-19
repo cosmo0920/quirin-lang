@@ -346,6 +346,8 @@ pub(crate) mod retention_guard;
 // Card SLOT-MOVE-AND-INTERIOR-BORROW (rules 12x, 12y, 12z, 13a).
 #[path = "legacy_detach.rs"]
 mod detach_route;
+#[path = "legacy_lookup.rs"]
+mod lookup_route;
 #[path = "legacy_slot_move_borrow.rs"]
 pub(crate) mod slot_move_route;
 // Card REFCOUNT-RESOURCE-KIND (rules 13b, 13c): reference counts (the
@@ -471,6 +473,12 @@ pub struct NestedContractCall {
 #[allow(clippy::large_enum_variant)]
 #[derive(Clone, Debug, PartialEq, Eq)]
 pub enum LegacyInstruction {
+    /// Read-only child/next lookup provenance, admitted only by an exact
+    /// complete typed source frame. This is never a child resource identity.
+    CheckedLookupRead {
+        parent: String,
+        destination: String,
+    },
     Acquire {
         destination: String,
         site: usize,
@@ -1088,8 +1096,20 @@ pub struct AliasPeers {
     pub peers: Vec<String>,
 }
 
+/// Source-derived indexed lookup call descriptor. The ordinary ContractCall
+/// remains visible to every contract, condition and lifetime consumer.
+#[derive(Clone, Debug, PartialEq, Eq)]
+pub struct CheckedLookupCall {
+    pub callee: String,
+    pub parent: String,
+    pub index: usize,
+}
+
 #[derive(Clone, Debug, PartialEq, Eq)]
 pub struct LegacyCfgNode {
+    /// Exact retained assigned-call/callee frame, rederived during replay.
+    /// Absence never supplies a child identity or membership fact.
+    pub lookup: Option<CheckedLookupCall>,
     pub instruction: LegacyInstruction,
     pub successors: Vec<LegacyNodeId>,
     pub line: usize,
@@ -3477,7 +3497,8 @@ pub(crate) fn body_calls_derived_result(
                 matches!(contract.result, ResourceReturnMode::Derived { .. })
             })
     });
-    derived_call && body.iter().any(|token| token.text == "return")
+    (derived_call || lookup_route::read(tokens, function).is_some())
+        && body.iter().any(|token| token.text == "return")
 }
 
 /// Card **W43-RESULT-ALIAS-RETURNED**: the CFG a derived-result summary is
@@ -3878,6 +3899,8 @@ fn build_function_cfg_unscoped(
     // a null test of a member place keeps the dereference obligation of
     // every pointer it reads through.
     member_release::oblige_member_null_tests(&mut cfg);
+    lookup_route::settle(&mut cfg, tokens, function);
+    lookup_route::settle_calls(&mut cfg, tokens, contracts);
     Ok(cfg)
 }
 

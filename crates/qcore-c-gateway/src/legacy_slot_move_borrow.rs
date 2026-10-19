@@ -649,6 +649,7 @@ fn mutation(instruction: &LegacyInstruction) -> Mutation {
         | LegacyInstruction::PointerStep { .. }
         | LegacyInstruction::CountedLoopHeader { .. }
         | LegacyInstruction::CountedLoopStep { .. }
+        | LegacyInstruction::CheckedLookupRead { .. }
         | LegacyInstruction::NoOp => Mutation::None,
         _ => Mutation::Unseen,
     }
@@ -737,7 +738,11 @@ pub(super) fn before(
     if state.borrows.is_empty() {
         return state;
     }
-    let mutated = mutation(&node.instruction);
+    let mutated = if node.lookup.is_some() {
+        Mutation::None
+    } else {
+        mutation(&node.instruction)
+    };
     let ended = state
         .borrows
         .iter()

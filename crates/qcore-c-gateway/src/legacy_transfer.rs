@@ -216,6 +216,10 @@ pub(super) struct AbstractState {
     /// *releasing* the owner does not cascade, because a plain C field store
     /// carries no declared destructor obligation (premise P-B08-SHALLOW).
     pub(super) field_links: BTreeMap<usize, BTreeMap<String, BTreeSet<usize>>>,
+    /// Must-held physical link values; explicit NULL differs from absent/unknown.
+    pub(super) lookup_links: BTreeMap<(usize, String), Option<usize>>,
+    /// Identity-refined lookup aliases still obey their parent's borrow lifetime.
+    pub(super) lookup_aliases: BTreeSet<String>,
     /// Card **B08-FIELD-LINK-JOIN-SILENT-UNRESOLVED** (rule 11c): the
     /// `(owner, field, child)` triples of `field_links` that may not hold on
     /// every path reaching here (linked on one side of a join). Always a
@@ -430,6 +434,10 @@ impl AbstractState {
                 .or_default()
                 .extend(children.iter().copied());
         }
+        self.lookup_links
+            .retain(|key, value| incoming.lookup_links.get(key) == Some(value));
+        self.lookup_aliases
+            .extend(incoming.lookup_aliases.iter().cloned());
         self.join_field_links(incoming);
         container_publication::join(&mut self.published, &incoming.published);
         in_place_custody::join_witnesses(&mut self.status_witnesses, &incoming.status_witnesses);
@@ -630,6 +638,7 @@ pub(super) fn rebound_names(instruction: &LegacyInstruction) -> Vec<&str> {
         | LegacyInstruction::VaArgPointer { destination }
         | LegacyInstruction::ForgetScalar { destination }
         | LegacyInstruction::PointerStep { destination, .. }
+        | LegacyInstruction::CheckedLookupRead { destination, .. }
         | LegacyInstruction::Clear { destination } => vec![destination.as_str()],
         LegacyInstruction::IndirectScalarAccess {
             destination: Some(destination),
@@ -1744,6 +1753,8 @@ impl TransferContext<'_> {
 /// here, and every permission it adds is re-checked at the exits.
 #[derive(Default)]
 pub(super) struct TransferContext<'a> {
+    /// No new link state is carried by functions without a checked call.
+    pub(super) lookup_tracking: bool,
     /// Out-parameter slots the contract in force declares. A store to any
     /// other indirect place stays unmodeled.
     pub(super) sanctioned: BTreeSet<&'a str>,
@@ -1844,6 +1855,7 @@ fn analyze_cfg_with_entry_collected(
     entry_custody: &EntryCustody,
 ) -> (LegacyFunctionSummary, Vec<ExitObservation>) {
     let context = TransferContext {
+        lookup_tracking: cfg.nodes.iter().any(|node| node.lookup.is_some()),
         sanctioned: entry_custody.sanctioned_places(),
         result_nullable: entry_custody.result_nullable,
         // A derived base's name-only site is caller-held too: no aggregate
@@ -2647,6 +2659,18 @@ pub(super) fn transfer(
 ) -> AbstractState {
     // Card SLOT-MOVE-AND-INTERIOR-BORROW (rules 12x, 12y): reads of
     // invalidated names refuse, and mutations end the borrows they may reach.
+    let lookup_result = context
+        .lookup_tracking
+        .then(|| lookup_route::resolve(node, &state, &context.site_kinds))
+        .flatten();
+    let lookup_store = context
+        .lookup_tracking
+        .then(|| lookup_route::stored_link(node, &state, &context.caller_sites))
+        .flatten();
+    let mut state = state;
+    if context.lookup_tracking {
+        lookup_route::prepare_removed(node, &mut state);
+    }
     let state = slot_move_route::before(
         function,
         node,
@@ -2664,6 +2688,9 @@ pub(super) fn transfer(
         diagnostics,
     );
     slot_move_route::after(node, &mut output);
+    if context.lookup_tracking {
+        lookup_route::after(node, &mut output, lookup_result, lookup_store);
+    }
     in_place_custody::forget_witnesses(&node.instruction, &mut output, writes_scalar);
     in_place_custody::record_witness(&node.instruction, &mut output);
     output
@@ -3224,6 +3251,7 @@ pub(super) fn transfer_base(
         | LegacyInstruction::VaArgPointer { destination }
         | LegacyInstruction::ForgetScalar { destination }
         | LegacyInstruction::PointerStep { destination, .. }
+        | LegacyInstruction::CheckedLookupRead { destination, .. }
         | LegacyInstruction::Clear { destination } => Some(destination.as_str()),
         LegacyInstruction::ContractCall { destination, .. }
         | LegacyInstruction::IndirectScalarAccess { destination, .. } => destination.as_deref(),
@@ -3637,6 +3665,20 @@ pub(super) fn transfer_base(
     // decision, so a `*B` store naming one refuses. Admitted or refused, the
     // statement writes only a scalar, so every projection map is preserved;
     // the one effect is forgetting the scalar destination's old fact.
+    if let LegacyInstruction::CheckedLookupRead {
+        parent,
+        destination,
+    } = &node.instruction
+    {
+        let pointer = derive_pointer(
+            state.pointers.get(parent),
+            DerivedExtent::Borrowed,
+            true,
+            true,
+        );
+        state.pointers.insert(destination.clone(), pointer);
+        return state;
+    }
     if let LegacyInstruction::IndirectScalarAccess {
         bases,
         destination,
@@ -4222,7 +4264,7 @@ pub(super) fn transfer_base(
                 }
             }
         }
-        LegacyInstruction::NoOp => {}
+        LegacyInstruction::NoOp | LegacyInstruction::CheckedLookupRead { .. } => {}
         // Card W43-INDEXED-RESOURCE-COLLECTIONS: decided by [`transfer`]
         // before this function is reached; as a base instruction a counted
         // loop's header is a `NoOp` and its step a forget.

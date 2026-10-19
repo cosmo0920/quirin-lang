@@ -337,6 +337,7 @@ pub(crate) fn admits_descriptor_read(
         // value that carries no identity, so it states nothing about a
         // descriptor on its line.
         | LegacyInstruction::PointerStore { .. }
+        | LegacyInstruction::CheckedLookupRead { .. }
         | LegacyInstruction::NoOp => false,
     }
 }

@@ -608,6 +608,7 @@ mod tests {
     /// declines it and the fixed point runs.
     fn cyclic_cfg(acquire_at: usize) -> LegacyCfg {
         let plain = |successors: Vec<usize>| LegacyCfgNode {
+            lookup: None,
             instruction: LegacyInstruction::NoOp,
             successors,
             line: 0,
@@ -655,6 +656,7 @@ mod tests {
     /// real body reaches 148 without being pathological.
     fn long_cyclic_cfg(chain: usize) -> LegacyCfg {
         let plain = |successors: Vec<usize>| LegacyCfgNode {
+            lookup: None,
             instruction: LegacyInstruction::NoOp,
             successors,
             line: 0,
@@ -1036,6 +1038,7 @@ mod tests {
         // analyzer actually takes: acquire, call, exit. Before this card the
         // call cleared the relation and node 2 carried nothing.
         let plain = |instruction, successors: Vec<usize>| LegacyCfgNode {
+            lookup: None,
             instruction,
             successors,
             line: 0,

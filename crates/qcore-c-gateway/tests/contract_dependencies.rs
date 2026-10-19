@@ -94,6 +94,7 @@ fn lean_outcome_vectors_match_the_unit_record() {
 
 fn call(callee: &str) -> LegacyCfgNode {
     LegacyCfgNode {
+        lookup: None,
         instruction: LegacyInstruction::ContractCall {
             function: callee.to_owned(),
             destination: None,

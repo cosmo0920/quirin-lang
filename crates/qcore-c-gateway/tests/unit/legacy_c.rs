@@ -1287,6 +1287,7 @@ fn alias_cfg(nodes: Vec<LegacyCfgNode>) -> LegacyCfg {
 
 fn alias_exit() -> LegacyCfgNode {
     LegacyCfgNode {
+        lookup: None,
         instruction: LegacyInstruction::NoOp,
         successors: Vec::new(),
         line: 0,
@@ -1297,6 +1298,7 @@ fn alias_exit() -> LegacyCfgNode {
 
 fn alias_node(instruction: LegacyInstruction, successors: Vec<LegacyNodeId>) -> LegacyCfgNode {
     LegacyCfgNode {
+        lookup: None,
         instruction,
         successors,
         line: 1,

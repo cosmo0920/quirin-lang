@@ -202,6 +202,7 @@ fn returns_derived_destination(cfg: &LegacyCfg) -> bool {
             } if matches!(contract.result, ResourceReturnMode::Derived { .. }) => {
                 Some(destination.as_str())
             }
+            LegacyInstruction::CheckedLookupRead { destination, .. } => Some(destination.as_str()),
             _ => None,
         })
         .collect::<BTreeSet<_>>();

@@ -518,6 +518,7 @@ impl CfgBuilder {
     ) -> LegacyNodeId {
         let id = self.nodes.len();
         self.nodes.push(LegacyCfgNode {
+            lookup: None,
             instruction,
             successors,
             line,

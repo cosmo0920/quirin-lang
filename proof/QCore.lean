@@ -1,3 +1,4 @@
+import QCore.ListLookup
 import QCore.DetachSameItem
 import QCore.ScalarPrecedence
 import QCore.RuntimeImports

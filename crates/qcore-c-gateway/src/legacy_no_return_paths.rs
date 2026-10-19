@@ -102,6 +102,7 @@ pub(super) fn called(instruction: &LegacyInstruction, out: &mut Vec<String>) {
         | LegacyInstruction::PointerStep { .. }
         | LegacyInstruction::ArgumentReads { .. }
         | LegacyInstruction::AggregateStore { .. }
+        | LegacyInstruction::CheckedLookupRead { .. }
         | LegacyInstruction::NoOp
         | LegacyInstruction::Unknown { .. } => {}
     }

@@ -182,3 +182,47 @@ fn a_body_the_ordinary_analysis_refuses_is_named() {
         DerivedRefusal::BodyNotModeled
     );
 }
+
+#[test]
+fn checked_indexed_child_lookup_keeps_borrowed_result_summary() {
+    let mut sources =
+        vec![include_str!("../fixtures/detach-lookup-membership/cjson_lookup_frame.h").to_owned()];
+    if let Some(path) = std::env::var_os("QCORE_LOOKUP_PRODUCTION_INPUT") {
+        sources
+            .push(std::fs::read_to_string(path).expect("explicit actual source must be readable"));
+    }
+    for source in &sources {
+        let _source = crate::typed_access_path::enter_source(
+            source,
+            crate::legacy_c::CCompilerDialect::C11,
+            None,
+        );
+        let result = infer_derived_result_summary(
+            &tokenize(source),
+            "get_array_item",
+            &ResourceContracts::default(),
+        );
+        assert_eq!(
+            result.map(|contract| contract.result),
+            Ok(ResourceReturnMode::Derived {
+                parameter: 0,
+                extent: DerivedExtent::Borrowed,
+                nullable: true,
+                const_dropped: true,
+            })
+        );
+    }
+}
+
+#[test]
+fn lookup_without_retained_source_context_keeps_the_lexical_refusal() {
+    let source = include_str!("../fixtures/detach-lookup-membership/cjson_lookup_frame.h");
+    assert_eq!(
+        infer_derived_result_summary(
+            &tokenize(source),
+            "get_array_item",
+            &ResourceContracts::default()
+        ),
+        Err(DerivedRefusal::NoDerivedExit)
+    );
+}
