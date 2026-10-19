@@ -202,12 +202,21 @@ fn pinned_second_codebase_runs_configured_process_checks_without_a_rust_import_a
     });
     let plain = fixture.run().unwrap();
     assert_eq!(counts.unknown_units, plain.unknown_units);
-    let plain_report = fixture.report();
+    let mut plain_report = fixture.report();
     let mut augmented = report.clone();
     augmented
         .as_object_mut()
         .unwrap()
         .remove("source_contracts");
+    // The augmented configuration has different compile-task dependencies.
+    // Graph contexts must bind that distinction; erasing evidence must still
+    // reproduce every original custody verdict, diagnostic and report field.
+    assert_ne!(
+        augmented["units"][0]["functions"][0]["hypothesis_context"]["build_identity"],
+        plain_report["units"][0]["functions"][0]["hypothesis_context"]["build_identity"]
+    );
+    qcore_audit::contract_dependencies::erase_hypotheses(&mut augmented);
+    qcore_audit::contract_dependencies::erase_hypotheses(&mut plain_report);
     assert_eq!(augmented, plain_report);
     if let Ok(path) = std::env::var("QCORE_KEEP_PROCESS_AUDIT_FIXTURE") {
         fixture.mutate("audit.json",|v|v["source_contracts"]=json!({"configuration":"source-contracts.json","source_rules":"rules.qcore","libraries":[{"library":"sample_widgets","source_root":"src"}]}));

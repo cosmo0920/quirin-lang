@@ -179,6 +179,8 @@ Regenerate with `python3 scripts/build_docs_index.py`; validate with `--check`.
 
 | [contract-check-load-path](contract-check-load-path/README.md) | CONTRACT-CHECK-LOAD-PATH |
 
+| [contract-hypothesis-graph-v1](contract-hypothesis-graph-v1/README.md) | Evidence-only contract hypothesis graphs |
+
 | [contract-inherit](contract-inherit/README.md) | CONTRACT-INHERIT: contract inclusion and contract inheritance |
 
 | [contract-inherit-adoption](contract-inherit-adoption/README.md) | CONTRACT-INHERIT-ADOPTION: contract inclusion and inheritance in the real provider crates |
