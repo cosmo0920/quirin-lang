@@ -122,5 +122,6 @@ fn the_verdict_order_is_the_lean_rank() {
         Verdict::Unsafe,
     ];
     assert!(order.windows(2).all(|pair| pair[0] < pair[1]));
-    assert!(LEAN.contains("| .safe => 0\n  | .pending => 1\n  | .unknown => 2\n  | .unsafe_ => 3"));
+    let lean = LEAN.replace("\r\n", "\n");
+    assert!(lean.contains("| .safe => 0\n  | .pending => 1\n  | .unknown => 2\n  | .unsafe_ => 3"));
 }

@@ -30,7 +30,7 @@ fn clang_available() -> bool {
 }
 
 const RECORDS: &str = "\
-typedef unsigned long size_t;
+typedef __SIZE_TYPE__ size_t;
 void *memcpy(void *, const void *, size_t);
 typedef int cb_t(void *);
 int fa(void *); int fb(void *);

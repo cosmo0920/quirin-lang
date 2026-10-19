@@ -266,7 +266,7 @@ fn alignment_obligations_are_decided_from_clangs_numbers() {
     assert_eq!(aligned.property, "layout.alignment.v1");
     // A scaled index over a wider element.
     let scaled = report(
-        "long subject(long *p, int i) { return *(long *)(void *)(p + i); }",
+        "__INT64_TYPE__ subject(__INT64_TYPE__ *p, int i) { return *(__INT64_TYPE__ *)(void *)(p + i); }",
         None,
     );
     assert_eq!(scaled.alignment.len(), 1, "{scaled:?}");

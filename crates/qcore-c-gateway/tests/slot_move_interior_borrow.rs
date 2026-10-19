@@ -13,14 +13,14 @@ use qcore_c_gateway::legacy_c::{
 use qcore_contract::contract_loader::load_resource_contract_sources;
 
 const PRELUDE: &str = "\
-typedef unsigned long size_t;
+typedef __SIZE_TYPE__ size_t;
 void *sm_alloc(size_t n); void sm_free(void *p); size_t sm_len(const char *s);
 void sm_touch(void *p);
 void sm_cat(char **slot, const char *text);
 void *sm_child(void *parent, const char *key);
 void *sm_private(void *parent);
 size_t sm_reader(void *slice, char **out);
-long sm_strtol(const char *nptr, char **end, int base);
+__INT64_TYPE__ sm_strtol(const char *nptr, char **end, int base);
 ";
 
 fn contracts() -> ResourceContracts {
@@ -319,8 +319,8 @@ fn a_derived_out_slot_owns_nothing() {
     // A caller's slot passed through, and a NULL slot under `nullable`.
     let rows = rows(
         "size_t r(void *slice, char **p) { return sm_reader(slice, p); }\n\
-         long s(const char *text) { return sm_strtol(text, 0, 10); }\n\
-         long t(const char *text) { char *end; long v = sm_strtol(text, &end, 10); return v; }",
+         __INT64_TYPE__ s(const char *text) { return sm_strtol(text, 0, 10); }\n\
+         __INT64_TYPE__ t(const char *text) { char *end; __INT64_TYPE__ v = sm_strtol(text, &end, 10); return v; }",
     );
     assert!(rows["r"].safe(), "{:?}", rows["r"]);
     assert!(rows["s"].safe(), "{:?}", rows["s"]);

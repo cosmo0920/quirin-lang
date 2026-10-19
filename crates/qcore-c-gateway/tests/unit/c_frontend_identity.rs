@@ -312,8 +312,8 @@ fn routes_g_and_t_read_the_identity_clang_prints() {
     if !crate::test_support::clang_available() {
         return;
     }
-    let source = "typedef long unsigned int size_t; typedef size_t my_size;\n\
-                  my_size subject(my_size a, unsigned long b, const char *c) { return a + b + (c != 0); }\n";
+    let source = "typedef __SIZE_TYPE__ size_t; typedef size_t my_size;\n\
+                  my_size subject(my_size a, __SIZE_TYPE__ b, const char *c) { return a + b + (c != 0); }\n";
     let unit = crate::legacy_c::C11TranslationUnit {
         source,
         ..Default::default()

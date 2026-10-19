@@ -176,6 +176,7 @@ const DEEP: usize = 80;
 const BEYOND: usize = 130;
 
 #[test]
+#[cfg_attr(windows, ignore = "models glibc assert as a GNU statement expression")]
 fn an_asserting_wrapper_is_validated_in_a_shallow_unit() {
     if !clang_available() {
         return;
@@ -195,6 +196,7 @@ fn an_asserting_wrapper_is_validated_in_a_shallow_unit() {
 }
 
 #[test]
+#[cfg_attr(windows, ignore = "models glibc assert as a GNU statement expression")]
 fn an_asserting_wrapper_is_validated_in_a_unit_deeper_than_the_default_limit() {
     if !clang_available() {
         return;
@@ -217,6 +219,7 @@ fn an_asserting_wrapper_is_validated_in_a_unit_deeper_than_the_default_limit() {
 }
 
 #[test]
+#[cfg_attr(windows, ignore = "models glibc assert as a GNU statement expression")]
 fn beyond_the_admitted_bound_the_unit_keeps_no_index_and_nothing_validates() {
     if !clang_available() {
         return;

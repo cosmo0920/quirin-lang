@@ -24,7 +24,7 @@ use qcore_c_gateway::reference_count::{
 use qcore_contract::contract_loader::load_resource_contract_sources;
 
 const PRELUDE: &str = "\
-typedef unsigned long size_t;
+typedef __SIZE_TYPE__ size_t;
 void *rc_alloc(size_t n); void rc_free(void *p); void rc_use(void *p); void *rc_new(size_t n);
 void *rc_keep(void *p); void rc_keep_void(void *p); void rc_drop(void *p);
 int rc_atomic_add(int *ra, int v); void unknown_call(void *p);

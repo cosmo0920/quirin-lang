@@ -18,7 +18,7 @@ const PRELUDE: &str = "\
 #include <stddef.h>
 struct item { int x; };
 struct box { struct item *payload; struct item *aux; };
-enum d_mode { D_KEEP = 0, D_FREE = 1 };
+typedef enum { D_KEEP = 0, D_FREE = 1, D_MODE_FORCE_UNSIGNED = 0xffffffffU } d_mode_t;
 struct item *d_item_new(int n);
 void d_item_free(struct item *it);
 struct box *d_box_new(void);
@@ -27,7 +27,7 @@ void d_box_destroy(struct box *b);
 void d_box_destroy_move(struct box *b);
 void d_box_destroy_maybe(struct box *b);
 void d_box_destroy_del(struct box *b, int del);
-void d_box_destroy_mode(struct box *b, enum d_mode mode);
+void d_box_destroy_mode(struct box *b, d_mode_t mode);
 void d_box_drain(struct box *b);
 void d_box_destroy_deep(struct box *b);
 ";

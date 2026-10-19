@@ -19,7 +19,7 @@ use qcore_contract::contract_loader::load_resource_contract_sources;
 
 const PRELUDE: &str = "\
 #include <stddef.h>
-typedef enum { H_PASS, H_HANDLED, H_KEEP, H_YIELD } h_res_t;
+typedef enum { H_PASS, H_HANDLED, H_KEEP, H_YIELD, H_FORCE_UNSIGNED = 0xffffffffU } h_res_t;
 enum other { OTHER_A, OTHER_B };
 struct hop { int x; };
 typedef h_res_t(h_cb_t)(void *q, struct hop *op, void *opaque);

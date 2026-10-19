@@ -9,6 +9,7 @@ use super::{FieldClass, PARSER_FIELDS, PROBE_STATE_FIELDS, Probe};
 
 /// The field names of `struct NAME … {` in `source`, in declaration order.
 fn declared_fields(source: &str, header: &str) -> Vec<String> {
+    let source = source.replace("\r\n", "\n");
     let start = source.find(header).expect("the struct is declared");
     let end = start + source[start..].find("\n}\n").expect("the struct closes");
     source[start..end]

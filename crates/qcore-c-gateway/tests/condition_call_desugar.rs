@@ -538,8 +538,8 @@ fn a_descriptor_keeps_the_sentinel_validity_rules() {
 }
 
 const DERIVED_DECLARATIONS: &str = "\
-char *d_alloc(unsigned long n); void d_free(void *p); \
-unsigned long d_len(const char *s); char *d_chr(const char *s, int c);";
+char *d_alloc(__SIZE_TYPE__ n); void d_free(void *p); \
+__SIZE_TYPE__ d_len(const char *s); char *d_chr(const char *s, int c);";
 
 fn derived_contracts() -> ResourceContracts {
     load_resource_contract_sources(&BTreeMap::from([(

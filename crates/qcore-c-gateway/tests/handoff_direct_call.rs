@@ -21,7 +21,7 @@ use qcore_contract::contract_loader::load_resource_contract_sources;
 
 const PRELUDE: &str = "\
 #include <stddef.h>
-typedef enum { D_PASS, D_HANDLED, D_KEEP, D_YIELD } d_res_t;
+typedef enum { D_PASS, D_HANDLED, D_KEEP, D_YIELD, D_FORCE_UNSIGNED = 0xffffffffU } d_res_t;
 struct dop { int x; };
 struct dop *d_new(size_t n);
 void d_free(struct dop *op);

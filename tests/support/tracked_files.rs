@@ -23,7 +23,30 @@ use std::process::Command;
 /// the working tree, exactly as a walk would have missed it.
 #[allow(dead_code)]
 pub fn tracked_files(directory: &Path) -> Vec<PathBuf> {
+    let checkout = directory
+        .ancestors()
+        .find(|ancestor| ancestor.join(".git").exists())
+        .unwrap_or_else(|| {
+            panic!(
+                "{} is not inside a git checkout (W45-TEST-HYGIENE)",
+                directory.display()
+            )
+        });
+    let canonical_checkout = checkout
+        .canonicalize()
+        .unwrap_or_else(|error| {
+            panic!(
+                "cannot canonicalize git checkout {}: {error} (W45-TEST-HYGIENE)",
+                checkout.display()
+            )
+        });
+    let canonical_text = canonical_checkout.to_string_lossy();
+    let safe_directory = canonical_text
+        .strip_prefix(r"\\?\")
+        .unwrap_or(&canonical_text)
+        .replace('\\', "/");
     let output = Command::new("git")
+        .args(["-c", &format!("safe.directory={safe_directory}")])
         .arg("-C")
         .arg(directory)
         .args(["ls-files", "-z", "--cached", "--", "."])

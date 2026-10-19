@@ -31,10 +31,10 @@ fn clang_available() -> bool {
 }
 
 /// An op with a callback member and a union of arms, as `rd_kafka_op_s`:
-/// `early.cb` and `admin.args.free_cb` at union offset 0, `early.pos` at 8,
-/// `late.cb` at 32, `same.cb2` at 32 too, `lp.pos` at 32.
+/// `early.cb` and `admin.args.free_cb` at union offset 0 and `early.pos` at 8.
+/// The late arm follows four C `long`s: offset 32 on LP64 and 16 on LLP64.
 const RECORDS: &str = "\
-typedef unsigned long size_t;
+typedef __SIZE_TYPE__ size_t;
 void *memcpy(void *, const void *, size_t);
 void *memset(void *, int, size_t);
 void keep(void *);
@@ -88,12 +88,14 @@ fn the_union_layout_is_read_and_the_read_keeps_its_arm() {
     }
     let facts = unit("");
     let layout = &facts.union_layouts["op_s.u.*"];
-    assert_eq!(layout.paths["late.cb"], (32, 8));
+    let late_offset = if cfg!(windows) { 16 } else { 32 };
+    let pos_size = if cfg!(windows) { 8 } else { 16 };
+    assert_eq!(layout.paths["late.cb"], (late_offset, 8));
     assert_eq!(layout.paths["early.cb"], (0, 8));
-    assert_eq!(layout.paths["same.cb2"], (32, 8));
+    assert_eq!(layout.paths["same.cb2"], (late_offset, 8));
     assert_eq!(
         layout.records["pos_s"],
-        Some(BTreeSet::from([(8, 16), (32, 16)]))
+        Some(BTreeSet::from([(8, pos_size), (late_offset, pos_size)]))
     );
     assert_eq!(
         layout.members["list_s.free_cb"],

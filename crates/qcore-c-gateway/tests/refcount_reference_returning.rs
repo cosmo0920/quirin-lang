@@ -21,7 +21,7 @@ use qcore_c_gateway::legacy_c::{
 use qcore_contract::contract_loader::load_resource_contract_sources;
 
 const PRELUDE: &str = "\
-typedef unsigned long size_t;
+typedef __SIZE_TYPE__ size_t;
 void *rr_alloc(size_t n); void rr_free(void *p); void rr_use(void *p);
 void *rr_lookup(int k); void *rr_make(void *owner, const char *name);
 void *rr_handle(void *owner); void rr_handle_destroy(void *h);

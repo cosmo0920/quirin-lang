@@ -10,8 +10,9 @@ const LEAN: &str = include_str!("../../../../proof/QCore/LayoutExtents.lean");
 /// The tuples of the Lean list `def NAME : … := [ … ]`, one per line,
 /// whitespace-normalised.
 fn lean_rows(name: &str) -> Vec<String> {
+    let lean = LEAN.replace("\r\n", "\n");
     let start = format!("def {name} :");
-    let body = LEAN.split(&start).nth(1).expect("the Lean vector list");
+    let body = lean.split(&start).nth(1).expect("the Lean vector list");
     let body = &body[body.find(":=").expect("a definition") + 2..];
     let body = &body[..body.find("\n\ntheorem").expect("the list's end")];
     body.lines()

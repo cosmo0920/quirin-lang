@@ -728,10 +728,16 @@ contract {
     requires bounds_extent(p, 16, bytes);
 };";
     let c = contracts(own);
-    assert_eq!(verdict("int subject(long *p) { return p[1]; }", &c), Safe);
-    assert_eq!(verdict("int subject(long *p) { return p[2]; }", &c), Unsafe);
+    assert_eq!(
+        verdict("int subject(__INT64_TYPE__ *p) { return p[1]; }", &c),
+        Safe
+    );
+    assert_eq!(
+        verdict("int subject(__INT64_TYPE__ *p) { return p[2]; }", &c),
+        Unsafe
+    );
     let r = row(
-        "int subject(long *p) { return p[1152921504606846976L]; }",
+        "int subject(__INT64_TYPE__ *p) { return p[1152921504606846976LL]; }",
         &c,
     );
     assert_eq!(r.verdict, "Unknown", "{r:#?}");
