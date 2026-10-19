@@ -416,3 +416,23 @@ void subject(void) { void *p = 0; if (step(&p) == 0) { free(p); } }\n";
         record.functions["subject"]
     );
 }
+
+#[test]
+fn actual_calls_and_summary_inheritance_lift_exactly_the_consulted_atoms() {
+    use qcore_schemas::hypothesis::{Atom, Graph, Proposition};
+    use std::collections::BTreeMap;
+    let contracts = unit_contracts();
+    let recording = Recording::start();
+    let summary = analyze_legacy_c_translation_unit(UNIT, "owner", &contracts).unwrap();
+    let record = recording.finish();
+    let rows = row_dependencies(&record, &summary, &contracts);
+    let graphs = ["free", "malloc", "released"].into_iter().map(|name| {
+        (name.to_owned(), Graph {version:1, atoms:BTreeMap::from([(format!("{name}_atom"), Atom{id:format!("{name}_atom"),proposition:Proposition::Opaque{statement:format!("{name} assumption")}})]),premises:BTreeMap::new()})
+    }).collect();
+    let closure=qcore_c_gateway::contract_dependencies::hypothesis_closure(&rows["owner"],&graphs);
+    assert_eq!(closure.keys().map(String::as_str).collect::<Vec<_>>(),vec!["free","malloc"]);
+    assert_eq!(closure["free"],BTreeSet::from(["free_atom".into()]));
+    assert_eq!(closure["malloc"],BTreeSet::from(["malloc_atom".into()]));
+    assert!(rows["owner"].summaries.contains("drop"));
+    assert!(qcore_c_gateway::contract_dependencies::hypothesis_closure(&rows["unrelated"],&graphs).is_empty());
+}

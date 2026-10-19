@@ -715,7 +715,7 @@ pub fn project_unit_into_with_cross_unit(
             hypothesis_context: hypothesis_context(
                 library,
                 file,
-                unit.source,
+                preprocessed.unwrap_or(unit.source),
                 contracts,
                 &format!(
                     "{:?}",
@@ -967,7 +967,9 @@ pub fn project_prepared_unit_into_with_cross_unit(
             hypothesis_context: hypothesis_context(
                 library,
                 file,
-                prepared.raw_source(),
+                prepared
+                    .preprocessed_source()
+                    .unwrap_or(prepared.raw_source()),
                 contracts,
                 &serde_json::to_string(compile_task_identity).map_err(|e| e.to_string())?,
                 source_profile_sha256,
@@ -1082,8 +1084,16 @@ fn record_projection(
         // Card VERDICT-CONTRACT-DEPENDENCIES (rule 13f): the row fields, after
         // the verdict is settled; additive.
         crate::contract_dependencies::annotate_unit(row, dependencies, &result, contracts)?;
-        row["hypothesis_context"] =
-            serde_json::to_value(hypothesis_context).map_err(|e| e.to_string())?;
+        for function in row["functions"].as_array_mut().into_iter().flatten() {
+            let mut context = hypothesis_context.clone();
+            if let Some(name) = function["function"].as_str() {
+                context.artifact.push('#');
+                context.artifact.push_str(name);
+            }
+            context.scope = serde_json::to_string(source_functions).map_err(|e| e.to_string())?;
+            function["hypothesis_context"] =
+                serde_json::to_value(context).map_err(|e| e.to_string())?;
+        }
     }
     // Card CG22-OP-CALLBACKS-AND-SERVED-QUEUES (rule 12n): the unit's member
     // facts for the run's closure, only when a declaration invokes a member.

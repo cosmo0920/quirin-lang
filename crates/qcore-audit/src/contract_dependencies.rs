@@ -322,6 +322,7 @@ pub struct Facts {
     safe: Vec<(BTreeSet<String>, usize, usize)>,
     rows_annotated: usize,
     safe_rows: usize,
+    hypothesis_contexts: BTreeMap<String, BTreeSet<String>>,
 }
 
 #[derive(Clone, Debug, Default, PartialEq, Eq)]
@@ -381,6 +382,12 @@ impl Facts {
                 let uses = self.rows.entry(name.clone()).or_default();
                 uses.rows += 1;
                 uses.safe_rows += usize::from(safe);
+                if let Some(context) = function.get("hypothesis_context") {
+                    self.hypothesis_contexts
+                        .entry(name.clone())
+                        .or_default()
+                        .insert(context.to_string());
+                }
             }
             let mut other = 0;
             for name in strings(&field["held"]) {
@@ -437,6 +444,12 @@ impl Facts {
 
     /// Unite `other`'s facts with these.
     pub fn absorb(&mut self, other: Self) {
+        for (name, contexts) in other.hypothesis_contexts {
+            self.hypothesis_contexts
+                .entry(name)
+                .or_default()
+                .extend(contexts);
+        }
         for (name, uses) in other.rows {
             let mine = self.rows.entry(name).or_default();
             mine.rows += uses.rows;
@@ -603,6 +616,13 @@ pub fn render(facts: &Facts, revision: &Value, premises: &Value) -> Value {
         });
         if let Some(graph) = premises["$hypothesis_graphs"].get(name) {
             record["hypothesis_graph"] = graph.clone();
+            record["hypothesis_evidence"] = json!({
+                "disposition": "open", "warrant": "declared",
+                "standing": "declared-assumption",
+                "meaning": "graph propositions remain open; body standing and warrant confer no graph authority",
+                "contexts": facts.hypothesis_contexts.get(name).into_iter().flatten().map(|s| serde_json::from_str::<Value>(s).expect("recorded JSON")).collect::<Vec<_>>(),
+                "dependent_rows": uses.rows, "dependent_safe_rows": uses.safe_rows,
+            });
         }
         if uses.held_rows > 0 {
             record["held_rows"] = json!(uses.held_rows);
@@ -751,4 +771,30 @@ pub fn tally(section: &Value) -> String {
             .as_u64()
             .unwrap_or_default(),
     )
+}
+
+/// Erase only this card's additive graph publication, preserving every old field.
+pub fn erase_hypotheses(value: &mut Value) {
+    match value {
+        Value::Object(map) => {
+            for key in [
+                "$hypothesis_graphs",
+                "hypothesis_graph",
+                "hypothesis_evidence",
+                "hypothesis_dependencies",
+                "hypothesis_context",
+            ] {
+                map.remove(key);
+            }
+            for item in map.values_mut() {
+                erase_hypotheses(item);
+            }
+        }
+        Value::Array(items) => {
+            for item in items {
+                erase_hypotheses(item);
+            }
+        }
+        _ => {}
+    }
 }

@@ -642,9 +642,7 @@ mod tests {
         let source = directory.join("libevent");
         let safe_source = source_repository.to_string_lossy().replace('\\', "/");
         let source_git_dir = repository.join(".git/modules/third_party/libevent");
-        let safe_git_dir = source_git_dir
-            .to_string_lossy()
-            .replace('\\', "/");
+        let safe_git_dir = source_git_dir.to_string_lossy().replace('\\', "/");
         let git_config = directory.join("gitconfig");
         fs::write(
             &git_config,

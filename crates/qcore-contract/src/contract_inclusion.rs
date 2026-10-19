@@ -837,6 +837,13 @@ fn rename_clauses(
     let position = |word: &str| parent_parameters.iter().position(|p| p == word);
     let mut renamed = Vec::with_capacity(clauses.len());
     for (introducer, expression) in clauses {
+        // Graph IDs are declaration-local symbols, not formal references.
+        // v1 admits opaque atoms only; future typed subjects need a separate
+        // capture-aware substitution rule before their registry can expand.
+        if crate::hypothesis::is_clause(expression) {
+            renamed.push((introducer.clone(), expression.clone()));
+            continue;
+        }
         for token in lex(introducer).map_err(|e| e.to_string())? {
             if let TokenKind::Word(word) = &token.kind
                 && (child_parameters.contains(word) || parent_parameters.contains(word))
