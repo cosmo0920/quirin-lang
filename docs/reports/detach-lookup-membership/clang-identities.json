@@ -1,0 +1,14 @@
+{
+  "/usr/bin/clang": {
+    "resolved": "/usr/lib/llvm-21/bin/clang",
+    "exit": 0,
+    "version": "Ubuntu clang version 21.1.8 (6ubuntu1)\nTarget: x86_64-pc-linux-gnu\nThread model: posix\nInstalledDir: /usr/lib/llvm-21/bin\n",
+    "sha256": "412bbe8c60571a1eb06f48fde89635033621caeb01a9b4ee76d46711bae8e932"
+  },
+  "/usr/lib/llvm-21/bin/clang": {
+    "resolved": "/usr/lib/llvm-21/bin/clang",
+    "exit": 0,
+    "version": "Ubuntu clang version 21.1.8 (6ubuntu1)\nTarget: x86_64-pc-linux-gnu\nThread model: posix\nInstalledDir: /usr/lib/llvm-21/bin\n",
+    "sha256": "412bbe8c60571a1eb06f48fde89635033621caeb01a9b4ee76d46711bae8e932"
+  }
+}

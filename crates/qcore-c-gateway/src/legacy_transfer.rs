@@ -216,6 +216,10 @@ pub(super) struct AbstractState {
     /// *releasing* the owner does not cascade, because a plain C field store
     /// carries no declared destructor obligation (premise P-B08-SHALLOW).
     pub(super) field_links: BTreeMap<usize, BTreeMap<String, BTreeSet<usize>>>,
+    /// Must-held physical link values; explicit NULL differs from absent/unknown.
+    pub(super) lookup_links: BTreeMap<(usize, String, String), Option<usize>>,
+    /// Identity-refined lookup aliases still obey their parent's borrow lifetime.
+    pub(super) lookup_aliases: BTreeSet<String>,
     /// Card **B08-FIELD-LINK-JOIN-SILENT-UNRESOLVED** (rule 11c): the
     /// `(owner, field, child)` triples of `field_links` that may not hold on
     /// every path reaching here (linked on one side of a join). Always a
@@ -430,6 +434,10 @@ impl AbstractState {
                 .or_default()
                 .extend(children.iter().copied());
         }
+        self.lookup_links
+            .retain(|key, value| incoming.lookup_links.get(key) == Some(value));
+        self.lookup_aliases
+            .extend(incoming.lookup_aliases.iter().cloned());
         self.join_field_links(incoming);
         container_publication::join(&mut self.published, &incoming.published);
         in_place_custody::join_witnesses(&mut self.status_witnesses, &incoming.status_witnesses);
@@ -1744,6 +1752,9 @@ impl TransferContext<'_> {
 /// here, and every permission it adds is re-checked at the exits.
 #[derive(Default)]
 pub(super) struct TransferContext<'a> {
+    /// No new link state is carried by functions without a checked call.
+    pub(super) lookup_tracking: bool,
+    pub(super) lookup_pointer_records: BTreeMap<String, String>,
     /// Out-parameter slots the contract in force declares. A store to any
     /// other indirect place stays unmodeled.
     pub(super) sanctioned: BTreeSet<&'a str>,
@@ -1844,6 +1855,16 @@ fn analyze_cfg_with_entry_collected(
     entry_custody: &EntryCustody,
 ) -> (LegacyFunctionSummary, Vec<ExitObservation>) {
     let context = TransferContext {
+        lookup_tracking: cfg.nodes.iter().any(|node| node.lookup.is_some()),
+        lookup_pointer_records: cfg
+            .nodes
+            .iter()
+            .find_map(|node| {
+                node.lookup
+                    .as_ref()
+                    .map(|lookup| lookup.pointer_records.clone())
+            })
+            .unwrap_or_default(),
         sanctioned: entry_custody.sanctioned_places(),
         result_nullable: entry_custody.result_nullable,
         // A derived base's name-only site is caller-held too: no aggregate
@@ -2647,6 +2668,25 @@ pub(super) fn transfer(
 ) -> AbstractState {
     // Card SLOT-MOVE-AND-INTERIOR-BORROW (rules 12x, 12y): reads of
     // invalidated names refuse, and mutations end the borrows they may reach.
+    let lookup_result = context
+        .lookup_tracking
+        .then(|| lookup_route::resolve(node, &state, &context.site_kinds))
+        .flatten();
+    let lookup_store = context
+        .lookup_tracking
+        .then(|| {
+            lookup_route::stored_link(
+                node,
+                &state,
+                &context.caller_sites,
+                &context.lookup_pointer_records,
+            )
+        })
+        .flatten();
+    let mut state = state;
+    if context.lookup_tracking {
+        lookup_route::prepare_removed(node, &mut state);
+    }
     let state = slot_move_route::before(
         function,
         node,
@@ -2664,6 +2704,9 @@ pub(super) fn transfer(
         diagnostics,
     );
     slot_move_route::after(node, &mut output);
+    if context.lookup_tracking {
+        lookup_route::after(node, &mut output, lookup_result, lookup_store);
+    }
     in_place_custody::forget_witnesses(&node.instruction, &mut output, writes_scalar);
     in_place_custody::record_witness(&node.instruction, &mut output);
     output
@@ -3644,9 +3687,32 @@ pub(super) fn transfer_base(
         chains,
         borrowed_destination,
         readback,
+        alias_reads,
         ..
     } = &node.instruction
     {
+        // Keep the original instruction and all read obligations. A checked
+        // borrowed view can expose only name-only inference sites, and only
+        // after the original-state alias obligation has discharged.
+        let mut alias_failures = BTreeSet::new();
+        if node.lookup_read.is_some() {
+            require_unaliased_reads(
+                function,
+                node.line,
+                alias_reads,
+                &state,
+                &context.caller_sites,
+                alias,
+                &mut alias_failures,
+            );
+        }
+        let view = alias_failures
+            .is_empty()
+            .then(|| lookup_route::read_view(node, &state, &context.derived_bases))
+            .flatten();
+        let read_state = view.as_ref().unwrap_or(&state);
+        let mut read_failed = !alias_failures.is_empty();
+        diagnostics.extend(alias_failures);
         // Card CG12-VOID-VIEW-READBACK (rule 11j): the member's identity,
         // read on the state entering the node, where the readback resolves.
         let read_back = readback
@@ -3659,7 +3725,10 @@ pub(super) fn transfer_base(
             let sanctioned = context.sanctioned.contains(format!("*{base}").as_str());
             // Card NULL-SAFETY-PROPERTY (rule 14n): a premised base is read
             // non-null here, under a named premise.
-            if sanctioned || !null_premise_route::base_resolves(function, node.line, &state, base) {
+            if sanctioned
+                || !null_premise_route::base_resolves(function, node.line, read_state, base)
+            {
+                read_failed = true;
                 diagnostics.insert(LegacyDiagnostic {
                     function: function.to_owned(),
                     line: node.line,
@@ -3674,8 +3743,9 @@ pub(super) fn transfer_base(
         // `indirect_chain_access::chain_resolves`, over this state read-only.
         for chain in chains {
             if let Err(variable) =
-                null_premise_route::chain_resolves_premised(function, node.line, &state, chain)
+                null_premise_route::chain_resolves_premised(function, node.line, read_state, chain)
             {
+                read_failed = true;
                 diagnostics.insert(LegacyDiagnostic {
                     function: function.to_owned(),
                     line: node.line,
@@ -3683,11 +3753,23 @@ pub(super) fn transfer_base(
                 });
             }
         }
+        let lookup_binding = if !read_failed && view.is_some() {
+            node.lookup_read.as_ref().map(|description| {
+                derive_pointer(
+                    state.pointers.get(&description.parent),
+                    DerivedExtent::Borrowed,
+                    true,
+                    true,
+                )
+            })
+        } else {
+            None
+        };
         if let Some(destination) = destination {
             if *borrowed_destination {
                 state.pointers.insert(
                     destination.clone(),
-                    read_back.unwrap_or(AbstractPointer {
+                    lookup_binding.or(read_back).unwrap_or(AbstractPointer {
                         targets: BTreeSet::new(),
                         unknown: true,
                         may_be_null: true,

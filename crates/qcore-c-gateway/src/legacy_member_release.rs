@@ -967,6 +967,8 @@ pub(super) fn dereferenced_prefixes(place: &str) -> Vec<String> {
 fn insert_before(cfg: &mut LegacyCfg, id: usize, instruction: LegacyInstruction, line: usize) {
     let inserted = cfg.nodes.len();
     cfg.nodes.push(LegacyCfgNode {
+        lookup: None,
+        lookup_read: None,
         instruction,
         successors: vec![id],
         line,

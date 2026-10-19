@@ -1,0 +1,11 @@
+{
+  "tracked_helper": "/tmp/qcore-detach-lookup-membership/docs/reports/detach-lookup-membership/scripts/final_review.py",
+  "tracked_sha256": "ae7745b38ac64c4fea1bb1a5f31e374fb6fa3e163cee1cb26b578ff78cc29c27",
+  "execution_helper": "/tmp/qcore-detach-lookup-membership/private/detach-lookup-membership/boundary_review.py",
+  "execution_sha256": "87f2daa5a7362f83fd339d0fb4fe58e51cf44dfdb7041b7dd0ffbde5f4ffb3db",
+  "changes": [
+    "bind REPORT to same original absolute report location for private execution",
+    "read actual measurement receipt at tip/route/route.exit"
+  ],
+  "analyzer_source_unchanged": true
+}

@@ -1,0 +1,160 @@
+[
+  {
+    "name": "corpus-archive",
+    "command": [
+      "/usr/bin/python3",
+      "/tmp/qcore-detach-lookup-membership/docs/reports/detach-lookup-membership/scripts/archive.py",
+      "/tmp/qcore-lexical-scalar-noop-alias-read/private/noop-alias/tip-2/corpus/corpus/resource-diagnostics.json",
+      "/tmp/qcore-detach-lookup-membership/private/detach-lookup-membership/measure-final-1/corpus/corpus/resource-diagnostics.json",
+      "corpus"
+    ],
+    "exit": 0,
+    "private_log": "/tmp/qcore-detach-lookup-membership/private/detach-lookup-membership/final-review/corpus-archive.log"
+  },
+  {
+    "name": "corpus-review_fields",
+    "command": [
+      "/usr/bin/python3",
+      "/tmp/qcore-detach-lookup-membership/docs/reports/detach-lookup-membership/scripts/review_fields.py",
+      "corpus"
+    ],
+    "exit": 0,
+    "private_log": "/tmp/qcore-detach-lookup-membership/private/detach-lookup-membership/final-review/corpus-review_fields.log"
+  },
+  {
+    "name": "corpus-review_precise",
+    "command": [
+      "/usr/bin/python3",
+      "/tmp/qcore-detach-lookup-membership/docs/reports/detach-lookup-membership/scripts/review_precise.py",
+      "corpus"
+    ],
+    "exit": 0,
+    "private_log": "/tmp/qcore-detach-lookup-membership/private/detach-lookup-membership/final-review/corpus-review_precise.log"
+  },
+  {
+    "name": "corpus-projections",
+    "command": [
+      "/usr/bin/python3",
+      "/tmp/qcore-detach-lookup-membership/docs/reports/detach-lookup-membership/scripts/projections.py",
+      "/tmp/qcore-lexical-scalar-noop-alias-read/private/noop-alias/tip-2/corpus",
+      "/tmp/qcore-detach-lookup-membership/private/detach-lookup-membership/measure-final-1/corpus",
+      "corpus"
+    ],
+    "exit": 0,
+    "private_log": "/tmp/qcore-detach-lookup-membership/private/detach-lookup-membership/final-review/corpus-projections.log"
+  },
+  {
+    "name": "before-plan",
+    "command": [
+      "/usr/bin/python3",
+      "/tmp/qcore-detach-lookup-membership/docs/reports/w48-bottom-up-callee-bodies/scripts/bottom_up_plan.py",
+      "/tmp/qcore-lexical-scalar-noop-alias-read/private/noop-alias/tip-2/corpus/corpus/resource-diagnostics.json",
+      "/tmp/qcore-detach-lookup-membership/private/detach-lookup-membership/final-review/before-plan.json",
+      "--top",
+      "20"
+    ],
+    "exit": 0,
+    "private_log": "/tmp/qcore-detach-lookup-membership/private/detach-lookup-membership/final-review/before-plan.log"
+  },
+  {
+    "name": "after-plan",
+    "command": [
+      "/usr/bin/python3",
+      "/tmp/qcore-detach-lookup-membership/docs/reports/w48-bottom-up-callee-bodies/scripts/bottom_up_plan.py",
+      "/tmp/qcore-detach-lookup-membership/private/detach-lookup-membership/measure-final-1/corpus/corpus/resource-diagnostics.json",
+      "/tmp/qcore-detach-lookup-membership/private/detach-lookup-membership/final-review/after-plan.json",
+      "--top",
+      "20"
+    ],
+    "exit": 0,
+    "private_log": "/tmp/qcore-detach-lookup-membership/private/detach-lookup-membership/final-review/after-plan.log"
+  },
+  {
+    "name": "system-archive",
+    "command": [
+      "/usr/bin/python3",
+      "/tmp/qcore-detach-lookup-membership/docs/reports/detach-lookup-membership/scripts/archive.py",
+      "/tmp/qcore-lexical-scalar-noop-alias-read/private/noop-alias/tip-2/system/resource-diagnostics.json",
+      "/tmp/qcore-detach-lookup-membership/private/detach-lookup-membership/measure-final-1/system/resource-diagnostics.json",
+      "system"
+    ],
+    "exit": 0,
+    "private_log": "/tmp/qcore-detach-lookup-membership/private/detach-lookup-membership/final-review/system-archive.log"
+  },
+  {
+    "name": "system-review_fields",
+    "command": [
+      "/usr/bin/python3",
+      "/tmp/qcore-detach-lookup-membership/docs/reports/detach-lookup-membership/scripts/review_fields.py",
+      "system"
+    ],
+    "exit": 0,
+    "private_log": "/tmp/qcore-detach-lookup-membership/private/detach-lookup-membership/final-review/system-review_fields.log"
+  },
+  {
+    "name": "system-review_precise",
+    "command": [
+      "/usr/bin/python3",
+      "/tmp/qcore-detach-lookup-membership/docs/reports/detach-lookup-membership/scripts/review_precise.py",
+      "system"
+    ],
+    "exit": 0,
+    "private_log": "/tmp/qcore-detach-lookup-membership/private/detach-lookup-membership/final-review/system-review_precise.log"
+  },
+  {
+    "name": "system-projections",
+    "command": [
+      "/usr/bin/python3",
+      "/tmp/qcore-detach-lookup-membership/docs/reports/detach-lookup-membership/scripts/projections.py",
+      "/tmp/qcore-lexical-scalar-noop-alias-read/private/noop-alias/tip-2/system",
+      "/tmp/qcore-detach-lookup-membership/private/detach-lookup-membership/measure-final-1/system",
+      "system"
+    ],
+    "exit": 0,
+    "private_log": "/tmp/qcore-detach-lookup-membership/private/detach-lookup-membership/final-review/system-projections.log"
+  },
+  {
+    "name": "slice-archive",
+    "command": [
+      "/usr/bin/python3",
+      "/tmp/qcore-detach-lookup-membership/docs/reports/detach-lookup-membership/scripts/archive.py",
+      "/tmp/qcore-lexical-scalar-noop-alias-read/private/noop-alias/tip-2/slice/resource-diagnostics.json",
+      "/tmp/qcore-detach-lookup-membership/private/detach-lookup-membership/measure-final-1/slice/resource-diagnostics.json",
+      "slice"
+    ],
+    "exit": 0,
+    "private_log": "/tmp/qcore-detach-lookup-membership/private/detach-lookup-membership/final-review/slice-archive.log"
+  },
+  {
+    "name": "slice-review_fields",
+    "command": [
+      "/usr/bin/python3",
+      "/tmp/qcore-detach-lookup-membership/docs/reports/detach-lookup-membership/scripts/review_fields.py",
+      "slice"
+    ],
+    "exit": 0,
+    "private_log": "/tmp/qcore-detach-lookup-membership/private/detach-lookup-membership/final-review/slice-review_fields.log"
+  },
+  {
+    "name": "slice-review_precise",
+    "command": [
+      "/usr/bin/python3",
+      "/tmp/qcore-detach-lookup-membership/docs/reports/detach-lookup-membership/scripts/review_precise.py",
+      "slice"
+    ],
+    "exit": 0,
+    "private_log": "/tmp/qcore-detach-lookup-membership/private/detach-lookup-membership/final-review/slice-review_precise.log"
+  },
+  {
+    "name": "slice-projections",
+    "command": [
+      "/usr/bin/python3",
+      "/tmp/qcore-detach-lookup-membership/docs/reports/detach-lookup-membership/scripts/projections.py",
+      "/tmp/qcore-lexical-scalar-noop-alias-read/private/noop-alias/tip-2/slice",
+      "/tmp/qcore-detach-lookup-membership/private/detach-lookup-membership/measure-final-1/slice",
+      "slice"
+    ],
+    "exit": 0,
+    "private_log": "/tmp/qcore-detach-lookup-membership/private/detach-lookup-membership/final-review/slice-projections.log"
+  }
+]

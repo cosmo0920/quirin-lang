@@ -6319,6 +6319,37 @@ consumers restricted to fresh results still refuse. Ordinary W4 never forgets
 the effect into borrowed-only custody. `QCore.DetachSameItem`; the report
 `docs/reports/cjson-detach-same-item/README.md` records the measured boundary.
 
+**Amendment (DETACH-LOOKUP-MEMBERSHIP):** a complete typed read-only
+indexed `child`/`next` frame can establish a nullable Borrowed result through
+ordinary fresh-run derived-summary validation (rule4b). Both original
+source-bound typed reads must exist; an opaque lexical refusal without retained
+Clang context does not fall back. Original typed reads and their alias/base/
+chain obligations remain intact. Only status-free name-only inference sites
+may use a checked untracked view at the exact read point; real, unresolved,
+nullable or conflicting parent bindings never gain that exception. The cursor
+is narrowed only under its source-proven non-NULL while-body guard. A released
+peer prevents the view. Assigned direct decimal0–255 calls retain
+ordinary ContractCall visibility and carry independently rederived CFG metadata.
+An identity refinement additionally needs explicit must-held physical links,
+a caller actual of the callee's complete canonical defining record type, and
+the same resolved record type at each stored-link owner. Prefix facts are keyed
+by site, record tag and field; a differently typed overlapping store invalidates
+prior facts for that owner. Unknown types, including opaque alias views, supply
+no identity descriptor. These are source-evidence checks for the existing
+physical-prefix premise. The audited eligibility predicate refuses unknown or mismatched
+canonical tags; the Rust extractor supplies completeness and exact equality.
+It also needs a live parent and an existing settled child uniquely contained by that parent;
+absence is Unknown, never NULL, and no new resource site is created. Facts meet
+by intersection and are carried only where a checked lookup call exists.
+Unknown/wrapper writes and unproved calls destroy them. Lookup aliases retain
+the ordinary borrow lifetime; only the already checked same-item Removed
+transition releases that old parent lifetime for the restored exact identity.
+The current source bridge proves stored head/empty-head cases; generic
+successor closure through contained children remains refused. Whole-return or
+nested Removed transport stays separate. Custody only; no runtime or C memory
+safety claim and no validation of the detach representation premise.
+`QCore.ListLookup`; [report](../reports/detach-lookup-membership/README.md).
+
 <a id="constraint-13b"></a>
 
 13b. **A reference count is a resource kind: each function balances the

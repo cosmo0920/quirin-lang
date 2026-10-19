@@ -1,0 +1,10 @@
+{
+  "build_and_run_exit": 0,
+  "captured_compiler_and_runtime_bytes": {
+    "build.log": 0,
+    "run.log": 0
+  },
+  "sanitizer_reports_observed": 0,
+  "binary_sha256": "ec090207401d6eb311c87fd84c18cdd1f5e721b32157efc8b21d027e64ac6fd7",
+  "scope": "Synthetic exact retained lookup body only; no deployment or detached-custody claim."
+}

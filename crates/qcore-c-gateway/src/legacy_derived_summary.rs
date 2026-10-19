@@ -202,6 +202,10 @@ fn returns_derived_destination(cfg: &LegacyCfg) -> bool {
             } if matches!(contract.result, ResourceReturnMode::Derived { .. }) => {
                 Some(destination.as_str())
             }
+            LegacyInstruction::IndirectScalarAccess {
+                destination: Some(destination),
+                ..
+            } if node.lookup_read.is_some() => Some(destination.as_str()),
             _ => None,
         })
         .collect::<BTreeSet<_>>();

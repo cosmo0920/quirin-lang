@@ -6648,33 +6648,34 @@
   },
   "libevent_submodule_pin": "d82464a277d0f42703702c4dfd9af6af38595a83",
   "cycle19_raw_units": {
-   "note": "W46-CONTRACT-ACCESS-EXPANSION at e6e31f49, 2026-09-27: eleven declarations and bounded typed statements. Measured 36 Unknown-to-Safe functions; no Safe correction or new violation. Old shape routes retained, replacement parity unproved. Exact diagnostic attribution and prior baseline are archived in the report. Provisional Unsafe remains unpromoted.",
+   "note": "DETACH-LOOKUP-MEMBERSHIP,2026-10-19, semantic source b92688d22 on completed alias base f35b5cf4b. Exact get_array_item frame and bounded source-replayed assigned lookup membership; exactly two conditional Safe promotions, no Safe regression. All six detach/delete wrappers remain Unknown; source/model/native/runtime limits are explicit in the report.",
    "units": 185,
-   "safe": 6,
-   "provisional_unsafe": 8,
-   "unknown": 167,
+   "safe": 8,
+   "provisional_unsafe": 7,
+   "unknown": 166,
    "data_only": 4,
    "projected_functions": 4834,
-   "leak_diagnostics": 34,
+   "leak_diagnostics": 40,
    "process_sidecar": "3 checked function contracts / 93 Unknown",
-   "baseline": "docs/reports/w46-contract-access-expansion/artifacts/combined/corpus/",
-   "source": "docs/reports/w46-contract-access-expansion/README.md",
-   "unknown_alias_diagnostics": 4760,
-   "unsupported_diagnostics": 39085,
+   "baseline": "docs/reports/detach-lookup-membership/artifacts/corpus/after/",
+   "source": "docs/reports/detach-lookup-membership/README.md",
+   "unknown_alias_diagnostics": 11052,
+   "unsupported_diagnostics": 27796,
    "double_release_diagnostics": 0,
    "function_statuses": {
-    "safe": 447,
+    "safe": 963,
     "provisional_unsafe": 9,
-    "unknown": 4378
+    "unknown": 3862
    },
    "source_definitions": 4921,
    "unprojected_definitions": 87,
    "unit_reason_codes": {
-    "unsupported-syntax": 166,
-    "none": 18,
+    "unsupported-syntax": 165,
+    "none": 19,
     "incomplete-obligation-coverage": 1
    },
-   "unprojected_classification": "87 positively verified pinned historical-build exclusions across24 full-path units (23 basenames);0 enumerator false positives,0 established projection defects,0 unresolved. docs/reports/w42-unprojected-definitions/artifacts/census.json"
+   "unprojected_classification": "87 positively verified pinned historical-build exclusions across24 full-path units (23 basenames);0 enumerator false positives,0 established projection defects,0 unresolved. docs/reports/w42-unprojected-definitions/artifacts/census.json",
+   "summary_conflict_diagnostics": 2
   },
   "configured_cmetrics_audit": {
    "checked_function_contracts": 1,
@@ -6753,11 +6754,11 @@
   "note": "providers/ is a separate Cargo workspace, excluded from the core workspace; P01 verified empirically that the core workspace builds and passes its full suite with providers/ moved out of the tree."
  },
  "validation": {
-  "note": "LEXICAL-SCALAR-NOOP-ALIAS-READ at source/proof 11e3e135f3e3 on exact base b5a00e7dc2. Fresh corpus/system/slice audits all exit0 with unchanged custody, diagnostics, null and runtime moved rows. Standing gate: 519 units/532 summaries, 8328 Rust passed/0 failed/15 ignored; 343 Lean audits; 374 root Python expected at matrix regeneration and confirmed by the post-matrix suite. Provider 133 is explicitly borrowed from the unchanged b5a provider source gate; no provider tree changed. The first corpus setup run and first sandbox submodule step failed and are retained; host-access submodule and corrected corpus reruns passed. Actual Clang recording from this alias worktree.",
-  "workspace_tests": 8328,
+  "note": "DETACH-LOOKUP-MEMBERSHIP final semantic source b92688d220e1e62cffdcdb6ccc46476df0f406fd on completed alias base f35b5cf4b596e1ad2f5bdec6a0c203e2fd987287. Core actual gate-host-3 records520units/533summaries,8349passed/0failed/15ignored/0filtered and344Lean audits; provider2 records133Rust/0failed/1ignored doctest,25Python and all5rebuilt+verified packages. All3fresh final audits exit0: corpus963Safe/3862Unknown/9provisionalUnsafe (two existing-null-premise promotions),system99/345/4,slice53/346/4Pending/1. Null5781dicts and runtime moved records unchanged. The authoritative post-matrix rootPython suite passed374/0failed in26.523s at closeout-1; the early gate-host-1 stale343→344 matrix failure is retained and superseded. Final receipt confirmation after this note regeneration is closeout-2. Current report/tracking edits are documentation-only; source/proof remains equal to frozen measured b926. Actual Clang recording comes from this worktree gate-host-3. Superseded failures and gate2cancellation retained.",
+  "workspace_tests": 8349,
   "provider_tests": 133,
   "python_evidence_validator_tests": 374,
-  "lean_audits": 343,
+  "lean_audits": 344,
   "lean_audit_files": [
    "AuditAbiEnumConstPointer.lean",
    "AuditAggregateOwnedField.lean",
@@ -6908,6 +6909,7 @@
    "AuditLexicalClosureNestedAssignment.lean",
    "AuditLifetimeCorrespondence.lean",
    "AuditListIteration.lean",
+   "AuditListLookup.lean",
    "AuditLiteralArgumentPremise.lean",
    "AuditLiteralTailActual.lean",
    "AuditLocalCondition.lean",
@@ -7109,7 +7111,7 @@
   "cargo_clippy": "clean",
   "standing_gate": "complete",
   "full_language_conformance": false,
-  "measurement_provenance": "integrator_supplied (docs/reports/lexical-scalar-noop-alias-read/gate.json)"
+  "measurement_provenance": "integrator_supplied (docs/reports/detach-lookup-membership/gate.json)"
  },
  "named_followups": [
   {
@@ -11888,10 +11890,10 @@
   },
   {
    "id": "W48-BOTTOM-UP-RESIDUAL-PLAN",
-   "title": "Measured bottom-up callee-body residual after checked detach",
-   "why": "Re-measured by W48-POINTER-RETURN-THROUGH-CALL-ACTUAL-ROOT at base fa04aab0f plus the exact read-only rd_list_cnt actual frame (corpus 941/9/3884 -> 952/9/3873; report artifacts/after/plan.json.gz): 260 Unknown functions wait on exactly one in-corpus callee body, versus 264 before. The hypothetical all-body ceiling remains 372; the no-extra-body closure is 4 same-unit and 12 cross-unit, versus 0 and 8 before. There are 2,228 candidate bodies, versus 2,232. Largest single body is cJSON_DetachItemViaPointer: six callers, seven own leaves across branch and indirect-access effects. Other small single-body candidates and family counts are in the archived after plan and family files. These are hypothetical closures, not Safe verdicts. DISCHARGE: lift a callee's own blockers soundly with Rust/Lean parity or a pinned body-checked contract, then rerun the corpus arbiter and plan. AMENDED (W48-BOTTOM-UP batch 2, exact base 1543259f0, semantic source 78751c611): fresh conditional corpus 955/9/3870 -> 959/9/3866, no Safe regression. gf2_matrix_times and gf2_matrix_square become Safe under the checked scalar-read/discarded-formal-step frame; the sixth conditional linked home LZ4_compressBound frees LZ4_compressHC and LZ4_compressHC2. Three stateful/continuation wrappers remain Unknown on retention-undecided. The fresh ranked plan is 259 -> 259 single-body waits, 2227 -> 2225 candidate bodies, no-extra-body same-unit 4 -> 4 and cross-unit 9 -> 4, hypothetical all-body ceiling 367 -> 362. These supersede dated planning numbers above and are not Safe verdicts; broader closure of 378 is a different model admitting provisional Unsafe/unanalysed homes (11 extra callers), archived separately. Four admin no-extra-body candidates still need usable W4 summaries; do not force neutral/out-slot forgetting from a Safe home alone. At that dated checkpoint cJSON_DetachItemViaPointer was the largest single body: six callers/seven own leaves; the later implemented checked-transfer decision and fresh plan are recorded below. Evidence: docs/reports/w48-bottom-up-batch2/README.md and artifacts/after/plan.json.gz. AMENDED (CJSON-DETACH-SAME-ITEM, 2026-10-19, analyzer/proof9bfe86a41, docs/reports/cjson-detach-same-item/README.md): the user approved checked same-item transfer and it is implemented with audited Lean, exact physical-frame checking and the explicit DeclaredAssumption detach_list_representation. The production declaration is pinned-in-force, failed0/withdrawn0/unvalidated1/validated0, four dependent rows/zeroSafe. Fresh completed-S3 baseline versus final corpus keeps961Safe/3864Unknown/9 provisionalUnsafe; all six wrappers remain Unknown. Fresh plan260→258 single-body waits,2224→2223 candidate bodies,365→363 hypothetical ceiling; no-extra-body same/cross closure4/4 unchanged. Two whole-return wrappers leave the call-only census for unsupported return effects, while the array wrapper now waits on get_array_item; these are not discharged bodies or promotions. The former six-caller detach hypothesis is not realized. Current follow-ons are DETACH-LOOKUP-MEMBERSHIP, DETACH-RESULT-WRAPPER-COMPOSITION and DETACH-LIST-REPRESENTATION-CLOSURE. Remaining ranked leaders are rd_kafka_log_buf4 and get_array_item3 hypothetical closure rows, neither a Safe promise. DISCHARGE: independently checked caller membership/result transport and each residual body, with full measured outcomes and no ordinary-summary erasure.",
-   "source": "docs/reports/cjson-detach-same-item/README.md",
-   "recorded_by": "CJSON-DETACH-SAME-ITEM"
+   "title": "Measured bottom-up residual after checked array lookup",
+   "why": "Fresh DETACH-LOOKUP-MEMBERSHIP on completed alias base f35b5cf4b, semantic source b92688d22, measures corpus961→963Safe/3864→3862Unknown/9provisionalUnsafe. Promotions are exactly get_array_item and cJSON_GetArrayItem under existing named null premise; all six detach/delete wrappers remain Unknown. Fresh planner single-body waits258→256, candidate bodies2223→2222, hypothetical all-body ceiling363→362, no-extra-body same/cross closure4/4→6/6. These are separate census quantities, not promised Safe gains or discharged six-caller closure. DISCHARGE: each remaining callee own blocker and supported richer result/membership transport with audited Rust/Lean and fresh measured outcomes. Detailed ranked rows, old/new plan, nine-body review and all production artifacts are archived in this report; prior dated detach predictions stay in their owning frozen report.",
+   "source": "docs/reports/detach-lookup-membership/README.md",
+   "recorded_by": "DETACH-LOOKUP-MEMBERSHIP"
   },
   {
    "id": "W48-POINTER-RETURN-THROUGH-CALL-ACTUAL-ROOT",
@@ -12682,24 +12684,24 @@
   },
   {
    "id": "DETACH-LOOKUP-MEMBERSHIP",
-   "title": "Checked exact child membership through cJSON lookup results",
-   "why": "The checked same-item transfer is implemented, but lookup provenance cannot establish the exact containing owner. The array wrapper currently refuses nested get_array_item; both object wrappers retain unsupported whole returns. DISCHARGE: derive exact same child identity and parent membership from a checked lookup frame, including NULL/missing-key/index branches and invalidating writes, with matching Rust/Lean and replay. Borrowed-from identity alone must never populate containment; preserve Unknown when absent. Fresh corpus has zero Safe promotions and all six wrappers Unknown; planner258/2223/363 with same/cross closure4/4 is a hypothetical census, not discharged bodies.",
-   "source": "docs/reports/cjson-detach-same-item/README.md",
-   "recorded_by": "CJSON-DETACH-SAME-ITEM"
+   "title": "Residual source-level exact child lookup membership",
+   "why": "Checked indexed child/next getter and assigned direct decimal0–255 calls now retain original typed-read/call obligations, exact canonical record identity, physical must-links, existing unique contained-child ownership, alias lifetime and invalidating writes, with audited Rust/Lean and independent source replay. Fresh corpus promotes only get_array_item and cJSON_GetArrayItem under their existing named null premise (961→963Safe,3864→3862Unknown,9provisionalUnsafe). Source-positive membership controls cover stored head and explicit empty head; all six detach/delete wrappers remain Unknown. DISCHARGE: checked successor-link source closure despite contained-child stores/unproved store helpers, object-key lookup, opaque/unknown caller record aliases and nonliteral indices. BorrowedFrom alone never establishes membership; missing/NULL/order/write/alias facts fail closed. Whole-return/nested Removed transport remains a separate registered obligation.",
+   "source": "docs/reports/detach-lookup-membership/README.md",
+   "recorded_by": "DETACH-LOOKUP-MEMBERSHIP"
   },
   {
    "id": "DETACH-RESULT-WRAPPER-COMPOSITION",
-   "title": "Preserve removed identity and custody through return and nested wrappers",
-   "why": "Removed results deliberately refuse whole-return/nested/fresh-only consumers and ordinary W4 inference. The two object detach wrappers and three delete wrappers remain Unknown; the array wrapper also needs exact lookup handling. DISCHARGE: transport the existing item identity, parent custody, membership prerequisites, NULL branches, result aliases and named representation premise through a richer summary with independent retained-source replay and audited Lean. Guarded/lifetime combinations remain refused until checked. Fresh corpus zero promotions; all six wrapper outcomes and the258/2223/363 plan/closure4/4 are retained.",
-   "source": "docs/reports/cjson-detach-same-item/README.md",
-   "recorded_by": "CJSON-DETACH-SAME-ITEM"
+   "title": "Preserve removed identity through production return and nested wrappers",
+   "why": "Checked same-item Removed and bounded assigned lookup membership are implemented, but all six production wrappers remain Unknown: cJSON_DetachItemFromArray refuses nested get_array_item; the two object detaches refuse whole return expressions; the three deletes refuse nested detach calls. The getter and public array accessor become conditionally Safe, without erasing these boundaries. DISCHARGE: transport the same existing child identity, parent custody, exact membership/NULL/alias prerequisites and named representation premise through richer independent source-replayed summaries with audited Lean. Guarded/lifetime combinations remain refused until checked; ordinary W4/fresh-result projection must not erase Removed identity or effects.",
+   "source": "docs/reports/detach-lookup-membership/README.md",
+   "recorded_by": "DETACH-LOOKUP-MEMBERSHIP"
   },
   {
    "id": "DETACH-LIST-REPRESENTATION-CLOSURE",
    "title": "Independently close the declared concrete cJSON list representation premise",
-   "why": "The actual production unlink template is checked and its declaration stays pinned-in-force under detach_list_representation: unvalidated1/validated0, four dependent rows/zeroSafe. Ordinary callee projection still has eleven branch/indirect/unresolved-item leaves. DISCHARGE: independently establish the concrete/list abstraction relation, alias/frame/lifetime and no-concurrent-writer requirements where stronger source assurance is claimed; keep membership separate. Runtime coverage needs an actual covering envelope, never a model theorem or body-template match. Source-template evidence must not become unconditional C conformance or a Safe body. Fresh measured residual plan258/2223/363 and same/cross closure4/4 do not discharge this premise.",
-   "source": "docs/reports/cjson-detach-same-item/README.md",
-   "recorded_by": "CJSON-DETACH-SAME-ITEM"
+   "why": "Fresh DETACH-LOOKUP-MEMBERSHIP corpus retains the pinned-in-force detach declaration under exact detach_list_representation: failed0/withdrawn0/unvalidated1/validated0, four dependent rows/zeroSafe; ordinary detach body retains all eleven leaves. Lookup provenance and checked physical links supply no unconditional C/list conformance or runtime envelope. DISCHARGE: independently establish concrete/list coherence, parent/item alias/frame/lifetime validity and no concurrent writer where stronger assurance is claimed; membership remains separate. Runtime coverage needs an actual covering envelope, never an abstract theorem or exact body-template match.",
+   "source": "docs/reports/detach-lookup-membership/README.md",
+   "recorded_by": "DETACH-LOOKUP-MEMBERSHIP"
   },
   {
    "id": "CONTRACT-HYPOTHESIS-GRAPH-V1",
@@ -12709,5 +12711,5 @@
    "recorded_by": "CONTRACT-HYPOTHESIS-GRAPH-V1-PLAN"
   }
  ],
- "updated": "2026-10-19 origin/main integration retains CONTRACT-HYPOTHESIS-GRAPH-V1 and the local LEXICAL-SCALAR-NOOP-ALIAS-READ discharge: 805 named follow-ups (804 local + 1 remote candidate). Historical checkpoint counts below retain their original branch context. Previous checkpoint: 2026-10-19 CONTRACT-HYPOTHESIS-GRAPH-V1 records an undispatched, records-first candidate card for decomposing C04.18 named premises into context-bound atomic hypotheses. It changes no product code, contract, rule, verdict or current measurement; the open ledger grows 805 -> 806. Previous checkpoint: 2026-10-18 RK-PLUGIN-INTERCEPTOR-CANDIDATES completed the runtime-only source-pinned inventory (14 lists / 14 aliases) and paired registered envelopes. All fresh corpus/system/slice static and runtime verdicts are unchanged; no Pending becomes Safe, and the exact candidate digest plus all three loader pins are in force. The primary baseline at ad526b58 is reused with implementation/input equivalence to base 1543259f0 checked. Actual source revisions 66910c10 / 046accf6 / 34155955 are recorded separately. The full standing/provider gate passed 8,235 root Rust tests, 338 Lean audits, 133 provider Rust tests, 374 script Python tests, 25 provider Python tests and five package verifications; every required final exit is zero. The registered candidate entry narrows to RK-INTERCEPTOR-STATIC-LIST-CLOSURE (797 -> 797); arbitrary stateful callbacks remain outside the neutral review class. Previous checkpoint: 2026-10-17 RK-PLUGIN-LIBRARY-OUTER-ENVELOPE measured paired envelopes on corpus, system and slice with static statuses unchanged; the exact 32 all-loaded corpus custody Unknown rows become Pending, and the existing Fluent Bit Pending row remains Pending. The RK implementation entry is replaced by RK-PLUGIN-INTERCEPTOR-CANDIDATES for rd_list_t members lacking candidate callback contracts: 797 -> 797. Standing and provider gates remain to be recorded on this branch. 2026-09-12 (wave 27 complete: SIX pieces merged one at a time under the failure-gated chain, each under its own green gate. CT23-CREDIT-ERROR-PATH landed EpochCreditRecoveryV1 - the creator's own error edges over a flat epoch's credits, restored + spent = credit componentwise with abandonment and minting both REFUSALS, zero words and zero codes, Q637 deliberately NOT extended because the success exit's bound already covers every error edge, and the T07 seam measured and deliberately not crossed. DOCS-COMPACT-3 honoured the compaction cadence three waves on with 39 standing constraints in and 39 out, zero renumbered and 37 bodies byte-identical, refreshed README.md to the full route surface, corrected one drift (the binary is quirin-audit; qcore-audit is the package and library name), and carried the USER-DIRECTED examples style pass - 'pipe the flow, parenthesize the assembly' - five files respelled one commit each with byte identity MEASURED, nine examined and skipped with reasons, and the rule's one open case left for the user as EXAMPLES-STYLE-SLICE-FANOUT rather than repaired against the brief's direction. AGGREGATES-V1 is the wave's LANGUAGE HEAD: source.record.v1 on source.buffer.v1, zero reserved words because the obvious spelling `record` was REJECTED ON EVIDENCE (an archived one-line probe pinned to Q000 by two frozen reports, constraint 21), zero codes because Q051/Q052/Q053's conditions widened under the ice box, no line of name resolution changed, scalar-fields-only DECIDED BY MEASUREMENT against an ownership IR that addresses owners by plain names, and CT09's scenario executed and byte-compared. QUANT-REGION-SOURCE gave the kernel's quantitative region its first source path with the sealed pack as a LINEAR capability consumed exactly once, the region ERASING to byte-identical C, and the RegionOp::QuantOpen operation VARIANT measured unreachable-by-design rather than repaired; CT21 and CT22's archived reasons retire, with CT22 keeping a narrower scenario gap for a lane to publish in its own record. CT07-SLICE-PERMISSIONS lent a RANGE and corrected the recorded blocker: the footprint fraction STD-BUFFER-SLICE named is about the WRITE half, so a read lend needed no ownership-IR change, disjointness is DECIDED by max low < min high and proved to be the set-theoretic question itself, overlapping BORROWS are deliberately admitted and argued, and exactly one pre-card refusal moves code (Q078 -> Q077) - measured and pinned. THE WAVE RAN ONE ARBITER: GATEWAY-C-LOCATION presents the original pre-preprocessing file:line on 54,371 diagnostic rows with the L-numbers kept INTERNAL by the user's ruling, under a checked line pairing where no #line can forge a file spelling; its re-pin is PRESENTATION-ONLY and measured to be, the BEFORE run reproducing the preceding baseline byte for byte and the AFTER run moving no verdict, no leaf and no count - 185 units 2/42/137/4, 4,834 functions 150/84/4,600, leak 266, unknown_alias 4,344, unsupported 49,773 - so the corpus baseline moves to docs/reports/gateway-c-location/artifacts/ with every preceding archive frozen and constraint 7 gaining no sixth move. CT coverage is UNCHANGED at 36/50 mapped: the wave mapped nothing and edited no manifest row, and the CT08/CT09/CT21/CT22/CT23 readiness it produced is capability rather than conformance. Standing constraint 15h is AMENDED on the slice card's own proposal, and three new rules land in merge order - 15j, 15k, 15l - beside 12a for the arbiter's anti-forgery rule. Nothing is promoted; full language conformance stays false.)"
+ "updated": "2026-10-19 DETACH-LOOKUP-MEMBERSHIP: measured corpus963Safe/3862Unknown/9provisionalUnsafe, system99/345/4, slice53/346/4Pending/1; two conditional promotions, no Safe regression; six detach/delete wrappers Unknown. Fresh plan256/2222/362 and no-extra closure6/6. Full gates 8349Rust/344Lean, provider133Rust/25Python/all5packages, post-matrixPython374. Four lookup residuals narrowed; CONTRACT-HYPOTHESIS-GRAPH-V1 candidate from origin/main retained; 805 named follow-ups."
 }

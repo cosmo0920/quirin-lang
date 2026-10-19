@@ -1,0 +1,50 @@
+{
+  "diagnostics": {
+    "present": true,
+    "source": "/tmp/qcore-detach-lookup-membership/private/detach-lookup-membership/measure-final-1/slice/resource-diagnostics.json",
+    "sha256": "f98f87344b120e01dbb22d66da086430938c72ba7f421011d8bbb2a6a25484ec",
+    "bytes": 1693569
+  },
+  "source": {
+    "present": false
+  },
+  "chunk-contracts": {
+    "present": true,
+    "source": "/tmp/qcore-detach-lookup-membership/private/detach-lookup-membership/measure-final-1/slice/resource-diagnostics.chunk-contracts.json",
+    "sha256": "a97259087e4ad89a4662edcb494b27c27e80f06c62e404a19076224bbc0a2bd8",
+    "bytes": 385
+  },
+  "source-effects": {
+    "present": true,
+    "source": "/tmp/qcore-detach-lookup-membership/private/detach-lookup-membership/measure-final-1/slice/resource-diagnostics.source-effects.json",
+    "sha256": "a97259087e4ad89a4662edcb494b27c27e80f06c62e404a19076224bbc0a2bd8",
+    "bytes": 385
+  },
+  "contracts": {
+    "present": true,
+    "source": "/tmp/qcore-detach-lookup-membership/private/detach-lookup-membership/measure-final-1/slice/resource-diagnostics.contracts.json",
+    "sha256": "4b94f8b47661cc5fb3b8407ff3a4f58dfa63340ca02a3dd41a3a4475f8f6c8e9",
+    "bytes": 7068119
+  },
+  "static_custody_counts": {
+    "Unknown": 346,
+    "Safe": 53,
+    "Pending": 4,
+    "Unsafe": 1
+  },
+  "slice-null.jsonl": {
+    "source": "/tmp/qcore-detach-lookup-membership/private/detach-lookup-membership/measure-final-1/slice/slice-null.jsonl",
+    "bytes": 1460997,
+    "sha256": "6eb1cd7b55ff9467ea72fa7ae9029e98db5d37f8c85e0994872a71693aa91ccf"
+  },
+  "slice-null.summary.json": {
+    "source": "/tmp/qcore-detach-lookup-membership/private/detach-lookup-membership/measure-final-1/slice/slice-null.summary.json",
+    "bytes": 64487,
+    "sha256": "4f765339b3ef087cc3d47ec9231eb7960393d2c1c5dd927c22d3a09f489faa49"
+  },
+  "slice-outer.json": {
+    "source": "/tmp/qcore-detach-lookup-membership/private/detach-lookup-membership/measure-final-1/slice/slice-outer.json",
+    "bytes": 88729,
+    "sha256": "c821633be7eeb61fd89bd9cccf068ba9592d0f7c818ee867fa79309bcd039a18"
+  }
+}

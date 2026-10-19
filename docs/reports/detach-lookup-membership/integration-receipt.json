@@ -1,0 +1,12 @@
+{
+  "semantic_source": "b92688d220e1e62cffdcdb6ccc46476df0f406fd",
+  "base": "f35b5cf4b596e1ad2f5bdec6a0c203e2fd987287",
+  "code_proof_contract_build_inputs_changed_after_final_gate": [],
+  "closeout_only": "docs/report scripts, artifacts, STATUS, increment, index and acceptance matrix",
+  "standing_complete": true,
+  "final_root_python_tests": 374,
+  "final_root_python_exit": 0,
+  "integrator_items": 3,
+  "open_followups": 804,
+  "no_main_merge_or_push": true
+}

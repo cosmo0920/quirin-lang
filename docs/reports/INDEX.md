@@ -386,6 +386,8 @@ Regenerate with `python3 scripts/build_docs_index.py`; validate with `--check`.
 
 | [deep-ast-transports-and-wall-time](deep-ast-transports-and-wall-time/README.md) | DEEP-AST-TRANSPORTS-AND-WALL-TIME: every Clang JSON transport's nesting, and `rdhttp.c`'s own time |
 
+| [detach-lookup-membership](detach-lookup-membership/README.md) | Checked array lookup identity and membership |
+
 | [development-docs-structure](development-docs-structure/README.md) | Development documentation structure and retrieval |
 
 | [docs-compact-2](docs-compact-2/README.md) | DOCS-COMPACT-2 — second compaction pass over `AGENTS.md`, `CLAUDE.md` and `README.md` |
@@ -513,6 +515,8 @@ Regenerate with `python3 scripts/build_docs_index.py`; validate with `--check`.
 | [lean-proof-integrity](lean-proof-integrity/README.md) | Lean proof integrity and Lean 4.34 warning cleanup |
 
 | [lexical-routes-typed-fallbacks](lexical-routes-typed-fallbacks/README.md) | LEXICAL-ROUTES-PREEMPT-TYPED-FALLBACKS |
+
+| [lexical-scalar-noop-alias-read](lexical-scalar-noop-alias-read/README.md) | LEXICAL-SCALAR-NOOP-ALIAS-READ |
 
 | [librdkafka-plugin-premise](librdkafka-plugin-premise/README.md) | LIBRDKAFKA-PLUGIN-PREMISE-UNSTATED: the plugin premise on every dependent declaration |
 
@@ -889,6 +893,8 @@ Regenerate with `python3 scripts/build_docs_index.py`; validate with `--check`.
 | [remaining-w4-expr-pos](remaining-w4-expr-pos/README.md) | W4-EXPR-POS — neutral expression positions, environment-aware — 2026-09-09 |
 
 | [remaining-wave3-ct-integration](remaining-wave3-ct-integration/README.md) | wave3-CT — integrating the T05 and T06 CT mappings |
+
+| [remote-main-merge-20261019](remote-main-merge-20261019/README.md) | origin/main conflict resolution, 2026-10-19 |
 
 | [requested-branch-integration](requested-branch-integration/README.md) | Requested branch integration |
 

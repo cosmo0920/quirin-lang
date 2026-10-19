@@ -97,6 +97,7 @@ pub mod member_run_facts;
 // Card SLOT-MOVE-AND-INTERIOR-BORROW (rules 12x, 12y, 12z): the pure
 // decisions are here, the G hooks in `legacy_slot_move_borrow.rs`.
 pub mod detach_same_item;
+pub mod list_lookup;
 pub mod slot_move_borrow;
 // Card REFCOUNT-RESOURCE-KIND (gateway rules 13b, 13c): the reference-count
 // kind's pure decisions are here, the G hooks in `legacy_reference_count.rs`.

@@ -1,0 +1,19 @@
+{
+  "source_head": "b92688d220e1e62cffdcdb6ccc46476df0f406fd",
+  "toolchain": "leanprover/lean4:v4.35.0",
+  "source_sha256": "72598d67f6996ff439a2cdf048b632cc8188eea091fbbb494093e25339889e1d",
+  "audit_sha256": "8ce6e4f17265e012396496789fd1f4575895b58c3a97990ae092aa2d18b4d3a1",
+  "standalone_sha256": "2abae28b0632830481f1fbbd9f7cb292e7918a61057ddb7eb1486a8df4192333",
+  "command": [
+    "lake",
+    "env",
+    "lean",
+    "../private/detach-lookup-membership/ListLookupRecordAudit.lean"
+  ],
+  "cwd": "/tmp/qcore-detach-lookup-membership/proof",
+  "exit": 0,
+  "axiom_prints": 19,
+  "log": "private/detach-lookup-membership/record-lean-1.log",
+  "full_audit": false,
+  "extractor_boundary": "Rust supplies completeness of the actual record and exact canonical equality with the callee. Unknown or unequal tags refuse both metadata and resolution."
+}
