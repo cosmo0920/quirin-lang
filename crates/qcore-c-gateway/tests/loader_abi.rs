@@ -26,11 +26,40 @@ use qcore_c_gateway::legacy_c::{
 use qcore_contract::contract_loader::load_resource_contract_sources;
 
 #[cfg(all(windows, target_pointer_width = "64"))]
-const HOST_SIZE_C: &str = "unsigned __int64";
+const HOST_SIZE_C: &str = "unsigned long long";
 #[cfg(all(not(windows), target_pointer_width = "64"))]
 const HOST_SIZE_C: &str = "unsigned long";
 #[cfg(target_pointer_width = "32")]
 const HOST_SIZE_C: &str = "unsigned int";
+
+#[cfg(all(windows, target_pointer_width = "64"))]
+const HOST_SIZE_TYPEDEF_C: &str =
+    "typedef unsigned long long k_size;\nvoid k_use(void *p, k_size n);";
+#[cfg(all(not(windows), target_pointer_width = "64"))]
+const HOST_SIZE_TYPEDEF_C: &str =
+    "typedef unsigned long k_size;\nvoid k_use(void *p, k_size n);";
+#[cfg(target_pointer_width = "32")]
+const HOST_SIZE_TYPEDEF_C: &str =
+    "typedef unsigned int k_size;\nvoid k_use(void *p, k_size n);";
+
+#[cfg(all(windows, target_pointer_width = "64"))]
+const HOST_SIZE_TYPEDEF_CHAIN_C: &str = "typedef unsigned long long k_word;\n\
+typedef k_word k_size;\nvoid k_use(void *p, k_size n);";
+#[cfg(all(not(windows), target_pointer_width = "64"))]
+const HOST_SIZE_TYPEDEF_CHAIN_C: &str = "typedef unsigned long k_word;\n\
+typedef k_word k_size;\nvoid k_use(void *p, k_size n);";
+#[cfg(target_pointer_width = "32")]
+const HOST_SIZE_TYPEDEF_CHAIN_C: &str = "typedef unsigned int k_word;\n\
+typedef k_word k_size;\nvoid k_use(void *p, k_size n);";
+
+#[cfg(windows)]
+const HOST_ENUM_TYPE: &str = "p: ptr<mut, u8>, n: i32";
+#[cfg(not(windows))]
+const HOST_ENUM_TYPE: &str = "p: ptr<mut, u8>, n: u32";
+#[cfg(windows)]
+const OTHER_ENUM_TYPE: &str = "p: ptr<mut, u8>, n: u32";
+#[cfg(not(windows))]
+const OTHER_ENUM_TYPE: &str = "p: ptr<mut, u8>, n: i32";
 use qcore_schemas::reason::{ReasonCategory, ReasonSubject};
 
 fn load(source: &str) -> ResourceContracts {
@@ -162,7 +191,7 @@ contract {
 };
 ",
     );
-    let source = format!("void *k_alloc(unsigned long size);\n{DISCARDING_BODY}");
+    let source = format!("void *k_alloc({HOST_SIZE_C} size);\n{DISCARDING_BODY}");
     let summary = analyse(&source, &contracts);
     let w = function(&summary, "w");
     assert_eq!(w.status, AnalysisStatus::Unknown);
@@ -500,13 +529,13 @@ const ROWS: &[Row] = &[
     Row {
         label: "a typedef is transparent, so it is resolved rather than refused",
         declared: "p: ptr<mut, u8>, n: usize",
-        c: "typedef unsigned long k_size;\nvoid k_use(void *p, k_size n);",
+        c: HOST_SIZE_TYPEDEF_C,
         outcome: None,
     },
     Row {
         label: "a typedef chain resolves too",
         declared: "p: ptr<mut, u8>, n: usize",
-        c: "typedef unsigned long k_word;\ntypedef k_word k_size;\nvoid k_use(void *p, k_size n);",
+        c: HOST_SIZE_TYPEDEF_CHAIN_C,
         outcome: None,
     },
     Row {
@@ -570,17 +599,16 @@ const ROWS: &[Row] = &[
         outcome: Some(AbiRefusal::UnreadableDeclaration),
     },
     // Card W43-ABI-ENUM-AND-CONST-PP (rule 12u): an enumeration is read now,
-    // as the integer type Clang states for it, never assumed `int`: this one
-    // has no negative value, so Clang's type is `unsigned int`.
+    // as the implementation-defined integer type Clang states for the target.
     Row {
         label: "an untagged `enum` value is its Clang integer type, never assumed `int`",
-        declared: "p: ptr<mut, u8>, n: i32",
+        declared: OTHER_ENUM_TYPE,
         c: "typedef enum { K_A, K_B } k_kind;\nvoid k_use(void *p, k_kind n);",
         outcome: Some(AbiRefusal::ParameterTypeDisagreement),
     },
     Row {
         label: "and agrees spelled as that type",
-        declared: "p: ptr<mut, u8>, n: u32",
+        declared: HOST_ENUM_TYPE,
         c: "typedef enum { K_A, K_B } k_kind;\nvoid k_use(void *p, k_kind n);",
         outcome: None,
     },
@@ -640,7 +668,7 @@ const ROWS: &[Row] = &[
     Row {
         label: "and for an integer",
         declared: "p: ptr<mut, u8>, n: fnptr",
-        c: "void k_use(void *p, unsigned long n);",
+        c: "void k_use(void *p, unsigned int n);",
         outcome: Some(AbiRefusal::ParameterTypeDisagreement),
     },
     Row {
@@ -696,18 +724,22 @@ const ROWS: &[Row] = &[
     },
     // -- types with no established spelling --------------------------------
     // Card W43-ABI-ENUM-AND-CONST-PP (rule 12u): implementation-defined, so
-    // read from Clang (`unsigned int` here), never assumed `int`.
+    // read from Clang, never assumed from the source spelling alone.
     Row {
         label: "an enumeration's compatible integer type is implementation-defined",
-        declared: "p: ptr<mut, u8>, n: i32",
+        declared: HOST_ENUM_TYPE,
         c: "enum k_kind { K_A, K_B };\nvoid k_use(void *p, enum k_kind n);",
-        outcome: Some(AbiRefusal::ParameterTypeDisagreement),
+        outcome: None,
     },
     Row {
         label: "an incomplete enumeration has no type Clang states",
         declared: "p: ptr<mut, u8>, n: u32",
         c: "enum k_kind;\nvoid k_use(void *p, enum k_kind n);",
-        outcome: Some(AbiRefusal::UnreadableDeclaration),
+        outcome: if cfg!(windows) {
+            Some(AbiRefusal::ParameterTypeDisagreement)
+        } else {
+            Some(AbiRefusal::UnreadableDeclaration)
+        },
     },
     Row {
         label: "`long double` has no spelling in this vocabulary",

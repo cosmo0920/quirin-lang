@@ -21,7 +21,7 @@ use qcore_contract::contract_loader::load_resource_contract_sources;
 
 const PRELUDE: &str = "\
 #include <stddef.h>
-typedef enum { D_PASS, D_HANDLED, D_KEEP, D_YIELD, D_FORCE_UNSIGNED = 0xffffffffU } d_res_t;
+typedef enum { D_PASS, D_HANDLED, D_KEEP, D_YIELD } d_res_t;
 struct dop { int x; };
 struct dop *d_new(size_t n);
 void d_free(struct dop *op);
@@ -33,9 +33,15 @@ const DIRECT: &str = "callback-handoff-direct";
 const UNBRANCHED: &str = "callback-handoff-unbranched";
 
 fn environment() -> ResourceContracts {
+    let source = include_str!("fixtures/contracts/handoff_direct.qv");
+    let source = if cfg!(windows) {
+        source.replace("-> u32", "-> i32")
+    } else {
+        source.to_owned()
+    };
     load_resource_contract_sources(&BTreeMap::from([(
         "handoff_direct.qv".to_owned(),
-        include_str!("fixtures/contracts/handoff_direct.qv").to_owned(),
+        source,
     )]))
     .expect("the fixture contracts load")
 }

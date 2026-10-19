@@ -27,6 +27,7 @@ fn fixture(name: &str) -> String {
             .join(name),
     )
     .unwrap()
+    .replace("\r\n", "\n")
 }
 
 fn clang_available() -> bool {

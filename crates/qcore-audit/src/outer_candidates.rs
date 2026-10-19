@@ -154,6 +154,17 @@ fn source_bytes(root: &Path, path: &str) -> Result<Vec<u8>, String> {
     }
 }
 
+fn repository_text_digest(bytes: &[u8]) -> String {
+    // Git's source identity is the LF blob. A Windows checkout may translate
+    // only those line endings to CRLF; do not let that platform presentation
+    // change an inventory digest cited by a contract.
+    let normalized = bytes
+        .split(|byte| *byte == b'\n')
+        .map(|line| line.strip_suffix(b"\r").unwrap_or(line))
+        .collect::<Vec<_>>();
+    sha256_hex(&normalized.join(&b'\n'))
+}
+
 fn sources_match(inventory: &Inventory, root: &Path) -> bool {
     let mut observed = BTreeMap::new();
     inventory.reviewed_identities.iter().any(|identity| {
@@ -192,7 +203,7 @@ pub fn apply(
         let bytes = fs::read(&path).map_err(|e| e.to_string())?;
         let text = std::str::from_utf8(&bytes).map_err(|e| e.to_string())?;
         let inventory = parse(text)?;
-        let hash = sha256_hex(&bytes);
+        let hash = repository_text_digest(&bytes);
         let matches = sources_match(&inventory, root);
         for candidate in &inventory.candidates {
             for key in std::iter::once(&candidate.list_member).chain(&candidate.aliases) {
@@ -377,6 +388,17 @@ contract {{
         fs::remove_dir(root).unwrap();
         assert!(!relative("../source.c"));
         assert!(!relative("/source.c"));
+    }
+    #[test]
+    fn inventory_digest_accepts_only_checkout_line_ending_translation() {
+        assert_eq!(
+            repository_text_digest(b"first\nsecond\n"),
+            repository_text_digest(b"first\r\nsecond\r\n")
+        );
+        assert_ne!(
+            repository_text_digest(b"first\nsecond\n"),
+            repository_text_digest(b"first\rsecond\n")
+        );
     }
     #[test]
     fn the_paired_envelopes_hold_when_candidate_source_is_missing() {

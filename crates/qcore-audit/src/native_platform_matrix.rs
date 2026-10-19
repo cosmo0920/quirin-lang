@@ -617,7 +617,11 @@ mod tests {
 
     #[test]
     fn configured_all_unknown_gap_report_is_valid() {
-        let repository = Path::new(env!("CARGO_MANIFEST_DIR")).join("../..");
+        let repository = Path::new(env!("CARGO_MANIFEST_DIR"))
+            .parent()
+            .and_then(Path::parent)
+            .expect("audit crate is two levels below the repository")
+            .to_path_buf();
         let policy = repository
             .join("providers/qcore-provider-libevent/contracts/monkey/native_platform_matrix.qv");
         let harness = repository.join("crates/qcore-audit/tests/fixtures/native_platform_probe.c");
@@ -636,9 +640,27 @@ mod tests {
         // Audit a private checkout of the pinned commit, retaining the production
         // cleanliness gate (including ignored files).
         let source = directory.join("libevent");
+        let safe_source = source_repository.to_string_lossy().replace('\\', "/");
+        let source_git_dir = repository.join(".git/modules/third_party/libevent");
+        let safe_git_dir = source_git_dir
+            .to_string_lossy()
+            .replace('\\', "/");
+        let git_config = directory.join("gitconfig");
+        fs::write(
+            &git_config,
+            format!("[safe]\n\tdirectory = {safe_source}\n\tdirectory = {safe_git_dir}\n"),
+        )
+        .unwrap();
         let clone = Command::new("git")
+            // `clone --shared` launches upload-pack as a child process. Pass
+            // the two scoped ownership exceptions through a private global
+            // config so that child sees protected-scope values too; `-c`
+            // values alone do not propagate on Windows.
+            .env("GIT_CONFIG_GLOBAL", &git_config)
+            .args(["-c", &format!("safe.directory={safe_source}")])
+            .args(["-c", &format!("safe.directory={safe_git_dir}")])
             .args(["clone", "--shared", "--no-checkout"])
-            .arg(&source_repository)
+            .arg(&safe_git_dir)
             .arg(&source)
             .output()
             .unwrap();

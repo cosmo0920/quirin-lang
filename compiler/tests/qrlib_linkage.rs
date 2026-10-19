@@ -1090,9 +1090,22 @@ mod windows {
     /// layout is taken from it; the triple derives the COFF format and the
     /// LLP64 data model.
     pub fn msvc_target() -> RecordedTarget {
+        let version = Command::new("rustc").arg("-vV").output().unwrap();
+        assert!(version.status.success());
+        let triple = String::from_utf8(version.stdout)
+            .unwrap()
+            .lines()
+            .find_map(|line| line.strip_prefix("host: "))
+            .expect("rustc reports its host triple")
+            .to_owned();
+        assert!(triple.ends_with("-pc-windows-msvc"), "{triple}");
         RecordedTarget {
-            pointer_width: PointerWidth::W64,
-            triple: "x86_64-pc-windows-msvc".into(),
+            pointer_width: if cfg!(target_pointer_width = "64") {
+                PointerWidth::W64
+            } else {
+                PointerWidth::W32
+            },
+            triple,
             compiler: "Microsoft C/C++ (cl.exe)".into(),
         }
     }
@@ -1218,7 +1231,7 @@ fn one_ntdll_function_links_through_the_sdk_import_library() {
     std::fs::write(&import_library, &sdk_bytes).unwrap();
     assert_eq!(std::fs::read(&import_library).unwrap(), sdk_bytes);
     let runtime = system32().join("ntdll.dll");
-    let facts = artifact::TargetFacts::from_triple("x86_64-pc-windows-msvc").unwrap();
+    let facts = artifact::TargetFacts::from_triple(&msvc_target().triple).unwrap();
     let loader = |reference: &str| std::fs::read(reference).map_err(|e| e.to_string());
     let read =
         artifact::read_artifact(&import_library.display().to_string(), &loader, &facts).unwrap();

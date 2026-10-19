@@ -145,6 +145,18 @@ fn hex_commit(value: &str) -> bool {
     matches!(value.len(), 40 | 64) && value.bytes().all(|b| b.is_ascii_hexdigit())
 }
 
+fn portable_absolute(path: &str) -> bool {
+    let bytes = path.as_bytes();
+    Path::new(path).is_absolute()
+        || path.starts_with('/')
+        || path.starts_with("\\\\")
+        || path.starts_with("//")
+        || (bytes.len() >= 3
+            && bytes[0].is_ascii_alphabetic()
+            && bytes[1] == b':'
+            && matches!(bytes[2], b'/' | b'\\'))
+}
+
 impl TipEntry {
     /// Validate the entry's shape (the lock's reader calls it).
     ///
@@ -164,7 +176,7 @@ impl TipEntry {
             .repository
             .path
             .as_deref()
-            .is_some_and(|path| !Path::new(path).is_absolute())
+            .is_some_and(|path| !portable_absolute(path))
         {
             return Err(malformed("repository path is not absolute"));
         }
@@ -571,6 +583,20 @@ mod tests {
     use super::*;
 
     const LEAN: &str = include_str!("../../../proof/QCore/ContractTipMode.lean");
+
+    #[test]
+    fn recorded_repository_paths_are_absolute_on_either_host_family() {
+        for path in [
+            "/home/reviewer/project",
+            r"C:\Users\reviewer\project",
+            r"\\server\share\project",
+        ] {
+            assert!(portable_absolute(path), "{path}");
+        }
+        for path in ["project", r"C:project", "../project"] {
+            assert!(!portable_absolute(path), "{path}");
+        }
+    }
 
     #[test]
     fn tip_decision_is_its_table() {

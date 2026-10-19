@@ -47,7 +47,11 @@ pub fn static_library(
         .cargo_metadata(false)
         .warnings(true)
         .warnings_into_errors(true);
-    if !cfg!(target_env = "msvc") {
+    if cfg!(target_env = "msvc") {
+        // Keep warning-as-error builds reproducible when headers contain
+        // UTF-8 text but the active Windows code page cannot represent it.
+        build.flag("/utf-8");
+    } else {
         build.compiler(std::env::var("QCORE_CLANG").unwrap_or_else(|_| "clang".into()));
         build.flag("-std=c11");
     }

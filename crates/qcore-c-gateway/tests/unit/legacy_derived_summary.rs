@@ -185,11 +185,23 @@ fn a_body_the_ordinary_analysis_refuses_is_named() {
 
 #[test]
 fn checked_indexed_child_lookup_keeps_borrowed_result_summary() {
-    let mut sources =
-        vec![include_str!("../fixtures/detach-lookup-membership/cjson_lookup_frame.h").to_owned()];
+    let fixture = include_str!("../fixtures/detach-lookup-membership/cjson_lookup_frame.h")
+        .replace("\r\n", "\n");
+    let fixture = if cfg!(windows) {
+        fixture.replace(
+            "typedef long unsigned int size_t;",
+            "typedef unsigned long long size_t;",
+        )
+    } else {
+        fixture
+    };
+    let mut sources = vec![fixture];
     if let Some(path) = std::env::var_os("QCORE_LOOKUP_PRODUCTION_INPUT") {
-        sources
-            .push(std::fs::read_to_string(path).expect("explicit actual source must be readable"));
+        sources.push(
+            std::fs::read_to_string(path)
+                .expect("explicit actual source must be readable")
+                .replace("\r\n", "\n"),
+        );
     }
     for source in &sources {
         let _source = crate::typed_access_path::enter_source(

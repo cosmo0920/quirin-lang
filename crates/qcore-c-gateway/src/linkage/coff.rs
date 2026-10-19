@@ -31,10 +31,19 @@ pub fn machine_name(machine: u16) -> &'static str {
         0x8664 => "x86_64",
         0x14c => "i386",
         0xaa64 => "arm64",
+        0xa641 => "arm64ec",
         0x1c4 => "armv7",
         0 => "unknown",
         _ => "other",
     }
+}
+
+/// Whether an import-library record belongs to a companion architecture that
+/// may coexist with `target` in one Windows SDK archive but must not contribute
+/// symbols to that target's table.
+#[must_use]
+pub fn is_companion_import_machine(machine: u16, target: u16) -> bool {
+    target == 0xaa64 && machine == 0xa641
 }
 
 /// Whether `data` is a short import record.

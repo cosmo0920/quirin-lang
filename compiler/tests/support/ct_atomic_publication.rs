@@ -163,6 +163,14 @@ pub(super) fn run(case: &ManifestCase) {
         );
     }
 
+    // Clang 17 accepts the C11 programs but emits the older atomic AST schema,
+    // so the source route deliberately returns UnsupportedPublisher. Keep the
+    // fixture/derivation and language-boundary checks above active; only the
+    // CG19 schema-dependent observations require Clang 18 or newer.
+    if !qcore_c_gateway::clang_version().is_ok_and(|version| version.supports_cg19_atomic_ast()) {
+        return;
+    }
+
     for (file, outcome) in std::iter::once(("case.c", "volatile_no_synchronization")).chain(
         controls
             .iter()

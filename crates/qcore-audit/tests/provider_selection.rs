@@ -657,8 +657,10 @@ fn the_cycle19_provider_selection_is_the_cycle19_manifest_module_for_module() {
     // The lowered manifest is the committed manifest, byte for byte, sitting at
     // the same directory, so every digest derived from it is unchanged.
     assert_eq!(
-        resolved.manifest_text(),
-        fs::read_to_string(&manifest_path).unwrap()
+        resolved.manifest_text().replace("\r\n", "\n"),
+        fs::read_to_string(&manifest_path)
+            .unwrap()
+            .replace("\r\n", "\n")
     );
     assert_eq!(resolved.manifest_path().parent(), manifest_path.parent());
     let from_manifest = load_resource_contract_manifest(&manifest_path).unwrap();

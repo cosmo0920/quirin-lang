@@ -29,6 +29,7 @@ fn compile_with(
 /// The release declaration with a contract-level marker, or its custody clause
 /// wrapped in a clause-level one.
 fn deferred(clause_level: bool) -> String {
+    let contracts = CONTRACTS.replace("\r\n", "\n");
     const DECLARATION: &str = "extern fn qcore_extern_release(buffer: ptr<mut, u8>) -> unit
 contract {
     requires resource_contract_v1;
@@ -36,7 +37,7 @@ contract {
     ensures normal resource_return_none();
 };";
     assert_eq!(
-        CONTRACTS.matches(DECLARATION).count(),
+        contracts.matches(DECLARATION).count(),
         1,
         "the fixture shape moved"
     );
@@ -53,7 +54,7 @@ contract {
              requires resource_review_pending(\"is the buffer freed on every path?\");",
         )
     };
-    CONTRACTS.replace(DECLARATION, &marked)
+    contracts.replace(DECLARATION, &marked)
 }
 
 #[test]

@@ -559,7 +559,7 @@ fn exclusion_files(
 }
 
 fn read_identifiers(entry: &CompileEntry, scope: &[Outside]) -> Reading {
-    let path = entry.file.to_string_lossy();
+    let path = entry.file.to_string_lossy().replace('\\', "/");
     if let Some(index) = scope
         .iter()
         .position(|outside| path.contains(&outside.fragment))
@@ -687,7 +687,7 @@ pub fn run(
     }
     let declared = crate::callback_member_fold::declared_stores(contracts);
     let declarations = declarations_unit(&declared);
-    let label = |entry: &CompileEntry| entry.file.to_string_lossy().into_owned();
+    let label = |entry: &CompileEntry| entry.file.to_string_lossy().replace('\\', "/");
     // Every unit's identifiers, once (in parallel, consumed in order).
     let mut readings = Vec::with_capacity(entries.len());
     let _ = crate::parallel::run_ordered(

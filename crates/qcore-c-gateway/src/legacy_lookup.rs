@@ -185,7 +185,8 @@ mod tests {
         include_str!("../tests/fixtures/detach-lookup-membership/cjson_lookup_frame.h");
     #[test]
     fn actual_complete_readonly_frame_and_mutation_controls() {
-        assert!(read(&super::super::tokenize(ACTUAL), "get_array_item").is_some());
+        let actual = ACTUAL.replace("\r\n", "\n");
+        assert!(read(&super::super::tokenize(&actual), "get_array_item").is_some());
         for (from, to) in [
             ("index--;", "index++;"),
             ("current_child->next", "array->next"),
@@ -210,16 +211,16 @@ mod tests {
             ("(index > 0)", "(index >= 0)"),
             ("(current_child != ((void*)0))", "(array != ((void*)0))"),
         ] {
-            let changed = ACTUAL.replace(from, to);
-            assert_ne!(changed, ACTUAL, "control must edit source: {from}");
+            let changed = actual.replace(from, to);
+            assert_ne!(changed, actual, "control must edit source: {from}");
             assert!(
                 read(&super::super::tokenize(&changed), "get_array_item").is_none(),
                 "{from} -> {to}"
             );
         }
-        let conflicting = format!("{ACTUAL}\ntypedef struct Other {{ int x; }} cJSON;");
+        let conflicting = format!("{actual}\ntypedef struct Other {{ int x; }} cJSON;");
         assert!(read(&super::super::tokenize(&conflicting), "get_array_item").is_none());
-        let alpha = ACTUAL
+        let alpha = actual
             .replace("get_array_item", "checked_lookup")
             .replace("current_child", "cursor")
             .replace("array", "parent")

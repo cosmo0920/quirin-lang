@@ -50,13 +50,18 @@ fn an_enumeration_without_a_negative_value_is_unsigned_int() {
         return;
     }
     let c = "typedef enum { A, B } e_t;\nint k(e_t v);";
+    let (host, other) = if cfg!(windows) {
+        ("i32", "u32")
+    } else {
+        ("u32", "i32")
+    };
     assert_eq!(
-        outcome(c, "k(v: u32) -> i32", &["v"], NONE),
+        outcome(c, &format!("k(v: {host}) -> i32"), &["v"], NONE),
         AbiOutcome::Agreed
     );
-    // `int` is never assumed: Clang says `unsigned int`.
+    // The opposite signedness is never admitted: Clang's target answer wins.
     assert_eq!(
-        outcome(c, "k(v: i32) -> i32", &["v"], NONE),
+        outcome(c, &format!("k(v: {other}) -> i32"), &["v"], NONE),
         AbiOutcome::Withdrawn(AbiRefusal::ParameterTypeDisagreement)
     );
 }
@@ -92,8 +97,9 @@ fn a_wide_or_fixed_enumeration_is_its_own_width() {
         return;
     }
     let wide = "enum big { BIG = 0x100000000 };\nint k(enum big v);";
+    let host = if cfg!(windows) { "i32" } else { "u64" };
     assert_eq!(
-        outcome(wide, "k(v: u64) -> i32", &["v"], NONE),
+        outcome(wide, &format!("k(v: {host}) -> i32"), &["v"], NONE),
         AbiOutcome::Agreed
     );
     // The pointer-width reading a `long` also admits is not the exact one.
@@ -112,7 +118,11 @@ fn an_enumeration_clang_cannot_state_refuses() {
     let incomplete = "enum later;\nint k(enum later v);";
     assert_eq!(
         outcome(incomplete, "k(v: u32) -> i32", &["v"], NONE),
-        AbiOutcome::Withdrawn(AbiRefusal::UnreadableDeclaration)
+        AbiOutcome::Withdrawn(if cfg!(windows) {
+            AbiRefusal::ParameterTypeDisagreement
+        } else {
+            AbiRefusal::UnreadableDeclaration
+        })
     );
     // A source that spells the probe prefix could forge an answer: refused.
     let forged = "typedef enum { A } e_t;\nint __qcore_abi_enum_probe_0;\nint k(e_t v);";

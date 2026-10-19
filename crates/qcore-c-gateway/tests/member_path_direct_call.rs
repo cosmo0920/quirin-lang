@@ -18,7 +18,7 @@ const PRELUDE: &str = "\
 #include <stddef.h>
 struct item { int x; };
 struct box { struct item *payload; struct item *aux; };
-typedef enum { D_KEEP = 0, D_FREE = 1, D_MODE_FORCE_UNSIGNED = 0xffffffffU } d_mode_t;
+typedef enum { D_KEEP = 0, D_FREE = 1 } d_mode_t;
 struct item *d_item_new(int n);
 void d_item_free(struct item *it);
 struct box *d_box_new(void);
@@ -33,9 +33,15 @@ void d_box_destroy_deep(struct box *b);
 ";
 
 fn environment() -> ResourceContracts {
+    let source = include_str!("fixtures/contracts/member_path_direct.qv");
+    let source = if cfg!(windows) {
+        source.replace("mode: u32", "mode: i32")
+    } else {
+        source.to_owned()
+    };
     load_resource_contract_sources(&BTreeMap::from([(
         "member_path_direct.qv".to_owned(),
-        include_str!("fixtures/contracts/member_path_direct.qv").to_owned(),
+        source,
     )]))
     .expect("the fixture contracts load")
 }

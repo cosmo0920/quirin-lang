@@ -129,7 +129,9 @@ fn an_export_fails_closed() {
     }));
     assert!(text.contains("W45-TEST-HYGIENE"), "{text}");
     assert!(
-        text.contains("`git ls-files` failed") || text.contains("git tracks no file"),
+        text.contains("not inside a git checkout")
+            || text.contains("`git ls-files` failed")
+            || text.contains("git tracks no file"),
         "{text}"
     );
 }

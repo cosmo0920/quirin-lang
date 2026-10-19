@@ -408,6 +408,13 @@ fn read_archive(
                 return Err(wrong(&origin, "a COFF import record", target));
             }
             let machine = coff::machine(member.data).map_err(malformed(&origin))?;
+            if coff::is_companion_import_machine(machine, target.coff_machine()) {
+                // Windows ARM64 SDK libraries can be hybrid archives carrying
+                // ARM64EC alongside native ARM64 import records. Only the
+                // exact known companion machine is omitted; every other
+                // mismatch remains a refusal below.
+                continue;
+            }
             if machine != target.coff_machine() {
                 return Err(wrong(
                     &origin,
@@ -431,6 +438,14 @@ fn read_archive(
             }
             objects = true;
             coff::object_symbols(member.data, &origin).map_err(malformed(&origin))?
+        } else if target.format == Format::Coff
+            && matches!(member.name.as_str(), "/<XFGHASHMAP>" | "/<ECSYMBOLS>")
+        {
+            // Windows 11 SDK and WDK archives may carry these exact,
+            // undocumented linker-metadata members. They contain no object
+            // symbol definitions. Keep every other unrecognised member
+            // fail-closed; LLVM's archive reader recognizes the same names.
+            continue;
         } else {
             return Err(ArtifactRefusal::Malformed {
                 reference: origin,

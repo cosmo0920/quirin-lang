@@ -623,13 +623,29 @@ fn load_provider_manifests(
 }
 
 /// F7/F8: verify a pinned checkout. Returns the verified commit on success.
+fn git_in(checkout: &Path) -> Command {
+    let canonical = checkout
+        .canonicalize()
+        .unwrap_or_else(|_| checkout.to_path_buf());
+    let text = canonical.to_string_lossy();
+    let safe = text
+        .strip_prefix(r"\\?\")
+        .unwrap_or(&text)
+        .replace('\\', "/");
+    let mut command = Command::new("git");
+    command
+        .arg("-c")
+        .arg(format!("safe.directory={safe}"))
+        .arg("-C")
+        .arg(checkout);
+    command
+}
+
 pub fn verify_pin(name: &str, pin: &SourcePin, checkout: &Path) -> Result<String, PinDiagnostic> {
     let unavailable = || PinDiagnostic::GitUnavailable {
         pin: name.to_owned(),
     };
-    let head = Command::new("git")
-        .arg("-C")
-        .arg(checkout)
+    let head = git_in(checkout)
         .args(["rev-parse", "HEAD"])
         .output()
         .map_err(|_| unavailable())?;
@@ -645,9 +661,7 @@ pub fn verify_pin(name: &str, pin: &SourcePin, checkout: &Path) -> Result<String
         });
     }
     if pin.clean_paths.is_empty() {
-        let status = Command::new("git")
-            .arg("-C")
-            .arg(checkout)
+        let status = git_in(checkout)
             .args(["status", "--porcelain", "--untracked-files=no"])
             .output()
             .map_err(|_| unavailable())?;
@@ -661,9 +675,7 @@ pub fn verify_pin(name: &str, pin: &SourcePin, checkout: &Path) -> Result<String
             });
         }
     } else {
-        let status = Command::new("git")
-            .arg("-C")
-            .arg(checkout)
+        let status = git_in(checkout)
             .args(["diff", "--quiet", "HEAD", "--"])
             .args(&pin.clean_paths)
             .status()
@@ -739,9 +751,7 @@ fn pinned_lf_bytes_for_crlf_checkout(
     if !worktree.windows(2).any(|pair| pair == b"\r\n") {
         return None;
     }
-    let blob = Command::new("git")
-        .arg("-C")
-        .arg(checkout)
+    let blob = git_in(checkout)
         .args(["show", &format!("{revision}:{path}")])
         .output()
         .ok()?;

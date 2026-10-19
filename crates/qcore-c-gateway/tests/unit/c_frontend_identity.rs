@@ -313,13 +313,21 @@ fn routes_g_and_t_read_the_identity_clang_prints() {
         return;
     }
     // The lexical ABI reader sees source tokens, not Clang's predefined macro expansion.
-    let source = "typedef long unsigned int size_t; typedef size_t my_size;\n\
-                  my_size subject(my_size a, long unsigned int b, const char *c) { return a + b + (c != 0); }\n";
+    let size_type = if cfg!(windows) {
+        "unsigned long long"
+    } else {
+        "unsigned long"
+    };
+    let source = format!(
+        "typedef {size_type} size_t; typedef size_t my_size;\n\
+         my_size subject(my_size a, {size_type} b, const char *c) {{ return a + b + (c != 0); }}\n"
+    );
     let unit = crate::legacy_c::C11TranslationUnit {
-        source,
+        source: &source,
         ..Default::default()
     };
-    let declarations = crate::typed_c_ast::ast_declarations(source, &unit, "subject").expect("AST");
+    let declarations =
+        crate::typed_c_ast::ast_declarations(&source, &unit, "subject").expect("AST");
     let function = declarations
         .iter()
         .find(|node| node["kind"] == "FunctionDecl" && node["name"] == "subject")
@@ -339,7 +347,7 @@ fn routes_g_and_t_read_the_identity_clang_prints() {
         .map(|node| crate::typed_source::canonical_type_id(node))
         .collect::<Vec<_>>();
     assert_eq!(g, t);
-    let tokens = crate::legacy_c::tokenize(source);
+    let tokens = crate::legacy_c::tokenize(&source);
     let texts = tokens
         .iter()
         .map(|token| token.text.as_str())
