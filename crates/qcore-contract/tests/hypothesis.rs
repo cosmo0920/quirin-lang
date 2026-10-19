@@ -181,25 +181,48 @@ fn canonical_wire_and_stale_graph_controls() {
     let bytes = serde_json::to_vec(&g).unwrap();
     assert_eq!(decode(&bytes).unwrap(), g);
     assert!(decode(&serde_json::to_vec_pretty(&g).unwrap()).is_err());
-    let mut extra = bytes.clone(); extra.push(b' '); assert!(decode(&extra).is_err());
-    let mut j=serde_json::to_value(&g).unwrap();j["version"]=serde_json::json!(2);assert!(decode(&serde_json::to_vec(&j).unwrap()).is_err());
-    let old=digest(&g).unwrap();
-    let mut changed=g.clone();changed.atoms.get_mut("a").unwrap().proposition=Proposition::Opaque{statement:"changed".into()};
-    assert_ne!(digest(&changed).unwrap(),old);
-    assert_ne!(qcore_contract::contract_revision::declaration_digests(&sources(STRUCTURED)).unwrap(),qcore_contract::contract_revision::declaration_digests(&sources(&STRUCTURED.replace("jointly","together"))).unwrap());
+    let mut extra = bytes.clone();
+    extra.push(b' ');
+    assert!(decode(&extra).is_err());
+    let mut j = serde_json::to_value(&g).unwrap();
+    j["version"] = serde_json::json!(2);
+    assert!(decode(&serde_json::to_vec(&j).unwrap()).is_err());
+    let old = digest(&g).unwrap();
+    let mut changed = g.clone();
+    changed.atoms.get_mut("a").unwrap().proposition = Proposition::Opaque {
+        statement: "changed".into(),
+    };
+    assert_ne!(digest(&changed).unwrap(), old);
+    assert_ne!(
+        qcore_contract::contract_revision::declaration_digests(&sources(STRUCTURED)).unwrap(),
+        qcore_contract::contract_revision::declaration_digests(&sources(
+            &STRUCTURED.replace("jointly", "together")
+        ))
+        .unwrap()
+    );
 }
 
 #[test]
 fn inherited_graph_keeps_every_parent_atom_and_replays() {
-    use qcore_contract::contract_inclusion::{ContractLoadPath, PublishedContractCrate, derive_contract_namespace};
-    let name="quirin-provider-hypothesis";
-    let parent=sources(STRUCTURED).remove("graph.qv").unwrap();
-    let child="module contract; extern fn child(q: ptr<mut, u8>) -> unit contract inherit f;";
-    let text=format!("{parent}\n{}",child.trim_start_matches("module contract;"));
-    let krate=PublishedContractCrate {name:name.into(),namespace:derive_contract_namespace(name).unwrap(),version:"0.1.0".into(),dependencies:Default::default(),modules:BTreeMap::from([("graph.qv".into(),text)]),published:Default::default()};
-    let path=ContractLoadPath::new(vec![krate]).unwrap();
-    let c=load_published_resource_contracts(&path,&[PublishedModuleRef::new(name,"graph.qv")]).unwrap();
-    let graphs=replay(c.source_assumptions()).unwrap();
-    assert_eq!(graphs["child"],graphs["f"]);
-    check_replay(c.source_assumptions(),&graphs).unwrap();
+    use qcore_contract::contract_inclusion::{
+        ContractLoadPath, PublishedContractCrate, derive_contract_namespace,
+    };
+    let name = "quirin-provider-hypothesis";
+    let parent = sources(STRUCTURED).remove("graph.qv").unwrap();
+    let child = "module contract; extern fn child(q: ptr<mut, u8>) -> unit contract inherit f;";
+    let text = format!("{parent}\n{}", child.trim_start_matches("module contract;"));
+    let krate = PublishedContractCrate {
+        name: name.into(),
+        namespace: derive_contract_namespace(name).unwrap(),
+        version: "0.1.0".into(),
+        dependencies: Default::default(),
+        modules: BTreeMap::from([("graph.qv".into(), text)]),
+        published: Default::default(),
+    };
+    let path = ContractLoadPath::new(vec![krate]).unwrap();
+    let c = load_published_resource_contracts(&path, &[PublishedModuleRef::new(name, "graph.qv")])
+        .unwrap();
+    let graphs = replay(c.source_assumptions()).unwrap();
+    assert_eq!(graphs["child"], graphs["f"]);
+    check_replay(c.source_assumptions(), &graphs).unwrap();
 }

@@ -326,19 +326,42 @@ contract {
 fn graph_section_erases_to_the_previous_premise_and_dependency_view() {
     use qcore_audit::contract_dependencies::erase_hypotheses;
     use qcore_contract::contract_loader::load_resource_contract_sources;
-    let text="module contract; extern fn f() -> unit contract { requires resource_contract_v1; requires resource_premise(p, \"assumption\"); ensures normal resource_return_none(); };";
-    let c=load_resource_contract_sources(&BTreeMap::from([("g.qv".into(),text.into())])).unwrap();
-    let mut metadata=premises(&c).unwrap();
-    assert_eq!(metadata["$hypothesis_graphs"]["f"]["atoms"].as_object().unwrap().len(),1);
-    let units=vec![json!({"functions":[function("use_f","Safe",json!({"declarations":["f"],"hypothesis_dependencies":{"f":["legacy_00000000"]}}))]})];
-    let rev=json!({"contracts":{"f":{"status":"pinned-in-force","mode":"pinned","contract_sha256":"pin","module":"g.qv"}}});
-    let mut section=render(&Facts::of_rows(&units),&rev,&metadata);
-    assert_eq!(section["declarations"]["f"]["hypothesis_evidence"]["disposition"],"open");
-    assert_eq!(section["declarations"]["f"]["body_standing"],"declared-assumption");
+    let text = "module contract; extern fn f() -> unit contract { requires resource_contract_v1; requires resource_premise(p, \"assumption\"); ensures normal resource_return_none(); };";
+    let c =
+        load_resource_contract_sources(&BTreeMap::from([("g.qv".into(), text.into())])).unwrap();
+    let mut metadata = premises(&c).unwrap();
+    assert_eq!(
+        metadata["$hypothesis_graphs"]["f"]["atoms"]
+            .as_object()
+            .unwrap()
+            .len(),
+        1
+    );
+    let units = vec![
+        json!({"functions":[function("use_f","Safe",json!({"declarations":["f"],"hypothesis_dependencies":{"f":["legacy_00000000"]}}))]}),
+    ];
+    let rev = json!({"contracts":{"f":{"status":"pinned-in-force","mode":"pinned","contract_sha256":"pin","module":"g.qv"}}});
+    let mut section = render(&Facts::of_rows(&units), &rev, &metadata);
+    assert_eq!(
+        section["declarations"]["f"]["hypothesis_evidence"]["disposition"],
+        "open"
+    );
+    assert_eq!(
+        section["declarations"]["f"]["body_standing"],
+        "declared-assumption"
+    );
     erase_hypotheses(&mut metadata);
-    assert_eq!(metadata,json!({"f":[{"name":"p","statement":"assumption","origin":"declared"}]}));
-    let mut old_units=json!(units);erase_hypotheses(&mut old_units);
-    let expected=render(&Facts::of_rows(old_units.as_array().unwrap()),&rev,&metadata);
+    assert_eq!(
+        metadata,
+        json!({"f":[{"name":"p","statement":"assumption","origin":"declared"}]})
+    );
+    let mut old_units = json!(units);
+    erase_hypotheses(&mut old_units);
+    let expected = render(
+        &Facts::of_rows(old_units.as_array().unwrap()),
+        &rev,
+        &metadata,
+    );
     erase_hypotheses(&mut section);
-    assert_eq!(section,expected);
+    assert_eq!(section, expected);
 }
