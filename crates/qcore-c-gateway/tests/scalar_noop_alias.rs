@@ -1,9 +1,9 @@
 //! Bounded independent scalar alternatives. Synthetic q_* declarations are
 //! trusted test assumptions; every Safe certificate is independently replayed.
 use qcore_c_gateway::legacy_c::{
-    AnalysisStatus, C11TranslationUnit, LegacyInstruction, LegacyProgramSummary, ResourceContracts,
-    UnrestrictedLegacyResult, analyze_unrestricted_c11, check_legacy_safety_certificate_for,
-    legacy_certificate_expected_context,
+    AnalysisStatus, C11TranslationUnit, LegacyDiagnosticKind, LegacyInstruction,
+    LegacyProgramSummary, ResourceContracts, UnrestrictedLegacyResult, analyze_unrestricted_c11,
+    check_legacy_safety_certificate_for, legacy_certificate_expected_context,
 };
 use qcore_contract::contract_loader::load_resource_contract_sources;
 use std::collections::BTreeMap;
@@ -53,10 +53,61 @@ void *bu_get(void *p); void unknown(void *p);
 }
 
 #[test]
-fn exact_baseline_observation() {
+fn released_alias_of_scalar_store_cannot_be_safe() {
     let summary = run("void subject(struct S *p, struct S *peer) { q_free(peer); p->x = 1; }");
     let row = &summary.functions["subject"];
-    println!("{row:#?}");
-    assert_eq!(row.status, AnalysisStatus::Safe);
-    assert!(row.cfg.nodes.iter().any(|n| matches!(n.instruction, LegacyInstruction::NoOp)));
+    assert_eq!(row.status, AnalysisStatus::Unknown);
+    assert!(row.diagnostics.iter().any(|diagnostic| matches!(
+        &diagnostic.kind,
+        LegacyDiagnosticKind::UnknownAlias { variable } if variable == "p/peer"
+    )));
+    assert!(row.cfg.nodes.iter().any(|n| matches!(n.instruction,
+        LegacyInstruction::IndirectScalarAccess { ref bases, .. } if bases == &["p".to_owned()])));
+}
+
+#[test]
+fn all_older_scalar_positions_keep_the_alias_read() {
+    for (label, body) in [
+        (
+            "store",
+            "void subject(struct S *p, struct S *peer) { q_free(peer); p->x = 1; }",
+        ),
+        (
+            "assignment",
+            "int subject(struct S *p, struct S *peer) { q_free(peer); int x = p->x; return x; }",
+        ),
+        (
+            "read",
+            "void subject(struct S *p, struct S *peer) { q_free(peer); p->x; }",
+        ),
+        (
+            "return",
+            "int subject(struct S *p, struct S *peer) { q_free(peer); return p->x; }",
+        ),
+        (
+            "if",
+            "void subject(struct S *p, struct S *peer) { q_free(peer); if (p->x) {} }",
+        ),
+        (
+            "call_return",
+            "int data(void); int subject(struct S *p, struct S *peer) { q_free(peer); return p->x + 1; }",
+        ),
+    ] {
+        let s = run(body);
+        let row = &s.functions["subject"];
+        assert_eq!(row.status, AnalysisStatus::Unknown, "{label}");
+        assert!(
+            row.diagnostics.iter().any(|diagnostic| matches!(
+                &diagnostic.kind,
+            LegacyDiagnosticKind::UnknownAlias { variable } if variable == "p/peer"
+            )),
+            "{label}"
+        );
+    }
+}
+
+#[test]
+fn unbound_scalar_base_keeps_existing_safe_admission() {
+    let summary = run("void subject(struct S *p) { p->x = 1; }");
+    assert_eq!(summary.functions["subject"].status, AnalysisStatus::Safe);
 }

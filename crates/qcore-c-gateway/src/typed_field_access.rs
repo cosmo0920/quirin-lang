@@ -2178,23 +2178,36 @@ fn split_top_level<'a>(texts: &[&'a str], separator: &str) -> Vec<Vec<&'a str>> 
     groups
 }
 
-/// Whether a statement the lexical gate rejected is a typed direct scalar-field
-/// access, and therefore custody-neutral for the resource projection.
-///
-/// The caller must already have established that the statement contains no call
-/// and no braces. Every other condition of the whitelist is checked here.
-pub(crate) fn is_scalar_field_noop(
+/// Pointer bases dereferenced by the older direct scalar-field route.  The
+/// existing total statement reader decides admission first; this walk only
+/// recovers the exact `BASE -> FIELD` bases it accepted so flow can check their
+/// alias and liveness obligations.  A direct record value's `BASE.FIELD` has
+/// no pointer dereference and contributes no base.
+pub(crate) fn scalar_field_noop_pointer_bases(
     texts: &[&str],
     model: &TypedAccessModel,
     types: &FunctionTypes,
-) -> bool {
-    matches!(scalar_statement_accesses(texts, model, types), Some(count) if count > 0)
+) -> Option<Vec<String>> {
+    (scalar_statement_accesses(texts, model, types)? > 0).then(|| {
+        let mut bases = Vec::new();
+        for window in texts.windows(4) {
+            let [base, "-", ">", _field] = window else {
+                continue;
+            };
+            if matches!(types.declared(base), Some(DeclaredType::RecordPointer(_)))
+                && !bases.iter().any(|seen| seen == base)
+            {
+                bases.push((*base).to_owned());
+            }
+        }
+        bases
+    })
 }
 
 /// The base of one exactly-shaped scalar member store through a record pointer
 /// this function may bind to a tracked identity.
 ///
-/// This is deliberately disjoint from [`is_scalar_field_noop`]'s premise 8.
+/// This is deliberately disjoint from [`scalar_field_noop_pointer_bases`]'s premise 8.
 /// That rule may erase an access only when the base can never carry custody;
 /// this rule admits a bound base only as an explicit instruction whose
 /// flow-sensitive transfer rechecks the base's live identity.  The syntax is
@@ -2790,7 +2803,7 @@ fn statement_assignment(texts: &[&str]) -> Option<(usize, usize)> {
 /// every path through it. O04 needs it because the selected caller's failure
 /// arms are reached through exactly such scalar bookkeeping.
 ///
-/// It is deliberately separate from [`is_scalar_field_noop`], whose contract
+/// It is deliberately separate from [`scalar_field_noop_pointer_bases`], whose contract
 /// (at least one admitted member access) is unchanged.
 pub(crate) fn is_scalar_only_noop(
     texts: &[&str],
@@ -2826,7 +2839,7 @@ pub(crate) fn is_scalar_initializer(
 ///
 /// Card W4-EXPR-POS reads the six expression positions of `legacy_c` through
 /// this entry point (see [`crate::neutral_position`]). It is the union of
-/// [`is_scalar_field_noop`] and [`is_scalar_only_noop`]'s conditions minus their
+/// [`scalar_field_noop_pointer_bases`] and [`is_scalar_only_noop`]'s conditions minus their
 /// disjoint access-count requirements: both counts are custody-neutral by the
 /// same argument, and an expression position — unlike a statement — has no
 /// reason to distinguish them. The empty run is admitted, so that an expression
@@ -3554,7 +3567,7 @@ mod tests {
     fn admits(records: &str, parameters: &str, body: &str, statement: &str) -> bool {
         let model = model(records);
         let types = types(&model, parameters, body);
-        is_scalar_field_noop(&texts(statement), &model, &types)
+        scalar_field_noop_pointer_bases(&texts(statement), &model, &types).is_some()
     }
 
     const R: &str = "struct r { int a ; int b ; struct q * p ; } ; struct q { int a ; } ;";
@@ -3635,11 +3648,9 @@ mod tests {
             &texts(""),
             &BTreeSet::from(["protected".to_owned()]),
         );
-        assert!(!is_scalar_field_noop(
-            &texts("protected -> a = 1"),
-            &model,
-            &types
-        ));
+        assert!(
+            scalar_field_noop_pointer_bases(&texts("protected -> a = 1"), &model, &types).is_none()
+        );
     }
 
     #[test]

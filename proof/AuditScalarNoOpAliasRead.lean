@@ -1,0 +1,7 @@
+import QCore.ScalarNoOpAliasRead
+
+#print axioms QCore.ScalarNoOpAliasRead.resource_projection_unchanged
+#print axioms QCore.ScalarNoOpAliasRead.a_released_undischarged_peer_refuses_the_scalar_read
+#print axioms QCore.ScalarNoOpAliasRead.unrelated_binding_unchanged
+#print axioms QCore.ScalarNoOpAliasRead.a_refused_single_read_is_not_safe
+#print axioms QCore.ScalarNoOpAliasRead.a_resolved_single_read_adds_no_diagnostic

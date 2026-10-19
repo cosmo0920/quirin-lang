@@ -88,13 +88,25 @@ impl Parser<'_> {
         }) {
             return false;
         }
-        if supported_neutral_expression(tokens) {
-            return true;
-        }
+        // A scalar member of a record pointer still evaluates its base.  The
+        // older lexical route used to accept that spelling as neutral and
+        // erase the read before the typed position routes could check it.
         let texts = tokens
             .iter()
             .map(|token| token.text.as_str())
             .collect::<Vec<_>>();
+        if crate::typed_field_access::scalar_field_noop_pointer_bases(
+            &texts,
+            &self.typed_model,
+            &self.typed_types,
+        )
+        .is_some_and(|bases| !bases.is_empty())
+        {
+            return false;
+        }
+        if supported_neutral_expression(tokens) {
+            return true;
+        }
         crate::neutral_position::is_neutral_expression(
             &texts,
             role,

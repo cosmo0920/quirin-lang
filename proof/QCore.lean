@@ -158,6 +158,7 @@ import QCore.ConditionalGroupDepth
 import QCore.AggregateStore
 import QCore.ScalarMemberStore
 import QCore.IndirectScalarAccess
+import QCore.ScalarNoOpAliasRead
 import QCore.IndexTraversal
 import QCore.IndexedCollection
 import QCore.IndexExtent

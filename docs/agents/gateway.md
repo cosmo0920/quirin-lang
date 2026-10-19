@@ -178,6 +178,16 @@ which is not a second authority.
    function never binds to a resource identity — exists because dropping it
    turned a read through a released pointer into `Safe`. The fail-closed pin
    caught it and **was not weakened**; keep it that way. `remaining-c02`.
+
+   **Amendment (LEXICAL-SCALAR-NOOP-ALIAS-READ):** source admission retains
+   that premise, but it does not discharge a same-type peer or pointer-base
+   read. Every admitted record-pointer scalar member access carries its
+   dereferenced base and alias peers into the existing checked scalar-read
+   transfer. A released, undischarged peer or unresolved base makes the result
+   non-Safe. The earlier lexical neutral route cannot erase this read in a
+   condition or return expression. Direct record values carry no pointer-base
+   read; scalar destinations still forget prior scalar facts. No new site,
+   containment, or pointer binding follows from the admission.
 <!-- preserved:constraint-5:end -->
 
 <a id="constraint-5a"></a>

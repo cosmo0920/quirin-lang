@@ -954,13 +954,35 @@ impl Parser<'_> {
         // shadowing gates, which still govern, and never for a statement
         // carrying a call, whose own rules continue to apply.
         if !contains_call(tokens)
-            && crate::typed_field_access::is_scalar_field_noop(
+            && let Some(bases) = crate::typed_field_access::scalar_field_noop_pointer_bases(
                 &texts,
                 &self.typed_model,
                 &self.typed_types,
             )
         {
-            let instruction = self.scalar_effect(&texts);
+            let effect = self.scalar_effect(&texts);
+            let destination = match &effect {
+                LegacyInstruction::ForgetScalar { destination } => Some(destination.clone()),
+                _ => None,
+            };
+            let instruction = match effect {
+                LegacyInstruction::NoOp | LegacyInstruction::ForgetScalar { .. } => {
+                    LegacyInstruction::IndirectScalarAccess {
+                        typed_alternative: None,
+                        alias_reads: bases
+                            .iter()
+                            .filter_map(|base| self.read_alias(Some(base)))
+                            .collect(),
+                        bases,
+                        destination,
+                        frame: None,
+                        chains: Vec::new(),
+                        borrowed_destination: false,
+                        readback: None,
+                    }
+                }
+                other => other,
+            };
             self.record_legacy_typed_parity(tokens, "scalar_field_noop", &instruction);
             return instruction;
         }
