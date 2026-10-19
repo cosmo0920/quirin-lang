@@ -208,3 +208,17 @@ bytes are unchanged. The direct native observation at the same retained C
 bytes has separately retained build/run logs, both empty and exit0, with
 ASan/UBSan enabled (`native-raw-1/commands.json` and
 `native-raw-1/native-observation.json`); this is not a production custody claim.
+
+At the integrator's parity check, the guard also gains a narrow audited Lean
+eligibility model: a known matching canonical tag admits; an unknown or
+mismatched tag refuses; eligibility requires both facts. Rust's extractor
+supplies completeness and canonical equality, and both extraction and flow
+resolution call the matching `record_eligible` predicate. Four exhaustive
+Rust/Lean correspondence vectors include the inconsistent unknown-but-same
+input, which still refuses. The standalone pinned4.35 audit compiles0 with19
+axiom prints (`record-lean-1.log`); Rust's five pure model tests and six
+record/read-parity tests each pass0. The in-progress gate2 at852633baf was
+cleanly cancelled130 before completing its build so the final full gate can
+cover this audited predicate. Its exact task-exclusive PID/PGID/SID2393181,
+member snapshot and confirmed absence are retained in
+`gate-host-2/cancellation{,-final}.json`; no production audit had started.

@@ -179,4 +179,29 @@ theorem physical_vectors_match_indexed_lookup :
     vectors.all (fun (xs, n, r) =>
       walk n (some xs.head?) (nextOf xs) xs.contains [] == some r) = true := by decide
 
+/-- Rust's bounded source extractor supplies a complete canonical actual tag
+and its equality with the checked callee tag. No C type system is assumed here. -/
+def recordEligible (known same : Bool) : Bool := known && same
+
+theorem a_known_matching_record_is_eligible : recordEligible true true = true := rfl
+
+theorem an_unknown_record_refuses (same : Bool) : recordEligible false same = false := by
+  simp [recordEligible]
+
+theorem a_mismatched_record_refuses (known : Bool) : recordEligible known false = false := by
+  simp [recordEligible]
+
+theorem eligibility_requires_known_matching_tags (known same : Bool)
+    (h : recordEligible known same = true) : known = true ∧ same = true := by
+  cases known <;> cases same <;> simp_all [recordEligible]
+
+def recordVectors : List (Bool × Bool × Bool) := [
+  (false, false, false),
+  (false, true, false),
+  (true, false, false),
+  (true, true, true)
+]
+theorem record_vectors_hold :
+    recordVectors.all (fun (known, same, result) => recordEligible known same == result) = true := by decide
+
 end QCore.ListLookup

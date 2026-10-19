@@ -1600,8 +1600,10 @@ Unsupported control flow, unresolved alias identities, missing contracts, and in
 
 A bounded complete read-only indexed child/next frame may infer a nullable
 Borrowed result under fresh-run validation. Caller identity refinement requires
-source-derived must-held link values plus independent unique parent custody;
-borrowed provenance alone MUST NOT establish membership or a fresh result site.
+source-derived must-held link values plus independent unique parent custody.
+The complete canonical record tags of the callee, actual and stored-link owner
+must match. Unknown or mismatched tags refuse the identity refinement.
+Borrowed provenance alone MUST NOT establish membership or a fresh result site.
 Missing physical order remains Unknown. The source bridge currently admits
 exact stored head and explicit empty-head cases; whole-return/nested Removed
 composition and general successor source closure stay outside it. See

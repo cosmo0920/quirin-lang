@@ -6336,8 +6336,9 @@ the same resolved record type at each stored-link owner. Prefix facts are keyed
 by site, record tag and field; a differently typed overlapping store invalidates
 prior facts for that owner. Unknown types, including opaque alias views, supply
 no identity descriptor. These are source-evidence checks for the existing
-physical-prefix premise, not a new abstract transition. It also needs
-a live parent and an existing settled child uniquely contained by that parent;
+physical-prefix premise. The audited eligibility predicate refuses unknown or mismatched
+canonical tags; the Rust extractor supplies completeness and exact equality.
+It also needs a live parent and an existing settled child uniquely contained by that parent;
 absence is Unknown, never NULL, and no new resource site is created. Facts meet
 by intersection and are carried only where a checked lookup call exists.
 Unknown/wrapper writes and unproved calls destroy them. Lookup aliases retain

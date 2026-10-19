@@ -487,7 +487,10 @@ pub(super) fn settle_calls(
                 .map(|(name, tag)| (name.to_owned(), tag.to_owned()))
                 .collect::<std::collections::BTreeMap<_, _>>()
         });
-        if records.get(parent) != Some(&frame.record) {
+        if !crate::list_lookup::record_eligible(
+            records.contains_key(parent),
+            records.get(parent) == Some(&frame.record),
+        ) {
             continue;
         }
         // A same-spelled local/formal function pointer must not be confused
@@ -570,6 +573,14 @@ pub(super) fn resolve(
     kinds: &std::collections::BTreeMap<usize, super::ResourceKind>,
 ) -> Option<AbstractPointer> {
     let description = node.lookup.as_ref()?;
+    if !crate::list_lookup::record_eligible(
+        description
+            .pointer_records
+            .contains_key(&description.parent),
+        description.pointer_records.get(&description.parent) == Some(&description.record),
+    ) {
+        return None;
+    }
     if state.unmodeled {
         return None;
     }
@@ -840,7 +851,7 @@ mod flow_controls {
                 parent: "p".to_owned(),
                 index: 0,
                 record: "Node".to_owned(),
-                pointer_records: Default::default(),
+                pointer_records: [("p".to_owned(), "Node".to_owned())].into(),
             }),
             lookup_read: None,
             instruction: LegacyInstruction::NoOp,
@@ -862,6 +873,16 @@ mod flow_controls {
             .lookup_links
             .insert((1, "Node".to_owned(), "child".to_owned()), Some(2));
         assert_eq!(resolve(&node, &state, &kinds), Some(pointer(2)));
+        let mut unknown = node.clone();
+        unknown.lookup.as_mut().unwrap().pointer_records.clear();
+        assert!(resolve(&unknown, &state, &kinds).is_none());
+        unknown
+            .lookup
+            .as_mut()
+            .unwrap()
+            .pointer_records
+            .insert("p".to_owned(), "Other".to_owned());
+        assert!(resolve(&unknown, &state, &kinds).is_none());
         after(
             &node,
             &mut state,

@@ -7,6 +7,13 @@ pub fn lookup(children: &[usize], index: usize) -> Option<usize> {
     children.get(index).copied()
 }
 
+/// The source extractor supplies completeness and canonical tag equality.
+/// Unknown or mismatched records cannot authorize a physical prefix reading.
+#[must_use]
+pub const fn record_eligible(known: bool, same: bool) -> bool {
+    known && same
+}
+
 /// Resolve only an explicitly known physical prefix. `None` is Unknown;
 /// `Some(None)` is a checked NULL, never inferred from an absent link.
 #[must_use]
@@ -52,6 +59,39 @@ pub const fn allow_read_view(f: ReadViewFacts) -> bool {
 #[cfg(test)]
 mod tests {
     use super::*;
+    #[test]
+    fn audited_record_eligibility_vectors_match_rust() {
+        let lean = include_str!("../../../proof/QCore/ListLookup.lean");
+        let table = lean
+            .split("def recordVectors : List (Bool × Bool × Bool) := [")
+            .nth(1)
+            .unwrap()
+            .split("\n]")
+            .next()
+            .unwrap();
+        let mut count = 0;
+        for line in table
+            .lines()
+            .map(str::trim)
+            .filter(|line| line.starts_with('('))
+        {
+            let values = line
+                .trim_start_matches('(')
+                .trim_end_matches(',')
+                .trim_end_matches(')')
+                .split(',')
+                .map(|value| match value.trim() {
+                    "true" => true,
+                    "false" => false,
+                    other => panic!("{other}"),
+                })
+                .collect::<Vec<_>>();
+            assert_eq!(values.len(), 3);
+            assert_eq!(record_eligible(values[0], values[1]), values[2]);
+            count += 1;
+        }
+        assert_eq!(count, 4);
+    }
     #[test]
     fn lean_borrowed_view_vectors_match_the_rust_decision() {
         let lean = include_str!("../../../proof/QCore/ListLookup.lean");

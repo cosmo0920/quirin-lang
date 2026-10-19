@@ -14,3 +14,8 @@ import QCore.ListLookup
 #print axioms QCore.ListLookup.a_real_site_keeps_its_original_obligation
 #print axioms QCore.ListLookup.a_released_peer_cannot_be_erased
 #print axioms QCore.ListLookup.read_view_vectors_hold
+#print axioms QCore.ListLookup.a_known_matching_record_is_eligible
+#print axioms QCore.ListLookup.an_unknown_record_refuses
+#print axioms QCore.ListLookup.a_mismatched_record_refuses
+#print axioms QCore.ListLookup.eligibility_requires_known_matching_tags
+#print axioms QCore.ListLookup.record_vectors_hold
