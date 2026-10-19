@@ -1,0 +1,11 @@
+{
+  "route": "system",
+  "custody_rows": 448,
+  "custody_rows_with_context": 448,
+  "custody_rows_with_atom_closure": 448,
+  "declarations": 118,
+  "declarations_with_graph": 118,
+  "null_rows": 454,
+  "null_rows_with_graph": 454,
+  "meaning": "metadata publication counts; no proposition truth or additional safety coverage"
+}

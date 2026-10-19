@@ -1,0 +1,59 @@
+{
+  "route": "slice",
+  "checks": {
+    "static_units_rows_full_diagnostics_reasons_dependencies_and_standing_equal": true,
+    "diagnostic_counts_equal": true,
+    "legacy_premises_equal": true,
+    "dependency_and_clause_standing_section_equal": true,
+    "contract_revision_equal": true,
+    "null_rows_except_identity_equal": true,
+    "null_summary_equal": true,
+    "runtime_projection_equal": true
+  },
+  "before": {
+    "units": 16,
+    "functions": {
+      "Unknown": 346,
+      "Safe": 53,
+      "Pending": 4,
+      "Unsafe": 1
+    },
+    "null_rows": 406
+  },
+  "after": {
+    "units": 16,
+    "functions": {
+      "Unknown": 346,
+      "Safe": 53,
+      "Pending": 4,
+      "Unsafe": 1
+    },
+    "null_rows": 406
+  },
+  "raw_differing_leaf_counts": {
+    "diagnostics": 808,
+    "contracts": 212,
+    "chunk-contracts": 0,
+    "source-effects": 0,
+    "null": 1216,
+    "null-summary": 0,
+    "outer": 0
+  },
+  "erased_normalized_differing_leaf_counts": {
+    "diagnostics": 0,
+    "contracts": 4,
+    "chunk-contracts": 0,
+    "source-effects": 0,
+    "null": 0,
+    "null-summary": 0,
+    "outer": 0
+  },
+  "normalization": {
+    "before_analyzer_root": "/home/cosmo/.codex/worktrees/3d1b/qcore-c/private/contract-hypothesis-graph-v1/baseline-source",
+    "after_analyzer_root": "/home/cosmo/.codex/worktrees/3d1b/qcore-c",
+    "replacement": "$ANALYZER",
+    "key_collisions": 0
+  },
+  "provenance_review": "all raw and erased differences retained; compile_configuration and null identity changes require separate attribution before acceptance",
+  "all_invariant_checks_pass": true
+}

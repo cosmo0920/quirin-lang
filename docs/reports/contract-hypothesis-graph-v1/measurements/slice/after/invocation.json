@@ -1,0 +1,42 @@
+{
+  "analyzer_source_commit": "5b5a8c0f05bef6aece8b57d90a2d405a459c29ea",
+  "command": [
+    "/home/cosmo/.codex/worktrees/3d1b/qcore-c/target/release/quirin-audit",
+    "current",
+    "--checkout",
+    "/home/cosmo/Documents/GitHub/qcore-c/private/w47-tail/attempt-1/prep/fluent-bit-clang-source",
+    "--profile-directory",
+    "/home/cosmo/.codex/worktrees/3d1b/qcore-c/contract/profiles/fluent-bit",
+    "--compile-database",
+    "/home/cosmo/Documents/GitHub/qcore-c/private/w47-tail/attempt-1/prep/fluent-bit-clang-production/compile_commands.json",
+    "--selection",
+    "/home/cosmo/.codex/worktrees/3d1b/qcore-c/contract/profiles/fluent-bit/tail-pause-selection.json",
+    "--jobs",
+    "4",
+    "--report",
+    "/home/cosmo/.codex/worktrees/3d1b/qcore-c/private/contract-hypothesis-graph-v1/measure-1/tip/slice/resource-diagnostics.json"
+  ],
+  "jobs": 4,
+  "binary": "/home/cosmo/.codex/worktrees/3d1b/qcore-c/target/release/quirin-audit",
+  "binary_sha256": "0dddea8e73619a4fb324605f1dc99f7f134a74132ccdc90908dd41b4b4201563",
+  "source_head": "34155955e4962a56d94eb23c03a002880899a0d1",
+  "link_map": "/home/cosmo/.codex/worktrees/3d1b/qcore-c/docs/reports/w48-bottom-up-batch2/link-map.corpus.json",
+  "link_map_sha256": "3a0424cf3f447211ce8bf78679c396428ffed62ade14a75b99526ac9ddd1156d",
+  "environment": {
+    "QCORE_CLANG": "/usr/lib/llvm-21/bin/clang",
+    "QCORE_CHUNKIO_PACKAGE": "unset",
+    "QCORE_CROSS_UNIT_LINK_MAP": "/home/cosmo/.codex/worktrees/3d1b/qcore-c/docs/reports/w48-bottom-up-batch2/link-map.corpus.json",
+    "QCORE_NULL_PROPERTY": "/home/cosmo/.codex/worktrees/3d1b/qcore-c/private/contract-hypothesis-graph-v1/measure-1/tip/slice/slice-null.jsonl",
+    "QCORE_OUTER_PROJECTION": "/home/cosmo/.codex/worktrees/3d1b/qcore-c/private/contract-hypothesis-graph-v1/measure-1/tip/slice/slice-outer.json",
+    "QCORE_SOURCE_CONTRACTS": "unset",
+    "QCORE_RETURN_CENSUS": "unset"
+  },
+  "started": "2026-10-19T23:28:29.469447+00:00",
+  "compile_database": "/home/cosmo/Documents/GitHub/qcore-c/private/w47-tail/attempt-1/prep/fluent-bit-clang-production/compile_commands.json",
+  "compile_database_sha256": "faf446759b31f892c9ffe03c76719875e9910682515cdd9acc908dc5142f8157",
+  "selection": "/home/cosmo/.codex/worktrees/3d1b/qcore-c/contract/profiles/fluent-bit/tail-pause-selection.json",
+  "selection_sha256": "11cc7e23b6e3e11a3b1b4443b51f2f4e12920a505e5a636ed586646b21f4d0af",
+  "exit": 0,
+  "ended": "2026-10-19T23:36:08.905147+00:00",
+  "binary_sha256_after": "0dddea8e73619a4fb324605f1dc99f7f134a74132ccdc90908dd41b4b4201563"
+}

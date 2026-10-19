@@ -1,0 +1,11 @@
+{
+  "route": "slice",
+  "custody_rows": 404,
+  "custody_rows_with_context": 404,
+  "custody_rows_with_atom_closure": 404,
+  "declarations": 103,
+  "declarations_with_graph": 103,
+  "null_rows": 406,
+  "null_rows_with_graph": 406,
+  "meaning": "metadata publication counts; no proposition truth or additional safety coverage"
+}

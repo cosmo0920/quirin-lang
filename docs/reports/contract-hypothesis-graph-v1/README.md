@@ -84,8 +84,7 @@ evidence root; other standing logs are in `standing-4/`.
 The complete host provider gate passes **133 Rust tests / 0 failed / 1 ignored
 doctest**, **25 Python tests**, check, formatting, Clippy, contract checks and
 all five rebuilt/verified packages. [Provider commands and exits](gate/provider-commands.json)
-name the complete logs in `provider-4/`. Root post-matrix Python and corpus,
-system, slice, null and runtime erasure comparisons remain pending.
+name the complete logs in `provider-4/`. Root post-matrix Python and the corpus erasure comparison remain pending.
 
 Superseded attempts are retained in [validation-attempts.json](validation-attempts.json): malformed initial custody fixture syntax
 (four failing new tests, subsequently corrected); an inheritance ID/formal
@@ -118,8 +117,18 @@ published twice (evidence and prepass). The
 keys by changing only Monkey's `MONKEY_BUILT` `__TIME__` expansion,
 `08:01:09` to `08:12:24` on 2026-10-20 Asia/Tokyo. Both semantic summaries
 are `{}`; all other erased normalized fields are equal. This attribution
-does not rewrite or suppress those raw differences. Slice and corpus remain
-pending.
+does not rewrite or suppress those raw differences.
+
+Fresh base/tip tail-pause runs both exit 0: **53 Safe / 346 Unknown / 4
+Pending / 1 provisional Unsafe**, 404 custody functions and 406 null rows.
+[Every invariant check passes](measurements/slice/comparison.json).
+The same exact timestamp-only replay accounts for its four residual leaves,
+`08:21:32` to `08:29:10`
+([attribution](measurements/slice/provenance-attribution.json)). Graph publication
+covers every measured custody/null row and every declaration in each dependency
+section: [system counts](measurements/system/publication-counts.json),
+[slice counts](measurements/slice/publication-counts.json). These are metadata
+counts, not new safety coverage. Corpus remains pending.
 
 ## Follow-on boundary
 
