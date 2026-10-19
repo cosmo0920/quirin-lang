@@ -171,7 +171,11 @@ fn preprocess_plain(
     let result = (|| {
         let mut command =
             crate::clang::command().map_err(LegacyCError::ProductionParserUnavailable)?;
-        command.args(["-x", "c", unit.dialect.clang_argument(), "-E", "-P"]);
+        let dialect = unit
+            .dialect
+            .clang_invocation_argument()
+            .map_err(LegacyCError::ProductionParserUnavailable)?;
+        command.args(["-x", "c", dialect, "-E", "-P"]);
         for include in &unit.include_paths {
             command.arg(format!("-I{include}"));
         }
@@ -231,11 +235,15 @@ fn validate_syntax(
         let mut command =
             crate::clang::command().map_err(LegacyCError::ProductionParserUnavailable)?;
         unit.append_frontend_flags(&mut command);
+        let dialect = unit
+            .dialect
+            .clang_invocation_argument()
+            .map_err(LegacyCError::ProductionParserUnavailable)?;
         let mut child = command
             .args([
                 "-x",
                 "c",
-                unit.dialect.clang_argument(),
+                dialect,
                 "-fsyntax-only",
                 "-",
             ])

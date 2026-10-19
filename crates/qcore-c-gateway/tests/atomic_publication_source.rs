@@ -33,6 +33,23 @@ fn clang_available() -> bool {
     }
 }
 
+fn clang_atomic_ast_available() -> bool {
+    if !clang_available() {
+        return false;
+    }
+    match qcore_c_gateway::clang_version() {
+        Ok(version) if version.supports_cg19_atomic_ast() => true,
+        Ok(version) => {
+            eprintln!(
+                "skipping atomic-publication AST observation on Clang {}.{}.{}: CG19 requires Clang 18 or newer",
+                version.major, version.minor, version.patch
+            );
+            false
+        }
+        Err(reason) => panic!("Clang was resolved but its release could not be detected: {reason}"),
+    }
+}
+
 fn profile() -> AtomicPublicationSourceProfile<'static> {
     AtomicPublicationSourceProfile {
         publisher: "publish",
@@ -64,7 +81,7 @@ fn check(
 
 #[test]
 fn release_acquire_source_derives_the_closed_typed_candidate() {
-    if !clang_available() {
+    if !clang_atomic_ast_available() {
         return;
     }
     let certificate = check(SOURCE).unwrap();
@@ -87,7 +104,7 @@ fn release_acquire_source_derives_the_closed_typed_candidate() {
 
 #[test]
 fn integer_conversions_never_supply_publication_values() {
-    if !clang_available() {
+    if !clang_atomic_ast_available() {
         return;
     }
     // On the test target these literals undergo an IntegralCast to int. The
@@ -165,7 +182,7 @@ fn inline_assembly_cannot_bypass_the_full_translation_unit_inventory() {
 
 #[test]
 fn redeclarations_cannot_change_the_identity_used_by_reference_counting() {
-    if !clang_available() {
+    if !clang_atomic_ast_available() {
         return;
     }
     let flag_redeclaration = format!(
@@ -220,7 +237,7 @@ int consume(void) { int seen = done; if (seen != 1) return 0; return payload; }
 
 #[test]
 fn atomic_spelling_extracts_orders_without_claiming_synchronization() {
-    if !clang_available() {
+    if !clang_atomic_ast_available() {
         return;
     }
     let relaxed_store = SOURCE.replace("memory_order_release", "memory_order_relaxed");
@@ -280,7 +297,7 @@ fn atomic_spelling_extracts_orders_without_claiming_synchronization() {
 
 #[test]
 fn source_shape_refuses_bypasses_ambiguity_and_extra_accesses() {
-    if !clang_available() {
+    if !clang_atomic_ast_available() {
         return;
     }
     let reversed = SOURCE.replace(
@@ -394,7 +411,7 @@ fn non_atomic_refusal_requires_the_actual_closed_publication_shape() {
 
 #[test]
 fn memory_order_enum_values_are_semantic_not_name_only() {
-    if !clang_available() {
+    if !clang_atomic_ast_available() {
         return;
     }
     let declarations = "typedef enum memory_order { memory_order_relaxed = 0, memory_order_acquire = 2, memory_order_release = 3, memory_order_seq_cst = 5 } memory_order;";
@@ -426,7 +443,7 @@ fn memory_order_enum_values_are_semantic_not_name_only() {
 /// named refusals.
 #[test]
 fn cg19_publication_forms_through_the_atomic_route() {
-    if !clang_available() {
+    if !clang_atomic_ast_available() {
         return;
     }
     // Clang's builtins with literal orders: no `memory_order` enumeration.

@@ -16,7 +16,7 @@ const PRELUDE: &str = "\
 #include <stddef.h>
 struct list { void **elems; int cnt; void (*free_cb)(void *); };
 struct entry { const char *name; int (*handler)(void *, unsigned long, void *); };
-void *c_alloc(unsigned long n); void c_free(void *p); void c_opaque(void *p);
+void *c_alloc(__SIZE_TYPE__ n); void c_free(void *p); void c_opaque(void *p);
 void unknown_effect(void *p);
 int c_each(void *reader, int (*cb)(void *, unsigned long, void *), void *context);
 int c_dispatch(void *reader, struct entry *table, void *context);

@@ -26,8 +26,8 @@ extern fn w_close(p: ptr<mut, u8>) -> unit contract {\n\
 };\n";
 const HEADERS: &str = "void *w_open(void); void w_close(void *p); \
 double cmt_metric_get_value(void *metric); \
-void cmt_metric_set_timestamp(void *metric, unsigned long timestamp); \
-unsigned long ctr_id_get_len(void *cid);";
+void cmt_metric_set_timestamp(void *metric, __UINT64_TYPE__ timestamp); \
+__SIZE_TYPE__ ctr_id_get_len(void *cid);";
 // The trace span setter is declared separately so its scalar field write is
 // exercised in the accepting and ownership controls below.
 const SPAN_HEADER: &str =
@@ -109,7 +109,7 @@ fn selected_metric_and_trace_calls_are_admitted_and_withdrawal_restores_refusal(
     let body = "void w(void) { void *p = w_open(); if (!p) return; \
         cmt_metric_set_timestamp(p, 4); \
         double x = cmt_metric_get_value(p); \
-        unsigned long n = ctr_id_get_len(p); \
+        __SIZE_TYPE__ n = ctr_id_get_len(p); \
         ctr_span_set_dropped_events_count(p, 2); \
         (void)x; (void)n; w_close(p); }";
     let admitted = analyze(body, METRIC, TRACE);

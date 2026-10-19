@@ -35,10 +35,10 @@ const CONTRACTS: &str = include_str!("fixtures/contracts/derived_result_generic.
 /// The declarations precede the macro, as in `string.h`, so they are not
 /// themselves expanded.
 const PRELUDE: &str = "\
-char *d_alloc(unsigned long n);
+char *d_alloc(__SIZE_TYPE__ n);
 void d_free(void *p);
 void d_consume(void *p);
-unsigned long d_len(const char *s);
+__SIZE_TYPE__ d_len(const char *s);
 char *d_chr(const char *s, int c);
 #define q_const_generic(PTR, CTYPE, CALL) \\
   _Generic (0 ? (PTR) : (void *) 1, const void *: (CTYPE) (CALL), default: CALL)
@@ -47,10 +47,10 @@ char *d_chr(const char *s, int c);
 
 /// The same declarations with no macro: the call as a pre-C23 header spells it.
 const PLAIN: &str = "\
-char *d_alloc(unsigned long n);
+char *d_alloc(__SIZE_TYPE__ n);
 void d_free(void *p);
 void d_consume(void *p);
-unsigned long d_len(const char *s);
+__SIZE_TYPE__ d_len(const char *s);
 char *d_chr(const char *s, int c);
 ";
 

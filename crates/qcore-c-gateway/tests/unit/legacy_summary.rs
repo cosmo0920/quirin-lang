@@ -943,7 +943,7 @@ fn extended_summary_certificates_are_rederived_and_reject_tampering() {
     }
     for source in [
         "void *q_alloc(void); void q_free(void *); int fill(void **out) { void *p = q_alloc(); *out = p; return 0; } void subject(void) { void *p; int rc = fill(&p); q_free(p); }",
-        "void *q_alloc(void); void q_free(void *); void *q_realloc(void *, unsigned long); void *grow(void *p) { void *q = q_realloc(p, 8); return q; } void subject(void) { void *p = q_alloc(); void *q = grow(p); if (q) { q_free(q); } else { q_free(p); } }",
+        "void *q_alloc(void); void q_free(void *); void *q_realloc(void *, __SIZE_TYPE__); void *grow(void *p) { void *q = q_realloc(p, 8); return q; } void subject(void) { void *p = q_alloc(); void *q = grow(p); if (q) { q_free(q); } else { q_free(p); } }",
     ] {
         let unit = C11TranslationUnit {
             source,

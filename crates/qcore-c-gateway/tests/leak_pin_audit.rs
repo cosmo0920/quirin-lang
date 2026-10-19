@@ -35,7 +35,7 @@ int k_open(const char *path); \
 int k_close(int fd); \
 void *k_fopen(const char *path); \
 int k_fclose(void *stream); \
-void *k_alloc(unsigned long size); \
+void *k_alloc(__SIZE_TYPE__ size); \
 void k_free(void *p); \
 void k_keep(void *p); \
 struct k_box { void *item; long n; }; \

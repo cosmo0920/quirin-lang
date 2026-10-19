@@ -24,12 +24,12 @@ use qcore_contract::contract_loader::load_resource_contract_sources;
 const CONTRACTS: &str = include_str!("fixtures/contracts/derived_result_generic.qv");
 
 const DECLARATIONS: &str = "\
-char *d_alloc(unsigned long n); \
+char *d_alloc(__SIZE_TYPE__ n); \
 void d_free(void *p); \
 void d_consume(void *p); \
-unsigned long d_len(const char *s); \
+__SIZE_TYPE__ d_len(const char *s); \
 char *d_chr(const char *s, int c); \
-void *d_copy(void *restrict dst, const void *restrict src, unsigned long n);";
+void *d_copy(void *restrict dst, const void *restrict src, __SIZE_TYPE__ n);";
 
 fn contracts() -> ResourceContracts {
     load_resource_contract_sources(&BTreeMap::from([(

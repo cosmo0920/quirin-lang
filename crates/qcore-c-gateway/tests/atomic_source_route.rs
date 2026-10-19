@@ -25,7 +25,7 @@ const CONSUME: &str = "memory_order_consume load `__c11_atomic_load` is not repr
 /// blockers were the uncontracted builtin calls: routed, custody-`Safe`.
 #[test]
 fn g_routes_the_cmetrics_plain_load_and_store() {
-    if !clang_available() {
+    if !clang_atomic_ast_available() {
         return;
     }
     let load = ga(
@@ -48,7 +48,7 @@ fn g_routes_the_cmetrics_plain_load_and_store() {
 /// builtins, and a loaded value's scalar destination.
 #[test]
 fn g_routes_stdatomic_plain_forms() {
-    if !clang_available() {
+    if !clang_atomic_ast_available() {
         return;
     }
     assert!(ga("int subject(atomic_int *a) { return atomic_load(a); }").safe());
@@ -82,7 +82,7 @@ fn g_routes_stdatomic_plain_forms() {
 /// is now refused for its unevaluated order; the consume load stays refused.
 #[test]
 fn g_refuses_rmw_cas_fence_and_consume_by_name() {
-    if !clang_available() {
+    if !clang_atomic_ast_available() {
         return;
     }
     for source in [
@@ -142,7 +142,7 @@ fn volatile_that_is_not_atomic_is_untouched() {
 /// CT41-TYPED-SOURCE-QUALIFIER-ARM-STILL-UNDISCRIMINATING).
 #[test]
 fn t_discriminates_atomic_from_volatile() {
-    if !clang_available() {
+    if !clang_atomic_ast_available() {
         return;
     }
     assert_eq!(

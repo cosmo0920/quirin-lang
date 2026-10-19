@@ -17,6 +17,7 @@ use qcore_compiler::{
 // (`tests/support/process_fixture.rs`). Data files stay `fs::write`.
 #[path = "../../tests/support/process_fixture.rs"]
 mod process_fixture;
+#[cfg(unix)]
 use process_fixture::write_executable;
 
 fn digest(ch: char) -> String {

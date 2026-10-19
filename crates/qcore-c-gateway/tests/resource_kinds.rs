@@ -25,12 +25,12 @@ typedef struct { void *buffer; unsigned long used; } regex_t; \
 void *k_dlopen(const char *path); \
 int k_dlclose(void *handle); \
 void *k_dlsym(void *handle, const char *name); \
-void *k_alloc(unsigned long size); \
+void *k_alloc(__SIZE_TYPE__ size); \
 void k_free(void *p); \
 int k_regcomp(regex_t *preg, const char *pattern, int flags); \
 int k_regexec(const regex_t *preg, const char *text); \
 void k_regfree(regex_t *preg); \
-void k_wipe(void *p, unsigned long n); \
+void k_wipe(void *p, __SIZE_TYPE__ n); \
 struct k_holder { regex_t re; }; \
 regex_t g_re;";
 

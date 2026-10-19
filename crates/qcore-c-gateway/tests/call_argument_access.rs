@@ -56,7 +56,7 @@ contract { requires resource_contract_v1; ensures normal resource_released(r, no
            ensures normal resource_return_none(); };";
 
 const DECLARATIONS: &str = "\
-void *x_alloc(unsigned long n); char *x_dup(const char *s); void x_free(void *p); \
+void *x_alloc(__SIZE_TYPE__ n); char *x_dup(const char *s); void x_free(void *p); \
 void x_take(void *p); void x_use(int n); void x_note(void *p); \
 void x_log(const char *fmt, ...); \
 struct x_lock { int held; }; \

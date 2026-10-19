@@ -20,7 +20,7 @@ struct ev_loop; struct obj { int x; };
 struct cfg { struct ev_loop *evl; };
 struct timer { int fd; struct cfg *sched; struct obj event; };
 struct coll { int id; struct ev_loop *evl; struct obj event; struct obj timer; struct coll *next; };
-void *ev_alloc(unsigned long n); void ev_free(void *p);
+void *ev_alloc(__SIZE_TYPE__ n); void ev_free(void *p);
 struct ev_loop *ev_loop_create(void); void ev_loop_destroy(struct ev_loop *loop);
 int ev_add(struct ev_loop *loop, void *data); int ev_del(struct ev_loop *loop, void *data);
 int e_start(struct coll *coll, struct cfg *config); void ev_touch(struct coll *coll);
@@ -28,8 +28,8 @@ struct list { struct list *prev, *next; };
 void e_list_add(struct list *entry, struct list *head);
 struct e_coll { int id; int (*cb_collect)(void); long seconds; struct list _head; };
 struct ins { struct list collectors; };
-int e_set(struct ins *ins, int (*cb)(void), long seconds, struct cfg *config);
-int e_set_bad(struct ins *ins, int (*cb)(void), long seconds, struct cfg *config);
+int e_set(struct ins *ins, int (*cb)(void), __INT64_TYPE__ seconds, struct cfg *config);
+int e_set_bad(struct ins *ins, int (*cb)(void), __INT64_TYPE__ seconds, struct cfg *config);
 ";
 
 fn environment() -> ResourceContracts {
@@ -269,8 +269,8 @@ fn a_declared_path_holder_refuses_at_its_caller() {
 
 const SETTERS: &str = "\
 static struct e_coll *e_create(struct ins *ins, int (*cb)(void), struct cfg *config) { struct e_coll *coll; coll = ev_alloc(sizeof(struct e_coll)); if (!coll) { return (void *)0; } coll->id = 1; coll->cb_collect = cb; e_list_add(&coll->_head, &ins->collectors); return coll; }
-int e_set(struct ins *ins, int (*cb)(void), long seconds, struct cfg *config) { struct e_coll *coll; coll = e_create(ins, cb, config); if (!coll) { return -1; } coll->seconds = seconds; return coll->id; }
-int e_set_bad(struct ins *ins, int (*cb)(void), long seconds, struct cfg *config) { struct e_coll *coll; coll = e_create(ins, cb, config); if (!coll) { return -1; } coll->seconds = seconds; return 0; }
+int e_set(struct ins *ins, int (*cb)(void), __INT64_TYPE__ seconds, struct cfg *config) { struct e_coll *coll; coll = e_create(ins, cb, config); if (!coll) { return -1; } coll->seconds = seconds; return coll->id; }
+int e_set_bad(struct ins *ins, int (*cb)(void), __INT64_TYPE__ seconds, struct cfg *config) { struct e_coll *coll; coll = e_create(ins, cb, config); if (!coll) { return -1; } coll->seconds = seconds; return 0; }
 static int collect(void) { return 0; }
 ";
 

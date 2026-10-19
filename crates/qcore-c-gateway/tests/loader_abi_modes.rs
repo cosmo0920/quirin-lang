@@ -106,8 +106,24 @@ contract {
 };
 ";
 
+#[cfg(all(windows, target_pointer_width = "64"))]
 const AMBIENT_C: &str = "\
-void *m_alloc(unsigned long size);
+typedef unsigned long long size_t;
+void *m_alloc(size_t size);
+void m_free(void *p);
+";
+
+#[cfg(all(not(windows), target_pointer_width = "64"))]
+const AMBIENT_C: &str = "\
+typedef unsigned long size_t;
+void *m_alloc(size_t size);
+void m_free(void *p);
+";
+
+#[cfg(target_pointer_width = "32")]
+const AMBIENT_C: &str = "\
+typedef unsigned int size_t;
+void *m_alloc(size_t size);
 void m_free(void *p);
 ";
 

@@ -18,7 +18,7 @@ struct op { int type; int (*op_cb)(void *rk, void *rkq, struct op *rko); void *p
 struct item { int x; };
 struct box { int type; struct item *payload; };
 struct box *c_box_new(int n); struct item *c_item_new(int n);
-void *c_alloc(unsigned long n); void c_free(void *p);
+void *c_alloc(__SIZE_TYPE__ n); void c_free(void *p);
 int c_serve(void *q, int (*cb)(void *, void *, void *), void *opaque);
 void c_op_destroy(struct op *rko);
 void c_op_free(struct box *rko);

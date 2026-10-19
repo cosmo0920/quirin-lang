@@ -24,6 +24,13 @@ use qcore_c_gateway::legacy_c::{
     analyze_legacy_c_translation_unit, analyze_unrestricted_c11, declared_abi_census,
 };
 use qcore_contract::contract_loader::load_resource_contract_sources;
+
+#[cfg(all(windows, target_pointer_width = "64"))]
+const HOST_SIZE_C: &str = "unsigned __int64";
+#[cfg(all(not(windows), target_pointer_width = "64"))]
+const HOST_SIZE_C: &str = "unsigned long";
+#[cfg(target_pointer_width = "32")]
+const HOST_SIZE_C: &str = "unsigned int";
 use qcore_schemas::reason::{ReasonCategory, ReasonSubject};
 
 fn load(source: &str) -> ResourceContracts {
@@ -119,7 +126,7 @@ fn without_a_c_declaration_the_unfaithful_result_type_still_applies() {
 /// with the named key and the unit is `Unknown`.
 #[test]
 fn a_result_type_the_c_declaration_contradicts_withdraws_the_contract() {
-    let source = format!("void *k_alloc(unsigned long size);\n{DISCARDING_BODY}");
+    let source = format!("void *k_alloc({HOST_SIZE_C} size);\n{DISCARDING_BODY}");
     let contracts = load(UNIT_RESULT);
     let summary = analyse(&source, &contracts);
     assert_eq!(function(&summary, "w").status, AnalysisStatus::Unknown);
@@ -229,24 +236,62 @@ const ROWS: &[Row] = &[
         outcome: None,
     },
     // -- integer widths -----------------------------------------------------
+    #[cfg(all(windows, target_pointer_width = "64"))]
     Row {
-        label: "`unsigned long` admits `usize` on the LP64 targets audited here",
+        label: "the target's size type admits `usize`",
+        declared: "p: ptr<mut, u8>, n: usize",
+        c: "void k_use(void *p, unsigned long long n);",
+        outcome: None,
+    },
+    #[cfg(all(not(windows), target_pointer_width = "64"))]
+    Row {
+        label: "the target's size type admits `usize`",
         declared: "p: ptr<mut, u8>, n: usize",
         c: "void k_use(void *p, unsigned long n);",
         outcome: None,
     },
+    #[cfg(target_pointer_width = "32")]
     Row {
-        label: "`unsigned long` admits `u64` too: one reading, two spellings",
-        declared: "p: ptr<mut, u8>, n: u64",
-        c: "void k_use(void *p, unsigned long n);",
+        label: "the target's size type admits `usize`",
+        declared: "p: ptr<mut, u8>, n: usize",
+        c: "void k_use(void *p, unsigned int n);",
         outcome: None,
     },
+    Row {
+        label: "the target's 64-bit unsigned type admits `u64`",
+        declared: "p: ptr<mut, u8>, n: u64",
+        c: "void k_use(void *p, unsigned long long n);",
+        outcome: None,
+    },
+    #[cfg(all(windows, target_pointer_width = "64"))]
+    Row {
+        label: "specifier order is a multiset, so `long unsigned int` is the same type",
+        declared: "p: ptr<mut, u8>, n: usize",
+        c: "void k_use(void *p, long long unsigned int n);",
+        outcome: None,
+    },
+    #[cfg(all(not(windows), target_pointer_width = "64"))]
     Row {
         label: "specifier order is a multiset, so `long unsigned int` is the same type",
         declared: "p: ptr<mut, u8>, n: usize",
         c: "void k_use(void *p, long unsigned int n);",
         outcome: None,
     },
+    #[cfg(target_pointer_width = "32")]
+    Row {
+        label: "specifier order is a multiset, so `unsigned int` is the same type",
+        declared: "p: ptr<mut, u8>, n: usize",
+        c: "void k_use(void *p, unsigned int n);",
+        outcome: None,
+    },
+    #[cfg(all(windows, target_pointer_width = "64"))]
+    Row {
+        label: "signedness is not admitted across",
+        declared: "p: ptr<mut, u8>, n: i64",
+        c: "void k_use(void *p, unsigned long n);",
+        outcome: Some(AbiRefusal::UnreadableDeclaration),
+    },
+    #[cfg(not(all(windows, target_pointer_width = "64")))]
     Row {
         label: "signedness is not admitted across",
         declared: "p: ptr<mut, u8>, n: i64",
@@ -1018,10 +1063,13 @@ contract {
     );
     for (c, expected) in [
         (
-            "typedef __builtin_va_list __gnuc_va_list;\n__gnuc_va_list k_swap(unsigned long x);",
+            "typedef __builtin_va_list __gnuc_va_list;\n__gnuc_va_list k_swap(unsigned long long x);",
             AbiOutcome::Withdrawn(AbiRefusal::UnreadableDeclaration),
         ),
-        ("unsigned long k_swap(unsigned long x);", AbiOutcome::Agreed),
+        (
+            "unsigned long long k_swap(unsigned long long x);",
+            AbiOutcome::Agreed,
+        ),
     ] {
         let source = format!("{c}\nvoid w(void) {{ }}");
         assert_eq!(
@@ -1378,7 +1426,7 @@ contract {
 };
 ",
     );
-    let agreeing = format!("void k_alloc(unsigned long size);\n{DISCARDING_BODY}");
+    let agreeing = format!("void k_alloc(__SIZE_TYPE__ size);\n{DISCARDING_BODY}");
     assert!(
         matches!(
             analyze_unrestricted_c11(

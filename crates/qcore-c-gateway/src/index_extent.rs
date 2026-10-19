@@ -218,7 +218,8 @@ fn target_facts(unit: &C11TranslationUnit<'_>) -> Result<BoundsTarget, String> {
     use std::process::Stdio;
     let mut command = crate::clang::command()?;
     unit.append_frontend_flags(&mut command);
-    command.args(["-x", "c", unit.dialect.clang_argument(), "-dM", "-E", "-"]);
+    let dialect = unit.dialect.clang_invocation_argument()?;
+    command.args(["-x", "c", dialect, "-dM", "-E", "-"]);
     let key = format!("{command:?}");
     if let Some(found) = TARGETS
         .lock()

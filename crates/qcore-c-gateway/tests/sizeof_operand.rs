@@ -39,8 +39,8 @@ contract { requires resource_contract_v1; ensures normal resource_borrowed(p);\n
            ensures normal resource_return_none(); };";
 
 const DECLARATIONS: &str = "\
-void *x_alloc(unsigned long n); void *x_calloc(unsigned long c, unsigned long n); \
-void x_free(void *p); void x_zero(void *p, unsigned long n); \
+void *x_alloc(__SIZE_TYPE__ n); void *x_calloc(__SIZE_TYPE__ c, __SIZE_TYPE__ n); \
+void x_free(void *p); void x_zero(void *p, __SIZE_TYPE__ n); \
 struct item { int a; long b; }; typedef struct item item_t; typedef unsigned int u32;";
 
 const ACCESS: &str = "unsupported:indirect memory access is outside the resource projection";

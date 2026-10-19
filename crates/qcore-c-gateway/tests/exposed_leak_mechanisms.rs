@@ -36,7 +36,7 @@ contract { requires resource_contract_v1; ensures normal resource_released(r, no
            ensures normal resource_return_none(); };";
 
 const DECLARATIONS: &str = "\
-void *x_alloc(unsigned long n); void x_free(void *p); \
+void *x_alloc(__SIZE_TYPE__ n); void x_free(void *p); \
 struct x_rec { int count; char *name; struct x_rec *next; }; \
 struct x_rec *x_record(void); void x_record_free(struct x_rec *r); \
 void y_release(void *p);";

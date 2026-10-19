@@ -642,7 +642,7 @@ fn n13_vector_values_are_refused() {
 /// custody-`Safe` (no ordering claim).
 #[test]
 fn w02_w03_w04_atomic_rmw_cas_and_fences_are_uncontracted_calls() {
-    if !clang_available() {
+    if !clang_atomic_ast_available() {
         return;
     }
     for source in [

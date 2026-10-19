@@ -429,8 +429,8 @@ fn reallocated_result_identity_and_its_null_alternative_are_rechecked() {
         return;
     }
     let modules = &[Q_BASE, Q_REALLOC];
-    let source = "void *q_alloc(void); void q_free(void *); void *q_realloc(void *, unsigned long); \
-                  void *grow(void *p, unsigned long n) { void *q = q_realloc(p, n); return q; } \
+    let source = "void *q_alloc(void); void q_free(void *); void *q_realloc(void *, __SIZE_TYPE__); \
+                  void *grow(void *p, __SIZE_TYPE__ n) { void *q = q_realloc(p, n); return q; } \
                   void subject(void) { void *p = q_alloc(); void *q = grow(p, 8); if (q) { q_free(q); } else { q_free(p); } }";
     let certificate = certified(source, modules);
     assert_eq!(

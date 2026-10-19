@@ -239,7 +239,7 @@ fn w08_field_updates_carry_no_lock_invariant() {
 /// ordering claim).
 #[test]
 fn w01_atomic_accesses_do_not_reach_the_atomic_model() {
-    if !clang_available() {
+    if !clang_atomic_ast_available() {
         return;
     }
     assert_eq!(
@@ -264,7 +264,7 @@ fn w01_atomic_accesses_do_not_reach_the_atomic_model() {
 /// parameter-based shape (`crates/qcore-verification/tests/atomic_publication_source.rs`).
 #[test]
 fn w09_general_publication_is_not_derived_from_source() {
-    if !clang_available() {
+    if !clang_atomic_ast_available() {
         return;
     }
     let run = gs(

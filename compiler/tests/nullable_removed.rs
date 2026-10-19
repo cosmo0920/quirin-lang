@@ -23,7 +23,7 @@ fn clang_available() -> bool {
 
 const DECLARATIONS: &str = "void *alloc(void); void *maybe_alloc(void); void release(void *); \
     void store(void *, void *); void detach(void *, void *); void strict_detach(void *, void *); \
-    void opaque(void *); void transfer(void *); void *resize(void *, unsigned long); void *resize_nonnull(void *, unsigned long); void *resize_nullable_old(void *, unsigned long);";
+    void opaque(void *); void transfer(void *); void *resize(void *, __SIZE_TYPE__); void *resize_nonnull(void *, __SIZE_TYPE__); void *resize_nullable_old(void *, __SIZE_TYPE__);";
 const API: &str = r#"
 module contract;
 extern fn alloc() -> ptr<mut, u8> contract {

@@ -22,7 +22,7 @@ int rp_take(void *p);
 
 const RETAINED: &str = "\
 struct st { const char *base; int n; };
-void *r_alloc(unsigned long n); void r_free(void *p);
+void *r_alloc(__SIZE_TYPE__ n); void r_free(void *p);
 int r_keep(struct st *state, const char *src); void r_reset(struct st *state);
 void r_global(const char *value);
 ";

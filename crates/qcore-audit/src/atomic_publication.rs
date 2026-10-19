@@ -229,12 +229,31 @@ int consume(void) { int seen = atomic_load_explicit(&done, memory_order_acquire)
         }
     }
 
+    fn clang_atomic_ast_available() -> bool {
+        if !clang_available() {
+            return false;
+        }
+        match qcore_c_gateway::clang_version() {
+            Ok(version) if version.supports_cg19_atomic_ast() => true,
+            Ok(version) => {
+                eprintln!(
+                    "skipping atomic-publication AST observation on Clang {}.{}.{}: CG19 requires Clang 18 or newer",
+                    version.major, version.minor, version.patch
+                );
+                false
+            }
+            Err(reason) => {
+                panic!("Clang was resolved but its release could not be detected: {reason}")
+            }
+        }
+    }
+
     /// The production route: `Safe` with the derived stages and (card CG29,
     /// rule 11z) the all-executions assumption, and a refused control
     /// `Unknown` with the single-graph assumption.
     #[test]
     fn cg19_atomic_publication_route_reports_safe_and_unknown() {
-        if !clang_available() {
+        if !clang_atomic_ast_available() {
             return;
         }
         let root =

@@ -50,7 +50,7 @@ contract { requires resource_contract_v1; ensures normal resource_released(fd, v
            ensures normal resource_kind(fd, descriptor); ensures normal resource_return_none(); };";
 
 const DECLARATIONS: &str = "\
-char *x_dup(const char *s); const char *x_name(const char *s); void x_free(void *p); unsigned long x_len(const char *s); \
+char *x_dup(const char *s); const char *x_name(const char *s); void x_free(void *p); __SIZE_TYPE__ x_len(const char *s); \
 struct x_rec { int count; char *name; struct x_rec *next; }; \
 struct x_holder { struct x_rec *rec; char *name; int fd; }; \
 struct x_rec *x_record(void); void x_record_free(struct x_rec *r); \

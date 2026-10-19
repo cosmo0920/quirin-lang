@@ -222,11 +222,12 @@ pub fn typed_ast(
     if let Some(flag) = target.flag() {
         command.arg(flag);
     }
+    let dialect = unit.dialect.clang_invocation_argument()?;
     let mut child = command
         .args([
             "-x",
             "c",
-            unit.dialect.clang_argument(),
+            dialect,
             "-fsyntax-only",
             "-Xclang",
             "-ast-dump=json",

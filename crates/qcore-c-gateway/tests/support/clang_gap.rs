@@ -111,6 +111,25 @@ pub fn clang_available() -> bool {
     }
 }
 
+/// Whether this Clang emits the atomic AST schema consumed by CG19/CG28.
+/// Clang 17 reports these builtins as `AtomicExpr` or ordinary calls instead.
+pub fn clang_atomic_ast_available() -> bool {
+    if !clang_available() {
+        return false;
+    }
+    match qcore_c_gateway::clang_version() {
+        Ok(version) if version.supports_cg19_atomic_ast() => true,
+        Ok(version) => {
+            eprintln!(
+                "skipping atomic-AST observation on Clang {}.{}.{}: CG19 requires Clang 18 or newer",
+                version.major, version.minor, version.patch
+            );
+            false
+        }
+        Err(reason) => panic!("Clang was resolved but its release could not be detected: {reason}"),
+    }
+}
+
 /// One G outcome for function `subject`.
 #[derive(Debug)]
 pub struct G {

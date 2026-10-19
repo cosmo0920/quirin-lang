@@ -19,6 +19,27 @@ int consume(void) {
 }
 "#;
 
+fn clang_atomic_ast_available() -> bool {
+    match qcore_c_gateway::clang_version() {
+        Ok(version) if version.supports_cg19_atomic_ast() => true,
+        Ok(version) => {
+            eprintln!(
+                "skipping atomic-publication AST observation on Clang {}.{}.{}: CG19 requires Clang 18 or newer",
+                version.major, version.minor, version.patch
+            );
+            false
+        }
+        Err(reason) => {
+            assert!(
+                std::env::var_os("QCORE_CLANG").is_none(),
+                "invalid explicit Clang: {reason}"
+            );
+            eprintln!("skipping Clang-dependent atomic publication test: {reason}");
+            false
+        }
+    }
+}
+
 fn profile() -> AtomicPublicationSourceProfile<'static> {
     AtomicPublicationSourceProfile {
         publisher: "publish",
@@ -50,6 +71,9 @@ fn check(
 
 #[test]
 fn extracted_release_acquire_source_is_checked_by_the_core_model() {
+    if !clang_atomic_ast_available() {
+        return;
+    }
     let certificate = check(SOURCE).unwrap();
     assert_eq!(
         certificate.semantic_profile,
@@ -66,6 +90,9 @@ fn extracted_release_acquire_source_is_checked_by_the_core_model() {
 
 #[test]
 fn extracted_controls_do_not_acquire_a_model_certificate() {
+    if !clang_atomic_ast_available() {
+        return;
+    }
     let relaxed_store = SOURCE.replace("memory_order_release", "memory_order_relaxed");
     assert_eq!(
         check(&relaxed_store),
@@ -91,6 +118,9 @@ fn extracted_controls_do_not_acquire_a_model_certificate() {
 
 #[test]
 fn misleading_enum_names_cannot_publish_an_ordering_certificate() {
+    if !clang_atomic_ast_available() {
+        return;
+    }
     let source = SOURCE.replace("#include <stdatomic.h>",
         "typedef enum memory_order { memory_order_relaxed = 0, memory_order_acquire = 0, memory_order_release = 0, memory_order_seq_cst = 0 } memory_order;")
         .replace("atomic_store_explicit", "__c11_atomic_store")
@@ -110,6 +140,9 @@ fn misleading_enum_names_cannot_publish_an_ordering_certificate() {
 /// single-graph one (`unknown_publication_carries_single_graph`).
 #[test]
 fn cg19_publication_verdict_gates_on_the_composed_check() {
+    if !clang_atomic_ast_available() {
+        return;
+    }
     use qcore_verification::atomic_publication_source::{
         AtomicPublicationVerdict, atomic_publication_verdict,
     };
@@ -157,6 +190,9 @@ fn cg19_publication_verdict_gates_on_the_composed_check() {
 /// races at the program level.
 #[test]
 fn cg29_extracted_shape_is_race_free_over_every_execution() {
+    if !clang_atomic_ast_available() {
+        return;
+    }
     use qcore_core::execution_coverage::{Instruction, ProgramVerdict, check_program_executions};
     use qcore_verification::atomic_publication_source::{
         PUBLICATION_COVERAGE_BOUNDS, publication_fragment,

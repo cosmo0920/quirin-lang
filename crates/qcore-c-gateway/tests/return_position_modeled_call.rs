@@ -57,7 +57,7 @@ const RESERVED: &str = "__qcore_returned_value";
 
 const DECLARATIONS: &str = "\
 void *q_alloc(void); void q_free(void *); void q_transfer(void *); \
-void *q_realloc(void *p, unsigned long size); \
+void *q_realloc(void *p, __SIZE_TYPE__ size); \
 int r_release_code(void *p); int r_consume_code(void *p); int r_borrow_code(void *p); \
 void *r_wrap(void *p); \
 int z_unknown(int n);";

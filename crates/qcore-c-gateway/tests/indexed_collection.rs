@@ -55,9 +55,9 @@ contract { requires resource_contract_v1; ensures normal resource_consumed(p, nu
            ensures normal resource_return_none(); };";
 
 const DECLARATIONS: &str = "\
-void *x_alloc(unsigned long n); char *x_fresh(unsigned long n); char *x_dup(const char *s); \
+void *x_alloc(__SIZE_TYPE__ n); char *x_fresh(__SIZE_TYPE__ n); char *x_dup(const char *s); \
 void x_free(void *p); void x_close(void *p); void x_note(void *p); void x_take(void *p); char *x_copy(void *p); \
-void *x_sopen(unsigned long n); void x_sclose(void *p);";
+void *x_sopen(__SIZE_TYPE__ n); void x_sclose(void *p);";
 
 fn contracts() -> ResourceContracts {
     load_resource_contract_sources(&BTreeMap::from([(

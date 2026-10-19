@@ -38,7 +38,7 @@ fn assert_refused(source: &str, refusal: &str) {
 /// compare-exchange.
 #[test]
 fn g_routes_the_cmetrics_compare_exchange() {
-    if !clang_available() {
+    if !clang_atomic_ast_available() {
         return;
     }
     assert_safe(
@@ -51,7 +51,7 @@ fn g_routes_the_cmetrics_compare_exchange() {
 /// through a pointer (BEFORE: each refused by name).
 #[test]
 fn g_routes_read_modify_writes() {
-    if !clang_available() {
+    if !clang_atomic_ast_available() {
         return;
     }
     for source in [
@@ -74,7 +74,7 @@ fn g_routes_read_modify_writes() {
 /// formal as `expected`, and the weak form's retry loop.
 #[test]
 fn g_routes_compare_exchange_and_the_weak_loop() {
-    if !clang_available() {
+    if !clang_atomic_ast_available() {
         return;
     }
     for source in [
@@ -120,7 +120,7 @@ fn g_routes_fences() {
 /// and an `_Atomic` read-modify-write of a named object.
 #[test]
 fn g_refuses_consume_invalid_orders_and_legacy_forms_by_name() {
-    if !clang_available() {
+    if !clang_atomic_ast_available() {
         return;
     }
     assert_refused(
@@ -195,7 +195,7 @@ fn g_keeps_the_dereference_obligations() {
 /// unrepresented); no typed-source consumer decides one.
 #[test]
 fn t_names_routed_events() {
-    if !clang_available() {
+    if !clang_atomic_ast_available() {
         return;
     }
     assert_eq!(

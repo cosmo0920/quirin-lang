@@ -17,6 +17,10 @@ mod clang_gap;
 
 use clang_gap::{DECLARATIONS, clang_available, contracts, t_refusal};
 
+fn clang_supports_c2y() -> bool {
+    qcore_c_gateway::clang_version().is_ok_and(|version| version.supports_c2y())
+}
+
 fn run(
     source: &str,
     dialect: CCompilerDialect,
@@ -73,13 +77,16 @@ fn a_unit_without_differences_reads_alike_under_every_dialect() {
         return;
     }
     let mut identities = Vec::new();
-    for dialect in [
+    let mut dialects = vec![
         CCompilerDialect::C11,
         CCompilerDialect::Gnu17,
         CCompilerDialect::C17,
         CCompilerDialect::C23,
-        CCompilerDialect::C2y,
-    ] {
+    ];
+    if clang_supports_c2y() {
+        dialects.push(CCompilerDialect::C2y);
+    }
+    for dialect in dialects {
         let outcome = run(PAIR, dialect, Vec::new());
         assert_eq!(
             row(&outcome),
@@ -117,7 +124,11 @@ fn c23_nullptr_is_refused_by_name_and_never_misread() {
         .iter()
         .find(|d| d.key == "c23-nullptr")
         .unwrap();
-    for dialect in [CCompilerDialect::C23, CCompilerDialect::C2y] {
+    let mut dialects = vec![CCompilerDialect::C23];
+    if clang_supports_c2y() {
+        dialects.push(CCompilerDialect::C2y);
+    }
+    for dialect in dialects {
         let (status, unsupported) = row(&run(source, dialect, Vec::new())).expect("projected");
         assert_eq!(status, AnalysisStatus::Unknown, "{dialect:?}");
         assert!(
@@ -138,6 +149,7 @@ fn c23_keywords_and_attributes_are_refused_by_name() {
     if !clang_available() {
         return;
     }
+    let version = qcore_c_gateway::clang_version().expect("Clang version is detected");
     for (source, key) in [
         ("int subject(void) { return true; }", "c23-true"),
         ("int subject(void) { bool b = 0; return b; }", "c23-bool"),
@@ -153,7 +165,10 @@ fn c23_keywords_and_attributes_are_refused_by_name() {
             "int subject(void) { typeof(1) k = 1; return k; }",
             "c23-typeof",
         ),
-    ] {
+    ]
+    .into_iter()
+    .filter(|(_, key)| *key != "c23-constexpr" || version.supports_c23_constexpr())
+    {
         let difference = C23_DIFFERENCES.iter().find(|d| d.key == key).unwrap();
         let (status, unsupported) =
             row(&run(source, CCompilerDialect::C23, Vec::new())).expect("projected");
@@ -168,6 +183,10 @@ fn c23_keywords_and_attributes_are_refused_by_name() {
 #[test]
 fn c2y_countof_is_refused_by_name() {
     if !clang_available() {
+        return;
+    }
+    if !clang_supports_c2y() {
+        eprintln!("selected Clang predates the C2y frontend mode; C23 coverage remains active");
         return;
     }
     let difference = C2Y_DIFFERENCES

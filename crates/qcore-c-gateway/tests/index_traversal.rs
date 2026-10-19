@@ -50,8 +50,8 @@ contract { requires resource_contract_v1; ensures normal resource_borrowed(p);\n
            ensures normal resource_return_none(); };";
 
 const DECLARATIONS: &str = "\
-char *x_alloc(unsigned long n); char *x_fresh(unsigned long n); void x_free(void *p); \
-unsigned long x_len(const char *s); char *x_chr(const char *s, int c); \
+char *x_alloc(__SIZE_TYPE__ n); char *x_fresh(__SIZE_TYPE__ n); void x_free(void *p); \
+__SIZE_TYPE__ x_len(const char *s); char *x_chr(const char *s, int c); \
 struct x_rec { int count; unsigned long total; struct x_rec *next; }; \
 struct x_rec *x_record(void); void x_record_free(struct x_rec *r); \
 void x_note(void *p); \

@@ -25,11 +25,11 @@ const CONTRACTS: &str = include_str!("fixtures/contracts/descriptor_generic.qv")
 const DECLARATIONS: &str = "\
 int k_open(const char *path); \
 int k_close(int fd); \
-long k_read(int fd, void *buffer, unsigned long size); \
+__INTPTR_TYPE__ k_read(int fd, void *buffer, __SIZE_TYPE__ size); \
 void *k_fopen(const char *path); \
 int k_fclose(void *stream); \
 int k_fflush(void *stream); \
-void *k_alloc(unsigned long size); \
+void *k_alloc(__SIZE_TYPE__ size); \
 void k_free(void *p); \
 struct k_conn { int fd; int flags; }; \
 struct k_conn *k_conn_new(void); \

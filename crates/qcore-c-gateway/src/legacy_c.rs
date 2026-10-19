@@ -1856,6 +1856,23 @@ impl CCompilerDialect {
             Self::C2y => "-std=c2y",
         }
     }
+
+    /// The driver spelling accepted by the selected Clang release.
+    ///
+    /// The semantic identity remains [`Self::clang_argument`]: `c2x` is only
+    /// Clang 17's spelling for the finalized C23 mode. C2y has no equivalent
+    /// older spelling and therefore fails closed on a compiler that lacks it.
+    pub(crate) fn clang_invocation_argument(self) -> Result<&'static str, String> {
+        let version = crate::clang::detected_version()?;
+        match self {
+            Self::C23 => Ok(version.c23_argument()),
+            Self::C2y if !version.supports_c2y() => Err(format!(
+                "Clang {}.{}.{} does not support the C2y frontend mode required by this unit",
+                version.major, version.minor, version.patch
+            )),
+            _ => Ok(self.clang_argument()),
+        }
+    }
 }
 
 /// Selects whether header-expanded definitions participate in the proof.

@@ -33,11 +33,11 @@ use qcore_contract::contract_loader::load_resource_contract_sources;
 const DECLARATIONS: &str = "\
 int k_open(const char *path); \
 int k_close(int fd); \
-void *k_alloc(unsigned long size); \
+void *k_alloc(__SIZE_TYPE__ size); \
 void k_free(void *p); \
-void *d_alloc(unsigned long n); \
+void *d_alloc(__SIZE_TYPE__ n); \
 void d_free(void *p); \
-unsigned long d_len(const char *s); \
+__SIZE_TYPE__ d_len(const char *s); \
 char *d_chr(const char *s, int c); \
 int z_unknown(int n); \
 struct k_box { void *item; long n; }; \

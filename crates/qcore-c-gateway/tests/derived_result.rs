@@ -22,6 +22,9 @@ use qcore_c_gateway::legacy_c::{
 };
 use qcore_contract::contract_loader::load_resource_contract_sources;
 
+#[path = "support/host_abi.rs"]
+mod host_abi;
+
 const CONTRACTS: &str = include_str!("fixtures/contracts/derived_result_generic.qv");
 
 /// The C declarations the fixture contracts describe. `d_copy` spells
@@ -29,12 +32,12 @@ const CONTRACTS: &str = include_str!("fixtures/contracts/derived_result_generic.
 /// also exercises the pointer-qualifier reader end to end: without it the
 /// declaration would be withdrawn at every call site.
 const DECLARATIONS: &str = "\
-char *d_alloc(unsigned long n); \
+char *d_alloc(__SIZE_TYPE__ n); \
 void d_free(void *p); \
 void d_consume(void *p); \
-unsigned long d_len(const char *s); \
+__SIZE_TYPE__ d_len(const char *s); \
 char *d_chr(const char *s, int c); \
-void *d_copy(void *restrict dst, const void *restrict src, unsigned long n); \
+void *d_copy(void *restrict dst, const void *restrict src, __SIZE_TYPE__ n); \
 struct d_item { int weight; }; \
 struct d_box { int flag; struct d_item *item; }; \
 struct d_box *d_box_new(void); \
@@ -299,7 +302,14 @@ fn const_dropped_is_exactly_const_in_and_mutable_out() {
 /// so the end-to-end tests below are not measuring a withdrawn contract.
 #[test]
 fn the_restrict_prototype_agrees_with_its_declaration() {
-    let rows = declared_abi_census(&format!("{DECLARATIONS} void w(void) {{ }}"), &contracts());
+    let declarations = DECLARATIONS.replace("__SIZE_TYPE__", "size_t");
+    let rows = declared_abi_census(
+        &format!(
+            "{}{declarations} void w(void) {{ }}",
+            host_abi::size_t_declaration!()
+        ),
+        &contracts(),
+    );
     assert!(!rows.is_empty());
     for row in rows {
         assert_eq!(row.outcome, AbiOutcome::Agreed, "{}", row.function);

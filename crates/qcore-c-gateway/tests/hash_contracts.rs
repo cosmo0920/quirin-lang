@@ -135,7 +135,7 @@ struct p_table *p_open(int n); \
 void p_close(struct p_table *t); \
 struct p_value *p_new(int n); \
 void p_release(struct p_value *v); \
-int p_publish(struct p_table *t, void *v, long size); \
+int p_publish(struct p_table *t, void *v, __INTPTR_TYPE__ size); \
 int p_forget(struct p_table *t, void *v);";
 
 fn analyze_with(contracts: &str, body: &str, entry: &str) -> UnrestrictedLegacyResult {
@@ -799,7 +799,7 @@ fn the_callees_own_definition_is_never_rewritten() {
         return;
     }
     let source = format!(
-        "{DECLARATIONS} int p_publish(struct p_table *t, void *v, long size) \
+        "{DECLARATIONS} int p_publish(struct p_table *t, void *v, __INTPTR_TYPE__ size) \
          {{ (void) t; (void) v; return (int) size; }}"
     );
     let result = analyze_unrestricted_c11(

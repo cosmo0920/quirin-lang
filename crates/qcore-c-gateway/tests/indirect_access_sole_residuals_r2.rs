@@ -25,8 +25,8 @@ const DECLARATIONS: &str = "\
 void *q_alloc(void); void q_free(void *p);
 int is_cmp(const char *a, const char *b); char *is_dup(const char *p);
 int is_count(const char *p); int is_unknown(const char *p);
-long rr_load(long *p); int rr_release_count(void *p);
-struct S { int a; char *name; struct S *next; long *counts; long arr[4]; char *names[4]; };
+__INT64_TYPE__ rr_load(__INT64_TYPE__ *p); int rr_release_count(void *p);
+struct S { int a; char *name; struct S *next; __INT64_TYPE__ *counts; __INT64_TYPE__ arr[4]; char *names[4]; };
 ";
 
 const INDIRECT: &str = "indirect memory access is outside the resource projection";
@@ -161,7 +161,9 @@ fn rule_14b_reads_an_interior_pointer_of_a_never_bound_root() {
     }
     assert_safe("void subject(struct S *a) { struct S *n = &a->next[a->a]; n = 0; }");
     assert_safe("void subject(struct S *a) { char *p = a->name + a->a; p = 0; }");
-    assert_safe("void subject(struct S *a) { long *c; c = &a->counts[2]; c = 0; }");
+    assert_safe(
+        "void subject(struct S *a) { __INT64_TYPE__ *c; c = &a->counts[2]; c = 0; }",
+    );
     // The alias is target-free and possibly null, exactly as a pointer read
     // binds it: a dereference through it is decided by its own rule, never
     // by the gate. Card NULL-SAFETY-PROPERTY (rule 14n, decision 1): that
@@ -194,8 +196,8 @@ fn rule_14c_reads_a_scalar_element_address_at_a_borrowed_actual() {
     if !clang_available() {
         return;
     }
-    assert_safe("long subject(struct S *a, int i) { long v = rr_load(&a->counts[i]); return v; }");
-    assert_safe("long subject(struct S *a, int i) { long v = rr_load(&a->arr[i]); return v; }");
+    assert_safe("__INT64_TYPE__ subject(struct S *a, int i) { __INT64_TYPE__ v = rr_load(&a->counts[i]); return v; }");
+    assert_safe("__INT64_TYPE__ subject(struct S *a, int i) { __INT64_TYPE__ v = rr_load(&a->arr[i]); return v; }");
 }
 
 #[test]

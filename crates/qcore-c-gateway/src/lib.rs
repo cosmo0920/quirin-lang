@@ -258,7 +258,7 @@ mod variadic_tail_actuals;
 
 use qcore_contract::contract_loader;
 
-pub use clang::ClangIdentity;
+pub use clang::{ClangIdentity, ClangVersion, detected_version as clang_version};
 /// Construct a validated Clang command using the configured discovery policy.
 /// An invalid or empty `QCORE_CLANG` override returns an error without fallback.
 /// Callers select arguments and remain responsible for subprocess execution.

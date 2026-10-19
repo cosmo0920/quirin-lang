@@ -61,10 +61,11 @@ fn declarations_command(
 ) -> Result<std::process::Command, String> {
     let mut command = crate::clang::command()?;
     unit.append_frontend_flags(&mut command);
+    let dialect = unit.dialect.clang_invocation_argument()?;
     command.args([
         "-x",
         "c",
-        unit.dialect.clang_argument(),
+        dialect,
         "-fsyntax-only",
         "-Xclang",
         "-ast-dump=json",
@@ -142,11 +143,12 @@ pub(crate) fn translation_unit_ast_with<T>(
 ) -> Result<T, String> {
     let mut command = crate::clang::command()?;
     unit.append_frontend_flags(&mut command);
+    let dialect = unit.dialect.clang_invocation_argument()?;
     let mut child = command
         .args([
             "-x",
             "c",
-            unit.dialect.clang_argument(),
+            dialect,
             "-fsyntax-only",
             "-Xclang",
             "-ast-dump=json",
@@ -185,11 +187,12 @@ pub(crate) fn record_layout_dump(
 ) -> Result<String, String> {
     let mut command = crate::clang::command()?;
     unit.append_frontend_flags(&mut command);
+    let dialect = unit.dialect.clang_invocation_argument()?;
     let mut child = command
         .args([
             "-x",
             "c",
-            unit.dialect.clang_argument(),
+            dialect,
             "-fsyntax-only",
             "-Xclang",
             "-fdump-record-layouts-complete",

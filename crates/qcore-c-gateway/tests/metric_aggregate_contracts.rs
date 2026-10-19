@@ -21,12 +21,12 @@ extern fn w_close(p: ptr<mut, u8>) -> unit contract {\n\
     ensures normal resource_return_none();\n\
 };\n";
 const HEADERS: &str = "void *w_open(void); void w_close(void *p); \
-unsigned long cmt_metric_hist_get_value(void *metric, int bucket_id); \
-unsigned long cmt_metric_hist_get_count_value(void *metric); \
+__UINT64_TYPE__ cmt_metric_hist_get_value(void *metric, int bucket_id); \
+__UINT64_TYPE__ cmt_metric_hist_get_count_value(void *metric); \
 double cmt_metric_hist_get_sum_value(void *metric); \
 double cmt_summary_quantile_get_value(void *metric, int quantile_id); \
 double cmt_summary_get_sum_value(void *metric); \
-unsigned long cmt_summary_get_count_value(void *metric);";
+__UINT64_TYPE__ cmt_summary_get_count_value(void *metric);";
 const NAMES: [&str; 6] = [
     "cmt_metric_hist_get_value",
     "cmt_metric_hist_get_count_value",
@@ -96,12 +96,12 @@ fn six_calls_admit_then_each_withdrawal_restores_named_refusal() {
         return;
     }
     let body = "void w(void) { void *p = w_open(); if (!p) return; \
-        unsigned long a = cmt_metric_hist_get_value(p, 0); \
-        unsigned long b = cmt_metric_hist_get_count_value(p); \
+        __UINT64_TYPE__ a = cmt_metric_hist_get_value(p, 0); \
+        __UINT64_TYPE__ b = cmt_metric_hist_get_count_value(p); \
         double c = cmt_metric_hist_get_sum_value(p); \
         double d = cmt_summary_quantile_get_value(p, 0); \
         double e = cmt_summary_get_sum_value(p); \
-        unsigned long f = cmt_summary_get_count_value(p); \
+        __UINT64_TYPE__ f = cmt_summary_get_count_value(p); \
         (void)a; (void)b; (void)c; (void)d; (void)e; (void)f; w_close(p); }";
     let accepted = analyze(body, METRIC);
     let UnrestrictedLegacyResult::Safe(certificate) = accepted else {

@@ -45,6 +45,69 @@ pub struct ClangIdentity {
     target: String,
 }
 
+/// Parsed release number of the Clang executable selected by [`command`].
+///
+/// This is deliberately separate from the compiler identity's complete banner:
+/// the banner remains provenance, while this value may only select documented
+/// frontend spellings and AST-schema compatibility.  Target ABI decisions never
+/// depend on the release number.
+#[derive(Clone, Copy, Debug, PartialEq, Eq, PartialOrd, Ord, serde::Serialize)]
+pub struct ClangVersion {
+    pub major: u32,
+    pub minor: u32,
+    pub patch: u32,
+}
+
+impl ClangVersion {
+    fn parse(banner: &str) -> Result<Self, String> {
+        let marker = "clang version ";
+        let start = banner
+            .find(marker)
+            .ok_or("Clang version banner has no `clang version` field")?
+            + marker.len();
+        let token = banner[start..]
+            .split_whitespace()
+            .next()
+            .ok_or("Clang version banner has no release number")?;
+        let mut parts = token.split('.');
+        let parse = |part: Option<&str>| {
+            part
+                .unwrap_or("0")
+                .chars()
+                .take_while(|ch| ch.is_ascii_digit())
+                .collect::<String>()
+                .parse::<u32>()
+                .map_err(|_| format!("unreadable Clang release number `{token}`"))
+        };
+        Ok(Self {
+            major: parse(parts.next())?,
+            minor: parse(parts.next())?,
+            patch: parse(parts.next())?,
+        })
+    }
+
+    /// Clang 17 and earlier spell the finalized C23 mode `c2x`.
+    pub fn c23_argument(self) -> &'static str {
+        if self.major >= 18 { "-std=c23" } else { "-std=c2x" }
+    }
+
+    /// The C2y driver spelling used by the gateway is available from Clang 19.
+    pub fn supports_c2y(self) -> bool {
+        self.major >= 19
+    }
+
+    /// Clang 17's `c2x` mode predates C23's `constexpr` implementation.
+    pub fn supports_c23_constexpr(self) -> bool {
+        self.major >= 19
+    }
+
+    /// CG19's checked atomic AST schema is the Clang 18-and-later schema.
+    /// Older Clang emits `AtomicExpr` for the affected builtins instead.
+    pub fn supports_cg19_atomic_ast(self) -> bool {
+        self.major >= 18
+    }
+}
+
 impl ClangIdentity {
     /// Construct a provenance record from values captured by an external audit
     /// coordinator. This records a claim; it does not attest the executable or
@@ -120,9 +183,38 @@ struct ResolutionKey {
 }
 
 type ResolutionCache = Mutex<Option<(ResolutionKey, PathBuf)>>;
+type VersionCache = Mutex<Option<(ResolutionKey, ClangVersion)>>;
 
 /// The last successful resolution in this process.
 static RESOLVED: ResolutionCache = Mutex::new(None);
+static VERSION: VersionCache = Mutex::new(None);
+
+/// Detect and parse the selected Clang release once per resolution environment.
+pub fn detected_version() -> Result<ClangVersion, String> {
+    let key = ResolutionKey {
+        explicit: std::env::var_os("QCORE_CLANG"),
+        search_path: std::env::var_os("PATH"),
+    };
+    if let Some((cached, version)) = VERSION
+        .lock()
+        .unwrap_or_else(PoisonError::into_inner)
+        .as_ref()
+        && *cached == key
+    {
+        return Ok(*version);
+    }
+    let output = command()?
+        .arg("--version")
+        .output()
+        .map_err(|error| error.to_string())?;
+    if !output.status.success() {
+        return Err("Clang could not report its release number".into());
+    }
+    let banner = String::from_utf8(output.stdout).map_err(|error| error.to_string())?;
+    let version = ClangVersion::parse(&banner)?;
+    *VERSION.lock().unwrap_or_else(PoisonError::into_inner) = Some((key, version));
+    Ok(version)
+}
 
 /// Resolve and probe the executable once per [`ResolutionKey`] per process.
 ///
@@ -533,5 +625,51 @@ mod tests {
             });
         assert_eq!(queries, 2);
         assert_eq!(candidates, visual_studio_candidates(&root));
+    }
+
+    #[test]
+    fn release_numbers_are_parsed_without_confusing_vendor_text() {
+        assert_eq!(
+            ClangVersion::parse(
+                "clang version 17.0.3\nTarget: aarch64-pc-windows-msvc\n"
+            )
+            .unwrap(),
+            ClangVersion {
+                major: 17,
+                minor: 0,
+                patch: 3
+            }
+        );
+        assert_eq!(
+            ClangVersion::parse("Apple clang version 21.1.0 (clang-2110.0.0.1)").unwrap(),
+            ClangVersion {
+                major: 21,
+                minor: 1,
+                patch: 0
+            }
+        );
+        assert!(ClangVersion::parse("clang development snapshot").is_err());
+    }
+
+    #[test]
+    fn version_effects_are_limited_to_frontend_spellings_and_atomic_schema() {
+        let old = ClangVersion {
+            major: 17,
+            minor: 0,
+            patch: 6,
+        };
+        let current = ClangVersion {
+            major: 21,
+            minor: 1,
+            patch: 0,
+        };
+        assert_eq!(old.c23_argument(), "-std=c2x");
+        assert_eq!(current.c23_argument(), "-std=c23");
+        assert!(!old.supports_c2y());
+        assert!(current.supports_c2y());
+        assert!(!old.supports_c23_constexpr());
+        assert!(current.supports_c23_constexpr());
+        assert!(!old.supports_cg19_atomic_ast());
+        assert!(current.supports_cg19_atomic_ast());
     }
 }
