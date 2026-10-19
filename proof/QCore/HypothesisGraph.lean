@@ -84,6 +84,45 @@ theorem composition_support_needs_every_atom (ctx : Context) (atoms : List Atom)
   split <;> simp_all
   split <;> simp_all
 
+structure Graph where
+  atoms : List Nat
+  premises : List (Nat × Conjunction)
+
+def graphValid (g : Graph) : Bool :=
+  decide (g.atoms.Pairwise (· < ·)) &&
+  decide ((g.premises.map (·.1)).Pairwise (· < ·)) &&
+  g.premises.all (fun p => !p.2.children.isEmpty &&
+    decide (p.2.children.Pairwise (· < ·)) &&
+    p.2.children.all (fun id => g.atoms.contains id))
+
+def selectedAtoms (ctx : Context) (children : List Nat) (evidence : List Atom) : List Atom :=
+  children.map (fun id => (evidence.find? (fun atom => atom.id == id)).getD
+    ⟨id, ctx, .open, .declared⟩)
+
+def composeGraph (ctx : Context) (g : Graph) (premise : Nat) (evidence : List Atom) : Disposition :=
+  if graphValid g then
+    match g.premises.find? (fun p => p.1 == premise) with
+    | none => .open
+    | some p => compose ctx (selectedAtoms ctx p.2.children evidence)
+  else .open
+
+theorem graph_composition_requires_valid_graph (ctx : Context) (g : Graph)
+    (p : Nat) (evidence : List Atom) (h : composeGraph ctx g p evidence = .supported) :
+    graphValid g = true := by
+  by_cases hv : graphValid g = true
+  · exact hv
+  · simp [composeGraph, hv] at h
+
+theorem invalid_graph_never_discharges (ctx : Context) (g : Graph) (p : Nat)
+    (evidence : List Atom) (h : graphValid g = false) :
+    composeGraph ctx g p evidence ≠ .supported := by
+  simp [composeGraph, h]
+
+theorem valid_graph_composition_is_acyclic (ctx : Context) (g : Graph)
+    (p : Nat) (evidence : List Atom) (a : Node)
+    (_h : composeGraph ctx g p evidence = .supported) : ¬ Reaches g.premises a a := by
+  exact graph_acyclic _ _
+
 /-- Warrant is absent from the reporting rule's premises. -/
 theorem warrant_changes_no_support (ctx : Context) (a : Atom) (w : Warrant) :
     supported ctx [{ a with warrant := w }] = supported ctx [a] := by

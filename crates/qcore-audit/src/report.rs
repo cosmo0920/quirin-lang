@@ -349,7 +349,7 @@ impl AuditReport {
                 row["function"].as_str().unwrap_or_default().to_owned(),
             );
             if let Some(mut context) = contexts.get_mut(&key).and_then(|q| q.pop_front()) {
-                context["property"] = row["null"]["property"].clone();
+                context["property"] = qcore_c_gateway::null_deref::NULL_PROPERTY.into();
                 context["scope"] =
                     json!({"scope":row["null"]["scope"],"assumptions":row["null"]["assumptions"]})
                         .to_string()

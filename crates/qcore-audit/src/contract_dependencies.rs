@@ -320,29 +320,7 @@ pub fn premises(contracts: &ResourceContracts) -> Result<Value, String> {
             if graph.premises.values().any(|p| p.erasure == record) {
                 continue;
             }
-            let index = graph
-                .premises
-                .keys()
-                .filter(|id| id.starts_with("legacy_"))
-                .count();
-            let id = format!("legacy_{index:08}");
-            graph.atoms.insert(
-                id.clone(),
-                qcore_schemas::hypothesis::Atom {
-                    id: id.clone(),
-                    proposition: qcore_schemas::hypothesis::Proposition::Opaque {
-                        statement: record.statement.clone(),
-                    },
-                },
-            );
-            graph.premises.insert(
-                id.clone(),
-                qcore_schemas::hypothesis::Conjunction {
-                    id: id.clone(),
-                    children: vec![id],
-                    erasure: record,
-                },
-            );
+            qcore_contract::hypothesis::append_legacy(graph, record)?;
         }
         qcore_contract::hypothesis::validate(graph)?;
     }

@@ -4090,14 +4090,18 @@ pub fn declaration_hypotheses(
     sources: &BTreeMap<String, String>,
 ) -> Result<BTreeMap<String, qcore_schemas::hypothesis::Graph>, String> {
     let mut graphs = BTreeMap::new();
-    each_loaded_declaration(sources, |name, _, loaded| {
-        if graphs
-            .insert(name.to_owned(), loaded.hypotheses.clone())
-            .is_some()
-        {
-            return Err("hypothesis: duplicate declaration".into());
+    // Independent graph replay deliberately bypasses the memoized module
+    // readings used by hot-path metadata queries.
+    for (path, source) in sources {
+        let reading = read_module(path, source)?;
+        for declaration in reading.declarations {
+            let loaded = declaration
+                .loaded
+                .map_err(|e| format!("{}: {e}", declaration.context))?;
+            if graphs.insert(declaration.name, loaded.hypotheses).is_some() {
+                return Err("hypothesis: duplicate declaration".into());
+            }
         }
-        Ok(())
-    })?;
+    }
     Ok(graphs)
 }

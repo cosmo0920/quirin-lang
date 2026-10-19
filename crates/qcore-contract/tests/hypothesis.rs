@@ -126,17 +126,23 @@ fn disposition_is_independent_of_every_warrant_and_cannot_split_relational_atoms
             e.warrant = warrant;
         }
         assert_eq!(
-            compose(&i, &context(), "p").unwrap(),
+            compose(&i, &context(), &graph(STRUCTURED), "p").unwrap(),
             Disposition::Supported
         );
         i.evidence[0].disposition = Disposition::Open;
-        assert_eq!(compose(&i, &context(), "p").unwrap(), Disposition::Open);
+        assert_eq!(
+            compose(&i, &context(), &graph(STRUCTURED), "p").unwrap(),
+            Disposition::Open
+        );
         i.evidence[0].disposition = Disposition::Refuted;
-        assert_eq!(compose(&i, &context(), "p").unwrap(), Disposition::Refuted);
+        assert_eq!(
+            compose(&i, &context(), &graph(STRUCTURED), "p").unwrap(),
+            Disposition::Refuted
+        );
     }
     let mut i = instance();
     i.evidence[0].atom = "independent_a".into();
-    assert!(compose(&i, &context(), "p").is_err());
+    assert!(compose(&i, &context(), &graph(STRUCTURED), "p").is_err());
 }
 #[test]
 fn every_context_coordinate_digest_and_evidence_substitution_refuses() {
@@ -159,20 +165,23 @@ fn every_context_coordinate_digest_and_evidence_substitution_refuses() {
             .nth(field)
             .unwrap()
             .push_str("-substituted");
-        assert!(compose(&i, &context(), "p").is_err());
+        assert!(compose(&i, &context(), &graph(STRUCTURED), "p").is_err());
     }
     let mut i = instance();
     i.graph.atoms.remove("a");
-    assert!(compose(&i, &context(), "p").is_err());
+    assert!(compose(&i, &context(), &graph(STRUCTURED), "p").is_err());
     let mut i = instance();
     i.graph_sha256 = "stale".into();
-    assert!(compose(&i, &context(), "p").is_err());
+    assert!(compose(&i, &context(), &graph(STRUCTURED), "p").is_err());
     let mut i = instance();
     i.evidence[0].atom_sha256 = "forged".into();
-    assert!(compose(&i, &context(), "p").is_err());
+    assert!(compose(&i, &context(), &graph(STRUCTURED), "p").is_err());
     let mut i = instance();
     i.evidence.remove(0);
-    assert_eq!(compose(&i, &context(), "p").unwrap(), Disposition::Open);
+    assert_eq!(
+        compose(&i, &context(), &graph(STRUCTURED), "p").unwrap(),
+        Disposition::Open
+    );
 }
 
 #[test]
@@ -225,4 +234,16 @@ fn inherited_graph_keeps_every_parent_atom_and_replays() {
     let graphs = replay(c.source_assumptions()).unwrap();
     assert_eq!(graphs["child"], graphs["f"]);
     check_replay(c.source_assumptions(), &graphs).unwrap();
+}
+
+#[test]
+fn a_self_consistent_replacement_graph_cannot_shed_an_atom() {
+    let mut i = instance();
+    let expected = i.graph.clone();
+    i.graph.atoms.remove("b");
+    i.graph.premises.get_mut("p").unwrap().children = vec!["a".into()];
+    i.graph.premises.get_mut("p").unwrap().erasure.statement = "all(a)".into();
+    i.graph_sha256 = digest(&i.graph).unwrap();
+    i.evidence.retain(|e| e.atom != "b");
+    assert!(compose(&i, &context(), &expected, "p").is_err());
 }

@@ -25,29 +25,15 @@ pub fn declaration(decl: &SourceDeclaration, legacy: &[DeclaredPremise]) -> Resu
         atoms: BTreeMap::new(),
         premises: BTreeMap::new(),
     };
-    for (i, premise) in legacy.iter().enumerate() {
-        let id = format!("legacy_{i:08}");
-        graph.atoms.insert(
-            id.clone(),
-            Atom {
-                id: id.clone(),
-                proposition: Proposition::Opaque {
-                    statement: premise.statement.clone(),
-                },
+    for premise in legacy {
+        append_legacy(
+            &mut graph,
+            ErasedPremise {
+                name: premise.name.clone(),
+                statement: premise.statement.clone(),
+                origin: premise.origin.as_str().into(),
             },
-        );
-        graph.premises.insert(
-            id.clone(),
-            Conjunction {
-                id,
-                children: vec![format!("legacy_{i:08}")],
-                erasure: ErasedPremise {
-                    name: premise.name.clone(),
-                    statement: premise.statement.clone(),
-                    origin: premise.origin.as_str().into(),
-                },
-            },
-        );
+        )?;
     }
     for clause in decl.function_contract.iter().flat_map(|c| &c.clauses) {
         let source = &clause.value.expression_source;
@@ -104,7 +90,7 @@ pub fn declaration(decl: &SourceDeclaration, legacy: &[DeclaredPremise]) -> Resu
             }
             let mut children = Vec::new();
             for (i, t) in rest.iter().enumerate() {
-                if i % 2 == 0 {
+                if i.is_multiple_of(2) {
                     let TokenKind::Word(child) = t else {
                         return Err(malformed());
                     };
@@ -119,7 +105,7 @@ pub fn declaration(decl: &SourceDeclaration, legacy: &[DeclaredPremise]) -> Resu
                     return Err(malformed());
                 }
             }
-            if rest.len() % 2 != 0 {
+            if !rest.len().is_multiple_of(2) {
                 return Err(malformed());
             }
             graph.premises.insert(
@@ -164,17 +150,20 @@ pub fn validate(graph: &Graph) -> Result<(), String> {
         {
             return Err("hypothesis: noncanonical conjunction".into());
         }
+        if graph.atoms.contains_key(id) {
+            return Err("hypothesis: overlapping node IDs".into());
+        }
         if !id.starts_with("legacy_")
-            && (graph.atoms.contains_key(id)
-                || premise.erasure.name != *id
+            && (premise.erasure.name != *id
                 || premise.erasure.origin != "declared"
                 || premise.erasure.statement != format!("all({})", premise.children.join(",")))
         {
             return Err("hypothesis: invalid structured erasure or overlapping IDs".into());
         }
         if id.starts_with("legacy_")
-            && (premise.children != vec![id.clone()]
-                || !matches!(graph.atoms.get(id).map(|a| &a.proposition), Some(Proposition::Opaque {statement}) if *statement == premise.erasure.statement))
+            && (premise.children != vec![id.replacen("legacy_premise_", "legacy_atom_", 1)]
+                || !id.starts_with("legacy_premise_")
+                || !matches!(graph.atoms.get(&id.replacen("legacy_premise_", "legacy_atom_", 1)).map(|a| &a.proposition), Some(Proposition::Opaque {statement}) if *statement == premise.erasure.statement))
         {
             return Err("hypothesis: invalid legacy erasure".into());
         }
@@ -214,9 +203,12 @@ pub fn check_replay(
     Ok(())
 }
 /// Claims are evidence only, including supported/derived claims. No certificate authority is returned.
+/// Both expected context and expected graph must be independently held (the
+/// latter freshly replayed from retained sources), never copied from the claim.
 pub fn compose(
     instance: &Instance,
     expected: &Context,
+    expected_graph: &Graph,
     premise: &str,
 ) -> Result<Disposition, String> {
     if &instance.context != expected
@@ -236,7 +228,10 @@ pub fn compose(
     {
         return Err("hypothesis: incomplete or incompatible context".into());
     }
-    if digest(&instance.graph)? != instance.graph_sha256 {
+    if digest(&instance.graph)? != instance.graph_sha256
+        || instance.graph_sha256 != digest(expected_graph)?
+        || instance.graph != *expected_graph
+    {
         return Err("hypothesis: stale graph digest".into());
     }
     let node = instance
@@ -301,26 +296,41 @@ pub fn legacy_records(records: &[ErasedPremise]) -> Result<Graph, String> {
         atoms: BTreeMap::new(),
         premises: BTreeMap::new(),
     };
-    for (index, record) in records.iter().enumerate() {
-        let id = format!("legacy_{index:08}");
-        graph.atoms.insert(
-            id.clone(),
-            Atom {
-                id: id.clone(),
-                proposition: Proposition::Opaque {
-                    statement: record.statement.clone(),
-                },
-            },
-        );
-        graph.premises.insert(
-            id.clone(),
-            Conjunction {
-                id: id.clone(),
-                children: vec![id],
-                erasure: record.clone(),
-            },
-        );
+    for record in records {
+        append_legacy(&mut graph, record.clone())?;
     }
     validate(&graph)?;
     Ok(graph)
+}
+
+/// Append one legacy record using disjoint, reserved atom and premise symbols.
+pub fn append_legacy(graph: &mut Graph, record: ErasedPremise) -> Result<(), String> {
+    let index = graph
+        .premises
+        .keys()
+        .filter(|id| id.starts_with("legacy_"))
+        .count();
+    let atom_id = format!("legacy_atom_{index:08}");
+    let premise_id = format!("legacy_premise_{index:08}");
+    if graph.atoms.contains_key(&atom_id) || graph.premises.contains_key(&premise_id) {
+        return Err("hypothesis: conflicting generated legacy ID".into());
+    }
+    graph.atoms.insert(
+        atom_id.clone(),
+        Atom {
+            id: atom_id.clone(),
+            proposition: Proposition::Opaque {
+                statement: record.statement.clone(),
+            },
+        },
+    );
+    graph.premises.insert(
+        premise_id.clone(),
+        Conjunction {
+            id: premise_id,
+            children: vec![atom_id],
+            erasure: record,
+        },
+    );
+    validate(graph)
 }

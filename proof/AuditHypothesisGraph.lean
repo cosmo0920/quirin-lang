@@ -13,3 +13,7 @@ import QCore.HypothesisGraph
 
 #print axioms QCore.HypothesisGraph.inserting_open_atom_never_promotes
 #print axioms QCore.HypothesisGraph.inserting_refuted_atom_never_promotes
+
+#print axioms QCore.HypothesisGraph.graph_composition_requires_valid_graph
+#print axioms QCore.HypothesisGraph.invalid_graph_never_discharges
+#print axioms QCore.HypothesisGraph.valid_graph_composition_is_acyclic
