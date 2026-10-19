@@ -1131,7 +1131,7 @@ fn an_explicit_selection_keeps_every_selected_file_in_the_denominator() {
             && fixture.read("profile/report.contracts.json")["unit_selection"].is_null()
     );
     let profile = fixture.read("profile/report.json");
-    let profile_unit = profile["units"]
+    let mut profile_unit = profile["units"]
         .as_array()
         .unwrap()
         .iter()
@@ -1141,6 +1141,14 @@ fn an_explicit_selection_keeps_every_selected_file_in_the_denominator() {
     let mut selected_unit = units[2].clone();
     assert_eq!(profile_unit["library"], "sample");
     selected_unit["library"] = json!("sample");
+    // The graph context retains the route's artifact label. Its erasure
+    // preserves the old same-configuration comparison in full.
+    assert_ne!(
+        selected_unit["functions"][0]["hypothesis_context"]["artifact"],
+        profile_unit["functions"][0]["hypothesis_context"]["artifact"]
+    );
+    qcore_audit::contract_dependencies::erase_hypotheses(&mut selected_unit);
+    qcore_audit::contract_dependencies::erase_hypotheses(&mut profile_unit);
     assert_eq!(selected_unit, profile_unit);
 }
 

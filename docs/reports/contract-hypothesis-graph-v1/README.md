@@ -3,7 +3,7 @@
 Work in progress on `codex/contract-hypothesis-graph-v1`, based on
 `198f6fc4349d3a47591a2378835ae9286859d918`. Design and the zero-movement
 prediction were committed as `1a2e40c95` before implementation. The current
-frozen implementation source is `66f60de38`; no completion or corpus-parity
+frozen implementation source is `69f13d6b9`; no completion or corpus-parity
 claim is made until the receipts below are filled from completed commands.
 
 The schema adds declaration-local opaque atoms, conjunction-only premises,
