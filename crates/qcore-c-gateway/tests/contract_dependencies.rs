@@ -276,6 +276,10 @@ fn the_set_comes_from_the_routes_consultations_and_changes_no_verdict() {
     let recorded =
         analyze_legacy_c_translation_unit(UNIT, "owner", &contracts).expect("the unit analyses");
     let record = recording.finish();
+    assert_eq!(
+        record.primary_source_sha256.as_deref(),
+        Some(qcore_schemas::sha256_hex(UNIT.as_bytes()).as_str())
+    );
     // Recording changes no row: status, diagnostics, CFG and exits.
     assert_eq!(unrecorded, recorded);
     let dependencies = row_dependencies(&record, &recorded, &contracts);

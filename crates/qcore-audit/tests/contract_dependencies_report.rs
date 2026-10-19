@@ -330,6 +330,12 @@ fn graph_section_erases_to_the_previous_premise_and_dependency_view() {
     let c =
         load_resource_contract_sources(&BTreeMap::from([("g.qv".into(), text.into())])).unwrap();
     let mut metadata = premises(&c).unwrap();
+    let parsed_graph: qcore_schemas::hypothesis::Graph =
+        serde_json::from_value(metadata["$hypothesis_graphs"]["f"].clone()).unwrap();
+    assert_eq!(
+        metadata["$hypothesis_graph_digests"]["f"],
+        qcore_contract::hypothesis::digest(&parsed_graph).unwrap()
+    );
     assert_eq!(
         metadata["$hypothesis_graphs"]["f"]["atoms"]
             .as_object()

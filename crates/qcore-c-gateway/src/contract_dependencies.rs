@@ -53,6 +53,9 @@ use crate::legacy_c::{LegacyCfg, LegacyInstruction, LegacyProgramSummary};
 /// [`UnitRecord::body_outcomes`].
 #[derive(Clone, Debug, Default, PartialEq, Eq)]
 pub struct UnitRecord {
+    /// Exact first authoritative C stream analyzed in this recording. Home
+    /// replay and hypothetical analyses cannot replace the primary stream.
+    pub primary_source_sha256: Option<String>,
     /// S3 source member/stability facts, per analyzed function. Evidence only;
     /// runtime projection treats each as a closed-world fact needing coverage.
     pub lifetime_members: BTreeMap<String, BTreeSet<String>>,
@@ -851,4 +854,13 @@ pub fn hypothesis_closure(
         })
         .filter(|(_, atoms): &(_, BTreeSet<String>)| !atoms.is_empty())
         .collect()
+}
+
+/// Record the primary stream before cross-unit replay can enter another one.
+pub(crate) fn primary_source(source: &str) {
+    with_recorder(|r| {
+        if r.record.primary_source_sha256.is_none() {
+            r.record.primary_source_sha256 = Some(qcore_schemas::sha256_hex(source.as_bytes()));
+        }
+    });
 }

@@ -343,6 +343,7 @@ impl AuditReport {
                 .collect::<Vec<_>>();
             let graph = qcore_contract::hypothesis::legacy_records(&records)?;
             row["hypothesis_graph"] = serde_json::to_value(&graph).map_err(|e| e.to_string())?;
+            row["hypothesis_graph_sha256"] = qcore_contract::hypothesis::digest(&graph)?.into();
             let key = (
                 row["library"].as_str().unwrap_or_default().to_owned(),
                 row["file"].as_str().unwrap_or_default().to_owned(),

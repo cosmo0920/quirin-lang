@@ -324,8 +324,13 @@ pub fn premises(contracts: &ResourceContracts) -> Result<Value, String> {
         }
         qcore_contract::hypothesis::validate(graph)?;
     }
+    let digests = graphs
+        .iter()
+        .map(|(name, graph)| Ok((name.clone(), qcore_contract::hypothesis::digest(graph)?)))
+        .collect::<Result<BTreeMap<_, _>, String>>()?;
     let mut value = json!(premises);
     value["$hypothesis_graphs"] = json!(graphs);
+    value["$hypothesis_graph_digests"] = json!(digests);
     Ok(value)
 }
 
@@ -638,6 +643,7 @@ pub fn render(facts: &Facts, revision: &Value, premises: &Value) -> Value {
             record["hypothesis_graph"] = graph.clone();
             record["hypothesis_evidence"] = json!({
                 "disposition": "open", "warrant": "declared",
+                "graph_sha256": premises["$hypothesis_graph_digests"][name],
                 "standing": "declared-assumption",
                 "meaning": "graph propositions remain open; body standing and warrant confer no graph authority",
                 "contexts": facts.hypothesis_contexts.get(name).into_iter().flatten().map(|s| serde_json::from_str::<Value>(s).expect("recorded JSON")).collect::<Vec<_>>(),
@@ -801,6 +807,7 @@ pub fn erase_hypotheses(value: &mut Value) {
             // publication fields only at their schema locations, never an
             // equally named declaration in a premise/inventory map.
             map.remove("$hypothesis_graphs");
+            map.remove("$hypothesis_graph_digests");
             let function_row = map.get("function").is_some_and(Value::is_string)
                 && (map.contains_key("status") || map.contains_key("null"));
             let declaration =
@@ -808,9 +815,11 @@ pub fn erase_hypotheses(value: &mut Value) {
             if function_row {
                 map.remove("hypothesis_context");
                 map.remove("hypothesis_graph");
+                map.remove("hypothesis_graph_sha256");
             }
             if declaration {
                 map.remove("hypothesis_graph");
+                map.remove("hypothesis_graph_sha256");
                 map.remove("hypothesis_evidence");
             }
             if map.get("declarations").is_some_and(Value::is_array) {

@@ -1086,6 +1086,9 @@ fn record_projection(
         crate::contract_dependencies::annotate_unit(row, dependencies, &result, contracts)?;
         for function in row["functions"].as_array_mut().into_iter().flatten() {
             let mut context = hypothesis_context.clone();
+            if let Some(source) = &dependencies.primary_source_sha256 {
+                context.source_identity = source.clone();
+            }
             if let Some(name) = function["function"].as_str() {
                 context.artifact.push('#');
                 context.artifact.push_str(name);

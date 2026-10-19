@@ -2597,6 +2597,7 @@ fn analyze_preprocessed_unrestricted_c11(
     source_functions: Option<Vec<String>>,
     homes: &[CrossUnitHomeEvidence],
 ) -> Result<UnrestrictedLegacyResult, LegacyCError> {
+    crate::contract_dependencies::primary_source(&preprocessed_source);
     cross_unit::check_imports(&preprocessed_source, contracts, homes).map_err(|reason| {
         LegacyCError::ProductionParserRejected(format!("cross-unit import refused: {reason}"))
     })?;
@@ -3112,6 +3113,7 @@ fn analyze_legacy_c_translation_unit_selected_partial(
     selected_functions: Option<&[String]>,
     typed_context: (CCompilerDialect, Option<&LegacyCertificateRequest>),
 ) -> Result<PartialTranslationUnitAnalysis, LegacyCError> {
+    crate::contract_dependencies::primary_source(source);
     let mut analysis = analyze_translation_unit_under_holds(
         source,
         entry,
