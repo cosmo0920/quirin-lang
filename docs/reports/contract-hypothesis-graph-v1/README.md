@@ -49,7 +49,21 @@ worktree's broader focused test hit an existing fixture assumption that
 `.git/modules/third_party/libevent` exists below a directory `.git`; a managed
 worktree instead has a `.git` file. The clone preserves the tested source
 without changing that fixture. Its actual Clang recording and command receipts
-are local to the clone's run. Final Rust/provider/Python/Lean counts and corpus,
+are local to the clone's run. The final host standing gate on `5b5a8c0f05bef6aece8b57d90a2d405a459c29ea`
+passes **8,364 Rust tests / 0 failed / 15 ignored**, 522 units and 535
+summaries, formatting, Clippy, both reevaluation examples and **345 Lean
+audits**. Rust build/capture/run took 104.037/9.406/403.036 seconds; timings
+are shared-host observations. [Commands and exits](gate/standing-commands.json),
+[source receipt](gate/standing-source.json), [complete runner summary](gate/rust-summary.json.gz)
+and [actual Clang recording](gate/clang-version.txt) are archived here.
+Private Rust unit logs are under
+`gate-source/private/test-binaries/20261019T221940Z-658616/` below the private
+evidence root; other standing logs are in `standing-4/`.
+
+The complete host provider gate passes **133 Rust tests / 0 failed / 1 ignored
+doctest**, **25 Python tests**, check, formatting, Clippy, contract checks and
+all five rebuilt/verified packages. [Provider commands and exits](gate/provider-commands.json)
+name the complete logs in `provider-4/`. Root post-matrix Python and corpus,
 system, slice, null and runtime erasure comparisons remain pending.
 
 Superseded attempts are retained in [validation-attempts.json](validation-attempts.json): malformed initial custody fixture syntax

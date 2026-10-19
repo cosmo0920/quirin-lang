@@ -1,0 +1,164 @@
+[
+  {
+    "name": "check",
+    "command": [
+      "cargo",
+      "check",
+      "--manifest-path",
+      "providers/Cargo.toml",
+      "--workspace",
+      "--locked",
+      "--offline"
+    ],
+    "exit": 0,
+    "seconds": 0.10948801040649414,
+    "log": "/home/cosmo/.codex/worktrees/3d1b/qcore-c/private/contract-hypothesis-graph-v1/provider-4/check.log"
+  },
+  {
+    "name": "rust",
+    "command": [
+      "cargo",
+      "test",
+      "--manifest-path",
+      "providers/Cargo.toml",
+      "--workspace",
+      "--locked",
+      "--offline"
+    ],
+    "exit": 0,
+    "seconds": 499.4171702861786,
+    "log": "/home/cosmo/.codex/worktrees/3d1b/qcore-c/private/contract-hypothesis-graph-v1/provider-4/rust.log"
+  },
+  {
+    "name": "fmt",
+    "command": [
+      "cargo",
+      "fmt",
+      "--manifest-path",
+      "providers/Cargo.toml",
+      "--all",
+      "--",
+      "--check"
+    ],
+    "exit": 0,
+    "seconds": 6.1336729526519775,
+    "log": "/home/cosmo/.codex/worktrees/3d1b/qcore-c/private/contract-hypothesis-graph-v1/provider-4/fmt.log"
+  },
+  {
+    "name": "clippy",
+    "command": [
+      "cargo",
+      "clippy",
+      "--manifest-path",
+      "providers/Cargo.toml",
+      "--workspace",
+      "--all-targets",
+      "--locked",
+      "--offline",
+      "--",
+      "-D",
+      "warnings"
+    ],
+    "exit": 0,
+    "seconds": 0.18939852714538574,
+    "log": "/home/cosmo/.codex/worktrees/3d1b/qcore-c/private/contract-hypothesis-graph-v1/provider-4/clippy.log"
+  },
+  {
+    "name": "contracts",
+    "command": [
+      "python3",
+      "providers/contracts.py",
+      "check"
+    ],
+    "exit": 0,
+    "seconds": 19.800838708877563,
+    "log": "/home/cosmo/.codex/worktrees/3d1b/qcore-c/private/contract-hypothesis-graph-v1/provider-4/contracts.log"
+  },
+  {
+    "name": "python",
+    "command": [
+      "python3",
+      "-m",
+      "unittest",
+      "discover",
+      "-s",
+      "providers/tests"
+    ],
+    "exit": 0,
+    "seconds": 20.13606548309326,
+    "log": "/home/cosmo/.codex/worktrees/3d1b/qcore-c/private/contract-hypothesis-graph-v1/provider-4/python.log"
+  },
+  {
+    "name": "build",
+    "command": [
+      "python3",
+      "providers/package.py",
+      "build",
+      "--output",
+      "/home/cosmo/.codex/worktrees/3d1b/qcore-c/private/contract-hypothesis-graph-v1/provider-4/packages"
+    ],
+    "exit": 0,
+    "seconds": 20.757478713989258,
+    "log": "/home/cosmo/.codex/worktrees/3d1b/qcore-c/private/contract-hypothesis-graph-v1/provider-4/build.log"
+  },
+  {
+    "name": "qcore.libevent",
+    "command": [
+      "python3",
+      "providers/package.py",
+      "verify",
+      "/home/cosmo/.codex/worktrees/3d1b/qcore-c/private/contract-hypothesis-graph-v1/provider-4/packages/qcore.libevent"
+    ],
+    "exit": 0,
+    "seconds": 0.1545712947845459,
+    "log": "/home/cosmo/.codex/worktrees/3d1b/qcore-c/private/contract-hypothesis-graph-v1/provider-4/qcore.libevent.log"
+  },
+  {
+    "name": "qcore.chunkio",
+    "command": [
+      "python3",
+      "providers/package.py",
+      "verify",
+      "/home/cosmo/.codex/worktrees/3d1b/qcore-c/private/contract-hypothesis-graph-v1/provider-4/packages/qcore.chunkio"
+    ],
+    "exit": 0,
+    "seconds": 0.16428852081298828,
+    "log": "/home/cosmo/.codex/worktrees/3d1b/qcore-c/private/contract-hypothesis-graph-v1/provider-4/qcore.chunkio.log"
+  },
+  {
+    "name": "qcore.cmetrics",
+    "command": [
+      "python3",
+      "providers/package.py",
+      "verify",
+      "/home/cosmo/.codex/worktrees/3d1b/qcore-c/private/contract-hypothesis-graph-v1/provider-4/packages/qcore.cmetrics"
+    ],
+    "exit": 0,
+    "seconds": 0.16154718399047852,
+    "log": "/home/cosmo/.codex/worktrees/3d1b/qcore-c/private/contract-hypothesis-graph-v1/provider-4/qcore.cmetrics.log"
+  },
+  {
+    "name": "qcore.ctraces",
+    "command": [
+      "python3",
+      "providers/package.py",
+      "verify",
+      "/home/cosmo/.codex/worktrees/3d1b/qcore-c/private/contract-hypothesis-graph-v1/provider-4/packages/qcore.ctraces"
+    ],
+    "exit": 0,
+    "seconds": 0.15912365913391113,
+    "log": "/home/cosmo/.codex/worktrees/3d1b/qcore-c/private/contract-hypothesis-graph-v1/provider-4/qcore.ctraces.log"
+  },
+  {
+    "name": "qcore.librdkafka",
+    "command": [
+      "python3",
+      "providers/package.py",
+      "verify",
+      "/home/cosmo/.codex/worktrees/3d1b/qcore-c/private/contract-hypothesis-graph-v1/provider-4/packages/qcore.librdkafka"
+    ],
+    "exit": 0,
+    "seconds": 0.17501115798950195,
+    "log": "/home/cosmo/.codex/worktrees/3d1b/qcore-c/private/contract-hypothesis-graph-v1/provider-4/qcore.librdkafka.log"
+  }
+]

@@ -95,5 +95,24 @@
       "followup": 0,
       "lean": 0
     }
+  },
+  "provider_3": {
+    "exit_by_step": {
+      "check": 0,
+      "rust": 101,
+      "fmt": 0,
+      "clippy": 0,
+      "contracts": 0,
+      "python": 0,
+      "build": 0,
+      "qcore.libevent": 0,
+      "qcore.chunkio": 0,
+      "qcore.cmetrics": 0,
+      "qcore.ctraces": 0,
+      "qcore.librdkafka": 0
+    },
+    "failure": "linux-confined-v1 cannot unshare user/network namespaces inside sandbox: EPERM",
+    "resolution": "full unchanged-source host provider gate4",
+    "logs": "private/contract-hypothesis-graph-v1/provider-3/"
   }
 }
