@@ -217,7 +217,7 @@ pub(super) struct AbstractState {
     /// carries no declared destructor obligation (premise P-B08-SHALLOW).
     pub(super) field_links: BTreeMap<usize, BTreeMap<String, BTreeSet<usize>>>,
     /// Must-held physical link values; explicit NULL differs from absent/unknown.
-    pub(super) lookup_links: BTreeMap<(usize, String), Option<usize>>,
+    pub(super) lookup_links: BTreeMap<(usize, String, String), Option<usize>>,
     /// Identity-refined lookup aliases still obey their parent's borrow lifetime.
     pub(super) lookup_aliases: BTreeSet<String>,
     /// Card **B08-FIELD-LINK-JOIN-SILENT-UNRESOLVED** (rule 11c): the
@@ -1754,6 +1754,7 @@ impl TransferContext<'_> {
 pub(super) struct TransferContext<'a> {
     /// No new link state is carried by functions without a checked call.
     pub(super) lookup_tracking: bool,
+    pub(super) lookup_pointer_records: BTreeMap<String, String>,
     /// Out-parameter slots the contract in force declares. A store to any
     /// other indirect place stays unmodeled.
     pub(super) sanctioned: BTreeSet<&'a str>,
@@ -1855,6 +1856,15 @@ fn analyze_cfg_with_entry_collected(
 ) -> (LegacyFunctionSummary, Vec<ExitObservation>) {
     let context = TransferContext {
         lookup_tracking: cfg.nodes.iter().any(|node| node.lookup.is_some()),
+        lookup_pointer_records: cfg
+            .nodes
+            .iter()
+            .find_map(|node| {
+                node.lookup
+                    .as_ref()
+                    .map(|lookup| lookup.pointer_records.clone())
+            })
+            .unwrap_or_default(),
         sanctioned: entry_custody.sanctioned_places(),
         result_nullable: entry_custody.result_nullable,
         // A derived base's name-only site is caller-held too: no aggregate
@@ -2664,7 +2674,14 @@ pub(super) fn transfer(
         .flatten();
     let lookup_store = context
         .lookup_tracking
-        .then(|| lookup_route::stored_link(node, &state, &context.caller_sites))
+        .then(|| {
+            lookup_route::stored_link(
+                node,
+                &state,
+                &context.caller_sites,
+                &context.lookup_pointer_records,
+            )
+        })
         .flatten();
     let mut state = state;
     if context.lookup_tracking {

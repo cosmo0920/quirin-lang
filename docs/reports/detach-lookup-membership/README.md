@@ -168,3 +168,43 @@ Rust/Lean correspondence remain boundary28 premises; validity of untracked
 memory stays outside custody. The detach representation stays a separate
 DeclaredAssumption and supplies none of these facts. No new human contract
 premise is inserted.
+
+## Canonical record binding repair (before production)
+
+After the clean rebase onto completed alias base
+`f35b5cf4b596e1ad2f5bdec6a0c203e2fd987287`, checkpoint
+`30792a14a5762a9a4044e1061ac345cb77652da8` passes the core Rust gate
+(8,346passed,0failed,15ignored), format, Clippy, both reevaluation examples,
+344 Lean audits and all13 provider steps (133Rust passed,0failed,1ignored
+doctest;25Python;five packages rebuilt/verified). The early core Python run
+has the single expected stale matrix343→344 failure; its374-test log remains
+under `private/detach-lookup-membership/gate-host-1/`. The release build exits0;
+its preserved binary is `release-1/quirin-audit-30792a14a`, SHA256
+`3882d096f90881bb5d70fdba837755b07775eb6cb7a65453863b169f2460b93a`.
+No production audit uses this superseded checkpoint.
+
+A lookup-only source review then identified that field-name/site keys did not
+explicitly bind a physical fact to the callee's defining record. The first
+void/Other-parent probe was already Unknown under existing obligations
+(`record-identity-before-1.log`,exit0); no Safe verdict was reproduced.
+The stronger assertion that this unresolved actual carries no checked lookup
+metadata fails101 (`record-identity-before-2.log`). The repair reads the
+caller's complete record declarations, requires the actual's canonical tag to
+match the retained callee, and keys physical links by site/tag/field. Every
+stored owner is type-bound, and an overlapping differently typed write removes
+prior owner facts. Opaque caller aliases withhold refinement. The original
+ContractCall and IndirectScalarAccess obligations remain intact. This repairs
+source-evidence extraction for the existing Rust/Lean physical-prefix premise;
+it changes no abstract lookup/Removed rule or representation assumption.
+
+The repaired bounded source/replay/native suite passes8/8 and the reader,
+record-prefix, must-join and two-read obligation-parity suite passes6/6
+(`record-identity-after-1.log`, `record-identity-unit-1.log`,each exit0).
+A typed cJSON actual with a differently typed alias store remains Unknown;
+changing the stored-link type cannot replay the original Safe certificate.
+The unpublished gateway descriptor now carries its canonical tag and the
+source-derived caller declaration map; qcore-schemas19 and provider contract
+bytes are unchanged. The direct native observation at the same retained C
+bytes has separately retained build/run logs, both empty and exit0, with
+ASan/UBSan enabled (`native-raw-1/commands.json` and
+`native-raw-1/native-observation.json`); this is not a production custody claim.

@@ -6331,6 +6331,12 @@ is narrowed only under its source-proven non-NULL while-body guard. A released
 peer prevents the view. Assigned direct decimal0–255 calls retain
 ordinary ContractCall visibility and carry independently rederived CFG metadata.
 An identity refinement additionally needs explicit must-held physical links,
+a caller actual of the callee's complete canonical defining record type, and
+the same resolved record type at each stored-link owner. Prefix facts are keyed
+by site, record tag and field; a differently typed overlapping store invalidates
+prior facts for that owner. Unknown types, including opaque alias views, supply
+no identity descriptor. These are source-evidence checks for the existing
+physical-prefix premise, not a new abstract transition. It also needs
 a live parent and an existing settled child uniquely contained by that parent;
 absence is Unknown, never NULL, and no new resource site is created. Facts meet
 by intersection and are carried only where a checked lookup call exists.

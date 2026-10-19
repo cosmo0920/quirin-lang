@@ -115,6 +115,53 @@ fn provenance_missing_order_wrong_parent_and_intervening_mutation_refuse() {
 }
 
 #[test]
+fn differently_typed_same_spelled_link_cannot_supply_lookup_identity() {
+    let source = format!(
+        "{ACTUAL_FRAME}\nstruct Other {{ struct cJSON *child; }};\n{DECLARATIONS}\nvoid subject(void) {{ void *p=dt_alloc(); struct Other *q=p; struct cJSON *i=dt_alloc(); dt_store(p,i); q->child=i; struct cJSON *s=get_array_item(p,0); struct cJSON *r=dt_detach(p,s); dt_free(p); dt_free(r); }}"
+    );
+    let program = qcore_c_gateway::legacy_c::analyze_legacy_c_translation_unit(
+        &source,
+        "subject",
+        &environment(),
+    )
+    .unwrap();
+    assert_eq!(
+        program.functions["subject"].status,
+        AnalysisStatus::Unknown,
+        "wrong defining record must not establish the callee's physical link: {program:?}"
+    );
+    assert!(
+        program.functions["subject"]
+            .cfg
+            .nodes
+            .iter()
+            .all(|node| node.lookup.is_none()),
+        "an unresolved caller record must not carry checked lookup metadata"
+    );
+    let source = format!(
+        "{ACTUAL_FRAME}\nstruct Other {{ struct cJSON *child; }};\n{DECLARATIONS}\nvoid subject(void) {{ struct cJSON *p=dt_alloc(); void *v=p; struct Other *q=v; struct cJSON *i=dt_alloc(); dt_store(p,i); q->child=i; struct cJSON *s=get_array_item(p,0); struct cJSON *r=dt_detach(p,s); dt_free(p); dt_free(r); }}"
+    );
+    let program = qcore_c_gateway::legacy_c::analyze_legacy_c_translation_unit(
+        &source,
+        "subject",
+        &environment(),
+    )
+    .unwrap();
+    assert!(
+        program.functions["subject"]
+            .cfg
+            .nodes
+            .iter()
+            .any(|node| node
+                .lookup
+                .as_ref()
+                .is_some_and(|lookup| lookup.record == "cJSON")),
+        "the actual call remains typed; the Other store supplies no cJSON link"
+    );
+    assert_eq!(program.functions["subject"].status, AnalysisStatus::Unknown);
+}
+
+#[test]
 fn retained_lookup_identity_and_transfer_replay_independently() {
     use qcore_c_gateway::legacy_c::{
         C11TranslationUnit, LegacyFunctionScope, UnrestrictedLegacyResult,
@@ -152,6 +199,19 @@ fn retained_lookup_identity_and_transfer_replay_independently() {
     assert!(
         check_legacy_safety_certificate(&changed).is_err(),
         "stale source cannot replay lookup proof"
+    );
+    let mut wrong_record = certificate.clone();
+    wrong_record.preprocessed_source = wrong_record.preprocessed_source.replace(
+        "p->child=i;",
+        "{ struct Other { struct cJSON *child; }; struct Other *q=(void*)p; q->child=i; }",
+    );
+    assert_ne!(
+        wrong_record.preprocessed_source,
+        certificate.preprocessed_source
+    );
+    assert!(
+        check_legacy_safety_certificate(&wrong_record).is_err(),
+        "a different stored-link record cannot replay the original source-bound relation"
     );
 }
 

@@ -5005,6 +5005,10 @@ for every admitted unsigned parameter. A literal has no redundant leading
 zero, suffix, cast or sign. Nested/whole-return calls and other indices retain
 the ordinary borrowed reading. Exact identity additionally needs must-held
 physical links and one settled contained child uniquely owned by a live parent.
+The caller actual and stored-link owners must resolve to the callee's complete
+canonical defining record tag. Same field spelling or site is insufficient;
+opaque caller type aliases withhold refinement. Link facts retain that tag,
+and a differently typed write invalidates overlapping owner facts.
 An absent link means Unknown; explicit NULL differs from absence. The source
 bridge currently proves exact stored-head and empty-head cases. General
 successor source closure, object-key lookup and Removed wrapper transport are

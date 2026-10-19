@@ -1097,6 +1097,10 @@ pub struct CheckedLookupCall {
     pub callee: String,
     pub parent: String,
     pub index: usize,
+    /// Canonical complete defining record, shared by the actual and frame.
+    pub record: String,
+    /// Caller declarations rederived from the retained source, never sites.
+    pub pointer_records: BTreeMap<String, String>,
 }
 
 /// A read point in the exact retained indexed lookup frame. The ordinary

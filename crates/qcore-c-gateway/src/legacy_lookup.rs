@@ -7,6 +7,7 @@ use super::{Token, find_function_body, function_parameter_range, function_parame
 
 #[derive(Clone, Debug, PartialEq, Eq)]
 pub(super) struct Frame {
+    pub record: String,
     pub parent: String,
     pub cursor: String,
     pub index: String,
@@ -169,6 +170,7 @@ pub(super) fn read(tokens: &[Token], function: &str) -> Option<Frame> {
         return None;
     };
     Some(Frame {
+        record: tag.to_owned(),
         parent: parent.clone(),
         cursor: cursor.to_owned(),
         index: index.clone(),
@@ -378,7 +380,7 @@ pub(super) fn read_view(
             || state
                 .lookup_links
                 .iter()
-                .any(|((owner, _), child)| *owner == site || *child == Some(site))
+                .any(|((owner, _, _), child)| *owner == site || *child == Some(site))
             || state.borrows.contains_key(&description.parent)
             || state.borrows.contains_key(&description.cursor)
             || state
@@ -421,6 +423,7 @@ pub(super) fn settle_calls(
     let Some(end) = matching(tokens, start, "{", "}") else {
         return;
     };
+    let mut pointer_records = None;
     for node in &mut cfg.nodes {
         let LegacyInstruction::ContractCall {
             function,
@@ -456,13 +459,37 @@ pub(super) fn settle_calls(
                     const_dropped: true
                 }
             )
-            || read(tokens, function).is_none()
         {
             continue;
         }
+        let Some(frame) = read(tokens, function) else {
+            continue;
+        };
         let Some(Some(parent)) = arguments.first() else {
             continue;
         };
+        let records = pointer_records.get_or_insert_with(|| {
+            let words = tokens.iter().map(|t| t.text.as_str()).collect::<Vec<_>>();
+            let model = crate::typed_field_access::TypedAccessModel::read(&words);
+            let Some((open, close)) = function_parameter_range(tokens, &cfg.function, start) else {
+                return std::collections::BTreeMap::new();
+            };
+            let types = crate::typed_field_access::FunctionTypes::read(
+                &model,
+                &words[open + 1..close],
+                &words[start + 1..end],
+                &BTreeSet::new(),
+            );
+            types
+                .record_pointer_names()
+                .into_iter()
+                .filter(|(_, tag)| model.record_definition_is_complete(tag))
+                .map(|(name, tag)| (name.to_owned(), tag.to_owned()))
+                .collect::<std::collections::BTreeMap<_, _>>()
+        });
+        if records.get(parent) != Some(&frame.record) {
+            continue;
+        }
         // A same-spelled local/formal function pointer must not be confused
         // with the retained defining function. Address-taking or any other
         // non-call occurrence conservatively withholds this descriptor too.
@@ -507,6 +534,8 @@ pub(super) fn settle_calls(
                 callee: function.clone(),
                 parent: parent.clone(),
                 index: *index,
+                record: frame.record.clone(),
+                pointer_records: records.clone(),
             });
         }
     }
@@ -554,9 +583,14 @@ pub(super) fn resolve(
         description.index,
         state
             .lookup_links
-            .get(&(parent, "child".to_owned()))
+            .get(&(parent, description.record.clone(), "child".to_owned()))
             .copied(),
-        |item| state.lookup_links.get(&(item, "next".to_owned())).copied(),
+        |item| {
+            state
+                .lookup_links
+                .get(&(item, description.record.clone(), "next".to_owned()))
+                .copied()
+        },
         |item| {
             super::kind_of(kinds, item) == super::ResourceKind::Heap
                 && item != parent
@@ -586,7 +620,8 @@ pub(super) fn stored_link(
     node: &LegacyCfgNode,
     state: &AbstractState,
     caller_sites: &BTreeSet<usize>,
-) -> Option<(usize, String, String)> {
+    pointer_records: &std::collections::BTreeMap<String, String>,
+) -> Option<(usize, String, String, String)> {
     let place = super::written_field_place(&node.instruction)?;
     let owner = crate::aggregate_store::place_owner(place)?;
     let field = crate::aggregate_store::place_field(place)?;
@@ -595,6 +630,7 @@ pub(super) fn stored_link(
     }
     Some((
         super::resolved_aggregate_owner(state, owner, caller_sites)?,
+        pointer_records.get(owner)?.clone(),
         field.to_owned(),
         place.to_owned(),
     ))
@@ -641,7 +677,7 @@ pub(super) fn after(
     node: &LegacyCfgNode,
     state: &mut AbstractState,
     result: Option<AbstractPointer>,
-    stored: Option<(usize, String, String)>,
+    stored: Option<(usize, String, String, String)>,
 ) {
     // Clear facts on every call except this exact complete read-only frame;
     // any unbounded or indirect write also destroys the physical prefix.
@@ -671,8 +707,10 @@ pub(super) fn after(
     if physical_write || state.unmodeled {
         state.lookup_links.clear();
     }
-    if let Some((owner, field, place)) = stored {
-        state.lookup_links.remove(&(owner, field.clone()));
+    if let Some((owner, record, field, place)) = stored {
+        // Different record views may overlap. A typed store invalidates every
+        // prior link of this owner before establishing its own exact field.
+        state.lookup_links.retain(|(site, _, _), _| *site != owner);
         if !state.unmodeled
             && let Some(pointer) = state.pointers.get(&place)
         {
@@ -686,7 +724,7 @@ pub(super) fn after(
                 None
             };
             if let Some(value) = value {
-                state.lookup_links.insert((owner, field), value);
+                state.lookup_links.insert((owner, record, field), value);
             }
         }
     }
@@ -748,7 +786,9 @@ mod flow_controls {
     #[test]
     fn opaque_member_write_cannot_preserve_an_old_physical_link() {
         let mut state = AbstractState::default();
-        state.lookup_links.insert((1, "child".to_owned()), Some(2));
+        state
+            .lookup_links
+            .insert((1, "Node".to_owned(), "child".to_owned()), Some(2));
         let node = LegacyCfgNode {
             lookup: None,
             lookup_read: None,
@@ -766,7 +806,7 @@ mod flow_controls {
     }
     #[test]
     fn physical_links_are_must_facts_and_null_is_not_absence() {
-        let key = (1, "child".to_owned());
+        let key = (1, "Node".to_owned(), "child".to_owned());
         let mut left = AbstractState::default();
         left.lookup_links.insert(key.clone(), Some(2));
         let right = left.clone();
@@ -780,6 +820,63 @@ mod flow_controls {
         null.lookup_links.insert(key.clone(), None);
         null.join(&AbstractState::default(), &BTreeSet::new());
         assert!(!null.lookup_links.contains_key(&key));
+    }
+    #[test]
+    fn same_site_and_field_with_a_different_record_cannot_supply_a_prefix() {
+        let mut state = AbstractState::default();
+        state
+            .resources
+            .extend([(1, super::super::LIVE), (2, super::super::CONTAINED)]);
+        state.contained.insert(1, BTreeSet::from([2]));
+        let pointer = |site| AbstractPointer {
+            targets: BTreeSet::from([site]),
+            ..Default::default()
+        };
+        state.pointers.insert("p".to_owned(), pointer(1));
+        state.pointers.insert("q->child".to_owned(), pointer(2));
+        let node = LegacyCfgNode {
+            lookup: Some(super::super::CheckedLookupCall {
+                callee: "lookup".to_owned(),
+                parent: "p".to_owned(),
+                index: 0,
+                record: "Node".to_owned(),
+                pointer_records: Default::default(),
+            }),
+            lookup_read: None,
+            instruction: LegacyInstruction::NoOp,
+            successors: vec![],
+            line: 1,
+            is_exit: false,
+            loop_exit_edge: None,
+        };
+        let kinds = [
+            (1, super::super::ResourceKind::Heap),
+            (2, super::super::ResourceKind::Heap),
+        ]
+        .into();
+        state
+            .lookup_links
+            .insert((1, "Other".to_owned(), "child".to_owned()), Some(2));
+        assert!(resolve(&node, &state, &kinds).is_none());
+        state
+            .lookup_links
+            .insert((1, "Node".to_owned(), "child".to_owned()), Some(2));
+        assert_eq!(resolve(&node, &state, &kinds), Some(pointer(2)));
+        after(
+            &node,
+            &mut state,
+            None,
+            Some((
+                1,
+                "Other".to_owned(),
+                "child".to_owned(),
+                "q->child".to_owned(),
+            )),
+        );
+        assert!(
+            resolve(&node, &state, &kinds).is_none(),
+            "an overlapping differently typed store invalidates the old record view"
+        );
     }
 }
 
