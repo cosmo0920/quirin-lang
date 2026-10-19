@@ -8,15 +8,17 @@ import hashlib
 import json
 import sys
 
-ROOTS = ('/tmp/qcore-lexical-scalar-noop-alias-read', '/tmp/qcore-detach-lookup-membership',
-         '/home/cosmo/Documents/GitHub/qcore-c')
+ANALYZER = Path(__file__).resolve().parents[4]
+ROOTS = [(str(ANALYZER / 'private/w48-bottom-up-batch3/inputs-base'), '$INPUTS'),
+         (str(ANALYZER / 'private/w48-bottom-up-batch3/inputs-tip'), '$INPUTS'),
+         (str(ANALYZER), '$ANALYZER')]
 OUT = Path(__file__).resolve().parents[1] / 'artifacts' / sys.argv[1]
 
 
 def norm(x, mapping=None):
     if isinstance(x, str):
-        for root in ROOTS:
-            x = x.replace(root, '$CHECKOUT')
+        for root, label in ROOTS:
+            x = x.replace(root, label)
         return (mapping or {}).get(x, x)
     if isinstance(x, list):
         return [norm(y, mapping) for y in x]

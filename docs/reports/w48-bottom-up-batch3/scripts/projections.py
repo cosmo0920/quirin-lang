@@ -21,7 +21,10 @@ def rows(path):
 
 def normalize_checkout(value):
     if isinstance(value, str):
-        return value.replace('/tmp/qcore-lexical-scalar-noop-alias-read', '$CHECKOUT').replace('/tmp/qcore-detach-lookup-membership', '$CHECKOUT')
+        repo = Path(__file__).resolve().parents[4]
+        for root in ['inputs-base', 'inputs-tip']:
+            value = value.replace(str(repo / 'private/w48-bottom-up-batch3' / root), '$INPUTS')
+        return value.replace(str(repo), '$ANALYZER')
     if isinstance(value, list):
         return [normalize_checkout(x) for x in value]
     if isinstance(value, dict):

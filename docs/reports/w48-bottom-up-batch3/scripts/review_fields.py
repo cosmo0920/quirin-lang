@@ -7,14 +7,16 @@ from pathlib import Path
 import sys
 
 REPORT = Path(__file__).resolve().parents[1]
-ROOTS = ("/tmp/qcore-detach-lookup-membership", "/tmp/qcore-lexical-scalar-noop-alias-read",
-         "/home/cosmo/Documents/GitHub/qcore-c")
+ANALYZER = Path(__file__).resolve().parents[4]
+ROOTS = [(str(ANALYZER / 'private/w48-bottom-up-batch3/inputs-base'), '$INPUTS'),
+         (str(ANALYZER / 'private/w48-bottom-up-batch3/inputs-tip'), '$INPUTS'),
+         (str(ANALYZER), '$ANALYZER')]
 
 
 def normalize(value):
     if isinstance(value, str):
-        for root in ROOTS:
-            value = value.replace(root, "$CHECKOUT")
+        for root, label in ROOTS:
+            value = value.replace(root, label)
         return value
     if isinstance(value, list):
         return [normalize(item) for item in value]

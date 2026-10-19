@@ -21,38 +21,47 @@ def main():
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument('route', choices=['corpus', 'system', 'slice'])
     parser.add_argument('out', type=Path)
-    parser.add_argument('--link-map', type=Path, default=REPO / 'docs/reports/w48-bottom-up-batch2/link-map.corpus.json')
+    parser.add_argument('--link-map', type=Path, required=True)
+    parser.add_argument('--inputs-snapshot', type=Path, required=True)
+    parser.add_argument('--binary-source', required=True)
+    parser.add_argument('--jobs', type=int, default=2)
     args = parser.parse_args()
+    assert args.jobs > 0
     out = args.out.resolve()
     out.mkdir(parents=True, exist_ok=False)
     route = args.route
-    binary = REPO / 'target/release/quirin-audit'
+    snapshot = args.inputs_snapshot.resolve()
+    binary = snapshot / 'target/release/quirin-audit'
     link_map = args.link_map.resolve()
     env = dict(os.environ)
     for key in ('QCORE_SOURCE_CONTRACTS', 'QCORE_RETURN_CENSUS'):
         env.pop(key, None)
+    env['QCORE_PROFILES'] = str(snapshot / 'contract/profiles')
     env.update(QCORE_CROSS_UNIT_LINK_MAP=str(link_map), QCORE_CLANG='/usr/lib/llvm-21/bin/clang',
                QCORE_NULL_PROPERTY=str(out / f'{route}-null.jsonl'),
                QCORE_OUTER_PROJECTION=str(out / f'{route}-outer.json'))
     if route == 'corpus':
-        command = [sys.executable, str(REPO / 'scripts/run_pinned_audit.py'), str(out / 'corpus'),
-                   '66910c10', '--inputs-root', str(PRIMARY / 'build/cycle19'), '--jobs', '4']
+        command = [sys.executable, str(snapshot / 'scripts/run_pinned_audit.py'), str(out / 'corpus'),
+                   '66910c10', '--inputs-root', str(PRIMARY / 'build/cycle19'), '--jobs', str(args.jobs)]
         source = PRIMARY / 'build/cycle19/c-gateway-wave-pin/fluent-bit-clang-source'
     else:
         prepared = PRIMARY / ('private/w45-fb/w46-external-callee-contracts/attempt-1' if route == 'system'
                               else 'private/w47-tail/attempt-1/prep')
         source = prepared / 'fluent-bit-clang-source'
         database = prepared / 'fluent-bit-clang-production/compile_commands.json'
-        selection = REPO / 'contract/profiles/fluent-bit' / ('system-selection.json' if route == 'system'
+        selection = snapshot / 'contract/profiles/fluent-bit' / ('system-selection.json' if route == 'system'
                                                           else 'tail-pause-selection.json')
         command = [str(binary), 'current', '--checkout', str(source), '--profile-directory',
-                   str(REPO / 'contract/profiles/fluent-bit'), '--compile-database', str(database),
-                   '--selection', str(selection), '--jobs', '4', '--report', str(out / 'resource-diagnostics.json')]
+                   str(snapshot / 'contract/profiles/fluent-bit'), '--compile-database', str(database),
+                   '--selection', str(selection), '--jobs', str(args.jobs), '--report', str(out / 'resource-diagnostics.json')]
     record = {'head': subprocess.check_output(['git', 'rev-parse', 'HEAD'], cwd=REPO, text=True).strip(),
-              'binary': str(binary), 'binary_sha256': sha(binary), 'command': command, 'jobs': 4,
+              'analyzer_source': args.binary_source, 'inputs_snapshot': str(snapshot),
+              'runner_sha256': sha(snapshot / 'scripts/run_pinned_audit.py'),
+              'profile_sha256': sha(snapshot / 'contract/profiles/fluent-bit/profile.json'),
+              'binary': str(binary), 'binary_sha256': sha(binary), 'command': command, 'jobs': args.jobs,
               'source_head': subprocess.check_output(['git', '-C', str(source), 'rev-parse', 'HEAD'], text=True).strip(),
               'link_map': str(link_map), 'link_map_sha256': sha(link_map),
-              'environment': {k: env.get(k, 'unset') for k in ('QCORE_CLANG', 'QCORE_CROSS_UNIT_LINK_MAP',
+              'environment': {k: env.get(k, 'unset') for k in ('QCORE_PROFILES', 'QCORE_CLANG', 'QCORE_CROSS_UNIT_LINK_MAP',
                               'QCORE_NULL_PROPERTY', 'QCORE_OUTER_PROJECTION', 'QCORE_SOURCE_CONTRACTS', 'QCORE_RETURN_CENSUS')},
               'started': datetime.datetime.now(datetime.timezone.utc).isoformat()}
     if route != 'corpus':

@@ -59,5 +59,26 @@
     "exit": 1,
     "private_log": "private/w48-bottom-up-batch3/provider-sync.log",
     "reason": "__errno_location flexible text lock still held the old reading-premise hash; deliberately refreshed only that hash with the pin CLI"
+  },
+  {
+    "name": "standing-rust-1",
+    "command": "python3 scripts/run_test_binaries.py --jobs 4 --log-dir private/w48-bottom-up-batch3/gate-rust-1/rust-units",
+    "exit": 101,
+    "units": 520,
+    "summaries": 533,
+    "passed": 8358,
+    "failed": 1,
+    "ignored": 15,
+    "private_log": "private/w48-bottom-up-batch3/gate-rust-1/rust.log",
+    "reason": "Existing native platform test assumed primary-checkout .git/modules layout; linked worktree has a .git file"
+  },
+  {
+    "name": "worktree-fixture-after",
+    "command": "cargo test --locked --offline -p qcore-audit --lib native_platform_matrix::tests::configured_all_unknown_gap_report_is_valid -- --exact",
+    "exit": 0,
+    "passed": 1,
+    "failed": 0,
+    "filtered": 126,
+    "private_log": "private/w48-bottom-up-batch3/worktree-fixture-after.log"
   }
 ]

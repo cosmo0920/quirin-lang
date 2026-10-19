@@ -46,3 +46,13 @@ session restart. They have no final report or exit receipt and are excluded
 from validation (`interrupted-attempts.json`). No old audit remains running.
 The semantic checkpoint is committed before restarting with immutable explicit
 binary/input snapshots. This supersedes the earlier running-status paragraphs.
+
+
+Full Rust attempt1 executes every unit:520units,533summaries,8358passed,
+1failed,15ignored (exit101). The sole failure is the base's native-platform
+fixture assuming `.git/modules/third_party/libevent` beneath a linked worktree's
+`.git` file. The fixture now asks the initialized submodule for
+`rev-parse --absolute-git-dir`, retaining both scoped ownership exceptions and
+all assertions. Its focused host control passes1/0failed (exit0); formatting
+passes. This changes test setup only, with no production analyzer or Lean rule.
+A complete fresh Rust gate follows the repair. No first-run failure is hidden.

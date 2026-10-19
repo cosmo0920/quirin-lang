@@ -641,8 +641,22 @@ mod tests {
         // cleanliness gate (including ignored files).
         let source = directory.join("libevent");
         let safe_source = source_repository.to_string_lossy().replace('\\', "/");
-        let source_git_dir = repository.join(".git/modules/third_party/libevent");
-        let safe_git_dir = source_git_dir.to_string_lossy().replace('\\', "/");
+        // A linked worktree has a .git file and its own submodule metadata
+        // beneath the common repository's worktrees directory. Ask Git for
+        // this submodule's actual directory rather than assuming a primary
+        // checkout's .git/modules layout.
+        let source_git_dir = Command::new("git")
+            .args(["-c", &format!("safe.directory={safe_source}")])
+            .arg("-C")
+            .arg(&source_repository)
+            .args(["rev-parse", "--absolute-git-dir"])
+            .output()
+            .unwrap();
+        assert!(source_git_dir.status.success(), "{source_git_dir:?}");
+        let safe_git_dir = String::from_utf8(source_git_dir.stdout)
+            .unwrap()
+            .trim_end_matches(['\r', '\n'])
+            .replace('\\', "/");
         let git_config = directory.join("gitconfig");
         fs::write(
             &git_config,
