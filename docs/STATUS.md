@@ -28,6 +28,8 @@ authority; history belongs in [increment records](development/increments/README.
 
 ## Coverage
 
+The [scalar NoOp alias-read repair](reports/lexical-scalar-noop-alias-read/README.md) reproduces the older route's synthetic trusted-release gap at exact base `b5a00e7dc2`: the analyzer accepted `q_free(peer); p->x = 1` as source-bound Safe/NoOp while Clang AddressSanitizer reports a use-after-free for `subject(p,p)`. The repaired route carries each accepted record-pointer scalar base into the existing alias/liveness transfer, with matching audited Lean. Three fresh pinned audits at source/proof `11e3e135f3e3` all exit 0 and retain **961 Safe / 3,864 Unknown / 9 provisional Unsafe** corpus functions, **99 / 345 / 4** system rows and **53 Safe / 346 Unknown / 4 Pending / 1 provisional Unsafe** slice rows. No status or full diagnostic changes; all 5,781 null-property rows, combined verdicts and runtime moved records are unchanged. The first fresh corpus attempt failed on an uninitialized Libevent submodule and is excluded from coverage. This is a synthetic soundness repair with no new production Safe claim. The full gate passes 8,328 Rust tests, 343 Lean audits and 374 post-matrix Python tests; exact commands and artifacts are in the report.
+
 The isolated [W44-CALLEE-CROSS-UNIT-SUMMARY](reports/w44-cross-unit-summary/README.md)
 run on base `fa04aab0f` measured an opt-in, conditional linked-program
 premise over five pinned external Safe home functions. Its corrected 66910c10

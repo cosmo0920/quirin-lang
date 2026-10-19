@@ -1,0 +1,13 @@
+{
+  "note": "LEXICAL-SCALAR-NOOP-ALIAS-READ at source/proof 11e3e135f3e3 on exact base b5a00e7dc2. Fresh corpus/system/slice audits all exit0 with unchanged custody, diagnostics, null and runtime moved rows. Standing gate: 519 units/532 summaries, 8328 Rust passed/0 failed/15 ignored; 343 Lean audits; 374 root Python expected at matrix regeneration and confirmed by the post-matrix suite. Provider 133 is explicitly borrowed from the unchanged b5a provider source gate; no provider tree changed. The first corpus setup run and first sandbox submodule step failed and are retained; host-access submodule and corrected corpus reruns passed. Actual Clang recording from this alias worktree.",
+  "workspace_tests": 8328,
+  "provider_tests": 133,
+  "python_evidence_validator_tests": 374,
+  "reevaluation_probe_exit": 0,
+  "reevaluation_followup_exit": 0,
+  "cargo_fmt": "clean",
+  "cargo_clippy": "clean",
+  "standing_gate": "complete",
+  "lean_audits": 343,
+  "clang": "present: Ubuntu clang version 21.1.8 (6ubuntu1)"
+}

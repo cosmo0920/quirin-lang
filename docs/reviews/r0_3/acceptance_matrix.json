@@ -195,7 +195,7 @@
   "ct_stage_names": 20,
   "ct_cells": 1000,
   "unverified_spec_items": 10,
-  "named_followups": 805
+  "named_followups": 804
  },
  "derivation": {
   "rule": "no count in a section this file marks `derived` is hand-copied from a status ledger; each is read from the manifest or validated run record named beside it. Sections marked `hand_maintained` are recorded analysis carried verbatim from the previous matrix, and `integrator_supplied` numbers name whether they were measured for this run or carried - see section_ownership.",
@@ -6753,11 +6753,11 @@
   "note": "providers/ is a separate Cargo workspace, excluded from the core workspace; P01 verified empirically that the core workspace builds and passes its full suite with providers/ moved out of the tree."
  },
  "validation": {
-  "note": "CJSON-DETACH-SAME-ITEM cumulative schema19 at analyzer/proof9bfe86a4115c4a7e3e4fb0de93c2e037ef5fcfbe on integration base94b3267f36a1d4a84c20f75226da836430f627b3. Host standing gate4:518units/531summaries,8325passed/0failed/15ignored;342Lean;374rootPython after final matrix regeneration. Fresh provider gate2:133Rust/0failed/1ignored,25Python,all five schema19 packages rebuilt/verified. Final release9f10a5bb all3audits exit0; custody unchanged, all5781null dictionaries and runtime moved records identical. Production detach stays conditional DeclaredAssumption, not Validated/bodySafe. Earlier failures, superseded0091 withdrawal and cancelled jobs1 control retained. Actual Clang recording copied from this same worktree/source gate-host-4, not another report.",
-  "workspace_tests": 8325,
+  "note": "LEXICAL-SCALAR-NOOP-ALIAS-READ at source/proof 11e3e135f3e3 on exact base b5a00e7dc2. Fresh corpus/system/slice audits all exit0 with unchanged custody, diagnostics, null and runtime moved rows. Standing gate: 519 units/532 summaries, 8328 Rust passed/0 failed/15 ignored; 343 Lean audits; 374 root Python expected at matrix regeneration and confirmed by the post-matrix suite. Provider 133 is explicitly borrowed from the unchanged b5a provider source gate; no provider tree changed. The first corpus setup run and first sandbox submodule step failed and are retained; host-access submodule and corrected corpus reruns passed. Actual Clang recording from this alias worktree.",
+  "workspace_tests": 8328,
   "provider_tests": 133,
   "python_evidence_validator_tests": 374,
-  "lean_audits": 342,
+  "lean_audits": 343,
   "lean_audit_files": [
    "AuditAbiEnumConstPointer.lean",
    "AuditAggregateOwnedField.lean",
@@ -7024,6 +7024,7 @@
    "AuditScalarEpochTasks.lean",
    "AuditScalarLoopBounds.lean",
    "AuditScalarMemberStore.lean",
+   "AuditScalarNoOpAliasRead.lean",
    "AuditScalarObservationContracts.lean",
    "AuditScalarPayloads.lean",
    "AuditScalarPositions.lean",
@@ -7108,7 +7109,7 @@
   "cargo_clippy": "clean",
   "standing_gate": "complete",
   "full_language_conformance": false,
-  "measurement_provenance": "integrator_supplied (docs/reports/cjson-detach-same-item/gate.json)"
+  "measurement_provenance": "integrator_supplied (docs/reports/lexical-scalar-noop-alias-read/gate.json)"
  },
  "named_followups": [
   {
@@ -12643,13 +12644,6 @@
    "why": "OUTER-CONTRACT selects the projection (QCORE_OUTER_PROJECTION) on the pinned, configured and no-build routes only; a checkpointed run refuses it (checkpoint_run.rs, as it refuses the null and bounds selections), so a composed report has no runtime scope. DISCHARGE: the checkpoint carries the outer environment's identity and each loader's reach, the composer projects the composed rows exactly as a whole run does (or refuses when the checkpoints disagree), tested on a split run equal to the whole one.",
    "source": "docs/reports/outer-contract/README.md",
    "recorded_by": "OUTER-CONTRACT"
-  },
-  {
-   "id": "LEXICAL-SCALAR-NOOP-ALIAS-READ",
-   "title": "An older unbound scalar-field NoOp carries no same-type alias read after a peer release",
-   "why": "Observed during LEXICAL-ROUTES-PREEMPT-TYPED-FALLBACKS first focused fixture run on a dirty worktree after prediction commit 1f9e306a0: under synthetic q_base.qv custody assumptions (q_free releases nonnull), struct S { int x; struct S *next; }; void subject(struct S *p, struct S *peer) { q_free(peer); p->x = 1; } is Safe and the store is NoOp, while the release carries the peer/p alias class. This is an observed analyzer-boundary candidate, not a validated violation or upstream defect. NoOp is outside the scalar alternative card, which preserves its existing handling. DISCHARGE: reproduce at an exact baseline, decide and implement an alias-preserving reading of the older scalar-field no-op without erasing genuine alias/custody/null/effect refusals, with Rust, audited Lean, full gate and all-route re-pin; read every moved row. Exact source/profile/log provenance is in artifacts/noop-alias-observation.json.",
-   "source": "docs/reports/lexical-routes-typed-fallbacks/README.md",
-   "recorded_by": "LEXICAL-ROUTES-PREEMPT-TYPED-FALLBACKS"
   },
   {
    "id": "LEXICAL-TYPED-TAIL-APPEND-ACTUAL-IDENTITY",

@@ -1,0 +1,25 @@
+{
+  "before": "/tmp/qcore-lexical-scalar-noop-alias-read/private/noop-alias/base-from-detach/corpus/corpus/resource-diagnostics.json",
+  "after": "/tmp/qcore-lexical-scalar-noop-alias-read/private/noop-alias/tip-2/corpus/corpus/resource-diagnostics.json",
+  "functions": 4834,
+  "transitions": [
+    {
+      "before": "Safe",
+      "after": "Safe",
+      "count": 961
+    },
+    {
+      "before": "Unknown",
+      "after": "Unknown",
+      "count": 3864
+    },
+    {
+      "before": "Unsafe",
+      "after": "Unsafe",
+      "count": 9
+    }
+  ],
+  "removed_leaves": [],
+  "added_leaves": [],
+  "changed": []
+}
