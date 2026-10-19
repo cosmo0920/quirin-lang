@@ -92,8 +92,15 @@ source closure remains a follow-on, not a claimed production discharge.
 
 The added native fixture exercises the exact retained getter over NULL parent,
 empty/head/middle/tail/missing/huge indices and nonconsecutive existing-node
-addresses. Its Linux test enables ASan/UBSan. Execution is deferred to the
-integrator's exclusive native/full-gate slot; no native result is claimed yet.
+addresses. In the integrator's exclusive slot, the prepared `native-1` plan
+exits0 for actual Clang21.1.8 and the native Rust control (1passed,0failed,
+0ignored;6filtered). The Linux build enables ASan/UBSan and exits0.
+The tested source is `45a6d1178c1a81a709a0000ef7e3ded17dc72f08` (semantic
+code `da24ec588930d47566b38cf9c07fa0082ec8f365`). Commands, flags,
+source hashes and logs are retained under
+`private/detach-lookup-membership/native-1/{commands.json,native-control.json,clang-version.log,native-lookup.log}`.
+This is native observation of the retained getter; it establishes no detached
+custody, production verdict or unconditional C conformance claim.
 The general Lean representation theorem already compiles0 under pinned4.35.0,
 and states a separate finite concrete/list relation before proving the indexed
 identity, rather than assuming the lookup conclusion.
