@@ -1,0 +1,42 @@
+{
+  "analyzer_source_commit": "198f6fc4349d3a47591a2378835ae9286859d918",
+  "command": [
+    "/home/cosmo/.codex/worktrees/3d1b/qcore-c/private/contract-hypothesis-graph-v1/baseline-source/target/release/quirin-audit",
+    "current",
+    "--checkout",
+    "/home/cosmo/Documents/GitHub/qcore-c/private/w45-fb/w46-external-callee-contracts/attempt-1/fluent-bit-clang-source",
+    "--profile-directory",
+    "/home/cosmo/.codex/worktrees/3d1b/qcore-c/contract/profiles/fluent-bit",
+    "--compile-database",
+    "/home/cosmo/Documents/GitHub/qcore-c/private/w45-fb/w46-external-callee-contracts/attempt-1/fluent-bit-clang-production/compile_commands.json",
+    "--selection",
+    "/home/cosmo/.codex/worktrees/3d1b/qcore-c/contract/profiles/fluent-bit/system-selection.json",
+    "--jobs",
+    "4",
+    "--report",
+    "/home/cosmo/.codex/worktrees/3d1b/qcore-c/private/contract-hypothesis-graph-v1/measure-1/base/system/resource-diagnostics.json"
+  ],
+  "jobs": 4,
+  "binary": "/home/cosmo/.codex/worktrees/3d1b/qcore-c/private/contract-hypothesis-graph-v1/baseline-source/target/release/quirin-audit",
+  "binary_sha256": "f3d7483b0db44a2908d356181dd7e3e25c0ab2dbf27e21fcd33a1900d496b2da",
+  "source_head": "046accf6aded7906f66a1baf0202da349e521736",
+  "link_map": "/home/cosmo/.codex/worktrees/3d1b/qcore-c/docs/reports/w48-bottom-up-batch2/link-map.corpus.json",
+  "link_map_sha256": "3a0424cf3f447211ce8bf78679c396428ffed62ade14a75b99526ac9ddd1156d",
+  "environment": {
+    "QCORE_CLANG": "/usr/lib/llvm-21/bin/clang",
+    "QCORE_CHUNKIO_PACKAGE": "unset",
+    "QCORE_CROSS_UNIT_LINK_MAP": "/home/cosmo/.codex/worktrees/3d1b/qcore-c/docs/reports/w48-bottom-up-batch2/link-map.corpus.json",
+    "QCORE_NULL_PROPERTY": "/home/cosmo/.codex/worktrees/3d1b/qcore-c/private/contract-hypothesis-graph-v1/measure-1/base/system/system-null.jsonl",
+    "QCORE_OUTER_PROJECTION": "/home/cosmo/.codex/worktrees/3d1b/qcore-c/private/contract-hypothesis-graph-v1/measure-1/base/system/system-outer.json",
+    "QCORE_SOURCE_CONTRACTS": "unset",
+    "QCORE_RETURN_CENSUS": "unset"
+  },
+  "started": "2026-10-19T23:00:16.245721+00:00",
+  "compile_database": "/home/cosmo/Documents/GitHub/qcore-c/private/w45-fb/w46-external-callee-contracts/attempt-1/fluent-bit-clang-production/compile_commands.json",
+  "compile_database_sha256": "2475e6374b14152538463f35a3457ffa98fbe30b2639d5df916ef9a216cb6876",
+  "selection": "/home/cosmo/.codex/worktrees/3d1b/qcore-c/contract/profiles/fluent-bit/system-selection.json",
+  "selection_sha256": "d7e8ce764c8c45c8df11d33f3568a7a653c3281985028156229c43ab86cccdde",
+  "exit": 0,
+  "ended": "2026-10-19T23:11:30.331895+00:00",
+  "binary_sha256_after": "f3d7483b0db44a2908d356181dd7e3e25c0ab2dbf27e21fcd33a1900d496b2da"
+}

@@ -38,6 +38,27 @@ warrant independence, erasure and refusal when an open/refuted atom is
 inserted. These are model theorems, not extraction of the Rust loader or a
 proof of Clang import fidelity.
 
+## Controls
+
+The [loader/replay controls](../../../crates/qcore-contract/tests/hypothesis.rs)
+exercise exact legacy erasure, same/conflicting duplicates, malformed graphs,
+canonical wire replay, all five warrants, each context coordinate, stale
+content and independently held relational graph identity. Removing an atom
+and recomputing a self-consistent digest still refuses against the expected
+graph. Inheritance retains parent atoms and rejects conflicting replacements.
+These are control families; no separate numeric mutation-campaign count is
+claimed.
+
+The [provider firewall controls](../../../crates/qcore-audit/tests/hypothesis_firewall.rs)
+reject graph-shaped forged evidence and fabricated Safe results without the
+private checked certificate under every warrant. Gateway tests pin the actual
+call/summary dependency closure. Audit publication tests cover full erasure,
+graph digests and declarations whose legal names collide with metadata field
+names. Existing outer-envelope tests and the required full runtime comparison
+retain the static/runtime boundary. The [Lean model](../../../proof/QCore/HypothesisGraph.lean)
+and [audit registration](../../../proof/AuditHypothesisGraph.lean) retain the
+model/import boundary stated above.
+
 ## Validation in progress
 
 Private evidence root:
@@ -78,6 +99,27 @@ inherit the enclosing card HEAD in build.rs and was excluded; it was rebuilt
 with explicit base `QCORE_AUDIT_BUILD_COMMIT` before measurement. The cancelled
 standing build's logs were preserved before reclaiming only its own29.7GiB
 of safe build output. These attempts are not substituted for final evidence.
+
+## Measured erasure
+
+Fresh base/tip system runs both exit 0: **99 Safe / 345 Unknown / 4
+provisional Unsafe**, 448 custody functions and 454 null rows. Every invariant
+in [the full comparison](measurements/system/comparison.json) passes: complete
+static rows/diagnostics/reasons/dependencies/standing, legacy premises,
+contract revision, full null records and summary, and runtime projection.
+Raw differences and the standard five-artifact comparison are retained beside
+both raw archived artifact sets.
+
+After graph erasure and collision-checked analyzer-root normalization, the
+only four differing leaves are one empty lifetime-summary identity remap,
+published twice (evidence and prepass). The
+[exact attribution](measurements/system/provenance-attribution.json) and
+[replay harness](scripts/attribute_time_identity.py) reproduce both SHA-256
+keys by changing only Monkey's `MONKEY_BUILT` `__TIME__` expansion,
+`08:01:09` to `08:12:24` on 2026-10-20 Asia/Tokyo. Both semantic summaries
+are `{}`; all other erased normalized fields are equal. This attribution
+does not rewrite or suppress those raw differences. Slice and corpus remain
+pending.
 
 ## Follow-on boundary
 

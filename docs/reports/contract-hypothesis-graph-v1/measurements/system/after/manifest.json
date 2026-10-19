@@ -1,0 +1,30 @@
+{
+  "resource-diagnostics.json": {
+    "bytes": 2640759,
+    "sha256": "ed7b6177132cd7fe301614d4c3a6d589768daad0b1611d3b10466e5782e9d1b6"
+  },
+  "resource-diagnostics.contracts.json": {
+    "bytes": 10126554,
+    "sha256": "ec1ff99cd02938955e316c914cbbc052b857d1085487136553e028da08da042b"
+  },
+  "resource-diagnostics.chunk-contracts.json": {
+    "bytes": 385,
+    "sha256": "e7e0d254d9e7ee199672b981e3fc764b702b35a1757bb0f4570a9438e6b87922"
+  },
+  "resource-diagnostics.source-effects.json": {
+    "bytes": 385,
+    "sha256": "e7e0d254d9e7ee199672b981e3fc764b702b35a1757bb0f4570a9438e6b87922"
+  },
+  "system-null.jsonl": {
+    "bytes": 1872541,
+    "sha256": "1777279bdca25d8859e575c8eee2c65c9ea3281db66fc29732ffa4ab24694f95"
+  },
+  "system-null.summary.json": {
+    "bytes": 64362,
+    "sha256": "3b6f7952527929102b032a1c9c944c3c6615006f6ff560105871e83886931b0f"
+  },
+  "system-outer.json": {
+    "bytes": 67284,
+    "sha256": "eb7c04ea43c26e5ee6ba1b81c9ecea7dea72fbb28979ed272ef9d410d868427a"
+  }
+}
