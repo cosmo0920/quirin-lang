@@ -39,11 +39,8 @@ fn environment() -> ResourceContracts {
     } else {
         source.to_owned()
     };
-    load_resource_contract_sources(&BTreeMap::from([(
-        "handoff_direct.qv".to_owned(),
-        source,
-    )]))
-    .expect("the fixture contracts load")
+    load_resource_contract_sources(&BTreeMap::from([("handoff_direct.qv".to_owned(), source)]))
+        .expect("the fixture contracts load")
 }
 
 fn clang_available() -> bool {

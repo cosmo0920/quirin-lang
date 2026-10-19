@@ -1,0 +1,63 @@
+[
+  {
+    "name": "base-build",
+    "command": "CARGO_BUILD_JOBS=2 CARGO_PROFILE_RELEASE_DEBUG=0 cargo build --locked --offline --release -p qcore-audit --bin quirin-audit",
+    "exit": 0,
+    "private_log": "private/w48-bottom-up-batch3/base-build.log"
+  },
+  {
+    "name": "condition-before",
+    "command": "cargo test --locked --offline -p qcore-c-gateway --test constructor_residuals scalar_accessor_conditions_keep_resources_and_replay -- --exact",
+    "exit": 101,
+    "private_log": "private/w48-bottom-up-batch3/condition-before.log"
+  },
+  {
+    "name": "condition-after-1",
+    "command": "cargo test --locked --offline -p qcore-c-gateway --test constructor_residuals scalar_accessor_conditions_keep_resources_and_replay -- --exact",
+    "exit": 101,
+    "private_log": "private/w48-bottom-up-batch3/condition-after-1.log"
+  },
+  {
+    "name": "condition-after-2",
+    "command": "cargo test --locked --offline -p qcore-c-gateway --test constructor_residuals scalar_accessor_conditions_keep_resources_and_replay -- --exact",
+    "exit": 0,
+    "private_log": "private/w48-bottom-up-batch3/condition-after-2.log"
+  },
+  {
+    "name": "accessor-controls-1",
+    "command": "cargo test --locked --offline -p qcore-c-gateway --test constructor_residuals",
+    "exit": 101,
+    "private_log": "private/w48-bottom-up-batch3/accessor-controls-1.log"
+  },
+  {
+    "name": "accessor-controls-2",
+    "command": "cargo test --locked --offline -p qcore-c-gateway --test constructor_residuals",
+    "exit": 0,
+    "private_log": "private/w48-bottom-up-batch3/accessor-controls-2.log"
+  },
+  {
+    "name": "model-controls-1",
+    "command": "cargo test --locked --offline -p qcore-c-gateway --lib scalar_accessor_condition",
+    "exit": 0,
+    "private_log": "private/w48-bottom-up-batch3/model-controls-1.log"
+  },
+  {
+    "name": "lean-1",
+    "command": "lake env lean QCore/ScalarAccessorCondition.lean",
+    "exit": 1,
+    "private_log": "private/w48-bottom-up-batch3/lean-1.log"
+  },
+  {
+    "name": "lean-2",
+    "command": "lake env lean QCore/ScalarAccessorCondition.lean",
+    "exit": 0,
+    "private_log": "private/w48-bottom-up-batch3/lean-2.log"
+  },
+  {
+    "name": "provider-sync-preparation",
+    "command": "python3 providers/contracts.py sync",
+    "exit": 1,
+    "private_log": "private/w48-bottom-up-batch3/provider-sync.log",
+    "reason": "__errno_location flexible text lock still held the old reading-premise hash; deliberately refreshed only that hash with the pin CLI"
+  }
+]

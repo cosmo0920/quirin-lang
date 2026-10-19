@@ -1,0 +1,8 @@
+import QCore.ScalarAccessorCondition
+#print axioms QCore.ScalarAccessorCondition.vectors_match
+#print axioms QCore.ScalarAccessorCondition.admission_needs_every_fact
+#print axioms QCore.ScalarAccessorCondition.an_unread_pointee_refuses
+#print axioms QCore.ScalarAccessorCondition.a_custody_result_refuses
+#print axioms QCore.ScalarAccessorCondition.call_errors_and_state_survive
+#print axioms QCore.ScalarAccessorCondition.every_concrete_comparison_is_covered
+#print axioms QCore.ScalarAccessorCondition.every_successor_keeps_the_complete_post_call_state

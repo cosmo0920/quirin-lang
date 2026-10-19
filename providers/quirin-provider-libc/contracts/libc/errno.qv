@@ -48,18 +48,24 @@ module contract;
 // ## What this declaration does NOT admit on its own
 //
 // Declaring `__errno_location` does not make `errno` readable anywhere. The
-// gateway's dereference-of-a-call-result rule (card CONSTRUCTOR-RESIDUALS,
-// premises N1-N10) independently requires, PER CALL SITE, that the call is the
-// statement's only nested call, that it occupies a whole argument at a declared
-// `Borrowed` position modulo the dereference wrapper, that its written arity
-// equals this declaration's, and — premise N10 — that THIS TRANSLATION UNIT's
-// own declaration of the callee returns exactly one `*` over a scalar type.
-// A unit that declares `__errno_location` differently, or does not declare it
-// at all, refuses every such site under this declaration exactly as without it.
+// gateway checks each reading position. The nested-argument rule (card
+// CONSTRUCTOR-RESIDUALS, premises N1-N10) requires a whole Borrowed or data-tail
+// argument modulo the dereference wrapper and exact written arity. The scalar
+// condition rule below has its own narrower zero-argument comparison shape.
+// Both independently require THIS TRANSLATION UNIT's own unambiguous
+// declaration to return exactly one `*` over a scalar type. A missing or
+// disagreeing declaration refuses the reading rather than assuming its type.
 //
 // Card VERDICT-CONTRACT-PREMISE-ANNOTATIONS: stated on `__errno_location` as
 // `requires resource_premise(nested_call_admission, "...")` (contract spec
 // C04.18), so every verdict that rests on the declaration names it.
+//
+// W48-BOTTOM-UP-BATCH3 deliberately adds one reading position, under the
+// same declared custody result: an external zero-argument call's scalar
+// dereference compared with a decimal literal in a condition. The gateway
+// retains the ordinary call and explores both comparison outcomes. No scalar
+// value, non-nullness, memory validity or function-body purity is inferred.
+// The named reading premise below states both positions explicitly.
 //
 // ## What no declaration here says
 //
@@ -81,7 +87,7 @@ extern fn __errno_location() -> ptr<mut, u8>
 contract {
     requires resource_contract_v1;
     requires resource_revision(flexible);
-    requires resource_premise(nested_call_admission, "a dereference of this call's result is read only where the gateway's nested-call admission holds at the call site (premises N1-N10 of cards O04-TRACE and CONSTRUCTOR-RESIDUALS, checked per site): the call is the statement's only nested call and a whole argument of a contracted call at a declared Borrowed position modulo the dereference wrapper (N4-D), its written arity is this declaration's, and the unit's own declaration of the callee returns exactly one pointer level over a scalar type (N10); under them the argument binds, releases, escapes and addresses nothing the projection tracks");
+    requires resource_premise(nested_call_admission, "a dereference of this call's result is read only under the checked reading rules: either the nested-call admission of O04-TRACE and CONSTRUCTOR-RESIDUALS (N1-N10, including a whole Borrowed or data-tail actual modulo the dereference wrapper and exact written arity), or W48-BOTTOM-UP-BATCH3 scalar condition admission (an external zero-argument call with this no-custody result, no container effect, exactly one dereference compared by equality or inequality with a decimal literal, the ordinary call checks retained and both outcomes explored); both require this unit's unambiguous declaration to return exactly one pointer level over a scalar type and bind, release, escape and address nothing the projection tracks");
     ensures normal resource_return_none();
 };
 

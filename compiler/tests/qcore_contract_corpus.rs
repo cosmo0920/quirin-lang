@@ -923,6 +923,8 @@ const EXPECTED_CONTRACTS: &[(&str, &str, usize)] = &[
     // same shape as `fluent_bit/time.qv`'s `flb_time_now`.
     // Card VERDICT-CONTRACT-PREMISE-ANNOTATIONS: `requires resource_premise(nested_call_admission, ...)`
     // (contract spec C04.18), one clause: 3 -> 4.
+    // W48-BOTTOM-UP-BATCH3 deliberately updates the existing reading-premise
+    // text for scalar conditions; the four clauses and custody modes stay pinned.
     ("libc/errno.qv", "__errno_location", 4),
     // Card W44-LIBC-RESIDUALS: `strerror`, appended beside the `errno`
     // accessor (the marker, one borrowed scalar, `none`: 3).

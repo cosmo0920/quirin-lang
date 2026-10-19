@@ -1,0 +1,24 @@
+{
+  "detected_utc": "2026-10-19T21:48:34.693030+00:00",
+  "reason": "App/execution-session restart: all old process handles are unknown; no old audit process remains, and none of the three drivers produced a final report, exit receipt or end timestamp. Exact termination status is unavailable. These attempts are excluded from validation.",
+  "attempts": [
+    {
+      "route": "corpus",
+      "private_path": "private/w48-bottom-up-batch3/before/corpus",
+      "final_exit": null,
+      "status": "interrupted; not measured"
+    },
+    {
+      "route": "system",
+      "private_path": "private/w48-bottom-up-batch3/before/system",
+      "final_exit": null,
+      "status": "interrupted; not measured"
+    },
+    {
+      "route": "slice",
+      "private_path": "private/w48-bottom-up-batch3/before/slice",
+      "final_exit": null,
+      "status": "interrupted; not measured"
+    }
+  ]
+}

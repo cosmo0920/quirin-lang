@@ -36,11 +36,9 @@ const HOST_SIZE_C: &str = "unsigned int";
 const HOST_SIZE_TYPEDEF_C: &str =
     "typedef unsigned long long k_size;\nvoid k_use(void *p, k_size n);";
 #[cfg(all(not(windows), target_pointer_width = "64"))]
-const HOST_SIZE_TYPEDEF_C: &str =
-    "typedef unsigned long k_size;\nvoid k_use(void *p, k_size n);";
+const HOST_SIZE_TYPEDEF_C: &str = "typedef unsigned long k_size;\nvoid k_use(void *p, k_size n);";
 #[cfg(target_pointer_width = "32")]
-const HOST_SIZE_TYPEDEF_C: &str =
-    "typedef unsigned int k_size;\nvoid k_use(void *p, k_size n);";
+const HOST_SIZE_TYPEDEF_C: &str = "typedef unsigned int k_size;\nvoid k_use(void *p, k_size n);";
 
 #[cfg(all(windows, target_pointer_width = "64"))]
 const HOST_SIZE_TYPEDEF_CHAIN_C: &str = "typedef unsigned long long k_word;\n\
