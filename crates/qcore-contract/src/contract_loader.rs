@@ -3522,6 +3522,18 @@ pub fn module_premises(source: &str) -> Result<BTreeMap<String, Vec<DeclaredPrem
                 premises.push(premise);
             }
         }
+        let graph = crate::hypothesis::declaration(&declaration.value, &premises)?;
+        for node in graph
+            .premises
+            .values()
+            .filter(|p| !p.id.starts_with("legacy_"))
+        {
+            premises.push(DeclaredPremise {
+                name: node.erasure.name.clone(),
+                statement: node.erasure.statement.clone(),
+                origin: PremiseOrigin::Declared,
+            });
+        }
         if !premises.is_empty()
             && out
                 .insert(declaration.value.name.clone(), premises)

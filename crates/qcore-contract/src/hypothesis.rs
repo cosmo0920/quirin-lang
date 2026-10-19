@@ -292,3 +292,35 @@ pub fn decode(bytes: &[u8]) -> Result<Graph, String> {
     }
     Ok(graph)
 }
+
+/// Compatibility elaboration for already validated premise records (including
+/// bounds/member and rule-owned metadata). Keeps their original order exactly.
+pub fn legacy_records(records: &[ErasedPremise]) -> Result<Graph, String> {
+    let mut graph = Graph {
+        version: 1,
+        atoms: BTreeMap::new(),
+        premises: BTreeMap::new(),
+    };
+    for (index, record) in records.iter().enumerate() {
+        let id = format!("legacy_{index:08}");
+        graph.atoms.insert(
+            id.clone(),
+            Atom {
+                id: id.clone(),
+                proposition: Proposition::Opaque {
+                    statement: record.statement.clone(),
+                },
+            },
+        );
+        graph.premises.insert(
+            id.clone(),
+            Conjunction {
+                id: id.clone(),
+                children: vec![id],
+                erasure: record.clone(),
+            },
+        );
+    }
+    validate(&graph)?;
+    Ok(graph)
+}

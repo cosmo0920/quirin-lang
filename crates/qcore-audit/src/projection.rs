@@ -1184,6 +1184,9 @@ fn hypothesis_context(
         ),
         source_identity: qcore_schemas::sha256_hex(source.as_bytes()),
         build_identity: qcore_schemas::sha256_hex(build.as_bytes()),
-        evidence_version: "contract-hypothesis-graph.v1".into(),
+        evidence_version: format!(
+            "contract-hypothesis-graph.v1:{}",
+            option_env!("QCORE_AUDIT_BUILD_COMMIT").unwrap_or("unrecorded-build")
+        ),
     }
 }

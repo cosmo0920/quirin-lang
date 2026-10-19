@@ -241,7 +241,9 @@ pub fn annotate_unit(
     };
     let dependencies =
         qcore_c_gateway::contract_dependencies::row_dependencies(record, summary, contracts);
-    let graphs = qcore_contract::hypothesis::replay(contracts.source_assumptions())?;
+    let graphs: BTreeMap<String, qcore_schemas::hypothesis::Graph> =
+        serde_json::from_value(premises(contracts)?["$hypothesis_graphs"].clone())
+            .map_err(|e| e.to_string())?;
     let invoked = crate::callback_member_fold::member_declarations(contracts);
     let constructed = crate::callback_member_fold::constructed_declarations(contracts);
     for function in row["functions"].as_array_mut().into_iter().flatten() {
@@ -302,10 +304,50 @@ pub fn premises(contracts: &ResourceContracts) -> Result<Value, String> {
                 }));
         }
     }
+    let mut graphs = qcore_contract::hypothesis::replay(contracts.source_assumptions())?;
+    for (name, records) in &premises {
+        let graph =
+            graphs
+                .entry(name.clone())
+                .or_insert_with(|| qcore_schemas::hypothesis::Graph {
+                    version: 1,
+                    atoms: BTreeMap::new(),
+                    premises: BTreeMap::new(),
+                });
+        for record in records {
+            let record: qcore_schemas::hypothesis::ErasedPremise =
+                serde_json::from_value(record.clone()).map_err(|e| e.to_string())?;
+            if graph.premises.values().any(|p| p.erasure == record) {
+                continue;
+            }
+            let index = graph
+                .premises
+                .keys()
+                .filter(|id| id.starts_with("legacy_"))
+                .count();
+            let id = format!("legacy_{index:08}");
+            graph.atoms.insert(
+                id.clone(),
+                qcore_schemas::hypothesis::Atom {
+                    id: id.clone(),
+                    proposition: qcore_schemas::hypothesis::Proposition::Opaque {
+                        statement: record.statement.clone(),
+                    },
+                },
+            );
+            graph.premises.insert(
+                id.clone(),
+                qcore_schemas::hypothesis::Conjunction {
+                    id: id.clone(),
+                    children: vec![id],
+                    erasure: record,
+                },
+            );
+        }
+        qcore_contract::hypothesis::validate(graph)?;
+    }
     let mut value = json!(premises);
-    value["$hypothesis_graphs"] = json!(qcore_contract::hypothesis::replay(
-        contracts.source_assumptions()
-    )?);
+    value["$hypothesis_graphs"] = json!(graphs);
     Ok(value)
 }
 

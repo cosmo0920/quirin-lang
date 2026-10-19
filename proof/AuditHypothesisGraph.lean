@@ -8,3 +8,8 @@ import QCore.HypothesisGraph
 #print axioms QCore.HypothesisGraph.refuted_atom_never_promotes
 #print axioms QCore.HypothesisGraph.legacy_erasure
 #print axioms QCore.HypothesisGraph.erasing_publication_preserves_verdict
+
+#print axioms QCore.HypothesisGraph.composition_support_needs_every_atom
+
+#print axioms QCore.HypothesisGraph.inserting_open_atom_never_promotes
+#print axioms QCore.HypothesisGraph.inserting_refuted_atom_never_promotes

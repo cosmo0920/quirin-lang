@@ -72,6 +72,18 @@ theorem graph_acyclic (graph : List (Nat × Conjunction)) (a : Node) :
 def supported (context : Context) (atoms : List Atom) : Bool :=
   !atoms.isEmpty && atoms.all (fun a => decide (a.context = context ∧ a.disposition = .supported))
 
+def compose (ctx : Context) (atoms : List Atom) : Disposition :=
+  if supported ctx atoms then .supported
+  else if atoms.all (fun a => decide (a.context = ctx)) &&
+      atoms.any (fun a => a.disposition == .refuted) then .refuted
+  else .open
+
+theorem composition_support_needs_every_atom (ctx : Context) (atoms : List Atom) :
+    compose ctx atoms = .supported ↔ supported ctx atoms = true := by
+  simp only [compose]
+  split <;> simp_all
+  split <;> simp_all
+
 /-- Warrant is absent from the reporting rule's premises. -/
 theorem warrant_changes_no_support (ctx : Context) (a : Atom) (w : Warrant) :
     supported ctx [{ a with warrant := w }] = supported ctx [a] := by
@@ -88,6 +100,16 @@ theorem open_atom_never_promotes (ctx : Context) (a : Atom) (rest : List Atom)
 theorem refuted_atom_never_promotes (ctx : Context) (a : Atom) (rest : List Atom)
     (h : a.disposition = .refuted) : supported ctx (a :: rest) = false := by
   simp [supported, h]
+
+theorem inserting_open_atom_never_promotes (ctx : Context) (a : Atom)
+    (left right : List Atom) (h : a.disposition = .open) :
+    supported ctx (left ++ a :: right) = false := by
+  simp [supported, List.all_append, h]
+
+theorem inserting_refuted_atom_never_promotes (ctx : Context) (a : Atom)
+    (left right : List Atom) (h : a.disposition = .refuted) :
+    supported ctx (left ++ a :: right) = false := by
+  simp [supported, List.all_append, h]
 
 def legacy (p : Premise) (id : Nat) : Conjunction := ⟨p, [id]⟩
 def erase (nodes : List Conjunction) : List Premise := nodes.map (·.erasure)

@@ -312,6 +312,61 @@ impl AuditReport {
             &self.null_evidence,
             &crate::bounds_selection::null_environment(),
         );
+        // Bind the null property's own consulted premise records after its fold.
+        // Contexts follow the same unit/configuration order as the custody rows.
+        let mut contexts = std::collections::BTreeMap::<
+            (String, String, String),
+            std::collections::VecDeque<Value>,
+        >::new();
+        for unit in &self.units {
+            for function in unit["functions"].as_array().into_iter().flatten() {
+                if let Some(context) = function.get("hypothesis_context") {
+                    let key = (
+                        unit["library"].as_str().unwrap_or_default().to_owned(),
+                        unit["file"].as_str().unwrap_or_default().to_owned(),
+                        function["function"].as_str().unwrap_or_default().to_owned(),
+                    );
+                    contexts.entry(key).or_default().push_back(context.clone());
+                }
+            }
+        }
+        for row in &mut rows {
+            let records = row["null"]["premises"]
+                .as_array()
+                .into_iter()
+                .flatten()
+                .map(|p| qcore_schemas::hypothesis::ErasedPremise {
+                    name: p["name"].as_str().unwrap_or_default().to_owned(),
+                    statement: p["statement"].as_str().unwrap_or_default().to_owned(),
+                    origin: "declared".into(),
+                })
+                .collect::<Vec<_>>();
+            let graph = qcore_contract::hypothesis::legacy_records(&records)?;
+            row["hypothesis_graph"] = serde_json::to_value(&graph).map_err(|e| e.to_string())?;
+            let key = (
+                row["library"].as_str().unwrap_or_default().to_owned(),
+                row["file"].as_str().unwrap_or_default().to_owned(),
+                row["function"].as_str().unwrap_or_default().to_owned(),
+            );
+            if let Some(mut context) = contexts.get_mut(&key).and_then(|q| q.pop_front()) {
+                context["property"] = row["null"]["property"].clone();
+                context["scope"] =
+                    json!({"scope":row["null"]["scope"],"assumptions":row["null"]["assumptions"]})
+                        .to_string()
+                        .into();
+                context["assumptions"] = qcore_schemas::sha256_hex(
+                    json!({"custody":context["assumptions"],"null_identity":row["identity"]})
+                        .to_string()
+                        .as_bytes(),
+                )
+                .into();
+                row["hypothesis_context"] = context;
+            } else if !records.is_empty() {
+                return Err(
+                    "hypothesis: null premise row lacks its caller-held compile context".into(),
+                );
+            }
+        }
         let mut lines = String::new();
         for row in &rows {
             lines.push_str(&serde_json::to_string(row).map_err(|e| e.to_string())?);

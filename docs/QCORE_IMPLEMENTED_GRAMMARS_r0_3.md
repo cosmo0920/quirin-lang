@@ -3525,6 +3525,8 @@ resource_clause = "requires", "resource_contract_v1", ";"
                 | "requires", contract_review_marker, ";"
                 | "requires", "resource_body_checked", ";"
                 | "requires", named_premise, ";"
+                | "requires", hypothesis_atom, ";"
+                | "requires", hypothesis_all, ";"
                 | "requires", discriminant, ";"
                 | "ensures", "normal", resource_predicate, ";"
                 | "ensures", "normal", arm_predicate, ";"
@@ -3532,6 +3534,8 @@ resource_clause = "requires", "resource_contract_v1", ";"
                 | "ensures", "normal", clause_review_marker, ";"
                 | "requires", contract_revision_marker, ";"
                 | "ensures", "normal", clause_revision_marker, ";" ;
+hypothesis_atom = "resource_hypothesis", "(", premise_name, ",", STRING, ")" ;
+hypothesis_all = "resource_premise_all", "(", premise_name, ",", premise_name, {",", premise_name}, ")" ;
 named_premise =
     "resource_premise", "(", premise_name, ",", STRING, ")" ;
   (* card VERDICT-CONTRACT-DEPENDENCIES, contract specification C04.18:
