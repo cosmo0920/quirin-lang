@@ -648,6 +648,7 @@ struct LoadedDeclaration {
     /// premises. This metadata list decides no verdict; C04.21's scoped
     /// atoms/recognized snapshot clause are separately parsed structured data.
     premises: Vec<DeclaredPremise>,
+    hypotheses: qcore_schemas::hypothesis::Graph,
     /// Card W47-LOOP-OWNER-CONTRACTS: the declared loop-owner obligation.
     loop_owner: Option<DeclaredLoopOwner>,
     /// Card W47-CONDVAR-JOIN-PUBLICATION: the declared thread-synchronization
@@ -1494,6 +1495,7 @@ fn inherited_declarations_agree(elaborated: &Elaborated) -> Result<(), String> {
             // A literal-argument premise is compared above by parameter
             // index; its rendering names the child's own parameter.
             || declared_premises_of(&child_loaded) != declared_premises_of(&parent_loaded)
+            || child_loaded.hypotheses.atoms.iter().filter(|(id,_)| !id.starts_with("legacy_")).collect::<Vec<_>>() != parent_loaded.hypotheses.atoms.iter().filter(|(id,_)| !id.starts_with("legacy_")).collect::<Vec<_>>()
             || child_loaded.loop_owner != parent_loaded.loop_owner
             || child_loaded.thread_sync != parent_loaded.thread_sync
             || child_loaded.lifecycle != parent_loaded.lifecycle
@@ -1741,6 +1743,8 @@ fn load_function_in(
     let mut literal_arguments: Vec<DeclaredLiteralArgument> = Vec::new();
     // Card VERDICT-CONTRACT-DEPENDENCIES: the named premises, in clause order.
     let mut premises: Vec<DeclaredPremise> = Vec::new();
+    // Validate the whole graph before accepting any of its clauses.
+    crate::hypothesis::declaration(decl, &[])?;
     let mut loop_owner: Option<DeclaredLoopOwner> = None;
     let mut thread_sync: Option<DeclaredThreadSync> = None;
     let mut lifecycle: Option<DeclaredLifecycle> = None;
@@ -1962,6 +1966,9 @@ fn load_function_in(
             // Card VERDICT-CONTRACT-DEPENDENCIES: a named premise, at most
             // once per name. It narrows nothing and widens nothing: it names
             // an assumption the declaration rests on, for the report.
+            if crate::hypothesis::is_clause(expression) {
+                continue;
+            }
             if let Some(premise) = premise_clause(expression)? {
                 if premises
                     .iter()
@@ -2839,6 +2846,31 @@ fn load_function_in(
                 .into(),
         );
     }
+    let mut premises: Vec<DeclaredPremise> = premises
+        .into_iter()
+        .chain(literal_arguments.iter().map(|premise| DeclaredPremise {
+            name: LITERAL_PREMISE_NAME.to_owned(),
+            statement: format!(
+                "{} = {}",
+                decl.parameters[premise.parameter].name.value,
+                premise.literal.concat()
+            ),
+            origin: PremiseOrigin::LiteralArgument,
+        }))
+        .collect();
+
+    let hypotheses = crate::hypothesis::declaration(decl, &premises)?;
+    for p in hypotheses
+        .premises
+        .values()
+        .filter(|p| !p.id.starts_with("legacy_"))
+    {
+        premises.push(DeclaredPremise {
+            name: p.erasure.name.clone(),
+            statement: p.erasure.statement.clone(),
+            origin: PremiseOrigin::Declared,
+        });
+    }
     Ok(LoadedDeclaration {
         relational,
         retaining,
@@ -2846,18 +2878,8 @@ fn load_function_in(
         variadic_data_tail,
         variadic_borrowed_tail,
         no_return,
-        premises: premises
-            .into_iter()
-            .chain(literal_arguments.iter().map(|premise| DeclaredPremise {
-                name: LITERAL_PREMISE_NAME.to_owned(),
-                statement: format!(
-                    "{} = {}",
-                    decl.parameters[premise.parameter].name.value,
-                    premise.literal.concat()
-                ),
-                origin: PremiseOrigin::LiteralArgument,
-            }))
-            .collect(),
+        premises,
+        hypotheses,
         literal_arguments,
         loop_owner,
         thread_sync,
@@ -3070,6 +3092,7 @@ fn load_ffi_function(decl: &SourceDeclaration) -> Result<LoadedDeclaration, Stri
         no_return: false,
         literal_arguments: Vec::new(),
         premises: Vec::new(),
+        hypotheses: crate::hypothesis::declaration(decl, &[])?,
         loop_owner: None,
         thread_sync: None,
         lifecycle: None,
@@ -4048,4 +4071,21 @@ fn predicate_call(source: &str) -> Result<Vec<String>, String> {
         return Err("trailing predicate comma".into());
     }
     Ok(words)
+}
+
+/// Declaration graphs freshly reconstructed through the same loader as custody.
+pub fn declaration_hypotheses(
+    sources: &BTreeMap<String, String>,
+) -> Result<BTreeMap<String, qcore_schemas::hypothesis::Graph>, String> {
+    let mut graphs = BTreeMap::new();
+    each_loaded_declaration(sources, |name, _, loaded| {
+        if graphs
+            .insert(name.to_owned(), loaded.hypotheses.clone())
+            .is_some()
+        {
+            return Err("hypothesis: duplicate declaration".into());
+        }
+        Ok(())
+    })?;
+    Ok(graphs)
 }

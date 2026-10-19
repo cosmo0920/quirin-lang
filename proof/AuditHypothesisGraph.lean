@@ -1,0 +1,10 @@
+import QCore.HypothesisGraph
+#print axioms QCore.HypothesisGraph.edges_decrease
+#print axioms QCore.HypothesisGraph.paths_decrease
+#print axioms QCore.HypothesisGraph.graph_acyclic
+#print axioms QCore.HypothesisGraph.warrant_changes_no_support
+#print axioms QCore.HypothesisGraph.incompatible_context_refuses
+#print axioms QCore.HypothesisGraph.open_atom_never_promotes
+#print axioms QCore.HypothesisGraph.refuted_atom_never_promotes
+#print axioms QCore.HypothesisGraph.legacy_erasure
+#print axioms QCore.HypothesisGraph.erasing_publication_preserves_verdict

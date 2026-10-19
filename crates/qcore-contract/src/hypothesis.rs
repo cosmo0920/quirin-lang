@@ -1,0 +1,294 @@
+//! Canonical conjunction-only graph validation and retained-text replay.
+use crate::contract_loader::DeclaredPremise;
+use qcore_frontend::frontend::{SourceContractClauseKind, SourceDeclaration};
+use qcore_frontend::lexer::{Symbol, TokenKind, lex};
+use qcore_schemas::hypothesis::*;
+use std::collections::{BTreeMap, BTreeSet};
+
+fn identifier(s: &str) -> bool {
+    s.as_bytes().first().is_some_and(u8::is_ascii_lowercase)
+        && s.bytes()
+            .all(|b| b.is_ascii_lowercase() || b.is_ascii_digit() || b == b'_')
+}
+fn plain(s: &str) -> bool {
+    !s.trim().is_empty() && !s.contains('\\') && !s.chars().any(char::is_control)
+}
+pub fn is_clause(s: &str) -> bool {
+    s.split(|c: char| !c.is_alphanumeric() && c != '_')
+        .next()
+        .is_some_and(|s| matches!(s, "resource_hypothesis" | "resource_premise_all"))
+}
+/// Reads a declaration-local graph, including legacy metadata without rewriting its bytes.
+pub fn declaration(decl: &SourceDeclaration, legacy: &[DeclaredPremise]) -> Result<Graph, String> {
+    let mut graph = Graph {
+        version: 1,
+        atoms: BTreeMap::new(),
+        premises: BTreeMap::new(),
+    };
+    for (i, premise) in legacy.iter().enumerate() {
+        let id = format!("legacy_{i:08}");
+        graph.atoms.insert(
+            id.clone(),
+            Atom {
+                id: id.clone(),
+                proposition: Proposition::Opaque {
+                    statement: premise.statement.clone(),
+                },
+            },
+        );
+        graph.premises.insert(
+            id.clone(),
+            Conjunction {
+                id,
+                children: vec![format!("legacy_{i:08}")],
+                erasure: ErasedPremise {
+                    name: premise.name.clone(),
+                    statement: premise.statement.clone(),
+                    origin: premise.origin.as_str().into(),
+                },
+            },
+        );
+    }
+    for clause in decl.function_contract.iter().flat_map(|c| &c.clauses) {
+        let source = &clause.value.expression_source;
+        if !is_clause(source) {
+            continue;
+        }
+        if clause.value.kind != SourceContractClauseKind::Requires {
+            return Err("hypothesis: graph clauses must be requires".into());
+        }
+        let ts = lex(source)
+            .map_err(|e| e.to_string())?
+            .into_iter()
+            .map(|t| t.kind)
+            .filter(|t| *t != TokenKind::Eof)
+            .collect::<Vec<_>>();
+        let malformed = || format!("hypothesis: malformed graph clause `{source}`");
+        let [
+            TokenKind::Word(head),
+            TokenKind::Symbol(Symbol::LeftParen),
+            TokenKind::Word(id),
+            TokenKind::Symbol(Symbol::Comma),
+            rest @ ..,
+        ] = ts.as_slice()
+        else {
+            return Err(malformed());
+        };
+        if !identifier(id) || id.starts_with("legacy_") {
+            return Err(malformed());
+        }
+        if head == "resource_hypothesis" {
+            let [
+                TokenKind::StringLiteral(statement),
+                TokenKind::Symbol(Symbol::RightParen),
+            ] = rest
+            else {
+                return Err(malformed());
+            };
+            if !plain(statement) {
+                return Err(malformed());
+            }
+            let atom = Atom {
+                id: id.clone(),
+                proposition: Proposition::Opaque {
+                    statement: statement.clone(),
+                },
+            };
+            if graph.atoms.get(id).is_some_and(|old| *old != atom) {
+                return Err("hypothesis: conflicting atom ID".into());
+            }
+            graph.atoms.insert(id.clone(), atom);
+        } else {
+            if graph.premises.contains_key(id) || legacy.iter().any(|p| p.name == *id) {
+                return Err("hypothesis: conflicting premise ID".into());
+            }
+            let mut children = Vec::new();
+            for (i, t) in rest.iter().enumerate() {
+                if i % 2 == 0 {
+                    let TokenKind::Word(child) = t else {
+                        return Err(malformed());
+                    };
+                    children.push(child.clone());
+                } else if *t
+                    != TokenKind::Symbol(if i == rest.len() - 1 {
+                        Symbol::RightParen
+                    } else {
+                        Symbol::Comma
+                    })
+                {
+                    return Err(malformed());
+                }
+            }
+            if rest.len() % 2 != 0 {
+                return Err(malformed());
+            }
+            graph.premises.insert(
+                id.clone(),
+                Conjunction {
+                    id: id.clone(),
+                    erasure: ErasedPremise {
+                        name: id.clone(),
+                        statement: format!("all({})", children.join(",")),
+                        origin: "declared".into(),
+                    },
+                    children,
+                },
+            );
+        }
+    }
+    validate(&graph)?;
+    Ok(graph)
+}
+pub fn validate(graph: &Graph) -> Result<(), String> {
+    if graph.version != 1 {
+        return Err("hypothesis: unsupported graph version".into());
+    }
+    let mut used = BTreeSet::new();
+    for (id, atom) in &graph.atoms {
+        if id != &atom.id || !identifier(id) {
+            return Err("hypothesis: invalid atom ID".into());
+        }
+        match &atom.proposition {
+            Proposition::Opaque { statement } if plain(statement) => (),
+            Proposition::Typed { .. } => {
+                return Err("hypothesis: unknown typed predicate (registry is empty in v1)".into());
+            }
+            _ => return Err("hypothesis: invalid opaque statement".into()),
+        }
+    }
+    for (id, premise) in &graph.premises {
+        if id != &premise.id
+            || !identifier(id)
+            || premise.children.is_empty()
+            || premise.children.windows(2).any(|w| w[0] >= w[1])
+        {
+            return Err("hypothesis: noncanonical conjunction".into());
+        }
+        if !id.starts_with("legacy_")
+            && (graph.atoms.contains_key(id)
+                || premise.erasure.name != *id
+                || premise.erasure.origin != "declared"
+                || premise.erasure.statement != format!("all({})", premise.children.join(",")))
+        {
+            return Err("hypothesis: invalid structured erasure or overlapping IDs".into());
+        }
+        if id.starts_with("legacy_")
+            && (premise.children != vec![id.clone()]
+                || !matches!(graph.atoms.get(id).map(|a| &a.proposition), Some(Proposition::Opaque {statement}) if *statement == premise.erasure.statement))
+        {
+            return Err("hypothesis: invalid legacy erasure".into());
+        }
+        for child in &premise.children {
+            if !graph.atoms.contains_key(child) {
+                return Err("hypothesis: missing atom or cyclic premise edge".into());
+            }
+            used.insert(child.clone());
+        }
+    }
+    if used.len() != graph.atoms.len() {
+        return Err("hypothesis: unreferenced atom".into());
+    }
+    Ok(())
+}
+pub fn digest(graph: &Graph) -> Result<String, String> {
+    validate(graph)?;
+    Ok(qcore_schemas::sha256_hex(
+        &serde_json::to_vec(graph).map_err(|e| e.to_string())?,
+    ))
+}
+pub fn erasure(graph: &Graph) -> Result<Vec<ErasedPremise>, String> {
+    validate(graph)?;
+    Ok(graph.premises.values().map(|p| p.erasure.clone()).collect())
+}
+/// Freshly replayed declaration graphs, using the loader's inclusion/inheritance path.
+pub fn replay(sources: &BTreeMap<String, String>) -> Result<BTreeMap<String, Graph>, String> {
+    crate::contract_loader::declaration_hypotheses(sources)
+}
+pub fn check_replay(
+    sources: &BTreeMap<String, String>,
+    expected: &BTreeMap<String, Graph>,
+) -> Result<(), String> {
+    if replay(sources)? != *expected {
+        return Err("hypothesis: retained-text graph replay mismatch".into());
+    }
+    Ok(())
+}
+/// Claims are evidence only, including supported/derived claims. No certificate authority is returned.
+pub fn compose(
+    instance: &Instance,
+    expected: &Context,
+    premise: &str,
+) -> Result<Disposition, String> {
+    if &instance.context != expected
+        || [
+            &expected.artifact,
+            &expected.property,
+            &expected.semantic_profile,
+            &expected.scope,
+            &expected.bounds,
+            &expected.assumptions,
+            &expected.source_identity,
+            &expected.build_identity,
+            &expected.evidence_version,
+        ]
+        .iter()
+        .any(|s| s.is_empty())
+    {
+        return Err("hypothesis: incomplete or incompatible context".into());
+    }
+    if digest(&instance.graph)? != instance.graph_sha256 {
+        return Err("hypothesis: stale graph digest".into());
+    }
+    let node = instance
+        .graph
+        .premises
+        .get(premise)
+        .ok_or("hypothesis: missing premise")?;
+    let mut evidence = BTreeMap::new();
+    for e in &instance.evidence {
+        let atom = instance
+            .graph
+            .atoms
+            .get(&e.atom)
+            .ok_or("hypothesis: evidence for missing atom")?;
+        let hash = qcore_schemas::sha256_hex(&serde_json::to_vec(atom).map_err(|e| e.to_string())?);
+        if e.context != *expected
+            || e.atom_sha256 != hash
+            || e.reference.is_empty()
+            || evidence.insert(&e.atom, e).is_some()
+        {
+            return Err("hypothesis: conflicting, stale or incompatible evidence".into());
+        }
+    }
+    use qcore_core::hypothesis as kernel;
+    let statuses = node
+        .children
+        .iter()
+        .map(|id| {
+            (
+                true,
+                match evidence.get(id).map(|e| e.disposition) {
+                    Some(Disposition::Supported) => kernel::Disposition::Supported,
+                    Some(Disposition::Refuted) => kernel::Disposition::Refuted,
+                    _ => kernel::Disposition::Open,
+                },
+            )
+        })
+        .collect::<Vec<_>>();
+    Ok(match kernel::conjunction(&statuses) {
+        kernel::Disposition::Open => Disposition::Open,
+        kernel::Disposition::Supported => Disposition::Supported,
+        kernel::Disposition::Refuted => Disposition::Refuted,
+    })
+}
+
+/// Strict wire loader: rejects duplicate map keys, reordered fields/children, whitespace
+/// variants and unknown fields instead of normalizing a noncanonical claim.
+pub fn decode(bytes: &[u8]) -> Result<Graph, String> {
+    let graph: Graph = serde_json::from_slice(bytes).map_err(|e| e.to_string())?;
+    validate(&graph)?;
+    if serde_json::to_vec(&graph).map_err(|e| e.to_string())? != bytes {
+        return Err("hypothesis: noncanonical wire encoding".into());
+    }
+    Ok(graph)
+}

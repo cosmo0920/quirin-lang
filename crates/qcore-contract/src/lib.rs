@@ -28,3 +28,5 @@ mod profile_json;
 pub mod typed_profile;
 
 pub mod chunk_contract;
+
+pub mod hypothesis;

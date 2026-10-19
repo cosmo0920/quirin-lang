@@ -226,3 +226,5 @@ pub mod scalar_floats;
 pub mod scalar_values;
 
 pub mod scalar_calls_c_emit;
+
+pub mod hypothesis;

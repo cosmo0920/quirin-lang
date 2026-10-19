@@ -712,6 +712,21 @@ pub fn project_unit_into_with_cross_unit(
             source_functions,
             contracts,
             dependencies: &dependencies,
+            hypothesis_context: hypothesis_context(
+                library,
+                file,
+                unit.source,
+                contracts,
+                &format!(
+                    "{:?}",
+                    (
+                        unit,
+                        std::env::current_dir().map_err(|e| e.to_string())?,
+                        qcore_c_gateway::ClangIdentity::capture()?
+                    )
+                ),
+                "legacy-pinned-resource-profile",
+            ),
         },
         result,
         locations.as_ref(),
@@ -949,6 +964,14 @@ pub fn project_prepared_unit_into_with_cross_unit(
             source_functions,
             contracts,
             dependencies: &dependencies,
+            hypothesis_context: hypothesis_context(
+                library,
+                file,
+                prepared.raw_source(),
+                contracts,
+                &serde_json::to_string(compile_task_identity).map_err(|e| e.to_string())?,
+                source_profile_sha256,
+            ),
         },
         result,
         Some(prepared.locations()),
@@ -988,6 +1011,7 @@ struct ProjectionContext<'a> {
     contracts: &'a ResourceContracts,
     /// Card VERDICT-CONTRACT-DEPENDENCIES: what the unit's analysis recorded.
     dependencies: &'a qcore_c_gateway::contract_dependencies::UnitRecord,
+    hypothesis_context: qcore_schemas::hypothesis::Context,
 }
 
 fn record_projection(
@@ -1005,6 +1029,7 @@ fn record_projection(
         source_functions,
         contracts,
         dependencies,
+        hypothesis_context,
     } = context;
     let result = match result {
         Ok(UnrestrictedLegacyResult::Safe(certificate)) if !inventory.supports_unit_safe() => {
@@ -1056,7 +1081,9 @@ fn record_projection(
             .map_err(|error| format!("{library}/{file}: {error}"))?;
         // Card VERDICT-CONTRACT-DEPENDENCIES (rule 13f): the row fields, after
         // the verdict is settled; additive.
-        crate::contract_dependencies::annotate_unit(row, dependencies, &result, contracts);
+        crate::contract_dependencies::annotate_unit(row, dependencies, &result, contracts)?;
+        row["hypothesis_context"] =
+            serde_json::to_value(hypothesis_context).map_err(|e| e.to_string())?;
     }
     // Card CG22-OP-CALLBACKS-AND-SERVED-QUEUES (rule 12n): the unit's member
     // facts for the run's closure, only when a declaration invokes a member.
@@ -1123,4 +1150,30 @@ fn record_projection(
         say!(out, "    {line}");
     }
     Ok(())
+}
+
+fn hypothesis_context(
+    library: &str,
+    file: &str,
+    source: &str,
+    contracts: &ResourceContracts,
+    build: &str,
+    profile: &str,
+) -> qcore_schemas::hypothesis::Context {
+    qcore_schemas::hypothesis::Context {
+        artifact: format!("{library}/{file}"),
+        property: "resource-custody.v1".into(),
+        semantic_profile: profile.into(),
+        scope: "selected-function-inventory; intraprocedural custody with validated summaries"
+            .into(),
+        bounds: "existing gateway budgets; no new hypothesis discharge".into(),
+        assumptions: qcore_schemas::sha256_hex(
+            serde_json::to_string(contracts.source_assumptions())
+                .expect("string map")
+                .as_bytes(),
+        ),
+        source_identity: qcore_schemas::sha256_hex(source.as_bytes()),
+        build_identity: qcore_schemas::sha256_hex(build.as_bytes()),
+        evidence_version: "contract-hypothesis-graph.v1".into(),
+    }
 }

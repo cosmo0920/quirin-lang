@@ -832,3 +832,23 @@ mod tests {
         assert!(!collecting());
     }
 }
+
+/// Lift the actual declaration/summary consultation closure to its atom IDs.
+/// This adds no lookup and is never read by the analyzer.
+pub fn hypothesis_closure(
+    dependencies: &RowDependencies,
+    graphs: &BTreeMap<String, qcore_schemas::hypothesis::Graph>,
+) -> BTreeMap<String, BTreeSet<String>> {
+    dependencies
+        .declarations
+        .iter()
+        .chain(&dependencies.held)
+        .chain(&dependencies.withdrawn)
+        .filter_map(|name| {
+            graphs
+                .get(name)
+                .map(|graph| (name.clone(), graph.atoms.keys().cloned().collect()))
+        })
+        .filter(|(_, atoms): &(_, BTreeSet<String>)| !atoms.is_empty())
+        .collect()
+}

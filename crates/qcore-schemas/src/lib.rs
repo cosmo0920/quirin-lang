@@ -87,3 +87,5 @@ pub mod composition_summary;
 pub mod counter_summary;
 pub mod reactor_program;
 pub mod teardown_summary;
+
+pub mod hypothesis;

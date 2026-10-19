@@ -235,12 +235,13 @@ pub fn annotate_unit(
     record: &UnitRecord,
     result: &Result<UnrestrictedLegacyResult, impl Sized>,
     contracts: &ResourceContracts,
-) {
+) -> Result<(), String> {
     let Some(summary) = summary_of(result) else {
-        return;
+        return Ok(());
     };
     let dependencies =
         qcore_c_gateway::contract_dependencies::row_dependencies(record, summary, contracts);
+    let graphs = qcore_contract::hypothesis::replay(contracts.source_assumptions())?;
     let invoked = crate::callback_member_fold::member_declarations(contracts);
     let constructed = crate::callback_member_fold::constructed_declarations(contracts);
     for function in row["functions"].as_array_mut().into_iter().flatten() {
@@ -250,12 +251,16 @@ pub fn annotate_unit(
         if let Some(dependencies) = dependencies.get(name) {
             let mut field = row_field(dependencies);
             add_member_keys(&mut field, dependencies, &invoked, &constructed);
+            field["hypothesis_dependencies"] = serde_json::json!(
+                qcore_c_gateway::contract_dependencies::hypothesis_closure(dependencies, &graphs)
+            );
             function[ROW_KEY] = field;
         }
     }
     if let Some(field) = unit_field(record, contracts) {
         row[UNIT_KEY] = field;
     }
+    Ok(())
 }
 
 /// The premises of every declaration of `contracts`: declared and
@@ -297,7 +302,11 @@ pub fn premises(contracts: &ResourceContracts) -> Result<Value, String> {
                 }));
         }
     }
-    Ok(json!(premises))
+    let mut value = json!(premises);
+    value["$hypothesis_graphs"] = json!(qcore_contract::hypothesis::replay(
+        contracts.source_assumptions()
+    )?);
+    Ok(value)
 }
 
 /// What the section reads of the rows: a per-unit fold, so a composed
@@ -592,6 +601,9 @@ pub fn render(facts: &Facts, revision: &Value, premises: &Value) -> Value {
             "safe_rows": uses.safe_rows,
             "premises": premises.get(name).cloned().unwrap_or_else(|| json!([])),
         });
+        if let Some(graph) = premises["$hypothesis_graphs"].get(name) {
+            record["hypothesis_graph"] = graph.clone();
+        }
         if uses.held_rows > 0 {
             record["held_rows"] = json!(uses.held_rows);
         }
