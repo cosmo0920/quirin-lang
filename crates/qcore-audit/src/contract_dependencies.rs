@@ -797,14 +797,24 @@ pub fn tally(section: &Value) -> String {
 pub fn erase_hypotheses(value: &mut Value) {
     match value {
         Value::Object(map) => {
-            for key in [
-                "$hypothesis_graphs",
-                "hypothesis_graph",
-                "hypothesis_evidence",
-                "hypothesis_dependencies",
-                "hypothesis_context",
-            ] {
-                map.remove(key);
+            // These names stay legal declaration identifiers. Erase owned
+            // publication fields only at their schema locations, never an
+            // equally named declaration in a premise/inventory map.
+            map.remove("$hypothesis_graphs");
+            let function_row = map.get("function").is_some_and(Value::is_string)
+                && (map.contains_key("status") || map.contains_key("null"));
+            let declaration =
+                map.contains_key("contract_sha256") && map.contains_key("body_standing");
+            if function_row {
+                map.remove("hypothesis_context");
+                map.remove("hypothesis_graph");
+            }
+            if declaration {
+                map.remove("hypothesis_graph");
+                map.remove("hypothesis_evidence");
+            }
+            if map.get("declarations").is_some_and(Value::is_array) {
+                map.remove("hypothesis_dependencies");
             }
             for item in map.values_mut() {
                 erase_hypotheses(item);

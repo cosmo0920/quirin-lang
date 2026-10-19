@@ -365,3 +365,11 @@ fn graph_section_erases_to_the_previous_premise_and_dependency_view() {
     erase_hypotheses(&mut section);
     assert_eq!(section, expected);
 }
+
+#[test]
+fn erasure_preserves_legacy_declarations_named_like_graph_fields() {
+    let old = json!({"hypothesis_context":[{"name":"p","statement":"assumption","origin":"declared"}],"hypothesis_graph":{"mode":"pinned"},"hypothesis_dependencies":[]});
+    let mut erased = old.clone();
+    qcore_audit::contract_dependencies::erase_hypotheses(&mut erased);
+    assert_eq!(erased, old);
+}
