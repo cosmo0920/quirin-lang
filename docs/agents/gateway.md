@@ -6319,6 +6319,25 @@ consumers restricted to fresh results still refuse. Ordinary W4 never forgets
 the effect into borrowed-only custody. `QCore.DetachSameItem`; the report
 `docs/reports/cjson-detach-same-item/README.md` records the measured boundary.
 
+**Amendment (DETACH-LOOKUP-MEMBERSHIP):** a complete typed read-only
+indexed `child`/`next` frame can establish a nullable Borrowed result through
+ordinary fresh-run derived-summary validation (rule4b). Both original
+source-bound typed reads must exist; an opaque lexical refusal without retained
+Clang context does not fall back. Assigned direct decimal0–255 calls retain
+ordinary ContractCall visibility and carry independently rederived CFG metadata.
+An identity refinement additionally needs explicit must-held physical links,
+a live parent and an existing settled child uniquely contained by that parent;
+absence is Unknown, never NULL, and no new resource site is created. Facts meet
+by intersection and are carried only where a checked lookup call exists.
+Unknown/wrapper writes and unproved calls destroy them. Lookup aliases retain
+the ordinary borrow lifetime; only the already checked same-item Removed
+transition releases that old parent lifetime for the restored exact identity.
+The current source bridge proves stored head/empty-head cases; generic
+successor closure through contained children remains refused. Whole-return or
+nested Removed transport stays separate. Custody only; no runtime or C memory
+safety claim and no validation of the detach representation premise.
+`QCore.ListLookup`; [report](../reports/detach-lookup-membership/README.md).
+
 <a id="constraint-13b"></a>
 
 13b. **A reference count is a resource kind: each function balances the

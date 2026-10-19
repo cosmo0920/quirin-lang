@@ -133,6 +133,26 @@ pub(super) fn read(tokens: &[Token], function: &str) -> Option<Frame> {
             return None;
         }
     }
+    // The shared continuation view deliberately ignores const. This local
+    // frame requires mutable, unqualified link declarations as written.
+    let definitions = words
+        .windows(3)
+        .enumerate()
+        .filter_map(|(at, w)| (w == ["struct", tag, "{"]).then_some(at + 2))
+        .collect::<Vec<_>>();
+    let [record_open] = definitions.as_slice() else {
+        return None;
+    };
+    let record_close = matching(tokens, *record_open, "{", "}")?;
+    for member in ["child", "next"] {
+        let declarations = words[record_open + 1..record_close]
+            .split(|word| *word == ";")
+            .filter(|group| group.last() == Some(&member))
+            .collect::<Vec<_>>();
+        if declarations.as_slice() != [&["struct", tag, "*", member][..]] {
+            return None;
+        }
+    }
     let read_lines = tokens[start..=end]
         .windows(7)
         .filter_map(|w| {
@@ -174,6 +194,13 @@ mod tests {
             ("size_t index", "double index"),
             ("const cJSON *array", "volatile cJSON *array"),
             ("const cJSON *array", "const cJSON **array"),
+            ("struct cJSON *next;", "const struct cJSON *next;"),
+            ("struct cJSON *next;", "volatile struct cJSON *next;"),
+            ("struct cJSON *next;", "struct cJSON *volatile next;"),
+            ("struct cJSON *next;", "_Atomic(struct cJSON *) next;"),
+            ("struct cJSON *child;", "struct cJSON **child;"),
+            ("typedef struct cJSON", "typedef union cJSON"),
+            ("typedef struct cJSON\n{", "typedef struct\n{"),
             (
                 "current_child = array->child;",
                 "current_child = array->next;",
@@ -188,6 +215,15 @@ mod tests {
                 "{from} -> {to}"
             );
         }
+        let conflicting = format!("{ACTUAL}\ntypedef struct Other {{ int x; }} cJSON;");
+        assert!(read(&super::super::tokenize(&conflicting), "get_array_item").is_none());
+        let alpha = ACTUAL
+            .replace("get_array_item", "checked_lookup")
+            .replace("current_child", "cursor")
+            .replace("array", "parent")
+            .replace("index", "position")
+            .replace("cJSON", "LookupNode");
+        assert!(read(&super::super::tokenize(&alpha), "checked_lookup").is_some());
     }
 }
 
@@ -281,6 +317,23 @@ pub(super) fn settle_calls(
         let Some(Some(parent)) = arguments.first() else {
             continue;
         };
+        // A same-spelled local/formal function pointer must not be confused
+        // with the retained defining function. Address-taking or any other
+        // non-call occurrence conservatively withholds this descriptor too.
+        if function_parameters(tokens, &cfg.function)
+            .is_some_and(|parameters| parameters.iter().flatten().any(|name| name == function))
+            || tokens[start + 1..end]
+                .iter()
+                .enumerate()
+                .any(|(at, token)| {
+                    token.text == *function
+                        && tokens
+                            .get(start + at + 2)
+                            .is_none_or(|next| next.text != "(")
+                })
+        {
+            continue;
+        }
         let candidates = tokens[start + 1..end]
             .windows(9)
             .filter_map(|w| {
@@ -295,7 +348,9 @@ pub(super) fn settle_calls(
                             && n.bytes().all(|b| b.is_ascii_digit())
                             && (*n == "0" || !n.starts_with('0')) =>
                     {
-                        n.parse::<usize>().ok()
+                        // Fits every admitted C unsigned parameter, even
+                        // unsigned char, without target-width conversion.
+                        n.parse::<usize>().ok().filter(|index| *index <= 255)
                     }
                     _ => None,
                 }
@@ -446,15 +501,26 @@ pub(super) fn after(
     // any unbounded or indirect write also destroys the physical prefix.
     let physical_write = match &node.instruction {
         LegacyInstruction::ContractCall { .. } => node.lookup.is_none(),
-        LegacyInstruction::Unknown { .. }
-        | LegacyInstruction::IndirectScalarAccess { frame: Some(_), .. }
-        | LegacyInstruction::PointerStore { .. } => true,
-        LegacyInstruction::ScalarMemberStore { .. } => true,
         LegacyInstruction::Alias { destination, .. } | LegacyInstruction::Clear { destination } => {
             crate::may_alias::place_root(destination) != Some(destination.as_str())
                 && stored.is_none()
         }
-        _ => false,
+        LegacyInstruction::OpaqueValue { destination, .. }
+        | LegacyInstruction::VaArgPointer { destination }
+        | LegacyInstruction::ForgetScalar { destination }
+        | LegacyInstruction::PointerStep { destination, .. }
+        | LegacyInstruction::Acquire { destination, .. } => {
+            crate::may_alias::place_root(destination) != Some(destination.as_str())
+        }
+        LegacyInstruction::AggregateStore { .. } => stored.is_none(),
+        LegacyInstruction::NoOp
+        | LegacyInstruction::BranchOnNull { .. }
+        | LegacyInstruction::BranchOnDistinct { .. }
+        | LegacyInstruction::BranchOnValidity { .. }
+        | LegacyInstruction::ArgumentReads { .. } => false,
+        // New/unrecognized operations, wrapper instructions and indirect
+        // stores fail closed; no black-list default can retain stale links.
+        _ => true,
     };
     if physical_write || state.unmodeled {
         state.lookup_links.clear();
@@ -533,6 +599,24 @@ pub(super) fn after(
 #[cfg(test)]
 mod flow_controls {
     use super::*;
+    #[test]
+    fn opaque_member_write_cannot_preserve_an_old_physical_link() {
+        let mut state = AbstractState::default();
+        state.lookup_links.insert((1, "child".to_owned()), Some(2));
+        let node = LegacyCfgNode {
+            lookup: None,
+            instruction: LegacyInstruction::OpaqueValue {
+                destination: "p->child".to_owned(),
+                alias_read: None,
+            },
+            successors: vec![],
+            line: 1,
+            is_exit: false,
+            loop_exit_edge: None,
+        };
+        after(&node, &mut state, None, None);
+        assert!(state.lookup_links.is_empty());
+    }
     #[test]
     fn physical_links_are_must_facts_and_null_is_not_absence() {
         let key = (1, "child".to_owned());

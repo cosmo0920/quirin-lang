@@ -95,6 +95,7 @@ fn assigned_lookup_uses_existing_head_and_preserves_same_item_transfer() {
 fn provenance_missing_order_wrong_parent_and_intervening_mutation_refuse() {
     for body in [
         "struct cJSON *p=dt_alloc(); p->child=0; struct cJSON *s=get_array_item(p,0); struct cJSON *r=dt_detach(p,s); dt_free(p); dt_free(r);",
+        "struct cJSON *p=dt_alloc(); p->child=0; struct cJSON *s=get_array_item(p,256); struct cJSON *r=dt_detach(p,s); dt_free(r); dt_free(p);",
         "struct cJSON *p=dt_alloc(); struct cJSON *i=dt_alloc(); dt_store(p,i); p->child=i; struct cJSON *s=get_array_item(p,0); p->child=0; struct cJSON *r=dt_detach(p,s); dt_free(p); dt_free(r);",
         "struct cJSON *p=dt_alloc(); struct cJSON *i=dt_alloc(); dt_store(p,i); p->child=i; struct cJSON *s=get_array_item(p,00); struct cJSON *r=dt_detach(p,s); dt_free(p); dt_free(r);",
         "struct cJSON *p=dt_alloc(); struct cJSON *i=dt_alloc(); dt_store(p,i); p->child=i; struct cJSON *s=get_array_item(p,-1); struct cJSON *r=dt_detach(p,s); dt_free(p); dt_free(r);",
@@ -170,4 +171,65 @@ fn signed_array_wrapper_preserves_borrowed_result_and_negative_branch() {
         AnalysisStatus::Safe,
         "{program:?}"
     );
+}
+
+#[test]
+fn native_exact_lookup_frame_returns_existing_nodes_or_null() {
+    let mut clang = match qcore_c_gateway::clang_command() {
+        Ok(clang) => clang,
+        Err(reason) => {
+            assert!(
+                std::env::var_os("QCORE_CLANG").is_none(),
+                "invalid explicit Clang: {reason}"
+            );
+            eprintln!("Clang unavailable for native lookup control: {reason}");
+            return;
+        }
+    };
+    let root = std::path::PathBuf::from(env!("CARGO_MANIFEST_DIR"))
+        .join("tests/fixtures/detach-lookup-membership");
+    let nonce = std::time::SystemTime::now()
+        .duration_since(std::time::UNIX_EPOCH)
+        .unwrap()
+        .as_nanos();
+    let directory = std::env::temp_dir().join(format!(
+        "qcore-lookup-native-{}-{nonce}",
+        std::process::id()
+    ));
+    std::fs::create_dir(&directory).unwrap();
+    let executable = directory.join(if cfg!(windows) {
+        "lookup.exe"
+    } else {
+        "lookup"
+    });
+    clang.args(["-std=c11", "-Wall", "-Wextra", "-Werror"]);
+    if cfg!(target_os = "linux") {
+        clang.args([
+            "-O1",
+            "-g",
+            "-fsanitize=address,undefined",
+            "-fno-omit-frame-pointer",
+        ]);
+    }
+    let built = clang
+        .arg(root.join("native_case.c"))
+        .arg("-o")
+        .arg(&executable)
+        .output()
+        .unwrap();
+    assert!(
+        built.status.success(),
+        "native build {directory:?}: {}\n{}",
+        String::from_utf8_lossy(&built.stdout),
+        String::from_utf8_lossy(&built.stderr)
+    );
+    let ran = std::process::Command::new(&executable).output().unwrap();
+    assert!(
+        ran.status.success(),
+        "native run {directory:?}: {}\n{}",
+        String::from_utf8_lossy(&ran.stdout),
+        String::from_utf8_lossy(&ran.stderr)
+    );
+    std::fs::remove_file(&executable).unwrap();
+    std::fs::remove_dir(&directory).unwrap();
 }

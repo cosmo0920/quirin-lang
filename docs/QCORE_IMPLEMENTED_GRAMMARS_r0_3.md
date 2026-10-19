@@ -4966,3 +4966,42 @@ exactly as the same call spelled without a selection. The Clang-resolved route
 (reading the compiler's selected association) is not implemented.
 See [the card report](reports/w44-c11-generic-selection/README.md) and
 `QCore.GenericSelection`.
+
+
+## G11. Existing C: indexed child/next lookup
+
+The gateway's bounded read-only class matches this complete preprocessed body,
+with alpha-renamed function, formal, local and named record/alias names:
+
+```c
+static T *F(const T *P, U N) {
+    T *C = 0;
+    if (P == 0) { return 0; }
+    C = P->child;
+    while ((C != 0) && (N > 0)) { N--; C = C->next; }
+    return C;
+}
+```
+
+`static` and the parent's leading `const` are optional. `T` is a complete,
+unique named nonunion `struct TAG` or its unique defining-struct alias; both
+members are unqualified single-level pointers to the same record. `U` resolves
+to an unsigned integer class; opaque, pointer, Boolean, enum, floating, volatile
+or atomic types refuse. Only zero and its parenthesized/void-pointer NULL forms
+are normalized. Added calls/writes, different guards/steps/returns, deeper
+pointers, qualified links and ambiguous/anonymous records refuse. Both original
+source-bound typed reads must be present under the retained Clang context.
+The inferred result is Borrowed,parent0,nullable,const_dropped, validated by
+ordinary derived-result inference; it never becomes a fresh allocation.
+
+Only an assigned direct `D = F(P, DECIMAL);` with decimal0–255 receives the
+private caller identity descriptor; this bound avoids target-width truncation
+for every admitted unsigned parameter. A literal has no redundant leading
+zero, suffix, cast or sign. Nested/whole-return calls and other indices retain
+the ordinary borrowed reading. Exact identity additionally needs must-held
+physical links and one settled contained child uniquely owned by a live parent.
+An absent link means Unknown; explicit NULL differs from absence. The source
+bridge currently proves exact stored-head and empty-head cases. General
+successor source closure, object-key lookup and Removed wrapper transport are
+not implemented by this class. See [gateway rule13a](agents/gateway.md#constraint-13a)
+and [the report](reports/detach-lookup-membership/README.md).

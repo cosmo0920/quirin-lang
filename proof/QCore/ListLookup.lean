@@ -94,6 +94,33 @@ theorem unknown_head_never_creates_identity (n : Nat) (next) (valid) (seen) :
 theorem explicit_null_stays_null (n : Nat) (next) (valid) (seen) :
     walk n (some none) next valid seen = some none := by cases n <;> rfl
 
+/-- The concrete/list relation states link values, live membership and no
+    repeated object. It states no conclusion about any indexed lookup. -/
+def Represents : List Nat → Option (Option Nat) →
+    (Nat → Option (Option Nat)) → (Nat → Bool) → List Nat → Prop
+  | [], head, _, _, _ => head = some none
+  | x :: xs, head, next, valid, seen =>
+    head = some (some x) ∧ valid x = true ∧ x ∉ seen ∧
+      Represents xs (next x) next valid (x :: seen)
+
+theorem coherent_prefix_selects_the_same_list_identity (xs : List Nat) (n : Nat)
+    (head : Option (Option Nat)) (next : Nat → Option (Option Nat))
+    (valid : Nat → Bool) (seen : List Nat)
+    (rep : Represents xs head next valid seen) :
+    walk n head next valid seen = some (lookup xs n) := by
+  induction xs generalizing n head seen with
+  | nil =>
+    simp only [Represents] at rep
+    subst head
+    cases n <;> simp [walk, lookup]
+  | cons x xs ih =>
+    rcases rep with ⟨same, live, fresh, tail⟩
+    subst head
+    cases n with
+    | zero => simp [walk, lookup, live, fresh]
+    | succ n => simpa [walk, lookup, live, fresh] using ih n (next x) (x :: seen) tail
+
+
 def nextOf : List Nat → Nat → Option (Option Nat)
   | [], _ => none
   | x :: xs, item => if x == item then some xs.head? else nextOf xs item

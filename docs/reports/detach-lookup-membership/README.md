@@ -70,3 +70,30 @@ command issued from the wrong working directory); corrected targeted Lean
 attempts3–4 compile0 under pinned4.35.0. No placeholder or project axiom is
 introduced. All private logs are under the report's private root named above;
 full standing/provider/package gates and final production audits have not run.
+
+Frozen bounded checkpoint `f5110c1db4839a2c2731031cf9f510866f4b8027`
+passed all seven commands in `narrow-1/commands.json`: actual Clang recording,
+format check, pure model/correspondence3, reader/join2, full retained production
+selected-function inference1, absent-source lexical refusal1 and source/replay6.
+Every command exited0; all tests failed0/ignored0. The original full frame is
+[the tracked retained header](../../../crates/qcore-c-gateway/tests/fixtures/detach-lookup-membership/cjson_lookup_frame.h).
+
+Subsequent bounded source preparation adds the general physical/list
+correspondence theorem and explicit source-reader qualifier/ambiguity controls.
+Caller constant indices are restricted to decimal0–255, fitting every admitted
+C unsigned parameter without relying on a target-width conversion; other
+values retain ordinary borrowed provenance and cannot refine an identity.
+Opaque member writes and unrecognized/wrapper operations fail closed by
+clearing physical facts. A source-positive caller currently proves the exact
+head or explicit empty head. The pure prefix model handles middle/tail/missing
+identities, but ordinary aggregate-owner rules reject stores through an already
+CONTAINED child, and an unproved dt_store call clears prior next facts. That
+source closure remains a follow-on, not a claimed production discharge.
+
+The added native fixture exercises the exact retained getter over NULL parent,
+empty/head/middle/tail/missing/huge indices and nonconsecutive existing-node
+addresses. Its Linux test enables ASan/UBSan. Execution is deferred to the
+integrator's exclusive native/full-gate slot; no native result is claimed yet.
+The general Lean representation theorem already compiles0 under pinned4.35.0,
+and states a separate finite concrete/list relation before proving the indexed
+identity, rather than assuming the lookup conclusion.
