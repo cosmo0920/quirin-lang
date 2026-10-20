@@ -16,9 +16,11 @@ Analysis paths: [GATEWAY-ANALYSIS-PATH-OPTIMIZATION](reports/gateway-analysis-pa
 
 Audit tooling: the bounded [CPU/memory optimization](reports/audit-memory-performance/README.md) preserves four verdict artifacts byte for byte on three Fluent Bit selections. The four-worker sample took 64.67 → 20.63 seconds with 21.0% lower maximum RSS; shared-host observations, not whole-corpus throughput or safety coverage.
 
-The latest corpus and configured-route measurements are the 2026-10-20
+The latest scalar-condition corpus and configured-route measurements are the 2026-10-20
 [scalar accessor condition receipt](reports/w48-bottom-up-batch3/README.md),
-analyzer/test source `1601ba438` on exact base `198f6fc43`. Source-pinned
+analyzer/test source `1601ba438` on exact base `198f6fc43`. The separately measured
+hypothesis graph below preserves its own earlier baseline. Integration does not
+claim a new composed production census. Source-pinned
 contracts, named null premises and the selected-program link premise remain
 assumptions, not unconditional C-body proofs. Older reports retain their dated
 checkpoint evidence. CT mapping, model proof, source replay, native observations
@@ -296,34 +298,17 @@ latest completed integration measurement.
 
 ## Latest validated gate
 
-Integration validation is in progress. The separate pre-merge checkpoints retain their own evidence:
-
-The latest complete checkpoint is the [hypothesis-graph report](reports/contract-hypothesis-graph-v1/README.md)
-on frozen implementation source `5b5a8c0f05bef6aece8b57d90a2d405a459c29ea`:
-**8,364 core Rust passed / 0 failed / 15 ignored, 522 units / 535 summaries;
-345 Lean audits; 374 post-committed-matrix Python tests**. Host standing4
-passes submodules, formatting, Clippy and both reevaluation examples; its actual
-Clang21.1.8 recording and command exits are archived. Host provider4 passes
-**133 Rust / 0 failed / 1 ignored doctest**, **25 Python**, check/fmt/Clippy,
-contract checks and all five rebuilt/verified packages. All six exact-base/tip
-release measurements exit0, with zero unexplained static/null/runtime erasure
-movement. Sandbox confinement/LeakSanitizer failures, corrected lock/comparison
-fixtures and cancelled preliminary attempts remain explicit in the report.
-The managed-worktree native-platform Git-directory fixture remains registered;
-the exact-source full standing run uses a private normal clone. This closes
-the additive schema19.1 graph migration, with no typed semantic consumer.
-
-The latest source checkpoint is the [scalar accessor condition report](reports/w48-bottom-up-batch3/README.md)
-on analyzer/test source `1601ba4383253adab7e58b0c469c82dd8c94f4d2`:
-**8,359 core Rust passed, 0 failed, 15 ignored over 520 units / 533 summaries;
-345 Lean audits; 374 root Python tests after matrix regeneration**. Submodules,
-fmt, Clippy and both reevaluation examples exit0. The fresh provider gate passes
-**133 Rust / 0 failed / 1 ignored**, **25 Python**, check/fmt/Clippy,
-contract sync/check and all five package build/verifications. Actual worktree
-Clang21.1.8 is recorded beside the gate. The first full Rust attempt's sole
-worktree-metadata fixture failure is retained; the repaired focused control and
-complete rerun pass. All six paired production audits exit0; the report retains complete changes,
-separate property/runtime denominators and the post-matrix Python receipt.
+The latest [serial integration gate](reports/w48-bottom-up-batch3/integration/README.md)
+measures merge `6e4f7dca8`, joining the evidence-only hypothesis graph/schema19.1
+migration and scalar accessor conditions: **8,370 core Rust passed / 0 failed /
+15 ignored, 522 units / 535 summaries; 346 Lean audits; 374 post-regeneration
+Python tests**. Formatting, Clippy and both reevaluation examples exit0.
+Fresh provider validation passes **133 Rust / 0 failed / 1 ignored**, **25 Python**,
+contract sync/check and all five rebuilt/verified packages. Actual local
+Clang21.1.8 and all command exits are recorded beside the gate. The repaired
+native-platform fixture passes in this managed worktree; its additional
+normal-clone control remains tracked. Each card's original production census
+retains its own source identity; no new composed production census is claimed.
 
 The five provider crates own **73** canonical contract modules; **48** shared or
 application-level modules live in six `providers/quirin-provider-*` crates: five

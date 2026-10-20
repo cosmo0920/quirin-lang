@@ -1,0 +1,13 @@
+{
+  "note": "W48-BOTTOM-UP-BATCH3 serial integration with evidence-only CONTRACT-HYPOTHESIS-GRAPH-V1. Measured source tip and merge SHA 6e4f7dca88cb99e8e8ac978d9e09795be666124b. Actual managed-worktree host gate:8370Rust/0failed/15ignored,522units/535summaries;346Lean. Providers133Rust/0failed/1ignored over43summaries,25Python,all5packages rebuilt+verified. Matrix regeneration precedes final root Python confirmation in command-receipts.json. Original production measurements retain their exact card sources; no new composed production census. Native Git-directory fixture passes in managed worktree; repaired normal-clone control remains tracked. Actual local Clang recording is beside this gate.",
+  "workspace_tests": 8370,
+  "provider_tests": 133,
+  "python_evidence_validator_tests": 374,
+  "reevaluation_probe_exit": 0,
+  "reevaluation_followup_exit": 0,
+  "cargo_fmt": "clean",
+  "cargo_clippy": "clean",
+  "standing_gate": "complete",
+  "lean_audits": 346,
+  "clang": "present: Ubuntu clang version 21.1.8 (6ubuntu1)"
+}
