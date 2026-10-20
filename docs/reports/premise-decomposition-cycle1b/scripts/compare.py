@@ -64,6 +64,22 @@ def main():
                 target=mapping['declarations'][owner]
                 assert value==target['after_statement'],(path,value)
                 records.append({'path':path+(key,),'kind':'exact-scoped-premise-statement','before':target['before_statement'],'after':value});value=target['before_statement']
+            if key=='inventory_sha256' and path and path[-1]=='compile_configuration':
+                # current.rs and no_build.rs hash the complete configuration
+                # before inserting this field. Verify both raw records; the
+                # final full-field comparison still rejects any other change.
+                before_config=data['before']
+                after_config=data['after']
+                for component in path:
+                    before_config=before_config[component]
+                    after_config=after_config[component]
+                for label,config in [('before',before_config),('after',after_config)]:
+                    body={k:x for k,x in config.items() if k!='inventory_sha256'}
+                    exact=hashlib.sha256(json.dumps(body,separators=(',',':'),ensure_ascii=False,sort_keys=True).encode()).hexdigest()
+                    assert config['inventory_sha256']==exact,(label,path,exact)
+                if value!=before_config['inventory_sha256']:
+                    records.append({'path':path+(key,),'kind':'reconstructed-complete-compile-configuration-sha256','before':before_config['inventory_sha256'],'after':value,'all_remaining_configuration_fields_compared':True})
+                value=before_config['inventory_sha256']
             if key=='resource_contract_sources':
                 assert value==source_hash['after'],(path,value,source_hash)
                 records.append({'path':path+(key,),'kind':'reconstructed-source-assumption-map-sha256','before':source_hash['before'],'after':value});value=source_hash['before']
@@ -114,7 +130,7 @@ def main():
     residual={k:old.differences(left[k],right[k]) for k in left};gz(a.out/'attributed-residual-differences.json.gz',residual);gz(a.out/'exact-metadata-attribution.json.gz',records)
     counts=lambda d:dict(Counter(f['status'] for u in d['diagnostics']['units'] for f in u['functions']))
     checks={'static_verdict_counts_equal':counts(left)==counts(right),'full_runtime_projection_equal':left['outer']==right['outer'],'all_null_records_equal':left['null']==right['null'],'null_summary_equal':left['null-summary']==right['null-summary'],'all_remaining_artifacts_equal':all(not x for x in residual.values())}
-    result={'route':a.route,'migrated_graphs':migrated_graphs,'before_counts':counts(left),'after_counts':counts(right),'null_rows':len(left['null']),'checks':checks,'raw_differences':{k:len(x) for k,x in raw.items()},'residual_differences':{k:len(x) for k,x in residual.items()},'scoped_metadata_records':len(records),'all_invariant_checks_pass':all(checks.values()),'meaning':'Raw before/after legacy erasure differs. Only exact two-declaration premise statements and officially refreshed flexible contract identities are restored; additional metadata needs independent attribution.'}
+    result={'route':a.route,'migrated_graphs':migrated_graphs,'before_counts':counts(left),'after_counts':counts(right),'null_rows':len(left['null']),'checks':checks,'raw_differences':{k:len(x) for k,x in raw.items()},'residual_differences':{k:len(x) for k,x in residual.items()},'scoped_metadata_records':len(records),'all_invariant_checks_pass':all(checks.values()),'meaning':'Raw before/after legacy erasure differs. Exact selected premise/module/pin metadata, independently reconstructed source/environment and complete configuration digests are restored; every remaining field is compared.'}
     (a.out/'comparison.json').write_text(json.dumps(result,indent=2)+'\n');print(json.dumps(result,indent=2));return 0 if result['all_invariant_checks_pass'] else 1
 
 if __name__=='__main__':raise SystemExit(main())
