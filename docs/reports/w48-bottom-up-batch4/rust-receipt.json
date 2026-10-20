@@ -1,0 +1,31 @@
+{
+  "schema": "qcore-test-binaries/1",
+  "jobs": 4,
+  "phases_seconds": {
+    "build": 50.702,
+    "capture": 7.999,
+    "run": 331.609
+  },
+  "problems": [],
+  "totals": {
+    "passed": 8377,
+    "failed": 0,
+    "ignored": 15,
+    "measured": 0,
+    "filtered": 0,
+    "summaries": 535
+  },
+  "units_run": 522,
+  "units_failed": [],
+  "ok": true,
+  "command": [
+    "python3",
+    "scripts/run_test_binaries.py",
+    "--jobs",
+    "4",
+    "--log-dir",
+    "/home/cosmo/.codex/worktrees/w48-bottom-up-batch4/qcore-c/private/w48-bottom-up-batch4/rust-units-final"
+  ],
+  "exit": 0,
+  "private_summary": "private/w48-bottom-up-batch4/rust-units-final/summary.json"
+}

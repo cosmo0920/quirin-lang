@@ -1,0 +1,306 @@
+{
+  "corpus": {
+    "custody": {
+      "before": {
+        "Unknown": 3858,
+        "Safe": 967,
+        "Unsafe": 9
+      },
+      "after": {
+        "Unknown": 3852,
+        "Safe": 973,
+        "Unsafe": 9
+      }
+    },
+    "selected_rows": 4834,
+    "changed_status_or_diagnostic_rows": 48,
+    "safe_gains": [
+      [
+        "cmetrics",
+        "cmt_decode_prometheus_remote_write.c",
+        "cmt_metric_name_from_labels",
+        0
+      ],
+      [
+        "cmetrics",
+        "cmt_encode_opentelemetry.c",
+        "compute_flat_scope_index",
+        0
+      ],
+      [
+        "cmetrics",
+        "cmt_summary.c",
+        "cmt_summary_quantile_get_value",
+        0
+      ],
+      [
+        "cmetrics",
+        "cmt_summary.c",
+        "cmt_summary_quantile_set",
+        0
+      ],
+      [
+        "chunkio",
+        "cio_file.c",
+        "cio_file_is_up",
+        0
+      ],
+      [
+        "chunkio",
+        "cio_file_unix.c",
+        "cio_file_native_delete",
+        0
+      ]
+    ],
+    "safe_regressions": [],
+    "new_provisional_unsafe": [],
+    "body_evidence_changes": 1,
+    "null_rows": 4921,
+    "null_property_dicts_identical": true,
+    "property_transitions": {
+      "custody": [
+        {
+          "before": null,
+          "after": null,
+          "count": 87
+        },
+        {
+          "before": "Safe",
+          "after": "Safe",
+          "count": 967
+        },
+        {
+          "before": "Unknown",
+          "after": "Safe",
+          "count": 6
+        },
+        {
+          "before": "Unknown",
+          "after": "Unknown",
+          "count": 3852
+        },
+        {
+          "before": "Unsafe",
+          "after": "Unsafe",
+          "count": 9
+        }
+      ],
+      "combined": [
+        {
+          "before": "Safe",
+          "after": "Safe",
+          "count": 843
+        },
+        {
+          "before": "Unknown",
+          "after": "Safe",
+          "count": 4
+        },
+        {
+          "before": "Unknown",
+          "after": "Unknown",
+          "count": 4047
+        },
+        {
+          "before": "Unsafe",
+          "after": "Unsafe",
+          "count": 27
+        }
+      ],
+      "null": [
+        {
+          "before": "Safe",
+          "after": "Safe",
+          "count": 2549
+        },
+        {
+          "before": "Unknown",
+          "after": "Unknown",
+          "count": 2354
+        },
+        {
+          "before": "Unsafe",
+          "after": "Unsafe",
+          "count": 18
+        }
+      ]
+    },
+    "runtime_scenario_changed_moves": {
+      "all": 0,
+      "flb_external_plugin": 0,
+      "rk_plugin_library": 0
+    }
+  },
+  "system": {
+    "custody": {
+      "before": {
+        "Unknown": 345,
+        "Safe": 99,
+        "Unsafe": 4
+      },
+      "after": {
+        "Unknown": 345,
+        "Safe": 99,
+        "Unsafe": 4
+      }
+    },
+    "selected_rows": 448,
+    "changed_status_or_diagnostic_rows": 33,
+    "safe_gains": [],
+    "safe_regressions": [],
+    "new_provisional_unsafe": [],
+    "body_evidence_changes": 0,
+    "null_rows": 454,
+    "null_property_dicts_identical": true,
+    "property_transitions": {
+      "custody": [
+        {
+          "before": null,
+          "after": null,
+          "count": 6
+        },
+        {
+          "before": "Safe",
+          "after": "Safe",
+          "count": 99
+        },
+        {
+          "before": "Unknown",
+          "after": "Unknown",
+          "count": 345
+        },
+        {
+          "before": "Unsafe",
+          "after": "Unsafe",
+          "count": 4
+        }
+      ],
+      "combined": [
+        {
+          "before": "Safe",
+          "after": "Safe",
+          "count": 65
+        },
+        {
+          "before": "Unknown",
+          "after": "Unknown",
+          "count": 385
+        },
+        {
+          "before": "Unsafe",
+          "after": "Unsafe",
+          "count": 4
+        }
+      ],
+      "null": [
+        {
+          "before": "Safe",
+          "after": "Safe",
+          "count": 211
+        },
+        {
+          "before": "Unknown",
+          "after": "Unknown",
+          "count": 243
+        }
+      ]
+    },
+    "runtime_scenario_changed_moves": {
+      "all": 0,
+      "flb_external_plugin": 0,
+      "rk_plugin_library": 0
+    }
+  },
+  "slice": {
+    "custody": {
+      "before": {
+        "Unknown": 346,
+        "Safe": 53,
+        "Pending": 4,
+        "Unsafe": 1
+      },
+      "after": {
+        "Unknown": 346,
+        "Safe": 53,
+        "Pending": 4,
+        "Unsafe": 1
+      }
+    },
+    "selected_rows": 404,
+    "changed_status_or_diagnostic_rows": 17,
+    "safe_gains": [],
+    "safe_regressions": [],
+    "new_provisional_unsafe": [],
+    "body_evidence_changes": 0,
+    "null_rows": 406,
+    "null_property_dicts_identical": true,
+    "property_transitions": {
+      "custody": [
+        {
+          "before": null,
+          "after": null,
+          "count": 2
+        },
+        {
+          "before": "Pending",
+          "after": "Pending",
+          "count": 4
+        },
+        {
+          "before": "Safe",
+          "after": "Safe",
+          "count": 53
+        },
+        {
+          "before": "Unknown",
+          "after": "Unknown",
+          "count": 346
+        },
+        {
+          "before": "Unsafe",
+          "after": "Unsafe",
+          "count": 1
+        }
+      ],
+      "combined": [
+        {
+          "before": "Pending",
+          "after": "Pending",
+          "count": 2
+        },
+        {
+          "before": "Safe",
+          "after": "Safe",
+          "count": 31
+        },
+        {
+          "before": "Unknown",
+          "after": "Unknown",
+          "count": 372
+        },
+        {
+          "before": "Unsafe",
+          "after": "Unsafe",
+          "count": 1
+        }
+      ],
+      "null": [
+        {
+          "before": "Safe",
+          "after": "Safe",
+          "count": 190
+        },
+        {
+          "before": "Unknown",
+          "after": "Unknown",
+          "count": 216
+        }
+      ]
+    },
+    "runtime_scenario_changed_moves": {
+      "all": 0,
+      "flb_external_plugin": 0,
+      "rk_plugin_library": 0
+    }
+  }
+}

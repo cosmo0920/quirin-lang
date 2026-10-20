@@ -1,0 +1,657 @@
+{
+  "route": "slice",
+  "selected_rows": 404,
+  "changed_status_or_diagnostic_rows": 17,
+  "safe_gains": [],
+  "safe_regressions": [],
+  "new_provisional_unsafe": [],
+  "rows": [
+    {
+      "key": [
+        "fluent-bit-tail-pause",
+        "src/flb_input.c",
+        "flb_input_init_all",
+        0
+      ],
+      "before": "Unknown",
+      "after": "Unknown",
+      "removed": [
+        {
+          "category": "unsupported",
+          "description": "unmodeled call, aggregate or indirect access in branch condition",
+          "line": 19370,
+          "origin": "src/flb_input.c:2085"
+        }
+      ],
+      "added": [],
+      "source_observations": [
+        {
+          "origin": "src/flb_input.c:2085",
+          "source_path": "src/flb_input.c",
+          "file_sha256": "92a0917b89dd61ff92d098dffcf56ddae1060d7588874a3fc0e8e27f45544122",
+          "excerpt": "        }\n\n        if (ins->tls_min_version != NULL || ins->tls_max_version != NULL) {\n            ret = flb_tls_set_minmax_proto(ins->tls, ins->tls_min_version, ins->tls_max_version);\n            if (ret != 0) {\n                flb_error(\"[input %s] error setting up minmax protocol version of TLS\","
+        }
+      ]
+    },
+    {
+      "key": [
+        "fluent-bit-tail-pause",
+        "src/flb_input.c",
+        "flb_input_instance_init",
+        0
+      ],
+      "before": "Unknown",
+      "after": "Unknown",
+      "removed": [
+        {
+          "category": "unsupported",
+          "description": "unmodeled call, aggregate or indirect access in branch condition",
+          "line": 19033,
+          "origin": "src/flb_input.c:1574"
+        },
+        {
+          "category": "unknown_alias",
+          "description": "unresolved resource identity `config`",
+          "line": 19034,
+          "origin": "src/flb_input.c:1575"
+        }
+      ],
+      "added": [],
+      "source_observations": [
+        {
+          "origin": "src/flb_input.c:1574",
+          "source_path": "src/flb_input.c",
+          "file_sha256": "92a0917b89dd61ff92d098dffcf56ddae1060d7588874a3fc0e8e27f45544122",
+          "excerpt": "    int tls_session_mode;\n\n    if (ins->log_level == -1 && config->log != NULL) {\n        ins->log_level = config->log->level;\n    }\n"
+        },
+        {
+          "origin": "src/flb_input.c:1575",
+          "source_path": "src/flb_input.c",
+          "file_sha256": "92a0917b89dd61ff92d098dffcf56ddae1060d7588874a3fc0e8e27f45544122",
+          "excerpt": "\n    if (ins->log_level == -1 && config->log != NULL) {\n        ins->log_level = config->log->level;\n    }\n\n    /* Skip pseudo input plugins */"
+        }
+      ]
+    },
+    {
+      "key": [
+        "fluent-bit-tail-pause",
+        "src/flb_input.c",
+        "flb_input_new",
+        0
+      ],
+      "before": "Unknown",
+      "after": "Unknown",
+      "removed": [
+        {
+          "category": "unsupported",
+          "description": "unmodeled call, aggregate or indirect access in branch condition",
+          "line": 18222,
+          "origin": "src/flb_input.c:542"
+        },
+        {
+          "category": "unsupported",
+          "description": "unmodeled call, aggregate or indirect access in branch condition",
+          "line": 18258,
+          "origin": "src/flb_input.c:580"
+        }
+      ],
+      "added": [
+        {
+          "category": "unknown_alias",
+          "description": "unresolved resource identity `instance`",
+          "line": 18222,
+          "origin": "src/flb_input.c:542"
+        },
+        {
+          "category": "unknown_alias",
+          "description": "unresolved resource identity `instance`",
+          "line": 18258,
+          "origin": "src/flb_input.c:580"
+        }
+      ],
+      "source_observations": [
+        {
+          "origin": "src/flb_input.c:542",
+          "source_path": "src/flb_input.c",
+          "file_sha256": "92a0917b89dd61ff92d098dffcf56ddae1060d7588874a3fc0e8e27f45544122",
+          "excerpt": "                flb_hash_table_destroy(instance->ht_profile_chunks);\n            }\n            if (plugin->type != FLB_INPUT_PLUGIN_CORE && instance->context) {\n                flb_free(instance->context);\n            }\n            flb_free(instance->http_server_config);"
+        },
+        {
+          "origin": "src/flb_input.c:580",
+          "source_path": "src/flb_input.c",
+          "file_sha256": "92a0917b89dd61ff92d098dffcf56ddae1060d7588874a3fc0e8e27f45544122",
+          "excerpt": "                    flb_hash_table_destroy(instance->ht_profile_chunks);\n                }\n                if (plugin->type != FLB_INPUT_PLUGIN_CORE && instance->context) {\n                    flb_free(instance->context);\n                }\n                flb_input_ingress_primitives_destroy(instance);"
+        },
+        {
+          "origin": "src/flb_input.c:542",
+          "source_path": "src/flb_input.c",
+          "file_sha256": "92a0917b89dd61ff92d098dffcf56ddae1060d7588874a3fc0e8e27f45544122",
+          "excerpt": "                flb_hash_table_destroy(instance->ht_profile_chunks);\n            }\n            if (plugin->type != FLB_INPUT_PLUGIN_CORE && instance->context) {\n                flb_free(instance->context);\n            }\n            flb_free(instance->http_server_config);"
+        },
+        {
+          "origin": "src/flb_input.c:580",
+          "source_path": "src/flb_input.c",
+          "file_sha256": "92a0917b89dd61ff92d098dffcf56ddae1060d7588874a3fc0e8e27f45544122",
+          "excerpt": "                    flb_hash_table_destroy(instance->ht_profile_chunks);\n                }\n                if (plugin->type != FLB_INPUT_PLUGIN_CORE && instance->context) {\n                    flb_free(instance->context);\n                }\n                flb_input_ingress_primitives_destroy(instance);"
+        }
+      ]
+    },
+    {
+      "key": [
+        "fluent-bit-tail-pause",
+        "src/flb_input.c",
+        "flb_input_rate_gate_maybe_resume",
+        0
+      ],
+      "before": "Unknown",
+      "after": "Unknown",
+      "removed": [
+        {
+          "category": "unsupported",
+          "description": "unmodeled call, aggregate or indirect access in branch condition",
+          "line": 19905,
+          "origin": "src/flb_input.c:2792"
+        }
+      ],
+      "added": [],
+      "source_observations": [
+        {
+          "origin": "src/flb_input.c:2792",
+          "source_path": "src/flb_input.c",
+          "file_sha256": "92a0917b89dd61ff92d098dffcf56ddae1060d7588874a3fc0e8e27f45544122",
+          "excerpt": "\n    name = (char *) flb_input_name(ins);\n    if (ins->cmt_rate_gate_limited != NULL &&\n        ins->rate_gate_status == FLB_INPUT_RUNNING) {\n        cmt_gauge_set(ins->cmt_rate_gate_limited, ts, 0, 1, (char *[]) {name});\n    }"
+        }
+      ]
+    },
+    {
+      "key": [
+        "fluent-bit-tail-pause",
+        "src/flb_input.c",
+        "flb_input_rate_gate_timer_cancel",
+        0
+      ],
+      "before": "Unknown",
+      "after": "Unknown",
+      "removed": [
+        {
+          "category": "unsupported",
+          "description": "unmodeled call, aggregate or indirect access in branch condition",
+          "line": 19756,
+          "origin": "src/flb_input.c:2609"
+        }
+      ],
+      "added": [],
+      "source_observations": [
+        {
+          "origin": "src/flb_input.c:2609",
+          "source_path": "src/flb_input.c",
+          "file_sha256": "92a0917b89dd61ff92d098dffcf56ddae1060d7588874a3fc0e8e27f45544122",
+          "excerpt": "    struct flb_sched_timer *timer;\n\n    if (ins == NULL || ins->rate_gate_timer == NULL) {\n        return;\n    }\n"
+        }
+      ]
+    },
+    {
+      "key": [
+        "fluent-bit-tail-pause",
+        "src/flb_input.c",
+        "flb_input_init_all",
+        1
+      ],
+      "before": "Unknown",
+      "after": "Unknown",
+      "removed": [
+        {
+          "category": "unsupported",
+          "description": "unmodeled call, aggregate or indirect access in branch condition",
+          "line": 19370,
+          "origin": "src/flb_input.c:2085"
+        }
+      ],
+      "added": [],
+      "source_observations": [
+        {
+          "origin": "src/flb_input.c:2085",
+          "source_path": "src/flb_input.c",
+          "file_sha256": "92a0917b89dd61ff92d098dffcf56ddae1060d7588874a3fc0e8e27f45544122",
+          "excerpt": "        }\n\n        if (ins->tls_min_version != NULL || ins->tls_max_version != NULL) {\n            ret = flb_tls_set_minmax_proto(ins->tls, ins->tls_min_version, ins->tls_max_version);\n            if (ret != 0) {\n                flb_error(\"[input %s] error setting up minmax protocol version of TLS\","
+        }
+      ]
+    },
+    {
+      "key": [
+        "fluent-bit-tail-pause",
+        "src/flb_input.c",
+        "flb_input_instance_init",
+        1
+      ],
+      "before": "Unknown",
+      "after": "Unknown",
+      "removed": [
+        {
+          "category": "unsupported",
+          "description": "unmodeled call, aggregate or indirect access in branch condition",
+          "line": 19033,
+          "origin": "src/flb_input.c:1574"
+        },
+        {
+          "category": "unknown_alias",
+          "description": "unresolved resource identity `config`",
+          "line": 19034,
+          "origin": "src/flb_input.c:1575"
+        }
+      ],
+      "added": [],
+      "source_observations": [
+        {
+          "origin": "src/flb_input.c:1574",
+          "source_path": "src/flb_input.c",
+          "file_sha256": "92a0917b89dd61ff92d098dffcf56ddae1060d7588874a3fc0e8e27f45544122",
+          "excerpt": "    int tls_session_mode;\n\n    if (ins->log_level == -1 && config->log != NULL) {\n        ins->log_level = config->log->level;\n    }\n"
+        },
+        {
+          "origin": "src/flb_input.c:1575",
+          "source_path": "src/flb_input.c",
+          "file_sha256": "92a0917b89dd61ff92d098dffcf56ddae1060d7588874a3fc0e8e27f45544122",
+          "excerpt": "\n    if (ins->log_level == -1 && config->log != NULL) {\n        ins->log_level = config->log->level;\n    }\n\n    /* Skip pseudo input plugins */"
+        }
+      ]
+    },
+    {
+      "key": [
+        "fluent-bit-tail-pause",
+        "src/flb_input.c",
+        "flb_input_new",
+        1
+      ],
+      "before": "Unknown",
+      "after": "Unknown",
+      "removed": [
+        {
+          "category": "unsupported",
+          "description": "unmodeled call, aggregate or indirect access in branch condition",
+          "line": 18222,
+          "origin": "src/flb_input.c:542"
+        },
+        {
+          "category": "unsupported",
+          "description": "unmodeled call, aggregate or indirect access in branch condition",
+          "line": 18258,
+          "origin": "src/flb_input.c:580"
+        }
+      ],
+      "added": [
+        {
+          "category": "unknown_alias",
+          "description": "unresolved resource identity `instance`",
+          "line": 18222,
+          "origin": "src/flb_input.c:542"
+        },
+        {
+          "category": "unknown_alias",
+          "description": "unresolved resource identity `instance`",
+          "line": 18258,
+          "origin": "src/flb_input.c:580"
+        }
+      ],
+      "source_observations": [
+        {
+          "origin": "src/flb_input.c:542",
+          "source_path": "src/flb_input.c",
+          "file_sha256": "92a0917b89dd61ff92d098dffcf56ddae1060d7588874a3fc0e8e27f45544122",
+          "excerpt": "                flb_hash_table_destroy(instance->ht_profile_chunks);\n            }\n            if (plugin->type != FLB_INPUT_PLUGIN_CORE && instance->context) {\n                flb_free(instance->context);\n            }\n            flb_free(instance->http_server_config);"
+        },
+        {
+          "origin": "src/flb_input.c:580",
+          "source_path": "src/flb_input.c",
+          "file_sha256": "92a0917b89dd61ff92d098dffcf56ddae1060d7588874a3fc0e8e27f45544122",
+          "excerpt": "                    flb_hash_table_destroy(instance->ht_profile_chunks);\n                }\n                if (plugin->type != FLB_INPUT_PLUGIN_CORE && instance->context) {\n                    flb_free(instance->context);\n                }\n                flb_input_ingress_primitives_destroy(instance);"
+        },
+        {
+          "origin": "src/flb_input.c:542",
+          "source_path": "src/flb_input.c",
+          "file_sha256": "92a0917b89dd61ff92d098dffcf56ddae1060d7588874a3fc0e8e27f45544122",
+          "excerpt": "                flb_hash_table_destroy(instance->ht_profile_chunks);\n            }\n            if (plugin->type != FLB_INPUT_PLUGIN_CORE && instance->context) {\n                flb_free(instance->context);\n            }\n            flb_free(instance->http_server_config);"
+        },
+        {
+          "origin": "src/flb_input.c:580",
+          "source_path": "src/flb_input.c",
+          "file_sha256": "92a0917b89dd61ff92d098dffcf56ddae1060d7588874a3fc0e8e27f45544122",
+          "excerpt": "                    flb_hash_table_destroy(instance->ht_profile_chunks);\n                }\n                if (plugin->type != FLB_INPUT_PLUGIN_CORE && instance->context) {\n                    flb_free(instance->context);\n                }\n                flb_input_ingress_primitives_destroy(instance);"
+        }
+      ]
+    },
+    {
+      "key": [
+        "fluent-bit-tail-pause",
+        "src/flb_input.c",
+        "flb_input_rate_gate_maybe_resume",
+        1
+      ],
+      "before": "Unknown",
+      "after": "Unknown",
+      "removed": [
+        {
+          "category": "unsupported",
+          "description": "unmodeled call, aggregate or indirect access in branch condition",
+          "line": 19905,
+          "origin": "src/flb_input.c:2792"
+        }
+      ],
+      "added": [],
+      "source_observations": [
+        {
+          "origin": "src/flb_input.c:2792",
+          "source_path": "src/flb_input.c",
+          "file_sha256": "92a0917b89dd61ff92d098dffcf56ddae1060d7588874a3fc0e8e27f45544122",
+          "excerpt": "\n    name = (char *) flb_input_name(ins);\n    if (ins->cmt_rate_gate_limited != NULL &&\n        ins->rate_gate_status == FLB_INPUT_RUNNING) {\n        cmt_gauge_set(ins->cmt_rate_gate_limited, ts, 0, 1, (char *[]) {name});\n    }"
+        }
+      ]
+    },
+    {
+      "key": [
+        "fluent-bit-tail-pause",
+        "src/flb_input.c",
+        "flb_input_rate_gate_timer_cancel",
+        1
+      ],
+      "before": "Unknown",
+      "after": "Unknown",
+      "removed": [
+        {
+          "category": "unsupported",
+          "description": "unmodeled call, aggregate or indirect access in branch condition",
+          "line": 19756,
+          "origin": "src/flb_input.c:2609"
+        }
+      ],
+      "added": [],
+      "source_observations": [
+        {
+          "origin": "src/flb_input.c:2609",
+          "source_path": "src/flb_input.c",
+          "file_sha256": "92a0917b89dd61ff92d098dffcf56ddae1060d7588874a3fc0e8e27f45544122",
+          "excerpt": "    struct flb_sched_timer *timer;\n\n    if (ins == NULL || ins->rate_gate_timer == NULL) {\n        return;\n    }\n"
+        }
+      ]
+    },
+    {
+      "key": [
+        "fluent-bit-tail-pause",
+        "plugins/in_tail/tail.c",
+        "in_tail_collect_pending",
+        0
+      ],
+      "before": "Unknown",
+      "after": "Unknown",
+      "removed": [
+        {
+          "category": "unsupported",
+          "description": "unmodeled call, aggregate or indirect access in branch condition",
+          "line": 19342,
+          "origin": "plugins/in_tail/tail.c:95"
+        },
+        {
+          "category": "unsupported",
+          "description": "unmodeled call, aggregate or indirect access in branch condition",
+          "line": 19366,
+          "origin": "plugins/in_tail/tail.c:131"
+        }
+      ],
+      "added": [
+        {
+          "category": "unknown_alias",
+          "description": "unresolved resource identity `file`",
+          "line": 19342,
+          "origin": "plugins/in_tail/tail.c:95"
+        },
+        {
+          "category": "unknown_alias",
+          "description": "unresolved resource identity `file`",
+          "line": 19366,
+          "origin": "plugins/in_tail/tail.c:131"
+        }
+      ],
+      "source_observations": [
+        {
+          "origin": "plugins/in_tail/tail.c:95",
+          "source_path": "plugins/in_tail/tail.c",
+          "file_sha256": "ccab8c6078d677ff7a552c01d463ef3cb8c57b07b74041576ae759e5a6abc0f7",
+          "excerpt": "\n        if (file->pending_bytes <= 0) {\n            if(file->decompression_context == NULL ||\n               file->decompression_context->input_buffer_length == 0) {\n                continue;\n            }"
+        },
+        {
+          "origin": "plugins/in_tail/tail.c:131",
+          "source_path": "plugins/in_tail/tail.c",
+          "file_sha256": "ccab8c6078d677ff7a552c01d463ef3cb8c57b07b74041576ae759e5a6abc0f7",
+          "excerpt": "                active++;\n            }\n            else if(file->decompression_context != NULL &&\n                    file->decompression_context->input_buffer_length > 0) {\n                active++;\n            }"
+        },
+        {
+          "origin": "plugins/in_tail/tail.c:95",
+          "source_path": "plugins/in_tail/tail.c",
+          "file_sha256": "ccab8c6078d677ff7a552c01d463ef3cb8c57b07b74041576ae759e5a6abc0f7",
+          "excerpt": "\n        if (file->pending_bytes <= 0) {\n            if(file->decompression_context == NULL ||\n               file->decompression_context->input_buffer_length == 0) {\n                continue;\n            }"
+        },
+        {
+          "origin": "plugins/in_tail/tail.c:131",
+          "source_path": "plugins/in_tail/tail.c",
+          "file_sha256": "ccab8c6078d677ff7a552c01d463ef3cb8c57b07b74041576ae759e5a6abc0f7",
+          "excerpt": "                active++;\n            }\n            else if(file->decompression_context != NULL &&\n                    file->decompression_context->input_buffer_length > 0) {\n                active++;\n            }"
+        }
+      ]
+    },
+    {
+      "key": [
+        "fluent-bit-tail-pause",
+        "plugins/in_tail/tail.c",
+        "in_tail_collect_static",
+        0
+      ],
+      "before": "Unknown",
+      "after": "Unknown",
+      "removed": [
+        {
+          "category": "unsupported",
+          "description": "unmodeled call, aggregate or indirect access in branch condition",
+          "line": 19418,
+          "origin": "plugins/in_tail/tail.c:219"
+        }
+      ],
+      "added": [
+        {
+          "category": "unknown_alias",
+          "description": "unresolved resource identity `file`",
+          "line": 19418,
+          "origin": "plugins/in_tail/tail.c:219"
+        }
+      ],
+      "source_observations": [
+        {
+          "origin": "plugins/in_tail/tail.c:219",
+          "source_path": "plugins/in_tail/tail.c",
+          "file_sha256": "ccab8c6078d677ff7a552c01d463ef3cb8c57b07b74041576ae759e5a6abc0f7",
+          "excerpt": "            break;\n        case FLB_TAIL_WAIT:\n            if(file->decompression_context != NULL &&\n               file->decompression_context->input_buffer_length > 0) {\n                active++;\n"
+        },
+        {
+          "origin": "plugins/in_tail/tail.c:219",
+          "source_path": "plugins/in_tail/tail.c",
+          "file_sha256": "ccab8c6078d677ff7a552c01d463ef3cb8c57b07b74041576ae759e5a6abc0f7",
+          "excerpt": "            break;\n        case FLB_TAIL_WAIT:\n            if(file->decompression_context != NULL &&\n               file->decompression_context->input_buffer_length > 0) {\n                active++;\n"
+        }
+      ]
+    },
+    {
+      "key": [
+        "fluent-bit-tail-pause",
+        "plugins/in_tail/tail.c",
+        "in_tail_init",
+        0
+      ],
+      "before": "Unknown",
+      "after": "Unknown",
+      "removed": [
+        {
+          "category": "unsupported",
+          "description": "unmodeled call, aggregate or indirect access in branch condition",
+          "line": 19570,
+          "origin": "plugins/in_tail/tail.c:459"
+        }
+      ],
+      "added": [],
+      "source_observations": [
+        {
+          "origin": "plugins/in_tail/tail.c:459",
+          "source_path": "plugins/in_tail/tail.c",
+          "file_sha256": "ccab8c6078d677ff7a552c01d463ef3cb8c57b07b74041576ae759e5a6abc0f7",
+          "excerpt": "\n\n    if (ctx->multiline == FLB_TRUE && ctx->parser) {\n        ctx->parser = NULL;\n        flb_plg_warn(in, \"on multiline mode 'Parser' is not allowed \"\n                     \"(parser disabled)\");"
+        }
+      ]
+    },
+    {
+      "key": [
+        "fluent-bit-tail-pause",
+        "plugins/in_tail/tail_file.c",
+        "dormant_destroy",
+        0
+      ],
+      "before": "Unknown",
+      "after": "Unknown",
+      "removed": [
+        {
+          "category": "unsupported",
+          "description": "unmodeled call, aggregate or indirect access in branch condition",
+          "line": 19813,
+          "origin": "plugins/in_tail/tail_file.c:378"
+        }
+      ],
+      "added": [],
+      "source_observations": [
+        {
+          "origin": "plugins/in_tail/tail_file.c:378",
+          "source_path": "plugins/in_tail/tail_file.c",
+          "file_sha256": "fef252bfc26b2167080931f5c15549f8279f096251e5269df00f2c3e1bae4e4d",
+          "excerpt": "    struct tail_dormant_file *owner;\n\n    if (delete_db && ctx->db && file->db_id != 0) {\n        /* A row awaiting deletion may have been adopted by a reopened file. */\n        owner = flb_hash_table_get_ptr(ctx->dormant_inodes, file->inode_key,\n                                      flb_sds_len(file->inode_key));"
+        }
+      ]
+    },
+    {
+      "key": [
+        "fluent-bit-tail-pause",
+        "plugins/in_tail/tail_file.c",
+        "flb_tail_file_append",
+        0
+      ],
+      "before": "Unknown",
+      "after": "Unknown",
+      "removed": [
+        {
+          "category": "unsupported",
+          "description": "unmodeled call, aggregate or indirect access in branch condition",
+          "line": 20963,
+          "origin": "plugins/in_tail/tail_file.c:1962"
+        }
+      ],
+      "added": [
+        {
+          "category": "unknown_alias",
+          "description": "unresolved resource identity `file`",
+          "line": 20963,
+          "origin": "plugins/in_tail/tail_file.c:1962"
+        }
+      ],
+      "source_observations": [
+        {
+          "origin": "plugins/in_tail/tail_file.c:1962",
+          "source_path": "plugins/in_tail/tail_file.c",
+          "file_sha256": "fef252bfc26b2167080931f5c15549f8279f096251e5269df00f2c3e1bae4e4d",
+          "excerpt": "    flb_free(file->buf_data);\nerr_destroy_ml_stream:\n    if (ctx->ml_ctx && file->ml_stream_id > 0) {\n        flb_ml_stream_id_destroy_all(ctx->ml_ctx, file->ml_stream_id);\n    }\nerr_free_dmode_lastline:"
+        },
+        {
+          "origin": "plugins/in_tail/tail_file.c:1962",
+          "source_path": "plugins/in_tail/tail_file.c",
+          "file_sha256": "fef252bfc26b2167080931f5c15549f8279f096251e5269df00f2c3e1bae4e4d",
+          "excerpt": "    flb_free(file->buf_data);\nerr_destroy_ml_stream:\n    if (ctx->ml_ctx && file->ml_stream_id > 0) {\n        flb_ml_stream_id_destroy_all(ctx->ml_ctx, file->ml_stream_id);\n    }\nerr_free_dmode_lastline:"
+        }
+      ]
+    },
+    {
+      "key": [
+        "fluent-bit-tail-pause",
+        "plugins/in_tail/tail_file.c",
+        "flb_tail_file_reclaim",
+        0
+      ],
+      "before": "Unknown",
+      "after": "Unknown",
+      "removed": [
+        {
+          "category": "unsupported",
+          "description": "unmodeled call, aggregate or indirect access in branch condition",
+          "line": 21053,
+          "origin": "plugins/in_tail/tail_file.c:2090"
+        },
+        {
+          "category": "unsupported",
+          "description": "unmodeled call, aggregate or indirect access in branch condition",
+          "line": 21061,
+          "origin": "plugins/in_tail/tail_file.c:2099"
+        }
+      ],
+      "added": [
+        {
+          "category": "unknown_alias",
+          "description": "unresolved resource identity `file`",
+          "line": 21061,
+          "origin": "plugins/in_tail/tail_file.c:2099"
+        }
+      ],
+      "source_observations": [
+        {
+          "origin": "plugins/in_tail/tail_file.c:2090",
+          "source_path": "plugins/in_tail/tail_file.c",
+          "file_sha256": "fef252bfc26b2167080931f5c15549f8279f096251e5269df00f2c3e1bae4e4d",
+          "excerpt": "\n    /* These modes may retain parser state beyond the file's read buffer. */\n    if (ctx->multiline || ctx->ml_ctx || ctx->docker_mode) {\n        return;\n    }\n"
+        },
+        {
+          "origin": "plugins/in_tail/tail_file.c:2099",
+          "source_path": "plugins/in_tail/tail_file.c",
+          "file_sha256": "fef252bfc26b2167080931f5c15549f8279f096251e5269df00f2c3e1bae4e4d",
+          "excerpt": "        }\n        file = mk_list_entry(head, struct flb_tail_file, _head);\n        if (file->rotated || file->is_link || file->decompression_context ||\n            file->buf_len != 0 || file->pending_bytes != 0 || file->skip_next ||\n            file->sl_log_event_encoder->output_length != 0) {\n            continue;"
+        },
+        {
+          "origin": "plugins/in_tail/tail_file.c:2099",
+          "source_path": "plugins/in_tail/tail_file.c",
+          "file_sha256": "fef252bfc26b2167080931f5c15549f8279f096251e5269df00f2c3e1bae4e4d",
+          "excerpt": "        }\n        file = mk_list_entry(head, struct flb_tail_file, _head);\n        if (file->rotated || file->is_link || file->decompression_context ||\n            file->buf_len != 0 || file->pending_bytes != 0 || file->skip_next ||\n            file->sl_log_event_encoder->output_length != 0) {\n            continue;"
+        }
+      ]
+    },
+    {
+      "key": [
+        "fluent-bit-tail-pause",
+        "plugins/in_tail/tail_file.c",
+        "flb_tail_file_remove",
+        0
+      ],
+      "before": "Unknown",
+      "after": "Unknown",
+      "removed": [
+        {
+          "category": "unsupported",
+          "description": "unmodeled call, aggregate or indirect access in branch condition",
+          "line": 21004,
+          "origin": "plugins/in_tail/tail_file.c:2014"
+        }
+      ],
+      "added": [],
+      "source_observations": [
+        {
+          "origin": "plugins/in_tail/tail_file.c:2014",
+          "source_path": "plugins/in_tail/tail_file.c",
+          "file_sha256": "fef252bfc26b2167080931f5c15549f8279f096251e5269df00f2c3e1bae4e4d",
+          "excerpt": "\n    /* remove the multiline.core stream */\n    if (ctx->ml_ctx && file->ml_stream_id > 0) {\n        flb_ml_stream_id_destroy_all(ctx->ml_ctx, file->ml_stream_id);\n    }\n"
+        }
+      ]
+    }
+  ],
+  "body_evidence_changes": [],
+  "meaning": "All semantic changes retained for source review; source snippets do not by themselves discharge custody obligations. Header replay multiplicity is not distinct native proof coverage."
+}

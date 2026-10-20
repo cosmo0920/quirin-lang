@@ -1,0 +1,1116 @@
+{
+  "before": "/home/cosmo/.codex/worktrees/w48-bottom-up-batch4/qcore-c/private/w48-bottom-up-batch4/corpus-before-final/corpus/resource-diagnostics.json",
+  "after": "/home/cosmo/.codex/worktrees/w48-bottom-up-batch4/qcore-c/private/w48-bottom-up-batch4/corpus-after-final/corpus/resource-diagnostics.json",
+  "functions": 4834,
+  "transitions": [
+    {
+      "before": "Safe",
+      "after": "Safe",
+      "count": 967
+    },
+    {
+      "before": "Unknown",
+      "after": "Safe",
+      "count": 6
+    },
+    {
+      "before": "Unknown",
+      "after": "Unknown",
+      "count": 3852
+    },
+    {
+      "before": "Unsafe",
+      "after": "Unsafe",
+      "count": 9
+    }
+  ],
+  "removed_leaves": [
+    [
+      "unknown_alias",
+      "unresolved resource identity `__qcore_returned_value`",
+      1
+    ],
+    [
+      "unknown_alias",
+      "unresolved resource identity `field`",
+      2
+    ],
+    [
+      "unknown_alias",
+      "unresolved resource identity `in`",
+      1
+    ],
+    [
+      "unknown_alias",
+      "unresolved resource identity `map`",
+      1
+    ],
+    [
+      "unknown_alias",
+      "unresolved resource identity `metric_name`",
+      6
+    ],
+    [
+      "unknown_alias",
+      "unresolved resource identity `metric`",
+      1
+    ],
+    [
+      "unsupported",
+      "call to uncontracted function `cio_file_is_up`",
+      1
+    ],
+    [
+      "unsupported",
+      "call to uncontracted function `cmt_metric_name_from_labels`",
+      1
+    ],
+    [
+      "unsupported",
+      "call to uncontracted function `cmt_summary_quantile_set`",
+      1
+    ],
+    [
+      "unsupported",
+      "call to uncontracted function `compute_flat_scope_index`",
+      1
+    ],
+    [
+      "unsupported",
+      "indirect memory access is outside the resource projection",
+      1
+    ],
+    [
+      "unsupported",
+      "nullable resource `__qcore_returned_value` used by a non-null contract",
+      1
+    ],
+    [
+      "unsupported",
+      "unmodeled call, aggregate or indirect access in branch condition",
+      52
+    ],
+    [
+      "unsupported",
+      "unmodeled call, aggregate or indirect access in loop condition",
+      3
+    ]
+  ],
+  "added_leaves": [
+    [
+      "unknown_alias",
+      "unresolved resource identity `callback_entry`",
+      2
+    ],
+    [
+      "unknown_alias",
+      "unresolved resource identity `chunk`",
+      2
+    ],
+    [
+      "unknown_alias",
+      "unresolved resource identity `err`",
+      1
+    ],
+    [
+      "unknown_alias",
+      "unresolved resource identity `histogram`",
+      2
+    ],
+    [
+      "unknown_alias",
+      "unresolved resource identity `negative`",
+      1
+    ],
+    [
+      "unknown_alias",
+      "unresolved resource identity `otel_resource_span`",
+      1
+    ],
+    [
+      "unknown_alias",
+      "unresolved resource identity `positive`",
+      1
+    ],
+    [
+      "unknown_alias",
+      "unresolved resource identity `type`",
+      1
+    ]
+  ],
+  "changed": [
+    {
+      "key": [
+        "cmetrics",
+        "cmt_cat.c",
+        "cat_exp_histogram_values",
+        0
+      ],
+      "before": "Unknown",
+      "after": "Unknown",
+      "removed_leaves": [
+        [
+          "unsupported",
+          "unmodeled call, aggregate or indirect access in branch condition",
+          4
+        ]
+      ],
+      "added_leaves": []
+    },
+    {
+      "key": [
+        "cmetrics",
+        "cmt_decode_msgpack.c",
+        "cmt_decode_msgpack_create",
+        0
+      ],
+      "before": "Unknown",
+      "after": "Unknown",
+      "removed_leaves": [
+        [
+          "unsupported",
+          "unmodeled call, aggregate or indirect access in branch condition",
+          1
+        ]
+      ],
+      "added_leaves": []
+    },
+    {
+      "key": [
+        "cmetrics",
+        "cmt_decode_msgpack.c",
+        "unpack_metric",
+        0
+      ],
+      "before": "Unknown",
+      "after": "Unknown",
+      "removed_leaves": [
+        [
+          "unknown_alias",
+          "unresolved resource identity `metric`",
+          1
+        ],
+        [
+          "unsupported",
+          "unmodeled call, aggregate or indirect access in branch condition",
+          1
+        ]
+      ],
+      "added_leaves": [
+        [
+          "unknown_alias",
+          "unresolved resource identity `histogram`",
+          1
+        ]
+      ]
+    },
+    {
+      "key": [
+        "cmetrics",
+        "cmt_decode_msgpack.c",
+        "unpack_opts",
+        0
+      ],
+      "before": "Unknown",
+      "after": "Unknown",
+      "removed_leaves": [
+        [
+          "unknown_alias",
+          "unresolved resource identity `map`",
+          1
+        ],
+        [
+          "unsupported",
+          "indirect memory access is outside the resource projection",
+          1
+        ],
+        [
+          "unsupported",
+          "unmodeled call, aggregate or indirect access in branch condition",
+          1
+        ]
+      ],
+      "added_leaves": []
+    },
+    {
+      "key": [
+        "cmetrics",
+        "cmt_decode_opentelemetry.c",
+        "decode_exponential_histogram_data_point",
+        0
+      ],
+      "before": "Unknown",
+      "after": "Unknown",
+      "removed_leaves": [
+        [
+          "unsupported",
+          "unmodeled call, aggregate or indirect access in branch condition",
+          2
+        ]
+      ],
+      "added_leaves": [
+        [
+          "unknown_alias",
+          "unresolved resource identity `negative`",
+          1
+        ],
+        [
+          "unknown_alias",
+          "unresolved resource identity `positive`",
+          1
+        ]
+      ]
+    },
+    {
+      "key": [
+        "cmetrics",
+        "cmt_decode_opentelemetry.c",
+        "decode_histogram_data_point",
+        0
+      ],
+      "before": "Unknown",
+      "after": "Unknown",
+      "removed_leaves": [
+        [
+          "unsupported",
+          "unmodeled call, aggregate or indirect access in branch condition",
+          2
+        ]
+      ],
+      "added_leaves": []
+    },
+    {
+      "key": [
+        "cmetrics",
+        "cmt_decode_opentelemetry.c",
+        "decode_resource_metrics_entry",
+        0
+      ],
+      "before": "Unknown",
+      "after": "Unknown",
+      "removed_leaves": [
+        [
+          "unsupported",
+          "unmodeled call, aggregate or indirect access in branch condition",
+          1
+        ]
+      ],
+      "added_leaves": []
+    },
+    {
+      "key": [
+        "cmetrics",
+        "cmt_decode_opentelemetry.c",
+        "decode_scope_metrics_entry",
+        0
+      ],
+      "before": "Unknown",
+      "after": "Unknown",
+      "removed_leaves": [
+        [
+          "unsupported",
+          "unmodeled call, aggregate or indirect access in branch condition",
+          1
+        ]
+      ],
+      "added_leaves": []
+    },
+    {
+      "key": [
+        "cmetrics",
+        "cmt_decode_opentelemetry.c",
+        "decode_summary_data_point",
+        0
+      ],
+      "before": "Unknown",
+      "after": "Unknown",
+      "removed_leaves": [
+        [
+          "unsupported",
+          "unmodeled call, aggregate or indirect access in branch condition",
+          1
+        ]
+      ],
+      "added_leaves": []
+    },
+    {
+      "key": [
+        "cmetrics",
+        "cmt_decode_prometheus_remote_write.c",
+        "cmt_metric_name_from_labels",
+        0
+      ],
+      "before": "Unknown",
+      "after": "Safe",
+      "removed_leaves": [
+        [
+          "unknown_alias",
+          "unresolved resource identity `__qcore_returned_value`",
+          1
+        ],
+        [
+          "unsupported",
+          "nullable resource `__qcore_returned_value` used by a non-null contract",
+          1
+        ],
+        [
+          "unsupported",
+          "unmodeled call, aggregate or indirect access in branch condition",
+          1
+        ]
+      ],
+      "added_leaves": []
+    },
+    {
+      "key": [
+        "cmetrics",
+        "cmt_decode_prometheus_remote_write.c",
+        "decode_histogram_time_series",
+        0
+      ],
+      "before": "Unknown",
+      "after": "Unknown",
+      "removed_leaves": [
+        [
+          "unsupported",
+          "unmodeled call, aggregate or indirect access in branch condition",
+          1
+        ]
+      ],
+      "added_leaves": []
+    },
+    {
+      "key": [
+        "cmetrics",
+        "cmt_decode_prometheus_remote_write.c",
+        "decode_metrics_entry",
+        0
+      ],
+      "before": "Unknown",
+      "after": "Unknown",
+      "removed_leaves": [
+        [
+          "unknown_alias",
+          "unresolved resource identity `metric_name`",
+          6
+        ],
+        [
+          "unsupported",
+          "call to uncontracted function `cmt_metric_name_from_labels`",
+          1
+        ],
+        [
+          "unsupported",
+          "unmodeled call, aggregate or indirect access in branch condition",
+          2
+        ]
+      ],
+      "added_leaves": []
+    },
+    {
+      "key": [
+        "cmetrics",
+        "cmt_encode_opentelemetry.c",
+        "compute_flat_scope_index",
+        0
+      ],
+      "before": "Unknown",
+      "after": "Safe",
+      "removed_leaves": [
+        [
+          "unsupported",
+          "unmodeled call, aggregate or indirect access in branch condition",
+          1
+        ]
+      ],
+      "added_leaves": []
+    },
+    {
+      "key": [
+        "cmetrics",
+        "cmt_encode_opentelemetry.c",
+        "resolve_target_scope_index",
+        0
+      ],
+      "before": "Unknown",
+      "after": "Unknown",
+      "removed_leaves": [
+        [
+          "unsupported",
+          "call to uncontracted function `compute_flat_scope_index`",
+          1
+        ]
+      ],
+      "added_leaves": []
+    },
+    {
+      "key": [
+        "cmetrics",
+        "cmt_map.c",
+        "metric_prepare_storage",
+        0
+      ],
+      "before": "Unknown",
+      "after": "Unknown",
+      "removed_leaves": [
+        [
+          "unsupported",
+          "unmodeled call, aggregate or indirect access in branch condition",
+          3
+        ]
+      ],
+      "added_leaves": [
+        [
+          "unknown_alias",
+          "unresolved resource identity `histogram`",
+          1
+        ]
+      ]
+    },
+    {
+      "key": [
+        "cmetrics",
+        "cmt_mpack_utils.c",
+        "cmt_mpack_unpack_map",
+        0
+      ],
+      "before": "Unknown",
+      "after": "Unknown",
+      "removed_leaves": [
+        [
+          "unsupported",
+          "unmodeled call, aggregate or indirect access in loop condition",
+          1
+        ]
+      ],
+      "added_leaves": [
+        [
+          "unknown_alias",
+          "unresolved resource identity `callback_entry`",
+          1
+        ]
+      ]
+    },
+    {
+      "key": [
+        "cmetrics",
+        "cmt_summary.c",
+        "cmt_summary_quantile_get_value",
+        0
+      ],
+      "before": "Unknown",
+      "after": "Safe",
+      "removed_leaves": [
+        [
+          "unsupported",
+          "unmodeled call, aggregate or indirect access in branch condition",
+          1
+        ]
+      ],
+      "added_leaves": []
+    },
+    {
+      "key": [
+        "cmetrics",
+        "cmt_summary.c",
+        "cmt_summary_quantile_set",
+        0
+      ],
+      "before": "Unknown",
+      "after": "Safe",
+      "removed_leaves": [
+        [
+          "unsupported",
+          "unmodeled call, aggregate or indirect access in branch condition",
+          1
+        ]
+      ],
+      "added_leaves": []
+    },
+    {
+      "key": [
+        "cmetrics",
+        "cmt_summary.c",
+        "cmt_summary_set_default",
+        0
+      ],
+      "before": "Unknown",
+      "after": "Unknown",
+      "removed_leaves": [
+        [
+          "unsupported",
+          "call to uncontracted function `cmt_summary_quantile_set`",
+          1
+        ],
+        [
+          "unsupported",
+          "unmodeled call, aggregate or indirect access in branch condition",
+          1
+        ]
+      ],
+      "added_leaves": []
+    },
+    {
+      "key": [
+        "ctraces",
+        "ctr_decode_opentelemetry.c",
+        "ctr_decode_opentelemetry_create",
+        0
+      ],
+      "before": "Unknown",
+      "after": "Unknown",
+      "removed_leaves": [
+        [
+          "unsupported",
+          "unmodeled call, aggregate or indirect access in branch condition",
+          1
+        ]
+      ],
+      "added_leaves": [
+        [
+          "unknown_alias",
+          "unresolved resource identity `otel_resource_span`",
+          1
+        ]
+      ]
+    },
+    {
+      "key": [
+        "ctraces",
+        "ctr_decode_opentelemetry.c",
+        "span_set_events",
+        0
+      ],
+      "before": "Unknown",
+      "after": "Unknown",
+      "removed_leaves": [
+        [
+          "unsupported",
+          "unmodeled call, aggregate or indirect access in branch condition",
+          1
+        ]
+      ],
+      "added_leaves": []
+    },
+    {
+      "key": [
+        "ctraces",
+        "ctr_mpack_utils.c",
+        "ctr_mpack_unpack_map",
+        0
+      ],
+      "before": "Unknown",
+      "after": "Unknown",
+      "removed_leaves": [
+        [
+          "unsupported",
+          "unmodeled call, aggregate or indirect access in loop condition",
+          1
+        ]
+      ],
+      "added_leaves": [
+        [
+          "unknown_alias",
+          "unresolved resource identity `callback_entry`",
+          1
+        ]
+      ]
+    },
+    {
+      "key": [
+        "ctraces",
+        "ctr_span.c",
+        "ctr_span_create",
+        0
+      ],
+      "before": "Unknown",
+      "after": "Unknown",
+      "removed_leaves": [
+        [
+          "unsupported",
+          "unmodeled call, aggregate or indirect access in branch condition",
+          1
+        ]
+      ],
+      "added_leaves": []
+    },
+    {
+      "key": [
+        "librdkafka",
+        "lz4hc.c",
+        "LZ4HC_countPattern",
+        0
+      ],
+      "before": "Unknown",
+      "after": "Unknown",
+      "removed_leaves": [
+        [
+          "unsupported",
+          "unmodeled call, aggregate or indirect access in loop condition",
+          1
+        ]
+      ],
+      "added_leaves": []
+    },
+    {
+      "key": [
+        "librdkafka",
+        "nanopb/pb_common.c",
+        "load_descriptor_values",
+        0
+      ],
+      "before": "Unknown",
+      "after": "Unknown",
+      "removed_leaves": [
+        [
+          "unsupported",
+          "unmodeled call, aggregate or indirect access in branch condition",
+          1
+        ]
+      ],
+      "added_leaves": []
+    },
+    {
+      "key": [
+        "librdkafka",
+        "nanopb/pb_decode.c",
+        "decode_static_field",
+        0
+      ],
+      "before": "Unknown",
+      "after": "Unknown",
+      "removed_leaves": [
+        [
+          "unknown_alias",
+          "unresolved resource identity `field`",
+          2
+        ],
+        [
+          "unsupported",
+          "unmodeled call, aggregate or indirect access in branch condition",
+          1
+        ]
+      ],
+      "added_leaves": []
+    },
+    {
+      "key": [
+        "librdkafka",
+        "nanopb/pb_decode.c",
+        "pb_dec_submessage",
+        0
+      ],
+      "before": "Unknown",
+      "after": "Unknown",
+      "removed_leaves": [
+        [
+          "unsupported",
+          "unmodeled call, aggregate or indirect access in branch condition",
+          1
+        ]
+      ],
+      "added_leaves": []
+    },
+    {
+      "key": [
+        "librdkafka",
+        "nanopb/pb_decode.c",
+        "pb_field_set_to_default",
+        0
+      ],
+      "before": "Unknown",
+      "after": "Unknown",
+      "removed_leaves": [
+        [
+          "unsupported",
+          "unmodeled call, aggregate or indirect access in branch condition",
+          1
+        ]
+      ],
+      "added_leaves": []
+    },
+    {
+      "key": [
+        "librdkafka",
+        "nanopb/pb_encode.c",
+        "pb_check_proto3_default_value",
+        0
+      ],
+      "before": "Unknown",
+      "after": "Unknown",
+      "removed_leaves": [
+        [
+          "unsupported",
+          "unmodeled call, aggregate or indirect access in branch condition",
+          1
+        ]
+      ],
+      "added_leaves": []
+    },
+    {
+      "key": [
+        "librdkafka",
+        "nanopb/pb_encode.c",
+        "pb_enc_submessage",
+        0
+      ],
+      "before": "Unknown",
+      "after": "Unknown",
+      "removed_leaves": [
+        [
+          "unsupported",
+          "unmodeled call, aggregate or indirect access in branch condition",
+          1
+        ]
+      ],
+      "added_leaves": []
+    },
+    {
+      "key": [
+        "librdkafka",
+        "rdkafka.c",
+        "rd_kafka_query_wmark_offsets_resp_cb",
+        0
+      ],
+      "before": "Unknown",
+      "after": "Unknown",
+      "removed_leaves": [
+        [
+          "unsupported",
+          "unmodeled call, aggregate or indirect access in branch condition",
+          1
+        ]
+      ],
+      "added_leaves": [
+        [
+          "unknown_alias",
+          "unresolved resource identity `err`",
+          1
+        ]
+      ]
+    },
+    {
+      "key": [
+        "librdkafka",
+        "rdkafka_queue.c",
+        "rd_kafka_q_move_cnt",
+        0
+      ],
+      "before": "Unknown",
+      "after": "Unknown",
+      "removed_leaves": [
+        [
+          "unsupported",
+          "unmodeled call, aggregate or indirect access in branch condition",
+          1
+        ]
+      ],
+      "added_leaves": []
+    },
+    {
+      "key": [
+        "librdkafka",
+        "rdkafka_queue.c",
+        "rd_kafka_share_set_log_queue",
+        0
+      ],
+      "before": "Unknown",
+      "after": "Unknown",
+      "removed_leaves": [
+        [
+          "unsupported",
+          "unmodeled call, aggregate or indirect access in branch condition",
+          1
+        ]
+      ],
+      "added_leaves": []
+    },
+    {
+      "key": [
+        "chunkio",
+        "cio_chunk.c",
+        "cio_chunk_is_up",
+        0
+      ],
+      "before": "Unknown",
+      "after": "Unknown",
+      "removed_leaves": [
+        [
+          "unsupported",
+          "call to uncontracted function `cio_file_is_up`",
+          1
+        ]
+      ],
+      "added_leaves": [
+        [
+          "unknown_alias",
+          "unresolved resource identity `type`",
+          1
+        ]
+      ]
+    },
+    {
+      "key": [
+        "chunkio",
+        "cio_file.c",
+        "cio_file_is_up",
+        0
+      ],
+      "before": "Unknown",
+      "after": "Safe",
+      "removed_leaves": [
+        [
+          "unsupported",
+          "unmodeled call, aggregate or indirect access in branch condition",
+          1
+        ]
+      ],
+      "added_leaves": []
+    },
+    {
+      "key": [
+        "chunkio",
+        "cio_file.c",
+        "cio_file_scan_dump",
+        0
+      ],
+      "before": "Unknown",
+      "after": "Unknown",
+      "removed_leaves": [
+        [
+          "unsupported",
+          "unmodeled call, aggregate or indirect access in branch condition",
+          1
+        ]
+      ],
+      "added_leaves": []
+    },
+    {
+      "key": [
+        "chunkio",
+        "cio_file.c",
+        "cio_file_write_metadata",
+        0
+      ],
+      "before": "Unknown",
+      "after": "Unknown",
+      "removed_leaves": [
+        [
+          "unsupported",
+          "unmodeled call, aggregate or indirect access in branch condition",
+          1
+        ]
+      ],
+      "added_leaves": []
+    },
+    {
+      "key": [
+        "chunkio",
+        "cio_file_unix.c",
+        "cio_file_native_delete",
+        0
+      ],
+      "before": "Unknown",
+      "after": "Safe",
+      "removed_leaves": [
+        [
+          "unsupported",
+          "unmodeled call, aggregate or indirect access in branch condition",
+          1
+        ]
+      ],
+      "added_leaves": []
+    },
+    {
+      "key": [
+        "fluent-bit-chunk",
+        "flb_input_chunk.c",
+        "flb_input_chunk_get_projected_write_size",
+        0
+      ],
+      "before": "Unknown",
+      "after": "Unknown",
+      "removed_leaves": [
+        [
+          "unsupported",
+          "unmodeled call, aggregate or indirect access in branch condition",
+          2
+        ]
+      ],
+      "added_leaves": [
+        [
+          "unknown_alias",
+          "unresolved resource identity `chunk`",
+          2
+        ]
+      ]
+    },
+    {
+      "key": [
+        "fluent-bit-chunk",
+        "flb_input_chunk.c",
+        "flb_input_chunk_release_route",
+        0
+      ],
+      "before": "Unknown",
+      "after": "Unknown",
+      "removed_leaves": [
+        [
+          "unsupported",
+          "unmodeled call, aggregate or indirect access in branch condition",
+          1
+        ]
+      ],
+      "added_leaves": []
+    },
+    {
+      "key": [
+        "fluent-bit-chunk",
+        "flb_input_chunk.c",
+        "get_input_chunk_source_name",
+        0
+      ],
+      "before": "Unknown",
+      "after": "Unknown",
+      "removed_leaves": [
+        [
+          "unsupported",
+          "unmodeled call, aggregate or indirect access in branch condition",
+          1
+        ]
+      ],
+      "added_leaves": []
+    },
+    {
+      "key": [
+        "fluent-bit-chunk",
+        "flb_input_chunk.c",
+        "input_chunk_append_raw",
+        0
+      ],
+      "before": "Unknown",
+      "after": "Unknown",
+      "removed_leaves": [
+        [
+          "unsupported",
+          "unmodeled call, aggregate or indirect access in branch condition",
+          1
+        ]
+      ],
+      "added_leaves": []
+    },
+    {
+      "key": [
+        "fluent-bit-chunk",
+        "flb_input_chunk.c",
+        "update_logs_tag_records_metrics",
+        0
+      ],
+      "before": "Unknown",
+      "after": "Unknown",
+      "removed_leaves": [
+        [
+          "unknown_alias",
+          "unresolved resource identity `in`",
+          1
+        ],
+        [
+          "unsupported",
+          "unmodeled call, aggregate or indirect access in branch condition",
+          1
+        ]
+      ],
+      "added_leaves": []
+    },
+    {
+      "key": [
+        "fluent-bit-chunk",
+        "flb_input_chunk.c",
+        "update_logs_tag_records_untracked",
+        0
+      ],
+      "before": "Unknown",
+      "after": "Unknown",
+      "removed_leaves": [
+        [
+          "unsupported",
+          "unmodeled call, aggregate or indirect access in branch condition",
+          1
+        ]
+      ],
+      "added_leaves": []
+    },
+    {
+      "key": [
+        "monkey-libevent",
+        "mk_core/mk_rconf.c",
+        "mk_rconf_read_glob",
+        0
+      ],
+      "before": "Unknown",
+      "after": "Unknown",
+      "removed_leaves": [
+        [
+          "unsupported",
+          "unmodeled call, aggregate or indirect access in branch condition",
+          1
+        ]
+      ],
+      "added_leaves": []
+    },
+    {
+      "key": [
+        "monkey-libevent",
+        "mk_server/mk_http_parser.c",
+        "header_lookup",
+        0
+      ],
+      "before": "Unknown",
+      "after": "Unknown",
+      "removed_leaves": [
+        [
+          "unsupported",
+          "unmodeled call, aggregate or indirect access in branch condition",
+          1
+        ]
+      ],
+      "added_leaves": []
+    },
+    {
+      "key": [
+        "monkey-libevent",
+        "mk_server/mk_mimetype.c",
+        "mk_mimetype_read_config",
+        0
+      ],
+      "before": "Unknown",
+      "after": "Unknown",
+      "removed_leaves": [
+        [
+          "unsupported",
+          "unmodeled call, aggregate or indirect access in branch condition",
+          1
+        ]
+      ],
+      "added_leaves": []
+    },
+    {
+      "key": [
+        "monkey-libevent",
+        "mk_server/monkey.c",
+        "mk_server_setup",
+        0
+      ],
+      "before": "Unknown",
+      "after": "Unknown",
+      "removed_leaves": [
+        [
+          "unsupported",
+          "unmodeled call, aggregate or indirect access in branch condition",
+          1
+        ]
+      ],
+      "added_leaves": []
+    }
+  ]
+}

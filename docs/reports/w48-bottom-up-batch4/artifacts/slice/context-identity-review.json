@@ -1,0 +1,918 @@
+{
+  "route": "slice",
+  "meaning": "Every context assumption/build/version digest is reconstructed from complete retained source maps, canonical production compile-task field ordering and actual binary build heads. Only exact input-root relocation and those derived identities are substituted in comparison. All original artifacts remain intact; every changed diagnostic stays explicit. No actual witness is transported between contexts.",
+  "assumptions": {
+    "before": "6edf5e07620644219b3ce211e085906c51c99265b41f98154bd4af298b3023db",
+    "after": "b668c67de0e1dab52dec5320c75014486c04231dd76ed8043c5536839a9ad9cb"
+  },
+  "evidence_versions": {
+    "before": "contract-hypothesis-graph.v1:35aaecd3e455c332c59913b15f1dad43dd60cfe5",
+    "after": "contract-hypothesis-graph.v1:b931ed61d4a9676f768e24d8aff8fc0e8a63ddea"
+  },
+  "units": [
+    {
+      "index": 0,
+      "library": "fluent-bit-tail-pause",
+      "file": "src/flb_input.c",
+      "build_identity": {
+        "before": "19f7e988a48d335a34daf995744663a7cafb1c724213522d9c4aa8acb4220411",
+        "after": "01f559c659e25613edd92be688fce067595608d9b8bd846057735953739812dc"
+      },
+      "inventory_sha256": {
+        "before": "e6d05684fb5d5d54a202dec72d3c0e58d9245274bedd417c8354ae577de98190",
+        "after": "2cc4dc8484ad8373661ac903bf19c8f49dfb646c3f4a934d52c8eb310106bcdb"
+      },
+      "complete_configuration_equal_after_exact_source_map_relocation": true,
+      "wrong_dependency_negative_rejected": true
+    },
+    {
+      "index": 1,
+      "library": "fluent-bit-tail-pause",
+      "file": "src/flb_input.c",
+      "build_identity": {
+        "before": "fc629254ee31ca543a28fd3af043a072c5b0ce93b858f1623266b991928cad89",
+        "after": "d5cbd7b26457cadd3aa6ea61d359065114acca1eea0bd0accb7fcb25640c5d30"
+      },
+      "inventory_sha256": {
+        "before": "326127a7cd0f2ebad593d6d715cd0828c672cc82dfab6c4dcdf5c6242e0b9994",
+        "after": "9bdd9670ef186667f2f9862868ef8a4c27412bf4b6e2937cbc9003baff2aeb7e"
+      },
+      "complete_configuration_equal_after_exact_source_map_relocation": true,
+      "wrong_dependency_negative_rejected": true
+    },
+    {
+      "index": 2,
+      "library": "fluent-bit-tail-pause",
+      "file": "src/flb_input_thread.c",
+      "build_identity": {
+        "before": "df7236de95428708877210ca08dec17930765566e3a9c07b17eeb99d891a17e9",
+        "after": "ea90097634b6bca49bfc528e9d1408a84e11bd8c9b5710a05c01d950b3a91596"
+      },
+      "inventory_sha256": {
+        "before": "aa9f9611d537a16c1082b771a75fb742a602bdae553503d311a2f3e1bb981f56",
+        "after": "87d864f8b64e848aced48cc10d37192c99716c6d9832e6e2e7bda760559d2da3"
+      },
+      "complete_configuration_equal_after_exact_source_map_relocation": true,
+      "wrong_dependency_negative_rejected": true
+    },
+    {
+      "index": 3,
+      "library": "fluent-bit-tail-pause",
+      "file": "src/flb_input_thread.c",
+      "build_identity": {
+        "before": "8e6cc897a090354b5a4c144fe4c47e8f3402b54b4cd0c90e7c051578dd2d0027",
+        "after": "8ce17a6fb18ddbed1449ae29a1a6621eddc46ba377c3eb6f8fb09a8d139c489b"
+      },
+      "inventory_sha256": {
+        "before": "8c50fdf70c4f915d20e95ab533ffec69592c4471e6f153da2e87ee3d835e484c",
+        "after": "21fe40e62074779b4c80a3fe6e017b153bc2d256f140e78061fb486975c90069"
+      },
+      "complete_configuration_equal_after_exact_source_map_relocation": true,
+      "wrong_dependency_negative_rejected": true
+    },
+    {
+      "index": 4,
+      "library": "fluent-bit-tail-pause",
+      "file": "src/flb_lib.c",
+      "build_identity": {
+        "before": "52da61490fe3d83dd57902118ac5bf10bc6f8ecc9a2c29747a3c8524681c1dcd",
+        "after": "4b1694ecf2b51f0442ef46b49346250c9ab5b3bd7aace8f417f864fda4bee970"
+      },
+      "inventory_sha256": {
+        "before": "e8c287ccc4bdd3b8f6f2dc9301b5751be82bd849d0d00792bf246be76e86fd82",
+        "after": "72e0b1e6bf971ca80db0ef5a9082fa93c85c73aeca282f0623adad64238efaa1"
+      },
+      "complete_configuration_equal_after_exact_source_map_relocation": true,
+      "wrong_dependency_negative_rejected": true
+    },
+    {
+      "index": 5,
+      "library": "fluent-bit-tail-pause",
+      "file": "src/flb_lib.c",
+      "build_identity": {
+        "before": "4195a0d6f95abdb3b69919c4985db56c3b97a2200ec55e9890ce7f7c7dc73aa4",
+        "after": "15866c9cc73bdbe2fc6dfd0b41ccf094059febabc7b382306cd0753cd1794ef7"
+      },
+      "inventory_sha256": {
+        "before": "68ca648cc9d7cc3246d8aed9683005decbed6b045a074dd50b9b0e01347e26f9",
+        "after": "3b9b24d20714ddf67b197e2918240f160cb38c51f4057c44c63a4118998e05e6"
+      },
+      "complete_configuration_equal_after_exact_source_map_relocation": true,
+      "wrong_dependency_negative_rejected": true
+    },
+    {
+      "index": 6,
+      "library": "fluent-bit-tail-pause",
+      "file": "plugins/in_tail/tail.c",
+      "build_identity": {
+        "before": "cda77a68ee726b109eab1fc3cfb8fa9b9cd328d55894ae3eb9c0d709065686af",
+        "after": "871626965942e40cd049bf7eacf7364962d359e6ba3dc3c85364d21bb1df7101"
+      },
+      "inventory_sha256": {
+        "before": "2881b42e998b2e92d17fb5c8da9f4553e2270032872ffe098642dbfb51323b14",
+        "after": "3c50c41c733e837d669e6e08189ac63f66443c90b179952b390197910890a42d"
+      },
+      "complete_configuration_equal_after_exact_source_map_relocation": true,
+      "wrong_dependency_negative_rejected": true
+    },
+    {
+      "index": 7,
+      "library": "fluent-bit-tail-pause",
+      "file": "plugins/in_tail/tail_config.c",
+      "build_identity": {
+        "before": "0cc5269148f1a79a25839f27bfa739a2f675f5e73798aed6c5e8d2a95dcb219d",
+        "after": "b9dcdcf159c9bfabccbf2bdb534a88da7ac93f0a7097d0b564e79b822a6e51b4"
+      },
+      "inventory_sha256": {
+        "before": "8a939ca343b305a1aebbfd56503b267e00afb06d1bdea88986f90251f72b2497",
+        "after": "059bbbcce4c321a8ea9bef4b07cad80c111e4f6725d1de5ff7dbe11b82e19ff1"
+      },
+      "complete_configuration_equal_after_exact_source_map_relocation": true,
+      "wrong_dependency_negative_rejected": true
+    },
+    {
+      "index": 8,
+      "library": "fluent-bit-tail-pause",
+      "file": "plugins/in_tail/tail_db.c",
+      "build_identity": {
+        "before": "a3afc76dd168b3f75ab2d35bff4632ed47cac80181e4724b230cc4dc79a0b568",
+        "after": "12a15b0cd54ba2f4d0ce528788b0eb44fb2abcfceba1c669b68639d59d77b27e"
+      },
+      "inventory_sha256": {
+        "before": "1ab8b2306799985105783c6ad97d4967951adbeb7872b845ab33b662915d294c",
+        "after": "65ff0ebb3d0a052dfe6ec10f7e768935283e408200f671de427943dd00c41b7e"
+      },
+      "complete_configuration_equal_after_exact_source_map_relocation": true,
+      "wrong_dependency_negative_rejected": true
+    },
+    {
+      "index": 9,
+      "library": "fluent-bit-tail-pause",
+      "file": "plugins/in_tail/tail_dockermode.c",
+      "build_identity": {
+        "before": "534ebc75d219f17b3f561cf8913307d188ae15bdb0d7503d73af2c2b495a7b0e",
+        "after": "a5f8100eb2a4c26c9792b68cd5782735cb641f6a33e015d0a03b2ba7e6a2f692"
+      },
+      "inventory_sha256": {
+        "before": "65777dfdca8632c855d219c7145f318589e6077869fcfa7bbbf334d01063e893",
+        "after": "05acbddc0f00bb9ebe4072cf859c458e343315ed1581ddb558fbd870dd4bf9e4"
+      },
+      "complete_configuration_equal_after_exact_source_map_relocation": true,
+      "wrong_dependency_negative_rejected": true
+    },
+    {
+      "index": 10,
+      "library": "fluent-bit-tail-pause",
+      "file": "plugins/in_tail/tail_file.c",
+      "build_identity": {
+        "before": "74115de69a066ec503d98f71f0c55f7665d6a4622d88c57a64cf0fb8bec05427",
+        "after": "ab27631b1e8afc9067836e60f0381fceff706f73b3873e6ab1304ec3e81b3ae1"
+      },
+      "inventory_sha256": {
+        "before": "efaf0749ad9a28a8ef6399c26cd70f82ccbf5acc9c50a4c1ee3e35e170506960",
+        "after": "48cbdc56d3ad5da4793d6edbbc8c262986d6dd2633b0aaed20a2d0cf5b65cbb9"
+      },
+      "complete_configuration_equal_after_exact_source_map_relocation": true,
+      "wrong_dependency_negative_rejected": true
+    },
+    {
+      "index": 11,
+      "library": "fluent-bit-tail-pause",
+      "file": "plugins/in_tail/tail_file_budget.c",
+      "build_identity": {
+        "before": "f9d3b4b25cc2d13960cef5ab21e3a4f856c4caefcae46d16577f33f88a3b4b79",
+        "after": "4001530c8fe3486c294ee5b7ca78b4a0dd2b1369e4a7ed4689aa80df7d9c707e"
+      },
+      "inventory_sha256": {
+        "before": "42703aebb24f3baec4544251774f7fec606296e0b2a6d5ce3d8fede6ffd783bb",
+        "after": "9a6a178d6498137d2b4ce1a730dae51d19598d4125554c43839f11593df8f144"
+      },
+      "complete_configuration_equal_after_exact_source_map_relocation": true,
+      "wrong_dependency_negative_rejected": true
+    },
+    {
+      "index": 12,
+      "library": "fluent-bit-tail-pause",
+      "file": "plugins/in_tail/tail_fs_inotify.c",
+      "build_identity": {
+        "before": "9aa0b7d6a8917c35b872da13a7d7b9d0fcc0b9bb1c2038ce5c5c4a166744b35d",
+        "after": "77afdc77e618ae4c15098f522d6a92f5e0ee8bff602d883b28714f43139e123f"
+      },
+      "inventory_sha256": {
+        "before": "840051e6b98f5cf355724f236f0e57117b312a475967c6274d47dbb26a604e9c",
+        "after": "ba0de19b237e1e15b7ca563ff3070999032879ed1c914fc21decfcb9fc26b0ac"
+      },
+      "complete_configuration_equal_after_exact_source_map_relocation": true,
+      "wrong_dependency_negative_rejected": true
+    },
+    {
+      "index": 13,
+      "library": "fluent-bit-tail-pause",
+      "file": "plugins/in_tail/tail_fs_stat.c",
+      "build_identity": {
+        "before": "e7348bd039ada0a3214b8904dfba68d57835d3a4d46f7cd2b1e1b7c4c24b34ec",
+        "after": "06d80c0f839e445c3522f40e9f80da16662f043d50d9917e49a959cf541b35d7"
+      },
+      "inventory_sha256": {
+        "before": "c8d7ba4e2fa8e47e2efcfbfc0659e92a68b8efb0abea410631dc659b5849ef13",
+        "after": "6d36583119f7632993c6b9708ddae4c16561077840578cb6287b61241d41cd62"
+      },
+      "complete_configuration_equal_after_exact_source_map_relocation": true,
+      "wrong_dependency_negative_rejected": true
+    },
+    {
+      "index": 14,
+      "library": "fluent-bit-tail-pause",
+      "file": "plugins/in_tail/tail_multiline.c",
+      "build_identity": {
+        "before": "8ab08fa07d52b9c680cdf3b301ffe6c68934f98e824d9b53f6964fff5407b3d0",
+        "after": "ca848b3c3df12ead137e47071f2d51657c10fcd9686f8cc56b3da0eb3b50ecc6"
+      },
+      "inventory_sha256": {
+        "before": "c89761d5332c8a885674ccc6040816c98fecee6b6c614395d5ffa7bdf4b6fb97",
+        "after": "84ac951158683ae9a630cf9be1644e21a9d27b7ce06460d6942c5bb71411d432"
+      },
+      "complete_configuration_equal_after_exact_source_map_relocation": true,
+      "wrong_dependency_negative_rejected": true
+    },
+    {
+      "index": 15,
+      "library": "fluent-bit-tail-pause",
+      "file": "plugins/in_tail/tail_scan.c",
+      "build_identity": {
+        "before": "4191ae132cf440fef322f6478fceade31ff062f38f2428a0de6a58f706e0f47e",
+        "after": "59bd6658e5cd4a90fd40cd8760f06df763d751d6d2b6232353687f363b2a62b1"
+      },
+      "inventory_sha256": {
+        "before": "031d5cbff79a8964c10329c5c9dd9497dfae5667db438c7d505957f7bf7e624c",
+        "after": "612224c90c2e28e95073b7bf4784abe4cba65ec5a2c14fdff48d1df6f95a0377"
+      },
+      "complete_configuration_equal_after_exact_source_map_relocation": true,
+      "wrong_dependency_negative_rejected": true
+    }
+  ],
+  "contexts_reconstructed": 1168,
+  "context_set_order_changes": [],
+  "semantic_rows": [
+    {
+      "unit_index": 0,
+      "row_index": 33,
+      "library": "fluent-bit-tail-pause",
+      "file": "src/flb_input.c",
+      "function": "flb_input_init_all",
+      "status": "Unknown",
+      "removed": [
+        {
+          "category": "unsupported",
+          "description": "unmodeled call, aggregate or indirect access in branch condition",
+          "line": 19370,
+          "origin": "src/flb_input.c:2085"
+        }
+      ],
+      "added": []
+    },
+    {
+      "unit_index": 0,
+      "row_index": 36,
+      "library": "fluent-bit-tail-pause",
+      "file": "src/flb_input.c",
+      "function": "flb_input_instance_init",
+      "status": "Unknown",
+      "removed": [
+        {
+          "category": "unsupported",
+          "description": "unmodeled call, aggregate or indirect access in branch condition",
+          "line": 19033,
+          "origin": "src/flb_input.c:1574"
+        },
+        {
+          "category": "unknown_alias",
+          "description": "unresolved resource identity `config`",
+          "line": 19034,
+          "origin": "src/flb_input.c:1575"
+        }
+      ],
+      "added": []
+    },
+    {
+      "unit_index": 0,
+      "row_index": 43,
+      "library": "fluent-bit-tail-pause",
+      "file": "src/flb_input.c",
+      "function": "flb_input_new",
+      "status": "Unknown",
+      "removed": [
+        {
+          "category": "unsupported",
+          "description": "unmodeled call, aggregate or indirect access in branch condition",
+          "line": 18222,
+          "origin": "src/flb_input.c:542"
+        },
+        {
+          "category": "unsupported",
+          "description": "unmodeled call, aggregate or indirect access in branch condition",
+          "line": 18258,
+          "origin": "src/flb_input.c:580"
+        }
+      ],
+      "added": [
+        {
+          "category": "unknown_alias",
+          "description": "unresolved resource identity `instance`",
+          "line": 18222,
+          "origin": "src/flb_input.c:542"
+        },
+        {
+          "category": "unknown_alias",
+          "description": "unresolved resource identity `instance`",
+          "line": 18258,
+          "origin": "src/flb_input.c:580"
+        }
+      ]
+    },
+    {
+      "unit_index": 0,
+      "row_index": 55,
+      "library": "fluent-bit-tail-pause",
+      "file": "src/flb_input.c",
+      "function": "flb_input_rate_gate_maybe_resume",
+      "status": "Unknown",
+      "removed": [
+        {
+          "category": "unsupported",
+          "description": "unmodeled call, aggregate or indirect access in branch condition",
+          "line": 19905,
+          "origin": "src/flb_input.c:2792"
+        }
+      ],
+      "added": []
+    },
+    {
+      "unit_index": 0,
+      "row_index": 59,
+      "library": "fluent-bit-tail-pause",
+      "file": "src/flb_input.c",
+      "function": "flb_input_rate_gate_timer_cancel",
+      "status": "Unknown",
+      "removed": [
+        {
+          "category": "unsupported",
+          "description": "unmodeled call, aggregate or indirect access in branch condition",
+          "line": 19756,
+          "origin": "src/flb_input.c:2609"
+        }
+      ],
+      "added": []
+    },
+    {
+      "unit_index": 1,
+      "row_index": 33,
+      "library": "fluent-bit-tail-pause",
+      "file": "src/flb_input.c",
+      "function": "flb_input_init_all",
+      "status": "Unknown",
+      "removed": [
+        {
+          "category": "unsupported",
+          "description": "unmodeled call, aggregate or indirect access in branch condition",
+          "line": 19370,
+          "origin": "src/flb_input.c:2085"
+        }
+      ],
+      "added": []
+    },
+    {
+      "unit_index": 1,
+      "row_index": 36,
+      "library": "fluent-bit-tail-pause",
+      "file": "src/flb_input.c",
+      "function": "flb_input_instance_init",
+      "status": "Unknown",
+      "removed": [
+        {
+          "category": "unsupported",
+          "description": "unmodeled call, aggregate or indirect access in branch condition",
+          "line": 19033,
+          "origin": "src/flb_input.c:1574"
+        },
+        {
+          "category": "unknown_alias",
+          "description": "unresolved resource identity `config`",
+          "line": 19034,
+          "origin": "src/flb_input.c:1575"
+        }
+      ],
+      "added": []
+    },
+    {
+      "unit_index": 1,
+      "row_index": 43,
+      "library": "fluent-bit-tail-pause",
+      "file": "src/flb_input.c",
+      "function": "flb_input_new",
+      "status": "Unknown",
+      "removed": [
+        {
+          "category": "unsupported",
+          "description": "unmodeled call, aggregate or indirect access in branch condition",
+          "line": 18222,
+          "origin": "src/flb_input.c:542"
+        },
+        {
+          "category": "unsupported",
+          "description": "unmodeled call, aggregate or indirect access in branch condition",
+          "line": 18258,
+          "origin": "src/flb_input.c:580"
+        }
+      ],
+      "added": [
+        {
+          "category": "unknown_alias",
+          "description": "unresolved resource identity `instance`",
+          "line": 18222,
+          "origin": "src/flb_input.c:542"
+        },
+        {
+          "category": "unknown_alias",
+          "description": "unresolved resource identity `instance`",
+          "line": 18258,
+          "origin": "src/flb_input.c:580"
+        }
+      ]
+    },
+    {
+      "unit_index": 1,
+      "row_index": 55,
+      "library": "fluent-bit-tail-pause",
+      "file": "src/flb_input.c",
+      "function": "flb_input_rate_gate_maybe_resume",
+      "status": "Unknown",
+      "removed": [
+        {
+          "category": "unsupported",
+          "description": "unmodeled call, aggregate or indirect access in branch condition",
+          "line": 19905,
+          "origin": "src/flb_input.c:2792"
+        }
+      ],
+      "added": []
+    },
+    {
+      "unit_index": 1,
+      "row_index": 59,
+      "library": "fluent-bit-tail-pause",
+      "file": "src/flb_input.c",
+      "function": "flb_input_rate_gate_timer_cancel",
+      "status": "Unknown",
+      "removed": [
+        {
+          "category": "unsupported",
+          "description": "unmodeled call, aggregate or indirect access in branch condition",
+          "line": 19756,
+          "origin": "src/flb_input.c:2609"
+        }
+      ],
+      "added": []
+    },
+    {
+      "unit_index": 6,
+      "row_index": 2,
+      "library": "fluent-bit-tail-pause",
+      "file": "plugins/in_tail/tail.c",
+      "function": "in_tail_collect_pending",
+      "status": "Unknown",
+      "removed": [
+        {
+          "category": "unsupported",
+          "description": "unmodeled call, aggregate or indirect access in branch condition",
+          "line": 19342,
+          "origin": "plugins/in_tail/tail.c:95"
+        },
+        {
+          "category": "unsupported",
+          "description": "unmodeled call, aggregate or indirect access in branch condition",
+          "line": 19366,
+          "origin": "plugins/in_tail/tail.c:131"
+        }
+      ],
+      "added": [
+        {
+          "category": "unknown_alias",
+          "description": "unresolved resource identity `file`",
+          "line": 19342,
+          "origin": "plugins/in_tail/tail.c:95"
+        },
+        {
+          "category": "unknown_alias",
+          "description": "unresolved resource identity `file`",
+          "line": 19366,
+          "origin": "plugins/in_tail/tail.c:131"
+        }
+      ]
+    },
+    {
+      "unit_index": 6,
+      "row_index": 3,
+      "library": "fluent-bit-tail-pause",
+      "file": "plugins/in_tail/tail.c",
+      "function": "in_tail_collect_static",
+      "status": "Unknown",
+      "removed": [
+        {
+          "category": "unsupported",
+          "description": "unmodeled call, aggregate or indirect access in branch condition",
+          "line": 19418,
+          "origin": "plugins/in_tail/tail.c:219"
+        }
+      ],
+      "added": [
+        {
+          "category": "unknown_alias",
+          "description": "unresolved resource identity `file`",
+          "line": 19418,
+          "origin": "plugins/in_tail/tail.c:219"
+        }
+      ]
+    },
+    {
+      "unit_index": 6,
+      "row_index": 5,
+      "library": "fluent-bit-tail-pause",
+      "file": "plugins/in_tail/tail.c",
+      "function": "in_tail_init",
+      "status": "Unknown",
+      "removed": [
+        {
+          "category": "unsupported",
+          "description": "unmodeled call, aggregate or indirect access in branch condition",
+          "line": 19570,
+          "origin": "plugins/in_tail/tail.c:459"
+        }
+      ],
+      "added": []
+    },
+    {
+      "unit_index": 10,
+      "row_index": 5,
+      "library": "fluent-bit-tail-pause",
+      "file": "plugins/in_tail/tail_file.c",
+      "function": "dormant_destroy",
+      "status": "Unknown",
+      "removed": [
+        {
+          "category": "unsupported",
+          "description": "unmodeled call, aggregate or indirect access in branch condition",
+          "line": 19813,
+          "origin": "plugins/in_tail/tail_file.c:378"
+        }
+      ],
+      "added": []
+    },
+    {
+      "unit_index": 10,
+      "row_index": 11,
+      "library": "fluent-bit-tail-pause",
+      "file": "plugins/in_tail/tail_file.c",
+      "function": "flb_tail_file_append",
+      "status": "Unknown",
+      "removed": [
+        {
+          "category": "unsupported",
+          "description": "unmodeled call, aggregate or indirect access in branch condition",
+          "line": 20963,
+          "origin": "plugins/in_tail/tail_file.c:1962"
+        }
+      ],
+      "added": [
+        {
+          "category": "unknown_alias",
+          "description": "unresolved resource identity `file`",
+          "line": 20963,
+          "origin": "plugins/in_tail/tail_file.c:1962"
+        }
+      ]
+    },
+    {
+      "unit_index": 10,
+      "row_index": 24,
+      "library": "fluent-bit-tail-pause",
+      "file": "plugins/in_tail/tail_file.c",
+      "function": "flb_tail_file_reclaim",
+      "status": "Unknown",
+      "removed": [
+        {
+          "category": "unsupported",
+          "description": "unmodeled call, aggregate or indirect access in branch condition",
+          "line": 21053,
+          "origin": "plugins/in_tail/tail_file.c:2090"
+        },
+        {
+          "category": "unsupported",
+          "description": "unmodeled call, aggregate or indirect access in branch condition",
+          "line": 21061,
+          "origin": "plugins/in_tail/tail_file.c:2099"
+        }
+      ],
+      "added": [
+        {
+          "category": "unknown_alias",
+          "description": "unresolved resource identity `file`",
+          "line": 21061,
+          "origin": "plugins/in_tail/tail_file.c:2099"
+        }
+      ]
+    },
+    {
+      "unit_index": 10,
+      "row_index": 25,
+      "library": "fluent-bit-tail-pause",
+      "file": "plugins/in_tail/tail_file.c",
+      "function": "flb_tail_file_remove",
+      "status": "Unknown",
+      "removed": [
+        {
+          "category": "unsupported",
+          "description": "unmodeled call, aggregate or indirect access in branch condition",
+          "line": 21004,
+          "origin": "plugins/in_tail/tail_file.c:2014"
+        }
+      ],
+      "added": []
+    }
+  ],
+  "null_carrier_changes": [
+    {
+      "unit_index": 6,
+      "row_index": 5,
+      "file": "plugins/in_tail/tail.c",
+      "function": "in_tail_init",
+      "before": [
+        {
+          "line": 19520,
+          "name": "null-deref:in_tail_init:19520:ctx",
+          "origin": "plugins/in_tail/tail.c:387",
+          "variable": "ctx"
+        },
+        {
+          "line": 19527,
+          "name": "null-deref:in_tail_init:19527:ctx",
+          "origin": "plugins/in_tail/tail.c:396",
+          "variable": "ctx"
+        },
+        {
+          "line": 19574,
+          "name": "null-deref:in_tail_init:19574:ctx",
+          "origin": "plugins/in_tail/tail.c:466",
+          "variable": "ctx"
+        },
+        {
+          "line": 19585,
+          "name": "null-deref:in_tail_init:19585:ctx",
+          "origin": "plugins/in_tail/tail.c:480",
+          "variable": "ctx"
+        }
+      ],
+      "after": [
+        {
+          "line": 19520,
+          "name": "null-deref:in_tail_init:19520:ctx",
+          "origin": "plugins/in_tail/tail.c:387",
+          "variable": "ctx"
+        },
+        {
+          "line": 19527,
+          "name": "null-deref:in_tail_init:19527:ctx",
+          "origin": "plugins/in_tail/tail.c:396",
+          "variable": "ctx"
+        },
+        {
+          "line": 19570,
+          "name": "null-deref:in_tail_init:19570:ctx",
+          "origin": "plugins/in_tail/tail.c:459",
+          "variable": "ctx"
+        },
+        {
+          "line": 19574,
+          "name": "null-deref:in_tail_init:19574:ctx",
+          "origin": "plugins/in_tail/tail.c:466",
+          "variable": "ctx"
+        },
+        {
+          "line": 19585,
+          "name": "null-deref:in_tail_init:19585:ctx",
+          "origin": "plugins/in_tail/tail.c:480",
+          "variable": "ctx"
+        }
+      ],
+      "before_dependencies": [
+        "null-deref:in_tail_init:19520:ctx",
+        "null-deref:in_tail_init:19527:ctx",
+        "null-deref:in_tail_init:19574:ctx",
+        "null-deref:in_tail_init:19585:ctx"
+      ],
+      "after_dependencies": [
+        "null-deref:in_tail_init:19520:ctx",
+        "null-deref:in_tail_init:19527:ctx",
+        "null-deref:in_tail_init:19570:ctx",
+        "null-deref:in_tail_init:19574:ctx",
+        "null-deref:in_tail_init:19585:ctx"
+      ]
+    },
+    {
+      "unit_index": 10,
+      "row_index": 25,
+      "file": "plugins/in_tail/tail_file.c",
+      "function": "flb_tail_file_remove",
+      "before": [
+        {
+          "line": 20997,
+          "name": "null-deref:flb_tail_file_remove:20997:ctx",
+          "origin": "plugins/in_tail/tail_file.c:2002",
+          "variable": "ctx"
+        },
+        {
+          "line": 21011,
+          "name": "null-deref:flb_tail_file_remove:21011:ctx",
+          "origin": "plugins/in_tail/tail_file.c:2028",
+          "variable": "ctx"
+        },
+        {
+          "line": 21019,
+          "name": "null-deref:flb_tail_file_remove:21019:ctx",
+          "origin": "plugins/in_tail/tail_file.c:2040",
+          "variable": "ctx"
+        },
+        {
+          "line": 21020,
+          "name": "null-deref:flb_tail_file_remove:21020:ctx",
+          "origin": "plugins/in_tail/tail_file.c:2041",
+          "variable": "ctx"
+        },
+        {
+          "line": 21031,
+          "name": "null-deref:flb_tail_file_remove:21031:ctx",
+          "origin": "plugins/in_tail/tail_file.c:2057",
+          "variable": "ctx"
+        },
+        {
+          "line": 21032,
+          "name": "null-deref:flb_tail_file_remove:21032:ctx",
+          "origin": "plugins/in_tail/tail_file.c:2058",
+          "variable": "ctx"
+        }
+      ],
+      "after": [
+        {
+          "line": 20997,
+          "name": "null-deref:flb_tail_file_remove:20997:ctx",
+          "origin": "plugins/in_tail/tail_file.c:2002",
+          "variable": "ctx"
+        },
+        {
+          "line": 21004,
+          "name": "null-deref:flb_tail_file_remove:21004:ctx",
+          "origin": "plugins/in_tail/tail_file.c:2014",
+          "variable": "ctx"
+        },
+        {
+          "line": 21011,
+          "name": "null-deref:flb_tail_file_remove:21011:ctx",
+          "origin": "plugins/in_tail/tail_file.c:2028",
+          "variable": "ctx"
+        },
+        {
+          "line": 21019,
+          "name": "null-deref:flb_tail_file_remove:21019:ctx",
+          "origin": "plugins/in_tail/tail_file.c:2040",
+          "variable": "ctx"
+        },
+        {
+          "line": 21020,
+          "name": "null-deref:flb_tail_file_remove:21020:ctx",
+          "origin": "plugins/in_tail/tail_file.c:2041",
+          "variable": "ctx"
+        },
+        {
+          "line": 21031,
+          "name": "null-deref:flb_tail_file_remove:21031:ctx",
+          "origin": "plugins/in_tail/tail_file.c:2057",
+          "variable": "ctx"
+        },
+        {
+          "line": 21032,
+          "name": "null-deref:flb_tail_file_remove:21032:ctx",
+          "origin": "plugins/in_tail/tail_file.c:2058",
+          "variable": "ctx"
+        }
+      ],
+      "before_dependencies": [
+        "null-deref:flb_tail_file_remove:20997:ctx",
+        "null-deref:flb_tail_file_remove:21011:ctx",
+        "null-deref:flb_tail_file_remove:21019:ctx",
+        "null-deref:flb_tail_file_remove:21020:ctx",
+        "null-deref:flb_tail_file_remove:21031:ctx",
+        "null-deref:flb_tail_file_remove:21032:ctx"
+      ],
+      "after_dependencies": [
+        "null-deref:flb_tail_file_remove:20997:ctx",
+        "null-deref:flb_tail_file_remove:21004:ctx",
+        "null-deref:flb_tail_file_remove:21011:ctx",
+        "null-deref:flb_tail_file_remove:21019:ctx",
+        "null-deref:flb_tail_file_remove:21020:ctx",
+        "null-deref:flb_tail_file_remove:21031:ctx",
+        "null-deref:flb_tail_file_remove:21032:ctx"
+      ]
+    }
+  ],
+  "source_summary_consultation_changes": [],
+  "unit_reason_changes": [
+    {
+      "unit_index": 0,
+      "file": "src/flb_input.c",
+      "before": "resource projection unresolved: 495 unsupported operation(s), 215 unresolved alias(es), 0 custody summary conflict(s), 1 call(s) held awaiting human review",
+      "after": "resource projection unresolved: 489 unsupported operation(s), 216 unresolved alias(es), 0 custody summary conflict(s), 1 call(s) held awaiting human review",
+      "all_counts_recomputed_from_full_diagnostics": true
+    },
+    {
+      "unit_index": 1,
+      "file": "src/flb_input.c",
+      "before": "resource projection unresolved: 495 unsupported operation(s), 215 unresolved alias(es), 0 custody summary conflict(s), 1 call(s) held awaiting human review",
+      "after": "resource projection unresolved: 489 unsupported operation(s), 216 unresolved alias(es), 0 custody summary conflict(s), 1 call(s) held awaiting human review",
+      "all_counts_recomputed_from_full_diagnostics": true
+    },
+    {
+      "unit_index": 6,
+      "file": "plugins/in_tail/tail.c",
+      "before": "resource projection unresolved: 60 unsupported operation(s), 48 unresolved alias(es), 0 custody summary conflict(s)",
+      "after": "resource projection unresolved: 56 unsupported operation(s), 51 unresolved alias(es), 0 custody summary conflict(s)",
+      "all_counts_recomputed_from_full_diagnostics": true
+    },
+    {
+      "unit_index": 10,
+      "file": "plugins/in_tail/tail_file.c",
+      "before": "resource projection unresolved: 384 unsupported operation(s), 214 unresolved alias(es), 0 custody summary conflict(s)",
+      "after": "resource projection unresolved: 379 unsupported operation(s), 216 unresolved alias(es), 0 custody summary conflict(s)",
+      "all_counts_recomputed_from_full_diagnostics": true
+    }
+  ],
+  "null_carrier_meaning": "Conditional custody-read premise carriers move with represented source guards and newly evaluated reads. Their complete old/new payloads remain explicit; they supply no new independent null-property fact.",
+  "removed_families": [
+    {
+      "category": "unsupported",
+      "description": "unmodeled call, aggregate or indirect access in branch condition",
+      "count": 21
+    },
+    {
+      "category": "unknown_alias",
+      "description": "unresolved resource identity `config`",
+      "count": 2
+    }
+  ],
+  "added_families": [
+    {
+      "category": "unknown_alias",
+      "description": "unresolved resource identity `instance`",
+      "count": 4
+    },
+    {
+      "category": "unknown_alias",
+      "description": "unresolved resource identity `file`",
+      "count": 5
+    }
+  ],
+  "custody_statuses_identical": true,
+  "all_other_diagnostic_metadata_equal_after_exact_reconstruction_and_retained_semantic_changes": true,
+  "complete_contract_artifact_equal_after_exact_context_and_time_reconstruction": true,
+  "other_families": {
+    "source": {
+      "present": false,
+      "complete_payload_equal_after_explicit_root_normalization": false
+    },
+    "chunk-contracts": {
+      "present": true,
+      "complete_payload_equal_after_explicit_root_normalization": true
+    },
+    "source-effects": {
+      "present": true,
+      "complete_payload_equal_after_explicit_root_normalization": true
+    }
+  },
+  "raw_artifact_sha256": {
+    "before": {
+      "diagnostics": "c567174523d4c6057f9007c1d84a29a66d7f4e1e13b3c31e3fbd1b22dae3f966",
+      "contracts": "674a03a5db75e062efc4d56a0aa49da870aa17eb80f85170f77e911ac4287d7c"
+    },
+    "after": {
+      "diagnostics": "27a9af0a6e28cf6c6383a987862fcfa5e75384b61c095a2695c883b9cd34f302",
+      "contracts": "5efd5dec150321a09295f3479bf1ce7e2ccd8d94c0e41be86a445f7b10f848c5"
+    }
+  },
+  "source_algorithms_sha256": {
+    "crates/qcore-audit/src/compile_db.rs": "4143ef788906ad0cb36c4a63db3b19ad17c9ebbac04309a8da390f8ef8d34d15",
+    "crates/qcore-audit/src/current.rs": "42ca604ea1fe2ae9b5e718a05957e67d8405d7c211ce28e85b814d27162ae4b8",
+    "crates/qcore-audit/src/projection.rs": "48de45985de4d8e46f7e84776b77e1eba1d725643b30077a275bb3eb68926f61",
+    "crates/qcore-c-gateway/src/clang.rs": "43d86381fd37e1a76bca0b6bc9bd427aa94358dc7b6e7be4dd5c78b1a4b061de",
+    "crates/qcore-c-gateway/src/legacy_c.rs": "e590e47a0882c9bc02cfcfff6c4ddce31e333ca286492fccdc745d0e28be627c",
+    "crates/qcore-audit/src/contract_dependencies.rs": "56ec0f767c7a80f8d9569910a68e8e0d842cf8e298aa22b8102b79b72554d912"
+  }
+}

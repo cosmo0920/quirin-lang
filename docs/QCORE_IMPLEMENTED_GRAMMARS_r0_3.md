@@ -5020,3 +5020,35 @@ bridge currently proves exact stored-head and empty-head cases. General
 successor source closure, object-key lookup and Removed wrapper transport are
 not implemented by this class. See [gateway rule13a](agents/gateway.md#constraint-13a)
 and [the report](reports/detach-lookup-membership/README.md).
+
+## G12. Existing C: checked call-free condition composition
+
+The resource gateway can retain its complete Boolean plan for a controlling
+expression made from existing call-free leaves, parentheses, `!`, `&&`,
+`||` and the ordinary `A ? B : C` conditional, with C's existing precedence
+and short-circuit placement. The plan is
+retained when an older admission already applies or when at least one node is
+an existing checked `IndirectScalarAccess`. This includes, for example:
+
+```c
+if ((p->fd != -1) && (p->map != NULL)) { /* existing supported statements */ }
+```
+
+Every leaf must already classify completely. Retention adds no leaf grammar,
+cast, qualifier, pointer value, scalar value or call-effect rule. The original
+read, alias/lifetime and per-hop obligations remain at their original positions;
+unresolved or released bases cannot be made safe by retaining the plan. A
+failed leaf refuses the complete plan and restores the classification probe.
+Descriptor and switch guards remain. The same existing graph assembly places
+admitted tests in `if`, `while`, `do` and `for` controls; it does not admit a new
+value-expression position or infer scalar outcomes.
+
+This closes a composition gap for older checked field readers, including the
+Linux `(cf->fd != -1) && (cf->map != NULL)` residency predicate and a header
+helper's two-pointer NULL conjunction. It supplies no callback neutrality,
+ownership transfer or richer return transport. Existing source summaries still
+require their ordinary complete body derivation and caller checks. See
+[gateway rule5h](agents/gateway.md#constraint-5h),
+[the card report](reports/w48-bottom-up-batch4/README.md), and the bounded
+`QCore.CallFreeConditionReads` model. C extraction and Rust/model
+correspondence remain explicit review premises.

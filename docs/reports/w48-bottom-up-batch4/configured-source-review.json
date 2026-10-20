@@ -1,0 +1,634 @@
+{
+  "system": {
+    "changed_diagnostic_rows": 33,
+    "all_custody_statuses_identical": true,
+    "changed_keys": [
+      [
+        "fluent-bit-system",
+        "plugins/in_storage_backlog/sb.c",
+        "sb_is_rejected_stream",
+        0
+      ],
+      [
+        "fluent-bit-system",
+        "src/flb_input_chunk.c",
+        "flb_input_chunk_get_projected_write_size",
+        0
+      ],
+      [
+        "fluent-bit-system",
+        "src/flb_input_chunk.c",
+        "flb_input_chunk_release_route",
+        0
+      ],
+      [
+        "fluent-bit-system",
+        "src/flb_input_chunk.c",
+        "get_input_chunk_source_name",
+        0
+      ],
+      [
+        "fluent-bit-system",
+        "src/flb_input_chunk.c",
+        "input_chunk_append_raw",
+        0
+      ],
+      [
+        "fluent-bit-system",
+        "src/flb_input_chunk.c",
+        "update_logs_tag_records_metrics",
+        0
+      ],
+      [
+        "fluent-bit-system",
+        "src/flb_input_chunk.c",
+        "update_logs_tag_records_untracked",
+        0
+      ],
+      [
+        "fluent-bit-system",
+        "src/flb_input_chunk.c",
+        "flb_input_chunk_get_projected_write_size",
+        1
+      ],
+      [
+        "fluent-bit-system",
+        "src/flb_input_chunk.c",
+        "flb_input_chunk_release_route",
+        1
+      ],
+      [
+        "fluent-bit-system",
+        "src/flb_input_chunk.c",
+        "get_input_chunk_source_name",
+        1
+      ],
+      [
+        "fluent-bit-system",
+        "src/flb_input_chunk.c",
+        "input_chunk_append_raw",
+        1
+      ],
+      [
+        "fluent-bit-system",
+        "src/flb_input_chunk.c",
+        "update_logs_tag_records_metrics",
+        1
+      ],
+      [
+        "fluent-bit-system",
+        "src/flb_input_chunk.c",
+        "update_logs_tag_records_untracked",
+        1
+      ],
+      [
+        "fluent-bit-system",
+        "src/flb_storage.c",
+        "flb_storage_quarantine_chunk",
+        0
+      ],
+      [
+        "fluent-bit-system",
+        "src/flb_storage.c",
+        "get_or_create_rejected_stream",
+        0
+      ],
+      [
+        "fluent-bit-system",
+        "src/flb_storage.c",
+        "flb_storage_quarantine_chunk",
+        1
+      ],
+      [
+        "fluent-bit-system",
+        "src/flb_storage.c",
+        "get_or_create_rejected_stream",
+        1
+      ],
+      [
+        "fluent-bit-system",
+        "src/flb_task.c",
+        "flb_task_destroy",
+        0
+      ],
+      [
+        "fluent-bit-system",
+        "src/flb_task.c",
+        "record_unmatched_route_drop_metrics",
+        0
+      ],
+      [
+        "fluent-bit-system",
+        "src/flb_task.c",
+        "flb_task_destroy",
+        1
+      ],
+      [
+        "fluent-bit-system",
+        "src/flb_task.c",
+        "record_unmatched_route_drop_metrics",
+        1
+      ],
+      [
+        "fluent-bit-system",
+        "src/flb_engine.c",
+        "handle_dlq_if_available",
+        0
+      ],
+      [
+        "fluent-bit-system",
+        "src/flb_engine.c",
+        "handle_output_event",
+        0
+      ],
+      [
+        "fluent-bit-system",
+        "src/flb_engine.c",
+        "handle_dlq_if_available",
+        1
+      ],
+      [
+        "fluent-bit-system",
+        "src/flb_engine.c",
+        "handle_output_event",
+        1
+      ],
+      [
+        "fluent-bit-system",
+        "src/flb_engine_dispatch.c",
+        "record_retry_failure_metrics",
+        0
+      ],
+      [
+        "fluent-bit-system",
+        "src/flb_engine_dispatch.c",
+        "record_retry_failure_metrics",
+        1
+      ],
+      [
+        "fluent-bit-system",
+        "src/flb_output.c",
+        "flb_output_init_all",
+        0
+      ],
+      [
+        "fluent-bit-system",
+        "src/flb_output.c",
+        "flb_output_new",
+        0
+      ],
+      [
+        "fluent-bit-system",
+        "src/flb_output.c",
+        "flb_output_proxy_tls_ca_check",
+        0
+      ],
+      [
+        "fluent-bit-system",
+        "src/flb_output.c",
+        "flb_output_init_all",
+        1
+      ],
+      [
+        "fluent-bit-system",
+        "src/flb_output.c",
+        "flb_output_new",
+        1
+      ],
+      [
+        "fluent-bit-system",
+        "src/flb_output.c",
+        "flb_output_proxy_tls_ca_check",
+        1
+      ]
+    ],
+    "removed_families": [
+      {
+        "category": "unsupported",
+        "description": "unmodeled call, aggregate or indirect access in branch condition",
+        "count": 47
+      },
+      {
+        "category": "unknown_alias",
+        "description": "unresolved resource identity `in`",
+        "count": 2
+      },
+      {
+        "category": "unknown_alias",
+        "description": "unresolved resource identity `ins`",
+        "count": 2
+      }
+    ],
+    "added_families": [
+      {
+        "category": "unknown_alias",
+        "description": "unresolved resource identity `chunk`",
+        "count": 4
+      },
+      {
+        "category": "unknown_alias",
+        "description": "unresolved resource identity `ic`",
+        "count": 2
+      },
+      {
+        "category": "unknown_alias",
+        "description": "unresolved resource identity `task`",
+        "count": 8
+      },
+      {
+        "category": "unknown_alias",
+        "description": "unresolved resource identity `instance`",
+        "count": 4
+      }
+    ],
+    "removed_aliases": [
+      {
+        "key": [
+          "fluent-bit-system",
+          "src/flb_input_chunk.c",
+          "update_logs_tag_records_metrics",
+          0
+        ],
+        "diagnostic": {
+          "category": "unknown_alias",
+          "description": "unresolved resource identity `in`",
+          "line": 17780,
+          "origin": "src/flb_input_chunk.c:145"
+        }
+      },
+      {
+        "key": [
+          "fluent-bit-system",
+          "src/flb_input_chunk.c",
+          "update_logs_tag_records_metrics",
+          1
+        ],
+        "diagnostic": {
+          "category": "unknown_alias",
+          "description": "unresolved resource identity `in`",
+          "line": 17780,
+          "origin": "src/flb_input_chunk.c:145"
+        }
+      },
+      {
+        "key": [
+          "fluent-bit-system",
+          "src/flb_task.c",
+          "record_unmatched_route_drop_metrics",
+          0
+        ],
+        "diagnostic": {
+          "category": "unknown_alias",
+          "description": "unresolved resource identity `ins`",
+          "line": 17312,
+          "origin": "src/flb_task.c:98"
+        }
+      },
+      {
+        "key": [
+          "fluent-bit-system",
+          "src/flb_task.c",
+          "record_unmatched_route_drop_metrics",
+          1
+        ],
+        "diagnostic": {
+          "category": "unknown_alias",
+          "description": "unresolved resource identity `ins`",
+          "line": 17312,
+          "origin": "src/flb_task.c:98"
+        }
+      }
+    ],
+    "removed_alias_frames": [
+      {
+        "function": "update_logs_tag_records_metrics",
+        "base": "in",
+        "guard": {
+          "source_path": "src/flb_input_chunk.c",
+          "line": 141,
+          "file_sha256": "0fdf7af3f6b976c7790fb6ded755e5f4cd20ea813cb7d868907a3c16eb10db8d",
+          "excerpt": "139:     }\n140: \n141:     if (!in->cmt_logs_tag_records || !in->cmt_logs_tag_records_untracked) {\n142:         return;\n143:     }\n144: \n145:     config = in->config;"
+        },
+        "later_read": {
+          "source_path": "src/flb_input_chunk.c",
+          "line": 145,
+          "file_sha256": "0fdf7af3f6b976c7790fb6ded755e5f4cd20ea813cb7d868907a3c16eb10db8d",
+          "excerpt": "143:     }\n144: \n145:     config = in->config;\n146: \n147:     /* Enforce the tag length limit before allocating anything */\n148:     if (config->telemetry_metrics_logs_tag_records_max_tag_length > 0 &&\n149:         tag_len > (size_t) config->telemetry_metrics_logs_tag_records_max_tag_length) {"
+        },
+        "reading": "The old unsupported compound guard conservatively poisoned the base binding. Retaining its complete checked-read plan removes that unsupported effect and its downstream unknown-binding consequence. The original read obligation stays; no scalar/null fact or callback effect is supplied."
+      },
+      {
+        "function": "record_unmatched_route_drop_metrics",
+        "base": "ins",
+        "guard": {
+          "source_path": "src/flb_task.c",
+          "line": 90,
+          "file_sha256": "6105cc5dccd5d8eac71b804f363832c42d18eec2e2b2483d3177c756da4c8b6d",
+          "excerpt": "88:     char *labels[2];\n89: \n90:     if (!ins || !ic || !ins->config) {\n91:         return;\n92:     }\n93: \n94:     if (ic->event_type != FLB_INPUT_LOGS || ic->total_records <= 0) {"
+        },
+        "later_read": {
+          "source_path": "src/flb_task.c",
+          "line": 98,
+          "file_sha256": "6105cc5dccd5d8eac71b804f363832c42d18eec2e2b2483d3177c756da4c8b6d",
+          "excerpt": "96:     }\n97: \n98:     router = ins->config->router;\n99:     if (!router) {\n100:         return;\n101:     }\n102: "
+        },
+        "reading": "The old unsupported compound guard conservatively poisoned the base binding. Retaining its complete checked-read plan removes that unsupported effect and its downstream unknown-binding consequence. The original read obligation stays; no scalar/null fact or callback effect is supplied."
+      }
+    ],
+    "new_alias_read_observations": [
+      {
+        "source_path": "src/flb_engine.c",
+        "line": 531,
+        "file_sha256": "2f70e703eb8f8bd853b436d50b51214c89402bc93b79b5e979024dd2ab578683",
+        "excerpt": "529:     ic = (struct flb_input_chunk *) task->ic;\n530: \n531:     if (!ic || !ic->chunk) {\n532:         return;\n533:     }\n534: \n535:     /* Obtain tag from the input chunk API (no direct field available) */"
+      },
+      {
+        "source_path": "src/flb_engine.c",
+        "line": 649,
+        "file_sha256": "2f70e703eb8f8bd853b436d50b51214c89402bc93b79b5e979024dd2ab578683",
+        "excerpt": "647:                         1, (char *[]) {out_name});\n648: \n649:         if (config->router && task->event_chunk->type == FLB_EVENT_TYPE_LOGS) {\n650:             cmt_counter_add(config->router->logs_records_total, ts,\n651:                             effective_records,\n652:                             2, (char *[]) {in_name, out_name});\n653: "
+      },
+      {
+        "source_path": "src/flb_engine.c",
+        "line": 713,
+        "file_sha256": "2f70e703eb8f8bd853b436d50b51214c89402bc93b79b5e979024dd2ab578683",
+        "excerpt": "711:                             1, (char *[]) {out_name});\n712: \n713:             if (config->router && task->event_chunk &&\n714:                 task->event_chunk->type == FLB_EVENT_TYPE_LOGS) {\n715:                 cmt_counter_add(config->router->logs_drop_records_total, ts,\n716:                                 effective_records,\n717:                                 2, (char *[]) {in_name, out_name});"
+      },
+      {
+        "source_path": "src/flb_engine.c",
+        "line": 762,
+        "file_sha256": "2f70e703eb8f8bd853b436d50b51214c89402bc93b79b5e979024dd2ab578683",
+        "excerpt": "760:                             1, (char *[]) {out_name});\n761: \n762:             if (config->router && task->event_chunk &&\n763:                 task->event_chunk->type == FLB_EVENT_TYPE_LOGS) {\n764:                 cmt_counter_add(config->router->logs_drop_records_total, ts,\n765:                                 effective_records,\n766:                                 2, (char *[]) {in_name, out_name});"
+      },
+      {
+        "source_path": "src/flb_engine.c",
+        "line": 858,
+        "file_sha256": "2f70e703eb8f8bd853b436d50b51214c89402bc93b79b5e979024dd2ab578683",
+        "excerpt": "856:                         1, (char *[]) {out_name});\n857: \n858:         if (config->router && task->event_chunk &&\n859:             task->event_chunk->type == FLB_EVENT_TYPE_LOGS) {\n860:             cmt_counter_add(config->router->logs_drop_records_total, ts,\n861:                             effective_records,\n862:                             2, (char *[]) {in_name, out_name});"
+      },
+      {
+        "source_path": "src/flb_input_chunk.c",
+        "line": 1014,
+        "file_sha256": "0fdf7af3f6b976c7790fb6ded755e5f4cd20ea813cb7d868907a3c16eb10db8d",
+        "excerpt": "1012:     chunk_file = NULL;\n1013: \n1014:     if (chunk != NULL && chunk->ctx != NULL && chunk->ctx->page_size > 0) {\n1015:         page_size = (size_t) chunk->ctx->page_size;\n1016:     }\n1017: \n1018:     if (chunk != NULL && chunk->backend != NULL &&"
+      },
+      {
+        "source_path": "src/flb_input_chunk.c",
+        "line": 1018,
+        "file_sha256": "0fdf7af3f6b976c7790fb6ded755e5f4cd20ea813cb7d868907a3c16eb10db8d",
+        "excerpt": "1016:     }\n1017: \n1018:     if (chunk != NULL && chunk->backend != NULL &&\n1019:         chunk->st != NULL && chunk->st->type == CIO_STORE_FS) {\n1020:         chunk_file = (struct flb_input_chunk_cio_file_view *) chunk->backend;\n1021:     }\n1022: "
+      },
+      {
+        "source_path": "src/flb_output.c",
+        "line": 952,
+        "file_sha256": "2d31e29a14f432716732d40a7c0f0276fc86d8daef7a5d2a0831307c18ba8fed",
+        "excerpt": "950: \n951:         if (ret != 0) {\n952:             if ((instance->flags & FLB_OUTPUT_SYNCHRONOUS) &&\n953:                  instance->singleplex_queue != NULL) {\n954:                 flb_task_queue_destroy(instance->singleplex_queue);\n955:             }\n956:             if (instance->callback != NULL) {"
+      },
+      {
+        "source_path": "src/flb_output.c",
+        "line": 959,
+        "file_sha256": "2d31e29a14f432716732d40a7c0f0276fc86d8daef7a5d2a0831307c18ba8fed",
+        "excerpt": "957:                 flb_callback_destroy(instance->callback);\n958:             }\n959:             if (plugin->type != FLB_OUTPUT_PLUGIN_CORE &&\n960:                 instance->context != NULL) {\n961:                 flb_free(instance->context);\n962:             }\n963:             flb_free(instance->http_server_config);"
+      }
+    ],
+    "new_alias_reading": "Each added UnknownAlias comes from an evaluated, now-retained read of an unresolved chunk/ic/task/instance/file base. These obligations keep the rows Unknown; unsupported container traversal, earlier opaque effects and missing identities are not neutralized."
+  },
+  "slice": {
+    "changed_diagnostic_rows": 17,
+    "all_custody_statuses_identical": true,
+    "changed_keys": [
+      [
+        "fluent-bit-tail-pause",
+        "src/flb_input.c",
+        "flb_input_init_all",
+        0
+      ],
+      [
+        "fluent-bit-tail-pause",
+        "src/flb_input.c",
+        "flb_input_instance_init",
+        0
+      ],
+      [
+        "fluent-bit-tail-pause",
+        "src/flb_input.c",
+        "flb_input_new",
+        0
+      ],
+      [
+        "fluent-bit-tail-pause",
+        "src/flb_input.c",
+        "flb_input_rate_gate_maybe_resume",
+        0
+      ],
+      [
+        "fluent-bit-tail-pause",
+        "src/flb_input.c",
+        "flb_input_rate_gate_timer_cancel",
+        0
+      ],
+      [
+        "fluent-bit-tail-pause",
+        "src/flb_input.c",
+        "flb_input_init_all",
+        1
+      ],
+      [
+        "fluent-bit-tail-pause",
+        "src/flb_input.c",
+        "flb_input_instance_init",
+        1
+      ],
+      [
+        "fluent-bit-tail-pause",
+        "src/flb_input.c",
+        "flb_input_new",
+        1
+      ],
+      [
+        "fluent-bit-tail-pause",
+        "src/flb_input.c",
+        "flb_input_rate_gate_maybe_resume",
+        1
+      ],
+      [
+        "fluent-bit-tail-pause",
+        "src/flb_input.c",
+        "flb_input_rate_gate_timer_cancel",
+        1
+      ],
+      [
+        "fluent-bit-tail-pause",
+        "plugins/in_tail/tail.c",
+        "in_tail_collect_pending",
+        0
+      ],
+      [
+        "fluent-bit-tail-pause",
+        "plugins/in_tail/tail.c",
+        "in_tail_collect_static",
+        0
+      ],
+      [
+        "fluent-bit-tail-pause",
+        "plugins/in_tail/tail.c",
+        "in_tail_init",
+        0
+      ],
+      [
+        "fluent-bit-tail-pause",
+        "plugins/in_tail/tail_file.c",
+        "dormant_destroy",
+        0
+      ],
+      [
+        "fluent-bit-tail-pause",
+        "plugins/in_tail/tail_file.c",
+        "flb_tail_file_append",
+        0
+      ],
+      [
+        "fluent-bit-tail-pause",
+        "plugins/in_tail/tail_file.c",
+        "flb_tail_file_reclaim",
+        0
+      ],
+      [
+        "fluent-bit-tail-pause",
+        "plugins/in_tail/tail_file.c",
+        "flb_tail_file_remove",
+        0
+      ]
+    ],
+    "removed_families": [
+      {
+        "category": "unsupported",
+        "description": "unmodeled call, aggregate or indirect access in branch condition",
+        "count": 21
+      },
+      {
+        "category": "unknown_alias",
+        "description": "unresolved resource identity `config`",
+        "count": 2
+      }
+    ],
+    "added_families": [
+      {
+        "category": "unknown_alias",
+        "description": "unresolved resource identity `instance`",
+        "count": 4
+      },
+      {
+        "category": "unknown_alias",
+        "description": "unresolved resource identity `file`",
+        "count": 5
+      }
+    ],
+    "removed_aliases": [
+      {
+        "key": [
+          "fluent-bit-tail-pause",
+          "src/flb_input.c",
+          "flb_input_instance_init",
+          0
+        ],
+        "diagnostic": {
+          "category": "unknown_alias",
+          "description": "unresolved resource identity `config`",
+          "line": 19034,
+          "origin": "src/flb_input.c:1575"
+        }
+      },
+      {
+        "key": [
+          "fluent-bit-tail-pause",
+          "src/flb_input.c",
+          "flb_input_instance_init",
+          1
+        ],
+        "diagnostic": {
+          "category": "unknown_alias",
+          "description": "unresolved resource identity `config`",
+          "line": 19034,
+          "origin": "src/flb_input.c:1575"
+        }
+      }
+    ],
+    "removed_alias_frames": [
+      {
+        "function": "flb_input_instance_init",
+        "base": "config",
+        "guard": {
+          "source_path": "src/flb_input.c",
+          "line": 1574,
+          "file_sha256": "92a0917b89dd61ff92d098dffcf56ddae1060d7588874a3fc0e8e27f45544122",
+          "excerpt": "1572:     int tls_session_mode;\n1573: \n1574:     if (ins->log_level == -1 && config->log != NULL) {\n1575:         ins->log_level = config->log->level;\n1576:     }\n1577: \n1578:     /* Skip pseudo input plugins */"
+        },
+        "later_read": {
+          "source_path": "src/flb_input.c",
+          "line": 1575,
+          "file_sha256": "92a0917b89dd61ff92d098dffcf56ddae1060d7588874a3fc0e8e27f45544122",
+          "excerpt": "1573: \n1574:     if (ins->log_level == -1 && config->log != NULL) {\n1575:         ins->log_level = config->log->level;\n1576:     }\n1577: \n1578:     /* Skip pseudo input plugins */\n1579:     if (!p) {"
+        },
+        "reading": "The old unsupported compound guard conservatively poisoned the base binding. Retaining its complete checked-read plan removes that unsupported effect and its downstream unknown-binding consequence. The original read obligation stays; no scalar/null fact or callback effect is supplied."
+      }
+    ],
+    "new_alias_read_observations": [
+      {
+        "source_path": "plugins/in_tail/tail.c",
+        "line": 131,
+        "file_sha256": "ccab8c6078d677ff7a552c01d463ef3cb8c57b07b74041576ae759e5a6abc0f7",
+        "excerpt": "129:                 active++;\n130:             }\n131:             else if(file->decompression_context != NULL &&\n132:                     file->decompression_context->input_buffer_length > 0) {\n133:                 active++;\n134:             }\n135:             else {"
+      },
+      {
+        "source_path": "plugins/in_tail/tail.c",
+        "line": 219,
+        "file_sha256": "ccab8c6078d677ff7a552c01d463ef3cb8c57b07b74041576ae759e5a6abc0f7",
+        "excerpt": "217:             break;\n218:         case FLB_TAIL_WAIT:\n219:             if(file->decompression_context != NULL &&\n220:                file->decompression_context->input_buffer_length > 0) {\n221:                 active++;\n222: \n223:                 break;"
+      },
+      {
+        "source_path": "plugins/in_tail/tail.c",
+        "line": 95,
+        "file_sha256": "ccab8c6078d677ff7a552c01d463ef3cb8c57b07b74041576ae759e5a6abc0f7",
+        "excerpt": "93: \n94:         if (file->pending_bytes <= 0) {\n95:             if(file->decompression_context == NULL ||\n96:                file->decompression_context->input_buffer_length == 0) {\n97:                 continue;\n98:             }\n99:         }"
+      },
+      {
+        "source_path": "plugins/in_tail/tail_file.c",
+        "line": 1962,
+        "file_sha256": "fef252bfc26b2167080931f5c15549f8279f096251e5269df00f2c3e1bae4e4d",
+        "excerpt": "1960:     flb_free(file->buf_data);\n1961: err_destroy_ml_stream:\n1962:     if (ctx->ml_ctx && file->ml_stream_id > 0) {\n1963:         flb_ml_stream_id_destroy_all(ctx->ml_ctx, file->ml_stream_id);\n1964:     }\n1965: err_free_dmode_lastline:\n1966:     flb_sds_destroy(file->dmode_lastline);"
+      },
+      {
+        "source_path": "plugins/in_tail/tail_file.c",
+        "line": 2099,
+        "file_sha256": "fef252bfc26b2167080931f5c15549f8279f096251e5269df00f2c3e1bae4e4d",
+        "excerpt": "2097:         }\n2098:         file = mk_list_entry(head, struct flb_tail_file, _head);\n2099:         if (file->rotated || file->is_link || file->decompression_context ||\n2100:             file->buf_len != 0 || file->pending_bytes != 0 || file->skip_next ||\n2101:             file->sl_log_event_encoder->output_length != 0) {\n2102:             continue;\n2103:         }"
+      },
+      {
+        "source_path": "src/flb_input.c",
+        "line": 542,
+        "file_sha256": "92a0917b89dd61ff92d098dffcf56ddae1060d7588874a3fc0e8e27f45544122",
+        "excerpt": "540:                 flb_hash_table_destroy(instance->ht_profile_chunks);\n541:             }\n542:             if (plugin->type != FLB_INPUT_PLUGIN_CORE && instance->context) {\n543:                 flb_free(instance->context);\n544:             }\n545:             flb_free(instance->http_server_config);\n546:             flb_free(instance);"
+      },
+      {
+        "source_path": "src/flb_input.c",
+        "line": 580,
+        "file_sha256": "92a0917b89dd61ff92d098dffcf56ddae1060d7588874a3fc0e8e27f45544122",
+        "excerpt": "578:                     flb_hash_table_destroy(instance->ht_profile_chunks);\n579:                 }\n580:                 if (plugin->type != FLB_INPUT_PLUGIN_CORE && instance->context) {\n581:                     flb_free(instance->context);\n582:                 }\n583:                 flb_input_ingress_primitives_destroy(instance);\n584:                 flb_free(instance->http_server_config);"
+      }
+    ],
+    "new_alias_reading": "Each added UnknownAlias comes from an evaluated, now-retained read of an unresolved chunk/ic/task/instance/file base. These obligations keep the rows Unknown; unsupported container traversal, earlier opaque effects and missing identities are not neutralized."
+  },
+  "mechanism": {
+    "meaning": "Source review explains observed diagnostic changes, not a C extraction/refinement theorem. Full raw rows and complete field comparisons remain separate evidence.",
+    "rust_sources": {
+      "crates/qcore-c-gateway/src/legacy_condition_desugar.rs": "9b50bfe454ee940d4fc730d7f619b1ebf7d5212900cced9474b1f84d5af4658a",
+      "crates/qcore-c-gateway/src/legacy_cfg_builder.rs": "32cfce9f52a592ab31c3ca57bcaffa9711afb98ed4c7313ae408a39380897d23",
+      "crates/qcore-c-gateway/src/legacy_transfer.rs": "246913a55b894cc1cb8601c9bd43a1f9eca4ab28893318119736538c5abea0e7"
+    },
+    "locations": [
+      "legacy_cfg_builder.rs:compile_planned_if route precedes unsupported branch fallback",
+      "legacy_transfer.rs:Unknown transfer emits Unsupported and sets potentially written pointer bindings unknown; resource statuses are retained"
+    ]
+  }
+}

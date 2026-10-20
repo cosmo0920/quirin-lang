@@ -1,0 +1,21 @@
+{
+  "command": [
+    "python3",
+    "scripts/check_lean_audits.py",
+    "--jobs",
+    "4"
+  ],
+  "exit": 0,
+  "audits": 347,
+  "log": "private/w48-bottom-up-batch4/lean-final.log",
+  "proof_sha256": {
+    "proof/QCore/CallFreeConditionReads.lean": "f5a60e2030efa6377e73327b8a37e43678f8878be9bb7bc7ac344c395ef8dd03",
+    "proof/AuditCallFreeConditionReads.lean": "9f740fb61051b7d6adf62bad4b57c6d18b60de51a635adc0dfb341b183fba6fe",
+    "proof/QCore.lean": "37d2cacd68e8a4a37ab6410460319fa81b4be1c6b42b184fd8c7279c57818197"
+  },
+  "initial_full_gate": {
+    "exit": 1,
+    "log": "private/w48-bottom-up-batch4/gate-lean.log",
+    "reason": "aggregate import appended after module-doc command; repaired by moving it among imports, preserving model definitions"
+  }
+}

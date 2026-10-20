@@ -1,0 +1,24 @@
+{
+  "complete_contract_artifacts_equal_after_individually_proved_derivations": true,
+  "producer_dependency_replays": "before/after-metadata-replay.json",
+  "native_body_standing_and_usage_review": "authority-review.json",
+  "context_reconstruction": "context-identity-review.json",
+  "time_key_reconstruction": "time-identity-review.json",
+  "new_conditional_home_import": {
+    "function": "cio_file_is_up",
+    "home_environment_sha256": "7151188411e9b367ce26722ee90c0700d6795e310019525c3d2b8904ee90da2d",
+    "home_preprocessed_source_sha256": "52c119f0c6397075b5971f4a6f34f9d35019e7b1f7f94007b3e3fea564082cc9",
+    "home_raw_source_sha256": "1c3eb285307108deb2b22c68cf282c0121619a35bbe36adc216f276d51925257",
+    "home_unit": "chunkio/cio_file.c"
+  },
+  "existing_import_payloads_preserved_after_exact_environment_reconstruction": [
+    "LZ4_compressBound",
+    "LZ4_sizeofState",
+    "LZ4_sizeofStateHC",
+    "cio_file_hash",
+    "mk_fifo_send",
+    "rd_kafka_error_code",
+    "rd_kafka_error_destroy"
+  ],
+  "meaning": "No raw field is deleted. Complete contract artifacts are equal after the freshly replayed dependency section, exactly reconstructed environment labels, the single newly checked cio_file_is_up import and the separately reproduced empty-summary time key. Raw payloads and all differences remain archived."
+}

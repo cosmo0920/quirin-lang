@@ -2,8 +2,8 @@
 //! through the unit analysis.
 
 use super::super::{
-    AnalysisStatus, LegacyInstruction, LegacyProgramSummary, analyze_legacy_c_translation_unit, build_function_cfg,
-    tokenize_with_conditionals,
+    AnalysisStatus, LegacyInstruction, LegacyProgramSummary, analyze_legacy_c_translation_unit,
+    build_function_cfg, tokenize_with_conditionals,
 };
 use super::guarded_callees;
 use qcore_schemas::contract::ResourceContracts;
@@ -457,9 +457,18 @@ fn a_member_null_test_reads_only_single_pointer_members() {
     assert_eq!(status(&summary, "subject"), AnalysisStatus::Safe);
     assert!(summary.functions["subject"].diagnostics.is_empty());
     assert!(
-        summary.functions["subject"].cfg.nodes.iter().filter(|node| {
-            matches!(node.instruction, LegacyInstruction::IndirectScalarAccess { .. })
-        }).count() >= 2,
+        summary.functions["subject"]
+            .cfg
+            .nodes
+            .iter()
+            .filter(|node| {
+                matches!(
+                    node.instruction,
+                    LegacyInstruction::IndirectScalarAccess { .. }
+                )
+            })
+            .count()
+            >= 2,
         "both source reads must retain their base obligations"
     );
     for condition in ["n->next->buf", "n->buf == n->next"] {
