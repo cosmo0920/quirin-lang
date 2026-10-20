@@ -27,7 +27,7 @@ def main():
     args = parser.parse_args()
     global REPO
     REPO = args.contract_root.resolve()
-    jobs = args.jobs if args.jobs is not None else (8 if args.route == 'corpus' else 2)
+    jobs = args.jobs if args.jobs is not None else (16 if args.route == 'corpus' else 8)
     if jobs <= 0:
         parser.error('--jobs must be positive')
     out = args.out.resolve()
