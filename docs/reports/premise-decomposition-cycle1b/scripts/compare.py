@@ -125,6 +125,11 @@ def main():
             raw=path.read_bytes();(dest/(name+'.gz')).write_bytes(gzip.compress(raw,mtime=0));manifest[name]={'bytes':len(raw),'sha256':hashlib.sha256(raw).hexdigest()};docs[stem]=[json.loads(x) for x in raw.splitlines()] if name.endswith('.jsonl') else json.loads(raw)
         (dest/'manifest.json').write_text(json.dumps(manifest,indent=2)+'\n');data[label]=docs
     assert data['before'].keys()==data['after'].keys()
+    before_declarations=data['before']['contracts']['contract_dependencies']['declarations']
+    after_declarations=data['after']['contracts']['contract_dependencies']['declarations']
+    assert before_declarations.keys()==after_declarations.keys()
+    unrelated_graphs=[name for name in before_declarations if name not in mapping['declarations']]
+    assert all(before_declarations[name]['hypothesis_graph']==after_declarations[name]['hypothesis_graph'] for name in unrelated_graphs), 'unrelated declaration graph changed'
     migrated_graphs={}
     for name,expected_atoms in [('__errno_location',3),('strerror',5)]:
         declarations=data['after']['contracts']['contract_dependencies']['declarations']
@@ -135,7 +140,9 @@ def main():
         assert len(before_graph['atoms'])==1 and len(before_graph['premises'])==1
         assert len(after_graph['atoms'])==expected_atoms
         assert list(after_graph['premises'])==['nested_call_admission']
-        assert after_graph['premises']['nested_call_admission']['children']==sorted(mapping['declarations'][name]['atoms'])
+        target=mapping['declarations'][name]
+        assert before_graph['premises']['legacy_premise_00000000']['erasure']['statement']==target['before_statement']
+        assert after_graph=={'version':1,'atoms':{atom:{'id':atom,'proposition':{'kind':'opaque','statement':statement}} for atom,statement in target['atoms'].items()},'premises':{'nested_call_admission':{'id':'nested_call_admission','children':sorted(target['atoms']),'erasure':{'name':'nested_call_admission','origin':'declared','statement':target['after_statement']}}}}, 'migrated graph differs from frozen opaque atoms/erasure'
         migrated_graphs[name]={'before_atoms':1,'after_atoms':expected_atoms,'consulting_rows':declarations[name]['rows'],'consulting_safe_rows':declarations[name]['safe_rows']}
     assert '__errno_location' in migrated_graphs
 
@@ -143,8 +150,8 @@ def main():
     left=normalize(old.erase(data['before']));right=normalize(restore(old.erase(data['after'])))
     residual={k:old.differences(left[k],right[k]) for k in left};gz(a.out/'attributed-residual-differences.json.gz',residual);gz(a.out/'exact-metadata-attribution.json.gz',records)
     counts=lambda d:dict(Counter(f['status'] for u in d['diagnostics']['units'] for f in u['functions']))
-    checks={'static_verdict_counts_equal':counts(left)==counts(right),'full_runtime_projection_equal':left['outer']==right['outer'],'all_null_records_equal':left['null']==right['null'],'null_summary_equal':left['null-summary']==right['null-summary'],'all_remaining_artifacts_equal':all(not x for x in residual.values())}
-    result={'route':a.route,'migrated_graphs':migrated_graphs,'before_counts':counts(left),'after_counts':counts(right),'null_rows':len(left['null']),'checks':checks,'raw_differences':{k:len(x) for k,x in raw.items()},'residual_differences':{k:len(x) for k,x in residual.items()},'scoped_metadata_records':len(records),'all_invariant_checks_pass':all(checks.values()),'meaning':'Raw before/after legacy erasure differs. Exact selected premise/module/pin metadata, independently reconstructed source/environment and complete configuration digests are restored; every remaining field is compared.'}
+    checks={'unrelated_declaration_graphs_equal':True,'selected_graphs_match_frozen_mapping':True,'static_verdict_counts_equal':counts(left)==counts(right),'full_runtime_projection_equal':left['outer']==right['outer'],'all_null_records_equal':left['null']==right['null'],'null_summary_equal':left['null-summary']==right['null-summary'],'all_remaining_artifacts_equal':all(not x for x in residual.values())}
+    result={'route':a.route,'unchanged_unrelated_declaration_graphs':len(unrelated_graphs),'migrated_graphs':migrated_graphs,'before_counts':counts(left),'after_counts':counts(right),'null_rows':len(left['null']),'checks':checks,'raw_differences':{k:len(x) for k,x in raw.items()},'residual_differences':{k:len(x) for k,x in residual.items()},'scoped_metadata_records':len(records),'all_invariant_checks_pass':all(checks.values()),'meaning':'Raw before/after legacy erasure differs. Exact selected premise/module/pin metadata, independently reconstructed source/environment and complete configuration digests are restored; every remaining field is compared.'}
     (a.out/'comparison.json').write_text(json.dumps(result,indent=2)+'\n');print(json.dumps(result,indent=2));return 0 if result['all_invariant_checks_pass'] else 1
 
 if __name__=='__main__':raise SystemExit(main())
