@@ -4,7 +4,7 @@ Work in progress on base `2d8f6d34257db14031a2578ce14f941bee25fc19`.
 The preimplementation selection/atom map/zero-movement prediction is frozen in
 `1195c7335` ([design](design.md)); [tracked census](census.json) examines141
 provider contract inputs and209named premise clauses, selecting one of four
-cJSON clauses. The later design addendum records the user's concrete-math and
+cJSON clauses. The later [acceptance addendum](acceptance-addendum.md) records the user's concrete-math and
 impact-propagation acceptance requirements.
 
 Nine opaque atoms decompose the physical representation/writer obligations
