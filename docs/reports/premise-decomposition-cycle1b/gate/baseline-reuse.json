@@ -14,5 +14,34 @@
   "contract_input_revision": "2d8f6d34257db14031a2578ce14f941bee25fc19",
   "independent_committed_production_delta": "",
   "current_toolchain": "rustc 1.99.0 (b940084d7 2026-09-28)",
-  "independent_verification_limit": "The immutable artifact hash and committed production-source delta are independently checked. The supplied build receipt owns the uncommitted tests-only delta and original environment/default-feature claim; this card does not reconstruct that past process."
+  "independent_verification_limit": "The immutable artifact hash and committed production-source delta are independently checked. The supplied build receipt owns the uncommitted tests-only delta and original environment/default-feature claim; this card does not reconstruct that past process.",
+  "independent_binary_toolchain_and_feature_observations": {
+    "binaries": {
+      "before": {
+        "command": [
+          "readelf",
+          "-p",
+          ".comment",
+          "/home/cosmo/.codex/worktrees/w48-bottom-up-batch4/qcore-c/private/w48-bottom-up-batch4/base/quirin-audit"
+        ],
+        "exit": 0,
+        "elf_comment": "\nString dump of section '.comment':\n  [     1]  rustc version 1.99.0 (b940084d7 2026-09-28)\n  [    2d]  GCC: (Ubuntu 15.2.0-16ubuntu1) 15.2.0\n  [    53]  Linker: LLD 23.1.1 (/checkout/src/llvm-project/llvm 1b9c0d5ff9bbe7634aead059efe6b11a7eeba145)\n\n",
+        "unit_timing_marker_present": false
+      },
+      "after": {
+        "command": [
+          "readelf",
+          "-p",
+          ".comment",
+          "private/premise-decomposition-cycle1b/gate-1/quirin-audit"
+        ],
+        "exit": 0,
+        "elf_comment": "\nString dump of section '.comment':\n  [     1]  rustc version 1.99.0 (b940084d7 2026-09-28)\n  [    2d]  GCC: (Ubuntu 15.2.0-16ubuntu1) 15.2.0\n  [    53]  Linker: LLD 23.1.1 (/checkout/src/llvm-project/llvm 1b9c0d5ff9bbe7634aead059efe6b11a7eeba145)\n\n",
+        "unit_timing_marker_present": false
+      }
+    },
+    "qcore_audit_manifest_sha256": "74ed1c1bde3329c2be9354daae6f6deb068b1413a9cd3f5d56106e3bbe7573ac",
+    "only_declared_optional_feature": "unit-timing; disabled by the recorded plain release command and absent runtime timing marker in both immutable ELF artifacts",
+    "limits": "ELF compiler/linker identity and the optional timing path are independently observed. The captured build command and exact source/dependency manifest comparison bind default feature selection; this does not recreate an unrecorded historical process environment."
+  }
 }
