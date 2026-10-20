@@ -18,11 +18,11 @@ Analysis paths: [GATEWAY-ANALYSIS-PATH-OPTIMIZATION](reports/gateway-analysis-pa
 
 Audit tooling: the bounded [CPU/memory optimization](reports/audit-memory-performance/README.md) preserves four verdict artifacts byte for byte on three Fluent Bit selections. The four-worker sample took 64.67 → 20.63 seconds with 21.0% lower maximum RSS; shared-host observations, not whole-corpus throughput or safety coverage.
 
-The latest scalar-condition corpus and configured-route measurements are the 2026-10-20
-[scalar accessor condition receipt](reports/w48-bottom-up-batch3/README.md),
-analyzer/test source `1601ba438` on exact base `198f6fc43`. The separately measured
-hypothesis graph below preserves its own earlier baseline. Integration does not
-claim a new composed production census. Source-pinned
+The latest individual implementation measurements are the
+[batch4 compound-condition receipt](reports/w48-bottom-up-batch4/README.md),
+with an explicit eight-home link map. The premise decompositions retain their
+separately measured six-home contexts. Serial integration does not claim a new
+composed production census. Source-pinned
 contracts, named null premises and the selected-program link premise remain
 assumptions, not unconditional C-body proofs. Older reports retain their dated
 checkpoint evidence. CT mapping, model proof, source replay, native observations
@@ -30,6 +30,8 @@ and runtime projections remain separate; projection is not safety coverage.
 Current tracking is the acceptance matrix; history is in the increment records.
 
 ## Coverage
+
+W48-BOTTOM-UP-BATCH4 retains complete call-free predicate plans containing existing checked indirect scalar reads, with matching audited Lean trace/error preservation and refusal controls. Fresh symmetric eight-home corpus: 4,834 custody rows, 967→973 Safe, 3,858→3,852 Unknown, 9 unchanged provisional Unsafe; no prior Safe regression or new Unsafe. Configured system remains 99/345/4 and slice 53/346/4 Pending/1. All 5,781 null row dictionaries and complete runtime views unchanged. Source/link/type/non-interposition assumptions remain conditional; one existing cmetrics declaration gains W4+entry native standing, not new declared premises. Full own gate: 8,377 Rust / 347 Lean / 374 Python; final Python count in report gate receipt. Provider gate N/A. See w48-bottom-up-batch4 report and its measured provenance.
 
 The [scalar accessor condition card](reports/w48-bottom-up-batch3/README.md) retains ordinary checked calls before exact scalar-pointer equality/inequality observations, with no pointer/value refinement and matching Rust/Lean. Six fresh audits exit0: corpus **967Safe/3858Unknown/9provisionalUnsafe** over4834, system **99/345/4**, slice **53Safe/346Unknown/4Pending/1provisionalUnsafe**. The four custody gains are `msg_write`, same-unit `mk_fifo_send`, conditionally imported `mk_mq_send`, and incidental Linux `net_plain_send_file`; all963 prior Safe rows remain Safe. Corpus loses22condition refusals/3call leaves with no added diagnostic. Slice retains13Unknown diagnostic changes, including3unresolved `end` identities; no new null fact is supplied. All5781 null dictionaries and runtime moved records agree; corpus combined Safe841→843, while the two FIFO callers remain combined Unknown. Errno remains declared, with only premise text/flexible binding changed. Repeated home-body evidence occurrences are not independent C definitions or standing promotions. Fresh corpus plan is254single-body waits/2220candidate bodies/360hypothetical ceiling, same/cross6/6; logger ownership/callback closure, scheduler dependencies and all six Unknown detach/delete wrappers remain tracked.
 

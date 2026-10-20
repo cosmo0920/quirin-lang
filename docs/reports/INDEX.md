@@ -179,8 +179,6 @@ Regenerate with `python3 scripts/build_docs_index.py`; validate with `--check`.
 
 | [contract-check-load-path](contract-check-load-path/README.md) | CONTRACT-CHECK-LOAD-PATH |
 
-| [premise-decomposition-cycle1](premise-decomposition-cycle1/README.md) | cJSON representation: report-owned concrete propositions; production classifier preserved |
-
 | [contract-hypothesis-graph-v1](contract-hypothesis-graph-v1/README.md) | Evidence-only contract hypothesis graphs |
 
 | [contract-inherit](contract-inherit/README.md) | CONTRACT-INHERIT: contract inclusion and contract inheritance |
@@ -610,7 +608,11 @@ Regenerate with `python3 scripts/build_docs_index.py`; validate with `--check`.
 
 | [plugin-package-build-write](plugin-package-build-write/README.md) | PLUGIN-PACKAGE-BUILD-WRITES-EXECUTABLE-IN-PROCESS: `package::build` holds no write descriptor on the executable |
 
+| [premise-decomposition-cycle1](premise-decomposition-cycle1/README.md) | cJSON representation premise decomposition, cycle 1 |
+
 | [premise-decomposition-cycle1b](premise-decomposition-cycle1b/README.md) | Libc reading-premise decomposition, cycle 1B |
+
+| [premise-integration](premise-integration/README.md) | Serial premise and implementation integration |
 
 | [process-fixtures-fs-write](process-fixtures-fs-write/README.md) | PROCESS-FIXTURES-FS-WRITE-OUTSIDE-HOST-CRATE: one out-of-process writer for every executable test fixture |
 

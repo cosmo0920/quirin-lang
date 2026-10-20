@@ -1,0 +1,30 @@
+{
+  "base": "2d8f6d34257db14031a2578ce14f941bee25fc19",
+  "merges": [
+    "44fd04b8c",
+    "6d83fd57f",
+    "91cc0ea41"
+  ],
+  "attempts": [
+    {
+      "command": "python3 docs/reports/remaining-d02/build_matrix.py --help",
+      "exit": 1,
+      "reason": "generator expects positional repository root, not argparse help; no output modified"
+    },
+    {
+      "command": "git add resolved files; git commit",
+      "exit": 128,
+      "reason": "index read-only under sandbox; scoped git retry succeeded"
+    },
+    {
+      "command": "merge cycle1b",
+      "exit": 1,
+      "reason": "expected history/matrix conflicts resolved by union"
+    },
+    {
+      "command": "merge batch4",
+      "exit": 1,
+      "reason": "expected matrix/Lean imports conflicts resolved by union"
+    }
+  ]
+}
