@@ -1,0 +1,34 @@
+{
+  "tracked_inputs": 141,
+  "premise_clauses": 209,
+  "cjson_candidates": [
+    {
+      "path": "providers/qcore-provider-librdkafka/contracts/librdkafka/cjson.qv",
+      "declaration": "cJSON_New_Item",
+      "name": "cjson_allocator_hooks",
+      "statement": "hooks->allocate returns a fresh allocation or NULL, which cJSON_Delete releases through the matching deallocate hook: malloc and free in global_hooks (cJSON.c:178, :186) unless cJSON_InitHooks installed a user pair, a premise of whoever installed it; nothing is stated about the hooks changing between the allocation and its release"
+    },
+    {
+      "path": "providers/qcore-provider-librdkafka/contracts/librdkafka/cjson.qv",
+      "declaration": "add_item_to_array",
+      "name": "cjson_list_invariant",
+      "statement": "cJSON's list invariant, kept by every cJSON list operation: a non-empty array's child->prev is its last element, never NULL; if a caller broke it, the child->prev == NULL arm returns true without linking item, which this declaration would read as a transfer"
+    },
+    {
+      "path": "providers/qcore-provider-librdkafka/contracts/librdkafka/cjson.qv",
+      "declaration": "print",
+      "name": "cjson_allocator_hooks",
+      "statement": "hooks->allocate and hooks->reallocate return a fresh allocation or NULL and hooks->deallocate releases one: malloc, realloc and free in global_hooks (cJSON.c:178-186) unless a user set was installed, a premise of whoever installed it; nothing is stated about the hooks changing between the allocation and its release"
+    },
+    {
+      "path": "providers/qcore-provider-librdkafka/contracts/librdkafka/cjson.qv",
+      "declaration": "cJSON_DetachItemViaPointer",
+      "name": "detach_list_representation",
+      "statement": "For this removed-result declaration, the live parent represents exactly its owned children by a finite acyclic child and next chain; child is NULL precisely when the chain is empty, each nonfirst child's prev is its predecessor, the first child's prev is the last child, chain child identities are pairwise distinct, every non-NULL next or prev target is a live child of that same parent, the last child's next is NULL, the parent is not a child, and no concurrent writer mutates these links during the call"
+    }
+  ],
+  "selected": {
+    "declaration": "cJSON_DetachItemViaPointer",
+    "name": "detach_list_representation"
+  }
+}
