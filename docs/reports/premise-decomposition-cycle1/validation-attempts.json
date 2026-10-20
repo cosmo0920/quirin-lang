@@ -150,5 +150,23 @@
     "exit": 0,
     "log": "/home/cosmo/.codex/worktrees/premise-decomposition-cycle1/qcore-c/private/premise-decomposition-cycle1/time-slice-1.log",
     "meaning": "Fresh local source replay reproduces the complete empty-summary identity hashes by varying only __TIME__ within actual invocation windows."
+  },
+  {
+    "attempt": "preprocess-correspondence",
+    "exit": 1,
+    "log": "/home/cosmo/.codex/worktrees/premise-decomposition-cycle1/qcore-c/private/premise-decomposition-cycle1/preprocess-correspondence.log",
+    "meaning": "The fresh receipt source_sha256 field hashes preprocessed stdout, not original C bytes. The provenance helper initially misinterpreted that field and refused. Original evidence unchanged."
+  },
+  {
+    "attempt": "preprocess-correspondence-2",
+    "exit": 0,
+    "log": "/home/cosmo/.codex/worktrees/premise-decomposition-cycle1/qcore-c/private/premise-decomposition-cycle1/preprocess-correspondence-2.log",
+    "meaning": "All three exact current-DB argv/cwd pairs equal fresh local preprocess receipts; preprocessed bytes and original C file are hashed separately."
+  },
+  {
+    "attempt": "matrix-derived-1",
+    "exit": 0,
+    "log": "/home/cosmo/.codex/worktrees/premise-decomposition-cycle1/qcore-c/private/premise-decomposition-cycle1/matrix-derived-1.log",
+    "meaning": "Derived dimensions regenerated before post-matrix Python; gate numbers are explicitly carried from previous matrix and NOT this card measurement. Final gate-backed regeneration remains pending."
   }
 ]

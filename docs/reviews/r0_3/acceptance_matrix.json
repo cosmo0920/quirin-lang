@@ -195,7 +195,7 @@
   "ct_stage_names": 20,
   "ct_cells": 1000,
   "unverified_spec_items": 10,
-  "named_followups": 805
+  "named_followups": 806
  },
  "derivation": {
   "rule": "no count in a section this file marks `derived` is hand-copied from a status ledger; each is read from the manifest or validated run record named beside it. Sections marked `hand_maintained` are recorded analysis carried verbatim from the previous matrix, and `integrator_supplied` numbers name whether they were measured for this run or carried - see section_ownership.",
@@ -6758,7 +6758,7 @@
   "workspace_tests": 8370,
   "provider_tests": 133,
   "python_evidence_validator_tests": 374,
-  "lean_audits": 346,
+  "lean_audits": 347,
   "lean_audit_files": [
    "AuditAbiEnumConstPointer.lean",
    "AuditAggregateOwnedField.lean",
@@ -6805,6 +6805,7 @@
    "AuditCheckedSpecification.lean",
    "AuditCheckpoints.lean",
    "AuditChunkIntegrityObservation.lean",
+   "AuditCjsonRepresentationPremises.lean",
    "AuditCleanupReplayAgreement.lean",
    "AuditCleanupVocabulary.lean",
    "AuditClosures.lean",
@@ -7113,7 +7114,7 @@
   "cargo_clippy": "clean",
   "standing_gate": "complete",
   "full_language_conformance": false,
-  "measurement_provenance": "integrator_supplied (docs/reports/w48-bottom-up-batch3/integration/gate.json)"
+  "measurement_provenance": "carried_from_previous_matrix: these numbers were NOT measured for this regeneration; pass --gate PATH with the standing-gate results of this checkpoint to replace them"
  },
  "named_followups": [
   {
