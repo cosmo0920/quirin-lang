@@ -1,0 +1,70 @@
+{
+  "base": "2d8f6d34257db14031a2578ce14f941bee25fc19",
+  "production_module": {
+    "path": "providers/qcore-provider-librdkafka/contracts/librdkafka/cjson.qv",
+    "sha256": "fad2fd35af203ad27f70bd0faeb93db94c6c6aa8528e57f618a670e9495ec513",
+    "byte_identical_to_base": true
+  },
+  "report_variant": {
+    "path": "docs/reports/premise-decomposition-cycle1/proposed-cjson.qv",
+    "sha256": "c68a9e5559ea08e53b329cd5b41602244142ba607249ec8557a80d8e2101dfa2",
+    "installed_in_production": false
+  },
+  "canonical_graph": {
+    "path": "docs/reports/premise-decomposition-cycle1/proposed-graph.json",
+    "wire_sha256": "3051972cf9cb0a21c5ff17b2620e44c8e9667e6659aa503a7ce0c84120559305",
+    "atoms": 10,
+    "graph_sha256": "3051972cf9cb0a21c5ff17b2620e44c8e9667e6659aa503a7ce0c84120559305",
+    "premises": 2,
+    "standing": "report-owned, all opaque; no evidence or typed consumer"
+  },
+  "mathematical_model": {
+    "path": "proof/QCore/CjsonRepresentationPremises.lean",
+    "sha256": "7f14f533993fb7551001a235992e85d25bddbed36a5d1db7e1c3fb484bcb4c07",
+    "audit": "proof/AuditCjsonRepresentationPremises.lean",
+    "meaning": "Explicit conditional Prop definitions and theorems; no imported-C or caller-antecedent proof."
+  },
+  "original_source_pins": [
+    {
+      "function": "cJSON_DetachItemViaPointer",
+      "module": "librdkafka/cjson.qv",
+      "contract_sha256": "878f8103527c43da2a5bb91d56ba60cd6b9e221a3dfb41723de90c36a94268ad",
+      "identities": [
+        {
+          "reviewed_at": [
+            {
+              "kind": "git",
+              "revision": "046accf6aded7906f66a1baf0202da349e521736"
+            },
+            {
+              "kind": "git",
+              "revision": "66910c10a4d7eafa810b84229cf2dcf7b0f26f97"
+            }
+          ],
+          "sites": [
+            {
+              "path": "lib/librdkafka-2.15.0/src/cJSON.c",
+              "kind": "definition",
+              "declaration_sha256": "cb628af5052405d572284a378e97683c47802e603c10b857898b3c801148a91f",
+              "body_sha256": "e29fa7de6028b572083e8b526ccda0c7aef8ddb3598ed5058c3e1869f2cdad82"
+            },
+            {
+              "path": "lib/librdkafka-2.15.0/src/cJSON.h",
+              "kind": "declaration",
+              "declaration_sha256": "cb628af5052405d572284a378e97683c47802e603c10b857898b3c801148a91f"
+            }
+          ]
+        }
+      ]
+    }
+  ],
+  "open_bindings": [
+    "C allocation identities to Nat and live/ownedChild predicates",
+    "Exact entry heap to finite children sequence and link maps",
+    "Invocation identity and every interleaved trace step within exact bounds",
+    "Source/build/profile/scope/property assumptions for each environment",
+    "Prose-to-formal equivalence including relational chain bundle",
+    "Neutral graph attachment preserving legacy closed-world classification"
+  ],
+  "discharge_boundary": "Pins identify source/declaration text only. Model proof, source observation, provider agreement and opaque strings do not establish these bindings. No production atom disposition or verdict is changed."
+}
