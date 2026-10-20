@@ -3,8 +3,10 @@
 Work in progress on base `2d8f6d34257db14031a2578ce14f941bee25fc19`.
 The preimplementation selection/atom map/zero-movement prediction is frozen in
 `1195c7335` ([design](design.md)); [tracked census](census.json) examines141
-provider contract inputs and209named premise clauses, selecting one of four
-cJSON clauses. The later [acceptance addendum](acceptance-addendum.md) records the user's concrete-math and
+tracked provider-tree .qv/.qcore inputs (fixtures included) and209lexical
+premise-clause matches, selecting one of four production cJSON clauses.
+[Census provenance](census-provenance.json) distinguishes this selection aid
+from loader-derived corpus counts. The later [acceptance addendum](acceptance-addendum.md) records the user's concrete-math and
 impact-propagation acceptance requirements.
 
 Nine opaque atoms decompose the physical representation/writer obligations

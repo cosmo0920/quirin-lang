@@ -1,0 +1,11 @@
+{
+  "frozen_census_commit": "1195c7335",
+  "scope": "git ls-files providers filtered to .qv and .qcore; includes tracked fixtures and model contracts, not only published production modules",
+  "method": "lexical regex match of requires resource_premise(NAME, STRING); no comment stripping or loader-derived total is claimed",
+  "counts": {
+    "tracked_files": 141,
+    "lexical_matches": 209,
+    "selected_production_cjson_declarations_with_matches": 4
+  },
+  "selection_validation": "The selected real production module is loaded and replayed by the Rust controls, which compare its exact original premise statement against frozen census data. This is a bounded selection census, not safety coverage or canonical corpus module/declaration counts."
+}
