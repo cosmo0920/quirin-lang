@@ -1,0 +1,1989 @@
+{
+  "route": "corpus",
+  "declarations": 440,
+  "changed": [
+    {
+      "function": "MK_EVENT_NEW",
+      "changed_fields": [
+        "bodies"
+      ],
+      "before": {
+        "bodies": {
+          "failed_by": [],
+          "failed_units": 0,
+          "unvalidated_units": 0,
+          "validated_by": [
+            "W4"
+          ],
+          "validated_units": 4,
+          "withdrawn_units": 0
+        },
+        "body_standing": "validated",
+        "clauses": {
+          "resource_borrowed(#0)": "validated",
+          "resource_return_none()": "validated"
+        },
+        "contract_sha256": "02b7a311ef042c3ca2bb07a3fe5f3e79306868934dd7a5af2a339408a3f586e8",
+        "mode": "pinned",
+        "module": "$INPUTS/contract/profiles/fluent-bit/../../../providers/qcore-provider-libevent/contracts/monkey/scalar_observation.qv",
+        "premises": [],
+        "rows": 5,
+        "safe_rows": 0,
+        "status": "pinned-in-force"
+      },
+      "after": {
+        "bodies": {
+          "failed_by": [],
+          "failed_units": 0,
+          "unvalidated_units": 0,
+          "validated_by": [
+            "W4"
+          ],
+          "validated_units": 180,
+          "withdrawn_units": 0
+        },
+        "body_standing": "validated",
+        "clauses": {
+          "resource_borrowed(#0)": "validated",
+          "resource_return_none()": "validated"
+        },
+        "contract_sha256": "02b7a311ef042c3ca2bb07a3fe5f3e79306868934dd7a5af2a339408a3f586e8",
+        "mode": "pinned",
+        "module": "$INPUTS/contract/profiles/fluent-bit/../../../providers/qcore-provider-libevent/contracts/monkey/scalar_observation.qv",
+        "premises": [],
+        "rows": 5,
+        "safe_rows": 0,
+        "status": "pinned-in-force"
+      }
+    },
+    {
+      "function": "__errno_location",
+      "changed_fields": [
+        "contract_sha256",
+        "premises",
+        "rows",
+        "safe_rows"
+      ],
+      "before": {
+        "body_standing": "declared-assumption",
+        "contract_sha256": "d956f076f4c50c66a40cd75f0ed9a408668c3c05e41c4a001c5dded9a6ce9c9e",
+        "mode": "flexible",
+        "module": "$INPUTS/contract/profiles/fluent-bit/../../../providers/quirin-provider-libc/contracts/libc/errno.qv",
+        "premises": [
+          {
+            "name": "nested_call_admission",
+            "origin": "declared",
+            "statement": "a dereference of this call's result is read only where the gateway's nested-call admission holds at the call site (premises N1-N10 of cards O04-TRACE and CONSTRUCTOR-RESIDUALS, checked per site): the call is the statement's only nested call and a whole argument of a contracted call at a declared Borrowed position modulo the dereference wrapper (N4-D), its written arity is this declaration's, and the unit's own declaration of the callee returns exactly one pointer level over a scalar type (N10); under them the argument binds, releases, escapes and addresses nothing the projection tracks"
+          }
+        ],
+        "rows": 160,
+        "safe_rows": 7,
+        "status": "flexible-standing"
+      },
+      "after": {
+        "body_standing": "declared-assumption",
+        "contract_sha256": "3f02b89663ffceff1a89c4f28cee5446ae36ebd6dbc57270d0878ad71106985b",
+        "mode": "flexible",
+        "module": "$INPUTS/contract/profiles/fluent-bit/../../../providers/quirin-provider-libc/contracts/libc/errno.qv",
+        "premises": [
+          {
+            "name": "nested_call_admission",
+            "origin": "declared",
+            "statement": "a dereference of this call's result is read only under the checked reading rules: either the nested-call admission of O04-TRACE and CONSTRUCTOR-RESIDUALS (N1-N10, including a whole Borrowed or data-tail actual modulo the dereference wrapper and exact written arity), or W48-BOTTOM-UP-BATCH3 scalar condition admission (an external zero-argument call with this no-custody result, no container effect, exactly one dereference compared by equality or inequality with a decimal literal, the ordinary call checks retained and both outcomes explored); both require this unit's unambiguous declaration to return exactly one pointer level over a scalar type and bind, release, escape and address nothing the projection tracks"
+          }
+        ],
+        "rows": 162,
+        "safe_rows": 11,
+        "status": "flexible-standing"
+      }
+    },
+    {
+      "function": "fprintf",
+      "changed_fields": [
+        "rows",
+        "safe_rows"
+      ],
+      "before": {
+        "body_standing": "declared-assumption",
+        "contract_sha256": "9d44f6233231b057a3f99433bffc41bdcca554df782463d14032a6a2e9e3f69e",
+        "mode": "flexible",
+        "module": "$INPUTS/contract/profiles/fluent-bit/../../../providers/quirin-provider-libc/contracts/libc/stdio.qv",
+        "premises": [],
+        "rows": 250,
+        "safe_rows": 6,
+        "status": "flexible-standing"
+      },
+      "after": {
+        "body_standing": "declared-assumption",
+        "contract_sha256": "9d44f6233231b057a3f99433bffc41bdcca554df782463d14032a6a2e9e3f69e",
+        "mode": "flexible",
+        "module": "$INPUTS/contract/profiles/fluent-bit/../../../providers/quirin-provider-libc/contracts/libc/stdio.qv",
+        "premises": [],
+        "rows": 251,
+        "safe_rows": 8,
+        "status": "flexible-standing"
+      }
+    },
+    {
+      "function": "mk_fifo_queue_destroy",
+      "changed_fields": [
+        "bodies"
+      ],
+      "before": {
+        "bodies": {
+          "failed_by": [],
+          "failed_units": 0,
+          "unvalidated_units": 1,
+          "validated_by": [],
+          "validated_units": 0,
+          "withdrawn_units": 0
+        },
+        "body_standing": "declared-assumption",
+        "contract_sha256": "80d78ceb3d95ef4bd5e4ea82848e46b622d9ac3e3d7d70a1b8a726994d053155",
+        "mode": "pinned",
+        "module": "$INPUTS/contract/profiles/fluent-bit/../../../providers/qcore-provider-libevent/contracts/monkey/intrusive_list.qv",
+        "premises": [],
+        "rows": 3,
+        "safe_rows": 0,
+        "status": "pinned-in-force"
+      },
+      "after": {
+        "bodies": {
+          "failed_by": [],
+          "failed_units": 0,
+          "unvalidated_units": 180,
+          "validated_by": [],
+          "validated_units": 0,
+          "withdrawn_units": 0
+        },
+        "body_standing": "declared-assumption",
+        "contract_sha256": "80d78ceb3d95ef4bd5e4ea82848e46b622d9ac3e3d7d70a1b8a726994d053155",
+        "mode": "pinned",
+        "module": "$INPUTS/contract/profiles/fluent-bit/../../../providers/qcore-provider-libevent/contracts/monkey/intrusive_list.qv",
+        "premises": [],
+        "rows": 3,
+        "safe_rows": 0,
+        "status": "pinned-in-force"
+      }
+    },
+    {
+      "function": "mk_list_add",
+      "changed_fields": [
+        "bodies"
+      ],
+      "before": {
+        "bodies": {
+          "failed_by": [],
+          "failed_units": 0,
+          "unvalidated_units": 18,
+          "validated_by": [],
+          "validated_units": 0,
+          "withdrawn_units": 0
+        },
+        "body_standing": "declared-assumption",
+        "contract_sha256": "748bf3d90bd350fe94aeb48d10bcd5efab02f4cbbec9c2093d113352288bf493",
+        "mode": "pinned",
+        "module": "$INPUTS/contract/profiles/fluent-bit/../../../providers/qcore-provider-libevent/contracts/monkey/intrusive_list.qv",
+        "premises": [],
+        "rows": 32,
+        "safe_rows": 0,
+        "status": "pinned-in-force"
+      },
+      "after": {
+        "bodies": {
+          "failed_by": [],
+          "failed_units": 0,
+          "unvalidated_units": 180,
+          "validated_by": [],
+          "validated_units": 0,
+          "withdrawn_units": 0
+        },
+        "body_standing": "declared-assumption",
+        "contract_sha256": "748bf3d90bd350fe94aeb48d10bcd5efab02f4cbbec9c2093d113352288bf493",
+        "mode": "pinned",
+        "module": "$INPUTS/contract/profiles/fluent-bit/../../../providers/qcore-provider-libevent/contracts/monkey/intrusive_list.qv",
+        "premises": [],
+        "rows": 32,
+        "safe_rows": 0,
+        "status": "pinned-in-force"
+      }
+    },
+    {
+      "function": "mk_list_del",
+      "changed_fields": [
+        "bodies"
+      ],
+      "before": {
+        "bodies": {
+          "failed_by": [],
+          "failed_units": 0,
+          "unvalidated_units": 17,
+          "validated_by": [],
+          "validated_units": 0,
+          "withdrawn_units": 0
+        },
+        "body_standing": "declared-assumption",
+        "contract_sha256": "507931da3352aced60a7f9f6956c920fbde74253949416a2eb473f52304c48a1",
+        "mode": "pinned",
+        "module": "$INPUTS/contract/profiles/fluent-bit/../../../providers/qcore-provider-libevent/contracts/monkey/intrusive_list.qv",
+        "premises": [],
+        "rows": 27,
+        "safe_rows": 1,
+        "status": "pinned-in-force"
+      },
+      "after": {
+        "bodies": {
+          "failed_by": [],
+          "failed_units": 0,
+          "unvalidated_units": 180,
+          "validated_by": [],
+          "validated_units": 0,
+          "withdrawn_units": 0
+        },
+        "body_standing": "declared-assumption",
+        "contract_sha256": "507931da3352aced60a7f9f6956c920fbde74253949416a2eb473f52304c48a1",
+        "mode": "pinned",
+        "module": "$INPUTS/contract/profiles/fluent-bit/../../../providers/qcore-provider-libevent/contracts/monkey/intrusive_list.qv",
+        "premises": [],
+        "rows": 27,
+        "safe_rows": 1,
+        "status": "pinned-in-force"
+      }
+    },
+    {
+      "function": "mk_mem_alloc",
+      "changed_fields": [
+        "bodies"
+      ],
+      "before": {
+        "bodies": {
+          "failed_by": [],
+          "failed_units": 0,
+          "unvalidated_units": 0,
+          "validated_by": [
+            "W4"
+          ],
+          "validated_units": 19,
+          "withdrawn_units": 0
+        },
+        "body_standing": "validated",
+        "clauses": {
+          "resource_borrowed(#0)": "validated",
+          "resource_return_owned(nullable)": "validated"
+        },
+        "contract_sha256": "30b051b31acb3878b8134da69e16c51e24b4eee30e44654a1b28bbef026f6902",
+        "mode": "pinned",
+        "module": "qcore-provider-libevent:monkey/memory.qv",
+        "premises": [],
+        "rows": 36,
+        "safe_rows": 4,
+        "status": "pinned-in-force"
+      },
+      "after": {
+        "bodies": {
+          "failed_by": [],
+          "failed_units": 0,
+          "unvalidated_units": 0,
+          "validated_by": [
+            "W4"
+          ],
+          "validated_units": 180,
+          "withdrawn_units": 0
+        },
+        "body_standing": "validated",
+        "clauses": {
+          "resource_borrowed(#0)": "validated",
+          "resource_return_owned(nullable)": "validated"
+        },
+        "contract_sha256": "30b051b31acb3878b8134da69e16c51e24b4eee30e44654a1b28bbef026f6902",
+        "mode": "pinned",
+        "module": "qcore-provider-libevent:monkey/memory.qv",
+        "premises": [],
+        "rows": 36,
+        "safe_rows": 4,
+        "status": "pinned-in-force"
+      }
+    },
+    {
+      "function": "mk_mem_alloc_z",
+      "changed_fields": [
+        "bodies"
+      ],
+      "before": {
+        "bodies": {
+          "failed_by": [],
+          "failed_units": 0,
+          "unvalidated_units": 0,
+          "validated_by": [
+            "W4"
+          ],
+          "validated_units": 16,
+          "withdrawn_units": 0
+        },
+        "body_standing": "validated",
+        "clauses": {
+          "resource_borrowed(#0)": "validated",
+          "resource_return_owned(nullable)": "validated"
+        },
+        "contract_sha256": "8364d7deffc38b4c9777e9a827b5bb20e22ffde71d2948f4f33990df55062d15",
+        "mode": "pinned",
+        "module": "qcore-provider-libevent:monkey/memory.qv",
+        "premises": [],
+        "rows": 25,
+        "safe_rows": 0,
+        "status": "pinned-in-force"
+      },
+      "after": {
+        "bodies": {
+          "failed_by": [],
+          "failed_units": 0,
+          "unvalidated_units": 0,
+          "validated_by": [
+            "W4"
+          ],
+          "validated_units": 180,
+          "withdrawn_units": 0
+        },
+        "body_standing": "validated",
+        "clauses": {
+          "resource_borrowed(#0)": "validated",
+          "resource_return_owned(nullable)": "validated"
+        },
+        "contract_sha256": "8364d7deffc38b4c9777e9a827b5bb20e22ffde71d2948f4f33990df55062d15",
+        "mode": "pinned",
+        "module": "qcore-provider-libevent:monkey/memory.qv",
+        "premises": [],
+        "rows": 25,
+        "safe_rows": 0,
+        "status": "pinned-in-force"
+      }
+    },
+    {
+      "function": "mk_mem_free",
+      "changed_fields": [
+        "bodies"
+      ],
+      "before": {
+        "bodies": {
+          "failed_by": [],
+          "failed_units": 0,
+          "unvalidated_units": 0,
+          "validated_by": [
+            "13m"
+          ],
+          "validated_units": 26,
+          "withdrawn_units": 0
+        },
+        "body_standing": "validated",
+        "clauses": {
+          "resource_released(#0, nullable)": "validated",
+          "resource_return_none()": "validated"
+        },
+        "contract_sha256": "2774440c44b71b2b2c8ba5daa323d1d7efcb962cc64c74219354cc66a10b91bf",
+        "mode": "pinned",
+        "module": "qcore-provider-libevent:monkey/memory.qv",
+        "premises": [],
+        "rows": 67,
+        "safe_rows": 3,
+        "status": "pinned-in-force"
+      },
+      "after": {
+        "bodies": {
+          "failed_by": [],
+          "failed_units": 0,
+          "unvalidated_units": 0,
+          "validated_by": [
+            "13m"
+          ],
+          "validated_units": 180,
+          "withdrawn_units": 0
+        },
+        "body_standing": "validated",
+        "clauses": {
+          "resource_released(#0, nullable)": "validated",
+          "resource_return_none()": "validated"
+        },
+        "contract_sha256": "2774440c44b71b2b2c8ba5daa323d1d7efcb962cc64c74219354cc66a10b91bf",
+        "mode": "pinned",
+        "module": "qcore-provider-libevent:monkey/memory.qv",
+        "premises": [],
+        "rows": 67,
+        "safe_rows": 3,
+        "status": "pinned-in-force"
+      }
+    },
+    {
+      "function": "perror",
+      "changed_fields": [
+        "rows",
+        "safe_rows"
+      ],
+      "before": {
+        "body_standing": "declared-assumption",
+        "contract_sha256": "50536c0e1241f2c583d114fbab69aa83babbfec20f3f0c240598397d6cba4c56",
+        "mode": "flexible",
+        "module": "$INPUTS/contract/profiles/fluent-bit/../../../providers/quirin-provider-libc/contracts/libc/stdio.qv",
+        "premises": [],
+        "rows": 14,
+        "safe_rows": 0,
+        "status": "flexible-standing"
+      },
+      "after": {
+        "body_standing": "declared-assumption",
+        "contract_sha256": "50536c0e1241f2c583d114fbab69aa83babbfec20f3f0c240598397d6cba4c56",
+        "mode": "flexible",
+        "module": "$INPUTS/contract/profiles/fluent-bit/../../../providers/quirin-provider-libc/contracts/libc/stdio.qv",
+        "premises": [],
+        "rows": 15,
+        "safe_rows": 3,
+        "status": "flexible-standing"
+      }
+    },
+    {
+      "function": "pthread_mutex_lock",
+      "changed_fields": [
+        "rows",
+        "safe_rows"
+      ],
+      "before": {
+        "body_standing": "declared-assumption",
+        "contract_sha256": "4e9a0d63356ce1dfa2a3b52a95533ea94e7d53acb2a2639ca5c66cdf8ede7e7c",
+        "mode": "flexible",
+        "module": "$INPUTS/contract/profiles/fluent-bit/../../../providers/quirin-provider-libc/contracts/libc/pthread_mutex.qv",
+        "premises": [],
+        "rows": 13,
+        "safe_rows": 1,
+        "status": "flexible-standing"
+      },
+      "after": {
+        "body_standing": "declared-assumption",
+        "contract_sha256": "4e9a0d63356ce1dfa2a3b52a95533ea94e7d53acb2a2639ca5c66cdf8ede7e7c",
+        "mode": "flexible",
+        "module": "$INPUTS/contract/profiles/fluent-bit/../../../providers/quirin-provider-libc/contracts/libc/pthread_mutex.qv",
+        "premises": [],
+        "rows": 14,
+        "safe_rows": 3,
+        "status": "flexible-standing"
+      }
+    },
+    {
+      "function": "pthread_mutex_unlock",
+      "changed_fields": [
+        "rows",
+        "safe_rows"
+      ],
+      "before": {
+        "body_standing": "declared-assumption",
+        "contract_sha256": "10ca8768c486406e29d97f6dd13213f0d33a58dfb808662bee1798b6a7c3551e",
+        "mode": "flexible",
+        "module": "$INPUTS/contract/profiles/fluent-bit/../../../providers/quirin-provider-libc/contracts/libc/pthread_mutex.qv",
+        "premises": [],
+        "rows": 13,
+        "safe_rows": 1,
+        "status": "flexible-standing"
+      },
+      "after": {
+        "body_standing": "declared-assumption",
+        "contract_sha256": "10ca8768c486406e29d97f6dd13213f0d33a58dfb808662bee1798b6a7c3551e",
+        "mode": "flexible",
+        "module": "$INPUTS/contract/profiles/fluent-bit/../../../providers/quirin-provider-libc/contracts/libc/pthread_mutex.qv",
+        "premises": [],
+        "rows": 14,
+        "safe_rows": 3,
+        "status": "flexible-standing"
+      }
+    },
+    {
+      "function": "sendfile",
+      "changed_fields": [
+        "safe_rows"
+      ],
+      "before": {
+        "body_standing": "declared-assumption",
+        "contract_sha256": "09fefe94523ec2e28171a70e00ff72f7dd167c2e378c16d0d422b6415bdb0fb4",
+        "mode": "flexible",
+        "module": "$INPUTS/contract/profiles/fluent-bit/../../../providers/quirin-provider-libc/contracts/libc/socket.qv",
+        "premises": [],
+        "rows": 1,
+        "safe_rows": 0,
+        "status": "flexible-standing"
+      },
+      "after": {
+        "body_standing": "declared-assumption",
+        "contract_sha256": "09fefe94523ec2e28171a70e00ff72f7dd167c2e378c16d0d422b6415bdb0fb4",
+        "mode": "flexible",
+        "module": "$INPUTS/contract/profiles/fluent-bit/../../../providers/quirin-provider-libc/contracts/libc/socket.qv",
+        "premises": [],
+        "rows": 1,
+        "safe_rows": 1,
+        "status": "flexible-standing"
+      }
+    },
+    {
+      "function": "usleep",
+      "changed_fields": [
+        "rows",
+        "safe_rows"
+      ],
+      "before": {
+        "body_standing": "declared-assumption",
+        "contract_sha256": "3d52495590e0892e2f80e6a6625c63859d69b342cd38cc6b91e55a5158349570",
+        "mode": "flexible",
+        "module": "$INPUTS/contract/profiles/fluent-bit/../../../providers/quirin-provider-libc/contracts/libc/unistd.qv",
+        "premises": [],
+        "rows": 2,
+        "safe_rows": 0,
+        "status": "flexible-standing"
+      },
+      "after": {
+        "body_standing": "declared-assumption",
+        "contract_sha256": "3d52495590e0892e2f80e6a6625c63859d69b342cd38cc6b91e55a5158349570",
+        "mode": "flexible",
+        "module": "$INPUTS/contract/profiles/fluent-bit/../../../providers/quirin-provider-libc/contracts/libc/unistd.qv",
+        "premises": [],
+        "rows": 4,
+        "safe_rows": 3,
+        "status": "flexible-standing"
+      }
+    },
+    {
+      "function": "write",
+      "changed_fields": [
+        "rows",
+        "safe_rows"
+      ],
+      "before": {
+        "body_standing": "declared-assumption",
+        "contract_sha256": "1cc311b830803db70cd25cf721bdae0fc7907a5c3ba25a0d4dda86ba00d11180",
+        "mode": "flexible",
+        "module": "$INPUTS/contract/profiles/fluent-bit/../../../providers/quirin-provider-libc/contracts/libc/unistd.qv",
+        "premises": [],
+        "rows": 10,
+        "safe_rows": 4,
+        "status": "flexible-standing"
+      },
+      "after": {
+        "body_standing": "declared-assumption",
+        "contract_sha256": "1cc311b830803db70cd25cf721bdae0fc7907a5c3ba25a0d4dda86ba00d11180",
+        "mode": "flexible",
+        "module": "$INPUTS/contract/profiles/fluent-bit/../../../providers/quirin-provider-libc/contracts/libc/unistd.qv",
+        "premises": [],
+        "rows": 12,
+        "safe_rows": 7,
+        "status": "flexible-standing"
+      }
+    }
+  ],
+  "inventory_equal": true,
+  "body_replay_occurrence_changes": [
+    {
+      "function": "MK_EVENT_NEW",
+      "changed_fields": [
+        "validated_units"
+      ],
+      "before": {
+        "failed_by": [],
+        "failed_units": 0,
+        "unvalidated_units": 0,
+        "validated_by": [
+          "W4"
+        ],
+        "validated_units": 4,
+        "withdrawn_units": 0
+      },
+      "after": {
+        "failed_by": [],
+        "failed_units": 0,
+        "unvalidated_units": 0,
+        "validated_by": [
+          "W4"
+        ],
+        "validated_units": 180,
+        "withdrawn_units": 0
+      },
+      "meaning": "Caller-session body replays, not distinct native C definitions; standing and proof methods unchanged."
+    },
+    {
+      "function": "mk_fifo_queue_destroy",
+      "changed_fields": [
+        "unvalidated_units"
+      ],
+      "before": {
+        "failed_by": [],
+        "failed_units": 0,
+        "unvalidated_units": 1,
+        "validated_by": [],
+        "validated_units": 0,
+        "withdrawn_units": 0
+      },
+      "after": {
+        "failed_by": [],
+        "failed_units": 0,
+        "unvalidated_units": 180,
+        "validated_by": [],
+        "validated_units": 0,
+        "withdrawn_units": 0
+      },
+      "meaning": "Caller-session body replays, not distinct native C definitions; standing and proof methods unchanged."
+    },
+    {
+      "function": "mk_list_add",
+      "changed_fields": [
+        "unvalidated_units"
+      ],
+      "before": {
+        "failed_by": [],
+        "failed_units": 0,
+        "unvalidated_units": 18,
+        "validated_by": [],
+        "validated_units": 0,
+        "withdrawn_units": 0
+      },
+      "after": {
+        "failed_by": [],
+        "failed_units": 0,
+        "unvalidated_units": 180,
+        "validated_by": [],
+        "validated_units": 0,
+        "withdrawn_units": 0
+      },
+      "meaning": "Caller-session body replays, not distinct native C definitions; standing and proof methods unchanged."
+    },
+    {
+      "function": "mk_list_del",
+      "changed_fields": [
+        "unvalidated_units"
+      ],
+      "before": {
+        "failed_by": [],
+        "failed_units": 0,
+        "unvalidated_units": 17,
+        "validated_by": [],
+        "validated_units": 0,
+        "withdrawn_units": 0
+      },
+      "after": {
+        "failed_by": [],
+        "failed_units": 0,
+        "unvalidated_units": 180,
+        "validated_by": [],
+        "validated_units": 0,
+        "withdrawn_units": 0
+      },
+      "meaning": "Caller-session body replays, not distinct native C definitions; standing and proof methods unchanged."
+    },
+    {
+      "function": "mk_mem_alloc",
+      "changed_fields": [
+        "validated_units"
+      ],
+      "before": {
+        "failed_by": [],
+        "failed_units": 0,
+        "unvalidated_units": 0,
+        "validated_by": [
+          "W4"
+        ],
+        "validated_units": 19,
+        "withdrawn_units": 0
+      },
+      "after": {
+        "failed_by": [],
+        "failed_units": 0,
+        "unvalidated_units": 0,
+        "validated_by": [
+          "W4"
+        ],
+        "validated_units": 180,
+        "withdrawn_units": 0
+      },
+      "meaning": "Caller-session body replays, not distinct native C definitions; standing and proof methods unchanged."
+    },
+    {
+      "function": "mk_mem_alloc_z",
+      "changed_fields": [
+        "validated_units"
+      ],
+      "before": {
+        "failed_by": [],
+        "failed_units": 0,
+        "unvalidated_units": 0,
+        "validated_by": [
+          "W4"
+        ],
+        "validated_units": 16,
+        "withdrawn_units": 0
+      },
+      "after": {
+        "failed_by": [],
+        "failed_units": 0,
+        "unvalidated_units": 0,
+        "validated_by": [
+          "W4"
+        ],
+        "validated_units": 180,
+        "withdrawn_units": 0
+      },
+      "meaning": "Caller-session body replays, not distinct native C definitions; standing and proof methods unchanged."
+    },
+    {
+      "function": "mk_mem_free",
+      "changed_fields": [
+        "validated_units"
+      ],
+      "before": {
+        "failed_by": [],
+        "failed_units": 0,
+        "unvalidated_units": 0,
+        "validated_by": [
+          "13m"
+        ],
+        "validated_units": 26,
+        "withdrawn_units": 0
+      },
+      "after": {
+        "failed_by": [],
+        "failed_units": 0,
+        "unvalidated_units": 0,
+        "validated_by": [
+          "13m"
+        ],
+        "validated_units": 180,
+        "withdrawn_units": 0
+      },
+      "meaning": "Caller-session body replays, not distinct native C definitions; standing and proof methods unchanged."
+    }
+  ],
+  "unchanged_authority_except_explicit_errno_text_binding": true,
+  "errno_remains_declared_assumption": true,
+  "before_counts": {
+    "declarations_consulted": 440,
+    "declared_assumption": 330,
+    "held": 1,
+    "partly_validated": 46,
+    "rows_annotated": 4834,
+    "validated": 63
+  },
+  "after_counts": {
+    "declarations_consulted": 440,
+    "declared_assumption": 330,
+    "held": 1,
+    "partly_validated": 46,
+    "rows_annotated": 4834,
+    "validated": 63
+  },
+  "before_safe_rollup": {
+    "carrying_a_null_premise": 39,
+    "consulting_a_held_or_withdrawn_declaration": 3,
+    "partly_validated_declarations": [
+      {
+        "function": "rd_kafka_admin_result_ret_groups",
+        "safe_rows": 5,
+        "uncovered_clauses": [
+          "resource_borrowed(#0)",
+          "resource_borrowed(#1)"
+        ]
+      },
+      {
+        "function": "sds_cat_safe",
+        "safe_rows": 5,
+        "uncovered_clauses": [
+          "resource_borrowed(#0)",
+          "resource_borrowed(#1)",
+          "resource_return_none()"
+        ]
+      },
+      {
+        "function": "rd_kafka_admin_result_ret_resources",
+        "safe_rows": 4,
+        "uncovered_clauses": [
+          "resource_borrowed(#0)",
+          "resource_borrowed(#1)"
+        ]
+      },
+      {
+        "function": "rd_kafka_admin_result_ret_topics",
+        "safe_rows": 4,
+        "uncovered_clauses": [
+          "resource_borrowed(#0)",
+          "resource_borrowed(#1)"
+        ]
+      },
+      {
+        "function": "rd_kafka_topic_partition_get_private",
+        "safe_rows": 4,
+        "uncovered_clauses": [
+          "resource_borrowed(#0)"
+        ]
+      },
+      {
+        "function": "get_object_item",
+        "safe_rows": 3,
+        "uncovered_clauses": [
+          "resource_borrowed(#0)",
+          "resource_borrowed(#1)",
+          "resource_borrowed(#2)"
+        ]
+      },
+      {
+        "function": "unit_test_telemetry",
+        "safe_rows": 3,
+        "uncovered_clauses": [
+          "resource_borrowed(#0)",
+          "resource_borrowed(#1)",
+          "resource_borrowed(#2)",
+          "resource_borrowed(#3)",
+          "resource_borrowed(#4)",
+          "resource_borrowed(#5)",
+          "resource_borrowed(#6)",
+          "resource_borrowed(#7)",
+          "resource_borrowed(#8)",
+          "resource_borrowed(#9)",
+          "resource_premise(rk_plugin_callback_closure)",
+          "resource_return_none()"
+        ]
+      },
+      {
+        "function": "flb_input_chunk_is_mem_overlimit",
+        "safe_rows": 2,
+        "uncovered_clauses": [
+          "resource_user_neutral()"
+        ]
+      },
+      {
+        "function": "rd_slice_reader0",
+        "safe_rows": 2,
+        "uncovered_clauses": [
+          "resource_borrowed(#0)",
+          "resource_borrowed(#1)",
+          "resource_borrowed(#2)",
+          "resource_return_none()"
+        ]
+      },
+      {
+        "function": "flb_input_chunk_get_name",
+        "safe_rows": 1,
+        "uncovered_clauses": [
+          "resource_premise(untracked_handback)"
+        ]
+      },
+      {
+        "function": "flb_input_chunk_is_storage_overlimit",
+        "safe_rows": 1,
+        "uncovered_clauses": [
+          "resource_user_neutral()"
+        ]
+      },
+      {
+        "function": "flb_input_chunk_is_up",
+        "safe_rows": 1,
+        "uncovered_clauses": [
+          "resource_user_neutral()"
+        ]
+      },
+      {
+        "function": "flb_task_get_route_status",
+        "safe_rows": 1,
+        "uncovered_clauses": [
+          "resource_user_neutral()"
+        ]
+      },
+      {
+        "function": "flb_task_set_route_status",
+        "safe_rows": 1,
+        "uncovered_clauses": [
+          "resource_user_neutral()"
+        ]
+      },
+      {
+        "function": "rd_kafka_oidc_token_metadata_aws_iam_refresh_cb",
+        "safe_rows": 1,
+        "uncovered_clauses": [
+          "resource_premise(rk_plugin_callback_closure)"
+        ]
+      },
+      {
+        "function": "rd_kafka_op_new0",
+        "safe_rows": 1,
+        "uncovered_clauses": [
+          "resource_borrowed(#0)",
+          "resource_borrowed(#1)",
+          "resource_premise(asserted_allocation)",
+          "resource_return_owned(nonnull)"
+        ]
+      },
+      {
+        "function": "rd_kafka_toppar_keep0",
+        "safe_rows": 1,
+        "uncovered_clauses": [
+          "resource_borrowed(#0)",
+          "resource_borrowed(#1)",
+          "resource_borrowed(#2)",
+          "resource_return_alias(#2, nonnull)"
+        ]
+      },
+      {
+        "function": "cmt_mpack_unpack_array",
+        "safe_rows": 0,
+        "uncovered_clauses": [
+          "resource_borrowed(#0)",
+          "resource_borrowed(#1)",
+          "resource_borrowed(#2)",
+          "resource_return_none()"
+        ]
+      },
+      {
+        "function": "ctr_mpack_unpack_array",
+        "safe_rows": 0,
+        "uncovered_clauses": [
+          "resource_borrowed(#0)",
+          "resource_borrowed(#1)",
+          "resource_borrowed(#2)",
+          "resource_return_none()"
+        ]
+      },
+      {
+        "function": "msgpack_packer_init",
+        "safe_rows": 0,
+        "uncovered_clauses": [
+          "resource_borrowed(#0)",
+          "resource_borrowed(#1)",
+          "resource_borrowed(#2)",
+          "resource_retained_by(#1, #0)",
+          "resource_return_none()"
+        ]
+      },
+      {
+        "function": "rd_kafka_DeleteRecords_leaders_queried_cb",
+        "safe_rows": 0,
+        "uncovered_clauses": [
+          "resource_borrowed(#0)",
+          "resource_borrowed(#1)",
+          "resource_borrowed(#2)",
+          "resource_premise(rk_plugin_callback_closure)",
+          "resource_return_none()"
+        ]
+      },
+      {
+        "function": "rd_kafka_ListOffsets_leaders_queried_cb",
+        "safe_rows": 0,
+        "uncovered_clauses": [
+          "resource_borrowed(#0)",
+          "resource_borrowed(#1)",
+          "resource_borrowed(#2)",
+          "resource_premise(rk_plugin_callback_closure)",
+          "resource_return_none()"
+        ]
+      },
+      {
+        "function": "rd_kafka_enq_once_trigger",
+        "safe_rows": 0,
+        "uncovered_clauses": [
+          "resource_borrowed(#0)",
+          "resource_borrowed(#1)",
+          "resource_borrowed(#2)",
+          "resource_premise(rk_plugin_callback_closure)",
+          "resource_return_none()"
+        ]
+      },
+      {
+        "function": "rd_kafka_op_destroy",
+        "safe_rows": 0,
+        "uncovered_clauses": [
+          "resource_callback_member_invoked(#0, rd_kafka_op_s.rko_op_cb, _, _, #0)",
+          "resource_premise(rk_plugin_callback_closure)",
+          "resource_released(#0, nonnull)",
+          "resource_return_none()"
+        ]
+      },
+      {
+        "function": "rd_kafka_q_destroy0",
+        "safe_rows": 0,
+        "uncovered_clauses": [
+          "resource_borrowed(#0)",
+          "resource_borrowed(#1)",
+          "resource_premise(rk_plugin_callback_closure)",
+          "resource_return_none()"
+        ]
+      },
+      {
+        "function": "rd_kafka_q_destroy_owner",
+        "safe_rows": 0,
+        "uncovered_clauses": [
+          "resource_borrowed(#0)",
+          "resource_premise(rk_plugin_callback_closure)",
+          "resource_return_none()"
+        ]
+      },
+      {
+        "function": "rd_kafka_q_keep",
+        "safe_rows": 0,
+        "uncovered_clauses": [
+          "resource_borrowed(#0)",
+          "resource_return_alias(#0, nonnull)"
+        ]
+      },
+      {
+        "function": "rd_kafka_q_keep_nolock",
+        "safe_rows": 0,
+        "uncovered_clauses": [
+          "resource_borrowed(#0)",
+          "resource_return_alias(#0, nonnull)"
+        ]
+      },
+      {
+        "function": "rd_kafka_q_new0",
+        "safe_rows": 0,
+        "uncovered_clauses": [
+          "resource_borrowed(#0)",
+          "resource_borrowed(#1)",
+          "resource_borrowed(#2)",
+          "resource_borrowed(#3)",
+          "resource_premise(asserted_allocation)",
+          "resource_retained_by(#0, result)",
+          "resource_retained_by(#2, result)"
+        ]
+      },
+      {
+        "function": "rd_kafka_share_commit_async_fanout_op",
+        "safe_rows": 0,
+        "uncovered_clauses": [
+          "resource_borrowed(#0)",
+          "resource_borrowed(#1)",
+          "resource_borrowed(#2)",
+          "resource_premise(rk_plugin_callback_closure)",
+          "resource_return_none()"
+        ]
+      },
+      {
+        "function": "rd_kafka_share_commit_sync_fanout_op",
+        "safe_rows": 0,
+        "uncovered_clauses": [
+          "resource_borrowed(#0)",
+          "resource_borrowed(#1)",
+          "resource_borrowed(#2)",
+          "resource_premise(rk_plugin_callback_closure)",
+          "resource_return_none()"
+        ]
+      },
+      {
+        "function": "rd_kafka_share_fetch_fanout_op",
+        "safe_rows": 0,
+        "uncovered_clauses": [
+          "resource_borrowed(#0)",
+          "resource_borrowed(#1)",
+          "resource_borrowed(#2)",
+          "resource_premise(rk_plugin_callback_closure)",
+          "resource_premise(share_ack_batches_nonempty)",
+          "resource_return_none()"
+        ]
+      },
+      {
+        "function": "rd_kafka_topic_destroy0",
+        "safe_rows": 0,
+        "uncovered_clauses": [
+          "resource_borrowed(#0)",
+          "resource_premise(rk_plugin_callback_closure)",
+          "resource_return_none()"
+        ]
+      },
+      {
+        "function": "rd_kafka_topic_keep",
+        "safe_rows": 0,
+        "uncovered_clauses": [
+          "resource_borrowed(#0)",
+          "resource_return_alias(#0, nonnull)"
+        ]
+      },
+      {
+        "function": "rd_kafka_topic_partition_list_query_leaders_async_worker_op_cb",
+        "safe_rows": 0,
+        "uncovered_clauses": [
+          "resource_borrowed(#0)",
+          "resource_borrowed(#1)",
+          "resource_owned(#2, nonnull)",
+          "resource_premise(rk_plugin_callback_closure)",
+          "resource_return_none()"
+        ]
+      },
+      {
+        "function": "rd_kafka_toppar_desired_add",
+        "safe_rows": 0,
+        "uncovered_clauses": [
+          "resource_borrowed(#0)",
+          "resource_borrowed(#1)",
+          "resource_premise(asserted_allocation)",
+          "resource_premise(rk_plugin_callback_closure)"
+        ]
+      },
+      {
+        "function": "rd_kafka_toppar_desired_get",
+        "safe_rows": 0,
+        "uncovered_clauses": [
+          "resource_borrowed(#0)",
+          "resource_borrowed(#1)"
+        ]
+      },
+      {
+        "function": "rd_kafka_toppar_destroy0",
+        "safe_rows": 0,
+        "uncovered_clauses": [
+          "resource_borrowed(#0)",
+          "resource_borrowed(#1)",
+          "resource_borrowed(#2)",
+          "resource_premise(rk_plugin_callback_closure)",
+          "resource_return_none()"
+        ]
+      },
+      {
+        "function": "rd_kafka_toppar_get0",
+        "safe_rows": 0,
+        "uncovered_clauses": [
+          "resource_borrowed(#0)",
+          "resource_borrowed(#1)",
+          "resource_borrowed(#2)",
+          "resource_borrowed(#3)",
+          "resource_borrowed(#4)"
+        ]
+      },
+      {
+        "function": "rd_kafka_toppar_get2",
+        "safe_rows": 0,
+        "uncovered_clauses": [
+          "resource_borrowed(#0)",
+          "resource_borrowed(#1)",
+          "resource_borrowed(#2)",
+          "resource_borrowed(#3)",
+          "resource_borrowed(#4)",
+          "resource_premise(rk_plugin_callback_closure)"
+        ]
+      },
+      {
+        "function": "rd_kafka_toppar_get_avail",
+        "safe_rows": 0,
+        "uncovered_clauses": [
+          "resource_borrowed(#0)",
+          "resource_borrowed(#1)",
+          "resource_borrowed(#2)",
+          "resource_borrowed(#3)",
+          "resource_premise(rk_plugin_callback_closure)"
+        ]
+      },
+      {
+        "function": "rd_kafka_toppar_new0",
+        "safe_rows": 0,
+        "uncovered_clauses": [
+          "resource_borrowed(#0)",
+          "resource_borrowed(#1)",
+          "resource_borrowed(#2)",
+          "resource_borrowed(#3)",
+          "resource_premise(asserted_allocation)",
+          "resource_premise(rk_plugin_callback_closure)"
+        ]
+      },
+      {
+        "function": "rd_list_init",
+        "safe_rows": 0,
+        "uncovered_clauses": [
+          "resource_borrowed(#0)",
+          "resource_borrowed(#1)",
+          "resource_borrowed(#2)",
+          "resource_return_alias(#0, nonnull)"
+        ]
+      },
+      {
+        "function": "ut_create_mock_queue",
+        "safe_rows": 0,
+        "uncovered_clauses": [
+          "resource_premise(asserted_allocation)"
+        ]
+      },
+      {
+        "function": "ut_create_mock_toppar",
+        "safe_rows": 0,
+        "uncovered_clauses": [
+          "resource_borrowed(#0)",
+          "resource_borrowed(#1)",
+          "resource_borrowed(#2)",
+          "resource_premise(rk_plugin_callback_closure)"
+        ]
+      },
+      {
+        "function": "ut_destroy_mock_queue",
+        "safe_rows": 0,
+        "uncovered_clauses": [
+          "resource_borrowed(#0)",
+          "resource_premise(rk_plugin_callback_closure)",
+          "resource_return_none()"
+        ]
+      }
+    ],
+    "resting_on_a_declared_assumption": 394,
+    "resting_on_a_partly_validated_declaration": 25,
+    "resting_on_no_declaration": 407,
+    "resting_only_on_a_null_premise": 26,
+    "resting_only_on_validated_declarations": 108,
+    "safe_rows": 963,
+    "top_declared_assumptions": [
+      {
+        "function": "memcpy",
+        "mode": "flexible",
+        "premises": [],
+        "safe_rows": 36,
+        "status": "flexible-standing"
+      },
+      {
+        "function": "strcmp",
+        "mode": "flexible",
+        "premises": [],
+        "safe_rows": 36,
+        "status": "flexible-standing"
+      },
+      {
+        "function": "mtx_lock",
+        "mode": "flexible",
+        "premises": [],
+        "safe_rows": 30,
+        "status": "flexible-standing"
+      },
+      {
+        "function": "mtx_unlock",
+        "mode": "flexible",
+        "premises": [],
+        "safe_rows": 30,
+        "status": "flexible-standing"
+      },
+      {
+        "function": "__assert_fail",
+        "mode": "flexible",
+        "premises": [],
+        "safe_rows": 23,
+        "status": "flexible-standing"
+      },
+      {
+        "function": "snprintf",
+        "mode": "flexible",
+        "premises": [],
+        "safe_rows": 19,
+        "status": "flexible-standing"
+      },
+      {
+        "function": "calloc",
+        "mode": "flexible",
+        "premises": [],
+        "safe_rows": 13,
+        "status": "flexible-standing"
+      },
+      {
+        "function": "LZ4_decompress_generic",
+        "mode": "pinned",
+        "premises": [],
+        "safe_rows": 12,
+        "status": "pinned-in-force"
+      },
+      {
+        "function": "clock_gettime",
+        "mode": "flexible",
+        "premises": [],
+        "safe_rows": 10,
+        "status": "flexible-standing"
+      },
+      {
+        "function": "free",
+        "mode": "flexible",
+        "premises": [],
+        "safe_rows": 10,
+        "status": "flexible-standing"
+      },
+      {
+        "function": "memset",
+        "mode": "flexible",
+        "premises": [],
+        "safe_rows": 10,
+        "status": "flexible-standing"
+      },
+      {
+        "function": "rd_atomic32_get",
+        "mode": "pinned",
+        "premises": [],
+        "safe_rows": 10,
+        "status": "pinned-in-force"
+      },
+      {
+        "function": "strlen",
+        "mode": "flexible",
+        "premises": [],
+        "safe_rows": 10,
+        "status": "flexible-standing"
+      },
+      {
+        "function": "rd_atomic64_get",
+        "mode": "pinned",
+        "premises": [],
+        "safe_rows": 9,
+        "status": "pinned-in-force"
+      },
+      {
+        "function": "cfl_sds_destroy",
+        "mode": "pinned",
+        "premises": [],
+        "safe_rows": 8,
+        "status": "pinned-in-force"
+      },
+      {
+        "function": "__errno_location",
+        "mode": "flexible",
+        "premises": [
+          {
+            "name": "nested_call_admission",
+            "origin": "declared",
+            "statement": "a dereference of this call's result is read only where the gateway's nested-call admission holds at the call site (premises N1-N10 of cards O04-TRACE and CONSTRUCTOR-RESIDUALS, checked per site): the call is the statement's only nested call and a whole argument of a contracted call at a declared Borrowed position modulo the dereference wrapper (N4-D), its written arity is this declaration's, and the unit's own declaration of the callee returns exactly one pointer level over a scalar type (N10); under them the argument binds, releases, escapes and addresses nothing the projection tracks"
+          }
+        ],
+        "safe_rows": 7,
+        "status": "flexible-standing"
+      },
+      {
+        "function": "cJSON_New_Item",
+        "mode": "pinned",
+        "premises": [
+          {
+            "name": "cjson_allocator_hooks",
+            "origin": "declared",
+            "statement": "hooks->allocate returns a fresh allocation or NULL, which cJSON_Delete releases through the matching deallocate hook: malloc and free in global_hooks (cJSON.c:178, :186) unless cJSON_InitHooks installed a user pair, a premise of whoever installed it; nothing is stated about the hooks changing between the allocation and its release"
+          }
+        ],
+        "safe_rows": 7,
+        "status": "pinned-in-force"
+      },
+      {
+        "function": "fprintf",
+        "mode": "flexible",
+        "premises": [],
+        "safe_rows": 6,
+        "status": "flexible-standing"
+      },
+      {
+        "function": "mk_print",
+        "mode": "pinned",
+        "premises": [],
+        "safe_rows": 6,
+        "status": "pinned-in-force"
+      },
+      {
+        "function": "printf",
+        "mode": "flexible",
+        "premises": [],
+        "safe_rows": 6,
+        "status": "flexible-standing"
+      }
+    ]
+  },
+  "after_safe_rollup": {
+    "carrying_a_null_premise": 39,
+    "consulting_a_held_or_withdrawn_declaration": 3,
+    "partly_validated_declarations": [
+      {
+        "function": "rd_kafka_admin_result_ret_groups",
+        "safe_rows": 5,
+        "uncovered_clauses": [
+          "resource_borrowed(#0)",
+          "resource_borrowed(#1)"
+        ]
+      },
+      {
+        "function": "sds_cat_safe",
+        "safe_rows": 5,
+        "uncovered_clauses": [
+          "resource_borrowed(#0)",
+          "resource_borrowed(#1)",
+          "resource_return_none()"
+        ]
+      },
+      {
+        "function": "rd_kafka_admin_result_ret_resources",
+        "safe_rows": 4,
+        "uncovered_clauses": [
+          "resource_borrowed(#0)",
+          "resource_borrowed(#1)"
+        ]
+      },
+      {
+        "function": "rd_kafka_admin_result_ret_topics",
+        "safe_rows": 4,
+        "uncovered_clauses": [
+          "resource_borrowed(#0)",
+          "resource_borrowed(#1)"
+        ]
+      },
+      {
+        "function": "rd_kafka_topic_partition_get_private",
+        "safe_rows": 4,
+        "uncovered_clauses": [
+          "resource_borrowed(#0)"
+        ]
+      },
+      {
+        "function": "get_object_item",
+        "safe_rows": 3,
+        "uncovered_clauses": [
+          "resource_borrowed(#0)",
+          "resource_borrowed(#1)",
+          "resource_borrowed(#2)"
+        ]
+      },
+      {
+        "function": "unit_test_telemetry",
+        "safe_rows": 3,
+        "uncovered_clauses": [
+          "resource_borrowed(#0)",
+          "resource_borrowed(#1)",
+          "resource_borrowed(#2)",
+          "resource_borrowed(#3)",
+          "resource_borrowed(#4)",
+          "resource_borrowed(#5)",
+          "resource_borrowed(#6)",
+          "resource_borrowed(#7)",
+          "resource_borrowed(#8)",
+          "resource_borrowed(#9)",
+          "resource_premise(rk_plugin_callback_closure)",
+          "resource_return_none()"
+        ]
+      },
+      {
+        "function": "flb_input_chunk_is_mem_overlimit",
+        "safe_rows": 2,
+        "uncovered_clauses": [
+          "resource_user_neutral()"
+        ]
+      },
+      {
+        "function": "rd_slice_reader0",
+        "safe_rows": 2,
+        "uncovered_clauses": [
+          "resource_borrowed(#0)",
+          "resource_borrowed(#1)",
+          "resource_borrowed(#2)",
+          "resource_return_none()"
+        ]
+      },
+      {
+        "function": "flb_input_chunk_get_name",
+        "safe_rows": 1,
+        "uncovered_clauses": [
+          "resource_premise(untracked_handback)"
+        ]
+      },
+      {
+        "function": "flb_input_chunk_is_storage_overlimit",
+        "safe_rows": 1,
+        "uncovered_clauses": [
+          "resource_user_neutral()"
+        ]
+      },
+      {
+        "function": "flb_input_chunk_is_up",
+        "safe_rows": 1,
+        "uncovered_clauses": [
+          "resource_user_neutral()"
+        ]
+      },
+      {
+        "function": "flb_task_get_route_status",
+        "safe_rows": 1,
+        "uncovered_clauses": [
+          "resource_user_neutral()"
+        ]
+      },
+      {
+        "function": "flb_task_set_route_status",
+        "safe_rows": 1,
+        "uncovered_clauses": [
+          "resource_user_neutral()"
+        ]
+      },
+      {
+        "function": "rd_kafka_oidc_token_metadata_aws_iam_refresh_cb",
+        "safe_rows": 1,
+        "uncovered_clauses": [
+          "resource_premise(rk_plugin_callback_closure)"
+        ]
+      },
+      {
+        "function": "rd_kafka_op_new0",
+        "safe_rows": 1,
+        "uncovered_clauses": [
+          "resource_borrowed(#0)",
+          "resource_borrowed(#1)",
+          "resource_premise(asserted_allocation)",
+          "resource_return_owned(nonnull)"
+        ]
+      },
+      {
+        "function": "rd_kafka_toppar_keep0",
+        "safe_rows": 1,
+        "uncovered_clauses": [
+          "resource_borrowed(#0)",
+          "resource_borrowed(#1)",
+          "resource_borrowed(#2)",
+          "resource_return_alias(#2, nonnull)"
+        ]
+      },
+      {
+        "function": "cmt_mpack_unpack_array",
+        "safe_rows": 0,
+        "uncovered_clauses": [
+          "resource_borrowed(#0)",
+          "resource_borrowed(#1)",
+          "resource_borrowed(#2)",
+          "resource_return_none()"
+        ]
+      },
+      {
+        "function": "ctr_mpack_unpack_array",
+        "safe_rows": 0,
+        "uncovered_clauses": [
+          "resource_borrowed(#0)",
+          "resource_borrowed(#1)",
+          "resource_borrowed(#2)",
+          "resource_return_none()"
+        ]
+      },
+      {
+        "function": "msgpack_packer_init",
+        "safe_rows": 0,
+        "uncovered_clauses": [
+          "resource_borrowed(#0)",
+          "resource_borrowed(#1)",
+          "resource_borrowed(#2)",
+          "resource_retained_by(#1, #0)",
+          "resource_return_none()"
+        ]
+      },
+      {
+        "function": "rd_kafka_DeleteRecords_leaders_queried_cb",
+        "safe_rows": 0,
+        "uncovered_clauses": [
+          "resource_borrowed(#0)",
+          "resource_borrowed(#1)",
+          "resource_borrowed(#2)",
+          "resource_premise(rk_plugin_callback_closure)",
+          "resource_return_none()"
+        ]
+      },
+      {
+        "function": "rd_kafka_ListOffsets_leaders_queried_cb",
+        "safe_rows": 0,
+        "uncovered_clauses": [
+          "resource_borrowed(#0)",
+          "resource_borrowed(#1)",
+          "resource_borrowed(#2)",
+          "resource_premise(rk_plugin_callback_closure)",
+          "resource_return_none()"
+        ]
+      },
+      {
+        "function": "rd_kafka_enq_once_trigger",
+        "safe_rows": 0,
+        "uncovered_clauses": [
+          "resource_borrowed(#0)",
+          "resource_borrowed(#1)",
+          "resource_borrowed(#2)",
+          "resource_premise(rk_plugin_callback_closure)",
+          "resource_return_none()"
+        ]
+      },
+      {
+        "function": "rd_kafka_op_destroy",
+        "safe_rows": 0,
+        "uncovered_clauses": [
+          "resource_callback_member_invoked(#0, rd_kafka_op_s.rko_op_cb, _, _, #0)",
+          "resource_premise(rk_plugin_callback_closure)",
+          "resource_released(#0, nonnull)",
+          "resource_return_none()"
+        ]
+      },
+      {
+        "function": "rd_kafka_q_destroy0",
+        "safe_rows": 0,
+        "uncovered_clauses": [
+          "resource_borrowed(#0)",
+          "resource_borrowed(#1)",
+          "resource_premise(rk_plugin_callback_closure)",
+          "resource_return_none()"
+        ]
+      },
+      {
+        "function": "rd_kafka_q_destroy_owner",
+        "safe_rows": 0,
+        "uncovered_clauses": [
+          "resource_borrowed(#0)",
+          "resource_premise(rk_plugin_callback_closure)",
+          "resource_return_none()"
+        ]
+      },
+      {
+        "function": "rd_kafka_q_keep",
+        "safe_rows": 0,
+        "uncovered_clauses": [
+          "resource_borrowed(#0)",
+          "resource_return_alias(#0, nonnull)"
+        ]
+      },
+      {
+        "function": "rd_kafka_q_keep_nolock",
+        "safe_rows": 0,
+        "uncovered_clauses": [
+          "resource_borrowed(#0)",
+          "resource_return_alias(#0, nonnull)"
+        ]
+      },
+      {
+        "function": "rd_kafka_q_new0",
+        "safe_rows": 0,
+        "uncovered_clauses": [
+          "resource_borrowed(#0)",
+          "resource_borrowed(#1)",
+          "resource_borrowed(#2)",
+          "resource_borrowed(#3)",
+          "resource_premise(asserted_allocation)",
+          "resource_retained_by(#0, result)",
+          "resource_retained_by(#2, result)"
+        ]
+      },
+      {
+        "function": "rd_kafka_share_commit_async_fanout_op",
+        "safe_rows": 0,
+        "uncovered_clauses": [
+          "resource_borrowed(#0)",
+          "resource_borrowed(#1)",
+          "resource_borrowed(#2)",
+          "resource_premise(rk_plugin_callback_closure)",
+          "resource_return_none()"
+        ]
+      },
+      {
+        "function": "rd_kafka_share_commit_sync_fanout_op",
+        "safe_rows": 0,
+        "uncovered_clauses": [
+          "resource_borrowed(#0)",
+          "resource_borrowed(#1)",
+          "resource_borrowed(#2)",
+          "resource_premise(rk_plugin_callback_closure)",
+          "resource_return_none()"
+        ]
+      },
+      {
+        "function": "rd_kafka_share_fetch_fanout_op",
+        "safe_rows": 0,
+        "uncovered_clauses": [
+          "resource_borrowed(#0)",
+          "resource_borrowed(#1)",
+          "resource_borrowed(#2)",
+          "resource_premise(rk_plugin_callback_closure)",
+          "resource_premise(share_ack_batches_nonempty)",
+          "resource_return_none()"
+        ]
+      },
+      {
+        "function": "rd_kafka_topic_destroy0",
+        "safe_rows": 0,
+        "uncovered_clauses": [
+          "resource_borrowed(#0)",
+          "resource_premise(rk_plugin_callback_closure)",
+          "resource_return_none()"
+        ]
+      },
+      {
+        "function": "rd_kafka_topic_keep",
+        "safe_rows": 0,
+        "uncovered_clauses": [
+          "resource_borrowed(#0)",
+          "resource_return_alias(#0, nonnull)"
+        ]
+      },
+      {
+        "function": "rd_kafka_topic_partition_list_query_leaders_async_worker_op_cb",
+        "safe_rows": 0,
+        "uncovered_clauses": [
+          "resource_borrowed(#0)",
+          "resource_borrowed(#1)",
+          "resource_owned(#2, nonnull)",
+          "resource_premise(rk_plugin_callback_closure)",
+          "resource_return_none()"
+        ]
+      },
+      {
+        "function": "rd_kafka_toppar_desired_add",
+        "safe_rows": 0,
+        "uncovered_clauses": [
+          "resource_borrowed(#0)",
+          "resource_borrowed(#1)",
+          "resource_premise(asserted_allocation)",
+          "resource_premise(rk_plugin_callback_closure)"
+        ]
+      },
+      {
+        "function": "rd_kafka_toppar_desired_get",
+        "safe_rows": 0,
+        "uncovered_clauses": [
+          "resource_borrowed(#0)",
+          "resource_borrowed(#1)"
+        ]
+      },
+      {
+        "function": "rd_kafka_toppar_destroy0",
+        "safe_rows": 0,
+        "uncovered_clauses": [
+          "resource_borrowed(#0)",
+          "resource_borrowed(#1)",
+          "resource_borrowed(#2)",
+          "resource_premise(rk_plugin_callback_closure)",
+          "resource_return_none()"
+        ]
+      },
+      {
+        "function": "rd_kafka_toppar_get0",
+        "safe_rows": 0,
+        "uncovered_clauses": [
+          "resource_borrowed(#0)",
+          "resource_borrowed(#1)",
+          "resource_borrowed(#2)",
+          "resource_borrowed(#3)",
+          "resource_borrowed(#4)"
+        ]
+      },
+      {
+        "function": "rd_kafka_toppar_get2",
+        "safe_rows": 0,
+        "uncovered_clauses": [
+          "resource_borrowed(#0)",
+          "resource_borrowed(#1)",
+          "resource_borrowed(#2)",
+          "resource_borrowed(#3)",
+          "resource_borrowed(#4)",
+          "resource_premise(rk_plugin_callback_closure)"
+        ]
+      },
+      {
+        "function": "rd_kafka_toppar_get_avail",
+        "safe_rows": 0,
+        "uncovered_clauses": [
+          "resource_borrowed(#0)",
+          "resource_borrowed(#1)",
+          "resource_borrowed(#2)",
+          "resource_borrowed(#3)",
+          "resource_premise(rk_plugin_callback_closure)"
+        ]
+      },
+      {
+        "function": "rd_kafka_toppar_new0",
+        "safe_rows": 0,
+        "uncovered_clauses": [
+          "resource_borrowed(#0)",
+          "resource_borrowed(#1)",
+          "resource_borrowed(#2)",
+          "resource_borrowed(#3)",
+          "resource_premise(asserted_allocation)",
+          "resource_premise(rk_plugin_callback_closure)"
+        ]
+      },
+      {
+        "function": "rd_list_init",
+        "safe_rows": 0,
+        "uncovered_clauses": [
+          "resource_borrowed(#0)",
+          "resource_borrowed(#1)",
+          "resource_borrowed(#2)",
+          "resource_return_alias(#0, nonnull)"
+        ]
+      },
+      {
+        "function": "ut_create_mock_queue",
+        "safe_rows": 0,
+        "uncovered_clauses": [
+          "resource_premise(asserted_allocation)"
+        ]
+      },
+      {
+        "function": "ut_create_mock_toppar",
+        "safe_rows": 0,
+        "uncovered_clauses": [
+          "resource_borrowed(#0)",
+          "resource_borrowed(#1)",
+          "resource_borrowed(#2)",
+          "resource_premise(rk_plugin_callback_closure)"
+        ]
+      },
+      {
+        "function": "ut_destroy_mock_queue",
+        "safe_rows": 0,
+        "uncovered_clauses": [
+          "resource_borrowed(#0)",
+          "resource_premise(rk_plugin_callback_closure)",
+          "resource_return_none()"
+        ]
+      }
+    ],
+    "resting_on_a_declared_assumption": 398,
+    "resting_on_a_partly_validated_declaration": 25,
+    "resting_on_no_declaration": 407,
+    "resting_only_on_a_null_premise": 26,
+    "resting_only_on_validated_declarations": 108,
+    "safe_rows": 967,
+    "top_declared_assumptions": [
+      {
+        "function": "memcpy",
+        "mode": "flexible",
+        "premises": [],
+        "safe_rows": 36,
+        "status": "flexible-standing"
+      },
+      {
+        "function": "strcmp",
+        "mode": "flexible",
+        "premises": [],
+        "safe_rows": 36,
+        "status": "flexible-standing"
+      },
+      {
+        "function": "mtx_lock",
+        "mode": "flexible",
+        "premises": [],
+        "safe_rows": 30,
+        "status": "flexible-standing"
+      },
+      {
+        "function": "mtx_unlock",
+        "mode": "flexible",
+        "premises": [],
+        "safe_rows": 30,
+        "status": "flexible-standing"
+      },
+      {
+        "function": "__assert_fail",
+        "mode": "flexible",
+        "premises": [],
+        "safe_rows": 23,
+        "status": "flexible-standing"
+      },
+      {
+        "function": "snprintf",
+        "mode": "flexible",
+        "premises": [],
+        "safe_rows": 19,
+        "status": "flexible-standing"
+      },
+      {
+        "function": "calloc",
+        "mode": "flexible",
+        "premises": [],
+        "safe_rows": 13,
+        "status": "flexible-standing"
+      },
+      {
+        "function": "LZ4_decompress_generic",
+        "mode": "pinned",
+        "premises": [],
+        "safe_rows": 12,
+        "status": "pinned-in-force"
+      },
+      {
+        "function": "__errno_location",
+        "mode": "flexible",
+        "premises": [
+          {
+            "name": "nested_call_admission",
+            "origin": "declared",
+            "statement": "a dereference of this call's result is read only under the checked reading rules: either the nested-call admission of O04-TRACE and CONSTRUCTOR-RESIDUALS (N1-N10, including a whole Borrowed or data-tail actual modulo the dereference wrapper and exact written arity), or W48-BOTTOM-UP-BATCH3 scalar condition admission (an external zero-argument call with this no-custody result, no container effect, exactly one dereference compared by equality or inequality with a decimal literal, the ordinary call checks retained and both outcomes explored); both require this unit's unambiguous declaration to return exactly one pointer level over a scalar type and bind, release, escape and address nothing the projection tracks"
+          }
+        ],
+        "safe_rows": 11,
+        "status": "flexible-standing"
+      },
+      {
+        "function": "clock_gettime",
+        "mode": "flexible",
+        "premises": [],
+        "safe_rows": 10,
+        "status": "flexible-standing"
+      },
+      {
+        "function": "free",
+        "mode": "flexible",
+        "premises": [],
+        "safe_rows": 10,
+        "status": "flexible-standing"
+      },
+      {
+        "function": "memset",
+        "mode": "flexible",
+        "premises": [],
+        "safe_rows": 10,
+        "status": "flexible-standing"
+      },
+      {
+        "function": "rd_atomic32_get",
+        "mode": "pinned",
+        "premises": [],
+        "safe_rows": 10,
+        "status": "pinned-in-force"
+      },
+      {
+        "function": "strlen",
+        "mode": "flexible",
+        "premises": [],
+        "safe_rows": 10,
+        "status": "flexible-standing"
+      },
+      {
+        "function": "rd_atomic64_get",
+        "mode": "pinned",
+        "premises": [],
+        "safe_rows": 9,
+        "status": "pinned-in-force"
+      },
+      {
+        "function": "cfl_sds_destroy",
+        "mode": "pinned",
+        "premises": [],
+        "safe_rows": 8,
+        "status": "pinned-in-force"
+      },
+      {
+        "function": "fprintf",
+        "mode": "flexible",
+        "premises": [],
+        "safe_rows": 8,
+        "status": "flexible-standing"
+      },
+      {
+        "function": "cJSON_New_Item",
+        "mode": "pinned",
+        "premises": [
+          {
+            "name": "cjson_allocator_hooks",
+            "origin": "declared",
+            "statement": "hooks->allocate returns a fresh allocation or NULL, which cJSON_Delete releases through the matching deallocate hook: malloc and free in global_hooks (cJSON.c:178, :186) unless cJSON_InitHooks installed a user pair, a premise of whoever installed it; nothing is stated about the hooks changing between the allocation and its release"
+          }
+        ],
+        "safe_rows": 7,
+        "status": "pinned-in-force"
+      },
+      {
+        "function": "write",
+        "mode": "flexible",
+        "premises": [],
+        "safe_rows": 7,
+        "status": "flexible-standing"
+      },
+      {
+        "function": "mk_print",
+        "mode": "pinned",
+        "premises": [],
+        "safe_rows": 6,
+        "status": "pinned-in-force"
+      }
+    ]
+  }
+}

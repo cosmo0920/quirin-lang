@@ -107,6 +107,12 @@ def main():
         "--archived", str(out / "before"), "--measured", str(after.parent),
         "--output", str(out / "artifact-diff.json"),
     ], check=True)
+    diff = out / "artifact-diff.json"
+    payload = diff.read_bytes()
+    packed = gzip.compress(payload, mtime=0)
+    assert gzip.decompress(packed) == payload
+    (out / "artifact-diff.json.gz").write_bytes(packed)
+    diff.unlink()
     print(json.dumps({"route": route, "archive": str(out), "comparators_exit": 0}))
 
 

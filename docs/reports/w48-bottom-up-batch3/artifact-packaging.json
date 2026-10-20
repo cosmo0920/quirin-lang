@@ -1,0 +1,23 @@
+[
+  {
+    "route": "corpus",
+    "uncompressed_sha256": "91b7fa24c6ac139fcabd942026f92afa532f61dbd940524d134c3302d609dd74",
+    "uncompressed_bytes": 6579740,
+    "archive": "docs/reports/w48-bottom-up-batch3/artifacts/corpus/artifact-diff.json.gz",
+    "round_trip_equal": true
+  },
+  {
+    "route": "system",
+    "uncompressed_sha256": "44a6f7cc866c5b898ae87222a78ab000ba9fa4292e956aeccb1cf501b0b380f1",
+    "uncompressed_bytes": 2240022,
+    "archive": "docs/reports/w48-bottom-up-batch3/artifacts/system/artifact-diff.json.gz",
+    "round_trip_equal": true
+  },
+  {
+    "route": "slice",
+    "uncompressed_sha256": "3db4a3274bf14b26062b99601d6d35426325aaa5b5f76c50ddfc412d576d6cac",
+    "uncompressed_bytes": 3240799,
+    "archive": "docs/reports/w48-bottom-up-batch3/artifacts/slice/artifact-diff.json.gz",
+    "round_trip_equal": true
+  }
+]

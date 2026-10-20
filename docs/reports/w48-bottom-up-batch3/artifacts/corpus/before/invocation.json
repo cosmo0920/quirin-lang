@@ -1,0 +1,37 @@
+{
+  "head": "1601ba4383253adab7e58b0c469c82dd8c94f4d2",
+  "analyzer_source": "198f6fc4349d3a47591a2378835ae9286859d918",
+  "inputs_snapshot": "/home/cosmo/.codex/worktrees/47fe/qcore-c/private/w48-bottom-up-batch3/inputs-base",
+  "runner_sha256": "7bfb5768fd2e2a466763a051a216a242e2f10355e9544f3dc1fdd09e73781e5f",
+  "profile_sha256": "37309028f4fa1d50682829be2cbca880931a1a65d57b47d1fccb78a9b74965f3",
+  "binary": "/home/cosmo/.codex/worktrees/47fe/qcore-c/private/w48-bottom-up-batch3/inputs-base/target/release/quirin-audit",
+  "binary_sha256": "12ea5ce5eaac602f519a8fb4a47b265498b91db0668a062bca372a4b586dc96b",
+  "command": [
+    "/usr/bin/python3",
+    "/home/cosmo/.codex/worktrees/47fe/qcore-c/private/w48-bottom-up-batch3/inputs-base/scripts/run_pinned_audit.py",
+    "/home/cosmo/.codex/worktrees/47fe/qcore-c/private/w48-bottom-up-batch3/measure-final/before/corpus/corpus",
+    "66910c10",
+    "--inputs-root",
+    "/home/cosmo/Documents/GitHub/qcore-c/build/cycle19",
+    "--jobs",
+    "2"
+  ],
+  "jobs": 2,
+  "source_head": "66910c10a4d7eafa810b84229cf2dcf7b0f26f97",
+  "link_map": "/home/cosmo/.codex/worktrees/47fe/qcore-c/docs/reports/w48-bottom-up-batch2/link-map.corpus.json",
+  "link_map_sha256": "3a0424cf3f447211ce8bf78679c396428ffed62ade14a75b99526ac9ddd1156d",
+  "environment": {
+    "QCORE_PROFILES": "/home/cosmo/.codex/worktrees/47fe/qcore-c/private/w48-bottom-up-batch3/inputs-base/contract/profiles",
+    "QCORE_CLANG": "/usr/lib/llvm-21/bin/clang",
+    "QCORE_CROSS_UNIT_LINK_MAP": "/home/cosmo/.codex/worktrees/47fe/qcore-c/docs/reports/w48-bottom-up-batch2/link-map.corpus.json",
+    "QCORE_NULL_PROPERTY": "/home/cosmo/.codex/worktrees/47fe/qcore-c/private/w48-bottom-up-batch3/measure-final/before/corpus/corpus-null.jsonl",
+    "QCORE_OUTER_PROJECTION": "/home/cosmo/.codex/worktrees/47fe/qcore-c/private/w48-bottom-up-batch3/measure-final/before/corpus/corpus-outer.json",
+    "QCORE_SOURCE_CONTRACTS": "unset",
+    "QCORE_RETURN_CENSUS": "unset"
+  },
+  "started": "2026-10-19T22:21:10.258256+00:00",
+  "exit": 0,
+  "ended": "2026-10-20T00:29:02.729322+00:00",
+  "binary_sha256_after": "12ea5ce5eaac602f519a8fb4a47b265498b91db0668a062bca372a4b586dc96b",
+  "head_after": "1601ba4383253adab7e58b0c469c82dd8c94f4d2"
+}

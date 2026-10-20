@@ -1,0 +1,226 @@
+{
+  "route": "system",
+  "meaning": "Finite context substitutions and separately retained declaration usage counts. Semantic diagnostic changes are reported, never classified as identity.",
+  "diagnostics_units": [
+    {
+      "index": 0,
+      "library": "fluent-bit-system",
+      "file": "plugins/in_storage_backlog/sb.c",
+      "exact_mapping": {
+        "af8b6eda68da0e3481047fc20fb7ebb5ae41b6dd3fa2338f83079f6d68f5d463": "0f374a4c697027b8cad3e8af1c2bb16a959e807bec4d61109a2a57d0ac081c22",
+        "00e0de328c8cb2058b0c2b6c8cb06a996ec28aaae9816d0039cf5d1767ec6bc3": "ebe2c87f505a29484d2af4947deb1220bca10619a2aa79ed99386e13c7d5921a"
+      },
+      "compile_configuration_complete_equal": true,
+      "complete_unit_payload_equal_after_mapping": true
+    },
+    {
+      "index": 1,
+      "library": "fluent-bit-system",
+      "file": "src/flb_input_chunk.c",
+      "exact_mapping": {
+        "af8b6eda68da0e3481047fc20fb7ebb5ae41b6dd3fa2338f83079f6d68f5d463": "0f374a4c697027b8cad3e8af1c2bb16a959e807bec4d61109a2a57d0ac081c22",
+        "6ebf6dd265bb70d2b9c888d9d664c4617d05fc49ae234bd5abf7c05361ef07a8": "555687b9468efc1d7ba51d3c375e9905a5f2d9098dc631e2ae1f752b2f8f8c23"
+      },
+      "compile_configuration_complete_equal": true,
+      "complete_unit_payload_equal_after_mapping": true
+    },
+    {
+      "index": 2,
+      "library": "fluent-bit-system",
+      "file": "src/flb_input_chunk.c",
+      "exact_mapping": {
+        "af8b6eda68da0e3481047fc20fb7ebb5ae41b6dd3fa2338f83079f6d68f5d463": "0f374a4c697027b8cad3e8af1c2bb16a959e807bec4d61109a2a57d0ac081c22",
+        "4d9ab585b298b50efda4e6be488583033b99b431d57c0233294d19a20201bd04": "90a966d99eba767097317b75d59f13ebdf02b833f7a50f3fa6143e2a3bde930a"
+      },
+      "compile_configuration_complete_equal": true,
+      "complete_unit_payload_equal_after_mapping": true
+    },
+    {
+      "index": 3,
+      "library": "fluent-bit-system",
+      "file": "src/flb_storage.c",
+      "exact_mapping": {
+        "af8b6eda68da0e3481047fc20fb7ebb5ae41b6dd3fa2338f83079f6d68f5d463": "0f374a4c697027b8cad3e8af1c2bb16a959e807bec4d61109a2a57d0ac081c22",
+        "c0600aa04410495d40f46f2bc99d2c9b873394cb7a12269465cb5b6e1de4d6e4": "a7224c1be379e109282ca9c20eaa0a24b6442f3048f2efe508538bda05cae5ed"
+      },
+      "compile_configuration_complete_equal": true,
+      "complete_unit_payload_equal_after_mapping": true
+    },
+    {
+      "index": 4,
+      "library": "fluent-bit-system",
+      "file": "src/flb_storage.c",
+      "exact_mapping": {
+        "af8b6eda68da0e3481047fc20fb7ebb5ae41b6dd3fa2338f83079f6d68f5d463": "0f374a4c697027b8cad3e8af1c2bb16a959e807bec4d61109a2a57d0ac081c22",
+        "b6e023a202b96df4e180c9153b5c2a36530dc352c48d3dd39ca4b73aee3fb506": "b808d69d23b7c66ca776b5421ffc5e1cdcb9c8511c2e795fd137e4f276e7d58a"
+      },
+      "compile_configuration_complete_equal": true,
+      "complete_unit_payload_equal_after_mapping": true
+    },
+    {
+      "index": 5,
+      "library": "fluent-bit-system",
+      "file": "src/flb_task.c",
+      "exact_mapping": {
+        "af8b6eda68da0e3481047fc20fb7ebb5ae41b6dd3fa2338f83079f6d68f5d463": "0f374a4c697027b8cad3e8af1c2bb16a959e807bec4d61109a2a57d0ac081c22",
+        "ea6ff0a4d627ff9d9a56cf0b81d5c8445a1d64584cf16e516d083d7c1af389a2": "0af7a80e7615d889087a8d6c12171c5f6f7cf8ce4aac3684019eae80f6a3b676"
+      },
+      "compile_configuration_complete_equal": true,
+      "complete_unit_payload_equal_after_mapping": true
+    },
+    {
+      "index": 6,
+      "library": "fluent-bit-system",
+      "file": "src/flb_task.c",
+      "exact_mapping": {
+        "af8b6eda68da0e3481047fc20fb7ebb5ae41b6dd3fa2338f83079f6d68f5d463": "0f374a4c697027b8cad3e8af1c2bb16a959e807bec4d61109a2a57d0ac081c22",
+        "8e3ea79c00b13d9f850781b453837c2b2f1f667e9662a0dc608cdac9a27a53b1": "70f759bf1f89da213e3c2cb42a0cf3d2757bb2aedb0dc311798299b9384c4c83"
+      },
+      "compile_configuration_complete_equal": true,
+      "complete_unit_payload_equal_after_mapping": true
+    },
+    {
+      "index": 7,
+      "library": "fluent-bit-system",
+      "file": "src/flb_engine.c",
+      "exact_mapping": {
+        "af8b6eda68da0e3481047fc20fb7ebb5ae41b6dd3fa2338f83079f6d68f5d463": "0f374a4c697027b8cad3e8af1c2bb16a959e807bec4d61109a2a57d0ac081c22",
+        "bbd06c815ccb6e987a848bf54fd8243801577e1fcc06822553635d05af0011e1": "13c4013e3f04f383c983a6acfae3af96aa071081ce89ef6ca68b27b564fef6a8"
+      },
+      "compile_configuration_complete_equal": true,
+      "complete_unit_payload_equal_after_mapping": true
+    },
+    {
+      "index": 8,
+      "library": "fluent-bit-system",
+      "file": "src/flb_engine.c",
+      "exact_mapping": {
+        "af8b6eda68da0e3481047fc20fb7ebb5ae41b6dd3fa2338f83079f6d68f5d463": "0f374a4c697027b8cad3e8af1c2bb16a959e807bec4d61109a2a57d0ac081c22",
+        "85647f38fd46ce405b2cb8c4657f8f72df2b64fce4f506e148ab104b526f71ff": "cd11deec617d7b17407c6fc377060e1bcf6259727c9974f5e541f51d44c6d877"
+      },
+      "compile_configuration_complete_equal": true,
+      "complete_unit_payload_equal_after_mapping": true
+    },
+    {
+      "index": 9,
+      "library": "fluent-bit-system",
+      "file": "src/flb_engine_dispatch.c",
+      "exact_mapping": {
+        "af8b6eda68da0e3481047fc20fb7ebb5ae41b6dd3fa2338f83079f6d68f5d463": "0f374a4c697027b8cad3e8af1c2bb16a959e807bec4d61109a2a57d0ac081c22",
+        "548511e72e2099e3b9acd052b17560630bda700ec2253299e7960b5d813f6118": "6d68359c32956bcc2d1e9686da81eb9f278ee229e16243bce91cf24f3cf556dc"
+      },
+      "compile_configuration_complete_equal": true,
+      "complete_unit_payload_equal_after_mapping": true
+    },
+    {
+      "index": 10,
+      "library": "fluent-bit-system",
+      "file": "src/flb_engine_dispatch.c",
+      "exact_mapping": {
+        "af8b6eda68da0e3481047fc20fb7ebb5ae41b6dd3fa2338f83079f6d68f5d463": "0f374a4c697027b8cad3e8af1c2bb16a959e807bec4d61109a2a57d0ac081c22",
+        "e6c79cdca2f56c6d2fc5e35f684d274ef7216f4f84c943d6200df425caab7c27": "0e10127fb44df65bb032ef098451a83d526c8a770f3961cec34c6ceda940ad5a"
+      },
+      "compile_configuration_complete_equal": true,
+      "complete_unit_payload_equal_after_mapping": true
+    },
+    {
+      "index": 11,
+      "library": "fluent-bit-system",
+      "file": "src/flb_scheduler.c",
+      "exact_mapping": {
+        "af8b6eda68da0e3481047fc20fb7ebb5ae41b6dd3fa2338f83079f6d68f5d463": "0f374a4c697027b8cad3e8af1c2bb16a959e807bec4d61109a2a57d0ac081c22",
+        "030a5b17f8e0058652185b1e6362a2931b0cdb27c858ea171ae5305616c6deae": "7a9a8981aca8311a559ec3ecb4d647db0dc3276226e8b1721909edf4bb92947c"
+      },
+      "compile_configuration_complete_equal": true,
+      "complete_unit_payload_equal_after_mapping": true
+    },
+    {
+      "index": 12,
+      "library": "fluent-bit-system",
+      "file": "src/flb_scheduler.c",
+      "exact_mapping": {
+        "af8b6eda68da0e3481047fc20fb7ebb5ae41b6dd3fa2338f83079f6d68f5d463": "0f374a4c697027b8cad3e8af1c2bb16a959e807bec4d61109a2a57d0ac081c22",
+        "26ecaa4f747096721ecc41578c297859e2662fc09ef8b020911c86b008066cee": "e0c8f95f14c608440b30e15be23c4ea7d724b663ce73cf41e22e83205e6da720"
+      },
+      "compile_configuration_complete_equal": true,
+      "complete_unit_payload_equal_after_mapping": true
+    },
+    {
+      "index": 13,
+      "library": "fluent-bit-system",
+      "file": "src/flb_output.c",
+      "exact_mapping": {
+        "af8b6eda68da0e3481047fc20fb7ebb5ae41b6dd3fa2338f83079f6d68f5d463": "0f374a4c697027b8cad3e8af1c2bb16a959e807bec4d61109a2a57d0ac081c22",
+        "31f0852dd1c4d0498bd74d08cdfd38882cf80576cd5a2a0b5ba919cd2fbe9391": "f3c049b4721f69c97f149d915d21e684c20a3b3863b9f597c5ec780f5183a586"
+      },
+      "compile_configuration_complete_equal": true,
+      "complete_unit_payload_equal_after_mapping": true
+    },
+    {
+      "index": 14,
+      "library": "fluent-bit-system",
+      "file": "src/flb_output.c",
+      "exact_mapping": {
+        "af8b6eda68da0e3481047fc20fb7ebb5ae41b6dd3fa2338f83079f6d68f5d463": "0f374a4c697027b8cad3e8af1c2bb16a959e807bec4d61109a2a57d0ac081c22",
+        "91fc6964fd30ffae64623d5d98b756c228a979e8a779fcb746052fda8ade9663": "e567741eb7f65c36f391a755058f3be8611cf402ee5a60428dbb5f9eeb902b25"
+      },
+      "compile_configuration_complete_equal": true,
+      "complete_unit_payload_equal_after_mapping": true
+    }
+  ],
+  "diagnostics_complete_payload_equal_after_mapping": true,
+  "non_identity_unit_indices": [],
+  "non_identity_evidence": [
+    "row-comparison.json",
+    "full-row-differences.json.gz",
+    "precise-field-differences.json.gz"
+  ],
+  "contracts_exact_mapping": {
+    "d956f076f4c50c66a40cd75f0ed9a408668c3c05e41c4a001c5dded9a6ce9c9e": "3f02b89663ffceff1a89c4f28cee5446ae36ebd6dbc57270d0878ad71106985b",
+    "a dereference of this call's result is read only where the gateway's nested-call admission holds at the call site (premises N1-N10 of cards O04-TRACE and CONSTRUCTOR-RESIDUALS, checked per site): the call is the statement's only nested call and a whole argument of a contracted call at a declared Borrowed position modulo the dereference wrapper (N4-D), its written arity is this declaration's, and the unit's own declaration of the callee returns exactly one pointer level over a scalar type (N10); under them the argument binds, releases, escapes and addresses nothing the projection tracks": "a dereference of this call's result is read only under the checked reading rules: either the nested-call admission of O04-TRACE and CONSTRUCTOR-RESIDUALS (N1-N10, including a whole Borrowed or data-tail actual modulo the dereference wrapper and exact written arity), or W48-BOTTOM-UP-BATCH3 scalar condition admission (an external zero-argument call with this no-custody result, no container effect, exactly one dereference compared by equality or inequality with a decimal literal, the ordinary call checks retained and both outcomes explored); both require this unit's unambiguous declaration to return exactly one pointer level over a scalar type and bind, release, escape and address nothing the projection tracks",
+    "module contract;\n\n// Card W45-CONTRACT-REVISION-MODE: every contract in this module is\n// `revision flexible` (contract spec C06.2): it binds by name and declared\n// signature at any revision of the audited project, and reports list the libc\n// contracts as one standing assumption, the libc/C-standard ABI premise. The\n// C library's version stays in the build's provenance.\n\n// The C library's `errno` accessor \u2014 resource-projection vocabulary version 1.\n//\n// Card CONSTRUCTOR-RESIDUALS. This module declares a TRUSTED ASSUMPTION about\n// one C library function. It verifies nothing: no C body is analyzed by this\n// loader, and a declaration is a premise.\n//\n// ## What the call sites actually reach \u2014 measured, not assumed\n//\n// `errno` is not an object in any translation unit of the pinned corpus. C11\n// 7.5p2 permits it to be \"a modifiable lvalue ... that expands to a modifiable\n// lvalue\", and glibc defines it as a macro over a function call\n// (`/usr/include/errno.h:37-38` on the audited host):\n//\n//     extern int *__errno_location (void) __THROW __attribute_const__;\n//     # define errno (*__errno_location ())\n//\n// So every `errno` a preprocessed unit of this corpus contains is the token\n// sequence `( * __errno_location ( ) )`, and the callee the resource\n// projection sees is `__errno_location`.\n//\n// ## `__errno_location`, read from its declaration\n//\n//   int *__errno_location (void)\n//\n//   * It takes NO parameters, so no argument of any caller can reach it and no\n//     caller's custody obligation can be affected through one.\n//   * It returns a pointer to the calling thread's `errno` object. That object\n//     has static storage duration and thread-local lifetime (C11 7.5p2): it is\n//     not allocated by this call, it is not the caller's to free, and no\n//     library function in this corpus frees it. The caller therefore acquires\n//     NO obligation, which is exactly `resource_return_none()`.\n//   * `__THROW` and `__attribute_const__` carry no type and no effect this\n//     projection models.\n//\n// The result type is spelled `ptr<mut, u8>` because that is this vocabulary's\n// projection of every single-`*` non-`const` pointer (`POINTER_ABI_TYPES`); the\n// declared *pointee* is deliberately not spelled here, and the gateway reads it\n// from the unit's own declarations instead \u2014 see below.\n//\n// ## What this declaration does NOT admit on its own\n//\n// Declaring `__errno_location` does not make `errno` readable anywhere. The\n// gateway's dereference-of-a-call-result rule (card CONSTRUCTOR-RESIDUALS,\n// premises N1-N10) independently requires, PER CALL SITE, that the call is the\n// statement's only nested call, that it occupies a whole argument at a declared\n// `Borrowed` position modulo the dereference wrapper, that its written arity\n// equals this declaration's, and \u2014 premise N10 \u2014 that THIS TRANSLATION UNIT's\n// own declaration of the callee returns exactly one `*` over a scalar type.\n// A unit that declares `__errno_location` differently, or does not declare it\n// at all, refuses every such site under this declaration exactly as without it.\n//\n// Card VERDICT-CONTRACT-PREMISE-ANNOTATIONS: stated on `__errno_location` as\n// `requires resource_premise(nested_call_admission, \"...\")` (contract spec\n// C04.18), so every verdict that rests on the declaration names it.\n//\n// ## What no declaration here says\n//\n// Nothing about the value of `errno`, nothing about which library functions set\n// it, nothing about the ordering of a set against a read, and nothing about\n// thread-local storage lifetime beyond the caller acquiring no obligation.\n// This is a per-call custody statement about the CALLER's obligations, and\n// nothing more.\n//\n// ## Portability, recorded rather than assumed\n//\n// `__errno_location` is the glibc spelling. musl declares the same name; macOS\n// spells it `__error()` and Windows `_errno()`. On a host whose headers use a\n// different spelling this declaration names a function no analysed unit\n// contains, so it is inert text there \u2014 the same measured-inert situation card\n// PROD-CONTRACTS recorded for `flb_trace`, and harmless for the same reason.\n\nextern fn __errno_location() -> ptr<mut, u8>\ncontract {\n    requires resource_contract_v1;\n    requires resource_revision(flexible);\n    requires resource_premise(nested_call_admission, \"a dereference of this call's result is read only where the gateway's nested-call admission holds at the call site (premises N1-N10 of cards O04-TRACE and CONSTRUCTOR-RESIDUALS, checked per site): the call is the statement's only nested call and a whole argument of a contracted call at a declared Borrowed position modulo the dereference wrapper (N4-D), its written arity is this declaration's, and the unit's own declaration of the callee returns exactly one pointer level over a scalar type (N10); under them the argument binds, releases, escapes and addresses nothing the projection tracks\");\n    ensures normal resource_return_none();\n};\n\n// ## `strerror` (card W44-LIBC-RESIDUALS, `LIBC-PRINTF-NESTED-TAIL-CALLEES`)\n//\n// TRUSTED ASSUMPTION (trust boundary 28). Declared in `<string.h>`, and placed\n// beside the `errno` accessor it serves rather than in `libc/string.qcore`,\n// which is a PUBLISHED module whose SHA-256 every inheriting contract's\n// identity carries (`providers/contract-load-path.json`): appending there would\n// move that identity for a declaration no inheriting contract uses. Read from\n// the prototype the analysed units declare (`/usr/include/string.h`):\n//\n//   extern char *strerror (int __errnum) __THROW;\n//\n//   * `__errnum` is an `int` by value: `resource_borrowed`.\n//   * The result points to a message the caller must NOT free: glibc returns a\n//     string in static read-only storage, or one in a thread-local buffer the\n//     next `strerror` call on that thread may overwrite. Nothing is allocated\n//     for the caller and the result points into no argument, so the caller\n//     acquires no obligation: `resource_return_none()`, the precedent\n//     `gai_strerror` (`libc/socket.qcore`), `dlerror` (`libc/dlfcn.qcore`) and\n//     `__errno_location` above set for a pointer result with no custody.\n//\n// Measured use: two printf-family tails pass `strerror(r)` whole, where the\n// nested-call admission (card O04-TRACE's premises N3, N6 and N7) needs exactly\n// this declaration. The census agrees in all 181 units that declare it.\n// Nothing about the message's lifetime past the next call, its text, locale or\n// `errno` is stated.\n//\n// Card VERDICT-CONTRACT-PREMISE-ANNOTATIONS: stated on `strerror` as `requires\n// resource_premise(nested_call_admission, \"...\")` (contract spec C04.18), so\n// every verdict that rests on the declaration names it.\n\nextern fn strerror(errnum: i32) -> ptr<mut, u8>\ncontract {\n    requires resource_contract_v1;\n    requires resource_revision(flexible);\n    requires resource_premise(nested_call_admission, \"a call of this function nested whole in another call's argument is read only where card O04-TRACE's nested-call admission holds at the call site; this declaration meets its premises N3 (a contract in force), N6 (result mode None) and N7 (every parameter Borrowed), and the admission checks the rest per site\");\n    ensures normal resource_borrowed(errnum);\n    ensures normal resource_return_none();\n};\n": "module contract;\n\n// Card W45-CONTRACT-REVISION-MODE: every contract in this module is\n// `revision flexible` (contract spec C06.2): it binds by name and declared\n// signature at any revision of the audited project, and reports list the libc\n// contracts as one standing assumption, the libc/C-standard ABI premise. The\n// C library's version stays in the build's provenance.\n\n// The C library's `errno` accessor \u2014 resource-projection vocabulary version 1.\n//\n// Card CONSTRUCTOR-RESIDUALS. This module declares a TRUSTED ASSUMPTION about\n// one C library function. It verifies nothing: no C body is analyzed by this\n// loader, and a declaration is a premise.\n//\n// ## What the call sites actually reach \u2014 measured, not assumed\n//\n// `errno` is not an object in any translation unit of the pinned corpus. C11\n// 7.5p2 permits it to be \"a modifiable lvalue ... that expands to a modifiable\n// lvalue\", and glibc defines it as a macro over a function call\n// (`/usr/include/errno.h:37-38` on the audited host):\n//\n//     extern int *__errno_location (void) __THROW __attribute_const__;\n//     # define errno (*__errno_location ())\n//\n// So every `errno` a preprocessed unit of this corpus contains is the token\n// sequence `( * __errno_location ( ) )`, and the callee the resource\n// projection sees is `__errno_location`.\n//\n// ## `__errno_location`, read from its declaration\n//\n//   int *__errno_location (void)\n//\n//   * It takes NO parameters, so no argument of any caller can reach it and no\n//     caller's custody obligation can be affected through one.\n//   * It returns a pointer to the calling thread's `errno` object. That object\n//     has static storage duration and thread-local lifetime (C11 7.5p2): it is\n//     not allocated by this call, it is not the caller's to free, and no\n//     library function in this corpus frees it. The caller therefore acquires\n//     NO obligation, which is exactly `resource_return_none()`.\n//   * `__THROW` and `__attribute_const__` carry no type and no effect this\n//     projection models.\n//\n// The result type is spelled `ptr<mut, u8>` because that is this vocabulary's\n// projection of every single-`*` non-`const` pointer (`POINTER_ABI_TYPES`); the\n// declared *pointee* is deliberately not spelled here, and the gateway reads it\n// from the unit's own declarations instead \u2014 see below.\n//\n// ## What this declaration does NOT admit on its own\n//\n// Declaring `__errno_location` does not make `errno` readable anywhere. The\n// gateway checks each reading position. The nested-argument rule (card\n// CONSTRUCTOR-RESIDUALS, premises N1-N10) requires a whole Borrowed or data-tail\n// argument modulo the dereference wrapper and exact written arity. The scalar\n// condition rule below has its own narrower zero-argument comparison shape.\n// Both independently require THIS TRANSLATION UNIT's own unambiguous\n// declaration to return exactly one `*` over a scalar type. A missing or\n// disagreeing declaration refuses the reading rather than assuming its type.\n//\n// Card VERDICT-CONTRACT-PREMISE-ANNOTATIONS: stated on `__errno_location` as\n// `requires resource_premise(nested_call_admission, \"...\")` (contract spec\n// C04.18), so every verdict that rests on the declaration names it.\n//\n// W48-BOTTOM-UP-BATCH3 deliberately adds one reading position, under the\n// same declared custody result: an external zero-argument call's scalar\n// dereference compared with a decimal literal in a condition. The gateway\n// retains the ordinary call and explores both comparison outcomes. No scalar\n// value, non-nullness, memory validity or function-body purity is inferred.\n// The named reading premise below states both positions explicitly.\n//\n// ## What no declaration here says\n//\n// Nothing about the value of `errno`, nothing about which library functions set\n// it, nothing about the ordering of a set against a read, and nothing about\n// thread-local storage lifetime beyond the caller acquiring no obligation.\n// This is a per-call custody statement about the CALLER's obligations, and\n// nothing more.\n//\n// ## Portability, recorded rather than assumed\n//\n// `__errno_location` is the glibc spelling. musl declares the same name; macOS\n// spells it `__error()` and Windows `_errno()`. On a host whose headers use a\n// different spelling this declaration names a function no analysed unit\n// contains, so it is inert text there \u2014 the same measured-inert situation card\n// PROD-CONTRACTS recorded for `flb_trace`, and harmless for the same reason.\n\nextern fn __errno_location() -> ptr<mut, u8>\ncontract {\n    requires resource_contract_v1;\n    requires resource_revision(flexible);\n    requires resource_premise(nested_call_admission, \"a dereference of this call's result is read only under the checked reading rules: either the nested-call admission of O04-TRACE and CONSTRUCTOR-RESIDUALS (N1-N10, including a whole Borrowed or data-tail actual modulo the dereference wrapper and exact written arity), or W48-BOTTOM-UP-BATCH3 scalar condition admission (an external zero-argument call with this no-custody result, no container effect, exactly one dereference compared by equality or inequality with a decimal literal, the ordinary call checks retained and both outcomes explored); both require this unit's unambiguous declaration to return exactly one pointer level over a scalar type and bind, release, escape and address nothing the projection tracks\");\n    ensures normal resource_return_none();\n};\n\n// ## `strerror` (card W44-LIBC-RESIDUALS, `LIBC-PRINTF-NESTED-TAIL-CALLEES`)\n//\n// TRUSTED ASSUMPTION (trust boundary 28). Declared in `<string.h>`, and placed\n// beside the `errno` accessor it serves rather than in `libc/string.qcore`,\n// which is a PUBLISHED module whose SHA-256 every inheriting contract's\n// identity carries (`providers/contract-load-path.json`): appending there would\n// move that identity for a declaration no inheriting contract uses. Read from\n// the prototype the analysed units declare (`/usr/include/string.h`):\n//\n//   extern char *strerror (int __errnum) __THROW;\n//\n//   * `__errnum` is an `int` by value: `resource_borrowed`.\n//   * The result points to a message the caller must NOT free: glibc returns a\n//     string in static read-only storage, or one in a thread-local buffer the\n//     next `strerror` call on that thread may overwrite. Nothing is allocated\n//     for the caller and the result points into no argument, so the caller\n//     acquires no obligation: `resource_return_none()`, the precedent\n//     `gai_strerror` (`libc/socket.qcore`), `dlerror` (`libc/dlfcn.qcore`) and\n//     `__errno_location` above set for a pointer result with no custody.\n//\n// Measured use: two printf-family tails pass `strerror(r)` whole, where the\n// nested-call admission (card O04-TRACE's premises N3, N6 and N7) needs exactly\n// this declaration. The census agrees in all 181 units that declare it.\n// Nothing about the message's lifetime past the next call, its text, locale or\n// `errno` is stated.\n//\n// Card VERDICT-CONTRACT-PREMISE-ANNOTATIONS: stated on `strerror` as `requires\n// resource_premise(nested_call_admission, \"...\")` (contract spec C04.18), so\n// every verdict that rests on the declaration names it.\n\nextern fn strerror(errnum: i32) -> ptr<mut, u8>\ncontract {\n    requires resource_contract_v1;\n    requires resource_revision(flexible);\n    requires resource_premise(nested_call_admission, \"a call of this function nested whole in another call's argument is read only where card O04-TRACE's nested-call admission holds at the call site; this declaration meets its premises N3 (a contract in force), N6 (result mode None) and N7 (every parameter Borrowed), and the admission checks the rest per site\");\n    ensures normal resource_borrowed(errnum);\n    ensures normal resource_return_none();\n};\n",
+    "7c268b6d39b84d3539a509140c02d26d5e7cfb252cc1b31510541db77e9dd87f": "1a4896203b2f4e2d843241d9d1804aefc007b2b5c800dfa96a36ea64afc7da8f",
+    "5d769c61cc04d9fd7e4e87305eb39457f2d40ee04c7f8f40f7c458e6265dbfdb": "6c0a095181f7f24676b92e9b8ebdea2c0bfb063ee6e10f26c3416d90375ac5b9"
+  },
+  "empty_callback_contexts": [
+    {
+      "path": [
+        "callback_members",
+        "lifetime_protocols",
+        "evidence",
+        "summaries"
+      ],
+      "before": "5d769c61cc04d9fd7e4e87305eb39457f2d40ee04c7f8f40f7c458e6265dbfdb",
+      "after": "6c0a095181f7f24676b92e9b8ebdea2c0bfb063ee6e10f26c3416d90375ac5b9",
+      "payload": {}
+    },
+    {
+      "path": [
+        "callback_members",
+        "prepass",
+        "lifetime_protocols",
+        "summaries"
+      ],
+      "before": "5d769c61cc04d9fd7e4e87305eb39457f2d40ee04c7f8f40f7c458e6265dbfdb",
+      "after": "6c0a095181f7f24676b92e9b8ebdea2c0bfb063ee6e10f26c3416d90375ac5b9",
+      "payload": {}
+    }
+  ],
+  "declaration_usage_adjustments": [],
+  "contracts_complete_payload_equal_after_explicit_mapping_and_usage_adjustments": true,
+  "other_three_families": {
+    "source": {
+      "present": false,
+      "both_absent": true,
+      "meaning": "Configured route does not emit this family; absence is not safety evidence."
+    },
+    "chunk-contracts": {
+      "present": true,
+      "complete_payload_equal_after_checkout_normalization": true
+    },
+    "source-effects": {
+      "present": true,
+      "complete_payload_equal_after_checkout_normalization": true
+    }
+  }
+}

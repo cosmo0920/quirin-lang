@@ -1,0 +1,400 @@
+{
+  "route": "slice",
+  "declarations": 103,
+  "changed": [
+    {
+      "function": "__errno_location",
+      "changed_fields": [
+        "contract_sha256",
+        "premises",
+        "rows"
+      ],
+      "before": {
+        "body_standing": "declared-assumption",
+        "contract_sha256": "d956f076f4c50c66a40cd75f0ed9a408668c3c05e41c4a001c5dded9a6ce9c9e",
+        "mode": "flexible",
+        "module": "$INPUTS/contract/profiles/fluent-bit/../../../providers/quirin-provider-libc/contracts/libc/errno.qv",
+        "premises": [
+          {
+            "name": "nested_call_admission",
+            "origin": "declared",
+            "statement": "a dereference of this call's result is read only where the gateway's nested-call admission holds at the call site (premises N1-N10 of cards O04-TRACE and CONSTRUCTOR-RESIDUALS, checked per site): the call is the statement's only nested call and a whole argument of a contracted call at a declared Borrowed position modulo the dereference wrapper (N4-D), its written arity is this declaration's, and the unit's own declaration of the callee returns exactly one pointer level over a scalar type (N10); under them the argument binds, releases, escapes and addresses nothing the projection tracks"
+          }
+        ],
+        "rows": 62,
+        "safe_rows": 7,
+        "status": "flexible-standing"
+      },
+      "after": {
+        "body_standing": "declared-assumption",
+        "contract_sha256": "3f02b89663ffceff1a89c4f28cee5446ae36ebd6dbc57270d0878ad71106985b",
+        "mode": "flexible",
+        "module": "$INPUTS/contract/profiles/fluent-bit/../../../providers/quirin-provider-libc/contracts/libc/errno.qv",
+        "premises": [
+          {
+            "name": "nested_call_admission",
+            "origin": "declared",
+            "statement": "a dereference of this call's result is read only under the checked reading rules: either the nested-call admission of O04-TRACE and CONSTRUCTOR-RESIDUALS (N1-N10, including a whole Borrowed or data-tail actual modulo the dereference wrapper and exact written arity), or W48-BOTTOM-UP-BATCH3 scalar condition admission (an external zero-argument call with this no-custody result, no container effect, exactly one dereference compared by equality or inequality with a decimal literal, the ordinary call checks retained and both outcomes explored); both require this unit's unambiguous declaration to return exactly one pointer level over a scalar type and bind, release, escape and address nothing the projection tracks"
+          }
+        ],
+        "rows": 65,
+        "safe_rows": 7,
+        "status": "flexible-standing"
+      }
+    },
+    {
+      "function": "flb_errno_print",
+      "changed_fields": [
+        "rows"
+      ],
+      "before": {
+        "body_standing": "declared-assumption",
+        "contract_sha256": "e57e0d609096b8f951295e88c3c3e0e6d56f3672cdd97088a11cdd319aeae26e",
+        "mode": "pinned",
+        "module": "$INPUTS/contract/profiles/fluent-bit/../../../providers/quirin-provider-fluent-bit/contracts/fluent_bit/logging.qv",
+        "premises": [],
+        "rows": 57,
+        "safe_rows": 7,
+        "status": "pinned-in-force"
+      },
+      "after": {
+        "body_standing": "declared-assumption",
+        "contract_sha256": "e57e0d609096b8f951295e88c3c3e0e6d56f3672cdd97088a11cdd319aeae26e",
+        "mode": "pinned",
+        "module": "$INPUTS/contract/profiles/fluent-bit/../../../providers/quirin-provider-fluent-bit/contracts/fluent_bit/logging.qv",
+        "premises": [],
+        "rows": 60,
+        "safe_rows": 7,
+        "status": "pinned-in-force"
+      }
+    },
+    {
+      "function": "read",
+      "changed_fields": [
+        "rows"
+      ],
+      "before": {
+        "body_standing": "declared-assumption",
+        "contract_sha256": "807198c5edc86ea3d3a87eadbc52b522566a8770ade01c9db0e18935fe69ec6b",
+        "mode": "flexible",
+        "module": "$INPUTS/contract/profiles/fluent-bit/../../../providers/quirin-provider-libc/contracts/libc/unistd.qv",
+        "premises": [],
+        "rows": 17,
+        "safe_rows": 3,
+        "status": "flexible-standing"
+      },
+      "after": {
+        "body_standing": "declared-assumption",
+        "contract_sha256": "807198c5edc86ea3d3a87eadbc52b522566a8770ade01c9db0e18935fe69ec6b",
+        "mode": "flexible",
+        "module": "$INPUTS/contract/profiles/fluent-bit/../../../providers/quirin-provider-libc/contracts/libc/unistd.qv",
+        "premises": [],
+        "rows": 18,
+        "safe_rows": 3,
+        "status": "flexible-standing"
+      }
+    },
+    {
+      "function": "write",
+      "changed_fields": [
+        "rows"
+      ],
+      "before": {
+        "body_standing": "declared-assumption",
+        "contract_sha256": "1cc311b830803db70cd25cf721bdae0fc7907a5c3ba25a0d4dda86ba00d11180",
+        "mode": "flexible",
+        "module": "$INPUTS/contract/profiles/fluent-bit/../../../providers/quirin-provider-libc/contracts/libc/unistd.qv",
+        "premises": [],
+        "rows": 13,
+        "safe_rows": 3,
+        "status": "flexible-standing"
+      },
+      "after": {
+        "body_standing": "declared-assumption",
+        "contract_sha256": "1cc311b830803db70cd25cf721bdae0fc7907a5c3ba25a0d4dda86ba00d11180",
+        "mode": "flexible",
+        "module": "$INPUTS/contract/profiles/fluent-bit/../../../providers/quirin-provider-libc/contracts/libc/unistd.qv",
+        "premises": [],
+        "rows": 18,
+        "safe_rows": 3,
+        "status": "flexible-standing"
+      }
+    }
+  ],
+  "inventory_equal": true,
+  "body_replay_occurrence_changes": [],
+  "unchanged_authority_except_explicit_errno_text_binding": true,
+  "errno_remains_declared_assumption": true,
+  "before_counts": {
+    "declarations_consulted": 103,
+    "declared_assumption": 87,
+    "held": 9,
+    "partly_validated": 2,
+    "rows_annotated": 404,
+    "validated": 5
+  },
+  "after_counts": {
+    "declarations_consulted": 103,
+    "declared_assumption": 87,
+    "held": 9,
+    "partly_validated": 2,
+    "rows_annotated": 404,
+    "validated": 5
+  },
+  "before_safe_rollup": {
+    "carrying_a_null_premise": 5,
+    "consulting_a_held_or_withdrawn_declaration": 0,
+    "partly_validated_declarations": [
+      {
+        "function": "flb_input_collector_running",
+        "safe_rows": 2,
+        "uncovered_clauses": [
+          "resource_user_neutral()"
+        ]
+      },
+      {
+        "function": "msgpack_packer_init",
+        "safe_rows": 0,
+        "uncovered_clauses": [
+          "resource_borrowed(#0)",
+          "resource_borrowed(#1)",
+          "resource_borrowed(#2)",
+          "resource_retained_by(#1, #0)",
+          "resource_return_none()"
+        ]
+      }
+    ],
+    "resting_on_a_declared_assumption": 19,
+    "resting_on_a_partly_validated_declaration": 2,
+    "resting_on_no_declaration": 30,
+    "resting_only_on_a_null_premise": 0,
+    "resting_only_on_validated_declarations": 2,
+    "safe_rows": 53,
+    "top_declared_assumptions": [
+      {
+        "function": "__errno_location",
+        "mode": "flexible",
+        "premises": [
+          {
+            "name": "nested_call_admission",
+            "origin": "declared",
+            "statement": "a dereference of this call's result is read only where the gateway's nested-call admission holds at the call site (premises N1-N10 of cards O04-TRACE and CONSTRUCTOR-RESIDUALS, checked per site): the call is the statement's only nested call and a whole argument of a contracted call at a declared Borrowed position modulo the dereference wrapper (N4-D), its written arity is this declaration's, and the unit's own declaration of the callee returns exactly one pointer level over a scalar type (N10); under them the argument binds, releases, escapes and addresses nothing the projection tracks"
+          }
+        ],
+        "safe_rows": 7,
+        "status": "flexible-standing"
+      },
+      {
+        "function": "flb_errno_print",
+        "mode": "pinned",
+        "premises": [],
+        "safe_rows": 7,
+        "status": "pinned-in-force"
+      },
+      {
+        "function": "read",
+        "mode": "flexible",
+        "premises": [],
+        "safe_rows": 3,
+        "status": "flexible-standing"
+      },
+      {
+        "function": "stat",
+        "mode": "flexible",
+        "premises": [],
+        "safe_rows": 3,
+        "status": "flexible-standing"
+      },
+      {
+        "function": "write",
+        "mode": "flexible",
+        "premises": [],
+        "safe_rows": 3,
+        "status": "flexible-standing"
+      },
+      {
+        "function": "flb_hash_table_del",
+        "mode": "pinned",
+        "premises": [],
+        "safe_rows": 2,
+        "status": "pinned-in-force"
+      },
+      {
+        "function": "memmove",
+        "mode": "flexible",
+        "premises": [],
+        "safe_rows": 2,
+        "status": "flexible-standing"
+      },
+      {
+        "function": "sleep",
+        "mode": "flexible",
+        "premises": [],
+        "safe_rows": 2,
+        "status": "flexible-standing"
+      },
+      {
+        "function": "flb_hash_table_add",
+        "mode": "pinned",
+        "premises": [
+          {
+            "name": "literal_argument",
+            "origin": "literal-argument",
+            "statement": "val_size = 0"
+          }
+        ],
+        "safe_rows": 1,
+        "status": "pinned-in-force"
+      },
+      {
+        "function": "lstat",
+        "mode": "flexible",
+        "premises": [],
+        "safe_rows": 1,
+        "status": "flexible-standing"
+      },
+      {
+        "function": "mk_list_add",
+        "mode": "pinned",
+        "premises": [],
+        "safe_rows": 1,
+        "status": "pinned-in-force"
+      },
+      {
+        "function": "mk_list_del",
+        "mode": "pinned",
+        "premises": [],
+        "safe_rows": 1,
+        "status": "pinned-in-force"
+      }
+    ]
+  },
+  "after_safe_rollup": {
+    "carrying_a_null_premise": 5,
+    "consulting_a_held_or_withdrawn_declaration": 0,
+    "partly_validated_declarations": [
+      {
+        "function": "flb_input_collector_running",
+        "safe_rows": 2,
+        "uncovered_clauses": [
+          "resource_user_neutral()"
+        ]
+      },
+      {
+        "function": "msgpack_packer_init",
+        "safe_rows": 0,
+        "uncovered_clauses": [
+          "resource_borrowed(#0)",
+          "resource_borrowed(#1)",
+          "resource_borrowed(#2)",
+          "resource_retained_by(#1, #0)",
+          "resource_return_none()"
+        ]
+      }
+    ],
+    "resting_on_a_declared_assumption": 19,
+    "resting_on_a_partly_validated_declaration": 2,
+    "resting_on_no_declaration": 30,
+    "resting_only_on_a_null_premise": 0,
+    "resting_only_on_validated_declarations": 2,
+    "safe_rows": 53,
+    "top_declared_assumptions": [
+      {
+        "function": "__errno_location",
+        "mode": "flexible",
+        "premises": [
+          {
+            "name": "nested_call_admission",
+            "origin": "declared",
+            "statement": "a dereference of this call's result is read only under the checked reading rules: either the nested-call admission of O04-TRACE and CONSTRUCTOR-RESIDUALS (N1-N10, including a whole Borrowed or data-tail actual modulo the dereference wrapper and exact written arity), or W48-BOTTOM-UP-BATCH3 scalar condition admission (an external zero-argument call with this no-custody result, no container effect, exactly one dereference compared by equality or inequality with a decimal literal, the ordinary call checks retained and both outcomes explored); both require this unit's unambiguous declaration to return exactly one pointer level over a scalar type and bind, release, escape and address nothing the projection tracks"
+          }
+        ],
+        "safe_rows": 7,
+        "status": "flexible-standing"
+      },
+      {
+        "function": "flb_errno_print",
+        "mode": "pinned",
+        "premises": [],
+        "safe_rows": 7,
+        "status": "pinned-in-force"
+      },
+      {
+        "function": "read",
+        "mode": "flexible",
+        "premises": [],
+        "safe_rows": 3,
+        "status": "flexible-standing"
+      },
+      {
+        "function": "stat",
+        "mode": "flexible",
+        "premises": [],
+        "safe_rows": 3,
+        "status": "flexible-standing"
+      },
+      {
+        "function": "write",
+        "mode": "flexible",
+        "premises": [],
+        "safe_rows": 3,
+        "status": "flexible-standing"
+      },
+      {
+        "function": "flb_hash_table_del",
+        "mode": "pinned",
+        "premises": [],
+        "safe_rows": 2,
+        "status": "pinned-in-force"
+      },
+      {
+        "function": "memmove",
+        "mode": "flexible",
+        "premises": [],
+        "safe_rows": 2,
+        "status": "flexible-standing"
+      },
+      {
+        "function": "sleep",
+        "mode": "flexible",
+        "premises": [],
+        "safe_rows": 2,
+        "status": "flexible-standing"
+      },
+      {
+        "function": "flb_hash_table_add",
+        "mode": "pinned",
+        "premises": [
+          {
+            "name": "literal_argument",
+            "origin": "literal-argument",
+            "statement": "val_size = 0"
+          }
+        ],
+        "safe_rows": 1,
+        "status": "pinned-in-force"
+      },
+      {
+        "function": "lstat",
+        "mode": "flexible",
+        "premises": [],
+        "safe_rows": 1,
+        "status": "flexible-standing"
+      },
+      {
+        "function": "mk_list_add",
+        "mode": "pinned",
+        "premises": [],
+        "safe_rows": 1,
+        "status": "pinned-in-force"
+      },
+      {
+        "function": "mk_list_del",
+        "mode": "pinned",
+        "premises": [],
+        "safe_rows": 1,
+        "status": "pinned-in-force"
+      }
+    ]
+  }
+}

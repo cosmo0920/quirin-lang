@@ -1,0 +1,2841 @@
+{
+  "meaning": "check_imports reanalyses each selected home under caller-session tracking. New mk_fifo_send home includes Monkey header bodies; occurrences are not independent native definitions or new standing classes.",
+  "code": [
+    "crates/qcore-c-gateway/src/legacy_c.rs:2600",
+    "crates/qcore-c-gateway/src/legacy_cross_unit.rs:287"
+  ],
+  "unchanged_existing_clause_payloads": {
+    "MK_EVENT_NEW": [
+      {
+        "methods": [
+          "W4"
+        ],
+        "clauses": {
+          "resource_borrowed(#0)": [
+            "W4"
+          ],
+          "resource_return_none()": [
+            "W4"
+          ]
+        }
+      }
+    ],
+    "mk_mem_alloc": [
+      {
+        "methods": [
+          "W4"
+        ],
+        "clauses": {
+          "resource_borrowed(#0)": [
+            "W4"
+          ],
+          "resource_return_owned(nullable)": [
+            "W4"
+          ]
+        }
+      }
+    ],
+    "mk_mem_alloc_z": [
+      {
+        "methods": [
+          "W4"
+        ],
+        "clauses": {
+          "resource_borrowed(#0)": [
+            "W4"
+          ],
+          "resource_return_owned(nullable)": [
+            "W4"
+          ]
+        }
+      }
+    ],
+    "mk_mem_free": [
+      {
+        "methods": [
+          "13m"
+        ],
+        "clauses": {
+          "resource_released(#0, nullable)": [
+            "13m"
+          ],
+          "resource_return_none()": [
+            "13m"
+          ]
+        }
+      }
+    ]
+  },
+  "unit_changes": [
+    {
+      "index": 0,
+      "library": "cmetrics",
+      "file": "cmetrics.c",
+      "validated_replay_additions": [
+        "MK_EVENT_NEW",
+        "mk_mem_alloc",
+        "mk_mem_alloc_z",
+        "mk_mem_free"
+      ],
+      "unvalidated_replay_additions": [
+        "mk_fifo_queue_destroy",
+        "mk_list_add",
+        "mk_list_del"
+      ]
+    },
+    {
+      "index": 1,
+      "library": "cmetrics",
+      "file": "cmt_atomic_clang.c",
+      "validated_replay_additions": [
+        "MK_EVENT_NEW",
+        "mk_mem_alloc",
+        "mk_mem_alloc_z",
+        "mk_mem_free"
+      ],
+      "unvalidated_replay_additions": [
+        "mk_fifo_queue_destroy",
+        "mk_list_add",
+        "mk_list_del"
+      ]
+    },
+    {
+      "index": 2,
+      "library": "cmetrics",
+      "file": "cmt_cat.c",
+      "validated_replay_additions": [
+        "MK_EVENT_NEW",
+        "mk_mem_alloc",
+        "mk_mem_alloc_z",
+        "mk_mem_free"
+      ],
+      "unvalidated_replay_additions": [
+        "mk_fifo_queue_destroy",
+        "mk_list_add",
+        "mk_list_del"
+      ]
+    },
+    {
+      "index": 3,
+      "library": "cmetrics",
+      "file": "cmt_counter.c",
+      "validated_replay_additions": [
+        "MK_EVENT_NEW",
+        "mk_mem_alloc",
+        "mk_mem_alloc_z",
+        "mk_mem_free"
+      ],
+      "unvalidated_replay_additions": [
+        "mk_fifo_queue_destroy",
+        "mk_list_add",
+        "mk_list_del"
+      ]
+    },
+    {
+      "index": 4,
+      "library": "cmetrics",
+      "file": "cmt_decode_msgpack.c",
+      "validated_replay_additions": [
+        "MK_EVENT_NEW",
+        "mk_mem_alloc",
+        "mk_mem_alloc_z",
+        "mk_mem_free"
+      ],
+      "unvalidated_replay_additions": [
+        "mk_fifo_queue_destroy",
+        "mk_list_add",
+        "mk_list_del"
+      ]
+    },
+    {
+      "index": 5,
+      "library": "cmetrics",
+      "file": "cmt_decode_opentelemetry.c",
+      "validated_replay_additions": [
+        "MK_EVENT_NEW",
+        "mk_mem_alloc",
+        "mk_mem_alloc_z",
+        "mk_mem_free"
+      ],
+      "unvalidated_replay_additions": [
+        "mk_fifo_queue_destroy",
+        "mk_list_add",
+        "mk_list_del"
+      ]
+    },
+    {
+      "index": 6,
+      "library": "cmetrics",
+      "file": "cmt_decode_prometheus_remote_write.c",
+      "validated_replay_additions": [
+        "MK_EVENT_NEW",
+        "mk_mem_alloc",
+        "mk_mem_alloc_z",
+        "mk_mem_free"
+      ],
+      "unvalidated_replay_additions": [
+        "mk_fifo_queue_destroy",
+        "mk_list_add",
+        "mk_list_del"
+      ]
+    },
+    {
+      "index": 7,
+      "library": "cmetrics",
+      "file": "cmt_decode_statsd.c",
+      "validated_replay_additions": [
+        "MK_EVENT_NEW",
+        "mk_mem_alloc",
+        "mk_mem_alloc_z",
+        "mk_mem_free"
+      ],
+      "unvalidated_replay_additions": [
+        "mk_fifo_queue_destroy",
+        "mk_list_add",
+        "mk_list_del"
+      ]
+    },
+    {
+      "index": 8,
+      "library": "cmetrics",
+      "file": "cmt_encode_cloudwatch_emf.c",
+      "validated_replay_additions": [
+        "MK_EVENT_NEW",
+        "mk_mem_alloc",
+        "mk_mem_alloc_z",
+        "mk_mem_free"
+      ],
+      "unvalidated_replay_additions": [
+        "mk_fifo_queue_destroy",
+        "mk_list_add",
+        "mk_list_del"
+      ]
+    },
+    {
+      "index": 9,
+      "library": "cmetrics",
+      "file": "cmt_encode_influx.c",
+      "validated_replay_additions": [
+        "MK_EVENT_NEW",
+        "mk_mem_alloc",
+        "mk_mem_alloc_z",
+        "mk_mem_free"
+      ],
+      "unvalidated_replay_additions": [
+        "mk_fifo_queue_destroy",
+        "mk_list_add",
+        "mk_list_del"
+      ]
+    },
+    {
+      "index": 10,
+      "library": "cmetrics",
+      "file": "cmt_encode_msgpack.c",
+      "validated_replay_additions": [
+        "MK_EVENT_NEW",
+        "mk_mem_alloc",
+        "mk_mem_alloc_z",
+        "mk_mem_free"
+      ],
+      "unvalidated_replay_additions": [
+        "mk_fifo_queue_destroy",
+        "mk_list_add",
+        "mk_list_del"
+      ]
+    },
+    {
+      "index": 11,
+      "library": "cmetrics",
+      "file": "cmt_encode_opentelemetry.c",
+      "validated_replay_additions": [
+        "MK_EVENT_NEW",
+        "mk_mem_alloc",
+        "mk_mem_alloc_z",
+        "mk_mem_free"
+      ],
+      "unvalidated_replay_additions": [
+        "mk_fifo_queue_destroy",
+        "mk_list_add",
+        "mk_list_del"
+      ]
+    },
+    {
+      "index": 12,
+      "library": "cmetrics",
+      "file": "cmt_encode_opentelemetry_batch.c",
+      "validated_replay_additions": [
+        "MK_EVENT_NEW",
+        "mk_mem_alloc",
+        "mk_mem_alloc_z",
+        "mk_mem_free"
+      ],
+      "unvalidated_replay_additions": [
+        "mk_fifo_queue_destroy",
+        "mk_list_add",
+        "mk_list_del"
+      ]
+    },
+    {
+      "index": 13,
+      "library": "cmetrics",
+      "file": "cmt_encode_prometheus.c",
+      "validated_replay_additions": [
+        "MK_EVENT_NEW",
+        "mk_mem_alloc",
+        "mk_mem_alloc_z",
+        "mk_mem_free"
+      ],
+      "unvalidated_replay_additions": [
+        "mk_fifo_queue_destroy",
+        "mk_list_add",
+        "mk_list_del"
+      ]
+    },
+    {
+      "index": 14,
+      "library": "cmetrics",
+      "file": "cmt_encode_prometheus_remote_write.c",
+      "validated_replay_additions": [
+        "MK_EVENT_NEW",
+        "mk_mem_alloc",
+        "mk_mem_alloc_z",
+        "mk_mem_free"
+      ],
+      "unvalidated_replay_additions": [
+        "mk_fifo_queue_destroy",
+        "mk_list_add",
+        "mk_list_del"
+      ]
+    },
+    {
+      "index": 15,
+      "library": "cmetrics",
+      "file": "cmt_encode_splunk_hec.c",
+      "validated_replay_additions": [
+        "MK_EVENT_NEW",
+        "mk_mem_alloc",
+        "mk_mem_alloc_z",
+        "mk_mem_free"
+      ],
+      "unvalidated_replay_additions": [
+        "mk_fifo_queue_destroy",
+        "mk_list_add",
+        "mk_list_del"
+      ]
+    },
+    {
+      "index": 16,
+      "library": "cmetrics",
+      "file": "cmt_encode_text.c",
+      "validated_replay_additions": [
+        "MK_EVENT_NEW",
+        "mk_mem_alloc",
+        "mk_mem_alloc_z",
+        "mk_mem_free"
+      ],
+      "unvalidated_replay_additions": [
+        "mk_fifo_queue_destroy",
+        "mk_list_add",
+        "mk_list_del"
+      ]
+    },
+    {
+      "index": 17,
+      "library": "cmetrics",
+      "file": "cmt_exp_histogram.c",
+      "validated_replay_additions": [
+        "MK_EVENT_NEW",
+        "mk_mem_alloc",
+        "mk_mem_alloc_z",
+        "mk_mem_free"
+      ],
+      "unvalidated_replay_additions": [
+        "mk_fifo_queue_destroy",
+        "mk_list_add",
+        "mk_list_del"
+      ]
+    },
+    {
+      "index": 18,
+      "library": "cmetrics",
+      "file": "cmt_filter.c",
+      "validated_replay_additions": [
+        "MK_EVENT_NEW",
+        "mk_mem_alloc",
+        "mk_mem_alloc_z",
+        "mk_mem_free"
+      ],
+      "unvalidated_replay_additions": [
+        "mk_fifo_queue_destroy",
+        "mk_list_add",
+        "mk_list_del"
+      ]
+    },
+    {
+      "index": 19,
+      "library": "cmetrics",
+      "file": "cmt_gauge.c",
+      "validated_replay_additions": [
+        "MK_EVENT_NEW",
+        "mk_mem_alloc",
+        "mk_mem_alloc_z",
+        "mk_mem_free"
+      ],
+      "unvalidated_replay_additions": [
+        "mk_fifo_queue_destroy",
+        "mk_list_add",
+        "mk_list_del"
+      ]
+    },
+    {
+      "index": 20,
+      "library": "cmetrics",
+      "file": "cmt_histogram.c",
+      "validated_replay_additions": [
+        "MK_EVENT_NEW",
+        "mk_mem_alloc",
+        "mk_mem_alloc_z",
+        "mk_mem_free"
+      ],
+      "unvalidated_replay_additions": [
+        "mk_fifo_queue_destroy",
+        "mk_list_add",
+        "mk_list_del"
+      ]
+    },
+    {
+      "index": 21,
+      "library": "cmetrics",
+      "file": "cmt_label.c",
+      "validated_replay_additions": [
+        "MK_EVENT_NEW",
+        "mk_mem_alloc",
+        "mk_mem_alloc_z",
+        "mk_mem_free"
+      ],
+      "unvalidated_replay_additions": [
+        "mk_fifo_queue_destroy",
+        "mk_list_add",
+        "mk_list_del"
+      ]
+    },
+    {
+      "index": 22,
+      "library": "cmetrics",
+      "file": "cmt_log.c",
+      "validated_replay_additions": [
+        "MK_EVENT_NEW",
+        "mk_mem_alloc",
+        "mk_mem_alloc_z",
+        "mk_mem_free"
+      ],
+      "unvalidated_replay_additions": [
+        "mk_fifo_queue_destroy",
+        "mk_list_add",
+        "mk_list_del"
+      ]
+    },
+    {
+      "index": 23,
+      "library": "cmetrics",
+      "file": "cmt_map.c",
+      "validated_replay_additions": [
+        "MK_EVENT_NEW",
+        "mk_mem_alloc",
+        "mk_mem_alloc_z",
+        "mk_mem_free"
+      ],
+      "unvalidated_replay_additions": [
+        "mk_fifo_queue_destroy",
+        "mk_list_add",
+        "mk_list_del"
+      ]
+    },
+    {
+      "index": 24,
+      "library": "cmetrics",
+      "file": "cmt_metric.c",
+      "validated_replay_additions": [
+        "MK_EVENT_NEW",
+        "mk_mem_alloc",
+        "mk_mem_alloc_z",
+        "mk_mem_free"
+      ],
+      "unvalidated_replay_additions": [
+        "mk_fifo_queue_destroy",
+        "mk_list_add",
+        "mk_list_del"
+      ]
+    },
+    {
+      "index": 25,
+      "library": "cmetrics",
+      "file": "cmt_metric_histogram.c",
+      "validated_replay_additions": [
+        "MK_EVENT_NEW",
+        "mk_mem_alloc",
+        "mk_mem_alloc_z",
+        "mk_mem_free"
+      ],
+      "unvalidated_replay_additions": [
+        "mk_fifo_queue_destroy",
+        "mk_list_add",
+        "mk_list_del"
+      ]
+    },
+    {
+      "index": 26,
+      "library": "cmetrics",
+      "file": "cmt_mpack_utils.c",
+      "validated_replay_additions": [
+        "MK_EVENT_NEW",
+        "mk_mem_alloc",
+        "mk_mem_alloc_z",
+        "mk_mem_free"
+      ],
+      "unvalidated_replay_additions": [
+        "mk_fifo_queue_destroy",
+        "mk_list_add",
+        "mk_list_del"
+      ]
+    },
+    {
+      "index": 27,
+      "library": "cmetrics",
+      "file": "cmt_opts.c",
+      "validated_replay_additions": [
+        "MK_EVENT_NEW",
+        "mk_mem_alloc",
+        "mk_mem_alloc_z",
+        "mk_mem_free"
+      ],
+      "unvalidated_replay_additions": [
+        "mk_fifo_queue_destroy",
+        "mk_list_add",
+        "mk_list_del"
+      ]
+    },
+    {
+      "index": 28,
+      "library": "cmetrics",
+      "file": "cmt_summary.c",
+      "validated_replay_additions": [
+        "MK_EVENT_NEW",
+        "mk_mem_alloc",
+        "mk_mem_alloc_z",
+        "mk_mem_free"
+      ],
+      "unvalidated_replay_additions": [
+        "mk_fifo_queue_destroy",
+        "mk_list_add",
+        "mk_list_del"
+      ]
+    },
+    {
+      "index": 29,
+      "library": "cmetrics",
+      "file": "cmt_time.c",
+      "validated_replay_additions": [
+        "MK_EVENT_NEW",
+        "mk_mem_alloc",
+        "mk_mem_alloc_z",
+        "mk_mem_free"
+      ],
+      "unvalidated_replay_additions": [
+        "mk_fifo_queue_destroy",
+        "mk_list_add",
+        "mk_list_del"
+      ]
+    },
+    {
+      "index": 30,
+      "library": "cmetrics",
+      "file": "cmt_untyped.c",
+      "validated_replay_additions": [
+        "MK_EVENT_NEW",
+        "mk_mem_alloc",
+        "mk_mem_alloc_z",
+        "mk_mem_free"
+      ],
+      "unvalidated_replay_additions": [
+        "mk_fifo_queue_destroy",
+        "mk_list_add",
+        "mk_list_del"
+      ]
+    },
+    {
+      "index": 31,
+      "library": "ctraces",
+      "file": "ctr_attributes.c",
+      "validated_replay_additions": [
+        "MK_EVENT_NEW",
+        "mk_mem_alloc",
+        "mk_mem_alloc_z",
+        "mk_mem_free"
+      ],
+      "unvalidated_replay_additions": [
+        "mk_fifo_queue_destroy",
+        "mk_list_add",
+        "mk_list_del"
+      ]
+    },
+    {
+      "index": 32,
+      "library": "ctraces",
+      "file": "ctr_decode_msgpack.c",
+      "validated_replay_additions": [
+        "MK_EVENT_NEW",
+        "mk_mem_alloc",
+        "mk_mem_alloc_z",
+        "mk_mem_free"
+      ],
+      "unvalidated_replay_additions": [
+        "mk_fifo_queue_destroy",
+        "mk_list_add",
+        "mk_list_del"
+      ]
+    },
+    {
+      "index": 33,
+      "library": "ctraces",
+      "file": "ctr_decode_opentelemetry.c",
+      "validated_replay_additions": [
+        "MK_EVENT_NEW",
+        "mk_mem_alloc",
+        "mk_mem_alloc_z",
+        "mk_mem_free"
+      ],
+      "unvalidated_replay_additions": [
+        "mk_fifo_queue_destroy",
+        "mk_list_add",
+        "mk_list_del"
+      ]
+    },
+    {
+      "index": 34,
+      "library": "ctraces",
+      "file": "ctr_encode_msgpack.c",
+      "validated_replay_additions": [
+        "MK_EVENT_NEW",
+        "mk_mem_alloc",
+        "mk_mem_alloc_z",
+        "mk_mem_free"
+      ],
+      "unvalidated_replay_additions": [
+        "mk_fifo_queue_destroy",
+        "mk_list_add",
+        "mk_list_del"
+      ]
+    },
+    {
+      "index": 35,
+      "library": "ctraces",
+      "file": "ctr_encode_opentelemetry.c",
+      "validated_replay_additions": [
+        "MK_EVENT_NEW",
+        "mk_mem_alloc",
+        "mk_mem_alloc_z",
+        "mk_mem_free"
+      ],
+      "unvalidated_replay_additions": [
+        "mk_fifo_queue_destroy",
+        "mk_list_add",
+        "mk_list_del"
+      ]
+    },
+    {
+      "index": 36,
+      "library": "ctraces",
+      "file": "ctr_encode_text.c",
+      "validated_replay_additions": [
+        "MK_EVENT_NEW",
+        "mk_mem_alloc",
+        "mk_mem_alloc_z",
+        "mk_mem_free"
+      ],
+      "unvalidated_replay_additions": [
+        "mk_fifo_queue_destroy",
+        "mk_list_add",
+        "mk_list_del"
+      ]
+    },
+    {
+      "index": 37,
+      "library": "ctraces",
+      "file": "ctr_id.c",
+      "validated_replay_additions": [
+        "MK_EVENT_NEW",
+        "mk_mem_alloc",
+        "mk_mem_alloc_z",
+        "mk_mem_free"
+      ],
+      "unvalidated_replay_additions": [
+        "mk_fifo_queue_destroy",
+        "mk_list_add",
+        "mk_list_del"
+      ]
+    },
+    {
+      "index": 38,
+      "library": "ctraces",
+      "file": "ctr_link.c",
+      "validated_replay_additions": [
+        "MK_EVENT_NEW",
+        "mk_mem_alloc",
+        "mk_mem_alloc_z",
+        "mk_mem_free"
+      ],
+      "unvalidated_replay_additions": [
+        "mk_fifo_queue_destroy",
+        "mk_list_add",
+        "mk_list_del"
+      ]
+    },
+    {
+      "index": 39,
+      "library": "ctraces",
+      "file": "ctr_log.c",
+      "validated_replay_additions": [
+        "MK_EVENT_NEW",
+        "mk_mem_alloc",
+        "mk_mem_alloc_z",
+        "mk_mem_free"
+      ],
+      "unvalidated_replay_additions": [
+        "mk_fifo_queue_destroy",
+        "mk_list_add",
+        "mk_list_del"
+      ]
+    },
+    {
+      "index": 40,
+      "library": "ctraces",
+      "file": "ctr_mpack_utils.c",
+      "validated_replay_additions": [
+        "MK_EVENT_NEW",
+        "mk_mem_alloc",
+        "mk_mem_alloc_z",
+        "mk_mem_free"
+      ],
+      "unvalidated_replay_additions": [
+        "mk_fifo_queue_destroy",
+        "mk_list_add",
+        "mk_list_del"
+      ]
+    },
+    {
+      "index": 41,
+      "library": "ctraces",
+      "file": "ctr_random.c",
+      "validated_replay_additions": [
+        "MK_EVENT_NEW",
+        "mk_mem_alloc",
+        "mk_mem_alloc_z",
+        "mk_mem_free"
+      ],
+      "unvalidated_replay_additions": [
+        "mk_fifo_queue_destroy",
+        "mk_list_add",
+        "mk_list_del"
+      ]
+    },
+    {
+      "index": 42,
+      "library": "ctraces",
+      "file": "ctr_resource.c",
+      "validated_replay_additions": [
+        "MK_EVENT_NEW",
+        "mk_mem_alloc",
+        "mk_mem_alloc_z",
+        "mk_mem_free"
+      ],
+      "unvalidated_replay_additions": [
+        "mk_fifo_queue_destroy",
+        "mk_list_add",
+        "mk_list_del"
+      ]
+    },
+    {
+      "index": 43,
+      "library": "ctraces",
+      "file": "ctr_scope.c",
+      "validated_replay_additions": [
+        "MK_EVENT_NEW",
+        "mk_mem_alloc",
+        "mk_mem_alloc_z",
+        "mk_mem_free"
+      ],
+      "unvalidated_replay_additions": [
+        "mk_fifo_queue_destroy",
+        "mk_list_add",
+        "mk_list_del"
+      ]
+    },
+    {
+      "index": 44,
+      "library": "ctraces",
+      "file": "ctr_span.c",
+      "validated_replay_additions": [
+        "MK_EVENT_NEW",
+        "mk_mem_alloc",
+        "mk_mem_alloc_z",
+        "mk_mem_free"
+      ],
+      "unvalidated_replay_additions": [
+        "mk_fifo_queue_destroy",
+        "mk_list_add",
+        "mk_list_del"
+      ]
+    },
+    {
+      "index": 46,
+      "library": "ctraces",
+      "file": "ctr_version.c",
+      "validated_replay_additions": [
+        "MK_EVENT_NEW",
+        "mk_mem_alloc",
+        "mk_mem_alloc_z",
+        "mk_mem_free"
+      ],
+      "unvalidated_replay_additions": [
+        "mk_fifo_queue_destroy",
+        "mk_list_add",
+        "mk_list_del"
+      ]
+    },
+    {
+      "index": 47,
+      "library": "ctraces",
+      "file": "ctraces.c",
+      "validated_replay_additions": [
+        "MK_EVENT_NEW",
+        "mk_mem_alloc",
+        "mk_mem_alloc_z",
+        "mk_mem_free"
+      ],
+      "unvalidated_replay_additions": [
+        "mk_fifo_queue_destroy",
+        "mk_list_add",
+        "mk_list_del"
+      ]
+    },
+    {
+      "index": 48,
+      "library": "librdkafka",
+      "file": "cJSON.c",
+      "validated_replay_additions": [
+        "MK_EVENT_NEW",
+        "mk_mem_alloc",
+        "mk_mem_alloc_z",
+        "mk_mem_free"
+      ],
+      "unvalidated_replay_additions": [
+        "mk_fifo_queue_destroy",
+        "mk_list_add",
+        "mk_list_del"
+      ]
+    },
+    {
+      "index": 49,
+      "library": "librdkafka",
+      "file": "crc32c.c",
+      "validated_replay_additions": [
+        "MK_EVENT_NEW",
+        "mk_mem_alloc",
+        "mk_mem_alloc_z",
+        "mk_mem_free"
+      ],
+      "unvalidated_replay_additions": [
+        "mk_fifo_queue_destroy",
+        "mk_list_add",
+        "mk_list_del"
+      ]
+    },
+    {
+      "index": 50,
+      "library": "librdkafka",
+      "file": "lz4.c",
+      "validated_replay_additions": [
+        "MK_EVENT_NEW",
+        "mk_mem_alloc",
+        "mk_mem_alloc_z",
+        "mk_mem_free"
+      ],
+      "unvalidated_replay_additions": [
+        "mk_fifo_queue_destroy",
+        "mk_list_add",
+        "mk_list_del"
+      ]
+    },
+    {
+      "index": 51,
+      "library": "librdkafka",
+      "file": "lz4frame.c",
+      "validated_replay_additions": [
+        "MK_EVENT_NEW",
+        "mk_mem_alloc",
+        "mk_mem_alloc_z",
+        "mk_mem_free"
+      ],
+      "unvalidated_replay_additions": [
+        "mk_fifo_queue_destroy",
+        "mk_list_add",
+        "mk_list_del"
+      ]
+    },
+    {
+      "index": 52,
+      "library": "librdkafka",
+      "file": "lz4hc.c",
+      "validated_replay_additions": [
+        "MK_EVENT_NEW",
+        "mk_mem_alloc",
+        "mk_mem_alloc_z",
+        "mk_mem_free"
+      ],
+      "unvalidated_replay_additions": [
+        "mk_fifo_queue_destroy",
+        "mk_list_add",
+        "mk_list_del"
+      ]
+    },
+    {
+      "index": 53,
+      "library": "librdkafka",
+      "file": "nanopb/pb_common.c",
+      "validated_replay_additions": [
+        "MK_EVENT_NEW",
+        "mk_mem_alloc",
+        "mk_mem_alloc_z",
+        "mk_mem_free"
+      ],
+      "unvalidated_replay_additions": [
+        "mk_fifo_queue_destroy",
+        "mk_list_add",
+        "mk_list_del"
+      ]
+    },
+    {
+      "index": 54,
+      "library": "librdkafka",
+      "file": "nanopb/pb_decode.c",
+      "validated_replay_additions": [
+        "MK_EVENT_NEW",
+        "mk_mem_alloc",
+        "mk_mem_alloc_z",
+        "mk_mem_free"
+      ],
+      "unvalidated_replay_additions": [
+        "mk_fifo_queue_destroy",
+        "mk_list_add",
+        "mk_list_del"
+      ]
+    },
+    {
+      "index": 55,
+      "library": "librdkafka",
+      "file": "nanopb/pb_encode.c",
+      "validated_replay_additions": [
+        "MK_EVENT_NEW",
+        "mk_mem_alloc",
+        "mk_mem_alloc_z",
+        "mk_mem_free"
+      ],
+      "unvalidated_replay_additions": [
+        "mk_fifo_queue_destroy",
+        "mk_list_add",
+        "mk_list_del"
+      ]
+    },
+    {
+      "index": 59,
+      "library": "librdkafka",
+      "file": "rdaddr.c",
+      "validated_replay_additions": [
+        "MK_EVENT_NEW",
+        "mk_mem_alloc",
+        "mk_mem_alloc_z",
+        "mk_mem_free"
+      ],
+      "unvalidated_replay_additions": [
+        "mk_fifo_queue_destroy",
+        "mk_list_add",
+        "mk_list_del"
+      ]
+    },
+    {
+      "index": 60,
+      "library": "librdkafka",
+      "file": "rdavl.c",
+      "validated_replay_additions": [
+        "MK_EVENT_NEW",
+        "mk_mem_alloc",
+        "mk_mem_alloc_z",
+        "mk_mem_free"
+      ],
+      "unvalidated_replay_additions": [
+        "mk_fifo_queue_destroy",
+        "mk_list_add",
+        "mk_list_del"
+      ]
+    },
+    {
+      "index": 61,
+      "library": "librdkafka",
+      "file": "rdbase64.c",
+      "validated_replay_additions": [
+        "MK_EVENT_NEW",
+        "mk_mem_alloc",
+        "mk_mem_alloc_z",
+        "mk_mem_free"
+      ],
+      "unvalidated_replay_additions": [
+        "mk_fifo_queue_destroy",
+        "mk_list_add",
+        "mk_list_del"
+      ]
+    },
+    {
+      "index": 62,
+      "library": "librdkafka",
+      "file": "rdbuf.c",
+      "validated_replay_additions": [
+        "MK_EVENT_NEW",
+        "mk_mem_alloc",
+        "mk_mem_alloc_z",
+        "mk_mem_free"
+      ],
+      "unvalidated_replay_additions": [
+        "mk_fifo_queue_destroy",
+        "mk_list_add",
+        "mk_list_del"
+      ]
+    },
+    {
+      "index": 63,
+      "library": "librdkafka",
+      "file": "rdcrc32.c",
+      "validated_replay_additions": [
+        "MK_EVENT_NEW",
+        "mk_mem_alloc",
+        "mk_mem_alloc_z",
+        "mk_mem_free"
+      ],
+      "unvalidated_replay_additions": [
+        "mk_fifo_queue_destroy",
+        "mk_list_add",
+        "mk_list_del"
+      ]
+    },
+    {
+      "index": 64,
+      "library": "librdkafka",
+      "file": "rddl.c",
+      "validated_replay_additions": [
+        "MK_EVENT_NEW",
+        "mk_mem_alloc",
+        "mk_mem_alloc_z",
+        "mk_mem_free"
+      ],
+      "unvalidated_replay_additions": [
+        "mk_fifo_queue_destroy",
+        "mk_list_add",
+        "mk_list_del"
+      ]
+    },
+    {
+      "index": 65,
+      "library": "librdkafka",
+      "file": "rdfnv1a.c",
+      "validated_replay_additions": [
+        "MK_EVENT_NEW",
+        "mk_mem_alloc",
+        "mk_mem_alloc_z",
+        "mk_mem_free"
+      ],
+      "unvalidated_replay_additions": [
+        "mk_fifo_queue_destroy",
+        "mk_list_add",
+        "mk_list_del"
+      ]
+    },
+    {
+      "index": 66,
+      "library": "librdkafka",
+      "file": "rdgz.c",
+      "validated_replay_additions": [
+        "MK_EVENT_NEW",
+        "mk_mem_alloc",
+        "mk_mem_alloc_z",
+        "mk_mem_free"
+      ],
+      "unvalidated_replay_additions": [
+        "mk_fifo_queue_destroy",
+        "mk_list_add",
+        "mk_list_del"
+      ]
+    },
+    {
+      "index": 67,
+      "library": "librdkafka",
+      "file": "rdhdrhistogram.c",
+      "validated_replay_additions": [
+        "MK_EVENT_NEW",
+        "mk_mem_alloc",
+        "mk_mem_alloc_z",
+        "mk_mem_free"
+      ],
+      "unvalidated_replay_additions": [
+        "mk_fifo_queue_destroy",
+        "mk_list_add",
+        "mk_list_del"
+      ]
+    },
+    {
+      "index": 68,
+      "library": "librdkafka",
+      "file": "rdhttp.c",
+      "validated_replay_additions": [
+        "MK_EVENT_NEW",
+        "mk_mem_alloc",
+        "mk_mem_alloc_z",
+        "mk_mem_free"
+      ],
+      "unvalidated_replay_additions": [
+        "mk_fifo_queue_destroy",
+        "mk_list_add",
+        "mk_list_del"
+      ]
+    },
+    {
+      "index": 69,
+      "library": "librdkafka",
+      "file": "rdkafka.c",
+      "validated_replay_additions": [
+        "MK_EVENT_NEW",
+        "mk_mem_alloc",
+        "mk_mem_alloc_z",
+        "mk_mem_free"
+      ],
+      "unvalidated_replay_additions": [
+        "mk_fifo_queue_destroy",
+        "mk_list_add",
+        "mk_list_del"
+      ]
+    },
+    {
+      "index": 70,
+      "library": "librdkafka",
+      "file": "rdkafka_admin.c",
+      "validated_replay_additions": [
+        "MK_EVENT_NEW",
+        "mk_mem_alloc",
+        "mk_mem_alloc_z",
+        "mk_mem_free"
+      ],
+      "unvalidated_replay_additions": [
+        "mk_fifo_queue_destroy",
+        "mk_list_add",
+        "mk_list_del"
+      ]
+    },
+    {
+      "index": 71,
+      "library": "librdkafka",
+      "file": "rdkafka_assignment.c",
+      "validated_replay_additions": [
+        "MK_EVENT_NEW",
+        "mk_mem_alloc",
+        "mk_mem_alloc_z",
+        "mk_mem_free"
+      ],
+      "unvalidated_replay_additions": [
+        "mk_fifo_queue_destroy",
+        "mk_list_add",
+        "mk_list_del"
+      ]
+    },
+    {
+      "index": 72,
+      "library": "librdkafka",
+      "file": "rdkafka_assignor.c",
+      "validated_replay_additions": [
+        "MK_EVENT_NEW",
+        "mk_mem_alloc",
+        "mk_mem_alloc_z",
+        "mk_mem_free"
+      ],
+      "unvalidated_replay_additions": [
+        "mk_fifo_queue_destroy",
+        "mk_list_add",
+        "mk_list_del"
+      ]
+    },
+    {
+      "index": 73,
+      "library": "librdkafka",
+      "file": "rdkafka_aux.c",
+      "validated_replay_additions": [
+        "MK_EVENT_NEW",
+        "mk_mem_alloc",
+        "mk_mem_alloc_z",
+        "mk_mem_free"
+      ],
+      "unvalidated_replay_additions": [
+        "mk_fifo_queue_destroy",
+        "mk_list_add",
+        "mk_list_del"
+      ]
+    },
+    {
+      "index": 74,
+      "library": "librdkafka",
+      "file": "rdkafka_background.c",
+      "validated_replay_additions": [
+        "MK_EVENT_NEW",
+        "mk_mem_alloc",
+        "mk_mem_alloc_z",
+        "mk_mem_free"
+      ],
+      "unvalidated_replay_additions": [
+        "mk_fifo_queue_destroy",
+        "mk_list_add",
+        "mk_list_del"
+      ]
+    },
+    {
+      "index": 75,
+      "library": "librdkafka",
+      "file": "rdkafka_broker.c",
+      "validated_replay_additions": [
+        "MK_EVENT_NEW",
+        "mk_mem_alloc",
+        "mk_mem_alloc_z",
+        "mk_mem_free"
+      ],
+      "unvalidated_replay_additions": [
+        "mk_fifo_queue_destroy",
+        "mk_list_add",
+        "mk_list_del"
+      ]
+    },
+    {
+      "index": 76,
+      "library": "librdkafka",
+      "file": "rdkafka_buf.c",
+      "validated_replay_additions": [
+        "MK_EVENT_NEW",
+        "mk_mem_alloc",
+        "mk_mem_alloc_z",
+        "mk_mem_free"
+      ],
+      "unvalidated_replay_additions": [
+        "mk_fifo_queue_destroy",
+        "mk_list_add",
+        "mk_list_del"
+      ]
+    },
+    {
+      "index": 77,
+      "library": "librdkafka",
+      "file": "rdkafka_cert.c",
+      "validated_replay_additions": [
+        "MK_EVENT_NEW",
+        "mk_mem_alloc",
+        "mk_mem_alloc_z",
+        "mk_mem_free"
+      ],
+      "unvalidated_replay_additions": [
+        "mk_fifo_queue_destroy",
+        "mk_list_add",
+        "mk_list_del"
+      ]
+    },
+    {
+      "index": 78,
+      "library": "librdkafka",
+      "file": "rdkafka_cgrp.c",
+      "validated_replay_additions": [
+        "MK_EVENT_NEW",
+        "mk_mem_alloc",
+        "mk_mem_alloc_z",
+        "mk_mem_free"
+      ],
+      "unvalidated_replay_additions": [
+        "mk_fifo_queue_destroy",
+        "mk_list_add",
+        "mk_list_del"
+      ]
+    },
+    {
+      "index": 79,
+      "library": "librdkafka",
+      "file": "rdkafka_conf.c",
+      "validated_replay_additions": [
+        "MK_EVENT_NEW",
+        "mk_mem_alloc",
+        "mk_mem_alloc_z",
+        "mk_mem_free"
+      ],
+      "unvalidated_replay_additions": [
+        "mk_fifo_queue_destroy",
+        "mk_list_add",
+        "mk_list_del"
+      ]
+    },
+    {
+      "index": 80,
+      "library": "librdkafka",
+      "file": "rdkafka_coord.c",
+      "validated_replay_additions": [
+        "MK_EVENT_NEW",
+        "mk_mem_alloc",
+        "mk_mem_alloc_z",
+        "mk_mem_free"
+      ],
+      "unvalidated_replay_additions": [
+        "mk_fifo_queue_destroy",
+        "mk_list_add",
+        "mk_list_del"
+      ]
+    },
+    {
+      "index": 81,
+      "library": "librdkafka",
+      "file": "rdkafka_error.c",
+      "validated_replay_additions": [
+        "MK_EVENT_NEW",
+        "mk_mem_alloc",
+        "mk_mem_alloc_z",
+        "mk_mem_free"
+      ],
+      "unvalidated_replay_additions": [
+        "mk_fifo_queue_destroy",
+        "mk_list_add",
+        "mk_list_del"
+      ]
+    },
+    {
+      "index": 82,
+      "library": "librdkafka",
+      "file": "rdkafka_event.c",
+      "validated_replay_additions": [
+        "MK_EVENT_NEW",
+        "mk_mem_alloc",
+        "mk_mem_alloc_z",
+        "mk_mem_free"
+      ],
+      "unvalidated_replay_additions": [
+        "mk_fifo_queue_destroy",
+        "mk_list_add",
+        "mk_list_del"
+      ]
+    },
+    {
+      "index": 83,
+      "library": "librdkafka",
+      "file": "rdkafka_feature.c",
+      "validated_replay_additions": [
+        "MK_EVENT_NEW",
+        "mk_mem_alloc",
+        "mk_mem_alloc_z",
+        "mk_mem_free"
+      ],
+      "unvalidated_replay_additions": [
+        "mk_fifo_queue_destroy",
+        "mk_list_add",
+        "mk_list_del"
+      ]
+    },
+    {
+      "index": 84,
+      "library": "librdkafka",
+      "file": "rdkafka_fetcher.c",
+      "validated_replay_additions": [
+        "MK_EVENT_NEW",
+        "mk_mem_alloc",
+        "mk_mem_alloc_z",
+        "mk_mem_free"
+      ],
+      "unvalidated_replay_additions": [
+        "mk_fifo_queue_destroy",
+        "mk_list_add",
+        "mk_list_del"
+      ]
+    },
+    {
+      "index": 85,
+      "library": "librdkafka",
+      "file": "rdkafka_header.c",
+      "validated_replay_additions": [
+        "MK_EVENT_NEW",
+        "mk_mem_alloc",
+        "mk_mem_alloc_z",
+        "mk_mem_free"
+      ],
+      "unvalidated_replay_additions": [
+        "mk_fifo_queue_destroy",
+        "mk_list_add",
+        "mk_list_del"
+      ]
+    },
+    {
+      "index": 86,
+      "library": "librdkafka",
+      "file": "rdkafka_idempotence.c",
+      "validated_replay_additions": [
+        "MK_EVENT_NEW",
+        "mk_mem_alloc",
+        "mk_mem_alloc_z",
+        "mk_mem_free"
+      ],
+      "unvalidated_replay_additions": [
+        "mk_fifo_queue_destroy",
+        "mk_list_add",
+        "mk_list_del"
+      ]
+    },
+    {
+      "index": 87,
+      "library": "librdkafka",
+      "file": "rdkafka_interceptor.c",
+      "validated_replay_additions": [
+        "MK_EVENT_NEW",
+        "mk_mem_alloc",
+        "mk_mem_alloc_z",
+        "mk_mem_free"
+      ],
+      "unvalidated_replay_additions": [
+        "mk_fifo_queue_destroy",
+        "mk_list_add",
+        "mk_list_del"
+      ]
+    },
+    {
+      "index": 88,
+      "library": "librdkafka",
+      "file": "rdkafka_lz4.c",
+      "validated_replay_additions": [
+        "MK_EVENT_NEW",
+        "mk_mem_alloc",
+        "mk_mem_alloc_z",
+        "mk_mem_free"
+      ],
+      "unvalidated_replay_additions": [
+        "mk_fifo_queue_destroy",
+        "mk_list_add",
+        "mk_list_del"
+      ]
+    },
+    {
+      "index": 89,
+      "library": "librdkafka",
+      "file": "rdkafka_metadata.c",
+      "validated_replay_additions": [
+        "MK_EVENT_NEW",
+        "mk_mem_alloc",
+        "mk_mem_alloc_z",
+        "mk_mem_free"
+      ],
+      "unvalidated_replay_additions": [
+        "mk_fifo_queue_destroy",
+        "mk_list_add",
+        "mk_list_del"
+      ]
+    },
+    {
+      "index": 90,
+      "library": "librdkafka",
+      "file": "rdkafka_metadata_cache.c",
+      "validated_replay_additions": [
+        "MK_EVENT_NEW",
+        "mk_mem_alloc",
+        "mk_mem_alloc_z",
+        "mk_mem_free"
+      ],
+      "unvalidated_replay_additions": [
+        "mk_fifo_queue_destroy",
+        "mk_list_add",
+        "mk_list_del"
+      ]
+    },
+    {
+      "index": 91,
+      "library": "librdkafka",
+      "file": "rdkafka_mock.c",
+      "validated_replay_additions": [
+        "MK_EVENT_NEW",
+        "mk_mem_alloc",
+        "mk_mem_alloc_z",
+        "mk_mem_free"
+      ],
+      "unvalidated_replay_additions": [
+        "mk_fifo_queue_destroy",
+        "mk_list_add",
+        "mk_list_del"
+      ]
+    },
+    {
+      "index": 92,
+      "library": "librdkafka",
+      "file": "rdkafka_mock_cgrp.c",
+      "validated_replay_additions": [
+        "MK_EVENT_NEW",
+        "mk_mem_alloc",
+        "mk_mem_alloc_z",
+        "mk_mem_free"
+      ],
+      "unvalidated_replay_additions": [
+        "mk_fifo_queue_destroy",
+        "mk_list_add",
+        "mk_list_del"
+      ]
+    },
+    {
+      "index": 93,
+      "library": "librdkafka",
+      "file": "rdkafka_mock_handlers.c",
+      "validated_replay_additions": [
+        "MK_EVENT_NEW",
+        "mk_mem_alloc",
+        "mk_mem_alloc_z",
+        "mk_mem_free"
+      ],
+      "unvalidated_replay_additions": [
+        "mk_fifo_queue_destroy",
+        "mk_list_add",
+        "mk_list_del"
+      ]
+    },
+    {
+      "index": 94,
+      "library": "librdkafka",
+      "file": "rdkafka_mock_sharegrp.c",
+      "validated_replay_additions": [
+        "MK_EVENT_NEW",
+        "mk_mem_alloc",
+        "mk_mem_alloc_z",
+        "mk_mem_free"
+      ],
+      "unvalidated_replay_additions": [
+        "mk_fifo_queue_destroy",
+        "mk_list_add",
+        "mk_list_del"
+      ]
+    },
+    {
+      "index": 95,
+      "library": "librdkafka",
+      "file": "rdkafka_msg.c",
+      "validated_replay_additions": [
+        "MK_EVENT_NEW",
+        "mk_mem_alloc",
+        "mk_mem_alloc_z",
+        "mk_mem_free"
+      ],
+      "unvalidated_replay_additions": [
+        "mk_fifo_queue_destroy",
+        "mk_list_add",
+        "mk_list_del"
+      ]
+    },
+    {
+      "index": 96,
+      "library": "librdkafka",
+      "file": "rdkafka_msgset_reader.c",
+      "validated_replay_additions": [
+        "MK_EVENT_NEW",
+        "mk_mem_alloc",
+        "mk_mem_alloc_z",
+        "mk_mem_free"
+      ],
+      "unvalidated_replay_additions": [
+        "mk_fifo_queue_destroy",
+        "mk_list_add",
+        "mk_list_del"
+      ]
+    },
+    {
+      "index": 97,
+      "library": "librdkafka",
+      "file": "rdkafka_msgset_writer.c",
+      "validated_replay_additions": [
+        "MK_EVENT_NEW",
+        "mk_mem_alloc",
+        "mk_mem_alloc_z",
+        "mk_mem_free"
+      ],
+      "unvalidated_replay_additions": [
+        "mk_fifo_queue_destroy",
+        "mk_list_add",
+        "mk_list_del"
+      ]
+    },
+    {
+      "index": 98,
+      "library": "librdkafka",
+      "file": "rdkafka_offset.c",
+      "validated_replay_additions": [
+        "MK_EVENT_NEW",
+        "mk_mem_alloc",
+        "mk_mem_alloc_z",
+        "mk_mem_free"
+      ],
+      "unvalidated_replay_additions": [
+        "mk_fifo_queue_destroy",
+        "mk_list_add",
+        "mk_list_del"
+      ]
+    },
+    {
+      "index": 99,
+      "library": "librdkafka",
+      "file": "rdkafka_op.c",
+      "validated_replay_additions": [
+        "MK_EVENT_NEW",
+        "mk_mem_alloc",
+        "mk_mem_alloc_z",
+        "mk_mem_free"
+      ],
+      "unvalidated_replay_additions": [
+        "mk_fifo_queue_destroy",
+        "mk_list_add",
+        "mk_list_del"
+      ]
+    },
+    {
+      "index": 100,
+      "library": "librdkafka",
+      "file": "rdkafka_partition.c",
+      "validated_replay_additions": [
+        "MK_EVENT_NEW",
+        "mk_mem_alloc",
+        "mk_mem_alloc_z",
+        "mk_mem_free"
+      ],
+      "unvalidated_replay_additions": [
+        "mk_fifo_queue_destroy",
+        "mk_list_add",
+        "mk_list_del"
+      ]
+    },
+    {
+      "index": 101,
+      "library": "librdkafka",
+      "file": "rdkafka_pattern.c",
+      "validated_replay_additions": [
+        "MK_EVENT_NEW",
+        "mk_mem_alloc",
+        "mk_mem_alloc_z",
+        "mk_mem_free"
+      ],
+      "unvalidated_replay_additions": [
+        "mk_fifo_queue_destroy",
+        "mk_list_add",
+        "mk_list_del"
+      ]
+    },
+    {
+      "index": 102,
+      "library": "librdkafka",
+      "file": "rdkafka_plugin.c",
+      "validated_replay_additions": [
+        "MK_EVENT_NEW",
+        "mk_mem_alloc",
+        "mk_mem_alloc_z",
+        "mk_mem_free"
+      ],
+      "unvalidated_replay_additions": [
+        "mk_fifo_queue_destroy",
+        "mk_list_add",
+        "mk_list_del"
+      ]
+    },
+    {
+      "index": 103,
+      "library": "librdkafka",
+      "file": "rdkafka_queue.c",
+      "validated_replay_additions": [
+        "MK_EVENT_NEW",
+        "mk_mem_alloc",
+        "mk_mem_alloc_z",
+        "mk_mem_free"
+      ],
+      "unvalidated_replay_additions": [
+        "mk_fifo_queue_destroy",
+        "mk_list_add",
+        "mk_list_del"
+      ]
+    },
+    {
+      "index": 104,
+      "library": "librdkafka",
+      "file": "rdkafka_range_assignor.c",
+      "validated_replay_additions": [
+        "MK_EVENT_NEW",
+        "mk_mem_alloc",
+        "mk_mem_alloc_z",
+        "mk_mem_free"
+      ],
+      "unvalidated_replay_additions": [
+        "mk_fifo_queue_destroy",
+        "mk_list_add",
+        "mk_list_del"
+      ]
+    },
+    {
+      "index": 105,
+      "library": "librdkafka",
+      "file": "rdkafka_request.c",
+      "validated_replay_additions": [
+        "MK_EVENT_NEW",
+        "mk_mem_alloc",
+        "mk_mem_alloc_z",
+        "mk_mem_free"
+      ],
+      "unvalidated_replay_additions": [
+        "mk_fifo_queue_destroy",
+        "mk_list_add",
+        "mk_list_del"
+      ]
+    },
+    {
+      "index": 106,
+      "library": "librdkafka",
+      "file": "rdkafka_roundrobin_assignor.c",
+      "validated_replay_additions": [
+        "MK_EVENT_NEW",
+        "mk_mem_alloc",
+        "mk_mem_alloc_z",
+        "mk_mem_free"
+      ],
+      "unvalidated_replay_additions": [
+        "mk_fifo_queue_destroy",
+        "mk_list_add",
+        "mk_list_del"
+      ]
+    },
+    {
+      "index": 107,
+      "library": "librdkafka",
+      "file": "rdkafka_sasl.c",
+      "validated_replay_additions": [
+        "MK_EVENT_NEW",
+        "mk_mem_alloc",
+        "mk_mem_alloc_z",
+        "mk_mem_free"
+      ],
+      "unvalidated_replay_additions": [
+        "mk_fifo_queue_destroy",
+        "mk_list_add",
+        "mk_list_del"
+      ]
+    },
+    {
+      "index": 108,
+      "library": "librdkafka",
+      "file": "rdkafka_sasl_cyrus.c",
+      "validated_replay_additions": [
+        "MK_EVENT_NEW",
+        "mk_mem_alloc",
+        "mk_mem_alloc_z",
+        "mk_mem_free"
+      ],
+      "unvalidated_replay_additions": [
+        "mk_fifo_queue_destroy",
+        "mk_list_add",
+        "mk_list_del"
+      ]
+    },
+    {
+      "index": 109,
+      "library": "librdkafka",
+      "file": "rdkafka_sasl_oauthbearer.c",
+      "validated_replay_additions": [
+        "MK_EVENT_NEW",
+        "mk_mem_alloc",
+        "mk_mem_alloc_z",
+        "mk_mem_free"
+      ],
+      "unvalidated_replay_additions": [
+        "mk_fifo_queue_destroy",
+        "mk_list_add",
+        "mk_list_del"
+      ]
+    },
+    {
+      "index": 110,
+      "library": "librdkafka",
+      "file": "rdkafka_sasl_oauthbearer_oidc.c",
+      "validated_replay_additions": [
+        "MK_EVENT_NEW",
+        "mk_mem_alloc",
+        "mk_mem_alloc_z",
+        "mk_mem_free"
+      ],
+      "unvalidated_replay_additions": [
+        "mk_fifo_queue_destroy",
+        "mk_list_add",
+        "mk_list_del"
+      ]
+    },
+    {
+      "index": 111,
+      "library": "librdkafka",
+      "file": "rdkafka_sasl_plain.c",
+      "validated_replay_additions": [
+        "MK_EVENT_NEW",
+        "mk_mem_alloc",
+        "mk_mem_alloc_z",
+        "mk_mem_free"
+      ],
+      "unvalidated_replay_additions": [
+        "mk_fifo_queue_destroy",
+        "mk_list_add",
+        "mk_list_del"
+      ]
+    },
+    {
+      "index": 112,
+      "library": "librdkafka",
+      "file": "rdkafka_sasl_scram.c",
+      "validated_replay_additions": [
+        "MK_EVENT_NEW",
+        "mk_mem_alloc",
+        "mk_mem_alloc_z",
+        "mk_mem_free"
+      ],
+      "unvalidated_replay_additions": [
+        "mk_fifo_queue_destroy",
+        "mk_list_add",
+        "mk_list_del"
+      ]
+    },
+    {
+      "index": 113,
+      "library": "librdkafka",
+      "file": "rdkafka_share_acknowledgement.c",
+      "validated_replay_additions": [
+        "MK_EVENT_NEW",
+        "mk_mem_alloc",
+        "mk_mem_alloc_z",
+        "mk_mem_free"
+      ],
+      "unvalidated_replay_additions": [
+        "mk_fifo_queue_destroy",
+        "mk_list_add",
+        "mk_list_del"
+      ]
+    },
+    {
+      "index": 114,
+      "library": "librdkafka",
+      "file": "rdkafka_ssl.c",
+      "validated_replay_additions": [
+        "MK_EVENT_NEW",
+        "mk_mem_alloc",
+        "mk_mem_alloc_z",
+        "mk_mem_free"
+      ],
+      "unvalidated_replay_additions": [
+        "mk_fifo_queue_destroy",
+        "mk_list_add",
+        "mk_list_del"
+      ]
+    },
+    {
+      "index": 115,
+      "library": "librdkafka",
+      "file": "rdkafka_sticky_assignor.c",
+      "validated_replay_additions": [
+        "MK_EVENT_NEW",
+        "mk_mem_alloc",
+        "mk_mem_alloc_z",
+        "mk_mem_free"
+      ],
+      "unvalidated_replay_additions": [
+        "mk_fifo_queue_destroy",
+        "mk_list_add",
+        "mk_list_del"
+      ]
+    },
+    {
+      "index": 116,
+      "library": "librdkafka",
+      "file": "rdkafka_subscription.c",
+      "validated_replay_additions": [
+        "MK_EVENT_NEW",
+        "mk_mem_alloc",
+        "mk_mem_alloc_z",
+        "mk_mem_free"
+      ],
+      "unvalidated_replay_additions": [
+        "mk_fifo_queue_destroy",
+        "mk_list_add",
+        "mk_list_del"
+      ]
+    },
+    {
+      "index": 117,
+      "library": "librdkafka",
+      "file": "rdkafka_telemetry.c",
+      "validated_replay_additions": [
+        "MK_EVENT_NEW",
+        "mk_mem_alloc",
+        "mk_mem_alloc_z",
+        "mk_mem_free"
+      ],
+      "unvalidated_replay_additions": [
+        "mk_fifo_queue_destroy",
+        "mk_list_add",
+        "mk_list_del"
+      ]
+    },
+    {
+      "index": 118,
+      "library": "librdkafka",
+      "file": "rdkafka_telemetry_decode.c",
+      "validated_replay_additions": [
+        "MK_EVENT_NEW",
+        "mk_mem_alloc",
+        "mk_mem_alloc_z",
+        "mk_mem_free"
+      ],
+      "unvalidated_replay_additions": [
+        "mk_fifo_queue_destroy",
+        "mk_list_add",
+        "mk_list_del"
+      ]
+    },
+    {
+      "index": 119,
+      "library": "librdkafka",
+      "file": "rdkafka_telemetry_encode.c",
+      "validated_replay_additions": [
+        "MK_EVENT_NEW",
+        "mk_mem_alloc",
+        "mk_mem_alloc_z",
+        "mk_mem_free"
+      ],
+      "unvalidated_replay_additions": [
+        "mk_fifo_queue_destroy",
+        "mk_list_add",
+        "mk_list_del"
+      ]
+    },
+    {
+      "index": 120,
+      "library": "librdkafka",
+      "file": "rdkafka_timer.c",
+      "validated_replay_additions": [
+        "MK_EVENT_NEW",
+        "mk_mem_alloc",
+        "mk_mem_alloc_z",
+        "mk_mem_free"
+      ],
+      "unvalidated_replay_additions": [
+        "mk_fifo_queue_destroy",
+        "mk_list_add",
+        "mk_list_del"
+      ]
+    },
+    {
+      "index": 121,
+      "library": "librdkafka",
+      "file": "rdkafka_topic.c",
+      "validated_replay_additions": [
+        "MK_EVENT_NEW",
+        "mk_mem_alloc",
+        "mk_mem_alloc_z",
+        "mk_mem_free"
+      ],
+      "unvalidated_replay_additions": [
+        "mk_fifo_queue_destroy",
+        "mk_list_add",
+        "mk_list_del"
+      ]
+    },
+    {
+      "index": 122,
+      "library": "librdkafka",
+      "file": "rdkafka_transport.c",
+      "validated_replay_additions": [
+        "MK_EVENT_NEW",
+        "mk_mem_alloc",
+        "mk_mem_alloc_z",
+        "mk_mem_free"
+      ],
+      "unvalidated_replay_additions": [
+        "mk_fifo_queue_destroy",
+        "mk_list_add",
+        "mk_list_del"
+      ]
+    },
+    {
+      "index": 123,
+      "library": "librdkafka",
+      "file": "rdkafka_txnmgr.c",
+      "validated_replay_additions": [
+        "MK_EVENT_NEW",
+        "mk_mem_alloc",
+        "mk_mem_alloc_z",
+        "mk_mem_free"
+      ],
+      "unvalidated_replay_additions": [
+        "mk_fifo_queue_destroy",
+        "mk_list_add",
+        "mk_list_del"
+      ]
+    },
+    {
+      "index": 124,
+      "library": "librdkafka",
+      "file": "rdkafka_zstd.c",
+      "validated_replay_additions": [
+        "MK_EVENT_NEW",
+        "mk_mem_alloc",
+        "mk_mem_alloc_z",
+        "mk_mem_free"
+      ],
+      "unvalidated_replay_additions": [
+        "mk_fifo_queue_destroy",
+        "mk_list_add",
+        "mk_list_del"
+      ]
+    },
+    {
+      "index": 125,
+      "library": "librdkafka",
+      "file": "rdlist.c",
+      "validated_replay_additions": [
+        "MK_EVENT_NEW",
+        "mk_mem_alloc",
+        "mk_mem_alloc_z",
+        "mk_mem_free"
+      ],
+      "unvalidated_replay_additions": [
+        "mk_fifo_queue_destroy",
+        "mk_list_add",
+        "mk_list_del"
+      ]
+    },
+    {
+      "index": 126,
+      "library": "librdkafka",
+      "file": "rdlog.c",
+      "validated_replay_additions": [
+        "MK_EVENT_NEW",
+        "mk_mem_alloc",
+        "mk_mem_alloc_z",
+        "mk_mem_free"
+      ],
+      "unvalidated_replay_additions": [
+        "mk_fifo_queue_destroy",
+        "mk_list_add",
+        "mk_list_del"
+      ]
+    },
+    {
+      "index": 127,
+      "library": "librdkafka",
+      "file": "rdmap.c",
+      "validated_replay_additions": [
+        "MK_EVENT_NEW",
+        "mk_mem_alloc",
+        "mk_mem_alloc_z",
+        "mk_mem_free"
+      ],
+      "unvalidated_replay_additions": [
+        "mk_fifo_queue_destroy",
+        "mk_list_add",
+        "mk_list_del"
+      ]
+    },
+    {
+      "index": 128,
+      "library": "librdkafka",
+      "file": "rdmurmur2.c",
+      "validated_replay_additions": [
+        "MK_EVENT_NEW",
+        "mk_mem_alloc",
+        "mk_mem_alloc_z",
+        "mk_mem_free"
+      ],
+      "unvalidated_replay_additions": [
+        "mk_fifo_queue_destroy",
+        "mk_list_add",
+        "mk_list_del"
+      ]
+    },
+    {
+      "index": 129,
+      "library": "librdkafka",
+      "file": "rdports.c",
+      "validated_replay_additions": [
+        "MK_EVENT_NEW",
+        "mk_mem_alloc",
+        "mk_mem_alloc_z",
+        "mk_mem_free"
+      ],
+      "unvalidated_replay_additions": [
+        "mk_fifo_queue_destroy",
+        "mk_list_add",
+        "mk_list_del"
+      ]
+    },
+    {
+      "index": 130,
+      "library": "librdkafka",
+      "file": "rdrand.c",
+      "validated_replay_additions": [
+        "MK_EVENT_NEW",
+        "mk_mem_alloc",
+        "mk_mem_alloc_z",
+        "mk_mem_free"
+      ],
+      "unvalidated_replay_additions": [
+        "mk_fifo_queue_destroy",
+        "mk_list_add",
+        "mk_list_del"
+      ]
+    },
+    {
+      "index": 131,
+      "library": "librdkafka",
+      "file": "rdregex.c",
+      "validated_replay_additions": [
+        "MK_EVENT_NEW",
+        "mk_mem_alloc",
+        "mk_mem_alloc_z",
+        "mk_mem_free"
+      ],
+      "unvalidated_replay_additions": [
+        "mk_fifo_queue_destroy",
+        "mk_list_add",
+        "mk_list_del"
+      ]
+    },
+    {
+      "index": 132,
+      "library": "librdkafka",
+      "file": "rdstring.c",
+      "validated_replay_additions": [
+        "MK_EVENT_NEW",
+        "mk_mem_alloc",
+        "mk_mem_alloc_z",
+        "mk_mem_free"
+      ],
+      "unvalidated_replay_additions": [
+        "mk_fifo_queue_destroy",
+        "mk_list_add",
+        "mk_list_del"
+      ]
+    },
+    {
+      "index": 133,
+      "library": "librdkafka",
+      "file": "rdunittest.c",
+      "validated_replay_additions": [
+        "MK_EVENT_NEW",
+        "mk_mem_alloc",
+        "mk_mem_alloc_z",
+        "mk_mem_free"
+      ],
+      "unvalidated_replay_additions": [
+        "mk_fifo_queue_destroy",
+        "mk_list_add",
+        "mk_list_del"
+      ]
+    },
+    {
+      "index": 134,
+      "library": "librdkafka",
+      "file": "rdunittest_acknowledge.c",
+      "validated_replay_additions": [
+        "MK_EVENT_NEW",
+        "mk_mem_alloc",
+        "mk_mem_alloc_z",
+        "mk_mem_free"
+      ],
+      "unvalidated_replay_additions": [
+        "mk_fifo_queue_destroy",
+        "mk_list_add",
+        "mk_list_del"
+      ]
+    },
+    {
+      "index": 135,
+      "library": "librdkafka",
+      "file": "rdunittest_fetcher.c",
+      "validated_replay_additions": [
+        "MK_EVENT_NEW",
+        "mk_mem_alloc",
+        "mk_mem_alloc_z",
+        "mk_mem_free"
+      ],
+      "unvalidated_replay_additions": [
+        "mk_fifo_queue_destroy",
+        "mk_list_add",
+        "mk_list_del"
+      ]
+    },
+    {
+      "index": 136,
+      "library": "librdkafka",
+      "file": "rdunittest_msgset_errors.c",
+      "validated_replay_additions": [
+        "MK_EVENT_NEW",
+        "mk_mem_alloc",
+        "mk_mem_alloc_z",
+        "mk_mem_free"
+      ],
+      "unvalidated_replay_additions": [
+        "mk_fifo_queue_destroy",
+        "mk_list_add",
+        "mk_list_del"
+      ]
+    },
+    {
+      "index": 137,
+      "library": "librdkafka",
+      "file": "rdvarint.c",
+      "validated_replay_additions": [
+        "MK_EVENT_NEW",
+        "mk_mem_alloc",
+        "mk_mem_alloc_z",
+        "mk_mem_free"
+      ],
+      "unvalidated_replay_additions": [
+        "mk_fifo_queue_destroy",
+        "mk_list_add",
+        "mk_list_del"
+      ]
+    },
+    {
+      "index": 138,
+      "library": "librdkafka",
+      "file": "rdxxhash.c",
+      "validated_replay_additions": [
+        "MK_EVENT_NEW",
+        "mk_mem_alloc",
+        "mk_mem_alloc_z",
+        "mk_mem_free"
+      ],
+      "unvalidated_replay_additions": [
+        "mk_fifo_queue_destroy",
+        "mk_list_add",
+        "mk_list_del"
+      ]
+    },
+    {
+      "index": 139,
+      "library": "librdkafka",
+      "file": "snappy.c",
+      "validated_replay_additions": [
+        "MK_EVENT_NEW",
+        "mk_mem_alloc",
+        "mk_mem_alloc_z",
+        "mk_mem_free"
+      ],
+      "unvalidated_replay_additions": [
+        "mk_fifo_queue_destroy",
+        "mk_list_add",
+        "mk_list_del"
+      ]
+    },
+    {
+      "index": 141,
+      "library": "librdkafka",
+      "file": "tinycthread_extra.c",
+      "validated_replay_additions": [
+        "MK_EVENT_NEW",
+        "mk_mem_alloc",
+        "mk_mem_alloc_z",
+        "mk_mem_free"
+      ],
+      "unvalidated_replay_additions": [
+        "mk_fifo_queue_destroy",
+        "mk_list_add",
+        "mk_list_del"
+      ]
+    },
+    {
+      "index": 142,
+      "library": "chunkio",
+      "file": "chunkio.c",
+      "validated_replay_additions": [
+        "MK_EVENT_NEW",
+        "mk_mem_alloc",
+        "mk_mem_alloc_z",
+        "mk_mem_free"
+      ],
+      "unvalidated_replay_additions": [
+        "mk_fifo_queue_destroy"
+      ]
+    },
+    {
+      "index": 143,
+      "library": "chunkio",
+      "file": "cio_chunk.c",
+      "validated_replay_additions": [
+        "MK_EVENT_NEW",
+        "mk_mem_alloc",
+        "mk_mem_alloc_z",
+        "mk_mem_free"
+      ],
+      "unvalidated_replay_additions": [
+        "mk_fifo_queue_destroy"
+      ]
+    },
+    {
+      "index": 144,
+      "library": "chunkio",
+      "file": "cio_error.c",
+      "validated_replay_additions": [
+        "MK_EVENT_NEW",
+        "mk_mem_alloc",
+        "mk_mem_alloc_z",
+        "mk_mem_free"
+      ],
+      "unvalidated_replay_additions": [
+        "mk_fifo_queue_destroy",
+        "mk_list_add",
+        "mk_list_del"
+      ]
+    },
+    {
+      "index": 145,
+      "library": "chunkio",
+      "file": "cio_file.c",
+      "validated_replay_additions": [
+        "MK_EVENT_NEW",
+        "mk_mem_alloc",
+        "mk_mem_alloc_z",
+        "mk_mem_free"
+      ],
+      "unvalidated_replay_additions": [
+        "mk_fifo_queue_destroy",
+        "mk_list_add",
+        "mk_list_del"
+      ]
+    },
+    {
+      "index": 146,
+      "library": "chunkio",
+      "file": "cio_file_unix.c",
+      "validated_replay_additions": [
+        "MK_EVENT_NEW",
+        "mk_mem_alloc",
+        "mk_mem_alloc_z",
+        "mk_mem_free"
+      ],
+      "unvalidated_replay_additions": [
+        "mk_fifo_queue_destroy",
+        "mk_list_add",
+        "mk_list_del"
+      ]
+    },
+    {
+      "index": 147,
+      "library": "chunkio",
+      "file": "cio_log.c",
+      "validated_replay_additions": [
+        "MK_EVENT_NEW",
+        "mk_mem_alloc",
+        "mk_mem_alloc_z",
+        "mk_mem_free"
+      ],
+      "unvalidated_replay_additions": [
+        "mk_fifo_queue_destroy",
+        "mk_list_add",
+        "mk_list_del"
+      ]
+    },
+    {
+      "index": 148,
+      "library": "chunkio",
+      "file": "cio_memfs.c",
+      "validated_replay_additions": [
+        "MK_EVENT_NEW",
+        "mk_mem_alloc",
+        "mk_mem_alloc_z",
+        "mk_mem_free"
+      ],
+      "unvalidated_replay_additions": [
+        "mk_fifo_queue_destroy",
+        "mk_list_add",
+        "mk_list_del"
+      ]
+    },
+    {
+      "index": 149,
+      "library": "chunkio",
+      "file": "cio_meta.c",
+      "validated_replay_additions": [
+        "MK_EVENT_NEW",
+        "mk_mem_alloc",
+        "mk_mem_alloc_z",
+        "mk_mem_free"
+      ],
+      "unvalidated_replay_additions": [
+        "mk_fifo_queue_destroy",
+        "mk_list_add",
+        "mk_list_del"
+      ]
+    },
+    {
+      "index": 150,
+      "library": "chunkio",
+      "file": "cio_os.c",
+      "validated_replay_additions": [
+        "MK_EVENT_NEW",
+        "mk_mem_alloc",
+        "mk_mem_alloc_z",
+        "mk_mem_free"
+      ],
+      "unvalidated_replay_additions": [
+        "mk_fifo_queue_destroy",
+        "mk_list_add",
+        "mk_list_del"
+      ]
+    },
+    {
+      "index": 151,
+      "library": "chunkio",
+      "file": "cio_scan.c",
+      "validated_replay_additions": [
+        "MK_EVENT_NEW",
+        "mk_mem_alloc",
+        "mk_mem_alloc_z",
+        "mk_mem_free"
+      ],
+      "unvalidated_replay_additions": [
+        "mk_fifo_queue_destroy",
+        "mk_list_add",
+        "mk_list_del"
+      ]
+    },
+    {
+      "index": 152,
+      "library": "chunkio",
+      "file": "cio_stats.c",
+      "validated_replay_additions": [
+        "MK_EVENT_NEW",
+        "mk_mem_alloc",
+        "mk_mem_alloc_z",
+        "mk_mem_free"
+      ],
+      "unvalidated_replay_additions": [
+        "mk_fifo_queue_destroy",
+        "mk_list_add",
+        "mk_list_del"
+      ]
+    },
+    {
+      "index": 153,
+      "library": "chunkio",
+      "file": "cio_stream.c",
+      "validated_replay_additions": [
+        "MK_EVENT_NEW",
+        "mk_mem_alloc",
+        "mk_mem_alloc_z",
+        "mk_mem_free"
+      ],
+      "unvalidated_replay_additions": [
+        "mk_fifo_queue_destroy"
+      ]
+    },
+    {
+      "index": 154,
+      "library": "chunkio",
+      "file": "cio_utils.c",
+      "validated_replay_additions": [
+        "MK_EVENT_NEW",
+        "mk_mem_alloc",
+        "mk_mem_alloc_z",
+        "mk_mem_free"
+      ],
+      "unvalidated_replay_additions": [
+        "mk_fifo_queue_destroy",
+        "mk_list_add",
+        "mk_list_del"
+      ]
+    },
+    {
+      "index": 155,
+      "library": "fluent-bit-chunk",
+      "file": "flb_input_chunk.c",
+      "validated_replay_additions": [
+        "MK_EVENT_NEW",
+        "mk_mem_alloc",
+        "mk_mem_alloc_z",
+        "mk_mem_free"
+      ],
+      "unvalidated_replay_additions": [
+        "mk_fifo_queue_destroy"
+      ]
+    },
+    {
+      "index": 156,
+      "library": "monkey-libevent",
+      "file": "mk_core/mk_event.c",
+      "validated_replay_additions": [
+        "mk_mem_alloc"
+      ],
+      "unvalidated_replay_additions": [
+        "mk_fifo_queue_destroy",
+        "mk_list_add"
+      ]
+    },
+    {
+      "index": 157,
+      "library": "monkey-libevent",
+      "file": "mk_core/mk_file.c",
+      "validated_replay_additions": [
+        "MK_EVENT_NEW",
+        "mk_mem_alloc"
+      ],
+      "unvalidated_replay_additions": [
+        "mk_fifo_queue_destroy",
+        "mk_list_add",
+        "mk_list_del"
+      ]
+    },
+    {
+      "index": 158,
+      "library": "monkey-libevent",
+      "file": "mk_core/mk_iov.c",
+      "validated_replay_additions": [
+        "MK_EVENT_NEW",
+        "mk_mem_alloc"
+      ],
+      "unvalidated_replay_additions": [
+        "mk_fifo_queue_destroy",
+        "mk_list_add",
+        "mk_list_del"
+      ]
+    },
+    {
+      "index": 159,
+      "library": "monkey-libevent",
+      "file": "mk_core/mk_memory.c",
+      "validated_replay_additions": [
+        "MK_EVENT_NEW",
+        "mk_mem_alloc_z"
+      ],
+      "unvalidated_replay_additions": [
+        "mk_fifo_queue_destroy",
+        "mk_list_add",
+        "mk_list_del"
+      ]
+    },
+    {
+      "index": 160,
+      "library": "monkey-libevent",
+      "file": "mk_core/mk_rconf.c",
+      "validated_replay_additions": [
+        "MK_EVENT_NEW"
+      ],
+      "unvalidated_replay_additions": [
+        "mk_fifo_queue_destroy"
+      ]
+    },
+    {
+      "index": 161,
+      "library": "monkey-libevent",
+      "file": "mk_core/mk_string.c",
+      "validated_replay_additions": [
+        "MK_EVENT_NEW",
+        "mk_mem_alloc_z"
+      ],
+      "unvalidated_replay_additions": [
+        "mk_fifo_queue_destroy"
+      ]
+    },
+    {
+      "index": 162,
+      "library": "monkey-libevent",
+      "file": "mk_core/mk_utils.c",
+      "validated_replay_additions": [
+        "MK_EVENT_NEW",
+        "mk_mem_alloc",
+        "mk_mem_alloc_z",
+        "mk_mem_free"
+      ],
+      "unvalidated_replay_additions": [
+        "mk_fifo_queue_destroy",
+        "mk_list_add",
+        "mk_list_del"
+      ]
+    },
+    {
+      "index": 163,
+      "library": "monkey-libevent",
+      "file": "mk_server/mk_cache.c",
+      "validated_replay_additions": [
+        "MK_EVENT_NEW"
+      ],
+      "unvalidated_replay_additions": [
+        "mk_fifo_queue_destroy",
+        "mk_list_add",
+        "mk_list_del"
+      ]
+    },
+    {
+      "index": 164,
+      "library": "monkey-libevent",
+      "file": "mk_server/mk_clock.c",
+      "validated_replay_additions": [
+        "MK_EVENT_NEW",
+        "mk_mem_alloc"
+      ],
+      "unvalidated_replay_additions": [
+        "mk_fifo_queue_destroy",
+        "mk_list_add",
+        "mk_list_del"
+      ]
+    },
+    {
+      "index": 165,
+      "library": "monkey-libevent",
+      "file": "mk_server/mk_config.c",
+      "validated_replay_additions": [
+        "MK_EVENT_NEW",
+        "mk_mem_alloc_z"
+      ],
+      "unvalidated_replay_additions": [
+        "mk_fifo_queue_destroy"
+      ]
+    },
+    {
+      "index": 167,
+      "library": "monkey-libevent",
+      "file": "mk_server/mk_header.c",
+      "validated_replay_additions": [
+        "MK_EVENT_NEW",
+        "mk_mem_alloc",
+        "mk_mem_alloc_z",
+        "mk_mem_free"
+      ],
+      "unvalidated_replay_additions": [
+        "mk_fifo_queue_destroy",
+        "mk_list_del"
+      ]
+    },
+    {
+      "index": 168,
+      "library": "monkey-libevent",
+      "file": "mk_server/mk_http.c",
+      "validated_replay_additions": [
+        "MK_EVENT_NEW",
+        "mk_mem_alloc_z"
+      ],
+      "unvalidated_replay_additions": [
+        "mk_fifo_queue_destroy"
+      ]
+    },
+    {
+      "index": 169,
+      "library": "monkey-libevent",
+      "file": "mk_server/mk_http_parser.c",
+      "validated_replay_additions": [
+        "MK_EVENT_NEW",
+        "mk_mem_alloc_z"
+      ],
+      "unvalidated_replay_additions": [
+        "mk_fifo_queue_destroy"
+      ]
+    },
+    {
+      "index": 170,
+      "library": "monkey-libevent",
+      "file": "mk_server/mk_http_thread.c",
+      "validated_replay_additions": [],
+      "unvalidated_replay_additions": [
+        "mk_fifo_queue_destroy"
+      ]
+    },
+    {
+      "index": 171,
+      "library": "monkey-libevent",
+      "file": "mk_server/mk_kernel.c",
+      "validated_replay_additions": [
+        "MK_EVENT_NEW",
+        "mk_mem_alloc",
+        "mk_mem_alloc_z"
+      ],
+      "unvalidated_replay_additions": [
+        "mk_fifo_queue_destroy",
+        "mk_list_add",
+        "mk_list_del"
+      ]
+    },
+    {
+      "index": 172,
+      "library": "monkey-libevent",
+      "file": "mk_server/mk_lib.c",
+      "validated_replay_additions": [
+        "MK_EVENT_NEW"
+      ],
+      "unvalidated_replay_additions": [
+        "mk_fifo_queue_destroy",
+        "mk_list_del"
+      ]
+    },
+    {
+      "index": 173,
+      "library": "monkey-libevent",
+      "file": "mk_server/mk_mimetype.c",
+      "validated_replay_additions": [
+        "MK_EVENT_NEW"
+      ],
+      "unvalidated_replay_additions": [
+        "mk_fifo_queue_destroy",
+        "mk_list_del"
+      ]
+    },
+    {
+      "index": 174,
+      "library": "monkey-libevent",
+      "file": "mk_server/mk_net.c",
+      "validated_replay_additions": [
+        "mk_mem_alloc_z"
+      ],
+      "unvalidated_replay_additions": [
+        "mk_fifo_queue_destroy",
+        "mk_list_add",
+        "mk_list_del"
+      ]
+    },
+    {
+      "index": 175,
+      "library": "monkey-libevent",
+      "file": "mk_server/mk_plugin.c",
+      "validated_replay_additions": [
+        "MK_EVENT_NEW"
+      ],
+      "unvalidated_replay_additions": [
+        "mk_fifo_queue_destroy"
+      ]
+    },
+    {
+      "index": 176,
+      "library": "monkey-libevent",
+      "file": "mk_server/mk_scheduler.c",
+      "validated_replay_additions": [
+        "MK_EVENT_NEW"
+      ],
+      "unvalidated_replay_additions": [
+        "mk_fifo_queue_destroy"
+      ]
+    },
+    {
+      "index": 177,
+      "library": "monkey-libevent",
+      "file": "mk_server/mk_server.c",
+      "validated_replay_additions": [
+        "MK_EVENT_NEW"
+      ],
+      "unvalidated_replay_additions": [
+        "mk_fifo_queue_destroy"
+      ]
+    },
+    {
+      "index": 178,
+      "library": "monkey-libevent",
+      "file": "mk_server/mk_socket.c",
+      "validated_replay_additions": [
+        "MK_EVENT_NEW",
+        "mk_mem_alloc",
+        "mk_mem_alloc_z"
+      ],
+      "unvalidated_replay_additions": [
+        "mk_fifo_queue_destroy",
+        "mk_list_add",
+        "mk_list_del"
+      ]
+    },
+    {
+      "index": 179,
+      "library": "monkey-libevent",
+      "file": "mk_server/mk_stream.c",
+      "validated_replay_additions": [
+        "MK_EVENT_NEW",
+        "mk_mem_alloc_z"
+      ],
+      "unvalidated_replay_additions": [
+        "mk_fifo_queue_destroy",
+        "mk_list_add"
+      ]
+    },
+    {
+      "index": 180,
+      "library": "monkey-libevent",
+      "file": "mk_server/mk_user.c",
+      "validated_replay_additions": [
+        "MK_EVENT_NEW",
+        "mk_mem_alloc_z"
+      ],
+      "unvalidated_replay_additions": [
+        "mk_fifo_queue_destroy",
+        "mk_list_add",
+        "mk_list_del"
+      ]
+    },
+    {
+      "index": 181,
+      "library": "monkey-libevent",
+      "file": "mk_server/mk_utils.c",
+      "validated_replay_additions": [
+        "MK_EVENT_NEW"
+      ],
+      "unvalidated_replay_additions": [
+        "mk_fifo_queue_destroy",
+        "mk_list_add",
+        "mk_list_del"
+      ]
+    },
+    {
+      "index": 182,
+      "library": "monkey-libevent",
+      "file": "mk_server/mk_vhost.c",
+      "validated_replay_additions": [
+        "MK_EVENT_NEW"
+      ],
+      "unvalidated_replay_additions": [
+        "mk_fifo_queue_destroy"
+      ]
+    },
+    {
+      "index": 183,
+      "library": "monkey-libevent",
+      "file": "mk_server/monkey.c",
+      "validated_replay_additions": [
+        "MK_EVENT_NEW",
+        "mk_mem_alloc"
+      ],
+      "unvalidated_replay_additions": [
+        "mk_fifo_queue_destroy",
+        "mk_list_add",
+        "mk_list_del"
+      ]
+    },
+    {
+      "index": 184,
+      "library": "monkey-libevent",
+      "file": "tls/tls_stub.c",
+      "validated_replay_additions": [
+        "MK_EVENT_NEW",
+        "mk_mem_alloc",
+        "mk_mem_alloc_z",
+        "mk_mem_free"
+      ],
+      "unvalidated_replay_additions": [
+        "mk_fifo_queue_destroy",
+        "mk_list_add",
+        "mk_list_del"
+      ]
+    }
+  ],
+  "complete_body_evidence_equal_after_explicit_replay_additions": true
+}

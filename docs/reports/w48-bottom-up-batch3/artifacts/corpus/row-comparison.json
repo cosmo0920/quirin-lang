@@ -1,0 +1,461 @@
+{
+  "before": "/home/cosmo/.codex/worktrees/47fe/qcore-c/private/w48-bottom-up-batch3/measure-final/before/corpus/corpus/resource-diagnostics.json",
+  "after": "/home/cosmo/.codex/worktrees/47fe/qcore-c/private/w48-bottom-up-batch3/measure-final/after/corpus/corpus/resource-diagnostics.json",
+  "functions": 4834,
+  "transitions": [
+    {
+      "before": "Safe",
+      "after": "Safe",
+      "count": 963
+    },
+    {
+      "before": "Unknown",
+      "after": "Safe",
+      "count": 4
+    },
+    {
+      "before": "Unknown",
+      "after": "Unknown",
+      "count": 3858
+    },
+    {
+      "before": "Unsafe",
+      "after": "Unsafe",
+      "count": 9
+    }
+  ],
+  "removed_leaves": [
+    [
+      "unsupported",
+      "call to uncontracted function `mk_fifo_send`",
+      1
+    ],
+    [
+      "unsupported",
+      "call to uncontracted function `msg_write`",
+      2
+    ],
+    [
+      "unsupported",
+      "unmodeled call, aggregate or indirect access in branch condition",
+      22
+    ]
+  ],
+  "added_leaves": [],
+  "changed": [
+    {
+      "key": [
+        "librdkafka",
+        "rdkafka_sasl_cyrus.c",
+        "rd_kafka_sasl_cyrus_kinit_refresh",
+        0
+      ],
+      "before": "Unknown",
+      "after": "Unknown",
+      "removed_leaves": [
+        [
+          "unsupported",
+          "unmodeled call, aggregate or indirect access in branch condition",
+          1
+        ]
+      ],
+      "added_leaves": []
+    },
+    {
+      "key": [
+        "librdkafka",
+        "rdkafka_sasl_scram.c",
+        "rd_kafka_sasl_scram_handle_server_first_message",
+        0
+      ],
+      "before": "Unknown",
+      "after": "Unknown",
+      "removed_leaves": [
+        [
+          "unsupported",
+          "unmodeled call, aggregate or indirect access in branch condition",
+          1
+        ]
+      ],
+      "added_leaves": []
+    },
+    {
+      "key": [
+        "librdkafka",
+        "rdkafka_ssl.c",
+        "rd_kafka_transport_ssl_io_update",
+        0
+      ],
+      "before": "Unknown",
+      "after": "Unknown",
+      "removed_leaves": [
+        [
+          "unsupported",
+          "unmodeled call, aggregate or indirect access in branch condition",
+          1
+        ]
+      ],
+      "added_leaves": []
+    },
+    {
+      "key": [
+        "librdkafka",
+        "rdkafka_transport.c",
+        "rd_kafka_transport_socket_recv0",
+        0
+      ],
+      "before": "Unknown",
+      "after": "Unknown",
+      "removed_leaves": [
+        [
+          "unsupported",
+          "unmodeled call, aggregate or indirect access in branch condition",
+          1
+        ]
+      ],
+      "added_leaves": []
+    },
+    {
+      "key": [
+        "librdkafka",
+        "rdkafka_transport.c",
+        "rd_kafka_transport_socket_recvmsg",
+        0
+      ],
+      "before": "Unknown",
+      "after": "Unknown",
+      "removed_leaves": [
+        [
+          "unsupported",
+          "unmodeled call, aggregate or indirect access in branch condition",
+          2
+        ]
+      ],
+      "added_leaves": []
+    },
+    {
+      "key": [
+        "librdkafka",
+        "rdkafka_transport.c",
+        "rd_kafka_transport_socket_send0",
+        0
+      ],
+      "before": "Unknown",
+      "after": "Unknown",
+      "removed_leaves": [
+        [
+          "unsupported",
+          "unmodeled call, aggregate or indirect access in branch condition",
+          1
+        ]
+      ],
+      "added_leaves": []
+    },
+    {
+      "key": [
+        "librdkafka",
+        "rdkafka_transport.c",
+        "rd_kafka_transport_socket_sendmsg",
+        0
+      ],
+      "before": "Unknown",
+      "after": "Unknown",
+      "removed_leaves": [
+        [
+          "unsupported",
+          "unmodeled call, aggregate or indirect access in branch condition",
+          1
+        ]
+      ],
+      "added_leaves": []
+    },
+    {
+      "key": [
+        "chunkio",
+        "cio_file_unix.c",
+        "cio_file_native_resize",
+        0
+      ],
+      "before": "Unknown",
+      "after": "Unknown",
+      "removed_leaves": [
+        [
+          "unsupported",
+          "unmodeled call, aggregate or indirect access in branch condition",
+          1
+        ]
+      ],
+      "added_leaves": []
+    },
+    {
+      "key": [
+        "monkey-libevent",
+        "mk_core/mk_file.c",
+        "mk_file_get_info",
+        0
+      ],
+      "before": "Unknown",
+      "after": "Unknown",
+      "removed_leaves": [
+        [
+          "unsupported",
+          "unmodeled call, aggregate or indirect access in branch condition",
+          1
+        ]
+      ],
+      "added_leaves": []
+    },
+    {
+      "key": [
+        "monkey-libevent",
+        "mk_core/mk_rconf.c",
+        "mk_rconf_read",
+        0
+      ],
+      "before": "Unknown",
+      "after": "Unknown",
+      "removed_leaves": [
+        [
+          "unsupported",
+          "unmodeled call, aggregate or indirect access in branch condition",
+          1
+        ]
+      ],
+      "added_leaves": []
+    },
+    {
+      "key": [
+        "monkey-libevent",
+        "mk_server/mk_config.c",
+        "mk_config_listen_parse",
+        0
+      ],
+      "before": "Unknown",
+      "after": "Unknown",
+      "removed_leaves": [
+        [
+          "unsupported",
+          "unmodeled call, aggregate or indirect access in branch condition",
+          1
+        ]
+      ],
+      "added_leaves": []
+    },
+    {
+      "key": [
+        "monkey-libevent",
+        "mk_server/mk_fifo.c",
+        "mk_fifo_send",
+        0
+      ],
+      "before": "Unknown",
+      "after": "Safe",
+      "removed_leaves": [
+        [
+          "unsupported",
+          "call to uncontracted function `msg_write`",
+          2
+        ]
+      ],
+      "added_leaves": []
+    },
+    {
+      "key": [
+        "monkey-libevent",
+        "mk_server/mk_fifo.c",
+        "msg_write",
+        0
+      ],
+      "before": "Unknown",
+      "after": "Safe",
+      "removed_leaves": [
+        [
+          "unsupported",
+          "unmodeled call, aggregate or indirect access in branch condition",
+          1
+        ]
+      ],
+      "added_leaves": []
+    },
+    {
+      "key": [
+        "monkey-libevent",
+        "mk_server/mk_http_parser.c",
+        "header_lookup",
+        0
+      ],
+      "before": "Unknown",
+      "after": "Unknown",
+      "removed_leaves": [
+        [
+          "unsupported",
+          "unmodeled call, aggregate or indirect access in branch condition",
+          1
+        ]
+      ],
+      "added_leaves": []
+    },
+    {
+      "key": [
+        "monkey-libevent",
+        "mk_server/mk_http_parser.c",
+        "http_parser_transfer_encoding_chunked",
+        0
+      ],
+      "before": "Unknown",
+      "after": "Unknown",
+      "removed_leaves": [
+        [
+          "unsupported",
+          "unmodeled call, aggregate or indirect access in branch condition",
+          1
+        ]
+      ],
+      "added_leaves": []
+    },
+    {
+      "key": [
+        "monkey-libevent",
+        "mk_server/mk_lib.c",
+        "mk_mq_send",
+        0
+      ],
+      "before": "Unknown",
+      "after": "Safe",
+      "removed_leaves": [
+        [
+          "unsupported",
+          "call to uncontracted function `mk_fifo_send`",
+          1
+        ]
+      ],
+      "added_leaves": []
+    },
+    {
+      "key": [
+        "monkey-libevent",
+        "mk_server/mk_net.c",
+        "mk_net_conn_create",
+        0
+      ],
+      "before": "Unsafe",
+      "after": "Unsafe",
+      "removed_leaves": [
+        [
+          "unsupported",
+          "unmodeled call, aggregate or indirect access in branch condition",
+          1
+        ]
+      ],
+      "added_leaves": []
+    },
+    {
+      "key": [
+        "monkey-libevent",
+        "mk_server/mk_net.c",
+        "mk_net_conn_write",
+        0
+      ],
+      "before": "Unknown",
+      "after": "Unknown",
+      "removed_leaves": [
+        [
+          "unsupported",
+          "unmodeled call, aggregate or indirect access in branch condition",
+          1
+        ]
+      ],
+      "added_leaves": []
+    },
+    {
+      "key": [
+        "monkey-libevent",
+        "mk_server/mk_net.c",
+        "net_plain_send_file",
+        0
+      ],
+      "before": "Unknown",
+      "after": "Safe",
+      "removed_leaves": [
+        [
+          "unsupported",
+          "unmodeled call, aggregate or indirect access in branch condition",
+          1
+        ]
+      ],
+      "added_leaves": []
+    },
+    {
+      "key": [
+        "monkey-libevent",
+        "mk_server/mk_scheduler.c",
+        "mk_sched_event_read",
+        0
+      ],
+      "before": "Unknown",
+      "after": "Unknown",
+      "removed_leaves": [
+        [
+          "unsupported",
+          "unmodeled call, aggregate or indirect access in branch condition",
+          1
+        ]
+      ],
+      "added_leaves": []
+    },
+    {
+      "key": [
+        "monkey-libevent",
+        "mk_server/mk_socket.c",
+        "mk_socket_connect",
+        0
+      ],
+      "before": "Unknown",
+      "after": "Unknown",
+      "removed_leaves": [
+        [
+          "unsupported",
+          "unmodeled call, aggregate or indirect access in branch condition",
+          1
+        ]
+      ],
+      "added_leaves": []
+    },
+    {
+      "key": [
+        "monkey-libevent",
+        "mk_server/mk_socket.c",
+        "mk_socket_open",
+        0
+      ],
+      "before": "Unknown",
+      "after": "Unknown",
+      "removed_leaves": [
+        [
+          "unsupported",
+          "unmodeled call, aggregate or indirect access in branch condition",
+          1
+        ]
+      ],
+      "added_leaves": []
+    },
+    {
+      "key": [
+        "monkey-libevent",
+        "mk_server/mk_stream.c",
+        "mk_channel_write",
+        0
+      ],
+      "before": "Unknown",
+      "after": "Unknown",
+      "removed_leaves": [
+        [
+          "unsupported",
+          "unmodeled call, aggregate or indirect access in branch condition",
+          1
+        ]
+      ],
+      "added_leaves": []
+    }
+  ]
+}

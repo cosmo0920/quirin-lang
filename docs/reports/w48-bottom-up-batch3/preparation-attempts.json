@@ -1,12 +1,46 @@
 {
   "meaning": "Nonmeasurement setup/probe errors, retained separately from validation",
   "attempts": [
-    {"command": "git switch -c codex/w48-bottom-up-batch3 && git submodule update --init --recursive", "exit": 128, "reason": "Shared Git metadata read-only in initial sandbox", "resolution": "Authorized escalation created the isolated card branch; submodules exited 0"},
-    {"command": "python3 scripts/task_context.py --base 198f6fc4349d3a47591a2378835ae9286859d918 --topic semantic --path crates/qcore-analysis --path docs/reports/w48-bottom-up-batch3 --render", "exit": 2, "reason": "Invalid topic; nonexistent broad planned crate", "resolution": "Effects/source packet over the actual gateway path, then provider expansion"},
-    {"command": "cat docs/reports/w48-bottom-up-batch2/scripts/measure.py", "exit": 1, "reason": "Prior card has measure.sh; corrected to the current report's measure.py"},
-    {"command": "rg with guessed providers/quirin-provider-shared/contracts/libc and providers/quirin-provider-librdkafka/contracts", "exit": 2, "reason": "Correct owners are quirin-provider-libc and qcore-provider-librdkafka"},
-    {"command": "cat proof/QCore/ConstructorResiduals.lean; cat proof/lakefile.lean", "exit": 1, "reason": "Correct files are DereferencedResult.lean and lakefile.toml"},
-    {"command": "Read-only shell probes using unmatched docs/plans/*.md, providers/*.qv and not-yet-produced private output globs", "exit": 1, "reason": "zsh no-match handling; no measurement was launched by those probes"}
+    {
+      "command": "git switch -c codex/w48-bottom-up-batch3 && git submodule update --init --recursive",
+      "exit": 128,
+      "reason": "Shared Git metadata read-only in initial sandbox",
+      "resolution": "Authorized escalation created the isolated card branch; submodules exited 0"
+    },
+    {
+      "command": "python3 scripts/task_context.py --base 198f6fc4349d3a47591a2378835ae9286859d918 --topic semantic --path crates/qcore-analysis --path docs/reports/w48-bottom-up-batch3 --render",
+      "exit": 2,
+      "reason": "Invalid topic; nonexistent broad planned crate",
+      "resolution": "Effects/source packet over the actual gateway path, then provider expansion"
+    },
+    {
+      "command": "cat docs/reports/w48-bottom-up-batch2/scripts/measure.py",
+      "exit": 1,
+      "reason": "Prior card has measure.sh; corrected to the current report's measure.py"
+    },
+    {
+      "command": "rg with guessed providers/quirin-provider-shared/contracts/libc and providers/quirin-provider-librdkafka/contracts",
+      "exit": 2,
+      "reason": "Correct owners are quirin-provider-libc and qcore-provider-librdkafka"
+    },
+    {
+      "command": "cat proof/QCore/ConstructorResiduals.lean; cat proof/lakefile.lean",
+      "exit": 1,
+      "reason": "Correct files are DereferencedResult.lean and lakefile.toml"
+    },
+    {
+      "command": "Read-only shell probes using unmatched docs/plans/*.md, providers/*.qv and not-yet-produced private output globs",
+      "exit": 1,
+      "reason": "zsh no-match handling; no measurement was launched by those probes"
+    },
+    {
+      "command": "Private measurement concurrency preflight before changing captured supervisor",
+      "exit": 1,
+      "reason": "MemAvailable9683432kB was below the24GiB floor; assertion fired before any signal or launch",
+      "resolution": "No adjustment applied; all original drivers and the three-route queue continued unchanged",
+      "private_receipt": "private/w48-bottom-up-batch3/measurement-supervisor-adjustment.json"
+    }
   ],
-  "retrieval_limit": "An initial unknown-path reading packet and an unscoped unit-diagnostic read produced oversized truncated output; neither is evidence of having read the omitted text. Subsequent relevant sections and exact source symbols were read separately. Reading packet byte counts are not billed tokens or a task-cost claim."
+  "retrieval_limit": "An initial unknown-path reading packet and an unscoped unit-diagnostic read produced oversized truncated output; neither is evidence of having read the omitted text. Subsequent relevant sections and exact source symbols were read separately. Reading packet byte counts are not billed tokens or a task-cost claim.",
+  "final_reading_packet": "private/w48-bottom-up-batch3/task-context-final.json; new range relative to expanded packet is gateway.md coalescing after the card own21-line amendment. Conservatively selected unknown report-script paths still select all topics; packet selection is not a claim that omitted/truncated text was read."
 }

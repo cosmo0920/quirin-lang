@@ -16,16 +16,18 @@ Analysis paths: [GATEWAY-ANALYSIS-PATH-OPTIMIZATION](reports/gateway-analysis-pa
 
 Audit tooling: the bounded [CPU/memory optimization](reports/audit-memory-performance/README.md) preserves four verdict artifacts byte for byte on three Fluent Bit selections. The four-worker sample took 64.67 → 20.63 seconds with 21.0% lower maximum RSS; shared-host observations, not whole-corpus throughput or safety coverage.
 
-The latest corpus and configured-route measurements are the 2026-10-19
-[checked array lookup receipt](reports/detach-lookup-membership/README.md),
-semantic source `b92688d22` on completed alias base `f35b5cf4b`. Source-pinned
-contracts and named null premises remain assumptions, not C-body proofs.
-Older rows and reports retain their dated checkpoint evidence. CT mapping,
-model proof, native observations and loaded-runtime projections are separate;
-projection is not safety coverage. Current tracking is the acceptance matrix,
-and history belongs in [increment records](development/increments/README.md).
+The latest corpus and configured-route measurements are the 2026-10-20
+[scalar accessor condition receipt](reports/w48-bottom-up-batch3/README.md),
+analyzer/test source `1601ba438` on exact base `198f6fc43`. Source-pinned
+contracts, named null premises and the selected-program link premise remain
+assumptions, not unconditional C-body proofs. Older reports retain their dated
+checkpoint evidence. CT mapping, model proof, source replay, native observations
+and runtime projections remain separate; projection is not safety coverage.
+Current tracking is the acceptance matrix; history is in the increment records.
 
 ## Coverage
+
+The [scalar accessor condition card](reports/w48-bottom-up-batch3/README.md) retains ordinary checked calls before exact scalar-pointer equality/inequality observations, with no pointer/value refinement and matching Rust/Lean. Six fresh audits exit0: corpus **967Safe/3858Unknown/9provisionalUnsafe** over4834, system **99/345/4**, slice **53Safe/346Unknown/4Pending/1provisionalUnsafe**. The four custody gains are `msg_write`, same-unit `mk_fifo_send`, conditionally imported `mk_mq_send`, and incidental Linux `net_plain_send_file`; all963 prior Safe rows remain Safe. Corpus loses22condition refusals/3call leaves with no added diagnostic. Slice retains13Unknown diagnostic changes, including3unresolved `end` identities; no new null fact is supplied. All5781 null dictionaries and runtime moved records agree; corpus combined Safe841→843, while the two FIFO callers remain combined Unknown. Errno remains declared, with only premise text/flexible binding changed. Repeated home-body evidence occurrences are not independent C definitions or standing promotions. Fresh corpus plan is254single-body waits/2220candidate bodies/360hypothetical ceiling, same/cross6/6; logger ownership/callback closure, scheduler dependencies and all six Unknown detach/delete wrappers remain tracked.
 
 The [checked array lookup card](reports/detach-lookup-membership/README.md) retains the exact read-only `get_array_item` frame, original typed read/call obligations and source-bound canonical record identity. Assigned constant-index controls recover an existing contained head only from explicit checked link/membership facts, with write/call invalidation and audited Rust/Lean; Borrowed provenance alone supplies no membership. Fresh pinned audits at `b92688d22` all exit0: corpus **963Safe/3862Unknown/9provisionalUnsafe** (exactly `get_array_item` and `cJSON_GetArrayItem` promoted under the existing named null premise); system **99/345/4** and slice **53Safe/346Unknown/4Pending/1provisionalUnsafe** unchanged. No Safe regression; all5781 null dictionaries and every runtime moved record unchanged. All six detach/delete wrappers remain Unknown, and the detach declaration remains pinned-in-force/DeclaredAssumption, unvalidated1/validated0. Fresh bottom-up plan is256 single-body waits/2222 candidate bodies/362 hypothetical ceiling, with no-extra-body same/cross closure6/6; these are not Safe promises. General successor/object lookup and whole-return/nested Removed transport remain registered. Final gate:8349Rust/344Lean, provider133Rust/25Python/five rebuilt+verified packages, and authoritative post-matrix Python in the report.
 
@@ -292,20 +294,17 @@ latest completed integration measurement.
 
 ## Latest validated gate
 
-The latest cumulative checkpoint is the [checked-detach report](reports/cjson-detach-same-item/README.md)
-on frozen analyzer/proof source `9bfe86a4115c4a7e3e4fb0de93c2e037ef5fcfbe`:
-**8,325 core Rust passed, 0 failed, 15 ignored over 518 units / 531 summaries;
-342 Lean audits; 374 root Python tests after matrix regeneration**. Host-access
-standing commands, submodules, fmt, Clippy, both reevaluation examples,
-documentation index and the actual worktree Clang21.1.8 recording exit0.
-The fresh provider gate passes **133 Rust / 0 failed / 1 ignored**, **25 Python**,
-check/fmt/Clippy, contract sync/check and all five package build/verifications.
-All three frozen-release audits exit0; binary SHA-256 is
-`9f10a5bbf704eb3c56af4c2e6c6c6ebe78e761cd4b7208937701c2a5295c3f06`.
-Earlier failed gates, the first production declaration withdrawal and cancelled
-jobs1 control remain retained. This closes one unpublished schema19 migration
-for Removed and S3's two public Rust fields; frozen schema18 reports remain
-historical semantic evidence, not the current compatibility receipt.
+The latest source checkpoint is the [scalar accessor condition report](reports/w48-bottom-up-batch3/README.md)
+on analyzer/test source `1601ba4383253adab7e58b0c469c82dd8c94f4d2`:
+**8,359 core Rust passed, 0 failed, 15 ignored over 520 units / 533 summaries;
+345 Lean audits; 374 root Python tests after matrix regeneration**. Submodules,
+fmt, Clippy and both reevaluation examples exit0. The fresh provider gate passes
+**133 Rust / 0 failed / 1 ignored**, **25 Python**, check/fmt/Clippy,
+contract sync/check and all five package build/verifications. Actual worktree
+Clang21.1.8 is recorded beside the gate. The first full Rust attempt's sole
+worktree-metadata fixture failure is retained; the repaired focused control and
+complete rerun pass. All six paired production audits exit0; the report retains complete changes,
+separate property/runtime denominators and the post-matrix Python receipt.
 
 The five provider crates own **73** canonical contract modules; **48** shared or
 application-level modules live in six `providers/quirin-provider-*` crates: five

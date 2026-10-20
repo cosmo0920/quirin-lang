@@ -1,0 +1,24 @@
+{
+  "schema": "qcore-test-binaries/1",
+  "jobs": 4,
+  "phases_seconds": {
+    "build": 105.987,
+    "capture": 18.274,
+    "run": 386.905
+  },
+  "problems": [],
+  "totals": {
+    "passed": 8359,
+    "failed": 0,
+    "ignored": 15,
+    "measured": 0,
+    "filtered": 0,
+    "summaries": 533
+  },
+  "units_run": 520,
+  "units_failed": [],
+  "ok": true,
+  "command": "python3 scripts/run_test_binaries.py --jobs 4 --log-dir private/w48-bottom-up-batch3/gate-rust-2/rust-units",
+  "exit": 0,
+  "private_summary": "private/w48-bottom-up-batch3/gate-rust-2/rust-units/summary.json"
+}
