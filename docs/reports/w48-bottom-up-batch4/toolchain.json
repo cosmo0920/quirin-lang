@@ -1,0 +1,24 @@
+{
+  "rustc": {
+    "command": [
+      "rustc",
+      "--version",
+      "--verbose"
+    ],
+    "exit": 0,
+    "stdout": "rustc 1.99.0 (b940084d7 2026-09-28)\nbinary: rustc\ncommit-hash: b940084d7eb6a299eb4bfeb8e34901bc051e7ac4\ncommit-date: 2026-09-28\nhost: x86_64-unknown-linux-gnu\nrelease: 1.99.0\nLLVM version: 23.1.1\n",
+    "stderr": ""
+  },
+  "cargo": {
+    "command": [
+      "cargo",
+      "--version"
+    ],
+    "exit": 0,
+    "stdout": "cargo 1.99.0 (5f94df478 2026-08-27)\n",
+    "stderr": ""
+  },
+  "cargo_lock_sha256": "1081a64d1873605ffa4629bfe8a7ea5aec304df1c7771a7f72804b2ddca8fc9e",
+  "features": "cargo build --release -p qcore-audit --bin quirin-audit; package default features, no feature overrides",
+  "observation": "Same worktree toolchain observed after the two builds; not an environment attestation."
+}

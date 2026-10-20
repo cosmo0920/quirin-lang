@@ -1283,6 +1283,8 @@ Regenerate with `python3 scripts/build_docs_index.py`; validate with `--check`.
 
 | [w48-bottom-up-batch3](w48-bottom-up-batch3/README.md) | W48 bottom-up batch 3 — scalar accessor conditions |
 
+| [w48-bottom-up-batch4](w48-bottom-up-batch4/README.md) | W48 bottom-up batch 4 — checked call-free predicate composition |
+
 | [w48-bottom-up-callee-bodies](w48-bottom-up-callee-bodies/README.md) | W48-BOTTOM-UP-CALLEE-BODIES: the bottom-up plan, and one body family lifted |
 
 | [w48-callee-closure-r3](w48-callee-closure-r3/README.md) | W48-CALLEE-CLOSURE-R3: every blocking callee ranked, two libc facts declared |

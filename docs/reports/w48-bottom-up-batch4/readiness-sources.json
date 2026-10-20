@@ -1,0 +1,42 @@
+{
+  "source_revision": "66910c10a4d7eafa810b84229cf2dcf7b0f26f97",
+  "files": [
+    {
+      "path": "lib/librdkafka-2.15.0/src/rdkafka.c",
+      "sha256": "c9451ca15c744f913ce2a6ed708dc36c04c47ab6730252afb0a2bb418d82d1d0"
+    },
+    {
+      "path": "lib/librdkafka-2.15.0/src/rdkafka_queue.h",
+      "sha256": "107e2292d4eeeda622828ecc115cf48cd43c7a1a82ee6da732a5426905686da2"
+    },
+    {
+      "path": "lib/monkey/mk_server/mk_scheduler.c",
+      "sha256": "9a515fa6d0cc79ee8e70457e5e26e65a9ab82c8febd0bb383c88d35bcc1aedda"
+    },
+    {
+      "path": "lib/monkey/mk_server/mk_http_thread.c",
+      "sha256": "29fa43236d38b00d8609906f535386d93c600685744cefc1914a2a7ccff3d745"
+    },
+    {
+      "path": "lib/monkey/include/monkey/mk_thread_libco.h",
+      "sha256": "4625fde94575742200f6ffa6eb4a8e30b12ee0079544cebd4f5de1d22f929fd3"
+    },
+    {
+      "path": "lib/chunkio/src/cio_file.c",
+      "sha256": "1c3eb285307108deb2b22c68cf282c0121619a35bbe36adc216f276d51925257"
+    },
+    {
+      "path": "lib/chunkio/src/cio_chunk.c",
+      "sha256": "8f6064c742b3fcc53d75b66dbd07d5c7f03d2f245ec7716f8605a2c3a6efd6c8"
+    },
+    {
+      "path": "lib/chunkio/include/chunkio/cio_file_native.h",
+      "sha256": "b29caa7130e6a2cc406024a1203f6728c3ce4cc7f84f22ca28e1b0eedb3c3853"
+    },
+    {
+      "path": "lib/librdkafka-2.15.0/src/cJSON.c",
+      "sha256": "fdb11f529efe3ad55b04d3c59c3c2f668cf4b68bd93feed23d51ee89841e0a90"
+    }
+  ],
+  "selection": "Source-derived readiness; C snippets and dependencies, not claims of C-body conformance."
+}
