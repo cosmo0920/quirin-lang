@@ -8,7 +8,10 @@ erase=legacy['erase']; differences=legacy['differences']
 COMPANION='detach_representation_atoms'
 SELECTED='cJSON_DetachItemViaPointer'
 COMPANION_LABELS={'premise:'+COMPANION, 'resource_premise('+COMPANION+')'}
-p=argparse.ArgumentParser();p.add_argument('route',choices=['system','slice','corpus']);p.add_argument('base',type=Path);p.add_argument('tip',type=Path);p.add_argument('out',type=Path);a=p.parse_args();a.out.mkdir(parents=True,exist_ok=False)
+p=argparse.ArgumentParser();p.add_argument('route',choices=['system','slice','corpus']);p.add_argument('base',type=Path);p.add_argument('tip',type=Path);p.add_argument('out',type=Path);a=p.parse_args()
+if a.out.exists():
+ assert {p.name for p in a.out.iterdir()} <= {'compile-command-correspondence.json'}, 'refuse to overwrite an existing comparison'
+else:a.out.mkdir(parents=True,exist_ok=False)
 inputs=ROOT/'private/premise-decomposition-cycle1/base-inputs'
 old_source=(inputs/'providers/qcore-provider-librdkafka/contracts/librdkafka/cjson.qv').read_text()
 new_source=(ROOT/'providers/qcore-provider-librdkafka/contracts/librdkafka/cjson.qv').read_text()
