@@ -1,0 +1,12 @@
+{
+  "before_environment_sha256": "2dea36ac02fe4401157fa54af3df1ba87701c604650e75ebf94910ff40269307",
+  "after_environment_sha256": "3b33e1bb83b9d68da440e3804434ab50ab05d52e79ffb72ee4f58e8bd72ce158",
+  "before_root": "/home/cosmo/.codex/worktrees/3d1b/qcore-c/private/contract-hypothesis-graph-v1/baseline-source",
+  "after_root": "/home/cosmo/.codex/worktrees/3d1b/qcore-c",
+  "root_literal_occurrences": 79,
+  "all_other_serialized_bytes_equal": true,
+  "refutation_table": "empty in both measured artifacts and reconstruction",
+  "loaded_by": "scripts/environment_provenance.rs; current loader reads each exact manifest path, applies actual source pins, serializes ResourceContracts",
+  "source_checkout": "/home/cosmo/Documents/GitHub/qcore-c/build/cycle19/c-gateway-wave-pin/fluent-bit-clang-source",
+  "meaning": "exact reconstruction of the recorded home_environment_sha256 values; this is provenance normalization, not semantic discharge"
+}

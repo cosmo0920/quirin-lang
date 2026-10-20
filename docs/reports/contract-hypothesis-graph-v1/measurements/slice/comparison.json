@@ -8,8 +8,10 @@
     "contract_revision_equal": true,
     "null_rows_except_identity_equal": true,
     "null_summary_equal": true,
+    "cross_unit_link_resolution_equal_after_attributed_environment_identity": true,
     "runtime_projection_equal": true
   },
+  "environment_attribution": null,
   "before": {
     "units": 16,
     "functions": {

@@ -73,6 +73,7 @@ def main():
     parser.add_argument('tip', type=Path)
     parser.add_argument('route', choices=['corpus', 'system', 'slice'])
     parser.add_argument('out', type=Path)
+    parser.add_argument('--environment-attribution', type=Path)
     args = parser.parse_args()
     args.out.mkdir(parents=True, exist_ok=False)
     names = {'diagnostics': 'resource-diagnostics.json', 'contracts': 'resource-diagnostics.contracts.json',
@@ -109,22 +110,54 @@ def main():
     right = normalize(erase(b))
     projected = {key: differences(left[key], right[key]) for key in left}
     write_gz(args.out / 'erased-normalized-differences.json.gz', projected)
+    # Retain raw and erased diffs above. Only an independently reproduced
+    # serialized environment can authorize comparison of its root-only digest.
+    environment_attribution = None
+    if args.environment_attribution:
+        proof_path = args.environment_attribution
+        proof = load(proof_path)
+        before_bytes = gzip.decompress((proof_path.parent / 'base.json.gz').read_bytes())
+        after_bytes = gzip.decompress((proof_path.parent / 'tip.json.gz').read_bytes())
+        assert hashlib.sha256(before_bytes).hexdigest() == proof['before_environment_sha256']
+        assert hashlib.sha256(after_bytes).hexdigest() == proof['after_environment_sha256']
+        assert before_bytes.replace(proof['before_root'].encode(), proof['after_root'].encode()) == after_bytes
+        counts = {}
+        for label, docs, expected in [('before', left, proof['before_environment_sha256']),
+                                      ('after', right, proof['after_environment_sha256'])]:
+            count = 0
+            records = [u.get('cross_unit_link_resolution', {}) for u in docs['diagnostics']['units']]
+            records.append(docs['contracts'].get('cross_unit_link_resolution', {}))
+            for record in records:
+                for imported in record.get('imported', []):
+                    assert imported['home_environment_sha256'] == expected
+                    imported['home_environment_sha256'] = '$ATTRIBUTED_ANALYZER_ROOT_ENVIRONMENT'
+                    count += 1
+            counts[label] = count
+        assert counts['before'] == counts['after'] and counts['before'] > 0
+        environment_attribution = {'proof': str(proof_path), 'exact_digest_fields_per_side': counts,
+                                   'meaning': 'only home_environment_sha256 in owned imported records; raw and erased differences retained'}
     units_a, units_b = left['diagnostics']['units'], right['diagnostics']['units']
     without_configuration = lambda units: [{k: v for k, v in u.items() if k != 'compile_configuration'} for u in units]
     # Compile-configuration identities remain in the raw and normalized diffs;
     # the invariant projection removes only that provenance record.
+    def legacy_premises(contracts):
+        if 'contract_premises' in contracts:
+            return contracts['contract_premises']
+        # The pinned route carries legacy premises on each declaration.
+        return {name: value['premises'] for name, value in contracts['contract_dependencies']['declarations'].items()}
     checks = {
         'static_units_rows_full_diagnostics_reasons_dependencies_and_standing_equal': without_configuration(units_a) == without_configuration(units_b),
         'diagnostic_counts_equal': left['diagnostics']['diagnostic_counts'] == right['diagnostics']['diagnostic_counts'],
-        'legacy_premises_equal': left['contracts']['contract_premises'] == right['contracts']['contract_premises'],
+        'legacy_premises_equal': legacy_premises(left['contracts']) == legacy_premises(right['contracts']),
         'dependency_and_clause_standing_section_equal': left['contracts']['contract_dependencies'] == right['contracts']['contract_dependencies'],
         'contract_revision_equal': left['contracts']['contract_revision'] == right['contracts']['contract_revision'],
         'null_rows_except_identity_equal': [{k: v for k, v in r.items() if k != 'identity'} for r in left['null']] == [{k: v for k, v in r.items() if k != 'identity'} for r in right['null']],
         'null_summary_equal': left['null-summary'] == right['null-summary'],
+        'cross_unit_link_resolution_equal_after_attributed_environment_identity': left['contracts'].get('cross_unit_link_resolution') == right['contracts'].get('cross_unit_link_resolution'),
         'runtime_projection_equal': left['outer'] == right['outer'],
     }
     counter = lambda units: dict(Counter(f['status'] for u in units for f in u['functions']))
-    summary = {'route': args.route, 'checks': checks,
+    summary = {'route': args.route, 'checks': checks, 'environment_attribution': environment_attribution,
                'before': {'units': len(units_a), 'functions': counter(units_a), 'null_rows': len(left['null'])},
                'after': {'units': len(units_b), 'functions': counter(units_b), 'null_rows': len(right['null'])},
                'raw_differing_leaf_counts': {k: len(v) for k, v in raw.items()},

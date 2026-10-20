@@ -1,0 +1,11 @@
+{
+  "route": "corpus",
+  "custody_rows": 4834,
+  "custody_rows_with_context": 4834,
+  "custody_rows_with_atom_closure": 4834,
+  "declarations": 440,
+  "declarations_with_graph": 440,
+  "null_rows": 4921,
+  "null_rows_with_graph": 4921,
+  "meaning": "metadata publication counts; no proposition truth or additional safety coverage"
+}

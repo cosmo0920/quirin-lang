@@ -104,5 +104,7 @@
   },
   "semantic_summary_before": {},
   "semantic_summary_after": {},
-  "all_other_erased_normalized_fields_equal": true
+  "all_other_erased_normalized_fields_equal": true,
+  "separately_attributed_environment_digest_fields": 0,
+  "environment_attribution": null
 }

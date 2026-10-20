@@ -1,0 +1,13 @@
+{
+  "note": "CONTRACT-HYPOTHESIS-GRAPH-V1 frozen source5b5a8c0f05bef6aece8b57d90a2d405a459c29ea. Actual host standing4:8364Rust passed/0failed/15ignored,522units/535summaries;345Lean; formatting/Clippy/both examples exit0. Host provider4:133Rust/0failed/1ignored doctest,25Python,all5packages rebuilt+verified. Six fresh audits exit0, all-route erasure has zero unexplained differences; exact root-only environment SHA and MONKEY_BUILT time replay retained. Root post-matrix Python is not yet measured: null count and pending standing_gate are intentional; candidate tracking remains open until it passes.",
+  "workspace_tests": 8364,
+  "provider_tests": 133,
+  "python_evidence_validator_tests": null,
+  "reevaluation_probe_exit": 0,
+  "reevaluation_followup_exit": 0,
+  "cargo_fmt": "clean",
+  "cargo_clippy": "clean",
+  "standing_gate": "pending_post_matrix_python",
+  "lean_audits": 345,
+  "clang": "present: Ubuntu clang version 21.1.8 (6ubuntu1)"
+}

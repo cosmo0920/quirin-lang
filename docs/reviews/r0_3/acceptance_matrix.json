@@ -170,7 +170,7 @@
   "note": "Prose revision 0.3 is the specification revision. It is separate from, and does not move with, the package/protocol/evidence/schema versions below.",
   "prose_specification_revision": "0.3",
   "documentation_revision": "0.3",
-  "qcore_schemas_rust_api": "19.0.0",
+  "qcore_schemas_rust_api": "19.1.0",
   "qcore_schemas_version_cause": "P02 added the public PluginLimits::additional field (3.0.0); P04 then added the counter_summary module and one variant each to witness/obligation/plugin plus an optional request field, three source-incompatible additions the documented policy makes a major change (4.0.0). Every later major (5.0.0 through 13.0.0) is the same policy applied to a further source-incompatible Rust API addition as a transported vocabulary landed; 13.0.0 is P04-COMPOSE-FS's three enum variants plus CompositionFamilyInput::nested() returning a vector because that family has two nested questions and one slot could not publish both. Existing wire bytes are unchanged at every step and pinned by crates/qcore-schemas/tests/counter_request_wire.rs and crates/qcore-schemas/tests/composition_request_wire.rs; COMPOSITION_SOURCE_INPUT_VERSION stays 2, so no existing task digest moved; 14.0.0 is P04-COMPOSE-UNSUPPORTED's three enum variants for the fifth and last reachable composition family, with COMPOSITION_SOURCE_INPUT_VERSION still 2 and no accessor changing shape, because P04-COMPOSE-FS had already paid that cost.",
   "plugin_protocol": "v1 (unchanged)",
   "semantic_evidence": "v2 (unchanged)",
@@ -6754,11 +6754,11 @@
   "note": "providers/ is a separate Cargo workspace, excluded from the core workspace; P01 verified empirically that the core workspace builds and passes its full suite with providers/ moved out of the tree."
  },
  "validation": {
-  "note": "DETACH-LOOKUP-MEMBERSHIP final semantic source b92688d220e1e62cffdcdb6ccc46476df0f406fd on completed alias base f35b5cf4b596e1ad2f5bdec6a0c203e2fd987287. Core actual gate-host-3 records520units/533summaries,8349passed/0failed/15ignored/0filtered and344Lean audits; provider2 records133Rust/0failed/1ignored doctest,25Python and all5rebuilt+verified packages. All3fresh final audits exit0: corpus963Safe/3862Unknown/9provisionalUnsafe (two existing-null-premise promotions),system99/345/4,slice53/346/4Pending/1. Null5781dicts and runtime moved records unchanged. The authoritative post-matrix rootPython suite passed374/0failed in26.523s at closeout-1; the early gate-host-1 stale343→344 matrix failure is retained and superseded. Final receipt confirmation after this note regeneration is closeout-2. Current report/tracking edits are documentation-only; source/proof remains equal to frozen measured b926. Actual Clang recording comes from this worktree gate-host-3. Superseded failures and gate2cancellation retained.",
-  "workspace_tests": 8349,
+  "note": "CONTRACT-HYPOTHESIS-GRAPH-V1 frozen source5b5a8c0f05bef6aece8b57d90a2d405a459c29ea. Actual host standing4:8364Rust passed/0failed/15ignored,522units/535summaries;345Lean; formatting/Clippy/both examples exit0. Host provider4:133Rust/0failed/1ignored doctest,25Python,all5packages rebuilt+verified. Six fresh audits exit0, all-route erasure has zero unexplained differences; exact root-only environment SHA and MONKEY_BUILT time replay retained. Root post-matrix Python is not yet measured: null count and pending standing_gate are intentional; candidate tracking remains open until it passes.",
+  "workspace_tests": 8364,
   "provider_tests": 133,
-  "python_evidence_validator_tests": 374,
-  "lean_audits": 344,
+  "python_evidence_validator_tests": null,
+  "lean_audits": 345,
   "lean_audit_files": [
    "AuditAbiEnumConstPointer.lean",
    "AuditAggregateOwnedField.lean",
@@ -6891,6 +6891,7 @@
    "AuditGnuBuiltinReader.lean",
    "AuditHandOffDirect.lean",
    "AuditHttpComputedLength.lean",
+   "AuditHypothesisGraph.lean",
    "AuditIeee754.lean",
    "AuditIndexExtent.lean",
    "AuditIndexExtentFrames.lean",
@@ -7109,9 +7110,9 @@
   "reevaluation_followup_exit": 0,
   "cargo_fmt": "clean",
   "cargo_clippy": "clean",
-  "standing_gate": "complete",
+  "standing_gate": "pending_post_matrix_python",
   "full_language_conformance": false,
-  "measurement_provenance": "integrator_supplied (docs/reports/detach-lookup-membership/gate.json)"
+  "measurement_provenance": "integrator_supplied (docs/reports/contract-hypothesis-graph-v1/gate.json)"
  },
  "named_followups": [
   {

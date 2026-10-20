@@ -1,0 +1,68 @@
+{
+  "route": "corpus",
+  "checks": {
+    "static_units_rows_full_diagnostics_reasons_dependencies_and_standing_equal": true,
+    "diagnostic_counts_equal": true,
+    "legacy_premises_equal": true,
+    "dependency_and_clause_standing_section_equal": true,
+    "contract_revision_equal": true,
+    "null_rows_except_identity_equal": true,
+    "null_summary_equal": true,
+    "cross_unit_link_resolution_equal_after_attributed_environment_identity": true,
+    "runtime_projection_equal": true
+  },
+  "environment_attribution": {
+    "proof": "docs/reports/contract-hypothesis-graph-v1/provenance/corpus-environment/attribution.json",
+    "exact_digest_fields_per_side": {
+      "before": 1116,
+      "after": 1116
+    },
+    "meaning": "only home_environment_sha256 in owned imported records; raw and erased differences retained"
+  },
+  "before": {
+    "units": 185,
+    "functions": {
+      "Unknown": 3862,
+      "Safe": 963,
+      "Unsafe": 9
+    },
+    "null_rows": 4921
+  },
+  "after": {
+    "units": 185,
+    "functions": {
+      "Unknown": 3862,
+      "Safe": 963,
+      "Unsafe": 9
+    },
+    "null_rows": 4921
+  },
+  "raw_differing_leaf_counts": {
+    "diagnostics": 10778,
+    "contracts": 2617,
+    "chunk-contracts": 0,
+    "source-effects": 0,
+    "source": 0,
+    "null": 14676,
+    "null-summary": 0,
+    "outer": 5
+  },
+  "erased_normalized_differing_leaf_counts": {
+    "diagnostics": 1110,
+    "contracts": 10,
+    "chunk-contracts": 0,
+    "source-effects": 0,
+    "source": 0,
+    "null": 0,
+    "null-summary": 0,
+    "outer": 0
+  },
+  "normalization": {
+    "before_analyzer_root": "/home/cosmo/.codex/worktrees/3d1b/qcore-c/private/contract-hypothesis-graph-v1/baseline-source",
+    "after_analyzer_root": "/home/cosmo/.codex/worktrees/3d1b/qcore-c",
+    "replacement": "$ANALYZER",
+    "key_collisions": 0
+  },
+  "provenance_review": "all raw and erased differences retained; compile_configuration and null identity changes require separate attribution before acceptance",
+  "all_invariant_checks_pass": true
+}

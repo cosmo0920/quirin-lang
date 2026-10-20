@@ -84,7 +84,7 @@ evidence root; other standing logs are in `standing-4/`.
 The complete host provider gate passes **133 Rust tests / 0 failed / 1 ignored
 doctest**, **25 Python tests**, check, formatting, Clippy, contract checks and
 all five rebuilt/verified packages. [Provider commands and exits](gate/provider-commands.json)
-name the complete logs in `provider-4/`. Root post-matrix Python and the corpus erasure comparison remain pending.
+name the complete logs in `provider-4/`. Only root post-matrix Python remains pending.
 
 Superseded attempts are retained in [validation-attempts.json](validation-attempts.json): malformed initial custody fixture syntax
 (four failing new tests, subsequently corrected); an inheritance ID/formal
@@ -128,7 +128,31 @@ The same exact timestamp-only replay accounts for its four residual leaves,
 covers every measured custody/null row and every declaration in each dependency
 section: [system counts](measurements/system/publication-counts.json),
 [slice counts](measurements/slice/publication-counts.json). These are metadata
-counts, not new safety coverage. Corpus remains pending.
+counts, not new safety coverage.
+
+Fresh base/tip corpus runs both exit 0: **963 Safe / 3,862 Unknown / 9
+provisional Unsafe**, 185 units, 4,834 custody functions and 4,921 null rows.
+[Every invariant passes](measurements/corpus/comparison.json); all 5,781 null
+rows across the three routes retain their complete old dictionaries after
+graph erasure, and every full runtime projection is equal. Corpus graph
+publication covers all rows and all 440 dependency declarations
+([counts](measurements/corpus/publication-counts.json)).
+
+Corpus retains 1,116 changed `home_environment_sha256` fields: six imports in
+each of 185 unit records and six in the sidecar. The
+[serialized environments](provenance/corpus-environment/attribution.json)
+reproduce both recorded SHA-256 values exactly. Replacing only the analyzer
+root prefix makes their bytes identical (79 occurrences); the applied and
+published refutation tables are empty in both. The comparer permits this exact
+mapping only after hashing both archived environments and checking root-only
+byte equality; raw and erased differences remain retained. Its four remaining
+empty-summary leaves replay from `08:36:51` to `09:38:50`
+([timestamp attribution](measurements/corpus/provenance-attribution.json)).
+There is zero unexplained verdict, diagnostic, reason, premise, standing, null
+or runtime-projection movement. The corpus comparison's first attempt assumed
+the configured route's top-level premise map; the repaired harness reads the
+pinned route's per-declaration premises. That failed comparison and partial
+output are retained; no analyzer measurement was replaced.
 
 ## Follow-on boundary
 

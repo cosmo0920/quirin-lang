@@ -1,0 +1,18 @@
+{
+  "command": [
+    "rustc",
+    "--edition=2024",
+    "docs/reports/contract-hypothesis-graph-v1/scripts/environment_provenance.rs",
+    "-L",
+    "dependency=target/debug/deps",
+    "-o",
+    "private/contract-hypothesis-graph-v1/environment-provenance",
+    "--extern",
+    "qcore_audit=target/debug/deps/libqcore_audit-3c204c2a78ef11f9.rlib",
+    "--extern",
+    "qcore_contract=target/debug/deps/libqcore_contract-2d8507e0c24b5d0a.rlib",
+    "--extern",
+    "serde_json=target/debug/deps/libserde_json-58df2affb574c893.rlib"
+  ],
+  "exit": 0
+}
