@@ -109,5 +109,46 @@
     "exit": 0,
     "log": "/home/cosmo/.codex/worktrees/premise-decomposition-cycle1/qcore-c/private/premise-decomposition-cycle1/focused-actual-impact-2.log",
     "meaning": "One real production detach/summary/unrelated control passes with direct and caller both explicitly conditionally Safe; graph publication does not hide a failed legacy semantic reader."
+  },
+  {
+    "attempt": "compare-system-1",
+    "exit": 1,
+    "log": "/home/cosmo/.codex/worktrees/premise-decomposition-cycle1/qcore-c/private/premise-decomposition-cycle1/compare-system-1.log",
+    "meaning": "All semantic checks passed; exact contract-lock file hash metadata remained unaccounted at this intermediate comparison. Raw differences retained unchanged; separate complete metadata reconstruction and timestamp replay now attribute every residual."
+  },
+  {
+    "attempt": "compare-slice-1",
+    "exit": 1,
+    "log": "/home/cosmo/.codex/worktrees/premise-decomposition-cycle1/qcore-c/private/premise-decomposition-cycle1/compare-slice-1.log",
+    "meaning": "All semantic checks passed; exact contract-lock file hash metadata remained unaccounted at this intermediate comparison. Raw differences retained unchanged; separate complete metadata reconstruction and timestamp replay now attribute every residual."
+  },
+  {
+    "attempt": "premature-metadata-attribution",
+    "exit": 1,
+    "meaning": "Tool output retained in conversation: first attribution command ran while tip environment reconstruction was still active and its redirected JSON was empty. No artifacts accepted or overwritten; later logged attribute-system-1 and attribute-slice-1 both exit0."
+  },
+  {
+    "attempt": "attribute-system-1",
+    "exit": 0,
+    "log": "/home/cosmo/.codex/worktrees/premise-decomposition-cycle1/qcore-c/private/premise-decomposition-cycle1/attribute-system-1.log",
+    "meaning": "Exact full metadata reconstruction"
+  },
+  {
+    "attempt": "time-system-1",
+    "exit": 0,
+    "log": "/home/cosmo/.codex/worktrees/premise-decomposition-cycle1/qcore-c/private/premise-decomposition-cycle1/time-system-1.log",
+    "meaning": "Fresh local source replay reproduces the complete empty-summary identity hashes by varying only __TIME__ within actual invocation windows."
+  },
+  {
+    "attempt": "attribute-slice-1",
+    "exit": 0,
+    "log": "/home/cosmo/.codex/worktrees/premise-decomposition-cycle1/qcore-c/private/premise-decomposition-cycle1/attribute-slice-1.log",
+    "meaning": "Exact full metadata reconstruction"
+  },
+  {
+    "attempt": "time-slice-1",
+    "exit": 0,
+    "log": "/home/cosmo/.codex/worktrees/premise-decomposition-cycle1/qcore-c/private/premise-decomposition-cycle1/time-slice-1.log",
+    "meaning": "Fresh local source replay reproduces the complete empty-summary identity hashes by varying only __TIME__ within actual invocation windows."
   }
 ]

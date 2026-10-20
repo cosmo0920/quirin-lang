@@ -2,8 +2,8 @@
 
 Work in progress on base `2d8f6d34257db14031a2578ce14f941bee25fc19`.
 The preimplementation selection/atom map/zero-movement prediction is frozen in
-`1195c7335` ([design](design.md)); [tracked census](census.json) examines141
-tracked provider-tree .qv/.qcore inputs (fixtures included) and209lexical
+`1195c7335` ([design](design.md)); [tracked census](census.json) examines 141
+tracked provider-tree .qv/.qcore inputs (fixtures included) and 209 lexical
 premise-clause matches, selecting one of four production cJSON clauses.
 [Census provenance](census-provenance.json) distinguishes this selection aid
 from loader-derived corpus counts. The later [acceptance addendum](acceptance-addendum.md) records the user's concrete-math and
@@ -28,11 +28,11 @@ standing, foreign-context refusal and dependency lift including held/withdrawn
 records and unrelated declarations. Refuted premise metadata is not Unsafe or
 a validated reachable C violation.
 
-Validation and fresh comparison evidence are pending. Private root:
+Four fresh configured audits exit 0. System retains 99 Safe / 345 Unknown / 4 provisional Unsafe across 448 rows; slice retains 53 Safe / 346 Unknown / 4 Pending / 1 provisional Unsafe across 404 rows. All 454 / 406 full null records, full runtime projections and declaration/clause standing agree after the explicitly attributed companion erasure. Raw module text, selected digest, exact lock-file bytes, serialized environment and complete compile configurations are retained and reconstructed. The remaining four empty-summary identity leaves per route are reproduced from fresh local source by changing only `__TIME__` within actual invocation windows. Intermediate comparison failures remain archived. Corpus base/tip and the standing/provider gates remain pending. Private root:
 `/home/cosmo/.codex/worktrees/premise-decomposition-cycle1/qcore-c/private/premise-decomposition-cycle1/`.
 
 Integrator list: integrate provider `cjson.qv`, its generated inventory and
-selected function pins together with deliberate5→15clause pin; official sync
+selected function pins together with deliberate 5→15 clause pin; official sync
 leaves the generated load-path byte-identical to base;
 keep exact old premise and unchanged reader. Shared STATUS, increment part10,
 report index and acceptance matrix require serial reconciliation. Preserve all
