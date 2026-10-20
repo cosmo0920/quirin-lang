@@ -208,7 +208,7 @@
   "conditional_conclusions": [
     "live owned link targets exclude parent (chain/linkTargets/parentOutside)",
     "equal child identities imply equal indices (distinct)",
-    "a link-writing trace step refutes noWriter"
+    "an other-actor link-writing trace step refutes noWriter"
   ],
   "next_cycle_design": {
     "all_prerequisites": "v1 conjunction only; each antecedent remains open until exact evidence",
