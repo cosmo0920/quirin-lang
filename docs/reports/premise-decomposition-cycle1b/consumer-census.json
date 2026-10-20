@@ -11,5 +11,23 @@
   "exit": 0,
   "stdout": "2d8f6d34257db14031a2578ce14f941bee25fc19:compiler/tests/qcore_contract_corpus.rs:924:    // Card VERDICT-CONTRACT-PREMISE-ANNOTATIONS: `requires resource_premise(nested_call_admission, ...)`\n2d8f6d34257db14031a2578ce14f941bee25fc19:compiler/tests/qcore_contract_corpus.rs:931:    // Card VERDICT-CONTRACT-PREMISE-ANNOTATIONS: `requires resource_premise(nested_call_admission, ...)`\n2d8f6d34257db14031a2578ce14f941bee25fc19:crates/qcore-audit/src/outer_selection.rs:75:    \"nested_call_admission\",\n",
   "stderr": "",
-  "interpretation": "The pre-migration production Rust consumer recognizes only the nested_call_admission name in the outer NOT_CLOSED_WORLD list. No exact English-statement reader is present. New production controls introduced by this card do read the graph structure for validation."
+  "interpretation": "The pre-migration production Rust consumer recognizes only the nested_call_admission name in the outer NOT_CLOSED_WORLD list. No exact English-statement reader is present. New production controls introduced by this card do read the graph structure for validation.",
+  "statement_reader_census": {
+    "command": [
+      "git",
+      "grep",
+      "-n",
+      "-E",
+      "(premise|p)\\.statement|statement\\.(contains|starts_with)|\\.statement[[:space:]]*==",
+      "2d8f6d34257db14031a2578ce14f941bee25fc19",
+      "--",
+      "crates/qcore-contract/src",
+      "crates/qcore-c-gateway/src",
+      "crates/qcore-audit/src"
+    ],
+    "exit": 0,
+    "stdout": "2d8f6d34257db14031a2578ce14f941bee25fc19:crates/qcore-audit/src/contract_dependencies.rs:284:                    \"statement\": premise.statement,\n2d8f6d34257db14031a2578ce14f941bee25fc19:crates/qcore-c-gateway/src/legacy_condition_desugar.rs:826:                    &tokens[group.statement..=call.close],\n2d8f6d34257db14031a2578ce14f941bee25fc19:crates/qcore-c-gateway/src/legacy_detach.rs:333:                        && p.statement == REPRESENTATION_STATEMENT\n2d8f6d34257db14031a2578ce14f941bee25fc19:crates/qcore-contract/src/bounds_contract.rs:1316:                    statement: premise.statement,\n2d8f6d34257db14031a2578ce14f941bee25fc19:crates/qcore-contract/src/contract_loader.rs:3466:        || statement.contains('\\\\')\n2d8f6d34257db14031a2578ce14f941bee25fc19:crates/qcore-contract/src/hypothesis.rs:33:                statement: premise.statement.clone(),\n2d8f6d34257db14031a2578ce14f941bee25fc19:crates/qcore-contract/src/outer_contract.rs:332:        && !statement.contains('\\\\')\n",
+    "stderr": "",
+    "interpretation": "Metadata parsing/serialization and plain-string checks are separate from the exact detach representation reader, which requires REPRESENTATION_NAME as well as REPRESENTATION_STATEMENT; it does not recognize nested_call_admission. C04.18/C04.18.1 remain the normative vocabulary boundary."
+  }
 }

@@ -95,12 +95,26 @@ def main():
             raw=path.read_bytes();(dest/(name+'.gz')).write_bytes(gzip.compress(raw,mtime=0));manifest[name]={'bytes':len(raw),'sha256':hashlib.sha256(raw).hexdigest()};docs[stem]=[json.loads(x) for x in raw.splitlines()] if name.endswith('.jsonl') else json.loads(raw)
         (dest/'manifest.json').write_text(json.dumps(manifest,indent=2)+'\n');data[label]=docs
     assert data['before'].keys()==data['after'].keys()
+    migrated_graphs={}
+    for name,expected_atoms in [('__errno_location',3),('strerror',5)]:
+        declarations=data['after']['contracts']['contract_dependencies']['declarations']
+        if name not in declarations:
+            continue  # Explicitly no consultation in this selected route.
+        before_graph=data['before']['contracts']['contract_dependencies']['declarations'][name]['hypothesis_graph']
+        after_graph=declarations[name]['hypothesis_graph']
+        assert len(before_graph['atoms'])==1 and len(before_graph['premises'])==1
+        assert len(after_graph['atoms'])==expected_atoms
+        assert list(after_graph['premises'])==['nested_call_admission']
+        assert after_graph['premises']['nested_call_admission']['children']==sorted(mapping['declarations'][name]['atoms'])
+        migrated_graphs[name]={'before_atoms':1,'after_atoms':expected_atoms,'consulting_rows':declarations[name]['rows'],'consulting_safe_rows':declarations[name]['safe_rows']}
+    assert '__errno_location' in migrated_graphs
+
     raw={k:old.differences(data['before'][k],data['after'][k]) for k in data['before']};gz(a.out/'raw-differences.json.gz',raw)
     left=normalize(old.erase(data['before']));right=normalize(restore(old.erase(data['after'])))
     residual={k:old.differences(left[k],right[k]) for k in left};gz(a.out/'attributed-residual-differences.json.gz',residual);gz(a.out/'exact-metadata-attribution.json.gz',records)
     counts=lambda d:dict(Counter(f['status'] for u in d['diagnostics']['units'] for f in u['functions']))
     checks={'static_verdict_counts_equal':counts(left)==counts(right),'full_runtime_projection_equal':left['outer']==right['outer'],'all_null_records_equal':left['null']==right['null'],'null_summary_equal':left['null-summary']==right['null-summary'],'all_remaining_artifacts_equal':all(not x for x in residual.values())}
-    result={'route':a.route,'before_counts':counts(left),'after_counts':counts(right),'null_rows':len(left['null']),'checks':checks,'raw_differences':{k:len(x) for k,x in raw.items()},'residual_differences':{k:len(x) for k,x in residual.items()},'scoped_metadata_records':len(records),'all_invariant_checks_pass':all(checks.values()),'meaning':'Raw before/after legacy erasure differs. Only exact two-declaration premise statements and officially refreshed flexible contract identities are restored; additional metadata needs independent attribution.'}
+    result={'route':a.route,'migrated_graphs':migrated_graphs,'before_counts':counts(left),'after_counts':counts(right),'null_rows':len(left['null']),'checks':checks,'raw_differences':{k:len(x) for k,x in raw.items()},'residual_differences':{k:len(x) for k,x in residual.items()},'scoped_metadata_records':len(records),'all_invariant_checks_pass':all(checks.values()),'meaning':'Raw before/after legacy erasure differs. Only exact two-declaration premise statements and officially refreshed flexible contract identities are restored; additional metadata needs independent attribution.'}
     (a.out/'comparison.json').write_text(json.dumps(result,indent=2)+'\n');print(json.dumps(result,indent=2));return 0 if result['all_invariant_checks_pass'] else 1
 
 if __name__=='__main__':raise SystemExit(main())
