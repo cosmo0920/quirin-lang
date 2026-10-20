@@ -319,7 +319,8 @@ fn production_cjson_decomposition_survives_inclusion_and_formal_renaming() {
     )
     .unwrap();
     let graphs = replay(contracts.source_assumptions()).unwrap();
-    assert_eq!(graphs["renamed"], graphs[DETACH]);
+    let original = replay(&BTreeMap::from([("cjson.qv".into(), CJSON.into())])).unwrap();
+    assert_eq!(graphs["renamed"], original[DETACH]);
     check_replay(contracts.source_assumptions(), &graphs).unwrap();
 }
 

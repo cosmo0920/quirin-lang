@@ -1,0 +1,157 @@
+{
+  "declaration": "cJSON_DetachItemViaPointer",
+  "original_premise": "detach_list_representation",
+  "conjunction": "detach_representation_atoms",
+  "equivalence": "open: no prose-to-formal or C extraction theorem",
+  "context_coordinates": [
+    "artifact",
+    "property",
+    "semantic_profile",
+    "scope",
+    "bounds",
+    "assumptions",
+    "source_identity",
+    "build_identity",
+    "evidence_version"
+  ],
+  "atoms": [
+    {
+      "id": "detach_chain",
+      "statement": "For this removed-result declaration, the live parent represents exactly its owned children by a finite acyclic child and next chain",
+      "proposition": "QCore.CjsonRepresentationPremises.chain",
+      "environment": "Environment e: parent, finite children list, ownedChild/live predicates, child/next/prev maps, call trace",
+      "quantifiers": "all child identities; all adjacent sequence decompositions; all nonempty next paths",
+      "prerequisites": [
+        "exact per-result context identity",
+        "source-to-model mapping of the selected removed-result declaration"
+      ],
+      "disposition": "open",
+      "warrant": "declared",
+      "discharge": "Supply independent context-bound proof/evidence of this proposition; source observations alone do not establish caller heaps or interference exclusion. Prove prose/formal correspondence separately."
+    },
+    {
+      "id": "detach_distinct",
+      "statement": "For this removed-result declaration, chain child identities are pairwise distinct",
+      "proposition": "QCore.CjsonRepresentationPremises.distinct",
+      "environment": "Environment e: parent, finite children list, ownedChild/live predicates, child/next/prev maps, call trace",
+      "quantifiers": "all finite sequence indices",
+      "prerequisites": [
+        "exact per-result context identity",
+        "source-to-model mapping of the selected removed-result declaration"
+      ],
+      "disposition": "open",
+      "warrant": "declared",
+      "discharge": "Supply independent context-bound proof/evidence of this proposition; source observations alone do not establish caller heaps or interference exclusion. Prove prose/formal correspondence separately."
+    },
+    {
+      "id": "detach_empty",
+      "statement": "For this removed-result declaration, child is NULL precisely when the child and next chain is empty",
+      "proposition": "QCore.CjsonRepresentationPremises.empty",
+      "environment": "Environment e: parent, finite children list, ownedChild/live predicates, child/next/prev maps, call trace",
+      "quantifiers": "the unique child pointer and finite sequence head",
+      "prerequisites": [
+        "exact per-result context identity",
+        "source-to-model mapping of the selected removed-result declaration"
+      ],
+      "disposition": "open",
+      "warrant": "declared",
+      "discharge": "Supply independent context-bound proof/evidence of this proposition; source observations alone do not establish caller heaps or interference exclusion. Prove prose/formal correspondence separately."
+    },
+    {
+      "id": "detach_first_prev",
+      "statement": "For this removed-result declaration, the first child's prev is the last child",
+      "proposition": "QCore.CjsonRepresentationPremises.firstPrev",
+      "environment": "Environment e: parent, finite children list, ownedChild/live predicates, child/next/prev maps, call trace",
+      "quantifiers": "all first/last identities matching sequence endpoints",
+      "prerequisites": [
+        "exact per-result context identity",
+        "source-to-model mapping of the selected removed-result declaration"
+      ],
+      "disposition": "open",
+      "warrant": "declared",
+      "discharge": "Supply independent context-bound proof/evidence of this proposition; source observations alone do not establish caller heaps or interference exclusion. Prove prose/formal correspondence separately."
+    },
+    {
+      "id": "detach_last_next",
+      "statement": "For this removed-result declaration, the last child's next is NULL",
+      "proposition": "QCore.CjsonRepresentationPremises.lastNext",
+      "environment": "Environment e: parent, finite children list, ownedChild/live predicates, child/next/prev maps, call trace",
+      "quantifiers": "all last identities matching the sequence endpoint",
+      "prerequisites": [
+        "exact per-result context identity",
+        "source-to-model mapping of the selected removed-result declaration"
+      ],
+      "disposition": "open",
+      "warrant": "declared",
+      "discharge": "Supply independent context-bound proof/evidence of this proposition; source observations alone do not establish caller heaps or interference exclusion. Prove prose/formal correspondence separately."
+    },
+    {
+      "id": "detach_link_targets",
+      "statement": "For this removed-result declaration, every non-NULL next or prev target is a live child of that same parent",
+      "proposition": "QCore.CjsonRepresentationPremises.linkTargets",
+      "environment": "Environment e: parent, finite children list, ownedChild/live predicates, child/next/prev maps, call trace",
+      "quantifiers": "all children x and all nonnull next/prev targets y",
+      "prerequisites": [
+        "exact per-result context identity",
+        "source-to-model mapping of the selected removed-result declaration"
+      ],
+      "disposition": "open",
+      "warrant": "declared",
+      "discharge": "Supply independent context-bound proof/evidence of this proposition; source observations alone do not establish caller heaps or interference exclusion. Prove prose/formal correspondence separately."
+    },
+    {
+      "id": "detach_no_writer",
+      "statement": "For this removed-result declaration, no concurrent writer mutates these links during the call",
+      "proposition": "QCore.CjsonRepresentationPremises.noWriter",
+      "environment": "Environment e: parent, finite children list, ownedChild/live predicates, child/next/prev maps, call trace",
+      "quantifiers": "all steps in the call trace",
+      "prerequisites": [
+        "exact per-result context identity",
+        "source-to-model mapping of the selected removed-result declaration"
+      ],
+      "disposition": "open",
+      "warrant": "declared",
+      "discharge": "Supply independent context-bound proof/evidence of this proposition; source observations alone do not establish caller heaps or interference exclusion. Prove prose/formal correspondence separately."
+    },
+    {
+      "id": "detach_parent_outside",
+      "statement": "For this removed-result declaration, the parent is not a child",
+      "proposition": "QCore.CjsonRepresentationPremises.parentOutside",
+      "environment": "Environment e: parent, finite children list, ownedChild/live predicates, child/next/prev maps, call trace",
+      "quantifiers": "the parent and every child",
+      "prerequisites": [
+        "exact per-result context identity",
+        "source-to-model mapping of the selected removed-result declaration"
+      ],
+      "disposition": "open",
+      "warrant": "declared",
+      "discharge": "Supply independent context-bound proof/evidence of this proposition; source observations alone do not establish caller heaps or interference exclusion. Prove prose/formal correspondence separately."
+    },
+    {
+      "id": "detach_predecessor",
+      "statement": "For this removed-result declaration, each nonfirst child's prev is its predecessor",
+      "proposition": "QCore.CjsonRepresentationPremises.predecessor",
+      "environment": "Environment e: parent, finite children list, ownedChild/live predicates, child/next/prev maps, call trace",
+      "quantifiers": "all adjacent sequence decompositions",
+      "prerequisites": [
+        "exact per-result context identity",
+        "source-to-model mapping of the selected removed-result declaration"
+      ],
+      "disposition": "open",
+      "warrant": "declared",
+      "discharge": "Supply independent context-bound proof/evidence of this proposition; source observations alone do not establish caller heaps or interference exclusion. Prove prose/formal correspondence separately."
+    }
+  ],
+  "conditional_conclusions": [
+    "live owned link targets exclude parent (chain/linkTargets/parentOutside)",
+    "equal child identities imply equal indices (distinct)",
+    "a link-writing trace step refutes noWriter"
+  ],
+  "next_cycle_design": {
+    "all_prerequisites": "v1 conjunction only; each antecedent remains open until exact evidence",
+    "branch_alternatives": "proposed ||-> needs branch-indexed evidence and every feasible-path safety obligation",
+    "forbidden_transition": "proposed !-> needs explicit negative proposition; Unknown is not negation",
+    "terminal_postcondition": "proposed ->| can state terminal condition but does not prove eventual termination",
+    "proceed_and": "proposed |-> needs exact state-transition semantics before grammar expansion"
+  }
+}
