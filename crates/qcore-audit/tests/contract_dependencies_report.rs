@@ -379,3 +379,53 @@ fn erasure_preserves_legacy_declarations_named_like_graph_fields() {
     qcore_audit::contract_dependencies::erase_hypotheses(&mut erased);
     assert_eq!(erased, old);
 }
+
+#[test]
+fn production_cjson_atoms_follow_declaration_dependencies_without_affecting_unrelated_rows() {
+    use qcore_c_gateway::contract_dependencies::{RowDependencies, hypothesis_closure};
+    use std::collections::BTreeSet;
+    let text =
+        include_str!("../../../providers/qcore-provider-librdkafka/contracts/librdkafka/cjson.qv");
+    let contracts = qcore_contract::contract_loader::load_resource_contract_sources(
+        &BTreeMap::from([("cjson.qv".into(), text.into())]),
+    )
+    .unwrap();
+    let graphs = qcore_contract::hypothesis::replay(contracts.source_assumptions()).unwrap();
+    let declaration = "cJSON_DetachItemViaPointer";
+    let expected: BTreeSet<String> = graphs[declaration].atoms.keys().cloned().collect();
+    assert_eq!(expected.len(), 10);
+    for standing in ["direct", "summary", "held", "withdrawn"] {
+        let mut deps = RowDependencies::default();
+        match standing {
+            "held" => {
+                deps.held.insert(declaration.into());
+            }
+            "withdrawn" => {
+                deps.withdrawn.insert(declaration.into());
+            }
+            _ => {
+                deps.declarations.insert(declaration.into());
+            }
+        }
+        if standing == "summary" {
+            deps.summaries.insert("wrapper".into());
+        }
+        assert_eq!(hypothesis_closure(&deps, &graphs)[declaration], expected);
+    }
+    let unrelated = RowDependencies {
+        declarations: BTreeSet::from(["cJSON_Delete".into()]),
+        ..Default::default()
+    };
+    let closure = hypothesis_closure(&unrelated, &graphs);
+    assert!(!closure.contains_key(declaration));
+    assert!(
+        !closure
+            .values()
+            .any(|atoms| atoms.contains("detach_no_writer"))
+    );
+    // Rendering keeps standing separate from graph disposition; no evidence control
+    // above changes a verdict or validates the original representation premise.
+    let metadata = premises(&contracts).unwrap();
+    assert_eq!(metadata["$hypothesis_graphs"][declaration]["premises"]
+        ["detach_representation_atoms"]["children"].as_array().unwrap().len(), 9);
+}

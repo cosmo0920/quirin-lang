@@ -1221,7 +1221,7 @@ const EXPECTED_CONTRACTS: &[(&str, &str, usize)] = &[
     ("librdkafka/cjson.qv", "print", 6),
     // Checked same-item detach: marker, explicit representation premise,
     // live parent, checked removed item and the same identity as result.
-    ("librdkafka/cjson.qv", "cJSON_DetachItemViaPointer", 5),
+    ("librdkafka/cjson.qv", "cJSON_DetachItemViaPointer", 15),
     // Card W43-ABI-ENUM-AND-CONST-PP: librdkafka functions over enumeration
     // (rule 12u) and pointer-to-pointer-to-const (rule 12v) prototypes:
     // marker, borrowed formals, a variadic data tail for the two variadic
