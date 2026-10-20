@@ -16,5 +16,6 @@
     "source": "docs/reports/w48-bottom-up-batch3/integration/gate.json at exact base2d8f6d342",
     "fresh_provider_rust_or_python_or_package_claim": false
   },
-  "root_python_after_committed_derived_matrix": 374
+  "root_python_after_committed_derived_matrix": 374,
+  "root_python_after_committed_gate_backed_matrix": 374
 }

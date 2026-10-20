@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 """Publish only completed actual gates, with complete commands and private logs."""
-import json,re
+import json,re,subprocess
 from pathlib import Path
 ROOT=Path(__file__).resolve().parents[4]
 PRIVATE=ROOT/'private/premise-decomposition-cycle1'
@@ -13,6 +13,8 @@ root_log=Path(standing[2]['log']).read_text();matches=re.findall(r'^summary: (.+
 summary_path=Path(matches[0]);summary_path=summary_path if summary_path.is_absolute() else ROOT/summary_path
 summary=load(summary_path);assert summary['ok'] and summary['totals']['failed']==0 and not summary['problems']
 lean=re.findall(r'^Passed (\d+) Lean audits$',Path(standing[7]['log']).read_text(),re.M);assert len(lean)==1
+provider_changes=subprocess.check_output(['git','diff','--name-only','2d8f6d342','--','providers','contract','crates/qcore-schemas'],cwd=ROOT,text=True).strip()
+assert not provider_changes, provider_changes
 provider_passed=133 # Borrowed exact-base provider boundary only; no fresh provider gate applies.
 def unittest_count(path):
  text=Path(path).read_text();matches=re.findall(r'^Ran (\d+) tests? in ',text,re.M);assert len(matches)==1 and re.search(r'^OK(?: \(.*\))?$',text,re.M);return int(matches[0])

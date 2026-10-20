@@ -1,0 +1,26 @@
+{
+  "gate_backed_matrix_commit": "5575f14500a20457744e3ae29092aee587488d9d",
+  "matrix_sha256": "8d560e5a65056e86b9ff9bdbcb11087c0c328f80858c40d711db633ab9647684",
+  "commands": [
+    {
+      "worktree_head_observed_at_step_end": "5575f14500a20457744e3ae29092aee587488d9d",
+      "tracked_worktree_status_observed_at_step_end": " M docs/reports/premise-decomposition-cycle1/README.md\n M docs/reports/premise-decomposition-cycle1/scripts/collect_gate.py\n M docs/reports/premise-decomposition-cycle1/validation-attempts.json\n",
+      "command": [
+        "python3",
+        "-m",
+        "unittest",
+        "discover",
+        "-s",
+        "scripts/tests"
+      ],
+      "cwd": "/home/cosmo/.codex/worktrees/premise-decomposition-cycle1/qcore-c",
+      "exit": 0,
+      "log": "/home/cosmo/.codex/worktrees/premise-decomposition-cycle1/qcore-c/private/premise-decomposition-cycle1/python-final/00.log",
+      "start": "2026-10-20T19:22:20.986630+00:00",
+      "end": "2026-10-20T19:23:12.482604+00:00"
+    }
+  ],
+  "passed": 374,
+  "exit": 0,
+  "boundary": "Actual second Python run after committing the gate-backed regenerated matrix; final documentation-only edits leave the matrix unchanged."
+}

@@ -200,5 +200,39 @@
     "summaries": 535,
     "summary": "/home/cosmo/.codex/worktrees/premise-decomposition-cycle1/qcore-c/private/test-binaries/20261020T185023Z-2238935/summary.json",
     "meaning": "New report-owned proposed-cjson.qv duplicates the existing extern print declaration. The every-tracked-source print-route and lexical-selector censuses intentionally pin every such location; their exact expected tables omitted this new legitimate location. Add only this explicit path to both tables, retain selected/ambiguous semantics unchanged, and rerun the entire standing gate. No source suffix workaround, test waiver or compiler/selector behavior change."
+  },
+  {
+    "attempt": "focused-census-pin-repair",
+    "exit": 0,
+    "passed": 3,
+    "ignored": 2,
+    "log": "/home/cosmo/.codex/worktrees/premise-decomposition-cycle1/qcore-c/private/premise-decomposition-cycle1/focused-census-pin-repair.log",
+    "meaning": "Exact report-owned print declaration path deliberately added to lexical-selector and print-route expected tables; compiler/selector behavior unchanged."
+  },
+  {
+    "attempt": "standing-2",
+    "exit": 0,
+    "passed": 8376,
+    "failed": 0,
+    "ignored": 15,
+    "units": 522,
+    "summaries": 535,
+    "lean_audits": 347,
+    "commands": "/home/cosmo/.codex/worktrees/premise-decomposition-cycle1/qcore-c/private/premise-decomposition-cycle1/standing-2/commands.json",
+    "meaning": "All eight corrected standing steps completed0; complete root Rust and Lean rerun, both examples, formatting and Clippy. No provider gate applies to final byte-exact provider/schema/SDK diff. Full Python follows committed matrix separately."
+  },
+  {
+    "attempt": "final-original-input-comparisons-and-matrix-confirmation",
+    "exit": 0,
+    "commands": "/home/cosmo/.codex/worktrees/premise-decomposition-cycle1/qcore-c/private/premise-decomposition-cycle1/finalize-pipeline.json",
+    "meaning": "Both final configured strict comparisons0; first Python374passed after committed derived matrix, actual gate collected, gate-backed matrix committed5575f1450, second Python374passed. Corrected heavy sequence0; original paused orchestrator exited1 on retained initial standing failure and released lock19:21:26UTC. No failure was hidden or overwritten."
+  },
+  {
+    "attempt": "final-matrix-reproducibility",
+    "initial_cmp_exit": 1,
+    "initial_difference": "Only measurement_provenance gate path: relative argument vs original absolute argument; no derived or gate data differed.",
+    "exact_original_gate_argument_cmp_exit": 0,
+    "log": "/home/cosmo/.codex/worktrees/premise-decomposition-cycle1/qcore-c/private/premise-decomposition-cycle1/final-matrix-reproducibility-exact-argv.log",
+    "meaning": "Final documentation-only bookkeeping leaves the committed gate-backed regenerated matrix byte-identical with exact original generator argv."
   }
 ]

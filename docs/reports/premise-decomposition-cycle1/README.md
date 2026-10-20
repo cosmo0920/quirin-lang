@@ -36,8 +36,8 @@ parent, distinct index injectivity and refutation of no-writer by an other-actor
 writing step. It proves neither caller antecedents nor their preservation
 through the C call. Rust controls replay the report variant, reject every atom
 substitution, retain included/renamed inheritance, and keep a refuted atom
-context-bound with the legacy atom separately open. A real allocation/store/
-detach/free fixture and transitive caller retain conditional Safe under both
+context-bound with the legacy atom separately open. An analyzed C allocation/store/
+detach/free caller fixture and transitive caller retain conditional Safe under both
 the unchanged production and proposed contracts. The original graph has one
 legacy atom; only the proposed graph has all ten atoms. Refutation metadata is
 not Unsafe and is not a validated reachable C violation.
@@ -50,12 +50,46 @@ batch3 seven-home map adds `mk_fifo_send`; its historical extra Safe row is
 retains all map entries/hashes and the one full row difference. This is no
 replacement for the later seven-home coverage measurement.
 
-Final original-input corpus/configured comparisons and standing/provider
-gates remain pending. Private logs:
+All six accepted fresh original-input audits exit 0. Under this exact six-home
+context, corpus remains **966 Safe / 3,859 Unknown / 9 provisional Unsafe**,
+system **99 / 345 / 4**, and slice **53 Safe / 346 Unknown / 4 Pending / 1
+provisional Unsafe**. [Final comparisons](measurements/final/) retain every
+static diagnostic, clause/declaration standing, all **5,781 full null records**,
+full runtime records and every row's actual closed-world classification.
+Environment/configuration hashes and four empty-summary timestamp identity
+leaves per route are reconstructed exactly; raw differences are retained.
+
+The impact artifact in each final route enumerates actual potential users. The
+corpus has four selected-declaration users: one exact-context hypothetical
+report-candidate instance is affected by the synthetic no-writer refutation,
+three dependent instances in other contexts stay unchanged, and 4,830 unrelated
+custody rows plus all null rows stay unchanged. Production premise dispositions
+and verdicts move zero. This is context-bound evidence impact with open source
+binding, not a discovered C violation.
+
+The complete standing gate passes **8,376 Rust tests / 0 failed / 15 ignored**
+over 522 units and 535 summaries, **347 Lean audits**, formatting, Clippy and
+both reevaluation examples. **374 Python tests** pass after the committed
+derived matrix; the gate-backed matrix is committed at `5575f1450` before its
+[separate final confirmation](post-matrix-confirmation.json), also 374 tests / exit 0. [Measured counts](measured-counts.json),
+[command receipts](command-receipts.json), [gate](gate.json) and
+[retained attempts](validation-attempts.json) own exact commands, exits and logs.
+The initial full Rust run found two omitted report-source census pins (8,374
+passed / 2 failed / 15 ignored). Deliberate path expectations passed the focused
+checks (3 passed / 2 ignored), then the entire standing gate passed; the first
+failure remains archived. The conditional provider gate is inapplicable:
+final provider contracts, SDK and schema equal base bytes. The provider count
+133 is explicitly borrowed exact-base integration evidence, with no fresh
+provider-test or package claim.
+
+Private logs are retained at
 `/home/cosmo/.codex/worktrees/premise-decomposition-cycle1/qcore-c/private/premise-decomposition-cycle1/`.
-The active immutable base audit is unchanged; only its own orchestrator was
-paused while restoring final inputs before the tip launch. All candidate,
-failed-control and interrupted-orchestration evidence is retained.
+The accepted heavy sequence completed and released the shared lock at
+2026-10-20 19:21:26 UTC. Only this card's orchestrator was paused for input
+restoration and full gate repair; no sibling process was interrupted. The
+original orchestrator's exit 1 records the first failed standing run; the
+corrected sequence exits 0. All candidate, failed-control and interrupted
+orchestration evidence is retained.
 
 Integrator list: report artifact and controls, mathematical model/audit and
 QCore import; shared STATUS, increment part10, report index and acceptance
