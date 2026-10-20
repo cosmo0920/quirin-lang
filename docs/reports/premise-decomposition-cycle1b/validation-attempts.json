@@ -46,5 +46,19 @@
     "failed": 1,
     "log": "/home/cosmo/.codex/worktrees/premise-decomposition-cycle1b/qcore-c/private/premise-decomposition-cycle1b/gate-1/python.log",
     "meaning": "committed matrix records346 audits, new source has347; preserved, post-commit rerun required"
+  },
+  {
+    "phase": "matrix-generator-interface-inspection",
+    "gate": false,
+    "commands": [
+      "python3 docs/reports/remaining-d02/build_matrix.py --help",
+      "PYTHONPATH=scripts python3 docs/reports/remaining-d02/build_matrix.py --help"
+    ],
+    "outcomes": [
+      "ModuleNotFoundError for ct_stage_summary",
+      "--help interpreted as ROOT; nonexistent carried matrix refused"
+    ],
+    "individual_exits": "not separately captured inside read-only composite inspection; no successful regeneration claimed",
+    "correction": "Read actual positional ROOT interface; final regeneration will pass . --gate explicit-path, record its individual exit, commit output, then run Python."
   }
 ]
