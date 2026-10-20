@@ -168,5 +168,26 @@
     "exit": 0,
     "log": "/home/cosmo/.codex/worktrees/premise-decomposition-cycle1/qcore-c/private/premise-decomposition-cycle1/matrix-derived-1.log",
     "meaning": "Derived dimensions regenerated before post-matrix Python; gate numbers are explicitly carried from previous matrix and NOT this card measurement. Final gate-backed regeneration remains pending."
+  },
+  {
+    "attempt": "production-companion-publication",
+    "accepted": false,
+    "meaning": "The actual closed-world classifier gives the new companion a new Fact::Premise. Verdict/moved-only parity cannot justify changing classification under Unknown. Exact production inputs restored; candidate preserved in proposed-cjson.qv. The negative actual-classifier Rust control proves exactly one added fact."
+  },
+  {
+    "attempt": "focused-report-fallback-audit",
+    "exit": 101,
+    "log": "/home/cosmo/.codex/worktrees/premise-decomposition-cycle1/qcore-c/private/premise-decomposition-cycle1/focused-report-fallback-audit.log",
+    "meaning": "The new negative control initially omitted its local BTreeSet import."
+  },
+  {
+    "attempt": "focused-report-fallback-audit-2",
+    "exit": 0,
+    "log": "/home/cosmo/.codex/worktrees/premise-decomposition-cycle1/qcore-c/private/premise-decomposition-cycle1/focused-report-fallback-audit-2.log",
+    "meaning": "All ten audit dependency controls pass, including unchanged real production and report-variant direct/caller Safe and explicit classifier mismatch."
+  },
+  {
+    "attempt": "orchestrator-restoration-pause",
+    "meaning": "SIGSTOP/SIGCONT only own measure_all.py PID2130769 while immutable base child continued; no audit was interrupted. Restored exact final production data and committed fallback606320b76 before tip launch. Private orchestration-stop.json/resume.json retain actual timestamps. Rejected configured variant tips remain archived; final configured tips run after provider gate within same lock."
   }
 ]

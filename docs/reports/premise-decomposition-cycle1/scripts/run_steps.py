@@ -15,6 +15,14 @@ steps={
 'standing':[['git','submodule','update','--init','--recursive'],['clang','--version'],['python3','scripts/run_test_binaries.py','--jobs','4'],['cargo','fmt','--all','--','--check'],['cargo','clippy','--all-targets','--','-D','warnings'],['cargo','run','-p','qcore-compiler','--example','reevaluation_probe'],['cargo','run','-p','qcore-compiler','--example','reevaluation_followup'],['python3','scripts/check_lean_audits.py','--jobs','4']],
 'provider':[['cargo','test','--manifest-path','providers/Cargo.toml','--workspace','--locked','--offline','--no-fail-fast'],['cargo','fmt','--manifest-path','providers/Cargo.toml','--all','--','--check'],['cargo','clippy','--manifest-path','providers/Cargo.toml','--workspace','--all-targets','--locked','--offline','--','-D','warnings'],['python3','-m','unittest','discover','-s','providers/tests'],['python3','providers/contracts.py','check'],['python3','providers/package.py','build','--output',str(out/'packages')]]+[['python3','providers/package.py','verify',str(out/'packages'/name)] for name in ['qcore.chunkio','qcore.libevent','qcore.librdkafka','qcore.cmetrics','qcore.ctraces']],
 'python':[['python3','-m','unittest','discover','-s','scripts/tests']]}
+# The rejected companion's configured tips remain archived separately. Reuse
+# the immutable original-input baselines, but take fresh final-input tips before
+# this same exclusive validation sequence releases its advisory lock.
+if a.stage == 'provider':
+    final_head = subprocess.check_output(['git','rev-parse','HEAD'],cwd=ROOT,text=True).strip()
+    steps['provider'] += [[os.sys.executable,str(Path(__file__).with_name('measure.py')),route,
+        str(ROOT/'target/release/quirin-audit'),final_head,str(ROOT),
+        str(out/'final-configured'/route/'tip')] for route in ['system','slice']]
 receipts=[]
 for i,command in enumerate(steps[a.stage]):
  log=out/f'{i:02}.log';start=datetime.datetime.now(datetime.timezone.utc).isoformat()
