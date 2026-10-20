@@ -16,5 +16,15 @@
     "build.rs"
   ],
   "exit": 0,
-  "meaning": "Actual working source tree, including staged/unstaged tracked files, remains identical to frozen production/control/provider/proof source. Later Rust/Python helpers live only in report evidence."
+  "meaning": "Every tracked non-docs file, including compiler, all workspace crates, providers, profiles, toolchain and build configuration, remains identical to frozen validated source. New report-only Rust/Python helpers replay existing serialization and add no semantic consumer.",
+  "all_non_documentation_source_command": [
+    "git",
+    "diff",
+    "--exit-code",
+    "13500ce9d9c71534357e44d6d505a58f52758661",
+    "--",
+    ".",
+    ":(exclude)docs"
+  ],
+  "all_non_documentation_source_exit": 0
 }
