@@ -410,3 +410,5 @@ pub(crate) mod test_support {
         }
     }
 }
+
+mod call_free_condition_reads;

@@ -401,3 +401,5 @@ import QCore.OuterListCandidates
 import QCore.HypothesisGraph
 
 /-! The executable formal core of QCore-C revision 0.1. -/
+
+import QCore.CallFreeConditionReads

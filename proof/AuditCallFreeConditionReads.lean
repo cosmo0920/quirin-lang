@@ -1,0 +1,9 @@
+import QCore.CallFreeConditionReads
+#print axioms QCore.CallFreeConditionReads.vectors_match
+#print axioms QCore.CallFreeConditionReads.old_admissions_survive
+#print axioms QCore.CallFreeConditionReads.a_checked_read_keeps_the_complete_plan
+#print axioms QCore.CallFreeConditionReads.a_plan_without_a_reason_refuses
+#print axioms QCore.CallFreeConditionReads.the_graph_preserves_checked_read_order
+#print axioms QCore.CallFreeConditionReads.the_graph_preserves_state_and_all_read_errors
+#print axioms QCore.CallFreeConditionReads.an_evaluated_read_error_is_not_erased
+#print axioms QCore.CallFreeConditionReads.short_circuit_reads
