@@ -103,5 +103,11 @@
   {
     "attempt": "model-faithfulness-correction",
     "meaning": "Before standing validation, noWriter was corrected from excluding every trace link write to excluding only actors other than the active detach invocation; the unlink invocation itself necessarily writes links. The theorem now requires an other-actor witness. This is correction of a proposed mathematical environment, not a detected C defect. A compiling theorem alone never established prose/source correspondence."
+  },
+  {
+    "attempt": "focused-actual-impact-2",
+    "exit": 0,
+    "log": "/home/cosmo/.codex/worktrees/premise-decomposition-cycle1/qcore-c/private/premise-decomposition-cycle1/focused-actual-impact-2.log",
+    "meaning": "One real production detach/summary/unrelated control passes with direct and caller both explicitly conditionally Safe; graph publication does not hide a failed legacy semantic reader."
   }
 ]

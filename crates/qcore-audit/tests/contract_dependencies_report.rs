@@ -453,6 +453,12 @@ extern fn impact_free(p: ptr<mut,u8>) -> unit contract { requires resource_contr
     let rows = row_dependencies(&record, &summary, &contracts);
     let graphs = qcore_contract::hypothesis::replay(contracts.source_assumptions()).unwrap();
     for name in ["direct", "caller"] {
+        assert_eq!(
+            summary.functions[name].status,
+            qcore_c_gateway::legacy_c::AnalysisStatus::Safe,
+            "{name}: {:?}",
+            summary.functions[name]
+        );
         let closure = hypothesis_closure(&rows[name], &graphs);
         assert!(
             closure["cJSON_DetachItemViaPointer"].contains("detach_no_writer"),
