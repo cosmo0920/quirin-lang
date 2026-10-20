@@ -1,0 +1,151 @@
+{
+  "scope": "This card measures an unchanged six-home linked-program assumption on both sides, inherited from graph-v1. It does not replace the later seven-home batch3 coverage measurement.",
+  "maps": {
+    "measured": {
+      "path": "docs/reports/w48-bottom-up-batch2/link-map.corpus.json",
+      "sha256": "3a0424cf3f447211ce8bf78679c396428ffed62ade14a75b99526ac9ddd1156d",
+      "document": {
+        "schema_version": 1,
+        "premise": "For the selected linked program and each selected compilation configuration, every external call to each listed symbol has a compatible function type and calling convention and resolves to its listed external definition. This assertion requires the actual link and interposition environment; the source audit conditions its result on it.",
+        "symbols": [
+          {
+            "function": "cio_file_hash",
+            "home_unit": "chunkio/cio_file.c"
+          },
+          {
+            "function": "LZ4_sizeofState",
+            "home_unit": "librdkafka/lz4.c"
+          },
+          {
+            "function": "LZ4_sizeofStateHC",
+            "home_unit": "librdkafka/lz4hc.c"
+          },
+          {
+            "function": "rd_kafka_error_code",
+            "home_unit": "librdkafka/rdkafka_error.c"
+          },
+          {
+            "function": "rd_kafka_error_destroy",
+            "home_unit": "librdkafka/rdkafka_error.c"
+          },
+          {
+            "function": "LZ4_compressBound",
+            "home_unit": "librdkafka/lz4.c"
+          }
+        ]
+      }
+    },
+    "historical": {
+      "path": "docs/reports/w48-bottom-up-batch3/link-map.corpus.json",
+      "sha256": "acc5e2d914994c2b295c03a0438c45ec8580943aaa65362028706cdd6db4cf38",
+      "document": {
+        "schema_version": 1,
+        "premise": "For the selected linked program and each selected compilation configuration, every external call to each listed symbol has a compatible function type and calling convention and resolves to its listed external definition. This assertion requires the actual link and interposition environment; the source audit conditions its result on it.",
+        "symbols": [
+          {
+            "function": "cio_file_hash",
+            "home_unit": "chunkio/cio_file.c"
+          },
+          {
+            "function": "LZ4_sizeofState",
+            "home_unit": "librdkafka/lz4.c"
+          },
+          {
+            "function": "LZ4_sizeofStateHC",
+            "home_unit": "librdkafka/lz4hc.c"
+          },
+          {
+            "function": "rd_kafka_error_code",
+            "home_unit": "librdkafka/rdkafka_error.c"
+          },
+          {
+            "function": "rd_kafka_error_destroy",
+            "home_unit": "librdkafka/rdkafka_error.c"
+          },
+          {
+            "function": "LZ4_compressBound",
+            "home_unit": "librdkafka/lz4.c"
+          },
+          {
+            "function": "mk_fifo_send",
+            "home_unit": "monkey-libevent/mk_server/mk_fifo.c"
+          }
+        ]
+      }
+    }
+  },
+  "added_in_historical_seven_home_map": [
+    {
+      "function": "mk_fifo_send",
+      "home_unit": "monkey-libevent/mk_server/mk_fifo.c"
+    }
+  ],
+  "schema_and_premise_equal": true,
+  "historical_status_comparison": "Attribution to a frozen historical record only, not a fresh seven-home audit.",
+  "historical_artifact": "docs/reports/w48-bottom-up-batch3/artifacts/corpus/after/diagnostics.json.gz",
+  "historical_artifact_sha256": "c54e4806a0afe52a602275c2b0373b0a79e5b8a3e4c8f41606c7f8e76d5f37f6",
+  "fresh_base_diagnostics_sha256": "3fdbfc303f0ba95e51f6d1b0366f56ad7d74bbdefb49018478355cdd1a105a63",
+  "full_status_differences": [
+    {
+      "key": [
+        "monkey-libevent",
+        "mk_server/mk_lib.c",
+        "mk_mq_send"
+      ],
+      "historical_row": {
+        "contract_dependencies": {
+          "declarations": [
+            "__errno_location",
+            "fprintf",
+            "perror",
+            "pthread_mutex_lock",
+            "pthread_mutex_unlock",
+            "usleep",
+            "write"
+          ],
+          "summaries": [
+            "mk_fifo_queue_get",
+            "mk_fifo_send",
+            "msg_write"
+          ]
+        },
+        "diagnostics": [],
+        "function": "mk_mq_send",
+        "status": "Safe"
+      },
+      "fresh_base_row": {
+        "contract_dependencies": {
+          "declarations": [],
+          "hypothesis_dependencies": {}
+        },
+        "diagnostics": [
+          {
+            "category": "unsupported",
+            "description": "call to uncontracted function `mk_fifo_send`",
+            "line": 6987,
+            "origin": "mk_server/mk_lib.c:788"
+          }
+        ],
+        "function": "mk_mq_send",
+        "hypothesis_context": {
+          "artifact": "monkey-libevent/mk_server/mk_lib.c#mk_mq_send",
+          "assumptions": "64112e947af8c10f52b3cd7fea48363203809519ce4fc9e0ab3b7f1818eeedc7",
+          "bounds": "existing gateway budgets; no new hypothesis discharge",
+          "build_identity": "6e1a7ada16e6f609025552256f17a94bee7d386f9d4454712ee0444ae6292cf5",
+          "evidence_version": "contract-hypothesis-graph.v1:35aaecd3e455c332c59913b15f1dad43dd60cfe5",
+          "property": "resource-custody.v1",
+          "scope": "[\"bool_val\",\"chunk_header\",\"free_chunk_header\",\"headers_setup\",\"mk_config_set\",\"mk_config_set_property\",\"mk_create\",\"mk_destroy\",\"mk_http_done\",\"mk_http_flush\",\"mk_http_header\",\"mk_http_send\",\"mk_http_status\",\"mk_lib_worker\",\"mk_lib_yield\",\"mk_main\",\"mk_mq_create\",\"mk_mq_send\",\"mk_start\",\"mk_stop\",\"mk_vhost_create\",\"mk_vhost_handler\",\"mk_vhost_lookup\",\"mk_vhost_set\",\"mk_vhost_set_property\",\"mk_worker_callback\"]",
+          "semantic_profile": "legacy-pinned-resource-profile",
+          "source_identity": "5601b612a9aeea16eb8d2e59ea569326225440ee17ca76d612c330b28ef47ebd"
+        },
+        "status": "Unknown"
+      }
+    }
+  ],
+  "fresh_base_counts": {
+    "Safe": 966,
+    "Unknown": 3859,
+    "provisionalUnsafe": 9
+  },
+  "interpretation": "The single historical Safe\u2192fresh Unknown difference is an omitted declared link-map home, not a source/analyzer regression or a decomposition movement. Final acceptance compares fresh same-six-home base and tip."
+}

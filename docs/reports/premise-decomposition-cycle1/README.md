@@ -41,7 +41,15 @@ the unchanged production and proposed contracts. The original graph has one
 legacy atom; only the proposed graph has all ten atoms. Refutation metadata is
 not Unsafe and is not a validated reachable C violation.
 
-Final original-input corpus/configured measurements and standing/provider
+The scoped fresh corpus baseline has 966 Safe / 3,859 Unknown / 9 provisional
+Unsafe over 4,834 rows under the unchanged six-home graph-v1 link map. The later
+batch3 seven-home map adds `mk_fifo_send`; its historical extra Safe row is
+`mk_mq_send`, which this baseline correctly leaves Unknown with an uncontracted
+`mk_fifo_send` diagnostic. [Exact context attribution](linked-program-context.json)
+retains all map entries/hashes and the one full row difference. This is no
+replacement for the later seven-home coverage measurement.
+
+Final original-input corpus/configured comparisons and standing/provider
 gates remain pending. Private logs:
 `/home/cosmo/.codex/worktrees/premise-decomposition-cycle1/qcore-c/private/premise-decomposition-cycle1/`.
 The active immutable base audit is unchanged; only its own orchestrator was
