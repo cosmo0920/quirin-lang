@@ -26,13 +26,14 @@ def chain (e : Environment) : Prop :=
   e.live e.parent ∧
   (∀ x, e.ownedChild x ↔ x ∈ e.children) ∧
   (∀ x ∈ e.children, e.live x) ∧
+  e.child = e.children.head? ∧
   (∀ before a b suffix, e.children = before ++ a :: b :: suffix → e.next a = some b) ∧
   (∀ x ∈ e.children, ¬ NextPath e.next x x)
 
 def distinct (e : Environment) : Prop := e.children.Nodup
 
 def empty (e : Environment) : Prop :=
-  e.child = e.children.head?
+  (e.child = none ↔ e.children = [])
 
 def firstPrev (e : Environment) : Prop :=
   ∀ first last, e.children.head? = some first →

@@ -21,6 +21,13 @@
       "proposition": "QCore.CjsonRepresentationPremises.chain",
       "environment": "Environment e: parent, finite children list, ownedChild/live predicates, child/next/prev maps, call trace",
       "quantifiers": "all child identities; all adjacent sequence decompositions; all nonempty next paths",
+      "conclusion": "chain e",
+      "environment_bindings": {
+        "parent": "the removed-result call actual parent, source-to-Nat identity binding open",
+        "children": "the finite exact owned-child sequence at call entry, heap interpretation open",
+        "child_next_prev": "the entry heap link maps; equations retained as relational propositions",
+        "trace": "every link-writing step during this call within the exact published bounds; exclusion is assumed, never inferred from a finite observation"
+      },
       "prerequisites": [
         "exact per-result context identity",
         "source-to-model mapping of the selected removed-result declaration"
@@ -35,6 +42,13 @@
       "proposition": "QCore.CjsonRepresentationPremises.distinct",
       "environment": "Environment e: parent, finite children list, ownedChild/live predicates, child/next/prev maps, call trace",
       "quantifiers": "all finite sequence indices",
+      "conclusion": "distinct e",
+      "environment_bindings": {
+        "parent": "the removed-result call actual parent, source-to-Nat identity binding open",
+        "children": "the finite exact owned-child sequence at call entry, heap interpretation open",
+        "child_next_prev": "the entry heap link maps; equations retained as relational propositions",
+        "trace": "every link-writing step during this call within the exact published bounds; exclusion is assumed, never inferred from a finite observation"
+      },
       "prerequisites": [
         "exact per-result context identity",
         "source-to-model mapping of the selected removed-result declaration"
@@ -49,6 +63,13 @@
       "proposition": "QCore.CjsonRepresentationPremises.empty",
       "environment": "Environment e: parent, finite children list, ownedChild/live predicates, child/next/prev maps, call trace",
       "quantifiers": "the unique child pointer and finite sequence head",
+      "conclusion": "empty e",
+      "environment_bindings": {
+        "parent": "the removed-result call actual parent, source-to-Nat identity binding open",
+        "children": "the finite exact owned-child sequence at call entry, heap interpretation open",
+        "child_next_prev": "the entry heap link maps; equations retained as relational propositions",
+        "trace": "every link-writing step during this call within the exact published bounds; exclusion is assumed, never inferred from a finite observation"
+      },
       "prerequisites": [
         "exact per-result context identity",
         "source-to-model mapping of the selected removed-result declaration"
@@ -63,6 +84,13 @@
       "proposition": "QCore.CjsonRepresentationPremises.firstPrev",
       "environment": "Environment e: parent, finite children list, ownedChild/live predicates, child/next/prev maps, call trace",
       "quantifiers": "all first/last identities matching sequence endpoints",
+      "conclusion": "firstPrev e",
+      "environment_bindings": {
+        "parent": "the removed-result call actual parent, source-to-Nat identity binding open",
+        "children": "the finite exact owned-child sequence at call entry, heap interpretation open",
+        "child_next_prev": "the entry heap link maps; equations retained as relational propositions",
+        "trace": "every link-writing step during this call within the exact published bounds; exclusion is assumed, never inferred from a finite observation"
+      },
       "prerequisites": [
         "exact per-result context identity",
         "source-to-model mapping of the selected removed-result declaration"
@@ -77,6 +105,13 @@
       "proposition": "QCore.CjsonRepresentationPremises.lastNext",
       "environment": "Environment e: parent, finite children list, ownedChild/live predicates, child/next/prev maps, call trace",
       "quantifiers": "all last identities matching the sequence endpoint",
+      "conclusion": "lastNext e",
+      "environment_bindings": {
+        "parent": "the removed-result call actual parent, source-to-Nat identity binding open",
+        "children": "the finite exact owned-child sequence at call entry, heap interpretation open",
+        "child_next_prev": "the entry heap link maps; equations retained as relational propositions",
+        "trace": "every link-writing step during this call within the exact published bounds; exclusion is assumed, never inferred from a finite observation"
+      },
       "prerequisites": [
         "exact per-result context identity",
         "source-to-model mapping of the selected removed-result declaration"
@@ -91,6 +126,13 @@
       "proposition": "QCore.CjsonRepresentationPremises.linkTargets",
       "environment": "Environment e: parent, finite children list, ownedChild/live predicates, child/next/prev maps, call trace",
       "quantifiers": "all children x and all nonnull next/prev targets y",
+      "conclusion": "linkTargets e",
+      "environment_bindings": {
+        "parent": "the removed-result call actual parent, source-to-Nat identity binding open",
+        "children": "the finite exact owned-child sequence at call entry, heap interpretation open",
+        "child_next_prev": "the entry heap link maps; equations retained as relational propositions",
+        "trace": "every link-writing step during this call within the exact published bounds; exclusion is assumed, never inferred from a finite observation"
+      },
       "prerequisites": [
         "exact per-result context identity",
         "source-to-model mapping of the selected removed-result declaration"
@@ -105,6 +147,13 @@
       "proposition": "QCore.CjsonRepresentationPremises.noWriter",
       "environment": "Environment e: parent, finite children list, ownedChild/live predicates, child/next/prev maps, call trace",
       "quantifiers": "all steps in the call trace",
+      "conclusion": "noWriter e",
+      "environment_bindings": {
+        "parent": "the removed-result call actual parent, source-to-Nat identity binding open",
+        "children": "the finite exact owned-child sequence at call entry, heap interpretation open",
+        "child_next_prev": "the entry heap link maps; equations retained as relational propositions",
+        "trace": "every link-writing step during this call within the exact published bounds; exclusion is assumed, never inferred from a finite observation"
+      },
       "prerequisites": [
         "exact per-result context identity",
         "source-to-model mapping of the selected removed-result declaration"
@@ -119,6 +168,13 @@
       "proposition": "QCore.CjsonRepresentationPremises.parentOutside",
       "environment": "Environment e: parent, finite children list, ownedChild/live predicates, child/next/prev maps, call trace",
       "quantifiers": "the parent and every child",
+      "conclusion": "parentOutside e",
+      "environment_bindings": {
+        "parent": "the removed-result call actual parent, source-to-Nat identity binding open",
+        "children": "the finite exact owned-child sequence at call entry, heap interpretation open",
+        "child_next_prev": "the entry heap link maps; equations retained as relational propositions",
+        "trace": "every link-writing step during this call within the exact published bounds; exclusion is assumed, never inferred from a finite observation"
+      },
       "prerequisites": [
         "exact per-result context identity",
         "source-to-model mapping of the selected removed-result declaration"
@@ -133,6 +189,13 @@
       "proposition": "QCore.CjsonRepresentationPremises.predecessor",
       "environment": "Environment e: parent, finite children list, ownedChild/live predicates, child/next/prev maps, call trace",
       "quantifiers": "all adjacent sequence decompositions",
+      "conclusion": "predecessor e",
+      "environment_bindings": {
+        "parent": "the removed-result call actual parent, source-to-Nat identity binding open",
+        "children": "the finite exact owned-child sequence at call entry, heap interpretation open",
+        "child_next_prev": "the entry heap link maps; equations retained as relational propositions",
+        "trace": "every link-writing step during this call within the exact published bounds; exclusion is assumed, never inferred from a finite observation"
+      },
       "prerequisites": [
         "exact per-result context identity",
         "source-to-model mapping of the selected removed-result declaration"
