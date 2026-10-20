@@ -1,0 +1,28 @@
+{
+  "route": "slice",
+  "every_row_classification_equal": true,
+  "rows": 404,
+  "actual_classifier": "qcore_audit::outer_selection::custody_facts; includes every Unknown row, not only published runtime moves",
+  "commands": [
+    {
+      "command": [
+        "target/debug/examples/premise_outer_facts",
+        "/home/cosmo/.codex/worktrees/premise-decomposition-cycle1/qcore-c/private/premise-decomposition-cycle1/measure-1/slice/base/resource-diagnostics.json",
+        "/home/cosmo/.codex/worktrees/premise-decomposition-cycle1/qcore-c/private/premise-decomposition-cycle1/measure-1/slice/base/resource-diagnostics.contracts.json",
+        "/home/cosmo/.codex/worktrees/premise-decomposition-cycle1/qcore-c/private/premise-decomposition-cycle1/slice-base-outer-facts.json"
+      ],
+      "exit": 0,
+      "output": "/home/cosmo/.codex/worktrees/premise-decomposition-cycle1/qcore-c/private/premise-decomposition-cycle1/slice-base-outer-facts.json"
+    },
+    {
+      "command": [
+        "target/debug/examples/premise_outer_facts",
+        "/home/cosmo/.codex/worktrees/premise-decomposition-cycle1/qcore-c/private/premise-decomposition-cycle1/measure-1/slice/tip/resource-diagnostics.json",
+        "/home/cosmo/.codex/worktrees/premise-decomposition-cycle1/qcore-c/private/premise-decomposition-cycle1/measure-1/slice/tip/resource-diagnostics.contracts.json",
+        "/home/cosmo/.codex/worktrees/premise-decomposition-cycle1/qcore-c/private/premise-decomposition-cycle1/slice-tip-outer-facts.json"
+      ],
+      "exit": 0,
+      "output": "/home/cosmo/.codex/worktrees/premise-decomposition-cycle1/qcore-c/private/premise-decomposition-cycle1/slice-tip-outer-facts.json"
+    }
+  ]
+}
