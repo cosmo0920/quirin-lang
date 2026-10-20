@@ -1,0 +1,88 @@
+{
+  "chronology": "Initial rendered packet was truncated. Operative selected sections were read before implementation; complete conservative broad packet was retrieved later during the serialized validation wait. This receipt does not claim full packet retrieval before implementation.",
+  "retrieval": "Complete model-visible bounded pages; overlapping follow-up reads closed clipped multi-file outputs.",
+  "files": [
+    {
+      "path": "AGENTS.md",
+      "sha256": "f42161b6022bf0d668876ac2b5168d61768e09f6a625ae5a00a3bc219d1f0005",
+      "characters": 5539
+    },
+    {
+      "path": "docs/agents/operations.md",
+      "sha256": "32baaa987dc812aa9efab5b8c0d3fb88d9cfd2420a989875960f2c95064bece4",
+      "characters": 11636
+    },
+    {
+      "path": "docs/agents/validation.md",
+      "sha256": "7cfd4dc3613a1995977e3773fc082603d7dadd729471bb17b5d50a93cc141280",
+      "characters": 10748
+    },
+    {
+      "path": "docs/agents/evidence.md",
+      "sha256": "d48d6018240d40c8c4521c727190599b15eea30d1a19ba3507e80ae031ad63f6",
+      "characters": 7150
+    },
+    {
+      "path": "docs/agents/source-identity.md",
+      "sha256": "170c85676445027d07257f24152da9f2ae8dd27fd84939c08338375b09473889",
+      "characters": 9196
+    },
+    {
+      "path": "docs/agents/providers.md",
+      "sha256": "ed1c7e9d196a34822b3cf1090980a34584443ce10eb9b67a29f50d614ef0fc98",
+      "characters": 29810
+    },
+    {
+      "path": "docs/agents/diagnostics.md",
+      "sha256": "6c9504e387debf0e83429f84db16e31f54e122961ac6d206c7b12daa8aecbb39",
+      "characters": 35599
+    },
+    {
+      "path": "docs/agents/gateway.md",
+      "sha256": "f6088af9e357b22b4ded41f553ca1de44a3b62b38905e1ec89366bcf6434c7c6",
+      "characters": 580533
+    },
+    {
+      "path": "docs/agents/source-routes.md",
+      "sha256": "12c6a7cf097421e5385796dddd4dbab069cf60093cbd5a71b60bc7895cd2b977",
+      "characters": 25687
+    },
+    {
+      "path": "docs/agents/effects.md",
+      "sha256": "9ae73d9b3070a54120afde2acea700fedd428b05b64674846a70a57bda49e18b",
+      "characters": 9712
+    },
+    {
+      "path": "docs/agents/io.md",
+      "sha256": "ce9a1ff9c91e183f7c2256a2f8a39c8f1495df34694ea7c49dd44b8fad75876f",
+      "characters": 12982
+    },
+    {
+      "path": "docs/agents/concurrency.md",
+      "sha256": "3a87ec049ada246bb70a579571cc3a80f0e04c7e0a372ea2d4c18f978815a3df",
+      "characters": 14456
+    },
+    {
+      "path": "docs/agents/buffers-records.md",
+      "sha256": "1fd166105f9473011d6eee82d224efa61f0a80e6f1082882020b285af86c98b4",
+      "characters": 36992
+    },
+    {
+      "path": "docs/STATUS.md",
+      "sha256": "2a3bb8f32b80adac7ef40a93a528c50aeda1dd72ad12d4e216af8d2b2bb67bc5",
+      "characters": 245710
+    },
+    {
+      "path": "docs/development/increments/structure-checkpoints/agent-cycle-guidance.md",
+      "sha256": "244db66addae95941bb685ad336b1a85ddedacc702b45c7dfec5500c24c95c3b",
+      "characters": 16053
+    },
+    {
+      "path": "docs/reports/task-context-contract-bundle/operations-before.txt",
+      "sha256": "d6072c957b244bdf7af47bc0461845418a9fca61b3b7991078b1aee4439a9b0f",
+      "characters": 23754
+    }
+  ],
+  "remaining_broad_packet_retrieval": [],
+  "token_billing_or_task_cost_claim": false
+}
