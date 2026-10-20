@@ -16,9 +16,11 @@ Analysis paths: [GATEWAY-ANALYSIS-PATH-OPTIMIZATION](reports/gateway-analysis-pa
 
 Audit tooling: the bounded [CPU/memory optimization](reports/audit-memory-performance/README.md) preserves four verdict artifacts byte for byte on three Fluent Bit selections. The four-worker sample took 64.67 → 20.63 seconds with 21.0% lower maximum RSS; shared-host observations, not whole-corpus throughput or safety coverage.
 
-The latest corpus and configured-route measurements are the 2026-10-19
-[checked array lookup receipt](reports/detach-lookup-membership/README.md),
-semantic source `b92688d22` on completed alias base `f35b5cf4b`. Source-pinned
+The latest fresh corpus and configured-route measurements are the 2026-10-20
+[hypothesis-graph erasure receipt](reports/contract-hypothesis-graph-v1/README.md),
+frozen source `5b5a8c0f0` against exact base `198f6fc43`. They reproduce the
+checked-array-lookup semantic checkpoint without verdict or diagnostic movement.
+Source-pinned
 contracts and named null premises remain assumptions, not C-body proofs.
 Older rows and reports retain their dated checkpoint evidence. CT mapping,
 model proof, native observations and loaded-runtime projections are separate;
@@ -26,6 +28,8 @@ projection is not safety coverage. Current tracking is the acceptance matrix,
 and history belongs in [increment records](development/increments/README.md).
 
 ## Coverage
+
+The [contract hypothesis graph](reports/contract-hypothesis-graph-v1/README.md) adds opaque atoms, conjunction-only premises, exact context/evidence records, fresh replay and per-row consultation closure with audited Lean. Schema19.1 and all five provider packages are migrated; no typed predicate is registered and the graph supplies no semantic consumer. Six fresh base/tip runs preserve corpus **963Safe/3862Unknown/9provisionalUnsafe**, system **99/345/4**, slice **53Safe/346Unknown/4Pending/1provisionalUnsafe**, all **5,781 null rows**, legacy premises/standing and full runtime projections after graph erasure. The sole remaining raw changes are additive metadata and exactly replayed timestamp/root-path identity changes. This is evidence structure, not additional safety coverage.
 
 The [checked array lookup card](reports/detach-lookup-membership/README.md) retains the exact read-only `get_array_item` frame, original typed read/call obligations and source-bound canonical record identity. Assigned constant-index controls recover an existing contained head only from explicit checked link/membership facts, with write/call invalidation and audited Rust/Lean; Borrowed provenance alone supplies no membership. Fresh pinned audits at `b92688d22` all exit0: corpus **963Safe/3862Unknown/9provisionalUnsafe** (exactly `get_array_item` and `cJSON_GetArrayItem` promoted under the existing named null premise); system **99/345/4** and slice **53Safe/346Unknown/4Pending/1provisionalUnsafe** unchanged. No Safe regression; all5781 null dictionaries and every runtime moved record unchanged. All six detach/delete wrappers remain Unknown, and the detach declaration remains pinned-in-force/DeclaredAssumption, unvalidated1/validated0. Fresh bottom-up plan is256 single-body waits/2222 candidate bodies/362 hypothetical ceiling, with no-extra-body same/cross closure6/6; these are not Safe promises. General successor/object lookup and whole-return/nested Removed transport remain registered. Final gate:8349Rust/344Lean, provider133Rust/25Python/five rebuilt+verified packages, and authoritative post-matrix Python in the report.
 
@@ -292,20 +296,20 @@ latest completed integration measurement.
 
 ## Latest validated gate
 
-The latest cumulative checkpoint is the [checked-detach report](reports/cjson-detach-same-item/README.md)
-on frozen analyzer/proof source `9bfe86a4115c4a7e3e4fb0de93c2e037ef5fcfbe`:
-**8,325 core Rust passed, 0 failed, 15 ignored over 518 units / 531 summaries;
-342 Lean audits; 374 root Python tests after matrix regeneration**. Host-access
-standing commands, submodules, fmt, Clippy, both reevaluation examples,
-documentation index and the actual worktree Clang21.1.8 recording exit0.
-The fresh provider gate passes **133 Rust / 0 failed / 1 ignored**, **25 Python**,
-check/fmt/Clippy, contract sync/check and all five package build/verifications.
-All three frozen-release audits exit0; binary SHA-256 is
-`9f10a5bbf704eb3c56af4c2e6c6c6ebe78e761cd4b7208937701c2a5295c3f06`.
-Earlier failed gates, the first production declaration withdrawal and cancelled
-jobs1 control remain retained. This closes one unpublished schema19 migration
-for Removed and S3's two public Rust fields; frozen schema18 reports remain
-historical semantic evidence, not the current compatibility receipt.
+The latest complete checkpoint is the [hypothesis-graph report](reports/contract-hypothesis-graph-v1/README.md)
+on frozen implementation source `5b5a8c0f05bef6aece8b57d90a2d405a459c29ea`:
+**8,364 core Rust passed / 0 failed / 15 ignored, 522 units / 535 summaries;
+345 Lean audits; 374 post-committed-matrix Python tests**. Host standing4
+passes submodules, formatting, Clippy and both reevaluation examples; its actual
+Clang21.1.8 recording and command exits are archived. Host provider4 passes
+**133 Rust / 0 failed / 1 ignored doctest**, **25 Python**, check/fmt/Clippy,
+contract checks and all five rebuilt/verified packages. All six exact-base/tip
+release measurements exit0, with zero unexplained static/null/runtime erasure
+movement. Sandbox confinement/LeakSanitizer failures, corrected lock/comparison
+fixtures and cancelled preliminary attempts remain explicit in the report.
+The managed-worktree native-platform Git-directory fixture remains registered;
+the exact-source full standing run uses a private normal clone. This closes
+the additive schema19.1 graph migration, with no typed semantic consumer.
 
 The five provider crates own **73** canonical contract modules; **48** shared or
 application-level modules live in six `providers/quirin-provider-*` crates: five

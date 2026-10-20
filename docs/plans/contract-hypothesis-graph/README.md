@@ -1,8 +1,11 @@
 # CONTRACT-HYPOTHESIS-GRAPH-V1: atomic hypotheses below premises
 
-Status: candidate implementation card, not dispatched work and not an
-implementation or coverage claim. Registered in the acceptance matrix under
-the full card ID `CONTRACT-HYPOTHESIS-GRAPH-V1`.
+Status: implemented as evidence-only at frozen source `5b5a8c0f0`;
+[completion evidence](../../reports/contract-hypothesis-graph-v1/README.md).
+The registered implementation entry is retired. The typed registry remains
+empty; no new safety coverage or semantic discharge is claimed. Accepted
+source forms are in C04.18.1 and G05; the illustration below retains the
+original planning spelling.
 
 ## Question
 

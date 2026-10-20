@@ -1,0 +1,24 @@
+{
+  "before": 805,
+  "retired_registered_entries": [
+    {
+      "id": "CONTRACT-HYPOTHESIS-GRAPH-V1",
+      "title": "Decompose named contract premises into context-bound atomic hypotheses",
+      "why": "Candidate implementation card, not dispatched. C04.18 currently publishes a stable named prose premise and C06.5 attributes it to dependent verdicts, but a broad premise has no machine-readable internal boundary between derived, bounded-observed, declared, human-reviewed, provider-proposed, open and refuted parts. DISCHARGE: implement the records-first conjunction-only hypothesis graph in docs/plans/contract-hypothesis-graph/README.md: total-or-reject canonical loading/replay/inheritance, separate proposition disposition and evidence warrant, complete verdict-contract context binding, actual-consultation dependency closure, erasure to the current premise view, rule-31 static/runtime separation, schema/package migration where required, Rust and audited Lean monotonicity/context controls, and zero unexplained verdict or diagnostic movement across corpus/system/slice. Existing resource_premise must elaborate to one opaque atom without changing digest, pin, standing or verdict effect; opaque text, LLM output and provider agreement grant no authority. Arbitrary Boolean logic and semantic discharge by a typed hypothesis are follow-on work, never silently included in this card.",
+      "source": "docs/plans/contract-hypothesis-graph/README.md",
+      "recorded_by": "CONTRACT-HYPOTHESIS-GRAPH-V1-PLAN"
+    }
+  ],
+  "added_residuals": [
+    {
+      "id": "NATIVE-PLATFORM-MATRIX-MANAGED-WORKTREE-GIT-DIR",
+      "title": "Native platform fixture must resolve Git metadata in managed worktrees",
+      "why": "CONTRACT-HYPOTHESIS-GRAPH-V1 focused gate reproduced native_platform_matrix fixture failure: it constructs repository/.git/modules/third_party/libevent although a managed worktree has a .git file. The complete host standing gate passes at exact source5b5a8c0f0 in a private normal clone with the pinned submodule, without altering the fixture or semantics; the incidental source change is rustfmt only. DISCHARGE: resolve the actual common/submodule Git directory through Git, retain safe-directory and pinned-revision checks, and run the fixture in a managed worktree as well as a normal clone. Focused failure log: private/contract-hypothesis-graph-v1/focused-contract-audit.log; full passing clone receipt in the card report.",
+      "source": "docs/reports/contract-hypothesis-graph-v1/README.md",
+      "recorded_by": "CONTRACT-HYPOTHESIS-GRAPH-V1"
+    }
+  ],
+  "after": 805,
+  "typed_families": [],
+  "why_no_typed_consumer_card": "closed typed registry is empty; graph is evidence-only and cannot discharge any safety obligation"
+}

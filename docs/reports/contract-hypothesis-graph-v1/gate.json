@@ -1,13 +1,13 @@
 {
-  "note": "CONTRACT-HYPOTHESIS-GRAPH-V1 frozen source5b5a8c0f05bef6aece8b57d90a2d405a459c29ea. Actual host standing4:8364Rust passed/0failed/15ignored,522units/535summaries;345Lean; formatting/Clippy/both examples exit0. Host provider4:133Rust/0failed/1ignored doctest,25Python,all5packages rebuilt+verified. Six fresh audits exit0, all-route erasure has zero unexplained differences; exact root-only environment SHA and MONKEY_BUILT time replay retained. Root post-matrix Python is not yet measured: null count and pending standing_gate are intentional; candidate tracking remains open until it passes.",
+  "note": "CONTRACT-HYPOTHESIS-GRAPH-V1 frozen source5b5a8c0f05bef6aece8b57d90a2d405a459c29ea, exact base198f6fc4349d3a47591a2378835ae9286859d918. Actual host standing4:8364Rust passed/0failed/15ignored,522units/535summaries;345Lean; formatting/Clippy/both examples exit0. Host provider4:133Rust/0failed/1ignored doctest,25Python,all5packages rebuilt+verified. All6fresh release audits exit0: custody963/3862/9 provisional Unsafe corpus,99/345/4 system,53/346/4Pending/1 slice; all5781null rows and runtime projections unchanged after graph erasure. Zero unexplained changes; exact root-only environment SHA and MONKEY_BUILT timestamp replay archived. Post-committed-matrix Python1 passed374/0failed in30.531s; final regenerated-matrix confirmation is python-post-matrix-2. Actual Clang recording belongs to the host standing4 run. Earlier failures/cancellations and comparison-harness correction retained. Graph remains evidence-only; no typed semantic consumer.",
   "workspace_tests": 8364,
   "provider_tests": 133,
-  "python_evidence_validator_tests": null,
+  "python_evidence_validator_tests": 374,
   "reevaluation_probe_exit": 0,
   "reevaluation_followup_exit": 0,
   "cargo_fmt": "clean",
   "cargo_clippy": "clean",
-  "standing_gate": "pending_post_matrix_python",
+  "standing_gate": "complete",
   "lean_audits": 345,
   "clang": "present: Ubuntu clang version 21.1.8 (6ubuntu1)"
 }

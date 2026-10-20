@@ -1,10 +1,10 @@
 # Evidence-only contract hypothesis graphs
 
-Work in progress on `codex/contract-hypothesis-graph-v1`, based on
+Completed on `codex/contract-hypothesis-graph-v1`, based on
 `198f6fc4349d3a47591a2378835ae9286859d918`. Design and the zero-movement
-prediction were committed as `1a2e40c95` before implementation. The current
-frozen implementation source is `5b5a8c0f0`; no completion or corpus-parity
-claim is made until the receipts below are filled from completed commands.
+prediction were committed as `1a2e40c95` before implementation. The frozen implementation source is
+`5b5a8c0f05bef6aece8b57d90a2d405a459c29ea`; all three route comparisons
+reproduce the base after graph erasure and exactly attributed provenance.
 
 The schema adds declaration-local opaque atoms, conjunction-only premises,
 separate disposition and warrant, complete instance contexts and evidence
@@ -59,7 +59,7 @@ retain the static/runtime boundary. The [Lean model](../../../proof/QCore/Hypoth
 and [audit registration](../../../proof/AuditHypothesisGraph.lean) retain the
 model/import boundary stated above.
 
-## Validation in progress
+## Validation
 
 Private evidence root:
 `/home/cosmo/.codex/worktrees/3d1b/qcore-c/private/contract-hypothesis-graph-v1/`.
@@ -84,7 +84,9 @@ evidence root; other standing logs are in `standing-4/`.
 The complete host provider gate passes **133 Rust tests / 0 failed / 1 ignored
 doctest**, **25 Python tests**, check, formatting, Clippy, contract checks and
 all five rebuilt/verified packages. [Provider commands and exits](gate/provider-commands.json)
-name the complete logs in `provider-4/`. Only root post-matrix Python remains pending.
+name the complete logs in `provider-4/`. The post-committed-matrix Python suite passes **374 tests**, exit0 in30.531s;
+`python-post-matrix-1.log` and `.exit` are under the private evidence root.
+The final regenerated-matrix confirmation is `python-post-matrix-2.log`/`.exit`.
 
 Superseded attempts are retained in [validation-attempts.json](validation-attempts.json): malformed initial custody fixture syntax
 (four failing new tests, subsequently corrected); an inheritance ID/formal
@@ -162,7 +164,20 @@ replay, exact context, Rust/Lean rule and refusing/positive controls before it
 can affect a verdict. Opaque text, provider agreement and LLM proposals grant
 no authority.
 
-Integrator items pending final reconciliation: preserve the design commit and
-frozen source provenance; retain all failed/cancelled attempts; merge shared
-status/matrix/index/increment records serially with the sibling card; keep the
-private validation clone and build outputs until final evidence is archived.
+[Tracking reconciliation](tracking.json) retires the actually registered card
+and adds `NATIVE-PLATFORM-MATRIX-MANAGED-WORKTREE-GIT-DIR`; the follow-up count
+stays805. The fixture still assumes a directory `.git`, so its managed-worktree
+failure is retained in `focused-contract-audit.log`; this card changes that
+file only through rustfmt. The passing full clone does not discharge that
+fixture portability residual.
+
+Integrator list: preserve the design commit and frozen production/proof source;
+retain all attempts and raw before/after evidence; integrate shared
+`docs/STATUS.md`, acceptance matrix, report index, current increment, contract
+spec and grammar serially with the sibling card. Likely code conflicts are
+Cargo/schema dependency versions and locks, gateway `legacy_c.rs` and
+`contract_dependencies.rs`, contract loader/inclusion, and audit projection/
+report/dependency publication. Keep Rust/Lean and schema/package migration
+together. The native-platform and two gateway-test formatting changes are
+formatting-only. Private clone/build outputs are retained. No main merge or
+push is performed by this card.

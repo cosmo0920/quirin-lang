@@ -6754,10 +6754,10 @@
   "note": "providers/ is a separate Cargo workspace, excluded from the core workspace; P01 verified empirically that the core workspace builds and passes its full suite with providers/ moved out of the tree."
  },
  "validation": {
-  "note": "CONTRACT-HYPOTHESIS-GRAPH-V1 frozen source5b5a8c0f05bef6aece8b57d90a2d405a459c29ea. Actual host standing4:8364Rust passed/0failed/15ignored,522units/535summaries;345Lean; formatting/Clippy/both examples exit0. Host provider4:133Rust/0failed/1ignored doctest,25Python,all5packages rebuilt+verified. Six fresh audits exit0, all-route erasure has zero unexplained differences; exact root-only environment SHA and MONKEY_BUILT time replay retained. Root post-matrix Python is not yet measured: null count and pending standing_gate are intentional; candidate tracking remains open until it passes.",
+  "note": "CONTRACT-HYPOTHESIS-GRAPH-V1 frozen source5b5a8c0f05bef6aece8b57d90a2d405a459c29ea, exact base198f6fc4349d3a47591a2378835ae9286859d918. Actual host standing4:8364Rust passed/0failed/15ignored,522units/535summaries;345Lean; formatting/Clippy/both examples exit0. Host provider4:133Rust/0failed/1ignored doctest,25Python,all5packages rebuilt+verified. All6fresh release audits exit0: custody963/3862/9 provisional Unsafe corpus,99/345/4 system,53/346/4Pending/1 slice; all5781null rows and runtime projections unchanged after graph erasure. Zero unexplained changes; exact root-only environment SHA and MONKEY_BUILT timestamp replay archived. Post-committed-matrix Python1 passed374/0failed in30.531s; final regenerated-matrix confirmation is python-post-matrix-2. Actual Clang recording belongs to the host standing4 run. Earlier failures/cancellations and comparison-harness correction retained. Graph remains evidence-only; no typed semantic consumer.",
   "workspace_tests": 8364,
   "provider_tests": 133,
-  "python_evidence_validator_tests": null,
+  "python_evidence_validator_tests": 374,
   "lean_audits": 345,
   "lean_audit_files": [
    "AuditAbiEnumConstPointer.lean",
@@ -7110,7 +7110,7 @@
   "reevaluation_followup_exit": 0,
   "cargo_fmt": "clean",
   "cargo_clippy": "clean",
-  "standing_gate": "pending_post_matrix_python",
+  "standing_gate": "complete",
   "full_language_conformance": false,
   "measurement_provenance": "integrator_supplied (docs/reports/contract-hypothesis-graph-v1/gate.json)"
  },
@@ -12705,12 +12705,12 @@
    "recorded_by": "DETACH-LOOKUP-MEMBERSHIP"
   },
   {
-   "id": "CONTRACT-HYPOTHESIS-GRAPH-V1",
-   "title": "Decompose named contract premises into context-bound atomic hypotheses",
-   "why": "Candidate implementation card, not dispatched. C04.18 currently publishes a stable named prose premise and C06.5 attributes it to dependent verdicts, but a broad premise has no machine-readable internal boundary between derived, bounded-observed, declared, human-reviewed, provider-proposed, open and refuted parts. DISCHARGE: implement the records-first conjunction-only hypothesis graph in docs/plans/contract-hypothesis-graph/README.md: total-or-reject canonical loading/replay/inheritance, separate proposition disposition and evidence warrant, complete verdict-contract context binding, actual-consultation dependency closure, erasure to the current premise view, rule-31 static/runtime separation, schema/package migration where required, Rust and audited Lean monotonicity/context controls, and zero unexplained verdict or diagnostic movement across corpus/system/slice. Existing resource_premise must elaborate to one opaque atom without changing digest, pin, standing or verdict effect; opaque text, LLM output and provider agreement grant no authority. Arbitrary Boolean logic and semantic discharge by a typed hypothesis are follow-on work, never silently included in this card.",
-   "source": "docs/plans/contract-hypothesis-graph/README.md",
-   "recorded_by": "CONTRACT-HYPOTHESIS-GRAPH-V1-PLAN"
+   "id": "NATIVE-PLATFORM-MATRIX-MANAGED-WORKTREE-GIT-DIR",
+   "title": "Native platform fixture must resolve Git metadata in managed worktrees",
+   "why": "CONTRACT-HYPOTHESIS-GRAPH-V1 focused gate reproduced native_platform_matrix fixture failure: it constructs repository/.git/modules/third_party/libevent although a managed worktree has a .git file. The complete host standing gate passes at exact source5b5a8c0f0 in a private normal clone with the pinned submodule, without altering the fixture or semantics; the incidental source change is rustfmt only. DISCHARGE: resolve the actual common/submodule Git directory through Git, retain safe-directory and pinned-revision checks, and run the fixture in a managed worktree as well as a normal clone. Focused failure log: private/contract-hypothesis-graph-v1/focused-contract-audit.log; full passing clone receipt in the card report.",
+   "source": "docs/reports/contract-hypothesis-graph-v1/README.md",
+   "recorded_by": "CONTRACT-HYPOTHESIS-GRAPH-V1"
   }
  ],
- "updated": "2026-10-19 DETACH-LOOKUP-MEMBERSHIP: measured corpus963Safe/3862Unknown/9provisionalUnsafe, system99/345/4, slice53/346/4Pending/1; two conditional promotions, no Safe regression; six detach/delete wrappers Unknown. Fresh plan256/2222/362 and no-extra closure6/6. Full gates 8349Rust/344Lean, provider133Rust/25Python/all5packages, post-matrixPython374. Four lookup residuals narrowed; CONTRACT-HYPOTHESIS-GRAPH-V1 candidate from origin/main retained; 805 named follow-ups."
+ "updated": "2026-10-20 CONTRACT-HYPOTHESIS-GRAPH-V1: evidence-only graph/schema19.1; all-route fresh erasure zero unexplained movement, custody963/3862/9 provisional Unsafe corpus,99/345/4 system,53/346/4Pending/1 slice;5781null rows/runtime unchanged. Host gates8364Rust/345Lean, provider133Rust/25Python/all5packages, committed-matrixPython374. Registered implementation card retired; managed-worktree native-platform Git metadata fixture residual added;805 named follow-ups."
 }
