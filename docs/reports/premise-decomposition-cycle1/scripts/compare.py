@@ -7,6 +7,7 @@ legacy=runpy.run_path(str(ROOT/'docs/reports/contract-hypothesis-graph-v1/script
 erase=legacy['erase']; differences=legacy['differences']
 COMPANION='detach_representation_atoms'
 SELECTED='cJSON_DetachItemViaPointer'
+COMPANION_LABELS={'premise:'+COMPANION, 'resource_premise('+COMPANION+')'}
 p=argparse.ArgumentParser();p.add_argument('route',choices=['system','slice','corpus']);p.add_argument('base',type=Path);p.add_argument('tip',type=Path);p.add_argument('out',type=Path);a=p.parse_args();a.out.mkdir(parents=True,exist_ok=False)
 inputs=ROOT/'private/premise-decomposition-cycle1/base-inputs'
 old_source=(inputs/'providers/qcore-provider-librdkafka/contracts/librdkafka/cjson.qv').read_text()
@@ -37,11 +38,11 @@ def migrate(v):
   for x in v:
    if isinstance(x,dict) and x.get('name')==COMPANION:
     assert x['origin']=='declared' and x['statement'].startswith('all(detach_');counts['companion_erasure']+=1;continue
-   if x=='premise:'+COMPANION:counts['companion_clause_label']+=1;continue
+   if isinstance(x,str) and x in COMPANION_LABELS:counts['companion_clause_label']+=1;continue
    result.append(migrate(x))
   return result
  if isinstance(v,dict):
-  return {k:migrate(x) for k,x in v.items() if k!='premise:'+COMPANION}
+  return {k:migrate(x) for k,x in v.items() if k not in COMPANION_LABELS}
  return v
 def gz(path,data):path.write_bytes(gzip.compress(data,mtime=0))
 names={'diagnostics':'resource-diagnostics.json','contracts':'resource-diagnostics.contracts.json','chunk-contracts':'resource-diagnostics.chunk-contracts.json','source-effects':'resource-diagnostics.source-effects.json','source':'monkey-source.json','null':a.route+'-null.jsonl','null-summary':a.route+'-null.summary.json','outer':a.route+'-outer.json'}
