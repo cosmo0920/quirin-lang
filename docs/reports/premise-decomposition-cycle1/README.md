@@ -14,7 +14,8 @@ distinguishes that selection aid from loader-derived corpus counts.
 
 [Proposed contract](proposed-cjson.qv) is the preserved production-companion
 attempt. It retains the exact legacy clause and adds nine opaque atoms and a
-conjunction under v1 grammar. [Atom map](atom-map.json) binds stable identities
+conjunction under v1 grammar. [Canonical graph](proposed-graph.json) and [source bindings](source-bindings.json)
+retain exact identities and open proof boundaries. [Atom map](atom-map.json) binds stable identities
 to explicit Lean Props, environments, quantifiers, prerequisites, conclusions
 and open evidence obligations. All remain open/declared. Prose/formal
 equivalence and actual C heap/trace binding are open; no typed consumer exists.
