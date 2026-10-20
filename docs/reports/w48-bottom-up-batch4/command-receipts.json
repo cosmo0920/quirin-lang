@@ -1154,5 +1154,31 @@
     "log": "private/w48-bottom-up-batch4/configured-preflight/slice-context-retry2.log",
     "started": "2026-10-20T21:36:23.940223+00:00",
     "ended": "2026-10-20T21:36:24.850558+00:00"
+  },
+  {
+    "name": "diff-check-range-before-repair",
+    "command": [
+      "git",
+      "diff",
+      "--check",
+      "2d8f6d34257db14031a2578ce14f941bee25fc19"
+    ],
+    "exit": 2,
+    "started": "2026-10-20T22:37:06.761847+00:00",
+    "ended": "2026-10-20T22:37:06.795132+00:00",
+    "log": "private/w48-bottom-up-batch4/diff-check-range-before-repair.log"
+  },
+  {
+    "name": "diff-check-range-final",
+    "command": [
+      "git",
+      "diff",
+      "--check",
+      "2d8f6d34257db14031a2578ce14f941bee25fc19"
+    ],
+    "exit": 0,
+    "started": "2026-10-20T22:37:27.381244+00:00",
+    "ended": "2026-10-20T22:37:27.440364+00:00",
+    "log": "private/w48-bottom-up-batch4/diff-check-range-final.log"
   }
 ]

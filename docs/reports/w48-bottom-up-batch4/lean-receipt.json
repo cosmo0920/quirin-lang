@@ -17,5 +17,12 @@
     "exit": 1,
     "log": "private/w48-bottom-up-batch4/gate-lean.log",
     "reason": "aggregate import appended after module-doc command; repaired by moving it among imports, preserving model definitions"
+  },
+  "post_gate_whitespace_only": {
+    "path": "proof/QCore.lean",
+    "tested_sha256": "37d2cacd68e8a4a37ab6410460319fa81b4be1c6b42b184fd8c7279c57818197",
+    "final_sha256": "31e3dd1942bbcbf072eaeb6b9481e07a4be7a6f20afdc941aa899dd0a8febc0c",
+    "equality_except_trailing_whitespace": true,
+    "change": "Remove one extra EOF blank line caught by final complete-range git diff --check. No Lean command or definition changes."
   }
 }

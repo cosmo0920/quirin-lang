@@ -211,7 +211,7 @@ for function, declaration in c['contract_dependencies']['declarations'].items():
     if right != ordered:
         set_orders.append({'function': function, 'contexts': len(right), 'rebound_order_permutation': permutation, 'meaning': 'contract_dependencies.rs records BTreeSet<String> of complete context JSON; hash relocation changes its lexical order. Both original arrays are verified canonical and unique, and the complete reconstructed context set is unchanged.'})
     d['contract_dependencies']['declarations'][function]['hypothesis_evidence']['contexts'] = ordered
-assert c == d, 'unattributed configured contract artifact field' 
+assert c == d, 'unattributed configured contract artifact field'
 families = {}
 for family in ['source', 'chunk-contracts', 'source-effects']:
     paths = [out / side / (family + '.json.gz') for side in ['before', 'after']]

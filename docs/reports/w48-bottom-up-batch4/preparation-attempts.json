@@ -198,5 +198,13 @@
     },
     "meaning": "Program audits all0. Final collector1 was a strict metadata guard against the cmetrics native-standing promotion; exact clauses/methods checked and retry0. Configured preflight guards and canonical context ordering attempts remain retained; these are not failed C program measurements."
   },
-  "first_collection_driver": "Initial private pipeline is a collector that exits0 after recording all child exits, including failures. Its aggregate exit is not a gate result. Final collector exits1 for any failed command; individual command exits are authoritative."
+  "first_collection_driver": "Initial private pipeline is a collector that exits0 after recording all child exits, including failures. Its aggregate exit is not a gate result. Final collector exits1 for any failed command; individual command exits are authoritative.",
+  "final_whitespace_check": {
+    "initial_staged_check_exit": 2,
+    "reason": "One trailing space in newly staged evidence-only configured_context_review.py, not visible to earlier unstaged git diff checks. Commit proceeded because the shell list did not stop on that check; corrected immediately and full base..tip diff checked again.",
+    "log": "interactive tool output retained; no separate initial private log claimed",
+    "semantic_change": false,
+    "range_check_exit": 2,
+    "additional_range_finding": "Extra EOF blank line in proof/QCore.lean from prior import repair; removed with exact byte-equality except trailing whitespace receipt."
+  }
 }
