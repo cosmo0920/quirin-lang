@@ -28,6 +28,7 @@ def main():
     out.mkdir(parents=True, exist_ok=False)
     binary = args.binary.resolve()
     route = args.route
+    jobs = 16 if route == "corpus" else 8
     inputs = args.inputs.resolve()
     link_map = REPO / 'docs/reports/w48-bottom-up-batch2/link-map.corpus.json'
     env = dict(os.environ)
@@ -40,7 +41,7 @@ def main():
         source = PRIMARY / 'build/cycle19/c-gateway-wave-pin/fluent-bit-clang-source'
         monkey = PRIMARY / 'build/cycle19/c-gateway-wave-pin/monkey/monkey-build/compile_commands.json'
         env['QCORE_CHUNKIO_PACKAGE'] = str(PRIMARY / 'build/cycle19/provider-packages-wave20/qcore.chunkio')
-        command = [str(binary), 'pinned', '--jobs', '8', str(source), str(monkey),
+        command = [str(binary), 'pinned', '--jobs', str(jobs), str(source), str(monkey),
                    str(out / 'monkey-source.json'), str(out / 'resource-diagnostics.json')]
     else:
         prepared = PRIMARY / ('private/w45-fb/w46-external-callee-contracts/attempt-1' if route == 'system'
@@ -51,8 +52,8 @@ def main():
                                                           else 'tail-pause-selection.json')
         command = [str(binary), 'current', '--checkout', str(source), '--profile-directory',
                    str(inputs / 'contract/profiles/fluent-bit'), '--compile-database', str(database),
-                   '--selection', str(selection), '--jobs', '8', '--report', str(out / 'resource-diagnostics.json')]
-    record = {'analyzer_source_commit': args.analyzer_commit, 'command': command, 'jobs': 8,
+                   '--selection', str(selection), '--jobs', str(jobs), '--report', str(out / 'resource-diagnostics.json')]
+    record = {'analyzer_source_commit': args.analyzer_commit, 'command': command, 'jobs': jobs,
               'binary': str(binary), 'binary_sha256': sha(binary),
               'source_head': subprocess.check_output(['git', '-C', str(source), 'rev-parse', 'HEAD'], text=True).strip(),
               'link_map': str(link_map), 'link_map_sha256': sha(link_map),
