@@ -84,7 +84,14 @@ for unit_index,unit in enumerate(data['tip']['diagnostics']['units']):
   if 'detach_no_writer' in deps.get(SELECTED,[]):
    item['declaration']=SELECTED;item['premise']=COMPANION;item['atom_dependencies']=deps[SELECTED];impact.append(item)
   else:unrelated.append(item)
-impact_record={'route':a.route,'control':{'atom':'detach_no_writer','disposition':'refuted','warrant':'declared','reference':'synthetic writing-step/control; no observed C violation'},'affected_records':impact,'unrelated_records':unrelated,'propagation':'evidence impact only; production dispositions and verdicts remain unchanged; foreign context refuses; legacy premise separately open','formal_refutation':'QCore.CjsonRepresentationPremises.a_writing_step_refutes_no_writer'}
+null_impact=[];null_unrelated=[]
+for index,row in enumerate(data['tip']['null']):
+ item={'record_index':index,'library':row.get('library'),'file':row.get('file'),'function':row.get('function'),'context':row.get('hypothesis_context'),'graph':row.get('hypothesis_graph'), 'null_verdict':row.get('null',{}).get('verdict'),'combined':row.get('combined')}
+ # The null property publishes its own consulted-premise graph. Do not invent
+ # custody-to-null dependencies merely because both rows name one C function.
+ if 'detach_no_writer' in row.get('hypothesis_graph',{}).get('atoms',{}):null_impact.append(item)
+ else:null_unrelated.append(item)
+impact_record={'route':a.route,'control':{'atom':'detach_no_writer','disposition':'refuted','warrant':'declared','reference':'synthetic writing-step/control; no observed C violation'},'affected_records':impact,'unrelated_records':unrelated,'null_affected_records':null_impact,'null_unrelated_records':null_unrelated,'null_boundary':'The null graph is its independently consulted legacy-premise fold; no custody-to-null implication is inferred.','propagation':'evidence impact only; production dispositions and verdicts remain unchanged; foreign context refuses; legacy premise separately open','formal_refutation':'QCore.CjsonRepresentationPremises.a_writing_step_refutes_no_writer'}
 gz(a.out/'impact.json.gz',(json.dumps(impact_record,indent=2)+'\n').encode())
 summary={'route':a.route,'checks':checks,'base':count('base'),'tip':count('tip'),'null_rows':{side:len(data[side]['null']) for side in data},'exact_migration_transform_counts':dict(counts),'raw_differing_leaf_counts':{k:len(v) for k,v in raw.items()},'remaining_differing_leaf_counts':{k:len(v) for k,v in projected.items()},'affected_custody_records':len(impact),'unrelated_custody_records':len(unrelated),'all_invariant_checks_pass':all(checks.values()),'note':'All residual leaf differences retained. Compile provenance/environment/timestamp differences require exact separate reconstruction before completion.'}
 (a.out/'comparison.json').write_text(json.dumps(summary,indent=2)+'\n');print(json.dumps(summary,indent=2));raise SystemExit(0 if all(checks.values()) else 1)
