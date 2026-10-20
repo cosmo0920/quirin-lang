@@ -925,12 +925,12 @@ const EXPECTED_CONTRACTS: &[(&str, &str, usize)] = &[
     // (contract spec C04.18), one clause: 3 -> 4.
     // W48-BOTTOM-UP-BATCH3 deliberately updates the existing reading-premise
     // text for scalar conditions; the four clauses and custody modes stay pinned.
-    ("libc/errno.qv", "__errno_location", 4),
+    ("libc/errno.qv", "__errno_location", 7),
     // Card W44-LIBC-RESIDUALS: `strerror`, appended beside the `errno`
     // accessor (the marker, one borrowed scalar, `none`: 3).
     // Card VERDICT-CONTRACT-PREMISE-ANNOTATIONS: `requires resource_premise(nested_call_admission, ...)`
     // (contract spec C04.18), one clause: 4 -> 5.
-    ("libc/errno.qv", "strerror", 5),
+    ("libc/errno.qv", "strerror", 10),
     ("libc/math.qv", "ceil", 4),
     ("libc/math.qv", "floor", 4),
     ("libc/math.qv", "fabs", 4),

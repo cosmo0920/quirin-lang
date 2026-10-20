@@ -83,11 +83,17 @@ module contract;
 // contains, so it is inert text there — the same measured-inert situation card
 // PROD-CONTRACTS recorded for `flb_trace`, and harmless for the same reason.
 
+// PREMISE-DECOMPOSITION-CYCLE1B: opaque conjunction atoms retain the reading
+// premise name; the either-route alternative remains one indivisible atom.
+// Exact before sentences and formal bindings are in the card mapping.json.
 extern fn __errno_location() -> ptr<mut, u8>
 contract {
     requires resource_contract_v1;
     requires resource_revision(flexible);
-    requires resource_premise(nested_call_admission, "a dereference of this call's result is read only under the checked reading rules: either the nested-call admission of O04-TRACE and CONSTRUCTOR-RESIDUALS (N1-N10, including a whole Borrowed or data-tail actual modulo the dereference wrapper and exact written arity), or W48-BOTTOM-UP-BATCH3 scalar condition admission (an external zero-argument call with this no-custody result, no container effect, exactly one dereference compared by equality or inequality with a decimal literal, the ordinary call checks retained and both outcomes explored); both require this unit's unambiguous declaration to return exactly one pointer level over a scalar type and bind, release, escape and address nothing the projection tracks");
+    requires resource_hypothesis(checked_reading_route, "a dereference of this call's result is read only under the checked reading rules: either the nested-call admission of O04-TRACE and CONSTRUCTOR-RESIDUALS (N1-N10, including a whole Borrowed or data-tail actual modulo the dereference wrapper and exact written arity), or W48-BOTTOM-UP-BATCH3 scalar condition admission (an external zero-argument call with this no-custody result, no container effect, exactly one dereference compared by equality or inequality with a decimal literal, the ordinary call checks retained and both outcomes explored)");
+    requires resource_hypothesis(scalar_declaration, "both checked reading routes require this unit's unambiguous declaration to return exactly one pointer level over a scalar type");
+    requires resource_hypothesis(untracked_effects, "both checked reading routes bind, release, escape and address nothing the projection tracks");
+    requires resource_premise_all(nested_call_admission, checked_reading_route, scalar_declaration, untracked_effects);
     ensures normal resource_return_none();
 };
 
@@ -125,7 +131,12 @@ extern fn strerror(errnum: i32) -> ptr<mut, u8>
 contract {
     requires resource_contract_v1;
     requires resource_revision(flexible);
-    requires resource_premise(nested_call_admission, "a call of this function nested whole in another call's argument is read only where card O04-TRACE's nested-call admission holds at the call site; this declaration meets its premises N3 (a contract in force), N6 (result mode None) and N7 (every parameter Borrowed), and the admission checks the rest per site");
+    requires resource_hypothesis(checked_nested_site, "a call of this function nested whole in another call's argument is read only where card O04-TRACE's nested-call admission holds at the call site");
+    requires resource_hypothesis(contract_in_force, "this declaration meets nested-call admission premise N3: a contract in force");
+    requires resource_hypothesis(no_custody_result, "this declaration meets nested-call admission premise N6: result mode None");
+    requires resource_hypothesis(parameters_borrowed, "this declaration meets nested-call admission premise N7: every parameter Borrowed");
+    requires resource_hypothesis(remaining_site_checks, "the nested-call admission checks the rest of its premises per site");
+    requires resource_premise_all(nested_call_admission, checked_nested_site, contract_in_force, no_custody_result, parameters_borrowed, remaining_site_checks);
     ensures normal resource_borrowed(errnum);
     ensures normal resource_return_none();
 };
