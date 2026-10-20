@@ -1,0 +1,25 @@
+{
+  "before": "/home/cosmo/.codex/worktrees/47fe/qcore-c/private/w48-bottom-up-batch3/measure-final/before/system/resource-diagnostics.json",
+  "after": "/home/cosmo/.codex/worktrees/47fe/qcore-c/private/w48-bottom-up-batch3/measure-final/after/system/resource-diagnostics.json",
+  "functions": 448,
+  "transitions": [
+    {
+      "before": "Safe",
+      "after": "Safe",
+      "count": 99
+    },
+    {
+      "before": "Unknown",
+      "after": "Unknown",
+      "count": 345
+    },
+    {
+      "before": "Unsafe",
+      "after": "Unsafe",
+      "count": 4
+    }
+  ],
+  "removed_leaves": [],
+  "added_leaves": [],
+  "changed": []
+}

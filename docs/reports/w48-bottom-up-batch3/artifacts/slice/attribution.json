@@ -1,0 +1,301 @@
+{
+  "route": "slice",
+  "selected_rows": 404,
+  "changed_statuses": 0,
+  "changed_diagnostic_rows": 13,
+  "raw_changed_full_rows": 21,
+  "checkout_only_full_rows": 8,
+  "removed_condition_leaves": 9,
+  "removed_helper_call_leaves": 6,
+  "added_unresolved_end_leaves": 3,
+  "new_custody_null_premise_carriers": 2,
+  "null_property_dictionaries_changed": 0,
+  "runtime_moved_records_changed": 0,
+  "rows": [
+    {
+      "key": [
+        "fluent-bit-tail-pause",
+        "src/flb_input.c",
+        "flb_input_set_property",
+        0
+      ],
+      "classification": "Direct errno comparison now retains the checked scalar accessor call; all remaining obligations stay in force. The strtol/strtoull end identity remains unresolved; no scalar test supplies pointer facts.",
+      "removed_leaves": [
+        [
+          "unsupported",
+          "unmodeled call, aggregate or indirect access in branch condition",
+          2
+        ]
+      ],
+      "added_leaves": [
+        [
+          "unknown_alias",
+          "unresolved resource identity `end`",
+          1
+        ]
+      ]
+    },
+    {
+      "key": [
+        "fluent-bit-tail-pause",
+        "src/flb_input.c",
+        "flb_input_set_property",
+        1
+      ],
+      "classification": "Direct errno comparison now retains the checked scalar accessor call; all remaining obligations stay in force. The strtol/strtoull end identity remains unresolved; no scalar test supplies pointer facts.",
+      "removed_leaves": [
+        [
+          "unsupported",
+          "unmodeled call, aggregate or indirect access in branch condition",
+          2
+        ]
+      ],
+      "added_leaves": [
+        [
+          "unknown_alias",
+          "unresolved resource identity `end`",
+          1
+        ]
+      ]
+    },
+    {
+      "key": [
+        "fluent-bit-tail-pause",
+        "src/flb_lib.c",
+        "flb_lib_config_file",
+        0
+      ],
+      "classification": "Direct errno comparison now retains the checked scalar accessor call; all remaining obligations stay in force.",
+      "removed_leaves": [
+        [
+          "unsupported",
+          "unmodeled call, aggregate or indirect access in branch condition",
+          1
+        ]
+      ],
+      "added_leaves": []
+    },
+    {
+      "key": [
+        "fluent-bit-tail-pause",
+        "src/flb_lib.c",
+        "flb_lib_config_file",
+        1
+      ],
+      "classification": "Direct errno comparison now retains the checked scalar accessor call; all remaining obligations stay in force.",
+      "removed_leaves": [
+        [
+          "unsupported",
+          "unmodeled call, aggregate or indirect access in branch condition",
+          1
+        ]
+      ],
+      "added_leaves": []
+    },
+    {
+      "key": [
+        "fluent-bit-tail-pause",
+        "plugins/in_tail/tail.c",
+        "in_tail_collect_pending",
+        0
+      ],
+      "classification": "Ordinary same-unit W4 propagation through tail_signal_pending or tail_consume_pending; existing read/write/error declarations are carried to the caller.",
+      "removed_leaves": [
+        [
+          "unsupported",
+          "call to uncontracted function `tail_consume_pending`",
+          1
+        ]
+      ],
+      "added_leaves": []
+    },
+    {
+      "key": [
+        "fluent-bit-tail-pause",
+        "plugins/in_tail/tail_file.c",
+        "flb_tail_file_is_rotated",
+        0
+      ],
+      "classification": "Direct errno comparison now retains the checked scalar accessor call; all remaining obligations stay in force.",
+      "removed_leaves": [
+        [
+          "unsupported",
+          "unmodeled call, aggregate or indirect access in branch condition",
+          1
+        ]
+      ],
+      "added_leaves": []
+    },
+    {
+      "key": [
+        "fluent-bit-tail-pause",
+        "plugins/in_tail/tail_file.c",
+        "flb_tail_file_to_event",
+        0
+      ],
+      "classification": "Ordinary same-unit W4 propagation through tail_signal_pending or tail_consume_pending; existing read/write/error declarations are carried to the caller.",
+      "removed_leaves": [
+        [
+          "unsupported",
+          "call to uncontracted function `tail_signal_pending`",
+          1
+        ]
+      ],
+      "added_leaves": []
+    },
+    {
+      "key": [
+        "fluent-bit-tail-pause",
+        "plugins/in_tail/tail_file_budget.c",
+        "configured_limit",
+        0
+      ],
+      "classification": "Direct errno comparison now retains the checked scalar accessor call; all remaining obligations stay in force. The strtol/strtoull end identity remains unresolved; no scalar test supplies pointer facts.",
+      "removed_leaves": [
+        [
+          "unsupported",
+          "unmodeled call, aggregate or indirect access in branch condition",
+          1
+        ]
+      ],
+      "added_leaves": [
+        [
+          "unknown_alias",
+          "unresolved resource identity `end`",
+          1
+        ]
+      ]
+    },
+    {
+      "key": [
+        "fluent-bit-tail-pause",
+        "plugins/in_tail/tail_fs_inotify.c",
+        "in_tail_progress_check_callback",
+        0
+      ],
+      "classification": "Ordinary same-unit W4 propagation through tail_signal_pending or tail_consume_pending; existing read/write/error declarations are carried to the caller.",
+      "removed_leaves": [
+        [
+          "unsupported",
+          "call to uncontracted function `tail_signal_pending`",
+          1
+        ]
+      ],
+      "added_leaves": []
+    },
+    {
+      "key": [
+        "fluent-bit-tail-pause",
+        "plugins/in_tail/tail_fs_inotify.c",
+        "reconcile_all_files",
+        0
+      ],
+      "classification": "Ordinary same-unit W4 propagation through tail_signal_pending or tail_consume_pending; existing read/write/error declarations are carried to the caller.",
+      "removed_leaves": [
+        [
+          "unsupported",
+          "call to uncontracted function `tail_signal_pending`",
+          1
+        ]
+      ],
+      "added_leaves": []
+    },
+    {
+      "key": [
+        "fluent-bit-tail-pause",
+        "plugins/in_tail/tail_fs_inotify.c",
+        "tail_fs_add",
+        0
+      ],
+      "classification": "Direct errno comparison now retains the checked scalar accessor call; all remaining obligations stay in force.",
+      "removed_leaves": [
+        [
+          "unsupported",
+          "unmodeled call, aggregate or indirect access in branch condition",
+          1
+        ]
+      ],
+      "added_leaves": []
+    },
+    {
+      "key": [
+        "fluent-bit-tail-pause",
+        "plugins/in_tail/tail_fs_inotify.c",
+        "tail_fs_event",
+        0
+      ],
+      "classification": "Ordinary same-unit W4 propagation through tail_signal_pending or tail_consume_pending; existing read/write/error declarations are carried to the caller.",
+      "removed_leaves": [
+        [
+          "unsupported",
+          "call to uncontracted function `tail_signal_pending`",
+          1
+        ]
+      ],
+      "added_leaves": []
+    },
+    {
+      "key": [
+        "fluent-bit-tail-pause",
+        "plugins/in_tail/tail_fs_stat.c",
+        "tail_fs_check",
+        0
+      ],
+      "classification": "Ordinary same-unit W4 propagation through tail_signal_pending or tail_consume_pending; existing read/write/error declarations are carried to the caller.",
+      "removed_leaves": [
+        [
+          "unsupported",
+          "call to uncontracted function `tail_signal_pending`",
+          1
+        ]
+      ],
+      "added_leaves": []
+    }
+  ],
+  "source_files": [
+    {
+      "path": "src/flb_input.c",
+      "sha256": "92a0917b89dd61ff92d098dffcf56ddae1060d7588874a3fc0e8e27f45544122"
+    },
+    {
+      "path": "src/flb_lib.c",
+      "sha256": "93113329f2a3e4b815d55c57a6d14b1a746adb6381b73b3f9fc6690fe0e37e89"
+    },
+    {
+      "path": "plugins/in_tail/tail_file.c",
+      "sha256": "fef252bfc26b2167080931f5c15549f8279f096251e5269df00f2c3e1bae4e4d"
+    },
+    {
+      "path": "plugins/in_tail/tail_file_budget.c",
+      "sha256": "111d1a4bc5f25fb8d556247b83d4bc1ec25d741f017301b3b87f180000057cff"
+    },
+    {
+      "path": "plugins/in_tail/tail_fs_inotify.c",
+      "sha256": "454a92bedfaec32ede331c08ee22942783fa05a337a7c5515e1885a17be0c597"
+    },
+    {
+      "path": "plugins/in_tail/tail_signal.h",
+      "sha256": "8bdad20dff7e2bfd9b99c75972623b87b538b25e71593a9aa8dad420e68d6f00"
+    },
+    {
+      "path": "plugins/in_tail/tail.c",
+      "sha256": "ccab8c6078d677ff7a552c01d463ef3cb8c57b07b74041576ae759e5a6abc0f7"
+    },
+    {
+      "path": "plugins/in_tail/tail_fs_stat.c",
+      "sha256": "34ef0a018be7cb17d0a79bf18979232c08ec8d3c0ae49d2a39b09b8047540df4"
+    },
+    {
+      "path": "include/fluent-bit/flb_pipe.h",
+      "sha256": "0b9eb3565f4c6f8c77e8979a2978db1838bd102fdb95eb8f8140c41196c81499"
+    }
+  ],
+  "other_fields": {
+    "compile_configurations": "All16 complete configurations equal after the finite context substitutions in context-identity-review.json.",
+    "unit_and_report_diagnostic_counts": "Derived counts/reason strings follow the retained thirteen diagnostic row changes.",
+    "contract_declaration_usage": "__errno_location62\u219265,flb_errno_print57\u219260,read17\u219218,write13\u219218; all safe_rows unchanged. Existing declarations only.",
+    "null_premise_carriers": "Two compile-task occurrences of flb_input_set_property now carry null-deref:flb_input_set_property:18664:end at src/flb_input.c:1060. These remain Unknown; all406 null verdict dictionaries agree.",
+    "contract_metadata": "Complete payload equality after explicit errno text/digest/lock substitutions, empty callback-cache context rekeying and four separately recorded usage-count changes. No declaration standing is promoted.",
+    "artifact_presence": "Configured source family absent on both sides; chunk-contracts/source-effects are identical empty Unknown records refusing historical evidence at current revision. Neither absence nor these placeholders is safety evidence."
+  }
+}

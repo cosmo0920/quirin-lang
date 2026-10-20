@@ -1,0 +1,49 @@
+{
+  "diagnostics": {
+    "present": true,
+    "source": "/home/cosmo/.codex/worktrees/47fe/qcore-c/private/w48-bottom-up-batch3/measure-final/after/system/resource-diagnostics.json",
+    "sha256": "cd057e5d59859b5d0e143296b8e331ecf872c412ca1039b1ed4d7d72e51a7e47",
+    "bytes": 1699154
+  },
+  "source": {
+    "present": false
+  },
+  "chunk-contracts": {
+    "present": true,
+    "source": "/home/cosmo/.codex/worktrees/47fe/qcore-c/private/w48-bottom-up-batch3/measure-final/after/system/resource-diagnostics.chunk-contracts.json",
+    "sha256": "e7e0d254d9e7ee199672b981e3fc764b702b35a1757bb0f4570a9438e6b87922",
+    "bytes": 385
+  },
+  "source-effects": {
+    "present": true,
+    "source": "/home/cosmo/.codex/worktrees/47fe/qcore-c/private/w48-bottom-up-batch3/measure-final/after/system/resource-diagnostics.source-effects.json",
+    "sha256": "e7e0d254d9e7ee199672b981e3fc764b702b35a1757bb0f4570a9438e6b87922",
+    "bytes": 385
+  },
+  "contracts": {
+    "present": true,
+    "source": "/home/cosmo/.codex/worktrees/47fe/qcore-c/private/w48-bottom-up-batch3/measure-final/after/system/resource-diagnostics.contracts.json",
+    "sha256": "88e43a18a017e1ee8fab10cde7cffb556c1c7cd9aaa001c47342a017fb726005",
+    "bytes": 7151915
+  },
+  "static_custody_counts": {
+    "Unknown": 345,
+    "Safe": 99,
+    "Unsafe": 4
+  },
+  "system-null.jsonl": {
+    "source": "/home/cosmo/.codex/worktrees/47fe/qcore-c/private/w48-bottom-up-batch3/measure-final/after/system/system-null.jsonl",
+    "bytes": 1444109,
+    "sha256": "3bf21e0d67c2e3f88349bba37a1dc3752b931fd8796ab78d88ec14183350a5ae"
+  },
+  "system-null.summary.json": {
+    "source": "/home/cosmo/.codex/worktrees/47fe/qcore-c/private/w48-bottom-up-batch3/measure-final/after/system/system-null.summary.json",
+    "bytes": 64362,
+    "sha256": "3b6f7952527929102b032a1c9c944c3c6615006f6ff560105871e83886931b0f"
+  },
+  "system-outer.json": {
+    "source": "/home/cosmo/.codex/worktrees/47fe/qcore-c/private/w48-bottom-up-batch3/measure-final/after/system/system-outer.json",
+    "bytes": 67484,
+    "sha256": "f008e545c71384f39e8071fca16aafe61328a8d142b95c0e08a9baf082f99d05"
+  }
+}

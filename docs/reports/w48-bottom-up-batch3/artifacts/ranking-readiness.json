@@ -1,0 +1,816 @@
+{
+  "meaning": "Hypothetical source-body graph closure, not Safe coverage or a promise. Original planner retained unchanged.",
+  "before": {
+    "summary": {
+      "bodies": 2222,
+      "ceiling": 362,
+      "ceiling_waits_on_bodies": {
+        "0": 5,
+        "1": 256,
+        "2": 68,
+        "3": 12,
+        "4": 6,
+        "5": 5,
+        "6": 5,
+        "7": 2,
+        "9": 1,
+        "11": 1,
+        "13": 1
+      },
+      "baseline_same": 6,
+      "baseline_cross": 6
+    },
+    "top20_by_score": [
+      {
+        "body": "rdkafka.c::rd_kafka_log0",
+        "library": "librdkafka",
+        "callers": 35,
+        "frees_same": 0,
+        "frees_cross": 3,
+        "ceiling_callers": 3,
+        "ceiling_alone": 3,
+        "own_leaves": 1,
+        "own_calls": {
+          "rd_kafka_log_buf": 1
+        },
+        "own_families": {},
+        "score": 3.0,
+        "freed": [
+          "rdkafka_mock_cgrp.c::rd_kafka_mock_cgrp_classic_member_active",
+          "rdkafka_mock_cgrp.c::rd_kafka_mock_cgrp_consumer_member_active",
+          "rdkafka_mock_sharegrp.c::rd_kafka_mock_sharegroup_member_active"
+        ],
+        "readiness": "Protected ownership/callback choice: log_buf8leaves and effectful recursive queue forwarding, not a neutral fixed point."
+      },
+      {
+        "body": "mk_server/mk_fifo.c::msg_write",
+        "library": "monkey-libevent",
+        "callers": 1,
+        "frees_same": 1,
+        "frees_cross": 2,
+        "ceiling_callers": 1,
+        "ceiling_alone": 1,
+        "own_leaves": 1,
+        "own_calls": {},
+        "own_families": {
+          "unsupported: unmodeled call, aggregate or indirect access in branch condition": 1
+        },
+        "score": 2.0,
+        "freed": [
+          "mk_server/mk_fifo.c::mk_fifo_send",
+          "mk_server/mk_lib.c::mk_mq_send"
+        ],
+        "readiness": "Not established by this card; requires own source/dependency reading."
+      },
+      {
+        "body": "mk_server/mk_scheduler.c::sched_thread_cleanup",
+        "library": "monkey-libevent",
+        "callers": 2,
+        "frees_same": 2,
+        "frees_cross": 2,
+        "ceiling_callers": 2,
+        "ceiling_alone": 2,
+        "own_leaves": 1,
+        "own_calls": {
+          "mk_http_thread_destroy": 1
+        },
+        "own_families": {},
+        "score": 2.0,
+        "freed": [
+          "mk_server/mk_scheduler.c::mk_sched_threads_destroy_all",
+          "mk_server/mk_scheduler.c::mk_sched_threads_purge"
+        ],
+        "readiness": "Dependency mk_http_thread_destroy retains5TLS/list/thread-destroy leaves; not a one-leaf closure."
+      },
+      {
+        "body": "cJSON.c::cJSON_DetachItemFromObject",
+        "library": "librdkafka",
+        "callers": 1,
+        "frees_same": 1,
+        "frees_cross": 1,
+        "ceiling_callers": 1,
+        "ceiling_alone": 1,
+        "own_leaves": 1,
+        "own_calls": {},
+        "own_families": {
+          "unsupported: unmodeled call, aggregate or indirect access in return expression": 1
+        },
+        "score": 1.0,
+        "freed": [
+          "cJSON.c::cJSON_DeleteItemFromObject"
+        ],
+        "readiness": "Existing richer return/Removed transport remains refused; scalar condition adapter does not apply."
+      },
+      {
+        "body": "cJSON.c::cJSON_DetachItemFromObjectCaseSensitive",
+        "library": "librdkafka",
+        "callers": 1,
+        "frees_same": 1,
+        "frees_cross": 1,
+        "ceiling_callers": 1,
+        "ceiling_alone": 1,
+        "own_leaves": 1,
+        "own_calls": {},
+        "own_families": {
+          "unsupported: unmodeled call, aggregate or indirect access in return expression": 1
+        },
+        "score": 1.0,
+        "freed": [
+          "cJSON.c::cJSON_DeleteItemFromObjectCaseSensitive"
+        ],
+        "readiness": "Existing richer return/Removed transport remains refused; scalar condition adapter does not apply."
+      },
+      {
+        "body": "cJSON.c::cJSON_ParseWithOpts",
+        "library": "librdkafka",
+        "callers": 2,
+        "frees_same": 1,
+        "frees_cross": 1,
+        "ceiling_callers": 1,
+        "ceiling_alone": 1,
+        "own_leaves": 1,
+        "own_calls": {
+          "cJSON_ParseWithLengthOpts": 1
+        },
+        "own_families": {},
+        "score": 1.0,
+        "freed": [
+          "cJSON.c::cJSON_Parse"
+        ],
+        "readiness": "Not established by this card; requires own source/dependency reading."
+      },
+      {
+        "body": "cio_file.c::cio_file_is_up",
+        "library": "chunkio",
+        "callers": 1,
+        "frees_same": 0,
+        "frees_cross": 1,
+        "ceiling_callers": 1,
+        "ceiling_alone": 1,
+        "own_leaves": 1,
+        "own_calls": {},
+        "own_families": {
+          "unsupported: unmodeled call, aggregate or indirect access in branch condition": 1
+        },
+        "score": 1.0,
+        "freed": [
+          "cio_chunk.c::cio_chunk_is_up"
+        ],
+        "readiness": "Not established by this card; requires own source/dependency reading."
+      },
+      {
+        "body": "cmt_map.c::cmt_map_metric_get",
+        "library": "cmetrics",
+        "callers": 14,
+        "frees_same": 1,
+        "frees_cross": 1,
+        "ceiling_callers": 11,
+        "ceiling_alone": 1,
+        "own_leaves": 1,
+        "own_calls": {
+          "map_metric_get_unlocked": 1
+        },
+        "own_families": {},
+        "score": 1.0,
+        "freed": [
+          "cmt_map.c::cmt_map_metric_get_val"
+        ],
+        "readiness": "Not established by this card; requires own source/dependency reading."
+      },
+      {
+        "body": "mk_core/mk_iov.c::mk_iov_free_marked",
+        "library": "monkey-libevent",
+        "callers": 2,
+        "frees_same": 0,
+        "frees_cross": 1,
+        "ceiling_callers": 1,
+        "ceiling_alone": 1,
+        "own_leaves": 1,
+        "own_calls": {},
+        "own_families": {
+          "unsupported: indirect memory access is outside the resource projection": 1
+        },
+        "score": 1.0,
+        "freed": [
+          "mk_server/mk_header.c::mk_header_cb_finished"
+        ],
+        "readiness": "Not established by this card; requires own source/dependency reading."
+      },
+      {
+        "body": "mk_core/mk_iov.c::mk_iov_send",
+        "library": "monkey-libevent",
+        "callers": 1,
+        "frees_same": 0,
+        "frees_cross": 1,
+        "ceiling_callers": 1,
+        "ceiling_alone": 1,
+        "own_leaves": 1,
+        "own_calls": {
+          "writev": 1
+        },
+        "own_families": {},
+        "score": 1.0,
+        "freed": [
+          "mk_server/mk_net.c::net_plain_writev"
+        ],
+        "readiness": "Not established by this card; requires own source/dependency reading."
+      },
+      {
+        "body": "mk_server/mk_http_parser.c::mk_http_parser_read_chunked_content",
+        "library": "monkey-libevent",
+        "callers": 1,
+        "frees_same": 1,
+        "frees_cross": 1,
+        "ceiling_callers": 1,
+        "ceiling_alone": 1,
+        "own_leaves": 1,
+        "own_calls": {
+          "http_parser_transfer_encoding_chunked": 1
+        },
+        "own_families": {},
+        "score": 1.0,
+        "freed": [
+          "mk_server/mk_http_parser.c::mk_http_parser_chunked_decode_buf"
+        ],
+        "readiness": "Not established by this card; requires own source/dependency reading."
+      },
+      {
+        "body": "rdkafka.c::rd_kafka_consume_batch0",
+        "library": "librdkafka",
+        "callers": 1,
+        "frees_same": 1,
+        "frees_cross": 1,
+        "ceiling_callers": 1,
+        "ceiling_alone": 1,
+        "own_leaves": 1,
+        "own_calls": {
+          "rd_kafka_q_serve_rkmessages": 1
+        },
+        "own_families": {},
+        "score": 1.0,
+        "freed": [
+          "rdkafka.c::rd_kafka_consume_batch_queue"
+        ],
+        "readiness": "Not established by this card; requires own source/dependency reading."
+      },
+      {
+        "body": "rdkafka.c::rd_kafka_oauthbearer_set_token",
+        "library": "librdkafka",
+        "callers": 1,
+        "frees_same": 0,
+        "frees_cross": 1,
+        "ceiling_callers": 1,
+        "ceiling_alone": 1,
+        "own_leaves": 1,
+        "own_calls": {
+          "rd_kafka_oauthbearer_set_token0": 1
+        },
+        "own_families": {},
+        "score": 1.0,
+        "freed": [
+          "rdkafka_sasl.c::rd_kafka_share_oauthbearer_set_token"
+        ],
+        "readiness": "Not established by this card; requires own source/dependency reading."
+      },
+      {
+        "body": "rdkafka_admin.c::rd_kafka_ConsumerGroupListing_copy",
+        "library": "librdkafka",
+        "callers": 1,
+        "frees_same": 1,
+        "frees_cross": 1,
+        "ceiling_callers": 1,
+        "ceiling_alone": 1,
+        "own_leaves": 1,
+        "own_calls": {
+          "rd_kafka_ConsumerGroupListing_new": 1
+        },
+        "own_families": {},
+        "score": 1.0,
+        "freed": [
+          "rdkafka_admin.c::rd_kafka_ConsumerGroupListing_copy_opaque"
+        ],
+        "readiness": "Not established by this card; requires own source/dependency reading."
+      },
+      {
+        "body": "rdkafka_admin.c::rd_kafka_ListConsumerGroupsResult_copy",
+        "library": "librdkafka",
+        "callers": 1,
+        "frees_same": 1,
+        "frees_cross": 1,
+        "ceiling_callers": 1,
+        "ceiling_alone": 1,
+        "own_leaves": 1,
+        "own_calls": {
+          "rd_kafka_ListConsumerGroupsResult_new": 1
+        },
+        "own_families": {},
+        "score": 1.0,
+        "freed": [
+          "rdkafka_admin.c::rd_kafka_ListConsumerGroupsResult_copy_opaque"
+        ],
+        "readiness": "Not established by this card; requires own source/dependency reading."
+      },
+      {
+        "body": "rdkafka_admin.c::rd_kafka_ListOffsetsResultInfo_copy",
+        "library": "librdkafka",
+        "callers": 1,
+        "frees_same": 1,
+        "frees_cross": 1,
+        "ceiling_callers": 1,
+        "ceiling_alone": 1,
+        "own_leaves": 1,
+        "own_calls": {
+          "rd_kafka_ListOffsetsResultInfo_new": 1
+        },
+        "own_families": {},
+        "score": 1.0,
+        "freed": [
+          "rdkafka_admin.c::rd_kafka_ListOffsetsResultInfo_copy_opaque"
+        ],
+        "readiness": "Not established by this card; requires own source/dependency reading."
+      },
+      {
+        "body": "rdkafka_admin.c::rd_kafka_MemberDescription_copy",
+        "library": "librdkafka",
+        "callers": 1,
+        "frees_same": 1,
+        "frees_cross": 1,
+        "ceiling_callers": 1,
+        "ceiling_alone": 1,
+        "own_leaves": 1,
+        "own_calls": {},
+        "own_families": {
+          "unsupported: indirect memory access is outside the resource projection": 1
+        },
+        "score": 1.0,
+        "freed": [
+          "rdkafka_admin.c::rd_kafka_MemberDescription_list_copy"
+        ],
+        "readiness": "Not established by this card; requires own source/dependency reading."
+      },
+      {
+        "body": "rdkafka_aux.c::rd_kafka_group_result_copy",
+        "library": "librdkafka",
+        "callers": 2,
+        "frees_same": 1,
+        "frees_cross": 1,
+        "ceiling_callers": 1,
+        "ceiling_alone": 1,
+        "own_leaves": 1,
+        "own_calls": {},
+        "own_families": {
+          "unsupported: indirect memory access is outside the resource projection": 1
+        },
+        "score": 1.0,
+        "freed": [
+          "rdkafka_aux.c::rd_kafka_group_result_copy_opaque"
+        ],
+        "readiness": "Not established by this card; requires own source/dependency reading."
+      },
+      {
+        "body": "rdkafka_aux.c::rd_kafka_topic_partition_result_copy",
+        "library": "librdkafka",
+        "callers": 1,
+        "frees_same": 1,
+        "frees_cross": 1,
+        "ceiling_callers": 1,
+        "ceiling_alone": 1,
+        "own_leaves": 1,
+        "own_calls": {
+          "rd_kafka_topic_partition_result_new": 1
+        },
+        "own_families": {},
+        "score": 1.0,
+        "freed": [
+          "rdkafka_aux.c::rd_kafka_topic_partition_result_copy_opaque"
+        ],
+        "readiness": "Not established by this card; requires own source/dependency reading."
+      },
+      {
+        "body": "rdkafka_broker.c::rd_kafka_broker_ApiVersion_at_least",
+        "library": "librdkafka",
+        "callers": 1,
+        "frees_same": 0,
+        "frees_cross": 1,
+        "ceiling_callers": 1,
+        "ceiling_alone": 1,
+        "own_leaves": 1,
+        "own_calls": {},
+        "own_families": {
+          "unsupported: unmodeled call, aggregate or indirect access in return expression": 1
+        },
+        "score": 1.0,
+        "freed": [
+          "rdkafka_metadata.c::rd_kafka_has_reliable_leader_epochs"
+        ],
+        "readiness": "Not established by this card; requires own source/dependency reading."
+      }
+    ]
+  },
+  "after": {
+    "summary": {
+      "bodies": 2220,
+      "ceiling": 360,
+      "ceiling_waits_on_bodies": {
+        "0": 5,
+        "1": 254,
+        "2": 68,
+        "3": 12,
+        "4": 6,
+        "5": 5,
+        "6": 5,
+        "7": 2,
+        "9": 1,
+        "11": 1,
+        "13": 1
+      },
+      "baseline_same": 6,
+      "baseline_cross": 6
+    },
+    "top20_by_score": [
+      {
+        "body": "rdkafka.c::rd_kafka_log0",
+        "library": "librdkafka",
+        "callers": 35,
+        "frees_same": 0,
+        "frees_cross": 3,
+        "ceiling_callers": 3,
+        "ceiling_alone": 3,
+        "own_leaves": 1,
+        "own_calls": {
+          "rd_kafka_log_buf": 1
+        },
+        "own_families": {},
+        "score": 3.0,
+        "freed": [
+          "rdkafka_mock_cgrp.c::rd_kafka_mock_cgrp_classic_member_active",
+          "rdkafka_mock_cgrp.c::rd_kafka_mock_cgrp_consumer_member_active",
+          "rdkafka_mock_sharegrp.c::rd_kafka_mock_sharegroup_member_active"
+        ],
+        "readiness": "Protected ownership/callback choice: log_buf8leaves and effectful recursive queue forwarding, not a neutral fixed point."
+      },
+      {
+        "body": "mk_server/mk_scheduler.c::sched_thread_cleanup",
+        "library": "monkey-libevent",
+        "callers": 2,
+        "frees_same": 2,
+        "frees_cross": 2,
+        "ceiling_callers": 2,
+        "ceiling_alone": 2,
+        "own_leaves": 1,
+        "own_calls": {
+          "mk_http_thread_destroy": 1
+        },
+        "own_families": {},
+        "score": 2.0,
+        "freed": [
+          "mk_server/mk_scheduler.c::mk_sched_threads_destroy_all",
+          "mk_server/mk_scheduler.c::mk_sched_threads_purge"
+        ],
+        "readiness": "Dependency mk_http_thread_destroy retains5TLS/list/thread-destroy leaves; not a one-leaf closure."
+      },
+      {
+        "body": "cJSON.c::cJSON_DetachItemFromObject",
+        "library": "librdkafka",
+        "callers": 1,
+        "frees_same": 1,
+        "frees_cross": 1,
+        "ceiling_callers": 1,
+        "ceiling_alone": 1,
+        "own_leaves": 1,
+        "own_calls": {},
+        "own_families": {
+          "unsupported: unmodeled call, aggregate or indirect access in return expression": 1
+        },
+        "score": 1.0,
+        "freed": [
+          "cJSON.c::cJSON_DeleteItemFromObject"
+        ],
+        "readiness": "Existing richer return/Removed transport remains refused; scalar condition adapter does not apply."
+      },
+      {
+        "body": "cJSON.c::cJSON_DetachItemFromObjectCaseSensitive",
+        "library": "librdkafka",
+        "callers": 1,
+        "frees_same": 1,
+        "frees_cross": 1,
+        "ceiling_callers": 1,
+        "ceiling_alone": 1,
+        "own_leaves": 1,
+        "own_calls": {},
+        "own_families": {
+          "unsupported: unmodeled call, aggregate or indirect access in return expression": 1
+        },
+        "score": 1.0,
+        "freed": [
+          "cJSON.c::cJSON_DeleteItemFromObjectCaseSensitive"
+        ],
+        "readiness": "Existing richer return/Removed transport remains refused; scalar condition adapter does not apply."
+      },
+      {
+        "body": "cJSON.c::cJSON_ParseWithOpts",
+        "library": "librdkafka",
+        "callers": 2,
+        "frees_same": 1,
+        "frees_cross": 1,
+        "ceiling_callers": 1,
+        "ceiling_alone": 1,
+        "own_leaves": 1,
+        "own_calls": {
+          "cJSON_ParseWithLengthOpts": 1
+        },
+        "own_families": {},
+        "score": 1.0,
+        "freed": [
+          "cJSON.c::cJSON_Parse"
+        ],
+        "readiness": "Not established by this card; requires own source/dependency reading."
+      },
+      {
+        "body": "cio_file.c::cio_file_is_up",
+        "library": "chunkio",
+        "callers": 1,
+        "frees_same": 0,
+        "frees_cross": 1,
+        "ceiling_callers": 1,
+        "ceiling_alone": 1,
+        "own_leaves": 1,
+        "own_calls": {},
+        "own_families": {
+          "unsupported: unmodeled call, aggregate or indirect access in branch condition": 1
+        },
+        "score": 1.0,
+        "freed": [
+          "cio_chunk.c::cio_chunk_is_up"
+        ],
+        "readiness": "Not established by this card; requires own source/dependency reading."
+      },
+      {
+        "body": "cmt_map.c::cmt_map_metric_get",
+        "library": "cmetrics",
+        "callers": 14,
+        "frees_same": 1,
+        "frees_cross": 1,
+        "ceiling_callers": 11,
+        "ceiling_alone": 1,
+        "own_leaves": 1,
+        "own_calls": {
+          "map_metric_get_unlocked": 1
+        },
+        "own_families": {},
+        "score": 1.0,
+        "freed": [
+          "cmt_map.c::cmt_map_metric_get_val"
+        ],
+        "readiness": "Not established by this card; requires own source/dependency reading."
+      },
+      {
+        "body": "mk_core/mk_iov.c::mk_iov_free_marked",
+        "library": "monkey-libevent",
+        "callers": 2,
+        "frees_same": 0,
+        "frees_cross": 1,
+        "ceiling_callers": 1,
+        "ceiling_alone": 1,
+        "own_leaves": 1,
+        "own_calls": {},
+        "own_families": {
+          "unsupported: indirect memory access is outside the resource projection": 1
+        },
+        "score": 1.0,
+        "freed": [
+          "mk_server/mk_header.c::mk_header_cb_finished"
+        ],
+        "readiness": "Not established by this card; requires own source/dependency reading."
+      },
+      {
+        "body": "mk_core/mk_iov.c::mk_iov_send",
+        "library": "monkey-libevent",
+        "callers": 1,
+        "frees_same": 0,
+        "frees_cross": 1,
+        "ceiling_callers": 1,
+        "ceiling_alone": 1,
+        "own_leaves": 1,
+        "own_calls": {
+          "writev": 1
+        },
+        "own_families": {},
+        "score": 1.0,
+        "freed": [
+          "mk_server/mk_net.c::net_plain_writev"
+        ],
+        "readiness": "Not established by this card; requires own source/dependency reading."
+      },
+      {
+        "body": "mk_server/mk_http_parser.c::mk_http_parser_read_chunked_content",
+        "library": "monkey-libevent",
+        "callers": 1,
+        "frees_same": 1,
+        "frees_cross": 1,
+        "ceiling_callers": 1,
+        "ceiling_alone": 1,
+        "own_leaves": 1,
+        "own_calls": {
+          "http_parser_transfer_encoding_chunked": 1
+        },
+        "own_families": {},
+        "score": 1.0,
+        "freed": [
+          "mk_server/mk_http_parser.c::mk_http_parser_chunked_decode_buf"
+        ],
+        "readiness": "Not established by this card; requires own source/dependency reading."
+      },
+      {
+        "body": "rdkafka.c::rd_kafka_consume_batch0",
+        "library": "librdkafka",
+        "callers": 1,
+        "frees_same": 1,
+        "frees_cross": 1,
+        "ceiling_callers": 1,
+        "ceiling_alone": 1,
+        "own_leaves": 1,
+        "own_calls": {
+          "rd_kafka_q_serve_rkmessages": 1
+        },
+        "own_families": {},
+        "score": 1.0,
+        "freed": [
+          "rdkafka.c::rd_kafka_consume_batch_queue"
+        ],
+        "readiness": "Not established by this card; requires own source/dependency reading."
+      },
+      {
+        "body": "rdkafka.c::rd_kafka_oauthbearer_set_token",
+        "library": "librdkafka",
+        "callers": 1,
+        "frees_same": 0,
+        "frees_cross": 1,
+        "ceiling_callers": 1,
+        "ceiling_alone": 1,
+        "own_leaves": 1,
+        "own_calls": {
+          "rd_kafka_oauthbearer_set_token0": 1
+        },
+        "own_families": {},
+        "score": 1.0,
+        "freed": [
+          "rdkafka_sasl.c::rd_kafka_share_oauthbearer_set_token"
+        ],
+        "readiness": "Not established by this card; requires own source/dependency reading."
+      },
+      {
+        "body": "rdkafka_admin.c::rd_kafka_ConsumerGroupListing_copy",
+        "library": "librdkafka",
+        "callers": 1,
+        "frees_same": 1,
+        "frees_cross": 1,
+        "ceiling_callers": 1,
+        "ceiling_alone": 1,
+        "own_leaves": 1,
+        "own_calls": {
+          "rd_kafka_ConsumerGroupListing_new": 1
+        },
+        "own_families": {},
+        "score": 1.0,
+        "freed": [
+          "rdkafka_admin.c::rd_kafka_ConsumerGroupListing_copy_opaque"
+        ],
+        "readiness": "Not established by this card; requires own source/dependency reading."
+      },
+      {
+        "body": "rdkafka_admin.c::rd_kafka_ListConsumerGroupsResult_copy",
+        "library": "librdkafka",
+        "callers": 1,
+        "frees_same": 1,
+        "frees_cross": 1,
+        "ceiling_callers": 1,
+        "ceiling_alone": 1,
+        "own_leaves": 1,
+        "own_calls": {
+          "rd_kafka_ListConsumerGroupsResult_new": 1
+        },
+        "own_families": {},
+        "score": 1.0,
+        "freed": [
+          "rdkafka_admin.c::rd_kafka_ListConsumerGroupsResult_copy_opaque"
+        ],
+        "readiness": "Not established by this card; requires own source/dependency reading."
+      },
+      {
+        "body": "rdkafka_admin.c::rd_kafka_ListOffsetsResultInfo_copy",
+        "library": "librdkafka",
+        "callers": 1,
+        "frees_same": 1,
+        "frees_cross": 1,
+        "ceiling_callers": 1,
+        "ceiling_alone": 1,
+        "own_leaves": 1,
+        "own_calls": {
+          "rd_kafka_ListOffsetsResultInfo_new": 1
+        },
+        "own_families": {},
+        "score": 1.0,
+        "freed": [
+          "rdkafka_admin.c::rd_kafka_ListOffsetsResultInfo_copy_opaque"
+        ],
+        "readiness": "Not established by this card; requires own source/dependency reading."
+      },
+      {
+        "body": "rdkafka_admin.c::rd_kafka_MemberDescription_copy",
+        "library": "librdkafka",
+        "callers": 1,
+        "frees_same": 1,
+        "frees_cross": 1,
+        "ceiling_callers": 1,
+        "ceiling_alone": 1,
+        "own_leaves": 1,
+        "own_calls": {},
+        "own_families": {
+          "unsupported: indirect memory access is outside the resource projection": 1
+        },
+        "score": 1.0,
+        "freed": [
+          "rdkafka_admin.c::rd_kafka_MemberDescription_list_copy"
+        ],
+        "readiness": "Not established by this card; requires own source/dependency reading."
+      },
+      {
+        "body": "rdkafka_aux.c::rd_kafka_group_result_copy",
+        "library": "librdkafka",
+        "callers": 2,
+        "frees_same": 1,
+        "frees_cross": 1,
+        "ceiling_callers": 1,
+        "ceiling_alone": 1,
+        "own_leaves": 1,
+        "own_calls": {},
+        "own_families": {
+          "unsupported: indirect memory access is outside the resource projection": 1
+        },
+        "score": 1.0,
+        "freed": [
+          "rdkafka_aux.c::rd_kafka_group_result_copy_opaque"
+        ],
+        "readiness": "Not established by this card; requires own source/dependency reading."
+      },
+      {
+        "body": "rdkafka_aux.c::rd_kafka_topic_partition_result_copy",
+        "library": "librdkafka",
+        "callers": 1,
+        "frees_same": 1,
+        "frees_cross": 1,
+        "ceiling_callers": 1,
+        "ceiling_alone": 1,
+        "own_leaves": 1,
+        "own_calls": {
+          "rd_kafka_topic_partition_result_new": 1
+        },
+        "own_families": {},
+        "score": 1.0,
+        "freed": [
+          "rdkafka_aux.c::rd_kafka_topic_partition_result_copy_opaque"
+        ],
+        "readiness": "Not established by this card; requires own source/dependency reading."
+      },
+      {
+        "body": "rdkafka_broker.c::rd_kafka_broker_ApiVersion_at_least",
+        "library": "librdkafka",
+        "callers": 1,
+        "frees_same": 0,
+        "frees_cross": 1,
+        "ceiling_callers": 1,
+        "ceiling_alone": 1,
+        "own_leaves": 1,
+        "own_calls": {},
+        "own_families": {
+          "unsupported: unmodeled call, aggregate or indirect access in return expression": 1
+        },
+        "score": 1.0,
+        "freed": [
+          "rdkafka_metadata.c::rd_kafka_has_reliable_leader_epochs"
+        ],
+        "readiness": "Not established by this card; requires own source/dependency reading."
+      },
+      {
+        "body": "rdkafka_mock.c::rd_kafka_mock_cluster_io_set_event",
+        "library": "librdkafka",
+        "callers": 1,
+        "frees_same": 1,
+        "frees_cross": 1,
+        "ceiling_callers": 1,
+        "ceiling_alone": 1,
+        "own_leaves": 1,
+        "own_calls": {},
+        "own_families": {
+          "unsupported: unmodeled call, aggregate or indirect access in branch condition": 1
+        },
+        "score": 1.0,
+        "freed": [
+          "rdkafka_mock.c::rd_kafka_mock_connection_set_blocking"
+        ],
+        "readiness": "Not established by this card; requires own source/dependency reading."
+      }
+    ]
+  }
+}

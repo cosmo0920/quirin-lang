@@ -600,7 +600,12 @@ impl Parser<'_> {
         // numbered in the order C creates them.
         let mut plans = Vec::with_capacity(spans.len());
         for &(start, end) in &spans {
-            plans.push(Some(self.leaf_plan(&condition[start..end], position)?));
+            let leaf = &condition[start..end];
+            let plan = match self.scalar_accessor_condition(leaf) {
+                Some(plan) => plan,
+                None => self.leaf_plan(leaf, position)?,
+            };
+            plans.push(Some(plan));
         }
         let mut counter = 0usize;
         let numbered = number(&tree, &mut counter);
@@ -616,6 +621,46 @@ impl Parser<'_> {
             return Err(Refusal::Unparsed);
         };
         Ok(ConditionPlan { nodes, entry })
+    }
+
+    /// Asked only for a controlling expression after every older whole-
+    /// condition route refused. The exact scalar observation retains the
+    /// external call and its ordinary checks; it names no tracked base and
+    /// refines neither successor. Single-leaf return consumers are unchanged.
+    fn scalar_accessor_condition(&mut self, tokens: &[Token]) -> Option<LeafPlan> {
+        let texts = tokens
+            .iter()
+            .map(|token| token.text.as_str())
+            .collect::<Vec<_>>();
+        let at = crate::scalar_accessor_condition::callee(&texts)?;
+        let name = texts[at];
+        let contract = self.contracts.contract(name)?;
+        if !crate::scalar_accessor_condition::eligible(
+            super::find_function_body(self.tokens, name).is_none(),
+            self.typed_model.scalar_pointer_result(name),
+            contract.parameters.is_empty(),
+            contract.result == ResourceReturnMode::None,
+            !contract.has_container_effect(),
+        ) {
+            return None;
+        }
+        self.probe(|parser| {
+            let outcome = parser.instantiate_call(
+                name,
+                &tokens[at..at + 3],
+                None,
+                crate::call_instantiation::ResultUse::Tested,
+            );
+            match outcome {
+                Ok(calls) if calls.last().is_some_and(is_identity_call) => {
+                    super::probe_state::Probe::Keep(Some(LeafPlan {
+                        calls,
+                        decision: LegacyInstruction::NoOp,
+                    }))
+                }
+                _ => super::probe_state::Probe::Decline(None),
+            }
+        })
     }
 
     /// Card **CG03-CALL-SUMMARY-INSTANTIATION** (rule 10u): the plan of an

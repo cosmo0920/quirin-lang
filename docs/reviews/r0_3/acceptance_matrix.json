@@ -6754,8 +6754,8 @@
   "note": "providers/ is a separate Cargo workspace, excluded from the core workspace; P01 verified empirically that the core workspace builds and passes its full suite with providers/ moved out of the tree."
  },
  "validation": {
-  "note": "CONTRACT-HYPOTHESIS-GRAPH-V1 frozen source5b5a8c0f05bef6aece8b57d90a2d405a459c29ea, exact base198f6fc4349d3a47591a2378835ae9286859d918. Actual host standing4:8364Rust passed/0failed/15ignored,522units/535summaries;345Lean; formatting/Clippy/both examples exit0. Host provider4:133Rust/0failed/1ignored doctest,25Python,all5packages rebuilt+verified. All6fresh release audits exit0: custody963/3862/9 provisional Unsafe corpus,99/345/4 system,53/346/4Pending/1 slice; all5781null rows and runtime projections unchanged after graph erasure. Zero unexplained changes; exact root-only environment SHA and MONKEY_BUILT timestamp replay archived. Post-committed-matrix Python1 passed374/0failed in30.531s; final regenerated-matrix confirmation is python-post-matrix-2. Actual Clang recording belongs to the host standing4 run. Earlier failures/cancellations and comparison-harness correction retained. Graph remains evidence-only; no typed semantic consumer.",
-  "workspace_tests": 8364,
+  "note": "W48-BOTTOM-UP-BATCH3 measured analyzer/test source1601ba4383253adab7e58b0c469c82dd8c94f4d2 on exact base198f6fc4349d3a47591a2378835ae9286859d918. Root runner520units/533summaries,8359passed/0failed/15ignored/0filtered;345Lean audits; fresh providers133Rust/0failed/1ignored,25Python and all5rebuilt+verified packages. RootPython374 passed after initial matrix regeneration; final gate-backed confirmation receipt is in command-receipts.json/python-final.log. All6fresh audits exit0: corpus963→967Safe/3862→3858Unknown/9provisionalUnsafe, exactly3targets plus incidental net_plain_send_file; no Safe regression. System99/345/4 and slice53/346/4Pending/1unchanged, with all13slice diagnostic changes attributed. All5781null dictionaries and runtime moved records agree; corpus combined841→843 follows static gains. Fresh plan254single-body waits/2220bodies/360hypothetical ceiling; same/cross6/6. No declaration standing promotion; home replay occurrence counts are separate from independent C definitions. Failed/interrupted/guard attempts retained. Actual worktree Clang21.1.8 recording is beside this gate. Rust/Lean/contracts unchanged after frozen source; remaining edits own evidence/tracking.",
+  "workspace_tests": 8359,
   "provider_tests": 133,
   "python_evidence_validator_tests": 374,
   "lean_audits": 345,
@@ -7021,6 +7021,7 @@
    "AuditReviewHoldStanding.lean",
    "AuditRouteSelection.lean",
    "AuditRuntimeImports.lean",
+   "AuditScalarAccessorCondition.lean",
    "AuditScalarBufferValues.lean",
    "AuditScalarCalls.lean",
    "AuditScalarComposedString.lean",
@@ -7112,7 +7113,7 @@
   "cargo_clippy": "clean",
   "standing_gate": "complete",
   "full_language_conformance": false,
-  "measurement_provenance": "integrator_supplied (docs/reports/contract-hypothesis-graph-v1/gate.json)"
+  "measurement_provenance": "integrator_supplied (docs/reports/w48-bottom-up-batch3/gate.json)"
  },
  "named_followups": [
   {
@@ -11891,10 +11892,10 @@
   },
   {
    "id": "W48-BOTTOM-UP-RESIDUAL-PLAN",
-   "title": "Measured bottom-up residual after checked array lookup",
-   "why": "Fresh DETACH-LOOKUP-MEMBERSHIP on completed alias base f35b5cf4b, semantic source b92688d22, measures corpus961→963Safe/3864→3862Unknown/9provisionalUnsafe. Promotions are exactly get_array_item and cJSON_GetArrayItem under existing named null premise; all six detach/delete wrappers remain Unknown. Fresh planner single-body waits258→256, candidate bodies2223→2222, hypothetical all-body ceiling363→362, no-extra-body same/cross closure4/4→6/6. These are separate census quantities, not promised Safe gains or discharged six-caller closure. DISCHARGE: each remaining callee own blocker and supported richer result/membership transport with audited Rust/Lean and fresh measured outcomes. Detailed ranked rows, old/new plan, nine-body review and all production artifacts are archived in this report; prior dated detach predictions stay in their owning frozen report.",
-   "source": "docs/reports/detach-lookup-membership/README.md",
-   "recorded_by": "DETACH-LOOKUP-MEMBERSHIP"
+   "title": "Measured bottom-up residual after scalar accessor conditions",
+   "why": "Fresh DETACH-LOOKUP-MEMBERSHIP on completed alias base f35b5cf4b, semantic source b92688d22, measures corpus961→963Safe/3864→3862Unknown/9provisionalUnsafe. Promotions are exactly get_array_item and cJSON_GetArrayItem under existing named null premise; all six detach/delete wrappers remain Unknown. Fresh planner single-body waits258→256, candidate bodies2223→2222, hypothetical all-body ceiling363→362, no-extra-body same/cross closure4/4→6/6. These are separate census quantities, not promised Safe gains or discharged six-caller closure. DISCHARGE: each remaining callee own blocker and supported richer result/membership transport with audited Rust/Lean and fresh measured outcomes. Detailed ranked rows, old/new plan, nine-body review and all production artifacts are archived in this report; prior dated detach predictions stay in their owning frozen report. AMENDED W48-BOTTOM-UP-BATCH3 (2026-10-20, analyzer1601ba438, exact base198f6fc43): fresh paired corpus963→967Safe/3862→3858Unknown/9provisionalUnsafe, three targets msg_write/mk_fifo_send/conditionally imported mk_mq_send plus incidental Linux net_plain_send_file. Fresh plan254single-body waits/2220candidate bodies/360hypothetical ceiling, same/cross6/6; no promised gains. Logger remains score3 but log_buf has8leaves and recursive queue forwarding transfers/destroys the op; no neutral fixed point or callback assumption is substituted. Scheduler cleanup remains score2 but mk_http_thread_destroy has5TLS/list/thread leaves. All six detach/delete wrappers remain Unknown. Separately, configured slice13Unknown diagnostic changes expose3unresolved end identities and two custody null-premise carriers, with no null-verdict/runtime-move changes. DISCHARGE: source/effect closure or an explicitly chosen ownership/callback premise, richer checked Removed return transport, and proper strtol/strtoull end identity before any further gain; matching audited Lean and fresh measurements remain required. No declaration standing promotion; body replay occurrence counts are not independent C definitions.",
+   "source": "docs/reports/w48-bottom-up-batch3/README.md",
+   "recorded_by": "W48-BOTTOM-UP-BATCH3"
   },
   {
    "id": "W48-POINTER-RETURN-THROUGH-CALL-ACTUAL-ROOT",
@@ -12712,5 +12713,5 @@
    "recorded_by": "CONTRACT-HYPOTHESIS-GRAPH-V1"
   }
  ],
- "updated": "2026-10-20 CONTRACT-HYPOTHESIS-GRAPH-V1: evidence-only graph/schema19.1; all-route fresh erasure zero unexplained movement, custody963/3862/9 provisional Unsafe corpus,99/345/4 system,53/346/4Pending/1 slice;5781null rows/runtime unchanged. Host gates8364Rust/345Lean, provider133Rust/25Python/all5packages, committed-matrixPython374. Registered implementation card retired; managed-worktree native-platform Git metadata fixture residual added;805 named follow-ups."
+ "updated": "2026-10-20 W48-BOTTOM-UP-BATCH3: corpus967Safe/3858Unknown/9provisionalUnsafe; system99/345/4; slice53/346/4Pending/1. Four conditional custody gains, no Safe regression, no declaration standing promotion. Fresh plan254/2220/360, same/cross6/6. Full source gate8359Rust/345Lean, providers133Rust/25Python/all5packages; post-matrixPython receipt in report. Existing805followups, including independent hypothesis-graph candidate, retained."
 }

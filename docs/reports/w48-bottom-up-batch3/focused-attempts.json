@@ -1,0 +1,208 @@
+[
+  {
+    "name": "base-build",
+    "command": "CARGO_BUILD_JOBS=2 CARGO_PROFILE_RELEASE_DEBUG=0 cargo build --locked --offline --release -p qcore-audit --bin quirin-audit",
+    "exit": 0,
+    "private_log": "private/w48-bottom-up-batch3/base-build.log"
+  },
+  {
+    "name": "condition-before",
+    "command": "cargo test --locked --offline -p qcore-c-gateway --test constructor_residuals scalar_accessor_conditions_keep_resources_and_replay -- --exact",
+    "exit": 101,
+    "private_log": "private/w48-bottom-up-batch3/condition-before.log"
+  },
+  {
+    "name": "condition-after-1",
+    "command": "cargo test --locked --offline -p qcore-c-gateway --test constructor_residuals scalar_accessor_conditions_keep_resources_and_replay -- --exact",
+    "exit": 101,
+    "private_log": "private/w48-bottom-up-batch3/condition-after-1.log"
+  },
+  {
+    "name": "condition-after-2",
+    "command": "cargo test --locked --offline -p qcore-c-gateway --test constructor_residuals scalar_accessor_conditions_keep_resources_and_replay -- --exact",
+    "exit": 0,
+    "private_log": "private/w48-bottom-up-batch3/condition-after-2.log"
+  },
+  {
+    "name": "accessor-controls-1",
+    "command": "cargo test --locked --offline -p qcore-c-gateway --test constructor_residuals",
+    "exit": 101,
+    "private_log": "private/w48-bottom-up-batch3/accessor-controls-1.log"
+  },
+  {
+    "name": "accessor-controls-2",
+    "command": "cargo test --locked --offline -p qcore-c-gateway --test constructor_residuals",
+    "exit": 0,
+    "private_log": "private/w48-bottom-up-batch3/accessor-controls-2.log"
+  },
+  {
+    "name": "model-controls-1",
+    "command": "cargo test --locked --offline -p qcore-c-gateway --lib scalar_accessor_condition",
+    "exit": 0,
+    "private_log": "private/w48-bottom-up-batch3/model-controls-1.log"
+  },
+  {
+    "name": "lean-1",
+    "command": "lake env lean QCore/ScalarAccessorCondition.lean",
+    "exit": 1,
+    "private_log": "private/w48-bottom-up-batch3/lean-1.log"
+  },
+  {
+    "name": "lean-2",
+    "command": "lake env lean QCore/ScalarAccessorCondition.lean",
+    "exit": 0,
+    "private_log": "private/w48-bottom-up-batch3/lean-2.log"
+  },
+  {
+    "name": "provider-sync-preparation",
+    "command": "python3 providers/contracts.py sync",
+    "exit": 1,
+    "private_log": "private/w48-bottom-up-batch3/provider-sync.log",
+    "reason": "__errno_location flexible text lock still held the old reading-premise hash; deliberately refreshed only that hash with the pin CLI"
+  },
+  {
+    "name": "standing-rust-1",
+    "command": "python3 scripts/run_test_binaries.py --jobs 4 --log-dir private/w48-bottom-up-batch3/gate-rust-1/rust-units",
+    "exit": 101,
+    "units": 520,
+    "summaries": 533,
+    "passed": 8358,
+    "failed": 1,
+    "ignored": 15,
+    "private_log": "private/w48-bottom-up-batch3/gate-rust-1/rust.log",
+    "reason": "Existing native platform test assumed primary-checkout .git/modules layout; linked worktree has a .git file"
+  },
+  {
+    "name": "worktree-fixture-after",
+    "command": "cargo test --locked --offline -p qcore-audit --lib native_platform_matrix::tests::configured_all_unknown_gap_report_is_valid -- --exact",
+    "exit": 0,
+    "passed": 1,
+    "failed": 0,
+    "filtered": 126,
+    "private_log": "private/w48-bottom-up-batch3/worktree-fixture-after.log"
+  },
+  {
+    "name": "system-context-review-1",
+    "command": "python3 private/w48-bottom-up-batch3/configured-context-review.py system",
+    "exit": 1,
+    "private_log": "private/w48-bottom-up-batch3/system-context-review.log",
+    "reason": "Review helper initially expected corpus-only artifact files from configured route; actual paired absence is now explicit, never treated as a semantic pass"
+  },
+  {
+    "name": "system-context-review-2",
+    "command": "python3 docs/reports/w48-bottom-up-batch3/scripts/configured_context_review.py system",
+    "exit": 0,
+    "private_log": "private/w48-bottom-up-batch3/system-context-review-2.log",
+    "unit_contexts": 15,
+    "meaning": "Complete payload equality under finite retained identity mapping; configured source absent, chunk/source-effects are identical empty Unknown records."
+  },
+  {
+    "name": "slice-context-review-1",
+    "command": "python3 docs/reports/w48-bottom-up-batch3/scripts/configured_context_review.py slice",
+    "exit": 1,
+    "private_log": "private/w48-bottom-up-batch3/slice-context-review.log",
+    "reason": "Identity-only guard refused real diagnostic/dependency changes. Source review attributes all13 rows; revised context checker preserves these semantic differences rather than classifying them as identity."
+  },
+  {
+    "name": "system-context-review-3",
+    "command": [
+      "python3",
+      "docs/reports/w48-bottom-up-batch3/scripts/configured_context_review.py",
+      "system"
+    ],
+    "exit": 0,
+    "private_log": "private/w48-bottom-up-batch3/system-context-review-3.log"
+  },
+  {
+    "name": "slice-context-review-2",
+    "command": [
+      "python3",
+      "docs/reports/w48-bottom-up-batch3/scripts/configured_context_review.py",
+      "slice"
+    ],
+    "exit": 0,
+    "private_log": "private/w48-bottom-up-batch3/slice-context-review-2.log"
+  },
+  {
+    "name": "corpus-authority-1",
+    "command": "python3 docs/reports/w48-bottom-up-batch3/scripts/authority_review.py corpus",
+    "exit": 1,
+    "private_log": "private/w48-bottom-up-batch3/postprocess-corpus-3.log",
+    "reason": "Guard treated body replay occurrence counters as authority fields. All standing classes/methods unchanged; added mk_fifo_send home is rechecked in caller sessions and copies previously present Monkey header clause payloads. Exact counts and complete payload review retained."
+  },
+  {
+    "name": "authority-final-system",
+    "command": [
+      "python3",
+      "docs/reports/w48-bottom-up-batch3/scripts/authority_review.py",
+      "system"
+    ],
+    "exit": 0,
+    "private_log": "private/w48-bottom-up-batch3/authority-final-system.log"
+  },
+  {
+    "name": "authority-final-slice",
+    "command": [
+      "python3",
+      "docs/reports/w48-bottom-up-batch3/scripts/authority_review.py",
+      "slice"
+    ],
+    "exit": 0,
+    "private_log": "private/w48-bottom-up-batch3/authority-final-slice.log"
+  },
+  {
+    "name": "authority-final-corpus",
+    "command": [
+      "python3",
+      "docs/reports/w48-bottom-up-batch3/scripts/authority_review.py",
+      "corpus"
+    ],
+    "exit": 0,
+    "private_log": "private/w48-bottom-up-batch3/authority-final-corpus.log"
+  },
+  {
+    "name": "corpus-projections",
+    "command": [
+      "python3",
+      "docs/reports/w48-bottom-up-batch3/scripts/projections.py",
+      "private/w48-bottom-up-batch3/measure-final/before/corpus",
+      "private/w48-bottom-up-batch3/measure-final/after/corpus",
+      "corpus"
+    ],
+    "exit": 0,
+    "private_log": "private/w48-bottom-up-batch3/corpus-projections.log"
+  },
+  {
+    "name": "before-plan",
+    "command": [
+      "python3",
+      "docs/reports/w48-bottom-up-callee-bodies/scripts/bottom_up_plan.py",
+      "private/w48-bottom-up-batch3/measure-final/before/corpus/corpus/resource-diagnostics.json",
+      "private/w48-bottom-up-batch3/before-plan.json",
+      "--top",
+      "20"
+    ],
+    "exit": 0,
+    "private_log": "private/w48-bottom-up-batch3/before-plan.log"
+  },
+  {
+    "name": "after-plan",
+    "command": [
+      "python3",
+      "docs/reports/w48-bottom-up-callee-bodies/scripts/bottom_up_plan.py",
+      "private/w48-bottom-up-batch3/measure-final/after/corpus/corpus/resource-diagnostics.json",
+      "private/w48-bottom-up-batch3/after-plan.json",
+      "--top",
+      "20"
+    ],
+    "exit": 0,
+    "private_log": "private/w48-bottom-up-batch3/after-plan.log"
+  },
+  {
+    "name": "corpus-attribution",
+    "command": "python3 private/w48-bottom-up-batch3/final-corpus-review.py",
+    "exit": 0,
+    "private_log": "private/w48-bottom-up-batch3/final-corpus-review.log",
+    "public_equivalent": "docs/reports/w48-bottom-up-batch3/scripts/corpus_review.py"
+  }
+]

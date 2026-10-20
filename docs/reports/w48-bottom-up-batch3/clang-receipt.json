@@ -1,0 +1,29 @@
+{
+  "discovered": {
+    "command": [
+      "clang",
+      "--version"
+    ],
+    "exit": 0,
+    "output": "Ubuntu clang version 21.1.8 (6ubuntu1)\nTarget: x86_64-pc-linux-gnu\nThread model: posix\nInstalledDir: /usr/lib/llvm-21/bin\n",
+    "resolved": "/usr/lib/llvm-21/bin/clang"
+  },
+  "pinned": {
+    "command": [
+      "/usr/bin/clang",
+      "--version"
+    ],
+    "exit": 0,
+    "output": "Ubuntu clang version 21.1.8 (6ubuntu1)\nTarget: x86_64-pc-linux-gnu\nThread model: posix\nInstalledDir: /usr/lib/llvm-21/bin\n",
+    "resolved": "/usr/lib/llvm-21/bin/clang"
+  },
+  "configured": {
+    "command": [
+      "/usr/lib/llvm-21/bin/clang",
+      "--version"
+    ],
+    "exit": 0,
+    "output": "Ubuntu clang version 21.1.8 (6ubuntu1)\nTarget: x86_64-pc-linux-gnu\nThread model: posix\nInstalledDir: /usr/lib/llvm-21/bin\n",
+    "resolved": "/usr/lib/llvm-21/bin/clang"
+  }
+}

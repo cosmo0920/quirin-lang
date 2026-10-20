@@ -14,7 +14,7 @@
     {
       "function": "__errno_location",
       "module": "libc/errno.qv",
-      "contract_sha256": "d956f076f4c50c66a40cd75f0ed9a408668c3c05e41c4a001c5dded9a6ce9c9e"
+      "contract_sha256": "3f02b89663ffceff1a89c4f28cee5446ae36ebd6dbc57270d0878ad71106985b"
     },
     {
       "function": "abort",

@@ -1,0 +1,10 @@
+{
+  "source_revision": "66910c10a4d7eafa810b84229cf2dcf7b0f26f97",
+  "source_path": "lib/monkey/mk_server/mk_fifo.c",
+  "source_sha256": "1b43086ad3e1001d1c36f1324904322509819c9dcf7eb44821f7991805d5de2b",
+  "function_sha256": "1a03e573f89b2ba9e63407521808e2bbd5b2bffb45eef47381e576739cf5f22e",
+  "fixture": "crates/qcore-c-gateway/tests/fixtures/scalar-accessor-condition/msg_write.h",
+  "fixture_sha256": "ab8becd1caddf0048e2773730ade748995f0f739d2b3abcbe0a2ccede792421b",
+  "note": "Verbatim function bytes with Linux header/type and _DEFAULT_SOURCE scaffold. This source observation grants no libc contract authority.",
+  "platform": "Linux configured source; retained production test is target_os=linux because other libc errno spellings and Windows socket branch are not this fixture"
+}

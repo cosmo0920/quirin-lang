@@ -738,3 +738,157 @@ fn the_bare_nested_call_family_is_unchanged() {
         summary.diagnostics
     );
 }
+
+#[test]
+fn scalar_accessor_conditions_keep_resources_and_replay() {
+    if !clang_available() {
+        return;
+    }
+    for condition in ["(*d_slot()) == 11", "*d_slot() != 11"] {
+        let body = format!(
+            "void d_run(int n) {{ struct d_rec *h = d_open(n); if (!h) return; if ({condition}) {{ d_report(1, \"x\"); }} d_close(h); }}"
+        );
+        let summary = summary_of(&body, "d_run");
+        assert_eq!(
+            summary.status,
+            AnalysisStatus::Safe,
+            "{condition}: {:?}",
+            summary.diagnostics
+        );
+    }
+}
+
+#[test]
+fn scalar_accessor_condition_boundaries_refuse_without_erasing_obligations() {
+    if !clang_available() {
+        return;
+    }
+    for (declarations, condition) in [
+        (DECLARATIONS.to_owned(), "(*d_owned_slot()) == 11"),
+        (
+            DECLARATIONS.to_owned(),
+            "(*d_slot_of((struct d_rec*)0)) == 11",
+        ),
+        (DECLARATIONS.to_owned(), "(*d_slot()) == n"),
+        (DECLARATIONS.to_owned(), "(*d_slot()) += 11"),
+        (DECLARATIONS.to_owned(), "(*d_slot()) == 11u"),
+        (
+            DECLARATIONS.replace("int *d_slot(void);", "int **d_slot(void);"),
+            "(**d_slot()) == 11",
+        ),
+        (
+            DECLARATIONS.replace("int *d_slot(void);", "volatile int *d_slot(void);"),
+            "(*d_slot()) == 11",
+        ),
+        (
+            DECLARATIONS.replace(
+                "int *d_slot(void);",
+                "int *d_slot(void) { static int n; return &n; }",
+            ),
+            "(*d_slot()) == 11",
+        ),
+    ] {
+        let body = format!("void d_run(int n) {{ if ({condition}) {{ d_report(1, \"x\"); }} }}");
+        let summary = summary_with(&declarations, &body, "d_run");
+        assert_eq!(
+            summary.status,
+            AnalysisStatus::Unknown,
+            "{declarations}: {condition}: {:?}",
+            summary.diagnostics
+        );
+    }
+    for body in [
+        "void d_run(int n) { struct d_rec *h = d_open(n); if (!h) return; if ((*d_slot()) == 11) {} }",
+        "void d_run(int n) { struct d_rec *h = d_open(n); if (!h) return; d_close(h); if ((*d_slot()) == 11) { d_close(h); } }",
+    ] {
+        let row = summary_of(body, "d_run");
+        assert_eq!(row.status, AnalysisStatus::Unsafe, "{row:?}");
+        assert!(!row.diagnostics.is_empty());
+    }
+    let missing = load("without-slot.qv", &GENERIC_CONTRACTS.replace(
+        "extern fn d_slot() -> ptr<mut, u8>\ncontract {\n    requires resource_contract_v1;\n    ensures normal resource_return_none();\n};", ""));
+    let source = format!("{DECLARATIONS} void d_run(void) {{ if ((*d_slot()) == 11) {{}} }}");
+    let result = analyze_unrestricted_c11(
+        &C11TranslationUnit {
+            source: &source,
+            ..Default::default()
+        },
+        "d_run",
+        &missing,
+    )
+    .unwrap();
+    assert!(
+        !matches!(result, UnrestrictedLegacyResult::Safe(_)),
+        "{result:?}"
+    );
+}
+
+#[test]
+fn scalar_accessor_condition_edges_and_stale_source_are_checked() {
+    if !clang_available() {
+        return;
+    }
+    for body in [
+        "void d_run(int n) { if (n && (*d_slot()) == 11) {} }",
+        "void d_run(int n) { if (n || (*d_slot()) != 11) {} }",
+        "void d_run(int n) { while ((*d_slot()) == 11) { if (n) break; continue; } }",
+        "void d_run(int n) { do { if (n) break; } while ((*d_slot()) != 11); }",
+        "void d_run(int n) { for (; (*d_slot()) == 11;) { if (n) break; } }",
+        "void d_run(int n) { switch ((*d_slot()) == 11) { case 1: break; default: break; } }",
+    ] {
+        let row = summary_of(body, "d_run");
+        assert_eq!(row.status, AnalysisStatus::Safe, "{body}: {row:?}");
+        let nodes = &row.cfg.nodes;
+        assert_eq!(nodes.iter().filter(|node| matches!(&node.instruction, qcore_c_gateway::legacy_c::LegacyInstruction::ContractCall { function, .. } if function == "d_slot")).count(), 1, "{body}");
+    }
+    let result = analyze_with(
+        DECLARATIONS,
+        "void d_run(void) { if ((*d_slot()) == 11) {} }",
+        "d_run",
+    );
+    let UnrestrictedLegacyResult::Safe(certificate) = result else {
+        panic!("{result:?}")
+    };
+    check_legacy_safety_certificate(&certificate).unwrap();
+    let mut changed = certificate.clone();
+    changed.preprocessed_source = changed
+        .preprocessed_source
+        .replace("int *d_slot(void)", "volatile int *d_slot(void)");
+    assert_ne!(changed.preprocessed_source, certificate.preprocessed_source);
+    assert!(check_legacy_safety_certificate(&changed).is_err());
+}
+
+#[cfg(target_os = "linux")]
+#[test]
+fn retained_msg_write_source_derives_and_replays() {
+    if !clang_available() {
+        return;
+    }
+    let manifest = std::path::Path::new(env!("CARGO_MANIFEST_DIR"))
+        .join("../../cycle19-resource-contracts.json");
+    let contracts =
+        qcore_contract::contract_loader::load_resource_contract_manifest(&manifest).unwrap();
+    let source = include_str!("fixtures/scalar-accessor-condition/msg_write.h");
+    let outcome = analyze_unrestricted_c11(
+        &C11TranslationUnit {
+            source,
+            function_scope: qcore_c_gateway::legacy_c::LegacyFunctionScope::MainSourceDefinitions,
+            ..Default::default()
+        },
+        "msg_write",
+        &contracts,
+    )
+    .unwrap();
+    let UnrestrictedLegacyResult::Safe(certificate) = outcome else {
+        panic!("{outcome:?}")
+    };
+    assert_eq!(
+        certificate.summary.functions["msg_write"].status,
+        AnalysisStatus::Safe
+    );
+    check_legacy_safety_certificate(&certificate).unwrap();
+    println!(
+        "retained production msg_write: {:?}",
+        certificate.summary.functions["msg_write"].status
+    );
+}

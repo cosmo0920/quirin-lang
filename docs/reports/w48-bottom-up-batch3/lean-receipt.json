@@ -1,0 +1,12 @@
+{
+  "command": "python3 scripts/check_lean_audits.py",
+  "exit": 0,
+  "audits": 345,
+  "private_log": "private/w48-bottom-up-batch3/lean-gate-1.log",
+  "proof_sha256": {
+    "proof/QCore/ScalarAccessorCondition.lean": "5ddd9c4103bc0b954dec09f36ef149b9f068fe7fd84d5ef4b6a3913326f41282",
+    "proof/AuditScalarAccessorCondition.lean": "d9c3c872975f362be1085d563a050ab7e94240b6d674cd3987051fbd0c558734",
+    "proof/QCore.lean": "b9807385ad1fc113d2ffcac56c062fcaff60ba3cc6b64291cc6f208349d4fd0c"
+  },
+  "note": "No Lean source changes after this successful full build/audit. The remaining standing commands are run separately without repeating this gate."
+}

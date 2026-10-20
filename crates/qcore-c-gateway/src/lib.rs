@@ -50,6 +50,7 @@ pub mod linkage;
 // acceptance and the typed per-formal substitution; the G hooks are in
 // `legacy_call_instantiation.rs`.
 mod call_instantiation;
+mod scalar_accessor_condition;
 // Card CG08-CASTS-AND-TYPE-QUERIES (rule 11b): casts as representations and
 // type-query operands by evaluation class; the G hooks are in
 // `legacy_cast_representation.rs`.

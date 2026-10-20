@@ -1,0 +1,30 @@
+{
+  "source_revision": "66910c10a4d7eafa810b84229cf2dcf7b0f26f97",
+  "files": [
+    {
+      "path": "lib/monkey/mk_server/mk_scheduler.c",
+      "sha256": "9a515fa6d0cc79ee8e70457e5e26e65a9ab82c8febd0bb383c88d35bcc1aedda"
+    },
+    {
+      "path": "lib/monkey/mk_server/mk_http_thread.c",
+      "sha256": "29fa43236d38b00d8609906f535386d93c600685744cefc1914a2a7ccff3d745"
+    },
+    {
+      "path": "lib/monkey/mk_server/mk_fifo.c",
+      "sha256": "1b43086ad3e1001d1c36f1324904322509819c9dcf7eb44821f7991805d5de2b"
+    },
+    {
+      "path": "lib/librdkafka-2.15.0/src/rdkafka.c",
+      "sha256": "c9451ca15c744f913ce2a6ed708dc36c04c47ab6730252afb0a2bb418d82d1d0"
+    },
+    {
+      "path": "lib/librdkafka-2.15.0/src/rdkafka_queue.h",
+      "sha256": "107e2292d4eeeda622828ecc115cf48cd43c7a1a82ee6da732a5426905686da2"
+    },
+    {
+      "path": "lib/librdkafka-2.15.0/src/rdkafka_queue.c",
+      "sha256": "a1d55367a2f020e67965661a29fbf2cf121b1d61e5b2ab6b52df875315c0acc7"
+    }
+  ],
+  "note": "Readiness source identities; body blockers are measured diagnostic leaves, not C safety findings."
+}

@@ -476,6 +476,27 @@ model; [report](../reports/lexical-routes-typed-fallbacks/README.md).
     whole-condition type-operator and increment refusals by its per-leaf
     decision. [Report](../reports/w44-branch-condition-calls/README.md).
 
+
+    **Amendment (W48-BOTTOM-UP-BATCH3): scalar accessor comparisons.** A
+    refused controlling-expression leaf may read exactly `*F()` or `(*F())`
+    compared by `==`/`!=` with one unsuffixed decimal literal. F must have no
+    body in this unit, an in-force zero-parameter contract with result None
+    and no container effect, and an unambiguous unit declaration returning
+    exactly one pointer level over a scalar type the existing pointee reader
+    admits (volatile, atomic and unresolved pointees refuse). The ordinary
+    instantiator still supplies the complete checked call, at its original
+    short-circuit/loop position, before a NoOp decision exploring both edges.
+    No pointer identity, scalar value, nullness or successor pruning follows.
+    Parameters, derived/owned results, volatile or unread pointees, richer
+    residuals and local bodies gain no admission; return consumers are
+    unchanged. The existing accessor custody contract remains a declared
+    assumption, with its reading-premise text naming this position explicitly.
+    Memory validity outside tracked custody remains outside this property.
+    `QCore.ScalarAccessorCondition` proves observation coverage and preservation
+    of the complete post-call state and diagnostics, with all32 admission
+    vectors bound in Rust; extraction and correspondence remain premises28.
+    [Report](../reports/w48-bottom-up-batch3/README.md).
+
 <a id="constraint-5i"></a>
 
 5i. **An assignment's destination is its whole left-hand side.**

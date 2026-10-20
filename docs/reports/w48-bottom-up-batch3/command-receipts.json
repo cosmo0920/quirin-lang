@@ -1,0 +1,603 @@
+{
+  "source": "1601ba4383253adab7e58b0c469c82dd8c94f4d2",
+  "tip_binary": {
+    "source": "1601ba4383253adab7e58b0c469c82dd8c94f4d2",
+    "path": "/home/cosmo/.codex/worktrees/47fe/qcore-c/private/w48-bottom-up-batch3/binaries/tip",
+    "sha256": "6f1503b2288dce4bfb8c16ae8b19c386cb95e8d16794c53a40a663ffbd441fcb"
+  },
+  "source_tools": [
+    {
+      "name": "fmt",
+      "command": [
+        "cargo",
+        "fmt",
+        "--all",
+        "--",
+        "--check"
+      ],
+      "exit": 0,
+      "private_log": "private/w48-bottom-up-batch3/source-tools-1/fmt.log"
+    },
+    {
+      "name": "clippy",
+      "command": [
+        "cargo",
+        "clippy",
+        "--all-targets",
+        "--",
+        "-D",
+        "warnings"
+      ],
+      "exit": 0,
+      "private_log": "private/w48-bottom-up-batch3/source-tools-1/clippy.log"
+    },
+    {
+      "name": "probe",
+      "command": [
+        "cargo",
+        "run",
+        "-p",
+        "qcore-compiler",
+        "--example",
+        "reevaluation_probe"
+      ],
+      "exit": 0,
+      "private_log": "private/w48-bottom-up-batch3/source-tools-1/probe.log"
+    },
+    {
+      "name": "followup",
+      "command": [
+        "cargo",
+        "run",
+        "-p",
+        "qcore-compiler",
+        "--example",
+        "reevaluation_followup"
+      ],
+      "exit": 0,
+      "private_log": "private/w48-bottom-up-batch3/source-tools-1/followup.log"
+    },
+    {
+      "name": "clang",
+      "command": [
+        "clang",
+        "--version"
+      ],
+      "exit": 0,
+      "private_log": "private/w48-bottom-up-batch3/source-tools-1/clang.log"
+    }
+  ],
+  "final_tools_after_test_fixture_repair": [
+    {
+      "command": [
+        "cargo",
+        "fmt",
+        "--all",
+        "--",
+        "--check"
+      ],
+      "exit": 0,
+      "private_log": "private/w48-bottom-up-batch3/fmt-after-fixture.log"
+    },
+    {
+      "command": [
+        "cargo",
+        "clippy",
+        "--all-targets",
+        "--",
+        "-D",
+        "warnings"
+      ],
+      "exit": 0,
+      "private_log": "private/w48-bottom-up-batch3/clippy-after-fixture.log"
+    }
+  ],
+  "python_after_carried_matrix": {
+    "command": [
+      "python3",
+      "-m",
+      "unittest",
+      "discover",
+      "-s",
+      "scripts/tests"
+    ],
+    "exit": 0,
+    "tests": 374,
+    "seconds": 63.911,
+    "private_log": "private/w48-bottom-up-batch3/python-carried.log"
+  },
+  "supervisor": [
+    {
+      "name": "rust-final",
+      "command": [
+        "python3",
+        "docs/reports/w48-bottom-up-batch3/scripts/gate.py",
+        "private/w48-bottom-up-batch3/gate-rust-2"
+      ],
+      "started": "2026-10-19T21:57:53.006557+00:00",
+      "source": "1601ba4383253adab7e58b0c469c82dd8c94f4d2",
+      "exit": 0,
+      "ended": "2026-10-19T22:06:24.492637+00:00"
+    },
+    {
+      "name": "providers-final",
+      "command": [
+        "python3",
+        "docs/reports/w48-bottom-up-batch3/scripts/provider_gate.py",
+        "private/w48-bottom-up-batch3/gate-providers-1"
+      ],
+      "started": "2026-10-19T22:06:24.493537+00:00",
+      "source": "1601ba4383253adab7e58b0c469c82dd8c94f4d2",
+      "exit": 0,
+      "ended": "2026-10-19T22:18:10.863164+00:00"
+    },
+    {
+      "name": "tip-release",
+      "command": [
+        "cargo",
+        "build",
+        "--locked",
+        "--offline",
+        "--release",
+        "-p",
+        "qcore-audit",
+        "--bin",
+        "quirin-audit"
+      ],
+      "started": "2026-10-19T22:18:10.863562+00:00",
+      "source": "1601ba4383253adab7e58b0c469c82dd8c94f4d2",
+      "exit": 0,
+      "ended": "2026-10-19T22:21:07.820419+00:00"
+    }
+  ],
+  "measurements": [
+    {
+      "side": "before",
+      "route": "corpus",
+      "command": [
+        "python3",
+        "docs/reports/w48-bottom-up-batch3/scripts/measure.py",
+        "corpus",
+        "/home/cosmo/.codex/worktrees/47fe/qcore-c/private/w48-bottom-up-batch3/measure-final/before/corpus",
+        "--link-map",
+        "docs/reports/w48-bottom-up-batch2/link-map.corpus.json",
+        "--inputs-snapshot",
+        "/home/cosmo/.codex/worktrees/47fe/qcore-c/private/w48-bottom-up-batch3/inputs-base",
+        "--binary-source",
+        "198f6fc4349d3a47591a2378835ae9286859d918",
+        "--jobs",
+        "2"
+      ],
+      "exit": 0,
+      "ended": "2026-10-20T00:29:02.790725+00:00"
+    },
+    {
+      "side": "before",
+      "route": "system",
+      "command": [
+        "python3",
+        "docs/reports/w48-bottom-up-batch3/scripts/measure.py",
+        "system",
+        "/home/cosmo/.codex/worktrees/47fe/qcore-c/private/w48-bottom-up-batch3/measure-final/before/system",
+        "--link-map",
+        "docs/reports/w48-bottom-up-batch2/link-map.corpus.json",
+        "--inputs-snapshot",
+        "/home/cosmo/.codex/worktrees/47fe/qcore-c/private/w48-bottom-up-batch3/inputs-base",
+        "--binary-source",
+        "198f6fc4349d3a47591a2378835ae9286859d918",
+        "--jobs",
+        "2"
+      ],
+      "exit": 0,
+      "ended": "2026-10-19T22:39:54.810078+00:00"
+    },
+    {
+      "side": "before",
+      "route": "slice",
+      "command": [
+        "python3",
+        "docs/reports/w48-bottom-up-batch3/scripts/measure.py",
+        "slice",
+        "/home/cosmo/.codex/worktrees/47fe/qcore-c/private/w48-bottom-up-batch3/measure-final/before/slice",
+        "--link-map",
+        "docs/reports/w48-bottom-up-batch2/link-map.corpus.json",
+        "--inputs-snapshot",
+        "/home/cosmo/.codex/worktrees/47fe/qcore-c/private/w48-bottom-up-batch3/inputs-base",
+        "--binary-source",
+        "198f6fc4349d3a47591a2378835ae9286859d918",
+        "--jobs",
+        "2"
+      ],
+      "exit": 0,
+      "ended": "2026-10-19T22:37:48.269112+00:00"
+    },
+    {
+      "side": "after",
+      "route": "corpus",
+      "command": [
+        "python3",
+        "docs/reports/w48-bottom-up-batch3/scripts/measure.py",
+        "corpus",
+        "/home/cosmo/.codex/worktrees/47fe/qcore-c/private/w48-bottom-up-batch3/measure-final/after/corpus",
+        "--link-map",
+        "docs/reports/w48-bottom-up-batch3/link-map.corpus.json",
+        "--inputs-snapshot",
+        "/home/cosmo/.codex/worktrees/47fe/qcore-c/private/w48-bottom-up-batch3/inputs-tip",
+        "--binary-source",
+        "1601ba4383253adab7e58b0c469c82dd8c94f4d2",
+        "--jobs",
+        "2"
+      ],
+      "exit": 0,
+      "ended": "2026-10-20T00:44:39.469942+00:00"
+    },
+    {
+      "side": "after",
+      "route": "system",
+      "command": [
+        "python3",
+        "docs/reports/w48-bottom-up-batch3/scripts/measure.py",
+        "system",
+        "/home/cosmo/.codex/worktrees/47fe/qcore-c/private/w48-bottom-up-batch3/measure-final/after/system",
+        "--link-map",
+        "docs/reports/w48-bottom-up-batch3/link-map.corpus.json",
+        "--inputs-snapshot",
+        "/home/cosmo/.codex/worktrees/47fe/qcore-c/private/w48-bottom-up-batch3/inputs-tip",
+        "--binary-source",
+        "1601ba4383253adab7e58b0c469c82dd8c94f4d2",
+        "--jobs",
+        "2"
+      ],
+      "exit": 0,
+      "ended": "2026-10-19T22:56:30.633293+00:00"
+    },
+    {
+      "side": "after",
+      "route": "slice",
+      "command": [
+        "python3",
+        "docs/reports/w48-bottom-up-batch3/scripts/measure.py",
+        "slice",
+        "/home/cosmo/.codex/worktrees/47fe/qcore-c/private/w48-bottom-up-batch3/measure-final/after/slice",
+        "--link-map",
+        "docs/reports/w48-bottom-up-batch3/link-map.corpus.json",
+        "--inputs-snapshot",
+        "/home/cosmo/.codex/worktrees/47fe/qcore-c/private/w48-bottom-up-batch3/inputs-tip",
+        "--binary-source",
+        "1601ba4383253adab7e58b0c469c82dd8c94f4d2",
+        "--jobs",
+        "2"
+      ],
+      "exit": 0,
+      "ended": "2026-10-19T23:13:29.401473+00:00"
+    }
+  ],
+  "comparators_initial": [
+    {
+      "command": [
+        "python3",
+        "docs/reports/w48-bottom-up-batch3/scripts/archive.py",
+        "private/w48-bottom-up-batch3/measure-final/before/system/resource-diagnostics.json",
+        "private/w48-bottom-up-batch3/measure-final/after/system/resource-diagnostics.json",
+        "system"
+      ],
+      "exit": 0,
+      "log": "postprocess-system-0.log"
+    },
+    {
+      "command": [
+        "python3",
+        "docs/reports/w48-bottom-up-batch3/scripts/review_fields.py",
+        "system"
+      ],
+      "exit": 0,
+      "log": "postprocess-system-1.log"
+    },
+    {
+      "command": [
+        "python3",
+        "docs/reports/w48-bottom-up-batch3/scripts/review_precise.py",
+        "system"
+      ],
+      "exit": 0,
+      "log": "postprocess-system-2.log"
+    },
+    {
+      "command": [
+        "python3",
+        "docs/reports/w48-bottom-up-batch3/scripts/authority_review.py",
+        "system"
+      ],
+      "exit": 0,
+      "log": "postprocess-system-3.log"
+    },
+    {
+      "command": [
+        "python3",
+        "docs/reports/w48-bottom-up-batch3/scripts/projections.py",
+        "private/w48-bottom-up-batch3/measure-final/before/system",
+        "private/w48-bottom-up-batch3/measure-final/after/system",
+        "system"
+      ],
+      "exit": 0,
+      "log": "postprocess-system-4.log"
+    },
+    {
+      "command": [
+        "python3",
+        "docs/reports/w48-bottom-up-batch3/scripts/archive.py",
+        "private/w48-bottom-up-batch3/measure-final/before/slice/resource-diagnostics.json",
+        "private/w48-bottom-up-batch3/measure-final/after/slice/resource-diagnostics.json",
+        "slice"
+      ],
+      "exit": 0,
+      "log": "postprocess-slice-0.log"
+    },
+    {
+      "command": [
+        "python3",
+        "docs/reports/w48-bottom-up-batch3/scripts/review_fields.py",
+        "slice"
+      ],
+      "exit": 0,
+      "log": "postprocess-slice-1.log"
+    },
+    {
+      "command": [
+        "python3",
+        "docs/reports/w48-bottom-up-batch3/scripts/review_precise.py",
+        "slice"
+      ],
+      "exit": 0,
+      "log": "postprocess-slice-2.log"
+    },
+    {
+      "command": [
+        "python3",
+        "docs/reports/w48-bottom-up-batch3/scripts/authority_review.py",
+        "slice"
+      ],
+      "exit": 0,
+      "log": "postprocess-slice-3.log"
+    },
+    {
+      "command": [
+        "python3",
+        "docs/reports/w48-bottom-up-batch3/scripts/projections.py",
+        "private/w48-bottom-up-batch3/measure-final/before/slice",
+        "private/w48-bottom-up-batch3/measure-final/after/slice",
+        "slice"
+      ],
+      "exit": 0,
+      "log": "postprocess-slice-4.log"
+    },
+    {
+      "command": [
+        "python3",
+        "docs/reports/w48-bottom-up-batch3/scripts/archive.py",
+        "private/w48-bottom-up-batch3/measure-final/before/corpus/corpus/resource-diagnostics.json",
+        "private/w48-bottom-up-batch3/measure-final/after/corpus/corpus/resource-diagnostics.json",
+        "corpus"
+      ],
+      "exit": 0,
+      "log": "postprocess-corpus-0.log"
+    },
+    {
+      "command": [
+        "python3",
+        "docs/reports/w48-bottom-up-batch3/scripts/review_fields.py",
+        "corpus"
+      ],
+      "exit": 0,
+      "log": "postprocess-corpus-1.log"
+    },
+    {
+      "command": [
+        "python3",
+        "docs/reports/w48-bottom-up-batch3/scripts/review_precise.py",
+        "corpus"
+      ],
+      "exit": 0,
+      "log": "postprocess-corpus-2.log"
+    },
+    {
+      "command": [
+        "python3",
+        "docs/reports/w48-bottom-up-batch3/scripts/authority_review.py",
+        "corpus"
+      ],
+      "exit": 1,
+      "log": "postprocess-corpus-3.log"
+    }
+  ],
+  "comparators_final": [
+    {
+      "name": "authority-final-system",
+      "command": [
+        "python3",
+        "docs/reports/w48-bottom-up-batch3/scripts/authority_review.py",
+        "system"
+      ],
+      "exit": 0,
+      "private_log": "private/w48-bottom-up-batch3/authority-final-system.log"
+    },
+    {
+      "name": "authority-final-slice",
+      "command": [
+        "python3",
+        "docs/reports/w48-bottom-up-batch3/scripts/authority_review.py",
+        "slice"
+      ],
+      "exit": 0,
+      "private_log": "private/w48-bottom-up-batch3/authority-final-slice.log"
+    },
+    {
+      "name": "authority-final-corpus",
+      "command": [
+        "python3",
+        "docs/reports/w48-bottom-up-batch3/scripts/authority_review.py",
+        "corpus"
+      ],
+      "exit": 0,
+      "private_log": "private/w48-bottom-up-batch3/authority-final-corpus.log"
+    },
+    {
+      "name": "corpus-projections",
+      "command": [
+        "python3",
+        "docs/reports/w48-bottom-up-batch3/scripts/projections.py",
+        "private/w48-bottom-up-batch3/measure-final/before/corpus",
+        "private/w48-bottom-up-batch3/measure-final/after/corpus",
+        "corpus"
+      ],
+      "exit": 0,
+      "private_log": "private/w48-bottom-up-batch3/corpus-projections.log"
+    },
+    {
+      "name": "before-plan",
+      "command": [
+        "python3",
+        "docs/reports/w48-bottom-up-callee-bodies/scripts/bottom_up_plan.py",
+        "private/w48-bottom-up-batch3/measure-final/before/corpus/corpus/resource-diagnostics.json",
+        "private/w48-bottom-up-batch3/before-plan.json",
+        "--top",
+        "20"
+      ],
+      "exit": 0,
+      "private_log": "private/w48-bottom-up-batch3/before-plan.log"
+    },
+    {
+      "name": "after-plan",
+      "command": [
+        "python3",
+        "docs/reports/w48-bottom-up-callee-bodies/scripts/bottom_up_plan.py",
+        "private/w48-bottom-up-batch3/measure-final/after/corpus/corpus/resource-diagnostics.json",
+        "private/w48-bottom-up-batch3/after-plan.json",
+        "--top",
+        "20"
+      ],
+      "exit": 0,
+      "private_log": "private/w48-bottom-up-batch3/after-plan.log"
+    }
+  ],
+  "configured_contexts": [
+    {
+      "name": "system-context-review-3",
+      "command": [
+        "python3",
+        "docs/reports/w48-bottom-up-batch3/scripts/configured_context_review.py",
+        "system"
+      ],
+      "exit": 0,
+      "private_log": "private/w48-bottom-up-batch3/system-context-review-3.log"
+    },
+    {
+      "name": "slice-context-review-2",
+      "command": [
+        "python3",
+        "docs/reports/w48-bottom-up-batch3/scripts/configured_context_review.py",
+        "slice"
+      ],
+      "exit": 0,
+      "private_log": "private/w48-bottom-up-batch3/slice-context-review-2.log"
+    }
+  ],
+  "closeout": [
+    {
+      "name": "corpus-public-review",
+      "command": [
+        "python3",
+        "docs/reports/w48-bottom-up-batch3/scripts/corpus_review.py"
+      ],
+      "exit": 0,
+      "private_log": "private/w48-bottom-up-batch3/corpus-public-review.log"
+    },
+    {
+      "name": "matrix-final",
+      "command": [
+        "python3",
+        "docs/reports/remaining-d02/build_matrix.py",
+        ".",
+        "--gate",
+        "docs/reports/w48-bottom-up-batch3/gate.json"
+      ],
+      "exit": 0,
+      "private_log": "private/w48-bottom-up-batch3/matrix-final.log"
+    },
+    {
+      "name": "index-final",
+      "command": [
+        "python3",
+        "scripts/build_docs_index.py"
+      ],
+      "exit": 0,
+      "private_log": "private/w48-bottom-up-batch3/index-final.log"
+    },
+    {
+      "name": "index-check",
+      "command": [
+        "python3",
+        "scripts/build_docs_index.py",
+        "--check"
+      ],
+      "exit": 0,
+      "private_log": "private/w48-bottom-up-batch3/index-check.log"
+    }
+  ],
+  "python_after_final_gate_backed_matrix": {
+    "command": [
+      "python3",
+      "-m",
+      "unittest",
+      "discover",
+      "-s",
+      "scripts/tests"
+    ],
+    "exit": 0,
+    "seconds": 38.848,
+    "private_log": "private/w48-bottom-up-batch3/python-final.log",
+    "tests": 374,
+    "unittest_seconds": 38.646
+  },
+  "frozen_source_match": {
+    "command": [
+      "git",
+      "diff",
+      "--exit-code",
+      "1601ba4383253adab7e58b0c469c82dd8c94f4d2",
+      "--",
+      "crates",
+      "compiler",
+      "providers",
+      "contract",
+      "proof",
+      "scripts"
+    ],
+    "exit": 0
+  },
+  "all_measurement_and_comparison_workers_complete": true,
+  "python_after_final_evidence_packaging": {
+    "command": [
+      "python3",
+      "-m",
+      "unittest",
+      "discover",
+      "-s",
+      "scripts/tests"
+    ],
+    "exit": 0,
+    "seconds": 41.492,
+    "private_log": "private/w48-bottom-up-batch3/python-packaged-final.log",
+    "tests": 374,
+    "unittest_seconds": 41.241
+  },
+  "index_after_final_evidence_packaging": {
+    "command": [
+      "python3",
+      "scripts/build_docs_index.py",
+      "--check"
+    ],
+    "exit": 0,
+    "private_log": "private/w48-bottom-up-batch3/index-packaged-check.log"
+  }
+}

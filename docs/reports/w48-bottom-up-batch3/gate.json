@@ -1,0 +1,13 @@
+{
+  "note": "W48-BOTTOM-UP-BATCH3 measured analyzer/test source1601ba4383253adab7e58b0c469c82dd8c94f4d2 on exact base198f6fc4349d3a47591a2378835ae9286859d918. Root runner520units/533summaries,8359passed/0failed/15ignored/0filtered;345Lean audits; fresh providers133Rust/0failed/1ignored,25Python and all5rebuilt+verified packages. RootPython374 passed after initial matrix regeneration; final gate-backed confirmation receipt is in command-receipts.json/python-final.log. All6fresh audits exit0: corpus963\u2192967Safe/3862\u21923858Unknown/9provisionalUnsafe, exactly3targets plus incidental net_plain_send_file; no Safe regression. System99/345/4 and slice53/346/4Pending/1unchanged, with all13slice diagnostic changes attributed. All5781null dictionaries and runtime moved records agree; corpus combined841\u2192843 follows static gains. Fresh plan254single-body waits/2220bodies/360hypothetical ceiling; same/cross6/6. No declaration standing promotion; home replay occurrence counts are separate from independent C definitions. Failed/interrupted/guard attempts retained. Actual worktree Clang21.1.8 recording is beside this gate. Rust/Lean/contracts unchanged after frozen source; remaining edits own evidence/tracking.",
+  "workspace_tests": 8359,
+  "provider_tests": 133,
+  "python_evidence_validator_tests": 374,
+  "reevaluation_probe_exit": 0,
+  "reevaluation_followup_exit": 0,
+  "cargo_fmt": "clean",
+  "cargo_clippy": "clean",
+  "standing_gate": "complete",
+  "lean_audits": 345,
+  "clang": "present: Ubuntu clang version 21.1.8 (6ubuntu1)"
+}

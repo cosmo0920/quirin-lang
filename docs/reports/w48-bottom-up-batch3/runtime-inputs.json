@@ -1,0 +1,24 @@
+{
+  "meaning": "Immutable runtime inputs from exact git archives; snapshots have equal file sets and differ only at the intentional premise and its flexible text binding. Original pinned runner bytes are unchanged. Base executable is preserved separately.",
+  "base_revision": "198f6fc4349d3a47591a2378835ae9286859d918",
+  "tip_revision": "bb6c2b0c3",
+  "files": 307,
+  "changed": [
+    {
+      "path": "providers/quirin-provider-libc/contracts.lock",
+      "before": "7c268b6d39b84d3539a509140c02d26d5e7cfb252cc1b31510541db77e9dd87f",
+      "after": "1a4896203b2f4e2d843241d9d1804aefc007b2b5c800dfa96a36ea64afc7da8f"
+    },
+    {
+      "path": "providers/quirin-provider-libc/contracts/libc/errno.qv",
+      "before": "bed9f9b8e8a65754c6b2bfa7f5121dace0c09e716d280c96ebef5a25314e7bce",
+      "after": "f5f4a40108b03bb5974ba07e56bc11afd30ea14e43b23358b5ccdf30d210d44c"
+    }
+  ],
+  "runner_sha256": "7bfb5768fd2e2a466763a051a216a242e2f10355e9544f3dc1fdd09e73781e5f",
+  "base_binary_sha256": "12ea5ce5eaac602f519a8fb4a47b265498b91db0668a062bca372a4b586dc96b",
+  "private_manifests": [
+    "private/w48-bottom-up-batch3/inputs-base-manifest.json",
+    "private/w48-bottom-up-batch3/inputs-tip-manifest.json"
+  ]
+}

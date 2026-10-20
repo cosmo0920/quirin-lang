@@ -1,0 +1,50 @@
+{
+  "diagnostics": {
+    "present": true,
+    "source": "/home/cosmo/.codex/worktrees/47fe/qcore-c/private/w48-bottom-up-batch3/measure-final/after/slice/resource-diagnostics.json",
+    "sha256": "b06052b0006dedaa0d40fb46a52dac0d55a6536a584c549121f0032a343ee699",
+    "bytes": 1692559
+  },
+  "source": {
+    "present": false
+  },
+  "chunk-contracts": {
+    "present": true,
+    "source": "/home/cosmo/.codex/worktrees/47fe/qcore-c/private/w48-bottom-up-batch3/measure-final/after/slice/resource-diagnostics.chunk-contracts.json",
+    "sha256": "a97259087e4ad89a4662edcb494b27c27e80f06c62e404a19076224bbc0a2bd8",
+    "bytes": 385
+  },
+  "source-effects": {
+    "present": true,
+    "source": "/home/cosmo/.codex/worktrees/47fe/qcore-c/private/w48-bottom-up-batch3/measure-final/after/slice/resource-diagnostics.source-effects.json",
+    "sha256": "a97259087e4ad89a4662edcb494b27c27e80f06c62e404a19076224bbc0a2bd8",
+    "bytes": 385
+  },
+  "contracts": {
+    "present": true,
+    "source": "/home/cosmo/.codex/worktrees/47fe/qcore-c/private/w48-bottom-up-batch3/measure-final/after/slice/resource-diagnostics.contracts.json",
+    "sha256": "f9df04f6b66bb6b022e2150c87f36e650b26b9b01830ec76dcc3c2250e73e41d",
+    "bytes": 7130289
+  },
+  "static_custody_counts": {
+    "Unknown": 346,
+    "Safe": 53,
+    "Pending": 4,
+    "Unsafe": 1
+  },
+  "slice-null.jsonl": {
+    "source": "/home/cosmo/.codex/worktrees/47fe/qcore-c/private/w48-bottom-up-batch3/measure-final/after/slice/slice-null.jsonl",
+    "bytes": 1461339,
+    "sha256": "f69a237f12aeb24f68e89ea0a9eb32eaf9532dfedbe4c5a987e7a8e13043c1c5"
+  },
+  "slice-null.summary.json": {
+    "source": "/home/cosmo/.codex/worktrees/47fe/qcore-c/private/w48-bottom-up-batch3/measure-final/after/slice/slice-null.summary.json",
+    "bytes": 64487,
+    "sha256": "16392a006bc5c7eceefa59dbcd3ca7faa6ac622e4329ec1ecbf92f1e3ed9a80d"
+  },
+  "slice-outer.json": {
+    "source": "/home/cosmo/.codex/worktrees/47fe/qcore-c/private/w48-bottom-up-batch3/measure-final/after/slice/slice-outer.json",
+    "bytes": 88959,
+    "sha256": "068d8f5ceb218f391dd4f062dd1bd10abb2df2a97cedb389a255ba0073e629ad"
+  }
+}

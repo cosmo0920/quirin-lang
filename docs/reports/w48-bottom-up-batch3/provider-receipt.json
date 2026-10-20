@@ -1,0 +1,179 @@
+{
+  "commands": [
+    {
+      "name": "check",
+      "command": [
+        "cargo",
+        "check",
+        "--manifest-path",
+        "providers/Cargo.toml",
+        "--workspace",
+        "--locked",
+        "--offline"
+      ],
+      "exit": 0,
+      "private_log": "/home/cosmo/.codex/worktrees/47fe/qcore-c/private/w48-bottom-up-batch3/gate-providers-1/check.log"
+    },
+    {
+      "name": "rust",
+      "command": [
+        "cargo",
+        "test",
+        "--manifest-path",
+        "providers/Cargo.toml",
+        "--workspace",
+        "--locked",
+        "--offline",
+        "--no-fail-fast"
+      ],
+      "exit": 0,
+      "private_log": "/home/cosmo/.codex/worktrees/47fe/qcore-c/private/w48-bottom-up-batch3/gate-providers-1/rust.log"
+    },
+    {
+      "name": "fmt",
+      "command": [
+        "cargo",
+        "fmt",
+        "--manifest-path",
+        "providers/Cargo.toml",
+        "--all",
+        "--",
+        "--check"
+      ],
+      "exit": 0,
+      "private_log": "/home/cosmo/.codex/worktrees/47fe/qcore-c/private/w48-bottom-up-batch3/gate-providers-1/fmt.log"
+    },
+    {
+      "name": "clippy",
+      "command": [
+        "cargo",
+        "clippy",
+        "--manifest-path",
+        "providers/Cargo.toml",
+        "--workspace",
+        "--all-targets",
+        "--locked",
+        "--offline",
+        "--",
+        "-D",
+        "warnings"
+      ],
+      "exit": 0,
+      "private_log": "/home/cosmo/.codex/worktrees/47fe/qcore-c/private/w48-bottom-up-batch3/gate-providers-1/clippy.log"
+    },
+    {
+      "name": "sync",
+      "command": [
+        "python3",
+        "providers/contracts.py",
+        "sync"
+      ],
+      "exit": 0,
+      "private_log": "/home/cosmo/.codex/worktrees/47fe/qcore-c/private/w48-bottom-up-batch3/gate-providers-1/sync.log"
+    },
+    {
+      "name": "contracts",
+      "command": [
+        "python3",
+        "providers/contracts.py",
+        "check"
+      ],
+      "exit": 0,
+      "private_log": "/home/cosmo/.codex/worktrees/47fe/qcore-c/private/w48-bottom-up-batch3/gate-providers-1/contracts.log"
+    },
+    {
+      "name": "python",
+      "command": [
+        "python3",
+        "-m",
+        "unittest",
+        "discover",
+        "-s",
+        "providers/tests"
+      ],
+      "exit": 0,
+      "private_log": "/home/cosmo/.codex/worktrees/47fe/qcore-c/private/w48-bottom-up-batch3/gate-providers-1/python.log"
+    },
+    {
+      "name": "packages",
+      "command": [
+        "python3",
+        "providers/package.py",
+        "build",
+        "--output",
+        "/home/cosmo/.codex/worktrees/47fe/qcore-c/private/w48-bottom-up-batch3/gate-providers-1/packages",
+        "--target-dir",
+        "/home/cosmo/.codex/worktrees/47fe/qcore-c/private/w48-bottom-up-batch3/provider-release-target"
+      ],
+      "exit": 0,
+      "private_log": "/home/cosmo/.codex/worktrees/47fe/qcore-c/private/w48-bottom-up-batch3/gate-providers-1/packages.log"
+    },
+    {
+      "name": "verify-qcore.libevent",
+      "command": [
+        "python3",
+        "providers/package.py",
+        "verify",
+        "/home/cosmo/.codex/worktrees/47fe/qcore-c/private/w48-bottom-up-batch3/gate-providers-1/packages/qcore.libevent"
+      ],
+      "exit": 0,
+      "private_log": "/home/cosmo/.codex/worktrees/47fe/qcore-c/private/w48-bottom-up-batch3/gate-providers-1/verify-qcore.libevent.log"
+    },
+    {
+      "name": "verify-qcore.chunkio",
+      "command": [
+        "python3",
+        "providers/package.py",
+        "verify",
+        "/home/cosmo/.codex/worktrees/47fe/qcore-c/private/w48-bottom-up-batch3/gate-providers-1/packages/qcore.chunkio"
+      ],
+      "exit": 0,
+      "private_log": "/home/cosmo/.codex/worktrees/47fe/qcore-c/private/w48-bottom-up-batch3/gate-providers-1/verify-qcore.chunkio.log"
+    },
+    {
+      "name": "verify-qcore.cmetrics",
+      "command": [
+        "python3",
+        "providers/package.py",
+        "verify",
+        "/home/cosmo/.codex/worktrees/47fe/qcore-c/private/w48-bottom-up-batch3/gate-providers-1/packages/qcore.cmetrics"
+      ],
+      "exit": 0,
+      "private_log": "/home/cosmo/.codex/worktrees/47fe/qcore-c/private/w48-bottom-up-batch3/gate-providers-1/verify-qcore.cmetrics.log"
+    },
+    {
+      "name": "verify-qcore.ctraces",
+      "command": [
+        "python3",
+        "providers/package.py",
+        "verify",
+        "/home/cosmo/.codex/worktrees/47fe/qcore-c/private/w48-bottom-up-batch3/gate-providers-1/packages/qcore.ctraces"
+      ],
+      "exit": 0,
+      "private_log": "/home/cosmo/.codex/worktrees/47fe/qcore-c/private/w48-bottom-up-batch3/gate-providers-1/verify-qcore.ctraces.log"
+    },
+    {
+      "name": "verify-qcore.librdkafka",
+      "command": [
+        "python3",
+        "providers/package.py",
+        "verify",
+        "/home/cosmo/.codex/worktrees/47fe/qcore-c/private/w48-bottom-up-batch3/gate-providers-1/packages/qcore.librdkafka"
+      ],
+      "exit": 0,
+      "private_log": "/home/cosmo/.codex/worktrees/47fe/qcore-c/private/w48-bottom-up-batch3/gate-providers-1/verify-qcore.librdkafka.log"
+    }
+  ],
+  "rust": {
+    "passed": 133,
+    "failed": 0,
+    "ignored": 1,
+    "summaries": 43
+  },
+  "python": {
+    "tests": 25,
+    "exit": 0,
+    "private_log": "private/w48-bottom-up-batch3/gate-providers-1/python.log"
+  },
+  "note": "Fresh provider workspace gate and all five rebuilt packages; no borrowed count."
+}

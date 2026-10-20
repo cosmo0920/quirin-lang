@@ -1,0 +1,654 @@
+{
+  "selected_rows": 4834,
+  "changed_status_or_diagnostic_rows": 23,
+  "promotions": [
+    [
+      "monkey-libevent",
+      "mk_server/mk_fifo.c",
+      "mk_fifo_send",
+      0
+    ],
+    [
+      "monkey-libevent",
+      "mk_server/mk_fifo.c",
+      "msg_write",
+      0
+    ],
+    [
+      "monkey-libevent",
+      "mk_server/mk_lib.c",
+      "mk_mq_send",
+      0
+    ],
+    [
+      "monkey-libevent",
+      "mk_server/mk_net.c",
+      "net_plain_send_file",
+      0
+    ]
+  ],
+  "safe_regressions": 0,
+  "new_unsafe_rows": 0,
+  "removed_condition_refusals": 22,
+  "removed_msg_write_calls": 2,
+  "removed_mk_fifo_send_calls": 1,
+  "added_diagnostics": 0,
+  "rows": [
+    {
+      "key": [
+        "librdkafka",
+        "rdkafka_sasl_cyrus.c",
+        "rd_kafka_sasl_cyrus_kinit_refresh",
+        0
+      ],
+      "before": "Unknown",
+      "after": "Unknown",
+      "classification": "Checked scalar errno comparison(s); both outcomes retained and other leaves unchanged.",
+      "removed_leaves": [
+        [
+          "unsupported",
+          "unmodeled call, aggregate or indirect access in branch condition",
+          1
+        ]
+      ],
+      "added_leaves": [],
+      "source_observations": [
+        {
+          "origin": "rdkafka_sasl_cyrus.c:251",
+          "source_path": "lib/librdkafka-2.15.0/src/rdkafka_sasl_cyrus.c",
+          "file_sha256": "0a1781f34535d192b404464afaa9466a39d2246b93e3593fc2161c5d166b6153",
+          "excerpt": "        if (r == -1) {\n                if (errno == ECHILD) {\n                        rd_kafka_log(rk, LOG_WARNING, \"SASLREFRESH\",\n                                     \"Kerberos ticket refresh command \""
+        }
+      ]
+    },
+    {
+      "key": [
+        "librdkafka",
+        "rdkafka_sasl_scram.c",
+        "rd_kafka_sasl_scram_handle_server_first_message",
+        0
+      ],
+      "before": "Unknown",
+      "after": "Unknown",
+      "classification": "Checked scalar errno comparison(s); both outcomes retained and other leaves unchanged.",
+      "removed_leaves": [
+        [
+          "unsupported",
+          "unmodeled call, aggregate or indirect access in branch condition",
+          1
+        ]
+      ],
+      "added_leaves": [],
+      "source_observations": [
+        {
+          "origin": "rdkafka_sasl_scram.c:496",
+          "source_path": "lib/librdkafka-2.15.0/src/rdkafka_sasl_scram.c",
+          "file_sha256": "232e5c09c8a47bd9a19c1064630d11431bfa1a69c0b5fa1b3ed190a7f64623f7",
+          "excerpt": "        itcnt = (int)strtoul(itcntstr, (char **)&endptr, 10);\n        if (itcntstr == endptr || *endptr != '\\0' || errno != 0 ||\n            itcnt > 1000000) {\n                rd_snprintf(errstr, errstr_size,"
+        }
+      ]
+    },
+    {
+      "key": [
+        "librdkafka",
+        "rdkafka_ssl.c",
+        "rd_kafka_transport_ssl_io_update",
+        0
+      ],
+      "before": "Unknown",
+      "after": "Unknown",
+      "classification": "Checked scalar errno comparison(s); both outcomes retained and other leaves unchanged.",
+      "removed_leaves": [
+        [
+          "unsupported",
+          "unmodeled call, aggregate or indirect access in branch condition",
+          1
+        ]
+      ],
+      "added_leaves": [],
+      "source_observations": [
+        {
+          "origin": "rdkafka_ssl.c:244",
+          "source_path": "lib/librdkafka-2.15.0/src/rdkafka_ssl.c",
+          "file_sha256": "bafad53316abe13a435b3d10f49aefc8834652bc9c53461c5bf251e8ad722b5f",
+          "excerpt": "                                    \"peer\");\n                } else if (rd_socket_errno == ECONNRESET) {\n                        rd_snprintf(errstr, errstr_size,\n                                    \"Disconnected: connection reset by peer\");"
+        }
+      ]
+    },
+    {
+      "key": [
+        "librdkafka",
+        "rdkafka_transport.c",
+        "rd_kafka_transport_socket_recv0",
+        0
+      ],
+      "before": "Unknown",
+      "after": "Unknown",
+      "classification": "Checked scalar errno comparison(s); both outcomes retained and other leaves unchanged.",
+      "removed_leaves": [
+        [
+          "unsupported",
+          "unmodeled call, aggregate or indirect access in branch condition",
+          1
+        ]
+      ],
+      "added_leaves": [],
+      "source_observations": [
+        {
+          "origin": "rdkafka_transport.c:330",
+          "source_path": "lib/librdkafka-2.15.0/src/rdkafka_transport.c",
+          "file_sha256": "9e2c024e061a63c96958af11c5657f35b73233f0ec3334b8bddbcf08645c353e",
+          "excerpt": "                if (unlikely(r == RD_SOCKET_ERROR)) {\n                        if (rd_socket_errno == EAGAIN\n#ifdef _WIN32\n                            || rd_socket_errno == WSAEWOULDBLOCK"
+        }
+      ]
+    },
+    {
+      "key": [
+        "librdkafka",
+        "rdkafka_transport.c",
+        "rd_kafka_transport_socket_recvmsg",
+        0
+      ],
+      "before": "Unknown",
+      "after": "Unknown",
+      "classification": "Checked scalar errno comparison(s); both outcomes retained and other leaves unchanged.",
+      "removed_leaves": [
+        [
+          "unsupported",
+          "unmodeled call, aggregate or indirect access in branch condition",
+          2
+        ]
+      ],
+      "added_leaves": [],
+      "source_observations": [
+        {
+          "origin": "rdkafka_transport.c:279",
+          "source_path": "lib/librdkafka-2.15.0/src/rdkafka_transport.c",
+          "file_sha256": "9e2c024e061a63c96958af11c5657f35b73233f0ec3334b8bddbcf08645c353e",
+          "excerpt": "        if (unlikely(r <= 0)) {\n                if (r == -1 && rd_socket_errno == EAGAIN)\n                        return 0;\n                else if (r == 0) {"
+        },
+        {
+          "origin": "rdkafka_transport.c:288",
+          "source_path": "lib/librdkafka-2.15.0/src/rdkafka_transport.c",
+          "file_sha256": "9e2c024e061a63c96958af11c5657f35b73233f0ec3334b8bddbcf08645c353e",
+          "excerpt": "                        return -1;\n                } else if (r == -1 && rd_socket_errno == ECONNRESET) {\n                        rd_snprintf(errstr, errstr_size,\n                                    \"Disconnected: connection \""
+        }
+      ]
+    },
+    {
+      "key": [
+        "librdkafka",
+        "rdkafka_transport.c",
+        "rd_kafka_transport_socket_send0",
+        0
+      ],
+      "before": "Unknown",
+      "after": "Unknown",
+      "classification": "Checked scalar errno comparison(s); both outcomes retained and other leaves unchanged.",
+      "removed_leaves": [
+        [
+          "unsupported",
+          "unmodeled call, aggregate or indirect access in branch condition",
+          1
+        ]
+      ],
+      "added_leaves": [],
+      "source_observations": [
+        {
+          "origin": "rdkafka_transport.c:210",
+          "source_path": "lib/librdkafka-2.15.0/src/rdkafka_transport.c",
+          "file_sha256": "9e2c024e061a63c96958af11c5657f35b73233f0ec3334b8bddbcf08645c353e",
+          "excerpt": "                if (unlikely(r <= 0)) {\n                        if (r == 0 || rd_socket_errno == EAGAIN)\n                                return 0;\n                        rd_snprintf(errstr, errstr_size, \"%s\","
+        }
+      ]
+    },
+    {
+      "key": [
+        "librdkafka",
+        "rdkafka_transport.c",
+        "rd_kafka_transport_socket_sendmsg",
+        0
+      ],
+      "before": "Unknown",
+      "after": "Unknown",
+      "classification": "Checked scalar errno comparison(s); both outcomes retained and other leaves unchanged.",
+      "removed_leaves": [
+        [
+          "unsupported",
+          "unmodeled call, aggregate or indirect access in branch condition",
+          1
+        ]
+      ],
+      "added_leaves": [],
+      "source_observations": [
+        {
+          "origin": "rdkafka_transport.c:155",
+          "source_path": "lib/librdkafka-2.15.0/src/rdkafka_transport.c",
+          "file_sha256": "9e2c024e061a63c96958af11c5657f35b73233f0ec3334b8bddbcf08645c353e",
+          "excerpt": "        if (r == -1) {\n                if (rd_socket_errno == EAGAIN)\n                        return 0;\n                rd_snprintf(errstr, errstr_size, \"%s\", rd_strerror(errno));"
+        }
+      ]
+    },
+    {
+      "key": [
+        "chunkio",
+        "cio_file_unix.c",
+        "cio_file_native_resize",
+        0
+      ],
+      "before": "Unknown",
+      "after": "Unknown",
+      "classification": "Checked scalar errno comparison(s); both outcomes retained and other leaves unchanged.",
+      "removed_leaves": [
+        [
+          "unsupported",
+          "unmodeled call, aggregate or indirect access in branch condition",
+          1
+        ]
+      ],
+      "added_leaves": [],
+      "source_observations": [
+        {
+          "origin": "cio_file_unix.c:536",
+          "source_path": "lib/chunkio/src/cio_file_unix.c",
+          "file_sha256": "29a392dbf68676bea741d579f8b4cc6c5bcfc0ba3b3e8b3a11fb185443a07fb0",
+          "excerpt": "\n           if (result == -1 && errno == EOPNOTSUPP) {\n               /*\n                * If fallocate fails with an EOPNOTSUPP try operation using"
+        }
+      ]
+    },
+    {
+      "key": [
+        "monkey-libevent",
+        "mk_core/mk_file.c",
+        "mk_file_get_info",
+        0
+      ],
+      "before": "Unknown",
+      "after": "Unknown",
+      "classification": "Checked scalar errno comparison(s); both outcomes retained and other leaves unchanged.",
+      "removed_leaves": [
+        [
+          "unsupported",
+          "unmodeled call, aggregate or indirect access in branch condition",
+          1
+        ]
+      ],
+      "added_leaves": [],
+      "source_observations": [
+        {
+          "origin": "mk_core/mk_file.c:46",
+          "source_path": "lib/monkey/mk_core/mk_file.c",
+          "file_sha256": "0adcb7b23356a9d21bd4cfd9f6fb168307556abc2e4110373ab2ca420771aff3",
+          "excerpt": "    if (lstat(path, &f) == -1) {\n        if (errno == EACCES) {\n            f_info->exists = MK_TRUE;\n        }"
+        }
+      ]
+    },
+    {
+      "key": [
+        "monkey-libevent",
+        "mk_core/mk_rconf.c",
+        "mk_rconf_read",
+        0
+      ],
+      "before": "Unknown",
+      "after": "Unknown",
+      "classification": "Checked scalar errno comparison(s); both outcomes retained and other leaves unchanged.",
+      "removed_leaves": [
+        [
+          "unsupported",
+          "unmodeled call, aggregate or indirect access in branch condition",
+          1
+        ]
+      ],
+      "added_leaves": [],
+      "source_observations": [
+        {
+          "origin": "mk_core/mk_rconf.c:225",
+          "source_path": "lib/monkey/mk_core/mk_rconf.c",
+          "file_sha256": "e483dc6d2ee2b2da24548bdea7ce118599a5bbde2bc59b8fe71a93ef733771af",
+          "excerpt": "        ret = stat(path, &st);\n        if (ret == -1 && errno == ENOENT) {\n            /* Try to resolve the real path (if exists) */\n            if (path[0] == '/') {"
+        }
+      ]
+    },
+    {
+      "key": [
+        "monkey-libevent",
+        "mk_server/mk_config.c",
+        "mk_config_listen_parse",
+        0
+      ],
+      "before": "Unknown",
+      "after": "Unknown",
+      "classification": "Checked scalar errno comparison(s); both outcomes retained and other leaves unchanged.",
+      "removed_leaves": [
+        [
+          "unsupported",
+          "unmodeled call, aggregate or indirect access in branch condition",
+          1
+        ]
+      ],
+      "added_leaves": [],
+      "source_observations": [
+        {
+          "origin": "mk_server/mk_config.c:219",
+          "source_path": "lib/monkey/mk_server/mk_config.c",
+          "file_sha256": "9e8bcce0ec0b7846e3fe874fd10f4553b379a387848d996d182a7146817ab7a7",
+          "excerpt": "    port_num = strtol(port, NULL, 10);\n    if (errno != 0 || port_num == LONG_MAX || port_num == LONG_MIN) {\n        mk_warn(\"Using defaults, could not understand \\\"Listen %s\\\"\",\n                listener->val);"
+        }
+      ]
+    },
+    {
+      "key": [
+        "monkey-libevent",
+        "mk_server/mk_fifo.c",
+        "mk_fifo_send",
+        0
+      ],
+      "before": "Unknown",
+      "after": "Safe",
+      "classification": "Ordinary same-unit msg_write summary discharges both calls.",
+      "removed_leaves": [
+        [
+          "unsupported",
+          "call to uncontracted function `msg_write`",
+          2
+        ]
+      ],
+      "added_leaves": [],
+      "source_observations": []
+    },
+    {
+      "key": [
+        "monkey-libevent",
+        "mk_server/mk_fifo.c",
+        "msg_write",
+        0
+      ],
+      "before": "Unknown",
+      "after": "Safe",
+      "classification": "Checked scalar errno comparison(s); both outcomes retained and other leaves unchanged.",
+      "removed_leaves": [
+        [
+          "unsupported",
+          "unmodeled call, aggregate or indirect access in branch condition",
+          1
+        ]
+      ],
+      "added_leaves": [],
+      "source_observations": [
+        {
+          "origin": "mk_server/mk_fifo.c:288",
+          "source_path": "lib/monkey/mk_server/mk_fifo.c",
+          "file_sha256": "1b43086ad3e1001d1c36f1324904322509819c9dcf7eb44821f7991805d5de2b",
+          "excerpt": "        if (bytes == -1) {\n            if (errno == EAGAIN) {\n                /*\n                 * This could happen, since this function goal is not to"
+        }
+      ]
+    },
+    {
+      "key": [
+        "monkey-libevent",
+        "mk_server/mk_http_parser.c",
+        "header_lookup",
+        0
+      ],
+      "before": "Unknown",
+      "after": "Unknown",
+      "classification": "Checked scalar errno comparison(s); both outcomes retained and other leaves unchanged.",
+      "removed_leaves": [
+        [
+          "unsupported",
+          "unmodeled call, aggregate or indirect access in branch condition",
+          1
+        ]
+      ],
+      "added_leaves": [],
+      "source_observations": [
+        {
+          "origin": "mk_server/mk_http_parser.c:310",
+          "source_path": "lib/monkey/mk_server/mk_http_parser.c",
+          "file_sha256": "bb1fe87e129a64981271103305273f7e1eaa454329eb2d4cfaf113d682716ff9",
+          "excerpt": "                    val = strtol(port, &endptr, 10);\n                    if ((errno == ERANGE && (val == LONG_MAX || val == LONG_MIN))\n                        || (errno != 0 && val == 0)) {\n                        return -MK_CLIENT_BAD_REQUEST;"
+        }
+      ]
+    },
+    {
+      "key": [
+        "monkey-libevent",
+        "mk_server/mk_http_parser.c",
+        "http_parser_transfer_encoding_chunked",
+        0
+      ],
+      "before": "Unknown",
+      "after": "Unknown",
+      "classification": "Checked scalar errno comparison(s); both outcomes retained and other leaves unchanged.",
+      "removed_leaves": [
+        [
+          "unsupported",
+          "unmodeled call, aggregate or indirect access in branch condition",
+          1
+        ]
+      ],
+      "added_leaves": [],
+      "source_observations": [
+        {
+          "origin": "mk_server/mk_http_parser.c:602",
+          "source_path": "lib/monkey/mk_server/mk_http_parser.c",
+          "file_sha256": "bb1fe87e129a64981271103305273f7e1eaa454329eb2d4cfaf113d682716ff9",
+          "excerpt": "    chunk_len = strtol(tmp, &ptr, 16);\n    if ((errno == ERANGE && (chunk_len == LONG_MAX || chunk_len == LONG_MIN)) ||\n        (errno != 0)) {\n        return MK_HTTP_PARSER_ERROR;"
+        }
+      ]
+    },
+    {
+      "key": [
+        "monkey-libevent",
+        "mk_server/mk_lib.c",
+        "mk_mq_send",
+        0
+      ],
+      "before": "Unknown",
+      "after": "Safe",
+      "classification": "Explicit conditional mk_fifo_send home plus replay discharges the external call; link/type/calling-convention/interposition premise remains.",
+      "removed_leaves": [
+        [
+          "unsupported",
+          "call to uncontracted function `mk_fifo_send`",
+          1
+        ]
+      ],
+      "added_leaves": [],
+      "source_observations": []
+    },
+    {
+      "key": [
+        "monkey-libevent",
+        "mk_server/mk_net.c",
+        "mk_net_conn_create",
+        0
+      ],
+      "before": "Unsafe",
+      "after": "Unsafe",
+      "classification": "Checked scalar errno comparison(s); both outcomes retained and other leaves unchanged.",
+      "removed_leaves": [
+        [
+          "unsupported",
+          "unmodeled call, aggregate or indirect access in branch condition",
+          1
+        ]
+      ],
+      "added_leaves": [],
+      "source_observations": [
+        {
+          "origin": "mk_server/mk_net.c:265",
+          "source_path": "lib/monkey/mk_server/mk_net.c",
+          "file_sha256": "59b1ea384cd84087790b7f92b3079602a64a3d4cd269f4acbc799b98e82d4cd3",
+          "excerpt": "    if (ret == -1) {\n        if (errno != EINPROGRESS) {\n            close(fd);\n            mk_mem_free(conn);"
+        }
+      ]
+    },
+    {
+      "key": [
+        "monkey-libevent",
+        "mk_server/mk_net.c",
+        "mk_net_conn_write",
+        0
+      ],
+      "before": "Unknown",
+      "after": "Unknown",
+      "classification": "Checked scalar errno comparison(s); both outcomes retained and other leaves unchanged.",
+      "removed_leaves": [
+        [
+          "unsupported",
+          "unmodeled call, aggregate or indirect access in branch condition",
+          1
+        ]
+      ],
+      "added_leaves": [],
+      "source_observations": [
+        {
+          "origin": "mk_server/mk_net.c:353",
+          "source_path": "lib/monkey/mk_server/mk_net.c",
+          "file_sha256": "59b1ea384cd84087790b7f92b3079602a64a3d4cd269f4acbc799b98e82d4cd3",
+          "excerpt": "    if (bytes == -1) {\n        if (errno == EAGAIN) {\n            MK_EVENT_NEW(channel->event);\n            channel->thread = th;"
+        }
+      ]
+    },
+    {
+      "key": [
+        "monkey-libevent",
+        "mk_server/mk_net.c",
+        "net_plain_send_file",
+        0
+      ],
+      "before": "Unknown",
+      "after": "Safe",
+      "classification": "Incidental exact errno!=EAGAIN comparison in the Linux sendfile branch; no new contract or pointer fact.",
+      "removed_leaves": [
+        [
+          "unsupported",
+          "unmodeled call, aggregate or indirect access in branch condition",
+          1
+        ]
+      ],
+      "added_leaves": [],
+      "source_observations": [
+        {
+          "origin": "mk_server/mk_net.c:88",
+          "source_path": "lib/monkey/mk_server/mk_net.c",
+          "file_sha256": "59b1ea384cd84087790b7f92b3079602a64a3d4cd269f4acbc799b98e82d4cd3",
+          "excerpt": "    ret = sendfile(socket_fd, file_fd, file_offset, file_count);\n    if (ret == -1 && errno != EAGAIN) {\n        MK_TRACE(\"[net] sendfile(%i) failed: %s\", socket_fd, strerror(errno));\n    }"
+        }
+      ]
+    },
+    {
+      "key": [
+        "monkey-libevent",
+        "mk_server/mk_scheduler.c",
+        "mk_sched_event_read",
+        0
+      ],
+      "before": "Unknown",
+      "after": "Unknown",
+      "classification": "Checked scalar errno comparison(s); both outcomes retained and other leaves unchanged.",
+      "removed_leaves": [
+        [
+          "unsupported",
+          "unmodeled call, aggregate or indirect access in branch condition",
+          1
+        ]
+      ],
+      "added_leaves": [],
+      "source_observations": [
+        {
+          "origin": "mk_server/mk_scheduler.c:703",
+          "source_path": "lib/monkey/mk_server/mk_scheduler.c",
+          "file_sha256": "9a515fa6d0cc79ee8e70457e5e26e65a9ab82c8febd0bb383c88d35bcc1aedda",
+          "excerpt": "    if (ret == -1) {\n        if (errno == EAGAIN) {\n            MK_TRACE(\"[FD %i] EAGAIN: need to read more data\", conn->event.fd);\n            mk_event_add(sched->loop, conn->event.fd,"
+        }
+      ]
+    },
+    {
+      "key": [
+        "monkey-libevent",
+        "mk_server/mk_socket.c",
+        "mk_socket_connect",
+        0
+      ],
+      "before": "Unknown",
+      "after": "Unknown",
+      "classification": "Checked scalar errno comparison(s); both outcomes retained and other leaves unchanged.",
+      "removed_leaves": [
+        [
+          "unsupported",
+          "unmodeled call, aggregate or indirect access in branch condition",
+          1
+        ]
+      ],
+      "added_leaves": [],
+      "source_observations": [
+        {
+          "origin": "mk_server/mk_socket.c:217",
+          "source_path": "lib/monkey/mk_server/mk_socket.c",
+          "file_sha256": "b37b356b0c391c559e481551cf50121765484d680c70b482fd5626ba617ec794",
+          "excerpt": "        if (ret == -1) {\n            if (errno == EINPROGRESS) {\n                break;\n            }"
+        }
+      ]
+    },
+    {
+      "key": [
+        "monkey-libevent",
+        "mk_server/mk_socket.c",
+        "mk_socket_open",
+        0
+      ],
+      "before": "Unknown",
+      "after": "Unknown",
+      "classification": "Checked scalar errno comparison(s); both outcomes retained and other leaves unchanged.",
+      "removed_leaves": [
+        [
+          "unsupported",
+          "unmodeled call, aggregate or indirect access in branch condition",
+          1
+        ]
+      ],
+      "added_leaves": [],
+      "source_observations": [
+        {
+          "origin": "mk_server/mk_socket.c:164",
+          "source_path": "lib/monkey/mk_server/mk_socket.c",
+          "file_sha256": "b37b356b0c391c559e481551cf50121765484d680c70b482fd5626ba617ec794",
+          "excerpt": "    if (ret == -1) {\n        if (errno == EINPROGRESS) {\n            return socket_fd;\n        }"
+        }
+      ]
+    },
+    {
+      "key": [
+        "monkey-libevent",
+        "mk_server/mk_stream.c",
+        "mk_channel_write",
+        0
+      ],
+      "before": "Unknown",
+      "after": "Unknown",
+      "classification": "Checked scalar errno comparison(s); both outcomes retained and other leaves unchanged.",
+      "removed_leaves": [
+        [
+          "unsupported",
+          "unmodeled call, aggregate or indirect access in branch condition",
+          1
+        ]
+      ],
+      "added_leaves": [],
+      "source_observations": [
+        {
+          "origin": "mk_server/mk_stream.c:305",
+          "source_path": "lib/monkey/mk_server/mk_stream.c",
+          "file_sha256": "37d26918c71467b7c94ff271271925beeabb90bb52c0ff859fb3c5270f57226a",
+          "excerpt": "        else if (bytes < 0) {\n            if (errno == EAGAIN) {\n                return MK_CHANNEL_BUSY;\n            }"
+        }
+      ]
+    }
+  ],
+  "body_evidence_occurrences": "body-replay-occurrence-review.json; standing classes unchanged, copies of previously present clause payloads only",
+  "cross_unit_metadata": "Report-wide catalog adds exactly mk_fifo_send and changes the link-map digest; it is not a claim every caller uses the home.",
+  "source_families": "Source/chunk-contract/source-effect payloads agree after explicit checkout normalization, as precise-field-differences.json.gz; no new source-effect theorem or authority is inferred."
+}

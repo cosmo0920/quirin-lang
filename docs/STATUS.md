@@ -16,18 +16,18 @@ Analysis paths: [GATEWAY-ANALYSIS-PATH-OPTIMIZATION](reports/gateway-analysis-pa
 
 Audit tooling: the bounded [CPU/memory optimization](reports/audit-memory-performance/README.md) preserves four verdict artifacts byte for byte on three Fluent Bit selections. The four-worker sample took 64.67 → 20.63 seconds with 21.0% lower maximum RSS; shared-host observations, not whole-corpus throughput or safety coverage.
 
-The latest fresh corpus and configured-route measurements are the 2026-10-20
-[hypothesis-graph erasure receipt](reports/contract-hypothesis-graph-v1/README.md),
-frozen source `5b5a8c0f0` against exact base `198f6fc43`. They reproduce the
-checked-array-lookup semantic checkpoint without verdict or diagnostic movement.
-Source-pinned
-contracts and named null premises remain assumptions, not C-body proofs.
-Older rows and reports retain their dated checkpoint evidence. CT mapping,
-model proof, native observations and loaded-runtime projections are separate;
-projection is not safety coverage. Current tracking is the acceptance matrix,
-and history belongs in [increment records](development/increments/README.md).
+The latest corpus and configured-route measurements are the 2026-10-20
+[scalar accessor condition receipt](reports/w48-bottom-up-batch3/README.md),
+analyzer/test source `1601ba438` on exact base `198f6fc43`. Source-pinned
+contracts, named null premises and the selected-program link premise remain
+assumptions, not unconditional C-body proofs. Older reports retain their dated
+checkpoint evidence. CT mapping, model proof, source replay, native observations
+and runtime projections remain separate; projection is not safety coverage.
+Current tracking is the acceptance matrix; history is in the increment records.
 
 ## Coverage
+
+The [scalar accessor condition card](reports/w48-bottom-up-batch3/README.md) retains ordinary checked calls before exact scalar-pointer equality/inequality observations, with no pointer/value refinement and matching Rust/Lean. Six fresh audits exit0: corpus **967Safe/3858Unknown/9provisionalUnsafe** over4834, system **99/345/4**, slice **53Safe/346Unknown/4Pending/1provisionalUnsafe**. The four custody gains are `msg_write`, same-unit `mk_fifo_send`, conditionally imported `mk_mq_send`, and incidental Linux `net_plain_send_file`; all963 prior Safe rows remain Safe. Corpus loses22condition refusals/3call leaves with no added diagnostic. Slice retains13Unknown diagnostic changes, including3unresolved `end` identities; no new null fact is supplied. All5781 null dictionaries and runtime moved records agree; corpus combined Safe841→843, while the two FIFO callers remain combined Unknown. Errno remains declared, with only premise text/flexible binding changed. Repeated home-body evidence occurrences are not independent C definitions or standing promotions. Fresh corpus plan is254single-body waits/2220candidate bodies/360hypothetical ceiling, same/cross6/6; logger ownership/callback closure, scheduler dependencies and all six Unknown detach/delete wrappers remain tracked.
 
 The [contract hypothesis graph](reports/contract-hypothesis-graph-v1/README.md) adds opaque atoms, conjunction-only premises, exact context/evidence records, fresh replay and per-row consultation closure with audited Lean. Schema19.1 and all five provider packages are migrated; no typed predicate is registered and the graph supplies no semantic consumer. Six fresh base/tip runs preserve corpus **963Safe/3862Unknown/9provisionalUnsafe**, system **99/345/4**, slice **53Safe/346Unknown/4Pending/1provisionalUnsafe**, all **5,781 null rows**, legacy premises/standing and full runtime projections after graph erasure. The sole remaining raw changes are additive metadata and exactly replayed timestamp/root-path identity changes. This is evidence structure, not additional safety coverage.
 
@@ -296,6 +296,8 @@ latest completed integration measurement.
 
 ## Latest validated gate
 
+Integration validation is in progress. The separate pre-merge checkpoints retain their own evidence:
+
 The latest complete checkpoint is the [hypothesis-graph report](reports/contract-hypothesis-graph-v1/README.md)
 on frozen implementation source `5b5a8c0f05bef6aece8b57d90a2d405a459c29ea`:
 **8,364 core Rust passed / 0 failed / 15 ignored, 522 units / 535 summaries;
@@ -310,6 +312,18 @@ fixtures and cancelled preliminary attempts remain explicit in the report.
 The managed-worktree native-platform Git-directory fixture remains registered;
 the exact-source full standing run uses a private normal clone. This closes
 the additive schema19.1 graph migration, with no typed semantic consumer.
+
+The latest source checkpoint is the [scalar accessor condition report](reports/w48-bottom-up-batch3/README.md)
+on analyzer/test source `1601ba4383253adab7e58b0c469c82dd8c94f4d2`:
+**8,359 core Rust passed, 0 failed, 15 ignored over 520 units / 533 summaries;
+345 Lean audits; 374 root Python tests after matrix regeneration**. Submodules,
+fmt, Clippy and both reevaluation examples exit0. The fresh provider gate passes
+**133 Rust / 0 failed / 1 ignored**, **25 Python**, check/fmt/Clippy,
+contract sync/check and all five package build/verifications. Actual worktree
+Clang21.1.8 is recorded beside the gate. The first full Rust attempt's sole
+worktree-metadata fixture failure is retained; the repaired focused control and
+complete rerun pass. All six paired production audits exit0; the report retains complete changes,
+separate property/runtime denominators and the post-matrix Python receipt.
 
 The five provider crates own **73** canonical contract modules; **48** shared or
 application-level modules live in six `providers/quirin-provider-*` crates: five
