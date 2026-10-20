@@ -1,8 +1,8 @@
 # Evidence-only contract hypothesis graphs
 
 Completed on `codex/contract-hypothesis-graph-v1`, based on
-`198f6fc4349d3a47591a2378835ae9286859d918`. Design and the zero-movement
-prediction were committed as `1a2e40c95` before implementation. The frozen implementation source is
+`198f6fc4349d3a47591a2378835ae9286859d918`. The [design and zero-movement
+prediction](design.md) were committed as `1a2e40c95` before implementation. The frozen implementation source is
 `5b5a8c0f05bef6aece8b57d90a2d405a459c29ea`; all three route comparisons
 reproduce the base after graph erasure and exactly attributed provenance.
 
@@ -37,6 +37,11 @@ acyclicity, canonical graph validity before composition, compatible contexts,
 warrant independence, erasure and refusal when an open/refuted atom is
 inserted. These are model theorems, not extraction of the Rust loader or a
 proof of Clang import fidelity.
+
+The [tracked grammar census](grammar-census.json), reproduced by
+`scripts/census.py`, examines 1,443 source/Rust-test inputs: the lexer and
+113-word reserved-name function remain byte-identical to base, both new heads
+remain contextual/unreserved, and there are **zero new source words or tokens**.
 
 ## Controls
 
@@ -86,7 +91,9 @@ doctest**, **25 Python tests**, check, formatting, Clippy, contract checks and
 all five rebuilt/verified packages. [Provider commands and exits](gate/provider-commands.json)
 name the complete logs in `provider-4/`. The post-committed-matrix Python suite passes **374 tests**, exit0 in30.531s;
 `python-post-matrix-1.log` and `.exit` are under the private evidence root.
-The final regenerated-matrix confirmation is `python-post-matrix-2.log`/`.exit`.
+The final regenerated-matrix confirmation also passes **374 tests**, exit0 in
+30.212s at committed matrix `151327746`. [Commands, exits and exact logs](gate/python-commands.json)
+are archived; both full logs are compressed beside that receipt.
 
 Superseded attempts are retained in [validation-attempts.json](validation-attempts.json): malformed initial custody fixture syntax
 (four failing new tests, subsequently corrected); an inheritance ID/formal
