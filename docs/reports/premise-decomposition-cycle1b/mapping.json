@@ -1,0 +1,31 @@
+{
+  "base": "2d8f6d34257db14031a2578ce14f941bee25fc19",
+  "module": "providers/quirin-provider-libc/contracts/libc/errno.qv",
+  "legacy_name": "nested_call_admission",
+  "declarations": {
+    "__errno_location": {
+      "before_statement": "...",
+      "atoms": {
+        "checked_reading_route": "...",
+        "scalar_declaration": "both checked reading routes require this unit's unambiguous declaration to return exactly one pointer level over a scalar type",
+        "untracked_effects": "both checked reading routes bind, release, escape and address nothing the projection tracks"
+      },
+      "after_statement": "all(checked_reading_route,scalar_declaration,untracked_effects)",
+      "scope": "every read at a call site in the audited translation unit; exact graph Context binds artifact/property/profile/scope/bounds/assumptions/source/build/evidence version",
+      "discharge": "Each opaque atom remains open/declared. Proof or source checks must establish the entire guarded proposition at every relevant reading position and exact independently held Context; no graph consumer exists."
+    },
+    "strerror": {
+      "before_statement": "a dereference of this call's result is read only under the checked reading rules: either the nested-call admission of O04-TRACE and CONSTRUCTOR-RESIDUALS (N1-N10, including a whole Borrowed or data-tail actual modulo the dereference wrapper and exact written arity), or W48-BOTTOM-UP-BATCH3 scalar condition admission (an external zero-argument call with this no-custody result, no container effect, exactly one dereference compared by equality or inequality with a decimal literal, the ordinary call checks retained and both outcomes explored); both require this unit's unambiguous declaration to return exactly one pointer level over a scalar type and bind, release, escape and address nothing the projection tracks",
+      "atoms": {
+        "checked_nested_site": "a dereference of this call's result is read only under the checked reading rules: either the nested-call admission of O04-TRACE and CONSTRUCTOR-RESIDUALS (N1-N10, including a whole Borrowed or data-tail actual modulo the dereference wrapper and exact written arity), or W48-BOTTOM-UP-BATCH3 scalar condition admission (an external zero-argument call with this no-custody result, no container effect, exactly one dereference compared by equality or inequality with a decimal literal, the ordinary call checks retained and both outcomes explored); both require this unit's unambiguous declaration to return exactly one pointer level over a scalar type and bind, release, escape and address nothing the projection tracks",
+        "contract_in_force": "this declaration meets nested-call admission premise N3: a contract in force",
+        "no_custody_result": "this declaration meets nested-call admission premise N6: result mode None",
+        "parameters_borrowed": "this declaration meets nested-call admission premise N7: every parameter Borrowed",
+        "remaining_site_checks": "the nested-call admission checks the rest of its premises per site"
+      },
+      "after_statement": "all(checked_nested_site,contract_in_force,no_custody_result,parameters_borrowed,remaining_site_checks)",
+      "scope": "every read at a call site in the audited translation unit; exact graph Context binds artifact/property/profile/scope/bounds/assumptions/source/build/evidence version",
+      "discharge": "Each opaque atom remains open/declared. Proof or source checks must establish the entire guarded proposition at every relevant reading position and exact independently held Context; no graph consumer exists."
+    }
+  }
+}
