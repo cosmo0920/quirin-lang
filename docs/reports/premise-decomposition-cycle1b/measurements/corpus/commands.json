@@ -1,0 +1,75 @@
+{
+  "first_attempt": [
+    {
+      "command": [
+        "python3",
+        "docs/reports/premise-decomposition-cycle1b/scripts/compare.py",
+        "corpus",
+        "private/premise-decomposition-cycle1b/runs-1/corpus/before",
+        "private/premise-decomposition-cycle1b/runs-1/corpus/after",
+        "docs/reports/premise-decomposition-cycle1b/measurements/corpus"
+      ],
+      "exit": 1,
+      "log": "private/premise-decomposition-cycle1b/compare-corpus-1.log"
+    },
+    {
+      "command": [
+        "python3",
+        "docs/reports/premise-decomposition-cycle1b/scripts/attribute_time_identity.py",
+        "corpus",
+        "docs/reports/premise-decomposition-cycle1b/measurements/corpus"
+      ],
+      "exit": 1,
+      "log": "private/premise-decomposition-cycle1b/compare-corpus-2.log"
+    }
+  ],
+  "completed_attributions_and_publication": [
+    {
+      "command": [
+        "python3",
+        "docs/reports/premise-decomposition-cycle1b/scripts/attribute_time_identity.py",
+        "corpus",
+        "docs/reports/premise-decomposition-cycle1b/measurements/corpus",
+        "--residual",
+        "docs/reports/premise-decomposition-cycle1b/measurements/corpus/cwd-attributed-residual-differences.json.gz"
+      ],
+      "exit": 0,
+      "log": "private/premise-decomposition-cycle1b/publish-corpus-final-1.log"
+    },
+    {
+      "command": [
+        "python3",
+        "docs/reports/premise-decomposition-cycle1b/scripts/publish_route.py",
+        "private/premise-decomposition-cycle1b/runs-1/corpus/before",
+        "private/premise-decomposition-cycle1b/runs-1/corpus/after",
+        "docs/reports/premise-decomposition-cycle1b/measurements/corpus/publication"
+      ],
+      "exit": 0,
+      "log": "private/premise-decomposition-cycle1b/publish-corpus-final-2.log"
+    }
+  ],
+  "cwd_build": {
+    "command": [
+      "rustc",
+      "--edition=2024",
+      "/home/cosmo/.codex/worktrees/premise-decomposition-cycle1b/qcore-c/docs/reports/premise-decomposition-cycle1b/scripts/cwd_task_provenance.rs",
+      "-L",
+      "dependency=/home/cosmo/.codex/worktrees/premise-decomposition-cycle1b/qcore-c/target/release/deps",
+      "--extern",
+      "qcore_schemas=/home/cosmo/.codex/worktrees/premise-decomposition-cycle1b/qcore-c/target/release/deps/libqcore_schemas-edb315d9d169061e.rlib",
+      "--extern",
+      "serde_json=/home/cosmo/.codex/worktrees/premise-decomposition-cycle1b/qcore-c/target/release/deps/libserde_json-08241b9b75b89117.rlib",
+      "-o",
+      "/home/cosmo/.codex/worktrees/premise-decomposition-cycle1b/qcore-c/private/premise-decomposition-cycle1b/cwd-task-provenance"
+    ],
+    "exit": 0
+  },
+  "cwd_replay": {
+    "command": [
+      "/home/cosmo/.codex/worktrees/premise-decomposition-cycle1b/qcore-c/private/premise-decomposition-cycle1b/cwd-task-provenance",
+      "/home/cosmo/.codex/worktrees/premise-decomposition-cycle1b/qcore-c/docs/reports/premise-decomposition-cycle1b/measurements/corpus/cwd-proof-input.json",
+      "/home/cosmo/.codex/worktrees/premise-decomposition-cycle1b/qcore-c/docs/reports/premise-decomposition-cycle1b/measurements/corpus/cwd-task-proof.json"
+    ],
+    "exit": 0
+  }
+}

@@ -1,0 +1,152 @@
+{
+  "source_freeze": "13500ce9d9c71534357e44d6d505a58f52758661",
+  "baseline_source": "2d8f6d34257db14031a2578ce14f941bee25fc19",
+  "linked_program_context": "../linked-program-context.json",
+  "routes": {
+    "corpus": {
+      "counts": {
+        "Unknown": 3859,
+        "Safe": 966,
+        "Unsafe": 9
+      },
+      "before_counts": {
+        "Unknown": 3859,
+        "Safe": 966,
+        "Unsafe": 9
+      },
+      "null_records": 4921,
+      "unrelated_graphs_exactly_equal": 438,
+      "migrated_graphs": {
+        "__errno_location": {
+          "before_atoms": 1,
+          "after_atoms": 3,
+          "consulting_rows": 161,
+          "consulting_safe_rows": 10
+        },
+        "strerror": {
+          "before_atoms": 1,
+          "after_atoms": 5,
+          "consulting_rows": 40,
+          "consulting_safe_rows": 0
+        }
+      },
+      "impact": {
+        "potential_consulting_rows": 161,
+        "exact_context_affected": 1,
+        "dependent_other_contexts_unchanged": 160,
+        "unrelated": 4673,
+        "verdict_rewrites": 0
+      },
+      "invocations": {
+        "before": {
+          "exit": 0,
+          "seconds": 1922.541432,
+          "jobs": 16,
+          "binary_sha256": "1fbfe1bb8f3d1a2bfd4d8323489b1431e0ba917941645f7ce09898f8051396b7"
+        },
+        "after": {
+          "exit": 0,
+          "seconds": 1921.30482,
+          "jobs": 16,
+          "binary_sha256": "a547dfe9dad5acd26b489af28796e913e10787a325bbbe044c4de3d3a40e5bc2"
+        }
+      },
+      "all_semantic_records_equal_after_documented_exact_attribution": true,
+      "unexplained_residual_leaves_after_all_proofs": 0
+    },
+    "system": {
+      "counts": {
+        "Unknown": 345,
+        "Safe": 99,
+        "Unsafe": 4
+      },
+      "before_counts": {
+        "Unknown": 345,
+        "Safe": 99,
+        "Unsafe": 4
+      },
+      "null_records": 454,
+      "unrelated_graphs_exactly_equal": 117,
+      "migrated_graphs": {
+        "__errno_location": {
+          "before_atoms": 1,
+          "after_atoms": 3,
+          "consulting_rows": 68,
+          "consulting_safe_rows": 6
+        }
+      },
+      "impact": {
+        "potential_consulting_rows": 68,
+        "exact_context_affected": 1,
+        "dependent_other_contexts_unchanged": 67,
+        "unrelated": 380,
+        "verdict_rewrites": 0
+      },
+      "invocations": {
+        "before": {
+          "exit": 0,
+          "seconds": 329.848437,
+          "jobs": 8,
+          "binary_sha256": "1fbfe1bb8f3d1a2bfd4d8323489b1431e0ba917941645f7ce09898f8051396b7"
+        },
+        "after": {
+          "exit": 0,
+          "seconds": 325.689373,
+          "jobs": 8,
+          "binary_sha256": "a547dfe9dad5acd26b489af28796e913e10787a325bbbe044c4de3d3a40e5bc2"
+        }
+      },
+      "all_semantic_records_equal_after_documented_exact_attribution": true,
+      "unexplained_residual_leaves_after_all_proofs": 0
+    },
+    "slice": {
+      "counts": {
+        "Unknown": 346,
+        "Safe": 53,
+        "Pending": 4,
+        "Unsafe": 1
+      },
+      "before_counts": {
+        "Unknown": 346,
+        "Safe": 53,
+        "Pending": 4,
+        "Unsafe": 1
+      },
+      "null_records": 406,
+      "unrelated_graphs_exactly_equal": 102,
+      "migrated_graphs": {
+        "__errno_location": {
+          "before_atoms": 1,
+          "after_atoms": 3,
+          "consulting_rows": 65,
+          "consulting_safe_rows": 7
+        }
+      },
+      "impact": {
+        "potential_consulting_rows": 65,
+        "exact_context_affected": 1,
+        "dependent_other_contexts_unchanged": 64,
+        "unrelated": 339,
+        "verdict_rewrites": 0
+      },
+      "invocations": {
+        "before": {
+          "exit": 0,
+          "seconds": 272.339691,
+          "jobs": 8,
+          "binary_sha256": "1fbfe1bb8f3d1a2bfd4d8323489b1431e0ba917941645f7ce09898f8051396b7"
+        },
+        "after": {
+          "exit": 0,
+          "seconds": 271.655454,
+          "jobs": 8,
+          "binary_sha256": "a547dfe9dad5acd26b489af28796e913e10787a325bbbe044c4de3d3a40e5bc2"
+        }
+      },
+      "all_semantic_records_equal_after_documented_exact_attribution": true,
+      "unexplained_residual_leaves_after_all_proofs": 0
+    }
+  },
+  "null_records": 5781,
+  "verdict_rewrites": 0
+}

@@ -1,0 +1,41 @@
+[
+  {
+    "after_obligation_ids": [
+      "resource_contracts:fce5ec4dbdf9d4b539a03030"
+    ],
+    "after_task_digest": "7afc1c112ac28cd2855fa1054869c9d23a0e514b3e3f3cd130ec178766afd368",
+    "before_obligation_ids": [
+      "resource_contracts:9f17048b0048f5c1a12d9b3a"
+    ],
+    "before_task_digest": "43676aaac5bad55fcb8e7ccee63a757295dc7043bc6b9cb37c6b00eaafff73b2",
+    "complete_tasks_equal_after_exact_import_identity_restoration": true,
+    "index": 16,
+    "wrong_build_digest_negative_control_rejected": true
+  },
+  {
+    "after_obligation_ids": [
+      "resource_contracts:819bad9bbce42547d82584bb"
+    ],
+    "after_task_digest": "f856f52b6f4b674dfc74e6c6eda5aa6ea9fd48bfdc3a6de6ee4c39156a2caf30",
+    "before_obligation_ids": [
+      "resource_contracts:2d368b246b26b43edb619f47"
+    ],
+    "before_task_digest": "ce0e01dbc18727d0e549f0b9b0eb6b05be72eb4cf1392952ce18b3460e945354",
+    "complete_tasks_equal_after_exact_import_identity_restoration": true,
+    "index": 24,
+    "wrong_build_digest_negative_control_rejected": true
+  },
+  {
+    "after_obligation_ids": [
+      "resource_contracts:ee63f2b7166b8c821ec173f0"
+    ],
+    "after_task_digest": "69ddf1d64e00ec72265fe635f106407317b129878d87961e2338e63cb08d317b",
+    "before_obligation_ids": [
+      "resource_contracts:3499e1642b986af26f32e648"
+    ],
+    "before_task_digest": "a201f406a8eaeb484ed43ab84129fbc80acb9c52f85d9204bf88574f1f421a2d",
+    "complete_tasks_equal_after_exact_import_identity_restoration": true,
+    "index": 63,
+    "wrong_build_digest_negative_control_rejected": true
+  }
+]

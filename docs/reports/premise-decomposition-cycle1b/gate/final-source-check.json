@@ -1,0 +1,20 @@
+{
+  "command": [
+    "git",
+    "diff",
+    "--exit-code",
+    "13500ce9d9c71534357e44d6d505a58f52758661",
+    "--",
+    "crates",
+    "proof",
+    "providers",
+    "contract",
+    "scripts",
+    "Cargo.toml",
+    "Cargo.lock",
+    "rust-toolchain.toml",
+    "build.rs"
+  ],
+  "exit": 0,
+  "meaning": "Actual working source tree, including staged/unstaged tracked files, remains identical to frozen production/control/provider/proof source. Later Rust/Python helpers live only in report evidence."
+}

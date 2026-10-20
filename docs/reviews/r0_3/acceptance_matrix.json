@@ -6754,7 +6754,7 @@
   "note": "providers/ is a separate Cargo workspace, excluded from the core workspace; P01 verified empirically that the core workspace builds and passes its full suite with providers/ moved out of the tree."
  },
  "validation": {
-  "note": "Cycle1B exact base2d8f6d342, frozen production/control source13500ce9d. Standing Rust8374/0failed/15ignored(524units537summaries),347Lean,fmt/Clippy/examples0; provider133Rust/1ignored,25Python,all5rebuilt+verified. Initial Python374ran/1failed solely stale matrix346vs347; post-committed-matrix confirmation pending, not claimed green. Fresh corpus/system/slice pairs remain pending; zero movement is still a prediction.",
+  "note": "Frozen production/control/proof source13500ce9d9;8374Rust/0failed/15ignored(524units537summaries),347Lean,fmt/Clippy/reevaluation0;provider133Rust/1ignored,25Python,all5rebuilt+verified. Initial374Python1failure(stale346vs347matrix) retained; actualpost-committed-a342matrix374pass33.002s. Sixownfreshaudits0 underfixedsix-home context; all5781null+fullruntime/static records equal after exact documented graph/module/pin/root/config/cwd/time provenance attribution. No new truth or standing authority. Final regenerated-matrix confirmation follows the committed matrix.",
   "workspace_tests": 8374,
   "provider_tests": 133,
   "python_evidence_validator_tests": 374,
@@ -7112,7 +7112,7 @@
   "reevaluation_followup_exit": 0,
   "cargo_fmt": "clean",
   "cargo_clippy": "clean",
-  "standing_gate": "incomplete: post-committed-matrix Python pending",
+  "standing_gate": "passed",
   "full_language_conformance": false,
   "measurement_provenance": "integrator_supplied (docs/reports/premise-decomposition-cycle1b/gate.json)"
  },

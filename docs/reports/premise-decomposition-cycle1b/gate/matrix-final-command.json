@@ -1,0 +1,14 @@
+{
+  "command": [
+    "python3",
+    "docs/reports/remaining-d02/build_matrix.py",
+    ".",
+    "--gate",
+    "docs/reports/premise-decomposition-cycle1b/gate.json"
+  ],
+  "environment": {
+    "PYTHONPATH": "scripts"
+  },
+  "exit": 0,
+  "log": "private/premise-decomposition-cycle1b/matrix-final-2.log"
+}

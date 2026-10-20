@@ -1,0 +1,14 @@
+{
+  "command": [
+    "/usr/bin/python3",
+    "/home/cosmo/.codex/worktrees/premise-decomposition-cycle1b/qcore-c/docs/reports/corpus-repin/diff_artifacts.py",
+    "--archived",
+    "docs/reports/premise-decomposition-cycle1b/measurements/corpus/publication/standard-archived",
+    "--measured",
+    "private/premise-decomposition-cycle1b/runs-1/corpus/after",
+    "--output",
+    "docs/reports/premise-decomposition-cycle1b/measurements/corpus/publication/standard-five-artifact-diff.json",
+    "--full"
+  ],
+  "exit": 0
+}
