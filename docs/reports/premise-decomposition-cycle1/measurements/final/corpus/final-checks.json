@@ -1,0 +1,109 @@
+{
+  "route": "corpus",
+  "checks": {
+    "all_complete_record_differences_exactly_attributed": true,
+    "full_original_input_contract_environment_equal_after_root_restoration": true,
+    "all_complete_compile_configurations_attributed": true,
+    "all_rows_actual_closed_world_facts_equal": true,
+    "production_lock_byte_identical": true,
+    "diagnostic_counts": true,
+    "full_null_dictionaries": true,
+    "null_summary": true,
+    "full_runtime_projection": true,
+    "declaration_and_clause_standing": true
+  },
+  "all_checks_pass": true,
+  "base": {
+    "Unknown": 3859,
+    "Safe": 966,
+    "Unsafe": 9
+  },
+  "tip": {
+    "Unknown": 3859,
+    "Safe": 966,
+    "Unsafe": 9
+  },
+  "null_rows": {
+    "base": 4921,
+    "tip": 4921
+  },
+  "potential_declaration_users": 4,
+  "hypothetically_affected_report_candidate_instances": 1,
+  "dependent_other_contexts_unchanged": 3,
+  "unrelated_custody_records": 4830,
+  "production_verdict_or_assumption_changes": 0,
+  "scope": "Exact original production data; nine-atom decomposition is report-owned, with source/model attachment open. Six-home link-map context does not supersede seven-home coverage.",
+  "retained_initial_comparison_exit": 1,
+  "commands": [
+    {
+      "command": [
+        "/usr/bin/python3",
+        "/home/cosmo/.codex/worktrees/premise-decomposition-cycle1/qcore-c/docs/reports/premise-decomposition-cycle1/scripts/compare.py",
+        "corpus",
+        "/home/cosmo/.codex/worktrees/premise-decomposition-cycle1/qcore-c/private/premise-decomposition-cycle1/measure-1/corpus/base",
+        "/home/cosmo/.codex/worktrees/premise-decomposition-cycle1/qcore-c/private/premise-decomposition-cycle1/measure-1/corpus/tip",
+        "/home/cosmo/.codex/worktrees/premise-decomposition-cycle1/qcore-c/docs/reports/premise-decomposition-cycle1/measurements/final/corpus"
+      ],
+      "exit": 1,
+      "log": "/home/cosmo/.codex/worktrees/premise-decomposition-cycle1/qcore-c/private/premise-decomposition-cycle1/final-comparison-inputs/corpus/compare.log"
+    },
+    {
+      "command": [
+        "/usr/bin/python3",
+        "/home/cosmo/.codex/worktrees/premise-decomposition-cycle1/qcore-c/docs/reports/premise-decomposition-cycle1/scripts/attribute_metadata.py",
+        "corpus",
+        "--comparison",
+        "/home/cosmo/.codex/worktrees/premise-decomposition-cycle1/qcore-c/docs/reports/premise-decomposition-cycle1/measurements/final/corpus",
+        "--raw-root",
+        "/home/cosmo/.codex/worktrees/premise-decomposition-cycle1/qcore-c/private/premise-decomposition-cycle1/final-comparison-inputs/corpus",
+        "--environment-directory",
+        "/home/cosmo/.codex/worktrees/premise-decomposition-cycle1/qcore-c/private/premise-decomposition-cycle1/final-environment"
+      ],
+      "exit": 0,
+      "log": "/home/cosmo/.codex/worktrees/premise-decomposition-cycle1/qcore-c/private/premise-decomposition-cycle1/final-comparison-inputs/corpus/attribute_metadata.log"
+    },
+    {
+      "command": [
+        "/usr/bin/python3",
+        "/home/cosmo/.codex/worktrees/premise-decomposition-cycle1/qcore-c/docs/reports/premise-decomposition-cycle1/scripts/attribute_time_identity.py",
+        "/home/cosmo/.codex/worktrees/premise-decomposition-cycle1/qcore-c/docs/reports/premise-decomposition-cycle1/measurements/final/corpus",
+        "/home/cosmo/.codex/worktrees/premise-decomposition-cycle1/qcore-c/private/premise-decomposition-cycle1/time-source-1/corpus.c",
+        "/home/cosmo/.codex/worktrees/premise-decomposition-cycle1/qcore-c/private/premise-decomposition-cycle1/time-source-1/corpus.json"
+      ],
+      "exit": 0,
+      "log": "/home/cosmo/.codex/worktrees/premise-decomposition-cycle1/qcore-c/private/premise-decomposition-cycle1/final-comparison-inputs/corpus/attribute_time_identity.log"
+    },
+    {
+      "command": [
+        "/usr/bin/python3",
+        "/home/cosmo/.codex/worktrees/premise-decomposition-cycle1/qcore-c/docs/reports/premise-decomposition-cycle1/scripts/five_artifacts.py",
+        "final-corpus",
+        "/home/cosmo/.codex/worktrees/premise-decomposition-cycle1/qcore-c/private/premise-decomposition-cycle1/measure-1/corpus/base",
+        "/home/cosmo/.codex/worktrees/premise-decomposition-cycle1/qcore-c/private/premise-decomposition-cycle1/measure-1/corpus/tip",
+        "/home/cosmo/.codex/worktrees/premise-decomposition-cycle1/qcore-c/docs/reports/premise-decomposition-cycle1/measurements/final/corpus/five-artifacts.json"
+      ],
+      "exit": 0,
+      "log": "/home/cosmo/.codex/worktrees/premise-decomposition-cycle1/qcore-c/private/premise-decomposition-cycle1/final-comparison-inputs/corpus/five_artifacts.log"
+    },
+    {
+      "command": [
+        "/home/cosmo/.codex/worktrees/premise-decomposition-cycle1/qcore-c/target/debug/examples/premise_outer_facts",
+        "/home/cosmo/.codex/worktrees/premise-decomposition-cycle1/qcore-c/private/premise-decomposition-cycle1/measure-1/corpus/base/resource-diagnostics.json",
+        "/home/cosmo/.codex/worktrees/premise-decomposition-cycle1/qcore-c/private/premise-decomposition-cycle1/measure-1/corpus/base/resource-diagnostics.contracts.json",
+        "/home/cosmo/.codex/worktrees/premise-decomposition-cycle1/qcore-c/private/premise-decomposition-cycle1/final-comparison-inputs/corpus/base-outer-facts.json"
+      ],
+      "exit": 0,
+      "output": "/home/cosmo/.codex/worktrees/premise-decomposition-cycle1/qcore-c/private/premise-decomposition-cycle1/final-comparison-inputs/corpus/base-outer-facts.json"
+    },
+    {
+      "command": [
+        "/home/cosmo/.codex/worktrees/premise-decomposition-cycle1/qcore-c/target/debug/examples/premise_outer_facts",
+        "/home/cosmo/.codex/worktrees/premise-decomposition-cycle1/qcore-c/private/premise-decomposition-cycle1/measure-1/corpus/tip/resource-diagnostics.json",
+        "/home/cosmo/.codex/worktrees/premise-decomposition-cycle1/qcore-c/private/premise-decomposition-cycle1/measure-1/corpus/tip/resource-diagnostics.contracts.json",
+        "/home/cosmo/.codex/worktrees/premise-decomposition-cycle1/qcore-c/private/premise-decomposition-cycle1/final-comparison-inputs/corpus/tip-outer-facts.json"
+      ],
+      "exit": 0,
+      "output": "/home/cosmo/.codex/worktrees/premise-decomposition-cycle1/qcore-c/private/premise-decomposition-cycle1/final-comparison-inputs/corpus/tip-outer-facts.json"
+    }
+  ]
+}

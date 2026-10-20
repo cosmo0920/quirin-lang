@@ -1,0 +1,431 @@
+module contract;
+
+// cJSON entity release — resource-projection vocabulary version 1.
+//
+// Card W36-CORPUS-CONTRACTS-3. ONE TRUSTED ASSUMPTION about one upstream
+// function. This module verifies nothing: the C body is not analyzed by this
+// loader, and a declaration is a premise. Any verdict that rests on it is a
+// verdict RELATIVE TO this declaration, never a proof of the C implementation.
+//
+// Read from the pinned checkout (`build/cycle19/fluent-bit-clang-source`) at
+// Fluent Bit 66910c10a4d7eafa810b84229cf2dcf7b0f26f97 on this card's own run.
+//
+// ## Where cJSON lives, measured rather than assumed
+//
+// There is no `lib/cjson/` in the pinned tree. The only cJSON is the copy
+// VENDORED INSIDE librdkafka, `lib/librdkafka-2.15.0/src/cJSON.{c,h}`, which is
+// why this module sits in the `librdkafka` family rather than a family of its
+// own. `librdkafka/cJSON.c` is one of the 185 audited units.
+//
+// ## Why this callee
+//
+// Three projected functions in the baseline are blocked by `cJSON_Delete` and
+// by nothing else, all three in that same unit and each holding exactly one
+// leaf: `cJSON_DeleteItemFromArray` (`lib/librdkafka-2.15.0/src/cJSON.c:2291`),
+// `cJSON_DeleteItemFromObject` (`:2310`) and
+// `cJSON_DeleteItemFromObjectCaseSensitive` (`:2315`). All three are one-line
+// detach-then-delete wrappers, e.g. (`:2288-2291`)
+//
+//     CJSON_PUBLIC(void) cJSON_DeleteItemFromArray(cJSON *array, int which)
+//     {
+//         cJSON_Delete(cJSON_DetachItemFromArray(array, which));
+//     }
+//
+// ## `cJSON_Delete`, read from `lib/librdkafka-2.15.0/src/cJSON.c:253-276`
+//
+//     CJSON_PUBLIC(void) cJSON_Delete(cJSON *item)
+//     {
+//         cJSON *next = NULL;
+//         while (item != NULL)
+//         {
+//             next = item->next;
+//             if (!(item->type & cJSON_IsReference) && (item->child != NULL))
+//             {
+//                 cJSON_Delete(item->child);
+//             }
+//             if (!(item->type & cJSON_IsReference) && (item->valuestring != NULL))
+//             {
+//                 global_hooks.deallocate(item->valuestring);
+//                 item->valuestring = NULL;
+//             }
+//             if (!(item->type & cJSON_StringIsConst) && (item->string != NULL))
+//             {
+//                 global_hooks.deallocate(item->string);
+//                 item->string = NULL;
+//             }
+//             global_hooks.deallocate(item);
+//             item = next;
+//         }
+//     }
+//
+//   * `item` is the ONLY parameter. On the first iteration the loop reaches
+//     `global_hooks.deallocate(item)` unconditionally — the two guarded
+//     `deallocate` calls above it concern `item->valuestring` and
+//     `item->string`, not `item` — so the storage `item` addresses stops being
+//     the caller's. That is what `resource_released` says.
+//   * The nullability marker is **`nullable`**, and the ground is the loop
+//     condition itself rather than a separate guard: `while (item != NULL)` is
+//     evaluated BEFORE any dereference, so `cJSON_Delete(NULL)` executes zero
+//     iterations and returns. A null argument is tolerated and is not a defect
+//     at any call site. That matters concretely here: at all three call sites
+//     the argument is the result of a `cJSON_DetachItem…` call, which returns
+//     NULL when the item is not found, so the null path is REACHED and
+//     `nonnull` would have been the wrong reading.
+//   * `CJSON_PUBLIC` is a visibility/dllexport wrapper macro, not a calling
+//     convention this projection models; `cJSON_Delete` is an ordinary
+//     function.
+//   * The result is `void`, so `resource_return_none()` is the faithful — and
+//     the only faithful — result mode.
+//
+// ## The sibling chain, stated rather than hidden — the load-bearing boundary
+//
+// This body does NOT release only `item`. The `item = next` step walks the
+// whole `next` chain, and the `cJSON_Delete(item->child)` recursion walks the
+// whole subtree, so one call releases an entire sibling list and everything
+// below it. `resource_released(item, nullable)` states the custody fact about
+// `item` and says NOTHING about the rest. That is faithful but NOT complete: if
+// some caller held a separate tracked identity for a SIBLING of `item`, this
+// declaration would not report that the sibling had been released too.
+//
+// At the three call sites that motivate this module the question does not
+// arise, and that was checked rather than assumed: each passes the result of
+// `cJSON_DetachItemViaPointer` (reached through `cJSON_DetachItemFromArray` at
+// `:2280-2284` and `cJSON_DetachItemFromObject` at `:2294-2299`), i.e. an item
+// already unlinked from its list, and no analysed call site in the corpus binds
+// a sibling separately. The gap is recorded as the named residual
+// `CJSON-DELETE-SIBLING-CHAIN` rather than left implicit, and its discharge
+// condition is a call site that binds two items of one chain — which would need
+// the v1 vocabulary to carry "releases a set reachable from this parameter",
+// which it does not.
+//
+// ## ABI and modes (constraint 8)
+//
+// `lib/librdkafka-2.15.0/src/cJSON.h:170-171` declares
+//
+//     CJSON_PUBLIC(void) cJSON_Delete(cJSON *item);
+//
+// One object-pointer level — `ptr<mut, u8>` — and a `void` result, spelled
+// `unit`. Arity one, matching every analysed call site; not variadic, so no
+// `resource_variadic_data_tail()`.
+//
+// ## Declared although defined in a corpus unit
+//
+// `cJSON_Delete` is defined in `librdkafka/cJSON.c`, which is ALSO the unit
+// holding all three call sites — so unlike this card's other five cases the
+// declaration and the derived W4 summary meet in the SAME unit, and constraint
+// 8's duty gate is live here rather than vacuous. That is deliberate and is
+// measured, not assumed: a declared contract wins over an inferred summary, a
+// disagreement is reported as a `SummaryConflict` diagnostic and never silently
+// resolved, and a duty contradiction would withdraw the declaration for this
+// unit — which is exactly the unit whose three functions it exists to decide.
+// The card's measured result reports whether that happened.
+//
+// ## NOT CLAIMED
+//
+//   * Nothing about `global_hooks.deallocate` — an indirect call through a
+//     file-scope hook table, which this projection does not model and which is
+//     not declared here.
+//   * Nothing about the recursion terminating, or about the subtree being
+//     acyclic.
+//   * Nothing about double release or use-after-free, which the gateway's own
+//     liveness precondition refuses on settled denotations, unchanged here.
+//   * Nothing about thread safety or ordering.
+
+// --- the cJSON entity's release (and, upstream, its whole sibling chain) ----
+extern fn cJSON_Delete(item: ptr<mut, u8>) -> unit
+contract {
+    requires resource_contract_v1;
+    ensures normal resource_released(item, nullable);
+    ensures normal resource_return_none();
+};
+
+// ## Card W45-CALLEE-CASCADE-RESIDUAL: `cJSON_New_Item`
+//
+// ONE TRUSTED ASSUMPTION, pinned (contract spec C06.2) after reading the body
+// at both audited revisions (`lib/librdkafka-2.15.0/src/cJSON.c` is
+// byte-identical at `66910c10` and `046accf6`). It is the only uncontracted
+// call of ten projected functions in the same unit, each `item =
+// cJSON_New_Item(&global_hooks); if (item) { <fields> } return item;`:
+// `cJSON_CreateNull`, `_True`, `_False`, `_Bool`, `_Number`, `_Array`,
+// `_Object`, `_StringReference`, `_ObjectReference` and `_ArrayReference`
+// (`:2446-2603`). Measured on main `3905139cd`: the head of the 704 functions
+// blocked by uncontracted calls alone.
+//
+// ## The body, read from `lib/librdkafka-2.15.0/src/cJSON.c:241-250`
+//
+//     static cJSON *cJSON_New_Item(const internal_hooks * const hooks)
+//     {
+//         cJSON* node = (cJSON*)hooks->allocate(sizeof(cJSON));
+//         if (node)
+//         {
+//             memset(node, '\0', sizeof(cJSON));
+//         }
+//
+//         return node;
+//     }
+//
+//   * The result is a fresh allocation or NULL, handed to the caller:
+//     `resource_return_owned(nullable)`. `hooks->allocate` is `malloc` in
+//     `global_hooks` (`:186`; `internal_malloc` is `#define`d to `malloc` off
+//     MSVC, `:178`) unless `cJSON_InitHooks` installed a user allocator; the
+//     release is `cJSON_Delete` (above), which frees the node through the
+//     matching `deallocate` hook. The parse paths pass
+//     `&input_buffer->hooks`, a copy of `global_hooks` (`:1159`).
+//   * `hooks` is read (one indirect call through its first member) and not
+//     stored: `resource_borrowed`.
+//
+// ## ABI (constraint 8)
+//
+// `static`, one definition in the tree. `const internal_hooks * const` is one
+// object-pointer level to a const tagged struct (`typedef struct
+// internal_hooks {...} internal_hooks;`, `:156-161`), `ptr<const, u8>`;
+// `cJSON *` is `ptr<mut, u8>`.
+//
+// NOT CLAIMED: that `hooks->allocate` is `malloc` (a user hook pair is a
+// premise of whoever installed it); anything about `cJSON_InitHooks` changing
+// the hooks between an allocation and its release.
+//
+// Card VERDICT-CONTRACT-PREMISE-ANNOTATIONS: stated on `cJSON_New_Item` as
+// `requires resource_premise(cjson_allocator_hooks, "...")` (contract spec
+// C04.18), so every verdict that rests on the declaration names it.
+
+// --- the cJSON node constructor --------------------------------------------
+extern fn cJSON_New_Item(hooks: ptr<const, u8>) -> ptr<mut, u8>
+contract {
+    requires resource_contract_v1;
+    requires resource_premise(cjson_allocator_hooks, "hooks->allocate returns a fresh allocation or NULL, which cJSON_Delete releases through the matching deallocate hook: malloc and free in global_hooks (cJSON.c:178, :186) unless cJSON_InitHooks installed a user pair, a premise of whoever installed it; nothing is stated about the hooks changing between the allocation and its release");
+    ensures normal resource_borrowed(hooks);
+    ensures normal resource_return_owned(nullable);
+};
+
+// ## Card CALLEE-RETENTION-CLASS1, stage (a): the custody-taking inserts
+//
+// USER DECISION 2026-10-05 (W48-CALLEE-DECISION-TABLE class 1, "split by
+// shape"): a custody-taking insert is a conditional custody transfer on
+// success, stated as a return-code disposition (contract spec C04.13, gateway
+// rule 11r), with no new vocabulary. Each declaration below is pinned (C06.2)
+// after reading the body at both audited revisions
+// (`lib/librdkafka-2.15.0/src/cJSON.c` is byte-identical at `66910c10` and
+// `046accf6`). Both functions are `static` in `cJSON.c`, the unit that also
+// holds their callers, so each declaration is checked against its body there
+// (rules 11r(5) and 12s): a body summary that contradicts a class withdraws it.
+// `cJSON_bool` is `typedef int cJSON_bool;` (`cJSON.h:132`), `i32`; `true` and
+// `false` are `((cJSON_bool)1)` and `((cJSON_bool)0)` (`cJSON.c:65-70`).
+//
+// ## `add_item_to_array`, read from `cJSON.c:2012-2042`
+//
+//     static cJSON_bool add_item_to_array(cJSON *array, cJSON *item)
+//     {
+//         cJSON *child = NULL;
+//         if ((item == NULL) || (array == NULL) || (array == item))
+//             return false;
+//         child = array->child;
+//         if (child == NULL) {
+//             array->child = item; item->prev = item; item->next = NULL;
+//         } else {
+//             if (child->prev) {
+//                 suffix_object(child->prev, item);
+//                 array->child->prev = item;
+//             }
+//         }
+//         return true;
+//     }
+//
+//   * A nonzero return links `item` into `array`'s child list: from then on
+//     `cJSON_Delete(array)` releases it (`cJSON_Delete` recurses into
+//     `child`, declared above), so the caller's custody moved:
+//     `resource_consumed`. A zero return touches nothing: the caller still
+//     holds `item`, `resource_owned`. Both classes `nullable`: a null `item`
+//     returns 0 before any dereference, and a null carries no custody.
+//   * `array` is read and its links written; its own custody is unchanged:
+//     `resource_borrowed`.
+//   * PREMISE (cJSON's list invariant, kept by every cJSON list operation): a
+//     non-empty array's `child->prev` is its last element, never NULL. If a
+//     caller broke it, the `child->prev == NULL` arm returns true without
+//     linking `item`, which this declaration would read as a transfer.
+//     Stated on the declaration as `requires
+//     resource_premise(cjson_list_invariant, "...")` (contract spec C04.18,
+//     card VERDICT-CONTRACT-PREMISE-ANNOTATIONS).
+//
+// ## `replace_item_in_object`, read from `cJSON.c:2412-2433` (with
+// `cJSON_ReplaceItemViaPointer`, `:2353-2400`, and `get_object_item`,
+// `:1936-1967`)
+//
+//   * `replacement == NULL` or `string == NULL` returns false untouched; the
+//     body then frees `replacement->string` (unless const) and replaces it by
+//     `cJSON_strdup(string)`, returning false when that fails: `replacement`
+//     owns the new key either way. `cJSON_ReplaceItemViaPointer(object,
+//     get_object_item(object, string, case_sensitive), replacement)` returns
+//     false for a null `object`, an empty object or a key not found (nothing
+//     linked), and true after linking `replacement` in the found item's place
+//     and `cJSON_Delete`-ing that item (an object-owned child). A nonzero
+//     return: `replacement` is the object's, `resource_consumed`; zero: still
+//     the caller's, `resource_owned`; both `nullable`.
+//   * `object` keeps its custody (a child it owned is replaced and released
+//     inside it): `resource_borrowed`. `string` is copied, never kept:
+//     `resource_borrowed`. `case_sensitive` is data.
+//   * The `replacement == item` arm returns true having changed nothing: the
+//     caller passed an object the object already held, which no live custody
+//     of the caller's can name (an `owned` or `consumed` position demands
+//     one).
+//
+// NOT CLAIMED: anything about `global_hooks`' allocator; anything about the
+// relative order of keys; that a released child was not also held elsewhere.
+// `add_item_to_object` is deliberately NOT declared: its `constant_key` arm
+// stores the caller's `string` in the item (`item->string =
+// cast_away_const(string)`, `:2077-2080`), a retained pointer (stage (b)), and
+// its callers pass `false`/`true` as casts, which no literal premise reads.
+
+// --- links `item` into `array` on a nonzero return -------------------------
+extern fn add_item_to_array(array: ptr<mut, u8>, item: ptr<mut, u8>) -> i32
+contract {
+    requires resource_contract_v1;
+    requires resource_premise(cjson_list_invariant, "cJSON's list invariant, kept by every cJSON list operation: a non-empty array's child->prev is its last element, never NULL; if a caller broke it, the child->prev == NULL arm returns true without linking item, which this declaration would read as a transfer");
+    ensures normal resource_borrowed(array);
+    ensures normal resource_on_return(ne, 0, resource_consumed(item, nullable));
+    ensures normal resource_on_return(eq, 0, resource_owned(item, nullable));
+    ensures normal resource_return_none();
+};
+
+// --- puts `replacement` in place of `object[string]` on a nonzero return ---
+extern fn replace_item_in_object(object: ptr<mut, u8>, string: ptr<const, u8>, replacement: ptr<mut, u8>, case_sensitive: i32) -> i32
+contract {
+    requires resource_contract_v1;
+    ensures normal resource_borrowed(object);
+    ensures normal resource_borrowed(string);
+    ensures normal resource_on_return(ne, 0, resource_consumed(replacement, nullable));
+    ensures normal resource_on_return(eq, 0, resource_owned(replacement, nullable));
+    ensures normal resource_borrowed(case_sensitive);
+    ensures normal resource_return_none();
+};
+
+// # Borrowed child and derived out slot (card SLOT-MOVE-AND-INTERIOR-BORROW)
+//
+// USER DECISION 2026-10-05 (`W48-CALLEE-DECISION-TABLE` class 8, contract
+// specification C04.3.4): the result is borrowed from the parent: no release
+// obligation, valid only while the parent lives and is not mutated through
+// another path, a write through it is a write to the parent.
+//
+// `get_object_item` (`cJSON.c:1936-1966`, static, byte-identical at both
+// revisions; the only definition of the name) walks `object->child` along
+// `->next` and returns the matching element or NULL: a child `object` owns.
+// Rule 13a checks the declaration against this body in `cJSON.c` (every
+// return is NULL or reached from `object` by member reads). `case_sensitive`
+// is `cJSON_bool`, `int` (`cJSON.h:132`).
+
+extern fn get_object_item(object: ptr<const, u8>, name: ptr<const, u8>, case_sensitive: i32) -> ptr<mut, u8>
+contract {
+    requires resource_contract_v1;
+    ensures normal resource_borrowed(object);
+    ensures normal resource_borrowed(name);
+    ensures normal resource_borrowed(case_sensitive);
+    ensures normal resource_return_borrowed_from(object, nullable);
+};
+
+// `cJSON_ParseWithLengthOpts` (`cJSON.c:1142-1222`, byte-identical at both
+// revisions) returns a fresh tree or NULL, stores `value` into the file-scope
+// `global_error.json` on failure (`local_error.json = value`, `:1198`, then
+// `global_error = local_error`, `:1215`: a pointer the program-
+// lifetime holder keeps, rule 12t) and writes a pointer into `value` through
+// `return_parse_end` when it is not NULL (`:1184`, `:1212`): a derived out
+// slot (C04.16, INTERIOR-OUT-SLOT-MODE). In `cJSON.c`, its only unit, rule
+// 13a does not read the slot's stores (one through a struct-local copy of
+// `value`, one through `buffer_at_offset`), so the declaration is withdrawn
+// there; its two callers stay Unknown either way (each retains its own
+// formal `value` in `global`, undecided under rule 12t).
+
+extern fn cJSON_ParseWithLengthOpts(value: ptr<const, u8>, buffer_length: usize, return_parse_end: ptr<mut, ptr<const, u8>>, require_null_terminated: i32) -> ptr<mut, u8>
+contract {
+    requires resource_contract_v1;
+    ensures normal resource_borrowed(value);
+    ensures normal resource_borrowed(buffer_length);
+    ensures normal resource_borrowed(return_parse_end);
+    ensures normal resource_borrowed(require_null_terminated);
+    ensures normal resource_retained_by(value, global);
+    ensures normal resource_out_derived(return_parse_end, value, nullable);
+    ensures normal resource_return_owned(nullable);
+};
+
+// ## Card W45-CALLEE-CASCADE-RESIDUAL round 3: cJSON's static `print`
+//
+// ONE TRUSTED ASSUMPTION, pinned after reading the body at both revisions
+// (`cJSON.c:1234-1299`, byte-identical). It is the only uncontracted call of
+// `cJSON_Print` and `cJSON_PrintUnformatted` (`:1302-1310`, each `return
+// (char*)print(item, <true|false>, &global_hooks);`).
+//
+// ## Identity of a generic name
+//
+// `print` is a generic name, so it is declared only because the pinned
+// identity binds it to cJSON's definition alone: at both revisions the one
+// definition named `print` under `lib/`, `src/`, `plugins/` and `include/` is
+// `cJSON.c:1234` (the other textual hits are comments in
+// `lib/yyjson-0.12.0/misc/make_tables.c`, which the lexical site scanner
+// does not read). A tree with another definition of `print` changes the
+// recorded sites, so the declaration is held there (`source-changed`), never
+// applied to it.
+//
+// ## The body
+//
+// It allocates a 256-byte print buffer through `hooks->allocate`, renders
+// `item` into it (`print_value`, reading `item`), then either shrinks it
+// through `hooks->reallocate` or copies it into a second `hooks->allocate`
+// buffer and releases the first through `hooks->deallocate`; every failure
+// path releases whatever it allocated and returns NULL. So the result is a
+// fresh allocation the caller owns, or NULL: `resource_return_owned(nullable)`
+// under the allocator premise `cJSON_New_Item` states. `item` and `hooks` are
+// read and not stored; `format` (`cJSON_bool`, `int`, `cJSON.h:132`) is a
+// flag. NOT CLAIMED: which release the caller uses (`cJSON_free` or the
+// deallocate hook), the rendering's correctness, or the hooks changing
+// between the allocation and its release.
+
+extern fn print(item: ptr<const, u8>, format: i32, hooks: ptr<const, u8>) -> ptr<mut, u8>
+contract {
+    requires resource_contract_v1;
+    requires resource_premise(cjson_allocator_hooks, "hooks->allocate and hooks->reallocate return a fresh allocation or NULL and hooks->deallocate releases one: malloc, realloc and free in global_hooks (cJSON.c:178-186) unless a user set was installed, a premise of whoever installed it; nothing is stated about the hooks changing between the allocation and its release");
+    ensures normal resource_borrowed(item);
+    ensures normal resource_borrowed(format);
+    ensures normal resource_borrowed(hooks);
+    ensures normal resource_return_owned(nullable);
+};
+
+// ## Card CJSON-DETACH-SAME-ITEM (user decision 2026-10-18)
+//
+// Success returns the SAME item after unlinking it. There is no allocation.
+// NULL item returns NULL without a transfer. This bounded contract requires a
+// known live nonnull parent and an item whose exact owner is independently
+// checked at the call. Borrowed-from provenance and a nonnull prev do not
+// establish membership. The C guard does not establish it either: passing a
+// foreign nonnull item can rewire a different list. Such inputs do not meet
+// this contract, and unproven membership remains Unknown.
+//
+// The complete body at cJSON.c:2243-2277 must match the checked unlink template
+// and a complete same-record child/next/prev layout in its defining unit.
+// The representation relation below is explicitly assumed, not inferred from
+// that pattern. It preserves cJSON's unusual first.prev = tail convention,
+// including singleton and two-node cases. The check never marks the premise
+// as validated; every dependent verdict/certificate retains it. No outer
+// envelope is expanded to cover this premise.
+//
+// This conservative surface does not claim the API's accepted null-parent
+// inputs; an unproved/null parent refuses. On admitted nonnull-item inputs,
+// exact caller containment and representation ensure the body's success arm.
+// The same item becomes directly owned; all other children stay in parent.
+extern fn cJSON_DetachItemViaPointer(parent: ptr<mut, u8>, item: ptr<mut, u8>) -> ptr<mut, u8>
+contract {
+    requires resource_contract_v1;
+    requires resource_premise(detach_list_representation, "For this removed-result declaration, the live parent represents exactly its owned children by a finite acyclic child and next chain; child is NULL precisely when the chain is empty, each nonfirst child's prev is its predecessor, the first child's prev is the last child, chain child identities are pairwise distinct, every non-NULL next or prev target is a live child of that same parent, the last child's next is NULL, the parent is not a child, and no concurrent writer mutates these links during the call");
+    // Evidence-only decomposition; exact legacy premise above remains authoritative.
+    requires resource_hypothesis(detach_chain, "For this removed-result declaration, the live parent represents exactly its owned children by a finite acyclic child and next chain");
+    requires resource_hypothesis(detach_distinct, "For this removed-result declaration, chain child identities are pairwise distinct");
+    requires resource_hypothesis(detach_empty, "For this removed-result declaration, child is NULL precisely when the child and next chain is empty");
+    requires resource_hypothesis(detach_first_prev, "For this removed-result declaration, the first child's prev is the last child");
+    requires resource_hypothesis(detach_last_next, "For this removed-result declaration, the last child's next is NULL");
+    requires resource_hypothesis(detach_link_targets, "For this removed-result declaration, every non-NULL next or prev target is a live child of that same parent");
+    requires resource_hypothesis(detach_no_writer, "For this removed-result declaration, no concurrent writer mutates these links during the call");
+    requires resource_hypothesis(detach_parent_outside, "For this removed-result declaration, the parent is not a child");
+    requires resource_hypothesis(detach_predecessor, "For this removed-result declaration, each nonfirst child's prev is its predecessor");
+    requires resource_premise_all(detach_representation_atoms, detach_chain, detach_distinct, detach_empty, detach_first_prev, detach_last_next, detach_link_targets, detach_no_writer, detach_parent_outside, detach_predecessor);
+    ensures normal resource_owned(parent, nonnull);
+    ensures normal resource_removed(item, parent, nullable);
+    ensures normal resource_return_removed(item, nullable);
+};

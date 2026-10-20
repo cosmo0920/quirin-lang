@@ -1,0 +1,4 @@
+import QCore.CjsonRepresentationPremises
+#print axioms QCore.CjsonRepresentationPremises.links_stay_live_owned_and_exclude_parent
+#print axioms QCore.CjsonRepresentationPremises.distinct_indices_identify_distinct_children
+#print axioms QCore.CjsonRepresentationPremises.a_writing_step_refutes_no_writer

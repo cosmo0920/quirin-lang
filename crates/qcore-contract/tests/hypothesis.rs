@@ -247,3 +247,135 @@ fn a_self_consistent_replacement_graph_cannot_shed_an_atom() {
     i.evidence.retain(|e| e.atom != "b");
     assert!(compose(&i, &context(), &expected, "p").is_err());
 }
+
+const CJSON: &str =
+    include_str!("../../../docs/reports/premise-decomposition-cycle1/proposed-cjson.qv");
+const DETACH: &str = "cJSON_DetachItemViaPointer";
+const DETACH_PREMISE: &str = "detach_representation_atoms";
+
+#[test]
+fn report_owned_cjson_decomposition_replays_and_keeps_the_exact_legacy_premise() {
+    let production =
+        include_str!("../../../providers/qcore-provider-librdkafka/contracts/librdkafka/cjson.qv");
+    assert!(!production.contains("resource_hypothesis(detach_"));
+    let actual = replay(&BTreeMap::from([("cjson.qv".into(), production.into())])).unwrap();
+    assert_eq!(actual[DETACH].atoms.len(), 1);
+
+    let sources = BTreeMap::from([("cjson.qv".into(), CJSON.into())]);
+    let contracts = load_resource_contract_sources(&sources).unwrap();
+    let expected = replay(contracts.source_assumptions()).unwrap();
+    check_replay(&sources, &expected).unwrap();
+    let graph = &expected[DETACH];
+    assert_eq!(graph.premises[DETACH_PREMISE].children.len(), 9);
+    assert_eq!(graph.atoms.len(), 10); // Nine selected atoms and the retained legacy atom.
+    let old = include_str!("../../../docs/reports/premise-decomposition-cycle1/census.json");
+    let census: serde_json::Value = serde_json::from_str(old).unwrap();
+    let legacy = census["cjson_candidates"]
+        .as_array()
+        .unwrap()
+        .iter()
+        .find(|row| row["name"] == "detach_list_representation")
+        .unwrap();
+    let erased = erasure(graph).unwrap();
+    let retained = erased
+        .iter()
+        .find(|p| p.name == "detach_list_representation")
+        .unwrap();
+    assert_eq!(retained.statement, legacy["statement"].as_str().unwrap());
+    for atom in &graph.premises[DETACH_PREMISE].children {
+        let mut changed = expected.clone();
+        changed
+            .get_mut(DETACH)
+            .unwrap()
+            .atoms
+            .get_mut(atom)
+            .unwrap()
+            .proposition = Proposition::Opaque {
+            statement: "substituted obligation".into(),
+        };
+        assert!(check_replay(&sources, &changed).is_err(), "{atom}");
+    }
+    let mut missing = expected.clone();
+    missing
+        .get_mut(DETACH)
+        .unwrap()
+        .atoms
+        .remove("detach_no_writer");
+    assert!(check_replay(&sources, &missing).is_err());
+}
+
+#[test]
+fn report_owned_cjson_decomposition_survives_inclusion_and_formal_renaming() {
+    use qcore_contract::contract_inclusion::{ContractLoadPath, PublishedContractCrate};
+    let krate = PublishedContractCrate {
+        name: "qcore-provider-librdkafka".into(),
+        namespace: "librdkafka".into(),
+        version: "0.1.0".into(),
+        dependencies: Default::default(),
+        modules: BTreeMap::from([("librdkafka/cjson.qv".into(), CJSON.into()), ("child.qv".into(), "module contract;\n#include \"qcore-provider-librdkafka:librdkafka/cjson.qv\"; extern fn renamed(owner: ptr<mut, u8>, child: ptr<mut, u8>) -> ptr<mut, u8> contract inherit librdkafka::cJSON_DetachItemViaPointer;".into())]),
+        published: std::collections::BTreeSet::from(["librdkafka/cjson.qv".into()]),
+    };
+    let path = ContractLoadPath::new(vec![krate]).unwrap();
+    let contracts = load_published_resource_contracts(
+        &path,
+        &[PublishedModuleRef::new(
+            "qcore-provider-librdkafka",
+            "child.qv",
+        )],
+    )
+    .unwrap();
+    let graphs = replay(contracts.source_assumptions()).unwrap();
+    let original = replay(&BTreeMap::from([("cjson.qv".into(), CJSON.into())])).unwrap();
+    assert_eq!(graphs["renamed"], original[DETACH]);
+    check_replay(contracts.source_assumptions(), &graphs).unwrap();
+}
+
+#[test]
+fn report_owned_cjson_refuted_prerequisite_is_reported_only_in_its_exact_context() {
+    let sources = BTreeMap::from([("cjson.qv".into(), CJSON.into())]);
+    let expected = replay(&sources).unwrap().remove(DETACH).unwrap();
+    let mut claim = Instance {
+        graph_sha256: digest(&expected).unwrap(),
+        graph: expected.clone(),
+        context: context(),
+        evidence: expected
+            .atoms
+            .values()
+            .map(|atom| Evidence {
+                atom: atom.id.clone(),
+                atom_sha256: qcore_schemas::sha256_hex(&serde_json::to_vec(atom).unwrap()),
+                context: context(),
+                disposition: Disposition::Open,
+                warrant: Warrant::Declared,
+                reference: "synthetic interference control, not a C violation".into(),
+            })
+            .collect(),
+    };
+    assert_eq!(
+        compose(&claim, &context(), &expected, DETACH_PREMISE).unwrap(),
+        Disposition::Open
+    );
+    claim
+        .evidence
+        .iter_mut()
+        .find(|e| e.atom == "detach_no_writer")
+        .unwrap()
+        .disposition = Disposition::Refuted;
+    assert_eq!(
+        compose(&claim, &context(), &expected, DETACH_PREMISE).unwrap(),
+        Disposition::Refuted
+    );
+    // The original proposition remains separately open; there is no proved equivalence rule.
+    let legacy = expected
+        .premises
+        .keys()
+        .find(|id| id.starts_with("legacy_"))
+        .unwrap();
+    assert_eq!(
+        compose(&claim, &context(), &expected, legacy).unwrap(),
+        Disposition::Open
+    );
+    let mut foreign = context();
+    foreign.build_identity = "another build".into();
+    assert!(compose(&claim, &foreign, &expected, DETACH_PREMISE).is_err());
+}

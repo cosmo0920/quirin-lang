@@ -195,7 +195,7 @@
   "ct_stage_names": 20,
   "ct_cells": 1000,
   "unverified_spec_items": 10,
-  "named_followups": 805
+  "named_followups": 806
  },
  "derivation": {
   "rule": "no count in a section this file marks `derived` is hand-copied from a status ledger; each is read from the manifest or validated run record named beside it. Sections marked `hand_maintained` are recorded analysis carried verbatim from the previous matrix, and `integrator_supplied` numbers name whether they were measured for this run or carried - see section_ownership.",
@@ -6754,11 +6754,11 @@
   "note": "providers/ is a separate Cargo workspace, excluded from the core workspace; P01 verified empirically that the core workspace builds and passes its full suite with providers/ moved out of the tree."
  },
  "validation": {
-  "note": "W48-BOTTOM-UP-BATCH3 serial integration with evidence-only CONTRACT-HYPOTHESIS-GRAPH-V1. Measured source tip and merge SHA 6e4f7dca88cb99e8e8ac978d9e09795be666124b. Actual managed-worktree host gate:8370Rust/0failed/15ignored,522units/535summaries;346Lean. Providers133Rust/0failed/1ignored over43summaries,25Python,all5packages rebuilt+verified. Matrix regeneration precedes final root Python confirmation in command-receipts.json. Original production measurements retain their exact card sources; no new composed production census. Native Git-directory fixture passes in managed worktree; repaired normal-clone control remains tracked. Actual local Clang recording is beside this gate.",
-  "workspace_tests": 8370,
+  "note": "PREMISE-DECOMPOSITION-CYCLE1 on exact base2d8f6d342: report-owned nine opaque atoms/three conditional theorems; no production contract, classifier or semantic reader change. Root runner522units/535summaries/8376passed/15ignored/0failed; 347Lean audits. Conditional provider gate inapplicable: final provider contracts/SDK/schema unchanged; provider_tests133 carries exact-base integration evidence only, with no fresh provider/package claim. RootPython374passed after committed derived matrix; final gate-backed confirmation documented separately. Six fresh original-input audits compare equal under same six-home link-map context; scoped corpus966Safe/3859Unknown/9provisionalUnsafe, system99/345/4, slice53/346/4Pending/1provisionalUnsafe. Complete null/runtime dictionaries and every-row closed-world classification equal; roots/environment/inventory/timestamp metadata exactly reconstructed. Historical seven-home967 coverage remains separately dated. Candidate production companion rejected by actual classifier control; all attempts retained. Actual local Clang recording accompanies this file.",
+  "workspace_tests": 8376,
   "provider_tests": 133,
   "python_evidence_validator_tests": 374,
-  "lean_audits": 346,
+  "lean_audits": 347,
   "lean_audit_files": [
    "AuditAbiEnumConstPointer.lean",
    "AuditAggregateOwnedField.lean",
@@ -6805,6 +6805,7 @@
    "AuditCheckedSpecification.lean",
    "AuditCheckpoints.lean",
    "AuditChunkIntegrityObservation.lean",
+   "AuditCjsonRepresentationPremises.lean",
    "AuditCleanupReplayAgreement.lean",
    "AuditCleanupVocabulary.lean",
    "AuditClosures.lean",
@@ -7113,7 +7114,7 @@
   "cargo_clippy": "clean",
   "standing_gate": "complete",
   "full_language_conformance": false,
-  "measurement_provenance": "integrator_supplied (docs/reports/w48-bottom-up-batch3/integration/gate.json)"
+  "measurement_provenance": "integrator_supplied (/home/cosmo/.codex/worktrees/premise-decomposition-cycle1/qcore-c/docs/reports/premise-decomposition-cycle1/gate.json)"
  },
  "named_followups": [
   {
@@ -12711,6 +12712,13 @@
    "why": "CONTRACT-HYPOTHESIS-GRAPH-V1 focused gate reproduced native_platform_matrix fixture failure: it constructs repository/.git/modules/third_party/libevent although a managed worktree has a .git file. The complete host standing gate passes at exact source5b5a8c0f0 in a private normal clone with the pinned submodule, without altering the fixture or semantics; the incidental source change is rustfmt only. DISCHARGE: resolve the actual common/submodule Git directory through Git, retain safe-directory and pinned-revision checks, and run the fixture in a managed worktree as well as a normal clone. Focused failure log: private/contract-hypothesis-graph-v1/focused-contract-audit.log; full passing clone receipt in the card report. AMENDED (W48-BOTTOM-UP-BATCH3 integration, merge6e4f7dca8): the sibling card resolves the initialized submodule metadata with Git, retaining scoped safe-directory and pinned-revision checks. The merged managed-worktree standing gate passes this fixture within8370Rust/0failed/15ignored; the repaired fixture has not additionally been executed in a normal clone during integration, so that requested portability control remains open. Original frozen failure and normal-clone baseline receipts remain in the hypothesis graph report.",
    "source": "docs/reports/contract-hypothesis-graph-v1/README.md",
    "recorded_by": "CONTRACT-HYPOTHESIS-GRAPH-V1"
+  },
+  {
+   "id": "CJSON-REPRESENTATION-PROSE-AND-SOURCE-BINDING",
+   "title": "Bind the cJSON representation propositions to prose and exact caller environments",
+   "why": "PREMISE-DECOMPOSITION-CYCLE1 publishes a report-owned replayable variant with nine opaque/open representation atoms with explicit Lean Props and conditional model theorems while preserving the exact production detach_list_representation reader. The production companion is rejected because its new name changes closed-world classification even under Unknown; a neutral graph-attachment interface must preserve that classification before production publication. No proof equates the old prose and conjunction, identifies imported C heaps with the mathematical environment, or establishes arbitrary callers and writer traces satisfy the antecedents. DISCHARGE: prove/review precise prose-to-formal correspondence, independently bind exact heap/trace/source/build/bounds contexts, exercise missing/refuted/incompatible antecedents and transitive result impact, and retain declared/evidence-only standing until a separately reviewed typed consumer exists. Opaque text, observed source shape, agreement and LLM proposals confer no semantic authority. This card does not cover allocator hooks, insertion invariant or sibling-release/lookup/Removed transport residuals.",
+   "source": "docs/reports/premise-decomposition-cycle1/README.md",
+   "recorded_by": "PREMISE-DECOMPOSITION-CYCLE1"
   }
  ],
  "updated": "2026-10-20 W48-BOTTOM-UP-BATCH3 serial integration with evidence-only hypothesis graph/schema19.1 at merge6e4f7dca8:8370Rust/346Lean,provider133Rust/25Python/all5packages; final regenerated-matrixPython374. Both frozen production measurements retained without a new composed census.805followups; managed-worktree fixture repair applied, normal-clone control remains open."

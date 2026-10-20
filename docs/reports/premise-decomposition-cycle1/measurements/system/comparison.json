@@ -1,0 +1,54 @@
+{
+  "route": "system",
+  "checks": {
+    "static_full_units_except_separately_attributed_compile_configuration": true,
+    "diagnostic_counts": true,
+    "full_null_dictionaries": true,
+    "null_summary": true,
+    "full_runtime_projection": true,
+    "declaration_and_clause_standing": true,
+    "contract_revision_except_exact_selected_digest": false
+  },
+  "base": {
+    "Unknown": 345,
+    "Safe": 99,
+    "Unsafe": 4
+  },
+  "tip": {
+    "Unknown": 345,
+    "Safe": 99,
+    "Unsafe": 4
+  },
+  "null_rows": {
+    "base": 454,
+    "tip": 454
+  },
+  "exact_migration_transform_counts": {
+    "companion_erasure": 1,
+    "exact_source_or_declaration_digest": 11
+  },
+  "raw_differing_leaf_counts": {
+    "diagnostics": 1397,
+    "contracts": 5220,
+    "chunk-contracts": 0,
+    "source-effects": 0,
+    "null": 1344,
+    "null-summary": 0,
+    "outer": 5
+  },
+  "remaining_differing_leaf_counts": {
+    "diagnostics": 45,
+    "contracts": 6,
+    "chunk-contracts": 0,
+    "source-effects": 0,
+    "null": 0,
+    "null-summary": 0,
+    "outer": 0
+  },
+  "potential_dependent_custody_records": 0,
+  "affected_custody_records": 0,
+  "dependent_other_contexts_unchanged": 0,
+  "unrelated_custody_records": 448,
+  "all_invariant_checks_pass": false,
+  "note": "All residual leaf differences retained. Compile provenance/environment/timestamp differences require exact separate reconstruction before completion."
+}

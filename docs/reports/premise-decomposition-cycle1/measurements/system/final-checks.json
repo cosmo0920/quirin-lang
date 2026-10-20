@@ -1,0 +1,31 @@
+{
+  "route": "system",
+  "checks": {
+    "static_full_units_except_separately_attributed_compile_configuration": true,
+    "diagnostic_counts": true,
+    "full_null_dictionaries": true,
+    "null_summary": true,
+    "full_runtime_projection": true,
+    "declaration_and_clause_standing": true,
+    "contract_revision_except_exact_selected_digest": true,
+    "complete_contract_environment_attributed": true,
+    "complete_compile_configurations_attributed": true,
+    "all_remaining_four_leaves_exact_timestamp_identity_remap": true
+  },
+  "all_checks_pass": true,
+  "base": {
+    "Unknown": 345,
+    "Safe": 99,
+    "Unsafe": 4
+  },
+  "tip": {
+    "Unknown": 345,
+    "Safe": 99,
+    "Unsafe": 4
+  },
+  "null_rows": {
+    "base": 454,
+    "tip": 454
+  },
+  "boundary": "Intermediate comparison exit1 retained; these final checks close its lock-hash residual through raw-byte reconstruction plus all remaining timestamp leaves through full-source hash replay. Complete raw dictionaries are archived."
+}

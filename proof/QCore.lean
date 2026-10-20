@@ -398,6 +398,7 @@ import QCore.LoopLifetimeSummary
 import QCore.OuterContract
 import QCore.OuterListCandidates
 
+import QCore.CjsonRepresentationPremises
 import QCore.HypothesisGraph
 
 /-! The executable formal core of QCore-C revision 0.1. -/

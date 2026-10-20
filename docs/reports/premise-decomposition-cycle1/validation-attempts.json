@@ -1,0 +1,238 @@
+[
+  {
+    "attempt": "focused-contract",
+    "exit": 101,
+    "log": "/home/cosmo/.codex/worktrees/premise-decomposition-cycle1/qcore-c/private/premise-decomposition-cycle1/focused-contract.log",
+    "meaning": "Compile error in new inclusion fixture: called a nonexistent loader helper."
+  },
+  {
+    "attempt": "focused-contract-2",
+    "exit": 101,
+    "log": "/home/cosmo/.codex/worktrees/premise-decomposition-cycle1/qcore-c/private/premise-decomposition-cycle1/focused-contract-2.log",
+    "meaning": "Eight passed, one failed: include directive preceded module contract, selecting executable source mode."
+  },
+  {
+    "attempt": "focused-contract-3",
+    "exit": 101,
+    "log": "/home/cosmo/.codex/worktrees/premise-decomposition-cycle1/qcore-c/private/premise-decomposition-cycle1/focused-contract-3.log",
+    "meaning": "Eight passed, one failed: synthetic publication set omitted included production module."
+  },
+  {
+    "attempt": "focused-contract-4",
+    "exit": 101,
+    "log": "/home/cosmo/.codex/worktrees/premise-decomposition-cycle1/qcore-c/private/premise-decomposition-cycle1/focused-contract-4.log",
+    "meaning": "Nine passed, one failed: inherited included declaration needed namespace qualification."
+  },
+  {
+    "attempt": "focused-contract-5",
+    "exit": 101,
+    "log": "/home/cosmo/.codex/worktrees/premise-decomposition-cycle1/qcore-c/private/premise-decomposition-cycle1/focused-contract-5.log",
+    "meaning": "Nine passed, one failed: assertion looked up unqualified included parent key; compare independently replayed original graph instead."
+  },
+  {
+    "attempt": "focused-contract-6",
+    "exit": 0,
+    "log": "/home/cosmo/.codex/worktrees/premise-decomposition-cycle1/qcore-c/private/premise-decomposition-cycle1/focused-contract-6.log",
+    "meaning": "Final ten-test loader/replay/inheritance/refutation suite passes."
+  },
+  {
+    "attempt": "focused-audit",
+    "exit": 0,
+    "log": "/home/cosmo/.codex/worktrees/premise-decomposition-cycle1/qcore-c/private/premise-decomposition-cycle1/focused-audit.log",
+    "meaning": "Eight dependency-report tests pass before the separate actual transitive consultation test was added."
+  },
+  {
+    "attempt": "focused-actual-impact",
+    "exit": 0,
+    "log": "/home/cosmo/.codex/worktrees/premise-decomposition-cycle1/qcore-c/private/premise-decomposition-cycle1/focused-actual-impact.log",
+    "meaning": "One real direct/summary/unrelated production detach consultation control passes."
+  },
+  {
+    "attempt": "focused-lean",
+    "exit": 1,
+    "log": "/home/cosmo/.codex/worktrees/premise-decomposition-cycle1/qcore-c/private/premise-decomposition-cycle1/focused-lean.log",
+    "meaning": "Initial Lean binder prefix was a keyword and the guessed Nodup theorem name did not exist. Failed elaboration warnings were not accepted as proof."
+  },
+  {
+    "attempt": "focused-lean-2",
+    "exit": 0,
+    "log": "/home/cosmo/.codex/worktrees/premise-decomposition-cycle1/qcore-c/private/premise-decomposition-cycle1/focused-lean-2.log",
+    "meaning": "Corrected three conditional theorems compile cleanly."
+  },
+  {
+    "attempt": "focused-lean-3",
+    "exit": 0,
+    "log": "/home/cosmo/.codex/worktrees/premise-decomposition-cycle1/qcore-c/private/premise-decomposition-cycle1/focused-lean-3.log",
+    "meaning": "Explicit next-path acyclicity antecedent compiles cleanly."
+  },
+  {
+    "attempt": "focused-lean-wrapper",
+    "exit": 1,
+    "meaning": "Initial command used repository cwd with ../private output path; shell refused redirection, so no Lean compilation ran. Tool output retained in conversation; subsequent commands run from proof and retain logs."
+  },
+  {
+    "attempt": "prep-1",
+    "commands": [
+      {
+        "command": [
+          "python3",
+          "providers/contracts.py",
+          "sync"
+        ],
+        "cwd": "/home/cosmo/.codex/worktrees/premise-decomposition-cycle1/qcore-c",
+        "exit": 1,
+        "log": "/home/cosmo/.codex/worktrees/premise-decomposition-cycle1/qcore-c/private/premise-decomposition-cycle1/prep-1/00.log",
+        "start": "2026-10-20T16:47:01.741972+00:00",
+        "end": "2026-10-20T16:47:20.489004+00:00"
+      }
+    ],
+    "meaning": "Inventory sync wrote inventory and correctly refused final verification of the changed unrefreshed selected pin. Official pin refresh then final sync/check succeed in prep-2."
+  },
+  {
+    "attempt": "focused-lean-4",
+    "exit": 0,
+    "log": "/home/cosmo/.codex/worktrees/premise-decomposition-cycle1/qcore-c/private/premise-decomposition-cycle1/focused-lean-4.log",
+    "meaning": "Exact iff emptiness/head separation."
+  },
+  {
+    "attempt": "focused-lean-5",
+    "exit": 0,
+    "log": "/home/cosmo/.codex/worktrees/premise-decomposition-cycle1/qcore-c/private/premise-decomposition-cycle1/focused-lean-5.log",
+    "meaning": "Actor-filtered no-concurrent-writer antecedent and refutation theorem compile cleanly."
+  },
+  {
+    "attempt": "model-faithfulness-correction",
+    "meaning": "Before standing validation, noWriter was corrected from excluding every trace link write to excluding only actors other than the active detach invocation; the unlink invocation itself necessarily writes links. The theorem now requires an other-actor witness. This is correction of a proposed mathematical environment, not a detected C defect. A compiling theorem alone never established prose/source correspondence."
+  },
+  {
+    "attempt": "focused-actual-impact-2",
+    "exit": 0,
+    "log": "/home/cosmo/.codex/worktrees/premise-decomposition-cycle1/qcore-c/private/premise-decomposition-cycle1/focused-actual-impact-2.log",
+    "meaning": "One real production detach/summary/unrelated control passes with direct and caller both explicitly conditionally Safe; graph publication does not hide a failed legacy semantic reader."
+  },
+  {
+    "attempt": "compare-system-1",
+    "exit": 1,
+    "log": "/home/cosmo/.codex/worktrees/premise-decomposition-cycle1/qcore-c/private/premise-decomposition-cycle1/compare-system-1.log",
+    "meaning": "All semantic checks passed; exact contract-lock file hash metadata remained unaccounted at this intermediate comparison. Raw differences retained unchanged; separate complete metadata reconstruction and timestamp replay now attribute every residual."
+  },
+  {
+    "attempt": "compare-slice-1",
+    "exit": 1,
+    "log": "/home/cosmo/.codex/worktrees/premise-decomposition-cycle1/qcore-c/private/premise-decomposition-cycle1/compare-slice-1.log",
+    "meaning": "All semantic checks passed; exact contract-lock file hash metadata remained unaccounted at this intermediate comparison. Raw differences retained unchanged; separate complete metadata reconstruction and timestamp replay now attribute every residual."
+  },
+  {
+    "attempt": "premature-metadata-attribution",
+    "exit": 1,
+    "meaning": "Tool output retained in conversation: first attribution command ran while tip environment reconstruction was still active and its redirected JSON was empty. No artifacts accepted or overwritten; later logged attribute-system-1 and attribute-slice-1 both exit0."
+  },
+  {
+    "attempt": "attribute-system-1",
+    "exit": 0,
+    "log": "/home/cosmo/.codex/worktrees/premise-decomposition-cycle1/qcore-c/private/premise-decomposition-cycle1/attribute-system-1.log",
+    "meaning": "Exact full metadata reconstruction"
+  },
+  {
+    "attempt": "time-system-1",
+    "exit": 0,
+    "log": "/home/cosmo/.codex/worktrees/premise-decomposition-cycle1/qcore-c/private/premise-decomposition-cycle1/time-system-1.log",
+    "meaning": "Fresh local source replay reproduces the complete empty-summary identity hashes by varying only __TIME__ within actual invocation windows."
+  },
+  {
+    "attempt": "attribute-slice-1",
+    "exit": 0,
+    "log": "/home/cosmo/.codex/worktrees/premise-decomposition-cycle1/qcore-c/private/premise-decomposition-cycle1/attribute-slice-1.log",
+    "meaning": "Exact full metadata reconstruction"
+  },
+  {
+    "attempt": "time-slice-1",
+    "exit": 0,
+    "log": "/home/cosmo/.codex/worktrees/premise-decomposition-cycle1/qcore-c/private/premise-decomposition-cycle1/time-slice-1.log",
+    "meaning": "Fresh local source replay reproduces the complete empty-summary identity hashes by varying only __TIME__ within actual invocation windows."
+  },
+  {
+    "attempt": "preprocess-correspondence",
+    "exit": 1,
+    "log": "/home/cosmo/.codex/worktrees/premise-decomposition-cycle1/qcore-c/private/premise-decomposition-cycle1/preprocess-correspondence.log",
+    "meaning": "The fresh receipt source_sha256 field hashes preprocessed stdout, not original C bytes. The provenance helper initially misinterpreted that field and refused. Original evidence unchanged."
+  },
+  {
+    "attempt": "preprocess-correspondence-2",
+    "exit": 0,
+    "log": "/home/cosmo/.codex/worktrees/premise-decomposition-cycle1/qcore-c/private/premise-decomposition-cycle1/preprocess-correspondence-2.log",
+    "meaning": "All three exact current-DB argv/cwd pairs equal fresh local preprocess receipts; preprocessed bytes and original C file are hashed separately."
+  },
+  {
+    "attempt": "matrix-derived-1",
+    "exit": 0,
+    "log": "/home/cosmo/.codex/worktrees/premise-decomposition-cycle1/qcore-c/private/premise-decomposition-cycle1/matrix-derived-1.log",
+    "meaning": "Derived dimensions regenerated before post-matrix Python; gate numbers are explicitly carried from previous matrix and NOT this card measurement. Final gate-backed regeneration remains pending."
+  },
+  {
+    "attempt": "production-companion-publication",
+    "accepted": false,
+    "meaning": "The actual closed-world classifier gives the new companion a new Fact::Premise. Verdict/moved-only parity cannot justify changing classification under Unknown. Exact production inputs restored; candidate preserved in proposed-cjson.qv. The negative actual-classifier Rust control proves exactly one added fact."
+  },
+  {
+    "attempt": "focused-report-fallback-audit",
+    "exit": 101,
+    "log": "/home/cosmo/.codex/worktrees/premise-decomposition-cycle1/qcore-c/private/premise-decomposition-cycle1/focused-report-fallback-audit.log",
+    "meaning": "The new negative control initially omitted its local BTreeSet import."
+  },
+  {
+    "attempt": "focused-report-fallback-audit-2",
+    "exit": 0,
+    "log": "/home/cosmo/.codex/worktrees/premise-decomposition-cycle1/qcore-c/private/premise-decomposition-cycle1/focused-report-fallback-audit-2.log",
+    "meaning": "All ten audit dependency controls pass, including unchanged real production and report-variant direct/caller Safe and explicit classifier mismatch."
+  },
+  {
+    "attempt": "orchestrator-restoration-pause",
+    "meaning": "SIGSTOP/SIGCONT only own measure_all.py PID2130769 while immutable base child continued; no audit was interrupted. Restored exact final production data and committed fallback606320b76 before tip launch. Private orchestration-stop.json/resume.json retain actual timestamps. Rejected configured variant tips remain archived; final configured tips run after provider gate within same lock."
+  },
+  {
+    "attempt": "standing-1-root-rust",
+    "exit": 101,
+    "passed": 8374,
+    "failed": 2,
+    "ignored": 15,
+    "units": 522,
+    "summaries": 535,
+    "summary": "/home/cosmo/.codex/worktrees/premise-decomposition-cycle1/qcore-c/private/test-binaries/20261020T185023Z-2238935/summary.json",
+    "meaning": "New report-owned proposed-cjson.qv duplicates the existing extern print declaration. The every-tracked-source print-route and lexical-selector censuses intentionally pin every such location; their exact expected tables omitted this new legitimate location. Add only this explicit path to both tables, retain selected/ambiguous semantics unchanged, and rerun the entire standing gate. No source suffix workaround, test waiver or compiler/selector behavior change."
+  },
+  {
+    "attempt": "focused-census-pin-repair",
+    "exit": 0,
+    "passed": 3,
+    "ignored": 2,
+    "log": "/home/cosmo/.codex/worktrees/premise-decomposition-cycle1/qcore-c/private/premise-decomposition-cycle1/focused-census-pin-repair.log",
+    "meaning": "Exact report-owned print declaration path deliberately added to lexical-selector and print-route expected tables; compiler/selector behavior unchanged."
+  },
+  {
+    "attempt": "standing-2",
+    "exit": 0,
+    "passed": 8376,
+    "failed": 0,
+    "ignored": 15,
+    "units": 522,
+    "summaries": 535,
+    "lean_audits": 347,
+    "commands": "/home/cosmo/.codex/worktrees/premise-decomposition-cycle1/qcore-c/private/premise-decomposition-cycle1/standing-2/commands.json",
+    "meaning": "All eight corrected standing steps completed0; complete root Rust and Lean rerun, both examples, formatting and Clippy. No provider gate applies to final byte-exact provider/schema/SDK diff. Full Python follows committed matrix separately."
+  },
+  {
+    "attempt": "final-original-input-comparisons-and-matrix-confirmation",
+    "exit": 0,
+    "commands": "/home/cosmo/.codex/worktrees/premise-decomposition-cycle1/qcore-c/private/premise-decomposition-cycle1/finalize-pipeline.json",
+    "meaning": "Both final configured strict comparisons0; first Python374passed after committed derived matrix, actual gate collected, gate-backed matrix committed5575f1450, second Python374passed. Corrected heavy sequence0; original paused orchestrator exited1 on retained initial standing failure and released lock19:21:26UTC. No failure was hidden or overwritten."
+  },
+  {
+    "attempt": "final-matrix-reproducibility",
+    "initial_cmp_exit": 1,
+    "initial_difference": "Only measurement_provenance gate path: relative argument vs original absolute argument; no derived or gate data differed.",
+    "exact_original_gate_argument_cmp_exit": 0,
+    "log": "/home/cosmo/.codex/worktrees/premise-decomposition-cycle1/qcore-c/private/premise-decomposition-cycle1/final-matrix-reproducibility-exact-argv.log",
+    "meaning": "Final documentation-only bookkeeping leaves the committed gate-backed regenerated matrix byte-identical with exact original generator argv."
+  }
+]

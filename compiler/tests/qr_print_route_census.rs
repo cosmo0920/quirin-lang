@@ -191,7 +191,10 @@ fn every_tracked_print_pair_is_classified_as_pinned() {
     assert_eq!(selected, ["examples/scalar/printing.qr"]);
     assert_eq!(
         declaration_only,
-        ["providers/qcore-provider-librdkafka/contracts/librdkafka/cjson.qv"]
+        [
+            "docs/reports/premise-decomposition-cycle1/proposed-cjson.qv",
+            "providers/qcore-provider-librdkafka/contracts/librdkafka/cjson.qv",
+        ]
     );
     assert!(ambiguous.is_empty(), "{ambiguous:?}");
 }
