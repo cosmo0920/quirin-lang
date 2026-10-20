@@ -1,0 +1,18 @@
+{
+  "base": "2d8f6d34257db14031a2578ce14f941bee25fc19",
+  "checkpoint": "8c9bcb81bbfc40e95b07f92e09080f8ab899039d",
+  "production_rust_src_changed": [],
+  "changed_rust_control_or_example_files": [
+    "compiler/tests/qcore_contract_corpus.rs",
+    "crates/qcore-audit/examples/premise_environment.rs",
+    "crates/qcore-audit/tests/contract_dependencies_report.rs",
+    "crates/qcore-contract/tests/hypothesis.rs"
+  ],
+  "Cargo.lock_changed": false,
+  "source_equivalence_boundary": "The analyzer implementation is unchanged; provider contract inputs differ deliberately. The reused immutable baseline binary was built by the implementation sibling at report-only build HEAD35aaecd3e, source-equivalent to exact base, with default release features; this is recorded source equivalence, not environment/compiler-execution attestation.",
+  "base_binary": "/home/cosmo/.codex/worktrees/w48-bottom-up-batch4/qcore-c/private/w48-bottom-up-batch4/base/quirin-audit",
+  "base_binary_sha256": "1fbfe1bb8f3d1a2bfd4d8323489b1431e0ba917941645f7ce09898f8051396b7",
+  "observed_post_build_rustc": "rustc 1.99.0 (b940084d7 2026-09-28)\nbinary: rustc\ncommit-hash: b940084d7eb6a299eb4bfeb8e34901bc051e7ac4\ncommit-date: 2026-09-28\nhost: x86_64-unknown-linux-gnu\nrelease: 1.99.0\nLLVM version: 23.1.1\n",
+  "observed_post_build_cargo": "cargo 1.99.0 (5f94df478 2026-08-27)\n",
+  "lock_sha256": "1081a64d1873605ffa4629bfe8a7ea5aec304df1c7771a7f72804b2ddca8fc9e"
+}
