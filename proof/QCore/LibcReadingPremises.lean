@@ -36,6 +36,15 @@ theorem scalar_route_does_not_require_nested_route (e : ReadingEnvironment S) (s
     (e.nestedRoute s ∨ e.scalarRoute s) ∧ e.scalarDeclaration s ∧ e.untrackedEffects s := by
   exact ⟨Or.inr scalar, decl, effects⟩
 
+/-- A concrete observed-site counterexample refutes the quantified assumption,
+not a C program or its custody verdict. -/
+theorem observed_declaration_counterexample_refutes_accessor (e : ReadingEnvironment S)
+    (counterexample : ∃ s, e.observed s ∧ ¬ e.scalarDeclaration s) :
+    ¬ accessorSentence e := by
+  rintro assumption
+  obtain ⟨s, seen, incompatible⟩ := counterexample
+  exact incompatible (assumption s seen).2.1
+
 structure NestedEnvironment (Site : Type) where
   observed : Site → Prop
   checkedSite : Site → Prop

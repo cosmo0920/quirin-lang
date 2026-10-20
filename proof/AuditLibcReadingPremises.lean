@@ -2,3 +2,4 @@ import QCore.LibcReadingPremises
 #print axioms QCore.LibcReadingPremises.accessor_decomposition_preserves_guarded_alternative
 #print axioms QCore.LibcReadingPremises.scalar_route_does_not_require_nested_route
 #print axioms QCore.LibcReadingPremises.nested_decomposition_preserves_declaration_and_site_obligations
+#print axioms QCore.LibcReadingPremises.observed_declaration_counterexample_refutes_accessor
