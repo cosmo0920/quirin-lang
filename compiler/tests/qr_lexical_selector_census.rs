@@ -606,6 +606,7 @@ fn every_tracked_selector_word_stands_where_pinned() {
         outside,
         [
             "join @ contract-clause: providers/quirin-provider-libc/contracts/libc/pthread_sync.qv",
+            "print ( @ declaration:ExternFunction: docs/reports/premise-decomposition-cycle1/proposed-cjson.qv",
             "print ( @ declaration:ExternFunction: providers/qcore-provider-librdkafka/contracts/librdkafka/cjson.qv",
             "spawn @ contract-clause: providers/qcore-provider-libevent/contracts/monkey/callback_task_handoff.qv",
         ]

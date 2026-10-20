@@ -189,5 +189,16 @@
   {
     "attempt": "orchestrator-restoration-pause",
     "meaning": "SIGSTOP/SIGCONT only own measure_all.py PID2130769 while immutable base child continued; no audit was interrupted. Restored exact final production data and committed fallback606320b76 before tip launch. Private orchestration-stop.json/resume.json retain actual timestamps. Rejected configured variant tips remain archived; final configured tips run after provider gate within same lock."
+  },
+  {
+    "attempt": "standing-1-root-rust",
+    "exit": 101,
+    "passed": 8374,
+    "failed": 2,
+    "ignored": 15,
+    "units": 522,
+    "summaries": 535,
+    "summary": "/home/cosmo/.codex/worktrees/premise-decomposition-cycle1/qcore-c/private/test-binaries/20261020T185023Z-2238935/summary.json",
+    "meaning": "New report-owned proposed-cjson.qv duplicates the existing extern print declaration. The every-tracked-source print-route and lexical-selector censuses intentionally pin every such location; their exact expected tables omitted this new legitimate location. Add only this explicit path to both tables, retain selected/ambiguous semantics unchanged, and rerun the entire standing gate. No source suffix workaround, test waiver or compiler/selector behavior change."
   }
 ]

@@ -6,7 +6,7 @@ ROOT=Path(__file__).resolve().parents[4]
 PRIVATE=ROOT/'private/premise-decomposition-cycle1'
 REPORT=ROOT/'docs/reports/premise-decomposition-cycle1'
 load=lambda p:json.loads(p.read_text())
-standing=load(PRIVATE/'standing-1/commands.json');provider=load(PRIVATE/'provider-1/commands.json');python=load(PRIVATE/'python-first/commands.json')
+standing=load(PRIVATE/'standing-2/commands.json');provider=load(PRIVATE/'provider-1/commands.json');python=load(PRIVATE/'python-first/commands.json')
 assert len(standing)==8 and len(provider)==13 and len(python)==1
 assert all(row['exit']==0 for rows in [standing,provider,python] for row in rows)
 root_log=Path(standing[2]['log']).read_text();matches=re.findall(r'^summary: (.+)$',root_log,re.M);assert len(matches)==1
