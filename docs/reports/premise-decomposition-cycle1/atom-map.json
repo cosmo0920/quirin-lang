@@ -26,7 +26,7 @@
         "parent": "the removed-result call actual parent, source-to-Nat identity binding open",
         "children": "the finite exact owned-child sequence at call entry, heap interpretation open",
         "child_next_prev": "the entry heap link maps; equations retained as relational propositions",
-        "trace": "every link-writing step during this call within the exact published bounds; exclusion is assumed, never inferred from a finite observation"
+        "trace": "every interleaved step during the call within the exact bounds, with callActor distinguishing the detach invocation from other actors; only other-actor link writes are excluded; exclusion is assumed, never inferred from finite observation"
       },
       "prerequisites": [
         "exact per-result context identity",
@@ -47,7 +47,7 @@
         "parent": "the removed-result call actual parent, source-to-Nat identity binding open",
         "children": "the finite exact owned-child sequence at call entry, heap interpretation open",
         "child_next_prev": "the entry heap link maps; equations retained as relational propositions",
-        "trace": "every link-writing step during this call within the exact published bounds; exclusion is assumed, never inferred from a finite observation"
+        "trace": "every interleaved step during the call within the exact bounds, with callActor distinguishing the detach invocation from other actors; only other-actor link writes are excluded; exclusion is assumed, never inferred from finite observation"
       },
       "prerequisites": [
         "exact per-result context identity",
@@ -68,7 +68,7 @@
         "parent": "the removed-result call actual parent, source-to-Nat identity binding open",
         "children": "the finite exact owned-child sequence at call entry, heap interpretation open",
         "child_next_prev": "the entry heap link maps; equations retained as relational propositions",
-        "trace": "every link-writing step during this call within the exact published bounds; exclusion is assumed, never inferred from a finite observation"
+        "trace": "every interleaved step during the call within the exact bounds, with callActor distinguishing the detach invocation from other actors; only other-actor link writes are excluded; exclusion is assumed, never inferred from finite observation"
       },
       "prerequisites": [
         "exact per-result context identity",
@@ -89,7 +89,7 @@
         "parent": "the removed-result call actual parent, source-to-Nat identity binding open",
         "children": "the finite exact owned-child sequence at call entry, heap interpretation open",
         "child_next_prev": "the entry heap link maps; equations retained as relational propositions",
-        "trace": "every link-writing step during this call within the exact published bounds; exclusion is assumed, never inferred from a finite observation"
+        "trace": "every interleaved step during the call within the exact bounds, with callActor distinguishing the detach invocation from other actors; only other-actor link writes are excluded; exclusion is assumed, never inferred from finite observation"
       },
       "prerequisites": [
         "exact per-result context identity",
@@ -110,7 +110,7 @@
         "parent": "the removed-result call actual parent, source-to-Nat identity binding open",
         "children": "the finite exact owned-child sequence at call entry, heap interpretation open",
         "child_next_prev": "the entry heap link maps; equations retained as relational propositions",
-        "trace": "every link-writing step during this call within the exact published bounds; exclusion is assumed, never inferred from a finite observation"
+        "trace": "every interleaved step during the call within the exact bounds, with callActor distinguishing the detach invocation from other actors; only other-actor link writes are excluded; exclusion is assumed, never inferred from finite observation"
       },
       "prerequisites": [
         "exact per-result context identity",
@@ -131,7 +131,7 @@
         "parent": "the removed-result call actual parent, source-to-Nat identity binding open",
         "children": "the finite exact owned-child sequence at call entry, heap interpretation open",
         "child_next_prev": "the entry heap link maps; equations retained as relational propositions",
-        "trace": "every link-writing step during this call within the exact published bounds; exclusion is assumed, never inferred from a finite observation"
+        "trace": "every interleaved step during the call within the exact bounds, with callActor distinguishing the detach invocation from other actors; only other-actor link writes are excluded; exclusion is assumed, never inferred from finite observation"
       },
       "prerequisites": [
         "exact per-result context identity",
@@ -146,13 +146,13 @@
       "statement": "For this removed-result declaration, no concurrent writer mutates these links during the call",
       "proposition": "QCore.CjsonRepresentationPremises.noWriter",
       "environment": "Environment e: parent, finite children list, ownedChild/live predicates, child/next/prev maps, call trace",
-      "quantifiers": "all steps in the call trace",
+      "quantifiers": "all steps in the call trace whose actor differs from the current invocation",
       "conclusion": "noWriter e",
       "environment_bindings": {
         "parent": "the removed-result call actual parent, source-to-Nat identity binding open",
         "children": "the finite exact owned-child sequence at call entry, heap interpretation open",
         "child_next_prev": "the entry heap link maps; equations retained as relational propositions",
-        "trace": "every link-writing step during this call within the exact published bounds; exclusion is assumed, never inferred from a finite observation"
+        "trace": "every interleaved step during the call within the exact bounds, with callActor distinguishing the detach invocation from other actors; only other-actor link writes are excluded; exclusion is assumed, never inferred from finite observation"
       },
       "prerequisites": [
         "exact per-result context identity",
@@ -173,7 +173,7 @@
         "parent": "the removed-result call actual parent, source-to-Nat identity binding open",
         "children": "the finite exact owned-child sequence at call entry, heap interpretation open",
         "child_next_prev": "the entry heap link maps; equations retained as relational propositions",
-        "trace": "every link-writing step during this call within the exact published bounds; exclusion is assumed, never inferred from a finite observation"
+        "trace": "every interleaved step during the call within the exact bounds, with callActor distinguishing the detach invocation from other actors; only other-actor link writes are excluded; exclusion is assumed, never inferred from finite observation"
       },
       "prerequisites": [
         "exact per-result context identity",
@@ -194,7 +194,7 @@
         "parent": "the removed-result call actual parent, source-to-Nat identity binding open",
         "children": "the finite exact owned-child sequence at call entry, heap interpretation open",
         "child_next_prev": "the entry heap link maps; equations retained as relational propositions",
-        "trace": "every link-writing step during this call within the exact published bounds; exclusion is assumed, never inferred from a finite observation"
+        "trace": "every interleaved step during the call within the exact bounds, with callActor distinguishing the detach invocation from other actors; only other-actor link writes are excluded; exclusion is assumed, never inferred from finite observation"
       },
       "prerequisites": [
         "exact per-result context identity",

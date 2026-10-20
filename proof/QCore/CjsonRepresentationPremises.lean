@@ -4,9 +4,11 @@ establishes that imported C, a caller heap or a provider claim satisfies them. -
 namespace QCore.CjsonRepresentationPremises
 
 structure Step where
+  actor : Nat
   writesLinks : Bool
 
 structure Environment where
+  callActor : Nat
   parent : Nat
   children : List Nat
   ownedChild : Nat → Prop
@@ -47,7 +49,7 @@ def linkTargets (e : Environment) : Prop :=
     e.next x = some y ∨ e.prev x = some y → y ∈ e.children ∧ e.live y
 
 def noWriter (e : Environment) : Prop :=
-  ∀ step ∈ e.trace, step.writesLinks = false
+  ∀ step ∈ e.trace, step.actor ≠ e.callActor → step.writesLinks = false
 
 def parentOutside (e : Environment) : Prop := e.parent ∉ e.children
 
@@ -75,11 +77,12 @@ theorem distinct_indices_identify_distinct_children (e : Environment)
   exact hd.eq_of_getElem_eq i.isLt j.isLt same
 
 /-- Writer exclusion is an explicit temporal antecedent, independent from the
-    heap's link equations; any listed writing step refutes that antecedent. -/
+    heap's link equations; any listed other-actor writing step refutes that antecedent. -/
 theorem a_writing_step_refutes_no_writer (e : Environment) (step : Step)
-    (member : step ∈ e.trace) (writes : step.writesLinks = true) : ¬ noWriter e := by
+    (member : step ∈ e.trace) (other : step.actor ≠ e.callActor)
+    (writes : step.writesLinks = true) : ¬ noWriter e := by
   intro h
-  have no := h step member
+  have no := h step member other
   rw [writes] at no
   contradiction
 

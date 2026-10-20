@@ -87,5 +87,21 @@
       }
     ],
     "meaning": "Inventory sync wrote inventory and correctly refused final verification of the changed unrefreshed selected pin. Official pin refresh then final sync/check succeed in prep-2."
+  },
+  {
+    "attempt": "focused-lean-4",
+    "exit": 0,
+    "log": "/home/cosmo/.codex/worktrees/premise-decomposition-cycle1/qcore-c/private/premise-decomposition-cycle1/focused-lean-4.log",
+    "meaning": "Exact iff emptiness/head separation."
+  },
+  {
+    "attempt": "focused-lean-5",
+    "exit": 0,
+    "log": "/home/cosmo/.codex/worktrees/premise-decomposition-cycle1/qcore-c/private/premise-decomposition-cycle1/focused-lean-5.log",
+    "meaning": "Actor-filtered no-concurrent-writer antecedent and refutation theorem compile cleanly."
+  },
+  {
+    "attempt": "model-faithfulness-correction",
+    "meaning": "Before standing validation, noWriter was corrected from excluding every trace link write to excluding only actors other than the active detach invocation; the unlink invocation itself necessarily writes links. The theorem now requires an other-actor witness. This is correction of a proposed mathematical environment, not a detected C defect. A compiling theorem alone never established prose/source correspondence."
   }
 ]
