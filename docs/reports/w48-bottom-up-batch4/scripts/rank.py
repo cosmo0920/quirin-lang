@@ -12,7 +12,7 @@ private = repo/'private/w48-bottom-up-batch4'
 records = {}
 for side in ['before', 'after']:
     output = private/(side+'-plan.json')
-    command = [sys.executable, str(repo/'docs/reports/w48-bottom-up-callee-bodies/scripts/bottom_up_plan.py'), str(private/('corpus-'+side)/'corpus/resource-diagnostics.json'), str(output), '--top', '20']
+    command = [sys.executable, str(repo/'docs/reports/w48-bottom-up-callee-bodies/scripts/bottom_up_plan.py'), str(private/('corpus-'+side+'-final')/'corpus/resource-diagnostics.json'), str(output), '--top', '20']
     with (private/(side+'-plan.log')).open('w') as stream:
         run = subprocess.run(command, stdout=stream, stderr=stream)
     records[side] = dict(command=command, exit=run.returncode, log=str(private/(side+'-plan.log')))

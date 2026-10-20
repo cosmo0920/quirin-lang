@@ -11,7 +11,7 @@ REPORT = Path(__file__).resolve().parents[1]
 
 def normalize(value):
     if isinstance(value, str):
-        for name in ['inputs-base', 'inputs-tip']:
+        for name in ['inputs-base-final', 'inputs-tip-final', 'inputs-base', 'inputs-tip']:
             value = value.replace(str(REPO / 'private/w48-bottom-up-batch4' / name), '$INPUTS')
         return value
     if isinstance(value, list):

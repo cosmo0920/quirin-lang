@@ -22,7 +22,7 @@ def rows(path):
 def normalize_checkout(value):
     if isinstance(value, str):
         repo = Path(__file__).resolve().parents[4]
-        for root in ['inputs-base', 'inputs-tip']:
+        for root in ['inputs-base-final', 'inputs-tip-final', 'inputs-base', 'inputs-tip']:
             value = value.replace(str(repo / 'private/w48-bottom-up-batch4' / root), '$INPUTS')
         return value.replace(str(repo), '$ANALYZER')
     if isinstance(value, list):

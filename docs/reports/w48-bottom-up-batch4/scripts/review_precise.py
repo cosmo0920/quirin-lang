@@ -9,7 +9,9 @@ import json
 import sys
 
 ANALYZER = Path(__file__).resolve().parents[4]
-ROOTS = [(str(ANALYZER / 'private/w48-bottom-up-batch4/inputs-base'), '$INPUTS'),
+ROOTS = [(str(ANALYZER / 'private/w48-bottom-up-batch4/inputs-base-final'), '$INPUTS'),
+         (str(ANALYZER / 'private/w48-bottom-up-batch4/inputs-tip-final'), '$INPUTS'),
+         (str(ANALYZER / 'private/w48-bottom-up-batch4/inputs-base'), '$INPUTS'),
          (str(ANALYZER / 'private/w48-bottom-up-batch4/inputs-tip'), '$INPUTS'),
          (str(ANALYZER), '$ANALYZER')]
 OUT = Path(__file__).resolve().parents[1] / 'artifacts' / sys.argv[1]

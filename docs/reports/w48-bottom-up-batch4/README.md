@@ -58,6 +58,35 @@ Validation and fresh paired corpus/system/slice runs are in progress under the
 shared host serialization lock. Private root: `private/w48-bottom-up-batch4/`.
 No gate or production outcome is claimed by this work-in-progress paragraph.
 
+## Retained preparation and validation attempts
+
+The first full Rust run finished with 8,376 passing tests, one failure and 15
+ignored tests across 522 binaries/535 summaries. Its sole failure was an
+explicit old compound-read refusal pin for `n->buf && n->n`. The checked
+composition intentionally supersedes that refusal; the replacement requires
+Safe, empty diagnostics and both `IndirectScalarAccess` obligations. Existing
+cast and chain refusal controls remain. The full Lean attempt also caught an
+aggregate import placed after the final module-doc command. Moving that import
+among the other imports leaves the individually checked model unchanged.
+Both failed attempts are retained for comparison with the final reruns.
+
+All six initial audit commands exited 1 before program analysis because the
+runtime archives omitted the tracked root `cycle19-resource-contracts.json`.
+Those original 306-file snapshots remain unchanged. Fresh, separate 307-file
+snapshots include the registry, whose filesystem and provider-qualified modules
+all resolve. [The final input manifest](runtime-inputs-final.json) records each
+file and the distinct analyzer binary on either side. Both contract file sets
+are identical. No verdict or coverage result comes from the failed preparations.
+
+Two replacement collectors were cancelled while still waiting for the shared
+lock, before any child process or output route existed. Their exit 130 and
+captured process-state checks are retained privately. The final schedule uses
+at most 16 analysis workers: configured system/slice run together at eight each,
+then each corpus side runs alone at 16. Each before/after route uses the same
+worker count. This follows the documented worker cap and deterministic-output
+contract; it changes neither selection nor assumptions. Original audit-driver
+bytes and the complete raw artifacts remain retained.
+
 ## Follow-ons
 
 `W48-BOTTOM-UP-RESIDUAL-PLAN` remains open. Logger ownership/callback closure,
