@@ -179,7 +179,7 @@ Regenerate with `python3 scripts/build_docs_index.py`; validate with `--check`.
 
 | [contract-check-load-path](contract-check-load-path/README.md) | CONTRACT-CHECK-LOAD-PATH |
 
-| [premise-decomposition-cycle1](premise-decomposition-cycle1/README.md) | cJSON physical representation: nine concrete open hypothesis atoms |
+| [premise-decomposition-cycle1](premise-decomposition-cycle1/README.md) | cJSON representation: report-owned concrete propositions; production classifier preserved |
 
 | [contract-hypothesis-graph-v1](contract-hypothesis-graph-v1/README.md) | Evidence-only contract hypothesis graphs |
 

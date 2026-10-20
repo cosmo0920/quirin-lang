@@ -28,7 +28,7 @@ for i,command in enumerate(steps[a.stage]):
  log=out/f'{i:02}.log';start=datetime.datetime.now(datetime.timezone.utc).isoformat()
  with log.open('wb') as f:
   result=subprocess.run(command,cwd=ROOT,stdout=f,stderr=subprocess.STDOUT)
- receipt=dict(command=command,cwd=str(ROOT),exit=result.returncode,log=str(log),start=start,end=datetime.datetime.now(datetime.timezone.utc).isoformat())
+ receipt=dict(worktree_head_observed_at_step_end=subprocess.check_output(['git','rev-parse','HEAD'],cwd=ROOT,text=True).strip(),tracked_worktree_status_observed_at_step_end=subprocess.check_output(['git','status','--porcelain','--untracked-files=no'],cwd=ROOT,text=True),command=command,cwd=str(ROOT),exit=result.returncode,log=str(log),start=start,end=datetime.datetime.now(datetime.timezone.utc).isoformat())
  receipts.append(receipt);(out/'commands.json').write_text(json.dumps(receipts,indent=2)+'\n');(out/f'{i:02}.exit').write_text(str(result.returncode)+'\n')
  print(json.dumps(receipt),flush=True)
  if result.returncode and a.stage=='prep':raise SystemExit(result.returncode)

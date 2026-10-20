@@ -3,11 +3,11 @@
   "checkpoint": "8c9bcb81bbfc40e95b07f92e09080f8ab899039d",
   "production_rust_src_changed": [],
   "changed_rust_control_or_example_files": [
-    "compiler/tests/qcore_contract_corpus.rs",
     "crates/qcore-audit/examples/premise_environment.rs",
+    "crates/qcore-audit/examples/premise_graph.rs",
+    "crates/qcore-audit/examples/premise_outer_facts.rs",
     "crates/qcore-audit/tests/contract_dependencies_report.rs",
-    "crates/qcore-contract/tests/hypothesis.rs",
-    "crates/qcore-audit/examples/premise_outer_facts.rs"
+    "crates/qcore-contract/tests/hypothesis.rs"
   ],
   "Cargo.lock_changed": false,
   "source_equivalence_boundary": "The analyzer implementation is unchanged; provider contract inputs differ deliberately. The reused immutable baseline binary was built by the implementation sibling at report-only build HEAD35aaecd3e, source-equivalent to exact base, with default release features; this is recorded source equivalence, not environment/compiler-execution attestation.",
@@ -16,5 +16,7 @@
   "observed_post_build_rustc": "rustc 1.99.0 (b940084d7 2026-09-28)\nbinary: rustc\ncommit-hash: b940084d7eb6a299eb4bfeb8e34901bc051e7ac4\ncommit-date: 2026-09-28\nhost: x86_64-unknown-linux-gnu\nrelease: 1.99.0\nLLVM version: 23.1.1\n",
   "observed_post_build_cargo": "cargo 1.99.0 (5f94df478 2026-08-27)\n",
   "lock_sha256": "1081a64d1873605ffa4629bfe8a7ea5aec304df1c7771a7f72804b2ddca8fc9e",
-  "final_production_inputs": "Exact base bytes restored for selected qv, inventory, lock and corpus clause expectation; candidate retained as report-owned proposed-cjson.qv."
+  "final_production_inputs": "Exact base bytes restored for selected qv, inventory, lock and corpus clause expectation; candidate retained as report-owned proposed-cjson.qv.",
+  "final_rust_and_model_source_freeze": "70ecbfd95",
+  "final_production_provider_files_changed": []
 }

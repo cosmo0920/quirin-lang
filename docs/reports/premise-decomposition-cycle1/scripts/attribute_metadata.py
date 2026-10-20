@@ -4,9 +4,10 @@ import argparse,gzip,hashlib,json,runpy
 from pathlib import Path
 ROOT=Path(__file__).resolve().parents[4]
 PRIVATE=ROOT/'private/premise-decomposition-cycle1'
-p=argparse.ArgumentParser();p.add_argument('route');a=p.parse_args()
-out=ROOT/'docs/reports/premise-decomposition-cycle1/measurements'/a.route
-raw=PRIVATE/'measure-1'/a.route
+p=argparse.ArgumentParser();p.add_argument('route');p.add_argument('--comparison',type=Path);p.add_argument('--raw-root',type=Path);p.add_argument('--environment-directory',type=Path);a=p.parse_args()
+out=a.comparison or ROOT/'docs/reports/premise-decomposition-cycle1/measurements'/a.route
+raw=a.raw_root or PRIVATE/'measure-1'/a.route
+environment_directory=a.environment_directory or PRIVATE
 sha=lambda b:hashlib.sha256(b).hexdigest()
 read=lambda p:json.loads(p.read_bytes())
 inputs=PRIVATE/'base-inputs'
@@ -29,8 +30,8 @@ def norm(v):
  if isinstance(v,dict):
   pairs=[(norm(k),norm(x)) for k,x in v.items()];assert len(dict(pairs))==len(pairs);return dict(pairs)
  return v
-hashes={side:read(PRIVATE/(side+'-environment-hashes.json')) for side in ['base','tip']}
-env={side:(PRIVATE/(side+'-environment.json')).read_bytes() for side in hashes}
+hashes={side:read(environment_directory/(side+'-environment-hashes.json')) for side in ['base','tip']}
+env={side:(environment_directory/(side+'-environment.json')).read_bytes() for side in hashes}
 for side in hashes:assert sha(env[side])==hashes[side]['environment_sha256']
 assert norm(json.loads(env['base']))==norm(json.loads(env['tip'])), 'full environment must differ only by exact migration and roots'
 for key in ['environment_sha256','source_assumptions_sha256','function_table_sha256']:known[hashes['tip'][key]]=hashes['base'][key]
