@@ -1,0 +1,91 @@
+[
+  {
+    "attempt": "focused-contract",
+    "exit": 101,
+    "log": "/home/cosmo/.codex/worktrees/premise-decomposition-cycle1/qcore-c/private/premise-decomposition-cycle1/focused-contract.log",
+    "meaning": "Compile error in new inclusion fixture: called a nonexistent loader helper."
+  },
+  {
+    "attempt": "focused-contract-2",
+    "exit": 101,
+    "log": "/home/cosmo/.codex/worktrees/premise-decomposition-cycle1/qcore-c/private/premise-decomposition-cycle1/focused-contract-2.log",
+    "meaning": "Eight passed, one failed: include directive preceded module contract, selecting executable source mode."
+  },
+  {
+    "attempt": "focused-contract-3",
+    "exit": 101,
+    "log": "/home/cosmo/.codex/worktrees/premise-decomposition-cycle1/qcore-c/private/premise-decomposition-cycle1/focused-contract-3.log",
+    "meaning": "Eight passed, one failed: synthetic publication set omitted included production module."
+  },
+  {
+    "attempt": "focused-contract-4",
+    "exit": 101,
+    "log": "/home/cosmo/.codex/worktrees/premise-decomposition-cycle1/qcore-c/private/premise-decomposition-cycle1/focused-contract-4.log",
+    "meaning": "Nine passed, one failed: inherited included declaration needed namespace qualification."
+  },
+  {
+    "attempt": "focused-contract-5",
+    "exit": 101,
+    "log": "/home/cosmo/.codex/worktrees/premise-decomposition-cycle1/qcore-c/private/premise-decomposition-cycle1/focused-contract-5.log",
+    "meaning": "Nine passed, one failed: assertion looked up unqualified included parent key; compare independently replayed original graph instead."
+  },
+  {
+    "attempt": "focused-contract-6",
+    "exit": 0,
+    "log": "/home/cosmo/.codex/worktrees/premise-decomposition-cycle1/qcore-c/private/premise-decomposition-cycle1/focused-contract-6.log",
+    "meaning": "Final ten-test loader/replay/inheritance/refutation suite passes."
+  },
+  {
+    "attempt": "focused-audit",
+    "exit": 0,
+    "log": "/home/cosmo/.codex/worktrees/premise-decomposition-cycle1/qcore-c/private/premise-decomposition-cycle1/focused-audit.log",
+    "meaning": "Eight dependency-report tests pass before the separate actual transitive consultation test was added."
+  },
+  {
+    "attempt": "focused-actual-impact",
+    "exit": 0,
+    "log": "/home/cosmo/.codex/worktrees/premise-decomposition-cycle1/qcore-c/private/premise-decomposition-cycle1/focused-actual-impact.log",
+    "meaning": "One real direct/summary/unrelated production detach consultation control passes."
+  },
+  {
+    "attempt": "focused-lean",
+    "exit": 1,
+    "log": "/home/cosmo/.codex/worktrees/premise-decomposition-cycle1/qcore-c/private/premise-decomposition-cycle1/focused-lean.log",
+    "meaning": "Initial Lean binder prefix was a keyword and the guessed Nodup theorem name did not exist. Failed elaboration warnings were not accepted as proof."
+  },
+  {
+    "attempt": "focused-lean-2",
+    "exit": 0,
+    "log": "/home/cosmo/.codex/worktrees/premise-decomposition-cycle1/qcore-c/private/premise-decomposition-cycle1/focused-lean-2.log",
+    "meaning": "Corrected three conditional theorems compile cleanly."
+  },
+  {
+    "attempt": "focused-lean-3",
+    "exit": 0,
+    "log": "/home/cosmo/.codex/worktrees/premise-decomposition-cycle1/qcore-c/private/premise-decomposition-cycle1/focused-lean-3.log",
+    "meaning": "Explicit next-path acyclicity antecedent compiles cleanly."
+  },
+  {
+    "attempt": "focused-lean-wrapper",
+    "exit": 1,
+    "meaning": "Initial command used repository cwd with ../private output path; shell refused redirection, so no Lean compilation ran. Tool output retained in conversation; subsequent commands run from proof and retain logs."
+  },
+  {
+    "attempt": "prep-1",
+    "commands": [
+      {
+        "command": [
+          "python3",
+          "providers/contracts.py",
+          "sync"
+        ],
+        "cwd": "/home/cosmo/.codex/worktrees/premise-decomposition-cycle1/qcore-c",
+        "exit": 1,
+        "log": "/home/cosmo/.codex/worktrees/premise-decomposition-cycle1/qcore-c/private/premise-decomposition-cycle1/prep-1/00.log",
+        "start": "2026-10-20T16:47:01.741972+00:00",
+        "end": "2026-10-20T16:47:20.489004+00:00"
+      }
+    ],
+    "meaning": "Inventory sync wrote inventory and correctly refused final verification of the changed unrefreshed selected pin. Official pin refresh then final sync/check succeed in prep-2."
+  }
+]
