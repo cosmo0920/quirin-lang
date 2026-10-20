@@ -345,7 +345,7 @@
     {
       "function": "cJSON_DetachItemViaPointer",
       "module": "librdkafka/cjson.qv",
-      "contract_sha256": "878f8103527c43da2a5bb91d56ba60cd6b9e221a3dfb41723de90c36a94268ad",
+      "contract_sha256": "957f5a060cd4b604a82c4934af4721b4aced0f576662bbd6152fe7264fb69d5c",
       "identities": [
         {
           "reviewed_at": [

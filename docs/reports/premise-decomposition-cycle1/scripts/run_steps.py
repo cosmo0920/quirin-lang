@@ -9,7 +9,6 @@ out=a.out.resolve();out.mkdir(parents=True,exist_ok=False)
 source=Path('/home/cosmo/Documents/GitHub/qcore-c')
 steps={
 'prep':[
- ['python3','providers/contracts.py','sync'],
  ['target/release/quirin-audit','pin','--source-root',str(source/'build/cycle19/c-gateway-wave-pin/fluent-bit-clang-source'),'--crate','qcore-provider-librdkafka','--function','cJSON_DetachItemViaPointer'],
  ['target/release/quirin-audit','pin','--source-root',str(source/'private/w45-fb/w46-external-callee-contracts/attempt-1/fluent-bit-clang-source'),'--crate','qcore-provider-librdkafka','--function','cJSON_DetachItemViaPointer'],
  ['python3','providers/contracts.py','sync'],['python3','providers/contracts.py','check']],
