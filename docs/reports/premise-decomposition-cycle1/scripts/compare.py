@@ -13,14 +13,7 @@ old_source=(inputs/'providers/qcore-provider-librdkafka/contracts/librdkafka/cjs
 new_source=(ROOT/'providers/qcore-provider-librdkafka/contracts/librdkafka/cjson.qv').read_text()
 def selected_digest(root):
  lock=json.loads((root/'providers/qcore-provider-librdkafka/contracts.lock').read_text())
- def visit(v):
-  if isinstance(v,dict):
-   if SELECTED in v:
-    yield v[SELECTED]
-   for x in v.values():yield from visit(x)
-  elif isinstance(v,list):
-   for x in v:yield from visit(x)
- records=list(visit(lock));assert len(records)==1
+ records=[row for row in lock['pinned'] if row['function']==SELECTED];assert len(records)==1
  return records[0]['contract_sha256']
 old_digest,new_digest=selected_digest(inputs),selected_digest(ROOT)
 known={new_source:old_source,new_digest:old_digest,hashlib.sha256(new_source.encode()).hexdigest():hashlib.sha256(old_source.encode()).hexdigest()}
