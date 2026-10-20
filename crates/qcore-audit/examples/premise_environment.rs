@@ -14,6 +14,11 @@ fn main() {
     )
     .unwrap();
     let bytes = serde_json::to_vec(&contracts).unwrap();
-    println!("{}", qcore_schemas::sha256_hex(&bytes));
+    let sources = serde_json::to_vec(contracts.source_assumptions()).unwrap();
+    let functions = serde_json::to_vec(contracts.functions()).unwrap();
+    println!(
+        "{}",
+        serde_json::json!({"environment_sha256":qcore_schemas::sha256_hex(&bytes), "source_assumptions_sha256":qcore_schemas::sha256_hex(&sources), "function_table_sha256":qcore_schemas::sha256_hex(&functions)})
+    );
     fs::write(&args[3], bytes).unwrap();
 }
