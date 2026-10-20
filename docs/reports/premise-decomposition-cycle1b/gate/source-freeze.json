@@ -1,0 +1,25 @@
+{
+  "frozen_source": "13500ce9d9c71534357e44d6d505a58f52758661",
+  "receipt_head": "f493895ad996719da800a47ff33fe7039f6c8ecd",
+  "command": [
+    "git",
+    "diff",
+    "--exit-code",
+    "13500ce9d9c71534357e44d6d505a58f52758661",
+    "HEAD",
+    "--",
+    "crates",
+    "proof",
+    "providers",
+    "contract",
+    "scripts",
+    "Cargo.toml",
+    "Cargo.lock",
+    "rust-toolchain.toml",
+    "build.rs"
+  ],
+  "exit": 0,
+  "source_trees_unchanged_since_completed_core_provider_and_lean_gates": true,
+  "binary_sha256": "a547dfe9dad5acd26b489af28796e913e10787a325bbbe044c4de3d3a40e5bc2",
+  "meaning": "Later commits change report/evidence/matrix records only. Source and provider gates bind this unchanged production/control/proof tree; paired route invocations independently recheck the immutable binary."
+}
