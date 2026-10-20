@@ -23,11 +23,21 @@ def main():
     locks={}
     for label,root in [('before',Path(roots[0])),('after',ROOT)]:
         lock=json.loads((root/'providers/quirin-provider-libc/contracts.lock').read_text());locks[label]={r['function']:r['contract_sha256'] for r in lock['flexible'] if r['function'] in mapping['declarations']}
+    lock_bytes={label:(root/'providers/quirin-provider-libc/contracts.lock').read_bytes() for label,root in [('before',Path(roots[0])),('after',ROOT)]}
+    restored_lock=lock_bytes['after']
+    for function in mapping['declarations']:
+        assert restored_lock.count(locks['after'][function].encode())==1
+        restored_lock=restored_lock.replace(locks['after'][function].encode(),locks['before'][function].encode())
+    assert restored_lock==lock_bytes['before'], 'lock bytes differ beyond the two official flexible identities'
+    lock_hash={label:hashlib.sha256(raw).hexdigest() for label,raw in lock_bytes.items()}
     records=[]
     baseline_text=(Path(roots[0])/mapping['module']).read_text()
     migrated_text=(ROOT/mapping['module']).read_text()
     environments={}
     provenance=a.out/'provenance';provenance.mkdir()
+    for label,raw in lock_bytes.items():
+        (provenance/(label+'-libc-contracts.lock.gz')).write_bytes(gzip.compress(raw,mtime=0))
+    (provenance/'lock-attribution.json').write_text(json.dumps({'sha256':lock_hash,'only_changed_functions':sorted(mapping['declarations']),'exact_bytes_equal_after_selected_digest_substitution':True},indent=2)+'\n')
     for label in ['before','after']:
         path=ROOT/('private/premise-decomposition-cycle1b/environment-'+label+'.json')
         if path.exists():
@@ -64,6 +74,10 @@ def main():
                 target=mapping['declarations'][owner]
                 assert value==target['after_statement'],(path,value)
                 records.append({'path':path+(key,),'kind':'exact-scoped-premise-statement','before':target['before_statement'],'after':value});value=target['before_statement']
+            if key=='sha256' and len(path)>1 and path[-2]=='locks' and str(path[-1]).endswith('/providers/quirin-provider-libc/contracts.lock'):
+                assert v['owner']=='quirin-provider-libc' and value==lock_hash['after']
+                records.append({'path':path+(key,),'kind':'exact-two-flexible-entry-lock-file-sha256','before':lock_hash['before'],'after':value})
+                value=lock_hash['before']
             if key=='inventory_sha256' and path and path[-1]=='compile_configuration':
                 # current.rs and no_build.rs hash the complete configuration
                 # before inserting this field. Verify both raw records; the
