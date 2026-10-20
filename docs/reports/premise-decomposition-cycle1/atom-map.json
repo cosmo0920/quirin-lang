@@ -216,5 +216,65 @@
     "forbidden_transition": "proposed !-> needs explicit negative proposition; Unknown is not negation",
     "terminal_postcondition": "proposed ->| can state terminal condition but does not prove eventual termination",
     "proceed_and": "proposed |-> needs exact state-transition semantics before grammar expansion"
+  },
+  "formal_implications": [
+    {
+      "id": "entry-link-target-custody",
+      "theorem": "QCore.CjsonRepresentationPremises.links_stay_live_owned_and_exclude_parent",
+      "environment": "Environment e; child identities x,y",
+      "prerequisite_atoms": [
+        "detach_chain",
+        "detach_link_targets",
+        "detach_parent_outside"
+      ],
+      "additional_antecedents": [
+        "x is in e.children",
+        "e.next x = some y or e.prev x = some y"
+      ],
+      "conclusion": "e.live y and e.ownedChild y and y differs from e.parent",
+      "boundary": "Entry heap implication only; no call-transition preservation or source binding."
+    },
+    {
+      "id": "finite-child-index-injectivity",
+      "theorem": "QCore.CjsonRepresentationPremises.distinct_indices_identify_distinct_children",
+      "environment": "Environment e; indices i,j : Fin e.children.length",
+      "prerequisite_atoms": [
+        "detach_distinct"
+      ],
+      "additional_antecedents": [
+        "e.children[i] = e.children[j]"
+      ],
+      "conclusion": "i = j",
+      "boundary": "Conditional finite-list result; does not establish caller distinctness."
+    },
+    {
+      "id": "other-writer-refutation",
+      "theorem": "QCore.CjsonRepresentationPremises.a_writing_step_refutes_no_writer",
+      "environment": "Environment e; Step step",
+      "prerequisite_atoms": [],
+      "additional_antecedents": [
+        "step is in e.trace",
+        "step.actor differs from e.callActor",
+        "step.writesLinks = true"
+      ],
+      "conclusion": "not noWriter e",
+      "affected_atom": "detach_no_writer",
+      "affected_premise": "detach_representation_atoms",
+      "boundary": "Refutes the assumed antecedent in this mathematical environment; not a validated reachable C violation. Original legacy premise remains separately open."
+    }
+  ],
+  "premise_dependency_map": {
+    "detach_representation_atoms": [
+      "detach_chain",
+      "detach_distinct",
+      "detach_empty",
+      "detach_first_prev",
+      "detach_last_next",
+      "detach_link_targets",
+      "detach_no_writer",
+      "detach_parent_outside",
+      "detach_predecessor"
+    ],
+    "detach_list_representation": "separate legacy atom; no proved equivalence edge to proposed conjunction"
   }
 }
