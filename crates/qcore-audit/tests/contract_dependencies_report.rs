@@ -381,11 +381,10 @@ fn erasure_preserves_legacy_declarations_named_like_graph_fields() {
 }
 
 #[test]
-fn production_cjson_atoms_follow_declaration_dependencies_without_affecting_unrelated_rows() {
+fn report_owned_cjson_atoms_follow_declaration_dependencies_without_affecting_unrelated_rows() {
     use qcore_c_gateway::contract_dependencies::{RowDependencies, hypothesis_closure};
     use std::collections::BTreeSet;
-    let text =
-        include_str!("../../../providers/qcore-provider-librdkafka/contracts/librdkafka/cjson.qv");
+    let text = include_str!("../../../docs/reports/premise-decomposition-cycle1/proposed-cjson.qv");
     let contracts = qcore_contract::contract_loader::load_resource_contract_sources(
         &BTreeMap::from([("cjson.qv".into(), text.into())]),
     )
@@ -431,11 +430,11 @@ fn production_cjson_atoms_follow_declaration_dependencies_without_affecting_unre
 }
 
 #[test]
-fn actual_cjson_detach_consultation_propagates_atoms_through_a_summary() {
+fn proposed_cjson_detach_consultation_propagates_atoms_through_a_summary() {
     use qcore_c_gateway::contract_dependencies::{Recording, hypothesis_closure, row_dependencies};
     use qcore_c_gateway::legacy_c::analyze_legacy_c_translation_unit;
     let production =
-        include_str!("../../../providers/qcore-provider-librdkafka/contracts/librdkafka/cjson.qv");
+        include_str!("../../../docs/reports/premise-decomposition-cycle1/proposed-cjson.qv");
     let fixture = "module contract;
 extern fn impact_alloc() -> ptr<mut,u8> contract { requires resource_contract_v1; ensures normal resource_return_owned(nonnull); };
 extern fn impact_store(p: ptr<mut,u8>, i: ptr<mut,u8>) -> unit contract { requires resource_contract_v1; ensures normal resource_owned(p,nonnull); ensures normal resource_stored(i,p,nonnull); ensures normal resource_return_none(); };
@@ -447,6 +446,28 @@ extern fn impact_free(p: ptr<mut,u8>) -> unit contract { requires resource_contr
         ]))
         .unwrap();
     let source = "void direct(void) { void *p=impact_alloc(); void *i=impact_alloc(); impact_store(p,i); void *r=cJSON_DetachItemViaPointer(p,i); impact_free(r); impact_free(p); } void caller(void) { direct(); } int unrelated(void) { return 7; }";
+    let original =
+        include_str!("../../../providers/qcore-provider-librdkafka/contracts/librdkafka/cjson.qv");
+    let actual =
+        qcore_contract::contract_loader::load_resource_contract_sources(&BTreeMap::from([
+            ("cjson.qv".into(), original.into()),
+            ("impact.qv".into(), fixture.into()),
+        ]))
+        .unwrap();
+    let actual_recording = Recording::start();
+    let actual_summary = analyze_legacy_c_translation_unit(source, "caller", &actual).unwrap();
+    let actual_record = actual_recording.finish();
+    let actual_rows = row_dependencies(&actual_record, &actual_summary, &actual);
+    let actual_graphs = qcore_contract::hypothesis::replay(actual.source_assumptions()).unwrap();
+    for name in ["direct", "caller"] {
+        assert_eq!(
+            actual_summary.functions[name].status,
+            qcore_c_gateway::legacy_c::AnalysisStatus::Safe
+        );
+        let closure = hypothesis_closure(&actual_rows[name], &actual_graphs);
+        assert_eq!(closure["cJSON_DetachItemViaPointer"].len(), 1);
+        assert!(!closure["cJSON_DetachItemViaPointer"].contains("detach_no_writer"));
+    }
     let recording = Recording::start();
     let summary = analyze_legacy_c_translation_unit(source, "caller", &contracts).unwrap();
     let record = recording.finish();
@@ -473,4 +494,35 @@ extern fn impact_free(p: ptr<mut,u8>) -> unit contract { requires resource_contr
         rows["caller"]
     );
     assert!(hypothesis_closure(&rows["unrelated"], &graphs).is_empty());
+}
+
+#[test]
+fn a_companion_premise_changes_closed_world_classification_so_stays_report_owned() {
+    use qcore_audit::outer_selection::{Fact, custody_facts};
+    use std::collections::BTreeSet;
+    let original =
+        include_str!("../../../providers/qcore-provider-librdkafka/contracts/librdkafka/cjson.qv");
+    let proposal =
+        include_str!("../../../docs/reports/premise-decomposition-cycle1/proposed-cjson.qv");
+    let load = |text: &str| {
+        qcore_contract::contract_loader::load_resource_contract_sources(&BTreeMap::from([(
+            "cjson.qv".into(),
+            text.into(),
+        )]))
+        .unwrap()
+    };
+    let before = premises(&load(original)).unwrap();
+    let after = premises(&load(proposal)).unwrap();
+    let dependencies = json!({"declarations":["cJSON_DetachItemViaPointer"]});
+    let old = custody_facts(&dependencies, &before);
+    let new = custody_facts(&dependencies, &after);
+    assert!(old.is_subset(&new));
+    assert_eq!(
+        new.difference(&old).cloned().collect::<BTreeSet<_>>(),
+        BTreeSet::from([Fact::Premise {
+            name: "detach_representation_atoms".into()
+        }])
+    );
+    // This classification difference exists even when an Unknown verdict hides
+    // it from the projection's moved-only records. No classifier exception is added.
 }

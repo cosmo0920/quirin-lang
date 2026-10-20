@@ -1,50 +1,63 @@
 # cJSON representation premise decomposition, cycle 1
 
-Work in progress on base `2d8f6d34257db14031a2578ce14f941bee25fc19`.
-The preimplementation selection/atom map/zero-movement prediction is frozen in
-`1195c7335` ([design](design.md)); [tracked census](census.json) examines 141
-tracked provider-tree .qv/.qcore inputs (fixtures included) and 209 lexical
-premise-clause matches, selecting one of four production cJSON clauses.
-[Census provenance](census-provenance.json) distinguishes this selection aid
-from loader-derived corpus counts. The later [acceptance addendum](acceptance-addendum.md) records the user's concrete-math and
-impact-propagation acceptance requirements.
+The first cycle is a report-owned, replayable decomposition of the existing
+`cJSON_DetachItemViaPointer` representation premise on exact base
+`2d8f6d34257db14031a2578ce14f941bee25fc19`. The production contract, generated
+inventory, source pins and five-clause corpus expectation are restored exactly
+to base. No runtime classifier exception or semantic reader was changed.
 
-Nine opaque atoms decompose the physical representation/writer obligations
-beside the exact retained `detach_list_representation` clause. The latter's
-semantic consumer remains unchanged. Grammar v1 requires a distinct companion
-conjunction name; it cannot replace the exact legacy text and keep its erasure.
-[Atom mapping](atom-map.json) names exact Lean propositions, quantifiers,
-environment and open discharge obligations. No equivalence or C extraction
-proof is claimed. All production atoms remain open/declared, evidence-only.
+The preimplementation selection and zero-movement prediction remain frozen in
+`1195c7335` ([design](design.md)). The [census](census.json) examines 141 tracked
+provider-tree .qv/.qcore inputs and 209 lexical premise-clause matches, selecting
+one of four production cJSON clauses; [provenance](census-provenance.json)
+distinguishes that selection aid from loader-derived corpus counts.
 
-The conditional Lean model derives entry-heap live-owned link targets excluding parent,
-index injectivity under distinctness, and refutation of no-writer by a writing
-step. It never proves the caller's heap or trace meets its antecedents, or that
-these entry-heap consequences persist through the call: a temporal heap
-transition model and source binding remain open. Rust
-controls use the actual production declaration: replay, each atom substitution,
-included/renamed inheritance, refuted no-writer, separate original legacy
-standing, foreign-context refusal and dependency lift including held/withdrawn
-records and unrelated declarations. Refuted premise metadata is not Unsafe or
-a validated reachable C violation.
+[Proposed contract](proposed-cjson.qv) is the preserved production-companion
+attempt. It retains the exact legacy clause and adds nine opaque atoms and a
+conjunction under v1 grammar. [Atom map](atom-map.json) binds stable identities
+to explicit Lean Props, environments, quantifiers, prerequisites, conclusions
+and open evidence obligations. All remain open/declared. Prose/formal
+equivalence and actual C heap/trace binding are open; no typed consumer exists.
 
-Four fresh configured audits exit 0. System retains 99 Safe / 345 Unknown / 4 provisional Unsafe across 448 rows; slice retains 53 Safe / 346 Unknown / 4 Pending / 1 provisional Unsafe across 404 rows. All 454 / 406 full null records, full runtime projections and declaration/clause standing agree after the explicitly attributed companion erasure. Raw module text, selected digest, exact lock-file bytes, serialized environment and complete compile configurations are retained and reconstructed. The remaining four empty-summary identity leaves per route are reproduced from fresh local source by changing only `__TIME__` within actual invocation windows. Intermediate comparison failures remain archived. Corpus base/tip and the standing/provider gates remain pending. Private root:
+The production-companion attempt is rejected: the actual runtime classifier
+interprets every new named premise as a closed-world fact. Its moved-only
+artifact can hide that change under an already Unknown row. The negative Rust
+control proves the new companion contributes exactly one additional fact.
+Four configured attempt audits exit 0 and preserve every full null/runtime
+record, standing and all 448/404 classifier records, because those selections
+have no selected-declaration users. Their archived metadata/source/timestamp
+attributions remain evidence of that rejected variant, not the final-input
+measurement. No failed expectation is waived. [Acceptance addendum](acceptance-addendum.md)
+records this stronger acceptance and fallback before the corpus comparison.
+
+The Lean model proves conditional entry-heap live-owned link targets excluding
+parent, distinct index injectivity and refutation of no-writer by an other-actor
+writing step. It proves neither caller antecedents nor their preservation
+through the C call. Rust controls replay the report variant, reject every atom
+substitution, retain included/renamed inheritance, and keep a refuted atom
+context-bound with the legacy atom separately open. A real allocation/store/
+detach/free fixture and transitive caller retain conditional Safe under both
+the unchanged production and proposed contracts. The original graph has one
+legacy atom; only the proposed graph has all ten atoms. Refutation metadata is
+not Unsafe and is not a validated reachable C violation.
+
+Final original-input corpus/configured measurements and standing/provider
+gates remain pending. Private logs:
 `/home/cosmo/.codex/worktrees/premise-decomposition-cycle1/qcore-c/private/premise-decomposition-cycle1/`.
+The active immutable base audit is unchanged; only its own orchestrator was
+paused while restoring final inputs before the tip launch. All candidate,
+failed-control and interrupted-orchestration evidence is retained.
 
-Integrator list: integrate provider `cjson.qv`, its generated inventory and
-selected function pins together with deliberate 5→15 clause pin; official sync
-leaves the generated load-path byte-identical to base;
-keep exact old premise and unchanged reader. Shared STATUS, increment part10,
-report index and acceptance matrix require serial reconciliation. Preserve all
-failed fixture/proof attempts. No main merge or push by this card.
+Integrator list: report artifact and controls, mathematical model/audit and
+QCore import; shared STATUS, increment part10, report index and acceptance
+matrix require serial reconciliation. Provider production files have no final
+diff. No merge or push by this card.
 
-Follow-ons: prose/formal equivalence; source/environment binding; typed consumer
-under a separate reviewed closed registry; allocator/insertion premises and
-remaining sibling-release/lookup/Removed transport residuals. User-proposed
-`|->`, `!->`, `||->`, `->|` remain design proposals in atom-map.json: no grammar
-extension, no negation from Unknown, no unchecked branch discharge, and no
-termination claim from a terminal marker.
-
-The selected chain atom remains a relational bundle (exact owned-child domain,
-head/adjacency equations and next-path acyclicity), not a claim of logical
-independence or irreducibility. Further refinement must preserve that relation.
+Next cycle: a neutral graph-attachment interface that preserves legacy runtime
+classification, precise prose/formal correspondence and independent exact
+source/heap/trace binding; typed consumption requires a separate reviewed
+closed rule. The chain atom remains a relational bundle, not an independence
+or irreducibility claim. Allocator/insertion and sibling-release/lookup/Removed
+transport remain separate residuals. Proposed `|->`, `!->`, `||->`, `->|` are
+design only: Unknown is not negation, alternatives need all feasible-path
+obligations, and a terminal marker does not prove eventual termination.

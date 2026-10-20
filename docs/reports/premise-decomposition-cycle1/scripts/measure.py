@@ -57,7 +57,7 @@ def main():
               'binary': str(binary), 'binary_sha256': sha(binary),
               'source_head': subprocess.check_output(['git', '-C', str(source), 'rev-parse', 'HEAD'], text=True).strip(),
               'link_map': str(link_map), 'link_map_sha256': sha(link_map),
-              'contract_inputs_root':str(inputs), 'environment': {k: env.get(k, 'unset') for k in ('QCORE_PROFILES','QCORE_CLANG', 'QCORE_CHUNKIO_PACKAGE', 'QCORE_CROSS_UNIT_LINK_MAP',
+              'contract_inputs_root':str(inputs), 'actual_input_worktree_head_observed_at_launch':subprocess.check_output(['git','rev-parse','HEAD'],cwd=REPO,text=True).strip(), 'selected_module_sha256':sha(inputs/'providers/qcore-provider-librdkafka/contracts/librdkafka/cjson.qv'), 'selected_lock_sha256':sha(inputs/'providers/qcore-provider-librdkafka/contracts.lock'), 'environment': {k: env.get(k, 'unset') for k in ('QCORE_PROFILES','QCORE_CLANG', 'QCORE_CHUNKIO_PACKAGE', 'QCORE_CROSS_UNIT_LINK_MAP',
                               'QCORE_NULL_PROPERTY', 'QCORE_OUTER_PROJECTION', 'QCORE_SOURCE_CONTRACTS', 'QCORE_RETURN_CENSUS')},
               'started': datetime.datetime.now(datetime.timezone.utc).isoformat()}
     if route != 'corpus':

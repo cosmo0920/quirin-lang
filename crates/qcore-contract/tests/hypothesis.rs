@@ -249,12 +249,18 @@ fn a_self_consistent_replacement_graph_cannot_shed_an_atom() {
 }
 
 const CJSON: &str =
-    include_str!("../../../providers/qcore-provider-librdkafka/contracts/librdkafka/cjson.qv");
+    include_str!("../../../docs/reports/premise-decomposition-cycle1/proposed-cjson.qv");
 const DETACH: &str = "cJSON_DetachItemViaPointer";
 const DETACH_PREMISE: &str = "detach_representation_atoms";
 
 #[test]
-fn production_cjson_decomposition_replays_and_keeps_the_exact_legacy_premise() {
+fn report_owned_cjson_decomposition_replays_and_keeps_the_exact_legacy_premise() {
+    let production =
+        include_str!("../../../providers/qcore-provider-librdkafka/contracts/librdkafka/cjson.qv");
+    assert!(!production.contains("resource_hypothesis(detach_"));
+    let actual = replay(&BTreeMap::from([("cjson.qv".into(), production.into())])).unwrap();
+    assert_eq!(actual[DETACH].atoms.len(), 1);
+
     let sources = BTreeMap::from([("cjson.qv".into(), CJSON.into())]);
     let contracts = load_resource_contract_sources(&sources).unwrap();
     let expected = replay(contracts.source_assumptions()).unwrap();
@@ -299,7 +305,7 @@ fn production_cjson_decomposition_replays_and_keeps_the_exact_legacy_premise() {
 }
 
 #[test]
-fn production_cjson_decomposition_survives_inclusion_and_formal_renaming() {
+fn report_owned_cjson_decomposition_survives_inclusion_and_formal_renaming() {
     use qcore_contract::contract_inclusion::{ContractLoadPath, PublishedContractCrate};
     let krate = PublishedContractCrate {
         name: "qcore-provider-librdkafka".into(),
@@ -325,7 +331,7 @@ fn production_cjson_decomposition_survives_inclusion_and_formal_renaming() {
 }
 
 #[test]
-fn production_cjson_refuted_prerequisite_is_reported_only_in_its_exact_context() {
+fn report_owned_cjson_refuted_prerequisite_is_reported_only_in_its_exact_context() {
     let sources = BTreeMap::from([("cjson.qv".into(), CJSON.into())]);
     let expected = replay(&sources).unwrap().remove(DETACH).unwrap();
     let mut claim = Instance {

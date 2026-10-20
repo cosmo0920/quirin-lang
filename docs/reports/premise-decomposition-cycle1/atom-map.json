@@ -217,6 +217,7 @@
     "terminal_postcondition": "proposed ->| can state terminal condition but does not prove eventual termination",
     "proceed_and": "proposed |-> needs exact state-transition semantics before grammar expansion"
   },
+  "publication": "Report-owned proposed-cjson.qv only; production contract and runtime classification are unchanged. Neutral attachment remains open.",
   "formal_implications": [
     {
       "id": "entry-link-target-custody",
