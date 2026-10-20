@@ -1,0 +1,28 @@
+[
+  {
+    "command": [
+      "/home/cosmo/.codex/worktrees/w48-bottom-up-batch4/qcore-c/private/w48-bottom-up-batch4/metadata-replay",
+      "/home/cosmo/.codex/worktrees/w48-bottom-up-batch4/qcore-c/private/w48-bottom-up-batch4/corpus-before-final/corpus/resource-diagnostics.json",
+      "/home/cosmo/.codex/worktrees/w48-bottom-up-batch4/qcore-c/private/w48-bottom-up-batch4/corpus-before-final/corpus/resource-diagnostics.contracts.json",
+      "/home/cosmo/.codex/worktrees/w48-bottom-up-batch4/qcore-c/private/w48-bottom-up-batch4/environment-base.json",
+      "/home/cosmo/.codex/worktrees/w48-bottom-up-batch4/qcore-c/docs/reports/w48-bottom-up-batch4/artifacts/corpus/before-metadata-replay.json"
+    ],
+    "exit": 0,
+    "log": "/home/cosmo/.codex/worktrees/w48-bottom-up-batch4/qcore-c/private/w48-bottom-up-batch4/corpus-before-metadata-replay-20261020T222317745582Z.log",
+    "started": "2026-10-20T22:23:17.745655+00:00",
+    "ended": "2026-10-20T22:23:18.699174+00:00"
+  },
+  {
+    "command": [
+      "/home/cosmo/.codex/worktrees/w48-bottom-up-batch4/qcore-c/private/w48-bottom-up-batch4/metadata-replay",
+      "/home/cosmo/.codex/worktrees/w48-bottom-up-batch4/qcore-c/private/w48-bottom-up-batch4/corpus-after-final/corpus/resource-diagnostics.json",
+      "/home/cosmo/.codex/worktrees/w48-bottom-up-batch4/qcore-c/private/w48-bottom-up-batch4/corpus-after-final/corpus/resource-diagnostics.contracts.json",
+      "/home/cosmo/.codex/worktrees/w48-bottom-up-batch4/qcore-c/private/w48-bottom-up-batch4/environment-tip.json",
+      "/home/cosmo/.codex/worktrees/w48-bottom-up-batch4/qcore-c/docs/reports/w48-bottom-up-batch4/artifacts/corpus/after-metadata-replay.json"
+    ],
+    "exit": 0,
+    "log": "/home/cosmo/.codex/worktrees/w48-bottom-up-batch4/qcore-c/private/w48-bottom-up-batch4/corpus-after-metadata-replay-20261020T222318841003Z.log",
+    "started": "2026-10-20T22:23:18.841056+00:00",
+    "ended": "2026-10-20T22:23:19.775164+00:00"
+  }
+]

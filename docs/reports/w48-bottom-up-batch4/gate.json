@@ -1,0 +1,13 @@
+{
+  "note": "W48-BOTTOM-UP-BATCH4 exact base 2d8f6d342; analyzer Rust source b931ed61d. Explicit test pin and aggregate Lean import placement repaired at 6fa45eb46 without changing analyzer semantics/model definitions. Full final Rust/fmt/Clippy plus repaired full Lean gate pass; initial failures remain in rust-attempts/command-receipts. Python ran after derived matrix regeneration; the command receipt identifies the final selected run. Provider gate is inapplicable (no provider files changed); provider_tests null is not a measurement. Shared matrix carries preceding supplied gate figures explicitly for serial integration; own current measurements are this gate. Six final audit outcomes and all field comparisons are separate from gate completion. Initial missing-registry audits are failed preparations, not program measurements. Actual Clang recording is from this worktree standing sequence.",
+  "workspace_tests": 8377,
+  "provider_tests": null,
+  "python_evidence_validator_tests": 374,
+  "reevaluation_probe_exit": 0,
+  "reevaluation_followup_exit": 0,
+  "cargo_fmt": "clean",
+  "cargo_clippy": "clean",
+  "standing_gate": "complete",
+  "lean_audits": 347,
+  "clang": "present: Ubuntu clang version 21.1.8 (6ubuntu1)"
+}

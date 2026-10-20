@@ -1,0 +1,10 @@
+{
+  "command": [
+    "python3",
+    "docs/reports/remaining-d02/build_matrix.py",
+    "."
+  ],
+  "exit": 0,
+  "log": "private/w48-bottom-up-batch4/matrix-regeneration-recorded.log",
+  "note": "Explicit-exit repetition because the first preparation shell ended in git add rather than preserving the generator exit; no first-attempt exit claimed."
+}

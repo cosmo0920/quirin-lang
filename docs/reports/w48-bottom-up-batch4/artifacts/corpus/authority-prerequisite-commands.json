@@ -1,0 +1,23 @@
+[
+  {
+    "command": [
+      "python3",
+      "/home/cosmo/.codex/worktrees/w48-bottom-up-batch4/qcore-c/docs/reports/w48-bottom-up-batch4/scripts/time_identity.py",
+      "corpus"
+    ],
+    "exit": 0,
+    "log": "/home/cosmo/.codex/worktrees/w48-bottom-up-batch4/qcore-c/private/w48-bottom-up-batch4/corpus-authority-20261020T222315478762Z-time_identity.py.log",
+    "started": "2026-10-20T22:23:15.478812+00:00",
+    "ended": "2026-10-20T22:23:16.374350+00:00"
+  },
+  {
+    "command": [
+      "python3",
+      "/home/cosmo/.codex/worktrees/w48-bottom-up-batch4/qcore-c/docs/reports/w48-bottom-up-batch4/scripts/corpus_context_review.py"
+    ],
+    "exit": 0,
+    "log": "/home/cosmo/.codex/worktrees/w48-bottom-up-batch4/qcore-c/private/w48-bottom-up-batch4/corpus-authority-20261020T222316374611Z-corpus_context_review.py.log",
+    "started": "2026-10-20T22:23:16.374638+00:00",
+    "ended": "2026-10-20T22:23:20.457671+00:00"
+  }
+]

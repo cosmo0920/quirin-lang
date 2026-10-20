@@ -2,8 +2,8 @@
 //! through the unit analysis.
 
 use super::super::{
-    AnalysisStatus, LegacyProgramSummary, analyze_legacy_c_translation_unit, build_function_cfg,
-    tokenize_with_conditionals,
+    AnalysisStatus, LegacyInstruction, LegacyProgramSummary, analyze_legacy_c_translation_unit,
+    build_function_cfg, tokenize_with_conditionals,
 };
 use super::guarded_callees;
 use qcore_schemas::contract::ResourceContracts;
@@ -447,19 +447,29 @@ fn a_member_null_test_is_a_typed_read_of_its_base() {
 
 #[test]
 fn a_member_null_test_reads_only_single_pointer_members() {
-    // Card W47-ACCESS-PATH-POSITIONS (rule 10k) re-pins this deliberately.
-    // This rule still reads only a single pointer member. Two shapes it leaves
-    // are now read by the typed condition fallback asked after it (a pointer
-    // chain's truthiness, a comparison of two pointer reads), each keeping the
-    // per-hop obligation of the untracked formal `n`. `n->buf && n->n` keeps
-    // the refusal: both operands are older routes' reads, and a call-free
-    // condition is desugared only when an operand needs the typed reader. A
-    // cast, which no route reads, still refuses.
+    // W47 re-pinned the chain/comparison fallbacks below. W48-BOTTOM-UP-
+    // BATCH4 deliberately re-pins the remaining compound shape: both old
+    // readers already supplied checked reads, so its short-circuit plan now
+    // stands without requiring a newer typed-path leaf. Each dereferenced
+    // base remains obliged. The member-null reader itself still reads one
+    // member, and the cast refusal below is unchanged.
     let summary = analyze("void subject(struct node *n) { if (n->buf && n->n) return; }\n");
+    assert_eq!(status(&summary, "subject"), AnalysisStatus::Safe);
+    assert!(summary.functions["subject"].diagnostics.is_empty());
     assert!(
-        has(&summary, "subject", "branch condition"),
-        "{:?}",
-        summary.functions["subject"].diagnostics
+        summary.functions["subject"]
+            .cfg
+            .nodes
+            .iter()
+            .filter(|node| {
+                matches!(
+                    node.instruction,
+                    LegacyInstruction::IndirectScalarAccess { .. }
+                )
+            })
+            .count()
+            >= 2,
+        "both source reads must retain their base obligations"
     );
     for condition in ["n->next->buf", "n->buf == n->next"] {
         let summary = analyze(&format!(

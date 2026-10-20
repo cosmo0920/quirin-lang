@@ -1,0 +1,725 @@
+{
+  "before": "/home/cosmo/.codex/worktrees/w48-bottom-up-batch4/qcore-c/private/w48-bottom-up-batch4/system-before-final/resource-diagnostics.json",
+  "after": "/home/cosmo/.codex/worktrees/w48-bottom-up-batch4/qcore-c/private/w48-bottom-up-batch4/system-after-final/resource-diagnostics.json",
+  "functions": 448,
+  "transitions": [
+    {
+      "before": "Safe",
+      "after": "Safe",
+      "count": 99
+    },
+    {
+      "before": "Unknown",
+      "after": "Unknown",
+      "count": 345
+    },
+    {
+      "before": "Unsafe",
+      "after": "Unsafe",
+      "count": 4
+    }
+  ],
+  "removed_leaves": [
+    [
+      "unknown_alias",
+      "unresolved resource identity `in`",
+      2
+    ],
+    [
+      "unknown_alias",
+      "unresolved resource identity `ins`",
+      2
+    ],
+    [
+      "unsupported",
+      "unmodeled call, aggregate or indirect access in branch condition",
+      47
+    ]
+  ],
+  "added_leaves": [
+    [
+      "unknown_alias",
+      "unresolved resource identity `chunk`",
+      4
+    ],
+    [
+      "unknown_alias",
+      "unresolved resource identity `ic`",
+      2
+    ],
+    [
+      "unknown_alias",
+      "unresolved resource identity `instance`",
+      4
+    ],
+    [
+      "unknown_alias",
+      "unresolved resource identity `task`",
+      8
+    ]
+  ],
+  "changed": [
+    {
+      "key": [
+        "fluent-bit-system",
+        "plugins/in_storage_backlog/sb.c",
+        "sb_is_rejected_stream",
+        0
+      ],
+      "before": "Unknown",
+      "after": "Unknown",
+      "removed_leaves": [
+        [
+          "unsupported",
+          "unmodeled call, aggregate or indirect access in branch condition",
+          1
+        ]
+      ],
+      "added_leaves": []
+    },
+    {
+      "key": [
+        "fluent-bit-system",
+        "src/flb_input_chunk.c",
+        "flb_input_chunk_get_projected_write_size",
+        0
+      ],
+      "before": "Unknown",
+      "after": "Unknown",
+      "removed_leaves": [
+        [
+          "unsupported",
+          "unmodeled call, aggregate or indirect access in branch condition",
+          2
+        ]
+      ],
+      "added_leaves": [
+        [
+          "unknown_alias",
+          "unresolved resource identity `chunk`",
+          2
+        ]
+      ]
+    },
+    {
+      "key": [
+        "fluent-bit-system",
+        "src/flb_input_chunk.c",
+        "flb_input_chunk_release_route",
+        0
+      ],
+      "before": "Unknown",
+      "after": "Unknown",
+      "removed_leaves": [
+        [
+          "unsupported",
+          "unmodeled call, aggregate or indirect access in branch condition",
+          1
+        ]
+      ],
+      "added_leaves": []
+    },
+    {
+      "key": [
+        "fluent-bit-system",
+        "src/flb_input_chunk.c",
+        "get_input_chunk_source_name",
+        0
+      ],
+      "before": "Unknown",
+      "after": "Unknown",
+      "removed_leaves": [
+        [
+          "unsupported",
+          "unmodeled call, aggregate or indirect access in branch condition",
+          1
+        ]
+      ],
+      "added_leaves": []
+    },
+    {
+      "key": [
+        "fluent-bit-system",
+        "src/flb_input_chunk.c",
+        "input_chunk_append_raw",
+        0
+      ],
+      "before": "Unknown",
+      "after": "Unknown",
+      "removed_leaves": [
+        [
+          "unsupported",
+          "unmodeled call, aggregate or indirect access in branch condition",
+          1
+        ]
+      ],
+      "added_leaves": []
+    },
+    {
+      "key": [
+        "fluent-bit-system",
+        "src/flb_input_chunk.c",
+        "update_logs_tag_records_metrics",
+        0
+      ],
+      "before": "Unknown",
+      "after": "Unknown",
+      "removed_leaves": [
+        [
+          "unknown_alias",
+          "unresolved resource identity `in`",
+          1
+        ],
+        [
+          "unsupported",
+          "unmodeled call, aggregate or indirect access in branch condition",
+          1
+        ]
+      ],
+      "added_leaves": []
+    },
+    {
+      "key": [
+        "fluent-bit-system",
+        "src/flb_input_chunk.c",
+        "update_logs_tag_records_untracked",
+        0
+      ],
+      "before": "Unknown",
+      "after": "Unknown",
+      "removed_leaves": [
+        [
+          "unsupported",
+          "unmodeled call, aggregate or indirect access in branch condition",
+          1
+        ]
+      ],
+      "added_leaves": []
+    },
+    {
+      "key": [
+        "fluent-bit-system",
+        "src/flb_input_chunk.c",
+        "flb_input_chunk_get_projected_write_size",
+        1
+      ],
+      "before": "Unknown",
+      "after": "Unknown",
+      "removed_leaves": [
+        [
+          "unsupported",
+          "unmodeled call, aggregate or indirect access in branch condition",
+          2
+        ]
+      ],
+      "added_leaves": [
+        [
+          "unknown_alias",
+          "unresolved resource identity `chunk`",
+          2
+        ]
+      ]
+    },
+    {
+      "key": [
+        "fluent-bit-system",
+        "src/flb_input_chunk.c",
+        "flb_input_chunk_release_route",
+        1
+      ],
+      "before": "Unknown",
+      "after": "Unknown",
+      "removed_leaves": [
+        [
+          "unsupported",
+          "unmodeled call, aggregate or indirect access in branch condition",
+          1
+        ]
+      ],
+      "added_leaves": []
+    },
+    {
+      "key": [
+        "fluent-bit-system",
+        "src/flb_input_chunk.c",
+        "get_input_chunk_source_name",
+        1
+      ],
+      "before": "Unknown",
+      "after": "Unknown",
+      "removed_leaves": [
+        [
+          "unsupported",
+          "unmodeled call, aggregate or indirect access in branch condition",
+          1
+        ]
+      ],
+      "added_leaves": []
+    },
+    {
+      "key": [
+        "fluent-bit-system",
+        "src/flb_input_chunk.c",
+        "input_chunk_append_raw",
+        1
+      ],
+      "before": "Unknown",
+      "after": "Unknown",
+      "removed_leaves": [
+        [
+          "unsupported",
+          "unmodeled call, aggregate or indirect access in branch condition",
+          1
+        ]
+      ],
+      "added_leaves": []
+    },
+    {
+      "key": [
+        "fluent-bit-system",
+        "src/flb_input_chunk.c",
+        "update_logs_tag_records_metrics",
+        1
+      ],
+      "before": "Unknown",
+      "after": "Unknown",
+      "removed_leaves": [
+        [
+          "unknown_alias",
+          "unresolved resource identity `in`",
+          1
+        ],
+        [
+          "unsupported",
+          "unmodeled call, aggregate or indirect access in branch condition",
+          1
+        ]
+      ],
+      "added_leaves": []
+    },
+    {
+      "key": [
+        "fluent-bit-system",
+        "src/flb_input_chunk.c",
+        "update_logs_tag_records_untracked",
+        1
+      ],
+      "before": "Unknown",
+      "after": "Unknown",
+      "removed_leaves": [
+        [
+          "unsupported",
+          "unmodeled call, aggregate or indirect access in branch condition",
+          1
+        ]
+      ],
+      "added_leaves": []
+    },
+    {
+      "key": [
+        "fluent-bit-system",
+        "src/flb_storage.c",
+        "flb_storage_quarantine_chunk",
+        0
+      ],
+      "before": "Unknown",
+      "after": "Unknown",
+      "removed_leaves": [
+        [
+          "unsupported",
+          "unmodeled call, aggregate or indirect access in branch condition",
+          1
+        ]
+      ],
+      "added_leaves": []
+    },
+    {
+      "key": [
+        "fluent-bit-system",
+        "src/flb_storage.c",
+        "get_or_create_rejected_stream",
+        0
+      ],
+      "before": "Unknown",
+      "after": "Unknown",
+      "removed_leaves": [
+        [
+          "unsupported",
+          "unmodeled call, aggregate or indirect access in branch condition",
+          2
+        ]
+      ],
+      "added_leaves": []
+    },
+    {
+      "key": [
+        "fluent-bit-system",
+        "src/flb_storage.c",
+        "flb_storage_quarantine_chunk",
+        1
+      ],
+      "before": "Unknown",
+      "after": "Unknown",
+      "removed_leaves": [
+        [
+          "unsupported",
+          "unmodeled call, aggregate or indirect access in branch condition",
+          1
+        ]
+      ],
+      "added_leaves": []
+    },
+    {
+      "key": [
+        "fluent-bit-system",
+        "src/flb_storage.c",
+        "get_or_create_rejected_stream",
+        1
+      ],
+      "before": "Unknown",
+      "after": "Unknown",
+      "removed_leaves": [
+        [
+          "unsupported",
+          "unmodeled call, aggregate or indirect access in branch condition",
+          2
+        ]
+      ],
+      "added_leaves": []
+    },
+    {
+      "key": [
+        "fluent-bit-system",
+        "src/flb_task.c",
+        "flb_task_destroy",
+        0
+      ],
+      "before": "Unknown",
+      "after": "Unknown",
+      "removed_leaves": [
+        [
+          "unsupported",
+          "unmodeled call, aggregate or indirect access in branch condition",
+          1
+        ]
+      ],
+      "added_leaves": []
+    },
+    {
+      "key": [
+        "fluent-bit-system",
+        "src/flb_task.c",
+        "record_unmatched_route_drop_metrics",
+        0
+      ],
+      "before": "Unknown",
+      "after": "Unknown",
+      "removed_leaves": [
+        [
+          "unknown_alias",
+          "unresolved resource identity `ins`",
+          1
+        ],
+        [
+          "unsupported",
+          "unmodeled call, aggregate or indirect access in branch condition",
+          1
+        ]
+      ],
+      "added_leaves": []
+    },
+    {
+      "key": [
+        "fluent-bit-system",
+        "src/flb_task.c",
+        "flb_task_destroy",
+        1
+      ],
+      "before": "Unknown",
+      "after": "Unknown",
+      "removed_leaves": [
+        [
+          "unsupported",
+          "unmodeled call, aggregate or indirect access in branch condition",
+          1
+        ]
+      ],
+      "added_leaves": []
+    },
+    {
+      "key": [
+        "fluent-bit-system",
+        "src/flb_task.c",
+        "record_unmatched_route_drop_metrics",
+        1
+      ],
+      "before": "Unknown",
+      "after": "Unknown",
+      "removed_leaves": [
+        [
+          "unknown_alias",
+          "unresolved resource identity `ins`",
+          1
+        ],
+        [
+          "unsupported",
+          "unmodeled call, aggregate or indirect access in branch condition",
+          1
+        ]
+      ],
+      "added_leaves": []
+    },
+    {
+      "key": [
+        "fluent-bit-system",
+        "src/flb_engine.c",
+        "handle_dlq_if_available",
+        0
+      ],
+      "before": "Unknown",
+      "after": "Unknown",
+      "removed_leaves": [
+        [
+          "unsupported",
+          "unmodeled call, aggregate or indirect access in branch condition",
+          2
+        ]
+      ],
+      "added_leaves": [
+        [
+          "unknown_alias",
+          "unresolved resource identity `ic`",
+          1
+        ]
+      ]
+    },
+    {
+      "key": [
+        "fluent-bit-system",
+        "src/flb_engine.c",
+        "handle_output_event",
+        0
+      ],
+      "before": "Unknown",
+      "after": "Unknown",
+      "removed_leaves": [
+        [
+          "unsupported",
+          "unmodeled call, aggregate or indirect access in branch condition",
+          4
+        ]
+      ],
+      "added_leaves": [
+        [
+          "unknown_alias",
+          "unresolved resource identity `task`",
+          4
+        ]
+      ]
+    },
+    {
+      "key": [
+        "fluent-bit-system",
+        "src/flb_engine.c",
+        "handle_dlq_if_available",
+        1
+      ],
+      "before": "Unknown",
+      "after": "Unknown",
+      "removed_leaves": [
+        [
+          "unsupported",
+          "unmodeled call, aggregate or indirect access in branch condition",
+          2
+        ]
+      ],
+      "added_leaves": [
+        [
+          "unknown_alias",
+          "unresolved resource identity `ic`",
+          1
+        ]
+      ]
+    },
+    {
+      "key": [
+        "fluent-bit-system",
+        "src/flb_engine.c",
+        "handle_output_event",
+        1
+      ],
+      "before": "Unknown",
+      "after": "Unknown",
+      "removed_leaves": [
+        [
+          "unsupported",
+          "unmodeled call, aggregate or indirect access in branch condition",
+          4
+        ]
+      ],
+      "added_leaves": [
+        [
+          "unknown_alias",
+          "unresolved resource identity `task`",
+          4
+        ]
+      ]
+    },
+    {
+      "key": [
+        "fluent-bit-system",
+        "src/flb_engine_dispatch.c",
+        "record_retry_failure_metrics",
+        0
+      ],
+      "before": "Unknown",
+      "after": "Unknown",
+      "removed_leaves": [
+        [
+          "unsupported",
+          "unmodeled call, aggregate or indirect access in branch condition",
+          1
+        ]
+      ],
+      "added_leaves": []
+    },
+    {
+      "key": [
+        "fluent-bit-system",
+        "src/flb_engine_dispatch.c",
+        "record_retry_failure_metrics",
+        1
+      ],
+      "before": "Unknown",
+      "after": "Unknown",
+      "removed_leaves": [
+        [
+          "unsupported",
+          "unmodeled call, aggregate or indirect access in branch condition",
+          1
+        ]
+      ],
+      "added_leaves": []
+    },
+    {
+      "key": [
+        "fluent-bit-system",
+        "src/flb_output.c",
+        "flb_output_init_all",
+        0
+      ],
+      "before": "Unknown",
+      "after": "Unknown",
+      "removed_leaves": [
+        [
+          "unsupported",
+          "unmodeled call, aggregate or indirect access in branch condition",
+          1
+        ]
+      ],
+      "added_leaves": []
+    },
+    {
+      "key": [
+        "fluent-bit-system",
+        "src/flb_output.c",
+        "flb_output_new",
+        0
+      ],
+      "before": "Unknown",
+      "after": "Unknown",
+      "removed_leaves": [
+        [
+          "unsupported",
+          "unmodeled call, aggregate or indirect access in branch condition",
+          2
+        ]
+      ],
+      "added_leaves": [
+        [
+          "unknown_alias",
+          "unresolved resource identity `instance`",
+          2
+        ]
+      ]
+    },
+    {
+      "key": [
+        "fluent-bit-system",
+        "src/flb_output.c",
+        "flb_output_proxy_tls_ca_check",
+        0
+      ],
+      "before": "Unknown",
+      "after": "Unknown",
+      "removed_leaves": [
+        [
+          "unsupported",
+          "unmodeled call, aggregate or indirect access in branch condition",
+          1
+        ]
+      ],
+      "added_leaves": []
+    },
+    {
+      "key": [
+        "fluent-bit-system",
+        "src/flb_output.c",
+        "flb_output_init_all",
+        1
+      ],
+      "before": "Unknown",
+      "after": "Unknown",
+      "removed_leaves": [
+        [
+          "unsupported",
+          "unmodeled call, aggregate or indirect access in branch condition",
+          1
+        ]
+      ],
+      "added_leaves": []
+    },
+    {
+      "key": [
+        "fluent-bit-system",
+        "src/flb_output.c",
+        "flb_output_new",
+        1
+      ],
+      "before": "Unknown",
+      "after": "Unknown",
+      "removed_leaves": [
+        [
+          "unsupported",
+          "unmodeled call, aggregate or indirect access in branch condition",
+          2
+        ]
+      ],
+      "added_leaves": [
+        [
+          "unknown_alias",
+          "unresolved resource identity `instance`",
+          2
+        ]
+      ]
+    },
+    {
+      "key": [
+        "fluent-bit-system",
+        "src/flb_output.c",
+        "flb_output_proxy_tls_ca_check",
+        1
+      ],
+      "before": "Unknown",
+      "after": "Unknown",
+      "removed_leaves": [
+        [
+          "unsupported",
+          "unmodeled call, aggregate or indirect access in branch condition",
+          1
+        ]
+      ],
+      "added_leaves": []
+    }
+  ]
+}

@@ -1,0 +1,210 @@
+{
+  "failed_incomplete_input_preparations": [
+    {
+      "name": "slice-before",
+      "command": [
+        "python3",
+        "/home/cosmo/.codex/worktrees/w48-bottom-up-batch4/qcore-c/docs/reports/w48-bottom-up-batch4/scripts/measure.py",
+        "slice",
+        "/home/cosmo/.codex/worktrees/w48-bottom-up-batch4/qcore-c/private/w48-bottom-up-batch4/slice-before",
+        "--link-map",
+        "/home/cosmo/.codex/worktrees/w48-bottom-up-batch4/qcore-c/docs/reports/w48-bottom-up-batch4/link-map.corpus.json",
+        "--inputs-snapshot",
+        "/home/cosmo/.codex/worktrees/w48-bottom-up-batch4/qcore-c/private/w48-bottom-up-batch4/inputs-base",
+        "--binary-source",
+        "2d8f6d34257db14031a2578ce14f941bee25fc19",
+        "--jobs",
+        "2"
+      ],
+      "cwd": "/home/cosmo/.codex/worktrees/w48-bottom-up-batch4/qcore-c",
+      "started": "2026-10-20T17:26:08.142228+00:00",
+      "ended": "2026-10-20T17:26:08.351807+00:00",
+      "exit": 1,
+      "log": "/home/cosmo/.codex/worktrees/w48-bottom-up-batch4/qcore-c/private/w48-bottom-up-batch4/slice-before.log"
+    },
+    {
+      "name": "system-before",
+      "command": [
+        "python3",
+        "/home/cosmo/.codex/worktrees/w48-bottom-up-batch4/qcore-c/docs/reports/w48-bottom-up-batch4/scripts/measure.py",
+        "system",
+        "/home/cosmo/.codex/worktrees/w48-bottom-up-batch4/qcore-c/private/w48-bottom-up-batch4/system-before",
+        "--link-map",
+        "/home/cosmo/.codex/worktrees/w48-bottom-up-batch4/qcore-c/docs/reports/w48-bottom-up-batch4/link-map.corpus.json",
+        "--inputs-snapshot",
+        "/home/cosmo/.codex/worktrees/w48-bottom-up-batch4/qcore-c/private/w48-bottom-up-batch4/inputs-base",
+        "--binary-source",
+        "2d8f6d34257db14031a2578ce14f941bee25fc19",
+        "--jobs",
+        "2"
+      ],
+      "cwd": "/home/cosmo/.codex/worktrees/w48-bottom-up-batch4/qcore-c",
+      "started": "2026-10-20T17:26:08.141658+00:00",
+      "ended": "2026-10-20T17:26:08.353729+00:00",
+      "exit": 1,
+      "log": "/home/cosmo/.codex/worktrees/w48-bottom-up-batch4/qcore-c/private/w48-bottom-up-batch4/system-before.log"
+    },
+    {
+      "name": "corpus-before",
+      "command": [
+        "python3",
+        "/home/cosmo/.codex/worktrees/w48-bottom-up-batch4/qcore-c/docs/reports/w48-bottom-up-batch4/scripts/measure.py",
+        "corpus",
+        "/home/cosmo/.codex/worktrees/w48-bottom-up-batch4/qcore-c/private/w48-bottom-up-batch4/corpus-before",
+        "--link-map",
+        "/home/cosmo/.codex/worktrees/w48-bottom-up-batch4/qcore-c/docs/reports/w48-bottom-up-batch4/link-map.corpus.json",
+        "--inputs-snapshot",
+        "/home/cosmo/.codex/worktrees/w48-bottom-up-batch4/qcore-c/private/w48-bottom-up-batch4/inputs-base",
+        "--binary-source",
+        "2d8f6d34257db14031a2578ce14f941bee25fc19",
+        "--jobs",
+        "2"
+      ],
+      "cwd": "/home/cosmo/.codex/worktrees/w48-bottom-up-batch4/qcore-c",
+      "started": "2026-10-20T17:26:08.140755+00:00",
+      "ended": "2026-10-20T17:26:08.505904+00:00",
+      "exit": 1,
+      "log": "/home/cosmo/.codex/worktrees/w48-bottom-up-batch4/qcore-c/private/w48-bottom-up-batch4/corpus-before.log"
+    },
+    {
+      "name": "system-after",
+      "command": [
+        "python3",
+        "/home/cosmo/.codex/worktrees/w48-bottom-up-batch4/qcore-c/docs/reports/w48-bottom-up-batch4/scripts/measure.py",
+        "system",
+        "/home/cosmo/.codex/worktrees/w48-bottom-up-batch4/qcore-c/private/w48-bottom-up-batch4/system-after",
+        "--link-map",
+        "/home/cosmo/.codex/worktrees/w48-bottom-up-batch4/qcore-c/docs/reports/w48-bottom-up-batch4/link-map.corpus.json",
+        "--inputs-snapshot",
+        "/home/cosmo/.codex/worktrees/w48-bottom-up-batch4/qcore-c/private/w48-bottom-up-batch4/inputs-tip",
+        "--binary-source",
+        "b931ed61d4a9676f768e24d8aff8fc0e8a63ddea",
+        "--jobs",
+        "2"
+      ],
+      "cwd": "/home/cosmo/.codex/worktrees/w48-bottom-up-batch4/qcore-c",
+      "started": "2026-10-20T17:26:08.507047+00:00",
+      "ended": "2026-10-20T17:26:08.670262+00:00",
+      "exit": 1,
+      "log": "/home/cosmo/.codex/worktrees/w48-bottom-up-batch4/qcore-c/private/w48-bottom-up-batch4/system-after.log"
+    },
+    {
+      "name": "slice-after",
+      "command": [
+        "python3",
+        "/home/cosmo/.codex/worktrees/w48-bottom-up-batch4/qcore-c/docs/reports/w48-bottom-up-batch4/scripts/measure.py",
+        "slice",
+        "/home/cosmo/.codex/worktrees/w48-bottom-up-batch4/qcore-c/private/w48-bottom-up-batch4/slice-after",
+        "--link-map",
+        "/home/cosmo/.codex/worktrees/w48-bottom-up-batch4/qcore-c/docs/reports/w48-bottom-up-batch4/link-map.corpus.json",
+        "--inputs-snapshot",
+        "/home/cosmo/.codex/worktrees/w48-bottom-up-batch4/qcore-c/private/w48-bottom-up-batch4/inputs-tip",
+        "--binary-source",
+        "b931ed61d4a9676f768e24d8aff8fc0e8a63ddea",
+        "--jobs",
+        "2"
+      ],
+      "cwd": "/home/cosmo/.codex/worktrees/w48-bottom-up-batch4/qcore-c",
+      "started": "2026-10-20T17:26:08.507259+00:00",
+      "ended": "2026-10-20T17:26:08.683687+00:00",
+      "exit": 1,
+      "log": "/home/cosmo/.codex/worktrees/w48-bottom-up-batch4/qcore-c/private/w48-bottom-up-batch4/slice-after.log"
+    },
+    {
+      "name": "corpus-after",
+      "command": [
+        "python3",
+        "/home/cosmo/.codex/worktrees/w48-bottom-up-batch4/qcore-c/docs/reports/w48-bottom-up-batch4/scripts/measure.py",
+        "corpus",
+        "/home/cosmo/.codex/worktrees/w48-bottom-up-batch4/qcore-c/private/w48-bottom-up-batch4/corpus-after",
+        "--link-map",
+        "/home/cosmo/.codex/worktrees/w48-bottom-up-batch4/qcore-c/docs/reports/w48-bottom-up-batch4/link-map.corpus.json",
+        "--inputs-snapshot",
+        "/home/cosmo/.codex/worktrees/w48-bottom-up-batch4/qcore-c/private/w48-bottom-up-batch4/inputs-tip",
+        "--binary-source",
+        "b931ed61d4a9676f768e24d8aff8fc0e8a63ddea",
+        "--jobs",
+        "2"
+      ],
+      "cwd": "/home/cosmo/.codex/worktrees/w48-bottom-up-batch4/qcore-c",
+      "started": "2026-10-20T17:26:08.506904+00:00",
+      "ended": "2026-10-20T17:26:08.786656+00:00",
+      "exit": 1,
+      "log": "/home/cosmo/.codex/worktrees/w48-bottom-up-batch4/qcore-c/private/w48-bottom-up-batch4/corpus-after.log"
+    }
+  ],
+  "queued_collector_cancellations": [
+    {
+      "pid": 2138651,
+      "argv": "python3 private/w48-bottom-up-batch4/final_measurements.py",
+      "state_before_interrupt": "T",
+      "children": "",
+      "reason": "Cancel own still-waiting collector before any Lean/audit invocation to select corpus8/configured2 under the same validation lock. No program measurement started.",
+      "retained_log": "private/w48-bottom-up-batch4/final-measurements.log",
+      "exit": 130
+    },
+    {
+      "pid": 2158989,
+      "argv": "python3 private/w48-bottom-up-batch4/final_measurements_8.py ",
+      "children": "",
+      "reason": "Queued-only collector replaced before any invocation by defaultcap16 corpus and two parallel configured routes8 each, max16workers; peer corpus16 leaves39GiB available.",
+      "log": "private/w48-bottom-up-batch4/final-measurements-8.log",
+      "exit_expected": 130,
+      "exit": 130
+    }
+  ],
+  "reason": "Initial git archives omitted tracked root cycle19-resource-contracts.json. All six failed before program analysis and supply no verdict/coverage evidence. Original 306-file snapshots retained unchanged. Fresh final 307-file snapshots include the registry.",
+  "metadata_preparation_guards": {
+    "configured_preflight": "private/w48-bottom-up-batch4/configured-preflight/commands.json",
+    "corpus_initial_guard": {
+      "name": "corpus-authority-final",
+      "command": [
+        "python3",
+        "/home/cosmo/.codex/worktrees/w48-bottom-up-batch4/qcore-c/docs/reports/w48-bottom-up-batch4/scripts/authority_review.py",
+        "corpus"
+      ],
+      "started": "2026-10-20T22:15:09.812213+00:00",
+      "ended": "2026-10-20T22:15:18.937247+00:00",
+      "exit": 1,
+      "log": "/home/cosmo/.codex/worktrees/w48-bottom-up-batch4/qcore-c/private/w48-bottom-up-batch4/corpus-authority-final.log"
+    },
+    "corpus_exact_retry": {
+      "name": "corpus-authority-retry1",
+      "command": [
+        "python3",
+        "docs/reports/w48-bottom-up-batch4/scripts/authority_review.py",
+        "corpus"
+      ],
+      "exit": 0,
+      "started": "2026-10-20T22:23:15.163320+00:00",
+      "ended": "2026-10-20T22:23:24.847508+00:00",
+      "log": "private/w48-bottom-up-batch4/corpus-authority-retry1.log"
+    },
+    "supplementary_own_vs_transitive_null_carrier_check": {
+      "initial_exit": 1,
+      "initial_capture": "interactive exec output retained by task; no file log claimed",
+      "reason": "Incorrect exact equality between own carriers and dependency set; producer closes dependencies over in-unit summaries. Corrected unique-name containment preserves both full payloads.",
+      "final": {
+        "name": "complete-diagnostics-final",
+        "command": [
+          "python3",
+          "docs/reports/w48-bottom-up-batch4/scripts/complete_diagnostics_review.py"
+        ],
+        "exit": 0,
+        "started": "2026-10-20T22:35:35.103297+00:00",
+        "ended": "2026-10-20T22:35:36.245655+00:00",
+        "log": "private/w48-bottom-up-batch4/complete-diagnostics-final.log"
+      }
+    },
+    "meaning": "Program audits all0. Final collector1 was a strict metadata guard against the cmetrics native-standing promotion; exact clauses/methods checked and retry0. Configured preflight guards and canonical context ordering attempts remain retained; these are not failed C program measurements."
+  },
+  "first_collection_driver": "Initial private pipeline is a collector that exits0 after recording all child exits, including failures. Its aggregate exit is not a gate result. Final collector exits1 for any failed command; individual command exits are authoritative.",
+  "final_whitespace_check": {
+    "initial_staged_check_exit": 2,
+    "reason": "One trailing space in newly staged evidence-only configured_context_review.py, not visible to earlier unstaged git diff checks. Commit proceeded because the shell list did not stop on that check; corrected immediately and full base..tip diff checked again.",
+    "log": "interactive tool output retained; no separate initial private log claimed",
+    "semantic_change": false,
+    "range_check_exit": 2,
+    "additional_range_finding": "Extra EOF blank line in proof/QCore.lean from prior import repair; removed with exact byte-equality except trailing whitespace receipt."
+  }
+}

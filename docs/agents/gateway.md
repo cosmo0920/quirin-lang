@@ -497,6 +497,23 @@ model; [report](../reports/lexical-routes-typed-fallbacks/README.md).
     vectors bound in Rust; extraction and correspondence remain premises28.
     [Report](../reports/w48-bottom-up-batch3/README.md).
 
+    **Amendment (W48-BOTTOM-UP-BATCH4): existing checked read leaves compose.**
+    After every whole-condition route refuses a call-free controlling
+    expression, its complete desugared plan may also stand when at least one
+    node is an existing `IndirectScalarAccess`. This amends rule 10k's
+    call-free-plan retention condition only: a leaf may have used an older
+    typed read instead of the Clang access-path reader. Every leaf must still
+    classify completely; its original instruction, alias/liveness/per-hop
+    obligations, branch decision and short-circuit/loop position remain.
+    No new leaf syntax, scalar value, pointer fact or call effect follows,
+    and a refused leaf still refuses the whole expression with probe state
+    restored. Switch shape and tracked-descriptor guards stand unchanged.
+    `QCore.CallFreeConditionReads` binds all 8 retention vectors and reuses the
+    Boolean-tree evaluation theorem for checked-read events, proving identical
+    full checked state/error traces for an arbitrary read checker. Extraction
+    and Rust correspondence remain premises 28.
+    [Report](../reports/w48-bottom-up-batch4/README.md).
+
 <a id="constraint-5i"></a>
 
 5i. **An assignment's destination is its whole left-hand side.**
@@ -1242,7 +1259,8 @@ refusal stays.
     wired by rule 5h's desugaring, so an operand of `&&`, `||` or `?:` that C
     skips on a path contributes no obligation there, and `p && p->x` reaches
     `p->x` only on the edge the existing null branch refined. A call-free
-    condition is desugared only when an operand needed this reader; one
+    condition is desugared only when an operand needed this reader or an
+    existing checked read retains its plan under rule 5h; one
     `NAME = PATH` operand (a declared non-formal local) is P2's statement,
     then the existing null or neutral decision on `NAME`, whose identity
     refusal constraint 10b keeps. (2) A `return` of one scalar value, or of

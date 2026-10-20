@@ -571,3 +571,144 @@ fn a_derived_result_assigned_in_a_condition_is_tracked_by_its_binding() {
     assert!(!run.refused(BRANCH), "{run:?}");
     assert_ne!(run.status, AnalysisStatus::Safe, "{run:?}");
 }
+
+#[test]
+fn batch4_call_free_member_predicate_composes_checked_reads() {
+    if !clang_available() {
+        return;
+    }
+    for condition in [
+        "(cf->fd != -1) && (cf->map != (void *)0)",
+        "(cf->fd != -1) || (cf->map != (void *)0)",
+        "!(cf->fd != -1) || (cf->map != (void *)0)",
+        "flag ? (cf->fd != -1) : (cf->map != (void *)0)",
+    ] {
+        let source = format!(
+            "struct file {{ int fd; void *map; }}; int w(struct file *cf, int flag) {{ if ({condition}) return 1; return 0; }}"
+        );
+        let run = run_with(&source, "w", &ResourceContracts::default());
+        assert_eq!(run.status, AnalysisStatus::Safe, "{condition}: {run:?}");
+        assert!(run.diagnostics.is_empty(), "{run:?}");
+        assert!(
+            run.cfg.nodes.iter().any(|n| matches!(
+                n.instruction,
+                LegacyInstruction::IndirectScalarAccess { .. }
+            )),
+            "{run:?}"
+        );
+    }
+}
+
+#[test]
+fn batch4_composed_reads_preserve_leaks_and_double_release() {
+    if !clang_available() {
+        return;
+    }
+    for (before, after, double) in [
+        ("void *p = q_alloc();", "", false),
+        ("void *p = q_alloc();", "q_free(p); q_free(p);", true),
+    ] {
+        let run = analyze(&format!(
+            "struct file {{ int fd; void *map; }}; void subject(struct file *cf) {{ {before} if ((cf->fd != -1) && (cf->map != (void *)0)) {{ }} {after} }}"
+        ));
+        assert_eq!(run.status, AnalysisStatus::Unsafe, "{run:?}");
+        assert!(!run.refused(BRANCH), "{run:?}");
+        assert!(
+            if double {
+                run.double_releases() > 0
+            } else {
+                run.leaks() > 0
+            },
+            "{run:?}"
+        );
+    }
+}
+
+#[test]
+fn batch4_call_free_predicates_keep_unknown_leaves_refused() {
+    if !clang_available() {
+        return;
+    }
+    for (record, condition) in [
+        (
+            "struct file { volatile int fd; void *map; };",
+            "(cf->fd != -1) && (cf->map != (void *)0)",
+        ),
+        (
+            "struct file { _Atomic int fd; void *map; };",
+            "(cf->fd != -1) && (cf->map != (void *)0)",
+        ),
+        (
+            "struct file { int fd; void *map; };",
+            "(cf->fd != -1) && opaque()",
+        ),
+        (
+            "struct file { int fd; void *map; };",
+            "(cf->fd != -1) && (cf->map = (void *)0)",
+        ),
+    ] {
+        let tag = if record.starts_with("union") {
+            "union"
+        } else {
+            "struct"
+        };
+        let source = format!(
+            "{record} int opaque(void); int w({tag} file *cf) {{ if ({condition}) return 1; return 0; }}"
+        );
+        let run = run_with(&source, "w", &ResourceContracts::default());
+        assert_ne!(run.status, AnalysisStatus::Safe, "{condition}: {run:?}");
+    }
+}
+
+#[test]
+fn batch4_loop_predicates_recheck_reads_and_keep_exit_paths() {
+    if !clang_available() {
+        return;
+    }
+    for control in [
+        "while ((cf->fd != -1) && (cf->map != (void *)0)) { break; }",
+        "for (; (cf->fd != -1) && (cf->map != (void *)0); ) { break; }",
+        "do { } while ((cf->fd != -1) && (cf->map != (void *)0));",
+    ] {
+        let source = format!(
+            "struct file {{ int fd; void *map; }}; void w(struct file *cf) {{ {control} }}"
+        );
+        let run = run_with(&source, "w", &ResourceContracts::default());
+        assert_eq!(run.status, AnalysisStatus::Safe, "{control}: {run:?}");
+        assert!(run.diagnostics.is_empty(), "{run:?}");
+    }
+}
+
+#[test]
+fn batch4_a_released_predicate_base_stays_non_safe() {
+    if !clang_available() {
+        return;
+    }
+    let run = analyze(
+        "struct file { int fd; void *map; }; void subject(void) { struct file *cf = q_alloc(); q_free(cf); if ((cf->fd != -1) && (cf->map != (void *)0)) { } }",
+    );
+    assert_ne!(run.status, AnalysisStatus::Safe, "{run:?}");
+    assert!(
+        run.diagnostics
+            .iter()
+            .any(|d| matches!(d, LegacyDiagnosticKind::UseAfterRelease { .. })),
+        "{run:?}"
+    );
+}
+
+#[test]
+fn batch4_literal_predicate_does_not_erase_read_obligations() {
+    if !clang_available() {
+        return;
+    }
+    let run = analyze(
+        "struct file { int fd; void *map; }; void subject(void) { struct file *cf = q_alloc(); q_free(cf); if (0 && ((cf->fd != -1) && (cf->map != (void *)0))) { } }",
+    );
+    assert_eq!(run.status, AnalysisStatus::Unsafe, "{run:?}");
+    assert!(
+        run.diagnostics
+            .iter()
+            .any(|d| matches!(d, LegacyDiagnosticKind::UseAfterRelease { .. })),
+        "{run:?}"
+    );
+}

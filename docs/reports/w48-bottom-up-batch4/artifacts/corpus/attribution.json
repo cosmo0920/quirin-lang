@@ -1,0 +1,2524 @@
+{
+  "route": "corpus",
+  "selected_rows": 4834,
+  "changed_status_or_diagnostic_rows": 48,
+  "safe_gains": [
+    [
+      "cmetrics",
+      "cmt_decode_prometheus_remote_write.c",
+      "cmt_metric_name_from_labels",
+      0
+    ],
+    [
+      "cmetrics",
+      "cmt_encode_opentelemetry.c",
+      "compute_flat_scope_index",
+      0
+    ],
+    [
+      "cmetrics",
+      "cmt_summary.c",
+      "cmt_summary_quantile_get_value",
+      0
+    ],
+    [
+      "cmetrics",
+      "cmt_summary.c",
+      "cmt_summary_quantile_set",
+      0
+    ],
+    [
+      "chunkio",
+      "cio_file.c",
+      "cio_file_is_up",
+      0
+    ],
+    [
+      "chunkio",
+      "cio_file_unix.c",
+      "cio_file_native_delete",
+      0
+    ]
+  ],
+  "safe_regressions": [],
+  "new_provisional_unsafe": [],
+  "rows": [
+    {
+      "key": [
+        "cmetrics",
+        "cmt_cat.c",
+        "cat_exp_histogram_values",
+        0
+      ],
+      "before": "Unknown",
+      "after": "Unknown",
+      "removed": [
+        {
+          "category": "unsupported",
+          "description": "unmodeled call, aggregate or indirect access in branch condition",
+          "line": 5738,
+          "origin": "cmt_cat.c:234"
+        },
+        {
+          "category": "unsupported",
+          "description": "unmodeled call, aggregate or indirect access in branch condition",
+          "line": 5742,
+          "origin": "cmt_cat.c:239"
+        },
+        {
+          "category": "unsupported",
+          "description": "unmodeled call, aggregate or indirect access in branch condition",
+          "line": 5746,
+          "origin": "cmt_cat.c:244"
+        },
+        {
+          "category": "unsupported",
+          "description": "unmodeled call, aggregate or indirect access in branch condition",
+          "line": 5750,
+          "origin": "cmt_cat.c:249"
+        }
+      ],
+      "added": [],
+      "source_observations": [
+        {
+          "origin": "cmt_cat.c:234",
+          "source_path": "lib/cmetrics/src/cmt_cat.c",
+          "file_sha256": "fce5d8b1e78c04daca8474967e0c0721861ede8248a6336912243c516f488d23",
+          "excerpt": "    }\n\n    if (metric_dst->exp_hist_positive_count > 0 &&\n        metric_dst->exp_hist_positive_buckets == NULL) {\n        goto cleanup;\n    }"
+        },
+        {
+          "origin": "cmt_cat.c:239",
+          "source_path": "lib/cmetrics/src/cmt_cat.c",
+          "file_sha256": "fce5d8b1e78c04daca8474967e0c0721861ede8248a6336912243c516f488d23",
+          "excerpt": "    }\n\n    if (metric_dst->exp_hist_negative_count > 0 &&\n        metric_dst->exp_hist_negative_buckets == NULL) {\n        goto cleanup;\n    }"
+        },
+        {
+          "origin": "cmt_cat.c:244",
+          "source_path": "lib/cmetrics/src/cmt_cat.c",
+          "file_sha256": "fce5d8b1e78c04daca8474967e0c0721861ede8248a6336912243c516f488d23",
+          "excerpt": "    }\n\n    if (metric_src->exp_hist_positive_count > 0 &&\n        metric_src->exp_hist_positive_buckets == NULL) {\n        goto cleanup;\n    }"
+        },
+        {
+          "origin": "cmt_cat.c:249",
+          "source_path": "lib/cmetrics/src/cmt_cat.c",
+          "file_sha256": "fce5d8b1e78c04daca8474967e0c0721861ede8248a6336912243c516f488d23",
+          "excerpt": "    }\n\n    if (metric_src->exp_hist_negative_count > 0 &&\n        metric_src->exp_hist_negative_buckets == NULL) {\n        goto cleanup;\n    }"
+        }
+      ]
+    },
+    {
+      "key": [
+        "cmetrics",
+        "cmt_decode_msgpack.c",
+        "cmt_decode_msgpack_create",
+        0
+      ],
+      "before": "Unknown",
+      "after": "Unknown",
+      "removed": [
+        {
+          "category": "unsupported",
+          "description": "unmodeled call, aggregate or indirect access in branch condition",
+          "line": 8672,
+          "origin": "cmt_decode_msgpack.c:2159"
+        }
+      ],
+      "added": [],
+      "source_observations": [
+        {
+          "origin": "cmt_decode_msgpack.c:2159",
+          "source_path": "lib/cmetrics/src/cmt_decode_msgpack.c",
+          "file_sha256": "a4eef9747051360824801822a87f5c3e48dc156165cb443c08388ddfd5d0133a",
+          "excerpt": "    size_t          remainder;\n\n    if (NULL == out_cmt ||\n        NULL == in_buf ||\n        NULL == offset ||\n        in_size < *offset ) {"
+        }
+      ]
+    },
+    {
+      "key": [
+        "cmetrics",
+        "cmt_decode_msgpack.c",
+        "unpack_metric",
+        0
+      ],
+      "before": "Unknown",
+      "after": "Unknown",
+      "removed": [
+        {
+          "category": "unsupported",
+          "description": "unmodeled call, aggregate or indirect access in branch condition",
+          "line": 7970,
+          "origin": "cmt_decode_msgpack.c:1238"
+        },
+        {
+          "category": "unknown_alias",
+          "description": "unresolved resource identity `metric`",
+          "line": 7971,
+          "origin": "cmt_decode_msgpack.c:1239"
+        }
+      ],
+      "added": [
+        {
+          "category": "unknown_alias",
+          "description": "unresolved resource identity `histogram`",
+          "line": 7970,
+          "origin": "cmt_decode_msgpack.c:1238"
+        }
+      ],
+      "source_observations": [
+        {
+          "origin": "cmt_decode_msgpack.c:1238",
+          "source_path": "lib/cmetrics/src/cmt_decode_msgpack.c",
+          "file_sha256": "a4eef9747051360824801822a87f5c3e48dc156165cb443c08388ddfd5d0133a",
+          "excerpt": "    if (decode_context->map->type == CMT_HISTOGRAM) {\n        histogram = decode_context->map->parent;\n        if (histogram == NULL || histogram->buckets == NULL) {\n            free(metric);\n            cmt_errno();\n            return CMT_DECODE_MSGPACK_ALLOCATION_ERROR;"
+        },
+        {
+          "origin": "cmt_decode_msgpack.c:1239",
+          "source_path": "lib/cmetrics/src/cmt_decode_msgpack.c",
+          "file_sha256": "a4eef9747051360824801822a87f5c3e48dc156165cb443c08388ddfd5d0133a",
+          "excerpt": "        histogram = decode_context->map->parent;\n        if (histogram == NULL || histogram->buckets == NULL) {\n            free(metric);\n            cmt_errno();\n            return CMT_DECODE_MSGPACK_ALLOCATION_ERROR;\n        }"
+        },
+        {
+          "origin": "cmt_decode_msgpack.c:1238",
+          "source_path": "lib/cmetrics/src/cmt_decode_msgpack.c",
+          "file_sha256": "a4eef9747051360824801822a87f5c3e48dc156165cb443c08388ddfd5d0133a",
+          "excerpt": "    if (decode_context->map->type == CMT_HISTOGRAM) {\n        histogram = decode_context->map->parent;\n        if (histogram == NULL || histogram->buckets == NULL) {\n            free(metric);\n            cmt_errno();\n            return CMT_DECODE_MSGPACK_ALLOCATION_ERROR;"
+        }
+      ]
+    },
+    {
+      "key": [
+        "cmetrics",
+        "cmt_decode_msgpack.c",
+        "unpack_opts",
+        0
+      ],
+      "before": "Unknown",
+      "after": "Unknown",
+      "removed": [
+        {
+          "category": "unsupported",
+          "description": "unmodeled call, aggregate or indirect access in branch condition",
+          "line": 7225,
+          "origin": "cmt_decode_msgpack.c:268"
+        },
+        {
+          "category": "unknown_alias",
+          "description": "unresolved resource identity `map`",
+          "line": 7230,
+          "origin": "cmt_decode_msgpack.c:274"
+        },
+        {
+          "category": "unsupported",
+          "description": "indirect memory access is outside the resource projection",
+          "line": 7232,
+          "origin": "cmt_decode_msgpack.c:276"
+        }
+      ],
+      "added": [],
+      "source_observations": [
+        {
+          "origin": "cmt_decode_msgpack.c:268",
+          "source_path": "lib/cmetrics/src/cmt_decode_msgpack.c",
+          "file_sha256": "a4eef9747051360824801822a87f5c3e48dc156165cb443c08388ddfd5d0133a",
+          "excerpt": "    struct cmt_opts *opts;\n\n    if (NULL == reader ||\n        NULL == map    ||\n        NULL == map->opts) {\n        return CMT_DECODE_MSGPACK_INVALID_ARGUMENT_ERROR;"
+        },
+        {
+          "origin": "cmt_decode_msgpack.c:274",
+          "source_path": "lib/cmetrics/src/cmt_decode_msgpack.c",
+          "file_sha256": "a4eef9747051360824801822a87f5c3e48dc156165cb443c08388ddfd5d0133a",
+          "excerpt": "    }\n\n    opts = map->opts;\n    memset(opts, 0, sizeof(struct cmt_opts));\n    map->unit = NULL;\n"
+        },
+        {
+          "origin": "cmt_decode_msgpack.c:276",
+          "source_path": "lib/cmetrics/src/cmt_decode_msgpack.c",
+          "file_sha256": "a4eef9747051360824801822a87f5c3e48dc156165cb443c08388ddfd5d0133a",
+          "excerpt": "    opts = map->opts;\n    memset(opts, 0, sizeof(struct cmt_opts));\n    map->unit = NULL;\n\n    result = cmt_mpack_unpack_map(reader, callbacks, (void *) map);\n"
+        }
+      ]
+    },
+    {
+      "key": [
+        "cmetrics",
+        "cmt_decode_opentelemetry.c",
+        "decode_exponential_histogram_data_point",
+        0
+      ],
+      "before": "Unknown",
+      "after": "Unknown",
+      "removed": [
+        {
+          "category": "unsupported",
+          "description": "unmodeled call, aggregate or indirect access in branch condition",
+          "line": 8042,
+          "origin": "cmt_decode_opentelemetry.c:1293"
+        },
+        {
+          "category": "unsupported",
+          "description": "unmodeled call, aggregate or indirect access in branch condition",
+          "line": 8047,
+          "origin": "cmt_decode_opentelemetry.c:1299"
+        }
+      ],
+      "added": [
+        {
+          "category": "unknown_alias",
+          "description": "unresolved resource identity `positive`",
+          "line": 8042,
+          "origin": "cmt_decode_opentelemetry.c:1293"
+        },
+        {
+          "category": "unknown_alias",
+          "description": "unresolved resource identity `negative`",
+          "line": 8047,
+          "origin": "cmt_decode_opentelemetry.c:1299"
+        }
+      ],
+      "source_observations": [
+        {
+          "origin": "cmt_decode_opentelemetry.c:1293",
+          "source_path": "lib/cmetrics/src/cmt_decode_opentelemetry.c",
+          "file_sha256": "beeaffa07a76c0ed93a58f7b7a141c42e47c1fd9d71b3a8e8cb390c4d3df66d3",
+          "excerpt": "    new_negative_buckets = NULL;\n\n    if (positive != NULL &&\n        positive->n_bucket_counts > 0 &&\n        positive->bucket_counts == NULL) {\n        return CMT_DECODE_OPENTELEMETRY_INVALID_ARGUMENT_ERROR;"
+        },
+        {
+          "origin": "cmt_decode_opentelemetry.c:1299",
+          "source_path": "lib/cmetrics/src/cmt_decode_opentelemetry.c",
+          "file_sha256": "beeaffa07a76c0ed93a58f7b7a141c42e47c1fd9d71b3a8e8cb390c4d3df66d3",
+          "excerpt": "    }\n\n    if (negative != NULL &&\n        negative->n_bucket_counts > 0 &&\n        negative->bucket_counts == NULL) {\n        return CMT_DECODE_OPENTELEMETRY_INVALID_ARGUMENT_ERROR;"
+        },
+        {
+          "origin": "cmt_decode_opentelemetry.c:1293",
+          "source_path": "lib/cmetrics/src/cmt_decode_opentelemetry.c",
+          "file_sha256": "beeaffa07a76c0ed93a58f7b7a141c42e47c1fd9d71b3a8e8cb390c4d3df66d3",
+          "excerpt": "    new_negative_buckets = NULL;\n\n    if (positive != NULL &&\n        positive->n_bucket_counts > 0 &&\n        positive->bucket_counts == NULL) {\n        return CMT_DECODE_OPENTELEMETRY_INVALID_ARGUMENT_ERROR;"
+        },
+        {
+          "origin": "cmt_decode_opentelemetry.c:1299",
+          "source_path": "lib/cmetrics/src/cmt_decode_opentelemetry.c",
+          "file_sha256": "beeaffa07a76c0ed93a58f7b7a141c42e47c1fd9d71b3a8e8cb390c4d3df66d3",
+          "excerpt": "    }\n\n    if (negative != NULL &&\n        negative->n_bucket_counts > 0 &&\n        negative->bucket_counts == NULL) {\n        return CMT_DECODE_OPENTELEMETRY_INVALID_ARGUMENT_ERROR;"
+        }
+      ]
+    },
+    {
+      "key": [
+        "cmetrics",
+        "cmt_decode_opentelemetry.c",
+        "decode_histogram_data_point",
+        0
+      ],
+      "before": "Unknown",
+      "after": "Unknown",
+      "removed": [
+        {
+          "category": "unsupported",
+          "description": "unmodeled call, aggregate or indirect access in branch condition",
+          "line": 7821,
+          "origin": "cmt_decode_opentelemetry.c:1014"
+        },
+        {
+          "category": "unsupported",
+          "description": "unmodeled call, aggregate or indirect access in branch condition",
+          "line": 7824,
+          "origin": "cmt_decode_opentelemetry.c:1018"
+        }
+      ],
+      "added": [],
+      "source_observations": [
+        {
+          "origin": "cmt_decode_opentelemetry.c:1014",
+          "source_path": "lib/cmetrics/src/cmt_decode_opentelemetry.c",
+          "file_sha256": "beeaffa07a76c0ed93a58f7b7a141c42e47c1fd9d71b3a8e8cb390c4d3df66d3",
+          "excerpt": "    histogram = (struct cmt_histogram *) map->parent;\n\n    if (data_point->n_explicit_bounds > 0 && data_point->explicit_bounds == NULL) {\n        return CMT_DECODE_OPENTELEMETRY_INVALID_ARGUMENT_ERROR;\n    }\n"
+        },
+        {
+          "origin": "cmt_decode_opentelemetry.c:1018",
+          "source_path": "lib/cmetrics/src/cmt_decode_opentelemetry.c",
+          "file_sha256": "beeaffa07a76c0ed93a58f7b7a141c42e47c1fd9d71b3a8e8cb390c4d3df66d3",
+          "excerpt": "    }\n\n    if (data_point->n_bucket_counts > 0 && data_point->bucket_counts == NULL) {\n        return CMT_DECODE_OPENTELEMETRY_INVALID_ARGUMENT_ERROR;\n    }\n"
+        }
+      ]
+    },
+    {
+      "key": [
+        "cmetrics",
+        "cmt_decode_opentelemetry.c",
+        "decode_resource_metrics_entry",
+        0
+      ],
+      "before": "Unknown",
+      "after": "Unknown",
+      "removed": [
+        {
+          "category": "unsupported",
+          "description": "unmodeled call, aggregate or indirect access in branch condition",
+          "line": 8627,
+          "origin": "cmt_decode_opentelemetry.c:2020"
+        }
+      ],
+      "added": [],
+      "source_observations": [
+        {
+          "origin": "cmt_decode_opentelemetry.c:2020",
+          "source_path": "lib/cmetrics/src/cmt_decode_opentelemetry.c",
+          "file_sha256": "beeaffa07a76c0ed93a58f7b7a141c42e47c1fd9d71b3a8e8cb390c4d3df66d3",
+          "excerpt": "    }\n\n    if (resource_metrics->n_scope_metrics > 0 &&\n        resource_metrics->scope_metrics == NULL) {\n        return CMT_DECODE_OPENTELEMETRY_INVALID_ARGUMENT_ERROR;\n    }"
+        }
+      ]
+    },
+    {
+      "key": [
+        "cmetrics",
+        "cmt_decode_opentelemetry.c",
+        "decode_scope_metrics_entry",
+        0
+      ],
+      "before": "Unknown",
+      "after": "Unknown",
+      "removed": [
+        {
+          "category": "unsupported",
+          "description": "unmodeled call, aggregate or indirect access in branch condition",
+          "line": 8540,
+          "origin": "cmt_decode_opentelemetry.c:1904"
+        }
+      ],
+      "added": [],
+      "source_observations": [
+        {
+          "origin": "cmt_decode_opentelemetry.c:1904",
+          "source_path": "lib/cmetrics/src/cmt_decode_opentelemetry.c",
+          "file_sha256": "beeaffa07a76c0ed93a58f7b7a141c42e47c1fd9d71b3a8e8cb390c4d3df66d3",
+          "excerpt": "    }\n\n    if (metrics->n_metrics > 0 && metrics->metrics == NULL) {\n        return CMT_DECODE_OPENTELEMETRY_INVALID_ARGUMENT_ERROR;\n    }\n"
+        }
+      ]
+    },
+    {
+      "key": [
+        "cmetrics",
+        "cmt_decode_opentelemetry.c",
+        "decode_summary_data_point",
+        0
+      ],
+      "before": "Unknown",
+      "after": "Unknown",
+      "removed": [
+        {
+          "category": "unsupported",
+          "description": "unmodeled call, aggregate or indirect access in branch condition",
+          "line": 7706,
+          "origin": "cmt_decode_opentelemetry.c:865"
+        }
+      ],
+      "added": [],
+      "source_observations": [
+        {
+          "origin": "cmt_decode_opentelemetry.c:865",
+          "source_path": "lib/cmetrics/src/cmt_decode_opentelemetry.c",
+          "file_sha256": "beeaffa07a76c0ed93a58f7b7a141c42e47c1fd9d71b3a8e8cb390c4d3df66d3",
+          "excerpt": "    summary = (struct cmt_summary *) map->parent;\n\n    if (data_point->n_quantile_values > 0 && data_point->quantile_values == NULL) {\n        return CMT_DECODE_OPENTELEMETRY_INVALID_ARGUMENT_ERROR;\n    }\n"
+        }
+      ]
+    },
+    {
+      "key": [
+        "cmetrics",
+        "cmt_decode_prometheus_remote_write.c",
+        "cmt_metric_name_from_labels",
+        0
+      ],
+      "before": "Unknown",
+      "after": "Safe",
+      "removed": [
+        {
+          "category": "unsupported",
+          "description": "unmodeled call, aggregate or indirect access in branch condition",
+          "line": 6454,
+          "origin": "cmt_decode_prometheus_remote_write.c:52"
+        },
+        {
+          "category": "unknown_alias",
+          "description": "unresolved resource identity `__qcore_returned_value`",
+          "line": 6468,
+          "origin": "cmt_decode_prometheus_remote_write.c:69"
+        },
+        {
+          "category": "unsupported",
+          "description": "nullable resource `__qcore_returned_value` used by a non-null contract",
+          "line": 6468,
+          "origin": "cmt_decode_prometheus_remote_write.c:69"
+        }
+      ],
+      "added": [],
+      "source_observations": [
+        {
+          "origin": "cmt_decode_prometheus_remote_write.c:52",
+          "source_path": "lib/cmetrics/src/cmt_decode_prometheus_remote_write.c",
+          "file_sha256": "ee979722fd738e1acb8991cc95656f03ae751c27e5b6cb496fe155480f86b6c7",
+          "excerpt": "    int count;\n\n    if (ts == NULL || ts->labels == NULL) {\n        return NULL;\n    }\n"
+        },
+        {
+          "origin": "cmt_decode_prometheus_remote_write.c:69",
+          "source_path": "lib/cmetrics/src/cmt_decode_prometheus_remote_write.c",
+          "file_sha256": "ee979722fd738e1acb8991cc95656f03ae751c27e5b6cb496fe155480f86b6c7",
+          "excerpt": "            }\n\n            return strdup(ts->labels[i]->value);\n        }\n    }\n"
+        },
+        {
+          "origin": "cmt_decode_prometheus_remote_write.c:69",
+          "source_path": "lib/cmetrics/src/cmt_decode_prometheus_remote_write.c",
+          "file_sha256": "ee979722fd738e1acb8991cc95656f03ae751c27e5b6cb496fe155480f86b6c7",
+          "excerpt": "            }\n\n            return strdup(ts->labels[i]->value);\n        }\n    }\n"
+        }
+      ]
+    },
+    {
+      "key": [
+        "cmetrics",
+        "cmt_decode_prometheus_remote_write.c",
+        "decode_histogram_time_series",
+        0
+      ],
+      "before": "Unknown",
+      "after": "Unknown",
+      "removed": [
+        {
+          "category": "unsupported",
+          "description": "unmodeled call, aggregate or indirect access in branch condition",
+          "line": 6914,
+          "origin": "cmt_decode_prometheus_remote_write.c:647"
+        }
+      ],
+      "added": [],
+      "source_observations": [
+        {
+          "origin": "cmt_decode_prometheus_remote_write.c:647",
+          "source_path": "lib/cmetrics/src/cmt_decode_prometheus_remote_write.c",
+          "file_sha256": "ee979722fd738e1acb8991cc95656f03ae751c27e5b6cb496fe155480f86b6c7",
+          "excerpt": "    result = CMT_DECODE_PROMETHEUS_REMOTE_WRITE_SUCCESS;\n\n    if (hist_count > 0 && ts->histograms == NULL) {\n        return CMT_DECODE_PROMETHEUS_REMOTE_WRITE_INVALID_ARGUMENT_ERROR;\n    }\n"
+        }
+      ]
+    },
+    {
+      "key": [
+        "cmetrics",
+        "cmt_decode_prometheus_remote_write.c",
+        "decode_metrics_entry",
+        0
+      ],
+      "before": "Unknown",
+      "after": "Unknown",
+      "removed": [
+        {
+          "category": "unsupported",
+          "description": "unmodeled call, aggregate or indirect access in branch condition",
+          "line": 6961,
+          "origin": "cmt_decode_prometheus_remote_write.c:705"
+        },
+        {
+          "category": "unsupported",
+          "description": "unmodeled call, aggregate or indirect access in branch condition",
+          "line": 6964,
+          "origin": "cmt_decode_prometheus_remote_write.c:709"
+        },
+        {
+          "category": "unsupported",
+          "description": "call to uncontracted function `cmt_metric_name_from_labels`",
+          "line": 6975,
+          "origin": "cmt_decode_prometheus_remote_write.c:723"
+        },
+        {
+          "category": "unknown_alias",
+          "description": "unresolved resource identity `metric_name`",
+          "line": 6976,
+          "origin": "cmt_decode_prometheus_remote_write.c:724"
+        },
+        {
+          "category": "unknown_alias",
+          "description": "unresolved resource identity `metric_name`",
+          "line": 7018,
+          "origin": "cmt_decode_prometheus_remote_write.c:772"
+        },
+        {
+          "category": "unknown_alias",
+          "description": "unresolved resource identity `metric_name`",
+          "line": 7034,
+          "origin": "cmt_decode_prometheus_remote_write.c:791"
+        },
+        {
+          "category": "unknown_alias",
+          "description": "unresolved resource identity `metric_name`",
+          "line": 7050,
+          "origin": "cmt_decode_prometheus_remote_write.c:810"
+        },
+        {
+          "category": "unknown_alias",
+          "description": "unresolved resource identity `metric_name`",
+          "line": 7067,
+          "origin": "cmt_decode_prometheus_remote_write.c:830"
+        },
+        {
+          "category": "unknown_alias",
+          "description": "unresolved resource identity `metric_name`",
+          "line": 7081,
+          "origin": "cmt_decode_prometheus_remote_write.c:850"
+        }
+      ],
+      "added": [],
+      "source_observations": [
+        {
+          "origin": "cmt_decode_prometheus_remote_write.c:705",
+          "source_path": "lib/cmetrics/src/cmt_decode_prometheus_remote_write.c",
+          "file_sha256": "ee979722fd738e1acb8991cc95656f03ae751c27e5b6cb496fe155480f86b6c7",
+          "excerpt": "\n    ts_count = write->n_timeseries;\n    if (ts_count > 0 && write->timeseries == NULL) {\n        return CMT_DECODE_PROMETHEUS_REMOTE_WRITE_INVALID_ARGUMENT_ERROR;\n    }\n"
+        },
+        {
+          "origin": "cmt_decode_prometheus_remote_write.c:709",
+          "source_path": "lib/cmetrics/src/cmt_decode_prometheus_remote_write.c",
+          "file_sha256": "ee979722fd738e1acb8991cc95656f03ae751c27e5b6cb496fe155480f86b6c7",
+          "excerpt": "    }\n\n    if (write->n_metadata > 0 && write->metadata == NULL) {\n        return CMT_DECODE_PROMETHEUS_REMOTE_WRITE_INVALID_ARGUMENT_ERROR;\n    }\n"
+        },
+        {
+          "origin": "cmt_decode_prometheus_remote_write.c:723",
+          "source_path": "lib/cmetrics/src/cmt_decode_prometheus_remote_write.c",
+          "file_sha256": "ee979722fd738e1acb8991cc95656f03ae751c27e5b6cb496fe155480f86b6c7",
+          "excerpt": "        metadata = NULL;\n\n        metric_name = cmt_metric_name_from_labels(ts);\n        if (metric_name == NULL) {\n            continue;\n        }"
+        },
+        {
+          "origin": "cmt_decode_prometheus_remote_write.c:724",
+          "source_path": "lib/cmetrics/src/cmt_decode_prometheus_remote_write.c",
+          "file_sha256": "ee979722fd738e1acb8991cc95656f03ae751c27e5b6cb496fe155480f86b6c7",
+          "excerpt": "\n        metric_name = cmt_metric_name_from_labels(ts);\n        if (metric_name == NULL) {\n            continue;\n        }\n"
+        },
+        {
+          "origin": "cmt_decode_prometheus_remote_write.c:772",
+          "source_path": "lib/cmetrics/src/cmt_decode_prometheus_remote_write.c",
+          "file_sha256": "ee979722fd738e1acb8991cc95656f03ae751c27e5b6cb496fe155480f86b6c7",
+          "excerpt": "\n            if (instance == NULL) {\n                free(metric_name);\n                return CMT_DECODE_PROMETHEUS_REMOTE_WRITE_ALLOCATION_ERROR;\n            }\n"
+        },
+        {
+          "origin": "cmt_decode_prometheus_remote_write.c:791",
+          "source_path": "lib/cmetrics/src/cmt_decode_prometheus_remote_write.c",
+          "file_sha256": "ee979722fd738e1acb8991cc95656f03ae751c27e5b6cb496fe155480f86b6c7",
+          "excerpt": "\n            if (instance == NULL) {\n                free(metric_name);\n                return CMT_DECODE_PROMETHEUS_REMOTE_WRITE_ALLOCATION_ERROR;\n            }\n"
+        },
+        {
+          "origin": "cmt_decode_prometheus_remote_write.c:810",
+          "source_path": "lib/cmetrics/src/cmt_decode_prometheus_remote_write.c",
+          "file_sha256": "ee979722fd738e1acb8991cc95656f03ae751c27e5b6cb496fe155480f86b6c7",
+          "excerpt": "\n            if (instance == NULL) {\n                free(metric_name);\n                return CMT_DECODE_PROMETHEUS_REMOTE_WRITE_ALLOCATION_ERROR;\n            }\n"
+        },
+        {
+          "origin": "cmt_decode_prometheus_remote_write.c:830",
+          "source_path": "lib/cmetrics/src/cmt_decode_prometheus_remote_write.c",
+          "file_sha256": "ee979722fd738e1acb8991cc95656f03ae751c27e5b6cb496fe155480f86b6c7",
+          "excerpt": "\n            if (instance == NULL) {\n                free(metric_name);\n                return CMT_DECODE_PROMETHEUS_REMOTE_WRITE_ALLOCATION_ERROR;\n            }\n"
+        },
+        {
+          "origin": "cmt_decode_prometheus_remote_write.c:850",
+          "source_path": "lib/cmetrics/src/cmt_decode_prometheus_remote_write.c",
+          "file_sha256": "ee979722fd738e1acb8991cc95656f03ae751c27e5b6cb496fe155480f86b6c7",
+          "excerpt": "        }\n\n        free(metric_name);\n    }\n\n    return result;"
+        }
+      ]
+    },
+    {
+      "key": [
+        "cmetrics",
+        "cmt_encode_opentelemetry.c",
+        "compute_flat_scope_index",
+        0
+      ],
+      "before": "Unknown",
+      "after": "Safe",
+      "removed": [
+        {
+          "category": "unsupported",
+          "description": "unmodeled call, aggregate or indirect access in branch condition",
+          "line": 7128,
+          "origin": "cmt_encode_opentelemetry.c:506"
+        }
+      ],
+      "added": [],
+      "source_observations": [
+        {
+          "origin": "cmt_encode_opentelemetry.c:506",
+          "source_path": "lib/cmetrics/src/cmt_encode_opentelemetry.c",
+          "file_sha256": "1fd4a476c3c23d4f8dd6bc5b898b01b88a36f58486c85fcd9419ddc4e668318e",
+          "excerpt": "    offset = 0;\n\n    if (context == NULL || context->metrics_data == NULL) {\n        return 0;\n    }\n"
+        }
+      ]
+    },
+    {
+      "key": [
+        "cmetrics",
+        "cmt_encode_opentelemetry.c",
+        "resolve_target_scope_index",
+        0
+      ],
+      "before": "Unknown",
+      "after": "Unknown",
+      "removed": [
+        {
+          "category": "unsupported",
+          "description": "call to uncontracted function `compute_flat_scope_index`",
+          "line": 7174,
+          "origin": "cmt_encode_opentelemetry.c:564"
+        }
+      ],
+      "added": [],
+      "source_observations": [
+        {
+          "origin": "cmt_encode_opentelemetry.c:564",
+          "source_path": "lib/cmetrics/src/cmt_encode_opentelemetry.c",
+          "file_sha256": "1fd4a476c3c23d4f8dd6bc5b898b01b88a36f58486c85fcd9419ddc4e668318e",
+          "excerpt": "    }\n\n    flat_scope_index = compute_flat_scope_index(context, (size_t) resource_index, (size_t) scope_index);\n    if (flat_scope_index < context->scope_metrics_count) {\n        return (size_t) flat_scope_index;\n    }"
+        }
+      ]
+    },
+    {
+      "key": [
+        "cmetrics",
+        "cmt_map.c",
+        "metric_prepare_storage",
+        0
+      ],
+      "before": "Unknown",
+      "after": "Unknown",
+      "removed": [
+        {
+          "category": "unsupported",
+          "description": "unmodeled call, aggregate or indirect access in branch condition",
+          "line": 5634,
+          "origin": "cmt_map.c:205"
+        },
+        {
+          "category": "unsupported",
+          "description": "unmodeled call, aggregate or indirect access in branch condition",
+          "line": 5636,
+          "origin": "cmt_map.c:207"
+        },
+        {
+          "category": "unsupported",
+          "description": "unmodeled call, aggregate or indirect access in branch condition",
+          "line": 5646,
+          "origin": "cmt_map.c:217"
+        }
+      ],
+      "added": [
+        {
+          "category": "unknown_alias",
+          "description": "unresolved resource identity `histogram`",
+          "line": 5636,
+          "origin": "cmt_map.c:207"
+        }
+      ],
+      "source_observations": [
+        {
+          "origin": "cmt_map.c:205",
+          "source_path": "lib/cmetrics/src/cmt_map.c",
+          "file_sha256": "a02cdda1b17d6b7fbe70a8dfa5cd329261ce575960e58af369cf058e1fa12517",
+          "excerpt": "    }\n\n    if (map->type == CMT_HISTOGRAM && metric->hist_buckets == NULL) {\n        histogram = map->parent;\n        if (histogram == NULL || histogram->buckets == NULL) {\n            return NULL;"
+        },
+        {
+          "origin": "cmt_map.c:207",
+          "source_path": "lib/cmetrics/src/cmt_map.c",
+          "file_sha256": "a02cdda1b17d6b7fbe70a8dfa5cd329261ce575960e58af369cf058e1fa12517",
+          "excerpt": "    if (map->type == CMT_HISTOGRAM && metric->hist_buckets == NULL) {\n        histogram = map->parent;\n        if (histogram == NULL || histogram->buckets == NULL) {\n            return NULL;\n        }\n        metric->hist_buckets = calloc(histogram->buckets->count + 1,"
+        },
+        {
+          "origin": "cmt_map.c:217",
+          "source_path": "lib/cmetrics/src/cmt_map.c",
+          "file_sha256": "a02cdda1b17d6b7fbe70a8dfa5cd329261ce575960e58af369cf058e1fa12517",
+          "excerpt": "        }\n    }\n    else if (map->type == CMT_SUMMARY && metric->sum_quantiles == NULL) {\n        summary = map->parent;\n        if (summary == NULL) {\n            return NULL;"
+        },
+        {
+          "origin": "cmt_map.c:207",
+          "source_path": "lib/cmetrics/src/cmt_map.c",
+          "file_sha256": "a02cdda1b17d6b7fbe70a8dfa5cd329261ce575960e58af369cf058e1fa12517",
+          "excerpt": "    if (map->type == CMT_HISTOGRAM && metric->hist_buckets == NULL) {\n        histogram = map->parent;\n        if (histogram == NULL || histogram->buckets == NULL) {\n            return NULL;\n        }\n        metric->hist_buckets = calloc(histogram->buckets->count + 1,"
+        }
+      ]
+    },
+    {
+      "key": [
+        "cmetrics",
+        "cmt_mpack_utils.c",
+        "cmt_mpack_unpack_map",
+        0
+      ],
+      "before": "Unknown",
+      "after": "Unknown",
+      "removed": [
+        {
+          "category": "unsupported",
+          "description": "unmodeled call, aggregate or indirect access in loop condition",
+          "line": 6366,
+          "origin": "cmt_mpack_utils.c:220"
+        }
+      ],
+      "added": [
+        {
+          "category": "unknown_alias",
+          "description": "unresolved resource identity `callback_entry`",
+          "line": 6366,
+          "origin": "cmt_mpack_utils.c:220"
+        }
+      ],
+      "source_observations": [
+        {
+          "origin": "cmt_mpack_utils.c:220",
+          "source_path": "lib/cmetrics/src/cmt_mpack_utils.c",
+          "file_sha256": "32025f194b04627eb6af64484aac17ce1291d0f00cb5ac4df7c1b1b0607717d4",
+          "excerpt": "            result = CMT_MPACK_UNEXPECTED_KEY_ERROR;\n\n            while (CMT_MPACK_UNEXPECTED_KEY_ERROR == result &&\n                   NULL != callback_entry->identifier) {\n\n                if (0 == strcmp(callback_entry->identifier, key_name)) {"
+        },
+        {
+          "origin": "cmt_mpack_utils.c:220",
+          "source_path": "lib/cmetrics/src/cmt_mpack_utils.c",
+          "file_sha256": "32025f194b04627eb6af64484aac17ce1291d0f00cb5ac4df7c1b1b0607717d4",
+          "excerpt": "            result = CMT_MPACK_UNEXPECTED_KEY_ERROR;\n\n            while (CMT_MPACK_UNEXPECTED_KEY_ERROR == result &&\n                   NULL != callback_entry->identifier) {\n\n                if (0 == strcmp(callback_entry->identifier, key_name)) {"
+        }
+      ]
+    },
+    {
+      "key": [
+        "cmetrics",
+        "cmt_summary.c",
+        "cmt_summary_quantile_get_value",
+        0
+      ],
+      "before": "Unknown",
+      "after": "Safe",
+      "removed": [
+        {
+          "category": "unsupported",
+          "description": "unmodeled call, aggregate or indirect access in branch condition",
+          "line": 5532,
+          "origin": "cmt_summary.c:133"
+        }
+      ],
+      "added": [],
+      "source_observations": [
+        {
+          "origin": "cmt_summary.c:133",
+          "source_path": "lib/cmetrics/src/cmt_summary.c",
+          "file_sha256": "fb3df5cd38613e844e2e37a5356cf3762f0d40a6d8ee96d5b1d7767fcc62925c",
+          "excerpt": "    uint64_t val;\n\n    if (metric == NULL || metric->sum_quantiles == NULL || quantile_id < 0 ||\n        (size_t) quantile_id >= metric->sum_quantiles_count) {\n        return 0;\n    }"
+        }
+      ]
+    },
+    {
+      "key": [
+        "cmetrics",
+        "cmt_summary.c",
+        "cmt_summary_quantile_set",
+        0
+      ],
+      "before": "Unknown",
+      "after": "Safe",
+      "removed": [
+        {
+          "category": "unsupported",
+          "description": "unmodeled call, aggregate or indirect access in branch condition",
+          "line": 5603,
+          "origin": "cmt_summary.c:224"
+        }
+      ],
+      "added": [],
+      "source_observations": [
+        {
+          "origin": "cmt_summary.c:224",
+          "source_path": "lib/cmetrics/src/cmt_summary.c",
+          "file_sha256": "fb3df5cd38613e844e2e37a5356cf3762f0d40a6d8ee96d5b1d7767fcc62925c",
+          "excerpt": "    int      result;\n\n    if (metric == NULL || metric->sum_quantiles == NULL || quantile_id < 0 ||\n        (size_t) quantile_id >= metric->sum_quantiles_count) {\n        return;\n    }"
+        }
+      ]
+    },
+    {
+      "key": [
+        "cmetrics",
+        "cmt_summary.c",
+        "cmt_summary_set_default",
+        0
+      ],
+      "before": "Unknown",
+      "after": "Unknown",
+      "removed": [
+        {
+          "category": "unsupported",
+          "description": "unmodeled call, aggregate or indirect access in branch condition",
+          "line": 5655,
+          "origin": "cmt_summary.c:288"
+        },
+        {
+          "category": "unsupported",
+          "description": "call to uncontracted function `cmt_summary_quantile_set`",
+          "line": 5666,
+          "origin": "cmt_summary.c:304"
+        }
+      ],
+      "added": [],
+      "source_observations": [
+        {
+          "origin": "cmt_summary.c:288",
+          "source_path": "lib/cmetrics/src/cmt_summary.c",
+          "file_sha256": "fb3df5cd38613e844e2e37a5356cf3762f0d40a6d8ee96d5b1d7767fcc62925c",
+          "excerpt": "\n\n    if (!metric->sum_quantiles && summary->quantiles_count) {\n        metric->sum_quantiles = calloc(1, sizeof(uint64_t) * summary->quantiles_count);\n        if (!metric->sum_quantiles) {\n            cmt_errno();"
+        },
+        {
+          "origin": "cmt_summary.c:304",
+          "source_path": "lib/cmetrics/src/cmt_summary.c",
+          "file_sha256": "fb3df5cd38613e844e2e37a5356cf3762f0d40a6d8ee96d5b1d7767fcc62925c",
+          "excerpt": "        /* populate each quantile */\n        for (i = 0; i < summary->quantiles_count; i++) {\n            cmt_summary_quantile_set(metric, timestamp, i, quantile_values[i]);\n        }\n    }\n"
+        }
+      ]
+    },
+    {
+      "key": [
+        "ctraces",
+        "ctr_decode_opentelemetry.c",
+        "ctr_decode_opentelemetry_create",
+        0
+      ],
+      "before": "Unknown",
+      "after": "Unknown",
+      "removed": [
+        {
+          "category": "unsupported",
+          "description": "unmodeled call, aggregate or indirect access in branch condition",
+          "line": 8907,
+          "origin": "ctr_decode_opentelemetry.c:551"
+        }
+      ],
+      "added": [
+        {
+          "category": "unknown_alias",
+          "description": "unresolved resource identity `otel_resource_span`",
+          "line": 8907,
+          "origin": "ctr_decode_opentelemetry.c:551"
+        }
+      ],
+      "source_observations": [
+        {
+          "origin": "ctr_decode_opentelemetry.c:551",
+          "source_path": "lib/ctraces/src/ctr_decode_opentelemetry.c",
+          "file_sha256": "68b74991687c7c3dbd3412e6ff3daacac92655cf468ea1ae310054f97691ca3b",
+          "excerpt": "    for (resource_span_index = 0; resource_span_index < service_request->n_resource_spans; resource_span_index++) {\n        otel_resource_span = service_request->resource_spans[resource_span_index];\n        if (otel_resource_span == NULL || otel_resource_span->resource == NULL) {\n            opentelemetry__proto__collector__trace__v1__export_trace_service_request__free_unpacked(service_request, NULL);\n            ctr_destroy(ctr);\n            return CTR_DECODE_OPENTELEMETRY_INVALID_PAYLOAD;"
+        },
+        {
+          "origin": "ctr_decode_opentelemetry.c:551",
+          "source_path": "lib/ctraces/src/ctr_decode_opentelemetry.c",
+          "file_sha256": "68b74991687c7c3dbd3412e6ff3daacac92655cf468ea1ae310054f97691ca3b",
+          "excerpt": "    for (resource_span_index = 0; resource_span_index < service_request->n_resource_spans; resource_span_index++) {\n        otel_resource_span = service_request->resource_spans[resource_span_index];\n        if (otel_resource_span == NULL || otel_resource_span->resource == NULL) {\n            opentelemetry__proto__collector__trace__v1__export_trace_service_request__free_unpacked(service_request, NULL);\n            ctr_destroy(ctr);\n            return CTR_DECODE_OPENTELEMETRY_INVALID_PAYLOAD;"
+        }
+      ]
+    },
+    {
+      "key": [
+        "ctraces",
+        "ctr_decode_opentelemetry.c",
+        "span_set_events",
+        0
+      ],
+      "before": "Unknown",
+      "after": "Unknown",
+      "removed": [
+        {
+          "category": "unsupported",
+          "description": "unmodeled call, aggregate or indirect access in branch condition",
+          "line": 8813,
+          "origin": "ctr_decode_opentelemetry.c:433"
+        }
+      ],
+      "added": [],
+      "source_observations": [
+        {
+          "origin": "ctr_decode_opentelemetry.c:433",
+          "source_path": "lib/ctraces/src/ctr_decode_opentelemetry.c",
+          "file_sha256": "68b74991687c7c3dbd3412e6ff3daacac92655cf468ea1ae310054f97691ca3b",
+          "excerpt": "        }\n\n        if (event->n_attributes > 0 && event->attributes != NULL) {\n            ctr_attributes = convert_otel_attrs(event->n_attributes, event->attributes);\n            if (ctr_attributes == NULL) {\n                return -1;"
+        }
+      ]
+    },
+    {
+      "key": [
+        "ctraces",
+        "ctr_mpack_utils.c",
+        "ctr_mpack_unpack_map",
+        0
+      ],
+      "before": "Unknown",
+      "after": "Unknown",
+      "removed": [
+        {
+          "category": "unsupported",
+          "description": "unmodeled call, aggregate or indirect access in loop condition",
+          "line": 2213,
+          "origin": "ctr_mpack_utils.c:374"
+        }
+      ],
+      "added": [
+        {
+          "category": "unknown_alias",
+          "description": "unresolved resource identity `callback_entry`",
+          "line": 2213,
+          "origin": "ctr_mpack_utils.c:374"
+        }
+      ],
+      "source_observations": [
+        {
+          "origin": "ctr_mpack_utils.c:374",
+          "source_path": "lib/ctraces/src/ctr_mpack_utils.c",
+          "file_sha256": "7b83a83671ce52c272a0cf55ac18099271ff263c478a5adbf34a371efe305390",
+          "excerpt": "            result = CTR_MPACK_UNEXPECTED_KEY_ERROR;\n\n            while (CTR_MPACK_UNEXPECTED_KEY_ERROR == result &&\n                   NULL != callback_entry->identifier) {\n\n                if (0 == strcmp(callback_entry->identifier, key_name)) {"
+        },
+        {
+          "origin": "ctr_mpack_utils.c:374",
+          "source_path": "lib/ctraces/src/ctr_mpack_utils.c",
+          "file_sha256": "7b83a83671ce52c272a0cf55ac18099271ff263c478a5adbf34a371efe305390",
+          "excerpt": "            result = CTR_MPACK_UNEXPECTED_KEY_ERROR;\n\n            while (CTR_MPACK_UNEXPECTED_KEY_ERROR == result &&\n                   NULL != callback_entry->identifier) {\n\n                if (0 == strcmp(callback_entry->identifier, key_name)) {"
+        }
+      ]
+    },
+    {
+      "key": [
+        "ctraces",
+        "ctr_span.c",
+        "ctr_span_create",
+        0
+      ],
+      "before": "Unknown",
+      "after": "Unknown",
+      "removed": [
+        {
+          "category": "unsupported",
+          "description": "unmodeled call, aggregate or indirect access in branch condition",
+          "line": 6788,
+          "origin": "ctr_span.c:71"
+        }
+      ],
+      "added": [],
+      "source_observations": [
+        {
+          "origin": "ctr_span.c:71",
+          "source_path": "lib/ctraces/src/ctr_span.c",
+          "file_sha256": "6d49af04ffbd66c59439b01884aa125ff32a8dc2d65c4c7c6d4074e15f88cb8b",
+          "excerpt": "\n    /* if a parent context was given, populate the span parent id */\n    if (parent != NULL && parent->span_id != NULL) {\n        ctr_span_set_parent_span_id_with_cid(span, parent->span_id);\n    }\n"
+        }
+      ]
+    },
+    {
+      "key": [
+        "librdkafka",
+        "lz4hc.c",
+        "LZ4HC_countPattern",
+        0
+      ],
+      "before": "Unknown",
+      "after": "Unknown",
+      "removed": [
+        {
+          "category": "unsupported",
+          "description": "unmodeled call, aggregate or indirect access in loop condition",
+          "line": 640,
+          "origin": "lz4hc.c:192"
+        }
+      ],
+      "added": [],
+      "source_observations": [
+        {
+          "origin": "lz4hc.c:192",
+          "source_path": "lib/librdkafka-2.15.0/src/lz4hc.c",
+          "file_sha256": "bca2cf3a014b21919da4fa92db5adbfbfc9aee2f0938107885a3a8f49a750aa8",
+          "excerpt": "    if (LZ4_isLittleEndian()) {\n        reg_t patternByte = pattern;\n        while ((ip<iEnd) && (*ip == (BYTE)patternByte)) {\n            ip++; patternByte >>= 8;\n        }\n    } else {  /* big endian */"
+        }
+      ]
+    },
+    {
+      "key": [
+        "librdkafka",
+        "nanopb/pb_common.c",
+        "load_descriptor_values",
+        0
+      ],
+      "before": "Unknown",
+      "after": "Unknown",
+      "removed": [
+        {
+          "category": "unsupported",
+          "description": "unmodeled call, aggregate or indirect access in branch condition",
+          "line": 396,
+          "origin": "nanopb/pb_common.c:100"
+        }
+      ],
+      "added": [],
+      "source_observations": [
+        {
+          "origin": "nanopb/pb_common.c:100",
+          "source_path": "lib/librdkafka-2.15.0/src/nanopb/pb_common.c",
+          "file_sha256": "41f0950b97a79ab5fd1186d609681c2293f2b2f29e3a0efb7a3b0ebb0fddd790",
+          "excerpt": "        }\n\n        if (PB_ATYPE(iter->type) == PB_ATYPE_POINTER && iter->pField != NULL)\n        {\n            iter->pData = *(void**)iter->pField;\n        }"
+        }
+      ]
+    },
+    {
+      "key": [
+        "librdkafka",
+        "nanopb/pb_decode.c",
+        "decode_static_field",
+        0
+      ],
+      "before": "Unknown",
+      "after": "Unknown",
+      "removed": [
+        {
+          "category": "unsupported",
+          "description": "unmodeled call, aggregate or indirect access in branch condition",
+          "line": 648,
+          "origin": "nanopb/pb_decode.c:479"
+        },
+        {
+          "category": "unknown_alias",
+          "description": "unresolved resource identity `field`",
+          "line": 653,
+          "origin": "nanopb/pb_decode.c:485"
+        },
+        {
+          "category": "unknown_alias",
+          "description": "unresolved resource identity `field`",
+          "line": 675,
+          "origin": "nanopb/pb_decode.c:512"
+        }
+      ],
+      "added": [],
+      "source_observations": [
+        {
+          "origin": "nanopb/pb_decode.c:479",
+          "source_path": "lib/librdkafka-2.15.0/src/nanopb/pb_decode.c",
+          "file_sha256": "362fd88bc261529b72d92ef0ed1b484738fdddd7dc816982829442d849ca6a7b",
+          "excerpt": "    \n        case PB_HTYPE_REPEATED:\n            if (wire_type == PB_WT_STRING\n                && PB_LTYPE(field->type) <= PB_LTYPE_LAST_PACKABLE)\n            {\n                /* Packed array */"
+        },
+        {
+          "origin": "nanopb/pb_decode.c:485",
+          "source_path": "lib/librdkafka-2.15.0/src/nanopb/pb_decode.c",
+          "file_sha256": "362fd88bc261529b72d92ef0ed1b484738fdddd7dc816982829442d849ca6a7b",
+          "excerpt": "                bool status = true;\n                pb_istream_t substream;\n                pb_size_t *size = (pb_size_t*)field->pSize;\n                field->pData = (char*)field->pField + field->data_size * (*size);\n\n                if (!pb_make_string_substream(stream, &substream))"
+        },
+        {
+          "origin": "nanopb/pb_decode.c:512",
+          "source_path": "lib/librdkafka-2.15.0/src/nanopb/pb_decode.c",
+          "file_sha256": "362fd88bc261529b72d92ef0ed1b484738fdddd7dc816982829442d849ca6a7b",
+          "excerpt": "            {\n                /* Repeated field */\n                pb_size_t *size = (pb_size_t*)field->pSize;\n                field->pData = (char*)field->pField + field->data_size * (*size);\n\n                if ((*size)++ >= field->array_size)"
+        }
+      ]
+    },
+    {
+      "key": [
+        "librdkafka",
+        "nanopb/pb_decode.c",
+        "pb_dec_submessage",
+        0
+      ],
+      "before": "Unknown",
+      "after": "Unknown",
+      "removed": [
+        {
+          "category": "unsupported",
+          "description": "unmodeled call, aggregate or indirect access in branch condition",
+          "line": 1190,
+          "origin": "nanopb/pb_decode.c:1601"
+        }
+      ],
+      "added": [],
+      "source_observations": [
+        {
+          "origin": "nanopb/pb_decode.c:1601",
+          "source_path": "lib/librdkafka-2.15.0/src/nanopb/pb_decode.c",
+          "file_sha256": "362fd88bc261529b72d92ef0ed1b484738fdddd7dc816982829442d849ca6a7b",
+          "excerpt": "     * before decoding the message. Typically it is used to set callback fields\n     * inside oneofs. */\n    if (PB_LTYPE(field->type) == PB_LTYPE_SUBMSG_W_CB && field->pSize != NULL)\n    {\n        /* Message callback is stored right before pSize. */\n        pb_callback_t *callback = (pb_callback_t*)field->pSize - 1;"
+        }
+      ]
+    },
+    {
+      "key": [
+        "librdkafka",
+        "nanopb/pb_decode.c",
+        "pb_field_set_to_default",
+        0
+      ],
+      "before": "Unknown",
+      "after": "Unknown",
+      "removed": [
+        {
+          "category": "unsupported",
+          "description": "unmodeled call, aggregate or indirect access in branch condition",
+          "line": 808,
+          "origin": "nanopb/pb_decode.c:891"
+        }
+      ],
+      "added": [],
+      "source_observations": [
+        {
+          "origin": "nanopb/pb_decode.c:891",
+          "source_path": "lib/librdkafka-2.15.0/src/nanopb/pb_decode.c",
+          "file_sha256": "362fd88bc261529b72d92ef0ed1b484738fdddd7dc816982829442d849ca6a7b",
+          "excerpt": "    {\n        bool init_data = true;\n        if (PB_HTYPE(type) == PB_HTYPE_OPTIONAL && field->pSize != NULL)\n        {\n            /* Set has_field to false. Still initialize the optional field\n             * itself also. */"
+        }
+      ]
+    },
+    {
+      "key": [
+        "librdkafka",
+        "nanopb/pb_encode.c",
+        "pb_check_proto3_default_value",
+        0
+      ],
+      "before": "Unknown",
+      "after": "Unknown",
+      "removed": [
+        {
+          "category": "unsupported",
+          "description": "unmodeled call, aggregate or indirect access in branch condition",
+          "line": 506,
+          "origin": "nanopb/pb_encode.c:264"
+        }
+      ],
+      "added": [],
+      "source_observations": [
+        {
+          "origin": "nanopb/pb_encode.c:264",
+          "source_path": "lib/librdkafka-2.15.0/src/nanopb/pb_encode.c",
+          "file_sha256": "696352ece4e2c0534ab5acb4dd47cca363e0e25e76ccd9e48e275a2ba8140082",
+          "excerpt": "            return *(const pb_size_t*)field->pSize == 0;\n        }\n        else if (PB_HTYPE(type) == PB_HTYPE_OPTIONAL && field->pSize != NULL)\n        {\n            /* Proto2 optional fields inside proto3 message, or proto3\n             * submessage fields. */"
+        }
+      ]
+    },
+    {
+      "key": [
+        "librdkafka",
+        "nanopb/pb_encode.c",
+        "pb_enc_submessage",
+        0
+      ],
+      "before": "Unknown",
+      "after": "Unknown",
+      "removed": [
+        {
+          "category": "unsupported",
+          "description": "unmodeled call, aggregate or indirect access in branch condition",
+          "line": 969,
+          "origin": "nanopb/pb_encode.c:934"
+        }
+      ],
+      "added": [],
+      "source_observations": [
+        {
+          "origin": "nanopb/pb_encode.c:934",
+          "source_path": "lib/librdkafka-2.15.0/src/nanopb/pb_encode.c",
+          "file_sha256": "696352ece4e2c0534ab5acb4dd47cca363e0e25e76ccd9e48e275a2ba8140082",
+          "excerpt": "        PB_RETURN_ERROR(stream, \"invalid field descriptor\");\n\n    if (PB_LTYPE(field->type) == PB_LTYPE_SUBMSG_W_CB && field->pSize != NULL)\n    {\n        /* Message callback is stored right before pSize. */\n        pb_callback_t *callback = (pb_callback_t*)field->pSize - 1;"
+        }
+      ]
+    },
+    {
+      "key": [
+        "librdkafka",
+        "rdkafka.c",
+        "rd_kafka_query_wmark_offsets_resp_cb",
+        0
+      ],
+      "before": "Unknown",
+      "after": "Unknown",
+      "removed": [
+        {
+          "category": "unsupported",
+          "description": "unmodeled call, aggregate or indirect access in branch condition",
+          "line": 24050,
+          "origin": "rdkafka.c:5549"
+        }
+      ],
+      "added": [
+        {
+          "category": "unknown_alias",
+          "description": "unresolved resource identity `err`",
+          "line": 24050,
+          "origin": "rdkafka.c:5549"
+        }
+      ],
+      "source_observations": [
+        {
+          "origin": "rdkafka.c:5549",
+          "source_path": "lib/librdkafka-2.15.0/src/rdkafka.c",
+          "file_sha256": "c9451ca15c744f913ce2a6ed708dc36c04c47ab6730252afb0a2bb418d82d1d0",
+          "excerpt": "        state->offidx++;\n\n        if (err || state->offidx == 2) /* Error or Done */\n                state->err = err;\n\n        rd_kafka_topic_partition_list_destroy(offsets);"
+        },
+        {
+          "origin": "rdkafka.c:5549",
+          "source_path": "lib/librdkafka-2.15.0/src/rdkafka.c",
+          "file_sha256": "c9451ca15c744f913ce2a6ed708dc36c04c47ab6730252afb0a2bb418d82d1d0",
+          "excerpt": "        state->offidx++;\n\n        if (err || state->offidx == 2) /* Error or Done */\n                state->err = err;\n\n        rd_kafka_topic_partition_list_destroy(offsets);"
+        }
+      ]
+    },
+    {
+      "key": [
+        "librdkafka",
+        "rdkafka_queue.c",
+        "rd_kafka_q_move_cnt",
+        0
+      ],
+      "before": "Unknown",
+      "after": "Unknown",
+      "removed": [
+        {
+          "category": "unsupported",
+          "description": "unmodeled call, aggregate or indirect access in branch condition",
+          "line": 19847,
+          "origin": "rdkafka_queue.c:310"
+        }
+      ],
+      "added": [],
+      "source_observations": [
+        {
+          "origin": "rdkafka_queue.c:310",
+          "source_path": "lib/librdkafka-2.15.0/src/rdkafka_queue.c",
+          "file_sha256": "a1d55367a2f020e67965661a29fbf2cf121b1d61e5b2ab6b52df875315c0acc7",
+          "excerpt": "        }\n\n        if (!dstq->rkq_fwdq && !srcq->rkq_fwdq) {\n                if (cnt > 0 && dstq->rkq_qlen == 0)\n                        rd_kafka_q_io_event(dstq);\n"
+        }
+      ]
+    },
+    {
+      "key": [
+        "librdkafka",
+        "rdkafka_queue.c",
+        "rd_kafka_share_set_log_queue",
+        0
+      ],
+      "before": "Unknown",
+      "after": "Unknown",
+      "removed": [
+        {
+          "category": "unsupported",
+          "description": "unmodeled call, aggregate or indirect access in branch condition",
+          "line": 20348,
+          "origin": "rdkafka_queue.c:1089"
+        }
+      ],
+      "added": [],
+      "source_observations": [
+        {
+          "origin": "rdkafka_queue.c:1089",
+          "source_path": "lib/librdkafka-2.15.0/src/rdkafka_queue.c",
+          "file_sha256": "a1d55367a2f020e67965661a29fbf2cf121b1d61e5b2ab6b52df875315c0acc7",
+          "excerpt": "        rd_kafka_resp_err_t err;\n\n        if (!rkshare || !rkshare->rkshare_rk)\n                return rd_kafka_error_new(\n                    RD_KAFKA_RESP_ERR__INVALID_ARG,\n                    \"Share consumer handle is NULL or uninitialized\");"
+        }
+      ]
+    },
+    {
+      "key": [
+        "chunkio",
+        "cio_chunk.c",
+        "cio_chunk_is_up",
+        0
+      ],
+      "before": "Unknown",
+      "after": "Unknown",
+      "removed": [
+        {
+          "category": "unsupported",
+          "description": "call to uncontracted function `cio_file_is_up`",
+          "line": 2363,
+          "origin": "cio_chunk.c:520"
+        }
+      ],
+      "added": [
+        {
+          "category": "unknown_alias",
+          "description": "unresolved resource identity `type`",
+          "line": 2361,
+          "origin": "cio_chunk.c:518"
+        }
+      ],
+      "source_observations": [
+        {
+          "origin": "cio_chunk.c:520",
+          "source_path": "lib/chunkio/src/cio_chunk.c",
+          "file_sha256": "8f6064c742b3fcc53d75b66dbd07d5c7f03d2f245ec7716f8605a2c3a6efd6c8",
+          "excerpt": "    else if (type == CIO_STORE_FS) {\n        cf = ch->backend;\n        return cio_file_is_up(ch, cf);\n    }\n\n    return CIO_FALSE;"
+        },
+        {
+          "origin": "cio_chunk.c:518",
+          "source_path": "lib/chunkio/src/cio_chunk.c",
+          "file_sha256": "8f6064c742b3fcc53d75b66dbd07d5c7f03d2f245ec7716f8605a2c3a6efd6c8",
+          "excerpt": "        return CIO_TRUE;\n    }\n    else if (type == CIO_STORE_FS) {\n        cf = ch->backend;\n        return cio_file_is_up(ch, cf);\n    }"
+        }
+      ]
+    },
+    {
+      "key": [
+        "chunkio",
+        "cio_file.c",
+        "cio_file_is_up",
+        0
+      ],
+      "before": "Unknown",
+      "after": "Safe",
+      "removed": [
+        {
+          "category": "unsupported",
+          "description": "unmodeled call, aggregate or indirect access in branch condition",
+          "line": 3679,
+          "origin": "cio_file.c:1382"
+        }
+      ],
+      "added": [],
+      "source_observations": [
+        {
+          "origin": "cio_file.c:1382",
+          "source_path": "lib/chunkio/src/cio_file.c",
+          "file_sha256": "1c3eb285307108deb2b22c68cf282c0121619a35bbe36adc216f276d51925257",
+          "excerpt": "    (void) ch;\n\n    if (cio_file_native_is_open(cf) &&\n        cio_file_native_is_mapped(cf)) {\n        return CIO_TRUE;\n    }"
+        }
+      ]
+    },
+    {
+      "key": [
+        "chunkio",
+        "cio_file.c",
+        "cio_file_scan_dump",
+        0
+      ],
+      "before": "Unknown",
+      "after": "Unknown",
+      "removed": [
+        {
+          "category": "unsupported",
+          "description": "unmodeled call, aggregate or indirect access in branch condition",
+          "line": 3648,
+          "origin": "cio_file.c:1333"
+        }
+      ],
+      "added": [],
+      "source_observations": [
+        {
+          "origin": "cio_file.c:1333",
+          "source_path": "lib/chunkio/src/cio_file.c",
+          "file_sha256": "1c3eb285307108deb2b22c68cf282c0121619a35bbe36adc216f276d51925257",
+          "excerpt": "        cf = ch->backend;\n\n        if (cio_file_is_up(ch, cf) == CIO_FALSE) {\n            ret = cio_file_up(ch);\n            if (ret == -1) {\n                continue;"
+        }
+      ]
+    },
+    {
+      "key": [
+        "chunkio",
+        "cio_file.c",
+        "cio_file_write_metadata",
+        0
+      ],
+      "before": "Unknown",
+      "after": "Unknown",
+      "removed": [
+        {
+          "category": "unsupported",
+          "description": "unmodeled call, aggregate or indirect access in branch condition",
+          "line": 3508,
+          "origin": "cio_file.c:1087"
+        }
+      ],
+      "added": [],
+      "source_observations": [
+        {
+          "origin": "cio_file.c:1087",
+          "source_path": "lib/chunkio/src/cio_file.c",
+          "file_sha256": "1c3eb285307108deb2b22c68cf282c0121619a35bbe36adc216f276d51925257",
+          "excerpt": "    cf = ch->backend;\n\n    if (cio_file_is_up(ch, cf) == CIO_FALSE) {\n        return -1;\n    }\n"
+        }
+      ]
+    },
+    {
+      "key": [
+        "chunkio",
+        "cio_file_unix.c",
+        "cio_file_native_delete",
+        0
+      ],
+      "before": "Unknown",
+      "after": "Safe",
+      "removed": [
+        {
+          "category": "unsupported",
+          "description": "unmodeled call, aggregate or indirect access in branch condition",
+          "line": 3268,
+          "origin": "cio_file_unix.c:461"
+        }
+      ],
+      "added": [],
+      "source_observations": [
+        {
+          "origin": "cio_file_unix.c:461",
+          "source_path": "lib/chunkio/src/cio_file_unix.c",
+          "file_sha256": "29a392dbf68676bea741d579f8b4cc6c5bcfc0ba3b3e8b3a11fb185443a07fb0",
+          "excerpt": "    int result;\n\n    if (cio_file_native_is_open(cf) ||\n        cio_file_native_is_mapped(cf)) {\n        return CIO_ERROR;\n    }"
+        }
+      ]
+    },
+    {
+      "key": [
+        "fluent-bit-chunk",
+        "flb_input_chunk.c",
+        "flb_input_chunk_get_projected_write_size",
+        0
+      ],
+      "before": "Unknown",
+      "after": "Unknown",
+      "removed": [
+        {
+          "category": "unsupported",
+          "description": "unmodeled call, aggregate or indirect access in branch condition",
+          "line": 18367,
+          "origin": "flb_input_chunk.c:1014"
+        },
+        {
+          "category": "unsupported",
+          "description": "unmodeled call, aggregate or indirect access in branch condition",
+          "line": 18370,
+          "origin": "flb_input_chunk.c:1018"
+        }
+      ],
+      "added": [
+        {
+          "category": "unknown_alias",
+          "description": "unresolved resource identity `chunk`",
+          "line": 18367,
+          "origin": "flb_input_chunk.c:1014"
+        },
+        {
+          "category": "unknown_alias",
+          "description": "unresolved resource identity `chunk`",
+          "line": 18370,
+          "origin": "flb_input_chunk.c:1018"
+        }
+      ],
+      "source_observations": [
+        {
+          "origin": "flb_input_chunk.c:1014",
+          "source_path": "src/flb_input_chunk.c",
+          "file_sha256": "a537fe347ec1be6c2af7971b55579284e0402f351334f3cfcf0c2c800fe0977e",
+          "excerpt": "    chunk_file = NULL;\n\n    if (chunk != NULL && chunk->ctx != NULL && chunk->ctx->page_size > 0) {\n        page_size = (size_t) chunk->ctx->page_size;\n    }\n"
+        },
+        {
+          "origin": "flb_input_chunk.c:1018",
+          "source_path": "src/flb_input_chunk.c",
+          "file_sha256": "a537fe347ec1be6c2af7971b55579284e0402f351334f3cfcf0c2c800fe0977e",
+          "excerpt": "    }\n\n    if (chunk != NULL && chunk->backend != NULL &&\n        chunk->st != NULL && chunk->st->type == CIO_STORE_FS) {\n        chunk_file = (struct flb_input_chunk_cio_file_view *) chunk->backend;\n    }"
+        },
+        {
+          "origin": "flb_input_chunk.c:1014",
+          "source_path": "src/flb_input_chunk.c",
+          "file_sha256": "a537fe347ec1be6c2af7971b55579284e0402f351334f3cfcf0c2c800fe0977e",
+          "excerpt": "    chunk_file = NULL;\n\n    if (chunk != NULL && chunk->ctx != NULL && chunk->ctx->page_size > 0) {\n        page_size = (size_t) chunk->ctx->page_size;\n    }\n"
+        },
+        {
+          "origin": "flb_input_chunk.c:1018",
+          "source_path": "src/flb_input_chunk.c",
+          "file_sha256": "a537fe347ec1be6c2af7971b55579284e0402f351334f3cfcf0c2c800fe0977e",
+          "excerpt": "    }\n\n    if (chunk != NULL && chunk->backend != NULL &&\n        chunk->st != NULL && chunk->st->type == CIO_STORE_FS) {\n        chunk_file = (struct flb_input_chunk_cio_file_view *) chunk->backend;\n    }"
+        }
+      ]
+    },
+    {
+      "key": [
+        "fluent-bit-chunk",
+        "flb_input_chunk.c",
+        "flb_input_chunk_release_route",
+        0
+      ],
+      "before": "Unknown",
+      "after": "Unknown",
+      "removed": [
+        {
+          "category": "unsupported",
+          "description": "unmodeled call, aggregate or indirect access in branch condition",
+          "line": 18220,
+          "origin": "flb_input_chunk.c:820"
+        }
+      ],
+      "added": [],
+      "source_observations": [
+        {
+          "origin": "flb_input_chunk.c:820",
+          "source_path": "src/flb_input_chunk.c",
+          "file_sha256": "a537fe347ec1be6c2af7971b55579284e0402f351334f3cfcf0c2c800fe0977e",
+          "excerpt": "    ssize_t bytes;\n\n    if (ic == NULL || o_ins == NULL || ic->routes_mask == NULL) {\n        return -1;\n    }\n"
+        }
+      ]
+    },
+    {
+      "key": [
+        "fluent-bit-chunk",
+        "flb_input_chunk.c",
+        "get_input_chunk_source_name",
+        0
+      ],
+      "before": "Unknown",
+      "after": "Unknown",
+      "removed": [
+        {
+          "category": "unsupported",
+          "description": "unmodeled call, aggregate or indirect access in branch condition",
+          "line": 18016,
+          "origin": "flb_input_chunk.c:529"
+        }
+      ],
+      "added": [],
+      "source_observations": [
+        {
+          "origin": "flb_input_chunk.c:529",
+          "source_path": "src/flb_input_chunk.c",
+          "file_sha256": "a537fe347ec1be6c2af7971b55579284e0402f351334f3cfcf0c2c800fe0977e",
+          "excerpt": "    struct cio_chunk *chunk;\n\n    if (input_chunk->fs_backlog == FLB_TRUE && input_chunk->chunk != NULL) {\n        chunk = (struct cio_chunk *) input_chunk->chunk;\n\n        if (chunk->st != NULL && chunk->st->name != NULL) {"
+        }
+      ]
+    },
+    {
+      "key": [
+        "fluent-bit-chunk",
+        "flb_input_chunk.c",
+        "input_chunk_append_raw",
+        0
+      ],
+      "before": "Unknown",
+      "after": "Unknown",
+      "removed": [
+        {
+          "category": "unsupported",
+          "description": "unmodeled call, aggregate or indirect access in branch condition",
+          "line": 20086,
+          "origin": "flb_input_chunk.c:3290"
+        }
+      ],
+      "added": [],
+      "source_observations": [
+        {
+          "origin": "flb_input_chunk.c:3290",
+          "source_path": "src/flb_input_chunk.c",
+          "file_sha256": "a537fe347ec1be6c2af7971b55579284e0402f351334f3cfcf0c2c800fe0977e",
+          "excerpt": "     */\n    if (!tag) {\n        if (in->tag && in->tag_len > 0) {\n            tag = in->tag;\n            tag_len = in->tag_len;\n        }"
+        }
+      ]
+    },
+    {
+      "key": [
+        "fluent-bit-chunk",
+        "flb_input_chunk.c",
+        "update_logs_tag_records_metrics",
+        0
+      ],
+      "before": "Unknown",
+      "after": "Unknown",
+      "removed": [
+        {
+          "category": "unsupported",
+          "description": "unmodeled call, aggregate or indirect access in branch condition",
+          "line": 17745,
+          "origin": "flb_input_chunk.c:141"
+        },
+        {
+          "category": "unknown_alias",
+          "description": "unresolved resource identity `in`",
+          "line": 17748,
+          "origin": "flb_input_chunk.c:145"
+        }
+      ],
+      "added": [],
+      "source_observations": [
+        {
+          "origin": "flb_input_chunk.c:141",
+          "source_path": "src/flb_input_chunk.c",
+          "file_sha256": "a537fe347ec1be6c2af7971b55579284e0402f351334f3cfcf0c2c800fe0977e",
+          "excerpt": "    }\n\n    if (!in->cmt_logs_tag_records || !in->cmt_logs_tag_records_untracked) {\n        return;\n    }\n"
+        },
+        {
+          "origin": "flb_input_chunk.c:145",
+          "source_path": "src/flb_input_chunk.c",
+          "file_sha256": "a537fe347ec1be6c2af7971b55579284e0402f351334f3cfcf0c2c800fe0977e",
+          "excerpt": "    }\n\n    config = in->config;\n\n    /* Enforce the tag length limit before allocating anything */\n    if (config->telemetry_metrics_logs_tag_records_max_tag_length > 0 &&"
+        }
+      ]
+    },
+    {
+      "key": [
+        "fluent-bit-chunk",
+        "flb_input_chunk.c",
+        "update_logs_tag_records_untracked",
+        0
+      ],
+      "before": "Unknown",
+      "after": "Unknown",
+      "removed": [
+        {
+          "category": "unsupported",
+          "description": "unmodeled call, aggregate or indirect access in branch condition",
+          "line": 17716,
+          "origin": "flb_input_chunk.c:108"
+        }
+      ],
+      "added": [],
+      "source_observations": [
+        {
+          "origin": "flb_input_chunk.c:108",
+          "source_path": "src/flb_input_chunk.c",
+          "file_sha256": "a537fe347ec1be6c2af7971b55579284e0402f351334f3cfcf0c2c800fe0977e",
+          "excerpt": "                                         const char *reason)\n{\n    if (!in->cmt_logs_tag_records_untracked || records == 0) {\n        return;\n    }\n"
+        }
+      ]
+    },
+    {
+      "key": [
+        "monkey-libevent",
+        "mk_core/mk_rconf.c",
+        "mk_rconf_read_glob",
+        0
+      ],
+      "before": "Unknown",
+      "after": "Unknown",
+      "removed": [
+        {
+          "category": "unsupported",
+          "description": "unmodeled call, aggregate or indirect access in branch condition",
+          "line": 2111,
+          "origin": "mk_core/mk_rconf.c:479"
+        }
+      ],
+      "added": [],
+      "source_observations": [
+        {
+          "origin": "mk_core/mk_rconf.c:479",
+          "source_path": "lib/monkey/mk_core/mk_rconf.c",
+          "file_sha256": "e483dc6d2ee2b2da24548bdea7ce118599a5bbde2bc59b8fe71a93ef733771af",
+          "excerpt": "    int ret_glb = -1;\n\n    if (conf->root_path && path[0] != '/') {\n        snprintf(tmp, PATH_MAX, \"%s/%s\", conf->root_path, path);\n        glb_path = tmp;\n    }"
+        }
+      ]
+    },
+    {
+      "key": [
+        "monkey-libevent",
+        "mk_server/mk_http_parser.c",
+        "header_lookup",
+        0
+      ],
+      "before": "Unknown",
+      "after": "Unknown",
+      "removed": [
+        {
+          "category": "unsupported",
+          "description": "unmodeled call, aggregate or indirect access in branch condition",
+          "line": 5617,
+          "origin": "mk_server/mk_http_parser.c:283"
+        }
+      ],
+      "added": [],
+      "source_observations": [
+        {
+          "origin": "mk_server/mk_http_parser.c:283",
+          "source_path": "lib/monkey/mk_server/mk_http_parser.c",
+          "file_sha256": "bb1fe87e129a64981271103305273f7e1eaa454329eb2d4cfaf113d682716ff9",
+          "excerpt": "            p->header_count++;\n\n            if (!mk_list_entry_is_orphan(&header->_head)) {\n                mk_list_del(&header->_head);\n            }\n"
+        }
+      ]
+    },
+    {
+      "key": [
+        "monkey-libevent",
+        "mk_server/mk_mimetype.c",
+        "mk_mimetype_read_config",
+        0
+      ],
+      "before": "Unknown",
+      "after": "Unknown",
+      "removed": [
+        {
+          "category": "unsupported",
+          "description": "unmodeled call, aggregate or indirect access in branch condition",
+          "line": 5907,
+          "origin": "mk_server/mk_mimetype.c:181"
+        }
+      ],
+      "added": [],
+      "source_observations": [
+        {
+          "origin": "mk_server/mk_mimetype.c:181",
+          "source_path": "lib/monkey/mk_server/mk_mimetype.c",
+          "file_sha256": "4f770ba53285bb5ee1a8f36f29d8691ac2ad29e8325277ae72861a68efdfc9b2",
+          "excerpt": "    mk_list_foreach(head, &section->entries) {\n        entry = mk_list_entry(head, struct mk_rconf_entry, _head);\n        if (!entry->key || !entry->val) {\n            continue;\n        }\n"
+        }
+      ]
+    },
+    {
+      "key": [
+        "monkey-libevent",
+        "mk_server/monkey.c",
+        "mk_server_setup",
+        0
+      ],
+      "before": "Unknown",
+      "after": "Unknown",
+      "removed": [
+        {
+          "category": "unsupported",
+          "description": "unmodeled call, aggregate or indirect access in branch condition",
+          "line": 6100,
+          "origin": "mk_server/monkey.c:195"
+        }
+      ],
+      "added": [],
+      "source_observations": [
+        {
+          "origin": "mk_server/monkey.c:195",
+          "source_path": "lib/monkey/mk_server/monkey.c",
+          "file_sha256": "821fe95aa0d812ef85015764dfe4a880686c0abbeaa5e527b5b68845430791b5",
+          "excerpt": "    /* Core and Scheduler setup */\n    mk_config_start_configure(server);\n    if (server->path_conf_root != NULL && server->config == NULL) {\n        return -1;\n    }\n"
+        }
+      ]
+    }
+  ],
+  "body_evidence_changes": [
+    {
+      "index": 28,
+      "library": "cmetrics",
+      "file": "cmt_summary.c",
+      "before": {
+        "clauses": {
+          "LZ4_resetStream": {
+            "resource_borrowed(#0)": [
+              "W4",
+              "entry"
+            ],
+            "resource_return_none()": [
+              "W4",
+              "entry"
+            ]
+          },
+          "MK_EVENT_NEW": {
+            "resource_borrowed(#0)": [
+              "W4"
+            ],
+            "resource_return_none()": [
+              "W4"
+            ]
+          },
+          "cmt_math_d64_to_uint64": {
+            "resource_borrowed(#0)": [
+              "W4"
+            ],
+            "resource_return_none()": [
+              "W4"
+            ]
+          },
+          "cmt_math_uint64_to_d64": {
+            "resource_borrowed(#0)": [
+              "W4"
+            ],
+            "resource_return_none()": [
+              "W4"
+            ]
+          },
+          "cmt_summary_get_count_value": {
+            "resource_borrowed(#0)": [
+              "W4",
+              "entry"
+            ],
+            "resource_return_none()": [
+              "W4",
+              "entry"
+            ]
+          },
+          "cmt_summary_get_sum_value": {
+            "resource_borrowed(#0)": [
+              "W4",
+              "entry"
+            ],
+            "resource_return_none()": [
+              "W4",
+              "entry"
+            ]
+          },
+          "mk_mem_alloc": {
+            "resource_borrowed(#0)": [
+              "W4"
+            ],
+            "resource_return_owned(nullable)": [
+              "W4"
+            ]
+          },
+          "mk_mem_alloc_z": {
+            "resource_borrowed(#0)": [
+              "W4"
+            ],
+            "resource_return_owned(nullable)": [
+              "W4"
+            ]
+          },
+          "mk_mem_free": {
+            "resource_released(#0, nullable)": [
+              "13m"
+            ],
+            "resource_return_none()": [
+              "13m"
+            ]
+          },
+          "rd_free": {
+            "resource_released(#0, nullable)": [
+              "13m"
+            ],
+            "resource_return_none()": [
+              "13m"
+            ]
+          },
+          "rd_kafka_enq_once_trigger": {
+            "resource_borrowed(#0)": [],
+            "resource_borrowed(#1)": [],
+            "resource_borrowed(#2)": [],
+            "resource_premise(rk_plugin_callback_closure)": [],
+            "resource_reference_dropped(#0)": [
+              "13c"
+            ],
+            "resource_return_none()": []
+          },
+          "rd_kafka_q_destroy0": {
+            "resource_borrowed(#0)": [],
+            "resource_borrowed(#1)": [],
+            "resource_premise(rk_plugin_callback_closure)": [],
+            "resource_reference_dropped(#0)": [
+              "13c"
+            ],
+            "resource_return_none()": []
+          },
+          "rd_kafka_q_destroy_owner": {
+            "resource_borrowed(#0)": [],
+            "resource_premise(rk_plugin_callback_closure)": [],
+            "resource_reference_dropped(#0)": [
+              "13c"
+            ],
+            "resource_return_none()": []
+          },
+          "rd_kafka_q_keep": {
+            "resource_borrowed(#0)": [],
+            "resource_reference_kept(#0)": [
+              "13c"
+            ],
+            "resource_return_alias(#0, nonnull)": []
+          },
+          "rd_kafka_q_keep_nolock": {
+            "resource_borrowed(#0)": [],
+            "resource_reference_kept(#0)": [
+              "13c"
+            ],
+            "resource_return_alias(#0, nonnull)": []
+          },
+          "rd_kafka_topic_destroy0": {
+            "resource_borrowed(#0)": [],
+            "resource_premise(rk_plugin_callback_closure)": [],
+            "resource_reference_dropped(#0)": [
+              "13c"
+            ],
+            "resource_return_none()": []
+          },
+          "rd_kafka_topic_keep": {
+            "resource_borrowed(#0)": [],
+            "resource_reference_kept(#0)": [
+              "13c"
+            ],
+            "resource_return_alias(#0, nonnull)": []
+          },
+          "rd_kafka_topic_partition_get_private": {
+            "resource_borrowed(#0)": [],
+            "resource_return_borrowed_from(#0, nonnull)": [
+              "13a"
+            ]
+          },
+          "rd_kafka_toppar_destroy0": {
+            "resource_borrowed(#0)": [],
+            "resource_borrowed(#1)": [],
+            "resource_borrowed(#2)": [],
+            "resource_premise(rk_plugin_callback_closure)": [],
+            "resource_reference_dropped(#2)": [
+              "13c"
+            ],
+            "resource_return_none()": []
+          },
+          "rd_kafka_toppar_keep0": {
+            "resource_borrowed(#0)": [],
+            "resource_borrowed(#1)": [],
+            "resource_borrowed(#2)": [],
+            "resource_reference_kept(#2)": [
+              "13c"
+            ],
+            "resource_return_alias(#2, nonnull)": []
+          },
+          "rd_malloc": {
+            "resource_borrowed(#0)": [
+              "13m"
+            ],
+            "resource_return_owned(nullable)": [
+              "13m"
+            ]
+          }
+        },
+        "failed": {
+          "getpeername": [
+            "abi"
+          ],
+          "rd_kafka_error_new_v": [
+            "abi"
+          ],
+          "strerror_r": [
+            "abi"
+          ],
+          "strtoll": [
+            "abi"
+          ],
+          "strtoull": [
+            "abi"
+          ]
+        },
+        "unvalidated": [
+          "LZ4_compress_HC",
+          "LZ4_compress_HC_continue",
+          "LZ4_compress_HC_extStateHC",
+          "LZ4_compress_default",
+          "LZ4_compress_fast_continue",
+          "LZ4_compress_fast_extState",
+          "LZ4_decompress_generic",
+          "LZ4_decompress_unsafe_generic",
+          "_cio_file_up",
+          "cmt_summary_quantile_get_value",
+          "mk_fifo_queue_destroy",
+          "mk_list_add",
+          "mk_list_del",
+          "rd_kafka_error_new"
+        ],
+        "validated": {
+          "LZ4_resetStream": [
+            "W4",
+            "entry"
+          ],
+          "MK_EVENT_NEW": [
+            "W4"
+          ],
+          "cmt_math_d64_to_uint64": [
+            "W4"
+          ],
+          "cmt_math_uint64_to_d64": [
+            "W4"
+          ],
+          "cmt_summary_get_count_value": [
+            "W4",
+            "entry"
+          ],
+          "cmt_summary_get_sum_value": [
+            "W4",
+            "entry"
+          ],
+          "mk_mem_alloc": [
+            "W4"
+          ],
+          "mk_mem_alloc_z": [
+            "W4"
+          ],
+          "mk_mem_free": [
+            "13m"
+          ],
+          "rd_free": [
+            "13m"
+          ],
+          "rd_kafka_enq_once_trigger": [
+            "13c"
+          ],
+          "rd_kafka_q_destroy0": [
+            "13c"
+          ],
+          "rd_kafka_q_destroy_owner": [
+            "13c"
+          ],
+          "rd_kafka_q_keep": [
+            "13c"
+          ],
+          "rd_kafka_q_keep_nolock": [
+            "13c"
+          ],
+          "rd_kafka_topic_destroy0": [
+            "13c"
+          ],
+          "rd_kafka_topic_keep": [
+            "13c"
+          ],
+          "rd_kafka_topic_partition_get_private": [
+            "13a"
+          ],
+          "rd_kafka_toppar_destroy0": [
+            "13c"
+          ],
+          "rd_kafka_toppar_keep0": [
+            "13c"
+          ],
+          "rd_malloc": [
+            "13m"
+          ]
+        },
+        "withdrawn": {
+          "cb_queue_chunks": [
+            "C06.3-no-body"
+          ],
+          "getpeername": [
+            "abi"
+          ],
+          "rd_kafka_error_new_v": [
+            "abi"
+          ],
+          "sb_allocate_backlogs": [
+            "C06.3-no-body"
+          ],
+          "sb_allocate_chunk": [
+            "C06.3-no-body"
+          ],
+          "sb_append_chunk_to_segregated_backlog": [
+            "C06.3-no-body"
+          ],
+          "sb_append_chunk_to_segregated_backlogs": [
+            "C06.3-no-body"
+          ],
+          "sb_destroy_backlog": [
+            "C06.3-no-body"
+          ],
+          "sb_destroy_backlogs": [
+            "C06.3-no-body"
+          ],
+          "sb_destroy_chunk": [
+            "C06.3-no-body"
+          ],
+          "sb_release_output_queue_space": [
+            "C06.3-no-body"
+          ],
+          "sb_remove_chunk_from_segregated_backlog": [
+            "C06.3-no-body"
+          ],
+          "sb_remove_chunk_from_segregated_backlogs": [
+            "C06.3-no-body"
+          ],
+          "sb_segregate_chunks": [
+            "C06.3-no-body"
+          ],
+          "strerror_r": [
+            "abi"
+          ],
+          "strtoll": [
+            "abi"
+          ],
+          "strtoull": [
+            "abi"
+          ]
+        }
+      },
+      "after": {
+        "clauses": {
+          "LZ4_resetStream": {
+            "resource_borrowed(#0)": [
+              "W4",
+              "entry"
+            ],
+            "resource_return_none()": [
+              "W4",
+              "entry"
+            ]
+          },
+          "MK_EVENT_NEW": {
+            "resource_borrowed(#0)": [
+              "W4"
+            ],
+            "resource_return_none()": [
+              "W4"
+            ]
+          },
+          "cmt_math_d64_to_uint64": {
+            "resource_borrowed(#0)": [
+              "W4"
+            ],
+            "resource_return_none()": [
+              "W4"
+            ]
+          },
+          "cmt_math_uint64_to_d64": {
+            "resource_borrowed(#0)": [
+              "W4"
+            ],
+            "resource_return_none()": [
+              "W4"
+            ]
+          },
+          "cmt_summary_get_count_value": {
+            "resource_borrowed(#0)": [
+              "W4",
+              "entry"
+            ],
+            "resource_return_none()": [
+              "W4",
+              "entry"
+            ]
+          },
+          "cmt_summary_get_sum_value": {
+            "resource_borrowed(#0)": [
+              "W4",
+              "entry"
+            ],
+            "resource_return_none()": [
+              "W4",
+              "entry"
+            ]
+          },
+          "cmt_summary_quantile_get_value": {
+            "resource_borrowed(#0)": [
+              "W4",
+              "entry"
+            ],
+            "resource_borrowed(#1)": [
+              "W4",
+              "entry"
+            ],
+            "resource_return_none()": [
+              "W4",
+              "entry"
+            ]
+          },
+          "mk_mem_alloc": {
+            "resource_borrowed(#0)": [
+              "W4"
+            ],
+            "resource_return_owned(nullable)": [
+              "W4"
+            ]
+          },
+          "mk_mem_alloc_z": {
+            "resource_borrowed(#0)": [
+              "W4"
+            ],
+            "resource_return_owned(nullable)": [
+              "W4"
+            ]
+          },
+          "mk_mem_free": {
+            "resource_released(#0, nullable)": [
+              "13m"
+            ],
+            "resource_return_none()": [
+              "13m"
+            ]
+          },
+          "rd_free": {
+            "resource_released(#0, nullable)": [
+              "13m"
+            ],
+            "resource_return_none()": [
+              "13m"
+            ]
+          },
+          "rd_kafka_enq_once_trigger": {
+            "resource_borrowed(#0)": [],
+            "resource_borrowed(#1)": [],
+            "resource_borrowed(#2)": [],
+            "resource_premise(rk_plugin_callback_closure)": [],
+            "resource_reference_dropped(#0)": [
+              "13c"
+            ],
+            "resource_return_none()": []
+          },
+          "rd_kafka_q_destroy0": {
+            "resource_borrowed(#0)": [],
+            "resource_borrowed(#1)": [],
+            "resource_premise(rk_plugin_callback_closure)": [],
+            "resource_reference_dropped(#0)": [
+              "13c"
+            ],
+            "resource_return_none()": []
+          },
+          "rd_kafka_q_destroy_owner": {
+            "resource_borrowed(#0)": [],
+            "resource_premise(rk_plugin_callback_closure)": [],
+            "resource_reference_dropped(#0)": [
+              "13c"
+            ],
+            "resource_return_none()": []
+          },
+          "rd_kafka_q_keep": {
+            "resource_borrowed(#0)": [],
+            "resource_reference_kept(#0)": [
+              "13c"
+            ],
+            "resource_return_alias(#0, nonnull)": []
+          },
+          "rd_kafka_q_keep_nolock": {
+            "resource_borrowed(#0)": [],
+            "resource_reference_kept(#0)": [
+              "13c"
+            ],
+            "resource_return_alias(#0, nonnull)": []
+          },
+          "rd_kafka_topic_destroy0": {
+            "resource_borrowed(#0)": [],
+            "resource_premise(rk_plugin_callback_closure)": [],
+            "resource_reference_dropped(#0)": [
+              "13c"
+            ],
+            "resource_return_none()": []
+          },
+          "rd_kafka_topic_keep": {
+            "resource_borrowed(#0)": [],
+            "resource_reference_kept(#0)": [
+              "13c"
+            ],
+            "resource_return_alias(#0, nonnull)": []
+          },
+          "rd_kafka_topic_partition_get_private": {
+            "resource_borrowed(#0)": [],
+            "resource_return_borrowed_from(#0, nonnull)": [
+              "13a"
+            ]
+          },
+          "rd_kafka_toppar_destroy0": {
+            "resource_borrowed(#0)": [],
+            "resource_borrowed(#1)": [],
+            "resource_borrowed(#2)": [],
+            "resource_premise(rk_plugin_callback_closure)": [],
+            "resource_reference_dropped(#2)": [
+              "13c"
+            ],
+            "resource_return_none()": []
+          },
+          "rd_kafka_toppar_keep0": {
+            "resource_borrowed(#0)": [],
+            "resource_borrowed(#1)": [],
+            "resource_borrowed(#2)": [],
+            "resource_reference_kept(#2)": [
+              "13c"
+            ],
+            "resource_return_alias(#2, nonnull)": []
+          },
+          "rd_malloc": {
+            "resource_borrowed(#0)": [
+              "13m"
+            ],
+            "resource_return_owned(nullable)": [
+              "13m"
+            ]
+          }
+        },
+        "failed": {
+          "getpeername": [
+            "abi"
+          ],
+          "rd_kafka_error_new_v": [
+            "abi"
+          ],
+          "strerror_r": [
+            "abi"
+          ],
+          "strtoll": [
+            "abi"
+          ],
+          "strtoull": [
+            "abi"
+          ]
+        },
+        "unvalidated": [
+          "LZ4_compress_HC",
+          "LZ4_compress_HC_continue",
+          "LZ4_compress_HC_extStateHC",
+          "LZ4_compress_default",
+          "LZ4_compress_fast_continue",
+          "LZ4_compress_fast_extState",
+          "LZ4_decompress_generic",
+          "LZ4_decompress_unsafe_generic",
+          "_cio_file_up",
+          "mk_fifo_queue_destroy",
+          "mk_list_add",
+          "mk_list_del",
+          "rd_kafka_error_new"
+        ],
+        "validated": {
+          "LZ4_resetStream": [
+            "W4",
+            "entry"
+          ],
+          "MK_EVENT_NEW": [
+            "W4"
+          ],
+          "cmt_math_d64_to_uint64": [
+            "W4"
+          ],
+          "cmt_math_uint64_to_d64": [
+            "W4"
+          ],
+          "cmt_summary_get_count_value": [
+            "W4",
+            "entry"
+          ],
+          "cmt_summary_get_sum_value": [
+            "W4",
+            "entry"
+          ],
+          "cmt_summary_quantile_get_value": [
+            "W4",
+            "entry"
+          ],
+          "mk_mem_alloc": [
+            "W4"
+          ],
+          "mk_mem_alloc_z": [
+            "W4"
+          ],
+          "mk_mem_free": [
+            "13m"
+          ],
+          "rd_free": [
+            "13m"
+          ],
+          "rd_kafka_enq_once_trigger": [
+            "13c"
+          ],
+          "rd_kafka_q_destroy0": [
+            "13c"
+          ],
+          "rd_kafka_q_destroy_owner": [
+            "13c"
+          ],
+          "rd_kafka_q_keep": [
+            "13c"
+          ],
+          "rd_kafka_q_keep_nolock": [
+            "13c"
+          ],
+          "rd_kafka_topic_destroy0": [
+            "13c"
+          ],
+          "rd_kafka_topic_keep": [
+            "13c"
+          ],
+          "rd_kafka_topic_partition_get_private": [
+            "13a"
+          ],
+          "rd_kafka_toppar_destroy0": [
+            "13c"
+          ],
+          "rd_kafka_toppar_keep0": [
+            "13c"
+          ],
+          "rd_malloc": [
+            "13m"
+          ]
+        },
+        "withdrawn": {
+          "cb_queue_chunks": [
+            "C06.3-no-body"
+          ],
+          "getpeername": [
+            "abi"
+          ],
+          "rd_kafka_error_new_v": [
+            "abi"
+          ],
+          "sb_allocate_backlogs": [
+            "C06.3-no-body"
+          ],
+          "sb_allocate_chunk": [
+            "C06.3-no-body"
+          ],
+          "sb_append_chunk_to_segregated_backlog": [
+            "C06.3-no-body"
+          ],
+          "sb_append_chunk_to_segregated_backlogs": [
+            "C06.3-no-body"
+          ],
+          "sb_destroy_backlog": [
+            "C06.3-no-body"
+          ],
+          "sb_destroy_backlogs": [
+            "C06.3-no-body"
+          ],
+          "sb_destroy_chunk": [
+            "C06.3-no-body"
+          ],
+          "sb_release_output_queue_space": [
+            "C06.3-no-body"
+          ],
+          "sb_remove_chunk_from_segregated_backlog": [
+            "C06.3-no-body"
+          ],
+          "sb_remove_chunk_from_segregated_backlogs": [
+            "C06.3-no-body"
+          ],
+          "sb_segregate_chunks": [
+            "C06.3-no-body"
+          ],
+          "strerror_r": [
+            "abi"
+          ],
+          "strtoll": [
+            "abi"
+          ],
+          "strtoull": [
+            "abi"
+          ]
+        }
+      },
+      "prior_validated_payloads_retained": [
+        "LZ4_resetStream",
+        "MK_EVENT_NEW",
+        "cmt_math_d64_to_uint64",
+        "cmt_math_uint64_to_d64",
+        "cmt_summary_get_count_value",
+        "cmt_summary_get_sum_value",
+        "mk_mem_alloc",
+        "mk_mem_alloc_z",
+        "mk_mem_free",
+        "rd_free",
+        "rd_kafka_enq_once_trigger",
+        "rd_kafka_q_destroy0",
+        "rd_kafka_q_destroy_owner",
+        "rd_kafka_q_keep",
+        "rd_kafka_q_keep_nolock",
+        "rd_kafka_topic_destroy0",
+        "rd_kafka_topic_keep",
+        "rd_kafka_topic_partition_get_private",
+        "rd_kafka_toppar_destroy0",
+        "rd_kafka_toppar_keep0",
+        "rd_malloc"
+      ],
+      "new_replay_payloads": [
+        {
+          "function": "cmt_summary_quantile_get_value",
+          "payload": {
+            "methods": [
+              "W4",
+              "entry"
+            ],
+            "clauses": {
+              "resource_borrowed(#0)": [
+                "W4",
+                "entry"
+              ],
+              "resource_borrowed(#1)": [
+                "W4",
+                "entry"
+              ],
+              "resource_return_none()": [
+                "W4",
+                "entry"
+              ]
+            }
+          },
+          "existed_in_baseline_units": false
+        }
+      ]
+    }
+  ],
+  "meaning": "All semantic changes retained for source review; source snippets do not by themselves discharge custody obligations. Header replay multiplicity is not distinct native proof coverage."
+}

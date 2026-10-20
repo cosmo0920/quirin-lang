@@ -1,0 +1,1603 @@
+{
+  "route": "slice",
+  "declarations": 103,
+  "changed": [],
+  "inventory_equal": true,
+  "body_replay_occurrence_changes": [],
+  "unchanged_authority": true,
+  "hypothesis_context_rebindings": [
+    {
+      "function": "__errno_location",
+      "artifact_path": [
+        "contract_dependencies",
+        "declarations",
+        "__errno_location",
+        "hypothesis_evidence"
+      ],
+      "canonical_json_sha256": {
+        "before": "a3c0a724e78513b7cd13f73d0f187af9b6af7f8cab30687f592f954511afa847",
+        "after": "03b597456772630edc251977efde487e61436d16d9b36ffa8c5b2ace827e00da"
+      },
+      "context_counts": {
+        "before": 65,
+        "after": 65
+      },
+      "proof": "context-identity-review.json: complete raw-artifact-bound reconstruction, including producer BTreeSet order and exact consulted-row counts; complete field payloads remain in both raw contracts archives"
+    },
+    {
+      "function": "access",
+      "artifact_path": [
+        "contract_dependencies",
+        "declarations",
+        "access",
+        "hypothesis_evidence"
+      ],
+      "canonical_json_sha256": {
+        "before": "1597ed6d20c5abfb03d236cd6939ca7b70130dc250c6b2b5c3258ff71d1e2d85",
+        "after": "de922cab66315fca341e8a13ea54df524e126c34fe8bef4f4035fde6bc1854ee"
+      },
+      "context_counts": {
+        "before": 2,
+        "after": 2
+      },
+      "proof": "context-identity-review.json: complete raw-artifact-bound reconstruction, including producer BTreeSet order and exact consulted-row counts; complete field payloads remain in both raw contracts archives"
+    },
+    {
+      "function": "atoi",
+      "artifact_path": [
+        "contract_dependencies",
+        "declarations",
+        "atoi",
+        "hypothesis_evidence"
+      ],
+      "canonical_json_sha256": {
+        "before": "24baa5fcfa39bcf18012a890fb06d1978c7ef40adfcbe54ff221579ac7a6cef2",
+        "after": "9f2a9ce17488ddfe3a40f4714eaaa78fcb51a82460c4c7e9c9544261ae931347"
+      },
+      "context_counts": {
+        "before": 3,
+        "after": 3
+      },
+      "proof": "context-identity-review.json: complete raw-artifact-bound reconstruction, including producer BTreeSet order and exact consulted-row counts; complete field payloads remain in both raw contracts archives"
+    },
+    {
+      "function": "cfl_time_now",
+      "artifact_path": [
+        "contract_dependencies",
+        "declarations",
+        "cfl_time_now",
+        "hypothesis_evidence"
+      ],
+      "canonical_json_sha256": {
+        "before": "047ae3b16b67a5d2a2474a11b5a1172ad3ea4b060a43e93df341b04a0ac9b532",
+        "after": "3a4c38d5a3de834ed97fd73da7ec7a13cd1b32bde3662700f0555ca1aaf49dd1"
+      },
+      "context_counts": {
+        "before": 17,
+        "after": 17
+      },
+      "proof": "context-identity-review.json: complete raw-artifact-bound reconstruction, including producer BTreeSet order and exact consulted-row counts; complete field payloads remain in both raw contracts archives"
+    },
+    {
+      "function": "close",
+      "artifact_path": [
+        "contract_dependencies",
+        "declarations",
+        "close",
+        "hypothesis_evidence"
+      ],
+      "canonical_json_sha256": {
+        "before": "76563fbd7e3d4caea59d3026f57c6a5460bf8e626cb5da6fbd8e7fd708f0a7d2",
+        "after": "71d2e0555b13c58d4d56c8aa81cd7d690cffb2fa76425c32f5aea245b0007030"
+      },
+      "context_counts": {
+        "before": 10,
+        "after": 10
+      },
+      "proof": "context-identity-review.json: complete raw-artifact-bound reconstruction, including producer BTreeSet order and exact consulted-row counts; complete field payloads remain in both raw contracts archives"
+    },
+    {
+      "function": "cmt_destroy",
+      "artifact_path": [
+        "contract_dependencies",
+        "declarations",
+        "cmt_destroy",
+        "hypothesis_evidence"
+      ],
+      "canonical_json_sha256": {
+        "before": "dd3d10c00ac8cb6ba02408aaae331c34afdca20cad44281e3551adc9d0f09dd0",
+        "after": "c9db11fc218c983a6db5e19f32f87e84846b0223e6b4613159aabf43f29f5d69"
+      },
+      "context_counts": {
+        "before": 2,
+        "after": 2
+      },
+      "proof": "context-identity-review.json: complete raw-artifact-bound reconstruction, including producer BTreeSet order and exact consulted-row counts; complete field payloads remain in both raw contracts archives"
+    },
+    {
+      "function": "fflush",
+      "artifact_path": [
+        "contract_dependencies",
+        "declarations",
+        "fflush",
+        "hypothesis_evidence"
+      ],
+      "canonical_json_sha256": {
+        "before": "1ae5657a15bafecbabfd8bcf80916ff7fe3761978985f3856dc2d96a1058b5cc",
+        "after": "39c91df4569f6be3d07cc03037c4380c3a1be6784c757578cb05f079791555c8"
+      },
+      "context_counts": {
+        "before": 2,
+        "after": 2
+      },
+      "proof": "context-identity-review.json: complete raw-artifact-bound reconstruction, including producer BTreeSet order and exact consulted-row counts; complete field payloads remain in both raw contracts archives"
+    },
+    {
+      "function": "flb_calloc",
+      "artifact_path": [
+        "contract_dependencies",
+        "declarations",
+        "flb_calloc",
+        "hypothesis_evidence"
+      ],
+      "canonical_json_sha256": {
+        "before": "a0d98fb58dcced68891252eef320e0238d7308b50ced86c3a1a269266937d446",
+        "after": "d0a79b73589174684734af564c42923b23137a1ea5512b1a9faebbf3383c85d9"
+      },
+      "context_counts": {
+        "before": 12,
+        "after": 12
+      },
+      "proof": "context-identity-review.json: complete raw-artifact-bound reconstruction, including producer BTreeSet order and exact consulted-row counts; complete field payloads remain in both raw contracts archives"
+    },
+    {
+      "function": "flb_coro_destroy",
+      "artifact_path": [
+        "contract_dependencies",
+        "declarations",
+        "flb_coro_destroy",
+        "hypothesis_evidence"
+      ],
+      "canonical_json_sha256": {
+        "before": "78e150450fcd089b10d5502f14298fc3dc1ecc8a42d87ef7ae14cb4f71cd4190",
+        "after": "898e8e9dbfb4076bcdd34c88111de8d52e6d1d7900a67475e9fa2c0078ed0e4e"
+      },
+      "context_counts": {
+        "before": 2,
+        "after": 2
+      },
+      "proof": "context-identity-review.json: complete raw-artifact-bound reconstruction, including producer BTreeSet order and exact consulted-row counts; complete field payloads remain in both raw contracts archives"
+    },
+    {
+      "function": "flb_errno_print",
+      "artifact_path": [
+        "contract_dependencies",
+        "declarations",
+        "flb_errno_print",
+        "hypothesis_evidence"
+      ],
+      "canonical_json_sha256": {
+        "before": "fb7f4a4bf9ef4fbc8b648a142cbc9ef1403d3415564424a6a930aade3eafa8f7",
+        "after": "040e9f93dbbe9bb947f7f97f11c402e43dc4027cf64d8de5036751637855f7c8"
+      },
+      "context_counts": {
+        "before": 60,
+        "after": 60
+      },
+      "proof": "context-identity-review.json: complete raw-artifact-bound reconstruction, including producer BTreeSet order and exact consulted-row counts; complete field payloads remain in both raw contracts archives"
+    },
+    {
+      "function": "flb_free",
+      "artifact_path": [
+        "contract_dependencies",
+        "declarations",
+        "flb_free",
+        "hypothesis_evidence"
+      ],
+      "canonical_json_sha256": {
+        "before": "97dfc651c2ea088456d044d6b5e1ef7617418b4dcfa1760f5929075c0c1b0dc6",
+        "after": "04d1667666e19d368f0617e71ace277693a88fe4af5ff315388638c3dadaf71f"
+      },
+      "context_counts": {
+        "before": 48,
+        "after": 48
+      },
+      "proof": "context-identity-review.json: complete raw-artifact-bound reconstruction, including producer BTreeSet order and exact consulted-row counts; complete field payloads remain in both raw contracts archives"
+    },
+    {
+      "function": "flb_hash_table_add",
+      "artifact_path": [
+        "contract_dependencies",
+        "declarations",
+        "flb_hash_table_add",
+        "hypothesis_evidence"
+      ],
+      "canonical_json_sha256": {
+        "before": "b8f3daaa1baff195fc87d935ba5bda1b028c657742df4879936ec35887a95f64",
+        "after": "110b30d2f800854e13ab65ecca37f1193ff5381c1c489a736abfbb198bd8bde1"
+      },
+      "context_counts": {
+        "before": 2,
+        "after": 2
+      },
+      "proof": "context-identity-review.json: complete raw-artifact-bound reconstruction, including producer BTreeSet order and exact consulted-row counts; complete field payloads remain in both raw contracts archives"
+    },
+    {
+      "function": "flb_hash_table_del",
+      "artifact_path": [
+        "contract_dependencies",
+        "declarations",
+        "flb_hash_table_del",
+        "hypothesis_evidence"
+      ],
+      "canonical_json_sha256": {
+        "before": "b018339926a98af333a9a5304028aacdb83cfd884cedf163338210b801ca3999",
+        "after": "73da98025c483a0cea352d42181dfb7b74a3d0e02a80c810548279d57d0f40ad"
+      },
+      "context_counts": {
+        "before": 8,
+        "after": 8
+      },
+      "proof": "context-identity-review.json: complete raw-artifact-bound reconstruction, including producer BTreeSet order and exact consulted-row counts; complete field payloads remain in both raw contracts archives"
+    },
+    {
+      "function": "flb_input_collector_delete",
+      "artifact_path": [
+        "contract_dependencies",
+        "declarations",
+        "flb_input_collector_delete",
+        "hypothesis_evidence"
+      ],
+      "canonical_json_sha256": {
+        "before": "1ead0169c1fe2c63d5635443c4fb025e13d6c0f9dc5b054f7b86a7a266918439",
+        "after": "e45f773e00f3d7a329cbd677059f9312bb890c9a848e4e9e33ca4338be660950"
+      },
+      "context_counts": {
+        "before": 2,
+        "after": 2
+      },
+      "proof": "context-identity-review.json: complete raw-artifact-bound reconstruction, including producer BTreeSet order and exact consulted-row counts; complete field payloads remain in both raw contracts archives"
+    },
+    {
+      "function": "flb_input_collector_destroy",
+      "artifact_path": [
+        "contract_dependencies",
+        "declarations",
+        "flb_input_collector_destroy",
+        "hypothesis_evidence"
+      ],
+      "canonical_json_sha256": {
+        "before": "f6c363895fdeafd82927a6708ab1d235f8855ba4202ba32182b5e98e1ebcb328",
+        "after": "01904ccaf73ed66dea9d5dae7c35e71dd2eceaa1043f40dd13b6a7293b08bf8e"
+      },
+      "context_counts": {
+        "before": 4,
+        "after": 4
+      },
+      "proof": "context-identity-review.json: complete raw-artifact-bound reconstruction, including producer BTreeSet order and exact consulted-row counts; complete field payloads remain in both raw contracts archives"
+    },
+    {
+      "function": "flb_input_collector_pause",
+      "artifact_path": [
+        "contract_dependencies",
+        "declarations",
+        "flb_input_collector_pause",
+        "hypothesis_evidence"
+      ],
+      "canonical_json_sha256": {
+        "before": "8b68f7d016e482aaf001712185eeddf0f5b5bb9fae81915455cc721a923afc9f",
+        "after": "d3ed162b3de6f698ab9ae88482b47a548890f58bc3037aa688a82a8bb7b6ae7b"
+      },
+      "context_counts": {
+        "before": 2,
+        "after": 2
+      },
+      "proof": "context-identity-review.json: complete raw-artifact-bound reconstruction, including producer BTreeSet order and exact consulted-row counts; complete field payloads remain in both raw contracts archives"
+    },
+    {
+      "function": "flb_input_collector_resume",
+      "artifact_path": [
+        "contract_dependencies",
+        "declarations",
+        "flb_input_collector_resume",
+        "hypothesis_evidence"
+      ],
+      "canonical_json_sha256": {
+        "before": "c4910e64806229e079a916031140d503f1e685daa9e5ff789624b691991e2986",
+        "after": "c5785f84c460a35fb34afefe954cdc46120acdf80e9bf192d9238503cd4ce14e"
+      },
+      "context_counts": {
+        "before": 2,
+        "after": 2
+      },
+      "proof": "context-identity-review.json: complete raw-artifact-bound reconstruction, including producer BTreeSet order and exact consulted-row counts; complete field payloads remain in both raw contracts archives"
+    },
+    {
+      "function": "flb_input_collector_running",
+      "artifact_path": [
+        "contract_dependencies",
+        "declarations",
+        "flb_input_collector_running",
+        "hypothesis_evidence"
+      ],
+      "canonical_json_sha256": {
+        "before": "7a341a0c9d3af1c32f3e860e9bde4a6d13f05b92f5bd0b8569dcb54e47795263",
+        "after": "acf41f9efe8eb07b432285adf09a4ac65fb1323892780f2d667c6e4ce862a426"
+      },
+      "context_counts": {
+        "before": 2,
+        "after": 2
+      },
+      "proof": "context-identity-review.json: complete raw-artifact-bound reconstruction, including producer BTreeSet order and exact consulted-row counts; complete field payloads remain in both raw contracts archives"
+    },
+    {
+      "function": "flb_input_coro_destroy",
+      "artifact_path": [
+        "contract_dependencies",
+        "declarations",
+        "flb_input_coro_destroy",
+        "hypothesis_evidence"
+      ],
+      "canonical_json_sha256": {
+        "before": "a39f429e2cf1466291547be820e4556f557a6eaf5e1b11432cc696981ffe6f2c",
+        "after": "08a5195348a9c8ab3c020d24b7bb591140fcb65ace146f01ea5e416b350ea0af"
+      },
+      "context_counts": {
+        "before": 4,
+        "after": 4
+      },
+      "proof": "context-identity-review.json: complete raw-artifact-bound reconstruction, including producer BTreeSet order and exact consulted-row counts; complete field payloads remain in both raw contracts archives"
+    },
+    {
+      "function": "flb_input_instance_destroy",
+      "artifact_path": [
+        "contract_dependencies",
+        "declarations",
+        "flb_input_instance_destroy",
+        "hypothesis_evidence"
+      ],
+      "canonical_json_sha256": {
+        "before": "048e5a8f008353e748012a6bc87ac97dc52ab80f4aec07841b8cd225c1aa3ef9",
+        "after": "750fee3e5bb6a1d21b7700559cee9daf15b1385e9366cbf8ef0f570a1364b8f9"
+      },
+      "context_counts": {
+        "before": 14,
+        "after": 14
+      },
+      "proof": "context-identity-review.json: complete raw-artifact-bound reconstruction, including producer BTreeSet order and exact consulted-row counts; complete field payloads remain in both raw contracts archives"
+    },
+    {
+      "function": "flb_input_set_collector_event",
+      "artifact_path": [
+        "contract_dependencies",
+        "declarations",
+        "flb_input_set_collector_event",
+        "hypothesis_evidence"
+      ],
+      "canonical_json_sha256": {
+        "before": "cd65de154b19e2d7cc982a91aa059dd4d64c4dd8a270509fb560232a79875ead",
+        "after": "ec36a26c4c54e0feb46f38aba2d6cb1eaf9bcf23dd08c2828a1554f2b348410c"
+      },
+      "context_counts": {
+        "before": 4,
+        "after": 4
+      },
+      "proof": "context-identity-review.json: complete raw-artifact-bound reconstruction, including producer BTreeSet order and exact consulted-row counts; complete field payloads remain in both raw contracts archives"
+    },
+    {
+      "function": "flb_input_set_collector_socket",
+      "artifact_path": [
+        "contract_dependencies",
+        "declarations",
+        "flb_input_set_collector_socket",
+        "hypothesis_evidence"
+      ],
+      "canonical_json_sha256": {
+        "before": "781118256dacca672dd8363d22bef3294cea3f99d9e5af746d65f3d5af5b658a",
+        "after": "58da6c4fc2fe8cec812bc640c9d50763957685c4a98c231223db91dbcdc3daed"
+      },
+      "context_counts": {
+        "before": 2,
+        "after": 2
+      },
+      "proof": "context-identity-review.json: complete raw-artifact-bound reconstruction, including producer BTreeSet order and exact consulted-row counts; complete field payloads remain in both raw contracts archives"
+    },
+    {
+      "function": "flb_input_set_collector_time",
+      "artifact_path": [
+        "contract_dependencies",
+        "declarations",
+        "flb_input_set_collector_time",
+        "hypothesis_evidence"
+      ],
+      "canonical_json_sha256": {
+        "before": "03830830302e391c08315177f55cb3717b3b6dcdc41909c6f4151e889987cce1",
+        "after": "b0378dcc68ed4f610d23985da6e939f8fb35c9b8410820336798b74f6d88d4de"
+      },
+      "context_counts": {
+        "before": 5,
+        "after": 5
+      },
+      "proof": "context-identity-review.json: complete raw-artifact-bound reconstruction, including producer BTreeSet order and exact consulted-row counts; complete field payloads remain in both raw contracts archives"
+    },
+    {
+      "function": "flb_log_check",
+      "artifact_path": [
+        "contract_dependencies",
+        "declarations",
+        "flb_log_check",
+        "hypothesis_evidence"
+      ],
+      "canonical_json_sha256": {
+        "before": "ff794531bdd9f80538959d69157b94c22684d34b506cd33852a1bbd7f10c7e5b",
+        "after": "e6a0406521530aec8a5b7e74cefef9046844583634736fbeac1d489f73ca21a3"
+      },
+      "context_counts": {
+        "before": 55,
+        "after": 55
+      },
+      "proof": "context-identity-review.json: complete raw-artifact-bound reconstruction, including producer BTreeSet order and exact consulted-row counts; complete field payloads remain in both raw contracts archives"
+    },
+    {
+      "function": "flb_log_print",
+      "artifact_path": [
+        "contract_dependencies",
+        "declarations",
+        "flb_log_print",
+        "hypothesis_evidence"
+      ],
+      "canonical_json_sha256": {
+        "before": "584cc60ac507bf1060931d74afbd92fb90555fa8003150931e1217d46751d8e6",
+        "after": "f4c7a5aa85cee3d64fcc51907f66ba5e10b6f767ab1a1791710ea38c43e6ee78"
+      },
+      "context_counts": {
+        "before": 121,
+        "after": 121
+      },
+      "proof": "context-identity-review.json: complete raw-artifact-bound reconstruction, including producer BTreeSet order and exact consulted-row counts; complete field payloads remain in both raw contracts archives"
+    },
+    {
+      "function": "flb_malloc",
+      "artifact_path": [
+        "contract_dependencies",
+        "declarations",
+        "flb_malloc",
+        "hypothesis_evidence"
+      ],
+      "canonical_json_sha256": {
+        "before": "1e4b9c725b0bea45e6ed16c5157bcf9279e58accce05b42c8f008038ad71eaa8",
+        "after": "56d62e85ecc0ea17719a11b4474da0c2f46c2f453b1395368474a4c0ebaecaf8"
+      },
+      "context_counts": {
+        "before": 9,
+        "after": 9
+      },
+      "proof": "context-identity-review.json: complete raw-artifact-bound reconstruction, including producer BTreeSet order and exact consulted-row counts; complete field payloads remain in both raw contracts archives"
+    },
+    {
+      "function": "flb_sds_destroy",
+      "artifact_path": [
+        "contract_dependencies",
+        "declarations",
+        "flb_sds_destroy",
+        "hypothesis_evidence"
+      ],
+      "canonical_json_sha256": {
+        "before": "ceddd30e274d25041d0b9c58fbe8de3cda38f95ca2ac44eb2c232aa28bd2f7ce",
+        "after": "d2035c243e4bfc5f42fa45bf133076d1bb6103ca23ca4bf37b52a43ae6028f9a"
+      },
+      "context_counts": {
+        "before": 14,
+        "after": 14
+      },
+      "proof": "context-identity-review.json: complete raw-artifact-bound reconstruction, including producer BTreeSet order and exact consulted-row counts; complete field payloads remain in both raw contracts archives"
+    },
+    {
+      "function": "flb_strdup",
+      "artifact_path": [
+        "contract_dependencies",
+        "declarations",
+        "flb_strdup",
+        "hypothesis_evidence"
+      ],
+      "canonical_json_sha256": {
+        "before": "19e78de81dff1fe63da03dba109f9403b4360f458ba4fca85545e470649e32d4",
+        "after": "ad4f5842f12f8dddba79da594305bcd8a8f9697a52a1e3b44175c0ba26a3a254"
+      },
+      "context_counts": {
+        "before": 4,
+        "after": 4
+      },
+      "proof": "context-identity-review.json: complete raw-artifact-bound reconstruction, including producer BTreeSet order and exact consulted-row counts; complete field payloads remain in both raw contracts archives"
+    },
+    {
+      "function": "flb_tail_config_destroy",
+      "artifact_path": [
+        "contract_dependencies",
+        "declarations",
+        "flb_tail_config_destroy",
+        "hypothesis_evidence"
+      ],
+      "canonical_json_sha256": {
+        "before": "617d86c29c43802912cd4f4150b569a06c010b86303283a094625b4ba29740b6",
+        "after": "d987ab99b58f4a2bcfd2c252f8977b1654d9c801a66aa83a6a7f4550111d3977"
+      },
+      "context_counts": {
+        "before": 5,
+        "after": 5
+      },
+      "proof": "context-identity-review.json: complete raw-artifact-bound reconstruction, including producer BTreeSet order and exact consulted-row counts; complete field payloads remain in both raw contracts archives"
+    },
+    {
+      "function": "flb_tail_file_remove",
+      "artifact_path": [
+        "contract_dependencies",
+        "declarations",
+        "flb_tail_file_remove",
+        "hypothesis_evidence"
+      ],
+      "canonical_json_sha256": {
+        "before": "faf0d9ce616f9611d2f1da898fb1852b571f3c5d164fe9740d2ed2fd4e60b361",
+        "after": "d985dbd86fca45670dd77022e507f7618a254c11c68414976eb9760bedc100e3"
+      },
+      "context_counts": {
+        "before": 10,
+        "after": 10
+      },
+      "proof": "context-identity-review.json: complete raw-artifact-bound reconstruction, including producer BTreeSet order and exact consulted-row counts; complete field payloads remain in both raw contracts archives"
+    },
+    {
+      "function": "flb_time_now",
+      "artifact_path": [
+        "contract_dependencies",
+        "declarations",
+        "flb_time_now",
+        "hypothesis_evidence"
+      ],
+      "canonical_json_sha256": {
+        "before": "1f99c54f9cfd505ab210fb70b2cb4109553f1ad9f0639c92b793e7801ab20df0",
+        "after": "aa4fa7fbbd53a08abfc0f7cf5c83502fee58cc2d1165b5178c67a19f787f545f"
+      },
+      "context_counts": {
+        "before": 2,
+        "after": 2
+      },
+      "proof": "context-identity-review.json: complete raw-artifact-bound reconstruction, including producer BTreeSet order and exact consulted-row counts; complete field payloads remain in both raw contracts archives"
+    },
+    {
+      "function": "fprintf",
+      "artifact_path": [
+        "contract_dependencies",
+        "declarations",
+        "fprintf",
+        "hypothesis_evidence"
+      ],
+      "canonical_json_sha256": {
+        "before": "1597ed6d20c5abfb03d236cd6939ca7b70130dc250c6b2b5c3258ff71d1e2d85",
+        "after": "de922cab66315fca341e8a13ea54df524e126c34fe8bef4f4035fde6bc1854ee"
+      },
+      "context_counts": {
+        "before": 2,
+        "after": 2
+      },
+      "proof": "context-identity-review.json: complete raw-artifact-bound reconstruction, including producer BTreeSet order and exact consulted-row counts; complete field payloads remain in both raw contracts archives"
+    },
+    {
+      "function": "free",
+      "artifact_path": [
+        "contract_dependencies",
+        "declarations",
+        "free",
+        "hypothesis_evidence"
+      ],
+      "canonical_json_sha256": {
+        "before": "1597ed6d20c5abfb03d236cd6939ca7b70130dc250c6b2b5c3258ff71d1e2d85",
+        "after": "de922cab66315fca341e8a13ea54df524e126c34fe8bef4f4035fde6bc1854ee"
+      },
+      "context_counts": {
+        "before": 2,
+        "after": 2
+      },
+      "proof": "context-identity-review.json: complete raw-artifact-bound reconstruction, including producer BTreeSet order and exact consulted-row counts; complete field payloads remain in both raw contracts archives"
+    },
+    {
+      "function": "fstat",
+      "artifact_path": [
+        "contract_dependencies",
+        "declarations",
+        "fstat",
+        "hypothesis_evidence"
+      ],
+      "canonical_json_sha256": {
+        "before": "e8efa354911dd23c64469421220c9bb94cd1f14dbcaa9f97c36e6bd6e726c977",
+        "after": "31635e3ad7d13747019d5aaaaa9b305f962ae3cb42f1d084f744b50297ff5fbf"
+      },
+      "context_counts": {
+        "before": 10,
+        "after": 10
+      },
+      "proof": "context-identity-review.json: complete raw-artifact-bound reconstruction, including producer BTreeSet order and exact consulted-row counts; complete field payloads remain in both raw contracts archives"
+    },
+    {
+      "function": "listen",
+      "artifact_path": [
+        "contract_dependencies",
+        "declarations",
+        "listen",
+        "hypothesis_evidence"
+      ],
+      "canonical_json_sha256": {
+        "before": "7ae217bf2f3ab597db25bfa078c4c800f2bc62bc17d1db39a00155586506f567",
+        "after": "056df36f16c86c943d87918bcd1a8e758383bc335bde7f5ee28dbd070ac56a92"
+      },
+      "context_counts": {
+        "before": 8,
+        "after": 8
+      },
+      "proof": "context-identity-review.json: complete raw-artifact-bound reconstruction, including producer BTreeSet order and exact consulted-row counts; complete field payloads remain in both raw contracts archives"
+    },
+    {
+      "function": "lstat",
+      "artifact_path": [
+        "contract_dependencies",
+        "declarations",
+        "lstat",
+        "hypothesis_evidence"
+      ],
+      "canonical_json_sha256": {
+        "before": "8bb71ee180367762b06093d84f26ba425762a11b3d325ea530e19c6b80443441",
+        "after": "0aade49a99bdbc9fb6038d635167712ce7c0f3cd34dcedbada7564b0d626d9e7"
+      },
+      "context_counts": {
+        "before": 3,
+        "after": 3
+      },
+      "proof": "context-identity-review.json: complete raw-artifact-bound reconstruction, including producer BTreeSet order and exact consulted-row counts; complete field payloads remain in both raw contracts archives"
+    },
+    {
+      "function": "memchr",
+      "artifact_path": [
+        "contract_dependencies",
+        "declarations",
+        "memchr",
+        "hypothesis_evidence"
+      ],
+      "canonical_json_sha256": {
+        "before": "82c8706c8999a45a638cc897b103f308bf2fe2805ed9cd42a755b63245686816",
+        "after": "082269cdecc7a14d446f5ecc07ece0315d79b43051fb24b42a1161cecb0e6a47"
+      },
+      "context_counts": {
+        "before": 2,
+        "after": 2
+      },
+      "proof": "context-identity-review.json: complete raw-artifact-bound reconstruction, including producer BTreeSet order and exact consulted-row counts; complete field payloads remain in both raw contracts archives"
+    },
+    {
+      "function": "memcpy",
+      "artifact_path": [
+        "contract_dependencies",
+        "declarations",
+        "memcpy",
+        "hypothesis_evidence"
+      ],
+      "canonical_json_sha256": {
+        "before": "dd620822ddf4c72360b2e344ad9e317ba2d0f09f22228aefd55f49911b43a4f9",
+        "after": "b697d3b0a0d2f0c51204f7fa7c10ffd19825f0e508e6b7034fc279a0c14b74a7"
+      },
+      "context_counts": {
+        "before": 10,
+        "after": 10
+      },
+      "proof": "context-identity-review.json: complete raw-artifact-bound reconstruction, including producer BTreeSet order and exact consulted-row counts; complete field payloads remain in both raw contracts archives"
+    },
+    {
+      "function": "memmove",
+      "artifact_path": [
+        "contract_dependencies",
+        "declarations",
+        "memmove",
+        "hypothesis_evidence"
+      ],
+      "canonical_json_sha256": {
+        "before": "3af7cd4107f3625c267926e5e49dbcb19d90c2b7d600f1c5a9958762a0112388",
+        "after": "caf59f21204204aaa8d12b99559946429dae8a266b4bdc7db81a8ea1858b9495"
+      },
+      "context_counts": {
+        "before": 4,
+        "after": 4
+      },
+      "proof": "context-identity-review.json: complete raw-artifact-bound reconstruction, including producer BTreeSet order and exact consulted-row counts; complete field payloads remain in both raw contracts archives"
+    },
+    {
+      "function": "memset",
+      "artifact_path": [
+        "contract_dependencies",
+        "declarations",
+        "memset",
+        "hypothesis_evidence"
+      ],
+      "canonical_json_sha256": {
+        "before": "7558be7532d11f173fa97add98fc651dcd53baa924ed264bfe8dd7f010c4dc38",
+        "after": "c5b28961b3381fa09622c9d80c1779f6ef3febe811bfcdb21417472e4870ce3d"
+      },
+      "context_counts": {
+        "before": 9,
+        "after": 9
+      },
+      "proof": "context-identity-review.json: complete raw-artifact-bound reconstruction, including producer BTreeSet order and exact consulted-row counts; complete field payloads remain in both raw contracts archives"
+    },
+    {
+      "function": "mk_event_add",
+      "artifact_path": [
+        "contract_dependencies",
+        "declarations",
+        "mk_event_add",
+        "hypothesis_evidence"
+      ],
+      "canonical_json_sha256": {
+        "before": "3f45e17441a71d79a4f5787d89b41b76142e9f51a0f6a4c44f62eaf23e226b2c",
+        "after": "e6abbc5753257ba901227bd931f849c0a482b85c663af7cd818fdad0dce5e957"
+      },
+      "context_counts": {
+        "before": 4,
+        "after": 4
+      },
+      "proof": "context-identity-review.json: complete raw-artifact-bound reconstruction, including producer BTreeSet order and exact consulted-row counts; complete field payloads remain in both raw contracts archives"
+    },
+    {
+      "function": "mk_event_channel_create",
+      "artifact_path": [
+        "contract_dependencies",
+        "declarations",
+        "mk_event_channel_create",
+        "hypothesis_evidence"
+      ],
+      "canonical_json_sha256": {
+        "before": "8938d93ee689b200629f908e4024ba65e9387e55a0af33ba888c32c47613eaa5",
+        "after": "5c1fdeee2c28ce795d2c6b87b8ad2b467510a23b4c94a6ee5b06cc17afc3d195"
+      },
+      "context_counts": {
+        "before": 6,
+        "after": 6
+      },
+      "proof": "context-identity-review.json: complete raw-artifact-bound reconstruction, including producer BTreeSet order and exact consulted-row counts; complete field payloads remain in both raw contracts archives"
+    },
+    {
+      "function": "mk_event_channel_destroy",
+      "artifact_path": [
+        "contract_dependencies",
+        "declarations",
+        "mk_event_channel_destroy",
+        "hypothesis_evidence"
+      ],
+      "canonical_json_sha256": {
+        "before": "8652e97bd2f4d2e6bead87466c394293145eb5f782fbfd86d50580f809baa819",
+        "after": "583c55b7fcbf9295bf8488f7f93857faaadf3ba7fb550b64a9f1ad452de485b4"
+      },
+      "context_counts": {
+        "before": 2,
+        "after": 2
+      },
+      "proof": "context-identity-review.json: complete raw-artifact-bound reconstruction, including producer BTreeSet order and exact consulted-row counts; complete field payloads remain in both raw contracts archives"
+    },
+    {
+      "function": "mk_event_del",
+      "artifact_path": [
+        "contract_dependencies",
+        "declarations",
+        "mk_event_del",
+        "hypothesis_evidence"
+      ],
+      "canonical_json_sha256": {
+        "before": "98230383d1835c4475d0949d0782d3dd5ab03c529919d268541aa25cd47b31b8",
+        "after": "062cf47d94db5a5eee4af1ace5cc038f80124a673e305b0dcdfb14cc5cdcf114"
+      },
+      "context_counts": {
+        "before": 6,
+        "after": 6
+      },
+      "proof": "context-identity-review.json: complete raw-artifact-bound reconstruction, including producer BTreeSet order and exact consulted-row counts; complete field payloads remain in both raw contracts archives"
+    },
+    {
+      "function": "mk_event_loop_create",
+      "artifact_path": [
+        "contract_dependencies",
+        "declarations",
+        "mk_event_loop_create",
+        "hypothesis_evidence"
+      ],
+      "canonical_json_sha256": {
+        "before": "5ba195329f1cfba3f9f9f8ddd0021940e40c7e3ff0c957b5645a9493db115437",
+        "after": "92b48f7c465a61b6be917b589fcddab56c09b93fb461a0d4835eddcb681301b0"
+      },
+      "context_counts": {
+        "before": 4,
+        "after": 4
+      },
+      "proof": "context-identity-review.json: complete raw-artifact-bound reconstruction, including producer BTreeSet order and exact consulted-row counts; complete field payloads remain in both raw contracts archives"
+    },
+    {
+      "function": "mk_event_loop_destroy",
+      "artifact_path": [
+        "contract_dependencies",
+        "declarations",
+        "mk_event_loop_destroy",
+        "hypothesis_evidence"
+      ],
+      "canonical_json_sha256": {
+        "before": "7eaa33d82ae601f314debd62b06f4da2883d62511c559b7b2e47cb8e36c7b14f",
+        "after": "158eb518b4992293d413630fc0e62e071740c2a9835b9296be1a90bef842e162"
+      },
+      "context_counts": {
+        "before": 4,
+        "after": 4
+      },
+      "proof": "context-identity-review.json: complete raw-artifact-bound reconstruction, including producer BTreeSet order and exact consulted-row counts; complete field payloads remain in both raw contracts archives"
+    },
+    {
+      "function": "mk_event_timeout_create",
+      "artifact_path": [
+        "contract_dependencies",
+        "declarations",
+        "mk_event_timeout_create",
+        "hypothesis_evidence"
+      ],
+      "canonical_json_sha256": {
+        "before": "65c1877081af167f7301e2f9246b610ffd9201f1c5c1f17a7ad0fe991a17b701",
+        "after": "9ac254ed94b5bb24ce1db737ad7f90d42b0902ba532f277c8f3a6495ab7c961b"
+      },
+      "context_counts": {
+        "before": 4,
+        "after": 4
+      },
+      "proof": "context-identity-review.json: complete raw-artifact-bound reconstruction, including producer BTreeSet order and exact consulted-row counts; complete field payloads remain in both raw contracts archives"
+    },
+    {
+      "function": "mk_event_timeout_destroy",
+      "artifact_path": [
+        "contract_dependencies",
+        "declarations",
+        "mk_event_timeout_destroy",
+        "hypothesis_evidence"
+      ],
+      "canonical_json_sha256": {
+        "before": "f914794695c8d93585397900aeebe5f994901cf9b11e9824129826cbb022869e",
+        "after": "742a7e7b4c3d447335ef744bbe64da2343ae98f32b49482c79ee9078d87967de"
+      },
+      "context_counts": {
+        "before": 4,
+        "after": 4
+      },
+      "proof": "context-identity-review.json: complete raw-artifact-bound reconstruction, including producer BTreeSet order and exact consulted-row counts; complete field payloads remain in both raw contracts archives"
+    },
+    {
+      "function": "mk_event_wait",
+      "artifact_path": [
+        "contract_dependencies",
+        "declarations",
+        "mk_event_wait",
+        "hypothesis_evidence"
+      ],
+      "canonical_json_sha256": {
+        "before": "a4a778864960914e3e5663ceb6daac2144ac7c190eb292bb05f387a249ea0a91",
+        "after": "56d46c64805f5b7f17adc48701ff9f0ddf39abbb39d45e68f304731791ab678a"
+      },
+      "context_counts": {
+        "before": 4,
+        "after": 4
+      },
+      "proof": "context-identity-review.json: complete raw-artifact-bound reconstruction, including producer BTreeSet order and exact consulted-row counts; complete field payloads remain in both raw contracts archives"
+    },
+    {
+      "function": "mk_list_add",
+      "artifact_path": [
+        "contract_dependencies",
+        "declarations",
+        "mk_list_add",
+        "hypothesis_evidence"
+      ],
+      "canonical_json_sha256": {
+        "before": "3bd0f295b277bbc4381e4ce526628d4bcfa3bc888be0105dd14b9300d31a3d88",
+        "after": "e794a3beba0c09fbad84cb37643f5b0cf6ec013fb08dcf98ec2edaf398e4f079"
+      },
+      "context_counts": {
+        "before": 16,
+        "after": 16
+      },
+      "proof": "context-identity-review.json: complete raw-artifact-bound reconstruction, including producer BTreeSet order and exact consulted-row counts; complete field payloads remain in both raw contracts archives"
+    },
+    {
+      "function": "mk_list_del",
+      "artifact_path": [
+        "contract_dependencies",
+        "declarations",
+        "mk_list_del",
+        "hypothesis_evidence"
+      ],
+      "canonical_json_sha256": {
+        "before": "aeb5c6da7f3396a8ae8e72905559063def29318570d7c8bb15bc5aae4c09c53c",
+        "after": "ff4d7e2d0a3d70fcad6518fb9e607143bdccad7ff4d58d416efda90592c48d2f"
+      },
+      "context_counts": {
+        "before": 15,
+        "after": 15
+      },
+      "proof": "context-identity-review.json: complete raw-artifact-bound reconstruction, including producer BTreeSet order and exact consulted-row counts; complete field payloads remain in both raw contracts archives"
+    },
+    {
+      "function": "msgpack_packer_init",
+      "artifact_path": [
+        "contract_dependencies",
+        "declarations",
+        "msgpack_packer_init",
+        "hypothesis_evidence"
+      ],
+      "canonical_json_sha256": {
+        "before": "f497d4017f99fd8fc7df71c4f56d37b1ad50fc24051d7f93ca9a5bd7d66b932d",
+        "after": "b9d3cda9d5882a50e69d3c811862768786ab64ec05e4476bdfea6a9609aea499"
+      },
+      "context_counts": {
+        "before": 2,
+        "after": 2
+      },
+      "proof": "context-identity-review.json: complete raw-artifact-bound reconstruction, including producer BTreeSet order and exact consulted-row counts; complete field payloads remain in both raw contracts archives"
+    },
+    {
+      "function": "open",
+      "artifact_path": [
+        "contract_dependencies",
+        "declarations",
+        "open",
+        "hypothesis_evidence"
+      ],
+      "canonical_json_sha256": {
+        "before": "675c1e2d153f18eceac9a6665ec03d698a81c18d5066c782e7ae1ac10472adf9",
+        "after": "b11f98dfdacb9091855d2d5ebee7c0e795e9c684a0c7c27bbeaa15f0fed176e0"
+      },
+      "context_counts": {
+        "before": 1,
+        "after": 1
+      },
+      "proof": "context-identity-review.json: complete raw-artifact-bound reconstruction, including producer BTreeSet order and exact consulted-row counts; complete field payloads remain in both raw contracts archives"
+    },
+    {
+      "function": "perror",
+      "artifact_path": [
+        "contract_dependencies",
+        "declarations",
+        "perror",
+        "hypothesis_evidence"
+      ],
+      "canonical_json_sha256": {
+        "before": "adef6c286cde638b8c4687afa3892cc02d86df9ae5f528f1984e31c184a8b767",
+        "after": "5603db8034852324a233ec747b25009f9b259f3c0a2bf7340c46b22d88b5ea68"
+      },
+      "context_counts": {
+        "before": 4,
+        "after": 4
+      },
+      "proof": "context-identity-review.json: complete raw-artifact-bound reconstruction, including producer BTreeSet order and exact consulted-row counts; complete field payloads remain in both raw contracts archives"
+    },
+    {
+      "function": "pthread_mutex_lock",
+      "artifact_path": [
+        "contract_dependencies",
+        "declarations",
+        "pthread_mutex_lock",
+        "hypothesis_evidence"
+      ],
+      "canonical_json_sha256": {
+        "before": "4a11f7d151347074036f56ad34d90ffb1a4881902aaabc2961326d94196a8829",
+        "after": "2dca0f6a9986dc634ba3ce1cda4d06c07fd4c7237260254aa1bdf3ad1c519b25"
+      },
+      "context_counts": {
+        "before": 8,
+        "after": 8
+      },
+      "proof": "context-identity-review.json: complete raw-artifact-bound reconstruction, including producer BTreeSet order and exact consulted-row counts; complete field payloads remain in both raw contracts archives"
+    },
+    {
+      "function": "pthread_mutex_unlock",
+      "artifact_path": [
+        "contract_dependencies",
+        "declarations",
+        "pthread_mutex_unlock",
+        "hypothesis_evidence"
+      ],
+      "canonical_json_sha256": {
+        "before": "4a11f7d151347074036f56ad34d90ffb1a4881902aaabc2961326d94196a8829",
+        "after": "2dca0f6a9986dc634ba3ce1cda4d06c07fd4c7237260254aa1bdf3ad1c519b25"
+      },
+      "context_counts": {
+        "before": 8,
+        "after": 8
+      },
+      "proof": "context-identity-review.json: complete raw-artifact-bound reconstruction, including producer BTreeSet order and exact consulted-row counts; complete field payloads remain in both raw contracts archives"
+    },
+    {
+      "function": "pthread_once",
+      "artifact_path": [
+        "contract_dependencies",
+        "declarations",
+        "pthread_once",
+        "hypothesis_evidence"
+      ],
+      "canonical_json_sha256": {
+        "before": "9c75d0f69d242bd23abbde9906b4268e5a00378144fc14bc8bee485caabd0a1b",
+        "after": "798ea96f1913818874c091a3cd1df2d1464e04e20397b0248d89465f65a1ded0"
+      },
+      "context_counts": {
+        "before": 2,
+        "after": 2
+      },
+      "proof": "context-identity-review.json: complete raw-artifact-bound reconstruction, including producer BTreeSet order and exact consulted-row counts; complete field payloads remain in both raw contracts archives"
+    },
+    {
+      "function": "read",
+      "artifact_path": [
+        "contract_dependencies",
+        "declarations",
+        "read",
+        "hypothesis_evidence"
+      ],
+      "canonical_json_sha256": {
+        "before": "e0b523abed56db484fd0c4e2330edeca67b28b5596fb53b0fd7adb4eacd2e9a0",
+        "after": "df64fe4aa2d9c95447e5eb352ecac6603f1828ed160f74790804929f6b54b917"
+      },
+      "context_counts": {
+        "before": 18,
+        "after": 18
+      },
+      "proof": "context-identity-review.json: complete raw-artifact-bound reconstruction, including producer BTreeSet order and exact consulted-row counts; complete field payloads remain in both raw contracts archives"
+    },
+    {
+      "function": "sleep",
+      "artifact_path": [
+        "contract_dependencies",
+        "declarations",
+        "sleep",
+        "hypothesis_evidence"
+      ],
+      "canonical_json_sha256": {
+        "before": "ae83a09d3624b4d7d5605593a590b3674d254c2e6817acb3ea380e8542bd89e5",
+        "after": "e8bb0691e50ef69613c02232e45907d5466b9c2123e01fa78a9e226e90ac838d"
+      },
+      "context_counts": {
+        "before": 4,
+        "after": 4
+      },
+      "proof": "context-identity-review.json: complete raw-artifact-bound reconstruction, including producer BTreeSet order and exact consulted-row counts; complete field payloads remain in both raw contracts archives"
+    },
+    {
+      "function": "snprintf",
+      "artifact_path": [
+        "contract_dependencies",
+        "declarations",
+        "snprintf",
+        "hypothesis_evidence"
+      ],
+      "canonical_json_sha256": {
+        "before": "e4bf134dd28c78ec36872dcd0000de20fcc1e47b87508c3e7e7f33217edde3aa",
+        "after": "692c91608825144eac41d5f86bd71595fd00ede3691b35af9aa879a7087406c8"
+      },
+      "context_counts": {
+        "before": 9,
+        "after": 9
+      },
+      "proof": "context-identity-review.json: complete raw-artifact-bound reconstruction, including producer BTreeSet order and exact consulted-row counts; complete field payloads remain in both raw contracts archives"
+    },
+    {
+      "function": "stat",
+      "artifact_path": [
+        "contract_dependencies",
+        "declarations",
+        "stat",
+        "hypothesis_evidence"
+      ],
+      "canonical_json_sha256": {
+        "before": "153a220487e18a047646707189c439d7c346425bb16ccd7d4056efd5ec1f2a45",
+        "after": "4169da568f23af74fe8a8c5f5e3504f7ffa4260953a4dd550356fedb536ccf52"
+      },
+      "context_counts": {
+        "before": 18,
+        "after": 18
+      },
+      "proof": "context-identity-review.json: complete raw-artifact-bound reconstruction, including producer BTreeSet order and exact consulted-row counts; complete field payloads remain in both raw contracts archives"
+    },
+    {
+      "function": "strcasecmp",
+      "artifact_path": [
+        "contract_dependencies",
+        "declarations",
+        "strcasecmp",
+        "hypothesis_evidence"
+      ],
+      "canonical_json_sha256": {
+        "before": "c8a1b9cdb170c1f31c38c76e490e0527f151d721068ff3392511c6e3eab4fef6",
+        "after": "6666a46e42a5401abc1547e40f5029d6a032bebc13da398b454efeea352538f6"
+      },
+      "context_counts": {
+        "before": 5,
+        "after": 5
+      },
+      "proof": "context-identity-review.json: complete raw-artifact-bound reconstruction, including producer BTreeSet order and exact consulted-row counts; complete field payloads remain in both raw contracts archives"
+    },
+    {
+      "function": "strchr",
+      "artifact_path": [
+        "contract_dependencies",
+        "declarations",
+        "strchr",
+        "hypothesis_evidence"
+      ],
+      "canonical_json_sha256": {
+        "before": "19d7c343db5752887145ce327f9c8d1bafe255f8c8d3739fde4b0008dc07de1e",
+        "after": "f59534004429f28455c9106747ef302641f1cecf095f8353a55bdd77fbd63ba6"
+      },
+      "context_counts": {
+        "before": 4,
+        "after": 4
+      },
+      "proof": "context-identity-review.json: complete raw-artifact-bound reconstruction, including producer BTreeSet order and exact consulted-row counts; complete field payloads remain in both raw contracts archives"
+    },
+    {
+      "function": "strcmp",
+      "artifact_path": [
+        "contract_dependencies",
+        "declarations",
+        "strcmp",
+        "hypothesis_evidence"
+      ],
+      "canonical_json_sha256": {
+        "before": "342068bf0c89c05c501d97616fe6bd0a8d039dad0749981d527832daee3f4742",
+        "after": "c09026f8df909d6d4fbb3a5443345255b00597d0afb2b2dc1ec3cf18169b5d8e"
+      },
+      "context_counts": {
+        "before": 9,
+        "after": 9
+      },
+      "proof": "context-identity-review.json: complete raw-artifact-bound reconstruction, including producer BTreeSet order and exact consulted-row counts; complete field payloads remain in both raw contracts archives"
+    },
+    {
+      "function": "strlen",
+      "artifact_path": [
+        "contract_dependencies",
+        "declarations",
+        "strlen",
+        "hypothesis_evidence"
+      ],
+      "canonical_json_sha256": {
+        "before": "e3de2a94015e72dc3824494dd6f848011a6138cea5d424d4c56a3373419493a0",
+        "after": "9c68fe357776cb4b25a0c5803f3ca3e1b51e449e48cae460a1abca1ae00033f2"
+      },
+      "context_counts": {
+        "before": 17,
+        "after": 17
+      },
+      "proof": "context-identity-review.json: complete raw-artifact-bound reconstruction, including producer BTreeSet order and exact consulted-row counts; complete field payloads remain in both raw contracts archives"
+    },
+    {
+      "function": "strncmp",
+      "artifact_path": [
+        "contract_dependencies",
+        "declarations",
+        "strncmp",
+        "hypothesis_evidence"
+      ],
+      "canonical_json_sha256": {
+        "before": "bcd2d017511d8c2bdefda0bb455ce8de82079b28dac25942864e74c6f062bbf1",
+        "after": "3252b06b01bcda9dd1c50fa12af32037f84af5f0bb3dd543ec44f5b7a25d93d6"
+      },
+      "context_counts": {
+        "before": 1,
+        "after": 1
+      },
+      "proof": "context-identity-review.json: complete raw-artifact-bound reconstruction, including producer BTreeSet order and exact consulted-row counts; complete field payloads remain in both raw contracts archives"
+    },
+    {
+      "function": "strrchr",
+      "artifact_path": [
+        "contract_dependencies",
+        "declarations",
+        "strrchr",
+        "hypothesis_evidence"
+      ],
+      "canonical_json_sha256": {
+        "before": "1597ed6d20c5abfb03d236cd6939ca7b70130dc250c6b2b5c3258ff71d1e2d85",
+        "after": "de922cab66315fca341e8a13ea54df524e126c34fe8bef4f4035fde6bc1854ee"
+      },
+      "context_counts": {
+        "before": 2,
+        "after": 2
+      },
+      "proof": "context-identity-review.json: complete raw-artifact-bound reconstruction, including producer BTreeSet order and exact consulted-row counts; complete field payloads remain in both raw contracts archives"
+    },
+    {
+      "function": "strstr",
+      "artifact_path": [
+        "contract_dependencies",
+        "declarations",
+        "strstr",
+        "hypothesis_evidence"
+      ],
+      "canonical_json_sha256": {
+        "before": "e8f76dd614766251cbdca8080552ef4f7cff07cb9a761a35aceb1eb1e56075cc",
+        "after": "78ca27450574faf57dce9429880883823021f4f6a1aa41f0ed7cb4f25cd581ca"
+      },
+      "context_counts": {
+        "before": 5,
+        "after": 5
+      },
+      "proof": "context-identity-review.json: complete raw-artifact-bound reconstruction, including producer BTreeSet order and exact consulted-row counts; complete field payloads remain in both raw contracts archives"
+    },
+    {
+      "function": "strtod",
+      "artifact_path": [
+        "contract_dependencies",
+        "declarations",
+        "strtod",
+        "hypothesis_evidence"
+      ],
+      "canonical_json_sha256": {
+        "before": "7846451750e40c21d9cf4950d25e6c5b93d30dfe161e561d0ebfa7b31963b5eb",
+        "after": "32778c917401f75478793d79d87157dd7a9b0e81587d66dfe165d32ddb740645"
+      },
+      "context_counts": {
+        "before": 2,
+        "after": 2
+      },
+      "proof": "context-identity-review.json: complete raw-artifact-bound reconstruction, including producer BTreeSet order and exact consulted-row counts; complete field payloads remain in both raw contracts archives"
+    },
+    {
+      "function": "strtol",
+      "artifact_path": [
+        "contract_dependencies",
+        "declarations",
+        "strtol",
+        "hypothesis_evidence"
+      ],
+      "canonical_json_sha256": {
+        "before": "88f46168f37477797e4b6b43975840408a340161c9a3857aeebea52840bf1379",
+        "after": "01cb44d57d9a669928860ad89b6aae91637bc19f3d5a1fb1876b88a108afae71"
+      },
+      "context_counts": {
+        "before": 1,
+        "after": 1
+      },
+      "proof": "context-identity-review.json: complete raw-artifact-bound reconstruction, including producer BTreeSet order and exact consulted-row counts; complete field payloads remain in both raw contracts archives"
+    },
+    {
+      "function": "time",
+      "artifact_path": [
+        "contract_dependencies",
+        "declarations",
+        "time",
+        "hypothesis_evidence"
+      ],
+      "canonical_json_sha256": {
+        "before": "13cb65f2f412c99f73de351f0e8393157ab9f402657780fd5a41a54f8f438b44",
+        "after": "83928dd45c9109b4526e82f1763785f04b2466cc46c568fa333fe82aeb5eb6c1"
+      },
+      "context_counts": {
+        "before": 13,
+        "after": 13
+      },
+      "proof": "context-identity-review.json: complete raw-artifact-bound reconstruction, including producer BTreeSet order and exact consulted-row counts; complete field payloads remain in both raw contracts archives"
+    },
+    {
+      "function": "write",
+      "artifact_path": [
+        "contract_dependencies",
+        "declarations",
+        "write",
+        "hypothesis_evidence"
+      ],
+      "canonical_json_sha256": {
+        "before": "086d3796f411509eda38cace9416ccb809b639fd59b8771a6380897406944870",
+        "after": "1d4aceebd0c48b06f6f2656aa16b61b88dff151abb1da2c9666aeb782958a0c4"
+      },
+      "context_counts": {
+        "before": 18,
+        "after": 18
+      },
+      "proof": "context-identity-review.json: complete raw-artifact-bound reconstruction, including producer BTreeSet order and exact consulted-row counts; complete field payloads remain in both raw contracts archives"
+    }
+  ],
+  "prerequisite_commands": [
+    {
+      "command": [
+        "python3",
+        "/home/cosmo/.codex/worktrees/w48-bottom-up-batch4/qcore-c/docs/reports/w48-bottom-up-batch4/scripts/time_identity.py",
+        "slice"
+      ],
+      "exit": 0,
+      "log": "/home/cosmo/.codex/worktrees/w48-bottom-up-batch4/qcore-c/private/w48-bottom-up-batch4/slice-authority-time_identity.py.log",
+      "started": "2026-10-20T22:15:26.143046+00:00",
+      "ended": "2026-10-20T22:15:26.413671+00:00"
+    },
+    {
+      "command": [
+        "python3",
+        "/home/cosmo/.codex/worktrees/w48-bottom-up-batch4/qcore-c/docs/reports/w48-bottom-up-batch4/scripts/configured_context_review.py",
+        "slice"
+      ],
+      "exit": 0,
+      "log": "/home/cosmo/.codex/worktrees/w48-bottom-up-batch4/qcore-c/private/w48-bottom-up-batch4/slice-authority-configured_context_review.py.log",
+      "started": "2026-10-20T22:15:26.414056+00:00",
+      "ended": "2026-10-20T22:15:26.754601+00:00"
+    }
+  ],
+  "errno_remains_declared_assumption": true,
+  "before_counts": {
+    "declarations_consulted": 103,
+    "declared_assumption": 87,
+    "held": 9,
+    "partly_validated": 2,
+    "rows_annotated": 404,
+    "validated": 5
+  },
+  "after_counts": {
+    "declarations_consulted": 103,
+    "declared_assumption": 87,
+    "held": 9,
+    "partly_validated": 2,
+    "rows_annotated": 404,
+    "validated": 5
+  },
+  "before_safe_rollup": {
+    "carrying_a_null_premise": 5,
+    "consulting_a_held_or_withdrawn_declaration": 0,
+    "partly_validated_declarations": [
+      {
+        "function": "flb_input_collector_running",
+        "safe_rows": 2,
+        "uncovered_clauses": [
+          "resource_user_neutral()"
+        ]
+      },
+      {
+        "function": "msgpack_packer_init",
+        "safe_rows": 0,
+        "uncovered_clauses": [
+          "resource_borrowed(#0)",
+          "resource_borrowed(#1)",
+          "resource_borrowed(#2)",
+          "resource_retained_by(#1, #0)",
+          "resource_return_none()"
+        ]
+      }
+    ],
+    "resting_on_a_declared_assumption": 19,
+    "resting_on_a_partly_validated_declaration": 2,
+    "resting_on_no_declaration": 30,
+    "resting_only_on_a_null_premise": 0,
+    "resting_only_on_validated_declarations": 2,
+    "safe_rows": 53,
+    "top_declared_assumptions": [
+      {
+        "function": "__errno_location",
+        "mode": "flexible",
+        "premises": [
+          {
+            "name": "nested_call_admission",
+            "origin": "declared",
+            "statement": "a dereference of this call's result is read only under the checked reading rules: either the nested-call admission of O04-TRACE and CONSTRUCTOR-RESIDUALS (N1-N10, including a whole Borrowed or data-tail actual modulo the dereference wrapper and exact written arity), or W48-BOTTOM-UP-BATCH3 scalar condition admission (an external zero-argument call with this no-custody result, no container effect, exactly one dereference compared by equality or inequality with a decimal literal, the ordinary call checks retained and both outcomes explored); both require this unit's unambiguous declaration to return exactly one pointer level over a scalar type and bind, release, escape and address nothing the projection tracks"
+          }
+        ],
+        "safe_rows": 7,
+        "status": "flexible-standing"
+      },
+      {
+        "function": "flb_errno_print",
+        "mode": "pinned",
+        "premises": [],
+        "safe_rows": 7,
+        "status": "pinned-in-force"
+      },
+      {
+        "function": "read",
+        "mode": "flexible",
+        "premises": [],
+        "safe_rows": 3,
+        "status": "flexible-standing"
+      },
+      {
+        "function": "stat",
+        "mode": "flexible",
+        "premises": [],
+        "safe_rows": 3,
+        "status": "flexible-standing"
+      },
+      {
+        "function": "write",
+        "mode": "flexible",
+        "premises": [],
+        "safe_rows": 3,
+        "status": "flexible-standing"
+      },
+      {
+        "function": "flb_hash_table_del",
+        "mode": "pinned",
+        "premises": [],
+        "safe_rows": 2,
+        "status": "pinned-in-force"
+      },
+      {
+        "function": "memmove",
+        "mode": "flexible",
+        "premises": [],
+        "safe_rows": 2,
+        "status": "flexible-standing"
+      },
+      {
+        "function": "sleep",
+        "mode": "flexible",
+        "premises": [],
+        "safe_rows": 2,
+        "status": "flexible-standing"
+      },
+      {
+        "function": "flb_hash_table_add",
+        "mode": "pinned",
+        "premises": [
+          {
+            "name": "literal_argument",
+            "origin": "literal-argument",
+            "statement": "val_size = 0"
+          }
+        ],
+        "safe_rows": 1,
+        "status": "pinned-in-force"
+      },
+      {
+        "function": "lstat",
+        "mode": "flexible",
+        "premises": [],
+        "safe_rows": 1,
+        "status": "flexible-standing"
+      },
+      {
+        "function": "mk_list_add",
+        "mode": "pinned",
+        "premises": [],
+        "safe_rows": 1,
+        "status": "pinned-in-force"
+      },
+      {
+        "function": "mk_list_del",
+        "mode": "pinned",
+        "premises": [],
+        "safe_rows": 1,
+        "status": "pinned-in-force"
+      }
+    ]
+  },
+  "after_safe_rollup": {
+    "carrying_a_null_premise": 5,
+    "consulting_a_held_or_withdrawn_declaration": 0,
+    "partly_validated_declarations": [
+      {
+        "function": "flb_input_collector_running",
+        "safe_rows": 2,
+        "uncovered_clauses": [
+          "resource_user_neutral()"
+        ]
+      },
+      {
+        "function": "msgpack_packer_init",
+        "safe_rows": 0,
+        "uncovered_clauses": [
+          "resource_borrowed(#0)",
+          "resource_borrowed(#1)",
+          "resource_borrowed(#2)",
+          "resource_retained_by(#1, #0)",
+          "resource_return_none()"
+        ]
+      }
+    ],
+    "resting_on_a_declared_assumption": 19,
+    "resting_on_a_partly_validated_declaration": 2,
+    "resting_on_no_declaration": 30,
+    "resting_only_on_a_null_premise": 0,
+    "resting_only_on_validated_declarations": 2,
+    "safe_rows": 53,
+    "top_declared_assumptions": [
+      {
+        "function": "__errno_location",
+        "mode": "flexible",
+        "premises": [
+          {
+            "name": "nested_call_admission",
+            "origin": "declared",
+            "statement": "a dereference of this call's result is read only under the checked reading rules: either the nested-call admission of O04-TRACE and CONSTRUCTOR-RESIDUALS (N1-N10, including a whole Borrowed or data-tail actual modulo the dereference wrapper and exact written arity), or W48-BOTTOM-UP-BATCH3 scalar condition admission (an external zero-argument call with this no-custody result, no container effect, exactly one dereference compared by equality or inequality with a decimal literal, the ordinary call checks retained and both outcomes explored); both require this unit's unambiguous declaration to return exactly one pointer level over a scalar type and bind, release, escape and address nothing the projection tracks"
+          }
+        ],
+        "safe_rows": 7,
+        "status": "flexible-standing"
+      },
+      {
+        "function": "flb_errno_print",
+        "mode": "pinned",
+        "premises": [],
+        "safe_rows": 7,
+        "status": "pinned-in-force"
+      },
+      {
+        "function": "read",
+        "mode": "flexible",
+        "premises": [],
+        "safe_rows": 3,
+        "status": "flexible-standing"
+      },
+      {
+        "function": "stat",
+        "mode": "flexible",
+        "premises": [],
+        "safe_rows": 3,
+        "status": "flexible-standing"
+      },
+      {
+        "function": "write",
+        "mode": "flexible",
+        "premises": [],
+        "safe_rows": 3,
+        "status": "flexible-standing"
+      },
+      {
+        "function": "flb_hash_table_del",
+        "mode": "pinned",
+        "premises": [],
+        "safe_rows": 2,
+        "status": "pinned-in-force"
+      },
+      {
+        "function": "memmove",
+        "mode": "flexible",
+        "premises": [],
+        "safe_rows": 2,
+        "status": "flexible-standing"
+      },
+      {
+        "function": "sleep",
+        "mode": "flexible",
+        "premises": [],
+        "safe_rows": 2,
+        "status": "flexible-standing"
+      },
+      {
+        "function": "flb_hash_table_add",
+        "mode": "pinned",
+        "premises": [
+          {
+            "name": "literal_argument",
+            "origin": "literal-argument",
+            "statement": "val_size = 0"
+          }
+        ],
+        "safe_rows": 1,
+        "status": "pinned-in-force"
+      },
+      {
+        "function": "lstat",
+        "mode": "flexible",
+        "premises": [],
+        "safe_rows": 1,
+        "status": "flexible-standing"
+      },
+      {
+        "function": "mk_list_add",
+        "mode": "pinned",
+        "premises": [],
+        "safe_rows": 1,
+        "status": "pinned-in-force"
+      },
+      {
+        "function": "mk_list_del",
+        "mode": "pinned",
+        "premises": [],
+        "safe_rows": 1,
+        "status": "pinned-in-force"
+      }
+    ]
+  }
+}

@@ -1,0 +1,1343 @@
+{
+  "route": "system",
+  "selected_rows": 448,
+  "changed_status_or_diagnostic_rows": 33,
+  "safe_gains": [],
+  "safe_regressions": [],
+  "new_provisional_unsafe": [],
+  "rows": [
+    {
+      "key": [
+        "fluent-bit-system",
+        "plugins/in_storage_backlog/sb.c",
+        "sb_is_rejected_stream",
+        0
+      ],
+      "before": "Unknown",
+      "after": "Unknown",
+      "removed": [
+        {
+          "category": "unsupported",
+          "description": "unmodeled call, aggregate or indirect access in branch condition",
+          "line": 18040,
+          "origin": "plugins/in_storage_backlog/sb.c:362"
+        }
+      ],
+      "added": [],
+      "source_observations": [
+        {
+          "origin": "plugins/in_storage_backlog/sb.c:362",
+          "source_path": "plugins/in_storage_backlog/sb.c",
+          "file_sha256": "705012c176a27a34d0d101c40bc4b28eb7e5ef35595a40b20c2a3a2b8670cf04",
+          "excerpt": "    const char *rp;\n\n    if (!config || !stream || !stream->name) {\n        return FLB_FALSE;\n    }\n"
+        }
+      ]
+    },
+    {
+      "key": [
+        "fluent-bit-system",
+        "src/flb_input_chunk.c",
+        "flb_input_chunk_get_projected_write_size",
+        0
+      ],
+      "before": "Unknown",
+      "after": "Unknown",
+      "removed": [
+        {
+          "category": "unsupported",
+          "description": "unmodeled call, aggregate or indirect access in branch condition",
+          "line": 18399,
+          "origin": "src/flb_input_chunk.c:1014"
+        },
+        {
+          "category": "unsupported",
+          "description": "unmodeled call, aggregate or indirect access in branch condition",
+          "line": 18402,
+          "origin": "src/flb_input_chunk.c:1018"
+        }
+      ],
+      "added": [
+        {
+          "category": "unknown_alias",
+          "description": "unresolved resource identity `chunk`",
+          "line": 18399,
+          "origin": "src/flb_input_chunk.c:1014"
+        },
+        {
+          "category": "unknown_alias",
+          "description": "unresolved resource identity `chunk`",
+          "line": 18402,
+          "origin": "src/flb_input_chunk.c:1018"
+        }
+      ],
+      "source_observations": [
+        {
+          "origin": "src/flb_input_chunk.c:1014",
+          "source_path": "src/flb_input_chunk.c",
+          "file_sha256": "0fdf7af3f6b976c7790fb6ded755e5f4cd20ea813cb7d868907a3c16eb10db8d",
+          "excerpt": "    chunk_file = NULL;\n\n    if (chunk != NULL && chunk->ctx != NULL && chunk->ctx->page_size > 0) {\n        page_size = (size_t) chunk->ctx->page_size;\n    }\n"
+        },
+        {
+          "origin": "src/flb_input_chunk.c:1018",
+          "source_path": "src/flb_input_chunk.c",
+          "file_sha256": "0fdf7af3f6b976c7790fb6ded755e5f4cd20ea813cb7d868907a3c16eb10db8d",
+          "excerpt": "    }\n\n    if (chunk != NULL && chunk->backend != NULL &&\n        chunk->st != NULL && chunk->st->type == CIO_STORE_FS) {\n        chunk_file = (struct flb_input_chunk_cio_file_view *) chunk->backend;\n    }"
+        },
+        {
+          "origin": "src/flb_input_chunk.c:1014",
+          "source_path": "src/flb_input_chunk.c",
+          "file_sha256": "0fdf7af3f6b976c7790fb6ded755e5f4cd20ea813cb7d868907a3c16eb10db8d",
+          "excerpt": "    chunk_file = NULL;\n\n    if (chunk != NULL && chunk->ctx != NULL && chunk->ctx->page_size > 0) {\n        page_size = (size_t) chunk->ctx->page_size;\n    }\n"
+        },
+        {
+          "origin": "src/flb_input_chunk.c:1018",
+          "source_path": "src/flb_input_chunk.c",
+          "file_sha256": "0fdf7af3f6b976c7790fb6ded755e5f4cd20ea813cb7d868907a3c16eb10db8d",
+          "excerpt": "    }\n\n    if (chunk != NULL && chunk->backend != NULL &&\n        chunk->st != NULL && chunk->st->type == CIO_STORE_FS) {\n        chunk_file = (struct flb_input_chunk_cio_file_view *) chunk->backend;\n    }"
+        }
+      ]
+    },
+    {
+      "key": [
+        "fluent-bit-system",
+        "src/flb_input_chunk.c",
+        "flb_input_chunk_release_route",
+        0
+      ],
+      "before": "Unknown",
+      "after": "Unknown",
+      "removed": [
+        {
+          "category": "unsupported",
+          "description": "unmodeled call, aggregate or indirect access in branch condition",
+          "line": 18252,
+          "origin": "src/flb_input_chunk.c:820"
+        }
+      ],
+      "added": [],
+      "source_observations": [
+        {
+          "origin": "src/flb_input_chunk.c:820",
+          "source_path": "src/flb_input_chunk.c",
+          "file_sha256": "0fdf7af3f6b976c7790fb6ded755e5f4cd20ea813cb7d868907a3c16eb10db8d",
+          "excerpt": "    ssize_t bytes;\n\n    if (ic == NULL || o_ins == NULL || ic->routes_mask == NULL) {\n        return -1;\n    }\n"
+        }
+      ]
+    },
+    {
+      "key": [
+        "fluent-bit-system",
+        "src/flb_input_chunk.c",
+        "get_input_chunk_source_name",
+        0
+      ],
+      "before": "Unknown",
+      "after": "Unknown",
+      "removed": [
+        {
+          "category": "unsupported",
+          "description": "unmodeled call, aggregate or indirect access in branch condition",
+          "line": 18048,
+          "origin": "src/flb_input_chunk.c:529"
+        }
+      ],
+      "added": [],
+      "source_observations": [
+        {
+          "origin": "src/flb_input_chunk.c:529",
+          "source_path": "src/flb_input_chunk.c",
+          "file_sha256": "0fdf7af3f6b976c7790fb6ded755e5f4cd20ea813cb7d868907a3c16eb10db8d",
+          "excerpt": "    struct cio_chunk *chunk;\n\n    if (input_chunk->fs_backlog == FLB_TRUE && input_chunk->chunk != NULL) {\n        chunk = (struct cio_chunk *) input_chunk->chunk;\n\n        if (chunk->st != NULL && chunk->st->name != NULL) {"
+        }
+      ]
+    },
+    {
+      "key": [
+        "fluent-bit-system",
+        "src/flb_input_chunk.c",
+        "input_chunk_append_raw",
+        0
+      ],
+      "before": "Unknown",
+      "after": "Unknown",
+      "removed": [
+        {
+          "category": "unsupported",
+          "description": "unmodeled call, aggregate or indirect access in branch condition",
+          "line": 20150,
+          "origin": "src/flb_input_chunk.c:3344"
+        }
+      ],
+      "added": [],
+      "source_observations": [
+        {
+          "origin": "src/flb_input_chunk.c:3344",
+          "source_path": "src/flb_input_chunk.c",
+          "file_sha256": "0fdf7af3f6b976c7790fb6ded755e5f4cd20ea813cb7d868907a3c16eb10db8d",
+          "excerpt": "     */\n    if (!tag || tag_len == 0) {\n        if (in->tag && in->tag_len > 0) {\n            tag = in->tag;\n            tag_len = in->tag_len;\n        }"
+        }
+      ]
+    },
+    {
+      "key": [
+        "fluent-bit-system",
+        "src/flb_input_chunk.c",
+        "update_logs_tag_records_metrics",
+        0
+      ],
+      "before": "Unknown",
+      "after": "Unknown",
+      "removed": [
+        {
+          "category": "unsupported",
+          "description": "unmodeled call, aggregate or indirect access in branch condition",
+          "line": 17777,
+          "origin": "src/flb_input_chunk.c:141"
+        },
+        {
+          "category": "unknown_alias",
+          "description": "unresolved resource identity `in`",
+          "line": 17780,
+          "origin": "src/flb_input_chunk.c:145"
+        }
+      ],
+      "added": [],
+      "source_observations": [
+        {
+          "origin": "src/flb_input_chunk.c:141",
+          "source_path": "src/flb_input_chunk.c",
+          "file_sha256": "0fdf7af3f6b976c7790fb6ded755e5f4cd20ea813cb7d868907a3c16eb10db8d",
+          "excerpt": "    }\n\n    if (!in->cmt_logs_tag_records || !in->cmt_logs_tag_records_untracked) {\n        return;\n    }\n"
+        },
+        {
+          "origin": "src/flb_input_chunk.c:145",
+          "source_path": "src/flb_input_chunk.c",
+          "file_sha256": "0fdf7af3f6b976c7790fb6ded755e5f4cd20ea813cb7d868907a3c16eb10db8d",
+          "excerpt": "    }\n\n    config = in->config;\n\n    /* Enforce the tag length limit before allocating anything */\n    if (config->telemetry_metrics_logs_tag_records_max_tag_length > 0 &&"
+        }
+      ]
+    },
+    {
+      "key": [
+        "fluent-bit-system",
+        "src/flb_input_chunk.c",
+        "update_logs_tag_records_untracked",
+        0
+      ],
+      "before": "Unknown",
+      "after": "Unknown",
+      "removed": [
+        {
+          "category": "unsupported",
+          "description": "unmodeled call, aggregate or indirect access in branch condition",
+          "line": 17748,
+          "origin": "src/flb_input_chunk.c:108"
+        }
+      ],
+      "added": [],
+      "source_observations": [
+        {
+          "origin": "src/flb_input_chunk.c:108",
+          "source_path": "src/flb_input_chunk.c",
+          "file_sha256": "0fdf7af3f6b976c7790fb6ded755e5f4cd20ea813cb7d868907a3c16eb10db8d",
+          "excerpt": "                                         const char *reason)\n{\n    if (!in->cmt_logs_tag_records_untracked || records == 0) {\n        return;\n    }\n"
+        }
+      ]
+    },
+    {
+      "key": [
+        "fluent-bit-system",
+        "src/flb_input_chunk.c",
+        "flb_input_chunk_get_projected_write_size",
+        1
+      ],
+      "before": "Unknown",
+      "after": "Unknown",
+      "removed": [
+        {
+          "category": "unsupported",
+          "description": "unmodeled call, aggregate or indirect access in branch condition",
+          "line": 18399,
+          "origin": "src/flb_input_chunk.c:1014"
+        },
+        {
+          "category": "unsupported",
+          "description": "unmodeled call, aggregate or indirect access in branch condition",
+          "line": 18402,
+          "origin": "src/flb_input_chunk.c:1018"
+        }
+      ],
+      "added": [
+        {
+          "category": "unknown_alias",
+          "description": "unresolved resource identity `chunk`",
+          "line": 18399,
+          "origin": "src/flb_input_chunk.c:1014"
+        },
+        {
+          "category": "unknown_alias",
+          "description": "unresolved resource identity `chunk`",
+          "line": 18402,
+          "origin": "src/flb_input_chunk.c:1018"
+        }
+      ],
+      "source_observations": [
+        {
+          "origin": "src/flb_input_chunk.c:1014",
+          "source_path": "src/flb_input_chunk.c",
+          "file_sha256": "0fdf7af3f6b976c7790fb6ded755e5f4cd20ea813cb7d868907a3c16eb10db8d",
+          "excerpt": "    chunk_file = NULL;\n\n    if (chunk != NULL && chunk->ctx != NULL && chunk->ctx->page_size > 0) {\n        page_size = (size_t) chunk->ctx->page_size;\n    }\n"
+        },
+        {
+          "origin": "src/flb_input_chunk.c:1018",
+          "source_path": "src/flb_input_chunk.c",
+          "file_sha256": "0fdf7af3f6b976c7790fb6ded755e5f4cd20ea813cb7d868907a3c16eb10db8d",
+          "excerpt": "    }\n\n    if (chunk != NULL && chunk->backend != NULL &&\n        chunk->st != NULL && chunk->st->type == CIO_STORE_FS) {\n        chunk_file = (struct flb_input_chunk_cio_file_view *) chunk->backend;\n    }"
+        },
+        {
+          "origin": "src/flb_input_chunk.c:1014",
+          "source_path": "src/flb_input_chunk.c",
+          "file_sha256": "0fdf7af3f6b976c7790fb6ded755e5f4cd20ea813cb7d868907a3c16eb10db8d",
+          "excerpt": "    chunk_file = NULL;\n\n    if (chunk != NULL && chunk->ctx != NULL && chunk->ctx->page_size > 0) {\n        page_size = (size_t) chunk->ctx->page_size;\n    }\n"
+        },
+        {
+          "origin": "src/flb_input_chunk.c:1018",
+          "source_path": "src/flb_input_chunk.c",
+          "file_sha256": "0fdf7af3f6b976c7790fb6ded755e5f4cd20ea813cb7d868907a3c16eb10db8d",
+          "excerpt": "    }\n\n    if (chunk != NULL && chunk->backend != NULL &&\n        chunk->st != NULL && chunk->st->type == CIO_STORE_FS) {\n        chunk_file = (struct flb_input_chunk_cio_file_view *) chunk->backend;\n    }"
+        }
+      ]
+    },
+    {
+      "key": [
+        "fluent-bit-system",
+        "src/flb_input_chunk.c",
+        "flb_input_chunk_release_route",
+        1
+      ],
+      "before": "Unknown",
+      "after": "Unknown",
+      "removed": [
+        {
+          "category": "unsupported",
+          "description": "unmodeled call, aggregate or indirect access in branch condition",
+          "line": 18252,
+          "origin": "src/flb_input_chunk.c:820"
+        }
+      ],
+      "added": [],
+      "source_observations": [
+        {
+          "origin": "src/flb_input_chunk.c:820",
+          "source_path": "src/flb_input_chunk.c",
+          "file_sha256": "0fdf7af3f6b976c7790fb6ded755e5f4cd20ea813cb7d868907a3c16eb10db8d",
+          "excerpt": "    ssize_t bytes;\n\n    if (ic == NULL || o_ins == NULL || ic->routes_mask == NULL) {\n        return -1;\n    }\n"
+        }
+      ]
+    },
+    {
+      "key": [
+        "fluent-bit-system",
+        "src/flb_input_chunk.c",
+        "get_input_chunk_source_name",
+        1
+      ],
+      "before": "Unknown",
+      "after": "Unknown",
+      "removed": [
+        {
+          "category": "unsupported",
+          "description": "unmodeled call, aggregate or indirect access in branch condition",
+          "line": 18048,
+          "origin": "src/flb_input_chunk.c:529"
+        }
+      ],
+      "added": [],
+      "source_observations": [
+        {
+          "origin": "src/flb_input_chunk.c:529",
+          "source_path": "src/flb_input_chunk.c",
+          "file_sha256": "0fdf7af3f6b976c7790fb6ded755e5f4cd20ea813cb7d868907a3c16eb10db8d",
+          "excerpt": "    struct cio_chunk *chunk;\n\n    if (input_chunk->fs_backlog == FLB_TRUE && input_chunk->chunk != NULL) {\n        chunk = (struct cio_chunk *) input_chunk->chunk;\n\n        if (chunk->st != NULL && chunk->st->name != NULL) {"
+        }
+      ]
+    },
+    {
+      "key": [
+        "fluent-bit-system",
+        "src/flb_input_chunk.c",
+        "input_chunk_append_raw",
+        1
+      ],
+      "before": "Unknown",
+      "after": "Unknown",
+      "removed": [
+        {
+          "category": "unsupported",
+          "description": "unmodeled call, aggregate or indirect access in branch condition",
+          "line": 20150,
+          "origin": "src/flb_input_chunk.c:3344"
+        }
+      ],
+      "added": [],
+      "source_observations": [
+        {
+          "origin": "src/flb_input_chunk.c:3344",
+          "source_path": "src/flb_input_chunk.c",
+          "file_sha256": "0fdf7af3f6b976c7790fb6ded755e5f4cd20ea813cb7d868907a3c16eb10db8d",
+          "excerpt": "     */\n    if (!tag || tag_len == 0) {\n        if (in->tag && in->tag_len > 0) {\n            tag = in->tag;\n            tag_len = in->tag_len;\n        }"
+        }
+      ]
+    },
+    {
+      "key": [
+        "fluent-bit-system",
+        "src/flb_input_chunk.c",
+        "update_logs_tag_records_metrics",
+        1
+      ],
+      "before": "Unknown",
+      "after": "Unknown",
+      "removed": [
+        {
+          "category": "unsupported",
+          "description": "unmodeled call, aggregate or indirect access in branch condition",
+          "line": 17777,
+          "origin": "src/flb_input_chunk.c:141"
+        },
+        {
+          "category": "unknown_alias",
+          "description": "unresolved resource identity `in`",
+          "line": 17780,
+          "origin": "src/flb_input_chunk.c:145"
+        }
+      ],
+      "added": [],
+      "source_observations": [
+        {
+          "origin": "src/flb_input_chunk.c:141",
+          "source_path": "src/flb_input_chunk.c",
+          "file_sha256": "0fdf7af3f6b976c7790fb6ded755e5f4cd20ea813cb7d868907a3c16eb10db8d",
+          "excerpt": "    }\n\n    if (!in->cmt_logs_tag_records || !in->cmt_logs_tag_records_untracked) {\n        return;\n    }\n"
+        },
+        {
+          "origin": "src/flb_input_chunk.c:145",
+          "source_path": "src/flb_input_chunk.c",
+          "file_sha256": "0fdf7af3f6b976c7790fb6ded755e5f4cd20ea813cb7d868907a3c16eb10db8d",
+          "excerpt": "    }\n\n    config = in->config;\n\n    /* Enforce the tag length limit before allocating anything */\n    if (config->telemetry_metrics_logs_tag_records_max_tag_length > 0 &&"
+        }
+      ]
+    },
+    {
+      "key": [
+        "fluent-bit-system",
+        "src/flb_input_chunk.c",
+        "update_logs_tag_records_untracked",
+        1
+      ],
+      "before": "Unknown",
+      "after": "Unknown",
+      "removed": [
+        {
+          "category": "unsupported",
+          "description": "unmodeled call, aggregate or indirect access in branch condition",
+          "line": 17748,
+          "origin": "src/flb_input_chunk.c:108"
+        }
+      ],
+      "added": [],
+      "source_observations": [
+        {
+          "origin": "src/flb_input_chunk.c:108",
+          "source_path": "src/flb_input_chunk.c",
+          "file_sha256": "0fdf7af3f6b976c7790fb6ded755e5f4cd20ea813cb7d868907a3c16eb10db8d",
+          "excerpt": "                                         const char *reason)\n{\n    if (!in->cmt_logs_tag_records_untracked || records == 0) {\n        return;\n    }\n"
+        }
+      ]
+    },
+    {
+      "key": [
+        "fluent-bit-system",
+        "src/flb_storage.c",
+        "flb_storage_quarantine_chunk",
+        0
+      ],
+      "before": "Unknown",
+      "after": "Unknown",
+      "removed": [
+        {
+          "category": "unsupported",
+          "description": "unmodeled call, aggregate or indirect access in branch condition",
+          "line": 19009,
+          "origin": "src/flb_storage.c:933"
+        }
+      ],
+      "added": [],
+      "source_observations": [
+        {
+          "origin": "src/flb_storage.c:933",
+          "source_path": "src/flb_storage.c",
+          "file_sha256": "740c66e2ee3a05394c77c738099a4a6b6e6cbb7307cc3c92f2d5099b2b1a608b",
+          "excerpt": "    }\n\n    if (ctx->storage_rejected_limit && current_size + (ssize_t) size > max_size) {\n        flb_warn(\"[storage] DLQ size limit exceeded (%zd + %zu > %\" PRId64\n                 \" bytes), rejected chunk copy skipped\",\n                 current_size, size, max_size);"
+        }
+      ]
+    },
+    {
+      "key": [
+        "fluent-bit-system",
+        "src/flb_storage.c",
+        "get_or_create_rejected_stream",
+        0
+      ],
+      "before": "Unknown",
+      "after": "Unknown",
+      "removed": [
+        {
+          "category": "unsupported",
+          "description": "unmodeled call, aggregate or indirect access in branch condition",
+          "line": 18911,
+          "origin": "src/flb_storage.c:806"
+        },
+        {
+          "category": "unsupported",
+          "description": "unmodeled call, aggregate or indirect access in branch condition",
+          "line": 18914,
+          "origin": "src/flb_storage.c:809"
+        }
+      ],
+      "added": [],
+      "source_observations": [
+        {
+          "origin": "src/flb_storage.c:806",
+          "source_path": "src/flb_storage.c",
+          "file_sha256": "740c66e2ee3a05394c77c738099a4a6b6e6cbb7307cc3c92f2d5099b2b1a608b",
+          "excerpt": "    const char *name;\n\n    if (!ctx || !ctx->cio) {\n        return NULL;\n    }\n    if (!ctx->storage_keep_rejected || !ctx->storage_path) {"
+        },
+        {
+          "origin": "src/flb_storage.c:809",
+          "source_path": "src/flb_storage.c",
+          "file_sha256": "740c66e2ee3a05394c77c738099a4a6b6e6cbb7307cc3c92f2d5099b2b1a608b",
+          "excerpt": "        return NULL;\n    }\n    if (!ctx->storage_keep_rejected || !ctx->storage_path) {\n        return NULL;\n    }\n"
+        }
+      ]
+    },
+    {
+      "key": [
+        "fluent-bit-system",
+        "src/flb_storage.c",
+        "flb_storage_quarantine_chunk",
+        1
+      ],
+      "before": "Unknown",
+      "after": "Unknown",
+      "removed": [
+        {
+          "category": "unsupported",
+          "description": "unmodeled call, aggregate or indirect access in branch condition",
+          "line": 19009,
+          "origin": "src/flb_storage.c:933"
+        }
+      ],
+      "added": [],
+      "source_observations": [
+        {
+          "origin": "src/flb_storage.c:933",
+          "source_path": "src/flb_storage.c",
+          "file_sha256": "740c66e2ee3a05394c77c738099a4a6b6e6cbb7307cc3c92f2d5099b2b1a608b",
+          "excerpt": "    }\n\n    if (ctx->storage_rejected_limit && current_size + (ssize_t) size > max_size) {\n        flb_warn(\"[storage] DLQ size limit exceeded (%zd + %zu > %\" PRId64\n                 \" bytes), rejected chunk copy skipped\",\n                 current_size, size, max_size);"
+        }
+      ]
+    },
+    {
+      "key": [
+        "fluent-bit-system",
+        "src/flb_storage.c",
+        "get_or_create_rejected_stream",
+        1
+      ],
+      "before": "Unknown",
+      "after": "Unknown",
+      "removed": [
+        {
+          "category": "unsupported",
+          "description": "unmodeled call, aggregate or indirect access in branch condition",
+          "line": 18911,
+          "origin": "src/flb_storage.c:806"
+        },
+        {
+          "category": "unsupported",
+          "description": "unmodeled call, aggregate or indirect access in branch condition",
+          "line": 18914,
+          "origin": "src/flb_storage.c:809"
+        }
+      ],
+      "added": [],
+      "source_observations": [
+        {
+          "origin": "src/flb_storage.c:806",
+          "source_path": "src/flb_storage.c",
+          "file_sha256": "740c66e2ee3a05394c77c738099a4a6b6e6cbb7307cc3c92f2d5099b2b1a608b",
+          "excerpt": "    const char *name;\n\n    if (!ctx || !ctx->cio) {\n        return NULL;\n    }\n    if (!ctx->storage_keep_rejected || !ctx->storage_path) {"
+        },
+        {
+          "origin": "src/flb_storage.c:809",
+          "source_path": "src/flb_storage.c",
+          "file_sha256": "740c66e2ee3a05394c77c738099a4a6b6e6cbb7307cc3c92f2d5099b2b1a608b",
+          "excerpt": "        return NULL;\n    }\n    if (!ctx->storage_keep_rejected || !ctx->storage_path) {\n        return NULL;\n    }\n"
+        }
+      ]
+    },
+    {
+      "key": [
+        "fluent-bit-system",
+        "src/flb_task.c",
+        "flb_task_destroy",
+        0
+      ],
+      "before": "Unknown",
+      "after": "Unknown",
+      "removed": [
+        {
+          "category": "unsupported",
+          "description": "unmodeled call, aggregate or indirect access in branch condition",
+          "line": 17955,
+          "origin": "src/flb_task.c:923"
+        }
+      ],
+      "added": [],
+      "source_observations": [
+        {
+          "origin": "src/flb_task.c:923",
+          "source_path": "src/flb_task.c",
+          "file_sha256": "6105cc5dccd5d8eac71b804f363832c42d18eec2e2b2483d3177c756da4c8b6d",
+          "excerpt": "\n    /* Unlink and release task */\n    if (!mk_list_entry_is_orphan(&task->_head)) {\n        mk_list_del(&task->_head);\n    }\n"
+        }
+      ]
+    },
+    {
+      "key": [
+        "fluent-bit-system",
+        "src/flb_task.c",
+        "record_unmatched_route_drop_metrics",
+        0
+      ],
+      "before": "Unknown",
+      "after": "Unknown",
+      "removed": [
+        {
+          "category": "unsupported",
+          "description": "unmodeled call, aggregate or indirect access in branch condition",
+          "line": 17306,
+          "origin": "src/flb_task.c:90"
+        },
+        {
+          "category": "unknown_alias",
+          "description": "unresolved resource identity `ins`",
+          "line": 17312,
+          "origin": "src/flb_task.c:98"
+        }
+      ],
+      "added": [],
+      "source_observations": [
+        {
+          "origin": "src/flb_task.c:90",
+          "source_path": "src/flb_task.c",
+          "file_sha256": "6105cc5dccd5d8eac71b804f363832c42d18eec2e2b2483d3177c756da4c8b6d",
+          "excerpt": "    char *labels[2];\n\n    if (!ins || !ic || !ins->config) {\n        return;\n    }\n"
+        },
+        {
+          "origin": "src/flb_task.c:98",
+          "source_path": "src/flb_task.c",
+          "file_sha256": "6105cc5dccd5d8eac71b804f363832c42d18eec2e2b2483d3177c756da4c8b6d",
+          "excerpt": "    }\n\n    router = ins->config->router;\n    if (!router) {\n        return;\n    }"
+        }
+      ]
+    },
+    {
+      "key": [
+        "fluent-bit-system",
+        "src/flb_task.c",
+        "flb_task_destroy",
+        1
+      ],
+      "before": "Unknown",
+      "after": "Unknown",
+      "removed": [
+        {
+          "category": "unsupported",
+          "description": "unmodeled call, aggregate or indirect access in branch condition",
+          "line": 17955,
+          "origin": "src/flb_task.c:923"
+        }
+      ],
+      "added": [],
+      "source_observations": [
+        {
+          "origin": "src/flb_task.c:923",
+          "source_path": "src/flb_task.c",
+          "file_sha256": "6105cc5dccd5d8eac71b804f363832c42d18eec2e2b2483d3177c756da4c8b6d",
+          "excerpt": "\n    /* Unlink and release task */\n    if (!mk_list_entry_is_orphan(&task->_head)) {\n        mk_list_del(&task->_head);\n    }\n"
+        }
+      ]
+    },
+    {
+      "key": [
+        "fluent-bit-system",
+        "src/flb_task.c",
+        "record_unmatched_route_drop_metrics",
+        1
+      ],
+      "before": "Unknown",
+      "after": "Unknown",
+      "removed": [
+        {
+          "category": "unsupported",
+          "description": "unmodeled call, aggregate or indirect access in branch condition",
+          "line": 17306,
+          "origin": "src/flb_task.c:90"
+        },
+        {
+          "category": "unknown_alias",
+          "description": "unresolved resource identity `ins`",
+          "line": 17312,
+          "origin": "src/flb_task.c:98"
+        }
+      ],
+      "added": [],
+      "source_observations": [
+        {
+          "origin": "src/flb_task.c:90",
+          "source_path": "src/flb_task.c",
+          "file_sha256": "6105cc5dccd5d8eac71b804f363832c42d18eec2e2b2483d3177c756da4c8b6d",
+          "excerpt": "    char *labels[2];\n\n    if (!ins || !ic || !ins->config) {\n        return;\n    }\n"
+        },
+        {
+          "origin": "src/flb_task.c:98",
+          "source_path": "src/flb_task.c",
+          "file_sha256": "6105cc5dccd5d8eac71b804f363832c42d18eec2e2b2483d3177c756da4c8b6d",
+          "excerpt": "    }\n\n    router = ins->config->router;\n    if (!router) {\n        return;\n    }"
+        }
+      ]
+    },
+    {
+      "key": [
+        "fluent-bit-system",
+        "src/flb_engine.c",
+        "handle_dlq_if_available",
+        0
+      ],
+      "before": "Unknown",
+      "after": "Unknown",
+      "removed": [
+        {
+          "category": "unsupported",
+          "description": "unmodeled call, aggregate or indirect access in branch condition",
+          "line": 19313,
+          "origin": "src/flb_engine.c:522"
+        },
+        {
+          "category": "unsupported",
+          "description": "unmodeled call, aggregate or indirect access in branch condition",
+          "line": 19320,
+          "origin": "src/flb_engine.c:531"
+        }
+      ],
+      "added": [
+        {
+          "category": "unknown_alias",
+          "description": "unresolved resource identity `ic`",
+          "line": 19320,
+          "origin": "src/flb_engine.c:531"
+        }
+      ],
+      "source_observations": [
+        {
+          "origin": "src/flb_engine.c:522",
+          "source_path": "src/flb_engine.c",
+          "file_sha256": "2f70e703eb8f8bd853b436d50b51214c89402bc93b79b5e979024dd2ab578683",
+          "excerpt": "    struct cio_chunk *cio_ch;\n\n    if (!config ||\n        !config->storage_keep_rejected ||\n        !config->storage_path ||\n        !task || !task->ic || !ins) {"
+        },
+        {
+          "origin": "src/flb_engine.c:531",
+          "source_path": "src/flb_engine.c",
+          "file_sha256": "2f70e703eb8f8bd853b436d50b51214c89402bc93b79b5e979024dd2ab578683",
+          "excerpt": "    ic = (struct flb_input_chunk *) task->ic;\n\n    if (!ic || !ic->chunk) {\n        return;\n    }\n"
+        },
+        {
+          "origin": "src/flb_engine.c:531",
+          "source_path": "src/flb_engine.c",
+          "file_sha256": "2f70e703eb8f8bd853b436d50b51214c89402bc93b79b5e979024dd2ab578683",
+          "excerpt": "    ic = (struct flb_input_chunk *) task->ic;\n\n    if (!ic || !ic->chunk) {\n        return;\n    }\n"
+        }
+      ]
+    },
+    {
+      "key": [
+        "fluent-bit-system",
+        "src/flb_engine.c",
+        "handle_output_event",
+        0
+      ],
+      "before": "Unknown",
+      "after": "Unknown",
+      "removed": [
+        {
+          "category": "unsupported",
+          "description": "unmodeled call, aggregate or indirect access in branch condition",
+          "line": 19404,
+          "origin": "src/flb_engine.c:649"
+        },
+        {
+          "category": "unsupported",
+          "description": "unmodeled call, aggregate or indirect access in branch condition",
+          "line": 19444,
+          "origin": "src/flb_engine.c:713"
+        },
+        {
+          "category": "unsupported",
+          "description": "unmodeled call, aggregate or indirect access in branch condition",
+          "line": 19468,
+          "origin": "src/flb_engine.c:762"
+        },
+        {
+          "category": "unsupported",
+          "description": "unmodeled call, aggregate or indirect access in branch condition",
+          "line": 19518,
+          "origin": "src/flb_engine.c:858"
+        }
+      ],
+      "added": [
+        {
+          "category": "unknown_alias",
+          "description": "unresolved resource identity `task`",
+          "line": 19404,
+          "origin": "src/flb_engine.c:649"
+        },
+        {
+          "category": "unknown_alias",
+          "description": "unresolved resource identity `task`",
+          "line": 19444,
+          "origin": "src/flb_engine.c:713"
+        },
+        {
+          "category": "unknown_alias",
+          "description": "unresolved resource identity `task`",
+          "line": 19468,
+          "origin": "src/flb_engine.c:762"
+        },
+        {
+          "category": "unknown_alias",
+          "description": "unresolved resource identity `task`",
+          "line": 19518,
+          "origin": "src/flb_engine.c:858"
+        }
+      ],
+      "source_observations": [
+        {
+          "origin": "src/flb_engine.c:649",
+          "source_path": "src/flb_engine.c",
+          "file_sha256": "2f70e703eb8f8bd853b436d50b51214c89402bc93b79b5e979024dd2ab578683",
+          "excerpt": "                        1, (char *[]) {out_name});\n\n        if (config->router && task->event_chunk->type == FLB_EVENT_TYPE_LOGS) {\n            cmt_counter_add(config->router->logs_records_total, ts,\n                            effective_records,\n                            2, (char *[]) {in_name, out_name});"
+        },
+        {
+          "origin": "src/flb_engine.c:713",
+          "source_path": "src/flb_engine.c",
+          "file_sha256": "2f70e703eb8f8bd853b436d50b51214c89402bc93b79b5e979024dd2ab578683",
+          "excerpt": "                            1, (char *[]) {out_name});\n\n            if (config->router && task->event_chunk &&\n                task->event_chunk->type == FLB_EVENT_TYPE_LOGS) {\n                cmt_counter_add(config->router->logs_drop_records_total, ts,\n                                effective_records,"
+        },
+        {
+          "origin": "src/flb_engine.c:762",
+          "source_path": "src/flb_engine.c",
+          "file_sha256": "2f70e703eb8f8bd853b436d50b51214c89402bc93b79b5e979024dd2ab578683",
+          "excerpt": "                            1, (char *[]) {out_name});\n\n            if (config->router && task->event_chunk &&\n                task->event_chunk->type == FLB_EVENT_TYPE_LOGS) {\n                cmt_counter_add(config->router->logs_drop_records_total, ts,\n                                effective_records,"
+        },
+        {
+          "origin": "src/flb_engine.c:858",
+          "source_path": "src/flb_engine.c",
+          "file_sha256": "2f70e703eb8f8bd853b436d50b51214c89402bc93b79b5e979024dd2ab578683",
+          "excerpt": "                        1, (char *[]) {out_name});\n\n        if (config->router && task->event_chunk &&\n            task->event_chunk->type == FLB_EVENT_TYPE_LOGS) {\n            cmt_counter_add(config->router->logs_drop_records_total, ts,\n                            effective_records,"
+        },
+        {
+          "origin": "src/flb_engine.c:649",
+          "source_path": "src/flb_engine.c",
+          "file_sha256": "2f70e703eb8f8bd853b436d50b51214c89402bc93b79b5e979024dd2ab578683",
+          "excerpt": "                        1, (char *[]) {out_name});\n\n        if (config->router && task->event_chunk->type == FLB_EVENT_TYPE_LOGS) {\n            cmt_counter_add(config->router->logs_records_total, ts,\n                            effective_records,\n                            2, (char *[]) {in_name, out_name});"
+        },
+        {
+          "origin": "src/flb_engine.c:713",
+          "source_path": "src/flb_engine.c",
+          "file_sha256": "2f70e703eb8f8bd853b436d50b51214c89402bc93b79b5e979024dd2ab578683",
+          "excerpt": "                            1, (char *[]) {out_name});\n\n            if (config->router && task->event_chunk &&\n                task->event_chunk->type == FLB_EVENT_TYPE_LOGS) {\n                cmt_counter_add(config->router->logs_drop_records_total, ts,\n                                effective_records,"
+        },
+        {
+          "origin": "src/flb_engine.c:762",
+          "source_path": "src/flb_engine.c",
+          "file_sha256": "2f70e703eb8f8bd853b436d50b51214c89402bc93b79b5e979024dd2ab578683",
+          "excerpt": "                            1, (char *[]) {out_name});\n\n            if (config->router && task->event_chunk &&\n                task->event_chunk->type == FLB_EVENT_TYPE_LOGS) {\n                cmt_counter_add(config->router->logs_drop_records_total, ts,\n                                effective_records,"
+        },
+        {
+          "origin": "src/flb_engine.c:858",
+          "source_path": "src/flb_engine.c",
+          "file_sha256": "2f70e703eb8f8bd853b436d50b51214c89402bc93b79b5e979024dd2ab578683",
+          "excerpt": "                        1, (char *[]) {out_name});\n\n        if (config->router && task->event_chunk &&\n            task->event_chunk->type == FLB_EVENT_TYPE_LOGS) {\n            cmt_counter_add(config->router->logs_drop_records_total, ts,\n                            effective_records,"
+        }
+      ]
+    },
+    {
+      "key": [
+        "fluent-bit-system",
+        "src/flb_engine.c",
+        "handle_dlq_if_available",
+        1
+      ],
+      "before": "Unknown",
+      "after": "Unknown",
+      "removed": [
+        {
+          "category": "unsupported",
+          "description": "unmodeled call, aggregate or indirect access in branch condition",
+          "line": 19313,
+          "origin": "src/flb_engine.c:522"
+        },
+        {
+          "category": "unsupported",
+          "description": "unmodeled call, aggregate or indirect access in branch condition",
+          "line": 19320,
+          "origin": "src/flb_engine.c:531"
+        }
+      ],
+      "added": [
+        {
+          "category": "unknown_alias",
+          "description": "unresolved resource identity `ic`",
+          "line": 19320,
+          "origin": "src/flb_engine.c:531"
+        }
+      ],
+      "source_observations": [
+        {
+          "origin": "src/flb_engine.c:522",
+          "source_path": "src/flb_engine.c",
+          "file_sha256": "2f70e703eb8f8bd853b436d50b51214c89402bc93b79b5e979024dd2ab578683",
+          "excerpt": "    struct cio_chunk *cio_ch;\n\n    if (!config ||\n        !config->storage_keep_rejected ||\n        !config->storage_path ||\n        !task || !task->ic || !ins) {"
+        },
+        {
+          "origin": "src/flb_engine.c:531",
+          "source_path": "src/flb_engine.c",
+          "file_sha256": "2f70e703eb8f8bd853b436d50b51214c89402bc93b79b5e979024dd2ab578683",
+          "excerpt": "    ic = (struct flb_input_chunk *) task->ic;\n\n    if (!ic || !ic->chunk) {\n        return;\n    }\n"
+        },
+        {
+          "origin": "src/flb_engine.c:531",
+          "source_path": "src/flb_engine.c",
+          "file_sha256": "2f70e703eb8f8bd853b436d50b51214c89402bc93b79b5e979024dd2ab578683",
+          "excerpt": "    ic = (struct flb_input_chunk *) task->ic;\n\n    if (!ic || !ic->chunk) {\n        return;\n    }\n"
+        }
+      ]
+    },
+    {
+      "key": [
+        "fluent-bit-system",
+        "src/flb_engine.c",
+        "handle_output_event",
+        1
+      ],
+      "before": "Unknown",
+      "after": "Unknown",
+      "removed": [
+        {
+          "category": "unsupported",
+          "description": "unmodeled call, aggregate or indirect access in branch condition",
+          "line": 19404,
+          "origin": "src/flb_engine.c:649"
+        },
+        {
+          "category": "unsupported",
+          "description": "unmodeled call, aggregate or indirect access in branch condition",
+          "line": 19444,
+          "origin": "src/flb_engine.c:713"
+        },
+        {
+          "category": "unsupported",
+          "description": "unmodeled call, aggregate or indirect access in branch condition",
+          "line": 19468,
+          "origin": "src/flb_engine.c:762"
+        },
+        {
+          "category": "unsupported",
+          "description": "unmodeled call, aggregate or indirect access in branch condition",
+          "line": 19518,
+          "origin": "src/flb_engine.c:858"
+        }
+      ],
+      "added": [
+        {
+          "category": "unknown_alias",
+          "description": "unresolved resource identity `task`",
+          "line": 19404,
+          "origin": "src/flb_engine.c:649"
+        },
+        {
+          "category": "unknown_alias",
+          "description": "unresolved resource identity `task`",
+          "line": 19444,
+          "origin": "src/flb_engine.c:713"
+        },
+        {
+          "category": "unknown_alias",
+          "description": "unresolved resource identity `task`",
+          "line": 19468,
+          "origin": "src/flb_engine.c:762"
+        },
+        {
+          "category": "unknown_alias",
+          "description": "unresolved resource identity `task`",
+          "line": 19518,
+          "origin": "src/flb_engine.c:858"
+        }
+      ],
+      "source_observations": [
+        {
+          "origin": "src/flb_engine.c:649",
+          "source_path": "src/flb_engine.c",
+          "file_sha256": "2f70e703eb8f8bd853b436d50b51214c89402bc93b79b5e979024dd2ab578683",
+          "excerpt": "                        1, (char *[]) {out_name});\n\n        if (config->router && task->event_chunk->type == FLB_EVENT_TYPE_LOGS) {\n            cmt_counter_add(config->router->logs_records_total, ts,\n                            effective_records,\n                            2, (char *[]) {in_name, out_name});"
+        },
+        {
+          "origin": "src/flb_engine.c:713",
+          "source_path": "src/flb_engine.c",
+          "file_sha256": "2f70e703eb8f8bd853b436d50b51214c89402bc93b79b5e979024dd2ab578683",
+          "excerpt": "                            1, (char *[]) {out_name});\n\n            if (config->router && task->event_chunk &&\n                task->event_chunk->type == FLB_EVENT_TYPE_LOGS) {\n                cmt_counter_add(config->router->logs_drop_records_total, ts,\n                                effective_records,"
+        },
+        {
+          "origin": "src/flb_engine.c:762",
+          "source_path": "src/flb_engine.c",
+          "file_sha256": "2f70e703eb8f8bd853b436d50b51214c89402bc93b79b5e979024dd2ab578683",
+          "excerpt": "                            1, (char *[]) {out_name});\n\n            if (config->router && task->event_chunk &&\n                task->event_chunk->type == FLB_EVENT_TYPE_LOGS) {\n                cmt_counter_add(config->router->logs_drop_records_total, ts,\n                                effective_records,"
+        },
+        {
+          "origin": "src/flb_engine.c:858",
+          "source_path": "src/flb_engine.c",
+          "file_sha256": "2f70e703eb8f8bd853b436d50b51214c89402bc93b79b5e979024dd2ab578683",
+          "excerpt": "                        1, (char *[]) {out_name});\n\n        if (config->router && task->event_chunk &&\n            task->event_chunk->type == FLB_EVENT_TYPE_LOGS) {\n            cmt_counter_add(config->router->logs_drop_records_total, ts,\n                            effective_records,"
+        },
+        {
+          "origin": "src/flb_engine.c:649",
+          "source_path": "src/flb_engine.c",
+          "file_sha256": "2f70e703eb8f8bd853b436d50b51214c89402bc93b79b5e979024dd2ab578683",
+          "excerpt": "                        1, (char *[]) {out_name});\n\n        if (config->router && task->event_chunk->type == FLB_EVENT_TYPE_LOGS) {\n            cmt_counter_add(config->router->logs_records_total, ts,\n                            effective_records,\n                            2, (char *[]) {in_name, out_name});"
+        },
+        {
+          "origin": "src/flb_engine.c:713",
+          "source_path": "src/flb_engine.c",
+          "file_sha256": "2f70e703eb8f8bd853b436d50b51214c89402bc93b79b5e979024dd2ab578683",
+          "excerpt": "                            1, (char *[]) {out_name});\n\n            if (config->router && task->event_chunk &&\n                task->event_chunk->type == FLB_EVENT_TYPE_LOGS) {\n                cmt_counter_add(config->router->logs_drop_records_total, ts,\n                                effective_records,"
+        },
+        {
+          "origin": "src/flb_engine.c:762",
+          "source_path": "src/flb_engine.c",
+          "file_sha256": "2f70e703eb8f8bd853b436d50b51214c89402bc93b79b5e979024dd2ab578683",
+          "excerpt": "                            1, (char *[]) {out_name});\n\n            if (config->router && task->event_chunk &&\n                task->event_chunk->type == FLB_EVENT_TYPE_LOGS) {\n                cmt_counter_add(config->router->logs_drop_records_total, ts,\n                                effective_records,"
+        },
+        {
+          "origin": "src/flb_engine.c:858",
+          "source_path": "src/flb_engine.c",
+          "file_sha256": "2f70e703eb8f8bd853b436d50b51214c89402bc93b79b5e979024dd2ab578683",
+          "excerpt": "                        1, (char *[]) {out_name});\n\n        if (config->router && task->event_chunk &&\n            task->event_chunk->type == FLB_EVENT_TYPE_LOGS) {\n            cmt_counter_add(config->router->logs_drop_records_total, ts,\n                            effective_records,"
+        }
+      ]
+    },
+    {
+      "key": [
+        "fluent-bit-system",
+        "src/flb_engine_dispatch.c",
+        "record_retry_failure_metrics",
+        0
+      ],
+      "before": "Unknown",
+      "after": "Unknown",
+      "removed": [
+        {
+          "category": "unsupported",
+          "description": "unmodeled call, aggregate or indirect access in branch condition",
+          "line": 17450,
+          "origin": "src/flb_engine_dispatch.c:68"
+        }
+      ],
+      "added": [],
+      "source_observations": [
+        {
+          "origin": "src/flb_engine_dispatch.c:68",
+          "source_path": "src/flb_engine_dispatch.c",
+          "file_sha256": "3fdae998c1ce17d8277881ca3151006fe939e0686d57760fdf999064cc740015",
+          "excerpt": "                    1, (char *[]) {output_name});\n\n    if (config->router && task->event_chunk &&\n        task->event_chunk->type == FLB_EVENT_TYPE_LOGS) {\n        cmt_counter_add(config->router->logs_drop_records_total, timestamp,\n                        effective_records,"
+        }
+      ]
+    },
+    {
+      "key": [
+        "fluent-bit-system",
+        "src/flb_engine_dispatch.c",
+        "record_retry_failure_metrics",
+        1
+      ],
+      "before": "Unknown",
+      "after": "Unknown",
+      "removed": [
+        {
+          "category": "unsupported",
+          "description": "unmodeled call, aggregate or indirect access in branch condition",
+          "line": 17450,
+          "origin": "src/flb_engine_dispatch.c:68"
+        }
+      ],
+      "added": [],
+      "source_observations": [
+        {
+          "origin": "src/flb_engine_dispatch.c:68",
+          "source_path": "src/flb_engine_dispatch.c",
+          "file_sha256": "3fdae998c1ce17d8277881ca3151006fe939e0686d57760fdf999064cc740015",
+          "excerpt": "                    1, (char *[]) {output_name});\n\n    if (config->router && task->event_chunk &&\n        task->event_chunk->type == FLB_EVENT_TYPE_LOGS) {\n        cmt_counter_add(config->router->logs_drop_records_total, timestamp,\n                        effective_records,"
+        }
+      ]
+    },
+    {
+      "key": [
+        "fluent-bit-system",
+        "src/flb_output.c",
+        "flb_output_init_all",
+        0
+      ],
+      "before": "Unknown",
+      "after": "Unknown",
+      "removed": [
+        {
+          "category": "unsupported",
+          "description": "unmodeled call, aggregate or indirect access in branch condition",
+          "line": 18865,
+          "origin": "src/flb_output.c:1756"
+        }
+      ],
+      "added": [],
+      "source_observations": [
+        {
+          "origin": "src/flb_output.c:1756",
+          "source_path": "src/flb_output.c",
+          "file_sha256": "2d31e29a14f432716732d40a7c0f0276fc86d8daef7a5d2a0831307c18ba8fed",
+          "excerpt": "            }\n\n            if (ins->tls_min_version != NULL || ins->tls_max_version != NULL) {\n                ret = flb_tls_set_minmax_proto(ins->tls, ins->tls_min_version, ins->tls_max_version);\n                if (ret != 0) {\n                    flb_error(\"[output %s] error setting up minmax protocol version of TLS\","
+        }
+      ]
+    },
+    {
+      "key": [
+        "fluent-bit-system",
+        "src/flb_output.c",
+        "flb_output_new",
+        0
+      ],
+      "before": "Unknown",
+      "after": "Unknown",
+      "removed": [
+        {
+          "category": "unsupported",
+          "description": "unmodeled call, aggregate or indirect access in branch condition",
+          "line": 18243,
+          "origin": "src/flb_output.c:952"
+        },
+        {
+          "category": "unsupported",
+          "description": "unmodeled call, aggregate or indirect access in branch condition",
+          "line": 18250,
+          "origin": "src/flb_output.c:959"
+        }
+      ],
+      "added": [
+        {
+          "category": "unknown_alias",
+          "description": "unresolved resource identity `instance`",
+          "line": 18243,
+          "origin": "src/flb_output.c:952"
+        },
+        {
+          "category": "unknown_alias",
+          "description": "unresolved resource identity `instance`",
+          "line": 18250,
+          "origin": "src/flb_output.c:959"
+        }
+      ],
+      "source_observations": [
+        {
+          "origin": "src/flb_output.c:952",
+          "source_path": "src/flb_output.c",
+          "file_sha256": "2d31e29a14f432716732d40a7c0f0276fc86d8daef7a5d2a0831307c18ba8fed",
+          "excerpt": "\n        if (ret != 0) {\n            if ((instance->flags & FLB_OUTPUT_SYNCHRONOUS) &&\n                 instance->singleplex_queue != NULL) {\n                flb_task_queue_destroy(instance->singleplex_queue);\n            }"
+        },
+        {
+          "origin": "src/flb_output.c:959",
+          "source_path": "src/flb_output.c",
+          "file_sha256": "2d31e29a14f432716732d40a7c0f0276fc86d8daef7a5d2a0831307c18ba8fed",
+          "excerpt": "                flb_callback_destroy(instance->callback);\n            }\n            if (plugin->type != FLB_OUTPUT_PLUGIN_CORE &&\n                instance->context != NULL) {\n                flb_free(instance->context);\n            }"
+        },
+        {
+          "origin": "src/flb_output.c:952",
+          "source_path": "src/flb_output.c",
+          "file_sha256": "2d31e29a14f432716732d40a7c0f0276fc86d8daef7a5d2a0831307c18ba8fed",
+          "excerpt": "\n        if (ret != 0) {\n            if ((instance->flags & FLB_OUTPUT_SYNCHRONOUS) &&\n                 instance->singleplex_queue != NULL) {\n                flb_task_queue_destroy(instance->singleplex_queue);\n            }"
+        },
+        {
+          "origin": "src/flb_output.c:959",
+          "source_path": "src/flb_output.c",
+          "file_sha256": "2d31e29a14f432716732d40a7c0f0276fc86d8daef7a5d2a0831307c18ba8fed",
+          "excerpt": "                flb_callback_destroy(instance->callback);\n            }\n            if (plugin->type != FLB_OUTPUT_PLUGIN_CORE &&\n                instance->context != NULL) {\n                flb_free(instance->context);\n            }"
+        }
+      ]
+    },
+    {
+      "key": [
+        "fluent-bit-system",
+        "src/flb_output.c",
+        "flb_output_proxy_tls_ca_check",
+        0
+      ],
+      "before": "Unknown",
+      "after": "Unknown",
+      "removed": [
+        {
+          "category": "unsupported",
+          "description": "unmodeled call, aggregate or indirect access in branch condition",
+          "line": 18681,
+          "origin": "src/flb_output.c:1499"
+        }
+      ],
+      "added": [],
+      "source_observations": [
+        {
+          "origin": "src/flb_output.c:1499",
+          "source_path": "src/flb_output.c",
+          "file_sha256": "2d31e29a14f432716732d40a7c0f0276fc86d8daef7a5d2a0831307c18ba8fed",
+          "excerpt": "    struct flb_tls *tls_proxy_validate;\n\n    if (ins->tls_proxy_ca_file == NULL && ins->tls_proxy_ca_path == NULL) {\n        return 0;\n    }\n"
+        }
+      ]
+    },
+    {
+      "key": [
+        "fluent-bit-system",
+        "src/flb_output.c",
+        "flb_output_init_all",
+        1
+      ],
+      "before": "Unknown",
+      "after": "Unknown",
+      "removed": [
+        {
+          "category": "unsupported",
+          "description": "unmodeled call, aggregate or indirect access in branch condition",
+          "line": 18865,
+          "origin": "src/flb_output.c:1756"
+        }
+      ],
+      "added": [],
+      "source_observations": [
+        {
+          "origin": "src/flb_output.c:1756",
+          "source_path": "src/flb_output.c",
+          "file_sha256": "2d31e29a14f432716732d40a7c0f0276fc86d8daef7a5d2a0831307c18ba8fed",
+          "excerpt": "            }\n\n            if (ins->tls_min_version != NULL || ins->tls_max_version != NULL) {\n                ret = flb_tls_set_minmax_proto(ins->tls, ins->tls_min_version, ins->tls_max_version);\n                if (ret != 0) {\n                    flb_error(\"[output %s] error setting up minmax protocol version of TLS\","
+        }
+      ]
+    },
+    {
+      "key": [
+        "fluent-bit-system",
+        "src/flb_output.c",
+        "flb_output_new",
+        1
+      ],
+      "before": "Unknown",
+      "after": "Unknown",
+      "removed": [
+        {
+          "category": "unsupported",
+          "description": "unmodeled call, aggregate or indirect access in branch condition",
+          "line": 18243,
+          "origin": "src/flb_output.c:952"
+        },
+        {
+          "category": "unsupported",
+          "description": "unmodeled call, aggregate or indirect access in branch condition",
+          "line": 18250,
+          "origin": "src/flb_output.c:959"
+        }
+      ],
+      "added": [
+        {
+          "category": "unknown_alias",
+          "description": "unresolved resource identity `instance`",
+          "line": 18243,
+          "origin": "src/flb_output.c:952"
+        },
+        {
+          "category": "unknown_alias",
+          "description": "unresolved resource identity `instance`",
+          "line": 18250,
+          "origin": "src/flb_output.c:959"
+        }
+      ],
+      "source_observations": [
+        {
+          "origin": "src/flb_output.c:952",
+          "source_path": "src/flb_output.c",
+          "file_sha256": "2d31e29a14f432716732d40a7c0f0276fc86d8daef7a5d2a0831307c18ba8fed",
+          "excerpt": "\n        if (ret != 0) {\n            if ((instance->flags & FLB_OUTPUT_SYNCHRONOUS) &&\n                 instance->singleplex_queue != NULL) {\n                flb_task_queue_destroy(instance->singleplex_queue);\n            }"
+        },
+        {
+          "origin": "src/flb_output.c:959",
+          "source_path": "src/flb_output.c",
+          "file_sha256": "2d31e29a14f432716732d40a7c0f0276fc86d8daef7a5d2a0831307c18ba8fed",
+          "excerpt": "                flb_callback_destroy(instance->callback);\n            }\n            if (plugin->type != FLB_OUTPUT_PLUGIN_CORE &&\n                instance->context != NULL) {\n                flb_free(instance->context);\n            }"
+        },
+        {
+          "origin": "src/flb_output.c:952",
+          "source_path": "src/flb_output.c",
+          "file_sha256": "2d31e29a14f432716732d40a7c0f0276fc86d8daef7a5d2a0831307c18ba8fed",
+          "excerpt": "\n        if (ret != 0) {\n            if ((instance->flags & FLB_OUTPUT_SYNCHRONOUS) &&\n                 instance->singleplex_queue != NULL) {\n                flb_task_queue_destroy(instance->singleplex_queue);\n            }"
+        },
+        {
+          "origin": "src/flb_output.c:959",
+          "source_path": "src/flb_output.c",
+          "file_sha256": "2d31e29a14f432716732d40a7c0f0276fc86d8daef7a5d2a0831307c18ba8fed",
+          "excerpt": "                flb_callback_destroy(instance->callback);\n            }\n            if (plugin->type != FLB_OUTPUT_PLUGIN_CORE &&\n                instance->context != NULL) {\n                flb_free(instance->context);\n            }"
+        }
+      ]
+    },
+    {
+      "key": [
+        "fluent-bit-system",
+        "src/flb_output.c",
+        "flb_output_proxy_tls_ca_check",
+        1
+      ],
+      "before": "Unknown",
+      "after": "Unknown",
+      "removed": [
+        {
+          "category": "unsupported",
+          "description": "unmodeled call, aggregate or indirect access in branch condition",
+          "line": 18681,
+          "origin": "src/flb_output.c:1499"
+        }
+      ],
+      "added": [],
+      "source_observations": [
+        {
+          "origin": "src/flb_output.c:1499",
+          "source_path": "src/flb_output.c",
+          "file_sha256": "2d31e29a14f432716732d40a7c0f0276fc86d8daef7a5d2a0831307c18ba8fed",
+          "excerpt": "    struct flb_tls *tls_proxy_validate;\n\n    if (ins->tls_proxy_ca_file == NULL && ins->tls_proxy_ca_path == NULL) {\n        return 0;\n    }\n"
+        }
+      ]
+    }
+  ],
+  "body_evidence_changes": [],
+  "meaning": "All semantic changes retained for source review; source snippets do not by themselves discharge custody obligations. Header replay multiplicity is not distinct native proof coverage."
+}

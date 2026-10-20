@@ -1,0 +1,52 @@
+{
+  "diagnostics": {
+    "present": true,
+    "source": "/home/cosmo/.codex/worktrees/w48-bottom-up-batch4/qcore-c/private/w48-bottom-up-batch4/corpus-before-final/corpus/resource-diagnostics.json",
+    "sha256": "bba8a6631a3e73938ed09a69ca8f1195e404248da4c62e28b04636b3a34745d9",
+    "bytes": 31806495
+  },
+  "source": {
+    "present": true,
+    "source": "/home/cosmo/.codex/worktrees/w48-bottom-up-batch4/qcore-c/private/w48-bottom-up-batch4/corpus-before-final/corpus/monkey-source.json",
+    "sha256": "57acfc58c4f7dddf2623efb3c9dc3e8f2dc276835e15cd18a157414696bb2f11",
+    "bytes": 1665950
+  },
+  "chunk-contracts": {
+    "present": true,
+    "source": "/home/cosmo/.codex/worktrees/w48-bottom-up-batch4/qcore-c/private/w48-bottom-up-batch4/corpus-before-final/corpus/resource-diagnostics.chunk-contracts.json",
+    "sha256": "cbbcfd9c176005146c1946d5fcd4dc83cc9ec041a3397b10b1f0ab16ae6c0484",
+    "bytes": 4186178
+  },
+  "source-effects": {
+    "present": true,
+    "source": "/home/cosmo/.codex/worktrees/w48-bottom-up-batch4/qcore-c/private/w48-bottom-up-batch4/corpus-before-final/corpus/resource-diagnostics.source-effects.json",
+    "sha256": "1de7b6b4059d20689b84d09ff3514413f3a776c3cea3720f5473dd4c14d01953",
+    "bytes": 118505
+  },
+  "contracts": {
+    "present": true,
+    "source": "/home/cosmo/.codex/worktrees/w48-bottom-up-batch4/qcore-c/private/w48-bottom-up-batch4/corpus-before-final/corpus/resource-diagnostics.contracts.json",
+    "sha256": "4744ddf51c9348043af11e1017b6ed352bb36b59d079831d7eb7148ea07a64ec",
+    "bytes": 41273641
+  },
+  "static_custody_counts": {
+    "Unknown": 3858,
+    "Safe": 967,
+    "Unsafe": 9
+  },
+  "corpus-null.jsonl": {
+    "source": "/home/cosmo/.codex/worktrees/w48-bottom-up-batch4/qcore-c/private/w48-bottom-up-batch4/corpus-before-final/corpus-null.jsonl",
+    "bytes": 27425901,
+    "sha256": "5ee5761ffbdbb598980a8e689e5e7dd96b6609c922e413cef378d43ec7d60dce"
+  },
+  "corpus-null.summary.json": {
+    "source": "/home/cosmo/.codex/worktrees/w48-bottom-up-batch4/qcore-c/private/w48-bottom-up-batch4/corpus-before-final/corpus-null.summary.json",
+    "bytes": 64899,
+    "sha256": "af6d56272d00c508e359ffa030ab225ef29c87e8867239b72136175d2a832271"
+  },
+  "corpus-outer.json": {
+    "source": "/home/cosmo/.codex/worktrees/w48-bottom-up-batch4/qcore-c/private/w48-bottom-up-batch4/corpus-before-final/corpus-outer.json",
+    "bytes": 670187,
+    "sha256": "4d84390730db516ce698a764c1b31bc5f7dcde85d4d70e505ff1eb18d53d1113"
+  }
+}

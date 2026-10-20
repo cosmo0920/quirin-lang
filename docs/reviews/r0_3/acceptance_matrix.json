@@ -6758,7 +6758,7 @@
   "workspace_tests": 8376,
   "provider_tests": 133,
   "python_evidence_validator_tests": 374,
-  "lean_audits": 348,
+  "lean_audits": 349,
   "lean_audit_files": [
    "AuditAbiEnumConstPointer.lean",
    "AuditAggregateOwnedField.lean",
@@ -6787,6 +6787,7 @@
    "AuditCProgram.lean",
    "AuditCallArgumentAccess.lean",
    "AuditCallExits.lean",
+   "AuditCallFreeConditionReads.lean",
    "AuditCallInstantiation.lean",
    "AuditCallUseAdmission.lean",
    "AuditCallbackContracts.lean",

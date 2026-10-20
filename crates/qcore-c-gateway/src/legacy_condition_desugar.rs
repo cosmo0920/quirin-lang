@@ -1027,8 +1027,25 @@ impl Parser<'_> {
                 ADMIT,
             );
         }
+        // W48-BOTTOM-UP-BATCH4: old typed readers also carry checked reads.
+        // Keep their complete graph, with the read at its original leaf; no
+        // leaf admission or transfer obligation changes. An incomplete plan
+        // is still refused, and its probe state restored below.
+        let checked_read = outcome.as_ref().is_ok_and(|plan| {
+            plan.nodes.iter().any(|node| {
+                matches!(
+                    node.instruction,
+                    LegacyInstruction::IndirectScalarAccess { .. }
+                )
+            })
+        });
         match outcome {
-            Ok(plan) if ADMIT && (typed || elaborated) => Some(Box::new(plan)),
+            Ok(plan)
+                if ADMIT
+                    && crate::call_free_condition_reads::keep(typed, elaborated, checked_read) =>
+            {
+                Some(Box::new(plan))
+            }
             _ => {
                 self.restore_probe_state(&saved);
                 None

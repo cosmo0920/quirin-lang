@@ -1,0 +1,20 @@
+{
+  "complete_dependency_metadata_reproduced": true,
+  "contracts": "/home/cosmo/.codex/worktrees/w48-bottom-up-batch4/qcore-c/private/w48-bottom-up-batch4/corpus-before-final/corpus/resource-diagnostics.contracts.json",
+  "diagnostics": "/home/cosmo/.codex/worktrees/w48-bottom-up-batch4/qcore-c/private/w48-bottom-up-batch4/corpus-before-final/corpus/resource-diagnostics.json",
+  "environment": "/home/cosmo/.codex/worktrees/w48-bottom-up-batch4/qcore-c/private/w48-bottom-up-batch4/environment-base.json",
+  "meaning": "Fresh production Facts::of_rows + render replay preserves every count, declaration, clause, standing and caller-context field. It adds no source proof or graph authority.",
+  "negative_body": {
+    "function": "LZ4_resetStream",
+    "unit": 0
+  },
+  "negative_row": {
+    "row": 3,
+    "unit": 0
+  },
+  "serialized_environment_sha256": "dd16969b488d53dd74c0a8c074c8ad5822eb652799e1460950a77fb2837d0d21",
+  "source_assumptions_match_retained_modules": true,
+  "unprovided_body_method_negative_rejected": true,
+  "wrong_build_context_negative_rejected": true,
+  "wrong_status_negative_rejected": true
+}

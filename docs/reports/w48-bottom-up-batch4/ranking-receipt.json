@@ -1,0 +1,42 @@
+{
+  "before": {
+    "command": [
+      "/usr/bin/python3",
+      "/home/cosmo/.codex/worktrees/w48-bottom-up-batch4/qcore-c/docs/reports/w48-bottom-up-callee-bodies/scripts/bottom_up_plan.py",
+      "/home/cosmo/.codex/worktrees/w48-bottom-up-batch4/qcore-c/private/w48-bottom-up-batch4/corpus-before-final/corpus/resource-diagnostics.json",
+      "/home/cosmo/.codex/worktrees/w48-bottom-up-batch4/qcore-c/private/w48-bottom-up-batch4/before-plan.json",
+      "--top",
+      "20"
+    ],
+    "exit": 0,
+    "log": "/home/cosmo/.codex/worktrees/w48-bottom-up-batch4/qcore-c/private/w48-bottom-up-batch4/before-plan.log",
+    "plan_keys": [
+      "baseline_same",
+      "baseline_cross",
+      "ceiling",
+      "ceiling_waits_on_bodies",
+      "bodies",
+      "rows"
+    ]
+  },
+  "after": {
+    "command": [
+      "/usr/bin/python3",
+      "/home/cosmo/.codex/worktrees/w48-bottom-up-batch4/qcore-c/docs/reports/w48-bottom-up-callee-bodies/scripts/bottom_up_plan.py",
+      "/home/cosmo/.codex/worktrees/w48-bottom-up-batch4/qcore-c/private/w48-bottom-up-batch4/corpus-after-final/corpus/resource-diagnostics.json",
+      "/home/cosmo/.codex/worktrees/w48-bottom-up-batch4/qcore-c/private/w48-bottom-up-batch4/after-plan.json",
+      "--top",
+      "20"
+    ],
+    "exit": 0,
+    "log": "/home/cosmo/.codex/worktrees/w48-bottom-up-batch4/qcore-c/private/w48-bottom-up-batch4/after-plan.log",
+    "plan_keys": [
+      "baseline_same",
+      "baseline_cross",
+      "ceiling",
+      "ceiling_waits_on_bodies",
+      "bodies",
+      "rows"
+    ]
+  }
+}

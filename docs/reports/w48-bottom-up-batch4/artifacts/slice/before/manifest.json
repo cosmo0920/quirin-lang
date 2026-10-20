@@ -1,0 +1,50 @@
+{
+  "diagnostics": {
+    "present": true,
+    "source": "/home/cosmo/.codex/worktrees/w48-bottom-up-batch4/qcore-c/private/w48-bottom-up-batch4/slice-before-final/resource-diagnostics.json",
+    "sha256": "c567174523d4c6057f9007c1d84a29a66d7f4e1e13b3c31e3fbd1b22dae3f966",
+    "bytes": 2548176
+  },
+  "source": {
+    "present": false
+  },
+  "chunk-contracts": {
+    "present": true,
+    "source": "/home/cosmo/.codex/worktrees/w48-bottom-up-batch4/qcore-c/private/w48-bottom-up-batch4/slice-before-final/resource-diagnostics.chunk-contracts.json",
+    "sha256": "a97259087e4ad89a4662edcb494b27c27e80f06c62e404a19076224bbc0a2bd8",
+    "bytes": 385
+  },
+  "source-effects": {
+    "present": true,
+    "source": "/home/cosmo/.codex/worktrees/w48-bottom-up-batch4/qcore-c/private/w48-bottom-up-batch4/slice-before-final/resource-diagnostics.source-effects.json",
+    "sha256": "a97259087e4ad89a4662edcb494b27c27e80f06c62e404a19076224bbc0a2bd8",
+    "bytes": 385
+  },
+  "contracts": {
+    "present": true,
+    "source": "/home/cosmo/.codex/worktrees/w48-bottom-up-batch4/qcore-c/private/w48-bottom-up-batch4/slice-before-final/resource-diagnostics.contracts.json",
+    "sha256": "674a03a5db75e062efc4d56a0aa49da870aa17eb80f85170f77e911ac4287d7c",
+    "bytes": 9024572
+  },
+  "static_custody_counts": {
+    "Unknown": 346,
+    "Safe": 53,
+    "Pending": 4,
+    "Unsafe": 1
+  },
+  "slice-null.jsonl": {
+    "source": "/home/cosmo/.codex/worktrees/w48-bottom-up-batch4/qcore-c/private/w48-bottom-up-batch4/slice-before-final/slice-null.jsonl",
+    "bytes": 1853060,
+    "sha256": "76ccb98b1399a25820bd566da2b072cbed3b29336a7d0a2b15be6dae0347b7e5"
+  },
+  "slice-null.summary.json": {
+    "source": "/home/cosmo/.codex/worktrees/w48-bottom-up-batch4/qcore-c/private/w48-bottom-up-batch4/slice-before-final/slice-null.summary.json",
+    "bytes": 64487,
+    "sha256": "16392a006bc5c7eceefa59dbcd3ca7faa6ac622e4329ec1ecbf92f1e3ed9a80d"
+  },
+  "slice-outer.json": {
+    "source": "/home/cosmo/.codex/worktrees/w48-bottom-up-batch4/qcore-c/private/w48-bottom-up-batch4/slice-before-final/slice-outer.json",
+    "bytes": 89074,
+    "sha256": "15e1b9a4844ade4a3c8965cb0b02d0d716610402162f308db3dacf3eb328888b"
+  }
+}

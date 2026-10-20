@@ -1,0 +1,5910 @@
+{
+  "route": "system",
+  "null_rows": 454,
+  "changed_null_row_fields": {
+    "hypothesis_context": 448,
+    "custody_null_premises": 8
+  },
+  "property_transitions": {
+    "custody": [
+      {
+        "before": null,
+        "after": null,
+        "count": 6
+      },
+      {
+        "before": "Safe",
+        "after": "Safe",
+        "count": 99
+      },
+      {
+        "before": "Unknown",
+        "after": "Unknown",
+        "count": 345
+      },
+      {
+        "before": "Unsafe",
+        "after": "Unsafe",
+        "count": 4
+      }
+    ],
+    "combined": [
+      {
+        "before": "Safe",
+        "after": "Safe",
+        "count": 65
+      },
+      {
+        "before": "Unknown",
+        "after": "Unknown",
+        "count": 385
+      },
+      {
+        "before": "Unsafe",
+        "after": "Unsafe",
+        "count": 4
+      }
+    ],
+    "null": [
+      {
+        "before": "Safe",
+        "after": "Safe",
+        "count": 211
+      },
+      {
+        "before": "Unknown",
+        "after": "Unknown",
+        "count": 243
+      }
+    ]
+  },
+  "non_identity_null_changes": [
+    {
+      "key": [
+        "fluent-bit-system",
+        "plugins/in_storage_backlog/sb.c",
+        "cb_queue_chunks",
+        0
+      ],
+      "fields": [
+        "hypothesis_context"
+      ]
+    },
+    {
+      "key": [
+        "fluent-bit-system",
+        "plugins/in_storage_backlog/sb.c",
+        "cb_sb_exit",
+        0
+      ],
+      "fields": [
+        "hypothesis_context"
+      ]
+    },
+    {
+      "key": [
+        "fluent-bit-system",
+        "plugins/in_storage_backlog/sb.c",
+        "cb_sb_init",
+        0
+      ],
+      "fields": [
+        "hypothesis_context"
+      ]
+    },
+    {
+      "key": [
+        "fluent-bit-system",
+        "plugins/in_storage_backlog/sb.c",
+        "cb_sb_pause",
+        0
+      ],
+      "fields": [
+        "hypothesis_context"
+      ]
+    },
+    {
+      "key": [
+        "fluent-bit-system",
+        "plugins/in_storage_backlog/sb.c",
+        "cb_sb_resume",
+        0
+      ],
+      "fields": [
+        "hypothesis_context"
+      ]
+    },
+    {
+      "key": [
+        "fluent-bit-system",
+        "plugins/in_storage_backlog/sb.c",
+        "sb_allocate_backlogs",
+        0
+      ],
+      "fields": [
+        "hypothesis_context"
+      ]
+    },
+    {
+      "key": [
+        "fluent-bit-system",
+        "plugins/in_storage_backlog/sb.c",
+        "sb_allocate_chunk",
+        0
+      ],
+      "fields": [
+        "hypothesis_context"
+      ]
+    },
+    {
+      "key": [
+        "fluent-bit-system",
+        "plugins/in_storage_backlog/sb.c",
+        "sb_append_chunk_to_segregated_backlog",
+        0
+      ],
+      "fields": [
+        "hypothesis_context"
+      ]
+    },
+    {
+      "key": [
+        "fluent-bit-system",
+        "plugins/in_storage_backlog/sb.c",
+        "sb_append_chunk_to_segregated_backlogs",
+        0
+      ],
+      "fields": [
+        "hypothesis_context"
+      ]
+    },
+    {
+      "key": [
+        "fluent-bit-system",
+        "plugins/in_storage_backlog/sb.c",
+        "sb_destroy_backlog",
+        0
+      ],
+      "fields": [
+        "hypothesis_context"
+      ]
+    },
+    {
+      "key": [
+        "fluent-bit-system",
+        "plugins/in_storage_backlog/sb.c",
+        "sb_destroy_backlogs",
+        0
+      ],
+      "fields": [
+        "hypothesis_context"
+      ]
+    },
+    {
+      "key": [
+        "fluent-bit-system",
+        "plugins/in_storage_backlog/sb.c",
+        "sb_destroy_chunk",
+        0
+      ],
+      "fields": [
+        "hypothesis_context"
+      ]
+    },
+    {
+      "key": [
+        "fluent-bit-system",
+        "plugins/in_storage_backlog/sb.c",
+        "sb_find_segregated_backlog_by_output_plugin_instance",
+        0
+      ],
+      "fields": [
+        "hypothesis_context"
+      ]
+    },
+    {
+      "key": [
+        "fluent-bit-system",
+        "plugins/in_storage_backlog/sb.c",
+        "sb_get_context",
+        0
+      ],
+      "fields": [
+        "hypothesis_context"
+      ]
+    },
+    {
+      "key": [
+        "fluent-bit-system",
+        "plugins/in_storage_backlog/sb.c",
+        "sb_get_releasable_output_queue_space",
+        0
+      ],
+      "fields": [
+        "hypothesis_context"
+      ]
+    },
+    {
+      "key": [
+        "fluent-bit-system",
+        "plugins/in_storage_backlog/sb.c",
+        "sb_is_rejected_stream",
+        0
+      ],
+      "fields": [
+        "hypothesis_context"
+      ]
+    },
+    {
+      "key": [
+        "fluent-bit-system",
+        "plugins/in_storage_backlog/sb.c",
+        "sb_release_output_queue_space",
+        0
+      ],
+      "fields": [
+        "hypothesis_context"
+      ]
+    },
+    {
+      "key": [
+        "fluent-bit-system",
+        "plugins/in_storage_backlog/sb.c",
+        "sb_remove_chunk_from_segregated_backlog",
+        0
+      ],
+      "fields": [
+        "hypothesis_context"
+      ]
+    },
+    {
+      "key": [
+        "fluent-bit-system",
+        "plugins/in_storage_backlog/sb.c",
+        "sb_remove_chunk_from_segregated_backlogs",
+        0
+      ],
+      "fields": [
+        "hypothesis_context"
+      ]
+    },
+    {
+      "key": [
+        "fluent-bit-system",
+        "plugins/in_storage_backlog/sb.c",
+        "sb_segregate_chunks",
+        0
+      ],
+      "fields": [
+        "hypothesis_context"
+      ]
+    },
+    {
+      "key": [
+        "fluent-bit-system",
+        "src/flb_input_chunk.c",
+        "append_to_ring_buffer",
+        0
+      ],
+      "fields": [
+        "hypothesis_context"
+      ]
+    },
+    {
+      "key": [
+        "fluent-bit-system",
+        "src/flb_input_chunk.c",
+        "destroy_chunk_raw",
+        0
+      ],
+      "fields": [
+        "hypothesis_context"
+      ]
+    },
+    {
+      "key": [
+        "fluent-bit-system",
+        "src/flb_input_chunk.c",
+        "flb_chunk_route_plugin_matches",
+        0
+      ],
+      "fields": [
+        "hypothesis_context"
+      ]
+    },
+    {
+      "key": [
+        "fluent-bit-system",
+        "src/flb_input_chunk.c",
+        "flb_input_chunk_append_raw",
+        0
+      ],
+      "fields": [
+        "hypothesis_context"
+      ]
+    },
+    {
+      "key": [
+        "fluent-bit-system",
+        "src/flb_input_chunk.c",
+        "flb_input_chunk_append_raw_local",
+        0
+      ],
+      "fields": [
+        "hypothesis_context"
+      ]
+    },
+    {
+      "key": [
+        "fluent-bit-system",
+        "src/flb_input_chunk.c",
+        "flb_input_chunk_create",
+        0
+      ],
+      "fields": [
+        "hypothesis_context"
+      ]
+    },
+    {
+      "key": [
+        "fluent-bit-system",
+        "src/flb_input_chunk.c",
+        "flb_input_chunk_destroy",
+        0
+      ],
+      "fields": [
+        "hypothesis_context"
+      ]
+    },
+    {
+      "key": [
+        "fluent-bit-system",
+        "src/flb_input_chunk.c",
+        "flb_input_chunk_destroy_corrupted",
+        0
+      ],
+      "fields": [
+        "hypothesis_context"
+      ]
+    },
+    {
+      "key": [
+        "fluent-bit-system",
+        "src/flb_input_chunk.c",
+        "flb_input_chunk_destroy_direct_routes",
+        0
+      ],
+      "fields": [
+        "hypothesis_context"
+      ]
+    },
+    {
+      "key": [
+        "fluent-bit-system",
+        "src/flb_input_chunk.c",
+        "flb_input_chunk_down",
+        0
+      ],
+      "fields": [
+        "hypothesis_context"
+      ]
+    },
+    {
+      "key": [
+        "fluent-bit-system",
+        "src/flb_input_chunk.c",
+        "flb_input_chunk_drop_task_route",
+        0
+      ],
+      "fields": [
+        "hypothesis_context"
+      ]
+    },
+    {
+      "key": [
+        "fluent-bit-system",
+        "src/flb_input_chunk.c",
+        "flb_input_chunk_find_space_new_data",
+        0
+      ],
+      "fields": [
+        "hypothesis_context"
+      ]
+    },
+    {
+      "key": [
+        "fluent-bit-system",
+        "src/flb_input_chunk.c",
+        "flb_input_chunk_flush",
+        0
+      ],
+      "fields": [
+        "hypothesis_context"
+      ]
+    },
+    {
+      "key": [
+        "fluent-bit-system",
+        "src/flb_input_chunk.c",
+        "flb_input_chunk_get_direct_routes",
+        0
+      ],
+      "fields": [
+        "hypothesis_context"
+      ]
+    },
+    {
+      "key": [
+        "fluent-bit-system",
+        "src/flb_input_chunk.c",
+        "flb_input_chunk_get_event_type",
+        0
+      ],
+      "fields": [
+        "hypothesis_context"
+      ]
+    },
+    {
+      "key": [
+        "fluent-bit-system",
+        "src/flb_input_chunk.c",
+        "flb_input_chunk_get_name",
+        0
+      ],
+      "fields": [
+        "hypothesis_context"
+      ]
+    },
+    {
+      "key": [
+        "fluent-bit-system",
+        "src/flb_input_chunk.c",
+        "flb_input_chunk_get_projected_write_size",
+        0
+      ],
+      "fields": [
+        "custody_null_premises",
+        "hypothesis_context"
+      ]
+    },
+    {
+      "key": [
+        "fluent-bit-system",
+        "src/flb_input_chunk.c",
+        "flb_input_chunk_get_real_size",
+        0
+      ],
+      "fields": [
+        "hypothesis_context"
+      ]
+    },
+    {
+      "key": [
+        "fluent-bit-system",
+        "src/flb_input_chunk.c",
+        "flb_input_chunk_get_size",
+        0
+      ],
+      "fields": [
+        "hypothesis_context"
+      ]
+    },
+    {
+      "key": [
+        "fluent-bit-system",
+        "src/flb_input_chunk.c",
+        "flb_input_chunk_get_tag",
+        0
+      ],
+      "fields": [
+        "hypothesis_context"
+      ]
+    },
+    {
+      "key": [
+        "fluent-bit-system",
+        "src/flb_input_chunk.c",
+        "flb_input_chunk_has_direct_routes",
+        0
+      ],
+      "fields": [
+        "hypothesis_context"
+      ]
+    },
+    {
+      "key": [
+        "fluent-bit-system",
+        "src/flb_input_chunk.c",
+        "flb_input_chunk_has_other_routes",
+        0
+      ],
+      "fields": [
+        "hypothesis_context"
+      ]
+    },
+    {
+      "key": [
+        "fluent-bit-system",
+        "src/flb_input_chunk.c",
+        "flb_input_chunk_has_overlimit_routes",
+        0
+      ],
+      "fields": [
+        "hypothesis_context"
+      ]
+    },
+    {
+      "key": [
+        "fluent-bit-system",
+        "src/flb_input_chunk.c",
+        "flb_input_chunk_is_mem_overlimit",
+        0
+      ],
+      "fields": [
+        "hypothesis_context"
+      ]
+    },
+    {
+      "key": [
+        "fluent-bit-system",
+        "src/flb_input_chunk.c",
+        "flb_input_chunk_is_storage_overlimit",
+        0
+      ],
+      "fields": [
+        "hypothesis_context"
+      ]
+    },
+    {
+      "key": [
+        "fluent-bit-system",
+        "src/flb_input_chunk.c",
+        "flb_input_chunk_is_task_safe_delete",
+        0
+      ],
+      "fields": [
+        "hypothesis_context"
+      ]
+    },
+    {
+      "key": [
+        "fluent-bit-system",
+        "src/flb_input_chunk.c",
+        "flb_input_chunk_is_up",
+        0
+      ],
+      "fields": [
+        "hypothesis_context"
+      ]
+    },
+    {
+      "key": [
+        "fluent-bit-system",
+        "src/flb_input_chunk.c",
+        "flb_input_chunk_map",
+        0
+      ],
+      "fields": [
+        "hypothesis_context"
+      ]
+    },
+    {
+      "key": [
+        "fluent-bit-system",
+        "src/flb_input_chunk.c",
+        "flb_input_chunk_output_size_subtract",
+        0
+      ],
+      "fields": [
+        "hypothesis_context"
+      ]
+    },
+    {
+      "key": [
+        "fluent-bit-system",
+        "src/flb_input_chunk.c",
+        "flb_input_chunk_output_would_exceed_limit",
+        0
+      ],
+      "fields": [
+        "hypothesis_context"
+      ]
+    },
+    {
+      "key": [
+        "fluent-bit-system",
+        "src/flb_input_chunk.c",
+        "flb_input_chunk_place_new_chunk",
+        0
+      ],
+      "fields": [
+        "hypothesis_context"
+      ]
+    },
+    {
+      "key": [
+        "fluent-bit-system",
+        "src/flb_input_chunk.c",
+        "flb_input_chunk_prefers_physical_delete",
+        0
+      ],
+      "fields": [
+        "hypothesis_context"
+      ]
+    },
+    {
+      "key": [
+        "fluent-bit-system",
+        "src/flb_input_chunk.c",
+        "flb_input_chunk_protect",
+        0
+      ],
+      "fields": [
+        "hypothesis_context"
+      ]
+    },
+    {
+      "key": [
+        "fluent-bit-system",
+        "src/flb_input_chunk.c",
+        "flb_input_chunk_release_lock",
+        0
+      ],
+      "fields": [
+        "hypothesis_context"
+      ]
+    },
+    {
+      "key": [
+        "fluent-bit-system",
+        "src/flb_input_chunk.c",
+        "flb_input_chunk_release_route",
+        0
+      ],
+      "fields": [
+        "hypothesis_context"
+      ]
+    },
+    {
+      "key": [
+        "fluent-bit-system",
+        "src/flb_input_chunk.c",
+        "flb_input_chunk_release_space",
+        0
+      ],
+      "fields": [
+        "hypothesis_context"
+      ]
+    },
+    {
+      "key": [
+        "fluent-bit-system",
+        "src/flb_input_chunk.c",
+        "flb_input_chunk_release_space_compound",
+        0
+      ],
+      "fields": [
+        "hypothesis_context"
+      ]
+    },
+    {
+      "key": [
+        "fluent-bit-system",
+        "src/flb_input_chunk.c",
+        "flb_input_chunk_ring_buffer_cleanup",
+        0
+      ],
+      "fields": [
+        "hypothesis_context"
+      ]
+    },
+    {
+      "key": [
+        "fluent-bit-system",
+        "src/flb_input_chunk.c",
+        "flb_input_chunk_ring_buffer_collector",
+        0
+      ],
+      "fields": [
+        "hypothesis_context"
+      ]
+    },
+    {
+      "key": [
+        "fluent-bit-system",
+        "src/flb_input_chunk.c",
+        "flb_input_chunk_ring_buffer_enqueue",
+        0
+      ],
+      "fields": [
+        "hypothesis_context"
+      ]
+    },
+    {
+      "key": [
+        "fluent-bit-system",
+        "src/flb_input_chunk.c",
+        "flb_input_chunk_ring_buffer_enqueue_log_routing",
+        0
+      ],
+      "fields": [
+        "hypothesis_context"
+      ]
+    },
+    {
+      "key": [
+        "fluent-bit-system",
+        "src/flb_input_chunk.c",
+        "flb_input_chunk_safe_delete",
+        0
+      ],
+      "fields": [
+        "hypothesis_context"
+      ]
+    },
+    {
+      "key": [
+        "fluent-bit-system",
+        "src/flb_input_chunk.c",
+        "flb_input_chunk_set_limits",
+        0
+      ],
+      "fields": [
+        "hypothesis_context"
+      ]
+    },
+    {
+      "key": [
+        "fluent-bit-system",
+        "src/flb_input_chunk.c",
+        "flb_input_chunk_set_up",
+        0
+      ],
+      "fields": [
+        "hypothesis_context"
+      ]
+    },
+    {
+      "key": [
+        "fluent-bit-system",
+        "src/flb_input_chunk.c",
+        "flb_input_chunk_set_up_down",
+        0
+      ],
+      "fields": [
+        "hypothesis_context"
+      ]
+    },
+    {
+      "key": [
+        "fluent-bit-system",
+        "src/flb_input_chunk.c",
+        "flb_input_chunk_total_size",
+        0
+      ],
+      "fields": [
+        "hypothesis_context"
+      ]
+    },
+    {
+      "key": [
+        "fluent-bit-system",
+        "src/flb_input_chunk.c",
+        "flb_input_chunk_update_output_instances",
+        0
+      ],
+      "fields": [
+        "hypothesis_context"
+      ]
+    },
+    {
+      "key": [
+        "fluent-bit-system",
+        "src/flb_input_chunk.c",
+        "flb_input_chunk_write",
+        0
+      ],
+      "fields": [
+        "hypothesis_context"
+      ]
+    },
+    {
+      "key": [
+        "fluent-bit-system",
+        "src/flb_input_chunk.c",
+        "flb_input_chunk_write_at",
+        0
+      ],
+      "fields": [
+        "hypothesis_context"
+      ]
+    },
+    {
+      "key": [
+        "fluent-bit-system",
+        "src/flb_input_chunk.c",
+        "flb_input_chunk_write_header_v2",
+        0
+      ],
+      "fields": [
+        "hypothesis_context"
+      ]
+    },
+    {
+      "key": [
+        "fluent-bit-system",
+        "src/flb_input_chunk.c",
+        "generate_chunk_name",
+        0
+      ],
+      "fields": [
+        "hypothesis_context"
+      ]
+    },
+    {
+      "key": [
+        "fluent-bit-system",
+        "src/flb_input_chunk.c",
+        "get_input_chunk_record_count",
+        0
+      ],
+      "fields": [
+        "hypothesis_context"
+      ]
+    },
+    {
+      "key": [
+        "fluent-bit-system",
+        "src/flb_input_chunk.c",
+        "get_input_chunk_source_name",
+        0
+      ],
+      "fields": [
+        "hypothesis_context"
+      ]
+    },
+    {
+      "key": [
+        "fluent-bit-system",
+        "src/flb_input_chunk.c",
+        "input_chunk_append_raw",
+        0
+      ],
+      "fields": [
+        "hypothesis_context"
+      ]
+    },
+    {
+      "key": [
+        "fluent-bit-system",
+        "src/flb_input_chunk.c",
+        "input_chunk_collect_output_references",
+        0
+      ],
+      "fields": [
+        "hypothesis_context"
+      ]
+    },
+    {
+      "key": [
+        "fluent-bit-system",
+        "src/flb_input_chunk.c",
+        "input_chunk_get",
+        0
+      ],
+      "fields": [
+        "hypothesis_context"
+      ]
+    },
+    {
+      "key": [
+        "fluent-bit-system",
+        "src/flb_input_chunk.c",
+        "input_chunk_has_magic_bytes",
+        0
+      ],
+      "fields": [
+        "hypothesis_context"
+      ]
+    },
+    {
+      "key": [
+        "fluent-bit-system",
+        "src/flb_input_chunk.c",
+        "input_chunk_metadata_view",
+        0
+      ],
+      "fields": [
+        "hypothesis_context"
+      ]
+    },
+    {
+      "key": [
+        "fluent-bit-system",
+        "src/flb_input_chunk.c",
+        "input_chunk_output_size_add",
+        0
+      ],
+      "fields": [
+        "hypothesis_context"
+      ]
+    },
+    {
+      "key": [
+        "fluent-bit-system",
+        "src/flb_input_chunk.c",
+        "input_chunk_write_header",
+        0
+      ],
+      "fields": [
+        "hypothesis_context"
+      ]
+    },
+    {
+      "key": [
+        "fluent-bit-system",
+        "src/flb_input_chunk.c",
+        "logs_tag_records_metrics_enabled",
+        0
+      ],
+      "fields": [
+        "hypothesis_context"
+      ]
+    },
+    {
+      "key": [
+        "fluent-bit-system",
+        "src/flb_input_chunk.c",
+        "memrb_input_chunk_release_space",
+        0
+      ],
+      "fields": [
+        "hypothesis_context"
+      ]
+    },
+    {
+      "key": [
+        "fluent-bit-system",
+        "src/flb_input_chunk.c",
+        "update_logs_tag_records_metrics",
+        0
+      ],
+      "fields": [
+        "hypothesis_context"
+      ]
+    },
+    {
+      "key": [
+        "fluent-bit-system",
+        "src/flb_input_chunk.c",
+        "update_logs_tag_records_untracked",
+        0
+      ],
+      "fields": [
+        "hypothesis_context"
+      ]
+    },
+    {
+      "key": [
+        "fluent-bit-system",
+        "src/flb_input_chunk.c",
+        "append_to_ring_buffer",
+        1
+      ],
+      "fields": [
+        "hypothesis_context"
+      ]
+    },
+    {
+      "key": [
+        "fluent-bit-system",
+        "src/flb_input_chunk.c",
+        "destroy_chunk_raw",
+        1
+      ],
+      "fields": [
+        "hypothesis_context"
+      ]
+    },
+    {
+      "key": [
+        "fluent-bit-system",
+        "src/flb_input_chunk.c",
+        "flb_chunk_route_plugin_matches",
+        1
+      ],
+      "fields": [
+        "hypothesis_context"
+      ]
+    },
+    {
+      "key": [
+        "fluent-bit-system",
+        "src/flb_input_chunk.c",
+        "flb_input_chunk_append_raw",
+        1
+      ],
+      "fields": [
+        "hypothesis_context"
+      ]
+    },
+    {
+      "key": [
+        "fluent-bit-system",
+        "src/flb_input_chunk.c",
+        "flb_input_chunk_append_raw_local",
+        1
+      ],
+      "fields": [
+        "hypothesis_context"
+      ]
+    },
+    {
+      "key": [
+        "fluent-bit-system",
+        "src/flb_input_chunk.c",
+        "flb_input_chunk_create",
+        1
+      ],
+      "fields": [
+        "hypothesis_context"
+      ]
+    },
+    {
+      "key": [
+        "fluent-bit-system",
+        "src/flb_input_chunk.c",
+        "flb_input_chunk_destroy",
+        1
+      ],
+      "fields": [
+        "hypothesis_context"
+      ]
+    },
+    {
+      "key": [
+        "fluent-bit-system",
+        "src/flb_input_chunk.c",
+        "flb_input_chunk_destroy_corrupted",
+        1
+      ],
+      "fields": [
+        "hypothesis_context"
+      ]
+    },
+    {
+      "key": [
+        "fluent-bit-system",
+        "src/flb_input_chunk.c",
+        "flb_input_chunk_destroy_direct_routes",
+        1
+      ],
+      "fields": [
+        "hypothesis_context"
+      ]
+    },
+    {
+      "key": [
+        "fluent-bit-system",
+        "src/flb_input_chunk.c",
+        "flb_input_chunk_down",
+        1
+      ],
+      "fields": [
+        "hypothesis_context"
+      ]
+    },
+    {
+      "key": [
+        "fluent-bit-system",
+        "src/flb_input_chunk.c",
+        "flb_input_chunk_drop_task_route",
+        1
+      ],
+      "fields": [
+        "hypothesis_context"
+      ]
+    },
+    {
+      "key": [
+        "fluent-bit-system",
+        "src/flb_input_chunk.c",
+        "flb_input_chunk_find_space_new_data",
+        1
+      ],
+      "fields": [
+        "hypothesis_context"
+      ]
+    },
+    {
+      "key": [
+        "fluent-bit-system",
+        "src/flb_input_chunk.c",
+        "flb_input_chunk_flush",
+        1
+      ],
+      "fields": [
+        "hypothesis_context"
+      ]
+    },
+    {
+      "key": [
+        "fluent-bit-system",
+        "src/flb_input_chunk.c",
+        "flb_input_chunk_get_direct_routes",
+        1
+      ],
+      "fields": [
+        "hypothesis_context"
+      ]
+    },
+    {
+      "key": [
+        "fluent-bit-system",
+        "src/flb_input_chunk.c",
+        "flb_input_chunk_get_event_type",
+        1
+      ],
+      "fields": [
+        "hypothesis_context"
+      ]
+    },
+    {
+      "key": [
+        "fluent-bit-system",
+        "src/flb_input_chunk.c",
+        "flb_input_chunk_get_name",
+        1
+      ],
+      "fields": [
+        "hypothesis_context"
+      ]
+    },
+    {
+      "key": [
+        "fluent-bit-system",
+        "src/flb_input_chunk.c",
+        "flb_input_chunk_get_projected_write_size",
+        1
+      ],
+      "fields": [
+        "custody_null_premises",
+        "hypothesis_context"
+      ]
+    },
+    {
+      "key": [
+        "fluent-bit-system",
+        "src/flb_input_chunk.c",
+        "flb_input_chunk_get_real_size",
+        1
+      ],
+      "fields": [
+        "hypothesis_context"
+      ]
+    },
+    {
+      "key": [
+        "fluent-bit-system",
+        "src/flb_input_chunk.c",
+        "flb_input_chunk_get_size",
+        1
+      ],
+      "fields": [
+        "hypothesis_context"
+      ]
+    },
+    {
+      "key": [
+        "fluent-bit-system",
+        "src/flb_input_chunk.c",
+        "flb_input_chunk_get_tag",
+        1
+      ],
+      "fields": [
+        "hypothesis_context"
+      ]
+    },
+    {
+      "key": [
+        "fluent-bit-system",
+        "src/flb_input_chunk.c",
+        "flb_input_chunk_has_direct_routes",
+        1
+      ],
+      "fields": [
+        "hypothesis_context"
+      ]
+    },
+    {
+      "key": [
+        "fluent-bit-system",
+        "src/flb_input_chunk.c",
+        "flb_input_chunk_has_other_routes",
+        1
+      ],
+      "fields": [
+        "hypothesis_context"
+      ]
+    },
+    {
+      "key": [
+        "fluent-bit-system",
+        "src/flb_input_chunk.c",
+        "flb_input_chunk_has_overlimit_routes",
+        1
+      ],
+      "fields": [
+        "hypothesis_context"
+      ]
+    },
+    {
+      "key": [
+        "fluent-bit-system",
+        "src/flb_input_chunk.c",
+        "flb_input_chunk_is_mem_overlimit",
+        1
+      ],
+      "fields": [
+        "hypothesis_context"
+      ]
+    },
+    {
+      "key": [
+        "fluent-bit-system",
+        "src/flb_input_chunk.c",
+        "flb_input_chunk_is_storage_overlimit",
+        1
+      ],
+      "fields": [
+        "hypothesis_context"
+      ]
+    },
+    {
+      "key": [
+        "fluent-bit-system",
+        "src/flb_input_chunk.c",
+        "flb_input_chunk_is_task_safe_delete",
+        1
+      ],
+      "fields": [
+        "hypothesis_context"
+      ]
+    },
+    {
+      "key": [
+        "fluent-bit-system",
+        "src/flb_input_chunk.c",
+        "flb_input_chunk_is_up",
+        1
+      ],
+      "fields": [
+        "hypothesis_context"
+      ]
+    },
+    {
+      "key": [
+        "fluent-bit-system",
+        "src/flb_input_chunk.c",
+        "flb_input_chunk_map",
+        1
+      ],
+      "fields": [
+        "hypothesis_context"
+      ]
+    },
+    {
+      "key": [
+        "fluent-bit-system",
+        "src/flb_input_chunk.c",
+        "flb_input_chunk_output_size_subtract",
+        1
+      ],
+      "fields": [
+        "hypothesis_context"
+      ]
+    },
+    {
+      "key": [
+        "fluent-bit-system",
+        "src/flb_input_chunk.c",
+        "flb_input_chunk_output_would_exceed_limit",
+        1
+      ],
+      "fields": [
+        "hypothesis_context"
+      ]
+    },
+    {
+      "key": [
+        "fluent-bit-system",
+        "src/flb_input_chunk.c",
+        "flb_input_chunk_place_new_chunk",
+        1
+      ],
+      "fields": [
+        "hypothesis_context"
+      ]
+    },
+    {
+      "key": [
+        "fluent-bit-system",
+        "src/flb_input_chunk.c",
+        "flb_input_chunk_prefers_physical_delete",
+        1
+      ],
+      "fields": [
+        "hypothesis_context"
+      ]
+    },
+    {
+      "key": [
+        "fluent-bit-system",
+        "src/flb_input_chunk.c",
+        "flb_input_chunk_protect",
+        1
+      ],
+      "fields": [
+        "hypothesis_context"
+      ]
+    },
+    {
+      "key": [
+        "fluent-bit-system",
+        "src/flb_input_chunk.c",
+        "flb_input_chunk_release_lock",
+        1
+      ],
+      "fields": [
+        "hypothesis_context"
+      ]
+    },
+    {
+      "key": [
+        "fluent-bit-system",
+        "src/flb_input_chunk.c",
+        "flb_input_chunk_release_route",
+        1
+      ],
+      "fields": [
+        "hypothesis_context"
+      ]
+    },
+    {
+      "key": [
+        "fluent-bit-system",
+        "src/flb_input_chunk.c",
+        "flb_input_chunk_release_space",
+        1
+      ],
+      "fields": [
+        "hypothesis_context"
+      ]
+    },
+    {
+      "key": [
+        "fluent-bit-system",
+        "src/flb_input_chunk.c",
+        "flb_input_chunk_release_space_compound",
+        1
+      ],
+      "fields": [
+        "hypothesis_context"
+      ]
+    },
+    {
+      "key": [
+        "fluent-bit-system",
+        "src/flb_input_chunk.c",
+        "flb_input_chunk_ring_buffer_cleanup",
+        1
+      ],
+      "fields": [
+        "hypothesis_context"
+      ]
+    },
+    {
+      "key": [
+        "fluent-bit-system",
+        "src/flb_input_chunk.c",
+        "flb_input_chunk_ring_buffer_collector",
+        1
+      ],
+      "fields": [
+        "hypothesis_context"
+      ]
+    },
+    {
+      "key": [
+        "fluent-bit-system",
+        "src/flb_input_chunk.c",
+        "flb_input_chunk_ring_buffer_enqueue",
+        1
+      ],
+      "fields": [
+        "hypothesis_context"
+      ]
+    },
+    {
+      "key": [
+        "fluent-bit-system",
+        "src/flb_input_chunk.c",
+        "flb_input_chunk_ring_buffer_enqueue_log_routing",
+        1
+      ],
+      "fields": [
+        "hypothesis_context"
+      ]
+    },
+    {
+      "key": [
+        "fluent-bit-system",
+        "src/flb_input_chunk.c",
+        "flb_input_chunk_safe_delete",
+        1
+      ],
+      "fields": [
+        "hypothesis_context"
+      ]
+    },
+    {
+      "key": [
+        "fluent-bit-system",
+        "src/flb_input_chunk.c",
+        "flb_input_chunk_set_limits",
+        1
+      ],
+      "fields": [
+        "hypothesis_context"
+      ]
+    },
+    {
+      "key": [
+        "fluent-bit-system",
+        "src/flb_input_chunk.c",
+        "flb_input_chunk_set_up",
+        1
+      ],
+      "fields": [
+        "hypothesis_context"
+      ]
+    },
+    {
+      "key": [
+        "fluent-bit-system",
+        "src/flb_input_chunk.c",
+        "flb_input_chunk_set_up_down",
+        1
+      ],
+      "fields": [
+        "hypothesis_context"
+      ]
+    },
+    {
+      "key": [
+        "fluent-bit-system",
+        "src/flb_input_chunk.c",
+        "flb_input_chunk_total_size",
+        1
+      ],
+      "fields": [
+        "hypothesis_context"
+      ]
+    },
+    {
+      "key": [
+        "fluent-bit-system",
+        "src/flb_input_chunk.c",
+        "flb_input_chunk_update_output_instances",
+        1
+      ],
+      "fields": [
+        "hypothesis_context"
+      ]
+    },
+    {
+      "key": [
+        "fluent-bit-system",
+        "src/flb_input_chunk.c",
+        "flb_input_chunk_write",
+        1
+      ],
+      "fields": [
+        "hypothesis_context"
+      ]
+    },
+    {
+      "key": [
+        "fluent-bit-system",
+        "src/flb_input_chunk.c",
+        "flb_input_chunk_write_at",
+        1
+      ],
+      "fields": [
+        "hypothesis_context"
+      ]
+    },
+    {
+      "key": [
+        "fluent-bit-system",
+        "src/flb_input_chunk.c",
+        "flb_input_chunk_write_header_v2",
+        1
+      ],
+      "fields": [
+        "hypothesis_context"
+      ]
+    },
+    {
+      "key": [
+        "fluent-bit-system",
+        "src/flb_input_chunk.c",
+        "generate_chunk_name",
+        1
+      ],
+      "fields": [
+        "hypothesis_context"
+      ]
+    },
+    {
+      "key": [
+        "fluent-bit-system",
+        "src/flb_input_chunk.c",
+        "get_input_chunk_record_count",
+        1
+      ],
+      "fields": [
+        "hypothesis_context"
+      ]
+    },
+    {
+      "key": [
+        "fluent-bit-system",
+        "src/flb_input_chunk.c",
+        "get_input_chunk_source_name",
+        1
+      ],
+      "fields": [
+        "hypothesis_context"
+      ]
+    },
+    {
+      "key": [
+        "fluent-bit-system",
+        "src/flb_input_chunk.c",
+        "input_chunk_append_raw",
+        1
+      ],
+      "fields": [
+        "hypothesis_context"
+      ]
+    },
+    {
+      "key": [
+        "fluent-bit-system",
+        "src/flb_input_chunk.c",
+        "input_chunk_collect_output_references",
+        1
+      ],
+      "fields": [
+        "hypothesis_context"
+      ]
+    },
+    {
+      "key": [
+        "fluent-bit-system",
+        "src/flb_input_chunk.c",
+        "input_chunk_get",
+        1
+      ],
+      "fields": [
+        "hypothesis_context"
+      ]
+    },
+    {
+      "key": [
+        "fluent-bit-system",
+        "src/flb_input_chunk.c",
+        "input_chunk_has_magic_bytes",
+        1
+      ],
+      "fields": [
+        "hypothesis_context"
+      ]
+    },
+    {
+      "key": [
+        "fluent-bit-system",
+        "src/flb_input_chunk.c",
+        "input_chunk_metadata_view",
+        1
+      ],
+      "fields": [
+        "hypothesis_context"
+      ]
+    },
+    {
+      "key": [
+        "fluent-bit-system",
+        "src/flb_input_chunk.c",
+        "input_chunk_output_size_add",
+        1
+      ],
+      "fields": [
+        "hypothesis_context"
+      ]
+    },
+    {
+      "key": [
+        "fluent-bit-system",
+        "src/flb_input_chunk.c",
+        "input_chunk_write_header",
+        1
+      ],
+      "fields": [
+        "hypothesis_context"
+      ]
+    },
+    {
+      "key": [
+        "fluent-bit-system",
+        "src/flb_input_chunk.c",
+        "logs_tag_records_metrics_enabled",
+        1
+      ],
+      "fields": [
+        "hypothesis_context"
+      ]
+    },
+    {
+      "key": [
+        "fluent-bit-system",
+        "src/flb_input_chunk.c",
+        "memrb_input_chunk_release_space",
+        1
+      ],
+      "fields": [
+        "hypothesis_context"
+      ]
+    },
+    {
+      "key": [
+        "fluent-bit-system",
+        "src/flb_input_chunk.c",
+        "update_logs_tag_records_metrics",
+        1
+      ],
+      "fields": [
+        "hypothesis_context"
+      ]
+    },
+    {
+      "key": [
+        "fluent-bit-system",
+        "src/flb_input_chunk.c",
+        "update_logs_tag_records_untracked",
+        1
+      ],
+      "fields": [
+        "hypothesis_context"
+      ]
+    },
+    {
+      "key": [
+        "fluent-bit-system",
+        "src/flb_storage.c",
+        "cb_storage_metrics_collect",
+        0
+      ],
+      "fields": [
+        "hypothesis_context"
+      ]
+    },
+    {
+      "key": [
+        "fluent-bit-system",
+        "src/flb_storage.c",
+        "dlq_stream_total_size",
+        0
+      ],
+      "fields": [
+        "hypothesis_context"
+      ]
+    },
+    {
+      "key": [
+        "fluent-bit-system",
+        "src/flb_storage.c",
+        "flb_storage_chunk_count",
+        0
+      ],
+      "fields": [
+        "hypothesis_context"
+      ]
+    },
+    {
+      "key": [
+        "fluent-bit-system",
+        "src/flb_storage.c",
+        "flb_storage_chunk_restore_state",
+        0
+      ],
+      "fields": [
+        "hypothesis_context"
+      ]
+    },
+    {
+      "key": [
+        "fluent-bit-system",
+        "src/flb_storage.c",
+        "flb_storage_create",
+        0
+      ],
+      "fields": [
+        "hypothesis_context"
+      ]
+    },
+    {
+      "key": [
+        "fluent-bit-system",
+        "src/flb_storage.c",
+        "flb_storage_destroy",
+        0
+      ],
+      "fields": [
+        "hypothesis_context"
+      ]
+    },
+    {
+      "key": [
+        "fluent-bit-system",
+        "src/flb_storage.c",
+        "flb_storage_input_create",
+        0
+      ],
+      "fields": [
+        "hypothesis_context"
+      ]
+    },
+    {
+      "key": [
+        "fluent-bit-system",
+        "src/flb_storage.c",
+        "flb_storage_input_destroy",
+        0
+      ],
+      "fields": [
+        "hypothesis_context"
+      ]
+    },
+    {
+      "key": [
+        "fluent-bit-system",
+        "src/flb_storage.c",
+        "flb_storage_metrics_create",
+        0
+      ],
+      "fields": [
+        "hypothesis_context"
+      ]
+    },
+    {
+      "key": [
+        "fluent-bit-system",
+        "src/flb_storage.c",
+        "flb_storage_metrics_update",
+        0
+      ],
+      "fields": [
+        "hypothesis_context"
+      ]
+    },
+    {
+      "key": [
+        "fluent-bit-system",
+        "src/flb_storage.c",
+        "flb_storage_quarantine_chunk",
+        0
+      ],
+      "fields": [
+        "hypothesis_context"
+      ]
+    },
+    {
+      "key": [
+        "fluent-bit-system",
+        "src/flb_storage.c",
+        "get_or_create_rejected_stream",
+        0
+      ],
+      "fields": [
+        "hypothesis_context"
+      ]
+    },
+    {
+      "key": [
+        "fluent-bit-system",
+        "src/flb_storage.c",
+        "log_cb",
+        0
+      ],
+      "fields": [
+        "hypothesis_context"
+      ]
+    },
+    {
+      "key": [
+        "fluent-bit-system",
+        "src/flb_storage.c",
+        "metrics_append_general",
+        0
+      ],
+      "fields": [
+        "hypothesis_context"
+      ]
+    },
+    {
+      "key": [
+        "fluent-bit-system",
+        "src/flb_storage.c",
+        "metrics_append_input",
+        0
+      ],
+      "fields": [
+        "hypothesis_context"
+      ]
+    },
+    {
+      "key": [
+        "fluent-bit-system",
+        "src/flb_storage.c",
+        "metrics_context_create",
+        0
+      ],
+      "fields": [
+        "hypothesis_context"
+      ]
+    },
+    {
+      "key": [
+        "fluent-bit-system",
+        "src/flb_storage.c",
+        "parse_stamp",
+        0
+      ],
+      "fields": [
+        "hypothesis_context"
+      ]
+    },
+    {
+      "key": [
+        "fluent-bit-system",
+        "src/flb_storage.c",
+        "print_storage_info",
+        0
+      ],
+      "fields": [
+        "hypothesis_context"
+      ]
+    },
+    {
+      "key": [
+        "fluent-bit-system",
+        "src/flb_storage.c",
+        "sanitize_name_component",
+        0
+      ],
+      "fields": [
+        "hypothesis_context"
+      ]
+    },
+    {
+      "key": [
+        "fluent-bit-system",
+        "src/flb_storage.c",
+        "sort_chunk_cmp",
+        0
+      ],
+      "fields": [
+        "hypothesis_context"
+      ]
+    },
+    {
+      "key": [
+        "fluent-bit-system",
+        "src/flb_storage.c",
+        "storage_contexts_create",
+        0
+      ],
+      "fields": [
+        "hypothesis_context"
+      ]
+    },
+    {
+      "key": [
+        "fluent-bit-system",
+        "src/flb_storage.c",
+        "cb_storage_metrics_collect",
+        1
+      ],
+      "fields": [
+        "hypothesis_context"
+      ]
+    },
+    {
+      "key": [
+        "fluent-bit-system",
+        "src/flb_storage.c",
+        "dlq_stream_total_size",
+        1
+      ],
+      "fields": [
+        "hypothesis_context"
+      ]
+    },
+    {
+      "key": [
+        "fluent-bit-system",
+        "src/flb_storage.c",
+        "flb_storage_chunk_count",
+        1
+      ],
+      "fields": [
+        "hypothesis_context"
+      ]
+    },
+    {
+      "key": [
+        "fluent-bit-system",
+        "src/flb_storage.c",
+        "flb_storage_chunk_restore_state",
+        1
+      ],
+      "fields": [
+        "hypothesis_context"
+      ]
+    },
+    {
+      "key": [
+        "fluent-bit-system",
+        "src/flb_storage.c",
+        "flb_storage_create",
+        1
+      ],
+      "fields": [
+        "hypothesis_context"
+      ]
+    },
+    {
+      "key": [
+        "fluent-bit-system",
+        "src/flb_storage.c",
+        "flb_storage_destroy",
+        1
+      ],
+      "fields": [
+        "hypothesis_context"
+      ]
+    },
+    {
+      "key": [
+        "fluent-bit-system",
+        "src/flb_storage.c",
+        "flb_storage_input_create",
+        1
+      ],
+      "fields": [
+        "hypothesis_context"
+      ]
+    },
+    {
+      "key": [
+        "fluent-bit-system",
+        "src/flb_storage.c",
+        "flb_storage_input_destroy",
+        1
+      ],
+      "fields": [
+        "hypothesis_context"
+      ]
+    },
+    {
+      "key": [
+        "fluent-bit-system",
+        "src/flb_storage.c",
+        "flb_storage_metrics_create",
+        1
+      ],
+      "fields": [
+        "hypothesis_context"
+      ]
+    },
+    {
+      "key": [
+        "fluent-bit-system",
+        "src/flb_storage.c",
+        "flb_storage_metrics_update",
+        1
+      ],
+      "fields": [
+        "hypothesis_context"
+      ]
+    },
+    {
+      "key": [
+        "fluent-bit-system",
+        "src/flb_storage.c",
+        "flb_storage_quarantine_chunk",
+        1
+      ],
+      "fields": [
+        "hypothesis_context"
+      ]
+    },
+    {
+      "key": [
+        "fluent-bit-system",
+        "src/flb_storage.c",
+        "get_or_create_rejected_stream",
+        1
+      ],
+      "fields": [
+        "hypothesis_context"
+      ]
+    },
+    {
+      "key": [
+        "fluent-bit-system",
+        "src/flb_storage.c",
+        "log_cb",
+        1
+      ],
+      "fields": [
+        "hypothesis_context"
+      ]
+    },
+    {
+      "key": [
+        "fluent-bit-system",
+        "src/flb_storage.c",
+        "metrics_append_general",
+        1
+      ],
+      "fields": [
+        "hypothesis_context"
+      ]
+    },
+    {
+      "key": [
+        "fluent-bit-system",
+        "src/flb_storage.c",
+        "metrics_append_input",
+        1
+      ],
+      "fields": [
+        "hypothesis_context"
+      ]
+    },
+    {
+      "key": [
+        "fluent-bit-system",
+        "src/flb_storage.c",
+        "metrics_context_create",
+        1
+      ],
+      "fields": [
+        "hypothesis_context"
+      ]
+    },
+    {
+      "key": [
+        "fluent-bit-system",
+        "src/flb_storage.c",
+        "parse_stamp",
+        1
+      ],
+      "fields": [
+        "hypothesis_context"
+      ]
+    },
+    {
+      "key": [
+        "fluent-bit-system",
+        "src/flb_storage.c",
+        "print_storage_info",
+        1
+      ],
+      "fields": [
+        "hypothesis_context"
+      ]
+    },
+    {
+      "key": [
+        "fluent-bit-system",
+        "src/flb_storage.c",
+        "sanitize_name_component",
+        1
+      ],
+      "fields": [
+        "hypothesis_context"
+      ]
+    },
+    {
+      "key": [
+        "fluent-bit-system",
+        "src/flb_storage.c",
+        "sort_chunk_cmp",
+        1
+      ],
+      "fields": [
+        "hypothesis_context"
+      ]
+    },
+    {
+      "key": [
+        "fluent-bit-system",
+        "src/flb_storage.c",
+        "storage_contexts_create",
+        1
+      ],
+      "fields": [
+        "hypothesis_context"
+      ]
+    },
+    {
+      "key": [
+        "fluent-bit-system",
+        "src/flb_task.c",
+        "flb_task_create",
+        0
+      ],
+      "fields": [
+        "hypothesis_context"
+      ]
+    },
+    {
+      "key": [
+        "fluent-bit-system",
+        "src/flb_task.c",
+        "flb_task_destroy",
+        0
+      ],
+      "fields": [
+        "hypothesis_context"
+      ]
+    },
+    {
+      "key": [
+        "fluent-bit-system",
+        "src/flb_task.c",
+        "flb_task_from_fs_storage",
+        0
+      ],
+      "fields": [
+        "hypothesis_context"
+      ]
+    },
+    {
+      "key": [
+        "fluent-bit-system",
+        "src/flb_task.c",
+        "flb_task_map_get_task_id",
+        0
+      ],
+      "fields": [
+        "hypothesis_context"
+      ]
+    },
+    {
+      "key": [
+        "fluent-bit-system",
+        "src/flb_task.c",
+        "flb_task_queue_create",
+        0
+      ],
+      "fields": [
+        "hypothesis_context"
+      ]
+    },
+    {
+      "key": [
+        "fluent-bit-system",
+        "src/flb_task.c",
+        "flb_task_queue_destroy",
+        0
+      ],
+      "fields": [
+        "hypothesis_context"
+      ]
+    },
+    {
+      "key": [
+        "fluent-bit-system",
+        "src/flb_task.c",
+        "flb_task_retry_clean",
+        0
+      ],
+      "fields": [
+        "hypothesis_context"
+      ]
+    },
+    {
+      "key": [
+        "fluent-bit-system",
+        "src/flb_task.c",
+        "flb_task_retry_count",
+        0
+      ],
+      "fields": [
+        "hypothesis_context"
+      ]
+    },
+    {
+      "key": [
+        "fluent-bit-system",
+        "src/flb_task.c",
+        "flb_task_retry_create",
+        0
+      ],
+      "fields": [
+        "hypothesis_context"
+      ]
+    },
+    {
+      "key": [
+        "fluent-bit-system",
+        "src/flb_task.c",
+        "flb_task_retry_destroy",
+        0
+      ],
+      "fields": [
+        "hypothesis_context"
+      ]
+    },
+    {
+      "key": [
+        "fluent-bit-system",
+        "src/flb_task.c",
+        "flb_task_retry_reschedule",
+        0
+      ],
+      "fields": [
+        "hypothesis_context"
+      ]
+    },
+    {
+      "key": [
+        "fluent-bit-system",
+        "src/flb_task.c",
+        "flb_task_running_count",
+        0
+      ],
+      "fields": [
+        "hypothesis_context"
+      ]
+    },
+    {
+      "key": [
+        "fluent-bit-system",
+        "src/flb_task.c",
+        "flb_task_running_print",
+        0
+      ],
+      "fields": [
+        "hypothesis_context"
+      ]
+    },
+    {
+      "key": [
+        "fluent-bit-system",
+        "src/flb_task.c",
+        "map_free_task_id",
+        0
+      ],
+      "fields": [
+        "hypothesis_context"
+      ]
+    },
+    {
+      "key": [
+        "fluent-bit-system",
+        "src/flb_task.c",
+        "map_get_task_id",
+        0
+      ],
+      "fields": [
+        "hypothesis_context"
+      ]
+    },
+    {
+      "key": [
+        "fluent-bit-system",
+        "src/flb_task.c",
+        "map_set_task_id",
+        0
+      ],
+      "fields": [
+        "hypothesis_context"
+      ]
+    },
+    {
+      "key": [
+        "fluent-bit-system",
+        "src/flb_task.c",
+        "record_unmatched_route_drop_metrics",
+        0
+      ],
+      "fields": [
+        "hypothesis_context"
+      ]
+    },
+    {
+      "key": [
+        "fluent-bit-system",
+        "src/flb_task.c",
+        "task_alloc",
+        0
+      ],
+      "fields": [
+        "hypothesis_context"
+      ]
+    },
+    {
+      "key": [
+        "fluent-bit-system",
+        "src/flb_task.c",
+        "task_collect_output_references",
+        0
+      ],
+      "fields": [
+        "hypothesis_context"
+      ]
+    },
+    {
+      "key": [
+        "fluent-bit-system",
+        "src/flb_task.c",
+        "flb_task_create",
+        1
+      ],
+      "fields": [
+        "hypothesis_context"
+      ]
+    },
+    {
+      "key": [
+        "fluent-bit-system",
+        "src/flb_task.c",
+        "flb_task_destroy",
+        1
+      ],
+      "fields": [
+        "hypothesis_context"
+      ]
+    },
+    {
+      "key": [
+        "fluent-bit-system",
+        "src/flb_task.c",
+        "flb_task_from_fs_storage",
+        1
+      ],
+      "fields": [
+        "hypothesis_context"
+      ]
+    },
+    {
+      "key": [
+        "fluent-bit-system",
+        "src/flb_task.c",
+        "flb_task_map_get_task_id",
+        1
+      ],
+      "fields": [
+        "hypothesis_context"
+      ]
+    },
+    {
+      "key": [
+        "fluent-bit-system",
+        "src/flb_task.c",
+        "flb_task_queue_create",
+        1
+      ],
+      "fields": [
+        "hypothesis_context"
+      ]
+    },
+    {
+      "key": [
+        "fluent-bit-system",
+        "src/flb_task.c",
+        "flb_task_queue_destroy",
+        1
+      ],
+      "fields": [
+        "hypothesis_context"
+      ]
+    },
+    {
+      "key": [
+        "fluent-bit-system",
+        "src/flb_task.c",
+        "flb_task_retry_clean",
+        1
+      ],
+      "fields": [
+        "hypothesis_context"
+      ]
+    },
+    {
+      "key": [
+        "fluent-bit-system",
+        "src/flb_task.c",
+        "flb_task_retry_count",
+        1
+      ],
+      "fields": [
+        "hypothesis_context"
+      ]
+    },
+    {
+      "key": [
+        "fluent-bit-system",
+        "src/flb_task.c",
+        "flb_task_retry_create",
+        1
+      ],
+      "fields": [
+        "hypothesis_context"
+      ]
+    },
+    {
+      "key": [
+        "fluent-bit-system",
+        "src/flb_task.c",
+        "flb_task_retry_destroy",
+        1
+      ],
+      "fields": [
+        "hypothesis_context"
+      ]
+    },
+    {
+      "key": [
+        "fluent-bit-system",
+        "src/flb_task.c",
+        "flb_task_retry_reschedule",
+        1
+      ],
+      "fields": [
+        "hypothesis_context"
+      ]
+    },
+    {
+      "key": [
+        "fluent-bit-system",
+        "src/flb_task.c",
+        "flb_task_running_count",
+        1
+      ],
+      "fields": [
+        "hypothesis_context"
+      ]
+    },
+    {
+      "key": [
+        "fluent-bit-system",
+        "src/flb_task.c",
+        "flb_task_running_print",
+        1
+      ],
+      "fields": [
+        "hypothesis_context"
+      ]
+    },
+    {
+      "key": [
+        "fluent-bit-system",
+        "src/flb_task.c",
+        "map_free_task_id",
+        1
+      ],
+      "fields": [
+        "hypothesis_context"
+      ]
+    },
+    {
+      "key": [
+        "fluent-bit-system",
+        "src/flb_task.c",
+        "map_get_task_id",
+        1
+      ],
+      "fields": [
+        "hypothesis_context"
+      ]
+    },
+    {
+      "key": [
+        "fluent-bit-system",
+        "src/flb_task.c",
+        "map_set_task_id",
+        1
+      ],
+      "fields": [
+        "hypothesis_context"
+      ]
+    },
+    {
+      "key": [
+        "fluent-bit-system",
+        "src/flb_task.c",
+        "record_unmatched_route_drop_metrics",
+        1
+      ],
+      "fields": [
+        "hypothesis_context"
+      ]
+    },
+    {
+      "key": [
+        "fluent-bit-system",
+        "src/flb_task.c",
+        "task_alloc",
+        1
+      ],
+      "fields": [
+        "hypothesis_context"
+      ]
+    },
+    {
+      "key": [
+        "fluent-bit-system",
+        "src/flb_task.c",
+        "task_collect_output_references",
+        1
+      ],
+      "fields": [
+        "hypothesis_context"
+      ]
+    },
+    {
+      "key": [
+        "fluent-bit-system",
+        "src/flb_engine.c",
+        "adaptive_flush_clamp",
+        0
+      ],
+      "fields": [
+        "hypothesis_context"
+      ]
+    },
+    {
+      "key": [
+        "fluent-bit-system",
+        "src/flb_engine.c",
+        "calculate_chunk_capacity_percent",
+        0
+      ],
+      "fields": [
+        "hypothesis_context"
+      ]
+    },
+    {
+      "key": [
+        "fluent-bit-system",
+        "src/flb_engine.c",
+        "cb_engine_sched_timer",
+        0
+      ],
+      "fields": [
+        "hypothesis_context"
+      ]
+    },
+    {
+      "key": [
+        "fluent-bit-system",
+        "src/flb_engine.c",
+        "engine_has_fluentbit_logs_input",
+        0
+      ],
+      "fields": [
+        "hypothesis_context"
+      ]
+    },
+    {
+      "key": [
+        "fluent-bit-system",
+        "src/flb_engine.c",
+        "flb_engine_adaptive_flush_init",
+        0
+      ],
+      "fields": [
+        "hypothesis_context"
+      ]
+    },
+    {
+      "key": [
+        "fluent-bit-system",
+        "src/flb_engine.c",
+        "flb_engine_adaptive_flush_interval",
+        0
+      ],
+      "fields": [
+        "hypothesis_context"
+      ]
+    },
+    {
+      "key": [
+        "fluent-bit-system",
+        "src/flb_engine.c",
+        "flb_engine_adaptive_flush_target_level",
+        0
+      ],
+      "fields": [
+        "hypothesis_context"
+      ]
+    },
+    {
+      "key": [
+        "fluent-bit-system",
+        "src/flb_engine.c",
+        "flb_engine_adaptive_flush_update",
+        0
+      ],
+      "fields": [
+        "hypothesis_context"
+      ]
+    },
+    {
+      "key": [
+        "fluent-bit-system",
+        "src/flb_engine.c",
+        "flb_engine_destroy_tasks",
+        0
+      ],
+      "fields": [
+        "hypothesis_context"
+      ]
+    },
+    {
+      "key": [
+        "fluent-bit-system",
+        "src/flb_engine.c",
+        "flb_engine_drain_ring_buffer_signal_channel",
+        0
+      ],
+      "fields": [
+        "hypothesis_context"
+      ]
+    },
+    {
+      "key": [
+        "fluent-bit-system",
+        "src/flb_engine.c",
+        "flb_engine_evl_get",
+        0
+      ],
+      "fields": [
+        "hypothesis_context"
+      ]
+    },
+    {
+      "key": [
+        "fluent-bit-system",
+        "src/flb_engine.c",
+        "flb_engine_evl_init",
+        0
+      ],
+      "fields": [
+        "hypothesis_context"
+      ]
+    },
+    {
+      "key": [
+        "fluent-bit-system",
+        "src/flb_engine.c",
+        "flb_engine_evl_init_private",
+        0
+      ],
+      "fields": [
+        "hypothesis_context"
+      ]
+    },
+    {
+      "key": [
+        "fluent-bit-system",
+        "src/flb_engine.c",
+        "flb_engine_evl_set",
+        0
+      ],
+      "fields": [
+        "hypothesis_context"
+      ]
+    },
+    {
+      "key": [
+        "fluent-bit-system",
+        "src/flb_engine.c",
+        "flb_engine_exit",
+        0
+      ],
+      "fields": [
+        "hypothesis_context"
+      ]
+    },
+    {
+      "key": [
+        "fluent-bit-system",
+        "src/flb_engine.c",
+        "flb_engine_exit_status",
+        0
+      ],
+      "fields": [
+        "hypothesis_context"
+      ]
+    },
+    {
+      "key": [
+        "fluent-bit-system",
+        "src/flb_engine.c",
+        "flb_engine_failed",
+        0
+      ],
+      "fields": [
+        "hypothesis_context"
+      ]
+    },
+    {
+      "key": [
+        "fluent-bit-system",
+        "src/flb_engine.c",
+        "flb_engine_flush",
+        0
+      ],
+      "fields": [
+        "hypothesis_context"
+      ]
+    },
+    {
+      "key": [
+        "fluent-bit-system",
+        "src/flb_engine.c",
+        "flb_engine_flush_timer_reset",
+        0
+      ],
+      "fields": [
+        "hypothesis_context"
+      ]
+    },
+    {
+      "key": [
+        "fluent-bit-system",
+        "src/flb_engine.c",
+        "flb_engine_get_chunk_backpressure_percent",
+        0
+      ],
+      "fields": [
+        "hypothesis_context"
+      ]
+    },
+    {
+      "key": [
+        "fluent-bit-system",
+        "src/flb_engine.c",
+        "flb_engine_handle_event",
+        0
+      ],
+      "fields": [
+        "hypothesis_context"
+      ]
+    },
+    {
+      "key": [
+        "fluent-bit-system",
+        "src/flb_engine.c",
+        "flb_engine_log_start",
+        0
+      ],
+      "fields": [
+        "hypothesis_context"
+      ]
+    },
+    {
+      "key": [
+        "fluent-bit-system",
+        "src/flb_engine.c",
+        "flb_engine_manager",
+        0
+      ],
+      "fields": [
+        "hypothesis_context"
+      ]
+    },
+    {
+      "key": [
+        "fluent-bit-system",
+        "src/flb_engine.c",
+        "flb_engine_reschedule_retries",
+        0
+      ],
+      "fields": [
+        "hypothesis_context"
+      ]
+    },
+    {
+      "key": [
+        "fluent-bit-system",
+        "src/flb_engine.c",
+        "flb_engine_shutdown",
+        0
+      ],
+      "fields": [
+        "hypothesis_context"
+      ]
+    },
+    {
+      "key": [
+        "fluent-bit-system",
+        "src/flb_engine.c",
+        "flb_engine_start",
+        0
+      ],
+      "fields": [
+        "hypothesis_context"
+      ]
+    },
+    {
+      "key": [
+        "fluent-bit-system",
+        "src/flb_engine.c",
+        "flb_engine_started",
+        0
+      ],
+      "fields": [
+        "hypothesis_context"
+      ]
+    },
+    {
+      "key": [
+        "fluent-bit-system",
+        "src/flb_engine.c",
+        "flb_engine_stop_ingestion",
+        0
+      ],
+      "fields": [
+        "hypothesis_context"
+      ]
+    },
+    {
+      "key": [
+        "fluent-bit-system",
+        "src/flb_engine.c",
+        "handle_dlq_if_available",
+        0
+      ],
+      "fields": [
+        "custody_null_premises",
+        "hypothesis_context"
+      ]
+    },
+    {
+      "key": [
+        "fluent-bit-system",
+        "src/flb_engine.c",
+        "handle_input_event",
+        0
+      ],
+      "fields": [
+        "hypothesis_context"
+      ]
+    },
+    {
+      "key": [
+        "fluent-bit-system",
+        "src/flb_engine.c",
+        "handle_output_event",
+        0
+      ],
+      "fields": [
+        "custody_null_premises",
+        "hypothesis_context"
+      ]
+    },
+    {
+      "key": [
+        "fluent-bit-system",
+        "src/flb_engine.c",
+        "handle_output_events",
+        0
+      ],
+      "fields": [
+        "hypothesis_context"
+      ]
+    },
+    {
+      "key": [
+        "fluent-bit-system",
+        "src/flb_engine.c",
+        "adaptive_flush_clamp",
+        1
+      ],
+      "fields": [
+        "hypothesis_context"
+      ]
+    },
+    {
+      "key": [
+        "fluent-bit-system",
+        "src/flb_engine.c",
+        "calculate_chunk_capacity_percent",
+        1
+      ],
+      "fields": [
+        "hypothesis_context"
+      ]
+    },
+    {
+      "key": [
+        "fluent-bit-system",
+        "src/flb_engine.c",
+        "cb_engine_sched_timer",
+        1
+      ],
+      "fields": [
+        "hypothesis_context"
+      ]
+    },
+    {
+      "key": [
+        "fluent-bit-system",
+        "src/flb_engine.c",
+        "engine_has_fluentbit_logs_input",
+        1
+      ],
+      "fields": [
+        "hypothesis_context"
+      ]
+    },
+    {
+      "key": [
+        "fluent-bit-system",
+        "src/flb_engine.c",
+        "flb_engine_adaptive_flush_init",
+        1
+      ],
+      "fields": [
+        "hypothesis_context"
+      ]
+    },
+    {
+      "key": [
+        "fluent-bit-system",
+        "src/flb_engine.c",
+        "flb_engine_adaptive_flush_interval",
+        1
+      ],
+      "fields": [
+        "hypothesis_context"
+      ]
+    },
+    {
+      "key": [
+        "fluent-bit-system",
+        "src/flb_engine.c",
+        "flb_engine_adaptive_flush_target_level",
+        1
+      ],
+      "fields": [
+        "hypothesis_context"
+      ]
+    },
+    {
+      "key": [
+        "fluent-bit-system",
+        "src/flb_engine.c",
+        "flb_engine_adaptive_flush_update",
+        1
+      ],
+      "fields": [
+        "hypothesis_context"
+      ]
+    },
+    {
+      "key": [
+        "fluent-bit-system",
+        "src/flb_engine.c",
+        "flb_engine_destroy_tasks",
+        1
+      ],
+      "fields": [
+        "hypothesis_context"
+      ]
+    },
+    {
+      "key": [
+        "fluent-bit-system",
+        "src/flb_engine.c",
+        "flb_engine_drain_ring_buffer_signal_channel",
+        1
+      ],
+      "fields": [
+        "hypothesis_context"
+      ]
+    },
+    {
+      "key": [
+        "fluent-bit-system",
+        "src/flb_engine.c",
+        "flb_engine_evl_get",
+        1
+      ],
+      "fields": [
+        "hypothesis_context"
+      ]
+    },
+    {
+      "key": [
+        "fluent-bit-system",
+        "src/flb_engine.c",
+        "flb_engine_evl_init",
+        1
+      ],
+      "fields": [
+        "hypothesis_context"
+      ]
+    },
+    {
+      "key": [
+        "fluent-bit-system",
+        "src/flb_engine.c",
+        "flb_engine_evl_init_private",
+        1
+      ],
+      "fields": [
+        "hypothesis_context"
+      ]
+    },
+    {
+      "key": [
+        "fluent-bit-system",
+        "src/flb_engine.c",
+        "flb_engine_evl_set",
+        1
+      ],
+      "fields": [
+        "hypothesis_context"
+      ]
+    },
+    {
+      "key": [
+        "fluent-bit-system",
+        "src/flb_engine.c",
+        "flb_engine_exit",
+        1
+      ],
+      "fields": [
+        "hypothesis_context"
+      ]
+    },
+    {
+      "key": [
+        "fluent-bit-system",
+        "src/flb_engine.c",
+        "flb_engine_exit_status",
+        1
+      ],
+      "fields": [
+        "hypothesis_context"
+      ]
+    },
+    {
+      "key": [
+        "fluent-bit-system",
+        "src/flb_engine.c",
+        "flb_engine_failed",
+        1
+      ],
+      "fields": [
+        "hypothesis_context"
+      ]
+    },
+    {
+      "key": [
+        "fluent-bit-system",
+        "src/flb_engine.c",
+        "flb_engine_flush",
+        1
+      ],
+      "fields": [
+        "hypothesis_context"
+      ]
+    },
+    {
+      "key": [
+        "fluent-bit-system",
+        "src/flb_engine.c",
+        "flb_engine_flush_timer_reset",
+        1
+      ],
+      "fields": [
+        "hypothesis_context"
+      ]
+    },
+    {
+      "key": [
+        "fluent-bit-system",
+        "src/flb_engine.c",
+        "flb_engine_get_chunk_backpressure_percent",
+        1
+      ],
+      "fields": [
+        "hypothesis_context"
+      ]
+    },
+    {
+      "key": [
+        "fluent-bit-system",
+        "src/flb_engine.c",
+        "flb_engine_handle_event",
+        1
+      ],
+      "fields": [
+        "hypothesis_context"
+      ]
+    },
+    {
+      "key": [
+        "fluent-bit-system",
+        "src/flb_engine.c",
+        "flb_engine_log_start",
+        1
+      ],
+      "fields": [
+        "hypothesis_context"
+      ]
+    },
+    {
+      "key": [
+        "fluent-bit-system",
+        "src/flb_engine.c",
+        "flb_engine_manager",
+        1
+      ],
+      "fields": [
+        "hypothesis_context"
+      ]
+    },
+    {
+      "key": [
+        "fluent-bit-system",
+        "src/flb_engine.c",
+        "flb_engine_reschedule_retries",
+        1
+      ],
+      "fields": [
+        "hypothesis_context"
+      ]
+    },
+    {
+      "key": [
+        "fluent-bit-system",
+        "src/flb_engine.c",
+        "flb_engine_shutdown",
+        1
+      ],
+      "fields": [
+        "hypothesis_context"
+      ]
+    },
+    {
+      "key": [
+        "fluent-bit-system",
+        "src/flb_engine.c",
+        "flb_engine_start",
+        1
+      ],
+      "fields": [
+        "hypothesis_context"
+      ]
+    },
+    {
+      "key": [
+        "fluent-bit-system",
+        "src/flb_engine.c",
+        "flb_engine_started",
+        1
+      ],
+      "fields": [
+        "hypothesis_context"
+      ]
+    },
+    {
+      "key": [
+        "fluent-bit-system",
+        "src/flb_engine.c",
+        "flb_engine_stop_ingestion",
+        1
+      ],
+      "fields": [
+        "hypothesis_context"
+      ]
+    },
+    {
+      "key": [
+        "fluent-bit-system",
+        "src/flb_engine.c",
+        "handle_dlq_if_available",
+        1
+      ],
+      "fields": [
+        "custody_null_premises",
+        "hypothesis_context"
+      ]
+    },
+    {
+      "key": [
+        "fluent-bit-system",
+        "src/flb_engine.c",
+        "handle_input_event",
+        1
+      ],
+      "fields": [
+        "hypothesis_context"
+      ]
+    },
+    {
+      "key": [
+        "fluent-bit-system",
+        "src/flb_engine.c",
+        "handle_output_event",
+        1
+      ],
+      "fields": [
+        "custody_null_premises",
+        "hypothesis_context"
+      ]
+    },
+    {
+      "key": [
+        "fluent-bit-system",
+        "src/flb_engine.c",
+        "handle_output_events",
+        1
+      ],
+      "fields": [
+        "hypothesis_context"
+      ]
+    },
+    {
+      "key": [
+        "fluent-bit-system",
+        "src/flb_engine_dispatch.c",
+        "flb_engine_dispatch",
+        0
+      ],
+      "fields": [
+        "hypothesis_context"
+      ]
+    },
+    {
+      "key": [
+        "fluent-bit-system",
+        "src/flb_engine_dispatch.c",
+        "flb_engine_dispatch_retry",
+        0
+      ],
+      "fields": [
+        "hypothesis_context"
+      ]
+    },
+    {
+      "key": [
+        "fluent-bit-system",
+        "src/flb_engine_dispatch.c",
+        "record_retry_failure_metrics",
+        0
+      ],
+      "fields": [
+        "hypothesis_context"
+      ]
+    },
+    {
+      "key": [
+        "fluent-bit-system",
+        "src/flb_engine_dispatch.c",
+        "tasks_start",
+        0
+      ],
+      "fields": [
+        "hypothesis_context"
+      ]
+    },
+    {
+      "key": [
+        "fluent-bit-system",
+        "src/flb_engine_dispatch.c",
+        "test_run_formatter",
+        0
+      ],
+      "fields": [
+        "hypothesis_context"
+      ]
+    },
+    {
+      "key": [
+        "fluent-bit-system",
+        "src/flb_engine_dispatch.c",
+        "flb_engine_dispatch",
+        1
+      ],
+      "fields": [
+        "hypothesis_context"
+      ]
+    },
+    {
+      "key": [
+        "fluent-bit-system",
+        "src/flb_engine_dispatch.c",
+        "flb_engine_dispatch_retry",
+        1
+      ],
+      "fields": [
+        "hypothesis_context"
+      ]
+    },
+    {
+      "key": [
+        "fluent-bit-system",
+        "src/flb_engine_dispatch.c",
+        "record_retry_failure_metrics",
+        1
+      ],
+      "fields": [
+        "hypothesis_context"
+      ]
+    },
+    {
+      "key": [
+        "fluent-bit-system",
+        "src/flb_engine_dispatch.c",
+        "tasks_start",
+        1
+      ],
+      "fields": [
+        "hypothesis_context"
+      ]
+    },
+    {
+      "key": [
+        "fluent-bit-system",
+        "src/flb_engine_dispatch.c",
+        "test_run_formatter",
+        1
+      ],
+      "fields": [
+        "hypothesis_context"
+      ]
+    },
+    {
+      "key": [
+        "fluent-bit-system",
+        "src/flb_scheduler.c",
+        "backoff_full_jitter",
+        0
+      ],
+      "fields": [
+        "hypothesis_context"
+      ]
+    },
+    {
+      "key": [
+        "fluent-bit-system",
+        "src/flb_scheduler.c",
+        "consume_byte",
+        0
+      ],
+      "fields": [
+        "hypothesis_context"
+      ]
+    },
+    {
+      "key": [
+        "fluent-bit-system",
+        "src/flb_scheduler.c",
+        "event_fd_consume_byte",
+        0
+      ],
+      "fields": [
+        "hypothesis_context"
+      ]
+    },
+    {
+      "key": [
+        "fluent-bit-system",
+        "src/flb_scheduler.c",
+        "flb_sched_create",
+        0
+      ],
+      "fields": [
+        "hypothesis_context"
+      ]
+    },
+    {
+      "key": [
+        "fluent-bit-system",
+        "src/flb_scheduler.c",
+        "flb_sched_ctx_get",
+        0
+      ],
+      "fields": [
+        "hypothesis_context"
+      ]
+    },
+    {
+      "key": [
+        "fluent-bit-system",
+        "src/flb_scheduler.c",
+        "flb_sched_ctx_init",
+        0
+      ],
+      "fields": [
+        "hypothesis_context"
+      ]
+    },
+    {
+      "key": [
+        "fluent-bit-system",
+        "src/flb_scheduler.c",
+        "flb_sched_ctx_set",
+        0
+      ],
+      "fields": [
+        "hypothesis_context"
+      ]
+    },
+    {
+      "key": [
+        "fluent-bit-system",
+        "src/flb_scheduler.c",
+        "flb_sched_destroy",
+        0
+      ],
+      "fields": [
+        "hypothesis_context"
+      ]
+    },
+    {
+      "key": [
+        "fluent-bit-system",
+        "src/flb_scheduler.c",
+        "flb_sched_event_handler",
+        0
+      ],
+      "fields": [
+        "hypothesis_context"
+      ]
+    },
+    {
+      "key": [
+        "fluent-bit-system",
+        "src/flb_scheduler.c",
+        "flb_sched_request_create",
+        0
+      ],
+      "fields": [
+        "hypothesis_context"
+      ]
+    },
+    {
+      "key": [
+        "fluent-bit-system",
+        "src/flb_scheduler.c",
+        "flb_sched_request_destroy",
+        0
+      ],
+      "fields": [
+        "hypothesis_context"
+      ]
+    },
+    {
+      "key": [
+        "fluent-bit-system",
+        "src/flb_scheduler.c",
+        "flb_sched_request_invalidate",
+        0
+      ],
+      "fields": [
+        "hypothesis_context"
+      ]
+    },
+    {
+      "key": [
+        "fluent-bit-system",
+        "src/flb_scheduler.c",
+        "flb_sched_retry_now",
+        0
+      ],
+      "fields": [
+        "hypothesis_context"
+      ]
+    },
+    {
+      "key": [
+        "fluent-bit-system",
+        "src/flb_scheduler.c",
+        "flb_sched_timer_cb_create",
+        0
+      ],
+      "fields": [
+        "hypothesis_context"
+      ]
+    },
+    {
+      "key": [
+        "fluent-bit-system",
+        "src/flb_scheduler.c",
+        "flb_sched_timer_cb_destroy",
+        0
+      ],
+      "fields": [
+        "hypothesis_context"
+      ]
+    },
+    {
+      "key": [
+        "fluent-bit-system",
+        "src/flb_scheduler.c",
+        "flb_sched_timer_cb_disable",
+        0
+      ],
+      "fields": [
+        "hypothesis_context"
+      ]
+    },
+    {
+      "key": [
+        "fluent-bit-system",
+        "src/flb_scheduler.c",
+        "flb_sched_timer_cleanup",
+        0
+      ],
+      "fields": [
+        "hypothesis_context"
+      ]
+    },
+    {
+      "key": [
+        "fluent-bit-system",
+        "src/flb_scheduler.c",
+        "flb_sched_timer_coro_cb_create",
+        0
+      ],
+      "fields": [
+        "hypothesis_context"
+      ]
+    },
+    {
+      "key": [
+        "fluent-bit-system",
+        "src/flb_scheduler.c",
+        "flb_sched_timer_coro_cleanup",
+        0
+      ],
+      "fields": [
+        "hypothesis_context"
+      ]
+    },
+    {
+      "key": [
+        "fluent-bit-system",
+        "src/flb_scheduler.c",
+        "flb_sched_timer_coro_create",
+        0
+      ],
+      "fields": [
+        "hypothesis_context"
+      ]
+    },
+    {
+      "key": [
+        "fluent-bit-system",
+        "src/flb_scheduler.c",
+        "flb_sched_timer_coro_destroy",
+        0
+      ],
+      "fields": [
+        "hypothesis_context"
+      ]
+    },
+    {
+      "key": [
+        "fluent-bit-system",
+        "src/flb_scheduler.c",
+        "flb_sched_timer_coro_get",
+        0
+      ],
+      "fields": [
+        "hypothesis_context"
+      ]
+    },
+    {
+      "key": [
+        "fluent-bit-system",
+        "src/flb_scheduler.c",
+        "flb_sched_timer_create",
+        0
+      ],
+      "fields": [
+        "hypothesis_context"
+      ]
+    },
+    {
+      "key": [
+        "fluent-bit-system",
+        "src/flb_scheduler.c",
+        "flb_sched_timer_destroy",
+        0
+      ],
+      "fields": [
+        "hypothesis_context"
+      ]
+    },
+    {
+      "key": [
+        "fluent-bit-system",
+        "src/flb_scheduler.c",
+        "flb_sched_timer_invalidate",
+        0
+      ],
+      "fields": [
+        "hypothesis_context"
+      ]
+    },
+    {
+      "key": [
+        "fluent-bit-system",
+        "src/flb_scheduler.c",
+        "ipow",
+        0
+      ],
+      "fields": [
+        "hypothesis_context"
+      ]
+    },
+    {
+      "key": [
+        "fluent-bit-system",
+        "src/flb_scheduler.c",
+        "random_uniform",
+        0
+      ],
+      "fields": [
+        "hypothesis_context"
+      ]
+    },
+    {
+      "key": [
+        "fluent-bit-system",
+        "src/flb_scheduler.c",
+        "sched_timer_coro_get_by_id",
+        0
+      ],
+      "fields": [
+        "hypothesis_context"
+      ]
+    },
+    {
+      "key": [
+        "fluent-bit-system",
+        "src/flb_scheduler.c",
+        "sched_timer_coro_get_id",
+        0
+      ],
+      "fields": [
+        "hypothesis_context"
+      ]
+    },
+    {
+      "key": [
+        "fluent-bit-system",
+        "src/flb_scheduler.c",
+        "schedule_request_now",
+        0
+      ],
+      "fields": [
+        "hypothesis_context"
+      ]
+    },
+    {
+      "key": [
+        "fluent-bit-system",
+        "src/flb_scheduler.c",
+        "schedule_request_promote",
+        0
+      ],
+      "fields": [
+        "hypothesis_context"
+      ]
+    },
+    {
+      "key": [
+        "fluent-bit-system",
+        "src/flb_scheduler.c",
+        "schedule_request_wait",
+        0
+      ],
+      "fields": [
+        "hypothesis_context"
+      ]
+    },
+    {
+      "key": [
+        "fluent-bit-system",
+        "src/flb_scheduler.c",
+        "timer_cb_coro_trampoline",
+        0
+      ],
+      "fields": [
+        "hypothesis_context"
+      ]
+    },
+    {
+      "key": [
+        "fluent-bit-system",
+        "src/flb_scheduler.c",
+        "xmin",
+        0
+      ],
+      "fields": [
+        "hypothesis_context"
+      ]
+    },
+    {
+      "key": [
+        "fluent-bit-system",
+        "src/flb_scheduler.c",
+        "backoff_full_jitter",
+        1
+      ],
+      "fields": [
+        "hypothesis_context"
+      ]
+    },
+    {
+      "key": [
+        "fluent-bit-system",
+        "src/flb_scheduler.c",
+        "consume_byte",
+        1
+      ],
+      "fields": [
+        "hypothesis_context"
+      ]
+    },
+    {
+      "key": [
+        "fluent-bit-system",
+        "src/flb_scheduler.c",
+        "event_fd_consume_byte",
+        1
+      ],
+      "fields": [
+        "hypothesis_context"
+      ]
+    },
+    {
+      "key": [
+        "fluent-bit-system",
+        "src/flb_scheduler.c",
+        "flb_sched_create",
+        1
+      ],
+      "fields": [
+        "hypothesis_context"
+      ]
+    },
+    {
+      "key": [
+        "fluent-bit-system",
+        "src/flb_scheduler.c",
+        "flb_sched_ctx_get",
+        1
+      ],
+      "fields": [
+        "hypothesis_context"
+      ]
+    },
+    {
+      "key": [
+        "fluent-bit-system",
+        "src/flb_scheduler.c",
+        "flb_sched_ctx_init",
+        1
+      ],
+      "fields": [
+        "hypothesis_context"
+      ]
+    },
+    {
+      "key": [
+        "fluent-bit-system",
+        "src/flb_scheduler.c",
+        "flb_sched_ctx_set",
+        1
+      ],
+      "fields": [
+        "hypothesis_context"
+      ]
+    },
+    {
+      "key": [
+        "fluent-bit-system",
+        "src/flb_scheduler.c",
+        "flb_sched_destroy",
+        1
+      ],
+      "fields": [
+        "hypothesis_context"
+      ]
+    },
+    {
+      "key": [
+        "fluent-bit-system",
+        "src/flb_scheduler.c",
+        "flb_sched_event_handler",
+        1
+      ],
+      "fields": [
+        "hypothesis_context"
+      ]
+    },
+    {
+      "key": [
+        "fluent-bit-system",
+        "src/flb_scheduler.c",
+        "flb_sched_request_create",
+        1
+      ],
+      "fields": [
+        "hypothesis_context"
+      ]
+    },
+    {
+      "key": [
+        "fluent-bit-system",
+        "src/flb_scheduler.c",
+        "flb_sched_request_destroy",
+        1
+      ],
+      "fields": [
+        "hypothesis_context"
+      ]
+    },
+    {
+      "key": [
+        "fluent-bit-system",
+        "src/flb_scheduler.c",
+        "flb_sched_request_invalidate",
+        1
+      ],
+      "fields": [
+        "hypothesis_context"
+      ]
+    },
+    {
+      "key": [
+        "fluent-bit-system",
+        "src/flb_scheduler.c",
+        "flb_sched_retry_now",
+        1
+      ],
+      "fields": [
+        "hypothesis_context"
+      ]
+    },
+    {
+      "key": [
+        "fluent-bit-system",
+        "src/flb_scheduler.c",
+        "flb_sched_timer_cb_create",
+        1
+      ],
+      "fields": [
+        "hypothesis_context"
+      ]
+    },
+    {
+      "key": [
+        "fluent-bit-system",
+        "src/flb_scheduler.c",
+        "flb_sched_timer_cb_destroy",
+        1
+      ],
+      "fields": [
+        "hypothesis_context"
+      ]
+    },
+    {
+      "key": [
+        "fluent-bit-system",
+        "src/flb_scheduler.c",
+        "flb_sched_timer_cb_disable",
+        1
+      ],
+      "fields": [
+        "hypothesis_context"
+      ]
+    },
+    {
+      "key": [
+        "fluent-bit-system",
+        "src/flb_scheduler.c",
+        "flb_sched_timer_cleanup",
+        1
+      ],
+      "fields": [
+        "hypothesis_context"
+      ]
+    },
+    {
+      "key": [
+        "fluent-bit-system",
+        "src/flb_scheduler.c",
+        "flb_sched_timer_coro_cb_create",
+        1
+      ],
+      "fields": [
+        "hypothesis_context"
+      ]
+    },
+    {
+      "key": [
+        "fluent-bit-system",
+        "src/flb_scheduler.c",
+        "flb_sched_timer_coro_cleanup",
+        1
+      ],
+      "fields": [
+        "hypothesis_context"
+      ]
+    },
+    {
+      "key": [
+        "fluent-bit-system",
+        "src/flb_scheduler.c",
+        "flb_sched_timer_coro_create",
+        1
+      ],
+      "fields": [
+        "hypothesis_context"
+      ]
+    },
+    {
+      "key": [
+        "fluent-bit-system",
+        "src/flb_scheduler.c",
+        "flb_sched_timer_coro_destroy",
+        1
+      ],
+      "fields": [
+        "hypothesis_context"
+      ]
+    },
+    {
+      "key": [
+        "fluent-bit-system",
+        "src/flb_scheduler.c",
+        "flb_sched_timer_coro_get",
+        1
+      ],
+      "fields": [
+        "hypothesis_context"
+      ]
+    },
+    {
+      "key": [
+        "fluent-bit-system",
+        "src/flb_scheduler.c",
+        "flb_sched_timer_create",
+        1
+      ],
+      "fields": [
+        "hypothesis_context"
+      ]
+    },
+    {
+      "key": [
+        "fluent-bit-system",
+        "src/flb_scheduler.c",
+        "flb_sched_timer_destroy",
+        1
+      ],
+      "fields": [
+        "hypothesis_context"
+      ]
+    },
+    {
+      "key": [
+        "fluent-bit-system",
+        "src/flb_scheduler.c",
+        "flb_sched_timer_invalidate",
+        1
+      ],
+      "fields": [
+        "hypothesis_context"
+      ]
+    },
+    {
+      "key": [
+        "fluent-bit-system",
+        "src/flb_scheduler.c",
+        "ipow",
+        1
+      ],
+      "fields": [
+        "hypothesis_context"
+      ]
+    },
+    {
+      "key": [
+        "fluent-bit-system",
+        "src/flb_scheduler.c",
+        "random_uniform",
+        1
+      ],
+      "fields": [
+        "hypothesis_context"
+      ]
+    },
+    {
+      "key": [
+        "fluent-bit-system",
+        "src/flb_scheduler.c",
+        "sched_timer_coro_get_by_id",
+        1
+      ],
+      "fields": [
+        "hypothesis_context"
+      ]
+    },
+    {
+      "key": [
+        "fluent-bit-system",
+        "src/flb_scheduler.c",
+        "sched_timer_coro_get_id",
+        1
+      ],
+      "fields": [
+        "hypothesis_context"
+      ]
+    },
+    {
+      "key": [
+        "fluent-bit-system",
+        "src/flb_scheduler.c",
+        "schedule_request_now",
+        1
+      ],
+      "fields": [
+        "hypothesis_context"
+      ]
+    },
+    {
+      "key": [
+        "fluent-bit-system",
+        "src/flb_scheduler.c",
+        "schedule_request_promote",
+        1
+      ],
+      "fields": [
+        "hypothesis_context"
+      ]
+    },
+    {
+      "key": [
+        "fluent-bit-system",
+        "src/flb_scheduler.c",
+        "schedule_request_wait",
+        1
+      ],
+      "fields": [
+        "hypothesis_context"
+      ]
+    },
+    {
+      "key": [
+        "fluent-bit-system",
+        "src/flb_scheduler.c",
+        "timer_cb_coro_trampoline",
+        1
+      ],
+      "fields": [
+        "hypothesis_context"
+      ]
+    },
+    {
+      "key": [
+        "fluent-bit-system",
+        "src/flb_scheduler.c",
+        "xmin",
+        1
+      ],
+      "fields": [
+        "hypothesis_context"
+      ]
+    },
+    {
+      "key": [
+        "fluent-bit-system",
+        "src/flb_output.c",
+        "check_protocol",
+        0
+      ],
+      "fields": [
+        "hypothesis_context"
+      ]
+    },
+    {
+      "key": [
+        "fluent-bit-system",
+        "src/flb_output.c",
+        "flb_output_check",
+        0
+      ],
+      "fields": [
+        "hypothesis_context"
+      ]
+    },
+    {
+      "key": [
+        "fluent-bit-system",
+        "src/flb_output.c",
+        "flb_output_coro_add",
+        0
+      ],
+      "fields": [
+        "hypothesis_context"
+      ]
+    },
+    {
+      "key": [
+        "fluent-bit-system",
+        "src/flb_output.c",
+        "flb_output_enable_multi_threading",
+        0
+      ],
+      "fields": [
+        "hypothesis_context"
+      ]
+    },
+    {
+      "key": [
+        "fluent-bit-system",
+        "src/flb_output.c",
+        "flb_output_exit",
+        0
+      ],
+      "fields": [
+        "hypothesis_context"
+      ]
+    },
+    {
+      "key": [
+        "fluent-bit-system",
+        "src/flb_output.c",
+        "flb_output_flush_finished",
+        0
+      ],
+      "fields": [
+        "hypothesis_context"
+      ]
+    },
+    {
+      "key": [
+        "fluent-bit-system",
+        "src/flb_output.c",
+        "flb_output_flush_id_get",
+        0
+      ],
+      "fields": [
+        "hypothesis_context"
+      ]
+    },
+    {
+      "key": [
+        "fluent-bit-system",
+        "src/flb_output.c",
+        "flb_output_flush_prepare_destroy",
+        0
+      ],
+      "fields": [
+        "hypothesis_context"
+      ]
+    },
+    {
+      "key": [
+        "fluent-bit-system",
+        "src/flb_output.c",
+        "flb_output_free_properties",
+        0
+      ],
+      "fields": [
+        "hypothesis_context"
+      ]
+    },
+    {
+      "key": [
+        "fluent-bit-system",
+        "src/flb_output.c",
+        "flb_output_get_cmt_instance",
+        0
+      ],
+      "fields": [
+        "hypothesis_context"
+      ]
+    },
+    {
+      "key": [
+        "fluent-bit-system",
+        "src/flb_output.c",
+        "flb_output_get_global_config_map",
+        0
+      ],
+      "fields": [
+        "hypothesis_context"
+      ]
+    },
+    {
+      "key": [
+        "fluent-bit-system",
+        "src/flb_output.c",
+        "flb_output_get_instance",
+        0
+      ],
+      "fields": [
+        "hypothesis_context"
+      ]
+    },
+    {
+      "key": [
+        "fluent-bit-system",
+        "src/flb_output.c",
+        "flb_output_get_property",
+        0
+      ],
+      "fields": [
+        "hypothesis_context"
+      ]
+    },
+    {
+      "key": [
+        "fluent-bit-system",
+        "src/flb_output.c",
+        "flb_output_http_server_property_check",
+        0
+      ],
+      "fields": [
+        "hypothesis_context"
+      ]
+    },
+    {
+      "key": [
+        "fluent-bit-system",
+        "src/flb_output.c",
+        "flb_output_init_all",
+        0
+      ],
+      "fields": [
+        "hypothesis_context"
+      ]
+    },
+    {
+      "key": [
+        "fluent-bit-system",
+        "src/flb_output.c",
+        "flb_output_instance_destroy",
+        0
+      ],
+      "fields": [
+        "hypothesis_context"
+      ]
+    },
+    {
+      "key": [
+        "fluent-bit-system",
+        "src/flb_output.c",
+        "flb_output_log_check",
+        0
+      ],
+      "fields": [
+        "hypothesis_context"
+      ]
+    },
+    {
+      "key": [
+        "fluent-bit-system",
+        "src/flb_output.c",
+        "flb_output_name",
+        0
+      ],
+      "fields": [
+        "hypothesis_context"
+      ]
+    },
+    {
+      "key": [
+        "fluent-bit-system",
+        "src/flb_output.c",
+        "flb_output_net_default",
+        0
+      ],
+      "fields": [
+        "hypothesis_context"
+      ]
+    },
+    {
+      "key": [
+        "fluent-bit-system",
+        "src/flb_output.c",
+        "flb_output_net_property_check",
+        0
+      ],
+      "fields": [
+        "hypothesis_context"
+      ]
+    },
+    {
+      "key": [
+        "fluent-bit-system",
+        "src/flb_output.c",
+        "flb_output_new",
+        0
+      ],
+      "fields": [
+        "custody_null_premises",
+        "hypothesis_context"
+      ]
+    },
+    {
+      "key": [
+        "fluent-bit-system",
+        "src/flb_output.c",
+        "flb_output_oauth2_property_check",
+        0
+      ],
+      "fields": [
+        "hypothesis_context"
+      ]
+    },
+    {
+      "key": [
+        "fluent-bit-system",
+        "src/flb_output.c",
+        "flb_output_plugin_property_check",
+        0
+      ],
+      "fields": [
+        "hypothesis_context"
+      ]
+    },
+    {
+      "key": [
+        "fluent-bit-system",
+        "src/flb_output.c",
+        "flb_output_pre_run",
+        0
+      ],
+      "fields": [
+        "hypothesis_context"
+      ]
+    },
+    {
+      "key": [
+        "fluent-bit-system",
+        "src/flb_output.c",
+        "flb_output_prepare",
+        0
+      ],
+      "fields": [
+        "hypothesis_context"
+      ]
+    },
+    {
+      "key": [
+        "fluent-bit-system",
+        "src/flb_output.c",
+        "flb_output_proxy_tls_ca_check",
+        0
+      ],
+      "fields": [
+        "hypothesis_context"
+      ]
+    },
+    {
+      "key": [
+        "fluent-bit-system",
+        "src/flb_output.c",
+        "flb_output_set_context",
+        0
+      ],
+      "fields": [
+        "hypothesis_context"
+      ]
+    },
+    {
+      "key": [
+        "fluent-bit-system",
+        "src/flb_output.c",
+        "flb_output_set_http_debug_callbacks",
+        0
+      ],
+      "fields": [
+        "hypothesis_context"
+      ]
+    },
+    {
+      "key": [
+        "fluent-bit-system",
+        "src/flb_output.c",
+        "flb_output_set_property",
+        0
+      ],
+      "fields": [
+        "hypothesis_context"
+      ]
+    },
+    {
+      "key": [
+        "fluent-bit-system",
+        "src/flb_output.c",
+        "flb_output_task_flush",
+        0
+      ],
+      "fields": [
+        "hypothesis_context"
+      ]
+    },
+    {
+      "key": [
+        "fluent-bit-system",
+        "src/flb_output.c",
+        "flb_output_task_flush_error",
+        0
+      ],
+      "fields": [
+        "hypothesis_context"
+      ]
+    },
+    {
+      "key": [
+        "fluent-bit-system",
+        "src/flb_output.c",
+        "flb_output_task_queue_enqueue",
+        0
+      ],
+      "fields": [
+        "hypothesis_context"
+      ]
+    },
+    {
+      "key": [
+        "fluent-bit-system",
+        "src/flb_output.c",
+        "flb_output_task_queue_flush_one",
+        0
+      ],
+      "fields": [
+        "hypothesis_context"
+      ]
+    },
+    {
+      "key": [
+        "fluent-bit-system",
+        "src/flb_output.c",
+        "flb_output_task_singleplex_enqueue",
+        0
+      ],
+      "fields": [
+        "hypothesis_context"
+      ]
+    },
+    {
+      "key": [
+        "fluent-bit-system",
+        "src/flb_output.c",
+        "flb_output_task_singleplex_flush_next",
+        0
+      ],
+      "fields": [
+        "hypothesis_context"
+      ]
+    },
+    {
+      "key": [
+        "fluent-bit-system",
+        "src/flb_output.c",
+        "flb_output_upstream_ha_set",
+        0
+      ],
+      "fields": [
+        "hypothesis_context"
+      ]
+    },
+    {
+      "key": [
+        "fluent-bit-system",
+        "src/flb_output.c",
+        "flb_output_upstream_set",
+        0
+      ],
+      "fields": [
+        "hypothesis_context"
+      ]
+    },
+    {
+      "key": [
+        "fluent-bit-system",
+        "src/flb_output.c",
+        "instance_id",
+        0
+      ],
+      "fields": [
+        "hypothesis_context"
+      ]
+    },
+    {
+      "key": [
+        "fluent-bit-system",
+        "src/flb_output.c",
+        "prop_key_check",
+        0
+      ],
+      "fields": [
+        "hypothesis_context"
+      ]
+    },
+    {
+      "key": [
+        "fluent-bit-system",
+        "src/flb_output.c",
+        "check_protocol",
+        1
+      ],
+      "fields": [
+        "hypothesis_context"
+      ]
+    },
+    {
+      "key": [
+        "fluent-bit-system",
+        "src/flb_output.c",
+        "flb_output_check",
+        1
+      ],
+      "fields": [
+        "hypothesis_context"
+      ]
+    },
+    {
+      "key": [
+        "fluent-bit-system",
+        "src/flb_output.c",
+        "flb_output_coro_add",
+        1
+      ],
+      "fields": [
+        "hypothesis_context"
+      ]
+    },
+    {
+      "key": [
+        "fluent-bit-system",
+        "src/flb_output.c",
+        "flb_output_enable_multi_threading",
+        1
+      ],
+      "fields": [
+        "hypothesis_context"
+      ]
+    },
+    {
+      "key": [
+        "fluent-bit-system",
+        "src/flb_output.c",
+        "flb_output_exit",
+        1
+      ],
+      "fields": [
+        "hypothesis_context"
+      ]
+    },
+    {
+      "key": [
+        "fluent-bit-system",
+        "src/flb_output.c",
+        "flb_output_flush_finished",
+        1
+      ],
+      "fields": [
+        "hypothesis_context"
+      ]
+    },
+    {
+      "key": [
+        "fluent-bit-system",
+        "src/flb_output.c",
+        "flb_output_flush_id_get",
+        1
+      ],
+      "fields": [
+        "hypothesis_context"
+      ]
+    },
+    {
+      "key": [
+        "fluent-bit-system",
+        "src/flb_output.c",
+        "flb_output_flush_prepare_destroy",
+        1
+      ],
+      "fields": [
+        "hypothesis_context"
+      ]
+    },
+    {
+      "key": [
+        "fluent-bit-system",
+        "src/flb_output.c",
+        "flb_output_free_properties",
+        1
+      ],
+      "fields": [
+        "hypothesis_context"
+      ]
+    },
+    {
+      "key": [
+        "fluent-bit-system",
+        "src/flb_output.c",
+        "flb_output_get_cmt_instance",
+        1
+      ],
+      "fields": [
+        "hypothesis_context"
+      ]
+    },
+    {
+      "key": [
+        "fluent-bit-system",
+        "src/flb_output.c",
+        "flb_output_get_global_config_map",
+        1
+      ],
+      "fields": [
+        "hypothesis_context"
+      ]
+    },
+    {
+      "key": [
+        "fluent-bit-system",
+        "src/flb_output.c",
+        "flb_output_get_instance",
+        1
+      ],
+      "fields": [
+        "hypothesis_context"
+      ]
+    },
+    {
+      "key": [
+        "fluent-bit-system",
+        "src/flb_output.c",
+        "flb_output_get_property",
+        1
+      ],
+      "fields": [
+        "hypothesis_context"
+      ]
+    },
+    {
+      "key": [
+        "fluent-bit-system",
+        "src/flb_output.c",
+        "flb_output_http_server_property_check",
+        1
+      ],
+      "fields": [
+        "hypothesis_context"
+      ]
+    },
+    {
+      "key": [
+        "fluent-bit-system",
+        "src/flb_output.c",
+        "flb_output_init_all",
+        1
+      ],
+      "fields": [
+        "hypothesis_context"
+      ]
+    },
+    {
+      "key": [
+        "fluent-bit-system",
+        "src/flb_output.c",
+        "flb_output_instance_destroy",
+        1
+      ],
+      "fields": [
+        "hypothesis_context"
+      ]
+    },
+    {
+      "key": [
+        "fluent-bit-system",
+        "src/flb_output.c",
+        "flb_output_log_check",
+        1
+      ],
+      "fields": [
+        "hypothesis_context"
+      ]
+    },
+    {
+      "key": [
+        "fluent-bit-system",
+        "src/flb_output.c",
+        "flb_output_name",
+        1
+      ],
+      "fields": [
+        "hypothesis_context"
+      ]
+    },
+    {
+      "key": [
+        "fluent-bit-system",
+        "src/flb_output.c",
+        "flb_output_net_default",
+        1
+      ],
+      "fields": [
+        "hypothesis_context"
+      ]
+    },
+    {
+      "key": [
+        "fluent-bit-system",
+        "src/flb_output.c",
+        "flb_output_net_property_check",
+        1
+      ],
+      "fields": [
+        "hypothesis_context"
+      ]
+    },
+    {
+      "key": [
+        "fluent-bit-system",
+        "src/flb_output.c",
+        "flb_output_new",
+        1
+      ],
+      "fields": [
+        "custody_null_premises",
+        "hypothesis_context"
+      ]
+    },
+    {
+      "key": [
+        "fluent-bit-system",
+        "src/flb_output.c",
+        "flb_output_oauth2_property_check",
+        1
+      ],
+      "fields": [
+        "hypothesis_context"
+      ]
+    },
+    {
+      "key": [
+        "fluent-bit-system",
+        "src/flb_output.c",
+        "flb_output_plugin_property_check",
+        1
+      ],
+      "fields": [
+        "hypothesis_context"
+      ]
+    },
+    {
+      "key": [
+        "fluent-bit-system",
+        "src/flb_output.c",
+        "flb_output_pre_run",
+        1
+      ],
+      "fields": [
+        "hypothesis_context"
+      ]
+    },
+    {
+      "key": [
+        "fluent-bit-system",
+        "src/flb_output.c",
+        "flb_output_prepare",
+        1
+      ],
+      "fields": [
+        "hypothesis_context"
+      ]
+    },
+    {
+      "key": [
+        "fluent-bit-system",
+        "src/flb_output.c",
+        "flb_output_proxy_tls_ca_check",
+        1
+      ],
+      "fields": [
+        "hypothesis_context"
+      ]
+    },
+    {
+      "key": [
+        "fluent-bit-system",
+        "src/flb_output.c",
+        "flb_output_set_context",
+        1
+      ],
+      "fields": [
+        "hypothesis_context"
+      ]
+    },
+    {
+      "key": [
+        "fluent-bit-system",
+        "src/flb_output.c",
+        "flb_output_set_http_debug_callbacks",
+        1
+      ],
+      "fields": [
+        "hypothesis_context"
+      ]
+    },
+    {
+      "key": [
+        "fluent-bit-system",
+        "src/flb_output.c",
+        "flb_output_set_property",
+        1
+      ],
+      "fields": [
+        "hypothesis_context"
+      ]
+    },
+    {
+      "key": [
+        "fluent-bit-system",
+        "src/flb_output.c",
+        "flb_output_task_flush",
+        1
+      ],
+      "fields": [
+        "hypothesis_context"
+      ]
+    },
+    {
+      "key": [
+        "fluent-bit-system",
+        "src/flb_output.c",
+        "flb_output_task_flush_error",
+        1
+      ],
+      "fields": [
+        "hypothesis_context"
+      ]
+    },
+    {
+      "key": [
+        "fluent-bit-system",
+        "src/flb_output.c",
+        "flb_output_task_queue_enqueue",
+        1
+      ],
+      "fields": [
+        "hypothesis_context"
+      ]
+    },
+    {
+      "key": [
+        "fluent-bit-system",
+        "src/flb_output.c",
+        "flb_output_task_queue_flush_one",
+        1
+      ],
+      "fields": [
+        "hypothesis_context"
+      ]
+    },
+    {
+      "key": [
+        "fluent-bit-system",
+        "src/flb_output.c",
+        "flb_output_task_singleplex_enqueue",
+        1
+      ],
+      "fields": [
+        "hypothesis_context"
+      ]
+    },
+    {
+      "key": [
+        "fluent-bit-system",
+        "src/flb_output.c",
+        "flb_output_task_singleplex_flush_next",
+        1
+      ],
+      "fields": [
+        "hypothesis_context"
+      ]
+    },
+    {
+      "key": [
+        "fluent-bit-system",
+        "src/flb_output.c",
+        "flb_output_upstream_ha_set",
+        1
+      ],
+      "fields": [
+        "hypothesis_context"
+      ]
+    },
+    {
+      "key": [
+        "fluent-bit-system",
+        "src/flb_output.c",
+        "flb_output_upstream_set",
+        1
+      ],
+      "fields": [
+        "hypothesis_context"
+      ]
+    },
+    {
+      "key": [
+        "fluent-bit-system",
+        "src/flb_output.c",
+        "instance_id",
+        1
+      ],
+      "fields": [
+        "hypothesis_context"
+      ]
+    },
+    {
+      "key": [
+        "fluent-bit-system",
+        "src/flb_output.c",
+        "prop_key_check",
+        1
+      ],
+      "fields": [
+        "hypothesis_context"
+      ]
+    }
+  ],
+  "null_property_dicts_identical": true,
+  "static_outer_before": {
+    "combined": {
+      "Pending": 0,
+      "Safe": 65,
+      "Unknown": 385,
+      "Unsafe": 4
+    },
+    "custody": {
+      "Pending": 0,
+      "Safe": 99,
+      "Unknown": 345,
+      "Unsafe": 4
+    },
+    "null": {
+      "Pending": 0,
+      "Safe": 211,
+      "Unknown": 243,
+      "Unsafe": 0
+    }
+  },
+  "static_outer_after": {
+    "combined": {
+      "Pending": 0,
+      "Safe": 65,
+      "Unknown": 385,
+      "Unsafe": 4
+    },
+    "custody": {
+      "Pending": 0,
+      "Safe": 99,
+      "Unknown": 345,
+      "Unsafe": 4
+    },
+    "null": {
+      "Pending": 0,
+      "Safe": 211,
+      "Unknown": 243,
+      "Unsafe": 0
+    }
+  },
+  "runtime_scenarios": {
+    "all": {
+      "before": {
+        "custody": {
+          "Pending": 0,
+          "Safe": 99,
+          "Unknown": 345,
+          "Unsafe": 4
+        },
+        "null": {
+          "Pending": 0,
+          "Safe": 209,
+          "Unknown": 245,
+          "Unsafe": 0
+        },
+        "combined": {
+          "Pending": 0,
+          "Safe": 63,
+          "Unknown": 387,
+          "Unsafe": 4
+        }
+      },
+      "after": {
+        "custody": {
+          "Pending": 0,
+          "Safe": 99,
+          "Unknown": 345,
+          "Unsafe": 4
+        },
+        "null": {
+          "Pending": 0,
+          "Safe": 209,
+          "Unknown": 245,
+          "Unsafe": 0
+        },
+        "combined": {
+          "Pending": 0,
+          "Safe": 63,
+          "Unknown": 387,
+          "Unsafe": 4
+        }
+      },
+      "added_moves": [],
+      "removed_moves": [],
+      "changed_moves": []
+    },
+    "flb_external_plugin": {
+      "before": {
+        "custody": {
+          "Pending": 0,
+          "Safe": 99,
+          "Unknown": 345,
+          "Unsafe": 4
+        },
+        "null": {
+          "Pending": 2,
+          "Safe": 209,
+          "Unknown": 243,
+          "Unsafe": 0
+        },
+        "combined": {
+          "Pending": 2,
+          "Safe": 63,
+          "Unknown": 385,
+          "Unsafe": 4
+        }
+      },
+      "after": {
+        "custody": {
+          "Pending": 0,
+          "Safe": 99,
+          "Unknown": 345,
+          "Unsafe": 4
+        },
+        "null": {
+          "Pending": 2,
+          "Safe": 209,
+          "Unknown": 243,
+          "Unsafe": 0
+        },
+        "combined": {
+          "Pending": 2,
+          "Safe": 63,
+          "Unknown": 385,
+          "Unsafe": 4
+        }
+      },
+      "added_moves": [],
+      "removed_moves": [],
+      "changed_moves": []
+    },
+    "rk_plugin_library": {
+      "before": {
+        "custody": {
+          "Pending": 0,
+          "Safe": 99,
+          "Unknown": 345,
+          "Unsafe": 4
+        },
+        "null": {
+          "Pending": 0,
+          "Safe": 209,
+          "Unknown": 245,
+          "Unsafe": 0
+        },
+        "combined": {
+          "Pending": 0,
+          "Safe": 63,
+          "Unknown": 387,
+          "Unsafe": 4
+        }
+      },
+      "after": {
+        "custody": {
+          "Pending": 0,
+          "Safe": 99,
+          "Unknown": 345,
+          "Unsafe": 4
+        },
+        "null": {
+          "Pending": 0,
+          "Safe": 209,
+          "Unknown": 245,
+          "Unsafe": 0
+        },
+        "combined": {
+          "Pending": 0,
+          "Safe": 63,
+          "Unknown": 387,
+          "Unsafe": 4
+        }
+      },
+      "added_moves": [],
+      "removed_moves": [],
+      "changed_moves": []
+    }
+  },
+  "other_outer_changes": {
+    "selection": {
+      "before": {
+        "contract_version": "qcore.outer.contract.v1",
+        "environment_sha256": "8bf6d7d0aa44e9e835cb33b2cf12e6d827462e275d9172e330d456f10dfc4b46",
+        "load_path": {
+          "path": "/home/cosmo/.codex/worktrees/w48-bottom-up-batch4/qcore-c/private/w48-bottom-up-batch4/inputs-base-final/contract/profiles/fluent-bit/../../../providers/contract-load-path.json",
+          "sha256": "9f56e0b96e9891533841a2778e193859204f79a736fa48d37bb6468db50a1cdd"
+        },
+        "modules": [
+          {
+            "crate": "qcore-provider-librdkafka",
+            "module": "librdkafka/outer.qv",
+            "sha256": "ca88ccbf79699b9fd1033a69b958ec1a116cb24c040f0829299c5e65e797704a"
+          },
+          {
+            "crate": "quirin-provider-fluent-bit",
+            "module": "fluent_bit/outer.qv",
+            "sha256": "282408a08e6fc19b6f87d3cde8d2c12d2ab0627b002b2f2e2a914bb8460c133d"
+          }
+        ],
+        "pins": {
+          "held": 0,
+          "in_force": 3,
+          "list_candidates": {
+            "held_loaders": [],
+            "inventories": [
+              {
+                "contract": {
+                  "candidates": [
+                    {
+                      "aliases": [
+                        "rd_kafka_s.rk_conf.interceptors.on_conf_set"
+                      ],
+                      "callback_member": "u.on_conf_set",
+                      "callback_signature": "typedef rd_kafka_conf_res_t(rd_kafka_interceptor_f_on_conf_set_t)( rd_kafka_conf_t *conf, const char *name, const char *val, char *errstr, size_t errstr_size, void *ic_opaque);",
+                      "custody": "all-pointer-arguments-borrowed-no-retention-or-global-custody-effects",
+                      "duplicates": "conflict-without-append",
+                      "element_record": "rd_kafka_interceptor_method_s",
+                      "lifecycle": "configuration",
+                      "list_member": "rd_kafka_conf_s.interceptors.on_conf_set",
+                      "registration_lifetime": "callback-code-and-opaque-valid-through-last-invocation",
+                      "review": "Every callback and its transitive calls preserve ownership of every argument and every object reachable from it: no release, retention, ownership transfer, or global custody change. Writes within documented borrowed output buffers are allowed. A callback that cannot meet this restriction is unsupported; no effect is inferred from its signature. Scalar resource handles, including sockfd, are borrowed: no close, release, duplication or transfer. Any local allocation or acquisition is balanced before return; no new resource is leaked or left retained. The registered callback code and ic_opaque context stay valid through their last possible invocation, including configuration/client destruction and copied on_new registrations.",
+                      "setter": "rd_kafka_conf_interceptor_add_on_conf_set",
+                      "successful_result": 0
+                    },
+                    {
+                      "aliases": [
+                        "rd_kafka_s.rk_conf.interceptors.on_conf_dup"
+                      ],
+                      "callback_member": "u.on_conf_dup",
+                      "callback_signature": "typedef rd_kafka_resp_err_t(rd_kafka_interceptor_f_on_conf_dup_t)( rd_kafka_conf_t *new_conf, const rd_kafka_conf_t *old_conf, size_t filter_cnt, const char **filter, void *ic_opaque);",
+                      "custody": "all-pointer-arguments-borrowed-no-retention-or-global-custody-effects",
+                      "duplicates": "conflict-without-append",
+                      "element_record": "rd_kafka_interceptor_method_s",
+                      "lifecycle": "configuration",
+                      "list_member": "rd_kafka_conf_s.interceptors.on_conf_dup",
+                      "registration_lifetime": "callback-code-and-opaque-valid-through-last-invocation",
+                      "review": "Every callback and its transitive calls preserve ownership of every argument and every object reachable from it: no release, retention, ownership transfer, or global custody change. Writes within documented borrowed output buffers are allowed. A callback that cannot meet this restriction is unsupported; no effect is inferred from its signature. Scalar resource handles, including sockfd, are borrowed: no close, release, duplication or transfer. Any local allocation or acquisition is balanced before return; no new resource is leaked or left retained. The registered callback code and ic_opaque context stay valid through their last possible invocation, including configuration/client destruction and copied on_new registrations.",
+                      "setter": "rd_kafka_conf_interceptor_add_on_conf_dup",
+                      "successful_result": 0
+                    },
+                    {
+                      "aliases": [
+                        "rd_kafka_s.rk_conf.interceptors.on_conf_destroy"
+                      ],
+                      "callback_member": "u.on_conf_destroy",
+                      "callback_signature": "typedef rd_kafka_resp_err_t(rd_kafka_interceptor_f_on_conf_destroy_t)( void *ic_opaque);",
+                      "custody": "all-pointer-arguments-borrowed-no-retention-or-global-custody-effects",
+                      "duplicates": "allowed",
+                      "element_record": "rd_kafka_interceptor_method_s",
+                      "lifecycle": "configuration",
+                      "list_member": "rd_kafka_conf_s.interceptors.on_conf_destroy",
+                      "registration_lifetime": "callback-code-and-opaque-valid-through-last-invocation",
+                      "review": "Every callback and its transitive calls preserve ownership of every argument and every object reachable from it: no release, retention, ownership transfer, or global custody change. Writes within documented borrowed output buffers are allowed. A callback that cannot meet this restriction is unsupported; no effect is inferred from its signature. Scalar resource handles, including sockfd, are borrowed: no close, release, duplication or transfer. Any local allocation or acquisition is balanced before return; no new resource is leaked or left retained. The registered callback code and ic_opaque context stay valid through their last possible invocation, including configuration/client destruction and copied on_new registrations.",
+                      "setter": "rd_kafka_conf_interceptor_add_on_conf_destroy",
+                      "successful_result": 0
+                    },
+                    {
+                      "aliases": [
+                        "rd_kafka_s.rk_conf.interceptors.on_new"
+                      ],
+                      "callback_member": "u.on_new",
+                      "callback_signature": "typedef rd_kafka_resp_err_t(rd_kafka_interceptor_f_on_new_t)( rd_kafka_t *rk, const rd_kafka_conf_t *conf, void *ic_opaque, char *errstr, size_t errstr_size);",
+                      "custody": "all-pointer-arguments-borrowed-no-retention-or-global-custody-effects",
+                      "duplicates": "conflict-without-append",
+                      "element_record": "rd_kafka_interceptor_method_s",
+                      "lifecycle": "configuration",
+                      "list_member": "rd_kafka_conf_s.interceptors.on_new",
+                      "registration_lifetime": "callback-code-and-opaque-valid-through-last-invocation",
+                      "review": "Every callback and its transitive calls preserve ownership of every argument and every object reachable from it: no release, retention, ownership transfer, or global custody change. Writes within documented borrowed output buffers are allowed. A callback that cannot meet this restriction is unsupported; no effect is inferred from its signature. Scalar resource handles, including sockfd, are borrowed: no close, release, duplication or transfer. Any local allocation or acquisition is balanced before return; no new resource is leaked or left retained. The registered callback code and ic_opaque context stay valid through their last possible invocation, including configuration/client destruction and copied on_new registrations.",
+                      "setter": "rd_kafka_conf_interceptor_add_on_new",
+                      "successful_result": 0
+                    },
+                    {
+                      "aliases": [
+                        "rd_kafka_s.rk_conf.interceptors.on_destroy"
+                      ],
+                      "callback_member": "u.on_destroy",
+                      "callback_signature": "typedef rd_kafka_resp_err_t( rd_kafka_interceptor_f_on_destroy_t)(rd_kafka_t *rk, void *ic_opaque);",
+                      "custody": "all-pointer-arguments-borrowed-no-retention-or-global-custody-effects",
+                      "duplicates": "conflict-without-append",
+                      "element_record": "rd_kafka_interceptor_method_s",
+                      "lifecycle": "on-new-before-initialized-non-share",
+                      "list_member": "rd_kafka_conf_s.interceptors.on_destroy",
+                      "registration_lifetime": "callback-code-and-opaque-valid-through-last-invocation",
+                      "review": "Every callback and its transitive calls preserve ownership of every argument and every object reachable from it: no release, retention, ownership transfer, or global custody change. Writes within documented borrowed output buffers are allowed. A callback that cannot meet this restriction is unsupported; no effect is inferred from its signature. Scalar resource handles, including sockfd, are borrowed: no close, release, duplication or transfer. Any local allocation or acquisition is balanced before return; no new resource is leaked or left retained. The registered callback code and ic_opaque context stay valid through their last possible invocation, including configuration/client destruction and copied on_new registrations.",
+                      "setter": "rd_kafka_interceptor_add_on_destroy",
+                      "successful_result": 0
+                    },
+                    {
+                      "aliases": [
+                        "rd_kafka_s.rk_conf.interceptors.on_send"
+                      ],
+                      "callback_member": "u.on_send",
+                      "callback_signature": "typedef rd_kafka_resp_err_t(rd_kafka_interceptor_f_on_send_t)( rd_kafka_t *rk, rd_kafka_message_t *rkmessage, void *ic_opaque);",
+                      "custody": "all-pointer-arguments-borrowed-no-retention-or-global-custody-effects",
+                      "duplicates": "conflict-without-append",
+                      "element_record": "rd_kafka_interceptor_method_s",
+                      "lifecycle": "on-new-before-initialized-non-share",
+                      "list_member": "rd_kafka_conf_s.interceptors.on_send",
+                      "registration_lifetime": "callback-code-and-opaque-valid-through-last-invocation",
+                      "review": "Every callback and its transitive calls preserve ownership of every argument and every object reachable from it: no release, retention, ownership transfer, or global custody change. Writes within documented borrowed output buffers are allowed. A callback that cannot meet this restriction is unsupported; no effect is inferred from its signature. Scalar resource handles, including sockfd, are borrowed: no close, release, duplication or transfer. Any local allocation or acquisition is balanced before return; no new resource is leaked or left retained. The registered callback code and ic_opaque context stay valid through their last possible invocation, including configuration/client destruction and copied on_new registrations.",
+                      "setter": "rd_kafka_interceptor_add_on_send",
+                      "successful_result": 0
+                    },
+                    {
+                      "aliases": [
+                        "rd_kafka_s.rk_conf.interceptors.on_acknowledgement"
+                      ],
+                      "callback_member": "u.on_acknowledgement",
+                      "callback_signature": "typedef rd_kafka_resp_err_t(rd_kafka_interceptor_f_on_acknowledgement_t)( rd_kafka_t *rk, rd_kafka_message_t *rkmessage, void *ic_opaque);",
+                      "custody": "all-pointer-arguments-borrowed-no-retention-or-global-custody-effects",
+                      "duplicates": "conflict-without-append",
+                      "element_record": "rd_kafka_interceptor_method_s",
+                      "lifecycle": "on-new-before-initialized-non-share",
+                      "list_member": "rd_kafka_conf_s.interceptors.on_acknowledgement",
+                      "registration_lifetime": "callback-code-and-opaque-valid-through-last-invocation",
+                      "review": "Every callback and its transitive calls preserve ownership of every argument and every object reachable from it: no release, retention, ownership transfer, or global custody change. Writes within documented borrowed output buffers are allowed. A callback that cannot meet this restriction is unsupported; no effect is inferred from its signature. Scalar resource handles, including sockfd, are borrowed: no close, release, duplication or transfer. Any local allocation or acquisition is balanced before return; no new resource is leaked or left retained. The registered callback code and ic_opaque context stay valid through their last possible invocation, including configuration/client destruction and copied on_new registrations.",
+                      "setter": "rd_kafka_interceptor_add_on_acknowledgement",
+                      "successful_result": 0
+                    },
+                    {
+                      "aliases": [
+                        "rd_kafka_s.rk_conf.interceptors.on_consume"
+                      ],
+                      "callback_member": "u.on_consume",
+                      "callback_signature": "typedef rd_kafka_resp_err_t(rd_kafka_interceptor_f_on_consume_t)( rd_kafka_t *rk, rd_kafka_message_t *rkmessage, void *ic_opaque);",
+                      "custody": "all-pointer-arguments-borrowed-no-retention-or-global-custody-effects",
+                      "duplicates": "conflict-without-append",
+                      "element_record": "rd_kafka_interceptor_method_s",
+                      "lifecycle": "on-new-before-initialized-non-share",
+                      "list_member": "rd_kafka_conf_s.interceptors.on_consume",
+                      "registration_lifetime": "callback-code-and-opaque-valid-through-last-invocation",
+                      "review": "Every callback and its transitive calls preserve ownership of every argument and every object reachable from it: no release, retention, ownership transfer, or global custody change. Writes within documented borrowed output buffers are allowed. A callback that cannot meet this restriction is unsupported; no effect is inferred from its signature. Scalar resource handles, including sockfd, are borrowed: no close, release, duplication or transfer. Any local allocation or acquisition is balanced before return; no new resource is leaked or left retained. The registered callback code and ic_opaque context stay valid through their last possible invocation, including configuration/client destruction and copied on_new registrations.",
+                      "setter": "rd_kafka_interceptor_add_on_consume",
+                      "successful_result": 0
+                    },
+                    {
+                      "aliases": [
+                        "rd_kafka_s.rk_conf.interceptors.on_commit"
+                      ],
+                      "callback_member": "u.on_commit",
+                      "callback_signature": "typedef rd_kafka_resp_err_t(rd_kafka_interceptor_f_on_commit_t)( rd_kafka_t *rk, const rd_kafka_topic_partition_list_t *offsets, rd_kafka_resp_err_t err, void *ic_opaque);",
+                      "custody": "all-pointer-arguments-borrowed-no-retention-or-global-custody-effects",
+                      "duplicates": "conflict-without-append",
+                      "element_record": "rd_kafka_interceptor_method_s",
+                      "lifecycle": "on-new-before-initialized-non-share",
+                      "list_member": "rd_kafka_conf_s.interceptors.on_commit",
+                      "registration_lifetime": "callback-code-and-opaque-valid-through-last-invocation",
+                      "review": "Every callback and its transitive calls preserve ownership of every argument and every object reachable from it: no release, retention, ownership transfer, or global custody change. Writes within documented borrowed output buffers are allowed. A callback that cannot meet this restriction is unsupported; no effect is inferred from its signature. Scalar resource handles, including sockfd, are borrowed: no close, release, duplication or transfer. Any local allocation or acquisition is balanced before return; no new resource is leaked or left retained. The registered callback code and ic_opaque context stay valid through their last possible invocation, including configuration/client destruction and copied on_new registrations.",
+                      "setter": "rd_kafka_interceptor_add_on_commit",
+                      "successful_result": 0
+                    },
+                    {
+                      "aliases": [
+                        "rd_kafka_s.rk_conf.interceptors.on_request_sent"
+                      ],
+                      "callback_member": "u.on_request_sent",
+                      "callback_signature": "typedef rd_kafka_resp_err_t(rd_kafka_interceptor_f_on_request_sent_t)( rd_kafka_t *rk, int sockfd, const char *brokername, int32_t brokerid, int16_t ApiKey, int16_t ApiVersion, int32_t CorrId, size_t size, void *ic_opaque);",
+                      "custody": "all-pointer-arguments-borrowed-no-retention-or-global-custody-effects",
+                      "duplicates": "conflict-without-append",
+                      "element_record": "rd_kafka_interceptor_method_s",
+                      "lifecycle": "on-new-before-initialized-non-share",
+                      "list_member": "rd_kafka_conf_s.interceptors.on_request_sent",
+                      "registration_lifetime": "callback-code-and-opaque-valid-through-last-invocation",
+                      "review": "Every callback and its transitive calls preserve ownership of every argument and every object reachable from it: no release, retention, ownership transfer, or global custody change. Writes within documented borrowed output buffers are allowed. A callback that cannot meet this restriction is unsupported; no effect is inferred from its signature. Scalar resource handles, including sockfd, are borrowed: no close, release, duplication or transfer. Any local allocation or acquisition is balanced before return; no new resource is leaked or left retained. The registered callback code and ic_opaque context stay valid through their last possible invocation, including configuration/client destruction and copied on_new registrations.",
+                      "setter": "rd_kafka_interceptor_add_on_request_sent",
+                      "successful_result": 0
+                    },
+                    {
+                      "aliases": [
+                        "rd_kafka_s.rk_conf.interceptors.on_response_received"
+                      ],
+                      "callback_member": "u.on_response_received",
+                      "callback_signature": "typedef rd_kafka_resp_err_t(rd_kafka_interceptor_f_on_response_received_t)( rd_kafka_t *rk, int sockfd, const char *brokername, int32_t brokerid, int16_t ApiKey, int16_t ApiVersion, int32_t CorrId, size_t size, int64_t rtt, rd_kafka_resp_err_t err, void *ic_opaque);",
+                      "custody": "all-pointer-arguments-borrowed-no-retention-or-global-custody-effects",
+                      "duplicates": "conflict-without-append",
+                      "element_record": "rd_kafka_interceptor_method_s",
+                      "lifecycle": "on-new-before-initialized-non-share",
+                      "list_member": "rd_kafka_conf_s.interceptors.on_response_received",
+                      "registration_lifetime": "callback-code-and-opaque-valid-through-last-invocation",
+                      "review": "Every callback and its transitive calls preserve ownership of every argument and every object reachable from it: no release, retention, ownership transfer, or global custody change. Writes within documented borrowed output buffers are allowed. A callback that cannot meet this restriction is unsupported; no effect is inferred from its signature. Scalar resource handles, including sockfd, are borrowed: no close, release, duplication or transfer. Any local allocation or acquisition is balanced before return; no new resource is leaked or left retained. The registered callback code and ic_opaque context stay valid through their last possible invocation, including configuration/client destruction and copied on_new registrations.",
+                      "setter": "rd_kafka_interceptor_add_on_response_received",
+                      "successful_result": 0
+                    },
+                    {
+                      "aliases": [
+                        "rd_kafka_s.rk_conf.interceptors.on_thread_start"
+                      ],
+                      "callback_member": "u.on_thread_start",
+                      "callback_signature": "typedef rd_kafka_resp_err_t(rd_kafka_interceptor_f_on_thread_start_t)( rd_kafka_t *rk, rd_kafka_thread_type_t thread_type, const char *thread_name, void *ic_opaque);",
+                      "custody": "all-pointer-arguments-borrowed-no-retention-or-global-custody-effects",
+                      "duplicates": "conflict-without-append",
+                      "element_record": "rd_kafka_interceptor_method_s",
+                      "lifecycle": "on-new-before-initialized-non-share",
+                      "list_member": "rd_kafka_conf_s.interceptors.on_thread_start",
+                      "registration_lifetime": "callback-code-and-opaque-valid-through-last-invocation",
+                      "review": "Every callback and its transitive calls preserve ownership of every argument and every object reachable from it: no release, retention, ownership transfer, or global custody change. Writes within documented borrowed output buffers are allowed. A callback that cannot meet this restriction is unsupported; no effect is inferred from its signature. Scalar resource handles, including sockfd, are borrowed: no close, release, duplication or transfer. Any local allocation or acquisition is balanced before return; no new resource is leaked or left retained. The registered callback code and ic_opaque context stay valid through their last possible invocation, including configuration/client destruction and copied on_new registrations.",
+                      "setter": "rd_kafka_interceptor_add_on_thread_start",
+                      "successful_result": 0
+                    },
+                    {
+                      "aliases": [
+                        "rd_kafka_s.rk_conf.interceptors.on_thread_exit"
+                      ],
+                      "callback_member": "u.on_thread_exit",
+                      "callback_signature": "typedef rd_kafka_resp_err_t(rd_kafka_interceptor_f_on_thread_exit_t)( rd_kafka_t *rk, rd_kafka_thread_type_t thread_type, const char *thread_name, void *ic_opaque);",
+                      "custody": "all-pointer-arguments-borrowed-no-retention-or-global-custody-effects",
+                      "duplicates": "conflict-without-append",
+                      "element_record": "rd_kafka_interceptor_method_s",
+                      "lifecycle": "on-new-before-initialized-non-share",
+                      "list_member": "rd_kafka_conf_s.interceptors.on_thread_exit",
+                      "registration_lifetime": "callback-code-and-opaque-valid-through-last-invocation",
+                      "review": "Every callback and its transitive calls preserve ownership of every argument and every object reachable from it: no release, retention, ownership transfer, or global custody change. Writes within documented borrowed output buffers are allowed. A callback that cannot meet this restriction is unsupported; no effect is inferred from its signature. Scalar resource handles, including sockfd, are borrowed: no close, release, duplication or transfer. Any local allocation or acquisition is balanced before return; no new resource is leaked or left retained. The registered callback code and ic_opaque context stay valid through their last possible invocation, including configuration/client destruction and copied on_new registrations.",
+                      "setter": "rd_kafka_interceptor_add_on_thread_exit",
+                      "successful_result": 0
+                    },
+                    {
+                      "aliases": [
+                        "rd_kafka_s.rk_conf.interceptors.on_broker_state_change"
+                      ],
+                      "callback_member": "u.on_broker_state_change",
+                      "callback_signature": "typedef rd_kafka_resp_err_t(rd_kafka_interceptor_f_on_broker_state_change_t)( rd_kafka_t *rk, int32_t broker_id, const char *secproto, const char *name, int port, const char *state, void *ic_opaque);",
+                      "custody": "all-pointer-arguments-borrowed-no-retention-or-global-custody-effects",
+                      "duplicates": "conflict-without-append",
+                      "element_record": "rd_kafka_interceptor_method_s",
+                      "lifecycle": "on-new-before-initialized-non-share",
+                      "list_member": "rd_kafka_conf_s.interceptors.on_broker_state_change",
+                      "registration_lifetime": "callback-code-and-opaque-valid-through-last-invocation",
+                      "review": "Every callback and its transitive calls preserve ownership of every argument and every object reachable from it: no release, retention, ownership transfer, or global custody change. Writes within documented borrowed output buffers are allowed. A callback that cannot meet this restriction is unsupported; no effect is inferred from its signature. Scalar resource handles, including sockfd, are borrowed: no close, release, duplication or transfer. Any local allocation or acquisition is balanced before return; no new resource is leaked or left retained. The registered callback code and ic_opaque context stay valid through their last possible invocation, including configuration/client destruction and copied on_new registrations.",
+                      "setter": "rd_kafka_interceptor_add_on_broker_state_change",
+                      "successful_result": 0
+                    }
+                  ],
+                  "kind": "outer-list-callback-candidates",
+                  "normalisation": "exact-source-bytes-sha256",
+                  "reviewed_identities": [
+                    {
+                      "reviewed_revision": "66910c10a4d7eafa810b84229cf2dcf7b0f26f97",
+                      "sources": {
+                        "lib/librdkafka-2.15.0/src/rdkafka.h": "33cca14d9fc87117100ce90bd84f2006b8ba521c788055db6af614d0f2f7ca2f",
+                        "lib/librdkafka-2.15.0/src/rdkafka_conf.h": "66b50a23015293089970cc5ace148ca62757d752607cb0533aaf26a8d8f64e27",
+                        "lib/librdkafka-2.15.0/src/rdkafka_interceptor.c": "f6bdee517cbc9d21a13cdc461daf23a02f2baeeb05fede6488f3651843111834",
+                        "lib/librdkafka-2.15.0/src/rdkafka_interceptor.h": "f87ddba2f1b1c71ac6800fcbfe5b183285056ca8e337f87018d6f427477d5694",
+                        "lib/librdkafka-2.15.0/src/rdlist.c": "179c025751cdcdbe2f59abe21b29bfa5efca1b1a018b3f51228af509a7206f9c",
+                        "lib/librdkafka-2.15.0/src/rdlist.h": "9e820273add1503102190cd59586e78c674265bdd869a065519b1a9e072ae025"
+                      }
+                    },
+                    {
+                      "reviewed_revision": "046accf6aded7906f66a1baf0202da349e521736",
+                      "sources": {
+                        "lib/librdkafka-2.15.0/src/rdkafka.h": "33cca14d9fc87117100ce90bd84f2006b8ba521c788055db6af614d0f2f7ca2f",
+                        "lib/librdkafka-2.15.0/src/rdkafka_conf.h": "66b50a23015293089970cc5ace148ca62757d752607cb0533aaf26a8d8f64e27",
+                        "lib/librdkafka-2.15.0/src/rdkafka_interceptor.c": "f6bdee517cbc9d21a13cdc461daf23a02f2baeeb05fede6488f3651843111834",
+                        "lib/librdkafka-2.15.0/src/rdkafka_interceptor.h": "f87ddba2f1b1c71ac6800fcbfe5b183285056ca8e337f87018d6f427477d5694",
+                        "lib/librdkafka-2.15.0/src/rdlist.c": "179c025751cdcdbe2f59abe21b29bfa5efca1b1a018b3f51228af509a7206f9c",
+                        "lib/librdkafka-2.15.0/src/rdlist.h": "9e820273add1503102190cd59586e78c674265bdd869a065519b1a9e072ae025"
+                      }
+                    }
+                  ],
+                  "schema_version": 1,
+                  "static_invocation_support": false
+                },
+                "in_force": true,
+                "owner": "qcore-provider-librdkafka",
+                "path": "/home/cosmo/.codex/worktrees/w48-bottom-up-batch4/qcore-c/private/w48-bottom-up-batch4/inputs-base-final/contract/profiles/fluent-bit/../../../providers/qcore-provider-librdkafka/outer-candidates.json",
+                "sha256": "5c3f8c4723832c0e9e6ebb784be6a57ebc0264d519421d5b95a18a8f68c18147",
+                "static_invocation_support": false
+              }
+            ],
+            "meaning": "runtime review restrictions only; static list invocation and static closure remain unsupported"
+          },
+          "outcomes": [
+            {
+              "contract_sha256": "2f9617351f039a2257962a96944b6c1468b0d92b7b9a2ef622ce1ce882a4d9cd",
+              "detail": "",
+              "loader": "flb_plugin_load",
+              "lock": "/home/cosmo/.codex/worktrees/w48-bottom-up-batch4/qcore-c/private/w48-bottom-up-batch4/inputs-base-final/contract/profiles/fluent-bit/../../../providers/quirin-provider-fluent-bit/outer-contracts.lock",
+              "module": "quirin-provider-fluent-bit:fluent_bit/outer.qv",
+              "reason": null,
+              "sites": [
+                {
+                  "declaration_sha256": "7743c8dbec5d7fb2bd76eb968e1464af72fb2d13ba4512b93f9b368843e5d27a",
+                  "kind": "declaration",
+                  "path": "include/fluent-bit/flb_plugin.h"
+                },
+                {
+                  "body_sha256": "e1a2c9fb39c33261b12f428ff49ba23f1cadb03b503ec4dfb57a3ae1c9865e42",
+                  "declaration_sha256": "7743c8dbec5d7fb2bd76eb968e1464af72fb2d13ba4512b93f9b368843e5d27a",
+                  "kind": "definition",
+                  "path": "src/flb_plugin.c"
+                }
+              ],
+              "standing": "in-force"
+            },
+            {
+              "contract_sha256": "eed16b6e18562d956488fa7819e9289c0af1670a3521542e48c70e14b450c888",
+              "detail": "",
+              "loader": "flb_plugin_proxy_create",
+              "lock": "/home/cosmo/.codex/worktrees/w48-bottom-up-batch4/qcore-c/private/w48-bottom-up-batch4/inputs-base-final/contract/profiles/fluent-bit/../../../providers/quirin-provider-fluent-bit/outer-contracts.lock",
+              "module": "quirin-provider-fluent-bit:fluent_bit/outer.qv",
+              "reason": null,
+              "sites": [
+                {
+                  "declaration_sha256": "24e6f5fd0f3684d3c132ade4ab7df6de573ec11d70bcc746e4dca1f8a46473f7",
+                  "kind": "declaration",
+                  "path": "include/fluent-bit/flb_plugin_proxy.h"
+                },
+                {
+                  "body_sha256": "3050e447b92adf93f0b3b1ded7328cf0fcef5779c7cd995edf0a85ca3e65ecdb",
+                  "declaration_sha256": "24e6f5fd0f3684d3c132ade4ab7df6de573ec11d70bcc746e4dca1f8a46473f7",
+                  "kind": "definition",
+                  "path": "src/flb_plugin_proxy.c"
+                }
+              ],
+              "standing": "in-force"
+            },
+            {
+              "contract_sha256": "f51206e1b667951cdd276298a9ad59fe734439c20002f1245c233790817713d9",
+              "detail": "",
+              "loader": "rd_kafka_plugin_new",
+              "lock": "/home/cosmo/.codex/worktrees/w48-bottom-up-batch4/qcore-c/private/w48-bottom-up-batch4/inputs-base-final/contract/profiles/fluent-bit/../../../providers/qcore-provider-librdkafka/outer-contracts.lock",
+              "module": "qcore-provider-librdkafka:librdkafka/outer.qv",
+              "reason": null,
+              "sites": [
+                {
+                  "body_sha256": "929a91281db72c51dfcee2bfd183826f560faab86755c26bb6f0286312170401",
+                  "declaration_sha256": "577947267b1b8fd5513926faaaf04601429a8fc0f31a5b75166a7cfb4b1ea82c",
+                  "kind": "definition",
+                  "path": "lib/librdkafka-2.15.0/src/rdkafka_plugin.c"
+                }
+              ],
+              "standing": "in-force"
+            }
+          ],
+          "source": {
+            "kind": "git",
+            "revision": "046accf6aded7906f66a1baf0202da349e521736"
+          }
+        },
+        "route": "configured",
+        "schema_version": 1,
+        "selection": "all-outer-views",
+        "trust": "declared assumptions about code loaded at runtime (C04.20: an outer contract vouches for what the audit cannot read), in force only where pinned to the loader's body"
+      },
+      "after": {
+        "contract_version": "qcore.outer.contract.v1",
+        "environment_sha256": "8bf6d7d0aa44e9e835cb33b2cf12e6d827462e275d9172e330d456f10dfc4b46",
+        "load_path": {
+          "path": "/home/cosmo/.codex/worktrees/w48-bottom-up-batch4/qcore-c/private/w48-bottom-up-batch4/inputs-tip-final/contract/profiles/fluent-bit/../../../providers/contract-load-path.json",
+          "sha256": "9f56e0b96e9891533841a2778e193859204f79a736fa48d37bb6468db50a1cdd"
+        },
+        "modules": [
+          {
+            "crate": "qcore-provider-librdkafka",
+            "module": "librdkafka/outer.qv",
+            "sha256": "ca88ccbf79699b9fd1033a69b958ec1a116cb24c040f0829299c5e65e797704a"
+          },
+          {
+            "crate": "quirin-provider-fluent-bit",
+            "module": "fluent_bit/outer.qv",
+            "sha256": "282408a08e6fc19b6f87d3cde8d2c12d2ab0627b002b2f2e2a914bb8460c133d"
+          }
+        ],
+        "pins": {
+          "held": 0,
+          "in_force": 3,
+          "list_candidates": {
+            "held_loaders": [],
+            "inventories": [
+              {
+                "contract": {
+                  "candidates": [
+                    {
+                      "aliases": [
+                        "rd_kafka_s.rk_conf.interceptors.on_conf_set"
+                      ],
+                      "callback_member": "u.on_conf_set",
+                      "callback_signature": "typedef rd_kafka_conf_res_t(rd_kafka_interceptor_f_on_conf_set_t)( rd_kafka_conf_t *conf, const char *name, const char *val, char *errstr, size_t errstr_size, void *ic_opaque);",
+                      "custody": "all-pointer-arguments-borrowed-no-retention-or-global-custody-effects",
+                      "duplicates": "conflict-without-append",
+                      "element_record": "rd_kafka_interceptor_method_s",
+                      "lifecycle": "configuration",
+                      "list_member": "rd_kafka_conf_s.interceptors.on_conf_set",
+                      "registration_lifetime": "callback-code-and-opaque-valid-through-last-invocation",
+                      "review": "Every callback and its transitive calls preserve ownership of every argument and every object reachable from it: no release, retention, ownership transfer, or global custody change. Writes within documented borrowed output buffers are allowed. A callback that cannot meet this restriction is unsupported; no effect is inferred from its signature. Scalar resource handles, including sockfd, are borrowed: no close, release, duplication or transfer. Any local allocation or acquisition is balanced before return; no new resource is leaked or left retained. The registered callback code and ic_opaque context stay valid through their last possible invocation, including configuration/client destruction and copied on_new registrations.",
+                      "setter": "rd_kafka_conf_interceptor_add_on_conf_set",
+                      "successful_result": 0
+                    },
+                    {
+                      "aliases": [
+                        "rd_kafka_s.rk_conf.interceptors.on_conf_dup"
+                      ],
+                      "callback_member": "u.on_conf_dup",
+                      "callback_signature": "typedef rd_kafka_resp_err_t(rd_kafka_interceptor_f_on_conf_dup_t)( rd_kafka_conf_t *new_conf, const rd_kafka_conf_t *old_conf, size_t filter_cnt, const char **filter, void *ic_opaque);",
+                      "custody": "all-pointer-arguments-borrowed-no-retention-or-global-custody-effects",
+                      "duplicates": "conflict-without-append",
+                      "element_record": "rd_kafka_interceptor_method_s",
+                      "lifecycle": "configuration",
+                      "list_member": "rd_kafka_conf_s.interceptors.on_conf_dup",
+                      "registration_lifetime": "callback-code-and-opaque-valid-through-last-invocation",
+                      "review": "Every callback and its transitive calls preserve ownership of every argument and every object reachable from it: no release, retention, ownership transfer, or global custody change. Writes within documented borrowed output buffers are allowed. A callback that cannot meet this restriction is unsupported; no effect is inferred from its signature. Scalar resource handles, including sockfd, are borrowed: no close, release, duplication or transfer. Any local allocation or acquisition is balanced before return; no new resource is leaked or left retained. The registered callback code and ic_opaque context stay valid through their last possible invocation, including configuration/client destruction and copied on_new registrations.",
+                      "setter": "rd_kafka_conf_interceptor_add_on_conf_dup",
+                      "successful_result": 0
+                    },
+                    {
+                      "aliases": [
+                        "rd_kafka_s.rk_conf.interceptors.on_conf_destroy"
+                      ],
+                      "callback_member": "u.on_conf_destroy",
+                      "callback_signature": "typedef rd_kafka_resp_err_t(rd_kafka_interceptor_f_on_conf_destroy_t)( void *ic_opaque);",
+                      "custody": "all-pointer-arguments-borrowed-no-retention-or-global-custody-effects",
+                      "duplicates": "allowed",
+                      "element_record": "rd_kafka_interceptor_method_s",
+                      "lifecycle": "configuration",
+                      "list_member": "rd_kafka_conf_s.interceptors.on_conf_destroy",
+                      "registration_lifetime": "callback-code-and-opaque-valid-through-last-invocation",
+                      "review": "Every callback and its transitive calls preserve ownership of every argument and every object reachable from it: no release, retention, ownership transfer, or global custody change. Writes within documented borrowed output buffers are allowed. A callback that cannot meet this restriction is unsupported; no effect is inferred from its signature. Scalar resource handles, including sockfd, are borrowed: no close, release, duplication or transfer. Any local allocation or acquisition is balanced before return; no new resource is leaked or left retained. The registered callback code and ic_opaque context stay valid through their last possible invocation, including configuration/client destruction and copied on_new registrations.",
+                      "setter": "rd_kafka_conf_interceptor_add_on_conf_destroy",
+                      "successful_result": 0
+                    },
+                    {
+                      "aliases": [
+                        "rd_kafka_s.rk_conf.interceptors.on_new"
+                      ],
+                      "callback_member": "u.on_new",
+                      "callback_signature": "typedef rd_kafka_resp_err_t(rd_kafka_interceptor_f_on_new_t)( rd_kafka_t *rk, const rd_kafka_conf_t *conf, void *ic_opaque, char *errstr, size_t errstr_size);",
+                      "custody": "all-pointer-arguments-borrowed-no-retention-or-global-custody-effects",
+                      "duplicates": "conflict-without-append",
+                      "element_record": "rd_kafka_interceptor_method_s",
+                      "lifecycle": "configuration",
+                      "list_member": "rd_kafka_conf_s.interceptors.on_new",
+                      "registration_lifetime": "callback-code-and-opaque-valid-through-last-invocation",
+                      "review": "Every callback and its transitive calls preserve ownership of every argument and every object reachable from it: no release, retention, ownership transfer, or global custody change. Writes within documented borrowed output buffers are allowed. A callback that cannot meet this restriction is unsupported; no effect is inferred from its signature. Scalar resource handles, including sockfd, are borrowed: no close, release, duplication or transfer. Any local allocation or acquisition is balanced before return; no new resource is leaked or left retained. The registered callback code and ic_opaque context stay valid through their last possible invocation, including configuration/client destruction and copied on_new registrations.",
+                      "setter": "rd_kafka_conf_interceptor_add_on_new",
+                      "successful_result": 0
+                    },
+                    {
+                      "aliases": [
+                        "rd_kafka_s.rk_conf.interceptors.on_destroy"
+                      ],
+                      "callback_member": "u.on_destroy",
+                      "callback_signature": "typedef rd_kafka_resp_err_t( rd_kafka_interceptor_f_on_destroy_t)(rd_kafka_t *rk, void *ic_opaque);",
+                      "custody": "all-pointer-arguments-borrowed-no-retention-or-global-custody-effects",
+                      "duplicates": "conflict-without-append",
+                      "element_record": "rd_kafka_interceptor_method_s",
+                      "lifecycle": "on-new-before-initialized-non-share",
+                      "list_member": "rd_kafka_conf_s.interceptors.on_destroy",
+                      "registration_lifetime": "callback-code-and-opaque-valid-through-last-invocation",
+                      "review": "Every callback and its transitive calls preserve ownership of every argument and every object reachable from it: no release, retention, ownership transfer, or global custody change. Writes within documented borrowed output buffers are allowed. A callback that cannot meet this restriction is unsupported; no effect is inferred from its signature. Scalar resource handles, including sockfd, are borrowed: no close, release, duplication or transfer. Any local allocation or acquisition is balanced before return; no new resource is leaked or left retained. The registered callback code and ic_opaque context stay valid through their last possible invocation, including configuration/client destruction and copied on_new registrations.",
+                      "setter": "rd_kafka_interceptor_add_on_destroy",
+                      "successful_result": 0
+                    },
+                    {
+                      "aliases": [
+                        "rd_kafka_s.rk_conf.interceptors.on_send"
+                      ],
+                      "callback_member": "u.on_send",
+                      "callback_signature": "typedef rd_kafka_resp_err_t(rd_kafka_interceptor_f_on_send_t)( rd_kafka_t *rk, rd_kafka_message_t *rkmessage, void *ic_opaque);",
+                      "custody": "all-pointer-arguments-borrowed-no-retention-or-global-custody-effects",
+                      "duplicates": "conflict-without-append",
+                      "element_record": "rd_kafka_interceptor_method_s",
+                      "lifecycle": "on-new-before-initialized-non-share",
+                      "list_member": "rd_kafka_conf_s.interceptors.on_send",
+                      "registration_lifetime": "callback-code-and-opaque-valid-through-last-invocation",
+                      "review": "Every callback and its transitive calls preserve ownership of every argument and every object reachable from it: no release, retention, ownership transfer, or global custody change. Writes within documented borrowed output buffers are allowed. A callback that cannot meet this restriction is unsupported; no effect is inferred from its signature. Scalar resource handles, including sockfd, are borrowed: no close, release, duplication or transfer. Any local allocation or acquisition is balanced before return; no new resource is leaked or left retained. The registered callback code and ic_opaque context stay valid through their last possible invocation, including configuration/client destruction and copied on_new registrations.",
+                      "setter": "rd_kafka_interceptor_add_on_send",
+                      "successful_result": 0
+                    },
+                    {
+                      "aliases": [
+                        "rd_kafka_s.rk_conf.interceptors.on_acknowledgement"
+                      ],
+                      "callback_member": "u.on_acknowledgement",
+                      "callback_signature": "typedef rd_kafka_resp_err_t(rd_kafka_interceptor_f_on_acknowledgement_t)( rd_kafka_t *rk, rd_kafka_message_t *rkmessage, void *ic_opaque);",
+                      "custody": "all-pointer-arguments-borrowed-no-retention-or-global-custody-effects",
+                      "duplicates": "conflict-without-append",
+                      "element_record": "rd_kafka_interceptor_method_s",
+                      "lifecycle": "on-new-before-initialized-non-share",
+                      "list_member": "rd_kafka_conf_s.interceptors.on_acknowledgement",
+                      "registration_lifetime": "callback-code-and-opaque-valid-through-last-invocation",
+                      "review": "Every callback and its transitive calls preserve ownership of every argument and every object reachable from it: no release, retention, ownership transfer, or global custody change. Writes within documented borrowed output buffers are allowed. A callback that cannot meet this restriction is unsupported; no effect is inferred from its signature. Scalar resource handles, including sockfd, are borrowed: no close, release, duplication or transfer. Any local allocation or acquisition is balanced before return; no new resource is leaked or left retained. The registered callback code and ic_opaque context stay valid through their last possible invocation, including configuration/client destruction and copied on_new registrations.",
+                      "setter": "rd_kafka_interceptor_add_on_acknowledgement",
+                      "successful_result": 0
+                    },
+                    {
+                      "aliases": [
+                        "rd_kafka_s.rk_conf.interceptors.on_consume"
+                      ],
+                      "callback_member": "u.on_consume",
+                      "callback_signature": "typedef rd_kafka_resp_err_t(rd_kafka_interceptor_f_on_consume_t)( rd_kafka_t *rk, rd_kafka_message_t *rkmessage, void *ic_opaque);",
+                      "custody": "all-pointer-arguments-borrowed-no-retention-or-global-custody-effects",
+                      "duplicates": "conflict-without-append",
+                      "element_record": "rd_kafka_interceptor_method_s",
+                      "lifecycle": "on-new-before-initialized-non-share",
+                      "list_member": "rd_kafka_conf_s.interceptors.on_consume",
+                      "registration_lifetime": "callback-code-and-opaque-valid-through-last-invocation",
+                      "review": "Every callback and its transitive calls preserve ownership of every argument and every object reachable from it: no release, retention, ownership transfer, or global custody change. Writes within documented borrowed output buffers are allowed. A callback that cannot meet this restriction is unsupported; no effect is inferred from its signature. Scalar resource handles, including sockfd, are borrowed: no close, release, duplication or transfer. Any local allocation or acquisition is balanced before return; no new resource is leaked or left retained. The registered callback code and ic_opaque context stay valid through their last possible invocation, including configuration/client destruction and copied on_new registrations.",
+                      "setter": "rd_kafka_interceptor_add_on_consume",
+                      "successful_result": 0
+                    },
+                    {
+                      "aliases": [
+                        "rd_kafka_s.rk_conf.interceptors.on_commit"
+                      ],
+                      "callback_member": "u.on_commit",
+                      "callback_signature": "typedef rd_kafka_resp_err_t(rd_kafka_interceptor_f_on_commit_t)( rd_kafka_t *rk, const rd_kafka_topic_partition_list_t *offsets, rd_kafka_resp_err_t err, void *ic_opaque);",
+                      "custody": "all-pointer-arguments-borrowed-no-retention-or-global-custody-effects",
+                      "duplicates": "conflict-without-append",
+                      "element_record": "rd_kafka_interceptor_method_s",
+                      "lifecycle": "on-new-before-initialized-non-share",
+                      "list_member": "rd_kafka_conf_s.interceptors.on_commit",
+                      "registration_lifetime": "callback-code-and-opaque-valid-through-last-invocation",
+                      "review": "Every callback and its transitive calls preserve ownership of every argument and every object reachable from it: no release, retention, ownership transfer, or global custody change. Writes within documented borrowed output buffers are allowed. A callback that cannot meet this restriction is unsupported; no effect is inferred from its signature. Scalar resource handles, including sockfd, are borrowed: no close, release, duplication or transfer. Any local allocation or acquisition is balanced before return; no new resource is leaked or left retained. The registered callback code and ic_opaque context stay valid through their last possible invocation, including configuration/client destruction and copied on_new registrations.",
+                      "setter": "rd_kafka_interceptor_add_on_commit",
+                      "successful_result": 0
+                    },
+                    {
+                      "aliases": [
+                        "rd_kafka_s.rk_conf.interceptors.on_request_sent"
+                      ],
+                      "callback_member": "u.on_request_sent",
+                      "callback_signature": "typedef rd_kafka_resp_err_t(rd_kafka_interceptor_f_on_request_sent_t)( rd_kafka_t *rk, int sockfd, const char *brokername, int32_t brokerid, int16_t ApiKey, int16_t ApiVersion, int32_t CorrId, size_t size, void *ic_opaque);",
+                      "custody": "all-pointer-arguments-borrowed-no-retention-or-global-custody-effects",
+                      "duplicates": "conflict-without-append",
+                      "element_record": "rd_kafka_interceptor_method_s",
+                      "lifecycle": "on-new-before-initialized-non-share",
+                      "list_member": "rd_kafka_conf_s.interceptors.on_request_sent",
+                      "registration_lifetime": "callback-code-and-opaque-valid-through-last-invocation",
+                      "review": "Every callback and its transitive calls preserve ownership of every argument and every object reachable from it: no release, retention, ownership transfer, or global custody change. Writes within documented borrowed output buffers are allowed. A callback that cannot meet this restriction is unsupported; no effect is inferred from its signature. Scalar resource handles, including sockfd, are borrowed: no close, release, duplication or transfer. Any local allocation or acquisition is balanced before return; no new resource is leaked or left retained. The registered callback code and ic_opaque context stay valid through their last possible invocation, including configuration/client destruction and copied on_new registrations.",
+                      "setter": "rd_kafka_interceptor_add_on_request_sent",
+                      "successful_result": 0
+                    },
+                    {
+                      "aliases": [
+                        "rd_kafka_s.rk_conf.interceptors.on_response_received"
+                      ],
+                      "callback_member": "u.on_response_received",
+                      "callback_signature": "typedef rd_kafka_resp_err_t(rd_kafka_interceptor_f_on_response_received_t)( rd_kafka_t *rk, int sockfd, const char *brokername, int32_t brokerid, int16_t ApiKey, int16_t ApiVersion, int32_t CorrId, size_t size, int64_t rtt, rd_kafka_resp_err_t err, void *ic_opaque);",
+                      "custody": "all-pointer-arguments-borrowed-no-retention-or-global-custody-effects",
+                      "duplicates": "conflict-without-append",
+                      "element_record": "rd_kafka_interceptor_method_s",
+                      "lifecycle": "on-new-before-initialized-non-share",
+                      "list_member": "rd_kafka_conf_s.interceptors.on_response_received",
+                      "registration_lifetime": "callback-code-and-opaque-valid-through-last-invocation",
+                      "review": "Every callback and its transitive calls preserve ownership of every argument and every object reachable from it: no release, retention, ownership transfer, or global custody change. Writes within documented borrowed output buffers are allowed. A callback that cannot meet this restriction is unsupported; no effect is inferred from its signature. Scalar resource handles, including sockfd, are borrowed: no close, release, duplication or transfer. Any local allocation or acquisition is balanced before return; no new resource is leaked or left retained. The registered callback code and ic_opaque context stay valid through their last possible invocation, including configuration/client destruction and copied on_new registrations.",
+                      "setter": "rd_kafka_interceptor_add_on_response_received",
+                      "successful_result": 0
+                    },
+                    {
+                      "aliases": [
+                        "rd_kafka_s.rk_conf.interceptors.on_thread_start"
+                      ],
+                      "callback_member": "u.on_thread_start",
+                      "callback_signature": "typedef rd_kafka_resp_err_t(rd_kafka_interceptor_f_on_thread_start_t)( rd_kafka_t *rk, rd_kafka_thread_type_t thread_type, const char *thread_name, void *ic_opaque);",
+                      "custody": "all-pointer-arguments-borrowed-no-retention-or-global-custody-effects",
+                      "duplicates": "conflict-without-append",
+                      "element_record": "rd_kafka_interceptor_method_s",
+                      "lifecycle": "on-new-before-initialized-non-share",
+                      "list_member": "rd_kafka_conf_s.interceptors.on_thread_start",
+                      "registration_lifetime": "callback-code-and-opaque-valid-through-last-invocation",
+                      "review": "Every callback and its transitive calls preserve ownership of every argument and every object reachable from it: no release, retention, ownership transfer, or global custody change. Writes within documented borrowed output buffers are allowed. A callback that cannot meet this restriction is unsupported; no effect is inferred from its signature. Scalar resource handles, including sockfd, are borrowed: no close, release, duplication or transfer. Any local allocation or acquisition is balanced before return; no new resource is leaked or left retained. The registered callback code and ic_opaque context stay valid through their last possible invocation, including configuration/client destruction and copied on_new registrations.",
+                      "setter": "rd_kafka_interceptor_add_on_thread_start",
+                      "successful_result": 0
+                    },
+                    {
+                      "aliases": [
+                        "rd_kafka_s.rk_conf.interceptors.on_thread_exit"
+                      ],
+                      "callback_member": "u.on_thread_exit",
+                      "callback_signature": "typedef rd_kafka_resp_err_t(rd_kafka_interceptor_f_on_thread_exit_t)( rd_kafka_t *rk, rd_kafka_thread_type_t thread_type, const char *thread_name, void *ic_opaque);",
+                      "custody": "all-pointer-arguments-borrowed-no-retention-or-global-custody-effects",
+                      "duplicates": "conflict-without-append",
+                      "element_record": "rd_kafka_interceptor_method_s",
+                      "lifecycle": "on-new-before-initialized-non-share",
+                      "list_member": "rd_kafka_conf_s.interceptors.on_thread_exit",
+                      "registration_lifetime": "callback-code-and-opaque-valid-through-last-invocation",
+                      "review": "Every callback and its transitive calls preserve ownership of every argument and every object reachable from it: no release, retention, ownership transfer, or global custody change. Writes within documented borrowed output buffers are allowed. A callback that cannot meet this restriction is unsupported; no effect is inferred from its signature. Scalar resource handles, including sockfd, are borrowed: no close, release, duplication or transfer. Any local allocation or acquisition is balanced before return; no new resource is leaked or left retained. The registered callback code and ic_opaque context stay valid through their last possible invocation, including configuration/client destruction and copied on_new registrations.",
+                      "setter": "rd_kafka_interceptor_add_on_thread_exit",
+                      "successful_result": 0
+                    },
+                    {
+                      "aliases": [
+                        "rd_kafka_s.rk_conf.interceptors.on_broker_state_change"
+                      ],
+                      "callback_member": "u.on_broker_state_change",
+                      "callback_signature": "typedef rd_kafka_resp_err_t(rd_kafka_interceptor_f_on_broker_state_change_t)( rd_kafka_t *rk, int32_t broker_id, const char *secproto, const char *name, int port, const char *state, void *ic_opaque);",
+                      "custody": "all-pointer-arguments-borrowed-no-retention-or-global-custody-effects",
+                      "duplicates": "conflict-without-append",
+                      "element_record": "rd_kafka_interceptor_method_s",
+                      "lifecycle": "on-new-before-initialized-non-share",
+                      "list_member": "rd_kafka_conf_s.interceptors.on_broker_state_change",
+                      "registration_lifetime": "callback-code-and-opaque-valid-through-last-invocation",
+                      "review": "Every callback and its transitive calls preserve ownership of every argument and every object reachable from it: no release, retention, ownership transfer, or global custody change. Writes within documented borrowed output buffers are allowed. A callback that cannot meet this restriction is unsupported; no effect is inferred from its signature. Scalar resource handles, including sockfd, are borrowed: no close, release, duplication or transfer. Any local allocation or acquisition is balanced before return; no new resource is leaked or left retained. The registered callback code and ic_opaque context stay valid through their last possible invocation, including configuration/client destruction and copied on_new registrations.",
+                      "setter": "rd_kafka_interceptor_add_on_broker_state_change",
+                      "successful_result": 0
+                    }
+                  ],
+                  "kind": "outer-list-callback-candidates",
+                  "normalisation": "exact-source-bytes-sha256",
+                  "reviewed_identities": [
+                    {
+                      "reviewed_revision": "66910c10a4d7eafa810b84229cf2dcf7b0f26f97",
+                      "sources": {
+                        "lib/librdkafka-2.15.0/src/rdkafka.h": "33cca14d9fc87117100ce90bd84f2006b8ba521c788055db6af614d0f2f7ca2f",
+                        "lib/librdkafka-2.15.0/src/rdkafka_conf.h": "66b50a23015293089970cc5ace148ca62757d752607cb0533aaf26a8d8f64e27",
+                        "lib/librdkafka-2.15.0/src/rdkafka_interceptor.c": "f6bdee517cbc9d21a13cdc461daf23a02f2baeeb05fede6488f3651843111834",
+                        "lib/librdkafka-2.15.0/src/rdkafka_interceptor.h": "f87ddba2f1b1c71ac6800fcbfe5b183285056ca8e337f87018d6f427477d5694",
+                        "lib/librdkafka-2.15.0/src/rdlist.c": "179c025751cdcdbe2f59abe21b29bfa5efca1b1a018b3f51228af509a7206f9c",
+                        "lib/librdkafka-2.15.0/src/rdlist.h": "9e820273add1503102190cd59586e78c674265bdd869a065519b1a9e072ae025"
+                      }
+                    },
+                    {
+                      "reviewed_revision": "046accf6aded7906f66a1baf0202da349e521736",
+                      "sources": {
+                        "lib/librdkafka-2.15.0/src/rdkafka.h": "33cca14d9fc87117100ce90bd84f2006b8ba521c788055db6af614d0f2f7ca2f",
+                        "lib/librdkafka-2.15.0/src/rdkafka_conf.h": "66b50a23015293089970cc5ace148ca62757d752607cb0533aaf26a8d8f64e27",
+                        "lib/librdkafka-2.15.0/src/rdkafka_interceptor.c": "f6bdee517cbc9d21a13cdc461daf23a02f2baeeb05fede6488f3651843111834",
+                        "lib/librdkafka-2.15.0/src/rdkafka_interceptor.h": "f87ddba2f1b1c71ac6800fcbfe5b183285056ca8e337f87018d6f427477d5694",
+                        "lib/librdkafka-2.15.0/src/rdlist.c": "179c025751cdcdbe2f59abe21b29bfa5efca1b1a018b3f51228af509a7206f9c",
+                        "lib/librdkafka-2.15.0/src/rdlist.h": "9e820273add1503102190cd59586e78c674265bdd869a065519b1a9e072ae025"
+                      }
+                    }
+                  ],
+                  "schema_version": 1,
+                  "static_invocation_support": false
+                },
+                "in_force": true,
+                "owner": "qcore-provider-librdkafka",
+                "path": "/home/cosmo/.codex/worktrees/w48-bottom-up-batch4/qcore-c/private/w48-bottom-up-batch4/inputs-tip-final/contract/profiles/fluent-bit/../../../providers/qcore-provider-librdkafka/outer-candidates.json",
+                "sha256": "5c3f8c4723832c0e9e6ebb784be6a57ebc0264d519421d5b95a18a8f68c18147",
+                "static_invocation_support": false
+              }
+            ],
+            "meaning": "runtime review restrictions only; static list invocation and static closure remain unsupported"
+          },
+          "outcomes": [
+            {
+              "contract_sha256": "2f9617351f039a2257962a96944b6c1468b0d92b7b9a2ef622ce1ce882a4d9cd",
+              "detail": "",
+              "loader": "flb_plugin_load",
+              "lock": "/home/cosmo/.codex/worktrees/w48-bottom-up-batch4/qcore-c/private/w48-bottom-up-batch4/inputs-tip-final/contract/profiles/fluent-bit/../../../providers/quirin-provider-fluent-bit/outer-contracts.lock",
+              "module": "quirin-provider-fluent-bit:fluent_bit/outer.qv",
+              "reason": null,
+              "sites": [
+                {
+                  "declaration_sha256": "7743c8dbec5d7fb2bd76eb968e1464af72fb2d13ba4512b93f9b368843e5d27a",
+                  "kind": "declaration",
+                  "path": "include/fluent-bit/flb_plugin.h"
+                },
+                {
+                  "body_sha256": "e1a2c9fb39c33261b12f428ff49ba23f1cadb03b503ec4dfb57a3ae1c9865e42",
+                  "declaration_sha256": "7743c8dbec5d7fb2bd76eb968e1464af72fb2d13ba4512b93f9b368843e5d27a",
+                  "kind": "definition",
+                  "path": "src/flb_plugin.c"
+                }
+              ],
+              "standing": "in-force"
+            },
+            {
+              "contract_sha256": "eed16b6e18562d956488fa7819e9289c0af1670a3521542e48c70e14b450c888",
+              "detail": "",
+              "loader": "flb_plugin_proxy_create",
+              "lock": "/home/cosmo/.codex/worktrees/w48-bottom-up-batch4/qcore-c/private/w48-bottom-up-batch4/inputs-tip-final/contract/profiles/fluent-bit/../../../providers/quirin-provider-fluent-bit/outer-contracts.lock",
+              "module": "quirin-provider-fluent-bit:fluent_bit/outer.qv",
+              "reason": null,
+              "sites": [
+                {
+                  "declaration_sha256": "24e6f5fd0f3684d3c132ade4ab7df6de573ec11d70bcc746e4dca1f8a46473f7",
+                  "kind": "declaration",
+                  "path": "include/fluent-bit/flb_plugin_proxy.h"
+                },
+                {
+                  "body_sha256": "3050e447b92adf93f0b3b1ded7328cf0fcef5779c7cd995edf0a85ca3e65ecdb",
+                  "declaration_sha256": "24e6f5fd0f3684d3c132ade4ab7df6de573ec11d70bcc746e4dca1f8a46473f7",
+                  "kind": "definition",
+                  "path": "src/flb_plugin_proxy.c"
+                }
+              ],
+              "standing": "in-force"
+            },
+            {
+              "contract_sha256": "f51206e1b667951cdd276298a9ad59fe734439c20002f1245c233790817713d9",
+              "detail": "",
+              "loader": "rd_kafka_plugin_new",
+              "lock": "/home/cosmo/.codex/worktrees/w48-bottom-up-batch4/qcore-c/private/w48-bottom-up-batch4/inputs-tip-final/contract/profiles/fluent-bit/../../../providers/qcore-provider-librdkafka/outer-contracts.lock",
+              "module": "qcore-provider-librdkafka:librdkafka/outer.qv",
+              "reason": null,
+              "sites": [
+                {
+                  "body_sha256": "929a91281db72c51dfcee2bfd183826f560faab86755c26bb6f0286312170401",
+                  "declaration_sha256": "577947267b1b8fd5513926faaaf04601429a8fc0f31a5b75166a7cfb4b1ea82c",
+                  "kind": "definition",
+                  "path": "lib/librdkafka-2.15.0/src/rdkafka_plugin.c"
+                }
+              ],
+              "standing": "in-force"
+            }
+          ],
+          "source": {
+            "kind": "git",
+            "revision": "046accf6aded7906f66a1baf0202da349e521736"
+          }
+        },
+        "route": "configured",
+        "schema_version": 1,
+        "selection": "all-outer-views",
+        "trust": "declared assumptions about code loaded at runtime (C04.20: an outer contract vouches for what the audit cannot read), in force only where pinned to the loader's body"
+      }
+    }
+  },
+  "other_outer_complete_equality_after_explicit_checkout_normalization": true
+}

@@ -1,0 +1,49 @@
+{
+  "diagnostics": {
+    "present": true,
+    "source": "/home/cosmo/.codex/worktrees/w48-bottom-up-batch4/qcore-c/private/w48-bottom-up-batch4/system-after-final/resource-diagnostics.json",
+    "sha256": "5d9e0a65150253315afca9e45fb227aebd35dfebb02270d633affdd670d02ba2",
+    "bytes": 2633457
+  },
+  "source": {
+    "present": false
+  },
+  "chunk-contracts": {
+    "present": true,
+    "source": "/home/cosmo/.codex/worktrees/w48-bottom-up-batch4/qcore-c/private/w48-bottom-up-batch4/system-after-final/resource-diagnostics.chunk-contracts.json",
+    "sha256": "e7e0d254d9e7ee199672b981e3fc764b702b35a1757bb0f4570a9438e6b87922",
+    "bytes": 385
+  },
+  "source-effects": {
+    "present": true,
+    "source": "/home/cosmo/.codex/worktrees/w48-bottom-up-batch4/qcore-c/private/w48-bottom-up-batch4/system-after-final/resource-diagnostics.source-effects.json",
+    "sha256": "e7e0d254d9e7ee199672b981e3fc764b702b35a1757bb0f4570a9438e6b87922",
+    "bytes": 385
+  },
+  "contracts": {
+    "present": true,
+    "source": "/home/cosmo/.codex/worktrees/w48-bottom-up-batch4/qcore-c/private/w48-bottom-up-batch4/system-after-final/resource-diagnostics.contracts.json",
+    "sha256": "c410120ce6e138cf0f86c55f94e94c6c497ce4d4cac4b7ecdc267fb3f88ba4d9",
+    "bytes": 10211420
+  },
+  "static_custody_counts": {
+    "Unknown": 345,
+    "Safe": 99,
+    "Unsafe": 4
+  },
+  "system-null.jsonl": {
+    "source": "/home/cosmo/.codex/worktrees/w48-bottom-up-batch4/qcore-c/private/w48-bottom-up-batch4/system-after-final/system-null.jsonl",
+    "bytes": 1872907,
+    "sha256": "da3cffed92e6a8c19dfaa3d52daa92ba238143b15b96f56a26db9e6cebf3acab"
+  },
+  "system-null.summary.json": {
+    "source": "/home/cosmo/.codex/worktrees/w48-bottom-up-batch4/qcore-c/private/w48-bottom-up-batch4/system-after-final/system-null.summary.json",
+    "bytes": 64362,
+    "sha256": "3389b25cc329299deb8b67fef780ac68ac555b75e24437688cccf8be5f34f1a4"
+  },
+  "system-outer.json": {
+    "source": "/home/cosmo/.codex/worktrees/w48-bottom-up-batch4/qcore-c/private/w48-bottom-up-batch4/system-after-final/system-outer.json",
+    "bytes": 67594,
+    "sha256": "6017a53e434e7624c53572cb35b10b9d4027c0a7f606be32b9937f0c0dda985e"
+  }
+}

@@ -1,0 +1,68 @@
+{
+  "attempts": [
+    {
+      "command": "cargo test -p qcore-c-gateway --test condition_call_desugar batch4_call_free_member_predicate_readiness -- --nocapture",
+      "exit": 0,
+      "log": "private/w48-bottom-up-batch4/readiness-test.log",
+      "test_summaries": [
+        "test result: ok. 1 passed; 0 failed; 0 ignored; 0 measured; 18 filtered out; finished in 0.11s"
+      ]
+    },
+    {
+      "command": "cargo test -p qcore-c-gateway --test condition_call_desugar batch4 -- --nocapture",
+      "exit": 101,
+      "log": "private/w48-bottom-up-batch4/focused-1.log",
+      "test_summaries": [
+        "test result: FAILED. 2 passed; 2 failed; 0 ignored; 0 measured; 18 filtered out; finished in 0.31s"
+      ]
+    },
+    {
+      "command": "cargo test -p qcore-c-gateway --test condition_call_desugar batch4 -- --nocapture",
+      "exit": 0,
+      "log": "private/w48-bottom-up-batch4/focused-2.log",
+      "test_summaries": [
+        "test result: ok. 4 passed; 0 failed; 0 ignored; 0 measured; 18 filtered out; finished in 0.24s"
+      ]
+    },
+    {
+      "command": "cargo test -p qcore-c-gateway --test condition_call_desugar batch4 -- --nocapture",
+      "exit": 101,
+      "log": "private/w48-bottom-up-batch4/focused-3.log",
+      "test_summaries": [
+        "test result: FAILED. 5 passed; 1 failed; 0 ignored; 0 measured; 18 filtered out; finished in 0.26s"
+      ]
+    },
+    {
+      "command": "cargo test -p qcore-c-gateway --test condition_call_desugar batch4 -- --nocapture",
+      "exit": 0,
+      "log": "private/w48-bottom-up-batch4/focused-4.log",
+      "test_summaries": [
+        "test result: ok. 6 passed; 0 failed; 0 ignored; 0 measured; 18 filtered out; finished in 0.28s"
+      ]
+    },
+    {
+      "command": "lake env lean QCore/CallFreeConditionReads.lean",
+      "exit": 1,
+      "log": "private/w48-bottom-up-batch4/lean-focused-1.log",
+      "test_summaries": []
+    },
+    {
+      "command": "lake build QCore.CallFreeConditionReads",
+      "exit": 1,
+      "log": "private/w48-bottom-up-batch4/lean-focused-2.log",
+      "test_summaries": []
+    },
+    {
+      "command": "lake -d proof build QCore.CallFreeConditionReads",
+      "exit": 0,
+      "log": "private/w48-bottom-up-batch4/lean-focused-3.log",
+      "test_summaries": []
+    }
+  ],
+  "explanation": [
+    "Initial focused Rust attempt: fixture helper selected subject while new body was named w; fixed fixture name. A union read was expected to refuse although existing rule10w already admits it; refusal control corrected to _Atomic, preserving union behavior.",
+    "Second red focused attempt: literal0&&control expected unreachable pruning, but existing NoOp scalar decision deliberately explores both outcomes. Corrected test asserts evaluated-read obligations are not erased.",
+    "Initial Lean source-only invocation lacked a built imported module; Lake built it. Next attempt used unavailable tauto tactic; replaced with explicit Or.inl.",
+    "Invalid first task_context topic checker exited2; repeated with valid effects/concurrency topics. Oversized broad packet output was truncated; it is not evidence of reading omitted text. Exact relevant symbol/rule sections were then read separately; final packet is private/task-context-final.json."
+  ]
+}

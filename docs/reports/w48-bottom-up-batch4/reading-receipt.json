@@ -1,0 +1,28 @@
+{
+  "base": "2d8f6d34257db14031a2578ce14f941bee25fc19",
+  "topics": [
+    "buffers",
+    "concurrency",
+    "contracts",
+    "docs",
+    "effects",
+    "gateway",
+    "integration",
+    "io",
+    "maintenance",
+    "providers",
+    "rationale",
+    "source",
+    "status"
+  ],
+  "selected_metrics": {
+    "unique_selected_bytes": 1079533,
+    "single_pass_retrieval_bytes": 1079533,
+    "actual_session_tokens": null,
+    "note": "Selection estimate only; repeated reads add retrieval. Bytes are not billed tokens."
+  },
+  "new_ranges_since_previous_widening": [],
+  "note": "Conservative selection estimate, not an actual-session retrieval or token cost measurement. Applicable operative, gateway, source/evidence, diagnostics and validation sections and Generalization2\u20133 were read during the card; both historical operations and cycle-guidance rationale documents were read when amending gateway rules. No claim that every byte in the conservative all-topic union was retrieved or read. No retrieval-efficiency claim. Final widening introduced no new ranges.",
+  "private_packet": "private/w48-bottom-up-batch4/reading-final.log",
+  "command_receipt": "reading-final"
+}

@@ -1,0 +1,1184 @@
+[
+  {
+    "name": "gate-submodules",
+    "command": [
+      "git",
+      "submodule",
+      "update",
+      "--init",
+      "--recursive"
+    ],
+    "cwd": "/home/cosmo/.codex/worktrees/w48-bottom-up-batch4/qcore-c",
+    "started": "2026-10-20T17:12:22.588733+00:00",
+    "ended": "2026-10-20T17:12:22.610423+00:00",
+    "exit": 0,
+    "log": "/home/cosmo/.codex/worktrees/w48-bottom-up-batch4/qcore-c/private/w48-bottom-up-batch4/gate-submodules.log"
+  },
+  {
+    "name": "gate-clang",
+    "command": [
+      "clang",
+      "--version"
+    ],
+    "cwd": "/home/cosmo/.codex/worktrees/w48-bottom-up-batch4/qcore-c",
+    "started": "2026-10-20T17:12:22.610692+00:00",
+    "ended": "2026-10-20T17:12:22.624326+00:00",
+    "exit": 0,
+    "log": "/home/cosmo/.codex/worktrees/w48-bottom-up-batch4/qcore-c/private/w48-bottom-up-batch4/gate-clang.log"
+  },
+  {
+    "name": "gate-rust",
+    "command": [
+      "python3",
+      "scripts/run_test_binaries.py",
+      "--jobs",
+      "4",
+      "--log-dir",
+      "/home/cosmo/.codex/worktrees/w48-bottom-up-batch4/qcore-c/private/w48-bottom-up-batch4/rust-units"
+    ],
+    "cwd": "/home/cosmo/.codex/worktrees/w48-bottom-up-batch4/qcore-c",
+    "started": "2026-10-20T17:12:22.624658+00:00",
+    "ended": "2026-10-20T17:22:37.300384+00:00",
+    "exit": 101,
+    "log": "/home/cosmo/.codex/worktrees/w48-bottom-up-batch4/qcore-c/private/w48-bottom-up-batch4/gate-rust.log"
+  },
+  {
+    "name": "gate-fmt",
+    "command": [
+      "cargo",
+      "fmt",
+      "--all",
+      "--",
+      "--check"
+    ],
+    "cwd": "/home/cosmo/.codex/worktrees/w48-bottom-up-batch4/qcore-c",
+    "started": "2026-10-20T17:22:37.300702+00:00",
+    "ended": "2026-10-20T17:22:41.480224+00:00",
+    "exit": 0,
+    "log": "/home/cosmo/.codex/worktrees/w48-bottom-up-batch4/qcore-c/private/w48-bottom-up-batch4/gate-fmt.log"
+  },
+  {
+    "name": "gate-clippy",
+    "command": [
+      "cargo",
+      "clippy",
+      "--all-targets",
+      "--",
+      "-D",
+      "warnings"
+    ],
+    "cwd": "/home/cosmo/.codex/worktrees/w48-bottom-up-batch4/qcore-c",
+    "started": "2026-10-20T17:22:41.481045+00:00",
+    "ended": "2026-10-20T17:23:39.449777+00:00",
+    "exit": 0,
+    "log": "/home/cosmo/.codex/worktrees/w48-bottom-up-batch4/qcore-c/private/w48-bottom-up-batch4/gate-clippy.log"
+  },
+  {
+    "name": "gate-probe",
+    "command": [
+      "cargo",
+      "run",
+      "-p",
+      "qcore-compiler",
+      "--example",
+      "reevaluation_probe"
+    ],
+    "cwd": "/home/cosmo/.codex/worktrees/w48-bottom-up-batch4/qcore-c",
+    "started": "2026-10-20T17:23:39.459831+00:00",
+    "ended": "2026-10-20T17:23:39.536726+00:00",
+    "exit": 0,
+    "log": "/home/cosmo/.codex/worktrees/w48-bottom-up-batch4/qcore-c/private/w48-bottom-up-batch4/gate-probe.log"
+  },
+  {
+    "name": "gate-followup",
+    "command": [
+      "cargo",
+      "run",
+      "-p",
+      "qcore-compiler",
+      "--example",
+      "reevaluation_followup"
+    ],
+    "cwd": "/home/cosmo/.codex/worktrees/w48-bottom-up-batch4/qcore-c",
+    "started": "2026-10-20T17:23:39.537070+00:00",
+    "ended": "2026-10-20T17:23:40.002525+00:00",
+    "exit": 0,
+    "log": "/home/cosmo/.codex/worktrees/w48-bottom-up-batch4/qcore-c/private/w48-bottom-up-batch4/gate-followup.log"
+  },
+  {
+    "name": "gate-lean",
+    "command": [
+      "python3",
+      "scripts/check_lean_audits.py",
+      "--jobs",
+      "4"
+    ],
+    "cwd": "/home/cosmo/.codex/worktrees/w48-bottom-up-batch4/qcore-c",
+    "started": "2026-10-20T17:23:40.002964+00:00",
+    "ended": "2026-10-20T17:25:34.706658+00:00",
+    "exit": 1,
+    "log": "/home/cosmo/.codex/worktrees/w48-bottom-up-batch4/qcore-c/private/w48-bottom-up-batch4/gate-lean.log"
+  },
+  {
+    "name": "gate-python",
+    "command": [
+      "python3",
+      "-m",
+      "unittest",
+      "discover",
+      "-s",
+      "scripts/tests"
+    ],
+    "cwd": "/home/cosmo/.codex/worktrees/w48-bottom-up-batch4/qcore-c",
+    "started": "2026-10-20T17:25:34.707258+00:00",
+    "ended": "2026-10-20T17:26:08.128618+00:00",
+    "exit": 0,
+    "log": "/home/cosmo/.codex/worktrees/w48-bottom-up-batch4/qcore-c/private/w48-bottom-up-batch4/gate-python.log"
+  },
+  {
+    "name": "slice-before",
+    "command": [
+      "python3",
+      "/home/cosmo/.codex/worktrees/w48-bottom-up-batch4/qcore-c/docs/reports/w48-bottom-up-batch4/scripts/measure.py",
+      "slice",
+      "/home/cosmo/.codex/worktrees/w48-bottom-up-batch4/qcore-c/private/w48-bottom-up-batch4/slice-before",
+      "--link-map",
+      "/home/cosmo/.codex/worktrees/w48-bottom-up-batch4/qcore-c/docs/reports/w48-bottom-up-batch4/link-map.corpus.json",
+      "--inputs-snapshot",
+      "/home/cosmo/.codex/worktrees/w48-bottom-up-batch4/qcore-c/private/w48-bottom-up-batch4/inputs-base",
+      "--binary-source",
+      "2d8f6d34257db14031a2578ce14f941bee25fc19",
+      "--jobs",
+      "2"
+    ],
+    "cwd": "/home/cosmo/.codex/worktrees/w48-bottom-up-batch4/qcore-c",
+    "started": "2026-10-20T17:26:08.142228+00:00",
+    "ended": "2026-10-20T17:26:08.351807+00:00",
+    "exit": 1,
+    "log": "/home/cosmo/.codex/worktrees/w48-bottom-up-batch4/qcore-c/private/w48-bottom-up-batch4/slice-before.log"
+  },
+  {
+    "name": "system-before",
+    "command": [
+      "python3",
+      "/home/cosmo/.codex/worktrees/w48-bottom-up-batch4/qcore-c/docs/reports/w48-bottom-up-batch4/scripts/measure.py",
+      "system",
+      "/home/cosmo/.codex/worktrees/w48-bottom-up-batch4/qcore-c/private/w48-bottom-up-batch4/system-before",
+      "--link-map",
+      "/home/cosmo/.codex/worktrees/w48-bottom-up-batch4/qcore-c/docs/reports/w48-bottom-up-batch4/link-map.corpus.json",
+      "--inputs-snapshot",
+      "/home/cosmo/.codex/worktrees/w48-bottom-up-batch4/qcore-c/private/w48-bottom-up-batch4/inputs-base",
+      "--binary-source",
+      "2d8f6d34257db14031a2578ce14f941bee25fc19",
+      "--jobs",
+      "2"
+    ],
+    "cwd": "/home/cosmo/.codex/worktrees/w48-bottom-up-batch4/qcore-c",
+    "started": "2026-10-20T17:26:08.141658+00:00",
+    "ended": "2026-10-20T17:26:08.353729+00:00",
+    "exit": 1,
+    "log": "/home/cosmo/.codex/worktrees/w48-bottom-up-batch4/qcore-c/private/w48-bottom-up-batch4/system-before.log"
+  },
+  {
+    "name": "corpus-before",
+    "command": [
+      "python3",
+      "/home/cosmo/.codex/worktrees/w48-bottom-up-batch4/qcore-c/docs/reports/w48-bottom-up-batch4/scripts/measure.py",
+      "corpus",
+      "/home/cosmo/.codex/worktrees/w48-bottom-up-batch4/qcore-c/private/w48-bottom-up-batch4/corpus-before",
+      "--link-map",
+      "/home/cosmo/.codex/worktrees/w48-bottom-up-batch4/qcore-c/docs/reports/w48-bottom-up-batch4/link-map.corpus.json",
+      "--inputs-snapshot",
+      "/home/cosmo/.codex/worktrees/w48-bottom-up-batch4/qcore-c/private/w48-bottom-up-batch4/inputs-base",
+      "--binary-source",
+      "2d8f6d34257db14031a2578ce14f941bee25fc19",
+      "--jobs",
+      "2"
+    ],
+    "cwd": "/home/cosmo/.codex/worktrees/w48-bottom-up-batch4/qcore-c",
+    "started": "2026-10-20T17:26:08.140755+00:00",
+    "ended": "2026-10-20T17:26:08.505904+00:00",
+    "exit": 1,
+    "log": "/home/cosmo/.codex/worktrees/w48-bottom-up-batch4/qcore-c/private/w48-bottom-up-batch4/corpus-before.log"
+  },
+  {
+    "name": "system-after",
+    "command": [
+      "python3",
+      "/home/cosmo/.codex/worktrees/w48-bottom-up-batch4/qcore-c/docs/reports/w48-bottom-up-batch4/scripts/measure.py",
+      "system",
+      "/home/cosmo/.codex/worktrees/w48-bottom-up-batch4/qcore-c/private/w48-bottom-up-batch4/system-after",
+      "--link-map",
+      "/home/cosmo/.codex/worktrees/w48-bottom-up-batch4/qcore-c/docs/reports/w48-bottom-up-batch4/link-map.corpus.json",
+      "--inputs-snapshot",
+      "/home/cosmo/.codex/worktrees/w48-bottom-up-batch4/qcore-c/private/w48-bottom-up-batch4/inputs-tip",
+      "--binary-source",
+      "b931ed61d4a9676f768e24d8aff8fc0e8a63ddea",
+      "--jobs",
+      "2"
+    ],
+    "cwd": "/home/cosmo/.codex/worktrees/w48-bottom-up-batch4/qcore-c",
+    "started": "2026-10-20T17:26:08.507047+00:00",
+    "ended": "2026-10-20T17:26:08.670262+00:00",
+    "exit": 1,
+    "log": "/home/cosmo/.codex/worktrees/w48-bottom-up-batch4/qcore-c/private/w48-bottom-up-batch4/system-after.log"
+  },
+  {
+    "name": "slice-after",
+    "command": [
+      "python3",
+      "/home/cosmo/.codex/worktrees/w48-bottom-up-batch4/qcore-c/docs/reports/w48-bottom-up-batch4/scripts/measure.py",
+      "slice",
+      "/home/cosmo/.codex/worktrees/w48-bottom-up-batch4/qcore-c/private/w48-bottom-up-batch4/slice-after",
+      "--link-map",
+      "/home/cosmo/.codex/worktrees/w48-bottom-up-batch4/qcore-c/docs/reports/w48-bottom-up-batch4/link-map.corpus.json",
+      "--inputs-snapshot",
+      "/home/cosmo/.codex/worktrees/w48-bottom-up-batch4/qcore-c/private/w48-bottom-up-batch4/inputs-tip",
+      "--binary-source",
+      "b931ed61d4a9676f768e24d8aff8fc0e8a63ddea",
+      "--jobs",
+      "2"
+    ],
+    "cwd": "/home/cosmo/.codex/worktrees/w48-bottom-up-batch4/qcore-c",
+    "started": "2026-10-20T17:26:08.507259+00:00",
+    "ended": "2026-10-20T17:26:08.683687+00:00",
+    "exit": 1,
+    "log": "/home/cosmo/.codex/worktrees/w48-bottom-up-batch4/qcore-c/private/w48-bottom-up-batch4/slice-after.log"
+  },
+  {
+    "name": "corpus-after",
+    "command": [
+      "python3",
+      "/home/cosmo/.codex/worktrees/w48-bottom-up-batch4/qcore-c/docs/reports/w48-bottom-up-batch4/scripts/measure.py",
+      "corpus",
+      "/home/cosmo/.codex/worktrees/w48-bottom-up-batch4/qcore-c/private/w48-bottom-up-batch4/corpus-after",
+      "--link-map",
+      "/home/cosmo/.codex/worktrees/w48-bottom-up-batch4/qcore-c/docs/reports/w48-bottom-up-batch4/link-map.corpus.json",
+      "--inputs-snapshot",
+      "/home/cosmo/.codex/worktrees/w48-bottom-up-batch4/qcore-c/private/w48-bottom-up-batch4/inputs-tip",
+      "--binary-source",
+      "b931ed61d4a9676f768e24d8aff8fc0e8a63ddea",
+      "--jobs",
+      "2"
+    ],
+    "cwd": "/home/cosmo/.codex/worktrees/w48-bottom-up-batch4/qcore-c",
+    "started": "2026-10-20T17:26:08.506904+00:00",
+    "ended": "2026-10-20T17:26:08.786656+00:00",
+    "exit": 1,
+    "log": "/home/cosmo/.codex/worktrees/w48-bottom-up-batch4/qcore-c/private/w48-bottom-up-batch4/corpus-after.log"
+  },
+  {
+    "name": "fmt-apply-final",
+    "command": [
+      "cargo",
+      "fmt",
+      "--all"
+    ],
+    "head": "f0e33b5f86f4460f4745f38d24eaa4393a89dea3",
+    "started": "2026-10-20T20:46:07.492559+00:00",
+    "ended": "2026-10-20T20:46:11.569751+00:00",
+    "exit": 0,
+    "log": "/home/cosmo/.codex/worktrees/w48-bottom-up-batch4/qcore-c/private/w48-bottom-up-batch4/fmt-apply-final.log"
+  },
+  {
+    "name": "retention-pin",
+    "command": [
+      "cargo",
+      "test",
+      "-p",
+      "qcore-c-gateway",
+      "--lib",
+      "legacy_c::member_release::tests::a_member_null_test_reads_only_single_pointer_members",
+      "--",
+      "--exact"
+    ],
+    "head": "f0e33b5f86f4460f4745f38d24eaa4393a89dea3",
+    "started": "2026-10-20T20:46:11.570130+00:00",
+    "ended": "2026-10-20T20:46:38.075558+00:00",
+    "exit": 0,
+    "log": "/home/cosmo/.codex/worktrees/w48-bottom-up-batch4/qcore-c/private/w48-bottom-up-batch4/retention-pin.log"
+  },
+  {
+    "name": "rust-final",
+    "command": [
+      "python3",
+      "scripts/run_test_binaries.py",
+      "--jobs",
+      "4",
+      "--log-dir",
+      "/home/cosmo/.codex/worktrees/w48-bottom-up-batch4/qcore-c/private/w48-bottom-up-batch4/rust-units-final"
+    ],
+    "head": "f0e33b5f86f4460f4745f38d24eaa4393a89dea3",
+    "started": "2026-10-20T20:46:38.076096+00:00",
+    "ended": "2026-10-20T20:53:08.516397+00:00",
+    "exit": 0,
+    "log": "/home/cosmo/.codex/worktrees/w48-bottom-up-batch4/qcore-c/private/w48-bottom-up-batch4/rust-final.log"
+  },
+  {
+    "name": "fmt-final",
+    "command": [
+      "cargo",
+      "fmt",
+      "--all",
+      "--",
+      "--check"
+    ],
+    "head": "f0e33b5f86f4460f4745f38d24eaa4393a89dea3",
+    "started": "2026-10-20T20:53:08.517904+00:00",
+    "ended": "2026-10-20T20:53:12.568174+00:00",
+    "exit": 0,
+    "log": "/home/cosmo/.codex/worktrees/w48-bottom-up-batch4/qcore-c/private/w48-bottom-up-batch4/fmt-final.log"
+  },
+  {
+    "name": "clippy-final",
+    "command": [
+      "cargo",
+      "clippy",
+      "--all-targets",
+      "--",
+      "-D",
+      "warnings"
+    ],
+    "head": "f0e33b5f86f4460f4745f38d24eaa4393a89dea3",
+    "started": "2026-10-20T20:53:12.569090+00:00",
+    "ended": "2026-10-20T20:53:21.190462+00:00",
+    "exit": 0,
+    "log": "/home/cosmo/.codex/worktrees/w48-bottom-up-batch4/qcore-c/private/w48-bottom-up-batch4/clippy-final.log"
+  },
+  {
+    "name": "lean-final",
+    "command": [
+      "python3",
+      "scripts/check_lean_audits.py",
+      "--jobs",
+      "4"
+    ],
+    "started": "2026-10-20T20:53:21.202158+00:00",
+    "ended": "2026-10-20T20:53:41.774849+00:00",
+    "exit": 0,
+    "log": "/home/cosmo/.codex/worktrees/w48-bottom-up-batch4/qcore-c/private/w48-bottom-up-batch4/lean-final.log"
+  },
+  {
+    "name": "slice-before-final",
+    "command": [
+      "python3",
+      "/home/cosmo/.codex/worktrees/w48-bottom-up-batch4/qcore-c/docs/reports/w48-bottom-up-batch4/scripts/measure.py",
+      "slice",
+      "/home/cosmo/.codex/worktrees/w48-bottom-up-batch4/qcore-c/private/w48-bottom-up-batch4/slice-before-final",
+      "--link-map",
+      "/home/cosmo/.codex/worktrees/w48-bottom-up-batch4/qcore-c/docs/reports/w48-bottom-up-batch4/link-map.corpus.json",
+      "--inputs-snapshot",
+      "/home/cosmo/.codex/worktrees/w48-bottom-up-batch4/qcore-c/private/w48-bottom-up-batch4/inputs-base-final",
+      "--binary-source",
+      "2d8f6d34257db14031a2578ce14f941bee25fc19",
+      "--jobs",
+      "8"
+    ],
+    "started": "2026-10-20T20:53:41.816480+00:00",
+    "ended": "2026-10-20T21:00:52.768882+00:00",
+    "exit": 0,
+    "log": "/home/cosmo/.codex/worktrees/w48-bottom-up-batch4/qcore-c/private/w48-bottom-up-batch4/slice-before-final.log"
+  },
+  {
+    "name": "system-before-final",
+    "command": [
+      "python3",
+      "/home/cosmo/.codex/worktrees/w48-bottom-up-batch4/qcore-c/docs/reports/w48-bottom-up-batch4/scripts/measure.py",
+      "system",
+      "/home/cosmo/.codex/worktrees/w48-bottom-up-batch4/qcore-c/private/w48-bottom-up-batch4/system-before-final",
+      "--link-map",
+      "/home/cosmo/.codex/worktrees/w48-bottom-up-batch4/qcore-c/docs/reports/w48-bottom-up-batch4/link-map.corpus.json",
+      "--inputs-snapshot",
+      "/home/cosmo/.codex/worktrees/w48-bottom-up-batch4/qcore-c/private/w48-bottom-up-batch4/inputs-base-final",
+      "--binary-source",
+      "2d8f6d34257db14031a2578ce14f941bee25fc19",
+      "--jobs",
+      "8"
+    ],
+    "started": "2026-10-20T20:53:41.815219+00:00",
+    "ended": "2026-10-20T21:01:35.860676+00:00",
+    "exit": 0,
+    "log": "/home/cosmo/.codex/worktrees/w48-bottom-up-batch4/qcore-c/private/w48-bottom-up-batch4/system-before-final.log"
+  },
+  {
+    "name": "slice-after-final",
+    "command": [
+      "python3",
+      "/home/cosmo/.codex/worktrees/w48-bottom-up-batch4/qcore-c/docs/reports/w48-bottom-up-batch4/scripts/measure.py",
+      "slice",
+      "/home/cosmo/.codex/worktrees/w48-bottom-up-batch4/qcore-c/private/w48-bottom-up-batch4/slice-after-final",
+      "--link-map",
+      "/home/cosmo/.codex/worktrees/w48-bottom-up-batch4/qcore-c/docs/reports/w48-bottom-up-batch4/link-map.corpus.json",
+      "--inputs-snapshot",
+      "/home/cosmo/.codex/worktrees/w48-bottom-up-batch4/qcore-c/private/w48-bottom-up-batch4/inputs-tip-final",
+      "--binary-source",
+      "b931ed61d4a9676f768e24d8aff8fc0e8a63ddea",
+      "--jobs",
+      "8"
+    ],
+    "started": "2026-10-20T21:01:35.862263+00:00",
+    "ended": "2026-10-20T21:08:33.673902+00:00",
+    "exit": 0,
+    "log": "/home/cosmo/.codex/worktrees/w48-bottom-up-batch4/qcore-c/private/w48-bottom-up-batch4/slice-after-final.log"
+  },
+  {
+    "name": "system-after-final",
+    "command": [
+      "python3",
+      "/home/cosmo/.codex/worktrees/w48-bottom-up-batch4/qcore-c/docs/reports/w48-bottom-up-batch4/scripts/measure.py",
+      "system",
+      "/home/cosmo/.codex/worktrees/w48-bottom-up-batch4/qcore-c/private/w48-bottom-up-batch4/system-after-final",
+      "--link-map",
+      "/home/cosmo/.codex/worktrees/w48-bottom-up-batch4/qcore-c/docs/reports/w48-bottom-up-batch4/link-map.corpus.json",
+      "--inputs-snapshot",
+      "/home/cosmo/.codex/worktrees/w48-bottom-up-batch4/qcore-c/private/w48-bottom-up-batch4/inputs-tip-final",
+      "--binary-source",
+      "b931ed61d4a9676f768e24d8aff8fc0e8a63ddea",
+      "--jobs",
+      "8"
+    ],
+    "started": "2026-10-20T21:01:35.861885+00:00",
+    "ended": "2026-10-20T21:09:25.033918+00:00",
+    "exit": 0,
+    "log": "/home/cosmo/.codex/worktrees/w48-bottom-up-batch4/qcore-c/private/w48-bottom-up-batch4/system-after-final.log"
+  },
+  {
+    "name": "corpus-before-final",
+    "command": [
+      "python3",
+      "/home/cosmo/.codex/worktrees/w48-bottom-up-batch4/qcore-c/docs/reports/w48-bottom-up-batch4/scripts/measure.py",
+      "corpus",
+      "/home/cosmo/.codex/worktrees/w48-bottom-up-batch4/qcore-c/private/w48-bottom-up-batch4/corpus-before-final",
+      "--link-map",
+      "/home/cosmo/.codex/worktrees/w48-bottom-up-batch4/qcore-c/docs/reports/w48-bottom-up-batch4/link-map.corpus.json",
+      "--inputs-snapshot",
+      "/home/cosmo/.codex/worktrees/w48-bottom-up-batch4/qcore-c/private/w48-bottom-up-batch4/inputs-base-final",
+      "--binary-source",
+      "2d8f6d34257db14031a2578ce14f941bee25fc19",
+      "--jobs",
+      "16"
+    ],
+    "started": "2026-10-20T21:09:25.034353+00:00",
+    "ended": "2026-10-20T21:41:52.187030+00:00",
+    "exit": 0,
+    "log": "/home/cosmo/.codex/worktrees/w48-bottom-up-batch4/qcore-c/private/w48-bottom-up-batch4/corpus-before-final.log"
+  },
+  {
+    "name": "corpus-after-final",
+    "command": [
+      "python3",
+      "/home/cosmo/.codex/worktrees/w48-bottom-up-batch4/qcore-c/docs/reports/w48-bottom-up-batch4/scripts/measure.py",
+      "corpus",
+      "/home/cosmo/.codex/worktrees/w48-bottom-up-batch4/qcore-c/private/w48-bottom-up-batch4/corpus-after-final",
+      "--link-map",
+      "/home/cosmo/.codex/worktrees/w48-bottom-up-batch4/qcore-c/docs/reports/w48-bottom-up-batch4/link-map.corpus.json",
+      "--inputs-snapshot",
+      "/home/cosmo/.codex/worktrees/w48-bottom-up-batch4/qcore-c/private/w48-bottom-up-batch4/inputs-tip-final",
+      "--binary-source",
+      "b931ed61d4a9676f768e24d8aff8fc0e8a63ddea",
+      "--jobs",
+      "16"
+    ],
+    "started": "2026-10-20T21:41:52.187321+00:00",
+    "ended": "2026-10-20T22:15:00.771475+00:00",
+    "exit": 0,
+    "log": "/home/cosmo/.codex/worktrees/w48-bottom-up-batch4/qcore-c/private/w48-bottom-up-batch4/corpus-after-final.log"
+  },
+  {
+    "name": "corpus-archive-final",
+    "command": [
+      "python3",
+      "/home/cosmo/.codex/worktrees/w48-bottom-up-batch4/qcore-c/docs/reports/w48-bottom-up-batch4/scripts/archive.py",
+      "/home/cosmo/.codex/worktrees/w48-bottom-up-batch4/qcore-c/private/w48-bottom-up-batch4/corpus-before-final/corpus/resource-diagnostics.json",
+      "/home/cosmo/.codex/worktrees/w48-bottom-up-batch4/qcore-c/private/w48-bottom-up-batch4/corpus-after-final/corpus/resource-diagnostics.json",
+      "corpus"
+    ],
+    "started": "2026-10-20T22:15:00.772339+00:00",
+    "ended": "2026-10-20T22:15:05.659930+00:00",
+    "exit": 0,
+    "log": "/home/cosmo/.codex/worktrees/w48-bottom-up-batch4/qcore-c/private/w48-bottom-up-batch4/corpus-archive-final.log"
+  },
+  {
+    "name": "corpus-fields-final",
+    "command": [
+      "python3",
+      "/home/cosmo/.codex/worktrees/w48-bottom-up-batch4/qcore-c/docs/reports/w48-bottom-up-batch4/scripts/review_fields.py",
+      "corpus"
+    ],
+    "started": "2026-10-20T22:15:05.660502+00:00",
+    "ended": "2026-10-20T22:15:08.211604+00:00",
+    "exit": 0,
+    "log": "/home/cosmo/.codex/worktrees/w48-bottom-up-batch4/qcore-c/private/w48-bottom-up-batch4/corpus-fields-final.log"
+  },
+  {
+    "name": "corpus-precise-final",
+    "command": [
+      "python3",
+      "/home/cosmo/.codex/worktrees/w48-bottom-up-batch4/qcore-c/docs/reports/w48-bottom-up-batch4/scripts/review_precise.py",
+      "corpus"
+    ],
+    "started": "2026-10-20T22:15:08.211919+00:00",
+    "ended": "2026-10-20T22:15:09.811633+00:00",
+    "exit": 0,
+    "log": "/home/cosmo/.codex/worktrees/w48-bottom-up-batch4/qcore-c/private/w48-bottom-up-batch4/corpus-precise-final.log"
+  },
+  {
+    "name": "corpus-authority-final",
+    "command": [
+      "python3",
+      "/home/cosmo/.codex/worktrees/w48-bottom-up-batch4/qcore-c/docs/reports/w48-bottom-up-batch4/scripts/authority_review.py",
+      "corpus"
+    ],
+    "started": "2026-10-20T22:15:09.812213+00:00",
+    "ended": "2026-10-20T22:15:18.937247+00:00",
+    "exit": 1,
+    "log": "/home/cosmo/.codex/worktrees/w48-bottom-up-batch4/qcore-c/private/w48-bottom-up-batch4/corpus-authority-final.log"
+  },
+  {
+    "name": "corpus-projections-final",
+    "command": [
+      "python3",
+      "/home/cosmo/.codex/worktrees/w48-bottom-up-batch4/qcore-c/docs/reports/w48-bottom-up-batch4/scripts/projections.py",
+      "/home/cosmo/.codex/worktrees/w48-bottom-up-batch4/qcore-c/private/w48-bottom-up-batch4/corpus-before-final",
+      "/home/cosmo/.codex/worktrees/w48-bottom-up-batch4/qcore-c/private/w48-bottom-up-batch4/corpus-after-final",
+      "corpus"
+    ],
+    "started": "2026-10-20T22:15:18.937879+00:00",
+    "ended": "2026-10-20T22:15:20.942767+00:00",
+    "exit": 0,
+    "log": "/home/cosmo/.codex/worktrees/w48-bottom-up-batch4/qcore-c/private/w48-bottom-up-batch4/corpus-projections-final.log"
+  },
+  {
+    "name": "corpus-attribute-final",
+    "command": [
+      "python3",
+      "/home/cosmo/.codex/worktrees/w48-bottom-up-batch4/qcore-c/docs/reports/w48-bottom-up-batch4/scripts/attribute.py",
+      "corpus"
+    ],
+    "started": "2026-10-20T22:15:20.943099+00:00",
+    "ended": "2026-10-20T22:15:21.740460+00:00",
+    "exit": 0,
+    "log": "/home/cosmo/.codex/worktrees/w48-bottom-up-batch4/qcore-c/private/w48-bottom-up-batch4/corpus-attribute-final.log"
+  },
+  {
+    "name": "system-archive-final",
+    "command": [
+      "python3",
+      "/home/cosmo/.codex/worktrees/w48-bottom-up-batch4/qcore-c/docs/reports/w48-bottom-up-batch4/scripts/archive.py",
+      "/home/cosmo/.codex/worktrees/w48-bottom-up-batch4/qcore-c/private/w48-bottom-up-batch4/system-before-final/resource-diagnostics.json",
+      "/home/cosmo/.codex/worktrees/w48-bottom-up-batch4/qcore-c/private/w48-bottom-up-batch4/system-after-final/resource-diagnostics.json",
+      "system"
+    ],
+    "started": "2026-10-20T22:15:21.741170+00:00",
+    "ended": "2026-10-20T22:15:22.448946+00:00",
+    "exit": 0,
+    "log": "/home/cosmo/.codex/worktrees/w48-bottom-up-batch4/qcore-c/private/w48-bottom-up-batch4/system-archive-final.log"
+  },
+  {
+    "name": "system-fields-final",
+    "command": [
+      "python3",
+      "/home/cosmo/.codex/worktrees/w48-bottom-up-batch4/qcore-c/docs/reports/w48-bottom-up-batch4/scripts/review_fields.py",
+      "system"
+    ],
+    "started": "2026-10-20T22:15:22.449447+00:00",
+    "ended": "2026-10-20T22:15:22.783370+00:00",
+    "exit": 0,
+    "log": "/home/cosmo/.codex/worktrees/w48-bottom-up-batch4/qcore-c/private/w48-bottom-up-batch4/system-fields-final.log"
+  },
+  {
+    "name": "system-precise-final",
+    "command": [
+      "python3",
+      "/home/cosmo/.codex/worktrees/w48-bottom-up-batch4/qcore-c/docs/reports/w48-bottom-up-batch4/scripts/review_precise.py",
+      "system"
+    ],
+    "started": "2026-10-20T22:15:22.783701+00:00",
+    "ended": "2026-10-20T22:15:23.119528+00:00",
+    "exit": 0,
+    "log": "/home/cosmo/.codex/worktrees/w48-bottom-up-batch4/qcore-c/private/w48-bottom-up-batch4/system-precise-final.log"
+  },
+  {
+    "name": "system-authority-final",
+    "command": [
+      "python3",
+      "/home/cosmo/.codex/worktrees/w48-bottom-up-batch4/qcore-c/docs/reports/w48-bottom-up-batch4/scripts/authority_review.py",
+      "system"
+    ],
+    "started": "2026-10-20T22:15:23.119870+00:00",
+    "ended": "2026-10-20T22:15:24.467710+00:00",
+    "exit": 0,
+    "log": "/home/cosmo/.codex/worktrees/w48-bottom-up-batch4/qcore-c/private/w48-bottom-up-batch4/system-authority-final.log"
+  },
+  {
+    "name": "system-projections-final",
+    "command": [
+      "python3",
+      "/home/cosmo/.codex/worktrees/w48-bottom-up-batch4/qcore-c/docs/reports/w48-bottom-up-batch4/scripts/projections.py",
+      "/home/cosmo/.codex/worktrees/w48-bottom-up-batch4/qcore-c/private/w48-bottom-up-batch4/system-before-final",
+      "/home/cosmo/.codex/worktrees/w48-bottom-up-batch4/qcore-c/private/w48-bottom-up-batch4/system-after-final",
+      "system"
+    ],
+    "started": "2026-10-20T22:15:24.468361+00:00",
+    "ended": "2026-10-20T22:15:24.642462+00:00",
+    "exit": 0,
+    "log": "/home/cosmo/.codex/worktrees/w48-bottom-up-batch4/qcore-c/private/w48-bottom-up-batch4/system-projections-final.log"
+  },
+  {
+    "name": "system-attribute-final",
+    "command": [
+      "python3",
+      "/home/cosmo/.codex/worktrees/w48-bottom-up-batch4/qcore-c/docs/reports/w48-bottom-up-batch4/scripts/attribute.py",
+      "system"
+    ],
+    "started": "2026-10-20T22:15:24.643047+00:00",
+    "ended": "2026-10-20T22:15:24.760441+00:00",
+    "exit": 0,
+    "log": "/home/cosmo/.codex/worktrees/w48-bottom-up-batch4/qcore-c/private/w48-bottom-up-batch4/system-attribute-final.log"
+  },
+  {
+    "name": "slice-archive-final",
+    "command": [
+      "python3",
+      "/home/cosmo/.codex/worktrees/w48-bottom-up-batch4/qcore-c/docs/reports/w48-bottom-up-batch4/scripts/archive.py",
+      "/home/cosmo/.codex/worktrees/w48-bottom-up-batch4/qcore-c/private/w48-bottom-up-batch4/slice-before-final/resource-diagnostics.json",
+      "/home/cosmo/.codex/worktrees/w48-bottom-up-batch4/qcore-c/private/w48-bottom-up-batch4/slice-after-final/resource-diagnostics.json",
+      "slice"
+    ],
+    "started": "2026-10-20T22:15:24.760850+00:00",
+    "ended": "2026-10-20T22:15:25.443902+00:00",
+    "exit": 0,
+    "log": "/home/cosmo/.codex/worktrees/w48-bottom-up-batch4/qcore-c/private/w48-bottom-up-batch4/slice-archive-final.log"
+  },
+  {
+    "name": "slice-fields-final",
+    "command": [
+      "python3",
+      "/home/cosmo/.codex/worktrees/w48-bottom-up-batch4/qcore-c/docs/reports/w48-bottom-up-batch4/scripts/review_fields.py",
+      "slice"
+    ],
+    "started": "2026-10-20T22:15:25.444743+00:00",
+    "ended": "2026-10-20T22:15:25.745773+00:00",
+    "exit": 0,
+    "log": "/home/cosmo/.codex/worktrees/w48-bottom-up-batch4/qcore-c/private/w48-bottom-up-batch4/slice-fields-final.log"
+  },
+  {
+    "name": "slice-precise-final",
+    "command": [
+      "python3",
+      "/home/cosmo/.codex/worktrees/w48-bottom-up-batch4/qcore-c/docs/reports/w48-bottom-up-batch4/scripts/review_precise.py",
+      "slice"
+    ],
+    "started": "2026-10-20T22:15:25.746399+00:00",
+    "ended": "2026-10-20T22:15:26.056360+00:00",
+    "exit": 0,
+    "log": "/home/cosmo/.codex/worktrees/w48-bottom-up-batch4/qcore-c/private/w48-bottom-up-batch4/slice-precise-final.log"
+  },
+  {
+    "name": "slice-authority-final",
+    "command": [
+      "python3",
+      "/home/cosmo/.codex/worktrees/w48-bottom-up-batch4/qcore-c/docs/reports/w48-bottom-up-batch4/scripts/authority_review.py",
+      "slice"
+    ],
+    "started": "2026-10-20T22:15:26.056722+00:00",
+    "ended": "2026-10-20T22:15:27.159797+00:00",
+    "exit": 0,
+    "log": "/home/cosmo/.codex/worktrees/w48-bottom-up-batch4/qcore-c/private/w48-bottom-up-batch4/slice-authority-final.log"
+  },
+  {
+    "name": "slice-projections-final",
+    "command": [
+      "python3",
+      "/home/cosmo/.codex/worktrees/w48-bottom-up-batch4/qcore-c/docs/reports/w48-bottom-up-batch4/scripts/projections.py",
+      "/home/cosmo/.codex/worktrees/w48-bottom-up-batch4/qcore-c/private/w48-bottom-up-batch4/slice-before-final",
+      "/home/cosmo/.codex/worktrees/w48-bottom-up-batch4/qcore-c/private/w48-bottom-up-batch4/slice-after-final",
+      "slice"
+    ],
+    "started": "2026-10-20T22:15:27.160441+00:00",
+    "ended": "2026-10-20T22:15:27.322624+00:00",
+    "exit": 0,
+    "log": "/home/cosmo/.codex/worktrees/w48-bottom-up-batch4/qcore-c/private/w48-bottom-up-batch4/slice-projections-final.log"
+  },
+  {
+    "name": "slice-attribute-final",
+    "command": [
+      "python3",
+      "/home/cosmo/.codex/worktrees/w48-bottom-up-batch4/qcore-c/docs/reports/w48-bottom-up-batch4/scripts/attribute.py",
+      "slice"
+    ],
+    "started": "2026-10-20T22:15:27.323230+00:00",
+    "ended": "2026-10-20T22:15:27.429112+00:00",
+    "exit": 0,
+    "log": "/home/cosmo/.codex/worktrees/w48-bottom-up-batch4/qcore-c/private/w48-bottom-up-batch4/slice-attribute-final.log"
+  },
+  {
+    "name": "rank-final",
+    "command": [
+      "python3",
+      "/home/cosmo/.codex/worktrees/w48-bottom-up-batch4/qcore-c/docs/reports/w48-bottom-up-batch4/scripts/rank.py"
+    ],
+    "started": "2026-10-20T22:15:27.429835+00:00",
+    "ended": "2026-10-20T22:15:32.405330+00:00",
+    "exit": 0,
+    "log": "/home/cosmo/.codex/worktrees/w48-bottom-up-batch4/qcore-c/private/w48-bottom-up-batch4/rank-final.log"
+  },
+  {
+    "name": "corpus-authority-retry1",
+    "command": [
+      "python3",
+      "docs/reports/w48-bottom-up-batch4/scripts/authority_review.py",
+      "corpus"
+    ],
+    "exit": 0,
+    "started": "2026-10-20T22:23:15.163320+00:00",
+    "ended": "2026-10-20T22:23:24.847508+00:00",
+    "log": "private/w48-bottom-up-batch4/corpus-authority-retry1.log"
+  },
+  {
+    "name": "complete-diagnostics-final",
+    "command": [
+      "python3",
+      "docs/reports/w48-bottom-up-batch4/scripts/complete_diagnostics_review.py"
+    ],
+    "exit": 0,
+    "started": "2026-10-20T22:35:35.103297+00:00",
+    "ended": "2026-10-20T22:35:36.245655+00:00",
+    "log": "private/w48-bottom-up-batch4/complete-diagnostics-final.log"
+  },
+  {
+    "name": "complete-contracts-final",
+    "command": [
+      "python3",
+      "docs/reports/w48-bottom-up-batch4/scripts/complete_contract_review.py"
+    ],
+    "exit": 0,
+    "started": "2026-10-20T22:35:36.270838+00:00",
+    "ended": "2026-10-20T22:35:36.786044+00:00",
+    "log": "private/w48-bottom-up-batch4/complete-contracts-final.log"
+  },
+  {
+    "name": "docs-index-final",
+    "command": [
+      "python3",
+      "scripts/build_docs_index.py"
+    ],
+    "exit": 0,
+    "started": "2026-10-20T22:35:36.805183+00:00",
+    "ended": "2026-10-20T22:35:36.930814+00:00",
+    "log": "private/w48-bottom-up-batch4/docs-index-final.log"
+  },
+  {
+    "name": "docs-index-check-final",
+    "command": [
+      "python3",
+      "scripts/build_docs_index.py",
+      "--check"
+    ],
+    "exit": 0,
+    "started": "2026-10-20T22:35:36.958523+00:00",
+    "ended": "2026-10-20T22:35:37.005471+00:00",
+    "log": "private/w48-bottom-up-batch4/docs-index-check-final.log"
+  },
+  {
+    "name": "reading-final",
+    "command": [
+      "python3",
+      "scripts/task_context.py",
+      "--base",
+      "2d8f6d34257db14031a2578ce14f941bee25fc19",
+      "--topic",
+      "gateway",
+      "--topic",
+      "integration",
+      "--topic",
+      "maintenance",
+      "--path",
+      "docs/reports/w48-bottom-up-batch4/scripts/metadata_replay.rs",
+      "--path",
+      "docs/QCORE_IMPLEMENTED_GRAMMARS_r0_3.md",
+      "--json"
+    ],
+    "exit": 0,
+    "started": "2026-10-20T22:35:37.027211+00:00",
+    "ended": "2026-10-20T22:35:37.591509+00:00",
+    "log": "private/w48-bottom-up-batch4/reading-final.log"
+  },
+  {
+    "name": "reconciliation-final",
+    "command": [
+      "python3",
+      "scripts/reconciliation_sweep.py",
+      ".",
+      "--cards",
+      "w48-bottom-up-batch4",
+      "--json"
+    ],
+    "exit": 0,
+    "started": "2026-10-20T22:35:37.609902+00:00",
+    "ended": "2026-10-20T22:35:37.643870+00:00",
+    "log": "private/w48-bottom-up-batch4/reconciliation-final.log"
+  },
+  {
+    "name": "diff-check-final",
+    "command": [
+      "git",
+      "diff",
+      "--check"
+    ],
+    "exit": 0,
+    "started": "2026-10-20T22:36:01.840444+00:00",
+    "ended": "2026-10-20T22:36:01.856024+00:00",
+    "log": "private/w48-bottom-up-batch4/diff-check-final.log"
+  },
+  {
+    "name": "python-final",
+    "command": [
+      "python3",
+      "-m",
+      "unittest",
+      "discover",
+      "-s",
+      "scripts/tests"
+    ],
+    "exit": 0,
+    "started": "2026-10-20T22:35:44.409626+00:00",
+    "ended": "2026-10-20T22:36:18.044899+00:00",
+    "log": "private/w48-bottom-up-batch4/python-final.log"
+  },
+  {
+    "name": "diff-check-close",
+    "command": [
+      "git",
+      "diff",
+      "--check"
+    ],
+    "exit": 0,
+    "started": "2026-10-20T22:36:53.949442+00:00",
+    "ended": "2026-10-20T22:36:53.964068+00:00",
+    "log": "private/w48-bottom-up-batch4/diff-check-close.log"
+  },
+  {
+    "name": "environment-build-command.json:0",
+    "receipt_source": "private/w48-bottom-up-batch4/environment-build-command.json",
+    "command": [
+      "rustc",
+      "--edition=2024",
+      "/home/cosmo/.codex/worktrees/w48-bottom-up-batch4/qcore-c/docs/reports/contract-hypothesis-graph-v1/scripts/environment_provenance.rs",
+      "-L",
+      "dependency=/home/cosmo/.codex/worktrees/w48-bottom-up-batch4/qcore-c/target/release/deps",
+      "--extern",
+      "qcore_audit=/home/cosmo/.codex/worktrees/w48-bottom-up-batch4/qcore-c/target/release/deps/libqcore_audit-ea4b824ef1f559eb.rlib",
+      "--extern",
+      "qcore_contract=/home/cosmo/.codex/worktrees/w48-bottom-up-batch4/qcore-c/target/release/deps/libqcore_contract-68876726193bb2d2.rlib",
+      "--extern",
+      "serde_json=/home/cosmo/.codex/worktrees/w48-bottom-up-batch4/qcore-c/target/release/deps/libserde_json-08241b9b75b89117.rlib",
+      "-o",
+      "/home/cosmo/.codex/worktrees/w48-bottom-up-batch4/qcore-c/private/w48-bottom-up-batch4/environment-provenance"
+    ],
+    "exit": 0,
+    "started": "2026-10-20T21:47:22.088742+00:00",
+    "ended": "2026-10-20T21:47:23.235127+00:00",
+    "log": "/home/cosmo/.codex/worktrees/w48-bottom-up-batch4/qcore-c/private/w48-bottom-up-batch4/environment-build.log",
+    "source_sha256": "70048e8c1953a7bf8f139723f60312a4b5bdb02fdfbd4ecc1698194f24f1a612",
+    "rlib_sha256": {
+      "/home/cosmo/.codex/worktrees/w48-bottom-up-batch4/qcore-c/target/release/deps/libqcore_audit-ea4b824ef1f559eb.rlib": "fec96c001a5c96b99cb2278994d813d6be1d958a1ddf317f2d14ac6ddccf29ee",
+      "/home/cosmo/.codex/worktrees/w48-bottom-up-batch4/qcore-c/target/release/deps/libqcore_contract-68876726193bb2d2.rlib": "d0d74bfa4efd3288179372c5134733f3141ac0b13d5356d2bf9296b6cd91aa49",
+      "/home/cosmo/.codex/worktrees/w48-bottom-up-batch4/qcore-c/target/release/deps/libserde_json-08241b9b75b89117.rlib": "e4c75aa4440971e682bba85dfe4d47ba555e80c8b5cab338149a047161e3dd56"
+    },
+    "rlib_sha256_after": {
+      "/home/cosmo/.codex/worktrees/w48-bottom-up-batch4/qcore-c/target/release/deps/libqcore_audit-ea4b824ef1f559eb.rlib": "fec96c001a5c96b99cb2278994d813d6be1d958a1ddf317f2d14ac6ddccf29ee",
+      "/home/cosmo/.codex/worktrees/w48-bottom-up-batch4/qcore-c/target/release/deps/libqcore_contract-68876726193bb2d2.rlib": "d0d74bfa4efd3288179372c5134733f3141ac0b13d5356d2bf9296b6cd91aa49",
+      "/home/cosmo/.codex/worktrees/w48-bottom-up-batch4/qcore-c/target/release/deps/libserde_json-08241b9b75b89117.rlib": "e4c75aa4440971e682bba85dfe4d47ba555e80c8b5cab338149a047161e3dd56"
+    },
+    "binary_sha256": "8edef2f1825aef709ef81dca02b4f4a75174f86a53bed0804ae6ece18c360b0a"
+  },
+  {
+    "name": "environment-base-command.json:0",
+    "receipt_source": "private/w48-bottom-up-batch4/environment-base-command.json",
+    "command": [
+      "/home/cosmo/.codex/worktrees/w48-bottom-up-batch4/qcore-c/private/w48-bottom-up-batch4/environment-provenance",
+      "/home/cosmo/.codex/worktrees/w48-bottom-up-batch4/qcore-c/private/w48-bottom-up-batch4/inputs-base-final/contract/profiles/fluent-bit/../../../cycle19-resource-contracts.json",
+      "/home/cosmo/Documents/GitHub/qcore-c/build/cycle19/c-gateway-wave-pin/fluent-bit-clang-source",
+      "/home/cosmo/.codex/worktrees/w48-bottom-up-batch4/qcore-c/private/w48-bottom-up-batch4/environment-base.json"
+    ],
+    "exit": 0,
+    "started": "2026-10-20T21:47:23.355231+00:00",
+    "ended": "2026-10-20T21:47:28.307153+00:00",
+    "log": "/home/cosmo/.codex/worktrees/w48-bottom-up-batch4/qcore-c/private/w48-bottom-up-batch4/environment-base.log",
+    "binary_sha256": "8edef2f1825aef709ef81dca02b4f4a75174f86a53bed0804ae6ece18c360b0a",
+    "output_sha256": "dd16969b488d53dd74c0a8c074c8ad5822eb652799e1460950a77fb2837d0d21"
+  },
+  {
+    "name": "environment-tip-command.json:0",
+    "receipt_source": "private/w48-bottom-up-batch4/environment-tip-command.json",
+    "command": [
+      "/home/cosmo/.codex/worktrees/w48-bottom-up-batch4/qcore-c/private/w48-bottom-up-batch4/environment-provenance",
+      "/home/cosmo/.codex/worktrees/w48-bottom-up-batch4/qcore-c/private/w48-bottom-up-batch4/inputs-tip-final/contract/profiles/fluent-bit/../../../cycle19-resource-contracts.json",
+      "/home/cosmo/Documents/GitHub/qcore-c/build/cycle19/c-gateway-wave-pin/fluent-bit-clang-source",
+      "/home/cosmo/.codex/worktrees/w48-bottom-up-batch4/qcore-c/private/w48-bottom-up-batch4/environment-tip.json"
+    ],
+    "exit": 0,
+    "started": "2026-10-20T21:47:28.325282+00:00",
+    "ended": "2026-10-20T21:47:33.349322+00:00",
+    "log": "/home/cosmo/.codex/worktrees/w48-bottom-up-batch4/qcore-c/private/w48-bottom-up-batch4/environment-tip.log",
+    "binary_sha256": "8edef2f1825aef709ef81dca02b4f4a75174f86a53bed0804ae6ece18c360b0a",
+    "output_sha256": "7151188411e9b367ce26722ee90c0700d6795e310019525c3d2b8904ee90da2d"
+  },
+  {
+    "name": "metadata-replay-build-command.json:0",
+    "receipt_source": "private/w48-bottom-up-batch4/metadata-replay-build-command.json",
+    "command": [
+      "rustc",
+      "--edition=2024",
+      "/home/cosmo/.codex/worktrees/w48-bottom-up-batch4/qcore-c/docs/reports/w48-bottom-up-batch4/scripts/metadata_replay.rs",
+      "-L",
+      "dependency=/home/cosmo/.codex/worktrees/w48-bottom-up-batch4/qcore-c/target/release/deps",
+      "--extern",
+      "qcore_audit=/home/cosmo/.codex/worktrees/w48-bottom-up-batch4/qcore-c/target/release/deps/libqcore_audit-ea4b824ef1f559eb.rlib",
+      "--extern",
+      "qcore_schemas=/home/cosmo/.codex/worktrees/w48-bottom-up-batch4/qcore-c/target/release/deps/libqcore_schemas-edb315d9d169061e.rlib",
+      "--extern",
+      "serde_json=/home/cosmo/.codex/worktrees/w48-bottom-up-batch4/qcore-c/target/release/deps/libserde_json-08241b9b75b89117.rlib",
+      "-o",
+      "/home/cosmo/.codex/worktrees/w48-bottom-up-batch4/qcore-c/private/w48-bottom-up-batch4/metadata-replay"
+    ],
+    "exit": 0,
+    "started": "2026-10-20T21:58:07.220107+00:00",
+    "ended": "2026-10-20T21:58:08.934114+00:00",
+    "log": "/home/cosmo/.codex/worktrees/w48-bottom-up-batch4/qcore-c/private/w48-bottom-up-batch4/metadata-replay-build.log",
+    "source_sha256": "981d9256f99d2b875acf51ecce2bd9c27b7900c43149b0ecb9150532184ad79a",
+    "rlib_sha256": {
+      "/home/cosmo/.codex/worktrees/w48-bottom-up-batch4/qcore-c/target/release/deps/libqcore_audit-ea4b824ef1f559eb.rlib": "fec96c001a5c96b99cb2278994d813d6be1d958a1ddf317f2d14ac6ddccf29ee",
+      "/home/cosmo/.codex/worktrees/w48-bottom-up-batch4/qcore-c/target/release/deps/libqcore_schemas-edb315d9d169061e.rlib": "d01f3e2248d5f5357f0c38e8a6536e74fe7bf3aa2ce7214cf44908ee2274c41b",
+      "/home/cosmo/.codex/worktrees/w48-bottom-up-batch4/qcore-c/target/release/deps/libserde_json-08241b9b75b89117.rlib": "e4c75aa4440971e682bba85dfe4d47ba555e80c8b5cab338149a047161e3dd56"
+    },
+    "rlib_sha256_after": {
+      "/home/cosmo/.codex/worktrees/w48-bottom-up-batch4/qcore-c/target/release/deps/libqcore_audit-ea4b824ef1f559eb.rlib": "fec96c001a5c96b99cb2278994d813d6be1d958a1ddf317f2d14ac6ddccf29ee",
+      "/home/cosmo/.codex/worktrees/w48-bottom-up-batch4/qcore-c/target/release/deps/libqcore_schemas-edb315d9d169061e.rlib": "d01f3e2248d5f5357f0c38e8a6536e74fe7bf3aa2ce7214cf44908ee2274c41b",
+      "/home/cosmo/.codex/worktrees/w48-bottom-up-batch4/qcore-c/target/release/deps/libserde_json-08241b9b75b89117.rlib": "e4c75aa4440971e682bba85dfe4d47ba555e80c8b5cab338149a047161e3dd56"
+    },
+    "binary_sha256": "77f2e64cb6d6564020c8f0e563f35fdd3709b0efa7f7c54f8806a2c316a35ddb"
+  },
+  {
+    "name": "metadata-replay-commands.json:0",
+    "receipt_source": "private/w48-bottom-up-batch4/metadata-replay-commands.json",
+    "command": [
+      "/home/cosmo/.codex/worktrees/w48-bottom-up-batch4/qcore-c/private/w48-bottom-up-batch4/metadata-replay",
+      "/home/cosmo/.codex/worktrees/w48-bottom-up-batch4/qcore-c/private/w48-bottom-up-batch4/system-before-final/resource-diagnostics.json",
+      "/home/cosmo/.codex/worktrees/w48-bottom-up-batch4/qcore-c/private/w48-bottom-up-batch4/system-before-final/resource-diagnostics.contracts.json",
+      "/home/cosmo/.codex/worktrees/w48-bottom-up-batch4/qcore-c/private/w48-bottom-up-batch4/environment-base.json",
+      "/home/cosmo/.codex/worktrees/w48-bottom-up-batch4/qcore-c/private/w48-bottom-up-batch4/system-before-metadata-replay.json"
+    ],
+    "exit": 0,
+    "started": "2026-10-20T21:59:10.864513+00:00",
+    "ended": "2026-10-20T21:59:11.390114+00:00",
+    "log": "/home/cosmo/.codex/worktrees/w48-bottom-up-batch4/qcore-c/private/w48-bottom-up-batch4/system-before-metadata-replay.log"
+  },
+  {
+    "name": "metadata-replay-commands.json:1",
+    "receipt_source": "private/w48-bottom-up-batch4/metadata-replay-commands.json",
+    "command": [
+      "/home/cosmo/.codex/worktrees/w48-bottom-up-batch4/qcore-c/private/w48-bottom-up-batch4/metadata-replay",
+      "/home/cosmo/.codex/worktrees/w48-bottom-up-batch4/qcore-c/private/w48-bottom-up-batch4/system-after-final/resource-diagnostics.json",
+      "/home/cosmo/.codex/worktrees/w48-bottom-up-batch4/qcore-c/private/w48-bottom-up-batch4/system-after-final/resource-diagnostics.contracts.json",
+      "/home/cosmo/.codex/worktrees/w48-bottom-up-batch4/qcore-c/private/w48-bottom-up-batch4/environment-tip.json",
+      "/home/cosmo/.codex/worktrees/w48-bottom-up-batch4/qcore-c/private/w48-bottom-up-batch4/system-after-metadata-replay.json"
+    ],
+    "exit": 0,
+    "started": "2026-10-20T21:59:11.390609+00:00",
+    "ended": "2026-10-20T21:59:12.072156+00:00",
+    "log": "/home/cosmo/.codex/worktrees/w48-bottom-up-batch4/qcore-c/private/w48-bottom-up-batch4/system-after-metadata-replay.log"
+  },
+  {
+    "name": "metadata-replay-commands.json:2",
+    "receipt_source": "private/w48-bottom-up-batch4/metadata-replay-commands.json",
+    "command": [
+      "/home/cosmo/.codex/worktrees/w48-bottom-up-batch4/qcore-c/private/w48-bottom-up-batch4/metadata-replay",
+      "/home/cosmo/.codex/worktrees/w48-bottom-up-batch4/qcore-c/private/w48-bottom-up-batch4/slice-before-final/resource-diagnostics.json",
+      "/home/cosmo/.codex/worktrees/w48-bottom-up-batch4/qcore-c/private/w48-bottom-up-batch4/slice-before-final/resource-diagnostics.contracts.json",
+      "/home/cosmo/.codex/worktrees/w48-bottom-up-batch4/qcore-c/private/w48-bottom-up-batch4/environment-base.json",
+      "/home/cosmo/.codex/worktrees/w48-bottom-up-batch4/qcore-c/private/w48-bottom-up-batch4/slice-before-metadata-replay.json"
+    ],
+    "exit": 0,
+    "started": "2026-10-20T21:59:12.072751+00:00",
+    "ended": "2026-10-20T21:59:12.596123+00:00",
+    "log": "/home/cosmo/.codex/worktrees/w48-bottom-up-batch4/qcore-c/private/w48-bottom-up-batch4/slice-before-metadata-replay.log"
+  },
+  {
+    "name": "metadata-replay-commands.json:3",
+    "receipt_source": "private/w48-bottom-up-batch4/metadata-replay-commands.json",
+    "command": [
+      "/home/cosmo/.codex/worktrees/w48-bottom-up-batch4/qcore-c/private/w48-bottom-up-batch4/metadata-replay",
+      "/home/cosmo/.codex/worktrees/w48-bottom-up-batch4/qcore-c/private/w48-bottom-up-batch4/slice-after-final/resource-diagnostics.json",
+      "/home/cosmo/.codex/worktrees/w48-bottom-up-batch4/qcore-c/private/w48-bottom-up-batch4/slice-after-final/resource-diagnostics.contracts.json",
+      "/home/cosmo/.codex/worktrees/w48-bottom-up-batch4/qcore-c/private/w48-bottom-up-batch4/environment-tip.json",
+      "/home/cosmo/.codex/worktrees/w48-bottom-up-batch4/qcore-c/private/w48-bottom-up-batch4/slice-after-metadata-replay.json"
+    ],
+    "exit": 0,
+    "started": "2026-10-20T21:59:12.596721+00:00",
+    "ended": "2026-10-20T21:59:13.024861+00:00",
+    "log": "/home/cosmo/.codex/worktrees/w48-bottom-up-batch4/qcore-c/private/w48-bottom-up-batch4/slice-after-metadata-replay.log"
+  },
+  {
+    "name": "metadata-replay-commands.json:4",
+    "receipt_source": "private/w48-bottom-up-batch4/metadata-replay-commands.json",
+    "command": [
+      "/home/cosmo/.codex/worktrees/w48-bottom-up-batch4/qcore-c/private/w48-bottom-up-batch4/metadata-replay",
+      "/home/cosmo/.codex/worktrees/w48-bottom-up-batch4/qcore-c/private/w48-bottom-up-batch4/corpus-before-final/corpus/resource-diagnostics.json",
+      "/home/cosmo/.codex/worktrees/w48-bottom-up-batch4/qcore-c/private/w48-bottom-up-batch4/corpus-before-final/corpus/resource-diagnostics.contracts.json",
+      "/home/cosmo/.codex/worktrees/w48-bottom-up-batch4/qcore-c/private/w48-bottom-up-batch4/environment-base.json",
+      "/home/cosmo/.codex/worktrees/w48-bottom-up-batch4/qcore-c/private/w48-bottom-up-batch4/corpus-before-metadata-replay.json"
+    ],
+    "exit": 0,
+    "started": "2026-10-20T21:59:13.025500+00:00",
+    "ended": "2026-10-20T21:59:15.583904+00:00",
+    "log": "/home/cosmo/.codex/worktrees/w48-bottom-up-batch4/qcore-c/private/w48-bottom-up-batch4/corpus-before-metadata-replay.log"
+  },
+  {
+    "name": "configured-preflight-commands.json:0",
+    "receipt_source": "private/w48-bottom-up-batch4/configured-preflight/commands.json",
+    "command": [
+      "python3",
+      "docs/reports/w48-bottom-up-batch4/scripts/time_identity.py",
+      "system",
+      "--artifacts-root",
+      "private/w48-bottom-up-batch4/configured-preflight"
+    ],
+    "exit": 0,
+    "log": "private/w48-bottom-up-batch4/configured-preflight/system-time_identity.py.log",
+    "started": "2026-10-20T21:30:05.616914+00:00",
+    "ended": "2026-10-20T21:30:06.453633+00:00"
+  },
+  {
+    "name": "configured-preflight-commands.json:1",
+    "receipt_source": "private/w48-bottom-up-batch4/configured-preflight/commands.json",
+    "command": [
+      "python3",
+      "docs/reports/w48-bottom-up-batch4/scripts/configured_context_review.py",
+      "system",
+      "--artifacts-root",
+      "private/w48-bottom-up-batch4/configured-preflight"
+    ],
+    "exit": 1,
+    "log": "private/w48-bottom-up-batch4/configured-preflight/system-configured_context_review.py.log",
+    "started": "2026-10-20T21:30:06.453922+00:00",
+    "ended": "2026-10-20T21:30:07.408136+00:00"
+  },
+  {
+    "name": "configured-preflight-commands.json:2",
+    "receipt_source": "private/w48-bottom-up-batch4/configured-preflight/commands.json",
+    "command": [
+      "python3",
+      "docs/reports/w48-bottom-up-batch4/scripts/time_identity.py",
+      "slice",
+      "--artifacts-root",
+      "private/w48-bottom-up-batch4/configured-preflight"
+    ],
+    "exit": 0,
+    "log": "private/w48-bottom-up-batch4/configured-preflight/slice-time_identity.py.log",
+    "started": "2026-10-20T21:30:07.873991+00:00",
+    "ended": "2026-10-20T21:30:08.487937+00:00"
+  },
+  {
+    "name": "configured-preflight-commands.json:3",
+    "receipt_source": "private/w48-bottom-up-batch4/configured-preflight/commands.json",
+    "command": [
+      "python3",
+      "docs/reports/w48-bottom-up-batch4/scripts/configured_context_review.py",
+      "slice",
+      "--artifacts-root",
+      "private/w48-bottom-up-batch4/configured-preflight"
+    ],
+    "exit": 1,
+    "log": "private/w48-bottom-up-batch4/configured-preflight/slice-configured_context_review.py.log",
+    "started": "2026-10-20T21:30:08.488414+00:00",
+    "ended": "2026-10-20T21:30:09.241111+00:00"
+  },
+  {
+    "name": "configured-preflight-commands.json:4",
+    "receipt_source": "private/w48-bottom-up-batch4/configured-preflight/commands.json",
+    "command": [
+      "python3",
+      "docs/reports/w48-bottom-up-batch4/scripts/configured_context_review.py",
+      "system",
+      "--artifacts-root",
+      "private/w48-bottom-up-batch4/configured-preflight"
+    ],
+    "exit": 1,
+    "log": "private/w48-bottom-up-batch4/configured-preflight/system-context-retry1.log",
+    "started": "2026-10-20T21:34:33.788826+00:00",
+    "ended": "2026-10-20T21:34:34.581254+00:00"
+  },
+  {
+    "name": "configured-preflight-commands.json:5",
+    "receipt_source": "private/w48-bottom-up-batch4/configured-preflight/commands.json",
+    "command": [
+      "python3",
+      "docs/reports/w48-bottom-up-batch4/scripts/configured_context_review.py",
+      "slice",
+      "--artifacts-root",
+      "private/w48-bottom-up-batch4/configured-preflight"
+    ],
+    "exit": 0,
+    "log": "private/w48-bottom-up-batch4/configured-preflight/slice-context-retry1.log",
+    "started": "2026-10-20T21:34:34.581757+00:00",
+    "ended": "2026-10-20T21:34:35.185182+00:00"
+  },
+  {
+    "name": "configured-preflight-commands.json:6",
+    "receipt_source": "private/w48-bottom-up-batch4/configured-preflight/commands.json",
+    "command": [
+      "python3",
+      "docs/reports/w48-bottom-up-batch4/scripts/configured_context_review.py",
+      "system",
+      "--artifacts-root",
+      "private/w48-bottom-up-batch4/configured-preflight"
+    ],
+    "exit": 0,
+    "log": "private/w48-bottom-up-batch4/configured-preflight/system-context-retry2.log",
+    "started": "2026-10-20T21:36:22.859615+00:00",
+    "ended": "2026-10-20T21:36:23.939532+00:00"
+  },
+  {
+    "name": "configured-preflight-commands.json:7",
+    "receipt_source": "private/w48-bottom-up-batch4/configured-preflight/commands.json",
+    "command": [
+      "python3",
+      "docs/reports/w48-bottom-up-batch4/scripts/configured_context_review.py",
+      "slice",
+      "--artifacts-root",
+      "private/w48-bottom-up-batch4/configured-preflight"
+    ],
+    "exit": 0,
+    "log": "private/w48-bottom-up-batch4/configured-preflight/slice-context-retry2.log",
+    "started": "2026-10-20T21:36:23.940223+00:00",
+    "ended": "2026-10-20T21:36:24.850558+00:00"
+  },
+  {
+    "name": "diff-check-range-before-repair",
+    "command": [
+      "git",
+      "diff",
+      "--check",
+      "2d8f6d34257db14031a2578ce14f941bee25fc19"
+    ],
+    "exit": 2,
+    "started": "2026-10-20T22:37:06.761847+00:00",
+    "ended": "2026-10-20T22:37:06.795132+00:00",
+    "log": "private/w48-bottom-up-batch4/diff-check-range-before-repair.log"
+  },
+  {
+    "name": "diff-check-range-final",
+    "command": [
+      "git",
+      "diff",
+      "--check",
+      "2d8f6d34257db14031a2578ce14f941bee25fc19"
+    ],
+    "exit": 0,
+    "started": "2026-10-20T22:37:27.381244+00:00",
+    "ended": "2026-10-20T22:37:27.440364+00:00",
+    "log": "private/w48-bottom-up-batch4/diff-check-range-final.log"
+  }
+]
