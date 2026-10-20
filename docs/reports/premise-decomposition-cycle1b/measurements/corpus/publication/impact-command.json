@@ -1,0 +1,10 @@
+{
+  "command": [
+    "/usr/bin/python3",
+    "/home/cosmo/.codex/worktrees/premise-decomposition-cycle1b/qcore-c/docs/reports/premise-decomposition-cycle1b/scripts/impact.py",
+    "private/premise-decomposition-cycle1b/runs-1/corpus/after/resource-diagnostics.contracts.json",
+    "private/premise-decomposition-cycle1b/runs-1/corpus/after/resource-diagnostics.json",
+    "docs/reports/premise-decomposition-cycle1b/measurements/corpus/publication/impact.json"
+  ],
+  "exit": 0
+}

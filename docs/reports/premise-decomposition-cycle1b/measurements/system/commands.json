@@ -1,0 +1,34 @@
+[
+  {
+    "command": [
+      "python3",
+      "docs/reports/premise-decomposition-cycle1b/scripts/compare.py",
+      "system",
+      "private/premise-decomposition-cycle1b/runs-1/system/before",
+      "private/premise-decomposition-cycle1b/runs-1/system/after",
+      "docs/reports/premise-decomposition-cycle1b/measurements/system"
+    ],
+    "exit": 1
+  },
+  {
+    "command": [
+      "python3",
+      "docs/reports/premise-decomposition-cycle1b/scripts/attribute_time_identity.py",
+      "system",
+      "docs/reports/premise-decomposition-cycle1b/measurements/system"
+    ],
+    "exit": 0,
+    "log": "private/premise-decomposition-cycle1b/publish-system-1.log"
+  },
+  {
+    "command": [
+      "python3",
+      "docs/reports/premise-decomposition-cycle1b/scripts/publish_route.py",
+      "private/premise-decomposition-cycle1b/runs-1/system/before",
+      "private/premise-decomposition-cycle1b/runs-1/system/after",
+      "docs/reports/premise-decomposition-cycle1b/measurements/system/publication"
+    ],
+    "exit": 0,
+    "log": "private/premise-decomposition-cycle1b/publish-system-2.log"
+  }
+]

@@ -1,0 +1,226 @@
+{
+  "propositions": [
+    {
+      "id": "libc.__errno_location.nested_call_admission.checked_reading_route.v1",
+      "declaration": "__errno_location",
+      "premise": "nested_call_admission",
+      "atom": "checked_reading_route",
+      "opaque_statement": "a dereference of this call's result is read only under the checked reading rules: either the nested-call admission of O04-TRACE and CONSTRUCTOR-RESIDUALS (N1-N10, including a whole Borrowed or data-tail actual modulo the dereference wrapper and exact written arity), or W48-BOTTOM-UP-BATCH3 scalar condition admission (an external zero-argument call with this no-custody result, no container effect, exactly one dereference compared by equality or inequality with a decimal literal, the ordinary call checks retained and both outcomes explored)",
+      "formal_proposition": "forall site, observed(site) -> (nestedRoute(site) OR scalarRoute(site))",
+      "lean_environment": "QCore.LibcReadingPremises.ReadingEnvironment",
+      "exact_context_binding": [
+        "artifact",
+        "property",
+        "semantic_profile",
+        "scope",
+        "bounds",
+        "assumptions",
+        "source_identity",
+        "build_identity",
+        "evidence_version"
+      ],
+      "prerequisites": [
+        "independently held complete Context equality",
+        "retained-source replay equals expected graph",
+        "declaration identity and reading-site selection unchanged"
+      ],
+      "discharge_obligation": "Establish the entire quantified/guarded proposition for this exact Context using an independently reviewed typed consumer and matching proof. No such consumer exists in this cycle; opaque graph remains open/declared.",
+      "refutation_scope": "A logical counterexample to the guarded predicate refutes this assumption in this Context only; consult impact map, never mint Unsafe or rewrite C verdicts."
+    },
+    {
+      "id": "libc.__errno_location.nested_call_admission.scalar_declaration.v1",
+      "declaration": "__errno_location",
+      "premise": "nested_call_admission",
+      "atom": "scalar_declaration",
+      "opaque_statement": "both checked reading routes require this unit's unambiguous declaration to return exactly one pointer level over a scalar type",
+      "formal_proposition": "forall site, observed(site) -> scalarDeclaration(site)",
+      "lean_environment": "QCore.LibcReadingPremises.ReadingEnvironment",
+      "exact_context_binding": [
+        "artifact",
+        "property",
+        "semantic_profile",
+        "scope",
+        "bounds",
+        "assumptions",
+        "source_identity",
+        "build_identity",
+        "evidence_version"
+      ],
+      "prerequisites": [
+        "independently held complete Context equality",
+        "retained-source replay equals expected graph",
+        "declaration identity and reading-site selection unchanged"
+      ],
+      "discharge_obligation": "Establish the entire quantified/guarded proposition for this exact Context using an independently reviewed typed consumer and matching proof. No such consumer exists in this cycle; opaque graph remains open/declared.",
+      "refutation_scope": "A logical counterexample to the guarded predicate refutes this assumption in this Context only; consult impact map, never mint Unsafe or rewrite C verdicts."
+    },
+    {
+      "id": "libc.__errno_location.nested_call_admission.untracked_effects.v1",
+      "declaration": "__errno_location",
+      "premise": "nested_call_admission",
+      "atom": "untracked_effects",
+      "opaque_statement": "both checked reading routes bind, release, escape and address nothing the projection tracks",
+      "formal_proposition": "forall site, observed(site) -> untrackedEffects(site)",
+      "lean_environment": "QCore.LibcReadingPremises.ReadingEnvironment",
+      "exact_context_binding": [
+        "artifact",
+        "property",
+        "semantic_profile",
+        "scope",
+        "bounds",
+        "assumptions",
+        "source_identity",
+        "build_identity",
+        "evidence_version"
+      ],
+      "prerequisites": [
+        "independently held complete Context equality",
+        "retained-source replay equals expected graph",
+        "declaration identity and reading-site selection unchanged"
+      ],
+      "discharge_obligation": "Establish the entire quantified/guarded proposition for this exact Context using an independently reviewed typed consumer and matching proof. No such consumer exists in this cycle; opaque graph remains open/declared.",
+      "refutation_scope": "A logical counterexample to the guarded predicate refutes this assumption in this Context only; consult impact map, never mint Unsafe or rewrite C verdicts."
+    },
+    {
+      "id": "libc.strerror.nested_call_admission.checked_nested_site.v1",
+      "declaration": "strerror",
+      "premise": "nested_call_admission",
+      "atom": "checked_nested_site",
+      "opaque_statement": "a call of this function nested whole in another call's argument is read only where card O04-TRACE's nested-call admission holds at the call site",
+      "formal_proposition": "forall site, observed(site) -> checkedSite(site)",
+      "lean_environment": "QCore.LibcReadingPremises.NestedEnvironment",
+      "exact_context_binding": [
+        "artifact",
+        "property",
+        "semantic_profile",
+        "scope",
+        "bounds",
+        "assumptions",
+        "source_identity",
+        "build_identity",
+        "evidence_version"
+      ],
+      "prerequisites": [
+        "independently held complete Context equality",
+        "retained-source replay equals expected graph",
+        "declaration identity and reading-site selection unchanged"
+      ],
+      "discharge_obligation": "Establish the entire quantified/guarded proposition for this exact Context using an independently reviewed typed consumer and matching proof. No such consumer exists in this cycle; opaque graph remains open/declared.",
+      "refutation_scope": "A logical counterexample to the guarded predicate refutes this assumption in this Context only; consult impact map, never mint Unsafe or rewrite C verdicts."
+    },
+    {
+      "id": "libc.strerror.nested_call_admission.contract_in_force.v1",
+      "declaration": "strerror",
+      "premise": "nested_call_admission",
+      "atom": "contract_in_force",
+      "opaque_statement": "this declaration meets nested-call admission premise N3: a contract in force",
+      "formal_proposition": "contractInForce(declaration, sourceRevision, pinStanding)",
+      "lean_environment": "QCore.LibcReadingPremises.NestedEnvironment",
+      "exact_context_binding": [
+        "artifact",
+        "property",
+        "semantic_profile",
+        "scope",
+        "bounds",
+        "assumptions",
+        "source_identity",
+        "build_identity",
+        "evidence_version"
+      ],
+      "prerequisites": [
+        "independently held complete Context equality",
+        "retained-source replay equals expected graph",
+        "declaration identity and reading-site selection unchanged"
+      ],
+      "discharge_obligation": "Establish the entire quantified/guarded proposition for this exact Context using an independently reviewed typed consumer and matching proof. No such consumer exists in this cycle; opaque graph remains open/declared.",
+      "refutation_scope": "A logical counterexample to the guarded predicate refutes this assumption in this Context only; consult impact map, never mint Unsafe or rewrite C verdicts."
+    },
+    {
+      "id": "libc.strerror.nested_call_admission.no_custody_result.v1",
+      "declaration": "strerror",
+      "premise": "nested_call_admission",
+      "atom": "no_custody_result",
+      "opaque_statement": "this declaration meets nested-call admission premise N6: result mode None",
+      "formal_proposition": "resultMode(declaration) = None",
+      "lean_environment": "QCore.LibcReadingPremises.NestedEnvironment",
+      "exact_context_binding": [
+        "artifact",
+        "property",
+        "semantic_profile",
+        "scope",
+        "bounds",
+        "assumptions",
+        "source_identity",
+        "build_identity",
+        "evidence_version"
+      ],
+      "prerequisites": [
+        "independently held complete Context equality",
+        "retained-source replay equals expected graph",
+        "declaration identity and reading-site selection unchanged"
+      ],
+      "discharge_obligation": "Establish the entire quantified/guarded proposition for this exact Context using an independently reviewed typed consumer and matching proof. No such consumer exists in this cycle; opaque graph remains open/declared.",
+      "refutation_scope": "A logical counterexample to the guarded predicate refutes this assumption in this Context only; consult impact map, never mint Unsafe or rewrite C verdicts."
+    },
+    {
+      "id": "libc.strerror.nested_call_admission.parameters_borrowed.v1",
+      "declaration": "strerror",
+      "premise": "nested_call_admission",
+      "atom": "parameters_borrowed",
+      "opaque_statement": "this declaration meets nested-call admission premise N7: every parameter Borrowed",
+      "formal_proposition": "forall parameter in declaration.parameters, mode(parameter) = Borrowed",
+      "lean_environment": "QCore.LibcReadingPremises.NestedEnvironment",
+      "exact_context_binding": [
+        "artifact",
+        "property",
+        "semantic_profile",
+        "scope",
+        "bounds",
+        "assumptions",
+        "source_identity",
+        "build_identity",
+        "evidence_version"
+      ],
+      "prerequisites": [
+        "independently held complete Context equality",
+        "retained-source replay equals expected graph",
+        "declaration identity and reading-site selection unchanged"
+      ],
+      "discharge_obligation": "Establish the entire quantified/guarded proposition for this exact Context using an independently reviewed typed consumer and matching proof. No such consumer exists in this cycle; opaque graph remains open/declared.",
+      "refutation_scope": "A logical counterexample to the guarded predicate refutes this assumption in this Context only; consult impact map, never mint Unsafe or rewrite C verdicts."
+    },
+    {
+      "id": "libc.strerror.nested_call_admission.remaining_site_checks.v1",
+      "declaration": "strerror",
+      "premise": "nested_call_admission",
+      "atom": "remaining_site_checks",
+      "opaque_statement": "the nested-call admission checks the rest of its premises per site",
+      "formal_proposition": "forall site, observed(site) -> remainingChecks(site)",
+      "lean_environment": "QCore.LibcReadingPremises.NestedEnvironment",
+      "exact_context_binding": [
+        "artifact",
+        "property",
+        "semantic_profile",
+        "scope",
+        "bounds",
+        "assumptions",
+        "source_identity",
+        "build_identity",
+        "evidence_version"
+      ],
+      "prerequisites": [
+        "independently held complete Context equality",
+        "retained-source replay equals expected graph",
+        "declaration identity and reading-site selection unchanged"
+      ],
+      "discharge_obligation": "Establish the entire quantified/guarded proposition for this exact Context using an independently reviewed typed consumer and matching proof. No such consumer exists in this cycle; opaque graph remains open/declared.",
+      "refutation_scope": "A logical counterexample to the guarded predicate refutes this assumption in this Context only; consult impact map, never mint Unsafe or rewrite C verdicts."
+    }
+  ],
+  "next_cycle_operators": {
+    "|->": "Candidate explicit conjunction edge over prerequisites; current resource_premise_all already represents flat atom conjunction only.",
+    "!->": "Potential forbidden transition constraint, distinct from evidence absence or logical negation; Unknown is not false.",
+    "||->": "Candidate alternative branch evidence; preserves feasible route coverage. Current either-route remains a single opaque atom.",
+    "->|": "Potential terminal postcondition; does not prove eventual termination."
+  }
+}

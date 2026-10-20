@@ -7,7 +7,7 @@
  "section_ownership": {
   "note": "Card D02-GEN-REST. Every top-level key of this file is labelled here, so no section is silently hand-maintained. `derived` sections are recomputed by the generator on every run and a hand edit to them is overwritten; `hand_maintained` sections are carried verbatim from the previous matrix, which is why a regeneration no longer reverts a later reconciliation; `integrator_supplied` numbers are measurements the generator cannot take.",
   "generator": "docs/reports/remaining-d02/build_matrix.py",
-  "carried_from": "docs/reviews/r0_3/acceptance_matrix.json",
+  "carried_from": "private/premise-integration/union-previous.json",
   "vocabulary": {
    "derived": "recomputed by docs/reports/remaining-d02/build_matrix.py from the named manifest, validated record or working tree; a hand edit here is overwritten on the next regeneration",
    "integrator_supplied": "a measurement this script cannot take; supplied through --gate, otherwise carried from the previous matrix and labelled as carried",
@@ -195,7 +195,7 @@
   "ct_stage_names": 20,
   "ct_cells": 1000,
   "unverified_spec_items": 10,
-  "named_followups": 806
+  "named_followups": 807
  },
  "derivation": {
   "rule": "no count in a section this file marks `derived` is hand-copied from a status ledger; each is read from the manifest or validated run record named beside it. Sections marked `hand_maintained` are recorded analysis carried verbatim from the previous matrix, and `integrator_supplied` numbers name whether they were measured for this run or carried - see section_ownership.",
@@ -6758,7 +6758,7 @@
   "workspace_tests": 8376,
   "provider_tests": 133,
   "python_evidence_validator_tests": 374,
-  "lean_audits": 347,
+  "lean_audits": 348,
   "lean_audit_files": [
    "AuditAbiEnumConstPointer.lean",
    "AuditAggregateOwnedField.lean",
@@ -6909,6 +6909,7 @@
    "AuditKindedCustody.lean",
    "AuditLayoutExtents.lean",
    "AuditLexicalClosureNestedAssignment.lean",
+   "AuditLibcReadingPremises.lean",
    "AuditLifetimeCorrespondence.lean",
    "AuditListIteration.lean",
    "AuditListLookup.lean",
@@ -7114,7 +7115,7 @@
   "cargo_clippy": "clean",
   "standing_gate": "complete",
   "full_language_conformance": false,
-  "measurement_provenance": "integrator_supplied (/home/cosmo/.codex/worktrees/premise-decomposition-cycle1/qcore-c/docs/reports/premise-decomposition-cycle1/gate.json)"
+  "measurement_provenance": "carried_from_previous_matrix: these numbers were NOT measured for this regeneration; pass --gate PATH with the standing-gate results of this checkpoint to replace them"
  },
  "named_followups": [
   {
@@ -12719,6 +12720,13 @@
    "why": "PREMISE-DECOMPOSITION-CYCLE1 publishes a report-owned replayable variant with nine opaque/open representation atoms with explicit Lean Props and conditional model theorems while preserving the exact production detach_list_representation reader. The production companion is rejected because its new name changes closed-world classification even under Unknown; a neutral graph-attachment interface must preserve that classification before production publication. No proof equates the old prose and conjunction, identifies imported C heaps with the mathematical environment, or establishes arbitrary callers and writer traces satisfy the antecedents. DISCHARGE: prove/review precise prose-to-formal correspondence, independently bind exact heap/trace/source/build/bounds contexts, exercise missing/refuted/incompatible antecedents and transitive result impact, and retain declared/evidence-only standing until a separately reviewed typed consumer exists. Opaque text, observed source shape, agreement and LLM proposals confer no semantic authority. This card does not cover allocator hooks, insertion invariant or sibling-release/lookup/Removed transport residuals.",
    "source": "docs/reports/premise-decomposition-cycle1/README.md",
    "recorded_by": "PREMISE-DECOMPOSITION-CYCLE1"
+  },
+  {
+   "id": "LIBC-READING-PREMISES-TYPED-DISCHARGE",
+   "title": "Bind libc reading propositions to independently checked source contexts before typed discharge",
+   "why": "Cycle1B migrates __errno_location and strerror nested_call_admission to3/5opaque atoms with stable formal proposition IDs, exact Context bindings, conditional Lean decomposition/counterexample theorems and direct/summary dependency controls. No typed registry entry, semantic consumer, verified library body or automatic verdict invalidation exists. DISCHARGE: independently establish each entire guarded proposition for its exact artifact/property/profile/scope/bounds/assumptions/source/build/evidence version and retained expected graph; preserve the accessor either-route alternative rather than requiring both. Any evidence recontextualization or checked verdict invalidation needs a separate scoped rule and matching proof; Unknown is not false and a refuted assumption is not a reachable C violation. Operator proposals AND/forbidden/OR/terminal remain separate semantics work.",
+   "source": "docs/reports/premise-decomposition-cycle1b/README.md",
+   "recorded_by": "PREMISE-DECOMPOSITION-CYCLE1B"
   }
  ],
  "updated": "2026-10-20 W48-BOTTOM-UP-BATCH3 serial integration with evidence-only hypothesis graph/schema19.1 at merge6e4f7dca8:8370Rust/346Lean,provider133Rust/25Python/all5packages; final regenerated-matrixPython374. Both frozen production measurements retained without a new composed census.805followups; managed-worktree fixture repair applied, normal-clone control remains open."

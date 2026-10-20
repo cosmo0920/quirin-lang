@@ -1,0 +1,80 @@
+[
+  {
+    "command": [
+      "python3",
+      "docs/reports/premise-decomposition-cycle1b/scripts/measure.py",
+      "--contract-root",
+      "/home/cosmo/.codex/worktrees/premise-decomposition-cycle1b/qcore-c/private/premise-decomposition-cycle1b/baseline-source",
+      "system",
+      "/home/cosmo/.codex/worktrees/w48-bottom-up-batch4/qcore-c/private/w48-bottom-up-batch4/base/quirin-audit",
+      "2d8f6d34257db14031a2578ce14f941bee25fc19",
+      "/home/cosmo/.codex/worktrees/premise-decomposition-cycle1b/qcore-c/private/premise-decomposition-cycle1b/runs-1/system/before"
+    ],
+    "exit": 0
+  },
+  {
+    "command": [
+      "python3",
+      "docs/reports/premise-decomposition-cycle1b/scripts/measure.py",
+      "--contract-root",
+      "/home/cosmo/.codex/worktrees/premise-decomposition-cycle1b/qcore-c",
+      "system",
+      "/home/cosmo/.codex/worktrees/premise-decomposition-cycle1b/qcore-c/private/premise-decomposition-cycle1b/gate-1/quirin-audit",
+      "13500ce9d9c71534357e44d6d505a58f52758661",
+      "/home/cosmo/.codex/worktrees/premise-decomposition-cycle1b/qcore-c/private/premise-decomposition-cycle1b/runs-1/system/after"
+    ],
+    "exit": 0
+  },
+  {
+    "command": [
+      "python3",
+      "docs/reports/premise-decomposition-cycle1b/scripts/measure.py",
+      "--contract-root",
+      "/home/cosmo/.codex/worktrees/premise-decomposition-cycle1b/qcore-c/private/premise-decomposition-cycle1b/baseline-source",
+      "slice",
+      "/home/cosmo/.codex/worktrees/w48-bottom-up-batch4/qcore-c/private/w48-bottom-up-batch4/base/quirin-audit",
+      "2d8f6d34257db14031a2578ce14f941bee25fc19",
+      "/home/cosmo/.codex/worktrees/premise-decomposition-cycle1b/qcore-c/private/premise-decomposition-cycle1b/runs-1/slice/before"
+    ],
+    "exit": 0
+  },
+  {
+    "command": [
+      "python3",
+      "docs/reports/premise-decomposition-cycle1b/scripts/measure.py",
+      "--contract-root",
+      "/home/cosmo/.codex/worktrees/premise-decomposition-cycle1b/qcore-c",
+      "slice",
+      "/home/cosmo/.codex/worktrees/premise-decomposition-cycle1b/qcore-c/private/premise-decomposition-cycle1b/gate-1/quirin-audit",
+      "13500ce9d9c71534357e44d6d505a58f52758661",
+      "/home/cosmo/.codex/worktrees/premise-decomposition-cycle1b/qcore-c/private/premise-decomposition-cycle1b/runs-1/slice/after"
+    ],
+    "exit": 0
+  },
+  {
+    "command": [
+      "python3",
+      "docs/reports/premise-decomposition-cycle1b/scripts/measure.py",
+      "--contract-root",
+      "/home/cosmo/.codex/worktrees/premise-decomposition-cycle1b/qcore-c/private/premise-decomposition-cycle1b/baseline-source",
+      "corpus",
+      "/home/cosmo/.codex/worktrees/w48-bottom-up-batch4/qcore-c/private/w48-bottom-up-batch4/base/quirin-audit",
+      "2d8f6d34257db14031a2578ce14f941bee25fc19",
+      "/home/cosmo/.codex/worktrees/premise-decomposition-cycle1b/qcore-c/private/premise-decomposition-cycle1b/runs-1/corpus/before"
+    ],
+    "exit": 0
+  },
+  {
+    "command": [
+      "python3",
+      "docs/reports/premise-decomposition-cycle1b/scripts/measure.py",
+      "--contract-root",
+      "/home/cosmo/.codex/worktrees/premise-decomposition-cycle1b/qcore-c",
+      "corpus",
+      "/home/cosmo/.codex/worktrees/premise-decomposition-cycle1b/qcore-c/private/premise-decomposition-cycle1b/gate-1/quirin-audit",
+      "13500ce9d9c71534357e44d6d505a58f52758661",
+      "/home/cosmo/.codex/worktrees/premise-decomposition-cycle1b/qcore-c/private/premise-decomposition-cycle1b/runs-1/corpus/after"
+    ],
+    "exit": 0
+  }
+]

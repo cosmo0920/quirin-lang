@@ -1,0 +1,47 @@
+{
+  "base": "2d8f6d34257db14031a2578ce14f941bee25fc19",
+  "build_head": "35aaecd3e455c332c59913b15f1dad43dd60cfe5",
+  "binary": "/home/cosmo/.codex/worktrees/w48-bottom-up-batch4/qcore-c/private/w48-bottom-up-batch4/base/quirin-audit",
+  "sha256": "1fbfe1bb8f3d1a2bfd4d8323489b1431e0ba917941645f7ce09898f8051396b7",
+  "command": "cargo build --release -p qcore-audit --bin quirin-audit",
+  "exit": 0,
+  "log": "/home/cosmo/.codex/worktrees/w48-bottom-up-batch4/qcore-c/private/w48-bottom-up-batch4/base-build.log",
+  "analyzer_source_delta": "diff --git a/crates/qcore-c-gateway/tests/condition_call_desugar.rs b/crates/qcore-c-gateway/tests/condition_call_desugar.rs\nindex 214188007..3d8b48dbc 100644\n--- a/crates/qcore-c-gateway/tests/condition_call_desugar.rs\n+++ b/crates/qcore-c-gateway/tests/condition_call_desugar.rs\n@@ -571,3 +571,11 @@ fn a_derived_result_assigned_in_a_condition_is_tracked_by_its_binding() {\n     assert!(!run.refused(BRANCH), \"{run:?}\");\n     assert_ne!(run.status, AnalysisStatus::Safe, \"{run:?}\");\n }\n+\n+#[test]\n+fn batch4_call_free_member_predicate_readiness() {\n+    let source = \"struct file { int fd; void *map; }; int w(struct file *cf) { if ((cf->fd != -1) && (cf->map != (void *)0)) return 1; return 0; }\";\n+    let run = run_with(source, \"w\", &ResourceContracts::default());\n+    assert_eq!(run.status, AnalysisStatus::Unknown, \"{run:?}\");\n+    assert!(run.refused(BRANCH), \"{run:?}\");\n+}",
+  "note": "Build HEAD differs from base only by report WIP checkpoint; uncommitted baseline readiness test changes test source only and not release analyzer.",
+  "independent_sha256": "1fbfe1bb8f3d1a2bfd4d8323489b1431e0ba917941645f7ce09898f8051396b7",
+  "contract_input_root": "/home/cosmo/.codex/worktrees/premise-decomposition-cycle1b/qcore-c/private/premise-decomposition-cycle1b/baseline-source",
+  "contract_input_archive_sha256": "0ca8fde13709cc0af9d9ee9e5dff1652b05fb2cb9a722334140082b681caf173",
+  "contract_input_revision": "2d8f6d34257db14031a2578ce14f941bee25fc19",
+  "independent_committed_production_delta": "",
+  "current_toolchain": "rustc 1.99.0 (b940084d7 2026-09-28)",
+  "independent_verification_limit": "The immutable artifact hash and committed production-source delta are independently checked. The supplied build receipt owns the uncommitted tests-only delta and original environment/default-feature claim; this card does not reconstruct that past process.",
+  "independent_binary_toolchain_and_feature_observations": {
+    "binaries": {
+      "before": {
+        "command": [
+          "readelf",
+          "-p",
+          ".comment",
+          "/home/cosmo/.codex/worktrees/w48-bottom-up-batch4/qcore-c/private/w48-bottom-up-batch4/base/quirin-audit"
+        ],
+        "exit": 0,
+        "elf_comment": "\nString dump of section '.comment':\n  [     1]  rustc version 1.99.0 (b940084d7 2026-09-28)\n  [    2d]  GCC: (Ubuntu 15.2.0-16ubuntu1) 15.2.0\n  [    53]  Linker: LLD 23.1.1 (/checkout/src/llvm-project/llvm 1b9c0d5ff9bbe7634aead059efe6b11a7eeba145)\n\n",
+        "unit_timing_marker_present": false
+      },
+      "after": {
+        "command": [
+          "readelf",
+          "-p",
+          ".comment",
+          "private/premise-decomposition-cycle1b/gate-1/quirin-audit"
+        ],
+        "exit": 0,
+        "elf_comment": "\nString dump of section '.comment':\n  [     1]  rustc version 1.99.0 (b940084d7 2026-09-28)\n  [    2d]  GCC: (Ubuntu 15.2.0-16ubuntu1) 15.2.0\n  [    53]  Linker: LLD 23.1.1 (/checkout/src/llvm-project/llvm 1b9c0d5ff9bbe7634aead059efe6b11a7eeba145)\n\n",
+        "unit_timing_marker_present": false
+      }
+    },
+    "qcore_audit_manifest_sha256": "74ed1c1bde3329c2be9354daae6f6deb068b1413a9cd3f5d56106e3bbe7573ac",
+    "only_declared_optional_feature": "unit-timing; disabled by the recorded plain release command and absent runtime timing marker in both immutable ELF artifacts",
+    "limits": "ELF compiler/linker identity and the optional timing path are independently observed. The captured build command and exact source/dependency manifest comparison bind default feature selection; this does not recreate an unrecorded historical process environment."
+  }
+}

@@ -1,0 +1,15 @@
+{
+  "command": [
+    "python3",
+    "-m",
+    "unittest",
+    "discover",
+    "-s",
+    "scripts/tests"
+  ],
+  "exit": 0,
+  "source": "c333b41d8f5e6c12f9c3d141ff2fffeebb1eac0e",
+  "matrix_sha256": "8852a2be6db9019de03931248317cd55f57441fe9f85960c2a7ee69415a747e5",
+  "seconds": 77.73711562308017,
+  "log": "/home/cosmo/.codex/worktrees/premise-decomposition-cycle1b/qcore-c/private/premise-decomposition-cycle1b/python-post-final-matrix.log"
+}

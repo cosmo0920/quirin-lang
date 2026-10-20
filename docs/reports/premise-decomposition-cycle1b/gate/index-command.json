@@ -1,0 +1,10 @@
+{
+  "command": [
+    "python3",
+    "scripts/build_docs_index.py",
+    "--check"
+  ],
+  "exit": 0,
+  "stdout": "Report index matches all report directories\n",
+  "stderr": ""
+}

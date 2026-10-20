@@ -1,0 +1,25 @@
+{
+  "resource-diagnostics.json": {
+    "present": true,
+    "bytes": 2548400,
+    "sha256": "ac63cfef60487e7a05ced8f6eb93f7b298dd02f4a92517713812bca5af037d94"
+  },
+  "monkey-source.json": {
+    "present": false
+  },
+  "resource-diagnostics.chunk-contracts.json": {
+    "present": true,
+    "bytes": 385,
+    "sha256": "a97259087e4ad89a4662edcb494b27c27e80f06c62e404a19076224bbc0a2bd8"
+  },
+  "resource-diagnostics.source-effects.json": {
+    "present": true,
+    "bytes": 385,
+    "sha256": "a97259087e4ad89a4662edcb494b27c27e80f06c62e404a19076224bbc0a2bd8"
+  },
+  "resource-diagnostics.contracts.json": {
+    "present": true,
+    "bytes": 9045900,
+    "sha256": "d6539ec239f797bbf42864b6e8e3c75a7ec24d9bd74e74f436e35b7e24325d33"
+  }
+}

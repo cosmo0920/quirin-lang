@@ -1,0 +1,22 @@
+{
+  "meaning": "All29 raw source-effect leaves are separately verified cwd-only derived identities, not ignored fields. Raw tasks, bounds, witnesses and source hashes remain retained; no actual witness is transported between contexts.",
+  "source_effect_records": [
+    16,
+    24,
+    63
+  ],
+  "raw_source_effect_leaves": 29,
+  "configuration_and_import_proofs": "cwd-proof-input.json",
+  "canonical_production_task_proofs": "cwd-task-proof.json",
+  "complete_source_effect_records_equal_after_exact_identity_substitution": true,
+  "wrong_cwd_and_wrong_build_negative_controls_rejected": true,
+  "replay_command": [
+    "/home/cosmo/.codex/worktrees/premise-decomposition-cycle1b/qcore-c/private/premise-decomposition-cycle1b/cwd-task-provenance",
+    "/home/cosmo/.codex/worktrees/premise-decomposition-cycle1b/qcore-c/docs/reports/premise-decomposition-cycle1b/measurements/corpus/cwd-proof-input.json",
+    "/home/cosmo/.codex/worktrees/premise-decomposition-cycle1b/qcore-c/docs/reports/premise-decomposition-cycle1b/measurements/corpus/cwd-task-proof.json"
+  ],
+  "exit": 0,
+  "helper_sha256": "41c6bb398637fa1f904e129ce22d3e9c2979dae352e5c03428f2543f4425a035",
+  "helper_source_sha256": "6030895edcf8bd3a4eb4adb208b0b29995f59a60f044dcfb2d590fc4b059fefb",
+  "cwd_binding": "measure.py subprocess.run(cwd=REPO), where REPO is the recorded contract_inputs_root on each side"
+}

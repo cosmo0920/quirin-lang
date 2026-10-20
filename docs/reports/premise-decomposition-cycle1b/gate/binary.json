@@ -1,0 +1,21 @@
+{
+  "source": "13500ce9d9c71534357e44d6d505a58f52758661",
+  "binary": "/home/cosmo/.codex/worktrees/premise-decomposition-cycle1b/qcore-c/private/premise-decomposition-cycle1b/gate-1/quirin-audit",
+  "sha256": "a547dfe9dad5acd26b489af28796e913e10787a325bbbe044c4de3d3a40e5bc2",
+  "build": {
+    "name": "release",
+    "command": [
+      "cargo",
+      "build",
+      "--release",
+      "-p",
+      "qcore-audit",
+      "--bin",
+      "quirin-audit"
+    ],
+    "exit": 0,
+    "seconds": 91.63635154801887,
+    "log": "/home/cosmo/.codex/worktrees/premise-decomposition-cycle1b/qcore-c/private/premise-decomposition-cycle1b/gate-1/release.log",
+    "source": "13500ce9d9c71534357e44d6d505a58f52758661"
+  }
+}

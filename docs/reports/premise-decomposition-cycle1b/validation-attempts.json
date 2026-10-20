@@ -1,0 +1,78 @@
+[
+  {
+    "phase": "preimplementation-mapping",
+    "commit": "081a9e678",
+    "outcome": "comment example matched; exact production-clause assertion raised AssertionError before any production edit",
+    "process_exit": 1,
+    "composite_shell_exit": 0,
+    "correction": "anchored production mapping committed615e45088 before migration; later shell steps created only the Lean/source-index draft",
+    "log": "tool transcript only"
+  },
+  {
+    "phase": "focused-1-provider-sync",
+    "exit": 1,
+    "log": "/home/cosmo/.codex/worktrees/premise-decomposition-cycle1b/qcore-c/private/premise-decomposition-cycle1b/focused-1/sync.log",
+    "meaning": "two changed flexible contract digests were stale; no fallback"
+  },
+  {
+    "phase": "focused-1-rust",
+    "exit": 101,
+    "passed": 2,
+    "failed": 1,
+    "log": "/home/cosmo/.codex/worktrees/premise-decomposition-cycle1b/qcore-c/private/premise-decomposition-cycle1b/focused-1/rust.log",
+    "meaning": "inheritance fixture used a loader without a published load path; fixture repaired"
+  },
+  {
+    "phase": "focused-1-lean",
+    "exit": 0,
+    "log": "/home/cosmo/.codex/worktrees/premise-decomposition-cycle1b/qcore-c/private/premise-decomposition-cycle1b/focused-1/lean.log"
+  },
+  {
+    "phase": "focused-2",
+    "exits": {
+      "pin": 0,
+      "sync": 0,
+      "rust": 0,
+      "dependencies": 0
+    },
+    "rust_passed": 3,
+    "dependency_passed": 1,
+    "logs": "/home/cosmo/.codex/worktrees/premise-decomposition-cycle1b/qcore-c/private/premise-decomposition-cycle1b/focused-2"
+  },
+  {
+    "phase": "standing-python-before-matrix",
+    "exit": 1,
+    "ran": 374,
+    "failed": 1,
+    "log": "/home/cosmo/.codex/worktrees/premise-decomposition-cycle1b/qcore-c/private/premise-decomposition-cycle1b/gate-1/python.log",
+    "meaning": "committed matrix records346 audits, new source has347; preserved, post-commit rerun required"
+  },
+  {
+    "phase": "matrix-generator-interface-inspection",
+    "gate": false,
+    "commands": [
+      "python3 docs/reports/remaining-d02/build_matrix.py --help",
+      "PYTHONPATH=scripts python3 docs/reports/remaining-d02/build_matrix.py --help"
+    ],
+    "outcomes": [
+      "ModuleNotFoundError for ct_stage_summary",
+      "--help interpreted as ROOT; nonexistent carried matrix refused"
+    ],
+    "individual_exits": "not separately captured inside read-only composite inspection; no successful regeneration claimed",
+    "correction": "Read actual positional ROOT interface; final regeneration will pass . --gate explicit-path, record its individual exit, commit output, then run Python."
+  },
+  {
+    "phase": "corpus-provenance-attribution",
+    "first_comparator_exit": 1,
+    "first_time_helper_exit": 1,
+    "meaning": "Four expected emptyMonkeytime leaves plus29source-effect derivedidentity leaves remained. Failclosed check refused to ignore them. Frozen corpus-cwd-attribution-plan precedes replay; exact actualDB/config/import/productiontask hashchain with wrongcwd/build negativecontrols proves all29, then independenttime replay andpublication exit0. No analyzer/provider/Lean source changed.",
+    "commands": "measurements/corpus/commands.json",
+    "failure_log": "measurements/corpus/first-time-attribution-failure.log.gz"
+  },
+  {
+    "phase": "final-reading-packet-json-inspection",
+    "gate": false,
+    "outcome": "task_context default text output was written to .json; subsequent json.loads raised JSONDecodeError. Composite continued to matrix/index, so individual first generator exit was not captured.",
+    "correction": "--json used; final packet0, same16files; separately captured finalmatrix2 exit0. No successful first packet decode claimed."
+  }
+]

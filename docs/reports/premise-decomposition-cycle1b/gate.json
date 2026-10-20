@@ -1,0 +1,13 @@
+{
+  "note": "Frozen production/control/proof source13500ce9d9;8374Rust/0failed/15ignored(524units537summaries),347Lean,fmt/Clippy/reevaluation0;provider133Rust/1ignored,25Python,all5rebuilt+verified. Initial374Python1failure(stale346vs347matrix) retained; actualpost-committed-a342matrix374pass33.002s. Sixownfreshaudits0 underfixedsix-home context; all5781null+fullruntime/static records equal after exact documented graph/module/pin/root/config/cwd/time provenance attribution. No new truth or standing authority. Final regenerated-matrix confirmation follows the committed matrix.",
+  "workspace_tests": 8374,
+  "provider_tests": 133,
+  "python_evidence_validator_tests": 374,
+  "reevaluation_probe_exit": 0,
+  "reevaluation_followup_exit": 0,
+  "cargo_fmt": "clean",
+  "cargo_clippy": "clean",
+  "standing_gate": "passed",
+  "lean_audits": 347,
+  "clang": "present: Ubuntu clang version 21.1.8 (6ubuntu1)"
+}
