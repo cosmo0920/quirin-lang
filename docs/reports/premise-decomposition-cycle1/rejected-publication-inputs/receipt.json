@@ -1,0 +1,37 @@
+{
+  "purpose": "Retain rejected publication inputs after exact production restoration; no installed-provider or standing claim.",
+  "records": [
+    {
+      "label": "base-lock",
+      "checkpoint": "2d8f6d342",
+      "path": "providers/qcore-provider-librdkafka/contracts.lock",
+      "sha256": "5cc9dcb6d3cebb95ab652a32d86965e44ff4f2646f9dea7f5efd3d7f4ba4788c",
+      "bytes": 173369
+    },
+    {
+      "label": "candidate-lock",
+      "checkpoint": "498321e3d",
+      "path": "providers/qcore-provider-librdkafka/contracts.lock",
+      "sha256": "f99613ece956c6fa399ffc10108be94deab5acf432d834c1a9cf52d2b987e9f8",
+      "bytes": 173369
+    },
+    {
+      "label": "candidate-inventory",
+      "checkpoint": "498321e3d",
+      "path": "providers/qcore-provider-librdkafka/contracts.json",
+      "sha256": "0ee354e66e5742db8ed0ad9053318a4a8e648fa2cf037adfc32307d853f72f41",
+      "bytes": 1771
+    }
+  ],
+  "exact_one_selected_declaration_digest_substitution_restores_lock_bytes": true,
+  "selected_digest": {
+    "base": "878f8103527c43da2a5bb91d56ba60cd6b9e221a3dfb41723de90c36a94268ad",
+    "candidate": "957f5a060cd4b604a82c4934af4721b4aced0f576662bbd6152fe7264fb69d5c"
+  },
+  "clause_expectation_attempt": {
+    "base": 5,
+    "candidate": 15,
+    "final": 5
+  },
+  "candidate_qv": "../proposed-cjson.qv"
+}
