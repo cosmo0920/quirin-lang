@@ -1,0 +1,17 @@
+{
+  "before": 805,
+  "retired_registered_entries": [],
+  "added_residuals": [
+    {
+      "id": "LIBC-READING-PREMISES-TYPED-DISCHARGE",
+      "title": "Bind libc reading propositions to independently checked source contexts before typed discharge",
+      "why": "Cycle1B migrates __errno_location and strerror nested_call_admission to3/5opaque atoms with stable formal proposition IDs, exact Context bindings, conditional Lean decomposition/counterexample theorems and direct/summary dependency controls. No typed registry entry, semantic consumer, verified library body or automatic verdict invalidation exists. DISCHARGE: independently establish each entire guarded proposition for its exact artifact/property/profile/scope/bounds/assumptions/source/build/evidence version and retained expected graph; preserve the accessor either-route alternative rather than requiring both. Any evidence recontextualization or checked verdict invalidation needs a separate scoped rule and matching proof; Unknown is not false and a refuted assumption is not a reachable C violation. Operator proposals AND/forbidden/OR/terminal remain separate semantics work.",
+      "source": "docs/reports/premise-decomposition-cycle1b/README.md",
+      "recorded_by": "PREMISE-DECOMPOSITION-CYCLE1B"
+    }
+  ],
+  "after": 806,
+  "retirement_note": "No specific cycle1b/libc decomposition card was registered; no no-op retirement is claimed.",
+  "typed_families": [],
+  "semantic_consumers": []
+}

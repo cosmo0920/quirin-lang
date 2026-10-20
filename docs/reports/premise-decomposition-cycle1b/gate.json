@@ -1,0 +1,13 @@
+{
+  "note": "Cycle1B exact base2d8f6d342, frozen production/control source13500ce9d. Standing Rust8374/0failed/15ignored(524units537summaries),347Lean,fmt/Clippy/examples0; provider133Rust/1ignored,25Python,all5rebuilt+verified. Initial Python374ran/1failed solely stale matrix346vs347; post-committed-matrix confirmation pending, not claimed green. Fresh corpus/system/slice pairs remain pending; zero movement is still a prediction.",
+  "workspace_tests": 8374,
+  "provider_tests": 133,
+  "python_evidence_validator_tests": 374,
+  "reevaluation_probe_exit": 0,
+  "reevaluation_followup_exit": 0,
+  "cargo_fmt": "clean",
+  "cargo_clippy": "clean",
+  "standing_gate": "incomplete: post-committed-matrix Python pending",
+  "lean_audits": 347,
+  "clang": "present: Ubuntu clang version 21.1.8 (6ubuntu1)"
+}

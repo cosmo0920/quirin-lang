@@ -1,0 +1,15 @@
+{
+  "command": [
+    "git",
+    "grep",
+    "-n",
+    "nested_call_admission",
+    "2d8f6d34257db14031a2578ce14f941bee25fc19",
+    "--",
+    "*.rs"
+  ],
+  "exit": 0,
+  "stdout": "2d8f6d34257db14031a2578ce14f941bee25fc19:compiler/tests/qcore_contract_corpus.rs:924:    // Card VERDICT-CONTRACT-PREMISE-ANNOTATIONS: `requires resource_premise(nested_call_admission, ...)`\n2d8f6d34257db14031a2578ce14f941bee25fc19:compiler/tests/qcore_contract_corpus.rs:931:    // Card VERDICT-CONTRACT-PREMISE-ANNOTATIONS: `requires resource_premise(nested_call_admission, ...)`\n2d8f6d34257db14031a2578ce14f941bee25fc19:crates/qcore-audit/src/outer_selection.rs:75:    \"nested_call_admission\",\n",
+  "stderr": "",
+  "interpretation": "The pre-migration production Rust consumer recognizes only the nested_call_admission name in the outer NOT_CLOSED_WORLD list. No exact English-statement reader is present. New production controls introduced by this card do read the graph structure for validation."
+}

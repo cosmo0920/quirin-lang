@@ -1,0 +1,50 @@
+[
+  {
+    "phase": "preimplementation-mapping",
+    "commit": "081a9e678",
+    "outcome": "comment example matched; exact production-clause assertion raised AssertionError before any production edit",
+    "process_exit": 1,
+    "composite_shell_exit": 0,
+    "correction": "anchored production mapping committed615e45088 before migration; later shell steps created only the Lean/source-index draft",
+    "log": "tool transcript only"
+  },
+  {
+    "phase": "focused-1-provider-sync",
+    "exit": 1,
+    "log": "/home/cosmo/.codex/worktrees/premise-decomposition-cycle1b/qcore-c/private/premise-decomposition-cycle1b/focused-1/sync.log",
+    "meaning": "two changed flexible contract digests were stale; no fallback"
+  },
+  {
+    "phase": "focused-1-rust",
+    "exit": 101,
+    "passed": 2,
+    "failed": 1,
+    "log": "/home/cosmo/.codex/worktrees/premise-decomposition-cycle1b/qcore-c/private/premise-decomposition-cycle1b/focused-1/rust.log",
+    "meaning": "inheritance fixture used a loader without a published load path; fixture repaired"
+  },
+  {
+    "phase": "focused-1-lean",
+    "exit": 0,
+    "log": "/home/cosmo/.codex/worktrees/premise-decomposition-cycle1b/qcore-c/private/premise-decomposition-cycle1b/focused-1/lean.log"
+  },
+  {
+    "phase": "focused-2",
+    "exits": {
+      "pin": 0,
+      "sync": 0,
+      "rust": 0,
+      "dependencies": 0
+    },
+    "rust_passed": 3,
+    "dependency_passed": 1,
+    "logs": "/home/cosmo/.codex/worktrees/premise-decomposition-cycle1b/qcore-c/private/premise-decomposition-cycle1b/focused-2"
+  },
+  {
+    "phase": "standing-python-before-matrix",
+    "exit": 1,
+    "ran": 374,
+    "failed": 1,
+    "log": "/home/cosmo/.codex/worktrees/premise-decomposition-cycle1b/qcore-c/private/premise-decomposition-cycle1b/gate-1/python.log",
+    "meaning": "committed matrix records346 audits, new source has347; preserved, post-commit rerun required"
+  }
+]

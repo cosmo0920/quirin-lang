@@ -195,7 +195,7 @@
   "ct_stage_names": 20,
   "ct_cells": 1000,
   "unverified_spec_items": 10,
-  "named_followups": 805
+  "named_followups": 806
  },
  "derivation": {
   "rule": "no count in a section this file marks `derived` is hand-copied from a status ledger; each is read from the manifest or validated run record named beside it. Sections marked `hand_maintained` are recorded analysis carried verbatim from the previous matrix, and `integrator_supplied` numbers name whether they were measured for this run or carried - see section_ownership.",
@@ -6754,11 +6754,11 @@
   "note": "providers/ is a separate Cargo workspace, excluded from the core workspace; P01 verified empirically that the core workspace builds and passes its full suite with providers/ moved out of the tree."
  },
  "validation": {
-  "note": "W48-BOTTOM-UP-BATCH3 serial integration with evidence-only CONTRACT-HYPOTHESIS-GRAPH-V1. Measured source tip and merge SHA 6e4f7dca88cb99e8e8ac978d9e09795be666124b. Actual managed-worktree host gate:8370Rust/0failed/15ignored,522units/535summaries;346Lean. Providers133Rust/0failed/1ignored over43summaries,25Python,all5packages rebuilt+verified. Matrix regeneration precedes final root Python confirmation in command-receipts.json. Original production measurements retain their exact card sources; no new composed production census. Native Git-directory fixture passes in managed worktree; repaired normal-clone control remains tracked. Actual local Clang recording is beside this gate.",
-  "workspace_tests": 8370,
+  "note": "Cycle1B exact base2d8f6d342, frozen production/control source13500ce9d. Standing Rust8374/0failed/15ignored(524units537summaries),347Lean,fmt/Clippy/examples0; provider133Rust/1ignored,25Python,all5rebuilt+verified. Initial Python374ran/1failed solely stale matrix346vs347; post-committed-matrix confirmation pending, not claimed green. Fresh corpus/system/slice pairs remain pending; zero movement is still a prediction.",
+  "workspace_tests": 8374,
   "provider_tests": 133,
   "python_evidence_validator_tests": 374,
-  "lean_audits": 346,
+  "lean_audits": 347,
   "lean_audit_files": [
    "AuditAbiEnumConstPointer.lean",
    "AuditAggregateOwnedField.lean",
@@ -6908,6 +6908,7 @@
    "AuditKindedCustody.lean",
    "AuditLayoutExtents.lean",
    "AuditLexicalClosureNestedAssignment.lean",
+   "AuditLibcReadingPremises.lean",
    "AuditLifetimeCorrespondence.lean",
    "AuditListIteration.lean",
    "AuditListLookup.lean",
@@ -7111,9 +7112,9 @@
   "reevaluation_followup_exit": 0,
   "cargo_fmt": "clean",
   "cargo_clippy": "clean",
-  "standing_gate": "complete",
+  "standing_gate": "incomplete: post-committed-matrix Python pending",
   "full_language_conformance": false,
-  "measurement_provenance": "integrator_supplied (docs/reports/w48-bottom-up-batch3/integration/gate.json)"
+  "measurement_provenance": "integrator_supplied (docs/reports/premise-decomposition-cycle1b/gate.json)"
  },
  "named_followups": [
   {
@@ -12711,6 +12712,13 @@
    "why": "CONTRACT-HYPOTHESIS-GRAPH-V1 focused gate reproduced native_platform_matrix fixture failure: it constructs repository/.git/modules/third_party/libevent although a managed worktree has a .git file. The complete host standing gate passes at exact source5b5a8c0f0 in a private normal clone with the pinned submodule, without altering the fixture or semantics; the incidental source change is rustfmt only. DISCHARGE: resolve the actual common/submodule Git directory through Git, retain safe-directory and pinned-revision checks, and run the fixture in a managed worktree as well as a normal clone. Focused failure log: private/contract-hypothesis-graph-v1/focused-contract-audit.log; full passing clone receipt in the card report. AMENDED (W48-BOTTOM-UP-BATCH3 integration, merge6e4f7dca8): the sibling card resolves the initialized submodule metadata with Git, retaining scoped safe-directory and pinned-revision checks. The merged managed-worktree standing gate passes this fixture within8370Rust/0failed/15ignored; the repaired fixture has not additionally been executed in a normal clone during integration, so that requested portability control remains open. Original frozen failure and normal-clone baseline receipts remain in the hypothesis graph report.",
    "source": "docs/reports/contract-hypothesis-graph-v1/README.md",
    "recorded_by": "CONTRACT-HYPOTHESIS-GRAPH-V1"
+  },
+  {
+   "id": "LIBC-READING-PREMISES-TYPED-DISCHARGE",
+   "title": "Bind libc reading propositions to independently checked source contexts before typed discharge",
+   "why": "Cycle1B migrates __errno_location and strerror nested_call_admission to3/5opaque atoms with stable formal proposition IDs, exact Context bindings, conditional Lean decomposition/counterexample theorems and direct/summary dependency controls. No typed registry entry, semantic consumer, verified library body or automatic verdict invalidation exists. DISCHARGE: independently establish each entire guarded proposition for its exact artifact/property/profile/scope/bounds/assumptions/source/build/evidence version and retained expected graph; preserve the accessor either-route alternative rather than requiring both. Any evidence recontextualization or checked verdict invalidation needs a separate scoped rule and matching proof; Unknown is not false and a refuted assumption is not a reachable C violation. Operator proposals AND/forbidden/OR/terminal remain separate semantics work.",
+   "source": "docs/reports/premise-decomposition-cycle1b/README.md",
+   "recorded_by": "PREMISE-DECOMPOSITION-CYCLE1B"
   }
  ],
  "updated": "2026-10-20 W48-BOTTOM-UP-BATCH3 serial integration with evidence-only hypothesis graph/schema19.1 at merge6e4f7dca8:8370Rust/346Lean,provider133Rust/25Python/all5packages; final regenerated-matrixPython374. Both frozen production measurements retained without a new composed census.805followups; managed-worktree fixture repair applied, normal-clone control remains open."

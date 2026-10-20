@@ -1,0 +1,18 @@
+{
+  "base": "2d8f6d34257db14031a2578ce14f941bee25fc19",
+  "build_head": "35aaecd3e455c332c59913b15f1dad43dd60cfe5",
+  "binary": "/home/cosmo/.codex/worktrees/w48-bottom-up-batch4/qcore-c/private/w48-bottom-up-batch4/base/quirin-audit",
+  "sha256": "1fbfe1bb8f3d1a2bfd4d8323489b1431e0ba917941645f7ce09898f8051396b7",
+  "command": "cargo build --release -p qcore-audit --bin quirin-audit",
+  "exit": 0,
+  "log": "/home/cosmo/.codex/worktrees/w48-bottom-up-batch4/qcore-c/private/w48-bottom-up-batch4/base-build.log",
+  "analyzer_source_delta": "diff --git a/crates/qcore-c-gateway/tests/condition_call_desugar.rs b/crates/qcore-c-gateway/tests/condition_call_desugar.rs\nindex 214188007..3d8b48dbc 100644\n--- a/crates/qcore-c-gateway/tests/condition_call_desugar.rs\n+++ b/crates/qcore-c-gateway/tests/condition_call_desugar.rs\n@@ -571,3 +571,11 @@ fn a_derived_result_assigned_in_a_condition_is_tracked_by_its_binding() {\n     assert!(!run.refused(BRANCH), \"{run:?}\");\n     assert_ne!(run.status, AnalysisStatus::Safe, \"{run:?}\");\n }\n+\n+#[test]\n+fn batch4_call_free_member_predicate_readiness() {\n+    let source = \"struct file { int fd; void *map; }; int w(struct file *cf) { if ((cf->fd != -1) && (cf->map != (void *)0)) return 1; return 0; }\";\n+    let run = run_with(source, \"w\", &ResourceContracts::default());\n+    assert_eq!(run.status, AnalysisStatus::Unknown, \"{run:?}\");\n+    assert!(run.refused(BRANCH), \"{run:?}\");\n+}",
+  "note": "Build HEAD differs from base only by report WIP checkpoint; uncommitted baseline readiness test changes test source only and not release analyzer.",
+  "independent_sha256": "1fbfe1bb8f3d1a2bfd4d8323489b1431e0ba917941645f7ce09898f8051396b7",
+  "contract_input_root": "/home/cosmo/.codex/worktrees/premise-decomposition-cycle1b/qcore-c/private/premise-decomposition-cycle1b/baseline-source",
+  "contract_input_archive_sha256": "0ca8fde13709cc0af9d9ee9e5dff1652b05fb2cb9a722334140082b681caf173",
+  "contract_input_revision": "2d8f6d34257db14031a2578ce14f941bee25fc19",
+  "independent_committed_production_delta": "",
+  "current_toolchain": "rustc 1.99.0 (b940084d7 2026-09-28)",
+  "independent_verification_limit": "The immutable artifact hash and committed production-source delta are independently checked. The supplied build receipt owns the uncommitted tests-only delta and original environment/default-feature claim; this card does not reconstruct that past process."
+}

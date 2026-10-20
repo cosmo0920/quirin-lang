@@ -1,0 +1,301 @@
+[
+  {
+    "name": "clang",
+    "command": [
+      "clang",
+      "--version"
+    ],
+    "exit": 0,
+    "seconds": 0.01387192599941045,
+    "log": "/home/cosmo/.codex/worktrees/premise-decomposition-cycle1b/qcore-c/private/premise-decomposition-cycle1b/gate-1/clang.log",
+    "source": "13500ce9d9c71534357e44d6d505a58f52758661"
+  },
+  {
+    "name": "rust",
+    "command": [
+      "python3",
+      "scripts/run_test_binaries.py"
+    ],
+    "exit": 0,
+    "seconds": 493.6203947599279,
+    "log": "/home/cosmo/.codex/worktrees/premise-decomposition-cycle1b/qcore-c/private/premise-decomposition-cycle1b/gate-1/rust.log",
+    "source": "13500ce9d9c71534357e44d6d505a58f52758661"
+  },
+  {
+    "name": "fmt",
+    "command": [
+      "cargo",
+      "fmt",
+      "--all",
+      "--",
+      "--check"
+    ],
+    "exit": 0,
+    "seconds": 4.053663583938032,
+    "log": "/home/cosmo/.codex/worktrees/premise-decomposition-cycle1b/qcore-c/private/premise-decomposition-cycle1b/gate-1/fmt.log",
+    "source": "13500ce9d9c71534357e44d6d505a58f52758661"
+  },
+  {
+    "name": "clippy",
+    "command": [
+      "cargo",
+      "clippy",
+      "--all-targets",
+      "--",
+      "-D",
+      "warnings"
+    ],
+    "exit": 0,
+    "seconds": 35.743711814051494,
+    "log": "/home/cosmo/.codex/worktrees/premise-decomposition-cycle1b/qcore-c/private/premise-decomposition-cycle1b/gate-1/clippy.log",
+    "source": "13500ce9d9c71534357e44d6d505a58f52758661"
+  },
+  {
+    "name": "reevaluation-probe",
+    "command": [
+      "cargo",
+      "run",
+      "-p",
+      "qcore-compiler",
+      "--example",
+      "reevaluation_probe"
+    ],
+    "exit": 0,
+    "seconds": 0.08216738305054605,
+    "log": "/home/cosmo/.codex/worktrees/premise-decomposition-cycle1b/qcore-c/private/premise-decomposition-cycle1b/gate-1/reevaluation-probe.log",
+    "source": "13500ce9d9c71534357e44d6d505a58f52758661"
+  },
+  {
+    "name": "reevaluation-followup",
+    "command": [
+      "cargo",
+      "run",
+      "-p",
+      "qcore-compiler",
+      "--example",
+      "reevaluation_followup"
+    ],
+    "exit": 0,
+    "seconds": 0.46149642893578857,
+    "log": "/home/cosmo/.codex/worktrees/premise-decomposition-cycle1b/qcore-c/private/premise-decomposition-cycle1b/gate-1/reevaluation-followup.log",
+    "source": "13500ce9d9c71534357e44d6d505a58f52758661"
+  },
+  {
+    "name": "lean",
+    "command": [
+      "python3",
+      "scripts/check_lean_audits.py"
+    ],
+    "exit": 0,
+    "seconds": 131.43197921698447,
+    "log": "/home/cosmo/.codex/worktrees/premise-decomposition-cycle1b/qcore-c/private/premise-decomposition-cycle1b/gate-1/lean.log",
+    "source": "13500ce9d9c71534357e44d6d505a58f52758661"
+  },
+  {
+    "name": "python",
+    "command": [
+      "python3",
+      "-m",
+      "unittest",
+      "discover",
+      "-s",
+      "scripts/tests"
+    ],
+    "exit": 1,
+    "seconds": 33.84114925505128,
+    "log": "/home/cosmo/.codex/worktrees/premise-decomposition-cycle1b/qcore-c/private/premise-decomposition-cycle1b/gate-1/python.log",
+    "source": "13500ce9d9c71534357e44d6d505a58f52758661"
+  },
+  {
+    "name": "provider-check",
+    "command": [
+      "cargo",
+      "check",
+      "--manifest-path",
+      "providers/Cargo.toml",
+      "--workspace",
+      "--locked",
+      "--offline"
+    ],
+    "exit": 0,
+    "seconds": 6.567850104998797,
+    "log": "/home/cosmo/.codex/worktrees/premise-decomposition-cycle1b/qcore-c/private/premise-decomposition-cycle1b/gate-1/provider-check.log",
+    "source": "13500ce9d9c71534357e44d6d505a58f52758661"
+  },
+  {
+    "name": "provider-rust",
+    "command": [
+      "cargo",
+      "test",
+      "--manifest-path",
+      "providers/Cargo.toml",
+      "--workspace",
+      "--locked",
+      "--offline"
+    ],
+    "exit": 0,
+    "seconds": 542.0830459310673,
+    "log": "/home/cosmo/.codex/worktrees/premise-decomposition-cycle1b/qcore-c/private/premise-decomposition-cycle1b/gate-1/provider-rust.log",
+    "source": "13500ce9d9c71534357e44d6d505a58f52758661"
+  },
+  {
+    "name": "provider-fmt",
+    "command": [
+      "cargo",
+      "fmt",
+      "--manifest-path",
+      "providers/Cargo.toml",
+      "--all",
+      "--",
+      "--check"
+    ],
+    "exit": 0,
+    "seconds": 4.191660896060057,
+    "log": "/home/cosmo/.codex/worktrees/premise-decomposition-cycle1b/qcore-c/private/premise-decomposition-cycle1b/gate-1/provider-fmt.log",
+    "source": "13500ce9d9c71534357e44d6d505a58f52758661"
+  },
+  {
+    "name": "provider-clippy",
+    "command": [
+      "cargo",
+      "clippy",
+      "--manifest-path",
+      "providers/Cargo.toml",
+      "--workspace",
+      "--all-targets",
+      "--locked",
+      "--offline",
+      "--",
+      "-D",
+      "warnings"
+    ],
+    "exit": 0,
+    "seconds": 23.524635356036015,
+    "log": "/home/cosmo/.codex/worktrees/premise-decomposition-cycle1b/qcore-c/private/premise-decomposition-cycle1b/gate-1/provider-clippy.log",
+    "source": "13500ce9d9c71534357e44d6d505a58f52758661"
+  },
+  {
+    "name": "provider-contracts",
+    "command": [
+      "python3",
+      "providers/contracts.py",
+      "check"
+    ],
+    "exit": 0,
+    "seconds": 14.84798935696017,
+    "log": "/home/cosmo/.codex/worktrees/premise-decomposition-cycle1b/qcore-c/private/premise-decomposition-cycle1b/gate-1/provider-contracts.log",
+    "source": "13500ce9d9c71534357e44d6d505a58f52758661"
+  },
+  {
+    "name": "provider-python",
+    "command": [
+      "python3",
+      "-m",
+      "unittest",
+      "discover",
+      "-s",
+      "providers/tests"
+    ],
+    "exit": 0,
+    "seconds": 14.343739758944139,
+    "log": "/home/cosmo/.codex/worktrees/premise-decomposition-cycle1b/qcore-c/private/premise-decomposition-cycle1b/gate-1/provider-python.log",
+    "source": "13500ce9d9c71534357e44d6d505a58f52758661"
+  },
+  {
+    "name": "provider-build",
+    "command": [
+      "python3",
+      "providers/package.py",
+      "build",
+      "--output",
+      "/home/cosmo/.codex/worktrees/premise-decomposition-cycle1b/qcore-c/private/premise-decomposition-cycle1b/gate-1/packages",
+      "--target-dir",
+      "/home/cosmo/.codex/worktrees/premise-decomposition-cycle1b/qcore-c/providers/target/packaging"
+    ],
+    "exit": 0,
+    "seconds": 36.765926872962154,
+    "log": "/home/cosmo/.codex/worktrees/premise-decomposition-cycle1b/qcore-c/private/premise-decomposition-cycle1b/gate-1/provider-build.log",
+    "source": "13500ce9d9c71534357e44d6d505a58f52758661"
+  },
+  {
+    "name": "verify-qcore.libevent",
+    "command": [
+      "python3",
+      "providers/package.py",
+      "verify",
+      "/home/cosmo/.codex/worktrees/premise-decomposition-cycle1b/qcore-c/private/premise-decomposition-cycle1b/gate-1/packages/qcore.libevent"
+    ],
+    "exit": 0,
+    "seconds": 0.13165202899836004,
+    "log": "/home/cosmo/.codex/worktrees/premise-decomposition-cycle1b/qcore-c/private/premise-decomposition-cycle1b/gate-1/verify-qcore.libevent.log",
+    "source": "13500ce9d9c71534357e44d6d505a58f52758661"
+  },
+  {
+    "name": "verify-qcore.chunkio",
+    "command": [
+      "python3",
+      "providers/package.py",
+      "verify",
+      "/home/cosmo/.codex/worktrees/premise-decomposition-cycle1b/qcore-c/private/premise-decomposition-cycle1b/gate-1/packages/qcore.chunkio"
+    ],
+    "exit": 0,
+    "seconds": 0.12612164800520986,
+    "log": "/home/cosmo/.codex/worktrees/premise-decomposition-cycle1b/qcore-c/private/premise-decomposition-cycle1b/gate-1/verify-qcore.chunkio.log",
+    "source": "13500ce9d9c71534357e44d6d505a58f52758661"
+  },
+  {
+    "name": "verify-qcore.cmetrics",
+    "command": [
+      "python3",
+      "providers/package.py",
+      "verify",
+      "/home/cosmo/.codex/worktrees/premise-decomposition-cycle1b/qcore-c/private/premise-decomposition-cycle1b/gate-1/packages/qcore.cmetrics"
+    ],
+    "exit": 0,
+    "seconds": 0.12150496803224087,
+    "log": "/home/cosmo/.codex/worktrees/premise-decomposition-cycle1b/qcore-c/private/premise-decomposition-cycle1b/gate-1/verify-qcore.cmetrics.log",
+    "source": "13500ce9d9c71534357e44d6d505a58f52758661"
+  },
+  {
+    "name": "verify-qcore.ctraces",
+    "command": [
+      "python3",
+      "providers/package.py",
+      "verify",
+      "/home/cosmo/.codex/worktrees/premise-decomposition-cycle1b/qcore-c/private/premise-decomposition-cycle1b/gate-1/packages/qcore.ctraces"
+    ],
+    "exit": 0,
+    "seconds": 0.11439007404260337,
+    "log": "/home/cosmo/.codex/worktrees/premise-decomposition-cycle1b/qcore-c/private/premise-decomposition-cycle1b/gate-1/verify-qcore.ctraces.log",
+    "source": "13500ce9d9c71534357e44d6d505a58f52758661"
+  },
+  {
+    "name": "verify-qcore.librdkafka",
+    "command": [
+      "python3",
+      "providers/package.py",
+      "verify",
+      "/home/cosmo/.codex/worktrees/premise-decomposition-cycle1b/qcore-c/private/premise-decomposition-cycle1b/gate-1/packages/qcore.librdkafka"
+    ],
+    "exit": 0,
+    "seconds": 0.13245519110932946,
+    "log": "/home/cosmo/.codex/worktrees/premise-decomposition-cycle1b/qcore-c/private/premise-decomposition-cycle1b/gate-1/verify-qcore.librdkafka.log",
+    "source": "13500ce9d9c71534357e44d6d505a58f52758661"
+  },
+  {
+    "name": "release",
+    "command": [
+      "cargo",
+      "build",
+      "--release",
+      "-p",
+      "qcore-audit",
+      "--bin",
+      "quirin-audit"
+    ],
+    "exit": 0,
+    "seconds": 91.63635154801887,
+    "log": "/home/cosmo/.codex/worktrees/premise-decomposition-cycle1b/qcore-c/private/premise-decomposition-cycle1b/gate-1/release.log",
+    "source": "13500ce9d9c71534357e44d6d505a58f52758661"
+  }
+]
