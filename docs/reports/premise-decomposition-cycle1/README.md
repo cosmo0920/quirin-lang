@@ -31,8 +31,9 @@ a validated reachable C violation.
 Validation and fresh comparison evidence are pending. Private root:
 `/home/cosmo/.codex/worktrees/premise-decomposition-cycle1/qcore-c/private/premise-decomposition-cycle1/`.
 
-Integrator list: integrate provider `cjson.qv`, its generated inventories,
-load-path and selected function pins together with deliberate5→15clause pin;
+Integrator list: integrate provider `cjson.qv`, its generated inventory and
+selected function pins together with deliberate5→15clause pin; official sync
+leaves the generated load-path byte-identical to base;
 keep exact old premise and unchanged reader. Shared STATUS, increment part10,
 report index and acceptance matrix require serial reconciliation. Preserve all
 failed fixture/proof attempts. No main merge or push by this card.
