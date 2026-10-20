@@ -11,3 +11,8 @@ for route in ['system','slice','corpus']:
   code=subprocess.call(command,cwd=ROOT)
   print(json.dumps(dict(route=route,side=side,exit=code)),flush=True)
   if code:raise SystemExit(code)
+
+for stage in ['standing','provider']:
+ code=subprocess.call([sys.executable,str(Path(__file__).with_name('run_steps.py')),stage,str(PRIVATE/(stage+'-1'))],cwd=ROOT)
+ print(json.dumps(dict(stage=stage,exit=code)),flush=True)
+ if code:raise SystemExit(code)
