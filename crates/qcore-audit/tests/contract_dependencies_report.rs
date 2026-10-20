@@ -429,3 +429,42 @@ fn production_cjson_atoms_follow_declaration_dependencies_without_affecting_unre
     assert_eq!(metadata["$hypothesis_graphs"][declaration]["premises"]
         ["detach_representation_atoms"]["children"].as_array().unwrap().len(), 9);
 }
+
+#[test]
+fn actual_cjson_detach_consultation_propagates_atoms_through_a_summary() {
+    use qcore_c_gateway::contract_dependencies::{Recording, hypothesis_closure, row_dependencies};
+    use qcore_c_gateway::legacy_c::analyze_legacy_c_translation_unit;
+    let production =
+        include_str!("../../../providers/qcore-provider-librdkafka/contracts/librdkafka/cjson.qv");
+    let fixture = "module contract;
+extern fn impact_alloc() -> ptr<mut,u8> contract { requires resource_contract_v1; ensures normal resource_return_owned(nonnull); };
+extern fn impact_store(p: ptr<mut,u8>, i: ptr<mut,u8>) -> unit contract { requires resource_contract_v1; ensures normal resource_owned(p,nonnull); ensures normal resource_stored(i,p,nonnull); ensures normal resource_return_none(); };
+extern fn impact_free(p: ptr<mut,u8>) -> unit contract { requires resource_contract_v1; ensures normal resource_released(p,nullable); ensures normal resource_return_none(); };";
+    let contracts =
+        qcore_contract::contract_loader::load_resource_contract_sources(&BTreeMap::from([
+            ("cjson.qv".into(), production.into()),
+            ("impact.qv".into(), fixture.into()),
+        ]))
+        .unwrap();
+    let source = "void direct(void) { void *p=impact_alloc(); void *i=impact_alloc(); impact_store(p,i); void *r=cJSON_DetachItemViaPointer(p,i); impact_free(r); impact_free(p); } void caller(void) { direct(); } int unrelated(void) { return 7; }";
+    let recording = Recording::start();
+    let summary = analyze_legacy_c_translation_unit(source, "caller", &contracts).unwrap();
+    let record = recording.finish();
+    let rows = row_dependencies(&record, &summary, &contracts);
+    let graphs = qcore_contract::hypothesis::replay(contracts.source_assumptions()).unwrap();
+    for name in ["direct", "caller"] {
+        let closure = hypothesis_closure(&rows[name], &graphs);
+        assert!(
+            closure["cJSON_DetachItemViaPointer"].contains("detach_no_writer"),
+            "{name}: {:?}",
+            rows[name]
+        );
+        assert_eq!(closure["cJSON_DetachItemViaPointer"].len(), 10);
+    }
+    assert!(
+        rows["caller"].summaries.contains("direct"),
+        "{:?}",
+        rows["caller"]
+    );
+    assert!(hypothesis_closure(&rows["unrelated"], &graphs).is_empty());
+}
