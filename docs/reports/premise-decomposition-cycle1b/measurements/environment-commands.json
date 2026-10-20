@@ -1,0 +1,49 @@
+{
+  "commands": [
+    {
+      "command": [
+        "rustc",
+        "--edition=2024",
+        "/home/cosmo/.codex/worktrees/premise-decomposition-cycle1b/qcore-c/docs/reports/contract-hypothesis-graph-v1/scripts/environment_provenance.rs",
+        "-L",
+        "dependency=/home/cosmo/.codex/worktrees/premise-decomposition-cycle1b/qcore-c/target/release/deps",
+        "--extern",
+        "qcore_audit=/home/cosmo/.codex/worktrees/premise-decomposition-cycle1b/qcore-c/target/release/deps/libqcore_audit-ea4b824ef1f559eb.rlib",
+        "--extern",
+        "qcore_contract=/home/cosmo/.codex/worktrees/premise-decomposition-cycle1b/qcore-c/target/release/deps/libqcore_contract-68876726193bb2d2.rlib",
+        "--extern",
+        "serde_json=/home/cosmo/.codex/worktrees/premise-decomposition-cycle1b/qcore-c/target/release/deps/libserde_json-08241b9b75b89117.rlib",
+        "-o",
+        "/home/cosmo/.codex/worktrees/premise-decomposition-cycle1b/qcore-c/private/premise-decomposition-cycle1b/environment-provenance"
+      ],
+      "exit": 0
+    },
+    {
+      "command": [
+        "/home/cosmo/.codex/worktrees/premise-decomposition-cycle1b/qcore-c/private/premise-decomposition-cycle1b/environment-provenance",
+        "/home/cosmo/.codex/worktrees/premise-decomposition-cycle1b/qcore-c/private/premise-decomposition-cycle1b/baseline-source/contract/profiles/fluent-bit/../../../cycle19-resource-contracts.json",
+        "/home/cosmo/Documents/GitHub/qcore-c/build/cycle19/c-gateway-wave-pin/fluent-bit-clang-source",
+        "/home/cosmo/.codex/worktrees/premise-decomposition-cycle1b/qcore-c/private/premise-decomposition-cycle1b/environment-before.json"
+      ],
+      "exit": 0
+    },
+    {
+      "command": [
+        "/home/cosmo/.codex/worktrees/premise-decomposition-cycle1b/qcore-c/private/premise-decomposition-cycle1b/environment-provenance",
+        "/home/cosmo/.codex/worktrees/premise-decomposition-cycle1b/qcore-c/contract/profiles/fluent-bit/../../../cycle19-resource-contracts.json",
+        "/home/cosmo/Documents/GitHub/qcore-c/build/cycle19/c-gateway-wave-pin/fluent-bit-clang-source",
+        "/home/cosmo/.codex/worktrees/premise-decomposition-cycle1b/qcore-c/private/premise-decomposition-cycle1b/environment-after.json"
+      ],
+      "exit": 0
+    }
+  ],
+  "helper_sha256": "9746fae0d8e744f95efaa78996ae10133c61325565c69edf5dec66db19134c63",
+  "helper_source": "docs/reports/contract-hypothesis-graph-v1/scripts/environment_provenance.rs",
+  "helper_source_sha256": "70048e8c1953a7bf8f139723f60312a4b5bdb02fdfbd4ecc1698194f24f1a612",
+  "frozen_compiled_library_source": "13500ce9d9c71534357e44d6d505a58f52758661",
+  "environment_sha256": {
+    "before": "45c7784391237de5d1dc8434ae45636d7711358356f5551f2e21524ca9ec0ceb",
+    "after": "7bf0f71f10ab58fdbb47cfc5e8b7ab7a6e6a4518b1516e94446bf198ac07adb8"
+  },
+  "meaning": "Fresh helper executions serialize the exact post-pin ResourceContracts used for attributable home-environment digests; source-assumption map and selected module-only reconstruction are checked separately in every route comparison."
+}
