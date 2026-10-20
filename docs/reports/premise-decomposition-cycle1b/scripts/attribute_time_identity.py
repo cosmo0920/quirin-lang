@@ -10,9 +10,15 @@ from pathlib import Path
 p=argparse.ArgumentParser(description=__doc__)
 p.add_argument('route',choices=['system','slice','corpus']);p.add_argument('comparison',type=Path)
 a=p.parse_args();d=json.loads(gzip.decompress((a.comparison/'attributed-residual-differences.json.gz').read_bytes()))
-primary=Path('/home/cosmo/Documents/GitHub/qcore-c')
-prepared=primary/({'system':'private/w45-fb/w46-external-callee-contracts/attempt-1','slice':'private/w47-tail/attempt-1/prep','corpus':'build/cycle19/c-gateway-wave-pin'}[a.route])
-database=prepared/'fluent-bit-clang-production/compile_commands.json'
+invocation=json.loads((a.comparison/'after/invocation.json').read_text())
+audit_command=invocation['command']
+if a.route=='corpus':
+ # pinned_route.rs:98 reads the source root's production database; the
+ # explicit Monkey library DB is appended later and has no mk_bin/monkey.c.
+ assert audit_command[1:3]==['pinned','--jobs']
+ database=Path(audit_command[4])/'build/compile_commands.json'
+else:
+ database=Path(audit_command[audit_command.index('--compile-database')+1])
 raw_database=database.read_bytes();entries=[entry for entry in json.loads(raw_database) if entry['file'].endswith('/lib/monkey/mk_bin/monkey.c')];assert len(entries)==1
 entry=entries[0];words=shlex.split(entry['command']);command=[words[0]];skip=False
 for word in words[1:]:
@@ -25,7 +31,7 @@ command+=['-E','-P']
 assert '-fPIE' in command
 assert command[-3].endswith('/lib/monkey/mk_bin/monkey.c')
 result=subprocess.run(command,cwd=entry['directory'],stdout=subprocess.PIPE,stderr=subprocess.PIPE)
-record={'command':command,'cwd':entry['directory'],'exit':result.returncode,'compile_database':str(database),'compile_database_sha256':hashlib.sha256(raw_database).hexdigest(),'source_sha256':hashlib.sha256(Path(entry['file']).read_bytes()).hexdigest(),'fresh_execution':True}
+record={'command':command,'cwd':entry['directory'],'exit':result.returncode,'compile_database':str(database),'resolved_compile_database':str(database.resolve()),'bound_audit_command':audit_command,'compile_database_sha256':hashlib.sha256(raw_database).hexdigest(),'source_sha256':hashlib.sha256(Path(entry['file']).read_bytes()).hexdigest(),'fresh_execution':True}
 (a.comparison/'time-preprocess-command.json').write_text(json.dumps(record,indent=2)+'\n');(a.comparison/'time-preprocess-stderr.log').write_bytes(result.stderr)
 assert result.returncode==0
 changes=d['contracts'];assert all(not v for k,v in d.items() if k!='contracts')
