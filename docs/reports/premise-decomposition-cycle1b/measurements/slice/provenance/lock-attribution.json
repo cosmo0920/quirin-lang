@@ -1,0 +1,11 @@
+{
+  "sha256": {
+    "before": "1a4896203b2f4e2d843241d9d1804aefc007b2b5c800dfa96a36ea64afc7da8f",
+    "after": "a10d0c93ee804cc71173764c6f8d9d2beb92dd1db1db6d9ffdfb58085582a4ba"
+  },
+  "only_changed_functions": [
+    "__errno_location",
+    "strerror"
+  ],
+  "exact_bytes_equal_after_selected_digest_substitution": true
+}

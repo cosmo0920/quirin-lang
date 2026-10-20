@@ -1,0 +1,58 @@
+{
+  "route": "slice",
+  "unchanged_unrelated_declaration_graphs": 102,
+  "migrated_graphs": {
+    "__errno_location": {
+      "before_atoms": 1,
+      "after_atoms": 3,
+      "consulting_rows": 65,
+      "consulting_safe_rows": 7
+    }
+  },
+  "before_counts": {
+    "Unknown": 346,
+    "Safe": 53,
+    "Pending": 4,
+    "Unsafe": 1
+  },
+  "after_counts": {
+    "Unknown": 346,
+    "Safe": 53,
+    "Pending": 4,
+    "Unsafe": 1
+  },
+  "null_rows": 406,
+  "checks": {
+    "unrelated_declaration_graphs_equal": true,
+    "selected_graphs_match_frozen_mapping": true,
+    "static_verdict_counts_equal": true,
+    "full_runtime_projection_equal": true,
+    "all_null_records_equal": true,
+    "null_summary_equal": true,
+    "all_remaining_artifacts_equal": false
+  },
+  "raw_differences": {
+    "diagnostics": 1339,
+    "contracts": 3732,
+    "chunk-contracts": 0,
+    "source-effects": 0,
+    "null": 1212,
+    "null-summary": 0,
+    "outer": 5
+  },
+  "residual_differences": {
+    "diagnostics": 0,
+    "contracts": 4,
+    "chunk-contracts": 0,
+    "source-effects": 0,
+    "null": 0,
+    "null-summary": 0,
+    "outer": 0
+  },
+  "scoped_metadata_records": 57,
+  "all_invariant_checks_pass": false,
+  "meaning": "Raw before/after legacy erasure differs. Exact selected premise/module/pin metadata, independently reconstructed source/environment and complete configuration digests are restored; every remaining field is compared.",
+  "all_remaining_raw_residuals_exactly_attributed": true,
+  "all_invariant_checks_pass_after_exact_provenance_attribution": true,
+  "time_attribution": "provenance-attribution.json"
+}

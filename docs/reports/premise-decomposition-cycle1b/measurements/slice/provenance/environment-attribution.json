@@ -1,0 +1,11 @@
+{
+  "before_sha256": "45c7784391237de5d1dc8434ae45636d7711358356f5551f2e21524ca9ec0ceb",
+  "after_sha256": "7bf0f71f10ab58fdbb47cfc5e8b7ab7a6e6a4518b1516e94446bf198ac07adb8",
+  "source_assumption_sha256": {
+    "before": "893d17bd45f20fb21ca63e96edfdeff6e50dfb5d90e6992f9a240180f4046309",
+    "after": "9874c72fa82af564fa45b7b26aeffb24e6dbfec53bd1dae66095cdd5cc15520a"
+  },
+  "only_changed_module": "providers/quirin-provider-libc/contracts/libc/errno.qv",
+  "module_key": "$ANALYZER/contract/profiles/fluent-bit/../../../providers/quirin-provider-libc/contracts/libc/errno.qv",
+  "all_other_environment_fields_equal_after_collision_checked_root_normalization": true
+}
