@@ -56,8 +56,9 @@ def parentOutside (e : Environment) : Prop := e.parent ∉ e.children
 def predecessor (e : Environment) : Prop :=
   ∀ before a b suffix, e.children = before ++ a :: b :: suffix → e.prev b = some a
 
-/-- A link target remains in the parent's exact custody domain and cannot
-    denote the parent. The link-target and exclusion assumptions are essential. -/
+/-- In the entry heap, a link target is in the parent's exact custody domain
+    and cannot denote the parent. No trace-preservation theorem is claimed.
+    The link-target and exclusion assumptions are essential. -/
 theorem links_stay_live_owned_and_exclude_parent (e : Environment)
     (hc : chain e) (ht : linkTargets e) (hp : parentOutside e)
     (x y : Nat) (hx : x ∈ e.children)

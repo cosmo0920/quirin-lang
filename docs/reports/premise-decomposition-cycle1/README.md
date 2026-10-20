@@ -17,9 +17,11 @@ conjunction name; it cannot replace the exact legacy text and keep its erasure.
 environment and open discharge obligations. No equivalence or C extraction
 proof is claimed. All production atoms remain open/declared, evidence-only.
 
-The conditional Lean model derives live-owned link targets excluding parent,
+The conditional Lean model derives entry-heap live-owned link targets excluding parent,
 index injectivity under distinctness, and refutation of no-writer by a writing
-step. It never proves the caller's heap or trace meets its antecedents. Rust
+step. It never proves the caller's heap or trace meets its antecedents, or that
+these entry-heap consequences persist through the call: a temporal heap
+transition model and source binding remain open. Rust
 controls use the actual production declaration: replay, each atom substitution,
 included/renamed inheritance, refuted no-writer, separate original legacy
 standing, foreign-context refusal and dependency lift including held/withdrawn
@@ -41,3 +43,7 @@ remaining sibling-release/lookup/Removed transport residuals. User-proposed
 `|->`, `!->`, `||->`, `->|` remain design proposals in atom-map.json: no grammar
 extension, no negation from Unknown, no unchecked branch discharge, and no
 termination claim from a terminal marker.
+
+The selected chain atom remains a relational bundle (exact owned-child domain,
+head/adjacency equations and next-path acyclicity), not a claim of logical
+independence or irreducibility. Further refinement must preserve that relation.
