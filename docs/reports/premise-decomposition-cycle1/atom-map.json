@@ -19,7 +19,7 @@
       "id": "detach_chain",
       "statement": "For this removed-result declaration, the live parent represents exactly its owned children by a finite acyclic child and next chain",
       "proposition": "QCore.CjsonRepresentationPremises.chain",
-      "environment": "Environment e: parent, finite children list, ownedChild/live predicates, child/next/prev maps, call trace",
+      "environment": "Environment e: callActor, parent, finite children list, ownedChild/live predicates, child/next/prev maps, interleaved trace with per-step actors",
       "quantifiers": "all child identities; all adjacent sequence decompositions; all nonempty next paths",
       "conclusion": "chain e",
       "environment_bindings": {
@@ -40,7 +40,7 @@
       "id": "detach_distinct",
       "statement": "For this removed-result declaration, chain child identities are pairwise distinct",
       "proposition": "QCore.CjsonRepresentationPremises.distinct",
-      "environment": "Environment e: parent, finite children list, ownedChild/live predicates, child/next/prev maps, call trace",
+      "environment": "Environment e: callActor, parent, finite children list, ownedChild/live predicates, child/next/prev maps, interleaved trace with per-step actors",
       "quantifiers": "all finite sequence indices",
       "conclusion": "distinct e",
       "environment_bindings": {
@@ -61,7 +61,7 @@
       "id": "detach_empty",
       "statement": "For this removed-result declaration, child is NULL precisely when the child and next chain is empty",
       "proposition": "QCore.CjsonRepresentationPremises.empty",
-      "environment": "Environment e: parent, finite children list, ownedChild/live predicates, child/next/prev maps, call trace",
+      "environment": "Environment e: callActor, parent, finite children list, ownedChild/live predicates, child/next/prev maps, interleaved trace with per-step actors",
       "quantifiers": "the unique child pointer and finite sequence head",
       "conclusion": "empty e",
       "environment_bindings": {
@@ -82,7 +82,7 @@
       "id": "detach_first_prev",
       "statement": "For this removed-result declaration, the first child's prev is the last child",
       "proposition": "QCore.CjsonRepresentationPremises.firstPrev",
-      "environment": "Environment e: parent, finite children list, ownedChild/live predicates, child/next/prev maps, call trace",
+      "environment": "Environment e: callActor, parent, finite children list, ownedChild/live predicates, child/next/prev maps, interleaved trace with per-step actors",
       "quantifiers": "all first/last identities matching sequence endpoints",
       "conclusion": "firstPrev e",
       "environment_bindings": {
@@ -103,7 +103,7 @@
       "id": "detach_last_next",
       "statement": "For this removed-result declaration, the last child's next is NULL",
       "proposition": "QCore.CjsonRepresentationPremises.lastNext",
-      "environment": "Environment e: parent, finite children list, ownedChild/live predicates, child/next/prev maps, call trace",
+      "environment": "Environment e: callActor, parent, finite children list, ownedChild/live predicates, child/next/prev maps, interleaved trace with per-step actors",
       "quantifiers": "all last identities matching the sequence endpoint",
       "conclusion": "lastNext e",
       "environment_bindings": {
@@ -124,7 +124,7 @@
       "id": "detach_link_targets",
       "statement": "For this removed-result declaration, every non-NULL next or prev target is a live child of that same parent",
       "proposition": "QCore.CjsonRepresentationPremises.linkTargets",
-      "environment": "Environment e: parent, finite children list, ownedChild/live predicates, child/next/prev maps, call trace",
+      "environment": "Environment e: callActor, parent, finite children list, ownedChild/live predicates, child/next/prev maps, interleaved trace with per-step actors",
       "quantifiers": "all children x and all nonnull next/prev targets y",
       "conclusion": "linkTargets e",
       "environment_bindings": {
@@ -145,7 +145,7 @@
       "id": "detach_no_writer",
       "statement": "For this removed-result declaration, no concurrent writer mutates these links during the call",
       "proposition": "QCore.CjsonRepresentationPremises.noWriter",
-      "environment": "Environment e: parent, finite children list, ownedChild/live predicates, child/next/prev maps, call trace",
+      "environment": "Environment e: callActor, parent, finite children list, ownedChild/live predicates, child/next/prev maps, interleaved trace with per-step actors",
       "quantifiers": "all steps in the call trace whose actor differs from the current invocation",
       "conclusion": "noWriter e",
       "environment_bindings": {
@@ -166,7 +166,7 @@
       "id": "detach_parent_outside",
       "statement": "For this removed-result declaration, the parent is not a child",
       "proposition": "QCore.CjsonRepresentationPremises.parentOutside",
-      "environment": "Environment e: parent, finite children list, ownedChild/live predicates, child/next/prev maps, call trace",
+      "environment": "Environment e: callActor, parent, finite children list, ownedChild/live predicates, child/next/prev maps, interleaved trace with per-step actors",
       "quantifiers": "the parent and every child",
       "conclusion": "parentOutside e",
       "environment_bindings": {
@@ -187,7 +187,7 @@
       "id": "detach_predecessor",
       "statement": "For this removed-result declaration, each nonfirst child's prev is its predecessor",
       "proposition": "QCore.CjsonRepresentationPremises.predecessor",
-      "environment": "Environment e: parent, finite children list, ownedChild/live predicates, child/next/prev maps, call trace",
+      "environment": "Environment e: callActor, parent, finite children list, ownedChild/live predicates, child/next/prev maps, interleaved trace with per-step actors",
       "quantifiers": "all adjacent sequence decompositions",
       "conclusion": "predecessor e",
       "environment_bindings": {
