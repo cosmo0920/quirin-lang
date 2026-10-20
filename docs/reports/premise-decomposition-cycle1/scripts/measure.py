@@ -40,7 +40,7 @@ def main():
         source = PRIMARY / 'build/cycle19/c-gateway-wave-pin/fluent-bit-clang-source'
         monkey = PRIMARY / 'build/cycle19/c-gateway-wave-pin/monkey/monkey-build/compile_commands.json'
         env['QCORE_CHUNKIO_PACKAGE'] = str(PRIMARY / 'build/cycle19/provider-packages-wave20/qcore.chunkio')
-        command = [str(binary), 'pinned', '--jobs', '4', str(source), str(monkey),
+        command = [str(binary), 'pinned', '--jobs', '8', str(source), str(monkey),
                    str(out / 'monkey-source.json'), str(out / 'resource-diagnostics.json')]
     else:
         prepared = PRIMARY / ('private/w45-fb/w46-external-callee-contracts/attempt-1' if route == 'system'
@@ -51,8 +51,8 @@ def main():
                                                           else 'tail-pause-selection.json')
         command = [str(binary), 'current', '--checkout', str(source), '--profile-directory',
                    str(inputs / 'contract/profiles/fluent-bit'), '--compile-database', str(database),
-                   '--selection', str(selection), '--jobs', '4', '--report', str(out / 'resource-diagnostics.json')]
-    record = {'analyzer_source_commit': args.analyzer_commit, 'command': command, 'jobs': 4,
+                   '--selection', str(selection), '--jobs', '8', '--report', str(out / 'resource-diagnostics.json')]
+    record = {'analyzer_source_commit': args.analyzer_commit, 'command': command, 'jobs': 8,
               'binary': str(binary), 'binary_sha256': sha(binary),
               'source_head': subprocess.check_output(['git', '-C', str(source), 'rev-parse', 'HEAD'], text=True).strip(),
               'link_map': str(link_map), 'link_map_sha256': sha(link_map),
