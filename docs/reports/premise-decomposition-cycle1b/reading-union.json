@@ -3,12 +3,33 @@
     "compiler/tests/qcore_contract_corpus.rs",
     "crates/qcore-c-gateway/tests/libc_reading_dependencies.rs",
     "crates/qcore-contract/tests/libc_reading_hypotheses.rs",
+    "docs/reports/INDEX.md",
+    "docs/reports/premise-decomposition-cycle1b/README.md",
+    "docs/reports/premise-decomposition-cycle1b/consumer-census.json",
     "docs/reports/premise-decomposition-cycle1b/design.md",
+    "docs/reports/premise-decomposition-cycle1b/gate.json",
+    "docs/reports/premise-decomposition-cycle1b/gate/baseline-reuse.json",
+    "docs/reports/premise-decomposition-cycle1b/gate/binary.json",
+    "docs/reports/premise-decomposition-cycle1b/gate/clang-version.exit",
+    "docs/reports/premise-decomposition-cycle1b/gate/clang-version.txt",
+    "docs/reports/premise-decomposition-cycle1b/gate/commands.json",
+    "docs/reports/premise-decomposition-cycle1b/gate/lean.log.gz",
+    "docs/reports/premise-decomposition-cycle1b/gate/provider-python.log.gz",
+    "docs/reports/premise-decomposition-cycle1b/gate/provider-rust.log.gz",
+    "docs/reports/premise-decomposition-cycle1b/gate/python.log.gz",
+    "docs/reports/premise-decomposition-cycle1b/gate/rust-summary.json.gz",
+    "docs/reports/premise-decomposition-cycle1b/gate/rust.log.gz",
     "docs/reports/premise-decomposition-cycle1b/mapping.json",
     "docs/reports/premise-decomposition-cycle1b/proposition-bindings.json",
+    "docs/reports/premise-decomposition-cycle1b/reading-union.json",
+    "docs/reports/premise-decomposition-cycle1b/scripts/attribute_time_identity.py",
     "docs/reports/premise-decomposition-cycle1b/scripts/compare.py",
     "docs/reports/premise-decomposition-cycle1b/scripts/impact.py",
     "docs/reports/premise-decomposition-cycle1b/scripts/measure.py",
+    "docs/reports/premise-decomposition-cycle1b/scripts/publish_route.py",
+    "docs/reports/premise-decomposition-cycle1b/tracking.json",
+    "docs/reports/premise-decomposition-cycle1b/validation-attempts.json",
+    "docs/reviews/r0_3/acceptance_matrix.json",
     "proof/AuditLibcReadingPremises.lean",
     "proof/QCore.lean",
     "proof/QCore/LibcReadingPremises.lean",
@@ -31,9 +52,11 @@
     "status"
   ],
   "unknown_paths": [
+    "docs/reports/premise-decomposition-cycle1b/scripts/attribute_time_identity.py",
     "docs/reports/premise-decomposition-cycle1b/scripts/compare.py",
     "docs/reports/premise-decomposition-cycle1b/scripts/impact.py",
-    "docs/reports/premise-decomposition-cycle1b/scripts/measure.py"
+    "docs/reports/premise-decomposition-cycle1b/scripts/measure.py",
+    "docs/reports/premise-decomposition-cycle1b/scripts/publish_route.py"
   ],
   "readings": [
     {
@@ -143,12 +166,33 @@
       "reasons": [
         "docs: compiler/tests/qcore_contract_corpus.rs",
         "docs: conservative fallback: unknown path or empty scope",
+        "docs: docs/reports/INDEX.md",
+        "docs: docs/reports/premise-decomposition-cycle1b/README.md",
+        "docs: docs/reports/premise-decomposition-cycle1b/consumer-census.json",
         "docs: docs/reports/premise-decomposition-cycle1b/design.md",
+        "docs: docs/reports/premise-decomposition-cycle1b/gate.json",
+        "docs: docs/reports/premise-decomposition-cycle1b/gate/baseline-reuse.json",
+        "docs: docs/reports/premise-decomposition-cycle1b/gate/binary.json",
+        "docs: docs/reports/premise-decomposition-cycle1b/gate/clang-version.exit",
+        "docs: docs/reports/premise-decomposition-cycle1b/gate/clang-version.txt",
+        "docs: docs/reports/premise-decomposition-cycle1b/gate/commands.json",
+        "docs: docs/reports/premise-decomposition-cycle1b/gate/lean.log.gz",
+        "docs: docs/reports/premise-decomposition-cycle1b/gate/provider-python.log.gz",
+        "docs: docs/reports/premise-decomposition-cycle1b/gate/provider-rust.log.gz",
+        "docs: docs/reports/premise-decomposition-cycle1b/gate/python.log.gz",
+        "docs: docs/reports/premise-decomposition-cycle1b/gate/rust-summary.json.gz",
+        "docs: docs/reports/premise-decomposition-cycle1b/gate/rust.log.gz",
         "docs: docs/reports/premise-decomposition-cycle1b/mapping.json",
         "docs: docs/reports/premise-decomposition-cycle1b/proposition-bindings.json",
+        "docs: docs/reports/premise-decomposition-cycle1b/reading-union.json",
+        "docs: docs/reports/premise-decomposition-cycle1b/scripts/attribute_time_identity.py",
         "docs: docs/reports/premise-decomposition-cycle1b/scripts/compare.py",
         "docs: docs/reports/premise-decomposition-cycle1b/scripts/impact.py",
         "docs: docs/reports/premise-decomposition-cycle1b/scripts/measure.py",
+        "docs: docs/reports/premise-decomposition-cycle1b/scripts/publish_route.py",
+        "docs: docs/reports/premise-decomposition-cycle1b/tracking.json",
+        "docs: docs/reports/premise-decomposition-cycle1b/validation-attempts.json",
+        "docs: docs/reviews/r0_3/acceptance_matrix.json",
         "docs: proof/AuditLibcReadingPremises.lean",
         "docs: proof/QCore.lean",
         "docs: proof/QCore/LibcReadingPremises.lean",
@@ -573,6 +617,7 @@
       "reasons": [
         "compiler/tests/qcore_contract_corpus.rs",
         "conservative fallback: unknown path or empty scope",
+        "docs/reviews/r0_3/acceptance_matrix.json",
         "proof/AuditLibcReadingPremises.lean",
         "proof/QCore.lean",
         "proof/QCore/LibcReadingPremises.lean"
@@ -609,7 +654,15 @@
   "additional_validation": "Read provider rule 18 and validation.md for package gates when applicable.",
   "followups": {
     "source": "docs/reviews/r0_3/acceptance_matrix.json#named_followups",
-    "exact_path_candidates": [],
+    "exact_path_candidates": [
+      {
+        "id": "LIBC-READING-PREMISES-TYPED-DISCHARGE",
+        "title": "Bind libc reading propositions to independently checked source contexts before typed discharge",
+        "why": "Cycle1B migrates __errno_location and strerror nested_call_admission to3/5opaque atoms with stable formal proposition IDs, exact Context bindings, conditional Lean decomposition/counterexample theorems and direct/summary dependency controls. No typed registry entry, semantic consumer, verified library body or automatic verdict invalidation exists. DISCHARGE: independently establish each entire guarded proposition for its exact artifact/property/profile/scope/bounds/assumptions/source/build/evidence version and retained expected graph; preserve the accessor either-route alternative rather than requiring both. Any evidence recontextualization or checked verdict invalidation needs a separate scoped rule and matching proof; Unknown is not false and a refuted assumption is not a reachable C violation. Operator proposals AND/forbidden/OR/terminal remain separate semantics work.",
+        "source": "docs/reports/premise-decomposition-cycle1b/README.md",
+        "recorded_by": "PREMISE-DECOMPOSITION-CYCLE1B"
+      }
+    ],
     "limitation": "Also inspect affected report follow-ons and semantic topic residuals."
   },
   "metrics": {
