@@ -1,0 +1,202 @@
+{
+  "lock_file": {
+    "base_sha256": "5cc9dcb6d3cebb95ab652a32d86965e44ff4f2646f9dea7f5efd3d7f4ba4788c",
+    "tip_sha256": "5cc9dcb6d3cebb95ab652a32d86965e44ff4f2646f9dea7f5efd3d7f4ba4788c",
+    "exact_single_declaration_digest_substitution_restores_base_bytes": true
+  },
+  "environment": {
+    "base": {
+      "environment_sha256": "69f9587b690b46418972399dbdb540585f70eb277905c0adc062d0f65a4b5e24",
+      "function_table_sha256": "ba188a413946dcce46f2d8c25dbda5d7bf95eac1296e357ca620ea3f793e1914",
+      "source_assumptions_sha256": "64112e947af8c10f52b3cd7fea48363203809519ce4fc9e0ab3b7f1818eeedc7"
+    },
+    "tip": {
+      "environment_sha256": "fac60e6f7d0cafb9166d7ed51e94aedf637d057f9c8f479464003a32e6fd6dde",
+      "function_table_sha256": "ba188a413946dcce46f2d8c25dbda5d7bf95eac1296e357ca620ea3f793e1914",
+      "source_assumptions_sha256": "e12c6db463929cb135c1ee8784834525f037984eafb54f5910ca345e20bd88a0"
+    }
+  },
+  "complete_environment_equal_after_exact_migration_and_root_restoration": true,
+  "all_compile_configurations_equal_after_exact_source_map_hash_and_root_restoration": true,
+  "inventory_reconstructions": [
+    {
+      "side": "base",
+      "actual": "b508f5f6181efbebb90e1ddf3d809d54e502158498187fae6b695284e6ca7efa",
+      "reconstructed": "b508f5f6181efbebb90e1ddf3d809d54e502158498187fae6b695284e6ca7efa"
+    },
+    {
+      "side": "base",
+      "actual": "2ef9311d94ab9ea521786de1393be82beaaa4ce5155d060be57e199a3159bd58",
+      "reconstructed": "2ef9311d94ab9ea521786de1393be82beaaa4ce5155d060be57e199a3159bd58"
+    },
+    {
+      "side": "base",
+      "actual": "d071d947648e5077f92d111e389d4da9fa6b419e2254c54c0ad16077c5a90863",
+      "reconstructed": "d071d947648e5077f92d111e389d4da9fa6b419e2254c54c0ad16077c5a90863"
+    },
+    {
+      "side": "base",
+      "actual": "cc2c9c1d8a227bee547cf61ad96271f1fe46f6cedc3311e4b34941147ff64572",
+      "reconstructed": "cc2c9c1d8a227bee547cf61ad96271f1fe46f6cedc3311e4b34941147ff64572"
+    },
+    {
+      "side": "base",
+      "actual": "24277361a6d7f945dd88a004fcef8dbe48a399c06682cca75177b833ce93cc1c",
+      "reconstructed": "24277361a6d7f945dd88a004fcef8dbe48a399c06682cca75177b833ce93cc1c"
+    },
+    {
+      "side": "base",
+      "actual": "e83d9e4e37845dd5511079e972c548cb63743923d9f9427e7d42ccbbbad80686",
+      "reconstructed": "e83d9e4e37845dd5511079e972c548cb63743923d9f9427e7d42ccbbbad80686"
+    },
+    {
+      "side": "base",
+      "actual": "c56637bcc6f800ee34468a662e9f24f0f1d57509558dc0ade318d801ca93c677",
+      "reconstructed": "c56637bcc6f800ee34468a662e9f24f0f1d57509558dc0ade318d801ca93c677"
+    },
+    {
+      "side": "base",
+      "actual": "8a1763327e1e48d0e74e36a76a9915f25b78a92039e7d10d224e93bfe55143a8",
+      "reconstructed": "8a1763327e1e48d0e74e36a76a9915f25b78a92039e7d10d224e93bfe55143a8"
+    },
+    {
+      "side": "base",
+      "actual": "c3c49c98d1f573c9536d1994148f090b4f0c1129a462bf6582a1893f9d81fb69",
+      "reconstructed": "c3c49c98d1f573c9536d1994148f090b4f0c1129a462bf6582a1893f9d81fb69"
+    },
+    {
+      "side": "base",
+      "actual": "a9fbde3c8835c5407689e97a40c9d1d15e632adb1b79afb3af34e0efd2b87d63",
+      "reconstructed": "a9fbde3c8835c5407689e97a40c9d1d15e632adb1b79afb3af34e0efd2b87d63"
+    },
+    {
+      "side": "base",
+      "actual": "207e4af80569611e48d5aac26c34f976b9d16079fc1e5bf05141af62b630ae24",
+      "reconstructed": "207e4af80569611e48d5aac26c34f976b9d16079fc1e5bf05141af62b630ae24"
+    },
+    {
+      "side": "base",
+      "actual": "72142df57d2394fce5c1c96354075d1df8930f25ca0ee54f45cbda4ddcef137e",
+      "reconstructed": "72142df57d2394fce5c1c96354075d1df8930f25ca0ee54f45cbda4ddcef137e"
+    },
+    {
+      "side": "base",
+      "actual": "3b99359fea5ef20ca6b573f6bc8485dff5d3e50a5fd95e6a110c3d49430d4c3f",
+      "reconstructed": "3b99359fea5ef20ca6b573f6bc8485dff5d3e50a5fd95e6a110c3d49430d4c3f"
+    },
+    {
+      "side": "base",
+      "actual": "03a64faffd7bb04c416dcb6fdc1d5d13c11340e2df5b09434764e2a54993cd0c",
+      "reconstructed": "03a64faffd7bb04c416dcb6fdc1d5d13c11340e2df5b09434764e2a54993cd0c"
+    },
+    {
+      "side": "base",
+      "actual": "cf767e34f0ed6306c5827fe4fe878c6068a56b1ac966738240b8c0e575db0b8e",
+      "reconstructed": "cf767e34f0ed6306c5827fe4fe878c6068a56b1ac966738240b8c0e575db0b8e"
+    },
+    {
+      "side": "base",
+      "actual": "c6201fcee34110e33631886209871e0aef80cb6afda7198a8dbf8f405e4bfb86",
+      "reconstructed": "c6201fcee34110e33631886209871e0aef80cb6afda7198a8dbf8f405e4bfb86"
+    },
+    {
+      "side": "tip",
+      "actual": "6af18e5ad621a55b667cc558f517dd72ec76a3e7ee422d9cb8e439fff41443f5",
+      "reconstructed": "6af18e5ad621a55b667cc558f517dd72ec76a3e7ee422d9cb8e439fff41443f5"
+    },
+    {
+      "side": "tip",
+      "actual": "65011f9e9e9843ef52e3838a963aa5c72d4eba2d7c3fb7043421f0d6baf94afe",
+      "reconstructed": "65011f9e9e9843ef52e3838a963aa5c72d4eba2d7c3fb7043421f0d6baf94afe"
+    },
+    {
+      "side": "tip",
+      "actual": "0a1a488055086a29d624b4059a4c693cfd7eff5dab75a72fc1cd624a0efdb763",
+      "reconstructed": "0a1a488055086a29d624b4059a4c693cfd7eff5dab75a72fc1cd624a0efdb763"
+    },
+    {
+      "side": "tip",
+      "actual": "272bbe078c5f4f7c233d0d1b9e50b2ef764cd3f4d157336b48ec0f226273e843",
+      "reconstructed": "272bbe078c5f4f7c233d0d1b9e50b2ef764cd3f4d157336b48ec0f226273e843"
+    },
+    {
+      "side": "tip",
+      "actual": "01d4e92ceaeafb4f6d488931771dd950a01b06cab58eef219862d4082ebc3b9c",
+      "reconstructed": "01d4e92ceaeafb4f6d488931771dd950a01b06cab58eef219862d4082ebc3b9c"
+    },
+    {
+      "side": "tip",
+      "actual": "edd79a83fc7be08cab32521a56ac295c351848de817dcf58e630f399e24932ac",
+      "reconstructed": "edd79a83fc7be08cab32521a56ac295c351848de817dcf58e630f399e24932ac"
+    },
+    {
+      "side": "tip",
+      "actual": "2b6fbd9ab4ff061b25f8296c402f6e93054d8cfd30261db16d79d2c57eaf8c05",
+      "reconstructed": "2b6fbd9ab4ff061b25f8296c402f6e93054d8cfd30261db16d79d2c57eaf8c05"
+    },
+    {
+      "side": "tip",
+      "actual": "2e71c4f613b0cd8dfb7f19b653b45fa503e339bf3e7824fc95287bd2e20ce8d2",
+      "reconstructed": "2e71c4f613b0cd8dfb7f19b653b45fa503e339bf3e7824fc95287bd2e20ce8d2"
+    },
+    {
+      "side": "tip",
+      "actual": "ded430f7c8dfccd4524ba8376967eb91ea0dee9cec8cd729eb772c5bb583b600",
+      "reconstructed": "ded430f7c8dfccd4524ba8376967eb91ea0dee9cec8cd729eb772c5bb583b600"
+    },
+    {
+      "side": "tip",
+      "actual": "c1d940f25b6790a340bb0ef6906aecd1068d0e13cb178733182c39931590ab78",
+      "reconstructed": "c1d940f25b6790a340bb0ef6906aecd1068d0e13cb178733182c39931590ab78"
+    },
+    {
+      "side": "tip",
+      "actual": "4d89985d15dfd53f19d47c7428b4813c58bf11b7d039beaaa24c15e027dfeac1",
+      "reconstructed": "4d89985d15dfd53f19d47c7428b4813c58bf11b7d039beaaa24c15e027dfeac1"
+    },
+    {
+      "side": "tip",
+      "actual": "d992daf54fa18b999f12e6e48d0750fdaaf3f24bbe69eeb15dffd0a63d363026",
+      "reconstructed": "d992daf54fa18b999f12e6e48d0750fdaaf3f24bbe69eeb15dffd0a63d363026"
+    },
+    {
+      "side": "tip",
+      "actual": "39cc9c3562657675e2cba16989dd9bea65eb1c845da572817b700a081bb0ca2d",
+      "reconstructed": "39cc9c3562657675e2cba16989dd9bea65eb1c845da572817b700a081bb0ca2d"
+    },
+    {
+      "side": "tip",
+      "actual": "740f204506967ee3ee7e870ecbf5250dc64b4d6c72fa0756e3be3a186423e9cf",
+      "reconstructed": "740f204506967ee3ee7e870ecbf5250dc64b4d6c72fa0756e3be3a186423e9cf"
+    },
+    {
+      "side": "tip",
+      "actual": "9b618bf6f97480f297a8480768e03665301c213ffb76d29fa4e87d78cf91a951",
+      "reconstructed": "9b618bf6f97480f297a8480768e03665301c213ffb76d29fa4e87d78cf91a951"
+    },
+    {
+      "side": "tip",
+      "actual": "233c5d85740d6e5fec6922f7d15f330b00070f89f7ee4929885f7a0198e07e6b",
+      "reconstructed": "233c5d85740d6e5fec6922f7d15f330b00070f89f7ee4929885f7a0198e07e6b"
+    }
+  ],
+  "attributed_leaf_counts": {
+    "diagnostics": 48,
+    "contracts": 0,
+    "chunk-contracts": 0,
+    "source-effects": 0,
+    "null": 0,
+    "null-summary": 0,
+    "outer": 0
+  },
+  "remaining_leaf_counts": {
+    "diagnostics": 0,
+    "contracts": 4,
+    "chunk-contracts": 0,
+    "source-effects": 0,
+    "null": 0,
+    "null-summary": 0,
+    "outer": 0
+  },
+  "boundary": "Raw records remain archived. Exact strings/hashes and root spellings only; no blanket hash/path filtering, no semantic field is discarded."
+}

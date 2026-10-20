@@ -1,0 +1,53 @@
+{
+  "route": "slice",
+  "checks": {
+    "static_full_units_except_separately_attributed_compile_configuration": true,
+    "diagnostic_counts": true,
+    "full_null_dictionaries": true,
+    "null_summary": true,
+    "full_runtime_projection": true,
+    "declaration_and_clause_standing": true,
+    "contract_revision_except_exact_selected_digest": true
+  },
+  "base": {
+    "Unknown": 346,
+    "Safe": 53,
+    "Pending": 4,
+    "Unsafe": 1
+  },
+  "tip": {
+    "Unknown": 346,
+    "Safe": 53,
+    "Pending": 4,
+    "Unsafe": 1
+  },
+  "null_rows": {
+    "base": 406,
+    "tip": 406
+  },
+  "exact_migration_transform_counts": {},
+  "raw_differing_leaf_counts": {
+    "diagnostics": 1274,
+    "contracts": 3702,
+    "chunk-contracts": 0,
+    "source-effects": 0,
+    "null": 1212,
+    "null-summary": 0,
+    "outer": 5
+  },
+  "remaining_differing_leaf_counts": {
+    "diagnostics": 48,
+    "contracts": 4,
+    "chunk-contracts": 0,
+    "source-effects": 0,
+    "null": 0,
+    "null-summary": 0,
+    "outer": 0
+  },
+  "potential_dependent_custody_records": 0,
+  "affected_custody_records": 0,
+  "dependent_other_contexts_unchanged": 0,
+  "unrelated_custody_records": 404,
+  "all_invariant_checks_pass": true,
+  "note": "Final production module/inventory/pins are byte-identical to exact base; decomposition is report-owned. All residual leaf differences retained. Compile provenance/environment/timestamp differences require exact separate reconstruction before completion."
+}

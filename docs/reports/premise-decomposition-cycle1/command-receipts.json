@@ -1,0 +1,189 @@
+{
+  "standing": [
+    {
+      "worktree_head_observed_at_step_end": "bbe9c4c7645538575aa8104af906562c1d15d42e",
+      "tracked_worktree_status_observed_at_step_end": "",
+      "command": [
+        "git",
+        "submodule",
+        "update",
+        "--init",
+        "--recursive"
+      ],
+      "cwd": "/home/cosmo/.codex/worktrees/premise-decomposition-cycle1/qcore-c",
+      "exit": 0,
+      "log": "/home/cosmo/.codex/worktrees/premise-decomposition-cycle1/qcore-c/private/premise-decomposition-cycle1/standing-2/00.log",
+      "start": "2026-10-20T19:04:58.956380+00:00",
+      "end": "2026-10-20T19:04:59.007048+00:00"
+    },
+    {
+      "worktree_head_observed_at_step_end": "bbe9c4c7645538575aa8104af906562c1d15d42e",
+      "tracked_worktree_status_observed_at_step_end": "",
+      "command": [
+        "clang",
+        "--version"
+      ],
+      "cwd": "/home/cosmo/.codex/worktrees/premise-decomposition-cycle1/qcore-c",
+      "exit": 0,
+      "log": "/home/cosmo/.codex/worktrees/premise-decomposition-cycle1/qcore-c/private/premise-decomposition-cycle1/standing-2/01.log",
+      "start": "2026-10-20T19:04:59.007273+00:00",
+      "end": "2026-10-20T19:04:59.087887+00:00"
+    },
+    {
+      "worktree_head_observed_at_step_end": "a294154b3e40ed0e22ab26996abc1a0de9457cb0",
+      "tracked_worktree_status_observed_at_step_end": " M docs/reports/premise-decomposition-cycle1/README.md\n M docs/reports/premise-decomposition-cycle1/scripts/collect_gate.py\n",
+      "command": [
+        "python3",
+        "scripts/run_test_binaries.py",
+        "--jobs",
+        "4"
+      ],
+      "cwd": "/home/cosmo/.codex/worktrees/premise-decomposition-cycle1/qcore-c",
+      "exit": 0,
+      "log": "/home/cosmo/.codex/worktrees/premise-decomposition-cycle1/qcore-c/private/premise-decomposition-cycle1/standing-2/02.log",
+      "start": "2026-10-20T19:04:59.088274+00:00",
+      "end": "2026-10-20T19:10:59.707393+00:00"
+    },
+    {
+      "worktree_head_observed_at_step_end": "a294154b3e40ed0e22ab26996abc1a0de9457cb0",
+      "tracked_worktree_status_observed_at_step_end": " M docs/reports/premise-decomposition-cycle1/README.md\n M docs/reports/premise-decomposition-cycle1/scripts/collect_gate.py\n",
+      "command": [
+        "cargo",
+        "fmt",
+        "--all",
+        "--",
+        "--check"
+      ],
+      "cwd": "/home/cosmo/.codex/worktrees/premise-decomposition-cycle1/qcore-c",
+      "exit": 0,
+      "log": "/home/cosmo/.codex/worktrees/premise-decomposition-cycle1/qcore-c/private/premise-decomposition-cycle1/standing-2/03.log",
+      "start": "2026-10-20T19:10:59.707750+00:00",
+      "end": "2026-10-20T19:11:03.738974+00:00"
+    },
+    {
+      "worktree_head_observed_at_step_end": "a294154b3e40ed0e22ab26996abc1a0de9457cb0",
+      "tracked_worktree_status_observed_at_step_end": " M docs/reports/premise-decomposition-cycle1/README.md\n M docs/reports/premise-decomposition-cycle1/scripts/collect_gate.py\n",
+      "command": [
+        "cargo",
+        "clippy",
+        "--all-targets",
+        "--",
+        "-D",
+        "warnings"
+      ],
+      "cwd": "/home/cosmo/.codex/worktrees/premise-decomposition-cycle1/qcore-c",
+      "exit": 0,
+      "log": "/home/cosmo/.codex/worktrees/premise-decomposition-cycle1/qcore-c/private/premise-decomposition-cycle1/standing-2/04.log",
+      "start": "2026-10-20T19:11:03.739260+00:00",
+      "end": "2026-10-20T19:11:06.768295+00:00"
+    },
+    {
+      "worktree_head_observed_at_step_end": "a294154b3e40ed0e22ab26996abc1a0de9457cb0",
+      "tracked_worktree_status_observed_at_step_end": " M docs/reports/premise-decomposition-cycle1/README.md\n M docs/reports/premise-decomposition-cycle1/scripts/collect_gate.py\n",
+      "command": [
+        "cargo",
+        "run",
+        "-p",
+        "qcore-compiler",
+        "--example",
+        "reevaluation_probe"
+      ],
+      "cwd": "/home/cosmo/.codex/worktrees/premise-decomposition-cycle1/qcore-c",
+      "exit": 0,
+      "log": "/home/cosmo/.codex/worktrees/premise-decomposition-cycle1/qcore-c/private/premise-decomposition-cycle1/standing-2/05.log",
+      "start": "2026-10-20T19:11:06.768584+00:00",
+      "end": "2026-10-20T19:11:07.185732+00:00"
+    },
+    {
+      "worktree_head_observed_at_step_end": "a294154b3e40ed0e22ab26996abc1a0de9457cb0",
+      "tracked_worktree_status_observed_at_step_end": " M docs/reports/premise-decomposition-cycle1/README.md\n M docs/reports/premise-decomposition-cycle1/scripts/collect_gate.py\n",
+      "command": [
+        "cargo",
+        "run",
+        "-p",
+        "qcore-compiler",
+        "--example",
+        "reevaluation_followup"
+      ],
+      "cwd": "/home/cosmo/.codex/worktrees/premise-decomposition-cycle1/qcore-c",
+      "exit": 0,
+      "log": "/home/cosmo/.codex/worktrees/premise-decomposition-cycle1/qcore-c/private/premise-decomposition-cycle1/standing-2/06.log",
+      "start": "2026-10-20T19:11:07.186079+00:00",
+      "end": "2026-10-20T19:11:08.054424+00:00"
+    },
+    {
+      "worktree_head_observed_at_step_end": "a294154b3e40ed0e22ab26996abc1a0de9457cb0",
+      "tracked_worktree_status_observed_at_step_end": " M docs/reports/premise-decomposition-cycle1/README.md\n M docs/reports/premise-decomposition-cycle1/scripts/collect_gate.py\n",
+      "command": [
+        "python3",
+        "scripts/check_lean_audits.py",
+        "--jobs",
+        "4"
+      ],
+      "cwd": "/home/cosmo/.codex/worktrees/premise-decomposition-cycle1/qcore-c",
+      "exit": 0,
+      "log": "/home/cosmo/.codex/worktrees/premise-decomposition-cycle1/qcore-c/private/premise-decomposition-cycle1/standing-2/07.log",
+      "start": "2026-10-20T19:11:08.054814+00:00",
+      "end": "2026-10-20T19:11:27.988263+00:00"
+    }
+  ],
+  "final_configured_tips": [
+    {
+      "worktree_head_observed_at_step_end": "a294154b3e40ed0e22ab26996abc1a0de9457cb0",
+      "tracked_worktree_status_observed_at_step_end": " M docs/reports/premise-decomposition-cycle1/README.md\n M docs/reports/premise-decomposition-cycle1/scripts/collect_gate.py\n M docs/reports/premise-decomposition-cycle1/validation-attempts.json\n",
+      "command": [
+        "/usr/bin/python3",
+        "/home/cosmo/.codex/worktrees/premise-decomposition-cycle1/qcore-c/docs/reports/premise-decomposition-cycle1/scripts/measure.py",
+        "system",
+        "/home/cosmo/.codex/worktrees/premise-decomposition-cycle1/qcore-c/target/release/quirin-audit",
+        "a294154b3e40ed0e22ab26996abc1a0de9457cb0",
+        "/home/cosmo/.codex/worktrees/premise-decomposition-cycle1/qcore-c",
+        "/home/cosmo/.codex/worktrees/premise-decomposition-cycle1/qcore-c/private/premise-decomposition-cycle1/provider-1/final-configured/system/tip"
+      ],
+      "cwd": "/home/cosmo/.codex/worktrees/premise-decomposition-cycle1/qcore-c",
+      "exit": 0,
+      "log": "/home/cosmo/.codex/worktrees/premise-decomposition-cycle1/qcore-c/private/premise-decomposition-cycle1/configured-final/00.log",
+      "start": "2026-10-20T19:11:30.843225+00:00",
+      "end": "2026-10-20T19:16:55.369585+00:00"
+    },
+    {
+      "worktree_head_observed_at_step_end": "a294154b3e40ed0e22ab26996abc1a0de9457cb0",
+      "tracked_worktree_status_observed_at_step_end": " M docs/reports/premise-decomposition-cycle1/README.md\n M docs/reports/premise-decomposition-cycle1/scripts/collect_gate.py\n M docs/reports/premise-decomposition-cycle1/validation-attempts.json\n",
+      "command": [
+        "/usr/bin/python3",
+        "/home/cosmo/.codex/worktrees/premise-decomposition-cycle1/qcore-c/docs/reports/premise-decomposition-cycle1/scripts/measure.py",
+        "slice",
+        "/home/cosmo/.codex/worktrees/premise-decomposition-cycle1/qcore-c/target/release/quirin-audit",
+        "a294154b3e40ed0e22ab26996abc1a0de9457cb0",
+        "/home/cosmo/.codex/worktrees/premise-decomposition-cycle1/qcore-c",
+        "/home/cosmo/.codex/worktrees/premise-decomposition-cycle1/qcore-c/private/premise-decomposition-cycle1/provider-1/final-configured/slice/tip"
+      ],
+      "cwd": "/home/cosmo/.codex/worktrees/premise-decomposition-cycle1/qcore-c",
+      "exit": 0,
+      "log": "/home/cosmo/.codex/worktrees/premise-decomposition-cycle1/qcore-c/private/premise-decomposition-cycle1/configured-final/01.log",
+      "start": "2026-10-20T19:16:55.369817+00:00",
+      "end": "2026-10-20T19:21:26.473193+00:00"
+    }
+  ],
+  "python_after_committed_derived_matrix": [
+    {
+      "worktree_head_observed_at_step_end": "a294154b3e40ed0e22ab26996abc1a0de9457cb0",
+      "tracked_worktree_status_observed_at_step_end": " M docs/reports/premise-decomposition-cycle1/README.md\n M docs/reports/premise-decomposition-cycle1/scripts/collect_gate.py\n M docs/reports/premise-decomposition-cycle1/validation-attempts.json\n",
+      "command": [
+        "python3",
+        "-m",
+        "unittest",
+        "discover",
+        "-s",
+        "scripts/tests"
+      ],
+      "cwd": "/home/cosmo/.codex/worktrees/premise-decomposition-cycle1/qcore-c",
+      "exit": 0,
+      "log": "/home/cosmo/.codex/worktrees/premise-decomposition-cycle1/qcore-c/private/premise-decomposition-cycle1/python-first/00.log",
+      "start": "2026-10-20T19:21:32.603492+00:00",
+      "end": "2026-10-20T19:22:20.418954+00:00"
+    }
+  ],
+  "root_runner_summary": "/home/cosmo/.codex/worktrees/premise-decomposition-cycle1/qcore-c/private/test-binaries/20261020T190459Z-2468583/summary.json",
+  "boundary": "Actual isolated worktree commands, exits and private log paths. Final source-census pins bbe9c4c76; model/helpers unchanged since70ecbfd95. Final production provider files/count pin byte-identical to exact base. Provider_tests133 only is carried from exact-base integration evidence because final provider gate is inapplicable; not a fresh measurement. Final gate-backed matrix confirmation will be recorded separately."
+}

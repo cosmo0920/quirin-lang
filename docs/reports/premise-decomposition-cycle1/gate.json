@@ -1,0 +1,13 @@
+{
+  "note": "PREMISE-DECOMPOSITION-CYCLE1 on exact base2d8f6d342: report-owned nine opaque atoms/three conditional theorems; no production contract, classifier or semantic reader change. Root runner522units/535summaries/8376passed/15ignored/0failed; 347Lean audits. Conditional provider gate inapplicable: final provider contracts/SDK/schema unchanged; provider_tests133 carries exact-base integration evidence only, with no fresh provider/package claim. RootPython374passed after committed derived matrix; final gate-backed confirmation documented separately. Six fresh original-input audits compare equal under same six-home link-map context; scoped corpus966Safe/3859Unknown/9provisionalUnsafe, system99/345/4, slice53/346/4Pending/1provisionalUnsafe. Complete null/runtime dictionaries and every-row closed-world classification equal; roots/environment/inventory/timestamp metadata exactly reconstructed. Historical seven-home967 coverage remains separately dated. Candidate production companion rejected by actual classifier control; all attempts retained. Actual local Clang recording accompanies this file.",
+  "workspace_tests": 8376,
+  "provider_tests": 133,
+  "python_evidence_validator_tests": 374,
+  "reevaluation_probe_exit": 0,
+  "reevaluation_followup_exit": 0,
+  "cargo_fmt": "clean",
+  "cargo_clippy": "clean",
+  "standing_gate": "complete",
+  "lean_audits": 347,
+  "clang": "present: Ubuntu clang version 21.1.8 (6ubuntu1)"
+}
