@@ -1,0 +1,48 @@
+{
+  "measured_source": "4d0cd81ff6c1f611bcc538311e92c12324a224f3",
+  "reporting_source_before_receipt_publication": "928e191416ed4caad468cc8d7e7ced1341b81a4a",
+  "gate_commands_sha256": "6209a5826e6b23ee5c283aa8620a08caa25d258143f1af7b0255a0b5dd97f0e6",
+  "exact_git_objects": {
+    "Cargo.toml": {
+      "measured": "f44e86aefd7b7bee48368f2085aacbc5dd375af5",
+      "reporting": "f44e86aefd7b7bee48368f2085aacbc5dd375af5"
+    },
+    "Cargo.lock": {
+      "measured": "095384fe25ddd99ea0978133a05b29f485bae2cc",
+      "reporting": "095384fe25ddd99ea0978133a05b29f485bae2cc"
+    },
+    "compiler": {
+      "measured": "bdf41b1d5f517969cf8013b4c914778841df7d6e",
+      "reporting": "bdf41b1d5f517969cf8013b4c914778841df7d6e"
+    },
+    "crates": {
+      "measured": "7e99ea0356ff9f8ac9fab99079335065127f0cc2",
+      "reporting": "7e99ea0356ff9f8ac9fab99079335065127f0cc2"
+    },
+    "proof": {
+      "measured": "5509aa94ce64b77465f3b780bfa4d61da34127ab",
+      "reporting": "5509aa94ce64b77465f3b780bfa4d61da34127ab"
+    },
+    "contract": {
+      "measured": "4788ef9bd81e042f8064cb843c8c0ea3e7c06500",
+      "reporting": "4788ef9bd81e042f8064cb843c8c0ea3e7c06500"
+    },
+    "providers": {
+      "measured": "a0122784dd4cee0fd661a2bae01d83f69684e3f2",
+      "reporting": "a0122784dd4cee0fd661a2bae01d83f69684e3f2"
+    },
+    "scripts": {
+      "measured": "1e361cef796b20a8603e295538eaaf0459cf5aba",
+      "reporting": "1e361cef796b20a8603e295538eaaf0459cf5aba"
+    },
+    "cycle19-resource-contracts.json": {
+      "measured": "dc6b3da57191b768d6a54ddc7fe676c38cecc581",
+      "reporting": "dc6b3da57191b768d6a54ddc7fe676c38cecc581"
+    },
+    "docs/reports/premise-guarded-decomposition/applications": {
+      "measured": "8a4ec7ad15e0b291693bcb80ef0922bd643bc2a3",
+      "reporting": "8a4ec7ad15e0b291693bcb80ef0922bd643bc2a3"
+    }
+  },
+  "interpretation": "Analyzer, audited Lean, runtime inputs and guarded application sources match the measured source exactly; later report/harness publication is separately recorded. Binary still names its actual measured build source."
+}

@@ -1,0 +1,14 @@
+{
+  "wrapper_exit": 0,
+  "source": "4d0cd81ff6c1f611bcc538311e92c12324a224f3",
+  "head_after": "4d0cd81ff6c1f611bcc538311e92c12324a224f3",
+  "clean_after": true,
+  "all_commands_zero": true,
+  "source_stable": true,
+  "command_count": 11,
+  "commands_sha256": "6209a5826e6b23ee5c283aa8620a08caa25d258143f1af7b0255a0b5dd97f0e6",
+  "matrix_python": "pending: run after regenerated matrix is committed",
+  "provider_gate": "not applicable: no provider inputs changed",
+  "provider_delta_base": "d08dcca8b77b35417a999474b608cedfe821cfdb",
+  "provider_changed_paths": []
+}
