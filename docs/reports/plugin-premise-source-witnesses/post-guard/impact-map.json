@@ -1,0 +1,80 @@
+{
+  "exact_context": {
+    "artifact": "a18c2105cfd4db3d7303dc4956375b2ef5f566332c975c68bfe612f547d95819",
+    "property": "plugin_fixture_selected_domain_v1",
+    "semantic_profile": "plugin-loader-fixture-v1",
+    "scope": "complete-selected-20-case-domain-v1",
+    "bounds": "20-cases/single-thread/explicit-stubs",
+    "assumptions": "local-clang-posix-loader/real-pinned-headers/explicit-allocation-list-log-stubs/no-deployed-plugin-claim",
+    "source_identity": "2ea1c936998d85776b151f4fdab8e2fc27b198b74c756d219d2e8c5865ea5b43",
+    "build_identity": "94cf5b572e10b07a823c6f20372170348ed6904b141d4124819fc094866aea6e",
+    "evidence_version": "plugin-source-witness-v1/4f8c1e24342f60556511888607d7a4073e899e2ea7ff47f8d3a451ee975fc2d5"
+  },
+  "entries": {
+    "alternative": {
+      "disposition": "supported",
+      "terminated": false,
+      "dependencies": [
+        "go_creator_fixture_complete_v1",
+        "go_creator_fixture_implies_registration_v1",
+        "rk_duplicate_fixture_no_loader_calls_v1"
+      ]
+    },
+    "combined": {
+      "disposition": "supported",
+      "terminated": false,
+      "dependencies": [
+        "go_creator_fixture_complete_v1",
+        "go_creator_fixture_implies_registration_v1",
+        "rk_duplicate_fixture_no_loader_calls_v1"
+      ]
+    },
+    "finished": {
+      "disposition": "supported",
+      "terminated": true,
+      "dependencies": [
+        "go_creator_fixture_complete_v1",
+        "go_creator_fixture_implies_registration_v1",
+        "rk_duplicate_fixture_complete_v1",
+        "rk_duplicate_fixture_no_loader_calls_v1"
+      ]
+    },
+    "known_error": {
+      "disposition": "supported",
+      "terminated": false,
+      "dependencies": [
+        "go_creator_fixture_complete_v1",
+        "go_creator_fixture_implies_registration_v1"
+      ]
+    },
+    "native_duplicate": {
+      "disposition": "supported",
+      "terminated": false,
+      "dependencies": [
+        "rk_duplicate_fixture_no_loader_calls_v1"
+      ]
+    },
+    "observed_counterexample": {
+      "disposition": "refuted",
+      "terminated": false,
+      "dependencies": [
+        "go_creator_fixture_implies_registration_v1"
+      ]
+    }
+  },
+  "foreign_context_controls": [
+    "foreign-context-axis-0",
+    "foreign-context-axis-1",
+    "foreign-context-axis-2",
+    "foreign-context-axis-3",
+    "foreign-context-axis-4",
+    "foreign-context-axis-5",
+    "foreign-context-axis-6",
+    "foreign-context-axis-7",
+    "foreign-context-axis-8"
+  ],
+  "original_seven_atoms_changed": [],
+  "original_envelopes_changed": [],
+  "upstreamUnsafe": false,
+  "production_preservation": "requires actual joint six-route measurements, not claimed by this focused evidence"
+}

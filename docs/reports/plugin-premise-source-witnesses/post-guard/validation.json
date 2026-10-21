@@ -1,0 +1,59 @@
+{
+  "source": "355db7892010672b00713a27f13f1730f36f43e0",
+  "status": "actual focused final identity/domain guards pass; joint gate still integrator-owned",
+  "commands": [
+    {
+      "name": "focused-test-6",
+      "exit": 0
+    },
+    {
+      "name": "clippy-4",
+      "exit": 0
+    },
+    {
+      "name": "lean-model-4",
+      "exit": 0
+    },
+    {
+      "name": "lean-audit-4",
+      "exit": 0
+    },
+    {
+      "name": "replay-6",
+      "exit": 0
+    }
+  ],
+  "counts": {
+    "Rust_passed": 4,
+    "Rust_failed": 0,
+    "Rust_filtered": 118,
+    "Lean_theorems": 16,
+    "native_cases": 20,
+    "refusal_controls": 79,
+    "formal_bindings": 4,
+    "explicit_formal_artifacts": 2
+  },
+  "context": {
+    "artifact": "a18c2105cfd4db3d7303dc4956375b2ef5f566332c975c68bfe612f547d95819",
+    "property": "plugin_fixture_selected_domain_v1",
+    "semantic_profile": "plugin-loader-fixture-v1",
+    "scope": "complete-selected-20-case-domain-v1",
+    "bounds": "20-cases/single-thread/explicit-stubs",
+    "assumptions": "local-clang-posix-loader/real-pinned-headers/explicit-allocation-list-log-stubs/no-deployed-plugin-claim",
+    "source_identity": "2ea1c936998d85776b151f4fdab8e2fc27b198b74c756d219d2e8c5865ea5b43",
+    "build_identity": "94cf5b572e10b07a823c6f20372170348ed6904b141d4124819fc094866aea6e",
+    "evidence_version": "plugin-source-witness-v1/4f8c1e24342f60556511888607d7a4073e899e2ea7ff47f8d3a451ee975fc2d5"
+  },
+  "checked_identity_fields": {
+    "document_sha256": "fdae01586e654545f5a4fcdd338adbe04d77e2776e06a1edc85961ab68098abd",
+    "graph_sha256": "d8b370596c089688222d4eb27f237ad5496592a2963a00f13d449d81404a5472",
+    "flow_model_sha256": "dda7f9692177d9849f045526dd375eb55796b82690f938362bb7053c016dbf63",
+    "source_contract_sha256": "86cd22b20c89448aa616b743e43200e709f5402e0d80f164bf74e6c9d2e3ddf7",
+    "explicit_artifacts": {
+      "proof/AuditPluginSourceWitnesses.lean": "7da0eef9fda3ec2b7ff3015ac393292d97cfe8f196a9086484811f0e938f3de0",
+      "proof/QCore/PluginSourceWitnesses.lean": "d6dce17c199a182403ad1060f60eb93e9c19c6ef8ccea74a97a44607e3765d57"
+    }
+  },
+  "prior_receipts": "../checked.json and ../bounded-flow.json remain historical replay-5 and are unchanged",
+  "private_root": "/home/cosmo/.codex/worktrees/w48-bottom-up-batch4/qcore-c/private/plugin-premise-source-witnesses/replay-6"
+}
