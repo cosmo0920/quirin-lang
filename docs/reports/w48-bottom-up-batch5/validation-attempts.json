@@ -12,11 +12,39 @@
   },
   "focused_tip_2": {
     "commands": "private/w48-batch5/focused-tip-2/commands.json",
-    "rust_unit": {"exit": 0, "passed": 3},
-    "rust_source": {"exit": 101, "passed": 4, "failed": 1},
-    "rust_boundaries": {"exit": 0, "passed": 51},
-    "clippy": 0, "fmt": 0, "lean_build": 0, "lean_audit": 0,
+    "rust_unit": {
+      "exit": 0,
+      "passed": 3
+    },
+    "rust_source": {
+      "exit": 101,
+      "passed": 4,
+      "failed": 1
+    },
+    "rust_boundaries": {
+      "exit": 0,
+      "passed": 51
+    },
+    "clippy": 0,
+    "fmt": 0,
+    "lean_build": 0,
+    "lean_audit": 0,
     "audited_theorems": 10,
     "source_fixture_correction": "The failed new test expected a volatile destination to refuse, but the retained unchanged OpaqueValue route already admits that shape with an unrefined condition. Replace this mistaken expectation with actual volatile/atomic field-read refusal controls and separately pin the inherited opaque destination route. No semantic implementation or existing pin is changed."
+  },
+  "focused_tip_3": {
+    "commands": "private/w48-batch5/focused-tip-3/commands.json",
+    "rust_source": {
+      "exit": 101,
+      "passed": 5,
+      "failed": 1
+    },
+    "clippy": 0,
+    "fmt": 0,
+    "lean_version": {
+      "exit": 0,
+      "version": "4.35.0"
+    },
+    "source_fixture_correction": "The volatile/atomic field controls pass. The remaining failure was the newly expected refusal of a scalar postfix increment already completely modeled by the existing elaborator as two checked reads plus ForgetScalar. Replace that mistaken unsupported-effect fixture with an actual uncontracted comma-position call. No semantic implementation or existing pin changes."
   }
 }

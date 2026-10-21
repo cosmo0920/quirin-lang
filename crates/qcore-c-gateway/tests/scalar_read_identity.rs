@@ -117,14 +117,14 @@ fn unsupported_volatile_atomic_and_expression_effects_stay_refused() {
     for body in [
         "struct Hot { volatile int value; }; int subject(struct Hot *p) { int value = p->value; if (value == 0) return 1; return 0; }",
         "struct Atomic { _Atomic int value; }; int subject(struct Atomic *p) { int value = p->value; if (value == 0) return 1; return 0; }",
-        "int subject(struct Chunk *ch) { int type; type = (ch->st->type++); if (type == 0) return 1; return 0; }",
+        "int subject(struct Chunk *ch) { int type; type = (unknown(ch), ch->st->type); if (type == 0) return 1; return 0; }",
         "int subject(struct Chunk *ch) { long type = (long) ch->st->pointer; if (type == 0) return 1; return 0; }",
     ] {
         let summary = run(body);
         assert_ne!(
             summary.functions["subject"].status,
             AnalysisStatus::Safe,
-            "{summary:#?}"
+            "source: {body}\n{summary:#?}"
         );
     }
 }
