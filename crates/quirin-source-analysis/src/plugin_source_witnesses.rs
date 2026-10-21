@@ -449,8 +449,27 @@ pub fn refusal_controls(
         refuse(name.into(), changed, held.clone())?;
     }
     let mut unicode = observation.clone();
+    let selected = unicode.projections[0].function.clone();
     unicode.projections[0].body.insert(0, 'é');
-    unicode.projections[0].start += 1;
+    unicode.projections[0].end += 2;
+    unicode.projections[0].sha256 = sha256_hex(unicode.projections[0].body.as_bytes());
+    let mut values = serde_json::Deserializer::from_str(&unicode.asts[&selected])
+        .into_iter::<Value>()
+        .collect::<Result<Vec<_>, _>>()
+        .map_err(|e| e.to_string())?;
+    let def = values
+        .iter_mut()
+        .find(|v| v["name"] == selected && children(v).any(|c| kind(c) == "CompoundStmt"))
+        .ok_or("control Unicode AST missing")?;
+    def["range"]["begin"]["offset"] = serde_json::json!(unicode.projections[0].start + 1);
+    unicode.asts.insert(
+        selected,
+        values
+            .iter()
+            .map(Value::to_string)
+            .collect::<Vec<_>>()
+            .join("\n"),
+    );
     refuse(
         "forged-unicode-body-nonboundary-ast".into(),
         unicode,
