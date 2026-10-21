@@ -7,7 +7,7 @@
  "section_ownership": {
   "note": "Card D02-GEN-REST. Every top-level key of this file is labelled here, so no section is silently hand-maintained. `derived` sections are recomputed by the generator on every run and a hand edit to them is overwritten; `hand_maintained` sections are carried verbatim from the previous matrix, which is why a regeneration no longer reverts a later reconciliation; `integrator_supplied` numbers are measurements the generator cannot take.",
   "generator": "docs/reports/remaining-d02/build_matrix.py",
-  "carried_from": "docs/reviews/r0_3/acceptance_matrix.json",
+  "carried_from": "private/premise-contracts-integration/final-previous-matrix.json",
   "vocabulary": {
    "derived": "recomputed by docs/reports/remaining-d02/build_matrix.py from the named manifest, validated record or working tree; a hand edit here is overwritten on the next regeneration",
    "integrator_supplied": "a measurement this script cannot take; supplied through --gate, otherwise carried from the previous matrix and labelled as carried",
@@ -12732,5 +12732,5 @@
    "recorded_by": "LIBC-READING-SITE-EVIDENCE-V1"
   }
  ],
- "updated": "Premise evidence contract integration; exact hand-maintained three-way union; joint gate pending."
+ "updated": "PREMISE-EVIDENCE-SERIAL-INTEGRATION: exact three-way union retains807followups; actual8405Rust/351Lean/374initialPython after documented Lean registration repair. Gate-backed committed-matrix confirmation follows."
 }
