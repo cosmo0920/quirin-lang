@@ -15,8 +15,14 @@ fn main() {
     );
     let sidecar_bytes = read(&args[1]);
     let sidecar: Value = serde_json::from_slice(&sidecar_bytes).unwrap();
-    let sources: BTreeMap<String, String> =
-        serde_json::from_value(sidecar["sources"].clone()).unwrap();
+    let sources: BTreeMap<String, String> = serde_json::from_value(
+        sidecar
+            .get("sources")
+            .or_else(|| sidecar.get("contracts"))
+            .unwrap()
+            .clone(),
+    )
+    .unwrap();
     let expected_graph: Graph = qcore_contract::hypothesis::decode(&read(&args[2])).unwrap();
     let expected_bytes = read(&args[3]);
     let expected_manifest: BindingManifest = serde_json::from_slice(&expected_bytes).unwrap();
