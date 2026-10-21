@@ -120,3 +120,41 @@ fn every_non_metadata_or_wrong_symbol_order_target_and_inventory_edit_refuses() 
         .is_err()
     );
 }
+
+#[test]
+fn raw_inclusion_inspection_keeps_all_directive_and_inherited_bytes_exact() {
+    let include = "#include \"quirin-provider-libc:libc/memory.qv\";\n";
+    let inherited = "extern fn alias(p: ptr<mut,u8>) -> unit contract inherit libc::free;";
+    let before = OLD.replacen(
+        "module contract;\n",
+        &format!("module contract;\n{include}"),
+        1,
+    ) + inherited
+        + "\n";
+    let after = new().replacen(
+        "module contract;\n",
+        &format!("module contract;\n{include}"),
+        1,
+    ) + inherited
+        + "\n";
+    let mut p: serde_json::Value = serde_json::from_slice(&plan()).unwrap();
+    p["files"][0]["sha256"] = json!(qcore_schemas::sha256_hex(before.as_bytes()));
+    p["files"][0]["bytes"] = json!(before.len());
+    p["inheritance"] = json!([{"file":"f.qv","declaration":"alias","source":inherited}]);
+    let p = serde_json::to_vec(&p).unwrap();
+    let held = BTreeMap::from([("f.qv".into(), before.clone())]);
+    let check = |source: &str| {
+        premise_metadata_bridge::check(
+            &p,
+            &qcore_schemas::sha256_hex(&p),
+            &held,
+            &BTreeMap::from([("f.qv".into(), source.into())]),
+        )
+    };
+    check(&after).unwrap();
+    assert!(check(&after.replace("libc::free", "libc::malloc")).is_err());
+    assert!(check(&after.replace("libc/memory.qv", "libc/string.qv")).is_err());
+    // The ordinary resource loader still refuses unresolved inclusion; the
+    // bridge cannot turn an inspection probe into an admitted contract.
+    assert!(qcore_contract::contract_loader::load_resource_contract_sources(&held).is_err());
+}

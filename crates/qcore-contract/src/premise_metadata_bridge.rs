@@ -193,6 +193,30 @@ fn graph(
         .collect::<Vec<_>>();
     crate::hypothesis::declaration(decl, &premises)
 }
+// Identical offset-preserving inspection technique to the inclusion elaborator.
+// It resolves no parent and cannot produce a loaded contract.
+fn inspection_probe(source: &str) -> Result<String, String> {
+    let syntax = qcore_frontend::contract_inclusion::scan_contract_inclusion(source)
+        .map_err(|e| e.to_string())?;
+    let mut bytes = source.as_bytes().to_vec();
+    for directive in syntax.includes {
+        for byte in &mut bytes[directive.span.start..directive.span.end] {
+            if *byte != b'\n' && *byte != b'\r' {
+                *byte = b' ';
+            }
+        }
+    }
+    for site in syntax.inherits {
+        for byte in &mut bytes[site.span.start..site.span.end] {
+            if *byte != b'\n' && *byte != b'\r' {
+                *byte = b' ';
+            }
+        }
+        bytes[site.span.start] = b'{';
+        bytes[site.span.end - 1] = b'}';
+    }
+    String::from_utf8(bytes).map_err(|e| e.to_string())
+}
 fn validate_module(
     module: &Module,
     before: &str,
@@ -205,8 +229,9 @@ fn validate_module(
     {
         return Err("bridge: stale held raw source".into());
     }
-    let parsed = parse_source_program(before).map_err(|e| e.to_string())?;
-    let old_legacy = crate::contract_loader::module_premises(before)?;
+    let probe = inspection_probe(before)?;
+    let parsed = parse_source_program(&probe).map_err(|e| e.to_string())?;
+    let old_legacy = crate::contract_loader::module_premises(&probe)?;
     let wanted = module
         .declarations
         .iter()
@@ -332,8 +357,9 @@ fn validate_module(
             "bridge: TIP differs from exact deterministic typed metadata insertions".into(),
         );
     }
-    let new = parse_source_program(after).map_err(|e| e.to_string())?;
-    let new_legacy = crate::contract_loader::module_premises(after)?;
+    let new_probe = inspection_probe(after)?;
+    let new = parse_source_program(&new_probe).map_err(|e| e.to_string())?;
+    let new_legacy = crate::contract_loader::module_premises(&new_probe)?;
     for located in &new.declarations {
         let decl = &located.value;
         let Some(plan) = wanted.get(decl.name.as_str()) else {
@@ -447,7 +473,8 @@ pub fn check(
         let source = before
             .get(&inherited.file)
             .ok_or("bridge: inherited module absent")?;
-        let parsed = parse_source_program(source).map_err(|e| e.to_string())?;
+        let probe = inspection_probe(source)?;
+        let parsed = parse_source_program(&probe).map_err(|e| e.to_string())?;
         let matching = parsed
             .declarations
             .iter()
