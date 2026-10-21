@@ -301,3 +301,24 @@ fn bounded_total_validation_rejects_entry_depth_and_expansion_exhaustion() {
         );
     }
 }
+
+#[test]
+fn whitespace_is_not_an_explicit_formal_model_binding() {
+    for coordinate in 0..5 {
+        let mut f = setup();
+        let model = f.models.get_mut("observed").unwrap();
+        match coordinate {
+            0 => model.environment.id = " ".into(),
+            1 => {
+                model
+                    .environment
+                    .variables
+                    .insert("valuation".into(), " ".into());
+            }
+            2 => model.atoms.get_mut("a").unwrap().proposition = " ".into(),
+            3 => model.atoms.get_mut("a").unwrap().quantifiers = vec![" ".into()],
+            _ => model.atoms.get_mut("a").unwrap().conclusion = " ".into(),
+        }
+        assert!(premise_flow::compile(&f.sources, &f.graphs, &f.models, &f.artifacts).is_err());
+    }
+}

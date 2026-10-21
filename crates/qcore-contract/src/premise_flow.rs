@@ -151,12 +151,12 @@ fn check_model(
     artifacts: &BTreeMap<String, Vec<u8>>,
 ) -> Result<(), String> {
     let env = &model.environment;
-    if env.id.is_empty()
+    if env.id.trim().is_empty()
         || env.variables.is_empty()
         || env
             .variables
             .iter()
-            .any(|(k, v)| k.is_empty() || v.is_empty())
+            .any(|(k, v)| k.trim().is_empty() || v.trim().is_empty())
         || model.atoms.keys().cloned().collect::<BTreeSet<_>>() != *used
     {
         return Err("flow: incomplete/excess independently held model/environment domain".into());
@@ -164,11 +164,11 @@ fn check_model(
     for (id, binding) in &model.atoms {
         if binding.atom_sha256 != digest(&graph.atoms[id])?
             || binding.environment != env.id
-            || binding.proposition.is_empty()
+            || binding.proposition.trim().is_empty()
             || binding.quantifiers.is_empty()
-            || binding.quantifiers.iter().any(String::is_empty)
+            || binding.quantifiers.iter().any(|q| q.trim().is_empty())
             || binding.prerequisites != vec![env.id.clone()]
-            || binding.conclusion.is_empty()
+            || binding.conclusion.trim().is_empty()
         {
             return Err("flow: model/atom/proposition/prerequisite mismatch".into());
         }
