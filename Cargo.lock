@@ -171,11 +171,12 @@ name = "qcore-frontend"
 version = "0.1.0"
 dependencies = [
  "qcore-core",
+ "qcore-schemas",
 ]
 
 [[package]]
 name = "qcore-schemas"
-version = "20.0.0"
+version = "20.1.0"
 dependencies = [
  "serde",
  "serde_json",

@@ -841,6 +841,7 @@ fn rename_clauses(
         // not formal references. Opaque statements also stay literal. Future
         // typed subjects need a separate capture-aware substitution rule.
         if crate::hypothesis::is_clause(expression)
+            || crate::premise_flow::is_clause(expression)
             || crate::contract_loader::premise_clause(expression)?.is_some()
         {
             renamed.push((introducer.clone(), expression.clone()));

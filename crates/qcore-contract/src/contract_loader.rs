@@ -1754,7 +1754,8 @@ fn load_function_in(
         .into_iter()
         .flatten()
         .collect::<Vec<_>>();
-    crate::hypothesis::declaration(decl, &graph_premises)?;
+    let graph = crate::hypothesis::declaration(decl, &graph_premises)?;
+    crate::premise_flow::declaration(decl, &graph)?;
     let mut loop_owner: Option<DeclaredLoopOwner> = None;
     let mut thread_sync: Option<DeclaredThreadSync> = None;
     let mut lifecycle: Option<DeclaredLifecycle> = None;
@@ -1976,7 +1977,9 @@ fn load_function_in(
             // Card VERDICT-CONTRACT-DEPENDENCIES: a named premise, at most
             // once per name. It narrows nothing and widens nothing: it names
             // an assumption the declaration rests on, for the report.
-            if crate::hypothesis::is_clause(expression) {
+            if crate::hypothesis::is_clause(expression)
+                || crate::premise_flow::is_clause(expression)
+            {
                 continue;
             }
             if let Some(premise) = premise_clause(expression)? {
@@ -3533,6 +3536,7 @@ pub fn module_premises(source: &str) -> Result<BTreeMap<String, Vec<DeclaredPrem
             }
         }
         let graph = crate::hypothesis::declaration(&declaration.value, &premises)?;
+        crate::premise_flow::declaration(&declaration.value, &graph)?;
         for node in graph
             .premises
             .values()
