@@ -1,0 +1,11 @@
+import QCore.ScalarReadIdentity
+#print axioms QCore.ScalarReadIdentity.vectors_match
+#print axioms QCore.ScalarReadIdentity.admission_needs_every_fact
+#print axioms QCore.ScalarReadIdentity.pointer_destination_refuses
+#print axioms QCore.ScalarReadIdentity.scalar_result_has_no_resource_identity
+#print axioms QCore.ScalarReadIdentity.every_other_binding_survives
+#print axioms QCore.ScalarReadIdentity.checked_read_errors_survive
+#print axioms QCore.ScalarReadIdentity.all_other_state_survives
+#print axioms QCore.ScalarReadIdentity.neither_scalar_comparison_outcome_is_removed
+#print axioms QCore.ScalarReadIdentity.original_alias_is_retained
+#print axioms QCore.ScalarReadIdentity.every_typed_alias_is_retained

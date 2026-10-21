@@ -455,6 +455,20 @@ extraction and Rust–Lean correspondence premises remain stated rather than
 proved. `QCore.ScalarPrecedence` proves the bounded selection and same-effect
 model; [report](../reports/lexical-routes-typed-fallbacks/README.md).
 
+**Amendment (W48-BOTTOM-UP-BATCH5): opaque field reads preserve scalar type.**
+An older `OpaqueValue` assignment may use the complete existing Clang statement
+plan when its exact destination is scalar, with no borrowed destination,
+readback, pointer store or refused-write frame. Retain every original alias
+read together with the plan's liveness and per-hop read obligations. The checked
+read transfer forgets only that scalar destination's old binding; it introduces
+no opaque pointer identity or known scalar value. Every other pointer binding,
+resource, diagnostic and feasible comparison outcome remains. A missing,
+unsupported or pointer-valued plan keeps the old instruction. Outer descriptor,
+in-place, formal-mutation, iteration and source-identity guards remain; null-test
+and status-witness semantics are unchanged. Faithful extraction and Rust–Lean
+correspondence remain premises28. `QCore.ScalarReadIdentity` models the exact
+admission and scalar forgetting; [report](../reports/w48-bottom-up-batch5/README.md).
+
 <a id="constraint-5h"></a>
 
 5h. **A desugared condition applies a call exactly where C evaluates it.**

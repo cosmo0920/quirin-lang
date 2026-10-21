@@ -11,7 +11,28 @@ impl Parser<'_> {
         tokens: &[Token],
         old: LegacyInstruction,
     ) -> LegacyInstruction {
-        if !eligible(&old) || contains_call(tokens) || contains_braces(tokens) {
+        if contains_call(tokens) || contains_braces(tokens) {
+            return old;
+        }
+        // W48-BOTTOM-UP-BATCH5: the lexical opaque-field reader does not
+        // distinguish data from a pointer value. A complete typed scalar
+        // assignment retains all reads and forgets only its scalar result.
+        if let LegacyInstruction::OpaqueValue {
+            destination,
+            alias_read,
+        } = &old
+        {
+            let saved = qcore_schemas::contract_consultation::snapshot();
+            let candidate = self.typed_path_statement(tokens, &old);
+            if let Some(candidate) =
+                crate::scalar_read_identity::retain(destination, alias_read.as_ref(), candidate)
+            {
+                return candidate;
+            }
+            qcore_schemas::contract_consultation::restore(&saved);
+            return old;
+        }
+        if !eligible(&old) {
             return old;
         }
         let saved = qcore_schemas::contract_consultation::snapshot();
