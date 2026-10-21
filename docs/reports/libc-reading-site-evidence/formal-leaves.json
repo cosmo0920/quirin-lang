@@ -1,0 +1,107 @@
+{
+  "schema": "libc-reading-formal-leaves.v1",
+  "parent_binding_manifest_sha256": "7ca8f2c1f0835b48a4152d87d5dc7014aef2953a71f69e971fa6e3b2db86167f",
+  "source": "docs/reports/libc-reading-site-evidence/LeafBindings.lean",
+  "source_sha256": "93941dbcc73a4ead0beea44cc007232b4020a737ae6e21b48edde90aaad80986",
+  "parent_model_source": "proof/QCore/LibcReadingPremises.lean",
+  "parent_model_source_sha256": "a527d3eb0c3d9fc237a749f2ace67e3960e25eb894c9475b17ccabcbb94e75cd",
+  "leaves": {
+    "libc.__errno_location.nested_call_admission.checked_reading_route.v1": {
+      "declaration": "__errno_location",
+      "atom": "checked_reading_route",
+      "definition": "QCore.LibcReadingLeafBindings.accessorRoute",
+      "environment": "QCore.LibcReadingPremises.ReadingEnvironment",
+      "site_subject": "an arbitrary relevant original reading position in the independently held audited Context",
+      "guard": "e.observed s means the intended reading domain, not successful checker capture",
+      "bindings": "exact nine-coordinate Context, actual source and effective environment SHA256, parent graph/atom identities, inherited prerequisite IDs in parent manifest",
+      "disposition": "open",
+      "transport": "none; no receipt supports a universal solely by existing",
+      "formula": "forall s : Site, e.observed s -> (e.nestedRoute s OR e.scalarRoute s)"
+    },
+    "libc.__errno_location.nested_call_admission.scalar_declaration.v1": {
+      "declaration": "__errno_location",
+      "atom": "scalar_declaration",
+      "definition": "QCore.LibcReadingLeafBindings.accessorDeclaration",
+      "environment": "QCore.LibcReadingPremises.ReadingEnvironment",
+      "site_subject": "an arbitrary relevant original reading position in the independently held audited Context",
+      "guard": "e.observed s means the intended reading domain, not successful checker capture",
+      "bindings": "exact nine-coordinate Context, actual source and effective environment SHA256, parent graph/atom identities, inherited prerequisite IDs in parent manifest",
+      "disposition": "open",
+      "transport": "none; no receipt supports a universal solely by existing",
+      "formula": "forall s : Site, e.observed s -> e.scalarDeclaration s"
+    },
+    "libc.__errno_location.nested_call_admission.untracked_effects.v1": {
+      "declaration": "__errno_location",
+      "atom": "untracked_effects",
+      "definition": "QCore.LibcReadingLeafBindings.accessorEffects",
+      "environment": "QCore.LibcReadingPremises.ReadingEnvironment",
+      "site_subject": "an arbitrary relevant original reading position in the independently held audited Context",
+      "guard": "e.observed s means the intended reading domain, not successful checker capture",
+      "bindings": "exact nine-coordinate Context, actual source and effective environment SHA256, parent graph/atom identities, inherited prerequisite IDs in parent manifest",
+      "disposition": "open",
+      "transport": "none; no receipt supports a universal solely by existing",
+      "formula": "forall s : Site, e.observed s -> e.untrackedEffects s"
+    },
+    "libc.strerror.nested_call_admission.checked_nested_site.v1": {
+      "declaration": "strerror",
+      "atom": "checked_nested_site",
+      "definition": "QCore.LibcReadingLeafBindings.nestedSite",
+      "environment": "QCore.LibcReadingPremises.NestedEnvironment",
+      "site_subject": "an arbitrary relevant original reading position in the independently held audited Context",
+      "guard": "e.observed s means the intended reading domain, not successful checker capture",
+      "bindings": "exact nine-coordinate Context, actual source and effective environment SHA256, parent graph/atom identities, inherited prerequisite IDs in parent manifest",
+      "disposition": "open",
+      "transport": "none; no receipt supports a universal solely by existing",
+      "formula": "forall s : Site, e.observed s -> e.checkedSite s"
+    },
+    "libc.strerror.nested_call_admission.contract_in_force.v1": {
+      "declaration": "strerror",
+      "atom": "contract_in_force",
+      "definition": "QCore.LibcReadingLeafBindings.contractForce",
+      "environment": "QCore.LibcReadingPremises.NestedEnvironment",
+      "site_subject": "the selected strerror declaration and loaded modes in the independently held audited environment",
+      "guard": "declaration-level proposition; no per-site antecedent",
+      "bindings": "exact nine-coordinate Context, actual source and effective environment SHA256, parent graph/atom identities, inherited prerequisite IDs in parent manifest",
+      "disposition": "open",
+      "transport": "none; no receipt supports a universal solely by existing",
+      "formula": "e.contractInForce"
+    },
+    "libc.strerror.nested_call_admission.no_custody_result.v1": {
+      "declaration": "strerror",
+      "atom": "no_custody_result",
+      "definition": "QCore.LibcReadingLeafBindings.resultNone",
+      "environment": "QCore.LibcReadingPremises.NestedEnvironment",
+      "site_subject": "the selected strerror declaration and loaded modes in the independently held audited environment",
+      "guard": "declaration-level proposition; no per-site antecedent",
+      "bindings": "exact nine-coordinate Context, actual source and effective environment SHA256, parent graph/atom identities, inherited prerequisite IDs in parent manifest",
+      "disposition": "open",
+      "transport": "none; no receipt supports a universal solely by existing",
+      "formula": "e.noCustodyResult"
+    },
+    "libc.strerror.nested_call_admission.parameters_borrowed.v1": {
+      "declaration": "strerror",
+      "atom": "parameters_borrowed",
+      "definition": "QCore.LibcReadingLeafBindings.parametersBorrowed",
+      "environment": "QCore.LibcReadingPremises.NestedEnvironment",
+      "site_subject": "the selected strerror declaration and loaded modes in the independently held audited environment",
+      "guard": "declaration-level proposition; no per-site antecedent",
+      "bindings": "exact nine-coordinate Context, actual source and effective environment SHA256, parent graph/atom identities, inherited prerequisite IDs in parent manifest",
+      "disposition": "open",
+      "transport": "none; no receipt supports a universal solely by existing",
+      "formula": "e.parametersBorrowed"
+    },
+    "libc.strerror.nested_call_admission.remaining_site_checks.v1": {
+      "declaration": "strerror",
+      "atom": "remaining_site_checks",
+      "definition": "QCore.LibcReadingLeafBindings.nestedRest",
+      "environment": "QCore.LibcReadingPremises.NestedEnvironment",
+      "site_subject": "an arbitrary relevant original reading position in the independently held audited Context",
+      "guard": "e.observed s means the intended reading domain, not successful checker capture",
+      "bindings": "exact nine-coordinate Context, actual source and effective environment SHA256, parent graph/atom identities, inherited prerequisite IDs in parent manifest",
+      "disposition": "open",
+      "transport": "none; no receipt supports a universal solely by existing",
+      "formula": "forall s : Site, e.observed s -> e.remainingChecks s"
+    }
+  },
+  "meaning": "report-owned named Prop leaves definitionally matching the existing audited decomposition; no graph/registry/producer manifest change"
+}

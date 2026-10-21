@@ -1,0 +1,6 @@
+import QCore.LibcReadingSiteEvidence
+#print axioms QCore.LibcReadingSiteEvidence.stale_context_rejected
+#print axioms QCore.LibcReadingSiteEvidence.self_consistent_but_unreproduced_rejected
+#print axioms QCore.LibcReadingSiteEvidence.accepted_local_predicate_is_true
+#print axioms QCore.LibcReadingSiteEvidence.selected_success_does_not_imply_universal
+#print axioms QCore.LibcReadingSiteEvidence.declined_probe_does_not_publish_new_site

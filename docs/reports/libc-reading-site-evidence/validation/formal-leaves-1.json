@@ -1,0 +1,10 @@
+{
+  "command": [
+    "lake",
+    "env",
+    "lean",
+    "/home/cosmo/.codex/worktrees/premise-decomposition-cycle1b/qcore-c/docs/reports/libc-reading-site-evidence/LeafBindings.lean"
+  ],
+  "exit": 0,
+  "manifest_sha256": "3114007602c4ec010230907a85c1f90f46c2e06c82e9fa3b355d7b5efe217c62"
+}

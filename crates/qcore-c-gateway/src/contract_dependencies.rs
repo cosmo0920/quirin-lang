@@ -56,6 +56,10 @@ pub struct UnitRecord {
     /// Exact first authoritative C stream analyzed in this recording. Home
     /// replay and hypothetical analyses cannot replace the primary stream.
     pub primary_source_sha256: Option<String>,
+    /// Authoritative token stream, for selected site observations only.
+    pub primary_token_sha256: Option<String>,
+    pub reading_sites: Vec<crate::reading_site_evidence::Observation>,
+    pub reading_site_omissions: BTreeMap<String, usize>,
     /// S3 source member/stability facts, per analyzed function. Evidence only;
     /// runtime projection treats each as a closed-world fact needing coverage.
     pub lifetime_members: BTreeMap<String, BTreeSet<String>>,
@@ -827,6 +831,76 @@ pub(crate) fn primary_source(source: &str) {
     with_recorder(|r| {
         if r.record.primary_source_sha256.is_none() {
             r.record.primary_source_sha256 = Some(qcore_schemas::sha256_hex(source.as_bytes()));
+            r.record.primary_token_sha256 = Some(crate::reading_site_evidence::token_digest(
+                &crate::legacy_c::tokenize(source),
+            ));
+        }
+    });
+}
+
+/// Probe-local capture state, restored together with consultation state.
+#[derive(Clone, Debug, PartialEq, Eq)]
+pub(crate) struct ReadingCheckpoint {
+    length: usize,
+    omissions: BTreeMap<String, usize>,
+}
+
+pub(crate) fn reading_checkpoint() -> Option<ReadingCheckpoint> {
+    RECORDER.with(|r| {
+        r.borrow().as_ref().map(|r| ReadingCheckpoint {
+            length: r.record.reading_sites.len(),
+            omissions: r.record.reading_site_omissions.clone(),
+        })
+    })
+}
+
+pub(crate) fn restore_reading_checkpoint(saved: &Option<ReadingCheckpoint>) {
+    if let Some(saved) = saved {
+        with_recorder(|r| {
+            r.record.reading_sites.truncate(saved.length);
+            r.record.reading_site_omissions.clone_from(&saved.omissions);
+        });
+    }
+}
+
+/// Instantiation can refuse after classification. Keep captures only when its
+/// final acceptance succeeds, independently of the caller's wider probe.
+pub(crate) struct ReadingTransaction(Option<ReadingCheckpoint>, bool);
+impl ReadingTransaction {
+    pub(crate) fn start() -> Self {
+        Self(reading_checkpoint(), false)
+    }
+    pub(crate) fn commit(&mut self) {
+        self.1 = true;
+    }
+}
+impl Drop for ReadingTransaction {
+    fn drop(&mut self) {
+        if !self.1 {
+            restore_reading_checkpoint(&self.0);
+        }
+    }
+}
+
+pub(crate) fn reading_primary() -> Option<(String, String)> {
+    RECORDER.with(|r| {
+        let r = r.borrow();
+        let r = r.as_ref()?;
+        Some((
+            r.record.primary_source_sha256.clone()?,
+            r.record.primary_token_sha256.clone()?,
+        ))
+    })
+}
+
+pub(crate) fn reading_omitted(reason: &str) {
+    with_evidence(|r| *r.reading_site_omissions.entry(reason.into()).or_default() += 1);
+}
+
+pub(crate) fn reading_observed(observation: crate::reading_site_evidence::Observation) {
+    with_evidence(|r| {
+        if !r.reading_sites.contains(&observation) {
+            r.reading_sites.push(observation);
         }
     });
 }

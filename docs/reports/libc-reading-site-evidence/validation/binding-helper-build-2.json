@@ -1,0 +1,45 @@
+{
+  "command": [
+    "rustc",
+    "--edition=2024",
+    "/home/cosmo/.codex/worktrees/premise-decomposition-cycle1b/qcore-c/docs/reports/libc-reading-site-evidence/scripts/check_production_bindings.rs",
+    "-L",
+    "dependency=/home/cosmo/.codex/worktrees/premise-decomposition-cycle1b/qcore-c/target/release/deps",
+    "--extern",
+    "qcore_audit=/home/cosmo/.codex/worktrees/premise-decomposition-cycle1b/qcore-c/target/release/deps/libqcore_audit-ea4b824ef1f559eb.rlib",
+    "--extern",
+    "qcore_c_gateway=/home/cosmo/.codex/worktrees/premise-decomposition-cycle1b/qcore-c/target/release/deps/libqcore_c_gateway-a2e4e6be8f468074.rlib",
+    "--extern",
+    "qcore_contract=/home/cosmo/.codex/worktrees/premise-decomposition-cycle1b/qcore-c/target/release/deps/libqcore_contract-68876726193bb2d2.rlib",
+    "--extern",
+    "qcore_schemas=/home/cosmo/.codex/worktrees/premise-decomposition-cycle1b/qcore-c/target/release/deps/libqcore_schemas-edb315d9d169061e.rlib",
+    "--extern",
+    "serde_json=/home/cosmo/.codex/worktrees/premise-decomposition-cycle1b/qcore-c/target/release/deps/libserde_json-08241b9b75b89117.rlib",
+    "-o",
+    "/home/cosmo/.codex/worktrees/premise-decomposition-cycle1b/qcore-c/private/libc-reading-site-evidence/check-production-bindings-2"
+  ],
+  "exit": 0,
+  "source_sha256": "52ed28769ab8a662243a287b138ecfc54186b3e7dd82284a3cf0eab31f9764cb",
+  "libraries": {
+    "qcore_audit": {
+      "path": "/home/cosmo/.codex/worktrees/premise-decomposition-cycle1b/qcore-c/target/release/deps/libqcore_audit-ea4b824ef1f559eb.rlib",
+      "sha256": "ed9ef3f1afe7ef3011bcfbaa00596ab8a2e06410e47ec33bf5494914938c669a"
+    },
+    "qcore_c_gateway": {
+      "path": "/home/cosmo/.codex/worktrees/premise-decomposition-cycle1b/qcore-c/target/release/deps/libqcore_c_gateway-a2e4e6be8f468074.rlib",
+      "sha256": "fa505b3dcc488dde707f6282777ab5903aa598c6eb0f0ecae2391f8b088dd8e5"
+    },
+    "qcore_contract": {
+      "path": "/home/cosmo/.codex/worktrees/premise-decomposition-cycle1b/qcore-c/target/release/deps/libqcore_contract-68876726193bb2d2.rlib",
+      "sha256": "c2b0a480bd166ed5c370ee8660e4c6b7894320af31d2a028e12940904a3fc8e8"
+    },
+    "qcore_schemas": {
+      "path": "/home/cosmo/.codex/worktrees/premise-decomposition-cycle1b/qcore-c/target/release/deps/libqcore_schemas-edb315d9d169061e.rlib",
+      "sha256": "c8b9c364d66528bd54811d72215c0818369254aaee2f2af5403231d17b3f2401"
+    },
+    "serde_json": {
+      "path": "/home/cosmo/.codex/worktrees/premise-decomposition-cycle1b/qcore-c/target/release/deps/libserde_json-08241b9b75b89117.rlib",
+      "sha256": "7d9102a9b183d08fa6891419c12899818764b7534c9d82e22d2b1c0021227df8"
+    }
+  }
+}

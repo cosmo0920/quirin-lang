@@ -1,0 +1,110 @@
+[
+  {
+    "route": "system",
+    "side": "before",
+    "command": [
+      "python3",
+      "/home/cosmo/.codex/worktrees/premise-decomposition-cycle1b/qcore-c/docs/reports/libc-reading-site-evidence/scripts/measure.py",
+      "--contract-root",
+      "/home/cosmo/.codex/worktrees/premise-decomposition-cycle1b/qcore-c/private/libc-reading-site-evidence/base-inputs",
+      "--jobs",
+      "8",
+      "system",
+      "/home/cosmo/Documents/GitHub/qcore-c/private/premise-integration/baseline/quirin-audit",
+      "c5c298db2ab7dedb5d39d29f4cfd097727e267b2",
+      "/home/cosmo/.codex/worktrees/premise-decomposition-cycle1b/qcore-c/private/libc-reading-site-evidence/runs-1/system/before"
+    ],
+    "exit": 0,
+    "seconds": 473.21924114227295
+  },
+  {
+    "route": "slice",
+    "side": "before",
+    "command": [
+      "python3",
+      "/home/cosmo/.codex/worktrees/premise-decomposition-cycle1b/qcore-c/docs/reports/libc-reading-site-evidence/scripts/measure.py",
+      "--contract-root",
+      "/home/cosmo/.codex/worktrees/premise-decomposition-cycle1b/qcore-c/private/libc-reading-site-evidence/base-inputs",
+      "--jobs",
+      "8",
+      "slice",
+      "/home/cosmo/Documents/GitHub/qcore-c/private/premise-integration/baseline/quirin-audit",
+      "c5c298db2ab7dedb5d39d29f4cfd097727e267b2",
+      "/home/cosmo/.codex/worktrees/premise-decomposition-cycle1b/qcore-c/private/libc-reading-site-evidence/runs-1/slice/before"
+    ],
+    "exit": 0,
+    "seconds": 473.2191469669342
+  },
+  {
+    "route": "system",
+    "side": "after",
+    "command": [
+      "python3",
+      "/home/cosmo/.codex/worktrees/premise-decomposition-cycle1b/qcore-c/docs/reports/libc-reading-site-evidence/scripts/measure.py",
+      "--contract-root",
+      "/home/cosmo/.codex/worktrees/premise-decomposition-cycle1b/qcore-c/private/libc-reading-site-evidence/base-inputs",
+      "--jobs",
+      "8",
+      "system",
+      "/home/cosmo/.codex/worktrees/premise-decomposition-cycle1b/qcore-c/private/libc-reading-site-evidence/gate-1/quirin-audit",
+      "ccb354a7d8279faf6078d611919ff5fe56ad7ed4",
+      "/home/cosmo/.codex/worktrees/premise-decomposition-cycle1b/qcore-c/private/libc-reading-site-evidence/runs-1/system/after"
+    ],
+    "exit": 0,
+    "seconds": 480.9719536304474
+  },
+  {
+    "route": "slice",
+    "side": "after",
+    "command": [
+      "python3",
+      "/home/cosmo/.codex/worktrees/premise-decomposition-cycle1b/qcore-c/docs/reports/libc-reading-site-evidence/scripts/measure.py",
+      "--contract-root",
+      "/home/cosmo/.codex/worktrees/premise-decomposition-cycle1b/qcore-c/private/libc-reading-site-evidence/base-inputs",
+      "--jobs",
+      "8",
+      "slice",
+      "/home/cosmo/.codex/worktrees/premise-decomposition-cycle1b/qcore-c/private/libc-reading-site-evidence/gate-1/quirin-audit",
+      "ccb354a7d8279faf6078d611919ff5fe56ad7ed4",
+      "/home/cosmo/.codex/worktrees/premise-decomposition-cycle1b/qcore-c/private/libc-reading-site-evidence/runs-1/slice/after"
+    ],
+    "exit": 0,
+    "seconds": 480.971866607666
+  },
+  {
+    "route": "corpus",
+    "side": "before",
+    "command": [
+      "python3",
+      "/home/cosmo/.codex/worktrees/premise-decomposition-cycle1b/qcore-c/docs/reports/libc-reading-site-evidence/scripts/measure.py",
+      "--contract-root",
+      "/home/cosmo/.codex/worktrees/premise-decomposition-cycle1b/qcore-c/private/libc-reading-site-evidence/base-inputs",
+      "--jobs",
+      "16",
+      "corpus",
+      "/home/cosmo/Documents/GitHub/qcore-c/private/premise-integration/baseline/quirin-audit",
+      "c5c298db2ab7dedb5d39d29f4cfd097727e267b2",
+      "/home/cosmo/.codex/worktrees/premise-decomposition-cycle1b/qcore-c/private/libc-reading-site-evidence/runs-1/corpus/before"
+    ],
+    "exit": 0,
+    "seconds": 2042.18989610672
+  },
+  {
+    "route": "corpus",
+    "side": "after",
+    "command": [
+      "python3",
+      "/home/cosmo/.codex/worktrees/premise-decomposition-cycle1b/qcore-c/docs/reports/libc-reading-site-evidence/scripts/measure.py",
+      "--contract-root",
+      "/home/cosmo/.codex/worktrees/premise-decomposition-cycle1b/qcore-c/private/libc-reading-site-evidence/base-inputs",
+      "--jobs",
+      "16",
+      "corpus",
+      "/home/cosmo/.codex/worktrees/premise-decomposition-cycle1b/qcore-c/private/libc-reading-site-evidence/gate-1/quirin-audit",
+      "ccb354a7d8279faf6078d611919ff5fe56ad7ed4",
+      "/home/cosmo/.codex/worktrees/premise-decomposition-cycle1b/qcore-c/private/libc-reading-site-evidence/runs-1/corpus/after"
+    ],
+    "exit": 0,
+    "seconds": 2276.8700947761536
+  }
+]

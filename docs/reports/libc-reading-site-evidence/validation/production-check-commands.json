@@ -1,0 +1,47 @@
+[
+  {
+    "route": "system",
+    "command": [
+      "/home/cosmo/.codex/worktrees/premise-decomposition-cycle1b/qcore-c/private/libc-reading-site-evidence/check-production-bindings-2",
+      "/home/cosmo/.codex/worktrees/premise-decomposition-cycle1b/qcore-c/private/libc-reading-site-evidence/base-inputs",
+      "/home/cosmo/Documents/GitHub/qcore-c/private/w45-fb/w46-external-callee-contracts/attempt-1/fluent-bit-clang-source",
+      "/home/cosmo/.codex/worktrees/premise-decomposition-cycle1b/qcore-c",
+      "/home/cosmo/.codex/worktrees/premise-decomposition-cycle1b/qcore-c/private/libc-reading-site-evidence/runs-1/system/after/resource-diagnostics.json",
+      "/home/cosmo/.codex/worktrees/premise-decomposition-cycle1b/qcore-c/private/libc-reading-site-evidence/production-system-bindings.json"
+    ],
+    "exit": 0,
+    "environment": {
+      "QCORE_CLANG": "/usr/lib/llvm-21/bin/clang"
+    }
+  },
+  {
+    "route": "slice",
+    "command": [
+      "/home/cosmo/.codex/worktrees/premise-decomposition-cycle1b/qcore-c/private/libc-reading-site-evidence/check-production-bindings-2",
+      "/home/cosmo/.codex/worktrees/premise-decomposition-cycle1b/qcore-c/private/libc-reading-site-evidence/base-inputs",
+      "/home/cosmo/Documents/GitHub/qcore-c/private/w47-tail/attempt-1/prep/fluent-bit-clang-source",
+      "/home/cosmo/.codex/worktrees/premise-decomposition-cycle1b/qcore-c",
+      "/home/cosmo/.codex/worktrees/premise-decomposition-cycle1b/qcore-c/private/libc-reading-site-evidence/runs-1/slice/after/resource-diagnostics.json",
+      "/home/cosmo/.codex/worktrees/premise-decomposition-cycle1b/qcore-c/private/libc-reading-site-evidence/production-slice-bindings.json"
+    ],
+    "exit": 0,
+    "environment": {
+      "QCORE_CLANG": "/usr/lib/llvm-21/bin/clang"
+    }
+  },
+  {
+    "route": "corpus",
+    "command": [
+      "/home/cosmo/.codex/worktrees/premise-decomposition-cycle1b/qcore-c/private/libc-reading-site-evidence/check-production-bindings-2",
+      "/home/cosmo/.codex/worktrees/premise-decomposition-cycle1b/qcore-c/private/libc-reading-site-evidence/base-inputs",
+      "/home/cosmo/Documents/GitHub/qcore-c/build/cycle19/c-gateway-wave-pin/fluent-bit-clang-source",
+      "/home/cosmo/.codex/worktrees/premise-decomposition-cycle1b/qcore-c",
+      "/home/cosmo/.codex/worktrees/premise-decomposition-cycle1b/qcore-c/private/libc-reading-site-evidence/runs-1/corpus/after/resource-diagnostics.json",
+      "/home/cosmo/.codex/worktrees/premise-decomposition-cycle1b/qcore-c/private/libc-reading-site-evidence/production-corpus-bindings.json"
+    ],
+    "exit": 0,
+    "environment": {
+      "QCORE_CLANG": "/usr/lib/llvm-21/bin/clang"
+    }
+  }
+]

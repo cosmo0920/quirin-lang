@@ -146,6 +146,7 @@ pub(super) struct ParserProbeState {
     list_frame_count: usize,
     /// The thread's contract consultation log (rule 13f), restored on decline.
     consultations: Option<Consulted>,
+    reading_site_checkpoint: Option<crate::contract_dependencies::ReadingCheckpoint>,
 }
 
 /// A probe's answer: kept (its state moves stand) or declined (the state is
@@ -222,6 +223,7 @@ impl Parser<'_> {
             typed_place_origin: typed_place_origin.get(),
             list_frame_count: list_frames.len(),
             consultations: contract_consultation::snapshot(),
+            reading_site_checkpoint: crate::contract_dependencies::reading_checkpoint(),
         }
     }
 
@@ -240,6 +242,7 @@ impl Parser<'_> {
             typed_place_origin,
             list_frame_count,
             consultations,
+            reading_site_checkpoint,
         } = state;
         debug_assert_eq!(self.list_frames.len(), *list_frame_count);
         self.cursor = *cursor;
@@ -255,6 +258,7 @@ impl Parser<'_> {
             .clone_from(variadic_tail_readings);
         self.typed_place_origin.set(*typed_place_origin);
         contract_consultation::restore(consultations);
+        crate::contract_dependencies::restore_reading_checkpoint(reading_site_checkpoint);
     }
 
     /// The scoped form: run `probe`; a [`Probe::Decline`] hands the state

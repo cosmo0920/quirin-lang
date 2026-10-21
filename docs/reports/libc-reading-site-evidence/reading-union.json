@@ -1,0 +1,555 @@
+{
+  "paths": [
+    "crates/qcore-audit/src/projection.rs",
+    "crates/qcore-audit/src/report.rs",
+    "crates/qcore-c-gateway/src/contract_dependencies.rs",
+    "crates/qcore-c-gateway/src/legacy_condition_desugar.rs",
+    "crates/qcore-c-gateway/src/legacy_variadics.rs",
+    "crates/qcore-c-gateway/src/reading_site_evidence.rs",
+    "crates/qcore-c-gateway/src/variadic_nested.rs",
+    "docs/reports/libc-reading-site-evidence",
+    "proof/QCore/LibcReadingSiteEvidence.lean"
+  ],
+  "topics": [
+    "buffers",
+    "concurrency",
+    "contracts",
+    "docs",
+    "effects",
+    "gateway",
+    "integration",
+    "io",
+    "maintenance",
+    "providers",
+    "rationale",
+    "source",
+    "status"
+  ],
+  "unknown_paths": [],
+  "readings": [
+    {
+      "path": "AGENTS.md",
+      "start": 1,
+      "end": 113,
+      "bytes": 5547,
+      "sha256": "f42161b6022bf0d668876ac2b5168d61768e09f6a625ae5a00a3bc219d1f0005",
+      "rule_ids": [],
+      "reasons": [
+        "every change"
+      ]
+    },
+    {
+      "path": "docs/agents/operations.md",
+      "start": 10,
+      "end": 48,
+      "bytes": 2624,
+      "sha256": "cb9c21b3ab961bd500c58c5e1cb7bdfbc238923e73f9bae8cf0edaa909ce3a70",
+      "rule_ids": [],
+      "reasons": [
+        "every change"
+      ]
+    },
+    {
+      "path": "docs/agents/operations.md",
+      "start": 49,
+      "end": 73,
+      "bytes": 1731,
+      "sha256": "03d5a820a4cb4cee2a2ad4a885e9a90fcd35c5f94e2ccda82ca299d76d93480e",
+      "rule_ids": [],
+      "reasons": [
+        "every change"
+      ]
+    },
+    {
+      "path": "docs/agents/operations.md",
+      "start": 74,
+      "end": 112,
+      "bytes": 2280,
+      "sha256": "a9517492f124fa38a2c04615e528c2335de4c984af117a3eb463b1da621ae6b2",
+      "rule_ids": [],
+      "reasons": [
+        "every change"
+      ]
+    },
+    {
+      "path": "docs/agents/operations.md",
+      "start": 113,
+      "end": 143,
+      "bytes": 1797,
+      "sha256": "6010fc5bb5ad0cd7f47706497bf6d038dace0599defdbbe1e5677907f3b9ae64",
+      "rule_ids": [],
+      "reasons": [
+        "every change"
+      ]
+    },
+    {
+      "path": "docs/agents/operations.md",
+      "start": 144,
+      "end": 173,
+      "bytes": 1831,
+      "sha256": "12049284ea24980aff30982a1068cc0079702baab08bd28eab19e208d838e876",
+      "rule_ids": [],
+      "reasons": [
+        "every change"
+      ]
+    },
+    {
+      "path": "docs/agents/operations.md",
+      "start": 174,
+      "end": 187,
+      "bytes": 902,
+      "sha256": "faa609c8fc3fa93067bdcc3c7090279124c3a10d0d86e7a6b783ef9acfee481c",
+      "rule_ids": [],
+      "reasons": [
+        "every change"
+      ]
+    },
+    {
+      "path": "docs/agents/validation.md",
+      "start": 1,
+      "end": 174,
+      "bytes": 10760,
+      "sha256": "7cfd4dc3613a1995977e3773fc082603d7dadd729471bb17b5d50a93cc141280",
+      "rule_ids": [
+        "constraint-29"
+      ],
+      "reasons": [
+        "every change"
+      ]
+    },
+    {
+      "path": "docs/agents/evidence.md",
+      "start": 1,
+      "end": 125,
+      "bytes": 7177,
+      "sha256": "d48d6018240d40c8c4521c727190599b15eea30d1a19ba3507e80ae031ad63f6",
+      "rule_ids": [
+        "constraint-21",
+        "constraint-22",
+        "constraint-23",
+        "constraint-24",
+        "constraint-25",
+        "constraint-28"
+      ],
+      "reasons": [
+        "docs: docs/reports/libc-reading-site-evidence",
+        "docs: proof/QCore/LibcReadingSiteEvidence.lean",
+        "every change"
+      ]
+    },
+    {
+      "path": "docs/agents/gateway.md",
+      "start": 1,
+      "end": 8556,
+      "bytes": 582600,
+      "sha256": "1305da8effb3c962afbb6e41c48bd34dd3e9efb301c266ab69edc2bf056424b2",
+      "rule_ids": [
+        "constraint-4",
+        "constraint-4a",
+        "constraint-4b",
+        "constraint-4c",
+        "constraint-5",
+        "constraint-5a",
+        "constraint-5b",
+        "constraint-5c",
+        "constraint-5d",
+        "constraint-5e",
+        "constraint-5f",
+        "constraint-5g",
+        "constraint-5h",
+        "constraint-5i",
+        "constraint-5j",
+        "constraint-5k",
+        "constraint-5l",
+        "constraint-6",
+        "constraint-7",
+        "constraint-8",
+        "constraint-9",
+        "constraint-10",
+        "constraint-10a",
+        "constraint-10b",
+        "constraint-10c",
+        "constraint-10d",
+        "constraint-10e",
+        "constraint-10f",
+        "constraint-10g",
+        "constraint-10h",
+        "constraint-10i",
+        "constraint-10j",
+        "constraint-10k",
+        "constraint-10l",
+        "constraint-10m",
+        "constraint-10n",
+        "constraint-10o",
+        "constraint-10p",
+        "constraint-10q",
+        "constraint-10r",
+        "constraint-10s",
+        "constraint-10t",
+        "constraint-10u",
+        "constraint-10v",
+        "constraint-10w",
+        "constraint-10x",
+        "constraint-10y",
+        "constraint-10z",
+        "constraint-11-series",
+        "constraint-11a",
+        "constraint-11b",
+        "constraint-11c",
+        "constraint-11d",
+        "constraint-11e",
+        "constraint-11f",
+        "constraint-11g",
+        "constraint-11h",
+        "constraint-11i",
+        "constraint-11j",
+        "constraint-11k",
+        "constraint-11l",
+        "constraint-11m",
+        "constraint-11n",
+        "constraint-11o",
+        "constraint-11p",
+        "constraint-11q",
+        "constraint-11r",
+        "constraint-11s",
+        "constraint-11t",
+        "constraint-11u",
+        "constraint-11v",
+        "constraint-11w",
+        "constraint-11x",
+        "constraint-11y",
+        "constraint-11z",
+        "constraint-12c",
+        "constraint-12d",
+        "constraint-12e",
+        "constraint-12f",
+        "constraint-12g",
+        "constraint-12h",
+        "constraint-12i",
+        "constraint-12j",
+        "constraint-12k",
+        "constraint-12l",
+        "constraint-12m",
+        "constraint-12n",
+        "constraint-12o",
+        "constraint-12p",
+        "constraint-12q",
+        "constraint-12r",
+        "constraint-12s",
+        "constraint-12t",
+        "constraint-12u",
+        "constraint-12v",
+        "constraint-12w",
+        "constraint-12x",
+        "constraint-12y",
+        "constraint-12z",
+        "constraint-13a",
+        "constraint-13b",
+        "constraint-13c",
+        "constraint-13d",
+        "constraint-13e",
+        "constraint-13f",
+        "constraint-13g",
+        "constraint-13h",
+        "constraint-13i",
+        "constraint-13j",
+        "constraint-13k",
+        "constraint-13l",
+        "constraint-13m",
+        "constraint-13n",
+        "constraint-13o",
+        "constraint-13p",
+        "constraint-13q",
+        "constraint-13r",
+        "constraint-13s",
+        "constraint-13t",
+        "constraint-13u",
+        "constraint-13v",
+        "constraint-13w",
+        "constraint-13x",
+        "constraint-13y",
+        "constraint-13z",
+        "constraint-14a",
+        "constraint-14b",
+        "constraint-14c",
+        "constraint-14d",
+        "constraint-14e",
+        "constraint-14f",
+        "constraint-14g",
+        "constraint-14h",
+        "constraint-14i",
+        "constraint-14j",
+        "constraint-14k",
+        "constraint-14l",
+        "constraint-14m",
+        "constraint-14n",
+        "constraint-14o",
+        "constraint-14p",
+        "constraint-14q",
+        "constraint-14r",
+        "constraint-14s",
+        "constraint-14t",
+        "constraint-14u",
+        "constraint-14v",
+        "constraint-14w",
+        "constraint-14x",
+        "constraint-14y",
+        "constraint-14z",
+        "constraint-15q",
+        "constraint-15r",
+        "constraint-15s",
+        "constraint-15t",
+        "constraint-15u",
+        "constraint-15w",
+        "constraint-15x",
+        "constraint-15y",
+        "constraint-15z",
+        "constraint-30",
+        "constraint-31"
+      ],
+      "reasons": [
+        "contracts: explicit task topic",
+        "contracts: proof/QCore/LibcReadingSiteEvidence.lean",
+        "gateway: crates/qcore-audit/src/projection.rs",
+        "gateway: crates/qcore-audit/src/report.rs",
+        "gateway: crates/qcore-c-gateway/src/contract_dependencies.rs",
+        "gateway: crates/qcore-c-gateway/src/legacy_condition_desugar.rs",
+        "gateway: crates/qcore-c-gateway/src/legacy_variadics.rs",
+        "gateway: crates/qcore-c-gateway/src/reading_site_evidence.rs",
+        "gateway: crates/qcore-c-gateway/src/variadic_nested.rs",
+        "gateway: explicit task topic",
+        "gateway: proof/QCore/LibcReadingSiteEvidence.lean"
+      ]
+    },
+    {
+      "path": "docs/agents/source-identity.md",
+      "start": 1,
+      "end": 150,
+      "bytes": 9206,
+      "sha256": "170c85676445027d07257f24152da9f2ae8dd27fd84939c08338375b09473889",
+      "rule_ids": [
+        "constraint-11",
+        "constraint-12",
+        "constraint-12a",
+        "constraint-12b"
+      ],
+      "reasons": [
+        "contracts: explicit task topic",
+        "contracts: proof/QCore/LibcReadingSiteEvidence.lean",
+        "gateway: crates/qcore-audit/src/projection.rs",
+        "gateway: crates/qcore-audit/src/report.rs",
+        "gateway: crates/qcore-c-gateway/src/contract_dependencies.rs",
+        "gateway: crates/qcore-c-gateway/src/legacy_condition_desugar.rs",
+        "gateway: crates/qcore-c-gateway/src/legacy_variadics.rs",
+        "gateway: crates/qcore-c-gateway/src/reading_site_evidence.rs",
+        "gateway: crates/qcore-c-gateway/src/variadic_nested.rs",
+        "gateway: explicit task topic",
+        "gateway: proof/QCore/LibcReadingSiteEvidence.lean",
+        "providers: crates/qcore-audit/src/projection.rs",
+        "providers: crates/qcore-audit/src/report.rs",
+        "providers: proof/QCore/LibcReadingSiteEvidence.lean"
+      ]
+    },
+    {
+      "path": "docs/agents/diagnostics.md",
+      "start": 1,
+      "end": 251,
+      "bytes": 35816,
+      "sha256": "6c9504e387debf0e83429f84db16e31f54e122961ac6d206c7b12daa8aecbb39",
+      "rule_ids": [
+        "constraint-1",
+        "constraint-2",
+        "constraint-3"
+      ],
+      "reasons": [
+        "contracts: explicit task topic",
+        "contracts: proof/QCore/LibcReadingSiteEvidence.lean",
+        "gateway: crates/qcore-audit/src/projection.rs",
+        "gateway: crates/qcore-audit/src/report.rs",
+        "gateway: crates/qcore-c-gateway/src/contract_dependencies.rs",
+        "gateway: crates/qcore-c-gateway/src/legacy_condition_desugar.rs",
+        "gateway: crates/qcore-c-gateway/src/legacy_variadics.rs",
+        "gateway: crates/qcore-c-gateway/src/reading_site_evidence.rs",
+        "gateway: crates/qcore-c-gateway/src/variadic_nested.rs",
+        "gateway: explicit task topic",
+        "gateway: proof/QCore/LibcReadingSiteEvidence.lean",
+        "source: explicit task topic",
+        "source: proof/QCore/LibcReadingSiteEvidence.lean"
+      ]
+    },
+    {
+      "path": "docs/agents/source-routes.md",
+      "start": 1,
+      "end": 410,
+      "bytes": 25780,
+      "sha256": "12c6a7cf097421e5385796dddd4dbab069cf60093cbd5a71b60bc7895cd2b977",
+      "rule_ids": [
+        "constraint-13",
+        "constraint-14",
+        "constraint-15",
+        "constraint-15a",
+        "constraint-15b",
+        "constraint-15v",
+        "constraint-14-amendments"
+      ],
+      "reasons": [
+        "concurrency: proof/QCore/LibcReadingSiteEvidence.lean",
+        "effects: proof/QCore/LibcReadingSiteEvidence.lean",
+        "io: proof/QCore/LibcReadingSiteEvidence.lean",
+        "source: explicit task topic",
+        "source: proof/QCore/LibcReadingSiteEvidence.lean"
+      ]
+    },
+    {
+      "path": "docs/agents/providers.md",
+      "start": 1,
+      "end": 460,
+      "bytes": 29882,
+      "sha256": "ed1c7e9d196a34822b3cf1090980a34584443ce10eb9b67a29f50d614ef0fc98",
+      "rule_ids": [
+        "constraint-16",
+        "constraint-17",
+        "constraint-18",
+        "constraint-19",
+        "constraint-20",
+        "constraint-26"
+      ],
+      "reasons": [
+        "providers: crates/qcore-audit/src/projection.rs",
+        "providers: crates/qcore-audit/src/report.rs",
+        "providers: proof/QCore/LibcReadingSiteEvidence.lean"
+      ]
+    },
+    {
+      "path": "docs/agents/buffers-records.md",
+      "start": 1,
+      "end": 544,
+      "bytes": 37168,
+      "sha256": "1fd166105f9473011d6eee82d224efa61f0a80e6f1082882020b285af86c98b4",
+      "rule_ids": [
+        "constraint-15h",
+        "constraint-15k",
+        "constraint-15k-amendments"
+      ],
+      "reasons": [
+        "buffers: proof/QCore/LibcReadingSiteEvidence.lean",
+        "concurrency: proof/QCore/LibcReadingSiteEvidence.lean"
+      ]
+    },
+    {
+      "path": "docs/agents/effects.md",
+      "start": 1,
+      "end": 145,
+      "bytes": 9773,
+      "sha256": "9ae73d9b3070a54120afde2acea700fedd428b05b64674846a70a57bda49e18b",
+      "rule_ids": [
+        "constraint-15j",
+        "constraint-15l",
+        "constraint-15m"
+      ],
+      "reasons": [
+        "effects: proof/QCore/LibcReadingSiteEvidence.lean"
+      ]
+    },
+    {
+      "path": "docs/agents/io.md",
+      "start": 1,
+      "end": 202,
+      "bytes": 13031,
+      "sha256": "ce9a1ff9c91e183f7c2256a2f8a39c8f1495df34694ea7c49dd44b8fad75876f",
+      "rule_ids": [
+        "constraint-15c",
+        "constraint-15d",
+        "constraint-15e",
+        "constraint-15f",
+        "constraint-15g",
+        "constraint-15i",
+        "constraint-15p"
+      ],
+      "reasons": [
+        "io: proof/QCore/LibcReadingSiteEvidence.lean"
+      ]
+    },
+    {
+      "path": "docs/agents/concurrency.md",
+      "start": 1,
+      "end": 211,
+      "bytes": 14504,
+      "sha256": "3a87ec049ada246bb70a579571cc3a80f0e04c7e0a372ea2d4c18f978815a3df",
+      "rule_ids": [
+        "constraint-15n",
+        "constraint-15o",
+        "constraint-27"
+      ],
+      "reasons": [
+        "concurrency: proof/QCore/LibcReadingSiteEvidence.lean"
+      ]
+    },
+    {
+      "path": "docs/STATUS.md",
+      "start": 1,
+      "end": 408,
+      "bytes": 250030,
+      "sha256": "57d2ba3c2d3a8e2f294cf8799bd0e90a22a1aa43243153f0ee37d63513951be1",
+      "rule_ids": [],
+      "reasons": [
+        "proof/QCore/LibcReadingSiteEvidence.lean"
+      ]
+    },
+    {
+      "path": "docs/reports/task-context-contract-bundle/operations-before.txt",
+      "start": 1,
+      "end": 338,
+      "bytes": 23862,
+      "sha256": "d6072c957b244bdf7af47bc0461845418a9fca61b3b7991078b1aee4439a9b0f",
+      "rule_ids": [],
+      "reasons": [
+        "rule changes require the preserved rationale; this is historical text"
+      ]
+    },
+    {
+      "path": "docs/development/increments/structure-checkpoints/agent-cycle-guidance.md",
+      "start": 1,
+      "end": 271,
+      "bytes": 16128,
+      "sha256": "244db66addae95941bb685ad336b1a85ddedacc702b45c7dfec5500c24c95c3b",
+      "rule_ids": [],
+      "reasons": [
+        "rule changes require the preserved rationale; this is historical text"
+      ]
+    }
+  ],
+  "on_demand": [],
+  "required_commands": [
+    "git submodule update --init --recursive   # every fresh checkout, worktrees included\npython3 scripts/run_test_binaries.py      # parallel form of: cargo test --workspace --no-fail-fast\ncargo fmt --all -- --check\ncargo clippy --all-targets -- -D warnings\ncargo run -p qcore-compiler --example reevaluation_probe      # expect exit 0\ncargo run -p qcore-compiler --example reevaluation_followup   # expect exit 0\npython3 scripts/check_lean_audits.py\npython3 -m unittest discover -s scripts/tests\n",
+    "python3 providers/package.py build --output /tmp/qcore-packages\npython3 providers/package.py verify /tmp/qcore-packages/qcore.libevent\ncargo test --manifest-path providers/Cargo.toml --workspace --locked --offline\ncargo fmt --manifest-path providers/Cargo.toml --all -- --check\ncargo clippy --manifest-path providers/Cargo.toml --workspace --all-targets --locked --offline -- -D warnings\n"
+  ],
+  "additional_validation": "Read provider rule 18 and validation.md for package gates when applicable.",
+  "followups": {
+    "source": "docs/reviews/r0_3/acceptance_matrix.json#named_followups",
+    "exact_path_candidates": [
+      {
+        "id": "AUDIT-ROW-ASSUMPTIONS-UNRECORDED",
+        "title": "Per-function and per-unit audit rows carry no assumptions: declared libc premises and Fluent Bit reachability premises live only in run-level text",
+        "why": "MEASURED by card STABILITY-REEVAL-5 (wave-45 close, base 8c1f15eb): the W45 slice's resource-diagnostics.json (docs/reports/w45-fb-retry-lifetime/artifacts/slice-after-providers-046accf6/) has top-level keys diagnostic_counts, enumeration_meaning, fluent_bit_revision, line_coordinates, not_projected_meaning, origin_meaning, reason_code_meaning, schema_version, scope, units, and unit rows carry no assumptions key, although OR-1's provisional Unsafe rests on the synchronous-proxy premise and OR-7's on unchecked neutrality (W45-FB-CROSS-UNIT-USER-PREMISES); unit assumptions are written only for no-build units (crates/qcore-audit/src/report.rs:301-304). The corpus's 22 W43 libc moves to Safe rest on declared, unchecked contracts disclosed at run level only (contracts.json trust string). Hard invariant 2 requires assumptions in every published result. DISCHARGE: each published row (or a linked sidecar keyed by row) names the premises and declared contracts it used, or the verdict contract states that a run-level assumption set suffices and every report says so.",
+        "source": "docs/reports/stability-reeval-5/README.md",
+        "recorded_by": "STABILITY-REEVAL-5"
+      },
+      {
+        "id": "W45-SR5-PENDING-INVENTORY-ARM-UNDRIVEN",
+        "title": "The audit's inventory arm that withholds a Pending unit is driven by no fixture",
+        "why": "MEASURED by card W45-SR5-SOUNDNESS: crates/qcore-audit/src/projection.rs now makes a Pending unit Unknown when the enumeration inventory does not support a unit Safe, as it already withheld a Safe one. The audit-route fixture (crates/qcore-audit/tests/sr5_pending_gates.rs) reaches the gateway's unread-definition gate first (its reason names `kr_width`), so this arm, like the Safe arm beside it, turns no test red when deleted. Fail-closed by reading. Size: 1 arm. DISCHARGE: a fixture whose enumeration completeness is refused (an undecided conditional group) beside a held call, asserting the unit Unknown with the inventory's reason.",
+        "source": "docs/reports/w45-sr5-soundness/README.md",
+        "recorded_by": "W45-SR5-SOUNDNESS"
+      }
+    ],
+    "limitation": "Also inspect affected report follow-ons and semantic topic residuals."
+  },
+  "metrics": {
+    "unique_selected_bytes": 1082429,
+    "single_pass_retrieval_bytes": 1082429,
+    "actual_session_tokens": null,
+    "note": "Selection estimate only; repeated reads add retrieval. Bytes are not billed tokens."
+  },
+  "base": "c5c298db2ab7dedb5d39d29f4cfd097727e267b2"
+}

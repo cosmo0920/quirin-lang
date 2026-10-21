@@ -7,7 +7,7 @@
  "section_ownership": {
   "note": "Card D02-GEN-REST. Every top-level key of this file is labelled here, so no section is silently hand-maintained. `derived` sections are recomputed by the generator on every run and a hand edit to them is overwritten; `hand_maintained` sections are carried verbatim from the previous matrix, which is why a regeneration no longer reverts a later reconciliation; `integrator_supplied` numbers are measurements the generator cannot take.",
   "generator": "docs/reports/remaining-d02/build_matrix.py",
-  "carried_from": "private/premise-integration/final-previous.json",
+  "carried_from": "private/premise-contracts-integration/libc-previous-matrix.json",
   "vocabulary": {
    "derived": "recomputed by docs/reports/remaining-d02/build_matrix.py from the named manifest, validated record or working tree; a hand edit here is overwritten on the next regeneration",
    "integrator_supplied": "a measurement this script cannot take; supplied through --gate, otherwise carried from the previous matrix and labelled as carried",
@@ -6754,11 +6754,11 @@
   "note": "providers/ is a separate Cargo workspace, excluded from the core workspace; P01 verified empirically that the core workspace builds and passes its full suite with providers/ moved out of the tree."
  },
  "validation": {
-  "note": "Serial integration on measured sourcec5c298db2ab7dedb5d39d29f4cfd097727e267b2; merges44fd04b8c,6d83fd57f,91cc0ea41. Actual unrestricted fullgate8387Rust/0failed/15ignored(524units537summaries),349Lean,374Python; allsteps0. Initial sandbox8279pass/108fail and submodule128 retained, complete source-unchanged unrestricted retry passes. Provider133Rust/25Python/all5packages is BORROWED measured cycle1B evidence for byte-identical provider source, not a fresh integration provider gate; exact provenance in provider-provenance.json. No composed production census; card six/eight-home measurements retain scope. Actual Clang recording from this integration run sits beside gate. Final gate-backed matrix confirmation follows commit.",
-  "workspace_tests": 8387,
+  "note": "Frozen analyzer/proof/control source ccb354a7d: 8,395 Rust passed / 0 failed / 15 ignored (525 units, 538 summaries), 350 Lean audits, formatting, Clippy, both reevaluation examples, submodules and release all exit 0. Six fresh native audits exit 0; all old static, 5,781 full null and full runtime records agree after exact additive/version/full-source-time attribution, with all raw differences retained. All 148 selected __errno_location reference bindings pass; one system and one slice held-source replay pass with changed-source negatives; corpus evidence is binding-only. Three report-owned conditional leaf theorems pass with no axioms; 444 hypothetical exact-context impact controls mutate zero verdicts. All eight universals remain Open. First post-committed-f676 matrix Python: 374 passed in 42.492s; final post-final-committed-matrix confirmation is recorded separately at validation/python-final.json. Provider 133 is explicitly carried exact-c5c-base evidence only: unchanged provider/schema/qv sources make a fresh package gate inapplicable. The actual own Clang recording is copied from this worktree gate-1/clang.log; it is not borrowed from another report.",
+  "workspace_tests": 8395,
   "provider_tests": 133,
   "python_evidence_validator_tests": 374,
-  "lean_audits": 349,
+  "lean_audits": 350,
   "lean_audit_files": [
    "AuditAbiEnumConstPointer.lean",
    "AuditAggregateOwnedField.lean",
@@ -6911,6 +6911,7 @@
    "AuditLayoutExtents.lean",
    "AuditLexicalClosureNestedAssignment.lean",
    "AuditLibcReadingPremises.lean",
+   "AuditLibcReadingSiteEvidence.lean",
    "AuditLifetimeCorrespondence.lean",
    "AuditListIteration.lean",
    "AuditListLookup.lean",
@@ -7114,9 +7115,9 @@
   "reevaluation_followup_exit": 0,
   "cargo_fmt": "clean",
   "cargo_clippy": "clean",
-  "standing_gate": "complete",
+  "standing_gate": "passed",
   "full_language_conformance": false,
-  "measurement_provenance": "integrator_supplied (docs/reports/premise-integration/gate.json)"
+  "measurement_provenance": "integrator_supplied (docs/reports/libc-reading-site-evidence/gate.json)"
  },
  "named_followups": [
   {
@@ -12725,10 +12726,10 @@
   {
    "id": "LIBC-READING-PREMISES-TYPED-DISCHARGE",
    "title": "Bind libc reading propositions to independently checked source contexts before typed discharge",
-   "why": "Cycle1B migrates __errno_location and strerror nested_call_admission to3/5opaque atoms with stable formal proposition IDs, exact Context bindings, conditional Lean decomposition/counterexample theorems and direct/summary dependency controls. No typed registry entry, semantic consumer, verified library body or automatic verdict invalidation exists. DISCHARGE: independently establish each entire guarded proposition for its exact artifact/property/profile/scope/bounds/assumptions/source/build/evidence version and retained expected graph; preserve the accessor either-route alternative rather than requiring both. Any evidence recontextualization or checked verdict invalidation needs a separate scoped rule and matching proof; Unknown is not false and a refuted assumption is not a reachable C violation. Operator proposals AND/forbidden/OR/terminal remain separate semantics work.",
-   "source": "docs/reports/premise-decomposition-cycle1b/README.md",
-   "recorded_by": "PREMISE-DECOMPOSITION-CYCLE1B"
+   "why": "Cycle1B migrates __errno_location and strerror nested_call_admission to3/5opaque atoms with stable formal proposition IDs, exact Context bindings, conditional Lean decomposition/counterexample theorems and direct/summary dependency controls. No typed registry entry, semantic consumer, verified library body or automatic verdict invalidation exists. DISCHARGE: independently establish each entire guarded proposition for its exact artifact/property/profile/scope/bounds/assumptions/source/build/evidence version and retained expected graph; preserve the accessor either-route alternative rather than requiring both. Any evidence recontextualization or checked verdict invalidation needs a separate scoped rule and matching proof; Unknown is not false and a refuted assumption is not a reachable C violation. Operator proposals AND/forbidden/OR/terminal remain separate semantics work. LIBC-READING-SITE-EVIDENCE-V1 adds transactional finite local-checker observations with exact spans, sibling sets, graph/atom/Context/environment references, named Prop leaves and conservative held-source replay controls. Selected successful captures do not enumerate the complete relevant reading domain or prove any of the eight opaque universal atoms; all remain Open. Source/preparation/environment reproduction refusals are evidence boundaries, not refutations or C violations.",
+   "source": "docs/reports/libc-reading-site-evidence/README.md",
+   "recorded_by": "LIBC-READING-SITE-EVIDENCE-V1"
   }
  ],
- "updated": "2026-10-21 serial integration merges44fd04b8c/6d83fd57f/91cc0ea41 at measuredsourcec5c298db2:8387Rust/349Lean/374Python;807followups. Provider133/25/all5packages borrowed byte-identical cycle1B evidence; no composed production census. Final committed-matrix Python confirmation recorded separately."
+ "updated": "2026-10-21 serial integration of premise cycles1/1B and W48 bottom-up batch4;807 followups; individual receipts retain their link contexts; composed standing gate pending."
 }

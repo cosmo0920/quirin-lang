@@ -29,6 +29,8 @@ mod clang;
 // Card VERDICT-CONTRACT-DEPENDENCIES (rules 13f-13h): the declarations each
 // row's derivation consulted, and the unit's body evidence; evidence only.
 pub mod contract_dependencies;
+// Bounded, evidence-only libc reader captures and independent replay.
+pub mod reading_site_evidence;
 // Card VERDICT-BODY-STANDING-CLAUSE-SCOPE (rules 13i-13k): the clauses of a
 // declaration and which of them each piece of body evidence covers.
 pub mod contract_clause_standing;

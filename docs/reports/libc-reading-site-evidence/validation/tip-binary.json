@@ -1,0 +1,17 @@
+{
+  "source": "ccb354a7d8279faf6078d611919ff5fe56ad7ed4",
+  "binary": "/home/cosmo/.codex/worktrees/premise-decomposition-cycle1b/qcore-c/private/libc-reading-site-evidence/gate-1/quirin-audit",
+  "sha256": "18451156d7eb3c51209875076aef360884b453ff67a26c4d82b2f1a372fedec1",
+  "command": [
+    "cargo",
+    "build",
+    "--release",
+    "-p",
+    "qcore-audit",
+    "--bin",
+    "quirin-audit"
+  ],
+  "feature_selection": "default; no feature flags",
+  "rustc": "rustc 1.99.0 (b940084d7 2026-09-28)\nbinary: rustc\ncommit-hash: b940084d7eb6a299eb4bfeb8e34901bc051e7ac4\ncommit-date: 2026-09-28\nhost: x86_64-unknown-linux-gnu\nrelease: 1.99.0\nLLVM version: 23.1.1\n",
+  "head_after": "ccb354a7d8279faf6078d611919ff5fe56ad7ed4"
+}
