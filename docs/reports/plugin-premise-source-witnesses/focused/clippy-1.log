@@ -1,0 +1,26 @@
+    Checking qcore-schemas v20.1.0 (/home/cosmo/.codex/worktrees/w48-bottom-up-batch4/qcore-c/crates/qcore-schemas)
+    Checking qcore-core v0.1.0 (/home/cosmo/.codex/worktrees/w48-bottom-up-batch4/qcore-c/crates/qcore-core)
+    Checking qcore-frontend v0.1.0 (/home/cosmo/.codex/worktrees/w48-bottom-up-batch4/qcore-c/crates/qcore-frontend)
+    Checking qcore-contract v0.1.0 (/home/cosmo/.codex/worktrees/w48-bottom-up-batch4/qcore-c/crates/qcore-contract)
+    Checking qcore-c-gateway v0.1.0 (/home/cosmo/.codex/worktrees/w48-bottom-up-batch4/qcore-c/crates/qcore-c-gateway)
+    Checking qcore-verifier-host v0.4.0 (/home/cosmo/.codex/worktrees/w48-bottom-up-batch4/qcore-c/crates/qcore-verifier-host)
+    Checking qcore-verification v0.4.0 (/home/cosmo/.codex/worktrees/w48-bottom-up-batch4/qcore-c/crates/qcore-verification)
+    Checking quirin-source-analysis v0.1.0 (/home/cosmo/.codex/worktrees/w48-bottom-up-batch4/qcore-c/crates/quirin-source-analysis)
+error: very complex type used. Consider factoring parts into `type` definitions
+   --> crates/quirin-source-analysis/src/plugin_source_witnesses.rs:569:21
+    |
+569 |   fn flow_inputs() -> Result<
+    |  _____________________^
+570 | |     (
+571 | |         BTreeMap<String, String>,
+572 | |         BTreeMap<String, qcore_schemas::hypothesis::Graph>,
+...   |
+576 | |     String,
+577 | | > {
+    | |_^
+    |
+    = help: for further information visit https://rust-lang.github.io/rust-clippy/rust-1.99.0/index.html#type_complexity
+    = note: `-D clippy::type-complexity` implied by `-D warnings`
+    = help: to override `-D warnings` add `#[allow(clippy::type_complexity)]`
+
+error: could not compile `quirin-source-analysis` (lib) due to 1 previous error

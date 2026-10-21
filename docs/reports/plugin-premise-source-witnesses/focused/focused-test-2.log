@@ -1,0 +1,23 @@
+   Compiling quirin-source-analysis v0.1.0 (/home/cosmo/.codex/worktrees/w48-bottom-up-batch4/qcore-c/crates/quirin-source-analysis)
+    Finished `test` profile [unoptimized] target(s) in 8.03s
+     Running unittests src/lib.rs (target/debug/deps/quirin_source_analysis-89d0ccd1ed634b24)
+
+running 2 tests
+test plugin_source_witnesses::tests::bounded_flow_source_replay_and_tampered_model_refuse ... FAILED
+test plugin_source_witnesses::tests::finite_domain_and_exact_trace_refusals ... ok
+
+failures:
+
+---- plugin_source_witnesses::tests::bounded_flow_source_replay_and_tampered_model_refuse stdout ----
+
+thread 'plugin_source_witnesses::tests::bounded_flow_source_replay_and_tampered_model_refuse' (1187538) panicked at crates/quirin-source-analysis/src/plugin_source_witnesses.rs:812:66:
+called `Result::unwrap()` on an `Err` value: "bounded-plugin-fixture.qv: plugin_fixture_duplicate at byte 17: flow: missing/unknown binary operator; parenthesize every binary expression"
+note: run with `RUST_BACKTRACE=1` environment variable to display a backtrace
+
+
+failures:
+    plugin_source_witnesses::tests::bounded_flow_source_replay_and_tampered_model_refuse
+
+test result: FAILED. 1 passed; 1 failed; 0 ignored; 0 measured; 118 filtered out; finished in 0.01s
+
+error: test failed, to rerun pass `-p quirin-source-analysis --lib`
