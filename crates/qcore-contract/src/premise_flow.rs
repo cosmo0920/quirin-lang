@@ -23,6 +23,31 @@ pub fn document_digest(document: &Document) -> Result<String, String> {
     digest(document)
 }
 
+/// Structural boundary from serialization-free frontend syntax to wire records.
+fn source_expr(expr: qcore_frontend::premise_flow::Expr) -> Expr {
+    use qcore_frontend::premise_flow::Expr as Source;
+    match expr {
+        Source::Atom { atom } => Expr::Atom { atom },
+        Source::Flow { flow } => Expr::Flow { flow },
+        Source::And { left, right } => Expr::And {
+            left: Box::new(source_expr(*left)),
+            right: Box::new(source_expr(*right)),
+        },
+        Source::Or { left, right } => Expr::Or {
+            left: Box::new(source_expr(*left)),
+            right: Box::new(source_expr(*right)),
+        },
+        Source::Except { left, right } => Expr::Except {
+            left: Box::new(source_expr(*left)),
+            right: Box::new(source_expr(*right)),
+        },
+        Source::Terminal { left, right } => Expr::Terminal {
+            left: Box::new(source_expr(*left)),
+            right: Box::new(source_expr(*right)),
+        },
+    }
+}
+
 /// Source syntax plus complete reference/terminal validation. No model/evidence
 /// is needed merely to load metadata; interpreted clauses keep their own loader.
 pub fn declaration(
@@ -39,7 +64,7 @@ pub fn declaration(
         if clause.value.kind != SourceContractClauseKind::Requires {
             return Err("flow: only a requires clause admits premise flow".into());
         }
-        if entries.insert(id, expr).is_some() {
+        if entries.insert(id, source_expr(expr)).is_some() {
             return Err("flow: duplicate entry ID".into());
         }
     }

@@ -325,8 +325,8 @@ fn lexes_maps_to_apart_from_the_pipe_the_or_and_the_arrow() {
             TokenKind::Eof,
         ]
     );
-    // `||` keeps its two bytes, and `||->` is the or then an arrow, never a
-    // bar then the maps-to.
+    // Plain `||` keeps its two bytes. PREMISE-FLOW-OPERATORS deliberately
+    // changes the `||->` pin to one longest-match FlowOr token; MapsTo is exact.
     assert_eq!(
         kinds("a || b"),
         vec![
@@ -340,8 +340,7 @@ fn lexes_maps_to_apart_from_the_pipe_the_or_and_the_arrow() {
         kinds("a ||-> b"),
         vec![
             TokenKind::Word("a".into()),
-            TokenKind::Symbol(Symbol::PipePipe),
-            TokenKind::Symbol(Symbol::Arrow),
+            TokenKind::Symbol(Symbol::FlowOr),
             TokenKind::Word("b".into()),
             TokenKind::Eof,
         ]

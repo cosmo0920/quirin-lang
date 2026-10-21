@@ -117,3 +117,15 @@ No semantic clause, old graph or cross-property Context is merged or stripped
 before its authoritative loader has validated it. Model/source tuples remain
 independently expected per view. Tests must exercise malformed/null-overlap and
 wrong-view refusal as well as accepted syntax in all three views.
+
+Joint-gate architecture/pin repair addendum (before corrective edits): the full
+integrated gate found the frontend→schemas dependency violates the existing
+frontend-only-core layering rule, and the old `||->` split-token expectation
+conflicts with the deliberately accepted longest-match operator. The frontend
+will own a serialization-free flow AST; the contract layer will structurally
+convert it to the unchanged schema20.1 expression. No dependency rule is relaxed.
+The existing lexer pin for `||->` will deliberately become FlowOr; all MapsTo,
+pipe, plain-or, arrow and spaced-bar expectations remain. Exact source-to-schema
+operator shape controls and the restarted joint full gate must validate this
+repair. Operator semantics, public flow records and zero-verdict prediction are
+unchanged; the failed joint attempt remains retained.

@@ -1,6 +1,15 @@
 //! Fully parenthesized, contextual premise flow source syntax.
 use crate::lexer::{Symbol, TokenKind, lex};
-use qcore_schemas::premise_flow::Expr;
+/// Frontend-owned syntax only; wire/schema conversion belongs to contract.
+#[derive(Clone, Debug, PartialEq, Eq)]
+pub enum Expr {
+    Atom { atom: String },
+    Flow { flow: String },
+    And { left: Box<Expr>, right: Box<Expr> },
+    Or { left: Box<Expr>, right: Box<Expr> },
+    Except { left: Box<Expr>, right: Box<Expr> },
+    Terminal { left: Box<Expr>, right: Box<Expr> },
+}
 pub fn identifier(s: &str) -> bool {
     s.as_bytes().first().is_some_and(u8::is_ascii_lowercase)
         && s.bytes()

@@ -1,11 +1,11 @@
 {
   "version": 1,
   "base": "882e128c12161babdbfa36806829894eadf600ba",
-  "semantic_checkpoint": "787ee7430",
+  "semantic_checkpoint": "025b4902e",
   "entries": [
     {
       "path": "Cargo.lock",
-      "sha256": "59baabc7a6544fa2561851f7761918a707f4570228dbe5aa1cdd6fe378def6ce"
+      "sha256": "e56a75e9883c7da057e2f8a6d4890d1fb272d7fdb0ceb5b6b58f4affba072b88"
     },
     {
       "path": "crates/qcore-audit/Cargo.toml",
@@ -53,11 +53,11 @@
     },
     {
       "path": "crates/qcore-contract/src/premise_flow.rs",
-      "sha256": "da4f85cb1bc2dc1c7622254b86dba395b950d0f8fa3e74ad642462cc4b591f5d"
+      "sha256": "ad1fc62c348477e5592b81cc16d52b27592bd13b2f73cacea491777b3df7195d"
     },
     {
       "path": "crates/qcore-contract/tests/premise_flow.rs",
-      "sha256": "e1255093942f222886831116c6c97830879191b795387c136d5342603a3da9c3"
+      "sha256": "8c4e83d89c5da370fdeabd233be7df7558d6cfb4c93cef8d3fba3c7f765c0d8a"
     },
     {
       "path": "crates/qcore-core/src/lib.rs",
@@ -73,7 +73,7 @@
     },
     {
       "path": "crates/qcore-frontend/Cargo.toml",
-      "sha256": "974afc21eab2e4d6f4f40f3b84331cc1c0a3a34b98f8232a19dbe34a0240861e"
+      "sha256": "01e4487b9ed5fd51023ee9d079a1454889b2e3d09c2572ed5f82af3d19242e4e"
     },
     {
       "path": "crates/qcore-frontend/src/lexer.rs",
@@ -85,11 +85,11 @@
     },
     {
       "path": "crates/qcore-frontend/src/premise_flow.rs",
-      "sha256": "1b35513fed2c75bffcfe3b11b29825d213ae5ec9dfd59d3a70ce70661a52925f"
+      "sha256": "f75c7af631c41da38c5569a977b9f21d5a5fea1ad7a1d6f6a40d4561fa10cfaf"
     },
     {
       "path": "crates/qcore-frontend/tests/unit/lexer.rs",
-      "sha256": "8071c948f5dd9ea5ae22e1a904c4d799a8ed2092784006ffc66cb26f24913593"
+      "sha256": "e915b91a62629b02d18dabce661c8542b987d31c10b7f6218e1e9a110f1a516e"
     },
     {
       "path": "crates/qcore-schemas/Cargo.toml",
@@ -146,5 +146,5 @@
   ],
   "shared_union_note": "proof/QCore.lean may gain other card imports during integration; root owns exact joint source/proof equality and revalidation",
   "production_qv_changes": 0,
-  "joint_gate": "pending"
+  "joint_gate": "initial integrated attempt failed and retained; restarted corrected-source joint gate pending"
 }

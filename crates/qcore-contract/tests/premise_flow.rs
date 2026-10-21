@@ -14,6 +14,45 @@ fn setup() -> fixture::Fixture {
 #[test]
 fn accepted_contract_source_executes_all_four_operators_and_retains_all_alternatives() {
     let f = setup();
+    use qcore_schemas::premise_flow::Expr;
+    let atom = |id: &str| Box::new(Expr::Atom { atom: id.into() });
+    assert_eq!(
+        f.document.entries["and_flow"],
+        Expr::And {
+            left: atom("a"),
+            right: atom("b")
+        }
+    );
+    assert_eq!(
+        f.document.entries["or_flow"],
+        Expr::Or {
+            left: atom("a"),
+            right: atom("c")
+        }
+    );
+    assert_eq!(
+        f.document.entries["not_flow"],
+        Expr::Except {
+            left: atom("a"),
+            right: atom("c")
+        }
+    );
+    assert_eq!(
+        f.document.entries["end_flow"],
+        Expr::Terminal {
+            left: Box::new(Expr::And {
+                left: Box::new(Expr::Flow {
+                    flow: "and_flow".into()
+                }),
+                right: Box::new(Expr::Flow {
+                    flow: "not_flow".into()
+                })
+            }),
+            right: Box::new(Expr::Flow {
+                flow: "or_flow".into()
+            })
+        }
+    );
     for entry in ["and_flow", "or_flow", "not_flow", "end_flow"] {
         let result = premise_flow::evaluate_proposed(&f.packet, f.held(), entry).unwrap();
         assert_eq!(result.disposition, Disposition::Supported);
