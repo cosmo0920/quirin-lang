@@ -1,0 +1,404 @@
+[
+  {
+    "private": "private/contract-lifecycle-symbols/gate-1/acquired.json",
+    "public": "docs/reports/contract-lifecycle-symbols/validation/gate-1/acquired.json",
+    "original_sha256": "7c66320dd37d3c1f052c91df89663a4ad205ab860759943e838f84dc3f6436df",
+    "public_sha256": "7c66320dd37d3c1f052c91df89663a4ad205ab860759943e838f84dc3f6436df"
+  },
+  {
+    "private": "private/contract-lifecycle-symbols/gate-1/clang.exit",
+    "public": "docs/reports/contract-lifecycle-symbols/validation/gate-1/clang.exit",
+    "original_sha256": "9a271f2a916b0b6ee6cecb2426f0b3206ef074578be55d9bc94f6f3fe3ab86aa",
+    "public_sha256": "9a271f2a916b0b6ee6cecb2426f0b3206ef074578be55d9bc94f6f3fe3ab86aa"
+  },
+  {
+    "private": "private/contract-lifecycle-symbols/gate-1/clang.log",
+    "public": "docs/reports/contract-lifecycle-symbols/validation/gate-1/clang.log.gz",
+    "original_sha256": "77467400b91c4cebb6c3e29d8a611af518a2f4078c22baf276b0a1373e996bf5",
+    "public_sha256": "406ea76b3153710fad352ac5a2cb02d02426f1c96f2a1234f1bffe3fe91a7d50"
+  },
+  {
+    "private": "private/contract-lifecycle-symbols/gate-1/clippy.exit",
+    "public": "docs/reports/contract-lifecycle-symbols/validation/gate-1/clippy.exit",
+    "original_sha256": "39b8dc3fc8b44765c8e6f1adee04c5b465e555ab791cc42d0d9e810d5b64297c",
+    "public_sha256": "39b8dc3fc8b44765c8e6f1adee04c5b465e555ab791cc42d0d9e810d5b64297c"
+  },
+  {
+    "private": "private/contract-lifecycle-symbols/gate-1/clippy.log",
+    "public": "docs/reports/contract-lifecycle-symbols/validation/gate-1/clippy.log.gz",
+    "original_sha256": "bd7519e07f503da7db496ba7af512348f27d0d8aaf61dd5affd96ea18a15f32c",
+    "public_sha256": "3f379439d7a716bd104c3fc3ccd9e72e7a06bb66a57b7b52e55153c398a25ce3"
+  },
+  {
+    "private": "private/contract-lifecycle-symbols/gate-1/commands.json",
+    "public": "docs/reports/contract-lifecycle-symbols/validation/gate-1/commands.json",
+    "original_sha256": "a28049c313b35a15c0fd2eb1aa9817d56db51b214d6ba10360e913b191e95f5e",
+    "public_sha256": "a28049c313b35a15c0fd2eb1aa9817d56db51b214d6ba10360e913b191e95f5e"
+  },
+  {
+    "private": "private/contract-lifecycle-symbols/gate-1/fmt.exit",
+    "public": "docs/reports/contract-lifecycle-symbols/validation/gate-1/fmt.exit",
+    "original_sha256": "9a271f2a916b0b6ee6cecb2426f0b3206ef074578be55d9bc94f6f3fe3ab86aa",
+    "public_sha256": "9a271f2a916b0b6ee6cecb2426f0b3206ef074578be55d9bc94f6f3fe3ab86aa"
+  },
+  {
+    "private": "private/contract-lifecycle-symbols/gate-1/fmt.log",
+    "public": "docs/reports/contract-lifecycle-symbols/validation/gate-1/fmt.log.gz",
+    "original_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "public_sha256": "9ceffb7310338057cfe71a4ae1e2c98d2c485d81cdef906532a801f457a38d64"
+  },
+  {
+    "private": "private/contract-lifecycle-symbols/gate-1/followup.exit",
+    "public": "docs/reports/contract-lifecycle-symbols/validation/gate-1/followup.exit",
+    "original_sha256": "9a271f2a916b0b6ee6cecb2426f0b3206ef074578be55d9bc94f6f3fe3ab86aa",
+    "public_sha256": "9a271f2a916b0b6ee6cecb2426f0b3206ef074578be55d9bc94f6f3fe3ab86aa"
+  },
+  {
+    "private": "private/contract-lifecycle-symbols/gate-1/followup.log",
+    "public": "docs/reports/contract-lifecycle-symbols/validation/gate-1/followup.log.gz",
+    "original_sha256": "ef11357e7959ba24c2230c57bd95114a63dca8fb63372ae2f7ab344fe184e2d5",
+    "public_sha256": "7124902447ccf3c1cded1c93726e64d5f2c09f8dd02d628268327f8d0f8a8d89"
+  },
+  {
+    "private": "private/contract-lifecycle-symbols/gate-1/lean.exit",
+    "public": "docs/reports/contract-lifecycle-symbols/validation/gate-1/lean.exit",
+    "original_sha256": "9a271f2a916b0b6ee6cecb2426f0b3206ef074578be55d9bc94f6f3fe3ab86aa",
+    "public_sha256": "9a271f2a916b0b6ee6cecb2426f0b3206ef074578be55d9bc94f6f3fe3ab86aa"
+  },
+  {
+    "private": "private/contract-lifecycle-symbols/gate-1/lean.log",
+    "public": "docs/reports/contract-lifecycle-symbols/validation/gate-1/lean.log.gz",
+    "original_sha256": "ced78c0e0695e5856d7a10308f20afbb76ba15e5272d3e40d04bd65d09720593",
+    "public_sha256": "7842a17d864aa2577b4dbba064678252745dcc684894979c8067944c3f7a2c8d"
+  },
+  {
+    "private": "private/contract-lifecycle-symbols/gate-1/probe.exit",
+    "public": "docs/reports/contract-lifecycle-symbols/validation/gate-1/probe.exit",
+    "original_sha256": "9a271f2a916b0b6ee6cecb2426f0b3206ef074578be55d9bc94f6f3fe3ab86aa",
+    "public_sha256": "9a271f2a916b0b6ee6cecb2426f0b3206ef074578be55d9bc94f6f3fe3ab86aa"
+  },
+  {
+    "private": "private/contract-lifecycle-symbols/gate-1/probe.log",
+    "public": "docs/reports/contract-lifecycle-symbols/validation/gate-1/probe.log.gz",
+    "original_sha256": "7b1412cbb2bbc96858cfb71cbbe66a4964e88bb46c051ae582057499a014c6f9",
+    "public_sha256": "a2cf1868fbf36167d28eb7286194adf3272b7daf79e7311ec1909a2f94fc0d03"
+  },
+  {
+    "private": "private/contract-lifecycle-symbols/gate-1/released.json",
+    "public": "docs/reports/contract-lifecycle-symbols/validation/gate-1/released.json",
+    "original_sha256": "0b2ed1fcb7eb944ea6d2c714ff205a003743c3c6c5acb4566e804d25be9c6590",
+    "public_sha256": "0b2ed1fcb7eb944ea6d2c714ff205a003743c3c6c5acb4566e804d25be9c6590"
+  },
+  {
+    "private": "private/contract-lifecycle-symbols/gate-1/rust.exit",
+    "public": "docs/reports/contract-lifecycle-symbols/validation/gate-1/rust.exit",
+    "original_sha256": "39b8dc3fc8b44765c8e6f1adee04c5b465e555ab791cc42d0d9e810d5b64297c",
+    "public_sha256": "39b8dc3fc8b44765c8e6f1adee04c5b465e555ab791cc42d0d9e810d5b64297c"
+  },
+  {
+    "private": "private/contract-lifecycle-symbols/gate-1/rust.log",
+    "public": "docs/reports/contract-lifecycle-symbols/validation/gate-1/rust.log.gz",
+    "original_sha256": "0aeda750e6231d5cb1672bf147b3f8ae5d6871e0eb5bc6fb7e29e50234288853",
+    "public_sha256": "b28b9fcd9f8b2c731a7be291445af27e67145eb6e078714946968bfdb08ff759"
+  },
+  {
+    "private": "private/contract-lifecycle-symbols/gate-1/submodules.exit",
+    "public": "docs/reports/contract-lifecycle-symbols/validation/gate-1/submodules.exit",
+    "original_sha256": "9a271f2a916b0b6ee6cecb2426f0b3206ef074578be55d9bc94f6f3fe3ab86aa",
+    "public_sha256": "9a271f2a916b0b6ee6cecb2426f0b3206ef074578be55d9bc94f6f3fe3ab86aa"
+  },
+  {
+    "private": "private/contract-lifecycle-symbols/gate-1/submodules.log",
+    "public": "docs/reports/contract-lifecycle-symbols/validation/gate-1/submodules.log.gz",
+    "original_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "public_sha256": "9ceffb7310338057cfe71a4ae1e2c98d2c485d81cdef906532a801f457a38d64"
+  },
+  {
+    "private": "private/contract-lifecycle-symbols/gate-2/bootstrap-refusal.json",
+    "public": "docs/reports/contract-lifecycle-symbols/validation/gate-2/bootstrap-refusal.json",
+    "original_sha256": "2b7f0850c951fcb78d41eaafca133e9b7585e8164ae29ded94b3ef905b738cc3",
+    "public_sha256": "2b7f0850c951fcb78d41eaafca133e9b7585e8164ae29ded94b3ef905b738cc3"
+  },
+  {
+    "private": "private/contract-lifecycle-symbols/gate-3/acquired.json",
+    "public": "docs/reports/contract-lifecycle-symbols/validation/gate-3/acquired.json",
+    "original_sha256": "ffb10296c1c91eb51921b08985663c2956542d8f200cd4a93ed73360d05e978a",
+    "public_sha256": "ffb10296c1c91eb51921b08985663c2956542d8f200cd4a93ed73360d05e978a"
+  },
+  {
+    "private": "private/contract-lifecycle-symbols/gate-3/clang.exit",
+    "public": "docs/reports/contract-lifecycle-symbols/validation/gate-3/clang.exit",
+    "original_sha256": "9a271f2a916b0b6ee6cecb2426f0b3206ef074578be55d9bc94f6f3fe3ab86aa",
+    "public_sha256": "9a271f2a916b0b6ee6cecb2426f0b3206ef074578be55d9bc94f6f3fe3ab86aa"
+  },
+  {
+    "private": "private/contract-lifecycle-symbols/gate-3/clang.log",
+    "public": "docs/reports/contract-lifecycle-symbols/validation/gate-3/clang.log.gz",
+    "original_sha256": "77467400b91c4cebb6c3e29d8a611af518a2f4078c22baf276b0a1373e996bf5",
+    "public_sha256": "406ea76b3153710fad352ac5a2cb02d02426f1c96f2a1234f1bffe3fe91a7d50"
+  },
+  {
+    "private": "private/contract-lifecycle-symbols/gate-3/clippy.exit",
+    "public": "docs/reports/contract-lifecycle-symbols/validation/gate-3/clippy.exit",
+    "original_sha256": "9a271f2a916b0b6ee6cecb2426f0b3206ef074578be55d9bc94f6f3fe3ab86aa",
+    "public_sha256": "9a271f2a916b0b6ee6cecb2426f0b3206ef074578be55d9bc94f6f3fe3ab86aa"
+  },
+  {
+    "private": "private/contract-lifecycle-symbols/gate-3/clippy.log",
+    "public": "docs/reports/contract-lifecycle-symbols/validation/gate-3/clippy.log.gz",
+    "original_sha256": "dca3ef08758abf102c0ec942cc205ac84ed66a6baa3d5460d17ab140fd7b6516",
+    "public_sha256": "86d4fa12f06976f4023efa3fd5c852588ee25a93df0944f7bda065fcb2312a04"
+  },
+  {
+    "private": "private/contract-lifecycle-symbols/gate-3/commands.json",
+    "public": "docs/reports/contract-lifecycle-symbols/validation/gate-3/commands.json",
+    "original_sha256": "5cd2ac419d5fa2da8a36b4991baf4dfdeaa658e57a2beeba59044f8cf771993a",
+    "public_sha256": "5cd2ac419d5fa2da8a36b4991baf4dfdeaa658e57a2beeba59044f8cf771993a"
+  },
+  {
+    "private": "private/contract-lifecycle-symbols/gate-3/fmt.exit",
+    "public": "docs/reports/contract-lifecycle-symbols/validation/gate-3/fmt.exit",
+    "original_sha256": "9a271f2a916b0b6ee6cecb2426f0b3206ef074578be55d9bc94f6f3fe3ab86aa",
+    "public_sha256": "9a271f2a916b0b6ee6cecb2426f0b3206ef074578be55d9bc94f6f3fe3ab86aa"
+  },
+  {
+    "private": "private/contract-lifecycle-symbols/gate-3/fmt.log",
+    "public": "docs/reports/contract-lifecycle-symbols/validation/gate-3/fmt.log.gz",
+    "original_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "public_sha256": "9ceffb7310338057cfe71a4ae1e2c98d2c485d81cdef906532a801f457a38d64"
+  },
+  {
+    "private": "private/contract-lifecycle-symbols/gate-3/followup.exit",
+    "public": "docs/reports/contract-lifecycle-symbols/validation/gate-3/followup.exit",
+    "original_sha256": "9a271f2a916b0b6ee6cecb2426f0b3206ef074578be55d9bc94f6f3fe3ab86aa",
+    "public_sha256": "9a271f2a916b0b6ee6cecb2426f0b3206ef074578be55d9bc94f6f3fe3ab86aa"
+  },
+  {
+    "private": "private/contract-lifecycle-symbols/gate-3/followup.log",
+    "public": "docs/reports/contract-lifecycle-symbols/validation/gate-3/followup.log.gz",
+    "original_sha256": "ffa5bee1fe5f1f0a68ec903fb026922b5a871e95c0adee2cf08cd50489edeb25",
+    "public_sha256": "1c59b1d242a6957d517273670b525e6d8b79acf73d8835559d2c371fab728bdf"
+  },
+  {
+    "private": "private/contract-lifecycle-symbols/gate-3/lean.exit",
+    "public": "docs/reports/contract-lifecycle-symbols/validation/gate-3/lean.exit",
+    "original_sha256": "9a271f2a916b0b6ee6cecb2426f0b3206ef074578be55d9bc94f6f3fe3ab86aa",
+    "public_sha256": "9a271f2a916b0b6ee6cecb2426f0b3206ef074578be55d9bc94f6f3fe3ab86aa"
+  },
+  {
+    "private": "private/contract-lifecycle-symbols/gate-3/lean.log",
+    "public": "docs/reports/contract-lifecycle-symbols/validation/gate-3/lean.log.gz",
+    "original_sha256": "35a1a3e0908690a614c13d76d173862297ce9392aaff859ab6b086ddf73789a4",
+    "public_sha256": "0f5e4e0837eda2bf229381c620c185cb251628cbc5f5e4d59074b3a2a10b18b8"
+  },
+  {
+    "private": "private/contract-lifecycle-symbols/gate-3/probe.exit",
+    "public": "docs/reports/contract-lifecycle-symbols/validation/gate-3/probe.exit",
+    "original_sha256": "9a271f2a916b0b6ee6cecb2426f0b3206ef074578be55d9bc94f6f3fe3ab86aa",
+    "public_sha256": "9a271f2a916b0b6ee6cecb2426f0b3206ef074578be55d9bc94f6f3fe3ab86aa"
+  },
+  {
+    "private": "private/contract-lifecycle-symbols/gate-3/probe.log",
+    "public": "docs/reports/contract-lifecycle-symbols/validation/gate-3/probe.log.gz",
+    "original_sha256": "5595fcf69a0e85180af728a2e993a5dc5347128a9f2c89416a60c521a3348cbd",
+    "public_sha256": "20cd31d6b7edc6e54590518032646807fba55117d95e9c7de836041cd055311c"
+  },
+  {
+    "private": "private/contract-lifecycle-symbols/gate-3/released.json",
+    "public": "docs/reports/contract-lifecycle-symbols/validation/gate-3/released.json",
+    "original_sha256": "e808dd9bb6e0094f6722eedd481a0e1e3c443c5e781756d02592a4a93adf2660",
+    "public_sha256": "e808dd9bb6e0094f6722eedd481a0e1e3c443c5e781756d02592a4a93adf2660"
+  },
+  {
+    "private": "private/contract-lifecycle-symbols/gate-3/rust.exit",
+    "public": "docs/reports/contract-lifecycle-symbols/validation/gate-3/rust.exit",
+    "original_sha256": "39b8dc3fc8b44765c8e6f1adee04c5b465e555ab791cc42d0d9e810d5b64297c",
+    "public_sha256": "39b8dc3fc8b44765c8e6f1adee04c5b465e555ab791cc42d0d9e810d5b64297c"
+  },
+  {
+    "private": "private/contract-lifecycle-symbols/gate-3/rust.log",
+    "public": "docs/reports/contract-lifecycle-symbols/validation/gate-3/rust.log.gz",
+    "original_sha256": "e0f8c1b7da13fd0f265bafb76f72f4645bc6eea7b8d9e5ead6b31fbdcea695d9",
+    "public_sha256": "c4ccb633122db4f22b071f458c9465b1786e122772c839debd23438cd70088d1"
+  },
+  {
+    "private": "private/contract-lifecycle-symbols/gate-3/submodules.exit",
+    "public": "docs/reports/contract-lifecycle-symbols/validation/gate-3/submodules.exit",
+    "original_sha256": "9a271f2a916b0b6ee6cecb2426f0b3206ef074578be55d9bc94f6f3fe3ab86aa",
+    "public_sha256": "9a271f2a916b0b6ee6cecb2426f0b3206ef074578be55d9bc94f6f3fe3ab86aa"
+  },
+  {
+    "private": "private/contract-lifecycle-symbols/gate-3/submodules.log",
+    "public": "docs/reports/contract-lifecycle-symbols/validation/gate-3/submodules.log.gz",
+    "original_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "public_sha256": "9ceffb7310338057cfe71a4ae1e2c98d2c485d81cdef906532a801f457a38d64"
+  },
+  {
+    "private": "private/contract-lifecycle-symbols/gate-4/acquired.json",
+    "public": "docs/reports/contract-lifecycle-symbols/validation/gate-4/acquired.json",
+    "original_sha256": "f5ddc6aec6b48c6565b8068628f0aabd8af9c55a21c80f2134d3f6809b8c80fc",
+    "public_sha256": "f5ddc6aec6b48c6565b8068628f0aabd8af9c55a21c80f2134d3f6809b8c80fc"
+  },
+  {
+    "private": "private/contract-lifecycle-symbols/gate-4/clang.exit",
+    "public": "docs/reports/contract-lifecycle-symbols/validation/gate-4/clang.exit",
+    "original_sha256": "9a271f2a916b0b6ee6cecb2426f0b3206ef074578be55d9bc94f6f3fe3ab86aa",
+    "public_sha256": "9a271f2a916b0b6ee6cecb2426f0b3206ef074578be55d9bc94f6f3fe3ab86aa"
+  },
+  {
+    "private": "private/contract-lifecycle-symbols/gate-4/clang.log",
+    "public": "docs/reports/contract-lifecycle-symbols/validation/gate-4/clang.log.gz",
+    "original_sha256": "77467400b91c4cebb6c3e29d8a611af518a2f4078c22baf276b0a1373e996bf5",
+    "public_sha256": "406ea76b3153710fad352ac5a2cb02d02426f1c96f2a1234f1bffe3fe91a7d50"
+  },
+  {
+    "private": "private/contract-lifecycle-symbols/gate-4/clippy.exit",
+    "public": "docs/reports/contract-lifecycle-symbols/validation/gate-4/clippy.exit",
+    "original_sha256": "9a271f2a916b0b6ee6cecb2426f0b3206ef074578be55d9bc94f6f3fe3ab86aa",
+    "public_sha256": "9a271f2a916b0b6ee6cecb2426f0b3206ef074578be55d9bc94f6f3fe3ab86aa"
+  },
+  {
+    "private": "private/contract-lifecycle-symbols/gate-4/clippy.log",
+    "public": "docs/reports/contract-lifecycle-symbols/validation/gate-4/clippy.log.gz",
+    "original_sha256": "3c48af3113d9bca06dbb760fbd9532b643040e1e98862677629a0436a1bde1bf",
+    "public_sha256": "804543f641bdf136e7da27c4049e5b5b9f8eda94fc8b821bb8c81fb8779cb8d8"
+  },
+  {
+    "private": "private/contract-lifecycle-symbols/gate-4/commands.json",
+    "public": "docs/reports/contract-lifecycle-symbols/validation/gate-4/commands.json",
+    "original_sha256": "24ed73a03e4236077ab653a4bf3d40b443056227c74724755efc457d9a873457",
+    "public_sha256": "24ed73a03e4236077ab653a4bf3d40b443056227c74724755efc457d9a873457"
+  },
+  {
+    "private": "private/contract-lifecycle-symbols/gate-4/fmt.exit",
+    "public": "docs/reports/contract-lifecycle-symbols/validation/gate-4/fmt.exit",
+    "original_sha256": "9a271f2a916b0b6ee6cecb2426f0b3206ef074578be55d9bc94f6f3fe3ab86aa",
+    "public_sha256": "9a271f2a916b0b6ee6cecb2426f0b3206ef074578be55d9bc94f6f3fe3ab86aa"
+  },
+  {
+    "private": "private/contract-lifecycle-symbols/gate-4/fmt.log",
+    "public": "docs/reports/contract-lifecycle-symbols/validation/gate-4/fmt.log.gz",
+    "original_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "public_sha256": "9ceffb7310338057cfe71a4ae1e2c98d2c485d81cdef906532a801f457a38d64"
+  },
+  {
+    "private": "private/contract-lifecycle-symbols/gate-4/followup.exit",
+    "public": "docs/reports/contract-lifecycle-symbols/validation/gate-4/followup.exit",
+    "original_sha256": "9a271f2a916b0b6ee6cecb2426f0b3206ef074578be55d9bc94f6f3fe3ab86aa",
+    "public_sha256": "9a271f2a916b0b6ee6cecb2426f0b3206ef074578be55d9bc94f6f3fe3ab86aa"
+  },
+  {
+    "private": "private/contract-lifecycle-symbols/gate-4/followup.log",
+    "public": "docs/reports/contract-lifecycle-symbols/validation/gate-4/followup.log.gz",
+    "original_sha256": "ffa5bee1fe5f1f0a68ec903fb026922b5a871e95c0adee2cf08cd50489edeb25",
+    "public_sha256": "1c59b1d242a6957d517273670b525e6d8b79acf73d8835559d2c371fab728bdf"
+  },
+  {
+    "private": "private/contract-lifecycle-symbols/gate-4/lean.exit",
+    "public": "docs/reports/contract-lifecycle-symbols/validation/gate-4/lean.exit",
+    "original_sha256": "9a271f2a916b0b6ee6cecb2426f0b3206ef074578be55d9bc94f6f3fe3ab86aa",
+    "public_sha256": "9a271f2a916b0b6ee6cecb2426f0b3206ef074578be55d9bc94f6f3fe3ab86aa"
+  },
+  {
+    "private": "private/contract-lifecycle-symbols/gate-4/lean.log",
+    "public": "docs/reports/contract-lifecycle-symbols/validation/gate-4/lean.log.gz",
+    "original_sha256": "75f9dabc8251347e7f2f12df8cbdfadf9117723775500203d03987d6c48510dc",
+    "public_sha256": "fe9a2bcde4e63db8729c21eb5dd779841869001dc3f0c7a7ed3fa31558dddd5a"
+  },
+  {
+    "private": "private/contract-lifecycle-symbols/gate-4/probe.exit",
+    "public": "docs/reports/contract-lifecycle-symbols/validation/gate-4/probe.exit",
+    "original_sha256": "9a271f2a916b0b6ee6cecb2426f0b3206ef074578be55d9bc94f6f3fe3ab86aa",
+    "public_sha256": "9a271f2a916b0b6ee6cecb2426f0b3206ef074578be55d9bc94f6f3fe3ab86aa"
+  },
+  {
+    "private": "private/contract-lifecycle-symbols/gate-4/probe.log",
+    "public": "docs/reports/contract-lifecycle-symbols/validation/gate-4/probe.log.gz",
+    "original_sha256": "5595fcf69a0e85180af728a2e993a5dc5347128a9f2c89416a60c521a3348cbd",
+    "public_sha256": "20cd31d6b7edc6e54590518032646807fba55117d95e9c7de836041cd055311c"
+  },
+  {
+    "private": "private/contract-lifecycle-symbols/gate-4/released.json",
+    "public": "docs/reports/contract-lifecycle-symbols/validation/gate-4/released.json",
+    "original_sha256": "632aaa825179d15028b9d846baba55dee967b9c1c67a5e011d9ebea8112234d2",
+    "public_sha256": "632aaa825179d15028b9d846baba55dee967b9c1c67a5e011d9ebea8112234d2"
+  },
+  {
+    "private": "private/contract-lifecycle-symbols/gate-4/rust.exit",
+    "public": "docs/reports/contract-lifecycle-symbols/validation/gate-4/rust.exit",
+    "original_sha256": "39b8dc3fc8b44765c8e6f1adee04c5b465e555ab791cc42d0d9e810d5b64297c",
+    "public_sha256": "39b8dc3fc8b44765c8e6f1adee04c5b465e555ab791cc42d0d9e810d5b64297c"
+  },
+  {
+    "private": "private/contract-lifecycle-symbols/gate-4/rust.log",
+    "public": "docs/reports/contract-lifecycle-symbols/validation/gate-4/rust.log.gz",
+    "original_sha256": "d2b93464b404882f1233c1c43bf8f9050c954bdac04bce9c7b764ef6ec4993d1",
+    "public_sha256": "546facaa62d7a1ac382fe4d33d247cfc889610cf0124f2220428c84d62e3ae24"
+  },
+  {
+    "private": "private/contract-lifecycle-symbols/gate-4/submodules.exit",
+    "public": "docs/reports/contract-lifecycle-symbols/validation/gate-4/submodules.exit",
+    "original_sha256": "9a271f2a916b0b6ee6cecb2426f0b3206ef074578be55d9bc94f6f3fe3ab86aa",
+    "public_sha256": "9a271f2a916b0b6ee6cecb2426f0b3206ef074578be55d9bc94f6f3fe3ab86aa"
+  },
+  {
+    "private": "private/contract-lifecycle-symbols/gate-4/submodules.log",
+    "public": "docs/reports/contract-lifecycle-symbols/validation/gate-4/submodules.log.gz",
+    "original_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "public_sha256": "9ceffb7310338057cfe71a4ae1e2c98d2c485d81cdef906532a801f457a38d64"
+  },
+  {
+    "private": "private/contract-lifecycle-symbols/tsan-isolation-1/receipt.json",
+    "public": "docs/reports/contract-lifecycle-symbols/validation/tsan-isolation-1/receipt.json",
+    "original_sha256": "3dab480c32b7ddb305172d6c3783b4844b3794deb75a2f4f3b7d219559d863bf",
+    "public_sha256": "3dab480c32b7ddb305172d6c3783b4844b3794deb75a2f4f3b7d219559d863bf"
+  },
+  {
+    "private": "private/contract-lifecycle-symbols/tsan-isolation-1/stderr.log",
+    "public": "docs/reports/contract-lifecycle-symbols/validation/tsan-isolation-1/stderr.log.gz",
+    "original_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "public_sha256": "9ceffb7310338057cfe71a4ae1e2c98d2c485d81cdef906532a801f457a38d64"
+  },
+  {
+    "private": "private/contract-lifecycle-symbols/tsan-isolation-1/stdout.log",
+    "public": "docs/reports/contract-lifecycle-symbols/validation/tsan-isolation-1/stdout.log.gz",
+    "original_sha256": "3fc0163ea1d930ea998912b77be9a07b5fba393e1abad2271e85cc472121ab18",
+    "public_sha256": "8498208b725ca5c2d40d08bb020c34aa3f999f119204ebe93b8591fad8391ed3"
+  },
+  {
+    "private": "private/contract-lifecycle-symbols/focused-1.log",
+    "public": "docs/reports/contract-lifecycle-symbols/validation/focused-1.log.gz",
+    "original_sha256": "cdcf160d97c80078346b1e632193141c4e601cdbfb1a07b7d42e675e90689145",
+    "public_sha256": "a1fb8c9d3e005239940af8a2deedaf0f1393da3f148f77810aee0165ccda46c0"
+  },
+  {
+    "private": "private/contract-lifecycle-symbols/focused-2.log",
+    "public": "docs/reports/contract-lifecycle-symbols/validation/focused-2.log.gz",
+    "original_sha256": "ffbe3cf68beab808f52f1eba9261c15e81ac1b8c8c46e161c0d9b616a452cd59",
+    "public_sha256": "5e8a2a27f3efe1d2b6dda50cb00359075f9846991142689c79f23ee5106b1255"
+  },
+  {
+    "private": "private/contract-lifecycle-symbols/focused-3.log",
+    "public": "docs/reports/contract-lifecycle-symbols/validation/focused-3.log.gz",
+    "original_sha256": "0fc0a258d1dd41a4814c9ec63964439c67c76567e25463fbf000913890f38f98",
+    "public_sha256": "2a0c3cf8927cb70f1ade9e2480238ecc514d9a816d6221481fc30c5520a4b243"
+  },
+  {
+    "private": "private/contract-lifecycle-symbols/focused-4.log",
+    "public": "docs/reports/contract-lifecycle-symbols/validation/focused-4.log.gz",
+    "original_sha256": "5239242a676ca57ccebb468ece8e87a50d75c9b59f8da0b0b5cafb34d6688294",
+    "public_sha256": "b367951651a2ead898c3d4f23139f4cf270df8707657ab2815bdc3569bb6323f"
+  },
+  {
+    "private": "private/contract-lifecycle-symbols/focused-5.log",
+    "public": "docs/reports/contract-lifecycle-symbols/validation/focused-5.log.gz",
+    "original_sha256": "ffecc1dd40ac8cc5fa8d2b27bf774ffb084c904314858c357fd7892c152aef84",
+    "public_sha256": "180556504e13b751d685ee39b637d3d49dce8a212d44583e3b897c562c865510"
+  },
+  {
+    "private": "private/contract-lifecycle-symbols/lean-focused-1.log",
+    "public": "docs/reports/contract-lifecycle-symbols/validation/lean-focused-1.log.gz",
+    "original_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "public_sha256": "9ceffb7310338057cfe71a4ae1e2c98d2c485d81cdef906532a801f457a38d64"
+  }
+]

@@ -1,0 +1,182 @@
+[
+  {
+    "name": "submodules",
+    "command": [
+      "git",
+      "submodule",
+      "update",
+      "--init",
+      "--recursive"
+    ],
+    "cwd": "/home/cosmo/Documents/GitHub/qcore-c",
+    "source": "8e7449578918450bf51d9801affb51ee9c9e8d3c",
+    "started": "2026-10-21T11:01:07.305585+00:00",
+    "ended": "2026-10-21T11:01:07.327024+00:00",
+    "seconds": 0.02145905897486955,
+    "exit": 0,
+    "environment_overrides": {
+      "CARGO_PROFILE_DEV_DEBUG": "0",
+      "CARGO_PROFILE_TEST_DEBUG": "0",
+      "CARGO_INCREMENTAL": "0",
+      "QCORE_AUDIT_BUILD_COMMIT": "8e7449578918450bf51d9801affb51ee9c9e8d3c"
+    },
+    "log": "/home/cosmo/Documents/GitHub/qcore-c/private/contract-lifecycle-symbols/gate-1/submodules.log"
+  },
+  {
+    "name": "clang",
+    "command": [
+      "clang",
+      "--version"
+    ],
+    "cwd": "/home/cosmo/Documents/GitHub/qcore-c",
+    "source": "8e7449578918450bf51d9801affb51ee9c9e8d3c",
+    "started": "2026-10-21T11:01:07.327215+00:00",
+    "ended": "2026-10-21T11:01:07.343298+00:00",
+    "seconds": 0.016100417939014733,
+    "exit": 0,
+    "environment_overrides": {
+      "CARGO_PROFILE_DEV_DEBUG": "0",
+      "CARGO_PROFILE_TEST_DEBUG": "0",
+      "CARGO_INCREMENTAL": "0",
+      "QCORE_AUDIT_BUILD_COMMIT": "8e7449578918450bf51d9801affb51ee9c9e8d3c"
+    },
+    "log": "/home/cosmo/Documents/GitHub/qcore-c/private/contract-lifecycle-symbols/gate-1/clang.log"
+  },
+  {
+    "name": "rust",
+    "command": [
+      "python3",
+      "scripts/run_test_binaries.py",
+      "--jobs",
+      "4"
+    ],
+    "cwd": "/home/cosmo/Documents/GitHub/qcore-c",
+    "source": "8e7449578918450bf51d9801affb51ee9c9e8d3c",
+    "started": "2026-10-21T11:01:07.343562+00:00",
+    "ended": "2026-10-21T11:01:19.894391+00:00",
+    "seconds": 12.550847757956944,
+    "exit": 101,
+    "environment_overrides": {
+      "CARGO_PROFILE_DEV_DEBUG": "0",
+      "CARGO_PROFILE_TEST_DEBUG": "0",
+      "CARGO_INCREMENTAL": "0",
+      "QCORE_AUDIT_BUILD_COMMIT": "8e7449578918450bf51d9801affb51ee9c9e8d3c"
+    },
+    "log": "/home/cosmo/Documents/GitHub/qcore-c/private/contract-lifecycle-symbols/gate-1/rust.log"
+  },
+  {
+    "name": "fmt",
+    "command": [
+      "cargo",
+      "fmt",
+      "--all",
+      "--",
+      "--check"
+    ],
+    "cwd": "/home/cosmo/Documents/GitHub/qcore-c",
+    "source": "8e7449578918450bf51d9801affb51ee9c9e8d3c",
+    "started": "2026-10-21T11:01:19.894712+00:00",
+    "ended": "2026-10-21T11:01:24.575486+00:00",
+    "seconds": 4.680794558953494,
+    "exit": 0,
+    "environment_overrides": {
+      "CARGO_PROFILE_DEV_DEBUG": "0",
+      "CARGO_PROFILE_TEST_DEBUG": "0",
+      "CARGO_INCREMENTAL": "0",
+      "QCORE_AUDIT_BUILD_COMMIT": "8e7449578918450bf51d9801affb51ee9c9e8d3c"
+    },
+    "log": "/home/cosmo/Documents/GitHub/qcore-c/private/contract-lifecycle-symbols/gate-1/fmt.log"
+  },
+  {
+    "name": "clippy",
+    "command": [
+      "cargo",
+      "clippy",
+      "--all-targets",
+      "--",
+      "-D",
+      "warnings"
+    ],
+    "cwd": "/home/cosmo/Documents/GitHub/qcore-c",
+    "source": "8e7449578918450bf51d9801affb51ee9c9e8d3c",
+    "started": "2026-10-21T11:01:24.575790+00:00",
+    "ended": "2026-10-21T11:01:32.900327+00:00",
+    "seconds": 8.32455688493792,
+    "exit": 101,
+    "environment_overrides": {
+      "CARGO_PROFILE_DEV_DEBUG": "0",
+      "CARGO_PROFILE_TEST_DEBUG": "0",
+      "CARGO_INCREMENTAL": "0",
+      "QCORE_AUDIT_BUILD_COMMIT": "8e7449578918450bf51d9801affb51ee9c9e8d3c"
+    },
+    "log": "/home/cosmo/Documents/GitHub/qcore-c/private/contract-lifecycle-symbols/gate-1/clippy.log"
+  },
+  {
+    "name": "probe",
+    "command": [
+      "cargo",
+      "run",
+      "-p",
+      "qcore-compiler",
+      "--example",
+      "reevaluation_probe"
+    ],
+    "cwd": "/home/cosmo/Documents/GitHub/qcore-c",
+    "source": "8e7449578918450bf51d9801affb51ee9c9e8d3c",
+    "started": "2026-10-21T11:01:32.900605+00:00",
+    "ended": "2026-10-21T11:02:01.668020+00:00",
+    "seconds": 28.76743745501153,
+    "exit": 0,
+    "environment_overrides": {
+      "CARGO_PROFILE_DEV_DEBUG": "0",
+      "CARGO_PROFILE_TEST_DEBUG": "0",
+      "CARGO_INCREMENTAL": "0",
+      "QCORE_AUDIT_BUILD_COMMIT": "8e7449578918450bf51d9801affb51ee9c9e8d3c"
+    },
+    "log": "/home/cosmo/Documents/GitHub/qcore-c/private/contract-lifecycle-symbols/gate-1/probe.log"
+  },
+  {
+    "name": "followup",
+    "command": [
+      "cargo",
+      "run",
+      "-p",
+      "qcore-compiler",
+      "--example",
+      "reevaluation_followup"
+    ],
+    "cwd": "/home/cosmo/Documents/GitHub/qcore-c",
+    "source": "8e7449578918450bf51d9801affb51ee9c9e8d3c",
+    "started": "2026-10-21T11:02:01.668329+00:00",
+    "ended": "2026-10-21T11:02:02.580848+00:00",
+    "seconds": 0.9125511980382726,
+    "exit": 0,
+    "environment_overrides": {
+      "CARGO_PROFILE_DEV_DEBUG": "0",
+      "CARGO_PROFILE_TEST_DEBUG": "0",
+      "CARGO_INCREMENTAL": "0",
+      "QCORE_AUDIT_BUILD_COMMIT": "8e7449578918450bf51d9801affb51ee9c9e8d3c"
+    },
+    "log": "/home/cosmo/Documents/GitHub/qcore-c/private/contract-lifecycle-symbols/gate-1/followup.log"
+  },
+  {
+    "name": "lean",
+    "command": [
+      "python3",
+      "scripts/check_lean_audits.py"
+    ],
+    "cwd": "/home/cosmo/Documents/GitHub/qcore-c",
+    "source": "8e7449578918450bf51d9801affb51ee9c9e8d3c",
+    "started": "2026-10-21T11:02:02.581439+00:00",
+    "ended": "2026-10-21T11:02:17.403677+00:00",
+    "seconds": 14.822260846034624,
+    "exit": 0,
+    "environment_overrides": {
+      "CARGO_PROFILE_DEV_DEBUG": "0",
+      "CARGO_PROFILE_TEST_DEBUG": "0",
+      "CARGO_INCREMENTAL": "0",
+      "QCORE_AUDIT_BUILD_COMMIT": "8e7449578918450bf51d9801affb51ee9c9e8d3c"
+    },
+    "log": "/home/cosmo/Documents/GitHub/qcore-c/private/contract-lifecycle-symbols/gate-1/lean.log"
+  }
+]
