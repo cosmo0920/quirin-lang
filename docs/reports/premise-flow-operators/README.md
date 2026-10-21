@@ -1,7 +1,11 @@
 # Executable premise flow operators
 
-Work in progress from exact base882e128c. The [preimplementation freeze](design.md)
-defines executable contextual syntax, independent proposed logic, positive
-refutation, root-only flow termination and exact source/model/Context replay.
-Existing graph/legacy semantics remain separate. No completed joint gate or
-new safety/source-truth claim is made yet.
+Work in progress from exact base882e128c. The [preimplementation freeze](design.md) owns the prediction and evidence boundary. C04.18.3 and G05-flow are the implemented authoritative semantics/grammar. Library typechecking passed; focused controls, Lean and the combined standing/provider/native gate remain pending. No completed gate or new safety/source-truth claim is made here.
+
+The accepted contract source is `crates/qcore-contract/examples/support/premise_flow.qv`. Its executable example requires explicit model/audit bytes and emits the exact independent flow document plus four results. A and B are declared Supported and C positively Refuted: `a |-> b`, `a ||-> c` and `a !-> c` are Supported; the root `(flow(and_flow) |-> flow(not_flow)) ->| flow(or_flow)` is Supported and terminated. These are assumed finite logical propositions. The terminal result closes this flow, without claiming that a C program halts. Removing C's refutation leaves both NOT and the terminal Open; removing B leaves the terminal Open and unterminated.
+
+Separate version1 flow records bind retained source, declaration/property view, graph, explicit formal model/artifact bytes and all nine Context coordinates. They add no graph field, named premise, interpreted bounds fact, global truth predicate or legacy semantic consumer. Original graph bytes/erasure remain exact when metadata is stripped. Source adapters own separately checked bounded receipts: eligible generic assignments remain proposed logic and their warrants grant no source authority. The concurrent library witness and libc/cJSON source-binding cards supply end-to-end checked finite-witness integrations; no old universal atom becomes Supported merely from these examples.
+
+Controls include exhaustive partial/Boolean assignment soundness, accepted execution of every operator, all nine context mismatches, duplicate/conflicting and unsupported evidence, source/graph/atom/model/artifact identity mismatches, canonical wire/version rejection, missing/cyclic references, entry/depth/expansion bounds, root-only termination through references, exact graph erasure, inheritance without identifier renaming and separately replayed bounds/model vocabularies. A real parsed C direct call and validated caller summary retain both OR alternatives and forbidden prerequisites. Its synthetic proposed refutation reports potential affected users while a different held Context refuses; no result is rewritten.
+
+The joint gate will measure the frozen integrated implementation shared by all three cards. Its actual commands, source identity, exits/counts/private logs and all six base/tip routes must be cited here before completion. No own-worktree audit campaign is claimed. `PLUGIN-PREMISE-OPERATOR-DESIGN` remains open until its exact registered acceptance criteria and the joint evidence are complete. Production flow adoption, universal source proofs and any typed safety consumer remain separate work.

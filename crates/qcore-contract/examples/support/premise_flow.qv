@@ -8,7 +8,7 @@ extern fn observed(p: ptr<mut, u8>) -> i32 contract {
     requires resource_premise_flow_v1(and_flow, (a |-> b));
     requires resource_premise_flow_v1(or_flow, (a ||-> c));
     requires resource_premise_flow_v1(not_flow, (a !-> c));
-    requires resource_premise_flow_v1(end_flow, (flow(and_flow) ->| flow(or_flow)));
+    requires resource_premise_flow_v1(end_flow, ((flow(and_flow) |-> flow(not_flow)) ->| flow(or_flow)));
     ensures normal resource_borrowed(p);
     ensures normal resource_return_none();
 };

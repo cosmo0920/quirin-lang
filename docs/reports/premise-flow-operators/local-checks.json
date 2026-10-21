@@ -1,10 +1,32 @@
 {
-  "version": 1,
-  "source_commit": "69ece79f5",
-  "command": "CARGO_PROFILE_DEV_DEBUG=0 CARGO_INCREMENTAL=0 cargo check -p qcore-contract --lib -j1",
-  "serialization": "/tmp/qcore-c-cycle2-small-compile.lock",
-  "exit": 0,
-  "elapsed_seconds": 13.99,
-  "private_log": "private/premise-flow-operators/focused-1/check.log",
-  "scope": "library typecheck only; new tests and Lean pending; not standing or measurement evidence"
+  "library_check": {
+    "version": 1,
+    "source_commit": "69ece79f5",
+    "command": "CARGO_PROFILE_DEV_DEBUG=0 CARGO_INCREMENTAL=0 cargo check -p qcore-contract --lib -j1",
+    "serialization": "/tmp/qcore-c-cycle2-small-compile.lock",
+    "exit": 0,
+    "elapsed_seconds": 13.99,
+    "private_log": "private/premise-flow-operators/focused-1/check.log",
+    "scope": "library typecheck only; new tests and Lean pending; not standing or measurement evidence"
+  },
+  "focused_2": {
+    "source_commit": "e3c0d7cfd",
+    "local_delta": "private/premise-flow-operators/focused-2/worktree.patch",
+    "core": {
+      "command": "cargo test -p qcore-core --test premise_flow -j1",
+      "exit": 0,
+      "passed": 2
+    },
+    "contract": {
+      "command": "cargo test -p qcore-contract --test premise_flow -j1",
+      "exit": 101,
+      "passed": 7,
+      "failed": 1,
+      "reason": "test fixture omitted mandatory nonnull_member beside bounds premise; unchanged authoritative guard refused as required"
+    },
+    "private_logs": "private/premise-flow-operators/focused-2/",
+    "gateway": "not run after first failure",
+    "lean": "not run",
+    "standing": "joint gate pending"
+  }
 }

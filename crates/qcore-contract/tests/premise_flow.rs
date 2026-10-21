@@ -51,6 +51,12 @@ fn open_is_not_refutation_or_terminal_discharge() {
             .disposition,
         Disposition::Open
     );
+    assert_eq!(
+        premise_flow::evaluate_proposed(&f.packet, f.held(), "end_flow")
+            .unwrap()
+            .disposition,
+        Disposition::Open
+    );
     f.packet.hypotheses.evidence.retain(|e| e.atom != "b");
     let r = premise_flow::evaluate_proposed(&f.packet, f.held(), "end_flow").unwrap();
     assert_eq!(r.disposition, Disposition::Open);
@@ -153,7 +159,7 @@ fn explicit_bounds_and_model_views_preserve_old_graph_and_interpreted_guards() {
     use qcore_contract::bounds_hypotheses;
     use qcore_schemas::premise_flow::{Model, View};
     use std::collections::BTreeMap;
-    let bounded = "module contract; extern fn read(p: ptr<mut,u8>) -> unit contract { requires bounds_contract_v1; requires resource_premise(premise, \"original proposition\"); requires resource_hypothesis(a, \"finite proposed A\"); requires resource_premise_decomposition(premise,a); requires resource_premise_flow_v1(entry,(a ->| a)); quant null-deref #p; };";
+    let bounded = "module contract; extern fn read(p: ptr<mut,u8>) -> unit contract { requires bounds_contract_v1; requires resource_premise(premise, \"original proposition\"); requires resource_hypothesis(a, \"finite proposed A\"); requires resource_premise_decomposition(premise,a); requires resource_premise_flow_v1(entry,(a ->| a)); requires nonnull_member(Node, next); quant null-deref #p; };";
     let model = "module contract; resource type Owner { repr: ptr<mut,u8>; footprint: { owners = 1 }; destructor: read noexcept; copy: forbidden; move: allowed; } extern fn read(p: own<Owner> use one) -> unit contract { requires resource_premise(premise, \"original proposition\"); requires resource_hypothesis(a, \"finite proposed A\"); requires resource_premise_decomposition(premise,a); requires resource_premise_flow_v1(entry,(a ->| a)); requires owner_is_live; ensures normal owner_is_discharged; };";
     let f = setup();
     for (source, view) in [(bounded, View::Bounds), (model, View::Model)] {
@@ -189,6 +195,10 @@ fn explicit_bounds_and_model_views_preserve_old_graph_and_interpreted_guards() {
             serde_json::to_vec(&oldgraphs).unwrap()
         );
     }
+    let missing_member = bounded.replace("requires nonnull_member(Node, next);", "");
+    assert!(
+        bounds_hypotheses::replay(&BTreeMap::from([("bad.qv".into(), missing_member)])).is_err()
+    );
     let malformed = bounded.replace("quant null-deref #p;", "quant null-deref #missing;");
     assert!(bounds_hypotheses::replay(&BTreeMap::from([("bad.qv".into(), malformed)])).is_err());
     let overlap = bounded.replace(
@@ -241,4 +251,53 @@ fn inherited_flow_atom_and_entry_identifiers_are_not_formal_parameter_renames() 
         premise_flow::dependencies(&entries, &graphs["child"]).unwrap()["and_flow"]
             .contains(&"a".into())
     );
+}
+
+#[test]
+fn bounded_total_validation_rejects_entry_depth_and_expansion_exhaustion() {
+    let f = setup();
+    let base = fixture::SOURCE
+        .lines()
+        .filter(|l| !l.contains("resource_premise_flow_v1"))
+        .collect::<Vec<_>>()
+        .join("\n");
+    let entries = (0..257)
+        .map(|n| format!("requires resource_premise_flow_v1(e{n},a); "))
+        .collect::<String>();
+    let chain = (0..130)
+        .map(|n| format!("requires resource_premise_flow_v1(e{n},flow(e{})); ", n + 1))
+        .collect::<String>()
+        + "requires resource_premise_flow_v1(e130,a);";
+    let mut expanded = std::collections::BTreeMap::from([(
+        "e0".into(),
+        qcore_schemas::premise_flow::Expr::Atom { atom: "a".into() },
+    )]);
+    for n in 1..15 {
+        use qcore_schemas::premise_flow::Expr;
+        expanded.insert(
+            format!("e{n}"),
+            Expr::And {
+                left: Box::new(Expr::Flow {
+                    flow: format!("e{}", n - 1),
+                }),
+                right: Box::new(Expr::Flow {
+                    flow: format!("e{}", n - 1),
+                }),
+            },
+        );
+    }
+    assert!(premise_flow::dependencies(&expanded, &f.graphs["observed"]).is_err());
+    for metadata in [entries, chain] {
+        let source = base.replace(
+            "ensures normal resource_borrowed(p);",
+            &(metadata + "ensures normal resource_borrowed(p);"),
+        );
+        assert!(
+            hypothesis::replay(&std::collections::BTreeMap::from([(
+                "limit.qv".into(),
+                source
+            )]))
+            .is_err()
+        );
+    }
 }
