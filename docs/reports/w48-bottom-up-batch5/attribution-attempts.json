@@ -1,0 +1,895 @@
+{
+  "attempts": [
+    {
+      "attempt": "attribution-1",
+      "receipts": [
+        {
+          "path": "/home/cosmo/.codex/worktrees/w48-bottom-up-batch5/qcore-c/private/w48-batch5/attribution-1/commands.json",
+          "sha256": "473ac52d1aba5e344e6d7416e37a35f3c093e89ca7f6bee110b4002761136b2d",
+          "actual": [
+            {
+              "name": "export-tip-corpus",
+              "command": [
+                "python3",
+                "docs/reports/w48-bottom-up-batch5/scripts/export_environment.py",
+                "--invocation",
+                "/home/cosmo/.codex/worktrees/symbolic-cycle3-integration/qcore-c/private/symbolic-decomposition-cycle3/postgate-1/corpus/tip/invocation.json",
+                "--helper",
+                "/home/cosmo/.codex/worktrees/symbolic-cycle3-integration/qcore-c/target/debug/examples/premise_environment",
+                "--side",
+                "tip",
+                "--out",
+                "/home/cosmo/.codex/worktrees/w48-bottom-up-batch5/qcore-c/private/w48-batch5/environments/tip/corpus"
+              ],
+              "cwd": "/home/cosmo/.codex/worktrees/w48-bottom-up-batch5/qcore-c",
+              "started": "2026-10-21T19:16:57.395563+00:00",
+              "exit": 0,
+              "ended": "2026-10-21T19:17:09.001863+00:00"
+            },
+            {
+              "name": "prepare-corpus",
+              "command": [
+                "python3",
+                "docs/reports/w48-bottom-up-batch5/scripts/prep_comparison.py",
+                "corpus"
+              ],
+              "cwd": "/home/cosmo/.codex/worktrees/w48-bottom-up-batch5/qcore-c",
+              "started": "2026-10-21T19:17:09.069348+00:00",
+              "exit": 0,
+              "ended": "2026-10-21T19:17:25.676671+00:00"
+            },
+            {
+              "name": "projection-build",
+              "command": [
+                "rustc",
+                "--edition=2024",
+                "docs/reports/w48-bottom-up-batch5/scripts/projection_replay.rs",
+                "-C",
+                "debuginfo=0",
+                "-L",
+                "dependency=/home/cosmo/.codex/worktrees/symbolic-cycle3-integration/qcore-c/target/release/deps",
+                "-o",
+                "/home/cosmo/.codex/worktrees/w48-bottom-up-batch5/qcore-c/private/w48-batch5/attribution-1/projection-replay",
+                "--extern",
+                "qcore_audit=/home/cosmo/.codex/worktrees/symbolic-cycle3-integration/qcore-c/target/release/deps/libqcore_audit-d1daecc62d7b472d.rlib",
+                "--extern",
+                "qcore_c_gateway=/home/cosmo/.codex/worktrees/symbolic-cycle3-integration/qcore-c/target/release/deps/libqcore_c_gateway-e446ff2e15cc37d9.rlib",
+                "--extern",
+                "qcore_contract=/home/cosmo/.codex/worktrees/symbolic-cycle3-integration/qcore-c/target/release/deps/libqcore_contract-1ae6fd14441b99d3.rlib",
+                "--extern",
+                "qcore_schemas=/home/cosmo/.codex/worktrees/symbolic-cycle3-integration/qcore-c/target/release/deps/libqcore_schemas-0de9b3a16b0fe98c.rlib",
+                "--extern",
+                "serde_json=/home/cosmo/.codex/worktrees/symbolic-cycle3-integration/qcore-c/target/release/deps/libserde_json-08241b9b75b89117.rlib"
+              ],
+              "cwd": "/home/cosmo/.codex/worktrees/w48-bottom-up-batch5/qcore-c",
+              "started": "2026-10-21T19:17:25.846610+00:00",
+              "exit": 0,
+              "ended": "2026-10-21T19:17:26.332666+00:00"
+            },
+            {
+              "name": "system-reading",
+              "command": [
+                "/home/cosmo/.codex/worktrees/symbolic-cycle3-integration/qcore-c/private/symbolic-decomposition-cycle3/postgate-1/reading-proof",
+                "/home/cosmo/.codex/worktrees/w48-bottom-up-batch5/qcore-c/private/w48-batch5/attribution-1/system-reading-spec.json",
+                "/home/cosmo/.codex/worktrees/w48-bottom-up-batch5/qcore-c/private/w48-batch5/comparisons/system/reading-proof.json"
+              ],
+              "cwd": "/home/cosmo/.codex/worktrees/w48-bottom-up-batch5/qcore-c",
+              "started": "2026-10-21T19:17:26.395940+00:00",
+              "exit": 0,
+              "ended": "2026-10-21T19:17:30.252971+00:00"
+            },
+            {
+              "name": "system-identities",
+              "command": [
+                "python3",
+                "docs/reports/w48-bottom-up-batch5/scripts/compare_attributed.py",
+                "system",
+                "/home/cosmo/.codex/worktrees/w48-bottom-up-batch5/qcore-c/private/w48-batch5/analysis-inputs/system/base",
+                "/home/cosmo/.codex/worktrees/w48-bottom-up-batch5/qcore-c/private/w48-batch5/analysis-inputs/system/tip",
+                "/home/cosmo/.codex/worktrees/w48-bottom-up-batch5/qcore-c/private/w48-batch5/comparisons/system/identity-review",
+                "--known",
+                "/home/cosmo/.codex/worktrees/w48-bottom-up-batch5/qcore-c/private/w48-batch5/comparisons/system/known-identities.json",
+                "--reading-proof",
+                "/home/cosmo/.codex/worktrees/w48-bottom-up-batch5/qcore-c/private/w48-batch5/comparisons/system/reading-proof.json",
+                "--base-build-receipt",
+                "/home/cosmo/.codex/worktrees/w48-bottom-up-batch5/qcore-c/docs/reports/w48-bottom-up-batch5/base-binary.json",
+                "--tip-build-receipt",
+                "/home/cosmo/.codex/worktrees/symbolic-cycle3-integration/qcore-c/private/symbolic-decomposition-cycle3/postgate-1/binary-receipt.json",
+                "--initial-base-receipts",
+                "/home/cosmo/.codex/worktrees/w48-bottom-up-batch5/qcore-c/docs/reports/w48-bottom-up-batch5/baseline-receipts.json"
+              ],
+              "cwd": "/home/cosmo/.codex/worktrees/w48-bottom-up-batch5/qcore-c",
+              "started": "2026-10-21T19:17:30.322315+00:00",
+              "exit": 0,
+              "ended": "2026-10-21T19:17:32.490673+00:00"
+            },
+            {
+              "name": "system-base-projection",
+              "command": [
+                "/home/cosmo/.codex/worktrees/w48-bottom-up-batch5/qcore-c/private/w48-batch5/attribution-1/projection-replay",
+                "/home/cosmo/.codex/worktrees/w48-bottom-up-batch5/qcore-c/private/w48-batch5/attribution-1/system-base-projection-spec.json",
+                "/home/cosmo/.codex/worktrees/w48-bottom-up-batch5/qcore-c/private/w48-batch5/comparisons/system/projection-base.json"
+              ],
+              "cwd": "/home/cosmo/.codex/worktrees/w48-bottom-up-batch5/qcore-c",
+              "started": "2026-10-21T19:17:32.565288+00:00",
+              "exit": 0,
+              "ended": "2026-10-21T19:17:34.863992+00:00"
+            },
+            {
+              "name": "system-tip-projection",
+              "command": [
+                "/home/cosmo/.codex/worktrees/w48-bottom-up-batch5/qcore-c/private/w48-batch5/attribution-1/projection-replay",
+                "/home/cosmo/.codex/worktrees/w48-bottom-up-batch5/qcore-c/private/w48-batch5/attribution-1/system-tip-projection-spec.json",
+                "/home/cosmo/.codex/worktrees/w48-bottom-up-batch5/qcore-c/private/w48-batch5/comparisons/system/projection-tip.json"
+              ],
+              "cwd": "/home/cosmo/.codex/worktrees/w48-bottom-up-batch5/qcore-c",
+              "started": "2026-10-21T19:17:34.932376+00:00",
+              "exit": 0,
+              "ended": "2026-10-21T19:17:37.247334+00:00"
+            },
+            {
+              "name": "slice-reading",
+              "command": [
+                "/home/cosmo/.codex/worktrees/symbolic-cycle3-integration/qcore-c/private/symbolic-decomposition-cycle3/postgate-1/reading-proof",
+                "/home/cosmo/.codex/worktrees/w48-bottom-up-batch5/qcore-c/private/w48-batch5/attribution-1/slice-reading-spec.json",
+                "/home/cosmo/.codex/worktrees/w48-bottom-up-batch5/qcore-c/private/w48-batch5/comparisons/slice/reading-proof.json"
+              ],
+              "cwd": "/home/cosmo/.codex/worktrees/w48-bottom-up-batch5/qcore-c",
+              "started": "2026-10-21T19:17:37.310620+00:00",
+              "exit": 0,
+              "ended": "2026-10-21T19:17:38.245531+00:00"
+            },
+            {
+              "name": "slice-identities",
+              "command": [
+                "python3",
+                "docs/reports/w48-bottom-up-batch5/scripts/compare_attributed.py",
+                "slice",
+                "/home/cosmo/.codex/worktrees/w48-bottom-up-batch5/qcore-c/private/w48-batch5/analysis-inputs/slice/base",
+                "/home/cosmo/.codex/worktrees/w48-bottom-up-batch5/qcore-c/private/w48-batch5/analysis-inputs/slice/tip",
+                "/home/cosmo/.codex/worktrees/w48-bottom-up-batch5/qcore-c/private/w48-batch5/comparisons/slice/identity-review",
+                "--known",
+                "/home/cosmo/.codex/worktrees/w48-bottom-up-batch5/qcore-c/private/w48-batch5/comparisons/slice/known-identities.json",
+                "--reading-proof",
+                "/home/cosmo/.codex/worktrees/w48-bottom-up-batch5/qcore-c/private/w48-batch5/comparisons/slice/reading-proof.json",
+                "--base-build-receipt",
+                "/home/cosmo/.codex/worktrees/w48-bottom-up-batch5/qcore-c/docs/reports/w48-bottom-up-batch5/base-binary.json",
+                "--tip-build-receipt",
+                "/home/cosmo/.codex/worktrees/symbolic-cycle3-integration/qcore-c/private/symbolic-decomposition-cycle3/postgate-1/binary-receipt.json",
+                "--initial-base-receipts",
+                "/home/cosmo/.codex/worktrees/w48-bottom-up-batch5/qcore-c/docs/reports/w48-bottom-up-batch5/baseline-receipts.json"
+              ],
+              "cwd": "/home/cosmo/.codex/worktrees/w48-bottom-up-batch5/qcore-c",
+              "started": "2026-10-21T19:17:38.312631+00:00",
+              "exit": 0,
+              "ended": "2026-10-21T19:17:40.049410+00:00"
+            },
+            {
+              "name": "slice-base-projection",
+              "command": [
+                "/home/cosmo/.codex/worktrees/w48-bottom-up-batch5/qcore-c/private/w48-batch5/attribution-1/projection-replay",
+                "/home/cosmo/.codex/worktrees/w48-bottom-up-batch5/qcore-c/private/w48-batch5/attribution-1/slice-base-projection-spec.json",
+                "/home/cosmo/.codex/worktrees/w48-bottom-up-batch5/qcore-c/private/w48-batch5/comparisons/slice/projection-base.json"
+              ],
+              "cwd": "/home/cosmo/.codex/worktrees/w48-bottom-up-batch5/qcore-c",
+              "started": "2026-10-21T19:17:40.115263+00:00",
+              "exit": 0,
+              "ended": "2026-10-21T19:17:42.370138+00:00"
+            },
+            {
+              "name": "slice-tip-projection",
+              "command": [
+                "/home/cosmo/.codex/worktrees/w48-bottom-up-batch5/qcore-c/private/w48-batch5/attribution-1/projection-replay",
+                "/home/cosmo/.codex/worktrees/w48-bottom-up-batch5/qcore-c/private/w48-batch5/attribution-1/slice-tip-projection-spec.json",
+                "/home/cosmo/.codex/worktrees/w48-bottom-up-batch5/qcore-c/private/w48-batch5/comparisons/slice/projection-tip.json"
+              ],
+              "cwd": "/home/cosmo/.codex/worktrees/w48-bottom-up-batch5/qcore-c",
+              "started": "2026-10-21T19:17:42.435747+00:00",
+              "exit": 0,
+              "ended": "2026-10-21T19:17:44.725927+00:00"
+            },
+            {
+              "name": "corpus-reading",
+              "command": [
+                "/home/cosmo/.codex/worktrees/symbolic-cycle3-integration/qcore-c/private/symbolic-decomposition-cycle3/postgate-1/reading-proof",
+                "/home/cosmo/.codex/worktrees/w48-bottom-up-batch5/qcore-c/private/w48-batch5/attribution-1/corpus-reading-spec.json",
+                "/home/cosmo/.codex/worktrees/w48-bottom-up-batch5/qcore-c/private/w48-batch5/comparisons/corpus/reading-proof.json"
+              ],
+              "cwd": "/home/cosmo/.codex/worktrees/w48-bottom-up-batch5/qcore-c",
+              "started": "2026-10-21T19:17:44.802485+00:00",
+              "exit": 101,
+              "ended": "2026-10-21T19:17:45.566601+00:00"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "attempt": "historical-replay-1",
+      "receipts": [
+        {
+          "path": "/home/cosmo/.codex/worktrees/w48-bottom-up-batch5/qcore-c/private/w48-batch5/historical-replay-1/commands.json",
+          "sha256": "e57186a97a99b881e76e778fb539274c3ecb0ec7139a8d9457ab32fd55a1d623",
+          "actual": [
+            {
+              "name": "build-historical_build",
+              "command": [
+                "rustc",
+                "--edition=2024",
+                "docs/reports/w48-bottom-up-batch5/scripts/historical_build.rs",
+                "-C",
+                "debuginfo=0",
+                "-L",
+                "dependency=/home/cosmo/.codex/worktrees/symbolic-cycle3-integration/qcore-c/target/release/deps",
+                "-o",
+                "/home/cosmo/.codex/worktrees/w48-bottom-up-batch5/qcore-c/private/w48-batch5/historical-replay-1/historical_build",
+                "--extern",
+                "qcore_audit=/home/cosmo/.codex/worktrees/symbolic-cycle3-integration/qcore-c/target/release/deps/libqcore_audit-d1daecc62d7b472d.rlib",
+                "--extern",
+                "qcore_c_gateway=/home/cosmo/.codex/worktrees/symbolic-cycle3-integration/qcore-c/target/release/deps/libqcore_c_gateway-e446ff2e15cc37d9.rlib",
+                "--extern",
+                "qcore_contract=/home/cosmo/.codex/worktrees/symbolic-cycle3-integration/qcore-c/target/release/deps/libqcore_contract-1ae6fd14441b99d3.rlib",
+                "--extern",
+                "qcore_schemas=/home/cosmo/.codex/worktrees/symbolic-cycle3-integration/qcore-c/target/release/deps/libqcore_schemas-0de9b3a16b0fe98c.rlib",
+                "--extern",
+                "serde_json=/home/cosmo/.codex/worktrees/symbolic-cycle3-integration/qcore-c/target/release/deps/libserde_json-08241b9b75b89117.rlib"
+              ],
+              "started": "2026-10-21T23:13:53.503085+00:00",
+              "exit": 1,
+              "ended": "2026-10-21T23:13:53.587454+00:00"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "attempt": "historical-replay-2",
+      "receipts": [
+        {
+          "path": "/home/cosmo/.codex/worktrees/w48-bottom-up-batch5/qcore-c/private/w48-batch5/historical-replay-2/commands.json",
+          "sha256": "c70436c408c359e2c8b75a96fbdb774e3f15b084127eae6a1a6f70855cc7841c",
+          "actual": [
+            {
+              "name": "build-historical_build",
+              "command": [
+                "rustc",
+                "--edition=2024",
+                "docs/reports/w48-bottom-up-batch5/scripts/historical_build.rs",
+                "-C",
+                "debuginfo=0",
+                "-L",
+                "dependency=/home/cosmo/.codex/worktrees/symbolic-cycle3-integration/qcore-c/target/release/deps",
+                "-o",
+                "/home/cosmo/.codex/worktrees/w48-bottom-up-batch5/qcore-c/private/w48-batch5/historical-replay-2/historical_build",
+                "--extern",
+                "qcore_audit=/home/cosmo/.codex/worktrees/symbolic-cycle3-integration/qcore-c/target/release/deps/libqcore_audit-d1daecc62d7b472d.rlib",
+                "--extern",
+                "qcore_c_gateway=/home/cosmo/.codex/worktrees/symbolic-cycle3-integration/qcore-c/target/release/deps/libqcore_c_gateway-e446ff2e15cc37d9.rlib",
+                "--extern",
+                "qcore_contract=/home/cosmo/.codex/worktrees/symbolic-cycle3-integration/qcore-c/target/release/deps/libqcore_contract-1ae6fd14441b99d3.rlib",
+                "--extern",
+                "qcore_schemas=/home/cosmo/.codex/worktrees/symbolic-cycle3-integration/qcore-c/target/release/deps/libqcore_schemas-0de9b3a16b0fe98c.rlib",
+                "--extern",
+                "serde_json=/home/cosmo/.codex/worktrees/symbolic-cycle3-integration/qcore-c/target/release/deps/libserde_json-08241b9b75b89117.rlib"
+              ],
+              "started": "2026-10-21T23:14:12.554556+00:00",
+              "exit": 0,
+              "ended": "2026-10-21T23:14:12.778999+00:00"
+            },
+            {
+              "name": "build-attribute_reading_environments",
+              "command": [
+                "rustc",
+                "--edition=2024",
+                "docs/reports/w48-bottom-up-batch5/scripts/attribute_reading_environments.rs",
+                "-C",
+                "debuginfo=0",
+                "-L",
+                "dependency=/home/cosmo/.codex/worktrees/symbolic-cycle3-integration/qcore-c/target/release/deps",
+                "-o",
+                "/home/cosmo/.codex/worktrees/w48-bottom-up-batch5/qcore-c/private/w48-batch5/historical-replay-2/attribute_reading_environments",
+                "--extern",
+                "qcore_audit=/home/cosmo/.codex/worktrees/symbolic-cycle3-integration/qcore-c/target/release/deps/libqcore_audit-d1daecc62d7b472d.rlib",
+                "--extern",
+                "qcore_c_gateway=/home/cosmo/.codex/worktrees/symbolic-cycle3-integration/qcore-c/target/release/deps/libqcore_c_gateway-e446ff2e15cc37d9.rlib",
+                "--extern",
+                "qcore_contract=/home/cosmo/.codex/worktrees/symbolic-cycle3-integration/qcore-c/target/release/deps/libqcore_contract-1ae6fd14441b99d3.rlib",
+                "--extern",
+                "qcore_schemas=/home/cosmo/.codex/worktrees/symbolic-cycle3-integration/qcore-c/target/release/deps/libqcore_schemas-0de9b3a16b0fe98c.rlib",
+                "--extern",
+                "serde_json=/home/cosmo/.codex/worktrees/symbolic-cycle3-integration/qcore-c/target/release/deps/libserde_json-08241b9b75b89117.rlib"
+              ],
+              "started": "2026-10-21T23:14:12.906736+00:00",
+              "exit": 0,
+              "ended": "2026-10-21T23:14:13.622732+00:00"
+            }
+          ]
+        },
+        {
+          "path": "/home/cosmo/.codex/worktrees/w48-bottom-up-batch5/qcore-c/private/w48-batch5/historical-replay-2/preparation-failure.json",
+          "sha256": "20c0c83dbb04d3c3b8a72fbee9330f95a3b81ff590c6b3683c4d83cae5eb187d",
+          "actual": {
+            "exit": 1,
+            "phase": "historical specification preparation after both Rust compilations0",
+            "reason": "expected one compile entry; fluent-bit-chunk exact selection has2. Source pinned_route::select_exact_unit intentionally chooses first matching entry. Corrected exact configuration selection accordingly; no build identity picked by output hash."
+          }
+        }
+      ]
+    },
+    {
+      "attempt": "historical-replay-3",
+      "receipts": [
+        {
+          "path": "/home/cosmo/.codex/worktrees/w48-bottom-up-batch5/qcore-c/private/w48-batch5/historical-replay-3/commands.json",
+          "sha256": "ea4819e73c443b1860809ada7e1c2ab305b6a5fb012546d527c3a964e9a4d235",
+          "actual": [
+            {
+              "name": "build-historical_build",
+              "command": [
+                "rustc",
+                "--edition=2024",
+                "docs/reports/w48-bottom-up-batch5/scripts/historical_build.rs",
+                "-C",
+                "debuginfo=0",
+                "-L",
+                "dependency=/home/cosmo/.codex/worktrees/symbolic-cycle3-integration/qcore-c/target/release/deps",
+                "-o",
+                "/home/cosmo/.codex/worktrees/w48-bottom-up-batch5/qcore-c/private/w48-batch5/historical-replay-3/historical_build",
+                "--extern",
+                "qcore_audit=/home/cosmo/.codex/worktrees/symbolic-cycle3-integration/qcore-c/target/release/deps/libqcore_audit-d1daecc62d7b472d.rlib",
+                "--extern",
+                "qcore_c_gateway=/home/cosmo/.codex/worktrees/symbolic-cycle3-integration/qcore-c/target/release/deps/libqcore_c_gateway-e446ff2e15cc37d9.rlib",
+                "--extern",
+                "qcore_contract=/home/cosmo/.codex/worktrees/symbolic-cycle3-integration/qcore-c/target/release/deps/libqcore_contract-1ae6fd14441b99d3.rlib",
+                "--extern",
+                "qcore_schemas=/home/cosmo/.codex/worktrees/symbolic-cycle3-integration/qcore-c/target/release/deps/libqcore_schemas-0de9b3a16b0fe98c.rlib",
+                "--extern",
+                "serde_json=/home/cosmo/.codex/worktrees/symbolic-cycle3-integration/qcore-c/target/release/deps/libserde_json-08241b9b75b89117.rlib"
+              ],
+              "started": "2026-10-21T23:14:48.088409+00:00",
+              "exit": 0,
+              "ended": "2026-10-21T23:14:48.313070+00:00"
+            },
+            {
+              "name": "build-attribute_reading_environments",
+              "command": [
+                "rustc",
+                "--edition=2024",
+                "docs/reports/w48-bottom-up-batch5/scripts/attribute_reading_environments.rs",
+                "-C",
+                "debuginfo=0",
+                "-L",
+                "dependency=/home/cosmo/.codex/worktrees/symbolic-cycle3-integration/qcore-c/target/release/deps",
+                "-o",
+                "/home/cosmo/.codex/worktrees/w48-bottom-up-batch5/qcore-c/private/w48-batch5/historical-replay-3/attribute_reading_environments",
+                "--extern",
+                "qcore_audit=/home/cosmo/.codex/worktrees/symbolic-cycle3-integration/qcore-c/target/release/deps/libqcore_audit-d1daecc62d7b472d.rlib",
+                "--extern",
+                "qcore_c_gateway=/home/cosmo/.codex/worktrees/symbolic-cycle3-integration/qcore-c/target/release/deps/libqcore_c_gateway-e446ff2e15cc37d9.rlib",
+                "--extern",
+                "qcore_contract=/home/cosmo/.codex/worktrees/symbolic-cycle3-integration/qcore-c/target/release/deps/libqcore_contract-1ae6fd14441b99d3.rlib",
+                "--extern",
+                "qcore_schemas=/home/cosmo/.codex/worktrees/symbolic-cycle3-integration/qcore-c/target/release/deps/libqcore_schemas-0de9b3a16b0fe98c.rlib",
+                "--extern",
+                "serde_json=/home/cosmo/.codex/worktrees/symbolic-cycle3-integration/qcore-c/target/release/deps/libserde_json-08241b9b75b89117.rlib"
+              ],
+              "started": "2026-10-21T23:14:48.441879+00:00",
+              "exit": 0,
+              "ended": "2026-10-21T23:14:49.156777+00:00"
+            },
+            {
+              "name": "historical-build",
+              "command": [
+                "/home/cosmo/.codex/worktrees/w48-bottom-up-batch5/qcore-c/private/w48-batch5/historical-replay-3/historical_build",
+                "/home/cosmo/.codex/worktrees/w48-bottom-up-batch5/qcore-c/private/w48-batch5/historical-replay-3/build-spec.json",
+                "/home/cosmo/.codex/worktrees/w48-bottom-up-batch5/qcore-c/private/w48-batch5/historical-replay-3/historical-build-proof.json"
+              ],
+              "started": "2026-10-21T23:14:49.917280+00:00",
+              "exit": 101,
+              "ended": "2026-10-21T23:14:50.375580+00:00"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "attempt": "historical-replay-4",
+      "receipts": [
+        {
+          "path": "/home/cosmo/.codex/worktrees/w48-bottom-up-batch5/qcore-c/private/w48-batch5/historical-replay-4/commands.json",
+          "sha256": "a673cee588f7cc6bc55d2a980e5a5a014a27f6faa31de9991ab15513b0ad0592",
+          "actual": [
+            {
+              "name": "build-historical_build",
+              "command": [
+                "rustc",
+                "--edition=2024",
+                "docs/reports/w48-bottom-up-batch5/scripts/historical_build.rs",
+                "-C",
+                "debuginfo=0",
+                "-L",
+                "dependency=/home/cosmo/.codex/worktrees/symbolic-cycle3-integration/qcore-c/target/release/deps",
+                "-o",
+                "/home/cosmo/.codex/worktrees/w48-bottom-up-batch5/qcore-c/private/w48-batch5/historical-replay-4/historical_build",
+                "--extern",
+                "qcore_audit=/home/cosmo/.codex/worktrees/symbolic-cycle3-integration/qcore-c/target/release/deps/libqcore_audit-d1daecc62d7b472d.rlib",
+                "--extern",
+                "qcore_c_gateway=/home/cosmo/.codex/worktrees/symbolic-cycle3-integration/qcore-c/target/release/deps/libqcore_c_gateway-e446ff2e15cc37d9.rlib",
+                "--extern",
+                "qcore_contract=/home/cosmo/.codex/worktrees/symbolic-cycle3-integration/qcore-c/target/release/deps/libqcore_contract-1ae6fd14441b99d3.rlib",
+                "--extern",
+                "qcore_schemas=/home/cosmo/.codex/worktrees/symbolic-cycle3-integration/qcore-c/target/release/deps/libqcore_schemas-0de9b3a16b0fe98c.rlib",
+                "--extern",
+                "serde_json=/home/cosmo/.codex/worktrees/symbolic-cycle3-integration/qcore-c/target/release/deps/libserde_json-08241b9b75b89117.rlib"
+              ],
+              "started": "2026-10-21T23:16:50.237104+00:00",
+              "exit": 0,
+              "ended": "2026-10-21T23:16:50.458557+00:00"
+            },
+            {
+              "name": "build-attribute_reading_environments",
+              "command": [
+                "rustc",
+                "--edition=2024",
+                "docs/reports/w48-bottom-up-batch5/scripts/attribute_reading_environments.rs",
+                "-C",
+                "debuginfo=0",
+                "-L",
+                "dependency=/home/cosmo/.codex/worktrees/symbolic-cycle3-integration/qcore-c/target/release/deps",
+                "-o",
+                "/home/cosmo/.codex/worktrees/w48-bottom-up-batch5/qcore-c/private/w48-batch5/historical-replay-4/attribute_reading_environments",
+                "--extern",
+                "qcore_audit=/home/cosmo/.codex/worktrees/symbolic-cycle3-integration/qcore-c/target/release/deps/libqcore_audit-d1daecc62d7b472d.rlib",
+                "--extern",
+                "qcore_c_gateway=/home/cosmo/.codex/worktrees/symbolic-cycle3-integration/qcore-c/target/release/deps/libqcore_c_gateway-e446ff2e15cc37d9.rlib",
+                "--extern",
+                "qcore_contract=/home/cosmo/.codex/worktrees/symbolic-cycle3-integration/qcore-c/target/release/deps/libqcore_contract-1ae6fd14441b99d3.rlib",
+                "--extern",
+                "qcore_schemas=/home/cosmo/.codex/worktrees/symbolic-cycle3-integration/qcore-c/target/release/deps/libqcore_schemas-0de9b3a16b0fe98c.rlib",
+                "--extern",
+                "serde_json=/home/cosmo/.codex/worktrees/symbolic-cycle3-integration/qcore-c/target/release/deps/libserde_json-08241b9b75b89117.rlib"
+              ],
+              "started": "2026-10-21T23:16:50.588862+00:00",
+              "exit": 0,
+              "ended": "2026-10-21T23:16:51.277177+00:00"
+            },
+            {
+              "name": "historical-build",
+              "command": [
+                "/home/cosmo/.codex/worktrees/w48-bottom-up-batch5/qcore-c/private/w48-batch5/historical-replay-4/historical_build",
+                "/home/cosmo/.codex/worktrees/w48-bottom-up-batch5/qcore-c/private/w48-batch5/historical-replay-4/build-spec.json",
+                "/home/cosmo/.codex/worktrees/w48-bottom-up-batch5/qcore-c/private/w48-batch5/historical-replay-4/historical-build-proof.json"
+              ],
+              "started": "2026-10-21T23:16:52.027584+00:00",
+              "exit": 0,
+              "ended": "2026-10-21T23:16:53.498378+00:00"
+            },
+            {
+              "name": "corpus-reading",
+              "command": [
+                "/home/cosmo/.codex/worktrees/w48-bottom-up-batch5/qcore-c/private/w48-batch5/historical-replay-4/attribute_reading_environments",
+                "/home/cosmo/.codex/worktrees/w48-bottom-up-batch5/qcore-c/private/w48-batch5/historical-replay-4/reading-spec.json",
+                "/home/cosmo/.codex/worktrees/w48-bottom-up-batch5/qcore-c/private/w48-batch5/comparisons/corpus/reading-proof.json"
+              ],
+              "started": "2026-10-21T23:16:55.931097+00:00",
+              "exit": 101,
+              "ended": "2026-10-21T23:17:00.357408+00:00"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "attempt": "historical-replay-5",
+      "receipts": [
+        {
+          "path": "/home/cosmo/.codex/worktrees/w48-bottom-up-batch5/qcore-c/private/w48-batch5/historical-replay-5/commands.json",
+          "sha256": "30f3a1b27844795dac3ef6690ced7b7c3ec7d11d107729a9393e5b5f7e9aa753",
+          "actual": [
+            {
+              "name": "build",
+              "command": [
+                "rustc",
+                "--edition=2024",
+                "docs/reports/w48-bottom-up-batch5/scripts/attribute_reading_environments.rs",
+                "-C",
+                "debuginfo=0",
+                "-L",
+                "dependency=/home/cosmo/.codex/worktrees/symbolic-cycle3-integration/qcore-c/target/release/deps",
+                "-o",
+                "/home/cosmo/.codex/worktrees/w48-bottom-up-batch5/qcore-c/private/w48-batch5/historical-replay-5/reading",
+                "--extern",
+                "qcore_audit=/home/cosmo/.codex/worktrees/symbolic-cycle3-integration/qcore-c/target/release/deps/libqcore_audit-d1daecc62d7b472d.rlib",
+                "--extern",
+                "qcore_c_gateway=/home/cosmo/.codex/worktrees/symbolic-cycle3-integration/qcore-c/target/release/deps/libqcore_c_gateway-e446ff2e15cc37d9.rlib",
+                "--extern",
+                "qcore_contract=/home/cosmo/.codex/worktrees/symbolic-cycle3-integration/qcore-c/target/release/deps/libqcore_contract-1ae6fd14441b99d3.rlib",
+                "--extern",
+                "qcore_schemas=/home/cosmo/.codex/worktrees/symbolic-cycle3-integration/qcore-c/target/release/deps/libqcore_schemas-0de9b3a16b0fe98c.rlib",
+                "--extern",
+                "serde_json=/home/cosmo/.codex/worktrees/symbolic-cycle3-integration/qcore-c/target/release/deps/libserde_json-08241b9b75b89117.rlib"
+              ],
+              "exit": 0
+            },
+            {
+              "name": "reading",
+              "command": [
+                "/home/cosmo/.codex/worktrees/w48-bottom-up-batch5/qcore-c/private/w48-batch5/historical-replay-5/reading",
+                "/home/cosmo/.codex/worktrees/w48-bottom-up-batch5/qcore-c/private/w48-batch5/historical-replay-4/reading-spec.json",
+                "/home/cosmo/.codex/worktrees/w48-bottom-up-batch5/qcore-c/private/w48-batch5/historical-replay-5/proof.json"
+              ],
+              "exit": 101
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "attempt": "semantic-reading-1",
+      "receipts": [
+        {
+          "path": "/home/cosmo/.codex/worktrees/w48-bottom-up-batch5/qcore-c/private/w48-batch5/semantic-reading-1/commands.json",
+          "sha256": "7d652c444f410b0eb52b62779582f37a5006806ed05aad6baa782c40c72ed2d9",
+          "actual": [
+            {
+              "name": "build",
+              "command": [
+                "rustc",
+                "--edition=2024",
+                "docs/reports/w48-bottom-up-batch5/scripts/attribute_reading_environments.rs",
+                "-C",
+                "debuginfo=0",
+                "-L",
+                "dependency=/home/cosmo/.codex/worktrees/symbolic-cycle3-integration/qcore-c/target/release/deps",
+                "-o",
+                "/home/cosmo/.codex/worktrees/w48-bottom-up-batch5/qcore-c/private/w48-batch5/semantic-reading-1/reading",
+                "--extern",
+                "qcore_audit=/home/cosmo/.codex/worktrees/symbolic-cycle3-integration/qcore-c/target/release/deps/libqcore_audit-d1daecc62d7b472d.rlib",
+                "--extern",
+                "qcore_c_gateway=/home/cosmo/.codex/worktrees/symbolic-cycle3-integration/qcore-c/target/release/deps/libqcore_c_gateway-e446ff2e15cc37d9.rlib",
+                "--extern",
+                "qcore_contract=/home/cosmo/.codex/worktrees/symbolic-cycle3-integration/qcore-c/target/release/deps/libqcore_contract-1ae6fd14441b99d3.rlib",
+                "--extern",
+                "qcore_schemas=/home/cosmo/.codex/worktrees/symbolic-cycle3-integration/qcore-c/target/release/deps/libqcore_schemas-0de9b3a16b0fe98c.rlib",
+                "--extern",
+                "serde_json=/home/cosmo/.codex/worktrees/symbolic-cycle3-integration/qcore-c/target/release/deps/libserde_json-08241b9b75b89117.rlib"
+              ],
+              "exit": 0
+            },
+            {
+              "name": "reading",
+              "command": [
+                "/home/cosmo/.codex/worktrees/w48-bottom-up-batch5/qcore-c/private/w48-batch5/semantic-reading-1/reading",
+                "/home/cosmo/.codex/worktrees/w48-bottom-up-batch5/qcore-c/private/w48-batch5/semantic-reading-spec.json",
+                "/home/cosmo/.codex/worktrees/w48-bottom-up-batch5/qcore-c/private/w48-batch5/semantic-reading-1/proof.json"
+              ],
+              "exit": 101
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "attempt": "semantic-reading-2",
+      "receipts": [
+        {
+          "path": "/home/cosmo/.codex/worktrees/w48-bottom-up-batch5/qcore-c/private/w48-batch5/semantic-reading-2/commands.json",
+          "sha256": "c4251d3a14d1d2e3ac4a362b23f9a7a8f742f494852907ffb65d9153ed4fe465",
+          "actual": [
+            {
+              "name": "build",
+              "command": [
+                "rustc",
+                "--edition=2024",
+                "docs/reports/w48-bottom-up-batch5/scripts/attribute_reading_environments.rs",
+                "-C",
+                "debuginfo=0",
+                "-L",
+                "dependency=/home/cosmo/.codex/worktrees/symbolic-cycle3-integration/qcore-c/target/release/deps",
+                "-o",
+                "/home/cosmo/.codex/worktrees/w48-bottom-up-batch5/qcore-c/private/w48-batch5/semantic-reading-2/reading",
+                "--extern",
+                "qcore_audit=/home/cosmo/.codex/worktrees/symbolic-cycle3-integration/qcore-c/target/release/deps/libqcore_audit-d1daecc62d7b472d.rlib",
+                "--extern",
+                "qcore_c_gateway=/home/cosmo/.codex/worktrees/symbolic-cycle3-integration/qcore-c/target/release/deps/libqcore_c_gateway-e446ff2e15cc37d9.rlib",
+                "--extern",
+                "qcore_contract=/home/cosmo/.codex/worktrees/symbolic-cycle3-integration/qcore-c/target/release/deps/libqcore_contract-1ae6fd14441b99d3.rlib",
+                "--extern",
+                "qcore_schemas=/home/cosmo/.codex/worktrees/symbolic-cycle3-integration/qcore-c/target/release/deps/libqcore_schemas-0de9b3a16b0fe98c.rlib",
+                "--extern",
+                "serde_json=/home/cosmo/.codex/worktrees/symbolic-cycle3-integration/qcore-c/target/release/deps/libserde_json-08241b9b75b89117.rlib"
+              ],
+              "exit": 0
+            },
+            {
+              "name": "reading",
+              "command": [
+                "/home/cosmo/.codex/worktrees/w48-bottom-up-batch5/qcore-c/private/w48-batch5/semantic-reading-2/reading",
+                "/home/cosmo/.codex/worktrees/w48-bottom-up-batch5/qcore-c/private/w48-batch5/semantic-reading-spec.json",
+                "/home/cosmo/.codex/worktrees/w48-bottom-up-batch5/qcore-c/private/w48-batch5/semantic-reading-2/proof.json"
+              ],
+              "exit": 0
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "attempt": "finish-corpus-1",
+      "receipts": [
+        {
+          "path": "/home/cosmo/.codex/worktrees/w48-bottom-up-batch5/qcore-c/private/w48-batch5/finish-corpus-1/identity-command.json",
+          "sha256": "9880ef0986387cb7208c21cf6551e3acfa02cf449957c0803703987ac2328946",
+          "actual": {
+            "command": [
+              "python3",
+              "docs/reports/w48-bottom-up-batch5/scripts/compare_attributed.py",
+              "corpus",
+              "/home/cosmo/.codex/worktrees/w48-bottom-up-batch5/qcore-c/private/w48-batch5/analysis-inputs/corpus/base",
+              "/home/cosmo/.codex/worktrees/w48-bottom-up-batch5/qcore-c/private/w48-batch5/analysis-inputs/corpus/tip",
+              "/home/cosmo/.codex/worktrees/w48-bottom-up-batch5/qcore-c/private/w48-batch5/comparisons/corpus/identity-review",
+              "--known",
+              "/home/cosmo/.codex/worktrees/w48-bottom-up-batch5/qcore-c/private/w48-batch5/comparisons/corpus/known-identities.json",
+              "--reading-proof",
+              "/home/cosmo/.codex/worktrees/w48-bottom-up-batch5/qcore-c/private/w48-batch5/comparisons/corpus/reading-proof.json",
+              "--base-build-receipt",
+              "/home/cosmo/.codex/worktrees/w48-bottom-up-batch5/qcore-c/docs/reports/w48-bottom-up-batch5/base-binary.json",
+              "--tip-build-receipt",
+              "/home/cosmo/.codex/worktrees/symbolic-cycle3-integration/qcore-c/private/symbolic-decomposition-cycle3/postgate-1/binary-receipt.json",
+              "--initial-base-receipts",
+              "/home/cosmo/.codex/worktrees/w48-bottom-up-batch5/qcore-c/docs/reports/w48-bottom-up-batch5/baseline-receipts.json"
+            ],
+            "exit": 0
+          }
+        }
+      ]
+    },
+    {
+      "attempt": "finish-checks-1",
+      "receipts": [
+        {
+          "path": "/home/cosmo/.codex/worktrees/w48-bottom-up-batch5/qcore-c/private/w48-batch5/finish-checks-1/commands.json",
+          "sha256": "76aaaefd18086cc16b9a8be2a2fdbbca6635e27f7be7dd73402598d93275a114",
+          "actual": [
+            {
+              "name": "source-effect-build",
+              "command": [
+                "rustc",
+                "--edition=2024",
+                "docs/reports/w48-bottom-up-batch5/scripts/source_effect_replay.rs",
+                "-C",
+                "debuginfo=0",
+                "-L",
+                "dependency=/home/cosmo/.codex/worktrees/symbolic-cycle3-integration/qcore-c/target/release/deps",
+                "-o",
+                "/home/cosmo/.codex/worktrees/w48-bottom-up-batch5/qcore-c/private/w48-batch5/finish-checks-1/source-effect-replay",
+                "--extern",
+                "qcore_audit=/home/cosmo/.codex/worktrees/symbolic-cycle3-integration/qcore-c/target/release/deps/libqcore_audit-d1daecc62d7b472d.rlib",
+                "--extern",
+                "qcore_c_gateway=/home/cosmo/.codex/worktrees/symbolic-cycle3-integration/qcore-c/target/release/deps/libqcore_c_gateway-e446ff2e15cc37d9.rlib",
+                "--extern",
+                "qcore_contract=/home/cosmo/.codex/worktrees/symbolic-cycle3-integration/qcore-c/target/release/deps/libqcore_contract-1ae6fd14441b99d3.rlib",
+                "--extern",
+                "qcore_schemas=/home/cosmo/.codex/worktrees/symbolic-cycle3-integration/qcore-c/target/release/deps/libqcore_schemas-0de9b3a16b0fe98c.rlib",
+                "--extern",
+                "serde_json=/home/cosmo/.codex/worktrees/symbolic-cycle3-integration/qcore-c/target/release/deps/libserde_json-08241b9b75b89117.rlib"
+              ],
+              "exit": 1,
+              "ended": "2026-10-21T23:28:33.155338+00:00"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "attempt": "finish-checks-2",
+      "receipts": [
+        {
+          "path": "/home/cosmo/.codex/worktrees/w48-bottom-up-batch5/qcore-c/private/w48-batch5/finish-checks-2/commands.json",
+          "sha256": "e1c8715fd845db8bb6623f101b74bd04fe011f3168c52fc71762fe2c39f1c91a",
+          "actual": [
+            {
+              "name": "source-effect-build",
+              "command": [
+                "rustc",
+                "--edition=2024",
+                "docs/reports/w48-bottom-up-batch5/scripts/source_effect_replay.rs",
+                "-C",
+                "debuginfo=0",
+                "-L",
+                "dependency=/home/cosmo/.codex/worktrees/symbolic-cycle3-integration/qcore-c/target/release/deps",
+                "-o",
+                "/home/cosmo/.codex/worktrees/w48-bottom-up-batch5/qcore-c/private/w48-batch5/finish-checks-2/source-effect-replay",
+                "--extern",
+                "qcore_audit=/home/cosmo/.codex/worktrees/symbolic-cycle3-integration/qcore-c/target/release/deps/libqcore_audit-d1daecc62d7b472d.rlib",
+                "--extern",
+                "qcore_c_gateway=/home/cosmo/.codex/worktrees/symbolic-cycle3-integration/qcore-c/target/release/deps/libqcore_c_gateway-e446ff2e15cc37d9.rlib",
+                "--extern",
+                "qcore_contract=/home/cosmo/.codex/worktrees/symbolic-cycle3-integration/qcore-c/target/release/deps/libqcore_contract-1ae6fd14441b99d3.rlib",
+                "--extern",
+                "qcore_schemas=/home/cosmo/.codex/worktrees/symbolic-cycle3-integration/qcore-c/target/release/deps/libqcore_schemas-0de9b3a16b0fe98c.rlib",
+                "--extern",
+                "serde_json=/home/cosmo/.codex/worktrees/symbolic-cycle3-integration/qcore-c/target/release/deps/libserde_json-08241b9b75b89117.rlib"
+              ],
+              "exit": 0,
+              "ended": "2026-10-21T23:29:01.399403+00:00"
+            },
+            {
+              "name": "source-effects",
+              "command": [
+                "/home/cosmo/.codex/worktrees/w48-bottom-up-batch5/qcore-c/private/w48-batch5/finish-checks-2/source-effect-replay",
+                "/home/cosmo/.codex/worktrees/w48-bottom-up-batch5/qcore-c/private/w48-batch5/finish-checks-2/source-effect-spec.json",
+                "/home/cosmo/.codex/worktrees/w48-bottom-up-batch5/qcore-c/private/w48-batch5/comparisons/corpus/source-effect-replay.json"
+              ],
+              "exit": 101,
+              "ended": "2026-10-21T23:29:01.537863+00:00"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "attempt": "finish-checks-3",
+      "receipts": [
+        {
+          "path": "/home/cosmo/.codex/worktrees/w48-bottom-up-batch5/qcore-c/private/w48-batch5/finish-checks-3/commands.json",
+          "sha256": "3294690ebea3bdb6ac15706aeffb7929f3064e6f93d7e14bc5e2bde23fe2705d",
+          "actual": [
+            {
+              "name": "source-effect-build",
+              "command": [
+                "rustc",
+                "--edition=2024",
+                "docs/reports/w48-bottom-up-batch5/scripts/source_effect_replay.rs",
+                "-C",
+                "debuginfo=0",
+                "-L",
+                "dependency=/home/cosmo/.codex/worktrees/symbolic-cycle3-integration/qcore-c/target/release/deps",
+                "-o",
+                "/home/cosmo/.codex/worktrees/w48-bottom-up-batch5/qcore-c/private/w48-batch5/finish-checks-3/source-effect-replay",
+                "--extern",
+                "qcore_audit=/home/cosmo/.codex/worktrees/symbolic-cycle3-integration/qcore-c/target/release/deps/libqcore_audit-d1daecc62d7b472d.rlib",
+                "--extern",
+                "qcore_c_gateway=/home/cosmo/.codex/worktrees/symbolic-cycle3-integration/qcore-c/target/release/deps/libqcore_c_gateway-e446ff2e15cc37d9.rlib",
+                "--extern",
+                "qcore_contract=/home/cosmo/.codex/worktrees/symbolic-cycle3-integration/qcore-c/target/release/deps/libqcore_contract-1ae6fd14441b99d3.rlib",
+                "--extern",
+                "qcore_schemas=/home/cosmo/.codex/worktrees/symbolic-cycle3-integration/qcore-c/target/release/deps/libqcore_schemas-0de9b3a16b0fe98c.rlib",
+                "--extern",
+                "serde_json=/home/cosmo/.codex/worktrees/symbolic-cycle3-integration/qcore-c/target/release/deps/libserde_json-08241b9b75b89117.rlib"
+              ],
+              "exit": 0,
+              "ended": "2026-10-21T23:29:26.077274+00:00"
+            },
+            {
+              "name": "source-effects",
+              "command": [
+                "/home/cosmo/.codex/worktrees/w48-bottom-up-batch5/qcore-c/private/w48-batch5/finish-checks-3/source-effect-replay",
+                "/home/cosmo/.codex/worktrees/w48-bottom-up-batch5/qcore-c/private/w48-batch5/finish-checks-3/source-effect-spec.json",
+                "/home/cosmo/.codex/worktrees/w48-bottom-up-batch5/qcore-c/private/w48-batch5/comparisons/corpus/source-effect-replay.json"
+              ],
+              "exit": 0,
+              "ended": "2026-10-21T23:29:26.219801+00:00"
+            },
+            {
+              "name": "projection-base",
+              "command": [
+                "/home/cosmo/.codex/worktrees/w48-bottom-up-batch5/qcore-c/private/w48-batch5/attribution-1/projection-replay",
+                "/home/cosmo/.codex/worktrees/w48-bottom-up-batch5/qcore-c/private/w48-batch5/finish-checks-3/base-projection-spec.json",
+                "/home/cosmo/.codex/worktrees/w48-bottom-up-batch5/qcore-c/private/w48-batch5/comparisons/corpus/projection-base.json"
+              ],
+              "exit": 101,
+              "ended": "2026-10-21T23:29:29.033351+00:00"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "attempt": "finish-checks-4",
+      "receipts": [
+        {
+          "path": "/home/cosmo/.codex/worktrees/w48-bottom-up-batch5/qcore-c/private/w48-batch5/finish-checks-4/commands.json",
+          "sha256": "1c958a8a06cbaad8a0d059c6a1bc33e546faaf6b63fc82713973c0b5e83dc2ca",
+          "actual": [
+            {
+              "name": "projection-build",
+              "command": [
+                "rustc",
+                "--edition=2024",
+                "docs/reports/w48-bottom-up-batch5/scripts/projection_replay.rs",
+                "-C",
+                "debuginfo=0",
+                "-L",
+                "dependency=/home/cosmo/.codex/worktrees/symbolic-cycle3-integration/qcore-c/target/release/deps",
+                "-o",
+                "/home/cosmo/.codex/worktrees/w48-bottom-up-batch5/qcore-c/private/w48-batch5/finish-checks-4/projection-replay",
+                "--extern",
+                "qcore_audit=/home/cosmo/.codex/worktrees/symbolic-cycle3-integration/qcore-c/target/release/deps/libqcore_audit-d1daecc62d7b472d.rlib",
+                "--extern",
+                "qcore_c_gateway=/home/cosmo/.codex/worktrees/symbolic-cycle3-integration/qcore-c/target/release/deps/libqcore_c_gateway-e446ff2e15cc37d9.rlib",
+                "--extern",
+                "qcore_contract=/home/cosmo/.codex/worktrees/symbolic-cycle3-integration/qcore-c/target/release/deps/libqcore_contract-1ae6fd14441b99d3.rlib",
+                "--extern",
+                "qcore_schemas=/home/cosmo/.codex/worktrees/symbolic-cycle3-integration/qcore-c/target/release/deps/libqcore_schemas-0de9b3a16b0fe98c.rlib",
+                "--extern",
+                "serde_json=/home/cosmo/.codex/worktrees/symbolic-cycle3-integration/qcore-c/target/release/deps/libserde_json-08241b9b75b89117.rlib"
+              ],
+              "exit": 0,
+              "ended": "2026-10-21T23:30:30.748513+00:00"
+            },
+            {
+              "name": "projection-base",
+              "command": [
+                "/home/cosmo/.codex/worktrees/w48-bottom-up-batch5/qcore-c/private/w48-batch5/finish-checks-4/projection-replay",
+                "/home/cosmo/.codex/worktrees/w48-bottom-up-batch5/qcore-c/private/w48-batch5/finish-checks-4/base-projection-spec.json",
+                "/home/cosmo/.codex/worktrees/w48-bottom-up-batch5/qcore-c/private/w48-batch5/comparisons/corpus/projection-base.json"
+              ],
+              "exit": 0,
+              "ended": "2026-10-21T23:30:34.408732+00:00"
+            },
+            {
+              "name": "projection-tip",
+              "command": [
+                "/home/cosmo/.codex/worktrees/w48-bottom-up-batch5/qcore-c/private/w48-batch5/finish-checks-4/projection-replay",
+                "/home/cosmo/.codex/worktrees/w48-bottom-up-batch5/qcore-c/private/w48-batch5/finish-checks-4/tip-projection-spec.json",
+                "/home/cosmo/.codex/worktrees/w48-bottom-up-batch5/qcore-c/private/w48-batch5/comparisons/corpus/projection-tip.json"
+              ],
+              "exit": 0,
+              "ended": "2026-10-21T23:30:38.038714+00:00"
+            },
+            {
+              "name": "time-system",
+              "command": [
+                "python3",
+                "docs/reports/w48-bottom-up-batch4/scripts/time_identity.py",
+                "system",
+                "--artifacts-root",
+                "/home/cosmo/.codex/worktrees/w48-bottom-up-batch5/qcore-c/private/w48-batch5/time-inputs"
+              ],
+              "exit": 0,
+              "ended": "2026-10-21T23:30:38.279859+00:00"
+            },
+            {
+              "name": "time-slice",
+              "command": [
+                "python3",
+                "docs/reports/w48-bottom-up-batch4/scripts/time_identity.py",
+                "slice",
+                "--artifacts-root",
+                "/home/cosmo/.codex/worktrees/w48-bottom-up-batch5/qcore-c/private/w48-batch5/time-inputs"
+              ],
+              "exit": 0,
+              "ended": "2026-10-21T23:30:38.486115+00:00"
+            },
+            {
+              "name": "time-corpus",
+              "command": [
+                "python3",
+                "docs/reports/w48-bottom-up-batch4/scripts/time_identity.py",
+                "corpus",
+                "--artifacts-root",
+                "/home/cosmo/.codex/worktrees/w48-bottom-up-batch5/qcore-c/private/w48-batch5/time-inputs"
+              ],
+              "exit": 0,
+              "ended": "2026-10-21T23:30:39.269424+00:00"
+            }
+          ]
+        }
+      ]
+    }
+  ],
+  "retained_failures": [
+    "Original strict corpus replay101: independent historical cwd build coordinate differs.",
+    "Helper compile1: CompileEntry has no Deserialize; explicit constructor used.",
+    "Specification1: declared exact unit has two DB configurations; source-defined first entry selected.",
+    "Historical preimage101: used configured options; corrected exact pinned compatibility API.",
+    "Strict canonical101: actual inferred internal summary table changes; complete semantic payloads now preserved.",
+    "Semantic-map101: existing is_up declaration excluded from internal-inference differences.",
+    "Source-effect compile1: private dialect helper; exact source-defined enum mapping used.",
+    "Source-effect101: historical transport is HistoricalStdin; exact pinned input guard corrected.",
+    "Projection101: historical sidecar omits contract_premises; root premises remain independently derived and full JSON replay required."
+  ],
+  "accepted_checks": "All185 historical build preimages/4834 coordinates both sides; complete actual binds and original canonical captures; typed source-effect tasks/full witnesses; complete projection/static/runtime and null joins; exact empty-summary time keys;169 semantic leaves accounted, zero unexplained.",
+  "scope": "Earlier native ENOSPC254 and queued143, plus focused fixture failures, remain in validation-attempts.json/baseline-receipts.json. No semantic analyzer repair was needed for these report-producer issues."
+}

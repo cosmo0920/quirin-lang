@@ -1,0 +1,302 @@
+{
+  "commands": [
+    {
+      "side": "base",
+      "command": [
+        "python3",
+        "docs/reports/w48-bottom-up-callee-bodies/scripts/bottom_up_plan.py",
+        "/home/cosmo/.codex/worktrees/w48-bottom-up-batch5/qcore-c/private/w48-batch5/analysis-inputs/corpus/base/resource-diagnostics.json",
+        "/home/cosmo/.codex/worktrees/w48-bottom-up-batch5/qcore-c/private/w48-batch5/base-plan-final.json",
+        "--top",
+        "20"
+      ],
+      "exit": 0,
+      "source_sha256": "67697b0c877d076930b2f9829724d5265bbaf604ba4e066e323da3b3a8621498",
+      "output_sha256": "bc93637d7829380594641e8ad5d5efef3f3759a91175097ade0c8d3d05e6f3a6",
+      "log": "/home/cosmo/.codex/worktrees/w48-bottom-up-batch5/qcore-c/private/w48-batch5/base-plan-final.log"
+    },
+    {
+      "side": "tip",
+      "command": [
+        "python3",
+        "docs/reports/w48-bottom-up-callee-bodies/scripts/bottom_up_plan.py",
+        "/home/cosmo/.codex/worktrees/w48-bottom-up-batch5/qcore-c/private/w48-batch5/analysis-inputs/corpus/tip/resource-diagnostics.json",
+        "/home/cosmo/.codex/worktrees/w48-bottom-up-batch5/qcore-c/private/w48-batch5/tip-plan-final.json",
+        "--top",
+        "20"
+      ],
+      "exit": 0,
+      "source_sha256": "26b92d34feb3e761bf3423cf4f347b34f70b223a5e3a1c413aaeb6e094d9baf1",
+      "output_sha256": "481754178170133b46e0747a8e19b980528cc2712b14cc5a41b91f1b62c23386",
+      "log": "/home/cosmo/.codex/worktrees/w48-bottom-up-batch5/qcore-c/private/w48-batch5/tip-plan-final.log"
+    }
+  ],
+  "planner_source_sha256": "82723ea30d06d6702fef39487f9e56a2c0f9d51bec04c7e906f1783e6f64cdeb",
+  "closure_source_sha256": "775d0829ef9a640872f7f1d58e8529330980bdda6fa0ec151917bdb7855419d7",
+  "base_and_tip_plans_exactly_equal": false,
+  "exact_body_row_changes": [
+    {
+      "body": "mk_server/mk_lib.c::mk_stop",
+      "before": {
+        "body": "mk_server/mk_lib.c::mk_stop",
+        "library": "monkey-libevent",
+        "callers": 1,
+        "frees_same": 0,
+        "frees_cross": 0,
+        "ceiling_callers": 0,
+        "ceiling_alone": 0,
+        "own_leaves": 2,
+        "own_calls": {},
+        "own_families": {
+          "unknown_alias: unresolved resource identity `X`": 1,
+          "unsupported: call to `X` outside its declared thread-synchronization obligation (no derived thread, predicate loop or join on this route)": 1
+        },
+        "score": 0.0,
+        "freed": []
+      },
+      "after": {
+        "body": "mk_server/mk_lib.c::mk_stop",
+        "library": "monkey-libevent",
+        "callers": 1,
+        "frees_same": 0,
+        "frees_cross": 0,
+        "ceiling_callers": 0,
+        "ceiling_alone": 0,
+        "own_leaves": 1,
+        "own_calls": {},
+        "own_families": {
+          "unsupported: call to `X` outside its declared thread-synchronization obligation (no derived thread, predicate loop or join on this route)": 1
+        },
+        "score": 0.0,
+        "freed": []
+      }
+    }
+  ],
+  "planning_envelopes_and_positive_priority_top_unchanged": true,
+  "baseline_same": 6,
+  "baseline_cross": 6,
+  "conditional_ceiling": 362,
+  "candidate_bodies": 2215,
+  "top_by_score": [
+    {
+      "body": "rdkafka.c::rd_kafka_log0",
+      "library": "librdkafka",
+      "callers": 35,
+      "frees_same": 0,
+      "frees_cross": 3,
+      "ceiling_callers": 3,
+      "ceiling_alone": 3,
+      "own_leaves": 1,
+      "own_calls": {
+        "rd_kafka_log_buf": 1
+      },
+      "own_families": {},
+      "score": 3.0,
+      "freed": [
+        "rdkafka_mock_cgrp.c::rd_kafka_mock_cgrp_classic_member_active",
+        "rdkafka_mock_cgrp.c::rd_kafka_mock_cgrp_consumer_member_active",
+        "rdkafka_mock_sharegrp.c::rd_kafka_mock_sharegroup_member_active"
+      ]
+    },
+    {
+      "body": "mk_server/mk_scheduler.c::sched_thread_cleanup",
+      "library": "monkey-libevent",
+      "callers": 2,
+      "frees_same": 2,
+      "frees_cross": 2,
+      "ceiling_callers": 2,
+      "ceiling_alone": 2,
+      "own_leaves": 1,
+      "own_calls": {
+        "mk_http_thread_destroy": 1
+      },
+      "own_families": {},
+      "score": 2.0,
+      "freed": [
+        "mk_server/mk_scheduler.c::mk_sched_threads_destroy_all",
+        "mk_server/mk_scheduler.c::mk_sched_threads_purge"
+      ]
+    },
+    {
+      "body": "cJSON.c::cJSON_DetachItemFromObject",
+      "library": "librdkafka",
+      "callers": 1,
+      "frees_same": 1,
+      "frees_cross": 1,
+      "ceiling_callers": 1,
+      "ceiling_alone": 1,
+      "own_leaves": 1,
+      "own_calls": {},
+      "own_families": {
+        "unsupported: unmodeled call, aggregate or indirect access in return expression": 1
+      },
+      "score": 1.0,
+      "freed": [
+        "cJSON.c::cJSON_DeleteItemFromObject"
+      ]
+    },
+    {
+      "body": "cJSON.c::cJSON_DetachItemFromObjectCaseSensitive",
+      "library": "librdkafka",
+      "callers": 1,
+      "frees_same": 1,
+      "frees_cross": 1,
+      "ceiling_callers": 1,
+      "ceiling_alone": 1,
+      "own_leaves": 1,
+      "own_calls": {},
+      "own_families": {
+        "unsupported: unmodeled call, aggregate or indirect access in return expression": 1
+      },
+      "score": 1.0,
+      "freed": [
+        "cJSON.c::cJSON_DeleteItemFromObjectCaseSensitive"
+      ]
+    },
+    {
+      "body": "cJSON.c::cJSON_ParseWithOpts",
+      "library": "librdkafka",
+      "callers": 2,
+      "frees_same": 1,
+      "frees_cross": 1,
+      "ceiling_callers": 1,
+      "ceiling_alone": 1,
+      "own_leaves": 1,
+      "own_calls": {
+        "cJSON_ParseWithLengthOpts": 1
+      },
+      "own_families": {},
+      "score": 1.0,
+      "freed": [
+        "cJSON.c::cJSON_Parse"
+      ]
+    },
+    {
+      "body": "cmt_map.c::cmt_map_metric_get",
+      "library": "cmetrics",
+      "callers": 14,
+      "frees_same": 1,
+      "frees_cross": 1,
+      "ceiling_callers": 11,
+      "ceiling_alone": 1,
+      "own_leaves": 1,
+      "own_calls": {
+        "map_metric_get_unlocked": 1
+      },
+      "own_families": {},
+      "score": 1.0,
+      "freed": [
+        "cmt_map.c::cmt_map_metric_get_val"
+      ]
+    },
+    {
+      "body": "mk_core/mk_iov.c::mk_iov_free_marked",
+      "library": "monkey-libevent",
+      "callers": 2,
+      "frees_same": 0,
+      "frees_cross": 1,
+      "ceiling_callers": 1,
+      "ceiling_alone": 1,
+      "own_leaves": 1,
+      "own_calls": {},
+      "own_families": {
+        "unsupported: indirect memory access is outside the resource projection": 1
+      },
+      "score": 1.0,
+      "freed": [
+        "mk_server/mk_header.c::mk_header_cb_finished"
+      ]
+    },
+    {
+      "body": "mk_core/mk_iov.c::mk_iov_send",
+      "library": "monkey-libevent",
+      "callers": 1,
+      "frees_same": 0,
+      "frees_cross": 1,
+      "ceiling_callers": 1,
+      "ceiling_alone": 1,
+      "own_leaves": 1,
+      "own_calls": {
+        "writev": 1
+      },
+      "own_families": {},
+      "score": 1.0,
+      "freed": [
+        "mk_server/mk_net.c::net_plain_writev"
+      ]
+    },
+    {
+      "body": "mk_server/mk_http_parser.c::mk_http_parser_read_chunked_content",
+      "library": "monkey-libevent",
+      "callers": 1,
+      "frees_same": 1,
+      "frees_cross": 1,
+      "ceiling_callers": 1,
+      "ceiling_alone": 1,
+      "own_leaves": 1,
+      "own_calls": {
+        "http_parser_transfer_encoding_chunked": 1
+      },
+      "own_families": {},
+      "score": 1.0,
+      "freed": [
+        "mk_server/mk_http_parser.c::mk_http_parser_chunked_decode_buf"
+      ]
+    },
+    {
+      "body": "rdkafka.c::rd_kafka_consume_batch0",
+      "library": "librdkafka",
+      "callers": 1,
+      "frees_same": 1,
+      "frees_cross": 1,
+      "ceiling_callers": 1,
+      "ceiling_alone": 1,
+      "own_leaves": 1,
+      "own_calls": {
+        "rd_kafka_q_serve_rkmessages": 1
+      },
+      "own_families": {},
+      "score": 1.0,
+      "freed": [
+        "rdkafka.c::rd_kafka_consume_batch_queue"
+      ]
+    },
+    {
+      "body": "rdkafka.c::rd_kafka_oauthbearer_set_token",
+      "library": "librdkafka",
+      "callers": 1,
+      "frees_same": 0,
+      "frees_cross": 1,
+      "ceiling_callers": 1,
+      "ceiling_alone": 1,
+      "own_leaves": 1,
+      "own_calls": {
+        "rd_kafka_oauthbearer_set_token0": 1
+      },
+      "own_families": {},
+      "score": 1.0,
+      "freed": [
+        "rdkafka_sasl.c::rd_kafka_share_oauthbearer_set_token"
+      ]
+    },
+    {
+      "body": "rdkafka_admin.c::rd_kafka_ConsumerGroupListing_copy",
+      "library": "librdkafka",
+      "callers": 1,
+      "frees_same": 1,
+      "frees_cross": 1,
+      "ceiling_callers": 1,
+      "ceiling_alone": 1,
+      "own_leaves": 1,
+      "own_calls": {
+        "rd_kafka_ConsumerGroupListing_new": 1
+      },
+      "own_families": {},
+      "score": 1.0,
+      "freed": [
+        "rdkafka_admin.c::rd_kafka_ConsumerGroupListing_copy_opaque"
+      ]
+    }
+  ],
+  "interpretation": "Counterfactual planning under lifted body obligations, not measured Safe promises or new link authority. Logger and scheduler remain blocked; existing declared is_up body gains source standing without changing this uncontracted-callee ranking."
+}

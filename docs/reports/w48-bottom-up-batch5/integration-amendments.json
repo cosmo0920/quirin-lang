@@ -1,0 +1,41 @@
+{
+  "status": "Source/native/attribution acceptance complete; root matrix/Python final receipt pending",
+  "source_tip": "9728ff74574f8398f90dcf7922fae90a7b42acde",
+  "measured_joint_source": "4d0cd81ff6c1f611bcc538311e92c12324a224f3",
+  "status_paragraph": "W48-BOTTOM-UP-BATCH5 preserves complete typed scalar-read plans instead of manufacturing a pointer identity for scalar destinations. Fresh conditional eight-home corpus4834:973\u2192975 Safe,3852\u21923850 Unknown,9 unchanged provisional Unsafe; system448 unchanged99/345/4, slice404:53\u219257 Safe,346\u2192342 Unknown,4 Pending/1 provisional Unsafe. No prior Safe regression. All5781 nested null dictionaries unchanged;3 corpus and2 slice added named candidate reads and custody/runtime envelopes retained and completely replayed. Existing declared cio_chunk_is_up gains native W4+entry standing. All169 semantic leaves accounted, whole original payloads retained, no source/graph truth transport. Shared joint gate8475 Rust/362 Lean; final matrix/Python receipt separate.",
+  "residual_plan": {
+    "retain": "W48-BOTTOM-UP-RESIDUAL-PLAN",
+    "close_only": "scalar-local read destination falsely carrying opaque pointer identity, including cio_chunk_is_up type at518 and adjacent is_file at531",
+    "open": [
+      "Actual logger/callback/TLS and ownership source contracts",
+      "Scheduler destroy/TLS ownership transport",
+      "cJSON string/member/Removed-result transport",
+      "Pointer/status carrier and unsupported casts/stores/effects",
+      "Source binding and guarded symbolic metadata truth obligations"
+    ]
+  },
+  "ranking": {
+    "positive_top_and_ceilings_unchanged": true,
+    "exact_row_delta": "mk_stop own_leaves2\u21921, frees/score0 unchanged",
+    "bodies": 2215,
+    "ceiling": 362,
+    "baseline_same": 6,
+    "baseline_cross": 6,
+    "interpretation": "Planning ceilings conditional, not coverage/safety gains. Top logger3 and scheduler2 remain blocked."
+  },
+  "matrix": {
+    "report": "docs/reports/w48-bottom-up-batch5/README.md",
+    "fresh_native": "native-comparison.json",
+    "accounting": "semantic-review-summary.json",
+    "source_authority": "Open",
+    "fields_erased": 0
+  },
+  "increment": "wave-48-part11.md",
+  "root_owned_files": [
+    "docs/STATUS.md",
+    "docs/increments/wave-48-part11.md",
+    "acceptance generator/matrix",
+    "report index"
+  ],
+  "final_required": "Integrate report-only commits, regenerate and commit matrix, run root Python acceptance tests, retain actual count/exit/log receipt and update shared gate completion before calling complete."
+}

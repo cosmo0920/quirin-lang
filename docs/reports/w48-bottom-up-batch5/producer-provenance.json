@@ -1,0 +1,26 @@
+{
+  "source_files": {
+    "crates/qcore-audit/src/projection.rs": "590b89c7fe0e67ee9ae6f6cd8efb1fb8ec21e536c88a24170b3167ef90650255",
+    "crates/qcore-audit/src/compile_db.rs": "4143ef788906ad0cb36c4a63db3b19ad17c9ebbac04309a8da390f8ef8d34d15",
+    "crates/qcore-c-gateway/src/clang.rs": "43d86381fd37e1a76bca0b6bc9bd427aa94358dc7b6e7be4dd5c78b1a4b061de",
+    "crates/qcore-c-gateway/src/legacy_c.rs": "1d24829ed028e8e34132db9f29a906cd4bfa3a0723eb9edf7b24f4c0acac8aac",
+    "crates/qcore-c-gateway/src/boolean_source.rs": "852b82f715893070e62a8e89e52de97cbf10c1085893ac85267f10de3ab7ded5",
+    "crates/qcore-verification/src/source_effect.rs": "7caf606967a579769c9db4bfd9190c13242e594545347e052d2b03ade1d3f56b",
+    "crates/qcore-audit/src/outer_selection.rs": "1ec691e54d10c24677ab983db4bcb31c91ab32d77c8d4b93c4d3821b593f93b2",
+    "crates/qcore-audit/src/null_tally.rs": "2b65f95ddf7eb145d8fa918cc2d173a14a298cbb58142254c1703eb6a6a9ede3"
+  },
+  "historical_proof": {
+    "path": "/home/cosmo/.codex/worktrees/w48-bottom-up-batch5/qcore-c/private/w48-batch5/historical-replay-4/historical-build-proof.json",
+    "sha256": "721125351ad9c6255cf588f447f61f53b8086562d44306bd45b33834aaadf004",
+    "units": 185,
+    "rows": 4834,
+    "field": "Complete actual Rust Debug(unit, invocation cwd, Clang) tuples; only held cwd differs; wrong-cwd negatives."
+  },
+  "source_effect_proof": {
+    "path": "/home/cosmo/.codex/worktrees/w48-bottom-up-batch5/qcore-c/private/w48-batch5/comparisons/corpus/source-effect-replay.json",
+    "sha256": "487020df9b24f22c677313ab0a4cadafb471db91cf1c17cbc9182b037f1c5b2d",
+    "records": 3,
+    "scope": "Entire source-effect document equality after exact recursive serialized identity/configuration/typed task/obligation/witness recomputation."
+  },
+  "canonical_semantic_boundary": "Two actual cio_chunk_open observations retain source-validated inferred function-table differences (internal cio_chunk_is_file and already-Safe cio_version phase variants), every other canonical field and every complete non-environment observation remains paired exactly. Declared sources, graphs, source bindings and truth authority unchanged."
+}

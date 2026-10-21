@@ -1,0 +1,402 @@
+{
+  "source_base": "d08dcca8b77b35417a999474b608cedfe821cfdb",
+  "actual_base_build_commit": "d5d881126d42b38fbb5581bbb58266bd042efe9c",
+  "actual_tip_build_commit": "4d0cd81ff6c1f611bcc538311e92c12324a224f3",
+  "tip_reporting_head": "9ed46cc4ea92adb27791200dedb1c320f337427d",
+  "base_binary_sha256": "e87e886d5aa0d680d65abcc0896545de0758238197b085ec72b51f60c60ca11f",
+  "tip_binary_sha256": "fc1c4903cb99d24c8495f00b6d585ef9a2c16549fea8497b66c21bf17b65c5ac",
+  "routes": {
+    "system": {
+      "rows": 448,
+      "before": {
+        "Unknown": 345,
+        "Safe": 99,
+        "Unsafe": 4
+      },
+      "after": {
+        "Unknown": 345,
+        "Safe": 99,
+        "Unsafe": 4
+      },
+      "semantic_rows_changed": 2,
+      "safe_gains": [],
+      "safe_regressions": [],
+      "null_rows": 454,
+      "all_nested_null_dictionaries_unchanged": true,
+      "review": {
+        "route": "system",
+        "leaf_count": 11,
+        "all_leaves_accounted_for": true,
+        "remaining_unexplained": 0,
+        "classification_counts": {
+          "exact tally of complete retained row diagnostics": 1,
+          "exact unit tally of complete retained row diagnostics": 2,
+          "actual scalar read or existing summary propagation, full C coordinates retained": 2,
+          "exact unchanged reason text plus independently recounted diagnostic deltas": 2,
+          "exact empty-summary __TIME__ preimage replay with wrong-time negative": 4
+        },
+        "fields_erased": 0,
+        "source_binding": "Open",
+        "truth_transport": false,
+        "reading_proof_sha256": "073483c1f1991194c0195f64bdef08b8b05982966b40d64d246b0fe24088dbc2",
+        "full_private_leaf_review": "/home/cosmo/.codex/worktrees/w48-bottom-up-batch5/qcore-c/private/w48-batch5/comparisons/system/semantic-leaf-review.json"
+      },
+      "reading_receipts_replayed": 24,
+      "semantic_reading_receipts": 0,
+      "canonical_proof_sha256": "073483c1f1991194c0195f64bdef08b8b05982966b40d64d246b0fe24088dbc2",
+      "base_invocation": {
+        "path": "/home/cosmo/.codex/worktrees/w48-bottom-up-batch5/qcore-c/private/w48-batch5/analysis-inputs/system/base/invocation.json",
+        "sha256": "d69c98d6ec43fcd63a39003c8aa5bc03dbabc9a681d0ba005429730b99705e62",
+        "exit": 0,
+        "started": "2026-10-21T17:21:14.759153+00:00",
+        "ended": "2026-10-21T17:25:30.840492+00:00",
+        "command": [
+          "/home/cosmo/.codex/worktrees/w48-bottom-up-batch5/qcore-c/private/w48-batch5/inputs-base/target/release/quirin-audit",
+          "current",
+          "--checkout",
+          "/home/cosmo/Documents/GitHub/qcore-c/private/w45-fb/w46-external-callee-contracts/attempt-1/fluent-bit-clang-source",
+          "--profile-directory",
+          "/home/cosmo/.codex/worktrees/w48-bottom-up-batch5/qcore-c/private/w48-batch5/inputs-base/contract/profiles/fluent-bit",
+          "--compile-database",
+          "/home/cosmo/Documents/GitHub/qcore-c/private/w45-fb/w46-external-callee-contracts/attempt-1/fluent-bit-clang-production/compile_commands.json",
+          "--selection",
+          "/home/cosmo/.codex/worktrees/w48-bottom-up-batch5/qcore-c/private/w48-batch5/inputs-base/contract/profiles/fluent-bit/system-selection.json",
+          "--jobs",
+          "16",
+          "--report",
+          "/home/cosmo/.codex/worktrees/w48-bottom-up-batch5/qcore-c/private/w48-batch5/system-before/resource-diagnostics.json"
+        ]
+      },
+      "tip_invocation": {
+        "path": "/home/cosmo/.codex/worktrees/w48-bottom-up-batch5/qcore-c/private/w48-batch5/analysis-inputs/system/tip/invocation.json",
+        "sha256": "b347882ea3947dfe76f3ade79f8a8a62940de8c664cfb8d65fbf0f0e2df8604b",
+        "exit": 0,
+        "started": "2026-10-21T18:39:27.093308+00:00",
+        "ended": "2026-10-21T18:43:29.771273+00:00",
+        "command": [
+          "/home/cosmo/.codex/worktrees/symbolic-cycle3-integration/qcore-c/private/symbolic-decomposition-cycle3/postgate-1/tip-freeze/inputs/target/release/quirin-audit",
+          "current",
+          "--checkout",
+          "/home/cosmo/Documents/GitHub/qcore-c/private/w45-fb/w46-external-callee-contracts/attempt-1/fluent-bit-clang-source",
+          "--profile-directory",
+          "/home/cosmo/.codex/worktrees/symbolic-cycle3-integration/qcore-c/private/symbolic-decomposition-cycle3/postgate-1/tip-freeze/inputs/contract/profiles/fluent-bit",
+          "--compile-database",
+          "/home/cosmo/Documents/GitHub/qcore-c/private/w45-fb/w46-external-callee-contracts/attempt-1/fluent-bit-clang-production/compile_commands.json",
+          "--selection",
+          "/home/cosmo/.codex/worktrees/symbolic-cycle3-integration/qcore-c/private/symbolic-decomposition-cycle3/postgate-1/tip-freeze/inputs/contract/profiles/fluent-bit/system-selection.json",
+          "--jobs",
+          "16",
+          "--report",
+          "/home/cosmo/.codex/worktrees/symbolic-cycle3-integration/qcore-c/private/symbolic-decomposition-cycle3/postgate-1/system/tip/resource-diagnostics.json"
+        ]
+      },
+      "complete_dependency_replay": [
+        {
+          "path": "/home/cosmo/.codex/worktrees/w48-bottom-up-batch5/qcore-c/private/w48-batch5/comparisons/system/metadata-base.json",
+          "sha256": "94587a4007db9d27f0c5835a22b292265bd0d6b500b7159ec41ff1417526eb5e"
+        },
+        {
+          "path": "/home/cosmo/.codex/worktrees/w48-bottom-up-batch5/qcore-c/private/w48-batch5/comparisons/system/metadata-tip.json",
+          "sha256": "2b45e78a9b266d207fd9d757f9dd13a8d1ec031923c8569fb5784a54b48742d2"
+        }
+      ],
+      "complete_projection_replay": [
+        {
+          "path": "/home/cosmo/.codex/worktrees/w48-bottom-up-batch5/qcore-c/private/w48-batch5/comparisons/system/projection-base.json",
+          "sha256": "a5d35d4381d73f24c2859a1f6733a07e7a74b398b9aa208b6894dda95248ee8e"
+        },
+        {
+          "path": "/home/cosmo/.codex/worktrees/w48-bottom-up-batch5/qcore-c/private/w48-batch5/comparisons/system/projection-tip.json",
+          "sha256": "55f9d1690a8f4b56316877ed31a1dd20cc1985a67d076b100b89e6f3f6e8fcaa"
+        }
+      ],
+      "raw_leaf_counts": {
+        "diagnostics": 1632,
+        "contracts": 5292,
+        "chunk-contracts": 0,
+        "source-effects": 0,
+        "null": 1344,
+        "null-summary": 0,
+        "outer": 5
+      }
+    },
+    "slice": {
+      "rows": 404,
+      "before": {
+        "Unknown": 346,
+        "Safe": 53,
+        "Pending": 4,
+        "Unsafe": 1
+      },
+      "after": {
+        "Unknown": 342,
+        "Safe": 57,
+        "Pending": 4,
+        "Unsafe": 1
+      },
+      "semantic_rows_changed": 8,
+      "safe_gains": [
+        [
+          "fluent-bit-tail-pause",
+          "src/flb_input.c",
+          "flb_input_rate_gate_can_resume",
+          0
+        ],
+        [
+          "fluent-bit-tail-pause",
+          "src/flb_input.c",
+          "flb_input_rate_gate_is_limited",
+          0
+        ],
+        [
+          "fluent-bit-tail-pause",
+          "src/flb_input.c",
+          "flb_input_rate_gate_can_resume",
+          1
+        ],
+        [
+          "fluent-bit-tail-pause",
+          "src/flb_input.c",
+          "flb_input_rate_gate_is_limited",
+          1
+        ]
+      ],
+      "safe_regressions": [],
+      "null_rows": 406,
+      "all_nested_null_dictionaries_unchanged": true,
+      "review": {
+        "route": "slice",
+        "leaf_count": 65,
+        "all_leaves_accounted_for": true,
+        "remaining_unexplained": 0,
+        "classification_counts": {
+          "exact tally of complete retained row diagnostics": 2,
+          "exact unit tally of complete retained row diagnostics": 4,
+          "actual scalar read or existing summary propagation, full C coordinates retained": 12,
+          "existing source-Safe summary consultation, including propagated new scalar bodies": 4,
+          "exact unchanged reason text plus independently recounted diagnostic deltas": 2,
+          "additional checked scalar-read named premise; no null truth discharge": 4,
+          "exact empty-summary __TIME__ preimage replay with wrong-time negative": 4,
+          "complete production Facts/premises/render replay both sides with three negative controls": 2,
+          "exact production custody/null join; new named premises remain candidate": 10,
+          "exact production null-tally field replay; supplemental fold fields unchanged": 5,
+          "complete production outer source/pin/reach/static/runtime JSON replay both sides": 16
+        },
+        "fields_erased": 0,
+        "source_binding": "Open",
+        "truth_transport": false,
+        "reading_proof_sha256": "4502b60713f458b33ed1f10ac3f78b28a0c5cf50c6a40661e8f8c128c7be4563",
+        "full_private_leaf_review": "/home/cosmo/.codex/worktrees/w48-bottom-up-batch5/qcore-c/private/w48-batch5/comparisons/slice/semantic-leaf-review.json"
+      },
+      "reading_receipts_replayed": 2,
+      "semantic_reading_receipts": 0,
+      "canonical_proof_sha256": "4502b60713f458b33ed1f10ac3f78b28a0c5cf50c6a40661e8f8c128c7be4563",
+      "base_invocation": {
+        "path": "/home/cosmo/.codex/worktrees/w48-bottom-up-batch5/qcore-c/private/w48-batch5/analysis-inputs/slice/base/invocation.json",
+        "sha256": "4ae1450f2ff812af1a58915a8381268675369475fd4067aadd02fd6ccb28df6f",
+        "exit": 0,
+        "started": "2026-10-21T17:25:30.989043+00:00",
+        "ended": "2026-10-21T17:29:08.591565+00:00",
+        "command": [
+          "/home/cosmo/.codex/worktrees/w48-bottom-up-batch5/qcore-c/private/w48-batch5/inputs-base/target/release/quirin-audit",
+          "current",
+          "--checkout",
+          "/home/cosmo/Documents/GitHub/qcore-c/private/w47-tail/attempt-1/prep/fluent-bit-clang-source",
+          "--profile-directory",
+          "/home/cosmo/.codex/worktrees/w48-bottom-up-batch5/qcore-c/private/w48-batch5/inputs-base/contract/profiles/fluent-bit",
+          "--compile-database",
+          "/home/cosmo/Documents/GitHub/qcore-c/private/w47-tail/attempt-1/prep/fluent-bit-clang-production/compile_commands.json",
+          "--selection",
+          "/home/cosmo/.codex/worktrees/w48-bottom-up-batch5/qcore-c/private/w48-batch5/inputs-base/contract/profiles/fluent-bit/tail-pause-selection.json",
+          "--jobs",
+          "16",
+          "--report",
+          "/home/cosmo/.codex/worktrees/w48-bottom-up-batch5/qcore-c/private/w48-batch5/slice-before/resource-diagnostics.json"
+        ]
+      },
+      "tip_invocation": {
+        "path": "/home/cosmo/.codex/worktrees/w48-bottom-up-batch5/qcore-c/private/w48-batch5/analysis-inputs/slice/tip/invocation.json",
+        "sha256": "220acf797829c0b7f456edc9f7bc3bbb33212eee61f0eecce7b9468d671cb2a5",
+        "exit": 0,
+        "started": "2026-10-21T18:43:30.033477+00:00",
+        "ended": "2026-10-21T18:46:59.606314+00:00",
+        "command": [
+          "/home/cosmo/.codex/worktrees/symbolic-cycle3-integration/qcore-c/private/symbolic-decomposition-cycle3/postgate-1/tip-freeze/inputs/target/release/quirin-audit",
+          "current",
+          "--checkout",
+          "/home/cosmo/Documents/GitHub/qcore-c/private/w47-tail/attempt-1/prep/fluent-bit-clang-source",
+          "--profile-directory",
+          "/home/cosmo/.codex/worktrees/symbolic-cycle3-integration/qcore-c/private/symbolic-decomposition-cycle3/postgate-1/tip-freeze/inputs/contract/profiles/fluent-bit",
+          "--compile-database",
+          "/home/cosmo/Documents/GitHub/qcore-c/private/w47-tail/attempt-1/prep/fluent-bit-clang-production/compile_commands.json",
+          "--selection",
+          "/home/cosmo/.codex/worktrees/symbolic-cycle3-integration/qcore-c/private/symbolic-decomposition-cycle3/postgate-1/tip-freeze/inputs/contract/profiles/fluent-bit/tail-pause-selection.json",
+          "--jobs",
+          "16",
+          "--report",
+          "/home/cosmo/.codex/worktrees/symbolic-cycle3-integration/qcore-c/private/symbolic-decomposition-cycle3/postgate-1/slice/tip/resource-diagnostics.json"
+        ]
+      },
+      "complete_dependency_replay": [
+        {
+          "path": "/home/cosmo/.codex/worktrees/w48-bottom-up-batch5/qcore-c/private/w48-batch5/comparisons/slice/metadata-base.json",
+          "sha256": "776e8a4f03ac658979ca1c3b3bf525c5babdc84debe0777b3afd519a0603f1c7"
+        },
+        {
+          "path": "/home/cosmo/.codex/worktrees/w48-bottom-up-batch5/qcore-c/private/w48-batch5/comparisons/slice/metadata-tip.json",
+          "sha256": "05cd878c4384725e73674e73700cd5d0864a509f650b6e219c333d978c46459a"
+        }
+      ],
+      "complete_projection_replay": [
+        {
+          "path": "/home/cosmo/.codex/worktrees/w48-bottom-up-batch5/qcore-c/private/w48-batch5/comparisons/slice/projection-base.json",
+          "sha256": "d5262988fb786cb2baaea69a19cb3e726df2ea292547cc67e583eb9f5c05599f"
+        },
+        {
+          "path": "/home/cosmo/.codex/worktrees/w48-bottom-up-batch5/qcore-c/private/w48-batch5/comparisons/slice/projection-tip.json",
+          "sha256": "52468f397f3c713e1e293e18b7308bc8de2606a550097ee4cbbbabe76a87f5cc"
+        }
+      ],
+      "raw_leaf_counts": {
+        "diagnostics": 1314,
+        "contracts": 3798,
+        "chunk-contracts": 0,
+        "source-effects": 0,
+        "null": 1222,
+        "null-summary": 5,
+        "outer": 21
+      }
+    },
+    "corpus": {
+      "rows": 4834,
+      "before": {
+        "Unknown": 3852,
+        "Safe": 973,
+        "Unsafe": 9
+      },
+      "after": {
+        "Unknown": 3850,
+        "Safe": 975,
+        "Unsafe": 9
+      },
+      "semantic_rows_changed": 4,
+      "safe_gains": [
+        [
+          "chunkio",
+          "cio_chunk.c",
+          "cio_chunk_is_file",
+          0
+        ],
+        [
+          "chunkio",
+          "cio_chunk.c",
+          "cio_chunk_is_up",
+          0
+        ]
+      ],
+      "safe_regressions": [],
+      "null_rows": 4921,
+      "all_nested_null_dictionaries_unchanged": true,
+      "review": {
+        "route": "corpus",
+        "leaf_count": 93,
+        "all_leaves_accounted_for": true,
+        "remaining_unexplained": 0,
+        "classification_counts": {
+          "exact tally of complete retained row diagnostics": 1,
+          "additional checked scalar-read named premise; no null truth discharge": 6,
+          "complete native body-standing change retained; exact dependency producer replay": 3,
+          "exact unit tally of complete retained row diagnostics": 3,
+          "actual scalar read or existing summary propagation, full C coordinates retained": 6,
+          "full original canonical/bind replay; real source-Safe inferred table payloads retained": 8,
+          "exact unchanged reason text plus independently recounted diagnostic deltas": 3,
+          "exact empty-summary __TIME__ preimage replay with wrong-time negative": 4,
+          "complete production Facts/premises/render replay both sides with three negative controls": 14,
+          "complete original source-effect records/task IDs/witnesses replayed; sole held cwd identity delta": 29,
+          "exact production custody/null join; new named premises remain candidate": 5,
+          "exact production null-tally field replay; supplemental fold fields unchanged": 3,
+          "complete production outer source/pin/reach/static/runtime JSON replay both sides": 8
+        },
+        "fields_erased": 0,
+        "source_binding": "Open",
+        "truth_transport": false,
+        "reading_proof_sha256": "c4fd5e30e61de6cecde62a6f98a733f81002c63adcfd6771033a248d6472f9e4",
+        "full_private_leaf_review": "/home/cosmo/.codex/worktrees/w48-bottom-up-batch5/qcore-c/private/w48-batch5/comparisons/corpus/semantic-leaf-review.json"
+      },
+      "reading_receipts_replayed": 122,
+      "semantic_reading_receipts": 2,
+      "canonical_proof_sha256": "c4fd5e30e61de6cecde62a6f98a733f81002c63adcfd6771033a248d6472f9e4",
+      "base_invocation": {
+        "path": "/home/cosmo/.codex/worktrees/w48-bottom-up-batch5/qcore-c/private/w48-batch5/analysis-inputs/corpus/base/invocation.json",
+        "sha256": "7cddcd420e5012bce812bc350328f0c03b4304ef595274c9d7eb74cd5dfce19f",
+        "exit": 0,
+        "started": "2026-10-21T18:08:19.405443+00:00",
+        "ended": "2026-10-21T18:39:21.743591+00:00",
+        "command": [
+          "/usr/bin/python3",
+          "/home/cosmo/.codex/worktrees/w48-bottom-up-batch5/qcore-c/private/w48-batch5/inputs-base/scripts/run_pinned_audit.py",
+          "/home/cosmo/.codex/worktrees/w48-bottom-up-batch5/qcore-c/private/w48-batch5/corpus-before-retry-1/corpus",
+          "66910c10",
+          "--inputs-root",
+          "/home/cosmo/Documents/GitHub/qcore-c/build/cycle19",
+          "--jobs",
+          "16"
+        ]
+      },
+      "tip_invocation": {
+        "path": "/home/cosmo/.codex/worktrees/w48-bottom-up-batch5/qcore-c/private/w48-batch5/analysis-inputs/corpus/tip/invocation.json",
+        "sha256": "fc5acd1e1005fa04c0b7158648d75d5162d211952622291934a032967d4e32ef",
+        "exit": 0,
+        "started": "2026-10-21T18:46:59.858987+00:00",
+        "ended": "2026-10-21T19:16:57.163771+00:00",
+        "command": [
+          "/usr/bin/python3",
+          "/home/cosmo/.codex/worktrees/symbolic-cycle3-integration/qcore-c/private/symbolic-decomposition-cycle3/postgate-1/tip-freeze/inputs/scripts/run_pinned_audit.py",
+          "/home/cosmo/.codex/worktrees/symbolic-cycle3-integration/qcore-c/private/symbolic-decomposition-cycle3/postgate-1/corpus/tip/corpus",
+          "66910c10",
+          "--inputs-root",
+          "/home/cosmo/Documents/GitHub/qcore-c/build/cycle19",
+          "--jobs",
+          "16"
+        ]
+      },
+      "complete_dependency_replay": [
+        {
+          "path": "/home/cosmo/.codex/worktrees/w48-bottom-up-batch5/qcore-c/private/w48-batch5/comparisons/corpus/metadata-base.json",
+          "sha256": "46e7e14799d8667e296d08fed2a1bdeaf41ca79fcc1192715129227c819223bb"
+        },
+        {
+          "path": "/home/cosmo/.codex/worktrees/w48-bottom-up-batch5/qcore-c/private/w48-batch5/comparisons/corpus/metadata-tip.json",
+          "sha256": "030185496c3c75e6061e983947c2d1fc953c31aeb28f3cf5a47469b9d571435b"
+        }
+      ],
+      "complete_projection_replay": [
+        {
+          "path": "/home/cosmo/.codex/worktrees/w48-bottom-up-batch5/qcore-c/private/w48-batch5/comparisons/corpus/projection-base.json",
+          "sha256": "ddd96f0823a567d2c7d1f491d436b80eca7b1cfc417f3d45ecdb7568517cbb26"
+        },
+        {
+          "path": "/home/cosmo/.codex/worktrees/w48-bottom-up-batch5/qcore-c/private/w48-batch5/comparisons/corpus/projection-tip.json",
+          "sha256": "1d8eae7494bd727992a4fdd0e9af96891ec34e7e8bc782af0114ff9579d08f0d"
+        }
+      ],
+      "raw_leaf_counts": {
+        "diagnostics": 16952,
+        "contracts": 28547,
+        "chunk-contracts": 0,
+        "source-effects": 29,
+        "source": 0,
+        "null": 14507,
+        "null-summary": 3,
+        "outer": 13
+      }
+    }
+  },
+  "semantic_leaves_reviewed": 169,
+  "unexplained_semantic_leaves": 0,
+  "fields_erased": 0,
+  "source_binding": "Open",
+  "truth_transport": false,
+  "runtime_boundary": "All nested null dictionaries agree. Whole envelopes retain measured custody, named-premise and runtime tally changes; all original payloads stay private and complete.",
+  "package_gate": "N/A; no provider inputs changed; actual external package/DB before-after fingerprints held."
+}

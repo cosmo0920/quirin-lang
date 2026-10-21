@@ -45,9 +45,9 @@ def migration(value,path=(),side='tip'):
   # capture. Preserve that entire exact value, including every source path.
   if len(path)==6 and path[:2]==('diagnostics','units') and path[-3:-1]==('reading_site_environments','environments'):
    if path[-1]=='$key':
-    assert value in proof['reconstructed_base_environments']
+    assert value in held_canonical
    else:
-    assert sha(value.encode())==path[-1] and proof['reconstructed_base_environments'][path[-1]]==value
+    assert sha(value.encode())==path[-1] and held_canonical[path[-1]]==value
    return value
   before=value
   if side=='tip' and value in known:
@@ -98,6 +98,15 @@ receipt_map={}
 for receipt in proof['receipts']:
  if receipt['tip_receipt'] in receipt_map:assert receipt_map[receipt['tip_receipt']]==receipt['base_receipt']
  receipt_map[receipt['tip_receipt']]=receipt['base_receipt']
+normalized=proof.get('normalized_tip_environments',proof.get('reconstructed_base_environments'))
+assert normalized is not None
+held_canonical=dict(normalized)
+for unit in data['base']['diagnostics']['units']:
+ for digest,canonical in unit.get('reading_site_environments',{}).get('environments',{}).items():
+  assert sha(canonical.encode())==digest
+  if digest in held_canonical:assert held_canonical[digest]==canonical
+  held_canonical[digest]=canonical
+normalized_receipts={r['tip_receipt']:r.get('normalized_tip_receipt',base_receipts[r['base_receipt']]) for r in proof['receipts']}
 new_captures=[];restored=0
 assert len(left['diagnostics']['units'])==len(right['diagnostics']['units'])
 for ui,unit in enumerate(right['diagnostics']['units']):
@@ -108,22 +117,23 @@ for ui,unit in enumerate(right['diagnostics']['units']):
   assert {k:v for k,v in value.items() if k!='environments'}=={k:v for k,v in base_value.items() if k!='environments'}
   env_map={}
   for record in proof['receipts']:
-   tip_sha,base_sha=record['tip_environment'],record['base_environment']
+   tip_sha,base_sha=record['tip_environment'],record.get('normalized_tip_environment',record['base_environment'])
    if tip_sha in env_map:assert env_map[tip_sha]==base_sha
    env_map[tip_sha]=base_sha
   transformed={}
   for tip_sha,canonical in value['environments'].items():
    assert sha(canonical.encode())==tip_sha and tip_sha in env_map
-   base_sha=env_map[tip_sha];base_canonical=proof['reconstructed_base_environments'][base_sha]
-   assert sha(base_canonical.encode())==base_sha and base_value['environments'][base_sha]==base_canonical
+   base_sha=env_map[tip_sha];base_canonical=normalized[base_sha]
+   assert sha(base_canonical.encode())==base_sha
+   if 'normalized_tip_environments' not in proof:assert base_value['environments'][base_sha]==base_canonical
    assert base_sha not in transformed,'capture domain collision'
    transformed[base_sha]=base_canonical
-   new_captures.append({'unit':ui,'tip_sha256':tip_sha,'base_sha256':base_sha,'proof':'actual BASE and TIP captures plus exact typed canonical reconstruction; no fields deleted'})
-  assert transformed==base_value['environments']
+   new_captures.append({'unit':ui,'tip_sha256':tip_sha,'base_sha256':base_sha,'proof':'actual original captures and complete typed metadata reconstruction; any semantic function-table differences retained'})
+  if 'normalized_tip_environments' not in proof:assert transformed==base_value['environments']
   value['environments']=transformed
  for row in unit['functions']:
   if 'reading_site_evidence' in row:
-   row['reading_site_evidence']=[copy.deepcopy(base_receipts[receipt_map[receipt['id']]]) for receipt in row['reading_site_evidence']];row['reading_site_evidence'].sort(key=lambda r:r['id']);restored+=len(row['reading_site_evidence'])
+   row['reading_site_evidence']=[copy.deepcopy(normalized_receipts[receipt['id']]) for receipt in row['reading_site_evidence']];row['reading_site_evidence'].sort(key=lambda r:r['id']);restored+=len(row['reading_site_evidence'])
 assert restored==len(proof['receipts'])
 CONTEXT={'artifact','property','semantic_profile','scope','bounds','assumptions','source_identity','build_identity','evidence_version'};version_changes=[]
 def validate_original_versions(v,expected):

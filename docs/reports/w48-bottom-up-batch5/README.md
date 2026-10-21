@@ -1,74 +1,101 @@
 # W48 bottom-up batch5: scalar read identity
 
-A source-shaped `int type = ch->st->type` now retains the existing complete typed
-scalar-read plan rather than manufacturing an opaque pointer identity. The
-subsequent zero comparison keeps the existing branch semantics. The synthetic
-source-bound custody fixture changes from Unknown (`UnknownAlias type`) to Safe and its
-certificate independently replays. Actual corpus movement awaits the fresh
-joint before/after comparison; no production count is claimed here yet.
+The actual pinned `cio_chunk_is_up` body now keeps the complete existing typed
+plan for `type = ch->st->type`. The earlier opaque-field route manufactured a
+pointer identity for the scalar local and reported `UnknownAlias type` at its
+zero comparison. The replacement preserves all alias, liveness and per-hop
+reads, clears only the scalar result, and retains both possible branch outcomes.
+Pointer destinations, store frames, readback, casts and unsupported effects keep
+their existing refusal boundaries.
 
-[Prediction](PREDICTION.md) was committed at `d5d881126`, before semantic edits,
-on exact base `d08dcca8b77b35417a999474b608cedfe821cfdb`.
-[Readiness](readiness.json) compares the actual pinned `cio_chunk_is_up` body
-with the repository fixture. Higher-ranked logger, scheduler and cJSON cards
-still require their independent ownership/callback/TLS/membership/return work.
+[Prediction](PREDICTION.md) was committed at `d5d881126` before implementation,
+on exact semantic base `d08dcca8b77b35417a999474b608cedfe821cfdb`.
+[Readiness](readiness.json) binds the actual source to the repository fixture.
+Implementation source ends at `9728ff745`; the shared measured integration is
+`4d0cd81ff6c1f611bcc538311e92c12324a224f3`. Its report/controller HEAD is
+`9ed46cc4e`. Actual embedded evidence versions are independently held BASE build
+`d5d881126` and TIP build `4d0cd81f`, with exact binary receipts.
 
-The bounded replacement requires the same exact scalar destination, no borrowed
-pointer destination, store frame or readback, and a complete existing typed
-statement plan. It preserves every older alias read beside all typed liveness
-and per-hop obligations. The existing transfer clears only the scalar result;
-no resource, known scalar value, branch pruning, call effect or source-binding
-truth is introduced. Failed planning keeps the original instruction and rolls
-back speculative consultations. Outer descriptor, in-place, formal-mutation,
-iteration and identity guards remain. No provider, profile, lock, contract,
-hypothesis or graph asset changes. Faithful extraction and Rust–Lean
-correspondence remain premises 28; the Lean proof is an abstract rule model.
+| Route | Custody rows | Safe | Unknown | Pending | Provisional Unsafe |
+|---|---:|---:|---:|---:|---:|
+| Conditional eight-home corpus | 4,834 | 973 → 975 | 3,852 → 3,850 | 0 | 9 |
+| Configured system | 448 | 99 | 345 | 0 | 4 |
+| Configured tail/pause slice | 404 | 53 → 57 | 346 → 342 | 4 | 1 |
 
-`QCore.ScalarReadIdentity` and its registered audit prove the 16 admission
-vectors, original/typed alias retention, no new destination identity,
-preservation of other bindings/state/errors and both possible scalar outcomes.
-The focused accepted set is 60 distinct Rust tests (3 new unit, 6 new source,
-51 existing descriptor/in-place/alias/chain controls), Clippy/fmt exit0, and
-10 audited theorems on Lean 4.35.0. [Focused receipts](focused-receipts.json)
-include every command, exit and private log. This is not a standalone full
-standing-gate claim; closure uses the shared frozen integration campaign.
+The corpus gains are `cio_chunk_is_up` and adjacent `cio_chunk_is_file`.
+The slice gains are two scoped copies each of
+`flb_input_rate_gate_can_resume` and `flb_input_rate_gate_is_limited`, whose
+`window_size = ins->rate_window_size` has the same scalar pattern. Six further
+Unknown rows retain fewer alias/callee diagnostics across the three audits.
+No prior Safe row regresses and no Unsafe is added. These are scoped custody
+observations under the existing source/link/type assumptions.
 
-[Validation attempts](validation-attempts.json) retain two mistaken new-fixture
-expectations against existing admissions, corrected without changing the
-implementation or any old pin: volatile destinations keep the original opaque
-route, and a scalar postfix increment already has an explicit elaboration.
-Actual volatile/atomic field reads, pointer-to-integer casts and an uncontracted
-comma-position call refuse; pointer destinations retain opaque identity.
+The existing declared `cio_chunk_is_up` contract gains native `W4` and `entry`
+standing for `resource_borrowed(#0)` and `resource_return_none()`. No declared
+contract, provider, profile, source pin, hypothesis graph or source-binding
+truth is added. Header/configuration replay multiplicity is retained separately
+from distinct native definitions. All Unsafe labels remain provisional.
 
-The first BASE corpus attempt was interrupted after host ENOSPC (actual analyzer
-signal exit−2, wrapper/driver 254) and is excluded. The queued focus job was
-terminated 143 before it started. The partial evidence-script write is retained
-and was restored from the protected commit with exact byte equality. Root
-reclaimed only an owner-approved completed 95GiB target; private evidence stayed
-intact. Fresh paths and a 30GiB reserve guard are required for the corpus retry.
-The fresh strengthened BASE corpus retry completed exit0: 185 units, 4,834 custody
-rows (973 Safe / 3,852 Unknown / 9 provisional Unsafe) and 4,921 null rows. Its
-24,991-file native before/after archive maps exactly equal the independently
-held original Git archive; both external databases and complete provider package
-match before/after. The actual pinned wrapper exits0 with its recorded Clang
-and package overrides. [BASE receipts](baseline-receipts.json) retain exact
-times, paths, binary/source/evidence versions and all input boundaries.
-Earlier completed BASE system/slice exits0 retain 448 rows: 99 Safe / 345 Unknown /
-4 provisional Unsafe; and 404 rows: 53 Safe / 346 Unknown / 4 Pending / 1 provisional Unsafe.
-The initial full-input [postcheck](runtime-input-postcheck.json) is explicitly
-mid-campaign, not a before-run claim. The strengthened retry records every
-frozen archive input, both external compile databases, provider package files,
-actual pinned-wrapper environment and binary before/after. All Unsafe labels
-remain provisional, never upstream defect claims.
+All 5,781 nested null dictionaries are identical. Whole envelopes retain their
+actual changes: the slice gains two named candidate read premises, the corpus
+three; slice combined Safe grows 31 → 35, while the corpus's combined tally
+stays unchanged. Runtime custody tallies reflect the measured custody gains.
+Complete production null-tally, custody/null joins, outer source/pin/reach and
+static/runtime JSON replay exactly on both sides.
 
-## For the integrator
+[Native comparison](native-comparison.json), [artifact manifests](artifact-manifests.json)
+and [semantic review](semantic-review-summary.json) retain every raw-field
+count, exact binary/input identity, command exit and private artifact reference.
+All 169 semantic remainder leaves are explicitly accounted for, with zero
+unexplained leaves and no erased fields. Complete original canonical captures,
+receipts, source modules, tasks and witnesses remain private.
 
-Source 9728ff745 is integration-ready; the report remains open until the shared
-standing gate and fresh complete corpus/system/slice TIP comparisons finish.
-Preserve all failed attempts and exact input/binary/source identities, including
-the actual wrapper's Clang/package overrides. Root owns STATUS, part11 increment,
-acceptance generator/matrix and report index. Final measured wording and the
-refreshed residual ranking will be supplied after joint native attribution.
-Keep `W48-BOTTOM-UP-RESIDUAL-PLAN` open; retire only its exact scalar-local
-identity leaf if actual source evidence discharges it. Symbolic metadata and
-all source-binding Open dispositions retain their separate boundaries.
+Historical corpus build coordinates are reproduced from all 185 complete Rust
+`Debug(unit, cwd, Clang)` tuples against all 4,834 rows on each side. The sole
+coordinate change is the independently held invocation directory. Three entire
+source-effect records also reproduce after exact configuration, recursive
+serialized identity, typed task, obligation and witness digest recomputation.
+Three empty-summary `__TIME__` key changes reproduce from exact source/configuration
+preimages with wrong-time negatives. [Producer provenance](producer-provenance.json)
+records these boundaries.
+
+Every original BASE and TIP reading receipt replays against its complete actual
+canonical environment and unchanged graph. Two `cio_chunk_open` observations
+retain real inferred-table changes for source-Safe internal `cio_chunk_is_file`
+and already-Safe `cio_version` at different inference phases. Their complete
+payloads remain semantic differences; no function entry or source atom is
+removed to manufacture parity. Source binding stays **Open**, with no truth
+transport. Faithful extraction and Rust–Lean correspondence remain premise 28.
+
+The accepted focused set is 60 distinct Rust tests (3 new unit, 6 new source,
+51 existing descriptor/alias/chain controls), Clippy/fmt exit0 and ten audited
+Lean theorems. [Focused receipts](focused-receipts.json) retain all attempts.
+The [shared frozen gate](shared-gate.json) passes all eleven stages: 8,475 Rust
+passed, 15 ignored, zero failed; 362 Lean theorems, no placeholders or project
+axioms; fmt, Clippy, probes, examples and release exit0. This is the joint
+integration gate. The integrator's regenerated committed matrix and final
+Python receipt remain the final acceptance step.
+
+[Retained attempts](attribution-attempts.json) include strict historical/canonical
+mismatch checks and report-helper preparation/compilation failures before their
+exact producer/schema corrections. [Earlier validation attempts](validation-attempts.json)
+retain two corrected new-fixture expectations, the excluded host-ENOSPC corpus
+attempt (analyzer signal exit−2, wrapper 254), and a queued focus job terminated
+143 before compilation. The successful strengthened corpus retry records every
+24,991-file archive input, both external databases and complete package files
+before/after. Earlier completed configured routes keep their narrower initial
+per-file guards and honestly timed [archive postcheck](runtime-input-postcheck.json).
+
+[Refreshed ranking](ranking-receipt.json) keeps 2,215 candidate bodies, the
+conditional ceiling of 362 and baseline closure 6/6. Positive priorities stay
+unchanged; `mk_stop` has one fewer own alias leaf, with score/freed callers still
+zero. Logger score3 and scheduler score2 remain blocked on actual callback,
+ownership and TLS transport; cJSON still needs string membership and Removed
+result transport. Planning ceilings are conditional, not promised Safe gains.
+Keep `W48-BOTTOM-UP-RESIDUAL-PLAN` open and close only the scalar-local identity
+leaf. Pointer/status carriers and unsupported reads/casts/stores/effects remain
+separate obligations.
+
+[Integration amendments](integration-amendments.json) provide exact proposed
+STATUS, part11 increment and matrix wording. Root owns those shared ledgers,
+report index, final Python acceptance and main/remote integration.

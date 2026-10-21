@@ -68,7 +68,7 @@ fn main() {
     ).unwrap();
     qcore_audit::outer_selection::compute_reach(&entries).unwrap();
     let premises = qcore_audit::contract_dependencies::premises(&environment).unwrap();
-    assert_eq!(premises, sidecar["contract_premises"]);
+    if let Some(native_premises)=sidecar.get("contract_premises") { assert_eq!(&premises, native_premises); } else { assert_eq!(spec["route"], "pinned", "only the known historical sidecar omits this publication"); }
     let actual_outer = read(&spec["outer"]);
     let derived_outer = qcore_audit::outer_selection::project(units, Some(&null_rows), &premises).unwrap();
     assert_eq!(derived_outer, actual_outer, "complete production runtime projection");
