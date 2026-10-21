@@ -1,0 +1,6 @@
+{
+  "all_before_after_identities_equal": true,
+  "same_source_checkout_identity": true,
+  "same_link_map_profile_runner": true,
+  "both_invocations_retained": true
+}

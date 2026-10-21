@@ -1,0 +1,205 @@
+{
+  "version": 1,
+  "frozen_integrated_source": "62eebba95c51917c0fe841fbc23e2bf0d0e7e465",
+  "evidence_owner": "root joint campaign for all three cycle2 cards; no own-worktree native measurement",
+  "routes": [
+    {
+      "route": "system",
+      "final_comparison": "private/premise-resolution-cycle2/comparison-configured-continuation-2/system/final-comparison.json",
+      "final_comparison_sha256": "6daf2c197319f9d7a7bac37dbaccd2b09ec2d618bc837d9d08f26c5fa16391c3",
+      "result": {
+        "route": "system",
+        "base": {
+          "Unknown": 345,
+          "Safe": 99,
+          "Unsafe": 4
+        },
+        "tip": {
+          "Unknown": 345,
+          "Safe": 99,
+          "Unsafe": 4
+        },
+        "null_rows": 454,
+        "full_null_equal": true,
+        "full_runtime_equal": true,
+        "raw_leaf_counts": {
+          "diagnostics": 1605,
+          "contracts": 5292,
+          "chunk-contracts": 0,
+          "source-effects": 0,
+          "null": 1344,
+          "null-summary": 0,
+          "outer": 5
+        },
+        "remaining_leaf_counts": {
+          "diagnostics": 0,
+          "contracts": 4,
+          "chunk-contracts": 0,
+          "source-effects": 0,
+          "null": 0,
+          "null-summary": 0,
+          "outer": 0
+        },
+        "existing_reading_observations_exactly_reconstructed": 24,
+        "all_existing_fields_equal": false,
+        "known_catalog_sha256": "0223c4cdc53bab0e8b4b40b5843dfd999db2010af0c48aa20eb8069e8d92b03b",
+        "reading_proof_sha256": "2ec5ce2219e0e3223b1d5fa49564eec8463bd2f41c89a4330a130dd18a7a79e6",
+        "source_binding": "open",
+        "all_existing_fields_equal_after_exact_time_identity_attribution": true,
+        "all_fields_retained": true,
+        "time_identity_proof_sha256": "ee8d0f5a71da15e4efa18653033d18d53c90b832f03663c157dcee7a34d19c04",
+        "unexplained_remaining_leaf_counts": {
+          "diagnostics": 0,
+          "contracts": 0,
+          "chunk-contracts": 0,
+          "source-effects": 0,
+          "null": 0,
+          "null-summary": 0,
+          "outer": 0
+        },
+        "qualification": "Only exact independently replayed empty-summary source keys are paired; no semantic payload or capture is deleted."
+      },
+      "native_proof": "private/premise-resolution-cycle2/comparison-configured-1/system-reading-proof.json",
+      "native_proof_sha256": "2ec5ce2219e0e3223b1d5fa49564eec8463bd2f41c89a4330a130dd18a7a79e6",
+      "receipts": 24,
+      "published_unit_capture_instances": 4
+    },
+    {
+      "route": "slice",
+      "final_comparison": "private/premise-resolution-cycle2/comparison-configured-continuation-2/slice/final-comparison.json",
+      "final_comparison_sha256": "b611d1e9484901a5e842495520164ebb4888274698a4485396a97dd1a800ed98",
+      "result": {
+        "route": "slice",
+        "base": {
+          "Unknown": 346,
+          "Safe": 53,
+          "Pending": 4,
+          "Unsafe": 1
+        },
+        "tip": {
+          "Unknown": 346,
+          "Safe": 53,
+          "Pending": 4,
+          "Unsafe": 1
+        },
+        "null_rows": 406,
+        "full_null_equal": true,
+        "full_runtime_equal": true,
+        "raw_leaf_counts": {
+          "diagnostics": 1286,
+          "contracts": 3796,
+          "chunk-contracts": 0,
+          "source-effects": 0,
+          "null": 1212,
+          "null-summary": 0,
+          "outer": 5
+        },
+        "remaining_leaf_counts": {
+          "diagnostics": 0,
+          "contracts": 4,
+          "chunk-contracts": 0,
+          "source-effects": 0,
+          "null": 0,
+          "null-summary": 0,
+          "outer": 0
+        },
+        "existing_reading_observations_exactly_reconstructed": 2,
+        "all_existing_fields_equal": false,
+        "known_catalog_sha256": "292acb1b2c99ac8f9535573cebf49107807186dc920a2022fcd85065746894bb",
+        "reading_proof_sha256": "ee7c40ad5f4be598694b04fad9562922a013f2337eab1036effbca26cd54e299",
+        "source_binding": "open",
+        "all_existing_fields_equal_after_exact_time_identity_attribution": true,
+        "all_fields_retained": true,
+        "time_identity_proof_sha256": "eb28f78a52ee413cfd929ddf714cf6a0534ba69cfdf10fce3368a0d16a15ada1",
+        "unexplained_remaining_leaf_counts": {
+          "diagnostics": 0,
+          "contracts": 0,
+          "chunk-contracts": 0,
+          "source-effects": 0,
+          "null": 0,
+          "null-summary": 0,
+          "outer": 0
+        },
+        "qualification": "Only exact independently replayed empty-summary source keys are paired; no semantic payload or capture is deleted."
+      },
+      "native_proof": "private/premise-resolution-cycle2/comparison-configured-continuation-2/slice-reading-proof.json",
+      "native_proof_sha256": "ee7c40ad5f4be598694b04fad9562922a013f2337eab1036effbca26cd54e299",
+      "receipts": 2,
+      "published_unit_capture_instances": 1
+    },
+    {
+      "route": "corpus",
+      "final_comparison": "private/premise-resolution-cycle2/comparison-corpus-1/corpus/final-comparison.json",
+      "final_comparison_sha256": "6944ede82a3cf5dcb5df5a0010161e4d06963496016202341c2eec12ca56ecb5",
+      "result": {
+        "route": "corpus",
+        "base": {
+          "Unknown": 3852,
+          "Safe": 973,
+          "Unsafe": 9
+        },
+        "tip": {
+          "Unknown": 3852,
+          "Safe": 973,
+          "Unsafe": 9
+        },
+        "null_rows": 4921,
+        "full_null_equal": true,
+        "full_runtime_equal": true,
+        "raw_leaf_counts": {
+          "diagnostics": 11994,
+          "contracts": 19632,
+          "chunk-contracts": 0,
+          "source-effects": 0,
+          "source": 0,
+          "null": 9668,
+          "null-summary": 0,
+          "outer": 5
+        },
+        "remaining_leaf_counts": {
+          "diagnostics": 0,
+          "contracts": 4,
+          "chunk-contracts": 0,
+          "source-effects": 0,
+          "source": 0,
+          "null": 0,
+          "null-summary": 0,
+          "outer": 0
+        },
+        "existing_reading_observations_exactly_reconstructed": 122,
+        "all_existing_fields_equal": false,
+        "known_catalog_sha256": "64b525d6522487054dc96309708eff95e786d56b48c687fbcbd9bcf0babb52ed",
+        "reading_proof_sha256": "b9af771fcb9d2c439dabd73de41918a6d251dc92d92fa3608ac5f21fa3a1bbdc",
+        "source_binding": "open",
+        "all_existing_fields_equal_after_exact_time_identity_attribution": true,
+        "all_fields_retained": true,
+        "time_identity_proof_sha256": "e8d5cdfb5ede366c901ac065e952d071a604c0c6307e2a08bb918f593dd253f5",
+        "unexplained_remaining_leaf_counts": {
+          "diagnostics": 0,
+          "contracts": 0,
+          "chunk-contracts": 0,
+          "source-effects": 0,
+          "source": 0,
+          "null": 0,
+          "null-summary": 0,
+          "outer": 0
+        },
+        "qualification": "Only exact independently replayed empty-summary source keys are paired; no semantic payload or capture is deleted."
+      },
+      "native_proof": "private/premise-resolution-cycle2/comparison-corpus-1/corpus-reading-proof.json",
+      "native_proof_sha256": "b9af771fcb9d2c439dabd73de41918a6d251dc92d92fa3608ac5f21fa3a1bbdc",
+      "receipts": 122,
+      "published_unit_capture_instances": 45
+    }
+  ],
+  "null_records": 5781,
+  "reading_receipts": 148,
+  "unit_capture_instances": 50,
+  "configured_control": "private/premise-resolution-cycle2/configured-comparison-summary.json",
+  "corpus_control": "private/premise-resolution-cycle2/comparison-corpus-1-control/command.json",
+  "corpus_control_sha256": "77b9987e67317c085c820455fe3610e2370d02e85352ea3db2331c52e5a362ff",
+  "all_full_fields_retained": true,
+  "no_graph_atom_inverse": true,
+  "no_verdict_rewrite": true,
+  "all_exits_final": 0
+}

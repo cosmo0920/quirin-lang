@@ -1,0 +1,5 @@
+{
+  "producer": "contract_dependencies.rs Facts::absorb Value::to_string BTreeSet ordering",
+  "changed_declarations": [],
+  "fields_erased": 0
+}

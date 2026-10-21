@@ -1,0 +1,16 @@
+[
+  {
+    "operation": "baseline summary helper1",
+    "exit": 1,
+    "reason": "corpus raw diagnostics are under corpus/; no audit failure, source/input mutation or output rewrite",
+    "correction": "helper2 explicit route layout + fresh byte-exact prepared views",
+    "retry_exit": 0
+  },
+  {
+    "operation": "joint packet inspection helper",
+    "exit": 1,
+    "reason": "task_context defaults to text but helper attempted JSON load; no validation/source mutation",
+    "correction": "explicit --json machine packet produced",
+    "retry_exit": 0
+  }
+]

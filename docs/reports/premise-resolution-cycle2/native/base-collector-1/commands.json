@@ -1,0 +1,65 @@
+[
+  {
+    "route": "system",
+    "command": [
+      "/usr/bin/python3",
+      "docs/reports/premise-resolution-cycle2/scripts/measure.py",
+      "system",
+      "/home/cosmo/Documents/GitHub/qcore-c/private/premise-resolution-cycle2/measure-1/system/base",
+      "--link-map",
+      "docs/reports/premise-resolution-cycle2/link-map.corpus.json",
+      "--inputs-snapshot",
+      "private/premise-resolution-cycle2/base-freeze/inputs",
+      "--binary-source",
+      "c1625baf713e4d8498c39282238675749237005d",
+      "--jobs",
+      "8"
+    ],
+    "started": "2026-10-21T07:10:51.374741+00:00",
+    "ended": "2026-10-21T07:19:19.124854+00:00",
+    "exit": 0,
+    "log": "/home/cosmo/Documents/GitHub/qcore-c/private/premise-resolution-cycle2/base-collector-1/system.log"
+  },
+  {
+    "route": "slice",
+    "command": [
+      "/usr/bin/python3",
+      "docs/reports/premise-resolution-cycle2/scripts/measure.py",
+      "slice",
+      "/home/cosmo/Documents/GitHub/qcore-c/private/premise-resolution-cycle2/measure-1/slice/base",
+      "--link-map",
+      "docs/reports/premise-resolution-cycle2/link-map.corpus.json",
+      "--inputs-snapshot",
+      "private/premise-resolution-cycle2/base-freeze/inputs",
+      "--binary-source",
+      "c1625baf713e4d8498c39282238675749237005d",
+      "--jobs",
+      "8"
+    ],
+    "started": "2026-10-21T07:10:51.375550+00:00",
+    "ended": "2026-10-21T07:18:30.632556+00:00",
+    "exit": 0,
+    "log": "/home/cosmo/Documents/GitHub/qcore-c/private/premise-resolution-cycle2/base-collector-1/slice.log"
+  },
+  {
+    "route": "corpus",
+    "command": [
+      "/usr/bin/python3",
+      "docs/reports/premise-resolution-cycle2/scripts/measure.py",
+      "corpus",
+      "/home/cosmo/Documents/GitHub/qcore-c/private/premise-resolution-cycle2/measure-1/corpus/base",
+      "--link-map",
+      "docs/reports/premise-resolution-cycle2/link-map.corpus.json",
+      "--inputs-snapshot",
+      "private/premise-resolution-cycle2/base-freeze/inputs",
+      "--binary-source",
+      "c1625baf713e4d8498c39282238675749237005d",
+      "--jobs",
+      "16"
+    ],
+    "started": "2026-10-21T07:19:19.125350+00:00",
+    "ended": "2026-10-21T07:55:19.105996+00:00",
+    "exit": 0,
+    "log": "/home/cosmo/Documents/GitHub/qcore-c/private/premise-resolution-cycle2/base-collector-1/corpus.log"
+  }
+]

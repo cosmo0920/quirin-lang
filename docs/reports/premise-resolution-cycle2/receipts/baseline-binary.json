@@ -1,0 +1,20 @@
+{
+  "source_checkpoint": "882e128c12161babdbfa36806829894eadf600ba",
+  "binary_actually_built_at": "c1625baf713e4d8498c39282238675749237005d",
+  "binary_sha256": "ddb51170371d1dd46d221ad96f7ff17421de1704b4b8ac81ee51c7a98cf97327",
+  "borrowed_original_receipt": "docs/reports/plugin-premise-decomposition/validation/final-gate-4/binary-receipt.json",
+  "checked_paths": [
+    "crates",
+    "compiler",
+    "proof",
+    "providers",
+    "contract",
+    "scripts",
+    "Cargo.toml",
+    "Cargo.lock",
+    "docs/QCORE_CONTRACT_SPEC_r0_3.md",
+    "docs/QCORE_IMPLEMENTED_GRAMMARS_r0_3.md"
+  ],
+  "source_equality_exit": 0,
+  "scope": "Successful default release and completed8419Rust354Lean/freshprovider gate. Later main commits are ledgers/receipts only. This is immutable BASE, not a new measurement."
+}

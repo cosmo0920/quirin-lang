@@ -1,0 +1,2662 @@
+{
+  "utc": "2026-10-21T08:28:02.869977+00:00",
+  "reason": "Failed root jointgate1 completed; reclaim only its 531 recorded newly emitted root test executables before mandatory final rebuild, avoiding disk exhaustion. Raw logs/summary/commands/source/native binaries and all delegated build trees retained.",
+  "files": [
+    {
+      "path": "/home/cosmo/Documents/GitHub/qcore-c/target/debug/deps/quirin_audit-81f9a5b2d9142dcc",
+      "bytes": 1074896,
+      "sha256": "570d1f11a7c5ca1283440cff63346b868ad2e5fea1288a8e3c137ed9744a11b7"
+    },
+    {
+      "path": "/home/cosmo/Documents/GitHub/qcore-c/target/debug/deps/quirin_dump_checkpoint-0bcabb00f834efbf",
+      "bytes": 1074992,
+      "sha256": "c5a5177bf8bccbe4f4f84587108b209bad81284d0d89c1a98167738f071dc7f9"
+    },
+    {
+      "path": "/home/cosmo/Documents/GitHub/qcore-c/target/debug/deps/qcore_audit-2705b7e96b5b0256",
+      "bytes": 71495856,
+      "sha256": "efccd3b6f5e21424c165dae59d0c7837e789029a29025c6aae1788acca1a1081"
+    },
+    {
+      "path": "/home/cosmo/Documents/GitHub/qcore-c/target/debug/deps/bounds_pin_hold-f8606d523d8fa07d",
+      "bytes": 15561600,
+      "sha256": "888ef12d65d31b83df0f6e625f0503a622eaaf807c313642e63b06e6e89d2d07"
+    },
+    {
+      "path": "/home/cosmo/Documents/GitHub/qcore-c/target/debug/deps/bounds_transport-d55de14392f10f09",
+      "bytes": 14942240,
+      "sha256": "b5f1421ed00b3d943b3aa59e177cb1b7bfd8e296b166c62f0dd35f2d6f0d1c8d"
+    },
+    {
+      "path": "/home/cosmo/Documents/GitHub/qcore-c/target/debug/deps/certificate_context-53790597a4f7eb34",
+      "bytes": 55387000,
+      "sha256": "13edbfa725e6d522d0a465b920c6e17546c95c65c66f309b1db98ee2b7d304a2"
+    },
+    {
+      "path": "/home/cosmo/Documents/GitHub/qcore-c/target/debug/deps/cg30_target_identity-46082c48d3f13b9c",
+      "bytes": 6374736,
+      "sha256": "fa44bb2afcbb0f9b8039277c45124343c07d63cea2f5918a69ba851e16c84e78"
+    },
+    {
+      "path": "/home/cosmo/Documents/GitHub/qcore-c/target/debug/deps/checkpoint_cli-3452c2bde01591ad",
+      "bytes": 14105144,
+      "sha256": "c4a4e9b69f1b549c2f0ca8e2f09d6b56ce12705bb46442a1d0de1beada70d643"
+    },
+    {
+      "path": "/home/cosmo/Documents/GitHub/qcore-c/target/debug/deps/clang_gap_flags-db1e7bf6094b69e8",
+      "bytes": 5926800,
+      "sha256": "01be16921b9bc8c2868bec2951fd1561c4029342917f1c7bea767decddf8843b"
+    },
+    {
+      "path": "/home/cosmo/Documents/GitHub/qcore-c/target/debug/deps/compile_options-85817a6fb993db54",
+      "bytes": 6916384,
+      "sha256": "50378f0db687cf35950dd6de94b411bc0dc7dad647354b41370b2f20df1088ac"
+    },
+    {
+      "path": "/home/cosmo/Documents/GitHub/qcore-c/target/debug/deps/compile_task_identity-d513cbd220577379",
+      "bytes": 7004992,
+      "sha256": "693350a575d4a22967a1b4c0c9f897d306a617a0dc13177cce147b5be0035c52"
+    },
+    {
+      "path": "/home/cosmo/Documents/GitHub/qcore-c/target/debug/deps/configured_cli-c8226f8eb527d92d",
+      "bytes": 71184032,
+      "sha256": "06f4b93e1b1e5fabc1065110fc49eea6706067ffe95d7d98d7fc5a39e2f547a5"
+    },
+    {
+      "path": "/home/cosmo/Documents/GitHub/qcore-c/target/debug/deps/contract_dependencies_report-de30e8ac6d3aec5b",
+      "bytes": 44982728,
+      "sha256": "3c92c98d1793dc785712a27b152278a1202e4655489fe5009fc1bc2aa3dc8692"
+    },
+    {
+      "path": "/home/cosmo/Documents/GitHub/qcore-c/target/debug/deps/contract_inherit_identity-0626c00ed866c333",
+      "bytes": 12747224,
+      "sha256": "a3450019f07226ebb7d816b8f2faf0caa0b737cc76de275270bb241b7d6cd479"
+    },
+    {
+      "path": "/home/cosmo/Documents/GitHub/qcore-c/target/debug/deps/contract_revision_audit-981cbc970950fc41",
+      "bytes": 4529328,
+      "sha256": "c2fed5da4cbf30cff6255d32f6dd9ab7d2040877296742a59268c79e84f08356"
+    },
+    {
+      "path": "/home/cosmo/Documents/GitHub/qcore-c/target/debug/deps/contract_revision_identities-b0f108e8b729502c",
+      "bytes": 4567712,
+      "sha256": "1655b81ff3fe3aa8f60d6c829c0cff930704195b66546472b3819829568855b4"
+    },
+    {
+      "path": "/home/cosmo/Documents/GitHub/qcore-c/target/debug/deps/contract_tip_mode-b2c585581f80b2ad",
+      "bytes": 4617544,
+      "sha256": "0616cb03b2950a8c89bc7cbd7139efc4fc088b01963630020c120595c8efaa29"
+    },
+    {
+      "path": "/home/cosmo/Documents/GitHub/qcore-c/target/debug/deps/current_cli-6e151597aa5f3ab1",
+      "bytes": 12964784,
+      "sha256": "0506e37fd5802ed7d893e098da70ad8f5831f7def5b4129071384f4c6f07abac"
+    },
+    {
+      "path": "/home/cosmo/Documents/GitHub/qcore-c/target/debug/deps/cycle19_current_command-9af766a963f0a982",
+      "bytes": 5128024,
+      "sha256": "afcf31bd817efa9480dd8e4feb35a7b51256faaf0fcfe8c0ff182cff98f11d0f"
+    },
+    {
+      "path": "/home/cosmo/Documents/GitHub/qcore-c/target/debug/deps/dependency_graph-856f33cdbc992a4f",
+      "bytes": 1705608,
+      "sha256": "bfb3c8ef884fa90585c2de23d68cae45e682688a0cdc7b9c754602876c15756d"
+    },
+    {
+      "path": "/home/cosmo/Documents/GitHub/qcore-c/target/debug/deps/dump_checkpoint_cli-e1a3332fa0fdc46a",
+      "bytes": 1176200,
+      "sha256": "89c4a895192af360bef73b90c1d4c3ef98f34c9e73d813556957ba78b8d75af5"
+    },
+    {
+      "path": "/home/cosmo/Documents/GitHub/qcore-c/target/debug/deps/hypothesis_firewall-94615f907f01288f",
+      "bytes": 6182144,
+      "sha256": "0d7715896988c9e4b8d4f55bb5855bc53859c582f2f6f7ce6077e41bbc8c3989"
+    },
+    {
+      "path": "/home/cosmo/Documents/GitHub/qcore-c/target/debug/deps/member_prepass_routes-e621214fc56dbee6",
+      "bytes": 7347992,
+      "sha256": "f69b0192cc95b8dbe65e506d6213079b2bc457608d580b8809ca9f6e364cbc69"
+    },
+    {
+      "path": "/home/cosmo/Documents/GitHub/qcore-c/target/debug/deps/no_build_cli-2f3187d5598277d0",
+      "bytes": 4535760,
+      "sha256": "6be9b346433b016d9a75c03ae6ef226b7ae28a46f4ba2a78d151e624895aa25e"
+    },
+    {
+      "path": "/home/cosmo/Documents/GitHub/qcore-c/target/debug/deps/observer_compile_flags-0047e2af8d5c03a1",
+      "bytes": 7163984,
+      "sha256": "8289b26ad059e8a0bb9427957cbb11bc91b8a1a289998664072a88b000789a82"
+    },
+    {
+      "path": "/home/cosmo/Documents/GitHub/qcore-c/target/debug/deps/outer_projection-2ad578e80c7eae62",
+      "bytes": 7946920,
+      "sha256": "0e293c1760c91f648c91b91b7a7bd53576ead6f87564f5d262395e850c0dfd3c"
+    },
+    {
+      "path": "/home/cosmo/Documents/GitHub/qcore-c/target/debug/deps/pending_review_report-f26f341c5bc471bb",
+      "bytes": 4455392,
+      "sha256": "b9df9496ed9ea07343449f75491490329424c13228618e30a85313b8f7d61a42"
+    },
+    {
+      "path": "/home/cosmo/Documents/GitHub/qcore-c/target/debug/deps/pinned_cli-b64c19f8351758b4",
+      "bytes": 1164688,
+      "sha256": "bab6f3b4776dead2db0c1f3a3ae34e66e75dbb3e3aadfd9fad0b7a58d51ece4b"
+    },
+    {
+      "path": "/home/cosmo/Documents/GitHub/qcore-c/target/debug/deps/plugin_null_hypotheses-244394839101d463",
+      "bytes": 47661704,
+      "sha256": "4cde337202e4d434ee72371ef148a322bb848af1e1f7dd7b0e99bfd271c0321a"
+    },
+    {
+      "path": "/home/cosmo/Documents/GitHub/qcore-c/target/debug/deps/prepare_cli-ea7b7d17692dd2ea",
+      "bytes": 1263488,
+      "sha256": "ed7d9c2be400d04d07b1a6e151ebeffc486c244e569706a720fe8a5489d1d565"
+    },
+    {
+      "path": "/home/cosmo/Documents/GitHub/qcore-c/target/debug/deps/provider_selection-dbee9bc9f9e345ea",
+      "bytes": 14460656,
+      "sha256": "60e5f15a38b91a9f4dc56b153a6bdc328f3d0c08d2ed2bd3c319fa92bf5b0a54"
+    },
+    {
+      "path": "/home/cosmo/Documents/GitHub/qcore-c/target/debug/deps/root_source_set-412b6f0552394d45",
+      "bytes": 4807960,
+      "sha256": "6ca8afded264a1a391602e94d182b2cd7215c77ae474d4f9dd734e163ada4b40"
+    },
+    {
+      "path": "/home/cosmo/Documents/GitHub/qcore-c/target/debug/deps/second_source_set-d80a55d1aa1368c9",
+      "bytes": 4801048,
+      "sha256": "509604f714ffc6443736226611b9cfd6d4ba4e8362ee7ddaf98fa7563234eafe"
+    },
+    {
+      "path": "/home/cosmo/Documents/GitHub/qcore-c/target/debug/deps/source_contract_config-a1179ba3cda3ebcb",
+      "bytes": 13096896,
+      "sha256": "b81f233bf9cc05f0e69f9ec84115ed5469521677df20f60e318b27e1356f3f61"
+    },
+    {
+      "path": "/home/cosmo/Documents/GitHub/qcore-c/target/debug/deps/sr5_pending_gates-5ce86ab6b37b129b",
+      "bytes": 4359432,
+      "sha256": "4b734ef9467265c00621d7efb08b713a230f99384485f88605e13d69d3c04894"
+    },
+    {
+      "path": "/home/cosmo/Documents/GitHub/qcore-c/target/debug/deps/subcommand_plugins-e95db56c78bdfe74",
+      "bytes": 1863856,
+      "sha256": "a262d71afb54a7f3614d1fee7a88ee182a0913acc757631ccdf47c5a4ddddf20"
+    },
+    {
+      "path": "/home/cosmo/Documents/GitHub/qcore-c/target/debug/deps/user_contract_plugins-53999520b3fda859",
+      "bytes": 70311176,
+      "sha256": "c37d5b30a791344c168b43be478f8200b65a86cd93e5175be744f0b750ae5044"
+    },
+    {
+      "path": "/home/cosmo/Documents/GitHub/qcore-c/target/debug/deps/qcore_c_gateway-7417bbdacd38e510",
+      "bytes": 60718960,
+      "sha256": "59484b7ef948250413375740c0d2268c39ab85e8f6df028f04e8e290b2a35bd9"
+    },
+    {
+      "path": "/home/cosmo/Documents/GitHub/qcore-c/target/debug/deps/abi_enum_const_pp-d7560bc8b55ce23a",
+      "bytes": 10517720,
+      "sha256": "9bbb7376d236dbdef77ec6a6fa4c447503c54129078b02432e3d51df1ac7d01d"
+    },
+    {
+      "path": "/home/cosmo/Documents/GitHub/qcore-c/target/debug/deps/access_path_position_residuals-15e45a0e808e82cc",
+      "bytes": 41874288,
+      "sha256": "ba4034fa682efc66607876f657bf08cde2c8d00ca18ba3529178115ca179fd4d"
+    },
+    {
+      "path": "/home/cosmo/Documents/GitHub/qcore-c/target/debug/deps/access_path_positions-763c4bed7322dbaa",
+      "bytes": 41875952,
+      "sha256": "430fb5715c00b3f781c10d04540c95f76458fc06c2217eeae2b28a74de3fde0c"
+    },
+    {
+      "path": "/home/cosmo/Documents/GitHub/qcore-c/target/debug/deps/access_path_statements-42f875479f3f68bd",
+      "bytes": 41810320,
+      "sha256": "50e467fa2084bf13bb0b13358266e808f21900f8f92af416f74ba26378690597"
+    },
+    {
+      "path": "/home/cosmo/Documents/GitHub/qcore-c/target/debug/deps/address_of_member-72c87684454c2840",
+      "bytes": 41930408,
+      "sha256": "04dfe6996b19481781c42b635c504674e0fb2f0e76d03e2741c6b7b98be35e1b"
+    },
+    {
+      "path": "/home/cosmo/Documents/GitHub/qcore-c/target/debug/deps/alias_aggregate-39dc6d6b7a2825ac",
+      "bytes": 41928888,
+      "sha256": "db8de6f7994bfb298f96e3e9b1055c27ad6d2030690be0c29fa17e4cda978a9e"
+    },
+    {
+      "path": "/home/cosmo/Documents/GitHub/qcore-c/target/debug/deps/app_rk_callbacks-f1a6a82dd633f1b5",
+      "bytes": 42090992,
+      "sha256": "60588f808a30b817300460beaa5e47b273f9e27095afdf83741324e8f36ac0cb"
+    },
+    {
+      "path": "/home/cosmo/Documents/GitHub/qcore-c/target/debug/deps/assignment_destination_suffix-5ba056e05d4bc6b9",
+      "bytes": 41883848,
+      "sha256": "38f3edee93c9c856d31e3dc07405e7ca5bcfaa01f2ef6ff92fce1405fadcfe93"
+    },
+    {
+      "path": "/home/cosmo/Documents/GitHub/qcore-c/target/debug/deps/atomic_publication_source-794ab1deee091081",
+      "bytes": 4894760,
+      "sha256": "6edfb406cf9aecb5896037614abe4a5de81ecb5ecb50520ce005ff7e21086c7f"
+    },
+    {
+      "path": "/home/cosmo/Documents/GitHub/qcore-c/target/debug/deps/atomic_source_route-41cdc1d7aeee2de5",
+      "bytes": 42782128,
+      "sha256": "498ca6bd3a73835a11e08a65bdfbf6e4d09736c75a7ec457478a81fa8308e985"
+    },
+    {
+      "path": "/home/cosmo/Documents/GitHub/qcore-c/target/debug/deps/atomic_weak_memory_events-7baa4efae8356e34",
+      "bytes": 42784312,
+      "sha256": "822a2951226ca26e61650aca51951a61777d41c0de962c9af2d98844f6f4e1d4"
+    },
+    {
+      "path": "/home/cosmo/Documents/GitHub/qcore-c/target/debug/deps/boolean_frame_helpers-e99d41ca53e15723",
+      "bytes": 9413312,
+      "sha256": "8b1ff343ebba88af30656879074ac10572de5f1de481f0f6572c2a715c7dabba"
+    },
+    {
+      "path": "/home/cosmo/Documents/GitHub/qcore-c/target/debug/deps/borrow_liveness_boundary-71a07d242a7dc416",
+      "bytes": 41886152,
+      "sha256": "627cdb7270ca389481a38cf4662703b50764ef0367b54c732e69a4c09f7a2b6d"
+    },
+    {
+      "path": "/home/cosmo/Documents/GitHub/qcore-c/target/debug/deps/borrow_residuals_boundary-ed26b32565f3bec8",
+      "bytes": 41888432,
+      "sha256": "2691d33338deb5b8cb1928ae620dbd5bebcb41ce79b199f70d70d86de4f4ceb3"
+    },
+    {
+      "path": "/home/cosmo/Documents/GitHub/qcore-c/target/debug/deps/borrowed_field_actuals-da3ea99ced391688",
+      "bytes": 41985072,
+      "sha256": "f5440c2e41695555b1c38a809752cf272c85692cfcd751634bf94dabf83e9acf"
+    },
+    {
+      "path": "/home/cosmo/Documents/GitHub/qcore-c/target/debug/deps/bound_untracked_roots-16e531514e0a3ecf",
+      "bytes": 41893720,
+      "sha256": "c23772bb392c8d489a1631136cf627cc5e02e2f6a5ec7169dadff9c84a7652b9"
+    },
+    {
+      "path": "/home/cosmo/Documents/GitHub/qcore-c/target/debug/deps/bounds_body_evidence-73375f2b63f2a2a3",
+      "bytes": 9135224,
+      "sha256": "176d19c40f93ba49b0b9eafe7cfd1b5ac8839567c87c9f2cbf369bd9e182003e"
+    },
+    {
+      "path": "/home/cosmo/Documents/GitHub/qcore-c/target/debug/deps/branch_condition_calls-9398f984ff8b333a",
+      "bytes": 41956656,
+      "sha256": "bf54d9fae2a654670fbfe9c20cd350e7dd2d1454a49fd5d768180ccfbfbafc73"
+    },
+    {
+      "path": "/home/cosmo/Documents/GitHub/qcore-c/target/debug/deps/c03_neutral_frame_recursion_probe-e046a39ba932b4ea",
+      "bytes": 41970408,
+      "sha256": "3814ae165be716fde8566dae4ec2e19ffe459c3b214b4eca9279095d01b74f85"
+    },
+    {
+      "path": "/home/cosmo/Documents/GitHub/qcore-c/target/debug/deps/c_numeric_abi_llp64-e61ed4bfcfa53cbe",
+      "bytes": 10537624,
+      "sha256": "0020da2f8d7c0904b0f446d4cfd0262f81b4bd1984e3c147657ed0e7b58c01d1"
+    },
+    {
+      "path": "/home/cosmo/Documents/GitHub/qcore-c/target/debug/deps/c_numeric_domain-f73ed9e635884680",
+      "bytes": 4988992,
+      "sha256": "8adf4b58be4946413c5952ec5d3246056ee1197e47413e52a40c2866cbe8ad0a"
+    },
+    {
+      "path": "/home/cosmo/Documents/GitHub/qcore-c/target/debug/deps/call_argument_access-436a9f4741e33040",
+      "bytes": 41875704,
+      "sha256": "470ff001ff95f134a0e57a0abd8ce065c1602e16b8b8386530625b4e1a9dda97"
+    },
+    {
+      "path": "/home/cosmo/Documents/GitHub/qcore-c/target/debug/deps/callback_member_data_only-31fc440638042df3",
+      "bytes": 42104592,
+      "sha256": "5c8d3ff3ee89902cd53f327b79eefeeab1da7381f16a30728d1d23a0a6120dee"
+    },
+    {
+      "path": "/home/cosmo/Documents/GitHub/qcore-c/target/debug/deps/callee_retention_class1-f809879206d4b1c2",
+      "bytes": 41970936,
+      "sha256": "d43dd569d4fe6fc0972e6ad72c2a3b970325e5fb29e4a1e74bbfd8a8193e9d66"
+    },
+    {
+      "path": "/home/cosmo/Documents/GitHub/qcore-c/target/debug/deps/cast_formalization-9806db4567a10228",
+      "bytes": 41930088,
+      "sha256": "e7172bd2514edb0eba66b86e5ab21d00985ec13909ec429bfb7d4209c636fd1d"
+    },
+    {
+      "path": "/home/cosmo/Documents/GitHub/qcore-c/target/debug/deps/certificate_scope-351204687483f7dc",
+      "bytes": 41949776,
+      "sha256": "9fe90028ab9c682203a0a04c9aef08fa62a2cf6c494acc0957acc6cca4157ec5"
+    },
+    {
+      "path": "/home/cosmo/Documents/GitHub/qcore-c/target/debug/deps/cg02_elaboration-761bf4684671ad69",
+      "bytes": 41892704,
+      "sha256": "2446a84b77ebe6e74bc13dd8ca68e07cb9aa4c9a9e0c26a0cfda1a1dfb65f2aa"
+    },
+    {
+      "path": "/home/cosmo/Documents/GitHub/qcore-c/target/debug/deps/cg03_call_instantiation-d693d24c42f09fba",
+      "bytes": 41906584,
+      "sha256": "83495d66d79b54a49e3de7cb7f198efc2f465797b20265cdbefb8ba0fb495b90"
+    },
+    {
+      "path": "/home/cosmo/Documents/GitHub/qcore-c/target/debug/deps/cg05_elaborator_call_footprints-e8240ee7e163b29c",
+      "bytes": 41901984,
+      "sha256": "735a05f19647aa50bf93008c6433d03d4f39ffb5f6a00366f0156a0dfee52731"
+    },
+    {
+      "path": "/home/cosmo/Documents/GitHub/qcore-c/target/debug/deps/cg05_nested_call_effects-3953b7a6fbbcf65c",
+      "bytes": 41910392,
+      "sha256": "31a7d2a05fe7be9ea8eb817381f4d3ca4cb27bc3a66e9b7043e751ed10f2751a"
+    },
+    {
+      "path": "/home/cosmo/Documents/GitHub/qcore-c/target/debug/deps/cg06_connective_footprints-38e466621ea69de5",
+      "bytes": 41891608,
+      "sha256": "ada00d68d4ff463baca64a125b33c749f4ed1b4d2a3a17eb643941bcf482ce2d"
+    },
+    {
+      "path": "/home/cosmo/Documents/GitHub/qcore-c/target/debug/deps/cg06_value_connectives-86a204980cef38c7",
+      "bytes": 41929240,
+      "sha256": "a2a01a911f1b2d8668166d97d752fdf6f5198af3d0d3190573ec630d8b0aeef9"
+    },
+    {
+      "path": "/home/cosmo/Documents/GitHub/qcore-c/target/debug/deps/cg07_statement_expressions-1ed7b3a52e3b0cab",
+      "bytes": 41905448,
+      "sha256": "da33ee59b37d59416b1a24c54d3741a25a2c2eba4b3589aaddc4acbf6a6220c5"
+    },
+    {
+      "path": "/home/cosmo/Documents/GitHub/qcore-c/target/debug/deps/cg08_casts_and_type_queries-84fbc6118c28fcfa",
+      "bytes": 42797528,
+      "sha256": "6ce382cc907b8fd57577c62e89144d721870d6cfa187ccfdea418304ea4522ac"
+    },
+    {
+      "path": "/home/cosmo/Documents/GitHub/qcore-c/target/debug/deps/cg10_sole_residual_contracts-30c11becd582b3fa",
+      "bytes": 41943952,
+      "sha256": "f702c1a181dc34cbaa00a1788ae69c66a9f3c0c1444ce110ab82072fa260ee66"
+    },
+    {
+      "path": "/home/cosmo/Documents/GitHub/qcore-c/target/debug/deps/cg11_pointer_stores-fc8e6c5b3df9d93b",
+      "bytes": 41954368,
+      "sha256": "1d7b071b70444180ae6d0e3f21b3514bbbec42575953434ec3de5b7df20a4119"
+    },
+    {
+      "path": "/home/cosmo/Documents/GitHub/qcore-c/target/debug/deps/cg12_void_view_readback-ee90f0bc73bc8a12",
+      "bytes": 41964632,
+      "sha256": "0dfeb0fd3b5df76a97f2882438b51062830f4dff5dab3d5d441d7707c04d3978"
+    },
+    {
+      "path": "/home/cosmo/Documents/GitHub/qcore-c/target/debug/deps/cg14_aggregate_values-c50bc84812d0736c",
+      "bytes": 41905256,
+      "sha256": "ba22aeb8350da51c29fcc46210d45d7fddc1dad55c511dd0d27362596adefad7"
+    },
+    {
+      "path": "/home/cosmo/Documents/GitHub/qcore-c/target/debug/deps/cg16_index_extents-b21372ace0845dee",
+      "bytes": 44179744,
+      "sha256": "55d7f0180dcfd705e3984722c17ad4f254f9ad8f3e8edece607f0317f333010a"
+    },
+    {
+      "path": "/home/cosmo/Documents/GitHub/qcore-c/target/debug/deps/cg21_call_exits-a1134a6fbc11b55b",
+      "bytes": 41923384,
+      "sha256": "875e3f5549b2a7ca9adb64133fb719ae6a2f32314491ecd808b86ad0ada11b94"
+    },
+    {
+      "path": "/home/cosmo/Documents/GitHub/qcore-c/target/debug/deps/cg22_callback_registry-77887744ea8b07c9",
+      "bytes": 41975952,
+      "sha256": "b4978152c186a38e594bb464a51c7ada53883e4ced574afd316bfeacf91ad858"
+    },
+    {
+      "path": "/home/cosmo/Documents/GitHub/qcore-c/target/debug/deps/cg22_indirect_calls-c95a96546e8dd80e",
+      "bytes": 41905360,
+      "sha256": "6b50d1a4c031ad7dad139eef8f40efd7d3e29a03a4f4a5fa4bf496d6a4995a12"
+    },
+    {
+      "path": "/home/cosmo/Documents/GitHub/qcore-c/target/debug/deps/cg22_op_callbacks-f48b49e194e4a744",
+      "bytes": 41965272,
+      "sha256": "512b34e8d1da3e2dcdc7b25e12238ef1eb71f5f7c375389eb724a41b61907c37"
+    },
+    {
+      "path": "/home/cosmo/Documents/GitHub/qcore-c/target/debug/deps/cg24_frames_and_relations-5e8935bd47b62263",
+      "bytes": 44107072,
+      "sha256": "cd5e97e87ca6be56ed3229f06869424055b4518c6451b0af0c97f626b651720a"
+    },
+    {
+      "path": "/home/cosmo/Documents/GitHub/qcore-c/target/debug/deps/cg26_tail_residual_actuals-c0ba43d4e856d21d",
+      "bytes": 41907720,
+      "sha256": "5a1afc530ad2738bb216dcf5aed38b05b4ddc02f672fad1b8e6adfa45abc6090"
+    },
+    {
+      "path": "/home/cosmo/Documents/GitHub/qcore-c/target/debug/deps/cg26_variadics-7e71aceede5fce15",
+      "bytes": 42029568,
+      "sha256": "ad8574fa9c8c351b08ca5b415629251cd8c2cf56b07af4979e025110bc583e3a"
+    },
+    {
+      "path": "/home/cosmo/Documents/GitHub/qcore-c/target/debug/deps/cg30_dialects_flags_types-4aa88156fd0c9a41",
+      "bytes": 42841848,
+      "sha256": "60c2fb9d38871fbf26267fe1098294295a4decf7b5bb5762322f49d7e3e4e3b0"
+    },
+    {
+      "path": "/home/cosmo/Documents/GitHub/qcore-c/target/debug/deps/chained_tail-2cf09dba69d7b9a9",
+      "bytes": 41910272,
+      "sha256": "6bd871762fb6dd29ffbe909889ea7cd3d7128ea988910145c672c5df98186e53"
+    },
+    {
+      "path": "/home/cosmo/Documents/GitHub/qcore-c/target/debug/deps/chunk_source_reason_codes-6a2faa032f8c2280",
+      "bytes": 3920120,
+      "sha256": "a9f96e54fc59f748d30241484c8c2f0b01746aede375d82284b995a391250cb5"
+    },
+    {
+      "path": "/home/cosmo/Documents/GitHub/qcore-c/target/debug/deps/chunkio_meta_len_bounds-17fcb06065da6334",
+      "bytes": 9014992,
+      "sha256": "aa0c4a3e8152cc90f975698182974b09f515fd898bd8cf4205d2c00ccbd0aab2"
+    },
+    {
+      "path": "/home/cosmo/Documents/GitHub/qcore-c/target/debug/deps/clang_gap_phase1-9abd5ddeebcac73c",
+      "bytes": 42877792,
+      "sha256": "9c5afe3079ff51f2e593eca43391d6b52d565b870e6d8c4b19bc1558a68e80ff"
+    },
+    {
+      "path": "/home/cosmo/Documents/GitHub/qcore-c/target/debug/deps/clang_gap_phase2-4d10a4dd0540e77e",
+      "bytes": 42799664,
+      "sha256": "623e3586bf570d1f2164cd384e9cc861acc32063d9dac7190395ecc726272389"
+    },
+    {
+      "path": "/home/cosmo/Documents/GitHub/qcore-c/target/debug/deps/clang_gap_phase3-c03e44e524397eea",
+      "bytes": 42791272,
+      "sha256": "535b3f728880b80fe5f76978c8af5b6cb2070a7885d8eaea036e65568e46bdd6"
+    },
+    {
+      "path": "/home/cosmo/Documents/GitHub/qcore-c/target/debug/deps/clang_gap_phase4-10ab764154ab94b8",
+      "bytes": 42868672,
+      "sha256": "43127df8881aba75e95e659bac29af01cab0cc2d1dafe1d7f51e9171ecbd6437"
+    },
+    {
+      "path": "/home/cosmo/Documents/GitHub/qcore-c/target/debug/deps/condition_acquisition-b3b521c14ea18c36",
+      "bytes": 41781512,
+      "sha256": "13106d3b11fba38f1af5da2222090c1f30bccb9f06545b37ab2729d14768845b"
+    },
+    {
+      "path": "/home/cosmo/Documents/GitHub/qcore-c/target/debug/deps/condition_call_desugar-1f2d04a39c0ec51e",
+      "bytes": 41842344,
+      "sha256": "5ead39a05327014314de46c3d9d87eb5f5d77027b16ae63a4c63f4cd95df223b"
+    },
+    {
+      "path": "/home/cosmo/Documents/GitHub/qcore-c/target/debug/deps/constant_do_while-8667c33bdcf437df",
+      "bytes": 41767600,
+      "sha256": "86e24c94fddd9df0385d5791e7d687d0486eea8e0e5e05638a2c29f1c03a99da"
+    },
+    {
+      "path": "/home/cosmo/Documents/GitHub/qcore-c/target/debug/deps/constructor_residuals-16a31fa1e805f27b",
+      "bytes": 42613912,
+      "sha256": "ddcd14324a6063d4fd3345d4d66c60e1670da29f639e6bcdc8f08317913c1346"
+    },
+    {
+      "path": "/home/cosmo/Documents/GitHub/qcore-c/target/debug/deps/container_root_reach-c9bf0245064d0ccf",
+      "bytes": 41729384,
+      "sha256": "0c587dc586f0c98068be9c26412b17ed47c1463ca7e7fb1294f6d4099f393331"
+    },
+    {
+      "path": "/home/cosmo/Documents/GitHub/qcore-c/target/debug/deps/contextual_recursion-4c1592036c217b5c",
+      "bytes": 41974984,
+      "sha256": "137373cb96ae9815fd4ae99927dba8fe10a1b01f0a57a78833d49de70ede6a3f"
+    },
+    {
+      "path": "/home/cosmo/Documents/GitHub/qcore-c/target/debug/deps/contract_clause_standing-6e3832228eb43d74",
+      "bytes": 40977048,
+      "sha256": "55d45daf0d1f1d6eeb4330d3ca4eccb180bc1582afe5a6c3b341f502a70d838a"
+    },
+    {
+      "path": "/home/cosmo/Documents/GitHub/qcore-c/target/debug/deps/contract_deferred_review-31fe2846076993af",
+      "bytes": 42228056,
+      "sha256": "a291b8c0fde089b1e843032ac6630aa44ceb8347b5bf1bc0e409d728ff216238"
+    },
+    {
+      "path": "/home/cosmo/Documents/GitHub/qcore-c/target/debug/deps/contract_dependencies-463fcbb02670b36b",
+      "bytes": 41260824,
+      "sha256": "c00fe120e07daebfe7a8346285a3ee947ab034def882882b551339691c706fa2"
+    },
+    {
+      "path": "/home/cosmo/Documents/GitHub/qcore-c/target/debug/deps/contract_noreturn_borrowed_tails-7dde149976c2d500",
+      "bytes": 42010432,
+      "sha256": "6321026d7969f175c903bfc12ba9db9e8b9ddbd68afbef7f03149fd72a8a4832"
+    },
+    {
+      "path": "/home/cosmo/Documents/GitHub/qcore-c/target/debug/deps/contract_pin_hold-8498175c18b32f24",
+      "bytes": 45994088,
+      "sha256": "a68aff7458c601b87a8ffda5d318ec16a29781f5a6161726ff370bcfe6d242d0"
+    },
+    {
+      "path": "/home/cosmo/Documents/GitHub/qcore-c/target/debug/deps/cross_unit_summary-c36ccfe509cafbd9",
+      "bytes": 42008024,
+      "sha256": "e34ac8d374659ea91507a6b68be5cc39b40a43519d07e80b506482d0d079e1db"
+    },
+    {
+      "path": "/home/cosmo/Documents/GitHub/qcore-c/target/debug/deps/custody_summary_regression-3346a3efa31f9de3",
+      "bytes": 41986288,
+      "sha256": "7b3414fc8a9bcd273863476502ff45d849abe9fb52d2b9c94a1045fab76c5e3c"
+    },
+    {
+      "path": "/home/cosmo/Documents/GitHub/qcore-c/target/debug/deps/declared_entry_check-bd992f7858b6f2fa",
+      "bytes": 42199192,
+      "sha256": "dd6ec4b5eb269524237ec704382a58abd19db5c2d429451b7631490849b7983c"
+    },
+    {
+      "path": "/home/cosmo/Documents/GitHub/qcore-c/target/debug/deps/deep_unit_ast-99538953a6b95593",
+      "bytes": 42187992,
+      "sha256": "e90857755e3b74c3cdb4dfef10a0a8c8e5346cfa90bd7f7f19f44189a211d032"
+    },
+    {
+      "path": "/home/cosmo/Documents/GitHub/qcore-c/target/debug/deps/deref_parts_null-ea7e7140fd972c7a",
+      "bytes": 11787080,
+      "sha256": "1bde5fafa3c61b512728d010a127f8407e03d949c72c47be34f4beeddee79d16"
+    },
+    {
+      "path": "/home/cosmo/Documents/GitHub/qcore-c/target/debug/deps/derived_result-eb80e2079bd5df4d",
+      "bytes": 41941592,
+      "sha256": "8713c8fc65ef3f4ecb6109141aae26e3496b1d0e77d577b0d9d8718e865cd7e6"
+    },
+    {
+      "path": "/home/cosmo/Documents/GitHub/qcore-c/target/debug/deps/derived_result_returned-778f00cf0065ef55",
+      "bytes": 41949272,
+      "sha256": "573a6164ac299d2dc007713cabf45f291a135aabf5c63aede900e12a28ee1855"
+    },
+    {
+      "path": "/home/cosmo/Documents/GitHub/qcore-c/target/debug/deps/descriptor_custody-87b1854800a35f24",
+      "bytes": 41893328,
+      "sha256": "0218e91a9b2339d83c48a4f1de5c50550a25bcc41966a867d87c8e02369f2f57"
+    },
+    {
+      "path": "/home/cosmo/Documents/GitHub/qcore-c/target/debug/deps/detach_lookup_membership-a63c5631da9f506c",
+      "bytes": 42023016,
+      "sha256": "f487fcb030b6d220818550a4e4636eca49fdb704322059aebab0fc0472c10ad2"
+    },
+    {
+      "path": "/home/cosmo/Documents/GitHub/qcore-c/target/debug/deps/detach_same_item-4654e8c9b2c7f2fd",
+      "bytes": 41933656,
+      "sha256": "8363eea781d251cc1ce226409fabb81ec06e8de83f7b4d1702055b2b1211f8e1"
+    },
+    {
+      "path": "/home/cosmo/Documents/GitHub/qcore-c/target/debug/deps/e01_denominator_coverage-4486288b5efe4765",
+      "bytes": 41859888,
+      "sha256": "373c4223a6f8127ba1d495887e3308e3392146ea1fa335cbf035258a541ab73e"
+    },
+    {
+      "path": "/home/cosmo/Documents/GitHub/qcore-c/target/debug/deps/e01_f1_raw_tokenizer-5b7d0d43c8446573",
+      "bytes": 4627888,
+      "sha256": "990564d8f36aa2ad6d54a9346b480c368b0f860b9d09f0094bd398b2d94b0e98"
+    },
+    {
+      "path": "/home/cosmo/Documents/GitHub/qcore-c/target/debug/deps/e01_raw_cond-d2835098c1894a3f",
+      "bytes": 4733728,
+      "sha256": "a1815ec673a25d50ed20bcbe0762e38ef6ecf8f9658154e00bd3c5b5832ea6bc"
+    },
+    {
+      "path": "/home/cosmo/Documents/GitHub/qcore-c/target/debug/deps/e01_source_enumeration-29f7563be17d22a6",
+      "bytes": 41917304,
+      "sha256": "c122c8a0a8a09aac19318886396a54bcde6844e4c5b375dafa804b8f50de14c4"
+    },
+    {
+      "path": "/home/cosmo/Documents/GitHub/qcore-c/target/debug/deps/e01_stdin_attribution-ddc4ca617afde38c",
+      "bytes": 4648936,
+      "sha256": "980817564fb4c54f36b12c44909bd6120013094c7db1a423eceed6a5a407d1e8"
+    },
+    {
+      "path": "/home/cosmo/Documents/GitHub/qcore-c/target/debug/deps/event_loop_retention-004e8ab0128fb600",
+      "bytes": 42008312,
+      "sha256": "3936ba41a1b7467510ce9dc89202fd566f73cd9e7a893e1d548540fb4c8abe65"
+    },
+    {
+      "path": "/home/cosmo/Documents/GitHub/qcore-c/target/debug/deps/exposed_leak_mechanisms-21a126736f9652c0",
+      "bytes": 41854592,
+      "sha256": "754ef65271ec890470cbb0474f476e0e6a4232cc2aeb0f6c041e6eca10e49ddf"
+    },
+    {
+      "path": "/home/cosmo/Documents/GitHub/qcore-c/target/debug/deps/field_link_join-f8c6c411532f9a2e",
+      "bytes": 41777384,
+      "sha256": "861f8a9fe681961c988c274902fc4a3e8f0077248fc404cd193dfcaf6dfaf684"
+    },
+    {
+      "path": "/home/cosmo/Documents/GitHub/qcore-c/target/debug/deps/fixture_text_support-25995c22cad1579a",
+      "bytes": 1111584,
+      "sha256": "a05f84f95dc7951c145af9317a0b79bec25c4583d0826f60d776fb2b1bf2396c"
+    },
+    {
+      "path": "/home/cosmo/Documents/GitHub/qcore-c/target/debug/deps/footprint_connection-3495f548238254ba",
+      "bytes": 42769120,
+      "sha256": "0ab6023642b6004cc9fbc31836a054e6484fec443aac6d3e9b18c0e61545c2f8"
+    },
+    {
+      "path": "/home/cosmo/Documents/GitHub/qcore-c/target/debug/deps/function_pointer_declarators-29f53ea8e8d3141c",
+      "bytes": 41851408,
+      "sha256": "de84bb4581805fd104cb1c002730df7041ec502ec0fb63f299ee6364a92795d7"
+    },
+    {
+      "path": "/home/cosmo/Documents/GitHub/qcore-c/target/debug/deps/gapo_return_correctness-0ed9c0b887b7f72c",
+      "bytes": 41936176,
+      "sha256": "9876f2cb065680399f33a74590e42fefd0d73f5d1567d0e6858c7cc05464068b"
+    },
+    {
+      "path": "/home/cosmo/Documents/GitHub/qcore-c/target/debug/deps/gateway_c_location-46338f5054875c44",
+      "bytes": 4773208,
+      "sha256": "a8ee47ffe325b592c4ac8c8de47f619051472bc9d250582d466fee8a66ca0a99"
+    },
+    {
+      "path": "/home/cosmo/Documents/GitHub/qcore-c/target/debug/deps/generic_selection-6b74da15805f724b",
+      "bytes": 41863560,
+      "sha256": "a8e465489927b9c2306721b786d20c94881bf4d37be7f4b1b1e6161e3acabdbb"
+    },
+    {
+      "path": "/home/cosmo/Documents/GitHub/qcore-c/target/debug/deps/handoff_candidate_own_callbacks-9c6cfa48e0842f5f",
+      "bytes": 42236264,
+      "sha256": "173b3c298a9da65aeb9a8af610da26a4217f75c8087e5791f9c08316012ad181"
+    },
+    {
+      "path": "/home/cosmo/Documents/GitHub/qcore-c/target/debug/deps/handoff_direct_call-dd50f5390f0ead2d",
+      "bytes": 41850200,
+      "sha256": "6e99ac5f5c379f3bf167b030e37ca7f5b9a2a3b6d1a4addb9b144c6538e1a8ab"
+    },
+    {
+      "path": "/home/cosmo/Documents/GitHub/qcore-c/target/debug/deps/hash_contracts-ff35752ace9e7d1e",
+      "bytes": 42055048,
+      "sha256": "dfc7e1413cc388c6e8a220aa7fee6de822617a8e7488dc5779898b142e2f7032"
+    },
+    {
+      "path": "/home/cosmo/Documents/GitHub/qcore-c/target/debug/deps/index_traversal-6ae07aa91b40766a",
+      "bytes": 41876680,
+      "sha256": "eb456b034ebed9f1430b4bdfca11355bdc560b53a43092a4ef2d7039d51d191f"
+    },
+    {
+      "path": "/home/cosmo/Documents/GitHub/qcore-c/target/debug/deps/indexed_collection-f4c1d0295f218636",
+      "bytes": 41879344,
+      "sha256": "4cd3026bd1f4b08de040c22b07ad75c56d6e324f127ab0ab1f9fae925c874ccb"
+    },
+    {
+      "path": "/home/cosmo/Documents/GitHub/qcore-c/target/debug/deps/indirect_access_sole_blockers-8585b45214c32f34",
+      "bytes": 41875840,
+      "sha256": "a9fe1f5394769b1cc3fb197937b13b06c7a1bba3d2f261cbd12459bd296e62d4"
+    },
+    {
+      "path": "/home/cosmo/Documents/GitHub/qcore-c/target/debug/deps/indirect_access_sole_residuals-4c7d9308a91cbcaf",
+      "bytes": 41858056,
+      "sha256": "9a3171b800c92680e992fb0d6bd8fb0e9fa4b2f5a0290f329f265129ad6f7fa6"
+    },
+    {
+      "path": "/home/cosmo/Documents/GitHub/qcore-c/target/debug/deps/indirect_access_sole_residuals_r2-bd3d33bdf93f05b4",
+      "bytes": 41864456,
+      "sha256": "5408d7cb6e11ead751866314c34abdac983606ca5aef3ca49f3f91c82d812b0e"
+    },
+    {
+      "path": "/home/cosmo/Documents/GitHub/qcore-c/target/debug/deps/indirect_chain_access-600334eb14e12bd8",
+      "bytes": 41889296,
+      "sha256": "0a651ad37ea0989b10c45f6bf89554817e0dfe43cd4bbc35a60726eea0be9d58"
+    },
+    {
+      "path": "/home/cosmo/Documents/GitHub/qcore-c/target/debug/deps/indirect_scalar_access-0b06242402042951",
+      "bytes": 41869296,
+      "sha256": "9ab30176cf1f433a770f5449fc3c3e842274daad5e4671db2d27fe6550d77fd7"
+    },
+    {
+      "path": "/home/cosmo/Documents/GitHub/qcore-c/target/debug/deps/intrusive_list_iteration-4f252973abf9df5b",
+      "bytes": 41731032,
+      "sha256": "3e917929ce04722c18821ae362e4e673bafd5ec064a1d42181cd51c12009306e"
+    },
+    {
+      "path": "/home/cosmo/Documents/GitHub/qcore-c/target/debug/deps/layout_extents-1858762e6b791e25",
+      "bytes": 42010720,
+      "sha256": "ac86f2296c43515d2ca3753fa8496daccc48aaf732e3e89c8a5a276bfcd28bd9"
+    },
+    {
+      "path": "/home/cosmo/Documents/GitHub/qcore-c/target/debug/deps/leak_pin_audit-be1558c8bee523a0",
+      "bytes": 41874616,
+      "sha256": "1be80ed97088bf482dfc486700f664fb8d08d92c86e3d8c24820512963d97c1d"
+    },
+    {
+      "path": "/home/cosmo/Documents/GitHub/qcore-c/target/debug/deps/lexical_closure_nested_assignment-a363fa804ad5e8c9",
+      "bytes": 41700168,
+      "sha256": "ba8ccb2eec42d2419958bc5d81c74b928743a9018aa229015cb6628775ba0424"
+    },
+    {
+      "path": "/home/cosmo/Documents/GitHub/qcore-c/target/debug/deps/libc_reading_dependencies-853c7784f3109094",
+      "bytes": 40547168,
+      "sha256": "824a2cdf501aa70e4e44dccfa648c02ae241f23747f3ec0e9f45bfc0611689ca"
+    },
+    {
+      "path": "/home/cosmo/Documents/GitHub/qcore-c/target/debug/deps/libc_reading_site_evidence-d8dab7be0b31306b",
+      "bytes": 44377840,
+      "sha256": "5afd30ef212adad34681156ee8949dbbf8b91dc0de17d8cc77d776a95e795ff5"
+    },
+    {
+      "path": "/home/cosmo/Documents/GitHub/qcore-c/target/debug/deps/loader_abi-389dfd85707e7cb1",
+      "bytes": 42147416,
+      "sha256": "b1bf57826593f14064b210c3619b1021767c83feca653e3ec1b673d369a8f54f"
+    },
+    {
+      "path": "/home/cosmo/Documents/GitHub/qcore-c/target/debug/deps/loader_abi_modes-c787918b017b1e59",
+      "bytes": 42192024,
+      "sha256": "9d20ffaf55563cc09783313bbd9ed282996f664fe1dc8e11fd772af83852ba91"
+    },
+    {
+      "path": "/home/cosmo/Documents/GitHub/qcore-c/target/debug/deps/loop_lifetime_s3-d838428e840201fc",
+      "bytes": 43149176,
+      "sha256": "d0c42473f2b18afdd4c49e1e13e85141c49ae606978a0628032a96d3b82da236"
+    },
+    {
+      "path": "/home/cosmo/Documents/GitHub/qcore-c/target/debug/deps/loop_site_generations-92d9f74a3654cbdb",
+      "bytes": 41815720,
+      "sha256": "9635816d816dfffc4a24e43731227dc162337b395a471c5bfcb6df11ee0918d1"
+    },
+    {
+      "path": "/home/cosmo/Documents/GitHub/qcore-c/target/debug/deps/loop_switch_condition_calls-8eef4fad0f927b8a",
+      "bytes": 41764544,
+      "sha256": "cce6be0e9aadbc51ea34253c7d63a48fff8e250584d41083500202ab9e7903f2"
+    },
+    {
+      "path": "/home/cosmo/Documents/GitHub/qcore-c/target/debug/deps/loops_recursion_budgets-ce59869c6a2a55b7",
+      "bytes": 43056928,
+      "sha256": "28e87992ae7d3d9f7b9a8c1ccc9ca64815236db53a4e07235d7f1bea33fd8b51"
+    },
+    {
+      "path": "/home/cosmo/Documents/GitHub/qcore-c/target/debug/deps/may_alias_boundary-0c7c82565c440df0",
+      "bytes": 41970720,
+      "sha256": "64df2e1cccaba5563b08e12e3c2334674c9c0b803216b6f8f14435e18483c5f6"
+    },
+    {
+      "path": "/home/cosmo/Documents/GitHub/qcore-c/target/debug/deps/member_path_direct_call-f58fc0131cbd6538",
+      "bytes": 41851584,
+      "sha256": "f37885a2877de4f1cd6ab2b7cf3df97c613c17b33b50038f577be5c9b06c363c"
+    },
+    {
+      "path": "/home/cosmo/Documents/GitHub/qcore-c/target/debug/deps/member_path_release-ef28e6e8b36da4de",
+      "bytes": 41853592,
+      "sha256": "f33c2ba205e2341bb43bce02a6969d6d2135bca330c63d369250f1d6b21ee319"
+    },
+    {
+      "path": "/home/cosmo/Documents/GitHub/qcore-c/target/debug/deps/metric_aggregate_contracts-17a4102487047636",
+      "bytes": 41874984,
+      "sha256": "0454e687a2e36533370b20577d5baede350bb432d40c02b1fdc89064968db188"
+    },
+    {
+      "path": "/home/cosmo/Documents/GitHub/qcore-c/target/debug/deps/metric_trace_contract_gaps-d7f2df43fd584836",
+      "bytes": 41894408,
+      "sha256": "25ab87bd4e63fc60c1250134a3d9492797cd2b35ed7d57c24f8c01ec8482cedb"
+    },
+    {
+      "path": "/home/cosmo/Documents/GitHub/qcore-c/target/debug/deps/monkey_vhost_property_custody-0cafea6c2382a44c",
+      "bytes": 40300864,
+      "sha256": "001e33166e55d272a6d787c68a738766b72fa08beaca30d95a16f5d161550f0a"
+    },
+    {
+      "path": "/home/cosmo/Documents/GitHub/qcore-c/target/debug/deps/neighbours-52ddf471e2c463a5",
+      "bytes": 42675568,
+      "sha256": "673cbe9e0d41c5c31083ec5a54ffe2a4508de078a43ce0823b16893290e22cdd"
+    },
+    {
+      "path": "/home/cosmo/Documents/GitHub/qcore-c/target/debug/deps/neutral_expression_positions-ad8cec8b9a5a4a50",
+      "bytes": 42104288,
+      "sha256": "783776c51ec594c6e5b722bb02a85809b9a4eb9b8b24dc9c8506d434f2080746"
+    },
+    {
+      "path": "/home/cosmo/Documents/GitHub/qcore-c/target/debug/deps/neutral_frame_recursion-84de9d30e9c7cc7b",
+      "bytes": 42139608,
+      "sha256": "f39d2495e9aec9065b6a6233636f99e98af622c8bdaf500d9affd943883f473b"
+    },
+    {
+      "path": "/home/cosmo/Documents/GitHub/qcore-c/target/debug/deps/neutral_reach_census-9aa59764b13c00a5",
+      "bytes": 41738544,
+      "sha256": "775392040ce5281bac2abdb84d1fa84199a2b82266516ab90064b662e0be5ea5"
+    },
+    {
+      "path": "/home/cosmo/Documents/GitHub/qcore-c/target/debug/deps/null_candidate_triage-3f6be5317919bf09",
+      "bytes": 14156144,
+      "sha256": "d689ffab4881336000531450a3f40fdc97d58898b1caa4ba0138546133c02f73"
+    },
+    {
+      "path": "/home/cosmo/Documents/GitHub/qcore-c/target/debug/deps/null_member_invariant_scope-03d4122abb02c309",
+      "bytes": 11894568,
+      "sha256": "bf39b0b7200126f5a1b09073a64f74463a8d21535894c4c3febd9ac2465601cd"
+    },
+    {
+      "path": "/home/cosmo/Documents/GitHub/qcore-c/target/debug/deps/null_member_premise-471dddcb141eb88d",
+      "bytes": 11917200,
+      "sha256": "f8e95299ccacab6ad1cc851007591a1ad8d6c5fba697c960100caa2f275315af"
+    },
+    {
+      "path": "/home/cosmo/Documents/GitHub/qcore-c/target/debug/deps/null_premise_custody-da95a53d9d26388d",
+      "bytes": 41869280,
+      "sha256": "ca70ef7d394cfdcf5265e3ba6e657e72b8b736b0fd787d9641215cde4e9b81d2"
+    },
+    {
+      "path": "/home/cosmo/Documents/GitHub/qcore-c/target/debug/deps/null_safety_property-4066eb629187c533",
+      "bytes": 14086752,
+      "sha256": "bc6a98728fea588a387f8c53026a2dfbe44153892ecb4ce68695110be72888b9"
+    },
+    {
+      "path": "/home/cosmo/Documents/GitHub/qcore-c/target/debug/deps/null_triage_unresolved_paths-0eb0676d3de429ae",
+      "bytes": 14135032,
+      "sha256": "1e467b3d777400199e2d4ac4e88c2404cdd29ed18788c97f9109aeed90731dd6"
+    },
+    {
+      "path": "/home/cosmo/Documents/GitHub/qcore-c/target/debug/deps/o04_arms-7f3cf74b931beb1b",
+      "bytes": 42153376,
+      "sha256": "b60162014417bc7214e0e69eb4620d54f1b29ef4b026e15188c46a6054caddd3"
+    },
+    {
+      "path": "/home/cosmo/Documents/GitHub/qcore-c/target/debug/deps/o04_b08-361e521807c892ea",
+      "bytes": 42117832,
+      "sha256": "fd2d2a2536b71eea1b9ed0f7a57bdaa93a4cbafd7b41ea21a8457eff281a9e7e"
+    },
+    {
+      "path": "/home/cosmo/Documents/GitHub/qcore-c/target/debug/deps/o04_b09b10-121e2c5a47cd19be",
+      "bytes": 42078832,
+      "sha256": "ce9f5572b6791a416df0cf024e0f427fbbd4a04e6d117ebee4e3a0425ac074d8"
+    },
+    {
+      "path": "/home/cosmo/Documents/GitHub/qcore-c/target/debug/deps/o04_constructor_caller-2af5a201915aea50",
+      "bytes": 42172280,
+      "sha256": "614a6d952b0d5963b5f603df2a8c8ef8697455d38c36315961881105538ac959"
+    },
+    {
+      "path": "/home/cosmo/Documents/GitHub/qcore-c/target/debug/deps/o04_read_bound-bfbd2dfd821fee59",
+      "bytes": 42105384,
+      "sha256": "0001b69631b56f85f1902a9250b2bd1d284a1b62b425f84c829c44adea7079fa"
+    },
+    {
+      "path": "/home/cosmo/Documents/GitHub/qcore-c/target/debug/deps/o04_trace-2baf76a197e4a7dc",
+      "bytes": 42142480,
+      "sha256": "453ceb21307060daa5b1d9bf626e2e2cc37b8a9d9a5b72fb65d77dab74c85154"
+    },
+    {
+      "path": "/home/cosmo/Documents/GitHub/qcore-c/target/debug/deps/op_constructor_declarations-028b0575d84e8ff5",
+      "bytes": 41972776,
+      "sha256": "eb8e7ee9d62a30aaf7a06d6b767240ee36c045bb784f237892f8cda328117d69"
+    },
+    {
+      "path": "/home/cosmo/Documents/GitHub/qcore-c/target/debug/deps/outer_record_graph-604484d5feb1d34a",
+      "bytes": 4931568,
+      "sha256": "224af083940dfdc2cf9f3e0ea87257e251de2e940a97d54f39cd289d2f0b0b4c"
+    },
+    {
+      "path": "/home/cosmo/Documents/GitHub/qcore-c/target/debug/deps/parenthesised_callee-e923cbe33ebcc6b1",
+      "bytes": 40406328,
+      "sha256": "39a5e4f9f8d507448f3dc7258979b3dee38de0e25452549ce8bd8dd0f5b1c97e"
+    },
+    {
+      "path": "/home/cosmo/Documents/GitHub/qcore-c/target/debug/deps/premise_flow_dependencies-fdc2373da08d55e4",
+      "bytes": 41971912,
+      "sha256": "7d741ae0e2b976623c519f4c87656874d16fb45c5f93a944eba5e39e042d6030"
+    },
+    {
+      "path": "/home/cosmo/Documents/GitHub/qcore-c/target/debug/deps/prepared_failure-864a9ecfaf66dc5a",
+      "bytes": 41673312,
+      "sha256": "1e3b6755cd7222c538baf56cb7bd218a8d37b29c1bdbb155ff201446730eb105"
+    },
+    {
+      "path": "/home/cosmo/Documents/GitHub/qcore-c/target/debug/deps/prepared_translation_unit-e707a2c3c8a2ba8f",
+      "bytes": 41920904,
+      "sha256": "dc3a93e26c8a73551d73fa8d5c60c5b5439411916b31b1eae3c4c6575216b485"
+    },
+    {
+      "path": "/home/cosmo/Documents/GitHub/qcore-c/target/debug/deps/prod_contracts-b8e1aa78a7c57678",
+      "bytes": 42615376,
+      "sha256": "da63da8f61bb4a1b1d60ae9eb36c4df20cc0bac9e28bfc5ebaeda00ccad1cffe"
+    },
+    {
+      "path": "/home/cosmo/Documents/GitHub/qcore-c/target/debug/deps/publication_custody-4badc877d8f85b6b",
+      "bytes": 41928472,
+      "sha256": "2d93151c1fb3498f628a958806b7eba44a7a6bb5a662dbf1e964e5256232a2c5"
+    },
+    {
+      "path": "/home/cosmo/Documents/GitHub/qcore-c/target/debug/deps/quant_index_checks-1ce3e68c371670fb",
+      "bytes": 8934376,
+      "sha256": "783d59e2a8e9765d8f067c2a94e0c288b7a46160839828822b9ccb5789831ebd"
+    },
+    {
+      "path": "/home/cosmo/Documents/GitHub/qcore-c/target/debug/deps/reach_gate_positions-4b2450138449fd1e",
+      "bytes": 41777160,
+      "sha256": "cfbc24e278ab52061ae816377006effcc52ae5f4fa21e38a0fe514f88afcb415"
+    },
+    {
+      "path": "/home/cosmo/Documents/GitHub/qcore-c/target/debug/deps/reading_site_domain-ff8535af8116dbfe",
+      "bytes": 44258968,
+      "sha256": "4a5be4a22b8c4a5a2122173321e006259e9bdf7f155a33fab981312a26ba8f92"
+    },
+    {
+      "path": "/home/cosmo/Documents/GitHub/qcore-c/target/debug/deps/refcount_reference_returning-cfdf53c1ea264bd2",
+      "bytes": 41993784,
+      "sha256": "b55cda1f3e3e2e09c7d53dd0f6bee4922ab7a6b72689e90b8f80a3f917e7f31b"
+    },
+    {
+      "path": "/home/cosmo/Documents/GitHub/qcore-c/target/debug/deps/refcount_resource_kind-7d4ba2f2867efc72",
+      "bytes": 42112624,
+      "sha256": "698c1f35ed5215009f9768ea16c8a83dfa22be8a931664d73d106ba327cd47ae"
+    },
+    {
+      "path": "/home/cosmo/Documents/GitHub/qcore-c/target/debug/deps/refused_call_hand_on-b293a0bf975bf69e",
+      "bytes": 41704888,
+      "sha256": "4887113bab8e034e7fa5713b9232d7e503a4cc30830ea746729f47b0c392b480"
+    },
+    {
+      "path": "/home/cosmo/Documents/GitHub/qcore-c/target/debug/deps/refuted_contract_foreign_unlink-e18568522b7f44e2",
+      "bytes": 41685376,
+      "sha256": "c97b70fe0878552ea0366d102faea6305cdc81942d744938039dba0cfef6f95d"
+    },
+    {
+      "path": "/home/cosmo/Documents/GitHub/qcore-c/target/debug/deps/refuted_contract_withdrawal-7fbe1f28fcc662da",
+      "bytes": 40463168,
+      "sha256": "f94f0dd8374694c25e3c700530af131f061c74221f81468f6c0d78b982b42505"
+    },
+    {
+      "path": "/home/cosmo/Documents/GitHub/qcore-c/target/debug/deps/relational_postconditions-40b99769cb6f7ac1",
+      "bytes": 41920624,
+      "sha256": "92d68b2d57a85e306bad87f5be68e6b28f7d0a3520b4e36868be6a47c230fb42"
+    },
+    {
+      "path": "/home/cosmo/Documents/GitHub/qcore-c/target/debug/deps/resource_kinds-9d883d2d1cf668a6",
+      "bytes": 41864824,
+      "sha256": "5588910a6cbb6af07e06bf1a5680c9e9ea78b3272854d799f3cfcb4606c39c8d"
+    },
+    {
+      "path": "/home/cosmo/Documents/GitHub/qcore-c/target/debug/deps/resource_kinds_lean-2330e7b574e82370",
+      "bytes": 6940496,
+      "sha256": "33e839142dfdcb604b9170e8051e9e2827f2406352936efb661dcf473d3d37dd"
+    },
+    {
+      "path": "/home/cosmo/Documents/GitHub/qcore-c/target/debug/deps/retention_guard-15811ef6126771c0",
+      "bytes": 41941176,
+      "sha256": "970587cb3f60207f24450611a0232a9d8e91bb82a9e324fbb16f8a7d5481d915"
+    },
+    {
+      "path": "/home/cosmo/Documents/GitHub/qcore-c/target/debug/deps/retry_lifetime-6cf17fb603c5360b",
+      "bytes": 40339312,
+      "sha256": "901de38ea22dbb01f25b21c6e87c763f746239e8e37477b624b975a275a110ad"
+    },
+    {
+      "path": "/home/cosmo/Documents/GitHub/qcore-c/target/debug/deps/return_code_handoff-d96bd91b485c8d83",
+      "bytes": 41856024,
+      "sha256": "85ed496b9853001ffec097f2043e08efe481da01013bad4c49197eb9a17507a9"
+    },
+    {
+      "path": "/home/cosmo/Documents/GitHub/qcore-c/target/debug/deps/return_expression_families-cfb08b9d365c1ba6",
+      "bytes": 41876848,
+      "sha256": "394737a8854d913119d080145dc5d29b21ae7bb55317bc070e4199d895de8c87"
+    },
+    {
+      "path": "/home/cosmo/Documents/GitHub/qcore-c/target/debug/deps/return_position_modeled_call-1912b19c20a8042c",
+      "bytes": 41799328,
+      "sha256": "06592c98add98cdc37eeac5e45f18f1c0e14452525d90b43e8950211ee034129"
+    },
+    {
+      "path": "/home/cosmo/Documents/GitHub/qcore-c/target/debug/deps/return_position_pointer_leaf-2f2dfb5f8be59312",
+      "bytes": 41766600,
+      "sha256": "a353332deb3afe3fc0bb8f6359349c9a19dd00635cd7be8a5c624f9a8ccaef1a"
+    },
+    {
+      "path": "/home/cosmo/Documents/GitHub/qcore-c/target/debug/deps/return_refused_call_lowering-bf412b296b3e321c",
+      "bytes": 41779632,
+      "sha256": "56921cafa9bbb570a0e8338e41d88b58ab92f027e9255f1421abc2c3a0e6bad8"
+    },
+    {
+      "path": "/home/cosmo/Documents/GitHub/qcore-c/target/debug/deps/review_hold_standing-57fd00ee838a8930",
+      "bytes": 42031320,
+      "sha256": "92453ebd55ba603b3b9a528dd852ee70bf738a5bf7dd38e841184b8ded62ee17"
+    },
+    {
+      "path": "/home/cosmo/Documents/GitHub/qcore-c/target/debug/deps/rko_union_layout-9eb8913365563db1",
+      "bytes": 8344000,
+      "sha256": "3b469cb7ced1247f30c14d3fd0656b715828d72e918d87569fa05b08aa1d6030"
+    },
+    {
+      "path": "/home/cosmo/Documents/GitHub/qcore-c/target/debug/deps/scalar_member_store-31e888b7eb685ad6",
+      "bytes": 41878376,
+      "sha256": "959549499c4339407822f6be82d6fef073ab532c49bc6f45d47e82efe187a28d"
+    },
+    {
+      "path": "/home/cosmo/Documents/GitHub/qcore-c/target/debug/deps/scalar_noop_alias-f1eb9fef9dc1f068",
+      "bytes": 41850184,
+      "sha256": "6d02d719235e647912d394c4736892946fab7cee55932e172e82a214ab492343"
+    },
+    {
+      "path": "/home/cosmo/Documents/GitHub/qcore-c/target/debug/deps/scalar_precedence-a4407b8cfb213b31",
+      "bytes": 41864032,
+      "sha256": "4f693530d87cb9087780f271f601d845e6de7deb6cbc758486b57428131406f1"
+    },
+    {
+      "path": "/home/cosmo/Documents/GitHub/qcore-c/target/debug/deps/scalar_route_exit_edge-17f99fe0545aeb9e",
+      "bytes": 41787592,
+      "sha256": "fb9a511f075f5bbafb22a1694bf02c9d18a794366c0178af892da016a4159cfa"
+    },
+    {
+      "path": "/home/cosmo/Documents/GitHub/qcore-c/target/debug/deps/serve_forwarded_callback_formals-65d18d8a0f1370f7",
+      "bytes": 41972136,
+      "sha256": "52c88ea9108446421a8c3200e8df9b10cb7c0f7454dbe8c46f56995a0ea9abc9"
+    },
+    {
+      "path": "/home/cosmo/Documents/GitHub/qcore-c/target/debug/deps/sizeof_operand-8609d15a0661922d",
+      "bytes": 41855080,
+      "sha256": "f6e5ffa27d088e015c6253854592011f459ba1625f60d83e4d3503e1fd0022f8"
+    },
+    {
+      "path": "/home/cosmo/Documents/GitHub/qcore-c/target/debug/deps/slot_move_interior_borrow-df7a3143e913fd87",
+      "bytes": 41996224,
+      "sha256": "462f15f90b1d6ed6e534b0745e2d5509732f181c2473e9290f2dabc28741fa29"
+    },
+    {
+      "path": "/home/cosmo/Documents/GitHub/qcore-c/target/debug/deps/sr5_soundness-533a9363306be59b",
+      "bytes": 41847568,
+      "sha256": "5e0d9af8890ecfe7322c51002e85540e67491832525d3e0e865b2487f5d87264"
+    },
+    {
+      "path": "/home/cosmo/Documents/GitHub/qcore-c/target/debug/deps/storage_duration_volatile-b9f5aad1f891dd43",
+      "bytes": 41974352,
+      "sha256": "1c37e6019958a569e8f1095645ed943eef4845cf603c1343ebeb86f52f64b8b5"
+    },
+    {
+      "path": "/home/cosmo/Documents/GitHub/qcore-c/target/debug/deps/sub_object_stores-c6630e9868fde8b4",
+      "bytes": 41869600,
+      "sha256": "764d873f20d31ae983a71423f6f368150c7edcb919dd3557330f41bbeb856d72"
+    },
+    {
+      "path": "/home/cosmo/Documents/GitHub/qcore-c/target/debug/deps/summary_validation_premises-9119fe566368e33b",
+      "bytes": 41953000,
+      "sha256": "7afe5024f1437e6fd6d6c15ab4fa028912674f6f1275260980db99fcbd1d8f5d"
+    },
+    {
+      "path": "/home/cosmo/Documents/GitHub/qcore-c/target/debug/deps/sup07_refused_test_accusation-2ac6f1e698a11159",
+      "bytes": 40285504,
+      "sha256": "27f521666b0923afb41df43512ada8342fc71d437880a4ae841dd235e7aee6b4"
+    },
+    {
+      "path": "/home/cosmo/Documents/GitHub/qcore-c/target/debug/deps/typed_body_comparison-3ea613162e2e1c35",
+      "bytes": 4803352,
+      "sha256": "072a90d230982fefdfc1c61d6b406d5311c29385c09f8ce9ac14f1e7b77f9a39"
+    },
+    {
+      "path": "/home/cosmo/Documents/GitHub/qcore-c/target/debug/deps/typed_const_pointer_value-4602695260f0bd5d",
+      "bytes": 41871040,
+      "sha256": "e05816cea6bc39aed0b1b390fb7adbece5961e4d5eb156d28398a84ae68b27c1"
+    },
+    {
+      "path": "/home/cosmo/Documents/GitHub/qcore-c/target/debug/deps/typed_field_access-4a66fed6ef1c5554",
+      "bytes": 41931264,
+      "sha256": "7092ac904762980129ff8fb8e9f06aa6f4c23a2da4a94ddf1374e327a2c4612b"
+    },
+    {
+      "path": "/home/cosmo/Documents/GitHub/qcore-c/target/debug/deps/typed_root_declarations-23a47afff2d9587e",
+      "bytes": 41697632,
+      "sha256": "61e06da3a4da038c6db8a13bd451591719cbab3d3c995416a74731db8ce79219"
+    },
+    {
+      "path": "/home/cosmo/Documents/GitHub/qcore-c/target/debug/deps/union_bitfield_places-d271d440eeefc5f7",
+      "bytes": 41898200,
+      "sha256": "cc996fb39f81f5a65b34991e4f3162863ae3a8619e4223636ef30ae946181855"
+    },
+    {
+      "path": "/home/cosmo/Documents/GitHub/qcore-c/target/debug/deps/union_opaque_writes-80eaa8276b95541a",
+      "bytes": 8361192,
+      "sha256": "f1746bb06c2b6bd20b33baefc61fd5fbc77755b419709a2f515e6261a1485b4a"
+    },
+    {
+      "path": "/home/cosmo/Documents/GitHub/qcore-c/target/debug/deps/va_loop_pointer_arg-7f9c93149aaf49d2",
+      "bytes": 41919952,
+      "sha256": "ea3b0bcaaa1f851a1a295e1d2a6e0fba702d6b76d4ba97ae17733a865b3fb1e6"
+    },
+    {
+      "path": "/home/cosmo/Documents/GitHub/qcore-c/target/debug/deps/verdict_fold-5272851eeb17d36f",
+      "bytes": 40306520,
+      "sha256": "7ca69cf4c6e0413dea0d4bd6b17234ad74448b21a2a3a7dc9d13630db2c659f4"
+    },
+    {
+      "path": "/home/cosmo/Documents/GitHub/qcore-c/target/debug/deps/w46_external_callee_contracts-f1688eff77d5d43d",
+      "bytes": 42028760,
+      "sha256": "a7bac12694303272eace0ff2f8d180ed7c0d69fea0affc080e85c2e1ace5b51d"
+    },
+    {
+      "path": "/home/cosmo/Documents/GitHub/qcore-c/target/debug/deps/w46_libc_event_contract_gaps-01f1e133c064e7da",
+      "bytes": 41899848,
+      "sha256": "5fabc2a1be6bb4188ca455baa8002819e959be8ae04cd363257c2bf278a1b299"
+    },
+    {
+      "path": "/home/cosmo/Documents/GitHub/qcore-c/target/debug/deps/w46_routing_query_contracts-f1fb09fd2df5e7e2",
+      "bytes": 41887416,
+      "sha256": "f25f344f071aa15578618639a0bf20a3e12ed8533e3f8799e9879686b27c73a6"
+    },
+    {
+      "path": "/home/cosmo/Documents/GitHub/qcore-c/target/debug/deps/w47_callee_closure_r2-4fea8a656269d95e",
+      "bytes": 41969016,
+      "sha256": "9f3e965d52b1f09e10958c6d775dd2c9ab1f03692ea2f28473bfb21a7fbad1ca"
+    },
+    {
+      "path": "/home/cosmo/Documents/GitHub/qcore-c/target/debug/deps/w48_bottom_up_callee_bodies-b69e5911d666b34c",
+      "bytes": 41901104,
+      "sha256": "9125bc952236aa4c683787044f7c0f34ed8e1e57c86d7eeae3d210d049046f5a"
+    },
+    {
+      "path": "/home/cosmo/Documents/GitHub/qcore-c/target/debug/deps/w48_callee_closure_r3-d32f1eaea0f3c6f4",
+      "bytes": 41908536,
+      "sha256": "eeb090fde6eb4fa6f583302204e6aa723d85add4f5af2a0ef91539cb0bee5eeb"
+    },
+    {
+      "path": "/home/cosmo/Documents/GitHub/qcore-c/target/debug/deps/qcore_compiler-0135c3f0051d04d3",
+      "bytes": 85899904,
+      "sha256": "6108329ffa82dc1022633418b4c7803449f5928190e2aeab97edd75c1271bcd7"
+    },
+    {
+      "path": "/home/cosmo/Documents/GitHub/qcore-c/target/debug/deps/aggregate_owned_field-e23f8bf51e4a31a5",
+      "bytes": 48657120,
+      "sha256": "009fdf69fc3cd9ef02f0c51d73691c0e92e892c904d0a725bd5accee33f63df4"
+    },
+    {
+      "path": "/home/cosmo/Documents/GitHub/qcore-c/target/debug/deps/bitfield_concurrency-1364a9914f86fa8b",
+      "bytes": 48549936,
+      "sha256": "1174f8f37261081652993da97a9bb798fdb9046449562d81a74e8a11c379d607"
+    },
+    {
+      "path": "/home/cosmo/Documents/GitHub/qcore-c/target/debug/deps/bitwise_conditions-bfdf1d96eb477d9a",
+      "bytes": 47844192,
+      "sha256": "194f07ae921f6dbbff6405b78304760731ef20c57068e88b01c8771bc38ffb3d"
+    },
+    {
+      "path": "/home/cosmo/Documents/GitHub/qcore-c/target/debug/deps/branch_arms-84b75596d11266d4",
+      "bytes": 47817272,
+      "sha256": "2c0fd11f5f7bab8762490847b995ab1a4cf058ac48dc2f0bbe3bab62ae20daa3"
+    },
+    {
+      "path": "/home/cosmo/Documents/GitHub/qcore-c/target/debug/deps/branch_statement-937d566be1f5a219",
+      "bytes": 47818256,
+      "sha256": "587af7659cbdc2a751d19a242b24a24a1cf68a35d7f3f0835c5f6c7fa7976ee3"
+    },
+    {
+      "path": "/home/cosmo/Documents/GitHub/qcore-c/target/debug/deps/call_use_route_parity-714f3eba39c00ad2",
+      "bytes": 8698544,
+      "sha256": "fe20b67950d72fc8c990116889aa03c1c201f39fde63ddbfe2ae65df81300800"
+    },
+    {
+      "path": "/home/cosmo/Documents/GitHub/qcore-c/target/debug/deps/checked_mutex_guards-18999719d7619d91",
+      "bytes": 48647152,
+      "sha256": "2d82511c321e88c8ef37ee44e1390cdff619f10c5ec7f3ae4a3a2fbe4fc0f4b8"
+    },
+    {
+      "path": "/home/cosmo/Documents/GitHub/qcore-c/target/debug/deps/chunk_lifecycle_coverage-a160573241117ca8",
+      "bytes": 14163136,
+      "sha256": "8a4d3d98a63601f6c46965c2e53286bbebf6f22705f59c500e2b1a6f1034a601"
+    },
+    {
+      "path": "/home/cosmo/Documents/GitHub/qcore-c/target/debug/deps/cleanup_replay_route_parity-d5c7cc31ce339d8c",
+      "bytes": 9900424,
+      "sha256": "fc3d82e40fe41da85a770082b8546decf11a32a5073a97cd6a32167bb32bcf12"
+    },
+    {
+      "path": "/home/cosmo/Documents/GitHub/qcore-c/target/debug/deps/cleanup_task_composition-4d64ec129d3f258e",
+      "bytes": 48513328,
+      "sha256": "36a8604591f6bad44ae17042887f0c3f4e03f47d4c75e883c05c3822bd39b1ba"
+    },
+    {
+      "path": "/home/cosmo/Documents/GitHub/qcore-c/target/debug/deps/closures-87a869380d5e9c61",
+      "bytes": 49423800,
+      "sha256": "12abe7e9e776c3d06853d1b2f8acc2b9f14625b5ec9f5e111f532f325d744992"
+    },
+    {
+      "path": "/home/cosmo/Documents/GitHub/qcore-c/target/debug/deps/compose_event_lines-5da081be1343023e",
+      "bytes": 47786624,
+      "sha256": "38edc52b6a43d99843bd08f40d638111fd2014597b22733ec6ec1c431b7576b5"
+    },
+    {
+      "path": "/home/cosmo/Documents/GitHub/qcore-c/target/debug/deps/composed_five_providers-0d9c96c956d630f5",
+      "bytes": 14634280,
+      "sha256": "28485619be38cbf8448afb85d26c48cdc397e719ac189244f6b75cf7ea17aeb6"
+    },
+    {
+      "path": "/home/cosmo/Documents/GitHub/qcore-c/target/debug/deps/composed_window_reach-d80139ae146023af",
+      "bytes": 47870168,
+      "sha256": "f418ad135097da019d2bf44b88db7fecfd06265e79457b4837f6868cef2f0096"
+    },
+    {
+      "path": "/home/cosmo/Documents/GitHub/qcore-c/target/debug/deps/composition_route_parity-4b35ccd8b55c130c",
+      "bytes": 10356088,
+      "sha256": "47cfed2aef5e88f8e3f6e53f5cc375bc7b3aae294d72824cd44b1cdd8b7aa45b"
+    },
+    {
+      "path": "/home/cosmo/Documents/GitHub/qcore-c/target/debug/deps/contract_consumers-c5a0553e06e041fb",
+      "bytes": 9137704,
+      "sha256": "75ec961d199a15f5c789cc525afa7a20e4378b7333c5dc912d11c1f83de5ca8c"
+    },
+    {
+      "path": "/home/cosmo/Documents/GitHub/qcore-c/target/debug/deps/contract_inherit_adoption-6f203b5089f9b46c",
+      "bytes": 10397592,
+      "sha256": "7745acf7809fbbde73771ae7d46321f3fe900202f62a3031ffc927ff09b45114"
+    },
+    {
+      "path": "/home/cosmo/Documents/GitHub/qcore-c/target/debug/deps/contract_inherit_parity-fccca301c6817b1e",
+      "bytes": 5133784,
+      "sha256": "bf18d22abc4342cc7a53949fce48fcb3bc4b76113bedd96bf0c7775fe0bc0ccc"
+    },
+    {
+      "path": "/home/cosmo/Documents/GitHub/qcore-c/target/debug/deps/contract_inherit_qcore_provider-730bb22f20f59051",
+      "bytes": 10162152,
+      "sha256": "2e0de087a6baf418c6c927d85f4ab5b2637eec96359e834cf3c5cd9cda40e60f"
+    },
+    {
+      "path": "/home/cosmo/Documents/GitHub/qcore-c/target/debug/deps/contract_loader-0c79ea6ef05587c1",
+      "bytes": 43516616,
+      "sha256": "4643345c5a1672839866e78aede9f0698b4fda80a0592765c9ce35d3f8070378"
+    },
+    {
+      "path": "/home/cosmo/Documents/GitHub/qcore-c/target/debug/deps/contract_view_census-043a3dcc1046af57",
+      "bytes": 10323904,
+      "sha256": "434486afa017b6e9ff51cc6d26f134d6ad0975e0bf8ab84094a8c7dba048951f"
+    },
+    {
+      "path": "/home/cosmo/Documents/GitHub/qcore-c/target/debug/deps/counter_route_parity-5bdde3abc73715d6",
+      "bytes": 8655496,
+      "sha256": "0e046222861c9a4d04e5cc643659012171d28bbd044dfd1cec26bef9368cfd1c"
+    },
+    {
+      "path": "/home/cosmo/Documents/GitHub/qcore-c/target/debug/deps/ct01_proof_leg-f7ff617db52b2069",
+      "bytes": 48652144,
+      "sha256": "bfbdc7a840bb61c91e654317a85983aebb995146fc3f4ce59ab29d3447b577ec"
+    },
+    {
+      "path": "/home/cosmo/Documents/GitHub/qcore-c/target/debug/deps/ct03_proof_leg-27fc25e3301968ff",
+      "bytes": 48648744,
+      "sha256": "f741e427796c6c0b4ce0fadf086c2a3221684b4896afca20762369701e50f5ff"
+    },
+    {
+      "path": "/home/cosmo/Documents/GitHub/qcore-c/target/debug/deps/ct07_proof_leg-d43b0bc338afd1d0",
+      "bytes": 48665224,
+      "sha256": "bbe0c9dd49032f13180bb4f16d23b93088e32f5e309fc9f7b55bcd133b7948c9"
+    },
+    {
+      "path": "/home/cosmo/Documents/GitHub/qcore-c/target/debug/deps/ct12_ct14_proof_reach-cf127371969d2482",
+      "bytes": 48506736,
+      "sha256": "8ac93b025287765a239be92f6f9c7fd7544b85b5667eddff5a73bee7b15f6895"
+    },
+    {
+      "path": "/home/cosmo/Documents/GitHub/qcore-c/target/debug/deps/ct37_proof_leg-00319bbef151e022",
+      "bytes": 48632520,
+      "sha256": "64eb1bd9ef28329b996e5985a3542ddaa19a43c375ded154e377c19236e5bc80"
+    },
+    {
+      "path": "/home/cosmo/Documents/GitHub/qcore-c/target/debug/deps/ct50_proof_leg-979b6e9bda7a74e1",
+      "bytes": 48785648,
+      "sha256": "d2ab696f89e974c639896ff2ae5c993e61d4e08da9ff849884e7c8f50c581b44"
+    },
+    {
+      "path": "/home/cosmo/Documents/GitHub/qcore-c/target/debug/deps/ct_corpus-5e74a7c2a822056d",
+      "bytes": 84100680,
+      "sha256": "6861c0043498ecd91d972632262058956ada72427530f14e4e2f3a099a982e05"
+    },
+    {
+      "path": "/home/cosmo/Documents/GitHub/qcore-c/target/debug/deps/cycle20_verifier_plugins-11c1471b9634bedf",
+      "bytes": 49415912,
+      "sha256": "65676be99544a35cc72fbdd934ab54ab53d3f6bf280019dca4b7148a19aeffec"
+    },
+    {
+      "path": "/home/cosmo/Documents/GitHub/qcore-c/target/debug/deps/emitted_c_werror-ebe3f7fc91f240f6",
+      "bytes": 47681736,
+      "sha256": "53835f73b6d4aa5daa726469042b11dc8eebef98e43b63649df492aa440a810a"
+    },
+    {
+      "path": "/home/cosmo/Documents/GitHub/qcore-c/target/debug/deps/epoch_credit_error_path-71c48aa2768f0560",
+      "bytes": 47819144,
+      "sha256": "19787890dc4636f043082e330fbd986484cf9b78bc8cc1b8bccc29f0a73c8e0e"
+    },
+    {
+      "path": "/home/cosmo/Documents/GitHub/qcore-c/target/debug/deps/epoch_source-62fda4da5bab985e",
+      "bytes": 48515408,
+      "sha256": "8b659abfc51e60a051a6bd36219899a33439a6a9b21430188f80866cd6c65571"
+    },
+    {
+      "path": "/home/cosmo/Documents/GitHub/qcore-c/target/debug/deps/epoch_tasks_source-7b28768cb4b3b957",
+      "bytes": 48566784,
+      "sha256": "9cf0d829dbb01cceb27df8dbeca6b1aa6898fe0c7886422297f65d8ce6a2cb29"
+    },
+    {
+      "path": "/home/cosmo/Documents/GitHub/qcore-c/target/debug/deps/error_payload_tasks-88c564ff0a55e0b6",
+      "bytes": 48412624,
+      "sha256": "5b75fe247be235326dc3e9a13cb4837927c4460a0e6b8406da57c90b8e514f7f"
+    },
+    {
+      "path": "/home/cosmo/Documents/GitHub/qcore-c/target/debug/deps/examples_suite-4b3edc745da1cb1b",
+      "bytes": 48223560,
+      "sha256": "f43f5a07c4925dabad9a64ca0c71a404fcea52560905d7576e223f57119520fc"
+    },
+    {
+      "path": "/home/cosmo/Documents/GitHub/qcore-c/target/debug/deps/extension_compatibility-5bb612f06abb2eea",
+      "bytes": 48578664,
+      "sha256": "e1760d0430334bcec4ed61967980e144f0dbaafb0347181de218c7173bf6290d"
+    },
+    {
+      "path": "/home/cosmo/Documents/GitHub/qcore-c/target/debug/deps/extension_contract_compatibility-e3cbd3da75bc7ead",
+      "bytes": 11519912,
+      "sha256": "b82dfd578d5a2f0fb54f4a33e060e74c15f3013699cedc9986a19fb2422a12e5"
+    },
+    {
+      "path": "/home/cosmo/Documents/GitHub/qcore-c/target/debug/deps/extern_call_deferred_review-ec7efbea0a1d8bad",
+      "bytes": 47655696,
+      "sha256": "b578e4c26372384e69cba15c4533347dea7c84ccfe76e06d6888b1398b9449e2"
+    },
+    {
+      "path": "/home/cosmo/Documents/GitHub/qcore-c/target/debug/deps/extern_calls-307f998c6bf98f0a",
+      "bytes": 48844320,
+      "sha256": "b82171179c4f8be2819825ad55e8bc1e7bbb5cc2c81bdecc19923d126c4954af"
+    },
+    {
+      "path": "/home/cosmo/Documents/GitHub/qcore-c/target/debug/deps/f02_trace_relation-c055e817ff3d18a4",
+      "bytes": 48783160,
+      "sha256": "08a590cfda13bc4a61b1b0a6823f293cee29beb5ce7cbe23d9ab858ca7207f98"
+    },
+    {
+      "path": "/home/cosmo/Documents/GitHub/qcore-c/target/debug/deps/f02_windows_pin_agreement-f59d7937a2ed14a5",
+      "bytes": 1158448,
+      "sha256": "b6a6b20c832ba26e7eae8c060558cb841ea41df1ac235fa8024318eaa9fa92d5"
+    },
+    {
+      "path": "/home/cosmo/Documents/GitHub/qcore-c/target/debug/deps/ffi_struct_import-407555f824efecdd",
+      "bytes": 49893760,
+      "sha256": "ace4e52b4a295a5e283428518a9cc94b72a38003e87c6ff806592bbc64c30324"
+    },
+    {
+      "path": "/home/cosmo/Documents/GitHub/qcore-c/target/debug/deps/file_close_route_parity-25f4a333e2b7bb3a",
+      "bytes": 13060920,
+      "sha256": "bae92f1f002a1b3f980c727996e0315522151dbf886513dab0df18c909378d6c"
+    },
+    {
+      "path": "/home/cosmo/Documents/GitHub/qcore-c/target/debug/deps/filesystem_chunk_close_route_parity-2490eaeff80d6f42",
+      "bytes": 14788480,
+      "sha256": "11cc36d9d15265ed565abc35ccb6921824e23d911ccfbbd04fb7c8895507de6a"
+    },
+    {
+      "path": "/home/cosmo/Documents/GitHub/qcore-c/target/debug/deps/first_party_discovery-b13e46215d215204",
+      "bytes": 12677872,
+      "sha256": "5cc28910591b32e2fc9faabc0e3f29fe22e281dd6643e6612454ef1fbe214ee9"
+    },
+    {
+      "path": "/home/cosmo/Documents/GitHub/qcore-c/target/debug/deps/float_buffer_payloads-3adba71b30572531",
+      "bytes": 49606160,
+      "sha256": "37ea0b720a64f0148cd77ebf2756a336f4db7955e5606587189f52af0bfaebc7"
+    },
+    {
+      "path": "/home/cosmo/Documents/GitHub/qcore-c/target/debug/deps/float_extern-c7896c65bda604b4",
+      "bytes": 48551272,
+      "sha256": "b939701da306e64eb38912cfd153b120a4744f7f74dcb9044267d0decc4817c2"
+    },
+    {
+      "path": "/home/cosmo/Documents/GitHub/qcore-c/target/debug/deps/float_ffi-f31a98a5522d0f0e",
+      "bytes": 50515648,
+      "sha256": "30cd665c0ba9b5674d0fedc7e29c52070d28bc0e3567dd1188fbdf1c63ba6915"
+    },
+    {
+      "path": "/home/cosmo/Documents/GitHub/qcore-c/target/debug/deps/float_ieee_vectors-a7f976c917c5390d",
+      "bytes": 4354288,
+      "sha256": "d2b0f18d10c880802288b5524eebdebcfd6e2ea439338e22c3f6cc42d7c45d84"
+    },
+    {
+      "path": "/home/cosmo/Documents/GitHub/qcore-c/target/debug/deps/float_tasks-1557c087a4dd87e6",
+      "bytes": 49250656,
+      "sha256": "1c0cf1ae53e913aa4a96163b7b1684fdcbed76acb36d743cf119dc35166193d0"
+    },
+    {
+      "path": "/home/cosmo/Documents/GitHub/qcore-c/target/debug/deps/float_types-4667989412886a95",
+      "bytes": 48762896,
+      "sha256": "2b334753421f9c7bb83c6e0da0bc8beb2b128d2a4b16406e7533f20a17bb0f17"
+    },
+    {
+      "path": "/home/cosmo/Documents/GitHub/qcore-c/target/debug/deps/http_computed_length-1532674ddbe45d14",
+      "bytes": 48007264,
+      "sha256": "e62f3370a36ca01692ff446427c08f727e49aefe39260ed64aed76cc0d9c87d5"
+    },
+    {
+      "path": "/home/cosmo/Documents/GitHub/qcore-c/target/debug/deps/libevent_submodule-ba41ec25a0e83cc5",
+      "bytes": 7206688,
+      "sha256": "1a14a0a98da5de7ba32dd064b895a8e593dddaca56caebcf5a950ea1002fd5ca"
+    },
+    {
+      "path": "/home/cosmo/Documents/GitHub/qcore-c/target/debug/deps/logical_connectives-521381efb889b501",
+      "bytes": 48621944,
+      "sha256": "f2f681154eac581033b4629ed8e29033bf0ec230bea6109bb01109207f1777c8"
+    },
+    {
+      "path": "/home/cosmo/Documents/GitHub/qcore-c/target/debug/deps/loop_unroll_budget-bfa81920b9d3732f",
+      "bytes": 47858920,
+      "sha256": "3fe20fa1ead35cc9995f8f6cad558cc71f307acd94e40376f55d5c1bc17d7ff5"
+    },
+    {
+      "path": "/home/cosmo/Documents/GitHub/qcore-c/target/debug/deps/loops_on_composed_routes-5753d86ae7cd4a67",
+      "bytes": 47926072,
+      "sha256": "6890375edc3fb0186b3da6e9f2072576eeca08dcd713b861c4a9a81276098028"
+    },
+    {
+      "path": "/home/cosmo/Documents/GitHub/qcore-c/target/debug/deps/memory_close_route_parity-29f0c4025dfa8a00",
+      "bytes": 10369680,
+      "sha256": "bc3a95c583cdde0d548ac9ffb945cb34a63b051130c1f913825ae2efdf671406"
+    },
+    {
+      "path": "/home/cosmo/Documents/GitHub/qcore-c/target/debug/deps/module_imports-528c35d85511e256",
+      "bytes": 49108560,
+      "sha256": "fc543104c2e91f97ac5af196f532538434ecfa124cccb6259b94c9a0201f2a6d"
+    },
+    {
+      "path": "/home/cosmo/Documents/GitHub/qcore-c/target/debug/deps/module_modes-461e35a8c7d46a94",
+      "bytes": 48494168,
+      "sha256": "17e1c4649f6737980d4c30e6e242ae6640deae56b0fb3d519f9fd50476704e27"
+    },
+    {
+      "path": "/home/cosmo/Documents/GitHub/qcore-c/target/debug/deps/monkey_profile-dce626a640b4ad31",
+      "bytes": 10226160,
+      "sha256": "5e90763ab45bf5a90330c55e5905d6fbbc79c8014823a8e84a6e878c9716ccaf"
+    },
+    {
+      "path": "/home/cosmo/Documents/GitHub/qcore-c/target/debug/deps/native_library-6c9fb4e232b41d31",
+      "bytes": 48684496,
+      "sha256": "24d2e4d4ce6da6c8b4bd50580f65be90fdb5971e4c5c831d8028440e07cf144f"
+    },
+    {
+      "path": "/home/cosmo/Documents/GitHub/qcore-c/target/debug/deps/native_library_contract-eb0065eac472827d",
+      "bytes": 48710280,
+      "sha256": "18c5b18594666153e13c5cc3a8ab4ed9f560ad4f6b1fb9ca2e7854c357b38dc0"
+    },
+    {
+      "path": "/home/cosmo/Documents/GitHub/qcore-c/target/debug/deps/native_library_header-125c7ca9e50012f3",
+      "bytes": 49675944,
+      "sha256": "3cabbfe842a0a6ccc7deb27b57ceadbbf017b3aac68bf39f8d754a6c1176aca3"
+    },
+    {
+      "path": "/home/cosmo/Documents/GitHub/qcore-c/target/debug/deps/native_library_header_decoration-57bab2650fc5bbba",
+      "bytes": 48045168,
+      "sha256": "097c2561905f84540c52a9d77c69da86d6a58949caa6443b1b3bc1574d6eaba7"
+    },
+    {
+      "path": "/home/cosmo/Documents/GitHub/qcore-c/target/debug/deps/native_library_source_binding-989b2a60db777d61",
+      "bytes": 48707080,
+      "sha256": "0c55f623d178cf7f6c1236a14832672d53b8156d4d47cf3fcfb531857624a035"
+    },
+    {
+      "path": "/home/cosmo/Documents/GitHub/qcore-c/target/debug/deps/nullable_removed-379f792e4e55d251",
+      "bytes": 42499944,
+      "sha256": "77e4fba5a157cc55ad587f0175c65c07125d863237dacfcffea22eb3999f6019"
+    },
+    {
+      "path": "/home/cosmo/Documents/GitHub/qcore-c/target/debug/deps/obs_reordering-6131a5d8e8ff3379",
+      "bytes": 49681592,
+      "sha256": "8d9f72f5669a2a4a28c4c1a0b5f24732ea0b28e2b543d5d2ef8d76e68e26fbfe"
+    },
+    {
+      "path": "/home/cosmo/Documents/GitHub/qcore-c/target/debug/deps/owned_field_route_reach-16aaf6f2abc9af4d",
+      "bytes": 48540304,
+      "sha256": "1a6bfe7f31be8dd5438e0aa48d239fa186e5990787e56c316708ce5eb91c077c"
+    },
+    {
+      "path": "/home/cosmo/Documents/GitHub/qcore-c/target/debug/deps/owned_source_tasks-36d98cf75356d672",
+      "bytes": 49330584,
+      "sha256": "d7aa7e1a1877ef84af8bd9be481e0fd93240c69a4b86c251241b9f3711612323"
+    },
+    {
+      "path": "/home/cosmo/Documents/GitHub/qcore-c/target/debug/deps/pipe_drop_stage-e3d1f1c9185af21c",
+      "bytes": 47744352,
+      "sha256": "39558d43f9efb55bf009f87af42e96eed1ebd0920fc5f51be07353fc2affa984"
+    },
+    {
+      "path": "/home/cosmo/Documents/GitHub/qcore-c/target/debug/deps/pipe_intrinsic_stage-90c7b47e47f04098",
+      "bytes": 48412456,
+      "sha256": "b98b087f5e3770d10cdce9524417c56fd299a9cc0a8fef125e5814f3910baafc"
+    },
+    {
+      "path": "/home/cosmo/Documents/GitHub/qcore-c/target/debug/deps/pipe_operator-3a0aaeeee8ddb81e",
+      "bytes": 48013504,
+      "sha256": "3a3ad50036afab2c19fe5869c3183e71cc81d83cdb133b49ea49b9ba0a7d383f"
+    },
+    {
+      "path": "/home/cosmo/Documents/GitHub/qcore-c/target/debug/deps/profile_loader-cb31145708853e02",
+      "bytes": 9261304,
+      "sha256": "be247c53c5028770e574bbb0c4a6dc783e7166cc43e9d3021a073bb4051dd3a9"
+    },
+    {
+      "path": "/home/cosmo/Documents/GitHub/qcore-c/target/debug/deps/proof_leg_digests-5cc987e61e4fd930",
+      "bytes": 1427328,
+      "sha256": "4a14264d994c5b3c3fc70de9f94cd76c0a0222498fb278f3d06e97e3d952ce52"
+    },
+    {
+      "path": "/home/cosmo/Documents/GitHub/qcore-c/target/debug/deps/qcore_contract_corpus-3dabbf094dc1792e",
+      "bytes": 48530352,
+      "sha256": "87c85877e41ae839721429307d36ad736380539d33cd107eab27ff9e28a3be82"
+    },
+    {
+      "path": "/home/cosmo/Documents/GitHub/qcore-c/target/debug/deps/qr_lexical_selector_census-75816ce61d4e1692",
+      "bytes": 48051232,
+      "sha256": "c8cea5a461428b66784560e0a473a578569ba6fb1301b3b8b7334d6d492315d3"
+    },
+    {
+      "path": "/home/cosmo/Documents/GitHub/qcore-c/target/debug/deps/qr_lexical_selector_selection-dc563a7907ab82eb",
+      "bytes": 47658240,
+      "sha256": "78b49e5a9abe1e0da46f6ee4e7d7333b84803de49b50278a8ca514941391094a"
+    },
+    {
+      "path": "/home/cosmo/Documents/GitHub/qcore-c/target/debug/deps/qr_print_route_census-a55884d5bb192259",
+      "bytes": 47782096,
+      "sha256": "34c2ae46c87a08eb998c8339b6ee5acb92b786e048e20ab71e8e2942dbbe9ad9"
+    },
+    {
+      "path": "/home/cosmo/Documents/GitHub/qcore-c/target/debug/deps/qr_print_route_selection-2ad1af8639e5743a",
+      "bytes": 47657608,
+      "sha256": "71597b247834a084c5a3acd8da9a4b1814e99faa689ff04efaaebd195b4cdab8"
+    },
+    {
+      "path": "/home/cosmo/Documents/GitHub/qcore-c/target/debug/deps/qrlib_linkage-976bb044faa3b8f1",
+      "bytes": 49920544,
+      "sha256": "4a56ab35df0de60e8ae7ef82b0fc0c1da3d2d6dfc8e68cf912caeae3694bf43f"
+    },
+    {
+      "path": "/home/cosmo/Documents/GitHub/qcore-c/target/debug/deps/quant_check_connectives-3fea5c297d6b9a28",
+      "bytes": 47645808,
+      "sha256": "6fadcb430d0f20126450271fbabd89536498a1add9f15b316ffa8771d0f930dd"
+    },
+    {
+      "path": "/home/cosmo/Documents/GitHub/qcore-c/target/debug/deps/quant_index_contracts-334d00dc29774acb",
+      "bytes": 48562032,
+      "sha256": "f9cb2127ba68fc99df4ae48fca1118be7aa9f7aa502448242f9fbf945f265121"
+    },
+    {
+      "path": "/home/cosmo/Documents/GitHub/qcore-c/target/debug/deps/quant_region-2cac8945cf84cfec",
+      "bytes": 47839200,
+      "sha256": "c2c76711bb1b4b314916bcb9342095133a378da5ee5849630ef13f3523f2b2af"
+    },
+    {
+      "path": "/home/cosmo/Documents/GitHub/qcore-c/target/debug/deps/reactor_route_parity-8fec07981b429465",
+      "bytes": 9325136,
+      "sha256": "371519a64a163d3236ccf0d6f5ac3298568385d337980ef69b1d4851964104db"
+    },
+    {
+      "path": "/home/cosmo/Documents/GitHub/qcore-c/target/debug/deps/region_credit_joins-382f4f4c6c86d80f",
+      "bytes": 48554744,
+      "sha256": "d1a7363a15aa4ab5c9ea55bf0cc11546ec7e259bd5a47036a58f0afbf57a5c06"
+    },
+    {
+      "path": "/home/cosmo/Documents/GitHub/qcore-c/target/debug/deps/region_joins_duties-f624fbce24ca97ed",
+      "bytes": 48617504,
+      "sha256": "516f18585ebc529fe132b4052529f18513b925c95091a0cebaae5e4abdf57800"
+    },
+    {
+      "path": "/home/cosmo/Documents/GitHub/qcore-c/target/debug/deps/region_joins_loan-06e823e5ec124c15",
+      "bytes": 48624600,
+      "sha256": "7ffba0675ddfc7421eef0db84b2fa1d91388930a047bf73fd841e119903ca9c9"
+    },
+    {
+      "path": "/home/cosmo/Documents/GitHub/qcore-c/target/debug/deps/resource_helper_functions-e003cc36edf230dc",
+      "bytes": 48559456,
+      "sha256": "a15120397ae647aa8b3eabe2070910b3f21ca7f6a4e4e151922e0034cef60a2c"
+    },
+    {
+      "path": "/home/cosmo/Documents/GitHub/qcore-c/target/debug/deps/route_selection_table-a2613417013c0ff5",
+      "bytes": 47658032,
+      "sha256": "012846176886450203482c89c3bf00f7b74b2ba910381675973a5de805ee883e"
+    },
+    {
+      "path": "/home/cosmo/Documents/GitHub/qcore-c/target/debug/deps/scalar_buffer_values-9f5c084258b01a93",
+      "bytes": 48700576,
+      "sha256": "323141a70072de542a59d7d19fdcc4737365de58817eea8481cbf5ec1b110bc8"
+    },
+    {
+      "path": "/home/cosmo/Documents/GitHub/qcore-c/target/debug/deps/scalar_composed_string-8d7b8674e30e81f5",
+      "bytes": 48532752,
+      "sha256": "87ac0db17bf4076e7239621081c21e8c88c5c87e7276706a486856157b6dce2b"
+    },
+    {
+      "path": "/home/cosmo/Documents/GitHub/qcore-c/target/debug/deps/scalar_epoch_tasks-ef00249acd674314",
+      "bytes": 49177168,
+      "sha256": "aa5aedb468f053eb20b027dbcb07f18d2c29a7307d247ba7fcb8f83e5a9e3a71"
+    },
+    {
+      "path": "/home/cosmo/Documents/GitHub/qcore-c/target/debug/deps/scalar_extern_values-bd3d352a60212ccb",
+      "bytes": 48743016,
+      "sha256": "e1ebd845fdfb755962bb5a63c5b3d72ba410340ae4247c557fc50518ff2cbce0"
+    },
+    {
+      "path": "/home/cosmo/Documents/GitHub/qcore-c/target/debug/deps/scalar_f02_outcomes-588681f625f0f178",
+      "bytes": 48675904,
+      "sha256": "930d96d480d9c93b1fd8c4b8d22abce0f401c814fb973aabe1a7d197b0ddd8f1"
+    },
+    {
+      "path": "/home/cosmo/Documents/GitHub/qcore-c/target/debug/deps/scalar_loop_bounds-8d09193c35b36478",
+      "bytes": 48646024,
+      "sha256": "5efc177053d26095af9015e2109aa023892bcde66122aa6f263ec556430598ea"
+    },
+    {
+      "path": "/home/cosmo/Documents/GitHub/qcore-c/target/debug/deps/scalar_payloads-3a3ab0cf5093c3ef",
+      "bytes": 49417008,
+      "sha256": "6fe3d22d5a704ab18afaa2659fa77d5880719715d7d596fc3c45c7cc0808783f"
+    },
+    {
+      "path": "/home/cosmo/Documents/GitHub/qcore-c/target/debug/deps/scalar_positions-25dfaaacf51c00df",
+      "bytes": 48721944,
+      "sha256": "1964c2c36eee54aaede73b7a42fae0248f15dac3100d78035b827001670fdfdd"
+    },
+    {
+      "path": "/home/cosmo/Documents/GitHub/qcore-c/target/debug/deps/scalar_tasks-aedf6547c04841a2",
+      "bytes": 49651088,
+      "sha256": "2d703be98b86f6982f7868710a2da7e3182183514a5dda171c0e3eab7db66c2b"
+    },
+    {
+      "path": "/home/cosmo/Documents/GitHub/qcore-c/target/debug/deps/scalar_typed_errors-d45ecdc1b3024682",
+      "bytes": 48819488,
+      "sha256": "5bcbe89874a6da3953cc51ae796e98cda4289d49b13c7335a700d45c9191bb1e"
+    },
+    {
+      "path": "/home/cosmo/Documents/GitHub/qcore-c/target/debug/deps/scalar_types-04bc90251dd0dd0b",
+      "bytes": 48788480,
+      "sha256": "6f78e3e302e0381bbf38b7eaeb38eddb2bf86a92ce620fe077f768f21e21fb18"
+    },
+    {
+      "path": "/home/cosmo/Documents/GitHub/qcore-c/target/debug/deps/scoped_read_loans-3b3e9796ce33af71",
+      "bytes": 48327288,
+      "sha256": "08abca577c8722933116381aa56bd9dbec88b88b97914266deaea8acdc7c0cae"
+    },
+    {
+      "path": "/home/cosmo/Documents/GitHub/qcore-c/target/debug/deps/scoped_read_shares-8af42134ceedf28e",
+      "bytes": 48346848,
+      "sha256": "e5958e1c3a7bad8c5822d745ecb54994d72a3c3bb6ad6894d9a40d9805ce3214"
+    },
+    {
+      "path": "/home/cosmo/Documents/GitHub/qcore-c/target/debug/deps/slice_permissions-5df10947ded4ed30",
+      "bytes": 47785344,
+      "sha256": "511176df13c0654d2f2ada0cebf8eff6008d76ef06b1862462522357f3b1faba"
+    },
+    {
+      "path": "/home/cosmo/Documents/GitHub/qcore-c/target/debug/deps/socket_cell_route-2d1c9f7d4c5c91f1",
+      "bytes": 47752936,
+      "sha256": "73d0a8484c21e10670224e14ff496c5d5ffa04307dc0fa7c3073d1efd42d4b3f"
+    },
+    {
+      "path": "/home/cosmo/Documents/GitHub/qcore-c/target/debug/deps/socket_event_compose-93d45d9af59ce392",
+      "bytes": 48999864,
+      "sha256": "f0c003cc2aa1aadddba90d1e3473a5870f06bfc243c4647332c7b0184ce7b1e4"
+    },
+    {
+      "path": "/home/cosmo/Documents/GitHub/qcore-c/target/debug/deps/source_loop-7dbad87597e6e41e",
+      "bytes": 47930448,
+      "sha256": "c0e11085e488de2461537cef669130132b078b2ba065e0cf2039b31f80e1b558"
+    },
+    {
+      "path": "/home/cosmo/Documents/GitHub/qcore-c/target/debug/deps/source_record-ac7ce937841b85c6",
+      "bytes": 48736080,
+      "sha256": "5f47285994feb6ce5e0949560f62187e5f9bf1abbe8cfd2a188ecfdb163e94d4"
+    },
+    {
+      "path": "/home/cosmo/Documents/GitHub/qcore-c/target/debug/deps/source_scalar_calls-90a0e0fe8640bac8",
+      "bytes": 48642248,
+      "sha256": "c59fbe9add5209c78fa18b55a0004a72eb0f6d90e136c0c9a61c38d192449e5a"
+    },
+    {
+      "path": "/home/cosmo/Documents/GitHub/qcore-c/target/debug/deps/source_tasks-a6ba7b8a897ef71d",
+      "bytes": 49171616,
+      "sha256": "f4b1632f9fdf6fc77aeb4727ea9560fcc7cbede25f686f24ab085394edfd43ed"
+    },
+    {
+      "path": "/home/cosmo/Documents/GitHub/qcore-c/target/debug/deps/std_buffer-e73097aab51045bc",
+      "bytes": 48693272,
+      "sha256": "cc7b3cb3373832363bde37e21f41a274a8de6a887b43880866f0dae4860f801b"
+    },
+    {
+      "path": "/home/cosmo/Documents/GitHub/qcore-c/target/debug/deps/std_event-ae71b73b3b144939",
+      "bytes": 47794256,
+      "sha256": "ed42e212a57f675554dc5b4813ff20648ad6015f9680fc39dac6ca1764c7699c"
+    },
+    {
+      "path": "/home/cosmo/Documents/GitHub/qcore-c/target/debug/deps/std_http-31ab9aed0a994ac6",
+      "bytes": 48256464,
+      "sha256": "dd8a17d3a71f476b77042a0c89214e264c015f4b6d86820f65d8a0ec055a8a7c"
+    },
+    {
+      "path": "/home/cosmo/Documents/GitHub/qcore-c/target/debug/deps/std_io_compose-3275a36f7b44cdbd",
+      "bytes": 48744184,
+      "sha256": "3274399120b67541c5107fdfd0befd4cf2dcb1574b510d3520a8ec0bd73a1c8f"
+    },
+    {
+      "path": "/home/cosmo/Documents/GitHub/qcore-c/target/debug/deps/std_modules-160ccf138581e2ad",
+      "bytes": 48594144,
+      "sha256": "e5ccbb1497eb94a87e21d5120fd1caf2cd494c48bf7e3fdaf5a44127df99dbb1"
+    },
+    {
+      "path": "/home/cosmo/Documents/GitHub/qcore-c/target/debug/deps/std_socket-9cc400ca82923c0f",
+      "bytes": 48341832,
+      "sha256": "6e766f2a67494a8745498d7edcca024b3831e36b0d698d595ccf23e9f19789ba"
+    },
+    {
+      "path": "/home/cosmo/Documents/GitHub/qcore-c/target/debug/deps/std_socket_inet-13b66a397ec2fc36",
+      "bytes": 47990880,
+      "sha256": "6200ed1d524aed96bd07b25d921a357e20e87c1fe909bb05ce36f405a65b93d4"
+    },
+    {
+      "path": "/home/cosmo/Documents/GitHub/qcore-c/target/debug/deps/std_string-8b7c36f2b1eb0d97",
+      "bytes": 48715384,
+      "sha256": "746799d77d0456ba72506f0c5417c3b238b42789bc5fd9357dc0563922309a44"
+    },
+    {
+      "path": "/home/cosmo/Documents/GitHub/qcore-c/target/debug/deps/string_concat-f7b94698ec584bf3",
+      "bytes": 47943520,
+      "sha256": "85a415803e1a363fabb2093b791c7504c6c4533e7b082c87f454f7367e1a36d0"
+    },
+    {
+      "path": "/home/cosmo/Documents/GitHub/qcore-c/target/debug/deps/string_slice_io-df7708dffe79aed4",
+      "bytes": 47936256,
+      "sha256": "4ddf0e9d19f4831cce46145e8678248c8af2596de1b73e8e01bcb48a8cb142ca"
+    },
+    {
+      "path": "/home/cosmo/Documents/GitHub/qcore-c/target/debug/deps/system_trace_examples_windows-6453fd37a6fccc18",
+      "bytes": 1075056,
+      "sha256": "59d3f2ef050c6b9ac59a2a1f04710e08e4c1cebf274332face98cb869ce1f86d"
+    },
+    {
+      "path": "/home/cosmo/Documents/GitHub/qcore-c/target/debug/deps/task_io_compose-2464d9836e64ead7",
+      "bytes": 49197536,
+      "sha256": "800b3cff3b6451f85f91f4b8a7b68680177530bc4dd86047179c0387d687129c"
+    },
+    {
+      "path": "/home/cosmo/Documents/GitHub/qcore-c/target/debug/deps/task_record_captures-a5374bac46cd8f9c",
+      "bytes": 49510744,
+      "sha256": "0c074fb33494c68fbf0d270d9e623b435f73a3f462a71e1790ad95274256010e"
+    },
+    {
+      "path": "/home/cosmo/Documents/GitHub/qcore-c/target/debug/deps/task_route_tsan-8e899ffe764f90c5",
+      "bytes": 48731376,
+      "sha256": "0b9816a600d79c7f02d33652e68ac4db11eb2b7b40d9b54f35221056277bec61"
+    },
+    {
+      "path": "/home/cosmo/Documents/GitHub/qcore-c/target/debug/deps/teardown_route_parity-61b2e787e5a0189a",
+      "bytes": 9189328,
+      "sha256": "a6219adbd2fa3203e5e297866f5ec03239c1b20f6dd0376e6c710606ce1e4f5d"
+    },
+    {
+      "path": "/home/cosmo/Documents/GitHub/qcore-c/target/debug/deps/thread_examples-bd75a8bbbf7ead29",
+      "bytes": 49188520,
+      "sha256": "5e845bef22ab44413185b2bb536b7ae9ca498aec23281824e17241d230596610"
+    },
+    {
+      "path": "/home/cosmo/Documents/GitHub/qcore-c/target/debug/deps/toolchain_compatibility-e0f129e27db12a0d",
+      "bytes": 39370440,
+      "sha256": "523c7048590ef5c5c1b85be0bc4aebf8419faf760ac259272bce3b20105e769e"
+    },
+    {
+      "path": "/home/cosmo/Documents/GitHub/qcore-c/target/debug/deps/trace_alphabet_lease_boundary-5742de1fa6c9f9f5",
+      "bytes": 48557320,
+      "sha256": "a8841d63fe2abd30a487778f1f57679ba2af494975598abf9a22f2af29f4b63b"
+    },
+    {
+      "path": "/home/cosmo/Documents/GitHub/qcore-c/target/debug/deps/tracked_inputs-c509d427e8367449",
+      "bytes": 1302680,
+      "sha256": "fb9bbe6395e054866fc20f06eea7fcf7a6877cc1391c664e82f53be3978ab275"
+    },
+    {
+      "path": "/home/cosmo/Documents/GitHub/qcore-c/target/debug/deps/unread_annotations-00d657c89d515f0f",
+      "bytes": 48504816,
+      "sha256": "04f4f9d2625717f05d2799034287671a67b640c6e9589d93c259bfe8f8d78d67"
+    },
+    {
+      "path": "/home/cosmo/Documents/GitHub/qcore-c/target/debug/deps/unsafe_linkage-ab72ecd5f1bbc268",
+      "bytes": 48662088,
+      "sha256": "448c19d725f5dd9239b5aca814a3c3e0f8f48602fc99eec8ece01209e1107419"
+    },
+    {
+      "path": "/home/cosmo/Documents/GitHub/qcore-c/target/debug/deps/unsupported_close_route_parity-6e02b4d7ee013495",
+      "bytes": 14790008,
+      "sha256": "838015c3865c8981591b517c7b0ed3df17ca02a2b2d023250958cd85971764de"
+    },
+    {
+      "path": "/home/cosmo/Documents/GitHub/qcore-c/target/debug/deps/usable_records-48f2b1a8b96bb7e4",
+      "bytes": 49869568,
+      "sha256": "0de07a0dbddd1ba045f6301a95392356568957a030deceb228238ef4db117bd6"
+    },
+    {
+      "path": "/home/cosmo/Documents/GitHub/qcore-c/target/debug/deps/usable_records_survey-88077bf3a1d07538",
+      "bytes": 47805264,
+      "sha256": "f0896a0566067bc7850c92b45e957c61f497358e57658ef4e4f44dc86a9e9c9d"
+    },
+    {
+      "path": "/home/cosmo/Documents/GitHub/qcore-c/target/debug/deps/w3_evidence_v2-e01443fa0cef4485",
+      "bytes": 48123904,
+      "sha256": "3f91dde33e0cd9045c493d3a9e13c7ae0c1f883fceac9d2659900499f07e9be1"
+    },
+    {
+      "path": "/home/cosmo/Documents/GitHub/qcore-c/target/debug/deps/windows_threads-a88918f39e5fd274",
+      "bytes": 1074928,
+      "sha256": "2e317786397d909d46cc9f312122ebcbeb7334d96c0bf5bf796bc2937c304444"
+    },
+    {
+      "path": "/home/cosmo/Documents/GitHub/qcore-c/target/debug/deps/workspace_layering-bda73afa83f197c2",
+      "bytes": 4859864,
+      "sha256": "ec0393d97d37ef747c76d8023bdc9e5ee8427e36daa5673477cdde4161d8fb8f"
+    },
+    {
+      "path": "/home/cosmo/Documents/GitHub/qcore-c/target/debug/deps/write_lend-36a15178663dc10c",
+      "bytes": 47895304,
+      "sha256": "18986f971d3bfc148948b8cb72ac8c189936ca3739a7c692ce9b0a0685bf74cf"
+    },
+    {
+      "path": "/home/cosmo/Documents/GitHub/qcore-c/target/debug/deps/write_lend_tasks-9ad3c888bcae4b76",
+      "bytes": 48380352,
+      "sha256": "cc2c6f41fca48c451e7da84e23496c33998bf01d777c5121a1741d0553463bcd"
+    },
+    {
+      "path": "/home/cosmo/Documents/GitHub/qcore-c/target/debug/deps/write_lend_tasks_exercise-f2d2f6be053599fc",
+      "bytes": 48610592,
+      "sha256": "0c8a60da514da5f38f59219cdda5ed2392e3483ef78924bb80949548313ed63a"
+    },
+    {
+      "path": "/home/cosmo/Documents/GitHub/qcore-c/target/debug/deps/qcore_contract-9ab7f9b5a68f7c43",
+      "bytes": 10221552,
+      "sha256": "caa66fbf0855738ea4eefed2e20fe0d88e0cf13b4cf2853ac70d2c9c8c2de63c"
+    },
+    {
+      "path": "/home/cosmo/Documents/GitHub/qcore-c/target/debug/deps/boolean_frame_policy-c61fc32377341570",
+      "bytes": 3821384,
+      "sha256": "ebd4c8e1427992c6b67b1e37149e156fea37ece31b2830db867db0b5070f610f"
+    },
+    {
+      "path": "/home/cosmo/Documents/GitHub/qcore-c/target/debug/deps/bounds_contract-9f62ecc0dcba1717",
+      "bytes": 7726016,
+      "sha256": "b86c1a247d42ad9d844ef165899353e100510aa658a745a1e81b304347324023"
+    },
+    {
+      "path": "/home/cosmo/Documents/GitHub/qcore-c/target/debug/deps/bounds_contract_frames-1e7892e751d26e96",
+      "bytes": 7515112,
+      "sha256": "2f706c57a4ee1818e98eaf3846c0ff3738e85982bbf89894b1c1336fdced79e1"
+    },
+    {
+      "path": "/home/cosmo/Documents/GitHub/qcore-c/target/debug/deps/bounds_quant-ff64487e1efd6984",
+      "bytes": 7751528,
+      "sha256": "a01ce0b39e4f081b607d54be505ec929452c36b6bfe6ef2f975ce28af5c92dc9"
+    },
+    {
+      "path": "/home/cosmo/Documents/GitHub/qcore-c/target/debug/deps/callback_clause-57a1dcc16cb1f8e1",
+      "bytes": 8079520,
+      "sha256": "c10948852956379a945a66e1e8552c3e31410f1d6d35d8fdb884995107dafd2f"
+    },
+    {
+      "path": "/home/cosmo/Documents/GitHub/qcore-c/target/debug/deps/chunk_policy_records-69f34579bbc49fb0",
+      "bytes": 4372736,
+      "sha256": "2cf262946455590b4b3206d7544cc7aa6fb17654a2c098ba046085427901ebcd"
+    },
+    {
+      "path": "/home/cosmo/Documents/GitHub/qcore-c/target/debug/deps/contract_body_checked-9950f69f97f17af1",
+      "bytes": 7226600,
+      "sha256": "4aad5fe739ff8d1766ccbac7049e20046a401ddf52e484f220af793853d48b4a"
+    },
+    {
+      "path": "/home/cosmo/Documents/GitHub/qcore-c/target/debug/deps/contract_bundle-215febbf671a0e7a",
+      "bytes": 3710208,
+      "sha256": "bbee236d724cd23ac98dbde49da6441ac5ff9d4a31638471dd875dca2302ec25"
+    },
+    {
+      "path": "/home/cosmo/Documents/GitHub/qcore-c/target/debug/deps/contract_bundle_includes-601a8ca0ed4d54ff",
+      "bytes": 3750424,
+      "sha256": "c200631cb3fb651853f25fbef6fa057e9148c5920fabcbe027c03479bd802f57"
+    },
+    {
+      "path": "/home/cosmo/Documents/GitHub/qcore-c/target/debug/deps/contract_deferred_review-504369533870fbea",
+      "bytes": 12788704,
+      "sha256": "6d27851c0d0f55dbabe71ca5026f94c57187753b646cfe37882c7ab30b6cf09e"
+    },
+    {
+      "path": "/home/cosmo/Documents/GitHub/qcore-c/target/debug/deps/contract_inherit-dbb41de28c48b3de",
+      "bytes": 13734640,
+      "sha256": "c8cdc8d8b025c1ab0c6934521c9e282b523b09f09ae052e0c18514293c5964eb"
+    },
+    {
+      "path": "/home/cosmo/Documents/GitHub/qcore-c/target/debug/deps/contract_premise-f03311b8245fca16",
+      "bytes": 7233776,
+      "sha256": "068211ecbf488b82c995c4ca35fc0e8517ba78a5fe0ae87e74ca802a14f84bfc"
+    },
+    {
+      "path": "/home/cosmo/Documents/GitHub/qcore-c/target/debug/deps/contract_revision_mode-1353ab8635dd0689",
+      "bytes": 15148640,
+      "sha256": "165b9294c5f3d40f7f1fe883f5072a92aae8d777d1f64b97af53e0dba63f1b93"
+    },
+    {
+      "path": "/home/cosmo/Documents/GitHub/qcore-c/target/debug/deps/contract_views-37745ab5f2acff83",
+      "bytes": 10235400,
+      "sha256": "6c60ac1c7687802a0034c305c851f840bf4fd84caf6bfe1343117c3d58a6d192"
+    },
+    {
+      "path": "/home/cosmo/Documents/GitHub/qcore-c/target/debug/deps/deref_parts-52cc440fcb627789",
+      "bytes": 8011240,
+      "sha256": "5d5d6c1e5f7c90f1bda551fe78b055ef03f156d3b34592c472f4d079a914880e"
+    },
+    {
+      "path": "/home/cosmo/Documents/GitHub/qcore-c/target/debug/deps/detach_same_item_clause-1447aa71d2269f92",
+      "bytes": 7093912,
+      "sha256": "687b1ace3f50c9dcdcd1b7f1a9cbfec50fbc6f3317e553bea6fdd84f2c705c1f"
+    },
+    {
+      "path": "/home/cosmo/Documents/GitHub/qcore-c/target/debug/deps/event_loop_clauses-bc7358532e4e8870",
+      "bytes": 8116896,
+      "sha256": "70e907f4420e9a501203f586fd412cce7536f3474b3b3ad5a2af277e615e51d6"
+    },
+    {
+      "path": "/home/cosmo/Documents/GitHub/qcore-c/target/debug/deps/hypothesis-8dc930f7813993e2",
+      "bytes": 9850248,
+      "sha256": "b770b92d01bc3c6e506ccb2d20909cd03641c1f58089402e6a54842b51895861"
+    },
+    {
+      "path": "/home/cosmo/Documents/GitHub/qcore-c/target/debug/deps/hypothesis_bindings-ba59fd0af82f8dd9",
+      "bytes": 7887520,
+      "sha256": "0fff864856ce09165447530e8742997ce6bb0dc6e392c46a89c4a17d872322af"
+    },
+    {
+      "path": "/home/cosmo/Documents/GitHub/qcore-c/target/debug/deps/libc_reading_hypotheses-dfefd92810489fc1",
+      "bytes": 9225152,
+      "sha256": "d5488afebbbc836173422295fc54711ed90b8d4a7b1d0e9723e25741d377c2b8"
+    },
+    {
+      "path": "/home/cosmo/Documents/GitHub/qcore-c/target/debug/deps/local_conditions-06b52198b6992ef8",
+      "bytes": 13357656,
+      "sha256": "73cfeff26a4784da6f7e9ece4927716d1b23d768b561dd10e527b9f90c2fa290"
+    },
+    {
+      "path": "/home/cosmo/Documents/GitHub/qcore-c/target/debug/deps/nonnull_member_qualifier-4583c88673df2550",
+      "bytes": 5016248,
+      "sha256": "8144af81297c19f8f33ac8c688fcce7701ec218488d9a599faec40cea0e6aa8e"
+    },
+    {
+      "path": "/home/cosmo/Documents/GitHub/qcore-c/target/debug/deps/op_callback_clause-b29b7d9ebe6fb68d",
+      "bytes": 8087240,
+      "sha256": "4114abbfcdaebe6baa5774a746e6b0572251e2a84a72435efb6c43d80fe56a3f"
+    },
+    {
+      "path": "/home/cosmo/Documents/GitHub/qcore-c/target/debug/deps/op_constructor_clause-38dad82185304245",
+      "bytes": 7108936,
+      "sha256": "8584a15162f59c18b8310e9c7b521aba4f89eff204504ce4b4159b21250dd1d8"
+    },
+    {
+      "path": "/home/cosmo/Documents/GitHub/qcore-c/target/debug/deps/outer_contract-3996b36b346eb65e",
+      "bytes": 7836656,
+      "sha256": "c5f59f7af5c7af406ed0a2bc7362f33bf3abd4c5384d5daf80d9fa4f422aaf41"
+    },
+    {
+      "path": "/home/cosmo/Documents/GitHub/qcore-c/target/debug/deps/plugin_premise_decomposition-d3eb894bd83a585a",
+      "bytes": 9037040,
+      "sha256": "c6a09cf2ed5c02a192aaf3d28fe5c9c16b288176941cbbb9eb4fda3c04c76abc"
+    },
+    {
+      "path": "/home/cosmo/Documents/GitHub/qcore-c/target/debug/deps/premise_flow-7562b868a1310187",
+      "bytes": 10971576,
+      "sha256": "a916a70261608c6acc72571ca18a886b4dd8df8161aba5b5afd68a8cefdfa7ee"
+    },
+    {
+      "path": "/home/cosmo/Documents/GitHub/qcore-c/target/debug/deps/reference_clause-fd3d058b21a3d6c5",
+      "bytes": 8220144,
+      "sha256": "d4168718c989f1689b5d74fad2cb327b6ee5da6bb22d4fc7f85dc8f0609ac19c"
+    },
+    {
+      "path": "/home/cosmo/Documents/GitHub/qcore-c/target/debug/deps/resource_kinds-6305e3b8ec6c73fb",
+      "bytes": 7222176,
+      "sha256": "b54410ae87becc0b3b67c7735d6f781111ebcfec73e84da2eb80c8323fef1138"
+    },
+    {
+      "path": "/home/cosmo/Documents/GitHub/qcore-c/target/debug/deps/resource_kinds_cg25-f2f76b94c797991f",
+      "bytes": 7113008,
+      "sha256": "865bd6a563b3728a31cb8e20106ed93dc6810f94fb936ab62e606cf05542661e"
+    },
+    {
+      "path": "/home/cosmo/Documents/GitHub/qcore-c/target/debug/deps/retained_by_clause-79e48820f4bf0025",
+      "bytes": 8267920,
+      "sha256": "32f0c335c67b669ca58d819d8c13ad31dc3c1b766230fd28dd91260f4f47d114"
+    },
+    {
+      "path": "/home/cosmo/Documents/GitHub/qcore-c/target/debug/deps/retention_guard_clause-ea55278227ae8061",
+      "bytes": 8132312,
+      "sha256": "3ee0b8611e731ed517822d41a72e9f927c032a2030f05b5f3fcdc73eff15e53a"
+    },
+    {
+      "path": "/home/cosmo/Documents/GitHub/qcore-c/target/debug/deps/return_code_handoff_clause-52ec901e1e726e86",
+      "bytes": 7531160,
+      "sha256": "40cfe17d0eeb65548c394c88aa480faaa0b4de586d55f796ff14d1f071ebd8e6"
+    },
+    {
+      "path": "/home/cosmo/Documents/GitHub/qcore-c/target/debug/deps/slot_move_clause-923047559ffac4cc",
+      "bytes": 8065312,
+      "sha256": "1cc5a74ec096c6d27e44517b966d06ece2d4aae894f06c3a71b4e401c7dde85f"
+    },
+    {
+      "path": "/home/cosmo/Documents/GitHub/qcore-c/target/debug/deps/typed_contract_facts-de75eacd35fb159d",
+      "bytes": 3885136,
+      "sha256": "05dda44436ee47d4c09baf6b48ab039c30b090d8eddda5a35b6070667cc56077"
+    },
+    {
+      "path": "/home/cosmo/Documents/GitHub/qcore-c/target/debug/deps/qcore_core-634b6c40d9c8c887",
+      "bytes": 32135736,
+      "sha256": "29f1cfacaab9d9c0271f43494cd7d250fb3793c5083d3c8159f6b69b05fa1c38"
+    },
+    {
+      "path": "/home/cosmo/Documents/GitHub/qcore-c/target/debug/deps/bounds_body_standing-020d3e161c145628",
+      "bytes": 2125944,
+      "sha256": "04fd0e279d4e985e1443cf0a2e29fdb7c3960bc7a3c7c445aecc544fb40755d0"
+    },
+    {
+      "path": "/home/cosmo/Documents/GitHub/qcore-c/target/debug/deps/callback_task_handoff-7a37caf720743b26",
+      "bytes": 2051912,
+      "sha256": "5c046b2262ee80bdeb21d0d5a2ff0a3e47afd008b9eb34f71e557401c7ac640f"
+    },
+    {
+      "path": "/home/cosmo/Documents/GitHub/qcore-c/target/debug/deps/clang_gap_core-304d01773f28370e",
+      "bytes": 3104496,
+      "sha256": "aee436dc26d77fb81c7f0b060311838520209db35d06c2e00798eeada34ed5b8"
+    },
+    {
+      "path": "/home/cosmo/Documents/GitHub/qcore-c/target/debug/deps/index_extent-0bcb04a21f3d4028",
+      "bytes": 2353480,
+      "sha256": "6f3f10b1a5e4b942526dd6ce9f9c7f5254c6ec4ab1f8bd0fa66b235e48365276"
+    },
+    {
+      "path": "/home/cosmo/Documents/GitHub/qcore-c/target/debug/deps/index_extent_frames-8bd421e6e945c26b",
+      "bytes": 2265528,
+      "sha256": "165d6a4e3a4f9f602d94aea96681fd9126f9880d8188e56b4a22b52b2bd6ad0e"
+    },
+    {
+      "path": "/home/cosmo/Documents/GitHub/qcore-c/target/debug/deps/index_quant-cba6e7d9a35bf044",
+      "bytes": 2041224,
+      "sha256": "c046c6866eca7d43cc3afa8f697ccececf590f4c3d36dbf8c7e0fff355c28f38"
+    },
+    {
+      "path": "/home/cosmo/Documents/GitHub/qcore-c/target/debug/deps/lifetime_correspondence-cc7689ba8d3fd351",
+      "bytes": 2846312,
+      "sha256": "49a1e704cddc4f6c5a951acb12643b7270537608c37d45d736c0eba61870bbcb"
+    },
+    {
+      "path": "/home/cosmo/Documents/GitHub/qcore-c/target/debug/deps/null_deref-be3007160f950c0e",
+      "bytes": 2311816,
+      "sha256": "621a6a422165c813af2887896ed3f83be55e747943bd28c8311deb086fc5ab07"
+    },
+    {
+      "path": "/home/cosmo/Documents/GitHub/qcore-c/target/debug/deps/null_deref_grade-f9392bba929d89dc",
+      "bytes": 2007608,
+      "sha256": "722b5485f0182a541b93c6b694b867b0c7ad68efd11ffab99ba98d5cae80f8fa"
+    },
+    {
+      "path": "/home/cosmo/Documents/GitHub/qcore-c/target/debug/deps/null_member_scope-6c38c03a2b3e856f",
+      "bytes": 2008752,
+      "sha256": "0dfdd14bb8b33d72d9d399d088f22aca8bfe66a4b5e367acd2f9d81cad311bc4"
+    },
+    {
+      "path": "/home/cosmo/Documents/GitHub/qcore-c/target/debug/deps/null_paths-30df38e39d37ab1a",
+      "bytes": 1855448,
+      "sha256": "0ec23419bb095e005f4f11ae0bb08991155517cfee890b945133c55df09df24a"
+    },
+    {
+      "path": "/home/cosmo/Documents/GitHub/qcore-c/target/debug/deps/null_triage-f8dfc620058bf276",
+      "bytes": 1946248,
+      "sha256": "139de0bd7bfbcf06fc62c1dbd6bd6152af685d9ae3da930b3c03fedb74ca4094"
+    },
+    {
+      "path": "/home/cosmo/Documents/GitHub/qcore-c/target/debug/deps/os_endpoint_correspondence-da45625fb62dbcad",
+      "bytes": 2042896,
+      "sha256": "d4b0d17c89ffc9bf96aa9c114ff2e5e7fb72cf79743f31c777a978fe40fb51c9"
+    },
+    {
+      "path": "/home/cosmo/Documents/GitHub/qcore-c/target/debug/deps/premise_flow-b5684a82685786e2",
+      "bytes": 1732248,
+      "sha256": "5b02029491d107283b58aa2d994170a7619ec93987ebc8ba74265f2e3820b513"
+    },
+    {
+      "path": "/home/cosmo/Documents/GitHub/qcore-c/target/debug/deps/task_trace_relation-c621a676cfaa5499",
+      "bytes": 2670960,
+      "sha256": "a78ec56293b69a8f2cf0b03737d001b0762bb8a4d484d30e813b8ff238a59414"
+    },
+    {
+      "path": "/home/cosmo/Documents/GitHub/qcore-c/target/debug/deps/qcore_frontend-9bfee3156f7779bd",
+      "bytes": 7759528,
+      "sha256": "823b50e7adf3c7e10e5df1f435c335a450d80d1c54037657dfa4172ef4aac549"
+    },
+    {
+      "path": "/home/cosmo/Documents/GitHub/qcore-c/target/debug/deps/cleanup_preempted-868e44b1e63ad763",
+      "bytes": 8754312,
+      "sha256": "5e02e688284f4b4a680a8fb4a2d9af39dcf1fff74ea9f3fe056a4063873ba55e"
+    },
+    {
+      "path": "/home/cosmo/Documents/GitHub/qcore-c/target/debug/deps/error_payloads-7a4a18e87731f825",
+      "bytes": 9634848,
+      "sha256": "4dff6e5f35fbc2e3548113b897fc71681ffde9c088d6ff353e7ab73d0da8dfc2"
+    },
+    {
+      "path": "/home/cosmo/Documents/GitHub/qcore-c/target/debug/deps/module_imports-307ea5d017d6594d",
+      "bytes": 4647152,
+      "sha256": "d43aa9f05163dedf2692800bd55a2382f3b7853c1935d5a12958b9a3b417ed88"
+    },
+    {
+      "path": "/home/cosmo/Documents/GitHub/qcore-c/target/debug/deps/mutex_share_cross-0a07b2fba776d265",
+      "bytes": 6562368,
+      "sha256": "5f7cd29c11bc752fefbef3db3293e5311a41facee1d9cf4bc8adf520e52a754e"
+    },
+    {
+      "path": "/home/cosmo/Documents/GitHub/qcore-c/target/debug/deps/mutex_share_cross_arms-7b20c50582912d41",
+      "bytes": 6507904,
+      "sha256": "877914e793c5e56ba005df793d38c6f9995904ce6e3400075953b09c2dd44adb"
+    },
+    {
+      "path": "/home/cosmo/Documents/GitHub/qcore-c/target/debug/deps/owned_tasks-25a2ff573ee00eb9",
+      "bytes": 9545048,
+      "sha256": "1ac2ab8b84f7571dd26bacd307a44807abe3b7c3ce38aa3369eabd9f3d7667b9"
+    },
+    {
+      "path": "/home/cosmo/Documents/GitHub/qcore-c/target/debug/deps/read_loans-226eb0b3526f6b74",
+      "bytes": 9529888,
+      "sha256": "beaf9faec5ccb9ec3b19f12124f9f4ac2dad083ebd597157520b1f01b0a5c90a"
+    },
+    {
+      "path": "/home/cosmo/Documents/GitHub/qcore-c/target/debug/deps/read_shares-615d67a49b5c500e",
+      "bytes": 9534824,
+      "sha256": "b814938e95d8ddce7c5f4d84f1c1691950244bae34347bfa2c864b1c1667f934"
+    },
+    {
+      "path": "/home/cosmo/Documents/GitHub/qcore-c/target/debug/deps/result_match_syntax-9e7dda1c5c34fa6f",
+      "bytes": 4805376,
+      "sha256": "3a63c4d277f770f5aaa371aff63ee4dddb6f799732aa391fcb2cc23a1a4433c6"
+    },
+    {
+      "path": "/home/cosmo/Documents/GitHub/qcore-c/target/debug/deps/runtime_import_syntax-6f9f769a3712ed8d",
+      "bytes": 4670960,
+      "sha256": "eef10a930e537c176d2f262929419699c0d93f21986addca6cd70ef2f3f3be6d"
+    },
+    {
+      "path": "/home/cosmo/Documents/GitHub/qcore-c/target/debug/deps/source_epoch-54158c9b8f7b41ab",
+      "bytes": 5361120,
+      "sha256": "5df7187b3305e991d57171cc3150b8841996932a1076582e2c1782aae6c796ae"
+    },
+    {
+      "path": "/home/cosmo/Documents/GitHub/qcore-c/target/debug/deps/source_epoch_tasks-e99cba4acd7048b6",
+      "bytes": 9715344,
+      "sha256": "1dfaa46121b1e5b4754ff8114ff58b85918c390fe58b3461e8b114df92f0b641"
+    },
+    {
+      "path": "/home/cosmo/Documents/GitHub/qcore-c/target/debug/deps/source_mutex-1457ef33b5d8549e",
+      "bytes": 7158520,
+      "sha256": "dbc62c4e69a94fc54a3bdebf439634704077ba07a04dc91de0424fbcf7acc999"
+    },
+    {
+      "path": "/home/cosmo/Documents/GitHub/qcore-c/target/debug/deps/source_mutex_footprint-d47c250153afa5ae",
+      "bytes": 7235464,
+      "sha256": "893f39122ca5104e662da65db35a064f365fc56b7e6a35ac5aaa1e026bce5ed6"
+    },
+    {
+      "path": "/home/cosmo/Documents/GitHub/qcore-c/target/debug/deps/source_tasks-2e89c2462b057dcb",
+      "bytes": 8865152,
+      "sha256": "846f1f1d1600b2ed113ed47342ee6dd0779e4f25c31c5784c237931fbc7277ae"
+    },
+    {
+      "path": "/home/cosmo/Documents/GitHub/qcore-c/target/debug/deps/task_recovery-353a62521c975e28",
+      "bytes": 9445184,
+      "sha256": "f01f0a5d07509834bdd11b9af2d87c0ad75de97cce2284da6e33a06578841dc8"
+    },
+    {
+      "path": "/home/cosmo/Documents/GitHub/qcore-c/target/debug/deps/task_syntax-64904a3b318b9392",
+      "bytes": 4786920,
+      "sha256": "507853ecf12a94eb77683359af7f08915db1f2918e532286ee2987acb5b85d13"
+    },
+    {
+      "path": "/home/cosmo/Documents/GitHub/qcore-c/target/debug/deps/transferability-d272a9751cdc4e24",
+      "bytes": 9301544,
+      "sha256": "de3631780d2369331eb93473b10dce0b84e1db0a4b41ab12f26fe050bf5fbdb9"
+    },
+    {
+      "path": "/home/cosmo/Documents/GitHub/qcore-c/target/debug/deps/qcore_schemas-57d78376f86fac49",
+      "bytes": 3248656,
+      "sha256": "53e7c713f41deb606bfdabb864d7c8dbc494e450c40d6ee13cacfef2b5c8d775"
+    },
+    {
+      "path": "/home/cosmo/Documents/GitHub/qcore-c/target/debug/deps/boolean_result_abi-f16be7d4ea71ccba",
+      "bytes": 2017168,
+      "sha256": "2202dd9ca1da4961d249492e01dd675ed5e338092e1f3f2d9fb47754b038130e"
+    },
+    {
+      "path": "/home/cosmo/Documents/GitHub/qcore-c/target/debug/deps/call_use_request_wire-48168a5cfe913ffd",
+      "bytes": 8407264,
+      "sha256": "26fb2a8e86f7ad0e538f26e4fdc08321c63e969f9489b1c029ec489ffc269d64"
+    },
+    {
+      "path": "/home/cosmo/Documents/GitHub/qcore-c/target/debug/deps/cleanup_replay_request_wire-45e743c43a353409",
+      "bytes": 8701208,
+      "sha256": "e21cb5573f06fd54006db6815b515bed7162b5ff0cfb2c85d07ab76065c18c71"
+    },
+    {
+      "path": "/home/cosmo/Documents/GitHub/qcore-c/target/debug/deps/composition_request_wire-c3a9cf202f0cb14b",
+      "bytes": 9111712,
+      "sha256": "129ed02868f1641d707e8bb2496fd45190a2f910b87dcbfa94cc8533a0e1700d"
+    },
+    {
+      "path": "/home/cosmo/Documents/GitHub/qcore-c/target/debug/deps/counter_request_wire-27ced1fc1b9496cd",
+      "bytes": 8284064,
+      "sha256": "166dc9a5b63317ba0afdeaac4c564455c2829809ce3051b0618087d2b6ead6db"
+    },
+    {
+      "path": "/home/cosmo/Documents/GitHub/qcore-c/target/debug/deps/plugin_limit_kinds-30d45445dcbaa46f",
+      "bytes": 1940200,
+      "sha256": "7b242bbcb3d5a8c6993eeabb26d7e020da34c55d2e3ec8dc4f6d9ed6f4b54410"
+    },
+    {
+      "path": "/home/cosmo/Documents/GitHub/qcore-c/target/debug/deps/reactor_records-a2931337f505b736",
+      "bytes": 2122096,
+      "sha256": "a873edf22def2600d4ce28a95a0491d992049e358ee9e2f44ad49e1c8a61814d"
+    },
+    {
+      "path": "/home/cosmo/Documents/GitHub/qcore-c/target/debug/deps/reactor_request_wire-dc4c2d4e12a9af44",
+      "bytes": 8533840,
+      "sha256": "1413bca9bc7b24288bdd879de39cf6d0eafde06647c565d55ec38d31bbb540f1"
+    },
+    {
+      "path": "/home/cosmo/Documents/GitHub/qcore-c/target/debug/deps/reason_codes-2a16b38ebb3f9195",
+      "bytes": 1973936,
+      "sha256": "bc2295e79a9237ffd6ecafbde662eda4c93f0a990245da9f1dff517558a438e1"
+    },
+    {
+      "path": "/home/cosmo/Documents/GitHub/qcore-c/target/debug/deps/schema_canonicalization-191aa18d6e18f73e",
+      "bytes": 5472728,
+      "sha256": "a25659c966e587e594930e1f26c18e52eafd5132d54de33f10638e8fc4c08496"
+    },
+    {
+      "path": "/home/cosmo/Documents/GitHub/qcore-c/target/debug/deps/teardown_request_wire-45abddce4b489477",
+      "bytes": 8423680,
+      "sha256": "291437bd3f10711a175ac25caed487ba6441b1f74edbea75de164864fdfec349"
+    },
+    {
+      "path": "/home/cosmo/Documents/GitHub/qcore-c/target/debug/deps/qcore_verification-80ac29caf36b66be",
+      "bytes": 45603232,
+      "sha256": "3e570f34ddd4d7bc8a300ac9ff2a40dadf20ee1408bb98edab1df73958ca0886"
+    },
+    {
+      "path": "/home/cosmo/Documents/GitHub/qcore-c/target/debug/deps/atomic_publication_source-729e721d42361c69",
+      "bytes": 6692560,
+      "sha256": "7840e7197d317a0f6e5535c4d27f68f1ed159f78d43e3ae0cc01e3569bd14d71"
+    },
+    {
+      "path": "/home/cosmo/Documents/GitHub/qcore-c/target/debug/deps/call_use_dependents-0cfeda99d4e71519",
+      "bytes": 10862432,
+      "sha256": "3cdb3994ca2804ff67fd3bd6d9523b5e3862b9219ade97be1d5fa8d2b21df17c"
+    },
+    {
+      "path": "/home/cosmo/Documents/GitHub/qcore-c/target/debug/deps/call_use_source-42b85d0edf68e966",
+      "bytes": 11266384,
+      "sha256": "b8df469f91939021f0e976ca60c0ed043e88d987975d6eab14f85a0c850c0868"
+    },
+    {
+      "path": "/home/cosmo/Documents/GitHub/qcore-c/target/debug/deps/callback_coverage-5f8cdc158d6ef577",
+      "bytes": 4892760,
+      "sha256": "1a2d4aae0a44b4ec9c559ca95320752cbdf6b0153ca722078d9c4ef1dd07bcc3"
+    },
+    {
+      "path": "/home/cosmo/Documents/GitHub/qcore-c/target/debug/deps/callback_task_handoff-0475841f4d4ab8f4",
+      "bytes": 11737528,
+      "sha256": "fec0e2c91da7f215b0a5b2d856066c78d5d06a9efce0f8132381ebf003880d09"
+    },
+    {
+      "path": "/home/cosmo/Documents/GitHub/qcore-c/target/debug/deps/chunk_lifecycle_coverage-5529a8174b3f6265",
+      "bytes": 5622512,
+      "sha256": "8076aff3cf2904320bff383c4ad376480c38feea2922d246efbd69744c4b7878"
+    },
+    {
+      "path": "/home/cosmo/Documents/GitHub/qcore-c/target/debug/deps/cleanup_replay_mutations-28c0faf613ba1d38",
+      "bytes": 12158344,
+      "sha256": "955362a9e2c681d0ec208317a68964f4aba77eb37f059ff8601a4d5ec3baa98f"
+    },
+    {
+      "path": "/home/cosmo/Documents/GitHub/qcore-c/target/debug/deps/cleanup_replay_source-bb69b5eb9ec76628",
+      "bytes": 11979568,
+      "sha256": "09d49ca5620ee44e9d23161b1aa56aa10cebbaac165927b54457b5d35b6c1035"
+    },
+    {
+      "path": "/home/cosmo/Documents/GitHub/qcore-c/target/debug/deps/cleanup_vocabulary-4e99392263efa2bb",
+      "bytes": 8335928,
+      "sha256": "c3a7d77e40d7c3a5cb8e84cf485b8344c7190b5acbdf72f7c773d1c964d0ae33"
+    },
+    {
+      "path": "/home/cosmo/Documents/GitHub/qcore-c/target/debug/deps/composition_bounds-62af35a4a1b186c5",
+      "bytes": 12222568,
+      "sha256": "bdcf1cbc8685beb23f7d6bce760df84b247e7291558500bd516cda519d9891ec"
+    },
+    {
+      "path": "/home/cosmo/Documents/GitHub/qcore-c/target/debug/deps/composition_mutations-dd966db8ee74febb",
+      "bytes": 12542000,
+      "sha256": "59abb1cf8b08eab27f5391d6fe976ef35c5bf98fbdecfae1a8a1c560bb7cc54b"
+    },
+    {
+      "path": "/home/cosmo/Documents/GitHub/qcore-c/target/debug/deps/composition_relation-1bf11f62b76ee5ab",
+      "bytes": 9352944,
+      "sha256": "dfd80a8133ecab12612f5ee2e99dd96290b9ec6bcfd2fbe28d613393a8d1bbf5"
+    },
+    {
+      "path": "/home/cosmo/Documents/GitHub/qcore-c/target/debug/deps/composition_source-334483527545a509",
+      "bytes": 12742224,
+      "sha256": "15029d490b90fce931cbc50e9c8014dd09d2429b334d5aa35a162ea6c97274bf"
+    },
+    {
+      "path": "/home/cosmo/Documents/GitHub/qcore-c/target/debug/deps/counter_source-9bc0001d6e0cc6a5",
+      "bytes": 10602872,
+      "sha256": "9a61b18b52718c069bd1d081889da2b0323d9ed4b0a27fa7a258fc24d906d832"
+    },
+    {
+      "path": "/home/cosmo/Documents/GitHub/qcore-c/target/debug/deps/ctraces_capability_boundary-0211f84958bd5f6d",
+      "bytes": 9228896,
+      "sha256": "a84111838786ced4837393d88a725e8c2d33fbd2f260dd0d9429697f0e4f76c7"
+    },
+    {
+      "path": "/home/cosmo/Documents/GitHub/qcore-c/target/debug/deps/emit_cleanup_replay_fixtures-0679eb44e4b90e14",
+      "bytes": 11060360,
+      "sha256": "fdd8fd9cb9be7f50455930b3297dc0d746ee82a9db5bec56a40e98e6723d790e"
+    },
+    {
+      "path": "/home/cosmo/Documents/GitHub/qcore-c/target/debug/deps/event_composition_context-f5ff7e6c924d6412",
+      "bytes": 4998528,
+      "sha256": "1cce448ac40c2c0518b6469755a04d3c21e1d6e0fc6cf206ac42accfdb66754e"
+    },
+    {
+      "path": "/home/cosmo/Documents/GitHub/qcore-c/target/debug/deps/event_payload-40acd27d44df87f0",
+      "bytes": 12027208,
+      "sha256": "03331a7fbed89751375126c5b5db9b296f4ca3ee445b52f872fc9ff1bb964731"
+    },
+    {
+      "path": "/home/cosmo/Documents/GitHub/qcore-c/target/debug/deps/file_close_composition_mutations-8ad3aab539d19e0c",
+      "bytes": 13111744,
+      "sha256": "1999eaffb51ad64ec54ede228547d580d39246670714f4b01f7fb38e93e2c1fa"
+    },
+    {
+      "path": "/home/cosmo/Documents/GitHub/qcore-c/target/debug/deps/file_close_composition_source-12c9faf204bf6f0e",
+      "bytes": 13354984,
+      "sha256": "8476ea0f8d721a45c55b51562c852a373b8a69c91a35c43b35a358c102938b90"
+    },
+    {
+      "path": "/home/cosmo/Documents/GitHub/qcore-c/target/debug/deps/filesystem_chunk_close_composition_mutations-102b5715863c07b3",
+      "bytes": 14880328,
+      "sha256": "e4920f7812655fe29f0755ae9c0518dd123a22900b5ec96d60d3d335919ce770"
+    },
+    {
+      "path": "/home/cosmo/Documents/GitHub/qcore-c/target/debug/deps/filesystem_chunk_close_composition_source-31d7ac3b10aa7d06",
+      "bytes": 15009576,
+      "sha256": "81ac20430edb3921344f6e2e2258e72b538c18a53ba3e0011ed28ec1937d0e76"
+    },
+    {
+      "path": "/home/cosmo/Documents/GitHub/qcore-c/target/debug/deps/frame_source-cc437b7c23b65156",
+      "bytes": 9829808,
+      "sha256": "35fb13d65311acbec5b9815268c93fc61a045ca86356f2323279b2e1517a70e9"
+    },
+    {
+      "path": "/home/cosmo/Documents/GitHub/qcore-c/target/debug/deps/frame_source_mutations-a2f972822472df45",
+      "bytes": 9728440,
+      "sha256": "873e640e37d0b5509533f20dfb0738064b60426c30e9c8ce397950f0e69ebe8f"
+    },
+    {
+      "path": "/home/cosmo/Documents/GitHub/qcore-c/target/debug/deps/generic_driver-113bba95341176e1",
+      "bytes": 43255760,
+      "sha256": "4a30c5077af73d8a9d565999f84c7d4678b1c9c7252fee1b429e3284e68b751a"
+    },
+    {
+      "path": "/home/cosmo/Documents/GitHub/qcore-c/target/debug/deps/generic_source-d9e55a8264daa30d",
+      "bytes": 8806360,
+      "sha256": "19c70706e3453816c114dd69f96f01d8a8278f300933137eb50ef2e245eb1835"
+    },
+    {
+      "path": "/home/cosmo/Documents/GitHub/qcore-c/target/debug/deps/memory_close_composition_mutations-6f595b60cb2f9873",
+      "bytes": 12658736,
+      "sha256": "5e0e445cd1f60beed2471910a7511c554f9f862b31250bcf651374bafc11942e"
+    },
+    {
+      "path": "/home/cosmo/Documents/GitHub/qcore-c/target/debug/deps/memory_close_composition_source-70e50c831ca29287",
+      "bytes": 13083936,
+      "sha256": "642c843397bfeb398a46c137795ecb38129d4cc99d973d35c34806930d6cd550"
+    },
+    {
+      "path": "/home/cosmo/Documents/GitHub/qcore-c/target/debug/deps/monkey_wait_projection-3be24ae984cbdf50",
+      "bytes": 10669200,
+      "sha256": "6cd3a2ba8fe1a9c584f2c08e6ccdb6ec49f26100f70e625e2a62df1e0b4f0a41"
+    },
+    {
+      "path": "/home/cosmo/Documents/GitHub/qcore-c/target/debug/deps/observed_wait_composition-cf22e0e6fc20af67",
+      "bytes": 13181568,
+      "sha256": "611257fa326b2eb5de1e72f39999affbc6b655a022782fe0d61a00dd2dc99f48"
+    },
+    {
+      "path": "/home/cosmo/Documents/GitHub/qcore-c/target/debug/deps/reactor_callback-306b60022bc79442",
+      "bytes": 5765952,
+      "sha256": "36f545d537efeac0cb73f42874a0ac25c63cca9fbe1201a1cb7f970bebe0f885"
+    },
+    {
+      "path": "/home/cosmo/Documents/GitHub/qcore-c/target/debug/deps/reactor_source-29fd834b496af92a",
+      "bytes": 7615288,
+      "sha256": "e2f11bb79d9017e0e06909c3b724d1cb815bbff9a5060b78cb9b6ae0188dc8a9"
+    },
+    {
+      "path": "/home/cosmo/Documents/GitHub/qcore-c/target/debug/deps/runtime_source_imports-9b7d9d31add93045",
+      "bytes": 42066304,
+      "sha256": "a5d4f320070d8c639e2616799f9d36305f38ca4723f680816ff162d0f6c8e31a"
+    },
+    {
+      "path": "/home/cosmo/Documents/GitHub/qcore-c/target/debug/deps/source_annotations-861c52ae7b803a8c",
+      "bytes": 41928680,
+      "sha256": "46c4d1b1314f719c6a7dd43fa0a6ce9268713c570a1aae12429bb093291f5836"
+    },
+    {
+      "path": "/home/cosmo/Documents/GitHub/qcore-c/target/debug/deps/source_effect-7d766c1aa9e7b7b3",
+      "bytes": 10879016,
+      "sha256": "fa0a14efb6d1febe3879258543ee7cec4f4fd6fbcef6adf73f7531d07003b4c3"
+    },
+    {
+      "path": "/home/cosmo/Documents/GitHub/qcore-c/target/debug/deps/source_effect_helper_target-63610d71d03e1b9d",
+      "bytes": 10534160,
+      "sha256": "5c003050ff253c514feca5d0eced873add2ca4b0a58f017a299587c8dfd2844a"
+    },
+    {
+      "path": "/home/cosmo/Documents/GitHub/qcore-c/target/debug/deps/source_effect_mutations-b5f7ba8d67d4b1db",
+      "bytes": 15699528,
+      "sha256": "1429a34425af4d06e800c82102d91fbf1b968ae6a7e753f7cd24e34ed09acf63"
+    },
+    {
+      "path": "/home/cosmo/Documents/GitHub/qcore-c/target/debug/deps/source_effect_obligations-bab42c5e08f72bac",
+      "bytes": 47057664,
+      "sha256": "3d456ec5b413cf3c15da84bd9d6534bda0fd7f8259b80ec366567f4c08eb29e8"
+    },
+    {
+      "path": "/home/cosmo/Documents/GitHub/qcore-c/target/debug/deps/source_profile_boundary-d83022051e00bc1c",
+      "bytes": 7689552,
+      "sha256": "c8088e1aa2d063bd9e8eb9c28d84fb38e35c2a53ca894721cd0646912645b817"
+    },
+    {
+      "path": "/home/cosmo/Documents/GitHub/qcore-c/target/debug/deps/teardown_prerequisites-0ecb1f3ecbc36bbe",
+      "bytes": 11414800,
+      "sha256": "edf851fdb4c478f8d26ed18e00d4b128bdd3369f86b10baf628fa1d6ef1a7bbe"
+    },
+    {
+      "path": "/home/cosmo/Documents/GitHub/qcore-c/target/debug/deps/teardown_source-d15d7b1766ecfc8f",
+      "bytes": 12281128,
+      "sha256": "f9749af97c878512aecaee9de01ec0024022deefb129e5960292d3c70d503c65"
+    },
+    {
+      "path": "/home/cosmo/Documents/GitHub/qcore-c/target/debug/deps/timed_wait_observation_wire-98fcef93928aaef2",
+      "bytes": 6011552,
+      "sha256": "0fa2a264911a860be995c574d91895319dcb50d553e9ae779babfdeb04e86101"
+    },
+    {
+      "path": "/home/cosmo/Documents/GitHub/qcore-c/target/debug/deps/timeout_teardown-e8d8c0cd81f784f7",
+      "bytes": 11501832,
+      "sha256": "35761a8ca0bbca9ecedfaa6c428185b485294eff8ad6a30910d819610e50391e"
+    },
+    {
+      "path": "/home/cosmo/Documents/GitHub/qcore-c/target/debug/deps/unsupported_close_composition_mutations-47c778a68ac582d2",
+      "bytes": 14814592,
+      "sha256": "e2b0ef4c920b4e7f1b2601e697d0f2ace9e044fd687e13e5e757276a77999c06"
+    },
+    {
+      "path": "/home/cosmo/Documents/GitHub/qcore-c/target/debug/deps/unsupported_close_composition_source-fc763546aa75b888",
+      "bytes": 14945112,
+      "sha256": "66bc6ed0292eb9420d1e81bcc094fddf52c3ab680a35f9b0c0df287ce9f93e1b"
+    },
+    {
+      "path": "/home/cosmo/Documents/GitHub/qcore-c/target/debug/deps/wait_failure_paths-a6aea853eb9f4bb1",
+      "bytes": 10736584,
+      "sha256": "8cf923b5833960ee71c78c63e6b4c56619c2eb2dcf1a78e49a47090ef289fec6"
+    },
+    {
+      "path": "/home/cosmo/Documents/GitHub/qcore-c/target/debug/deps/qcore_verifier_host-ecc01428b779fba7",
+      "bytes": 4774352,
+      "sha256": "6cb4dca44c24db4dddffd4154eb596235c9abfb80b5c389730f1d9afbaf649fc"
+    },
+    {
+      "path": "/home/cosmo/Documents/GitHub/qcore-c/target/debug/deps/composition_relation-589772f675595312",
+      "bytes": 5061784,
+      "sha256": "832f7975c8df31a642b23307c329631cc0aa76f81e96c2826d020db156610e87"
+    },
+    {
+      "path": "/home/cosmo/Documents/GitHub/qcore-c/target/debug/deps/confined_process_execution-41b840802de196e8",
+      "bytes": 8895808,
+      "sha256": "407df063151086eef8980874ce1489733f2c3ed9677714c20f1fd236d18ce4ff"
+    },
+    {
+      "path": "/home/cosmo/Documents/GitHub/qcore-c/target/debug/deps/diagnostic_attribution-758fe547a559ff91",
+      "bytes": 3993880,
+      "sha256": "7777ebc4854a170a0d4a418c5cc181642804ac2a8be7f27d727c7c28e5d94663"
+    },
+    {
+      "path": "/home/cosmo/Documents/GitHub/qcore-c/target/debug/deps/enforced_process_limits-3dbc47562ee323d8",
+      "bytes": 8721328,
+      "sha256": "a8eda33fdedb86bc91c6b94328d83435ce39198a57369dc9c586e50e86c42afe"
+    },
+    {
+      "path": "/home/cosmo/Documents/GitHub/qcore-c/target/debug/deps/execution_quota-ef920421e77e5f96",
+      "bytes": 9037776,
+      "sha256": "cdada5ab2f43606ee36d34875d3d339a8399ba20c07ea35819f8f8d214d70a49"
+    },
+    {
+      "path": "/home/cosmo/Documents/GitHub/qcore-c/target/debug/deps/package_identity-cde140053eea9b34",
+      "bytes": 8665336,
+      "sha256": "fcddc8be06b458aa87ae0f7834de8dd8563329d2d65e250690a20fa4d97eb0d2"
+    },
+    {
+      "path": "/home/cosmo/Documents/GitHub/qcore-c/target/debug/deps/plugin_firewall-e30a1cc9b9e3c310",
+      "bytes": 4423192,
+      "sha256": "63b291420d07e207a390bab7e7f75df768801f649532df59564d88101dbf113a"
+    },
+    {
+      "path": "/home/cosmo/Documents/GitHub/qcore-c/target/debug/deps/request_consumption-40df39e5eb21f520",
+      "bytes": 4583208,
+      "sha256": "1f3e393de3d15b3d8ca4c4a1de8ab2a05096e05823da2b52268f0e2e388f4d7b"
+    },
+    {
+      "path": "/home/cosmo/Documents/GitHub/qcore-c/target/debug/deps/standalone_host-ea63844a960cb1a9",
+      "bytes": 6071696,
+      "sha256": "6d23b80d72b6a41d8d90fe27e635d4730cc30de8c5e38b55d53d5d621f1d7501"
+    },
+    {
+      "path": "/home/cosmo/Documents/GitHub/qcore-c/target/debug/deps/quirin-be68464cb6383813",
+      "bytes": 1074840,
+      "sha256": "79df6c89c65866a7953bf26d968be03a3547a0c9bb968126ddc7fec0362a2c05"
+    },
+    {
+      "path": "/home/cosmo/Documents/GitHub/qcore-c/target/debug/deps/cli-df1fb36a59a145ae",
+      "bytes": 4756504,
+      "sha256": "61c6c80fbde07809d59afc854545703bfee74a3fb3726cc1e64532706246c8b4"
+    },
+    {
+      "path": "/home/cosmo/Documents/GitHub/qcore-c/target/debug/deps/contract_load_path-e4db91cfb3f4653e",
+      "bytes": 1415616,
+      "sha256": "874f39622b214d983ec09f16d3c41fe886473b1d31ccaefbf93e44338dcf2773"
+    },
+    {
+      "path": "/home/cosmo/Documents/GitHub/qcore-c/target/debug/deps/examples_cli-89ca29f2906ca97f",
+      "bytes": 1357280,
+      "sha256": "1d1f417d354128a09cdefcef155aca48c9a7a8da5fd40925217a4162cf731179"
+    },
+    {
+      "path": "/home/cosmo/Documents/GitHub/qcore-c/target/debug/deps/extension_compatibility-cb0e710d3c03cbac",
+      "bytes": 1194176,
+      "sha256": "1cf4aedd9c035bf81861abcc929a314326408a53f031bf848677a0ea836d90ec"
+    },
+    {
+      "path": "/home/cosmo/Documents/GitHub/qcore-c/target/debug/deps/plugin_packages-b46c7b9ebb51a1fd",
+      "bytes": 8256616,
+      "sha256": "bfa6ebb185be4f0cc4a34f737bda966106daac39ad5b22038b130dd60f0c7d01"
+    },
+    {
+      "path": "/home/cosmo/Documents/GitHub/qcore-c/target/debug/deps/runtime_imports-61ba84005c3c24fd",
+      "bytes": 1178640,
+      "sha256": "319565fdbd982951435c76ea8a728e5008f8172f74835cae7c4edd4bc50db975"
+    },
+    {
+      "path": "/home/cosmo/Documents/GitHub/qcore-c/target/debug/deps/quirin_audit_libevent-d26a28f1b56002ef",
+      "bytes": 1074984,
+      "sha256": "0689d4b9215b06b2029067b556ef7871d14ad9d45b1a6bd76d34b70ec3a3e2af"
+    },
+    {
+      "path": "/home/cosmo/Documents/GitHub/qcore-c/target/debug/deps/quirin_audit_plugin_libevent-f3ec54f3e9443a3e",
+      "bytes": 2217112,
+      "sha256": "6345b5930e68c8e708ef5900bb99f5c6c7598d399784dc72d75e7f73a1596858"
+    },
+    {
+      "path": "/home/cosmo/Documents/GitHub/qcore-c/target/debug/deps/quirin_audit_plugin-e49c6699aed558b8",
+      "bytes": 2204288,
+      "sha256": "80c849cc9bcf5da94fe7810e659ad6ed6c821c723290cac3a8856f591f77b921"
+    },
+    {
+      "path": "/home/cosmo/Documents/GitHub/qcore-c/target/debug/deps/dependencies-de5bfd678765469a",
+      "bytes": 1791152,
+      "sha256": "e9a6358e252b8bf75f5b80342b704181a501e01d2a378ebcadd888a90caf7df9"
+    },
+    {
+      "path": "/home/cosmo/Documents/GitHub/qcore-c/target/debug/deps/harness-a4dab555e642ace0",
+      "bytes": 2237312,
+      "sha256": "ac5b243a3202dd96cb7399be51e50fd3a4428051e2c292b1479edadbad990a73"
+    },
+    {
+      "path": "/home/cosmo/Documents/GitHub/qcore-c/target/debug/deps/quirin_source_analysis-e6344ecb67fa3aba",
+      "bytes": 25151536,
+      "sha256": "6205f0bc411558d7f5b4d2c6389cf33b19697d8c76ae54215121559baba272c0"
+    },
+    {
+      "path": "/home/cosmo/Documents/GitHub/qcore-c/target/debug/deps/condvar_join_census-8a116904c868e95f",
+      "bytes": 51580760,
+      "sha256": "d5cecb8dbadcf926c0cf79d46cbc1cd62db6d7889e309e4aad4d59dacc7b24b6"
+    },
+    {
+      "path": "/home/cosmo/Documents/GitHub/qcore-c/target/debug/deps/condvar_join_lifecycle-d2d974952f3bf68f",
+      "bytes": 51673632,
+      "sha256": "1a2851b93504a4f705d7ad58e5b3dac34339991a369796096f0f5a9c43fe85a9"
+    },
+    {
+      "path": "/home/cosmo/Documents/GitHub/qcore-c/target/debug/deps/condvar_join_stop_paths-806e8a5215d5864e",
+      "bytes": 15452808,
+      "sha256": "64f24575bfced8219b56efade108fa7b248b6d5869905ab6511f66fe822130ce"
+    },
+    {
+      "path": "/home/cosmo/Documents/GitHub/qcore-c/target/debug/deps/loop_owner_census-9206a38bb20917c7",
+      "bytes": 47426336,
+      "sha256": "ee6c6747fadd6255ebf704e7c2bc43fb800728803a2811eb23625b0d2200ea48"
+    },
+    {
+      "path": "/home/cosmo/Documents/GitHub/qcore-c/target/debug/deps/loop_owner_coro_plugin-f2d4ced93dd88c2b",
+      "bytes": 15968600,
+      "sha256": "8687e8585d9fd471aa18441aa37b8fada39980ef0ded37c7d58178aee0d39f4d"
+    },
+    {
+      "path": "/home/cosmo/Documents/GitHub/qcore-c/target/debug/deps/loop_owner_coroutine-c2b1cbb5110c5dc4",
+      "bytes": 14799256,
+      "sha256": "8d356972da68a0292b193caf79baefe8b06a586c3ee26b2c63eb9c46b27ca267"
+    },
+    {
+      "path": "/home/cosmo/Documents/GitHub/qcore-c/target/debug/deps/loop_owner_holder_region-49ab3bde874e86de",
+      "bytes": 16954496,
+      "sha256": "f7a710ed3b888ff948bdd4f71921a54f24aef2cbedfb7b4653a66d57c526d953"
+    },
+    {
+      "path": "/home/cosmo/Documents/GitHub/qcore-c/target/debug/deps/loop_owner_instance_flow-bfd75223d5fe9308",
+      "bytes": 16517032,
+      "sha256": "1c081f0171a94c228a96285da25b5630d01c1b537dc3b560972505cca297521d"
+    },
+    {
+      "path": "/home/cosmo/Documents/GitHub/qcore-c/target/debug/deps/loop_owner_predefined_macros-67b988cbf936a4c6",
+      "bytes": 11333240,
+      "sha256": "ac70a515d362b949f0458e7e1f3a3d8cb4a1f5e222b0e66c9eb555ff4b2ce225"
+    },
+    {
+      "path": "/home/cosmo/Documents/GitHub/qcore-c/target/debug/deps/loop_owner_premises_instance-8750d75532f8de17",
+      "bytes": 16039504,
+      "sha256": "b4d1a91a29ca9d037cbff99bfaec522c0475fc448db27220ffb1eaf251d99490"
+    },
+    {
+      "path": "/home/cosmo/Documents/GitHub/qcore-c/target/debug/deps/loop_owner_property_keys-b826e90d9c9a1321",
+      "bytes": 15981528,
+      "sha256": "11aaa342021f202b0199160a82d03a96972561d6372f8d3f2eaefaed2b2f3dea"
+    },
+    {
+      "path": "/home/cosmo/Documents/GitHub/qcore-c/target/debug/deps/loop_owner_typed_route-764ff3f0780d94a5",
+      "bytes": 16018752,
+      "sha256": "9db2c5d3c1e0277cbee62163ef50eb8eb0451a8456036f038c6370dadf4566ba"
+    }
+  ],
+  "bytes": 15023989704
+}

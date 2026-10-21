@@ -1,0 +1,39 @@
+{
+  "route": "system",
+  "base": {
+    "Unknown": 345,
+    "Safe": 99,
+    "Unsafe": 4
+  },
+  "tip": {
+    "Unknown": 345,
+    "Safe": 99,
+    "Unsafe": 4
+  },
+  "null_rows": 454,
+  "full_null_equal": true,
+  "full_runtime_equal": true,
+  "raw_leaf_counts": {
+    "diagnostics": 1605,
+    "contracts": 5292,
+    "chunk-contracts": 0,
+    "source-effects": 0,
+    "null": 1344,
+    "null-summary": 0,
+    "outer": 5
+  },
+  "remaining_leaf_counts": {
+    "diagnostics": 0,
+    "contracts": 4,
+    "chunk-contracts": 0,
+    "source-effects": 0,
+    "null": 0,
+    "null-summary": 0,
+    "outer": 0
+  },
+  "existing_reading_observations_exactly_reconstructed": 24,
+  "all_existing_fields_equal": false,
+  "known_catalog_sha256": "0223c4cdc53bab0e8b4b40b5843dfd999db2010af0c48aa20eb8069e8d92b03b",
+  "reading_proof_sha256": "2ec5ce2219e0e3223b1d5fa49564eec8463bd2f41c89a4330a130dd18a7a79e6",
+  "source_binding": "open"
+}

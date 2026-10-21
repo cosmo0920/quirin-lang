@@ -1,0 +1,1958 @@
+{
+  "file_metadata_fields": [
+    "module",
+    "source_module",
+    "lock",
+    "path",
+    "$key"
+  ],
+  "no_code_or_general_string_normalization": true,
+  "records": [
+    {
+      "held_file": "/home/cosmo/Documents/GitHub/qcore-c/private/premise-resolution-cycle2/base-freeze/inputs/providers/quirin-provider-fluent-bit/contracts/fluent_bit/lib_engine_thread.qv",
+      "counterpart_file": "/home/cosmo/Documents/GitHub/qcore-c/private/premise-resolution-cycle2/tip-freeze/inputs/providers/quirin-provider-fluent-bit/contracts/fluent_bit/lib_engine_thread.qv",
+      "relative_file": "providers/quirin-provider-fluent-bit/contracts/fluent_bit/lib_engine_thread.qv",
+      "held_sha256": "154ad0b2815f4207f690da1c1f04ee3c5adf0bc14f44bfdb89b41a5bef1e46aa",
+      "counterpart_sha256": "154ad0b2815f4207f690da1c1f04ee3c5adf0bc14f44bfdb89b41a5bef1e46aa",
+      "proof": "byte-exact identity",
+      "metadata_occurrences": 23,
+      "field_kinds": [
+        "module",
+        "$key"
+      ]
+    },
+    {
+      "held_file": "/home/cosmo/Documents/GitHub/qcore-c/private/premise-resolution-cycle2/base-freeze/inputs/providers/quirin-provider-fluent-bit/contracts/fluent_bit/input_instance.qv",
+      "counterpart_file": "/home/cosmo/Documents/GitHub/qcore-c/private/premise-resolution-cycle2/tip-freeze/inputs/providers/quirin-provider-fluent-bit/contracts/fluent_bit/input_instance.qv",
+      "relative_file": "providers/quirin-provider-fluent-bit/contracts/fluent_bit/input_instance.qv",
+      "held_sha256": "95ed00f8b44a8d751b1ecc06ee576f1845563dfb45e4ef3ab81962cbf92c2fac",
+      "counterpart_sha256": "95ed00f8b44a8d751b1ecc06ee576f1845563dfb45e4ef3ab81962cbf92c2fac",
+      "proof": "byte-exact identity",
+      "metadata_occurrences": 27,
+      "field_kinds": [
+        "module",
+        "$key"
+      ]
+    },
+    {
+      "held_file": "/home/cosmo/Documents/GitHub/qcore-c/private/premise-resolution-cycle2/base-freeze/inputs/providers/quirin-provider-libc/contracts/libc/errno.qv",
+      "counterpart_file": "/home/cosmo/Documents/GitHub/qcore-c/private/premise-resolution-cycle2/tip-freeze/inputs/providers/quirin-provider-libc/contracts/libc/errno.qv",
+      "relative_file": "providers/quirin-provider-libc/contracts/libc/errno.qv",
+      "held_sha256": "a9bbcb0e6111186cbf828d6303b3b27b459002f5ff732a93e6a390b17ee42ec3",
+      "counterpart_sha256": "a9bbcb0e6111186cbf828d6303b3b27b459002f5ff732a93e6a390b17ee42ec3",
+      "proof": "byte-exact identity",
+      "metadata_occurrences": 4,
+      "field_kinds": [
+        "module",
+        "$key"
+      ]
+    },
+    {
+      "held_file": "/home/cosmo/Documents/GitHub/qcore-c/private/premise-resolution-cycle2/base-freeze/inputs/providers/quirin-provider-libc/contracts/libc/unistd.qv",
+      "counterpart_file": "/home/cosmo/Documents/GitHub/qcore-c/private/premise-resolution-cycle2/tip-freeze/inputs/providers/quirin-provider-libc/contracts/libc/unistd.qv",
+      "relative_file": "providers/quirin-provider-libc/contracts/libc/unistd.qv",
+      "held_sha256": "be6f9f900e22c8127e71da391353b21587fc701a06bf59c985dafd4f8467a088",
+      "counterpart_sha256": "be6f9f900e22c8127e71da391353b21587fc701a06bf59c985dafd4f8467a088",
+      "proof": "byte-exact identity",
+      "metadata_occurrences": 21,
+      "field_kinds": [
+        "module",
+        "$key"
+      ]
+    },
+    {
+      "held_file": "/home/cosmo/Documents/GitHub/qcore-c/private/premise-resolution-cycle2/base-freeze/inputs/providers/quirin-provider-libc/contracts/libc/stdlib.qv",
+      "counterpart_file": "/home/cosmo/Documents/GitHub/qcore-c/private/premise-resolution-cycle2/tip-freeze/inputs/providers/quirin-provider-libc/contracts/libc/stdlib.qv",
+      "relative_file": "providers/quirin-provider-libc/contracts/libc/stdlib.qv",
+      "held_sha256": "111503b7e38a3e5abdf6e3c17876cb8946470b7120858ca3af579e786d9f4293",
+      "counterpart_sha256": "111503b7e38a3e5abdf6e3c17876cb8946470b7120858ca3af579e786d9f4293",
+      "proof": "byte-exact identity",
+      "metadata_occurrences": 20,
+      "field_kinds": [
+        "module",
+        "$key"
+      ]
+    },
+    {
+      "held_file": "/home/cosmo/Documents/GitHub/qcore-c/private/premise-resolution-cycle2/base-freeze/inputs/providers/quirin-provider-fluent-bit/contracts/fluent_bit/storage_backlog.qv",
+      "counterpart_file": "/home/cosmo/Documents/GitHub/qcore-c/private/premise-resolution-cycle2/tip-freeze/inputs/providers/quirin-provider-fluent-bit/contracts/fluent_bit/storage_backlog.qv",
+      "relative_file": "providers/quirin-provider-fluent-bit/contracts/fluent_bit/storage_backlog.qv",
+      "held_sha256": "8bea72df56e4397c09c3bb21f71b579f069f8bd031cc4c3a0950532aa1691d83",
+      "counterpart_sha256": "8bea72df56e4397c09c3bb21f71b579f069f8bd031cc4c3a0950532aa1691d83",
+      "proof": "byte-exact identity",
+      "metadata_occurrences": 37,
+      "field_kinds": [
+        "module",
+        "$key"
+      ]
+    },
+    {
+      "held_file": "/home/cosmo/Documents/GitHub/qcore-c/private/premise-resolution-cycle2/base-freeze/inputs/providers/quirin-provider-cfl/contracts/cfl/time.qv",
+      "counterpart_file": "/home/cosmo/Documents/GitHub/qcore-c/private/premise-resolution-cycle2/tip-freeze/inputs/providers/quirin-provider-cfl/contracts/cfl/time.qv",
+      "relative_file": "providers/quirin-provider-cfl/contracts/cfl/time.qv",
+      "held_sha256": "1696e45592e854e29d6e0117ab9c037f46158c33c4a340027739558e9b137bb6",
+      "counterpart_sha256": "1696e45592e854e29d6e0117ab9c037f46158c33c4a340027739558e9b137bb6",
+      "proof": "byte-exact identity",
+      "metadata_occurrences": 4,
+      "field_kinds": [
+        "module",
+        "$key"
+      ]
+    },
+    {
+      "held_file": "/home/cosmo/Documents/GitHub/qcore-c/private/premise-resolution-cycle2/base-freeze/inputs/providers/qcore-provider-cmetrics/contracts/cmetrics/context_lifetime.qv",
+      "counterpart_file": "/home/cosmo/Documents/GitHub/qcore-c/private/premise-resolution-cycle2/tip-freeze/inputs/providers/qcore-provider-cmetrics/contracts/cmetrics/context_lifetime.qv",
+      "relative_file": "providers/qcore-provider-cmetrics/contracts/cmetrics/context_lifetime.qv",
+      "held_sha256": "1ba76df850e122ae7a37a529594f94ad2257c31de5383e0fe106e063c2731014",
+      "counterpart_sha256": "1ba76df850e122ae7a37a529594f94ad2257c31de5383e0fe106e063c2731014",
+      "proof": "byte-exact identity",
+      "metadata_occurrences": 6,
+      "field_kinds": [
+        "module",
+        "$key"
+      ]
+    },
+    {
+      "held_file": "/home/cosmo/Documents/GitHub/qcore-c/private/premise-resolution-cycle2/base-freeze/inputs/providers/quirin-provider-libc/contracts/libc/stdio.qv",
+      "counterpart_file": "/home/cosmo/Documents/GitHub/qcore-c/private/premise-resolution-cycle2/tip-freeze/inputs/providers/quirin-provider-libc/contracts/libc/stdio.qv",
+      "relative_file": "providers/quirin-provider-libc/contracts/libc/stdio.qv",
+      "held_sha256": "6e772eb0890e5a0a63414576d963a859bec451f1286f7ed52504dc5cbac5dbf8",
+      "counterpart_sha256": "6e772eb0890e5a0a63414576d963a859bec451f1286f7ed52504dc5cbac5dbf8",
+      "proof": "byte-exact identity",
+      "metadata_occurrences": 17,
+      "field_kinds": [
+        "module",
+        "$key"
+      ]
+    },
+    {
+      "held_file": "/home/cosmo/Documents/GitHub/qcore-c/private/premise-resolution-cycle2/base-freeze/inputs/providers/quirin-provider-fluent-bit/contracts/fluent_bit/teardown_destroy.qv",
+      "counterpart_file": "/home/cosmo/Documents/GitHub/qcore-c/private/premise-resolution-cycle2/tip-freeze/inputs/providers/quirin-provider-fluent-bit/contracts/fluent_bit/teardown_destroy.qv",
+      "relative_file": "providers/quirin-provider-fluent-bit/contracts/fluent_bit/teardown_destroy.qv",
+      "held_sha256": "8eb681b2a3f3a43c4d87b4ab9359716e52d6dafe67f8b25f8edb36412b47ab1c",
+      "counterpart_sha256": "8eb681b2a3f3a43c4d87b4ab9359716e52d6dafe67f8b25f8edb36412b47ab1c",
+      "proof": "byte-exact identity",
+      "metadata_occurrences": 35,
+      "field_kinds": [
+        "module",
+        "$key"
+      ]
+    },
+    {
+      "held_file": "/home/cosmo/Documents/GitHub/qcore-c/private/premise-resolution-cycle2/base-freeze/inputs/providers/quirin-provider-fluent-bit/contracts/fluent_bit/logging.qv",
+      "counterpart_file": "/home/cosmo/Documents/GitHub/qcore-c/private/premise-resolution-cycle2/tip-freeze/inputs/providers/quirin-provider-fluent-bit/contracts/fluent_bit/logging.qv",
+      "relative_file": "providers/quirin-provider-fluent-bit/contracts/fluent_bit/logging.qv",
+      "held_sha256": "c5fa867ac7e7c02bdc4d693788637620fd1c496e146e2afb656211424d618ad8",
+      "counterpart_sha256": "c5fa867ac7e7c02bdc4d693788637620fd1c496e146e2afb656211424d618ad8",
+      "proof": "byte-exact identity",
+      "metadata_occurrences": 19,
+      "field_kinds": [
+        "module",
+        "source_module",
+        "$key"
+      ]
+    },
+    {
+      "held_file": "/home/cosmo/Documents/GitHub/qcore-c/private/premise-resolution-cycle2/base-freeze/inputs/providers/quirin-provider-fluent-bit/contracts/fluent_bit/hash_table_publication.qv",
+      "counterpart_file": "/home/cosmo/Documents/GitHub/qcore-c/private/premise-resolution-cycle2/tip-freeze/inputs/providers/quirin-provider-fluent-bit/contracts/fluent_bit/hash_table_publication.qv",
+      "relative_file": "providers/quirin-provider-fluent-bit/contracts/fluent_bit/hash_table_publication.qv",
+      "held_sha256": "209d0491da15604e7c31bb7e961fe97f3ad6dba73e5696024bc4190c5a81ae41",
+      "counterpart_sha256": "209d0491da15604e7c31bb7e961fe97f3ad6dba73e5696024bc4190c5a81ae41",
+      "proof": "byte-exact identity",
+      "metadata_occurrences": 7,
+      "field_kinds": [
+        "module",
+        "$key"
+      ]
+    },
+    {
+      "held_file": "/home/cosmo/Documents/GitHub/qcore-c/private/premise-resolution-cycle2/base-freeze/inputs/providers/quirin-provider-fluent-bit/contracts/fluent_bit/loop_owner.qv",
+      "counterpart_file": "/home/cosmo/Documents/GitHub/qcore-c/private/premise-resolution-cycle2/tip-freeze/inputs/providers/quirin-provider-fluent-bit/contracts/fluent_bit/loop_owner.qv",
+      "relative_file": "providers/quirin-provider-fluent-bit/contracts/fluent_bit/loop_owner.qv",
+      "held_sha256": "cc4ff75530269aa85f1e754024590a56aefe2f85f21df7adcf1472e8c6f774aa",
+      "counterpart_sha256": "cc4ff75530269aa85f1e754024590a56aefe2f85f21df7adcf1472e8c6f774aa",
+      "proof": "byte-exact identity",
+      "metadata_occurrences": 13,
+      "field_kinds": [
+        "module",
+        "$key"
+      ]
+    },
+    {
+      "held_file": "/home/cosmo/Documents/GitHub/qcore-c/private/premise-resolution-cycle2/base-freeze/inputs/providers/quirin-provider-fluent-bit/contracts/fluent_bit/input_collector_registration.qv",
+      "counterpart_file": "/home/cosmo/Documents/GitHub/qcore-c/private/premise-resolution-cycle2/tip-freeze/inputs/providers/quirin-provider-fluent-bit/contracts/fluent_bit/input_collector_registration.qv",
+      "relative_file": "providers/quirin-provider-fluent-bit/contracts/fluent_bit/input_collector_registration.qv",
+      "held_sha256": "4cdabeffd70e4d5fdf3edd3a273b03e2ba6484375734a4fa34a8e10ecaf197a4",
+      "counterpart_sha256": "4cdabeffd70e4d5fdf3edd3a273b03e2ba6484375734a4fa34a8e10ecaf197a4",
+      "proof": "byte-exact identity",
+      "metadata_occurrences": 10,
+      "field_kinds": [
+        "module",
+        "$key"
+      ]
+    },
+    {
+      "held_file": "/home/cosmo/Documents/GitHub/qcore-c/private/premise-resolution-cycle2/base-freeze/inputs/providers/quirin-provider-fluent-bit/contracts/fluent_bit/time.qv",
+      "counterpart_file": "/home/cosmo/Documents/GitHub/qcore-c/private/premise-resolution-cycle2/tip-freeze/inputs/providers/quirin-provider-fluent-bit/contracts/fluent_bit/time.qv",
+      "relative_file": "providers/quirin-provider-fluent-bit/contracts/fluent_bit/time.qv",
+      "held_sha256": "e81170f7f36f50f1c93ed0d2a69b2a7f3e3e26714f6627ca3e9326fb87c10784",
+      "counterpart_sha256": "e81170f7f36f50f1c93ed0d2a69b2a7f3e3e26714f6627ca3e9326fb87c10784",
+      "proof": "byte-exact identity",
+      "metadata_occurrences": 4,
+      "field_kinds": [
+        "module",
+        "$key"
+      ]
+    },
+    {
+      "held_file": "/home/cosmo/Documents/GitHub/qcore-c/private/premise-resolution-cycle2/base-freeze/inputs/providers/quirin-provider-libc/contracts/libc/memory.qv",
+      "counterpart_file": "/home/cosmo/Documents/GitHub/qcore-c/private/premise-resolution-cycle2/tip-freeze/inputs/providers/quirin-provider-libc/contracts/libc/memory.qv",
+      "relative_file": "providers/quirin-provider-libc/contracts/libc/memory.qv",
+      "held_sha256": "dec99ab65e1abe68f8344e6a2fc45e31221f9015a5ed0285bae2ff384f2db34f",
+      "counterpart_sha256": "dec99ab65e1abe68f8344e6a2fc45e31221f9015a5ed0285bae2ff384f2db34f",
+      "proof": "byte-exact identity",
+      "metadata_occurrences": 5,
+      "field_kinds": [
+        "module",
+        "$key"
+      ]
+    },
+    {
+      "held_file": "/home/cosmo/Documents/GitHub/qcore-c/private/premise-resolution-cycle2/base-freeze/inputs/providers/quirin-provider-libc/contracts/libc/sys_stat.qv",
+      "counterpart_file": "/home/cosmo/Documents/GitHub/qcore-c/private/premise-resolution-cycle2/tip-freeze/inputs/providers/quirin-provider-libc/contracts/libc/sys_stat.qv",
+      "relative_file": "providers/quirin-provider-libc/contracts/libc/sys_stat.qv",
+      "held_sha256": "f11ab5fddc48c3ca44ff4ce588bf7f43816f32c4f70fa630d1c2c52c0e87c261",
+      "counterpart_sha256": "f11ab5fddc48c3ca44ff4ce588bf7f43816f32c4f70fa630d1c2c52c0e87c261",
+      "proof": "byte-exact identity",
+      "metadata_occurrences": 9,
+      "field_kinds": [
+        "module",
+        "$key"
+      ]
+    },
+    {
+      "held_file": "/home/cosmo/Documents/GitHub/qcore-c/private/premise-resolution-cycle2/base-freeze/inputs/providers/quirin-provider-libc/contracts/libc/socket.qv",
+      "counterpart_file": "/home/cosmo/Documents/GitHub/qcore-c/private/premise-resolution-cycle2/tip-freeze/inputs/providers/quirin-provider-libc/contracts/libc/socket.qv",
+      "relative_file": "providers/quirin-provider-libc/contracts/libc/socket.qv",
+      "held_sha256": "00e22e461721db5669d15336fff0e3cbc0385d9045d31dfa1e8975b095bb2eea",
+      "counterpart_sha256": "00e22e461721db5669d15336fff0e3cbc0385d9045d31dfa1e8975b095bb2eea",
+      "proof": "byte-exact identity",
+      "metadata_occurrences": 14,
+      "field_kinds": [
+        "module",
+        "$key"
+      ]
+    },
+    {
+      "held_file": "/home/cosmo/Documents/GitHub/qcore-c/private/premise-resolution-cycle2/base-freeze/inputs/providers/quirin-provider-libc/contracts/libc/string.qv",
+      "counterpart_file": "/home/cosmo/Documents/GitHub/qcore-c/private/premise-resolution-cycle2/tip-freeze/inputs/providers/quirin-provider-libc/contracts/libc/string.qv",
+      "relative_file": "providers/quirin-provider-libc/contracts/libc/string.qv",
+      "held_sha256": "6c59574468efc24ccd5fbc1fe4570d225087ec4f43c9818f678d74a75c89cc7f",
+      "counterpart_sha256": "6c59574468efc24ccd5fbc1fe4570d225087ec4f43c9818f678d74a75c89cc7f",
+      "proof": "byte-exact identity",
+      "metadata_occurrences": 33,
+      "field_kinds": [
+        "module",
+        "$key"
+      ]
+    },
+    {
+      "held_file": "/home/cosmo/Documents/GitHub/qcore-c/private/premise-resolution-cycle2/base-freeze/inputs/providers/qcore-provider-libevent/contracts/monkey/event_loop.qv",
+      "counterpart_file": "/home/cosmo/Documents/GitHub/qcore-c/private/premise-resolution-cycle2/tip-freeze/inputs/providers/qcore-provider-libevent/contracts/monkey/event_loop.qv",
+      "relative_file": "providers/qcore-provider-libevent/contracts/monkey/event_loop.qv",
+      "held_sha256": "bcd64a750c1830c44b501d0fc13cd19268c40751aa909789ca1598ca11085e15",
+      "counterpart_sha256": "bcd64a750c1830c44b501d0fc13cd19268c40751aa909789ca1598ca11085e15",
+      "proof": "byte-exact identity",
+      "metadata_occurrences": 28,
+      "field_kinds": [
+        "module",
+        "$key"
+      ]
+    },
+    {
+      "held_file": "/home/cosmo/Documents/GitHub/qcore-c/private/premise-resolution-cycle2/base-freeze/inputs/providers/qcore-provider-libevent/contracts/monkey/intrusive_list.qv",
+      "counterpart_file": "/home/cosmo/Documents/GitHub/qcore-c/private/premise-resolution-cycle2/tip-freeze/inputs/providers/qcore-provider-libevent/contracts/monkey/intrusive_list.qv",
+      "relative_file": "providers/qcore-provider-libevent/contracts/monkey/intrusive_list.qv",
+      "held_sha256": "37acb50318b1d658ce6366a3fb42c84ea349ba5f6570f21bffc072de47efd8e8",
+      "counterpart_sha256": "37acb50318b1d658ce6366a3fb42c84ea349ba5f6570f21bffc072de47efd8e8",
+      "proof": "byte-exact identity",
+      "metadata_occurrences": 9,
+      "field_kinds": [
+        "module",
+        "$key"
+      ]
+    },
+    {
+      "held_file": "/home/cosmo/Documents/GitHub/qcore-c/private/premise-resolution-cycle2/base-freeze/inputs/providers/quirin-provider-msgpack/contracts/msgpack/packer.qv",
+      "counterpart_file": "/home/cosmo/Documents/GitHub/qcore-c/private/premise-resolution-cycle2/tip-freeze/inputs/providers/quirin-provider-msgpack/contracts/msgpack/packer.qv",
+      "relative_file": "providers/quirin-provider-msgpack/contracts/msgpack/packer.qv",
+      "held_sha256": "2325d107ca7c672db6bcdae8370edfccf3c946c45a2a341e681244ffd3610040",
+      "counterpart_sha256": "2325d107ca7c672db6bcdae8370edfccf3c946c45a2a341e681244ffd3610040",
+      "proof": "byte-exact identity",
+      "metadata_occurrences": 4,
+      "field_kinds": [
+        "module",
+        "$key"
+      ]
+    },
+    {
+      "held_file": "/home/cosmo/Documents/GitHub/qcore-c/private/premise-resolution-cycle2/base-freeze/inputs/providers/quirin-provider-libc/contracts/libc/pthread_sync.qv",
+      "counterpart_file": "/home/cosmo/Documents/GitHub/qcore-c/private/premise-resolution-cycle2/tip-freeze/inputs/providers/quirin-provider-libc/contracts/libc/pthread_sync.qv",
+      "relative_file": "providers/quirin-provider-libc/contracts/libc/pthread_sync.qv",
+      "held_sha256": "c1a2bbf313fa7010c5e06e9dff7307cb5d684a7696ae8ce43799703736a72909",
+      "counterpart_sha256": "c1a2bbf313fa7010c5e06e9dff7307cb5d684a7696ae8ce43799703736a72909",
+      "proof": "byte-exact identity",
+      "metadata_occurrences": 12,
+      "field_kinds": [
+        "module",
+        "$key"
+      ]
+    },
+    {
+      "held_file": "/home/cosmo/Documents/GitHub/qcore-c/private/premise-resolution-cycle2/base-freeze/inputs/providers/quirin-provider-libc/contracts/libc/pthread_mutex.qv",
+      "counterpart_file": "/home/cosmo/Documents/GitHub/qcore-c/private/premise-resolution-cycle2/tip-freeze/inputs/providers/quirin-provider-libc/contracts/libc/pthread_mutex.qv",
+      "relative_file": "providers/quirin-provider-libc/contracts/libc/pthread_mutex.qv",
+      "held_sha256": "fb55d21dac8ae878a69b77df04f2cd5c920d58266cc9ecd6a54eec0a9bce6679",
+      "counterpart_sha256": "fb55d21dac8ae878a69b77df04f2cd5c920d58266cc9ecd6a54eec0a9bce6679",
+      "proof": "byte-exact identity",
+      "metadata_occurrences": 5,
+      "field_kinds": [
+        "module",
+        "$key"
+      ]
+    },
+    {
+      "held_file": "/home/cosmo/Documents/GitHub/qcore-c/private/premise-resolution-cycle2/base-freeze/inputs/providers/quirin-provider-libc/contracts/libc/threads.qv",
+      "counterpart_file": "/home/cosmo/Documents/GitHub/qcore-c/private/premise-resolution-cycle2/tip-freeze/inputs/providers/quirin-provider-libc/contracts/libc/threads.qv",
+      "relative_file": "providers/quirin-provider-libc/contracts/libc/threads.qv",
+      "held_sha256": "a0ccacd82d541743f208208534732550dc9893dd57452a3b2dd0632398998db3",
+      "counterpart_sha256": "a0ccacd82d541743f208208534732550dc9893dd57452a3b2dd0632398998db3",
+      "proof": "byte-exact identity",
+      "metadata_occurrences": 19,
+      "field_kinds": [
+        "module",
+        "$key"
+      ]
+    },
+    {
+      "held_file": "/home/cosmo/Documents/GitHub/qcore-c/private/premise-resolution-cycle2/base-freeze/inputs/providers/quirin-provider-libc/contracts/libc/time.qv",
+      "counterpart_file": "/home/cosmo/Documents/GitHub/qcore-c/private/premise-resolution-cycle2/tip-freeze/inputs/providers/quirin-provider-libc/contracts/libc/time.qv",
+      "relative_file": "providers/quirin-provider-libc/contracts/libc/time.qv",
+      "held_sha256": "cd8b5188b82d239d12b15bf1ebf81fdf0dc679a71605e43223f665cf58bfc986",
+      "counterpart_sha256": "cd8b5188b82d239d12b15bf1ebf81fdf0dc679a71605e43223f665cf58bfc986",
+      "proof": "byte-exact identity",
+      "metadata_occurrences": 9,
+      "field_kinds": [
+        "module",
+        "$key"
+      ]
+    },
+    {
+      "held_file": "/home/cosmo/Documents/GitHub/qcore-c/private/premise-resolution-cycle2/base-freeze/inputs/providers/qcore-provider-librdkafka/contracts/librdkafka/cjson.qv",
+      "counterpart_file": "/home/cosmo/Documents/GitHub/qcore-c/private/premise-resolution-cycle2/tip-freeze/inputs/providers/qcore-provider-librdkafka/contracts/librdkafka/cjson.qv",
+      "relative_file": "providers/qcore-provider-librdkafka/contracts/librdkafka/cjson.qv",
+      "held_sha256": "3ad75ee24b3cb08232cf2b7000e262d3d4d7374e9196cb3254944fd16706e4fd",
+      "counterpart_sha256": "3ad75ee24b3cb08232cf2b7000e262d3d4d7374e9196cb3254944fd16706e4fd",
+      "proof": "byte-exact identity",
+      "metadata_occurrences": 18,
+      "field_kinds": [
+        "source_module",
+        "module",
+        "$key"
+      ]
+    },
+    {
+      "held_file": "/home/cosmo/Documents/GitHub/qcore-c/private/premise-resolution-cycle2/base-freeze/inputs/providers/qcore-provider-librdkafka/contracts/librdkafka/client.qv",
+      "counterpart_file": "/home/cosmo/Documents/GitHub/qcore-c/private/premise-resolution-cycle2/tip-freeze/inputs/providers/qcore-provider-librdkafka/contracts/librdkafka/client.qv",
+      "relative_file": "providers/qcore-provider-librdkafka/contracts/librdkafka/client.qv",
+      "held_sha256": "288d0fa65ffe6832d11dd06acd5ebf3d8b3d211e5a76f382e130c0a13c402946",
+      "counterpart_sha256": "288d0fa65ffe6832d11dd06acd5ebf3d8b3d211e5a76f382e130c0a13c402946",
+      "proof": "byte-exact identity",
+      "metadata_occurrences": 346,
+      "field_kinds": [
+        "source_module",
+        "module",
+        "$key"
+      ]
+    },
+    {
+      "held_file": "/home/cosmo/Documents/GitHub/qcore-c/private/premise-resolution-cycle2/base-freeze/inputs/providers/qcore-provider-librdkafka/contracts/librdkafka/kafka_mem.qv",
+      "counterpart_file": "/home/cosmo/Documents/GitHub/qcore-c/private/premise-resolution-cycle2/tip-freeze/inputs/providers/qcore-provider-librdkafka/contracts/librdkafka/kafka_mem.qv",
+      "relative_file": "providers/qcore-provider-librdkafka/contracts/librdkafka/kafka_mem.qv",
+      "held_sha256": "3924b280719d1064dfcf821f4d6eec5e00033f2b2551e8a6cc6b4dc0784624be",
+      "counterpart_sha256": "3924b280719d1064dfcf821f4d6eec5e00033f2b2551e8a6cc6b4dc0784624be",
+      "proof": "byte-exact identity",
+      "metadata_occurrences": 18,
+      "field_kinds": [
+        "source_module",
+        "module",
+        "$key"
+      ]
+    },
+    {
+      "held_file": "/home/cosmo/Documents/GitHub/qcore-c/private/premise-resolution-cycle2/base-freeze/inputs/providers/qcore-provider-librdkafka/contracts/librdkafka/lz4_stream.qv",
+      "counterpart_file": "/home/cosmo/Documents/GitHub/qcore-c/private/premise-resolution-cycle2/tip-freeze/inputs/providers/qcore-provider-librdkafka/contracts/librdkafka/lz4_stream.qv",
+      "relative_file": "providers/qcore-provider-librdkafka/contracts/librdkafka/lz4_stream.qv",
+      "held_sha256": "0b3c92fc7476d1f0a0d11d5954a9445882c66897d2409eda55e9efbd6db8ce74",
+      "counterpart_sha256": "0b3c92fc7476d1f0a0d11d5954a9445882c66897d2409eda55e9efbd6db8ce74",
+      "proof": "byte-exact identity",
+      "metadata_occurrences": 19,
+      "field_kinds": [
+        "module",
+        "$key"
+      ]
+    },
+    {
+      "held_file": "/home/cosmo/Documents/GitHub/qcore-c/private/premise-resolution-cycle2/base-freeze/inputs/providers/qcore-provider-libevent/contracts/monkey/scalar_observation.qv",
+      "counterpart_file": "/home/cosmo/Documents/GitHub/qcore-c/private/premise-resolution-cycle2/tip-freeze/inputs/providers/qcore-provider-libevent/contracts/monkey/scalar_observation.qv",
+      "relative_file": "providers/qcore-provider-libevent/contracts/monkey/scalar_observation.qv",
+      "held_sha256": "8f400380f17d656598422a0e8430dcf154d96893bba664e620d4e6a60c5e1def",
+      "counterpart_sha256": "8f400380f17d656598422a0e8430dcf154d96893bba664e620d4e6a60c5e1def",
+      "proof": "byte-exact identity",
+      "metadata_occurrences": 15,
+      "field_kinds": [
+        "module",
+        "$key"
+      ]
+    },
+    {
+      "held_file": "/home/cosmo/Documents/GitHub/qcore-c/private/premise-resolution-cycle2/base-freeze/inputs/providers/qcore-provider-chunkio/contracts/chunkio/chunk_residency.qv",
+      "counterpart_file": "/home/cosmo/Documents/GitHub/qcore-c/private/premise-resolution-cycle2/tip-freeze/inputs/providers/qcore-provider-chunkio/contracts/chunkio/chunk_residency.qv",
+      "relative_file": "providers/qcore-provider-chunkio/contracts/chunkio/chunk_residency.qv",
+      "held_sha256": "1e263d09958646bc09ce70ef1d6db4c2c3fb5b789fe56b2e00904189cb4a8de6",
+      "counterpart_sha256": "1e263d09958646bc09ce70ef1d6db4c2c3fb5b789fe56b2e00904189cb4a8de6",
+      "proof": "byte-exact identity",
+      "metadata_occurrences": 11,
+      "field_kinds": [
+        "module",
+        "$key"
+      ]
+    },
+    {
+      "held_file": "/home/cosmo/Documents/GitHub/qcore-c/private/premise-resolution-cycle2/base-freeze/inputs/providers/quirin-provider-fluent-bit/contracts/fluent_bit/input_chunk_helpers.qv",
+      "counterpart_file": "/home/cosmo/Documents/GitHub/qcore-c/private/premise-resolution-cycle2/tip-freeze/inputs/providers/quirin-provider-fluent-bit/contracts/fluent_bit/input_chunk_helpers.qv",
+      "relative_file": "providers/quirin-provider-fluent-bit/contracts/fluent_bit/input_chunk_helpers.qv",
+      "held_sha256": "be6f7f270596ec192b8798f69adfc88d34e4369a3ab336d0f9c0e1349cc8f44b",
+      "counterpart_sha256": "be6f7f270596ec192b8798f69adfc88d34e4369a3ab336d0f9c0e1349cc8f44b",
+      "proof": "byte-exact identity",
+      "metadata_occurrences": 7,
+      "field_kinds": [
+        "module",
+        "$key"
+      ]
+    },
+    {
+      "held_file": "/home/cosmo/Documents/GitHub/qcore-c/private/premise-resolution-cycle2/base-freeze/inputs/providers/quirin-provider-libc/contracts/libc/math.qv",
+      "counterpart_file": "/home/cosmo/Documents/GitHub/qcore-c/private/premise-resolution-cycle2/tip-freeze/inputs/providers/quirin-provider-libc/contracts/libc/math.qv",
+      "relative_file": "providers/quirin-provider-libc/contracts/libc/math.qv",
+      "held_sha256": "4015f9b71721b861129cde42e64fa4335518e0ecdd33ee953f2ab1fa8ddf2214",
+      "counterpart_sha256": "4015f9b71721b861129cde42e64fa4335518e0ecdd33ee953f2ab1fa8ddf2214",
+      "proof": "byte-exact identity",
+      "metadata_occurrences": 5,
+      "field_kinds": [
+        "module",
+        "$key"
+      ]
+    },
+    {
+      "held_file": "/home/cosmo/Documents/GitHub/qcore-c/private/premise-resolution-cycle2/base-freeze/inputs/providers/quirin-provider-cfl/contracts/cfl/sds_lifetime.qv",
+      "counterpart_file": "/home/cosmo/Documents/GitHub/qcore-c/private/premise-resolution-cycle2/tip-freeze/inputs/providers/quirin-provider-cfl/contracts/cfl/sds_lifetime.qv",
+      "relative_file": "providers/quirin-provider-cfl/contracts/cfl/sds_lifetime.qv",
+      "held_sha256": "a3684cfe27ec6d829b825e939f2574c67754fd3505a406143215a05ba44ebc56",
+      "counterpart_sha256": "a3684cfe27ec6d829b825e939f2574c67754fd3505a406143215a05ba44ebc56",
+      "proof": "byte-exact identity",
+      "metadata_occurrences": 25,
+      "field_kinds": [
+        "module",
+        "$key"
+      ]
+    },
+    {
+      "held_file": "/home/cosmo/Documents/GitHub/qcore-c/private/premise-resolution-cycle2/base-freeze/inputs/providers/qcore-provider-chunkio/contracts/chunkio/resource_open_close.qv",
+      "counterpart_file": "/home/cosmo/Documents/GitHub/qcore-c/private/premise-resolution-cycle2/tip-freeze/inputs/providers/qcore-provider-chunkio/contracts/chunkio/resource_open_close.qv",
+      "relative_file": "providers/qcore-provider-chunkio/contracts/chunkio/resource_open_close.qv",
+      "held_sha256": "e3e9b6ba36bdc9ad3cf193364f399902bf1a23fd80198c50c13f101e69480a8c",
+      "counterpart_sha256": "e3e9b6ba36bdc9ad3cf193364f399902bf1a23fd80198c50c13f101e69480a8c",
+      "proof": "byte-exact identity",
+      "metadata_occurrences": 5,
+      "field_kinds": [
+        "module",
+        "$key"
+      ]
+    },
+    {
+      "held_file": "/home/cosmo/Documents/GitHub/qcore-c/private/premise-resolution-cycle2/base-freeze/inputs/providers/qcore-provider-chunkio/contracts/chunkio/chunk_sizes.qv",
+      "counterpart_file": "/home/cosmo/Documents/GitHub/qcore-c/private/premise-resolution-cycle2/tip-freeze/inputs/providers/qcore-provider-chunkio/contracts/chunkio/chunk_sizes.qv",
+      "relative_file": "providers/qcore-provider-chunkio/contracts/chunkio/chunk_sizes.qv",
+      "held_sha256": "be25bb329b29dd665247237988f1cf56e868b501aec85a5c5f8368275c06e4f2",
+      "counterpart_sha256": "be25bb329b29dd665247237988f1cf56e868b501aec85a5c5f8368275c06e4f2",
+      "proof": "byte-exact identity",
+      "metadata_occurrences": 7,
+      "field_kinds": [
+        "module",
+        "$key"
+      ]
+    },
+    {
+      "held_file": "/home/cosmo/Documents/GitHub/qcore-c/private/premise-resolution-cycle2/base-freeze/inputs/providers/quirin-provider-libc/contracts/libc/dirent.qv",
+      "counterpart_file": "/home/cosmo/Documents/GitHub/qcore-c/private/premise-resolution-cycle2/tip-freeze/inputs/providers/quirin-provider-libc/contracts/libc/dirent.qv",
+      "relative_file": "providers/quirin-provider-libc/contracts/libc/dirent.qv",
+      "held_sha256": "f8fecf64f3670ea86d300791789e66d941fbb67c2ffd235e3bc98b1c324d3fa9",
+      "counterpart_sha256": "f8fecf64f3670ea86d300791789e66d941fbb67c2ffd235e3bc98b1c324d3fa9",
+      "proof": "byte-exact identity",
+      "metadata_occurrences": 3,
+      "field_kinds": [
+        "module",
+        "$key"
+      ]
+    },
+    {
+      "held_file": "/home/cosmo/Documents/GitHub/qcore-c/private/premise-resolution-cycle2/base-freeze/inputs/providers/qcore-provider-cmetrics/contracts/cmetrics/metric_values.qv",
+      "counterpart_file": "/home/cosmo/Documents/GitHub/qcore-c/private/premise-resolution-cycle2/tip-freeze/inputs/providers/qcore-provider-cmetrics/contracts/cmetrics/metric_values.qv",
+      "relative_file": "providers/qcore-provider-cmetrics/contracts/cmetrics/metric_values.qv",
+      "held_sha256": "c3db21d15d98e12fdf11fe6ffe3de98f674c94625256a94b3270f9db73be1a43",
+      "counterpart_sha256": "c3db21d15d98e12fdf11fe6ffe3de98f674c94625256a94b3270f9db73be1a43",
+      "proof": "byte-exact identity",
+      "metadata_occurrences": 49,
+      "field_kinds": [
+        "module",
+        "$key"
+      ]
+    },
+    {
+      "held_file": "/home/cosmo/Documents/GitHub/qcore-c/private/premise-resolution-cycle2/base-freeze/inputs/providers/qcore-provider-cmetrics/contracts/cmetrics/mpack_utils.qv",
+      "counterpart_file": "/home/cosmo/Documents/GitHub/qcore-c/private/premise-resolution-cycle2/tip-freeze/inputs/providers/qcore-provider-cmetrics/contracts/cmetrics/mpack_utils.qv",
+      "relative_file": "providers/qcore-provider-cmetrics/contracts/cmetrics/mpack_utils.qv",
+      "held_sha256": "c0c2c64b6b569303a24ecffd7c257641668747417851f2d12825aa13d13a93a2",
+      "counterpart_sha256": "c0c2c64b6b569303a24ecffd7c257641668747417851f2d12825aa13d13a93a2",
+      "proof": "byte-exact identity",
+      "metadata_occurrences": 7,
+      "field_kinds": [
+        "module",
+        "$key"
+      ]
+    },
+    {
+      "held_file": "/home/cosmo/Documents/GitHub/qcore-c/private/premise-resolution-cycle2/base-freeze/inputs/providers/qcore-provider-ctraces/contracts/ctraces/context_lifetime.qv",
+      "counterpart_file": "/home/cosmo/Documents/GitHub/qcore-c/private/premise-resolution-cycle2/tip-freeze/inputs/providers/qcore-provider-ctraces/contracts/ctraces/context_lifetime.qv",
+      "relative_file": "providers/qcore-provider-ctraces/contracts/ctraces/context_lifetime.qv",
+      "held_sha256": "9fd62aa72fb062548298bf9725dfff048c261a5d7f019fd0e8c524b6417a15f1",
+      "counterpart_sha256": "9fd62aa72fb062548298bf9725dfff048c261a5d7f019fd0e8c524b6417a15f1",
+      "proof": "byte-exact identity",
+      "metadata_occurrences": 39,
+      "field_kinds": [
+        "module",
+        "$key"
+      ]
+    },
+    {
+      "held_file": "/home/cosmo/Documents/GitHub/qcore-c/private/premise-resolution-cycle2/base-freeze/inputs/providers/quirin-provider-libc/contracts/libc/dlfcn.qv",
+      "counterpart_file": "/home/cosmo/Documents/GitHub/qcore-c/private/premise-resolution-cycle2/tip-freeze/inputs/providers/quirin-provider-libc/contracts/libc/dlfcn.qv",
+      "relative_file": "providers/quirin-provider-libc/contracts/libc/dlfcn.qv",
+      "held_sha256": "27ffa658847c32fa4bdc59a0d66420ae37ba70efe5a5e5999c066c1dadfb7671",
+      "counterpart_sha256": "27ffa658847c32fa4bdc59a0d66420ae37ba70efe5a5e5999c066c1dadfb7671",
+      "proof": "byte-exact identity",
+      "metadata_occurrences": 5,
+      "field_kinds": [
+        "module",
+        "$key"
+      ]
+    },
+    {
+      "held_file": "/home/cosmo/Documents/GitHub/qcore-c/private/premise-resolution-cycle2/base-freeze/inputs/providers/quirin-provider-fluent-bit/contracts/fluent_bit/input_chunk_destroy.qv",
+      "counterpart_file": "/home/cosmo/Documents/GitHub/qcore-c/private/premise-resolution-cycle2/tip-freeze/inputs/providers/quirin-provider-fluent-bit/contracts/fluent_bit/input_chunk_destroy.qv",
+      "relative_file": "providers/quirin-provider-fluent-bit/contracts/fluent_bit/input_chunk_destroy.qv",
+      "held_sha256": "073c9206df21e37d18775bcd50bd0c57b0d8c70f2f0ee5ec50a5579f5eaff897",
+      "counterpart_sha256": "073c9206df21e37d18775bcd50bd0c57b0d8c70f2f0ee5ec50a5579f5eaff897",
+      "proof": "byte-exact identity",
+      "metadata_occurrences": 3,
+      "field_kinds": [
+        "module",
+        "$key"
+      ]
+    },
+    {
+      "held_file": "/home/cosmo/Documents/GitHub/qcore-c/private/premise-resolution-cycle2/base-freeze/inputs/providers/quirin-provider-fluent-bit/contracts/fluent_bit/input_chunk_destroy_direct_routes.qv",
+      "counterpart_file": "/home/cosmo/Documents/GitHub/qcore-c/private/premise-resolution-cycle2/tip-freeze/inputs/providers/quirin-provider-fluent-bit/contracts/fluent_bit/input_chunk_destroy_direct_routes.qv",
+      "relative_file": "providers/quirin-provider-fluent-bit/contracts/fluent_bit/input_chunk_destroy_direct_routes.qv",
+      "held_sha256": "2ce152d343357466fe9ec5979362be28145f8fa707c20746ae49bc0599703974",
+      "counterpart_sha256": "2ce152d343357466fe9ec5979362be28145f8fa707c20746ae49bc0599703974",
+      "proof": "byte-exact identity",
+      "metadata_occurrences": 3,
+      "field_kinds": [
+        "module",
+        "$key"
+      ]
+    },
+    {
+      "held_file": "/home/cosmo/Documents/GitHub/qcore-c/private/premise-resolution-cycle2/base-freeze/inputs/providers/quirin-provider-fluent-bit/contracts/fluent_bit/input_chunk_name.qv",
+      "counterpart_file": "/home/cosmo/Documents/GitHub/qcore-c/private/premise-resolution-cycle2/tip-freeze/inputs/providers/quirin-provider-fluent-bit/contracts/fluent_bit/input_chunk_name.qv",
+      "relative_file": "providers/quirin-provider-fluent-bit/contracts/fluent_bit/input_chunk_name.qv",
+      "held_sha256": "8cdde48b065cf97d30b708637a7f93933e12338d03d468c6d0240ed925b47f41",
+      "counterpart_sha256": "8cdde48b065cf97d30b708637a7f93933e12338d03d468c6d0240ed925b47f41",
+      "proof": "byte-exact identity",
+      "metadata_occurrences": 3,
+      "field_kinds": [
+        "module",
+        "$key"
+      ]
+    },
+    {
+      "held_file": "/home/cosmo/Documents/GitHub/qcore-c/private/premise-resolution-cycle2/base-freeze/inputs/providers/quirin-provider-fluent-bit/contracts/fluent_bit/input_chunk_sizes.qv",
+      "counterpart_file": "/home/cosmo/Documents/GitHub/qcore-c/private/premise-resolution-cycle2/tip-freeze/inputs/providers/quirin-provider-fluent-bit/contracts/fluent_bit/input_chunk_sizes.qv",
+      "relative_file": "providers/quirin-provider-fluent-bit/contracts/fluent_bit/input_chunk_sizes.qv",
+      "held_sha256": "ba8db67de28e9ee480165c21ca2c03f398433699d5af0dd57f4c225d0d74d0f8",
+      "counterpart_sha256": "ba8db67de28e9ee480165c21ca2c03f398433699d5af0dd57f4c225d0d74d0f8",
+      "proof": "byte-exact identity",
+      "metadata_occurrences": 5,
+      "field_kinds": [
+        "module",
+        "$key"
+      ]
+    },
+    {
+      "held_file": "/home/cosmo/Documents/GitHub/qcore-c/private/premise-resolution-cycle2/base-freeze/inputs/providers/quirin-provider-fluent-bit/contracts/fluent_bit/input_chunk_is_up.qv",
+      "counterpart_file": "/home/cosmo/Documents/GitHub/qcore-c/private/premise-resolution-cycle2/tip-freeze/inputs/providers/quirin-provider-fluent-bit/contracts/fluent_bit/input_chunk_is_up.qv",
+      "relative_file": "providers/quirin-provider-fluent-bit/contracts/fluent_bit/input_chunk_is_up.qv",
+      "held_sha256": "5812a21ab91cd7e636bfa25df35a5141e96e0c017b27e153987db498e1c2b761",
+      "counterpart_sha256": "5812a21ab91cd7e636bfa25df35a5141e96e0c017b27e153987db498e1c2b761",
+      "proof": "byte-exact identity",
+      "metadata_occurrences": 9,
+      "field_kinds": [
+        "module",
+        "$key"
+      ]
+    },
+    {
+      "held_file": "/home/cosmo/Documents/GitHub/qcore-c/private/premise-resolution-cycle2/base-freeze/inputs/providers/quirin-provider-fluent-bit/contracts/fluent_bit/input_chunk_total_size.qv",
+      "counterpart_file": "/home/cosmo/Documents/GitHub/qcore-c/private/premise-resolution-cycle2/tip-freeze/inputs/providers/quirin-provider-fluent-bit/contracts/fluent_bit/input_chunk_total_size.qv",
+      "relative_file": "providers/quirin-provider-fluent-bit/contracts/fluent_bit/input_chunk_total_size.qv",
+      "held_sha256": "f8a1ab9dcf7637174ae83849b2ebf3c2d11374842c5ef5e517280b22691392d8",
+      "counterpart_sha256": "f8a1ab9dcf7637174ae83849b2ebf3c2d11374842c5ef5e517280b22691392d8",
+      "proof": "byte-exact identity",
+      "metadata_occurrences": 3,
+      "field_kinds": [
+        "module",
+        "$key"
+      ]
+    },
+    {
+      "held_file": "/home/cosmo/Documents/GitHub/qcore-c/private/premise-resolution-cycle2/base-freeze/inputs/providers/quirin-provider-fluent-bit/contracts/fluent_bit/output_flush_id.qv",
+      "counterpart_file": "/home/cosmo/Documents/GitHub/qcore-c/private/premise-resolution-cycle2/tip-freeze/inputs/providers/quirin-provider-fluent-bit/contracts/fluent_bit/output_flush_id.qv",
+      "relative_file": "providers/quirin-provider-fluent-bit/contracts/fluent_bit/output_flush_id.qv",
+      "held_sha256": "5161dfc52e7b06caaf41fcb3c00c8135f903101e11d9c262312e7f1893e425d3",
+      "counterpart_sha256": "5161dfc52e7b06caaf41fcb3c00c8135f903101e11d9c262312e7f1893e425d3",
+      "proof": "byte-exact identity",
+      "metadata_occurrences": 3,
+      "field_kinds": [
+        "module",
+        "$key"
+      ]
+    },
+    {
+      "held_file": "/home/cosmo/Documents/GitHub/qcore-c/private/premise-resolution-cycle2/base-freeze/inputs/providers/quirin-provider-fluent-bit/contracts/fluent_bit/output_singleplex.qv",
+      "counterpart_file": "/home/cosmo/Documents/GitHub/qcore-c/private/premise-resolution-cycle2/tip-freeze/inputs/providers/quirin-provider-fluent-bit/contracts/fluent_bit/output_singleplex.qv",
+      "relative_file": "providers/quirin-provider-fluent-bit/contracts/fluent_bit/output_singleplex.qv",
+      "held_sha256": "1493fe2a92a6240b565de872572d3ba04fe3da7db636159fa4fa75902f853818",
+      "counterpart_sha256": "1493fe2a92a6240b565de872572d3ba04fe3da7db636159fa4fa75902f853818",
+      "proof": "byte-exact identity",
+      "metadata_occurrences": 5,
+      "field_kinds": [
+        "module",
+        "$key"
+      ]
+    },
+    {
+      "held_file": "/home/cosmo/Documents/GitHub/qcore-c/private/premise-resolution-cycle2/base-freeze/inputs/providers/quirin-provider-fluent-bit/contracts/fluent_bit/task_users.qv",
+      "counterpart_file": "/home/cosmo/Documents/GitHub/qcore-c/private/premise-resolution-cycle2/tip-freeze/inputs/providers/quirin-provider-fluent-bit/contracts/fluent_bit/task_users.qv",
+      "relative_file": "providers/quirin-provider-fluent-bit/contracts/fluent_bit/task_users.qv",
+      "held_sha256": "cc07429255f69df182831ae2cf0246bafd71c3f6038173cbfcd194ea51da9f18",
+      "counterpart_sha256": "cc07429255f69df182831ae2cf0246bafd71c3f6038173cbfcd194ea51da9f18",
+      "proof": "byte-exact identity",
+      "metadata_occurrences": 9,
+      "field_kinds": [
+        "module",
+        "$key"
+      ]
+    },
+    {
+      "held_file": "/home/cosmo/Documents/GitHub/qcore-c/private/premise-resolution-cycle2/base-freeze/inputs/providers/quirin-provider-fluent-bit/contracts/fluent_bit/routes_mask.qv",
+      "counterpart_file": "/home/cosmo/Documents/GitHub/qcore-c/private/premise-resolution-cycle2/tip-freeze/inputs/providers/quirin-provider-fluent-bit/contracts/fluent_bit/routes_mask.qv",
+      "relative_file": "providers/quirin-provider-fluent-bit/contracts/fluent_bit/routes_mask.qv",
+      "held_sha256": "3ea37c31e5fcf8d38aa7721312cfc333630fc8852f8dbcfad772c0726b82bc03",
+      "counterpart_sha256": "3ea37c31e5fcf8d38aa7721312cfc333630fc8852f8dbcfad772c0726b82bc03",
+      "proof": "byte-exact identity",
+      "metadata_occurrences": 9,
+      "field_kinds": [
+        "module",
+        "$key"
+      ]
+    },
+    {
+      "held_file": "/home/cosmo/Documents/GitHub/qcore-c/private/premise-resolution-cycle2/base-freeze/inputs/providers/quirin-provider-fluent-bit/contracts/fluent_bit/task_route_queries.qv",
+      "counterpart_file": "/home/cosmo/Documents/GitHub/qcore-c/private/premise-resolution-cycle2/tip-freeze/inputs/providers/quirin-provider-fluent-bit/contracts/fluent_bit/task_route_queries.qv",
+      "relative_file": "providers/quirin-provider-fluent-bit/contracts/fluent_bit/task_route_queries.qv",
+      "held_sha256": "2ccd2ecece939836971e60168720e45e16bc1955820c10cff33b53dd605b1ca0",
+      "counterpart_sha256": "2ccd2ecece939836971e60168720e45e16bc1955820c10cff33b53dd605b1ca0",
+      "proof": "byte-exact identity",
+      "metadata_occurrences": 9,
+      "field_kinds": [
+        "module",
+        "$key"
+      ]
+    },
+    {
+      "held_file": "/home/cosmo/Documents/GitHub/qcore-c/private/premise-resolution-cycle2/base-freeze/inputs/providers/quirin-provider-libc/contracts/libc/process.qv",
+      "counterpart_file": "/home/cosmo/Documents/GitHub/qcore-c/private/premise-resolution-cycle2/tip-freeze/inputs/providers/quirin-provider-libc/contracts/libc/process.qv",
+      "relative_file": "providers/quirin-provider-libc/contracts/libc/process.qv",
+      "held_sha256": "654a9058c95960eb49324a731d26edb307f0e76e386d2dae9016f36e078d6555",
+      "counterpart_sha256": "654a9058c95960eb49324a731d26edb307f0e76e386d2dae9016f36e078d6555",
+      "proof": "byte-exact identity",
+      "metadata_occurrences": 4,
+      "field_kinds": [
+        "module",
+        "$key"
+      ]
+    },
+    {
+      "held_file": "/home/cosmo/Documents/GitHub/qcore-c/private/premise-resolution-cycle2/base-freeze/inputs/providers/qcore-provider-libevent/contracts/monkey/logging.qv",
+      "counterpart_file": "/home/cosmo/Documents/GitHub/qcore-c/private/premise-resolution-cycle2/tip-freeze/inputs/providers/qcore-provider-libevent/contracts/monkey/logging.qv",
+      "relative_file": "providers/qcore-provider-libevent/contracts/monkey/logging.qv",
+      "held_sha256": "c9fdea74a8d0227836c3ed6260c413f2ee43a82bf6856b312ce49babd516e15b",
+      "counterpart_sha256": "c9fdea74a8d0227836c3ed6260c413f2ee43a82bf6856b312ce49babd516e15b",
+      "proof": "byte-exact identity",
+      "metadata_occurrences": 5,
+      "field_kinds": [
+        "module",
+        "$key"
+      ]
+    },
+    {
+      "held_file": "/home/cosmo/Documents/GitHub/qcore-c/private/premise-resolution-cycle2/base-freeze/inputs/providers/qcore-provider-libevent/contracts/monkey/string.qv",
+      "counterpart_file": "/home/cosmo/Documents/GitHub/qcore-c/private/premise-resolution-cycle2/tip-freeze/inputs/providers/qcore-provider-libevent/contracts/monkey/string.qv",
+      "relative_file": "providers/qcore-provider-libevent/contracts/monkey/string.qv",
+      "held_sha256": "53f9c3f6baa72f6acf2c7bdb2582b6a6392c67a9c17a1c5785413a1efc943f44",
+      "counterpart_sha256": "53f9c3f6baa72f6acf2c7bdb2582b6a6392c67a9c17a1c5785413a1efc943f44",
+      "proof": "byte-exact identity",
+      "metadata_occurrences": 3,
+      "field_kinds": [
+        "module",
+        "$key"
+      ]
+    },
+    {
+      "held_file": "/home/cosmo/Documents/GitHub/qcore-c/private/premise-resolution-cycle2/base-freeze/inputs/providers/qcore-provider-libevent/contracts/monkey/vhost_set.qv",
+      "counterpart_file": "/home/cosmo/Documents/GitHub/qcore-c/private/premise-resolution-cycle2/tip-freeze/inputs/providers/qcore-provider-libevent/contracts/monkey/vhost_set.qv",
+      "relative_file": "providers/qcore-provider-libevent/contracts/monkey/vhost_set.qv",
+      "held_sha256": "640187a5674cd86f7782bf9815e6d72b1082aef66e811f45b2def3e9f757fb34",
+      "counterpart_sha256": "640187a5674cd86f7782bf9815e6d72b1082aef66e811f45b2def3e9f757fb34",
+      "proof": "byte-exact identity",
+      "metadata_occurrences": 3,
+      "field_kinds": [
+        "module",
+        "$key"
+      ]
+    },
+    {
+      "held_file": "/home/cosmo/Documents/GitHub/qcore-c/private/premise-resolution-cycle2/base-freeze/inputs/providers/quirin-provider-mpack/contracts/mpack/writer.qv",
+      "counterpart_file": "/home/cosmo/Documents/GitHub/qcore-c/private/premise-resolution-cycle2/tip-freeze/inputs/providers/quirin-provider-mpack/contracts/mpack/writer.qv",
+      "relative_file": "providers/quirin-provider-mpack/contracts/mpack/writer.qv",
+      "held_sha256": "b85a05457c61d4be42f34882e9c2a9e2a5348e46ec055e3ca5a7f83a5bbf2c16",
+      "counterpart_sha256": "b85a05457c61d4be42f34882e9c2a9e2a5348e46ec055e3ca5a7f83a5bbf2c16",
+      "proof": "byte-exact identity",
+      "metadata_occurrences": 19,
+      "field_kinds": [
+        "module",
+        "$key"
+      ]
+    },
+    {
+      "held_file": "/home/cosmo/Documents/GitHub/qcore-c/private/premise-resolution-cycle2/base-freeze/inputs/providers/qcore-provider-librdkafka/contracts/librdkafka/topic_partition.qv",
+      "counterpart_file": "/home/cosmo/Documents/GitHub/qcore-c/private/premise-resolution-cycle2/tip-freeze/inputs/providers/qcore-provider-librdkafka/contracts/librdkafka/topic_partition.qv",
+      "relative_file": "providers/qcore-provider-librdkafka/contracts/librdkafka/topic_partition.qv",
+      "held_sha256": "c7e28fa40acff1c6d80fea924af68c7e0f0395faa3ef473156afbbb57db758e2",
+      "counterpart_sha256": "c7e28fa40acff1c6d80fea924af68c7e0f0395faa3ef473156afbbb57db758e2",
+      "proof": "byte-exact identity",
+      "metadata_occurrences": 3,
+      "field_kinds": [
+        "module",
+        "$key"
+      ]
+    },
+    {
+      "held_file": "/home/cosmo/Documents/GitHub/qcore-c/private/premise-resolution-cycle2/base-freeze/inputs/providers/quirin-provider-libc/contracts/libc/regex.qv",
+      "counterpart_file": "/home/cosmo/Documents/GitHub/qcore-c/private/premise-resolution-cycle2/tip-freeze/inputs/providers/quirin-provider-libc/contracts/libc/regex.qv",
+      "relative_file": "providers/quirin-provider-libc/contracts/libc/regex.qv",
+      "held_sha256": "3e98107559c67866747fd39f6d68d56fa6efe2378de3382a6209c220816180fa",
+      "counterpart_sha256": "3e98107559c67866747fd39f6d68d56fa6efe2378de3382a6209c220816180fa",
+      "proof": "byte-exact identity",
+      "metadata_occurrences": 5,
+      "field_kinds": [
+        "module",
+        "$key"
+      ]
+    },
+    {
+      "held_file": "/home/cosmo/Documents/GitHub/qcore-c/private/premise-resolution-cycle2/base-freeze/inputs/providers/qcore-provider-libevent/contracts.lock",
+      "counterpart_file": "/home/cosmo/Documents/GitHub/qcore-c/private/premise-resolution-cycle2/tip-freeze/inputs/providers/qcore-provider-libevent/contracts.lock",
+      "relative_file": "providers/qcore-provider-libevent/contracts.lock",
+      "held_sha256": "21f3d34bbda31de78e0dbdafd87131a1d96bc938e46ac2d313f32765bd69e7c7",
+      "counterpart_sha256": "21f3d34bbda31de78e0dbdafd87131a1d96bc938e46ac2d313f32765bd69e7c7",
+      "proof": "byte-exact identity",
+      "metadata_occurrences": 28,
+      "field_kinds": [
+        "$key",
+        "lock"
+      ]
+    },
+    {
+      "held_file": "/home/cosmo/Documents/GitHub/qcore-c/private/premise-resolution-cycle2/base-freeze/inputs/providers/qcore-provider-librdkafka/contracts.lock",
+      "counterpart_file": "/home/cosmo/Documents/GitHub/qcore-c/private/premise-resolution-cycle2/tip-freeze/inputs/providers/qcore-provider-librdkafka/contracts.lock",
+      "relative_file": "providers/qcore-provider-librdkafka/contracts.lock",
+      "held_sha256": "8dafb889443409ee8b341913579ff51b1036431dd7429049eec23f9aa3be6ff3",
+      "counterpart_sha256": "8dafb889443409ee8b341913579ff51b1036431dd7429049eec23f9aa3be6ff3",
+      "proof": "byte-exact identity",
+      "metadata_occurrences": 169,
+      "field_kinds": [
+        "$key",
+        "lock"
+      ]
+    },
+    {
+      "held_file": "/home/cosmo/Documents/GitHub/qcore-c/private/premise-resolution-cycle2/base-freeze/inputs/providers/quirin-provider-fluent-bit/contracts.lock",
+      "counterpart_file": "/home/cosmo/Documents/GitHub/qcore-c/private/premise-resolution-cycle2/tip-freeze/inputs/providers/quirin-provider-fluent-bit/contracts.lock",
+      "relative_file": "providers/quirin-provider-fluent-bit/contracts.lock",
+      "held_sha256": "cf7b725abe50b6c6df0cb4c09aa41c574f78531d04922df3865ecb2034f6ae67",
+      "counterpart_sha256": "cf7b725abe50b6c6df0cb4c09aa41c574f78531d04922df3865ecb2034f6ae67",
+      "proof": "byte-exact identity",
+      "metadata_occurrences": 79,
+      "field_kinds": [
+        "$key",
+        "lock"
+      ]
+    },
+    {
+      "held_file": "/home/cosmo/Documents/GitHub/qcore-c/private/premise-resolution-cycle2/base-freeze/inputs/providers/qcore-provider-chunkio/contracts.lock",
+      "counterpart_file": "/home/cosmo/Documents/GitHub/qcore-c/private/premise-resolution-cycle2/tip-freeze/inputs/providers/qcore-provider-chunkio/contracts.lock",
+      "relative_file": "providers/qcore-provider-chunkio/contracts.lock",
+      "held_sha256": "e4d425be4e48164a0d0f5a86cacfbfcb2284586f939e0f3c30664379d8c69e9d",
+      "counterpart_sha256": "e4d425be4e48164a0d0f5a86cacfbfcb2284586f939e0f3c30664379d8c69e9d",
+      "proof": "byte-exact identity",
+      "metadata_occurrences": 11,
+      "field_kinds": [
+        "$key",
+        "lock"
+      ]
+    },
+    {
+      "held_file": "/home/cosmo/Documents/GitHub/qcore-c/private/premise-resolution-cycle2/base-freeze/inputs/providers/qcore-provider-cmetrics/contracts.lock",
+      "counterpart_file": "/home/cosmo/Documents/GitHub/qcore-c/private/premise-resolution-cycle2/tip-freeze/inputs/providers/qcore-provider-cmetrics/contracts.lock",
+      "relative_file": "providers/qcore-provider-cmetrics/contracts.lock",
+      "held_sha256": "e54772f99294b483e96eb65ac9ff81ce0d6ddf22379e53a9d85926cd1ec8f206",
+      "counterpart_sha256": "e54772f99294b483e96eb65ac9ff81ce0d6ddf22379e53a9d85926cd1ec8f206",
+      "proof": "byte-exact identity",
+      "metadata_occurrences": 30,
+      "field_kinds": [
+        "$key",
+        "lock"
+      ]
+    },
+    {
+      "held_file": "/home/cosmo/Documents/GitHub/qcore-c/private/premise-resolution-cycle2/base-freeze/inputs/providers/qcore-provider-ctraces/contracts.lock",
+      "counterpart_file": "/home/cosmo/Documents/GitHub/qcore-c/private/premise-resolution-cycle2/tip-freeze/inputs/providers/qcore-provider-ctraces/contracts.lock",
+      "relative_file": "providers/qcore-provider-ctraces/contracts.lock",
+      "held_sha256": "8ad52b0ec1fea99243597495d7588d5219a68da694ac5aa06a90c513a996758c",
+      "counterpart_sha256": "8ad52b0ec1fea99243597495d7588d5219a68da694ac5aa06a90c513a996758c",
+      "proof": "byte-exact identity",
+      "metadata_occurrences": 20,
+      "field_kinds": [
+        "$key",
+        "lock"
+      ]
+    },
+    {
+      "held_file": "/home/cosmo/Documents/GitHub/qcore-c/private/premise-resolution-cycle2/base-freeze/inputs/providers/quirin-provider-cfl/contracts.lock",
+      "counterpart_file": "/home/cosmo/Documents/GitHub/qcore-c/private/premise-resolution-cycle2/tip-freeze/inputs/providers/quirin-provider-cfl/contracts.lock",
+      "relative_file": "providers/quirin-provider-cfl/contracts.lock",
+      "held_sha256": "597070fa1443633cf8b2efa4351af7560c9a5a8035ce12cf267f9ad0e267d238",
+      "counterpart_sha256": "597070fa1443633cf8b2efa4351af7560c9a5a8035ce12cf267f9ad0e267d238",
+      "proof": "byte-exact identity",
+      "metadata_occurrences": 14,
+      "field_kinds": [
+        "$key",
+        "lock"
+      ]
+    },
+    {
+      "held_file": "/home/cosmo/Documents/GitHub/qcore-c/private/premise-resolution-cycle2/base-freeze/inputs/providers/quirin-provider-libc/contracts.lock",
+      "counterpart_file": "/home/cosmo/Documents/GitHub/qcore-c/private/premise-resolution-cycle2/tip-freeze/inputs/providers/quirin-provider-libc/contracts.lock",
+      "relative_file": "providers/quirin-provider-libc/contracts.lock",
+      "held_sha256": "a10d0c93ee804cc71173764c6f8d9d2beb92dd1db1db6d9ffdfb58085582a4ba",
+      "counterpart_sha256": "a10d0c93ee804cc71173764c6f8d9d2beb92dd1db1db6d9ffdfb58085582a4ba",
+      "proof": "byte-exact identity",
+      "metadata_occurrences": 1,
+      "field_kinds": [
+        "$key"
+      ]
+    },
+    {
+      "held_file": "/home/cosmo/Documents/GitHub/qcore-c/private/premise-resolution-cycle2/base-freeze/inputs/providers/quirin-provider-mpack/contracts.lock",
+      "counterpart_file": "/home/cosmo/Documents/GitHub/qcore-c/private/premise-resolution-cycle2/tip-freeze/inputs/providers/quirin-provider-mpack/contracts.lock",
+      "relative_file": "providers/quirin-provider-mpack/contracts.lock",
+      "held_sha256": "d460d92b4287ba68a42d0af69858e405983738e3fdf8d46c6d1dfd3eba197ffd",
+      "counterpart_sha256": "d460d92b4287ba68a42d0af69858e405983738e3fdf8d46c6d1dfd3eba197ffd",
+      "proof": "byte-exact identity",
+      "metadata_occurrences": 10,
+      "field_kinds": [
+        "$key",
+        "lock"
+      ]
+    },
+    {
+      "held_file": "/home/cosmo/Documents/GitHub/qcore-c/private/premise-resolution-cycle2/base-freeze/inputs/providers/quirin-provider-msgpack/contracts.lock",
+      "counterpart_file": "/home/cosmo/Documents/GitHub/qcore-c/private/premise-resolution-cycle2/tip-freeze/inputs/providers/quirin-provider-msgpack/contracts.lock",
+      "relative_file": "providers/quirin-provider-msgpack/contracts.lock",
+      "held_sha256": "4a5383178918740b9c865a9a77bd91e1e53f514612fbad744d5f911ad6fa4f24",
+      "counterpart_sha256": "4a5383178918740b9c865a9a77bd91e1e53f514612fbad744d5f911ad6fa4f24",
+      "proof": "byte-exact identity",
+      "metadata_occurrences": 2,
+      "field_kinds": [
+        "$key",
+        "lock"
+      ]
+    },
+    {
+      "held_file": "/home/cosmo/Documents/GitHub/qcore-c/private/premise-resolution-cycle2/base-freeze/inputs/contract/profiles/fluent-bit/tail-pause-selection.json",
+      "counterpart_file": "/home/cosmo/Documents/GitHub/qcore-c/private/premise-resolution-cycle2/tip-freeze/inputs/contract/profiles/fluent-bit/tail-pause-selection.json",
+      "relative_file": "contract/profiles/fluent-bit/tail-pause-selection.json",
+      "held_sha256": "11cc7e23b6e3e11a3b1b4443b51f2f4e12920a505e5a636ed586646b21f4d0af",
+      "counterpart_sha256": "11cc7e23b6e3e11a3b1b4443b51f2f4e12920a505e5a636ed586646b21f4d0af",
+      "proof": "byte-exact identity",
+      "metadata_occurrences": 1,
+      "field_kinds": [
+        "path"
+      ]
+    },
+    {
+      "held_file": "/home/cosmo/Documents/GitHub/qcore-c/private/premise-resolution-cycle2/base-freeze/inputs/providers/contract-load-path.json",
+      "counterpart_file": "/home/cosmo/Documents/GitHub/qcore-c/private/premise-resolution-cycle2/tip-freeze/inputs/providers/contract-load-path.json",
+      "relative_file": "providers/contract-load-path.json",
+      "held_sha256": "9f56e0b96e9891533841a2778e193859204f79a736fa48d37bb6468db50a1cdd",
+      "counterpart_sha256": "9f56e0b96e9891533841a2778e193859204f79a736fa48d37bb6468db50a1cdd",
+      "proof": "byte-exact identity",
+      "metadata_occurrences": 1,
+      "field_kinds": [
+        "path"
+      ]
+    },
+    {
+      "held_file": "/home/cosmo/Documents/GitHub/qcore-c/private/premise-resolution-cycle2/base-freeze/inputs/providers/qcore-provider-librdkafka/outer-candidates.json",
+      "counterpart_file": "/home/cosmo/Documents/GitHub/qcore-c/private/premise-resolution-cycle2/tip-freeze/inputs/providers/qcore-provider-librdkafka/outer-candidates.json",
+      "relative_file": "providers/qcore-provider-librdkafka/outer-candidates.json",
+      "held_sha256": "5c3f8c4723832c0e9e6ebb784be6a57ebc0264d519421d5b95a18a8f68c18147",
+      "counterpart_sha256": "5c3f8c4723832c0e9e6ebb784be6a57ebc0264d519421d5b95a18a8f68c18147",
+      "proof": "byte-exact identity",
+      "metadata_occurrences": 1,
+      "field_kinds": [
+        "path"
+      ]
+    },
+    {
+      "held_file": "/home/cosmo/Documents/GitHub/qcore-c/private/premise-resolution-cycle2/base-freeze/inputs/providers/quirin-provider-fluent-bit/outer-contracts.lock",
+      "counterpart_file": "/home/cosmo/Documents/GitHub/qcore-c/private/premise-resolution-cycle2/tip-freeze/inputs/providers/quirin-provider-fluent-bit/outer-contracts.lock",
+      "relative_file": "providers/quirin-provider-fluent-bit/outer-contracts.lock",
+      "held_sha256": "6bdabe473897b6b5f15f30431725785d46c2c77ebcaf4851b44865afa12bc2db",
+      "counterpart_sha256": "6bdabe473897b6b5f15f30431725785d46c2c77ebcaf4851b44865afa12bc2db",
+      "proof": "byte-exact identity",
+      "metadata_occurrences": 2,
+      "field_kinds": [
+        "lock"
+      ]
+    },
+    {
+      "held_file": "/home/cosmo/Documents/GitHub/qcore-c/private/premise-resolution-cycle2/base-freeze/inputs/providers/qcore-provider-librdkafka/outer-contracts.lock",
+      "counterpart_file": "/home/cosmo/Documents/GitHub/qcore-c/private/premise-resolution-cycle2/tip-freeze/inputs/providers/qcore-provider-librdkafka/outer-contracts.lock",
+      "relative_file": "providers/qcore-provider-librdkafka/outer-contracts.lock",
+      "held_sha256": "a80f67f6b284e60ce3b7f4c8fd5d56726b4f584bdc85a3e8ed2dab2a07f7123b",
+      "counterpart_sha256": "a80f67f6b284e60ce3b7f4c8fd5d56726b4f584bdc85a3e8ed2dab2a07f7123b",
+      "proof": "byte-exact identity",
+      "metadata_occurrences": 1,
+      "field_kinds": [
+        "lock"
+      ]
+    },
+    {
+      "held_file": "/home/cosmo/Documents/GitHub/qcore-c/private/premise-resolution-cycle2/tip-freeze/inputs/providers/quirin-provider-fluent-bit/contracts/fluent_bit/lib_engine_thread.qv",
+      "counterpart_file": "/home/cosmo/Documents/GitHub/qcore-c/private/premise-resolution-cycle2/base-freeze/inputs/providers/quirin-provider-fluent-bit/contracts/fluent_bit/lib_engine_thread.qv",
+      "relative_file": "providers/quirin-provider-fluent-bit/contracts/fluent_bit/lib_engine_thread.qv",
+      "held_sha256": "154ad0b2815f4207f690da1c1f04ee3c5adf0bc14f44bfdb89b41a5bef1e46aa",
+      "counterpart_sha256": "154ad0b2815f4207f690da1c1f04ee3c5adf0bc14f44bfdb89b41a5bef1e46aa",
+      "proof": "byte-exact identity",
+      "metadata_occurrences": 23,
+      "field_kinds": [
+        "module",
+        "$key"
+      ]
+    },
+    {
+      "held_file": "/home/cosmo/Documents/GitHub/qcore-c/private/premise-resolution-cycle2/tip-freeze/inputs/providers/quirin-provider-fluent-bit/contracts/fluent_bit/input_instance.qv",
+      "counterpart_file": "/home/cosmo/Documents/GitHub/qcore-c/private/premise-resolution-cycle2/base-freeze/inputs/providers/quirin-provider-fluent-bit/contracts/fluent_bit/input_instance.qv",
+      "relative_file": "providers/quirin-provider-fluent-bit/contracts/fluent_bit/input_instance.qv",
+      "held_sha256": "95ed00f8b44a8d751b1ecc06ee576f1845563dfb45e4ef3ab81962cbf92c2fac",
+      "counterpart_sha256": "95ed00f8b44a8d751b1ecc06ee576f1845563dfb45e4ef3ab81962cbf92c2fac",
+      "proof": "byte-exact identity",
+      "metadata_occurrences": 27,
+      "field_kinds": [
+        "module",
+        "$key"
+      ]
+    },
+    {
+      "held_file": "/home/cosmo/Documents/GitHub/qcore-c/private/premise-resolution-cycle2/tip-freeze/inputs/providers/quirin-provider-libc/contracts/libc/errno.qv",
+      "counterpart_file": "/home/cosmo/Documents/GitHub/qcore-c/private/premise-resolution-cycle2/base-freeze/inputs/providers/quirin-provider-libc/contracts/libc/errno.qv",
+      "relative_file": "providers/quirin-provider-libc/contracts/libc/errno.qv",
+      "held_sha256": "a9bbcb0e6111186cbf828d6303b3b27b459002f5ff732a93e6a390b17ee42ec3",
+      "counterpart_sha256": "a9bbcb0e6111186cbf828d6303b3b27b459002f5ff732a93e6a390b17ee42ec3",
+      "proof": "byte-exact identity",
+      "metadata_occurrences": 4,
+      "field_kinds": [
+        "module",
+        "$key"
+      ]
+    },
+    {
+      "held_file": "/home/cosmo/Documents/GitHub/qcore-c/private/premise-resolution-cycle2/tip-freeze/inputs/providers/quirin-provider-libc/contracts/libc/unistd.qv",
+      "counterpart_file": "/home/cosmo/Documents/GitHub/qcore-c/private/premise-resolution-cycle2/base-freeze/inputs/providers/quirin-provider-libc/contracts/libc/unistd.qv",
+      "relative_file": "providers/quirin-provider-libc/contracts/libc/unistd.qv",
+      "held_sha256": "be6f9f900e22c8127e71da391353b21587fc701a06bf59c985dafd4f8467a088",
+      "counterpart_sha256": "be6f9f900e22c8127e71da391353b21587fc701a06bf59c985dafd4f8467a088",
+      "proof": "byte-exact identity",
+      "metadata_occurrences": 21,
+      "field_kinds": [
+        "module",
+        "$key"
+      ]
+    },
+    {
+      "held_file": "/home/cosmo/Documents/GitHub/qcore-c/private/premise-resolution-cycle2/tip-freeze/inputs/providers/quirin-provider-libc/contracts/libc/stdlib.qv",
+      "counterpart_file": "/home/cosmo/Documents/GitHub/qcore-c/private/premise-resolution-cycle2/base-freeze/inputs/providers/quirin-provider-libc/contracts/libc/stdlib.qv",
+      "relative_file": "providers/quirin-provider-libc/contracts/libc/stdlib.qv",
+      "held_sha256": "111503b7e38a3e5abdf6e3c17876cb8946470b7120858ca3af579e786d9f4293",
+      "counterpart_sha256": "111503b7e38a3e5abdf6e3c17876cb8946470b7120858ca3af579e786d9f4293",
+      "proof": "byte-exact identity",
+      "metadata_occurrences": 20,
+      "field_kinds": [
+        "module",
+        "$key"
+      ]
+    },
+    {
+      "held_file": "/home/cosmo/Documents/GitHub/qcore-c/private/premise-resolution-cycle2/tip-freeze/inputs/providers/quirin-provider-fluent-bit/contracts/fluent_bit/storage_backlog.qv",
+      "counterpart_file": "/home/cosmo/Documents/GitHub/qcore-c/private/premise-resolution-cycle2/base-freeze/inputs/providers/quirin-provider-fluent-bit/contracts/fluent_bit/storage_backlog.qv",
+      "relative_file": "providers/quirin-provider-fluent-bit/contracts/fluent_bit/storage_backlog.qv",
+      "held_sha256": "8bea72df56e4397c09c3bb21f71b579f069f8bd031cc4c3a0950532aa1691d83",
+      "counterpart_sha256": "8bea72df56e4397c09c3bb21f71b579f069f8bd031cc4c3a0950532aa1691d83",
+      "proof": "byte-exact identity",
+      "metadata_occurrences": 37,
+      "field_kinds": [
+        "module",
+        "$key"
+      ]
+    },
+    {
+      "held_file": "/home/cosmo/Documents/GitHub/qcore-c/private/premise-resolution-cycle2/tip-freeze/inputs/providers/quirin-provider-cfl/contracts/cfl/time.qv",
+      "counterpart_file": "/home/cosmo/Documents/GitHub/qcore-c/private/premise-resolution-cycle2/base-freeze/inputs/providers/quirin-provider-cfl/contracts/cfl/time.qv",
+      "relative_file": "providers/quirin-provider-cfl/contracts/cfl/time.qv",
+      "held_sha256": "1696e45592e854e29d6e0117ab9c037f46158c33c4a340027739558e9b137bb6",
+      "counterpart_sha256": "1696e45592e854e29d6e0117ab9c037f46158c33c4a340027739558e9b137bb6",
+      "proof": "byte-exact identity",
+      "metadata_occurrences": 4,
+      "field_kinds": [
+        "module",
+        "$key"
+      ]
+    },
+    {
+      "held_file": "/home/cosmo/Documents/GitHub/qcore-c/private/premise-resolution-cycle2/tip-freeze/inputs/providers/qcore-provider-cmetrics/contracts/cmetrics/context_lifetime.qv",
+      "counterpart_file": "/home/cosmo/Documents/GitHub/qcore-c/private/premise-resolution-cycle2/base-freeze/inputs/providers/qcore-provider-cmetrics/contracts/cmetrics/context_lifetime.qv",
+      "relative_file": "providers/qcore-provider-cmetrics/contracts/cmetrics/context_lifetime.qv",
+      "held_sha256": "1ba76df850e122ae7a37a529594f94ad2257c31de5383e0fe106e063c2731014",
+      "counterpart_sha256": "1ba76df850e122ae7a37a529594f94ad2257c31de5383e0fe106e063c2731014",
+      "proof": "byte-exact identity",
+      "metadata_occurrences": 6,
+      "field_kinds": [
+        "module",
+        "$key"
+      ]
+    },
+    {
+      "held_file": "/home/cosmo/Documents/GitHub/qcore-c/private/premise-resolution-cycle2/tip-freeze/inputs/providers/quirin-provider-libc/contracts/libc/stdio.qv",
+      "counterpart_file": "/home/cosmo/Documents/GitHub/qcore-c/private/premise-resolution-cycle2/base-freeze/inputs/providers/quirin-provider-libc/contracts/libc/stdio.qv",
+      "relative_file": "providers/quirin-provider-libc/contracts/libc/stdio.qv",
+      "held_sha256": "6e772eb0890e5a0a63414576d963a859bec451f1286f7ed52504dc5cbac5dbf8",
+      "counterpart_sha256": "6e772eb0890e5a0a63414576d963a859bec451f1286f7ed52504dc5cbac5dbf8",
+      "proof": "byte-exact identity",
+      "metadata_occurrences": 17,
+      "field_kinds": [
+        "module",
+        "$key"
+      ]
+    },
+    {
+      "held_file": "/home/cosmo/Documents/GitHub/qcore-c/private/premise-resolution-cycle2/tip-freeze/inputs/providers/quirin-provider-fluent-bit/contracts/fluent_bit/teardown_destroy.qv",
+      "counterpart_file": "/home/cosmo/Documents/GitHub/qcore-c/private/premise-resolution-cycle2/base-freeze/inputs/providers/quirin-provider-fluent-bit/contracts/fluent_bit/teardown_destroy.qv",
+      "relative_file": "providers/quirin-provider-fluent-bit/contracts/fluent_bit/teardown_destroy.qv",
+      "held_sha256": "8eb681b2a3f3a43c4d87b4ab9359716e52d6dafe67f8b25f8edb36412b47ab1c",
+      "counterpart_sha256": "8eb681b2a3f3a43c4d87b4ab9359716e52d6dafe67f8b25f8edb36412b47ab1c",
+      "proof": "byte-exact identity",
+      "metadata_occurrences": 35,
+      "field_kinds": [
+        "module",
+        "$key"
+      ]
+    },
+    {
+      "held_file": "/home/cosmo/Documents/GitHub/qcore-c/private/premise-resolution-cycle2/tip-freeze/inputs/providers/quirin-provider-fluent-bit/contracts/fluent_bit/logging.qv",
+      "counterpart_file": "/home/cosmo/Documents/GitHub/qcore-c/private/premise-resolution-cycle2/base-freeze/inputs/providers/quirin-provider-fluent-bit/contracts/fluent_bit/logging.qv",
+      "relative_file": "providers/quirin-provider-fluent-bit/contracts/fluent_bit/logging.qv",
+      "held_sha256": "c5fa867ac7e7c02bdc4d693788637620fd1c496e146e2afb656211424d618ad8",
+      "counterpart_sha256": "c5fa867ac7e7c02bdc4d693788637620fd1c496e146e2afb656211424d618ad8",
+      "proof": "byte-exact identity",
+      "metadata_occurrences": 19,
+      "field_kinds": [
+        "module",
+        "source_module",
+        "$key"
+      ]
+    },
+    {
+      "held_file": "/home/cosmo/Documents/GitHub/qcore-c/private/premise-resolution-cycle2/tip-freeze/inputs/providers/quirin-provider-fluent-bit/contracts/fluent_bit/hash_table_publication.qv",
+      "counterpart_file": "/home/cosmo/Documents/GitHub/qcore-c/private/premise-resolution-cycle2/base-freeze/inputs/providers/quirin-provider-fluent-bit/contracts/fluent_bit/hash_table_publication.qv",
+      "relative_file": "providers/quirin-provider-fluent-bit/contracts/fluent_bit/hash_table_publication.qv",
+      "held_sha256": "209d0491da15604e7c31bb7e961fe97f3ad6dba73e5696024bc4190c5a81ae41",
+      "counterpart_sha256": "209d0491da15604e7c31bb7e961fe97f3ad6dba73e5696024bc4190c5a81ae41",
+      "proof": "byte-exact identity",
+      "metadata_occurrences": 7,
+      "field_kinds": [
+        "module",
+        "$key"
+      ]
+    },
+    {
+      "held_file": "/home/cosmo/Documents/GitHub/qcore-c/private/premise-resolution-cycle2/tip-freeze/inputs/providers/quirin-provider-fluent-bit/contracts/fluent_bit/loop_owner.qv",
+      "counterpart_file": "/home/cosmo/Documents/GitHub/qcore-c/private/premise-resolution-cycle2/base-freeze/inputs/providers/quirin-provider-fluent-bit/contracts/fluent_bit/loop_owner.qv",
+      "relative_file": "providers/quirin-provider-fluent-bit/contracts/fluent_bit/loop_owner.qv",
+      "held_sha256": "cc4ff75530269aa85f1e754024590a56aefe2f85f21df7adcf1472e8c6f774aa",
+      "counterpart_sha256": "cc4ff75530269aa85f1e754024590a56aefe2f85f21df7adcf1472e8c6f774aa",
+      "proof": "byte-exact identity",
+      "metadata_occurrences": 13,
+      "field_kinds": [
+        "module",
+        "$key"
+      ]
+    },
+    {
+      "held_file": "/home/cosmo/Documents/GitHub/qcore-c/private/premise-resolution-cycle2/tip-freeze/inputs/providers/quirin-provider-fluent-bit/contracts/fluent_bit/input_collector_registration.qv",
+      "counterpart_file": "/home/cosmo/Documents/GitHub/qcore-c/private/premise-resolution-cycle2/base-freeze/inputs/providers/quirin-provider-fluent-bit/contracts/fluent_bit/input_collector_registration.qv",
+      "relative_file": "providers/quirin-provider-fluent-bit/contracts/fluent_bit/input_collector_registration.qv",
+      "held_sha256": "4cdabeffd70e4d5fdf3edd3a273b03e2ba6484375734a4fa34a8e10ecaf197a4",
+      "counterpart_sha256": "4cdabeffd70e4d5fdf3edd3a273b03e2ba6484375734a4fa34a8e10ecaf197a4",
+      "proof": "byte-exact identity",
+      "metadata_occurrences": 10,
+      "field_kinds": [
+        "module",
+        "$key"
+      ]
+    },
+    {
+      "held_file": "/home/cosmo/Documents/GitHub/qcore-c/private/premise-resolution-cycle2/tip-freeze/inputs/providers/quirin-provider-fluent-bit/contracts/fluent_bit/time.qv",
+      "counterpart_file": "/home/cosmo/Documents/GitHub/qcore-c/private/premise-resolution-cycle2/base-freeze/inputs/providers/quirin-provider-fluent-bit/contracts/fluent_bit/time.qv",
+      "relative_file": "providers/quirin-provider-fluent-bit/contracts/fluent_bit/time.qv",
+      "held_sha256": "e81170f7f36f50f1c93ed0d2a69b2a7f3e3e26714f6627ca3e9326fb87c10784",
+      "counterpart_sha256": "e81170f7f36f50f1c93ed0d2a69b2a7f3e3e26714f6627ca3e9326fb87c10784",
+      "proof": "byte-exact identity",
+      "metadata_occurrences": 4,
+      "field_kinds": [
+        "module",
+        "$key"
+      ]
+    },
+    {
+      "held_file": "/home/cosmo/Documents/GitHub/qcore-c/private/premise-resolution-cycle2/tip-freeze/inputs/providers/quirin-provider-libc/contracts/libc/memory.qv",
+      "counterpart_file": "/home/cosmo/Documents/GitHub/qcore-c/private/premise-resolution-cycle2/base-freeze/inputs/providers/quirin-provider-libc/contracts/libc/memory.qv",
+      "relative_file": "providers/quirin-provider-libc/contracts/libc/memory.qv",
+      "held_sha256": "dec99ab65e1abe68f8344e6a2fc45e31221f9015a5ed0285bae2ff384f2db34f",
+      "counterpart_sha256": "dec99ab65e1abe68f8344e6a2fc45e31221f9015a5ed0285bae2ff384f2db34f",
+      "proof": "byte-exact identity",
+      "metadata_occurrences": 5,
+      "field_kinds": [
+        "module",
+        "$key"
+      ]
+    },
+    {
+      "held_file": "/home/cosmo/Documents/GitHub/qcore-c/private/premise-resolution-cycle2/tip-freeze/inputs/providers/quirin-provider-libc/contracts/libc/sys_stat.qv",
+      "counterpart_file": "/home/cosmo/Documents/GitHub/qcore-c/private/premise-resolution-cycle2/base-freeze/inputs/providers/quirin-provider-libc/contracts/libc/sys_stat.qv",
+      "relative_file": "providers/quirin-provider-libc/contracts/libc/sys_stat.qv",
+      "held_sha256": "f11ab5fddc48c3ca44ff4ce588bf7f43816f32c4f70fa630d1c2c52c0e87c261",
+      "counterpart_sha256": "f11ab5fddc48c3ca44ff4ce588bf7f43816f32c4f70fa630d1c2c52c0e87c261",
+      "proof": "byte-exact identity",
+      "metadata_occurrences": 9,
+      "field_kinds": [
+        "module",
+        "$key"
+      ]
+    },
+    {
+      "held_file": "/home/cosmo/Documents/GitHub/qcore-c/private/premise-resolution-cycle2/tip-freeze/inputs/providers/quirin-provider-libc/contracts/libc/socket.qv",
+      "counterpart_file": "/home/cosmo/Documents/GitHub/qcore-c/private/premise-resolution-cycle2/base-freeze/inputs/providers/quirin-provider-libc/contracts/libc/socket.qv",
+      "relative_file": "providers/quirin-provider-libc/contracts/libc/socket.qv",
+      "held_sha256": "00e22e461721db5669d15336fff0e3cbc0385d9045d31dfa1e8975b095bb2eea",
+      "counterpart_sha256": "00e22e461721db5669d15336fff0e3cbc0385d9045d31dfa1e8975b095bb2eea",
+      "proof": "byte-exact identity",
+      "metadata_occurrences": 14,
+      "field_kinds": [
+        "module",
+        "$key"
+      ]
+    },
+    {
+      "held_file": "/home/cosmo/Documents/GitHub/qcore-c/private/premise-resolution-cycle2/tip-freeze/inputs/providers/quirin-provider-libc/contracts/libc/string.qv",
+      "counterpart_file": "/home/cosmo/Documents/GitHub/qcore-c/private/premise-resolution-cycle2/base-freeze/inputs/providers/quirin-provider-libc/contracts/libc/string.qv",
+      "relative_file": "providers/quirin-provider-libc/contracts/libc/string.qv",
+      "held_sha256": "6c59574468efc24ccd5fbc1fe4570d225087ec4f43c9818f678d74a75c89cc7f",
+      "counterpart_sha256": "6c59574468efc24ccd5fbc1fe4570d225087ec4f43c9818f678d74a75c89cc7f",
+      "proof": "byte-exact identity",
+      "metadata_occurrences": 33,
+      "field_kinds": [
+        "module",
+        "$key"
+      ]
+    },
+    {
+      "held_file": "/home/cosmo/Documents/GitHub/qcore-c/private/premise-resolution-cycle2/tip-freeze/inputs/providers/qcore-provider-libevent/contracts/monkey/event_loop.qv",
+      "counterpart_file": "/home/cosmo/Documents/GitHub/qcore-c/private/premise-resolution-cycle2/base-freeze/inputs/providers/qcore-provider-libevent/contracts/monkey/event_loop.qv",
+      "relative_file": "providers/qcore-provider-libevent/contracts/monkey/event_loop.qv",
+      "held_sha256": "bcd64a750c1830c44b501d0fc13cd19268c40751aa909789ca1598ca11085e15",
+      "counterpart_sha256": "bcd64a750c1830c44b501d0fc13cd19268c40751aa909789ca1598ca11085e15",
+      "proof": "byte-exact identity",
+      "metadata_occurrences": 28,
+      "field_kinds": [
+        "module",
+        "$key"
+      ]
+    },
+    {
+      "held_file": "/home/cosmo/Documents/GitHub/qcore-c/private/premise-resolution-cycle2/tip-freeze/inputs/providers/qcore-provider-libevent/contracts/monkey/intrusive_list.qv",
+      "counterpart_file": "/home/cosmo/Documents/GitHub/qcore-c/private/premise-resolution-cycle2/base-freeze/inputs/providers/qcore-provider-libevent/contracts/monkey/intrusive_list.qv",
+      "relative_file": "providers/qcore-provider-libevent/contracts/monkey/intrusive_list.qv",
+      "held_sha256": "37acb50318b1d658ce6366a3fb42c84ea349ba5f6570f21bffc072de47efd8e8",
+      "counterpart_sha256": "37acb50318b1d658ce6366a3fb42c84ea349ba5f6570f21bffc072de47efd8e8",
+      "proof": "byte-exact identity",
+      "metadata_occurrences": 9,
+      "field_kinds": [
+        "module",
+        "$key"
+      ]
+    },
+    {
+      "held_file": "/home/cosmo/Documents/GitHub/qcore-c/private/premise-resolution-cycle2/tip-freeze/inputs/providers/quirin-provider-msgpack/contracts/msgpack/packer.qv",
+      "counterpart_file": "/home/cosmo/Documents/GitHub/qcore-c/private/premise-resolution-cycle2/base-freeze/inputs/providers/quirin-provider-msgpack/contracts/msgpack/packer.qv",
+      "relative_file": "providers/quirin-provider-msgpack/contracts/msgpack/packer.qv",
+      "held_sha256": "2325d107ca7c672db6bcdae8370edfccf3c946c45a2a341e681244ffd3610040",
+      "counterpart_sha256": "2325d107ca7c672db6bcdae8370edfccf3c946c45a2a341e681244ffd3610040",
+      "proof": "byte-exact identity",
+      "metadata_occurrences": 4,
+      "field_kinds": [
+        "module",
+        "$key"
+      ]
+    },
+    {
+      "held_file": "/home/cosmo/Documents/GitHub/qcore-c/private/premise-resolution-cycle2/tip-freeze/inputs/providers/quirin-provider-libc/contracts/libc/pthread_sync.qv",
+      "counterpart_file": "/home/cosmo/Documents/GitHub/qcore-c/private/premise-resolution-cycle2/base-freeze/inputs/providers/quirin-provider-libc/contracts/libc/pthread_sync.qv",
+      "relative_file": "providers/quirin-provider-libc/contracts/libc/pthread_sync.qv",
+      "held_sha256": "c1a2bbf313fa7010c5e06e9dff7307cb5d684a7696ae8ce43799703736a72909",
+      "counterpart_sha256": "c1a2bbf313fa7010c5e06e9dff7307cb5d684a7696ae8ce43799703736a72909",
+      "proof": "byte-exact identity",
+      "metadata_occurrences": 12,
+      "field_kinds": [
+        "module",
+        "$key"
+      ]
+    },
+    {
+      "held_file": "/home/cosmo/Documents/GitHub/qcore-c/private/premise-resolution-cycle2/tip-freeze/inputs/providers/quirin-provider-libc/contracts/libc/pthread_mutex.qv",
+      "counterpart_file": "/home/cosmo/Documents/GitHub/qcore-c/private/premise-resolution-cycle2/base-freeze/inputs/providers/quirin-provider-libc/contracts/libc/pthread_mutex.qv",
+      "relative_file": "providers/quirin-provider-libc/contracts/libc/pthread_mutex.qv",
+      "held_sha256": "fb55d21dac8ae878a69b77df04f2cd5c920d58266cc9ecd6a54eec0a9bce6679",
+      "counterpart_sha256": "fb55d21dac8ae878a69b77df04f2cd5c920d58266cc9ecd6a54eec0a9bce6679",
+      "proof": "byte-exact identity",
+      "metadata_occurrences": 5,
+      "field_kinds": [
+        "module",
+        "$key"
+      ]
+    },
+    {
+      "held_file": "/home/cosmo/Documents/GitHub/qcore-c/private/premise-resolution-cycle2/tip-freeze/inputs/providers/quirin-provider-libc/contracts/libc/threads.qv",
+      "counterpart_file": "/home/cosmo/Documents/GitHub/qcore-c/private/premise-resolution-cycle2/base-freeze/inputs/providers/quirin-provider-libc/contracts/libc/threads.qv",
+      "relative_file": "providers/quirin-provider-libc/contracts/libc/threads.qv",
+      "held_sha256": "a0ccacd82d541743f208208534732550dc9893dd57452a3b2dd0632398998db3",
+      "counterpart_sha256": "a0ccacd82d541743f208208534732550dc9893dd57452a3b2dd0632398998db3",
+      "proof": "byte-exact identity",
+      "metadata_occurrences": 19,
+      "field_kinds": [
+        "module",
+        "$key"
+      ]
+    },
+    {
+      "held_file": "/home/cosmo/Documents/GitHub/qcore-c/private/premise-resolution-cycle2/tip-freeze/inputs/providers/quirin-provider-libc/contracts/libc/time.qv",
+      "counterpart_file": "/home/cosmo/Documents/GitHub/qcore-c/private/premise-resolution-cycle2/base-freeze/inputs/providers/quirin-provider-libc/contracts/libc/time.qv",
+      "relative_file": "providers/quirin-provider-libc/contracts/libc/time.qv",
+      "held_sha256": "cd8b5188b82d239d12b15bf1ebf81fdf0dc679a71605e43223f665cf58bfc986",
+      "counterpart_sha256": "cd8b5188b82d239d12b15bf1ebf81fdf0dc679a71605e43223f665cf58bfc986",
+      "proof": "byte-exact identity",
+      "metadata_occurrences": 9,
+      "field_kinds": [
+        "module",
+        "$key"
+      ]
+    },
+    {
+      "held_file": "/home/cosmo/Documents/GitHub/qcore-c/private/premise-resolution-cycle2/tip-freeze/inputs/providers/qcore-provider-librdkafka/contracts/librdkafka/cjson.qv",
+      "counterpart_file": "/home/cosmo/Documents/GitHub/qcore-c/private/premise-resolution-cycle2/base-freeze/inputs/providers/qcore-provider-librdkafka/contracts/librdkafka/cjson.qv",
+      "relative_file": "providers/qcore-provider-librdkafka/contracts/librdkafka/cjson.qv",
+      "held_sha256": "3ad75ee24b3cb08232cf2b7000e262d3d4d7374e9196cb3254944fd16706e4fd",
+      "counterpart_sha256": "3ad75ee24b3cb08232cf2b7000e262d3d4d7374e9196cb3254944fd16706e4fd",
+      "proof": "byte-exact identity",
+      "metadata_occurrences": 18,
+      "field_kinds": [
+        "source_module",
+        "module",
+        "$key"
+      ]
+    },
+    {
+      "held_file": "/home/cosmo/Documents/GitHub/qcore-c/private/premise-resolution-cycle2/tip-freeze/inputs/providers/qcore-provider-librdkafka/contracts/librdkafka/client.qv",
+      "counterpart_file": "/home/cosmo/Documents/GitHub/qcore-c/private/premise-resolution-cycle2/base-freeze/inputs/providers/qcore-provider-librdkafka/contracts/librdkafka/client.qv",
+      "relative_file": "providers/qcore-provider-librdkafka/contracts/librdkafka/client.qv",
+      "held_sha256": "288d0fa65ffe6832d11dd06acd5ebf3d8b3d211e5a76f382e130c0a13c402946",
+      "counterpart_sha256": "288d0fa65ffe6832d11dd06acd5ebf3d8b3d211e5a76f382e130c0a13c402946",
+      "proof": "byte-exact identity",
+      "metadata_occurrences": 346,
+      "field_kinds": [
+        "source_module",
+        "module",
+        "$key"
+      ]
+    },
+    {
+      "held_file": "/home/cosmo/Documents/GitHub/qcore-c/private/premise-resolution-cycle2/tip-freeze/inputs/providers/qcore-provider-librdkafka/contracts/librdkafka/kafka_mem.qv",
+      "counterpart_file": "/home/cosmo/Documents/GitHub/qcore-c/private/premise-resolution-cycle2/base-freeze/inputs/providers/qcore-provider-librdkafka/contracts/librdkafka/kafka_mem.qv",
+      "relative_file": "providers/qcore-provider-librdkafka/contracts/librdkafka/kafka_mem.qv",
+      "held_sha256": "3924b280719d1064dfcf821f4d6eec5e00033f2b2551e8a6cc6b4dc0784624be",
+      "counterpart_sha256": "3924b280719d1064dfcf821f4d6eec5e00033f2b2551e8a6cc6b4dc0784624be",
+      "proof": "byte-exact identity",
+      "metadata_occurrences": 18,
+      "field_kinds": [
+        "source_module",
+        "module",
+        "$key"
+      ]
+    },
+    {
+      "held_file": "/home/cosmo/Documents/GitHub/qcore-c/private/premise-resolution-cycle2/tip-freeze/inputs/providers/qcore-provider-librdkafka/contracts/librdkafka/lz4_stream.qv",
+      "counterpart_file": "/home/cosmo/Documents/GitHub/qcore-c/private/premise-resolution-cycle2/base-freeze/inputs/providers/qcore-provider-librdkafka/contracts/librdkafka/lz4_stream.qv",
+      "relative_file": "providers/qcore-provider-librdkafka/contracts/librdkafka/lz4_stream.qv",
+      "held_sha256": "0b3c92fc7476d1f0a0d11d5954a9445882c66897d2409eda55e9efbd6db8ce74",
+      "counterpart_sha256": "0b3c92fc7476d1f0a0d11d5954a9445882c66897d2409eda55e9efbd6db8ce74",
+      "proof": "byte-exact identity",
+      "metadata_occurrences": 19,
+      "field_kinds": [
+        "module",
+        "$key"
+      ]
+    },
+    {
+      "held_file": "/home/cosmo/Documents/GitHub/qcore-c/private/premise-resolution-cycle2/tip-freeze/inputs/providers/qcore-provider-libevent/contracts/monkey/scalar_observation.qv",
+      "counterpart_file": "/home/cosmo/Documents/GitHub/qcore-c/private/premise-resolution-cycle2/base-freeze/inputs/providers/qcore-provider-libevent/contracts/monkey/scalar_observation.qv",
+      "relative_file": "providers/qcore-provider-libevent/contracts/monkey/scalar_observation.qv",
+      "held_sha256": "8f400380f17d656598422a0e8430dcf154d96893bba664e620d4e6a60c5e1def",
+      "counterpart_sha256": "8f400380f17d656598422a0e8430dcf154d96893bba664e620d4e6a60c5e1def",
+      "proof": "byte-exact identity",
+      "metadata_occurrences": 15,
+      "field_kinds": [
+        "module",
+        "$key"
+      ]
+    },
+    {
+      "held_file": "/home/cosmo/Documents/GitHub/qcore-c/private/premise-resolution-cycle2/tip-freeze/inputs/providers/qcore-provider-chunkio/contracts/chunkio/chunk_residency.qv",
+      "counterpart_file": "/home/cosmo/Documents/GitHub/qcore-c/private/premise-resolution-cycle2/base-freeze/inputs/providers/qcore-provider-chunkio/contracts/chunkio/chunk_residency.qv",
+      "relative_file": "providers/qcore-provider-chunkio/contracts/chunkio/chunk_residency.qv",
+      "held_sha256": "1e263d09958646bc09ce70ef1d6db4c2c3fb5b789fe56b2e00904189cb4a8de6",
+      "counterpart_sha256": "1e263d09958646bc09ce70ef1d6db4c2c3fb5b789fe56b2e00904189cb4a8de6",
+      "proof": "byte-exact identity",
+      "metadata_occurrences": 11,
+      "field_kinds": [
+        "module",
+        "$key"
+      ]
+    },
+    {
+      "held_file": "/home/cosmo/Documents/GitHub/qcore-c/private/premise-resolution-cycle2/tip-freeze/inputs/providers/quirin-provider-fluent-bit/contracts/fluent_bit/input_chunk_helpers.qv",
+      "counterpart_file": "/home/cosmo/Documents/GitHub/qcore-c/private/premise-resolution-cycle2/base-freeze/inputs/providers/quirin-provider-fluent-bit/contracts/fluent_bit/input_chunk_helpers.qv",
+      "relative_file": "providers/quirin-provider-fluent-bit/contracts/fluent_bit/input_chunk_helpers.qv",
+      "held_sha256": "be6f7f270596ec192b8798f69adfc88d34e4369a3ab336d0f9c0e1349cc8f44b",
+      "counterpart_sha256": "be6f7f270596ec192b8798f69adfc88d34e4369a3ab336d0f9c0e1349cc8f44b",
+      "proof": "byte-exact identity",
+      "metadata_occurrences": 7,
+      "field_kinds": [
+        "module",
+        "$key"
+      ]
+    },
+    {
+      "held_file": "/home/cosmo/Documents/GitHub/qcore-c/private/premise-resolution-cycle2/tip-freeze/inputs/providers/quirin-provider-libc/contracts/libc/math.qv",
+      "counterpart_file": "/home/cosmo/Documents/GitHub/qcore-c/private/premise-resolution-cycle2/base-freeze/inputs/providers/quirin-provider-libc/contracts/libc/math.qv",
+      "relative_file": "providers/quirin-provider-libc/contracts/libc/math.qv",
+      "held_sha256": "4015f9b71721b861129cde42e64fa4335518e0ecdd33ee953f2ab1fa8ddf2214",
+      "counterpart_sha256": "4015f9b71721b861129cde42e64fa4335518e0ecdd33ee953f2ab1fa8ddf2214",
+      "proof": "byte-exact identity",
+      "metadata_occurrences": 5,
+      "field_kinds": [
+        "module",
+        "$key"
+      ]
+    },
+    {
+      "held_file": "/home/cosmo/Documents/GitHub/qcore-c/private/premise-resolution-cycle2/tip-freeze/inputs/providers/quirin-provider-cfl/contracts/cfl/sds_lifetime.qv",
+      "counterpart_file": "/home/cosmo/Documents/GitHub/qcore-c/private/premise-resolution-cycle2/base-freeze/inputs/providers/quirin-provider-cfl/contracts/cfl/sds_lifetime.qv",
+      "relative_file": "providers/quirin-provider-cfl/contracts/cfl/sds_lifetime.qv",
+      "held_sha256": "a3684cfe27ec6d829b825e939f2574c67754fd3505a406143215a05ba44ebc56",
+      "counterpart_sha256": "a3684cfe27ec6d829b825e939f2574c67754fd3505a406143215a05ba44ebc56",
+      "proof": "byte-exact identity",
+      "metadata_occurrences": 25,
+      "field_kinds": [
+        "module",
+        "$key"
+      ]
+    },
+    {
+      "held_file": "/home/cosmo/Documents/GitHub/qcore-c/private/premise-resolution-cycle2/tip-freeze/inputs/providers/qcore-provider-chunkio/contracts/chunkio/resource_open_close.qv",
+      "counterpart_file": "/home/cosmo/Documents/GitHub/qcore-c/private/premise-resolution-cycle2/base-freeze/inputs/providers/qcore-provider-chunkio/contracts/chunkio/resource_open_close.qv",
+      "relative_file": "providers/qcore-provider-chunkio/contracts/chunkio/resource_open_close.qv",
+      "held_sha256": "e3e9b6ba36bdc9ad3cf193364f399902bf1a23fd80198c50c13f101e69480a8c",
+      "counterpart_sha256": "e3e9b6ba36bdc9ad3cf193364f399902bf1a23fd80198c50c13f101e69480a8c",
+      "proof": "byte-exact identity",
+      "metadata_occurrences": 5,
+      "field_kinds": [
+        "module",
+        "$key"
+      ]
+    },
+    {
+      "held_file": "/home/cosmo/Documents/GitHub/qcore-c/private/premise-resolution-cycle2/tip-freeze/inputs/providers/qcore-provider-chunkio/contracts/chunkio/chunk_sizes.qv",
+      "counterpart_file": "/home/cosmo/Documents/GitHub/qcore-c/private/premise-resolution-cycle2/base-freeze/inputs/providers/qcore-provider-chunkio/contracts/chunkio/chunk_sizes.qv",
+      "relative_file": "providers/qcore-provider-chunkio/contracts/chunkio/chunk_sizes.qv",
+      "held_sha256": "be25bb329b29dd665247237988f1cf56e868b501aec85a5c5f8368275c06e4f2",
+      "counterpart_sha256": "be25bb329b29dd665247237988f1cf56e868b501aec85a5c5f8368275c06e4f2",
+      "proof": "byte-exact identity",
+      "metadata_occurrences": 7,
+      "field_kinds": [
+        "module",
+        "$key"
+      ]
+    },
+    {
+      "held_file": "/home/cosmo/Documents/GitHub/qcore-c/private/premise-resolution-cycle2/tip-freeze/inputs/providers/quirin-provider-libc/contracts/libc/dirent.qv",
+      "counterpart_file": "/home/cosmo/Documents/GitHub/qcore-c/private/premise-resolution-cycle2/base-freeze/inputs/providers/quirin-provider-libc/contracts/libc/dirent.qv",
+      "relative_file": "providers/quirin-provider-libc/contracts/libc/dirent.qv",
+      "held_sha256": "f8fecf64f3670ea86d300791789e66d941fbb67c2ffd235e3bc98b1c324d3fa9",
+      "counterpart_sha256": "f8fecf64f3670ea86d300791789e66d941fbb67c2ffd235e3bc98b1c324d3fa9",
+      "proof": "byte-exact identity",
+      "metadata_occurrences": 3,
+      "field_kinds": [
+        "module",
+        "$key"
+      ]
+    },
+    {
+      "held_file": "/home/cosmo/Documents/GitHub/qcore-c/private/premise-resolution-cycle2/tip-freeze/inputs/providers/qcore-provider-cmetrics/contracts/cmetrics/metric_values.qv",
+      "counterpart_file": "/home/cosmo/Documents/GitHub/qcore-c/private/premise-resolution-cycle2/base-freeze/inputs/providers/qcore-provider-cmetrics/contracts/cmetrics/metric_values.qv",
+      "relative_file": "providers/qcore-provider-cmetrics/contracts/cmetrics/metric_values.qv",
+      "held_sha256": "c3db21d15d98e12fdf11fe6ffe3de98f674c94625256a94b3270f9db73be1a43",
+      "counterpart_sha256": "c3db21d15d98e12fdf11fe6ffe3de98f674c94625256a94b3270f9db73be1a43",
+      "proof": "byte-exact identity",
+      "metadata_occurrences": 49,
+      "field_kinds": [
+        "module",
+        "$key"
+      ]
+    },
+    {
+      "held_file": "/home/cosmo/Documents/GitHub/qcore-c/private/premise-resolution-cycle2/tip-freeze/inputs/providers/qcore-provider-cmetrics/contracts/cmetrics/mpack_utils.qv",
+      "counterpart_file": "/home/cosmo/Documents/GitHub/qcore-c/private/premise-resolution-cycle2/base-freeze/inputs/providers/qcore-provider-cmetrics/contracts/cmetrics/mpack_utils.qv",
+      "relative_file": "providers/qcore-provider-cmetrics/contracts/cmetrics/mpack_utils.qv",
+      "held_sha256": "c0c2c64b6b569303a24ecffd7c257641668747417851f2d12825aa13d13a93a2",
+      "counterpart_sha256": "c0c2c64b6b569303a24ecffd7c257641668747417851f2d12825aa13d13a93a2",
+      "proof": "byte-exact identity",
+      "metadata_occurrences": 7,
+      "field_kinds": [
+        "module",
+        "$key"
+      ]
+    },
+    {
+      "held_file": "/home/cosmo/Documents/GitHub/qcore-c/private/premise-resolution-cycle2/tip-freeze/inputs/providers/qcore-provider-ctraces/contracts/ctraces/context_lifetime.qv",
+      "counterpart_file": "/home/cosmo/Documents/GitHub/qcore-c/private/premise-resolution-cycle2/base-freeze/inputs/providers/qcore-provider-ctraces/contracts/ctraces/context_lifetime.qv",
+      "relative_file": "providers/qcore-provider-ctraces/contracts/ctraces/context_lifetime.qv",
+      "held_sha256": "9fd62aa72fb062548298bf9725dfff048c261a5d7f019fd0e8c524b6417a15f1",
+      "counterpart_sha256": "9fd62aa72fb062548298bf9725dfff048c261a5d7f019fd0e8c524b6417a15f1",
+      "proof": "byte-exact identity",
+      "metadata_occurrences": 39,
+      "field_kinds": [
+        "module",
+        "$key"
+      ]
+    },
+    {
+      "held_file": "/home/cosmo/Documents/GitHub/qcore-c/private/premise-resolution-cycle2/tip-freeze/inputs/providers/quirin-provider-libc/contracts/libc/dlfcn.qv",
+      "counterpart_file": "/home/cosmo/Documents/GitHub/qcore-c/private/premise-resolution-cycle2/base-freeze/inputs/providers/quirin-provider-libc/contracts/libc/dlfcn.qv",
+      "relative_file": "providers/quirin-provider-libc/contracts/libc/dlfcn.qv",
+      "held_sha256": "27ffa658847c32fa4bdc59a0d66420ae37ba70efe5a5e5999c066c1dadfb7671",
+      "counterpart_sha256": "27ffa658847c32fa4bdc59a0d66420ae37ba70efe5a5e5999c066c1dadfb7671",
+      "proof": "byte-exact identity",
+      "metadata_occurrences": 5,
+      "field_kinds": [
+        "module",
+        "$key"
+      ]
+    },
+    {
+      "held_file": "/home/cosmo/Documents/GitHub/qcore-c/private/premise-resolution-cycle2/tip-freeze/inputs/providers/quirin-provider-fluent-bit/contracts/fluent_bit/input_chunk_destroy.qv",
+      "counterpart_file": "/home/cosmo/Documents/GitHub/qcore-c/private/premise-resolution-cycle2/base-freeze/inputs/providers/quirin-provider-fluent-bit/contracts/fluent_bit/input_chunk_destroy.qv",
+      "relative_file": "providers/quirin-provider-fluent-bit/contracts/fluent_bit/input_chunk_destroy.qv",
+      "held_sha256": "073c9206df21e37d18775bcd50bd0c57b0d8c70f2f0ee5ec50a5579f5eaff897",
+      "counterpart_sha256": "073c9206df21e37d18775bcd50bd0c57b0d8c70f2f0ee5ec50a5579f5eaff897",
+      "proof": "byte-exact identity",
+      "metadata_occurrences": 3,
+      "field_kinds": [
+        "module",
+        "$key"
+      ]
+    },
+    {
+      "held_file": "/home/cosmo/Documents/GitHub/qcore-c/private/premise-resolution-cycle2/tip-freeze/inputs/providers/quirin-provider-fluent-bit/contracts/fluent_bit/input_chunk_destroy_direct_routes.qv",
+      "counterpart_file": "/home/cosmo/Documents/GitHub/qcore-c/private/premise-resolution-cycle2/base-freeze/inputs/providers/quirin-provider-fluent-bit/contracts/fluent_bit/input_chunk_destroy_direct_routes.qv",
+      "relative_file": "providers/quirin-provider-fluent-bit/contracts/fluent_bit/input_chunk_destroy_direct_routes.qv",
+      "held_sha256": "2ce152d343357466fe9ec5979362be28145f8fa707c20746ae49bc0599703974",
+      "counterpart_sha256": "2ce152d343357466fe9ec5979362be28145f8fa707c20746ae49bc0599703974",
+      "proof": "byte-exact identity",
+      "metadata_occurrences": 3,
+      "field_kinds": [
+        "module",
+        "$key"
+      ]
+    },
+    {
+      "held_file": "/home/cosmo/Documents/GitHub/qcore-c/private/premise-resolution-cycle2/tip-freeze/inputs/providers/quirin-provider-fluent-bit/contracts/fluent_bit/input_chunk_name.qv",
+      "counterpart_file": "/home/cosmo/Documents/GitHub/qcore-c/private/premise-resolution-cycle2/base-freeze/inputs/providers/quirin-provider-fluent-bit/contracts/fluent_bit/input_chunk_name.qv",
+      "relative_file": "providers/quirin-provider-fluent-bit/contracts/fluent_bit/input_chunk_name.qv",
+      "held_sha256": "8cdde48b065cf97d30b708637a7f93933e12338d03d468c6d0240ed925b47f41",
+      "counterpart_sha256": "8cdde48b065cf97d30b708637a7f93933e12338d03d468c6d0240ed925b47f41",
+      "proof": "byte-exact identity",
+      "metadata_occurrences": 3,
+      "field_kinds": [
+        "module",
+        "$key"
+      ]
+    },
+    {
+      "held_file": "/home/cosmo/Documents/GitHub/qcore-c/private/premise-resolution-cycle2/tip-freeze/inputs/providers/quirin-provider-fluent-bit/contracts/fluent_bit/input_chunk_sizes.qv",
+      "counterpart_file": "/home/cosmo/Documents/GitHub/qcore-c/private/premise-resolution-cycle2/base-freeze/inputs/providers/quirin-provider-fluent-bit/contracts/fluent_bit/input_chunk_sizes.qv",
+      "relative_file": "providers/quirin-provider-fluent-bit/contracts/fluent_bit/input_chunk_sizes.qv",
+      "held_sha256": "ba8db67de28e9ee480165c21ca2c03f398433699d5af0dd57f4c225d0d74d0f8",
+      "counterpart_sha256": "ba8db67de28e9ee480165c21ca2c03f398433699d5af0dd57f4c225d0d74d0f8",
+      "proof": "byte-exact identity",
+      "metadata_occurrences": 5,
+      "field_kinds": [
+        "module",
+        "$key"
+      ]
+    },
+    {
+      "held_file": "/home/cosmo/Documents/GitHub/qcore-c/private/premise-resolution-cycle2/tip-freeze/inputs/providers/quirin-provider-fluent-bit/contracts/fluent_bit/input_chunk_is_up.qv",
+      "counterpart_file": "/home/cosmo/Documents/GitHub/qcore-c/private/premise-resolution-cycle2/base-freeze/inputs/providers/quirin-provider-fluent-bit/contracts/fluent_bit/input_chunk_is_up.qv",
+      "relative_file": "providers/quirin-provider-fluent-bit/contracts/fluent_bit/input_chunk_is_up.qv",
+      "held_sha256": "5812a21ab91cd7e636bfa25df35a5141e96e0c017b27e153987db498e1c2b761",
+      "counterpart_sha256": "5812a21ab91cd7e636bfa25df35a5141e96e0c017b27e153987db498e1c2b761",
+      "proof": "byte-exact identity",
+      "metadata_occurrences": 9,
+      "field_kinds": [
+        "module",
+        "$key"
+      ]
+    },
+    {
+      "held_file": "/home/cosmo/Documents/GitHub/qcore-c/private/premise-resolution-cycle2/tip-freeze/inputs/providers/quirin-provider-fluent-bit/contracts/fluent_bit/input_chunk_total_size.qv",
+      "counterpart_file": "/home/cosmo/Documents/GitHub/qcore-c/private/premise-resolution-cycle2/base-freeze/inputs/providers/quirin-provider-fluent-bit/contracts/fluent_bit/input_chunk_total_size.qv",
+      "relative_file": "providers/quirin-provider-fluent-bit/contracts/fluent_bit/input_chunk_total_size.qv",
+      "held_sha256": "f8a1ab9dcf7637174ae83849b2ebf3c2d11374842c5ef5e517280b22691392d8",
+      "counterpart_sha256": "f8a1ab9dcf7637174ae83849b2ebf3c2d11374842c5ef5e517280b22691392d8",
+      "proof": "byte-exact identity",
+      "metadata_occurrences": 3,
+      "field_kinds": [
+        "module",
+        "$key"
+      ]
+    },
+    {
+      "held_file": "/home/cosmo/Documents/GitHub/qcore-c/private/premise-resolution-cycle2/tip-freeze/inputs/providers/quirin-provider-fluent-bit/contracts/fluent_bit/output_flush_id.qv",
+      "counterpart_file": "/home/cosmo/Documents/GitHub/qcore-c/private/premise-resolution-cycle2/base-freeze/inputs/providers/quirin-provider-fluent-bit/contracts/fluent_bit/output_flush_id.qv",
+      "relative_file": "providers/quirin-provider-fluent-bit/contracts/fluent_bit/output_flush_id.qv",
+      "held_sha256": "5161dfc52e7b06caaf41fcb3c00c8135f903101e11d9c262312e7f1893e425d3",
+      "counterpart_sha256": "5161dfc52e7b06caaf41fcb3c00c8135f903101e11d9c262312e7f1893e425d3",
+      "proof": "byte-exact identity",
+      "metadata_occurrences": 3,
+      "field_kinds": [
+        "module",
+        "$key"
+      ]
+    },
+    {
+      "held_file": "/home/cosmo/Documents/GitHub/qcore-c/private/premise-resolution-cycle2/tip-freeze/inputs/providers/quirin-provider-fluent-bit/contracts/fluent_bit/output_singleplex.qv",
+      "counterpart_file": "/home/cosmo/Documents/GitHub/qcore-c/private/premise-resolution-cycle2/base-freeze/inputs/providers/quirin-provider-fluent-bit/contracts/fluent_bit/output_singleplex.qv",
+      "relative_file": "providers/quirin-provider-fluent-bit/contracts/fluent_bit/output_singleplex.qv",
+      "held_sha256": "1493fe2a92a6240b565de872572d3ba04fe3da7db636159fa4fa75902f853818",
+      "counterpart_sha256": "1493fe2a92a6240b565de872572d3ba04fe3da7db636159fa4fa75902f853818",
+      "proof": "byte-exact identity",
+      "metadata_occurrences": 5,
+      "field_kinds": [
+        "module",
+        "$key"
+      ]
+    },
+    {
+      "held_file": "/home/cosmo/Documents/GitHub/qcore-c/private/premise-resolution-cycle2/tip-freeze/inputs/providers/quirin-provider-fluent-bit/contracts/fluent_bit/task_users.qv",
+      "counterpart_file": "/home/cosmo/Documents/GitHub/qcore-c/private/premise-resolution-cycle2/base-freeze/inputs/providers/quirin-provider-fluent-bit/contracts/fluent_bit/task_users.qv",
+      "relative_file": "providers/quirin-provider-fluent-bit/contracts/fluent_bit/task_users.qv",
+      "held_sha256": "cc07429255f69df182831ae2cf0246bafd71c3f6038173cbfcd194ea51da9f18",
+      "counterpart_sha256": "cc07429255f69df182831ae2cf0246bafd71c3f6038173cbfcd194ea51da9f18",
+      "proof": "byte-exact identity",
+      "metadata_occurrences": 9,
+      "field_kinds": [
+        "module",
+        "$key"
+      ]
+    },
+    {
+      "held_file": "/home/cosmo/Documents/GitHub/qcore-c/private/premise-resolution-cycle2/tip-freeze/inputs/providers/quirin-provider-fluent-bit/contracts/fluent_bit/routes_mask.qv",
+      "counterpart_file": "/home/cosmo/Documents/GitHub/qcore-c/private/premise-resolution-cycle2/base-freeze/inputs/providers/quirin-provider-fluent-bit/contracts/fluent_bit/routes_mask.qv",
+      "relative_file": "providers/quirin-provider-fluent-bit/contracts/fluent_bit/routes_mask.qv",
+      "held_sha256": "3ea37c31e5fcf8d38aa7721312cfc333630fc8852f8dbcfad772c0726b82bc03",
+      "counterpart_sha256": "3ea37c31e5fcf8d38aa7721312cfc333630fc8852f8dbcfad772c0726b82bc03",
+      "proof": "byte-exact identity",
+      "metadata_occurrences": 9,
+      "field_kinds": [
+        "module",
+        "$key"
+      ]
+    },
+    {
+      "held_file": "/home/cosmo/Documents/GitHub/qcore-c/private/premise-resolution-cycle2/tip-freeze/inputs/providers/quirin-provider-fluent-bit/contracts/fluent_bit/task_route_queries.qv",
+      "counterpart_file": "/home/cosmo/Documents/GitHub/qcore-c/private/premise-resolution-cycle2/base-freeze/inputs/providers/quirin-provider-fluent-bit/contracts/fluent_bit/task_route_queries.qv",
+      "relative_file": "providers/quirin-provider-fluent-bit/contracts/fluent_bit/task_route_queries.qv",
+      "held_sha256": "2ccd2ecece939836971e60168720e45e16bc1955820c10cff33b53dd605b1ca0",
+      "counterpart_sha256": "2ccd2ecece939836971e60168720e45e16bc1955820c10cff33b53dd605b1ca0",
+      "proof": "byte-exact identity",
+      "metadata_occurrences": 9,
+      "field_kinds": [
+        "module",
+        "$key"
+      ]
+    },
+    {
+      "held_file": "/home/cosmo/Documents/GitHub/qcore-c/private/premise-resolution-cycle2/tip-freeze/inputs/providers/quirin-provider-libc/contracts/libc/process.qv",
+      "counterpart_file": "/home/cosmo/Documents/GitHub/qcore-c/private/premise-resolution-cycle2/base-freeze/inputs/providers/quirin-provider-libc/contracts/libc/process.qv",
+      "relative_file": "providers/quirin-provider-libc/contracts/libc/process.qv",
+      "held_sha256": "654a9058c95960eb49324a731d26edb307f0e76e386d2dae9016f36e078d6555",
+      "counterpart_sha256": "654a9058c95960eb49324a731d26edb307f0e76e386d2dae9016f36e078d6555",
+      "proof": "byte-exact identity",
+      "metadata_occurrences": 4,
+      "field_kinds": [
+        "module",
+        "$key"
+      ]
+    },
+    {
+      "held_file": "/home/cosmo/Documents/GitHub/qcore-c/private/premise-resolution-cycle2/tip-freeze/inputs/providers/qcore-provider-libevent/contracts/monkey/logging.qv",
+      "counterpart_file": "/home/cosmo/Documents/GitHub/qcore-c/private/premise-resolution-cycle2/base-freeze/inputs/providers/qcore-provider-libevent/contracts/monkey/logging.qv",
+      "relative_file": "providers/qcore-provider-libevent/contracts/monkey/logging.qv",
+      "held_sha256": "c9fdea74a8d0227836c3ed6260c413f2ee43a82bf6856b312ce49babd516e15b",
+      "counterpart_sha256": "c9fdea74a8d0227836c3ed6260c413f2ee43a82bf6856b312ce49babd516e15b",
+      "proof": "byte-exact identity",
+      "metadata_occurrences": 5,
+      "field_kinds": [
+        "module",
+        "$key"
+      ]
+    },
+    {
+      "held_file": "/home/cosmo/Documents/GitHub/qcore-c/private/premise-resolution-cycle2/tip-freeze/inputs/providers/qcore-provider-libevent/contracts/monkey/string.qv",
+      "counterpart_file": "/home/cosmo/Documents/GitHub/qcore-c/private/premise-resolution-cycle2/base-freeze/inputs/providers/qcore-provider-libevent/contracts/monkey/string.qv",
+      "relative_file": "providers/qcore-provider-libevent/contracts/monkey/string.qv",
+      "held_sha256": "53f9c3f6baa72f6acf2c7bdb2582b6a6392c67a9c17a1c5785413a1efc943f44",
+      "counterpart_sha256": "53f9c3f6baa72f6acf2c7bdb2582b6a6392c67a9c17a1c5785413a1efc943f44",
+      "proof": "byte-exact identity",
+      "metadata_occurrences": 3,
+      "field_kinds": [
+        "module",
+        "$key"
+      ]
+    },
+    {
+      "held_file": "/home/cosmo/Documents/GitHub/qcore-c/private/premise-resolution-cycle2/tip-freeze/inputs/providers/qcore-provider-libevent/contracts/monkey/vhost_set.qv",
+      "counterpart_file": "/home/cosmo/Documents/GitHub/qcore-c/private/premise-resolution-cycle2/base-freeze/inputs/providers/qcore-provider-libevent/contracts/monkey/vhost_set.qv",
+      "relative_file": "providers/qcore-provider-libevent/contracts/monkey/vhost_set.qv",
+      "held_sha256": "640187a5674cd86f7782bf9815e6d72b1082aef66e811f45b2def3e9f757fb34",
+      "counterpart_sha256": "640187a5674cd86f7782bf9815e6d72b1082aef66e811f45b2def3e9f757fb34",
+      "proof": "byte-exact identity",
+      "metadata_occurrences": 3,
+      "field_kinds": [
+        "module",
+        "$key"
+      ]
+    },
+    {
+      "held_file": "/home/cosmo/Documents/GitHub/qcore-c/private/premise-resolution-cycle2/tip-freeze/inputs/providers/quirin-provider-mpack/contracts/mpack/writer.qv",
+      "counterpart_file": "/home/cosmo/Documents/GitHub/qcore-c/private/premise-resolution-cycle2/base-freeze/inputs/providers/quirin-provider-mpack/contracts/mpack/writer.qv",
+      "relative_file": "providers/quirin-provider-mpack/contracts/mpack/writer.qv",
+      "held_sha256": "b85a05457c61d4be42f34882e9c2a9e2a5348e46ec055e3ca5a7f83a5bbf2c16",
+      "counterpart_sha256": "b85a05457c61d4be42f34882e9c2a9e2a5348e46ec055e3ca5a7f83a5bbf2c16",
+      "proof": "byte-exact identity",
+      "metadata_occurrences": 19,
+      "field_kinds": [
+        "module",
+        "$key"
+      ]
+    },
+    {
+      "held_file": "/home/cosmo/Documents/GitHub/qcore-c/private/premise-resolution-cycle2/tip-freeze/inputs/providers/qcore-provider-librdkafka/contracts/librdkafka/topic_partition.qv",
+      "counterpart_file": "/home/cosmo/Documents/GitHub/qcore-c/private/premise-resolution-cycle2/base-freeze/inputs/providers/qcore-provider-librdkafka/contracts/librdkafka/topic_partition.qv",
+      "relative_file": "providers/qcore-provider-librdkafka/contracts/librdkafka/topic_partition.qv",
+      "held_sha256": "c7e28fa40acff1c6d80fea924af68c7e0f0395faa3ef473156afbbb57db758e2",
+      "counterpart_sha256": "c7e28fa40acff1c6d80fea924af68c7e0f0395faa3ef473156afbbb57db758e2",
+      "proof": "byte-exact identity",
+      "metadata_occurrences": 3,
+      "field_kinds": [
+        "module",
+        "$key"
+      ]
+    },
+    {
+      "held_file": "/home/cosmo/Documents/GitHub/qcore-c/private/premise-resolution-cycle2/tip-freeze/inputs/providers/quirin-provider-libc/contracts/libc/regex.qv",
+      "counterpart_file": "/home/cosmo/Documents/GitHub/qcore-c/private/premise-resolution-cycle2/base-freeze/inputs/providers/quirin-provider-libc/contracts/libc/regex.qv",
+      "relative_file": "providers/quirin-provider-libc/contracts/libc/regex.qv",
+      "held_sha256": "3e98107559c67866747fd39f6d68d56fa6efe2378de3382a6209c220816180fa",
+      "counterpart_sha256": "3e98107559c67866747fd39f6d68d56fa6efe2378de3382a6209c220816180fa",
+      "proof": "byte-exact identity",
+      "metadata_occurrences": 5,
+      "field_kinds": [
+        "module",
+        "$key"
+      ]
+    },
+    {
+      "held_file": "/home/cosmo/Documents/GitHub/qcore-c/private/premise-resolution-cycle2/tip-freeze/inputs/providers/qcore-provider-libevent/contracts.lock",
+      "counterpart_file": "/home/cosmo/Documents/GitHub/qcore-c/private/premise-resolution-cycle2/base-freeze/inputs/providers/qcore-provider-libevent/contracts.lock",
+      "relative_file": "providers/qcore-provider-libevent/contracts.lock",
+      "held_sha256": "21f3d34bbda31de78e0dbdafd87131a1d96bc938e46ac2d313f32765bd69e7c7",
+      "counterpart_sha256": "21f3d34bbda31de78e0dbdafd87131a1d96bc938e46ac2d313f32765bd69e7c7",
+      "proof": "byte-exact identity",
+      "metadata_occurrences": 28,
+      "field_kinds": [
+        "$key",
+        "lock"
+      ]
+    },
+    {
+      "held_file": "/home/cosmo/Documents/GitHub/qcore-c/private/premise-resolution-cycle2/tip-freeze/inputs/providers/qcore-provider-librdkafka/contracts.lock",
+      "counterpart_file": "/home/cosmo/Documents/GitHub/qcore-c/private/premise-resolution-cycle2/base-freeze/inputs/providers/qcore-provider-librdkafka/contracts.lock",
+      "relative_file": "providers/qcore-provider-librdkafka/contracts.lock",
+      "held_sha256": "8dafb889443409ee8b341913579ff51b1036431dd7429049eec23f9aa3be6ff3",
+      "counterpart_sha256": "8dafb889443409ee8b341913579ff51b1036431dd7429049eec23f9aa3be6ff3",
+      "proof": "byte-exact identity",
+      "metadata_occurrences": 169,
+      "field_kinds": [
+        "$key",
+        "lock"
+      ]
+    },
+    {
+      "held_file": "/home/cosmo/Documents/GitHub/qcore-c/private/premise-resolution-cycle2/tip-freeze/inputs/providers/quirin-provider-fluent-bit/contracts.lock",
+      "counterpart_file": "/home/cosmo/Documents/GitHub/qcore-c/private/premise-resolution-cycle2/base-freeze/inputs/providers/quirin-provider-fluent-bit/contracts.lock",
+      "relative_file": "providers/quirin-provider-fluent-bit/contracts.lock",
+      "held_sha256": "cf7b725abe50b6c6df0cb4c09aa41c574f78531d04922df3865ecb2034f6ae67",
+      "counterpart_sha256": "cf7b725abe50b6c6df0cb4c09aa41c574f78531d04922df3865ecb2034f6ae67",
+      "proof": "byte-exact identity",
+      "metadata_occurrences": 79,
+      "field_kinds": [
+        "$key",
+        "lock"
+      ]
+    },
+    {
+      "held_file": "/home/cosmo/Documents/GitHub/qcore-c/private/premise-resolution-cycle2/tip-freeze/inputs/providers/qcore-provider-chunkio/contracts.lock",
+      "counterpart_file": "/home/cosmo/Documents/GitHub/qcore-c/private/premise-resolution-cycle2/base-freeze/inputs/providers/qcore-provider-chunkio/contracts.lock",
+      "relative_file": "providers/qcore-provider-chunkio/contracts.lock",
+      "held_sha256": "e4d425be4e48164a0d0f5a86cacfbfcb2284586f939e0f3c30664379d8c69e9d",
+      "counterpart_sha256": "e4d425be4e48164a0d0f5a86cacfbfcb2284586f939e0f3c30664379d8c69e9d",
+      "proof": "byte-exact identity",
+      "metadata_occurrences": 11,
+      "field_kinds": [
+        "$key",
+        "lock"
+      ]
+    },
+    {
+      "held_file": "/home/cosmo/Documents/GitHub/qcore-c/private/premise-resolution-cycle2/tip-freeze/inputs/providers/qcore-provider-cmetrics/contracts.lock",
+      "counterpart_file": "/home/cosmo/Documents/GitHub/qcore-c/private/premise-resolution-cycle2/base-freeze/inputs/providers/qcore-provider-cmetrics/contracts.lock",
+      "relative_file": "providers/qcore-provider-cmetrics/contracts.lock",
+      "held_sha256": "e54772f99294b483e96eb65ac9ff81ce0d6ddf22379e53a9d85926cd1ec8f206",
+      "counterpart_sha256": "e54772f99294b483e96eb65ac9ff81ce0d6ddf22379e53a9d85926cd1ec8f206",
+      "proof": "byte-exact identity",
+      "metadata_occurrences": 30,
+      "field_kinds": [
+        "$key",
+        "lock"
+      ]
+    },
+    {
+      "held_file": "/home/cosmo/Documents/GitHub/qcore-c/private/premise-resolution-cycle2/tip-freeze/inputs/providers/qcore-provider-ctraces/contracts.lock",
+      "counterpart_file": "/home/cosmo/Documents/GitHub/qcore-c/private/premise-resolution-cycle2/base-freeze/inputs/providers/qcore-provider-ctraces/contracts.lock",
+      "relative_file": "providers/qcore-provider-ctraces/contracts.lock",
+      "held_sha256": "8ad52b0ec1fea99243597495d7588d5219a68da694ac5aa06a90c513a996758c",
+      "counterpart_sha256": "8ad52b0ec1fea99243597495d7588d5219a68da694ac5aa06a90c513a996758c",
+      "proof": "byte-exact identity",
+      "metadata_occurrences": 20,
+      "field_kinds": [
+        "$key",
+        "lock"
+      ]
+    },
+    {
+      "held_file": "/home/cosmo/Documents/GitHub/qcore-c/private/premise-resolution-cycle2/tip-freeze/inputs/providers/quirin-provider-cfl/contracts.lock",
+      "counterpart_file": "/home/cosmo/Documents/GitHub/qcore-c/private/premise-resolution-cycle2/base-freeze/inputs/providers/quirin-provider-cfl/contracts.lock",
+      "relative_file": "providers/quirin-provider-cfl/contracts.lock",
+      "held_sha256": "597070fa1443633cf8b2efa4351af7560c9a5a8035ce12cf267f9ad0e267d238",
+      "counterpart_sha256": "597070fa1443633cf8b2efa4351af7560c9a5a8035ce12cf267f9ad0e267d238",
+      "proof": "byte-exact identity",
+      "metadata_occurrences": 14,
+      "field_kinds": [
+        "$key",
+        "lock"
+      ]
+    },
+    {
+      "held_file": "/home/cosmo/Documents/GitHub/qcore-c/private/premise-resolution-cycle2/tip-freeze/inputs/providers/quirin-provider-libc/contracts.lock",
+      "counterpart_file": "/home/cosmo/Documents/GitHub/qcore-c/private/premise-resolution-cycle2/base-freeze/inputs/providers/quirin-provider-libc/contracts.lock",
+      "relative_file": "providers/quirin-provider-libc/contracts.lock",
+      "held_sha256": "a10d0c93ee804cc71173764c6f8d9d2beb92dd1db1db6d9ffdfb58085582a4ba",
+      "counterpart_sha256": "a10d0c93ee804cc71173764c6f8d9d2beb92dd1db1db6d9ffdfb58085582a4ba",
+      "proof": "byte-exact identity",
+      "metadata_occurrences": 1,
+      "field_kinds": [
+        "$key"
+      ]
+    },
+    {
+      "held_file": "/home/cosmo/Documents/GitHub/qcore-c/private/premise-resolution-cycle2/tip-freeze/inputs/providers/quirin-provider-mpack/contracts.lock",
+      "counterpart_file": "/home/cosmo/Documents/GitHub/qcore-c/private/premise-resolution-cycle2/base-freeze/inputs/providers/quirin-provider-mpack/contracts.lock",
+      "relative_file": "providers/quirin-provider-mpack/contracts.lock",
+      "held_sha256": "d460d92b4287ba68a42d0af69858e405983738e3fdf8d46c6d1dfd3eba197ffd",
+      "counterpart_sha256": "d460d92b4287ba68a42d0af69858e405983738e3fdf8d46c6d1dfd3eba197ffd",
+      "proof": "byte-exact identity",
+      "metadata_occurrences": 10,
+      "field_kinds": [
+        "$key",
+        "lock"
+      ]
+    },
+    {
+      "held_file": "/home/cosmo/Documents/GitHub/qcore-c/private/premise-resolution-cycle2/tip-freeze/inputs/providers/quirin-provider-msgpack/contracts.lock",
+      "counterpart_file": "/home/cosmo/Documents/GitHub/qcore-c/private/premise-resolution-cycle2/base-freeze/inputs/providers/quirin-provider-msgpack/contracts.lock",
+      "relative_file": "providers/quirin-provider-msgpack/contracts.lock",
+      "held_sha256": "4a5383178918740b9c865a9a77bd91e1e53f514612fbad744d5f911ad6fa4f24",
+      "counterpart_sha256": "4a5383178918740b9c865a9a77bd91e1e53f514612fbad744d5f911ad6fa4f24",
+      "proof": "byte-exact identity",
+      "metadata_occurrences": 2,
+      "field_kinds": [
+        "$key",
+        "lock"
+      ]
+    },
+    {
+      "held_file": "/home/cosmo/Documents/GitHub/qcore-c/private/premise-resolution-cycle2/tip-freeze/inputs/contract/profiles/fluent-bit/tail-pause-selection.json",
+      "counterpart_file": "/home/cosmo/Documents/GitHub/qcore-c/private/premise-resolution-cycle2/base-freeze/inputs/contract/profiles/fluent-bit/tail-pause-selection.json",
+      "relative_file": "contract/profiles/fluent-bit/tail-pause-selection.json",
+      "held_sha256": "11cc7e23b6e3e11a3b1b4443b51f2f4e12920a505e5a636ed586646b21f4d0af",
+      "counterpart_sha256": "11cc7e23b6e3e11a3b1b4443b51f2f4e12920a505e5a636ed586646b21f4d0af",
+      "proof": "byte-exact identity",
+      "metadata_occurrences": 1,
+      "field_kinds": [
+        "path"
+      ]
+    },
+    {
+      "held_file": "/home/cosmo/Documents/GitHub/qcore-c/private/premise-resolution-cycle2/tip-freeze/inputs/providers/contract-load-path.json",
+      "counterpart_file": "/home/cosmo/Documents/GitHub/qcore-c/private/premise-resolution-cycle2/base-freeze/inputs/providers/contract-load-path.json",
+      "relative_file": "providers/contract-load-path.json",
+      "held_sha256": "9f56e0b96e9891533841a2778e193859204f79a736fa48d37bb6468db50a1cdd",
+      "counterpart_sha256": "9f56e0b96e9891533841a2778e193859204f79a736fa48d37bb6468db50a1cdd",
+      "proof": "byte-exact identity",
+      "metadata_occurrences": 1,
+      "field_kinds": [
+        "path"
+      ]
+    },
+    {
+      "held_file": "/home/cosmo/Documents/GitHub/qcore-c/private/premise-resolution-cycle2/tip-freeze/inputs/providers/qcore-provider-librdkafka/outer-candidates.json",
+      "counterpart_file": "/home/cosmo/Documents/GitHub/qcore-c/private/premise-resolution-cycle2/base-freeze/inputs/providers/qcore-provider-librdkafka/outer-candidates.json",
+      "relative_file": "providers/qcore-provider-librdkafka/outer-candidates.json",
+      "held_sha256": "5c3f8c4723832c0e9e6ebb784be6a57ebc0264d519421d5b95a18a8f68c18147",
+      "counterpart_sha256": "5c3f8c4723832c0e9e6ebb784be6a57ebc0264d519421d5b95a18a8f68c18147",
+      "proof": "byte-exact identity",
+      "metadata_occurrences": 1,
+      "field_kinds": [
+        "path"
+      ]
+    },
+    {
+      "held_file": "/home/cosmo/Documents/GitHub/qcore-c/private/premise-resolution-cycle2/tip-freeze/inputs/providers/quirin-provider-fluent-bit/outer-contracts.lock",
+      "counterpart_file": "/home/cosmo/Documents/GitHub/qcore-c/private/premise-resolution-cycle2/base-freeze/inputs/providers/quirin-provider-fluent-bit/outer-contracts.lock",
+      "relative_file": "providers/quirin-provider-fluent-bit/outer-contracts.lock",
+      "held_sha256": "6bdabe473897b6b5f15f30431725785d46c2c77ebcaf4851b44865afa12bc2db",
+      "counterpart_sha256": "6bdabe473897b6b5f15f30431725785d46c2c77ebcaf4851b44865afa12bc2db",
+      "proof": "byte-exact identity",
+      "metadata_occurrences": 2,
+      "field_kinds": [
+        "lock"
+      ]
+    },
+    {
+      "held_file": "/home/cosmo/Documents/GitHub/qcore-c/private/premise-resolution-cycle2/tip-freeze/inputs/providers/qcore-provider-librdkafka/outer-contracts.lock",
+      "counterpart_file": "/home/cosmo/Documents/GitHub/qcore-c/private/premise-resolution-cycle2/base-freeze/inputs/providers/qcore-provider-librdkafka/outer-contracts.lock",
+      "relative_file": "providers/qcore-provider-librdkafka/outer-contracts.lock",
+      "held_sha256": "a80f67f6b284e60ce3b7f4c8fd5d56726b4f584bdc85a3e8ed2dab2a07f7123b",
+      "counterpart_sha256": "a80f67f6b284e60ce3b7f4c8fd5d56726b4f584bdc85a3e8ed2dab2a07f7123b",
+      "proof": "byte-exact identity",
+      "metadata_occurrences": 1,
+      "field_kinds": [
+        "lock"
+      ]
+    }
+  ]
+}

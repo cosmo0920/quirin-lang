@@ -1,0 +1,89 @@
+[
+  {
+    "name": "system-all-fields",
+    "command": [
+      "/usr/bin/python3",
+      "private/premise-resolution-cycle2/compare_records.py",
+      "system",
+      "private/premise-resolution-cycle2/prepared-base/system",
+      "private/premise-resolution-cycle2/prepared-tip/system",
+      "private/premise-resolution-cycle2/comparison-configured-continuation-2/system",
+      "--known",
+      "private/premise-resolution-cycle2/comparison-configured-1/system-known.json",
+      "--reading-proof",
+      "private/premise-resolution-cycle2/comparison-configured-1/system-reading-proof.json"
+    ],
+    "exit": 1,
+    "log": "private/premise-resolution-cycle2/comparison-configured-continuation-2/system-all-fields.log",
+    "source": "62eebba95c51917c0fe841fbc23e2bf0d0e7e465"
+  },
+  {
+    "name": "system-exact-time-identity",
+    "command": [
+      "/usr/bin/python3",
+      "private/premise-resolution-cycle2/attribute_time_identity.py",
+      "system",
+      "private/premise-resolution-cycle2/comparison-configured-continuation-2/system"
+    ],
+    "exit": 0,
+    "log": "private/premise-resolution-cycle2/comparison-configured-continuation-2/system-exact-time-identity.log",
+    "source": "62eebba95c51917c0fe841fbc23e2bf0d0e7e465"
+  },
+  {
+    "name": "slice-identities",
+    "command": [
+      "/usr/bin/python3",
+      "private/premise-resolution-cycle2/derive_joint_identities.py",
+      "slice",
+      "private/premise-resolution-cycle2/prepared-base/slice",
+      "private/premise-resolution-cycle2/prepared-tip/slice",
+      "private/premise-resolution-cycle2/comparison-configured-1/base-environments",
+      "private/premise-resolution-cycle2/comparison-configured-1/tip-environments",
+      "private/premise-resolution-cycle2/comparison-configured-continuation-2/slice-known.json"
+    ],
+    "exit": 0,
+    "log": "private/premise-resolution-cycle2/comparison-configured-continuation-2/slice-identities.log",
+    "source": "62eebba95c51917c0fe841fbc23e2bf0d0e7e465"
+  },
+  {
+    "name": "slice-canonical-capture-proof",
+    "command": [
+      "private/premise-resolution-cycle2/comparator-helpers/attribute-reading-environments",
+      "private/premise-resolution-cycle2/comparison-configured-continuation-2/slice-reading-input.json",
+      "private/premise-resolution-cycle2/comparison-configured-continuation-2/slice-reading-proof.json"
+    ],
+    "exit": 0,
+    "log": "private/premise-resolution-cycle2/comparison-configured-continuation-2/slice-canonical-capture-proof.log",
+    "source": "62eebba95c51917c0fe841fbc23e2bf0d0e7e465"
+  },
+  {
+    "name": "slice-all-fields",
+    "command": [
+      "/usr/bin/python3",
+      "private/premise-resolution-cycle2/compare_records.py",
+      "slice",
+      "private/premise-resolution-cycle2/prepared-base/slice",
+      "private/premise-resolution-cycle2/prepared-tip/slice",
+      "private/premise-resolution-cycle2/comparison-configured-continuation-2/slice",
+      "--known",
+      "private/premise-resolution-cycle2/comparison-configured-continuation-2/slice-known.json",
+      "--reading-proof",
+      "private/premise-resolution-cycle2/comparison-configured-continuation-2/slice-reading-proof.json"
+    ],
+    "exit": 1,
+    "log": "private/premise-resolution-cycle2/comparison-configured-continuation-2/slice-all-fields.log",
+    "source": "62eebba95c51917c0fe841fbc23e2bf0d0e7e465"
+  },
+  {
+    "name": "slice-exact-time-identity",
+    "command": [
+      "/usr/bin/python3",
+      "private/premise-resolution-cycle2/attribute_time_identity.py",
+      "slice",
+      "private/premise-resolution-cycle2/comparison-configured-continuation-2/slice"
+    ],
+    "exit": 0,
+    "log": "private/premise-resolution-cycle2/comparison-configured-continuation-2/slice-exact-time-identity.log",
+    "source": "62eebba95c51917c0fe841fbc23e2bf0d0e7e465"
+  }
+]

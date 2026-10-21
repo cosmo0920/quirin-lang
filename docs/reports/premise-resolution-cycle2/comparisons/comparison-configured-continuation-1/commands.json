@@ -1,0 +1,20 @@
+[
+  {
+    "name": "system-all-fields",
+    "command": [
+      "/usr/bin/python3",
+      "private/premise-resolution-cycle2/compare_records.py",
+      "system",
+      "private/premise-resolution-cycle2/prepared-base/system",
+      "private/premise-resolution-cycle2/prepared-tip/system",
+      "private/premise-resolution-cycle2/comparison-configured-continuation-1/system",
+      "--known",
+      "private/premise-resolution-cycle2/comparison-configured-1/system-known.json",
+      "--reading-proof",
+      "private/premise-resolution-cycle2/comparison-configured-1/system-reading-proof.json"
+    ],
+    "exit": 1,
+    "log": "private/premise-resolution-cycle2/comparison-configured-continuation-1/system-all-fields.log",
+    "source": "62eebba95c51917c0fe841fbc23e2bf0d0e7e465"
+  }
+]

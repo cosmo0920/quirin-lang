@@ -1,0 +1,13 @@
+{
+  "note": "Cycle2 combined source 62eebba95c51917c0fe841fbc23e2bf0d0e7e465: fresh successful joint-gate-2 all22 steps0, Rust8441/0failed/15ignored(532units545summaries), Lean357, provider133Rust/1ignored/25Python and all5 package builds/verifications. All six native audits and full-record comparisons pass0; no verdict movement. Python374 is explicitly BORROWED prior plugin-premise-integration confirmation pending fresh committed-matrix phase1; operator retirement is withheld until that passes. Failed gate1 and corrected comparison/source replay attempts retained. Commands/exits/private logs and exact source scopes are in this report.",
+  "workspace_tests": 8441,
+  "provider_tests": 133,
+  "python_evidence_validator_tests": 374,
+  "reevaluation_probe_exit": 0,
+  "reevaluation_followup_exit": 0,
+  "cargo_fmt": "clean",
+  "cargo_clippy": "clean",
+  "standing_gate": "native stages complete; fresh committed-matrix Python pending",
+  "lean_audits": 357,
+  "clang": "present: Ubuntu clang version 21.1.8 (6ubuntu1)"
+}

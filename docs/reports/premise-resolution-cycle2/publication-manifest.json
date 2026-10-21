@@ -1,0 +1,2753 @@
+[
+  {
+    "source": "private/premise-resolution-cycle2/joint-gate-1/acquired.json",
+    "published": "docs/reports/premise-resolution-cycle2/validation/joint-gate-1/acquired.json",
+    "source_sha256": "c347330a7b0aec834bae2f2d5c29a07c82b73386a9e02031a292f4ba6107dca9",
+    "published_sha256": "c347330a7b0aec834bae2f2d5c29a07c82b73386a9e02031a292f4ba6107dca9",
+    "gzip": false
+  },
+  {
+    "source": "private/premise-resolution-cycle2/joint-gate-1/audit-examples.exit",
+    "published": "docs/reports/premise-resolution-cycle2/validation/joint-gate-1/audit-examples.exit",
+    "source_sha256": "9a271f2a916b0b6ee6cecb2426f0b3206ef074578be55d9bc94f6f3fe3ab86aa",
+    "published_sha256": "9a271f2a916b0b6ee6cecb2426f0b3206ef074578be55d9bc94f6f3fe3ab86aa",
+    "gzip": false
+  },
+  {
+    "source": "private/premise-resolution-cycle2/joint-gate-1/audit-examples.log",
+    "published": "docs/reports/premise-resolution-cycle2/validation/joint-gate-1/audit-examples.log.gz",
+    "source_sha256": "d406543f224718b237022a6f718b7b5c4163f285ff7b447252247fd16fb99e75",
+    "published_sha256": "c2c6a62a80c3a89111d328b62cb456ee2d6d88aa9a0d94b99ffcab60882ff618",
+    "gzip": true
+  },
+  {
+    "source": "private/premise-resolution-cycle2/joint-gate-1/clang.exit",
+    "published": "docs/reports/premise-resolution-cycle2/validation/joint-gate-1/clang.exit",
+    "source_sha256": "9a271f2a916b0b6ee6cecb2426f0b3206ef074578be55d9bc94f6f3fe3ab86aa",
+    "published_sha256": "9a271f2a916b0b6ee6cecb2426f0b3206ef074578be55d9bc94f6f3fe3ab86aa",
+    "gzip": false
+  },
+  {
+    "source": "private/premise-resolution-cycle2/joint-gate-1/clang.log",
+    "published": "docs/reports/premise-resolution-cycle2/validation/joint-gate-1/clang.log.gz",
+    "source_sha256": "77467400b91c4cebb6c3e29d8a611af518a2f4078c22baf276b0a1373e996bf5",
+    "published_sha256": "406ea76b3153710fad352ac5a2cb02d02426f1c96f2a1234f1bffe3fe91a7d50",
+    "gzip": true
+  },
+  {
+    "source": "private/premise-resolution-cycle2/joint-gate-1/clippy.exit",
+    "published": "docs/reports/premise-resolution-cycle2/validation/joint-gate-1/clippy.exit",
+    "source_sha256": "9a271f2a916b0b6ee6cecb2426f0b3206ef074578be55d9bc94f6f3fe3ab86aa",
+    "published_sha256": "9a271f2a916b0b6ee6cecb2426f0b3206ef074578be55d9bc94f6f3fe3ab86aa",
+    "gzip": false
+  },
+  {
+    "source": "private/premise-resolution-cycle2/joint-gate-1/clippy.log",
+    "published": "docs/reports/premise-resolution-cycle2/validation/joint-gate-1/clippy.log.gz",
+    "source_sha256": "af4459cef08fc268cd744fe7455a417add6ded0125b04694c3fb87dbf20ea267",
+    "published_sha256": "d585525b42803fd5976ccb733077b7ac0292c97c5577f85b30537d8e46e841f4",
+    "gzip": true
+  },
+  {
+    "source": "private/premise-resolution-cycle2/joint-gate-1/commands.json",
+    "published": "docs/reports/premise-resolution-cycle2/validation/joint-gate-1/commands.json",
+    "source_sha256": "eda189f7fe36189843cf183e1cff9bfe4ee0b27606a3d948622c54105d232f65",
+    "published_sha256": "eda189f7fe36189843cf183e1cff9bfe4ee0b27606a3d948622c54105d232f65",
+    "gzip": false
+  },
+  {
+    "source": "private/premise-resolution-cycle2/joint-gate-1/fmt.exit",
+    "published": "docs/reports/premise-resolution-cycle2/validation/joint-gate-1/fmt.exit",
+    "source_sha256": "4355a46b19d348dc2f57c046f8ef63d4538ebb936000f3c9ee954a27460dd865",
+    "published_sha256": "4355a46b19d348dc2f57c046f8ef63d4538ebb936000f3c9ee954a27460dd865",
+    "gzip": false
+  },
+  {
+    "source": "private/premise-resolution-cycle2/joint-gate-1/fmt.log",
+    "published": "docs/reports/premise-resolution-cycle2/validation/joint-gate-1/fmt.log.gz",
+    "source_sha256": "b1bdd6882020e3dcb9715da6d6392a4ee3ac06ce887959bc1fad967961169ee5",
+    "published_sha256": "037608e01bd9e1ef01788421c398dc0e3210b2e18caf8a72cfe3857fe4eaeae4",
+    "gzip": true
+  },
+  {
+    "source": "private/premise-resolution-cycle2/joint-gate-1/followup.exit",
+    "published": "docs/reports/premise-resolution-cycle2/validation/joint-gate-1/followup.exit",
+    "source_sha256": "9a271f2a916b0b6ee6cecb2426f0b3206ef074578be55d9bc94f6f3fe3ab86aa",
+    "published_sha256": "9a271f2a916b0b6ee6cecb2426f0b3206ef074578be55d9bc94f6f3fe3ab86aa",
+    "gzip": false
+  },
+  {
+    "source": "private/premise-resolution-cycle2/joint-gate-1/followup.log",
+    "published": "docs/reports/premise-resolution-cycle2/validation/joint-gate-1/followup.log.gz",
+    "source_sha256": "ffa5bee1fe5f1f0a68ec903fb026922b5a871e95c0adee2cf08cd50489edeb25",
+    "published_sha256": "1c59b1d242a6957d517273670b525e6d8b79acf73d8835559d2c371fab728bdf",
+    "gzip": true
+  },
+  {
+    "source": "private/premise-resolution-cycle2/joint-gate-1/lean.exit",
+    "published": "docs/reports/premise-resolution-cycle2/validation/joint-gate-1/lean.exit",
+    "source_sha256": "4355a46b19d348dc2f57c046f8ef63d4538ebb936000f3c9ee954a27460dd865",
+    "published_sha256": "4355a46b19d348dc2f57c046f8ef63d4538ebb936000f3c9ee954a27460dd865",
+    "gzip": false
+  },
+  {
+    "source": "private/premise-resolution-cycle2/joint-gate-1/lean.log",
+    "published": "docs/reports/premise-resolution-cycle2/validation/joint-gate-1/lean.log.gz",
+    "source_sha256": "6aad8e72f7b198ed9b7a76499364e67ce415522ace938a00aa0908eb7f929d6e",
+    "published_sha256": "b48e06d2cae139ec879de15ede7346c6ebbf4251cb1e5e11b92345fd495f49fb",
+    "gzip": true
+  },
+  {
+    "source": "private/premise-resolution-cycle2/joint-gate-1/package-build.exit",
+    "published": "docs/reports/premise-resolution-cycle2/validation/joint-gate-1/package-build.exit",
+    "source_sha256": "9a271f2a916b0b6ee6cecb2426f0b3206ef074578be55d9bc94f6f3fe3ab86aa",
+    "published_sha256": "9a271f2a916b0b6ee6cecb2426f0b3206ef074578be55d9bc94f6f3fe3ab86aa",
+    "gzip": false
+  },
+  {
+    "source": "private/premise-resolution-cycle2/joint-gate-1/package-build.log",
+    "published": "docs/reports/premise-resolution-cycle2/validation/joint-gate-1/package-build.log.gz",
+    "source_sha256": "f4aa3887e25167beae88c7783c958a87d83fa4db2b52ff6e73735caa2d892767",
+    "published_sha256": "af4afbf3124a6d748fb59ffec9972e251181edbcafebf4ca4fa14153257afe00",
+    "gzip": true
+  },
+  {
+    "source": "private/premise-resolution-cycle2/joint-gate-1/package-verify-chunkio.exit",
+    "published": "docs/reports/premise-resolution-cycle2/validation/joint-gate-1/package-verify-chunkio.exit",
+    "source_sha256": "9a271f2a916b0b6ee6cecb2426f0b3206ef074578be55d9bc94f6f3fe3ab86aa",
+    "published_sha256": "9a271f2a916b0b6ee6cecb2426f0b3206ef074578be55d9bc94f6f3fe3ab86aa",
+    "gzip": false
+  },
+  {
+    "source": "private/premise-resolution-cycle2/joint-gate-1/package-verify-chunkio.log",
+    "published": "docs/reports/premise-resolution-cycle2/validation/joint-gate-1/package-verify-chunkio.log.gz",
+    "source_sha256": "8500690eb4546875e1f4d8fc5a14e6d8352af1a81e959ffba50faa8fda7b163d",
+    "published_sha256": "4c8752c2257fa34b9e9b12d5fdea64bddeaf4577f12f9fd4b7ded4065c20f62d",
+    "gzip": true
+  },
+  {
+    "source": "private/premise-resolution-cycle2/joint-gate-1/package-verify-cmetrics.exit",
+    "published": "docs/reports/premise-resolution-cycle2/validation/joint-gate-1/package-verify-cmetrics.exit",
+    "source_sha256": "9a271f2a916b0b6ee6cecb2426f0b3206ef074578be55d9bc94f6f3fe3ab86aa",
+    "published_sha256": "9a271f2a916b0b6ee6cecb2426f0b3206ef074578be55d9bc94f6f3fe3ab86aa",
+    "gzip": false
+  },
+  {
+    "source": "private/premise-resolution-cycle2/joint-gate-1/package-verify-cmetrics.log",
+    "published": "docs/reports/premise-resolution-cycle2/validation/joint-gate-1/package-verify-cmetrics.log.gz",
+    "source_sha256": "f747bce86488a20f35cf134c9e0a0773a17d306b1ac62e8233aaef4fdc9a2edc",
+    "published_sha256": "2357f159fe7c7f3d1171e5d39bb49677d4d2016ee1ee452dfa2f467bbdcd377d",
+    "gzip": true
+  },
+  {
+    "source": "private/premise-resolution-cycle2/joint-gate-1/package-verify-ctraces.exit",
+    "published": "docs/reports/premise-resolution-cycle2/validation/joint-gate-1/package-verify-ctraces.exit",
+    "source_sha256": "9a271f2a916b0b6ee6cecb2426f0b3206ef074578be55d9bc94f6f3fe3ab86aa",
+    "published_sha256": "9a271f2a916b0b6ee6cecb2426f0b3206ef074578be55d9bc94f6f3fe3ab86aa",
+    "gzip": false
+  },
+  {
+    "source": "private/premise-resolution-cycle2/joint-gate-1/package-verify-ctraces.log",
+    "published": "docs/reports/premise-resolution-cycle2/validation/joint-gate-1/package-verify-ctraces.log.gz",
+    "source_sha256": "b8148d953a7cf557914a59e3dde79ce403df5282702e4809f81437f4f6a5a846",
+    "published_sha256": "365b7deb832df05655b19f5f34424237593849276d974c2b74426fad1a81f583",
+    "gzip": true
+  },
+  {
+    "source": "private/premise-resolution-cycle2/joint-gate-1/package-verify-libevent.exit",
+    "published": "docs/reports/premise-resolution-cycle2/validation/joint-gate-1/package-verify-libevent.exit",
+    "source_sha256": "9a271f2a916b0b6ee6cecb2426f0b3206ef074578be55d9bc94f6f3fe3ab86aa",
+    "published_sha256": "9a271f2a916b0b6ee6cecb2426f0b3206ef074578be55d9bc94f6f3fe3ab86aa",
+    "gzip": false
+  },
+  {
+    "source": "private/premise-resolution-cycle2/joint-gate-1/package-verify-libevent.log",
+    "published": "docs/reports/premise-resolution-cycle2/validation/joint-gate-1/package-verify-libevent.log.gz",
+    "source_sha256": "0d1796b84701960409685a650a4ad2455ad01d5b5377a46874234da158ca1618",
+    "published_sha256": "ce012486e8c4c9a5316d877d17fc4c3159e0209cbe6d11ed8c07cdfaee3b7c99",
+    "gzip": true
+  },
+  {
+    "source": "private/premise-resolution-cycle2/joint-gate-1/package-verify-librdkafka.exit",
+    "published": "docs/reports/premise-resolution-cycle2/validation/joint-gate-1/package-verify-librdkafka.exit",
+    "source_sha256": "9a271f2a916b0b6ee6cecb2426f0b3206ef074578be55d9bc94f6f3fe3ab86aa",
+    "published_sha256": "9a271f2a916b0b6ee6cecb2426f0b3206ef074578be55d9bc94f6f3fe3ab86aa",
+    "gzip": false
+  },
+  {
+    "source": "private/premise-resolution-cycle2/joint-gate-1/package-verify-librdkafka.log",
+    "published": "docs/reports/premise-resolution-cycle2/validation/joint-gate-1/package-verify-librdkafka.log.gz",
+    "source_sha256": "e833f700d28c3d02fb01a90c61168b8dd54d20d9c0f7fdc940f243fcab728d40",
+    "published_sha256": "239472c8eb63087b3361c3a7c14736ff1af7080f0d1fed42e50e0e85e5e432d1",
+    "gzip": true
+  },
+  {
+    "source": "private/premise-resolution-cycle2/joint-gate-1/probe.exit",
+    "published": "docs/reports/premise-resolution-cycle2/validation/joint-gate-1/probe.exit",
+    "source_sha256": "9a271f2a916b0b6ee6cecb2426f0b3206ef074578be55d9bc94f6f3fe3ab86aa",
+    "published_sha256": "9a271f2a916b0b6ee6cecb2426f0b3206ef074578be55d9bc94f6f3fe3ab86aa",
+    "gzip": false
+  },
+  {
+    "source": "private/premise-resolution-cycle2/joint-gate-1/probe.log",
+    "published": "docs/reports/premise-resolution-cycle2/validation/joint-gate-1/probe.log.gz",
+    "source_sha256": "6e54cc74c017eb68365d29c66b76ce4872b8baa2674350c5217a48e11ea49bbc",
+    "published_sha256": "6344443257ec0713575401814992b840608a024423773bc88304640abd6bb872",
+    "gzip": true
+  },
+  {
+    "source": "private/premise-resolution-cycle2/joint-gate-1/provider-clippy.exit",
+    "published": "docs/reports/premise-resolution-cycle2/validation/joint-gate-1/provider-clippy.exit",
+    "source_sha256": "9a271f2a916b0b6ee6cecb2426f0b3206ef074578be55d9bc94f6f3fe3ab86aa",
+    "published_sha256": "9a271f2a916b0b6ee6cecb2426f0b3206ef074578be55d9bc94f6f3fe3ab86aa",
+    "gzip": false
+  },
+  {
+    "source": "private/premise-resolution-cycle2/joint-gate-1/provider-clippy.log",
+    "published": "docs/reports/premise-resolution-cycle2/validation/joint-gate-1/provider-clippy.log.gz",
+    "source_sha256": "372e368b218dcda30a3833bde10740d22ef619934193058e99554c1bbf934d64",
+    "published_sha256": "4cf388893b580669fd2abafc142ee4e1f72c8a56cd308bfdf135d6d767278561",
+    "gzip": true
+  },
+  {
+    "source": "private/premise-resolution-cycle2/joint-gate-1/provider-contracts.exit",
+    "published": "docs/reports/premise-resolution-cycle2/validation/joint-gate-1/provider-contracts.exit",
+    "source_sha256": "9a271f2a916b0b6ee6cecb2426f0b3206ef074578be55d9bc94f6f3fe3ab86aa",
+    "published_sha256": "9a271f2a916b0b6ee6cecb2426f0b3206ef074578be55d9bc94f6f3fe3ab86aa",
+    "gzip": false
+  },
+  {
+    "source": "private/premise-resolution-cycle2/joint-gate-1/provider-contracts.log",
+    "published": "docs/reports/premise-resolution-cycle2/validation/joint-gate-1/provider-contracts.log.gz",
+    "source_sha256": "43a857b3aec7028a5c78fa2c1be45883e432225c27d3c66f759b12b32b03e9a1",
+    "published_sha256": "473e887cce6e08426177c9b9de9f7a6995debe69d3fbd0ba10208d9d7f744f7a",
+    "gzip": true
+  },
+  {
+    "source": "private/premise-resolution-cycle2/joint-gate-1/provider-fmt.exit",
+    "published": "docs/reports/premise-resolution-cycle2/validation/joint-gate-1/provider-fmt.exit",
+    "source_sha256": "4355a46b19d348dc2f57c046f8ef63d4538ebb936000f3c9ee954a27460dd865",
+    "published_sha256": "4355a46b19d348dc2f57c046f8ef63d4538ebb936000f3c9ee954a27460dd865",
+    "gzip": false
+  },
+  {
+    "source": "private/premise-resolution-cycle2/joint-gate-1/provider-fmt.log",
+    "published": "docs/reports/premise-resolution-cycle2/validation/joint-gate-1/provider-fmt.log.gz",
+    "source_sha256": "b1bdd6882020e3dcb9715da6d6392a4ee3ac06ce887959bc1fad967961169ee5",
+    "published_sha256": "037608e01bd9e1ef01788421c398dc0e3210b2e18caf8a72cfe3857fe4eaeae4",
+    "gzip": true
+  },
+  {
+    "source": "private/premise-resolution-cycle2/joint-gate-1/provider-python.exit",
+    "published": "docs/reports/premise-resolution-cycle2/validation/joint-gate-1/provider-python.exit",
+    "source_sha256": "9a271f2a916b0b6ee6cecb2426f0b3206ef074578be55d9bc94f6f3fe3ab86aa",
+    "published_sha256": "9a271f2a916b0b6ee6cecb2426f0b3206ef074578be55d9bc94f6f3fe3ab86aa",
+    "gzip": false
+  },
+  {
+    "source": "private/premise-resolution-cycle2/joint-gate-1/provider-python.log",
+    "published": "docs/reports/premise-resolution-cycle2/validation/joint-gate-1/provider-python.log.gz",
+    "source_sha256": "f46ae40025b4dd454a85e77ad2f64c54406d06653dbc00d79039c156864fe3db",
+    "published_sha256": "e20b9ee3c2264f36aaaca63502a10b6450fa6149f284c0c54f85920dd5152318",
+    "gzip": true
+  },
+  {
+    "source": "private/premise-resolution-cycle2/joint-gate-1/provider-rust.exit",
+    "published": "docs/reports/premise-resolution-cycle2/validation/joint-gate-1/provider-rust.exit",
+    "source_sha256": "9a271f2a916b0b6ee6cecb2426f0b3206ef074578be55d9bc94f6f3fe3ab86aa",
+    "published_sha256": "9a271f2a916b0b6ee6cecb2426f0b3206ef074578be55d9bc94f6f3fe3ab86aa",
+    "gzip": false
+  },
+  {
+    "source": "private/premise-resolution-cycle2/joint-gate-1/provider-rust.log",
+    "published": "docs/reports/premise-resolution-cycle2/validation/joint-gate-1/provider-rust.log.gz",
+    "source_sha256": "b4fbdd3d5e8742c0da9afded8dc04ac7f4264e49c3757f19d48c6b8718a5bb12",
+    "published_sha256": "32de70b7a70d4619320b05844aa024d54968f50a0e1fccb0132c9aed447c098b",
+    "gzip": true
+  },
+  {
+    "source": "private/premise-resolution-cycle2/joint-gate-1/release.exit",
+    "published": "docs/reports/premise-resolution-cycle2/validation/joint-gate-1/release.exit",
+    "source_sha256": "9a271f2a916b0b6ee6cecb2426f0b3206ef074578be55d9bc94f6f3fe3ab86aa",
+    "published_sha256": "9a271f2a916b0b6ee6cecb2426f0b3206ef074578be55d9bc94f6f3fe3ab86aa",
+    "gzip": false
+  },
+  {
+    "source": "private/premise-resolution-cycle2/joint-gate-1/release.log",
+    "published": "docs/reports/premise-resolution-cycle2/validation/joint-gate-1/release.log.gz",
+    "source_sha256": "f854ab58ecfb4df12ff2a4e7888ace473896b32a08504529035cab79c35f7b79",
+    "published_sha256": "89c6ea830af8dfe0bd381f3d80e4ee69d8a1d4341ec3585984dc036e09e8aa81",
+    "gzip": true
+  },
+  {
+    "source": "private/premise-resolution-cycle2/joint-gate-1/released.json",
+    "published": "docs/reports/premise-resolution-cycle2/validation/joint-gate-1/released.json",
+    "source_sha256": "dc8207ac9d4b0096f5986d27423eca7fedd00f7d4170474b056c94d28af95116",
+    "published_sha256": "dc8207ac9d4b0096f5986d27423eca7fedd00f7d4170474b056c94d28af95116",
+    "gzip": false
+  },
+  {
+    "source": "private/premise-resolution-cycle2/joint-gate-1/rust.exit",
+    "published": "docs/reports/premise-resolution-cycle2/validation/joint-gate-1/rust.exit",
+    "source_sha256": "39b8dc3fc8b44765c8e6f1adee04c5b465e555ab791cc42d0d9e810d5b64297c",
+    "published_sha256": "39b8dc3fc8b44765c8e6f1adee04c5b465e555ab791cc42d0d9e810d5b64297c",
+    "gzip": false
+  },
+  {
+    "source": "private/premise-resolution-cycle2/joint-gate-1/rust.log",
+    "published": "docs/reports/premise-resolution-cycle2/validation/joint-gate-1/rust.log.gz",
+    "source_sha256": "eee56c520defd27b1089d1b7be73bdd73a5357fa29f6c62d86c233dd94c5f6c2",
+    "published_sha256": "2ec90780c26c540ff70d17cddc47002b7862f423607843da6121db902d5e93a5",
+    "gzip": true
+  },
+  {
+    "source": "private/premise-resolution-cycle2/joint-gate-1/source-examples.exit",
+    "published": "docs/reports/premise-resolution-cycle2/validation/joint-gate-1/source-examples.exit",
+    "source_sha256": "9a271f2a916b0b6ee6cecb2426f0b3206ef074578be55d9bc94f6f3fe3ab86aa",
+    "published_sha256": "9a271f2a916b0b6ee6cecb2426f0b3206ef074578be55d9bc94f6f3fe3ab86aa",
+    "gzip": false
+  },
+  {
+    "source": "private/premise-resolution-cycle2/joint-gate-1/source-examples.log",
+    "published": "docs/reports/premise-resolution-cycle2/validation/joint-gate-1/source-examples.log.gz",
+    "source_sha256": "4d479340bb9ae13e1471b01a634033e13d2bd25b686103fa480c8cacac5c38ed",
+    "published_sha256": "ffad6fa7244ba0c670ee0d9a0f4862c81c56b142b35c65dc6cbc277518a686ba",
+    "gzip": true
+  },
+  {
+    "source": "private/premise-resolution-cycle2/joint-gate-1/submodules.exit",
+    "published": "docs/reports/premise-resolution-cycle2/validation/joint-gate-1/submodules.exit",
+    "source_sha256": "9a271f2a916b0b6ee6cecb2426f0b3206ef074578be55d9bc94f6f3fe3ab86aa",
+    "published_sha256": "9a271f2a916b0b6ee6cecb2426f0b3206ef074578be55d9bc94f6f3fe3ab86aa",
+    "gzip": false
+  },
+  {
+    "source": "private/premise-resolution-cycle2/joint-gate-1/submodules.log",
+    "published": "docs/reports/premise-resolution-cycle2/validation/joint-gate-1/submodules.log.gz",
+    "source_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "published_sha256": "9ceffb7310338057cfe71a4ae1e2c98d2c485d81cdef906532a801f457a38d64",
+    "gzip": true
+  },
+  {
+    "source": "private/premise-resolution-cycle2/joint-gate-2/acquired.json",
+    "published": "docs/reports/premise-resolution-cycle2/validation/joint-gate-2/acquired.json",
+    "source_sha256": "8d8331032698f9667d78b75420d671c3967955548b8c0442e91e4dcefd1d4f84",
+    "published_sha256": "8d8331032698f9667d78b75420d671c3967955548b8c0442e91e4dcefd1d4f84",
+    "gzip": false
+  },
+  {
+    "source": "private/premise-resolution-cycle2/joint-gate-2/audit-examples.exit",
+    "published": "docs/reports/premise-resolution-cycle2/validation/joint-gate-2/audit-examples.exit",
+    "source_sha256": "9a271f2a916b0b6ee6cecb2426f0b3206ef074578be55d9bc94f6f3fe3ab86aa",
+    "published_sha256": "9a271f2a916b0b6ee6cecb2426f0b3206ef074578be55d9bc94f6f3fe3ab86aa",
+    "gzip": false
+  },
+  {
+    "source": "private/premise-resolution-cycle2/joint-gate-2/audit-examples.log",
+    "published": "docs/reports/premise-resolution-cycle2/validation/joint-gate-2/audit-examples.log.gz",
+    "source_sha256": "47d1ebe904a90b00c5b9e4f31a52db52e92ee8caeaa47e1a29a4a65b6baf0c9d",
+    "published_sha256": "182ebe7541f9f4d3bdb4e0f93080ba58649bbeacbaf508ab660e56f835347edb",
+    "gzip": true
+  },
+  {
+    "source": "private/premise-resolution-cycle2/joint-gate-2/clang.exit",
+    "published": "docs/reports/premise-resolution-cycle2/validation/joint-gate-2/clang.exit",
+    "source_sha256": "9a271f2a916b0b6ee6cecb2426f0b3206ef074578be55d9bc94f6f3fe3ab86aa",
+    "published_sha256": "9a271f2a916b0b6ee6cecb2426f0b3206ef074578be55d9bc94f6f3fe3ab86aa",
+    "gzip": false
+  },
+  {
+    "source": "private/premise-resolution-cycle2/joint-gate-2/clang.log",
+    "published": "docs/reports/premise-resolution-cycle2/validation/joint-gate-2/clang.log.gz",
+    "source_sha256": "77467400b91c4cebb6c3e29d8a611af518a2f4078c22baf276b0a1373e996bf5",
+    "published_sha256": "406ea76b3153710fad352ac5a2cb02d02426f1c96f2a1234f1bffe3fe91a7d50",
+    "gzip": true
+  },
+  {
+    "source": "private/premise-resolution-cycle2/joint-gate-2/clippy.exit",
+    "published": "docs/reports/premise-resolution-cycle2/validation/joint-gate-2/clippy.exit",
+    "source_sha256": "9a271f2a916b0b6ee6cecb2426f0b3206ef074578be55d9bc94f6f3fe3ab86aa",
+    "published_sha256": "9a271f2a916b0b6ee6cecb2426f0b3206ef074578be55d9bc94f6f3fe3ab86aa",
+    "gzip": false
+  },
+  {
+    "source": "private/premise-resolution-cycle2/joint-gate-2/clippy.log",
+    "published": "docs/reports/premise-resolution-cycle2/validation/joint-gate-2/clippy.log.gz",
+    "source_sha256": "024ced059a3e8efc0c5bbb8fe2da07d474db6ace74c342eccf8356ab2975cea7",
+    "published_sha256": "a2ed564c63f0677b634b6d04558ab05a6b8cba2e478ac6d89f49f87b167f8944",
+    "gzip": true
+  },
+  {
+    "source": "private/premise-resolution-cycle2/joint-gate-2/commands.json",
+    "published": "docs/reports/premise-resolution-cycle2/validation/joint-gate-2/commands.json",
+    "source_sha256": "ef8a14bc419760e32ca82c12b75b242580f995b5dc39c6ec212791089411c377",
+    "published_sha256": "ef8a14bc419760e32ca82c12b75b242580f995b5dc39c6ec212791089411c377",
+    "gzip": false
+  },
+  {
+    "source": "private/premise-resolution-cycle2/joint-gate-2/fmt.exit",
+    "published": "docs/reports/premise-resolution-cycle2/validation/joint-gate-2/fmt.exit",
+    "source_sha256": "9a271f2a916b0b6ee6cecb2426f0b3206ef074578be55d9bc94f6f3fe3ab86aa",
+    "published_sha256": "9a271f2a916b0b6ee6cecb2426f0b3206ef074578be55d9bc94f6f3fe3ab86aa",
+    "gzip": false
+  },
+  {
+    "source": "private/premise-resolution-cycle2/joint-gate-2/fmt.log",
+    "published": "docs/reports/premise-resolution-cycle2/validation/joint-gate-2/fmt.log.gz",
+    "source_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "published_sha256": "9ceffb7310338057cfe71a4ae1e2c98d2c485d81cdef906532a801f457a38d64",
+    "gzip": true
+  },
+  {
+    "source": "private/premise-resolution-cycle2/joint-gate-2/followup.exit",
+    "published": "docs/reports/premise-resolution-cycle2/validation/joint-gate-2/followup.exit",
+    "source_sha256": "9a271f2a916b0b6ee6cecb2426f0b3206ef074578be55d9bc94f6f3fe3ab86aa",
+    "published_sha256": "9a271f2a916b0b6ee6cecb2426f0b3206ef074578be55d9bc94f6f3fe3ab86aa",
+    "gzip": false
+  },
+  {
+    "source": "private/premise-resolution-cycle2/joint-gate-2/followup.log",
+    "published": "docs/reports/premise-resolution-cycle2/validation/joint-gate-2/followup.log.gz",
+    "source_sha256": "ffa5bee1fe5f1f0a68ec903fb026922b5a871e95c0adee2cf08cd50489edeb25",
+    "published_sha256": "1c59b1d242a6957d517273670b525e6d8b79acf73d8835559d2c371fab728bdf",
+    "gzip": true
+  },
+  {
+    "source": "private/premise-resolution-cycle2/joint-gate-2/lean.exit",
+    "published": "docs/reports/premise-resolution-cycle2/validation/joint-gate-2/lean.exit",
+    "source_sha256": "9a271f2a916b0b6ee6cecb2426f0b3206ef074578be55d9bc94f6f3fe3ab86aa",
+    "published_sha256": "9a271f2a916b0b6ee6cecb2426f0b3206ef074578be55d9bc94f6f3fe3ab86aa",
+    "gzip": false
+  },
+  {
+    "source": "private/premise-resolution-cycle2/joint-gate-2/lean.log",
+    "published": "docs/reports/premise-resolution-cycle2/validation/joint-gate-2/lean.log.gz",
+    "source_sha256": "7f32c0e85c10e6e9c2d5089dc2ebbd234eea587c2efc646c897840668d066948",
+    "published_sha256": "6f71010904a039daa64ab6e3fee5c1c929b25cbb7f8d08b84fe6c28cea37d10c",
+    "gzip": true
+  },
+  {
+    "source": "private/premise-resolution-cycle2/joint-gate-2/package-build.exit",
+    "published": "docs/reports/premise-resolution-cycle2/validation/joint-gate-2/package-build.exit",
+    "source_sha256": "9a271f2a916b0b6ee6cecb2426f0b3206ef074578be55d9bc94f6f3fe3ab86aa",
+    "published_sha256": "9a271f2a916b0b6ee6cecb2426f0b3206ef074578be55d9bc94f6f3fe3ab86aa",
+    "gzip": false
+  },
+  {
+    "source": "private/premise-resolution-cycle2/joint-gate-2/package-build.log",
+    "published": "docs/reports/premise-resolution-cycle2/validation/joint-gate-2/package-build.log.gz",
+    "source_sha256": "baa892ed0c86df6c6f6ac53a99dd4512c38c22f4a516e06f7e40fb9789dc5f55",
+    "published_sha256": "bb975fd40366f2b5bfc3d6850f36706e43532a64372636b4f010db7e2b9b55f8",
+    "gzip": true
+  },
+  {
+    "source": "private/premise-resolution-cycle2/joint-gate-2/package-verify-chunkio.exit",
+    "published": "docs/reports/premise-resolution-cycle2/validation/joint-gate-2/package-verify-chunkio.exit",
+    "source_sha256": "9a271f2a916b0b6ee6cecb2426f0b3206ef074578be55d9bc94f6f3fe3ab86aa",
+    "published_sha256": "9a271f2a916b0b6ee6cecb2426f0b3206ef074578be55d9bc94f6f3fe3ab86aa",
+    "gzip": false
+  },
+  {
+    "source": "private/premise-resolution-cycle2/joint-gate-2/package-verify-chunkio.log",
+    "published": "docs/reports/premise-resolution-cycle2/validation/joint-gate-2/package-verify-chunkio.log.gz",
+    "source_sha256": "8500690eb4546875e1f4d8fc5a14e6d8352af1a81e959ffba50faa8fda7b163d",
+    "published_sha256": "4c8752c2257fa34b9e9b12d5fdea64bddeaf4577f12f9fd4b7ded4065c20f62d",
+    "gzip": true
+  },
+  {
+    "source": "private/premise-resolution-cycle2/joint-gate-2/package-verify-cmetrics.exit",
+    "published": "docs/reports/premise-resolution-cycle2/validation/joint-gate-2/package-verify-cmetrics.exit",
+    "source_sha256": "9a271f2a916b0b6ee6cecb2426f0b3206ef074578be55d9bc94f6f3fe3ab86aa",
+    "published_sha256": "9a271f2a916b0b6ee6cecb2426f0b3206ef074578be55d9bc94f6f3fe3ab86aa",
+    "gzip": false
+  },
+  {
+    "source": "private/premise-resolution-cycle2/joint-gate-2/package-verify-cmetrics.log",
+    "published": "docs/reports/premise-resolution-cycle2/validation/joint-gate-2/package-verify-cmetrics.log.gz",
+    "source_sha256": "f747bce86488a20f35cf134c9e0a0773a17d306b1ac62e8233aaef4fdc9a2edc",
+    "published_sha256": "2357f159fe7c7f3d1171e5d39bb49677d4d2016ee1ee452dfa2f467bbdcd377d",
+    "gzip": true
+  },
+  {
+    "source": "private/premise-resolution-cycle2/joint-gate-2/package-verify-ctraces.exit",
+    "published": "docs/reports/premise-resolution-cycle2/validation/joint-gate-2/package-verify-ctraces.exit",
+    "source_sha256": "9a271f2a916b0b6ee6cecb2426f0b3206ef074578be55d9bc94f6f3fe3ab86aa",
+    "published_sha256": "9a271f2a916b0b6ee6cecb2426f0b3206ef074578be55d9bc94f6f3fe3ab86aa",
+    "gzip": false
+  },
+  {
+    "source": "private/premise-resolution-cycle2/joint-gate-2/package-verify-ctraces.log",
+    "published": "docs/reports/premise-resolution-cycle2/validation/joint-gate-2/package-verify-ctraces.log.gz",
+    "source_sha256": "b8148d953a7cf557914a59e3dde79ce403df5282702e4809f81437f4f6a5a846",
+    "published_sha256": "365b7deb832df05655b19f5f34424237593849276d974c2b74426fad1a81f583",
+    "gzip": true
+  },
+  {
+    "source": "private/premise-resolution-cycle2/joint-gate-2/package-verify-libevent.exit",
+    "published": "docs/reports/premise-resolution-cycle2/validation/joint-gate-2/package-verify-libevent.exit",
+    "source_sha256": "9a271f2a916b0b6ee6cecb2426f0b3206ef074578be55d9bc94f6f3fe3ab86aa",
+    "published_sha256": "9a271f2a916b0b6ee6cecb2426f0b3206ef074578be55d9bc94f6f3fe3ab86aa",
+    "gzip": false
+  },
+  {
+    "source": "private/premise-resolution-cycle2/joint-gate-2/package-verify-libevent.log",
+    "published": "docs/reports/premise-resolution-cycle2/validation/joint-gate-2/package-verify-libevent.log.gz",
+    "source_sha256": "0d1796b84701960409685a650a4ad2455ad01d5b5377a46874234da158ca1618",
+    "published_sha256": "ce012486e8c4c9a5316d877d17fc4c3159e0209cbe6d11ed8c07cdfaee3b7c99",
+    "gzip": true
+  },
+  {
+    "source": "private/premise-resolution-cycle2/joint-gate-2/package-verify-librdkafka.exit",
+    "published": "docs/reports/premise-resolution-cycle2/validation/joint-gate-2/package-verify-librdkafka.exit",
+    "source_sha256": "9a271f2a916b0b6ee6cecb2426f0b3206ef074578be55d9bc94f6f3fe3ab86aa",
+    "published_sha256": "9a271f2a916b0b6ee6cecb2426f0b3206ef074578be55d9bc94f6f3fe3ab86aa",
+    "gzip": false
+  },
+  {
+    "source": "private/premise-resolution-cycle2/joint-gate-2/package-verify-librdkafka.log",
+    "published": "docs/reports/premise-resolution-cycle2/validation/joint-gate-2/package-verify-librdkafka.log.gz",
+    "source_sha256": "e833f700d28c3d02fb01a90c61168b8dd54d20d9c0f7fdc940f243fcab728d40",
+    "published_sha256": "239472c8eb63087b3361c3a7c14736ff1af7080f0d1fed42e50e0e85e5e432d1",
+    "gzip": true
+  },
+  {
+    "source": "private/premise-resolution-cycle2/joint-gate-2/probe.exit",
+    "published": "docs/reports/premise-resolution-cycle2/validation/joint-gate-2/probe.exit",
+    "source_sha256": "9a271f2a916b0b6ee6cecb2426f0b3206ef074578be55d9bc94f6f3fe3ab86aa",
+    "published_sha256": "9a271f2a916b0b6ee6cecb2426f0b3206ef074578be55d9bc94f6f3fe3ab86aa",
+    "gzip": false
+  },
+  {
+    "source": "private/premise-resolution-cycle2/joint-gate-2/probe.log",
+    "published": "docs/reports/premise-resolution-cycle2/validation/joint-gate-2/probe.log.gz",
+    "source_sha256": "5595fcf69a0e85180af728a2e993a5dc5347128a9f2c89416a60c521a3348cbd",
+    "published_sha256": "20cd31d6b7edc6e54590518032646807fba55117d95e9c7de836041cd055311c",
+    "gzip": true
+  },
+  {
+    "source": "private/premise-resolution-cycle2/joint-gate-2/provider-clippy.exit",
+    "published": "docs/reports/premise-resolution-cycle2/validation/joint-gate-2/provider-clippy.exit",
+    "source_sha256": "9a271f2a916b0b6ee6cecb2426f0b3206ef074578be55d9bc94f6f3fe3ab86aa",
+    "published_sha256": "9a271f2a916b0b6ee6cecb2426f0b3206ef074578be55d9bc94f6f3fe3ab86aa",
+    "gzip": false
+  },
+  {
+    "source": "private/premise-resolution-cycle2/joint-gate-2/provider-clippy.log",
+    "published": "docs/reports/premise-resolution-cycle2/validation/joint-gate-2/provider-clippy.log.gz",
+    "source_sha256": "01780d461669e3e7c50150a6a76a3f92f83b0e072ba5374e986b56b1db46e57e",
+    "published_sha256": "16daaa43f9d55dfab9213ad86571887af10a2a85b8c81d2832fb8e5e2eac5c9d",
+    "gzip": true
+  },
+  {
+    "source": "private/premise-resolution-cycle2/joint-gate-2/provider-contracts.exit",
+    "published": "docs/reports/premise-resolution-cycle2/validation/joint-gate-2/provider-contracts.exit",
+    "source_sha256": "9a271f2a916b0b6ee6cecb2426f0b3206ef074578be55d9bc94f6f3fe3ab86aa",
+    "published_sha256": "9a271f2a916b0b6ee6cecb2426f0b3206ef074578be55d9bc94f6f3fe3ab86aa",
+    "gzip": false
+  },
+  {
+    "source": "private/premise-resolution-cycle2/joint-gate-2/provider-contracts.log",
+    "published": "docs/reports/premise-resolution-cycle2/validation/joint-gate-2/provider-contracts.log.gz",
+    "source_sha256": "43a857b3aec7028a5c78fa2c1be45883e432225c27d3c66f759b12b32b03e9a1",
+    "published_sha256": "473e887cce6e08426177c9b9de9f7a6995debe69d3fbd0ba10208d9d7f744f7a",
+    "gzip": true
+  },
+  {
+    "source": "private/premise-resolution-cycle2/joint-gate-2/provider-fmt.exit",
+    "published": "docs/reports/premise-resolution-cycle2/validation/joint-gate-2/provider-fmt.exit",
+    "source_sha256": "9a271f2a916b0b6ee6cecb2426f0b3206ef074578be55d9bc94f6f3fe3ab86aa",
+    "published_sha256": "9a271f2a916b0b6ee6cecb2426f0b3206ef074578be55d9bc94f6f3fe3ab86aa",
+    "gzip": false
+  },
+  {
+    "source": "private/premise-resolution-cycle2/joint-gate-2/provider-fmt.log",
+    "published": "docs/reports/premise-resolution-cycle2/validation/joint-gate-2/provider-fmt.log.gz",
+    "source_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "published_sha256": "9ceffb7310338057cfe71a4ae1e2c98d2c485d81cdef906532a801f457a38d64",
+    "gzip": true
+  },
+  {
+    "source": "private/premise-resolution-cycle2/joint-gate-2/provider-python.exit",
+    "published": "docs/reports/premise-resolution-cycle2/validation/joint-gate-2/provider-python.exit",
+    "source_sha256": "9a271f2a916b0b6ee6cecb2426f0b3206ef074578be55d9bc94f6f3fe3ab86aa",
+    "published_sha256": "9a271f2a916b0b6ee6cecb2426f0b3206ef074578be55d9bc94f6f3fe3ab86aa",
+    "gzip": false
+  },
+  {
+    "source": "private/premise-resolution-cycle2/joint-gate-2/provider-python.log",
+    "published": "docs/reports/premise-resolution-cycle2/validation/joint-gate-2/provider-python.log.gz",
+    "source_sha256": "bd57adfed776faf7520764e7f5c0cf5ab7c45114035b3972ccf0bc6bf83cc0ae",
+    "published_sha256": "9b487527bdae0768b598904f24beda4f78d802b3909cb082e29df1d95a274b5f",
+    "gzip": true
+  },
+  {
+    "source": "private/premise-resolution-cycle2/joint-gate-2/provider-rust.exit",
+    "published": "docs/reports/premise-resolution-cycle2/validation/joint-gate-2/provider-rust.exit",
+    "source_sha256": "9a271f2a916b0b6ee6cecb2426f0b3206ef074578be55d9bc94f6f3fe3ab86aa",
+    "published_sha256": "9a271f2a916b0b6ee6cecb2426f0b3206ef074578be55d9bc94f6f3fe3ab86aa",
+    "gzip": false
+  },
+  {
+    "source": "private/premise-resolution-cycle2/joint-gate-2/provider-rust.log",
+    "published": "docs/reports/premise-resolution-cycle2/validation/joint-gate-2/provider-rust.log.gz",
+    "source_sha256": "934ee832a4f6ec9b96333d81361d7986b737b9b3b591b405c8b3718649e36496",
+    "published_sha256": "e4d89081739202051ae8da6dcd204c21a60d6fcfb589d24a6ca1742c32f299c5",
+    "gzip": true
+  },
+  {
+    "source": "private/premise-resolution-cycle2/joint-gate-2/release.exit",
+    "published": "docs/reports/premise-resolution-cycle2/validation/joint-gate-2/release.exit",
+    "source_sha256": "9a271f2a916b0b6ee6cecb2426f0b3206ef074578be55d9bc94f6f3fe3ab86aa",
+    "published_sha256": "9a271f2a916b0b6ee6cecb2426f0b3206ef074578be55d9bc94f6f3fe3ab86aa",
+    "gzip": false
+  },
+  {
+    "source": "private/premise-resolution-cycle2/joint-gate-2/release.log",
+    "published": "docs/reports/premise-resolution-cycle2/validation/joint-gate-2/release.log.gz",
+    "source_sha256": "1d70c16883314fca94ba4a59fa5ebf26ec32d59b00088fe5393ff25c61672f1d",
+    "published_sha256": "cf303f7ba9963157413a1a2042b6bdf9ccf9e47e7a1217bf26744df73eae3f20",
+    "gzip": true
+  },
+  {
+    "source": "private/premise-resolution-cycle2/joint-gate-2/released.json",
+    "published": "docs/reports/premise-resolution-cycle2/validation/joint-gate-2/released.json",
+    "source_sha256": "1ba75af1096a86c9477249b287b58fc8f381be9561d98fb823a24ac27e47320c",
+    "published_sha256": "1ba75af1096a86c9477249b287b58fc8f381be9561d98fb823a24ac27e47320c",
+    "gzip": false
+  },
+  {
+    "source": "private/premise-resolution-cycle2/joint-gate-2/rust.exit",
+    "published": "docs/reports/premise-resolution-cycle2/validation/joint-gate-2/rust.exit",
+    "source_sha256": "9a271f2a916b0b6ee6cecb2426f0b3206ef074578be55d9bc94f6f3fe3ab86aa",
+    "published_sha256": "9a271f2a916b0b6ee6cecb2426f0b3206ef074578be55d9bc94f6f3fe3ab86aa",
+    "gzip": false
+  },
+  {
+    "source": "private/premise-resolution-cycle2/joint-gate-2/rust.log",
+    "published": "docs/reports/premise-resolution-cycle2/validation/joint-gate-2/rust.log.gz",
+    "source_sha256": "c823b31157571e82e3697c79eed8d2b13ae5f09fe0ab3ca0e634c584f01b8170",
+    "published_sha256": "b4f49a1a57447f8fe9c2138b568626e84bb8fc61c3853757ca308c3fd312d6f0",
+    "gzip": true
+  },
+  {
+    "source": "private/premise-resolution-cycle2/joint-gate-2/source-examples.exit",
+    "published": "docs/reports/premise-resolution-cycle2/validation/joint-gate-2/source-examples.exit",
+    "source_sha256": "9a271f2a916b0b6ee6cecb2426f0b3206ef074578be55d9bc94f6f3fe3ab86aa",
+    "published_sha256": "9a271f2a916b0b6ee6cecb2426f0b3206ef074578be55d9bc94f6f3fe3ab86aa",
+    "gzip": false
+  },
+  {
+    "source": "private/premise-resolution-cycle2/joint-gate-2/source-examples.log",
+    "published": "docs/reports/premise-resolution-cycle2/validation/joint-gate-2/source-examples.log.gz",
+    "source_sha256": "509f0da6d45945713d9477d0082cd28361a65d299dba3a1f3c0c9b9354959e0c",
+    "published_sha256": "a50830a5f2a5ac7bc1d495c21fbe09742474d96845e1aa1b6887cba00f94a11c",
+    "gzip": true
+  },
+  {
+    "source": "private/premise-resolution-cycle2/joint-gate-2/submodules.exit",
+    "published": "docs/reports/premise-resolution-cycle2/validation/joint-gate-2/submodules.exit",
+    "source_sha256": "9a271f2a916b0b6ee6cecb2426f0b3206ef074578be55d9bc94f6f3fe3ab86aa",
+    "published_sha256": "9a271f2a916b0b6ee6cecb2426f0b3206ef074578be55d9bc94f6f3fe3ab86aa",
+    "gzip": false
+  },
+  {
+    "source": "private/premise-resolution-cycle2/joint-gate-2/submodules.log",
+    "published": "docs/reports/premise-resolution-cycle2/validation/joint-gate-2/submodules.log.gz",
+    "source_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "published_sha256": "9ceffb7310338057cfe71a4ae1e2c98d2c485d81cdef906532a801f457a38d64",
+    "gzip": true
+  },
+  {
+    "source": "private/premise-resolution-cycle2/base-collector-1/acquired.json",
+    "published": "docs/reports/premise-resolution-cycle2/native/base-collector-1/acquired.json",
+    "source_sha256": "0b8be9273842f0f6b5b67fd09dbdf71725ee7c1a56bd3a91cdf7844dcbf60d11",
+    "published_sha256": "0b8be9273842f0f6b5b67fd09dbdf71725ee7c1a56bd3a91cdf7844dcbf60d11",
+    "gzip": false
+  },
+  {
+    "source": "private/premise-resolution-cycle2/base-collector-1/commands.json",
+    "published": "docs/reports/premise-resolution-cycle2/native/base-collector-1/commands.json",
+    "source_sha256": "ac19e2efdb283bdba8f6c6847f68611c5eea9d7d8d3a6297ab9e7d625e372761",
+    "published_sha256": "ac19e2efdb283bdba8f6c6847f68611c5eea9d7d8d3a6297ab9e7d625e372761",
+    "gzip": false
+  },
+  {
+    "source": "private/premise-resolution-cycle2/base-collector-1/corpus.log",
+    "published": "docs/reports/premise-resolution-cycle2/native/base-collector-1/corpus.log.gz",
+    "source_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "published_sha256": "9ceffb7310338057cfe71a4ae1e2c98d2c485d81cdef906532a801f457a38d64",
+    "gzip": true
+  },
+  {
+    "source": "private/premise-resolution-cycle2/base-collector-1/released.json",
+    "published": "docs/reports/premise-resolution-cycle2/native/base-collector-1/released.json",
+    "source_sha256": "94349798177054ee67cb2c597a4a2cca58555c200748f9055073c701d802bf7c",
+    "published_sha256": "94349798177054ee67cb2c597a4a2cca58555c200748f9055073c701d802bf7c",
+    "gzip": false
+  },
+  {
+    "source": "private/premise-resolution-cycle2/base-collector-1/slice.log",
+    "published": "docs/reports/premise-resolution-cycle2/native/base-collector-1/slice.log.gz",
+    "source_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "published_sha256": "9ceffb7310338057cfe71a4ae1e2c98d2c485d81cdef906532a801f457a38d64",
+    "gzip": true
+  },
+  {
+    "source": "private/premise-resolution-cycle2/base-collector-1/system.log",
+    "published": "docs/reports/premise-resolution-cycle2/native/base-collector-1/system.log.gz",
+    "source_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "published_sha256": "9ceffb7310338057cfe71a4ae1e2c98d2c485d81cdef906532a801f457a38d64",
+    "gzip": true
+  },
+  {
+    "source": "private/premise-resolution-cycle2/tip-collector-1/acquired.json",
+    "published": "docs/reports/premise-resolution-cycle2/native/tip-collector-1/acquired.json",
+    "source_sha256": "e1dc89e4f37971db3fe1856be4e47a4b88e41e251f3a432c7af710ca7f1b9ac8",
+    "published_sha256": "e1dc89e4f37971db3fe1856be4e47a4b88e41e251f3a432c7af710ca7f1b9ac8",
+    "gzip": false
+  },
+  {
+    "source": "private/premise-resolution-cycle2/tip-collector-1/commands.json",
+    "published": "docs/reports/premise-resolution-cycle2/native/tip-collector-1/commands.json",
+    "source_sha256": "7754c2a25dad42f4bac9e657be283ec194e406b070f48453ff4efd0fecf6c966",
+    "published_sha256": "7754c2a25dad42f4bac9e657be283ec194e406b070f48453ff4efd0fecf6c966",
+    "gzip": false
+  },
+  {
+    "source": "private/premise-resolution-cycle2/tip-collector-1/corpus.log",
+    "published": "docs/reports/premise-resolution-cycle2/native/tip-collector-1/corpus.log.gz",
+    "source_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "published_sha256": "9ceffb7310338057cfe71a4ae1e2c98d2c485d81cdef906532a801f457a38d64",
+    "gzip": true
+  },
+  {
+    "source": "private/premise-resolution-cycle2/tip-collector-1/released.json",
+    "published": "docs/reports/premise-resolution-cycle2/native/tip-collector-1/released.json",
+    "source_sha256": "2c3b3ffbbb6d837ca283f35fd64d255644cd437f284c345856f71182e69f90b8",
+    "published_sha256": "2c3b3ffbbb6d837ca283f35fd64d255644cd437f284c345856f71182e69f90b8",
+    "gzip": false
+  },
+  {
+    "source": "private/premise-resolution-cycle2/tip-collector-1/slice.log",
+    "published": "docs/reports/premise-resolution-cycle2/native/tip-collector-1/slice.log.gz",
+    "source_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "published_sha256": "9ceffb7310338057cfe71a4ae1e2c98d2c485d81cdef906532a801f457a38d64",
+    "gzip": true
+  },
+  {
+    "source": "private/premise-resolution-cycle2/tip-collector-1/system.log",
+    "published": "docs/reports/premise-resolution-cycle2/native/tip-collector-1/system.log.gz",
+    "source_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "published_sha256": "9ceffb7310338057cfe71a4ae1e2c98d2c485d81cdef906532a801f457a38d64",
+    "gzip": true
+  },
+  {
+    "source": "private/premise-resolution-cycle2/comparison-configured-1/base-environments/commands.json",
+    "published": "docs/reports/premise-resolution-cycle2/comparisons/comparison-configured-1/base-environments/commands.json",
+    "source_sha256": "640894a290da1af507c078deb03f621c0f43f5b99cd575c20e2b7292807a18b8",
+    "published_sha256": "640894a290da1af507c078deb03f621c0f43f5b99cd575c20e2b7292807a18b8",
+    "gzip": false
+  },
+  {
+    "source": "private/premise-resolution-cycle2/comparison-configured-1/base-environments/slice/base-environment-hashes.json",
+    "published": "docs/reports/premise-resolution-cycle2/comparisons/comparison-configured-1/base-environments/slice/base-environment-hashes.json",
+    "source_sha256": "4c10f314cdb33ded300e84069979a47535ede64a61747af029f32c6ff06e23da",
+    "published_sha256": "4c10f314cdb33ded300e84069979a47535ede64a61747af029f32c6ff06e23da",
+    "gzip": false
+  },
+  {
+    "source": "private/premise-resolution-cycle2/comparison-configured-1/base-environments/slice/base-environment.json",
+    "published": "docs/reports/premise-resolution-cycle2/comparisons/comparison-configured-1/base-environments/slice/base-environment.json",
+    "source_sha256": "54a898de1521d1401eef20413b0b2a9b8cb1c1e2819f95b4e5228fdb60c173ae",
+    "published_sha256": "54a898de1521d1401eef20413b0b2a9b8cb1c1e2819f95b4e5228fdb60c173ae",
+    "gzip": false
+  },
+  {
+    "source": "private/premise-resolution-cycle2/comparison-configured-1/base-environments/slice/base-stderr.log",
+    "published": "docs/reports/premise-resolution-cycle2/comparisons/comparison-configured-1/base-environments/slice/base-stderr.log",
+    "source_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "published_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "gzip": false
+  },
+  {
+    "source": "private/premise-resolution-cycle2/comparison-configured-1/base-environments/system/base-environment-hashes.json",
+    "published": "docs/reports/premise-resolution-cycle2/comparisons/comparison-configured-1/base-environments/system/base-environment-hashes.json",
+    "source_sha256": "cc904067c535b38c1f2f0adb3b83f85a0ed1e433871b0c4c0d3f9bb6f890907b",
+    "published_sha256": "cc904067c535b38c1f2f0adb3b83f85a0ed1e433871b0c4c0d3f9bb6f890907b",
+    "gzip": false
+  },
+  {
+    "source": "private/premise-resolution-cycle2/comparison-configured-1/base-environments/system/base-environment.json",
+    "published": "docs/reports/premise-resolution-cycle2/comparisons/comparison-configured-1/base-environments/system/base-environment.json",
+    "source_sha256": "420e6c841a73efc5cce8d8cdebe1d3fcd0f25057858b0395372b790940949982",
+    "published_sha256": "420e6c841a73efc5cce8d8cdebe1d3fcd0f25057858b0395372b790940949982",
+    "gzip": false
+  },
+  {
+    "source": "private/premise-resolution-cycle2/comparison-configured-1/base-environments/system/base-stderr.log",
+    "published": "docs/reports/premise-resolution-cycle2/comparisons/comparison-configured-1/base-environments/system/base-stderr.log",
+    "source_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "published_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "gzip": false
+  },
+  {
+    "source": "private/premise-resolution-cycle2/comparison-configured-1/commands.json",
+    "published": "docs/reports/premise-resolution-cycle2/comparisons/comparison-configured-1/commands.json",
+    "source_sha256": "c2fa0d7773e063cefeb66f8dafd3a2805d0b2a3cc21f5ba9ba882fc11b429373",
+    "published_sha256": "c2fa0d7773e063cefeb66f8dafd3a2805d0b2a3cc21f5ba9ba882fc11b429373",
+    "gzip": false
+  },
+  {
+    "source": "private/premise-resolution-cycle2/comparison-configured-1/export-base.log",
+    "published": "docs/reports/premise-resolution-cycle2/comparisons/comparison-configured-1/export-base.log",
+    "source_sha256": "476b304944e7c78de45883fcffacc21cb539cadc91a4990b514dea9fc841d678",
+    "published_sha256": "476b304944e7c78de45883fcffacc21cb539cadc91a4990b514dea9fc841d678",
+    "gzip": false
+  },
+  {
+    "source": "private/premise-resolution-cycle2/comparison-configured-1/export-tip.log",
+    "published": "docs/reports/premise-resolution-cycle2/comparisons/comparison-configured-1/export-tip.log",
+    "source_sha256": "8987e0975940195dfa56228564ba155fb2c60c81b5bd3595f05b032abcc5b3d2",
+    "published_sha256": "8987e0975940195dfa56228564ba155fb2c60c81b5bd3595f05b032abcc5b3d2",
+    "gzip": false
+  },
+  {
+    "source": "private/premise-resolution-cycle2/comparison-configured-1/lock-observation.json",
+    "published": "docs/reports/premise-resolution-cycle2/comparisons/comparison-configured-1/lock-observation.json",
+    "source_sha256": "47a8fc72e9c2782e012df0515f547cbe3e117518c831891dceea24193c728008",
+    "published_sha256": "47a8fc72e9c2782e012df0515f547cbe3e117518c831891dceea24193c728008",
+    "gzip": false
+  },
+  {
+    "source": "private/premise-resolution-cycle2/comparison-configured-1/system/base/invocation.json",
+    "published": "docs/reports/premise-resolution-cycle2/comparisons/comparison-configured-1/system/base/invocation.json",
+    "source_sha256": "83f3d74e479d02d12519a660930d8c10e65dff1aa3d6346336ccf22d333fc3e5",
+    "published_sha256": "83f3d74e479d02d12519a660930d8c10e65dff1aa3d6346336ccf22d333fc3e5",
+    "gzip": false
+  },
+  {
+    "source": "private/premise-resolution-cycle2/comparison-configured-1/system/base/manifest.json",
+    "published": "docs/reports/premise-resolution-cycle2/comparisons/comparison-configured-1/system/base/manifest.json",
+    "source_sha256": "d14d585e39769b4806bcee3eceac8bb0d1bd70f5ca7df4b62767347772baa61a",
+    "published_sha256": "d14d585e39769b4806bcee3eceac8bb0d1bd70f5ca7df4b62767347772baa61a",
+    "gzip": false
+  },
+  {
+    "source": "private/premise-resolution-cycle2/comparison-configured-1/system/base/resource-diagnostics.chunk-contracts.json.gz",
+    "published": "docs/reports/premise-resolution-cycle2/comparisons/comparison-configured-1/system/base/resource-diagnostics.chunk-contracts.json.gz",
+    "source_sha256": "21c47e400097333e880703ea1d1f27b3f23cd0544271c70c8c1b96c6216afe40",
+    "published_sha256": "21c47e400097333e880703ea1d1f27b3f23cd0544271c70c8c1b96c6216afe40",
+    "gzip": false
+  },
+  {
+    "source": "private/premise-resolution-cycle2/comparison-configured-1/system/base/resource-diagnostics.contracts.json.gz",
+    "published": "docs/reports/premise-resolution-cycle2/comparisons/comparison-configured-1/system/base/resource-diagnostics.contracts.json.gz",
+    "source_sha256": "cb7eda16518ec58e34dd38150986af6df224435531ead6fddb224116504baef4",
+    "published_sha256": "cb7eda16518ec58e34dd38150986af6df224435531ead6fddb224116504baef4",
+    "gzip": false
+  },
+  {
+    "source": "private/premise-resolution-cycle2/comparison-configured-1/system/base/resource-diagnostics.json.gz",
+    "published": "docs/reports/premise-resolution-cycle2/comparisons/comparison-configured-1/system/base/resource-diagnostics.json.gz",
+    "source_sha256": "d80b046e28a052df088c180496beb8b2a5de9e92cd4586b7913163cde310a7fa",
+    "published_sha256": "d80b046e28a052df088c180496beb8b2a5de9e92cd4586b7913163cde310a7fa",
+    "gzip": false
+  },
+  {
+    "source": "private/premise-resolution-cycle2/comparison-configured-1/system/base/resource-diagnostics.source-effects.json.gz",
+    "published": "docs/reports/premise-resolution-cycle2/comparisons/comparison-configured-1/system/base/resource-diagnostics.source-effects.json.gz",
+    "source_sha256": "21c47e400097333e880703ea1d1f27b3f23cd0544271c70c8c1b96c6216afe40",
+    "published_sha256": "21c47e400097333e880703ea1d1f27b3f23cd0544271c70c8c1b96c6216afe40",
+    "gzip": false
+  },
+  {
+    "source": "private/premise-resolution-cycle2/comparison-configured-1/system/base/system-null.jsonl.gz",
+    "published": "docs/reports/premise-resolution-cycle2/comparisons/comparison-configured-1/system/base/system-null.jsonl.gz",
+    "source_sha256": "038c97c99469840403b44317ab9f729708a513c2124345f4d2da4fbcba030fc1",
+    "published_sha256": "038c97c99469840403b44317ab9f729708a513c2124345f4d2da4fbcba030fc1",
+    "gzip": false
+  },
+  {
+    "source": "private/premise-resolution-cycle2/comparison-configured-1/system/base/system-null.summary.json.gz",
+    "published": "docs/reports/premise-resolution-cycle2/comparisons/comparison-configured-1/system/base/system-null.summary.json.gz",
+    "source_sha256": "f538ab69b0117e99d0b21573b85bb8e5fb14df87b9fd3366be36b9fb428efe76",
+    "published_sha256": "f538ab69b0117e99d0b21573b85bb8e5fb14df87b9fd3366be36b9fb428efe76",
+    "gzip": false
+  },
+  {
+    "source": "private/premise-resolution-cycle2/comparison-configured-1/system/base/system-outer.json.gz",
+    "published": "docs/reports/premise-resolution-cycle2/comparisons/comparison-configured-1/system/base/system-outer.json.gz",
+    "source_sha256": "4ef0a15d3306738836c7c5beb41dcdab40e85a338c25640b8676edc264f1acac",
+    "published_sha256": "4ef0a15d3306738836c7c5beb41dcdab40e85a338c25640b8676edc264f1acac",
+    "gzip": false
+  },
+  {
+    "source": "private/premise-resolution-cycle2/comparison-configured-1/system/input-invariants.json",
+    "published": "docs/reports/premise-resolution-cycle2/comparisons/comparison-configured-1/system/input-invariants.json",
+    "source_sha256": "1124e9bedad394ed5068cec2f6cd18906da4508ad9c0e39d2baba4e3d67894a3",
+    "published_sha256": "1124e9bedad394ed5068cec2f6cd18906da4508ad9c0e39d2baba4e3d67894a3",
+    "gzip": false
+  },
+  {
+    "source": "private/premise-resolution-cycle2/comparison-configured-1/system/raw-differences.json.gz",
+    "published": "docs/reports/premise-resolution-cycle2/comparisons/comparison-configured-1/system/raw-differences.json.gz",
+    "source_sha256": "beb24c0c29968954cdf12be97e4f13670a39d8b80cba9856a6445416d2940374",
+    "published_sha256": "beb24c0c29968954cdf12be97e4f13670a39d8b80cba9856a6445416d2940374",
+    "gzip": false
+  },
+  {
+    "source": "private/premise-resolution-cycle2/comparison-configured-1/system/tip/invocation.json",
+    "published": "docs/reports/premise-resolution-cycle2/comparisons/comparison-configured-1/system/tip/invocation.json",
+    "source_sha256": "5de7291e8b6f056f22b2f2e1f5fd004844bfd226e391184e31fca2ffb49df997",
+    "published_sha256": "5de7291e8b6f056f22b2f2e1f5fd004844bfd226e391184e31fca2ffb49df997",
+    "gzip": false
+  },
+  {
+    "source": "private/premise-resolution-cycle2/comparison-configured-1/system/tip/manifest.json",
+    "published": "docs/reports/premise-resolution-cycle2/comparisons/comparison-configured-1/system/tip/manifest.json",
+    "source_sha256": "006061e98620f6bc3535f6eefa79dfdc256633228135813b868b3db367a91e07",
+    "published_sha256": "006061e98620f6bc3535f6eefa79dfdc256633228135813b868b3db367a91e07",
+    "gzip": false
+  },
+  {
+    "source": "private/premise-resolution-cycle2/comparison-configured-1/system/tip/resource-diagnostics.chunk-contracts.json.gz",
+    "published": "docs/reports/premise-resolution-cycle2/comparisons/comparison-configured-1/system/tip/resource-diagnostics.chunk-contracts.json.gz",
+    "source_sha256": "21c47e400097333e880703ea1d1f27b3f23cd0544271c70c8c1b96c6216afe40",
+    "published_sha256": "21c47e400097333e880703ea1d1f27b3f23cd0544271c70c8c1b96c6216afe40",
+    "gzip": false
+  },
+  {
+    "source": "private/premise-resolution-cycle2/comparison-configured-1/system/tip/resource-diagnostics.contracts.json.gz",
+    "published": "docs/reports/premise-resolution-cycle2/comparisons/comparison-configured-1/system/tip/resource-diagnostics.contracts.json.gz",
+    "source_sha256": "101a97eb72abb8efeca4e05adeab1ddb93ff48992175ad3af9e3a88eb8e10041",
+    "published_sha256": "101a97eb72abb8efeca4e05adeab1ddb93ff48992175ad3af9e3a88eb8e10041",
+    "gzip": false
+  },
+  {
+    "source": "private/premise-resolution-cycle2/comparison-configured-1/system/tip/resource-diagnostics.json.gz",
+    "published": "docs/reports/premise-resolution-cycle2/comparisons/comparison-configured-1/system/tip/resource-diagnostics.json.gz",
+    "source_sha256": "b693eb03296e513ffad16046d2651eca45066f193106808fde82c00896a6b1b8",
+    "published_sha256": "b693eb03296e513ffad16046d2651eca45066f193106808fde82c00896a6b1b8",
+    "gzip": false
+  },
+  {
+    "source": "private/premise-resolution-cycle2/comparison-configured-1/system/tip/resource-diagnostics.source-effects.json.gz",
+    "published": "docs/reports/premise-resolution-cycle2/comparisons/comparison-configured-1/system/tip/resource-diagnostics.source-effects.json.gz",
+    "source_sha256": "21c47e400097333e880703ea1d1f27b3f23cd0544271c70c8c1b96c6216afe40",
+    "published_sha256": "21c47e400097333e880703ea1d1f27b3f23cd0544271c70c8c1b96c6216afe40",
+    "gzip": false
+  },
+  {
+    "source": "private/premise-resolution-cycle2/comparison-configured-1/system/tip/system-null.jsonl.gz",
+    "published": "docs/reports/premise-resolution-cycle2/comparisons/comparison-configured-1/system/tip/system-null.jsonl.gz",
+    "source_sha256": "fd12aa88c7a144d8558012904f317e70b7817cc96dc6b86ba3030afd3d3a0e00",
+    "published_sha256": "fd12aa88c7a144d8558012904f317e70b7817cc96dc6b86ba3030afd3d3a0e00",
+    "gzip": false
+  },
+  {
+    "source": "private/premise-resolution-cycle2/comparison-configured-1/system/tip/system-null.summary.json.gz",
+    "published": "docs/reports/premise-resolution-cycle2/comparisons/comparison-configured-1/system/tip/system-null.summary.json.gz",
+    "source_sha256": "f538ab69b0117e99d0b21573b85bb8e5fb14df87b9fd3366be36b9fb428efe76",
+    "published_sha256": "f538ab69b0117e99d0b21573b85bb8e5fb14df87b9fd3366be36b9fb428efe76",
+    "gzip": false
+  },
+  {
+    "source": "private/premise-resolution-cycle2/comparison-configured-1/system/tip/system-outer.json.gz",
+    "published": "docs/reports/premise-resolution-cycle2/comparisons/comparison-configured-1/system/tip/system-outer.json.gz",
+    "source_sha256": "56ebfcd4e19ca705eed1aee28f4697f81ef7f028e7a099a14e8a02484ed7936f",
+    "published_sha256": "56ebfcd4e19ca705eed1aee28f4697f81ef7f028e7a099a14e8a02484ed7936f",
+    "gzip": false
+  },
+  {
+    "source": "private/premise-resolution-cycle2/comparison-configured-1/system-all-fields.log",
+    "published": "docs/reports/premise-resolution-cycle2/comparisons/comparison-configured-1/system-all-fields.log",
+    "source_sha256": "ae82847cbf63567c828126ebd32457b95e5f80fc53c662cd601e9bf691d54b5d",
+    "published_sha256": "ae82847cbf63567c828126ebd32457b95e5f80fc53c662cd601e9bf691d54b5d",
+    "gzip": false
+  },
+  {
+    "source": "private/premise-resolution-cycle2/comparison-configured-1/system-canonical-capture-proof.log",
+    "published": "docs/reports/premise-resolution-cycle2/comparisons/comparison-configured-1/system-canonical-capture-proof.log",
+    "source_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "published_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "gzip": false
+  },
+  {
+    "source": "private/premise-resolution-cycle2/comparison-configured-1/system-identities.log",
+    "published": "docs/reports/premise-resolution-cycle2/comparisons/comparison-configured-1/system-identities.log",
+    "source_sha256": "ecf306c383323e7b5949765d9cc6766f8ff0beccd50711d22ede59a8a9f27bda",
+    "published_sha256": "ecf306c383323e7b5949765d9cc6766f8ff0beccd50711d22ede59a8a9f27bda",
+    "gzip": false
+  },
+  {
+    "source": "private/premise-resolution-cycle2/comparison-configured-1/system-known.json",
+    "published": "docs/reports/premise-resolution-cycle2/comparisons/comparison-configured-1/system-known.json",
+    "source_sha256": "0223c4cdc53bab0e8b4b40b5843dfd999db2010af0c48aa20eb8069e8d92b03b",
+    "published_sha256": "0223c4cdc53bab0e8b4b40b5843dfd999db2010af0c48aa20eb8069e8d92b03b",
+    "gzip": false
+  },
+  {
+    "source": "private/premise-resolution-cycle2/comparison-configured-1/system-reading-input.json",
+    "published": "docs/reports/premise-resolution-cycle2/comparisons/comparison-configured-1/system-reading-input.json",
+    "source_sha256": "41b5dfed0737cca9c892a2be7f37610ac0260b68370d3b901ba0f5163d22ff53",
+    "published_sha256": "41b5dfed0737cca9c892a2be7f37610ac0260b68370d3b901ba0f5163d22ff53",
+    "gzip": false
+  },
+  {
+    "source": "private/premise-resolution-cycle2/comparison-configured-1/system-reading-proof.json",
+    "published": "docs/reports/premise-resolution-cycle2/comparisons/comparison-configured-1/system-reading-proof.json",
+    "source_sha256": "2ec5ce2219e0e3223b1d5fa49564eec8463bd2f41c89a4330a130dd18a7a79e6",
+    "published_sha256": "2ec5ce2219e0e3223b1d5fa49564eec8463bd2f41c89a4330a130dd18a7a79e6",
+    "gzip": false
+  },
+  {
+    "source": "private/premise-resolution-cycle2/comparison-configured-1/tip-environments/commands.json",
+    "published": "docs/reports/premise-resolution-cycle2/comparisons/comparison-configured-1/tip-environments/commands.json",
+    "source_sha256": "ca5ea2ec619c3f782188d0ed4448542ac88e0276a2ccbf5231f154afee05bf01",
+    "published_sha256": "ca5ea2ec619c3f782188d0ed4448542ac88e0276a2ccbf5231f154afee05bf01",
+    "gzip": false
+  },
+  {
+    "source": "private/premise-resolution-cycle2/comparison-configured-1/tip-environments/slice/tip-environment-hashes.json",
+    "published": "docs/reports/premise-resolution-cycle2/comparisons/comparison-configured-1/tip-environments/slice/tip-environment-hashes.json",
+    "source_sha256": "da01a31c300a094abdbdb51d649879c3b329f7ff30d27762e7ee4a87b29d4a02",
+    "published_sha256": "da01a31c300a094abdbdb51d649879c3b329f7ff30d27762e7ee4a87b29d4a02",
+    "gzip": false
+  },
+  {
+    "source": "private/premise-resolution-cycle2/comparison-configured-1/tip-environments/slice/tip-environment.json",
+    "published": "docs/reports/premise-resolution-cycle2/comparisons/comparison-configured-1/tip-environments/slice/tip-environment.json",
+    "source_sha256": "8635ceab4b87487d3b08bb89b627244664d297eaeb87a9112cd6917694f632a8",
+    "published_sha256": "8635ceab4b87487d3b08bb89b627244664d297eaeb87a9112cd6917694f632a8",
+    "gzip": false
+  },
+  {
+    "source": "private/premise-resolution-cycle2/comparison-configured-1/tip-environments/slice/tip-stderr.log",
+    "published": "docs/reports/premise-resolution-cycle2/comparisons/comparison-configured-1/tip-environments/slice/tip-stderr.log",
+    "source_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "published_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "gzip": false
+  },
+  {
+    "source": "private/premise-resolution-cycle2/comparison-configured-1/tip-environments/system/tip-environment-hashes.json",
+    "published": "docs/reports/premise-resolution-cycle2/comparisons/comparison-configured-1/tip-environments/system/tip-environment-hashes.json",
+    "source_sha256": "d2f0887d54f725f2b029538547cba0013cac010485a179b573dc2940fa1e1bed",
+    "published_sha256": "d2f0887d54f725f2b029538547cba0013cac010485a179b573dc2940fa1e1bed",
+    "gzip": false
+  },
+  {
+    "source": "private/premise-resolution-cycle2/comparison-configured-1/tip-environments/system/tip-environment.json",
+    "published": "docs/reports/premise-resolution-cycle2/comparisons/comparison-configured-1/tip-environments/system/tip-environment.json",
+    "source_sha256": "affea7e5fa7df561f84cfaf57415ac78f53c3ef8b24d58c2cc9b57665d716db7",
+    "published_sha256": "affea7e5fa7df561f84cfaf57415ac78f53c3ef8b24d58c2cc9b57665d716db7",
+    "gzip": false
+  },
+  {
+    "source": "private/premise-resolution-cycle2/comparison-configured-1/tip-environments/system/tip-stderr.log",
+    "published": "docs/reports/premise-resolution-cycle2/comparisons/comparison-configured-1/tip-environments/system/tip-stderr.log",
+    "source_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "published_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "gzip": false
+  },
+  {
+    "source": "private/premise-resolution-cycle2/comparison-configured-continuation-1/acquired.json",
+    "published": "docs/reports/premise-resolution-cycle2/comparisons/comparison-configured-continuation-1/acquired.json",
+    "source_sha256": "a6ec886f463a9bb2ade81bf4f9a9f1fd1ee459b2097d93ca28da6fc56caa2676",
+    "published_sha256": "a6ec886f463a9bb2ade81bf4f9a9f1fd1ee459b2097d93ca28da6fc56caa2676",
+    "gzip": false
+  },
+  {
+    "source": "private/premise-resolution-cycle2/comparison-configured-continuation-1/commands.json",
+    "published": "docs/reports/premise-resolution-cycle2/comparisons/comparison-configured-continuation-1/commands.json",
+    "source_sha256": "d79c35972f3dee96cf9733f375e06ea184d04d095593973bc6ab22e71a8cd3ff",
+    "published_sha256": "d79c35972f3dee96cf9733f375e06ea184d04d095593973bc6ab22e71a8cd3ff",
+    "gzip": false
+  },
+  {
+    "source": "private/premise-resolution-cycle2/comparison-configured-continuation-1/reused-proof.json",
+    "published": "docs/reports/premise-resolution-cycle2/comparisons/comparison-configured-continuation-1/reused-proof.json",
+    "source_sha256": "47ac15ba0e5bd7534eef0ddb407eaeefa62ad585443a64b5f83c26a1aaf26744",
+    "published_sha256": "47ac15ba0e5bd7534eef0ddb407eaeefa62ad585443a64b5f83c26a1aaf26744",
+    "gzip": false
+  },
+  {
+    "source": "private/premise-resolution-cycle2/comparison-configured-continuation-1/system/base/invocation.json",
+    "published": "docs/reports/premise-resolution-cycle2/comparisons/comparison-configured-continuation-1/system/base/invocation.json",
+    "source_sha256": "83f3d74e479d02d12519a660930d8c10e65dff1aa3d6346336ccf22d333fc3e5",
+    "published_sha256": "83f3d74e479d02d12519a660930d8c10e65dff1aa3d6346336ccf22d333fc3e5",
+    "gzip": false
+  },
+  {
+    "source": "private/premise-resolution-cycle2/comparison-configured-continuation-1/system/base/manifest.json",
+    "published": "docs/reports/premise-resolution-cycle2/comparisons/comparison-configured-continuation-1/system/base/manifest.json",
+    "source_sha256": "d14d585e39769b4806bcee3eceac8bb0d1bd70f5ca7df4b62767347772baa61a",
+    "published_sha256": "d14d585e39769b4806bcee3eceac8bb0d1bd70f5ca7df4b62767347772baa61a",
+    "gzip": false
+  },
+  {
+    "source": "private/premise-resolution-cycle2/comparison-configured-continuation-1/system/base/resource-diagnostics.chunk-contracts.json.gz",
+    "published": "docs/reports/premise-resolution-cycle2/comparisons/comparison-configured-continuation-1/system/base/resource-diagnostics.chunk-contracts.json.gz",
+    "source_sha256": "21c47e400097333e880703ea1d1f27b3f23cd0544271c70c8c1b96c6216afe40",
+    "published_sha256": "21c47e400097333e880703ea1d1f27b3f23cd0544271c70c8c1b96c6216afe40",
+    "gzip": false
+  },
+  {
+    "source": "private/premise-resolution-cycle2/comparison-configured-continuation-1/system/base/resource-diagnostics.contracts.json.gz",
+    "published": "docs/reports/premise-resolution-cycle2/comparisons/comparison-configured-continuation-1/system/base/resource-diagnostics.contracts.json.gz",
+    "source_sha256": "cb7eda16518ec58e34dd38150986af6df224435531ead6fddb224116504baef4",
+    "published_sha256": "cb7eda16518ec58e34dd38150986af6df224435531ead6fddb224116504baef4",
+    "gzip": false
+  },
+  {
+    "source": "private/premise-resolution-cycle2/comparison-configured-continuation-1/system/base/resource-diagnostics.json.gz",
+    "published": "docs/reports/premise-resolution-cycle2/comparisons/comparison-configured-continuation-1/system/base/resource-diagnostics.json.gz",
+    "source_sha256": "d80b046e28a052df088c180496beb8b2a5de9e92cd4586b7913163cde310a7fa",
+    "published_sha256": "d80b046e28a052df088c180496beb8b2a5de9e92cd4586b7913163cde310a7fa",
+    "gzip": false
+  },
+  {
+    "source": "private/premise-resolution-cycle2/comparison-configured-continuation-1/system/base/resource-diagnostics.source-effects.json.gz",
+    "published": "docs/reports/premise-resolution-cycle2/comparisons/comparison-configured-continuation-1/system/base/resource-diagnostics.source-effects.json.gz",
+    "source_sha256": "21c47e400097333e880703ea1d1f27b3f23cd0544271c70c8c1b96c6216afe40",
+    "published_sha256": "21c47e400097333e880703ea1d1f27b3f23cd0544271c70c8c1b96c6216afe40",
+    "gzip": false
+  },
+  {
+    "source": "private/premise-resolution-cycle2/comparison-configured-continuation-1/system/base/system-null.jsonl.gz",
+    "published": "docs/reports/premise-resolution-cycle2/comparisons/comparison-configured-continuation-1/system/base/system-null.jsonl.gz",
+    "source_sha256": "038c97c99469840403b44317ab9f729708a513c2124345f4d2da4fbcba030fc1",
+    "published_sha256": "038c97c99469840403b44317ab9f729708a513c2124345f4d2da4fbcba030fc1",
+    "gzip": false
+  },
+  {
+    "source": "private/premise-resolution-cycle2/comparison-configured-continuation-1/system/base/system-null.summary.json.gz",
+    "published": "docs/reports/premise-resolution-cycle2/comparisons/comparison-configured-continuation-1/system/base/system-null.summary.json.gz",
+    "source_sha256": "f538ab69b0117e99d0b21573b85bb8e5fb14df87b9fd3366be36b9fb428efe76",
+    "published_sha256": "f538ab69b0117e99d0b21573b85bb8e5fb14df87b9fd3366be36b9fb428efe76",
+    "gzip": false
+  },
+  {
+    "source": "private/premise-resolution-cycle2/comparison-configured-continuation-1/system/base/system-outer.json.gz",
+    "published": "docs/reports/premise-resolution-cycle2/comparisons/comparison-configured-continuation-1/system/base/system-outer.json.gz",
+    "source_sha256": "4ef0a15d3306738836c7c5beb41dcdab40e85a338c25640b8676edc264f1acac",
+    "published_sha256": "4ef0a15d3306738836c7c5beb41dcdab40e85a338c25640b8676edc264f1acac",
+    "gzip": false
+  },
+  {
+    "source": "private/premise-resolution-cycle2/comparison-configured-continuation-1/system/input-invariants.json",
+    "published": "docs/reports/premise-resolution-cycle2/comparisons/comparison-configured-continuation-1/system/input-invariants.json",
+    "source_sha256": "1124e9bedad394ed5068cec2f6cd18906da4508ad9c0e39d2baba4e3d67894a3",
+    "published_sha256": "1124e9bedad394ed5068cec2f6cd18906da4508ad9c0e39d2baba4e3d67894a3",
+    "gzip": false
+  },
+  {
+    "source": "private/premise-resolution-cycle2/comparison-configured-continuation-1/system/raw-differences.json.gz",
+    "published": "docs/reports/premise-resolution-cycle2/comparisons/comparison-configured-continuation-1/system/raw-differences.json.gz",
+    "source_sha256": "beb24c0c29968954cdf12be97e4f13670a39d8b80cba9856a6445416d2940374",
+    "published_sha256": "beb24c0c29968954cdf12be97e4f13670a39d8b80cba9856a6445416d2940374",
+    "gzip": false
+  },
+  {
+    "source": "private/premise-resolution-cycle2/comparison-configured-continuation-1/system/tip/invocation.json",
+    "published": "docs/reports/premise-resolution-cycle2/comparisons/comparison-configured-continuation-1/system/tip/invocation.json",
+    "source_sha256": "5de7291e8b6f056f22b2f2e1f5fd004844bfd226e391184e31fca2ffb49df997",
+    "published_sha256": "5de7291e8b6f056f22b2f2e1f5fd004844bfd226e391184e31fca2ffb49df997",
+    "gzip": false
+  },
+  {
+    "source": "private/premise-resolution-cycle2/comparison-configured-continuation-1/system/tip/manifest.json",
+    "published": "docs/reports/premise-resolution-cycle2/comparisons/comparison-configured-continuation-1/system/tip/manifest.json",
+    "source_sha256": "006061e98620f6bc3535f6eefa79dfdc256633228135813b868b3db367a91e07",
+    "published_sha256": "006061e98620f6bc3535f6eefa79dfdc256633228135813b868b3db367a91e07",
+    "gzip": false
+  },
+  {
+    "source": "private/premise-resolution-cycle2/comparison-configured-continuation-1/system/tip/resource-diagnostics.chunk-contracts.json.gz",
+    "published": "docs/reports/premise-resolution-cycle2/comparisons/comparison-configured-continuation-1/system/tip/resource-diagnostics.chunk-contracts.json.gz",
+    "source_sha256": "21c47e400097333e880703ea1d1f27b3f23cd0544271c70c8c1b96c6216afe40",
+    "published_sha256": "21c47e400097333e880703ea1d1f27b3f23cd0544271c70c8c1b96c6216afe40",
+    "gzip": false
+  },
+  {
+    "source": "private/premise-resolution-cycle2/comparison-configured-continuation-1/system/tip/resource-diagnostics.contracts.json.gz",
+    "published": "docs/reports/premise-resolution-cycle2/comparisons/comparison-configured-continuation-1/system/tip/resource-diagnostics.contracts.json.gz",
+    "source_sha256": "101a97eb72abb8efeca4e05adeab1ddb93ff48992175ad3af9e3a88eb8e10041",
+    "published_sha256": "101a97eb72abb8efeca4e05adeab1ddb93ff48992175ad3af9e3a88eb8e10041",
+    "gzip": false
+  },
+  {
+    "source": "private/premise-resolution-cycle2/comparison-configured-continuation-1/system/tip/resource-diagnostics.json.gz",
+    "published": "docs/reports/premise-resolution-cycle2/comparisons/comparison-configured-continuation-1/system/tip/resource-diagnostics.json.gz",
+    "source_sha256": "b693eb03296e513ffad16046d2651eca45066f193106808fde82c00896a6b1b8",
+    "published_sha256": "b693eb03296e513ffad16046d2651eca45066f193106808fde82c00896a6b1b8",
+    "gzip": false
+  },
+  {
+    "source": "private/premise-resolution-cycle2/comparison-configured-continuation-1/system/tip/resource-diagnostics.source-effects.json.gz",
+    "published": "docs/reports/premise-resolution-cycle2/comparisons/comparison-configured-continuation-1/system/tip/resource-diagnostics.source-effects.json.gz",
+    "source_sha256": "21c47e400097333e880703ea1d1f27b3f23cd0544271c70c8c1b96c6216afe40",
+    "published_sha256": "21c47e400097333e880703ea1d1f27b3f23cd0544271c70c8c1b96c6216afe40",
+    "gzip": false
+  },
+  {
+    "source": "private/premise-resolution-cycle2/comparison-configured-continuation-1/system/tip/system-null.jsonl.gz",
+    "published": "docs/reports/premise-resolution-cycle2/comparisons/comparison-configured-continuation-1/system/tip/system-null.jsonl.gz",
+    "source_sha256": "fd12aa88c7a144d8558012904f317e70b7817cc96dc6b86ba3030afd3d3a0e00",
+    "published_sha256": "fd12aa88c7a144d8558012904f317e70b7817cc96dc6b86ba3030afd3d3a0e00",
+    "gzip": false
+  },
+  {
+    "source": "private/premise-resolution-cycle2/comparison-configured-continuation-1/system/tip/system-null.summary.json.gz",
+    "published": "docs/reports/premise-resolution-cycle2/comparisons/comparison-configured-continuation-1/system/tip/system-null.summary.json.gz",
+    "source_sha256": "f538ab69b0117e99d0b21573b85bb8e5fb14df87b9fd3366be36b9fb428efe76",
+    "published_sha256": "f538ab69b0117e99d0b21573b85bb8e5fb14df87b9fd3366be36b9fb428efe76",
+    "gzip": false
+  },
+  {
+    "source": "private/premise-resolution-cycle2/comparison-configured-continuation-1/system/tip/system-outer.json.gz",
+    "published": "docs/reports/premise-resolution-cycle2/comparisons/comparison-configured-continuation-1/system/tip/system-outer.json.gz",
+    "source_sha256": "56ebfcd4e19ca705eed1aee28f4697f81ef7f028e7a099a14e8a02484ed7936f",
+    "published_sha256": "56ebfcd4e19ca705eed1aee28f4697f81ef7f028e7a099a14e8a02484ed7936f",
+    "gzip": false
+  },
+  {
+    "source": "private/premise-resolution-cycle2/comparison-configured-continuation-1/system-all-fields.log",
+    "published": "docs/reports/premise-resolution-cycle2/comparisons/comparison-configured-continuation-1/system-all-fields.log",
+    "source_sha256": "aacd9ab44f343feb50224ea912cbefba079f1724e996ed88a6dfc7cadc404b0e",
+    "published_sha256": "aacd9ab44f343feb50224ea912cbefba079f1724e996ed88a6dfc7cadc404b0e",
+    "gzip": false
+  },
+  {
+    "source": "private/premise-resolution-cycle2/comparison-configured-continuation-2/acquired.json",
+    "published": "docs/reports/premise-resolution-cycle2/comparisons/comparison-configured-continuation-2/acquired.json",
+    "source_sha256": "ba49ddf109b39e3132a138c77fb52de880135e892f8874eb2284ceb1b425c182",
+    "published_sha256": "ba49ddf109b39e3132a138c77fb52de880135e892f8874eb2284ceb1b425c182",
+    "gzip": false
+  },
+  {
+    "source": "private/premise-resolution-cycle2/comparison-configured-continuation-2/commands.json",
+    "published": "docs/reports/premise-resolution-cycle2/comparisons/comparison-configured-continuation-2/commands.json",
+    "source_sha256": "b51b4837e125cf87b025d9ff0e64ffe3982b2d52bfe8c248a3ef28b5afcc68ee",
+    "published_sha256": "b51b4837e125cf87b025d9ff0e64ffe3982b2d52bfe8c248a3ef28b5afcc68ee",
+    "gzip": false
+  },
+  {
+    "source": "private/premise-resolution-cycle2/comparison-configured-continuation-2/released.json",
+    "published": "docs/reports/premise-resolution-cycle2/comparisons/comparison-configured-continuation-2/released.json",
+    "source_sha256": "6899314988caf0276313f27770dd3288b6a9fda48522a5124992c0e26af66ea2",
+    "published_sha256": "6899314988caf0276313f27770dd3288b6a9fda48522a5124992c0e26af66ea2",
+    "gzip": false
+  },
+  {
+    "source": "private/premise-resolution-cycle2/comparison-configured-continuation-2/reused-proof.json",
+    "published": "docs/reports/premise-resolution-cycle2/comparisons/comparison-configured-continuation-2/reused-proof.json",
+    "source_sha256": "47ac15ba0e5bd7534eef0ddb407eaeefa62ad585443a64b5f83c26a1aaf26744",
+    "published_sha256": "47ac15ba0e5bd7534eef0ddb407eaeefa62ad585443a64b5f83c26a1aaf26744",
+    "gzip": false
+  },
+  {
+    "source": "private/premise-resolution-cycle2/comparison-configured-continuation-2/slice/base/invocation.json",
+    "published": "docs/reports/premise-resolution-cycle2/comparisons/comparison-configured-continuation-2/slice/base/invocation.json",
+    "source_sha256": "1d084c2a7ecef3f66ba5ff177b523e402a4f25b699469ce06ed07eff15cd93c7",
+    "published_sha256": "1d084c2a7ecef3f66ba5ff177b523e402a4f25b699469ce06ed07eff15cd93c7",
+    "gzip": false
+  },
+  {
+    "source": "private/premise-resolution-cycle2/comparison-configured-continuation-2/slice/base/manifest.json",
+    "published": "docs/reports/premise-resolution-cycle2/comparisons/comparison-configured-continuation-2/slice/base/manifest.json",
+    "source_sha256": "1b3b6f496f2ee10529d545b9da441fec4cafa1319ca3c697e87b9ff8e72afba5",
+    "published_sha256": "1b3b6f496f2ee10529d545b9da441fec4cafa1319ca3c697e87b9ff8e72afba5",
+    "gzip": false
+  },
+  {
+    "source": "private/premise-resolution-cycle2/comparison-configured-continuation-2/slice/base/resource-diagnostics.chunk-contracts.json.gz",
+    "published": "docs/reports/premise-resolution-cycle2/comparisons/comparison-configured-continuation-2/slice/base/resource-diagnostics.chunk-contracts.json.gz",
+    "source_sha256": "1811378fafdc3e57d9f3b3f603bccf68debf19ce12e89c0f504ba80e2e173cf4",
+    "published_sha256": "1811378fafdc3e57d9f3b3f603bccf68debf19ce12e89c0f504ba80e2e173cf4",
+    "gzip": false
+  },
+  {
+    "source": "private/premise-resolution-cycle2/comparison-configured-continuation-2/slice/base/resource-diagnostics.contracts.json.gz",
+    "published": "docs/reports/premise-resolution-cycle2/comparisons/comparison-configured-continuation-2/slice/base/resource-diagnostics.contracts.json.gz",
+    "source_sha256": "2942c1e7db9cc67cf85694dfbbdf088267444165cf7a47258307167b3d1f6773",
+    "published_sha256": "2942c1e7db9cc67cf85694dfbbdf088267444165cf7a47258307167b3d1f6773",
+    "gzip": false
+  },
+  {
+    "source": "private/premise-resolution-cycle2/comparison-configured-continuation-2/slice/base/resource-diagnostics.json.gz",
+    "published": "docs/reports/premise-resolution-cycle2/comparisons/comparison-configured-continuation-2/slice/base/resource-diagnostics.json.gz",
+    "source_sha256": "6be2289816f0d345c584882acb22902b76b324ec4f25adba3184a770245af562",
+    "published_sha256": "6be2289816f0d345c584882acb22902b76b324ec4f25adba3184a770245af562",
+    "gzip": false
+  },
+  {
+    "source": "private/premise-resolution-cycle2/comparison-configured-continuation-2/slice/base/resource-diagnostics.source-effects.json.gz",
+    "published": "docs/reports/premise-resolution-cycle2/comparisons/comparison-configured-continuation-2/slice/base/resource-diagnostics.source-effects.json.gz",
+    "source_sha256": "1811378fafdc3e57d9f3b3f603bccf68debf19ce12e89c0f504ba80e2e173cf4",
+    "published_sha256": "1811378fafdc3e57d9f3b3f603bccf68debf19ce12e89c0f504ba80e2e173cf4",
+    "gzip": false
+  },
+  {
+    "source": "private/premise-resolution-cycle2/comparison-configured-continuation-2/slice/base/slice-null.jsonl.gz",
+    "published": "docs/reports/premise-resolution-cycle2/comparisons/comparison-configured-continuation-2/slice/base/slice-null.jsonl.gz",
+    "source_sha256": "73775b628c8b77657d9914121d2c5735bb00bb99289f0af95742d964c6a0f008",
+    "published_sha256": "73775b628c8b77657d9914121d2c5735bb00bb99289f0af95742d964c6a0f008",
+    "gzip": false
+  },
+  {
+    "source": "private/premise-resolution-cycle2/comparison-configured-continuation-2/slice/base/slice-null.summary.json.gz",
+    "published": "docs/reports/premise-resolution-cycle2/comparisons/comparison-configured-continuation-2/slice/base/slice-null.summary.json.gz",
+    "source_sha256": "b61cc4fa471da210e6278aa018d6d4527e54327b72dc1f406b28e789073aa237",
+    "published_sha256": "b61cc4fa471da210e6278aa018d6d4527e54327b72dc1f406b28e789073aa237",
+    "gzip": false
+  },
+  {
+    "source": "private/premise-resolution-cycle2/comparison-configured-continuation-2/slice/base/slice-outer.json.gz",
+    "published": "docs/reports/premise-resolution-cycle2/comparisons/comparison-configured-continuation-2/slice/base/slice-outer.json.gz",
+    "source_sha256": "0f8c904236ced4ad879a5dfcd68a806af05f52339c068c36a4fcd601c397304d",
+    "published_sha256": "0f8c904236ced4ad879a5dfcd68a806af05f52339c068c36a4fcd601c397304d",
+    "gzip": false
+  },
+  {
+    "source": "private/premise-resolution-cycle2/comparison-configured-continuation-2/slice/comparison.json",
+    "published": "docs/reports/premise-resolution-cycle2/comparisons/comparison-configured-continuation-2/slice/comparison.json",
+    "source_sha256": "869c90ef1b1191c8dc47fcafcf0ef675b80c7fbbc3540c4f2fb259ae85c01b06",
+    "published_sha256": "869c90ef1b1191c8dc47fcafcf0ef675b80c7fbbc3540c4f2fb259ae85c01b06",
+    "gzip": false
+  },
+  {
+    "source": "private/premise-resolution-cycle2/comparison-configured-continuation-2/slice/context-order-attribution.json",
+    "published": "docs/reports/premise-resolution-cycle2/comparisons/comparison-configured-continuation-2/slice/context-order-attribution.json",
+    "source_sha256": "5e0b635595a11454847c3275fff28c69a1aee1b04b087d9cb2c1d98bbfdef307",
+    "published_sha256": "5e0b635595a11454847c3275fff28c69a1aee1b04b087d9cb2c1d98bbfdef307",
+    "gzip": false
+  },
+  {
+    "source": "private/premise-resolution-cycle2/comparison-configured-continuation-2/slice/exact-string-attribution.json.gz",
+    "published": "docs/reports/premise-resolution-cycle2/comparisons/comparison-configured-continuation-2/slice/exact-string-attribution.json.gz",
+    "source_sha256": "615bc74e53c1ba941282bbdc0b5134d507ea71bfc8a4f27ebce012d04ff83a81",
+    "published_sha256": "615bc74e53c1ba941282bbdc0b5134d507ea71bfc8a4f27ebce012d04ff83a81",
+    "gzip": false
+  },
+  {
+    "source": "private/premise-resolution-cycle2/comparison-configured-continuation-2/slice/exact-version-attribution.json.gz",
+    "published": "docs/reports/premise-resolution-cycle2/comparisons/comparison-configured-continuation-2/slice/exact-version-attribution.json.gz",
+    "source_sha256": "e1ac016df43a80a941ee93475ad35513918b4985c801b82ddd698e7ee09abb6d",
+    "published_sha256": "e1ac016df43a80a941ee93475ad35513918b4985c801b82ddd698e7ee09abb6d",
+    "gzip": false
+  },
+  {
+    "source": "private/premise-resolution-cycle2/comparison-configured-continuation-2/slice/final-comparison.json",
+    "published": "docs/reports/premise-resolution-cycle2/comparisons/comparison-configured-continuation-2/slice/final-comparison.json",
+    "source_sha256": "b611d1e9484901a5e842495520164ebb4888274698a4485396a97dd1a800ed98",
+    "published_sha256": "b611d1e9484901a5e842495520164ebb4888274698a4485396a97dd1a800ed98",
+    "gzip": false
+  },
+  {
+    "source": "private/premise-resolution-cycle2/comparison-configured-continuation-2/slice/graph-attribution.json.gz",
+    "published": "docs/reports/premise-resolution-cycle2/comparisons/comparison-configured-continuation-2/slice/graph-attribution.json.gz",
+    "source_sha256": "abc129be8d26e8d4afe9ce45f9d5a73c8ed9aa62810ca24ee789fe4581dc4a80",
+    "published_sha256": "abc129be8d26e8d4afe9ce45f9d5a73c8ed9aa62810ca24ee789fe4581dc4a80",
+    "gzip": false
+  },
+  {
+    "source": "private/premise-resolution-cycle2/comparison-configured-continuation-2/slice/input-invariants.json",
+    "published": "docs/reports/premise-resolution-cycle2/comparisons/comparison-configured-continuation-2/slice/input-invariants.json",
+    "source_sha256": "1124e9bedad394ed5068cec2f6cd18906da4508ad9c0e39d2baba4e3d67894a3",
+    "published_sha256": "1124e9bedad394ed5068cec2f6cd18906da4508ad9c0e39d2baba4e3d67894a3",
+    "gzip": false
+  },
+  {
+    "source": "private/premise-resolution-cycle2/comparison-configured-continuation-2/slice/new-diagnostic-environments.json.gz",
+    "published": "docs/reports/premise-resolution-cycle2/comparisons/comparison-configured-continuation-2/slice/new-diagnostic-environments.json.gz",
+    "source_sha256": "6d03801793cb8f76a339a9db9e8deb866a5f0dbeffc147504f9792acd727014c",
+    "published_sha256": "6d03801793cb8f76a339a9db9e8deb866a5f0dbeffc147504f9792acd727014c",
+    "gzip": false
+  },
+  {
+    "source": "private/premise-resolution-cycle2/comparison-configured-continuation-2/slice/provenance-attribution.json",
+    "published": "docs/reports/premise-resolution-cycle2/comparisons/comparison-configured-continuation-2/slice/provenance-attribution.json",
+    "source_sha256": "eb28f78a52ee413cfd929ddf714cf6a0534ba69cfdf10fce3368a0d16a15ada1",
+    "published_sha256": "eb28f78a52ee413cfd929ddf714cf6a0534ba69cfdf10fce3368a0d16a15ada1",
+    "gzip": false
+  },
+  {
+    "source": "private/premise-resolution-cycle2/comparison-configured-continuation-2/slice/raw-differences.json.gz",
+    "published": "docs/reports/premise-resolution-cycle2/comparisons/comparison-configured-continuation-2/slice/raw-differences.json.gz",
+    "source_sha256": "f369f1e648fd56f932a2a39800da4f4eec5d4108a7792543fd822e2c594f2d8b",
+    "published_sha256": "f369f1e648fd56f932a2a39800da4f4eec5d4108a7792543fd822e2c594f2d8b",
+    "gzip": false
+  },
+  {
+    "source": "private/premise-resolution-cycle2/comparison-configured-continuation-2/slice/remaining-differences.json.gz",
+    "published": "docs/reports/premise-resolution-cycle2/comparisons/comparison-configured-continuation-2/slice/remaining-differences.json.gz",
+    "source_sha256": "9c088c32e4c9941a223eab2c4fbd9af896e5b1949ecdd7daf07e8b6641e1fef8",
+    "published_sha256": "9c088c32e4c9941a223eab2c4fbd9af896e5b1949ecdd7daf07e8b6641e1fef8",
+    "gzip": false
+  },
+  {
+    "source": "private/premise-resolution-cycle2/comparison-configured-continuation-2/slice/snapshot-file-provenance.json",
+    "published": "docs/reports/premise-resolution-cycle2/comparisons/comparison-configured-continuation-2/slice/snapshot-file-provenance.json",
+    "source_sha256": "5dab6240805c1841649e0608c1c21bed5be8792132e91781e9feb617fb736ec2",
+    "published_sha256": "5dab6240805c1841649e0608c1c21bed5be8792132e91781e9feb617fb736ec2",
+    "gzip": false
+  },
+  {
+    "source": "private/premise-resolution-cycle2/comparison-configured-continuation-2/slice/time-preprocess-command.json",
+    "published": "docs/reports/premise-resolution-cycle2/comparisons/comparison-configured-continuation-2/slice/time-preprocess-command.json",
+    "source_sha256": "a0e21996614393593818c8a21e46d2c28c69d31c62b147c75076a7680bdd0ac8",
+    "published_sha256": "a0e21996614393593818c8a21e46d2c28c69d31c62b147c75076a7680bdd0ac8",
+    "gzip": false
+  },
+  {
+    "source": "private/premise-resolution-cycle2/comparison-configured-continuation-2/slice/time-preprocess-stderr.log",
+    "published": "docs/reports/premise-resolution-cycle2/comparisons/comparison-configured-continuation-2/slice/time-preprocess-stderr.log",
+    "source_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "published_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "gzip": false
+  },
+  {
+    "source": "private/premise-resolution-cycle2/comparison-configured-continuation-2/slice/time-source.c.gz",
+    "published": "docs/reports/premise-resolution-cycle2/comparisons/comparison-configured-continuation-2/slice/time-source.c.gz",
+    "source_sha256": "d9eab8002bd0e3e6217861bbcefd99449815f0763c4534ec59cf96c521a2d98d",
+    "published_sha256": "d9eab8002bd0e3e6217861bbcefd99449815f0763c4534ec59cf96c521a2d98d",
+    "gzip": false
+  },
+  {
+    "source": "private/premise-resolution-cycle2/comparison-configured-continuation-2/slice/tip/invocation.json",
+    "published": "docs/reports/premise-resolution-cycle2/comparisons/comparison-configured-continuation-2/slice/tip/invocation.json",
+    "source_sha256": "671bb43eee714d3afa2ee807ad354f964bd556717b66d311bada3086cd7d0a4d",
+    "published_sha256": "671bb43eee714d3afa2ee807ad354f964bd556717b66d311bada3086cd7d0a4d",
+    "gzip": false
+  },
+  {
+    "source": "private/premise-resolution-cycle2/comparison-configured-continuation-2/slice/tip/manifest.json",
+    "published": "docs/reports/premise-resolution-cycle2/comparisons/comparison-configured-continuation-2/slice/tip/manifest.json",
+    "source_sha256": "8854f866c665628c2c4826865db19bcdd9b787f10a2f9a179e08e0ede501a826",
+    "published_sha256": "8854f866c665628c2c4826865db19bcdd9b787f10a2f9a179e08e0ede501a826",
+    "gzip": false
+  },
+  {
+    "source": "private/premise-resolution-cycle2/comparison-configured-continuation-2/slice/tip/resource-diagnostics.chunk-contracts.json.gz",
+    "published": "docs/reports/premise-resolution-cycle2/comparisons/comparison-configured-continuation-2/slice/tip/resource-diagnostics.chunk-contracts.json.gz",
+    "source_sha256": "1811378fafdc3e57d9f3b3f603bccf68debf19ce12e89c0f504ba80e2e173cf4",
+    "published_sha256": "1811378fafdc3e57d9f3b3f603bccf68debf19ce12e89c0f504ba80e2e173cf4",
+    "gzip": false
+  },
+  {
+    "source": "private/premise-resolution-cycle2/comparison-configured-continuation-2/slice/tip/resource-diagnostics.contracts.json.gz",
+    "published": "docs/reports/premise-resolution-cycle2/comparisons/comparison-configured-continuation-2/slice/tip/resource-diagnostics.contracts.json.gz",
+    "source_sha256": "eb4175335dd8b46bf0759b672e1ac84f57d3b2c81f1651bae2cec70b78ad1146",
+    "published_sha256": "eb4175335dd8b46bf0759b672e1ac84f57d3b2c81f1651bae2cec70b78ad1146",
+    "gzip": false
+  },
+  {
+    "source": "private/premise-resolution-cycle2/comparison-configured-continuation-2/slice/tip/resource-diagnostics.json.gz",
+    "published": "docs/reports/premise-resolution-cycle2/comparisons/comparison-configured-continuation-2/slice/tip/resource-diagnostics.json.gz",
+    "source_sha256": "e9746a8f6b3638860853f6fafe0e310d5d91e9915e3bd11abe4741dfae6abd20",
+    "published_sha256": "e9746a8f6b3638860853f6fafe0e310d5d91e9915e3bd11abe4741dfae6abd20",
+    "gzip": false
+  },
+  {
+    "source": "private/premise-resolution-cycle2/comparison-configured-continuation-2/slice/tip/resource-diagnostics.source-effects.json.gz",
+    "published": "docs/reports/premise-resolution-cycle2/comparisons/comparison-configured-continuation-2/slice/tip/resource-diagnostics.source-effects.json.gz",
+    "source_sha256": "1811378fafdc3e57d9f3b3f603bccf68debf19ce12e89c0f504ba80e2e173cf4",
+    "published_sha256": "1811378fafdc3e57d9f3b3f603bccf68debf19ce12e89c0f504ba80e2e173cf4",
+    "gzip": false
+  },
+  {
+    "source": "private/premise-resolution-cycle2/comparison-configured-continuation-2/slice/tip/slice-null.jsonl.gz",
+    "published": "docs/reports/premise-resolution-cycle2/comparisons/comparison-configured-continuation-2/slice/tip/slice-null.jsonl.gz",
+    "source_sha256": "8158d28ad107c8fdfb4ff30e493ffe398887ebe55014639b4cd9270610b78af0",
+    "published_sha256": "8158d28ad107c8fdfb4ff30e493ffe398887ebe55014639b4cd9270610b78af0",
+    "gzip": false
+  },
+  {
+    "source": "private/premise-resolution-cycle2/comparison-configured-continuation-2/slice/tip/slice-null.summary.json.gz",
+    "published": "docs/reports/premise-resolution-cycle2/comparisons/comparison-configured-continuation-2/slice/tip/slice-null.summary.json.gz",
+    "source_sha256": "b61cc4fa471da210e6278aa018d6d4527e54327b72dc1f406b28e789073aa237",
+    "published_sha256": "b61cc4fa471da210e6278aa018d6d4527e54327b72dc1f406b28e789073aa237",
+    "gzip": false
+  },
+  {
+    "source": "private/premise-resolution-cycle2/comparison-configured-continuation-2/slice/tip/slice-outer.json.gz",
+    "published": "docs/reports/premise-resolution-cycle2/comparisons/comparison-configured-continuation-2/slice/tip/slice-outer.json.gz",
+    "source_sha256": "d006cc813105c4a77d6b94dab04dbf1117dddd9536d1f4add63c4206ed27b134",
+    "published_sha256": "d006cc813105c4a77d6b94dab04dbf1117dddd9536d1f4add63c4206ed27b134",
+    "gzip": false
+  },
+  {
+    "source": "private/premise-resolution-cycle2/comparison-configured-continuation-2/slice-all-fields.log",
+    "published": "docs/reports/premise-resolution-cycle2/comparisons/comparison-configured-continuation-2/slice-all-fields.log",
+    "source_sha256": "869c90ef1b1191c8dc47fcafcf0ef675b80c7fbbc3540c4f2fb259ae85c01b06",
+    "published_sha256": "869c90ef1b1191c8dc47fcafcf0ef675b80c7fbbc3540c4f2fb259ae85c01b06",
+    "gzip": false
+  },
+  {
+    "source": "private/premise-resolution-cycle2/comparison-configured-continuation-2/slice-canonical-capture-proof.log",
+    "published": "docs/reports/premise-resolution-cycle2/comparisons/comparison-configured-continuation-2/slice-canonical-capture-proof.log",
+    "source_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "published_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "gzip": false
+  },
+  {
+    "source": "private/premise-resolution-cycle2/comparison-configured-continuation-2/slice-exact-time-identity.log",
+    "published": "docs/reports/premise-resolution-cycle2/comparisons/comparison-configured-continuation-2/slice-exact-time-identity.log",
+    "source_sha256": "85fda288a53c7124d7564a552250c69f7e70241924deec3a171ff8168f8caf96",
+    "published_sha256": "85fda288a53c7124d7564a552250c69f7e70241924deec3a171ff8168f8caf96",
+    "gzip": false
+  },
+  {
+    "source": "private/premise-resolution-cycle2/comparison-configured-continuation-2/slice-identities.log",
+    "published": "docs/reports/premise-resolution-cycle2/comparisons/comparison-configured-continuation-2/slice-identities.log",
+    "source_sha256": "65828dfbdc48e125bbceefbb75622287e5769c9768fac22f3e8e12964a7a0a93",
+    "published_sha256": "65828dfbdc48e125bbceefbb75622287e5769c9768fac22f3e8e12964a7a0a93",
+    "gzip": false
+  },
+  {
+    "source": "private/premise-resolution-cycle2/comparison-configured-continuation-2/slice-known.json",
+    "published": "docs/reports/premise-resolution-cycle2/comparisons/comparison-configured-continuation-2/slice-known.json",
+    "source_sha256": "292acb1b2c99ac8f9535573cebf49107807186dc920a2022fcd85065746894bb",
+    "published_sha256": "292acb1b2c99ac8f9535573cebf49107807186dc920a2022fcd85065746894bb",
+    "gzip": false
+  },
+  {
+    "source": "private/premise-resolution-cycle2/comparison-configured-continuation-2/slice-reading-input.json",
+    "published": "docs/reports/premise-resolution-cycle2/comparisons/comparison-configured-continuation-2/slice-reading-input.json",
+    "source_sha256": "cadf60d29cbb296478e7d4a051862066c34241794d41417234b65b795d7fe3e4",
+    "published_sha256": "cadf60d29cbb296478e7d4a051862066c34241794d41417234b65b795d7fe3e4",
+    "gzip": false
+  },
+  {
+    "source": "private/premise-resolution-cycle2/comparison-configured-continuation-2/slice-reading-proof.json",
+    "published": "docs/reports/premise-resolution-cycle2/comparisons/comparison-configured-continuation-2/slice-reading-proof.json",
+    "source_sha256": "ee7c40ad5f4be598694b04fad9562922a013f2337eab1036effbca26cd54e299",
+    "published_sha256": "ee7c40ad5f4be598694b04fad9562922a013f2337eab1036effbca26cd54e299",
+    "gzip": false
+  },
+  {
+    "source": "private/premise-resolution-cycle2/comparison-configured-continuation-2/system/base/invocation.json",
+    "published": "docs/reports/premise-resolution-cycle2/comparisons/comparison-configured-continuation-2/system/base/invocation.json",
+    "source_sha256": "83f3d74e479d02d12519a660930d8c10e65dff1aa3d6346336ccf22d333fc3e5",
+    "published_sha256": "83f3d74e479d02d12519a660930d8c10e65dff1aa3d6346336ccf22d333fc3e5",
+    "gzip": false
+  },
+  {
+    "source": "private/premise-resolution-cycle2/comparison-configured-continuation-2/system/base/manifest.json",
+    "published": "docs/reports/premise-resolution-cycle2/comparisons/comparison-configured-continuation-2/system/base/manifest.json",
+    "source_sha256": "d14d585e39769b4806bcee3eceac8bb0d1bd70f5ca7df4b62767347772baa61a",
+    "published_sha256": "d14d585e39769b4806bcee3eceac8bb0d1bd70f5ca7df4b62767347772baa61a",
+    "gzip": false
+  },
+  {
+    "source": "private/premise-resolution-cycle2/comparison-configured-continuation-2/system/base/resource-diagnostics.chunk-contracts.json.gz",
+    "published": "docs/reports/premise-resolution-cycle2/comparisons/comparison-configured-continuation-2/system/base/resource-diagnostics.chunk-contracts.json.gz",
+    "source_sha256": "21c47e400097333e880703ea1d1f27b3f23cd0544271c70c8c1b96c6216afe40",
+    "published_sha256": "21c47e400097333e880703ea1d1f27b3f23cd0544271c70c8c1b96c6216afe40",
+    "gzip": false
+  },
+  {
+    "source": "private/premise-resolution-cycle2/comparison-configured-continuation-2/system/base/resource-diagnostics.contracts.json.gz",
+    "published": "docs/reports/premise-resolution-cycle2/comparisons/comparison-configured-continuation-2/system/base/resource-diagnostics.contracts.json.gz",
+    "source_sha256": "cb7eda16518ec58e34dd38150986af6df224435531ead6fddb224116504baef4",
+    "published_sha256": "cb7eda16518ec58e34dd38150986af6df224435531ead6fddb224116504baef4",
+    "gzip": false
+  },
+  {
+    "source": "private/premise-resolution-cycle2/comparison-configured-continuation-2/system/base/resource-diagnostics.json.gz",
+    "published": "docs/reports/premise-resolution-cycle2/comparisons/comparison-configured-continuation-2/system/base/resource-diagnostics.json.gz",
+    "source_sha256": "d80b046e28a052df088c180496beb8b2a5de9e92cd4586b7913163cde310a7fa",
+    "published_sha256": "d80b046e28a052df088c180496beb8b2a5de9e92cd4586b7913163cde310a7fa",
+    "gzip": false
+  },
+  {
+    "source": "private/premise-resolution-cycle2/comparison-configured-continuation-2/system/base/resource-diagnostics.source-effects.json.gz",
+    "published": "docs/reports/premise-resolution-cycle2/comparisons/comparison-configured-continuation-2/system/base/resource-diagnostics.source-effects.json.gz",
+    "source_sha256": "21c47e400097333e880703ea1d1f27b3f23cd0544271c70c8c1b96c6216afe40",
+    "published_sha256": "21c47e400097333e880703ea1d1f27b3f23cd0544271c70c8c1b96c6216afe40",
+    "gzip": false
+  },
+  {
+    "source": "private/premise-resolution-cycle2/comparison-configured-continuation-2/system/base/system-null.jsonl.gz",
+    "published": "docs/reports/premise-resolution-cycle2/comparisons/comparison-configured-continuation-2/system/base/system-null.jsonl.gz",
+    "source_sha256": "038c97c99469840403b44317ab9f729708a513c2124345f4d2da4fbcba030fc1",
+    "published_sha256": "038c97c99469840403b44317ab9f729708a513c2124345f4d2da4fbcba030fc1",
+    "gzip": false
+  },
+  {
+    "source": "private/premise-resolution-cycle2/comparison-configured-continuation-2/system/base/system-null.summary.json.gz",
+    "published": "docs/reports/premise-resolution-cycle2/comparisons/comparison-configured-continuation-2/system/base/system-null.summary.json.gz",
+    "source_sha256": "f538ab69b0117e99d0b21573b85bb8e5fb14df87b9fd3366be36b9fb428efe76",
+    "published_sha256": "f538ab69b0117e99d0b21573b85bb8e5fb14df87b9fd3366be36b9fb428efe76",
+    "gzip": false
+  },
+  {
+    "source": "private/premise-resolution-cycle2/comparison-configured-continuation-2/system/base/system-outer.json.gz",
+    "published": "docs/reports/premise-resolution-cycle2/comparisons/comparison-configured-continuation-2/system/base/system-outer.json.gz",
+    "source_sha256": "4ef0a15d3306738836c7c5beb41dcdab40e85a338c25640b8676edc264f1acac",
+    "published_sha256": "4ef0a15d3306738836c7c5beb41dcdab40e85a338c25640b8676edc264f1acac",
+    "gzip": false
+  },
+  {
+    "source": "private/premise-resolution-cycle2/comparison-configured-continuation-2/system/comparison.json",
+    "published": "docs/reports/premise-resolution-cycle2/comparisons/comparison-configured-continuation-2/system/comparison.json",
+    "source_sha256": "eda443c70c0c505d93be32adb65320af086c00dea8bedb126ec7e0477bd7a3c7",
+    "published_sha256": "eda443c70c0c505d93be32adb65320af086c00dea8bedb126ec7e0477bd7a3c7",
+    "gzip": false
+  },
+  {
+    "source": "private/premise-resolution-cycle2/comparison-configured-continuation-2/system/context-order-attribution.json",
+    "published": "docs/reports/premise-resolution-cycle2/comparisons/comparison-configured-continuation-2/system/context-order-attribution.json",
+    "source_sha256": "0cc517ef2ca3de72d0184709dba69f181c67c1e4f5f5d8ff72edd76274daf81a",
+    "published_sha256": "0cc517ef2ca3de72d0184709dba69f181c67c1e4f5f5d8ff72edd76274daf81a",
+    "gzip": false
+  },
+  {
+    "source": "private/premise-resolution-cycle2/comparison-configured-continuation-2/system/exact-string-attribution.json.gz",
+    "published": "docs/reports/premise-resolution-cycle2/comparisons/comparison-configured-continuation-2/system/exact-string-attribution.json.gz",
+    "source_sha256": "34cb971313afc9395acef751c69f27dad3ce06b6876de4ba82c71e76fba124b7",
+    "published_sha256": "34cb971313afc9395acef751c69f27dad3ce06b6876de4ba82c71e76fba124b7",
+    "gzip": false
+  },
+  {
+    "source": "private/premise-resolution-cycle2/comparison-configured-continuation-2/system/exact-version-attribution.json.gz",
+    "published": "docs/reports/premise-resolution-cycle2/comparisons/comparison-configured-continuation-2/system/exact-version-attribution.json.gz",
+    "source_sha256": "a2237cd03f92d811b23bdd1baef0df56c03e210d99c613c01cec35d709c55bd2",
+    "published_sha256": "a2237cd03f92d811b23bdd1baef0df56c03e210d99c613c01cec35d709c55bd2",
+    "gzip": false
+  },
+  {
+    "source": "private/premise-resolution-cycle2/comparison-configured-continuation-2/system/final-comparison.json",
+    "published": "docs/reports/premise-resolution-cycle2/comparisons/comparison-configured-continuation-2/system/final-comparison.json",
+    "source_sha256": "6daf2c197319f9d7a7bac37dbaccd2b09ec2d618bc837d9d08f26c5fa16391c3",
+    "published_sha256": "6daf2c197319f9d7a7bac37dbaccd2b09ec2d618bc837d9d08f26c5fa16391c3",
+    "gzip": false
+  },
+  {
+    "source": "private/premise-resolution-cycle2/comparison-configured-continuation-2/system/graph-attribution.json.gz",
+    "published": "docs/reports/premise-resolution-cycle2/comparisons/comparison-configured-continuation-2/system/graph-attribution.json.gz",
+    "source_sha256": "abc129be8d26e8d4afe9ce45f9d5a73c8ed9aa62810ca24ee789fe4581dc4a80",
+    "published_sha256": "abc129be8d26e8d4afe9ce45f9d5a73c8ed9aa62810ca24ee789fe4581dc4a80",
+    "gzip": false
+  },
+  {
+    "source": "private/premise-resolution-cycle2/comparison-configured-continuation-2/system/input-invariants.json",
+    "published": "docs/reports/premise-resolution-cycle2/comparisons/comparison-configured-continuation-2/system/input-invariants.json",
+    "source_sha256": "1124e9bedad394ed5068cec2f6cd18906da4508ad9c0e39d2baba4e3d67894a3",
+    "published_sha256": "1124e9bedad394ed5068cec2f6cd18906da4508ad9c0e39d2baba4e3d67894a3",
+    "gzip": false
+  },
+  {
+    "source": "private/premise-resolution-cycle2/comparison-configured-continuation-2/system/new-diagnostic-environments.json.gz",
+    "published": "docs/reports/premise-resolution-cycle2/comparisons/comparison-configured-continuation-2/system/new-diagnostic-environments.json.gz",
+    "source_sha256": "5c49e5713b3943f9e786feae1d63d5c3bb3a6e9df74a1bb0b9e3573f76f9cb42",
+    "published_sha256": "5c49e5713b3943f9e786feae1d63d5c3bb3a6e9df74a1bb0b9e3573f76f9cb42",
+    "gzip": false
+  },
+  {
+    "source": "private/premise-resolution-cycle2/comparison-configured-continuation-2/system/provenance-attribution.json",
+    "published": "docs/reports/premise-resolution-cycle2/comparisons/comparison-configured-continuation-2/system/provenance-attribution.json",
+    "source_sha256": "ee8d0f5a71da15e4efa18653033d18d53c90b832f03663c157dcee7a34d19c04",
+    "published_sha256": "ee8d0f5a71da15e4efa18653033d18d53c90b832f03663c157dcee7a34d19c04",
+    "gzip": false
+  },
+  {
+    "source": "private/premise-resolution-cycle2/comparison-configured-continuation-2/system/raw-differences.json.gz",
+    "published": "docs/reports/premise-resolution-cycle2/comparisons/comparison-configured-continuation-2/system/raw-differences.json.gz",
+    "source_sha256": "beb24c0c29968954cdf12be97e4f13670a39d8b80cba9856a6445416d2940374",
+    "published_sha256": "beb24c0c29968954cdf12be97e4f13670a39d8b80cba9856a6445416d2940374",
+    "gzip": false
+  },
+  {
+    "source": "private/premise-resolution-cycle2/comparison-configured-continuation-2/system/remaining-differences.json.gz",
+    "published": "docs/reports/premise-resolution-cycle2/comparisons/comparison-configured-continuation-2/system/remaining-differences.json.gz",
+    "source_sha256": "79e17338b5ad42391cd22013d699bfe81f51f76706395a72278e8dad60159277",
+    "published_sha256": "79e17338b5ad42391cd22013d699bfe81f51f76706395a72278e8dad60159277",
+    "gzip": false
+  },
+  {
+    "source": "private/premise-resolution-cycle2/comparison-configured-continuation-2/system/snapshot-file-provenance.json",
+    "published": "docs/reports/premise-resolution-cycle2/comparisons/comparison-configured-continuation-2/system/snapshot-file-provenance.json",
+    "source_sha256": "f0290b5afe38750853daaa954d98e8089a520e0b6301352c52a0cb35d66059c2",
+    "published_sha256": "f0290b5afe38750853daaa954d98e8089a520e0b6301352c52a0cb35d66059c2",
+    "gzip": false
+  },
+  {
+    "source": "private/premise-resolution-cycle2/comparison-configured-continuation-2/system/time-preprocess-command.json",
+    "published": "docs/reports/premise-resolution-cycle2/comparisons/comparison-configured-continuation-2/system/time-preprocess-command.json",
+    "source_sha256": "5560b9efdc697053fb456885ca05af7a448cb5dfb8341e4c5a83ed6dd488c6e9",
+    "published_sha256": "5560b9efdc697053fb456885ca05af7a448cb5dfb8341e4c5a83ed6dd488c6e9",
+    "gzip": false
+  },
+  {
+    "source": "private/premise-resolution-cycle2/comparison-configured-continuation-2/system/time-preprocess-stderr.log",
+    "published": "docs/reports/premise-resolution-cycle2/comparisons/comparison-configured-continuation-2/system/time-preprocess-stderr.log",
+    "source_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "published_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "gzip": false
+  },
+  {
+    "source": "private/premise-resolution-cycle2/comparison-configured-continuation-2/system/time-source.c.gz",
+    "published": "docs/reports/premise-resolution-cycle2/comparisons/comparison-configured-continuation-2/system/time-source.c.gz",
+    "source_sha256": "29d9240142145e965d07d5409a64bf3182f966d2137af200a6b954f6920f2041",
+    "published_sha256": "29d9240142145e965d07d5409a64bf3182f966d2137af200a6b954f6920f2041",
+    "gzip": false
+  },
+  {
+    "source": "private/premise-resolution-cycle2/comparison-configured-continuation-2/system/tip/invocation.json",
+    "published": "docs/reports/premise-resolution-cycle2/comparisons/comparison-configured-continuation-2/system/tip/invocation.json",
+    "source_sha256": "5de7291e8b6f056f22b2f2e1f5fd004844bfd226e391184e31fca2ffb49df997",
+    "published_sha256": "5de7291e8b6f056f22b2f2e1f5fd004844bfd226e391184e31fca2ffb49df997",
+    "gzip": false
+  },
+  {
+    "source": "private/premise-resolution-cycle2/comparison-configured-continuation-2/system/tip/manifest.json",
+    "published": "docs/reports/premise-resolution-cycle2/comparisons/comparison-configured-continuation-2/system/tip/manifest.json",
+    "source_sha256": "006061e98620f6bc3535f6eefa79dfdc256633228135813b868b3db367a91e07",
+    "published_sha256": "006061e98620f6bc3535f6eefa79dfdc256633228135813b868b3db367a91e07",
+    "gzip": false
+  },
+  {
+    "source": "private/premise-resolution-cycle2/comparison-configured-continuation-2/system/tip/resource-diagnostics.chunk-contracts.json.gz",
+    "published": "docs/reports/premise-resolution-cycle2/comparisons/comparison-configured-continuation-2/system/tip/resource-diagnostics.chunk-contracts.json.gz",
+    "source_sha256": "21c47e400097333e880703ea1d1f27b3f23cd0544271c70c8c1b96c6216afe40",
+    "published_sha256": "21c47e400097333e880703ea1d1f27b3f23cd0544271c70c8c1b96c6216afe40",
+    "gzip": false
+  },
+  {
+    "source": "private/premise-resolution-cycle2/comparison-configured-continuation-2/system/tip/resource-diagnostics.contracts.json.gz",
+    "published": "docs/reports/premise-resolution-cycle2/comparisons/comparison-configured-continuation-2/system/tip/resource-diagnostics.contracts.json.gz",
+    "source_sha256": "101a97eb72abb8efeca4e05adeab1ddb93ff48992175ad3af9e3a88eb8e10041",
+    "published_sha256": "101a97eb72abb8efeca4e05adeab1ddb93ff48992175ad3af9e3a88eb8e10041",
+    "gzip": false
+  },
+  {
+    "source": "private/premise-resolution-cycle2/comparison-configured-continuation-2/system/tip/resource-diagnostics.json.gz",
+    "published": "docs/reports/premise-resolution-cycle2/comparisons/comparison-configured-continuation-2/system/tip/resource-diagnostics.json.gz",
+    "source_sha256": "b693eb03296e513ffad16046d2651eca45066f193106808fde82c00896a6b1b8",
+    "published_sha256": "b693eb03296e513ffad16046d2651eca45066f193106808fde82c00896a6b1b8",
+    "gzip": false
+  },
+  {
+    "source": "private/premise-resolution-cycle2/comparison-configured-continuation-2/system/tip/resource-diagnostics.source-effects.json.gz",
+    "published": "docs/reports/premise-resolution-cycle2/comparisons/comparison-configured-continuation-2/system/tip/resource-diagnostics.source-effects.json.gz",
+    "source_sha256": "21c47e400097333e880703ea1d1f27b3f23cd0544271c70c8c1b96c6216afe40",
+    "published_sha256": "21c47e400097333e880703ea1d1f27b3f23cd0544271c70c8c1b96c6216afe40",
+    "gzip": false
+  },
+  {
+    "source": "private/premise-resolution-cycle2/comparison-configured-continuation-2/system/tip/system-null.jsonl.gz",
+    "published": "docs/reports/premise-resolution-cycle2/comparisons/comparison-configured-continuation-2/system/tip/system-null.jsonl.gz",
+    "source_sha256": "fd12aa88c7a144d8558012904f317e70b7817cc96dc6b86ba3030afd3d3a0e00",
+    "published_sha256": "fd12aa88c7a144d8558012904f317e70b7817cc96dc6b86ba3030afd3d3a0e00",
+    "gzip": false
+  },
+  {
+    "source": "private/premise-resolution-cycle2/comparison-configured-continuation-2/system/tip/system-null.summary.json.gz",
+    "published": "docs/reports/premise-resolution-cycle2/comparisons/comparison-configured-continuation-2/system/tip/system-null.summary.json.gz",
+    "source_sha256": "f538ab69b0117e99d0b21573b85bb8e5fb14df87b9fd3366be36b9fb428efe76",
+    "published_sha256": "f538ab69b0117e99d0b21573b85bb8e5fb14df87b9fd3366be36b9fb428efe76",
+    "gzip": false
+  },
+  {
+    "source": "private/premise-resolution-cycle2/comparison-configured-continuation-2/system/tip/system-outer.json.gz",
+    "published": "docs/reports/premise-resolution-cycle2/comparisons/comparison-configured-continuation-2/system/tip/system-outer.json.gz",
+    "source_sha256": "56ebfcd4e19ca705eed1aee28f4697f81ef7f028e7a099a14e8a02484ed7936f",
+    "published_sha256": "56ebfcd4e19ca705eed1aee28f4697f81ef7f028e7a099a14e8a02484ed7936f",
+    "gzip": false
+  },
+  {
+    "source": "private/premise-resolution-cycle2/comparison-configured-continuation-2/system-all-fields.log",
+    "published": "docs/reports/premise-resolution-cycle2/comparisons/comparison-configured-continuation-2/system-all-fields.log",
+    "source_sha256": "eda443c70c0c505d93be32adb65320af086c00dea8bedb126ec7e0477bd7a3c7",
+    "published_sha256": "eda443c70c0c505d93be32adb65320af086c00dea8bedb126ec7e0477bd7a3c7",
+    "gzip": false
+  },
+  {
+    "source": "private/premise-resolution-cycle2/comparison-configured-continuation-2/system-exact-time-identity.log",
+    "published": "docs/reports/premise-resolution-cycle2/comparisons/comparison-configured-continuation-2/system-exact-time-identity.log",
+    "source_sha256": "a39a6c630ca922e149ce1134821ef9f7fda9d8a2faa765cd1e41384c81cc5d5d",
+    "published_sha256": "a39a6c630ca922e149ce1134821ef9f7fda9d8a2faa765cd1e41384c81cc5d5d",
+    "gzip": false
+  },
+  {
+    "source": "private/premise-resolution-cycle2/comparison-corpus-1/base-environments/commands.json",
+    "published": "docs/reports/premise-resolution-cycle2/comparisons/comparison-corpus-1/base-environments/commands.json",
+    "source_sha256": "382f680ceca11af96a2a93c3f1d358196c205858a634e893e8f54f7ab2c3a878",
+    "published_sha256": "382f680ceca11af96a2a93c3f1d358196c205858a634e893e8f54f7ab2c3a878",
+    "gzip": false
+  },
+  {
+    "source": "private/premise-resolution-cycle2/comparison-corpus-1/base-environments/corpus/base-environment-hashes.json",
+    "published": "docs/reports/premise-resolution-cycle2/comparisons/comparison-corpus-1/base-environments/corpus/base-environment-hashes.json",
+    "source_sha256": "a3017673685f391cef85099dbcf620a932c6c5523afd98d40cdef0d8b507000c",
+    "published_sha256": "a3017673685f391cef85099dbcf620a932c6c5523afd98d40cdef0d8b507000c",
+    "gzip": false
+  },
+  {
+    "source": "private/premise-resolution-cycle2/comparison-corpus-1/base-environments/corpus/base-environment.json",
+    "published": "docs/reports/premise-resolution-cycle2/comparisons/comparison-corpus-1/base-environments/corpus/base-environment.json",
+    "source_sha256": "0f23762856a43c01d480eb3f07687d01d444ea742103303ac74389b452f04372",
+    "published_sha256": "0f23762856a43c01d480eb3f07687d01d444ea742103303ac74389b452f04372",
+    "gzip": false
+  },
+  {
+    "source": "private/premise-resolution-cycle2/comparison-corpus-1/base-environments/corpus/base-stderr.log",
+    "published": "docs/reports/premise-resolution-cycle2/comparisons/comparison-corpus-1/base-environments/corpus/base-stderr.log",
+    "source_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "published_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "gzip": false
+  },
+  {
+    "source": "private/premise-resolution-cycle2/comparison-corpus-1/commands.json",
+    "published": "docs/reports/premise-resolution-cycle2/comparisons/comparison-corpus-1/commands.json",
+    "source_sha256": "215ff3537bcbe02beb941b3cc00353ce388355a2e59117d45c3b7ae65fe0caf4",
+    "published_sha256": "215ff3537bcbe02beb941b3cc00353ce388355a2e59117d45c3b7ae65fe0caf4",
+    "gzip": false
+  },
+  {
+    "source": "private/premise-resolution-cycle2/comparison-corpus-1/comparison-summary.json",
+    "published": "docs/reports/premise-resolution-cycle2/comparisons/comparison-corpus-1/comparison-summary.json",
+    "source_sha256": "8e3805d0b17c09abe4559462600ef57db6a05b87d5d0dce6bb2b816c41135ae2",
+    "published_sha256": "8e3805d0b17c09abe4559462600ef57db6a05b87d5d0dce6bb2b816c41135ae2",
+    "gzip": false
+  },
+  {
+    "source": "private/premise-resolution-cycle2/comparison-corpus-1/corpus/base/corpus-null.jsonl.gz",
+    "published": "docs/reports/premise-resolution-cycle2/comparisons/comparison-corpus-1/corpus/base/corpus-null.jsonl.gz",
+    "source_sha256": "10095acdf697f7e51b3a1af580be8dec36ce177124b228069ed71317bec7a06c",
+    "published_sha256": "10095acdf697f7e51b3a1af580be8dec36ce177124b228069ed71317bec7a06c",
+    "gzip": false
+  },
+  {
+    "source": "private/premise-resolution-cycle2/comparison-corpus-1/corpus/base/corpus-null.summary.json.gz",
+    "published": "docs/reports/premise-resolution-cycle2/comparisons/comparison-corpus-1/corpus/base/corpus-null.summary.json.gz",
+    "source_sha256": "f539ec6b02c393986bb4585a52317b36c8569666a8bf9d046a173e36f56202c2",
+    "published_sha256": "f539ec6b02c393986bb4585a52317b36c8569666a8bf9d046a173e36f56202c2",
+    "gzip": false
+  },
+  {
+    "source": "private/premise-resolution-cycle2/comparison-corpus-1/corpus/base/corpus-outer.json.gz",
+    "published": "docs/reports/premise-resolution-cycle2/comparisons/comparison-corpus-1/corpus/base/corpus-outer.json.gz",
+    "source_sha256": "3978586f0e59b4a2d3182c8f6bc0200345cef28e9bff2c72406fbe236770a8d6",
+    "published_sha256": "3978586f0e59b4a2d3182c8f6bc0200345cef28e9bff2c72406fbe236770a8d6",
+    "gzip": false
+  },
+  {
+    "source": "private/premise-resolution-cycle2/comparison-corpus-1/corpus/base/invocation.json",
+    "published": "docs/reports/premise-resolution-cycle2/comparisons/comparison-corpus-1/corpus/base/invocation.json",
+    "source_sha256": "273603bce777abbc42c68b7307933a67c9c45a5342d6425857c2d5b795fda39e",
+    "published_sha256": "273603bce777abbc42c68b7307933a67c9c45a5342d6425857c2d5b795fda39e",
+    "gzip": false
+  },
+  {
+    "source": "private/premise-resolution-cycle2/comparison-corpus-1/corpus/base/manifest.json",
+    "published": "docs/reports/premise-resolution-cycle2/comparisons/comparison-corpus-1/corpus/base/manifest.json",
+    "source_sha256": "2605b2e31ae431884cc1a299e3a39aeee9546afebff8eb6e25f98a14acdbdb9d",
+    "published_sha256": "2605b2e31ae431884cc1a299e3a39aeee9546afebff8eb6e25f98a14acdbdb9d",
+    "gzip": false
+  },
+  {
+    "source": "private/premise-resolution-cycle2/comparison-corpus-1/corpus/base/monkey-source.json.gz",
+    "published": "docs/reports/premise-resolution-cycle2/comparisons/comparison-corpus-1/corpus/base/monkey-source.json.gz",
+    "source_sha256": "fe80d190e2c0e5c6ca4d24f057add3ee3ff85bd48882a5e3525c7568c28b2fb8",
+    "published_sha256": "fe80d190e2c0e5c6ca4d24f057add3ee3ff85bd48882a5e3525c7568c28b2fb8",
+    "gzip": false
+  },
+  {
+    "source": "private/premise-resolution-cycle2/comparison-corpus-1/corpus/base/resource-diagnostics.chunk-contracts.json.gz",
+    "published": "docs/reports/premise-resolution-cycle2/comparisons/comparison-corpus-1/corpus/base/resource-diagnostics.chunk-contracts.json.gz",
+    "source_sha256": "f0568583a78a62741104d890e33c7dd84ccbb67d9a692f051aa21cc3b8e01703",
+    "published_sha256": "f0568583a78a62741104d890e33c7dd84ccbb67d9a692f051aa21cc3b8e01703",
+    "gzip": false
+  },
+  {
+    "source": "private/premise-resolution-cycle2/comparison-corpus-1/corpus/base/resource-diagnostics.contracts.json.gz",
+    "published": "docs/reports/premise-resolution-cycle2/comparisons/comparison-corpus-1/corpus/base/resource-diagnostics.contracts.json.gz",
+    "source_sha256": "0b96069ad482650a0a6b89c2d591f1a0250e56b713986a5f812068b5353358b8",
+    "published_sha256": "0b96069ad482650a0a6b89c2d591f1a0250e56b713986a5f812068b5353358b8",
+    "gzip": false
+  },
+  {
+    "source": "private/premise-resolution-cycle2/comparison-corpus-1/corpus/base/resource-diagnostics.json.gz",
+    "published": "docs/reports/premise-resolution-cycle2/comparisons/comparison-corpus-1/corpus/base/resource-diagnostics.json.gz",
+    "source_sha256": "6b3ac8a4495c160f7b6e40cdeff1bc5ebe8367f8fca7d632603a14ab8b0b6bd9",
+    "published_sha256": "6b3ac8a4495c160f7b6e40cdeff1bc5ebe8367f8fca7d632603a14ab8b0b6bd9",
+    "gzip": false
+  },
+  {
+    "source": "private/premise-resolution-cycle2/comparison-corpus-1/corpus/base/resource-diagnostics.source-effects.json.gz",
+    "published": "docs/reports/premise-resolution-cycle2/comparisons/comparison-corpus-1/corpus/base/resource-diagnostics.source-effects.json.gz",
+    "source_sha256": "6d04b9645abc0b702a47dfc863cfe28e935adcf038ea9fffb2e68db0f72dec53",
+    "published_sha256": "6d04b9645abc0b702a47dfc863cfe28e935adcf038ea9fffb2e68db0f72dec53",
+    "gzip": false
+  },
+  {
+    "source": "private/premise-resolution-cycle2/comparison-corpus-1/corpus/comparison.json",
+    "published": "docs/reports/premise-resolution-cycle2/comparisons/comparison-corpus-1/corpus/comparison.json",
+    "source_sha256": "f265ad9dcf221b25baedb2d42e694bec18872e983ae06d5e0d5d7e08dd8f7089",
+    "published_sha256": "f265ad9dcf221b25baedb2d42e694bec18872e983ae06d5e0d5d7e08dd8f7089",
+    "gzip": false
+  },
+  {
+    "source": "private/premise-resolution-cycle2/comparison-corpus-1/corpus/context-order-attribution.json",
+    "published": "docs/reports/premise-resolution-cycle2/comparisons/comparison-corpus-1/corpus/context-order-attribution.json",
+    "source_sha256": "84e7f911c8eb3b224ae123f4341fa12e35c1c0dc7a6f473b23274738338c0e36",
+    "published_sha256": "84e7f911c8eb3b224ae123f4341fa12e35c1c0dc7a6f473b23274738338c0e36",
+    "gzip": false
+  },
+  {
+    "source": "private/premise-resolution-cycle2/comparison-corpus-1/corpus/exact-string-attribution.json.gz",
+    "published": "docs/reports/premise-resolution-cycle2/comparisons/comparison-corpus-1/corpus/exact-string-attribution.json.gz",
+    "source_sha256": "61d133c14181e6e43f19de91b9a971e900b5d8bf3eb5542589002b19d7919e42",
+    "published_sha256": "61d133c14181e6e43f19de91b9a971e900b5d8bf3eb5542589002b19d7919e42",
+    "gzip": false
+  },
+  {
+    "source": "private/premise-resolution-cycle2/comparison-corpus-1/corpus/exact-version-attribution.json.gz",
+    "published": "docs/reports/premise-resolution-cycle2/comparisons/comparison-corpus-1/corpus/exact-version-attribution.json.gz",
+    "source_sha256": "d1164467e810edec27f6607a5160c2af1af1048ae58a8f51f8bf965643d48fb3",
+    "published_sha256": "d1164467e810edec27f6607a5160c2af1af1048ae58a8f51f8bf965643d48fb3",
+    "gzip": false
+  },
+  {
+    "source": "private/premise-resolution-cycle2/comparison-corpus-1/corpus/final-comparison.json",
+    "published": "docs/reports/premise-resolution-cycle2/comparisons/comparison-corpus-1/corpus/final-comparison.json",
+    "source_sha256": "6944ede82a3cf5dcb5df5a0010161e4d06963496016202341c2eec12ca56ecb5",
+    "published_sha256": "6944ede82a3cf5dcb5df5a0010161e4d06963496016202341c2eec12ca56ecb5",
+    "gzip": false
+  },
+  {
+    "source": "private/premise-resolution-cycle2/comparison-corpus-1/corpus/graph-attribution.json.gz",
+    "published": "docs/reports/premise-resolution-cycle2/comparisons/comparison-corpus-1/corpus/graph-attribution.json.gz",
+    "source_sha256": "abc129be8d26e8d4afe9ce45f9d5a73c8ed9aa62810ca24ee789fe4581dc4a80",
+    "published_sha256": "abc129be8d26e8d4afe9ce45f9d5a73c8ed9aa62810ca24ee789fe4581dc4a80",
+    "gzip": false
+  },
+  {
+    "source": "private/premise-resolution-cycle2/comparison-corpus-1/corpus/input-invariants.json",
+    "published": "docs/reports/premise-resolution-cycle2/comparisons/comparison-corpus-1/corpus/input-invariants.json",
+    "source_sha256": "1124e9bedad394ed5068cec2f6cd18906da4508ad9c0e39d2baba4e3d67894a3",
+    "published_sha256": "1124e9bedad394ed5068cec2f6cd18906da4508ad9c0e39d2baba4e3d67894a3",
+    "gzip": false
+  },
+  {
+    "source": "private/premise-resolution-cycle2/comparison-corpus-1/corpus/new-diagnostic-environments.json.gz",
+    "published": "docs/reports/premise-resolution-cycle2/comparisons/comparison-corpus-1/corpus/new-diagnostic-environments.json.gz",
+    "source_sha256": "cc225c485590522f12f950e72efd4509e93475f5f80ad8aafa225947fba68165",
+    "published_sha256": "cc225c485590522f12f950e72efd4509e93475f5f80ad8aafa225947fba68165",
+    "gzip": false
+  },
+  {
+    "source": "private/premise-resolution-cycle2/comparison-corpus-1/corpus/provenance-attribution.json",
+    "published": "docs/reports/premise-resolution-cycle2/comparisons/comparison-corpus-1/corpus/provenance-attribution.json",
+    "source_sha256": "e8d5cdfb5ede366c901ac065e952d071a604c0c6307e2a08bb918f593dd253f5",
+    "published_sha256": "e8d5cdfb5ede366c901ac065e952d071a604c0c6307e2a08bb918f593dd253f5",
+    "gzip": false
+  },
+  {
+    "source": "private/premise-resolution-cycle2/comparison-corpus-1/corpus/raw-differences.json.gz",
+    "published": "docs/reports/premise-resolution-cycle2/comparisons/comparison-corpus-1/corpus/raw-differences.json.gz",
+    "source_sha256": "e82bc875588ac37bf846e039d513a19f186d068cf75fd94e50d528043b022452",
+    "published_sha256": "e82bc875588ac37bf846e039d513a19f186d068cf75fd94e50d528043b022452",
+    "gzip": false
+  },
+  {
+    "source": "private/premise-resolution-cycle2/comparison-corpus-1/corpus/remaining-differences.json.gz",
+    "published": "docs/reports/premise-resolution-cycle2/comparisons/comparison-corpus-1/corpus/remaining-differences.json.gz",
+    "source_sha256": "c54e8c5b9efd1b6d25411eb9e781efa69aa6328533df5c87f95f1a254923ce50",
+    "published_sha256": "c54e8c5b9efd1b6d25411eb9e781efa69aa6328533df5c87f95f1a254923ce50",
+    "gzip": false
+  },
+  {
+    "source": "private/premise-resolution-cycle2/comparison-corpus-1/corpus/snapshot-file-provenance.json",
+    "published": "docs/reports/premise-resolution-cycle2/comparisons/comparison-corpus-1/corpus/snapshot-file-provenance.json",
+    "source_sha256": "bc8605bbfd2b0904af464313ea2d2dc0f6103026cb388cf408a7e18fed4033d8",
+    "published_sha256": "bc8605bbfd2b0904af464313ea2d2dc0f6103026cb388cf408a7e18fed4033d8",
+    "gzip": false
+  },
+  {
+    "source": "private/premise-resolution-cycle2/comparison-corpus-1/corpus/time-preprocess-command.json",
+    "published": "docs/reports/premise-resolution-cycle2/comparisons/comparison-corpus-1/corpus/time-preprocess-command.json",
+    "source_sha256": "2200f8732c745b581b16445b22613104d1865d1ede2dc99c3fc4c441fb85e6a3",
+    "published_sha256": "2200f8732c745b581b16445b22613104d1865d1ede2dc99c3fc4c441fb85e6a3",
+    "gzip": false
+  },
+  {
+    "source": "private/premise-resolution-cycle2/comparison-corpus-1/corpus/time-preprocess-stderr.log",
+    "published": "docs/reports/premise-resolution-cycle2/comparisons/comparison-corpus-1/corpus/time-preprocess-stderr.log",
+    "source_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "published_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "gzip": false
+  },
+  {
+    "source": "private/premise-resolution-cycle2/comparison-corpus-1/corpus/time-source.c.gz",
+    "published": "docs/reports/premise-resolution-cycle2/comparisons/comparison-corpus-1/corpus/time-source.c.gz",
+    "source_sha256": "a41333fed334210d3c4bffc042f2ec0d21d5873ce72dc0d4846d091a334cb9fa",
+    "published_sha256": "a41333fed334210d3c4bffc042f2ec0d21d5873ce72dc0d4846d091a334cb9fa",
+    "gzip": false
+  },
+  {
+    "source": "private/premise-resolution-cycle2/comparison-corpus-1/corpus/tip/corpus-null.jsonl.gz",
+    "published": "docs/reports/premise-resolution-cycle2/comparisons/comparison-corpus-1/corpus/tip/corpus-null.jsonl.gz",
+    "source_sha256": "f87b8952f300cd1610757d33a3cbdc6a75ba87b5d0693ba8e0dbaba0149ce9e7",
+    "published_sha256": "f87b8952f300cd1610757d33a3cbdc6a75ba87b5d0693ba8e0dbaba0149ce9e7",
+    "gzip": false
+  },
+  {
+    "source": "private/premise-resolution-cycle2/comparison-corpus-1/corpus/tip/corpus-null.summary.json.gz",
+    "published": "docs/reports/premise-resolution-cycle2/comparisons/comparison-corpus-1/corpus/tip/corpus-null.summary.json.gz",
+    "source_sha256": "f539ec6b02c393986bb4585a52317b36c8569666a8bf9d046a173e36f56202c2",
+    "published_sha256": "f539ec6b02c393986bb4585a52317b36c8569666a8bf9d046a173e36f56202c2",
+    "gzip": false
+  },
+  {
+    "source": "private/premise-resolution-cycle2/comparison-corpus-1/corpus/tip/corpus-outer.json.gz",
+    "published": "docs/reports/premise-resolution-cycle2/comparisons/comparison-corpus-1/corpus/tip/corpus-outer.json.gz",
+    "source_sha256": "509888e5fbc78991651f60f854c596091bb20bc83eb23086521456bf74afb532",
+    "published_sha256": "509888e5fbc78991651f60f854c596091bb20bc83eb23086521456bf74afb532",
+    "gzip": false
+  },
+  {
+    "source": "private/premise-resolution-cycle2/comparison-corpus-1/corpus/tip/invocation.json",
+    "published": "docs/reports/premise-resolution-cycle2/comparisons/comparison-corpus-1/corpus/tip/invocation.json",
+    "source_sha256": "bb70fae7607b5e4f6c7f541cef4b773c5cd6735a9e524813dd50268dff7e445e",
+    "published_sha256": "bb70fae7607b5e4f6c7f541cef4b773c5cd6735a9e524813dd50268dff7e445e",
+    "gzip": false
+  },
+  {
+    "source": "private/premise-resolution-cycle2/comparison-corpus-1/corpus/tip/manifest.json",
+    "published": "docs/reports/premise-resolution-cycle2/comparisons/comparison-corpus-1/corpus/tip/manifest.json",
+    "source_sha256": "fbcc2f47170af07c57afab5a4c117fac3a48495fc703cc87f3008b6cf11d76e2",
+    "published_sha256": "fbcc2f47170af07c57afab5a4c117fac3a48495fc703cc87f3008b6cf11d76e2",
+    "gzip": false
+  },
+  {
+    "source": "private/premise-resolution-cycle2/comparison-corpus-1/corpus/tip/monkey-source.json.gz",
+    "published": "docs/reports/premise-resolution-cycle2/comparisons/comparison-corpus-1/corpus/tip/monkey-source.json.gz",
+    "source_sha256": "fe80d190e2c0e5c6ca4d24f057add3ee3ff85bd48882a5e3525c7568c28b2fb8",
+    "published_sha256": "fe80d190e2c0e5c6ca4d24f057add3ee3ff85bd48882a5e3525c7568c28b2fb8",
+    "gzip": false
+  },
+  {
+    "source": "private/premise-resolution-cycle2/comparison-corpus-1/corpus/tip/resource-diagnostics.chunk-contracts.json.gz",
+    "published": "docs/reports/premise-resolution-cycle2/comparisons/comparison-corpus-1/corpus/tip/resource-diagnostics.chunk-contracts.json.gz",
+    "source_sha256": "f0568583a78a62741104d890e33c7dd84ccbb67d9a692f051aa21cc3b8e01703",
+    "published_sha256": "f0568583a78a62741104d890e33c7dd84ccbb67d9a692f051aa21cc3b8e01703",
+    "gzip": false
+  },
+  {
+    "source": "private/premise-resolution-cycle2/comparison-corpus-1/corpus/tip/resource-diagnostics.contracts.json.gz",
+    "published": "docs/reports/premise-resolution-cycle2/comparisons/comparison-corpus-1/corpus/tip/resource-diagnostics.contracts.json.gz",
+    "source_sha256": "72e5fbb4909a6a456aba9552fce896f742192a966688d22f2e7b850dcee7cd41",
+    "published_sha256": "72e5fbb4909a6a456aba9552fce896f742192a966688d22f2e7b850dcee7cd41",
+    "gzip": false
+  },
+  {
+    "source": "private/premise-resolution-cycle2/comparison-corpus-1/corpus/tip/resource-diagnostics.json.gz",
+    "published": "docs/reports/premise-resolution-cycle2/comparisons/comparison-corpus-1/corpus/tip/resource-diagnostics.json.gz",
+    "source_sha256": "c1ad47c1c0e2e47f797b557e5015ca63ef38f4d27d4c9a48215767c96f05f5b5",
+    "published_sha256": "c1ad47c1c0e2e47f797b557e5015ca63ef38f4d27d4c9a48215767c96f05f5b5",
+    "gzip": false
+  },
+  {
+    "source": "private/premise-resolution-cycle2/comparison-corpus-1/corpus/tip/resource-diagnostics.source-effects.json.gz",
+    "published": "docs/reports/premise-resolution-cycle2/comparisons/comparison-corpus-1/corpus/tip/resource-diagnostics.source-effects.json.gz",
+    "source_sha256": "6d04b9645abc0b702a47dfc863cfe28e935adcf038ea9fffb2e68db0f72dec53",
+    "published_sha256": "6d04b9645abc0b702a47dfc863cfe28e935adcf038ea9fffb2e68db0f72dec53",
+    "gzip": false
+  },
+  {
+    "source": "private/premise-resolution-cycle2/comparison-corpus-1/corpus-all-fields.log",
+    "published": "docs/reports/premise-resolution-cycle2/comparisons/comparison-corpus-1/corpus-all-fields.log",
+    "source_sha256": "f265ad9dcf221b25baedb2d42e694bec18872e983ae06d5e0d5d7e08dd8f7089",
+    "published_sha256": "f265ad9dcf221b25baedb2d42e694bec18872e983ae06d5e0d5d7e08dd8f7089",
+    "gzip": false
+  },
+  {
+    "source": "private/premise-resolution-cycle2/comparison-corpus-1/corpus-canonical-capture-proof.log",
+    "published": "docs/reports/premise-resolution-cycle2/comparisons/comparison-corpus-1/corpus-canonical-capture-proof.log",
+    "source_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "published_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "gzip": false
+  },
+  {
+    "source": "private/premise-resolution-cycle2/comparison-corpus-1/corpus-exact-time-identity.log",
+    "published": "docs/reports/premise-resolution-cycle2/comparisons/comparison-corpus-1/corpus-exact-time-identity.log",
+    "source_sha256": "be36a7aad6a640b5a374458ccd7771dc1ddaf7100bf95d0b3d504c323a243257",
+    "published_sha256": "be36a7aad6a640b5a374458ccd7771dc1ddaf7100bf95d0b3d504c323a243257",
+    "gzip": false
+  },
+  {
+    "source": "private/premise-resolution-cycle2/comparison-corpus-1/corpus-identities.log",
+    "published": "docs/reports/premise-resolution-cycle2/comparisons/comparison-corpus-1/corpus-identities.log",
+    "source_sha256": "d6c32db673aecde5dc4ec6f849362e51ee2d248910bbbceb4e2ecc425e8fac88",
+    "published_sha256": "d6c32db673aecde5dc4ec6f849362e51ee2d248910bbbceb4e2ecc425e8fac88",
+    "gzip": false
+  },
+  {
+    "source": "private/premise-resolution-cycle2/comparison-corpus-1/corpus-known.json",
+    "published": "docs/reports/premise-resolution-cycle2/comparisons/comparison-corpus-1/corpus-known.json",
+    "source_sha256": "64b525d6522487054dc96309708eff95e786d56b48c687fbcbd9bcf0babb52ed",
+    "published_sha256": "64b525d6522487054dc96309708eff95e786d56b48c687fbcbd9bcf0babb52ed",
+    "gzip": false
+  },
+  {
+    "source": "private/premise-resolution-cycle2/comparison-corpus-1/corpus-reading-input.json",
+    "published": "docs/reports/premise-resolution-cycle2/comparisons/comparison-corpus-1/corpus-reading-input.json",
+    "source_sha256": "0b473a7339f2d6aefc4322939d8d5bf63b2f50a86efda45711c602ab0ce1e579",
+    "published_sha256": "0b473a7339f2d6aefc4322939d8d5bf63b2f50a86efda45711c602ab0ce1e579",
+    "gzip": false
+  },
+  {
+    "source": "private/premise-resolution-cycle2/comparison-corpus-1/corpus-reading-proof.json",
+    "published": "docs/reports/premise-resolution-cycle2/comparisons/comparison-corpus-1/corpus-reading-proof.json",
+    "source_sha256": "b9af771fcb9d2c439dabd73de41918a6d251dc92d92fa3608ac5f21fa3a1bbdc",
+    "published_sha256": "b9af771fcb9d2c439dabd73de41918a6d251dc92d92fa3608ac5f21fa3a1bbdc",
+    "gzip": false
+  },
+  {
+    "source": "private/premise-resolution-cycle2/comparison-corpus-1/export-base.log",
+    "published": "docs/reports/premise-resolution-cycle2/comparisons/comparison-corpus-1/export-base.log",
+    "source_sha256": "43774541fcb09c215ee5deef31f6df118657f7334198477ead93320ec2b36d9b",
+    "published_sha256": "43774541fcb09c215ee5deef31f6df118657f7334198477ead93320ec2b36d9b",
+    "gzip": false
+  },
+  {
+    "source": "private/premise-resolution-cycle2/comparison-corpus-1/export-tip.log",
+    "published": "docs/reports/premise-resolution-cycle2/comparisons/comparison-corpus-1/export-tip.log",
+    "source_sha256": "6d9a124d4f48fb523d4a51f77805f6e674eb6cdd50cd625b3de3d1072e28ef80",
+    "published_sha256": "6d9a124d4f48fb523d4a51f77805f6e674eb6cdd50cd625b3de3d1072e28ef80",
+    "gzip": false
+  },
+  {
+    "source": "private/premise-resolution-cycle2/comparison-corpus-1/tip-environments/commands.json",
+    "published": "docs/reports/premise-resolution-cycle2/comparisons/comparison-corpus-1/tip-environments/commands.json",
+    "source_sha256": "a80408a2e51f0dc16fd1124500ef56aa548be6b8f096f94dde675982a8edfeb5",
+    "published_sha256": "a80408a2e51f0dc16fd1124500ef56aa548be6b8f096f94dde675982a8edfeb5",
+    "gzip": false
+  },
+  {
+    "source": "private/premise-resolution-cycle2/comparison-corpus-1/tip-environments/corpus/tip-environment-hashes.json",
+    "published": "docs/reports/premise-resolution-cycle2/comparisons/comparison-corpus-1/tip-environments/corpus/tip-environment-hashes.json",
+    "source_sha256": "42c6466389607bd31c4ed148b7c23d7825f394a345d7ca8ee0744c3d260eceeb",
+    "published_sha256": "42c6466389607bd31c4ed148b7c23d7825f394a345d7ca8ee0744c3d260eceeb",
+    "gzip": false
+  },
+  {
+    "source": "private/premise-resolution-cycle2/comparison-corpus-1/tip-environments/corpus/tip-environment.json",
+    "published": "docs/reports/premise-resolution-cycle2/comparisons/comparison-corpus-1/tip-environments/corpus/tip-environment.json",
+    "source_sha256": "57d20c7b83e32be886baaed8e1e209ba8b4f1143041b3049cbf2f22170c9bf10",
+    "published_sha256": "57d20c7b83e32be886baaed8e1e209ba8b4f1143041b3049cbf2f22170c9bf10",
+    "gzip": false
+  },
+  {
+    "source": "private/premise-resolution-cycle2/comparison-corpus-1/tip-environments/corpus/tip-stderr.log",
+    "published": "docs/reports/premise-resolution-cycle2/comparisons/comparison-corpus-1/tip-environments/corpus/tip-stderr.log",
+    "source_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "published_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "gzip": false
+  },
+  {
+    "source": "private/premise-resolution-cycle2/comparison-corpus-1-control/command.json",
+    "published": "docs/reports/premise-resolution-cycle2/comparisons/comparison-corpus-1-control/command.json",
+    "source_sha256": "77b9987e67317c085c820455fe3610e2370d02e85352ea3db2331c52e5a362ff",
+    "published_sha256": "77b9987e67317c085c820455fe3610e2370d02e85352ea3db2331c52e5a362ff",
+    "gzip": false
+  },
+  {
+    "source": "private/premise-resolution-cycle2/comparison-corpus-1-control/run.log",
+    "published": "docs/reports/premise-resolution-cycle2/comparisons/comparison-corpus-1-control/run.log",
+    "source_sha256": "ee2e7dc45c3622095b7ebce37bb03afadc38d6e4c478d2fadb47007034704125",
+    "published_sha256": "ee2e7dc45c3622095b7ebce37bb03afadc38d6e4c478d2fadb47007034704125",
+    "gzip": false
+  },
+  {
+    "source": "private/premise-resolution-cycle2/configured-comparison-summary.json",
+    "published": "docs/reports/premise-resolution-cycle2/receipts/configured-comparison-summary.json",
+    "source_sha256": "98d6524f10d68b63d7f458022ace66f529c5bb75b52b3c68de538e52d951aacd",
+    "published_sha256": "98d6524f10d68b63d7f458022ace66f529c5bb75b52b3c68de538e52d951aacd",
+    "gzip": false
+  },
+  {
+    "source": "private/premise-resolution-cycle2/baseline-route-summary.json",
+    "published": "docs/reports/premise-resolution-cycle2/receipts/baseline-route-summary.json",
+    "source_sha256": "eb8b434e53c497d553326053a7d1d0039865be19dc8e3c8763099a4e4d143120",
+    "published_sha256": "eb8b434e53c497d553326053a7d1d0039865be19dc8e3c8763099a4e4d143120",
+    "gzip": false
+  },
+  {
+    "source": "private/premise-resolution-cycle2/tip-route-summary-system-slice.json",
+    "published": "docs/reports/premise-resolution-cycle2/receipts/tip-route-summary-system-slice.json",
+    "source_sha256": "b7e138a0d2f6472489cc8e9e6d4b70d347e95d94b06e3fb8226e048f38af35ae",
+    "published_sha256": "b7e138a0d2f6472489cc8e9e6d4b70d347e95d94b06e3fb8226e048f38af35ae",
+    "gzip": false
+  },
+  {
+    "source": "private/premise-resolution-cycle2/tip-route-summary-corpus.json",
+    "published": "docs/reports/premise-resolution-cycle2/receipts/tip-route-summary-corpus.json",
+    "source_sha256": "d06e689b0317578bc8e345488ec52ed871ae1b757902eadc6405edc2a73a03e0",
+    "published_sha256": "d06e689b0317578bc8e345488ec52ed871ae1b757902eadc6405edc2a73a03e0",
+    "gzip": false
+  },
+  {
+    "source": "private/premise-resolution-cycle2/bootstrap-helper-attempts.json",
+    "published": "docs/reports/premise-resolution-cycle2/receipts/bootstrap-helper-attempts.json",
+    "source_sha256": "2289cef3355f23e21e9a2742cf18b3fb1fb6ea7bef4817267d14fdc7814dd532",
+    "published_sha256": "2289cef3355f23e21e9a2742cf18b3fb1fb6ea7bef4817267d14fdc7814dd532",
+    "gzip": false
+  },
+  {
+    "source": "private/premise-resolution-cycle2/joint-attempts.json",
+    "published": "docs/reports/premise-resolution-cycle2/receipts/joint-attempts.json",
+    "source_sha256": "7217e9a198e68ada08b88294125b14f8475d92d9e7b338a4a3bd372a3e4b407b",
+    "published_sha256": "7217e9a198e68ada08b88294125b14f8475d92d9e7b338a4a3bd372a3e4b407b",
+    "gzip": false
+  },
+  {
+    "source": "private/premise-resolution-cycle2/failed-gate-executable-reclamation.json",
+    "published": "docs/reports/premise-resolution-cycle2/receipts/failed-gate-executable-reclamation.json",
+    "source_sha256": "fd082596de694130239b91140e5e279c91b1155587dd87bee1ddd1f028c18110",
+    "published_sha256": "fd082596de694130239b91140e5e279c91b1155587dd87bee1ddd1f028c18110",
+    "gzip": false
+  },
+  {
+    "source": "private/premise-resolution-cycle2/baseline-comparator-preflight.json",
+    "published": "docs/reports/premise-resolution-cycle2/receipts/baseline-comparator-preflight.json",
+    "source_sha256": "debecd888dc8d6691bc1d9e8e7a83c135309dc661e1dd9a4b9164a0bffd00523",
+    "published_sha256": "debecd888dc8d6691bc1d9e8e7a83c135309dc661e1dd9a4b9164a0bffd00523",
+    "gzip": false
+  },
+  {
+    "source": "private/premise-resolution-cycle2/base-freeze/receipt.json",
+    "published": "docs/reports/premise-resolution-cycle2/receipts/base-freeze.json",
+    "source_sha256": "3a4f833c0922970c987b0129022966f382687e3ad517b58581b16255988d6cca",
+    "published_sha256": "3a4f833c0922970c987b0129022966f382687e3ad517b58581b16255988d6cca",
+    "gzip": false
+  },
+  {
+    "source": "private/premise-resolution-cycle2/tip-freeze/receipt.json",
+    "published": "docs/reports/premise-resolution-cycle2/receipts/tip-freeze.json",
+    "source_sha256": "a1113a73ac259e88a801668a97f98a07b92ef87b86252c5f9f4814c96300f906",
+    "published_sha256": "a1113a73ac259e88a801668a97f98a07b92ef87b86252c5f9f4814c96300f906",
+    "gzip": false
+  },
+  {
+    "source": "private/premise-resolution-cycle2/baseline/receipt.json",
+    "published": "docs/reports/premise-resolution-cycle2/receipts/baseline-binary.json",
+    "source_sha256": "f397c5018f172846196637f4b3f07ec61e69db3b91ccc40db697ee334801d4d8",
+    "published_sha256": "f397c5018f172846196637f4b3f07ec61e69db3b91ccc40db697ee334801d4d8",
+    "gzip": false
+  },
+  {
+    "source": "private/premise-resolution-cycle2/attribute_reading_environments.rs",
+    "published": "docs/reports/premise-resolution-cycle2/scripts/attribute_reading_environments.rs",
+    "source_sha256": "419665c7488941489c90ec8b2aac9e22c74c0eebc1262fa7b74f7623fe49005a",
+    "published_sha256": "419665c7488941489c90ec8b2aac9e22c74c0eebc1262fa7b74f7623fe49005a",
+    "gzip": false
+  },
+  {
+    "source": "private/premise-resolution-cycle2/compare_records.py",
+    "published": "docs/reports/premise-resolution-cycle2/scripts/compare_records.py",
+    "source_sha256": "bc5cb2504d95c4ee40a06be22f9401fce64dff9ff59c823ee467173af156729a",
+    "published_sha256": "bc5cb2504d95c4ee40a06be22f9401fce64dff9ff59c823ee467173af156729a",
+    "gzip": false
+  },
+  {
+    "source": "private/premise-resolution-cycle2/derive_joint_identities.py",
+    "published": "docs/reports/premise-resolution-cycle2/scripts/derive_joint_identities.py",
+    "source_sha256": "2bd3fd2086ca9801ee8f8419031c3e123d7d61f9b8f708254a871d1af2091e86",
+    "published_sha256": "2bd3fd2086ca9801ee8f8419031c3e123d7d61f9b8f708254a871d1af2091e86",
+    "gzip": false
+  },
+  {
+    "source": "private/premise-resolution-cycle2/export_environments.py",
+    "published": "docs/reports/premise-resolution-cycle2/scripts/export_environments.py",
+    "source_sha256": "4f95c92965200915df541664c285c0b1fd1a88040d04c8f7dbda39f3722aa989",
+    "published_sha256": "4f95c92965200915df541664c285c0b1fd1a88040d04c8f7dbda39f3722aa989",
+    "gzip": false
+  },
+  {
+    "source": "private/premise-resolution-cycle2/attribute_time_identity.py",
+    "published": "docs/reports/premise-resolution-cycle2/scripts/attribute_time_identity.py",
+    "source_sha256": "9f8d3e777d5c796ac84c2e51a37dd3aeadea0e769fe89e513637839359a0a3c8",
+    "published_sha256": "9f8d3e777d5c796ac84c2e51a37dd3aeadea0e769fe89e513637839359a0a3c8",
+    "gzip": false
+  },
+  {
+    "source": "private/premise-resolution-cycle2/run_comparisons.py",
+    "published": "docs/reports/premise-resolution-cycle2/scripts/run_comparisons.py",
+    "source_sha256": "fde17ed475d07323c979b194b22f451437b6505a7da143a1facefacc0ac995bd",
+    "published_sha256": "fde17ed475d07323c979b194b22f451437b6505a7da143a1facefacc0ac995bd",
+    "gzip": false
+  },
+  {
+    "source": "private/premise-resolution-cycle2/compile_comparator_helpers.py",
+    "published": "docs/reports/premise-resolution-cycle2/scripts/compile_comparator_helpers.py",
+    "source_sha256": "223a860f2d8501257808b345b109762e45564f2e8f32990bc7d8df2228464c73",
+    "published_sha256": "223a860f2d8501257808b345b109762e45564f2e8f32990bc7d8df2228464c73",
+    "gzip": false
+  },
+  {
+    "source": "private/premise-resolution-cycle2/prepare_tip_views.py",
+    "published": "docs/reports/premise-resolution-cycle2/scripts/prepare_tip_views.py",
+    "source_sha256": "6f5743b9396d2494273393f1635b8607e9cad508de10550bc7bf7301ea001858",
+    "published_sha256": "6f5743b9396d2494273393f1635b8607e9cad508de10550bc7bf7301ea001858",
+    "gzip": false
+  },
+  {
+    "source": "private/premise-resolution-cycle2/finish_configured.py",
+    "published": "docs/reports/premise-resolution-cycle2/scripts/finish_configured.py",
+    "source_sha256": "092b42db96dde1c674a6ffac11f412c9521dce9b82af9ed6d1a88018b3f8b8fb",
+    "published_sha256": "092b42db96dde1c674a6ffac11f412c9521dce9b82af9ed6d1a88018b3f8b8fb",
+    "gzip": false
+  },
+  {
+    "source": "private/premise-resolution-cycle2/run_joint_gate.py",
+    "published": "docs/reports/premise-resolution-cycle2/scripts/run_joint_gate.py",
+    "source_sha256": "6589e8e48fd5f81e07ddcb925d89746dbb694fd3e8c56f76d436f3e7d363f80d",
+    "published_sha256": "6589e8e48fd5f81e07ddcb925d89746dbb694fd3e8c56f76d436f3e7d363f80d",
+    "gzip": false
+  },
+  {
+    "source": "private/premise-resolution-cycle2/run_base.py",
+    "published": "docs/reports/premise-resolution-cycle2/scripts/run_base.py",
+    "source_sha256": "260ed70601b2d0adee0a6b4f40103cf5eda53450d1bcc17eb21b393970651997",
+    "published_sha256": "260ed70601b2d0adee0a6b4f40103cf5eda53450d1bcc17eb21b393970651997",
+    "gzip": false
+  },
+  {
+    "source": "private/premise-resolution-cycle2/run_tip.py",
+    "published": "docs/reports/premise-resolution-cycle2/scripts/run_tip.py",
+    "source_sha256": "1841c3dcf00793076bfa50bd2ebbcaa69838815174ac9ff331b87f04fe954b6a",
+    "published_sha256": "1841c3dcf00793076bfa50bd2ebbcaa69838815174ac9ff331b87f04fe954b6a",
+    "gzip": false
+  },
+  {
+    "source": "private/premise-resolution-cycle2/run_postgate_native.py",
+    "published": "docs/reports/premise-resolution-cycle2/scripts/run_postgate_native.py",
+    "source_sha256": "3e7c3980ecfe661b52ed359d0f3c2d11759b3cf9beb7f43cd9a16ef2ad9b0c9d",
+    "published_sha256": "3e7c3980ecfe661b52ed359d0f3c2d11759b3cf9beb7f43cd9a16ef2ad9b0c9d",
+    "gzip": false
+  },
+  {
+    "source": "private/premise-resolution-cycle2/comparator-helpers/commands.json",
+    "published": "docs/reports/premise-resolution-cycle2/receipts/comparator-helpers/commands.json",
+    "source_sha256": "81f57d83b058063c4f17e28cfddf6e5f38d6115de2ad4b9c373b9e09526988d0",
+    "published_sha256": "81f57d83b058063c4f17e28cfddf6e5f38d6115de2ad4b9c373b9e09526988d0",
+    "gzip": false
+  },
+  {
+    "source": "private/premise-resolution-cycle2/comparator-helpers/receipt.json",
+    "published": "docs/reports/premise-resolution-cycle2/receipts/comparator-helpers/receipt.json",
+    "source_sha256": "41cf0c162478c9c4089c02f0256eb73c939b05ea0906606d3d70bf64f1ec1dfd",
+    "published_sha256": "41cf0c162478c9c4089c02f0256eb73c939b05ea0906606d3d70bf64f1ec1dfd",
+    "gzip": false
+  },
+  {
+    "source": "private/premise-resolution-cycle2/postgate-source-1/acquired.json",
+    "published": "docs/reports/premise-resolution-cycle2/source-witnesses/acquired.json.gz",
+    "source_sha256": "2791637c97160823f94aa36a258577fc931aaa4340ff684c961e55a61d61f23a",
+    "published_sha256": "ece3c3c30355b8d7a278729630421aed32478fa1de1420a77a8d84daf2952e05",
+    "gzip": true
+  },
+  {
+    "source": "private/premise-resolution-cycle2/postgate-source-1/binary-receipt.json",
+    "published": "docs/reports/premise-resolution-cycle2/source-witnesses/binary-receipt.json.gz",
+    "source_sha256": "5cf334d01c7c1eb80b5b1f1f245d747218df8a7b432fe2e8dc3b06fad9a36ad6",
+    "published_sha256": "aa760184b929f5d81d1635304a2d3b1580839b800286625d469d18a1073a234a",
+    "gzip": true
+  },
+  {
+    "source": "private/premise-resolution-cycle2/postgate-source-1/cjson/checked.json",
+    "published": "docs/reports/premise-resolution-cycle2/source-witnesses/cjson/checked.json.gz",
+    "source_sha256": "0696fd4fa1f5b9334449acc910e55b72e3521eac148bea11bc98dfa34e607d1c",
+    "published_sha256": "6a1abdba6e4b95b9a07f9563203f25423989f6f5e093103253f1f7905ddd5d48",
+    "gzip": true
+  },
+  {
+    "source": "private/premise-resolution-cycle2/postgate-source-1/cjson/commands.json",
+    "published": "docs/reports/premise-resolution-cycle2/source-witnesses/cjson/commands.json.gz",
+    "source_sha256": "233413959399e5a2c6baa0ffd33602ab87e3153a8bdca04e50562c47a6deb9e8",
+    "published_sha256": "ee90edec1cd88f4051e68e7ec7e9249da691be33d17b742b406a1c4704ea8353",
+    "gzip": true
+  },
+  {
+    "source": "private/premise-resolution-cycle2/postgate-source-1/cjson/flows.json",
+    "published": "docs/reports/premise-resolution-cycle2/source-witnesses/cjson/flows.json.gz",
+    "source_sha256": "e012f6ee49509bfa372eac2b5b132596b92931ca46f9b20ded571e52cda009e6",
+    "published_sha256": "78ddcc9a75033770fe02250018cb0ebc71ade79353af074fa414969a7a515cb2",
+    "gzip": true
+  },
+  {
+    "source": "private/premise-resolution-cycle2/postgate-source-1/cjson/native.json",
+    "published": "docs/reports/premise-resolution-cycle2/source-witnesses/cjson/native.json.gz",
+    "source_sha256": "046e9dc24541076e98d91f19b14f07ffd0bff837f73d90c919ee054eedfa8b6a",
+    "published_sha256": "56b665d8fa1b19165313d8a3761ced31fd861a3517c94a746570bddfeab2e4fe",
+    "gzip": true
+  },
+  {
+    "source": "private/premise-resolution-cycle2/postgate-source-1/cjson-source.log",
+    "published": "docs/reports/premise-resolution-cycle2/source-witnesses/cjson-source.log.gz",
+    "source_sha256": "373f6af47eac9c858165a42656c218e543f93a22ae09d466fe662288c5c45d86",
+    "published_sha256": "933630904da503026198336d21829fd9fc4c78d2820dbf3dabf5c665d66979aa",
+    "gzip": true
+  },
+  {
+    "source": "private/premise-resolution-cycle2/postgate-source-1/commands.json",
+    "published": "docs/reports/premise-resolution-cycle2/source-witnesses/commands.json.gz",
+    "source_sha256": "78afc65063bae53682a7aba8ef36c0f7e72cf01d971e4c3894382f2eff40f596",
+    "published_sha256": "787f13fc4513a3c504de412aff5cddc007ae805a70877e80e93cb5ca17581846",
+    "gzip": true
+  },
+  {
+    "source": "private/premise-resolution-cycle2/postgate-source-1/compile-comparison-helpers.log",
+    "published": "docs/reports/premise-resolution-cycle2/source-witnesses/compile-comparison-helpers.log.gz",
+    "source_sha256": "41cf0c162478c9c4089c02f0256eb73c939b05ea0906606d3d70bf64f1ec1dfd",
+    "published_sha256": "4aeb819166387f4f4041d1310b4162fc5e3b342b1ccefb9fcaee4cc443a93485",
+    "gzip": true
+  },
+  {
+    "source": "private/premise-resolution-cycle2/postgate-source-1/freeze-tip-inputs.log",
+    "published": "docs/reports/premise-resolution-cycle2/source-witnesses/freeze-tip-inputs.log.gz",
+    "source_sha256": "d58b61a320cb4d433a22207427cec51ecb16defb126f6cccab9b570641ea1ef9",
+    "published_sha256": "e479f5ef34698fe0f019601cdbd4416e8a499ae74df64c77ddb6f20502deecea",
+    "gzip": true
+  },
+  {
+    "source": "private/premise-resolution-cycle2/postgate-source-1/plugin/bounded-flow.json",
+    "published": "docs/reports/premise-resolution-cycle2/source-witnesses/plugin/bounded-flow.json.gz",
+    "source_sha256": "a9956f1194db353055143fb6b4cbb7750f3ef53cff5469f011d2e923af7aa649",
+    "published_sha256": "ffc7eba2cf5774a0ac1751d8e4bbac9d060c0657d8523453197bd6acb6fbbf83",
+    "gzip": true
+  },
+  {
+    "source": "private/premise-resolution-cycle2/postgate-source-1/plugin/checked.json",
+    "published": "docs/reports/premise-resolution-cycle2/source-witnesses/plugin/checked.json.gz",
+    "source_sha256": "8cc9c62ed2270628b1c3812994ac13e980c4509461814a7c9c771c06e1984d34",
+    "published_sha256": "c369618b30283c4f9445e833c075820399d91d41752a9a827f6720f50f5d885d",
+    "gzip": true
+  },
+  {
+    "source": "private/premise-resolution-cycle2/postgate-source-1/plugin/independent-replay/commands.json",
+    "published": "docs/reports/premise-resolution-cycle2/source-witnesses/plugin/independent-replay/commands.json.gz",
+    "source_sha256": "39b51222af3b02f1c150d0859d85c220c47face31ea88397dd9d69831ed45ac6",
+    "published_sha256": "b3e3f199fb241ea2e317b7e18bbc140732f28dc58b29e9579fe0334bbaafa11b",
+    "gzip": true
+  },
+  {
+    "source": "private/premise-resolution-cycle2/postgate-source-1/plugin/independent-replay/destroy_plugin.ast.json",
+    "published": "docs/reports/premise-resolution-cycle2/source-witnesses/plugin/independent-replay/destroy_plugin.ast.json.gz",
+    "source_sha256": "ed037251f87d304bb2f685315b8439aa6f405f8dbdf8022efbb5937f2a3c580a",
+    "published_sha256": "bfda88ace32642b841e6306e3c18b1be402f61bc7feac919f4904e44d22028ff",
+    "gzip": true
+  },
+  {
+    "source": "private/premise-resolution-cycle2/postgate-source-1/plugin/independent-replay/flb_plugin_load.ast.json",
+    "published": "docs/reports/premise-resolution-cycle2/source-witnesses/plugin/independent-replay/flb_plugin_load.ast.json.gz",
+    "source_sha256": "789326781a4692b5f658012e58f99876603592b90dea5b567bdf33e596a03f02",
+    "published_sha256": "d557f37f66e08dd316e3315eab4233c0dcfb43417104ef83fb0416f3303d5363",
+    "gzip": true
+  },
+  {
+    "source": "private/premise-resolution-cycle2/postgate-source-1/plugin/independent-replay/flb_plugin_proxy_create.ast.json",
+    "published": "docs/reports/premise-resolution-cycle2/source-witnesses/plugin/independent-replay/flb_plugin_proxy_create.ast.json.gz",
+    "source_sha256": "ba7d36c2b5224dcb279c2e4ef9f62ab572147547ec78776b9dd837bb069ab84a",
+    "published_sha256": "8ef793f318b8958a8f97db5fcf4fb0bb33802b770e9b8b5882f3c9bde0656282",
+    "gzip": true
+  },
+  {
+    "source": "private/premise-resolution-cycle2/postgate-source-1/plugin/independent-replay/flb_plugin_proxy_destroy.ast.json",
+    "published": "docs/reports/premise-resolution-cycle2/source-witnesses/plugin/independent-replay/flb_plugin_proxy_destroy.ast.json.gz",
+    "source_sha256": "e63e60b76cb2555cedf73130c51186b4087622dd119551ca726c2907514c7702",
+    "published_sha256": "0bd117033815d16e99c8e25bf2c2d90336a5905dc01d18f0a2a3bbbe5f5a54e2",
+    "gzip": true
+  },
+  {
+    "source": "private/premise-resolution-cycle2/postgate-source-1/plugin/independent-replay/flb_plugin_proxy_register.ast.json",
+    "published": "docs/reports/premise-resolution-cycle2/source-witnesses/plugin/independent-replay/flb_plugin_proxy_register.ast.json.gz",
+    "source_sha256": "16fbae1bed41744335fc8e961abc9e23e142cb5ff96628fda996b201bb7d9850",
+    "published_sha256": "0b9093c36bb722d4ffaa6b010db720be4a0b3be9f8e58bb3e2db00708703b46d",
+    "gzip": true
+  },
+  {
+    "source": "private/premise-resolution-cycle2/postgate-source-1/plugin/independent-replay/flb_plugin_proxy_symbol.ast.json",
+    "published": "docs/reports/premise-resolution-cycle2/source-witnesses/plugin/independent-replay/flb_plugin_proxy_symbol.ast.json.gz",
+    "source_sha256": "2682db1ee940f6b2629e468feb7eb11fa4d90d734298907647c3ade8e5167e6d",
+    "published_sha256": "ec610e8fb730ed592404bcb38cb4f8ddc910e6a8e158b349e3b7b6add18db704",
+    "gzip": true
+  },
+  {
+    "source": "private/premise-resolution-cycle2/postgate-source-1/plugin/independent-replay/get_handle.ast.json",
+    "published": "docs/reports/premise-resolution-cycle2/source-witnesses/plugin/independent-replay/get_handle.ast.json.gz",
+    "source_sha256": "89e11511cf7b101f2e71abcc8dc84e4fddd7d97bcc6233c61673e61deb1e25ca",
+    "published_sha256": "61217b68dbff1af074a761c2b6f80c83b4594078edf79a0bdc541ceab465f76e",
+    "gzip": true
+  },
+  {
+    "source": "private/premise-resolution-cycle2/postgate-source-1/plugin/independent-replay/inventory.json",
+    "published": "docs/reports/premise-resolution-cycle2/source-witnesses/plugin/independent-replay/inventory.json.gz",
+    "source_sha256": "2ea1c936998d85776b151f4fdab8e2fc27b198b74c756d219d2e8c5865ea5b43",
+    "published_sha256": "0cd6517f28904e9c0d29bceb6a5327fee8c781bdfce222e7e58cc294c894c48b",
+    "gzip": true
+  },
+  {
+    "source": "private/premise-resolution-cycle2/postgate-source-1/plugin/independent-replay/is_filter.ast.json",
+    "published": "docs/reports/premise-resolution-cycle2/source-witnesses/plugin/independent-replay/is_filter.ast.json.gz",
+    "source_sha256": "a4e2dfcf4601a4e0648f68a421e600670938eb8ebd93b93f76735fbb1c297d79",
+    "published_sha256": "63b5bddff0d0f0b400bb44b1193bce9d895a1d22b326fd567fdffa03a05020f3",
+    "gzip": true
+  },
+  {
+    "source": "private/premise-resolution-cycle2/postgate-source-1/plugin/independent-replay/is_input.ast.json",
+    "published": "docs/reports/premise-resolution-cycle2/source-witnesses/plugin/independent-replay/is_input.ast.json.gz",
+    "source_sha256": "5df9cc26b4c2bedea7dffea7ddb19f626d451765154aa3aa4e7f3391a5d69148",
+    "published_sha256": "ed293926c696b0bb546d69cb992671d56a3e24fda892fbe2a7b28599596a05b9",
+    "gzip": true
+  },
+  {
+    "source": "private/premise-resolution-cycle2/postgate-source-1/plugin/independent-replay/is_output.ast.json",
+    "published": "docs/reports/premise-resolution-cycle2/source-witnesses/plugin/independent-replay/is_output.ast.json.gz",
+    "source_sha256": "24bbd4624153d4dff8690990dec1d3c953a0c19545ff2709c37129ed15831991",
+    "published_sha256": "c3bbf862332d3dd0ea85ebcb17898f26a7c67ba2f9302e28f367ad10f4da505b",
+    "gzip": true
+  },
+  {
+    "source": "private/premise-resolution-cycle2/postgate-source-1/plugin/independent-replay/is_processor.ast.json",
+    "published": "docs/reports/premise-resolution-cycle2/source-witnesses/plugin/independent-replay/is_processor.ast.json.gz",
+    "source_sha256": "17a97711ab0955318d367adaf4116a427b25353d525fa476b997a62ed809c21e",
+    "published_sha256": "b134cc94979ab3554343f6972f7afb2da81726096600190a6e4198a846145808",
+    "gzip": true
+  },
+  {
+    "source": "private/premise-resolution-cycle2/postgate-source-1/plugin/independent-replay/load_symbol.ast.json",
+    "published": "docs/reports/premise-resolution-cycle2/source-witnesses/plugin/independent-replay/load_symbol.ast.json.gz",
+    "source_sha256": "5bf2f439e561d19d3fa7d9b7477cc539fd74b65e58bdac3de4fc40fb896f8a79",
+    "published_sha256": "95ef3b6e99f35ea2eb25775c3c10180f4ec934561a164acc97143be57e77310b",
+    "gzip": true
+  },
+  {
+    "source": "private/premise-resolution-cycle2/postgate-source-1/plugin/independent-replay/observation.json",
+    "published": "docs/reports/premise-resolution-cycle2/source-witnesses/plugin/independent-replay/observation.json.gz",
+    "source_sha256": "3c610e05d1789b1b3a1eb8d82e98bb63432da148cb0f1ab9eaa94258c3574f0f",
+    "published_sha256": "0d86c776fdc20b64fd7c5350e0e6fe7dae2b7436188dd550437be473dcfdb081",
+    "gzip": true
+  },
+  {
+    "source": "private/premise-resolution-cycle2/postgate-source-1/plugin/independent-replay/path_to_plugin_name.ast.json",
+    "published": "docs/reports/premise-resolution-cycle2/source-witnesses/plugin/independent-replay/path_to_plugin_name.ast.json.gz",
+    "source_sha256": "778295e78899723cbdb5a95dedeec0fe214436113428387153e0476977162330",
+    "published_sha256": "1c39e08aaad7a0cbd92960f651ae45223856cae68ff2a06e5438ffc72468328a",
+    "gzip": true
+  },
+  {
+    "source": "private/premise-resolution-cycle2/postgate-source-1/plugin/independent-replay/proxy_go_output_register.ast.json",
+    "published": "docs/reports/premise-resolution-cycle2/source-witnesses/plugin/independent-replay/proxy_go_output_register.ast.json.gz",
+    "source_sha256": "03a6d5d64955420f736b1dfe533d10399cf1d3047af9493401ee4a7adbc7986c",
+    "published_sha256": "ed311e0be93ba00ddef61d48c7b27cda2ebffa109d7b8d7a57fadc40012f25a7",
+    "gzip": true
+  },
+  {
+    "source": "private/premise-resolution-cycle2/postgate-source-1/plugin/independent-replay/rd_kafka_plugin_cmp.ast.json",
+    "published": "docs/reports/premise-resolution-cycle2/source-witnesses/plugin/independent-replay/rd_kafka_plugin_cmp.ast.json.gz",
+    "source_sha256": "99a91ce32ca5355c27668a743c34a407a2f7ee26aef9cbba8e489c576db19f56",
+    "published_sha256": "e66700b56be5f613abfbe8da96f04aefc634a51401d286723be943d4363e717b",
+    "gzip": true
+  },
+  {
+    "source": "private/premise-resolution-cycle2/postgate-source-1/plugin/independent-replay/rd_kafka_plugin_destroy.ast.json",
+    "published": "docs/reports/premise-resolution-cycle2/source-witnesses/plugin/independent-replay/rd_kafka_plugin_destroy.ast.json.gz",
+    "source_sha256": "97e4bfaa1cfbe5bfdae1d5292f167852e1a3b0b51e6ae9e786487ca390b2923d",
+    "published_sha256": "a0275fb02d4cf3d626041cfd2b8606b0ccfaad7377dee87ee507097e8d97957a",
+    "gzip": true
+  },
+  {
+    "source": "private/premise-resolution-cycle2/postgate-source-1/plugin/independent-replay/rd_kafka_plugin_new.ast.json",
+    "published": "docs/reports/premise-resolution-cycle2/source-witnesses/plugin/independent-replay/rd_kafka_plugin_new.ast.json.gz",
+    "source_sha256": "9738b5a3d8838b2dbe9d73a775108a3b32a4edcea03f5a847771087282195b47",
+    "published_sha256": "62a993bfd1f34198792901a1bb7afad0353f4a3008915474912f89c642ae3e60",
+    "gzip": true
+  },
+  {
+    "source": "private/premise-resolution-cycle2/postgate-source-1/plugin/observe/commands.json",
+    "published": "docs/reports/premise-resolution-cycle2/source-witnesses/plugin/observe/commands.json.gz",
+    "source_sha256": "910ddf8ffd4560f72f8645588668dc2c3d4e0af4e7a8b16c9adc30666445268d",
+    "published_sha256": "34d64f8a0356c0c4452cf4a947c89d1ede540a67a51850422dcd86b2d4a78260",
+    "gzip": true
+  },
+  {
+    "source": "private/premise-resolution-cycle2/postgate-source-1/plugin/observe/destroy_plugin.ast.json",
+    "published": "docs/reports/premise-resolution-cycle2/source-witnesses/plugin/observe/destroy_plugin.ast.json.gz",
+    "source_sha256": "a97363c26e68d4ed23f4f63b598ff7d6c0d012c42688c42ea7d6c816e0e66dc4",
+    "published_sha256": "95bebc39103d585f1bcf877c8702ea82fca3c4048c3854af7ee0e0f8d6584908",
+    "gzip": true
+  },
+  {
+    "source": "private/premise-resolution-cycle2/postgate-source-1/plugin/observe/flb_plugin_load.ast.json",
+    "published": "docs/reports/premise-resolution-cycle2/source-witnesses/plugin/observe/flb_plugin_load.ast.json.gz",
+    "source_sha256": "89bd590d16b6b9902a29a1b4924fb96d53061c0d3d0773b7e88eaaeaec9e4eeb",
+    "published_sha256": "32c072d2c2ab0b744183f0ab22d0003f094894d8b767ecda930ae47b92dd4420",
+    "gzip": true
+  },
+  {
+    "source": "private/premise-resolution-cycle2/postgate-source-1/plugin/observe/flb_plugin_proxy_create.ast.json",
+    "published": "docs/reports/premise-resolution-cycle2/source-witnesses/plugin/observe/flb_plugin_proxy_create.ast.json.gz",
+    "source_sha256": "bbad0b55b3ffbe4209767261f7b8a6264e524c99aa7a83a27b19ca679ba2d72b",
+    "published_sha256": "ee6b3dc2ec22f9d2591d81a500a48b4269eb954fc7ae5ffaab4676670a89f7d4",
+    "gzip": true
+  },
+  {
+    "source": "private/premise-resolution-cycle2/postgate-source-1/plugin/observe/flb_plugin_proxy_destroy.ast.json",
+    "published": "docs/reports/premise-resolution-cycle2/source-witnesses/plugin/observe/flb_plugin_proxy_destroy.ast.json.gz",
+    "source_sha256": "63022d13557f28677908ad8cda24dd5375a4ec79b928fdf08f265e9696945246",
+    "published_sha256": "f02775996ab62a973fca360b8aaf8e374513a079f20f4dfac1b9fda03d56ec73",
+    "gzip": true
+  },
+  {
+    "source": "private/premise-resolution-cycle2/postgate-source-1/plugin/observe/flb_plugin_proxy_register.ast.json",
+    "published": "docs/reports/premise-resolution-cycle2/source-witnesses/plugin/observe/flb_plugin_proxy_register.ast.json.gz",
+    "source_sha256": "c90fbbbc3d3cb3912e23b75cb8e8267c9d7b3243c49ce5a84432605b9a3717af",
+    "published_sha256": "e92d9512fe6956a6b4fb529e55625dacb8b310e0f72890b1220acb7775297af6",
+    "gzip": true
+  },
+  {
+    "source": "private/premise-resolution-cycle2/postgate-source-1/plugin/observe/flb_plugin_proxy_symbol.ast.json",
+    "published": "docs/reports/premise-resolution-cycle2/source-witnesses/plugin/observe/flb_plugin_proxy_symbol.ast.json.gz",
+    "source_sha256": "e4addec109cf0d18602d9a96258de5b3cf55f9909ffd63a0eb13ba84afd53248",
+    "published_sha256": "533e288817f39cd21aa60570c859be4d79914a784051f9340ed00437068a1237",
+    "gzip": true
+  },
+  {
+    "source": "private/premise-resolution-cycle2/postgate-source-1/plugin/observe/get_handle.ast.json",
+    "published": "docs/reports/premise-resolution-cycle2/source-witnesses/plugin/observe/get_handle.ast.json.gz",
+    "source_sha256": "0e1ce85dd9134f3b46c1ddfd1fa2ad2a3214aeefab1bc5782fc1fda7265a3675",
+    "published_sha256": "84cef03d31a7d98c8d8595cc4a699082df7b757c11a96ed8dfad0ba909b9e6b8",
+    "gzip": true
+  },
+  {
+    "source": "private/premise-resolution-cycle2/postgate-source-1/plugin/observe/inventory.json",
+    "published": "docs/reports/premise-resolution-cycle2/source-witnesses/plugin/observe/inventory.json.gz",
+    "source_sha256": "2ea1c936998d85776b151f4fdab8e2fc27b198b74c756d219d2e8c5865ea5b43",
+    "published_sha256": "0cd6517f28904e9c0d29bceb6a5327fee8c781bdfce222e7e58cc294c894c48b",
+    "gzip": true
+  },
+  {
+    "source": "private/premise-resolution-cycle2/postgate-source-1/plugin/observe/is_filter.ast.json",
+    "published": "docs/reports/premise-resolution-cycle2/source-witnesses/plugin/observe/is_filter.ast.json.gz",
+    "source_sha256": "df8ac01b074648db3515787ab3538555fdf3ad7a405a5598e6737e9b39e194d4",
+    "published_sha256": "a2631b2d240bb39b1f5729de71ee14e2cdccf674e3cb00bb5c8762859226a319",
+    "gzip": true
+  },
+  {
+    "source": "private/premise-resolution-cycle2/postgate-source-1/plugin/observe/is_input.ast.json",
+    "published": "docs/reports/premise-resolution-cycle2/source-witnesses/plugin/observe/is_input.ast.json.gz",
+    "source_sha256": "d0080e33ed51c39699d85da11709337da2613097f83ca2cae5078b301a90597a",
+    "published_sha256": "3cb7eb1f41c3dedad4df2062b79c982093db691fc6cd5e534620e1ea546ef6e9",
+    "gzip": true
+  },
+  {
+    "source": "private/premise-resolution-cycle2/postgate-source-1/plugin/observe/is_output.ast.json",
+    "published": "docs/reports/premise-resolution-cycle2/source-witnesses/plugin/observe/is_output.ast.json.gz",
+    "source_sha256": "abb3f430750b6e8e746acd9ebdc740cac9deccd259657efbdeca88e9d79eb7e3",
+    "published_sha256": "7b63efc54237fed821a7d2dbde1bd7b62961a29e73656d46857474060aa59689",
+    "gzip": true
+  },
+  {
+    "source": "private/premise-resolution-cycle2/postgate-source-1/plugin/observe/is_processor.ast.json",
+    "published": "docs/reports/premise-resolution-cycle2/source-witnesses/plugin/observe/is_processor.ast.json.gz",
+    "source_sha256": "9567c4943dd510b9dfd4eb0e69057038eda640e782577460bee4820837873538",
+    "published_sha256": "c455e102ad0a75e1ad840118e43df37d0f0314ec51b17f7bd0270102e19aa69e",
+    "gzip": true
+  },
+  {
+    "source": "private/premise-resolution-cycle2/postgate-source-1/plugin/observe/load_symbol.ast.json",
+    "published": "docs/reports/premise-resolution-cycle2/source-witnesses/plugin/observe/load_symbol.ast.json.gz",
+    "source_sha256": "8cbb2e99e2f4bddb2ac1aeea3dbe74dfdf192c9b5d9940194b149a9dfbd8fa9e",
+    "published_sha256": "b52b3b317a11b3a5003e16e27e3d30d362f793671ed6d5b0aa8894299ee632b3",
+    "gzip": true
+  },
+  {
+    "source": "private/premise-resolution-cycle2/postgate-source-1/plugin/observe/observation.json",
+    "published": "docs/reports/premise-resolution-cycle2/source-witnesses/plugin/observe/observation.json.gz",
+    "source_sha256": "9443c580cb3f0ddfc15d86c512246395a849cba35e2b6ab8b923f04ac5a0903d",
+    "published_sha256": "6c82198b6be512b9e56b8feaa442fc6b4c2b636fd8432723314d26de52e23a13",
+    "gzip": true
+  },
+  {
+    "source": "private/premise-resolution-cycle2/postgate-source-1/plugin/observe/path_to_plugin_name.ast.json",
+    "published": "docs/reports/premise-resolution-cycle2/source-witnesses/plugin/observe/path_to_plugin_name.ast.json.gz",
+    "source_sha256": "5e8d57e8bf101294aad6a658211bee761b338c466a58c69185692e4db0d6ff65",
+    "published_sha256": "d9befceb1ce6935965de3bf597c5b3429fdc436a5b23cbd7376f826b87c5fb2d",
+    "gzip": true
+  },
+  {
+    "source": "private/premise-resolution-cycle2/postgate-source-1/plugin/observe/proxy_go_output_register.ast.json",
+    "published": "docs/reports/premise-resolution-cycle2/source-witnesses/plugin/observe/proxy_go_output_register.ast.json.gz",
+    "source_sha256": "18fe27f686a3f73f2f96f6e6465a1d5ed9c7fb96f526dbe6102903c226791b8e",
+    "published_sha256": "4d81fc3af9dd07ba69c5a47ef1ea282694f2f9fa9d11ea0f2ab2ec85a4e50b1e",
+    "gzip": true
+  },
+  {
+    "source": "private/premise-resolution-cycle2/postgate-source-1/plugin/observe/rd_kafka_plugin_cmp.ast.json",
+    "published": "docs/reports/premise-resolution-cycle2/source-witnesses/plugin/observe/rd_kafka_plugin_cmp.ast.json.gz",
+    "source_sha256": "8765f5b2bd573b94b3638fa6987f58d80e0e20f3c4b0ccf7b9f131b3124cc286",
+    "published_sha256": "a52f547c6c715390377475db19802f5167d65fc465f1cb8f4b85be11a4930d09",
+    "gzip": true
+  },
+  {
+    "source": "private/premise-resolution-cycle2/postgate-source-1/plugin/observe/rd_kafka_plugin_destroy.ast.json",
+    "published": "docs/reports/premise-resolution-cycle2/source-witnesses/plugin/observe/rd_kafka_plugin_destroy.ast.json.gz",
+    "source_sha256": "b11fa28dd41bcaca6ea40344278c1043f2e4ddf625f0406d5e19641ab47399ba",
+    "published_sha256": "fe0616c5d635301a623feb1cf6e98df2c07f5f6348f33a5285cf3bd576f5a180",
+    "gzip": true
+  },
+  {
+    "source": "private/premise-resolution-cycle2/postgate-source-1/plugin/observe/rd_kafka_plugin_new.ast.json",
+    "published": "docs/reports/premise-resolution-cycle2/source-witnesses/plugin/observe/rd_kafka_plugin_new.ast.json.gz",
+    "source_sha256": "6f1c08e5479eb6b670025a4f8606dfcf837e15163173b395d846dde6cf9cbe8f",
+    "published_sha256": "f216cc4b9a31dfab6da2ff9b1fe0381ca45576c4d85d970622c852dd57d2ce64",
+    "gzip": true
+  },
+  {
+    "source": "private/premise-resolution-cycle2/postgate-source-1/plugin/presented.json",
+    "published": "docs/reports/premise-resolution-cycle2/source-witnesses/plugin/presented.json.gz",
+    "source_sha256": "da1485f7b8357755e2b7b4a96abb96e5ac4e2618e2d19ce62b293f34a0cf2b1c",
+    "published_sha256": "d3e104ca5c605cf83ee156d15ad7db0c1d44bf2b78fe5f0ee14eea7ef7e57eec",
+    "gzip": true
+  },
+  {
+    "source": "private/premise-resolution-cycle2/postgate-source-1/plugin/refusal-controls.json",
+    "published": "docs/reports/premise-resolution-cycle2/source-witnesses/plugin/refusal-controls.json.gz",
+    "source_sha256": "e037e6dac7c9ca540ea722e488520b922b43fb7b0779ba53973ee04fe80e7508",
+    "published_sha256": "199a34a5efc352a4b67094cb781d2160957198e67af4b25cae51af787fab62e2",
+    "gzip": true
+  },
+  {
+    "source": "private/premise-resolution-cycle2/postgate-source-1/plugin-source.log",
+    "published": "docs/reports/premise-resolution-cycle2/source-witnesses/plugin-source.log.gz",
+    "source_sha256": "5ad0dd3eacd38371f0c751eadb086761ff810912c572c24cb6fc94c5ad1714ba",
+    "published_sha256": "10ef3cb81d7b52f09b510b5fddca90f1c6dcd35342802308f6d61cbec11d15c6",
+    "gzip": true
+  },
+  {
+    "source": "private/premise-resolution-cycle2/postgate-source-1/released.json",
+    "published": "docs/reports/premise-resolution-cycle2/source-witnesses/released.json.gz",
+    "source_sha256": "4c21ff04049de4e56b31338624275afb00ee3812a8f31fc1b8107172110bb0c0",
+    "published_sha256": "b858302e675a00b9cb8da3c28f28de93a5fcdc1b7f6f62e76153fadfb48803be",
+    "gzip": true
+  },
+  {
+    "source": "private/premise-resolution-cycle2/joint-gate-2/clang.log",
+    "published": "docs/reports/premise-resolution-cycle2/clang-version.txt",
+    "source_sha256": "77467400b91c4cebb6c3e29d8a611af518a2f4078c22baf276b0a1373e996bf5",
+    "published_sha256": "77467400b91c4cebb6c3e29d8a611af518a2f4078c22baf276b0a1373e996bf5",
+    "gzip": false
+  },
+  {
+    "source": "private/premise-resolution-cycle2/joint-gate-2/clang.exit",
+    "published": "docs/reports/premise-resolution-cycle2/clang-version.exit",
+    "source_sha256": "9a271f2a916b0b6ee6cecb2426f0b3206ef074578be55d9bc94f6f3fe3ab86aa",
+    "published_sha256": "9a271f2a916b0b6ee6cecb2426f0b3206ef074578be55d9bc94f6f3fe3ab86aa",
+    "gzip": false
+  }
+]
