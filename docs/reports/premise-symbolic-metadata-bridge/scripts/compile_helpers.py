@@ -8,8 +8,8 @@ P=Path(__file__).resolve().parent;out=a.out.resolve();out.mkdir(parents=True,exi
 sha=lambda p:hashlib.sha256(Path(p).read_bytes()).hexdigest()
 gate_raw=(a.gate/'acquired.json').read_bytes();gate=json.loads(gate_raw);frozen=a.source;assert len(frozen)==40 and gate['head']==frozen
 commands=json.loads((a.gate/'commands.json').read_bytes());assert commands and all(x['exit']==0 and x['source']==frozen for x in commands), 'successful complete gate required'
-required={'rust','fmt','clippy','lean','provider-rust','provider-python','provider-contracts','package-build','audit-examples','release'}|{'package-verify-'+x for x in ['chunkio','libevent','librdkafka','cmetrics','ctraces']}
-assert required <= {x['name'] for x in commands};assert (a.gate/'released.json').exists()
+required={'submodules','clang','rust','fmt','clippy','probe','followup','lean','provider-rust','provider-fmt','provider-clippy','provider-python','provider-contracts','package-build','audit-examples','source-examples','release'}|{'package-verify-'+x for x in ['chunkio','libevent','librdkafka','cmetrics','ctraces']}
+assert required == {x['name'] for x in commands} and len(commands)==len(required);assert (a.gate/'released.json').exists()
 overrides={'QCORE_AUDIT_BUILD_COMMIT':frozen,'CARGO_PROFILE_DEV_DEBUG':'0','CARGO_PROFILE_TEST_DEBUG':'0','CARGO_INCREMENTAL':'0'};env=dict(os.environ,**overrides)
 def guard():
  head=subprocess.check_output(['git','rev-parse','HEAD'],text=True).strip();delta=subprocess.check_output(['git','diff','--no-ext-diff','--binary','HEAD']);assert head==frozen and not delta, 'frozen root HEAD/source changed'
