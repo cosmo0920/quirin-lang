@@ -1,9 +1,4 @@
 {
-  "KafkaQueueOwner": {
-    "atoms": {},
-    "premises": {},
-    "version": 1
-  },
   "rd_kafka_q_destroy_final": {
     "atoms": {
       "legacy_atom_00000000": {

@@ -74,6 +74,16 @@ fn missing_dependency_changed_statement_and_wrong_actual_source_refuse() {
     let mut missing = row.clone();
     missing["null"]["contract_dependencies"] = json!([]);
     assert!(view.attach(&missing, &mut original.clone()).is_err());
+    let mut late_bad = row.clone();
+    let mut bad_record = late_bad["null"]["premises"][0].clone();
+    bad_record["statement"] = json!("inconsistent second record");
+    late_bad["null"]["premises"]
+        .as_array_mut()
+        .unwrap()
+        .push(bad_record);
+    let mut unchanged = original.clone();
+    assert!(view.attach(&late_bad, &mut unchanged).is_err());
+    assert_eq!(unchanged, original, "failed attachment is transactional");
     let mut changed = row;
     changed["null"]["premises"][0]["statement"] = json!("invented neutrality");
     assert!(view.attach(&changed, &mut original.clone()).is_err());
@@ -84,4 +94,134 @@ fn missing_dependency_changed_statement_and_wrong_actual_source_refuse() {
         format!("{SOURCE}\n// different selected bytes\n"),
     )]);
     assert!(qcore_audit::null_hypotheses::View::new(&environment, &altered).is_err());
+}
+
+#[test]
+fn actual_resource_callback_contract_propagates_through_a_real_summary_without_changing_classification()
+ {
+    use qcore_c_gateway::contract_dependencies::{Recording, hypothesis_closure, row_dependencies};
+    use qcore_c_gateway::legacy_c::analyze_legacy_c_translation_unit;
+    const CLIENT: &str =
+        include_str!("../../../providers/qcore-provider-librdkafka/contracts/librdkafka/client.qv");
+    let erased = CLIENT
+        .lines()
+        .filter(|line| {
+            let line = line.trim();
+            !line.starts_with("requires resource_hypothesis(plugin_")
+                && !line.starts_with(
+                    "requires resource_premise_decomposition(rk_plugin_callback_closure,",
+                )
+                && !line.starts_with("// qcore-premise-binding-manifest-v1 ")
+        })
+        .collect::<Vec<_>>()
+        .join("\n")
+        + "\n";
+    let original = qcore_contract::contract_loader::load_resource_contract_sources(
+        &BTreeMap::from([("client.qv".into(), erased)]),
+    )
+    .unwrap();
+    let current = qcore_contract::contract_loader::load_resource_contract_sources(&BTreeMap::from(
+        [("client.qv".into(), CLIENT.into())],
+    ))
+    .unwrap();
+    let source = "int direct(void *queue) { return rd_kafka_q_purge0(queue, 0); } int relay(void *queue) { return direct(queue); } int unrelated(void) { return 7; }";
+    let old = analyze_legacy_c_translation_unit(source, "relay", &original).unwrap();
+    let recording = Recording::start();
+    let new = analyze_legacy_c_translation_unit(source, "relay", &current).unwrap();
+    let record = recording.finish();
+    let rows = row_dependencies(&record, &new, &current);
+    let graphs = hypothesis::replay(current.source_assumptions()).unwrap();
+    for name in ["direct", "relay", "unrelated"] {
+        assert_eq!(
+            new.functions[name].status, old.functions[name].status,
+            "{name}"
+        );
+    }
+    for name in ["direct", "relay"] {
+        let closure = hypothesis_closure(&rows[name], &graphs);
+        let selected = &closure["rd_kafka_q_purge0"];
+        assert!(selected.contains("plugin_interceptor_registration"));
+        assert!(selected.contains("plugin_code_context_lifetime"));
+        assert_eq!(
+            selected.len(),
+            9,
+            "seven proposed atoms plus two unchanged legacy atoms"
+        );
+    }
+    assert!(rows["relay"].summaries.contains("direct"));
+    assert!(hypothesis_closure(&rows["unrelated"], &graphs).is_empty());
+    let dependencies = json!({"declarations":["rd_kafka_q_purge0"]});
+    let before = qcore_audit::outer_selection::custody_facts(
+        &dependencies,
+        &qcore_audit::contract_dependencies::premises(&original).unwrap(),
+    );
+    let after = qcore_audit::outer_selection::custody_facts(
+        &dependencies,
+        &qcore_audit::contract_dependencies::premises(&current).unwrap(),
+    );
+    assert_eq!(
+        before, after,
+        "full original closed-world callback facts remain exact"
+    );
+}
+
+#[test]
+fn actual_clang_member_reader_keeps_the_full_null_row_and_routes_its_real_premise() {
+    use qcore_c_gateway::legacy_c::C11TranslationUnit;
+    use qcore_c_gateway::null_deref::analyze_null_c11;
+    use qcore_schemas::contract::ResourceContracts;
+    let erased = SOURCE
+        .lines()
+        .filter(|line| {
+            let line = line.trim();
+            !line.starts_with("requires resource_hypothesis(plugin_")
+                && !line.starts_with(
+                    "requires resource_premise_decomposition(rk_plugin_callback_closure,",
+                )
+                && !line.starts_with("// qcore-premise-binding-manifest-v1 ")
+        })
+        .collect::<Vec<_>>()
+        .join("\n")
+        + "\n";
+    let before = bounds_contract::load_bounds_contract_sources(&BTreeMap::from([(
+        "actual-null.qv".into(),
+        erased,
+    )]))
+    .unwrap();
+    let sources = BTreeMap::from([("actual-null.qv".into(), SOURCE.into())]);
+    let after = bounds_contract::load_bounds_contract_sources(&sources).unwrap();
+    let source = "struct rd_kafka_topic_s { char *rkt_topic; }; int reader(struct rd_kafka_topic_s *p) { if (!p) return 0; return p->rkt_topic[0]; } int unrelated(void) { return 7; }";
+    let unit = C11TranslationUnit {
+        source,
+        ..Default::default()
+    };
+    let functions = vec!["reader".into(), "unrelated".into()];
+    let resource = ResourceContracts::default();
+    let old = analyze_null_c11(&unit, &functions, &resource, &before).unwrap();
+    let new = analyze_null_c11(&unit, &functions, &resource, &after).unwrap();
+    let view = qcore_audit::null_hypotheses::View::new(&after, &sources).unwrap();
+    for name in ["reader", "unrelated"] {
+        let actual = new.row(name).unwrap();
+        assert_eq!(actual, old.row(name).unwrap(), "complete null row {name}");
+        let records = actual
+            .premises
+            .iter()
+            .map(|p| ErasedPremise {
+                name: p.name.clone(),
+                statement: p.statement.clone(),
+                origin: "declared".into(),
+            })
+            .collect::<Vec<_>>();
+        let mut graph = hypothesis::legacy_records(&records).unwrap();
+        let references = view.attach(&json!({"null":actual}), &mut graph).unwrap();
+        if name == "reader" {
+            assert!(actual.premises.iter().any(|p| p.name == PREMISE));
+            assert_eq!(graph.refinements.len(), 1);
+            assert_eq!(references.len(), 1);
+            assert_eq!(references[0].declaration, "rd_kafka_topic_new0");
+        } else {
+            assert!(graph.refinements.is_empty());
+            assert!(references.is_empty());
+        }
+    }
 }

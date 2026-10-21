@@ -84,6 +84,8 @@ fn resource_null_and_model_views_keep_actual_duplicate_spellings_separate() {
     }
     assert!(bounds_hypotheses::check_replay(&inputs(NULL), &resource).is_err());
     assert!(bounds_hypotheses::replay(&inputs(CLIENT)).is_err());
+    assert!(bounds_hypotheses::replay_model(&inputs(CLIENT)).is_err());
+    assert!(bounds_hypotheses::replay_model(&inputs(NULL)).is_err());
     let original = erase_plugin_metadata(MODEL);
     assert_eq!(
         contract_loader::module_premises(MODEL).unwrap(),

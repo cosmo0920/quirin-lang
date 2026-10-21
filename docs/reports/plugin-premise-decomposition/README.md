@@ -7,8 +7,7 @@ prerequisite/formal/source maps for both actual `rk_plugin_library` and
 `flb_external_plugin` outer envelopes. [Census](census.json) separates the two
 outer definitions and inherited proxy reference from function premises.
 
-Production edits wait for the serially merged Graph v2/schema20 attachment API.
-The preparation freeze is refreshed against that exact new base before production edits. Exact classification is 94 resource-v1 sites, 71 bounds-v1 sites and one declared Quirin model; see CLASSIFICATION-ADDENDUM.md.
+Production development now uses the explicitly authorized interim Graph v2 checkpoint `5a556d827`. [The committed interim prediction](INTERIM-BASE-PREDICTION.json) predates production edits. Final standing/provider gates and measurements remain deferred until the exact serially merged baseline is supplied and the prediction is refreshed. Exact classification is 94 resource-v1 sites, 71 bounds-v1 sites and one declared Quirin model; see CLASSIFICATION-ADDENDUM.md.
 Original legacy premise names/text, outer names/text/digests/selection and all
 static/closed-world/runtime semantics must remain unchanged. Catalog bindings
 convey reference integrity only; every source/environment binding remains Open.
@@ -20,11 +19,9 @@ proves artifact identity, ABI, whole-world closure, neutrality or lifetime.
 
 ## Open work and residuals
 
-Complete the formal/catalog design freeze, new-base refresh, all 166 consistent
-production attachments, independently bound outer catalogs and guarded callback
-bridge, Rust/Lean replay and refutation controls, official pin/inventory/count
-updates, standing/provider gates and six fresh paired audits. No production
-result or completed gate is claimed at this preparation checkpoint.
+The production WIP includes all 166 same-name attachments and exact per-property canonical manifests, additive bounds/null/model replay, and dependency-selected null graph publication. The frozen +1,328 clause pins are installed. Five focused contract controls and two actual null-dependency controls pass; [interim receipts](interim-controls.json) distinguish these from final gates. Every original selected module reconstructs byte-for-byte after removing only the new metadata (bindings/index.json).
+
+Remaining work includes the merged-base refresh, final independently bound outer catalog controls and actual source/context impact replay, official pin/inventory checks, full standing/provider gates and six fresh paired audits. No completed final gate or measurement is claimed.
 
 Track `PLUGIN-PREMISE-SOURCE-BINDING` for actual deployed code, trace, ABI,
 artifact resolution and context evidence; `PLUGIN-PREMISE-OUTER-TRUTH` for

@@ -3,13 +3,13 @@
   "plugin_id": "qcore.librdkafka",
   "contracts": {
     "contracts/librdkafka/cjson.qv": "3ad75ee24b3cb08232cf2b7000e262d3d4d7374e9196cb3254944fd16706e4fd",
-    "contracts/librdkafka/client.qv": "c0f6b7a2538ac14c1daa9d81f5412b4308e449ed4dada15cc142209ac7e83499",
-    "contracts/librdkafka/kafka_mem.qv": "d75b18e45520ee4f93f20286ad99587e32431bed6751f3409b1a329f32fcde83",
+    "contracts/librdkafka/client.qv": "5dfbcc64b887c56513ffe11ac09c232408e3cd5e1838c9b2837a0df7c9682846",
+    "contracts/librdkafka/kafka_mem.qv": "282118c75362475d18775843ec4dc7c15b04db875b59ef256107d14cf8a8e07c",
     "contracts/librdkafka/lz4_stream.qv": "0b3c92fc7476d1f0a0d11d5954a9445882c66897d2409eda55e9efbd6db8ce74",
-    "contracts/librdkafka/memory.qv": "bd69c0fe6859ccf6f621c2b001748d1f4d987601fb9115af15e3aa83918c2a67",
-    "contracts/librdkafka/null_deref.qv": "ba5d7a7a49f00aea49df1dbff8f56e2fd3bf53f39838a0afb4f00fb3b5cde537",
+    "contracts/librdkafka/memory.qv": "e9e3cd509bd0db4e9550f70b882473e4e6b19ca76099150b049860449cca8231",
+    "contracts/librdkafka/null_deref.qv": "1a8b36af29ddf6fa031e99581dd624ea8b992365280f3f2693ac5b066640fb8d",
     "contracts/librdkafka/outer.qv": "ca88ccbf79699b9fd1033a69b958ec1a116cb24c040f0829299c5e65e797704a",
-    "contracts/librdkafka/queue_destructor.qv": "fa88928d00caa91eba736362e8ba36d88abb97efc5d50f1dd45f51dd7f64e238",
+    "contracts/librdkafka/queue_destructor.qv": "752b5957fafedc03e0a03a38a8379f18b4de3bfb3f44cb8cab16029aecad182f",
     "contracts/librdkafka/refcount.qv": "725fcf995116042cde3a92a547f2e889d1a5503aa2ef230f2c5e6576034fc0bb",
     "contracts/librdkafka/topic_partition.qv": "c7e28fa40acff1c6d80fea924af68c7e0f0395faa3ef473156afbbb57db758e2",
     "contracts/librdkafka/typed_queue.qv": "cf9ff32d3b65d8ef38c6d7c95a91396899a99f89ca5ebd2a5cb89022c0af63b5"

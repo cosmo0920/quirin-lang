@@ -2,7 +2,7 @@
 //! Same-name metadata retains every original interpreted bounds/null clause.
 use crate::bounds_contract::{BoundsClause, load_bounds_contract_sources};
 use crate::contract_loader::{DeclaredPremise, PremiseOrigin};
-use qcore_frontend::frontend::{SourceModuleMode, parse_source_program};
+use qcore_frontend::frontend::{DeclarationKind, SourceModuleMode, parse_source_program};
 use qcore_schemas::hypothesis::Graph;
 use std::collections::BTreeMap;
 
@@ -97,8 +97,21 @@ pub fn replay_model(sources: &BTreeMap<String, String>) -> Result<BTreeMap<Strin
     for source in sources.values() {
         let named = crate::contract_loader::module_premises(source)?;
         let parsed = parse_source_program(source).map_err(|e| e.to_string())?;
+        if parsed.mode != SourceModuleMode::Contract
+            || !parsed
+                .declarations
+                .iter()
+                .any(|d| d.value.kind == DeclarationKind::ResourceType)
+        {
+            return Err(
+                "model hypothesis: expected a declared resource-type model source view".into(),
+            );
+        }
         for declaration in parsed.declarations {
             let decl = declaration.value;
+            if decl.kind != DeclarationKind::ExternFunction {
+                continue;
+            }
             let legacy = named.get(&decl.name).cloned().unwrap_or_default();
             let graph = crate::hypothesis::declaration(&decl, &legacy)?;
             require_neutral_erasure(&graph, &legacy)?;

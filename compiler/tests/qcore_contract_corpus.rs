@@ -1508,7 +1508,11 @@ const EXPECTED_CONTRACTS: &[(&str, &str, usize)] = &[
         "rd_kafka_background_queue_serve",
         25,
     ),
-    ("librdkafka/client.qv", "rd_kafka_oauthbearer_refresh_op", 15),
+    (
+        "librdkafka/client.qv",
+        "rd_kafka_oauthbearer_refresh_op",
+        15,
+    ),
     ("librdkafka/client.qv", "rd_kafka_log_print", 6),
     (
         "librdkafka/client.qv",
@@ -1726,7 +1730,11 @@ const EXPECTED_CONTRACTS: &[(&str, &str, usize)] = &[
         "rd_kafka_broker_bufq_timeout_scan",
         11,
     ),
-    ("librdkafka/null_deref.qv", "rd_kafka_broker_conn_closed", 11),
+    (
+        "librdkafka/null_deref.qv",
+        "rd_kafka_broker_conn_closed",
+        11,
+    ),
     ("librdkafka/null_deref.qv", "rd_kafka_broker_connect", 11),
     (
         "librdkafka/null_deref.qv",

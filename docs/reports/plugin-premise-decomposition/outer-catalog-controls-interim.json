@@ -1,0 +1,21 @@
+{
+  "schema": 1,
+  "positive_controls": 2,
+  "negative_controls": 14,
+  "all_expected_outcomes": true,
+  "binary_sha256": "c72bcc23c783f0197824c62a9940dd36041f66a0533ec80bc265d44fbe79ce9d",
+  "model_sha256": "c8537b922b10a53648b3c24904ca4ac45fca14ca149fc3c3f0a3368bec805940",
+  "audit_sha256": "9c9df17ba6253a9f52aec821023e80aecb252f388992f4406239ae7c0daa0f2c",
+  "held_catalog_sha256": "093712024ff2f893185580d39556dcb97746ed9d21a4344a2e31a98efda4c5ba",
+  "outer_source_digests": {
+    "qcore-provider-librdkafka:librdkafka/outer.qv": "ca88ccbf79699b9fd1033a69b958ec1a116cb24c040f0829299c5e65e797704a",
+    "quirin-provider-fluent-bit:fluent_bit/outer.qv": "282408a08e6fc19b6f87d3cde8d2c12d2ab0627b002b2f2e2a914bb8460c133d"
+  },
+  "ignored-registration-return": {
+    "source": "src/flb_plugin_proxy.c",
+    "sha256": "00ca65b30aabad04495496fdac049e8ef95ed9adef0c48eaefcf3e7f15e8e87f",
+    "reference_check_disposition": "open",
+    "meaning": "Absence of a checked return proves neither successful registration nor failed old envelope. No Supported source evidence or upstream Unsafe is minted."
+  },
+  "meaning": "Reference integrity checks only; source/model/prose/environment binding and all component truths remain Open. Final production model/audit + independently held Graph/Context checks are separate."
+}

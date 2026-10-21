@@ -52,6 +52,17 @@ impl View {
         row: &Value,
         graph: &mut Graph,
     ) -> Result<Vec<BindingRequirement>, String> {
+        let mut checked = graph.clone();
+        let requirements = self.attach_checked(row, &mut checked)?;
+        *graph = checked;
+        Ok(requirements)
+    }
+
+    fn attach_checked(
+        &self,
+        row: &Value,
+        graph: &mut Graph,
+    ) -> Result<Vec<BindingRequirement>, String> {
         qcore_contract::hypothesis::validate(graph)?;
         let original = graph.clone();
         let mut used = BTreeSet::new();

@@ -1,0 +1,13 @@
+{
+  "status": "reference integrity only; no source binding or proposition truth",
+  "source_binding": "open",
+  "counts": {
+    "resource": 94,
+    "null": 71,
+    "model": 1
+  },
+  "positive": 6,
+  "negative": 15,
+  "all_expected_outcomes": true,
+  "binary_sha256": "0e393c8231ca17bdfbac23076e4e67f3aa15f1c514b67aee565fc4cf55d3563e"
+}
