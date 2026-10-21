@@ -1,0 +1,13 @@
+{
+  "note": "Source/proof/control freeze ccb354a7d:8395Rust/0failed/15ignored(525units538summaries),350Lean,fmt/Clippy/bothreevaluationexamples/submodules/release0. Allsixfreshnativeaudits0,148selectedlocalobservations; exactfouremptytime-derivedkeyattributionandproductionpostchecks pending. Python374 is explicitly CARRIED from exact c5c base here, not a fresh checkpoint result; authoritative Python follows this committed regenerated matrix and final confirmation follows the final matrix. Provider133 is explicitly carried exact-base evidence only: unchanged provider/schema/qv diff makes fresh package gate N/A. Actual own Clang recording is copied from this worktree gate-1/clang.log.",
+  "workspace_tests": 8395,
+  "provider_tests": 133,
+  "python_evidence_validator_tests": 374,
+  "reevaluation_probe_exit": 0,
+  "reevaluation_followup_exit": 0,
+  "cargo_fmt": "clean",
+  "cargo_clippy": "clean",
+  "standing_gate": "pending: final Python and exact provenance/source postchecks",
+  "lean_audits": 350,
+  "clang": "present: Ubuntu clang version 21.1.8 (6ubuntu1)"
+}
