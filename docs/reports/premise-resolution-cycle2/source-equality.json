@@ -1,0 +1,13 @@
+{
+  "measured_source": "62eebba95c51917c0fe841fbc23e2bf0d0e7e465",
+  "publication_head": "548af230112866a48ae15658615ca04c0117b923",
+  "command": "git diff --exit-code MEASURED HEAD -- all tracked non-doc leaves plus listed compiled doc inputs",
+  "exit": 0,
+  "selected_leaf_count": 3232,
+  "compiled_doc_inputs": [
+    "docs/reports/plugin-premise-source-witnesses/input-inventory.json",
+    "docs/reports/premise-local-source-bindings/native/cjson_heap.c",
+    "docs/reports/premise-evidence-contracts/expected-graph.json"
+  ],
+  "diff": ""
+}

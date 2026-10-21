@@ -1,0 +1,16 @@
+{
+  "command": [
+    "python3",
+    "-m",
+    "unittest",
+    "discover",
+    "-s",
+    "scripts/tests"
+  ],
+  "head": "548af230112866a48ae15658615ca04c0117b923",
+  "exit": 0,
+  "elapsed_seconds": 33.98433589935303,
+  "matrix_sha256_before": "50b47ca661588c1ffd14ea777a9a4fe0124136377136cff7094a804d77c5740c",
+  "matrix_sha256_after": "50b47ca661588c1ffd14ea777a9a4fe0124136377136cff7094a804d77c5740c",
+  "private_log": "private/premise-resolution-cycle2/python-2/unittest.log"
+}

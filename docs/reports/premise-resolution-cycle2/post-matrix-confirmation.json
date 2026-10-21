@@ -1,0 +1,45 @@
+{
+  "status": "complete",
+  "phase1": {
+    "command": [
+      "python3",
+      "-m",
+      "unittest",
+      "discover",
+      "-s",
+      "scripts/tests"
+    ],
+    "head": "f03192a4e7e0bd7a8daccb1cc69eb51ecf34b555",
+    "exit": 0,
+    "elapsed_seconds": 34.4194118976593,
+    "matrix_sha256_before": "21944342e8f7cde6b563775b61ac0206331113ff86f8decc9480393efd84a5a3",
+    "matrix_sha256_after": "21944342e8f7cde6b563775b61ac0206331113ff86f8decc9480393efd84a5a3",
+    "private_log": "private/premise-resolution-cycle2/python-1/unittest.log"
+  },
+  "phase2": {
+    "command": [
+      "python3",
+      "-m",
+      "unittest",
+      "discover",
+      "-s",
+      "scripts/tests"
+    ],
+    "head": "548af230112866a48ae15658615ca04c0117b923",
+    "exit": 0,
+    "elapsed_seconds": 33.98433589935303,
+    "matrix_sha256_before": "50b47ca661588c1ffd14ea777a9a4fe0124136377136cff7094a804d77c5740c",
+    "matrix_sha256_after": "50b47ca661588c1ffd14ea777a9a4fe0124136377136cff7094a804d77c5740c",
+    "private_log": "private/premise-resolution-cycle2/python-2/unittest.log"
+  },
+  "counts": {
+    "python_each": 374,
+    "rust": 8441,
+    "lean": 357,
+    "provider_rust": 133,
+    "provider_python": 25,
+    "packages": 5
+  },
+  "matrix_unchanged_after_final_confirmation": true,
+  "report_only_publication_follows": true
+}

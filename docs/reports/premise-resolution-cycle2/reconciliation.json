@@ -1,14 +1,14 @@
 {
   "cards": [
-    "PREMISE-FLOW-OPERATORS",
-    "PLUGIN-PREMISE-SOURCE-WITNESSES",
-    "PREMISE-LOCAL-SOURCE-BINDINGS"
+    "premise-flow-operators",
+    "plugin-premise-source-witnesses",
+    "premise-local-source-bindings"
   ],
   "verdicts": {},
   "no_section": {
-    "PREMISE-FLOW-OPERATORS": "No tool-recognized integrator heading; manual prose and structured proposals reconciled in ledger-reconciliation.json, not omitted.",
-    "PLUGIN-PREMISE-SOURCE-WITNESSES": "No tool-recognized integrator heading; manual prose and structured proposals reconciled in ledger-reconciliation.json, not omitted.",
-    "PREMISE-LOCAL-SOURCE-BINDINGS": "No tool-recognized integrator heading; manual prose and structured proposals reconciled in ledger-reconciliation.json, not omitted."
+    "premise-flow-operators": "No tool-recognized integrator heading; manual prose and structured proposals reconciled in ledger-reconciliation.json.",
+    "plugin-premise-source-witnesses": "No tool-recognized integrator heading; manual prose and structured proposals reconciled in ledger-reconciliation.json.",
+    "premise-local-source-bindings": "No tool-recognized integrator heading; manual prose and structured proposals reconciled in ledger-reconciliation.json."
   },
   "manual_decisions": {
     "status": "APPLIED: four amendments; registered operator retired after actual first committed-matrix Python0; production residual rehomed; final Python follows",
@@ -39,5 +39,7 @@
     "untouched_id_sha256": "6d001dab51ff519850fc732096c7f89a14088b350c3dcba34178782b7b650cd9",
     "phase1": "after all native postchecks, apply four existing finite-subobligation amendments+actual gate; commit, then run matrix Python0",
     "phase2": "only after phase1 Python0 discharges design criteria, retire actual registered design ID/rehome production consumer, regenerate+commit, then final Python0"
-  }
+  },
+  "verify_applied": true,
+  "manual_decision_verification": "Actual final matrix records equal the proposed exact replacements;805 original records untouched; registered retire1/add1 and4amends verified in ledger-reconciliation.json."
 }

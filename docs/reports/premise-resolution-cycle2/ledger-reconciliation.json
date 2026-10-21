@@ -26,5 +26,23 @@
   "untouched_record_count": 805,
   "untouched_id_sha256": "6d001dab51ff519850fc732096c7f89a14088b350c3dcba34178782b7b650cd9",
   "phase1": "after all native postchecks, apply four existing finite-subobligation amendments+actual gate; commit, then run matrix Python0",
-  "phase2": "only after phase1 Python0 discharges design criteria, retire actual registered design ID/rehome production consumer, regenerate+commit, then final Python0"
+  "phase2": "only after phase1 Python0 discharges design criteria, retire actual registered design ID/rehome production consumer, regenerate+commit, then final Python0",
+  "verified_actual_matrix": {
+    "before": 810,
+    "after": 810,
+    "byte_equivalent_untouched_records": 805,
+    "retired_registered_ids": [
+      "PLUGIN-PREMISE-OPERATOR-DESIGN"
+    ],
+    "new_ids": [
+      "PREMISE-FLOW-PRODUCTION-DISCHARGE"
+    ],
+    "amended_ids": [
+      "CJSON-REPRESENTATION-PROSE-AND-SOURCE-BINDING",
+      "PLUGIN-PREMISE-OUTER-TRUTH",
+      "LIBC-READING-PREMISES-TYPED-DISCHARGE",
+      "PLUGIN-PREMISE-SOURCE-BINDING"
+    ],
+    "status": "all exact draft replacement records equal actual final matrix"
+  }
 }

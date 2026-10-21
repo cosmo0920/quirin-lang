@@ -117,3 +117,7 @@ coverage Open. Merge the latest operator branch first; this branch shares
 checkpoint `69ece79f5` and imports both proof modules. Shared-file joins are
 `proof/QCore.lean`, crate exports, Cargo.lock and the one increment paragraph.
 No delegated main merge or push is performed.
+
+## Root completion, 2026-10-21
+
+Both actual committed-matrix Python runs pass374 tests/exit0. The registered operator design is retired and production semantic discharge rehomed;810 follow-ups remain, with four exact source-residual amendments. This completes the earlier pre-Python checkpoint above. The [joint confirmation](../premise-resolution-cycle2/post-matrix-confirmation.json) owns commands, commits, matrix SHA and private log paths. Source/native scopes and Open universal obligations are unchanged.

@@ -1,0 +1,20 @@
+{
+  "command": [
+    "python3",
+    "scripts/reconciliation_sweep.py",
+    ".",
+    "--cards",
+    "premise-flow-operators",
+    "plugin-premise-source-witnesses",
+    "premise-local-source-bindings",
+    "--check",
+    "docs/reports/premise-resolution-cycle2/reconciliation.json"
+  ],
+  "exit": 0,
+  "stdout": "every swept item carries a recorded verdict. This says nothing about whether any item was applied - read the notes.\n0 content claims (0 present, 0 absent) verified at their named locations across 0 files; 0 of 0 'applied' verdicts carry checkable text, 0 declared unverifiable with a ground.\nThis record predates the evidence standard and was NOT held to it: it may carry bare 'applied' verdicts (wave 36+ records, and any record setting 'verify_applied', are held to it).\nA verified claim says the close's own string is at the close's own named location. Whether it is the RIGHT string stays a person's judgment.\n",
+  "stderr": "",
+  "prior_attempt": {
+    "exit": 1,
+    "cause": "Card IDs were passed where script requires report-directory slugs; corrected without ledger changes."
+  }
+}
