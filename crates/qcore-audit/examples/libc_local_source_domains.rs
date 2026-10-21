@@ -24,7 +24,14 @@ fn reconstruct_imports(
     main_entries: &[qcore_audit::compile_db::CompileEntry],
     auxiliary_entries: &[qcore_audit::compile_db::CompileEntry],
     out: &Path,
-) -> Result<(qcore_schemas::contract::ResourceContracts, Vec<qcore_c_gateway::legacy_c::CrossUnitHomeEvidence>, Value), String> {
+) -> Result<
+    (
+        qcore_schemas::contract::ResourceContracts,
+        Vec<qcore_c_gateway::legacy_c::CrossUnitHomeEvidence>,
+        Value,
+    ),
+    String,
+> {
     let Some(path) = invocation["link_map"].as_str() else {
         if sidecar.get("cross_unit_link_resolution").is_some() {
             return Err("recorded cross-unit premise lacks independent actual link map".into());
@@ -51,41 +58,112 @@ fn reconstruct_imports(
         if u["enumeration"]["completeness"] != "established" {
             return Err(format!("held complete definition census refused: {key}"));
         }
-        let names: Vec<String> = serde_json::from_value(u["source_functions"].clone()).map_err(|e|e.to_string())?;
-        definitions.extend(names.iter().filter(|n| requested.contains(*n)).map(|n|(key.clone(),n.clone())));
+        let names: Vec<String> =
+            serde_json::from_value(u["source_functions"].clone()).map_err(|e| e.to_string())?;
+        definitions.extend(
+            names
+                .iter()
+                .filter(|n| requested.contains(*n))
+                .map(|n| (key.clone(), n.clone())),
+        );
         let selected = links.names_for(&key);
-        if selected.is_empty() {continue;}
-        let entries = if library == "monkey-libevent" {auxiliary_entries} else {main_entries};
-        let candidates = entries.iter().filter(|e|e.file.ends_with(file)).collect::<Vec<_>>();
-        let [entry] = candidates.as_slice() else {return Err(format!("home actual DB selection ambiguous or absent: {key}"));};
-        let raw = fs::read_to_string(&entry.file).map_err(|e|e.to_string())?;
-        let options = qcore_audit::compile_db::compiler_options(entry)?;
-        let unit = C11TranslationUnit {source:&raw,include_paths:options.include_paths,definitions:options.definitions,preprocessor_options:options.preprocessor_options,dialect:options.dialect,function_scope:LegacyFunctionScope::MainSourceDefinitions,input:options.input};
-        let prepared = prepare_translation_unit(&unit);
-        let pp = prepared.preprocessed_source().map_err(|e|e.to_string())?;
-        if !prepared.inventory().is_complete() || prepared.inventory().definitions() != names.as_slice() {
-            return Err(format!("independent home complete inventory differs: {key}"));
+        if selected.is_empty() {
+            continue;
         }
-        let found = qcore_c_gateway::legacy_c::export_cross_unit_homes(&prepared,root,&selected,&links.digest)?;
+        let entries = if library == "monkey-libevent" {
+            auxiliary_entries
+        } else {
+            main_entries
+        };
+        let candidates = entries
+            .iter()
+            .filter(|e| e.file.ends_with(file))
+            .collect::<Vec<_>>();
+        let [entry] = candidates.as_slice() else {
+            return Err(format!(
+                "home actual DB selection ambiguous or absent: {key}"
+            ));
+        };
+        let raw = fs::read_to_string(&entry.file).map_err(|e| e.to_string())?;
+        let options = qcore_audit::compile_db::compiler_options(entry)?;
+        let unit = C11TranslationUnit {
+            source: &raw,
+            include_paths: options.include_paths,
+            definitions: options.definitions,
+            preprocessor_options: options.preprocessor_options,
+            dialect: options.dialect,
+            function_scope: LegacyFunctionScope::MainSourceDefinitions,
+            input: options.input,
+        };
+        let prepared = prepare_translation_unit(&unit);
+        let pp = prepared.preprocessed_source().map_err(|e| e.to_string())?;
+        if !prepared.inventory().is_complete()
+            || prepared.inventory().definitions() != names.as_slice()
+        {
+            return Err(format!(
+                "independent home complete inventory differs: {key}"
+            ));
+        }
+        let found = qcore_c_gateway::legacy_c::export_cross_unit_homes(
+            &prepared,
+            root,
+            &selected,
+            &links.digest,
+        )?;
         for export in &found {
-            let records = sidecar["cross_unit_link_resolution"]["imported"].as_array().ok_or("recorded imports absent")?;
-            let matches = records.iter().filter(|r|r["function"].as_str()==Some(export.home.function.as_str())).collect::<Vec<_>>();
-            let [record] = matches.as_slice() else {return Err("recorded selected home absent/duplicate".into());};
+            let records = sidecar["cross_unit_link_resolution"]["imported"]
+                .as_array()
+                .ok_or("recorded imports absent")?;
+            let matches = records
+                .iter()
+                .filter(|r| r["function"].as_str() == Some(export.home.function.as_str()))
+                .collect::<Vec<_>>();
+            let [record] = matches.as_slice() else {
+                return Err("recorded selected home absent/duplicate".into());
+            };
             let id = export.home.import_identity();
-            if record["home_unit"] != key || record["home_environment_sha256"] != id.environment_sha256 || record["home_raw_source_sha256"] != id.raw_source_sha256 || record["home_preprocessed_source_sha256"] != id.preprocessed_source_sha256 {
-                return Err(format!("independent export differs from actual selected home: {}",export.home.function));
+            if record["home_unit"] != key
+                || record["home_environment_sha256"] != id.environment_sha256
+                || record["home_raw_source_sha256"] != id.raw_source_sha256
+                || record["home_preprocessed_source_sha256"] != id.preprocessed_source_sha256
+            {
+                return Err(format!(
+                    "independent export differs from actual selected home: {}",
+                    export.home.function
+                ));
             }
         }
-        fs::write(out.join(format!("home-{}.prepared.c",source_receipts.len())),pp).map_err(|e|e.to_string())?;
+        fs::write(
+            out.join(format!("home-{}.prepared.c", source_receipts.len())),
+            pp,
+        )
+        .map_err(|e| e.to_string())?;
         source_receipts.push(json!({"unit":key,"file":entry.file,"directory":entry.directory,"command":entry.command,"raw_sha256":qcore_schemas::sha256_hex(raw.as_bytes()),"preprocessed_sha256":qcore_schemas::sha256_hex(pp.as_bytes()),"requested":selected,"independently_exported":found.iter().map(|e|json!({"function":e.home.function,"contract":e.contract,"identity":e.home.import_identity()})).collect::<Vec<_>>()}));
-        exports.extend(found.into_iter().map(|export|(key.clone(),export)));
+        exports.extend(found.into_iter().map(|export| (key.clone(), export)));
     }
-    let (environment,homes) = links.select(exports,definitions.clone(),root);
-    let selected_names = homes.iter().map(|h|h.function.clone()).collect::<BTreeSet<_>>();
-    let recorded_names = sidecar["cross_unit_link_resolution"]["imported"].as_array().ok_or("recorded imports absent")?.iter().map(|r|r["function"].as_str().map(str::to_owned).ok_or("import function absent")).collect::<Result<BTreeSet<_>,_>>()?;
-    if selected_names != recorded_names {return Err("independent selected home set differs from complete actual imported set".into());}
+    let (environment, homes) = links.select(exports, definitions.clone(), root);
+    let selected_names = homes
+        .iter()
+        .map(|h| h.function.clone())
+        .collect::<BTreeSet<_>>();
+    let recorded_names = sidecar["cross_unit_link_resolution"]["imported"]
+        .as_array()
+        .ok_or("recorded imports absent")?
+        .iter()
+        .map(|r| {
+            r["function"]
+                .as_str()
+                .map(str::to_owned)
+                .ok_or("import function absent")
+        })
+        .collect::<Result<BTreeSet<_>, _>>()?;
+    if selected_names != recorded_names {
+        return Err(
+            "independent selected home set differs from complete actual imported set".into(),
+        );
+    }
     let receipt = json!({"actual_link_map":path,"sha256":links.digest,"premise":links.premise,"independent_home_source_exports":source_receipts,"retained_complete_definition_census":definitions,"census_prerequisite":"independently held recorded complete selected-unit census; other unit bodies not re-enumerated by this bounded helper","actual_link_interposition_truth":"open","run_environment_sha256":qcore_schemas::sha256_hex(&serde_json::to_vec(&environment).map_err(|e|e.to_string())?)});
-    Ok((environment,homes,receipt))
+    Ok((environment, homes, receipt))
 }
 
 fn main() -> Result<(), String> {
@@ -257,9 +335,21 @@ fn main() -> Result<(), String> {
         .map_err(|e| e.to_string())?;
     let profile_sha = actual_profile.manifest_digest().to_owned();
     let (run_contracts, run_homes, imported_environment_replay) = if configured {
-        (contracts.clone(), Vec::new(), json!({"mode":"configured-no-import-replay"}))
+        (
+            contracts.clone(),
+            Vec::new(),
+            json!({"mode":"configured-no-import-replay"}),
+        )
     } else {
-        reconstruct_imports(&invocation, &sidecar, &data, &contracts, &entries, &auxiliary_entries, &out)?
+        reconstruct_imports(
+            &invocation,
+            &sidecar,
+            &data,
+            &contracts,
+            &entries,
+            &auxiliary_entries,
+            &out,
+        )?
     };
     let mut dependent_records = Vec::new();
     for (ui, u) in data["units"]
@@ -493,7 +583,11 @@ fn main() -> Result<(), String> {
                     pp,
                 )
                 .map_err(|e| e.to_string())?;
-                let (caller_contracts, _) = qcore_c_gateway::legacy_c::cross_unit_for_caller(pp, &run_contracts, &run_homes);
+                let (caller_contracts, _) = qcore_c_gateway::legacy_c::cross_unit_for_caller(
+                    pp,
+                    &run_contracts,
+                    &run_homes,
+                );
                 let held = HeldDomain {
                     source: pp,
                     raw_source: &source_bytes,
