@@ -1,0 +1,122 @@
+{
+  "status": "frozen after complete gate3 release and before repair source edits",
+  "frozen_failed_source": "686628c915f91143b8ad9fbdb4ba664db76abb16",
+  "actual_gate3": {
+    "Rust": {
+      "units": 528,
+      "summaries": 541,
+      "passed": 8405,
+      "failed": 13,
+      "ignored": 15,
+      "exit": 101
+    },
+    "Lean": {
+      "audits": 353,
+      "exit": 0
+    },
+    "provider_Rust": {
+      "passed": 133,
+      "failed": 0,
+      "ignored": 1,
+      "exit": 0
+    },
+    "provider_Python": {
+      "passed": 25,
+      "exit": 0
+    },
+    "log_root": "private/plugin-premise-decomposition/final-gate-3",
+    "failure_units": [
+      "qcore-c-gateway::test::neighbours",
+      "qcore-c-gateway::test::prod_contracts",
+      "qcore-compiler::test::contract_inherit_qcore_provider",
+      "qcore-compiler::test::contract_view_census",
+      "qcore-contract::test::contract_views"
+    ],
+    "provider_all_steps_exit": 0,
+    "five_packages": "built and all five verified",
+    "examples_exit": 0,
+    "release_exit": 0,
+    "pipeline_exit": 1,
+    "released": "2026-10-21T04:39:31.685094+00:00"
+  },
+  "repairs": {
+    "module_header_compatibility": [
+      {
+        "path": "providers/qcore-provider-librdkafka/contracts/librdkafka/client.qv",
+        "markers": 89,
+        "before_sha256": "5dfbcc64b887c56513ffe11ac09c232408e3cd5e1838c9b2837a0df7c9682846",
+        "predicted_after_sha256": "288d0fa65ffe6832d11dd06acd5ebf3d8b3d211e5a76f382e130c0a13c402946",
+        "source_line_count_unchanged": true
+      },
+      {
+        "path": "providers/qcore-provider-librdkafka/contracts/librdkafka/kafka_mem.qv",
+        "markers": 1,
+        "before_sha256": "282118c75362475d18775843ec4dc7c15b04db875b59ef256107d14cf8a8e07c",
+        "predicted_after_sha256": "3924b280719d1064dfcf821f4d6eec5e00033f2b2551e8a6cc6b4dc0784624be",
+        "source_line_count_unchanged": true
+      },
+      {
+        "path": "providers/qcore-provider-librdkafka/contracts/librdkafka/memory.qv",
+        "markers": 1,
+        "before_sha256": "e9e3cd509bd0db4e9550f70b882473e4e6b19ca76099150b049860449cca8231",
+        "predicted_after_sha256": "a20e69e5bb5d5012bce683508e534388701ac3a9b2ac44b1e95bd89d2cc56012",
+        "source_line_count_unchanged": true
+      },
+      {
+        "path": "providers/qcore-provider-librdkafka/contracts/librdkafka/null_deref.qv",
+        "markers": 71,
+        "before_sha256": "1a8b36af29ddf6fa031e99581dd624ea8b992365280f3f2693ac5b066640fb8d",
+        "predicted_after_sha256": "76904006ed920a3352c62b60006e22e6c192c52356ce4043b31bfcfb07a41616",
+        "source_line_count_unchanged": true
+      },
+      {
+        "path": "providers/qcore-provider-librdkafka/contracts/librdkafka/queue_destructor.qv",
+        "markers": 1,
+        "before_sha256": "752b5957fafedc03e0a03a38a8379f18b4de3bfb3f44cb8cab16029aecad182f",
+        "predicted_after_sha256": "5e66e4b28144008620c9fe0295cbffcca6c331846352c6066b71e0c24e5836e8",
+        "source_line_count_unchanged": true
+      },
+      {
+        "path": "providers/quirin-provider-fluent-bit/contracts/fluent_bit/logging.qv",
+        "markers": 3,
+        "before_sha256": "1e9cb65e40799b326820c6b3378f19c63283e6863ca317048007acb98adf4d44",
+        "predicted_after_sha256": "c5fa867ac7e7c02bdc4d693788637620fd1c496e146e2afb656211424d618ad8",
+        "source_line_count_unchanged": true
+      }
+    ],
+    "overlap_guard": {
+      "file": "crates/qcore-contract/src/contract_views.rs",
+      "prepared_sha256": "7732c6c31c60b9d66c818a9fca79dcfb00ae8365093ef9e5f0baf7be0edf19af",
+      "behavior": "Only bounds-loader-validated neutral metadata whose atoms/refinement match an independently replayed resource peer is admitted. No whole graph/legacy-vector equivalence, Context transport or new semantic clause. Malformed, unknown, wrong vocabulary/property and changed peer statements refuse.",
+      "matching_Lean": "attachment_preserves_original_clause_interpretation and attachment_preserves_any_existing_null_checker already cover metadata erasure; existing formal model/audit byte hashes remain unchanged."
+    },
+    "inherited_parity": {
+      "file": "compiler/tests/fixtures/contract_inherit_qcore_provider/librdkafka_memory_hand_written.qv",
+      "before_sha256": "310c1913c88869ceb14e98c15fc47481063d8decf97b4056983d805d8819d33f",
+      "predicted_after_sha256": "df913aedbbf4b1ee4695e6a4e49edba2ec67d0b1973988f38905c33f1484b8c1",
+      "meaning": "Explicitly amend the live parity reference with the same exact eight metadata clauses only at rd_kafka_crash. Retain token-for-token comparison and every ABI/semantic/inclusion check; frozen report archives unchanged."
+    }
+  },
+  "attribution_helper": "Add strict report-owned independently held actual BASE/TIP contract sidecars; validate selected home root environment canonical digests and complete home/link records before reversing ONLY import environment SHA. Every full effective BASE hash and every other observation/receipt/context field remains mandatory.",
+  "new_control": "Registered overlap refuses missing/changed counterpart or malformed metadata; existing wrong vocabulary/context tests retained.",
+  "preserved_predictions": {
+    "provider_selected_sites": 166,
+    "resource": 94,
+    "bounds": 71,
+    "model_only": 1,
+    "production_additional_clauses": 1328,
+    "manifest_graph_atom_model_audit_digests": "unchanged by moving comments and tightening guard",
+    "original_outer_source_bytes": "unchanged",
+    "selected165Csourcepins": "unchanged; officialrepin+sync receipts refreshed",
+    "all_verdict_null_runtime_standing_classification_deltas": 0,
+    "source_bindings": "open"
+  },
+  "required_after_repair": [
+    "refresh six module raw SHA receipts and official provider sync/locks",
+    "focused failed-unit and guard refusal controls",
+    "commit final repaired source and prediction",
+    "fresh full standing/provider/packagebuildverify/release",
+    "six fresh own paired routes and exact complete attribution",
+    "committed matrix with actual counts before final Python"
+  ]
+}
