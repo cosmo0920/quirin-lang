@@ -634,7 +634,7 @@ impl Parser<'_> {
             .collect::<Vec<_>>();
         let at = crate::scalar_accessor_condition::callee(&texts)?;
         let name = texts[at];
-        let contract = self.contracts.contract(name)?;
+        let contract = self.contracts.contract(name)?.clone();
         if !crate::scalar_accessor_condition::eligible(
             super::find_function_body(self.tokens, name).is_none(),
             self.typed_model.scalar_pointer_result(name),
@@ -653,6 +653,36 @@ impl Parser<'_> {
             );
             match outcome {
                 Ok(calls) if calls.last().is_some_and(is_identity_call) => {
+                    if name == "__errno_location" {
+                        use crate::reading_site_evidence::{Capture, Route, Span};
+                        crate::reading_site_evidence::capture(Capture {
+                            function: &parser.typed_path_function,
+                            declaration: name,
+                            route: Route::ScalarCondition,
+                            full: parser.tokens,
+                            statement: tokens,
+                            call: Span {
+                                start: at,
+                                end: at + 3,
+                            },
+                            outer_argument: None,
+                            siblings: Vec::new(),
+                            contract: &contract,
+                            environment: parser.contracts,
+                            checked_predicates: [
+                                "exact-zero-argument-scalar-condition",
+                                "external-no-local-body",
+                                "single-level-scalar-pointer-declaration",
+                                "declared-empty-parameters",
+                                "declared-no-result-or-container-effect",
+                                "ordinary-instantiation-succeeded",
+                                "instantiated-identity-call",
+                            ]
+                            .into_iter()
+                            .map(|id| (id.to_owned(), true))
+                            .collect(),
+                        });
+                    }
                     super::probe_state::Probe::Keep(Some(LeafPlan {
                         calls,
                         decision: LegacyInstruction::NoOp,

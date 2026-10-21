@@ -3106,6 +3106,25 @@ pub(crate) mod container_publication;
 #[path = "legacy_counted_users.rs"]
 pub mod counted_users;
 
+/// Recollect local reader observations with independent caller-held inputs.
+/// This exposes no certificate and does not require the whole CFG to succeed.
+pub(crate) fn replay_reading_observations(
+    source: &str,
+    entry: &str,
+    contracts: &ResourceContracts,
+    selected: Option<&[String]>,
+    dialect: CCompilerDialect,
+) -> Result<(), LegacyCError> {
+    analyze_legacy_c_translation_unit_selected_partial(
+        source,
+        entry,
+        contracts,
+        selected,
+        (dialect, None),
+    )
+    .map(|_| ())
+}
+
 fn analyze_legacy_c_translation_unit_selected_partial(
     source: &str,
     entry: &str,

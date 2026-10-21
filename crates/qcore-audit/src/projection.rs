@@ -1084,6 +1084,21 @@ fn record_projection(
         // Card VERDICT-CONTRACT-DEPENDENCIES (rule 13f): the row fields, after
         // the verdict is settled; additive.
         crate::contract_dependencies::annotate_unit(row, dependencies, &result, contracts)?;
+        if !dependencies.reading_sites.is_empty() || !dependencies.reading_site_omissions.is_empty()
+        {
+            row["reading_site_domain"] = serde_json::json!({
+                "schema": qcore_c_gateway::reading_site_evidence::SCHEMA,
+                "coverage": "selected-observations-only",
+                "captured_local_fragments": dependencies.reading_sites.len(),
+                "omissions": dependencies.reading_site_omissions,
+                "universal_disposition": "open"
+            });
+        }
+        let reading_graphs = if dependencies.reading_sites.is_empty() {
+            Default::default()
+        } else {
+            qcore_contract::hypothesis::replay(contracts.source_assumptions())?
+        };
         for function in row["functions"].as_array_mut().into_iter().flatten() {
             let mut context = hypothesis_context.clone();
             if let Some(source) = &dependencies.primary_source_sha256 {
@@ -1094,6 +1109,26 @@ fn record_projection(
                 context.artifact.push_str(name);
             }
             context.scope = serde_json::to_string(source_functions).map_err(|e| e.to_string())?;
+            let name = function["function"].as_str().unwrap_or_default();
+            let mut readings = Vec::new();
+            for observation in dependencies
+                .reading_sites
+                .iter()
+                .filter(|site| site.function == name)
+            {
+                if let Some(graph) = reading_graphs.get(&observation.declaration) {
+                    readings.push(qcore_c_gateway::reading_site_evidence::bind(
+                        observation,
+                        &context,
+                        graph,
+                    )?);
+                }
+            }
+            if !readings.is_empty() {
+                readings.sort_by(|a, b| a.id.cmp(&b.id));
+                function["reading_site_evidence"] =
+                    serde_json::to_value(readings).map_err(|e| e.to_string())?;
+            }
             function["hypothesis_context"] =
                 serde_json::to_value(context).map_err(|e| e.to_string())?;
         }

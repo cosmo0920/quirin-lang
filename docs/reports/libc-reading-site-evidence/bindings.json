@@ -1,0 +1,278 @@
+{
+  "schema": "libc-reading-site-bindings.v1",
+  "artifacts": {
+    "accessor-model": {
+      "path": "proof/QCore/LibcReadingPremises.lean",
+      "sha256": "a527d3eb0c3d9fc237a749f2ace67e3960e25eb894c9475b17ccabcbb94e75cd",
+      "symbol": "def accessorAtoms"
+    },
+    "nested-model": {
+      "path": "proof/QCore/LibcReadingPremises.lean",
+      "sha256": "a527d3eb0c3d9fc237a749f2ace67e3960e25eb894c9475b17ccabcbb94e75cd",
+      "symbol": "def nestedAtoms"
+    },
+    "scalar-reader": {
+      "path": "crates/qcore-c-gateway/src/legacy_condition_desugar.rs",
+      "sha256": "02c929cf78963c3c77c999d5f4fcb7f5d377135b10385de9838ff5d25a42b9ae",
+      "symbol": "fn scalar_accessor_condition"
+    },
+    "nested-reader": {
+      "path": "crates/qcore-c-gateway/src/variadic_nested.rs",
+      "sha256": "f2155f950b8f5217d60ea00f27fa0988a455b4e3fe97ee1cc97a66bdc38f11e9",
+      "symbol": "fn admitted_nested_calls"
+    },
+    "declaration-reader": {
+      "path": "crates/qcore-c-gateway/src/typed_field_access.rs",
+      "sha256": "f2429ce066b697eea387c046f64ca9ec419d1b617d59909c0891b393e5dadae6",
+      "symbol": "fn scalar_pointer_result"
+    },
+    "receipt-model": {
+      "path": "proof/QCore/LibcReadingSiteEvidence.lean",
+      "sha256": "225d29336256bd7d43e4d12167117be1cf33eb3fc8cccca4f6738ea5af6a88b5",
+      "symbol": "def accepts"
+    },
+    "conditional-neutrality": {
+      "path": "proof/QCore/VariadicNested.lean",
+      "sha256": "4a15efc9ce6968a6b290619357c823187247478986eaf59bab374dbcd5746299",
+      "symbol": "theorem admitted_sibling_calls_are_the_identity"
+    },
+    "scalar-model": {
+      "path": "proof/QCore/ScalarAccessorCondition.lean",
+      "sha256": "5ddd9c4103bc0b954dec09f36ef149b9f068fe7fd84d5ef4b6a3913326f41282",
+      "symbol": "theorem admission_needs_every_fact"
+    }
+  },
+  "propositions": {
+    "libc.__errno_location.nested_call_admission.checked_reading_route.v1": {
+      "declaration": "__errno_location",
+      "atom": "checked_reading_route",
+      "quantifier": "every relevant reading site in independently held audited Context",
+      "observation_scope": "one successful local checker fragment; selected observations only",
+      "universal_disposition": "open",
+      "formal_definition": "accessor-model",
+      "reader_references": [
+        "scalar-reader",
+        "nested-reader",
+        "declaration-reader"
+      ],
+      "conditional_models": [
+        "receipt-model",
+        "scalar-model"
+      ],
+      "inherited_prerequisites": [
+        "boundary28.source-extraction",
+        "C02.declaration-completeness",
+        "C02-P.alias-and-actual-closure",
+        "loaded-contract-mode-truth",
+        "boundary28.rust-lean-correspondence"
+      ],
+      "refutation_obligation": "an independently established observed antecedent and failed conclusion in this exact Context; stale receipts/refused sites are not logical counterexamples",
+      "dependency_rule": "existing declaration/summary consultation closure conservatively reaches every atom; this local observation adds no verdict dependency rule"
+    },
+    "libc.__errno_location.nested_call_admission.scalar_declaration.v1": {
+      "declaration": "__errno_location",
+      "atom": "scalar_declaration",
+      "quantifier": "every relevant reading site in independently held audited Context",
+      "observation_scope": "one successful local checker fragment; selected observations only",
+      "universal_disposition": "open",
+      "formal_definition": "accessor-model",
+      "reader_references": [
+        "scalar-reader",
+        "nested-reader",
+        "declaration-reader"
+      ],
+      "conditional_models": [
+        "receipt-model",
+        "scalar-model"
+      ],
+      "inherited_prerequisites": [
+        "boundary28.source-extraction",
+        "C02.declaration-completeness",
+        "C02-P.alias-and-actual-closure",
+        "loaded-contract-mode-truth",
+        "boundary28.rust-lean-correspondence"
+      ],
+      "refutation_obligation": "an independently established observed antecedent and failed conclusion in this exact Context; stale receipts/refused sites are not logical counterexamples",
+      "dependency_rule": "existing declaration/summary consultation closure conservatively reaches every atom; this local observation adds no verdict dependency rule"
+    },
+    "libc.__errno_location.nested_call_admission.untracked_effects.v1": {
+      "declaration": "__errno_location",
+      "atom": "untracked_effects",
+      "quantifier": "every relevant reading site in independently held audited Context",
+      "observation_scope": "one successful local checker fragment; selected observations only",
+      "universal_disposition": "open",
+      "formal_definition": "accessor-model",
+      "reader_references": [
+        "scalar-reader",
+        "nested-reader",
+        "declaration-reader"
+      ],
+      "conditional_models": [
+        "receipt-model",
+        "scalar-model"
+      ],
+      "inherited_prerequisites": [
+        "boundary28.source-extraction",
+        "C02.declaration-completeness",
+        "C02-P.alias-and-actual-closure",
+        "loaded-contract-mode-truth",
+        "boundary28.rust-lean-correspondence"
+      ],
+      "refutation_obligation": "an independently established observed antecedent and failed conclusion in this exact Context; stale receipts/refused sites are not logical counterexamples",
+      "dependency_rule": "existing declaration/summary consultation closure conservatively reaches every atom; this local observation adds no verdict dependency rule"
+    },
+    "libc.strerror.nested_call_admission.checked_nested_site.v1": {
+      "declaration": "strerror",
+      "atom": "checked_nested_site",
+      "quantifier": "every relevant reading site in independently held audited Context",
+      "observation_scope": "one successful local checker fragment; selected observations only",
+      "universal_disposition": "open",
+      "formal_definition": "nested-model",
+      "reader_references": [
+        "nested-reader"
+      ],
+      "conditional_models": [
+        "receipt-model",
+        "conditional-neutrality"
+      ],
+      "inherited_prerequisites": [
+        "boundary28.source-extraction",
+        "C02.declaration-completeness",
+        "C02-P.alias-and-actual-closure",
+        "loaded-contract-mode-truth",
+        "boundary28.rust-lean-correspondence"
+      ],
+      "refutation_obligation": "an independently established observed antecedent and failed conclusion in this exact Context; stale receipts/refused sites are not logical counterexamples",
+      "dependency_rule": "existing declaration/summary consultation closure conservatively reaches every atom; this local observation adds no verdict dependency rule"
+    },
+    "libc.strerror.nested_call_admission.contract_in_force.v1": {
+      "declaration": "strerror",
+      "atom": "contract_in_force",
+      "quantifier": "every relevant reading site in independently held audited Context",
+      "observation_scope": "one successful local checker fragment; selected observations only",
+      "universal_disposition": "open",
+      "formal_definition": "nested-model",
+      "reader_references": [
+        "nested-reader"
+      ],
+      "conditional_models": [
+        "receipt-model",
+        "conditional-neutrality"
+      ],
+      "inherited_prerequisites": [
+        "boundary28.source-extraction",
+        "C02.declaration-completeness",
+        "C02-P.alias-and-actual-closure",
+        "loaded-contract-mode-truth",
+        "boundary28.rust-lean-correspondence"
+      ],
+      "refutation_obligation": "an independently established observed antecedent and failed conclusion in this exact Context; stale receipts/refused sites are not logical counterexamples",
+      "dependency_rule": "existing declaration/summary consultation closure conservatively reaches every atom; this local observation adds no verdict dependency rule"
+    },
+    "libc.strerror.nested_call_admission.no_custody_result.v1": {
+      "declaration": "strerror",
+      "atom": "no_custody_result",
+      "quantifier": "every relevant reading site in independently held audited Context",
+      "observation_scope": "one successful local checker fragment; selected observations only",
+      "universal_disposition": "open",
+      "formal_definition": "nested-model",
+      "reader_references": [
+        "nested-reader"
+      ],
+      "conditional_models": [
+        "receipt-model",
+        "conditional-neutrality"
+      ],
+      "inherited_prerequisites": [
+        "boundary28.source-extraction",
+        "C02.declaration-completeness",
+        "C02-P.alias-and-actual-closure",
+        "loaded-contract-mode-truth",
+        "boundary28.rust-lean-correspondence"
+      ],
+      "refutation_obligation": "an independently established observed antecedent and failed conclusion in this exact Context; stale receipts/refused sites are not logical counterexamples",
+      "dependency_rule": "existing declaration/summary consultation closure conservatively reaches every atom; this local observation adds no verdict dependency rule"
+    },
+    "libc.strerror.nested_call_admission.parameters_borrowed.v1": {
+      "declaration": "strerror",
+      "atom": "parameters_borrowed",
+      "quantifier": "every relevant reading site in independently held audited Context",
+      "observation_scope": "one successful local checker fragment; selected observations only",
+      "universal_disposition": "open",
+      "formal_definition": "nested-model",
+      "reader_references": [
+        "nested-reader"
+      ],
+      "conditional_models": [
+        "receipt-model",
+        "conditional-neutrality"
+      ],
+      "inherited_prerequisites": [
+        "boundary28.source-extraction",
+        "C02.declaration-completeness",
+        "C02-P.alias-and-actual-closure",
+        "loaded-contract-mode-truth",
+        "boundary28.rust-lean-correspondence"
+      ],
+      "refutation_obligation": "an independently established observed antecedent and failed conclusion in this exact Context; stale receipts/refused sites are not logical counterexamples",
+      "dependency_rule": "existing declaration/summary consultation closure conservatively reaches every atom; this local observation adds no verdict dependency rule"
+    },
+    "libc.strerror.nested_call_admission.remaining_site_checks.v1": {
+      "declaration": "strerror",
+      "atom": "remaining_site_checks",
+      "quantifier": "every relevant reading site in independently held audited Context",
+      "observation_scope": "one successful local checker fragment; selected observations only",
+      "universal_disposition": "open",
+      "formal_definition": "nested-model",
+      "reader_references": [
+        "nested-reader"
+      ],
+      "conditional_models": [
+        "receipt-model",
+        "conditional-neutrality"
+      ],
+      "inherited_prerequisites": [
+        "boundary28.source-extraction",
+        "C02.declaration-completeness",
+        "C02-P.alias-and-actual-closure",
+        "loaded-contract-mode-truth",
+        "boundary28.rust-lean-correspondence"
+      ],
+      "refutation_obligation": "an independently established observed antecedent and failed conclusion in this exact Context; stale receipts/refused sites are not logical counterexamples",
+      "dependency_rule": "existing declaration/summary consultation closure conservatively reaches every atom; this local observation adds no verdict dependency rule"
+    }
+  },
+  "prerequisites": {
+    "boundary28.source-extraction": {
+      "disposition": "open",
+      "kind": "external-or-inherited-assumption",
+      "binding": "independently held full Context and actual source/environment hashes; no proof by receipt existence"
+    },
+    "C02.declaration-completeness": {
+      "disposition": "open",
+      "kind": "external-or-inherited-assumption",
+      "binding": "independently held full Context and actual source/environment hashes; no proof by receipt existence"
+    },
+    "C02-P.alias-and-actual-closure": {
+      "disposition": "open",
+      "kind": "external-or-inherited-assumption",
+      "binding": "independently held full Context and actual source/environment hashes; no proof by receipt existence"
+    },
+    "loaded-contract-mode-truth": {
+      "disposition": "open",
+      "kind": "external-or-inherited-assumption",
+      "binding": "independently held full Context and actual source/environment hashes; no proof by receipt existence"
+    },
+    "boundary28.rust-lean-correspondence": {
+      "disposition": "open",
+      "kind": "external-or-inherited-assumption",
+      "binding": "independently held full Context and actual source/environment hashes; no proof by receipt existence"
+    }
+  },
+  "authority": "reference-integrity-only; all eight opaque atoms remain Open",
+  "models": {
+    "QCore.ScalarAccessorCondition.admission_needs_every_fact": "scalar-model",
+    "QCore.VariadicNested.an_admitted_nested_slot_is_data": "conditional-neutrality",
+    "QCore.LibcReadingPremises": "accessor-model/nested-model selected by declaration; module only, not automatic truth transport"
+  }
+}
