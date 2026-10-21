@@ -1,0 +1,23 @@
+{
+  "command": [
+    "python3",
+    "-m",
+    "unittest",
+    "discover",
+    "-s",
+    "scripts/tests"
+  ],
+  "exit": 0,
+  "seconds": 34.43405055999756,
+  "committed_matrix_at": "b4403839698010ab53eb0000184a3bb882baa106",
+  "sha256_before": "4f6fb9b080373c97964bb7c01cfd51abc04911b4264c633da37f7df17f9ff28c",
+  "sha256_after": "4f6fb9b080373c97964bb7c01cfd51abc04911b4264c633da37f7df17f9ff28c",
+  "unchanged": true,
+  "log": "/home/cosmo/Documents/GitHub/qcore-c/private/plugin-premise-integration/python-final-1/python.log",
+  "summaries": [
+    [
+      "374",
+      "34.285"
+    ]
+  ]
+}

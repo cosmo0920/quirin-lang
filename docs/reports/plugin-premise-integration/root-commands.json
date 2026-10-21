@@ -1,0 +1,100 @@
+{
+  "native_measurements": "BORROWED unchanged completedcard; seeprovenance.json",
+  "root_commands": [
+    {
+      "command": [
+        "git",
+        "merge",
+        "--no-ff",
+        "d208636856bea292070fd06aa96a1624afbec5a1",
+        "-m",
+        "Merge completed plugin premise decomposition with preserved source evidence"
+      ],
+      "exit": 0,
+      "result": "67697d6c5695110981cc08e616190ce106627d7f"
+    },
+    {
+      "command": [
+        "python3",
+        "private/plugin-premise-integration/source_equivalence.py",
+        "d208636856bea292070fd06aa96a1624afbec5a1"
+      ],
+      "exit": 0,
+      "result": "exact complete tree at merge; exact relevant source afterb440"
+    },
+    {
+      "command": [
+        "python3",
+        "scripts/build_docs_index.py"
+      ],
+      "exit": 0
+    },
+    {
+      "command": [
+        "python3",
+        "docs/reports/remaining-d02/build_matrix.py",
+        ".",
+        "--previous",
+        "private/plugin-premise-integration/union-previous.json",
+        "--gate",
+        "docs/reports/plugin-premise-integration/gate.json"
+      ],
+      "exit": 0,
+      "result": "810followups,354audits"
+    },
+    {
+      "command": [
+        "python3",
+        "scripts/build_docs_index.py",
+        "--check"
+      ],
+      "exit": 0
+    },
+    {
+      "command": [
+        "python3",
+        "scripts/reconciliation_sweep.py",
+        ".",
+        "--cards",
+        "plugin-premise-decomposition",
+        "--check",
+        "docs/reports/plugin-premise-integration/reconciliation.json"
+      ],
+      "exit": 0,
+      "scope": "no dedicated section;0swept claims. Supplemental4claims directly checked in applied-verification.json."
+    },
+    {
+      "command": [
+        "git",
+        "diff",
+        "--check",
+        "HEAD~1",
+        "HEAD"
+      ],
+      "exit": 0
+    },
+    {
+      "command": [
+        "python3",
+        "-m",
+        "unittest",
+        "discover",
+        "-s",
+        "scripts/tests"
+      ],
+      "exit": 0,
+      "seconds": 34.43405055999756,
+      "committed_matrix_at": "b4403839698010ab53eb0000184a3bb882baa106",
+      "sha256_before": "4f6fb9b080373c97964bb7c01cfd51abc04911b4264c633da37f7df17f9ff28c",
+      "sha256_after": "4f6fb9b080373c97964bb7c01cfd51abc04911b4264c633da37f7df17f9ff28c",
+      "unchanged": true,
+      "log": "/home/cosmo/Documents/GitHub/qcore-c/private/plugin-premise-integration/python-final-1/python.log",
+      "summaries": [
+        [
+          "374",
+          "34.285"
+        ]
+      ]
+    }
+  ]
+}
