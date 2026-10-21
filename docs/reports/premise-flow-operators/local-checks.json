@@ -1,0 +1,158 @@
+{
+  "library_check": {
+    "version": 1,
+    "source_commit": "69ece79f5",
+    "command": "CARGO_PROFILE_DEV_DEBUG=0 CARGO_INCREMENTAL=0 cargo check -p qcore-contract --lib -j1",
+    "serialization": "/tmp/qcore-c-cycle2-small-compile.lock",
+    "exit": 0,
+    "elapsed_seconds": 13.99,
+    "private_log": "private/premise-flow-operators/focused-1/check.log",
+    "scope": "library typecheck only; new tests and Lean pending; not standing or measurement evidence"
+  },
+  "focused_2": {
+    "source_commit": "e3c0d7cfd",
+    "local_delta": "private/premise-flow-operators/focused-2/worktree.patch",
+    "core": {
+      "command": "cargo test -p qcore-core --test premise_flow -j1",
+      "exit": 0,
+      "passed": 2
+    },
+    "contract": {
+      "command": "cargo test -p qcore-contract --test premise_flow -j1",
+      "exit": 101,
+      "passed": 7,
+      "failed": 1,
+      "reason": "test fixture omitted mandatory nonnull_member beside bounds premise; unchanged authoritative guard refused as required"
+    },
+    "private_logs": "private/premise-flow-operators/focused-2/",
+    "gateway": "not run after first failure",
+    "lean": "not run",
+    "standing": "joint gate pending"
+  },
+  "focused_3": {
+    "source_commit": "feccf07c0",
+    "environment": {
+      "CARGO_PROFILE_DEV_DEBUG": "0",
+      "CARGO_PROFILE_TEST_DEBUG": "0",
+      "CARGO_INCREMENTAL": "0"
+    },
+    "lock": "/tmp/qcore-c-cycle2-small-compile.lock",
+    "exit": 0,
+    "steps": [
+      {
+        "command": "cargo test -p qcore-contract --test premise_flow -j1",
+        "passed": 8,
+        "exit": 0,
+        "log": "contract.log"
+      },
+      {
+        "command": "cargo test -p qcore-c-gateway --test premise_flow_dependencies -j1",
+        "passed": 1,
+        "exit": 0,
+        "log": "gateway.log"
+      },
+      {
+        "command": "cargo test -p qcore-frontend --lib premise_flow_longest_tokens_preserve_maps_to_exactly -j1",
+        "passed": 1,
+        "exit": 0,
+        "log": "lexer.log"
+      },
+      {
+        "command": "cd proof && lake env lean -o .lake/build/lib/lean/QCore/PremiseFlow.olean QCore/PremiseFlow.lean",
+        "exit": 0,
+        "log": "lean.log"
+      },
+      {
+        "command": "cd proof && lake env lean AuditPremiseFlow.lean",
+        "exit": 0,
+        "project_axioms": 0,
+        "log": "audit.log"
+      },
+      {
+        "command": "cargo run -p qcore-contract --example premise_flow -j1 -- proof/QCore/PremiseFlow.lean proof/AuditPremiseFlow.lean",
+        "exit": 0,
+        "log": "example.log",
+        "output": "example.json"
+      }
+    ],
+    "private_directory": "private/premise-flow-operators/focused-3"
+  },
+  "focused_4": {
+    "source_commit": "f452aa7ad",
+    "environment": {
+      "CARGO_PROFILE_DEV_DEBUG": "0",
+      "CARGO_PROFILE_TEST_DEBUG": "0",
+      "CARGO_INCREMENTAL": "0"
+    },
+    "lock": "/tmp/qcore-c-cycle2-small-compile.lock",
+    "exit": 0,
+    "steps": [
+      {
+        "command": "cargo test -p qcore-c-gateway --test premise_flow_dependencies -j1 -- --nocapture",
+        "passed": 1,
+        "exit": 0,
+        "log": "gateway.log",
+        "published_output": "impact-output.json"
+      },
+      {
+        "command": "cd proof && lake env lean AuditPremiseFlow.lean",
+        "exit": 0,
+        "project_axioms": 0,
+        "log": "audit.log"
+      },
+      {
+        "command": "cargo run -p qcore-contract --example premise_flow -j1 -- proof/QCore/PremiseFlow.lean proof/AuditPremiseFlow.lean",
+        "exit": 0,
+        "log": "example.log",
+        "published_output": "example-output.json",
+        "output_sha256": "6ffd6b22847cbedb9b1c37f117e58169db0a872ef24866a29565537b552aba65"
+      }
+    ],
+    "private_directory": "private/premise-flow-operators/focused-4"
+  },
+  "joint_gate": {
+    "status": "pending actual frozen integrated source; no own-worktree standing/provider/native claim"
+  },
+  "focused_5": {
+    "source_commit": "787ee7430",
+    "command": "CARGO_PROFILE_DEV_DEBUG=0 CARGO_PROFILE_TEST_DEBUG=0 CARGO_INCREMENTAL=0 cargo test -p qcore-contract --test premise_flow -j1",
+    "exit": 0,
+    "passed": 9,
+    "lock": "/tmp/qcore-c-cycle2-small-compile.lock",
+    "private_log": "private/premise-flow-operators/focused-5/contract.log",
+    "reason": "required model fields now reject whitespace-only values; complete corrected contract target rerun"
+  },
+  "joint_gate_1": {
+    "source": "a7ba6a6d627778151ec60aaafcae231dae86d4b9",
+    "authority": "root-owned integrated attempt; not own-worktree gate",
+    "command": "python3 scripts/run_test_binaries.py --jobs 4",
+    "exit": 101,
+    "passed": 8438,
+    "failed": 2,
+    "ignored": 15,
+    "units": 532,
+    "summaries": 545,
+    "failures": [
+      {
+        "test": "workspace_dependencies_point_strictly_downward",
+        "reason": "frontend must depend only on core; newly added frontend-to-schemas dependency violated architecture",
+        "log": "/home/cosmo/Documents/GitHub/qcore-c/private/test-binaries/20261021T080506Z-1202176/qcore-compiler_test_workspace_layering.stdout.log"
+      },
+      {
+        "test": "lexes_maps_to_apart_from_the_pipe_the_or_and_the_arrow",
+        "reason": "old ||-> split-token pin must intentionally become longest-match FlowOr; MapsTo unchanged",
+        "log": "/home/cosmo/Documents/GitHub/qcore-c/private/test-binaries/20261021T080506Z-1202176/qcore-frontend_lib_qcore_frontend.stdout.log"
+      }
+    ],
+    "shared_ancillary": {
+      "fmt_exit": 1,
+      "reason_fmt": "source-analysis module order",
+      "clippy_exit": 0,
+      "lean_exit": 1,
+      "reason_lean": "merged root QCore.lean import after declarations; individual new flow module built successfully"
+    },
+    "own_repair_freeze": "d321ece1c",
+    "own_source_repair": "025b4902e",
+    "new_builds": "none while root locks held; restarted full joint gate required"
+  }
+}

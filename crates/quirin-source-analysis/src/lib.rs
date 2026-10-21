@@ -12,6 +12,7 @@ pub mod libevent;
 pub mod lifecycle_census;
 // Card W47-LOOP-OWNER-CONTRACTS (gateway rule 10p).
 pub mod loop_owner_census;
+pub mod plugin_source_witnesses;
 pub mod source_profiles;
 pub mod typed_source_match;
 
@@ -41,3 +42,6 @@ pub(crate) use chunkio::chunk_source;
 
 #[cfg(test)]
 mod test_support;
+
+/// Source-specific finite native cJSON representation observations.
+pub mod cjson_local_binding;

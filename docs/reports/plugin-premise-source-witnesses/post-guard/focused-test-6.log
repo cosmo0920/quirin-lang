@@ -1,0 +1,12 @@
+   Compiling quirin-source-analysis v0.1.0 (/home/cosmo/.codex/worktrees/w48-bottom-up-batch4/qcore-c/crates/quirin-source-analysis)
+    Finished `test` profile [unoptimized] target(s) in 2.10s
+     Running unittests src/lib.rs (target/debug/deps/quirin_source_analysis-89d0ccd1ed634b24)
+
+running 4 tests
+test plugin_source_witnesses::tests::malformed_offsets_and_utf8_prefix_refuse_without_panics ... ok
+test plugin_source_witnesses::tests::replaced_native_layout_case_refuses_exact_domain ... ok
+test plugin_source_witnesses::tests::finite_domain_and_exact_trace_refusals ... ok
+test plugin_source_witnesses::tests::bounded_flow_source_replay_and_tampered_model_refuse ... ok
+
+test result: ok. 4 passed; 0 failed; 0 ignored; 0 measured; 118 filtered out; finished in 0.02s
+

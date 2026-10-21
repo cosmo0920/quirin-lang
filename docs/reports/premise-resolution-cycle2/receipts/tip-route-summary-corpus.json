@@ -1,0 +1,19 @@
+{
+  "routes": [
+    {
+      "route": "corpus",
+      "units": 185,
+      "rows": 4834,
+      "counts": {
+        "Unknown": 3852,
+        "Safe": 973,
+        "Unsafe": 9
+      },
+      "invocation": "private/premise-resolution-cycle2/measure-1/corpus/tip/invocation.json",
+      "source_guard_equal": true,
+      "byte_exact_prepared_view": "private/premise-resolution-cycle2/prepared-tip/corpus",
+      "exit": 0
+    }
+  ],
+  "meaning": "All copied bytes checked equal; no artifact normalization or field changes."
+}

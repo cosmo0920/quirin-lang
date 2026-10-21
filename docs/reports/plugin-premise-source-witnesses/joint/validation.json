@@ -1,0 +1,150 @@
+{
+  "status": "joint gate, independent source witness, all six native routes and complete comparisons passed; final committed-matrix Python pending",
+  "source": "62eebba95c51917c0fe841fbc23e2bf0d0e7e465",
+  "measurement_owner": "root integrator, not this worktree",
+  "joint_gate": {
+    "all_steps_exit0": 22,
+    "Rust_passed": 8441,
+    "Rust_failed": 0,
+    "Rust_ignored": 15,
+    "units": 532,
+    "summaries": 545,
+    "Lean_audits": 357,
+    "provider_Rust": 133,
+    "provider_Python": 25,
+    "package_build_verify": 5
+  },
+  "actual_direct_witness_command": {
+    "name": "plugin-source",
+    "command": [
+      "/home/cosmo/Documents/GitHub/qcore-c/target/debug/examples/plugin_source_witnesses",
+      "/home/cosmo/Documents/GitHub/qcore-c/private/premise-resolution-cycle2/postgate-source-1/plugin"
+    ],
+    "cwd": "/home/cosmo/Documents/GitHub/qcore-c",
+    "source": "62eebba95c51917c0fe841fbc23e2bf0d0e7e465",
+    "started": "2026-10-21T09:04:59.556308+00:00",
+    "ended": "2026-10-21T09:05:13.042939+00:00",
+    "exit": 0,
+    "log": "/home/cosmo/Documents/GitHub/qcore-c/private/premise-resolution-cycle2/postgate-source-1/plugin-source.log",
+    "QCORE_AUDIT_BUILD_COMMIT": "62eebba95c51917c0fe841fbc23e2bf0d0e7e465"
+  },
+  "actual_context": {
+    "artifact": "a18c2105cfd4db3d7303dc4956375b2ef5f566332c975c68bfe612f547d95819",
+    "property": "plugin_fixture_selected_domain_v1",
+    "semantic_profile": "plugin-loader-fixture-v1",
+    "scope": "complete-selected-20-case-domain-v1",
+    "bounds": "20-cases/single-thread/explicit-stubs",
+    "assumptions": "local-clang-posix-loader/real-pinned-headers/explicit-allocation-list-log-stubs/no-deployed-plugin-claim",
+    "source_identity": "2ea1c936998d85776b151f4fdab8e2fc27b198b74c756d219d2e8c5865ea5b43",
+    "build_identity": "94cf5b572e10b07a823c6f20372170348ed6904b141d4124819fc094866aea6e",
+    "evidence_version": "plugin-source-witness-v1/4f8c1e24342f60556511888607d7a4073e899e2ea7ff47f8d3a451ee975fc2d5"
+  },
+  "cases": 20,
+  "refusals": 79,
+  "finite_flow": {
+    "alternative": {
+      "disposition": "supported",
+      "terminated": false
+    },
+    "combined": {
+      "disposition": "supported",
+      "terminated": false
+    },
+    "finished": {
+      "disposition": "supported",
+      "terminated": true
+    },
+    "known_error": {
+      "disposition": "supported",
+      "terminated": false
+    },
+    "native_duplicate": {
+      "disposition": "supported",
+      "terminated": false
+    },
+    "observed_counterexample": {
+      "disposition": "refuted",
+      "terminated": false
+    }
+  },
+  "formal_binding_count": 4,
+  "explicit_artifact_digests": {
+    "proof/AuditPluginSourceWitnesses.lean": "7da0eef9fda3ec2b7ff3015ac393292d97cfe8f196a9086484811f0e938f3de0",
+    "proof/QCore/PluginSourceWitnesses.lean": "d6dce17c199a182403ad1060f60eb93e9c19c6ef8ccea74a97a44607e3765d57"
+  },
+  "native_campaign": {
+    "base_revision": "882e128c12161babdbfa36806829894eadf600ba",
+    "tip_revision": "62eebba95c51917c0fe841fbc23e2bf0d0e7e465",
+    "commands": "base-commands.json and tip-commands.json",
+    "comparison": "comparison-summary.json",
+    "full_null_records": 5781,
+    "reading_source_domain_checks_each_side": 148,
+    "all_fields_retained": true,
+    "no_graph_atom_inverse": true,
+    "no_verdict_rewrite": true,
+    "final_guard_utc": "2026-10-21T09:53:30.777133+00:00"
+  },
+  "final_matrix_python": "pending root committed-matrix result; do not infer from focused checks",
+  "receipt_manifest": [
+    {
+      "file": "gate-commands.json",
+      "original": "/home/cosmo/Documents/GitHub/qcore-c/private/premise-resolution-cycle2/joint-gate-2/commands.json",
+      "sha256": "ef8a14bc419760e32ca82c12b75b242580f995b5dc39c6ec212791089411c377"
+    },
+    {
+      "file": "base-commands.json",
+      "original": "/home/cosmo/Documents/GitHub/qcore-c/private/premise-resolution-cycle2/base-collector-1/commands.json",
+      "sha256": "ac19e2efdb283bdba8f6c6847f68611c5eea9d7d8d3a6297ab9e7d625e372761"
+    },
+    {
+      "file": "tip-commands.json",
+      "original": "/home/cosmo/Documents/GitHub/qcore-c/private/premise-resolution-cycle2/tip-collector-1/commands.json",
+      "sha256": "7754c2a25dad42f4bac9e657be283ec194e406b070f48453ff4efd0fecf6c966"
+    },
+    {
+      "file": "comparison-summary.json",
+      "original": "/home/cosmo/Documents/GitHub/qcore-c/private/premise-resolution-cycle2/joint-comparison-summary.json",
+      "sha256": "179bbd8194186b578aed6692ef8d3f3876a07751b5545ad75f2825d0f302a565"
+    },
+    {
+      "file": "configured-comparison-summary.json",
+      "original": "/home/cosmo/Documents/GitHub/qcore-c/private/premise-resolution-cycle2/configured-comparison-summary.json",
+      "sha256": "98d6524f10d68b63d7f458022ace66f529c5bb75b52b3c68de538e52d951aacd"
+    },
+    {
+      "file": "corpus-comparison-command.json",
+      "original": "/home/cosmo/Documents/GitHub/qcore-c/private/premise-resolution-cycle2/comparison-corpus-1-control/command.json",
+      "sha256": "77b9987e67317c085c820455fe3610e2370d02e85352ea3db2331c52e5a362ff"
+    },
+    {
+      "file": "source-equality.json",
+      "original": "/home/cosmo/.codex/worktrees/w48-bottom-up-batch4/qcore-c/private/plugin-premise-source-witnesses/integration-prep/joint-actual/plugin-source-equality.json",
+      "sha256": "d3ce008b36fbc0c2a4d4aed69102e4a96b68882605c1711c4274b6c24830a222"
+    },
+    {
+      "file": "direct-witness-commands.json",
+      "original": "/home/cosmo/.codex/worktrees/w48-bottom-up-batch4/qcore-c/private/plugin-premise-source-witnesses/integration-prep/joint-actual/commands.json",
+      "sha256": "78afc65063bae53682a7aba8ef36c0f7e72cf01d971e4c3894382f2eff40f596"
+    },
+    {
+      "file": "independent-full-receipt-equality.json",
+      "original": "/home/cosmo/.codex/worktrees/w48-bottom-up-batch4/qcore-c/private/plugin-premise-source-witnesses/integration-prep/joint-actual/independent-full-receipt-equality.json",
+      "sha256": "1c281e157a5b48834fc3a81aec0d9ceffbbffbbe618bcdb8ff9bf3e469c7e2c9"
+    },
+    {
+      "file": "checked.json",
+      "original": "/home/cosmo/.codex/worktrees/w48-bottom-up-batch4/qcore-c/private/plugin-premise-source-witnesses/integration-prep/joint-actual/plugin-checked.json",
+      "sha256": "8cc9c62ed2270628b1c3812994ac13e980c4509461814a7c9c771c06e1984d34"
+    },
+    {
+      "file": "bounded-flow.json",
+      "original": "/home/cosmo/.codex/worktrees/w48-bottom-up-batch4/qcore-c/private/plugin-premise-source-witnesses/integration-prep/joint-actual/plugin-bounded-flow.json",
+      "sha256": "a9956f1194db353055143fb6b4cbb7750f3ef53cff5469f011d2e923af7aa649"
+    },
+    {
+      "file": "refusal-controls.json",
+      "original": "/home/cosmo/.codex/worktrees/w48-bottom-up-batch4/qcore-c/private/plugin-premise-source-witnesses/integration-prep/joint-actual/plugin-refusal-controls.json",
+      "sha256": "e037e6dac7c9ca540ea722e488520b922b43fb7b0779ba53973ee04fe80e7508"
+    }
+  ]
+}

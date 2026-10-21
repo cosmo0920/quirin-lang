@@ -1,0 +1,123 @@
+[
+  {
+    "name": "export-base",
+    "command": [
+      "/usr/bin/python3",
+      "private/premise-resolution-cycle2/export_environments.py",
+      "--helper",
+      "target/release/examples/premise_environment",
+      "--side",
+      "base",
+      "--routes",
+      "private/premise-resolution-cycle2/prepared-base",
+      "--out",
+      "private/premise-resolution-cycle2/comparison-corpus-1/base-environments",
+      "--selected-routes",
+      "corpus"
+    ],
+    "cwd": "/home/cosmo/Documents/GitHub/qcore-c",
+    "root_head": "62eebba95c51917c0fe841fbc23e2bf0d0e7e465",
+    "environment_overrides": {
+      "QCORE_CLANG": "/usr/lib/llvm-21/bin/clang"
+    },
+    "exit": 0,
+    "log": "private/premise-resolution-cycle2/comparison-corpus-1/export-base.log"
+  },
+  {
+    "name": "export-tip",
+    "command": [
+      "/usr/bin/python3",
+      "private/premise-resolution-cycle2/export_environments.py",
+      "--helper",
+      "target/release/examples/premise_environment",
+      "--side",
+      "tip",
+      "--routes",
+      "private/premise-resolution-cycle2/prepared-tip",
+      "--out",
+      "private/premise-resolution-cycle2/comparison-corpus-1/tip-environments",
+      "--selected-routes",
+      "corpus"
+    ],
+    "cwd": "/home/cosmo/Documents/GitHub/qcore-c",
+    "root_head": "62eebba95c51917c0fe841fbc23e2bf0d0e7e465",
+    "environment_overrides": {
+      "QCORE_CLANG": "/usr/lib/llvm-21/bin/clang"
+    },
+    "exit": 0,
+    "log": "private/premise-resolution-cycle2/comparison-corpus-1/export-tip.log"
+  },
+  {
+    "name": "corpus-identities",
+    "command": [
+      "/usr/bin/python3",
+      "private/premise-resolution-cycle2/derive_joint_identities.py",
+      "corpus",
+      "private/premise-resolution-cycle2/prepared-base/corpus",
+      "private/premise-resolution-cycle2/prepared-tip/corpus",
+      "private/premise-resolution-cycle2/comparison-corpus-1/base-environments",
+      "private/premise-resolution-cycle2/comparison-corpus-1/tip-environments",
+      "private/premise-resolution-cycle2/comparison-corpus-1/corpus-known.json"
+    ],
+    "cwd": "/home/cosmo/Documents/GitHub/qcore-c",
+    "root_head": "62eebba95c51917c0fe841fbc23e2bf0d0e7e465",
+    "environment_overrides": {
+      "QCORE_CLANG": "/usr/lib/llvm-21/bin/clang"
+    },
+    "exit": 0,
+    "log": "private/premise-resolution-cycle2/comparison-corpus-1/corpus-identities.log"
+  },
+  {
+    "name": "corpus-canonical-capture-proof",
+    "command": [
+      "private/premise-resolution-cycle2/comparator-helpers/attribute-reading-environments",
+      "private/premise-resolution-cycle2/comparison-corpus-1/corpus-reading-input.json",
+      "private/premise-resolution-cycle2/comparison-corpus-1/corpus-reading-proof.json"
+    ],
+    "cwd": "/home/cosmo/Documents/GitHub/qcore-c",
+    "root_head": "62eebba95c51917c0fe841fbc23e2bf0d0e7e465",
+    "environment_overrides": {
+      "QCORE_CLANG": "/usr/lib/llvm-21/bin/clang"
+    },
+    "exit": 0,
+    "log": "private/premise-resolution-cycle2/comparison-corpus-1/corpus-canonical-capture-proof.log"
+  },
+  {
+    "name": "corpus-all-fields",
+    "command": [
+      "/usr/bin/python3",
+      "private/premise-resolution-cycle2/compare_records.py",
+      "corpus",
+      "private/premise-resolution-cycle2/prepared-base/corpus",
+      "private/premise-resolution-cycle2/prepared-tip/corpus",
+      "private/premise-resolution-cycle2/comparison-corpus-1/corpus",
+      "--known",
+      "private/premise-resolution-cycle2/comparison-corpus-1/corpus-known.json",
+      "--reading-proof",
+      "private/premise-resolution-cycle2/comparison-corpus-1/corpus-reading-proof.json"
+    ],
+    "cwd": "/home/cosmo/Documents/GitHub/qcore-c",
+    "root_head": "62eebba95c51917c0fe841fbc23e2bf0d0e7e465",
+    "environment_overrides": {
+      "QCORE_CLANG": "/usr/lib/llvm-21/bin/clang"
+    },
+    "exit": 1,
+    "log": "private/premise-resolution-cycle2/comparison-corpus-1/corpus-all-fields.log"
+  },
+  {
+    "name": "corpus-exact-time-identity",
+    "command": [
+      "/usr/bin/python3",
+      "private/premise-resolution-cycle2/attribute_time_identity.py",
+      "corpus",
+      "private/premise-resolution-cycle2/comparison-corpus-1/corpus"
+    ],
+    "cwd": "/home/cosmo/Documents/GitHub/qcore-c",
+    "root_head": "62eebba95c51917c0fe841fbc23e2bf0d0e7e465",
+    "environment_overrides": {
+      "QCORE_CLANG": "/usr/lib/llvm-21/bin/clang"
+    },
+    "exit": 0,
+    "log": "private/premise-resolution-cycle2/comparison-corpus-1/corpus-exact-time-identity.log"
+  }
+]

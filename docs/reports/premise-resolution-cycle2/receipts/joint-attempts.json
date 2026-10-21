@@ -1,0 +1,73 @@
+{
+  "version": 1,
+  "joint_gate_1": {
+    "source": "a7ba6a6d627778151ec60aaafcae231dae86d4b9",
+    "status": "completed every step; failed and not eligible for TIP validation",
+    "rust": {
+      "passed": 8438,
+      "failed": 2,
+      "ignored": 15,
+      "units": 532,
+      "summaries": 545,
+      "exit": 101,
+      "summary": "private/test-binaries/20261021T080506Z-1202176/summary.json"
+    },
+    "failures": [
+      "frontend upward dependency violates existing workspace layering",
+      "old lexer ||-> expectation intentionally changes to FlowOr",
+      "QCore PluginSourceWitnesses import appended after declarations",
+      "module export rustfmt order"
+    ],
+    "commands": "private/premise-resolution-cycle2/joint-gate-1/commands.json",
+    "all_step_exits": {
+      "submodules": 0,
+      "clang": 0,
+      "rust": 101,
+      "fmt": 1,
+      "clippy": 0,
+      "probe": 0,
+      "followup": 0,
+      "lean": 1,
+      "provider-rust": 0,
+      "provider-fmt": 1,
+      "provider-clippy": 0,
+      "provider-python": 0,
+      "provider-contracts": 0,
+      "package-build": 0,
+      "package-verify-chunkio": 0,
+      "package-verify-libevent": 0,
+      "package-verify-librdkafka": 0,
+      "package-verify-cmetrics": 0,
+      "package-verify-ctraces": 0,
+      "audit-examples": 0,
+      "source-examples": 0,
+      "release": 0
+    },
+    "released": {
+      "utc": "2026-10-21T08:25:47.315549+00:00"
+    }
+  },
+  "required_repairs": [
+    "frontend-owned AST and explicit contract conversion; no layering relaxation",
+    "deliberate longest-match expectation update retaining MapsTo",
+    "top-level import placement and sorted module export",
+    "actual auxiliary DB+compiler historical replay helper binding",
+    "exact finite layout-key domain refusal guard"
+  ],
+  "notes": "No failed gate promotes source facts. First full gate finishes all steps; corrected frozen source requires final successful full gate before TIP native.",
+  "historical_libc_attempt_1": {
+    "source_helper": "26668d65a",
+    "actual_source": "67b8e45d1",
+    "build_exit": 0,
+    "replay_exit": 1,
+    "replayed_domains": 17,
+    "reproduced_observations": 122,
+    "accepted": 0,
+    "retained_path": "/home/cosmo/.codex/worktrees/premise-decomposition-cycle1b/qcore-c/private/premise-local-source-bindings/production-corpus-1",
+    "first_domain_exact_difference": [
+      "observation.environment_sha256",
+      "derived receipt id"
+    ],
+    "attribution": "Canonical held environment has eight inferred imports, eight cross-unit import identities and link-resolution digest; removing exactly these three fields reproduces helper root environment SHA. All other receipt leaves agree. Equality guard retained; source/configured cross-unit replay repair required."
+  }
+}

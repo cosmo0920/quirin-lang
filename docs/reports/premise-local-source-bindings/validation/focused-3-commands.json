@@ -1,0 +1,36 @@
+[
+  {
+    "step": "gateway-domain",
+    "command": [
+      "cargo",
+      "test",
+      "-p",
+      "qcore-c-gateway",
+      "--test",
+      "reading_site_domain",
+      "-j1"
+    ],
+    "exit": 0,
+    "seconds": 1.4589271545410156,
+    "source": "ca6def82ca28965e90cf0f5ada386ea981b499b2"
+  },
+  {
+    "step": "adapter-lints",
+    "command": [
+      "cargo",
+      "clippy",
+      "-p",
+      "qcore-c-gateway",
+      "-p",
+      "quirin-source-analysis",
+      "--lib",
+      "-j1",
+      "--",
+      "-D",
+      "warnings"
+    ],
+    "exit": 0,
+    "seconds": 30.293084144592285,
+    "source": "ca6def82ca28965e90cf0f5ada386ea981b499b2"
+  }
+]

@@ -1,0 +1,8 @@
+{
+  "native_system_proof": "private/premise-resolution-cycle2/comparison-configured-1/system-reading-proof.json",
+  "sha256": "2ec5ce2219e0e3223b1d5fa49564eec8463bd2f41c89a4330a130dd18a7a79e6",
+  "known": "private/premise-resolution-cycle2/comparison-configured-1/system-known.json",
+  "known_sha256": "0223c4cdc53bab0e8b4b40b5843dfd999db2010af0c48aa20eb8069e8d92b03b",
+  "completed_prior_commands": "private/premise-resolution-cycle2/comparison-configured-1/commands.json",
+  "reason": "prior Python assertion happened after successful native proof; no repeated native campaign"
+}

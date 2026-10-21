@@ -1,0 +1,44 @@
+{
+  "source": "62eebba95c51917c0fe841fbc23e2bf0d0e7e465",
+  "source_guard": {
+    "head": "62eebba95c51917c0fe841fbc23e2bf0d0e7e465",
+    "tracked_delta_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  },
+  "independently_held_gate_acquisition": "private/premise-resolution-cycle2/joint-gate-2/acquired.json",
+  "gate_acquisition_sha256": "8d8331032698f9667d78b75420d671c3967955548b8c0442e91e4dcefd1d4f84",
+  "environment_overrides": {
+    "QCORE_AUDIT_BUILD_COMMIT": "62eebba95c51917c0fe841fbc23e2bf0d0e7e465",
+    "CARGO_PROFILE_DEV_DEBUG": "0",
+    "CARGO_PROFILE_TEST_DEBUG": "0",
+    "CARGO_INCREMENTAL": "0"
+  },
+  "reading_helper": "/home/cosmo/Documents/GitHub/qcore-c/private/premise-resolution-cycle2/comparator-helpers/attribute-reading-environments",
+  "reading_helper_sha256": "daf6ced620a2a6e3c93fdc5db5163894d614728b69629cee95b27b8a1e07eced",
+  "reading_source_sha256": "419665c7488941489c90ec8b2aac9e22c74c0eebc1262fa7b74f7623fe49005a",
+  "environment_helper": "/home/cosmo/Documents/GitHub/qcore-c/target/release/examples/premise_environment",
+  "environment_helper_sha256": "78eb361b38e5eebd8b8bbabba652714e7db45184605c77f8c61e747dfc8a30a3",
+  "environment_source_sha256": "c9c90553c6e6a4a915e4f536549e8a4b388a5df8361b47265fa4e2b0c3cce5a5",
+  "exact_rlibs": {
+    "qcore_audit": {
+      "path": "/home/cosmo/Documents/GitHub/qcore-c/target/release/libqcore_audit.rlib",
+      "sha256": "9e9633057b9f07c078b43349b064f1e150d3704adade9b1f89e9a1a1dde0cb09"
+    },
+    "qcore_c_gateway": {
+      "path": "/home/cosmo/Documents/GitHub/qcore-c/target/release/deps/libqcore_c_gateway-e446ff2e15cc37d9.rlib",
+      "sha256": "0966f9183ea23dd01a8fd0bd819e9e4aaa3a0d954d5ef61b736431ff1448fac3"
+    },
+    "qcore_contract": {
+      "path": "/home/cosmo/Documents/GitHub/qcore-c/target/release/deps/libqcore_contract-1ae6fd14441b99d3.rlib",
+      "sha256": "14922f0907ac419268dfe40936d939cdde5502762c92b5ba455982365eaf1b0d"
+    },
+    "qcore_schemas": {
+      "path": "/home/cosmo/Documents/GitHub/qcore-c/target/release/deps/libqcore_schemas-0de9b3a16b0fe98c.rlib",
+      "sha256": "c4054017aea6352186503b04278e8d6ca0de4ef16fab3b47b5563992ea26ab9d"
+    },
+    "serde_json": {
+      "path": "/home/cosmo/Documents/GitHub/qcore-c/target/release/deps/libserde_json-08241b9b75b89117.rlib",
+      "sha256": "3cf49f1eb35ba613a5d7b241b154bfe56da68292fb72426b25677ecb3699acba"
+    }
+  },
+  "checker_execution": "no environment export or receipt replay during compile; separate explicit runner required"
+}

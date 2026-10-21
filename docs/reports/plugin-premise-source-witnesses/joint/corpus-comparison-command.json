@@ -1,0 +1,42 @@
+{
+  "command": [
+    "/usr/bin/python3",
+    "private/premise-resolution-cycle2/run_comparisons.py",
+    "--environment-helper",
+    "target/release/examples/premise_environment",
+    "--reading-helper",
+    "private/premise-resolution-cycle2/comparator-helpers/attribute-reading-environments",
+    "--base-views",
+    "private/premise-resolution-cycle2/prepared-base",
+    "--tip-views",
+    "private/premise-resolution-cycle2/prepared-tip",
+    "--out",
+    "private/premise-resolution-cycle2/comparison-corpus-1",
+    "--routes",
+    "corpus"
+  ],
+  "cwd": "/home/cosmo/Documents/GitHub/qcore-c",
+  "queued_utc": "2026-10-21T09:50:37.158754+00:00",
+  "source_guard_before": {
+    "head": "62eebba95c51917c0fe841fbc23e2bf0d0e7e465",
+    "tracked_delta_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  },
+  "helper_compile_receipt_sha256": "41cf0c162478c9c4089c02f0256eb73c939b05ea0906606d3d70bf64f1ec1dfd",
+  "reuse_configured": "comparison-configured-continuation-2 results retained; not rerun",
+  "lock_order": [
+    "PRIMARY",
+    "SMALL"
+  ],
+  "acquired_utc": "2026-10-21T09:52:58.132872+00:00",
+  "source_guard_acquired": {
+    "head": "62eebba95c51917c0fe841fbc23e2bf0d0e7e465",
+    "tracked_delta_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  },
+  "exit": 0,
+  "ended_utc": "2026-10-21T09:53:30.777133+00:00",
+  "source_guard_after": {
+    "head": "62eebba95c51917c0fe841fbc23e2bf0d0e7e465",
+    "tracked_delta_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  },
+  "released_utc": "2026-10-21T09:53:30.798013+00:00"
+}

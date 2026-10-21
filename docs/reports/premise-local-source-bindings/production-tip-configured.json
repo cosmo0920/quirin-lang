@@ -1,0 +1,37 @@
+{
+  "schema": "local-source-production-tip-configured.v1",
+  "analyzer_source": "62eebba95c51917c0fe841fbc23e2bf0d0e7e465",
+  "analyzer_sha256": "5584d30e805afc8406350f389b5e84e5a59d810705ec8db0836414fdb1d67640",
+  "replay_helper_sha256": "b5196351b52c985d81d29fd38886d0e9319206742a2017d22faa02226022b49b",
+  "driver_sha256": "752b38d2d8ed40c0411688b9ec1cb644b70956e7f444fe4aa4d1b516c135f2ad",
+  "expected_source_from_independent_parent_build_receipt": true,
+  "system": {
+    "exit": 0,
+    "complete_selected_recorded_domains": 2,
+    "reproduced_observations": 24,
+    "denominator": 24
+  },
+  "slice": {
+    "exit": 0,
+    "complete_selected_recorded_domains": 1,
+    "reproduced_observations": 2,
+    "denominator": 2
+  },
+  "corpus": "separate full122green at production-tip-corpus.json",
+  "concurrency": "parent-authorized routine single-compiler CPP/replay under SMALL while corpus auditor16 held PRIMARY; no performance claim",
+  "universal_atoms": "open",
+  "files": {
+    "production-tip-configured/acquired.json.gz": "e8f759f75b8712880a03a146c8c403455a84251d271fcf3fe4834d91603ea3c1",
+    "production-tip-configured/commands.json.gz": "25ee0411b2f1f3849d02477d2219ab49e62b657006c66324c8fcd925dc237258",
+    "production-tip-configured/released.json.gz": "c14c5f28f34fd06ac370dbaf0c8f7888e53184f330d65e872f7f7e8ffd21606a",
+    "production-tip-configured/slice/result.json.gz": "50a8ca8eccbb2316325edda02b4e98d1213ec6649458e9c65f8ef391bdfac575",
+    "production-tip-configured/slice/unit-11-candidate-0.prepared.c.gz": "2d1d7cdb003ae0ddf4fc71d375ef192324f0ad47eec6409ea2c5fbd4ae831fd3",
+    "production-tip-configured/slice.log.gz": "ea222878a2ef1533c0d7503e24b1fd48dcc129c6d3119164e7e2a53d3d0d3798",
+    "production-tip-configured/system/result.json.gz": "995124845672d958873c81f5b4c8d1c9f4c38d319aaee48c279bfb616c3b20ec",
+    "production-tip-configured/system/unit-5-candidate-0.prepared.c.gz": "d924695dbffcf630a398671258e49869d4da1e264cac00a293605495f00c9f4c",
+    "production-tip-configured/system/unit-6-candidate-0.prepared.c.gz": "d924695dbffcf630a398671258e49869d4da1e264cac00a293605495f00c9f4c",
+    "production-tip-configured/system.log.gz": "d2dc495035232793072d01d7a6cc941d07ed80479b9be0d1d32e1fcfe00469d5",
+    "production-tip-configured/tip-helper-provenance.json.gz": "abcc0e77609b463844a84b6ff4a2f6348fa44c2846b2931260c9bc9bc5950f55",
+    "production-tip-configured/run-tip-domains.py.gz": "9be0f285c42938b4043bb3236853cf081b26e185280043c2afc15915957f41a0"
+  }
+}

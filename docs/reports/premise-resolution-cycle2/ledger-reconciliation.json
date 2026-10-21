@@ -1,0 +1,48 @@
+{
+  "status": "APPLIED: four amendments; registered operator retired after actual first committed-matrix Python0; production residual rehomed; final Python follows",
+  "before_count": 810,
+  "after_count": 810,
+  "amend_ids": [
+    "PLUGIN-PREMISE-SOURCE-BINDING",
+    "PLUGIN-PREMISE-OUTER-TRUTH",
+    "CJSON-REPRESENTATION-PROSE-AND-SOURCE-BINDING",
+    "LIBC-READING-PREMISES-TYPED-DISCHARGE"
+  ],
+  "retire_id": "PLUGIN-PREMISE-OPERATOR-DESIGN",
+  "retired_original": {
+    "id": "PLUGIN-PREMISE-OPERATOR-DESIGN",
+    "title": "Design explicit premise operators and prerequisite composition without changing current source syntax",
+    "why": "The card implements only conjunction-only opaque atoms and neutral same-name attachments. Loader/build/runtime environments and dependencies are assigned formal propositions/catalogs; no new operator, typed predicate, evidence consumer or general dependency-DAG source syntax is supplied. DISCHARGE: a separately frozen language/API design with total-or-reject grammar, explicit quantifier/prerequisite/evidence semantics, exact context/refutation propagation, Rust/Lean parity and its own source/provider/all-route validation. This is design-only follow-on work and cannot license truth transport or automatic Unsafe.",
+    "source": "docs/reports/plugin-premise-decomposition/README.md",
+    "recorded_by": "PLUGIN-PREMISE-DECOMPOSITION"
+  },
+  "add": {
+    "id": "PREMISE-FLOW-PRODUCTION-DISCHARGE",
+    "title": "Adopt scoped premise flows through an explicitly checked production semantic consumer",
+    "why": "PREMISE-FLOW-OPERATORS supplies executable AND/OR/positive-NOT/terminal syntax and proposed composition, exact source/model/graph/Context replay and independently checked finite source-witness integrations. It deliberately migrates no production flow clause, registers no global typed predicate and supplies no verdict/standing consumer. Missing capability: turn one exactly scoped production obligation into checked authority only under independently discharged complete antecedents, without treating a generic ProposedEvaluation or a finite fixture as universal source truth. DISCHARGE: select and freeze a bounded production declaration/property and eligible predicate family; establish exact source/model/prose/environment correspondence and complete scoped evidence, including every feasible program-path obligation; implement a total-or-reject checked consumer and dependency/invalidation rule with matching Rust/Lean, exact9-coordinate context and refutation controls; preserve legacy erasure/classification and validate intentional verdict movement through standing/provider/all-route evidence. Safe requires all relevant obligations; Unsafe still requires a validated reachable C violation. Existing CJSON-REPRESENTATION-PROSE-AND-SOURCE-BINDING, LIBC-READING-PREMISES-TYPED-DISCHARGE, PLUGIN-PREMISE-SOURCE-BINDING and PLUGIN-PREMISE-OUTER-TRUTH retain their independent source/prose/world proof scopes.",
+    "source": "docs/reports/premise-flow-operators/README.md",
+    "recorded_by": "PREMISE-FLOW-OPERATORS"
+  },
+  "untouched_record_count": 805,
+  "untouched_id_sha256": "6d001dab51ff519850fc732096c7f89a14088b350c3dcba34178782b7b650cd9",
+  "phase1": "after all native postchecks, apply four existing finite-subobligation amendments+actual gate; commit, then run matrix Python0",
+  "phase2": "only after phase1 Python0 discharges design criteria, retire actual registered design ID/rehome production consumer, regenerate+commit, then final Python0",
+  "verified_actual_matrix": {
+    "before": 810,
+    "after": 810,
+    "byte_equivalent_untouched_records": 805,
+    "retired_registered_ids": [
+      "PLUGIN-PREMISE-OPERATOR-DESIGN"
+    ],
+    "new_ids": [
+      "PREMISE-FLOW-PRODUCTION-DISCHARGE"
+    ],
+    "amended_ids": [
+      "CJSON-REPRESENTATION-PROSE-AND-SOURCE-BINDING",
+      "PLUGIN-PREMISE-OUTER-TRUTH",
+      "LIBC-READING-PREMISES-TYPED-DISCHARGE",
+      "PLUGIN-PREMISE-SOURCE-BINDING"
+    ],
+    "status": "all exact draft replacement records equal actual final matrix"
+  }
+}

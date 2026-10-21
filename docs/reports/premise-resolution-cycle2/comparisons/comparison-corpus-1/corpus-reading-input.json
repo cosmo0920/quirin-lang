@@ -1,0 +1,12 @@
+{
+  "base_environment": "private/premise-resolution-cycle2/comparison-corpus-1/base-environments/corpus/base-environment.json",
+  "tip_environment": "private/premise-resolution-cycle2/comparison-corpus-1/tip-environments/corpus/tip-environment.json",
+  "base_diagnostics": "private/premise-resolution-cycle2/prepared-base/corpus/resource-diagnostics.json",
+  "tip_diagnostics": "private/premise-resolution-cycle2/prepared-tip/corpus/resource-diagnostics.json",
+  "base_contracts": "private/premise-resolution-cycle2/prepared-base/corpus/resource-diagnostics.contracts.json",
+  "tip_contracts": "private/premise-resolution-cycle2/prepared-tip/corpus/resource-diagnostics.contracts.json",
+  "base_inputs_root": "/home/cosmo/Documents/GitHub/qcore-c/private/premise-resolution-cycle2/base-freeze/inputs",
+  "tip_inputs_root": "/home/cosmo/Documents/GitHub/qcore-c/private/premise-resolution-cycle2/tip-freeze/inputs",
+  "base_build_commit": "c1625baf713e4d8498c39282238675749237005d",
+  "tip_build_commit": "62eebba95c51917c0fe841fbc23e2bf0d0e7e465"
+}

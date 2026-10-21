@@ -1,0 +1,17 @@
+import QCore.PluginSourceWitnesses
+#print axioms QCore.PluginSourceWitnesses.duplicate_finite_fact
+#print axioms QCore.PluginSourceWitnesses.duplicate_has_no_open
+#print axioms QCore.PluginSourceWitnesses.changed_case_refuses
+#print axioms QCore.PluginSourceWitnesses.changed_context_refuses
+#print axioms QCore.PluginSourceWitnesses.missing_source_refuses
+#print axioms QCore.PluginSourceWitnesses.admitted_preserves_exact_context
+#print axioms QCore.PluginSourceWitnesses.creator_return_is_not_registration_evidence
+#print axioms QCore.PluginSourceWitnesses.c_context_failure_does_not_erase_prior_link
+#print axioms QCore.PluginSourceWitnesses.old_truth_remains_independent
+#print axioms QCore.PluginSourceWitnesses.duplicate_completion_fact
+#print axioms QCore.PluginSourceWitnesses.go_completion_fact
+#print axioms QCore.PluginSourceWitnesses.finite_go_implication_refuted
+#print axioms QCore.PluginSourceWitnesses.closing_token_overflow_refuses
+#print axioms QCore.PluginSourceWitnesses.out_of_range_prefix_refuses
+#print axioms QCore.PluginSourceWitnesses.non_boundary_prefix_refuses
+#print axioms QCore.PluginSourceWitnesses.missing_layout_case_refuses

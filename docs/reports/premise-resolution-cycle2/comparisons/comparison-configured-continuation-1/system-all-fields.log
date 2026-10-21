@@ -1,0 +1,24 @@
+Traceback (most recent call last):
+  File "/home/cosmo/Documents/GitHub/qcore-c/private/premise-resolution-cycle2/compare_records.py", line 147, in <module>
+    left=migration(left,side='base');right=migration(right)
+  File "/home/cosmo/Documents/GitHub/qcore-c/private/premise-resolution-cycle2/compare_records.py", line 66, in migration
+    new_key=migration(key,path+('$key',),side);assert new_key not in result;result[new_key]=migration(item,path+(key,),side)
+                                                                                            ~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/cosmo/Documents/GitHub/qcore-c/private/premise-resolution-cycle2/compare_records.py", line 66, in migration
+    new_key=migration(key,path+('$key',),side);assert new_key not in result;result[new_key]=migration(item,path+(key,),side)
+                                                                                            ~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/cosmo/Documents/GitHub/qcore-c/private/premise-resolution-cycle2/compare_records.py", line 62, in migration
+    if isinstance(value,list):return [migration(x,path+(i,),side) for i,x in enumerate(value)]
+                                      ~~~~~~~~~^^^^^^^^^^^^^^^^^^
+  File "/home/cosmo/Documents/GitHub/qcore-c/private/premise-resolution-cycle2/compare_records.py", line 66, in migration
+    new_key=migration(key,path+('$key',),side);assert new_key not in result;result[new_key]=migration(item,path+(key,),side)
+                                                                                            ~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/cosmo/Documents/GitHub/qcore-c/private/premise-resolution-cycle2/compare_records.py", line 66, in migration
+    new_key=migration(key,path+('$key',),side);assert new_key not in result;result[new_key]=migration(item,path+(key,),side)
+                                                                                            ~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/cosmo/Documents/GitHub/qcore-c/private/premise-resolution-cycle2/compare_records.py", line 66, in migration
+    new_key=migration(key,path+('$key',),side);assert new_key not in result;result[new_key]=migration(item,path+(key,),side)
+  File "/home/cosmo/Documents/GitHub/qcore-c/private/premise-resolution-cycle2/compare_records.py", line 35, in migration
+    assert sha(value.encode())==path[-1] and proof['reconstructed_base_environments'][path[-1]]==value
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+AssertionError

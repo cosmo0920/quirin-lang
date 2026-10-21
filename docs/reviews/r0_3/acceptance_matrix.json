@@ -7,7 +7,7 @@
  "section_ownership": {
   "note": "Card D02-GEN-REST. Every top-level key of this file is labelled here, so no section is silently hand-maintained. `derived` sections are recomputed by the generator on every run and a hand edit to them is overwritten; `hand_maintained` sections are carried verbatim from the previous matrix, which is why a regeneration no longer reverts a later reconciliation; `integrator_supplied` numbers are measurements the generator cannot take.",
   "generator": "docs/reports/remaining-d02/build_matrix.py",
-  "carried_from": "private/plugin-premise-integration/union-previous.json",
+  "carried_from": "docs/reviews/r0_3/acceptance_matrix.json",
   "vocabulary": {
    "derived": "recomputed by docs/reports/remaining-d02/build_matrix.py from the named manifest, validated record or working tree; a hand edit here is overwritten on the next regeneration",
    "integrator_supplied": "a measurement this script cannot take; supplied through --gate, otherwise carried from the previous matrix and labelled as carried",
@@ -170,7 +170,7 @@
   "note": "Prose revision 0.3 is the specification revision. It is separate from, and does not move with, the package/protocol/evidence/schema versions below.",
   "prose_specification_revision": "0.3",
   "documentation_revision": "0.3",
-  "qcore_schemas_rust_api": "20.0.0",
+  "qcore_schemas_rust_api": "20.1.0",
   "qcore_schemas_version_cause": "P02 added the public PluginLimits::additional field (3.0.0); P04 then added the counter_summary module and one variant each to witness/obligation/plugin plus an optional request field, three source-incompatible additions the documented policy makes a major change (4.0.0). Every later major (5.0.0 through 13.0.0) is the same policy applied to a further source-incompatible Rust API addition as a transported vocabulary landed; 13.0.0 is P04-COMPOSE-FS's three enum variants plus CompositionFamilyInput::nested() returning a vector because that family has two nested questions and one slot could not publish both. Existing wire bytes are unchanged at every step and pinned by crates/qcore-schemas/tests/counter_request_wire.rs and crates/qcore-schemas/tests/composition_request_wire.rs; COMPOSITION_SOURCE_INPUT_VERSION stays 2, so no existing task digest moved; 14.0.0 is P04-COMPOSE-UNSUPPORTED's three enum variants for the fifth and last reachable composition family, with COMPOSITION_SOURCE_INPUT_VERSION still 2 and no accessor changing shape, because P04-COMPOSE-FS had already paid that cost.",
   "plugin_protocol": "v1 (unchanged)",
   "semantic_evidence": "v2 (unchanged)",
@@ -6754,11 +6754,11 @@
   "note": "providers/ is a separate Cargo workspace, excluded from the core workspace; P01 verified empirically that the core workspace builds and passes its full suite with providers/ moved out of the tree."
  },
  "validation": {
-  "note": "PLUGIN-PREMISE-INTEGRATION: merge 67697d6c5695110981cc08e616190ce106627d7f is exactly the complete tree of completed card d208636856bea292070fd06aa96a1624afbec5a1. Rust8419/0failed/15ignored(528units541summaries), Lean354, fmt/Clippy/examples/submodules/defaultrelease and provider133Rust/1ignored/25Python/allfivepackage builds+verify are BORROWED completed-card measurements at frozen c1625baf713e4d8498c39282238675749237005d, not fresh root native measurements. All relevant source equality is checked; no semantic merge repair. Exact command/exits/logs retained by card validation/final-gate-4. Root clang recording is actual local discovery only; measured-run Clang is separately retained in the borrowed card command receipt. Card six native audits/full comparisons retain original scope. First and final card Python374 passed. Final root committed-matrix Python confirmation follows this integration receipt commit. Source bindings remain Open; no new syntax or truth/verdict promotion.",
-  "workspace_tests": 8419,
+  "note": "Cycle2 combined source 62eebba95c51917c0fe841fbc23e2bf0d0e7e465: fresh successful joint-gate-2 all22 steps0, Rust8441/0failed/15ignored(532units545summaries), Lean357, provider133Rust/1ignored/25Python and all5 package builds/verifications. All six native audits and full-record comparisons pass0; no verdict movement. Fresh phase1 committed-matrix Python374 passes0 at f03192a4e7e0bd7a8daccb1cc69eb51ecf34b555; registered operator design retired and production consumer residual rehomed. Final regenerated committed-matrix confirmation follows. Failed gate1 and corrected comparison/source replay attempts retained. Commands/exits/private logs and exact source scopes are in this report.",
+  "workspace_tests": 8441,
   "provider_tests": 133,
   "python_evidence_validator_tests": 374,
-  "lean_audits": 354,
+  "lean_audits": 357,
   "lean_audit_files": [
    "AuditAbiEnumConstPointer.lean",
    "AuditAggregateOwnedField.lean",
@@ -6918,6 +6918,7 @@
    "AuditLiteralArgumentPremise.lean",
    "AuditLiteralTailActual.lean",
    "AuditLocalCondition.lean",
+   "AuditLocalSourceBindings.lean",
    "AuditLoopBudget.lean",
    "AuditLoopInvariants.lean",
    "AuditLoopLifetimeSummary.lean",
@@ -6977,8 +6978,10 @@
    "AuditPluginNeutralOverlap.lean",
    "AuditPluginPremiseDecomposition.lean",
    "AuditPluginReadingEnvironment.lean",
+   "AuditPluginSourceWitnesses.lean",
    "AuditPointerQualifierReader.lean",
    "AuditPointerStore.lean",
+   "AuditPremiseFlow.lean",
    "AuditPremiseRefinement.lean",
    "AuditPrintRouteSelection.lean",
    "AuditProcessQuotaPlan.lean",
@@ -7119,9 +7122,9 @@
   "reevaluation_followup_exit": 0,
   "cargo_fmt": "clean",
   "cargo_clippy": "clean",
-  "standing_gate": "complete",
+  "standing_gate": "complete; final regenerated committed-matrix confirmation follows",
   "full_language_conformance": false,
-  "measurement_provenance": "integrator_supplied (docs/reports/plugin-premise-integration/gate.json)"
+  "measurement_provenance": "integrator_supplied (docs/reports/premise-resolution-cycle2/gate.json)"
  },
  "named_followups": [
   {
@@ -12723,37 +12726,37 @@
   {
    "id": "CJSON-REPRESENTATION-PROSE-AND-SOURCE-BINDING",
    "title": "Bind the cJSON representation propositions to prose and exact caller environments",
-   "why": "PREMISE-DECOMPOSITION-CYCLE1 publishes a report-owned replayable variant with nine opaque/open representation atoms with explicit Lean Props and conditional model theorems while preserving the exact production detach_list_representation reader. The production companion is rejected because its new name changes closed-world classification even under Unknown; a neutral graph-attachment interface must preserve that classification before production publication. No proof equates the old prose and conjunction, identifies imported C heaps with the mathematical environment, or establishes arbitrary callers and writer traces satisfy the antecedents. DISCHARGE: prove/review precise prose-to-formal correspondence, independently bind exact heap/trace/source/build/bounds contexts, exercise missing/refuted/incompatible antecedents and transitive result impact, and retain declared/evidence-only standing until a separately reviewed typed consumer exists. Opaque text, observed source shape, agreement and LLM proposals confer no semantic authority. This card does not cover allocator hooks, insertion invariant or sibling-release/lookup/Removed transport residuals. AMENDED (PREMISE-EVIDENCE-CONTRACTS): a production same-name graph-v2 neutral attachment now preserves exact legacy name/text/singleton/erasure and all closed-world facts; nine formal references, prerequisite/environment IDs and explicit content-addressed model/audit bindings resolve integrity-only. Six fresh eight-home pairs preserve every static/null/runtime/standing/classification record; actual-context refutation impact and real direct/summary controls pass. The attachment interface portion is complete. All source/prose correspondences, actual heap/trace antecedents, evidence transport and typed semantic discharge remain Open; reference integrity is not truth. See docs/reports/premise-evidence-contracts/README.md, including the retained historical classifier-helper correction.",
+   "why": "PREMISE-DECOMPOSITION-CYCLE1 publishes a report-owned replayable variant with nine opaque/open representation atoms with explicit Lean Props and conditional model theorems while preserving the exact production detach_list_representation reader. The production companion is rejected because its new name changes closed-world classification even under Unknown; a neutral graph-attachment interface must preserve that classification before production publication. No proof equates the old prose and conjunction, identifies imported C heaps with the mathematical environment, or establishes arbitrary callers and writer traces satisfy the antecedents. DISCHARGE: prove/review precise prose-to-formal correspondence, independently bind exact heap/trace/source/build/bounds contexts, exercise missing/refuted/incompatible antecedents and transitive result impact, and retain declared/evidence-only standing until a separately reviewed typed consumer exists. Opaque text, observed source shape, agreement and LLM proposals confer no semantic authority. This card does not cover allocator hooks, insertion invariant or sibling-release/lookup/Removed transport residuals. AMENDED (PREMISE-EVIDENCE-CONTRACTS): a production same-name graph-v2 neutral attachment now preserves exact legacy name/text/singleton/erasure and all closed-world facts; nine formal references, prerequisite/environment IDs and explicit content-addressed model/audit bindings resolve integrity-only. Six fresh eight-home pairs preserve every static/null/runtime/standing/classification record; actual-context refutation impact and real direct/summary controls pass. The attachment interface portion is complete. All source/prose correspondences, actual heap/trace antecedents, evidence transport and typed semantic discharge remain Open; reference integrity is not truth. See docs/reports/premise-evidence-contracts/README.md, including the retained historical classifier-helper correction. AMENDED (PREMISE-LOCAL-SOURCE-BINDINGS): Complete typed actual detach-body/three-field representation comparison plus adapter-owned actual native11-case heap-domain execution, eight local entry equations, detach/remaining postchecks, fixed Context/property/guard identity and sealed three-atom four-flow evaluation. REMAINS OPEN: English-to-mathematical equivalence; arbitrary heap/custody/alias/lifetime/writer/allocator universal claims; whole-C extraction and Rust-Lean correspondence. Actual finite property/context bindings and complete recorded-source domains are in docs/reports/premise-local-source-bindings/README.md; source/math extraction and semantic consumers remain separately guarded.",
    "source": "docs/reports/premise-decomposition-cycle1/README.md",
    "recorded_by": "PREMISE-DECOMPOSITION-CYCLE1"
   },
   {
    "id": "LIBC-READING-PREMISES-TYPED-DISCHARGE",
    "title": "Bind libc reading propositions to independently checked source contexts before typed discharge",
-   "why": "Cycle1B migrates __errno_location and strerror nested_call_admission to3/5opaque atoms with stable formal proposition IDs, exact Context bindings, conditional Lean decomposition/counterexample theorems and direct/summary dependency controls. No typed registry entry, semantic consumer, verified library body or automatic verdict invalidation exists. DISCHARGE: independently establish each entire guarded proposition for its exact artifact/property/profile/scope/bounds/assumptions/source/build/evidence version and retained expected graph; preserve the accessor either-route alternative rather than requiring both. Any evidence recontextualization or checked verdict invalidation needs a separate scoped rule and matching proof; Unknown is not false and a refuted assumption is not a reachable C violation. Operator proposals AND/forbidden/OR/terminal remain separate semantics work. LIBC-READING-SITE-EVIDENCE-V1 adds transactional finite local-checker observations with exact spans, sibling sets, graph/atom/Context/environment references, named Prop leaves and conservative held-source replay controls. Selected successful captures do not enumerate the complete relevant reading domain or prove any of the eight opaque universal atoms; all remain Open. Source/preparation/environment reproduction refusals are evidence boundaries, not refutations or C violations.",
+   "why": "Cycle1B migrates __errno_location and strerror nested_call_admission to3/5opaque atoms with stable formal proposition IDs, exact Context bindings, conditional Lean decomposition/counterexample theorems and direct/summary dependency controls. No typed registry entry, semantic consumer, verified library body or automatic verdict invalidation exists. DISCHARGE: independently establish each entire guarded proposition for its exact artifact/property/profile/scope/bounds/assumptions/source/build/evidence version and retained expected graph; preserve the accessor either-route alternative rather than requiring both. Any evidence recontextualization or checked verdict invalidation needs a separate scoped rule and matching proof; Unknown is not false and a refuted assumption is not a reachable C violation. Operator proposals AND/forbidden/OR/terminal remain separate semantics work. LIBC-READING-SITE-EVIDENCE-V1 adds transactional finite local-checker observations with exact spans, sibling sets, graph/atom/Context/environment references, named Prop leaves and conservative held-source replay controls. Selected successful captures do not enumerate the complete relevant reading domain or prove any of the eight opaque universal atoms; all remain Open. Source/preparation/environment reproduction refusals are evidence boundaries, not refutations or C violations. AMENDED (PREMISE-LOCAL-SOURCE-BINDINGS): All148 selected recorded BASE observations independently source-replayed:24system+2slice+122corpus in20 complete selected owner/declaration domains; exact old receipts, original scalar-OR-nested checks, effective environments, compile/source/profile/all9Context/graphs, consultation closure and truncation controls. Corpus imports reconstructed by8independently exported summaries from5actual home sources; complete other-unit recorded definition census and actual link/interposition truth remain explicit prerequisites. REMAINS OPEN: all8original universal atoms; complete all-relevant guarded-reading universe; external libc implementation/body mode truth; whole-C extraction and Rust-Lean correspondence. Actual finite property/context bindings and complete recorded-source domains are in docs/reports/premise-local-source-bindings/README.md; source/math extraction and semantic consumers remain separately guarded.",
    "source": "docs/reports/libc-reading-site-evidence/README.md",
    "recorded_by": "LIBC-READING-SITE-EVIDENCE-V1"
   },
   {
    "id": "PLUGIN-PREMISE-SOURCE-BINDING",
    "title": "Bind deployed plugin prerequisite evidence to actual artifacts, loader traces and exact property contexts",
-   "why": "PLUGIN-PREMISE-DECOMPOSITION factors166 existing same-name occurrences and two outer-envelope catalogs into explicit conditional propositions, environments and prerequisite references. All source bindings remain Open: artifact and symbol/ABI resolution, build and loader environment, complete registration/candidate events, callback/context liveness, transitive custody and final unload need independently supplied source/trace evidence. In particular the pinned Go proxy creator ignores the register return; allocation establishes no successful registration. DISCHARGE: source-bound evidence for these exact prerequisites and all nine Context coordinates, explicit replay/negative controls and exact dependent-row propagation, without prose equivalence, implicit provider authority or automatic Unsafe.",
-   "source": "docs/reports/plugin-premise-decomposition/README.md",
+   "why": "PLUGIN-PREMISE-DECOMPOSITION's166 original same-name bindings and seven callback atoms remain Open and unchanged. PLUGIN-PREMISE-SOURCE-WITNESSES now independently executes and replays20 local real-header fixture cases over17 unchanged typed source projections (15 native-exercised functions),527 actual dependency-byte inputs,40 artifacts and13 DSOs. Sealed finite assignments authenticate all nine Context axes: three bounded predicates are Observed Supported and the selected Go creator-implies-registration predicate is Observed Refuted, with !->/AND/OR/terminal propagation and79 refusal controls. This discharges these selected local source/build/artifact/ABI/phase prerequisites only; it does not promote original universal atoms or produce Unsafe. REMAINS: independently held deployed artifact inventory, actual deployment loader/registration traces with justified completeness, foreign/transitive callback frame/custody/liveness, copied contexts and final unload evidence for the original quantified premises. DISCHARGE: source/model evidence over those complete exact domains and contexts, preserving original authority and fail-closed rules. Joint production preservation measurements belong to the integrator's frozen cycle2 campaign.",
+   "source": "docs/reports/plugin-premise-source-witnesses/README.md",
    "recorded_by": "PLUGIN-PREMISE-DECOMPOSITION"
   },
   {
    "id": "PLUGIN-PREMISE-OUTER-TRUTH",
    "title": "Establish both plugin outer-envelope propositions and their guarded callback bridge",
-   "why": "The unchanged rk_plugin_library and flb_external_plugin outer declarations retain independent names/prose/digests/selection. Their proposed12/14-atom catalogs are deliberately additional guarded obligations, not asserted equivalences. Model/audit/source/candidate hashes establish reference integrity only. DISCHARGE: independent source/model/prose/environment correspondence and complete guarded proofs or validated refutations for both actual loaded-code families and the selected callback bridge; preserve separate authority, registration, frame/cJSON, borrowing, lifetime and unload assumptions. A sample callback set or dlsym success supplies no whole-world closure. Existing static interceptor closure and loader reach residuals remain separately open.",
-   "source": "docs/reports/plugin-premise-decomposition/README.md",
+   "why": "The unchanged rk_plugin_library and flb_external_plugin names/prose/digests/selection and their separate12/14-atom proposed catalogs remain independent and Open. PLUGIN-PREMISE-SOURCE-WITNESSES maps every original catalog atom beside concrete finite loader cases: actual local compilation/header/artifact/symbol/layout checks, selected registration guards, retention/copy/link and failure/destroy close ordering. The local Go ignored-return counterexample refutes only a new scoped implication; it refutes neither original envelope nor the seven original atoms. REMAINS: full guarded source/model/prose correspondence and complete deployed callback domains, public/candidate registration closure, frame/cJSON and borrowing/custody facts, transitive lifetime/copy/reference/unload proofs for both loaded-code families and their exact property contexts. Hashes, sample symbols and local fixture traces alone supply no whole-world closure. Existing interceptor-closure and loader-reach residuals remain separately open; no automatic Unsafe is authorized.",
+   "source": "docs/reports/plugin-premise-source-witnesses/README.md",
    "recorded_by": "PLUGIN-PREMISE-DECOMPOSITION"
   },
   {
-   "id": "PLUGIN-PREMISE-OPERATOR-DESIGN",
-   "title": "Design explicit premise operators and prerequisite composition without changing current source syntax",
-   "why": "The card implements only conjunction-only opaque atoms and neutral same-name attachments. Loader/build/runtime environments and dependencies are assigned formal propositions/catalogs; no new operator, typed predicate, evidence consumer or general dependency-DAG source syntax is supplied. DISCHARGE: a separately frozen language/API design with total-or-reject grammar, explicit quantifier/prerequisite/evidence semantics, exact context/refutation propagation, Rust/Lean parity and its own source/provider/all-route validation. This is design-only follow-on work and cannot license truth transport or automatic Unsafe.",
-   "source": "docs/reports/plugin-premise-decomposition/README.md",
-   "recorded_by": "PLUGIN-PREMISE-DECOMPOSITION"
+   "id": "PREMISE-FLOW-PRODUCTION-DISCHARGE",
+   "title": "Adopt scoped premise flows through an explicitly checked production semantic consumer",
+   "why": "PREMISE-FLOW-OPERATORS supplies executable AND/OR/positive-NOT/terminal syntax and proposed composition, exact source/model/graph/Context replay and independently checked finite source-witness integrations. It deliberately migrates no production flow clause, registers no global typed predicate and supplies no verdict/standing consumer. Missing capability: turn one exactly scoped production obligation into checked authority only under independently discharged complete antecedents, without treating a generic ProposedEvaluation or a finite fixture as universal source truth. DISCHARGE: select and freeze a bounded production declaration/property and eligible predicate family; establish exact source/model/prose/environment correspondence and complete scoped evidence, including every feasible program-path obligation; implement a total-or-reject checked consumer and dependency/invalidation rule with matching Rust/Lean, exact9-coordinate context and refutation controls; preserve legacy erasure/classification and validate intentional verdict movement through standing/provider/all-route evidence. Safe requires all relevant obligations; Unsafe still requires a validated reachable C violation. Existing CJSON-REPRESENTATION-PROSE-AND-SOURCE-BINDING, LIBC-READING-PREMISES-TYPED-DISCHARGE, PLUGIN-PREMISE-SOURCE-BINDING and PLUGIN-PREMISE-OUTER-TRUTH retain their independent source/prose/world proof scopes.",
+   "source": "docs/reports/premise-flow-operators/README.md",
+   "recorded_by": "PREMISE-FLOW-OPERATORS"
   }
  ],
  "updated": "Completed plugin premise integration; exact hand-maintained union retains810followups, borrowed measured-source8419Rust/354Lean/freshcard133provider, exact source equivalence checked; authoritative root committed-matrix Python confirmation in integration receipt."

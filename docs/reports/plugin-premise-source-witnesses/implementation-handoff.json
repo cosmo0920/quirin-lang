@@ -1,0 +1,29 @@
+{
+  "base": "882e128c12161babdbfa36806829894eadf600ba",
+  "source": "e1a59d73e1a9ebfe451cc3473d9e21c3a9a55052",
+  "operator_shared_ancestor": "69ece79f5",
+  "branch": "codex/plugin-premise-source-witnesses",
+  "status": "implementation ready; joint final gate pending",
+  "owned_source": [
+    "crates/quirin-source-analysis/src/plugin_source_witnesses.rs",
+    "crates/quirin-source-analysis/src/plugin_source_witnesses/",
+    "crates/quirin-source-analysis/examples/plugin_source_witnesses.rs",
+    "proof/QCore/PluginSourceWitnesses.lean",
+    "proof/AuditPluginSourceWitnesses.lean"
+  ],
+  "shared_edits": [
+    "crates/quirin-source-analysis/src/lib.rs module export",
+    "proof/QCore.lean registered import",
+    "Cargo.lock qcore-frontend schemas dependency from shared operator checkpoint"
+  ],
+  "commands": [
+    "cargo test -p quirin-source-analysis --lib plugin_source_witnesses -j1",
+    "cargo clippy -p quirin-source-analysis --lib --example plugin_source_witnesses -j1 -- -D warnings",
+    "cargo run -p quirin-source-analysis --example plugin_source_witnesses -j1 -- private/plugin-premise-source-witnesses/replay-5",
+    "cd proof && lake env lean -o .lake/build/lib/lean/QCore/PluginSourceWitnesses.olean QCore/PluginSourceWitnesses.lean",
+    "cd proof && lake env lean AuditPluginSourceWitnesses.lean"
+  ],
+  "private_evidence": "/home/cosmo/.codex/worktrees/w48-bottom-up-batch4/qcore-c/private/plugin-premise-source-witnesses",
+  "final_native_observation": "/home/cosmo/.codex/worktrees/w48-bottom-up-batch4/qcore-c/private/plugin-premise-source-witnesses/replay-5",
+  "joint_collector": "No previous seven-atom inverse; baseline already has all old metadata/captures. Full old payload/environment/null/runtime/closed-world comparisons remain required."
+}

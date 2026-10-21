@@ -414,3 +414,6 @@ pub(crate) mod test_support {
 }
 
 mod call_free_condition_reads;
+
+/// Bounded complete recorded-site source replay; no verdict consumer.
+pub mod reading_site_domain;

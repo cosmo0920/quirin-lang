@@ -1,0 +1,8 @@
+{
+  "pid": 1181972,
+  "cmdline": "flock /tmp/qcore-c-cycle2-small-compile.lock env CARGO_PROFILE_DEV_DEBUG=0 CARGO_INCREMENTAL=0 cargo run -p quirin-source-analysis --example plugin_source_witnesses -j1 -- /home/cosmo/.codex/worktrees/w48-bottom-up-batch4/qcore-c/private/plugin-premise-source-witnesses/replay-1 ",
+  "cwd": "/home/cosmo/.codex/worktrees/w48-bottom-up-batch4/qcore-c",
+  "reason": "cancel confirmed unacquired own waiter to include parent-required finite refutation in first actual runtime source freeze",
+  "time": "2026-10-21T07:44:54.413851+00:00",
+  "no_child_output_directory": true
+}

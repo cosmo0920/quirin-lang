@@ -1,0 +1,51 @@
+{
+  "routes": [
+    {
+      "route": "system",
+      "rows": 448,
+      "units": 15,
+      "counts": {
+        "Unknown": 345,
+        "Safe": 99,
+        "Unsafe": 4
+      },
+      "invocation": "private/premise-resolution-cycle2/measure-1/system/base/invocation.json",
+      "exit": 0,
+      "source_guard_equal": true,
+      "raw_diagnostics": "private/premise-resolution-cycle2/measure-1/system/base/resource-diagnostics.json",
+      "byte_exact_prepared_view": "private/premise-resolution-cycle2/prepared-base/system"
+    },
+    {
+      "route": "slice",
+      "rows": 404,
+      "units": 16,
+      "counts": {
+        "Unknown": 346,
+        "Safe": 53,
+        "Pending": 4,
+        "Unsafe": 1
+      },
+      "invocation": "private/premise-resolution-cycle2/measure-1/slice/base/invocation.json",
+      "exit": 0,
+      "source_guard_equal": true,
+      "raw_diagnostics": "private/premise-resolution-cycle2/measure-1/slice/base/resource-diagnostics.json",
+      "byte_exact_prepared_view": "private/premise-resolution-cycle2/prepared-base/slice"
+    },
+    {
+      "route": "corpus",
+      "rows": 4834,
+      "units": 185,
+      "counts": {
+        "Unknown": 3852,
+        "Safe": 973,
+        "Unsafe": 9
+      },
+      "invocation": "private/premise-resolution-cycle2/measure-1/corpus/base/invocation.json",
+      "exit": 0,
+      "source_guard_equal": true,
+      "raw_diagnostics": "private/premise-resolution-cycle2/measure-1/corpus/base/corpus/resource-diagnostics.json",
+      "byte_exact_prepared_view": "private/premise-resolution-cycle2/prepared-base/corpus"
+    }
+  ],
+  "ambient_work": "Narrow serial native fixture/type/module checks ran separately under auxiliary lock; no workspace/provider/fullgate ran concurrently. No performance or throughput claim."
+}

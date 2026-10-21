@@ -1,0 +1,31 @@
+{
+  "utc": "2026-10-21T09:16:57.286801+00:00",
+  "locks": [
+    {
+      "command": "python3",
+      "pid": 1640488,
+      "type": "FLOCK",
+      "size": null,
+      "mode": "WRITE",
+      "m": false,
+      "start": 0,
+      "end": 0,
+      "path": "/tmp/qcore-c-cycle2-small-compile.lock"
+    },
+    {
+      "command": "python3",
+      "pid": 1616187,
+      "type": "FLOCK",
+      "size": null,
+      "mode": "WRITE",
+      "m": false,
+      "start": 0,
+      "end": 0,
+      "path": "/tmp/qcore-c-card-validation-20261021.lock"
+    }
+  ],
+  "command": "flock /tmp/qcore-c-cycle2-small-compile.lock python3 private/premise-resolution-cycle2/run_comparisons.py --environment-helper target/release/examples/premise_environment --reading-helper private/premise-resolution-cycle2/comparator-helpers/attribute-reading-environments --base-views private/premise-resolution-cycle2/prepared-base --tip-views private/premise-resolution-cycle2/prepared-tip --out private/premise-resolution-cycle2/comparison-configured-1 --routes system,slice",
+  "concurrency": "Root corpus16 TIP audit continues under PRIMARY; this explicitly authorized SMALL phase serializes one typed native binder or Python identity/comparison process at a time. No workspace/provider/audit run or performance claim.",
+  "observational_limit": "Initial sandbox lslocks returned empty; this host process-lock inventory uses escalated read-only observation.",
+  "later_attribution": "SMALL PID1640488 belongs to sibling libc26 source replay, acquired09:16:29UTC after this configured attempt had failed/released. This is an after-attempt host-lock observation, not proof that the comparator still held the lock."
+}

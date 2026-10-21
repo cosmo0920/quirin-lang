@@ -614,6 +614,8 @@ Regenerate with `python3 scripts/build_docs_index.py`; validate with `--check`.
 
 | [plugin-premise-integration](plugin-premise-integration/README.md) | Plugin premise integration |
 
+| [plugin-premise-source-witnesses](plugin-premise-source-witnesses/README.md) | PLUGIN-PREMISE-SOURCE-WITNESSES |
+
 | [premise-contracts-integration](premise-contracts-integration/README.md) | Concrete premise contract integration |
 
 | [premise-decomposition-cycle1](premise-decomposition-cycle1/README.md) | cJSON representation premise decomposition, cycle 1 |
@@ -622,7 +624,13 @@ Regenerate with `python3 scripts/build_docs_index.py`; validate with `--check`.
 
 | [premise-evidence-contracts](premise-evidence-contracts/README.md) | Concrete premise evidence contracts |
 
+| [premise-flow-operators](premise-flow-operators/README.md) | Executable premise flow operators |
+
 | [premise-integration](premise-integration/README.md) | Serial premise and implementation integration |
+
+| [premise-local-source-bindings](premise-local-source-bindings/README.md) | Premise local source bindings |
+
+| [premise-resolution-cycle2](premise-resolution-cycle2/README.md) | Premise resolution cycle 2 |
 
 | [process-fixtures-fs-write](process-fixtures-fs-write/README.md) | PROCESS-FIXTURES-FS-WRITE-OUTSIDE-HOST-CRATE: one out-of-process writer for every executable test fixture |
 

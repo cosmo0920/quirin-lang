@@ -3528,6 +3528,7 @@ resource_clause = "requires", "resource_contract_v1", ";"
                 | "requires", hypothesis_atom, ";"
                 | "requires", hypothesis_all, ";"
                 | "requires", hypothesis_decomposition, ";"
+                | "requires", premise_flow, ";"
                 | "requires", discriminant, ";"
                 | "ensures", "normal", resource_predicate, ";"
                 | "ensures", "normal", arm_predicate, ";"
@@ -3713,6 +3714,21 @@ tails are refused. The result retains the item's identity. The physical-body
 reader additionally requires the exact explicit `detach_list_representation`
 premise and complete bounded list layout/unlink frame; neither its syntax nor
 its premise establishes caller membership.
+
+
+### G05-flow. Proposed premise expressions
+
+C04.18.3 adds one contextual clause, also admitted in the explicit bounds and resource-type model views after full vocabulary validation:
+
+```ebnf
+premise_flow = "resource_premise_flow_v1", "(", flow_id, ",", flow_expr, ")" ;
+flow_expr = atom_id | "flow", "(", flow_id, ")"
+          | "(", flow_expr, flow_operator, flow_expr, ")" ;
+flow_operator = "|->" | "||->" | "!->" | "->|" ;
+```
+
+IDs match `[a-z][a-z0-9_]*`. Every binary operation requires its own parentheses; no precedence or associativity is inferred. `|->` reuses MapsTo only inside this clause; elsewhere its state-clause meaning is unchanged. The lexer uses longest matching for three additional symbols `||->`, `!->`, `->|`; the contextual heads remain ordinary words. `flow(ID)` resolves only a same-declaration entry; atom IDs resolve only existing graph atoms. Full reference validation rejects missing IDs, duplicate entries, cycles, excessive expansion and terminal composition below the root, including through references. Every branch and entry is checked. The exact limits, three-valued truth tables, positive-refutation requirement, explicit discharged terminal condition, source/model/Context replay and evidence-only authority boundary are C04.18.3. These records add no graph field or premise, and inherited graph/flow identifiers are literal metadata independent of formal parameter renaming. The source-language expression grammar, scoped S3 and FFI vocabularies do not gain general flow expressions.
+
 
 ## G05a. Contract inclusion and inheritance
 

@@ -1,0 +1,134 @@
+{
+  "base": "882e128c12161babdbfa36806829894eadf600ba",
+  "validated_source": "e1a59d73e1a9ebfe451cc3473d9e21c3a9a55052",
+  "commands": [
+    {
+      "name": "libcheck1",
+      "exit": 0
+    },
+    {
+      "name": "libcheck2",
+      "exit": 0
+    },
+    {
+      "name": "libcheck3",
+      "exit": 0
+    },
+    {
+      "name": "native1",
+      "exit": 1
+    },
+    {
+      "name": "native2",
+      "exit": 1
+    },
+    {
+      "name": "native3",
+      "exit": 0
+    },
+    {
+      "name": "focused-test1",
+      "exit": 0
+    },
+    {
+      "name": "focused-test2",
+      "exit": 101
+    },
+    {
+      "name": "lean-model1",
+      "exit": 1
+    },
+    {
+      "name": "replay1-unacquired-canceled",
+      "exit": 143
+    },
+    {
+      "name": "focused-test3",
+      "exit": 0
+    },
+    {
+      "name": "replay3",
+      "exit": 0
+    },
+    {
+      "name": "lean-model2",
+      "exit": 0
+    },
+    {
+      "name": "lean-audit2",
+      "exit": 0
+    },
+    {
+      "name": "clippy1",
+      "exit": 101
+    },
+    {
+      "name": "focused-test4",
+      "exit": 0
+    },
+    {
+      "name": "clippy2",
+      "exit": 0
+    },
+    {
+      "name": "replay4",
+      "exit": 0
+    },
+    {
+      "name": "lean-model3",
+      "exit": 0
+    },
+    {
+      "name": "lean-audit3",
+      "exit": 0
+    },
+    {
+      "name": "focused-test5",
+      "exit": 0
+    },
+    {
+      "name": "clippy3",
+      "exit": 0
+    },
+    {
+      "name": "replay5",
+      "exit": 0
+    }
+  ],
+  "final_focused": {
+    "Rust": {
+      "passed": 3,
+      "failed": 0,
+      "filtered": 118
+    },
+    "native_cases": 20,
+    "original_AST_projections": 17,
+    "native_exercised_functions": 15,
+    "header_inputs": 527,
+    "artifacts": 40,
+    "DSOs": 13,
+    "refusals": 78,
+    "Lean_theorems": 15,
+    "model_exit": 0,
+    "audit_exit": 0,
+    "clippy_exit": 0
+  },
+  "private_root": "/home/cosmo/.codex/worktrees/w48-bottom-up-batch4/qcore-c/private/plugin-premise-source-witnesses",
+  "joint_standing_provider_six_routes": "pending integrator; no card-local fullgate or fresh campaign claimed",
+  "source_trust": "actual local compiler/loader and reviewed maintained C/Rust/Lean correspondence are explicit premises",
+  "final_source_hashes": {
+    "crates/quirin-source-analysis/src/plugin_source_witnesses.rs": "eddd07f6e627befe470aa97010c1e2ae85a6534e7efa30a94d663fb8df6b11b1",
+    "crates/quirin-source-analysis/src/plugin_source_witnesses/observe.py": "444795afc1263f3c84572e61155d4963cfcdd0d19202507390937309c5a54440",
+    "crates/quirin-source-analysis/src/plugin_source_witnesses/trace_model.json": "4164c517db886dfd2fb4c4c35e8d44b976c207545ce5c8d1bd3a4f9263066b9e",
+    "proof/QCore/PluginSourceWitnesses.lean": "6df197a0301cf1a6aca493efa588d79cdfe4bac255d86f31760b90a610ac7399",
+    "proof/AuditPluginSourceWitnesses.lean": "fb51415b8e8417ba092172f0812aeda2ef10b3221551ab20ccb3dcba9fe3926f"
+  },
+  "actual_control_notes": {
+    "malformed_range": "actual presented original AST out-of-range/overflow refusal",
+    "unicode": "forged Unicode body and nonboundary AST rejected by original byte pin; separate synthetic Rust prefix control exercises UTF-8 boundary",
+    "source_only_functions": [
+      "rd_kafka_plugin_cmp",
+      "destroy_plugin"
+    ]
+  }
+}

@@ -1,0 +1,193 @@
+{
+  "checker": "quirin-source-analysis/plugin-source-witness-v1",
+  "bounded_atom": "rk_duplicate_fixture_no_loader_calls_v1",
+  "source_observation_sha256": "d998d41ae7f46ea0220259c0106c262ce66b91e37aa86d24cd93d1bc4bd2dfb7",
+  "result": {
+    "entry": "finished",
+    "disposition": "supported",
+    "terminated": true,
+    "atom_dependencies": [
+      "go_creator_fixture_complete_v1",
+      "go_creator_fixture_implies_registration_v1",
+      "rk_duplicate_fixture_complete_v1",
+      "rk_duplicate_fixture_no_loader_calls_v1"
+    ],
+    "warrants": {
+      "go_creator_fixture_complete_v1": "observed",
+      "go_creator_fixture_implies_registration_v1": "observed",
+      "rk_duplicate_fixture_complete_v1": "observed",
+      "rk_duplicate_fixture_no_loader_calls_v1": "observed"
+    },
+    "context": {
+      "artifact": "a18c2105cfd4db3d7303dc4956375b2ef5f566332c975c68bfe612f547d95819",
+      "property": "plugin_fixture_selected_domain_v1",
+      "semantic_profile": "plugin-loader-fixture-v1",
+      "scope": "complete-selected-20-case-domain-v1",
+      "bounds": "20-cases/single-thread/explicit-stubs",
+      "assumptions": "local-clang-posix-loader/real-pinned-headers/explicit-allocation-list-log-stubs/no-deployed-plugin-claim",
+      "source_identity": "2ea1c936998d85776b151f4fdab8e2fc27b198b74c756d219d2e8c5865ea5b43",
+      "build_identity": "dd0f26c4135a1b5c3427e67bf577d7496a4401220b1397f8b8660ed696f54b58",
+      "evidence_version": "plugin-source-witness-v1/eddd07f6e627befe470aa97010c1e2ae85a6534e7efa30a94d663fb8df6b11b1"
+    }
+  },
+  "evaluations": {
+    "alternative": {
+      "entry": "alternative",
+      "disposition": "supported",
+      "terminated": false,
+      "atom_dependencies": [
+        "go_creator_fixture_complete_v1",
+        "go_creator_fixture_implies_registration_v1",
+        "rk_duplicate_fixture_no_loader_calls_v1"
+      ],
+      "warrants": {
+        "go_creator_fixture_complete_v1": "observed",
+        "go_creator_fixture_implies_registration_v1": "observed",
+        "rk_duplicate_fixture_complete_v1": "observed",
+        "rk_duplicate_fixture_no_loader_calls_v1": "observed"
+      },
+      "context": {
+        "artifact": "a18c2105cfd4db3d7303dc4956375b2ef5f566332c975c68bfe612f547d95819",
+        "property": "plugin_fixture_selected_domain_v1",
+        "semantic_profile": "plugin-loader-fixture-v1",
+        "scope": "complete-selected-20-case-domain-v1",
+        "bounds": "20-cases/single-thread/explicit-stubs",
+        "assumptions": "local-clang-posix-loader/real-pinned-headers/explicit-allocation-list-log-stubs/no-deployed-plugin-claim",
+        "source_identity": "2ea1c936998d85776b151f4fdab8e2fc27b198b74c756d219d2e8c5865ea5b43",
+        "build_identity": "dd0f26c4135a1b5c3427e67bf577d7496a4401220b1397f8b8660ed696f54b58",
+        "evidence_version": "plugin-source-witness-v1/eddd07f6e627befe470aa97010c1e2ae85a6534e7efa30a94d663fb8df6b11b1"
+      }
+    },
+    "combined": {
+      "entry": "combined",
+      "disposition": "supported",
+      "terminated": false,
+      "atom_dependencies": [
+        "go_creator_fixture_complete_v1",
+        "go_creator_fixture_implies_registration_v1",
+        "rk_duplicate_fixture_no_loader_calls_v1"
+      ],
+      "warrants": {
+        "go_creator_fixture_complete_v1": "observed",
+        "go_creator_fixture_implies_registration_v1": "observed",
+        "rk_duplicate_fixture_complete_v1": "observed",
+        "rk_duplicate_fixture_no_loader_calls_v1": "observed"
+      },
+      "context": {
+        "artifact": "a18c2105cfd4db3d7303dc4956375b2ef5f566332c975c68bfe612f547d95819",
+        "property": "plugin_fixture_selected_domain_v1",
+        "semantic_profile": "plugin-loader-fixture-v1",
+        "scope": "complete-selected-20-case-domain-v1",
+        "bounds": "20-cases/single-thread/explicit-stubs",
+        "assumptions": "local-clang-posix-loader/real-pinned-headers/explicit-allocation-list-log-stubs/no-deployed-plugin-claim",
+        "source_identity": "2ea1c936998d85776b151f4fdab8e2fc27b198b74c756d219d2e8c5865ea5b43",
+        "build_identity": "dd0f26c4135a1b5c3427e67bf577d7496a4401220b1397f8b8660ed696f54b58",
+        "evidence_version": "plugin-source-witness-v1/eddd07f6e627befe470aa97010c1e2ae85a6534e7efa30a94d663fb8df6b11b1"
+      }
+    },
+    "finished": {
+      "entry": "finished",
+      "disposition": "supported",
+      "terminated": true,
+      "atom_dependencies": [
+        "go_creator_fixture_complete_v1",
+        "go_creator_fixture_implies_registration_v1",
+        "rk_duplicate_fixture_complete_v1",
+        "rk_duplicate_fixture_no_loader_calls_v1"
+      ],
+      "warrants": {
+        "go_creator_fixture_complete_v1": "observed",
+        "go_creator_fixture_implies_registration_v1": "observed",
+        "rk_duplicate_fixture_complete_v1": "observed",
+        "rk_duplicate_fixture_no_loader_calls_v1": "observed"
+      },
+      "context": {
+        "artifact": "a18c2105cfd4db3d7303dc4956375b2ef5f566332c975c68bfe612f547d95819",
+        "property": "plugin_fixture_selected_domain_v1",
+        "semantic_profile": "plugin-loader-fixture-v1",
+        "scope": "complete-selected-20-case-domain-v1",
+        "bounds": "20-cases/single-thread/explicit-stubs",
+        "assumptions": "local-clang-posix-loader/real-pinned-headers/explicit-allocation-list-log-stubs/no-deployed-plugin-claim",
+        "source_identity": "2ea1c936998d85776b151f4fdab8e2fc27b198b74c756d219d2e8c5865ea5b43",
+        "build_identity": "dd0f26c4135a1b5c3427e67bf577d7496a4401220b1397f8b8660ed696f54b58",
+        "evidence_version": "plugin-source-witness-v1/eddd07f6e627befe470aa97010c1e2ae85a6534e7efa30a94d663fb8df6b11b1"
+      }
+    },
+    "known_error": {
+      "entry": "known_error",
+      "disposition": "supported",
+      "terminated": false,
+      "atom_dependencies": [
+        "go_creator_fixture_complete_v1",
+        "go_creator_fixture_implies_registration_v1"
+      ],
+      "warrants": {
+        "go_creator_fixture_complete_v1": "observed",
+        "go_creator_fixture_implies_registration_v1": "observed",
+        "rk_duplicate_fixture_complete_v1": "observed",
+        "rk_duplicate_fixture_no_loader_calls_v1": "observed"
+      },
+      "context": {
+        "artifact": "a18c2105cfd4db3d7303dc4956375b2ef5f566332c975c68bfe612f547d95819",
+        "property": "plugin_fixture_selected_domain_v1",
+        "semantic_profile": "plugin-loader-fixture-v1",
+        "scope": "complete-selected-20-case-domain-v1",
+        "bounds": "20-cases/single-thread/explicit-stubs",
+        "assumptions": "local-clang-posix-loader/real-pinned-headers/explicit-allocation-list-log-stubs/no-deployed-plugin-claim",
+        "source_identity": "2ea1c936998d85776b151f4fdab8e2fc27b198b74c756d219d2e8c5865ea5b43",
+        "build_identity": "dd0f26c4135a1b5c3427e67bf577d7496a4401220b1397f8b8660ed696f54b58",
+        "evidence_version": "plugin-source-witness-v1/eddd07f6e627befe470aa97010c1e2ae85a6534e7efa30a94d663fb8df6b11b1"
+      }
+    },
+    "native_duplicate": {
+      "entry": "native_duplicate",
+      "disposition": "supported",
+      "terminated": false,
+      "atom_dependencies": [
+        "rk_duplicate_fixture_no_loader_calls_v1"
+      ],
+      "warrants": {
+        "go_creator_fixture_complete_v1": "observed",
+        "go_creator_fixture_implies_registration_v1": "observed",
+        "rk_duplicate_fixture_complete_v1": "observed",
+        "rk_duplicate_fixture_no_loader_calls_v1": "observed"
+      },
+      "context": {
+        "artifact": "a18c2105cfd4db3d7303dc4956375b2ef5f566332c975c68bfe612f547d95819",
+        "property": "plugin_fixture_selected_domain_v1",
+        "semantic_profile": "plugin-loader-fixture-v1",
+        "scope": "complete-selected-20-case-domain-v1",
+        "bounds": "20-cases/single-thread/explicit-stubs",
+        "assumptions": "local-clang-posix-loader/real-pinned-headers/explicit-allocation-list-log-stubs/no-deployed-plugin-claim",
+        "source_identity": "2ea1c936998d85776b151f4fdab8e2fc27b198b74c756d219d2e8c5865ea5b43",
+        "build_identity": "dd0f26c4135a1b5c3427e67bf577d7496a4401220b1397f8b8660ed696f54b58",
+        "evidence_version": "plugin-source-witness-v1/eddd07f6e627befe470aa97010c1e2ae85a6534e7efa30a94d663fb8df6b11b1"
+      }
+    },
+    "observed_counterexample": {
+      "entry": "observed_counterexample",
+      "disposition": "refuted",
+      "terminated": false,
+      "atom_dependencies": [
+        "go_creator_fixture_implies_registration_v1"
+      ],
+      "warrants": {
+        "go_creator_fixture_complete_v1": "observed",
+        "go_creator_fixture_implies_registration_v1": "observed",
+        "rk_duplicate_fixture_complete_v1": "observed",
+        "rk_duplicate_fixture_no_loader_calls_v1": "observed"
+      },
+      "context": {
+        "artifact": "a18c2105cfd4db3d7303dc4956375b2ef5f566332c975c68bfe612f547d95819",
+        "property": "plugin_fixture_selected_domain_v1",
+        "semantic_profile": "plugin-loader-fixture-v1",
+        "scope": "complete-selected-20-case-domain-v1",
+        "bounds": "20-cases/single-thread/explicit-stubs",
+        "assumptions": "local-clang-posix-loader/real-pinned-headers/explicit-allocation-list-log-stubs/no-deployed-plugin-claim",
+        "source_identity": "2ea1c936998d85776b151f4fdab8e2fc27b198b74c756d219d2e8c5865ea5b43",
+        "build_identity": "dd0f26c4135a1b5c3427e67bf577d7496a4401220b1397f8b8660ed696f54b58",
+        "evidence_version": "plugin-source-witness-v1/eddd07f6e627befe470aa97010c1e2ae85a6534e7efa30a94d663fb8df6b11b1"
+      }
+    }
+  }
+}

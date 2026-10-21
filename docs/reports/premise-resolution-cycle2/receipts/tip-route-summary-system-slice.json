@@ -1,0 +1,34 @@
+{
+  "routes": [
+    {
+      "route": "system",
+      "units": 15,
+      "rows": 448,
+      "counts": {
+        "Unknown": 345,
+        "Safe": 99,
+        "Unsafe": 4
+      },
+      "invocation": "private/premise-resolution-cycle2/measure-1/system/tip/invocation.json",
+      "source_guard_equal": true,
+      "byte_exact_prepared_view": "private/premise-resolution-cycle2/prepared-tip/system",
+      "exit": 0
+    },
+    {
+      "route": "slice",
+      "units": 16,
+      "rows": 404,
+      "counts": {
+        "Unknown": 346,
+        "Safe": 53,
+        "Pending": 4,
+        "Unsafe": 1
+      },
+      "invocation": "private/premise-resolution-cycle2/measure-1/slice/tip/invocation.json",
+      "source_guard_equal": true,
+      "byte_exact_prepared_view": "private/premise-resolution-cycle2/prepared-tip/slice",
+      "exit": 0
+    }
+  ],
+  "meaning": "All copied bytes checked equal; no artifact normalization or field changes."
+}

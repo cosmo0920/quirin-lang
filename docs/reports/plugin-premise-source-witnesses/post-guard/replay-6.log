@@ -1,0 +1,4 @@
+   Compiling quirin-source-analysis v0.1.0 (/home/cosmo/.codex/worktrees/w48-bottom-up-batch4/qcore-c/crates/quirin-source-analysis)
+    Finished `dev` profile [unoptimized] target(s) in 1.98s
+     Running `target/debug/examples/plugin_source_witnesses /home/cosmo/.codex/worktrees/w48-bottom-up-batch4/qcore-c/private/plugin-premise-source-witnesses/replay-6`
+checked 20 selected cases; source-bound terminal flow serialized

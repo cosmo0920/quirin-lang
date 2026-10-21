@@ -1,0 +1,107 @@
+[
+  {
+    "name": "export-base",
+    "command": [
+      "/usr/bin/python3",
+      "private/premise-resolution-cycle2/export_environments.py",
+      "--helper",
+      "target/release/examples/premise_environment",
+      "--side",
+      "base",
+      "--routes",
+      "private/premise-resolution-cycle2/prepared-base",
+      "--out",
+      "private/premise-resolution-cycle2/comparison-configured-1/base-environments",
+      "--selected-routes",
+      "system,slice"
+    ],
+    "cwd": "/home/cosmo/Documents/GitHub/qcore-c",
+    "root_head": "62eebba95c51917c0fe841fbc23e2bf0d0e7e465",
+    "environment_overrides": {
+      "QCORE_CLANG": "/usr/lib/llvm-21/bin/clang"
+    },
+    "exit": 0,
+    "log": "private/premise-resolution-cycle2/comparison-configured-1/export-base.log"
+  },
+  {
+    "name": "export-tip",
+    "command": [
+      "/usr/bin/python3",
+      "private/premise-resolution-cycle2/export_environments.py",
+      "--helper",
+      "target/release/examples/premise_environment",
+      "--side",
+      "tip",
+      "--routes",
+      "private/premise-resolution-cycle2/prepared-tip",
+      "--out",
+      "private/premise-resolution-cycle2/comparison-configured-1/tip-environments",
+      "--selected-routes",
+      "system,slice"
+    ],
+    "cwd": "/home/cosmo/Documents/GitHub/qcore-c",
+    "root_head": "62eebba95c51917c0fe841fbc23e2bf0d0e7e465",
+    "environment_overrides": {
+      "QCORE_CLANG": "/usr/lib/llvm-21/bin/clang"
+    },
+    "exit": 0,
+    "log": "private/premise-resolution-cycle2/comparison-configured-1/export-tip.log"
+  },
+  {
+    "name": "system-identities",
+    "command": [
+      "/usr/bin/python3",
+      "private/premise-resolution-cycle2/derive_joint_identities.py",
+      "system",
+      "private/premise-resolution-cycle2/prepared-base/system",
+      "private/premise-resolution-cycle2/prepared-tip/system",
+      "private/premise-resolution-cycle2/comparison-configured-1/base-environments",
+      "private/premise-resolution-cycle2/comparison-configured-1/tip-environments",
+      "private/premise-resolution-cycle2/comparison-configured-1/system-known.json"
+    ],
+    "cwd": "/home/cosmo/Documents/GitHub/qcore-c",
+    "root_head": "62eebba95c51917c0fe841fbc23e2bf0d0e7e465",
+    "environment_overrides": {
+      "QCORE_CLANG": "/usr/lib/llvm-21/bin/clang"
+    },
+    "exit": 0,
+    "log": "private/premise-resolution-cycle2/comparison-configured-1/system-identities.log"
+  },
+  {
+    "name": "system-canonical-capture-proof",
+    "command": [
+      "private/premise-resolution-cycle2/comparator-helpers/attribute-reading-environments",
+      "private/premise-resolution-cycle2/comparison-configured-1/system-reading-input.json",
+      "private/premise-resolution-cycle2/comparison-configured-1/system-reading-proof.json"
+    ],
+    "cwd": "/home/cosmo/Documents/GitHub/qcore-c",
+    "root_head": "62eebba95c51917c0fe841fbc23e2bf0d0e7e465",
+    "environment_overrides": {
+      "QCORE_CLANG": "/usr/lib/llvm-21/bin/clang"
+    },
+    "exit": 0,
+    "log": "private/premise-resolution-cycle2/comparison-configured-1/system-canonical-capture-proof.log"
+  },
+  {
+    "name": "system-all-fields",
+    "command": [
+      "/usr/bin/python3",
+      "private/premise-resolution-cycle2/compare_records.py",
+      "system",
+      "private/premise-resolution-cycle2/prepared-base/system",
+      "private/premise-resolution-cycle2/prepared-tip/system",
+      "private/premise-resolution-cycle2/comparison-configured-1/system",
+      "--known",
+      "private/premise-resolution-cycle2/comparison-configured-1/system-known.json",
+      "--reading-proof",
+      "private/premise-resolution-cycle2/comparison-configured-1/system-reading-proof.json"
+    ],
+    "cwd": "/home/cosmo/Documents/GitHub/qcore-c",
+    "root_head": "62eebba95c51917c0fe841fbc23e2bf0d0e7e465",
+    "environment_overrides": {
+      "QCORE_CLANG": "/usr/lib/llvm-21/bin/clang"
+    },
+    "exit": 1,
+    "log": "private/premise-resolution-cycle2/comparison-configured-1/system-all-fields.log"
+  }
+]

@@ -1,0 +1,51 @@
+[
+  {
+    "route": "system",
+    "rows": 448,
+    "status": {
+      "Unknown": 345,
+      "Safe": 99,
+      "Unsafe": 4
+    },
+    "receipts": 24,
+    "unit_capture_instances": 4,
+    "actual_base_bytes_match_copy_manifest": true,
+    "capture_sha256_and_publication_domain_exact": true,
+    "typed_canonical_and_bind_replay": "pending after gate native helper",
+    "analyzer_source": "c1625baf713e4d8498c39282238675749237005d",
+    "invocation_sha256": "83f3d74e479d02d12519a660930d8c10e65dff1aa3d6346336ccf22d333fc3e5"
+  },
+  {
+    "route": "slice",
+    "rows": 404,
+    "status": {
+      "Unknown": 346,
+      "Safe": 53,
+      "Pending": 4,
+      "Unsafe": 1
+    },
+    "receipts": 2,
+    "unit_capture_instances": 1,
+    "actual_base_bytes_match_copy_manifest": true,
+    "capture_sha256_and_publication_domain_exact": true,
+    "typed_canonical_and_bind_replay": "pending after gate native helper",
+    "analyzer_source": "c1625baf713e4d8498c39282238675749237005d",
+    "invocation_sha256": "1d084c2a7ecef3f66ba5ff177b523e402a4f25b699469ce06ed07eff15cd93c7"
+  },
+  {
+    "route": "corpus",
+    "rows": 4834,
+    "status": {
+      "Unknown": 3852,
+      "Safe": 973,
+      "Unsafe": 9
+    },
+    "receipts": 122,
+    "unit_capture_instances": 45,
+    "actual_base_bytes_match_copy_manifest": true,
+    "capture_sha256_and_publication_domain_exact": true,
+    "typed_canonical_and_bind_replay": "pending after gate native helper",
+    "analyzer_source": "c1625baf713e4d8498c39282238675749237005d",
+    "invocation_sha256": "273603bce777abbc42c68b7307933a67c9c45a5342d6425857c2d5b795fda39e"
+  }
+]

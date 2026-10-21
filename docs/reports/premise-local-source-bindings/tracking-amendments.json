@@ -1,0 +1,26 @@
+{
+  "schema": "local-source-tracking-amendments.v1",
+  "preserve_named_followup_count": 810,
+  "retire_followups": [],
+  "amendments": {
+    "CJSON-REPRESENTATION-PROSE-AND-SOURCE-BINDING": {
+      "supported_finite_subobligations": "Complete typed actual detach-body/three-field representation comparison plus adapter-owned actual native11-case heap-domain execution, eight local entry equations, detach/remaining postchecks, fixed Context/property/guard identity and sealed three-atom four-flow evaluation.",
+      "remaining_open": [
+        "English-to-mathematical equivalence",
+        "arbitrary heap/custody/alias/lifetime/writer/allocator universal claims",
+        "whole-C extraction and Rust-Lean correspondence"
+      ],
+      "evidence": "native-evidence/checked.json.gz and flows.json.gz; scoped-bindings.json; joint-validation.json (source-exact combined gate); parent fresh finalsource native11/all4 run also passed"
+    },
+    "LIBC-READING-PREMISES-TYPED-DISCHARGE": {
+      "supported_finite_subobligations": "All148 selected recorded BASE and148 freshTIP observations each independently source-replayed:24system+2slice+122corpus in20 complete selected owner/declaration domains; exact old receipts, original scalar-OR-nested checks, effective environments, compile/source/profile/all9Context/graphs, consultation closure and truncation controls. Corpus imports reconstructed by8independently exported summaries from5actual home sources; complete other-unit recorded definition census and actual link/interposition truth remain explicit prerequisites.",
+      "remaining_open": [
+        "all8original universal atoms",
+        "complete all-relevant guarded-reading universe",
+        "external libc implementation/body mode truth",
+        "whole-C extraction and Rust-Lean correspondence"
+      ],
+      "evidence": "production-base-configured.json, production-base-corpus.json, production-tip-configured.json, production-tip-corpus.json, joint-validation.json; complete parent comparisons0; final committed-matrix Python pending"
+    }
+  }
+}

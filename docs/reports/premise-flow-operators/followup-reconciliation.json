@@ -1,0 +1,45 @@
+{
+  "version": 1,
+  "status": "guarded accepted retirement/rehome proposal; all native/source criteria green, first and final committed-matrix Python pending",
+  "base": "882e128c12161babdbfa36806829894eadf600ba",
+  "before": {
+    "id": "PLUGIN-PREMISE-OPERATOR-DESIGN",
+    "title": "Design explicit premise operators and prerequisite composition without changing current source syntax",
+    "why": "The card implements only conjunction-only opaque atoms and neutral same-name attachments. Loader/build/runtime environments and dependencies are assigned formal propositions/catalogs; no new operator, typed predicate, evidence consumer or general dependency-DAG source syntax is supplied. DISCHARGE: a separately frozen language/API design with total-or-reject grammar, explicit quantifier/prerequisite/evidence semantics, exact context/refutation propagation, Rust/Lean parity and its own source/provider/all-route validation. This is design-only follow-on work and cannot license truth transport or automatic Unsafe.",
+    "source": "docs/reports/plugin-premise-decomposition/README.md",
+    "recorded_by": "PLUGIN-PREMISE-DECOMPOSITION"
+  },
+  "criteria": {
+    "frozen_total_grammar": "design.md; C04.18.3; G05-flow; source parser/replay controls",
+    "quantifier_prerequisite_evidence": "explicit Model environment/FormalBinding; source/model/atom/artifact digests; proposed-only evaluation",
+    "exact_context_refutation_propagation": "all nine mismatch controls; actual C direct+summary closure; independently held function context and retained other-context rows",
+    "rust_lean_parity": "qcore-core/contract/gateway/lexer focused targets; QCore.PremiseFlow; AuditPremiseFlow",
+    "source_provider_all_route_validation": "Actual frozen62 joint gate22steps0 (8441Rust/0/15ignored,357Lean,provider133Rust/1ignored+25Python/all5packages), all6freshnativeaudits0, full5781null/runtime/static and148receipt/50capture comparisons0,148BASE+148TIPselected-source-domain replays0; both committed-matrix Python stages pending"
+  },
+  "apply_only_when": "all criteria plus native/source postchecks and first committed gate-backed 810-entry matrix Python pass; then retire1/add1 and regenerate/commit matrix followed by authoritative final Python pass; root owns serial union",
+  "retire_on_acceptance": [
+    "PLUGIN-PREMISE-OPERATOR-DESIGN"
+  ],
+  "retain_all_other_followups": true,
+  "count_effect_if_no_other_cards_change_union": {
+    "before": 810,
+    "retired": 1,
+    "added": 1,
+    "after": 810
+  },
+  "remaining_scope": "production flow adoption, whole-world source/prose truth and any typed safety consumer remain independently scoped; this retirement licenses none of them",
+  "add_on_acceptance": [
+    {
+      "id": "PREMISE-FLOW-PRODUCTION-DISCHARGE",
+      "title": "Adopt scoped premise flows through an explicitly checked production semantic consumer",
+      "why": "PREMISE-FLOW-OPERATORS supplies executable AND/OR/positive-NOT/terminal syntax and proposed composition, exact source/model/graph/Context replay and independently checked finite source-witness integrations. It deliberately migrates no production flow clause, registers no global typed predicate and supplies no verdict/standing consumer. Missing capability: turn one exactly scoped production obligation into checked authority only under independently discharged complete antecedents, without treating a generic ProposedEvaluation or a finite fixture as universal source truth. DISCHARGE: select and freeze a bounded production declaration/property and eligible predicate family; establish exact source/model/prose/environment correspondence and complete scoped evidence, including every feasible program-path obligation; implement a total-or-reject checked consumer and dependency/invalidation rule with matching Rust/Lean, exact9-coordinate context and refutation controls; preserve legacy erasure/classification and validate intentional verdict movement through standing/provider/all-route evidence. Safe requires all relevant obligations; Unsafe still requires a validated reachable C violation. Existing CJSON-REPRESENTATION-PROSE-AND-SOURCE-BINDING, LIBC-READING-PREMISES-TYPED-DISCHARGE, PLUGIN-PREMISE-SOURCE-BINDING and PLUGIN-PREMISE-OUTER-TRUTH retain their independent source/prose/world proof scopes.",
+      "source": "docs/reports/premise-flow-operators/README.md",
+      "recorded_by": "PREMISE-FLOW-OPERATORS"
+    }
+  ],
+  "accepted_order": [
+    "After native/postchecks, commit gate-backed matrix with original810 plus source amendments; Python0 completes the original operator validation criterion.",
+    "Then retire exact PLUGIN-PREMISE-OPERATOR-DESIGN and add exact PREMISE-FLOW-PRODUCTION-DISCHARGE; regenerate/commit matrix; final Python0 validates changed authoritative ledger.",
+    "Record both actual Python runs and matrix identities; count810=810-1+1, with all other809 retained."
+  ]
+}

@@ -1,0 +1,71 @@
+[
+  {
+    "name": "cargo-artifacts",
+    "command": [
+      "cargo",
+      "build",
+      "--release",
+      "-p",
+      "qcore-audit",
+      "--lib",
+      "--example",
+      "premise_environment",
+      "--message-format=json",
+      "-j1"
+    ],
+    "exit": 0,
+    "source_before": {
+      "head": "62eebba95c51917c0fe841fbc23e2bf0d0e7e465",
+      "tracked_delta_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "source_after": {
+      "head": "62eebba95c51917c0fe841fbc23e2bf0d0e7e465",
+      "tracked_delta_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "environment_overrides": {
+      "QCORE_AUDIT_BUILD_COMMIT": "62eebba95c51917c0fe841fbc23e2bf0d0e7e465",
+      "CARGO_PROFILE_DEV_DEBUG": "0",
+      "CARGO_PROFILE_TEST_DEBUG": "0",
+      "CARGO_INCREMENTAL": "0"
+    }
+  },
+  {
+    "name": "reading-proof-build",
+    "command": [
+      "rustc",
+      "--edition=2024",
+      "private/premise-resolution-cycle2/attribute_reading_environments.rs",
+      "-C",
+      "debuginfo=0",
+      "-L",
+      "dependency=/home/cosmo/Documents/GitHub/qcore-c/target/release/deps",
+      "-o",
+      "private/premise-resolution-cycle2/comparator-helpers/attribute-reading-environments",
+      "--extern",
+      "qcore_audit=/home/cosmo/Documents/GitHub/qcore-c/target/release/libqcore_audit.rlib",
+      "--extern",
+      "qcore_c_gateway=/home/cosmo/Documents/GitHub/qcore-c/target/release/deps/libqcore_c_gateway-e446ff2e15cc37d9.rlib",
+      "--extern",
+      "qcore_contract=/home/cosmo/Documents/GitHub/qcore-c/target/release/deps/libqcore_contract-1ae6fd14441b99d3.rlib",
+      "--extern",
+      "qcore_schemas=/home/cosmo/Documents/GitHub/qcore-c/target/release/deps/libqcore_schemas-0de9b3a16b0fe98c.rlib",
+      "--extern",
+      "serde_json=/home/cosmo/Documents/GitHub/qcore-c/target/release/deps/libserde_json-08241b9b75b89117.rlib"
+    ],
+    "exit": 0,
+    "source_before": {
+      "head": "62eebba95c51917c0fe841fbc23e2bf0d0e7e465",
+      "tracked_delta_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "source_after": {
+      "head": "62eebba95c51917c0fe841fbc23e2bf0d0e7e465",
+      "tracked_delta_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "environment_overrides": {
+      "QCORE_AUDIT_BUILD_COMMIT": "62eebba95c51917c0fe841fbc23e2bf0d0e7e465",
+      "CARGO_PROFILE_DEV_DEBUG": "0",
+      "CARGO_PROFILE_TEST_DEBUG": "0",
+      "CARGO_INCREMENTAL": "0"
+    }
+  }
+]
