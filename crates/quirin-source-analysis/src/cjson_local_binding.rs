@@ -466,6 +466,24 @@ mod tests {
             );
         }
         assert!(check_source(&u, "foreign", &c, &c, &g, MODEL.as_bytes(), ENVIRONMENT).is_err());
+        for key in [
+            "artifact",
+            "property",
+            "semantic_profile",
+            "scope",
+            "bounds",
+            "assumptions",
+            "evidence_version",
+        ] {
+            let mut v = serde_json::to_value(&c).unwrap();
+            v[key] = "self-consistent-foreign".into();
+            let wrong: Context = serde_json::from_value(v).unwrap();
+            assert!(
+                check_source(&u, &sha, &wrong, &wrong, &g, MODEL.as_bytes(), ENVIRONMENT).is_err(),
+                "independent fixed target axis{key}"
+            );
+        }
+
         assert!(check_source(&u, &sha, &c, &c, &g, b"changed model", ENVIRONMENT).is_err());
         assert!(check_source(&u, &sha, &c, &c, &g, MODEL.as_bytes(), "foreign").is_err());
         let mut wrong = g.clone();
@@ -473,7 +491,8 @@ mod tests {
         assert!(check_source(&u, &sha, &c, &c, &wrong, MODEL.as_bytes(), ENVIRONMENT).is_err());
         // Hashes and preprocessing context honestly updated: semantic body still
         // differs from independently fixed reference and must refuse.
-        let changed = s.replace("item->next = NULL;", "item->next = parent;");
+        let changed = s.replace("item->next = ((void *)0);", "item->next = parent;");
+        assert_ne!(changed, s, "negative must alter the actual source bytes");
         let c = ctx(&changed);
         assert!(
             check_source(
@@ -571,6 +590,7 @@ mod tests {
 // This graph has only new finite-domain propositions. It does not name or
 // rewrite any atom of the original production cJSON representation graph.
 const FINITE_FLOW_SOURCE: &str = r#"
+module contract;
 extern fn qcore_cjson_native_domain() -> unit contract {
  requires resource_contract_v1;
  requires resource_hypothesis(finite_detach_post, "All post-field comparisons in the exact native case domain hold");
@@ -754,10 +774,54 @@ fn read_input(path: impl AsRef<std::path::Path>) -> Result<Vec<u8>, String> {
     std::fs::read(path).map_err(|e| e.to_string())
 }
 
+fn resolved_compiler(program: &std::ffi::OsStr) -> Result<std::path::PathBuf, String> {
+    let path = std::path::Path::new(program);
+    let acceptable = |candidate: &std::path::Path| {
+        if !candidate.is_file() {
+            return false;
+        }
+        #[cfg(unix)]
+        {
+            use std::os::unix::fs::PermissionsExt;
+            candidate
+                .metadata()
+                .is_ok_and(|m| m.permissions().mode() & 0o111 != 0)
+        }
+        #[cfg(not(unix))]
+        {
+            true
+        }
+    };
+    if path.components().count() > 1 || path.is_absolute() {
+        if !acceptable(path) {
+            return Err("cjson native: actual compiler executable absent".into());
+        }
+        return std::fs::canonicalize(path).map_err(|e| e.to_string());
+    }
+    for directory in
+        std::env::split_paths(&std::env::var_os("PATH").ok_or("cjson native: PATH absent")?)
+    {
+        let candidate = directory.join(path);
+        if acceptable(&candidate) {
+            return std::fs::canonicalize(candidate).map_err(|e| e.to_string());
+        }
+        #[cfg(windows)]
+        {
+            let candidate = candidate.with_extension("exe");
+            if acceptable(&candidate) {
+                return std::fs::canonicalize(candidate).map_err(|e| e.to_string());
+            }
+        }
+    }
+    Err("cjson native: cannot independently resolve discovered compiler spelling".into())
+}
+
 pub fn native_build_configuration(directory: &std::path::Path) -> Result<NativeBuild, String> {
     let directory = std::fs::canonicalize(directory).map_err(|e| e.to_string())?;
     let command = qcore_c_gateway::clang_command()?;
-    let compiler = command.get_program().to_string_lossy().into_owned();
+    let compiler = resolved_compiler(command.get_program())?
+        .to_string_lossy()
+        .into_owned();
     let prefix = command
         .get_args()
         .map(|a| a.to_string_lossy().into_owned())

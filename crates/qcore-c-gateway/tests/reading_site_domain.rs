@@ -81,12 +81,12 @@ fn complete_recorded_domain_replays_and_truncated_context_source_or_environment_
     other.artifact = "other.c#caller".into();
     let rows = vec![
         reading_site_domain::DependentRecord {
-            id: "actual-direct".into(),
+            id: "direct-control".into(),
             context: contexts["f"].clone(),
             declarations: declarations.clone(),
         },
         reading_site_domain::DependentRecord {
-            id: "actual-summary-other-context".into(),
+            id: "summary-other-context-control".into(),
             context: other.clone(),
             declarations: declarations.clone(),
         },
@@ -109,11 +109,11 @@ fn complete_recorded_domain_replays_and_truncated_context_source_or_environment_
         .unwrap();
         assert_eq!(
             impact["affected_records"],
-            serde_json::json!(["actual-direct"])
+            serde_json::json!(["direct-control"])
         );
         assert_eq!(
             impact["dependent_other_contexts_unchanged"],
-            serde_json::json!(["actual-summary-other-context"])
+            serde_json::json!(["summary-other-context-control"])
         );
         assert_eq!(
             impact["unrelated_records"],
@@ -165,6 +165,7 @@ fn complete_recorded_domain_replays_and_truncated_context_source_or_environment_
             reading_site_domain::check(&held, &expected).is_err(),
             "{key}"
         );
+        held.contexts = &contexts;
     }
     held.contexts = &contexts;
     let mut wrong = expected.clone();
