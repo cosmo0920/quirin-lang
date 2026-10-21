@@ -31,3 +31,5 @@ only). Existing `RK-INTERCEPTOR-STATIC-LIST-CLOSURE` and
 `RK-OUTER-LOADER-REACH-PRECISION` remain open and are not discharged by this card.
 
 The conditional formal draft now compiles as a single file with existing dependencies, including metadata erasure and exact-context impact. Draft-check receipts preserve the initial reserved-identifier failure and unused-simp warning. This is preparation only; registered full Lean/Rust/provider gates remain due. Original outer identity expectations and all three actual source-set observations are in outer-identity-freeze.json.
+
+The final comparison harness reverses only the seven exact proposed atoms, their same-name attachment and pinned new reference requirements, with canonical graph digests checked against all166 typed Rust producer records. It preserves every legacy node, other refinement and Context coordinate; exact source/environment/configuration/time changes remain separately attributed. Fresh actual sidecar replay is still due.
