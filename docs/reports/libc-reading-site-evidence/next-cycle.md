@@ -1,0 +1,11 @@
+# Remaining bounded work
+
+`LIBC-READING-PREMISES-TYPED-DISCHARGE` remains open. This card supplies actual local checker observations, independently reproducible reader controls and resolvable formal references; it does not establish the eight guarded universal propositions.
+
+A next finite-domain card must first define the complete domain independently of successful captures: every relevant original reading position in the intended translation unit, including rejected positions and source transformations. It must account for ambiguous, rewritten and foreign streams without treating omission as success. Exact source/build/profile/bounds/assumption/evidence coordinates and the original expected graph remain caller-held. Different effective contract environments at one physical site are distinct observations, not duplicate proof of one environment.
+
+Production binding replay in this card authenticates references and graph/atom/Context/consultation relationships. A stronger production source replay must reconstruct the actual preparation request, source bytes, selected definition inventory and dynamic effective environment, including any cross-unit imports and prepasses, from independently held inputs. A self-consistent receipt or a new invocation with conveniently different inputs is insufficient. No published count should describe that stronger check until it actually runs.
+
+Only after independently proving a bounded predicate should a separately checked registry consumer connect it to a formal proposition. Supporting a local reader predicate does not support the whole opaque universal or the external C contract's truth. External mode behavior, declaration/extraction completeness, actual/alias closure and Rust/Lean correspondence still need their own evidence. Any automatic verdict invalidation needs an explicit scoped semantic rule and proof; the current impact report changes no verdict.
+
+The proposed AND/forbidden/OR/terminal operators require separate semantics. The existing conjunction graph remains unchanged; the accessor OR is opaque. A forbidden transition is different from logical negation, missing evidence is not false, and a terminal postcondition supplies no eventual-termination theorem.
