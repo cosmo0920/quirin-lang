@@ -1,0 +1,36 @@
+{
+  "joint_source": "62eebba95c51917c0fe841fbc23e2bf0d0e7e465",
+  "card_source": "355db7892010672b00713a27f13f1730f36f43e0",
+  "exact_files": [
+    {
+      "path": "crates/quirin-source-analysis/src/plugin_source_witnesses.rs",
+      "sha256": "4f8c1e24342f60556511888607d7a4073e899e2ea7ff47f8d3a451ee975fc2d5"
+    },
+    {
+      "path": "crates/quirin-source-analysis/src/plugin_source_witnesses/observe.py",
+      "sha256": "444795afc1263f3c84572e61155d4963cfcdd0d19202507390937309c5a54440"
+    },
+    {
+      "path": "crates/quirin-source-analysis/src/plugin_source_witnesses/trace_model.json",
+      "sha256": "4164c517db886dfd2fb4c4c35e8d44b976c207545ce5c8d1bd3a4f9263066b9e"
+    },
+    {
+      "path": "crates/quirin-source-analysis/examples/plugin_source_witnesses.rs",
+      "sha256": "2133de89ecd55d34da92e302a0366c5845d8e4a285b3cc5da77a1461f9e7a4f8"
+    },
+    {
+      "path": "docs/reports/plugin-premise-source-witnesses/input-inventory.json",
+      "sha256": "2ea1c936998d85776b151f4fdab8e2fc27b198b74c756d219d2e8c5865ea5b43"
+    },
+    {
+      "path": "proof/QCore/PluginSourceWitnesses.lean",
+      "sha256": "d6dce17c199a182403ad1060f60eb93e9c19c6ef8ccea74a97a44607e3765d57"
+    },
+    {
+      "path": "proof/AuditPluginSourceWitnesses.lean",
+      "sha256": "7da0eef9fda3ec2b7ff3015ac393292d97cfe8f196a9086484811f0e938f3de0"
+    }
+  ],
+  "mismatches": [],
+  "note": "Union module export/import and dependency-layer repairs are validated by root joint gate; these exact owning source/model/input files are unchanged."
+}

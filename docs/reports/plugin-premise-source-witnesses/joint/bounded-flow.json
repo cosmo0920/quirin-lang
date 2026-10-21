@@ -1,0 +1,283 @@
+{
+  "checker": "quirin-source-analysis/plugin-source-witness-v1",
+  "bounded_atom": "rk_duplicate_fixture_no_loader_calls_v1",
+  "source_observation_sha256": "d998d41ae7f46ea0220259c0106c262ce66b91e37aa86d24cd93d1bc4bd2dfb7",
+  "result": {
+    "entry": "finished",
+    "disposition": "supported",
+    "terminated": true,
+    "atom_dependencies": [
+      "go_creator_fixture_complete_v1",
+      "go_creator_fixture_implies_registration_v1",
+      "rk_duplicate_fixture_complete_v1",
+      "rk_duplicate_fixture_no_loader_calls_v1"
+    ],
+    "warrants": {
+      "go_creator_fixture_complete_v1": "observed",
+      "go_creator_fixture_implies_registration_v1": "observed",
+      "rk_duplicate_fixture_complete_v1": "observed",
+      "rk_duplicate_fixture_no_loader_calls_v1": "observed"
+    },
+    "context": {
+      "artifact": "a18c2105cfd4db3d7303dc4956375b2ef5f566332c975c68bfe612f547d95819",
+      "property": "plugin_fixture_selected_domain_v1",
+      "semantic_profile": "plugin-loader-fixture-v1",
+      "scope": "complete-selected-20-case-domain-v1",
+      "bounds": "20-cases/single-thread/explicit-stubs",
+      "assumptions": "local-clang-posix-loader/real-pinned-headers/explicit-allocation-list-log-stubs/no-deployed-plugin-claim",
+      "source_identity": "2ea1c936998d85776b151f4fdab8e2fc27b198b74c756d219d2e8c5865ea5b43",
+      "build_identity": "94cf5b572e10b07a823c6f20372170348ed6904b141d4124819fc094866aea6e",
+      "evidence_version": "plugin-source-witness-v1/4f8c1e24342f60556511888607d7a4073e899e2ea7ff47f8d3a451ee975fc2d5"
+    }
+  },
+  "evaluations": {
+    "alternative": {
+      "entry": "alternative",
+      "disposition": "supported",
+      "terminated": false,
+      "atom_dependencies": [
+        "go_creator_fixture_complete_v1",
+        "go_creator_fixture_implies_registration_v1",
+        "rk_duplicate_fixture_no_loader_calls_v1"
+      ],
+      "warrants": {
+        "go_creator_fixture_complete_v1": "observed",
+        "go_creator_fixture_implies_registration_v1": "observed",
+        "rk_duplicate_fixture_complete_v1": "observed",
+        "rk_duplicate_fixture_no_loader_calls_v1": "observed"
+      },
+      "context": {
+        "artifact": "a18c2105cfd4db3d7303dc4956375b2ef5f566332c975c68bfe612f547d95819",
+        "property": "plugin_fixture_selected_domain_v1",
+        "semantic_profile": "plugin-loader-fixture-v1",
+        "scope": "complete-selected-20-case-domain-v1",
+        "bounds": "20-cases/single-thread/explicit-stubs",
+        "assumptions": "local-clang-posix-loader/real-pinned-headers/explicit-allocation-list-log-stubs/no-deployed-plugin-claim",
+        "source_identity": "2ea1c936998d85776b151f4fdab8e2fc27b198b74c756d219d2e8c5865ea5b43",
+        "build_identity": "94cf5b572e10b07a823c6f20372170348ed6904b141d4124819fc094866aea6e",
+        "evidence_version": "plugin-source-witness-v1/4f8c1e24342f60556511888607d7a4073e899e2ea7ff47f8d3a451ee975fc2d5"
+      }
+    },
+    "combined": {
+      "entry": "combined",
+      "disposition": "supported",
+      "terminated": false,
+      "atom_dependencies": [
+        "go_creator_fixture_complete_v1",
+        "go_creator_fixture_implies_registration_v1",
+        "rk_duplicate_fixture_no_loader_calls_v1"
+      ],
+      "warrants": {
+        "go_creator_fixture_complete_v1": "observed",
+        "go_creator_fixture_implies_registration_v1": "observed",
+        "rk_duplicate_fixture_complete_v1": "observed",
+        "rk_duplicate_fixture_no_loader_calls_v1": "observed"
+      },
+      "context": {
+        "artifact": "a18c2105cfd4db3d7303dc4956375b2ef5f566332c975c68bfe612f547d95819",
+        "property": "plugin_fixture_selected_domain_v1",
+        "semantic_profile": "plugin-loader-fixture-v1",
+        "scope": "complete-selected-20-case-domain-v1",
+        "bounds": "20-cases/single-thread/explicit-stubs",
+        "assumptions": "local-clang-posix-loader/real-pinned-headers/explicit-allocation-list-log-stubs/no-deployed-plugin-claim",
+        "source_identity": "2ea1c936998d85776b151f4fdab8e2fc27b198b74c756d219d2e8c5865ea5b43",
+        "build_identity": "94cf5b572e10b07a823c6f20372170348ed6904b141d4124819fc094866aea6e",
+        "evidence_version": "plugin-source-witness-v1/4f8c1e24342f60556511888607d7a4073e899e2ea7ff47f8d3a451ee975fc2d5"
+      }
+    },
+    "finished": {
+      "entry": "finished",
+      "disposition": "supported",
+      "terminated": true,
+      "atom_dependencies": [
+        "go_creator_fixture_complete_v1",
+        "go_creator_fixture_implies_registration_v1",
+        "rk_duplicate_fixture_complete_v1",
+        "rk_duplicate_fixture_no_loader_calls_v1"
+      ],
+      "warrants": {
+        "go_creator_fixture_complete_v1": "observed",
+        "go_creator_fixture_implies_registration_v1": "observed",
+        "rk_duplicate_fixture_complete_v1": "observed",
+        "rk_duplicate_fixture_no_loader_calls_v1": "observed"
+      },
+      "context": {
+        "artifact": "a18c2105cfd4db3d7303dc4956375b2ef5f566332c975c68bfe612f547d95819",
+        "property": "plugin_fixture_selected_domain_v1",
+        "semantic_profile": "plugin-loader-fixture-v1",
+        "scope": "complete-selected-20-case-domain-v1",
+        "bounds": "20-cases/single-thread/explicit-stubs",
+        "assumptions": "local-clang-posix-loader/real-pinned-headers/explicit-allocation-list-log-stubs/no-deployed-plugin-claim",
+        "source_identity": "2ea1c936998d85776b151f4fdab8e2fc27b198b74c756d219d2e8c5865ea5b43",
+        "build_identity": "94cf5b572e10b07a823c6f20372170348ed6904b141d4124819fc094866aea6e",
+        "evidence_version": "plugin-source-witness-v1/4f8c1e24342f60556511888607d7a4073e899e2ea7ff47f8d3a451ee975fc2d5"
+      }
+    },
+    "known_error": {
+      "entry": "known_error",
+      "disposition": "supported",
+      "terminated": false,
+      "atom_dependencies": [
+        "go_creator_fixture_complete_v1",
+        "go_creator_fixture_implies_registration_v1"
+      ],
+      "warrants": {
+        "go_creator_fixture_complete_v1": "observed",
+        "go_creator_fixture_implies_registration_v1": "observed",
+        "rk_duplicate_fixture_complete_v1": "observed",
+        "rk_duplicate_fixture_no_loader_calls_v1": "observed"
+      },
+      "context": {
+        "artifact": "a18c2105cfd4db3d7303dc4956375b2ef5f566332c975c68bfe612f547d95819",
+        "property": "plugin_fixture_selected_domain_v1",
+        "semantic_profile": "plugin-loader-fixture-v1",
+        "scope": "complete-selected-20-case-domain-v1",
+        "bounds": "20-cases/single-thread/explicit-stubs",
+        "assumptions": "local-clang-posix-loader/real-pinned-headers/explicit-allocation-list-log-stubs/no-deployed-plugin-claim",
+        "source_identity": "2ea1c936998d85776b151f4fdab8e2fc27b198b74c756d219d2e8c5865ea5b43",
+        "build_identity": "94cf5b572e10b07a823c6f20372170348ed6904b141d4124819fc094866aea6e",
+        "evidence_version": "plugin-source-witness-v1/4f8c1e24342f60556511888607d7a4073e899e2ea7ff47f8d3a451ee975fc2d5"
+      }
+    },
+    "native_duplicate": {
+      "entry": "native_duplicate",
+      "disposition": "supported",
+      "terminated": false,
+      "atom_dependencies": [
+        "rk_duplicate_fixture_no_loader_calls_v1"
+      ],
+      "warrants": {
+        "go_creator_fixture_complete_v1": "observed",
+        "go_creator_fixture_implies_registration_v1": "observed",
+        "rk_duplicate_fixture_complete_v1": "observed",
+        "rk_duplicate_fixture_no_loader_calls_v1": "observed"
+      },
+      "context": {
+        "artifact": "a18c2105cfd4db3d7303dc4956375b2ef5f566332c975c68bfe612f547d95819",
+        "property": "plugin_fixture_selected_domain_v1",
+        "semantic_profile": "plugin-loader-fixture-v1",
+        "scope": "complete-selected-20-case-domain-v1",
+        "bounds": "20-cases/single-thread/explicit-stubs",
+        "assumptions": "local-clang-posix-loader/real-pinned-headers/explicit-allocation-list-log-stubs/no-deployed-plugin-claim",
+        "source_identity": "2ea1c936998d85776b151f4fdab8e2fc27b198b74c756d219d2e8c5865ea5b43",
+        "build_identity": "94cf5b572e10b07a823c6f20372170348ed6904b141d4124819fc094866aea6e",
+        "evidence_version": "plugin-source-witness-v1/4f8c1e24342f60556511888607d7a4073e899e2ea7ff47f8d3a451ee975fc2d5"
+      }
+    },
+    "observed_counterexample": {
+      "entry": "observed_counterexample",
+      "disposition": "refuted",
+      "terminated": false,
+      "atom_dependencies": [
+        "go_creator_fixture_implies_registration_v1"
+      ],
+      "warrants": {
+        "go_creator_fixture_complete_v1": "observed",
+        "go_creator_fixture_implies_registration_v1": "observed",
+        "rk_duplicate_fixture_complete_v1": "observed",
+        "rk_duplicate_fixture_no_loader_calls_v1": "observed"
+      },
+      "context": {
+        "artifact": "a18c2105cfd4db3d7303dc4956375b2ef5f566332c975c68bfe612f547d95819",
+        "property": "plugin_fixture_selected_domain_v1",
+        "semantic_profile": "plugin-loader-fixture-v1",
+        "scope": "complete-selected-20-case-domain-v1",
+        "bounds": "20-cases/single-thread/explicit-stubs",
+        "assumptions": "local-clang-posix-loader/real-pinned-headers/explicit-allocation-list-log-stubs/no-deployed-plugin-claim",
+        "source_identity": "2ea1c936998d85776b151f4fdab8e2fc27b198b74c756d219d2e8c5865ea5b43",
+        "build_identity": "94cf5b572e10b07a823c6f20372170348ed6904b141d4124819fc094866aea6e",
+        "evidence_version": "plugin-source-witness-v1/4f8c1e24342f60556511888607d7a4073e899e2ea7ff47f8d3a451ee975fc2d5"
+      }
+    }
+  },
+  "document_sha256": "fdae01586e654545f5a4fcdd338adbe04d77e2776e06a1edc85961ab68098abd",
+  "graph_sha256": "d8b370596c089688222d4eb27f237ad5496592a2963a00f13d449d81404a5472",
+  "flow_model_sha256": "dda7f9692177d9849f045526dd375eb55796b82690f938362bb7053c016dbf63",
+  "source_contract_sha256": "86cd22b20c89448aa616b743e43200e709f5402e0d80f164bf74e6c9d2e3ddf7",
+  "formal_bindings": {
+    "go_creator_fixture_complete_v1": {
+      "atom_sha256": "0ec7bf75deafb20934061ee925808b2ae50f47e8f41c356a55be23d2577e5856",
+      "proposition": "QCore.PluginSourceWitnesses.GoCreatorCompleted",
+      "model": {
+        "path": "proof/QCore/PluginSourceWitnesses.lean",
+        "sha256": "d6dce17c199a182403ad1060f60eb93e9c19c6ef8ccea74a97a44607e3765d57"
+      },
+      "audit": {
+        "path": "proof/AuditPluginSourceWitnesses.lean",
+        "sha256": "7da0eef9fda3ec2b7ff3015ac393292d97cfe8f196a9086484811f0e938f3de0"
+      },
+      "environment": "plugin-loader-fixture-v1",
+      "quantifiers": [
+        "trace : List String; selected = go_create_ignores_register_failure; exact held Context and explicit stub environment"
+      ],
+      "prerequisites": [
+        "plugin-loader-fixture-v1"
+      ],
+      "conclusion": "GoCreatorCompleted trace for this exact selected invocation"
+    },
+    "go_creator_fixture_implies_registration_v1": {
+      "atom_sha256": "82b3a7250292adeb45a3b2185cfec794259495ccf1fdebdd53083f7688c7008a",
+      "proposition": "QCore.PluginSourceWitnesses.GoCreatorImpliesRegistration",
+      "model": {
+        "path": "proof/QCore/PluginSourceWitnesses.lean",
+        "sha256": "d6dce17c199a182403ad1060f60eb93e9c19c6ef8ccea74a97a44607e3765d57"
+      },
+      "audit": {
+        "path": "proof/AuditPluginSourceWitnesses.lean",
+        "sha256": "7da0eef9fda3ec2b7ff3015ac393292d97cfe8f196a9086484811f0e938f3de0"
+      },
+      "environment": "plugin-loader-fixture-v1",
+      "quantifiers": [
+        "trace : List String; selected = go_create_ignores_register_failure; exact held Context and explicit stub environment"
+      ],
+      "prerequisites": [
+        "plugin-loader-fixture-v1"
+      ],
+      "conclusion": "GoCreatorImpliesRegistration trace for this exact selected invocation; a finite counterexample refutes only this implication"
+    },
+    "rk_duplicate_fixture_complete_v1": {
+      "atom_sha256": "58d92ad52b88ae431e425960ca40ac8b9ebeed4935ca0553c9956e7bf09d3d57",
+      "proposition": "QCore.PluginSourceWitnesses.DuplicateCompleted",
+      "model": {
+        "path": "proof/QCore/PluginSourceWitnesses.lean",
+        "sha256": "d6dce17c199a182403ad1060f60eb93e9c19c6ef8ccea74a97a44607e3765d57"
+      },
+      "audit": {
+        "path": "proof/AuditPluginSourceWitnesses.lean",
+        "sha256": "7da0eef9fda3ec2b7ff3015ac393292d97cfe8f196a9086484811f0e938f3de0"
+      },
+      "environment": "plugin-loader-fixture-v1",
+      "quantifiers": [
+        "trace : List String; selected = rk_duplicate; exact held Context and explicit stub environment"
+      ],
+      "prerequisites": [
+        "plugin-loader-fixture-v1"
+      ],
+      "conclusion": "DuplicateCompleted trace: zero return and matching end of the same selected invocation"
+    },
+    "rk_duplicate_fixture_no_loader_calls_v1": {
+      "atom_sha256": "f6383515958145cc44e51963bd16f79d590dbfcf168a9cf0d39283719c31307a",
+      "proposition": "QCore.PluginSourceWitnesses.DuplicateNoLoaderCalls",
+      "model": {
+        "path": "proof/QCore/PluginSourceWitnesses.lean",
+        "sha256": "d6dce17c199a182403ad1060f60eb93e9c19c6ef8ccea74a97a44607e3765d57"
+      },
+      "audit": {
+        "path": "proof/AuditPluginSourceWitnesses.lean",
+        "sha256": "7da0eef9fda3ec2b7ff3015ac393292d97cfe8f196a9086484811f0e938f3de0"
+      },
+      "environment": "plugin-loader-fixture-v1",
+      "quantifiers": [
+        "trace : List String; selected = rk_duplicate; exact held Context and explicit stub environment"
+      ],
+      "prerequisites": [
+        "plugin-loader-fixture-v1"
+      ],
+      "conclusion": "DuplicateNoLoaderCalls trace for this selected invocation only; old plugin atoms/envelopes remain independent"
+    }
+  },
+  "explicit_artifacts": {
+    "proof/AuditPluginSourceWitnesses.lean": "7da0eef9fda3ec2b7ff3015ac393292d97cfe8f196a9086484811f0e938f3de0",
+    "proof/QCore/PluginSourceWitnesses.lean": "d6dce17c199a182403ad1060f60eb93e9c19c6ef8ccea74a97a44607e3765d57"
+  }
+}

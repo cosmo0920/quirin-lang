@@ -1,0 +1,11 @@
+{
+  "own_source": "355db7892010672b00713a27f13f1730f36f43e0",
+  "joint_source": "62eebba95c51917c0fe841fbc23e2bf0d0e7e465",
+  "independent_own_and_root_executions": true,
+  "full_JSON_equality": {
+    "checked.json": true,
+    "bounded-flow.json": true,
+    "refusal-controls.json": true
+  },
+  "meaning": "Owning source/model/native identities and complete sealed results match on independent executions. This is not a replacement for six production route comparisons."
+}
