@@ -1,0 +1,12 @@
+{
+  "command": [
+    "python3",
+    "docs/reports/w48-bottom-up-batch5/scripts/check_base_completion.py"
+  ],
+  "exit": 0,
+  "actual_run_script": "/tmp/w48-batch5-base-completion.py",
+  "actual_run_stdout": "/tmp/w48-batch5-base-completion.stdout.json",
+  "script_sha256": "d106758f2acef3f8bb8366b9f2c3dddf7cabb88d2318f8e0fa0ec1733d4ff4bc",
+  "receipt_sha256": "4947860ea694d3322463b73ca06f22c9aca1c212fa1ab06bb96c0ea6ae994f57",
+  "equivalence": "Committed script bytes exactly equal the actual /tmp script executed after corpus completion."
+}

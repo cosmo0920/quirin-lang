@@ -46,6 +46,13 @@ terminated 143 before it started. The partial evidence-script write is retained
 and was restored from the protected commit with exact byte equality. Root
 reclaimed only an owner-approved completed 95GiB target; private evidence stayed
 intact. Fresh paths and a 30GiB reserve guard are required for the corpus retry.
+The fresh strengthened BASE corpus retry completed exit0: 185 units, 4,834 custody
+rows (973 Safe / 3,852 Unknown / 9 provisional Unsafe) and 4,921 null rows. Its
+24,991-file native before/after archive maps exactly equal the independently
+held original Git archive; both external databases and complete provider package
+match before/after. The actual pinned wrapper exits0 with its recorded Clang
+and package overrides. [BASE receipts](baseline-receipts.json) retain exact
+times, paths, binary/source/evidence versions and all input boundaries.
 Earlier completed BASE system/slice exits0 retain 448 rows: 99 Safe / 345 Unknown /
 4 provisional Unsafe; and 404 rows: 53 Safe / 346 Unknown / 4 Pending / 1 provisional Unsafe.
 The initial full-input [postcheck](runtime-input-postcheck.json) is explicitly
