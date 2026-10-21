@@ -1,0 +1,169 @@
+{
+  "envelopes": [
+    {
+      "name": "rk_plugin_library",
+      "defining_declaration": "rd_kafka_plugin_new",
+      "hosting_loaders": [
+        "rd_kafka_plugin_new"
+      ],
+      "module": "providers/qcore-provider-librdkafka/contracts/librdkafka/outer.qv",
+      "module_sha256": "ca88ccbf79699b9fd1033a69b958ec1a116cb24c040f0829299c5e65e797704a",
+      "outer_digest_from_original_official_loader_text_hashes": "0c309c2cb0ca67354f3276bf1ed1a8de797d5b64630a5f3f1e542c7371b43575",
+      "original_official_lock": "providers/qcore-provider-librdkafka/outer-contracts.lock",
+      "original_official_lock_sha256": "a80f67f6b284e60ce3b7f4c8fd5d56726b4f584bdc85a3e8ed2dab2a07f7123b",
+      "entries": [
+        {
+          "function": "rd_kafka_plugin_new",
+          "module": "librdkafka/outer.qv",
+          "contract_sha256": "f51206e1b667951cdd276298a9ad59fe734439c20002f1245c233790817713d9",
+          "identities": [
+            {
+              "reviewed_at": [
+                {
+                  "kind": "git",
+                  "revision": "046accf6aded7906f66a1baf0202da349e521736"
+                },
+                {
+                  "kind": "git",
+                  "revision": "66910c10a4d7eafa810b84229cf2dcf7b0f26f97"
+                }
+              ],
+              "sites": [
+                {
+                  "path": "lib/librdkafka-2.15.0/src/rdkafka_plugin.c",
+                  "kind": "definition",
+                  "declaration_sha256": "577947267b1b8fd5513926faaaf04601429a8fc0f31a5b75166a7cfb4b1ea82c",
+                  "body_sha256": "929a91281db72c51dfcee2bfd183826f560faab86755c26bb6f0286312170401"
+                }
+              ]
+            }
+          ]
+        }
+      ],
+      "meaning": "Expected identity reconstructed from existing official records before production edits, to be independently compared with the actual outer source parser. This does not claim a pin is in force at a new source or establish outer truth."
+    },
+    {
+      "name": "flb_external_plugin",
+      "defining_declaration": "flb_plugin_load",
+      "hosting_loaders": [
+        "flb_plugin_load",
+        "flb_plugin_proxy_create"
+      ],
+      "module": "providers/quirin-provider-fluent-bit/contracts/fluent_bit/outer.qv",
+      "module_sha256": "282408a08e6fc19b6f87d3cde8d2c12d2ab0627b002b2f2e2a914bb8460c133d",
+      "outer_digest_from_original_official_loader_text_hashes": "545119edfb1834a4b51d5a0003ca18acb648775b28c197b673ef6638662490f9",
+      "original_official_lock": "providers/quirin-provider-fluent-bit/outer-contracts.lock",
+      "original_official_lock_sha256": "6bdabe473897b6b5f15f30431725785d46c2c77ebcaf4851b44865afa12bc2db",
+      "entries": [
+        {
+          "function": "flb_plugin_load",
+          "module": "fluent_bit/outer.qv",
+          "contract_sha256": "2f9617351f039a2257962a96944b6c1468b0d92b7b9a2ef622ce1ce882a4d9cd",
+          "identities": [
+            {
+              "reviewed_at": [
+                {
+                  "kind": "git",
+                  "revision": "046accf6aded7906f66a1baf0202da349e521736"
+                },
+                {
+                  "kind": "git",
+                  "revision": "66910c10a4d7eafa810b84229cf2dcf7b0f26f97"
+                }
+              ],
+              "sites": [
+                {
+                  "path": "include/fluent-bit/flb_plugin.h",
+                  "kind": "declaration",
+                  "declaration_sha256": "7743c8dbec5d7fb2bd76eb968e1464af72fb2d13ba4512b93f9b368843e5d27a"
+                },
+                {
+                  "path": "src/flb_plugin.c",
+                  "kind": "definition",
+                  "declaration_sha256": "7743c8dbec5d7fb2bd76eb968e1464af72fb2d13ba4512b93f9b368843e5d27a",
+                  "body_sha256": "e1a2c9fb39c33261b12f428ff49ba23f1cadb03b503ec4dfb57a3ae1c9865e42"
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "function": "flb_plugin_proxy_create",
+          "module": "fluent_bit/outer.qv",
+          "contract_sha256": "eed16b6e18562d956488fa7819e9289c0af1670a3521542e48c70e14b450c888",
+          "identities": [
+            {
+              "reviewed_at": [
+                {
+                  "kind": "git",
+                  "revision": "046accf6aded7906f66a1baf0202da349e521736"
+                },
+                {
+                  "kind": "git",
+                  "revision": "66910c10a4d7eafa810b84229cf2dcf7b0f26f97"
+                }
+              ],
+              "sites": [
+                {
+                  "path": "include/fluent-bit/flb_plugin_proxy.h",
+                  "kind": "declaration",
+                  "declaration_sha256": "24e6f5fd0f3684d3c132ade4ab7df6de573ec11d70bcc746e4dca1f8a46473f7"
+                },
+                {
+                  "path": "src/flb_plugin_proxy.c",
+                  "kind": "definition",
+                  "declaration_sha256": "24e6f5fd0f3684d3c132ade4ab7df6de573ec11d70bcc746e4dca1f8a46473f7",
+                  "body_sha256": "3050e447b92adf93f0b3b1ded7328cf0fcef5779c7cd995edf0a85ca3e65ecdb"
+                }
+              ]
+            }
+          ]
+        }
+      ],
+      "meaning": "Expected identity reconstructed from existing official records before production edits, to be independently compared with the actual outer source parser. This does not claim a pin is in force at a new source or establish outer truth."
+    }
+  ],
+  "source_routes": {
+    "corpus": {
+      "root": "/home/cosmo/Documents/GitHub/qcore-c/build/cycle19/c-gateway-wave-pin/fluent-bit-clang-source",
+      "head": "66910c10a4d7eafa810b84229cf2dcf7b0f26f97",
+      "files": {
+        "lib/librdkafka-2.15.0/src/rdkafka_plugin.c": "8e8ac3380dc8c99e083ae9c279f6046c645f5fc05a28696a3f797940640ee12e",
+        "lib/librdkafka-2.15.0/src/rddl.c": "95d11a6057615c7586fa212e15bd5999f36475a68fb67eda93d3687576b642d5",
+        "lib/librdkafka-2.15.0/src/rdkafka_interceptor.c": "f6bdee517cbc9d21a13cdc461daf23a02f2baeeb05fede6488f3651843111834",
+        "src/flb_plugin.c": "99a616b2f0599a4cd52a36cf6b132201c8dca27bf924c643758a5ab87aec2fa1",
+        "src/flb_plugin_proxy.c": "00ca65b30aabad04495496fdac049e8ef95ed9adef0c48eaefcf3e7f15e8e87f",
+        "src/proxy/go/go.c": "7e51665520f324b1da6cee1935d53c71028a05aec80c341c2e3210d5ebe1e59e",
+        "lib/librdkafka-2.15.0/src/rdkafka_conf.c": "7464c3e6fa9a95fb9618d9b7b3117693cf08b972042a880dd23eb25c9d8f1fba"
+      }
+    },
+    "system": {
+      "root": "/home/cosmo/Documents/GitHub/qcore-c/private/w45-fb/w46-external-callee-contracts/attempt-1/fluent-bit-clang-source",
+      "head": "046accf6aded7906f66a1baf0202da349e521736",
+      "files": {
+        "lib/librdkafka-2.15.0/src/rdkafka_plugin.c": "8e8ac3380dc8c99e083ae9c279f6046c645f5fc05a28696a3f797940640ee12e",
+        "lib/librdkafka-2.15.0/src/rddl.c": "95d11a6057615c7586fa212e15bd5999f36475a68fb67eda93d3687576b642d5",
+        "lib/librdkafka-2.15.0/src/rdkafka_interceptor.c": "f6bdee517cbc9d21a13cdc461daf23a02f2baeeb05fede6488f3651843111834",
+        "src/flb_plugin.c": "99a616b2f0599a4cd52a36cf6b132201c8dca27bf924c643758a5ab87aec2fa1",
+        "src/flb_plugin_proxy.c": "00ca65b30aabad04495496fdac049e8ef95ed9adef0c48eaefcf3e7f15e8e87f",
+        "src/proxy/go/go.c": "7e51665520f324b1da6cee1935d53c71028a05aec80c341c2e3210d5ebe1e59e",
+        "lib/librdkafka-2.15.0/src/rdkafka_conf.c": "7464c3e6fa9a95fb9618d9b7b3117693cf08b972042a880dd23eb25c9d8f1fba"
+      }
+    },
+    "slice": {
+      "root": "/home/cosmo/Documents/GitHub/qcore-c/private/w47-tail/attempt-1/prep/fluent-bit-clang-source",
+      "head": "34155955e4962a56d94eb23c03a002880899a0d1",
+      "files": {
+        "lib/librdkafka-2.15.0/src/rdkafka_plugin.c": "8e8ac3380dc8c99e083ae9c279f6046c645f5fc05a28696a3f797940640ee12e",
+        "lib/librdkafka-2.15.0/src/rddl.c": "95d11a6057615c7586fa212e15bd5999f36475a68fb67eda93d3687576b642d5",
+        "lib/librdkafka-2.15.0/src/rdkafka_interceptor.c": "f6bdee517cbc9d21a13cdc461daf23a02f2baeeb05fede6488f3651843111834",
+        "src/flb_plugin.c": "99a616b2f0599a4cd52a36cf6b132201c8dca27bf924c643758a5ab87aec2fa1",
+        "src/flb_plugin_proxy.c": "00ca65b30aabad04495496fdac049e8ef95ed9adef0c48eaefcf3e7f15e8e87f",
+        "src/proxy/go/go.c": "7e51665520f324b1da6cee1935d53c71028a05aec80c341c2e3210d5ebe1e59e",
+        "lib/librdkafka-2.15.0/src/rdkafka_conf.c": "7464c3e6fa9a95fb9618d9b7b3117693cf08b972042a880dd23eb25c9d8f1fba"
+      }
+    }
+  },
+  "complete_loader_source_bytes_match_across_routes": true,
+  "notice": "Actual build configurations, preprocessor-selected platform paths, deployed artifacts, callback traces and source/model correspondence stay Open. Matching source bytes are not build or deployment equivalence."
+}

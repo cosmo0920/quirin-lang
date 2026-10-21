@@ -243,4 +243,66 @@ theorem callback_has_candidate_and_registration_or_default
          reg.time < ev.time ∧ reg.result = 0 ∧ reg.publicSetter = true) := by
   exact h.callback ev eventIn invoked
 
+/-! Property-specific metadata erasure models the bounds/null parser boundary.
+The generic graph checker remains a prerequisite, not proved by this erasure. -/
+inductive Clause (α : Type) where
+  | semantic (value : α)
+  | atom (id : Nat)
+  | refinement (children : List Nat)
+
+def semanticClauses : List (Clause α) → List α
+  | [] => []
+  | .semantic value :: rest => value :: semanticClauses rest
+  | .atom _ :: rest => semanticClauses rest
+  | .refinement _ :: rest => semanticClauses rest
+
+theorem semanticClauses_append (left right : List (Clause α)) :
+    semanticClauses (left ++ right) = semanticClauses left ++ semanticClauses right := by
+  induction left with
+  | nil => rfl
+  | cons head rest ih => cases head <;> simp [semanticClauses, ih]
+
+def attach (original : List (Clause α)) (atoms : List Nat) : List (Clause α) :=
+  atoms.map Clause.atom ++ Clause.refinement atoms :: original
+
+theorem attachment_preserves_original_clause_interpretation
+    (original : List (Clause α)) (atoms : List Nat) :
+    semanticClauses (attach original atoms) = semanticClauses original := by
+  have erased : semanticClauses (atoms.map (Clause.atom (α := α))) = [] := by
+    induction atoms with
+    | nil => rfl
+    | cons a rest ih => simpa [semanticClauses] using ih
+  simp [attach, semanticClauses_append, erased, semanticClauses]
+
+theorem attachment_preserves_any_existing_null_checker
+    (checker : List α → β) (original : List (Clause α)) (atoms : List Nat) :
+    checker (semanticClauses (attach original atoms)) =
+      checker (semanticClauses original) := by
+  rw [attachment_preserves_original_clause_interpretation]
+
+structure Instance where
+  context : HypothesisGraph.Context
+  dependencies : List Nat
+
+def affected (expected : HypothesisGraph.Context) (atom : Nat) (i : Instance) : Bool :=
+  decide (i.context = expected) && i.dependencies.contains atom
+
+def impact (expected : HypothesisGraph.Context) (atom : Nat) (instances : List Instance) :=
+  instances.filter (affected expected atom)
+
+theorem impact_requires_exact_context_and_dependency
+    (expected : HypothesisGraph.Context) (atom : Nat) (instances : List Instance)
+    (i : Instance) :
+    i ∈ impact expected atom instances ↔
+      i ∈ instances ∧ i.context = expected ∧ atom ∈ i.dependencies := by
+  simp [impact, affected]
+
+theorem foreign_property_is_not_selected
+    (expected : HypothesisGraph.Context) (atom : Nat) (i : Instance)
+    (different : i.context.property ≠ expected.property) : affected expected atom i = false := by
+  have contexts : i.context ≠ expected := by
+    intro equal
+    exact different (congrArg HypothesisGraph.Context.property equal)
+  simp [affected, contexts]
+
 end QCore.PluginPremiseDecomposition

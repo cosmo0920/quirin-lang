@@ -1,0 +1,19 @@
+{
+  "planned_routes": [
+    "corpus",
+    "system",
+    "slice"
+  ],
+  "each_side": "Fresh own BASE and TIP executions against final exact API base and final card source. No previous results substituted.",
+  "link_map": "docs/reports/plugin-premise-decomposition/link-map.corpus.json",
+  "link_map_sha256": "98a4db761ace9fd4846b000c4c98defdc2e39ce6f95684c67c30f9b8b6f38ad3",
+  "workers": {
+    "corpus": 16,
+    "system": 8,
+    "slice": 8
+  },
+  "schedule": "Shared advisory flock; configured system/slice together at8each, corpus sides each alone at16, no concurrent cargo tests. Same N per route/side.",
+  "inputs": "Distinct immutable explicit complete runtime snapshots with registry, all contract/profile/load-path/lock/candidate inputs and exact analyzer binary. Preserve full source/driver/selection/database/binary hashes and subprocess cwd.",
+  "comparison": "All raw five artifact families, precise duplicate-preserving status/diagnostic/dependency/standing/classifier records, complete null and runtime dictionaries, separately attributed graph additions and exact producer-derived context/environment/configuration/time identities.",
+  "base_binary": "Needs exact merged Graphv2 current-base binary, not semantically older2619 binary. Immutable binary reuse only with identical source/features/toolchain receipt; every route execution own and fresh."
+}
