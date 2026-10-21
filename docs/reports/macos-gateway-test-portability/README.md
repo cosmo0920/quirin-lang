@@ -46,8 +46,7 @@ Fresh macOS focused checks (all exit 0):
 
 Final validation receipts are in
 `private/pagemap-portability-20261022-unsandboxed/`; the full Rust runner uses
-`private/test-binaries/20261021T163032Z-79574/`. Gate results will be recorded
-after completion. The checkout already carried unrelated audit/provider changes,
+`private/test-binaries/20261021T163032Z-79574/`. The gate results and remaining failures are recorded below. The checkout already carried unrelated audit/provider changes,
 which this repair preserves.
 
 The initial sandboxed build was interrupted (recorded exit 143) after executable
@@ -66,3 +65,51 @@ Its test binary was rebuilt separately before the runner's isolated
 `subcommand_plugins` phase; this test-only rebuild does not change the analyzer
 binary. The initial full build therefore predates that last fixture edit;
 `plugin-build.log` records the supplemental build.
+
+## Final verification and follow-ups
+
+The first complete gate exercised the revised timeout fixture but still failed
+that row: its child PID was absent with sibling plugin fixtures running. The
+same row passed alone (1 passed, exit 0, `plugin-isolated-before.log`). The final
+repair serializes the 14 tests within this timing-sensitive binary, complementing
+the runner's existing isolation from other binaries. Both the 500 ms quota and
+20 s outer assertion remain unchanged. The complete repaired binary passes
+14/14, exit 0 (`plugin-final.log`); the earlier failure is retained rather than
+reported as a green full run. The checkpoint suite passed all 8 tests, including
+both attached failures, without a code change.
+
+Commands below ran in this macOS checkout with Apple Clang 21.0.0
+(`clang --version`, exit 0, `clang-version.log`). The existing checkout was used,
+so the fresh-checkout-only submodule initialization step was not applicable.
+Each gate step has its own `.log` and `.exit` under
+`private/pagemap-portability-20261022-unsandboxed/`.
+
+| Command | Exit | Result / log stem |
+|---|---:|---|
+| `python3 scripts/run_test_binaries.py` | 101 | 535 units, 548 summaries; 8,383 passed, 1 failed, 15 ignored; `rust` |
+| `cargo test -p qcore-audit --test subcommand_plugins` (after final repair) | 0 | 14 passed, 0 failed; `plugin-final` |
+| `cargo fmt --all -- --check` | 0 | `fmt`; repeated after the final fixture edit as `fmt-final` |
+| `cargo clippy --all-targets -- -D warnings` | 101 | Existing `drop(quota)` on a `Copy` value at `crates/qcore-verifier-host/src/lib.rs:1562`; `clippy` |
+| `cargo run -p qcore-compiler --example reevaluation_probe` | 0 | `probe` |
+| `cargo run -p qcore-compiler --example reevaluation_followup` | 0 | `followup` |
+| `python3 scripts/check_lean_audits.py` | 0 | 360 audits passed; `lean` |
+| `python3 -m unittest discover -s scripts/tests` | 1 | 374 tests: 353 passed, 15 failed, 6 skipped; `python` |
+
+The full 535-unit suite was not rerun after serializing only the plugin tests;
+the complete affected binary was rerun instead. Thus this report does not claim
+a green standing gate. Remaining findings outside the reported Rust failures:
+
+- Clippy's pre-existing `dropping_copy_types` error at the verifier-host site
+  above. Resolve the intentional quota lifetime on macOS, then rerun Clippy.
+- Twelve reconciliation-sweep Python failures compare resolved paths against an
+  unresolved macOS temporary root and report that fixture files escape the root.
+- Two test-runner Python environment controls reject Darwin's injected
+  `__CF_USER_TEXT_ENCODING` variable.
+- One census Python control expects `/var/...` include paths while the command
+  uses their canonical `/private/var/...` forms.
+
+These Python failures are in `test_reconciliation_sweep`,
+`test_run_test_binaries` and `test_w42_unprojected_census`; the private log names
+every assertion. They need separate portability fixes and a fresh Python gate.
+The separately committed per-library provider changes were already present when
+this validation began and are included in these measured Rust/Lean results.

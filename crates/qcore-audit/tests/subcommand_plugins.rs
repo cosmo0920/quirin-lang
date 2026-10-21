@@ -26,6 +26,15 @@ mod process_fixture;
 
 const HOST: &str = env!("CARGO_BIN_EXE_quirin-audit");
 
+// The runner isolates this binary from other test binaries. Also isolate its
+// shell/plugin fixtures from each other: concurrent launches can consume the
+// timeout control's 500 ms before its child PID is published on macOS.
+static PROCESS_TESTS: std::sync::Mutex<()> = std::sync::Mutex::new(());
+
+fn serial() -> std::sync::MutexGuard<'static, ()> {
+    PROCESS_TESTS.lock().expect("a prior plugin test panicked")
+}
+
 fn scratch(name: &str) -> PathBuf {
     let directory = Path::new(env!("CARGO_TARGET_TMPDIR"))
         .join("subcommand-plugins")
@@ -115,6 +124,7 @@ fn stderr(output: &Output) -> String {
 
 #[test]
 fn an_external_plugin_runs_and_its_artifacts_are_recorded() {
+    let _serial = serial();
     let directory = scratch("runs");
     let content = "prepared\n";
     let digest = qcore_schemas::sha256_hex(content.as_bytes());
@@ -164,6 +174,7 @@ fn an_external_plugin_runs_and_its_artifacts_are_recorded() {
 
 #[test]
 fn a_builtin_name_is_never_run_externally() {
+    let _serial = serial();
     let directory = scratch("builtin");
     for name in ["plugin", "prepare", "current", "pinned"] {
         plugin(&directory, name, "touch \"$0.ran\"");
@@ -202,6 +213,7 @@ fn a_builtin_name_is_never_run_externally() {
 
 #[test]
 fn a_missing_plugin_is_a_usage_error_and_path_is_not_searched() {
+    let _serial = serial();
     let directory = scratch("missing");
     plugin(
         &directory,
@@ -240,6 +252,7 @@ fn assert_unknown(directory: &Path, name: &str, output: &Output, code: &str) {
 
 #[test]
 fn a_version_mismatch_is_unknown_with_a_named_reason() {
+    let _serial = serial();
     let directory = scratch("version");
     let text = response(&json!([]), &json!([]))
         .replace("\"protocol_version\":1", "\"protocol_version\":2");
@@ -250,6 +263,7 @@ fn a_version_mismatch_is_unknown_with_a_named_reason() {
 
 #[test]
 fn a_timeout_is_unknown_and_kills_the_process_group() {
+    let _serial = serial();
     let directory = scratch("timeout");
     // Consume stdin with shell builtins: launching `cat` before publishing
     // child.pid can spend the entire timeout in executable startup on macOS.
@@ -291,6 +305,7 @@ fn a_timeout_is_unknown_and_kills_the_process_group() {
 
 #[test]
 fn oversize_output_is_unknown() {
+    let _serial = serial();
     let directory = scratch("oversize");
     plugin(&directory, "loud", "head -c 200000 /dev/zero | tr '\\0' x");
     let output = run(&directory, &["--stdout-limit-bytes", "1000"], "loud", &[]);
@@ -306,6 +321,7 @@ fn oversize_output_is_unknown() {
 
 #[test]
 fn a_nonzero_exit_is_unknown() {
+    let _serial = serial();
     let directory = scratch("exit");
     plugin(
         &directory,
@@ -324,6 +340,7 @@ fn a_nonzero_exit_is_unknown() {
 
 #[test]
 fn malformed_json_is_unknown() {
+    let _serial = serial();
     let directory = scratch("malformed");
     plugin(&directory, "garbled", "echo 'not json'");
     let output = run(&directory, &[], "garbled", &[]);
@@ -332,6 +349,7 @@ fn malformed_json_is_unknown() {
 
 #[test]
 fn an_artifact_outside_the_output_is_unknown() {
+    let _serial = serial();
     let directory = scratch("outside");
     let digest = qcore_schemas::sha256_hex(b"x\n");
     let body = format!(
@@ -348,6 +366,7 @@ fn an_artifact_outside_the_output_is_unknown() {
 
 #[test]
 fn uncertified_claims_are_pending() {
+    let _serial = serial();
     let directory = scratch("claims");
     for (name, verdict) in [("says-safe", "Safe"), ("says-unsafe", "Unsafe")] {
         plugin(
@@ -405,6 +424,7 @@ fn audit_report(directory: &Path, status: &str) -> PathBuf {
 
 #[test]
 fn a_failed_plugin_joined_with_safe_is_unknown() {
+    let _serial = serial();
     let directory = scratch("failed-join");
     let safe = audit_report(&directory, "Safe");
     plugin(&directory, "fails", "exit 1");
@@ -422,6 +442,7 @@ fn a_failed_plugin_joined_with_safe_is_unknown() {
 
 #[test]
 fn no_claim_lowers_an_existing_unsafe() {
+    let _serial = serial();
     let directory = scratch("unsafe-host");
     let unsafe_report = audit_report(&directory, "Unsafe");
     for (name, verdict) in [("safe-on-bad", "Safe"), ("unknown-on-bad", "Unknown")] {
@@ -456,6 +477,7 @@ fn no_claim_lowers_an_existing_unsafe() {
 
 #[test]
 fn the_environment_does_not_leak() {
+    let _serial = serial();
     let directory = scratch("environment");
     let body = format!(
         "env > environment.txt\n{}",
@@ -513,6 +535,7 @@ fn the_environment_does_not_leak() {
 
 #[test]
 fn a_provider_needs_a_load_path_and_an_output_is_required() {
+    let _serial = serial();
     let directory = scratch("inputs");
     plugin(&directory, "tool", &emit(&response(&json!([]), &json!([]))));
     let output = run(
