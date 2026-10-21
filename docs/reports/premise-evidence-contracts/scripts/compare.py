@@ -74,6 +74,31 @@ checks={
 count=lambda side:dict(collections.Counter(f['status'] for u in data[side]['diagnostics']['units'] for f in u['functions']))
 expected=json.loads((ROOT/'docs/reports/premise-evidence-contracts/expected-graph.json').read_bytes())
 manifest=json.loads((ROOT/'docs/reports/premise-evidence-contracts/binding-manifest.json').read_bytes())
+def canonical_graph(g):
+ atoms={}
+ for k,a in sorted(g['atoms'].items()):
+  prop=a['proposition'];assert prop['kind']=='opaque'
+  atoms[k]={'id':a['id'],'proposition':{'kind':'opaque','statement':prop['statement']}}
+ premises={k:{'id':p['id'],'children':p['children'],'erasure':{e:p['erasure'][e] for e in ['name','statement','origin']}} for k,p in sorted(g['premises'].items())}
+ out={'version':g['version'],'atoms':atoms,'premises':premises}
+ if g.get('refinements'):out['refinements']={k:{'premise':v['premise'],'children':v['children']} for k,v in sorted(g['refinements'].items())}
+ return json.dumps(out,ensure_ascii=False,separators=(',',':')).encode()
+assert canonical_graph(expected)==(ROOT/'docs/reports/premise-evidence-contracts/expected-graph.json').read_bytes()
+graph_digest_checks=0
+def verify_digests(v):
+ global graph_digest_checks
+ if isinstance(v,list):
+  for x in v:verify_digests(x)
+ elif isinstance(v,dict):
+  if isinstance(v.get('hypothesis_graph'),dict):
+   h=hashlib.sha256(canonical_graph(v['hypothesis_graph'])).hexdigest()
+   if 'hypothesis_graph_sha256' in v:assert v['hypothesis_graph_sha256']==h;graph_digest_checks+=1
+   if isinstance(v.get('hypothesis_evidence'),dict):assert v['hypothesis_evidence']['graph_sha256']==h;graph_digest_checks+=1
+  if '$hypothesis_graphs' in v:
+   assert v['$hypothesis_graphs'].keys()==v['$hypothesis_graph_digests'].keys()
+   for name,g in v['$hypothesis_graphs'].items():assert hashlib.sha256(canonical_graph(g)).hexdigest()==v['$hypothesis_graph_digests'][name];graph_digest_checks+=1
+  for x in v.values():verify_digests(x)
+for docs in data.values():verify_digests(docs)
 selected_graphs=[]
 def graph_walk(l,r,path=()):
  if isinstance(l,dict) and isinstance(r,dict):
@@ -111,5 +136,5 @@ if selected_context is not None:assert all(selected_context.get(k) for k in ['ar
 exact_impact=[v for v in impact if v['context']==selected_context];other_contexts=[v for v in impact if v['context']!=selected_context]
 impact_record={'route':a.route,'control':{'atom':'detach_no_writer','disposition':'refuted','warrant':'declared','reference':'synthetic formal writing-step control; no observed C violation'},'selected_independently_held_context':selected_context,'binding_resolution_receipt':'checked-binding-publication.json.gz','formal_refutation_target':manifest['atoms']['detach_no_writer'],'potential_transitive_dependents':impact,'affected_refinement_instances':exact_impact,'dependent_other_contexts_unchanged':other_contexts,'unrelated_records':unrelated,'production_verdict_changes':[],'legacy_premise_disposition_changes':[],'source_binding':'open','boundary':'Exact production graph and content-addressed binding. Refutation affects proposed conjunction only in held Context; legacy singleton stays separately Open. Actual Rust direct+summary controls establish closure/refusal. No null-property dependency is inferred.'}
 gz(a.out/'impact.json.gz',(json.dumps(impact_record,indent=2)+'\n').encode())
-summary={'route':a.route,'checks':checks,'base':count('base'),'tip':count('tip'),'null_rows':{side:len(data[side]['null']) for side in data},'exact_migration_transform_counts':dict(counts),'raw_differing_leaf_counts':{k:len(v) for k,v in raw.items()},'remaining_differing_leaf_counts':{k:len(v) for k,v in projected.items()},'potential_dependent_custody_records':len(impact),'affected_custody_records':len(exact_impact),'dependent_other_contexts_unchanged':len(other_contexts),'unrelated_custody_records':len(unrelated),'all_invariant_checks_pass':all(checks.values()),'verified_selected_graph_instances':selected_graphs,'note':'Production same-name neutral refinement, exact original singleton/name/text and all unrelated v1 graphs retained. Every metadata residual needs separate attribution. Source binding remains Open.'}
+summary={'route':a.route,'checks':checks,'base':count('base'),'tip':count('tip'),'null_rows':{side:len(data[side]['null']) for side in data},'exact_migration_transform_counts':dict(counts),'raw_differing_leaf_counts':{k:len(v) for k,v in raw.items()},'remaining_differing_leaf_counts':{k:len(v) for k,v in projected.items()},'potential_dependent_custody_records':len(impact),'affected_custody_records':len(exact_impact),'dependent_other_contexts_unchanged':len(other_contexts),'unrelated_custody_records':len(unrelated),'all_invariant_checks_pass':all(checks.values()),'verified_selected_graph_instances':selected_graphs,'fresh_graph_digest_checks':graph_digest_checks,'note':'Production same-name neutral refinement, exact original singleton/name/text and all unrelated v1 graphs retained. Every metadata residual needs separate attribution. Source binding remains Open.'}
 (a.out/'comparison.json').write_text(json.dumps(summary,indent=2)+'\n');print(json.dumps(summary,indent=2));raise SystemExit(0 if all(checks.values()) else 1)
