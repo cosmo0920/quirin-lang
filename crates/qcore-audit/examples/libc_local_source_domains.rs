@@ -128,8 +128,10 @@ fn reconstruct_imports(
                 || record["home_preprocessed_source_sha256"] != id.preprocessed_source_sha256
             {
                 return Err(format!(
-                    "independent export differs from actual selected home: {}",
-                    export.home.function
+                    "independent export differs from actual selected home: {} actual={} expected={}",
+                    export.home.function,
+                    serde_json::to_string(&id).unwrap(),
+                    record
                 ));
             }
         }
