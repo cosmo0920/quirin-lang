@@ -76,6 +76,61 @@ fn complete_recorded_domain_replays_and_truncated_context_source_or_environment_
             .len(),
         expected.len()
     );
+    let checked = reading_site_domain::check(&held, &expected).unwrap();
+    let mut other = contexts["f"].clone();
+    other.artifact = "other.c#caller".into();
+    let rows = vec![
+        reading_site_domain::DependentRecord {
+            id: "actual-direct".into(),
+            context: contexts["f"].clone(),
+            declarations: declarations.clone(),
+        },
+        reading_site_domain::DependentRecord {
+            id: "actual-summary-other-context".into(),
+            context: other.clone(),
+            declarations: declarations.clone(),
+        },
+        reading_site_domain::DependentRecord {
+            id: "unrelated".into(),
+            context: contexts["f"].clone(),
+            declarations: BTreeSet::new(),
+        },
+    ];
+    for kind in [
+        reading_site_domain::FailureKind::SourceMismatch,
+        reading_site_domain::FailureKind::RefutedPrerequisite,
+        reading_site_domain::FailureKind::FinitePredicateCounterexample,
+    ] {
+        let impact = serde_json::to_value(
+            checked
+                .impact(&expected[0].id, &contexts["f"], kind, &rows)
+                .unwrap(),
+        )
+        .unwrap();
+        assert_eq!(
+            impact["affected_records"],
+            serde_json::json!(["actual-direct"])
+        );
+        assert_eq!(
+            impact["dependent_other_contexts_unchanged"],
+            serde_json::json!(["actual-summary-other-context"])
+        );
+        assert_eq!(
+            impact["unrelated_records"],
+            serde_json::json!(["unrelated"])
+        );
+        assert_eq!(impact["verdict_mutations"], 0);
+    }
+    assert!(
+        checked
+            .impact(
+                &expected[0].id,
+                &other,
+                reading_site_domain::FailureKind::SourceMismatch,
+                &rows
+            )
+            .is_err()
+    );
     let mut truncated = expected.clone();
     truncated.pop();
     assert!(reading_site_domain::check(&held, &truncated).is_err());

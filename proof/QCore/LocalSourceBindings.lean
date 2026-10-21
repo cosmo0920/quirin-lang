@@ -53,19 +53,58 @@ theorem a_foreign_link_write_still_refutes_writer_guard (e : Environment) (s : S
     (writes : s.writesLinks = true) : ¬ noWriter e := by
   exact a_writing_step_refutes_no_writer e s seen foreign writes
 
+/-- A source-local native domain. The driver must bind these fields to its
+retained native snapshots; the model supplies no execution attestation. -/
+structure NativeDomain where
+  entries : List Environment
+  rank : Environment → Nat → Nat
+  postPredicates : List Bool
+  caseKeys : List (Nat × Option Nat)
+
+def canonicalCases : List (Nat × Option Nat) :=
+  [(0, none), (1, some 0), (2, some 0), (2, some 1),
+   (3, some 0), (3, some 1), (3, some 2),
+   (4, some 0), (4, some 1), (4, some 2), (4, some 3)]
+
+def finiteEntryEquations (d : NativeDomain) : Prop :=
+  ∀ e ∈ d.entries, chain e ∧ distinct e ∧ empty e ∧ firstPrev e ∧
+    lastNext e ∧ linkTargets e ∧ parentOutside e ∧ predecessor e
+
+def finiteDetachPost (d : NativeDomain) : Prop :=
+  ∀ predicate ∈ d.postPredicates, predicate = true
+
+def incompleteFixedCaseDomain (d : NativeDomain) : Prop :=
+  ¬ d.caseKeys.Perm canonicalCases
+
+theorem native_entry_checks_refine_finite_equations (d : NativeDomain)
+    (allEntries : ∀ e ∈ d.entries, EntryCheck e (d.rank e)) :
+    finiteEntryEquations d := by
+  intro e member
+  exact checked_entry_has_eight_finite_equations e (d.rank e) (allEntries e member)
+
+theorem complete_case_domain_covers_each_case (d : NativeDomain)
+    (complete : d.caseKeys.Perm canonicalCases) (key : Nat × Option Nat)
+    (member : key ∈ canonicalCases) : key ∈ d.caseKeys := by
+  exact complete.mem_iff.mpr member
+
+theorem checked_post_predicate_is_true (d : NativeDomain)
+    (allTrue : d.postPredicates.all id = true) (predicate : Bool)
+    (member : predicate ∈ d.postPredicates) : predicate = true := by
+  exact List.all_eq_true.mp allTrue predicate member
+
 /-- Full finite recorded-domain equality, not selected membership. -/
-def domainAccepts (held presented fresh : List S) (local : S → Prop) : Prop :=
-  presented = held ∧ fresh = held ∧ ∀ s ∈ fresh, local s
+def domainAccepts (held presented fresh : List S) (predicate : S → Prop) : Prop :=
+  presented = held ∧ fresh = held ∧ ∀ s ∈ fresh, predicate s
 
 theorem complete_recorded_domain_covers_each_held_site (held presented fresh : List S)
-    (local : S → Prop) (accepted : domainAccepts held presented fresh local)
-    (s : S) (member : s ∈ held) : local s := by
+    (predicate : S → Prop) (accepted : domainAccepts held presented fresh predicate)
+    (s : S) (member : s ∈ held) : predicate s := by
   apply accepted.2.2 s
   simpa [accepted.2.1] using member
 
-theorem truncated_domain_refused (held presented fresh : List S) (local : S → Prop)
+theorem truncated_domain_refused (held presented fresh : List S) (predicate : S → Prop)
     (s : S) (freshMember : s ∈ fresh) (omitted : s ∉ presented) :
-    ¬ domainAccepts held presented fresh local := by
+    ¬ domainAccepts held presented fresh predicate := by
   intro accepted
   apply omitted
   simpa [accepted.1, accepted.2.1] using freshMember

@@ -40,9 +40,13 @@ pub struct CheckedDomain {
     claim: &'static str,
     domain_sha256: String,
     receipt_ids: Vec<String>,
+    targets: BTreeMap<String, (Context, String)>,
     local_predicates: BTreeMap<String, BTreeMap<String, bool>>,
     raw_sha256: String,
     compile_sha256: String,
+    finite_property: &'static str,
+    model_sha256: String,
+    checker_sha256: String,
     universal_disposition: &'static str,
     open_prerequisites: [&'static str; 4],
 }
@@ -150,12 +154,26 @@ pub fn check(held: &HeldDomain<'_>, presented: &[Receipt]) -> Result<CheckedDoma
             &serde_json::to_vec(&canonical(&rebuilt)?).map_err(|e| e.to_string())?,
         ),
         receipt_ids: ids,
+        targets: rebuilt
+            .iter()
+            .map(|r| {
+                (
+                    r.id.clone(),
+                    (r.context.clone(), r.observation.declaration.clone()),
+                )
+            })
+            .collect(),
         local_predicates: rebuilt
             .iter()
             .map(|r| (r.id.clone(), r.observation.checked_predicates.clone()))
             .collect(),
         raw_sha256: held.raw_sha256.into(),
         compile_sha256: qcore_schemas::sha256_hex(held.compile_configuration.as_bytes()),
+        finite_property: "libc.recorded-domain.local-accepted-predicates.v1",
+        model_sha256: qcore_schemas::sha256_hex(include_bytes!(
+            "../../../proof/QCore/LocalSourceBindings.lean"
+        )),
+        checker_sha256: qcore_schemas::sha256_hex(include_bytes!("reading_site_domain.rs")),
         universal_disposition: "open",
         open_prerequisites: [
             "all-relevant-C-reading-domain",
@@ -164,4 +182,80 @@ pub fn check(held: &HeldDomain<'_>, presented: &[Receipt]) -> Result<CheckedDoma
             "boundary28.rust-lean-correspondence",
         ],
     })
+}
+
+/// Explicit records from actual direct/summary consultation closure. These
+/// contain no mutable verdict. The caller retains status/property payloads.
+pub struct DependentRecord {
+    pub id: String,
+    pub context: Context,
+    pub declarations: BTreeSet<String>,
+}
+#[derive(Debug, Serialize)]
+pub struct ScopedImpact {
+    receipt_id: String,
+    failure_kind: &'static str,
+    affected_records: Vec<String>,
+    dependent_other_contexts_unchanged: Vec<String>,
+    unrelated_records: Vec<String>,
+    verdict_mutations: usize,
+    universal_atoms: &'static str,
+}
+/// Distinguish a source mismatch from a mathematical/guard counterexample.
+/// A report of either kind supplies no reachable C violation or Unsafe.
+pub enum FailureKind {
+    SourceMismatch,
+    RefutedPrerequisite,
+    FinitePredicateCounterexample,
+}
+impl CheckedDomain {
+    pub fn impact(
+        &self,
+        receipt_id: &str,
+        independently_held_context: &Context,
+        kind: FailureKind,
+        records: &[DependentRecord],
+    ) -> Result<ScopedImpact, String> {
+        let (context, declaration) = self
+            .targets
+            .get(receipt_id)
+            .ok_or("local impact: receipt outside checked finite domain")?;
+        if context != independently_held_context {
+            return Err("local impact: foreign Context".into());
+        }
+        if records.iter().map(|r| &r.id).collect::<BTreeSet<_>>().len() != records.len() {
+            return Err("local impact: duplicate record identities".into());
+        }
+        let mut affected = Vec::new();
+        let mut other = Vec::new();
+        let mut unrelated = Vec::new();
+        for row in records {
+            if row.declarations.contains(declaration) {
+                if row.context == *context {
+                    affected.push(row.id.clone())
+                } else {
+                    other.push(row.id.clone())
+                }
+            } else {
+                unrelated.push(row.id.clone())
+            }
+        }
+        Ok(ScopedImpact {
+            receipt_id: receipt_id.into(),
+            failure_kind: match kind {
+                FailureKind::SourceMismatch => "source-mismatch-evidence-refused",
+                FailureKind::RefutedPrerequisite => {
+                    "hypothetical-refuted-prerequisite-no-C-violation"
+                }
+                FailureKind::FinitePredicateCounterexample => {
+                    "hypothetical-finite-predicate-counterexample-no-C-violation"
+                }
+            },
+            affected_records: affected,
+            dependent_other_contexts_unchanged: other,
+            unrelated_records: unrelated,
+            verdict_mutations: 0,
+            universal_atoms: "open",
+        })
+    }
 }

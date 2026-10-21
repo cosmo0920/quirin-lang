@@ -7,3 +7,6 @@ import QCore.LocalSourceBindings
 #print axioms QCore.LocalSourceBindings.scalar_site_preserves_alternative
 #print axioms QCore.LocalSourceBindings.another_context_is_unaffected
 #print axioms QCore.LocalSourceBindings.unrelated_dependency_is_unaffected
+#print axioms QCore.LocalSourceBindings.native_entry_checks_refine_finite_equations
+#print axioms QCore.LocalSourceBindings.complete_case_domain_covers_each_case
+#print axioms QCore.LocalSourceBindings.checked_post_predicate_is_true
