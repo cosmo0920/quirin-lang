@@ -6754,7 +6754,7 @@
   "note": "providers/ is a separate Cargo workspace, excluded from the core workspace; P01 verified empirically that the core workspace builds and passes its full suite with providers/ moved out of the tree."
  },
  "validation": {
-  "note": "Cycle2 combined source 62eebba95c51917c0fe841fbc23e2bf0d0e7e465: fresh successful joint-gate-2 all22 steps0, Rust8441/0failed/15ignored(532units545summaries), Lean357, provider133Rust/1ignored/25Python and all5 package builds/verifications. All six native audits and full-record comparisons pass0; no verdict movement. Python374 is explicitly BORROWED prior plugin-premise-integration confirmation pending fresh committed-matrix phase1; operator retirement is withheld until that passes. Failed gate1 and corrected comparison/source replay attempts retained. Commands/exits/private logs and exact source scopes are in this report.",
+  "note": "Cycle2 combined source 62eebba95c51917c0fe841fbc23e2bf0d0e7e465: fresh successful joint-gate-2 all22 steps0, Rust8441/0failed/15ignored(532units545summaries), Lean357, provider133Rust/1ignored/25Python and all5 package builds/verifications. All six native audits and full-record comparisons pass0; no verdict movement. Fresh phase1 committed-matrix Python374 passes0 at f03192a4e7e0bd7a8daccb1cc69eb51ecf34b555; registered operator design retired and production consumer residual rehomed. Final regenerated committed-matrix confirmation follows. Failed gate1 and corrected comparison/source replay attempts retained. Commands/exits/private logs and exact source scopes are in this report.",
   "workspace_tests": 8441,
   "provider_tests": 133,
   "python_evidence_validator_tests": 374,
@@ -7122,7 +7122,7 @@
   "reevaluation_followup_exit": 0,
   "cargo_fmt": "clean",
   "cargo_clippy": "clean",
-  "standing_gate": "native stages complete; fresh committed-matrix Python pending",
+  "standing_gate": "complete; final regenerated committed-matrix confirmation follows",
   "full_language_conformance": false,
   "measurement_provenance": "integrator_supplied (docs/reports/premise-resolution-cycle2/gate.json)"
  },
@@ -12752,11 +12752,11 @@
    "recorded_by": "PLUGIN-PREMISE-DECOMPOSITION"
   },
   {
-   "id": "PLUGIN-PREMISE-OPERATOR-DESIGN",
-   "title": "Design explicit premise operators and prerequisite composition without changing current source syntax",
-   "why": "The card implements only conjunction-only opaque atoms and neutral same-name attachments. Loader/build/runtime environments and dependencies are assigned formal propositions/catalogs; no new operator, typed predicate, evidence consumer or general dependency-DAG source syntax is supplied. DISCHARGE: a separately frozen language/API design with total-or-reject grammar, explicit quantifier/prerequisite/evidence semantics, exact context/refutation propagation, Rust/Lean parity and its own source/provider/all-route validation. This is design-only follow-on work and cannot license truth transport or automatic Unsafe.",
-   "source": "docs/reports/plugin-premise-decomposition/README.md",
-   "recorded_by": "PLUGIN-PREMISE-DECOMPOSITION"
+   "id": "PREMISE-FLOW-PRODUCTION-DISCHARGE",
+   "title": "Adopt scoped premise flows through an explicitly checked production semantic consumer",
+   "why": "PREMISE-FLOW-OPERATORS supplies executable AND/OR/positive-NOT/terminal syntax and proposed composition, exact source/model/graph/Context replay and independently checked finite source-witness integrations. It deliberately migrates no production flow clause, registers no global typed predicate and supplies no verdict/standing consumer. Missing capability: turn one exactly scoped production obligation into checked authority only under independently discharged complete antecedents, without treating a generic ProposedEvaluation or a finite fixture as universal source truth. DISCHARGE: select and freeze a bounded production declaration/property and eligible predicate family; establish exact source/model/prose/environment correspondence and complete scoped evidence, including every feasible program-path obligation; implement a total-or-reject checked consumer and dependency/invalidation rule with matching Rust/Lean, exact9-coordinate context and refutation controls; preserve legacy erasure/classification and validate intentional verdict movement through standing/provider/all-route evidence. Safe requires all relevant obligations; Unsafe still requires a validated reachable C violation. Existing CJSON-REPRESENTATION-PROSE-AND-SOURCE-BINDING, LIBC-READING-PREMISES-TYPED-DISCHARGE, PLUGIN-PREMISE-SOURCE-BINDING and PLUGIN-PREMISE-OUTER-TRUTH retain their independent source/prose/world proof scopes.",
+   "source": "docs/reports/premise-flow-operators/README.md",
+   "recorded_by": "PREMISE-FLOW-OPERATORS"
   }
  ],
  "updated": "Completed plugin premise integration; exact hand-maintained union retains810followups, borrowed measured-source8419Rust/354Lean/freshcard133provider, exact source equivalence checked; authoritative root committed-matrix Python confirmation in integration receipt."
