@@ -93,6 +93,45 @@ fn main() -> Result<(), String> {
     )?;
     let raw = read(diagnostics)?;
     let data: Value = serde_json::from_slice(&raw).map_err(|e| e.to_string())?;
+    let source_digest = qcore_schemas::sha256_hex(
+        serde_json::to_string(contracts.source_assumptions())
+            .map_err(|e| e.to_string())?
+            .as_bytes(),
+    );
+    let compiler = qcore_c_gateway::ClangIdentity::capture()?;
+    let actual_profile = qcore_contract::profile_loader::load_profile_directory(&profile_dir)
+        .map_err(|e| e.to_string())?;
+    let profile_sha = qcore_schemas::sha256_hex(
+        serde_json::to_string(&actual_profile.assumptions())
+            .map_err(|e| e.to_string())?
+            .as_bytes(),
+    );
+    let mut dependent_records = Vec::new();
+    for (ui, u) in data["units"]
+        .as_array()
+        .ok_or("units absent")?
+        .iter()
+        .enumerate()
+    {
+        for row in u["functions"].as_array().ok_or("functions absent")? {
+            if let Some(context) = row.get("hypothesis_context") {
+                let declarations = row["contract_dependencies"]["hypothesis_dependencies"]
+                    .as_object()
+                    .map(|m| m.keys().cloned().collect())
+                    .unwrap_or_default();
+                dependent_records.push(reading_site_domain::DependentRecord {
+                    id: format!(
+                        "{}:{}:{}",
+                        ui,
+                        u["file"].as_str().unwrap_or(""),
+                        row["function"].as_str().unwrap_or("")
+                    ),
+                    context: serde_json::from_value(context.clone()).map_err(|e| e.to_string())?,
+                    declarations,
+                });
+            }
+        }
+    }
     let mut results = Vec::new();
     let mut all_records = 0;
     let mut checked_records = 0;
@@ -124,6 +163,15 @@ fn main() -> Result<(), String> {
                         .is_some_and(|d| d.iter().any(|v| v.as_str() == Some(a)))
                 }) {
                     return Err("actual consultation atom closure missing".into());
+                }
+                if let Some(captured) = u.get("reading_site_environments") {
+                    let environments: BTreeMap<String, String> =
+                        serde_json::from_value(captured["environments"].clone())
+                            .map_err(|e| e.to_string())?;
+                    qcore_c_gateway::reading_site_evidence::validate_observation_environment(
+                        &receipt.observation,
+                        &environments,
+                    )?;
                 }
                 contexts.insert(receipt.observation.function.clone(), ctx);
                 expected.push(receipt);
@@ -193,6 +241,62 @@ fn main() -> Result<(), String> {
                 {
                     return Err("actual preprocessing does not match held source Context".into());
                 }
+                let build_replay = if configured {
+                    let dependencies: BTreeMap<String, String> =
+                        serde_json::from_value(cfg["dependencies"].clone())
+                            .map_err(|e| e.to_string())?;
+                    if dependencies.get("resource_contract_sources") != Some(&source_digest)
+                        || dependencies.get("source_profile") != Some(&profile_sha)
+                        || cfg["compiler"]
+                            != serde_json::to_value(&compiler).map_err(|e| e.to_string())?
+                    {
+                        return Err("actual source/profile/compiler dependencies differ from held compile task".into());
+                    }
+                    let task = qcore_audit::compile_db::compile_task_identity(
+                        entry,
+                        &unit,
+                        qcore_audit::compile_db::EffectiveInput::Accepted(pp),
+                        &compiler,
+                        dependencies,
+                    )?;
+                    let digest = task.digest()?;
+                    if serde_json::to_value(&task).map_err(|e| e.to_string())?
+                        != cfg["compile_task_identity"]
+                        || contexts.values().any(|c| {
+                            c.build_identity != digest
+                                || c.semantic_profile != profile_sha
+                                || c.assumptions != source_digest
+                        })
+                    {
+                        return Err("actual complete compile-task/Context preimage differs".into());
+                    }
+                    json!({"kind":"actual-production-compile-task-constructor","task":task,"digest":digest})
+                } else {
+                    let cwd = PathBuf::from(
+                        invocation["process_cwd"]
+                            .as_str()
+                            .ok_or("historical process cwd absent")?,
+                    );
+                    let build = format!("{:?}", (&unit, cwd, &compiler));
+                    let digest = qcore_schemas::sha256_hex(build.as_bytes());
+                    if contexts.values().any(|c| {
+                        c.build_identity != digest
+                            || c.semantic_profile != "legacy-pinned-resource-profile"
+                            || c.assumptions != source_digest
+                    }) {
+                        return Err(
+                            "actual historical unit/cwd/compiler build preimage differs".into()
+                        );
+                    }
+                    let wrong = format!(
+                        "{:?}",
+                        (&unit, PathBuf::from("/wrong-context-cwd"), &compiler)
+                    );
+                    if qcore_schemas::sha256_hex(wrong.as_bytes()) == digest {
+                        return Err("wrong cwd negative did not differ".into());
+                    }
+                    json!({"kind":"unchanged-production-historical-debug-preimage","digest":digest,"actual_recorded_process_cwd":invocation["process_cwd"],"wrong_cwd_negative_rejected":true})
+                };
                 let compile=serde_json::to_string(&json!({"file":entry.file,"directory":entry.directory,"command":entry.command,"database_sha256":qcore_schemas::sha256_hex(&dbbytes),"transport":unit.input,"dialect":format!("{:?}",unit.dialect)})).unwrap();
                 fs::write(
                     out.join(format!("unit-{number}-candidate-{candidate}.prepared.c")),
@@ -218,13 +322,28 @@ fn main() -> Result<(), String> {
                     formal_artifacts: &artifacts,
                 };
                 let result = reading_site_domain::check(&held, &expected)?;
+                let mut impacts = Vec::new();
+                for receipt in &expected {
+                    for kind in [
+                        reading_site_domain::FailureKind::SourceMismatch,
+                        reading_site_domain::FailureKind::RefutedPrerequisite,
+                        reading_site_domain::FailureKind::FinitePredicateCounterexample,
+                    ] {
+                        impacts.push(result.impact(
+                            &receipt.id,
+                            &contexts[&receipt.observation.function],
+                            kind,
+                            &dependent_records,
+                        )?);
+                    }
+                }
                 let mut truncated = expected.clone();
                 truncated.pop();
                 if reading_site_domain::check(&held, &truncated).is_ok() {
                     return Err("truncated-domain negative did not refuse".into());
                 }
                 Ok(
-                    json!({"checked":result,"actual_compile_configuration":serde_json::from_str::<Value>(&compile).unwrap(),"held_definition_inventory":selected,"truncated_domain_negative_rejected":true}),
+                    json!({"checked":result,"actual_build_context_reconstruction":build_replay,"hypothetical_scope_impact_controls":impacts,"actual_compile_configuration":serde_json::from_str::<Value>(&compile).unwrap(),"held_definition_inventory":selected,"truncated_domain_negative_rejected":true}),
                 )
             })();
             attempts.push(json!({"candidate":candidate,"file":entry.file,"result":checked}));
