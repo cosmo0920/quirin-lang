@@ -972,9 +972,21 @@ fn check_null_deref_only(
         // Match complete maps, including IDs and every AST / typed target.
         // Contexts, legacy premise vectors and graph identities stay separate;
         // this comparison produces no interpretation or evidence disposition.
-        if validated_symbolic_metadata(declaration, graph)?
-            != validated_symbolic_metadata(resource, peer)?
-        {
+        let null_metadata = validated_symbolic_metadata(declaration, graph)?;
+        let resource_metadata = validated_symbolic_metadata(resource, peer)?;
+        // The existing pure-null relation has no proposed graph to share.
+        // Its resource peer remains fully validated but nothing crosses into
+        // null scope. Any introduced null graph or metadata leaves this case.
+        let independent_pure_null = graph.atoms.is_empty()
+            && graph.premises.is_empty()
+            && graph.refinements.is_empty()
+            && null_metadata.flows.is_empty()
+            && null_metadata.lifecycle.is_empty()
+            && declaration.clauses.iter().all(|clause| {
+                (clause.kind == "requires" && clause.expression == "bounds_contract_v1")
+                    || clause.kind == "quant null-deref"
+            });
+        if !independent_pure_null && null_metadata != resource_metadata {
             return Err("null view: neutral symbolic metadata differs from resource peer".into());
         }
     }

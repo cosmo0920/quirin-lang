@@ -82,4 +82,36 @@ theorem metadata_does_not_prove_legacy_support :
   have wrong := claimed .open valid
   cases wrong
 
+/-- Independent pure-null admission validates both property views while requiring
+an empty null graph and empty null metadata. Resource payloads are not copied. -/
+def independentPureNull (original boundsLoaded resourceLoaded graphEmpty metadataEmpty nullOnly : Prop) : Prop :=
+  original ∧ boundsLoaded ∧ resourceLoaded ∧ graphEmpty ∧ metadataEmpty ∧ nullOnly
+
+theorem pure_null_preserves_original_guard
+    (original boundsLoaded resourceLoaded graphEmpty metadataEmpty nullOnly : Prop)
+    (boundsValid : boundsLoaded) (resourceValid : resourceLoaded)
+    (emptyGraph : graphEmpty) (emptyMetadata : metadataEmpty) (onlyNull : nullOnly) :
+    independentPureNull original boundsLoaded resourceLoaded graphEmpty metadataEmpty nullOnly ↔ original := by
+  simp [independentPureNull, boundsValid, resourceValid, emptyGraph, emptyMetadata, onlyNull]
+
+theorem pure_null_graph_introduction_refuses
+    (original boundsLoaded resourceLoaded metadataEmpty nullOnly : Prop) :
+    ¬ independentPureNull original boundsLoaded resourceLoaded False metadataEmpty nullOnly := by
+  simp [independentPureNull]
+
+theorem pure_null_metadata_introduction_refuses
+    (original boundsLoaded resourceLoaded graphEmpty nullOnly : Prop) :
+    ¬ independentPureNull original boundsLoaded resourceLoaded graphEmpty False nullOnly := by
+  simp [independentPureNull]
+
+theorem both_cases_require_resource_validation
+    (original boundsLoaded resourceLoaded graphMatched erasureNeutral graphEmpty metadataEmpty nullOnly : Prop)
+    (nf rf : Nat → Option Flow) (nl rl : Nat → Option Lifecycle)
+    (accepted : admitted original boundsLoaded resourceLoaded graphMatched erasureNeutral nf rf nl rl ∨
+      independentPureNull original boundsLoaded resourceLoaded graphEmpty metadataEmpty nullOnly) :
+    resourceLoaded := by
+  cases accepted with
+  | inl shared => exact shared.2.2.1
+  | inr independent => exact independent.2.2.1
+
 end QCore.SymbolicOverlapAdmission

@@ -632,3 +632,75 @@ fn resource_only_symbolic_metadata_cannot_bypass_matching_an_absent_null_map() {
         "{error}"
     );
 }
+
+#[test]
+fn original_pure_null_pairs_keep_resource_metadata_independent_and_validate_it() {
+    for name in [
+        "rd_kafka_topic_partition_list_destroy",
+        "rd_kafka_op_destroy",
+    ] {
+        let pair = symbolic_overlap_pair(name);
+        let original = pair
+            .iter()
+            .map(|(module, source)| {
+                let text = source
+                    .split_inclusive('\n')
+                    .filter(|line| {
+                        let line = line.trim_start();
+                        !line.starts_with("requires resource_lifecycle_v1(")
+                            && !line.starts_with("requires resource_premise_flow_v1(")
+                    })
+                    .collect::<String>();
+                (module.clone(), text)
+            })
+            .collect();
+        let run = |input: &BTreeMap<String, String>| {
+            qcore_contract::contract_views::check_relation(overlap_relation(name), input).unwrap()
+        };
+        assert_eq!(
+            serde_json::to_value(run(&pair)).unwrap(),
+            serde_json::to_value(run(&original)).unwrap()
+        );
+        // Neither null graph nor metadata introductions can enter the independent case.
+        for clause in [
+            "requires resource_hypothesis(injected, \"An independently unbound proposition\");",
+            "requires resource_lifecycle_v1(injected, |^+ resource(x));",
+            "requires resource_premise_flow_v1(injected, missing);",
+        ] {
+            let mut changed = pair.clone();
+            let null = changed.get_mut("librdkafka/null_deref.qv").unwrap();
+            *null = null.replacen(
+                "requires bounds_contract_v1;",
+                &format!("requires bounds_contract_v1;\n    {clause}"),
+                1,
+            );
+            assert!(
+                qcore_contract::contract_views::check_relation(overlap_relation(name), &changed)
+                    .is_err(),
+                "accepted null introduction {name}: {clause}"
+            );
+        }
+        // Resource-only metadata is validated rather than ignored.
+        for (from, to) in [
+            ("resource_premise_flow_v1", "resource_premise_flow_v2"),
+            (
+                "|^+ hypothesis(plugin_artifact_symbol_abi)",
+                "|^+ hypothesis(missing)",
+            ),
+            (
+                "requires resource_lifecycle_v1",
+                "ensures normal resource_lifecycle_v1",
+            ),
+        ] {
+            let mut changed = pair.clone();
+            let resource = changed.get_mut("librdkafka/client.qv").unwrap();
+            assert!(resource.contains(from));
+            *resource = resource.replacen(from, to, 1);
+            assert!(
+                qcore_contract::contract_views::check_relation(overlap_relation(name), &changed)
+                    .is_err(),
+                "accepted invalid resource-only metadata {name}: {to}"
+            );
+        }
+    }
+}

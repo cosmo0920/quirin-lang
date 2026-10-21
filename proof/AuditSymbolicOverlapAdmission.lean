@@ -8,3 +8,7 @@ import QCore.SymbolicOverlapAdmission
 #print axioms QCore.SymbolicOverlapAdmission.changed_lifecycle_entry_refuses
 #print axioms QCore.SymbolicOverlapAdmission.one_sided_flow_refuses
 #print axioms QCore.SymbolicOverlapAdmission.metadata_does_not_prove_legacy_support
+#print axioms QCore.SymbolicOverlapAdmission.pure_null_preserves_original_guard
+#print axioms QCore.SymbolicOverlapAdmission.pure_null_graph_introduction_refuses
+#print axioms QCore.SymbolicOverlapAdmission.pure_null_metadata_introduction_refuses
+#print axioms QCore.SymbolicOverlapAdmission.both_cases_require_resource_validation
