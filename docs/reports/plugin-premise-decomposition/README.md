@@ -7,7 +7,7 @@ prerequisite/formal/source maps for both actual `rk_plugin_library` and
 `flb_external_plugin` outer envelopes. [Census](census.json) separates the two
 outer definitions and inherited proxy reference from function premises.
 
-Production development began at the explicitly authorized interim Graph v2 checkpoint `5a556d827`; its committed prediction predates production edits. The card is now synchronized onto exact completed combined base `44951dbb4cb6c4a0780506dbd832b29323d07b22`. [The final base prediction](FINAL-BASE-PREDICTION.json) freezes the production and detached-environment boundary before final gates and six fresh audits. Exact classification is 94 resource-v1 sites, 71 bounds-v1 sites and one declared Quirin model; see CLASSIFICATION-ADDENDUM.md.
+Production development began at the explicitly authorized interim Graph v2 checkpoint `5a556d827`; its committed prediction predates production edits. The card is now synchronized onto exact repaired combined base `32e6f5dda334d6a017a1be4dcb02f72a9138c6a6` (the only change from `44951dbb4` registers the libc Lean module). [The final base prediction](FINAL-BASE-PREDICTION.json) freezes the production and detached-environment boundary before final gates and six fresh audits. Exact classification is 94 resource-v1 sites, 71 bounds-v1 sites and one declared Quirin model; see CLASSIFICATION-ADDENDUM.md.
 Original legacy premise names/text, outer names/text/digests/selection and all
 static/closed-world/runtime semantics must remain unchanged. Catalog bindings
 convey reference integrity only; every source/environment binding remains Open.

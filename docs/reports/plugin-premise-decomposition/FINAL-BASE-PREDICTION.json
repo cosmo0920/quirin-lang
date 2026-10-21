@@ -1,8 +1,8 @@
 {
   "status": "final combined-base prediction frozen before full standing/provider/fresh paired audits",
   "card": "PLUGIN-PREMISE-DECOMPOSITION",
-  "base": "44951dbb4cb6c4a0780506dbd832b29323d07b22",
-  "synchronized_at": "ccf567bc6dbe797b9700cc1a845b867521632a93",
+  "base": "32e6f5dda334d6a017a1be4dcb02f72a9138c6a6",
+  "synchronized_at": "61fd1d1c9f956f8f6c4bcf94f6f48ad7f9540e52",
   "interim_preserved": "codex/plugin-premise-interim-04e90d",
   "production_boundary": {
     "resource_occurrences": 94,
@@ -71,5 +71,16 @@
     "docs/reports/plugin-premise-decomposition/census.json": "9b91cd238789eef85b80ca33f230db6d63986c947075d79cb95e9887b96ee675"
   },
   "reading_packet": "private/plugin-premise-decomposition/final-task-context.txt; refreshed status/operations/validation/evidence reviewed; previously applicable broader rules retained",
-  "residuals": "followup-amendments.json; no source/outer-truth/operator closure"
+  "residuals": "followup-amendments.json; no source/outer-truth/operator closure",
+  "previous_final_prediction_base": "44951dbb4cb6c4a0780506dbd832b29323d07b22",
+  "repair": "Only missing libc reading-site Lean library registration changed. Existing theorem statements, Rust, contracts and input artifacts byte-identical; all three new/current imports preserved.",
+  "base_analyzer": {
+    "actual_build_source": "44951dbb4cb6c4a0780506dbd832b29323d07b22",
+    "snapshot_source": "32e6f5dda334d6a017a1be4dcb02f72a9138c6a6",
+    "binary_sha256": "17b72dc72bc23a6556fdba576179d4b46d34f04dc34704c7770e72dbb2a7a6bf",
+    "source_delta_paths": [
+      "proof/QCore.lean"
+    ],
+    "source_equivalence": "Exact git diff only proof/QCore.lean; Rust/contract/runtime input trees unchanged. Context evidence_version must retain actual build44951, not32e6."
+  }
 }
