@@ -1,0 +1,76 @@
+{
+  "changed_provider_files": [
+    {
+      "path": "providers/qcore-provider-librdkafka/bounds-contracts.lock",
+      "before_sha256": "109cfe7a5e5d1732ea97819fcce52ee711d5825938ad97dbbcb101246cb3313a",
+      "after_sha256": "5900e38a1eee1d0fa9a657e0556a00c4b0e22b01f4045a1f09040e57f780abfa"
+    },
+    {
+      "path": "providers/qcore-provider-librdkafka/contracts.json",
+      "before_sha256": "3b9aab732c20e5fb996cf4409ca2446a3fc9ab9a79352c5b14c17f854aab0c09",
+      "after_sha256": "9aee37b2a85a6dc84b677e34d2fac9b23606048677026c3eaa297ef761a64a2e"
+    },
+    {
+      "path": "providers/qcore-provider-librdkafka/contracts.lock",
+      "before_sha256": "8dafb889443409ee8b341913579ff51b1036431dd7429049eec23f9aa3be6ff3",
+      "after_sha256": "099760e8ac0e217ddb2b1a928742bfbfdbd8b70a59c88623034bbdb95a12fcbf"
+    },
+    {
+      "path": "providers/qcore-provider-librdkafka/contracts/librdkafka/cjson.qv",
+      "before_sha256": "3ad75ee24b3cb08232cf2b7000e262d3d4d7374e9196cb3254944fd16706e4fd",
+      "after_sha256": "d1fa3d6e01857a42db485441887794b250a92ad719a46044e0e77bfb9b6e3353"
+    },
+    {
+      "path": "providers/qcore-provider-librdkafka/contracts/librdkafka/client.qv",
+      "before_sha256": "288d0fa65ffe6832d11dd06acd5ebf3d8b3d211e5a76f382e130c0a13c402946",
+      "after_sha256": "a09f66246bb7cd2d7285ba553e9698c8f3bfab89b2347f7390a56f299fecd7f6"
+    },
+    {
+      "path": "providers/qcore-provider-librdkafka/contracts/librdkafka/kafka_mem.qv",
+      "before_sha256": "3924b280719d1064dfcf821f4d6eec5e00033f2b2551e8a6cc6b4dc0784624be",
+      "after_sha256": "459a1cb32e3512e97c267a4651ca1629943179e41e136b28b6c71e19b639d0d3"
+    },
+    {
+      "path": "providers/qcore-provider-librdkafka/contracts/librdkafka/memory.qv",
+      "before_sha256": "a20e69e5bb5d5012bce683508e534388701ac3a9b2ac44b1e95bd89d2cc56012",
+      "after_sha256": "ac2111a6de7554e1d1633bd9d7cc43a56384c5a03e10dee32cde853acc712807"
+    },
+    {
+      "path": "providers/qcore-provider-librdkafka/contracts/librdkafka/null_deref.qv",
+      "before_sha256": "76904006ed920a3352c62b60006e22e6c192c52356ce4043b31bfcfb07a41616",
+      "after_sha256": "4fd3563c67ad3698fcdcacea683d6990c01d4c8a6763956910f1e91d938dbe71"
+    },
+    {
+      "path": "providers/qcore-provider-librdkafka/contracts/librdkafka/queue_destructor.qv",
+      "before_sha256": "5e66e4b28144008620c9fe0295cbffcca6c331846352c6066b71e0c24e5836e8",
+      "after_sha256": "a97cdd5583925ab0e999fe93f783b17687b67c9c3cabaf142c6f3de47ea31ed7"
+    },
+    {
+      "path": "providers/quirin-provider-fluent-bit/contracts.lock",
+      "before_sha256": "cf7b725abe50b6c6df0cb4c09aa41c574f78531d04922df3865ecb2034f6ae67",
+      "after_sha256": "88cd85877c4d69c5765b82dbba6ce18b7a2eb63456f9702b31b3ea7949d0bfa7"
+    },
+    {
+      "path": "providers/quirin-provider-fluent-bit/contracts/fluent_bit/logging.qv",
+      "before_sha256": "c5fa867ac7e7c02bdc4d693788637620fd1c496e146e2afb656211424d618ad8",
+      "after_sha256": "f40b60f1a15d401c25624ecdecee9deca687ffd8de28c2a72c3ba8e0db998795"
+    },
+    {
+      "path": "providers/quirin-provider-libc/contracts.lock",
+      "before_sha256": "a10d0c93ee804cc71173764c6f8d9d2beb92dd1db1db6d9ffdfb58085582a4ba",
+      "after_sha256": "50fcea7010327dbfed012df75775b0ba2e2dc0aaabfb560f66332577a91353c6"
+    },
+    {
+      "path": "providers/quirin-provider-libc/contracts/libc/errno.qv",
+      "before_sha256": "a9bbcb0e6111186cbf828d6303b3b27b459002f5ff732a93e6a390b17ee42ec3",
+      "after_sha256": "676c4ff84ddd784a35e5cb196ecf62fbef75f18a118f1aac925477b39dc37bfb"
+    }
+  ],
+  "load_path_regenerated_byte_identical": {
+    "path": "providers/contract-load-path.json",
+    "sha256": "9f56e0b96e9891533841a2778e193859204f79a736fa48d37bb6468db50a1cdd"
+  },
+  "unchanged_original_binding_manifest_lines": 167,
+  "whole_original_source_recovery": "adoption-records.json + exhaustive Rust control",
+  "frozen_assets_unmodified": true
+}

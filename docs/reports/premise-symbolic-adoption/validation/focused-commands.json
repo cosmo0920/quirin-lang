@@ -1,0 +1,92 @@
+[
+  {
+    "name": "format",
+    "command": [
+      "rustfmt",
+      "--edition",
+      "2024",
+      "crates/qcore-contract/tests/production_symbolic_adoption.rs"
+    ],
+    "cwd": "/home/cosmo/.codex/worktrees/premise-symbolic-adoption/qcore-c",
+    "started": "2026-10-21T11:33:59.578159+00:00",
+    "ended": "2026-10-21T11:33:59.610125+00:00",
+    "exit": 0,
+    "environment_overrides": {
+      "CARGO_PROFILE_DEV_DEBUG": "0",
+      "CARGO_PROFILE_TEST_DEBUG": "0",
+      "CARGO_INCREMENTAL": "0"
+    },
+    "log": "private/premise-symbolic-adoption/focused-1/format.log"
+  },
+  {
+    "name": "adoption",
+    "command": [
+      "cargo",
+      "test",
+      "-p",
+      "qcore-contract",
+      "--test",
+      "production_symbolic_adoption",
+      "-j",
+      "2",
+      "--",
+      "--nocapture"
+    ],
+    "cwd": "/home/cosmo/.codex/worktrees/premise-symbolic-adoption/qcore-c",
+    "started": "2026-10-21T11:33:59.610304+00:00",
+    "ended": "2026-10-21T11:37:49.750692+00:00",
+    "exit": 0,
+    "environment_overrides": {
+      "CARGO_PROFILE_DEV_DEBUG": "0",
+      "CARGO_PROFILE_TEST_DEBUG": "0",
+      "CARGO_INCREMENTAL": "0"
+    },
+    "log": "private/premise-symbolic-adoption/focused-1/adoption.log"
+  },
+  {
+    "name": "corpus-pins",
+    "command": [
+      "cargo",
+      "test",
+      "-p",
+      "qcore-compiler",
+      "--test",
+      "qcore_contract_corpus",
+      "-j",
+      "2"
+    ],
+    "cwd": "/home/cosmo/.codex/worktrees/premise-symbolic-adoption/qcore-c",
+    "started": "2026-10-21T11:37:49.750982+00:00",
+    "ended": "2026-10-21T11:38:32.068316+00:00",
+    "exit": 0,
+    "environment_overrides": {
+      "CARGO_PROFILE_DEV_DEBUG": "0",
+      "CARGO_PROFILE_TEST_DEBUG": "0",
+      "CARGO_INCREMENTAL": "0"
+    },
+    "log": "private/premise-symbolic-adoption/focused-1/corpus-pins.log"
+  },
+  {
+    "name": "pin-binary",
+    "command": [
+      "cargo",
+      "build",
+      "-p",
+      "qcore-audit",
+      "--bin",
+      "quirin-audit",
+      "-j",
+      "2"
+    ],
+    "cwd": "/home/cosmo/.codex/worktrees/premise-symbolic-adoption/qcore-c",
+    "started": "2026-10-21T11:38:32.068543+00:00",
+    "ended": "2026-10-21T11:38:32.531254+00:00",
+    "exit": 0,
+    "environment_overrides": {
+      "CARGO_PROFILE_DEV_DEBUG": "0",
+      "CARGO_PROFILE_TEST_DEBUG": "0",
+      "CARGO_INCREMENTAL": "0"
+    },
+    "log": "private/premise-symbolic-adoption/focused-1/pin-binary.log"
+  }
+]

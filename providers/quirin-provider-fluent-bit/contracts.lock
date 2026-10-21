@@ -35,7 +35,7 @@
     {
       "function": "cb_kafka_logger",
       "module": "fluent_bit/logging.qv",
-      "contract_sha256": "14cce7a30449f418a1b48fd3f55916f04fbb3e8d305c84c2e4ac54d99d84a5b1",
+      "contract_sha256": "20338489bb43ba3fc980d12ad13170571d12eb53f57f28072c8e9d021e97c785",
       "identities": [
         {
           "reviewed_at": [
@@ -67,7 +67,7 @@
     {
       "function": "cb_kafka_msg",
       "module": "fluent_bit/logging.qv",
-      "contract_sha256": "ff9434a7a7d2f533fa78fbb3d7faa470faa3ab204b448f4378486339a1021d63",
+      "contract_sha256": "e73c635c83838b683f8e030dd1dbaf1ca60b02d981d52af13b9741a87993fdd7",
       "identities": [
         {
           "reviewed_at": [
@@ -2509,7 +2509,7 @@
     {
       "function": "oauthbearer_token_refresh_cb",
       "module": "fluent_bit/logging.qv",
-      "contract_sha256": "35158cd5894129ec4c63f03df54d72257ebcadaf557bdbd574bd64b4daafef83",
+      "contract_sha256": "a96d0885f0449d32ae0ce22db45516f186403273992028356d2eeb10cdb811d1",
       "identities": [
         {
           "reviewed_at": [
