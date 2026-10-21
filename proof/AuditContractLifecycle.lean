@@ -1,0 +1,10 @@
+import QCore.ContractLifecycle
+#print axioms QCore.ContractLifecycle.erasure_preserves_semantics
+#print axioms QCore.ContractLifecycle.creation_derives_no_fact
+#print axioms QCore.ContractLifecycle.retirement_derives_no_fact
+#print axioms QCore.ContractLifecycle.creation_does_not_support_open
+#print axioms QCore.ContractLifecycle.retirement_is_not_refutation
+#print axioms QCore.ContractLifecycle.missing_hypothesis_refuses
+#print axioms QCore.ContractLifecycle.resource_target_is_symbolic
+#print axioms QCore.ContractLifecycle.duplicate_entry_refuses
+#print axioms QCore.ContractLifecycle.oversized_declaration_refuses

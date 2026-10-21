@@ -1,0 +1,12 @@
+module contract;
+extern fn observed(p: ptr<mut, u8>) -> i32 contract {
+    requires resource_contract_v1;
+    requires resource_hypothesis(h, "assigned hypothesis");
+    requires resource_premise_all(assigned, h);
+    requires resource_lifecycle_v1(make_node, |^+ resource(node));
+    requires resource_lifecycle_v1(drop_node, |^- resource(node));
+    requires resource_lifecycle_v1(introduce_h, |^+ hypothesis(h));
+    requires resource_lifecycle_v1(retire_h, |^- hypothesis(h));
+    ensures normal resource_borrowed(p);
+    ensures normal resource_return_none();
+};

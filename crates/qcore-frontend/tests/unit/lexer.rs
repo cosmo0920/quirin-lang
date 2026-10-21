@@ -435,3 +435,31 @@ fn premise_flow_longest_tokens_preserve_maps_to_exactly() {
         ]
     );
 }
+
+#[test]
+fn lifecycle_symbols_are_atomic_and_preserve_neighboring_flow_and_pipe_tokens() {
+    let kinds = lex("|^+ |^- |-> ||-> !-> ->| |> || | ^ + -")
+        .unwrap()
+        .into_iter()
+        .map(|t| t.kind)
+        .collect::<Vec<_>>();
+    assert_eq!(
+        &kinds[..8],
+        &[
+            TokenKind::Symbol(Symbol::LifecycleCreate),
+            TokenKind::Symbol(Symbol::LifecycleRetire),
+            TokenKind::Symbol(Symbol::MapsTo),
+            TokenKind::Symbol(Symbol::FlowOr),
+            TokenKind::Symbol(Symbol::FlowExcept),
+            TokenKind::Symbol(Symbol::FlowTerminal),
+            TokenKind::Symbol(Symbol::PipeInto),
+            TokenKind::Symbol(Symbol::PipePipe),
+        ]
+    );
+    assert!(
+        qcore_frontend::contract_lifecycle::parse_clause(
+            "resource_lifecycle_v1(x, | ^ + resource(n))"
+        )
+        .is_err()
+    );
+}

@@ -11,6 +11,7 @@ pub mod bounds_hypotheses;
 pub mod bounds_quant;
 pub mod bundle;
 pub mod contract_inclusion;
+pub mod contract_lifecycle;
 pub mod contract_loader;
 pub mod contract_observation;
 pub mod contract_revision;

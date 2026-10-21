@@ -1,3 +1,4 @@
+import QCore.ContractLifecycle
 import QCore.PluginSourceWitnesses
 import QCore.LocalSourceBindings
 import QCore.PremiseFlow
