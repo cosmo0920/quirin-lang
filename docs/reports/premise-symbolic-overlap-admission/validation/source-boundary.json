@@ -1,0 +1,19 @@
+{
+  "base": "bb45fdc9dc65c39e9c229b0ee46677b04dca2ae6",
+  "tested_source": "4ed49592ab1add194c8c775351c8794d91328b73",
+  "only_changed_source": [
+    "crates/qcore-contract/src/contract_views.rs",
+    "crates/qcore-contract/tests/contract_views.rs",
+    "proof/AuditSymbolicOverlapAdmission.lean",
+    "proof/QCore.lean",
+    "proof/QCore/SymbolicOverlapAdmission.lean"
+  ],
+  "no_production_contract_pin_inventory_or_original_model_manifest_changes": true,
+  "files": {
+    "crates/qcore-contract/src/contract_views.rs": "16cb31fcdabbb31c16f595711f29e9503142ced1c137bf0a1294f1176e25c134",
+    "crates/qcore-contract/tests/contract_views.rs": "b1672220c7d167d9215eeaa117be9faaeab266a67ec5452c09a1ce1714da67ea",
+    "proof/AuditSymbolicOverlapAdmission.lean": "3324f2ada0eab581a8db17dcfb417f43dc6593636d6eaf9705c49186abbbd623",
+    "proof/QCore.lean": "9653532c425e18b3113125bd8f2f275ab06c134e5483b7d163962156ba465cb8",
+    "proof/QCore/SymbolicOverlapAdmission.lean": "458e16dfdcd6080441896ddce4af7cd93c51d06b2698d9f89126bee20d0be1ee"
+  }
+}
