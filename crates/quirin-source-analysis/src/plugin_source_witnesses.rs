@@ -168,12 +168,105 @@ pub fn context(observation:&Observation)->Result<Context,String> {
 /// are not propositions: compare derived typed facts, exact source projections,
 /// compiler, target, actual artifacts/symbols and the entire selected trace.
 pub fn replay(presented:&Observation,expected_context:&Context,fresh_directory:&Path)->Result<CheckedWitness,String> {
+    let presented_facts=validate(presented)?;
+    if context(presented)?!=*expected_context {return Err("foreign declared context".into())}
     let actual=observe(fresh_directory)?;
     let source_facts=validate(&actual)?;
-    if validate(presented)?!=source_facts || presented.projections!=actual.projections || presented.artifacts!=actual.artifacts || presented.symbols!=actual.symbols || presented.layouts!=actual.layouts || presented.compiler!=actual.compiler || presented.target!=actual.target || presented.traces!=actual.traces || context(&actual)?!=*expected_context || context(presented)?!=*expected_context {return Err("independent source/native/context replay mismatch".into())}
+    if presented_facts!=source_facts || presented.projections!=actual.projections || presented.artifacts!=actual.artifacts || presented.symbols!=actual.symbols || presented.layouts!=actual.layouts || presented.compiler!=actual.compiler || presented.target!=actual.target || presented.traces!=actual.traces || context(&actual)?!=*expected_context || context(presented)?!=*expected_context {return Err("independent source/native/context replay mismatch".into())}
     Ok(CheckedWitness{context:expected_context.clone(),observation_sha256:digest(&(actual.inventory_sha256,&actual.artifacts,&actual.traces,&source_facts))?,model_sha256:sha256_hex(MODEL.as_bytes()),producer_sha256:sha256_hex(PRODUCER.as_bytes()),source_facts,cases:actual.traces,remaining_obligations:vec!["deployed-artifact-inventory-and-loader-traces".into(),"foreign-callback-frame-custody-and-whole-world-closure".into(),"transitive-lifetime-and-unload-order".into(),"faithful-clang-extraction-and-maintained-rust-lean-correspondence".into()]})
 }
 impl CheckedWitness {
     pub fn context(&self)->&Context{&self.context}
     pub fn cases(&self)->&BTreeMap<String,Vec<String>>{&self.cases}
+}
+
+/// This record is produced only from a freshly replayed checked witness. It is
+/// an observed finite predicate and proposed logic result, not a safety verdict.
+#[derive(Debug, Serialize)]
+pub struct BoundedFlowResult {
+    checker: String,
+    bounded_atom: String,
+    source_observation_sha256: String,
+    result: qcore_schemas::premise_flow::ProposedEvaluation,
+}
+/// Build separately held flow inputs for the new bounded predicate. None of the
+/// old seven universal plugin propositions occurs in this standalone graph.
+fn flow_inputs() -> Result<(
+    BTreeMap<String,String>,
+    BTreeMap<String,qcore_schemas::hypothesis::Graph>,
+    BTreeMap<String,qcore_schemas::premise_flow::Model>,
+    BTreeMap<String,Vec<u8>>,
+),String> {
+    use qcore_schemas::hypothesis::{ArtifactReference,EnvironmentDefinition,FormalBinding};
+    let source=format!(r#"module contract;
+extern fn plugin_fixture_duplicate() -> unit
+contract {{
+ requires resource_contract_v1;
+ requires resource_hypothesis({BOUNDED_ATOM}, "The selected rk_duplicate fixture invocation under plugin-loader-fixture-v1 has exactly begin duplicate_test return:0 end; no loader operation occurs inside this invocation");
+ requires resource_premise_flow_v1(native_duplicate, {BOUNDED_ATOM});
+ requires resource_premise_flow_v1(finished, (flow(native_duplicate) ->. {BOUNDED_ATOM}));
+ ensures normal resource_return_none();
+}};
+"#);
+    let sources=BTreeMap::from([("bounded-plugin-fixture.qv".into(),source)]);
+    let graphs=qcore_contract::hypothesis::replay(&sources)?;
+    let graph=graphs.get("plugin_fixture_duplicate").ok_or("standalone fixture graph absent")?;
+    let model_path="proof/QCore/PluginSourceWitnesses.lean";
+    let audit_path="proof/AuditPluginSourceWitnesses.lean";
+    let model=include_bytes!("../../../proof/QCore/PluginSourceWitnesses.lean").to_vec();
+    let audit=include_bytes!("../../../proof/AuditPluginSourceWitnesses.lean").to_vec();
+    let environment=EnvironmentDefinition{id:PROFILE.into(),variables:BTreeMap::from([
+        ("source_inventory_sha256".into(),sha256_hex(INVENTORY)),
+        ("native_producer_sha256".into(),sha256_hex(PRODUCER.as_bytes())),
+        ("trace_model_sha256".into(),sha256_hex(MODEL.as_bytes())),
+        ("scope".into(),BOUNDS.into()),
+        ("assumptions".into(),ASSUMPTIONS.into()),
+    ])};
+    let binding=FormalBinding{atom_sha256:digest(&graph.atoms[BOUNDED_ATOM])?,proposition:"QCore.PluginSourceWitnesses.DuplicateNoLoaderCalls".into(),model:ArtifactReference{path:model_path.into(),sha256:sha256_hex(&model)},audit:ArtifactReference{path:audit_path.into(),sha256:sha256_hex(&audit)},environment:environment.id.clone(),quantifiers:vec!["trace : List String; selected = rk_duplicate; exact held Context and explicit stub environment".into()],prerequisites:vec![environment.id.clone()],conclusion:"DuplicateNoLoaderCalls trace for this selected invocation only; old plugin atoms/envelopes remain independent".into()};
+    let models=BTreeMap::from([("plugin_fixture_duplicate".into(),qcore_schemas::premise_flow::Model{environment,atoms:BTreeMap::from([(BOUNDED_ATOM.into(),binding)])})]);
+    let artifacts=BTreeMap::from([(model_path.into(),model),(audit_path.into(),audit)]);
+    Ok((sources,graphs,models,artifacts))
+}
+impl CheckedWitness {
+    /// Consume an admitted witness through the source-replayed operator API.
+    /// The repeated leaf in the root terminal is idempotent; it is not counted
+    /// as a second independent proof. No caller-provided Supported is accepted.
+    pub fn evaluate_duplicate_flow(&self)->Result<BoundedFlowResult,String> {
+        use qcore_schemas::hypothesis::{Disposition,Evidence,Instance,Warrant};
+        use qcore_contract::premise_flow::{self,FlowInstance};
+        if self.cases!=model()? {return Err("sealed finite domain changed".into())}
+        let (sources,graphs,models,artifacts)=flow_inputs()?;
+        let docs=premise_flow::compile(&sources,&graphs,&models,&artifacts)?;
+        let doc=docs.get("plugin_fixture_duplicate").ok_or("fixture flow missing")?;
+        let graph=graphs["plugin_fixture_duplicate"].clone();
+        let packet=FlowInstance{document:doc.clone(),document_sha256:premise_flow::document_digest(doc)?,hypotheses:Instance{graph_sha256:qcore_contract::hypothesis::digest(&graph)?,context:self.context.clone(),evidence:vec![Evidence{atom:BOUNDED_ATOM.into(),atom_sha256:digest(&graph.atoms[BOUNDED_ATOM])?,context:self.context.clone(),disposition:Disposition::Supported,warrant:Warrant::Observed,reference:self.observation_sha256.clone()}],graph}};
+        let result=premise_flow::evaluate_proposed(&packet,premise_flow::Expected{sources:&sources,graphs:&graphs,models:&models,artifacts:&artifacts,document:doc,context:&self.context},"finished")?;
+        if result.disposition!=Disposition::Supported || !result.terminated || result.atom_dependencies!=vec![BOUNDED_ATOM.to_owned()] {return Err("unexpected bounded flow result".into())}
+        Ok(BoundedFlowResult{checker:"quirin-source-analysis/plugin-source-witness-v1".into(),bounded_atom:BOUNDED_ATOM.into(),source_observation_sha256:self.observation_sha256.clone(),result})
+    }
+}
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+    #[test]
+    fn finite_domain_and_exact_trace_refusals() {
+        let traces=model().unwrap();assert_eq!(traces.len(),20);
+        assert_eq!(traces["rk_duplicate"],vec!["begin","duplicate_test","return:0","end"]);
+        assert!(!traces["go_create_ignores_register_failure"].contains(&"register".into()));
+        assert!(traces["flb_c_context_alloc_fail"].contains(&"link".into()));
+        for key in traces.keys(){let mut changed=traces.clone();changed.remove(key);assert_ne!(changed,model().unwrap());}
+    }
+    #[test]
+    fn bounded_flow_source_replay_and_tampered_model_refuse() {
+        let (sources,graphs,models,artifacts)=flow_inputs().unwrap();
+        let docs=qcore_contract::premise_flow::compile(&sources,&graphs,&models,&artifacts).unwrap();
+        assert_eq!(docs.len(),1);
+        assert_eq!(graphs["plugin_fixture_duplicate"].atoms.len(),1);
+        assert!(graphs["plugin_fixture_duplicate"].premises.is_empty());
+        let mut wrong=artifacts.clone();wrong.values_mut().next().unwrap().push(b' ');
+        assert!(qcore_contract::premise_flow::compile(&sources,&graphs,&models,&wrong).is_err());
+        let mut missing=models.clone();missing.values_mut().next().unwrap().atoms.clear();
+        assert!(qcore_contract::premise_flow::compile(&sources,&graphs,&missing,&artifacts).is_err());
+    }
 }

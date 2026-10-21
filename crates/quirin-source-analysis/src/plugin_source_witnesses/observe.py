@@ -75,7 +75,7 @@ static void *real_open(const char *p,int f){ev("open");return dlopen(p,f);}
 static void *real_sym(void *h,const char *s){char b[160];snprintf(b,sizeof b,"symbol:%s",s);ev(b);return dlsym(h,s);}
 static int real_close(void *h){ev("close");return dlclose(h);}
 static void trace_free(void *p){ev("free");free(p);}
-static void *trace_copy(void *d,const void *s,size_t n){ev("copy");return memcpy(d,s,n);}
+static void *trace_copy(void *d,const void *s,size_t n){void *r=memcpy(d,s,n);if(memcmp(d,s,n))exit(78);ev("copy");return r;}
 static int alloc_count,fail_alloc;
 static void *trace_malloc(size_t n){ev("allocate");if(++alloc_count==fail_alloc)return NULL;return malloc(n);}
 static void *trace_calloc(size_t a,size_t b){ev("allocate");return calloc(a,b);}
@@ -99,7 +99,7 @@ static char *trace_strdup(const char *s){ev("allocate");return strdup(s);}
 '''
 # True MK list primitives are retained behind an instrumentation boundary.
 list_support=r'''
-static void add_observed(struct mk_list *a,struct mk_list *b){ev("link");mk_list_add(a,b);}
+static void add_observed(struct mk_list *a,struct mk_list *b){mk_list_add(a,b);if(a->next->prev!=a||a->prev->next!=a)exit(79);ev("link");}
 #define mk_list_add add_observed
 static flb_sds_t sds_observed(const char *s){ev("retain");return strdup(s);}
 #define flb_sds_create sds_observed
