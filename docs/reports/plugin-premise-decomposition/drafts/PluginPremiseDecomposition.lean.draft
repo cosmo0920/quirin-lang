@@ -23,7 +23,7 @@ structure Event where
   plugin : Nat
   function : Nat
   member : Nat
-  opaque : Nat
+  opaqueId : Nat
   handle : Nat
   resource : Nat
   time : Nat
@@ -123,7 +123,7 @@ def interceptorCustody (e : Environment) (p : Nat) : Prop :=
 def codeContextLifetime (e : Environment) (p : Nat) : Prop :=
   ∀ ev ∈ e.trace, ev.plugin = p →
     (ev.action = .invoke ∨ ev.action = .destroyCallback) →
-    e.codeLive ev.function ev.time ∧ e.contextLive ev.opaque ev.time
+    e.codeLive ev.function ev.time ∧ e.contextLive ev.opaqueId ev.time
 
 def unloadOrder (e : Environment) (p : Nat) : Prop :=
   (∀ stop ∈ e.trace, stop.plugin = p → stop.action = .close →
