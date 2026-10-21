@@ -1,0 +1,23 @@
+{
+  "command": [
+    "flock",
+    "/tmp/qcore-c-cycle2-small-compile.lock",
+    "cargo",
+    "check",
+    "-p",
+    "qcore-c-gateway",
+    "-p",
+    "quirin-source-analysis",
+    "--lib",
+    "-j1"
+  ],
+  "exit": 0,
+  "seconds": 63.64897871017456,
+  "source": "d1a3805ac053d873ba309fab01ba513c0c0991aa",
+  "working_tree_diff_sha256": "755e7af0aba6b76803614b8f1abefbff19232f1ecfd3f8e1a7383b5a3b672f14",
+  "environment": {
+    "CARGO_PROFILE_DEV_DEBUG": "0",
+    "CARGO_PROFILE_TEST_DEBUG": "0",
+    "CARGO_INCREMENTAL": "0"
+  }
+}
