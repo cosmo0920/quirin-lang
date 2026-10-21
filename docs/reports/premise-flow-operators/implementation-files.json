@@ -1,7 +1,7 @@
 {
   "version": 1,
   "base": "882e128c12161babdbfa36806829894eadf600ba",
-  "semantic_checkpoint": "f452aa7ad",
+  "semantic_checkpoint": "787ee7430",
   "entries": [
     {
       "path": "Cargo.lock",
@@ -53,11 +53,11 @@
     },
     {
       "path": "crates/qcore-contract/src/premise_flow.rs",
-      "sha256": "ce4d3141d5bfd10cba3b6312f361e2515341b6877f5322e72ab260a0212c375d"
+      "sha256": "da4f85cb1bc2dc1c7622254b86dba395b950d0f8fa3e74ad642462cc4b591f5d"
     },
     {
       "path": "crates/qcore-contract/tests/premise_flow.rs",
-      "sha256": "b690080e66c2145ca1f12af877f83982159350ef8dff375bca4052a4480c481c"
+      "sha256": "e1255093942f222886831116c6c97830879191b795387c136d5342603a3da9c3"
     },
     {
       "path": "crates/qcore-core/src/lib.rs",
