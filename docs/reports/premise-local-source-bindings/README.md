@@ -103,7 +103,7 @@ version (for example `contract-hypothesis-graph.v1:FULL_BUILD_COMMIT`):
 
 ```sh
 cargo run -p qcore-audit --example libc_local_source_domains -- \
-  INPUT_ROOT CHECKOUT REPO DIAGNOSTICS FRESH_OUTPUT_DIRECTORY \
+  INPUT_ROOT CHECKOUT REPO DIAGNOSTICS INVOCATION FRESH_OUTPUT_DIRECTORY \
   EXPECTED_GRAPH_EVIDENCE_VERSION
 ```
 

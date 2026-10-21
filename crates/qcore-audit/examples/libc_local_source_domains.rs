@@ -1,5 +1,5 @@
 //! Explicit held-source replay of every recorded libc observation domain.
-//! INPUT_ROOT CHECKOUT REPO DIAGNOSTICS FRESH_OUTPUT_DIRECTORY EXPECTED_GRAPH_EVIDENCE_VERSION.
+//! INPUT_ROOT CHECKOUT REPO DIAGNOSTICS INVOCATION FRESH_OUTPUT_DIRECTORY EXPECTED_GRAPH_EVIDENCE_VERSION.
 //! Refused domains are retained and never counted as source-bound successes.
 use qcore_c_gateway::{
     legacy_c::{C11TranslationUnit, LegacyFunctionScope, prepare_translation_unit},
@@ -18,14 +18,14 @@ fn read(path: impl AsRef<Path>) -> Result<Vec<u8>, String> {
 }
 fn main() -> Result<(), String> {
     let args = std::env::args().collect::<Vec<_>>();
-    if args.len() != 7 {
-        return Err("INPUT_ROOT CHECKOUT REPO DIAGNOSTICS FRESH_OUTPUT_DIRECTORY EXPECTED_GRAPH_EVIDENCE_VERSION".into());
+    if args.len() != 8 {
+        return Err("INPUT_ROOT CHECKOUT REPO DIAGNOSTICS INVOCATION FRESH_OUTPUT_DIRECTORY EXPECTED_GRAPH_EVIDENCE_VERSION".into());
     }
     let inputs = Path::new(&args[1]);
     let checkout = Path::new(&args[2]);
     let repo = Path::new(&args[3]);
     let diagnostics = Path::new(&args[4]);
-    let out = PathBuf::from(&args[5]);
+    let out = PathBuf::from(&args[6]);
     fs::create_dir(&out).map_err(|e| e.to_string())?;
     let profile_dir = inputs.join("contract/profiles/fluent-bit");
     let profile: Value = serde_json::from_slice(&read(profile_dir.join("profile.json"))?)
@@ -74,7 +74,7 @@ fn main() -> Result<(), String> {
             Ok((p.to_owned(), read(repo.join(p))?))
         })
         .collect::<Result<_, String>>()?;
-    let invocation_bytes = read(diagnostics.parent().unwrap().join("invocation.json"))?;
+    let invocation_bytes = read(&args[5])?;
     let invocation: Value = serde_json::from_slice(&invocation_bytes).map_err(|e| e.to_string())?;
     let configured = invocation["compile_database"].as_str().is_some();
     let database = invocation["compile_database"]
@@ -101,11 +101,7 @@ fn main() -> Result<(), String> {
     let compiler = qcore_c_gateway::ClangIdentity::capture()?;
     let actual_profile = qcore_contract::profile_loader::load_profile_directory(&profile_dir)
         .map_err(|e| e.to_string())?;
-    let profile_sha = qcore_schemas::sha256_hex(
-        serde_json::to_string(&actual_profile.assumptions())
-            .map_err(|e| e.to_string())?
-            .as_bytes(),
-    );
+    let profile_sha = actual_profile.manifest_digest().to_owned();
     let mut dependent_records = Vec::new();
     for (ui, u) in data["units"]
         .as_array()
@@ -162,7 +158,7 @@ fn main() -> Result<(), String> {
                 if ctx.artifact != artifact
                     || ctx.property != "resource-custody.v1"
                     || ctx.bounds != "existing gateway budgets; no new hypothesis discharge"
-                    || ctx.evidence_version != args[6]
+                    || ctx.evidence_version != args[7]
                 {
                     return Err("actual row artifact/property/bounds or independently held binary evidence version differs".into());
                 }
@@ -286,11 +282,13 @@ fn main() -> Result<(), String> {
                     json!({"kind":"actual-production-compile-task-constructor","task":task,"digest":digest})
                 } else {
                     let cwd = PathBuf::from(
-                        invocation["process_cwd"]
-                            .as_str()
+                        invocation
+                            .get("process_cwd")
+                            .or_else(|| invocation.get("cwd"))
+                            .and_then(Value::as_str)
                             .ok_or("historical process cwd absent")?,
                     );
-                    let build = format!("{:?}", (&unit, cwd, &compiler));
+                    let build = format!("{:?}", (&unit, &cwd, &compiler));
                     let digest = qcore_schemas::sha256_hex(build.as_bytes());
                     if contexts.values().any(|c| {
                         c.build_identity != digest
@@ -308,7 +306,7 @@ fn main() -> Result<(), String> {
                     if qcore_schemas::sha256_hex(wrong.as_bytes()) == digest {
                         return Err("wrong cwd negative did not differ".into());
                     }
-                    json!({"kind":"unchanged-production-historical-debug-preimage","digest":digest,"actual_recorded_process_cwd":invocation["process_cwd"],"wrong_cwd_negative_rejected":true})
+                    json!({"kind":"unchanged-production-historical-debug-preimage","digest":digest,"actual_recorded_process_cwd":cwd,"wrong_cwd_negative_rejected":true})
                 };
                 let compile=serde_json::to_string(&json!({"file":entry.file,"directory":entry.directory,"command":entry.command,"database_sha256":qcore_schemas::sha256_hex(&dbbytes),"transport":unit.input,"dialect":format!("{:?}",unit.dialect)})).unwrap();
                 fs::write(
