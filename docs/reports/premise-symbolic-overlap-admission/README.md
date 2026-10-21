@@ -28,3 +28,5 @@ lean -DwarningAsError=true AuditSymbolicOverlapAdmission.lean
 [The source-boundary receipt](validation/source-boundary.json) records the five changed source/test/proof paths and their hashes. No production `.qv`, identity pin, inventory, original binding manifest or original model/audit file differs from base.
 
 Root owns the subsequent combined standing/provider/native and committed-matrix Python gate. This report does not substitute focused checks for that campaign or claim completion before the joint evidence exists.
+
+Joint source/provider/native acceptance is now recorded by the [main-based symbolic integration](../premise-symbolic-integration/README.md): all22 stages and final source guard pass, with8,456 Rust/360 Lean and complete three-route record parity. Component focused and failed-attempt checkpoints above retain their original scopes. Final committed-matrix Python confirmation is owned by that joint report.

@@ -1,0 +1,42 @@
+[
+  {
+    "source": "private/premise-symbolic-integration/measure-1/slice/tip/resource-diagnostics.json",
+    "copy": "private/premise-symbolic-integration/prepared-tip/slice/resource-diagnostics.json",
+    "sha256": "453fbe9a56c0fd37984d845594b97ea64dfc5b7db1fda92223f4380814d3fcc1"
+  },
+  {
+    "source": "private/premise-symbolic-integration/measure-1/slice/tip/resource-diagnostics.contracts.json",
+    "copy": "private/premise-symbolic-integration/prepared-tip/slice/resource-diagnostics.contracts.json",
+    "sha256": "6dbdd4625107c623040196b98852226373e2befb4bc111e9c6c406487de250e8"
+  },
+  {
+    "source": "private/premise-symbolic-integration/measure-1/slice/tip/resource-diagnostics.source-effects.json",
+    "copy": "private/premise-symbolic-integration/prepared-tip/slice/resource-diagnostics.source-effects.json",
+    "sha256": "a97259087e4ad89a4662edcb494b27c27e80f06c62e404a19076224bbc0a2bd8"
+  },
+  {
+    "source": "private/premise-symbolic-integration/measure-1/slice/tip/resource-diagnostics.chunk-contracts.json",
+    "copy": "private/premise-symbolic-integration/prepared-tip/slice/resource-diagnostics.chunk-contracts.json",
+    "sha256": "a97259087e4ad89a4662edcb494b27c27e80f06c62e404a19076224bbc0a2bd8"
+  },
+  {
+    "source": "private/premise-symbolic-integration/measure-1/slice/tip/invocation.json",
+    "copy": "private/premise-symbolic-integration/prepared-tip/slice/invocation.json",
+    "sha256": "f8d9142ca5ce2a82efedeb2610facbf76417a38ffa6d0a69aa05dcccc2fc8667"
+  },
+  {
+    "source": "private/premise-symbolic-integration/measure-1/slice/tip/slice-null.jsonl",
+    "copy": "private/premise-symbolic-integration/prepared-tip/slice/slice-null.jsonl",
+    "sha256": "de44fff67d16eb6b1e1345438600bb010735ea4a303de74175f7bd889975b033"
+  },
+  {
+    "source": "private/premise-symbolic-integration/measure-1/slice/tip/slice-null.summary.json",
+    "copy": "private/premise-symbolic-integration/prepared-tip/slice/slice-null.summary.json",
+    "sha256": "45acfd52ed91ac9e2ae64152e3c3a21b8b849df8aaf37c715ded3c5fda72ecc0"
+  },
+  {
+    "source": "private/premise-symbolic-integration/measure-1/slice/tip/slice-outer.json",
+    "copy": "private/premise-symbolic-integration/prepared-tip/slice/slice-outer.json",
+    "sha256": "9f2c908221e0021173cc34e8976b6d685d3093cbb16dc47318b0c0dab81b9928"
+  }
+]

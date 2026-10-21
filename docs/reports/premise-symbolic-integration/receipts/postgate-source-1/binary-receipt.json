@@ -1,0 +1,32 @@
+{
+  "source": "eb0dc0cadb10e84ad6df79e36ca22996fd6ce528",
+  "build": {
+    "name": "release",
+    "command": [
+      "cargo",
+      "build",
+      "--release",
+      "-p",
+      "qcore-audit",
+      "--bin",
+      "quirin-audit"
+    ],
+    "cwd": "/home/cosmo/Documents/GitHub/qcore-c",
+    "source": "eb0dc0cadb10e84ad6df79e36ca22996fd6ce528",
+    "started": "2026-10-21T13:11:02.473134+00:00",
+    "ended": "2026-10-21T13:11:26.823796+00:00",
+    "seconds": 24.35068989591673,
+    "exit": 0,
+    "environment_overrides": {
+      "CARGO_PROFILE_DEV_DEBUG": "0",
+      "CARGO_PROFILE_TEST_DEBUG": "0",
+      "CARGO_INCREMENTAL": "0",
+      "QCORE_AUDIT_BUILD_COMMIT": "eb0dc0cadb10e84ad6df79e36ca22996fd6ce528"
+    },
+    "log": "/home/cosmo/Documents/GitHub/qcore-c/private/premise-symbolic-integration/joint-gate-3/release.log"
+  },
+  "standing_gate_commands": "/home/cosmo/Documents/GitHub/qcore-c/private/premise-symbolic-integration/joint-gate-3/commands.json",
+  "binary": "/home/cosmo/Documents/GitHub/qcore-c/target/release/quirin-audit",
+  "sha256": "775d87b7df2b8281b990abc372dd398930a79f88f71e40062058288cf873cf40",
+  "meaning": "Default release binary actually built at the frozen all22green joint gate source. Both source example builds pass on the same source."
+}

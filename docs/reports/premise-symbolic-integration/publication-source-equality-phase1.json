@@ -1,0 +1,22 @@
+{
+  "measured_source": "eb0dc0cadb10e84ad6df79e36ca22996fd6ce528",
+  "current_head_before_publication_commit": "06e305cd175df185ec1cab9695440d71a02119d9",
+  "non_docs_tracked_source_diff_exit": 0,
+  "changed_tracked_paths": [
+    "docs/STATUS.md",
+    "docs/development/increments/wave-48-part11.md",
+    "docs/reports/contract-lifecycle-symbols/README.md",
+    "docs/reports/premise-symbolic-adoption/README.md",
+    "docs/reports/premise-symbolic-integration/README.md",
+    "docs/reports/premise-symbolic-metadata-bridge/README.md",
+    "docs/reports/premise-symbolic-metadata-bridge/focused-evidence.json",
+    "docs/reports/premise-symbolic-metadata-bridge/increment-request.md",
+    "docs/reports/premise-symbolic-metadata-bridge/postgate-evidence.json",
+    "docs/reports/premise-symbolic-metadata-bridge/scripts/compile_helpers.py",
+    "docs/reports/premise-symbolic-metadata-bridge/validation/compiler-preflight-1-results.json.gz",
+    "docs/reports/premise-symbolic-overlap-admission/README.md",
+    "docs/reviews/r0_3/acceptance_matrix.json"
+  ],
+  "compiled_doc_inventory_assets_exact": true,
+  "scope": "Publication and comparison-controller/report documents only; core Rust/Lean/runtime inputs remain measured-source bytes. Final commit equality is recorded separately."
+}

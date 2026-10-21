@@ -1,0 +1,65 @@
+[
+  {
+    "route": "system",
+    "command": [
+      "/usr/bin/python3",
+      "docs/reports/premise-symbolic-integration/scripts/measure.py",
+      "system",
+      "/home/cosmo/Documents/GitHub/qcore-c/private/premise-symbolic-integration/measure-1/system/tip",
+      "--link-map",
+      "docs/reports/premise-symbolic-integration/link-map.corpus.json",
+      "--inputs-snapshot",
+      "private/premise-symbolic-integration/tip-freeze/inputs",
+      "--binary-source",
+      "eb0dc0cadb10e84ad6df79e36ca22996fd6ce528",
+      "--jobs",
+      "8"
+    ],
+    "started": "2026-10-21T13:12:33.635842+00:00",
+    "ended": "2026-10-21T13:20:50.963586+00:00",
+    "exit": 0,
+    "log": "/home/cosmo/Documents/GitHub/qcore-c/private/premise-symbolic-integration/tip-collector-1/system.log"
+  },
+  {
+    "route": "slice",
+    "command": [
+      "/usr/bin/python3",
+      "docs/reports/premise-symbolic-integration/scripts/measure.py",
+      "slice",
+      "/home/cosmo/Documents/GitHub/qcore-c/private/premise-symbolic-integration/measure-1/slice/tip",
+      "--link-map",
+      "docs/reports/premise-symbolic-integration/link-map.corpus.json",
+      "--inputs-snapshot",
+      "private/premise-symbolic-integration/tip-freeze/inputs",
+      "--binary-source",
+      "eb0dc0cadb10e84ad6df79e36ca22996fd6ce528",
+      "--jobs",
+      "8"
+    ],
+    "started": "2026-10-21T13:12:33.636079+00:00",
+    "ended": "2026-10-21T13:19:52.445108+00:00",
+    "exit": 0,
+    "log": "/home/cosmo/Documents/GitHub/qcore-c/private/premise-symbolic-integration/tip-collector-1/slice.log"
+  },
+  {
+    "route": "corpus",
+    "command": [
+      "/usr/bin/python3",
+      "docs/reports/premise-symbolic-integration/scripts/measure.py",
+      "corpus",
+      "/home/cosmo/Documents/GitHub/qcore-c/private/premise-symbolic-integration/measure-1/corpus/tip",
+      "--link-map",
+      "docs/reports/premise-symbolic-integration/link-map.corpus.json",
+      "--inputs-snapshot",
+      "private/premise-symbolic-integration/tip-freeze/inputs",
+      "--binary-source",
+      "eb0dc0cadb10e84ad6df79e36ca22996fd6ce528",
+      "--jobs",
+      "16"
+    ],
+    "started": "2026-10-21T13:20:50.965264+00:00",
+    "ended": "2026-10-21T13:55:44.099106+00:00",
+    "exit": 0,
+    "log": "/home/cosmo/Documents/GitHub/qcore-c/private/premise-symbolic-integration/tip-collector-1/corpus.log"
+  }
+]

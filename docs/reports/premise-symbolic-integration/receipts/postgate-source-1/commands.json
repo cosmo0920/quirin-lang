@@ -1,0 +1,18 @@
+[
+  {
+    "command": [
+      "python3",
+      "docs/reports/premise-symbolic-integration/scripts/freeze_inputs.py",
+      "/home/cosmo/Documents/GitHub/qcore-c/private/premise-symbolic-integration/tip-freeze",
+      "--source",
+      "eb0dc0cadb10e84ad6df79e36ca22996fd6ce528",
+      "--binary",
+      "/home/cosmo/Documents/GitHub/qcore-c/target/release/quirin-audit",
+      "--binary-sha256",
+      "775d87b7df2b8281b990abc372dd398930a79f88f71e40062058288cf873cf40",
+      "--binary-receipt",
+      "/home/cosmo/Documents/GitHub/qcore-c/private/premise-symbolic-integration/postgate-source-1/binary-receipt.json"
+    ],
+    "exit": 0
+  }
+]

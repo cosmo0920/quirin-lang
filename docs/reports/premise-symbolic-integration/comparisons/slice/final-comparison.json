@@ -1,0 +1,56 @@
+{
+  "route": "slice",
+  "base": {
+    "Unknown": 346,
+    "Safe": 53,
+    "Pending": 4,
+    "Unsafe": 1
+  },
+  "tip": {
+    "Unknown": 346,
+    "Safe": 53,
+    "Pending": 4,
+    "Unsafe": 1
+  },
+  "null_rows": 406,
+  "full_null_equal": true,
+  "full_runtime_equal": true,
+  "raw_leaf_counts": {
+    "diagnostics": 1286,
+    "contracts": 4155,
+    "chunk-contracts": 0,
+    "source-effects": 0,
+    "null": 1618,
+    "null-summary": 0,
+    "outer": 5
+  },
+  "remaining_leaf_counts": {
+    "diagnostics": 0,
+    "contracts": 4,
+    "chunk-contracts": 0,
+    "source-effects": 0,
+    "null": 0,
+    "null-summary": 0,
+    "outer": 0
+  },
+  "existing_reading_observations_exactly_reconstructed": 2,
+  "all_existing_fields_equal": false,
+  "known_catalog_sha256": "ae296f9d9436a07991ccc1074a10e247c6e0fea34b13828329aca850484ba95f",
+  "reading_proof_sha256": "45189d2817b38dd45e385e45302b9b992f9ed551f00b4eece7c46b9b892d030d",
+  "source_binding": "open",
+  "raw_symbolic_clause_additions": 1348,
+  "checked_source_pair_count": 9,
+  "all_existing_fields_equal_after_exact_time_identity_attribution": true,
+  "all_fields_retained": true,
+  "time_identity_proof_sha256": "d25be5bfb7da04728e77636859fe3c34bf301b942f6d75208125b85077a16602",
+  "unexplained_remaining_leaf_counts": {
+    "diagnostics": 0,
+    "contracts": 0,
+    "chunk-contracts": 0,
+    "source-effects": 0,
+    "null": 0,
+    "null-summary": 0,
+    "outer": 0
+  },
+  "qualification": "Only exact independently replayed empty-summary source keys are paired; no semantic payload or capture is deleted."
+}

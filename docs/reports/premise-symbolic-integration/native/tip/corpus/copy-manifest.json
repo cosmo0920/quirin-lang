@@ -1,0 +1,47 @@
+[
+  {
+    "source": "private/premise-symbolic-integration/measure-1/corpus/tip/corpus/resource-diagnostics.json",
+    "copy": "private/premise-symbolic-integration/prepared-tip/corpus/resource-diagnostics.json",
+    "sha256": "d73c2e393e03bdc384853309cd7663b52efaca4c49d0255b591d45776fab9c07"
+  },
+  {
+    "source": "private/premise-symbolic-integration/measure-1/corpus/tip/corpus/resource-diagnostics.contracts.json",
+    "copy": "private/premise-symbolic-integration/prepared-tip/corpus/resource-diagnostics.contracts.json",
+    "sha256": "3cb180ecef688550b809dad9c19ed550ced07fd7da2120eb431b0b796b029480"
+  },
+  {
+    "source": "private/premise-symbolic-integration/measure-1/corpus/tip/corpus/resource-diagnostics.source-effects.json",
+    "copy": "private/premise-symbolic-integration/prepared-tip/corpus/resource-diagnostics.source-effects.json",
+    "sha256": "39ff15812af2eab7b28beea8188ed091c01fef9bf165fe707f35231283a132ba"
+  },
+  {
+    "source": "private/premise-symbolic-integration/measure-1/corpus/tip/corpus/resource-diagnostics.chunk-contracts.json",
+    "copy": "private/premise-symbolic-integration/prepared-tip/corpus/resource-diagnostics.chunk-contracts.json",
+    "sha256": "cbbcfd9c176005146c1946d5fcd4dc83cc9ec041a3397b10b1f0ab16ae6c0484"
+  },
+  {
+    "source": "private/premise-symbolic-integration/measure-1/corpus/tip/corpus/monkey-source.json",
+    "copy": "private/premise-symbolic-integration/prepared-tip/corpus/monkey-source.json",
+    "sha256": "57acfc58c4f7dddf2623efb3c9dc3e8f2dc276835e15cd18a157414696bb2f11"
+  },
+  {
+    "source": "private/premise-symbolic-integration/measure-1/corpus/tip/invocation.json",
+    "copy": "private/premise-symbolic-integration/prepared-tip/corpus/invocation.json",
+    "sha256": "6d17c13b513138fcfa4a9be6e92e401381ad44e747b4379b987437d202ca30b0"
+  },
+  {
+    "source": "private/premise-symbolic-integration/measure-1/corpus/tip/corpus-null.jsonl",
+    "copy": "private/premise-symbolic-integration/prepared-tip/corpus/corpus-null.jsonl",
+    "sha256": "9404529887c1243ae547e9cb78cb69b3591c3fc6069a4f771fad0aa47188f5a6"
+  },
+  {
+    "source": "private/premise-symbolic-integration/measure-1/corpus/tip/corpus-null.summary.json",
+    "copy": "private/premise-symbolic-integration/prepared-tip/corpus/corpus-null.summary.json",
+    "sha256": "01b4f36c46d248c457b9739a3b69b463bc6e1820b8b7348bb27b0f48de5f521c"
+  },
+  {
+    "source": "private/premise-symbolic-integration/measure-1/corpus/tip/corpus-outer.json",
+    "copy": "private/premise-symbolic-integration/prepared-tip/corpus/corpus-outer.json",
+    "sha256": "136d2a1e6f1b6fbe65515013832a7f9b89408be3784ff760ffa658890b29592e"
+  }
+]

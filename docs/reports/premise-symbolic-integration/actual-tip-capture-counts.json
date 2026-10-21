@@ -1,0 +1,32 @@
+{
+  "actual_tip_counts": [
+    {
+      "route": "system",
+      "actual_tip_artifact": "/home/cosmo/Documents/GitHub/qcore-c/private/premise-symbolic-integration/prepared-tip/system/resource-diagnostics.json",
+      "artifact_sha256": "418efa0afb472c6fe7e676ff3699123cf9f224da097eed304f159032255ed2ec",
+      "capture_instances": 4,
+      "unique_capture_sha256": 2,
+      "reading_receipts": 24
+    },
+    {
+      "route": "slice",
+      "actual_tip_artifact": "/home/cosmo/Documents/GitHub/qcore-c/private/premise-symbolic-integration/prepared-tip/slice/resource-diagnostics.json",
+      "artifact_sha256": "453fbe9a56c0fd37984d845594b97ea64dfc5b7db1fda92223f4380814d3fcc1",
+      "capture_instances": 1,
+      "unique_capture_sha256": 1,
+      "reading_receipts": 2
+    },
+    {
+      "route": "corpus",
+      "actual_tip_artifact": "/home/cosmo/Documents/GitHub/qcore-c/private/premise-symbolic-integration/prepared-tip/corpus/resource-diagnostics.json",
+      "artifact_sha256": "d73c2e393e03bdc384853309cd7663b52efaca4c49d0255b591d45776fab9c07",
+      "capture_instances": 45,
+      "unique_capture_sha256": 38,
+      "reading_receipts": 122
+    }
+  ],
+  "capture_instances": 50,
+  "sum_route_unique": 41,
+  "global_unique_capture_sha256": 41,
+  "reading_receipts": 148
+}

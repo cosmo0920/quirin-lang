@@ -1,0 +1,12 @@
+{
+  "harness_exit": 1,
+  "failure": "final HEAD guard AssertionError after all22stage commands exited0",
+  "measured_acquisition": "c4b29b14e31328675e8973f56dbe5eebaee14dad",
+  "observed_end": "eb0dc0cadb10e84ad6df79e36ca22996fd6ce528",
+  "full_tree_ids": {
+    "c4b29b14e31328675e8973f56dbe5eebaee14dad": "e9ce2c61d8a393945091dd895807d4c4b5884a36",
+    "eb0dc0cadb10e84ad6df79e36ca22996fd6ce528": "e9ce2c61d8a393945091dd895807d4c4b5884a36"
+  },
+  "tree_equality_is_not_frozen_run_acceptance": "Checkout to previous main and merge occurred at12:26:44UTC while Rust tests were active; transient input movement cannot be ruled out. Repeat complete gate on stable mergedmain.",
+  "reflog": "eb0dc0cad merge codex/contract-lifecycle-symbols: Merge made by the 'ort' strategy.\nfb9e5f6e8 checkout: moving from codex/contract-lifecycle-symbols to main\nc4b29b14e commit: Freeze combined symbolic contract adoption and overlap repair for final measurement\n40524b396 merge 1b38abe3e: Merge made by the 'ort' strategy.\n6661b5b57 merge d765be48df2bb9212b12cdf667c422b41b8a287b: Merge made by the 'ort' strategy.\n"
+}

@@ -1,0 +1,113 @@
+{
+  "source": "eb0dc0cadb10e84ad6df79e36ca22996fd6ce528",
+  "binary_sha256": "775d87b7df2b8281b990abc372dd398930a79f88f71e40062058288cf873cf40",
+  "base": "explicitly BORROWED completed cycle2TIP at62eebba95c51917c0fe841fbc23e2bf0d0e7e465/binary5584d30e805afc8406350f389b5e84e5a59d810705ec8db0836414fdb1d67640; no freshBASE claim",
+  "routes": [
+    {
+      "route": "system",
+      "native_exit": 0,
+      "rows": 448,
+      "resource_status_counts": {
+        "Unknown": 345,
+        "Safe": 99,
+        "Unsafe": 4
+      },
+      "unsafe_qualification": "Every Unsafe label remains provisional, not a validated upstream defect.",
+      "null_rows": 454,
+      "reading_receipts_reconstructed": 24,
+      "all_full_fields_equal_after_exact_identity_proofs": true,
+      "unexplained_leaves": {
+        "diagnostics": 0,
+        "contracts": 0,
+        "chunk-contracts": 0,
+        "source-effects": 0,
+        "null": 0,
+        "null-summary": 0,
+        "outer": 0
+      },
+      "source_binding": "Open",
+      "raw_added_clauses_preserved": 1348,
+      "checked_source_pairs": 9,
+      "final_comparison": "private/premise-symbolic-integration/comparison-configured-1/system/final-comparison.json",
+      "final_comparison_sha256": "566bae624bd963adc2162ae985281b577227e474a5dbfca02fc8d8d8aa341394",
+      "reading_proof_sha256": "dcc7361e492dee7b55311800979072daa49f9fa8f50e7bef63b8a7cdb8f2ea11",
+      "time_proof_sha256": "d60ed9c9b1816441df5156541633cc7aff944db1159204fccf89049cdd398721",
+      "native_invocation": "private/premise-symbolic-integration/prepared-tip/system/invocation.json",
+      "native_invocation_sha256": "7cb53b43e41addab557cceb1b0e6c3c71297398205c47e7603f5ff7d1b81d480"
+    },
+    {
+      "route": "slice",
+      "native_exit": 0,
+      "rows": 404,
+      "resource_status_counts": {
+        "Unknown": 346,
+        "Safe": 53,
+        "Pending": 4,
+        "Unsafe": 1
+      },
+      "unsafe_qualification": "Every Unsafe label remains provisional, not a validated upstream defect.",
+      "null_rows": 406,
+      "reading_receipts_reconstructed": 2,
+      "all_full_fields_equal_after_exact_identity_proofs": true,
+      "unexplained_leaves": {
+        "diagnostics": 0,
+        "contracts": 0,
+        "chunk-contracts": 0,
+        "source-effects": 0,
+        "null": 0,
+        "null-summary": 0,
+        "outer": 0
+      },
+      "source_binding": "Open",
+      "raw_added_clauses_preserved": 1348,
+      "checked_source_pairs": 9,
+      "final_comparison": "private/premise-symbolic-integration/comparison-configured-1/slice/final-comparison.json",
+      "final_comparison_sha256": "20ed6ef9def37a681f248faf42f3ecce55db5c9052c95a61803b7e53bcfb54a6",
+      "reading_proof_sha256": "45189d2817b38dd45e385e45302b9b992f9ed551f00b4eece7c46b9b892d030d",
+      "time_proof_sha256": "d25be5bfb7da04728e77636859fe3c34bf301b942f6d75208125b85077a16602",
+      "native_invocation": "private/premise-symbolic-integration/prepared-tip/slice/invocation.json",
+      "native_invocation_sha256": "f8d9142ca5ce2a82efedeb2610facbf76417a38ffa6d0a69aa05dcccc2fc8667"
+    },
+    {
+      "route": "corpus",
+      "native_exit": 0,
+      "rows": 4834,
+      "resource_status_counts": {
+        "Unknown": 3852,
+        "Safe": 973,
+        "Unsafe": 9
+      },
+      "unsafe_qualification": "Every Unsafe label remains provisional, not a validated upstream defect.",
+      "null_rows": 4921,
+      "reading_receipts_reconstructed": 122,
+      "all_full_fields_equal_after_exact_identity_proofs": true,
+      "unexplained_leaves": {
+        "diagnostics": 0,
+        "contracts": 0,
+        "chunk-contracts": 0,
+        "source-effects": 0,
+        "source": 0,
+        "null": 0,
+        "null-summary": 0,
+        "outer": 0
+      },
+      "source_binding": "Open",
+      "raw_added_clauses_preserved": 1348,
+      "checked_source_pairs": 9,
+      "final_comparison": "private/premise-symbolic-integration/comparison-corpus-1/corpus/final-comparison.json",
+      "final_comparison_sha256": "177c8627485449b573da99298772e9fcd034b3b0bee5a6377b4457dcb2f46dcf",
+      "reading_proof_sha256": "ccc5984e4d0fdca374002bbe5d623aaf885b716744a3c1274ba55076ef531bf3",
+      "time_proof_sha256": "e847ce0c5a839687e7b88c0a61be1339b2fb47319bfdd0001915d77be422a18b",
+      "native_invocation": "private/premise-symbolic-integration/prepared-tip/corpus/invocation.json",
+      "native_invocation_sha256": "6d17c13b513138fcfa4a9be6e92e401381ad44e747b4379b987437d202ca30b0"
+    }
+  ],
+  "all_fields_retained": true,
+  "null_records": 5781,
+  "reading_receipts": 148,
+  "source_bindings": "Open",
+  "verdict_movement": 0,
+  "performance_claim": false,
+  "no_arbitrary_source_inverse": true,
+  "raw_canonical_and_source_pair_payloads": "retained PRIVATE with path/size/SHA manifests; public finite summaries are separate artifacts"
+}

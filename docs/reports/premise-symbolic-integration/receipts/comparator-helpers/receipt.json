@@ -1,0 +1,50 @@
+{
+  "source": "eb0dc0cadb10e84ad6df79e36ca22996fd6ce528",
+  "source_guard": {
+    "head": "eb0dc0cadb10e84ad6df79e36ca22996fd6ce528",
+    "tracked_delta_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  },
+  "independently_held_gate_acquisition": "/home/cosmo/Documents/GitHub/qcore-c/private/premise-symbolic-integration/joint-gate-3/acquired.json",
+  "gate_acquisition_sha256": "6f122cec64ba89de85856205b10f6e29c65e5a4d5b8f9b69ee25985b17de8c7e",
+  "gate_commands_sha256": "a33b15204c1753b57c1dcf466418208b977682965922d9aaf619182cd834e2a8",
+  "gate_completion_sha256": "2c2edf212ddf0a9a6d7ffff1f07f7f552964fe235d31a0ac1bb04a967a760632",
+  "environment_overrides": {
+    "QCORE_AUDIT_BUILD_COMMIT": "eb0dc0cadb10e84ad6df79e36ca22996fd6ce528",
+    "CARGO_PROFILE_DEV_DEBUG": "0",
+    "CARGO_PROFILE_TEST_DEBUG": "0",
+    "CARGO_INCREMENTAL": "0"
+  },
+  "reading_helper": "/home/cosmo/Documents/GitHub/qcore-c/private/premise-symbolic-integration/comparator-helpers/attribute-reading-environments",
+  "reading_helper_sha256": "0c25e085581b866141e6935670360cb356e8ea4e41e08b33161b18b5f544b2fb",
+  "report_source_sha256": {
+    "attribute_reading_environments.rs": "5ab09cdd40aaf2a420b50d8be95742fc11ee7686d1e4113a1a12db2cb57105fb",
+    "source_bridge.rs": "c6addbb42cc241cc36bdfd1938d295114798f1dd2f3ca0b505ff2b41957ba0cf",
+    "compile_helpers.py": "8a3a7f7719ff857d8d6ee03767a02d37360306839108da7a9716e7a10939cbc2"
+  },
+  "environment_helper": "/home/cosmo/Documents/GitHub/qcore-c/target/release/examples/premise_environment",
+  "environment_helper_sha256": "4c1d911cfde777455dc1716ba94ea0be2bfb6fdb5abd22e8c023dda68556fd27",
+  "environment_source_sha256": "c9c90553c6e6a4a915e4f536549e8a4b388a5df8361b47265fa4e2b0c3cce5a5",
+  "exact_rlibs": {
+    "qcore_audit": {
+      "path": "/home/cosmo/Documents/GitHub/qcore-c/target/release/libqcore_audit.rlib",
+      "sha256": "8d4d7b5e99e9e97f2e04145575c0c882f3d13f38c7fd453b16c4cf118767c347"
+    },
+    "qcore_c_gateway": {
+      "path": "/home/cosmo/Documents/GitHub/qcore-c/target/release/deps/libqcore_c_gateway-e446ff2e15cc37d9.rlib",
+      "sha256": "150ab310eb9beab6a55c68ddcd0a0fd3ed4da4a96129bb02202ac22c87d18f1c"
+    },
+    "qcore_contract": {
+      "path": "/home/cosmo/Documents/GitHub/qcore-c/target/release/deps/libqcore_contract-1ae6fd14441b99d3.rlib",
+      "sha256": "76dd8188c568217b2c8dd91292255bcdf2cdd0abf60ec3d63c8468bad7d241d1"
+    },
+    "qcore_schemas": {
+      "path": "/home/cosmo/Documents/GitHub/qcore-c/target/release/deps/libqcore_schemas-0de9b3a16b0fe98c.rlib",
+      "sha256": "c4054017aea6352186503b04278e8d6ca0de4ef16fab3b47b5563992ea26ab9d"
+    },
+    "serde_json": {
+      "path": "/home/cosmo/Documents/GitHub/qcore-c/target/release/deps/libserde_json-08241b9b75b89117.rlib",
+      "sha256": "3cf49f1eb35ba613a5d7b241b154bfe56da68292fb72426b25677ecb3699acba"
+    }
+  },
+  "checker_execution": "compile only; no canonical export, reading replay or native auditor"
+}

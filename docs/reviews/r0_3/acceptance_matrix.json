@@ -6754,11 +6754,11 @@
   "note": "providers/ is a separate Cargo workspace, excluded from the core workspace; P01 verified empirically that the core workspace builds and passes its full suite with providers/ moved out of the tree."
  },
  "validation": {
-  "note": "Cycle2 combined source 62eebba95c51917c0fe841fbc23e2bf0d0e7e465: fresh successful joint-gate-2 all22 steps0, Rust8441/0failed/15ignored(532units545summaries), Lean357, provider133Rust/1ignored/25Python and all5 package builds/verifications. All six native audits and full-record comparisons pass0; no verdict movement. Fresh phase1 committed-matrix Python374 passes0 at f03192a4e7e0bd7a8daccb1cc69eb51ecf34b555; registered operator design retired and production consumer residual rehomed. Final regenerated committed-matrix confirmation follows. Failed gate1 and corrected comparison/source replay attempts retained. Commands/exits/private logs and exact source scopes are in this report.",
-  "workspace_tests": 8441,
+  "note": "Fresh merged-main source eb0dc0cadb10e84ad6df79e36ca22996fd6ce528: joint-gate-3 all22 commands AND wrapper/head guard exit0; Rust8456/0failed/15ignored(535units548summaries), Lean360, provider133Rust/1ignored/25Python and all5 package builds/verifications. All3 freshTIP native audits and complete5781null/static/runtime/canonical comparisons pass after exact source/pin/identity/time reconstruction; no verdict movement. BASE explicitly BORROWED cycle2TIP. Python374 is BORROWED from the previous completed checkpoint ONLY until fresh post-committed-regenerated-matrix confirmation; that authoritative confirmation remains pending. Gate1Rust9failures and gate2all22green-but-finalHEADguard1 are retained. Exact commands/exits/private logs are in this report.",
+  "workspace_tests": 8456,
   "provider_tests": 133,
   "python_evidence_validator_tests": 374,
-  "lean_audits": 357,
+  "lean_audits": 360,
   "lean_audit_files": [
    "AuditAbiEnumConstPointer.lean",
    "AuditAggregateOwnedField.lean",
@@ -6827,6 +6827,7 @@
    "AuditContractDeferredReview.lean",
    "AuditContractDependencies.lean",
    "AuditContractInherit.lean",
+   "AuditContractLifecycle.lean",
    "AuditContractRevisionMode.lean",
    "AuditContractTipMode.lean",
    "AuditContractViewProjection.lean",
@@ -6982,6 +6983,7 @@
    "AuditPointerQualifierReader.lean",
    "AuditPointerStore.lean",
    "AuditPremiseFlow.lean",
+   "AuditPremiseMetadataBridge.lean",
    "AuditPremiseRefinement.lean",
    "AuditPrintRouteSelection.lean",
    "AuditProcessQuotaPlan.lean",
@@ -7080,6 +7082,7 @@
    "AuditSubcommandPlugins.lean",
    "AuditSummaryValidationPremises.lean",
    "AuditSymbolicClassAdmission.lean",
+   "AuditSymbolicOverlapAdmission.lean",
    "AuditTaskExecution.lean",
    "AuditTaskRecordCaptures.lean",
    "AuditTaskTraceFixedOutcomes.lean",
@@ -7122,9 +7125,9 @@
   "reevaluation_followup_exit": 0,
   "cargo_fmt": "clean",
   "cargo_clippy": "clean",
-  "standing_gate": "complete; final regenerated committed-matrix confirmation follows",
+  "standing_gate": "source/provider/native complete; authoritative committed-matrix Python pending",
   "full_language_conformance": false,
-  "measurement_provenance": "integrator_supplied (docs/reports/premise-resolution-cycle2/gate.json)"
+  "measurement_provenance": "integrator_supplied (docs/reports/premise-symbolic-integration/gate.json)"
  },
  "named_followups": [
   {
@@ -12754,7 +12757,7 @@
   {
    "id": "PREMISE-FLOW-PRODUCTION-DISCHARGE",
    "title": "Adopt scoped premise flows through an explicitly checked production semantic consumer",
-   "why": "PREMISE-FLOW-OPERATORS supplies executable AND/OR/positive-NOT/terminal syntax and proposed composition, exact source/model/graph/Context replay and independently checked finite source-witness integrations. It deliberately migrates no production flow clause, registers no global typed predicate and supplies no verdict/standing consumer. Missing capability: turn one exactly scoped production obligation into checked authority only under independently discharged complete antecedents, without treating a generic ProposedEvaluation or a finite fixture as universal source truth. DISCHARGE: select and freeze a bounded production declaration/property and eligible predicate family; establish exact source/model/prose/environment correspondence and complete scoped evidence, including every feasible program-path obligation; implement a total-or-reject checked consumer and dependency/invalidation rule with matching Rust/Lean, exact9-coordinate context and refutation controls; preserve legacy erasure/classification and validate intentional verdict movement through standing/provider/all-route evidence. Safe requires all relevant obligations; Unsafe still requires a validated reachable C violation. Existing CJSON-REPRESENTATION-PROSE-AND-SOURCE-BINDING, LIBC-READING-PREMISES-TYPED-DISCHARGE, PLUGIN-PREMISE-SOURCE-BINDING and PLUGIN-PREMISE-OUTER-TRUTH retain their independent source/prose/world proof scopes.",
+   "why": "PREMISE-FLOW-OPERATORS supplies executable AND/OR/positive-NOT/terminal syntax and proposed composition, exact source/model/graph/Context replay and independently checked finite source-witness integrations. PREMISE-SYMBOLIC-ADOPTION adds 169 proposed production conjunction flows and 1,179 symbolic hypothesis introductions in eight provider contract files, preserving all original hypotheses, premise groups, graphs, binding manifests and interpreted clauses. These are proposed metadata: no global typed predicate, checked semantic/lifecycle consumer, verdict or standing authority is supplied. Missing capability: turn one exactly scoped production obligation into checked authority only under independently discharged complete antecedents, without treating a generic ProposedEvaluation or a finite fixture as universal source truth. DISCHARGE: select and freeze a bounded production declaration/property and eligible predicate family; establish exact source/model/prose/environment correspondence and complete scoped evidence, including every feasible program-path obligation; implement a total-or-reject checked consumer and dependency/invalidation rule with matching Rust/Lean, exact9-coordinate context and refutation controls; preserve legacy erasure/classification and validate intentional verdict movement through standing/provider/all-route evidence. Safe requires all relevant obligations; Unsafe still requires a validated reachable C violation. Existing CJSON-REPRESENTATION-PROSE-AND-SOURCE-BINDING, LIBC-READING-PREMISES-TYPED-DISCHARGE, PLUGIN-PREMISE-SOURCE-BINDING and PLUGIN-PREMISE-OUTER-TRUTH retain their independent source/prose/world proof scopes. Checked lifecycle lowering additionally requires independently bound fresh allocation identities, source-bound creation/release events, ownership and alias effects, lifetime and linear-use judgments, and versioned hypothesis retirement with complete dependent invalidation. Symbolic |^+ and |^- records alone prove none of those effects; a failed proof or retirement alone never proves negation or a reachable violation. The active production hypotheses remain unretired and Open.",
    "source": "docs/reports/premise-flow-operators/README.md",
    "recorded_by": "PREMISE-FLOW-OPERATORS"
   }

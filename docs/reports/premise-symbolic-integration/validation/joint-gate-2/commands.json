@@ -1,0 +1,511 @@
+[
+  {
+    "name": "submodules",
+    "command": [
+      "git",
+      "submodule",
+      "update",
+      "--init",
+      "--recursive"
+    ],
+    "cwd": "/home/cosmo/Documents/GitHub/qcore-c",
+    "source": "c4b29b14e31328675e8973f56dbe5eebaee14dad",
+    "started": "2026-10-21T12:21:55.863049+00:00",
+    "ended": "2026-10-21T12:21:55.884821+00:00",
+    "seconds": 0.021794929052703083,
+    "exit": 0,
+    "environment_overrides": {
+      "CARGO_PROFILE_DEV_DEBUG": "0",
+      "CARGO_PROFILE_TEST_DEBUG": "0",
+      "CARGO_INCREMENTAL": "0",
+      "QCORE_AUDIT_BUILD_COMMIT": "c4b29b14e31328675e8973f56dbe5eebaee14dad"
+    },
+    "log": "/home/cosmo/Documents/GitHub/qcore-c/private/premise-symbolic-integration/joint-gate-2/submodules.log"
+  },
+  {
+    "name": "clang",
+    "command": [
+      "clang",
+      "--version"
+    ],
+    "cwd": "/home/cosmo/Documents/GitHub/qcore-c",
+    "source": "c4b29b14e31328675e8973f56dbe5eebaee14dad",
+    "started": "2026-10-21T12:21:55.885056+00:00",
+    "ended": "2026-10-21T12:21:55.896694+00:00",
+    "seconds": 0.01166101498529315,
+    "exit": 0,
+    "environment_overrides": {
+      "CARGO_PROFILE_DEV_DEBUG": "0",
+      "CARGO_PROFILE_TEST_DEBUG": "0",
+      "CARGO_INCREMENTAL": "0",
+      "QCORE_AUDIT_BUILD_COMMIT": "c4b29b14e31328675e8973f56dbe5eebaee14dad"
+    },
+    "log": "/home/cosmo/Documents/GitHub/qcore-c/private/premise-symbolic-integration/joint-gate-2/clang.log"
+  },
+  {
+    "name": "rust",
+    "command": [
+      "python3",
+      "scripts/run_test_binaries.py",
+      "--jobs",
+      "4"
+    ],
+    "cwd": "/home/cosmo/Documents/GitHub/qcore-c",
+    "source": "c4b29b14e31328675e8973f56dbe5eebaee14dad",
+    "started": "2026-10-21T12:21:55.897105+00:00",
+    "ended": "2026-10-21T12:32:33.318776+00:00",
+    "seconds": 637.4216950489208,
+    "exit": 0,
+    "environment_overrides": {
+      "CARGO_PROFILE_DEV_DEBUG": "0",
+      "CARGO_PROFILE_TEST_DEBUG": "0",
+      "CARGO_INCREMENTAL": "0",
+      "QCORE_AUDIT_BUILD_COMMIT": "c4b29b14e31328675e8973f56dbe5eebaee14dad"
+    },
+    "log": "/home/cosmo/Documents/GitHub/qcore-c/private/premise-symbolic-integration/joint-gate-2/rust.log"
+  },
+  {
+    "name": "fmt",
+    "command": [
+      "cargo",
+      "fmt",
+      "--all",
+      "--",
+      "--check"
+    ],
+    "cwd": "/home/cosmo/Documents/GitHub/qcore-c",
+    "source": "c4b29b14e31328675e8973f56dbe5eebaee14dad",
+    "started": "2026-10-21T12:32:33.319209+00:00",
+    "ended": "2026-10-21T12:32:37.607320+00:00",
+    "seconds": 4.288146538892761,
+    "exit": 0,
+    "environment_overrides": {
+      "CARGO_PROFILE_DEV_DEBUG": "0",
+      "CARGO_PROFILE_TEST_DEBUG": "0",
+      "CARGO_INCREMENTAL": "0",
+      "QCORE_AUDIT_BUILD_COMMIT": "c4b29b14e31328675e8973f56dbe5eebaee14dad"
+    },
+    "log": "/home/cosmo/Documents/GitHub/qcore-c/private/premise-symbolic-integration/joint-gate-2/fmt.log"
+  },
+  {
+    "name": "clippy",
+    "command": [
+      "cargo",
+      "clippy",
+      "--all-targets",
+      "--",
+      "-D",
+      "warnings"
+    ],
+    "cwd": "/home/cosmo/Documents/GitHub/qcore-c",
+    "source": "c4b29b14e31328675e8973f56dbe5eebaee14dad",
+    "started": "2026-10-21T12:32:37.607794+00:00",
+    "ended": "2026-10-21T12:33:04.834517+00:00",
+    "seconds": 27.2267541839974,
+    "exit": 0,
+    "environment_overrides": {
+      "CARGO_PROFILE_DEV_DEBUG": "0",
+      "CARGO_PROFILE_TEST_DEBUG": "0",
+      "CARGO_INCREMENTAL": "0",
+      "QCORE_AUDIT_BUILD_COMMIT": "c4b29b14e31328675e8973f56dbe5eebaee14dad"
+    },
+    "log": "/home/cosmo/Documents/GitHub/qcore-c/private/premise-symbolic-integration/joint-gate-2/clippy.log"
+  },
+  {
+    "name": "probe",
+    "command": [
+      "cargo",
+      "run",
+      "-p",
+      "qcore-compiler",
+      "--example",
+      "reevaluation_probe"
+    ],
+    "cwd": "/home/cosmo/Documents/GitHub/qcore-c",
+    "source": "c4b29b14e31328675e8973f56dbe5eebaee14dad",
+    "started": "2026-10-21T12:33:04.835092+00:00",
+    "ended": "2026-10-21T12:33:35.644057+00:00",
+    "seconds": 30.808989961980842,
+    "exit": 0,
+    "environment_overrides": {
+      "CARGO_PROFILE_DEV_DEBUG": "0",
+      "CARGO_PROFILE_TEST_DEBUG": "0",
+      "CARGO_INCREMENTAL": "0",
+      "QCORE_AUDIT_BUILD_COMMIT": "c4b29b14e31328675e8973f56dbe5eebaee14dad"
+    },
+    "log": "/home/cosmo/Documents/GitHub/qcore-c/private/premise-symbolic-integration/joint-gate-2/probe.log"
+  },
+  {
+    "name": "followup",
+    "command": [
+      "cargo",
+      "run",
+      "-p",
+      "qcore-compiler",
+      "--example",
+      "reevaluation_followup"
+    ],
+    "cwd": "/home/cosmo/Documents/GitHub/qcore-c",
+    "source": "c4b29b14e31328675e8973f56dbe5eebaee14dad",
+    "started": "2026-10-21T12:33:35.644418+00:00",
+    "ended": "2026-10-21T12:33:36.550667+00:00",
+    "seconds": 0.9062745129922405,
+    "exit": 0,
+    "environment_overrides": {
+      "CARGO_PROFILE_DEV_DEBUG": "0",
+      "CARGO_PROFILE_TEST_DEBUG": "0",
+      "CARGO_INCREMENTAL": "0",
+      "QCORE_AUDIT_BUILD_COMMIT": "c4b29b14e31328675e8973f56dbe5eebaee14dad"
+    },
+    "log": "/home/cosmo/Documents/GitHub/qcore-c/private/premise-symbolic-integration/joint-gate-2/followup.log"
+  },
+  {
+    "name": "lean",
+    "command": [
+      "python3",
+      "scripts/check_lean_audits.py"
+    ],
+    "cwd": "/home/cosmo/Documents/GitHub/qcore-c",
+    "source": "c4b29b14e31328675e8973f56dbe5eebaee14dad",
+    "started": "2026-10-21T12:33:36.551121+00:00",
+    "ended": "2026-10-21T12:33:51.068418+00:00",
+    "seconds": 14.517319726990536,
+    "exit": 0,
+    "environment_overrides": {
+      "CARGO_PROFILE_DEV_DEBUG": "0",
+      "CARGO_PROFILE_TEST_DEBUG": "0",
+      "CARGO_INCREMENTAL": "0",
+      "QCORE_AUDIT_BUILD_COMMIT": "c4b29b14e31328675e8973f56dbe5eebaee14dad"
+    },
+    "log": "/home/cosmo/Documents/GitHub/qcore-c/private/premise-symbolic-integration/joint-gate-2/lean.log"
+  },
+  {
+    "name": "provider-rust",
+    "command": [
+      "cargo",
+      "test",
+      "--manifest-path",
+      "providers/Cargo.toml",
+      "--workspace",
+      "--locked",
+      "--offline",
+      "--no-fail-fast"
+    ],
+    "cwd": "/home/cosmo/Documents/GitHub/qcore-c",
+    "source": "c4b29b14e31328675e8973f56dbe5eebaee14dad",
+    "started": "2026-10-21T12:33:51.068833+00:00",
+    "ended": "2026-10-21T12:43:56.257810+00:00",
+    "seconds": 605.18900807295,
+    "exit": 0,
+    "environment_overrides": {
+      "CARGO_PROFILE_DEV_DEBUG": "0",
+      "CARGO_PROFILE_TEST_DEBUG": "0",
+      "CARGO_INCREMENTAL": "0",
+      "QCORE_AUDIT_BUILD_COMMIT": "c4b29b14e31328675e8973f56dbe5eebaee14dad"
+    },
+    "log": "/home/cosmo/Documents/GitHub/qcore-c/private/premise-symbolic-integration/joint-gate-2/provider-rust.log"
+  },
+  {
+    "name": "provider-fmt",
+    "command": [
+      "cargo",
+      "fmt",
+      "--manifest-path",
+      "providers/Cargo.toml",
+      "--all",
+      "--",
+      "--check"
+    ],
+    "cwd": "/home/cosmo/Documents/GitHub/qcore-c",
+    "source": "c4b29b14e31328675e8973f56dbe5eebaee14dad",
+    "started": "2026-10-21T12:43:56.258395+00:00",
+    "ended": "2026-10-21T12:44:00.779860+00:00",
+    "seconds": 4.521492616971955,
+    "exit": 0,
+    "environment_overrides": {
+      "CARGO_PROFILE_DEV_DEBUG": "0",
+      "CARGO_PROFILE_TEST_DEBUG": "0",
+      "CARGO_INCREMENTAL": "0",
+      "QCORE_AUDIT_BUILD_COMMIT": "c4b29b14e31328675e8973f56dbe5eebaee14dad"
+    },
+    "log": "/home/cosmo/Documents/GitHub/qcore-c/private/premise-symbolic-integration/joint-gate-2/provider-fmt.log"
+  },
+  {
+    "name": "provider-clippy",
+    "command": [
+      "cargo",
+      "clippy",
+      "--manifest-path",
+      "providers/Cargo.toml",
+      "--workspace",
+      "--all-targets",
+      "--locked",
+      "--offline",
+      "--",
+      "-D",
+      "warnings"
+    ],
+    "cwd": "/home/cosmo/Documents/GitHub/qcore-c",
+    "source": "c4b29b14e31328675e8973f56dbe5eebaee14dad",
+    "started": "2026-10-21T12:44:00.780509+00:00",
+    "ended": "2026-10-21T12:44:19.526026+00:00",
+    "seconds": 18.74554558703676,
+    "exit": 0,
+    "environment_overrides": {
+      "CARGO_PROFILE_DEV_DEBUG": "0",
+      "CARGO_PROFILE_TEST_DEBUG": "0",
+      "CARGO_INCREMENTAL": "0",
+      "QCORE_AUDIT_BUILD_COMMIT": "c4b29b14e31328675e8973f56dbe5eebaee14dad"
+    },
+    "log": "/home/cosmo/Documents/GitHub/qcore-c/private/premise-symbolic-integration/joint-gate-2/provider-clippy.log"
+  },
+  {
+    "name": "provider-python",
+    "command": [
+      "python3",
+      "-m",
+      "unittest",
+      "discover",
+      "-s",
+      "providers/tests"
+    ],
+    "cwd": "/home/cosmo/Documents/GitHub/qcore-c",
+    "source": "c4b29b14e31328675e8973f56dbe5eebaee14dad",
+    "started": "2026-10-21T12:44:19.526344+00:00",
+    "ended": "2026-10-21T12:44:44.332148+00:00",
+    "seconds": 24.805822581984103,
+    "exit": 0,
+    "environment_overrides": {
+      "CARGO_PROFILE_DEV_DEBUG": "0",
+      "CARGO_PROFILE_TEST_DEBUG": "0",
+      "CARGO_INCREMENTAL": "0",
+      "QCORE_AUDIT_BUILD_COMMIT": "c4b29b14e31328675e8973f56dbe5eebaee14dad"
+    },
+    "log": "/home/cosmo/Documents/GitHub/qcore-c/private/premise-symbolic-integration/joint-gate-2/provider-python.log"
+  },
+  {
+    "name": "provider-contracts",
+    "command": [
+      "python3",
+      "providers/contracts.py",
+      "check"
+    ],
+    "cwd": "/home/cosmo/Documents/GitHub/qcore-c",
+    "source": "c4b29b14e31328675e8973f56dbe5eebaee14dad",
+    "started": "2026-10-21T12:44:44.332488+00:00",
+    "ended": "2026-10-21T12:45:11.047983+00:00",
+    "seconds": 26.71551497792825,
+    "exit": 0,
+    "environment_overrides": {
+      "CARGO_PROFILE_DEV_DEBUG": "0",
+      "CARGO_PROFILE_TEST_DEBUG": "0",
+      "CARGO_INCREMENTAL": "0",
+      "QCORE_AUDIT_BUILD_COMMIT": "c4b29b14e31328675e8973f56dbe5eebaee14dad"
+    },
+    "log": "/home/cosmo/Documents/GitHub/qcore-c/private/premise-symbolic-integration/joint-gate-2/provider-contracts.log"
+  },
+  {
+    "name": "package-build",
+    "command": [
+      "python3",
+      "providers/package.py",
+      "build",
+      "--output",
+      "/home/cosmo/Documents/GitHub/qcore-c/private/premise-symbolic-integration/joint-gate-2/provider/packages"
+    ],
+    "cwd": "/home/cosmo/Documents/GitHub/qcore-c",
+    "source": "c4b29b14e31328675e8973f56dbe5eebaee14dad",
+    "started": "2026-10-21T12:45:11.048320+00:00",
+    "ended": "2026-10-21T12:45:49.957018+00:00",
+    "seconds": 38.90871766500641,
+    "exit": 0,
+    "environment_overrides": {
+      "CARGO_PROFILE_DEV_DEBUG": "0",
+      "CARGO_PROFILE_TEST_DEBUG": "0",
+      "CARGO_INCREMENTAL": "0",
+      "QCORE_AUDIT_BUILD_COMMIT": "c4b29b14e31328675e8973f56dbe5eebaee14dad"
+    },
+    "log": "/home/cosmo/Documents/GitHub/qcore-c/private/premise-symbolic-integration/joint-gate-2/package-build.log"
+  },
+  {
+    "name": "package-verify-chunkio",
+    "command": [
+      "python3",
+      "providers/package.py",
+      "verify",
+      "/home/cosmo/Documents/GitHub/qcore-c/private/premise-symbolic-integration/joint-gate-2/provider/packages/qcore.chunkio"
+    ],
+    "cwd": "/home/cosmo/Documents/GitHub/qcore-c",
+    "source": "c4b29b14e31328675e8973f56dbe5eebaee14dad",
+    "started": "2026-10-21T12:45:49.957388+00:00",
+    "ended": "2026-10-21T12:45:50.123426+00:00",
+    "seconds": 0.16605706908740103,
+    "exit": 0,
+    "environment_overrides": {
+      "CARGO_PROFILE_DEV_DEBUG": "0",
+      "CARGO_PROFILE_TEST_DEBUG": "0",
+      "CARGO_INCREMENTAL": "0",
+      "QCORE_AUDIT_BUILD_COMMIT": "c4b29b14e31328675e8973f56dbe5eebaee14dad"
+    },
+    "log": "/home/cosmo/Documents/GitHub/qcore-c/private/premise-symbolic-integration/joint-gate-2/package-verify-chunkio.log"
+  },
+  {
+    "name": "package-verify-libevent",
+    "command": [
+      "python3",
+      "providers/package.py",
+      "verify",
+      "/home/cosmo/Documents/GitHub/qcore-c/private/premise-symbolic-integration/joint-gate-2/provider/packages/qcore.libevent"
+    ],
+    "cwd": "/home/cosmo/Documents/GitHub/qcore-c",
+    "source": "c4b29b14e31328675e8973f56dbe5eebaee14dad",
+    "started": "2026-10-21T12:45:50.123763+00:00",
+    "ended": "2026-10-21T12:45:50.275643+00:00",
+    "seconds": 0.15189739898778498,
+    "exit": 0,
+    "environment_overrides": {
+      "CARGO_PROFILE_DEV_DEBUG": "0",
+      "CARGO_PROFILE_TEST_DEBUG": "0",
+      "CARGO_INCREMENTAL": "0",
+      "QCORE_AUDIT_BUILD_COMMIT": "c4b29b14e31328675e8973f56dbe5eebaee14dad"
+    },
+    "log": "/home/cosmo/Documents/GitHub/qcore-c/private/premise-symbolic-integration/joint-gate-2/package-verify-libevent.log"
+  },
+  {
+    "name": "package-verify-librdkafka",
+    "command": [
+      "python3",
+      "providers/package.py",
+      "verify",
+      "/home/cosmo/Documents/GitHub/qcore-c/private/premise-symbolic-integration/joint-gate-2/provider/packages/qcore.librdkafka"
+    ],
+    "cwd": "/home/cosmo/Documents/GitHub/qcore-c",
+    "source": "c4b29b14e31328675e8973f56dbe5eebaee14dad",
+    "started": "2026-10-21T12:45:50.276029+00:00",
+    "ended": "2026-10-21T12:45:50.484981+00:00",
+    "seconds": 0.20897053589578718,
+    "exit": 0,
+    "environment_overrides": {
+      "CARGO_PROFILE_DEV_DEBUG": "0",
+      "CARGO_PROFILE_TEST_DEBUG": "0",
+      "CARGO_INCREMENTAL": "0",
+      "QCORE_AUDIT_BUILD_COMMIT": "c4b29b14e31328675e8973f56dbe5eebaee14dad"
+    },
+    "log": "/home/cosmo/Documents/GitHub/qcore-c/private/premise-symbolic-integration/joint-gate-2/package-verify-librdkafka.log"
+  },
+  {
+    "name": "package-verify-cmetrics",
+    "command": [
+      "python3",
+      "providers/package.py",
+      "verify",
+      "/home/cosmo/Documents/GitHub/qcore-c/private/premise-symbolic-integration/joint-gate-2/provider/packages/qcore.cmetrics"
+    ],
+    "cwd": "/home/cosmo/Documents/GitHub/qcore-c",
+    "source": "c4b29b14e31328675e8973f56dbe5eebaee14dad",
+    "started": "2026-10-21T12:45:50.485349+00:00",
+    "ended": "2026-10-21T12:45:50.620027+00:00",
+    "seconds": 0.134698317036964,
+    "exit": 0,
+    "environment_overrides": {
+      "CARGO_PROFILE_DEV_DEBUG": "0",
+      "CARGO_PROFILE_TEST_DEBUG": "0",
+      "CARGO_INCREMENTAL": "0",
+      "QCORE_AUDIT_BUILD_COMMIT": "c4b29b14e31328675e8973f56dbe5eebaee14dad"
+    },
+    "log": "/home/cosmo/Documents/GitHub/qcore-c/private/premise-symbolic-integration/joint-gate-2/package-verify-cmetrics.log"
+  },
+  {
+    "name": "package-verify-ctraces",
+    "command": [
+      "python3",
+      "providers/package.py",
+      "verify",
+      "/home/cosmo/Documents/GitHub/qcore-c/private/premise-symbolic-integration/joint-gate-2/provider/packages/qcore.ctraces"
+    ],
+    "cwd": "/home/cosmo/Documents/GitHub/qcore-c",
+    "source": "c4b29b14e31328675e8973f56dbe5eebaee14dad",
+    "started": "2026-10-21T12:45:50.620468+00:00",
+    "ended": "2026-10-21T12:45:50.760971+00:00",
+    "seconds": 0.14053264108952135,
+    "exit": 0,
+    "environment_overrides": {
+      "CARGO_PROFILE_DEV_DEBUG": "0",
+      "CARGO_PROFILE_TEST_DEBUG": "0",
+      "CARGO_INCREMENTAL": "0",
+      "QCORE_AUDIT_BUILD_COMMIT": "c4b29b14e31328675e8973f56dbe5eebaee14dad"
+    },
+    "log": "/home/cosmo/Documents/GitHub/qcore-c/private/premise-symbolic-integration/joint-gate-2/package-verify-ctraces.log"
+  },
+  {
+    "name": "audit-examples",
+    "command": [
+      "cargo",
+      "build",
+      "-p",
+      "qcore-audit",
+      "--examples"
+    ],
+    "cwd": "/home/cosmo/Documents/GitHub/qcore-c",
+    "source": "c4b29b14e31328675e8973f56dbe5eebaee14dad",
+    "started": "2026-10-21T12:45:50.761659+00:00",
+    "ended": "2026-10-21T12:45:52.118188+00:00",
+    "seconds": 1.3565535970265046,
+    "exit": 0,
+    "environment_overrides": {
+      "CARGO_PROFILE_DEV_DEBUG": "0",
+      "CARGO_PROFILE_TEST_DEBUG": "0",
+      "CARGO_INCREMENTAL": "0",
+      "QCORE_AUDIT_BUILD_COMMIT": "c4b29b14e31328675e8973f56dbe5eebaee14dad"
+    },
+    "log": "/home/cosmo/Documents/GitHub/qcore-c/private/premise-symbolic-integration/joint-gate-2/audit-examples.log"
+  },
+  {
+    "name": "source-examples",
+    "command": [
+      "cargo",
+      "build",
+      "-p",
+      "quirin-source-analysis",
+      "--examples"
+    ],
+    "cwd": "/home/cosmo/Documents/GitHub/qcore-c",
+    "source": "c4b29b14e31328675e8973f56dbe5eebaee14dad",
+    "started": "2026-10-21T12:45:52.118603+00:00",
+    "ended": "2026-10-21T12:46:14.633229+00:00",
+    "seconds": 22.51464851293713,
+    "exit": 0,
+    "environment_overrides": {
+      "CARGO_PROFILE_DEV_DEBUG": "0",
+      "CARGO_PROFILE_TEST_DEBUG": "0",
+      "CARGO_INCREMENTAL": "0",
+      "QCORE_AUDIT_BUILD_COMMIT": "c4b29b14e31328675e8973f56dbe5eebaee14dad"
+    },
+    "log": "/home/cosmo/Documents/GitHub/qcore-c/private/premise-symbolic-integration/joint-gate-2/source-examples.log"
+  },
+  {
+    "name": "release",
+    "command": [
+      "cargo",
+      "build",
+      "--release",
+      "-p",
+      "qcore-audit",
+      "--bin",
+      "quirin-audit"
+    ],
+    "cwd": "/home/cosmo/Documents/GitHub/qcore-c",
+    "source": "c4b29b14e31328675e8973f56dbe5eebaee14dad",
+    "started": "2026-10-21T12:46:14.633647+00:00",
+    "ended": "2026-10-21T12:47:37.841971+00:00",
+    "seconds": 83.20835836604238,
+    "exit": 0,
+    "environment_overrides": {
+      "CARGO_PROFILE_DEV_DEBUG": "0",
+      "CARGO_PROFILE_TEST_DEBUG": "0",
+      "CARGO_INCREMENTAL": "0",
+      "QCORE_AUDIT_BUILD_COMMIT": "c4b29b14e31328675e8973f56dbe5eebaee14dad"
+    },
+    "log": "/home/cosmo/Documents/GitHub/qcore-c/private/premise-symbolic-integration/joint-gate-2/release.log"
+  }
+]

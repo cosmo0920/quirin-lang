@@ -1,0 +1,30 @@
+[
+  {
+    "command": [
+      "python3",
+      "scripts/reconciliation_sweep.py",
+      ".",
+      "--since",
+      "fb9e5f6e8cc4362e3d266ff201b6c469a85677d9",
+      "--check",
+      "docs/reports/premise-symbolic-integration/reconciliation.json"
+    ],
+    "exit": 1,
+    "log": "private/premise-symbolic-integration/reconciliation-check-1.log",
+    "reason": "inclusive prior-close scan also requires the four previously closed card dispositions"
+  },
+  {
+    "command": [
+      "python3",
+      "scripts/reconciliation_sweep.py",
+      ".",
+      "--since",
+      "fb9e5f6e8cc4362e3d266ff201b6c469a85677d9",
+      "--check",
+      "docs/reports/premise-symbolic-integration/reconciliation.json"
+    ],
+    "exit": 0,
+    "log": "private/premise-symbolic-integration/reconciliation-check-2.log",
+    "resolution": "record prior-close cards as noted with original frozen authority; no prior report rewritten"
+  }
+]

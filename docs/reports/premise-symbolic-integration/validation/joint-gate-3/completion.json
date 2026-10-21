@@ -1,0 +1,9 @@
+{
+  "wrapper_exit": 0,
+  "source": "eb0dc0cadb10e84ad6df79e36ca22996fd6ce528",
+  "head_after": "eb0dc0cadb10e84ad6df79e36ca22996fd6ce528",
+  "clean_after": true,
+  "all_commands_zero": true,
+  "command_count": 22,
+  "commands_sha256": "a33b15204c1753b57c1dcf466418208b977682965922d9aaf619182cd834e2a8"
+}

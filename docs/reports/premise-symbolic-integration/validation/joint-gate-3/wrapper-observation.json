@@ -1,0 +1,8 @@
+{
+  "tool": "write_stdin",
+  "session_id": 80520,
+  "observed_exit_code": 0,
+  "observed_output_tail": "SYMBOLIC INTEGRATION GATE COMPLETE all22keys0",
+  "source_after": "eb0dc0cadb10e84ad6df79e36ca22996fd6ce528",
+  "tracked_status_after": "clean"
+}
