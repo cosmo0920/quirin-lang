@@ -640,6 +640,8 @@ Regenerate with `python3 scripts/build_docs_index.py`; validate with `--check`.
 
 | [premise-symbolic-metadata-bridge](premise-symbolic-metadata-bridge/README.md) | Symbolic premise metadata bridge |
 
+| [premise-symbolic-overlap-admission](premise-symbolic-overlap-admission/README.md) | PREMISE-SYMBOLIC-OVERLAP-ADMISSION |
+
 | [process-fixtures-fs-write](process-fixtures-fs-write/README.md) | PROCESS-FIXTURES-FS-WRITE-OUTSIDE-HOST-CRATE: one out-of-process writer for every executable test fixture |
 
 | [proof-leg-batch](proof-leg-batch/README.md) | Two proof rows withdrawn by measurement: CT12 and CT14 are CT01's artifact (PROOF-LEG-BATCH) |
