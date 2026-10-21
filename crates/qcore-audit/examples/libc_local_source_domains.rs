@@ -16,6 +16,78 @@ use std::{
 fn read(path: impl AsRef<Path>) -> Result<Vec<u8>, String> {
     fs::read(path).map_err(|e| e.to_string())
 }
+fn reconstruct_imports(
+    invocation: &Value,
+    sidecar: &Value,
+    data: &Value,
+    root: &qcore_schemas::contract::ResourceContracts,
+    main_entries: &[qcore_audit::compile_db::CompileEntry],
+    auxiliary_entries: &[qcore_audit::compile_db::CompileEntry],
+    out: &Path,
+) -> Result<(qcore_schemas::contract::ResourceContracts, Vec<qcore_c_gateway::legacy_c::CrossUnitHomeEvidence>, Value), String> {
+    let Some(path) = invocation["link_map"].as_str() else {
+        if sidecar.get("cross_unit_link_resolution").is_some() {
+            return Err("recorded cross-unit premise lacks independent actual link map".into());
+        }
+        return Ok((root.clone(), Vec::new(), json!({"imports":"none"})));
+    };
+    let links = qcore_audit::cross_unit_links::LinkMap::load(Path::new(path))?;
+    if invocation["link_map_sha256"].as_str() != Some(&links.digest)
+        || invocation["link_map_sha256_after"].as_str() != Some(&links.digest)
+        || sidecar["cross_unit_link_resolution"]["map_sha256"].as_str() != Some(&links.digest)
+        || sidecar["cross_unit_link_resolution"]["premise"].as_str() != Some(&links.premise)
+    {
+        return Err("actual held link-map bytes/premise differ".into());
+    }
+    let requested = links.requested();
+    let units = data["units"].as_array().ok_or("recorded census absent")?;
+    let mut definitions = Vec::new();
+    let mut exports = Vec::new();
+    let mut source_receipts = Vec::new();
+    for u in units {
+        let library = u["library"].as_str().ok_or("census library absent")?;
+        let file = u["file"].as_str().ok_or("census file absent")?;
+        let key = format!("{library}/{file}");
+        if u["enumeration"]["completeness"] != "established" {
+            return Err(format!("held complete definition census refused: {key}"));
+        }
+        let names: Vec<String> = serde_json::from_value(u["source_functions"].clone()).map_err(|e|e.to_string())?;
+        definitions.extend(names.iter().filter(|n| requested.contains(*n)).map(|n|(key.clone(),n.clone())));
+        let selected = links.names_for(&key);
+        if selected.is_empty() {continue;}
+        let entries = if library == "monkey-libevent" {auxiliary_entries} else {main_entries};
+        let candidates = entries.iter().filter(|e|e.file.ends_with(file)).collect::<Vec<_>>();
+        let [entry] = candidates.as_slice() else {return Err(format!("home actual DB selection ambiguous or absent: {key}"));};
+        let raw = fs::read_to_string(&entry.file).map_err(|e|e.to_string())?;
+        let options = qcore_audit::compile_db::compiler_options(entry)?;
+        let unit = C11TranslationUnit {source:&raw,include_paths:options.include_paths,definitions:options.definitions,preprocessor_options:options.preprocessor_options,dialect:options.dialect,function_scope:LegacyFunctionScope::MainSourceDefinitions,input:options.input};
+        let prepared = prepare_translation_unit(&unit);
+        let pp = prepared.preprocessed_source().map_err(|e|e.to_string())?;
+        if !prepared.inventory().is_complete() || prepared.inventory().definitions() != names.as_slice() {
+            return Err(format!("independent home complete inventory differs: {key}"));
+        }
+        let found = qcore_c_gateway::legacy_c::export_cross_unit_homes(&prepared,root,&selected,&links.digest)?;
+        for export in &found {
+            let records = sidecar["cross_unit_link_resolution"]["imported"].as_array().ok_or("recorded imports absent")?;
+            let matches = records.iter().filter(|r|r["function"].as_str()==Some(export.home.function.as_str())).collect::<Vec<_>>();
+            let [record] = matches.as_slice() else {return Err("recorded selected home absent/duplicate".into());};
+            let id = export.home.import_identity();
+            if record["home_unit"] != key || record["home_environment_sha256"] != id.environment_sha256 || record["home_raw_source_sha256"] != id.raw_source_sha256 || record["home_preprocessed_source_sha256"] != id.preprocessed_source_sha256 {
+                return Err(format!("independent export differs from actual selected home: {}",export.home.function));
+            }
+        }
+        fs::write(out.join(format!("home-{}.prepared.c",source_receipts.len())),pp).map_err(|e|e.to_string())?;
+        source_receipts.push(json!({"unit":key,"file":entry.file,"directory":entry.directory,"command":entry.command,"raw_sha256":qcore_schemas::sha256_hex(raw.as_bytes()),"preprocessed_sha256":qcore_schemas::sha256_hex(pp.as_bytes()),"requested":selected,"independently_exported":found.iter().map(|e|json!({"function":e.home.function,"contract":e.contract,"identity":e.home.import_identity()})).collect::<Vec<_>>()}));
+        exports.extend(found.into_iter().map(|export|(key.clone(),export)));
+    }
+    let (environment,homes) = links.select(exports,definitions.clone(),root);
+    let selected_names = homes.iter().map(|h|h.function.clone()).collect::<BTreeSet<_>>();
+    let recorded_names = sidecar["cross_unit_link_resolution"]["imported"].as_array().ok_or("recorded imports absent")?.iter().map(|r|r["function"].as_str().map(str::to_owned).ok_or("import function absent")).collect::<Result<BTreeSet<_>,_>>()?;
+    if selected_names != recorded_names {return Err("independent selected home set differs from complete actual imported set".into());}
+    let receipt = json!({"actual_link_map":path,"sha256":links.digest,"premise":links.premise,"independent_home_source_exports":source_receipts,"retained_complete_definition_census":definitions,"census_prerequisite":"independently held recorded complete selected-unit census; other unit bodies not re-enumerated by this bounded helper","actual_link_interposition_truth":"open","run_environment_sha256":qcore_schemas::sha256_hex(&serde_json::to_vec(&environment).map_err(|e|e.to_string())?)});
+    Ok((environment,homes,receipt))
+}
+
 fn main() -> Result<(), String> {
     let args = std::env::args().collect::<Vec<_>>();
     if args.len() != 8 {
@@ -184,6 +256,11 @@ fn main() -> Result<(), String> {
     let actual_profile = qcore_contract::profile_loader::load_profile_directory(&profile_dir)
         .map_err(|e| e.to_string())?;
     let profile_sha = actual_profile.manifest_digest().to_owned();
+    let (run_contracts, run_homes, imported_environment_replay) = if configured {
+        (contracts.clone(), Vec::new(), json!({"mode":"configured-no-import-replay"}))
+    } else {
+        reconstruct_imports(&invocation, &sidecar, &data, &contracts, &entries, &auxiliary_entries, &out)?
+    };
     let mut dependent_records = Vec::new();
     for (ui, u) in data["units"]
         .as_array()
@@ -416,6 +493,7 @@ fn main() -> Result<(), String> {
                     pp,
                 )
                 .map_err(|e| e.to_string())?;
+                let (caller_contracts, _) = qcore_c_gateway::legacy_c::cross_unit_for_caller(pp, &run_contracts, &run_homes);
                 let held = HeldDomain {
                     source: pp,
                     raw_source: &source_bytes,
@@ -423,7 +501,7 @@ fn main() -> Result<(), String> {
                     compile_configuration: &compile,
                     expected_compile_configuration: &compile,
                     entry: owners.iter().next().unwrap(),
-                    contracts: &contracts,
+                    contracts: &caller_contracts,
                     selected: Some(&selected),
                     dialect: unit.dialect,
                     graphs: &graphs,
@@ -468,7 +546,7 @@ fn main() -> Result<(), String> {
         }
         results.push(json!({"unit_index":number,"library":u["library"],"file":file,"held_observation_count":expected.len(),"owners":owners,"declarations":declarations,"candidate_count":candidates.len(),"complete_selected_recorded_domain_reproduced":success,"attempts":attempts,"universal_atoms":"open"}));
     }
-    let result = json!({"schema":"libc-local-source-domain-production.v1","diagnostics_sha256":qcore_schemas::sha256_hex(&raw),"invocation_sha256":qcore_schemas::sha256_hex(&invocation_bytes),"sidecar_sha256":qcore_schemas::sha256_hex(&sidecar_bytes),"actual_compile_database":database,"actual_compile_database_sha256":qcore_schemas::sha256_hex(&dbbytes),"independently_held_database_receipts":database_receipts,"actual_clang_spelling":actual_clang_spelling,"held_recorded_observations":all_records,"source_reproduced_observations":checked_records,"all_selected_recorded_domains_reproduced":all_records>0&&all_records==checked_records,"units":results,"universal_atoms":"open","unproved_boundaries":["complete relevant C site universe","external library behavior","compiler execution attestation","whole-C extraction","Rust-Lean correspondence"]});
+    let result = json!({"schema":"libc-local-source-domain-production.v1","diagnostics_sha256":qcore_schemas::sha256_hex(&raw),"invocation_sha256":qcore_schemas::sha256_hex(&invocation_bytes),"sidecar_sha256":qcore_schemas::sha256_hex(&sidecar_bytes),"actual_compile_database":database,"actual_compile_database_sha256":qcore_schemas::sha256_hex(&dbbytes),"independently_held_database_receipts":database_receipts,"actual_clang_spelling":actual_clang_spelling,"imported_environment_replay":imported_environment_replay,"held_recorded_observations":all_records,"source_reproduced_observations":checked_records,"all_selected_recorded_domains_reproduced":all_records>0&&all_records==checked_records,"units":results,"universal_atoms":"open","unproved_boundaries":["complete relevant C site universe","external library behavior","compiler execution attestation","whole-C extraction","Rust-Lean correspondence"]});
     fs::write(
         out.join("result.json"),
         serde_json::to_vec_pretty(&result).unwrap(),
