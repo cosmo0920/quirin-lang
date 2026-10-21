@@ -57,7 +57,7 @@
   "gates": {
     "standing": "full gate + post-committed-matrix Python",
     "provider": "fresh133Rust/25Python expected, all five rebuilt verified; actual results authoritative",
-    "lean_expected": 353,
+    "lean_expected": 354,
     "measurements": "six fresh own actual routes, symmetric eight-home map, full-null/runtime/rawmetadata comparison",
     "lock": "/tmp/qcore-c-card-validation-20261021.lock; root combined gate precedes this card"
   },
@@ -68,7 +68,9 @@
     "proof/QCore/PluginReadingEnvironment.lean": "a776da5bec0c6e439014cfd51d36948ea113c109c0a8a3906dcdec00650907e6",
     "proof/AuditPluginReadingEnvironment.lean": "d61784fd4d2b5e3a048d7f71060597b50e582231569dcfe75b041df1dc4c895c",
     "docs/reports/plugin-premise-decomposition/outer-catalog.json": "093712024ff2f893185580d39556dcb97746ed9d21a4344a2e31a98efda4c5ba",
-    "docs/reports/plugin-premise-decomposition/census.json": "9b91cd238789eef85b80ca33f230db6d63986c947075d79cb95e9887b96ee675"
+    "docs/reports/plugin-premise-decomposition/census.json": "9b91cd238789eef85b80ca33f230db6d63986c947075d79cb95e9887b96ee675",
+    "proof/QCore/PluginNeutralOverlap.lean": "d895d5ac185ec19ce2f94e39b33f3cf557527cd39ad3f28715645c3dd2e8b29d",
+    "proof/AuditPluginNeutralOverlap.lean": "76473a65410c713c6d015eba51dbf494515f768cca87b73a1313731197b72150"
   },
   "reading_packet": "private/plugin-premise-decomposition/final-task-context.txt; refreshed status/operations/validation/evidence reviewed; previously applicable broader rules retained",
   "residuals": "followup-amendments.json; no source/outer-truth/operator closure",
@@ -82,5 +84,8 @@
       "proof/QCore.lean"
     ],
     "source_equivalence": "Exact git diff only proof/QCore.lean; Rust/contract/runtime input trees unchanged. Context evidence_version must retain actual build44951, not32e6."
-  }
+  },
+  "repair_prediction": "REPAIR-PREDICTION.json",
+  "overlap_formal_addendum": "REPAIR-LEAN-ADDENDUM.json",
+  "repaired_source_will_include": "Explicit matched-neutral resource/null relation model and7 audited refusal/noninterference theorems, all original166 model/audit references unchanged"
 }

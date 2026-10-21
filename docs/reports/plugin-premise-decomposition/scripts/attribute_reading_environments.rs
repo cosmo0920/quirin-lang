@@ -9,7 +9,8 @@ use std::{collections::BTreeMap, fs};
 fn read(path: &Value) -> Vec<u8> { fs::read(path.as_str().expect("explicit file path")).unwrap() }
 fn value(path: &Value) -> Value { serde_json::from_slice(&read(path)).unwrap() }
 fn typed(value: &Value) -> ResourceContracts { serde_json::from_value(value.clone()).unwrap() }
-fn digest(v: &BTreeMap<String,String>) -> String { qcore_schemas::sha256_hex(&serde_json::to_vec(v).unwrap()) }
+fn digest(v: &ResourceContracts) -> String { qcore_schemas::sha256_hex(&serde_json::to_vec(v).unwrap()) }
+fn source_digest(v: &BTreeMap<String,String>) -> String { qcore_schemas::sha256_hex(&serde_json::to_vec(v).unwrap()) }
 fn main() {
     let args=std::env::args().collect::<Vec<_>>();
     assert_eq!(args.len(),3,"INPUT OUTPUT");
@@ -25,6 +26,40 @@ fn main() {
     let new_graphs=qcore_contract::hypothesis::replay(new.source_assumptions()).unwrap();
     let before=value(&spec["base_diagnostics"]);
     let after=value(&spec["tip_diagnostics"]);
+    let old_contracts=value(&spec["base_contracts"]);
+    let new_contracts=value(&spec["tip_contracts"]);
+    for (sidecar,environment) in [(&old_contracts,&old),(&new_contracts,&new)] {
+        let source_field=sidecar.get("sources").or_else(||sidecar.get("contracts")).unwrap();
+        assert_eq!(source_field,&json!(environment.source_assumptions()));
+        assert!(sidecar["refuted_contracts"]["entries"].as_array().unwrap().iter().all(|entry| entry["applied"]!=true),"nonempty home refutation stage requires separately reconstructed held environment");
+    }
+    // current_route and pinned_route export homes under the held pre-import root.
+    // Check every actual selected home before deriving the sole permitted delta.
+    let old_home_root=digest(&old);
+    let new_home_root=digest(&new);
+    let home_records=|sidecar:&Value| -> BTreeMap<String,Value> {
+        let mut out=BTreeMap::new();
+        for entry in sidecar["cross_unit_link_resolution"]["imported"].as_array().into_iter().flatten() {
+            assert!(out.insert(entry["function"].as_str().unwrap().to_owned(),entry.clone()).is_none());
+        }
+        out
+    };
+    let old_homes=home_records(&old_contracts);
+    let new_homes=home_records(&new_contracts);
+    assert_eq!(old_homes.keys().collect::<Vec<_>>(),new_homes.keys().collect::<Vec<_>>());
+    for (function,new_home) in &new_homes {
+        assert_eq!(new_home["home_environment_sha256"],new_home_root);
+        assert_eq!(old_homes[function]["home_environment_sha256"],old_home_root);
+        let mut reconstructed=new_home.clone();
+        reconstructed["home_environment_sha256"]=json!(old_home_root);
+        assert_eq!(reconstructed,old_homes[function],"home identity or selected link premise changed beyond exact root environment");
+    }
+    let mut old_cross=old_contracts["cross_unit_link_resolution"].clone();
+    let new_cross=&new_contracts["cross_unit_link_resolution"];
+    if let Some(imported)=old_cross.get_mut("imported").and_then(Value::as_array_mut) {
+        for entry in imported {entry["home_environment_sha256"]=json!(new_home_root);}
+    }
+    assert_eq!(&old_cross,new_cross,"complete link-resolution premise/selection must agree");
     let bu=before["units"].as_array().unwrap();
     let tu=after["units"].as_array().unwrap();
     assert_eq!(bu.len(),tu.len());
@@ -46,8 +81,8 @@ fn main() {
             if tip_receipts.is_empty() {continue;}
             let bc:Context=serde_json::from_value(b["hypothesis_context"].clone()).unwrap();
             let tc:Context=serde_json::from_value(t["hypothesis_context"].clone()).unwrap();
-            assert_eq!(bc.assumptions,digest(old.source_assumptions()));
-            assert_eq!(tc.assumptions,digest(new.source_assumptions()));
+            assert_eq!(bc.assumptions,source_digest(old.source_assumptions()));
+            assert_eq!(tc.assumptions,source_digest(new.source_assumptions()));
             assert_eq!(bc.evidence_version,format!("contract-hypothesis-graph.v1:{}",spec["base_build_commit"].as_str().unwrap()));
             assert_eq!(tc.evidence_version,format!("contract-hypothesis-graph.v1:{}",spec["tip_build_commit"].as_str().unwrap()));
             let mut reversed_context=tc.clone();
@@ -63,6 +98,15 @@ fn main() {
                 assert_eq!(reconstructed.inclusion_evidence(),new.inclusion_evidence(),"effective inclusion metadata differs from held TIP root");
                 reconstructed.set_source_assumptions(old.source_assumptions().clone());
                 reconstructed.set_inclusion_evidence(old.inclusion_evidence().clone());
+                let mut imports=reconstructed.cross_unit_import_identities().clone();
+                for (function,identity) in &mut imports {
+                    let home=&new_homes[function];
+                    assert_eq!(identity.environment_sha256,new_home_root);
+                    assert_eq!(identity.raw_source_sha256,home["home_raw_source_sha256"]);
+                    assert_eq!(identity.preprocessed_source_sha256,home["home_preprocessed_source_sha256"]);
+                    identity.environment_sha256=old_home_root.clone();
+                }
+                reconstructed.set_cross_unit_import_identities(imports);
                 let canonical=serde_json::to_string(&reconstructed).unwrap();
                 let old_sha=qcore_schemas::sha256_hex(canonical.as_bytes());
                 let mut observation=receipt.observation.clone();

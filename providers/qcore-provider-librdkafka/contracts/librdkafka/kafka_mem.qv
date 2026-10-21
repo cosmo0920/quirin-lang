@@ -1,5 +1,5 @@
-// qcore-premise-binding-manifest-v1 rd_kafka_dump0 rk_plugin_callback_closure f86b101a9461536b91018f23ba7df6881fd9a6970b2797b36cd3b3d587c204e4
 module contract;
+// qcore-premise-binding-manifest-v1 rd_kafka_dump0 rk_plugin_callback_closure f86b101a9461536b91018f23ba7df6881fd9a6970b2797b36cd3b3d587c204e4
 
 // librdkafka's public allocator-free entry point — resource-projection
 // vocabulary version 1.

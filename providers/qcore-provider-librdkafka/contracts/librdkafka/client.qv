@@ -1,3 +1,4 @@
+module contract;
 // qcore-premise-binding-manifest-v1 rd_kafka_AlterConsumerGroupOffsets_destroy rk_plugin_callback_closure 953131412908232f6d3137c63a725dd45d1683a7ee02327ecc2167152d3b7cb5
 // qcore-premise-binding-manifest-v1 rd_kafka_DeleteConsumerGroupOffsets_destroy rk_plugin_callback_closure 223161955075031fb2e31ae95aa5da79503a896ecd31b92f0d870bedd6fa8f86
 // qcore-premise-binding-manifest-v1 rd_kafka_DeleteRecords_leaders_queried_cb rk_plugin_callback_closure ea62f945cb92e889829ca3cce240246af1f926e3df713c5ccb52cf19a037beb8
@@ -87,7 +88,6 @@
 // qcore-premise-binding-manifest-v1 unit_test_telemetry rk_plugin_callback_closure 96677275a35084dc39eb969e5a526da3a564e374511b22d96a0a5350366f03ff
 // qcore-premise-binding-manifest-v1 ut_create_mock_toppar rk_plugin_callback_closure f8dd449a6d44e7e47ed3bb4244f5690e4ffd0020f869c8ddc721c3b3dbb997c9
 // qcore-premise-binding-manifest-v1 ut_destroy_mock_queue rk_plugin_callback_closure c6ebdd7f9f1bf12e39ba723fea0fac2576d5e4d524c3b11e71374260a503c401
-module contract;
 
 // # librdkafka client functions with enumeration or pointer-to-const-pointer
 // # prototypes

@@ -1,7 +1,7 @@
+module contract;
 // qcore-premise-binding-manifest-v1 cb_kafka_logger rk_plugin_callback_closure c0e4629e58ec35de1a0251dce6700fc152438ac9ab4d6d8cb4500638c063f061
 // qcore-premise-binding-manifest-v1 cb_kafka_msg rk_plugin_callback_closure 7a3a983e68e4a74083324f5c985948fc43f47eafc155152924489a55e4ccb482
 // qcore-premise-binding-manifest-v1 oauthbearer_token_refresh_cb rk_plugin_callback_closure c355b4f4418cb176f0eff2bb45cc9176fa5771c69aec5afdad2f6e92a938a729
-module contract;
 
 // Fluent Bit diagnostic logging — resource-projection vocabulary version 1.
 //

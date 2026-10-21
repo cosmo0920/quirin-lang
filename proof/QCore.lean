@@ -406,5 +406,6 @@ import QCore.PremiseRefinement
 import QCore.LibcReadingSiteEvidence
 import QCore.PluginPremiseDecomposition
 import QCore.PluginReadingEnvironment
+import QCore.PluginNeutralOverlap
 
 /-! The executable formal core of QCore-C revision 0.1. -/

@@ -1837,42 +1837,42 @@
     {
       "path": "providers/qcore-provider-librdkafka/contracts/librdkafka/client.qv",
       "selected_declarations": 89,
-      "raw_sha256": "5dfbcc64b887c56513ffe11ac09c232408e3cd5e1838c9b2837a0df7c9682846",
+      "raw_sha256": "288d0fa65ffe6832d11dd06acd5ebf3d8b3d211e5a76f382e130c0a13c402946",
       "original_reconstructed_sha256": "c0f6b7a2538ac14c1daa9d81f5412b4308e449ed4dada15cc142209ac7e83499",
       "original_bytes_reconstructed": true
     },
     {
       "path": "providers/qcore-provider-librdkafka/contracts/librdkafka/kafka_mem.qv",
       "selected_declarations": 1,
-      "raw_sha256": "282118c75362475d18775843ec4dc7c15b04db875b59ef256107d14cf8a8e07c",
+      "raw_sha256": "3924b280719d1064dfcf821f4d6eec5e00033f2b2551e8a6cc6b4dc0784624be",
       "original_reconstructed_sha256": "d75b18e45520ee4f93f20286ad99587e32431bed6751f3409b1a329f32fcde83",
       "original_bytes_reconstructed": true
     },
     {
       "path": "providers/qcore-provider-librdkafka/contracts/librdkafka/memory.qv",
       "selected_declarations": 1,
-      "raw_sha256": "e9e3cd509bd0db4e9550f70b882473e4e6b19ca76099150b049860449cca8231",
+      "raw_sha256": "a20e69e5bb5d5012bce683508e534388701ac3a9b2ac44b1e95bd89d2cc56012",
       "original_reconstructed_sha256": "bd69c0fe6859ccf6f621c2b001748d1f4d987601fb9115af15e3aa83918c2a67",
       "original_bytes_reconstructed": true
     },
     {
       "path": "providers/qcore-provider-librdkafka/contracts/librdkafka/null_deref.qv",
       "selected_declarations": 71,
-      "raw_sha256": "1a8b36af29ddf6fa031e99581dd624ea8b992365280f3f2693ac5b066640fb8d",
+      "raw_sha256": "76904006ed920a3352c62b60006e22e6c192c52356ce4043b31bfcfb07a41616",
       "original_reconstructed_sha256": "ba5d7a7a49f00aea49df1dbff8f56e2fd3bf53f39838a0afb4f00fb3b5cde537",
       "original_bytes_reconstructed": true
     },
     {
       "path": "providers/qcore-provider-librdkafka/contracts/librdkafka/queue_destructor.qv",
       "selected_declarations": 1,
-      "raw_sha256": "752b5957fafedc03e0a03a38a8379f18b4de3bfb3f44cb8cab16029aecad182f",
+      "raw_sha256": "5e66e4b28144008620c9fe0295cbffcca6c331846352c6066b71e0c24e5836e8",
       "original_reconstructed_sha256": "fa88928d00caa91eba736362e8ba36d88abb97efc5d50f1dd45f51dd7f64e238",
       "original_bytes_reconstructed": true
     },
     {
       "path": "providers/quirin-provider-fluent-bit/contracts/fluent_bit/logging.qv",
       "selected_declarations": 3,
-      "raw_sha256": "1e9cb65e40799b326820c6b3378f19c63283e6863ca317048007acb98adf4d44",
+      "raw_sha256": "c5fa867ac7e7c02bdc4d693788637620fd1c496e146e2afb656211424d618ad8",
       "original_reconstructed_sha256": "4a026ffe209161dce22bd8be63a9cbb3c3983b330e74993cdfb67e8d1348181c",
       "original_bytes_reconstructed": true
     }
