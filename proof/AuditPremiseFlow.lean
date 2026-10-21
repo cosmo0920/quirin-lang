@@ -16,3 +16,6 @@ import QCore.PremiseFlow
 #print axioms QCore.PremiseFlow.foreign_context_refuses
 #print axioms QCore.PremiseFlow.wrong_identity_refuses
 #print axioms QCore.PremiseFlow.proposed_solution_does_not_establish_legacy
+#print axioms QCore.PremiseFlow.positive_refutation_permits
+#print axioms QCore.PremiseFlow.terminal_requires_both_conditions
+#print axioms QCore.PremiseFlow.exhausted_resolution_refuses
