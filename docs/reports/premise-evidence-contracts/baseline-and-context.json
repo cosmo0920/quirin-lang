@@ -1,0 +1,49 @@
+{
+  "exact_base": "c5c298db2ab7dedb5d39d29f4cfd097727e267b2",
+  "input_archive_sha256": "9e6a1a779b7f6b0c5ce0962608dc6ad8b9b2b691d47536d4c3216203d5a28adf",
+  "binary_source_receipt": "/home/cosmo/Documents/GitHub/qcore-c/private/premise-integration/baseline/receipt.json",
+  "binary_source": "/home/cosmo/Documents/GitHub/qcore-c/private/premise-integration/baseline/quirin-audit",
+  "own_binary_copy": "/home/cosmo/.codex/worktrees/premise-decomposition-cycle1/qcore-c/private/premise-evidence-contracts/base-inputs/target/release/quirin-audit",
+  "binary_sha256": "1e9e70c262d6e28a423cde0ad96eec3d0bb899fc599a07aaa9b3195de3cc06dd",
+  "link_map_source": "/home/cosmo/.codex/worktrees/premise-decomposition-cycle1/qcore-c/docs/reports/w48-bottom-up-batch4/link-map.corpus.json",
+  "link_map_sha256": "98a4db761ace9fd4846b000c4c98defdc2e39ce6f95684c67c30f9b8b6f38ad3",
+  "link_map": {
+    "schema_version": 1,
+    "premise": "For the selected linked program and each selected compilation configuration, every external call to each listed symbol has a compatible function type and calling convention and resolves to its listed external definition. This assertion requires the actual link and interposition environment; the source audit conditions its result on it.",
+    "symbols": [
+      {
+        "function": "cio_file_hash",
+        "home_unit": "chunkio/cio_file.c"
+      },
+      {
+        "function": "LZ4_sizeofState",
+        "home_unit": "librdkafka/lz4.c"
+      },
+      {
+        "function": "LZ4_sizeofStateHC",
+        "home_unit": "librdkafka/lz4hc.c"
+      },
+      {
+        "function": "rd_kafka_error_code",
+        "home_unit": "librdkafka/rdkafka_error.c"
+      },
+      {
+        "function": "rd_kafka_error_destroy",
+        "home_unit": "librdkafka/rdkafka_error.c"
+      },
+      {
+        "function": "LZ4_compressBound",
+        "home_unit": "librdkafka/lz4.c"
+      },
+      {
+        "function": "mk_fifo_send",
+        "home_unit": "monkey-libevent/mk_server/mk_fifo.c"
+      },
+      {
+        "function": "cio_file_is_up",
+        "home_unit": "chunkio/cio_file.c"
+      }
+    ]
+  },
+  "scope": "Fresh own snapshots of current merged eight-home context, not prior six-home evidence. Shared baseline binary only; all card route measurements remain fresh."
+}

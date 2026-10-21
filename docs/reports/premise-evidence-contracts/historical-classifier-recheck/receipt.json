@@ -1,0 +1,142 @@
+{
+  "boundary": "Corrected lightweight classification postprocessing of existing immutable historical artifacts; no new audit run or current eight-home measurement. Original helper omitted named premise facts by reading nonexistent top-level contract_premises. Frozen report not rewritten. Adapter extracts exact published contract_dependencies.declarations[name].premises, then invokes the same preserved original custody_facts helper binary.",
+  "binary": "/home/cosmo/.codex/worktrees/premise-decomposition-cycle1/qcore-c/private/premise-decomposition-cycle1/preserved-executables/premise_outer_facts",
+  "binary_sha256": "676a77eab649e6fd100c473e5433b83bc9fec40e208f3b4cc6b9cb2717685ef9",
+  "routes": {
+    "corpus": {
+      "all_full_records_equal": true,
+      "sides": [
+        {
+          "side": "base",
+          "command": [
+            "/home/cosmo/.codex/worktrees/premise-decomposition-cycle1/qcore-c/private/premise-decomposition-cycle1/preserved-executables/premise_outer_facts",
+            "/home/cosmo/.codex/worktrees/premise-decomposition-cycle1/qcore-c/private/premise-decomposition-cycle1/measure-1/corpus/base/resource-diagnostics.json",
+            "/home/cosmo/.codex/worktrees/premise-decomposition-cycle1/qcore-c/private/premise-evidence-contracts/historical-recheck-1/corpus/base/adapted-input.json",
+            "/home/cosmo/.codex/worktrees/premise-decomposition-cycle1/qcore-c/private/premise-evidence-contracts/historical-recheck-1/corpus/base/full-facts.json"
+          ],
+          "exit": 0,
+          "start": "2026-10-21T00:25:20.845153+00:00",
+          "end": "2026-10-21T00:25:21.372584+00:00",
+          "diagnostics_sha256": "3fdbfc303f0ba95e51f6d1b0366f56ad7d74bbdefb49018478355cdd1a105a63",
+          "actual_contracts_sidecar": "/home/cosmo/.codex/worktrees/premise-decomposition-cycle1/qcore-c/private/premise-decomposition-cycle1/measure-1/corpus/base/resource-diagnostics.contracts.json",
+          "actual_contracts_sha256": "eea3059cd30fb731545a21dd33e831657bd624d3d23a0142368843f927018b20",
+          "adapter_sha256": "2e0ae2de52e08eef45602b7792ecd5037e6f77fbae4c932c9d3ff875501f234c",
+          "output_sha256": "03620b300dcd8ee5a97ce04ba786711ebbf5272f813bbe8d5eb99de16072bc49",
+          "rows": 4834,
+          "rows_with_premise_facts": 531,
+          "detach_representation_fact_rows": 4
+        },
+        {
+          "side": "tip",
+          "command": [
+            "/home/cosmo/.codex/worktrees/premise-decomposition-cycle1/qcore-c/private/premise-decomposition-cycle1/preserved-executables/premise_outer_facts",
+            "/home/cosmo/.codex/worktrees/premise-decomposition-cycle1/qcore-c/private/premise-decomposition-cycle1/measure-1/corpus/tip/resource-diagnostics.json",
+            "/home/cosmo/.codex/worktrees/premise-decomposition-cycle1/qcore-c/private/premise-evidence-contracts/historical-recheck-1/corpus/tip/adapted-input.json",
+            "/home/cosmo/.codex/worktrees/premise-decomposition-cycle1/qcore-c/private/premise-evidence-contracts/historical-recheck-1/corpus/tip/full-facts.json"
+          ],
+          "exit": 0,
+          "start": "2026-10-21T00:25:21.553209+00:00",
+          "end": "2026-10-21T00:25:22.061941+00:00",
+          "diagnostics_sha256": "530f8a2e8ed238197f54c3abaaeecfffe88847b25b1fc0f80780a2d9e4c3fcdb",
+          "actual_contracts_sidecar": "/home/cosmo/.codex/worktrees/premise-decomposition-cycle1/qcore-c/private/premise-decomposition-cycle1/measure-1/corpus/tip/resource-diagnostics.contracts.json",
+          "actual_contracts_sha256": "f7fbae23cdae4eb1d3efa75ad8a04cde00bfc7d8372814cf77f6bd7e9f266142",
+          "adapter_sha256": "2e0ae2de52e08eef45602b7792ecd5037e6f77fbae4c932c9d3ff875501f234c",
+          "output_sha256": "03620b300dcd8ee5a97ce04ba786711ebbf5272f813bbe8d5eb99de16072bc49",
+          "rows": 4834,
+          "rows_with_premise_facts": 531,
+          "detach_representation_fact_rows": 4
+        }
+      ]
+    },
+    "system": {
+      "all_full_records_equal": true,
+      "sides": [
+        {
+          "side": "base",
+          "command": [
+            "/home/cosmo/.codex/worktrees/premise-decomposition-cycle1/qcore-c/private/premise-decomposition-cycle1/preserved-executables/premise_outer_facts",
+            "/home/cosmo/.codex/worktrees/premise-decomposition-cycle1/qcore-c/private/premise-decomposition-cycle1/measure-1/system/base/resource-diagnostics.json",
+            "/home/cosmo/.codex/worktrees/premise-decomposition-cycle1/qcore-c/private/premise-evidence-contracts/historical-recheck-1/system/base/adapted-input.json",
+            "/home/cosmo/.codex/worktrees/premise-decomposition-cycle1/qcore-c/private/premise-evidence-contracts/historical-recheck-1/system/base/full-facts.json"
+          ],
+          "exit": 0,
+          "start": "2026-10-21T00:25:22.179787+00:00",
+          "end": "2026-10-21T00:25:22.228805+00:00",
+          "diagnostics_sha256": "546f0d4747ba0b3a1981874446811bfb64da75ab69f4b5a95192813f78130f4e",
+          "actual_contracts_sidecar": "/home/cosmo/.codex/worktrees/premise-decomposition-cycle1/qcore-c/private/premise-decomposition-cycle1/measure-1/system/base/resource-diagnostics.contracts.json",
+          "actual_contracts_sha256": "18ce05f77d0771eeccf3d610fcc259bb67d5dea091eb66822790fb81d1d34f75",
+          "adapter_sha256": "1c39ac4307bfc8ce0a18c4b881c3f8669607da952482eed52590d8b01c716992",
+          "output_sha256": "2c21db2872120dee04fd13249f458f37516ca32b2f5137da87eb3e7e265105bb",
+          "rows": 448,
+          "rows_with_premise_facts": 0,
+          "detach_representation_fact_rows": 0
+        },
+        {
+          "side": "tip",
+          "command": [
+            "/home/cosmo/.codex/worktrees/premise-decomposition-cycle1/qcore-c/private/premise-decomposition-cycle1/preserved-executables/premise_outer_facts",
+            "/home/cosmo/.codex/worktrees/premise-decomposition-cycle1/qcore-c/private/premise-decomposition-cycle1/provider-1/final-configured/system/tip/resource-diagnostics.json",
+            "/home/cosmo/.codex/worktrees/premise-decomposition-cycle1/qcore-c/private/premise-evidence-contracts/historical-recheck-1/system/tip/adapted-input.json",
+            "/home/cosmo/.codex/worktrees/premise-decomposition-cycle1/qcore-c/private/premise-evidence-contracts/historical-recheck-1/system/tip/full-facts.json"
+          ],
+          "exit": 0,
+          "start": "2026-10-21T00:25:22.274379+00:00",
+          "end": "2026-10-21T00:25:22.325519+00:00",
+          "diagnostics_sha256": "6772644dee6a68b286e39988408e46dbdd006256f83c7b2c92f64a5ae35ac603",
+          "actual_contracts_sidecar": "/home/cosmo/.codex/worktrees/premise-decomposition-cycle1/qcore-c/private/premise-decomposition-cycle1/provider-1/final-configured/system/tip/resource-diagnostics.contracts.json",
+          "actual_contracts_sha256": "cf371cfd338c2b4f4bec00590eabfdfccbfe4f630d6976b25232addd69dfed3e",
+          "adapter_sha256": "1c39ac4307bfc8ce0a18c4b881c3f8669607da952482eed52590d8b01c716992",
+          "output_sha256": "2c21db2872120dee04fd13249f458f37516ca32b2f5137da87eb3e7e265105bb",
+          "rows": 448,
+          "rows_with_premise_facts": 0,
+          "detach_representation_fact_rows": 0
+        }
+      ]
+    },
+    "slice": {
+      "all_full_records_equal": true,
+      "sides": [
+        {
+          "side": "base",
+          "command": [
+            "/home/cosmo/.codex/worktrees/premise-decomposition-cycle1/qcore-c/private/premise-decomposition-cycle1/preserved-executables/premise_outer_facts",
+            "/home/cosmo/.codex/worktrees/premise-decomposition-cycle1/qcore-c/private/premise-decomposition-cycle1/measure-1/slice/base/resource-diagnostics.json",
+            "/home/cosmo/.codex/worktrees/premise-decomposition-cycle1/qcore-c/private/premise-evidence-contracts/historical-recheck-1/slice/base/adapted-input.json",
+            "/home/cosmo/.codex/worktrees/premise-decomposition-cycle1/qcore-c/private/premise-evidence-contracts/historical-recheck-1/slice/base/full-facts.json"
+          ],
+          "exit": 0,
+          "start": "2026-10-21T00:25:22.367124+00:00",
+          "end": "2026-10-21T00:25:22.424806+00:00",
+          "diagnostics_sha256": "1150a2b091a6edfe4ac84fda4c83805024433032bbfdc4c8791fc4de01b8b564",
+          "actual_contracts_sidecar": "/home/cosmo/.codex/worktrees/premise-decomposition-cycle1/qcore-c/private/premise-decomposition-cycle1/measure-1/slice/base/resource-diagnostics.contracts.json",
+          "actual_contracts_sha256": "482bfca54014e7bc49b722baa8ba54421618a6b811312d52a87a222c5db04800",
+          "adapter_sha256": "c0ffee4f60ab255ecde35a1412e373ed95151c298fb0c53978f80c37a81b6034",
+          "output_sha256": "bd5a4a4da6792a5a90fbc3fb1528f816deda75711be91d1b3ae691794277ee53",
+          "rows": 404,
+          "rows_with_premise_facts": 0,
+          "detach_representation_fact_rows": 0
+        },
+        {
+          "side": "tip",
+          "command": [
+            "/home/cosmo/.codex/worktrees/premise-decomposition-cycle1/qcore-c/private/premise-decomposition-cycle1/preserved-executables/premise_outer_facts",
+            "/home/cosmo/.codex/worktrees/premise-decomposition-cycle1/qcore-c/private/premise-decomposition-cycle1/provider-1/final-configured/slice/tip/resource-diagnostics.json",
+            "/home/cosmo/.codex/worktrees/premise-decomposition-cycle1/qcore-c/private/premise-evidence-contracts/historical-recheck-1/slice/tip/adapted-input.json",
+            "/home/cosmo/.codex/worktrees/premise-decomposition-cycle1/qcore-c/private/premise-evidence-contracts/historical-recheck-1/slice/tip/full-facts.json"
+          ],
+          "exit": 0,
+          "start": "2026-10-21T00:25:22.476909+00:00",
+          "end": "2026-10-21T00:25:22.516828+00:00",
+          "diagnostics_sha256": "047c6fea130b379fcc98c275445c0c7befef075873193a9ad2e91492c4d09da1",
+          "actual_contracts_sidecar": "/home/cosmo/.codex/worktrees/premise-decomposition-cycle1/qcore-c/private/premise-decomposition-cycle1/provider-1/final-configured/slice/tip/resource-diagnostics.contracts.json",
+          "actual_contracts_sha256": "6245db7abd7bf72aae3112543723fd7c3c59501d69745d656ebe575654fdf6ac",
+          "adapter_sha256": "c0ffee4f60ab255ecde35a1412e373ed95151c298fb0c53978f80c37a81b6034",
+          "output_sha256": "bd5a4a4da6792a5a90fbc3fb1528f816deda75711be91d1b3ae691794277ee53",
+          "rows": 404,
+          "rows_with_premise_facts": 0,
+          "detach_representation_fact_rows": 0
+        }
+      ]
+    }
+  }
+}

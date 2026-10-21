@@ -883,3 +883,25 @@ pub fn publish_checked_bindings(
     });
     Ok(())
 }
+
+/// Recover the published named-premise view from the actual contracts sidecar
+/// schema. Missing declarations/invalid premise arrays refuse; absent per-row
+/// premises explicitly means that declaration publishes none.
+pub fn premise_view_from_sidecar(sidecar: &Value) -> Result<Value, String> {
+    let declarations = sidecar["contract_dependencies"]["declarations"]
+        .as_object()
+        .ok_or("sidecar: missing contract dependency declarations")?;
+    let mut out = serde_json::Map::new();
+    for (name, declaration) in declarations {
+        let declaration = declaration
+            .as_object()
+            .ok_or("sidecar: invalid declaration record")?;
+        let premises = match declaration.get("premises") {
+            Some(value) if value.is_array() => value.clone(),
+            None => json!([]),
+            _ => return Err("sidecar: invalid declared premise array".into()),
+        };
+        out.insert(name.clone(), premises);
+    }
+    Ok(Value::Object(out))
+}

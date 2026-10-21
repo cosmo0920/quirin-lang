@@ -705,3 +705,27 @@ fn concrete_attachment_preserves_closed_world_facts_and_publishes_checked_open_b
     qcore_audit::contract_dependencies::erase_hypotheses(&mut b);
     assert_eq!(a, b);
 }
+
+#[test]
+fn actual_sidecar_premise_location_preserves_named_classification_and_missing_schema_refuses() {
+    let dependency = json!({"declarations":["f"]});
+    let named = json!({"f":[{"name":"detach_list_representation","statement":"exact original","origin":"declared"}]});
+    let actual = json!({"contract_dependencies":{"declarations":{"f":{"premises":named["f"]},"no_premise":{}}}});
+    let view = qcore_audit::contract_dependencies::premise_view_from_sidecar(&actual).unwrap();
+    assert_eq!(view["f"], named["f"]);
+    assert_eq!(view["no_premise"], json!([]));
+    let expected = qcore_audit::outer_selection::custody_facts(&dependency, &named);
+    assert!(!expected.is_empty());
+    assert_eq!(
+        qcore_audit::outer_selection::custody_facts(&dependency, &view),
+        expected
+    );
+    assert_ne!(
+        qcore_audit::outer_selection::custody_facts(&dependency, &actual["contract_premises"]),
+        expected
+    );
+    assert!(qcore_audit::contract_dependencies::premise_view_from_sidecar(&json!({})).is_err());
+    let mut malformed = actual;
+    malformed["contract_dependencies"]["declarations"]["f"]["premises"] = json!("wrong");
+    assert!(qcore_audit::contract_dependencies::premise_view_from_sidecar(&malformed).is_err());
+}
