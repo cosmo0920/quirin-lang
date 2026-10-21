@@ -1,0 +1,94 @@
+{
+  "status": "INTERIM development controls only; final gates and measurements deferred to root exact merged base",
+  "base": "5a556d8272b17b35a47a5036bad1f6d614ee698b",
+  "source_binding": "open",
+  "contract_controls": {
+    "passed": 5,
+    "failed": 0
+  },
+  "actual_null_dependency_controls": {
+    "passed": 2,
+    "failed": 0
+  },
+  "canonical_binding_counts": {
+    "resource": 94,
+    "null": 71,
+    "model": 1
+  },
+  "original_bytes_reconstruction": "bindings/index.json proves all six original module SHAs after removing only this card metadata",
+  "commands": [
+    {
+      "name": "interim-contract-controls-1",
+      "command": [
+        "cargo",
+        "test",
+        "-p",
+        "qcore-contract",
+        "--test",
+        "plugin_premise_decomposition",
+        "--jobs",
+        "1"
+      ],
+      "exit": 0,
+      "started": "2026-10-21T02:41:04.986299+00:00",
+      "ended": "2026-10-21T02:41:49.319564+00:00",
+      "log": "private/plugin-premise-decomposition/interim-contract-controls-1.log"
+    },
+    {
+      "name": "interim-null-controls-1",
+      "command": [
+        "cargo",
+        "test",
+        "-p",
+        "qcore-audit",
+        "--test",
+        "plugin_null_hypotheses",
+        "--jobs",
+        "1"
+      ],
+      "exit": 0,
+      "started": "2026-10-21T02:44:05.229361+00:00",
+      "ended": "2026-10-21T02:46:37.435524+00:00",
+      "log": "private/plugin-premise-decomposition/interim-null-controls-1.log"
+    },
+    {
+      "name": "interim-check-resource-2",
+      "command": [
+        "target/debug/examples/plugin_binding_catalog",
+        "private/plugin-premise-decomposition/catalogs-1/resource-check-input.json",
+        "private/plugin-premise-decomposition/catalogs-1/resource-checked-2.json"
+      ],
+      "exit": 0,
+      "started": "2026-10-21T02:47:12.444555+00:00",
+      "ended": "2026-10-21T02:47:14.988189+00:00",
+      "log": "private/plugin-premise-decomposition/interim-check-resource-2.log"
+    },
+    {
+      "name": "interim-check-null-2",
+      "command": [
+        "target/debug/examples/plugin_binding_catalog",
+        "private/plugin-premise-decomposition/catalogs-1/null-check-input.json",
+        "private/plugin-premise-decomposition/catalogs-1/null-checked-2.json"
+      ],
+      "exit": 0,
+      "started": "2026-10-21T02:47:15.091838+00:00",
+      "ended": "2026-10-21T02:47:16.550423+00:00",
+      "log": "private/plugin-premise-decomposition/interim-check-null-2.log"
+    },
+    {
+      "name": "interim-check-model-2",
+      "command": [
+        "target/debug/examples/plugin_binding_catalog",
+        "private/plugin-premise-decomposition/catalogs-1/model-check-input.json",
+        "private/plugin-premise-decomposition/catalogs-1/model-checked-2.json"
+      ],
+      "exit": 0,
+      "started": "2026-10-21T02:47:16.628033+00:00",
+      "ended": "2026-10-21T02:47:16.664340+00:00",
+      "log": "private/plugin-premise-decomposition/interim-check-model-2.log"
+    }
+  ],
+  "retained_attempts": {
+    "interim-check-*-1": "Started while catalog rebuild2 waited for cargo lock; previous helper performed actual replay/typed integrity but regenerated expectations. Not claimed as independent frozen-input controls. Rebuilt helper replay attempts2 use explicit separately held graph/manifest paths."
+  }
+}

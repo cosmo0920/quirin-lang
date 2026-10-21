@@ -1,0 +1,95 @@
+{
+  "KafkaQueueOwner": {
+    "atoms": {},
+    "premises": {},
+    "version": 1
+  },
+  "rd_kafka_q_destroy_final": {
+    "atoms": {
+      "legacy_atom_00000000": {
+        "id": "legacy_atom_00000000",
+        "proposition": {
+          "kind": "opaque",
+          "statement": "P-RK-PLUGIN-CALLBACK-CLOSURE: in the static scope every rk_conf callback a call may run, including rd_kafka_log_buf's log callback, is a run registration or a stated default with a declared candidate; with loaded external code, extra registrations depend on the applicable pinned rk_plugin_library and flb_external_plugin outer envelopes (OP-APP-RK-CALLBACKS-VIA-POLL-CB, C04.20)"
+        }
+      },
+      "plugin_artifact_symbol_abi": {
+        "id": "plugin_artifact_symbol_abi",
+        "proposition": {
+          "kind": "opaque",
+          "statement": "For every reached loaded artifact, exact selected build/inventory, artifact identity and required symbol/address/ABI prerequisites hold."
+        }
+      },
+      "plugin_callback_candidates": {
+        "id": "plugin_callback_candidates",
+        "proposition": {
+          "kind": "opaque",
+          "statement": "Every actual rk_conf invocation has its exact declared member candidate and a prior successful public registration or stated static default."
+        }
+      },
+      "plugin_code_context_lifetime": {
+        "id": "plugin_code_context_lifetime",
+        "proposition": {
+          "kind": "opaque",
+          "statement": "Every loaded callback invocation, including destruction and copied on_new paths, has live code and opaque context."
+        }
+      },
+      "plugin_interceptor_custody": {
+        "id": "plugin_interceptor_custody",
+        "proposition": {
+          "kind": "opaque",
+          "statement": "Every interceptor-descendant pointer and scalar resource is borrowed, with no retain/transfer/global custody and each local acquisition dropped before its activation returns."
+        }
+      },
+      "plugin_interceptor_registration": {
+        "id": "plugin_interceptor_registration",
+        "proposition": {
+          "kind": "opaque",
+          "statement": "Every loaded interceptor uses a successful public setter with the exact pinned list/union-arm candidate and permitted configuration/client lifecycle."
+        }
+      },
+      "plugin_lifecycle_unload": {
+        "id": "plugin_lifecycle_unload",
+        "proposition": {
+          "kind": "opaque",
+          "statement": "Every callback invocation precedes matching final unload and copied registrations retain actual loader references."
+        }
+      },
+      "plugin_outer_bridge": {
+        "id": "plugin_outer_bridge",
+        "proposition": {
+          "kind": "opaque",
+          "statement": "Actually loaded RK and Fluent Bit C/Go code independently meet their respectively bound proposed outer envelopes; one envelope covers no missing obligation of another."
+        }
+      }
+    },
+    "premises": {
+      "legacy_premise_00000000": {
+        "children": [
+          "legacy_atom_00000000"
+        ],
+        "erasure": {
+          "name": "rk_plugin_callback_closure",
+          "origin": "declared",
+          "statement": "P-RK-PLUGIN-CALLBACK-CLOSURE: in the static scope every rk_conf callback a call may run, including rd_kafka_log_buf's log callback, is a run registration or a stated default with a declared candidate; with loaded external code, extra registrations depend on the applicable pinned rk_plugin_library and flb_external_plugin outer envelopes (OP-APP-RK-CALLBACKS-VIA-POLL-CB, C04.20)"
+        },
+        "id": "legacy_premise_00000000"
+      }
+    },
+    "refinements": {
+      "rk_plugin_callback_closure": {
+        "children": [
+          "plugin_artifact_symbol_abi",
+          "plugin_callback_candidates",
+          "plugin_code_context_lifetime",
+          "plugin_interceptor_custody",
+          "plugin_interceptor_registration",
+          "plugin_lifecycle_unload",
+          "plugin_outer_bridge"
+        ],
+        "premise": "legacy_premise_00000000"
+      }
+    },
+    "version": 2
+  }
+}

@@ -1,3 +1,4 @@
+// qcore-premise-binding-manifest-v1 rd_kafka_q_destroy_final rk_plugin_callback_closure a4d1ae87d10c769b4a210fcd876b6302b052cb488d6bfa7d1aeb9118d93861b8
 module contract;
 
 // Upstream source: src/rdkafka_queue.c (librdkafka 2.15.0)

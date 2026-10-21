@@ -73,7 +73,13 @@ pub fn resolve(
     artifacts: &BTreeMap<String, Vec<u8>>,
 ) -> Result<BTreeMap<String, BindingManifest>, String> {
     hypothesis::check_replay(sources, expected_graphs)?;
-    resolve_replayed(sources, expected_graphs, expected_manifests, presented_manifests, artifacts)
+    resolve_replayed(
+        sources,
+        expected_graphs,
+        expected_manifests,
+        presented_manifests,
+        artifacts,
+    )
 }
 
 /// Explicit bounds/null view replay. Never merges resource names or Contexts.
@@ -85,7 +91,13 @@ pub fn resolve_bounds(
     artifacts: &BTreeMap<String, Vec<u8>>,
 ) -> Result<BTreeMap<String, BindingManifest>, String> {
     crate::bounds_hypotheses::check_replay(sources, expected_graphs)?;
-    resolve_replayed(sources, expected_graphs, expected_manifests, presented_manifests, artifacts)
+    resolve_replayed(
+        sources,
+        expected_graphs,
+        expected_manifests,
+        presented_manifests,
+        artifacts,
+    )
 }
 
 /// Explicit model-only view. Reference integrity does not supply a C ABI or body.
@@ -97,9 +109,17 @@ pub fn resolve_model(
     artifacts: &BTreeMap<String, Vec<u8>>,
 ) -> Result<BTreeMap<String, BindingManifest>, String> {
     if crate::bounds_hypotheses::replay_model(sources)? != *expected_graphs {
-        return Err("model binding: independently held graph differs from actual model source".into());
+        return Err(
+            "model binding: independently held graph differs from actual model source".into(),
+        );
     }
-    resolve_replayed(sources, expected_graphs, expected_manifests, presented_manifests, artifacts)
+    resolve_replayed(
+        sources,
+        expected_graphs,
+        expected_manifests,
+        presented_manifests,
+        artifacts,
+    )
 }
 
 fn resolve_replayed(

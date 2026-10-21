@@ -1408,13 +1408,19 @@ fn load_function(path: &str, decl: &SourceDeclaration) -> Result<BoundsFunctionC
                 .into(),
         );
     }
-    let legacy = clauses.iter().filter_map(|entry| match &entry.clause {
-        BoundsClause::Premise { name, statement } => Some(crate::contract_loader::DeclaredPremise {
-            name: name.clone(), statement: statement.clone(),
-            origin: crate::contract_loader::PremiseOrigin::Declared,
-        }),
-        _ => None,
-    }).collect::<Vec<_>>();
+    let legacy = clauses
+        .iter()
+        .filter_map(|entry| match &entry.clause {
+            BoundsClause::Premise { name, statement } => {
+                Some(crate::contract_loader::DeclaredPremise {
+                    name: name.clone(),
+                    statement: statement.clone(),
+                    origin: crate::contract_loader::PremiseOrigin::Declared,
+                })
+            }
+            _ => None,
+        })
+        .collect::<Vec<_>>();
     let graph = crate::hypothesis::declaration(decl, &legacy)?;
     crate::bounds_hypotheses::require_neutral_erasure(&graph, &legacy)?;
     frame_conditions(&parameters, &clauses)?;
