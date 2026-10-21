@@ -143,6 +143,10 @@ pub enum Symbol {
     FlowExcept,
     /// Contextual premise-flow terminal condition `->|`.
     FlowTerminal,
+    /// Contextual symbolic creation/introduction `|^+`.
+    LifecycleCreate,
+    /// Contextual symbolic destruction/retirement `|^-`.
+    LifecycleRetire,
     FatArrow,
     ColonColon,
     Define,
@@ -342,6 +346,8 @@ impl Lexer<'_> {
         // Longest-match additions. Existing MapsTo keeps its exact identity.
         for (spelling, symbol) in [
             ("||->", Symbol::FlowOr),
+            ("|^+", Symbol::LifecycleCreate),
+            ("|^-", Symbol::LifecycleRetire),
             ("!->", Symbol::FlowExcept),
             ("->|", Symbol::FlowTerminal),
         ] {

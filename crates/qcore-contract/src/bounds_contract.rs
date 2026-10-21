@@ -1271,7 +1271,9 @@ fn load_function(path: &str, decl: &SourceDeclaration) -> Result<BoundsFunctionC
         }
         // Graph-v2 attachments are reference metadata, never bounds/null facts.
         // Full declaration validation below checks the original premise target.
-        if crate::premise_flow::is_clause(&clause.expression_source) {
+        if crate::premise_flow::is_clause(&clause.expression_source)
+            || crate::contract_lifecycle::is_clause(&clause.expression_source)
+        {
             if !requires {
                 return Err("bounds flow: only requires flow metadata is admitted".into());
             }
@@ -1430,6 +1432,7 @@ fn load_function(path: &str, decl: &SourceDeclaration) -> Result<BoundsFunctionC
     let graph = crate::hypothesis::declaration(decl, &legacy)?;
     crate::bounds_hypotheses::require_neutral_erasure(&graph, &legacy)?;
     crate::premise_flow::declaration(decl, &graph)?;
+    crate::contract_lifecycle::declaration(decl, &graph)?;
     frame_conditions(&parameters, &clauses)?;
     let canonical_sha256 =
         crate::deref_parts::canonical_sha256(&normalised[0], &clauses, contract_review.as_ref());

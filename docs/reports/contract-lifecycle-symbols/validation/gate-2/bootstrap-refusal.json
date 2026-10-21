@@ -1,0 +1,9 @@
+{
+  "command": [
+    "python3",
+    "private/contract-lifecycle-symbols/run_gate.py",
+    "gate-2"
+  ],
+  "exit": 1,
+  "reason": "Clean-source guard refused a late rustfmt-only test layout change before any gate commands or lock acquisition; formatting completed and was committed before gate-3."
+}

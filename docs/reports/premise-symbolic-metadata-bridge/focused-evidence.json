@@ -1,0 +1,249 @@
+{
+  "version": 1,
+  "kernel_checkpoint": "c0110c4fb50db3dd465c708be0acd3720bec336b",
+  "diagnostics_archives": [
+    {
+      "private_path": "/home/cosmo/.codex/worktrees/premise-symbolic-metadata-bridge/qcore-c/private/premise-symbolic-metadata-bridge/focused-1/commands.json",
+      "archive": "validation/focused-1/commands.json.gz",
+      "bytes": 520,
+      "sha256": "5a48fa4cde92269d5b35535d251424459e75fe4bb0914a8e14bc3a4618fa4fd9"
+    },
+    {
+      "private_path": "/home/cosmo/.codex/worktrees/premise-symbolic-metadata-bridge/qcore-c/private/premise-symbolic-metadata-bridge/focused-1/acquired.json",
+      "archive": "validation/focused-1/acquired.json.gz",
+      "bytes": 121,
+      "sha256": "d741411353292cf34278a152b981cc89ecc346a7851631030e0cc8aa7c3f0a9a"
+    },
+    {
+      "private_path": "/home/cosmo/.codex/worktrees/premise-symbolic-metadata-bridge/qcore-c/private/premise-symbolic-metadata-bridge/focused-1/released.json",
+      "archive": "validation/focused-1/released.json.gz",
+      "bytes": 59,
+      "sha256": "471ddcc60e04f4424ce7b3895f7fbbb94ed98f54975c39c471dd200cb7a450fb"
+    },
+    {
+      "private_path": "/home/cosmo/.codex/worktrees/premise-symbolic-metadata-bridge/qcore-c/private/premise-symbolic-metadata-bridge/focused-1/rust.log",
+      "archive": "validation/focused-1/rust.log.gz",
+      "bytes": 1893,
+      "sha256": "78a2022372d18667b47cd0072d1e96a2a6fb315eea7d050e079087a86e77c57f"
+    },
+    {
+      "private_path": "/home/cosmo/.codex/worktrees/premise-symbolic-metadata-bridge/qcore-c/private/premise-symbolic-metadata-bridge/focused-2/commands.json",
+      "archive": "validation/focused-2/commands.json.gz",
+      "bytes": 2470,
+      "sha256": "aaa6ac64758d03571df7a1af40ad97c47f73de1303c173ea661e4ab66cd21e49"
+    },
+    {
+      "private_path": "/home/cosmo/.codex/worktrees/premise-symbolic-metadata-bridge/qcore-c/private/premise-symbolic-metadata-bridge/focused-2/acquired.json",
+      "archive": "validation/focused-2/acquired.json.gz",
+      "bytes": 121,
+      "sha256": "cc1d6d60a2e926d9bc0323ce2fc6558fd8544cd2e5e184177b83f60ea2ebba1b"
+    },
+    {
+      "private_path": "/home/cosmo/.codex/worktrees/premise-symbolic-metadata-bridge/qcore-c/private/premise-symbolic-metadata-bridge/focused-2/released.json",
+      "archive": "validation/focused-2/released.json.gz",
+      "bytes": 59,
+      "sha256": "1f2e56cdebf52a381ba74c817a1c04c465de5e3947302188e11ecdfcf37bfc54"
+    },
+    {
+      "private_path": "/home/cosmo/.codex/worktrees/premise-symbolic-metadata-bridge/qcore-c/private/premise-symbolic-metadata-bridge/focused-2/rust.log",
+      "archive": "validation/focused-2/rust.log.gz",
+      "bytes": 579,
+      "sha256": "f3205b9d0679064f79c8018ba7d421748ae84961bdc484d7e4684a5ae3085a20"
+    },
+    {
+      "private_path": "/home/cosmo/.codex/worktrees/premise-symbolic-metadata-bridge/qcore-c/private/premise-symbolic-metadata-bridge/focused-2/sealing.log",
+      "archive": "validation/focused-2/sealing.log.gz",
+      "bytes": 332,
+      "sha256": "555ef271bcb652b6d80d42fd9b0d4faffbe93fe030097c2c23e3efedc08886c2"
+    },
+    {
+      "private_path": "/home/cosmo/.codex/worktrees/premise-symbolic-metadata-bridge/qcore-c/private/premise-symbolic-metadata-bridge/focused-2/clippy.log",
+      "archive": "validation/focused-2/clippy.log.gz",
+      "bytes": 741,
+      "sha256": "e91880bb48f192d41d6357083437ccb6dc36aace469c2ffdfa3206771196f95e"
+    },
+    {
+      "private_path": "/home/cosmo/.codex/worktrees/premise-symbolic-metadata-bridge/qcore-c/private/premise-symbolic-metadata-bridge/focused-2/lean.log",
+      "archive": "validation/focused-2/lean.log.gz",
+      "bytes": 204,
+      "sha256": "63a04df21432160cececd953f042bcfea43b33c93b14c87880df244fa09dde5a"
+    },
+    {
+      "private_path": "/home/cosmo/.codex/worktrees/premise-symbolic-metadata-bridge/qcore-c/private/premise-symbolic-metadata-bridge/focused-3/commands.json",
+      "archive": "validation/focused-3/commands.json.gz",
+      "bytes": 1629,
+      "sha256": "9c8277c40d1ce41c1f42e4ace41d40017d1956ece604e3de7d3edec60f6dfc0e"
+    },
+    {
+      "private_path": "/home/cosmo/.codex/worktrees/premise-symbolic-metadata-bridge/qcore-c/private/premise-symbolic-metadata-bridge/focused-3/acquired.json",
+      "archive": "validation/focused-3/acquired.json.gz",
+      "bytes": 121,
+      "sha256": "10125f7d1920614e9d56086e116ce3d93147d55816129b0f70f9024b2151b191"
+    },
+    {
+      "private_path": "/home/cosmo/.codex/worktrees/premise-symbolic-metadata-bridge/qcore-c/private/premise-symbolic-metadata-bridge/focused-3/released.json",
+      "archive": "validation/focused-3/released.json.gz",
+      "bytes": 59,
+      "sha256": "758049af53902002da16ff9e58d9335033105a97cc5dacfa97d41f1c1d2e90f9"
+    },
+    {
+      "private_path": "/home/cosmo/.codex/worktrees/premise-symbolic-metadata-bridge/qcore-c/private/premise-symbolic-metadata-bridge/focused-3/lean.log",
+      "archive": "validation/focused-3/lean.log.gz",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "private_path": "/home/cosmo/.codex/worktrees/premise-symbolic-metadata-bridge/qcore-c/private/premise-symbolic-metadata-bridge/focused-3/audit.log",
+      "archive": "validation/focused-3/audit.log.gz",
+      "bytes": 742,
+      "sha256": "64a150507781db807866b80a6b9399c73c667a04f68669beacfefe903ace5163"
+    },
+    {
+      "private_path": "/home/cosmo/.codex/worktrees/premise-symbolic-metadata-bridge/qcore-c/private/premise-symbolic-metadata-bridge/focused-4/commands.json",
+      "archive": "validation/focused-4/commands.json.gz",
+      "bytes": 1613,
+      "sha256": "03a8d3029e77a6f1bb3d3451ac9b85be3419b40be99c9c676903cf413959a8cc"
+    },
+    {
+      "private_path": "/home/cosmo/.codex/worktrees/premise-symbolic-metadata-bridge/qcore-c/private/premise-symbolic-metadata-bridge/focused-4/acquired.json",
+      "archive": "validation/focused-4/acquired.json.gz",
+      "bytes": 121,
+      "sha256": "282693fedaf17c7c8bf854bfb655e1c9bc0fe60ace98389b11dc5e1e5c462968"
+    },
+    {
+      "private_path": "/home/cosmo/.codex/worktrees/premise-symbolic-metadata-bridge/qcore-c/private/premise-symbolic-metadata-bridge/focused-4/released.json",
+      "archive": "validation/focused-4/released.json.gz",
+      "bytes": 59,
+      "sha256": "cec5da5a41fa85d1b4991df46a9ef835e862dabbbdc5489d894c85fe21ab93b7"
+    },
+    {
+      "private_path": "/home/cosmo/.codex/worktrees/premise-symbolic-metadata-bridge/qcore-c/private/premise-symbolic-metadata-bridge/focused-4/rust.log",
+      "archive": "validation/focused-4/rust.log.gz",
+      "bytes": 662,
+      "sha256": "80a1cc4d04133d95bc497c61939e144af3db9e13e79a1f05766f0ece7e41fc6a"
+    },
+    {
+      "private_path": "/home/cosmo/.codex/worktrees/premise-symbolic-metadata-bridge/qcore-c/private/premise-symbolic-metadata-bridge/focused-4/sealing.log",
+      "archive": "validation/focused-4/sealing.log.gz",
+      "bytes": 332,
+      "sha256": "d4a6ccb53e31bea1e818c7f99b66c11084ecf86c7b46fb51c9f49369227824f0"
+    },
+    {
+      "private_path": "/home/cosmo/.codex/worktrees/premise-symbolic-metadata-bridge/qcore-c/private/premise-symbolic-metadata-bridge/focused-4/clippy.log",
+      "archive": "validation/focused-4/clippy.log.gz",
+      "bytes": 189,
+      "sha256": "20927e647e853ecc7a61e4539cfc8c5bda39d4c1ebecd6370a7e820d85469adc"
+    },
+    {
+      "private_path": "/home/cosmo/.codex/worktrees/premise-symbolic-metadata-bridge/qcore-c/private/premise-symbolic-metadata-bridge/production-1/commands.json",
+      "archive": "validation/production-1/commands.json.gz",
+      "bytes": 6452,
+      "sha256": "7f10ea9f0e462231266de5b7604216748fb00d89f3dcd9677202f5602720e3cb"
+    },
+    {
+      "private_path": "/home/cosmo/.codex/worktrees/premise-symbolic-metadata-bridge/qcore-c/private/premise-symbolic-metadata-bridge/production-1/acquired.json",
+      "archive": "validation/production-1/acquired.json.gz",
+      "bytes": 121,
+      "sha256": "e763e88c9d4927c27c583b1ad5052e73270f73c4488be249817b00d7ec298192"
+    },
+    {
+      "private_path": "/home/cosmo/.codex/worktrees/premise-symbolic-metadata-bridge/qcore-c/private/premise-symbolic-metadata-bridge/production-1/released.json",
+      "archive": "validation/production-1/released.json.gz",
+      "bytes": 59,
+      "sha256": "c27db151b43b42c4e155cd4ae5468f4a85f4060a954793bedaaf992dc31bedfc"
+    },
+    {
+      "private_path": "/home/cosmo/.codex/worktrees/premise-symbolic-metadata-bridge/qcore-c/private/premise-symbolic-metadata-bridge/production-1/inputs-after.json",
+      "archive": "validation/production-1/inputs-after.json.gz",
+      "bytes": 2317,
+      "sha256": "540996f27e08decf648d3c08e766510f2ee2aa75a6252cff4f745ab9fd1aed00"
+    },
+    {
+      "private_path": "/home/cosmo/.codex/worktrees/premise-symbolic-metadata-bridge/qcore-c/private/premise-symbolic-metadata-bridge/production-1/build.log",
+      "archive": "validation/production-1/build.log.gz",
+      "bytes": 189,
+      "sha256": "7e470b866e70c2ce2ca08c9d48b27959cc93bff82c8f3b3f4f33060efb86cd74"
+    },
+    {
+      "private_path": "/home/cosmo/.codex/worktrees/premise-symbolic-metadata-bridge/qcore-c/private/premise-symbolic-metadata-bridge/production-1/actual-production.log",
+      "archive": "validation/production-1/actual-production.log.gz",
+      "bytes": 150,
+      "sha256": "1b7af9424840145a33cef80b8bf80b50e24dc48c258eedba2f939cce26f483a2"
+    },
+    {
+      "private_path": "/home/cosmo/.codex/worktrees/premise-symbolic-metadata-bridge/qcore-c/private/premise-symbolic-metadata-bridge/production-2/commands.json",
+      "archive": "validation/production-2/commands.json.gz",
+      "bytes": 6452,
+      "sha256": "4561fadbe2f6f1168c9887d6340ec4fdaa814862b6802d5042b6299be3b8d83d"
+    },
+    {
+      "private_path": "/home/cosmo/.codex/worktrees/premise-symbolic-metadata-bridge/qcore-c/private/premise-symbolic-metadata-bridge/production-2/acquired.json",
+      "archive": "validation/production-2/acquired.json.gz",
+      "bytes": 121,
+      "sha256": "ee576773ae80cbb69fab803082a2577c3d39ded7737141c871afa2be8cc114cd"
+    },
+    {
+      "private_path": "/home/cosmo/.codex/worktrees/premise-symbolic-metadata-bridge/qcore-c/private/premise-symbolic-metadata-bridge/production-2/released.json",
+      "archive": "validation/production-2/released.json.gz",
+      "bytes": 59,
+      "sha256": "fba2ded2407ecc82bbf1cc83d03775768469649cd821ece656ce8191a1f921ea"
+    },
+    {
+      "private_path": "/home/cosmo/.codex/worktrees/premise-symbolic-metadata-bridge/qcore-c/private/premise-symbolic-metadata-bridge/production-2/inputs-after.json",
+      "archive": "validation/production-2/inputs-after.json.gz",
+      "bytes": 2317,
+      "sha256": "540996f27e08decf648d3c08e766510f2ee2aa75a6252cff4f745ab9fd1aed00"
+    },
+    {
+      "private_path": "/home/cosmo/.codex/worktrees/premise-symbolic-metadata-bridge/qcore-c/private/premise-symbolic-metadata-bridge/production-2/build.log",
+      "archive": "validation/production-2/build.log.gz",
+      "bytes": 189,
+      "sha256": "08b167e16783a96f417e91b0934f2d2378752e4cc32cd21990f64a1e765f7cf2"
+    },
+    {
+      "private_path": "/home/cosmo/.codex/worktrees/premise-symbolic-metadata-bridge/qcore-c/private/premise-symbolic-metadata-bridge/production-2/actual-production.log",
+      "archive": "validation/production-2/actual-production.log.gz",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "private_path": "/home/cosmo/.codex/worktrees/premise-symbolic-metadata-bridge/qcore-c/private/premise-symbolic-metadata-bridge/helper-format-1.log",
+      "archive": "validation/helper-format-1.log.gz",
+      "bytes": 3737,
+      "sha256": "ca0d916de80b9e170cc4175cc2639fb8ea511b566157c3caea247ddda837e00f"
+    },
+    {
+      "private_path": "/home/cosmo/.codex/worktrees/premise-symbolic-metadata-bridge/qcore-c/private/premise-symbolic-metadata-bridge/helper-format-2.log",
+      "archive": "validation/helper-format-2.log.gz",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    }
+  ],
+  "private_raw_source_artifact": {
+    "path": "/home/cosmo/.codex/worktrees/premise-symbolic-metadata-bridge/qcore-c/private/premise-symbolic-metadata-bridge/production-2/actual-bridge.json",
+    "sha256": "aacce2dfcb838eae399e0407bd91818dec64505fc8b7649861c72238599a9676",
+    "bytes": 1782147,
+    "published": false,
+    "declarations": 169,
+    "introductions": 1179,
+    "conjunction_flows": 169,
+    "added_lines": 1348
+  },
+  "final_focused": {
+    "rust_tests_passed": 3,
+    "sealing_compile_fail_passed": 1,
+    "scoped_clippy_exit": 0,
+    "lean_module_exit": 0,
+    "lean_audit_exit": 0,
+    "conditional_theorems": 9,
+    "actual_eight_file_bridge_exit": 0
+  },
+  "retained_failures": [
+    "focused-1 synthetic resource fixture missing result mode",
+    "focused-2 Lean invoked outside lake project root",
+    "production-1 raw unresolved inclusion parser refusal",
+    "helper-format-1 inner doc placement"
+  ],
+  "integrated_gate_and_native_comparison": "parent-owned; pending corrected final source",
+  "archive_policy": "Only explicitly reviewed commands and tool diagnostics archived; complete raw source pairs stay private after automatic approval rejection."
+}

@@ -5,6 +5,8 @@ use qcore_compiler::{
     SourceFile, compile_files, format_diagnostic, parse_source_program,
 };
 
+// PREMISE-SYMBOLIC-ADOPTION: deliberate +1,348 metadata-only clause pins
+// across 169 declarations. Original hypotheses/interpreted clauses are retained.
 const EXPECTED_CONTRACTS: &[(&str, &str, usize)] = &[
     ("cfl/arena_lifetime.qv", "cfl_arena_create_with_options", 5),
     ("cfl/arena_lifetime.qv", "cfl_arena_destroy", 5),
@@ -644,9 +646,9 @@ const EXPECTED_CONTRACTS: &[(&str, &str, usize)] = &[
     ("fluent_bit/logging.qv", "flb_errno_print", 5),
     ("fluent_bit/logging.qv", "flb_log_print", 7),
     // Card OP-APP-RK-CALLBACKS-VIA-POLL-CB: Fluent Bit's registered rk_conf callbacks.
-    ("fluent_bit/logging.qv", "cb_kafka_msg", 14),
-    ("fluent_bit/logging.qv", "cb_kafka_logger", 15),
-    ("fluent_bit/logging.qv", "oauthbearer_token_refresh_cb", 14),
+    ("fluent_bit/logging.qv", "cb_kafka_msg", 22),
+    ("fluent_bit/logging.qv", "cb_kafka_logger", 23),
+    ("fluent_bit/logging.qv", "oauthbearer_token_refresh_cb", 22),
     // Card W47-LOOP-OWNER-CONTRACTS: the marker, the loop-owner obligation, two
     // borrowed arguments, the neutral user clause and the scalar result.
     ("fluent_bit/loop_owner.qv", "flb_input_collector_running", 6),
@@ -925,12 +927,12 @@ const EXPECTED_CONTRACTS: &[(&str, &str, usize)] = &[
     // (contract spec C04.18), one clause: 3 -> 4.
     // W48-BOTTOM-UP-BATCH3 deliberately updates the existing reading-premise
     // text for scalar conditions; the four clauses and custody modes stay pinned.
-    ("libc/errno.qv", "__errno_location", 7),
+    ("libc/errno.qv", "__errno_location", 11),
     // Card W44-LIBC-RESIDUALS: `strerror`, appended beside the `errno`
     // accessor (the marker, one borrowed scalar, `none`: 3).
     // Card VERDICT-CONTRACT-PREMISE-ANNOTATIONS: `requires resource_premise(nested_call_admission, ...)`
     // (contract spec C04.18), one clause: 4 -> 5.
-    ("libc/errno.qv", "strerror", 10),
+    ("libc/errno.qv", "strerror", 16),
     ("libc/math.qv", "ceil", 4),
     ("libc/math.qv", "floor", 4),
     ("libc/math.qv", "fabs", 4),
@@ -1221,7 +1223,7 @@ const EXPECTED_CONTRACTS: &[(&str, &str, usize)] = &[
     ("librdkafka/cjson.qv", "print", 6),
     // Checked same-item detach: marker, explicit representation premise,
     // live parent, checked removed item and the same identity as result.
-    ("librdkafka/cjson.qv", "cJSON_DetachItemViaPointer", 15),
+    ("librdkafka/cjson.qv", "cJSON_DetachItemViaPointer", 25),
     // Card W43-ABI-ENUM-AND-CONST-PP: librdkafka functions over enumeration
     // (rule 12u) and pointer-to-pointer-to-const (rule 12v) prototypes:
     // marker, borrowed formals, a variadic data tail for the two variadic
@@ -1230,13 +1232,13 @@ const EXPECTED_CONTRACTS: &[(&str, &str, usize)] = &[
     ("librdkafka/client.qv", "rd_kafka_error_new", 5),
     // Card LIBRDKAFKA-PLUGIN-PREMISE-UNSTATED: +1 on each of the 34 client.qv declarations
     // whose body may reach rk_conf.log_cb (`rk_no_plugin_library`, user decision U2).
-    ("librdkafka/client.qv", "rd_kafka_err_action", 15),
+    ("librdkafka/client.qv", "rd_kafka_err_action", 23),
     (
         "librdkafka/client.qv",
         "rd_kafka_oauthbearer_set_token_failure",
-        13,
+        21,
     ),
-    ("librdkafka/client.qv", "rd_kafka_toppars_pause_resume", 16),
+    ("librdkafka/client.qv", "rd_kafka_toppars_pause_resume", 24),
     ("librdkafka/client.qv", "rd_kafka_AclBinding_new0", 11),
     (
         "librdkafka/client.qv",
@@ -1279,43 +1281,43 @@ const EXPECTED_CONTRACTS: &[(&str, &str, usize)] = &[
     ("librdkafka/client.qv", "rd_kafka_q_keep", 4),
     ("librdkafka/client.qv", "rd_kafka_q_keep_nolock", 4),
     ("librdkafka/client.qv", "rd_kafka_topic_keep", 4),
-    ("librdkafka/client.qv", "rd_kafka_toppar_destroy0", 15),
-    ("librdkafka/client.qv", "rd_kafka_q_destroy0", 14),
-    ("librdkafka/client.qv", "rd_kafka_q_destroy_owner", 13),
-    ("librdkafka/client.qv", "rd_kafka_topic_destroy0", 13),
-    ("librdkafka/client.qv", "rd_kafka_enq_once_trigger", 15),
+    ("librdkafka/client.qv", "rd_kafka_toppar_destroy0", 23),
+    ("librdkafka/client.qv", "rd_kafka_q_destroy0", 22),
+    ("librdkafka/client.qv", "rd_kafka_q_destroy_owner", 21),
+    ("librdkafka/client.qv", "rd_kafka_topic_destroy0", 21),
+    ("librdkafka/client.qv", "rd_kafka_enq_once_trigger", 23),
     // 4 -> 5 by card REFCOUNT-REFERENCE-RETURNING-DECLARATIONS: the handle
     // retains `rk` by its result (C04.14.2, rule 13e).
     ("librdkafka/client.qv", "rd_kafka_queue_new0", 5),
     (
         "librdkafka/client.qv",
         "rd_kafka_topic_partition_list_destroy",
-        12,
+        20,
     ),
     (
         "librdkafka/client.qv",
         "rd_kafka_topic_partition_destroy0",
-        14,
+        22,
     ),
     (
         "librdkafka/client.qv",
         "rd_kafka_AlterConsumerGroupOffsets_destroy",
-        12,
+        20,
     ),
     (
         "librdkafka/client.qv",
         "rd_kafka_DeleteConsumerGroupOffsets_destroy",
-        12,
+        20,
     ),
     (
         "librdkafka/client.qv",
         "rd_kafka_ListConsumerGroupOffsets_destroy",
-        12,
+        20,
     ),
     (
         "librdkafka/client.qv",
         "rd_kafka_topic_partition_result_destroy",
-        12,
+        20,
     ),
     // Card REFCOUNT-REFERENCE-RETURNING-DECLARATIONS (C04.17, C04.14.2, rules
     // 13d and 13e): nine returned references (marker, borrowed formals, the
@@ -1327,23 +1329,23 @@ const EXPECTED_CONTRACTS: &[(&str, &str, usize)] = &[
     // (`rd_kafka_toppar_new0`, `rd_kafka_toppar_desired_add`, `rd_kafka_q_new0`,
     // `ut_create_mock_queue`) state `requires resource_premise(asserted_allocation,
     // ...)` (contract spec C04.18), one clause each: 7 -> 8, 5 -> 6, 9 -> 10, 3 -> 4.
-    ("librdkafka/client.qv", "rd_kafka_toppar_new0", 17),
-    ("librdkafka/client.qv", "rd_kafka_toppar_desired_add", 15),
-    ("librdkafka/client.qv", "rd_kafka_toppar_get2", 17),
-    ("librdkafka/client.qv", "rd_kafka_toppar_get_avail", 16),
+    ("librdkafka/client.qv", "rd_kafka_toppar_new0", 25),
+    ("librdkafka/client.qv", "rd_kafka_toppar_desired_add", 23),
+    ("librdkafka/client.qv", "rd_kafka_toppar_get2", 25),
+    ("librdkafka/client.qv", "rd_kafka_toppar_get_avail", 24),
     ("librdkafka/client.qv", "rd_kafka_q_new0", 10),
-    ("librdkafka/client.qv", "ut_create_mock_toppar", 15),
+    ("librdkafka/client.qv", "ut_create_mock_toppar", 23),
     ("librdkafka/client.qv", "ut_create_mock_queue", 4),
-    ("librdkafka/client.qv", "ut_destroy_mock_queue", 13),
+    ("librdkafka/client.qv", "ut_destroy_mock_queue", 21),
     // Card REFCOUNT-FAMILY-BLOCKING-CALLEES: four plain declarations between a
     // reference's acquisition and its drop (marker, borrowed formals, `none`).
     // Card VERDICT-CONTRACT-DEPENDENCIES: the first two also state the
     // served-queue premise (`requires resource_premise(served_queue, ...)`,
     // contract spec C04.18), one clause each: 4 -> 5.
-    ("librdkafka/client.qv", "rd_kafka_q_wait_result", 14),
-    ("librdkafka/client.qv", "rd_kafka_q_purge0", 14),
+    ("librdkafka/client.qv", "rd_kafka_q_wait_result", 22),
+    ("librdkafka/client.qv", "rd_kafka_q_purge0", 22),
     ("librdkafka/client.qv", "rd_kafka_toppar_needs_query", 4),
-    ("librdkafka/client.qv", "rd_kafka_toppar_fetch_backoff", 14),
+    ("librdkafka/client.qv", "rd_kafka_toppar_fetch_backoff", 22),
     // CG22-CALLBACK-REGISTRY-CONTRACT: lists with a free callback and
     // nanopb's output stream.
     ("librdkafka/client.qv", "rd_list_init", 6),
@@ -1365,189 +1367,189 @@ const EXPECTED_CONTRACTS: &[(&str, &str, usize)] = &[
         "rd_kafka_UserScramCredentialAlteration_destroy",
         3,
     ),
-    ("librdkafka/client.qv", "unit_test_telemetry", 22),
+    ("librdkafka/client.qv", "unit_test_telemetry", 30),
     // Card CG22-OP-CALLBACKS-AND-SERVED-QUEUES: the queue serving family
     // (marker, every formal borrowed, the callback invocation, the two op
     // member invocations, the result) and `rd_kafka_op_destroy` (marker, the
     // discriminant, the release, the op callback, 170 arm clauses, `none`).
-    ("librdkafka/client.qv", "rd_kafka_q_serve0", 21),
-    ("librdkafka/client.qv", "rd_kafka_q_serve", 20),
-    ("librdkafka/client.qv", "rd_kafka_q_serve_maybe_consume", 20),
-    ("librdkafka/client.qv", "rd_kafka_q_pop_serve0", 21),
-    ("librdkafka/client.qv", "rd_kafka_q_pop_serve", 20),
+    ("librdkafka/client.qv", "rd_kafka_q_serve0", 29),
+    ("librdkafka/client.qv", "rd_kafka_q_serve", 28),
+    ("librdkafka/client.qv", "rd_kafka_q_serve_maybe_consume", 28),
+    ("librdkafka/client.qv", "rd_kafka_q_pop_serve0", 29),
+    ("librdkafka/client.qv", "rd_kafka_q_pop_serve", 28),
     (
         "librdkafka/client.qv",
         "rd_kafka_q_pop_serve_maybe_consume",
-        20,
+        28,
     ),
-    ("librdkafka/client.qv", "rd_kafka_op_destroy", 184),
+    ("librdkafka/client.qv", "rd_kafka_op_destroy", 192),
     // Card OP-CONSTRUCTOR-DECLARATIONS: the op constructors (a result state,
     // C04.19.4; `rd_kafka_op_new0`'s `quant live #result` state clause is one
     // clause) and the request family.
     ("librdkafka/client.qv", "rd_kafka_op_new0", 7),
     ("librdkafka/client.qv", "rd_kafka_op_new_cb", 9),
-    ("librdkafka/client.qv", "rd_kafka_op_req0", 17),
-    ("librdkafka/client.qv", "rd_kafka_op_req", 16),
-    ("librdkafka/client.qv", "rd_kafka_op_req2", 15),
+    ("librdkafka/client.qv", "rd_kafka_op_req0", 25),
+    ("librdkafka/client.qv", "rd_kafka_op_req", 24),
+    ("librdkafka/client.qv", "rd_kafka_op_req2", 23),
     // Card OP-CALLBACK-CANDIDATE-CONTRACTS: the declared op-callback
     // candidates. An `rko_op_cb` candidate: marker, the `rk_log_callback`
     // premise, three borrowed formals, `none` (6), plus one more premise for
     // the broker monitor and the assignor (7); an `rko_serve` candidate:
     // marker, the premise, the op consumed, four borrowed, `none` (8), plus
     // the `rk_closesocket_callback` premise for the mock cluster (9).
-    ("librdkafka/client.qv", "rd_kafka_broker_monitor_op_cb", 15),
+    ("librdkafka/client.qv", "rd_kafka_broker_monitor_op_cb", 23),
     (
         "librdkafka/client.qv",
         "rd_kafka_cgrp_assignor_handle_Metadata_op",
-        15,
+        23,
     ),
     (
         "librdkafka/client.qv",
         "rd_kafka_cgrp_consumer_handle_Metadata_op",
-        14,
+        22,
     ),
     (
         "librdkafka/client.qv",
         "rd_kafka_cgrp_handle_Metadata_op",
-        14,
+        22,
     ),
-    ("librdkafka/client.qv", "rd_kafka_offset_reset_op_cb", 14),
-    ("librdkafka/client.qv", "rd_kafka_offset_validate_op_cb", 14),
+    ("librdkafka/client.qv", "rd_kafka_offset_reset_op_cb", 22),
+    ("librdkafka/client.qv", "rd_kafka_offset_validate_op_cb", 22),
     (
         "librdkafka/client.qv",
         "rd_kafka_share_ack_commit_cb_register_op",
-        14,
+        22,
     ),
     (
         "librdkafka/client.qv",
         "rd_kafka_share_fetch_reply_op_cb",
-        14,
+        22,
     ),
     (
         "librdkafka/client.qv",
         "rd_kafka_txn_op_init_transactions",
-        14,
+        22,
     ),
     (
         "librdkafka/client.qv",
         "rd_kafka_txn_op_ack_init_transactions",
-        14,
+        22,
     ),
     (
         "librdkafka/client.qv",
         "rd_kafka_txn_op_begin_transaction",
-        14,
+        22,
     ),
-    ("librdkafka/client.qv", "rd_kafka_txn_op_begin_commit", 14),
+    ("librdkafka/client.qv", "rd_kafka_txn_op_begin_commit", 22),
     (
         "librdkafka/client.qv",
         "rd_kafka_txn_op_commit_transaction",
-        14,
+        22,
     ),
     (
         "librdkafka/client.qv",
         "rd_kafka_txn_op_commit_transaction_ack",
-        14,
+        22,
     ),
-    ("librdkafka/client.qv", "rd_kafka_txn_op_begin_abort", 14),
+    ("librdkafka/client.qv", "rd_kafka_txn_op_begin_abort", 22),
     (
         "librdkafka/client.qv",
         "rd_kafka_txn_op_abort_transaction",
-        14,
+        22,
     ),
     (
         "librdkafka/client.qv",
         "rd_kafka_txn_op_abort_transaction_ack",
-        14,
+        22,
     ),
-    ("librdkafka/client.qv", "rd_kafka_cgrp_op_serve", 16),
-    ("librdkafka/client.qv", "rd_kafka_mock_cluster_op_serve", 16),
+    ("librdkafka/client.qv", "rd_kafka_cgrp_op_serve", 24),
+    ("librdkafka/client.qv", "rd_kafka_mock_cluster_op_serve", 24),
     // Card OP-APP-RK-CALLBACKS-VIA-POLL-CB: the rk_conf setters, `rd_kafka_conf_new`, the member
     // invokers and the run-closed candidates.
     (
         "librdkafka/client.qv",
         "rd_kafka_conf_set_background_event_cb",
-        15,
+        23,
     ),
-    ("librdkafka/client.qv", "rd_kafka_conf_set_dr_cb", 15),
-    ("librdkafka/client.qv", "rd_kafka_conf_set_dr_msg_cb", 15),
-    ("librdkafka/client.qv", "rd_kafka_conf_set_consume_cb", 15),
-    ("librdkafka/client.qv", "rd_kafka_conf_set_rebalance_cb", 15),
+    ("librdkafka/client.qv", "rd_kafka_conf_set_dr_cb", 23),
+    ("librdkafka/client.qv", "rd_kafka_conf_set_dr_msg_cb", 23),
+    ("librdkafka/client.qv", "rd_kafka_conf_set_consume_cb", 23),
+    ("librdkafka/client.qv", "rd_kafka_conf_set_rebalance_cb", 23),
     (
         "librdkafka/client.qv",
         "rd_kafka_conf_set_offset_commit_cb",
-        15,
+        23,
     ),
-    ("librdkafka/client.qv", "rd_kafka_conf_set_error_cb", 15),
-    ("librdkafka/client.qv", "rd_kafka_conf_set_throttle_cb", 15),
-    ("librdkafka/client.qv", "rd_kafka_conf_set_log_cb", 15),
-    ("librdkafka/client.qv", "rd_kafka_conf_set_stats_cb", 15),
+    ("librdkafka/client.qv", "rd_kafka_conf_set_error_cb", 23),
+    ("librdkafka/client.qv", "rd_kafka_conf_set_throttle_cb", 23),
+    ("librdkafka/client.qv", "rd_kafka_conf_set_log_cb", 23),
+    ("librdkafka/client.qv", "rd_kafka_conf_set_stats_cb", 23),
     (
         "librdkafka/client.qv",
         "rd_kafka_conf_set_oauthbearer_token_refresh_cb",
-        15,
+        23,
     ),
-    ("librdkafka/client.qv", "rd_kafka_conf_set_socket_cb", 15),
-    ("librdkafka/client.qv", "rd_kafka_conf_set_connect_cb", 15),
+    ("librdkafka/client.qv", "rd_kafka_conf_set_socket_cb", 23),
+    ("librdkafka/client.qv", "rd_kafka_conf_set_connect_cb", 23),
     (
         "librdkafka/client.qv",
         "rd_kafka_conf_set_closesocket_cb",
-        15,
+        23,
     ),
-    ("librdkafka/client.qv", "rd_kafka_conf_set_open_cb", 15),
-    ("librdkafka/client.qv", "rd_kafka_conf_set_resolve_cb", 15),
+    ("librdkafka/client.qv", "rd_kafka_conf_set_open_cb", 23),
+    ("librdkafka/client.qv", "rd_kafka_conf_set_resolve_cb", 23),
     (
         "librdkafka/client.qv",
         "rd_kafka_conf_set_ssl_cert_verify_cb",
-        15,
+        23,
     ),
-    ("librdkafka/client.qv", "rd_kafka_conf_new", 16),
-    ("librdkafka/client.qv", "rd_kafka_consume_cb", 17),
+    ("librdkafka/client.qv", "rd_kafka_conf_new", 24),
+    ("librdkafka/client.qv", "rd_kafka_consume_cb", 25),
     (
         "librdkafka/client.qv",
         "rd_kafka_background_queue_serve",
-        25,
+        33,
     ),
     (
         "librdkafka/client.qv",
         "rd_kafka_oauthbearer_refresh_op",
-        15,
+        23,
     ),
     ("librdkafka/client.qv", "rd_kafka_log_print", 6),
     (
         "librdkafka/client.qv",
         "rd_kafka_oauthbearer_unsecured_token",
-        14,
+        22,
     ),
     (
         "librdkafka/client.qv",
         "rd_kafka_oidc_token_jwt_bearer_refresh_cb",
-        14,
+        22,
     ),
     (
         "librdkafka/client.qv",
         "rd_kafka_oidc_token_client_credentials_refresh_cb",
-        14,
+        22,
     ),
     (
         "librdkafka/client.qv",
         "rd_kafka_oidc_token_metadata_azure_imds_refresh_cb",
-        14,
+        22,
     ),
     (
         "librdkafka/client.qv",
         "rd_kafka_oidc_token_metadata_aws_iam_refresh_cb",
-        14,
+        22,
     ),
     // Card SUPPLIED-OWNED-RETURN-CODE-HANDOFF: the two hand-off declarations
     // (C04.19.5): `rd_kafka_poll_cb` (marker, premise, five modes, twelve
     // member invocations, the result, the not-PASS hand-off) and the KEEP-only
     // `rd_kafka_txn_op_send_offsets_to_transaction`.
-    ("librdkafka/client.qv", "rd_kafka_poll_cb", 29),
+    ("librdkafka/client.qv", "rd_kafka_poll_cb", 37),
     (
         "librdkafka/client.qv",
         "rd_kafka_txn_op_send_offsets_to_transaction",
-        15,
+        23,
     ),
     // Card OP-CALLBACK-MEMBER-PATH-RELEASE: the eight op-callback candidates
     // of shape (b) (C04.19.6), each the marker, the `rk_no_plugin_library`
@@ -1556,33 +1558,33 @@ const EXPECTED_CONTRACTS: &[(&str, &str, usize)] = &[
     // (four states each), `rd_kafka_share_fetch_fanout_op` with its
     // `share_ack_batches_nonempty` premise, `rd_kafka_share_commit_sync_fanout_op`
     // with three states.
-    ("librdkafka/client.qv", "rd_kafka_admin_worker", 19),
+    ("librdkafka/client.qv", "rd_kafka_admin_worker", 27),
     (
         "librdkafka/client.qv",
         "rd_kafka_topic_partition_list_query_leaders_async_worker_op_cb",
-        19,
+        27,
     ),
-    ("librdkafka/client.qv", "rd_kafka_admin_fanout_worker", 15),
+    ("librdkafka/client.qv", "rd_kafka_admin_fanout_worker", 23),
     (
         "librdkafka/client.qv",
         "rd_kafka_DeleteRecords_leaders_queried_cb",
-        15,
+        23,
     ),
     (
         "librdkafka/client.qv",
         "rd_kafka_ListOffsets_leaders_queried_cb",
-        15,
+        23,
     ),
     (
         "librdkafka/client.qv",
         "rd_kafka_share_commit_async_fanout_op",
-        15,
+        23,
     ),
-    ("librdkafka/client.qv", "rd_kafka_share_fetch_fanout_op", 16),
+    ("librdkafka/client.qv", "rd_kafka_share_fetch_fanout_op", 24),
     (
         "librdkafka/client.qv",
         "rd_kafka_share_commit_sync_fanout_op",
-        17,
+        25,
     ),
     // Card W36-CORPUS-CONTRACTS-3: kept in its own module rather than appended
     // to `librdkafka/memory.qv`, so that module's pin stays untouched. Read
@@ -1600,7 +1602,7 @@ const EXPECTED_CONTRACTS: &[(&str, &str, usize)] = &[
     ),
     ("librdkafka/kafka_mem.qv", "rd_kafka_anyconf_desensitize", 4),
     // Card LIBRDKAFKA-PLUGIN-PREMISE-REMAINDER: +1, the dump names `rk_no_plugin_library`.
-    ("librdkafka/kafka_mem.qv", "rd_kafka_dump0", 14),
+    ("librdkafka/kafka_mem.qv", "rd_kafka_dump0", 22),
     (
         "librdkafka/kafka_mem.qv",
         "rd_kafka_metadata_copy_internal",
@@ -1656,7 +1658,7 @@ const EXPECTED_CONTRACTS: &[(&str, &str, usize)] = &[
     // (`src/rdkafka.c:6640-6649`): marker, five borrowed arguments, `none`
     // and the no-return exit.
     // Card LIBRDKAFKA-PLUGIN-PREMISE-REMAINDER: +1, the crash path names `rk_no_plugin_library`.
-    ("librdkafka/memory.qv", "rd_kafka_crash", 17),
+    ("librdkafka/memory.qv", "rd_kafka_crash", 25),
     // Card CG10-INDIRECT-ACCESS-SOLE-RESIDUALS: custody-neutral scalar
     // helpers (`src/rdatomic.h`, `src/tinycthread_extra.c:92-129`,
     // `src/rdhdrhistogram.c:391-407`): marker, borrowed formals, `none`.
@@ -1687,10 +1689,10 @@ const EXPECTED_CONTRACTS: &[(&str, &str, usize)] = &[
     // Card NONNULL-MEMBER-UNIFIED-QUALIFIER (USER DECISION 2026-10-16, "Yes,
     // all kinds"): +1 on each of the four plain member declarations, which
     // name `rk_no_plugin_library` (2 -> 3, 3 -> 4, 2 -> 3, 2 -> 3).
-    ("librdkafka/null_deref.qv", "rd_kafka_toppar_new0", 11),
-    ("librdkafka/null_deref.qv", "rd_kafka_topic_new0", 12),
-    ("librdkafka/null_deref.qv", "rd_kafka_cgrp_new", 11),
-    ("librdkafka/null_deref.qv", "rd_kafka_transport_new", 11),
+    ("librdkafka/null_deref.qv", "rd_kafka_toppar_new0", 19),
+    ("librdkafka/null_deref.qv", "rd_kafka_topic_new0", 20),
+    ("librdkafka/null_deref.qv", "rd_kafka_cgrp_new", 19),
+    ("librdkafka/null_deref.qv", "rd_kafka_transport_new", 19),
     ("librdkafka/null_deref.qv", "rd_kafka_topic_keep", 2),
     ("librdkafka/null_deref.qv", "rd_kafka_flush", 2),
     ("librdkafka/null_deref.qv", "rd_kafka_message_errstr", 2),
@@ -1705,238 +1707,238 @@ const EXPECTED_CONTRACTS: &[(&str, &str, usize)] = &[
     // stable and scope member declarations (`rk_no_plugin_library`; spelled
     // `nonnull_member(...) where quant #scope [[stable]]` / `[[scope]]` since
     // card NONNULL-MEMBER-UNIFIED-QUALIFIER, counts unchanged).
-    ("librdkafka/null_deref.qv", "rd_kafka_broker_add", 11),
+    ("librdkafka/null_deref.qv", "rd_kafka_broker_add", 19),
     // Card NULL-MEMBER-INVARIANT-SCOPE (rule 14z): sixty-six function-scope
     // entries of the registered broker (the selector and one scope clause).
     (
         "librdkafka/null_deref.qv",
         "rd_kafka_ShareAcknowledgeRequest",
-        11,
+        19,
     ),
     (
         "librdkafka/null_deref.qv",
         "rd_kafka_broker_active_toppar_add",
-        11,
+        19,
     ),
     (
         "librdkafka/null_deref.qv",
         "rd_kafka_broker_active_toppar_del",
-        11,
+        19,
     ),
-    ("librdkafka/null_deref.qv", "rd_kafka_broker_buf_enq0", 11),
-    ("librdkafka/null_deref.qv", "rd_kafka_broker_buf_retry", 11),
+    ("librdkafka/null_deref.qv", "rd_kafka_broker_buf_enq0", 19),
+    ("librdkafka/null_deref.qv", "rd_kafka_broker_buf_retry", 19),
     (
         "librdkafka/null_deref.qv",
         "rd_kafka_broker_bufq_timeout_scan",
-        11,
+        19,
     ),
     (
         "librdkafka/null_deref.qv",
         "rd_kafka_broker_conn_closed",
-        11,
+        19,
     ),
-    ("librdkafka/null_deref.qv", "rd_kafka_broker_connect", 11),
+    ("librdkafka/null_deref.qv", "rd_kafka_broker_connect", 19),
     (
         "librdkafka/null_deref.qv",
         "rd_kafka_broker_connect_auth",
-        11,
+        19,
     ),
     (
         "librdkafka/null_deref.qv",
         "rd_kafka_broker_connect_done",
-        11,
+        19,
     ),
-    ("librdkafka/null_deref.qv", "rd_kafka_broker_connect_up", 11),
+    ("librdkafka/null_deref.qv", "rd_kafka_broker_connect_up", 19),
     (
         "librdkafka/null_deref.qv",
         "rd_kafka_broker_consumer_serve",
-        11,
+        19,
     ),
     (
         "librdkafka/null_deref.qv",
         "rd_kafka_broker_destroy_final",
-        11,
+        19,
     ),
     (
         "librdkafka/null_deref.qv",
         "rd_kafka_broker_feature_disable",
-        11,
+        19,
     ),
     (
         "librdkafka/null_deref.qv",
         "rd_kafka_broker_feature_enable",
-        11,
+        19,
     ),
     (
         "librdkafka/null_deref.qv",
         "rd_kafka_broker_features_set",
-        11,
+        19,
     ),
     (
         "librdkafka/null_deref.qv",
         "rd_kafka_broker_fetch_backoff",
-        11,
+        19,
     ),
     (
         "librdkafka/null_deref.qv",
         "rd_kafka_broker_fetch_toppars",
-        11,
+        19,
     ),
     (
         "librdkafka/null_deref.qv",
         "rd_kafka_broker_handle_purge_queues",
-        11,
+        19,
     ),
-    ("librdkafka/null_deref.qv", "rd_kafka_broker_idle_check", 11),
+    ("librdkafka/null_deref.qv", "rd_kafka_broker_idle_check", 19),
     (
         "librdkafka/null_deref.qv",
         "rd_kafka_broker_internal_serve",
-        11,
+        19,
     ),
     (
         "librdkafka/null_deref.qv",
         "rd_kafka_broker_needs_connection",
-        11,
+        19,
     ),
     (
         "librdkafka/null_deref.qv",
         "rd_kafka_broker_produce_toppars",
-        11,
+        19,
     ),
-    ("librdkafka/null_deref.qv", "rd_kafka_broker_resolve", 11),
+    ("librdkafka/null_deref.qv", "rd_kafka_broker_resolve", 19),
     (
         "librdkafka/null_deref.qv",
         "rd_kafka_broker_retry_bufs_move",
-        11,
+        19,
     ),
-    ("librdkafka/null_deref.qv", "rd_kafka_broker_serve", 11),
+    ("librdkafka/null_deref.qv", "rd_kafka_broker_serve", 19),
     (
         "librdkafka/null_deref.qv",
         "rd_kafka_broker_session_add_partition_to_toppars_in_session",
-        11,
+        19,
     ),
     (
         "librdkafka/null_deref.qv",
         "rd_kafka_broker_session_remove_partition_from_toppars_in_session",
-        11,
+        19,
     ),
     (
         "librdkafka/null_deref.qv",
         "rd_kafka_broker_session_reset",
-        11,
+        19,
     ),
     (
         "librdkafka/null_deref.qv",
         "rd_kafka_broker_session_update_epoch",
-        11,
+        19,
     ),
     (
         "librdkafka/null_deref.qv",
         "rd_kafka_broker_session_update_partitions",
-        11,
+        19,
     ),
     (
         "librdkafka/null_deref.qv",
         "rd_kafka_broker_set_api_versions",
-        11,
+        19,
     ),
     (
         "librdkafka/null_deref.qv",
         "rd_kafka_broker_set_nodename",
-        11,
+        19,
     ),
-    ("librdkafka/null_deref.qv", "rd_kafka_broker_set_state", 11),
+    ("librdkafka/null_deref.qv", "rd_kafka_broker_set_state", 19),
     (
         "librdkafka/null_deref.qv",
         "rd_kafka_broker_share_fetch_session_clear",
-        11,
+        19,
     ),
     (
         "librdkafka/null_deref.qv",
         "rd_kafka_broker_share_fetch_session_leave",
-        11,
+        19,
     ),
-    ("librdkafka/null_deref.qv", "rd_kafka_broker_share_rpc", 11),
+    ("librdkafka/null_deref.qv", "rd_kafka_broker_share_rpc", 19),
     (
         "librdkafka/null_deref.qv",
         "rd_kafka_broker_share_session_toppar_add",
-        11,
+        19,
     ),
     (
         "librdkafka/null_deref.qv",
         "rd_kafka_broker_timeout_scan",
-        11,
+        19,
     ),
     (
         "librdkafka/null_deref.qv",
         "rd_kafka_broker_toppar_msgq_scan",
-        11,
+        19,
     ),
-    ("librdkafka/null_deref.qv", "rd_kafka_broker_wakeup", 11),
-    ("librdkafka/null_deref.qv", "rd_kafka_buf_new_request0", 11),
-    ("librdkafka/null_deref.qv", "rd_kafka_buf_retry", 11),
+    ("librdkafka/null_deref.qv", "rd_kafka_broker_wakeup", 19),
+    ("librdkafka/null_deref.qv", "rd_kafka_buf_new_request0", 19),
+    ("librdkafka/null_deref.qv", "rd_kafka_buf_retry", 19),
     (
         "librdkafka/null_deref.qv",
         "rd_kafka_bufq_connection_reset",
-        11,
+        19,
     ),
-    ("librdkafka/null_deref.qv", "rd_kafka_bufq_dump", 11),
-    ("librdkafka/null_deref.qv", "rd_kafka_bufq_purge", 11),
-    ("librdkafka/null_deref.qv", "rd_kafka_dr_implicit_ack", 11),
-    ("librdkafka/null_deref.qv", "rd_kafka_features_check", 11),
+    ("librdkafka/null_deref.qv", "rd_kafka_bufq_dump", 19),
+    ("librdkafka/null_deref.qv", "rd_kafka_bufq_purge", 19),
+    ("librdkafka/null_deref.qv", "rd_kafka_dr_implicit_ack", 19),
+    ("librdkafka/null_deref.qv", "rd_kafka_features_check", 19),
     (
         "librdkafka/null_deref.qv",
         "rd_kafka_fetch_reply_handle_partition_error",
-        11,
+        19,
     ),
     (
         "librdkafka/null_deref.qv",
         "rd_kafka_group_MemberMetadata_consumer_read",
-        11,
+        19,
     ),
     (
         "librdkafka/null_deref.qv",
         "rd_kafka_handle_Produce_metadata_update",
-        11,
+        19,
     ),
     (
         "librdkafka/null_deref.qv",
         "rd_kafka_idemp_request_pid_failed",
-        11,
+        19,
     ),
     (
         "librdkafka/null_deref.qv",
         "rd_kafka_msgbatch_handle_Produce_result",
-        11,
+        19,
     ),
-    ("librdkafka/null_deref.qv", "rd_kafka_op_throttle_time", 11),
+    ("librdkafka/null_deref.qv", "rd_kafka_op_throttle_time", 19),
     (
         "librdkafka/null_deref.qv",
         "rd_kafka_parse_Metadata_update_topic",
-        11,
+        19,
     ),
-    ("librdkafka/null_deref.qv", "rd_kafka_recv", 11),
-    ("librdkafka/null_deref.qv", "rd_kafka_req_response", 11),
-    ("librdkafka/null_deref.qv", "rd_kafka_sasl_broker_init", 11),
-    ("librdkafka/null_deref.qv", "rd_kafka_sasl_broker_term", 11),
-    ("librdkafka/null_deref.qv", "rd_kafka_send", 11),
-    ("librdkafka/null_deref.qv", "rd_kafka_ssl_hmac", 11),
+    ("librdkafka/null_deref.qv", "rd_kafka_recv", 19),
+    ("librdkafka/null_deref.qv", "rd_kafka_req_response", 19),
+    ("librdkafka/null_deref.qv", "rd_kafka_sasl_broker_init", 19),
+    ("librdkafka/null_deref.qv", "rd_kafka_sasl_broker_term", 19),
+    ("librdkafka/null_deref.qv", "rd_kafka_send", 19),
+    ("librdkafka/null_deref.qv", "rd_kafka_ssl_hmac", 19),
     (
         "librdkafka/null_deref.qv",
         "rd_kafka_toppar_fetch_backoff",
-        11,
+        19,
     ),
-    ("librdkafka/null_deref.qv", "rd_kafka_transport_connect", 11),
+    ("librdkafka/null_deref.qv", "rd_kafka_transport_connect", 19),
     (
         "librdkafka/null_deref.qv",
         "rd_kafka_transport_ssl_connect",
-        11,
+        19,
     ),
-    ("librdkafka/null_deref.qv", "rd_kafka_waitresp_find", 11),
+    ("librdkafka/null_deref.qv", "rd_kafka_waitresp_find", 19),
     (
         "librdkafka/null_deref.qv",
         "rd_kafkap_share_leader_changes_apply",
-        11,
+        19,
     ),
     // RK-PLUGIN-LIBRARY-OUTER-ENVELOPE: selector, definition, runtime guard,
     // 34 callback registrations, 8 kept members and 8 premises.
@@ -1946,7 +1948,7 @@ const EXPECTED_CONTRACTS: &[(&str, &str, usize)] = &[
     (
         "librdkafka/queue_destructor.qv",
         "rd_kafka_q_destroy_final",
-        15,
+        23,
     ),
     ("librdkafka/refcount.qv", "rd_refcnt_add0", 4),
     ("librdkafka/refcount.qv", "rd_refcnt_sub0", 4),

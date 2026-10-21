@@ -842,6 +842,7 @@ fn rename_clauses(
         // typed subjects need a separate capture-aware substitution rule.
         if crate::hypothesis::is_clause(expression)
             || crate::premise_flow::is_clause(expression)
+            || crate::contract_lifecycle::is_clause(expression)
             || crate::contract_loader::premise_clause(expression)?.is_some()
         {
             renamed.push((introducer.clone(), expression.clone()));

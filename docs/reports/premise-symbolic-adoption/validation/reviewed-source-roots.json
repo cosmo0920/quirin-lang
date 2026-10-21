@@ -1,0 +1,12 @@
+{
+  "actual_source_heads": {
+    "/home/cosmo/Documents/GitHub/qcore-c/build/cycle19/c-gateway-wave-pin/fluent-bit-clang-source": "66910c10a4d7eafa810b84229cf2dcf7b0f26f97",
+    "/home/cosmo/Documents/GitHub/qcore-c/private/w45-fb/w46-external-callee-contracts/attempt-1/fluent-bit-clang-source": "046accf6aded7906f66a1baf0202da349e521736"
+  },
+  "exact_original_reviewed_revision_set": [
+    "046accf6aded7906f66a1baf0202da349e521736",
+    "66910c10a4d7eafa810b84229cf2dcf7b0f26f97"
+  ],
+  "pin_binary_sha256": "57eedc9b744b8d7ff087f5e45c867fd0d42843e805ae0456b722c2f300e244e2",
+  "review_scope": "The frozen whole8module originals are recovered exactly after the selected metadata lines are removed; exhaustive Rust validates complete interpreted/graph/binding equality. Existing reviewed C identities must be reproduced exactly by official CLI; no new C-body claim is introduced."
+}

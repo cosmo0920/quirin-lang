@@ -187,6 +187,8 @@ Regenerate with `python3 scripts/build_docs_index.py`; validate with `--check`.
 
 | [contract-inherit-qcore-provider-naming](contract-inherit-qcore-provider-naming/README.md) | CONTRACT-INHERIT-QCORE-PROVIDER-NAMING: the executable provider crates on the contract load path |
 
+| [contract-lifecycle-symbols](contract-lifecycle-symbols/README.md) | CONTRACT-LIFECYCLE-SYMBOLS |
+
 | [contract-noreturn-and-borrowed-tails](contract-noreturn-and-borrowed-tails/README.md) | CONTRACT-NORETURN-AND-BORROWED-TAILS |
 
 | [contract-pin-tip-mode](contract-pin-tip-mode/README.md) | CONTRACT-PIN-TIP-MODE: contracts that track the tip of a fix branch |
@@ -631,6 +633,14 @@ Regenerate with `python3 scripts/build_docs_index.py`; validate with `--check`.
 | [premise-local-source-bindings](premise-local-source-bindings/README.md) | Premise local source bindings |
 
 | [premise-resolution-cycle2](premise-resolution-cycle2/README.md) | Premise resolution cycle 2 |
+
+| [premise-symbolic-adoption](premise-symbolic-adoption/README.md) | Production symbolic hypothesis adoption |
+
+| [premise-symbolic-integration](premise-symbolic-integration/README.md) | Premise symbolic integration |
+
+| [premise-symbolic-metadata-bridge](premise-symbolic-metadata-bridge/README.md) | Symbolic premise metadata bridge |
+
+| [premise-symbolic-overlap-admission](premise-symbolic-overlap-admission/README.md) | PREMISE-SYMBOLIC-OVERLAP-ADMISSION |
 
 | [process-fixtures-fs-write](process-fixtures-fs-write/README.md) | PROCESS-FIXTURES-FS-WRITE-OUTSIDE-HOST-CRATE: one out-of-process writer for every executable test fixture |
 

@@ -1,0 +1,142 @@
+module contract;
+
+// Card W45-CONTRACT-REVISION-MODE: every contract in this module is
+// `revision flexible` (contract spec C06.2): it binds by name and declared
+// signature at any revision of the audited project, and reports list the libc
+// contracts as one standing assumption, the libc/C-standard ABI premise. The
+// C library's version stays in the build's provenance.
+
+// The C library's `errno` accessor — resource-projection vocabulary version 1.
+//
+// Card CONSTRUCTOR-RESIDUALS. This module declares a TRUSTED ASSUMPTION about
+// one C library function. It verifies nothing: no C body is analyzed by this
+// loader, and a declaration is a premise.
+//
+// ## What the call sites actually reach — measured, not assumed
+//
+// `errno` is not an object in any translation unit of the pinned corpus. C11
+// 7.5p2 permits it to be "a modifiable lvalue ... that expands to a modifiable
+// lvalue", and glibc defines it as a macro over a function call
+// (`/usr/include/errno.h:37-38` on the audited host):
+//
+//     extern int *__errno_location (void) __THROW __attribute_const__;
+//     # define errno (*__errno_location ())
+//
+// So every `errno` a preprocessed unit of this corpus contains is the token
+// sequence `( * __errno_location ( ) )`, and the callee the resource
+// projection sees is `__errno_location`.
+//
+// ## `__errno_location`, read from its declaration
+//
+//   int *__errno_location (void)
+//
+//   * It takes NO parameters, so no argument of any caller can reach it and no
+//     caller's custody obligation can be affected through one.
+//   * It returns a pointer to the calling thread's `errno` object. That object
+//     has static storage duration and thread-local lifetime (C11 7.5p2): it is
+//     not allocated by this call, it is not the caller's to free, and no
+//     library function in this corpus frees it. The caller therefore acquires
+//     NO obligation, which is exactly `resource_return_none()`.
+//   * `__THROW` and `__attribute_const__` carry no type and no effect this
+//     projection models.
+//
+// The result type is spelled `ptr<mut, u8>` because that is this vocabulary's
+// projection of every single-`*` non-`const` pointer (`POINTER_ABI_TYPES`); the
+// declared *pointee* is deliberately not spelled here, and the gateway reads it
+// from the unit's own declarations instead — see below.
+//
+// ## What this declaration does NOT admit on its own
+//
+// Declaring `__errno_location` does not make `errno` readable anywhere. The
+// gateway checks each reading position. The nested-argument rule (card
+// CONSTRUCTOR-RESIDUALS, premises N1-N10) requires a whole Borrowed or data-tail
+// argument modulo the dereference wrapper and exact written arity. The scalar
+// condition rule below has its own narrower zero-argument comparison shape.
+// Both independently require THIS TRANSLATION UNIT's own unambiguous
+// declaration to return exactly one `*` over a scalar type. A missing or
+// disagreeing declaration refuses the reading rather than assuming its type.
+//
+// Card VERDICT-CONTRACT-PREMISE-ANNOTATIONS: stated on `__errno_location` as
+// `requires resource_premise(nested_call_admission, "...")` (contract spec
+// C04.18), so every verdict that rests on the declaration names it.
+//
+// W48-BOTTOM-UP-BATCH3 deliberately adds one reading position, under the
+// same declared custody result: an external zero-argument call's scalar
+// dereference compared with a decimal literal in a condition. The gateway
+// retains the ordinary call and explores both comparison outcomes. No scalar
+// value, non-nullness, memory validity or function-body purity is inferred.
+// The named reading premise below states both positions explicitly.
+//
+// ## What no declaration here says
+//
+// Nothing about the value of `errno`, nothing about which library functions set
+// it, nothing about the ordering of a set against a read, and nothing about
+// thread-local storage lifetime beyond the caller acquiring no obligation.
+// This is a per-call custody statement about the CALLER's obligations, and
+// nothing more.
+//
+// ## Portability, recorded rather than assumed
+//
+// `__errno_location` is the glibc spelling. musl declares the same name; macOS
+// spells it `__error()` and Windows `_errno()`. On a host whose headers use a
+// different spelling this declaration names a function no analysed unit
+// contains, so it is inert text there — the same measured-inert situation card
+// PROD-CONTRACTS recorded for `flb_trace`, and harmless for the same reason.
+
+// PREMISE-DECOMPOSITION-CYCLE1B: opaque conjunction atoms retain the reading
+// premise name; the either-route alternative remains one indivisible atom.
+// Exact before sentences and formal bindings are in the card mapping.json.
+extern fn __errno_location() -> ptr<mut, u8>
+contract {
+    requires resource_contract_v1;
+    requires resource_revision(flexible);
+    requires resource_hypothesis(checked_reading_route, "a dereference of this call's result is read only under the checked reading rules: either the nested-call admission of O04-TRACE and CONSTRUCTOR-RESIDUALS (N1-N10, including a whole Borrowed or data-tail actual modulo the dereference wrapper and exact written arity), or W48-BOTTOM-UP-BATCH3 scalar condition admission (an external zero-argument call with this no-custody result, no container effect, exactly one dereference compared by equality or inequality with a decimal literal, the ordinary call checks retained and both outcomes explored)");
+    requires resource_hypothesis(scalar_declaration, "both checked reading routes require this unit's unambiguous declaration to return exactly one pointer level over a scalar type");
+    requires resource_hypothesis(untracked_effects, "both checked reading routes bind, release, escape and address nothing the projection tracks");
+    requires resource_premise_all(nested_call_admission, checked_reading_route, scalar_declaration, untracked_effects);
+    ensures normal resource_return_none();
+};
+
+// ## `strerror` (card W44-LIBC-RESIDUALS, `LIBC-PRINTF-NESTED-TAIL-CALLEES`)
+//
+// TRUSTED ASSUMPTION (trust boundary 28). Declared in `<string.h>`, and placed
+// beside the `errno` accessor it serves rather than in `libc/string.qcore`,
+// which is a PUBLISHED module whose SHA-256 every inheriting contract's
+// identity carries (`providers/contract-load-path.json`): appending there would
+// move that identity for a declaration no inheriting contract uses. Read from
+// the prototype the analysed units declare (`/usr/include/string.h`):
+//
+//   extern char *strerror (int __errnum) __THROW;
+//
+//   * `__errnum` is an `int` by value: `resource_borrowed`.
+//   * The result points to a message the caller must NOT free: glibc returns a
+//     string in static read-only storage, or one in a thread-local buffer the
+//     next `strerror` call on that thread may overwrite. Nothing is allocated
+//     for the caller and the result points into no argument, so the caller
+//     acquires no obligation: `resource_return_none()`, the precedent
+//     `gai_strerror` (`libc/socket.qcore`), `dlerror` (`libc/dlfcn.qcore`) and
+//     `__errno_location` above set for a pointer result with no custody.
+//
+// Measured use: two printf-family tails pass `strerror(r)` whole, where the
+// nested-call admission (card O04-TRACE's premises N3, N6 and N7) needs exactly
+// this declaration. The census agrees in all 181 units that declare it.
+// Nothing about the message's lifetime past the next call, its text, locale or
+// `errno` is stated.
+//
+// Card VERDICT-CONTRACT-PREMISE-ANNOTATIONS: stated on `strerror` as `requires
+// resource_premise(nested_call_admission, "...")` (contract spec C04.18), so
+// every verdict that rests on the declaration names it.
+
+extern fn strerror(errnum: i32) -> ptr<mut, u8>
+contract {
+    requires resource_contract_v1;
+    requires resource_revision(flexible);
+    requires resource_hypothesis(checked_nested_site, "a call of this function nested whole in another call's argument is read only where card O04-TRACE's nested-call admission holds at the call site");
+    requires resource_hypothesis(contract_in_force, "this declaration meets nested-call admission premise N3: a contract in force");
+    requires resource_hypothesis(no_custody_result, "this declaration meets nested-call admission premise N6: result mode None");
+    requires resource_hypothesis(parameters_borrowed, "this declaration meets nested-call admission premise N7: every parameter Borrowed");
+    requires resource_hypothesis(remaining_site_checks, "the nested-call admission checks the rest of its premises per site");
+    requires resource_premise_all(nested_call_admission, checked_nested_site, contract_in_force, no_custody_result, parameters_borrowed, remaining_site_checks);
+    ensures normal resource_borrowed(errnum);
+    ensures normal resource_return_none();
+};

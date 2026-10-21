@@ -1756,6 +1756,7 @@ fn load_function_in(
         .collect::<Vec<_>>();
     let graph = crate::hypothesis::declaration(decl, &graph_premises)?;
     crate::premise_flow::declaration(decl, &graph)?;
+    crate::contract_lifecycle::declaration(decl, &graph)?;
     let mut loop_owner: Option<DeclaredLoopOwner> = None;
     let mut thread_sync: Option<DeclaredThreadSync> = None;
     let mut lifecycle: Option<DeclaredLifecycle> = None;
@@ -1979,6 +1980,7 @@ fn load_function_in(
             // an assumption the declaration rests on, for the report.
             if crate::hypothesis::is_clause(expression)
                 || crate::premise_flow::is_clause(expression)
+                || crate::contract_lifecycle::is_clause(expression)
             {
                 continue;
             }
@@ -3537,6 +3539,7 @@ pub fn module_premises(source: &str) -> Result<BTreeMap<String, Vec<DeclaredPrem
         }
         let graph = crate::hypothesis::declaration(&declaration.value, &premises)?;
         crate::premise_flow::declaration(&declaration.value, &graph)?;
+        crate::contract_lifecycle::declaration(&declaration.value, &graph)?;
         for node in graph
             .premises
             .values()

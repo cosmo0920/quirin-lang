@@ -1,0 +1,22 @@
+[
+  {
+    "source": "private/premise-symbolic-integration/legacy-focused-1/0.log",
+    "published": "docs/reports/premise-symbolic-integration/validation/legacy-focused-1/0.log.gz",
+    "source_sha256": "015f1d7c4bd36230cd9d333f04fab560243cd6cbba314cdf9e007cfd8c74ff38"
+  },
+  {
+    "source": "private/premise-symbolic-integration/legacy-focused-1/1.log",
+    "published": "docs/reports/premise-symbolic-integration/validation/legacy-focused-1/1.log.gz",
+    "source_sha256": "0a7ade5802280d39a3e1baa56c521f9014f35247846f7482ed5806eb3a64e5c2"
+  },
+  {
+    "source": "private/premise-symbolic-integration/legacy-focused-1/2.log",
+    "published": "docs/reports/premise-symbolic-integration/validation/legacy-focused-1/2.log.gz",
+    "source_sha256": "253928fd16dc8cd58fa95d7fc98c82158b90bdee1b8672bbacae2d9975d87fbd"
+  },
+  {
+    "source": "private/premise-symbolic-integration/legacy-focused-1/commands.json",
+    "published": "docs/reports/premise-symbolic-integration/validation/legacy-focused-1/commands.json",
+    "source_sha256": "8ec5477010eaa39694c12cb176247f96d3e3c9c8df84808aebefa72abcea10c3"
+  }
+]

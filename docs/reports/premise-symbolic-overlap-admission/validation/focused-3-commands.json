@@ -1,0 +1,36 @@
+[
+  {
+    "name": "lean-version",
+    "command": [
+      "lean",
+      "--version"
+    ],
+    "cwd": "/home/cosmo/.codex/worktrees/premise-symbolic-adoption/qcore-c/proof",
+    "exit": 0,
+    "seconds": 0.03346562385559082
+  },
+  {
+    "name": "lean-model",
+    "command": [
+      "lean",
+      "-DwarningAsError=true",
+      "-o",
+      "/home/cosmo/.codex/worktrees/premise-symbolic-adoption/qcore-c/private/premise-symbolic-overlap-admission/focused-3/lean/QCore/SymbolicOverlapAdmission.olean",
+      "QCore/SymbolicOverlapAdmission.lean"
+    ],
+    "cwd": "/home/cosmo/.codex/worktrees/premise-symbolic-adoption/qcore-c/proof",
+    "exit": 0,
+    "seconds": 0.18120956420898438
+  },
+  {
+    "name": "lean-audit",
+    "command": [
+      "lean",
+      "-DwarningAsError=true",
+      "AuditSymbolicOverlapAdmission.lean"
+    ],
+    "cwd": "/home/cosmo/.codex/worktrees/premise-symbolic-adoption/qcore-c/proof",
+    "exit": 0,
+    "seconds": 0.1447901725769043
+  }
+]

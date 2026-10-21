@@ -3730,6 +3730,19 @@ flow_operator = "|->" | "||->" | "!->" | "->|" ;
 IDs match `[a-z][a-z0-9_]*`. Every binary operation requires its own parentheses; no precedence or associativity is inferred. `|->` reuses MapsTo only inside this clause; elsewhere its state-clause meaning is unchanged. The lexer uses longest matching for three additional symbols `||->`, `!->`, `->|`; the contextual heads remain ordinary words. `flow(ID)` resolves only a same-declaration entry; atom IDs resolve only existing graph atoms. Full reference validation rejects missing IDs, duplicate entries, cycles, excessive expansion and terminal composition below the root, including through references. Every branch and entry is checked. The exact limits, three-valued truth tables, positive-refutation requirement, explicit discharged terminal condition, source/model/Context replay and evidence-only authority boundary are C04.18.3. These records add no graph field or premise, and inherited graph/flow identifiers are literal metadata independent of formal parameter renaming. The source-language expression grammar, scoped S3 and FFI vocabularies do not gain general flow expressions.
 
 
+### G05-lifecycle. Typed symbolic lifecycle clauses
+
+C04.18.4 admits the following source-version1 metadata through the existing resource, bounds and explicit resource-type-model views:
+
+```ebnf
+lifecycle_clause = "resource_lifecycle_v1", "(", entry_id, ",",
+                   lifecycle_operator, lifecycle_target, ")" ;
+lifecycle_operator = "|^+" | "|^-" ;
+lifecycle_target = ("resource" | "hypothesis"), "(", target_id, ")" ;
+```
+
+The enclosing source clause is `requires lifecycle_clause;`. Operators are atomic by longest match and remain unsupported in ordinary expressions, flow-v1 expressions and other contract vocabularies. No untyped operand, target path, nested lifecycle expression or trailing token is admitted. IDs are literal metadata with the exact bounds/reference/inheritance rules of C04.18.4. These forms retain typed symbolic intents only; they introduce no executable lifecycle or proof authority. Existing maps-to, flow, pipe and arithmetic spellings keep their identities.
+
 ## G05a. Contract inclusion and inheritance
 
 Card CONTRACT-INHERIT. A directive layer read by
