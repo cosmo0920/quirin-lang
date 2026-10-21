@@ -102,6 +102,8 @@ def main():
         record['external_inputs_after']={p:sha(Path(p)) for p in record['external_inputs_before']}
         record['package_inputs_after']=tree_identity(PRIMARY/'build/cycle19/provider-packages-wave20/qcore.chunkio')
         record['retained_actual_driver_receipt']=str(out/'corpus/run.json')
+        record['actual_driver_receipt']=json.loads((out/'corpus/run.json').read_bytes())
+        assert record['actual_driver_receipt']['exit']==record['exit'] and record['actual_driver_receipt']['binary_sha256']==record['binary_sha256']
         assert record['external_inputs_before']==record['external_inputs_after'] and record['package_inputs_before']==record['package_inputs_after']
     stable = record['inputs_before']==record['inputs_after'] and all(record.get(k + '_after') == record[k] for k in ['source_identity', 'runner_sha256', 'profile_sha256', 'link_map_sha256', 'report_driver_sha256'] + ([] if route == 'corpus' else ['compile_database_sha256', 'selection_sha256']))
     if not stable or record['binary_sha256_after'] != record['binary_sha256'] or record['head_after'] != record['head']:

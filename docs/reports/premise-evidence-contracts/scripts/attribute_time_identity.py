@@ -17,7 +17,10 @@ audit_command=invocation['command']
 if a.route=='corpus':
  # pinned_route.rs:98 reads the source root's production database; the
  # explicit Monkey library DB is appended later and has no mk_bin/monkey.c.
- database=Path(invocation['source_root'])/'build/compile_commands.json'
+ audit_command=invocation['actual_driver_receipt']['command']
+ assert audit_command[:3]==[invocation['binary'],'pinned','--jobs']
+ assert Path(audit_command[4])==Path(invocation['source_root'])
+ database=Path(audit_command[4])/'build/compile_commands.json'
 else:
  database=Path(audit_command[audit_command.index('--compile-database')+1])
 raw_database=database.read_bytes();entries=[entry for entry in json.loads(raw_database) if entry['file'].endswith('/lib/monkey/mk_bin/monkey.c')];assert len(entries)==1
