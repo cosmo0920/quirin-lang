@@ -1,0 +1,228 @@
+{
+  "schema": "premise-local-source-binding-map.v1",
+  "authority": "bounded checker/native observation only; no typed registry or universal truth",
+  "new_properties": {
+    "cjson.native-local-representation.v1": {
+      "environment": "cjson-native-single-thread-allocated-ledger.v1",
+      "actual_fixture": "cJSON_CreateArray and cJSON_CreateNumber(i), i=0..n-1; n0..4 and every valid detach index. These11specific constructed cases do not cover all possible heaps of those sizes.",
+      "subjects": "Each before/after snapshot is a separate case-local environment; no identity/lifetime transport across cases or address reuse.",
+      "new_atoms": {
+        "finite_entry_equations": "QCore.LocalSourceBindings.finiteEntryEquations",
+        "finite_detach_post": "QCore.LocalSourceBindings.finiteDetachPost",
+        "incomplete_fixed_case_domain": "QCore.LocalSourceBindings.incompleteFixedCaseDomain"
+      },
+      "prerequisites": [
+        "native-driver-executed-held-source",
+        "allocation-ledger-live-until-snapshot",
+        "single-thread-harness-no-callback-hooks"
+      ],
+      "native_compiler_boundary": "Observed compiler/native execution, no attestation; actual compile preprocessing must equal typed checked projection"
+    },
+    "libc.recorded-domain.local-accepted-predicates.v1": {
+      "environment": "Each actual held original Context, raw/preprocessed input, actual compile task or historical preimage, effective ResourceContracts, exact selected recorded owner/declaration domain",
+      "proposition": "Every independently held successful observation in that finite recorded domain is recollected identically with all recorded local predicates true and actual declaration consultation.",
+      "not_claimed": "Every relevant guarded C read, external C library mode truth, whole-C extraction or Rust-Lean correspondence",
+      "prerequisites": [
+        "held actual source and compilation input correspondence",
+        "exact prepared source and definition inventory",
+        "independently held original graph/atom/formal artifact bytes",
+        "exact nine-coordinate Context and binary evidence version"
+      ]
+    }
+  },
+  "artifacts": {
+    "proof/QCore/LocalSourceBindings.lean": {
+      "sha256": "bb901fba0b6a051abc4227971aaa9b7ce4afd2b26a00dbf7823c78347c35270e"
+    },
+    "proof/AuditLocalSourceBindings.lean": {
+      "sha256": "2aaa3ce31348e9120bfd4ff525261cafd6507c84f576229c62df012236e60fed"
+    },
+    "proof/QCore/CjsonRepresentationPremises.lean": {
+      "sha256": "7f14f533993fb7551001a235992e85d25bddbed36a5d1db7e1c3fb484bcb4c07"
+    },
+    "proof/QCore/LibcReadingPremises.lean": {
+      "sha256": "a527d3eb0c3d9fc237a749f2ace67e3960e25eb894c9475b17ccabcbb94e75cd"
+    },
+    "crates/qcore-c-gateway/src/reading_site_domain.rs": {
+      "sha256": "55d7d5a12782e8c67451f0d0457870d4f190108a1a96427cc7f82d23ec2add98"
+    },
+    "crates/quirin-source-analysis/src/cjson_local_binding.rs": {
+      "sha256": "5a407f085f7874194c0bec3df52d1a203bc4e983046e94af5781daf175605af5"
+    }
+  },
+  "original_cjson_atoms": {
+    "detach_chain": {
+      "original_atom_sha256": "1d259f6448e38d5b4b400ea8d22d4cbf9f7a5a3e9f84ee586950f1b3a260a132",
+      "original_proposition": "QCore.CjsonRepresentationPremises.chain",
+      "finite_interpretation": "Checked only over11specific native case-local environments, using exact node/child/next/prev data and allocation guard; ownedChild means finite selected sequence membership only",
+      "universal_disposition": "open",
+      "prose_equivalence": "open"
+    },
+    "detach_distinct": {
+      "original_atom_sha256": "c779bf957841c4c91d8bfa1e6f981c94ff01617e4b5076fc8e3c29b87876a156",
+      "original_proposition": "QCore.CjsonRepresentationPremises.distinct",
+      "finite_interpretation": "Checked only over11specific native case-local environments, using exact node/child/next/prev data and allocation guard; ownedChild means finite selected sequence membership only",
+      "universal_disposition": "open",
+      "prose_equivalence": "open"
+    },
+    "detach_empty": {
+      "original_atom_sha256": "d5afe8330ea3b476d16e1b429afc6ee85d5524ee8d573db403178ba85cd9c493",
+      "original_proposition": "QCore.CjsonRepresentationPremises.empty",
+      "finite_interpretation": "Checked only over11specific native case-local environments, using exact node/child/next/prev data and allocation guard; ownedChild means finite selected sequence membership only",
+      "universal_disposition": "open",
+      "prose_equivalence": "open"
+    },
+    "detach_first_prev": {
+      "original_atom_sha256": "23e3e9ec0d8b29d68cbec697ab2b56ec71d09724e4b3e01df60d4c49ff5e4043",
+      "original_proposition": "QCore.CjsonRepresentationPremises.firstPrev",
+      "finite_interpretation": "Checked only over11specific native case-local environments, using exact node/child/next/prev data and allocation guard; ownedChild means finite selected sequence membership only",
+      "universal_disposition": "open",
+      "prose_equivalence": "open"
+    },
+    "detach_last_next": {
+      "original_atom_sha256": "d74415af0dd413e954102d545991622896de9d08a0e16201526867569e2a0974",
+      "original_proposition": "QCore.CjsonRepresentationPremises.lastNext",
+      "finite_interpretation": "Checked only over11specific native case-local environments, using exact node/child/next/prev data and allocation guard; ownedChild means finite selected sequence membership only",
+      "universal_disposition": "open",
+      "prose_equivalence": "open"
+    },
+    "detach_link_targets": {
+      "original_atom_sha256": "dae74182726b0e4ac30fc6e15b0099e55faa3faddbed50a8b129c6d401254361",
+      "original_proposition": "QCore.CjsonRepresentationPremises.linkTargets",
+      "finite_interpretation": "Checked only over11specific native case-local environments, using exact node/child/next/prev data and allocation guard; ownedChild means finite selected sequence membership only",
+      "universal_disposition": "open",
+      "prose_equivalence": "open"
+    },
+    "detach_no_writer": {
+      "original_atom_sha256": "45714fdff02d46b98c8671b0eda8a584508e02958ad5fdda25e237ba48ada9df",
+      "original_proposition": "QCore.CjsonRepresentationPremises.noWriter",
+      "finite_interpretation": "Not supplied; no complete other-actor trace",
+      "universal_disposition": "open",
+      "prose_equivalence": "open"
+    },
+    "detach_parent_outside": {
+      "original_atom_sha256": "8575ad457239ada17b97add19bb8a4e5815c1f78b2469dd681ada6551d9d6f2f",
+      "original_proposition": "QCore.CjsonRepresentationPremises.parentOutside",
+      "finite_interpretation": "Checked only over11specific native case-local environments, using exact node/child/next/prev data and allocation guard; ownedChild means finite selected sequence membership only",
+      "universal_disposition": "open",
+      "prose_equivalence": "open"
+    },
+    "detach_predecessor": {
+      "original_atom_sha256": "edb91c434ed5847fa2ac36c757c5b3e3a890543a0b1c4e8cdce8042fb3926a47",
+      "original_proposition": "QCore.CjsonRepresentationPremises.predecessor",
+      "finite_interpretation": "Checked only over11specific native case-local environments, using exact node/child/next/prev data and allocation guard; ownedChild means finite selected sequence membership only",
+      "universal_disposition": "open",
+      "prose_equivalence": "open"
+    }
+  },
+  "original_libc_atoms": {
+    "libc.__errno_location.nested_call_admission.checked_reading_route.v1": {
+      "declaration": "__errno_location",
+      "atom": "checked_reading_route",
+      "recorded_local_predicates": {
+        "scalar-condition": [
+          "exact-zero-argument-scalar-condition",
+          "ordinary-instantiation-succeeded",
+          "instantiated-identity-call"
+        ],
+        "nested-argument": [
+          "whole-argument-or-checked-dereference",
+          "all-sibling-nested-sites-accepted",
+          "one-level-no-inner-call",
+          "inner-arity-and-data-actuals-accepted"
+        ]
+      },
+      "universal_disposition": "open",
+      "external_mode_truth": "open"
+    },
+    "libc.__errno_location.nested_call_admission.scalar_declaration.v1": {
+      "declaration": "__errno_location",
+      "atom": "scalar_declaration",
+      "recorded_local_predicates": {
+        "scalar-condition": [
+          "single-level-scalar-pointer-declaration"
+        ],
+        "nested-argument": [
+          "whole-argument-or-checked-dereference"
+        ]
+      },
+      "universal_disposition": "open",
+      "external_mode_truth": "open"
+    },
+    "libc.__errno_location.nested_call_admission.untracked_effects.v1": {
+      "declaration": "__errno_location",
+      "atom": "untracked_effects",
+      "recorded_local_predicates": {
+        "scalar-condition": [
+          "instantiated-identity-call",
+          "declared-no-result-or-container-effect"
+        ],
+        "nested-argument": [
+          "declared-no-custody-result",
+          "declared-all-parameters-borrowed-no-container-effect"
+        ]
+      },
+      "universal_disposition": "open",
+      "external_mode_truth": "open"
+    },
+    "libc.strerror.nested_call_admission.checked_nested_site.v1": {
+      "declaration": "strerror",
+      "atom": "checked_nested_site",
+      "recorded_local_predicates": {
+        "nested-argument": [
+          "whole-argument-or-checked-dereference",
+          "all-sibling-nested-sites-accepted"
+        ]
+      },
+      "universal_disposition": "open",
+      "external_mode_truth": "open"
+    },
+    "libc.strerror.nested_call_admission.contract_in_force.v1": {
+      "declaration": "strerror",
+      "atom": "contract_in_force",
+      "recorded_local_predicates": {
+        "nested-argument": [
+          "in-force-loaded-contract"
+        ]
+      },
+      "universal_disposition": "open",
+      "external_mode_truth": "open"
+    },
+    "libc.strerror.nested_call_admission.no_custody_result.v1": {
+      "declaration": "strerror",
+      "atom": "no_custody_result",
+      "recorded_local_predicates": {
+        "nested-argument": [
+          "declared-no-custody-result"
+        ]
+      },
+      "universal_disposition": "open",
+      "external_mode_truth": "open"
+    },
+    "libc.strerror.nested_call_admission.parameters_borrowed.v1": {
+      "declaration": "strerror",
+      "atom": "parameters_borrowed",
+      "recorded_local_predicates": {
+        "nested-argument": [
+          "declared-all-parameters-borrowed-no-container-effect"
+        ]
+      },
+      "universal_disposition": "open",
+      "external_mode_truth": "open"
+    },
+    "libc.strerror.nested_call_admission.remaining_site_checks.v1": {
+      "declaration": "strerror",
+      "atom": "remaining_site_checks",
+      "recorded_local_predicates": {
+        "nested-argument": [
+          "one-level-no-inner-call",
+          "outer-position-borrowed-or-declared-tail",
+          "inner-arity-and-data-actuals-accepted",
+          "enclosing-call-final-local-checks-accepted"
+        ]
+      },
+      "universal_disposition": "open",
+      "external_mode_truth": "open"
+    }
+  }
+}

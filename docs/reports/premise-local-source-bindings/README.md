@@ -19,8 +19,7 @@ private byte copies, a fixed single-thread harness and UBSan; pinned audit C
 inputs are untouched. Compiler/native execution is observed, not attested or
 proved.
 
-The native domain is eleven cases: the empty array and every valid detach index
-for lengths one through four. Concrete identities, allocations and link fields
+The native domain is eleven specific constructed cases: an empty array and every valid detach index for arrays built by cJSON_CreateArray/cJSON_CreateNumber(i), i=0..n-1, for lengths one through four. This covers those actual fixtures, not every possible heap of those sizes. Concrete identities, allocations and link fields
 are read while the harness retains its objects. Rust checks distinct identities,
 parent exclusion, exact child/head and finite next-chain equations, first-prev
 last, null last-next, predecessor equations and link targets in the retained
@@ -108,8 +107,7 @@ cargo run -p qcore-audit --example libc_local_source_domains -- \
 ```
 
 The output records all attempted domains and conservative refusals; a nonzero
-exit never becomes source support. The 122 historical corpus observations remain
-binding-only until their own actual source/configuration/domain replay succeeds.
+exit never becomes source support. The actual new BASE configured replay passes24/24 system and2/2 slice observations in all three selected recorded domains; [complete evidence](production-base-configured.json) retains actual source/compile/task/Context and impact records. Corpus122 remain binding-only until their own actual source/configuration/domain replay succeeds; [the actual auxiliary-DB correction](auxiliary-db-correction.md) records why no known-doomed probe was launched.
 
 Integrator items: preserve all old frozen bytes and 810 follow-up tracking;
 amend only actually checked subobligations of
