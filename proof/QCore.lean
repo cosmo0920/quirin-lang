@@ -1,3 +1,4 @@
+import QCore.SymbolicOverlapAdmission
 import QCore.PremiseMetadataBridge
 import QCore.ContractLifecycle
 import QCore.PluginSourceWitnesses

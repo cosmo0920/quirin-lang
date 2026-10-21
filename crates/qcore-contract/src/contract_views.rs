@@ -881,6 +881,36 @@ fn pointer_nominal(type_source: &str) -> Option<&str> {
     inner.rsplit(',').next()
 }
 
+// These heads identify a validation obligation, not permission to skip a clause.
+fn symbolic_metadata_head(expression: &str) -> bool {
+    crate::premise_flow::is_clause(expression)
+        || crate::contract_lifecycle::is_clause(expression)
+}
+
+#[derive(PartialEq, Eq)]
+struct ValidatedSymbolicMetadata {
+    flows: BTreeMap<String, qcore_schemas::premise_flow::Expr>,
+    lifecycle: BTreeMap<String, crate::contract_lifecycle::Entry>,
+}
+
+fn validated_symbolic_metadata(
+    view: &ViewDeclaration,
+    graph: &qcore_schemas::hypothesis::Graph,
+) -> Result<ValidatedSymbolicMetadata, String> {
+    // The caller first ran the complete property loader and original graph /
+    // erasure checks. Still validate every entry, reference and placement here;
+    // neither an unused entry nor a familiar head is a neutral fallback.
+    let program = parse_source_program(&format!("module contract;\n{}\n", view.text))
+        .map_err(|error| error.to_string())?;
+    let declaration = program.declarations.iter()
+        .find(|declaration| declaration.value.name == view.name)
+        .ok_or("null view: missing actual declaration for metadata replay")?;
+    Ok(ValidatedSymbolicMetadata {
+        flows: crate::premise_flow::declaration(&declaration.value, graph)?,
+        lifecycle: crate::contract_lifecycle::declaration(&declaration.value, graph)?,
+    })
+}
+
 /// Positional agreement of two declarations' signatures: equal arity, equal
 /// ABI category at every position and for the result.
 /// Card NULL-SAFETY-PROPERTY: the bounds declaration of a
@@ -894,7 +924,9 @@ fn check_null_deref_only(
     // passes the full loader and same-name legacy-erasure replay. A familiar
     // head alone never licenses a new semantic clause or premise.
     let has_metadata = declaration.clauses.iter().any(|clause| {
-        clause.kind == "requires" && crate::hypothesis::is_clause(&clause.expression)
+        crate::hypothesis::is_clause(&clause.expression)
+    }) || [declaration, resource].into_iter().any(|view| {
+        view.clauses.iter().any(|clause| symbolic_metadata_head(&clause.expression))
     });
     if has_metadata {
         let sources = BTreeMap::from([(
@@ -907,8 +939,10 @@ fn check_null_deref_only(
             format!("module contract;\n{}\n", resource.text),
         )]);
         let resource_graphs = crate::hypothesis::replay(&resource_sources)?;
-        let graph = &bounds_graphs[&declaration.name];
-        let peer = &resource_graphs[&resource.name];
+        let graph = bounds_graphs.get(&declaration.name)
+            .ok_or("null view: missing replayed bounds graph")?;
+        let peer = resource_graphs.get(&resource.name)
+            .ok_or("null view: missing replayed resource graph")?;
         // Compare proposed metadata only. Original premise vectors, graph
         // identities and property Contexts are independently retained.
         for (name, attachment) in &graph.refinements {
@@ -928,13 +962,22 @@ fn check_null_deref_only(
                 return Err("null view: proposed atom differs from resource peer".into());
             }
         }
+        // Match complete maps, including IDs and every AST / typed target.
+        // Contexts, legacy premise vectors and graph identities stay separate;
+        // this comparison produces no interpretation or evidence disposition.
+        if validated_symbolic_metadata(declaration, graph)?
+            != validated_symbolic_metadata(resource, peer)?
+        {
+            return Err("null view: neutral symbolic metadata differs from resource peer".into());
+        }
     }
     let only = !declaration.clauses.is_empty()
         && declaration.clauses.iter().all(|clause| {
             (clause.kind == "requires" && clause.expression == "bounds_contract_v1")
                 || (has_metadata
                     && clause.kind == "requires"
-                    && crate::hypothesis::is_clause(&clause.expression))
+                    && (crate::hypothesis::is_clause(&clause.expression)
+                        || symbolic_metadata_head(&clause.expression)))
                 || clause.kind == "quant null-deref"
                 // Card NULL-CANDIDATE-TRIAGE: the null property's member and
                 // result declarations (G05e), which custody never reads; card
