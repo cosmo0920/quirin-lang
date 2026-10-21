@@ -408,6 +408,7 @@ import QCore.CjsonRepresentationPremises
 import QCore.HypothesisGraph
 import QCore.LibcReadingPremises
 import QCore.CallFreeConditionReads
+import QCore.ScalarReadIdentity
 import QCore.PremiseRefinement
 import QCore.LibcReadingSiteEvidence
 import QCore.PluginPremiseDecomposition

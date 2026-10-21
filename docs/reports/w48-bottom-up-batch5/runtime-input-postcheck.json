@@ -1,0 +1,12 @@
+{
+  "base": "d08dcca8b77b35417a999474b608cedfe821cfdb",
+  "archive_reference": "d5d881126d42b38fbb5581bbb58266bd042efe9c",
+  "captured_at": "2026-10-21T17:31:10.782787+00:00",
+  "timing": "during first corpus BASE run, after system/slice; postcheck of initial git archive, not pre-run file-manifest capture",
+  "files": 24991,
+  "all_exact_git_archive_bytes_equal": true,
+  "manifest": "private/w48-batch5/full-input-postcheck.json",
+  "manifest_sha256": "088a089ceabe136bd8e9ec7edaf6ad6c0fe24c8bb94e0fe966bfcc403b07e269",
+  "binary_sha256": "e87e886d5aa0d680d65abcc0896545de0758238197b085ec72b51f60c60ca11f",
+  "scope": "Content postcheck of the frozen Git archive plus separately built analyzer; not a before-run whole-input manifest or environment attestation."
+}

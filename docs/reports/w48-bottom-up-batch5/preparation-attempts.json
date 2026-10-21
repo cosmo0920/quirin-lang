@@ -1,0 +1,17 @@
+[
+  {
+    "command": "git switch -c codex/w48-bottom-up-batch5",
+    "reason": "sandbox .git read-only; retried authorized escalation successfully",
+    "individual_exit": "not separately captured; combined command exited2 after task_context rejected the invalid topic"
+  },
+  {
+    "command": "task_context.py --topic evidence",
+    "exit": 2,
+    "reason": "invalid topic name; reran valid source/gateway topics"
+  },
+  {
+    "command": "get_worktree_creation_status 2dde597b-9f15-4b84-b6ca-cfe58548f266",
+    "tool_error": true,
+    "reason": "operation unavailable in subagent context; list_artifacts and git worktree inventory independently confirmed attached exact-base worktree"
+  }
+]
