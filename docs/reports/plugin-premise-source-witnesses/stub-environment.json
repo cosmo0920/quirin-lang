@@ -1,0 +1,83 @@
+{
+  "version": 1,
+  "role": "descriptive complete boundary catalog; admission executes independently held embedded producer bytes, not this prose",
+  "producer": {
+    "path": "crates/quirin-source-analysis/src/plugin_source_witnesses/observe.py",
+    "sha256": "444795afc1263f3c84572e61155d4963cfcdd0d19202507390937309c5a54440"
+  },
+  "scope": "20 named single-thread local fixture invocations; actual original loader function bodies unchanged",
+  "preflight": "Native sizeof/alignment/used-field-offset checks perform host loader operations before the selected function invocation. Duplicate no-loader-call predicate excludes preflight.",
+  "toolchain_environment": {
+    "SOURCE_DATE_EPOCH": "1761004800",
+    "compiler": "/usr/bin/clang; actual binary bytes/banner/target in observation",
+    "headers": "527actual dependency-byte identities, frozen selected compile records",
+    "host_loader": "Local POSIX loader correctness is an explicit premise; no attestation."
+  },
+  "boundaries": [
+    {
+      "boundary": "rd_list_find",
+      "behavior": "Declared branch selector returns the skeleton only in rk_duplicate, otherwise NULL; comparator is not executed.",
+      "limit": "No arbitrary real rd_list membership/closure claim."
+    },
+    {
+      "boundary": "rd_list_add",
+      "behavior": "Retains the actual newly allocated plugin pointer in a fixture variable and emits retain.",
+      "limit": "No proof of real list insertion or transitive ownership."
+    },
+    {
+      "boundary": "rd_calloc/rd_strdup/rd_free",
+      "behavior": "Standard libc allocation/copy/free wrappers; selected RK cases assume successful allocations.",
+      "limit": "Abort-on-allocation semantics outside selected successful inputs are excluded."
+    },
+    {
+      "boundary": "rd_dl_open/rd_dl_sym/rd_dl_close",
+      "behavior": "Actual host POSIX dlopen/dlsym/dlclose through instrumented boundary wrappers.",
+      "limit": "No deployed artifact, arbitrary loader/refcount/unload theorem."
+    },
+    {
+      "boundary": "rd_kafka_dbg0/flb_error/flb_errno",
+      "behavior": "Diagnostics replaced by no-ops.",
+      "limit": "No claims about logging side effects."
+    },
+    {
+      "boundary": "flb_malloc/flb_calloc/flb_strdup/flb_free",
+      "behavior": "Instrumented standard libc helpers; malloc third-allocation failure only in flb_c_context_alloc_fail.",
+      "limit": "No production allocator/hook semantics or unrelated failure completeness."
+    },
+    {
+      "boundary": "memcpy",
+      "behavior": "Actual libc memcpy followed by full immediate memcmp assertion.",
+      "limit": "No arbitrary caller aliasing/extent proof; selected real-header object sizes only."
+    },
+    {
+      "boundary": "mk_list_add",
+      "behavior": "Calls the actual real-header inline MK helper, then checks next/prev reciprocity.",
+      "limit": "No global list ownership, concurrent mutation or whole registry closure."
+    },
+    {
+      "boundary": "flb_sds_create/flb_sds_destroy",
+      "behavior": "Path storage is an explicit strdup/free stub.",
+      "limit": "No full SDS representation/capacity/allocator behavior claim; destroy_plugin is not native-exercised."
+    },
+    {
+      "boundary": "flb_api_create/flb_api_destroy",
+      "behavior": "Returns one static fixture API object; destruction is no-op.",
+      "limit": "Only successful API-context prerequisite is modeled; no production API allocation/lifetime proof."
+    },
+    {
+      "boundary": "flb_proxy_register_output/input/custom",
+      "behavior": "Explicit link-event stubs after selected Go handler returns zero.",
+      "limit": "No actual callback-set assignment, registration success or foreign callback neutrality proof."
+    },
+    {
+      "boundary": "proxy_go_input_register/proxy_go_custom_register",
+      "behavior": "Return -1; unreachable in selected output-only cases.",
+      "limit": "Go input/custom implementations and their callback sets excluded."
+    },
+    {
+      "boundary": "fixture conf_init/FLBPluginRegister/Init/PreRegister",
+      "behavior": "Actual locally compiled real-header fixture DSO functions, with selected literal return/field behaviors and explicit callback entry/success events.",
+      "limit": "Fixtures are not deployed plugins; no universal callback-frame/custody/noninterference claim."
+    }
+  ]
+}
