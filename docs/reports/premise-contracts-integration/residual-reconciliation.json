@@ -1,0 +1,10 @@
+{
+  "followups": 807,
+  "duplicates": 0,
+  "retired": [],
+  "retained_open": [
+    "CJSON-REPRESENTATION-PROSE-AND-SOURCE-BINDING",
+    "LIBC-READING-PREMISES-TYPED-DISCHARGE"
+  ],
+  "note": "Exact three-way hand-maintained union retains both partial-discharge amendments. No residual is retired and no claimed source truth."
+}

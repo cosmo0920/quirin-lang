@@ -1,0 +1,36 @@
+{
+  "cards": [
+    "premise-evidence-contracts",
+    "libc-reading-site-evidence"
+  ],
+  "verify_applied": true,
+  "verdicts": {},
+  "no_section": {
+    "libc-reading-site-evidence": "Read full README and next-cycle.md. No dedicated integrator section; source/proof/records and exact-context replay receipts merged, existing LIBC-READING-PREMISES-TYPED-DISCHARGE amendment retained, final matrix regenerated. Complete-domain/source-mode/correspondence and operator semantics remain explicitly open.",
+    "premise-evidence-contracts": "Read complete final README and handoff; no dedicated integrator section. Deliberate schema20 Cargo/lock/provider updates, cJSON clause pins and both Lean models retained. Historical classifier-helper erratum remains beside frozen predecessor. Existing CJSON source/prose follow-up amended without retirement; matrix uses exact three-way hand-maintained union. Joint measured gate and card integration receipts follow."
+  },
+  "supplemental": [
+    {
+      "card": "libc-reading-site-evidence",
+      "status": "applied",
+      "files": [
+        "docs/STATUS.md",
+        "docs/development/increments/wave-48-part10.md",
+        "docs/reviews/r0_3/acceptance_matrix.json"
+      ],
+      "deferred": "Existing LIBC-READING-PREMISES-TYPED-DISCHARGE remains open. All eight universal atoms Open; no universal truth or verdict invalidation."
+    },
+    {
+      "card": "premise-evidence-contracts",
+      "status": "applied",
+      "files": [
+        "crates/qcore-schemas/Cargo.toml",
+        "compiler/tests/qcore_contract_corpus.rs",
+        "proof/QCore.lean",
+        "docs/QCORE_CONTRACT_SPEC_r0_3.md",
+        "docs/QCORE_IMPLEMENTED_GRAMMARS_r0_3.md"
+      ],
+      "deferred": "CJSON-REPRESENTATION-PROSE-AND-SOURCE-BINDING remains open; reference integrity and proposed conjunction do not establish prose equivalence or C source truth."
+    }
+  ]
+}

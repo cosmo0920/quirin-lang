@@ -1,0 +1,20 @@
+{
+  "status": "explicitly BORROWED completed generic-card provider measurement, not fresh root provider run",
+  "measured_source": "5a556d827",
+  "completed_card_tip": "c6b9d8009024465f7c15e9a188121a52fc6f72da",
+  "integration_source": "44951dbb4cb6c4a0780506dbd832b29323d07b22",
+  "equality_command": "git diff --exit-code c6b9d8009 HEAD -- providers crates/qcore-schemas crates/qcore-contract",
+  "equality_exit": 0,
+  "exact_git_trees": {
+    "providers": "f0a37b5764ca96f53b5db1c536cf51a82cefafc0",
+    "crates/qcore-schemas": "dcbc4a84ce9b9a7439e2b3f4138afacfdd48797b",
+    "crates/qcore-contract": "74196df55c4a9542e10877cb808b4cde44cca2b9"
+  },
+  "rust_passed": 133,
+  "rust_failed": 0,
+  "rust_ignored": 1,
+  "python_passed": 25,
+  "all_five_packages": "build and verify exit0",
+  "source_receipts": "docs/reports/premise-evidence-contracts/command-receipts.json",
+  "private_logs": "/home/cosmo/.codex/worktrees/premise-decomposition-cycle1/qcore-c/private/premise-evidence-contracts/provider-1/"
+}

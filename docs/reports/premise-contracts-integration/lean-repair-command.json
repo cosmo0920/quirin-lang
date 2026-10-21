@@ -1,0 +1,11 @@
+{
+  "source": "32e6f5dda334d6a017a1be4dcb02f72a9138c6a6",
+  "command": [
+    "python3",
+    "scripts/check_lean_audits.py"
+  ],
+  "exit": 0,
+  "seconds": 16.00643253326416,
+  "log": "private/premise-contracts-integration/lean-repair-1/lean.log",
+  "repair": "Only proof/QCore.lean adds missing LibcReadingSiteEvidence import; Rust/models/statements unchanged."
+}

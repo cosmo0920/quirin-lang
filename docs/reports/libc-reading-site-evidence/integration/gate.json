@@ -1,0 +1,13 @@
+{
+  "note": "Associated card merge681ab8e8d; joint repaired measuredtip32e6f5dda. Combined source44951dbb4 after merges681ab8e8d/libc and44951dbb4/concrete: actual unrestricted8405Rust/0failed/15ignored(526units539summaries),fmt/Clippy/examples/submodules/release/Python374 all0. InitialLean1 exposed missing LibcReadingSiteEvidence libraryimport; repair32e6f5dda registers it and full library407jobs/351audits pass0. Rust/checker/contracts/models/theoremstatements unchanged by repair, source equality explicitlychecked. Provider133Rust/1ignored/25Python/allfivepackages is BORROWED completed generic-card measurement for byte-identical providers+schemas+contract trees; not fresh rootprovidermeasurement. Each card owns its fresh six-audit census, no composed census asserted. Actual local Clang recording accompaniesgate. Final gate-backed committedmatrixPython follows receiptcommit.",
+  "workspace_tests": 8405,
+  "provider_tests": 133,
+  "python_evidence_validator_tests": 374,
+  "reevaluation_probe_exit": 0,
+  "reevaluation_followup_exit": 0,
+  "cargo_fmt": "clean",
+  "cargo_clippy": "clean",
+  "standing_gate": "complete after recorded Lean registration repair",
+  "lean_audits": 351,
+  "clang": "present: Ubuntu clang version 21.1.8 (6ubuntu1)"
+}

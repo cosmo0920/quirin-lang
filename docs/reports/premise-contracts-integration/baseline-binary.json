@@ -1,0 +1,21 @@
+{
+  "source": "44951dbb4cb6c4a0780506dbd832b29323d07b22",
+  "command": [
+    "cargo",
+    "build",
+    "--release",
+    "-p",
+    "qcore-audit",
+    "--bin",
+    "quirin-audit"
+  ],
+  "exit": 0,
+  "release_log": "/home/cosmo/Documents/GitHub/qcore-c/private/premise-contracts-integration/gate-1/release.log",
+  "binary": "/home/cosmo/Documents/GitHub/qcore-c/private/premise-contracts-integration/baseline/quirin-audit",
+  "sha256": "17b72dc72bc23a6556fdba576179d4b46d34f04dc34704c7770e72dbb2a7a6bf",
+  "features": "default",
+  "standing_gate": "Rust8405passed; Lean registration repair pending, not a completed joint gate",
+  "rustc": "rustc 1.99.0 (b940084d7 2026-09-28)\nbinary: rustc\ncommit-hash: b940084d7eb6a299eb4bfeb8e34901bc051e7ac4\ncommit-date: 2026-09-28\nhost: x86_64-unknown-linux-gnu\nrelease: 1.99.0\nLLVM version: 23.1.1\n",
+  "cargo": "cargo 1.99.0 (5f94df478 2026-08-27)\n",
+  "note": "Actual successful unrestricted root release build. Binary is immutable; previous c5c baseline retained separately. Final root receipt commits may differ only in documentation and proof root registration; source equality must be disclosed."
+}
