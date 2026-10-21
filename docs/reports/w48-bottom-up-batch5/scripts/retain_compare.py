@@ -21,6 +21,15 @@ for side,directory in [('base',a.base.resolve()),('tip',a.tip.resolve())]:
  for key in ['source_identity','runner_sha256','profile_sha256','link_map_sha256','report_driver_sha256']+([] if a.route=='corpus' else ['compile_database_sha256','selection_sha256']):
   assert invocation[key]==invocation[key+'_after'],(side,key)
  dest=a.out/side;dest.mkdir();(dest/'invocation.json').write_bytes((directory/'invocation.json').read_bytes());values={};manifest[side]={}
+ for meta in ['run.json','completion.json']:
+  meta_paths=[path for path in [directory/meta,directory/'corpus'/meta] if path.is_file()]
+  assert len(meta_paths)<=1,(side,meta,'ambiguous provenance')
+  if meta_paths:
+   raw=meta_paths[0].read_bytes();(dest/meta).write_bytes(raw);manifest[side][meta]=dict(source=str(meta_paths[0]),bytes=len(raw),sha256=sha(raw))
+   if meta=='run.json' and a.route=='corpus':
+    actual=json.loads(raw);assert actual['exit']==0 and actual['binary_sha256']==invocation['binary_sha256']
+  elif a.route=='corpus' and meta=='run.json':raise AssertionError('pinned actual-wrapper run.json missing')
+
  for label,name in names.items():
   candidates=[directory/name,directory/'corpus'/name]
   paths=[path for path in candidates if path.is_file()]

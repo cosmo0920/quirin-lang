@@ -19,7 +19,7 @@ def sha(path):
 
 
 def tree_identity(root):
-    return {str(p.relative_to(root)):sha(p) for p in sorted(root.rglob("*")) if p.is_file() and "target" not in p.relative_to(root).parts}
+    return {str(p.relative_to(root)):sha(p) for p in sorted(root.rglob("*")) if p.is_file() and p.relative_to(root).parts[0] != "target"}
 
 
 def source_identity(source):
