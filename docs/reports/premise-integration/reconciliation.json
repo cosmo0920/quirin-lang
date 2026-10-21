@@ -1,0 +1,71 @@
+{
+  "cards": [
+    "premise-decomposition-cycle1",
+    "premise-decomposition-cycle1b",
+    "w48-bottom-up-batch4"
+  ],
+  "verify_applied": true,
+  "verdicts": {
+    "w48-bottom-up-batch4#for-the-integrator#1": {
+      "verdict": "applied",
+      "verify": [
+        {
+          "file": "docs/STATUS.md",
+          "contains": "W48-BOTTOM-UP-BATCH4"
+        },
+        {
+          "file": "docs/development/increments/wave-48-part10.md",
+          "contains": "967\u2192973"
+        },
+        {
+          "file": "docs/reviews/r0_3/acceptance_matrix.json",
+          "contains": "cio_chunk_is_up remains Unknown"
+        }
+      ]
+    },
+    "w48-bottom-up-batch4#for-the-integrator#2": {
+      "verdict": "applied",
+      "verify": [
+        {
+          "file": "docs/STATUS.md",
+          "contains": "W48-BOTTOM-UP-BATCH4"
+        },
+        {
+          "file": "docs/development/increments/wave-48-part10.md",
+          "contains": "967\u2192973"
+        },
+        {
+          "file": "docs/reviews/r0_3/acceptance_matrix.json",
+          "contains": "cio_chunk_is_up remains Unknown"
+        }
+      ]
+    }
+  },
+  "no_section": {
+    "premise-decomposition-cycle1": "Checked README final inline Integrator list paragraph; heading is not recognized by sweep. Models, controls and both source-census pins merged, STATUS/history/index retained, generator unions named residuals. Provider tree restored, and frozen artifacts preserved. See supplemental records.",
+    "premise-decomposition-cycle1b": "Checked README Integrator list and follow-ons heading, not recognized by sweep. Union retains models/count pins/history/STATUS/index/residual; no new runtime name exception. See supplemental records."
+  },
+  "supplemental": [
+    {
+      "card": "premise-decomposition-cycle1",
+      "status": "applied",
+      "files": [
+        "compiler/tests/qr_lexical_selector_census.rs",
+        "compiler/tests/qr_print_route_census.rs",
+        "proof/QCore.lean",
+        "docs/STATUS.md"
+      ],
+      "deferred": "Neutral attachment/prose-source binding remains named CJSON-REPRESENTATION-PROSE-AND-SOURCE-BINDING; next card underway."
+    },
+    {
+      "card": "premise-decomposition-cycle1b",
+      "status": "applied",
+      "files": [
+        "compiler/tests/qcore_contract_corpus.rs",
+        "proof/QCore.lean",
+        "docs/STATUS.md"
+      ],
+      "deferred": "LIBC-READING-PREMISES-TYPED-DISCHARGE stays registered; no source truth or operator claim."
+    }
+  ]
+}

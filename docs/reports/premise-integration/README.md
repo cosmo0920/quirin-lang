@@ -19,7 +19,27 @@ attachment must preserve that original fact and exact reader identity. Libc
 already contains eight concrete opaque atoms, with conditional formal models;
 no evidence is promoted to truth and no typed consumer is introduced here.
 
-The merged standing gate is pending. Individual card gates are retained as
-individual evidence. All integration commands, exits and private log paths will
-be recorded after the run. Conditional provider evidence must identify the exact
-provider bytes and must not be mislabeled as a fresh integration run.
+The merged standing gate on source `c5c298db2` passes **8,387 Rust tests / 0 failed / 15 ignored**
+(524 units / 537 summaries), **349 Lean audits**, **374 Python tests**, submodules,
+formatting, Clippy and both reevaluation examples. Every command exits0;
+[command receipts](command-receipts.json) retain actual absolute private log paths.
+The initial sandbox run fails108 native/sanitizer/confinement tests and its
+submodule initialization fails128; both attempts remain in
+[validation attempts](validation-attempts.json). A complete unrestricted rerun
+passes without any source, assertion or policy change. Initial and final Rust
+summaries are archived separately.
+
+The provider tree exactly equals the completed libc card. Its133Rust/25Python
+and five package rebuild/verify outcomes are explicitly borrowed evidence,
+[bound to the card receipt](provider-provenance.json), not a fresh provider run.
+Integration gate files beside each card record their own gate count versus the
+combined count, tested source and associated merge SHA. No composed production
+census is claimed. A separate Python confirmation follows the committed final
+regenerated matrix.
+
+The next implementation work proceeds from this exact merged base in isolated
+branches: production cJSON same-name graph attachment with independently bound
+formal/evidence references, and libc reading-site evidence recording/replay.
+These remain in progress and are not included in this integration completion.
+The immutable default-feature [base analyzer receipt](baseline-binary.json)
+binds their shared executable; each card must take independent fresh runs.

@@ -1,5 +1,13 @@
 # Current status and evidence boundaries
 
+The [serial premise/batch4 integration](reports/premise-integration/README.md)
+merges the three completed cards onto local main. The combined source `c5c298db2`
+passes8,387Rust/349Lean/374Python; initial sandbox failures and the unchanged-source
+unrestricted retry remain recorded. Provider133Rust/25Python/five-package evidence
+is explicitly borrowed from the byte-identical libc-card provider tree. The
+individual six-home and eight-home production measurements retain their scope;
+no composed production census or new hypothesis truth is claimed.
+
 The [libc premise decomposition cycle1B](reports/premise-decomposition-cycle1b/README.md) splits existing same-name reading premises into3 accessor and5 strerror opaque atoms, preserving the complete alternative and declared authority. Conditional Lean and real direct/summary controls plus exact-context impact maps add no semantic consumer. Six own audits preserve six-home corpus966Safe/3859Unknown/9provisionalUnsafe, system99/345/4, slice53Safe/346Unknown/4Pending/1; all5781 null records, static standing and full runtime records agree after explicit graph erasure and exact module/pin/root/environment/configuration/cwd/time attribution. This six-home receipt does not replace later seven-home coverage. Source gates pass8374Rust/347Lean, fresh providers133Rust/25Python/fivepackages; actual374 post-committed-matrix Python passes, with final regeneration confirmation recorded in the report. No premise/body truth or new Unsafe is inferred.
 
 Runtime source imports now support `#import std.fmt;` and relative `.qr` modules with or without the extension. Snapshot-only library APIs, explicit CLI filesystem loading and file-local capabilities are covered by the [runtime import report](reports/runtime-source-imports/README.md). The [contract-load-path check](reports/contract-check-load-path/README.md) resolves published contract inclusions as trusted resource-v1 assumptions, not C-body safety. The 421-source replay retains 168 accepted / 253 refused outcomes and all accepted emitted C; five pinned audit artifacts remain byte-identical.

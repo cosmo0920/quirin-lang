@@ -7,7 +7,7 @@
  "section_ownership": {
   "note": "Card D02-GEN-REST. Every top-level key of this file is labelled here, so no section is silently hand-maintained. `derived` sections are recomputed by the generator on every run and a hand edit to them is overwritten; `hand_maintained` sections are carried verbatim from the previous matrix, which is why a regeneration no longer reverts a later reconciliation; `integrator_supplied` numbers are measurements the generator cannot take.",
   "generator": "docs/reports/remaining-d02/build_matrix.py",
-  "carried_from": "private/premise-integration/union-previous.json",
+  "carried_from": "private/premise-integration/final-previous.json",
   "vocabulary": {
    "derived": "recomputed by docs/reports/remaining-d02/build_matrix.py from the named manifest, validated record or working tree; a hand edit here is overwritten on the next regeneration",
    "integrator_supplied": "a measurement this script cannot take; supplied through --gate, otherwise carried from the previous matrix and labelled as carried",
@@ -6754,8 +6754,8 @@
   "note": "providers/ is a separate Cargo workspace, excluded from the core workspace; P01 verified empirically that the core workspace builds and passes its full suite with providers/ moved out of the tree."
  },
  "validation": {
-  "note": "PREMISE-DECOMPOSITION-CYCLE1 on exact base2d8f6d342: report-owned nine opaque atoms/three conditional theorems; no production contract, classifier or semantic reader change. Root runner522units/535summaries/8376passed/15ignored/0failed; 347Lean audits. Conditional provider gate inapplicable: final provider contracts/SDK/schema unchanged; provider_tests133 carries exact-base integration evidence only, with no fresh provider/package claim. RootPython374passed after committed derived matrix; final gate-backed confirmation documented separately. Six fresh original-input audits compare equal under same six-home link-map context; scoped corpus966Safe/3859Unknown/9provisionalUnsafe, system99/345/4, slice53/346/4Pending/1provisionalUnsafe. Complete null/runtime dictionaries and every-row closed-world classification equal; roots/environment/inventory/timestamp metadata exactly reconstructed. Historical seven-home967 coverage remains separately dated. Candidate production companion rejected by actual classifier control; all attempts retained. Actual local Clang recording accompanies this file.",
-  "workspace_tests": 8376,
+  "note": "Serial integration on measured sourcec5c298db2ab7dedb5d39d29f4cfd097727e267b2; merges44fd04b8c,6d83fd57f,91cc0ea41. Actual unrestricted fullgate8387Rust/0failed/15ignored(524units537summaries),349Lean,374Python; allsteps0. Initial sandbox8279pass/108fail and submodule128 retained, complete source-unchanged unrestricted retry passes. Provider133Rust/25Python/all5packages is BORROWED measured cycle1B evidence for byte-identical provider source, not a fresh integration provider gate; exact provenance in provider-provenance.json. No composed production census; card six/eight-home measurements retain scope. Actual Clang recording from this integration run sits beside gate. Final gate-backed matrix confirmation follows commit.",
+  "workspace_tests": 8387,
   "provider_tests": 133,
   "python_evidence_validator_tests": 374,
   "lean_audits": 349,
@@ -7116,7 +7116,7 @@
   "cargo_clippy": "clean",
   "standing_gate": "complete",
   "full_language_conformance": false,
-  "measurement_provenance": "carried_from_previous_matrix: these numbers were NOT measured for this regeneration; pass --gate PATH with the standing-gate results of this checkpoint to replace them"
+  "measurement_provenance": "integrator_supplied (docs/reports/premise-integration/gate.json)"
  },
  "named_followups": [
   {
@@ -12730,5 +12730,5 @@
    "recorded_by": "PREMISE-DECOMPOSITION-CYCLE1B"
   }
  ],
- "updated": "2026-10-21 serial integration of premise cycles1/1B and W48 bottom-up batch4;807 followups; individual receipts retain their link contexts; composed standing gate pending."
+ "updated": "2026-10-21 serial integration merges44fd04b8c/6d83fd57f/91cc0ea41 at measuredsourcec5c298db2:8387Rust/349Lean/374Python;807followups. Provider133/25/all5packages borrowed byte-identical cycle1B evidence; no composed production census. Final committed-matrix Python confirmation recorded separately."
 }

@@ -1,0 +1,6 @@
+{
+  "before_after_equal": true,
+  "meaning": "No named tracker retired. Both new registered premise residuals and amended bottom-up residual retained; report-local residual census unchanged across integration record reconciliation.",
+  "before": "private/premise-integration/residuals-before.json",
+  "after": "private/premise-integration/residuals-after.json"
+}

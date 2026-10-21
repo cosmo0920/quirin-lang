@@ -1,0 +1,125 @@
+[
+  {
+    "name": "submodules",
+    "command": [
+      "git",
+      "submodule",
+      "update",
+      "--init",
+      "--recursive"
+    ],
+    "exit": 128,
+    "seconds": 0.025370359420776367,
+    "source": "c5c298db2ab7dedb5d39d29f4cfd097727e267b2",
+    "log": "/home/cosmo/Documents/GitHub/qcore-c/private/premise-integration/gate-1/submodules.log"
+  },
+  {
+    "name": "clang",
+    "command": [
+      "clang",
+      "--version"
+    ],
+    "exit": 0,
+    "seconds": 0.01471090316772461,
+    "source": "c5c298db2ab7dedb5d39d29f4cfd097727e267b2",
+    "log": "/home/cosmo/Documents/GitHub/qcore-c/private/premise-integration/gate-1/clang.log"
+  },
+  {
+    "name": "rust",
+    "command": [
+      "python3",
+      "scripts/run_test_binaries.py",
+      "--jobs",
+      "4"
+    ],
+    "exit": 101,
+    "seconds": 517.3462734222412,
+    "source": "c5c298db2ab7dedb5d39d29f4cfd097727e267b2",
+    "log": "/home/cosmo/Documents/GitHub/qcore-c/private/premise-integration/gate-1/rust.log"
+  },
+  {
+    "name": "fmt",
+    "command": [
+      "cargo",
+      "fmt",
+      "--all",
+      "--",
+      "--check"
+    ],
+    "exit": 0,
+    "seconds": 4.386102914810181,
+    "source": "c5c298db2ab7dedb5d39d29f4cfd097727e267b2",
+    "log": "/home/cosmo/Documents/GitHub/qcore-c/private/premise-integration/gate-1/fmt.log"
+  },
+  {
+    "name": "clippy",
+    "command": [
+      "cargo",
+      "clippy",
+      "--all-targets",
+      "--",
+      "-D",
+      "warnings"
+    ],
+    "exit": 0,
+    "seconds": 37.21633863449097,
+    "source": "c5c298db2ab7dedb5d39d29f4cfd097727e267b2",
+    "log": "/home/cosmo/Documents/GitHub/qcore-c/private/premise-integration/gate-1/clippy.log"
+  },
+  {
+    "name": "probe",
+    "command": [
+      "cargo",
+      "run",
+      "-p",
+      "qcore-compiler",
+      "--example",
+      "reevaluation_probe"
+    ],
+    "exit": 0,
+    "seconds": 0.09072041511535645,
+    "source": "c5c298db2ab7dedb5d39d29f4cfd097727e267b2",
+    "log": "/home/cosmo/Documents/GitHub/qcore-c/private/premise-integration/gate-1/probe.log"
+  },
+  {
+    "name": "followup",
+    "command": [
+      "cargo",
+      "run",
+      "-p",
+      "qcore-compiler",
+      "--example",
+      "reevaluation_followup"
+    ],
+    "exit": 0,
+    "seconds": 0.44820284843444824,
+    "source": "c5c298db2ab7dedb5d39d29f4cfd097727e267b2",
+    "log": "/home/cosmo/Documents/GitHub/qcore-c/private/premise-integration/gate-1/followup.log"
+  },
+  {
+    "name": "lean",
+    "command": [
+      "python3",
+      "scripts/check_lean_audits.py"
+    ],
+    "exit": 0,
+    "seconds": 16.971166849136353,
+    "source": "c5c298db2ab7dedb5d39d29f4cfd097727e267b2",
+    "log": "/home/cosmo/Documents/GitHub/qcore-c/private/premise-integration/gate-1/lean.log"
+  },
+  {
+    "name": "python",
+    "command": [
+      "python3",
+      "-m",
+      "unittest",
+      "discover",
+      "-s",
+      "scripts/tests"
+    ],
+    "exit": 0,
+    "seconds": 32.08086562156677,
+    "source": "c5c298db2ab7dedb5d39d29f4cfd097727e267b2",
+    "log": "/home/cosmo/Documents/GitHub/qcore-c/private/premise-integration/gate-1/python.log"
+  }
+]
