@@ -134,7 +134,6 @@ name = "qcore-frontend"
 version = "0.1.0"
 dependencies = [
  "qcore-core",
- "qcore-schemas",
 ]
 
 [[package]]

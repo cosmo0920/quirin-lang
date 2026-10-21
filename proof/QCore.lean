@@ -1,3 +1,4 @@
+import QCore.PluginSourceWitnesses
 import QCore.LocalSourceBindings
 import QCore.PremiseFlow
 import QCore.ScalarAccessorCondition
@@ -412,4 +413,3 @@ import QCore.PluginNeutralOverlap
 
 /-! The executable formal core of QCore-C revision 0.1. -/
 
-import QCore.PluginSourceWitnesses
