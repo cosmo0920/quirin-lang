@@ -85,7 +85,7 @@ fn reconstruct_imports(
             ));
         };
         let raw = fs::read_to_string(&entry.file).map_err(|e| e.to_string())?;
-        let options = qcore_audit::compile_db::compiler_options(entry)?;
+        let options = qcore_audit::compile_db::compiler_options_compatibility(entry)?;
         let unit = C11TranslationUnit {
             source: &raw,
             include_paths: options.include_paths,
