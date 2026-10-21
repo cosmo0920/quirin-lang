@@ -3,7 +3,7 @@
 A source-shaped `int type = ch->st->type` now retains the existing complete typed
 scalar-read plan rather than manufacturing an opaque pointer identity. The
 subsequent zero comparison keeps the existing branch semantics. The synthetic
-source-bound fixture changes from Unknown (`UnknownAlias type`) to Safe and its
+source-bound custody fixture changes from Unknown (`UnknownAlias type`) to Safe and its
 certificate independently replays. Actual corpus movement awaits the fresh
 joint before/after comparison; no production count is claimed here yet.
 
@@ -22,14 +22,14 @@ truth is introduced. Failed planning keeps the original instruction and rolls
 back speculative consultations. Outer descriptor, in-place, formal-mutation,
 iteration and identity guards remain. No provider, profile, lock, contract,
 hypothesis or graph asset changes. Faithful extraction and Rust–Lean
-correspondence remain premises28; the Lean proof is an abstract rule model.
+correspondence remain premises 28; the Lean proof is an abstract rule model.
 
-`QCore.ScalarReadIdentity` and its registered audit prove the16 admission
+`QCore.ScalarReadIdentity` and its registered audit prove the 16 admission
 vectors, original/typed alias retention, no new destination identity,
 preservation of other bindings/state/errors and both possible scalar outcomes.
-The focused accepted set is60 distinct Rust tests (3 new unit,6 new source,
+The focused accepted set is 60 distinct Rust tests (3 new unit, 6 new source,
 51 existing descriptor/in-place/alias/chain controls), Clippy/fmt exit0, and
-10 audited theorems on Lean4.35.0. [Focused receipts](focused-receipts.json)
+10 audited theorems on Lean 4.35.0. [Focused receipts](focused-receipts.json)
 include every command, exit and private log. This is not a standalone full
 standing-gate claim; closure uses the shared frozen integration campaign.
 
@@ -41,13 +41,13 @@ Actual volatile/atomic field reads, pointer-to-integer casts and an uncontracted
 comma-position call refuse; pointer destinations retain opaque identity.
 
 The first BASE corpus attempt was interrupted after host ENOSPC (actual analyzer
-signal exit−2, wrapper/driver254) and is excluded. The queued focus job was
-terminated143 before it started. The partial evidence-script write is retained
+signal exit−2, wrapper/driver 254) and is excluded. The queued focus job was
+terminated 143 before it started. The partial evidence-script write is retained
 and was restored from the protected commit with exact byte equality. Root
-reclaimed only an owner-approved completed95GiB target; private evidence stayed
-intact. Fresh paths and a30GiB reserve guard are required for the corpus retry.
-Earlier completed BASE system/slice exits0 retain448 rows99Safe/345Unknown/
-4provisionalUnsafe and404 rows53Safe/346Unknown/4Pending/1provisionalUnsafe.
+reclaimed only an owner-approved completed 95GiB target; private evidence stayed
+intact. Fresh paths and a 30GiB reserve guard are required for the corpus retry.
+Earlier completed BASE system/slice exits0 retain 448 rows: 99 Safe / 345 Unknown /
+4 provisional Unsafe; and 404 rows: 53 Safe / 346 Unknown / 4 Pending / 1 provisional Unsafe.
 The initial full-input [postcheck](runtime-input-postcheck.json) is explicitly
 mid-campaign, not a before-run claim. The strengthened retry records every
 frozen archive input, both external compile databases, provider package files,
@@ -56,7 +56,7 @@ remain provisional, never upstream defect claims.
 
 ## For the integrator
 
-Source9728ff745 is integration-ready; the report remains open until the shared
+Source 9728ff745 is integration-ready; the report remains open until the shared
 standing gate and fresh complete corpus/system/slice TIP comparisons finish.
 Preserve all failed attempts and exact input/binary/source identities, including
 the actual wrapper's Clang/package overrides. Root owns STATUS, part11 increment,
