@@ -2207,10 +2207,455 @@
       "path": "/home/cosmo/Documents/GitHub/qcore-c/private/premise-symbolic-integration/unknown-pin-negative-1/result.json",
       "bytes": 85691,
       "sha256": "691d2b1a262833c8a19a7ca84e1b285a523064756f937ff1a6a9af2d40b887b9"
+    },
+    {
+      "path": "/home/cosmo/Documents/GitHub/qcore-c/private/premise-symbolic-integration/comparison-corpus-1/comparison-summary.json",
+      "bytes": 2118,
+      "sha256": "2961226b22504580c6a52bf62f5966db5066a0dc4cc3a4976088ddd15a15d319"
+    },
+    {
+      "path": "/home/cosmo/Documents/GitHub/qcore-c/private/premise-symbolic-integration/comparison-corpus-1/corpus-canonical-capture-proof.log",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "/home/cosmo/Documents/GitHub/qcore-c/private/premise-symbolic-integration/comparison-corpus-1/corpus-identities.log",
+      "bytes": 86,
+      "sha256": "9f4b38790020a4d3a534e7ff9cd64b3e5d14078bb7717595f122d42e0e5ba6d4"
+    },
+    {
+      "path": "/home/cosmo/Documents/GitHub/qcore-c/private/premise-symbolic-integration/comparison-corpus-1/commands.json",
+      "bytes": 6131,
+      "sha256": "a825369c3be25dcbd5b34b634980202f4a4d6c77b570e7725cc174f4e63a3111"
+    },
+    {
+      "path": "/home/cosmo/Documents/GitHub/qcore-c/private/premise-symbolic-integration/comparison-corpus-1/corpus-reading-input.json",
+      "bytes": 1813,
+      "sha256": "cfb8d2b259c36fa71539842cf29fa604695fa75224ffd4f0b64fd20182cb61bf"
+    },
+    {
+      "path": "/home/cosmo/Documents/GitHub/qcore-c/private/premise-symbolic-integration/comparison-corpus-1/corpus-all-fields.log",
+      "bytes": 1034,
+      "sha256": "628ddd07f90a69a153fe2581cf79fe0ddb1591ca761edabc36c64bf2d59a8b55"
+    },
+    {
+      "path": "/home/cosmo/Documents/GitHub/qcore-c/private/premise-symbolic-integration/comparison-corpus-1/corpus-reading-proof.json",
+      "bytes": 43304975,
+      "sha256": "ccc5984e4d0fdca374002bbe5d623aaf885b716744a3c1274ba55076ef531bf3"
+    },
+    {
+      "path": "/home/cosmo/Documents/GitHub/qcore-c/private/premise-symbolic-integration/comparison-corpus-1/corpus-known.json",
+      "bytes": 4137312,
+      "sha256": "5e6dfbb87476bae7853ffd67d2d7e2f49b44db52fac12b4bb30f2c339effdcaa"
+    },
+    {
+      "path": "/home/cosmo/Documents/GitHub/qcore-c/private/premise-symbolic-integration/comparison-corpus-1/corpus-exact-time-identity.log",
+      "bytes": 208,
+      "sha256": "013432677009b0489235d9a3b4900259e40b25004f9208012f61ca6479759faa"
+    },
+    {
+      "path": "/home/cosmo/Documents/GitHub/qcore-c/private/premise-symbolic-integration/comparison-corpus-1/export-base.log",
+      "bytes": 42,
+      "sha256": "43774541fcb09c215ee5deef31f6df118657f7334198477ead93320ec2b36d9b"
+    },
+    {
+      "path": "/home/cosmo/Documents/GitHub/qcore-c/private/premise-symbolic-integration/comparison-corpus-1/export-tip.log",
+      "bytes": 41,
+      "sha256": "6d9a124d4f48fb523d4a51f77805f6e674eb6cdd50cd625b3de3d1072e28ef80"
+    },
+    {
+      "path": "/home/cosmo/Documents/GitHub/qcore-c/private/premise-symbolic-integration/comparison-corpus-1/corpus/snapshot-file-provenance.json",
+      "bytes": 116964,
+      "sha256": "05e0387c7fa989c5734bc6ae514c21d87ad57eb1e7866841b74f05ae4cf46896"
+    },
+    {
+      "path": "/home/cosmo/Documents/GitHub/qcore-c/private/premise-symbolic-integration/comparison-corpus-1/corpus/remaining-differences.json.gz",
+      "bytes": 348,
+      "sha256": "9fdfb5d3ae8909b72a47331b7a0a8120f6d896e2af50cab26a9449cd8da4d436"
+    },
+    {
+      "path": "/home/cosmo/Documents/GitHub/qcore-c/private/premise-symbolic-integration/comparison-corpus-1/corpus/exact-string-attribution.json.gz",
+      "bytes": 232154,
+      "sha256": "87db3883daf712aa43378db1a029ba69333a68d602bde0d7577f560130302319"
+    },
+    {
+      "path": "/home/cosmo/Documents/GitHub/qcore-c/private/premise-symbolic-integration/comparison-corpus-1/corpus/time-preprocess-stderr.log",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "/home/cosmo/Documents/GitHub/qcore-c/private/premise-symbolic-integration/comparison-corpus-1/corpus/time-source.c.gz",
+      "bytes": 39248,
+      "sha256": "0055adefabf2371218e40c0af6972e659df4a79910bf1a69f3d2b0bc7e13a5be"
+    },
+    {
+      "path": "/home/cosmo/Documents/GitHub/qcore-c/private/premise-symbolic-integration/comparison-corpus-1/corpus/exact-version-attribution.json.gz",
+      "bytes": 71176,
+      "sha256": "e723afe0db22f1449b7cf3eafe533a6455a6f792bb090042274ca7b3532a0381"
+    },
+    {
+      "path": "/home/cosmo/Documents/GitHub/qcore-c/private/premise-symbolic-integration/comparison-corpus-1/corpus/raw-differences.json.gz",
+      "bytes": 17318580,
+      "sha256": "ce1a402b417f759e84892ae196903132d589596ad8f00d66db761aa9d63becf8"
+    },
+    {
+      "path": "/home/cosmo/Documents/GitHub/qcore-c/private/premise-symbolic-integration/comparison-corpus-1/corpus/new-diagnostic-environments.json.gz",
+      "bytes": 3349,
+      "sha256": "0bb87a5868e320d03a45a1595533949534241279417ec3c28725d4c67402d66d"
+    },
+    {
+      "path": "/home/cosmo/Documents/GitHub/qcore-c/private/premise-symbolic-integration/comparison-corpus-1/corpus/context-order-attribution.json",
+      "bytes": 146,
+      "sha256": "84e7f911c8eb3b224ae123f4341fa12e35c1c0dc7a6f473b23274738338c0e36"
+    },
+    {
+      "path": "/home/cosmo/Documents/GitHub/qcore-c/private/premise-symbolic-integration/comparison-corpus-1/corpus/input-invariants.json",
+      "bytes": 166,
+      "sha256": "1124e9bedad394ed5068cec2f6cd18906da4508ad9c0e39d2baba4e3d67894a3"
+    },
+    {
+      "path": "/home/cosmo/Documents/GitHub/qcore-c/private/premise-symbolic-integration/comparison-corpus-1/corpus/time-preprocess-command.json",
+      "bytes": 7502,
+      "sha256": "30940aeecd0fd5fd6c7f7ca3e8683070bc0caecd9994bdb71a100c3daa9bf90e"
+    },
+    {
+      "path": "/home/cosmo/Documents/GitHub/qcore-c/private/premise-symbolic-integration/comparison-corpus-1/corpus/comparison.json",
+      "bytes": 1034,
+      "sha256": "628ddd07f90a69a153fe2581cf79fe0ddb1591ca761edabc36c64bf2d59a8b55"
+    },
+    {
+      "path": "/home/cosmo/Documents/GitHub/qcore-c/private/premise-symbolic-integration/comparison-corpus-1/corpus/graph-attribution.json.gz",
+      "bytes": 23,
+      "sha256": "abc129be8d26e8d4afe9ce45f9d5a73c8ed9aa62810ca24ee789fe4581dc4a80"
+    },
+    {
+      "path": "/home/cosmo/Documents/GitHub/qcore-c/private/premise-symbolic-integration/comparison-corpus-1/corpus/provenance-attribution.json",
+      "bytes": 8946,
+      "sha256": "e847ce0c5a839687e7b88c0a61be1339b2fb47319bfdd0001915d77be422a18b"
+    },
+    {
+      "path": "/home/cosmo/Documents/GitHub/qcore-c/private/premise-symbolic-integration/comparison-corpus-1/corpus/final-comparison.json",
+      "bytes": 1586,
+      "sha256": "177c8627485449b573da99298772e9fcd034b3b0bee5a6377b4457dcb2f46dcf"
+    },
+    {
+      "path": "/home/cosmo/Documents/GitHub/qcore-c/private/premise-symbolic-integration/comparison-corpus-1/base-environments/commands.json",
+      "bytes": 43741,
+      "sha256": "5efd95d7b8c9fabc81ab7f23ebd0f01022d14a11ff31ec73265c77319bcadd92"
+    },
+    {
+      "path": "/home/cosmo/Documents/GitHub/qcore-c/private/premise-symbolic-integration/comparison-corpus-1/tip-environments/commands.json",
+      "bytes": 43741,
+      "sha256": "8ce2e3b9b033971cb28aa61c6ca519cc8f437574ed17076ac78fc267e834c6f6"
+    },
+    {
+      "path": "/home/cosmo/Documents/GitHub/qcore-c/private/premise-symbolic-integration/comparison-corpus-1/tip-environments/corpus/tip-stderr.log",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "/home/cosmo/Documents/GitHub/qcore-c/private/premise-symbolic-integration/comparison-corpus-1/tip-environments/corpus/tip-environment-hashes.json",
+      "bytes": 276,
+      "sha256": "c563a45bf27083d93353c28c2ef980cc145cd2fee1e6553668e259e48d26bd4f"
+    },
+    {
+      "path": "/home/cosmo/Documents/GitHub/qcore-c/private/premise-symbolic-integration/comparison-corpus-1/tip-environments/corpus/tip-environment.json",
+      "bytes": 1233511,
+      "sha256": "80bd57225f50668c3dce622b549b6985348380477d48dfa4fdcb16b550bb67d0"
+    },
+    {
+      "path": "/home/cosmo/Documents/GitHub/qcore-c/private/premise-symbolic-integration/comparison-corpus-1/base-environments/corpus/base-environment.json",
+      "bytes": 1123762,
+      "sha256": "57d20c7b83e32be886baaed8e1e209ba8b4f1143041b3049cbf2f22170c9bf10"
+    },
+    {
+      "path": "/home/cosmo/Documents/GitHub/qcore-c/private/premise-symbolic-integration/comparison-corpus-1/base-environments/corpus/base-stderr.log",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "/home/cosmo/Documents/GitHub/qcore-c/private/premise-symbolic-integration/comparison-corpus-1/base-environments/corpus/base-environment-hashes.json",
+      "bytes": 276,
+      "sha256": "42c6466389607bd31c4ed148b7c23d7825f394a345d7ca8ee0744c3d260eceeb"
+    },
+    {
+      "path": "/home/cosmo/Documents/GitHub/qcore-c/private/premise-symbolic-integration/comparison-corpus-1/corpus/base/resource-diagnostics.json.gz",
+      "bytes": 9537204,
+      "sha256": "c1ad47c1c0e2e47f797b557e5015ca63ef38f4d27d4c9a48215767c96f05f5b5"
+    },
+    {
+      "path": "/home/cosmo/Documents/GitHub/qcore-c/private/premise-symbolic-integration/comparison-corpus-1/corpus/base/resource-diagnostics.chunk-contracts.json.gz",
+      "bytes": 281881,
+      "sha256": "f0568583a78a62741104d890e33c7dd84ccbb67d9a692f051aa21cc3b8e01703"
+    },
+    {
+      "path": "/home/cosmo/Documents/GitHub/qcore-c/private/premise-symbolic-integration/comparison-corpus-1/corpus/base/corpus-outer.json.gz",
+      "bytes": 18879,
+      "sha256": "509888e5fbc78991651f60f854c596091bb20bc83eb23086521456bf74afb532"
+    },
+    {
+      "path": "/home/cosmo/Documents/GitHub/qcore-c/private/premise-symbolic-integration/comparison-corpus-1/corpus/base/invocation.json",
+      "bytes": 90380,
+      "sha256": "bb70fae7607b5e4f6c7f541cef4b773c5cd6735a9e524813dd50268dff7e445e"
+    },
+    {
+      "path": "/home/cosmo/Documents/GitHub/qcore-c/private/premise-symbolic-integration/comparison-corpus-1/corpus/base/corpus-null.jsonl.gz",
+      "bytes": 1511768,
+      "sha256": "f87b8952f300cd1610757d33a3cbdc6a75ba87b5d0693ba8e0dbaba0149ce9e7"
+    },
+    {
+      "path": "/home/cosmo/Documents/GitHub/qcore-c/private/premise-symbolic-integration/comparison-corpus-1/corpus/base/resource-diagnostics.contracts.json.gz",
+      "bytes": 1921796,
+      "sha256": "72e5fbb4909a6a456aba9552fce896f742192a966688d22f2e7b850dcee7cd41"
+    },
+    {
+      "path": "/home/cosmo/Documents/GitHub/qcore-c/private/premise-symbolic-integration/comparison-corpus-1/corpus/base/corpus-null.summary.json.gz",
+      "bytes": 3635,
+      "sha256": "f539ec6b02c393986bb4585a52317b36c8569666a8bf9d046a173e36f56202c2"
+    },
+    {
+      "path": "/home/cosmo/Documents/GitHub/qcore-c/private/premise-symbolic-integration/comparison-corpus-1/corpus/base/resource-diagnostics.source-effects.json.gz",
+      "bytes": 16808,
+      "sha256": "6d04b9645abc0b702a47dfc863cfe28e935adcf038ea9fffb2e68db0f72dec53"
+    },
+    {
+      "path": "/home/cosmo/Documents/GitHub/qcore-c/private/premise-symbolic-integration/comparison-corpus-1/corpus/base/monkey-source.json.gz",
+      "bytes": 42097,
+      "sha256": "fe80d190e2c0e5c6ca4d24f057add3ee3ff85bd48882a5e3525c7568c28b2fb8"
+    },
+    {
+      "path": "/home/cosmo/Documents/GitHub/qcore-c/private/premise-symbolic-integration/comparison-corpus-1/corpus/base/manifest.json",
+      "bytes": 1147,
+      "sha256": "fbcc2f47170af07c57afab5a4c117fac3a48495fc703cc87f3008b6cf11d76e2"
+    },
+    {
+      "path": "/home/cosmo/Documents/GitHub/qcore-c/private/premise-symbolic-integration/comparison-corpus-1/corpus/tip/resource-diagnostics.json.gz",
+      "bytes": 9671036,
+      "sha256": "e232556dd81bab68eeb3266f66f3c55132b3d2c97004eb89667f08de71270360"
+    },
+    {
+      "path": "/home/cosmo/Documents/GitHub/qcore-c/private/premise-symbolic-integration/comparison-corpus-1/corpus/tip/resource-diagnostics.chunk-contracts.json.gz",
+      "bytes": 281881,
+      "sha256": "f0568583a78a62741104d890e33c7dd84ccbb67d9a692f051aa21cc3b8e01703"
+    },
+    {
+      "path": "/home/cosmo/Documents/GitHub/qcore-c/private/premise-symbolic-integration/comparison-corpus-1/corpus/tip/corpus-outer.json.gz",
+      "bytes": 18881,
+      "sha256": "4d43189178d60d45d7f67611201636f401afd16edfca9dac4649c607b3918f05"
+    },
+    {
+      "path": "/home/cosmo/Documents/GitHub/qcore-c/private/premise-symbolic-integration/comparison-corpus-1/corpus/tip/invocation.json",
+      "bytes": 90419,
+      "sha256": "6d17c13b513138fcfa4a9be6e92e401381ad44e747b4379b987437d202ca30b0"
+    },
+    {
+      "path": "/home/cosmo/Documents/GitHub/qcore-c/private/premise-symbolic-integration/comparison-corpus-1/corpus/tip/corpus-null.jsonl.gz",
+      "bytes": 1511790,
+      "sha256": "eb1e0f17fad386582f34734cd3221a6ef056ae90155793f26539f5d5857b4489"
+    },
+    {
+      "path": "/home/cosmo/Documents/GitHub/qcore-c/private/premise-symbolic-integration/comparison-corpus-1/corpus/tip/resource-diagnostics.contracts.json.gz",
+      "bytes": 1925321,
+      "sha256": "4ffe0c1a94077a1c0803ae5023bc8a2baa0e35e66cf89c6d7377528d87769f64"
+    },
+    {
+      "path": "/home/cosmo/Documents/GitHub/qcore-c/private/premise-symbolic-integration/comparison-corpus-1/corpus/tip/corpus-null.summary.json.gz",
+      "bytes": 3635,
+      "sha256": "f539ec6b02c393986bb4585a52317b36c8569666a8bf9d046a173e36f56202c2"
+    },
+    {
+      "path": "/home/cosmo/Documents/GitHub/qcore-c/private/premise-symbolic-integration/comparison-corpus-1/corpus/tip/resource-diagnostics.source-effects.json.gz",
+      "bytes": 16808,
+      "sha256": "6d04b9645abc0b702a47dfc863cfe28e935adcf038ea9fffb2e68db0f72dec53"
+    },
+    {
+      "path": "/home/cosmo/Documents/GitHub/qcore-c/private/premise-symbolic-integration/comparison-corpus-1/corpus/tip/monkey-source.json.gz",
+      "bytes": 42097,
+      "sha256": "fe80d190e2c0e5c6ca4d24f057add3ee3ff85bd48882a5e3525c7568c28b2fb8"
+    },
+    {
+      "path": "/home/cosmo/Documents/GitHub/qcore-c/private/premise-symbolic-integration/comparison-corpus-1/corpus/tip/manifest.json",
+      "bytes": 1147,
+      "sha256": "870ee26d47a961016b571bf81aef1c62b027dfd2e7ef3d7d24d5f0dbb9589196"
+    },
+    {
+      "path": "/home/cosmo/Documents/GitHub/qcore-c/private/premise-symbolic-integration/actual-tip-capture-counts.json",
+      "bytes": 1278,
+      "sha256": "4b487ea989075e1344a1d7ce69623ed34ed6f6f7cd97b7d9656a063504d59a68"
+    },
+    {
+      "path": "/home/cosmo/Documents/GitHub/qcore-c/private/premise-symbolic-integration/borrowed-base-receipt.json",
+      "bytes": 1661,
+      "sha256": "6e3a54987ffe86556f628e9221c36ffec4dde31d747589cc39df38ff4d3bbde2"
+    },
+    {
+      "path": "/home/cosmo/Documents/GitHub/qcore-c/private/premise-symbolic-integration/joint-gate-1/acquired.json",
+      "bytes": 102,
+      "sha256": "abe0999809004a1b8b9e9b4084d726ed24aad12b1c74d4edcf8830d6a7174386"
+    },
+    {
+      "path": "/home/cosmo/Documents/GitHub/qcore-c/private/premise-symbolic-integration/joint-gate-1/commands.json",
+      "bytes": 17328,
+      "sha256": "d15da8e599b60a65ea965843dc26088f97186e2b9163e8830ca8977144e6c938"
+    },
+    {
+      "path": "/home/cosmo/Documents/GitHub/qcore-c/private/premise-symbolic-integration/joint-gate-2/acquired.json",
+      "bytes": 102,
+      "sha256": "9dbb120b41a3e1ec658de88d99b2c37447ae22c0d4b18dddf42e5ac13d6cd532"
+    },
+    {
+      "path": "/home/cosmo/Documents/GitHub/qcore-c/private/premise-symbolic-integration/joint-gate-2/commands.json",
+      "bytes": 17319,
+      "sha256": "39a68e88241de57f507f93cb15316ba8c8e5d84e2c2af04a71dc22306767ea56"
+    },
+    {
+      "path": "/home/cosmo/Documents/GitHub/qcore-c/private/premise-symbolic-integration/joint-gate-2/head-guard-failure.json",
+      "bytes": 1109,
+      "sha256": "951aefb6840d038fc8297655613ccf8866afc5b6fccbe89e07816767bfb070a2"
+    },
+    {
+      "path": "/home/cosmo/Documents/GitHub/qcore-c/private/premise-symbolic-integration/joint-gate-3/acquired.json",
+      "bytes": 102,
+      "sha256": "6f122cec64ba89de85856205b10f6e29c65e5a4d5b8f9b69ee25985b17de8c7e"
+    },
+    {
+      "path": "/home/cosmo/Documents/GitHub/qcore-c/private/premise-symbolic-integration/joint-gate-3/commands.json",
+      "bytes": 17331,
+      "sha256": "a33b15204c1753b57c1dcf466418208b977682965922d9aaf619182cd834e2a8"
+    },
+    {
+      "path": "/home/cosmo/Documents/GitHub/qcore-c/private/premise-symbolic-integration/joint-gate-3/completion.json",
+      "bytes": 304,
+      "sha256": "2c2edf212ddf0a9a6d7ffff1f07f7f552964fe235d31a0ac1bb04a967a760632"
+    },
+    {
+      "path": "/home/cosmo/Documents/GitHub/qcore-c/private/premise-symbolic-integration/joint-gate-3/wrapper-observation.json",
+      "bytes": 250,
+      "sha256": "4eb7bfb8757a531e4171bfe74e10ed94869043b2af814bafcea258cc7d53dda6"
     }
   ],
-  "corpus": "pending actual TIP completion and strict one-time proof",
+  "corpus": {
+    "route": "corpus",
+    "base": {
+      "Unknown": 3852,
+      "Safe": 973,
+      "Unsafe": 9
+    },
+    "tip": {
+      "Unknown": 3852,
+      "Safe": 973,
+      "Unsafe": 9
+    },
+    "null_rows": 4921,
+    "full_null_equal": true,
+    "full_runtime_equal": true,
+    "existing_reading_observations_exactly_reconstructed": 122,
+    "all_existing_fields_equal_after_exact_time_identity_attribution": true,
+    "unexplained_remaining_leaf_counts": {
+      "diagnostics": 0,
+      "contracts": 0,
+      "chunk-contracts": 0,
+      "source-effects": 0,
+      "source": 0,
+      "null": 0,
+      "null-summary": 0,
+      "outer": 0
+    },
+    "raw_symbolic_clause_additions": 1348,
+    "checked_source_pair_count": 9
+  },
   "full_raw_payloads_published": false,
   "universal_source_truth": "Open",
-  "typed_truth_or_verdict_promotion": false
+  "typed_truth_or_verdict_promotion": false,
+  "actual_tip_capture_domain": {
+    "actual_tip_counts": [
+      {
+        "route": "system",
+        "actual_tip_artifact": "/home/cosmo/Documents/GitHub/qcore-c/private/premise-symbolic-integration/prepared-tip/system/resource-diagnostics.json",
+        "artifact_sha256": "418efa0afb472c6fe7e676ff3699123cf9f224da097eed304f159032255ed2ec",
+        "capture_instances": 4,
+        "unique_capture_sha256": 2,
+        "reading_receipts": 24
+      },
+      {
+        "route": "slice",
+        "actual_tip_artifact": "/home/cosmo/Documents/GitHub/qcore-c/private/premise-symbolic-integration/prepared-tip/slice/resource-diagnostics.json",
+        "artifact_sha256": "453fbe9a56c0fd37984d845594b97ea64dfc5b7db1fda92223f4380814d3fcc1",
+        "capture_instances": 1,
+        "unique_capture_sha256": 1,
+        "reading_receipts": 2
+      },
+      {
+        "route": "corpus",
+        "actual_tip_artifact": "/home/cosmo/Documents/GitHub/qcore-c/private/premise-symbolic-integration/prepared-tip/corpus/resource-diagnostics.json",
+        "artifact_sha256": "d73c2e393e03bdc384853309cd7663b52efaca4c49d0255b591d45776fab9c07",
+        "capture_instances": 45,
+        "unique_capture_sha256": 38,
+        "reading_receipts": 122
+      }
+    ],
+    "capture_instances": 50,
+    "sum_route_unique": 41,
+    "global_unique_capture_sha256": 41,
+    "reading_receipts": 148
+  },
+  "complete_native_parity": {
+    "routes": 3,
+    "reading_receipts": 148,
+    "canonical_capture_instances": 50,
+    "global_unique_canonical_capture_sha256": 41,
+    "full_null_records": 5781,
+    "all_static_runtime_existing_fields_preserved": true,
+    "all_unexplained_leaf_counts_zero": true,
+    "fields_erased": 0,
+    "baseline": "borrowed byte-exact prior cycle2 TIP; no fresh BASE audit claimed",
+    "baseline_source": "62eebba95c51917c0fe841fbc23e2bf0d0e7e465",
+    "baseline_binary_sha256": "5584d30e805afc8406350f389b5e84e5a59d810705ec8db0836414fdb1d67640",
+    "tip_binary_sha256": "775d87b7df2b8281b990abc372dd398930a79f88f71e40062058288cf873cf40"
+  },
+  "retained_corpus_intermediate": {
+    "corpus_all_fields_exit": 1,
+    "unattributed_contract_leaves": 4,
+    "reason": "empty Monkey time-derived identity keys; actual compile-DB/time-window/full-preprocessed-byte producer reconstruction required",
+    "time_identity_exit": 0,
+    "time_identity_proof_sha256": "e847ce0c5a839687e7b88c0a61be1339b2fb47319bfdd0001915d77be422a18b",
+    "final_unexplained_leaves": 0,
+    "positive_native_proof_repeated": false
+  },
+  "integrated_gate": {
+    "actual_successful_wrapper_exit": 0,
+    "all_stages_zero": 22,
+    "rust_passed": 8456,
+    "rust_failed": 0,
+    "rust_ignored": 15,
+    "rust_units": 535,
+    "rust_summaries": 548,
+    "lean_audits": 360,
+    "provider_rust_passed": 133,
+    "provider_rust_failed": 0,
+    "provider_rust_ignored": 1,
+    "provider_python_passed": 25,
+    "provider_packages_build_and_verify": 5,
+    "source": "eb0dc0cadb10e84ad6df79e36ca22996fd6ce528",
+    "gate_dir": "/home/cosmo/Documents/GitHub/qcore-c/private/premise-symbolic-integration/joint-gate-3",
+    "parent_owned_final_matrix_python": "required after integration; not claimed by this receipt"
+  },
+  "retained_integrated_failures": [
+    {
+      "gate": "joint-gate-1",
+      "source": "bb45fdc9dc65c39e9c229b0ee46677b04dca2ae6",
+      "rust_exit": 101,
+      "other_command_exits": 0,
+      "accepted": false
+    },
+    {
+      "gate": "joint-gate-2",
+      "source": "c4b29b14e31328675e8973f56dbe5eebaee14dad",
+      "all_22_command_exits": 0,
+      "wrapper_final_head_guard_failed": true,
+      "external_checkout_during_gate": true,
+      "accepted": false
+    }
+  ],
+  "publication_policy": "Finite selected statistics, reviewed diagnostics and path/size/SHA receipts only; raw source, canonical captures, reading proofs and full assertion payloads remain private."
 }
