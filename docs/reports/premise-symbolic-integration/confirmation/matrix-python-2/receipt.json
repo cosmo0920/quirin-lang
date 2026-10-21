@@ -1,0 +1,16 @@
+{
+  "command": [
+    "python3",
+    "-m",
+    "unittest",
+    "discover",
+    "-s",
+    "scripts/tests"
+  ],
+  "head": "49397b08b411043681f63d3f29024d62bd60b023",
+  "exit": 0,
+  "elapsed_seconds": 34.254865646362305,
+  "matrix_sha256_before": "4408f2d1b3a267fd6f672b819d7d2d5b4d3c6f86b69845161583d5e026877c64",
+  "matrix_sha256_after": "4408f2d1b3a267fd6f672b819d7d2d5b4d3c6f86b69845161583d5e026877c64",
+  "private_log": "private/premise-symbolic-integration/matrix-python-2/unittest.log"
+}

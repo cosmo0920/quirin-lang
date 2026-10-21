@@ -1,5 +1,5 @@
 {
-  "status": "Exact ledger/source/provider/native decisions applied; phase1 committed-matrix Python374 passes0; final regenerated confirmation follows",
+  "status": "COMPLETE: exact ledger/source/provider/native decisions applied; both authoritative committed-matrix Python374 runs pass0; no final matrix mutation",
   "cards": [
     "contract-lifecycle-symbols",
     "premise-symbolic-adoption",
@@ -93,5 +93,12 @@
     "exit": 0,
     "tests": 374,
     "receipt": "confirmation/matrix-python-1/receipt.json"
+  },
+  "final_python": {
+    "head": "49397b08b411043681f63d3f29024d62bd60b023",
+    "exit": 0,
+    "tests": 374,
+    "matrix_sha256": "4408f2d1b3a267fd6f672b819d7d2d5b4d3c6f86b69845161583d5e026877c64",
+    "receipt": "confirmation/matrix-python-2/receipt.json"
   }
 }

@@ -1,0 +1,15 @@
+{
+  "measured_source": "eb0dc0cadb10e84ad6df79e36ca22996fd6ce528",
+  "publication_head_before_receipt_only_commit": "49397b08b411043681f63d3f29024d62bd60b023",
+  "core_Rust_Lean_runtime_input_diff_exit": 0,
+  "actual_comparison_controller_sources_match_measured_receipt": true,
+  "original_followups": 810,
+  "current_followups": 810,
+  "untouched_original_records": 809,
+  "amended_existing_records": 1,
+  "added": 0,
+  "retired": 0,
+  "final_matrix_sha256": "4408f2d1b3a267fd6f672b819d7d2d5b4d3c6f86b69845161583d5e026877c64",
+  "final_python_tests": 374,
+  "final_python_exit": 0
+}
