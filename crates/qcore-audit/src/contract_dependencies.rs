@@ -313,6 +313,7 @@ pub fn premises(contracts: &ResourceContracts) -> Result<Value, String> {
                     version: 1,
                     atoms: BTreeMap::new(),
                     premises: BTreeMap::new(),
+                    refinements: BTreeMap::new(),
                 });
         for record in records {
             let record: qcore_schemas::hypothesis::ErasedPremise =
@@ -329,6 +330,11 @@ pub fn premises(contracts: &ResourceContracts) -> Result<Value, String> {
         .map(|(name, graph)| Ok((name.clone(), qcore_contract::hypothesis::digest(graph)?)))
         .collect::<Result<BTreeMap<_, _>, String>>()?;
     let mut value = json!(premises);
+    let binding_requirements =
+        qcore_contract::hypothesis_bindings::requirements(contracts.source_assumptions(), &graphs)?;
+    if !binding_requirements.is_empty() {
+        value["$hypothesis_binding_requirements"] = json!(binding_requirements);
+    }
     value["$hypothesis_graphs"] = json!(graphs);
     value["$hypothesis_graph_digests"] = json!(digests);
     Ok(value)
@@ -641,6 +647,16 @@ pub fn render(facts: &Facts, revision: &Value, premises: &Value) -> Value {
         });
         if let Some(graph) = premises["$hypothesis_graphs"].get(name) {
             record["hypothesis_graph"] = graph.clone();
+            let references = premises["$hypothesis_binding_requirements"]
+                .as_array()
+                .into_iter()
+                .flatten()
+                .filter(|r| r["declaration"].as_str() == Some(name.as_str()))
+                .cloned()
+                .collect::<Vec<_>>();
+            if !references.is_empty() {
+                record["hypothesis_binding_requirements"] = json!(references);
+            }
             record["hypothesis_evidence"] = json!({
                 "disposition": "open", "warrant": "declared",
                 "graph_sha256": premises["$hypothesis_graph_digests"][name],
@@ -808,6 +824,8 @@ pub fn erase_hypotheses(value: &mut Value) {
             // equally named declaration in a premise/inventory map.
             map.remove("$hypothesis_graphs");
             map.remove("$hypothesis_graph_digests");
+            map.remove("$hypothesis_binding_requirements");
+            map.remove("$checked_hypothesis_bindings");
             let function_row = map.get("function").is_some_and(Value::is_string)
                 && (map.contains_key("status") || map.contains_key("null"));
             let declaration =
@@ -818,6 +836,7 @@ pub fn erase_hypotheses(value: &mut Value) {
                 map.remove("hypothesis_graph_sha256");
             }
             if declaration {
+                map.remove("hypothesis_binding_requirements");
                 map.remove("hypothesis_graph");
                 map.remove("hypothesis_graph_sha256");
                 map.remove("hypothesis_evidence");
@@ -836,4 +855,64 @@ pub fn erase_hypotheses(value: &mut Value) {
         }
         _ => {}
     }
+}
+
+/// Publish explicitly supplied, independently checked reference bindings beside
+/// the exact existing graph. Integrity only; source correspondence stays Open.
+pub fn publish_checked_bindings(
+    value: &mut Value,
+    sources: &BTreeMap<String, String>,
+    expected_graphs: &BTreeMap<String, qcore_schemas::hypothesis::Graph>,
+    expected_manifests: &BTreeMap<String, qcore_schemas::hypothesis::BindingManifest>,
+    presented_manifests: &BTreeMap<String, Vec<u8>>,
+    artifacts: &BTreeMap<String, Vec<u8>>,
+) -> Result<(), String> {
+    // Audit publication may also contain rule-owned legacy graphs. Bind the
+    // exact attached declarations; do not reinterpret unrelated rule metadata.
+    let requirements = qcore_contract::hypothesis_bindings::requirements(sources, expected_graphs)?;
+    for required in &requirements {
+        if value["$hypothesis_graphs"][&required.declaration]
+            != json!(expected_graphs[&required.declaration])
+        {
+            return Err(
+                "binding: independently expected attachment graph differs from publication".into(),
+            );
+        }
+    }
+    if value["$hypothesis_binding_requirements"] != json!(requirements) {
+        return Err("binding: independently expected requirements differ from publication".into());
+    }
+    let bindings = qcore_contract::hypothesis_bindings::resolve(
+        sources,
+        expected_graphs,
+        expected_manifests,
+        presented_manifests,
+        artifacts,
+    )?;
+    value["$checked_hypothesis_bindings"] = json!({
+        "warrant": "reference-integrity-only", "source_binding": "open", "manifests": bindings
+    });
+    Ok(())
+}
+
+/// Recover the published named-premise view from the actual contracts sidecar
+/// schema. Missing declarations/invalid premise arrays refuse; absent per-row
+/// premises explicitly means that declaration publishes none.
+pub fn premise_view_from_sidecar(sidecar: &Value) -> Result<Value, String> {
+    let declarations = sidecar["contract_dependencies"]["declarations"]
+        .as_object()
+        .ok_or("sidecar: missing contract dependency declarations")?;
+    let mut out = serde_json::Map::new();
+    for (name, declaration) in declarations {
+        let declaration = declaration
+            .as_object()
+            .ok_or("sidecar: invalid declaration record")?;
+        let premises = match declaration.get("premises") {
+            Some(value) if value.is_array() => value.clone(),
+            None => json!([]),
+            _ => return Err("sidecar: invalid declared premise array".into()),
+        };
+        out.insert(name.clone(), premises);
+    }
+    Ok(Value::Object(out))
 }

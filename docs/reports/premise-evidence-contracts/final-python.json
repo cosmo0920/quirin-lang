@@ -1,0 +1,35 @@
+{
+  "command": {
+    "command": [
+      "python3",
+      "-m",
+      "unittest",
+      "discover",
+      "-s",
+      "scripts/tests"
+    ],
+    "cwd": "/home/cosmo/.codex/worktrees/premise-decomposition-cycle1/qcore-c",
+    "environment": {
+      "CARGO_PROFILE_DEV_DEBUG": "0",
+      "CARGO_PROFILE_TEST_DEBUG": "0",
+      "CARGO_INCREMENTAL": "0",
+      "QCORE_AUDIT_BUILD_COMMIT": null,
+      "RUSTFLAGS": null,
+      "CARGO_ENCODED_RUSTFLAGS": null,
+      "RUSTUP_TOOLCHAIN": null,
+      "ELAN_TOOLCHAIN": null,
+      "QCORE_CLANG": null
+    },
+    "start": "2026-10-21T03:59:48.175667+00:00",
+    "end": "2026-10-21T04:00:22.667658+00:00",
+    "exit": 0,
+    "log": "/home/cosmo/.codex/worktrees/premise-decomposition-cycle1/qcore-c/private/premise-evidence-contracts/python-2/00.log",
+    "head": "61696b4ad582d4df98a7b8c15fde7ca9ac2678ae"
+  },
+  "passed": 374,
+  "failed": 0,
+  "committed_matrix_sha256": "59ac701378c625b682c48848cb00cadf5069e55e5abffb4bd174a8f4cdbe9322",
+  "matrix_commit": "61696b4ad582d4df98a7b8c15fde7ca9ac2678ae",
+  "final_receipt_only_commit_changes_matrix": false,
+  "meaning": "Authoritative own Python confirmation after the committed gate-backed regenerated matrix. Subsequent receipt-only commit preserves exactly these matrix bytes."
+}

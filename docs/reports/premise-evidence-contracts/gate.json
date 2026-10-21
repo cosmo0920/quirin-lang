@@ -1,0 +1,13 @@
+{
+  "note": "PREMISE-EVIDENCE-CONTRACTS exact base c5c298db2, frozen analyzer/proof/production source 5a556d827. Same-name production cJSON graph-v2 attachment, exact legacy singleton/name/text/erasure retained; nine formal references integrity-checked, all source bindings Open. 525 Rust units/538 summaries/8397 passed/15 ignored/0 failed; 350 Lean audits. Fresh providers 133 Rust/1 ignored/25 Python; all five packages rebuilt and verified. Own 374 Python passed after committed regenerated matrix; final gate-backed confirmation recorded separately. All six fresh eight-home audits exit0 and complete static/null/runtime/standing/closed-world facts agree; system {'Unknown': 345, 'Safe': 99, 'Unsafe': 4}; slice {'Unknown': 346, 'Safe': 53, 'Pending': 4, 'Unsafe': 1}; corpus {'Unknown': 3852, 'Safe': 973, 'Unsafe': 9}. No verdict, classifier exception, typed consumer, standing or source truth promotion. All failures, exact route environment/configuration/lock/time attribution and historical helper correction retained. Actual local Clang recording accompanies this file.",
+  "workspace_tests": 8397,
+  "provider_tests": 133,
+  "python_evidence_validator_tests": 374,
+  "reevaluation_probe_exit": 0,
+  "reevaluation_followup_exit": 0,
+  "cargo_fmt": "clean",
+  "cargo_clippy": "clean",
+  "standing_gate": "complete",
+  "lean_audits": 350,
+  "clang": "present: Ubuntu clang version 21.1.8 (6ubuntu1)"
+}

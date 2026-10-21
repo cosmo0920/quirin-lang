@@ -1,0 +1,70 @@
+{
+  "base": {
+    "resource-diagnostics.json": {
+      "bytes": 31892136,
+      "sha256": "b5821ca4fe9e308e366684458b721b24c8253053f7b4a6b06d8fdf98f4372d8d"
+    },
+    "resource-diagnostics.contracts.json": {
+      "bytes": 41291463,
+      "sha256": "1f5f690cd25dc4bf48096ed053f3dbf9ecbd36dc7c5b3de950ad7136436f3319"
+    },
+    "resource-diagnostics.chunk-contracts.json": {
+      "bytes": 4186178,
+      "sha256": "cbbcfd9c176005146c1946d5fcd4dc83cc9ec041a3397b10b1f0ab16ae6c0484"
+    },
+    "resource-diagnostics.source-effects.json": {
+      "bytes": 118505,
+      "sha256": "941eeba64b69c01d9d8dbf166aa3b5a6feb78ee50f8faf0262d4d6a29cba7c6c"
+    },
+    "monkey-source.json": {
+      "bytes": 1665950,
+      "sha256": "57acfc58c4f7dddf2623efb3c9dc3e8f2dc276835e15cd18a157414696bb2f11"
+    },
+    "corpus-null.jsonl": {
+      "bytes": 27425960,
+      "sha256": "36e35951f428b757808cdfd922513f223affb86608c4735474e7abe34098d206"
+    },
+    "corpus-null.summary.json": {
+      "bytes": 64899,
+      "sha256": "01b4f36c46d248c457b9739a3b69b463bc6e1820b8b7348bb27b0f48de5f521c"
+    },
+    "corpus-outer.json": {
+      "bytes": 670227,
+      "sha256": "a9e5e89c1cc67e9218c2a4ee6c2372cbc2bf7d07c883ad1e75063df557717bc6"
+    }
+  },
+  "tip": {
+    "resource-diagnostics.json": {
+      "bytes": 31893440,
+      "sha256": "b3c776b21f348f0eb00b86a5c099ad0bf95829618633822e7cb3fc279b7bfd7b"
+    },
+    "resource-diagnostics.contracts.json": {
+      "bytes": 41295306,
+      "sha256": "4602cfa123783825172fe50886ea8127ef0485e1ef182b8939e159adff0e03ae"
+    },
+    "resource-diagnostics.chunk-contracts.json": {
+      "bytes": 4186178,
+      "sha256": "cbbcfd9c176005146c1946d5fcd4dc83cc9ec041a3397b10b1f0ab16ae6c0484"
+    },
+    "resource-diagnostics.source-effects.json": {
+      "bytes": 118505,
+      "sha256": "941eeba64b69c01d9d8dbf166aa3b5a6feb78ee50f8faf0262d4d6a29cba7c6c"
+    },
+    "monkey-source.json": {
+      "bytes": 1665950,
+      "sha256": "57acfc58c4f7dddf2623efb3c9dc3e8f2dc276835e15cd18a157414696bb2f11"
+    },
+    "corpus-null.jsonl": {
+      "bytes": 27425960,
+      "sha256": "be79903af1323fcd5965153f5f5e5541c2a54b571597ca138e27c049a28c8bee"
+    },
+    "corpus-null.summary.json": {
+      "bytes": 64899,
+      "sha256": "01b4f36c46d248c457b9739a3b69b463bc6e1820b8b7348bb27b0f48de5f521c"
+    },
+    "corpus-outer.json": {
+      "bytes": 670222,
+      "sha256": "da6eab5253380454e42a0e5c368b444c6f244cc012cdec439e9f7692b0d888f6"
+    }
+  }
+}

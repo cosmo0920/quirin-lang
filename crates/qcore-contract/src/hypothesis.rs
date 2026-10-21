@@ -16,7 +16,12 @@ fn plain(s: &str) -> bool {
 pub fn is_clause(s: &str) -> bool {
     s.split(|c: char| !c.is_alphanumeric() && c != '_')
         .next()
-        .is_some_and(|s| matches!(s, "resource_hypothesis" | "resource_premise_all"))
+        .is_some_and(|s| {
+            matches!(
+                s,
+                "resource_hypothesis" | "resource_premise_all" | "resource_premise_decomposition"
+            )
+        })
 }
 /// Reads a declaration-local graph, including legacy metadata without rewriting its bytes.
 pub fn declaration(decl: &SourceDeclaration, legacy: &[DeclaredPremise]) -> Result<Graph, String> {
@@ -24,6 +29,7 @@ pub fn declaration(decl: &SourceDeclaration, legacy: &[DeclaredPremise]) -> Resu
         version: 1,
         atoms: BTreeMap::new(),
         premises: BTreeMap::new(),
+        refinements: BTreeMap::new(),
     };
     for premise in legacy {
         append_legacy(
@@ -35,6 +41,7 @@ pub fn declaration(decl: &SourceDeclaration, legacy: &[DeclaredPremise]) -> Resu
             },
         )?;
     }
+    let mut attachments = Vec::new();
     for clause in decl.function_contract.iter().flat_map(|c| &c.clauses) {
         let source = &clause.value.expression_source;
         if !is_clause(source) {
@@ -85,7 +92,9 @@ pub fn declaration(decl: &SourceDeclaration, legacy: &[DeclaredPremise]) -> Resu
             }
             graph.atoms.insert(id.clone(), atom);
         } else {
-            if graph.premises.contains_key(id) || legacy.iter().any(|p| p.name == *id) {
+            if head == "resource_premise_all"
+                && (graph.premises.contains_key(id) || legacy.iter().any(|p| p.name == *id))
+            {
                 return Err("hypothesis: conflicting premise ID".into());
             }
             let mut children = Vec::new();
@@ -108,6 +117,10 @@ pub fn declaration(decl: &SourceDeclaration, legacy: &[DeclaredPremise]) -> Resu
             if !rest.len().is_multiple_of(2) {
                 return Err(malformed());
             }
+            if head == "resource_premise_decomposition" {
+                attachments.push((id.clone(), children));
+                continue;
+            }
             graph.premises.insert(
                 id.clone(),
                 Conjunction {
@@ -122,11 +135,39 @@ pub fn declaration(decl: &SourceDeclaration, legacy: &[DeclaredPremise]) -> Resu
             );
         }
     }
+    for (name, children) in attachments {
+        let targets = graph
+            .premises
+            .iter()
+            .filter(|(id, p)| {
+                id.starts_with("legacy_premise_")
+                    && p.erasure.name == name
+                    && p.erasure.origin == "declared"
+            })
+            .map(|(id, _)| id.clone())
+            .collect::<Vec<_>>();
+        if targets.len() != 1 || graph.refinements.contains_key(&name) {
+            return Err(
+                "hypothesis: decomposition needs one existing declared premise and one attachment"
+                    .into(),
+            );
+        }
+        graph.refinements.insert(
+            name,
+            Refinement {
+                premise: targets[0].clone(),
+                children,
+            },
+        );
+    }
+    if !graph.refinements.is_empty() {
+        graph.version = 2;
+    }
     validate(&graph)?;
     Ok(graph)
 }
 pub fn validate(graph: &Graph) -> Result<(), String> {
-    if graph.version != 1 {
+    if !matches!(graph.version, 1 | 2) || (graph.version == 1) != graph.refinements.is_empty() {
         return Err("hypothesis: unsupported graph version".into());
     }
     let mut used = BTreeSet::new();
@@ -174,6 +215,28 @@ pub fn validate(graph: &Graph) -> Result<(), String> {
             used.insert(child.clone());
         }
     }
+    for (name, refinement) in &graph.refinements {
+        let target = graph
+            .premises
+            .get(&refinement.premise)
+            .ok_or("hypothesis: missing refinement target")?;
+        if !identifier(name)
+            || name.starts_with("legacy_")
+            || !refinement.premise.starts_with("legacy_premise_")
+            || target.erasure.name != *name
+            || target.erasure.origin != "declared"
+            || refinement.children.is_empty()
+            || refinement.children.windows(2).any(|w| w[0] >= w[1])
+        {
+            return Err("hypothesis: invalid proposed decomposition".into());
+        }
+        for child in &refinement.children {
+            if child.starts_with("legacy_") || !graph.atoms.contains_key(child) {
+                return Err("hypothesis: missing or legacy refinement atom".into());
+            }
+            used.insert(child.clone());
+        }
+    }
     if used.len() != graph.atoms.len() {
         return Err("hypothesis: unreferenced atom".into());
     }
@@ -211,6 +274,34 @@ pub fn compose(
     expected_graph: &Graph,
     premise: &str,
 ) -> Result<Disposition, String> {
+    let node = instance
+        .graph
+        .premises
+        .get(premise)
+        .ok_or("hypothesis: missing premise")?;
+    compose_children(instance, expected, expected_graph, &node.children)
+}
+/// Compose only the proposed conjunction. Its disposition is never transported
+/// to the legacy proposition, even when every proposed atom is supported.
+pub fn compose_refinement(
+    instance: &Instance,
+    expected: &Context,
+    expected_graph: &Graph,
+    name: &str,
+) -> Result<Disposition, String> {
+    let refinement = instance
+        .graph
+        .refinements
+        .get(name)
+        .ok_or("hypothesis: missing proposed decomposition")?;
+    compose_children(instance, expected, expected_graph, &refinement.children)
+}
+fn compose_children(
+    instance: &Instance,
+    expected: &Context,
+    expected_graph: &Graph,
+    children: &[String],
+) -> Result<Disposition, String> {
     if &instance.context != expected
         || [
             &expected.artifact,
@@ -234,11 +325,6 @@ pub fn compose(
     {
         return Err("hypothesis: stale graph digest".into());
     }
-    let node = instance
-        .graph
-        .premises
-        .get(premise)
-        .ok_or("hypothesis: missing premise")?;
     let mut evidence = BTreeMap::new();
     for e in &instance.evidence {
         let atom = instance
@@ -256,8 +342,7 @@ pub fn compose(
         }
     }
     use qcore_core::hypothesis as kernel;
-    let statuses = node
-        .children
+    let statuses = children
         .iter()
         .map(|id| {
             (
@@ -295,6 +380,7 @@ pub fn legacy_records(records: &[ErasedPremise]) -> Result<Graph, String> {
         version: 1,
         atoms: BTreeMap::new(),
         premises: BTreeMap::new(),
+        refinements: BTreeMap::new(),
     };
     for record in records {
         append_legacy(&mut graph, record.clone())?;

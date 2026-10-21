@@ -257,9 +257,12 @@ const DETACH_PREMISE: &str = "detach_representation_atoms";
 fn report_owned_cjson_decomposition_replays_and_keeps_the_exact_legacy_premise() {
     let production =
         include_str!("../../../providers/qcore-provider-librdkafka/contracts/librdkafka/cjson.qv");
-    assert!(!production.contains("resource_hypothesis(detach_"));
+    // Concrete attachment retains the original singleton and declared premise.
+    assert!(production.contains("resource_premise_decomposition(detach_list_representation,"));
     let actual = replay(&BTreeMap::from([("cjson.qv".into(), production.into())])).unwrap();
-    assert_eq!(actual[DETACH].atoms.len(), 1);
+    assert_eq!(actual[DETACH].atoms.len(), 10);
+    assert_eq!(actual[DETACH].premises.len(), 1);
+    assert_eq!(actual[DETACH].refinements.len(), 1);
 
     let sources = BTreeMap::from([("cjson.qv".into(), CJSON.into())]);
     let contracts = load_resource_contract_sources(&sources).unwrap();
@@ -378,4 +381,158 @@ fn report_owned_cjson_refuted_prerequisite_is_reported_only_in_its_exact_context
     let mut foreign = context();
     foreign.build_identity = "another build".into();
     assert!(compose(&claim, &foreign, &expected, DETACH_PREMISE).is_err());
+}
+
+const REFINED: &str = "requires resource_premise(p, \"original proposition\"); requires resource_hypothesis(a, \"proposed A\"); requires resource_hypothesis(b, \"proposed B\"); requires resource_premise_decomposition(p, a, b);";
+#[test]
+fn v1_canonical_bytes_and_digests_remain_exact_with_v2_available() {
+    let old = graph(STRUCTURED);
+    let wire = br#"{"version":1,"atoms":{"a":{"id":"a","proposition":{"kind":"opaque","statement":"A and B hold jointly"}},"b":{"id":"b","proposition":{"kind":"opaque","statement":"C"}}},"premises":{"p":{"id":"p","children":["a","b"],"erasure":{"name":"p","statement":"all(a,b)","origin":"declared"}}}}"#;
+    assert_eq!(serde_json::to_vec(&old).unwrap(), wire);
+    assert_eq!(decode(wire).unwrap(), old);
+    assert_eq!(digest(&old).unwrap(), qcore_schemas::sha256_hex(wire));
+}
+#[test]
+fn same_name_attachment_preserves_exact_legacy_view_and_refuses_bad_structure() {
+    let before = graph("requires resource_premise(p, \"original proposition\");");
+    let after = graph(REFINED);
+    assert_eq!(after.version, 2);
+    assert_eq!(after.premises, before.premises);
+    assert_eq!(
+        after.atoms["legacy_atom_00000000"],
+        before.atoms["legacy_atom_00000000"]
+    );
+    assert_eq!(erasure(&after).unwrap(), erasure(&before).unwrap());
+    assert_eq!(decode(&serde_json::to_vec(&after).unwrap()).unwrap(), after);
+    for text in [
+        REFINED.replace("decomposition(p,", "decomposition(missing,"),
+        format!("{REFINED} requires resource_premise_decomposition(p, a, b);"),
+        REFINED.replace("decomposition(p, a, b)", "decomposition(p, b, a)"),
+        REFINED.replace("decomposition(p, a, b)", "decomposition(p, a, a)"),
+        REFINED.replace("decomposition(p, a, b)", "decomposition(p, a, missing)"),
+        REFINED.replace(
+            "decomposition(p, a, b)",
+            "decomposition(p, legacy_atom_00000000)",
+        ),
+        REFINED.replace(
+            "requires resource_premise(p, \"original proposition\");",
+            "",
+        ),
+        REFINED.replace(
+            "requires resource_premise_decomposition",
+            "ensures normal resource_premise_decomposition",
+        ),
+    ] {
+        assert!(
+            load_resource_contract_sources(&sources(&text)).is_err(),
+            "{text}"
+        );
+    }
+    for version in [0, 1, 3, u32::MAX] {
+        let mut changed = after.clone();
+        changed.version = version;
+        assert!(validate(&changed).is_err());
+    }
+    let mut changed = after.clone();
+    changed.refinements.get_mut("p").unwrap().premise = "missing".into();
+    assert!(validate(&changed).is_err());
+}
+#[test]
+fn proposed_support_and_refutation_never_transport_to_legacy_truth() {
+    let g = graph(REFINED);
+    let held = context();
+    let mut i = Instance {
+        graph: g.clone(),
+        graph_sha256: digest(&g).unwrap(),
+        context: held.clone(),
+        evidence: vec![],
+    };
+    for id in ["a", "b"] {
+        i.evidence.push(Evidence {
+            atom: id.into(),
+            atom_sha256: qcore_schemas::sha256_hex(&serde_json::to_vec(&g.atoms[id]).unwrap()),
+            context: held.clone(),
+            disposition: Disposition::Supported,
+            warrant: Warrant::Declared,
+            reference: "synthetic prerequisite control, not source truth".into(),
+        });
+    }
+    assert_eq!(
+        compose_refinement(&i, &held, &g, "p").unwrap(),
+        Disposition::Supported
+    );
+    assert_eq!(
+        compose(&i, &held, &g, "legacy_premise_00000000").unwrap(),
+        Disposition::Open
+    );
+    i.evidence[0].disposition = Disposition::Refuted;
+    assert_eq!(
+        compose_refinement(&i, &held, &g, "p").unwrap(),
+        Disposition::Refuted
+    );
+    assert_eq!(
+        compose(&i, &held, &g, "legacy_premise_00000000").unwrap(),
+        Disposition::Open
+    );
+    let mut foreign = held.clone();
+    foreign.build_identity.push_str("-other");
+    assert!(compose_refinement(&i, &foreign, &g, "p").is_err());
+    i.evidence[0].context = foreign;
+    assert!(compose_refinement(&i, &held, &g, "p").is_err());
+    i.evidence[0].context = held.clone();
+    i.evidence[0].atom_sha256 = "stale".into();
+    assert!(compose_refinement(&i, &held, &g, "p").is_err());
+}
+#[test]
+fn production_attachment_replays_exact_frozen_graph_and_preserves_legacy_singleton() {
+    let production =
+        include_str!("../../../providers/qcore-provider-librdkafka/contracts/librdkafka/cjson.qv");
+    let sources = BTreeMap::from([("cjson.qv".into(), production.into())]);
+    let graphs = replay(&sources).unwrap();
+    let expected = decode(include_bytes!(
+        "../../../docs/reports/premise-evidence-contracts/expected-graph.json"
+    ))
+    .unwrap();
+    assert_eq!(graphs[DETACH], expected);
+    assert_eq!(
+        expected.refinements["detach_list_representation"]
+            .children
+            .len(),
+        9
+    );
+    assert_eq!(expected.premises.len(), 1);
+    assert_eq!(expected.atoms.len(), 10);
+    assert_eq!(
+        expected.premises["legacy_premise_00000000"].children,
+        ["legacy_atom_00000000"]
+    );
+}
+
+#[test]
+fn same_name_attachment_inherits_without_rewriting_original_erasure() {
+    use qcore_contract::contract_inclusion::{
+        ContractLoadPath, PublishedContractCrate, derive_contract_namespace,
+    };
+    let name = "quirin-provider-refinement";
+    let parent = sources(REFINED).remove("graph.qv").unwrap();
+    let text = format!("{parent}\nextern fn child(q: ptr<mut,u8>) -> unit contract inherit f;");
+    let krate = PublishedContractCrate {
+        name: name.into(),
+        namespace: derive_contract_namespace(name).unwrap(),
+        version: "0.1.0".into(),
+        dependencies: Default::default(),
+        modules: BTreeMap::from([("graph.qv".into(), text)]),
+        published: Default::default(),
+    };
+    let path = ContractLoadPath::new(vec![krate]).unwrap();
+    let c = load_published_resource_contracts(&path, &[PublishedModuleRef::new(name, "graph.qv")])
+        .unwrap();
+    let graphs = replay(c.source_assumptions()).unwrap();
+    assert_eq!(graphs["f"], graphs["child"]);
+    let old = module_premises(
+        &sources("requires resource_premise(p, \"original proposition\");")["graph.qv"],
+    )
+    .unwrap();
+    let new = module_premises(&sources(REFINED)["graph.qv"]).unwrap();
+    assert_eq!(new, old);
 }

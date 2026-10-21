@@ -1,0 +1,62 @@
+{
+  "base": {
+    "resource-diagnostics.json": {
+      "bytes": 2638697,
+      "sha256": "6d862ba2e1a40bd8030fddce99e8127cd60a0ee92f52781235a0cdc2cf4e9a4f"
+    },
+    "resource-diagnostics.contracts.json": {
+      "bytes": 10222995,
+      "sha256": "1bf9a8a11b08d0b4ac39db841ed65ceec5d3c0d65def07a092fbe79f390bcb59"
+    },
+    "resource-diagnostics.chunk-contracts.json": {
+      "bytes": 385,
+      "sha256": "e7e0d254d9e7ee199672b981e3fc764b702b35a1757bb0f4570a9438e6b87922"
+    },
+    "resource-diagnostics.source-effects.json": {
+      "bytes": 385,
+      "sha256": "e7e0d254d9e7ee199672b981e3fc764b702b35a1757bb0f4570a9438e6b87922"
+    },
+    "system-null.jsonl": {
+      "bytes": 1872907,
+      "sha256": "b13213d6104465a27d72bf250ec986f8f2e84b0dbefe914feb5b73cf84ecdb7d"
+    },
+    "system-null.summary.json": {
+      "bytes": 64362,
+      "sha256": "3389b25cc329299deb8b67fef780ac68ac555b75e24437688cccf8be5f34f1a4"
+    },
+    "system-outer.json": {
+      "bytes": 67639,
+      "sha256": "8afcfebe779fc3c7be42d0d9fa1bb04918f3f9c3982211b153f04d58deecd30d"
+    }
+  },
+  "tip": {
+    "resource-diagnostics.json": {
+      "bytes": 2638689,
+      "sha256": "6fc3871d00998f6ca777c523d6dd7104bd242cc45a19590541fbe827b5a853fa"
+    },
+    "resource-diagnostics.contracts.json": {
+      "bytes": 10226952,
+      "sha256": "ed256c2228127f25abddfad97b99c21e969c779253203b5ddd74767285ad79f1"
+    },
+    "resource-diagnostics.chunk-contracts.json": {
+      "bytes": 385,
+      "sha256": "e7e0d254d9e7ee199672b981e3fc764b702b35a1757bb0f4570a9438e6b87922"
+    },
+    "resource-diagnostics.source-effects.json": {
+      "bytes": 385,
+      "sha256": "e7e0d254d9e7ee199672b981e3fc764b702b35a1757bb0f4570a9438e6b87922"
+    },
+    "system-null.jsonl": {
+      "bytes": 1872907,
+      "sha256": "f90429f5af05a84da817e70cb55f7859bb02d0635fafb92df771138ff7a2e331"
+    },
+    "system-null.summary.json": {
+      "bytes": 64362,
+      "sha256": "3389b25cc329299deb8b67fef780ac68ac555b75e24437688cccf8be5f34f1a4"
+    },
+    "system-outer.json": {
+      "bytes": 67634,
+      "sha256": "f75f6a72ca9548bf920482fbb7770ba0ad3c8a62aa19fc1476e8e264764cd7de"
+    }
+  }
+}

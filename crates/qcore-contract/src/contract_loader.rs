@@ -1496,6 +1496,7 @@ fn inherited_declarations_agree(elaborated: &Elaborated) -> Result<(), String> {
             // index; its rendering names the child's own parameter.
             || declared_premises_of(&child_loaded) != declared_premises_of(&parent_loaded)
             || child_loaded.hypotheses.atoms.iter().filter(|(id,_)| !id.starts_with("legacy_")).collect::<Vec<_>>() != parent_loaded.hypotheses.atoms.iter().filter(|(id,_)| !id.starts_with("legacy_")).collect::<Vec<_>>()
+            || child_loaded.hypotheses.refinements != parent_loaded.hypotheses.refinements
             || child_loaded.loop_owner != parent_loaded.loop_owner
             || child_loaded.thread_sync != parent_loaded.thread_sync
             || child_loaded.lifecycle != parent_loaded.lifecycle
@@ -1744,7 +1745,16 @@ fn load_function_in(
     // Card VERDICT-CONTRACT-DEPENDENCIES: the named premises, in clause order.
     let mut premises: Vec<DeclaredPremise> = Vec::new();
     // Validate the whole graph before accepting any of its clauses.
-    crate::hypothesis::declaration(decl, &[])?;
+    let graph_premises = decl
+        .function_contract
+        .iter()
+        .flat_map(|c| &c.clauses)
+        .map(|c| premise_clause(&c.value.expression_source))
+        .collect::<Result<Vec<_>, _>>()?
+        .into_iter()
+        .flatten()
+        .collect::<Vec<_>>();
+    crate::hypothesis::declaration(decl, &graph_premises)?;
     let mut loop_owner: Option<DeclaredLoopOwner> = None;
     let mut thread_sync: Option<DeclaredThreadSync> = None;
     let mut lifecycle: Option<DeclaredLifecycle> = None;

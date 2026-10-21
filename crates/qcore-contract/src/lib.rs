@@ -30,3 +30,4 @@ pub mod typed_profile;
 pub mod chunk_contract;
 
 pub mod hypothesis;
+pub mod hypothesis_bindings;

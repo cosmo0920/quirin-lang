@@ -1,0 +1,1099 @@
+{
+  "focused-1": [
+    {
+      "command": [
+        "cargo",
+        "test",
+        "-p",
+        "qcore-contract",
+        "--test",
+        "hypothesis",
+        "--test",
+        "hypothesis_bindings",
+        "--no-fail-fast"
+      ],
+      "cwd": "/home/cosmo/.codex/worktrees/premise-decomposition-cycle1/qcore-c",
+      "environment": {
+        "CARGO_PROFILE_DEV_DEBUG": "0",
+        "CARGO_PROFILE_TEST_DEBUG": "0",
+        "CARGO_INCREMENTAL": "0"
+      },
+      "start": "2026-10-21T00:16:05.959871+00:00",
+      "end": "2026-10-21T00:16:18.401344+00:00",
+      "exit": 101,
+      "log": "/home/cosmo/.codex/worktrees/premise-decomposition-cycle1/qcore-c/private/premise-evidence-contracts/focused-1/00.log",
+      "head": "4546190d66e2ebbb6ec240d5f9987b62bef5a878"
+    },
+    {
+      "command": [
+        "cargo",
+        "test",
+        "-p",
+        "qcore-audit",
+        "--test",
+        "contract_dependencies_report",
+        "--no-fail-fast"
+      ],
+      "cwd": "/home/cosmo/.codex/worktrees/premise-decomposition-cycle1/qcore-c",
+      "environment": {
+        "CARGO_PROFILE_DEV_DEBUG": "0",
+        "CARGO_PROFILE_TEST_DEBUG": "0",
+        "CARGO_INCREMENTAL": "0"
+      },
+      "start": "2026-10-21T00:16:18.403928+00:00",
+      "end": "2026-10-21T00:16:51.545163+00:00",
+      "exit": 0,
+      "log": "/home/cosmo/.codex/worktrees/premise-decomposition-cycle1/qcore-c/private/premise-evidence-contracts/focused-1/01.log",
+      "head": "4546190d66e2ebbb6ec240d5f9987b62bef5a878"
+    },
+    {
+      "command": [
+        "lake",
+        "build",
+        "QCore.PremiseRefinement"
+      ],
+      "cwd": "/home/cosmo/.codex/worktrees/premise-decomposition-cycle1/qcore-c/proof",
+      "environment": {
+        "CARGO_PROFILE_DEV_DEBUG": "0",
+        "CARGO_PROFILE_TEST_DEBUG": "0",
+        "CARGO_INCREMENTAL": "0"
+      },
+      "start": "2026-10-21T00:16:51.547476+00:00",
+      "end": "2026-10-21T00:16:51.784357+00:00",
+      "exit": 1,
+      "log": "/home/cosmo/.codex/worktrees/premise-decomposition-cycle1/qcore-c/private/premise-evidence-contracts/focused-1/02.log",
+      "head": "4546190d66e2ebbb6ec240d5f9987b62bef5a878"
+    },
+    {
+      "command": [
+        "lake",
+        "env",
+        "lean",
+        "AuditPremiseRefinement.lean"
+      ],
+      "cwd": "/home/cosmo/.codex/worktrees/premise-decomposition-cycle1/qcore-c/proof",
+      "environment": {
+        "CARGO_PROFILE_DEV_DEBUG": "0",
+        "CARGO_PROFILE_TEST_DEBUG": "0",
+        "CARGO_INCREMENTAL": "0"
+      },
+      "start": "2026-10-21T00:16:51.786752+00:00",
+      "end": "2026-10-21T00:16:51.881451+00:00",
+      "exit": 1,
+      "log": "/home/cosmo/.codex/worktrees/premise-decomposition-cycle1/qcore-c/private/premise-evidence-contracts/focused-1/03.log",
+      "head": "4546190d66e2ebbb6ec240d5f9987b62bef5a878"
+    },
+    {
+      "command": [
+        "cargo",
+        "build",
+        "--release",
+        "-p",
+        "qcore-audit",
+        "--bin",
+        "quirin-audit"
+      ],
+      "cwd": "/home/cosmo/.codex/worktrees/premise-decomposition-cycle1/qcore-c",
+      "environment": {
+        "CARGO_PROFILE_DEV_DEBUG": "0",
+        "CARGO_PROFILE_TEST_DEBUG": "0",
+        "CARGO_INCREMENTAL": "0"
+      },
+      "start": "2026-10-21T00:16:51.882918+00:00",
+      "end": "2026-10-21T00:18:24.650644+00:00",
+      "exit": 0,
+      "log": "/home/cosmo/.codex/worktrees/premise-decomposition-cycle1/qcore-c/private/premise-evidence-contracts/focused-1/04.log",
+      "head": "4546190d66e2ebbb6ec240d5f9987b62bef5a878"
+    }
+  ],
+  "focused-2": [
+    {
+      "command": [
+        "cargo",
+        "test",
+        "-p",
+        "qcore-contract",
+        "--test",
+        "hypothesis",
+        "--test",
+        "hypothesis_bindings",
+        "--no-fail-fast"
+      ],
+      "cwd": "/home/cosmo/.codex/worktrees/premise-decomposition-cycle1/qcore-c",
+      "environment": {
+        "CARGO_PROFILE_DEV_DEBUG": "0",
+        "CARGO_PROFILE_TEST_DEBUG": "0",
+        "CARGO_INCREMENTAL": "0"
+      },
+      "start": "2026-10-21T00:19:58.532088+00:00",
+      "end": "2026-10-21T00:20:01.635990+00:00",
+      "exit": 0,
+      "log": "/home/cosmo/.codex/worktrees/premise-decomposition-cycle1/qcore-c/private/premise-evidence-contracts/focused-2/00.log",
+      "head": "d8d57f73a32b0e8ae10079b794da34ac022cfebc"
+    },
+    {
+      "command": [
+        "cargo",
+        "test",
+        "-p",
+        "qcore-audit",
+        "--test",
+        "contract_dependencies_report",
+        "--no-fail-fast"
+      ],
+      "cwd": "/home/cosmo/.codex/worktrees/premise-decomposition-cycle1/qcore-c",
+      "environment": {
+        "CARGO_PROFILE_DEV_DEBUG": "0",
+        "CARGO_PROFILE_TEST_DEBUG": "0",
+        "CARGO_INCREMENTAL": "0"
+      },
+      "start": "2026-10-21T00:20:01.638680+00:00",
+      "end": "2026-10-21T00:20:26.610330+00:00",
+      "exit": 0,
+      "log": "/home/cosmo/.codex/worktrees/premise-decomposition-cycle1/qcore-c/private/premise-evidence-contracts/focused-2/01.log",
+      "head": "d8d57f73a32b0e8ae10079b794da34ac022cfebc"
+    },
+    {
+      "command": [
+        "lake",
+        "build",
+        "QCore.PremiseRefinement"
+      ],
+      "cwd": "/home/cosmo/.codex/worktrees/premise-decomposition-cycle1/qcore-c/proof",
+      "environment": {
+        "CARGO_PROFILE_DEV_DEBUG": "0",
+        "CARGO_PROFILE_TEST_DEBUG": "0",
+        "CARGO_INCREMENTAL": "0"
+      },
+      "start": "2026-10-21T00:20:26.612363+00:00",
+      "end": "2026-10-21T00:20:26.948720+00:00",
+      "exit": 0,
+      "log": "/home/cosmo/.codex/worktrees/premise-decomposition-cycle1/qcore-c/private/premise-evidence-contracts/focused-2/02.log",
+      "head": "d8d57f73a32b0e8ae10079b794da34ac022cfebc"
+    },
+    {
+      "command": [
+        "lake",
+        "env",
+        "lean",
+        "AuditPremiseRefinement.lean"
+      ],
+      "cwd": "/home/cosmo/.codex/worktrees/premise-decomposition-cycle1/qcore-c/proof",
+      "environment": {
+        "CARGO_PROFILE_DEV_DEBUG": "0",
+        "CARGO_PROFILE_TEST_DEBUG": "0",
+        "CARGO_INCREMENTAL": "0"
+      },
+      "start": "2026-10-21T00:20:26.951547+00:00",
+      "end": "2026-10-21T00:20:27.109399+00:00",
+      "exit": 0,
+      "log": "/home/cosmo/.codex/worktrees/premise-decomposition-cycle1/qcore-c/private/premise-evidence-contracts/focused-2/03.log",
+      "head": "d8d57f73a32b0e8ae10079b794da34ac022cfebc"
+    },
+    {
+      "command": [
+        "cargo",
+        "build",
+        "--release",
+        "-p",
+        "qcore-audit",
+        "--bin",
+        "quirin-audit"
+      ],
+      "cwd": "/home/cosmo/.codex/worktrees/premise-decomposition-cycle1/qcore-c",
+      "environment": {
+        "CARGO_PROFILE_DEV_DEBUG": "0",
+        "CARGO_PROFILE_TEST_DEBUG": "0",
+        "CARGO_INCREMENTAL": "0"
+      },
+      "start": "2026-10-21T00:20:27.111054+00:00",
+      "end": "2026-10-21T00:21:37.761691+00:00",
+      "exit": 0,
+      "log": "/home/cosmo/.codex/worktrees/premise-decomposition-cycle1/qcore-c/private/premise-evidence-contracts/focused-2/04.log",
+      "head": "d8d57f73a32b0e8ae10079b794da34ac022cfebc"
+    }
+  ],
+  "pins-1": [
+    {
+      "command": [
+        "target/release/quirin-audit",
+        "pin",
+        "--source-root",
+        "/home/cosmo/Documents/GitHub/qcore-c/build/cycle19/c-gateway-wave-pin/fluent-bit-clang-source",
+        "--crate",
+        "qcore-provider-librdkafka",
+        "--function",
+        "cJSON_DetachItemViaPointer"
+      ],
+      "cwd": "/home/cosmo/.codex/worktrees/premise-decomposition-cycle1/qcore-c",
+      "environment": {
+        "CARGO_PROFILE_DEV_DEBUG": "0",
+        "CARGO_PROFILE_TEST_DEBUG": "0",
+        "CARGO_INCREMENTAL": "0"
+      },
+      "start": "2026-10-21T00:21:37.798383+00:00",
+      "end": "2026-10-21T00:21:38.122683+00:00",
+      "exit": 0,
+      "log": "/home/cosmo/.codex/worktrees/premise-decomposition-cycle1/qcore-c/private/premise-evidence-contracts/pins-1/00.log",
+      "head": "d8d57f73a32b0e8ae10079b794da34ac022cfebc"
+    },
+    {
+      "command": [
+        "target/release/quirin-audit",
+        "pin",
+        "--source-root",
+        "/home/cosmo/Documents/GitHub/qcore-c/private/w45-fb/w46-external-callee-contracts/attempt-1/fluent-bit-clang-source",
+        "--crate",
+        "qcore-provider-librdkafka",
+        "--function",
+        "cJSON_DetachItemViaPointer"
+      ],
+      "cwd": "/home/cosmo/.codex/worktrees/premise-decomposition-cycle1/qcore-c",
+      "environment": {
+        "CARGO_PROFILE_DEV_DEBUG": "0",
+        "CARGO_PROFILE_TEST_DEBUG": "0",
+        "CARGO_INCREMENTAL": "0"
+      },
+      "start": "2026-10-21T00:21:38.124716+00:00",
+      "end": "2026-10-21T00:21:38.443183+00:00",
+      "exit": 0,
+      "log": "/home/cosmo/.codex/worktrees/premise-decomposition-cycle1/qcore-c/private/premise-evidence-contracts/pins-1/01.log",
+      "head": "d8d57f73a32b0e8ae10079b794da34ac022cfebc"
+    },
+    {
+      "command": [
+        "python3",
+        "providers/contracts.py",
+        "sync"
+      ],
+      "cwd": "/home/cosmo/.codex/worktrees/premise-decomposition-cycle1/qcore-c",
+      "environment": {
+        "CARGO_PROFILE_DEV_DEBUG": "0",
+        "CARGO_PROFILE_TEST_DEBUG": "0",
+        "CARGO_INCREMENTAL": "0"
+      },
+      "start": "2026-10-21T00:21:38.444941+00:00",
+      "end": "2026-10-21T00:21:53.851721+00:00",
+      "exit": 0,
+      "log": "/home/cosmo/.codex/worktrees/premise-decomposition-cycle1/qcore-c/private/premise-evidence-contracts/pins-1/02.log",
+      "head": "d8d57f73a32b0e8ae10079b794da34ac022cfebc"
+    },
+    {
+      "command": [
+        "python3",
+        "providers/contracts.py",
+        "check"
+      ],
+      "cwd": "/home/cosmo/.codex/worktrees/premise-decomposition-cycle1/qcore-c",
+      "environment": {
+        "CARGO_PROFILE_DEV_DEBUG": "0",
+        "CARGO_PROFILE_TEST_DEBUG": "0",
+        "CARGO_INCREMENTAL": "0"
+      },
+      "start": "2026-10-21T00:21:53.854358+00:00",
+      "end": "2026-10-21T00:22:08.882907+00:00",
+      "exit": 0,
+      "log": "/home/cosmo/.codex/worktrees/premise-decomposition-cycle1/qcore-c/private/premise-evidence-contracts/pins-1/03.log",
+      "head": "d8d57f73a32b0e8ae10079b794da34ac022cfebc"
+    }
+  ],
+  "examples-1": [
+    {
+      "command": [
+        "cargo",
+        "build",
+        "-p",
+        "qcore-audit",
+        "--examples"
+      ],
+      "cwd": "/home/cosmo/.codex/worktrees/premise-decomposition-cycle1/qcore-c",
+      "environment": {
+        "CARGO_PROFILE_DEV_DEBUG": "0",
+        "CARGO_PROFILE_TEST_DEBUG": "0",
+        "CARGO_INCREMENTAL": "0"
+      },
+      "start": "2026-10-21T00:33:17.728793+00:00",
+      "end": "2026-10-21T00:33:25.099303+00:00",
+      "exit": 0,
+      "log": "/home/cosmo/.codex/worktrees/premise-decomposition-cycle1/qcore-c/private/premise-evidence-contracts/examples-1/00.log",
+      "head": "c84a1e1eb199960f4a08282b093a9cb0525b0e19"
+    }
+  ],
+  "standing-1": [
+    {
+      "command": [
+        "git",
+        "submodule",
+        "update",
+        "--init",
+        "--recursive"
+      ],
+      "cwd": "/home/cosmo/.codex/worktrees/premise-decomposition-cycle1/qcore-c",
+      "environment": {
+        "CARGO_PROFILE_DEV_DEBUG": "0",
+        "CARGO_PROFILE_TEST_DEBUG": "0",
+        "CARGO_INCREMENTAL": "0"
+      },
+      "start": "2026-10-21T00:33:25.137044+00:00",
+      "end": "2026-10-21T00:33:25.160316+00:00",
+      "exit": 0,
+      "log": "/home/cosmo/.codex/worktrees/premise-decomposition-cycle1/qcore-c/private/premise-evidence-contracts/standing-1/00.log",
+      "head": "c84a1e1eb199960f4a08282b093a9cb0525b0e19"
+    },
+    {
+      "command": [
+        "clang",
+        "--version"
+      ],
+      "cwd": "/home/cosmo/.codex/worktrees/premise-decomposition-cycle1/qcore-c",
+      "environment": {
+        "CARGO_PROFILE_DEV_DEBUG": "0",
+        "CARGO_PROFILE_TEST_DEBUG": "0",
+        "CARGO_INCREMENTAL": "0"
+      },
+      "start": "2026-10-21T00:33:25.161834+00:00",
+      "end": "2026-10-21T00:33:25.176658+00:00",
+      "exit": 0,
+      "log": "/home/cosmo/.codex/worktrees/premise-decomposition-cycle1/qcore-c/private/premise-evidence-contracts/standing-1/01.log",
+      "head": "c84a1e1eb199960f4a08282b093a9cb0525b0e19"
+    },
+    {
+      "command": [
+        "python3",
+        "scripts/run_test_binaries.py",
+        "--jobs",
+        "4"
+      ],
+      "cwd": "/home/cosmo/.codex/worktrees/premise-decomposition-cycle1/qcore-c",
+      "environment": {
+        "CARGO_PROFILE_DEV_DEBUG": "0",
+        "CARGO_PROFILE_TEST_DEBUG": "0",
+        "CARGO_INCREMENTAL": "0"
+      },
+      "start": "2026-10-21T00:33:25.178099+00:00",
+      "end": "2026-10-21T00:39:46.018558+00:00",
+      "exit": 0,
+      "log": "/home/cosmo/.codex/worktrees/premise-decomposition-cycle1/qcore-c/private/premise-evidence-contracts/standing-1/02.log",
+      "head": "c84a1e1eb199960f4a08282b093a9cb0525b0e19"
+    },
+    {
+      "command": [
+        "cargo",
+        "fmt",
+        "--all",
+        "--",
+        "--check"
+      ],
+      "cwd": "/home/cosmo/.codex/worktrees/premise-decomposition-cycle1/qcore-c",
+      "environment": {
+        "CARGO_PROFILE_DEV_DEBUG": "0",
+        "CARGO_PROFILE_TEST_DEBUG": "0",
+        "CARGO_INCREMENTAL": "0"
+      },
+      "start": "2026-10-21T00:39:46.020148+00:00",
+      "end": "2026-10-21T00:39:49.965820+00:00",
+      "exit": 0,
+      "log": "/home/cosmo/.codex/worktrees/premise-decomposition-cycle1/qcore-c/private/premise-evidence-contracts/standing-1/03.log",
+      "head": "c84a1e1eb199960f4a08282b093a9cb0525b0e19"
+    },
+    {
+      "command": [
+        "cargo",
+        "clippy",
+        "--all-targets",
+        "--",
+        "-D",
+        "warnings"
+      ],
+      "cwd": "/home/cosmo/.codex/worktrees/premise-decomposition-cycle1/qcore-c",
+      "environment": {
+        "CARGO_PROFILE_DEV_DEBUG": "0",
+        "CARGO_PROFILE_TEST_DEBUG": "0",
+        "CARGO_INCREMENTAL": "0"
+      },
+      "start": "2026-10-21T00:39:49.968178+00:00",
+      "end": "2026-10-21T00:40:11.637983+00:00",
+      "exit": 101,
+      "log": "/home/cosmo/.codex/worktrees/premise-decomposition-cycle1/qcore-c/private/premise-evidence-contracts/standing-1/04.log",
+      "head": "c84a1e1eb199960f4a08282b093a9cb0525b0e19"
+    },
+    {
+      "command": [
+        "cargo",
+        "run",
+        "-p",
+        "qcore-compiler",
+        "--example",
+        "reevaluation_probe"
+      ],
+      "cwd": "/home/cosmo/.codex/worktrees/premise-decomposition-cycle1/qcore-c",
+      "environment": {
+        "CARGO_PROFILE_DEV_DEBUG": "0",
+        "CARGO_PROFILE_TEST_DEBUG": "0",
+        "CARGO_INCREMENTAL": "0"
+      },
+      "start": "2026-10-21T00:40:11.640153+00:00",
+      "end": "2026-10-21T00:40:11.717587+00:00",
+      "exit": 0,
+      "log": "/home/cosmo/.codex/worktrees/premise-decomposition-cycle1/qcore-c/private/premise-evidence-contracts/standing-1/05.log",
+      "head": "c84a1e1eb199960f4a08282b093a9cb0525b0e19"
+    },
+    {
+      "command": [
+        "cargo",
+        "run",
+        "-p",
+        "qcore-compiler",
+        "--example",
+        "reevaluation_followup"
+      ],
+      "cwd": "/home/cosmo/.codex/worktrees/premise-decomposition-cycle1/qcore-c",
+      "environment": {
+        "CARGO_PROFILE_DEV_DEBUG": "0",
+        "CARGO_PROFILE_TEST_DEBUG": "0",
+        "CARGO_INCREMENTAL": "0"
+      },
+      "start": "2026-10-21T00:40:11.719272+00:00",
+      "end": "2026-10-21T00:40:12.148801+00:00",
+      "exit": 0,
+      "log": "/home/cosmo/.codex/worktrees/premise-decomposition-cycle1/qcore-c/private/premise-evidence-contracts/standing-1/06.log",
+      "head": "c84a1e1eb199960f4a08282b093a9cb0525b0e19"
+    },
+    {
+      "command": [
+        "python3",
+        "scripts/check_lean_audits.py",
+        "--jobs",
+        "4"
+      ],
+      "cwd": "/home/cosmo/.codex/worktrees/premise-decomposition-cycle1/qcore-c",
+      "environment": {
+        "CARGO_PROFILE_DEV_DEBUG": "0",
+        "CARGO_PROFILE_TEST_DEBUG": "0",
+        "CARGO_INCREMENTAL": "0"
+      },
+      "start": "2026-10-21T00:40:12.151106+00:00",
+      "end": "2026-10-21T00:40:13.219012+00:00",
+      "exit": 1,
+      "log": "/home/cosmo/.codex/worktrees/premise-decomposition-cycle1/qcore-c/private/premise-evidence-contracts/standing-1/07.log",
+      "head": "c84a1e1eb199960f4a08282b093a9cb0525b0e19"
+    }
+  ],
+  "standing-2": [
+    {
+      "command": [
+        "git",
+        "submodule",
+        "update",
+        "--init",
+        "--recursive"
+      ],
+      "cwd": "/home/cosmo/.codex/worktrees/premise-decomposition-cycle1/qcore-c",
+      "environment": {
+        "CARGO_PROFILE_DEV_DEBUG": "0",
+        "CARGO_PROFILE_TEST_DEBUG": "0",
+        "CARGO_INCREMENTAL": "0",
+        "QCORE_AUDIT_BUILD_COMMIT": null,
+        "RUSTFLAGS": null,
+        "CARGO_ENCODED_RUSTFLAGS": null,
+        "RUSTUP_TOOLCHAIN": null,
+        "ELAN_TOOLCHAIN": null,
+        "QCORE_CLANG": null
+      },
+      "start": "2026-10-21T02:08:07.075918+00:00",
+      "end": "2026-10-21T02:08:07.103498+00:00",
+      "exit": 0,
+      "log": "/home/cosmo/.codex/worktrees/premise-decomposition-cycle1/qcore-c/private/premise-evidence-contracts/standing-2/00.log",
+      "head": "5a556d8272b17b35a47a5036bad1f6d614ee698b"
+    },
+    {
+      "command": [
+        "clang",
+        "--version"
+      ],
+      "cwd": "/home/cosmo/.codex/worktrees/premise-decomposition-cycle1/qcore-c",
+      "environment": {
+        "CARGO_PROFILE_DEV_DEBUG": "0",
+        "CARGO_PROFILE_TEST_DEBUG": "0",
+        "CARGO_INCREMENTAL": "0",
+        "QCORE_AUDIT_BUILD_COMMIT": null,
+        "RUSTFLAGS": null,
+        "CARGO_ENCODED_RUSTFLAGS": null,
+        "RUSTUP_TOOLCHAIN": null,
+        "ELAN_TOOLCHAIN": null,
+        "QCORE_CLANG": null
+      },
+      "start": "2026-10-21T02:08:07.105276+00:00",
+      "end": "2026-10-21T02:08:07.120912+00:00",
+      "exit": 0,
+      "log": "/home/cosmo/.codex/worktrees/premise-decomposition-cycle1/qcore-c/private/premise-evidence-contracts/standing-2/01.log",
+      "head": "5a556d8272b17b35a47a5036bad1f6d614ee698b"
+    },
+    {
+      "command": [
+        "python3",
+        "scripts/run_test_binaries.py",
+        "--jobs",
+        "4"
+      ],
+      "cwd": "/home/cosmo/.codex/worktrees/premise-decomposition-cycle1/qcore-c",
+      "environment": {
+        "CARGO_PROFILE_DEV_DEBUG": "0",
+        "CARGO_PROFILE_TEST_DEBUG": "0",
+        "CARGO_INCREMENTAL": "0",
+        "QCORE_AUDIT_BUILD_COMMIT": null,
+        "RUSTFLAGS": null,
+        "CARGO_ENCODED_RUSTFLAGS": null,
+        "RUSTUP_TOOLCHAIN": null,
+        "ELAN_TOOLCHAIN": null,
+        "QCORE_CLANG": null
+      },
+      "start": "2026-10-21T02:08:07.122759+00:00",
+      "end": "2026-10-21T02:14:30.454031+00:00",
+      "exit": 0,
+      "log": "/home/cosmo/.codex/worktrees/premise-decomposition-cycle1/qcore-c/private/premise-evidence-contracts/standing-2/02.log",
+      "head": "5a556d8272b17b35a47a5036bad1f6d614ee698b"
+    },
+    {
+      "command": [
+        "cargo",
+        "fmt",
+        "--all",
+        "--",
+        "--check"
+      ],
+      "cwd": "/home/cosmo/.codex/worktrees/premise-decomposition-cycle1/qcore-c",
+      "environment": {
+        "CARGO_PROFILE_DEV_DEBUG": "0",
+        "CARGO_PROFILE_TEST_DEBUG": "0",
+        "CARGO_INCREMENTAL": "0",
+        "QCORE_AUDIT_BUILD_COMMIT": null,
+        "RUSTFLAGS": null,
+        "CARGO_ENCODED_RUSTFLAGS": null,
+        "RUSTUP_TOOLCHAIN": null,
+        "ELAN_TOOLCHAIN": null,
+        "QCORE_CLANG": null
+      },
+      "start": "2026-10-21T02:14:30.456165+00:00",
+      "end": "2026-10-21T02:14:35.887617+00:00",
+      "exit": 0,
+      "log": "/home/cosmo/.codex/worktrees/premise-decomposition-cycle1/qcore-c/private/premise-evidence-contracts/standing-2/03.log",
+      "head": "5a556d8272b17b35a47a5036bad1f6d614ee698b"
+    },
+    {
+      "command": [
+        "cargo",
+        "clippy",
+        "--all-targets",
+        "--",
+        "-D",
+        "warnings"
+      ],
+      "cwd": "/home/cosmo/.codex/worktrees/premise-decomposition-cycle1/qcore-c",
+      "environment": {
+        "CARGO_PROFILE_DEV_DEBUG": "0",
+        "CARGO_PROFILE_TEST_DEBUG": "0",
+        "CARGO_INCREMENTAL": "0",
+        "QCORE_AUDIT_BUILD_COMMIT": null,
+        "RUSTFLAGS": null,
+        "CARGO_ENCODED_RUSTFLAGS": null,
+        "RUSTUP_TOOLCHAIN": null,
+        "ELAN_TOOLCHAIN": null,
+        "QCORE_CLANG": null
+      },
+      "start": "2026-10-21T02:14:35.889733+00:00",
+      "end": "2026-10-21T02:14:48.732920+00:00",
+      "exit": 0,
+      "log": "/home/cosmo/.codex/worktrees/premise-decomposition-cycle1/qcore-c/private/premise-evidence-contracts/standing-2/04.log",
+      "head": "5a556d8272b17b35a47a5036bad1f6d614ee698b"
+    },
+    {
+      "command": [
+        "cargo",
+        "run",
+        "-p",
+        "qcore-compiler",
+        "--example",
+        "reevaluation_probe"
+      ],
+      "cwd": "/home/cosmo/.codex/worktrees/premise-decomposition-cycle1/qcore-c",
+      "environment": {
+        "CARGO_PROFILE_DEV_DEBUG": "0",
+        "CARGO_PROFILE_TEST_DEBUG": "0",
+        "CARGO_INCREMENTAL": "0",
+        "QCORE_AUDIT_BUILD_COMMIT": null,
+        "RUSTFLAGS": null,
+        "CARGO_ENCODED_RUSTFLAGS": null,
+        "RUSTUP_TOOLCHAIN": null,
+        "ELAN_TOOLCHAIN": null,
+        "QCORE_CLANG": null
+      },
+      "start": "2026-10-21T02:14:48.735721+00:00",
+      "end": "2026-10-21T02:14:48.826321+00:00",
+      "exit": 0,
+      "log": "/home/cosmo/.codex/worktrees/premise-decomposition-cycle1/qcore-c/private/premise-evidence-contracts/standing-2/05.log",
+      "head": "5a556d8272b17b35a47a5036bad1f6d614ee698b"
+    },
+    {
+      "command": [
+        "cargo",
+        "run",
+        "-p",
+        "qcore-compiler",
+        "--example",
+        "reevaluation_followup"
+      ],
+      "cwd": "/home/cosmo/.codex/worktrees/premise-decomposition-cycle1/qcore-c",
+      "environment": {
+        "CARGO_PROFILE_DEV_DEBUG": "0",
+        "CARGO_PROFILE_TEST_DEBUG": "0",
+        "CARGO_INCREMENTAL": "0",
+        "QCORE_AUDIT_BUILD_COMMIT": null,
+        "RUSTFLAGS": null,
+        "CARGO_ENCODED_RUSTFLAGS": null,
+        "RUSTUP_TOOLCHAIN": null,
+        "ELAN_TOOLCHAIN": null,
+        "QCORE_CLANG": null
+      },
+      "start": "2026-10-21T02:14:48.828048+00:00",
+      "end": "2026-10-21T02:14:49.298868+00:00",
+      "exit": 0,
+      "log": "/home/cosmo/.codex/worktrees/premise-decomposition-cycle1/qcore-c/private/premise-evidence-contracts/standing-2/06.log",
+      "head": "5a556d8272b17b35a47a5036bad1f6d614ee698b"
+    },
+    {
+      "command": [
+        "python3",
+        "scripts/check_lean_audits.py",
+        "--jobs",
+        "4"
+      ],
+      "cwd": "/home/cosmo/.codex/worktrees/premise-decomposition-cycle1/qcore-c",
+      "environment": {
+        "CARGO_PROFILE_DEV_DEBUG": "0",
+        "CARGO_PROFILE_TEST_DEBUG": "0",
+        "CARGO_INCREMENTAL": "0",
+        "QCORE_AUDIT_BUILD_COMMIT": null,
+        "RUSTFLAGS": null,
+        "CARGO_ENCODED_RUSTFLAGS": null,
+        "RUSTUP_TOOLCHAIN": null,
+        "ELAN_TOOLCHAIN": null,
+        "QCORE_CLANG": null
+      },
+      "start": "2026-10-21T02:14:49.301561+00:00",
+      "end": "2026-10-21T02:15:13.151773+00:00",
+      "exit": 0,
+      "log": "/home/cosmo/.codex/worktrees/premise-decomposition-cycle1/qcore-c/private/premise-evidence-contracts/standing-2/07.log",
+      "head": "5a556d8272b17b35a47a5036bad1f6d614ee698b"
+    }
+  ],
+  "provider-1": [
+    {
+      "command": [
+        "cargo",
+        "test",
+        "--manifest-path",
+        "providers/Cargo.toml",
+        "--workspace",
+        "--locked",
+        "--offline",
+        "--no-fail-fast"
+      ],
+      "cwd": "/home/cosmo/.codex/worktrees/premise-decomposition-cycle1/qcore-c",
+      "environment": {
+        "CARGO_PROFILE_DEV_DEBUG": "0",
+        "CARGO_PROFILE_TEST_DEBUG": "0",
+        "CARGO_INCREMENTAL": "0",
+        "QCORE_AUDIT_BUILD_COMMIT": null,
+        "RUSTFLAGS": null,
+        "CARGO_ENCODED_RUSTFLAGS": null,
+        "RUSTUP_TOOLCHAIN": null,
+        "ELAN_TOOLCHAIN": null,
+        "QCORE_CLANG": null
+      },
+      "start": "2026-10-21T02:15:13.198838+00:00",
+      "end": "2026-10-21T02:24:45.443168+00:00",
+      "exit": 0,
+      "log": "/home/cosmo/.codex/worktrees/premise-decomposition-cycle1/qcore-c/private/premise-evidence-contracts/provider-1/00.log",
+      "head": "5a556d8272b17b35a47a5036bad1f6d614ee698b"
+    },
+    {
+      "command": [
+        "cargo",
+        "fmt",
+        "--manifest-path",
+        "providers/Cargo.toml",
+        "--all",
+        "--",
+        "--check"
+      ],
+      "cwd": "/home/cosmo/.codex/worktrees/premise-decomposition-cycle1/qcore-c",
+      "environment": {
+        "CARGO_PROFILE_DEV_DEBUG": "0",
+        "CARGO_PROFILE_TEST_DEBUG": "0",
+        "CARGO_INCREMENTAL": "0",
+        "QCORE_AUDIT_BUILD_COMMIT": null,
+        "RUSTFLAGS": null,
+        "CARGO_ENCODED_RUSTFLAGS": null,
+        "RUSTUP_TOOLCHAIN": null,
+        "ELAN_TOOLCHAIN": null,
+        "QCORE_CLANG": null
+      },
+      "start": "2026-10-21T02:24:45.445194+00:00",
+      "end": "2026-10-21T02:24:51.192878+00:00",
+      "exit": 0,
+      "log": "/home/cosmo/.codex/worktrees/premise-decomposition-cycle1/qcore-c/private/premise-evidence-contracts/provider-1/01.log",
+      "head": "5a556d8272b17b35a47a5036bad1f6d614ee698b"
+    },
+    {
+      "command": [
+        "cargo",
+        "clippy",
+        "--manifest-path",
+        "providers/Cargo.toml",
+        "--workspace",
+        "--all-targets",
+        "--locked",
+        "--offline",
+        "--",
+        "-D",
+        "warnings"
+      ],
+      "cwd": "/home/cosmo/.codex/worktrees/premise-decomposition-cycle1/qcore-c",
+      "environment": {
+        "CARGO_PROFILE_DEV_DEBUG": "0",
+        "CARGO_PROFILE_TEST_DEBUG": "0",
+        "CARGO_INCREMENTAL": "0",
+        "QCORE_AUDIT_BUILD_COMMIT": null,
+        "RUSTFLAGS": null,
+        "CARGO_ENCODED_RUSTFLAGS": null,
+        "RUSTUP_TOOLCHAIN": null,
+        "ELAN_TOOLCHAIN": null,
+        "QCORE_CLANG": null
+      },
+      "start": "2026-10-21T02:24:51.195138+00:00",
+      "end": "2026-10-21T02:25:17.326296+00:00",
+      "exit": 0,
+      "log": "/home/cosmo/.codex/worktrees/premise-decomposition-cycle1/qcore-c/private/premise-evidence-contracts/provider-1/02.log",
+      "head": "5a556d8272b17b35a47a5036bad1f6d614ee698b"
+    },
+    {
+      "command": [
+        "python3",
+        "-m",
+        "unittest",
+        "discover",
+        "-s",
+        "providers/tests"
+      ],
+      "cwd": "/home/cosmo/.codex/worktrees/premise-decomposition-cycle1/qcore-c",
+      "environment": {
+        "CARGO_PROFILE_DEV_DEBUG": "0",
+        "CARGO_PROFILE_TEST_DEBUG": "0",
+        "CARGO_INCREMENTAL": "0",
+        "QCORE_AUDIT_BUILD_COMMIT": null,
+        "RUSTFLAGS": null,
+        "CARGO_ENCODED_RUSTFLAGS": null,
+        "RUSTUP_TOOLCHAIN": null,
+        "ELAN_TOOLCHAIN": null,
+        "QCORE_CLANG": null
+      },
+      "start": "2026-10-21T02:25:17.328777+00:00",
+      "end": "2026-10-21T02:25:37.024268+00:00",
+      "exit": 0,
+      "log": "/home/cosmo/.codex/worktrees/premise-decomposition-cycle1/qcore-c/private/premise-evidence-contracts/provider-1/03.log",
+      "head": "5a556d8272b17b35a47a5036bad1f6d614ee698b"
+    },
+    {
+      "command": [
+        "python3",
+        "providers/contracts.py",
+        "check"
+      ],
+      "cwd": "/home/cosmo/.codex/worktrees/premise-decomposition-cycle1/qcore-c",
+      "environment": {
+        "CARGO_PROFILE_DEV_DEBUG": "0",
+        "CARGO_PROFILE_TEST_DEBUG": "0",
+        "CARGO_INCREMENTAL": "0",
+        "QCORE_AUDIT_BUILD_COMMIT": null,
+        "RUSTFLAGS": null,
+        "CARGO_ENCODED_RUSTFLAGS": null,
+        "RUSTUP_TOOLCHAIN": null,
+        "ELAN_TOOLCHAIN": null,
+        "QCORE_CLANG": null
+      },
+      "start": "2026-10-21T02:25:37.026818+00:00",
+      "end": "2026-10-21T02:25:57.637040+00:00",
+      "exit": 0,
+      "log": "/home/cosmo/.codex/worktrees/premise-decomposition-cycle1/qcore-c/private/premise-evidence-contracts/provider-1/04.log",
+      "head": "5a556d8272b17b35a47a5036bad1f6d614ee698b"
+    },
+    {
+      "command": [
+        "python3",
+        "providers/package.py",
+        "build",
+        "--output",
+        "/home/cosmo/.codex/worktrees/premise-decomposition-cycle1/qcore-c/private/premise-evidence-contracts/provider-1/packages"
+      ],
+      "cwd": "/home/cosmo/.codex/worktrees/premise-decomposition-cycle1/qcore-c",
+      "environment": {
+        "CARGO_PROFILE_DEV_DEBUG": "0",
+        "CARGO_PROFILE_TEST_DEBUG": "0",
+        "CARGO_INCREMENTAL": "0",
+        "QCORE_AUDIT_BUILD_COMMIT": null,
+        "RUSTFLAGS": null,
+        "CARGO_ENCODED_RUSTFLAGS": null,
+        "RUSTUP_TOOLCHAIN": null,
+        "ELAN_TOOLCHAIN": null,
+        "QCORE_CLANG": null
+      },
+      "start": "2026-10-21T02:25:57.639082+00:00",
+      "end": "2026-10-21T02:26:46.336508+00:00",
+      "exit": 0,
+      "log": "/home/cosmo/.codex/worktrees/premise-decomposition-cycle1/qcore-c/private/premise-evidence-contracts/provider-1/05.log",
+      "head": "5a556d8272b17b35a47a5036bad1f6d614ee698b"
+    },
+    {
+      "command": [
+        "python3",
+        "providers/package.py",
+        "verify",
+        "/home/cosmo/.codex/worktrees/premise-decomposition-cycle1/qcore-c/private/premise-evidence-contracts/provider-1/packages/qcore.chunkio"
+      ],
+      "cwd": "/home/cosmo/.codex/worktrees/premise-decomposition-cycle1/qcore-c",
+      "environment": {
+        "CARGO_PROFILE_DEV_DEBUG": "0",
+        "CARGO_PROFILE_TEST_DEBUG": "0",
+        "CARGO_INCREMENTAL": "0",
+        "QCORE_AUDIT_BUILD_COMMIT": null,
+        "RUSTFLAGS": null,
+        "CARGO_ENCODED_RUSTFLAGS": null,
+        "RUSTUP_TOOLCHAIN": null,
+        "ELAN_TOOLCHAIN": null,
+        "QCORE_CLANG": null
+      },
+      "start": "2026-10-21T02:26:46.339031+00:00",
+      "end": "2026-10-21T02:26:46.497456+00:00",
+      "exit": 0,
+      "log": "/home/cosmo/.codex/worktrees/premise-decomposition-cycle1/qcore-c/private/premise-evidence-contracts/provider-1/06.log",
+      "head": "5a556d8272b17b35a47a5036bad1f6d614ee698b"
+    },
+    {
+      "command": [
+        "python3",
+        "providers/package.py",
+        "verify",
+        "/home/cosmo/.codex/worktrees/premise-decomposition-cycle1/qcore-c/private/premise-evidence-contracts/provider-1/packages/qcore.libevent"
+      ],
+      "cwd": "/home/cosmo/.codex/worktrees/premise-decomposition-cycle1/qcore-c",
+      "environment": {
+        "CARGO_PROFILE_DEV_DEBUG": "0",
+        "CARGO_PROFILE_TEST_DEBUG": "0",
+        "CARGO_INCREMENTAL": "0",
+        "QCORE_AUDIT_BUILD_COMMIT": null,
+        "RUSTFLAGS": null,
+        "CARGO_ENCODED_RUSTFLAGS": null,
+        "RUSTUP_TOOLCHAIN": null,
+        "ELAN_TOOLCHAIN": null,
+        "QCORE_CLANG": null
+      },
+      "start": "2026-10-21T02:26:46.499587+00:00",
+      "end": "2026-10-21T02:26:46.658380+00:00",
+      "exit": 0,
+      "log": "/home/cosmo/.codex/worktrees/premise-decomposition-cycle1/qcore-c/private/premise-evidence-contracts/provider-1/07.log",
+      "head": "5a556d8272b17b35a47a5036bad1f6d614ee698b"
+    },
+    {
+      "command": [
+        "python3",
+        "providers/package.py",
+        "verify",
+        "/home/cosmo/.codex/worktrees/premise-decomposition-cycle1/qcore-c/private/premise-evidence-contracts/provider-1/packages/qcore.librdkafka"
+      ],
+      "cwd": "/home/cosmo/.codex/worktrees/premise-decomposition-cycle1/qcore-c",
+      "environment": {
+        "CARGO_PROFILE_DEV_DEBUG": "0",
+        "CARGO_PROFILE_TEST_DEBUG": "0",
+        "CARGO_INCREMENTAL": "0",
+        "QCORE_AUDIT_BUILD_COMMIT": null,
+        "RUSTFLAGS": null,
+        "CARGO_ENCODED_RUSTFLAGS": null,
+        "RUSTUP_TOOLCHAIN": null,
+        "ELAN_TOOLCHAIN": null,
+        "QCORE_CLANG": null
+      },
+      "start": "2026-10-21T02:26:46.660590+00:00",
+      "end": "2026-10-21T02:26:46.822788+00:00",
+      "exit": 0,
+      "log": "/home/cosmo/.codex/worktrees/premise-decomposition-cycle1/qcore-c/private/premise-evidence-contracts/provider-1/08.log",
+      "head": "5a556d8272b17b35a47a5036bad1f6d614ee698b"
+    },
+    {
+      "command": [
+        "python3",
+        "providers/package.py",
+        "verify",
+        "/home/cosmo/.codex/worktrees/premise-decomposition-cycle1/qcore-c/private/premise-evidence-contracts/provider-1/packages/qcore.cmetrics"
+      ],
+      "cwd": "/home/cosmo/.codex/worktrees/premise-decomposition-cycle1/qcore-c",
+      "environment": {
+        "CARGO_PROFILE_DEV_DEBUG": "0",
+        "CARGO_PROFILE_TEST_DEBUG": "0",
+        "CARGO_INCREMENTAL": "0",
+        "QCORE_AUDIT_BUILD_COMMIT": null,
+        "RUSTFLAGS": null,
+        "CARGO_ENCODED_RUSTFLAGS": null,
+        "RUSTUP_TOOLCHAIN": null,
+        "ELAN_TOOLCHAIN": null,
+        "QCORE_CLANG": null
+      },
+      "start": "2026-10-21T02:26:46.825181+00:00",
+      "end": "2026-10-21T02:26:46.973378+00:00",
+      "exit": 0,
+      "log": "/home/cosmo/.codex/worktrees/premise-decomposition-cycle1/qcore-c/private/premise-evidence-contracts/provider-1/09.log",
+      "head": "5a556d8272b17b35a47a5036bad1f6d614ee698b"
+    },
+    {
+      "command": [
+        "python3",
+        "providers/package.py",
+        "verify",
+        "/home/cosmo/.codex/worktrees/premise-decomposition-cycle1/qcore-c/private/premise-evidence-contracts/provider-1/packages/qcore.ctraces"
+      ],
+      "cwd": "/home/cosmo/.codex/worktrees/premise-decomposition-cycle1/qcore-c",
+      "environment": {
+        "CARGO_PROFILE_DEV_DEBUG": "0",
+        "CARGO_PROFILE_TEST_DEBUG": "0",
+        "CARGO_INCREMENTAL": "0",
+        "QCORE_AUDIT_BUILD_COMMIT": null,
+        "RUSTFLAGS": null,
+        "CARGO_ENCODED_RUSTFLAGS": null,
+        "RUSTUP_TOOLCHAIN": null,
+        "ELAN_TOOLCHAIN": null,
+        "QCORE_CLANG": null
+      },
+      "start": "2026-10-21T02:26:46.975333+00:00",
+      "end": "2026-10-21T02:26:47.129292+00:00",
+      "exit": 0,
+      "log": "/home/cosmo/.codex/worktrees/premise-decomposition-cycle1/qcore-c/private/premise-evidence-contracts/provider-1/10.log",
+      "head": "5a556d8272b17b35a47a5036bad1f6d614ee698b"
+    }
+  ],
+  "release-1": [
+    {
+      "command": [
+        "cargo",
+        "build",
+        "--release",
+        "-p",
+        "qcore-audit",
+        "--bin",
+        "quirin-audit"
+      ],
+      "cwd": "/home/cosmo/.codex/worktrees/premise-decomposition-cycle1/qcore-c",
+      "environment": {
+        "CARGO_PROFILE_DEV_DEBUG": "0",
+        "CARGO_PROFILE_TEST_DEBUG": "0",
+        "CARGO_INCREMENTAL": "0",
+        "QCORE_AUDIT_BUILD_COMMIT": null,
+        "RUSTFLAGS": null,
+        "CARGO_ENCODED_RUSTFLAGS": null,
+        "RUSTUP_TOOLCHAIN": null,
+        "ELAN_TOOLCHAIN": null,
+        "QCORE_CLANG": null
+      },
+      "start": "2026-10-21T02:26:47.174882+00:00",
+      "end": "2026-10-21T02:27:14.307733+00:00",
+      "exit": 0,
+      "log": "/home/cosmo/.codex/worktrees/premise-decomposition-cycle1/qcore-c/private/premise-evidence-contracts/release-1/00.log",
+      "head": "5a556d8272b17b35a47a5036bad1f6d614ee698b"
+    }
+  ],
+  "examples-2": [
+    {
+      "command": [
+        "cargo",
+        "build",
+        "-p",
+        "qcore-audit",
+        "--examples"
+      ],
+      "cwd": "/home/cosmo/.codex/worktrees/premise-decomposition-cycle1/qcore-c",
+      "environment": {
+        "CARGO_PROFILE_DEV_DEBUG": "0",
+        "CARGO_PROFILE_TEST_DEBUG": "0",
+        "CARGO_INCREMENTAL": "0",
+        "QCORE_AUDIT_BUILD_COMMIT": null,
+        "RUSTFLAGS": null,
+        "CARGO_ENCODED_RUSTFLAGS": null,
+        "RUSTUP_TOOLCHAIN": null,
+        "ELAN_TOOLCHAIN": null,
+        "QCORE_CLANG": null
+      },
+      "start": "2026-10-21T02:27:33.686793+00:00",
+      "end": "2026-10-21T02:27:33.753424+00:00",
+      "exit": 0,
+      "log": "/home/cosmo/.codex/worktrees/premise-decomposition-cycle1/qcore-c/private/premise-evidence-contracts/examples-2/00.log",
+      "head": "5a556d8272b17b35a47a5036bad1f6d614ee698b"
+    }
+  ],
+  "python-1": [
+    {
+      "command": [
+        "python3",
+        "-m",
+        "unittest",
+        "discover",
+        "-s",
+        "scripts/tests"
+      ],
+      "cwd": "/home/cosmo/.codex/worktrees/premise-decomposition-cycle1/qcore-c",
+      "environment": {
+        "CARGO_PROFILE_DEV_DEBUG": "0",
+        "CARGO_PROFILE_TEST_DEBUG": "0",
+        "CARGO_INCREMENTAL": "0",
+        "QCORE_AUDIT_BUILD_COMMIT": null,
+        "RUSTFLAGS": null,
+        "CARGO_ENCODED_RUSTFLAGS": null,
+        "RUSTUP_TOOLCHAIN": null,
+        "ELAN_TOOLCHAIN": null,
+        "QCORE_CLANG": null
+      },
+      "start": "2026-10-21T02:54:25.632891+00:00",
+      "end": "2026-10-21T02:55:50.488904+00:00",
+      "exit": 0,
+      "log": "/home/cosmo/.codex/worktrees/premise-decomposition-cycle1/qcore-c/private/premise-evidence-contracts/python-1/00.log",
+      "head": "5a556d8272b17b35a47a5036bad1f6d614ee698b"
+    }
+  ],
+  "python-2": [
+    {
+      "command": [
+        "python3",
+        "-m",
+        "unittest",
+        "discover",
+        "-s",
+        "scripts/tests"
+      ],
+      "cwd": "/home/cosmo/.codex/worktrees/premise-decomposition-cycle1/qcore-c",
+      "environment": {
+        "CARGO_PROFILE_DEV_DEBUG": "0",
+        "CARGO_PROFILE_TEST_DEBUG": "0",
+        "CARGO_INCREMENTAL": "0",
+        "QCORE_AUDIT_BUILD_COMMIT": null,
+        "RUSTFLAGS": null,
+        "CARGO_ENCODED_RUSTFLAGS": null,
+        "RUSTUP_TOOLCHAIN": null,
+        "ELAN_TOOLCHAIN": null,
+        "QCORE_CLANG": null
+      },
+      "start": "2026-10-21T03:59:48.175667+00:00",
+      "end": "2026-10-21T04:00:22.667658+00:00",
+      "exit": 0,
+      "log": "/home/cosmo/.codex/worktrees/premise-decomposition-cycle1/qcore-c/private/premise-evidence-contracts/python-2/00.log",
+      "head": "61696b4ad582d4df98a7b8c15fde7ca9ac2678ae"
+    }
+  ]
+}
