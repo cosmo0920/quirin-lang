@@ -245,5 +245,14 @@
     "helper-format-1 inner doc placement"
   ],
   "integrated_gate_and_native_comparison": "parent-owned; pending corrected final source",
-  "archive_policy": "Only explicitly reviewed commands and tool diagnostics archived; complete raw source pairs stay private after automatic approval rejection."
+  "archive_policy": "Only explicitly reviewed commands and tool diagnostics archived; complete raw source pairs stay private after automatic approval rejection.",
+  "compiler_preflight_controls": {
+    "synthetic_cases": 9,
+    "expected_nonzero_refusals": 9,
+    "cargo_or_rustc_started": false,
+    "private_results": "/home/cosmo/.codex/worktrees/premise-symbolic-metadata-bridge/qcore-c/private/premise-symbolic-metadata-bridge/compiler-preflight-1/results.json",
+    "results_sha256": "c60897eaa009af6e3f17133b3cd7b18252424caa540d28d2fb164d7920d9d479",
+    "archive": "validation/compiler-preflight-1-results.json.gz",
+    "scope": "gate wrapper precondition only; no native or final gate acceptance"
+  }
 }
