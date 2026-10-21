@@ -1,0 +1,222 @@
+{
+  "semantic_checkpoint": "025b4902e",
+  "frozen_integrated_source": "62eebba95c51917c0fe841fbc23e2bf0d0e7e465",
+  "entries": [
+    {
+      "path": "Cargo.lock",
+      "card_sha256": "e56a75e9883c7da057e2f8a6d4890d1fb272d7fdb0ceb5b6b58f4affba072b88",
+      "integrated_sha256": "e56a75e9883c7da057e2f8a6d4890d1fb272d7fdb0ceb5b6b58f4affba072b88",
+      "exact": true
+    },
+    {
+      "path": "crates/qcore-audit/Cargo.toml",
+      "card_sha256": "6d8c5c3d9c076000e4a4ddea8a7104b0c1657cdecd10259f35b8129e443f3ac1",
+      "integrated_sha256": "6d8c5c3d9c076000e4a4ddea8a7104b0c1657cdecd10259f35b8129e443f3ac1",
+      "exact": true
+    },
+    {
+      "path": "crates/qcore-c-gateway/Cargo.toml",
+      "card_sha256": "7fb166fd8e5fb20187edd8a9c3ee076b4f660497f9adebfac81b7ca6295e0f4e",
+      "integrated_sha256": "7fb166fd8e5fb20187edd8a9c3ee076b4f660497f9adebfac81b7ca6295e0f4e",
+      "exact": true
+    },
+    {
+      "path": "crates/qcore-c-gateway/tests/premise_flow_dependencies.rs",
+      "card_sha256": "c47dafce6e08413d700168c7b595a6b4124075480c066d0324acec29e761f778",
+      "integrated_sha256": "c47dafce6e08413d700168c7b595a6b4124075480c066d0324acec29e761f778",
+      "exact": true
+    },
+    {
+      "path": "crates/qcore-contract/Cargo.toml",
+      "card_sha256": "34daa4592cea40ed0d8ab7301b4b0e5a2f8e79288399799609743e56f37882aa",
+      "integrated_sha256": "34daa4592cea40ed0d8ab7301b4b0e5a2f8e79288399799609743e56f37882aa",
+      "exact": true
+    },
+    {
+      "path": "crates/qcore-contract/examples/premise_flow.rs",
+      "card_sha256": "69551ba318c72ba5f0ee0729e6d50e52edb70b39a995773232e6e56ea43c6b1a",
+      "integrated_sha256": "69551ba318c72ba5f0ee0729e6d50e52edb70b39a995773232e6e56ea43c6b1a",
+      "exact": true
+    },
+    {
+      "path": "crates/qcore-contract/examples/support/premise_flow.qv",
+      "card_sha256": "0c74a52eb0591997f346e391c2b09552c4599ce602ce6936de33bd80dc86896f",
+      "integrated_sha256": "0c74a52eb0591997f346e391c2b09552c4599ce602ce6936de33bd80dc86896f",
+      "exact": true
+    },
+    {
+      "path": "crates/qcore-contract/examples/support/premise_flow_fixture.rs",
+      "card_sha256": "40ec665b27def9873bc09711141cb363721bb38790f892de4433951474cdf52e",
+      "integrated_sha256": "40ec665b27def9873bc09711141cb363721bb38790f892de4433951474cdf52e",
+      "exact": true
+    },
+    {
+      "path": "crates/qcore-contract/src/bounds_contract.rs",
+      "card_sha256": "df282e863f25c834dcfb2dbe3c56f322cc793e26f10f92912bf79d750fa4a850",
+      "integrated_sha256": "df282e863f25c834dcfb2dbe3c56f322cc793e26f10f92912bf79d750fa4a850",
+      "exact": true
+    },
+    {
+      "path": "crates/qcore-contract/src/contract_inclusion.rs",
+      "card_sha256": "b5960dda63e8374b1fdf7cf839857b649fc997165191341e341f72bba2172743",
+      "integrated_sha256": "b5960dda63e8374b1fdf7cf839857b649fc997165191341e341f72bba2172743",
+      "exact": true
+    },
+    {
+      "path": "crates/qcore-contract/src/contract_loader.rs",
+      "card_sha256": "d8402f1cb3193195e527251edd5c17997c203b154ad9217cb5c1b82b5cb16b00",
+      "integrated_sha256": "d8402f1cb3193195e527251edd5c17997c203b154ad9217cb5c1b82b5cb16b00",
+      "exact": true
+    },
+    {
+      "path": "crates/qcore-contract/src/lib.rs",
+      "card_sha256": "5f58cd7f5229fbec84f4874c65c01d6f93caeda0ec9e9e9ff7d8aa13e84437cc",
+      "integrated_sha256": "5f58cd7f5229fbec84f4874c65c01d6f93caeda0ec9e9e9ff7d8aa13e84437cc",
+      "exact": true
+    },
+    {
+      "path": "crates/qcore-contract/src/premise_flow.rs",
+      "card_sha256": "ad1fc62c348477e5592b81cc16d52b27592bd13b2f73cacea491777b3df7195d",
+      "integrated_sha256": "ad1fc62c348477e5592b81cc16d52b27592bd13b2f73cacea491777b3df7195d",
+      "exact": true
+    },
+    {
+      "path": "crates/qcore-contract/tests/premise_flow.rs",
+      "card_sha256": "8c4e83d89c5da370fdeabd233be7df7558d6cfb4c93cef8d3fba3c7f765c0d8a",
+      "integrated_sha256": "8c4e83d89c5da370fdeabd233be7df7558d6cfb4c93cef8d3fba3c7f765c0d8a",
+      "exact": true
+    },
+    {
+      "path": "crates/qcore-core/src/lib.rs",
+      "card_sha256": "eb2d68d36c8a0840b4f5608d3898c2c92fc97e8976f0ad1b796d0b77a18a06ea",
+      "integrated_sha256": "eb2d68d36c8a0840b4f5608d3898c2c92fc97e8976f0ad1b796d0b77a18a06ea",
+      "exact": true
+    },
+    {
+      "path": "crates/qcore-core/src/premise_flow.rs",
+      "card_sha256": "0835ae857485455f9bde9c4e8b6534beeefcf6028c60b9b3e70c932bb6901b70",
+      "integrated_sha256": "0835ae857485455f9bde9c4e8b6534beeefcf6028c60b9b3e70c932bb6901b70",
+      "exact": true
+    },
+    {
+      "path": "crates/qcore-core/tests/premise_flow.rs",
+      "card_sha256": "342106f1fe83445fa1efd2b39b51ce034d082b954b8f705d74fb40ec7f21cddd",
+      "integrated_sha256": "342106f1fe83445fa1efd2b39b51ce034d082b954b8f705d74fb40ec7f21cddd",
+      "exact": true
+    },
+    {
+      "path": "crates/qcore-frontend/Cargo.toml",
+      "card_sha256": "01e4487b9ed5fd51023ee9d079a1454889b2e3d09c2572ed5f82af3d19242e4e",
+      "integrated_sha256": "01e4487b9ed5fd51023ee9d079a1454889b2e3d09c2572ed5f82af3d19242e4e",
+      "exact": true
+    },
+    {
+      "path": "crates/qcore-frontend/src/lexer.rs",
+      "card_sha256": "7b3d3e69e8a8c0177308a130bcc5e844e6fc93f07db6a0a0bc462bce54f1455c",
+      "integrated_sha256": "7b3d3e69e8a8c0177308a130bcc5e844e6fc93f07db6a0a0bc462bce54f1455c",
+      "exact": true
+    },
+    {
+      "path": "crates/qcore-frontend/src/lib.rs",
+      "card_sha256": "cd4d1931aaa4eb3979c20475c444fbb2f858c201500f4e8927a59b7761dd464f",
+      "integrated_sha256": "cd4d1931aaa4eb3979c20475c444fbb2f858c201500f4e8927a59b7761dd464f",
+      "exact": true
+    },
+    {
+      "path": "crates/qcore-frontend/src/premise_flow.rs",
+      "card_sha256": "f75c7af631c41da38c5569a977b9f21d5a5fea1ad7a1d6f6a40d4561fa10cfaf",
+      "integrated_sha256": "f75c7af631c41da38c5569a977b9f21d5a5fea1ad7a1d6f6a40d4561fa10cfaf",
+      "exact": true
+    },
+    {
+      "path": "crates/qcore-frontend/tests/unit/lexer.rs",
+      "card_sha256": "e915b91a62629b02d18dabce661c8542b987d31c10b7f6218e1e9a110f1a516e",
+      "integrated_sha256": "e915b91a62629b02d18dabce661c8542b987d31c10b7f6218e1e9a110f1a516e",
+      "exact": true
+    },
+    {
+      "path": "crates/qcore-schemas/Cargo.toml",
+      "card_sha256": "fa0c4b68162120175df1dd6aad91735c89fc5c2ba1694b86a873abdfa67c19cf",
+      "integrated_sha256": "fa0c4b68162120175df1dd6aad91735c89fc5c2ba1694b86a873abdfa67c19cf",
+      "exact": true
+    },
+    {
+      "path": "crates/qcore-schemas/src/lib.rs",
+      "card_sha256": "1032fb5f9bf0911dc8b33174750b3ead794b683d5ac27ce89e08d68328de853e",
+      "integrated_sha256": "1032fb5f9bf0911dc8b33174750b3ead794b683d5ac27ce89e08d68328de853e",
+      "exact": true
+    },
+    {
+      "path": "crates/qcore-schemas/src/premise_flow.rs",
+      "card_sha256": "b239c4226f8db3c62312d7df048a7e4c7a2e7c9bc7eeaacd8d7abda387afede2",
+      "integrated_sha256": "b239c4226f8db3c62312d7df048a7e4c7a2e7c9bc7eeaacd8d7abda387afede2",
+      "exact": true
+    },
+    {
+      "path": "crates/qcore-verification/Cargo.toml",
+      "card_sha256": "ed7c648cebfe5c612c912bcf58c9d1ec6e71a5c7130b61ff7d971dfbdd2f2d50",
+      "integrated_sha256": "ed7c648cebfe5c612c912bcf58c9d1ec6e71a5c7130b61ff7d971dfbdd2f2d50",
+      "exact": true
+    },
+    {
+      "path": "crates/qcore-verifier-host/Cargo.toml",
+      "card_sha256": "7d0b6af6f97ee1819954ae0fbfeb74b6c9282fc5b4652957536ee1b170b02908",
+      "integrated_sha256": "7d0b6af6f97ee1819954ae0fbfeb74b6c9282fc5b4652957536ee1b170b02908",
+      "exact": true
+    },
+    {
+      "path": "crates/quirin-audit-plugin-libevent/Cargo.toml",
+      "card_sha256": "2dc7ca3b306a2eef5a77376d9f2989e6c1a249302e1d3f53694227ab43b3a60b",
+      "integrated_sha256": "2dc7ca3b306a2eef5a77376d9f2989e6c1a249302e1d3f53694227ab43b3a60b",
+      "exact": true
+    },
+    {
+      "path": "crates/quirin-audit-plugin/Cargo.toml",
+      "card_sha256": "781398eb14f722f810fdf846a300a52741dcbf2a6bac90e2ae69c454d2244183",
+      "integrated_sha256": "781398eb14f722f810fdf846a300a52741dcbf2a6bac90e2ae69c454d2244183",
+      "exact": true
+    },
+    {
+      "path": "crates/quirin-source-analysis/Cargo.toml",
+      "card_sha256": "67d0a5c4a4454a5a5abd178cfbdf09f6d595a23a9fc18d6e13059f083f4272d5",
+      "integrated_sha256": "67d0a5c4a4454a5a5abd178cfbdf09f6d595a23a9fc18d6e13059f083f4272d5",
+      "exact": true
+    },
+    {
+      "path": "proof/AuditPremiseFlow.lean",
+      "card_sha256": "4210ee1241f82c64790b44d4ca0cadb2f4ca4d1277fe1506428a384b7a3a86e2",
+      "integrated_sha256": "4210ee1241f82c64790b44d4ca0cadb2f4ca4d1277fe1506428a384b7a3a86e2",
+      "exact": true
+    },
+    {
+      "path": "proof/QCore.lean",
+      "card_sha256": "b0c349934cdff1f698fec3b709ac0ef22f08312037acc129d95276bcf8bbfec9",
+      "integrated_sha256": "aacd2619acaf26ff423eb6ce6d113d6584ec39b235de5f6e8d592cc6f85c9721",
+      "exact": false
+    },
+    {
+      "path": "proof/QCore/PremiseFlow.lean",
+      "card_sha256": "8e33737acaf7555b91b7494bf5fd8fdc7c22b3098a1991c77b5e0403184d12be",
+      "integrated_sha256": "8e33737acaf7555b91b7494bf5fd8fdc7c22b3098a1991c77b5e0403184d12be",
+      "exact": true
+    },
+    {
+      "path": "providers/Cargo.lock",
+      "card_sha256": "2aaa2b210e05738a4535ef4c7a2a42e78749ef137ed89194040e2dc4a57a055b",
+      "integrated_sha256": "2aaa2b210e05738a4535ef4c7a2a42e78749ef137ed89194040e2dc4a57a055b",
+      "exact": true
+    },
+    {
+      "path": "providers/Cargo.toml",
+      "card_sha256": "549bc96a4a97f59c29824300394fd4d81259f1038ec84af91cf47381b20baeef",
+      "integrated_sha256": "549bc96a4a97f59c29824300394fd4d81259f1038ec84af91cf47381b20baeef",
+      "exact": true
+    }
+  ],
+  "nonidentical_shared_aggregator": {
+    "path": "proof/QCore.lean",
+    "reason": "Joint integration adds sibling QCore.PluginSourceWitnesses and QCore.LocalSourceBindings imports before the retained QCore.PremiseFlow header import, plus final whitespace. All operator implementation/schema/frontend/core/contract/spec/lock/model/audit leaves match card checkpoint025 exactly.",
+    "matching_leaf_count": 34,
+    "source_claim": "Actual joint gate validates this explicit integrated union, not independent card worktree measurement"
+  }
+}
