@@ -1,0 +1,281 @@
+module contract;
+// qcore-premise-binding-manifest-v1 cb_kafka_logger rk_plugin_callback_closure c0e4629e58ec35de1a0251dce6700fc152438ac9ab4d6d8cb4500638c063f061
+// qcore-premise-binding-manifest-v1 cb_kafka_msg rk_plugin_callback_closure 7a3a983e68e4a74083324f5c985948fc43f47eafc155152924489a55e4ccb482
+// qcore-premise-binding-manifest-v1 oauthbearer_token_refresh_cb rk_plugin_callback_closure c355b4f4418cb176f0eff2bb45cc9176fa5771c69aec5afdad2f6e92a938a729
+
+// Fluent Bit diagnostic logging — resource-projection vocabulary version 1.
+//
+// Card PROD-CONTRACTS. This module declares TRUSTED ASSUMPTIONS about the two
+// upstream functions the logging macros actually reach. It verifies nothing:
+// the C bodies are not analyzed by this loader, and a declaration is a premise.
+// A function-level `Safe` that rests on this module is `Safe` RELATIVE TO these
+// declarations and is never a proof of the C implementation.
+//
+// ## What the call sites actually reach — measured, not assumed
+//
+// `flb_trace`, `flb_error`, `flb_warn`, `flb_info`, `flb_debug`, `flb_helper`
+// and `flb_idebug` are FUNCTION-LIKE MACROS, not functions
+// (`include/fluent-bit/flb_log.h` at Fluent Bit
+// 66910c10a4d7eafa810b84229cf2dcf7b0f26f97, lines 247-306). Under the pinned
+// build's `-DFLB_HAVE_TRACE` they expand as, for example,
+//
+//     flb_trace(fmt, ...)
+//       -> if (flb_log_check(FLB_LOG_TRACE))
+//              flb_log_print(FLB_LOG_TRACE, __FILE__, __LINE__, fmt, ...)
+//
+//     flb_error(fmt, ...)
+//       -> if (flb_log_check(FLB_LOG_ERROR))
+//              flb_log_print(FLB_LOG_ERROR, NULL, 0, fmt, ...)
+//
+// so NO analyzed statement in the pinned corpus ever names `flb_trace` or
+// `flb_error`. Declaring either of those names in a production module would be
+// inert text: it is measured at ZERO call sites corpus-wide, while
+// `flb_log_print` is the callee the resource projection actually reports
+// (21 occurrences of `call to uncontracted function \`flb_log_print\`` in the
+// 185-unit baseline, all in `fluent-bit-chunk/flb_input_chunk.c`, the corpus's
+// only Fluent Bit unit). This module therefore declares the two functions the
+// expansion names, and nothing else.
+//
+// ## `flb_log_print`, read from the pinned body (`src/flb_log.c:1242`)
+//
+//   void flb_log_print(int type, const char *file, int line,
+//                      const char *fmt, ...)
+//
+//   * `type` is an `int` by value. It is passed to `flb_log_construct` and to
+//     `flb_log_message_type_str`, and compared. No custody.
+//   * `file` and `line` are forwarded to `flb_log_construct`
+//     (`src/flb_log.c:1179`), whose first two statements are `(void) file;` and
+//     `(void) line;`. They are DISCARDED. No custody, no retention.
+//   * `fmt` reaches `vsnprintf(body, body_size, fmt, *args)` where `body` is a
+//     function-local `char` array. It is read, never freed, never stored.
+//   * the variadic tail is consumed by `va_start`/`vsnprintf` into that same
+//     local `body`. What leaves the function afterwards — `log_queue_enqueue`,
+//     `log_render_message`, `fprintf` — carries the RENDERED TEXT of `body`,
+//     never a tail argument's pointer. No tail argument is freed, and no
+//     pointer to one is retained past the call.
+//
+// That last sentence is exactly what `resource_variadic_data_tail()` declares:
+// the callee takes no custody of, and retains no pointer to, any argument
+// beyond the ones this declaration names. It says nothing about the body being
+// correct, nothing about the tail being type-correct against the format string,
+// and nothing about the tail being read at all. It also admits nothing on its
+// own: the gateway independently requires, PER CALL SITE, that each tail actual
+// really is data, and a tail actual that may carry a tracked resource identity
+// is refused UNDER this declaration exactly as it is without one.
+//
+// NOT CLAIMED, recorded rather than hidden: `vsnprintf` READS through every
+// `%s` tail pointer. That is a validity/reachability requirement on the caller,
+// not a custody fact, and this projection models custody only. A caller that
+// passes a released pointer in a tail position is a use-after-free this
+// declaration neither creates nor detects — the gateway's own liveness
+// precondition (card BORROW-LIVENESS) is what refuses that, on settled
+// denotations, and it is unchanged here.
+//
+// [Card CONTRACT-NORETURN-AND-BORROWED-TAILS] `flb_log_print`'s tail clause is
+// now `resource_variadic_borrowed_tail()` (contract specification C04.2): the
+// data tail's statement, and that every trailing position is
+// `resource_borrowed`. Re-read against the body at both audited revisions
+// (`src/flb_log.c:1179-1300` and `include/fluent-bit/flb_log.h`, identical at
+// `66910c10` and `046accf6`): the list is opened by `va_start(args, fmt)`,
+// passed as `&args` to `flb_log_construct`, whose only use of it is
+// `vsnprintf(body, body_size, fmt, *args)` into the function-local `body`, and
+// closed by `va_end(args)` before anything else runs. `vsnprintf` reads each
+// `%s` / `%p` argument and writes through a `%n` one as an `int *` (C17
+// 7.21.6.12, 7.21.6.1); everything after it (`log_queue_enqueue`,
+// `log_render_message`, `fprintf`) carries the text of `body`. No trailing
+// pointer is freed, stored, returned or reachable after the call: each one is
+// borrowed. The gateway reads a trailing plain name as a borrowed place
+// (gateway rule 11w, T8): a live tracked pointer (`flb_debug("… %p", task)`)
+// is admitted with its own obligation unchanged, and one released before the
+// call is still refused (C04.2's caller-side rule, the liveness precondition
+// the NOT CLAIMED note above names).
+//
+// ## `flb_log_check`, read from the pinned body
+//     (`include/fluent-bit/flb_log.h:162`, a `static inline`)
+//
+//   static inline int flb_log_check(int l)
+//
+// It takes one `int` BY VALUE, reads the thread-local worker pointer, compares
+// a level and returns `FLB_TRUE`/`FLB_FALSE`. It has no pointer parameter at
+// all, so it can have no effect on any caller's custody obligations under any
+// reading. `resource_borrowed` on its one parameter and `resource_return_none`
+// on its scalar result is the faithful — and the only faithful — declaration.
+//
+// This one matters more than its triviality suggests: `flb_log_check(N)` is the
+// BRANCH CONDITION every logging expansion wraps its print in, and an
+// uncontracted call in a condition is refused. Declaring it lets the existing
+// F1 neutral-call admission (card W4-EXPR-POS) decide those conditions instead.
+// F1 is unchanged by this module: it still requires the contract in force to
+// declare every parameter borrowed and the result `None`, an exact arity, and
+// every argument admitted by the same predicate.
+//
+// ## Read at the same time and DELIBERATELY LEFT UNDECLARED
+//
+//   * `flb_log_is_truncated(int, const char *, int, const char *, ...)`
+//     (`src/flb_log.c:1222`) has the same body shape and would take the same
+//     faithful declaration, tail included. It is measured at ZERO call sites in
+//     the whole preprocessed corpus — only its prototype occurs — so declaring
+//     it would be a premise with no measured payoff. Left undeclared.
+//   * `flb_log_is_truncated` — see above. Still undeclared.
+//
+// (Card CONSTRUCTOR-RESIDUALS: `flb_errno_print` was in this list and is no
+// longer. PROD-CONTRACTS left it undeclared because the `flb_errno()` macro's
+// dereference refused the statement before any contract was consulted; that
+// blocker is now the gateway's dereference-of-a-call-result admission, so the
+// declaration is reachable and is made below, read against the pinned body.)
+//   * `flb_log_check_level(int, int)` and
+//     `flb_log_suppress_check(int, const char *, ...)`
+//     (`include/fluent-bit/flb_log.h:153` and `:200`) are the plugin-scoped
+//     `flb_plg_*` family's two gates. Both are custody-free. They are left
+//     undeclared because the F1 expression-position admission requires an
+//     EXACT declared arity, so a variadic tail can never be admitted in a
+//     branch condition; `flb_log_suppress_check` occurs only in branch
+//     conditions, so its declaration is unreachable by construction, and
+//     admitting only the outer `flb_log_check_level` gate leaves the inner one
+//     refusing. Named `PROD-CONTRACTS-PLG` in the card report.
+//
+// ## What no declaration here says
+//
+// Nothing about the logging pipeline's own resources — the worker, the log
+// queue, the cache, the counters — is modeled or claimed. Nothing about
+// ordering, locking, truncation, or output is claimed. These are per-call
+// custody statements about the CALLER's obligations, and nothing more.
+
+// --- the level gate every logging expansion branches on --------------------
+extern fn flb_log_check(level: i32) -> i32
+contract {
+    requires resource_contract_v1;
+    ensures normal resource_borrowed(level);
+    ensures normal resource_return_none();
+};
+
+// --- the variadic diagnostic entry point every logging expansion calls -----
+// --- the `flb_errno()` macro's callee ---------------------------------------
+//
+// Card CONSTRUCTOR-RESIDUALS, read from the pinned body (`src/flb_log.c:1321`,
+// Fluent Bit 66910c10a4d7eafa810b84229cf2dcf7b0f26f97):
+//
+//   int flb_errno_print(int errnum, const char *file, int line)
+//   {
+//       char buf[256];
+//       strerror_r(errnum, buf, sizeof(buf) - 1);
+//       flb_error("[%s:%i errno=%i] %s", file, line, errnum, buf);
+//       return errnum;
+//   }
+//
+//   * `errnum` is an `int` by value. It is passed to `strerror_r`, formatted,
+//     and returned. No custody.
+//   * `file` reaches `flb_error`, i.e. `flb_log_print`'s variadic tail, which
+//     this module already declares `resource_variadic_data_tail()`: read into a
+//     function-local buffer, never freed, never retained. No custody.
+//   * `line` is an `int` by value. No custody.
+//   * `buf` is a function-local array. It never leaves.
+//   * The result is `errnum` — a scalar, so `resource_return_none()` is the
+//     faithful and the only faithful result mode.
+//
+// The declaration is at the ONE arity the macro writes; a variadic tail is not
+// declared because the C declaration is not variadic
+// (`include/fluent-bit/flb_log.h:310`).
+extern fn flb_errno_print(errnum: i32, file: ptr<const, u8>, line: i32) -> i32
+contract {
+    requires resource_contract_v1;
+    ensures normal resource_borrowed(errnum);
+    ensures normal resource_borrowed(file);
+    ensures normal resource_borrowed(line);
+    ensures normal resource_return_none();
+};
+
+extern fn flb_log_print(level: i32, file: ptr<const, u8>, line: i32, format: ptr<const, u8>) -> unit
+contract {
+    requires resource_contract_v1;
+    ensures normal resource_borrowed(level);
+    ensures normal resource_borrowed(file);
+    ensures normal resource_borrowed(line);
+    ensures normal resource_borrowed(format);
+    ensures normal resource_variadic_borrowed_tail();
+    ensures normal resource_return_none();
+};
+
+// BEGIN OP-APP-RK-CALLBACKS-VIA-POLL-CB (scripts/write_contracts.py)
+
+// # Fluent Bit's registered rk_conf callbacks
+//
+// Card OP-APP-RK-CALLBACKS-VIA-POLL-CB (gateway rule 12n), on the user's
+// decisions of 2026-10-14 ("Closed over FB's registrations"; "Each candidate
+// needs its own contract"; F1: declared-assumption standing for the three
+// Fluent Bit candidates, each body read). The callbacks Fluent Bit registers
+// through `rd_kafka_conf_set_*_cb`: `plugins/out_kafka/kafka_config.c:108`
+// (`dr_msg_cb`), `:111` (`log_cb`) and `src/aws/flb_aws_msk_iam.c:775`
+// (`sasl.oauthbearer.token_refresh_cb`). Each body was read at `66910c10` and
+// `046accf6` (identical); no analysed route defines them, so each is a
+// declared assumption (rule 13i). Each is pinned (C06.2).
+
+// `cb_kafka_msg(rk, rkmessage, opaque)` (`plugins/out_kafka/kafka.c:63-78`):
+// reads the opaque's plugin context and the message's error, length and
+// partition, and logs through `flb_plg_warn` / `flb_plg_debug`; keeps nothing.
+extern fn cb_kafka_msg(rk: ptr<mut, u8>, rkmessage: ptr<const, u8>, opaque: ptr<mut, u8>) -> unit
+contract {
+    requires resource_contract_v1;
+    requires resource_premise(rk_plugin_callback_closure, "P-RK-PLUGIN-CALLBACK-CLOSURE: in the static scope every rk_conf callback a call may run, including rd_kafka_log_buf's log callback, is a run registration or a stated default with a declared candidate; with loaded external code, extra registrations depend on the applicable pinned rk_plugin_library and flb_external_plugin outer envelopes (OP-APP-RK-CALLBACKS-VIA-POLL-CB, C04.20)");
+    requires resource_hypothesis(plugin_artifact_symbol_abi, "For every reached loaded artifact, exact selected build/inventory, artifact identity and required symbol/address/ABI prerequisites hold.");
+    requires resource_hypothesis(plugin_callback_candidates, "Every actual rk_conf invocation has its exact declared member candidate and a prior successful public registration or stated static default.");
+    requires resource_hypothesis(plugin_code_context_lifetime, "Every loaded callback invocation, including destruction and copied on_new paths, has live code and opaque context.");
+    requires resource_hypothesis(plugin_interceptor_custody, "Every interceptor-descendant pointer and scalar resource is borrowed, with no retain/transfer/global custody and each local acquisition dropped before its activation returns.");
+    requires resource_hypothesis(plugin_interceptor_registration, "Every loaded interceptor uses a successful public setter with the exact pinned list/union-arm candidate and permitted configuration/client lifecycle.");
+    requires resource_hypothesis(plugin_lifecycle_unload, "Every callback invocation precedes matching final unload and copied registrations retain actual loader references.");
+    requires resource_hypothesis(plugin_outer_bridge, "Actually loaded RK and Fluent Bit C/Go code independently meet their respectively bound proposed outer envelopes; one envelope covers no missing obligation of another.");
+    requires resource_premise_decomposition(rk_plugin_callback_closure, plugin_artifact_symbol_abi, plugin_callback_candidates, plugin_code_context_lifetime, plugin_interceptor_custody, plugin_interceptor_registration, plugin_lifecycle_unload, plugin_outer_bridge);
+    ensures normal resource_borrowed(rk);
+    ensures normal resource_borrowed(rkmessage);
+    ensures normal resource_borrowed(opaque);
+    ensures normal resource_return_none();
+};
+
+// `cb_kafka_logger(rk, level, fac, buf)` (`plugins/out_kafka/kafka.c:80-104`):
+// `rd_kafka_opaque(rk)` for the plugin context, `rd_kafka_name(rk)`, and one
+// `flb_plg_*` line by level; keeps nothing.
+extern fn cb_kafka_logger(rk: ptr<const, u8>, level: i32, fac: ptr<const, u8>, buf: ptr<const, u8>) -> unit
+contract {
+    requires resource_contract_v1;
+    requires resource_premise(rk_plugin_callback_closure, "P-RK-PLUGIN-CALLBACK-CLOSURE: in the static scope every rk_conf callback a call may run, including rd_kafka_log_buf's log callback, is a run registration or a stated default with a declared candidate; with loaded external code, extra registrations depend on the applicable pinned rk_plugin_library and flb_external_plugin outer envelopes (OP-APP-RK-CALLBACKS-VIA-POLL-CB, C04.20)");
+    requires resource_hypothesis(plugin_artifact_symbol_abi, "For every reached loaded artifact, exact selected build/inventory, artifact identity and required symbol/address/ABI prerequisites hold.");
+    requires resource_hypothesis(plugin_callback_candidates, "Every actual rk_conf invocation has its exact declared member candidate and a prior successful public registration or stated static default.");
+    requires resource_hypothesis(plugin_code_context_lifetime, "Every loaded callback invocation, including destruction and copied on_new paths, has live code and opaque context.");
+    requires resource_hypothesis(plugin_interceptor_custody, "Every interceptor-descendant pointer and scalar resource is borrowed, with no retain/transfer/global custody and each local acquisition dropped before its activation returns.");
+    requires resource_hypothesis(plugin_interceptor_registration, "Every loaded interceptor uses a successful public setter with the exact pinned list/union-arm candidate and permitted configuration/client lifecycle.");
+    requires resource_hypothesis(plugin_lifecycle_unload, "Every callback invocation precedes matching final unload and copied registrations retain actual loader references.");
+    requires resource_hypothesis(plugin_outer_bridge, "Actually loaded RK and Fluent Bit C/Go code independently meet their respectively bound proposed outer envelopes; one envelope covers no missing obligation of another.");
+    requires resource_premise_decomposition(rk_plugin_callback_closure, plugin_artifact_symbol_abi, plugin_callback_candidates, plugin_code_context_lifetime, plugin_interceptor_custody, plugin_interceptor_registration, plugin_lifecycle_unload, plugin_outer_bridge);
+    ensures normal resource_borrowed(rk);
+    ensures normal resource_borrowed(level);
+    ensures normal resource_borrowed(fac);
+    ensures normal resource_borrowed(buf);
+    ensures normal resource_return_none();
+};
+
+// `oauthbearer_token_refresh_cb(rk, oauthbearer_config, opaque)`
+// (`src/aws/flb_aws_msk_iam.c:609-717`, static): validates the opaque's MSK
+// IAM context, builds a payload (`build_msk_iam_payload`), creates a
+// temporary credentials provider and reads credentials, sets the token
+// (`rd_kafka_oauthbearer_set_token`, which copies) or its failure, then
+// destroys the credentials, the provider and the payload on every path that
+// made them; keeps nothing it is handed.
+extern fn oauthbearer_token_refresh_cb(rk: ptr<mut, u8>, oauthbearer_config: ptr<const, u8>, opaque: ptr<mut, u8>) -> unit
+contract {
+    requires resource_contract_v1;
+    requires resource_premise(rk_plugin_callback_closure, "P-RK-PLUGIN-CALLBACK-CLOSURE: in the static scope every rk_conf callback a call may run, including rd_kafka_log_buf's log callback, is a run registration or a stated default with a declared candidate; with loaded external code, extra registrations depend on the applicable pinned rk_plugin_library and flb_external_plugin outer envelopes (OP-APP-RK-CALLBACKS-VIA-POLL-CB, C04.20)");
+    requires resource_hypothesis(plugin_artifact_symbol_abi, "For every reached loaded artifact, exact selected build/inventory, artifact identity and required symbol/address/ABI prerequisites hold.");
+    requires resource_hypothesis(plugin_callback_candidates, "Every actual rk_conf invocation has its exact declared member candidate and a prior successful public registration or stated static default.");
+    requires resource_hypothesis(plugin_code_context_lifetime, "Every loaded callback invocation, including destruction and copied on_new paths, has live code and opaque context.");
+    requires resource_hypothesis(plugin_interceptor_custody, "Every interceptor-descendant pointer and scalar resource is borrowed, with no retain/transfer/global custody and each local acquisition dropped before its activation returns.");
+    requires resource_hypothesis(plugin_interceptor_registration, "Every loaded interceptor uses a successful public setter with the exact pinned list/union-arm candidate and permitted configuration/client lifecycle.");
+    requires resource_hypothesis(plugin_lifecycle_unload, "Every callback invocation precedes matching final unload and copied registrations retain actual loader references.");
+    requires resource_hypothesis(plugin_outer_bridge, "Actually loaded RK and Fluent Bit C/Go code independently meet their respectively bound proposed outer envelopes; one envelope covers no missing obligation of another.");
+    requires resource_premise_decomposition(rk_plugin_callback_closure, plugin_artifact_symbol_abi, plugin_callback_candidates, plugin_code_context_lifetime, plugin_interceptor_custody, plugin_interceptor_registration, plugin_lifecycle_unload, plugin_outer_bridge);
+    ensures normal resource_borrowed(rk);
+    ensures normal resource_borrowed(oauthbearer_config);
+    ensures normal resource_borrowed(opaque);
+    ensures normal resource_return_none();
+};
+
+// END OP-APP-RK-CALLBACKS-VIA-POLL-CB

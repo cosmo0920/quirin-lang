@@ -1,0 +1,7 @@
+{
+  "command": "python3 docs/reports/premise-symbolic-adoption/scripts/adopt.py --apply",
+  "exit": 1,
+  "reason": "Compiler pin regex did not admit whitespace immediately after the opening tuple parenthesis; rejected long multiline entry rd_kafka_oauthbearer_set_token_failure. All8sourcefiles had been written before pin planning, then the shell continued to a WIP commit. No focused/native validation claimed.",
+  "wip_commit": "c8c6260a0",
+  "correction": "Restore exact before bytes by fresh writes; plan all source and pin edits before any write; allow actual multiline tuple spacing; reapply frozen exact plan."
+}

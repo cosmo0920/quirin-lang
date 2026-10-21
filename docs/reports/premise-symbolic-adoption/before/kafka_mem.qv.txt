@@ -1,0 +1,272 @@
+module contract;
+// qcore-premise-binding-manifest-v1 rd_kafka_dump0 rk_plugin_callback_closure f86b101a9461536b91018f23ba7df6881fd9a6970b2797b36cd3b3d587c204e4
+
+// librdkafka's public allocator-free entry point — resource-projection
+// vocabulary version 1.
+//
+// Card W36-CORPUS-CONTRACTS-3. ONE TRUSTED ASSUMPTION about one upstream
+// function. This module verifies nothing: the C body is not analyzed by this
+// loader, and a declaration is a premise. Any verdict that rests on it is a
+// verdict RELATIVE TO this declaration, never a proof of the C implementation.
+//
+// Read from the pinned checkout (`build/cycle19/fluent-bit-clang-source`) at
+// Fluent Bit 66910c10a4d7eafa810b84229cf2dcf7b0f26f97 on this card's own run.
+//
+// This module is deliberately SEPARATE from `qcore/librdkafka/memory.qcore`
+// rather than appended to it: that module is already manifest-selected and
+// pinned clause-for-clause by `compiler/tests/qcore_contract_corpus.rs`, and
+// keeping this card's one new declaration in its own file leaves that pin
+// untouched and makes this card's contribution individually attributable.
+//
+// ## Why this callee
+//
+// Four projected functions in the baseline are blocked by `rd_kafka_mem_free`
+// and by nothing else, each holding exactly one leaf — the vendored LZ4
+// deallocators `LZ4_freeStream` (`lib/librdkafka-2.15.0/src/lz4.c:1539`),
+// `LZ4_freeStreamDecode` (`:2476`), `LZ4_freeHC`
+// (`lib/librdkafka-2.15.0/src/lz4hc.c:1240`) and `LZ4_freeStreamHC` (`:1005`).
+// They reach it through LZ4's `FREEMEM` macro, which the vendored build points
+// at librdkafka's allocator.
+//
+// ## `rd_kafka_mem_free`, read from `lib/librdkafka-2.15.0/src/rdkafka.c:7131-7133`
+//
+//     void rd_kafka_mem_free(rd_kafka_t *rk, void *ptr) {
+//             rd_free(ptr);
+//     }
+//
+// The whole body is one statement, and it is the clearest case in this card.
+//
+//   * `rk` is READ NOWHERE. It is not dereferenced, not stored, not passed on —
+//     the body ignores it entirely. It is a handle the public API takes for
+//     symmetry with the rest of librdkafka's allocator surface. `rk` therefore
+//     carries no custody requirement and no custody effect, which is exactly
+//     `resource_borrowed`. In particular this declaration does NOT say `rk` is
+//     non-null, and the call sites confirm that matters: LZ4's `FREEMEM` passes
+//     a null handle.
+//   * `ptr` is forwarded to `rd_free`, which `qcore/librdkafka/memory.qcore`
+//     already declares `resource_released(ptr, nullable)` — read from the same
+//     pinned tree by card PROD-CONTRACTS. The custody of `ptr` therefore ends
+//     at this call, and the nullability marker is **`nullable`**, inherited
+//     from the delegate rather than guessed: `rd_free` reaches libc `free`,
+//     for which a null argument is defined and is a no-op. Both LZ4 sites
+//     independently guard null before calling anyway
+//     (`lz4.c:1536` `if (!LZ4_stream) return 0;   /* support free on NULL */`
+//     and `lz4.c:2474` `if (LZ4_stream == NULL) { return 0; }`), so the marker
+//     is not load-bearing at these four sites — but it is the faithful reading
+//     of the callee, which is what a declaration states.
+//   * The result is `void`, so `resource_return_none()` is the faithful — and
+//     the only faithful — result mode.
+//
+// ## ABI and modes (constraint 8) — two C declarations, checked against each other
+//
+// The public header `lib/librdkafka-2.15.0/src/rdkafka.h:3643-3644` declares
+//
+//     RD_EXPORT
+//     void rd_kafka_mem_free(rd_kafka_t *rk, void *ptr);
+//
+// while the vendored `lz4.c` carries its OWN local extern declaration at
+// `lib/librdkafka-2.15.0/src/lz4.c:227`
+//
+//     extern void rd_kafka_mem_free(struct rdkafka_s *rk, void *p);
+//
+// These spell the first parameter's pointee differently (`rd_kafka_t`, i.e.
+// `struct rd_kafka_s`, versus `struct rdkafka_s`) and name the second parameter
+// differently. Neither difference reaches the v1 ABI projection, which is
+// stated in POINTER LEVELS and not in struct tags: both are exactly one
+// object-pointer level and both project to `ptr<mut, u8>`. The declaration is
+// therefore in agreement with the C of BOTH units that declare it, which is what
+// constraint 8 requires — and it is recorded here because a reader who checked
+// only the public header would not have seen the second spelling. Result `void`,
+// spelled `unit`; arity two, matching every analysed call site; not variadic,
+// so no `resource_variadic_data_tail()`.
+//
+// ## Declared although defined in a corpus unit
+//
+// `rd_kafka_mem_free` is defined in `librdkafka/rdkafka.c`, an audited unit, so
+// it meets constraint 8's duty gate. A declared contract wins over an inferred
+// W4 summary and a disagreement is a `SummaryConflict` diagnostic, never a
+// silent override; a withdrawal would be scoped to `rdkafka.c` alone, and the
+// four call sites this declaration exists to decide are in `lz4.c` and
+// `lz4hc.c`, which define no body for it. `rdkafka.c`'s own definition stays
+// analyzable and is not rewritten.
+//
+// ## NOT CLAIMED
+//
+//   * Nothing about `rd_free` beyond the declaration
+//     `qcore/librdkafka/memory.qcore` already carries; this module adds no
+//     claim about the allocator backend, and nothing here says the two
+//     declarations compose into a proof.
+//   * Nothing about `rk` being a live or valid handle — the point of the
+//     reading above is that the body never asks.
+//   * Nothing about double release or use-after-free, which the gateway's own
+//     liveness precondition refuses on settled denotations, unchanged here.
+//   * Nothing about thread safety or ordering.
+
+// --- librdkafka's public free, which ignores its handle and frees its pointer
+extern fn rd_kafka_mem_free(rk: ptr<mut, u8>, ptr: ptr<mut, u8>) -> unit
+contract {
+    requires resource_contract_v1;
+    ensures normal resource_borrowed(rk);
+    ensures normal resource_released(ptr, nullable);
+    ensures normal resource_return_none();
+};
+
+// ## Card W45-CALLEE-CASCADE-RESIDUAL: five librdkafka-internal helpers
+//
+// FIVE TRUSTED ASSUMPTIONS, pinned (contract spec C06.2) after reading each
+// body at both audited revisions (`lib/librdkafka-2.15.0/` is byte-identical
+// at `66910c10` and `046accf6`). Each is `static` with one definition in the
+// tree, and each is the only uncontracted call of two projected functions in
+// its own unit (main `3905139cd`):
+//
+// | callee | its callers |
+// | --- | --- |
+// | `load_descriptor_values` (`nanopb/pb_common.c:8-120`) | `pb_field_iter_next`, `pb_field_iter_find_extension` |
+// | `rd_kafka_aborted_txns_next_offset` (`rdkafka_msgset_reader.c:1877-1901`) | `rd_kafka_aborted_txns_get_offset`, `_pop_offset` |
+// | `rd_kafka_anyconf_desensitize` (`rdkafka_conf.c:2720-2729`) | `rd_kafka_conf_desensitize`, `rd_kafka_topic_conf_desensitize` |
+// | `rd_kafka_dump0` (`rdkafka.c:6201-6282`) | `rd_kafka_dump`, `rd_kafka_crash` |
+// | `rd_kafka_metadata_copy_internal` (`rdkafka_metadata.c:192-339`) | `rd_kafka_metadata_copy`, `_copy_add_racks` |
+//
+// ## The bodies
+//
+//   * `load_descriptor_values(pb_field_iter_t *iter)` decodes the descriptor
+//     words at `iter->descriptor->field_info[iter->field_info_index...]` into
+//     `iter`'s own scalar fields, sets `iter->pField`/`pSize`/`pData` to
+//     addresses derived from `iter->message` (or `&iter->array_size`, or
+//     NULL), and `iter->submsg_desc` from the descriptor table; it returns
+//     `false` past the last field, else `true`. Nothing is allocated, freed or
+//     stored outside `*iter`.
+//   * `rd_kafka_aborted_txns_next_offset(aborted_txns, pid, increment_idx,
+//     max_offset)` finds the pid's node with `RD_AVL_FIND` (`:1853-1858`),
+//     reads one `int64_t` list element and, when `increment_idx`, advances the
+//     node's scalar `offsets_idx`; it returns the offset or -1.
+//   * `rd_kafka_anyconf_desensitize(scope, conf)` walks the static property
+//     table and, for each sensitive `_RK_C_STR` property of the scope, calls
+//     `rd_kafka_desensitize_str` on the string `conf` holds, which overwrites
+//     it in place (`rd_kafka_anyconf_prop_desensitize`, `:2689-2714`). No
+//     string is freed or replaced.
+//   * `rd_kafka_dump0(fp, rk, locks)` prints `rk`'s state to `fp`, taking and
+//     releasing `rk`'s read lock and `rk_internal_rkb_lock` in pairs when
+//     `locks`; it allocates and stores nothing.
+//   * `rd_kafka_metadata_copy_internal(src_internal, size, populate_racks)`
+//     copies `src_internal` into ONE `rd_tmpabuf` buffer
+//     (`rd_tmpabuf_finalize` is `rd_malloc(size)`, `rdkafka_buf.h:80`) and
+//     returns its start, `mdi` (the first write is at offset 0); every pointer
+//     it writes points inside that buffer, and the scratch `rd_list_t` of the
+//     rack path is destroyed before the return. A failed copy asserts
+//     (`:332-333`). `rd_kafka_metadata_destroy` releases the copy with
+//     `rd_free` (`:185-187`). So the result is a fresh owned allocation:
+//     `resource_return_owned(nullable)`, the weaker marker, as `rd_malloc`'s
+//     own result is declared.
+//
+// ## Custody
+//
+// Every pointer formal is read or written through and not stored, freed or
+// transferred: `resource_borrowed`. Scalars are `resource_borrowed`. The
+// first four results are scalars: `resource_return_none()`.
+//
+// ## ABI (constraint 8)
+//
+// Object pointers to tagged structs (`pb_field_iter_t`,
+// `rd_kafka_aborted_txns_t`, `FILE`, `rd_kafka_t`, `void *`) are
+// `ptr<mut, u8>`, `const rd_kafka_metadata_internal_t *` `ptr<const, u8>`;
+// `int64_t` is `i64`, `rd_bool_t` (`typedef uint8_t rd_bool_t;`,
+// `rdtypes.h:49`) `u8`, `int` `i32`, `size_t` `usize`, `bool` (`_Bool`) `bool`.
+//
+// NOT CLAIMED: anything about the values returned or printed, lock ordering,
+// the AVL tree's or the property table's contents, or `fp` being open.
+
+// --- nanopb: decode one field descriptor into the iterator -----------------
+extern fn load_descriptor_values(iter: ptr<mut, u8>) -> bool
+contract {
+    requires resource_contract_v1;
+    ensures normal resource_borrowed(iter);
+    ensures normal resource_return_none();
+};
+
+// --- the next aborted-transaction start offset for a producer id -----------
+extern fn rd_kafka_aborted_txns_next_offset(aborted_txns: ptr<mut, u8>, pid: i64, increment_idx: u8, max_offset: i64) -> i64
+contract {
+    requires resource_contract_v1;
+    ensures normal resource_borrowed(aborted_txns);
+    ensures normal resource_borrowed(pid);
+    ensures normal resource_borrowed(increment_idx);
+    ensures normal resource_borrowed(max_offset);
+    ensures normal resource_return_none();
+};
+
+// --- overwrite the sensitive string properties of a configuration ----------
+extern fn rd_kafka_anyconf_desensitize(scope: i32, conf: ptr<mut, u8>) -> unit
+contract {
+    requires resource_contract_v1;
+    ensures normal resource_borrowed(scope);
+    ensures normal resource_borrowed(conf);
+    ensures normal resource_return_none();
+};
+
+// --- print an instance's state to a stream ---------------------------------
+// Card LIBRDKAFKA-PLUGIN-PREMISE-REMAINDER (USER DECISION 2026-10-15, "Yes,
+// list it"): the dump's queue-length reads (rd_kafka_q_len) take and drop a
+// forwarded queue's reference, whose final drop may run an interceptor or
+// rk_conf.log_cb, so the declaration names P-RK-PLUGIN-CALLBACK-CLOSURE (re-pinned
+// at 66910c10 and 046accf6).
+extern fn rd_kafka_dump0(fp: ptr<mut, u8>, rk: ptr<mut, u8>, locks: i32) -> unit
+contract {
+    requires resource_contract_v1;
+    requires resource_premise(rk_plugin_callback_closure, "P-RK-PLUGIN-CALLBACK-CLOSURE: in the static scope every rk_conf callback a call may run, including rd_kafka_log_buf's log callback, is a run registration or a stated default with a declared candidate; with loaded external code, extra registrations depend on the applicable pinned rk_plugin_library and flb_external_plugin outer envelopes (OP-APP-RK-CALLBACKS-VIA-POLL-CB, C04.20)");
+    requires resource_hypothesis(plugin_artifact_symbol_abi, "For every reached loaded artifact, exact selected build/inventory, artifact identity and required symbol/address/ABI prerequisites hold.");
+    requires resource_hypothesis(plugin_callback_candidates, "Every actual rk_conf invocation has its exact declared member candidate and a prior successful public registration or stated static default.");
+    requires resource_hypothesis(plugin_code_context_lifetime, "Every loaded callback invocation, including destruction and copied on_new paths, has live code and opaque context.");
+    requires resource_hypothesis(plugin_interceptor_custody, "Every interceptor-descendant pointer and scalar resource is borrowed, with no retain/transfer/global custody and each local acquisition dropped before its activation returns.");
+    requires resource_hypothesis(plugin_interceptor_registration, "Every loaded interceptor uses a successful public setter with the exact pinned list/union-arm candidate and permitted configuration/client lifecycle.");
+    requires resource_hypothesis(plugin_lifecycle_unload, "Every callback invocation precedes matching final unload and copied registrations retain actual loader references.");
+    requires resource_hypothesis(plugin_outer_bridge, "Actually loaded RK and Fluent Bit C/Go code independently meet their respectively bound proposed outer envelopes; one envelope covers no missing obligation of another.");
+    requires resource_premise_decomposition(rk_plugin_callback_closure, plugin_artifact_symbol_abi, plugin_callback_candidates, plugin_code_context_lifetime, plugin_interceptor_custody, plugin_interceptor_registration, plugin_lifecycle_unload, plugin_outer_bridge);
+    ensures normal resource_borrowed(fp);
+    ensures normal resource_borrowed(rk);
+    ensures normal resource_borrowed(locks);
+    ensures normal resource_return_none();
+};
+
+// --- copy metadata into one fresh allocation -------------------------------
+extern fn rd_kafka_metadata_copy_internal(src_internal: ptr<const, u8>, size: usize, populate_racks: u8) -> ptr<mut, u8>
+contract {
+    requires resource_contract_v1;
+    ensures normal resource_borrowed(src_internal);
+    ensures normal resource_borrowed(size);
+    ensures normal resource_borrowed(populate_racks);
+    ensures normal resource_return_owned(nullable);
+};
+
+// ## Card W45-CALLEE-CASCADE-RESIDUAL round 3: two callees whose own bodies
+// ## are Safe in their home units
+//
+// TWO TRUSTED ASSUMPTIONS, pinned after reading each body at both revisions
+// (byte-identical). Each is the only uncontracted call of one function in
+// another unit, and each body is analysed in its home unit, where W4 checks
+// the declaration against it (rule 13g):
+//
+//   * `rd_bytes_hash(bytes, len)` (`rdmap.c:246-254`) reads `len` bytes of
+//     `bytes` into a djb2 hash and returns it: neutral. Caller:
+//     `rd_kafka_Uuid_hash` (`rdkafka.c`).
+//   * `rd_kafka_mem_calloc(rk, num, size)` (`rdkafka.c:7127-7129`) is `return
+//     rd_calloc(num, size);`: `rk` unused, the result `rd_calloc`'s (declared
+//     by inheriting `libc::calloc`, an owned nullable result). Caller:
+//     `LZ4_createStreamHC` (`lz4hc.c`, through `ALLOC_AND_ZERO`).
+
+extern fn rd_bytes_hash(bytes: ptr<mut, u8>, len: usize) -> u32
+contract {
+    requires resource_contract_v1;
+    ensures normal resource_borrowed(bytes);
+    ensures normal resource_borrowed(len);
+    ensures normal resource_return_none();
+};
+
+extern fn rd_kafka_mem_calloc(rk: ptr<mut, u8>, num: usize, size: usize) -> ptr<mut, u8>
+contract {
+    requires resource_contract_v1;
+    ensures normal resource_borrowed(rk);
+    ensures normal resource_borrowed(num);
+    ensures normal resource_borrowed(size);
+    ensures normal resource_return_owned(nullable);
+};

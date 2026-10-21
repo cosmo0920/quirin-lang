@@ -1,0 +1,420 @@
+module contract;
+// qcore-premise-binding-manifest-v1 rd_kafka_crash rk_plugin_callback_closure 1f7ed5118d85a487094ca3a46a81a264dedf8abe4f6c0a9515d80c6e95dafe21
+#include "quirin-provider-libc:libc/memory.qv";
+#include "quirin-provider-libc:libc/string.qv";
+
+// Trusted resource-projection assumptions, vocabulary version 1.
+// These preserve the Cycle 19 audit table; they do not verify the C bodies.
+// Borrowed scalar/opaque arguments carry no resource custody requirement.
+// Detailed observation/lifecycle contracts remain separate semantic profiles.
+//
+// Card CONTRACT-INHERIT-QCORE-PROVIDER-NAMING: librdkafka's allocator and
+// string-duplication wrappers take their contracts from the libc declarations
+// they wrap instead of restating them. `src/rd.h` defines `rd_malloc`,
+// `rd_calloc`, `rd_strdup` and `rd_strndup` as `malloc`, `calloc`, `strdup`
+// (`_strdup` on Windows) and `strndup` (or `rd_malloc` + `memcpy` without
+// `HAVE_STRNDUP`) followed by `rd_assert` on the result, and `rd_free` as
+// `free(ptr)`. The `nullable` owned result is the parent's statement and
+// covers the assert-disabled build. Each elaborates to the clauses these
+// declarations carried when they were written out by hand (clause for clause,
+// parameter names included); an inherited contract is a trusted assumption of
+// the same strength as that hand-written one, never a proof. `rd_realloc`
+// stays written out: libc declares no `realloc`.
+
+extern fn rd_malloc(size: usize) -> ptr<mut, u8> contract inherit libc::malloc;
+
+extern fn rd_calloc(count: usize, size: usize) -> ptr<mut, u8> contract inherit libc::calloc;
+
+extern fn rd_strdup(str: ptr<const, u8>) -> ptr<mut, u8> contract inherit libc::strdup;
+
+extern fn rd_strndup(str: ptr<const, u8>, len: usize) -> ptr<mut, u8> contract inherit libc::strndup;
+
+extern fn rd_free(ptr: ptr<mut, u8>) -> unit contract inherit libc::free;
+
+extern fn rd_realloc(ptr: ptr<mut, u8>, size: usize) -> ptr<mut, u8>
+contract {
+    requires resource_contract_v1;
+    ensures normal resource_owned(ptr, nullable);
+    ensures normal resource_borrowed(size);
+    ensures normal resource_return_reallocated(ptr, nullable);
+};
+
+// ## Card W46-EXTERNAL-CALLEE-CONTRACTS: `rd_atomic32_get`
+//
+// ONE TRUSTED ASSUMPTION, pinned (contract spec C06.2) after reading the body
+// at both audited revisions (identical at `66910c10` and `046accf6`). It is
+// the last uncontracted call of `rd_kafka_thread_cnt` (`src/rdkafka.c:114-116`,
+// `return rd_atomic32_get(&rd_kafka_thread_cnt_curr);`). It sits in this
+// module because the crate has no atomic-counter module and one declaration
+// does not justify a new resource-view module.
+//
+// ## The body, read from `lib/librdkafka-2.15.0/src/rdatomic.h:100-112`
+//
+//     static RD_INLINE int32_t RD_UNUSED rd_atomic32_get(rd_atomic32_t *ra) {
+//     #if defined(_WIN32) || defined(__SUNPRO_C)
+//             return ra->val;
+//     #elif !HAVE_ATOMICS_32
+//             int32_t r;
+//             mtx_lock(&ra->lock);
+//             r = ra->val;
+//             mtx_unlock(&ra->lock);
+//             return r;
+//     #else
+//             return ATOMIC_OP32(fetch, add, &ra->val, 0);
+//     #endif
+//     }
+//
+// On every configuration arm the function READS the counter (an atomic
+// fetch-and-add of zero, a plain read, or a read under the counter's own
+// mutex) and returns its `int32_t` value. It allocates, frees, stores and
+// transfers nothing, so `ra` is `resource_borrowed` and the scalar result is
+// `resource_return_none()`.
+//
+// ## Where the body lives
+//
+// `static RD_INLINE` in a header: every unit that includes `rdatomic.h` holds
+// a copy, but no analysed function of the corpus is this function, so no body
+// is checked against this declaration (constraint 8, rule 10g). `RD_INLINE` and
+// `RD_UNUSED` are `inline` and an `__attribute__((unused))` decoration; neither
+// changes a parameter type or the arity.
+//
+// ## ABI (constraint 8)
+//
+// `rd_atomic32_t *` is one object-pointer level, `ptr<mut, u8>`; `int32_t` is
+// `i32`.
+//
+// NOT CLAIMED: memory ordering, the counter's value, or anything about the
+// counter's lifetime.
+
+// --- read a 32-bit atomic counter ---
+extern fn rd_atomic32_get(ra: ptr<mut, u8>) -> i32
+contract {
+    requires resource_contract_v1;
+    ensures normal resource_borrowed(ra);
+    ensures normal resource_return_none();
+};
+
+// ## Card W47-CALLEE-CLOSURE-R2: `rd_file_read`
+//
+// ONE TRUSTED ASSUMPTION, pinned (contract spec C06.2) after reading the body
+// at both audited revisions (identical at `66910c10` and `046accf6`; one copy
+// in the tree). After P3 it is the last uncontracted call of
+// `rd_kafka_oidc_assertion_read_from_file`
+// (`src/rdkafka_sasl_oauthbearer_oidc.c:651-656`: a null test of its formal,
+// then `return rd_file_read(file_path, NULL, max_size);`); its other call site
+// (`:275`) sits in a function with other blockers. It sits in this module,
+// beside `rd_malloc` and `rd_free`, whose custody its result carries.
+//
+// ## The body, read from `lib/librdkafka-2.15.0/src/rd.h:472-521`
+//
+//     static RD_INLINE RD_UNUSED char *
+//     rd_file_read(const char *file_path, size_t *size, size_t max_size) {
+//             FILE *file;
+//             char *buf = NULL;
+//             size_t file_size;
+//             size_t read_size;
+//             if (!size)
+//                     size = &read_size;
+//             file = fopen(file_path, "rb");          /* the non-_WIN32 arm */
+//             if (!file)
+//                     return NULL;
+//             if (fseek(file, 0, SEEK_END) != 0)
+//                     goto err;
+//             file_size = (size_t)ftell(file);
+//             ...                                      /* seek back, size cap */
+//             buf       = (char *)rd_malloc(file_size + 1);
+//             read_size = fread(buf, 1, file_size, file);
+//             if (read_size != file_size)
+//                     goto err;
+//             buf[file_size] = '\0';
+//             *size          = file_size;
+//             fclose(file);
+//             return buf;
+//     err:
+//             fclose(file);
+//             if (buf)
+//                     rd_free(buf);
+//             return NULL;
+//     }
+//
+// Its comment says so (`:468`): "@remark The returned pointer ownership is
+// transferred to the caller."
+//
+// ## Custody
+//
+//   * The result is `resource_return_owned(nullable)`: on success it is the
+//     buffer `rd_malloc` returned (the heap kind `rd_free` releases, as
+//     `libc::free`), handed to the caller; on every failure arm the body has
+//     released it itself (`rd_free(buf)`) or never allocated it, and returns
+//     NULL. The `FILE` the body opens is closed on every arm before the
+//     return, so nothing else outlives the call.
+//   * `file_path` is `resource_borrowed` (read by `fopen`); `size` is
+//     `resource_borrowed` (optional: the body substitutes a local when it is
+//     NULL, and writes a scalar through it on success); `max_size` is a scalar.
+//
+// ## Where the body lives
+//
+// `static RD_INLINE` in a header: every unit that includes `rd.h` holds a
+// copy, but no analysed function of the corpus is this function, so no body
+// is checked against this declaration (constraint 8, rule 10g); it is an
+// unchecked premise pinned to the header text, as `rd_atomic32_get` above.
+//
+// ## ABI (constraint 8)
+//
+// `const char *` is `ptr<const, u8>`, `size_t *` one object-pointer level
+// (`ptr<mut, u8>`), `size_t` is `usize` under LP64 and `char *` is
+// `ptr<mut, u8>`.
+//
+// NOT CLAIMED: the buffer's contents or NUL termination, the size written
+// through `size`, `errno`, or the Windows arm (`fopen_s`), which is not in
+// the audited build.
+
+// --- read a whole file into a new heap buffer ---
+extern fn rd_file_read(file_path: ptr<const, u8>, size: ptr<mut, u8>, max_size: usize) -> ptr<mut, u8>
+contract {
+    requires resource_contract_v1;
+    ensures normal resource_borrowed(file_path);
+    ensures normal resource_borrowed(size);
+    ensures normal resource_borrowed(max_size);
+    ensures normal resource_return_owned(nullable);
+};
+
+// ## Card CONTRACT-NORETURN-AND-BORROWED-TAILS: `rd_kafka_crash`
+//
+// ONE TRUSTED ASSUMPTION, pinned (contract spec C06.2) after reading the body
+// at both audited revisions (`rdkafka.c`, `rdkafka_int.h` and `rdposix.h` are
+// identical at `66910c10` and `046accf6`, and at the tail-pause export
+// `90978ac6`; one copy in the tree). It is the target of `rd_kafka_assert`
+// (`lib/librdkafka-2.15.0/src/rdkafka_int.h:61-66`):
+//
+//     #define rd_kafka_assert(rk, cond)                                    \
+//             do {                                                         \
+//                     if (unlikely(!(cond)))                               \
+//                             rd_kafka_crash(__FILE__, __LINE__,           \
+//                                            __FUNCTION__, (rk),           \
+//                                            "assert: " #cond);            \
+//             } while (0)
+//
+// CG21's census resolves it as the only uncontracted callee whose Clang
+// declaration is `noreturn` (`CG21-UNDECLARED-NORETURN-CALLEES`). It lives in
+// this module, beside the module's other librdkafka declarations, so every
+// selection that reads librdkafka's contracts reads it.
+//
+// ## The declaration, read from `rdkafka_int.h:69-73` and `rdposix.h:61`
+//
+//     void RD_NORETURN rd_kafka_crash(const char *file, int line,
+//                                     const char *function, rd_kafka_t *rk,
+//                                     const char *reason);
+//     #define RD_NORETURN __attribute__((noreturn))
+//
+// (`rdwin32.h:80` spells it `__declspec(noreturn)` in the Windows build,
+// which is not audited.) The definition repeats `RD_NORETURN`.
+//
+// ## The body, read from `rdkafka.c:6640-6649`
+//
+//     void RD_NORETURN rd_kafka_crash(const char *file, int line,
+//                                     const char *function, rd_kafka_t *rk,
+//                                     const char *reason) {
+//             fprintf(stderr, "*** %s:%i:%s: %s ***\n", file, line, function,
+//                     reason);
+//             if (rk)
+//                     rd_kafka_dump0(stderr, rk, 0 /*no locks*/);
+//             abort();
+//     }
+//
+// Every path ends at `abort()` (C17 7.22.4.1: it does not return), after a
+// diagnostic on `stderr` and, for a non-NULL `rk`, `rd_kafka_dump0` with
+// `locks` 0 (`rdkafka.c:6201-6282`). That dump only reads: it prints `rk`'s
+// counters, brokers (`rd_kafka_broker_dump`), consumer group, topics and
+// metadata cache (`rd_kafka_metadata_cache_dump`), takes no rd_kafka lock at
+// `locks` 0, and its one lock, `rd_kafka_curr_msgs_get`'s
+// `mtx_lock(&rk->rk_curr_msgs.lock)` / `mtx_unlock` pair, is taken and
+// released inside the call (were the asserting thread already holding that
+// plain mutex, the relock would be undefined behaviour, C11 7.26.4.4, which
+// C04.3.3's exit includes; `rd_kafka_curr_msgs_sub`'s own assertion passes
+// `rk` NULL). No path calls `longjmp`, `setcontext`, `pthread_exit` or
+// `thrd_exit`: the exit is program termination, not a non-local exit, which
+// is what `resource_no_return()` states.
+//
+// ## Custody
+//
+//   * `file`, `function` and `reason` are strings READ by `fprintf`; never
+//     freed, stored or returned: `resource_borrowed`. `line` is a scalar.
+//   * `rk` is only read (by the dump) and may be NULL: `resource_borrowed`.
+//     Nothing is released or retained; the program then ends.
+//   * The result is `void`: `resource_return_none()`.
+//
+// The C gateway ends the path at a call STATEMENT only where the call's own
+// Clang declaration is `noreturn` (gateway rule 11o); neither this
+// declaration alone nor the attribute alone does.
+//
+// ## Where the body lives
+//
+// `rdkafka.c`, an analysed unit. A body with no normal exit publishes no
+// summary (rule 11o), so the body neither validates nor refutes this
+// declaration: it stays an unchecked premise (rule 10g), pinned to the
+// declaration and definition texts.
+//
+// ## ABI (constraint 8)
+//
+// `const char *` is `ptr<const, u8>`, `int` is `i32`, `rd_kafka_t *` one
+// object-pointer level (`ptr<mut, u8>`), and the `void` result `unit`.
+//
+// NOT CLAIMED: the dump's output, its unlocked reads of state other threads
+// may be changing, or anything about the asserted condition.
+
+// --- rd_kafka_assert's failure call: prints, dumps and aborts ---
+// Card LIBRDKAFKA-PLUGIN-PREMISE-REMAINDER (USER DECISION 2026-10-15, "Yes,
+// list it"): with a non-null rk the assertion-failure dump (rd_kafka_dump0)
+// drops queue references that may run an interceptor or rk_conf.log_cb, so the
+// declaration names P-RK-PLUGIN-CALLBACK-CLOSURE (re-pinned at 66910c10 and
+// 046accf6).
+extern fn rd_kafka_crash(file: ptr<const, u8>, line: i32, function: ptr<const, u8>, rk: ptr<mut, u8>, reason: ptr<const, u8>) -> unit
+contract {
+    requires resource_contract_v1;
+    requires resource_premise(rk_plugin_callback_closure, "P-RK-PLUGIN-CALLBACK-CLOSURE: in the static scope every rk_conf callback a call may run, including rd_kafka_log_buf's log callback, is a run registration or a stated default with a declared candidate; with loaded external code, extra registrations depend on the applicable pinned rk_plugin_library and flb_external_plugin outer envelopes (OP-APP-RK-CALLBACKS-VIA-POLL-CB, C04.20)");
+    requires resource_hypothesis(plugin_artifact_symbol_abi, "For every reached loaded artifact, exact selected build/inventory, artifact identity and required symbol/address/ABI prerequisites hold.");
+    requires resource_hypothesis(plugin_callback_candidates, "Every actual rk_conf invocation has its exact declared member candidate and a prior successful public registration or stated static default.");
+    requires resource_hypothesis(plugin_code_context_lifetime, "Every loaded callback invocation, including destruction and copied on_new paths, has live code and opaque context.");
+    requires resource_hypothesis(plugin_interceptor_custody, "Every interceptor-descendant pointer and scalar resource is borrowed, with no retain/transfer/global custody and each local acquisition dropped before its activation returns.");
+    requires resource_hypothesis(plugin_interceptor_registration, "Every loaded interceptor uses a successful public setter with the exact pinned list/union-arm candidate and permitted configuration/client lifecycle.");
+    requires resource_hypothesis(plugin_lifecycle_unload, "Every callback invocation precedes matching final unload and copied registrations retain actual loader references.");
+    requires resource_hypothesis(plugin_outer_bridge, "Actually loaded RK and Fluent Bit C/Go code independently meet their respectively bound proposed outer envelopes; one envelope covers no missing obligation of another.");
+    requires resource_premise_decomposition(rk_plugin_callback_closure, plugin_artifact_symbol_abi, plugin_callback_candidates, plugin_code_context_lifetime, plugin_interceptor_custody, plugin_interceptor_registration, plugin_lifecycle_unload, plugin_outer_bridge);
+    ensures normal resource_borrowed(file);
+    ensures normal resource_borrowed(line);
+    ensures normal resource_borrowed(function);
+    ensures normal resource_borrowed(rk);
+    ensures normal resource_borrowed(reason);
+    ensures normal resource_return_none();
+    ensures normal resource_no_return();
+};
+
+// ## Card CG10-INDIRECT-ACCESS-SOLE-RESIDUALS: custody-neutral scalar helpers
+//
+// Wave 48, round 18. Placed beside `rd_atomic32_get` (the same family).
+//
+// Each declaration is the NEUTRAL ELEMENT of the vocabulary — every formal
+// `resource_borrowed`, the scalar result `resource_return_none()` — the
+// weakest statement it can make (gateway rule 4's `N(m)`). Each was read at
+// both audited revisions (`66910c10` and `046accf6`, where `rdatomic.h`,
+// `rdhdrhistogram.c` and `tinycthread_extra.c` are byte-identical) and is
+// pinned to the text read (contract spec C06.2): a declaration is in force
+// only where the audited source matches a reviewed identity.
+//
+// ## Why these callees
+//
+// The card's census of the functions the indirect-access refusal blocked
+// alone: their refused statements call these callees with member actuals
+// (`rd_atomic64_get(&rk->rk_telemetry.…)`, `rd_avg_add(&rkb->rkb_avg_rtt, v)`,
+// `cnd_timedwait_ms(&rk->rk_…_cnd, &rk->rk_…_lock, ms)`), and gateway rule 12k
+// names the callee as what decides each statement. With a declaration in
+// force, rule W44 reads those actuals at their `Borrowed` positions.
+//
+// ## Two bodies a unit analyses (checked in their home units)
+//
+// `cnd_timedwait_ms` (`src/tinycthread_extra.c:92-129`) and
+// `rd_hdr_histogram_record` (`src/rdhdrhistogram.c:391-407`) are external
+// definitions whose own rows are `Safe` in their home units on the BEFORE
+// corpus run, so the W4 summary derived from each body there is the
+// declaration below; constraint 8's duty gate compares them in that unit and
+// would withdraw a contradicting declaration. Their callers sit in other
+// units, which no summary route reaches (`W44-CALLEE-CROSS-UNIT-SUMMARY`).
+//
+//     int cnd_timedwait_ms(cnd_t *cnd, mtx_t *mtx, int timeout_ms)
+//
+//   waits on `cnd` with `mtx` (`cnd_wait`, or a `cnd_timedwait` loop over a
+//   local `struct timespec` computed from `gettimeofday`), returning the
+//   `thrd_*` code. Neither pointer is freed, stored or transferred.
+//
+//     int rd_hdr_histogram_record(rd_hdr_histogram_t *hdr, int64_t v)
+//
+//   increments scalar counters of `*hdr` (`counts[idx]`, `totalCount`, or
+//   the out-of-range counters) and returns 0 or 1. `hdr` is written through,
+//   never released or retained. It is the one uncontracted call of the
+//   header body `rd_avg_add` (`src/rdavg.h:77-93`, `WITH_HDRHISTOGRAM`),
+//   which W4 derives in every including unit (gateway rule 4a): with this
+//   declaration that body can validate, rather than being declared itself.
+//
+// ## Two header bodies no unit reports (declared, as `rd_atomic32_get`)
+//
+// `static RD_INLINE` in `src/rdatomic.h`: every including unit carries a
+// copy, inside W4's derivation scope, but each body's one statement is
+// `return __atomic_…(&ra->val, …);`, a compiler builtin with no owning crate
+// (`W48-CALLEE-DECISION-TABLE` class 6), so no summary is published; these
+// declarations sit beside `rd_atomic32_get` (`memory.qv`) and are recorded
+// under `W46-HEADER-INLINE-DECLARED-UNCHECKED`. On every configuration arm
+// (an `__atomic_*`/`__sync_*` builtin, a Windows or Solaris intrinsic, or a
+// read and write of `ra->val` under the counter's own mutex) each function
+// reads and/or writes the scalar counter and returns an `int64_t`; it
+// allocates, frees, stores and transfers nothing.
+//
+//     rd_atomic64_add(rd_atomic64_t *ra, int64_t v)   rdatomic.h:145-161
+//     rd_atomic64_get(rd_atomic64_t *ra)              rdatomic.h:190-202
+//
+// ## Deliberately NOT declared: `rd_atomic32_add`, `rd_atomic32_set`
+//
+// Their bodies have the same custody (borrowed counter, scalar result), but
+// librdkafka's reference counts are these two functions: `src/rd.h:338,351`
+// `#define rd_refcnt_set(R, v) rd_atomic32_set(R, v)` and
+// `#define rd_refcnt_add0(R) rd_atomic32_add(R, 1)`. A name-keyed declaration
+// would therefore read every reference-count `keep` (`rd_kafka_toppar_keep0`,
+// `rd_kafka_cert_dup`) as custody-neutral, which is
+// `W48-CALLEE-DECISION-TABLE` class 3 (reference counts), a decision this card
+// does not make. A first measurement with them declared moved
+// `rd_kafka_cert_dup` and `rd_kafka_toppar_list_copy` (through the header
+// body `rd_kafka_toppar_keep0`) to `Safe`; they were withdrawn before any
+// record (the card's report, section 4).
+//
+// Card REFCOUNT-RESOURCE-KIND (the user's decision of 2026-10-05, class 3:
+// a reference-count resource kind) keeps both undeclared: the reference
+// operations are declared on the named wrappers whose bodies show the object
+// (`client.qv`, "Reference counts"), and a plain counter on the same
+// primitive needs its own declaration, typed by its operand, which no card
+// has yet written (`REFCOUNT-PLAIN-COUNTER-DECLARATION`).
+//
+// ## ABI (constraint 8)
+//
+// Every pointer is one object-pointer level, `ptr<mut, u8>`; `int`/`int32_t`
+// are `i32`, `int64_t` is `i64` (LP64, `LOADER-ABI-LP64`).
+//
+// NOT CLAIMED: memory ordering, atomicity, the counters' values, the
+// histogram's bounds (`counts[idx]` is guarded by the body), the condition
+// variable's or mutex's state, or any object's lifetime: a borrowed
+// declaration leaves the caller's obligations unchanged, it discharges none.
+
+// --- wait on a condition variable for at most timeout_ms ---
+extern fn cnd_timedwait_ms(cnd: ptr<mut, u8>, mtx: ptr<mut, u8>, timeout_ms: i32) -> i32
+contract {
+    requires resource_contract_v1;
+    ensures normal resource_borrowed(cnd);
+    ensures normal resource_borrowed(mtx);
+    ensures normal resource_borrowed(timeout_ms);
+    ensures normal resource_return_none();
+};
+
+// --- record one value in an HDR histogram ---
+extern fn rd_hdr_histogram_record(hdr: ptr<mut, u8>, v: i64) -> i32
+contract {
+    requires resource_contract_v1;
+    ensures normal resource_borrowed(hdr);
+    ensures normal resource_borrowed(v);
+    ensures normal resource_return_none();
+};
+
+// --- add to a 64-bit atomic counter, returning the new value ---
+extern fn rd_atomic64_add(ra: ptr<mut, u8>, v: i64) -> i64
+contract {
+    requires resource_contract_v1;
+    ensures normal resource_borrowed(ra);
+    ensures normal resource_borrowed(v);
+    ensures normal resource_return_none();
+};
+
+// --- read a 64-bit atomic counter ---
+extern fn rd_atomic64_get(ra: ptr<mut, u8>) -> i64
+contract {
+    requires resource_contract_v1;
+    ensures normal resource_borrowed(ra);
+    ensures normal resource_return_none();
+};
