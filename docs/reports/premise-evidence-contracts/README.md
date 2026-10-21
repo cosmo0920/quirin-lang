@@ -106,7 +106,8 @@ units/538summaries,350 Lean audits, formatting, Clippy, both reevaluation exampl
 and submodule initialization. Fresh providers pass133 Rust tests/1ignored and25
 Python tests; inventory check, all five package builds and all five verifications
 exit0. Own Python passes374 after the committed regenerated matrix; the final
-authoritative gate-backed confirmation is recorded separately. Actual commands,
+authoritative gate-backed [confirmation](final-python.json) passes374 tests
+with unchanged committed matrix SHA `59ac701378c625b682c48848cb00cadf5069e55e5abffb4bd174a8f4cdbe9322`. Actual commands,
 environment overrides, exits and private logs are in [command receipts](command-receipts.json).
 Clang is recorded beside the gate. Debug/test debuginfo is0 and incremental is
 disabled for disk capacity; no test or sanitizer is disabled.

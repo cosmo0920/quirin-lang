@@ -127,5 +127,13 @@
       "docs/reports/premise-evidence-contracts/scripts/collect.py"
     ],
     "meaning": "Report helper syntax checks pass with cache in the authorized temporary directory. No source, test, analyzer or gate behavior changed."
+  },
+  {
+    "attempt": "python-2-authoritative",
+    "commands": "/home/cosmo/.codex/worktrees/premise-decomposition-cycle1/qcore-c/private/premise-evidence-contracts/python-2/commands.json",
+    "exit": 0,
+    "python_passed": 374,
+    "committed_matrix_sha256": "59ac701378c625b682c48848cb00cadf5069e55e5abffb4bd174a8f4cdbe9322",
+    "head": "61696b4ad582d4df98a7b8c15fde7ca9ac2678ae"
   }
 ]
