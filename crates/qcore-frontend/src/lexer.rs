@@ -137,6 +137,12 @@ pub enum Symbol {
     /// contract state clause reads it, and every other reader refuses it as
     /// an unexpected symbol.
     MapsTo,
+    /// Contextual premise-flow logical alternative `||->`.
+    FlowOr,
+    /// Contextual premise-flow forbidden condition `!->`.
+    FlowExcept,
+    /// Contextual premise-flow terminal condition `->|`.
+    FlowTerminal,
     FatArrow,
     ColonColon,
     Define,
@@ -333,6 +339,23 @@ impl Lexer<'_> {
     /// > 0` is the spaced spelling and it parses; `1 |> 2` is a pipeline in a
     /// condition and refuses at `Q045`.
     fn symbol(&mut self, start: usize, first: char) -> Result<Symbol, LexError> {
+        // Longest-match additions. Existing MapsTo keeps its exact identity.
+        for (spelling, symbol) in [
+            ("||->", Symbol::FlowOr),
+            ("!->", Symbol::FlowExcept),
+            ("->|", Symbol::FlowTerminal),
+        ] {
+            if self
+                .source
+                .get(start..)
+                .is_some_and(|rest| rest.starts_with(spelling))
+            {
+                for _ in 1..spelling.len() {
+                    self.bump();
+                }
+                return Ok(symbol);
+            }
+        }
         // Card OP-CONSTRUCTOR-DECLARATIONS: the one three-byte spelling,
         // tried first, so the width-two rule below is unchanged for `|>`,
         // `||` and `|]`.
