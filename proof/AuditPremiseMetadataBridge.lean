@@ -1,0 +1,10 @@
+import QCore.PremiseMetadataBridge
+#print axioms QCore.PremiseMetadataBridge.exact_original_bytes
+#print axioms QCore.PremiseMetadataBridge.wrong_introduction_entry
+#print axioms QCore.PremiseMetadataBridge.missing_atom_refuses
+#print axioms QCore.PremiseMetadataBridge.changed_child_order_refuses
+#print axioms QCore.PremiseMetadataBridge.checked_roundtrip
+#print axioms QCore.PremiseMetadataBridge.stale_source_refuses
+#print axioms QCore.PremiseMetadataBridge.graph_unchanged
+#print axioms QCore.PremiseMetadataBridge.interpreted_bindings_unchanged
+#print axioms QCore.PremiseMetadataBridge.no_disposition_transport
