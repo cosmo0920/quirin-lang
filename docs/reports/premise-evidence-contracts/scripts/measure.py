@@ -44,7 +44,7 @@ def main():
     binary = snapshot / 'target/release/quirin-audit'
     link_map = args.link_map.resolve()
     env = dict(os.environ)
-    for key in ('QCORE_SOURCE_CONTRACTS', 'QCORE_RETURN_CENSUS'):
+    for key in ('QCORE_SOURCE_CONTRACTS', 'QCORE_RETURN_CENSUS', 'QCORE_CHUNKIO_PACKAGE'):
         env.pop(key, None)
     env['QCORE_PROFILES'] = str(snapshot / 'contract/profiles')
     env.update(QCORE_CROSS_UNIT_LINK_MAP=str(link_map), QCORE_CLANG='/usr/lib/llvm-21/bin/clang',
@@ -74,7 +74,7 @@ def main():
               'source_identity': source_identity(source),
               'link_map': str(link_map), 'link_map_sha256': sha(link_map),
               'environment': {k: env.get(k, 'unset') for k in ('QCORE_PROFILES', 'QCORE_CLANG', 'QCORE_CROSS_UNIT_LINK_MAP',
-                              'QCORE_NULL_PROPERTY', 'QCORE_OUTER_PROJECTION', 'QCORE_SOURCE_CONTRACTS', 'QCORE_RETURN_CENSUS')},
+                              'QCORE_NULL_PROPERTY', 'QCORE_OUTER_PROJECTION', 'QCORE_SOURCE_CONTRACTS', 'QCORE_RETURN_CENSUS', 'QCORE_CHUNKIO_PACKAGE', 'QCORE_AUDIT_JOBS')},
               'started': datetime.datetime.now(datetime.timezone.utc).isoformat()}
     if route == 'corpus':
         record['driver_environment_overrides']={'QCORE_CLANG':'/usr/bin/clang','QCORE_CHUNKIO_PACKAGE':str(PRIMARY/'build/cycle19/provider-packages-wave20/qcore.chunkio')}
