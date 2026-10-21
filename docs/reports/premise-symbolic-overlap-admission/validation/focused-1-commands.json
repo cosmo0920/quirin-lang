@@ -1,0 +1,17 @@
+[
+  {
+    "name": "contract-views",
+    "command": [
+      "cargo",
+      "test",
+      "-p",
+      "qcore-contract",
+      "--test",
+      "contract_views",
+      "-j1"
+    ],
+    "cwd": "/home/cosmo/.codex/worktrees/premise-symbolic-adoption/qcore-c",
+    "exit": 101,
+    "seconds": 36.214815855026245
+  }
+]

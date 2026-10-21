@@ -1,0 +1,9 @@
+{
+  "head": "4ed49592ab1add194c8c775351c8794d91328b73",
+  "time": 1792585069.588528,
+  "env": {
+    "CARGO_PROFILE_DEV_DEBUG": "0",
+    "CARGO_PROFILE_TEST_DEBUG": "0",
+    "CARGO_INCREMENTAL": "0"
+  }
+}

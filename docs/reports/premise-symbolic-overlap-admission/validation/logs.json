@@ -1,0 +1,114 @@
+[
+  {
+    "attempt": "focused-1",
+    "private": "/home/cosmo/.codex/worktrees/premise-symbolic-adoption/qcore-c/private/premise-symbolic-overlap-admission/focused-1/contract-views.stderr.log",
+    "public": "docs/reports/premise-symbolic-overlap-admission/validation/focused-1-contract-views.stderr.log.gz",
+    "uncompressed_sha256": "9fe27c9300e6b70ee3d3e5d9e3d6a80d2af4a419b449d3ece244e6034366b844",
+    "gzip_sha256": "165a2b8b25cd7214d85725755273cecbf40bd56cc18ab1145f2ba267b80b1481"
+  },
+  {
+    "attempt": "focused-1",
+    "private": "/home/cosmo/.codex/worktrees/premise-symbolic-adoption/qcore-c/private/premise-symbolic-overlap-admission/focused-1/contract-views.stdout.log",
+    "public": "docs/reports/premise-symbolic-overlap-admission/validation/focused-1-contract-views.stdout.log.gz",
+    "uncompressed_sha256": "e34373a71b0acb1dab22129ce740da557097550cbdb4dcd61176e15475032052",
+    "gzip_sha256": "413eba143ba160b8428d212a52761143c894df6fc8d8a918aafed759266ca20c"
+  },
+  {
+    "attempt": "focused-2",
+    "private": "/home/cosmo/.codex/worktrees/premise-symbolic-adoption/qcore-c/private/premise-symbolic-overlap-admission/focused-2/clippy.stderr.log",
+    "public": "docs/reports/premise-symbolic-overlap-admission/validation/focused-2-clippy.stderr.log.gz",
+    "uncompressed_sha256": "847df64a1fbaeb799606b064a603ab504542783e3e4dd348c8f22128a5692d12",
+    "gzip_sha256": "0d749f9f0fdaa5a8b9be7903af4fcac4141f2ab9d3d1a042102d9460b93c6299"
+  },
+  {
+    "attempt": "focused-2",
+    "private": "/home/cosmo/.codex/worktrees/premise-symbolic-adoption/qcore-c/private/premise-symbolic-overlap-admission/focused-2/clippy.stdout.log",
+    "public": "docs/reports/premise-symbolic-overlap-admission/validation/focused-2-clippy.stdout.log.gz",
+    "uncompressed_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "gzip_sha256": "9ceffb7310338057cfe71a4ae1e2c98d2c485d81cdef906532a801f457a38d64"
+  },
+  {
+    "attempt": "focused-2",
+    "private": "/home/cosmo/.codex/worktrees/premise-symbolic-adoption/qcore-c/private/premise-symbolic-overlap-admission/focused-2/contract-view-census.stderr.log",
+    "public": "docs/reports/premise-symbolic-overlap-admission/validation/focused-2-contract-view-census.stderr.log.gz",
+    "uncompressed_sha256": "f737912496d99a7bc80d3d43c4945507758bc6cbfeccfaa93e749cc2d4a93eea",
+    "gzip_sha256": "575a2107c789348fcc85a9fcf4be9dc83135fa40cfa41197153abd3ccae70a6d"
+  },
+  {
+    "attempt": "focused-2",
+    "private": "/home/cosmo/.codex/worktrees/premise-symbolic-adoption/qcore-c/private/premise-symbolic-overlap-admission/focused-2/contract-view-census.stdout.log",
+    "public": "docs/reports/premise-symbolic-overlap-admission/validation/focused-2-contract-view-census.stdout.log.gz",
+    "uncompressed_sha256": "fcaa19f5b6ea48943270acff04eaf56ed2d22832c9d88cb92e454037055ddede",
+    "gzip_sha256": "4b32ab2d686355f89becea234f16bee053173a169b4747e08b069f5669658de6"
+  },
+  {
+    "attempt": "focused-2",
+    "private": "/home/cosmo/.codex/worktrees/premise-symbolic-adoption/qcore-c/private/premise-symbolic-overlap-admission/focused-2/contract-views.stderr.log",
+    "public": "docs/reports/premise-symbolic-overlap-admission/validation/focused-2-contract-views.stderr.log.gz",
+    "uncompressed_sha256": "46122e71ca3f0d64819576617579dec22219c267dee578433e15fd9ff8c87124",
+    "gzip_sha256": "d04dbc44efbcf05e44bdfce9c8ee46456ec5e07cf8b06eb52a9a0d0804c1047b"
+  },
+  {
+    "attempt": "focused-2",
+    "private": "/home/cosmo/.codex/worktrees/premise-symbolic-adoption/qcore-c/private/premise-symbolic-overlap-admission/focused-2/contract-views.stdout.log",
+    "public": "docs/reports/premise-symbolic-overlap-admission/validation/focused-2-contract-views.stdout.log.gz",
+    "uncompressed_sha256": "ff9a7baa5fa142e8c59ce637763e0487f64494d6210477c070e5de2ab1a51b15",
+    "gzip_sha256": "6d1b08f0e5a94329b9d6c56ac32500000fba0ac87cfa21df3a144e04c58cc68f"
+  },
+  {
+    "attempt": "focused-2",
+    "private": "/home/cosmo/.codex/worktrees/premise-symbolic-adoption/qcore-c/private/premise-symbolic-overlap-admission/focused-2/lean-model.stderr.log",
+    "public": "docs/reports/premise-symbolic-overlap-admission/validation/focused-2-lean-model.stderr.log.gz",
+    "uncompressed_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "gzip_sha256": "9ceffb7310338057cfe71a4ae1e2c98d2c485d81cdef906532a801f457a38d64"
+  },
+  {
+    "attempt": "focused-2",
+    "private": "/home/cosmo/.codex/worktrees/premise-symbolic-adoption/qcore-c/private/premise-symbolic-overlap-admission/focused-2/lean-model.stdout.log",
+    "public": "docs/reports/premise-symbolic-overlap-admission/validation/focused-2-lean-model.stdout.log.gz",
+    "uncompressed_sha256": "271cf6b29616f2487309f4aeee3d582190e11f115bebce1b49ae9e49cefb7244",
+    "gzip_sha256": "bf7636305d29ed4c88969a0c92f60859681c6dad1ddb230b6d260bfeac0c07b8"
+  },
+  {
+    "attempt": "focused-3",
+    "private": "/home/cosmo/.codex/worktrees/premise-symbolic-adoption/qcore-c/private/premise-symbolic-overlap-admission/focused-3/lean-audit.stderr.log",
+    "public": "docs/reports/premise-symbolic-overlap-admission/validation/focused-3-lean-audit.stderr.log.gz",
+    "uncompressed_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "gzip_sha256": "9ceffb7310338057cfe71a4ae1e2c98d2c485d81cdef906532a801f457a38d64"
+  },
+  {
+    "attempt": "focused-3",
+    "private": "/home/cosmo/.codex/worktrees/premise-symbolic-adoption/qcore-c/private/premise-symbolic-overlap-admission/focused-3/lean-audit.stdout.log",
+    "public": "docs/reports/premise-symbolic-overlap-admission/validation/focused-3-lean-audit.stdout.log.gz",
+    "uncompressed_sha256": "88ecc2fbdbf5523d8ca3e1dca917f94c582c9de7f59bcadbaee57d31af58868e",
+    "gzip_sha256": "60f98fda19d1718357228f609764aa937f149732858d7bb961b5e73d0e2ee89d"
+  },
+  {
+    "attempt": "focused-3",
+    "private": "/home/cosmo/.codex/worktrees/premise-symbolic-adoption/qcore-c/private/premise-symbolic-overlap-admission/focused-3/lean-model.stderr.log",
+    "public": "docs/reports/premise-symbolic-overlap-admission/validation/focused-3-lean-model.stderr.log.gz",
+    "uncompressed_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "gzip_sha256": "9ceffb7310338057cfe71a4ae1e2c98d2c485d81cdef906532a801f457a38d64"
+  },
+  {
+    "attempt": "focused-3",
+    "private": "/home/cosmo/.codex/worktrees/premise-symbolic-adoption/qcore-c/private/premise-symbolic-overlap-admission/focused-3/lean-model.stdout.log",
+    "public": "docs/reports/premise-symbolic-overlap-admission/validation/focused-3-lean-model.stdout.log.gz",
+    "uncompressed_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "gzip_sha256": "9ceffb7310338057cfe71a4ae1e2c98d2c485d81cdef906532a801f457a38d64"
+  },
+  {
+    "attempt": "focused-3",
+    "private": "/home/cosmo/.codex/worktrees/premise-symbolic-adoption/qcore-c/private/premise-symbolic-overlap-admission/focused-3/lean-version.stderr.log",
+    "public": "docs/reports/premise-symbolic-overlap-admission/validation/focused-3-lean-version.stderr.log.gz",
+    "uncompressed_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "gzip_sha256": "9ceffb7310338057cfe71a4ae1e2c98d2c485d81cdef906532a801f457a38d64"
+  },
+  {
+    "attempt": "focused-3",
+    "private": "/home/cosmo/.codex/worktrees/premise-symbolic-adoption/qcore-c/private/premise-symbolic-overlap-admission/focused-3/lean-version.stdout.log",
+    "public": "docs/reports/premise-symbolic-overlap-admission/validation/focused-3-lean-version.stdout.log.gz",
+    "uncompressed_sha256": "eb22144228dd41cd51a0c84af4f976cd0cef473102dcf99b60be756b11f2b95a",
+    "gzip_sha256": "1da76e5d6d6023db61f164bf06cdf87c21217a1ef6691cdda381db0d7597a99b"
+  }
+]

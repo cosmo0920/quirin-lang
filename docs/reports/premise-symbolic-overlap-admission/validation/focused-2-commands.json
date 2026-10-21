@@ -1,0 +1,63 @@
+[
+  {
+    "name": "contract-views",
+    "command": [
+      "cargo",
+      "test",
+      "-p",
+      "qcore-contract",
+      "--test",
+      "contract_views",
+      "-j1"
+    ],
+    "cwd": "/home/cosmo/.codex/worktrees/premise-symbolic-adoption/qcore-c",
+    "exit": 0,
+    "seconds": 44.49883556365967
+  },
+  {
+    "name": "contract-view-census",
+    "command": [
+      "cargo",
+      "test",
+      "-p",
+      "qcore-compiler",
+      "--test",
+      "contract_view_census",
+      "-j1"
+    ],
+    "cwd": "/home/cosmo/.codex/worktrees/premise-symbolic-adoption/qcore-c",
+    "exit": 0,
+    "seconds": 47.28513956069946
+  },
+  {
+    "name": "clippy",
+    "command": [
+      "cargo",
+      "clippy",
+      "-p",
+      "qcore-contract",
+      "--test",
+      "contract_views",
+      "-j1",
+      "--",
+      "-D",
+      "warnings"
+    ],
+    "cwd": "/home/cosmo/.codex/worktrees/premise-symbolic-adoption/qcore-c",
+    "exit": 0,
+    "seconds": 12.62358283996582
+  },
+  {
+    "name": "lean-model",
+    "command": [
+      "lean",
+      "-DwarningAsError=true",
+      "-o",
+      "/home/cosmo/.codex/worktrees/premise-symbolic-adoption/qcore-c/private/premise-symbolic-overlap-admission/focused-2/lean/QCore/SymbolicOverlapAdmission.olean",
+      "QCore/SymbolicOverlapAdmission.lean"
+    ],
+    "cwd": "/home/cosmo/.codex/worktrees/premise-symbolic-adoption/qcore-c/proof",
+    "exit": 1,
+    "seconds": 0.078399658203125
+  }
+]

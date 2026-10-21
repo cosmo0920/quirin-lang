@@ -1,0 +1,12 @@
+{
+  "PluginNeutralOverlap": {
+    "source_sha256": "d895d5ac185ec19ce2f94e39b33f3cf557527cd39ad3f28715645c3dd2e8b29d",
+    "cache": "/home/cosmo/Documents/GitHub/qcore-c/proof/.lake/build/lib/lean/QCore/PluginNeutralOverlap.olean",
+    "cache_sha256": "c12622be9186f8c3e77c6d85efb2fef2c01c1380c581dac4c437f820603c5252"
+  },
+  "HypothesisGraph": {
+    "source_sha256": "67564ad24042de0aebfe30e78d5e44f70db9dfa2c29f1b7fa205b41780af81fa",
+    "cache": "/home/cosmo/Documents/GitHub/qcore-c/proof/.lake/build/lib/lean/QCore/HypothesisGraph.olean",
+    "cache_sha256": "4cf3b94637ea0ee8372b898f1ae6a31aae12c0c0a0b946ec9408e64cd2befdfd"
+  }
+}
