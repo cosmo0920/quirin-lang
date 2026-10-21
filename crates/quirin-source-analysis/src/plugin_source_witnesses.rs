@@ -131,8 +131,22 @@ fn offset(v: &Value, edge: &str) -> Result<usize, String> {
         .and_then(|x| x.get(edge))
         .and_then(|x| x.get("offset"))
         .and_then(Value::as_u64)
-        .map(|x| x as usize)
+        .and_then(|x| usize::try_from(x).ok())
         .ok_or_else(|| "original main-source AST range missing".into())
+}
+fn checked_projection_prefix(
+    projection: &Projection,
+    start: usize,
+    end: usize,
+) -> Result<(), String> {
+    let prefix = start
+        .checked_sub(projection.start)
+        .and_then(|n| projection.body.get(..n))
+        .ok_or("typed prefix outside source or UTF-8 boundary")?;
+    if start > projection.end || start > end || end != projection.end || !prefix.trim().is_empty() {
+        return Err("typed/source projection boundary mismatch".into());
+    }
+    Ok(())
 }
 fn source_facts(observation: &Observation) -> Result<BTreeMap<String, SourceFacts>, String> {
     let inventory: Value = serde_json::from_slice(INVENTORY).map_err(|e| e.to_string())?;
@@ -185,17 +199,12 @@ fn source_facts(observation: &Observation) -> Result<BTreeMap<String, SourceFact
         }
         let def = definitions[0];
         let start = offset(def, "begin")?;
-        let end = offset(def, "end")? + 1;
+        let end = offset(def, "end")?
+            .checked_add(1)
+            .ok_or("typed range end overflow")?;
         // Extraction may include initial whitespace; the AST must delimit the
         // complete same body, with no token before/after hidden by the producer.
-        if start < projection.start
-            || end != projection.end
-            || !projection.body[..start - projection.start]
-                .trim()
-                .is_empty()
-        {
-            return Err("typed/source projection boundary mismatch".into());
-        }
+        checked_projection_prefix(projection, start, end)?;
         let compound = children(def)
             .find(|c| kind(c) == "CompoundStmt")
             .ok_or("body missing")?;
@@ -409,6 +418,44 @@ pub fn refusal_controls(
         .asts
         .insert("rd_kafka_plugin_new".into(), "{}".into());
     refuse("forged-original-ast".into(), changed, held.clone())?;
+    for (name, edge, value) in [
+        (
+            "out-of-range-ast",
+            "begin",
+            serde_json::json!(usize::MAX - 1),
+        ),
+        ("overflow-ast-end", "end", serde_json::json!(u64::MAX)),
+    ] {
+        let mut changed = observation.clone();
+        let mut values = serde_json::Deserializer::from_str(&changed.asts["rd_kafka_plugin_new"])
+            .into_iter::<Value>()
+            .collect::<Result<Vec<_>, _>>()
+            .map_err(|e| e.to_string())?;
+        let def = values
+            .iter_mut()
+            .find(|v| {
+                v["name"] == "rd_kafka_plugin_new" && children(v).any(|c| kind(c) == "CompoundStmt")
+            })
+            .ok_or("control original AST missing")?;
+        def["range"][edge]["offset"] = value;
+        changed.asts.insert(
+            "rd_kafka_plugin_new".into(),
+            values
+                .iter()
+                .map(Value::to_string)
+                .collect::<Vec<_>>()
+                .join("\n"),
+        );
+        refuse(name.into(), changed, held.clone())?;
+    }
+    let mut unicode = observation.clone();
+    unicode.projections[0].body.insert(0, 'é');
+    unicode.projections[0].start += 1;
+    refuse(
+        "forged-unicode-body-nonboundary-ast".into(),
+        unicode,
+        held.clone(),
+    )?;
     let mut changed = observation.clone();
     changed.artifacts.clear();
     refuse("missing-native-artifacts".into(), changed, held.clone())?;
@@ -566,15 +613,13 @@ pub struct BoundedFlowResult {
 }
 /// Build separately held flow inputs for the new bounded predicate. None of the
 /// old seven universal plugin propositions occurs in this standalone graph.
-fn flow_inputs() -> Result<
-    (
-        BTreeMap<String, String>,
-        BTreeMap<String, qcore_schemas::hypothesis::Graph>,
-        BTreeMap<String, qcore_schemas::premise_flow::Model>,
-        BTreeMap<String, Vec<u8>>,
-    ),
-    String,
-> {
+struct FlowInputs {
+    sources: BTreeMap<String, String>,
+    graphs: BTreeMap<String, qcore_schemas::hypothesis::Graph>,
+    models: BTreeMap<String, qcore_schemas::premise_flow::Model>,
+    artifacts: BTreeMap<String, Vec<u8>>,
+}
+fn flow_inputs() -> Result<FlowInputs, String> {
     use qcore_schemas::hypothesis::{ArtifactReference, EnvironmentDefinition, FormalBinding};
     let source = format!(
         r#"module contract;
@@ -648,7 +693,12 @@ contract {{
         },
     )]);
     let artifacts = BTreeMap::from([(model_path.into(), model), (audit_path.into(), audit)]);
-    Ok((sources, graphs, models, artifacts))
+    Ok(FlowInputs {
+        sources,
+        graphs,
+        models,
+        artifacts,
+    })
 }
 fn assignments(
     cases: &BTreeMap<String, Vec<String>>,
@@ -692,7 +742,12 @@ impl CheckedWitness {
         if self.cases != model()? {
             return Err("sealed finite domain changed".into());
         }
-        let (sources, graphs, models, artifacts) = flow_inputs()?;
+        let FlowInputs {
+            sources,
+            graphs,
+            models,
+            artifacts,
+        } = flow_inputs()?;
         let docs = premise_flow::compile(&sources, &graphs, &models, &artifacts)?;
         let doc = docs
             .get("plugin_fixture_duplicate")
@@ -792,6 +847,29 @@ impl CheckedWitness {
 mod tests {
     use super::*;
     #[test]
+    fn malformed_offsets_and_utf8_prefix_refuse_without_panics() {
+        let projection = Projection {
+            module: "synthetic boundary only".into(),
+            function: "boundary".into(),
+            start: 10,
+            end: 14,
+            body: "é{}".into(),
+            sha256: String::new(),
+        };
+        assert!(checked_projection_prefix(&projection, 11, 14).is_err());
+        assert!(checked_projection_prefix(&projection, usize::MAX, 14).is_err());
+        assert!(checked_projection_prefix(&projection, 9, 14).is_err());
+        assert!(
+            offset(
+                &serde_json::json!({"range":{"end":{"offset":u64::MAX}}}),
+                "end"
+            )
+            .unwrap()
+            .checked_add(1)
+            .is_none()
+        );
+    }
+    #[test]
     fn finite_domain_and_exact_trace_refusals() {
         let traces = model().unwrap();
         assert_eq!(traces.len(), 20);
@@ -809,7 +887,12 @@ mod tests {
     }
     #[test]
     fn bounded_flow_source_replay_and_tampered_model_refuse() {
-        let (sources, graphs, models, artifacts) = flow_inputs().unwrap();
+        let FlowInputs {
+            sources,
+            graphs,
+            models,
+            artifacts,
+        } = flow_inputs().unwrap();
         let docs =
             qcore_contract::premise_flow::compile(&sources, &graphs, &models, &artifacts).unwrap();
         assert_eq!(docs.len(), 1);
