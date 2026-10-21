@@ -403,6 +403,7 @@ import QCore.HypothesisGraph
 import QCore.LibcReadingPremises
 import QCore.CallFreeConditionReads
 import QCore.PremiseRefinement
+import QCore.PluginPremiseDecomposition
 
 /-! The executable formal core of QCore-C revision 0.1. -/
 

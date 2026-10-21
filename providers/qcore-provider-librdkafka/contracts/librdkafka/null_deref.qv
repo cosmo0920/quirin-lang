@@ -107,6 +107,14 @@ contract {
     requires bounds_contract_v1;
     requires nonnull_member(rd_kafka_toppar_s, rktp_rkt);
     requires resource_premise(rk_plugin_callback_closure, "P-RK-PLUGIN-CALLBACK-CLOSURE: in the static scope every rk_conf callback a call may run, including rd_kafka_log_buf's log callback, is a run registration or a stated default with a declared candidate; with loaded external code, extra registrations depend on the applicable pinned rk_plugin_library and flb_external_plugin outer envelopes (OP-APP-RK-CALLBACKS-VIA-POLL-CB, C04.20)");
+    requires resource_hypothesis(plugin_artifact_symbol_abi, "For every reached loaded artifact, exact selected build/inventory, artifact identity and required symbol/address/ABI prerequisites hold.");
+    requires resource_hypothesis(plugin_callback_candidates, "Every actual rk_conf invocation has its exact declared member candidate and a prior successful public registration or stated static default.");
+    requires resource_hypothesis(plugin_code_context_lifetime, "Every loaded callback invocation, including destruction and copied on_new paths, has live code and opaque context.");
+    requires resource_hypothesis(plugin_interceptor_custody, "Every interceptor-descendant pointer and scalar resource is borrowed, with no retain/transfer/global custody and each local acquisition dropped before its activation returns.");
+    requires resource_hypothesis(plugin_interceptor_registration, "Every loaded interceptor uses a successful public setter with the exact pinned list/union-arm candidate and permitted configuration/client lifecycle.");
+    requires resource_hypothesis(plugin_lifecycle_unload, "Every callback invocation precedes matching final unload and copied registrations retain actual loader references.");
+    requires resource_hypothesis(plugin_outer_bridge, "Actually loaded RK and Fluent Bit C/Go code independently meet their respectively bound proposed outer envelopes; one envelope covers no missing obligation of another.");
+    requires resource_premise_decomposition(rk_plugin_callback_closure, plugin_artifact_symbol_abi, plugin_callback_candidates, plugin_code_context_lifetime, plugin_interceptor_custody, plugin_interceptor_registration, plugin_lifecycle_unload, plugin_outer_bridge);
 };
 
 // rdkafka_topic.c: rd_kafka_topic_new0 stores `rkt->rkt_topic =
@@ -117,6 +125,14 @@ contract {
     requires nonnull_member(rd_kafka_topic_s, rkt_rk);
     requires nonnull_member(rd_kafka_topic_s, rkt_topic);
     requires resource_premise(rk_plugin_callback_closure, "P-RK-PLUGIN-CALLBACK-CLOSURE: in the static scope every rk_conf callback a call may run, including rd_kafka_log_buf's log callback, is a run registration or a stated default with a declared candidate; with loaded external code, extra registrations depend on the applicable pinned rk_plugin_library and flb_external_plugin outer envelopes (OP-APP-RK-CALLBACKS-VIA-POLL-CB, C04.20)");
+    requires resource_hypothesis(plugin_artifact_symbol_abi, "For every reached loaded artifact, exact selected build/inventory, artifact identity and required symbol/address/ABI prerequisites hold.");
+    requires resource_hypothesis(plugin_callback_candidates, "Every actual rk_conf invocation has its exact declared member candidate and a prior successful public registration or stated static default.");
+    requires resource_hypothesis(plugin_code_context_lifetime, "Every loaded callback invocation, including destruction and copied on_new paths, has live code and opaque context.");
+    requires resource_hypothesis(plugin_interceptor_custody, "Every interceptor-descendant pointer and scalar resource is borrowed, with no retain/transfer/global custody and each local acquisition dropped before its activation returns.");
+    requires resource_hypothesis(plugin_interceptor_registration, "Every loaded interceptor uses a successful public setter with the exact pinned list/union-arm candidate and permitted configuration/client lifecycle.");
+    requires resource_hypothesis(plugin_lifecycle_unload, "Every callback invocation precedes matching final unload and copied registrations retain actual loader references.");
+    requires resource_hypothesis(plugin_outer_bridge, "Actually loaded RK and Fluent Bit C/Go code independently meet their respectively bound proposed outer envelopes; one envelope covers no missing obligation of another.");
+    requires resource_premise_decomposition(rk_plugin_callback_closure, plugin_artifact_symbol_abi, plugin_callback_candidates, plugin_code_context_lifetime, plugin_interceptor_custody, plugin_interceptor_registration, plugin_lifecycle_unload, plugin_outer_bridge);
 };
 
 // rdkafka_cgrp.c: rd_kafka_cgrp_new stores `rkcg->rkcg_rk = rk`.
@@ -125,6 +141,14 @@ contract {
     requires bounds_contract_v1;
     requires nonnull_member(rd_kafka_cgrp_s, rkcg_rk);
     requires resource_premise(rk_plugin_callback_closure, "P-RK-PLUGIN-CALLBACK-CLOSURE: in the static scope every rk_conf callback a call may run, including rd_kafka_log_buf's log callback, is a run registration or a stated default with a declared candidate; with loaded external code, extra registrations depend on the applicable pinned rk_plugin_library and flb_external_plugin outer envelopes (OP-APP-RK-CALLBACKS-VIA-POLL-CB, C04.20)");
+    requires resource_hypothesis(plugin_artifact_symbol_abi, "For every reached loaded artifact, exact selected build/inventory, artifact identity and required symbol/address/ABI prerequisites hold.");
+    requires resource_hypothesis(plugin_callback_candidates, "Every actual rk_conf invocation has its exact declared member candidate and a prior successful public registration or stated static default.");
+    requires resource_hypothesis(plugin_code_context_lifetime, "Every loaded callback invocation, including destruction and copied on_new paths, has live code and opaque context.");
+    requires resource_hypothesis(plugin_interceptor_custody, "Every interceptor-descendant pointer and scalar resource is borrowed, with no retain/transfer/global custody and each local acquisition dropped before its activation returns.");
+    requires resource_hypothesis(plugin_interceptor_registration, "Every loaded interceptor uses a successful public setter with the exact pinned list/union-arm candidate and permitted configuration/client lifecycle.");
+    requires resource_hypothesis(plugin_lifecycle_unload, "Every callback invocation precedes matching final unload and copied registrations retain actual loader references.");
+    requires resource_hypothesis(plugin_outer_bridge, "Actually loaded RK and Fluent Bit C/Go code independently meet their respectively bound proposed outer envelopes; one envelope covers no missing obligation of another.");
+    requires resource_premise_decomposition(rk_plugin_callback_closure, plugin_artifact_symbol_abi, plugin_callback_candidates, plugin_code_context_lifetime, plugin_interceptor_custody, plugin_interceptor_registration, plugin_lifecycle_unload, plugin_outer_bridge);
 };
 
 // rdkafka_transport.c: rd_kafka_transport_new stores `rktrans->rktrans_rkb
@@ -134,6 +158,14 @@ contract {
     requires bounds_contract_v1;
     requires nonnull_member(rd_kafka_transport_s, rktrans_rkb);
     requires resource_premise(rk_plugin_callback_closure, "P-RK-PLUGIN-CALLBACK-CLOSURE: in the static scope every rk_conf callback a call may run, including rd_kafka_log_buf's log callback, is a run registration or a stated default with a declared candidate; with loaded external code, extra registrations depend on the applicable pinned rk_plugin_library and flb_external_plugin outer envelopes (OP-APP-RK-CALLBACKS-VIA-POLL-CB, C04.20)");
+    requires resource_hypothesis(plugin_artifact_symbol_abi, "For every reached loaded artifact, exact selected build/inventory, artifact identity and required symbol/address/ABI prerequisites hold.");
+    requires resource_hypothesis(plugin_callback_candidates, "Every actual rk_conf invocation has its exact declared member candidate and a prior successful public registration or stated static default.");
+    requires resource_hypothesis(plugin_code_context_lifetime, "Every loaded callback invocation, including destruction and copied on_new paths, has live code and opaque context.");
+    requires resource_hypothesis(plugin_interceptor_custody, "Every interceptor-descendant pointer and scalar resource is borrowed, with no retain/transfer/global custody and each local acquisition dropped before its activation returns.");
+    requires resource_hypothesis(plugin_interceptor_registration, "Every loaded interceptor uses a successful public setter with the exact pinned list/union-arm candidate and permitted configuration/client lifecycle.");
+    requires resource_hypothesis(plugin_lifecycle_unload, "Every callback invocation precedes matching final unload and copied registrations retain actual loader references.");
+    requires resource_hypothesis(plugin_outer_bridge, "Actually loaded RK and Fluent Bit C/Go code independently meet their respectively bound proposed outer envelopes; one envelope covers no missing obligation of another.");
+    requires resource_premise_decomposition(rk_plugin_callback_closure, plugin_artifact_symbol_abi, plugin_callback_candidates, plugin_code_context_lifetime, plugin_interceptor_custody, plugin_interceptor_registration, plugin_lifecycle_unload, plugin_outer_bridge);
 };
 
 // Card NULL-CANDIDATE-TRIAGE (rule 14u): a declared non-null result,
@@ -254,6 +286,14 @@ contract {
     requires bounds_contract_v1;
     requires nonnull_member(rd_kafka_broker_s, rkb_rk) where quant #scope [[stable]];
     requires resource_premise(rk_plugin_callback_closure, "P-RK-PLUGIN-CALLBACK-CLOSURE: in the static scope every rk_conf callback a call may run, including rd_kafka_log_buf's log callback, is a run registration or a stated default with a declared candidate; with loaded external code, extra registrations depend on the applicable pinned rk_plugin_library and flb_external_plugin outer envelopes (OP-APP-RK-CALLBACKS-VIA-POLL-CB, C04.20)");
+    requires resource_hypothesis(plugin_artifact_symbol_abi, "For every reached loaded artifact, exact selected build/inventory, artifact identity and required symbol/address/ABI prerequisites hold.");
+    requires resource_hypothesis(plugin_callback_candidates, "Every actual rk_conf invocation has its exact declared member candidate and a prior successful public registration or stated static default.");
+    requires resource_hypothesis(plugin_code_context_lifetime, "Every loaded callback invocation, including destruction and copied on_new paths, has live code and opaque context.");
+    requires resource_hypothesis(plugin_interceptor_custody, "Every interceptor-descendant pointer and scalar resource is borrowed, with no retain/transfer/global custody and each local acquisition dropped before its activation returns.");
+    requires resource_hypothesis(plugin_interceptor_registration, "Every loaded interceptor uses a successful public setter with the exact pinned list/union-arm candidate and permitted configuration/client lifecycle.");
+    requires resource_hypothesis(plugin_lifecycle_unload, "Every callback invocation precedes matching final unload and copied registrations retain actual loader references.");
+    requires resource_hypothesis(plugin_outer_bridge, "Actually loaded RK and Fluent Bit C/Go code independently meet their respectively bound proposed outer envelopes; one envelope covers no missing obligation of another.");
+    requires resource_premise_decomposition(rk_plugin_callback_closure, plugin_artifact_symbol_abi, plugin_callback_candidates, plugin_code_context_lifetime, plugin_interceptor_custody, plugin_interceptor_registration, plugin_lifecycle_unload, plugin_outer_bridge);
 };
 
 // Card NULL-MEMBER-INVARIANT-SCOPE (rule 14z): function-scope entries of the
@@ -274,6 +314,14 @@ contract {
     requires bounds_contract_v1;
     requires nonnull_member(rd_kafka_broker_s, rkb_rk, rkb) where quant #scope [[scope]];
     requires resource_premise(rk_plugin_callback_closure, "P-RK-PLUGIN-CALLBACK-CLOSURE: in the static scope every rk_conf callback a call may run, including rd_kafka_log_buf's log callback, is a run registration or a stated default with a declared candidate; with loaded external code, extra registrations depend on the applicable pinned rk_plugin_library and flb_external_plugin outer envelopes (OP-APP-RK-CALLBACKS-VIA-POLL-CB, C04.20)");
+    requires resource_hypothesis(plugin_artifact_symbol_abi, "For every reached loaded artifact, exact selected build/inventory, artifact identity and required symbol/address/ABI prerequisites hold.");
+    requires resource_hypothesis(plugin_callback_candidates, "Every actual rk_conf invocation has its exact declared member candidate and a prior successful public registration or stated static default.");
+    requires resource_hypothesis(plugin_code_context_lifetime, "Every loaded callback invocation, including destruction and copied on_new paths, has live code and opaque context.");
+    requires resource_hypothesis(plugin_interceptor_custody, "Every interceptor-descendant pointer and scalar resource is borrowed, with no retain/transfer/global custody and each local acquisition dropped before its activation returns.");
+    requires resource_hypothesis(plugin_interceptor_registration, "Every loaded interceptor uses a successful public setter with the exact pinned list/union-arm candidate and permitted configuration/client lifecycle.");
+    requires resource_hypothesis(plugin_lifecycle_unload, "Every callback invocation precedes matching final unload and copied registrations retain actual loader references.");
+    requires resource_hypothesis(plugin_outer_bridge, "Actually loaded RK and Fluent Bit C/Go code independently meet their respectively bound proposed outer envelopes; one envelope covers no missing obligation of another.");
+    requires resource_premise_decomposition(rk_plugin_callback_closure, plugin_artifact_symbol_abi, plugin_callback_candidates, plugin_code_context_lifetime, plugin_interceptor_custody, plugin_interceptor_registration, plugin_lifecycle_unload, plugin_outer_bridge);
 };
 
 // lib/librdkafka-2.15.0/src/rdkafka_broker.c: 1 first read(s) of rkb->rkb_rk on the stable reading.
@@ -282,6 +330,14 @@ contract {
     requires bounds_contract_v1;
     requires nonnull_member(rd_kafka_broker_s, rkb_rk, rkb) where quant #scope [[scope]];
     requires resource_premise(rk_plugin_callback_closure, "P-RK-PLUGIN-CALLBACK-CLOSURE: in the static scope every rk_conf callback a call may run, including rd_kafka_log_buf's log callback, is a run registration or a stated default with a declared candidate; with loaded external code, extra registrations depend on the applicable pinned rk_plugin_library and flb_external_plugin outer envelopes (OP-APP-RK-CALLBACKS-VIA-POLL-CB, C04.20)");
+    requires resource_hypothesis(plugin_artifact_symbol_abi, "For every reached loaded artifact, exact selected build/inventory, artifact identity and required symbol/address/ABI prerequisites hold.");
+    requires resource_hypothesis(plugin_callback_candidates, "Every actual rk_conf invocation has its exact declared member candidate and a prior successful public registration or stated static default.");
+    requires resource_hypothesis(plugin_code_context_lifetime, "Every loaded callback invocation, including destruction and copied on_new paths, has live code and opaque context.");
+    requires resource_hypothesis(plugin_interceptor_custody, "Every interceptor-descendant pointer and scalar resource is borrowed, with no retain/transfer/global custody and each local acquisition dropped before its activation returns.");
+    requires resource_hypothesis(plugin_interceptor_registration, "Every loaded interceptor uses a successful public setter with the exact pinned list/union-arm candidate and permitted configuration/client lifecycle.");
+    requires resource_hypothesis(plugin_lifecycle_unload, "Every callback invocation precedes matching final unload and copied registrations retain actual loader references.");
+    requires resource_hypothesis(plugin_outer_bridge, "Actually loaded RK and Fluent Bit C/Go code independently meet their respectively bound proposed outer envelopes; one envelope covers no missing obligation of another.");
+    requires resource_premise_decomposition(rk_plugin_callback_closure, plugin_artifact_symbol_abi, plugin_callback_candidates, plugin_code_context_lifetime, plugin_interceptor_custody, plugin_interceptor_registration, plugin_lifecycle_unload, plugin_outer_bridge);
 };
 
 // lib/librdkafka-2.15.0/src/rdkafka_broker.c: 1 first read(s) of rkb->rkb_rk on the stable reading.
@@ -290,6 +346,14 @@ contract {
     requires bounds_contract_v1;
     requires nonnull_member(rd_kafka_broker_s, rkb_rk, rkb) where quant #scope [[scope]];
     requires resource_premise(rk_plugin_callback_closure, "P-RK-PLUGIN-CALLBACK-CLOSURE: in the static scope every rk_conf callback a call may run, including rd_kafka_log_buf's log callback, is a run registration or a stated default with a declared candidate; with loaded external code, extra registrations depend on the applicable pinned rk_plugin_library and flb_external_plugin outer envelopes (OP-APP-RK-CALLBACKS-VIA-POLL-CB, C04.20)");
+    requires resource_hypothesis(plugin_artifact_symbol_abi, "For every reached loaded artifact, exact selected build/inventory, artifact identity and required symbol/address/ABI prerequisites hold.");
+    requires resource_hypothesis(plugin_callback_candidates, "Every actual rk_conf invocation has its exact declared member candidate and a prior successful public registration or stated static default.");
+    requires resource_hypothesis(plugin_code_context_lifetime, "Every loaded callback invocation, including destruction and copied on_new paths, has live code and opaque context.");
+    requires resource_hypothesis(plugin_interceptor_custody, "Every interceptor-descendant pointer and scalar resource is borrowed, with no retain/transfer/global custody and each local acquisition dropped before its activation returns.");
+    requires resource_hypothesis(plugin_interceptor_registration, "Every loaded interceptor uses a successful public setter with the exact pinned list/union-arm candidate and permitted configuration/client lifecycle.");
+    requires resource_hypothesis(plugin_lifecycle_unload, "Every callback invocation precedes matching final unload and copied registrations retain actual loader references.");
+    requires resource_hypothesis(plugin_outer_bridge, "Actually loaded RK and Fluent Bit C/Go code independently meet their respectively bound proposed outer envelopes; one envelope covers no missing obligation of another.");
+    requires resource_premise_decomposition(rk_plugin_callback_closure, plugin_artifact_symbol_abi, plugin_callback_candidates, plugin_code_context_lifetime, plugin_interceptor_custody, plugin_interceptor_registration, plugin_lifecycle_unload, plugin_outer_bridge);
 };
 
 // lib/librdkafka-2.15.0/src/rdkafka_broker.c: 1 first read(s) of rkb->rkb_rk on the stable reading.
@@ -298,6 +362,14 @@ contract {
     requires bounds_contract_v1;
     requires nonnull_member(rd_kafka_broker_s, rkb_rk, rkb) where quant #scope [[scope]];
     requires resource_premise(rk_plugin_callback_closure, "P-RK-PLUGIN-CALLBACK-CLOSURE: in the static scope every rk_conf callback a call may run, including rd_kafka_log_buf's log callback, is a run registration or a stated default with a declared candidate; with loaded external code, extra registrations depend on the applicable pinned rk_plugin_library and flb_external_plugin outer envelopes (OP-APP-RK-CALLBACKS-VIA-POLL-CB, C04.20)");
+    requires resource_hypothesis(plugin_artifact_symbol_abi, "For every reached loaded artifact, exact selected build/inventory, artifact identity and required symbol/address/ABI prerequisites hold.");
+    requires resource_hypothesis(plugin_callback_candidates, "Every actual rk_conf invocation has its exact declared member candidate and a prior successful public registration or stated static default.");
+    requires resource_hypothesis(plugin_code_context_lifetime, "Every loaded callback invocation, including destruction and copied on_new paths, has live code and opaque context.");
+    requires resource_hypothesis(plugin_interceptor_custody, "Every interceptor-descendant pointer and scalar resource is borrowed, with no retain/transfer/global custody and each local acquisition dropped before its activation returns.");
+    requires resource_hypothesis(plugin_interceptor_registration, "Every loaded interceptor uses a successful public setter with the exact pinned list/union-arm candidate and permitted configuration/client lifecycle.");
+    requires resource_hypothesis(plugin_lifecycle_unload, "Every callback invocation precedes matching final unload and copied registrations retain actual loader references.");
+    requires resource_hypothesis(plugin_outer_bridge, "Actually loaded RK and Fluent Bit C/Go code independently meet their respectively bound proposed outer envelopes; one envelope covers no missing obligation of another.");
+    requires resource_premise_decomposition(rk_plugin_callback_closure, plugin_artifact_symbol_abi, plugin_callback_candidates, plugin_code_context_lifetime, plugin_interceptor_custody, plugin_interceptor_registration, plugin_lifecycle_unload, plugin_outer_bridge);
 };
 
 // lib/librdkafka-2.15.0/src/rdkafka_broker.c: 1 first read(s) of rkb->rkb_rk on the stable reading.
@@ -306,6 +378,14 @@ contract {
     requires bounds_contract_v1;
     requires nonnull_member(rd_kafka_broker_s, rkb_rk, rkb) where quant #scope [[scope]];
     requires resource_premise(rk_plugin_callback_closure, "P-RK-PLUGIN-CALLBACK-CLOSURE: in the static scope every rk_conf callback a call may run, including rd_kafka_log_buf's log callback, is a run registration or a stated default with a declared candidate; with loaded external code, extra registrations depend on the applicable pinned rk_plugin_library and flb_external_plugin outer envelopes (OP-APP-RK-CALLBACKS-VIA-POLL-CB, C04.20)");
+    requires resource_hypothesis(plugin_artifact_symbol_abi, "For every reached loaded artifact, exact selected build/inventory, artifact identity and required symbol/address/ABI prerequisites hold.");
+    requires resource_hypothesis(plugin_callback_candidates, "Every actual rk_conf invocation has its exact declared member candidate and a prior successful public registration or stated static default.");
+    requires resource_hypothesis(plugin_code_context_lifetime, "Every loaded callback invocation, including destruction and copied on_new paths, has live code and opaque context.");
+    requires resource_hypothesis(plugin_interceptor_custody, "Every interceptor-descendant pointer and scalar resource is borrowed, with no retain/transfer/global custody and each local acquisition dropped before its activation returns.");
+    requires resource_hypothesis(plugin_interceptor_registration, "Every loaded interceptor uses a successful public setter with the exact pinned list/union-arm candidate and permitted configuration/client lifecycle.");
+    requires resource_hypothesis(plugin_lifecycle_unload, "Every callback invocation precedes matching final unload and copied registrations retain actual loader references.");
+    requires resource_hypothesis(plugin_outer_bridge, "Actually loaded RK and Fluent Bit C/Go code independently meet their respectively bound proposed outer envelopes; one envelope covers no missing obligation of another.");
+    requires resource_premise_decomposition(rk_plugin_callback_closure, plugin_artifact_symbol_abi, plugin_callback_candidates, plugin_code_context_lifetime, plugin_interceptor_custody, plugin_interceptor_registration, plugin_lifecycle_unload, plugin_outer_bridge);
 };
 
 // lib/librdkafka-2.15.0/src/rdkafka_broker.c: 1 first read(s) of rkb->rkb_rk on the stable reading.
@@ -314,6 +394,14 @@ contract {
     requires bounds_contract_v1;
     requires nonnull_member(rd_kafka_broker_s, rkb_rk, rkb) where quant #scope [[scope]];
     requires resource_premise(rk_plugin_callback_closure, "P-RK-PLUGIN-CALLBACK-CLOSURE: in the static scope every rk_conf callback a call may run, including rd_kafka_log_buf's log callback, is a run registration or a stated default with a declared candidate; with loaded external code, extra registrations depend on the applicable pinned rk_plugin_library and flb_external_plugin outer envelopes (OP-APP-RK-CALLBACKS-VIA-POLL-CB, C04.20)");
+    requires resource_hypothesis(plugin_artifact_symbol_abi, "For every reached loaded artifact, exact selected build/inventory, artifact identity and required symbol/address/ABI prerequisites hold.");
+    requires resource_hypothesis(plugin_callback_candidates, "Every actual rk_conf invocation has its exact declared member candidate and a prior successful public registration or stated static default.");
+    requires resource_hypothesis(plugin_code_context_lifetime, "Every loaded callback invocation, including destruction and copied on_new paths, has live code and opaque context.");
+    requires resource_hypothesis(plugin_interceptor_custody, "Every interceptor-descendant pointer and scalar resource is borrowed, with no retain/transfer/global custody and each local acquisition dropped before its activation returns.");
+    requires resource_hypothesis(plugin_interceptor_registration, "Every loaded interceptor uses a successful public setter with the exact pinned list/union-arm candidate and permitted configuration/client lifecycle.");
+    requires resource_hypothesis(plugin_lifecycle_unload, "Every callback invocation precedes matching final unload and copied registrations retain actual loader references.");
+    requires resource_hypothesis(plugin_outer_bridge, "Actually loaded RK and Fluent Bit C/Go code independently meet their respectively bound proposed outer envelopes; one envelope covers no missing obligation of another.");
+    requires resource_premise_decomposition(rk_plugin_callback_closure, plugin_artifact_symbol_abi, plugin_callback_candidates, plugin_code_context_lifetime, plugin_interceptor_custody, plugin_interceptor_registration, plugin_lifecycle_unload, plugin_outer_bridge);
 };
 
 // lib/librdkafka-2.15.0/src/rdkafka_broker.c: 1 first read(s) of rkb->rkb_rk on the stable reading.
@@ -322,6 +410,14 @@ contract {
     requires bounds_contract_v1;
     requires nonnull_member(rd_kafka_broker_s, rkb_rk, rkb) where quant #scope [[scope]];
     requires resource_premise(rk_plugin_callback_closure, "P-RK-PLUGIN-CALLBACK-CLOSURE: in the static scope every rk_conf callback a call may run, including rd_kafka_log_buf's log callback, is a run registration or a stated default with a declared candidate; with loaded external code, extra registrations depend on the applicable pinned rk_plugin_library and flb_external_plugin outer envelopes (OP-APP-RK-CALLBACKS-VIA-POLL-CB, C04.20)");
+    requires resource_hypothesis(plugin_artifact_symbol_abi, "For every reached loaded artifact, exact selected build/inventory, artifact identity and required symbol/address/ABI prerequisites hold.");
+    requires resource_hypothesis(plugin_callback_candidates, "Every actual rk_conf invocation has its exact declared member candidate and a prior successful public registration or stated static default.");
+    requires resource_hypothesis(plugin_code_context_lifetime, "Every loaded callback invocation, including destruction and copied on_new paths, has live code and opaque context.");
+    requires resource_hypothesis(plugin_interceptor_custody, "Every interceptor-descendant pointer and scalar resource is borrowed, with no retain/transfer/global custody and each local acquisition dropped before its activation returns.");
+    requires resource_hypothesis(plugin_interceptor_registration, "Every loaded interceptor uses a successful public setter with the exact pinned list/union-arm candidate and permitted configuration/client lifecycle.");
+    requires resource_hypothesis(plugin_lifecycle_unload, "Every callback invocation precedes matching final unload and copied registrations retain actual loader references.");
+    requires resource_hypothesis(plugin_outer_bridge, "Actually loaded RK and Fluent Bit C/Go code independently meet their respectively bound proposed outer envelopes; one envelope covers no missing obligation of another.");
+    requires resource_premise_decomposition(rk_plugin_callback_closure, plugin_artifact_symbol_abi, plugin_callback_candidates, plugin_code_context_lifetime, plugin_interceptor_custody, plugin_interceptor_registration, plugin_lifecycle_unload, plugin_outer_bridge);
 };
 
 // lib/librdkafka-2.15.0/src/rdkafka_broker.c: 1 first read(s) of rkb->rkb_rk on the stable reading.
@@ -330,6 +426,14 @@ contract {
     requires bounds_contract_v1;
     requires nonnull_member(rd_kafka_broker_s, rkb_rk, rkb) where quant #scope [[scope]];
     requires resource_premise(rk_plugin_callback_closure, "P-RK-PLUGIN-CALLBACK-CLOSURE: in the static scope every rk_conf callback a call may run, including rd_kafka_log_buf's log callback, is a run registration or a stated default with a declared candidate; with loaded external code, extra registrations depend on the applicable pinned rk_plugin_library and flb_external_plugin outer envelopes (OP-APP-RK-CALLBACKS-VIA-POLL-CB, C04.20)");
+    requires resource_hypothesis(plugin_artifact_symbol_abi, "For every reached loaded artifact, exact selected build/inventory, artifact identity and required symbol/address/ABI prerequisites hold.");
+    requires resource_hypothesis(plugin_callback_candidates, "Every actual rk_conf invocation has its exact declared member candidate and a prior successful public registration or stated static default.");
+    requires resource_hypothesis(plugin_code_context_lifetime, "Every loaded callback invocation, including destruction and copied on_new paths, has live code and opaque context.");
+    requires resource_hypothesis(plugin_interceptor_custody, "Every interceptor-descendant pointer and scalar resource is borrowed, with no retain/transfer/global custody and each local acquisition dropped before its activation returns.");
+    requires resource_hypothesis(plugin_interceptor_registration, "Every loaded interceptor uses a successful public setter with the exact pinned list/union-arm candidate and permitted configuration/client lifecycle.");
+    requires resource_hypothesis(plugin_lifecycle_unload, "Every callback invocation precedes matching final unload and copied registrations retain actual loader references.");
+    requires resource_hypothesis(plugin_outer_bridge, "Actually loaded RK and Fluent Bit C/Go code independently meet their respectively bound proposed outer envelopes; one envelope covers no missing obligation of another.");
+    requires resource_premise_decomposition(rk_plugin_callback_closure, plugin_artifact_symbol_abi, plugin_callback_candidates, plugin_code_context_lifetime, plugin_interceptor_custody, plugin_interceptor_registration, plugin_lifecycle_unload, plugin_outer_bridge);
 };
 
 // lib/librdkafka-2.15.0/src/rdkafka_broker.c: 1 first read(s) of rkb->rkb_rk on the stable reading.
@@ -338,6 +442,14 @@ contract {
     requires bounds_contract_v1;
     requires nonnull_member(rd_kafka_broker_s, rkb_rk, rkb) where quant #scope [[scope]];
     requires resource_premise(rk_plugin_callback_closure, "P-RK-PLUGIN-CALLBACK-CLOSURE: in the static scope every rk_conf callback a call may run, including rd_kafka_log_buf's log callback, is a run registration or a stated default with a declared candidate; with loaded external code, extra registrations depend on the applicable pinned rk_plugin_library and flb_external_plugin outer envelopes (OP-APP-RK-CALLBACKS-VIA-POLL-CB, C04.20)");
+    requires resource_hypothesis(plugin_artifact_symbol_abi, "For every reached loaded artifact, exact selected build/inventory, artifact identity and required symbol/address/ABI prerequisites hold.");
+    requires resource_hypothesis(plugin_callback_candidates, "Every actual rk_conf invocation has its exact declared member candidate and a prior successful public registration or stated static default.");
+    requires resource_hypothesis(plugin_code_context_lifetime, "Every loaded callback invocation, including destruction and copied on_new paths, has live code and opaque context.");
+    requires resource_hypothesis(plugin_interceptor_custody, "Every interceptor-descendant pointer and scalar resource is borrowed, with no retain/transfer/global custody and each local acquisition dropped before its activation returns.");
+    requires resource_hypothesis(plugin_interceptor_registration, "Every loaded interceptor uses a successful public setter with the exact pinned list/union-arm candidate and permitted configuration/client lifecycle.");
+    requires resource_hypothesis(plugin_lifecycle_unload, "Every callback invocation precedes matching final unload and copied registrations retain actual loader references.");
+    requires resource_hypothesis(plugin_outer_bridge, "Actually loaded RK and Fluent Bit C/Go code independently meet their respectively bound proposed outer envelopes; one envelope covers no missing obligation of another.");
+    requires resource_premise_decomposition(rk_plugin_callback_closure, plugin_artifact_symbol_abi, plugin_callback_candidates, plugin_code_context_lifetime, plugin_interceptor_custody, plugin_interceptor_registration, plugin_lifecycle_unload, plugin_outer_bridge);
 };
 
 // lib/librdkafka-2.15.0/src/rdkafka_broker.c: 1 first read(s) of rkb->rkb_rk on the stable reading.
@@ -346,6 +458,14 @@ contract {
     requires bounds_contract_v1;
     requires nonnull_member(rd_kafka_broker_s, rkb_rk, rkb) where quant #scope [[scope]];
     requires resource_premise(rk_plugin_callback_closure, "P-RK-PLUGIN-CALLBACK-CLOSURE: in the static scope every rk_conf callback a call may run, including rd_kafka_log_buf's log callback, is a run registration or a stated default with a declared candidate; with loaded external code, extra registrations depend on the applicable pinned rk_plugin_library and flb_external_plugin outer envelopes (OP-APP-RK-CALLBACKS-VIA-POLL-CB, C04.20)");
+    requires resource_hypothesis(plugin_artifact_symbol_abi, "For every reached loaded artifact, exact selected build/inventory, artifact identity and required symbol/address/ABI prerequisites hold.");
+    requires resource_hypothesis(plugin_callback_candidates, "Every actual rk_conf invocation has its exact declared member candidate and a prior successful public registration or stated static default.");
+    requires resource_hypothesis(plugin_code_context_lifetime, "Every loaded callback invocation, including destruction and copied on_new paths, has live code and opaque context.");
+    requires resource_hypothesis(plugin_interceptor_custody, "Every interceptor-descendant pointer and scalar resource is borrowed, with no retain/transfer/global custody and each local acquisition dropped before its activation returns.");
+    requires resource_hypothesis(plugin_interceptor_registration, "Every loaded interceptor uses a successful public setter with the exact pinned list/union-arm candidate and permitted configuration/client lifecycle.");
+    requires resource_hypothesis(plugin_lifecycle_unload, "Every callback invocation precedes matching final unload and copied registrations retain actual loader references.");
+    requires resource_hypothesis(plugin_outer_bridge, "Actually loaded RK and Fluent Bit C/Go code independently meet their respectively bound proposed outer envelopes; one envelope covers no missing obligation of another.");
+    requires resource_premise_decomposition(rk_plugin_callback_closure, plugin_artifact_symbol_abi, plugin_callback_candidates, plugin_code_context_lifetime, plugin_interceptor_custody, plugin_interceptor_registration, plugin_lifecycle_unload, plugin_outer_bridge);
 };
 
 // lib/librdkafka-2.15.0/src/rdkafka_broker.c: 1 first read(s) of rkb->rkb_rk on the stable reading.
@@ -354,6 +474,14 @@ contract {
     requires bounds_contract_v1;
     requires nonnull_member(rd_kafka_broker_s, rkb_rk, rkb) where quant #scope [[scope]];
     requires resource_premise(rk_plugin_callback_closure, "P-RK-PLUGIN-CALLBACK-CLOSURE: in the static scope every rk_conf callback a call may run, including rd_kafka_log_buf's log callback, is a run registration or a stated default with a declared candidate; with loaded external code, extra registrations depend on the applicable pinned rk_plugin_library and flb_external_plugin outer envelopes (OP-APP-RK-CALLBACKS-VIA-POLL-CB, C04.20)");
+    requires resource_hypothesis(plugin_artifact_symbol_abi, "For every reached loaded artifact, exact selected build/inventory, artifact identity and required symbol/address/ABI prerequisites hold.");
+    requires resource_hypothesis(plugin_callback_candidates, "Every actual rk_conf invocation has its exact declared member candidate and a prior successful public registration or stated static default.");
+    requires resource_hypothesis(plugin_code_context_lifetime, "Every loaded callback invocation, including destruction and copied on_new paths, has live code and opaque context.");
+    requires resource_hypothesis(plugin_interceptor_custody, "Every interceptor-descendant pointer and scalar resource is borrowed, with no retain/transfer/global custody and each local acquisition dropped before its activation returns.");
+    requires resource_hypothesis(plugin_interceptor_registration, "Every loaded interceptor uses a successful public setter with the exact pinned list/union-arm candidate and permitted configuration/client lifecycle.");
+    requires resource_hypothesis(plugin_lifecycle_unload, "Every callback invocation precedes matching final unload and copied registrations retain actual loader references.");
+    requires resource_hypothesis(plugin_outer_bridge, "Actually loaded RK and Fluent Bit C/Go code independently meet their respectively bound proposed outer envelopes; one envelope covers no missing obligation of another.");
+    requires resource_premise_decomposition(rk_plugin_callback_closure, plugin_artifact_symbol_abi, plugin_callback_candidates, plugin_code_context_lifetime, plugin_interceptor_custody, plugin_interceptor_registration, plugin_lifecycle_unload, plugin_outer_bridge);
 };
 
 // lib/librdkafka-2.15.0/src/rdkafka_broker.c: 1 first read(s) of rkb->rkb_rk on the stable reading.
@@ -362,6 +490,14 @@ contract {
     requires bounds_contract_v1;
     requires nonnull_member(rd_kafka_broker_s, rkb_rk, rkb) where quant #scope [[scope]];
     requires resource_premise(rk_plugin_callback_closure, "P-RK-PLUGIN-CALLBACK-CLOSURE: in the static scope every rk_conf callback a call may run, including rd_kafka_log_buf's log callback, is a run registration or a stated default with a declared candidate; with loaded external code, extra registrations depend on the applicable pinned rk_plugin_library and flb_external_plugin outer envelopes (OP-APP-RK-CALLBACKS-VIA-POLL-CB, C04.20)");
+    requires resource_hypothesis(plugin_artifact_symbol_abi, "For every reached loaded artifact, exact selected build/inventory, artifact identity and required symbol/address/ABI prerequisites hold.");
+    requires resource_hypothesis(plugin_callback_candidates, "Every actual rk_conf invocation has its exact declared member candidate and a prior successful public registration or stated static default.");
+    requires resource_hypothesis(plugin_code_context_lifetime, "Every loaded callback invocation, including destruction and copied on_new paths, has live code and opaque context.");
+    requires resource_hypothesis(plugin_interceptor_custody, "Every interceptor-descendant pointer and scalar resource is borrowed, with no retain/transfer/global custody and each local acquisition dropped before its activation returns.");
+    requires resource_hypothesis(plugin_interceptor_registration, "Every loaded interceptor uses a successful public setter with the exact pinned list/union-arm candidate and permitted configuration/client lifecycle.");
+    requires resource_hypothesis(plugin_lifecycle_unload, "Every callback invocation precedes matching final unload and copied registrations retain actual loader references.");
+    requires resource_hypothesis(plugin_outer_bridge, "Actually loaded RK and Fluent Bit C/Go code independently meet their respectively bound proposed outer envelopes; one envelope covers no missing obligation of another.");
+    requires resource_premise_decomposition(rk_plugin_callback_closure, plugin_artifact_symbol_abi, plugin_callback_candidates, plugin_code_context_lifetime, plugin_interceptor_custody, plugin_interceptor_registration, plugin_lifecycle_unload, plugin_outer_bridge);
 };
 
 // lib/librdkafka-2.15.0/src/rdkafka_broker.c: 2 first read(s) of rkb->rkb_rk on the stable reading.
@@ -370,6 +506,14 @@ contract {
     requires bounds_contract_v1;
     requires nonnull_member(rd_kafka_broker_s, rkb_rk, rkb) where quant #scope [[scope]];
     requires resource_premise(rk_plugin_callback_closure, "P-RK-PLUGIN-CALLBACK-CLOSURE: in the static scope every rk_conf callback a call may run, including rd_kafka_log_buf's log callback, is a run registration or a stated default with a declared candidate; with loaded external code, extra registrations depend on the applicable pinned rk_plugin_library and flb_external_plugin outer envelopes (OP-APP-RK-CALLBACKS-VIA-POLL-CB, C04.20)");
+    requires resource_hypothesis(plugin_artifact_symbol_abi, "For every reached loaded artifact, exact selected build/inventory, artifact identity and required symbol/address/ABI prerequisites hold.");
+    requires resource_hypothesis(plugin_callback_candidates, "Every actual rk_conf invocation has its exact declared member candidate and a prior successful public registration or stated static default.");
+    requires resource_hypothesis(plugin_code_context_lifetime, "Every loaded callback invocation, including destruction and copied on_new paths, has live code and opaque context.");
+    requires resource_hypothesis(plugin_interceptor_custody, "Every interceptor-descendant pointer and scalar resource is borrowed, with no retain/transfer/global custody and each local acquisition dropped before its activation returns.");
+    requires resource_hypothesis(plugin_interceptor_registration, "Every loaded interceptor uses a successful public setter with the exact pinned list/union-arm candidate and permitted configuration/client lifecycle.");
+    requires resource_hypothesis(plugin_lifecycle_unload, "Every callback invocation precedes matching final unload and copied registrations retain actual loader references.");
+    requires resource_hypothesis(plugin_outer_bridge, "Actually loaded RK and Fluent Bit C/Go code independently meet their respectively bound proposed outer envelopes; one envelope covers no missing obligation of another.");
+    requires resource_premise_decomposition(rk_plugin_callback_closure, plugin_artifact_symbol_abi, plugin_callback_candidates, plugin_code_context_lifetime, plugin_interceptor_custody, plugin_interceptor_registration, plugin_lifecycle_unload, plugin_outer_bridge);
 };
 
 // lib/librdkafka-2.15.0/src/rdkafka_broker.c: 1 first read(s) of rkb->rkb_rk on the stable reading.
@@ -378,6 +522,14 @@ contract {
     requires bounds_contract_v1;
     requires nonnull_member(rd_kafka_broker_s, rkb_rk, rkb) where quant #scope [[scope]];
     requires resource_premise(rk_plugin_callback_closure, "P-RK-PLUGIN-CALLBACK-CLOSURE: in the static scope every rk_conf callback a call may run, including rd_kafka_log_buf's log callback, is a run registration or a stated default with a declared candidate; with loaded external code, extra registrations depend on the applicable pinned rk_plugin_library and flb_external_plugin outer envelopes (OP-APP-RK-CALLBACKS-VIA-POLL-CB, C04.20)");
+    requires resource_hypothesis(plugin_artifact_symbol_abi, "For every reached loaded artifact, exact selected build/inventory, artifact identity and required symbol/address/ABI prerequisites hold.");
+    requires resource_hypothesis(plugin_callback_candidates, "Every actual rk_conf invocation has its exact declared member candidate and a prior successful public registration or stated static default.");
+    requires resource_hypothesis(plugin_code_context_lifetime, "Every loaded callback invocation, including destruction and copied on_new paths, has live code and opaque context.");
+    requires resource_hypothesis(plugin_interceptor_custody, "Every interceptor-descendant pointer and scalar resource is borrowed, with no retain/transfer/global custody and each local acquisition dropped before its activation returns.");
+    requires resource_hypothesis(plugin_interceptor_registration, "Every loaded interceptor uses a successful public setter with the exact pinned list/union-arm candidate and permitted configuration/client lifecycle.");
+    requires resource_hypothesis(plugin_lifecycle_unload, "Every callback invocation precedes matching final unload and copied registrations retain actual loader references.");
+    requires resource_hypothesis(plugin_outer_bridge, "Actually loaded RK and Fluent Bit C/Go code independently meet their respectively bound proposed outer envelopes; one envelope covers no missing obligation of another.");
+    requires resource_premise_decomposition(rk_plugin_callback_closure, plugin_artifact_symbol_abi, plugin_callback_candidates, plugin_code_context_lifetime, plugin_interceptor_custody, plugin_interceptor_registration, plugin_lifecycle_unload, plugin_outer_bridge);
 };
 
 // lib/librdkafka-2.15.0/src/rdkafka_broker.c: 1 first read(s) of rkb->rkb_rk on the stable reading.
@@ -386,6 +538,14 @@ contract {
     requires bounds_contract_v1;
     requires nonnull_member(rd_kafka_broker_s, rkb_rk, rkb) where quant #scope [[scope]];
     requires resource_premise(rk_plugin_callback_closure, "P-RK-PLUGIN-CALLBACK-CLOSURE: in the static scope every rk_conf callback a call may run, including rd_kafka_log_buf's log callback, is a run registration or a stated default with a declared candidate; with loaded external code, extra registrations depend on the applicable pinned rk_plugin_library and flb_external_plugin outer envelopes (OP-APP-RK-CALLBACKS-VIA-POLL-CB, C04.20)");
+    requires resource_hypothesis(plugin_artifact_symbol_abi, "For every reached loaded artifact, exact selected build/inventory, artifact identity and required symbol/address/ABI prerequisites hold.");
+    requires resource_hypothesis(plugin_callback_candidates, "Every actual rk_conf invocation has its exact declared member candidate and a prior successful public registration or stated static default.");
+    requires resource_hypothesis(plugin_code_context_lifetime, "Every loaded callback invocation, including destruction and copied on_new paths, has live code and opaque context.");
+    requires resource_hypothesis(plugin_interceptor_custody, "Every interceptor-descendant pointer and scalar resource is borrowed, with no retain/transfer/global custody and each local acquisition dropped before its activation returns.");
+    requires resource_hypothesis(plugin_interceptor_registration, "Every loaded interceptor uses a successful public setter with the exact pinned list/union-arm candidate and permitted configuration/client lifecycle.");
+    requires resource_hypothesis(plugin_lifecycle_unload, "Every callback invocation precedes matching final unload and copied registrations retain actual loader references.");
+    requires resource_hypothesis(plugin_outer_bridge, "Actually loaded RK and Fluent Bit C/Go code independently meet their respectively bound proposed outer envelopes; one envelope covers no missing obligation of another.");
+    requires resource_premise_decomposition(rk_plugin_callback_closure, plugin_artifact_symbol_abi, plugin_callback_candidates, plugin_code_context_lifetime, plugin_interceptor_custody, plugin_interceptor_registration, plugin_lifecycle_unload, plugin_outer_bridge);
 };
 
 // lib/librdkafka-2.15.0/src/rdkafka_broker.c: 1 first read(s) of rkb->rkb_rk on the stable reading.
@@ -394,6 +554,14 @@ contract {
     requires bounds_contract_v1;
     requires nonnull_member(rd_kafka_broker_s, rkb_rk, rkb) where quant #scope [[scope]];
     requires resource_premise(rk_plugin_callback_closure, "P-RK-PLUGIN-CALLBACK-CLOSURE: in the static scope every rk_conf callback a call may run, including rd_kafka_log_buf's log callback, is a run registration or a stated default with a declared candidate; with loaded external code, extra registrations depend on the applicable pinned rk_plugin_library and flb_external_plugin outer envelopes (OP-APP-RK-CALLBACKS-VIA-POLL-CB, C04.20)");
+    requires resource_hypothesis(plugin_artifact_symbol_abi, "For every reached loaded artifact, exact selected build/inventory, artifact identity and required symbol/address/ABI prerequisites hold.");
+    requires resource_hypothesis(plugin_callback_candidates, "Every actual rk_conf invocation has its exact declared member candidate and a prior successful public registration or stated static default.");
+    requires resource_hypothesis(plugin_code_context_lifetime, "Every loaded callback invocation, including destruction and copied on_new paths, has live code and opaque context.");
+    requires resource_hypothesis(plugin_interceptor_custody, "Every interceptor-descendant pointer and scalar resource is borrowed, with no retain/transfer/global custody and each local acquisition dropped before its activation returns.");
+    requires resource_hypothesis(plugin_interceptor_registration, "Every loaded interceptor uses a successful public setter with the exact pinned list/union-arm candidate and permitted configuration/client lifecycle.");
+    requires resource_hypothesis(plugin_lifecycle_unload, "Every callback invocation precedes matching final unload and copied registrations retain actual loader references.");
+    requires resource_hypothesis(plugin_outer_bridge, "Actually loaded RK and Fluent Bit C/Go code independently meet their respectively bound proposed outer envelopes; one envelope covers no missing obligation of another.");
+    requires resource_premise_decomposition(rk_plugin_callback_closure, plugin_artifact_symbol_abi, plugin_callback_candidates, plugin_code_context_lifetime, plugin_interceptor_custody, plugin_interceptor_registration, plugin_lifecycle_unload, plugin_outer_bridge);
 };
 
 // lib/librdkafka-2.15.0/src/rdkafka_fetcher.c: 1 first read(s) of rkb->rkb_rk on the stable reading.
@@ -402,6 +570,14 @@ contract {
     requires bounds_contract_v1;
     requires nonnull_member(rd_kafka_broker_s, rkb_rk, rkb) where quant #scope [[scope]];
     requires resource_premise(rk_plugin_callback_closure, "P-RK-PLUGIN-CALLBACK-CLOSURE: in the static scope every rk_conf callback a call may run, including rd_kafka_log_buf's log callback, is a run registration or a stated default with a declared candidate; with loaded external code, extra registrations depend on the applicable pinned rk_plugin_library and flb_external_plugin outer envelopes (OP-APP-RK-CALLBACKS-VIA-POLL-CB, C04.20)");
+    requires resource_hypothesis(plugin_artifact_symbol_abi, "For every reached loaded artifact, exact selected build/inventory, artifact identity and required symbol/address/ABI prerequisites hold.");
+    requires resource_hypothesis(plugin_callback_candidates, "Every actual rk_conf invocation has its exact declared member candidate and a prior successful public registration or stated static default.");
+    requires resource_hypothesis(plugin_code_context_lifetime, "Every loaded callback invocation, including destruction and copied on_new paths, has live code and opaque context.");
+    requires resource_hypothesis(plugin_interceptor_custody, "Every interceptor-descendant pointer and scalar resource is borrowed, with no retain/transfer/global custody and each local acquisition dropped before its activation returns.");
+    requires resource_hypothesis(plugin_interceptor_registration, "Every loaded interceptor uses a successful public setter with the exact pinned list/union-arm candidate and permitted configuration/client lifecycle.");
+    requires resource_hypothesis(plugin_lifecycle_unload, "Every callback invocation precedes matching final unload and copied registrations retain actual loader references.");
+    requires resource_hypothesis(plugin_outer_bridge, "Actually loaded RK and Fluent Bit C/Go code independently meet their respectively bound proposed outer envelopes; one envelope covers no missing obligation of another.");
+    requires resource_premise_decomposition(rk_plugin_callback_closure, plugin_artifact_symbol_abi, plugin_callback_candidates, plugin_code_context_lifetime, plugin_interceptor_custody, plugin_interceptor_registration, plugin_lifecycle_unload, plugin_outer_bridge);
 };
 
 // lib/librdkafka-2.15.0/src/rdkafka_fetcher.c: 1 first read(s) of rkb->rkb_rk on the stable reading.
@@ -410,6 +586,14 @@ contract {
     requires bounds_contract_v1;
     requires nonnull_member(rd_kafka_broker_s, rkb_rk, rkb) where quant #scope [[scope]];
     requires resource_premise(rk_plugin_callback_closure, "P-RK-PLUGIN-CALLBACK-CLOSURE: in the static scope every rk_conf callback a call may run, including rd_kafka_log_buf's log callback, is a run registration or a stated default with a declared candidate; with loaded external code, extra registrations depend on the applicable pinned rk_plugin_library and flb_external_plugin outer envelopes (OP-APP-RK-CALLBACKS-VIA-POLL-CB, C04.20)");
+    requires resource_hypothesis(plugin_artifact_symbol_abi, "For every reached loaded artifact, exact selected build/inventory, artifact identity and required symbol/address/ABI prerequisites hold.");
+    requires resource_hypothesis(plugin_callback_candidates, "Every actual rk_conf invocation has its exact declared member candidate and a prior successful public registration or stated static default.");
+    requires resource_hypothesis(plugin_code_context_lifetime, "Every loaded callback invocation, including destruction and copied on_new paths, has live code and opaque context.");
+    requires resource_hypothesis(plugin_interceptor_custody, "Every interceptor-descendant pointer and scalar resource is borrowed, with no retain/transfer/global custody and each local acquisition dropped before its activation returns.");
+    requires resource_hypothesis(plugin_interceptor_registration, "Every loaded interceptor uses a successful public setter with the exact pinned list/union-arm candidate and permitted configuration/client lifecycle.");
+    requires resource_hypothesis(plugin_lifecycle_unload, "Every callback invocation precedes matching final unload and copied registrations retain actual loader references.");
+    requires resource_hypothesis(plugin_outer_bridge, "Actually loaded RK and Fluent Bit C/Go code independently meet their respectively bound proposed outer envelopes; one envelope covers no missing obligation of another.");
+    requires resource_premise_decomposition(rk_plugin_callback_closure, plugin_artifact_symbol_abi, plugin_callback_candidates, plugin_code_context_lifetime, plugin_interceptor_custody, plugin_interceptor_registration, plugin_lifecycle_unload, plugin_outer_bridge);
 };
 
 // lib/librdkafka-2.15.0/src/rdkafka_broker.c: 1 first read(s) of rkb->rkb_rk on the stable reading.
@@ -418,6 +602,14 @@ contract {
     requires bounds_contract_v1;
     requires nonnull_member(rd_kafka_broker_s, rkb_rk, rkb) where quant #scope [[scope]];
     requires resource_premise(rk_plugin_callback_closure, "P-RK-PLUGIN-CALLBACK-CLOSURE: in the static scope every rk_conf callback a call may run, including rd_kafka_log_buf's log callback, is a run registration or a stated default with a declared candidate; with loaded external code, extra registrations depend on the applicable pinned rk_plugin_library and flb_external_plugin outer envelopes (OP-APP-RK-CALLBACKS-VIA-POLL-CB, C04.20)");
+    requires resource_hypothesis(plugin_artifact_symbol_abi, "For every reached loaded artifact, exact selected build/inventory, artifact identity and required symbol/address/ABI prerequisites hold.");
+    requires resource_hypothesis(plugin_callback_candidates, "Every actual rk_conf invocation has its exact declared member candidate and a prior successful public registration or stated static default.");
+    requires resource_hypothesis(plugin_code_context_lifetime, "Every loaded callback invocation, including destruction and copied on_new paths, has live code and opaque context.");
+    requires resource_hypothesis(plugin_interceptor_custody, "Every interceptor-descendant pointer and scalar resource is borrowed, with no retain/transfer/global custody and each local acquisition dropped before its activation returns.");
+    requires resource_hypothesis(plugin_interceptor_registration, "Every loaded interceptor uses a successful public setter with the exact pinned list/union-arm candidate and permitted configuration/client lifecycle.");
+    requires resource_hypothesis(plugin_lifecycle_unload, "Every callback invocation precedes matching final unload and copied registrations retain actual loader references.");
+    requires resource_hypothesis(plugin_outer_bridge, "Actually loaded RK and Fluent Bit C/Go code independently meet their respectively bound proposed outer envelopes; one envelope covers no missing obligation of another.");
+    requires resource_premise_decomposition(rk_plugin_callback_closure, plugin_artifact_symbol_abi, plugin_callback_candidates, plugin_code_context_lifetime, plugin_interceptor_custody, plugin_interceptor_registration, plugin_lifecycle_unload, plugin_outer_bridge);
 };
 
 // lib/librdkafka-2.15.0/src/rdkafka_broker.c: 1 first read(s) of rkb->rkb_rk on the stable reading.
@@ -426,6 +618,14 @@ contract {
     requires bounds_contract_v1;
     requires nonnull_member(rd_kafka_broker_s, rkb_rk, rkb) where quant #scope [[scope]];
     requires resource_premise(rk_plugin_callback_closure, "P-RK-PLUGIN-CALLBACK-CLOSURE: in the static scope every rk_conf callback a call may run, including rd_kafka_log_buf's log callback, is a run registration or a stated default with a declared candidate; with loaded external code, extra registrations depend on the applicable pinned rk_plugin_library and flb_external_plugin outer envelopes (OP-APP-RK-CALLBACKS-VIA-POLL-CB, C04.20)");
+    requires resource_hypothesis(plugin_artifact_symbol_abi, "For every reached loaded artifact, exact selected build/inventory, artifact identity and required symbol/address/ABI prerequisites hold.");
+    requires resource_hypothesis(plugin_callback_candidates, "Every actual rk_conf invocation has its exact declared member candidate and a prior successful public registration or stated static default.");
+    requires resource_hypothesis(plugin_code_context_lifetime, "Every loaded callback invocation, including destruction and copied on_new paths, has live code and opaque context.");
+    requires resource_hypothesis(plugin_interceptor_custody, "Every interceptor-descendant pointer and scalar resource is borrowed, with no retain/transfer/global custody and each local acquisition dropped before its activation returns.");
+    requires resource_hypothesis(plugin_interceptor_registration, "Every loaded interceptor uses a successful public setter with the exact pinned list/union-arm candidate and permitted configuration/client lifecycle.");
+    requires resource_hypothesis(plugin_lifecycle_unload, "Every callback invocation precedes matching final unload and copied registrations retain actual loader references.");
+    requires resource_hypothesis(plugin_outer_bridge, "Actually loaded RK and Fluent Bit C/Go code independently meet their respectively bound proposed outer envelopes; one envelope covers no missing obligation of another.");
+    requires resource_premise_decomposition(rk_plugin_callback_closure, plugin_artifact_symbol_abi, plugin_callback_candidates, plugin_code_context_lifetime, plugin_interceptor_custody, plugin_interceptor_registration, plugin_lifecycle_unload, plugin_outer_bridge);
 };
 
 // lib/librdkafka-2.15.0/src/rdkafka_broker.c: 1 first read(s) of rkb->rkb_rk on the stable reading.
@@ -434,6 +634,14 @@ contract {
     requires bounds_contract_v1;
     requires nonnull_member(rd_kafka_broker_s, rkb_rk, rkb) where quant #scope [[scope]];
     requires resource_premise(rk_plugin_callback_closure, "P-RK-PLUGIN-CALLBACK-CLOSURE: in the static scope every rk_conf callback a call may run, including rd_kafka_log_buf's log callback, is a run registration or a stated default with a declared candidate; with loaded external code, extra registrations depend on the applicable pinned rk_plugin_library and flb_external_plugin outer envelopes (OP-APP-RK-CALLBACKS-VIA-POLL-CB, C04.20)");
+    requires resource_hypothesis(plugin_artifact_symbol_abi, "For every reached loaded artifact, exact selected build/inventory, artifact identity and required symbol/address/ABI prerequisites hold.");
+    requires resource_hypothesis(plugin_callback_candidates, "Every actual rk_conf invocation has its exact declared member candidate and a prior successful public registration or stated static default.");
+    requires resource_hypothesis(plugin_code_context_lifetime, "Every loaded callback invocation, including destruction and copied on_new paths, has live code and opaque context.");
+    requires resource_hypothesis(plugin_interceptor_custody, "Every interceptor-descendant pointer and scalar resource is borrowed, with no retain/transfer/global custody and each local acquisition dropped before its activation returns.");
+    requires resource_hypothesis(plugin_interceptor_registration, "Every loaded interceptor uses a successful public setter with the exact pinned list/union-arm candidate and permitted configuration/client lifecycle.");
+    requires resource_hypothesis(plugin_lifecycle_unload, "Every callback invocation precedes matching final unload and copied registrations retain actual loader references.");
+    requires resource_hypothesis(plugin_outer_bridge, "Actually loaded RK and Fluent Bit C/Go code independently meet their respectively bound proposed outer envelopes; one envelope covers no missing obligation of another.");
+    requires resource_premise_decomposition(rk_plugin_callback_closure, plugin_artifact_symbol_abi, plugin_callback_candidates, plugin_code_context_lifetime, plugin_interceptor_custody, plugin_interceptor_registration, plugin_lifecycle_unload, plugin_outer_bridge);
 };
 
 // lib/librdkafka-2.15.0/src/rdkafka_broker.c: 2 first read(s) of rkb->rkb_rk on the stable reading.
@@ -442,6 +650,14 @@ contract {
     requires bounds_contract_v1;
     requires nonnull_member(rd_kafka_broker_s, rkb_rk, rkb) where quant #scope [[scope]];
     requires resource_premise(rk_plugin_callback_closure, "P-RK-PLUGIN-CALLBACK-CLOSURE: in the static scope every rk_conf callback a call may run, including rd_kafka_log_buf's log callback, is a run registration or a stated default with a declared candidate; with loaded external code, extra registrations depend on the applicable pinned rk_plugin_library and flb_external_plugin outer envelopes (OP-APP-RK-CALLBACKS-VIA-POLL-CB, C04.20)");
+    requires resource_hypothesis(plugin_artifact_symbol_abi, "For every reached loaded artifact, exact selected build/inventory, artifact identity and required symbol/address/ABI prerequisites hold.");
+    requires resource_hypothesis(plugin_callback_candidates, "Every actual rk_conf invocation has its exact declared member candidate and a prior successful public registration or stated static default.");
+    requires resource_hypothesis(plugin_code_context_lifetime, "Every loaded callback invocation, including destruction and copied on_new paths, has live code and opaque context.");
+    requires resource_hypothesis(plugin_interceptor_custody, "Every interceptor-descendant pointer and scalar resource is borrowed, with no retain/transfer/global custody and each local acquisition dropped before its activation returns.");
+    requires resource_hypothesis(plugin_interceptor_registration, "Every loaded interceptor uses a successful public setter with the exact pinned list/union-arm candidate and permitted configuration/client lifecycle.");
+    requires resource_hypothesis(plugin_lifecycle_unload, "Every callback invocation precedes matching final unload and copied registrations retain actual loader references.");
+    requires resource_hypothesis(plugin_outer_bridge, "Actually loaded RK and Fluent Bit C/Go code independently meet their respectively bound proposed outer envelopes; one envelope covers no missing obligation of another.");
+    requires resource_premise_decomposition(rk_plugin_callback_closure, plugin_artifact_symbol_abi, plugin_callback_candidates, plugin_code_context_lifetime, plugin_interceptor_custody, plugin_interceptor_registration, plugin_lifecycle_unload, plugin_outer_bridge);
 };
 
 // lib/librdkafka-2.15.0/src/rdkafka_broker.c: 1 first read(s) of rkb->rkb_rk on the stable reading.
@@ -450,6 +666,14 @@ contract {
     requires bounds_contract_v1;
     requires nonnull_member(rd_kafka_broker_s, rkb_rk, rkb) where quant #scope [[scope]];
     requires resource_premise(rk_plugin_callback_closure, "P-RK-PLUGIN-CALLBACK-CLOSURE: in the static scope every rk_conf callback a call may run, including rd_kafka_log_buf's log callback, is a run registration or a stated default with a declared candidate; with loaded external code, extra registrations depend on the applicable pinned rk_plugin_library and flb_external_plugin outer envelopes (OP-APP-RK-CALLBACKS-VIA-POLL-CB, C04.20)");
+    requires resource_hypothesis(plugin_artifact_symbol_abi, "For every reached loaded artifact, exact selected build/inventory, artifact identity and required symbol/address/ABI prerequisites hold.");
+    requires resource_hypothesis(plugin_callback_candidates, "Every actual rk_conf invocation has its exact declared member candidate and a prior successful public registration or stated static default.");
+    requires resource_hypothesis(plugin_code_context_lifetime, "Every loaded callback invocation, including destruction and copied on_new paths, has live code and opaque context.");
+    requires resource_hypothesis(plugin_interceptor_custody, "Every interceptor-descendant pointer and scalar resource is borrowed, with no retain/transfer/global custody and each local acquisition dropped before its activation returns.");
+    requires resource_hypothesis(plugin_interceptor_registration, "Every loaded interceptor uses a successful public setter with the exact pinned list/union-arm candidate and permitted configuration/client lifecycle.");
+    requires resource_hypothesis(plugin_lifecycle_unload, "Every callback invocation precedes matching final unload and copied registrations retain actual loader references.");
+    requires resource_hypothesis(plugin_outer_bridge, "Actually loaded RK and Fluent Bit C/Go code independently meet their respectively bound proposed outer envelopes; one envelope covers no missing obligation of another.");
+    requires resource_premise_decomposition(rk_plugin_callback_closure, plugin_artifact_symbol_abi, plugin_callback_candidates, plugin_code_context_lifetime, plugin_interceptor_custody, plugin_interceptor_registration, plugin_lifecycle_unload, plugin_outer_bridge);
 };
 
 // lib/librdkafka-2.15.0/src/rdkafka_broker.c: 2 first read(s) of rkb->rkb_rk on the stable reading.
@@ -458,6 +682,14 @@ contract {
     requires bounds_contract_v1;
     requires nonnull_member(rd_kafka_broker_s, rkb_rk, rkb) where quant #scope [[scope]];
     requires resource_premise(rk_plugin_callback_closure, "P-RK-PLUGIN-CALLBACK-CLOSURE: in the static scope every rk_conf callback a call may run, including rd_kafka_log_buf's log callback, is a run registration or a stated default with a declared candidate; with loaded external code, extra registrations depend on the applicable pinned rk_plugin_library and flb_external_plugin outer envelopes (OP-APP-RK-CALLBACKS-VIA-POLL-CB, C04.20)");
+    requires resource_hypothesis(plugin_artifact_symbol_abi, "For every reached loaded artifact, exact selected build/inventory, artifact identity and required symbol/address/ABI prerequisites hold.");
+    requires resource_hypothesis(plugin_callback_candidates, "Every actual rk_conf invocation has its exact declared member candidate and a prior successful public registration or stated static default.");
+    requires resource_hypothesis(plugin_code_context_lifetime, "Every loaded callback invocation, including destruction and copied on_new paths, has live code and opaque context.");
+    requires resource_hypothesis(plugin_interceptor_custody, "Every interceptor-descendant pointer and scalar resource is borrowed, with no retain/transfer/global custody and each local acquisition dropped before its activation returns.");
+    requires resource_hypothesis(plugin_interceptor_registration, "Every loaded interceptor uses a successful public setter with the exact pinned list/union-arm candidate and permitted configuration/client lifecycle.");
+    requires resource_hypothesis(plugin_lifecycle_unload, "Every callback invocation precedes matching final unload and copied registrations retain actual loader references.");
+    requires resource_hypothesis(plugin_outer_bridge, "Actually loaded RK and Fluent Bit C/Go code independently meet their respectively bound proposed outer envelopes; one envelope covers no missing obligation of another.");
+    requires resource_premise_decomposition(rk_plugin_callback_closure, plugin_artifact_symbol_abi, plugin_callback_candidates, plugin_code_context_lifetime, plugin_interceptor_custody, plugin_interceptor_registration, plugin_lifecycle_unload, plugin_outer_bridge);
 };
 
 // lib/librdkafka-2.15.0/src/rdkafka_broker.c: 1 first read(s) of rkb->rkb_rk on the stable reading.
@@ -466,6 +698,14 @@ contract {
     requires bounds_contract_v1;
     requires nonnull_member(rd_kafka_broker_s, rkb_rk, rkb) where quant #scope [[scope]];
     requires resource_premise(rk_plugin_callback_closure, "P-RK-PLUGIN-CALLBACK-CLOSURE: in the static scope every rk_conf callback a call may run, including rd_kafka_log_buf's log callback, is a run registration or a stated default with a declared candidate; with loaded external code, extra registrations depend on the applicable pinned rk_plugin_library and flb_external_plugin outer envelopes (OP-APP-RK-CALLBACKS-VIA-POLL-CB, C04.20)");
+    requires resource_hypothesis(plugin_artifact_symbol_abi, "For every reached loaded artifact, exact selected build/inventory, artifact identity and required symbol/address/ABI prerequisites hold.");
+    requires resource_hypothesis(plugin_callback_candidates, "Every actual rk_conf invocation has its exact declared member candidate and a prior successful public registration or stated static default.");
+    requires resource_hypothesis(plugin_code_context_lifetime, "Every loaded callback invocation, including destruction and copied on_new paths, has live code and opaque context.");
+    requires resource_hypothesis(plugin_interceptor_custody, "Every interceptor-descendant pointer and scalar resource is borrowed, with no retain/transfer/global custody and each local acquisition dropped before its activation returns.");
+    requires resource_hypothesis(plugin_interceptor_registration, "Every loaded interceptor uses a successful public setter with the exact pinned list/union-arm candidate and permitted configuration/client lifecycle.");
+    requires resource_hypothesis(plugin_lifecycle_unload, "Every callback invocation precedes matching final unload and copied registrations retain actual loader references.");
+    requires resource_hypothesis(plugin_outer_bridge, "Actually loaded RK and Fluent Bit C/Go code independently meet their respectively bound proposed outer envelopes; one envelope covers no missing obligation of another.");
+    requires resource_premise_decomposition(rk_plugin_callback_closure, plugin_artifact_symbol_abi, plugin_callback_candidates, plugin_code_context_lifetime, plugin_interceptor_custody, plugin_interceptor_registration, plugin_lifecycle_unload, plugin_outer_bridge);
 };
 
 // lib/librdkafka-2.15.0/src/rdkafka_broker.c: 2 first read(s) of rkb->rkb_rk on the stable reading.
@@ -474,6 +714,14 @@ contract {
     requires bounds_contract_v1;
     requires nonnull_member(rd_kafka_broker_s, rkb_rk, rkb) where quant #scope [[scope]];
     requires resource_premise(rk_plugin_callback_closure, "P-RK-PLUGIN-CALLBACK-CLOSURE: in the static scope every rk_conf callback a call may run, including rd_kafka_log_buf's log callback, is a run registration or a stated default with a declared candidate; with loaded external code, extra registrations depend on the applicable pinned rk_plugin_library and flb_external_plugin outer envelopes (OP-APP-RK-CALLBACKS-VIA-POLL-CB, C04.20)");
+    requires resource_hypothesis(plugin_artifact_symbol_abi, "For every reached loaded artifact, exact selected build/inventory, artifact identity and required symbol/address/ABI prerequisites hold.");
+    requires resource_hypothesis(plugin_callback_candidates, "Every actual rk_conf invocation has its exact declared member candidate and a prior successful public registration or stated static default.");
+    requires resource_hypothesis(plugin_code_context_lifetime, "Every loaded callback invocation, including destruction and copied on_new paths, has live code and opaque context.");
+    requires resource_hypothesis(plugin_interceptor_custody, "Every interceptor-descendant pointer and scalar resource is borrowed, with no retain/transfer/global custody and each local acquisition dropped before its activation returns.");
+    requires resource_hypothesis(plugin_interceptor_registration, "Every loaded interceptor uses a successful public setter with the exact pinned list/union-arm candidate and permitted configuration/client lifecycle.");
+    requires resource_hypothesis(plugin_lifecycle_unload, "Every callback invocation precedes matching final unload and copied registrations retain actual loader references.");
+    requires resource_hypothesis(plugin_outer_bridge, "Actually loaded RK and Fluent Bit C/Go code independently meet their respectively bound proposed outer envelopes; one envelope covers no missing obligation of another.");
+    requires resource_premise_decomposition(rk_plugin_callback_closure, plugin_artifact_symbol_abi, plugin_callback_candidates, plugin_code_context_lifetime, plugin_interceptor_custody, plugin_interceptor_registration, plugin_lifecycle_unload, plugin_outer_bridge);
 };
 
 // lib/librdkafka-2.15.0/src/rdkafka_fetcher.c: 2 first read(s) of rkb->rkb_rk on the stable reading.
@@ -482,6 +730,14 @@ contract {
     requires bounds_contract_v1;
     requires nonnull_member(rd_kafka_broker_s, rkb_rk, rkb) where quant #scope [[scope]];
     requires resource_premise(rk_plugin_callback_closure, "P-RK-PLUGIN-CALLBACK-CLOSURE: in the static scope every rk_conf callback a call may run, including rd_kafka_log_buf's log callback, is a run registration or a stated default with a declared candidate; with loaded external code, extra registrations depend on the applicable pinned rk_plugin_library and flb_external_plugin outer envelopes (OP-APP-RK-CALLBACKS-VIA-POLL-CB, C04.20)");
+    requires resource_hypothesis(plugin_artifact_symbol_abi, "For every reached loaded artifact, exact selected build/inventory, artifact identity and required symbol/address/ABI prerequisites hold.");
+    requires resource_hypothesis(plugin_callback_candidates, "Every actual rk_conf invocation has its exact declared member candidate and a prior successful public registration or stated static default.");
+    requires resource_hypothesis(plugin_code_context_lifetime, "Every loaded callback invocation, including destruction and copied on_new paths, has live code and opaque context.");
+    requires resource_hypothesis(plugin_interceptor_custody, "Every interceptor-descendant pointer and scalar resource is borrowed, with no retain/transfer/global custody and each local acquisition dropped before its activation returns.");
+    requires resource_hypothesis(plugin_interceptor_registration, "Every loaded interceptor uses a successful public setter with the exact pinned list/union-arm candidate and permitted configuration/client lifecycle.");
+    requires resource_hypothesis(plugin_lifecycle_unload, "Every callback invocation precedes matching final unload and copied registrations retain actual loader references.");
+    requires resource_hypothesis(plugin_outer_bridge, "Actually loaded RK and Fluent Bit C/Go code independently meet their respectively bound proposed outer envelopes; one envelope covers no missing obligation of another.");
+    requires resource_premise_decomposition(rk_plugin_callback_closure, plugin_artifact_symbol_abi, plugin_callback_candidates, plugin_code_context_lifetime, plugin_interceptor_custody, plugin_interceptor_registration, plugin_lifecycle_unload, plugin_outer_bridge);
 };
 
 // lib/librdkafka-2.15.0/src/rdkafka_fetcher.c: 2 first read(s) of rkb->rkb_rk on the stable reading.
@@ -490,6 +746,14 @@ contract {
     requires bounds_contract_v1;
     requires nonnull_member(rd_kafka_broker_s, rkb_rk, rkb) where quant #scope [[scope]];
     requires resource_premise(rk_plugin_callback_closure, "P-RK-PLUGIN-CALLBACK-CLOSURE: in the static scope every rk_conf callback a call may run, including rd_kafka_log_buf's log callback, is a run registration or a stated default with a declared candidate; with loaded external code, extra registrations depend on the applicable pinned rk_plugin_library and flb_external_plugin outer envelopes (OP-APP-RK-CALLBACKS-VIA-POLL-CB, C04.20)");
+    requires resource_hypothesis(plugin_artifact_symbol_abi, "For every reached loaded artifact, exact selected build/inventory, artifact identity and required symbol/address/ABI prerequisites hold.");
+    requires resource_hypothesis(plugin_callback_candidates, "Every actual rk_conf invocation has its exact declared member candidate and a prior successful public registration or stated static default.");
+    requires resource_hypothesis(plugin_code_context_lifetime, "Every loaded callback invocation, including destruction and copied on_new paths, has live code and opaque context.");
+    requires resource_hypothesis(plugin_interceptor_custody, "Every interceptor-descendant pointer and scalar resource is borrowed, with no retain/transfer/global custody and each local acquisition dropped before its activation returns.");
+    requires resource_hypothesis(plugin_interceptor_registration, "Every loaded interceptor uses a successful public setter with the exact pinned list/union-arm candidate and permitted configuration/client lifecycle.");
+    requires resource_hypothesis(plugin_lifecycle_unload, "Every callback invocation precedes matching final unload and copied registrations retain actual loader references.");
+    requires resource_hypothesis(plugin_outer_bridge, "Actually loaded RK and Fluent Bit C/Go code independently meet their respectively bound proposed outer envelopes; one envelope covers no missing obligation of another.");
+    requires resource_premise_decomposition(rk_plugin_callback_closure, plugin_artifact_symbol_abi, plugin_callback_candidates, plugin_code_context_lifetime, plugin_interceptor_custody, plugin_interceptor_registration, plugin_lifecycle_unload, plugin_outer_bridge);
 };
 
 // lib/librdkafka-2.15.0/src/rdkafka_fetcher.c: 1 first read(s) of rkb->rkb_rk on the stable reading.
@@ -498,6 +762,14 @@ contract {
     requires bounds_contract_v1;
     requires nonnull_member(rd_kafka_broker_s, rkb_rk, rkb) where quant #scope [[scope]];
     requires resource_premise(rk_plugin_callback_closure, "P-RK-PLUGIN-CALLBACK-CLOSURE: in the static scope every rk_conf callback a call may run, including rd_kafka_log_buf's log callback, is a run registration or a stated default with a declared candidate; with loaded external code, extra registrations depend on the applicable pinned rk_plugin_library and flb_external_plugin outer envelopes (OP-APP-RK-CALLBACKS-VIA-POLL-CB, C04.20)");
+    requires resource_hypothesis(plugin_artifact_symbol_abi, "For every reached loaded artifact, exact selected build/inventory, artifact identity and required symbol/address/ABI prerequisites hold.");
+    requires resource_hypothesis(plugin_callback_candidates, "Every actual rk_conf invocation has its exact declared member candidate and a prior successful public registration or stated static default.");
+    requires resource_hypothesis(plugin_code_context_lifetime, "Every loaded callback invocation, including destruction and copied on_new paths, has live code and opaque context.");
+    requires resource_hypothesis(plugin_interceptor_custody, "Every interceptor-descendant pointer and scalar resource is borrowed, with no retain/transfer/global custody and each local acquisition dropped before its activation returns.");
+    requires resource_hypothesis(plugin_interceptor_registration, "Every loaded interceptor uses a successful public setter with the exact pinned list/union-arm candidate and permitted configuration/client lifecycle.");
+    requires resource_hypothesis(plugin_lifecycle_unload, "Every callback invocation precedes matching final unload and copied registrations retain actual loader references.");
+    requires resource_hypothesis(plugin_outer_bridge, "Actually loaded RK and Fluent Bit C/Go code independently meet their respectively bound proposed outer envelopes; one envelope covers no missing obligation of another.");
+    requires resource_premise_decomposition(rk_plugin_callback_closure, plugin_artifact_symbol_abi, plugin_callback_candidates, plugin_code_context_lifetime, plugin_interceptor_custody, plugin_interceptor_registration, plugin_lifecycle_unload, plugin_outer_bridge);
 };
 
 // lib/librdkafka-2.15.0/src/rdkafka_fetcher.c: 2 first read(s) of rkb->rkb_rk on the stable reading.
@@ -506,6 +778,14 @@ contract {
     requires bounds_contract_v1;
     requires nonnull_member(rd_kafka_broker_s, rkb_rk, rkb) where quant #scope [[scope]];
     requires resource_premise(rk_plugin_callback_closure, "P-RK-PLUGIN-CALLBACK-CLOSURE: in the static scope every rk_conf callback a call may run, including rd_kafka_log_buf's log callback, is a run registration or a stated default with a declared candidate; with loaded external code, extra registrations depend on the applicable pinned rk_plugin_library and flb_external_plugin outer envelopes (OP-APP-RK-CALLBACKS-VIA-POLL-CB, C04.20)");
+    requires resource_hypothesis(plugin_artifact_symbol_abi, "For every reached loaded artifact, exact selected build/inventory, artifact identity and required symbol/address/ABI prerequisites hold.");
+    requires resource_hypothesis(plugin_callback_candidates, "Every actual rk_conf invocation has its exact declared member candidate and a prior successful public registration or stated static default.");
+    requires resource_hypothesis(plugin_code_context_lifetime, "Every loaded callback invocation, including destruction and copied on_new paths, has live code and opaque context.");
+    requires resource_hypothesis(plugin_interceptor_custody, "Every interceptor-descendant pointer and scalar resource is borrowed, with no retain/transfer/global custody and each local acquisition dropped before its activation returns.");
+    requires resource_hypothesis(plugin_interceptor_registration, "Every loaded interceptor uses a successful public setter with the exact pinned list/union-arm candidate and permitted configuration/client lifecycle.");
+    requires resource_hypothesis(plugin_lifecycle_unload, "Every callback invocation precedes matching final unload and copied registrations retain actual loader references.");
+    requires resource_hypothesis(plugin_outer_bridge, "Actually loaded RK and Fluent Bit C/Go code independently meet their respectively bound proposed outer envelopes; one envelope covers no missing obligation of another.");
+    requires resource_premise_decomposition(rk_plugin_callback_closure, plugin_artifact_symbol_abi, plugin_callback_candidates, plugin_code_context_lifetime, plugin_interceptor_custody, plugin_interceptor_registration, plugin_lifecycle_unload, plugin_outer_bridge);
 };
 
 // lib/librdkafka-2.15.0/src/rdkafka_fetcher.c: 1 first read(s) of rkb->rkb_rk on the stable reading.
@@ -514,6 +794,14 @@ contract {
     requires bounds_contract_v1;
     requires nonnull_member(rd_kafka_broker_s, rkb_rk, rkb) where quant #scope [[scope]];
     requires resource_premise(rk_plugin_callback_closure, "P-RK-PLUGIN-CALLBACK-CLOSURE: in the static scope every rk_conf callback a call may run, including rd_kafka_log_buf's log callback, is a run registration or a stated default with a declared candidate; with loaded external code, extra registrations depend on the applicable pinned rk_plugin_library and flb_external_plugin outer envelopes (OP-APP-RK-CALLBACKS-VIA-POLL-CB, C04.20)");
+    requires resource_hypothesis(plugin_artifact_symbol_abi, "For every reached loaded artifact, exact selected build/inventory, artifact identity and required symbol/address/ABI prerequisites hold.");
+    requires resource_hypothesis(plugin_callback_candidates, "Every actual rk_conf invocation has its exact declared member candidate and a prior successful public registration or stated static default.");
+    requires resource_hypothesis(plugin_code_context_lifetime, "Every loaded callback invocation, including destruction and copied on_new paths, has live code and opaque context.");
+    requires resource_hypothesis(plugin_interceptor_custody, "Every interceptor-descendant pointer and scalar resource is borrowed, with no retain/transfer/global custody and each local acquisition dropped before its activation returns.");
+    requires resource_hypothesis(plugin_interceptor_registration, "Every loaded interceptor uses a successful public setter with the exact pinned list/union-arm candidate and permitted configuration/client lifecycle.");
+    requires resource_hypothesis(plugin_lifecycle_unload, "Every callback invocation precedes matching final unload and copied registrations retain actual loader references.");
+    requires resource_hypothesis(plugin_outer_bridge, "Actually loaded RK and Fluent Bit C/Go code independently meet their respectively bound proposed outer envelopes; one envelope covers no missing obligation of another.");
+    requires resource_premise_decomposition(rk_plugin_callback_closure, plugin_artifact_symbol_abi, plugin_callback_candidates, plugin_code_context_lifetime, plugin_interceptor_custody, plugin_interceptor_registration, plugin_lifecycle_unload, plugin_outer_bridge);
 };
 
 // lib/librdkafka-2.15.0/src/rdkafka_broker.c: 1 first read(s) of rkb->rkb_rk on the stable reading.
@@ -522,6 +810,14 @@ contract {
     requires bounds_contract_v1;
     requires nonnull_member(rd_kafka_broker_s, rkb_rk, rkb) where quant #scope [[scope]];
     requires resource_premise(rk_plugin_callback_closure, "P-RK-PLUGIN-CALLBACK-CLOSURE: in the static scope every rk_conf callback a call may run, including rd_kafka_log_buf's log callback, is a run registration or a stated default with a declared candidate; with loaded external code, extra registrations depend on the applicable pinned rk_plugin_library and flb_external_plugin outer envelopes (OP-APP-RK-CALLBACKS-VIA-POLL-CB, C04.20)");
+    requires resource_hypothesis(plugin_artifact_symbol_abi, "For every reached loaded artifact, exact selected build/inventory, artifact identity and required symbol/address/ABI prerequisites hold.");
+    requires resource_hypothesis(plugin_callback_candidates, "Every actual rk_conf invocation has its exact declared member candidate and a prior successful public registration or stated static default.");
+    requires resource_hypothesis(plugin_code_context_lifetime, "Every loaded callback invocation, including destruction and copied on_new paths, has live code and opaque context.");
+    requires resource_hypothesis(plugin_interceptor_custody, "Every interceptor-descendant pointer and scalar resource is borrowed, with no retain/transfer/global custody and each local acquisition dropped before its activation returns.");
+    requires resource_hypothesis(plugin_interceptor_registration, "Every loaded interceptor uses a successful public setter with the exact pinned list/union-arm candidate and permitted configuration/client lifecycle.");
+    requires resource_hypothesis(plugin_lifecycle_unload, "Every callback invocation precedes matching final unload and copied registrations retain actual loader references.");
+    requires resource_hypothesis(plugin_outer_bridge, "Actually loaded RK and Fluent Bit C/Go code independently meet their respectively bound proposed outer envelopes; one envelope covers no missing obligation of another.");
+    requires resource_premise_decomposition(rk_plugin_callback_closure, plugin_artifact_symbol_abi, plugin_callback_candidates, plugin_code_context_lifetime, plugin_interceptor_custody, plugin_interceptor_registration, plugin_lifecycle_unload, plugin_outer_bridge);
 };
 
 // lib/librdkafka-2.15.0/src/rdkafka_broker.c: 1 first read(s) of rkb->rkb_rk on the stable reading.
@@ -530,6 +826,14 @@ contract {
     requires bounds_contract_v1;
     requires nonnull_member(rd_kafka_broker_s, rkb_rk, rkb) where quant #scope [[scope]];
     requires resource_premise(rk_plugin_callback_closure, "P-RK-PLUGIN-CALLBACK-CLOSURE: in the static scope every rk_conf callback a call may run, including rd_kafka_log_buf's log callback, is a run registration or a stated default with a declared candidate; with loaded external code, extra registrations depend on the applicable pinned rk_plugin_library and flb_external_plugin outer envelopes (OP-APP-RK-CALLBACKS-VIA-POLL-CB, C04.20)");
+    requires resource_hypothesis(plugin_artifact_symbol_abi, "For every reached loaded artifact, exact selected build/inventory, artifact identity and required symbol/address/ABI prerequisites hold.");
+    requires resource_hypothesis(plugin_callback_candidates, "Every actual rk_conf invocation has its exact declared member candidate and a prior successful public registration or stated static default.");
+    requires resource_hypothesis(plugin_code_context_lifetime, "Every loaded callback invocation, including destruction and copied on_new paths, has live code and opaque context.");
+    requires resource_hypothesis(plugin_interceptor_custody, "Every interceptor-descendant pointer and scalar resource is borrowed, with no retain/transfer/global custody and each local acquisition dropped before its activation returns.");
+    requires resource_hypothesis(plugin_interceptor_registration, "Every loaded interceptor uses a successful public setter with the exact pinned list/union-arm candidate and permitted configuration/client lifecycle.");
+    requires resource_hypothesis(plugin_lifecycle_unload, "Every callback invocation precedes matching final unload and copied registrations retain actual loader references.");
+    requires resource_hypothesis(plugin_outer_bridge, "Actually loaded RK and Fluent Bit C/Go code independently meet their respectively bound proposed outer envelopes; one envelope covers no missing obligation of another.");
+    requires resource_premise_decomposition(rk_plugin_callback_closure, plugin_artifact_symbol_abi, plugin_callback_candidates, plugin_code_context_lifetime, plugin_interceptor_custody, plugin_interceptor_registration, plugin_lifecycle_unload, plugin_outer_bridge);
 };
 
 // lib/librdkafka-2.15.0/src/rdkafka_broker.c: 1 first read(s) of rkb->rkb_rk on the stable reading.
@@ -538,6 +842,14 @@ contract {
     requires bounds_contract_v1;
     requires nonnull_member(rd_kafka_broker_s, rkb_rk, rkb) where quant #scope [[scope]];
     requires resource_premise(rk_plugin_callback_closure, "P-RK-PLUGIN-CALLBACK-CLOSURE: in the static scope every rk_conf callback a call may run, including rd_kafka_log_buf's log callback, is a run registration or a stated default with a declared candidate; with loaded external code, extra registrations depend on the applicable pinned rk_plugin_library and flb_external_plugin outer envelopes (OP-APP-RK-CALLBACKS-VIA-POLL-CB, C04.20)");
+    requires resource_hypothesis(plugin_artifact_symbol_abi, "For every reached loaded artifact, exact selected build/inventory, artifact identity and required symbol/address/ABI prerequisites hold.");
+    requires resource_hypothesis(plugin_callback_candidates, "Every actual rk_conf invocation has its exact declared member candidate and a prior successful public registration or stated static default.");
+    requires resource_hypothesis(plugin_code_context_lifetime, "Every loaded callback invocation, including destruction and copied on_new paths, has live code and opaque context.");
+    requires resource_hypothesis(plugin_interceptor_custody, "Every interceptor-descendant pointer and scalar resource is borrowed, with no retain/transfer/global custody and each local acquisition dropped before its activation returns.");
+    requires resource_hypothesis(plugin_interceptor_registration, "Every loaded interceptor uses a successful public setter with the exact pinned list/union-arm candidate and permitted configuration/client lifecycle.");
+    requires resource_hypothesis(plugin_lifecycle_unload, "Every callback invocation precedes matching final unload and copied registrations retain actual loader references.");
+    requires resource_hypothesis(plugin_outer_bridge, "Actually loaded RK and Fluent Bit C/Go code independently meet their respectively bound proposed outer envelopes; one envelope covers no missing obligation of another.");
+    requires resource_premise_decomposition(rk_plugin_callback_closure, plugin_artifact_symbol_abi, plugin_callback_candidates, plugin_code_context_lifetime, plugin_interceptor_custody, plugin_interceptor_registration, plugin_lifecycle_unload, plugin_outer_bridge);
 };
 
 // lib/librdkafka-2.15.0/src/rdkafka_fetcher.c: 1 first read(s) of rkb->rkb_rk on the stable reading.
@@ -546,6 +858,14 @@ contract {
     requires bounds_contract_v1;
     requires nonnull_member(rd_kafka_broker_s, rkb_rk, rkb) where quant #scope [[scope]];
     requires resource_premise(rk_plugin_callback_closure, "P-RK-PLUGIN-CALLBACK-CLOSURE: in the static scope every rk_conf callback a call may run, including rd_kafka_log_buf's log callback, is a run registration or a stated default with a declared candidate; with loaded external code, extra registrations depend on the applicable pinned rk_plugin_library and flb_external_plugin outer envelopes (OP-APP-RK-CALLBACKS-VIA-POLL-CB, C04.20)");
+    requires resource_hypothesis(plugin_artifact_symbol_abi, "For every reached loaded artifact, exact selected build/inventory, artifact identity and required symbol/address/ABI prerequisites hold.");
+    requires resource_hypothesis(plugin_callback_candidates, "Every actual rk_conf invocation has its exact declared member candidate and a prior successful public registration or stated static default.");
+    requires resource_hypothesis(plugin_code_context_lifetime, "Every loaded callback invocation, including destruction and copied on_new paths, has live code and opaque context.");
+    requires resource_hypothesis(plugin_interceptor_custody, "Every interceptor-descendant pointer and scalar resource is borrowed, with no retain/transfer/global custody and each local acquisition dropped before its activation returns.");
+    requires resource_hypothesis(plugin_interceptor_registration, "Every loaded interceptor uses a successful public setter with the exact pinned list/union-arm candidate and permitted configuration/client lifecycle.");
+    requires resource_hypothesis(plugin_lifecycle_unload, "Every callback invocation precedes matching final unload and copied registrations retain actual loader references.");
+    requires resource_hypothesis(plugin_outer_bridge, "Actually loaded RK and Fluent Bit C/Go code independently meet their respectively bound proposed outer envelopes; one envelope covers no missing obligation of another.");
+    requires resource_premise_decomposition(rk_plugin_callback_closure, plugin_artifact_symbol_abi, plugin_callback_candidates, plugin_code_context_lifetime, plugin_interceptor_custody, plugin_interceptor_registration, plugin_lifecycle_unload, plugin_outer_bridge);
 };
 
 // lib/librdkafka-2.15.0/src/rdkafka_fetcher.c: 1 first read(s) of rkb->rkb_rk on the stable reading.
@@ -554,6 +874,14 @@ contract {
     requires bounds_contract_v1;
     requires nonnull_member(rd_kafka_broker_s, rkb_rk, rkb) where quant #scope [[scope]];
     requires resource_premise(rk_plugin_callback_closure, "P-RK-PLUGIN-CALLBACK-CLOSURE: in the static scope every rk_conf callback a call may run, including rd_kafka_log_buf's log callback, is a run registration or a stated default with a declared candidate; with loaded external code, extra registrations depend on the applicable pinned rk_plugin_library and flb_external_plugin outer envelopes (OP-APP-RK-CALLBACKS-VIA-POLL-CB, C04.20)");
+    requires resource_hypothesis(plugin_artifact_symbol_abi, "For every reached loaded artifact, exact selected build/inventory, artifact identity and required symbol/address/ABI prerequisites hold.");
+    requires resource_hypothesis(plugin_callback_candidates, "Every actual rk_conf invocation has its exact declared member candidate and a prior successful public registration or stated static default.");
+    requires resource_hypothesis(plugin_code_context_lifetime, "Every loaded callback invocation, including destruction and copied on_new paths, has live code and opaque context.");
+    requires resource_hypothesis(plugin_interceptor_custody, "Every interceptor-descendant pointer and scalar resource is borrowed, with no retain/transfer/global custody and each local acquisition dropped before its activation returns.");
+    requires resource_hypothesis(plugin_interceptor_registration, "Every loaded interceptor uses a successful public setter with the exact pinned list/union-arm candidate and permitted configuration/client lifecycle.");
+    requires resource_hypothesis(plugin_lifecycle_unload, "Every callback invocation precedes matching final unload and copied registrations retain actual loader references.");
+    requires resource_hypothesis(plugin_outer_bridge, "Actually loaded RK and Fluent Bit C/Go code independently meet their respectively bound proposed outer envelopes; one envelope covers no missing obligation of another.");
+    requires resource_premise_decomposition(rk_plugin_callback_closure, plugin_artifact_symbol_abi, plugin_callback_candidates, plugin_code_context_lifetime, plugin_interceptor_custody, plugin_interceptor_registration, plugin_lifecycle_unload, plugin_outer_bridge);
 };
 
 // lib/librdkafka-2.15.0/src/rdkafka_fetcher.c: 1 first read(s) of rkb->rkb_rk on the stable reading.
@@ -562,6 +890,14 @@ contract {
     requires bounds_contract_v1;
     requires nonnull_member(rd_kafka_broker_s, rkb_rk, rkb) where quant #scope [[scope]];
     requires resource_premise(rk_plugin_callback_closure, "P-RK-PLUGIN-CALLBACK-CLOSURE: in the static scope every rk_conf callback a call may run, including rd_kafka_log_buf's log callback, is a run registration or a stated default with a declared candidate; with loaded external code, extra registrations depend on the applicable pinned rk_plugin_library and flb_external_plugin outer envelopes (OP-APP-RK-CALLBACKS-VIA-POLL-CB, C04.20)");
+    requires resource_hypothesis(plugin_artifact_symbol_abi, "For every reached loaded artifact, exact selected build/inventory, artifact identity and required symbol/address/ABI prerequisites hold.");
+    requires resource_hypothesis(plugin_callback_candidates, "Every actual rk_conf invocation has its exact declared member candidate and a prior successful public registration or stated static default.");
+    requires resource_hypothesis(plugin_code_context_lifetime, "Every loaded callback invocation, including destruction and copied on_new paths, has live code and opaque context.");
+    requires resource_hypothesis(plugin_interceptor_custody, "Every interceptor-descendant pointer and scalar resource is borrowed, with no retain/transfer/global custody and each local acquisition dropped before its activation returns.");
+    requires resource_hypothesis(plugin_interceptor_registration, "Every loaded interceptor uses a successful public setter with the exact pinned list/union-arm candidate and permitted configuration/client lifecycle.");
+    requires resource_hypothesis(plugin_lifecycle_unload, "Every callback invocation precedes matching final unload and copied registrations retain actual loader references.");
+    requires resource_hypothesis(plugin_outer_bridge, "Actually loaded RK and Fluent Bit C/Go code independently meet their respectively bound proposed outer envelopes; one envelope covers no missing obligation of another.");
+    requires resource_premise_decomposition(rk_plugin_callback_closure, plugin_artifact_symbol_abi, plugin_callback_candidates, plugin_code_context_lifetime, plugin_interceptor_custody, plugin_interceptor_registration, plugin_lifecycle_unload, plugin_outer_bridge);
 };
 
 // lib/librdkafka-2.15.0/src/rdkafka_broker.c: 2 first read(s) of rkb->rkb_rk on the stable reading.
@@ -570,6 +906,14 @@ contract {
     requires bounds_contract_v1;
     requires nonnull_member(rd_kafka_broker_s, rkb_rk, rkb) where quant #scope [[scope]];
     requires resource_premise(rk_plugin_callback_closure, "P-RK-PLUGIN-CALLBACK-CLOSURE: in the static scope every rk_conf callback a call may run, including rd_kafka_log_buf's log callback, is a run registration or a stated default with a declared candidate; with loaded external code, extra registrations depend on the applicable pinned rk_plugin_library and flb_external_plugin outer envelopes (OP-APP-RK-CALLBACKS-VIA-POLL-CB, C04.20)");
+    requires resource_hypothesis(plugin_artifact_symbol_abi, "For every reached loaded artifact, exact selected build/inventory, artifact identity and required symbol/address/ABI prerequisites hold.");
+    requires resource_hypothesis(plugin_callback_candidates, "Every actual rk_conf invocation has its exact declared member candidate and a prior successful public registration or stated static default.");
+    requires resource_hypothesis(plugin_code_context_lifetime, "Every loaded callback invocation, including destruction and copied on_new paths, has live code and opaque context.");
+    requires resource_hypothesis(plugin_interceptor_custody, "Every interceptor-descendant pointer and scalar resource is borrowed, with no retain/transfer/global custody and each local acquisition dropped before its activation returns.");
+    requires resource_hypothesis(plugin_interceptor_registration, "Every loaded interceptor uses a successful public setter with the exact pinned list/union-arm candidate and permitted configuration/client lifecycle.");
+    requires resource_hypothesis(plugin_lifecycle_unload, "Every callback invocation precedes matching final unload and copied registrations retain actual loader references.");
+    requires resource_hypothesis(plugin_outer_bridge, "Actually loaded RK and Fluent Bit C/Go code independently meet their respectively bound proposed outer envelopes; one envelope covers no missing obligation of another.");
+    requires resource_premise_decomposition(rk_plugin_callback_closure, plugin_artifact_symbol_abi, plugin_callback_candidates, plugin_code_context_lifetime, plugin_interceptor_custody, plugin_interceptor_registration, plugin_lifecycle_unload, plugin_outer_bridge);
 };
 
 // lib/librdkafka-2.15.0/src/rdkafka_broker.c: 1 first read(s) of rkb->rkb_rk on the stable reading.
@@ -578,6 +922,14 @@ contract {
     requires bounds_contract_v1;
     requires nonnull_member(rd_kafka_broker_s, rkb_rk, rkb) where quant #scope [[scope]];
     requires resource_premise(rk_plugin_callback_closure, "P-RK-PLUGIN-CALLBACK-CLOSURE: in the static scope every rk_conf callback a call may run, including rd_kafka_log_buf's log callback, is a run registration or a stated default with a declared candidate; with loaded external code, extra registrations depend on the applicable pinned rk_plugin_library and flb_external_plugin outer envelopes (OP-APP-RK-CALLBACKS-VIA-POLL-CB, C04.20)");
+    requires resource_hypothesis(plugin_artifact_symbol_abi, "For every reached loaded artifact, exact selected build/inventory, artifact identity and required symbol/address/ABI prerequisites hold.");
+    requires resource_hypothesis(plugin_callback_candidates, "Every actual rk_conf invocation has its exact declared member candidate and a prior successful public registration or stated static default.");
+    requires resource_hypothesis(plugin_code_context_lifetime, "Every loaded callback invocation, including destruction and copied on_new paths, has live code and opaque context.");
+    requires resource_hypothesis(plugin_interceptor_custody, "Every interceptor-descendant pointer and scalar resource is borrowed, with no retain/transfer/global custody and each local acquisition dropped before its activation returns.");
+    requires resource_hypothesis(plugin_interceptor_registration, "Every loaded interceptor uses a successful public setter with the exact pinned list/union-arm candidate and permitted configuration/client lifecycle.");
+    requires resource_hypothesis(plugin_lifecycle_unload, "Every callback invocation precedes matching final unload and copied registrations retain actual loader references.");
+    requires resource_hypothesis(plugin_outer_bridge, "Actually loaded RK and Fluent Bit C/Go code independently meet their respectively bound proposed outer envelopes; one envelope covers no missing obligation of another.");
+    requires resource_premise_decomposition(rk_plugin_callback_closure, plugin_artifact_symbol_abi, plugin_callback_candidates, plugin_code_context_lifetime, plugin_interceptor_custody, plugin_interceptor_registration, plugin_lifecycle_unload, plugin_outer_bridge);
 };
 
 // lib/librdkafka-2.15.0/src/rdkafka_broker.c: 1 first read(s) of rkb->rkb_rk on the stable reading.
@@ -586,6 +938,14 @@ contract {
     requires bounds_contract_v1;
     requires nonnull_member(rd_kafka_broker_s, rkb_rk, rkb) where quant #scope [[scope]];
     requires resource_premise(rk_plugin_callback_closure, "P-RK-PLUGIN-CALLBACK-CLOSURE: in the static scope every rk_conf callback a call may run, including rd_kafka_log_buf's log callback, is a run registration or a stated default with a declared candidate; with loaded external code, extra registrations depend on the applicable pinned rk_plugin_library and flb_external_plugin outer envelopes (OP-APP-RK-CALLBACKS-VIA-POLL-CB, C04.20)");
+    requires resource_hypothesis(plugin_artifact_symbol_abi, "For every reached loaded artifact, exact selected build/inventory, artifact identity and required symbol/address/ABI prerequisites hold.");
+    requires resource_hypothesis(plugin_callback_candidates, "Every actual rk_conf invocation has its exact declared member candidate and a prior successful public registration or stated static default.");
+    requires resource_hypothesis(plugin_code_context_lifetime, "Every loaded callback invocation, including destruction and copied on_new paths, has live code and opaque context.");
+    requires resource_hypothesis(plugin_interceptor_custody, "Every interceptor-descendant pointer and scalar resource is borrowed, with no retain/transfer/global custody and each local acquisition dropped before its activation returns.");
+    requires resource_hypothesis(plugin_interceptor_registration, "Every loaded interceptor uses a successful public setter with the exact pinned list/union-arm candidate and permitted configuration/client lifecycle.");
+    requires resource_hypothesis(plugin_lifecycle_unload, "Every callback invocation precedes matching final unload and copied registrations retain actual loader references.");
+    requires resource_hypothesis(plugin_outer_bridge, "Actually loaded RK and Fluent Bit C/Go code independently meet their respectively bound proposed outer envelopes; one envelope covers no missing obligation of another.");
+    requires resource_premise_decomposition(rk_plugin_callback_closure, plugin_artifact_symbol_abi, plugin_callback_candidates, plugin_code_context_lifetime, plugin_interceptor_custody, plugin_interceptor_registration, plugin_lifecycle_unload, plugin_outer_bridge);
 };
 
 // lib/librdkafka-2.15.0/src/rdkafka_broker.c: 1 first read(s) of rkb->rkb_rk on the stable reading.
@@ -594,6 +954,14 @@ contract {
     requires bounds_contract_v1;
     requires nonnull_member(rd_kafka_broker_s, rkb_rk, rkb) where quant #scope [[scope]];
     requires resource_premise(rk_plugin_callback_closure, "P-RK-PLUGIN-CALLBACK-CLOSURE: in the static scope every rk_conf callback a call may run, including rd_kafka_log_buf's log callback, is a run registration or a stated default with a declared candidate; with loaded external code, extra registrations depend on the applicable pinned rk_plugin_library and flb_external_plugin outer envelopes (OP-APP-RK-CALLBACKS-VIA-POLL-CB, C04.20)");
+    requires resource_hypothesis(plugin_artifact_symbol_abi, "For every reached loaded artifact, exact selected build/inventory, artifact identity and required symbol/address/ABI prerequisites hold.");
+    requires resource_hypothesis(plugin_callback_candidates, "Every actual rk_conf invocation has its exact declared member candidate and a prior successful public registration or stated static default.");
+    requires resource_hypothesis(plugin_code_context_lifetime, "Every loaded callback invocation, including destruction and copied on_new paths, has live code and opaque context.");
+    requires resource_hypothesis(plugin_interceptor_custody, "Every interceptor-descendant pointer and scalar resource is borrowed, with no retain/transfer/global custody and each local acquisition dropped before its activation returns.");
+    requires resource_hypothesis(plugin_interceptor_registration, "Every loaded interceptor uses a successful public setter with the exact pinned list/union-arm candidate and permitted configuration/client lifecycle.");
+    requires resource_hypothesis(plugin_lifecycle_unload, "Every callback invocation precedes matching final unload and copied registrations retain actual loader references.");
+    requires resource_hypothesis(plugin_outer_bridge, "Actually loaded RK and Fluent Bit C/Go code independently meet their respectively bound proposed outer envelopes; one envelope covers no missing obligation of another.");
+    requires resource_premise_decomposition(rk_plugin_callback_closure, plugin_artifact_symbol_abi, plugin_callback_candidates, plugin_code_context_lifetime, plugin_interceptor_custody, plugin_interceptor_registration, plugin_lifecycle_unload, plugin_outer_bridge);
 };
 
 // lib/librdkafka-2.15.0/src/rdkafka_buf.c: 1 first read(s) of rkb->rkb_rk on the stable reading.
@@ -602,6 +970,14 @@ contract {
     requires bounds_contract_v1;
     requires nonnull_member(rd_kafka_broker_s, rkb_rk, rkb) where quant #scope [[scope]];
     requires resource_premise(rk_plugin_callback_closure, "P-RK-PLUGIN-CALLBACK-CLOSURE: in the static scope every rk_conf callback a call may run, including rd_kafka_log_buf's log callback, is a run registration or a stated default with a declared candidate; with loaded external code, extra registrations depend on the applicable pinned rk_plugin_library and flb_external_plugin outer envelopes (OP-APP-RK-CALLBACKS-VIA-POLL-CB, C04.20)");
+    requires resource_hypothesis(plugin_artifact_symbol_abi, "For every reached loaded artifact, exact selected build/inventory, artifact identity and required symbol/address/ABI prerequisites hold.");
+    requires resource_hypothesis(plugin_callback_candidates, "Every actual rk_conf invocation has its exact declared member candidate and a prior successful public registration or stated static default.");
+    requires resource_hypothesis(plugin_code_context_lifetime, "Every loaded callback invocation, including destruction and copied on_new paths, has live code and opaque context.");
+    requires resource_hypothesis(plugin_interceptor_custody, "Every interceptor-descendant pointer and scalar resource is borrowed, with no retain/transfer/global custody and each local acquisition dropped before its activation returns.");
+    requires resource_hypothesis(plugin_interceptor_registration, "Every loaded interceptor uses a successful public setter with the exact pinned list/union-arm candidate and permitted configuration/client lifecycle.");
+    requires resource_hypothesis(plugin_lifecycle_unload, "Every callback invocation precedes matching final unload and copied registrations retain actual loader references.");
+    requires resource_hypothesis(plugin_outer_bridge, "Actually loaded RK and Fluent Bit C/Go code independently meet their respectively bound proposed outer envelopes; one envelope covers no missing obligation of another.");
+    requires resource_premise_decomposition(rk_plugin_callback_closure, plugin_artifact_symbol_abi, plugin_callback_candidates, plugin_code_context_lifetime, plugin_interceptor_custody, plugin_interceptor_registration, plugin_lifecycle_unload, plugin_outer_bridge);
 };
 
 // lib/librdkafka-2.15.0/src/rdkafka_buf.c: 1 first read(s) of rkb->rkb_rk on the stable reading.
@@ -610,6 +986,14 @@ contract {
     requires bounds_contract_v1;
     requires nonnull_member(rd_kafka_broker_s, rkb_rk, rkb) where quant #scope [[scope]];
     requires resource_premise(rk_plugin_callback_closure, "P-RK-PLUGIN-CALLBACK-CLOSURE: in the static scope every rk_conf callback a call may run, including rd_kafka_log_buf's log callback, is a run registration or a stated default with a declared candidate; with loaded external code, extra registrations depend on the applicable pinned rk_plugin_library and flb_external_plugin outer envelopes (OP-APP-RK-CALLBACKS-VIA-POLL-CB, C04.20)");
+    requires resource_hypothesis(plugin_artifact_symbol_abi, "For every reached loaded artifact, exact selected build/inventory, artifact identity and required symbol/address/ABI prerequisites hold.");
+    requires resource_hypothesis(plugin_callback_candidates, "Every actual rk_conf invocation has its exact declared member candidate and a prior successful public registration or stated static default.");
+    requires resource_hypothesis(plugin_code_context_lifetime, "Every loaded callback invocation, including destruction and copied on_new paths, has live code and opaque context.");
+    requires resource_hypothesis(plugin_interceptor_custody, "Every interceptor-descendant pointer and scalar resource is borrowed, with no retain/transfer/global custody and each local acquisition dropped before its activation returns.");
+    requires resource_hypothesis(plugin_interceptor_registration, "Every loaded interceptor uses a successful public setter with the exact pinned list/union-arm candidate and permitted configuration/client lifecycle.");
+    requires resource_hypothesis(plugin_lifecycle_unload, "Every callback invocation precedes matching final unload and copied registrations retain actual loader references.");
+    requires resource_hypothesis(plugin_outer_bridge, "Actually loaded RK and Fluent Bit C/Go code independently meet their respectively bound proposed outer envelopes; one envelope covers no missing obligation of another.");
+    requires resource_premise_decomposition(rk_plugin_callback_closure, plugin_artifact_symbol_abi, plugin_callback_candidates, plugin_code_context_lifetime, plugin_interceptor_custody, plugin_interceptor_registration, plugin_lifecycle_unload, plugin_outer_bridge);
 };
 
 // lib/librdkafka-2.15.0/src/rdkafka_buf.c: 1 first read(s) of rkb->rkb_rk on the stable reading.
@@ -618,6 +1002,14 @@ contract {
     requires bounds_contract_v1;
     requires nonnull_member(rd_kafka_broker_s, rkb_rk, rkb) where quant #scope [[scope]];
     requires resource_premise(rk_plugin_callback_closure, "P-RK-PLUGIN-CALLBACK-CLOSURE: in the static scope every rk_conf callback a call may run, including rd_kafka_log_buf's log callback, is a run registration or a stated default with a declared candidate; with loaded external code, extra registrations depend on the applicable pinned rk_plugin_library and flb_external_plugin outer envelopes (OP-APP-RK-CALLBACKS-VIA-POLL-CB, C04.20)");
+    requires resource_hypothesis(plugin_artifact_symbol_abi, "For every reached loaded artifact, exact selected build/inventory, artifact identity and required symbol/address/ABI prerequisites hold.");
+    requires resource_hypothesis(plugin_callback_candidates, "Every actual rk_conf invocation has its exact declared member candidate and a prior successful public registration or stated static default.");
+    requires resource_hypothesis(plugin_code_context_lifetime, "Every loaded callback invocation, including destruction and copied on_new paths, has live code and opaque context.");
+    requires resource_hypothesis(plugin_interceptor_custody, "Every interceptor-descendant pointer and scalar resource is borrowed, with no retain/transfer/global custody and each local acquisition dropped before its activation returns.");
+    requires resource_hypothesis(plugin_interceptor_registration, "Every loaded interceptor uses a successful public setter with the exact pinned list/union-arm candidate and permitted configuration/client lifecycle.");
+    requires resource_hypothesis(plugin_lifecycle_unload, "Every callback invocation precedes matching final unload and copied registrations retain actual loader references.");
+    requires resource_hypothesis(plugin_outer_bridge, "Actually loaded RK and Fluent Bit C/Go code independently meet their respectively bound proposed outer envelopes; one envelope covers no missing obligation of another.");
+    requires resource_premise_decomposition(rk_plugin_callback_closure, plugin_artifact_symbol_abi, plugin_callback_candidates, plugin_code_context_lifetime, plugin_interceptor_custody, plugin_interceptor_registration, plugin_lifecycle_unload, plugin_outer_bridge);
 };
 
 // lib/librdkafka-2.15.0/src/rdkafka_buf.c: 1 first read(s) of rkb->rkb_rk on the stable reading.
@@ -626,6 +1018,14 @@ contract {
     requires bounds_contract_v1;
     requires nonnull_member(rd_kafka_broker_s, rkb_rk, rkb) where quant #scope [[scope]];
     requires resource_premise(rk_plugin_callback_closure, "P-RK-PLUGIN-CALLBACK-CLOSURE: in the static scope every rk_conf callback a call may run, including rd_kafka_log_buf's log callback, is a run registration or a stated default with a declared candidate; with loaded external code, extra registrations depend on the applicable pinned rk_plugin_library and flb_external_plugin outer envelopes (OP-APP-RK-CALLBACKS-VIA-POLL-CB, C04.20)");
+    requires resource_hypothesis(plugin_artifact_symbol_abi, "For every reached loaded artifact, exact selected build/inventory, artifact identity and required symbol/address/ABI prerequisites hold.");
+    requires resource_hypothesis(plugin_callback_candidates, "Every actual rk_conf invocation has its exact declared member candidate and a prior successful public registration or stated static default.");
+    requires resource_hypothesis(plugin_code_context_lifetime, "Every loaded callback invocation, including destruction and copied on_new paths, has live code and opaque context.");
+    requires resource_hypothesis(plugin_interceptor_custody, "Every interceptor-descendant pointer and scalar resource is borrowed, with no retain/transfer/global custody and each local acquisition dropped before its activation returns.");
+    requires resource_hypothesis(plugin_interceptor_registration, "Every loaded interceptor uses a successful public setter with the exact pinned list/union-arm candidate and permitted configuration/client lifecycle.");
+    requires resource_hypothesis(plugin_lifecycle_unload, "Every callback invocation precedes matching final unload and copied registrations retain actual loader references.");
+    requires resource_hypothesis(plugin_outer_bridge, "Actually loaded RK and Fluent Bit C/Go code independently meet their respectively bound proposed outer envelopes; one envelope covers no missing obligation of another.");
+    requires resource_premise_decomposition(rk_plugin_callback_closure, plugin_artifact_symbol_abi, plugin_callback_candidates, plugin_code_context_lifetime, plugin_interceptor_custody, plugin_interceptor_registration, plugin_lifecycle_unload, plugin_outer_bridge);
 };
 
 // lib/librdkafka-2.15.0/src/rdkafka_buf.c: 1 first read(s) of rkb->rkb_rk on the stable reading.
@@ -634,6 +1034,14 @@ contract {
     requires bounds_contract_v1;
     requires nonnull_member(rd_kafka_broker_s, rkb_rk, rkb) where quant #scope [[scope]];
     requires resource_premise(rk_plugin_callback_closure, "P-RK-PLUGIN-CALLBACK-CLOSURE: in the static scope every rk_conf callback a call may run, including rd_kafka_log_buf's log callback, is a run registration or a stated default with a declared candidate; with loaded external code, extra registrations depend on the applicable pinned rk_plugin_library and flb_external_plugin outer envelopes (OP-APP-RK-CALLBACKS-VIA-POLL-CB, C04.20)");
+    requires resource_hypothesis(plugin_artifact_symbol_abi, "For every reached loaded artifact, exact selected build/inventory, artifact identity and required symbol/address/ABI prerequisites hold.");
+    requires resource_hypothesis(plugin_callback_candidates, "Every actual rk_conf invocation has its exact declared member candidate and a prior successful public registration or stated static default.");
+    requires resource_hypothesis(plugin_code_context_lifetime, "Every loaded callback invocation, including destruction and copied on_new paths, has live code and opaque context.");
+    requires resource_hypothesis(plugin_interceptor_custody, "Every interceptor-descendant pointer and scalar resource is borrowed, with no retain/transfer/global custody and each local acquisition dropped before its activation returns.");
+    requires resource_hypothesis(plugin_interceptor_registration, "Every loaded interceptor uses a successful public setter with the exact pinned list/union-arm candidate and permitted configuration/client lifecycle.");
+    requires resource_hypothesis(plugin_lifecycle_unload, "Every callback invocation precedes matching final unload and copied registrations retain actual loader references.");
+    requires resource_hypothesis(plugin_outer_bridge, "Actually loaded RK and Fluent Bit C/Go code independently meet their respectively bound proposed outer envelopes; one envelope covers no missing obligation of another.");
+    requires resource_premise_decomposition(rk_plugin_callback_closure, plugin_artifact_symbol_abi, plugin_callback_candidates, plugin_code_context_lifetime, plugin_interceptor_custody, plugin_interceptor_registration, plugin_lifecycle_unload, plugin_outer_bridge);
 };
 
 // lib/librdkafka-2.15.0/src/rdkafka_broker.c: 1 first read(s) of rkb->rkb_rk on the stable reading.
@@ -642,6 +1050,14 @@ contract {
     requires bounds_contract_v1;
     requires nonnull_member(rd_kafka_broker_s, rkb_rk, rkb) where quant #scope [[scope]];
     requires resource_premise(rk_plugin_callback_closure, "P-RK-PLUGIN-CALLBACK-CLOSURE: in the static scope every rk_conf callback a call may run, including rd_kafka_log_buf's log callback, is a run registration or a stated default with a declared candidate; with loaded external code, extra registrations depend on the applicable pinned rk_plugin_library and flb_external_plugin outer envelopes (OP-APP-RK-CALLBACKS-VIA-POLL-CB, C04.20)");
+    requires resource_hypothesis(plugin_artifact_symbol_abi, "For every reached loaded artifact, exact selected build/inventory, artifact identity and required symbol/address/ABI prerequisites hold.");
+    requires resource_hypothesis(plugin_callback_candidates, "Every actual rk_conf invocation has its exact declared member candidate and a prior successful public registration or stated static default.");
+    requires resource_hypothesis(plugin_code_context_lifetime, "Every loaded callback invocation, including destruction and copied on_new paths, has live code and opaque context.");
+    requires resource_hypothesis(plugin_interceptor_custody, "Every interceptor-descendant pointer and scalar resource is borrowed, with no retain/transfer/global custody and each local acquisition dropped before its activation returns.");
+    requires resource_hypothesis(plugin_interceptor_registration, "Every loaded interceptor uses a successful public setter with the exact pinned list/union-arm candidate and permitted configuration/client lifecycle.");
+    requires resource_hypothesis(plugin_lifecycle_unload, "Every callback invocation precedes matching final unload and copied registrations retain actual loader references.");
+    requires resource_hypothesis(plugin_outer_bridge, "Actually loaded RK and Fluent Bit C/Go code independently meet their respectively bound proposed outer envelopes; one envelope covers no missing obligation of another.");
+    requires resource_premise_decomposition(rk_plugin_callback_closure, plugin_artifact_symbol_abi, plugin_callback_candidates, plugin_code_context_lifetime, plugin_interceptor_custody, plugin_interceptor_registration, plugin_lifecycle_unload, plugin_outer_bridge);
 };
 
 // lib/librdkafka-2.15.0/src/rdkafka_feature.c: 2 first read(s) of rkb->rkb_rk on the stable reading.
@@ -650,6 +1066,14 @@ contract {
     requires bounds_contract_v1;
     requires nonnull_member(rd_kafka_broker_s, rkb_rk, rkb) where quant #scope [[scope]];
     requires resource_premise(rk_plugin_callback_closure, "P-RK-PLUGIN-CALLBACK-CLOSURE: in the static scope every rk_conf callback a call may run, including rd_kafka_log_buf's log callback, is a run registration or a stated default with a declared candidate; with loaded external code, extra registrations depend on the applicable pinned rk_plugin_library and flb_external_plugin outer envelopes (OP-APP-RK-CALLBACKS-VIA-POLL-CB, C04.20)");
+    requires resource_hypothesis(plugin_artifact_symbol_abi, "For every reached loaded artifact, exact selected build/inventory, artifact identity and required symbol/address/ABI prerequisites hold.");
+    requires resource_hypothesis(plugin_callback_candidates, "Every actual rk_conf invocation has its exact declared member candidate and a prior successful public registration or stated static default.");
+    requires resource_hypothesis(plugin_code_context_lifetime, "Every loaded callback invocation, including destruction and copied on_new paths, has live code and opaque context.");
+    requires resource_hypothesis(plugin_interceptor_custody, "Every interceptor-descendant pointer and scalar resource is borrowed, with no retain/transfer/global custody and each local acquisition dropped before its activation returns.");
+    requires resource_hypothesis(plugin_interceptor_registration, "Every loaded interceptor uses a successful public setter with the exact pinned list/union-arm candidate and permitted configuration/client lifecycle.");
+    requires resource_hypothesis(plugin_lifecycle_unload, "Every callback invocation precedes matching final unload and copied registrations retain actual loader references.");
+    requires resource_hypothesis(plugin_outer_bridge, "Actually loaded RK and Fluent Bit C/Go code independently meet their respectively bound proposed outer envelopes; one envelope covers no missing obligation of another.");
+    requires resource_premise_decomposition(rk_plugin_callback_closure, plugin_artifact_symbol_abi, plugin_callback_candidates, plugin_code_context_lifetime, plugin_interceptor_custody, plugin_interceptor_registration, plugin_lifecycle_unload, plugin_outer_bridge);
 };
 
 // lib/librdkafka-2.15.0/src/rdkafka_fetcher.c: 1 first read(s) of rkb->rkb_rk on the stable reading.
@@ -658,6 +1082,14 @@ contract {
     requires bounds_contract_v1;
     requires nonnull_member(rd_kafka_broker_s, rkb_rk, rkb) where quant #scope [[scope]];
     requires resource_premise(rk_plugin_callback_closure, "P-RK-PLUGIN-CALLBACK-CLOSURE: in the static scope every rk_conf callback a call may run, including rd_kafka_log_buf's log callback, is a run registration or a stated default with a declared candidate; with loaded external code, extra registrations depend on the applicable pinned rk_plugin_library and flb_external_plugin outer envelopes (OP-APP-RK-CALLBACKS-VIA-POLL-CB, C04.20)");
+    requires resource_hypothesis(plugin_artifact_symbol_abi, "For every reached loaded artifact, exact selected build/inventory, artifact identity and required symbol/address/ABI prerequisites hold.");
+    requires resource_hypothesis(plugin_callback_candidates, "Every actual rk_conf invocation has its exact declared member candidate and a prior successful public registration or stated static default.");
+    requires resource_hypothesis(plugin_code_context_lifetime, "Every loaded callback invocation, including destruction and copied on_new paths, has live code and opaque context.");
+    requires resource_hypothesis(plugin_interceptor_custody, "Every interceptor-descendant pointer and scalar resource is borrowed, with no retain/transfer/global custody and each local acquisition dropped before its activation returns.");
+    requires resource_hypothesis(plugin_interceptor_registration, "Every loaded interceptor uses a successful public setter with the exact pinned list/union-arm candidate and permitted configuration/client lifecycle.");
+    requires resource_hypothesis(plugin_lifecycle_unload, "Every callback invocation precedes matching final unload and copied registrations retain actual loader references.");
+    requires resource_hypothesis(plugin_outer_bridge, "Actually loaded RK and Fluent Bit C/Go code independently meet their respectively bound proposed outer envelopes; one envelope covers no missing obligation of another.");
+    requires resource_premise_decomposition(rk_plugin_callback_closure, plugin_artifact_symbol_abi, plugin_callback_candidates, plugin_code_context_lifetime, plugin_interceptor_custody, plugin_interceptor_registration, plugin_lifecycle_unload, plugin_outer_bridge);
 };
 
 // lib/librdkafka-2.15.0/src/rdkafka_cgrp.c: 1 first read(s) of rkb->rkb_rk on the stable reading.
@@ -666,6 +1098,14 @@ contract {
     requires bounds_contract_v1;
     requires nonnull_member(rd_kafka_broker_s, rkb_rk, rkb) where quant #scope [[scope]];
     requires resource_premise(rk_plugin_callback_closure, "P-RK-PLUGIN-CALLBACK-CLOSURE: in the static scope every rk_conf callback a call may run, including rd_kafka_log_buf's log callback, is a run registration or a stated default with a declared candidate; with loaded external code, extra registrations depend on the applicable pinned rk_plugin_library and flb_external_plugin outer envelopes (OP-APP-RK-CALLBACKS-VIA-POLL-CB, C04.20)");
+    requires resource_hypothesis(plugin_artifact_symbol_abi, "For every reached loaded artifact, exact selected build/inventory, artifact identity and required symbol/address/ABI prerequisites hold.");
+    requires resource_hypothesis(plugin_callback_candidates, "Every actual rk_conf invocation has its exact declared member candidate and a prior successful public registration or stated static default.");
+    requires resource_hypothesis(plugin_code_context_lifetime, "Every loaded callback invocation, including destruction and copied on_new paths, has live code and opaque context.");
+    requires resource_hypothesis(plugin_interceptor_custody, "Every interceptor-descendant pointer and scalar resource is borrowed, with no retain/transfer/global custody and each local acquisition dropped before its activation returns.");
+    requires resource_hypothesis(plugin_interceptor_registration, "Every loaded interceptor uses a successful public setter with the exact pinned list/union-arm candidate and permitted configuration/client lifecycle.");
+    requires resource_hypothesis(plugin_lifecycle_unload, "Every callback invocation precedes matching final unload and copied registrations retain actual loader references.");
+    requires resource_hypothesis(plugin_outer_bridge, "Actually loaded RK and Fluent Bit C/Go code independently meet their respectively bound proposed outer envelopes; one envelope covers no missing obligation of another.");
+    requires resource_premise_decomposition(rk_plugin_callback_closure, plugin_artifact_symbol_abi, plugin_callback_candidates, plugin_code_context_lifetime, plugin_interceptor_custody, plugin_interceptor_registration, plugin_lifecycle_unload, plugin_outer_bridge);
 };
 
 // lib/librdkafka-2.15.0/src/rdkafka_request.c: 1 first read(s) of rkb->rkb_rk on the stable reading.
@@ -674,6 +1114,14 @@ contract {
     requires bounds_contract_v1;
     requires nonnull_member(rd_kafka_broker_s, rkb_rk, rkb) where quant #scope [[scope]];
     requires resource_premise(rk_plugin_callback_closure, "P-RK-PLUGIN-CALLBACK-CLOSURE: in the static scope every rk_conf callback a call may run, including rd_kafka_log_buf's log callback, is a run registration or a stated default with a declared candidate; with loaded external code, extra registrations depend on the applicable pinned rk_plugin_library and flb_external_plugin outer envelopes (OP-APP-RK-CALLBACKS-VIA-POLL-CB, C04.20)");
+    requires resource_hypothesis(plugin_artifact_symbol_abi, "For every reached loaded artifact, exact selected build/inventory, artifact identity and required symbol/address/ABI prerequisites hold.");
+    requires resource_hypothesis(plugin_callback_candidates, "Every actual rk_conf invocation has its exact declared member candidate and a prior successful public registration or stated static default.");
+    requires resource_hypothesis(plugin_code_context_lifetime, "Every loaded callback invocation, including destruction and copied on_new paths, has live code and opaque context.");
+    requires resource_hypothesis(plugin_interceptor_custody, "Every interceptor-descendant pointer and scalar resource is borrowed, with no retain/transfer/global custody and each local acquisition dropped before its activation returns.");
+    requires resource_hypothesis(plugin_interceptor_registration, "Every loaded interceptor uses a successful public setter with the exact pinned list/union-arm candidate and permitted configuration/client lifecycle.");
+    requires resource_hypothesis(plugin_lifecycle_unload, "Every callback invocation precedes matching final unload and copied registrations retain actual loader references.");
+    requires resource_hypothesis(plugin_outer_bridge, "Actually loaded RK and Fluent Bit C/Go code independently meet their respectively bound proposed outer envelopes; one envelope covers no missing obligation of another.");
+    requires resource_premise_decomposition(rk_plugin_callback_closure, plugin_artifact_symbol_abi, plugin_callback_candidates, plugin_code_context_lifetime, plugin_interceptor_custody, plugin_interceptor_registration, plugin_lifecycle_unload, plugin_outer_bridge);
 };
 
 // lib/librdkafka-2.15.0/src/rdkafka_idempotence.c: 2 first read(s) of rkb->rkb_rk on the stable reading.
@@ -682,6 +1130,14 @@ contract {
     requires bounds_contract_v1;
     requires nonnull_member(rd_kafka_broker_s, rkb_rk, rkb) where quant #scope [[scope]];
     requires resource_premise(rk_plugin_callback_closure, "P-RK-PLUGIN-CALLBACK-CLOSURE: in the static scope every rk_conf callback a call may run, including rd_kafka_log_buf's log callback, is a run registration or a stated default with a declared candidate; with loaded external code, extra registrations depend on the applicable pinned rk_plugin_library and flb_external_plugin outer envelopes (OP-APP-RK-CALLBACKS-VIA-POLL-CB, C04.20)");
+    requires resource_hypothesis(plugin_artifact_symbol_abi, "For every reached loaded artifact, exact selected build/inventory, artifact identity and required symbol/address/ABI prerequisites hold.");
+    requires resource_hypothesis(plugin_callback_candidates, "Every actual rk_conf invocation has its exact declared member candidate and a prior successful public registration or stated static default.");
+    requires resource_hypothesis(plugin_code_context_lifetime, "Every loaded callback invocation, including destruction and copied on_new paths, has live code and opaque context.");
+    requires resource_hypothesis(plugin_interceptor_custody, "Every interceptor-descendant pointer and scalar resource is borrowed, with no retain/transfer/global custody and each local acquisition dropped before its activation returns.");
+    requires resource_hypothesis(plugin_interceptor_registration, "Every loaded interceptor uses a successful public setter with the exact pinned list/union-arm candidate and permitted configuration/client lifecycle.");
+    requires resource_hypothesis(plugin_lifecycle_unload, "Every callback invocation precedes matching final unload and copied registrations retain actual loader references.");
+    requires resource_hypothesis(plugin_outer_bridge, "Actually loaded RK and Fluent Bit C/Go code independently meet their respectively bound proposed outer envelopes; one envelope covers no missing obligation of another.");
+    requires resource_premise_decomposition(rk_plugin_callback_closure, plugin_artifact_symbol_abi, plugin_callback_candidates, plugin_code_context_lifetime, plugin_interceptor_custody, plugin_interceptor_registration, plugin_lifecycle_unload, plugin_outer_bridge);
 };
 
 // lib/librdkafka-2.15.0/src/rdkafka_request.c: 3 first read(s) of rkb->rkb_rk on the stable reading.
@@ -690,6 +1146,14 @@ contract {
     requires bounds_contract_v1;
     requires nonnull_member(rd_kafka_broker_s, rkb_rk, rkb) where quant #scope [[scope]];
     requires resource_premise(rk_plugin_callback_closure, "P-RK-PLUGIN-CALLBACK-CLOSURE: in the static scope every rk_conf callback a call may run, including rd_kafka_log_buf's log callback, is a run registration or a stated default with a declared candidate; with loaded external code, extra registrations depend on the applicable pinned rk_plugin_library and flb_external_plugin outer envelopes (OP-APP-RK-CALLBACKS-VIA-POLL-CB, C04.20)");
+    requires resource_hypothesis(plugin_artifact_symbol_abi, "For every reached loaded artifact, exact selected build/inventory, artifact identity and required symbol/address/ABI prerequisites hold.");
+    requires resource_hypothesis(plugin_callback_candidates, "Every actual rk_conf invocation has its exact declared member candidate and a prior successful public registration or stated static default.");
+    requires resource_hypothesis(plugin_code_context_lifetime, "Every loaded callback invocation, including destruction and copied on_new paths, has live code and opaque context.");
+    requires resource_hypothesis(plugin_interceptor_custody, "Every interceptor-descendant pointer and scalar resource is borrowed, with no retain/transfer/global custody and each local acquisition dropped before its activation returns.");
+    requires resource_hypothesis(plugin_interceptor_registration, "Every loaded interceptor uses a successful public setter with the exact pinned list/union-arm candidate and permitted configuration/client lifecycle.");
+    requires resource_hypothesis(plugin_lifecycle_unload, "Every callback invocation precedes matching final unload and copied registrations retain actual loader references.");
+    requires resource_hypothesis(plugin_outer_bridge, "Actually loaded RK and Fluent Bit C/Go code independently meet their respectively bound proposed outer envelopes; one envelope covers no missing obligation of another.");
+    requires resource_premise_decomposition(rk_plugin_callback_closure, plugin_artifact_symbol_abi, plugin_callback_candidates, plugin_code_context_lifetime, plugin_interceptor_custody, plugin_interceptor_registration, plugin_lifecycle_unload, plugin_outer_bridge);
 };
 
 // lib/librdkafka-2.15.0/src/rdkafka_op.c: 1 first read(s) of rkb->rkb_rk on the stable reading.
@@ -698,6 +1162,14 @@ contract {
     requires bounds_contract_v1;
     requires nonnull_member(rd_kafka_broker_s, rkb_rk, rkb) where quant #scope [[scope]];
     requires resource_premise(rk_plugin_callback_closure, "P-RK-PLUGIN-CALLBACK-CLOSURE: in the static scope every rk_conf callback a call may run, including rd_kafka_log_buf's log callback, is a run registration or a stated default with a declared candidate; with loaded external code, extra registrations depend on the applicable pinned rk_plugin_library and flb_external_plugin outer envelopes (OP-APP-RK-CALLBACKS-VIA-POLL-CB, C04.20)");
+    requires resource_hypothesis(plugin_artifact_symbol_abi, "For every reached loaded artifact, exact selected build/inventory, artifact identity and required symbol/address/ABI prerequisites hold.");
+    requires resource_hypothesis(plugin_callback_candidates, "Every actual rk_conf invocation has its exact declared member candidate and a prior successful public registration or stated static default.");
+    requires resource_hypothesis(plugin_code_context_lifetime, "Every loaded callback invocation, including destruction and copied on_new paths, has live code and opaque context.");
+    requires resource_hypothesis(plugin_interceptor_custody, "Every interceptor-descendant pointer and scalar resource is borrowed, with no retain/transfer/global custody and each local acquisition dropped before its activation returns.");
+    requires resource_hypothesis(plugin_interceptor_registration, "Every loaded interceptor uses a successful public setter with the exact pinned list/union-arm candidate and permitted configuration/client lifecycle.");
+    requires resource_hypothesis(plugin_lifecycle_unload, "Every callback invocation precedes matching final unload and copied registrations retain actual loader references.");
+    requires resource_hypothesis(plugin_outer_bridge, "Actually loaded RK and Fluent Bit C/Go code independently meet their respectively bound proposed outer envelopes; one envelope covers no missing obligation of another.");
+    requires resource_premise_decomposition(rk_plugin_callback_closure, plugin_artifact_symbol_abi, plugin_callback_candidates, plugin_code_context_lifetime, plugin_interceptor_custody, plugin_interceptor_registration, plugin_lifecycle_unload, plugin_outer_bridge);
 };
 
 // lib/librdkafka-2.15.0/src/rdkafka_metadata.c: 1 first read(s) of rkb->rkb_rk on the stable reading.
@@ -706,6 +1178,14 @@ contract {
     requires bounds_contract_v1;
     requires nonnull_member(rd_kafka_broker_s, rkb_rk, rkb) where quant #scope [[scope]];
     requires resource_premise(rk_plugin_callback_closure, "P-RK-PLUGIN-CALLBACK-CLOSURE: in the static scope every rk_conf callback a call may run, including rd_kafka_log_buf's log callback, is a run registration or a stated default with a declared candidate; with loaded external code, extra registrations depend on the applicable pinned rk_plugin_library and flb_external_plugin outer envelopes (OP-APP-RK-CALLBACKS-VIA-POLL-CB, C04.20)");
+    requires resource_hypothesis(plugin_artifact_symbol_abi, "For every reached loaded artifact, exact selected build/inventory, artifact identity and required symbol/address/ABI prerequisites hold.");
+    requires resource_hypothesis(plugin_callback_candidates, "Every actual rk_conf invocation has its exact declared member candidate and a prior successful public registration or stated static default.");
+    requires resource_hypothesis(plugin_code_context_lifetime, "Every loaded callback invocation, including destruction and copied on_new paths, has live code and opaque context.");
+    requires resource_hypothesis(plugin_interceptor_custody, "Every interceptor-descendant pointer and scalar resource is borrowed, with no retain/transfer/global custody and each local acquisition dropped before its activation returns.");
+    requires resource_hypothesis(plugin_interceptor_registration, "Every loaded interceptor uses a successful public setter with the exact pinned list/union-arm candidate and permitted configuration/client lifecycle.");
+    requires resource_hypothesis(plugin_lifecycle_unload, "Every callback invocation precedes matching final unload and copied registrations retain actual loader references.");
+    requires resource_hypothesis(plugin_outer_bridge, "Actually loaded RK and Fluent Bit C/Go code independently meet their respectively bound proposed outer envelopes; one envelope covers no missing obligation of another.");
+    requires resource_premise_decomposition(rk_plugin_callback_closure, plugin_artifact_symbol_abi, plugin_callback_candidates, plugin_code_context_lifetime, plugin_interceptor_custody, plugin_interceptor_registration, plugin_lifecycle_unload, plugin_outer_bridge);
 };
 
 // lib/librdkafka-2.15.0/src/rdkafka_broker.c: 2 first read(s) of rkb->rkb_rk on the stable reading.
@@ -714,6 +1194,14 @@ contract {
     requires bounds_contract_v1;
     requires nonnull_member(rd_kafka_broker_s, rkb_rk, rkb) where quant #scope [[scope]];
     requires resource_premise(rk_plugin_callback_closure, "P-RK-PLUGIN-CALLBACK-CLOSURE: in the static scope every rk_conf callback a call may run, including rd_kafka_log_buf's log callback, is a run registration or a stated default with a declared candidate; with loaded external code, extra registrations depend on the applicable pinned rk_plugin_library and flb_external_plugin outer envelopes (OP-APP-RK-CALLBACKS-VIA-POLL-CB, C04.20)");
+    requires resource_hypothesis(plugin_artifact_symbol_abi, "For every reached loaded artifact, exact selected build/inventory, artifact identity and required symbol/address/ABI prerequisites hold.");
+    requires resource_hypothesis(plugin_callback_candidates, "Every actual rk_conf invocation has its exact declared member candidate and a prior successful public registration or stated static default.");
+    requires resource_hypothesis(plugin_code_context_lifetime, "Every loaded callback invocation, including destruction and copied on_new paths, has live code and opaque context.");
+    requires resource_hypothesis(plugin_interceptor_custody, "Every interceptor-descendant pointer and scalar resource is borrowed, with no retain/transfer/global custody and each local acquisition dropped before its activation returns.");
+    requires resource_hypothesis(plugin_interceptor_registration, "Every loaded interceptor uses a successful public setter with the exact pinned list/union-arm candidate and permitted configuration/client lifecycle.");
+    requires resource_hypothesis(plugin_lifecycle_unload, "Every callback invocation precedes matching final unload and copied registrations retain actual loader references.");
+    requires resource_hypothesis(plugin_outer_bridge, "Actually loaded RK and Fluent Bit C/Go code independently meet their respectively bound proposed outer envelopes; one envelope covers no missing obligation of another.");
+    requires resource_premise_decomposition(rk_plugin_callback_closure, plugin_artifact_symbol_abi, plugin_callback_candidates, plugin_code_context_lifetime, plugin_interceptor_custody, plugin_interceptor_registration, plugin_lifecycle_unload, plugin_outer_bridge);
 };
 
 // lib/librdkafka-2.15.0/src/rdkafka_broker.c: 2 first read(s) of rkb->rkb_rk on the stable reading.
@@ -722,6 +1210,14 @@ contract {
     requires bounds_contract_v1;
     requires nonnull_member(rd_kafka_broker_s, rkb_rk, rkb) where quant #scope [[scope]];
     requires resource_premise(rk_plugin_callback_closure, "P-RK-PLUGIN-CALLBACK-CLOSURE: in the static scope every rk_conf callback a call may run, including rd_kafka_log_buf's log callback, is a run registration or a stated default with a declared candidate; with loaded external code, extra registrations depend on the applicable pinned rk_plugin_library and flb_external_plugin outer envelopes (OP-APP-RK-CALLBACKS-VIA-POLL-CB, C04.20)");
+    requires resource_hypothesis(plugin_artifact_symbol_abi, "For every reached loaded artifact, exact selected build/inventory, artifact identity and required symbol/address/ABI prerequisites hold.");
+    requires resource_hypothesis(plugin_callback_candidates, "Every actual rk_conf invocation has its exact declared member candidate and a prior successful public registration or stated static default.");
+    requires resource_hypothesis(plugin_code_context_lifetime, "Every loaded callback invocation, including destruction and copied on_new paths, has live code and opaque context.");
+    requires resource_hypothesis(plugin_interceptor_custody, "Every interceptor-descendant pointer and scalar resource is borrowed, with no retain/transfer/global custody and each local acquisition dropped before its activation returns.");
+    requires resource_hypothesis(plugin_interceptor_registration, "Every loaded interceptor uses a successful public setter with the exact pinned list/union-arm candidate and permitted configuration/client lifecycle.");
+    requires resource_hypothesis(plugin_lifecycle_unload, "Every callback invocation precedes matching final unload and copied registrations retain actual loader references.");
+    requires resource_hypothesis(plugin_outer_bridge, "Actually loaded RK and Fluent Bit C/Go code independently meet their respectively bound proposed outer envelopes; one envelope covers no missing obligation of another.");
+    requires resource_premise_decomposition(rk_plugin_callback_closure, plugin_artifact_symbol_abi, plugin_callback_candidates, plugin_code_context_lifetime, plugin_interceptor_custody, plugin_interceptor_registration, plugin_lifecycle_unload, plugin_outer_bridge);
 };
 
 // lib/librdkafka-2.15.0/src/rdkafka_sasl.c: 1 first read(s) of rkb->rkb_rk on the stable reading.
@@ -730,6 +1226,14 @@ contract {
     requires bounds_contract_v1;
     requires nonnull_member(rd_kafka_broker_s, rkb_rk, rkb) where quant #scope [[scope]];
     requires resource_premise(rk_plugin_callback_closure, "P-RK-PLUGIN-CALLBACK-CLOSURE: in the static scope every rk_conf callback a call may run, including rd_kafka_log_buf's log callback, is a run registration or a stated default with a declared candidate; with loaded external code, extra registrations depend on the applicable pinned rk_plugin_library and flb_external_plugin outer envelopes (OP-APP-RK-CALLBACKS-VIA-POLL-CB, C04.20)");
+    requires resource_hypothesis(plugin_artifact_symbol_abi, "For every reached loaded artifact, exact selected build/inventory, artifact identity and required symbol/address/ABI prerequisites hold.");
+    requires resource_hypothesis(plugin_callback_candidates, "Every actual rk_conf invocation has its exact declared member candidate and a prior successful public registration or stated static default.");
+    requires resource_hypothesis(plugin_code_context_lifetime, "Every loaded callback invocation, including destruction and copied on_new paths, has live code and opaque context.");
+    requires resource_hypothesis(plugin_interceptor_custody, "Every interceptor-descendant pointer and scalar resource is borrowed, with no retain/transfer/global custody and each local acquisition dropped before its activation returns.");
+    requires resource_hypothesis(plugin_interceptor_registration, "Every loaded interceptor uses a successful public setter with the exact pinned list/union-arm candidate and permitted configuration/client lifecycle.");
+    requires resource_hypothesis(plugin_lifecycle_unload, "Every callback invocation precedes matching final unload and copied registrations retain actual loader references.");
+    requires resource_hypothesis(plugin_outer_bridge, "Actually loaded RK and Fluent Bit C/Go code independently meet their respectively bound proposed outer envelopes; one envelope covers no missing obligation of another.");
+    requires resource_premise_decomposition(rk_plugin_callback_closure, plugin_artifact_symbol_abi, plugin_callback_candidates, plugin_code_context_lifetime, plugin_interceptor_custody, plugin_interceptor_registration, plugin_lifecycle_unload, plugin_outer_bridge);
 };
 
 // lib/librdkafka-2.15.0/src/rdkafka_sasl.c: 1 first read(s) of rkb->rkb_rk on the stable reading.
@@ -738,6 +1242,14 @@ contract {
     requires bounds_contract_v1;
     requires nonnull_member(rd_kafka_broker_s, rkb_rk, rkb) where quant #scope [[scope]];
     requires resource_premise(rk_plugin_callback_closure, "P-RK-PLUGIN-CALLBACK-CLOSURE: in the static scope every rk_conf callback a call may run, including rd_kafka_log_buf's log callback, is a run registration or a stated default with a declared candidate; with loaded external code, extra registrations depend on the applicable pinned rk_plugin_library and flb_external_plugin outer envelopes (OP-APP-RK-CALLBACKS-VIA-POLL-CB, C04.20)");
+    requires resource_hypothesis(plugin_artifact_symbol_abi, "For every reached loaded artifact, exact selected build/inventory, artifact identity and required symbol/address/ABI prerequisites hold.");
+    requires resource_hypothesis(plugin_callback_candidates, "Every actual rk_conf invocation has its exact declared member candidate and a prior successful public registration or stated static default.");
+    requires resource_hypothesis(plugin_code_context_lifetime, "Every loaded callback invocation, including destruction and copied on_new paths, has live code and opaque context.");
+    requires resource_hypothesis(plugin_interceptor_custody, "Every interceptor-descendant pointer and scalar resource is borrowed, with no retain/transfer/global custody and each local acquisition dropped before its activation returns.");
+    requires resource_hypothesis(plugin_interceptor_registration, "Every loaded interceptor uses a successful public setter with the exact pinned list/union-arm candidate and permitted configuration/client lifecycle.");
+    requires resource_hypothesis(plugin_lifecycle_unload, "Every callback invocation precedes matching final unload and copied registrations retain actual loader references.");
+    requires resource_hypothesis(plugin_outer_bridge, "Actually loaded RK and Fluent Bit C/Go code independently meet their respectively bound proposed outer envelopes; one envelope covers no missing obligation of another.");
+    requires resource_premise_decomposition(rk_plugin_callback_closure, plugin_artifact_symbol_abi, plugin_callback_candidates, plugin_code_context_lifetime, plugin_interceptor_custody, plugin_interceptor_registration, plugin_lifecycle_unload, plugin_outer_bridge);
 };
 
 // lib/librdkafka-2.15.0/src/rdkafka_broker.c: 4 first read(s) of rkb->rkb_rk on the stable reading.
@@ -746,6 +1258,14 @@ contract {
     requires bounds_contract_v1;
     requires nonnull_member(rd_kafka_broker_s, rkb_rk, rkb) where quant #scope [[scope]];
     requires resource_premise(rk_plugin_callback_closure, "P-RK-PLUGIN-CALLBACK-CLOSURE: in the static scope every rk_conf callback a call may run, including rd_kafka_log_buf's log callback, is a run registration or a stated default with a declared candidate; with loaded external code, extra registrations depend on the applicable pinned rk_plugin_library and flb_external_plugin outer envelopes (OP-APP-RK-CALLBACKS-VIA-POLL-CB, C04.20)");
+    requires resource_hypothesis(plugin_artifact_symbol_abi, "For every reached loaded artifact, exact selected build/inventory, artifact identity and required symbol/address/ABI prerequisites hold.");
+    requires resource_hypothesis(plugin_callback_candidates, "Every actual rk_conf invocation has its exact declared member candidate and a prior successful public registration or stated static default.");
+    requires resource_hypothesis(plugin_code_context_lifetime, "Every loaded callback invocation, including destruction and copied on_new paths, has live code and opaque context.");
+    requires resource_hypothesis(plugin_interceptor_custody, "Every interceptor-descendant pointer and scalar resource is borrowed, with no retain/transfer/global custody and each local acquisition dropped before its activation returns.");
+    requires resource_hypothesis(plugin_interceptor_registration, "Every loaded interceptor uses a successful public setter with the exact pinned list/union-arm candidate and permitted configuration/client lifecycle.");
+    requires resource_hypothesis(plugin_lifecycle_unload, "Every callback invocation precedes matching final unload and copied registrations retain actual loader references.");
+    requires resource_hypothesis(plugin_outer_bridge, "Actually loaded RK and Fluent Bit C/Go code independently meet their respectively bound proposed outer envelopes; one envelope covers no missing obligation of another.");
+    requires resource_premise_decomposition(rk_plugin_callback_closure, plugin_artifact_symbol_abi, plugin_callback_candidates, plugin_code_context_lifetime, plugin_interceptor_custody, plugin_interceptor_registration, plugin_lifecycle_unload, plugin_outer_bridge);
 };
 
 // lib/librdkafka-2.15.0/src/rdkafka_ssl.c: 2 first read(s) of rkb->rkb_rk on the stable reading.
@@ -754,6 +1274,14 @@ contract {
     requires bounds_contract_v1;
     requires nonnull_member(rd_kafka_broker_s, rkb_rk, rkb) where quant #scope [[scope]];
     requires resource_premise(rk_plugin_callback_closure, "P-RK-PLUGIN-CALLBACK-CLOSURE: in the static scope every rk_conf callback a call may run, including rd_kafka_log_buf's log callback, is a run registration or a stated default with a declared candidate; with loaded external code, extra registrations depend on the applicable pinned rk_plugin_library and flb_external_plugin outer envelopes (OP-APP-RK-CALLBACKS-VIA-POLL-CB, C04.20)");
+    requires resource_hypothesis(plugin_artifact_symbol_abi, "For every reached loaded artifact, exact selected build/inventory, artifact identity and required symbol/address/ABI prerequisites hold.");
+    requires resource_hypothesis(plugin_callback_candidates, "Every actual rk_conf invocation has its exact declared member candidate and a prior successful public registration or stated static default.");
+    requires resource_hypothesis(plugin_code_context_lifetime, "Every loaded callback invocation, including destruction and copied on_new paths, has live code and opaque context.");
+    requires resource_hypothesis(plugin_interceptor_custody, "Every interceptor-descendant pointer and scalar resource is borrowed, with no retain/transfer/global custody and each local acquisition dropped before its activation returns.");
+    requires resource_hypothesis(plugin_interceptor_registration, "Every loaded interceptor uses a successful public setter with the exact pinned list/union-arm candidate and permitted configuration/client lifecycle.");
+    requires resource_hypothesis(plugin_lifecycle_unload, "Every callback invocation precedes matching final unload and copied registrations retain actual loader references.");
+    requires resource_hypothesis(plugin_outer_bridge, "Actually loaded RK and Fluent Bit C/Go code independently meet their respectively bound proposed outer envelopes; one envelope covers no missing obligation of another.");
+    requires resource_premise_decomposition(rk_plugin_callback_closure, plugin_artifact_symbol_abi, plugin_callback_candidates, plugin_code_context_lifetime, plugin_interceptor_custody, plugin_interceptor_registration, plugin_lifecycle_unload, plugin_outer_bridge);
 };
 
 // lib/librdkafka-2.15.0/src/rdkafka_fetcher.c: 2 first read(s) of rkb->rkb_rk on the stable reading.
@@ -762,6 +1290,14 @@ contract {
     requires bounds_contract_v1;
     requires nonnull_member(rd_kafka_broker_s, rkb_rk, rkb) where quant #scope [[scope]];
     requires resource_premise(rk_plugin_callback_closure, "P-RK-PLUGIN-CALLBACK-CLOSURE: in the static scope every rk_conf callback a call may run, including rd_kafka_log_buf's log callback, is a run registration or a stated default with a declared candidate; with loaded external code, extra registrations depend on the applicable pinned rk_plugin_library and flb_external_plugin outer envelopes (OP-APP-RK-CALLBACKS-VIA-POLL-CB, C04.20)");
+    requires resource_hypothesis(plugin_artifact_symbol_abi, "For every reached loaded artifact, exact selected build/inventory, artifact identity and required symbol/address/ABI prerequisites hold.");
+    requires resource_hypothesis(plugin_callback_candidates, "Every actual rk_conf invocation has its exact declared member candidate and a prior successful public registration or stated static default.");
+    requires resource_hypothesis(plugin_code_context_lifetime, "Every loaded callback invocation, including destruction and copied on_new paths, has live code and opaque context.");
+    requires resource_hypothesis(plugin_interceptor_custody, "Every interceptor-descendant pointer and scalar resource is borrowed, with no retain/transfer/global custody and each local acquisition dropped before its activation returns.");
+    requires resource_hypothesis(plugin_interceptor_registration, "Every loaded interceptor uses a successful public setter with the exact pinned list/union-arm candidate and permitted configuration/client lifecycle.");
+    requires resource_hypothesis(plugin_lifecycle_unload, "Every callback invocation precedes matching final unload and copied registrations retain actual loader references.");
+    requires resource_hypothesis(plugin_outer_bridge, "Actually loaded RK and Fluent Bit C/Go code independently meet their respectively bound proposed outer envelopes; one envelope covers no missing obligation of another.");
+    requires resource_premise_decomposition(rk_plugin_callback_closure, plugin_artifact_symbol_abi, plugin_callback_candidates, plugin_code_context_lifetime, plugin_interceptor_custody, plugin_interceptor_registration, plugin_lifecycle_unload, plugin_outer_bridge);
 };
 
 // lib/librdkafka-2.15.0/src/rdkafka_transport.c: 1 first read(s) of rkb->rkb_rk on the stable reading.
@@ -770,6 +1306,14 @@ contract {
     requires bounds_contract_v1;
     requires nonnull_member(rd_kafka_broker_s, rkb_rk, rkb) where quant #scope [[scope]];
     requires resource_premise(rk_plugin_callback_closure, "P-RK-PLUGIN-CALLBACK-CLOSURE: in the static scope every rk_conf callback a call may run, including rd_kafka_log_buf's log callback, is a run registration or a stated default with a declared candidate; with loaded external code, extra registrations depend on the applicable pinned rk_plugin_library and flb_external_plugin outer envelopes (OP-APP-RK-CALLBACKS-VIA-POLL-CB, C04.20)");
+    requires resource_hypothesis(plugin_artifact_symbol_abi, "For every reached loaded artifact, exact selected build/inventory, artifact identity and required symbol/address/ABI prerequisites hold.");
+    requires resource_hypothesis(plugin_callback_candidates, "Every actual rk_conf invocation has its exact declared member candidate and a prior successful public registration or stated static default.");
+    requires resource_hypothesis(plugin_code_context_lifetime, "Every loaded callback invocation, including destruction and copied on_new paths, has live code and opaque context.");
+    requires resource_hypothesis(plugin_interceptor_custody, "Every interceptor-descendant pointer and scalar resource is borrowed, with no retain/transfer/global custody and each local acquisition dropped before its activation returns.");
+    requires resource_hypothesis(plugin_interceptor_registration, "Every loaded interceptor uses a successful public setter with the exact pinned list/union-arm candidate and permitted configuration/client lifecycle.");
+    requires resource_hypothesis(plugin_lifecycle_unload, "Every callback invocation precedes matching final unload and copied registrations retain actual loader references.");
+    requires resource_hypothesis(plugin_outer_bridge, "Actually loaded RK and Fluent Bit C/Go code independently meet their respectively bound proposed outer envelopes; one envelope covers no missing obligation of another.");
+    requires resource_premise_decomposition(rk_plugin_callback_closure, plugin_artifact_symbol_abi, plugin_callback_candidates, plugin_code_context_lifetime, plugin_interceptor_custody, plugin_interceptor_registration, plugin_lifecycle_unload, plugin_outer_bridge);
 };
 
 // lib/librdkafka-2.15.0/src/rdkafka_ssl.c: 1 first read(s) of rkb->rkb_rk on the stable reading.
@@ -778,6 +1322,14 @@ contract {
     requires bounds_contract_v1;
     requires nonnull_member(rd_kafka_broker_s, rkb_rk, rkb) where quant #scope [[scope]];
     requires resource_premise(rk_plugin_callback_closure, "P-RK-PLUGIN-CALLBACK-CLOSURE: in the static scope every rk_conf callback a call may run, including rd_kafka_log_buf's log callback, is a run registration or a stated default with a declared candidate; with loaded external code, extra registrations depend on the applicable pinned rk_plugin_library and flb_external_plugin outer envelopes (OP-APP-RK-CALLBACKS-VIA-POLL-CB, C04.20)");
+    requires resource_hypothesis(plugin_artifact_symbol_abi, "For every reached loaded artifact, exact selected build/inventory, artifact identity and required symbol/address/ABI prerequisites hold.");
+    requires resource_hypothesis(plugin_callback_candidates, "Every actual rk_conf invocation has its exact declared member candidate and a prior successful public registration or stated static default.");
+    requires resource_hypothesis(plugin_code_context_lifetime, "Every loaded callback invocation, including destruction and copied on_new paths, has live code and opaque context.");
+    requires resource_hypothesis(plugin_interceptor_custody, "Every interceptor-descendant pointer and scalar resource is borrowed, with no retain/transfer/global custody and each local acquisition dropped before its activation returns.");
+    requires resource_hypothesis(plugin_interceptor_registration, "Every loaded interceptor uses a successful public setter with the exact pinned list/union-arm candidate and permitted configuration/client lifecycle.");
+    requires resource_hypothesis(plugin_lifecycle_unload, "Every callback invocation precedes matching final unload and copied registrations retain actual loader references.");
+    requires resource_hypothesis(plugin_outer_bridge, "Actually loaded RK and Fluent Bit C/Go code independently meet their respectively bound proposed outer envelopes; one envelope covers no missing obligation of another.");
+    requires resource_premise_decomposition(rk_plugin_callback_closure, plugin_artifact_symbol_abi, plugin_callback_candidates, plugin_code_context_lifetime, plugin_interceptor_custody, plugin_interceptor_registration, plugin_lifecycle_unload, plugin_outer_bridge);
 };
 
 // lib/librdkafka-2.15.0/src/rdkafka_broker.c: 4 first read(s) of rkb->rkb_rk on the stable reading.
@@ -786,6 +1338,14 @@ contract {
     requires bounds_contract_v1;
     requires nonnull_member(rd_kafka_broker_s, rkb_rk, rkb) where quant #scope [[scope]];
     requires resource_premise(rk_plugin_callback_closure, "P-RK-PLUGIN-CALLBACK-CLOSURE: in the static scope every rk_conf callback a call may run, including rd_kafka_log_buf's log callback, is a run registration or a stated default with a declared candidate; with loaded external code, extra registrations depend on the applicable pinned rk_plugin_library and flb_external_plugin outer envelopes (OP-APP-RK-CALLBACKS-VIA-POLL-CB, C04.20)");
+    requires resource_hypothesis(plugin_artifact_symbol_abi, "For every reached loaded artifact, exact selected build/inventory, artifact identity and required symbol/address/ABI prerequisites hold.");
+    requires resource_hypothesis(plugin_callback_candidates, "Every actual rk_conf invocation has its exact declared member candidate and a prior successful public registration or stated static default.");
+    requires resource_hypothesis(plugin_code_context_lifetime, "Every loaded callback invocation, including destruction and copied on_new paths, has live code and opaque context.");
+    requires resource_hypothesis(plugin_interceptor_custody, "Every interceptor-descendant pointer and scalar resource is borrowed, with no retain/transfer/global custody and each local acquisition dropped before its activation returns.");
+    requires resource_hypothesis(plugin_interceptor_registration, "Every loaded interceptor uses a successful public setter with the exact pinned list/union-arm candidate and permitted configuration/client lifecycle.");
+    requires resource_hypothesis(plugin_lifecycle_unload, "Every callback invocation precedes matching final unload and copied registrations retain actual loader references.");
+    requires resource_hypothesis(plugin_outer_bridge, "Actually loaded RK and Fluent Bit C/Go code independently meet their respectively bound proposed outer envelopes; one envelope covers no missing obligation of another.");
+    requires resource_premise_decomposition(rk_plugin_callback_closure, plugin_artifact_symbol_abi, plugin_callback_candidates, plugin_code_context_lifetime, plugin_interceptor_custody, plugin_interceptor_registration, plugin_lifecycle_unload, plugin_outer_bridge);
 };
 
 // lib/librdkafka-2.15.0/src/rdkafka_request.c: 1 first read(s) of rkb->rkb_rk on the stable reading.
@@ -794,4 +1354,12 @@ contract {
     requires bounds_contract_v1;
     requires nonnull_member(rd_kafka_broker_s, rkb_rk, rkb) where quant #scope [[scope]];
     requires resource_premise(rk_plugin_callback_closure, "P-RK-PLUGIN-CALLBACK-CLOSURE: in the static scope every rk_conf callback a call may run, including rd_kafka_log_buf's log callback, is a run registration or a stated default with a declared candidate; with loaded external code, extra registrations depend on the applicable pinned rk_plugin_library and flb_external_plugin outer envelopes (OP-APP-RK-CALLBACKS-VIA-POLL-CB, C04.20)");
+    requires resource_hypothesis(plugin_artifact_symbol_abi, "For every reached loaded artifact, exact selected build/inventory, artifact identity and required symbol/address/ABI prerequisites hold.");
+    requires resource_hypothesis(plugin_callback_candidates, "Every actual rk_conf invocation has its exact declared member candidate and a prior successful public registration or stated static default.");
+    requires resource_hypothesis(plugin_code_context_lifetime, "Every loaded callback invocation, including destruction and copied on_new paths, has live code and opaque context.");
+    requires resource_hypothesis(plugin_interceptor_custody, "Every interceptor-descendant pointer and scalar resource is borrowed, with no retain/transfer/global custody and each local acquisition dropped before its activation returns.");
+    requires resource_hypothesis(plugin_interceptor_registration, "Every loaded interceptor uses a successful public setter with the exact pinned list/union-arm candidate and permitted configuration/client lifecycle.");
+    requires resource_hypothesis(plugin_lifecycle_unload, "Every callback invocation precedes matching final unload and copied registrations retain actual loader references.");
+    requires resource_hypothesis(plugin_outer_bridge, "Actually loaded RK and Fluent Bit C/Go code independently meet their respectively bound proposed outer envelopes; one envelope covers no missing obligation of another.");
+    requires resource_premise_decomposition(rk_plugin_callback_closure, plugin_artifact_symbol_abi, plugin_callback_candidates, plugin_code_context_lifetime, plugin_interceptor_custody, plugin_interceptor_registration, plugin_lifecycle_unload, plugin_outer_bridge);
 };
