@@ -1,0 +1,12 @@
+{
+  "command": [
+    "/usr/bin/python3",
+    "/home/cosmo/.codex/worktrees/premise-decomposition-cycle1b/qcore-c/docs/reports/libc-reading-site-evidence/scripts/impact.py",
+    "/home/cosmo/.codex/worktrees/premise-decomposition-cycle1b/qcore-c/private/libc-reading-site-evidence/runs-1/slice/after/resource-diagnostics.json",
+    "/home/cosmo/.codex/worktrees/premise-decomposition-cycle1b/qcore-c/private/libc-reading-site-evidence/production-slice-impact.json"
+  ],
+  "exit": 0,
+  "controls": 6,
+  "records": 404,
+  "automatic_verdict_mutations": 0
+}

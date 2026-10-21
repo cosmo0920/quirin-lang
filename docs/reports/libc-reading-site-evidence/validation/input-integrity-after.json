@@ -1,0 +1,8 @@
+{
+  "input_files_checked": 307,
+  "all_input_hashes_equal_to_pre_run_manifest": true,
+  "binaries": {
+    "/home/cosmo/Documents/GitHub/qcore-c/private/premise-integration/baseline/quirin-audit": "1e9e70c262d6e28a423cde0ad96eec3d0bb899fc599a07aaa9b3195de3cc06dd",
+    "/home/cosmo/.codex/worktrees/premise-decomposition-cycle1b/qcore-c/private/libc-reading-site-evidence/gate-1/quirin-audit": "18451156d7eb3c51209875076aef360884b453ff67a26c4d82b2f1a372fedec1"
+  }
+}

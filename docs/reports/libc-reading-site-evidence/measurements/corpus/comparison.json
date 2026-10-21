@@ -1,0 +1,69 @@
+{
+  "route": "corpus",
+  "checks": {
+    "identical_input_paths": true,
+    "identical_process_cwd": true,
+    "static_counts_equal": true,
+    "full_null_equal": true,
+    "null_summary_equal": true,
+    "full_runtime_equal": true,
+    "all_existing_artifacts_equal_after_exact_additive_version_and_full_source_time_attribution": true
+  },
+  "before_counts": {
+    "Unknown": 3852,
+    "Safe": 973,
+    "Unsafe": 9
+  },
+  "after_counts": {
+    "Unknown": 3852,
+    "Safe": 973,
+    "Unsafe": 9
+  },
+  "null_records": 4921,
+  "site_observations": 122,
+  "site_observations_by_declaration": {
+    "__errno_location": 122
+  },
+  "raw_differences": {
+    "diagnostics": 5070,
+    "contracts": 8905,
+    "chunk-contracts": 0,
+    "source-effects": 0,
+    "source": 0,
+    "null": 4834,
+    "null-summary": 0,
+    "outer": 0
+  },
+  "residual_differences": {
+    "diagnostics": 0,
+    "contracts": 0,
+    "chunk-contracts": 0,
+    "source-effects": 0,
+    "source": 0,
+    "null": 0,
+    "null-summary": 0,
+    "outer": 0
+  },
+  "version_records": 18569,
+  "all_pass": true,
+  "pre_time_checks": {
+    "identical_input_paths": true,
+    "identical_process_cwd": true,
+    "all_existing_artifacts_equal_after_exact_additive_erasure_and_version_attribution": false,
+    "static_counts_equal": true,
+    "full_null_equal": true,
+    "null_summary_equal": true,
+    "full_runtime_equal": true
+  },
+  "residual_differences_before_time_attribution": {
+    "diagnostics": 0,
+    "contracts": 4,
+    "chunk-contracts": 0,
+    "source-effects": 0,
+    "source": 0,
+    "null": 0,
+    "null-summary": 0,
+    "outer": 0
+  },
+  "time_attribution": "provenance-attribution.json"
+}

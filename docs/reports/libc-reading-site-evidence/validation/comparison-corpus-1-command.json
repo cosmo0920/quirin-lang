@@ -1,0 +1,12 @@
+{
+  "command": [
+    "python3",
+    "docs/reports/libc-reading-site-evidence/scripts/compare.py",
+    "corpus",
+    "private/libc-reading-site-evidence/runs-1/corpus/before",
+    "private/libc-reading-site-evidence/runs-1/corpus/after",
+    "private/libc-reading-site-evidence/comparison-corpus-1"
+  ],
+  "exit": 1,
+  "seconds": 10.176663160324097
+}

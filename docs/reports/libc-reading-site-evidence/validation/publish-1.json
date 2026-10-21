@@ -1,0 +1,8 @@
+{
+  "command": [
+    "python3",
+    "docs/reports/libc-reading-site-evidence/scripts/publish.py"
+  ],
+  "exit": 0,
+  "seconds": 5.7341790199279785
+}
