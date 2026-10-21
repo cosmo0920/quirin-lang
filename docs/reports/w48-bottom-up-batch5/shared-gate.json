@@ -284,10 +284,10 @@
     "ignored": 15
   },
   "lean": {
-    "theorems": 362,
     "placeholders": 0,
     "project_axioms": 0,
-    "version": "4.35.0"
+    "version": "4.35.0",
+    "audits": 362
   },
   "scope": "Shared frozen combined-card gate, not a standalone batch5 worktree gate.",
   "matrix_python": "Pending integrator regenerated committed matrix and Python receipt."

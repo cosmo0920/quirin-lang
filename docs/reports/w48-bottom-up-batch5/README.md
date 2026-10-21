@@ -71,7 +71,7 @@ The accepted focused set is 60 distinct Rust tests (3 new unit, 6 new source,
 51 existing descriptor/alias/chain controls), Clippy/fmt exit0 and ten audited
 Lean theorems. [Focused receipts](focused-receipts.json) retain all attempts.
 The [shared frozen gate](shared-gate.json) passes all eleven stages: 8,475 Rust
-passed, 15 ignored, zero failed; 362 Lean theorems, no placeholders or project
+passed, 15 ignored, zero failed; 362 Lean audits, no placeholders or project
 axioms; fmt, Clippy, probes, examples and release exit0. This is the joint
 integration gate. The integrator's regenerated committed matrix and final
 Python receipt remain the final acceptance step.
