@@ -1,3 +1,5 @@
+import QCore.GuardedContractApplications
+import QCore.GuardedDecomposition
 import QCore.SymbolicOverlapAdmission
 import QCore.PremiseMetadataBridge
 import QCore.ContractLifecycle

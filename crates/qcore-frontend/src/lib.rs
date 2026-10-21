@@ -62,3 +62,5 @@ pub use whole_program::{
 pub mod source_scalar_calls;
 
 pub mod premise_flow;
+
+pub mod guarded_decomposition;

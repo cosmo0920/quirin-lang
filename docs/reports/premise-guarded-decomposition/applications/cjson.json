@@ -1,0 +1,214 @@
+{
+  "bindings": {
+    "detach": {
+      "dependencies": [
+        "detach_chain",
+        "detach_distinct",
+        "detach_empty",
+        "detach_first_prev",
+        "detach_last_next",
+        "detach_link_targets",
+        "detach_no_writer",
+        "detach_parent_outside",
+        "detach_predecessor"
+      ],
+      "proposition": "Admission of the selected cJSON_DetachItemViaPointer call under its Removed contract; not a claim that raw C checks complete membership.",
+      "role": "operation"
+    },
+    "detach_chain": {
+      "dependencies": [
+        "detach_chain"
+      ],
+      "proposition": "For this removed-result declaration, the live parent represents exactly its owned children by a finite acyclic child and next chain",
+      "role": "prerequisite"
+    },
+    "detach_distinct": {
+      "dependencies": [
+        "detach_distinct"
+      ],
+      "proposition": "For this removed-result declaration, chain child identities are pairwise distinct",
+      "role": "prerequisite"
+    },
+    "detach_empty": {
+      "dependencies": [
+        "detach_empty"
+      ],
+      "proposition": "For this removed-result declaration, child is NULL precisely when the child and next chain is empty",
+      "role": "prerequisite"
+    },
+    "detach_first_prev": {
+      "dependencies": [
+        "detach_first_prev"
+      ],
+      "proposition": "For this removed-result declaration, the first child's prev is the last child",
+      "role": "prerequisite"
+    },
+    "detach_last_next": {
+      "dependencies": [
+        "detach_last_next"
+      ],
+      "proposition": "For this removed-result declaration, the last child's next is NULL",
+      "role": "prerequisite"
+    },
+    "detach_link_targets": {
+      "dependencies": [
+        "detach_link_targets"
+      ],
+      "proposition": "For this removed-result declaration, every non-NULL next or prev target is a live child of that same parent",
+      "role": "prerequisite"
+    },
+    "detach_no_writer": {
+      "dependencies": [
+        "detach_no_writer"
+      ],
+      "proposition": "For this removed-result declaration, no concurrent writer mutates these links during the call",
+      "role": "prerequisite"
+    },
+    "detach_parent_outside": {
+      "dependencies": [
+        "detach_parent_outside"
+      ],
+      "proposition": "For this removed-result declaration, the parent is not a child",
+      "role": "prerequisite"
+    },
+    "detach_predecessor": {
+      "dependencies": [
+        "detach_predecessor"
+      ],
+      "proposition": "For this removed-result declaration, each nonfirst child's prev is its predecessor",
+      "role": "prerequisite"
+    },
+    "environment": {
+      "dependencies": [
+        "detach_chain",
+        "detach_distinct",
+        "detach_empty",
+        "detach_first_prev",
+        "detach_last_next",
+        "detach_link_targets",
+        "detach_no_writer",
+        "detach_parent_outside",
+        "detach_predecessor"
+      ],
+      "proposition": "Exact CjsonRepresentationPremises.Environment entry heap and complete interference trace, exact caller identity and nine-coordinate context; source/model correspondence remains Open.",
+      "role": "environment"
+    },
+    "failure_case": {
+      "dependencies": [
+        "detach_chain",
+        "detach_distinct",
+        "detach_empty",
+        "detach_first_prev",
+        "detach_last_next",
+        "detach_link_targets",
+        "detach_no_writer",
+        "detach_parent_outside",
+        "detach_predecessor"
+      ],
+      "proposition": "Selected raw body early return: parent is NULL, item is NULL, or item differs from parent.child and item.prev is NULL; not every invalid-membership input.",
+      "role": "case"
+    },
+    "invalid_membership": {
+      "dependencies": [
+        "detach_chain",
+        "detach_distinct",
+        "detach_empty",
+        "detach_first_prev",
+        "detach_last_next",
+        "detach_link_targets",
+        "detach_no_writer",
+        "detach_parent_outside",
+        "detach_predecessor"
+      ],
+      "proposition": "Positive caller-side evidence that nonnull item is not an owned child of the selected parent; not merely failed membership proof.",
+      "role": "condition"
+    },
+    "membership": {
+      "dependencies": [
+        "detach_chain",
+        "detach_distinct",
+        "detach_empty",
+        "detach_first_prev",
+        "detach_last_next",
+        "detach_link_targets",
+        "detach_no_writer",
+        "detach_parent_outside",
+        "detach_predecessor"
+      ],
+      "proposition": "Exact selected nonnull item is contained in the live parent at entry; caller membership is independently required, never inferred from Borrowed provenance.",
+      "role": "prerequisite"
+    },
+    "original_list_unchanged": {
+      "dependencies": [
+        "detach_chain",
+        "detach_distinct",
+        "detach_empty",
+        "detach_first_prev",
+        "detach_last_next",
+        "detach_link_targets",
+        "detach_no_writer",
+        "detach_parent_outside",
+        "detach_predecessor"
+      ],
+      "proposition": "For the exact early-return case the link heap equals the entry link heap; says nothing about arbitrary invalid lists.",
+      "role": "postcondition"
+    },
+    "remaining_list_valid": {
+      "dependencies": [
+        "detach_chain",
+        "detach_distinct",
+        "detach_empty",
+        "detach_first_prev",
+        "detach_last_next",
+        "detach_link_targets",
+        "detach_no_writer",
+        "detach_parent_outside",
+        "detach_predecessor"
+      ],
+      "proposition": "For the exact successful call, remaining owned children retain the representation and removed item has NULL prev and next.",
+      "role": "postcondition"
+    },
+    "success_case": {
+      "dependencies": [
+        "detach_chain",
+        "detach_distinct",
+        "detach_empty",
+        "detach_first_prev",
+        "detach_last_next",
+        "detach_link_targets",
+        "detach_no_writer",
+        "detach_parent_outside",
+        "detach_predecessor"
+      ],
+      "proposition": "Selected raw body exits returning the same nonnull item after unlinking under all representation and containment prerequisites.",
+      "role": "case"
+    }
+  },
+  "boundary": "Proposed guarded obligations bound to actual existing source hypotheses. Dependencies are not equivalence/implication proofs. No inline adoption or source-truth receipt.",
+  "declaration": "cJSON_DetachItemViaPointer",
+  "formal_model": "proof/QCore/GuardedContractApplications.lean",
+  "module": "providers/qcore-provider-librdkafka/contracts/librdkafka/cjson.qv",
+  "provenance": [
+    {
+      "path": "docs/reports/premise-evidence-contracts/binding-manifest-readable.json",
+      "sha256": "b3131190b81863f6e8ee7e2ff7f333aee64b0d4ed5fcf2919f6df8a228da807c"
+    },
+    {
+      "path": "proof/QCore/CjsonRepresentationPremises.lean",
+      "sha256": "7f14f533993fb7551001a235992e85d25bddbed36a5d1db7e1c3fb484bcb4c07"
+    },
+    {
+      "path": "proof/QCore/GuardedContractApplications.lean",
+      "sha256": "5797d14a7563145bcb79b63f077bf50edcd94f892843df090d0e1ab73a08a459"
+    },
+    {
+      "path": "docs/reports/premise-guarded-decomposition/source-observations.json",
+      "sha256": "b345301413d26c708cb7a8104c6b4c705ee419bf75169f6d743640560e97d7e4"
+    }
+  ],
+  "source_binding": "open",
+  "source_correspondence": "open; formal propositions are conditional model definitions, not statements proved of imported C",
+  "source_sha256": "d1fa3d6e01857a42db485441887794b250a92ad719a46044e0e77bfb9b6e3353",
+  "version": 1,
+  "view": "resource"
+}

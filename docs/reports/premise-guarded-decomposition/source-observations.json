@@ -1,0 +1,48 @@
+{
+  "version": 1,
+  "scope": "Read-only actual source observations. No extraction proof, complete feasible-path coverage or C/model correspondence is inferred.",
+  "records": [
+    {
+      "source_root": "/home/cosmo/Documents/GitHub/qcore-c/build/cycle19/c-gateway-wave-pin/fluent-bit-clang-source",
+      "relative_path": "lib/librdkafka-2.15.0/src/cJSON.c",
+      "file_sha256": "fdb11f529efe3ad55b04d3c59c3c2f668cf4b68bd93feed23d51ee89841e0a90",
+      "lines": [
+        2243,
+        2277
+      ],
+      "excerpt_sha256": "51742b858f4db86dc35652573b27cbf4796a09bd5912b16ae1bb3543a1d6e017",
+      "observation": "Raw early-return guard is partial; it does not establish complete caller membership. Unlink writes and unchanged early return are source observations, not a universal source/model theorem.",
+      "source_binding": "open",
+      "source_revision": "66910c10a4d7eafa810b84229cf2dcf7b0f26f97",
+      "file_matches_revision_blob": true
+    },
+    {
+      "source_root": "/home/cosmo/Documents/GitHub/qcore-c/build/cycle19/c-gateway-wave-pin/fluent-bit-clang-source",
+      "relative_path": "lib/librdkafka-2.15.0/src/rdkafka_plugin.c",
+      "file_sha256": "8e8ac3380dc8c99e083ae9c279f6046c645f5fc05a28696a3f797940640ee12e",
+      "lines": [
+        55,
+        137
+      ],
+      "excerpt_sha256": "0cc6388451d10dc554ad41982f0f33df2fcacd34270a82713c864616717bf4b6",
+      "observation": "New plugin path requires successful loader/symbol/conf_init before insertion; destroy relies on prior conf_destroy and loader refcounts. These are independent obligations.",
+      "source_binding": "open",
+      "source_revision": "66910c10a4d7eafa810b84229cf2dcf7b0f26f97",
+      "file_matches_revision_blob": true
+    },
+    {
+      "source_root": "/home/cosmo/Documents/GitHub/qcore-c/build/cycle19/c-gateway-wave-pin/fluent-bit-clang-source",
+      "relative_path": "src/flb_plugin.c",
+      "file_sha256": "99a616b2f0599a4cd52a36cf6b132201c8dca27bf924c643758a5ab87aec2fa1",
+      "lines": [
+        200,
+        320
+      ],
+      "excerpt_sha256": "94d8ac365ecdbc19fcbe4288156567b12e4c359f6ce6cf164a7600049d18e163",
+      "observation": "C descriptor loading/copying does not prove ABI/candidate/lifetime effects of loaded code.",
+      "source_binding": "open",
+      "source_revision": "66910c10a4d7eafa810b84229cf2dcf7b0f26f97",
+      "file_matches_revision_blob": true
+    }
+  ]
+}

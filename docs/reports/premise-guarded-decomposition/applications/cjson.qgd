@@ -1,0 +1,6 @@
+guarded_decomposition_v1;
+(environment ∧ detach_chain ∧ detach_distinct ∧ detach_empty ∧ detach_first_prev ∧ detach_last_next ∧ detach_link_targets ∧ detach_no_writer ∧ detach_parent_outside ∧ detach_predecessor ∧ membership) |-> detach;
+invalid_membership !-> detach;
+detach ||-> success_case / failure_case;
+success_case ->| remaining_list_valid;
+failure_case ->| original_list_unchanged;
