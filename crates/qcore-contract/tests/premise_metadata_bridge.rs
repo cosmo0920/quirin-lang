@@ -2,7 +2,7 @@ use qcore_contract::premise_metadata_bridge;
 use qcore_schemas::premise_flow::View;
 use serde_json::json;
 use std::collections::BTreeMap;
-const OLD: &str = "module contract;\nextern fn f(p: ptr<mut,u8>) -> unit\ncontract {\n    requires resource_contract_v1;\n    requires resource_hypothesis(a, \"first original opaque statement\");\n    requires resource_hypothesis(b, \"second original opaque statement\");\n    requires resource_premise_all(pair, a, b);\n    ensures normal resource_borrowed(p);\n};\n";
+const OLD: &str = "module contract;\nextern fn f(p: ptr<mut,u8>) -> unit\ncontract {\n    requires resource_contract_v1;\n    requires resource_hypothesis(a, \"first original opaque statement\");\n    requires resource_hypothesis(b, \"second original opaque statement\");\n    requires resource_premise_all(pair, a, b);\n    ensures normal resource_borrowed(p);\n    ensures normal resource_return_none();\n};\n";
 fn new() -> String {
     OLD.replace("    requires resource_hypothesis(a, \"first original opaque statement\");\n", "    requires resource_hypothesis(a, \"first original opaque statement\");\n    requires resource_lifecycle_v1(introduce_a, |^+ hypothesis(a));\n")
         .replace("    requires resource_hypothesis(b, \"second original opaque statement\");\n", "    requires resource_hypothesis(b, \"second original opaque statement\");\n    requires resource_lifecycle_v1(introduce_b, |^+ hypothesis(b));\n")
