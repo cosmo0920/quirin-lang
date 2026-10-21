@@ -63,9 +63,8 @@ theorem one_sided_flow_refuses
     (nf rf : Nat → Option Flow) (nl rl : Nat → Option Lifecycle)
     (key : Nat) (entry : Flow) (absent : nf key = none) (present : rf key = some entry) :
     ¬ admitted original boundsLoaded resourceLoaded graphMatched erasureNeutral nf rf nl rl := by
-  apply changed_flow_entry_refuses
-  rw [absent, present]
-  exact Option.noConfusion
+  apply changed_flow_entry_refuses (key := key)
+  simp [absent, present]
 
 /-- A nonempty, exactly matched metadata map with every validation assumption
 holds alongside an Open old proposition. Metadata cannot entail support. -/

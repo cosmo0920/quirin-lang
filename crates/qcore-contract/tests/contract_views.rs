@@ -494,27 +494,44 @@ fn symbolic_overlap_pair(name: &str) -> BTreeMap<String, String> {
             let source = &actual[module];
             let start = source.find(&format!("extern fn {name}(")).unwrap();
             let end = start + source[start..].find("\n};").unwrap() + "\n};".len();
-            (module.into(), format!("module contract;\n{}\n", &source[start..end]))
+            (
+                module.into(),
+                format!("module contract;\n{}\n", &source[start..end]),
+            )
         })
         .collect()
 }
 fn overlap_relation(name: &str) -> &RegisteredRelation {
-    REGISTERED_RELATIONS.iter().find(|r| r.function == name
-        && matches!(r.check, RelationCheck::NullDerefBeside)).unwrap()
+    REGISTERED_RELATIONS
+        .iter()
+        .find(|r| r.function == name && matches!(r.check, RelationCheck::NullDerefBeside))
+        .unwrap()
 }
 #[test]
 fn both_actual_symbolic_overlaps_retain_complete_original_relation_evidence() {
     for name in ["rd_kafka_toppar_new0", "rd_kafka_toppar_fetch_backoff"] {
         let pair = symbolic_overlap_pair(name);
-        let original = pair.iter().map(|(module, source)| {
-            let text = source.split_inclusive('\n').filter(|line| {
-                let line = line.trim_start();
-                !line.starts_with("requires resource_lifecycle_v1(")
-                    && !line.starts_with("requires resource_premise_flow_v1(")
-            }).collect::<String>(); (module.clone(), text)
-        }).collect();
-        let run = |input: &BTreeMap<String, String>| qcore_contract::contract_views::check_relation(overlap_relation(name), input).unwrap();
-        assert_eq!(serde_json::to_value(run(&pair)).unwrap(), serde_json::to_value(run(&original)).unwrap());
+        let original = pair
+            .iter()
+            .map(|(module, source)| {
+                let text = source
+                    .split_inclusive('\n')
+                    .filter(|line| {
+                        let line = line.trim_start();
+                        !line.starts_with("requires resource_lifecycle_v1(")
+                            && !line.starts_with("requires resource_premise_flow_v1(")
+                    })
+                    .collect::<String>();
+                (module.clone(), text)
+            })
+            .collect();
+        let run = |input: &BTreeMap<String, String>| {
+            qcore_contract::contract_views::check_relation(overlap_relation(name), input).unwrap()
+        };
+        assert_eq!(
+            serde_json::to_value(run(&pair)).unwrap(),
+            serde_json::to_value(run(&original)).unwrap()
+        );
     }
 }
 #[test]
@@ -523,32 +540,69 @@ fn symbolic_overlap_compares_complete_maps_and_rejects_invalid_entries_on_either
     let pair = symbolic_overlap_pair(name);
     for module in ["librdkafka/null_deref.qv", "librdkafka/client.qv"] {
         let source = &pair[module];
-        let flow = source.lines().find(|l| l.trim_start().starts_with("requires resource_premise_flow_v1(")).unwrap();
-        let life = source.lines().find(|l| l.trim_start().starts_with("requires resource_lifecycle_v1(")).unwrap();
+        let flow = source
+            .lines()
+            .find(|l| {
+                l.trim_start()
+                    .starts_with("requires resource_premise_flow_v1(")
+            })
+            .unwrap();
+        let life = source
+            .lines()
+            .find(|l| {
+                l.trim_start()
+                    .starts_with("requires resource_lifecycle_v1(")
+            })
+            .unwrap();
         let changes = [
             (flow, String::new()),
             (flow, flow.replacen("decompose_", "other_", 1)),
             (flow, flow.replacen("|->", "||->", 1)),
             (flow, format!("{flow}\n{flow}")),
-            (flow, flow.replacen("resource_premise_flow_v1", "resource_premise_flow_v2", 1)),
-            (flow, "    requires resource_premise_flow_v1(extra, missing);".into()),
-            (flow, format!("{flow}\n    requires resource_premise_flow_v1(extra, flow(extra));")),
+            (
+                flow,
+                flow.replacen("resource_premise_flow_v1", "resource_premise_flow_v2", 1),
+            ),
+            (
+                flow,
+                "    requires resource_premise_flow_v1(extra, missing);".into(),
+            ),
+            (
+                flow,
+                format!("{flow}\n    requires resource_premise_flow_v1(extra, flow(extra));"),
+            ),
             (flow, flow.replacen("requires ", "ensures normal ", 1)),
             (life, String::new()),
             (life, life.replacen("introduce_", "other_", 1)),
             (life, life.replacen("|^+", "|^-", 1)),
             (life, life.replacen("hypothesis(", "resource(", 1)),
             (life, format!("{life}\n{life}")),
-            (life, life.replacen("resource_lifecycle_v1", "resource_lifecycle_v2", 1)),
-            (life, "    requires resource_lifecycle_v1(extra, |^+ hypothesis(missing));".into()),
+            (
+                life,
+                life.replacen("resource_lifecycle_v1", "resource_lifecycle_v2", 1),
+            ),
+            (
+                life,
+                "    requires resource_lifecycle_v1(extra, |^+ hypothesis(missing));".into(),
+            ),
             (life, life.replacen("requires ", "ensures normal ", 1)),
-            (life, format!("{life}\n    requires unknown_metadata_v1(h);")),
-            (life, format!("{life}\n    ensures normal resource_borrowed(missing);")),
+            (
+                life,
+                format!("{life}\n    requires unknown_metadata_v1(h);"),
+            ),
+            (
+                life,
+                format!("{life}\n    ensures normal resource_borrowed(missing);"),
+            ),
         ];
         for (from, to) in changes {
             let mut changed = pair.clone();
             changed.insert(module.into(), source.replacen(from, &to, 1));
-            assert!(qcore_contract::contract_views::check_relation(overlap_relation(name), &changed).is_err(), "accepted {module}: {to}");
+            assert!(
+                qcore_contract::contract_views::check_relation(overlap_relation(name), &changed)
+                    .is_err(),
+                "accepted {module}: {to}"
+            );
         }
     }
     qcore_contract::contract_views::check_relation(overlap_relation(name), &pair).unwrap();
@@ -558,16 +612,23 @@ fn resource_only_symbolic_metadata_cannot_bypass_matching_an_absent_null_map() {
     let name = "rd_kafka_toppar_new0";
     let mut pair = symbolic_overlap_pair(name);
     let source = pair.get_mut("librdkafka/null_deref.qv").unwrap();
-    *source = source.split_inclusive('\n').filter(|line| {
-        let line = line.trim_start();
-        !(line.starts_with("requires resource_hypothesis(")
-            || line.starts_with("requires resource_premise_decomposition(")
-            || line.starts_with("requires resource_lifecycle_v1(")
-            || line.starts_with("requires resource_premise_flow_v1("))
-    }).collect();
+    *source = source
+        .split_inclusive('\n')
+        .filter(|line| {
+            let line = line.trim_start();
+            !(line.starts_with("requires resource_hypothesis(")
+                || line.starts_with("requires resource_premise_decomposition(")
+                || line.starts_with("requires resource_lifecycle_v1(")
+                || line.starts_with("requires resource_premise_flow_v1("))
+        })
+        .collect();
     let standalone = BTreeMap::from([("null.qv".into(), source.clone())]);
     qcore_contract::bounds_hypotheses::replay(&standalone).unwrap();
     assert!(!source.contains("resource_hypothesis("));
-    let error = qcore_contract::contract_views::check_relation(overlap_relation(name), &pair).unwrap_err();
-    assert!(error.contains("neutral symbolic metadata differs"), "{error}");
+    let error =
+        qcore_contract::contract_views::check_relation(overlap_relation(name), &pair).unwrap_err();
+    assert!(
+        error.contains("neutral symbolic metadata differs"),
+        "{error}"
+    );
 }

@@ -883,8 +883,7 @@ fn pointer_nominal(type_source: &str) -> Option<&str> {
 
 // These heads identify a validation obligation, not permission to skip a clause.
 fn symbolic_metadata_head(expression: &str) -> bool {
-    crate::premise_flow::is_clause(expression)
-        || crate::contract_lifecycle::is_clause(expression)
+    crate::premise_flow::is_clause(expression) || crate::contract_lifecycle::is_clause(expression)
 }
 
 #[derive(PartialEq, Eq)]
@@ -902,7 +901,9 @@ fn validated_symbolic_metadata(
     // neither an unused entry nor a familiar head is a neutral fallback.
     let program = parse_source_program(&format!("module contract;\n{}\n", view.text))
         .map_err(|error| error.to_string())?;
-    let declaration = program.declarations.iter()
+    let declaration = program
+        .declarations
+        .iter()
         .find(|declaration| declaration.value.name == view.name)
         .ok_or("null view: missing actual declaration for metadata replay")?;
     Ok(ValidatedSymbolicMetadata {
@@ -923,11 +924,15 @@ fn check_null_deref_only(
     // Graph metadata is neutral only after this exact bounds/property source
     // passes the full loader and same-name legacy-erasure replay. A familiar
     // head alone never licenses a new semantic clause or premise.
-    let has_metadata = declaration.clauses.iter().any(|clause| {
-        crate::hypothesis::is_clause(&clause.expression)
-    }) || [declaration, resource].into_iter().any(|view| {
-        view.clauses.iter().any(|clause| symbolic_metadata_head(&clause.expression))
-    });
+    let has_metadata = declaration
+        .clauses
+        .iter()
+        .any(|clause| crate::hypothesis::is_clause(&clause.expression))
+        || [declaration, resource].into_iter().any(|view| {
+            view.clauses
+                .iter()
+                .any(|clause| symbolic_metadata_head(&clause.expression))
+        });
     if has_metadata {
         let sources = BTreeMap::from([(
             declaration.module.clone(),
@@ -939,9 +944,11 @@ fn check_null_deref_only(
             format!("module contract;\n{}\n", resource.text),
         )]);
         let resource_graphs = crate::hypothesis::replay(&resource_sources)?;
-        let graph = bounds_graphs.get(&declaration.name)
+        let graph = bounds_graphs
+            .get(&declaration.name)
             .ok_or("null view: missing replayed bounds graph")?;
-        let peer = resource_graphs.get(&resource.name)
+        let peer = resource_graphs
+            .get(&resource.name)
             .ok_or("null view: missing replayed resource graph")?;
         // Compare proposed metadata only. Original premise vectors, graph
         // identities and property Contexts are independently retained.
