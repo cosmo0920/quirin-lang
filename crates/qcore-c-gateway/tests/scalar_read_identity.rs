@@ -118,6 +118,7 @@ fn unsupported_volatile_atomic_and_expression_effects_stay_refused() {
         "int subject(struct Chunk *ch) { volatile int type = ch->st->type; if (type == 0) return 1; return 0; }",
         "int subject(struct Chunk *ch) { _Atomic int type = ch->st->type; if (type == 0) return 1; return 0; }",
         "int subject(struct Chunk *ch) { int type; type = (ch->st->type++); if (type == 0) return 1; return 0; }",
+        "int subject(struct Chunk *ch) { long type = (long) ch->st->pointer; if (type == 0) return 1; return 0; }",
     ] {
         let summary = run(body);
         assert_ne!(
