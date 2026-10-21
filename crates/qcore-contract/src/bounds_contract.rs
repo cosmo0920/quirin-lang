@@ -1271,6 +1271,12 @@ fn load_function(path: &str, decl: &SourceDeclaration) -> Result<BoundsFunctionC
         }
         // Graph-v2 attachments are reference metadata, never bounds/null facts.
         // Full declaration validation below checks the original premise target.
+        if crate::premise_flow::is_clause(&clause.expression_source) {
+            if !requires {
+                return Err("bounds flow: only requires flow metadata is admitted".into());
+            }
+            continue;
+        }
         if crate::hypothesis::is_clause(&clause.expression_source) {
             if !requires || clause.expression_source.starts_with("resource_premise_all") {
                 return Err("bounds hypothesis: only requires atoms and same-name decompositions are admitted".into());
@@ -1423,6 +1429,7 @@ fn load_function(path: &str, decl: &SourceDeclaration) -> Result<BoundsFunctionC
         .collect::<Vec<_>>();
     let graph = crate::hypothesis::declaration(decl, &legacy)?;
     crate::bounds_hypotheses::require_neutral_erasure(&graph, &legacy)?;
+    crate::premise_flow::declaration(decl, &graph)?;
     frame_conditions(&parameters, &clauses)?;
     let canonical_sha256 =
         crate::deref_parts::canonical_sha256(&normalised[0], &clauses, contract_review.as_ref());
