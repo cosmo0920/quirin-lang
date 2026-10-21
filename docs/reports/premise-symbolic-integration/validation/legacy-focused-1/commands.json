@@ -1,0 +1,41 @@
+[
+  {
+    "command": [
+      "cargo",
+      "test",
+      "-p",
+      "qcore-audit",
+      "--test",
+      "plugin_null_hypotheses"
+    ],
+    "exit": 0,
+    "seconds": 9.320717887952924,
+    "log": "private/premise-symbolic-integration/legacy-focused-1/0.log"
+  },
+  {
+    "command": [
+      "cargo",
+      "test",
+      "-p",
+      "qcore-contract",
+      "--test",
+      "plugin_premise_decomposition"
+    ],
+    "exit": 0,
+    "seconds": 4.069998324965127,
+    "log": "private/premise-symbolic-integration/legacy-focused-1/1.log"
+  },
+  {
+    "command": [
+      "cargo",
+      "test",
+      "-p",
+      "qcore-compiler",
+      "--test",
+      "contract_inherit_qcore_provider"
+    ],
+    "exit": 0,
+    "seconds": 3.058375091990456,
+    "log": "private/premise-symbolic-integration/legacy-focused-1/2.log"
+  }
+]
