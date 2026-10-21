@@ -105,3 +105,15 @@ operator residual have been retrieved for this card. Initial task-context call
 used unsupported topic names evidence/lean and exited2; corrected documented
 contracts/source/gateway topics generated the union. This is retrieval failure,
 not semantic/gate evidence.
+
+Preimplementation compatibility addendum (root coordination): the same delimited
+syntax is admitted through explicit RESOURCE, BOUNDS and MODEL source views,
+never by vocabulary guessing or fallback. Document additionally binds its view.
+`compile` is resource-only convenience; `compile_bounds` reruns the complete
+bounds loader plus unchanged neutral-erasure checks, and `compile_model` uses
+the existing declared-resource-type model replay. A malformed interpreted null/
+bounds clause cannot become accepted metadata. Wrong vocabulary still refuses.
+No semantic clause, old graph or cross-property Context is merged or stripped
+before its authoritative loader has validated it. Model/source tuples remain
+independently expected per view. Tests must exercise malformed/null-overlap and
+wrong-view refusal as well as accepted syntax in all three views.
