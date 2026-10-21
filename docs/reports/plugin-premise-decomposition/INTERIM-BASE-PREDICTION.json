@@ -1,0 +1,31 @@
+{
+  "interim_base": "5a556d8272b17b35a47a5036bad1f6d614ee698b",
+  "source_status": "Frozen Graphv2 API development checkpoint explicitly authorized by integrator; not merged/completed. Generic final provider/measurement results not borrowed.",
+  "preserved_preparation": "codex/plugin-premise-preparation@94b52aaa8",
+  "rebased_preparation_tip": "11a61f44ec8b23f02ab9b03943560b3ec7d7e121",
+  "selected_original_source_hashes_identical": {
+    "providers/qcore-provider-librdkafka/contracts/librdkafka/client.qv": "c0f6b7a2538ac14c1daa9d81f5412b4308e449ed4dada15cc142209ac7e83499",
+    "providers/qcore-provider-librdkafka/contracts/librdkafka/kafka_mem.qv": "d75b18e45520ee4f93f20286ad99587e32431bed6751f3409b1a329f32fcde83",
+    "providers/qcore-provider-librdkafka/contracts/librdkafka/memory.qv": "bd69c0fe6859ccf6f621c2b001748d1f4d987601fb9115af15e3aa83918c2a67",
+    "providers/qcore-provider-librdkafka/contracts/librdkafka/null_deref.qv": "ba5d7a7a49f00aea49df1dbff8f56e2fd3bf53f39838a0afb4f00fb3b5cde537",
+    "providers/qcore-provider-librdkafka/contracts/librdkafka/queue_destructor.qv": "fa88928d00caa91eba736362e8ba36d88abb97efc5d50f1dd45f51dd7f64e238",
+    "providers/quirin-provider-fluent-bit/contracts/fluent_bit/logging.qv": "4a026ffe209161dce22bd8be63a9cbb3c3983b330e74993cdfb67e8d1348181c",
+    "providers/qcore-provider-librdkafka/contracts/librdkafka/outer.qv": "ca88ccbf79699b9fd1033a69b958ec1a116cb24c040f0829299c5e65e797704a",
+    "providers/quirin-provider-fluent-bit/contracts/fluent_bit/outer.qv": "282408a08e6fc19b6f87d3cde8d2c12d2ab0627b002b2f2e2a914bb8460c133d"
+  },
+  "occurrences": {
+    "resource": 94,
+    "bounds_null": 71,
+    "declared_model": 1,
+    "total": 166
+  },
+  "clause_prediction": {
+    "per_site_added": 8,
+    "total_added": 1328,
+    "original_expected_table": "census.json"
+  },
+  "neutral_extension": "Bounds accepts only requires resource_hypothesis and resource_premise_decomposition metadata against unchanged BoundsClause::Premise; resource_premise_all stays refused there. Ordinary interpreted clauses and canonical semantic digests preserved. Text/pin identities bind metadata. Resource/bounds/model source maps replay separately; no overlap-name merge.",
+  "prediction": "Zero static/null/combined/runtime verdict, full null-property dictionary, legacy-premise vector, actual closed-world fact, or body/clause-standing changes. Explicit graph/reference additions and exact source/pin/environment/configuration/root/time identities only, with full retained attribution. Both original outer source modules stay byte-identical. All source binding Open.",
+  "final_validation_requirement": "Before any final standing/provider/audit measurements, synchronize onto exact root mergedmain and commit a new baseline/prediction refresh. No final measurement against interim checkpoint.",
+  "requirements": "Full standing gate, full conditional provider check + all5package build/verify, six fresh paired own eight-home audits, actual source/dependency/context/refutation/negative/reference controls and complete raw metadata attribution; no Unsafe/authority/typed consumer/operator additions."
+}
