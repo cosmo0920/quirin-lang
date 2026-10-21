@@ -18,10 +18,5 @@ sha=lambda path:hashlib.sha256(path.read_bytes()).hexdigest()
 receipt={'head':head,'binary_sha256':sha(snapshot/'target/release/quirin-audit'),'tip_archive_sha256':sha(archive),'baseline_receipt':json.loads((ROOT/'docs/reports/premise-evidence-contracts/baseline-and-context.json').read_bytes()),'source_binding':'open','all_gate_steps_pass':True}
 (P/'immutable-tip.json').write_text(json.dumps(receipt,indent=2)+'\n')
 print(json.dumps(receipt),flush=True)
-env=P/'environment';env.mkdir()
-source='/home/cosmo/Documents/GitHub/qcore-c/build/cycle19/c-gateway-wave-pin/fluent-bit-clang-source'
-for side in ['base','tip']:
- command=[str(ROOT/'target/debug/examples/premise_environment'),str(P/(side+'-inputs')/'cycle19-resource-contracts.json'),source,str(env/(side+'-environment.json'))]
- with (env/(side+'-environment-hashes.json')).open('wb') as stream:subprocess.run(command,cwd=ROOT,stdout=stream,check=True)
- (env/(side+'-command.json')).write_text(json.dumps(command,indent=2)+'\n')
+subprocess.run([sys.executable,str(ROOT/'docs/reports/premise-evidence-contracts/scripts/reconstruct_environments.py')],cwd=ROOT,check=True)
 raise SystemExit(subprocess.call([sys.executable,'docs/reports/premise-evidence-contracts/scripts/measure_all.py'],cwd=ROOT))

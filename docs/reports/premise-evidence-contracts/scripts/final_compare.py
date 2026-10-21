@@ -19,7 +19,7 @@ def run(label,args,allowed=(0,)):
  receipts.append({'command':command,'exit':code,'log':str(log)});(raw/'commands.json').write_text(json.dumps(receipts,indent=2)+'\n')
  assert code in allowed,(label,code,log)
 run('compare',[route,base,tip,out],allowed=(0,1))
-run('attribute_metadata',[route,'--comparison',out,'--raw-root',raw,'--environment-directory',PRIVATE/'environment'])
+run('attribute_metadata',[route,'--comparison',out,'--raw-root',raw,'--environment-directory',PRIVATE/'route-environments'/route])
 run('attribute_time_identity',[route,out])
 run('five_artifacts',[route,base,tip,out/'five-artifacts.json'])
 facts={}

@@ -1,0 +1,68 @@
+[
+  {
+    "route": "system",
+    "side": "base",
+    "command": [
+      "/home/cosmo/.codex/worktrees/premise-decomposition-cycle1/qcore-c/target/debug/examples/premise_environment",
+      "/home/cosmo/.codex/worktrees/premise-decomposition-cycle1/qcore-c/private/premise-evidence-contracts/base-inputs/contract/profiles/fluent-bit/../../../cycle19-resource-contracts.json",
+      "/home/cosmo/Documents/GitHub/qcore-c/private/w45-fb/w46-external-callee-contracts/attempt-1/fluent-bit-clang-source",
+      "/home/cosmo/.codex/worktrees/premise-decomposition-cycle1/qcore-c/private/premise-evidence-contracts/route-environments/system/base-environment.json"
+    ],
+    "exit": 0
+  },
+  {
+    "route": "system",
+    "side": "tip",
+    "command": [
+      "/home/cosmo/.codex/worktrees/premise-decomposition-cycle1/qcore-c/target/debug/examples/premise_environment",
+      "/home/cosmo/.codex/worktrees/premise-decomposition-cycle1/qcore-c/private/premise-evidence-contracts/tip-inputs/contract/profiles/fluent-bit/../../../cycle19-resource-contracts.json",
+      "/home/cosmo/Documents/GitHub/qcore-c/private/w45-fb/w46-external-callee-contracts/attempt-1/fluent-bit-clang-source",
+      "/home/cosmo/.codex/worktrees/premise-decomposition-cycle1/qcore-c/private/premise-evidence-contracts/route-environments/system/tip-environment.json"
+    ],
+    "exit": 0
+  },
+  {
+    "route": "slice",
+    "side": "base",
+    "command": [
+      "/home/cosmo/.codex/worktrees/premise-decomposition-cycle1/qcore-c/target/debug/examples/premise_environment",
+      "/home/cosmo/.codex/worktrees/premise-decomposition-cycle1/qcore-c/private/premise-evidence-contracts/base-inputs/contract/profiles/fluent-bit/../../../cycle19-resource-contracts.json",
+      "/home/cosmo/Documents/GitHub/qcore-c/private/w47-tail/attempt-1/prep/fluent-bit-clang-source",
+      "/home/cosmo/.codex/worktrees/premise-decomposition-cycle1/qcore-c/private/premise-evidence-contracts/route-environments/slice/base-environment.json"
+    ],
+    "exit": 0
+  },
+  {
+    "route": "slice",
+    "side": "tip",
+    "command": [
+      "/home/cosmo/.codex/worktrees/premise-decomposition-cycle1/qcore-c/target/debug/examples/premise_environment",
+      "/home/cosmo/.codex/worktrees/premise-decomposition-cycle1/qcore-c/private/premise-evidence-contracts/tip-inputs/contract/profiles/fluent-bit/../../../cycle19-resource-contracts.json",
+      "/home/cosmo/Documents/GitHub/qcore-c/private/w47-tail/attempt-1/prep/fluent-bit-clang-source",
+      "/home/cosmo/.codex/worktrees/premise-decomposition-cycle1/qcore-c/private/premise-evidence-contracts/route-environments/slice/tip-environment.json"
+    ],
+    "exit": 0
+  },
+  {
+    "route": "corpus",
+    "side": "base",
+    "command": [
+      "/home/cosmo/.codex/worktrees/premise-decomposition-cycle1/qcore-c/target/debug/examples/premise_environment",
+      "/home/cosmo/.codex/worktrees/premise-decomposition-cycle1/qcore-c/private/premise-evidence-contracts/base-inputs/contract/profiles/fluent-bit/../../../cycle19-resource-contracts.json",
+      "/home/cosmo/Documents/GitHub/qcore-c/build/cycle19/c-gateway-wave-pin/fluent-bit-clang-source",
+      "/home/cosmo/.codex/worktrees/premise-decomposition-cycle1/qcore-c/private/premise-evidence-contracts/route-environments/corpus/base-environment.json"
+    ],
+    "exit": 0
+  },
+  {
+    "route": "corpus",
+    "side": "tip",
+    "command": [
+      "/home/cosmo/.codex/worktrees/premise-decomposition-cycle1/qcore-c/target/debug/examples/premise_environment",
+      "/home/cosmo/.codex/worktrees/premise-decomposition-cycle1/qcore-c/private/premise-evidence-contracts/tip-inputs/contract/profiles/fluent-bit/../../../cycle19-resource-contracts.json",
+      "/home/cosmo/Documents/GitHub/qcore-c/build/cycle19/c-gateway-wave-pin/fluent-bit-clang-source",
+      "/home/cosmo/.codex/worktrees/premise-decomposition-cycle1/qcore-c/private/premise-evidence-contracts/route-environments/corpus/tip-environment.json"
+    ],
+    "exit": 0
+  }
+]

@@ -1,0 +1,43 @@
+{
+  "lock_file": {
+    "base_sha256": "5cc9dcb6d3cebb95ab652a32d86965e44ff4f2646f9dea7f5efd3d7f4ba4788c",
+    "tip_sha256": "8329ab01237e6354bad4265b6eff0c767720284de35b9a1015e894c14ef8e459",
+    "exact_single_declaration_digest_substitution_restores_base_bytes": true
+  },
+  "environment": {
+    "base": {
+      "environment_sha256": "57596d9ac4778804676a25a13ef28706230d2e2ca2018b570c853377d1e0ab35",
+      "function_table_sha256": "ba188a413946dcce46f2d8c25dbda5d7bf95eac1296e357ca620ea3f793e1914",
+      "source_assumptions_sha256": "8b437f43b8f6f8c000978967aa827d18ead4ff7f8c774a8f3e5cefe2a7cd8792"
+    },
+    "tip": {
+      "environment_sha256": "b96c4597553f3d115b44111391a5b0c4af6660e55792202c5320e9e458a7d27b",
+      "function_table_sha256": "ba188a413946dcce46f2d8c25dbda5d7bf95eac1296e357ca620ea3f793e1914",
+      "source_assumptions_sha256": "2af42d9e04ee4ac542841d204d44bae199057c08bca0db9e03fe67b3e59c7d33"
+    }
+  },
+  "complete_environment_equal_after_exact_migration_and_root_restoration": true,
+  "all_compile_configurations_equal_after_exact_source_map_hash_and_root_restoration": true,
+  "inventory_reconstructions": [],
+  "attributed_leaf_counts": {
+    "diagnostics": 1480,
+    "contracts": 10,
+    "chunk-contracts": 0,
+    "source-effects": 0,
+    "source": 0,
+    "null": 0,
+    "null-summary": 0,
+    "outer": 0
+  },
+  "remaining_leaf_counts": {
+    "diagnostics": 0,
+    "contracts": 4,
+    "chunk-contracts": 0,
+    "source-effects": 0,
+    "source": 0,
+    "null": 0,
+    "null-summary": 0,
+    "outer": 0
+  },
+  "boundary": "Raw records remain archived. Exact strings/hashes and root spellings only; no blanket hash/path filtering, no semantic field is discarded."
+}

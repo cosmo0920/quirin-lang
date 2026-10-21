@@ -1,0 +1,65 @@
+{
+  "route": "corpus",
+  "checks": {
+    "static_full_units_except_separately_attributed_compile_configuration": false,
+    "diagnostic_counts": true,
+    "full_null_dictionaries": true,
+    "null_summary": true,
+    "full_runtime_projection": true,
+    "declaration_and_clause_standing": true,
+    "contract_revision_except_exact_selected_digest": false
+  },
+  "base": {
+    "Unknown": 3852,
+    "Safe": 973,
+    "Unsafe": 9
+  },
+  "tip": {
+    "Unknown": 3852,
+    "Safe": 973,
+    "Unsafe": 9
+  },
+  "null_rows": {
+    "base": 4921,
+    "tip": 4921
+  },
+  "exact_migration_transform_counts": {
+    "exact_source_or_declaration_digest": 12
+  },
+  "raw_differing_leaf_counts": {
+    "diagnostics": 11152,
+    "contracts": 19565,
+    "chunk-contracts": 0,
+    "source-effects": 0,
+    "source": 0,
+    "null": 9668,
+    "null-summary": 0,
+    "outer": 5
+  },
+  "remaining_differing_leaf_counts": {
+    "diagnostics": 1480,
+    "contracts": 14,
+    "chunk-contracts": 0,
+    "source-effects": 0,
+    "source": 0,
+    "null": 0,
+    "null-summary": 0,
+    "outer": 0
+  },
+  "potential_dependent_custody_records": 4,
+  "affected_custody_records": 1,
+  "dependent_other_contexts_unchanged": 3,
+  "unrelated_custody_records": 4830,
+  "all_invariant_checks_pass": false,
+  "verified_selected_graph_instances": [
+    [
+      "contracts",
+      "contract_dependencies",
+      "declarations",
+      "cJSON_DetachItemViaPointer",
+      "hypothesis_graph"
+    ]
+  ],
+  "fresh_graph_digest_checks": 10722,
+  "note": "Production same-name neutral refinement, exact original singleton/name/text and all unrelated v1 graphs retained. Every metadata residual needs separate attribution. Source binding remains Open."
+}

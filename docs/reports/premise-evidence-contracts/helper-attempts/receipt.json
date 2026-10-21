@@ -1,0 +1,22 @@
+[
+  {
+    "actual_path": "/tmp/premise-evidence-post-1.py",
+    "archived_path": "docs/reports/premise-evidence-contracts/helper-attempts/premise-evidence-post-1.py",
+    "sha256": "5d71446fdcfc68ecd38fc628308033553a5f276a25c1a809c6237537567ae983"
+  },
+  {
+    "actual_path": "/tmp/premise-evidence-final-compare-2.py",
+    "archived_path": "docs/reports/premise-evidence-contracts/helper-attempts/premise-evidence-final-compare-2.py",
+    "sha256": "0191d33a23b374eb5da341716ed0bdd9e6c29d6b838879f57ec694c8008d0af5"
+  },
+  {
+    "actual_path": "/tmp/premise-evidence-resume-system-2.py",
+    "archived_path": "docs/reports/premise-evidence-contracts/helper-attempts/premise-evidence-resume-system-2.py",
+    "sha256": "54ca55a0179c3e45a04505567d9ba5085b337b3b6798823f7d853ce6e7032fcc"
+  },
+  {
+    "actual_path": "/tmp/premise-evidence-corpus-post-2.py",
+    "archived_path": "docs/reports/premise-evidence-contracts/helper-attempts/premise-evidence-corpus-post-2.py",
+    "sha256": "1d019b5cafc2f66d4633c7d0264d35868e3335771ff80d72e313c494b0ae8d51"
+  }
+]
