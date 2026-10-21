@@ -1,0 +1,741 @@
+
+  AGGREGATE-NULL-TEST-AFTER-RELEASE
+      written in  docs/agents/gateway.md (standing constraints)
+      written in  docs/development/increments/wave-45-history.md
+      mentioned in docs/agents/gateway.md - a RULE, not a tracker
+
+  AGGREGATE-TASK-CAPTURE
+      written in  docs/agents/buffers-records.md (standing constraints)
+      written in  docs/development/increments/wave-39.md
+      written in  docs/development/increments/wave-41.md
+      written in  docs/development/increments/wave-48-continuation.md
+      mentioned in docs/agents/buffers-records.md - a RULE, not a tracker
+
+  AUDIT-CHECKPOINT-FILES
+      written in  docs/development/increments/wave-46.md
+
+  AUDIT-CHECKPOINT-INSPECTOR
+      written in  docs/development/increments/wave-46.md
+
+  AUDIT-MEMORY-PERFORMANCE
+      written in  docs/development/increments/wave-46.md
+
+  AUDIT-PREPARE-PROGRESS
+      written in  docs/development/increments/wave-46.md
+
+  BASE-TYPE-READER-CENSUS-FEATURE-UNBUILT
+      written in  docs/development/increments/wave-43.md
+      written in  docs/development/increments/wave-45-compaction-status-prose.md
+
+  BASE-TYPE-READER-UNMEASURED
+      written in  docs/development/increments/wave-36.md
+      written in  docs/development/increments/wave-37.md
+
+  CALLBACK-MEMBER-DATA-ONLY-UNITS
+      written in  docs/agents/gateway.md (standing constraints)
+      written in  docs/development/increments/wave-48-part7.md
+      mentioned in docs/agents/README.md, docs/agents/gateway.md - a RULE, not a tracker
+
+  CALLBACK-MEMBER-EMBEDDED-RECORD-KEYS
+      written in  docs/development/increments/wave-48-part7.md
+
+  CAST-RETURN-UNCOMMITTED-OPERAND
+      written in  docs/agents/gateway.md (standing constraints)
+      mentioned in docs/agents/gateway.md - a RULE, not a tracker
+
+  CG01-CYCLE18-EVALUATOR-WIDTH
+      written in  docs/development/increments/wave-48-part3.md
+      written in  docs/development/increments/wave-48.md
+
+  CG21-UNDECLARED-NORETURN-CALLEES
+      written in  docs/development/increments/wave-48-part3.md
+      written in  docs/development/increments/wave-48-part4.md
+
+  CG26-BORROWED-TAIL-DECLARATIONS
+      written in  docs/development/increments/wave-48-part4.md
+
+  CG30-TYPE-IDENTITY-FIXTURE
+      written in  docs/development/increments/wave-48-part10.md
+
+  CHECKPOINT-PAGE-SPLIT
+      written in  docs/development/increments/wave-40.md
+
+  CHUNKIO-FILE-ST-NEIGHBOUR-BOUNDS
+      written in  docs/development/increments/wave-48-part5.md
+      written in  docs/development/increments/wave-48-part6.md
+
+  COMPOSED-VIEW-WINDOW-INERT
+      written in  docs/agents/buffers-records.md (standing constraints)
+      written in  docs/development/increments/wave-40.md
+      written in  docs/development/increments/wave-41.md
+      mentioned in docs/agents/buffers-records.md - a RULE, not a tracker
+
+  CONDITION-DESUGAR-REFUSAL-ARMS-UNPINNED
+      written in  docs/development/increments/wave-48.md
+
+  CONFINED-EXIT-PRECEDENCE
+      written in  docs/development/increments/wave-41-continuation.md
+
+  CONSTANT-DO-WHILE-JOINED-PROVENANCE-REACH
+      written in  docs/agents/gateway.md (standing constraints)
+      written in  docs/development/increments/wave-35.md
+      written in  docs/development/increments/wave-37.md
+      written in  docs/development/increments/wave-45-compaction-checkpoints.md
+      mentioned in docs/agents/gateway.md - a RULE, not a tracker
+
+  CONTRACT-CHECK-LOAD-PATH
+      written in  docs/development/increments/wave-47.md
+
+  CONTRACT-VIEW-MUTATIONS-LINE-ENDINGS
+      written in  docs/development/increments/wave-48-part3.md
+
+  CT-COMPOSED-NATIVE-ROWS
+      written in  docs/development/increments/wave-32.md
+      written in  docs/development/increments/wave-40.md
+
+  CT-FIXTURE-CROSS-CASE-DUPLICATES
+      written in  docs/development/increments/wave-35.md
+      written in  docs/development/increments/wave-41-continuation.md
+
+  CT-INTEGRATION-REBASE
+      written in  docs/development/increments/wave-41.md
+
+  CT-NATIVE-CREDIT
+      written in  docs/development/increments/wave-40.md
+
+  CT-PROOF-LEG-2
+      written in  docs/development/increments/wave-30.md
+      written in  docs/development/increments/wave-31.md
+      written in  docs/development/increments/wave-32.md
+      written in  docs/development/increments/wave-37.md
+      written in  docs/development/increments/wave-40-compaction-checkpoints.md
+
+  CT-WIRE-LANE-2
+      written in  docs/development/increments/wave-28.md
+      written in  docs/development/increments/wave-37.md
+
+  CT-WIRE-LANE-3
+      written in  docs/development/increments/wave-31.md
+      written in  docs/development/increments/wave-32.md
+      written in  docs/development/increments/wave-37.md
+      written in  docs/development/increments/wave-40-compaction-checkpoints.md
+
+  CT01-PROOF-LEG
+      written in  docs/development/increments/wave-29.md
+      written in  docs/development/increments/wave-37.md
+      written in  docs/development/increments/wave-40-compaction-checkpoints.md
+
+  CT07-TWO-THREAD-REMAP
+      written in  docs/development/increments/wave-36.md
+
+  CT10-BYTE-ENCODING-UNSOUND
+      written in  docs/development/increments/wave-37.md
+
+  CT10-SOURCE-LAYOUT
+      written in  docs/agents/diagnostics.md (standing constraints)
+      mentioned in docs/agents/diagnostics.md - a RULE, not a tracker
+
+  CT22-CT-MAPPING
+      written in  docs/development/increments/wave-28.md
+
+  CT22-WIRE
+      written in  docs/development/increments/wave-29.md
+      written in  docs/development/increments/wave-32.md
+      written in  docs/development/increments/wave-37.md
+      written in  docs/development/increments/wave-40-compaction-checkpoints.md
+
+  CT24-CLEANUP-PREEMPTED
+      written in  docs/agents/diagnostics.md (standing constraints)
+      written in  docs/development/increments/wave-30.md
+      written in  docs/development/increments/wave-40-compaction-checkpoints.md
+      written in  docs/development/increments/wave-45-compaction-checkpoints.md
+      mentioned in docs/agents/diagnostics.md - a RULE, not a tracker
+
+  CT24-CLEANUP-TASK-COMPOSITION
+      written in  docs/agents/diagnostics.md (standing constraints)
+      mentioned in docs/agents/diagnostics.md - a RULE, not a tracker
+
+  CT41-PUBLICATION-MAPPING
+      written in  docs/development/increments/wave-41.md
+
+  CT41-TYPED-SOURCE-UNDISCRIMINATING
+      written in  docs/development/increments/wave-35.md
+      written in  docs/development/increments/wave-37.md
+      written in  docs/development/increments/wave-40-compaction-checkpoints.md
+
+  CT41-VOLATILE-COMPLEMENT-UNMEASURED
+      written in  docs/development/increments/wave-48-continuation.md
+
+  CT42-CELL-DERIVED-PREMISE
+      written in  docs/agents/io.md (standing constraints)
+      written in  docs/development/increments/wave-31.md
+      written in  docs/development/increments/wave-39.md
+      mentioned in docs/agents/io.md - a RULE, not a tracker
+
+  CT42-CELL-UDP-QUEUE
+      written in  docs/agents/io.md (standing constraints)
+      written in  docs/development/increments/wave-31.md
+      written in  docs/development/increments/wave-39.md
+      mentioned in docs/agents/io.md - a RULE, not a tracker
+
+  CT42-MAP
+      written in  docs/development/increments/wave-39.md
+
+  CT46-SENDSYNC
+      written in  docs/development/increments/wave-29.md
+
+  CYCLE18-BROADER-INTEGRATION
+      written in  docs/development/increments/wave-41-continuation-history.md
+      written in  docs/development/increments/wave-41-continuation.md
+
+  CYCLE18-CONTRACT-EXTRACTION
+      written in  docs/development/increments/wave-41-continuation-history.md
+      written in  docs/development/increments/wave-41-continuation.md
+
+  CYCLE18-PRIORITY1-INTEGRATION
+      written in  docs/development/increments/wave-41-continuation-history.md
+      written in  docs/development/increments/wave-41-continuation.md
+
+  DEEP-AST-FILTERED-TRANSPORTS
+      written in  docs/development/increments/wave-48-part5.md
+
+  DOCS-COMPACT-5-EXAMPLES-HOST-GATE
+      written in  docs/development/increments/wave-32.md
+
+  DOCS-COMPACT-5-MIGRATED-SECTION-CLAUSE
+      written in  docs/development/increments/wave-32.md
+
+  DOCS-STRUCTURE-COMPRESSION
+      written in  docs/development/increments/wave-40.md
+
+  EVENT-V1-WINDOWS-AFUNIX
+      written in  docs/development/increments/wave-23.md
+
+  EXT-01-EXTENSION-COMPATIBILITY
+      written in  docs/development/increments/wave-47.md
+
+  EXT-02-CONTRACT-EXTENSIONS
+      written in  docs/development/increments/wave-47.md
+
+  EXT-03-RUNTIME-ABI-EXTENSIONS
+      written in  docs/development/increments/wave-47.md
+
+  F02-DIGEST-PIN-DUPLICATED
+      written in  docs/development/increments/wave-38.md
+
+  F02-WINDOWS-PIN-RUN
+      written in  docs/development/increments/wave-38.md
+
+  F02-WINDOWS-PIN-STALE-SINCE-WAVE-36
+      written in  docs/development/increments/wave-38.md
+      written in  docs/development/increments/wave-40-compaction-checkpoints.md
+
+  FB-PROCESSOR-INSTANCE-ALLOCATION-SIZE-MEASURED
+      written in  docs/development/increments/wave-48-part8.md
+      written in  docs/development/increments/wave-48-part9.md
+
+  FB-SYSTEM-AUDIT-CARDS
+      written in  docs/development/increments/wave-45-history.md
+      written in  docs/development/increments/wave-45.md
+
+  GAPO-PARITY-DECISIONS-NONDETERMINISTIC
+      written in  docs/development/increments/wave-48-part4.md
+      mentioned in docs/agents/gateway.md - a RULE, not a tracker
+
+  GAPO-RETURN-PROBE-COUNTER-RESTORATION
+      written in  docs/development/increments/wave-48-part4.md
+
+  GATEWAY-5L-ELEMENT-TRACKED-AFTER-FOREIGN-UNLINK
+      written in  docs/development/increments/wave-45-continuation.md
+
+  GATEWAY-VOLATILE-PREMISE
+      written in  docs/agents/gateway.md (standing constraints)
+      written in  docs/development/increments/wave-48-continuation.md
+      mentioned in docs/agents/gateway.md - a RULE, not a tracker
+
+  INDIRECT-CENSUS-FEATURE-UNBUILT
+      written in  docs/development/increments/wave-36.md
+      written in  docs/development/increments/wave-37.md
+      written in  docs/development/increments/wave-43.md
+      written in  docs/development/increments/wave-45-compaction-status-prose.md
+
+  INTEGRATION-GATE-PATH-RULE-DRIFT
+      written in  docs/development/increments/wave-45-continuation.md
+
+  JOINED-PROVENANCE-DECLINE-INDISTINGUISHABLE
+      written in  docs/development/increments/wave-37.md
+
+  JOINED-PROVENANCE-FACTS-NAME-NOTHING
+      written in  docs/development/increments/wave-35.md
+      written in  docs/development/increments/wave-36.md
+
+  JOINED-PROVENANCE-FIXED-POINT-BOUND-UNMEASURED
+      written in  docs/development/increments/wave-37.md
+
+  LEAN-4-35-TOOLCHAIN
+      written in  docs/development/increments/wave-48-part8.md
+
+  LEAN-AUDIT-GATE-KEY-OPTIONAL
+      written in  docs/development/increments/wave-38.md
+
+  LEXICAL-SCALAR-NOOP-ALIAS-READ
+      written in  docs/development/increments/wave-48-part10.md
+      mentioned in docs/agents/gateway.md - a RULE, not a tracker
+
+  LIBC-MEM-RESULT-ALIAS
+      written in  docs/development/increments/wave-36.md
+      written in  docs/development/increments/wave-45-compaction-status-prose.md
+
+  LIBC-PRINTF-TAIL-ACTUALS
+      written in  docs/development/increments/wave-43.md
+      written in  docs/development/increments/wave-44.md
+      written in  docs/development/increments/wave-45-compaction-status-prose.md
+
+  LIBC-PRINTF-VA-LIST
+      written in  docs/development/increments/wave-43.md
+      written in  docs/development/increments/wave-44.md
+      written in  docs/development/increments/wave-45-compaction-status-prose.md
+
+  LIBRDKAFKA-CRASH-DUMP-PREMISE-UNSTATED
+      written in  docs/development/increments/wave-48-part8.md
+
+  LIBRDKAFKA-LOG-CALLBACK-PREMISE-UNSTATED
+      written in  docs/development/increments/wave-48-part7.md
+
+  LIBRDKAFKA-NONNULL-MEMBER-PREMISE-UNADMITTED
+      written in  docs/development/increments/wave-48-part8.md
+      written in  docs/development/increments/wave-48-part9.md
+
+  LIBRDKAFKA-PLUGIN-PREMISE-REMAINDER
+      written in  docs/development/increments/wave-48-part8.md
+      mentioned in docs/agents/gateway.md - a RULE, not a tracker
+
+  LIBRDKAFKA-PLUGIN-PREMISE-UNSTATED
+      written in  docs/development/increments/wave-48-part8.md
+
+  LOAD-SENSITIVE-ROW-UNNAMED
+      written in  docs/agents/providers.md (standing constraints)
+      written in  docs/development/increments/wave-36.md
+      written in  docs/development/increments/wave-37.md
+      written in  docs/development/increments/wave-48-part4.md
+      written in  docs/development/increments/wave-48-part6.md
+      mentioned in docs/agents/providers.md - a RULE, not a tracker
+
+  LOADER-ABI-RESTRICT-QUALIFIER
+      written in  docs/development/increments/wave-41-continuation.md
+      written in  docs/development/increments/wave-45-compaction-status-prose.md
+
+  LOOPWINDOWS-ADMITTED-SHAPES-TAUTOLOGY
+      written in  docs/development/increments/wave-41.md
+
+  MAIN-GUARD-LOG-UNCONSUMED
+      written in  docs/development/increments/wave-36.md
+
+  MAIN-GUARD-REFUSES-PACK-REFS
+      written in  docs/development/increments/wave-37.md
+
+  MAIN-GUARD-UNACTIVATED
+      written in  docs/development/increments/wave-36.md
+      written in  docs/development/increments/wave-37.md
+
+  MEMBER-RELEASE-BEFORE-SUMMARY-RELEASE
+      written in  docs/agents/gateway.md (standing constraints)
+      written in  docs/development/increments/wave-45-compaction-status-prose.md
+      written in  docs/development/increments/wave-45-continuation.md
+      mentioned in docs/agents/gateway.md - a RULE, not a tracker
+
+  MSVC-DEFAULT-C-ABI-READER
+      written in  docs/development/increments/wave-48-part3.md
+
+  NATIVE-PLATFORM-TEST-ISOLATION
+      written in  docs/development/increments/wave-41-continuation.md
+
+  NESTED-CALL-IN-ARGUMENT-POSITION
+      written in  docs/development/increments/wave-37.md
+      written in  docs/development/increments/wave-40-compaction-checkpoints.md
+
+  NONNULL-MEMBER-UNIFIED-QUALIFIER
+      written in  docs/development/increments/wave-48-part9.md
+      mentioned in docs/agents/README.md, docs/agents/gateway.md - a RULE, not a tracker
+
+  OP-CALLBACK-MEMBER-PATH-RELEASE
+      written in  docs/development/increments/wave-48-part8.md
+      mentioned in docs/agents/gateway.md - a RULE, not a tracker
+
+  ORIGIN-MAIN-CONFLICT-RESOLUTION
+      written in  docs/development/increments/wave-48-part10.md
+
+  OWNED-FIELD-BOUNDARIES-ARE-ABSENCE
+      written in  docs/development/increments/wave-40.md
+      written in  docs/development/increments/wave-41.md
+
+  OWNED-FIELD-WINDOWS-RUN
+      written in  docs/development/increments/wave-40-compaction-checkpoints.md
+      written in  docs/development/platform-evidence.md (standing constraints)
+      mentioned in docs/development/platform-evidence.md - a RULE, not a tracker
+
+  OWNERSHIP-COPY-OP-UNPRODUCED
+      written in  docs/development/increments/wave-40.md
+      written in  docs/development/increments/wave-41.md
+
+  P-ALIGNED-POINTER-CONVERSION
+      written in  docs/agents/gateway.md (standing constraints)
+      mentioned in docs/agents/gateway.md - a RULE, not a tracker
+
+  P-CG17-POINTER-ALIGNED
+      written in  docs/agents/gateway.md (standing constraints)
+      mentioned in docs/agents/gateway.md - a RULE, not a tracker
+
+  P-CG22-DEFINED-POINTER-VALUE
+      written in  docs/agents/gateway.md (standing constraints)
+      mentioned in docs/agents/gateway.md - a RULE, not a tracker
+
+  P-CG22-MEMBER-CLOSED-WORLD
+      written in  docs/agents/gateway.md (standing constraints)
+      written in  docs/development/increments/wave-48-part7.md
+      mentioned in docs/agents/README.md, docs/agents/gateway.md - a RULE, not a tracker
+
+  P-CG22-TABLE-INDEX-IN-BOUNDS
+      written in  docs/agents/gateway.md (standing constraints)
+      mentioned in docs/agents/gateway.md - a RULE, not a tracker
+
+  P-HOLDER-PATH-STABLE
+      written in  docs/agents/gateway.md (standing constraints)
+      mentioned in docs/agents/gateway.md - a RULE, not a tracker
+
+  P-OPCTOR-STORES-SEEN
+      written in  docs/agents/gateway.md (standing constraints)
+      mentioned in docs/agents/README.md, docs/agents/gateway.md - a RULE, not a tracker
+
+  P-PATH-MEMBER-VIEW
+      written in  docs/agents/gateway.md (standing constraints)
+      mentioned in docs/agents/gateway.md - a RULE, not a tracker
+
+  P-RESTRICT
+      written in  docs/agents/gateway.md (standing constraints)
+      mentioned in docs/agents/gateway.md - a RULE, not a tracker
+
+  PREMISE-DECOMPOSITION-CYCLE1B
+      written in  docs/development/increments/wave-48-part10.md
+
+  PROVIDER-CONTRACT-PACKAGING
+      written in  docs/development/increments/wave-41-continuation.md
+
+  PROVIDER-LOAD-PATH-VIEW-PIN-STALE
+      written in  docs/development/increments/wave-48-part4.md
+
+  PROVIDER-PY-DUAL-STEM-FIXTURE-STALE
+      written in  docs/development/increments/wave-47.md
+
+  PUBLICATION-ROOT-RELEASED
+      written in  docs/development/increments/wave-45-continuation.md
+
+  QR-LEXICAL-SELECTORS-DECLARATION-NAMES
+      written in  docs/agents/source-routes.md (standing constraints)
+      written in  docs/development/increments/wave-48-part6.md
+      mentioned in docs/agents/source-routes.md - a RULE, not a tracker
+
+  QUIRIN-EXTENSION-MIGRATION-PLAN
+      written in  docs/development/increments/wave-46.md
+
+  QUIRIN-REVIEW-INTEGRATION
+      written in  docs/development/increments/wave-41-continuation-history.md
+      written in  docs/development/increments/wave-41-continuation.md
+
+  RDHTTP-DEEP-UNIT-WALL-TIME
+      written in  docs/development/increments/wave-48-part5.md
+
+  RECONCILIATION-APPLIED-ASSERTS-UNVERIFIED
+      written in  docs/development/increments/wave-36.md
+      written in  docs/development/increments/wave-37.md
+
+  RED-AS-REQUIRED
+      written in  docs/development/increments/wave-39.md
+      written in  docs/development/increments/wave-41.md
+
+  REGION-JOINS-DUTIES
+      written in  docs/agents/diagnostics.md (standing constraints)
+      written in  docs/agents/effects.md (standing constraints)
+      written in  docs/development/increments/wave-28.md
+      written in  docs/development/increments/wave-29.md
+      written in  docs/development/increments/wave-30.md
+      written in  docs/development/increments/wave-40-compaction-checkpoints.md
+      mentioned in docs/agents/diagnostics.md, docs/agents/effects.md - a RULE, not a tracker
+
+  RELATIONAL-REWRITE-LINE-ORDER
+      written in  docs/development/increments/wave-48-part8.md
+      mentioned in docs/agents/gateway.md - a RULE, not a tracker
+
+  REQUESTED-BRANCH-INTEGRATION
+      written in  docs/development/increments/wave-47.md
+
+  RESOURCE-HELPER-FUNCTIONS
+      written in  docs/agents/diagnostics.md (standing constraints)
+      mentioned in docs/agents/diagnostics.md, docs/agents/source-routes.md - a RULE, not a tracker
+
+  RETAINED-BY-RESULT-HOLDER
+      written in  docs/agents/gateway.md (standing constraints)
+      written in  docs/development/increments/wave-48-part5.md
+      mentioned in docs/agents/gateway.md - a RULE, not a tracker
+
+  RETAINED-RELEASE-OF-A-FORMAL-READ-UNKNOWN
+      written in  docs/development/increments/wave-48-part7.md
+      mentioned in docs/agents/gateway.md - a RULE, not a tracker
+
+  RETURN-CALL-INCOMPLETE-LINE-455
+      written in  docs/development/increments/wave-34.md
+      written in  docs/development/increments/wave-41-continuation.md
+      written in  docs/development/increments/wave-45-compaction-status-prose.md
+
+  RETURN-CAST-PLACE-NOT-ESCAPED
+      written in  docs/development/increments/wave-43.md
+      written in  docs/development/increments/wave-44.md
+
+  RETURN-POSITION-CONDITIONAL
+      written in  docs/development/increments/wave-48.md
+
+  RK-PLUGIN-LIBRARY-OUTER-ENVELOPE
+      written in  docs/development/increments/wave-48-part9.md
+
+  RUNTIME-SOURCE-IMPORTS
+      written in  docs/development/increments/wave-47.md
+
+  SOURCE-SCALAR-CALLS-V1
+      written in  docs/development/increments/wave-41.md
+      mentioned in docs/agents/diagnostics.md, docs/agents/source-routes.md - a RULE, not a tracker
+
+  STABLE-TOOLCHAIN-1-99-CLIPPY-NEEDLESS-BORROWS
+      written in  docs/development/increments/wave-48-part7.md
+
+  SUP03-BOUNDS-TALLY-ON-INTEGRATED-MAIN
+      written in  docs/development/increments/wave-48-part6.md
+
+  SUPPLIED-OWNED-RETURN-CODE-HANDOFF
+      written in  docs/development/increments/wave-48-part8.md
+      mentioned in docs/agents/README.md, docs/agents/gateway.md - a RULE, not a tracker
+
+  SWEEP-RESIDUALS-PROSE-ONLY-ITEMS
+      written in  docs/development/increments/wave-37.md
+
+  SWEEP-RESIDUALS-SCANS-REPORTS-ONLY
+      written in  docs/development/increments/wave-35.md
+
+  TASK-CONTEXT-CONTRACT-BUNDLE
+      written in  docs/development/increments/wave-41-continuation.md
+
+  TASK-ROUTE-TSAN-SEGV-PRIORITY
+      written in  docs/development/increments/wave-37.md
+
+  TSAN-JOIN-EDGE-ROW-LOAD-SENSITIVE
+      written in  docs/agents/providers.md (standing constraints)
+      written in  docs/development/increments/wave-41.md
+      written in  docs/development/increments/wave-43.md
+      written in  docs/development/increments/wave-45.md
+      mentioned in docs/agents/providers.md - a RULE, not a tracker
+
+  TSAN-SUBJECTS-ARE-TWINS-NOT-FIXTURES
+      written in  docs/development/increments/wave-39.md
+
+  VERIFIER-HOST-ROW-DISPOSITION
+      written in  docs/development/increments/wave-35.md
+
+  W29-CORPUS-CONTRACTS
+      written in  docs/development/increments/wave-29.md
+      written in  docs/development/increments/wave-40-compaction-checkpoints.md
+
+  W32-SWEEP-MATRIX-EDIT-LOST-AT-MERGE
+      written in  docs/development/increments/wave-35.md
+
+  W36-W37-MUTATION-HARNESSES-UNSHIPPED
+      written in  docs/development/increments/wave-40-compaction-checkpoints.md
+      written in  docs/development/increments/wave-40.md
+
+  W4-RECSUM-ALREADY-LANDED
+      written in  docs/development/increments/wave-30.md
+
+  W4-RECSUM-CONSTRAINT-4
+      written in  docs/development/increments/wave-30.md
+
+  W4-RECURSIVE-SUMMARIES
+      written in  docs/development/increments/wave-30.md
+      written in  docs/development/increments/wave-40-compaction-checkpoints.md
+
+  W42-PRIORITY-INTEGRATION
+      written in  docs/development/increments/wave-41.md
+
+  W43-DESC-NATIVE-PHASE-B
+      written in  docs/development/increments/wave-43.md
+
+  W43-INDEX-TRAVERSAL-CONDITION-CALL
+      written in  docs/development/increments/wave-44.md
+
+  W43-INDIRECT-BYTE-STORE-REPRESENTATION-PREMISE
+      written in  docs/agents/gateway.md (standing constraints)
+      written in  docs/development/increments/wave-48-part3.md
+      mentioned in docs/agents/gateway.md - a RULE, not a tracker
+
+  W43-INDIRECT-CHAIN-ACCESS
+      written in  docs/development/increments/wave-44-history.md
+      written in  docs/development/increments/wave-45-compaction-status-prose.md
+
+  W43-LIBC-NORETURN
+      written in  docs/agents/gateway.md (standing constraints)
+      written in  docs/development/increments/wave-48-continuation.md
+      mentioned in docs/agents/gateway.md - a RULE, not a tracker
+
+  W43-LIBC-POINTER-QUALIFIER-READER
+      written in  docs/development/increments/wave-45-compaction-status-prose.md
+
+  W43-LIBC-RESTRICT-PROTOTYPES-UNDECLARED
+      written in  docs/development/increments/wave-43.md
+      written in  docs/development/increments/wave-45-compaction-status-prose.md
+
+  W43-RESULT-ALIAS-EXACT-RELEASE
+      written in  docs/development/increments/wave-43.md
+      written in  docs/development/increments/wave-45-compaction-status-prose.md
+
+  W43-RETURN-CALL-UNDER-CAST
+      written in  docs/development/increments/wave-45-compaction-status-prose.md
+      written in  docs/development/increments/wave-45-history.md
+
+  W43-RETURN-CONDITIONAL-OPERANDS
+      written in  docs/development/increments/wave-48.md
+
+  W43-RETURN-TYPE-OPERATOR
+      written in  docs/development/increments/wave-45-compaction-status-prose.md
+      written in  docs/development/increments/wave-45-history.md
+
+  W44-AGENT-GUIDANCE-OPUS55
+      written in  docs/development/increments/wave-44.md
+
+  W44-CALLEE-SCOPE-RESERVED-BODIES
+      written in  docs/development/increments/wave-44.md
+      written in  docs/development/increments/wave-45-compaction-status-prose.md
+
+  W44-CONDITION-CALL-TYPE-OPERATOR
+      written in  docs/development/increments/wave-48.md
+
+  W44-QUIRIN-AUDIT-PROVIDERS
+      written in  docs/development/increments/wave-44.md
+      mentioned in docs/agents/validation.md - a RULE, not a tracker
+
+  W44-SUB-OBJECT-STORE-REFUSED
+      written in  docs/development/increments/wave-45-history.md
+
+  W44-VA-START-END-BUILTINS
+      written in  docs/development/increments/wave-44.md
+
+  W45-CALLEE-CAST-LEXICAL-PREMISE
+      written in  docs/agents/gateway.md (standing constraints)
+      written in  docs/development/increments/wave-45-compaction-status-prose.md
+      written in  docs/development/increments/wave-45-history.md
+      mentioned in docs/agents/gateway.md - a RULE, not a tracker
+
+  W45-CHECKPOINT-COMPOSE-SEMIGROUP
+      written in  docs/development/increments/wave-45-compaction-status-prose.md
+      written in  docs/development/increments/wave-45.md
+
+  W45-FB-BACKLOG-FOREIGN-UNLINK
+      written in  docs/development/increments/wave-45-compaction-status-prose.md
+      written in  docs/development/increments/wave-45.md
+
+  W45-FB-SINGLEPLEX-CUSTODY-DECLARED
+      written in  docs/development/increments/wave-45-compaction-status-prose.md
+      written in  docs/development/increments/wave-45-continuation.md
+
+  W45-GATEWAY-MEMBER-RELEASE-MEMO-KEY
+      written in  docs/development/increments/wave-45.md
+
+  W45-REVIEW-PREFIX-COLLISION-UNPINNED
+      written in  docs/development/increments/wave-45-compaction-status-prose.md
+
+  W45-SR5-SCALAR-READ-STAR-THROUGH-CAST
+      written in  docs/development/increments/wave-48-part4.md
+
+  W46-ACCESS-PATH-POSITIONS
+      written in  docs/development/increments/wave-47.md
+
+  W46-AUDIT-PINNED-REPLAY-CLI
+      written in  docs/development/increments/wave-46.md
+
+  W46-FLUENT-EVENT-CONTRACT-GAPS
+      written in  docs/development/increments/wave-46.md
+
+  W46-FLUENT-ROUTING-QUERY-CONTRACTS
+      written in  docs/development/increments/wave-46.md
+
+  W46-LIBC-EVENT-CONTRACT-GAPS
+      written in  docs/development/increments/wave-46.md
+
+  W46-METRIC-AGGREGATE-CONTRACTS
+      written in  docs/development/increments/wave-46.md
+
+  W46-METRIC-TRACE-CONTRACT-GAPS
+      written in  docs/development/increments/wave-46.md
+
+  W46-UNION-MEMBER-PATH
+      written in  docs/development/increments/wave-48.md
+
+  W47-SUMMARY-VALIDATION-PROTECTED-FORMALS
+      written in  docs/development/increments/wave-47.md
+      mentioned in docs/agents/gateway.md - a RULE, not a tracker
+
+  W47-TYPED-CONST-POINTER-VALUE
+      written in  docs/agents/gateway.md (standing constraints)
+      written in  docs/development/increments/wave-47.md
+      mentioned in docs/agents/gateway.md - a RULE, not a tracker
+
+  W48-BOTTOM-UP-BATCH3-INTEGRATION
+      written in  docs/development/increments/wave-48-part10.md
+
+  W48-INERT-EXTERN-DECLARATION-TYPES
+      written in  docs/development/increments/wave-48.md
+
+  W48-QR-BUFFER-ROUTE-ARITHMETIC
+      written in  docs/development/increments/wave-48.md
+
+  W48-QR-F02-FIXED-OUTCOMES
+      written in  docs/development/increments/wave-48.md
+
+  W48-QR-FLOAT-QRLIB-SPELLING
+      written in  docs/development/increments/wave-48-continuation.md
+
+  W48-QR-TYPES-COMPOSED-STRING
+      written in  docs/development/increments/wave-48.md
+
+  W48-QR-TYPES-EPOCH-TASKS
+      written in  docs/development/increments/wave-48.md
+
+  W48-QR-TYPES-LOOP-BOUNDS
+      written in  docs/development/increments/wave-48.md
+
+  W48-QR-TYPES-PAYLOADS
+      written in  docs/development/increments/wave-48.md
+
+  WAVE-34-CLOSE-UNSWEPT
+      written in  docs/development/increments/wave-35.md
+
+  WAVE-38-CLOSE
+      written in  docs/development/increments/wave-38.md
+
+  WINDOWS-FIXTURE-FOLLOWUP
+      written in  docs/development/increments/wave-48-part3.md
+
+  WINDOWS-LIBC-HOST-CONTROL
+      written in  docs/development/increments/wave-48-part3.md
+
+  WINDOWS-TEST-PORTABILITY
+      written in  docs/development/increments/wave-41-continuation.md
+
+  WINDOWS-USER-CONTRACT-PLUGIN-TEST-BUILD
+      written in  docs/development/increments/wave-48-part3.md
+
+  WINDOWS-WORKSPACE-PORTABILITY
+      written in  docs/development/increments/wave-48-part3.md
+
+  WLT-EXERCISE-TSAN-TEST-SILENT-ARMS
+      written in  docs/development/increments/wave-39.md
+
+197 residual-shaped names the tracker (docs/reviews/r0_3/acceptance_matrix.json:named_followups) does not carry.
+Scanned: the named card reports, docs/development/increments/, and the standing-constraints text of AGENTS.md, CLAUDE.md, docs/agents/README.md, docs/agents/buffers-records.md, docs/agents/concurrency.md, docs/agents/diagnostics.md, docs/agents/effects.md, docs/agents/evidence.md, docs/agents/gateway.md, docs/agents/io.md, docs/agents/operations.md, docs/agents/providers.md, docs/agents/source-identity.md, docs/agents/source-routes.md, docs/agents/validation.md, docs/development/platform-evidence.md.
+Candidates for a human eye; this tool classifies none of them.

@@ -1,0 +1,34 @@
+{
+  "cards": [
+    "plugin-premise-decomposition"
+  ],
+  "verify_applied": true,
+  "verdicts": {},
+  "no_section": {
+    "plugin-premise-decomposition": "Read complete final README, REPRODUCTION.md, followup-amendments.json and source-equality.json. No dedicated integrator section (sweep returns empty). Exact completed tree merged; all807 prior followups retained plus three new registrations. Original outer identities/property source boundaries, all three Lean imports, deliberate clause pins and provider inventories preserved. All source/prose/environment truth and operator semantics remain open."
+  },
+  "supplemental": [
+    {
+      "status": "applied",
+      "verify": [
+        {
+          "file": "proof/QCore.lean",
+          "contains": "import QCore.PluginNeutralOverlap"
+        },
+        {
+          "file": "docs/reviews/r0_3/acceptance_matrix.json",
+          "contains": "PLUGIN-PREMISE-SOURCE-BINDING"
+        },
+        {
+          "file": "docs/reviews/r0_3/acceptance_matrix.json",
+          "contains": "PLUGIN-PREMISE-OUTER-TRUTH"
+        },
+        {
+          "file": "docs/reviews/r0_3/acceptance_matrix.json",
+          "contains": "PLUGIN-PREMISE-OPERATOR-DESIGN"
+        }
+      ],
+      "note": "No existing entry retired. 197 global historical/rule-shaped residual names from the broad sweep are retained, not recast as new plugin residuals."
+    }
+  ]
+}

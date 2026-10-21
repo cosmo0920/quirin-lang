@@ -612,6 +612,8 @@ Regenerate with `python3 scripts/build_docs_index.py`; validate with `--check`.
 
 | [plugin-premise-decomposition](plugin-premise-decomposition/README.md) | PLUGIN-PREMISE-DECOMPOSITION |
 
+| [plugin-premise-integration](plugin-premise-integration/README.md) | Plugin premise integration |
+
 | [premise-contracts-integration](premise-contracts-integration/README.md) | Concrete premise contract integration |
 
 | [premise-decomposition-cycle1](premise-decomposition-cycle1/README.md) | cJSON representation premise decomposition, cycle 1 |

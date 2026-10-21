@@ -1,0 +1,22 @@
+{
+  "merge": "67697d6c5695110981cc08e616190ce106627d7f",
+  "completed_card": "d208636856bea292070fd06aa96a1624afbec5a1",
+  "measured_source": "c1625baf713e4d8498c39282238675749237005d",
+  "reuse": "BORROWED completed card gates; exact full tree at merge, exact relevant source after ledger/receipt edits",
+  "command_receipts": "../plugin-premise-decomposition/command-history.json",
+  "standing_commands": "../plugin-premise-decomposition/validation/final-gate-4/standing/commands.json",
+  "provider_commands": "../plugin-premise-decomposition/validation/final-gate-4/provider/commands.json",
+  "examples_commands": "../plugin-premise-decomposition/validation/final-gate-4/examples/commands.json",
+  "release_commands": "../plugin-premise-decomposition/validation/final-gate-4/release/commands.json",
+  "private_log_root": "/home/cosmo/.codex/worktrees/w48-bottom-up-batch4/qcore-c/private/plugin-premise-decomposition",
+  "root_clang": {
+    "command": [
+      "clang",
+      "--version"
+    ],
+    "cwd": "/home/cosmo/Documents/GitHub/qcore-c",
+    "exit": 0,
+    "scope": "actual discovery here, not fresh native gate"
+  },
+  "native_pairs": "Six card-owned fresh runs, all0; three exhaustive comparisons0unexplained leaves; all5781null records and148observations preserved. No new composed census."
+}

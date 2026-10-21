@@ -1,0 +1,13 @@
+{
+  "note": "PLUGIN-PREMISE-INTEGRATION: merge 67697d6c5695110981cc08e616190ce106627d7f is exactly the complete tree of completed card d208636856bea292070fd06aa96a1624afbec5a1. Rust8419/0failed/15ignored(528units541summaries), Lean354, fmt/Clippy/examples/submodules/defaultrelease and provider133Rust/1ignored/25Python/allfivepackage builds+verify are BORROWED completed-card measurements at frozen c1625baf713e4d8498c39282238675749237005d, not fresh root native measurements. All relevant source equality is checked; no semantic merge repair. Exact command/exits/logs retained by card validation/final-gate-4. Root clang recording is actual local discovery only; measured-run Clang is separately retained in the borrowed card command receipt. Card six native audits/full comparisons retain original scope. First and final card Python374 passed. Final root committed-matrix Python confirmation follows this integration receipt commit. Source bindings remain Open; no new syntax or truth/verdict promotion.",
+  "workspace_tests": 8419,
+  "provider_tests": 133,
+  "python_evidence_validator_tests": 374,
+  "reevaluation_probe_exit": 0,
+  "reevaluation_followup_exit": 0,
+  "cargo_fmt": "clean",
+  "cargo_clippy": "clean",
+  "standing_gate": "complete",
+  "lean_audits": 354,
+  "clang": "present: Ubuntu clang version 21.1.8 (6ubuntu1)"
+}

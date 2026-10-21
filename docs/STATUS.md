@@ -1,5 +1,7 @@
 # Current status and evidence boundaries
 
+The [plugin premise integration](reports/plugin-premise-integration/README.md) merges completed card `d20863685` at `67697d6c5` with exact measured source equality. Borrowed completed-card gates pass 8,419 Rust / 354 Lean and fresh card provider133Rust/25Python/allfivepackages; root final committed-matrix Python is recorded in its confirmation receipt. All 810 follow-ups remain registered. The six card-owned native comparisons preserve all5781 null records and148 observations; source bindings and operator design remain Open.
+
 The [plugin premise decomposition](reports/plugin-premise-decomposition/README.md) implements166 same-name proposed graph-v2 attachments (94 resource/71 bounds/null/1 declared model), seven conditional atoms and independently bound 12/14-atom catalogs for both original outer envelopes. All source/prose/environment assignments remain Open; original premise/outer semantics, classification and verdicts are preserved. Frozen c162 source gates pass 8,419 Rust / 354 Lean and fresh 133 provider Rust / 25 provider Python / all five packages. Six own eight-home audits retain corpus973Safe/3852Unknown/9provisionalUnsafe, system99/345/4 and slice53/346/4Pending/1, with all 5,781 full null records, full runtime/static/standing/classification records and148 original observations preserved by exact canonical preimage/receipt replay. Actual corpus impact covers 490 resource + 611 null dependent rows; separate row/context denominators retain 87 contextless null diagnostics without evidence. No typed consumer, operator syntax, source-truth promotion or automatic Unsafe is added. Final committed-matrix Python receipts are in the report.
 
 The [concrete cJSON premise evidence contract](reports/premise-evidence-contracts/README.md) now publishes a same-name graph-v2 attachment with nine content-addressed formal references while preserving the exact old premise text, singleton, erasure and closed-world facts. Schema20.0 is deliberate; all five provider packages are rebuilt/verified. Six fresh own eight-home audits retain corpus973Safe/3852Unknown/9provisionalUnsafe, system99/345/4 and slice53/346/4Pending/1; all 5,781 null records and full static/runtime/standing/classification records agree after exact metadata reconstruction. Source gates pass8397Rust/350Lean, providers133Rust/25Python and374 post-committed-matrix Python, with final confirmation in the report. Actual impact lists4potential users/1exact-context hypothetical proposed refutation/3other contexts/4830unrelated rows, with0verdict or legacy-disposition changes. All source bindings remain Open; no typed consumer, classifier exception, Unsafe or truth promotion is added. The report explicitly corrects the old frozen report's classifier helper and retains all failed attempts.
@@ -323,17 +325,17 @@ latest completed integration measurement.
 
 ## Latest validated gate
 
-The latest [serial integration gate](reports/w48-bottom-up-batch3/integration/README.md)
-measures merge `6e4f7dca8`, joining the evidence-only hypothesis graph/schema19.1
-migration and scalar accessor conditions: **8,370 core Rust passed / 0 failed /
-15 ignored, 522 units / 535 summaries; 346 Lean audits; 374 post-regeneration
-Python tests**. Formatting, Clippy and both reevaluation examples exit0.
-Fresh provider validation passes **133 Rust / 0 failed / 1 ignored**, **25 Python**,
-contract sync/check and all five rebuilt/verified packages. Actual local
-Clang21.1.8 and all command exits are recorded beside the gate. The repaired
-native-platform fixture passes in this managed worktree; its additional
-normal-clone control remains tracked. Each card's original production census
-retains its own source identity; no new composed production census is claimed.
+The latest [plugin integration gate](reports/plugin-premise-integration/README.md)
+records merge `67697d6c5`: **8,419 core Rust passed / 0 failed /
+15 ignored, 528 units / 541 summaries; 354 Lean audits; 374 card Python tests**.
+Rust/Lean/provider and ancillary gates are explicitly borrowed from completed
+card source `c1625baf7`, which remains byte-identical after integration.
+Providers pass **133 Rust / 0 failed / 1 ignored**, **25 Python**, all five
+package builds/verifications. Commands, exits, measured-run Clang and private
+logs remain in the card; root Clang discovery is separately recorded.
+The integration receipt owns final committed-matrix Python confirmation.
+Each card's production census retains its own source identity and scope;
+no new composed production census or source truth is claimed.
 
 The five provider crates own **73** canonical contract modules; **48** shared or
 application-level modules live in six `providers/quirin-provider-*` crates: five

@@ -1,0 +1,15 @@
+{
+  "completed_card_tip": "d208636856bea292070fd06aa96a1624afbec5a1",
+  "merged_head": "67697d6c5695110981cc08e616190ce106627d7f",
+  "command": [
+    "git",
+    "diff",
+    "--name-only",
+    "d208636856bea292070fd06aa96a1624afbec5a1",
+    "67697d6c5695110981cc08e616190ce106627d7f"
+  ],
+  "differences": [],
+  "unexpected_source_changes": [],
+  "exact_relevant_source_equal": true,
+  "note": "Only listed ledger/history/receipt differences are allowed. All Rust, Lean, contract/spec/grammar, test, fixture, source form, script, Cargo and toolchain content must equal the completed measured card. This is source equality, not a fresh root native gate."
+}

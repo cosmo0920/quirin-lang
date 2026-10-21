@@ -1,0 +1,25 @@
+{
+  "note": "Supplemental claims checked directly; no-section sweep has zero swept verdict claims.",
+  "checks": [
+    {
+      "file": "proof/QCore.lean",
+      "contains": "import QCore.PluginNeutralOverlap",
+      "passed": true
+    },
+    {
+      "file": "docs/reviews/r0_3/acceptance_matrix.json",
+      "contains": "PLUGIN-PREMISE-SOURCE-BINDING",
+      "passed": true
+    },
+    {
+      "file": "docs/reviews/r0_3/acceptance_matrix.json",
+      "contains": "PLUGIN-PREMISE-OUTER-TRUTH",
+      "passed": true
+    },
+    {
+      "file": "docs/reviews/r0_3/acceptance_matrix.json",
+      "contains": "PLUGIN-PREMISE-OPERATOR-DESIGN",
+      "passed": true
+    }
+  ]
+}
