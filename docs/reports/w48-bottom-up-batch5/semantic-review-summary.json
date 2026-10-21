@@ -1,0 +1,70 @@
+{
+  "system": {
+    "route": "system",
+    "leaf_count": 11,
+    "all_leaves_accounted_for": true,
+    "remaining_unexplained": 0,
+    "classification_counts": {
+      "exact tally of complete retained row diagnostics": 1,
+      "exact unit tally of complete retained row diagnostics": 2,
+      "actual scalar read or existing summary propagation, full C coordinates retained": 2,
+      "exact unchanged reason text plus independently recounted diagnostic deltas": 2,
+      "exact empty-summary __TIME__ preimage replay with wrong-time negative": 4
+    },
+    "fields_erased": 0,
+    "source_binding": "Open",
+    "truth_transport": false,
+    "reading_proof_sha256": "073483c1f1991194c0195f64bdef08b8b05982966b40d64d246b0fe24088dbc2",
+    "full_private_leaf_review": "/home/cosmo/.codex/worktrees/w48-bottom-up-batch5/qcore-c/private/w48-batch5/comparisons/system/semantic-leaf-review.json"
+  },
+  "slice": {
+    "route": "slice",
+    "leaf_count": 65,
+    "all_leaves_accounted_for": true,
+    "remaining_unexplained": 0,
+    "classification_counts": {
+      "exact tally of complete retained row diagnostics": 2,
+      "exact unit tally of complete retained row diagnostics": 4,
+      "actual scalar read or existing summary propagation, full C coordinates retained": 12,
+      "existing source-Safe summary consultation, including propagated new scalar bodies": 4,
+      "exact unchanged reason text plus independently recounted diagnostic deltas": 2,
+      "additional checked scalar-read named premise; no null truth discharge": 4,
+      "exact empty-summary __TIME__ preimage replay with wrong-time negative": 4,
+      "complete production Facts/premises/render replay both sides with three negative controls": 2,
+      "exact production custody/null join; new named premises remain candidate": 10,
+      "exact production null-tally field replay; supplemental fold fields unchanged": 5,
+      "complete production outer source/pin/reach/static/runtime JSON replay both sides": 16
+    },
+    "fields_erased": 0,
+    "source_binding": "Open",
+    "truth_transport": false,
+    "reading_proof_sha256": "4502b60713f458b33ed1f10ac3f78b28a0c5cf50c6a40661e8f8c128c7be4563",
+    "full_private_leaf_review": "/home/cosmo/.codex/worktrees/w48-bottom-up-batch5/qcore-c/private/w48-batch5/comparisons/slice/semantic-leaf-review.json"
+  },
+  "corpus": {
+    "route": "corpus",
+    "leaf_count": 93,
+    "all_leaves_accounted_for": true,
+    "remaining_unexplained": 0,
+    "classification_counts": {
+      "exact tally of complete retained row diagnostics": 1,
+      "additional checked scalar-read named premise; no null truth discharge": 6,
+      "complete native body-standing change retained; exact dependency producer replay": 3,
+      "exact unit tally of complete retained row diagnostics": 3,
+      "actual scalar read or existing summary propagation, full C coordinates retained": 6,
+      "full original canonical/bind replay; real source-Safe inferred table payloads retained": 8,
+      "exact unchanged reason text plus independently recounted diagnostic deltas": 3,
+      "exact empty-summary __TIME__ preimage replay with wrong-time negative": 4,
+      "complete production Facts/premises/render replay both sides with three negative controls": 14,
+      "complete original source-effect records/task IDs/witnesses replayed; sole held cwd identity delta": 29,
+      "exact production custody/null join; new named premises remain candidate": 5,
+      "exact production null-tally field replay; supplemental fold fields unchanged": 3,
+      "complete production outer source/pin/reach/static/runtime JSON replay both sides": 8
+    },
+    "fields_erased": 0,
+    "source_binding": "Open",
+    "truth_transport": false,
+    "reading_proof_sha256": "c4fd5e30e61de6cecde62a6f98a733f81002c63adcfd6771033a248d6472f9e4",
+    "full_private_leaf_review": "/home/cosmo/.codex/worktrees/w48-bottom-up-batch5/qcore-c/private/w48-batch5/comparisons/corpus/semantic-leaf-review.json"
+  }
+}

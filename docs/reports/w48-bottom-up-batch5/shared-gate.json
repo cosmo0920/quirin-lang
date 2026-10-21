@@ -1,0 +1,294 @@
+{
+  "source": "4d0cd81ff6c1f611bcc538311e92c12324a224f3",
+  "root_private_gate": "/home/cosmo/.codex/worktrees/symbolic-cycle3-integration/qcore-c/private/symbolic-decomposition-cycle3/joint-gate-1",
+  "completion_sha256": "efdae968efef5188728ed96aef32a1276c5e27c7d9810aa2f34a86d30235daa4",
+  "commands_sha256": "6209a5826e6b23ee5c283aa8620a08caa25d258143f1af7b0255a0b5dd97f0e6",
+  "commands": [
+    {
+      "name": "submodules",
+      "command": [
+        "git",
+        "submodule",
+        "update",
+        "--init",
+        "--recursive"
+      ],
+      "cwd": "/home/cosmo/.codex/worktrees/symbolic-cycle3-integration/qcore-c",
+      "source": "4d0cd81ff6c1f611bcc538311e92c12324a224f3",
+      "started": "2026-10-21T17:54:27.207849+00:00",
+      "ended": "2026-10-21T17:54:32.444153+00:00",
+      "seconds": 5.236319719999756,
+      "exit": 0,
+      "environment_overrides": {
+        "CARGO_PROFILE_DEV_DEBUG": "0",
+        "CARGO_PROFILE_TEST_DEBUG": "0",
+        "CARGO_INCREMENTAL": "0",
+        "QCORE_AUDIT_BUILD_COMMIT": "4d0cd81ff6c1f611bcc538311e92c12324a224f3"
+      },
+      "log": "/home/cosmo/.codex/worktrees/symbolic-cycle3-integration/qcore-c/private/symbolic-decomposition-cycle3/joint-gate-1/submodules.log",
+      "head_after": "4d0cd81ff6c1f611bcc538311e92c12324a224f3",
+      "clean_after": true
+    },
+    {
+      "name": "clang-version",
+      "command": [
+        "clang",
+        "--version"
+      ],
+      "cwd": "/home/cosmo/.codex/worktrees/symbolic-cycle3-integration/qcore-c",
+      "source": "4d0cd81ff6c1f611bcc538311e92c12324a224f3",
+      "started": "2026-10-21T17:54:32.486486+00:00",
+      "ended": "2026-10-21T17:54:32.501021+00:00",
+      "seconds": 0.014541202999680536,
+      "exit": 0,
+      "environment_overrides": {
+        "CARGO_PROFILE_DEV_DEBUG": "0",
+        "CARGO_PROFILE_TEST_DEBUG": "0",
+        "CARGO_INCREMENTAL": "0",
+        "QCORE_AUDIT_BUILD_COMMIT": "4d0cd81ff6c1f611bcc538311e92c12324a224f3"
+      },
+      "log": "/home/cosmo/.codex/worktrees/symbolic-cycle3-integration/qcore-c/private/symbolic-decomposition-cycle3/joint-gate-1/clang-version.log",
+      "head_after": "4d0cd81ff6c1f611bcc538311e92c12324a224f3",
+      "clean_after": true
+    },
+    {
+      "name": "rust",
+      "command": [
+        "/usr/bin/python3",
+        "scripts/run_test_binaries.py",
+        "--jobs",
+        "4"
+      ],
+      "cwd": "/home/cosmo/.codex/worktrees/symbolic-cycle3-integration/qcore-c",
+      "source": "4d0cd81ff6c1f611bcc538311e92c12324a224f3",
+      "started": "2026-10-21T17:54:32.548616+00:00",
+      "ended": "2026-10-21T18:03:57.187660+00:00",
+      "seconds": 564.6390495930004,
+      "exit": 0,
+      "environment_overrides": {
+        "CARGO_PROFILE_DEV_DEBUG": "0",
+        "CARGO_PROFILE_TEST_DEBUG": "0",
+        "CARGO_INCREMENTAL": "0",
+        "QCORE_AUDIT_BUILD_COMMIT": "4d0cd81ff6c1f611bcc538311e92c12324a224f3"
+      },
+      "log": "/home/cosmo/.codex/worktrees/symbolic-cycle3-integration/qcore-c/private/symbolic-decomposition-cycle3/joint-gate-1/rust.log",
+      "head_after": "4d0cd81ff6c1f611bcc538311e92c12324a224f3",
+      "clean_after": true
+    },
+    {
+      "name": "fmt",
+      "command": [
+        "cargo",
+        "fmt",
+        "--all",
+        "--",
+        "--check"
+      ],
+      "cwd": "/home/cosmo/.codex/worktrees/symbolic-cycle3-integration/qcore-c",
+      "source": "4d0cd81ff6c1f611bcc538311e92c12324a224f3",
+      "started": "2026-10-21T18:03:57.219415+00:00",
+      "ended": "2026-10-21T18:04:00.942142+00:00",
+      "seconds": 3.7227537820003818,
+      "exit": 0,
+      "environment_overrides": {
+        "CARGO_PROFILE_DEV_DEBUG": "0",
+        "CARGO_PROFILE_TEST_DEBUG": "0",
+        "CARGO_INCREMENTAL": "0",
+        "QCORE_AUDIT_BUILD_COMMIT": "4d0cd81ff6c1f611bcc538311e92c12324a224f3"
+      },
+      "log": "/home/cosmo/.codex/worktrees/symbolic-cycle3-integration/qcore-c/private/symbolic-decomposition-cycle3/joint-gate-1/fmt.log",
+      "head_after": "4d0cd81ff6c1f611bcc538311e92c12324a224f3",
+      "clean_after": true
+    },
+    {
+      "name": "clippy",
+      "command": [
+        "cargo",
+        "clippy",
+        "--all-targets",
+        "--",
+        "-D",
+        "warnings"
+      ],
+      "cwd": "/home/cosmo/.codex/worktrees/symbolic-cycle3-integration/qcore-c",
+      "source": "4d0cd81ff6c1f611bcc538311e92c12324a224f3",
+      "started": "2026-10-21T18:04:00.977108+00:00",
+      "ended": "2026-10-21T18:04:30.098388+00:00",
+      "seconds": 29.12128624900015,
+      "exit": 0,
+      "environment_overrides": {
+        "CARGO_PROFILE_DEV_DEBUG": "0",
+        "CARGO_PROFILE_TEST_DEBUG": "0",
+        "CARGO_INCREMENTAL": "0",
+        "QCORE_AUDIT_BUILD_COMMIT": "4d0cd81ff6c1f611bcc538311e92c12324a224f3"
+      },
+      "log": "/home/cosmo/.codex/worktrees/symbolic-cycle3-integration/qcore-c/private/symbolic-decomposition-cycle3/joint-gate-1/clippy.log",
+      "head_after": "4d0cd81ff6c1f611bcc538311e92c12324a224f3",
+      "clean_after": true
+    },
+    {
+      "name": "probe",
+      "command": [
+        "cargo",
+        "run",
+        "-p",
+        "qcore-compiler",
+        "--example",
+        "reevaluation_probe"
+      ],
+      "cwd": "/home/cosmo/.codex/worktrees/symbolic-cycle3-integration/qcore-c",
+      "source": "4d0cd81ff6c1f611bcc538311e92c12324a224f3",
+      "started": "2026-10-21T18:04:30.132391+00:00",
+      "ended": "2026-10-21T18:04:30.200031+00:00",
+      "seconds": 0.06764899800009516,
+      "exit": 0,
+      "environment_overrides": {
+        "CARGO_PROFILE_DEV_DEBUG": "0",
+        "CARGO_PROFILE_TEST_DEBUG": "0",
+        "CARGO_INCREMENTAL": "0",
+        "QCORE_AUDIT_BUILD_COMMIT": "4d0cd81ff6c1f611bcc538311e92c12324a224f3"
+      },
+      "log": "/home/cosmo/.codex/worktrees/symbolic-cycle3-integration/qcore-c/private/symbolic-decomposition-cycle3/joint-gate-1/probe.log",
+      "head_after": "4d0cd81ff6c1f611bcc538311e92c12324a224f3",
+      "clean_after": true
+    },
+    {
+      "name": "followup",
+      "command": [
+        "cargo",
+        "run",
+        "-p",
+        "qcore-compiler",
+        "--example",
+        "reevaluation_followup"
+      ],
+      "cwd": "/home/cosmo/.codex/worktrees/symbolic-cycle3-integration/qcore-c",
+      "source": "4d0cd81ff6c1f611bcc538311e92c12324a224f3",
+      "started": "2026-10-21T18:04:30.233759+00:00",
+      "ended": "2026-10-21T18:04:30.628533+00:00",
+      "seconds": 0.39480232599999,
+      "exit": 0,
+      "environment_overrides": {
+        "CARGO_PROFILE_DEV_DEBUG": "0",
+        "CARGO_PROFILE_TEST_DEBUG": "0",
+        "CARGO_INCREMENTAL": "0",
+        "QCORE_AUDIT_BUILD_COMMIT": "4d0cd81ff6c1f611bcc538311e92c12324a224f3"
+      },
+      "log": "/home/cosmo/.codex/worktrees/symbolic-cycle3-integration/qcore-c/private/symbolic-decomposition-cycle3/joint-gate-1/followup.log",
+      "head_after": "4d0cd81ff6c1f611bcc538311e92c12324a224f3",
+      "clean_after": true
+    },
+    {
+      "name": "lean",
+      "command": [
+        "/usr/bin/python3",
+        "scripts/check_lean_audits.py"
+      ],
+      "cwd": "/home/cosmo/.codex/worktrees/symbolic-cycle3-integration/qcore-c",
+      "source": "4d0cd81ff6c1f611bcc538311e92c12324a224f3",
+      "started": "2026-10-21T18:04:30.664132+00:00",
+      "ended": "2026-10-21T18:06:21.490346+00:00",
+      "seconds": 110.82621558300025,
+      "exit": 0,
+      "environment_overrides": {
+        "CARGO_PROFILE_DEV_DEBUG": "0",
+        "CARGO_PROFILE_TEST_DEBUG": "0",
+        "CARGO_INCREMENTAL": "0",
+        "QCORE_AUDIT_BUILD_COMMIT": "4d0cd81ff6c1f611bcc538311e92c12324a224f3"
+      },
+      "log": "/home/cosmo/.codex/worktrees/symbolic-cycle3-integration/qcore-c/private/symbolic-decomposition-cycle3/joint-gate-1/lean.log",
+      "head_after": "4d0cd81ff6c1f611bcc538311e92c12324a224f3",
+      "clean_after": true
+    },
+    {
+      "name": "audit-examples",
+      "command": [
+        "cargo",
+        "build",
+        "-p",
+        "qcore-audit",
+        "--examples"
+      ],
+      "cwd": "/home/cosmo/.codex/worktrees/symbolic-cycle3-integration/qcore-c",
+      "source": "4d0cd81ff6c1f611bcc538311e92c12324a224f3",
+      "started": "2026-10-21T18:06:21.525462+00:00",
+      "ended": "2026-10-21T18:06:21.588400+00:00",
+      "seconds": 0.06295578300023408,
+      "exit": 0,
+      "environment_overrides": {
+        "CARGO_PROFILE_DEV_DEBUG": "0",
+        "CARGO_PROFILE_TEST_DEBUG": "0",
+        "CARGO_INCREMENTAL": "0",
+        "QCORE_AUDIT_BUILD_COMMIT": "4d0cd81ff6c1f611bcc538311e92c12324a224f3"
+      },
+      "log": "/home/cosmo/.codex/worktrees/symbolic-cycle3-integration/qcore-c/private/symbolic-decomposition-cycle3/joint-gate-1/audit-examples.log",
+      "head_after": "4d0cd81ff6c1f611bcc538311e92c12324a224f3",
+      "clean_after": true
+    },
+    {
+      "name": "source-examples",
+      "command": [
+        "cargo",
+        "build",
+        "-p",
+        "quirin-source-analysis",
+        "--examples"
+      ],
+      "cwd": "/home/cosmo/.codex/worktrees/symbolic-cycle3-integration/qcore-c",
+      "source": "4d0cd81ff6c1f611bcc538311e92c12324a224f3",
+      "started": "2026-10-21T18:06:21.622506+00:00",
+      "ended": "2026-10-21T18:06:46.521627+00:00",
+      "seconds": 24.89913143099966,
+      "exit": 0,
+      "environment_overrides": {
+        "CARGO_PROFILE_DEV_DEBUG": "0",
+        "CARGO_PROFILE_TEST_DEBUG": "0",
+        "CARGO_INCREMENTAL": "0",
+        "QCORE_AUDIT_BUILD_COMMIT": "4d0cd81ff6c1f611bcc538311e92c12324a224f3"
+      },
+      "log": "/home/cosmo/.codex/worktrees/symbolic-cycle3-integration/qcore-c/private/symbolic-decomposition-cycle3/joint-gate-1/source-examples.log",
+      "head_after": "4d0cd81ff6c1f611bcc538311e92c12324a224f3",
+      "clean_after": true
+    },
+    {
+      "name": "release",
+      "command": [
+        "cargo",
+        "build",
+        "--release",
+        "-p",
+        "qcore-audit",
+        "--bin",
+        "quirin-audit"
+      ],
+      "cwd": "/home/cosmo/.codex/worktrees/symbolic-cycle3-integration/qcore-c",
+      "source": "4d0cd81ff6c1f611bcc538311e92c12324a224f3",
+      "started": "2026-10-21T18:06:46.560050+00:00",
+      "ended": "2026-10-21T18:08:16.026628+00:00",
+      "seconds": 89.46658640299984,
+      "exit": 0,
+      "environment_overrides": {
+        "CARGO_PROFILE_DEV_DEBUG": "0",
+        "CARGO_PROFILE_TEST_DEBUG": "0",
+        "CARGO_INCREMENTAL": "0",
+        "QCORE_AUDIT_BUILD_COMMIT": "4d0cd81ff6c1f611bcc538311e92c12324a224f3"
+      },
+      "log": "/home/cosmo/.codex/worktrees/symbolic-cycle3-integration/qcore-c/private/symbolic-decomposition-cycle3/joint-gate-1/release.log",
+      "head_after": "4d0cd81ff6c1f611bcc538311e92c12324a224f3",
+      "clean_after": true
+    }
+  ],
+  "rust": {
+    "passed": 8475,
+    "failed": 0,
+    "ignored": 15
+  },
+  "lean": {
+    "placeholders": 0,
+    "project_axioms": 0,
+    "version": "4.35.0",
+    "audits": 362
+  },
+  "scope": "Shared frozen combined-card gate, not a standalone batch5 worktree gate.",
+  "matrix_python": "Pending integrator regenerated committed matrix and Python receipt."
+}

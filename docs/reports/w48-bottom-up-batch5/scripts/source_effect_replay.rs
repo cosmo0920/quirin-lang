@@ -1,0 +1,33 @@
+//! Exact source-effect identity/task replay. No witness, source or decision erased.
+use qcore_audit::compile_db::{CompileEntry,compiler_options_compatibility};
+use qcore_c_gateway::ClangIdentity;
+use qcore_schemas::{obligation::VerificationTask,sha256_hex};
+use serde_json::{Value,json};
+use std::{collections::BTreeMap,fs,path::PathBuf};
+fn value(p:&Value)->Value{serde_json::from_slice(&fs::read(p.as_str().unwrap()).unwrap()).unwrap()}
+fn ordered(v:&Value,keys:&[&str])->String{let o=v.as_object().unwrap();assert_eq!(o.len(),keys.len());format!("{{{}}}",keys.iter().map(|k|format!("{}:{}",serde_json::to_string(k).unwrap(),serde_json::to_string(&o[*k]).unwrap())).collect::<Vec<_>>().join(","))}
+fn identity(v:&Value)->String{
+ let keys=["raw_source_digest","preprocessed_source_digest","configuration_digest","dialect","source_contract_digest","profile_digest","model_library","source_revision","compiler","helpers"];assert_eq!(v.as_object().unwrap().len(),keys.len());
+ format!("{{{}}}",keys.into_iter().map(|k|{let data=match k{"compiler"=>ordered(&v[k],&["program","version","target"]),"helpers"=>format!("{{{}}}",v[k].as_object().unwrap().iter().map(|(n,v)|format!("{}:{}",serde_json::to_string(n).unwrap(),identity(v))).collect::<Vec<_>>().join(",")),_=>serde_json::to_string(&v[k]).unwrap()};format!("{}:{data}",serde_json::to_string(k).unwrap())}).collect::<Vec<_>>().join(","))
+}
+fn replace_config(v:&mut Value,old:&str,new:&str){assert_eq!(v["configuration_digest"],new);v["configuration_digest"]=json!(old);for h in v["helpers"].as_object_mut().unwrap().values_mut(){replace_config(h,old,new);}}
+fn main(){
+ let args=std::env::args().collect::<Vec<_>>();let spec:Value=serde_json::from_slice(&fs::read(&args[1]).unwrap()).unwrap();let base=value(&spec["base"]);let tip=value(&spec["tip"]);let historical=value(&spec["historical"]);let bi=value(&spec["base_invocation"]);let ti=value(&spec["tip_invocation"]);let compiler=ClangIdentity::capture().unwrap();let mut normalized=tip.clone();let mut receipts=Vec::new();
+ for (i,(b,t)) in base["results"].as_array().unwrap().iter().zip(tip["results"].as_array().unwrap()).enumerate(){
+  if b==t{continue;}let old=&b["import_identity"];let new=&t["import_identity"];assert!(old.is_object()&&new.is_object());assert_eq!(old["compiler"],serde_json::to_value(&compiler).unwrap());assert_eq!(new["compiler"],old["compiler"]);
+  let records=historical["records"].as_array().unwrap().iter().filter(|r|r["raw_source_sha256"]==old["raw_source_digest"]).collect::<Vec<_>>();assert_eq!(records.len(),1);let r=records[0];let e=&r["entry"];let entry=CompileEntry{directory:e["directory"].as_str().unwrap().into(),file:e["file"].as_str().unwrap().into(),command:e["command"].as_str().unwrap().into()};let options=compiler_options_compatibility(&entry).unwrap();assert!(options.preprocessor_options.is_empty());assert_eq!(format!("{:?}",options.input),"HistoricalStdin");
+  let dialect=match options.dialect {qcore_c_gateway::legacy_c::CCompilerDialect::C11=>"-std=c11",qcore_c_gateway::legacy_c::CCompilerDialect::Gnu99=>"-std=gnu99",qcore_c_gateway::legacy_c::CCompilerDialect::Gnu11=>"-std=gnu11",qcore_c_gateway::legacy_c::CCompilerDialect::Gnu17=>"-std=gnu17",qcore_c_gateway::legacy_c::CCompilerDialect::C17=>"-std=c17",qcore_c_gateway::legacy_c::CCompilerDialect::C23=>"-std=c23",qcore_c_gateway::legacy_c::CCompilerDialect::C2y=>"-std=c2y"};let digest=|cwd:&Value|sha256_hex(&serde_json::to_vec(&(dialect,&options.include_paths,&options.definitions,"main_source_definitions",PathBuf::from(cwd.as_str().unwrap()),&compiler)).unwrap());let od=digest(&bi["cwd"]);let nd=digest(&ti["cwd"]);assert_eq!(old["configuration_digest"],od);assert_eq!(new["configuration_digest"],nd);
+  let mut restored=new.clone();replace_config(&mut restored,&od,&nd);assert_eq!(restored,*old,"entire recursively held identity");
+  let old_build=sha256_hex(identity(old).as_bytes());let new_build=sha256_hex(identity(new).as_bytes());
+  let bt:VerificationTask=serde_json::from_value(b["task"].clone()).unwrap();let tt:VerificationTask=serde_json::from_value(t["task"].clone()).unwrap();assert_eq!(serde_json::to_value(&bt).unwrap(),b["task"]);assert_eq!(serde_json::to_value(&tt).unwrap(),t["task"]);bt.validate().unwrap();tt.validate().unwrap();assert_eq!(bt.unit.build_digest,old_build);assert_eq!(tt.unit.build_digest,new_build);
+  for task in [&bt,&tt]{for o in &task.obligations{assert_eq!(task.obligation_id(o.capability,o.property,&o.subject),o.obligation_id);}}
+  assert_eq!(b["witness"]["task_digest"],bt.task_digest());assert_eq!(t["witness"]["task_digest"],tt.task_digest());
+  let mut nt=tt.clone();nt.unit.build_digest=old_build.clone();nt.contract_sources.insert("qcore:boolean-field-import:v1".into(),old_build.clone());let ids=nt.obligations.iter().map(|o|nt.obligation_id(o.capability,o.property,&o.subject)).collect::<Vec<_>>();for(o,id)in nt.obligations.iter_mut().zip(ids){o.obligation_id=id;}assert_eq!(serde_json::to_value(&nt).unwrap(),b["task"],"all task fields after independently proved input identity");
+  let row=&mut normalized["results"][i];row["import_identity"]=restored;row["task"]=serde_json::to_value(&nt).unwrap();assert_eq!(t["evidence"]["unit"],serde_json::to_value(&tt.unit).unwrap());row["evidence"]["unit"]=serde_json::to_value(&bt.unit).unwrap();
+  let coverage=tt.obligations.iter().map(|o|o.obligation_id.clone()).collect::<Vec<_>>();assert_eq!(t["evidence"]["coverage"],json!(coverage));row["evidence"]["coverage"]=json!(bt.obligations.iter().map(|o|o.obligation_id.clone()).collect::<Vec<_>>());
+  let bounds=tt.obligations.iter().map(|o|(o.obligation_id.clone(),serde_json::to_value(&o.bounds).unwrap())).collect::<BTreeMap<_,_>>();assert_eq!(t["bounds"],json!(bounds));row["bounds"]=json!(bt.obligations.iter().map(|o|(o.obligation_id.clone(),serde_json::to_value(&o.bounds).unwrap())).collect::<BTreeMap<_,_>>());row["witness"]["task_digest"]=json!(bt.task_digest());assert_eq!(*row,*b,"entire source-effect record, including actual witness/decisions");
+  receipts.push(json!({"index":i,"function":b["function"],"base_configuration":od,"tip_configuration":nd,"base_serialized_identity":old_build,"tip_serialized_identity":new_build,"actual_task_ids_replayed":true,"entire_normalized_record_exact":true}));
+ }
+ assert_eq!(base["results"].as_array().unwrap().len(),tip["results"].as_array().unwrap().len());assert_eq!(normalized,base);
+ fs::write(&args[2],serde_json::to_vec_pretty(&json!({"status":"complete source-effects identity/task/witness replay exact","records":receipts,"all_fields_retained":true,"source_binding":"Open","truth_transport":false})).unwrap()).unwrap();
+}

@@ -1,0 +1,43 @@
+{
+  "status": "Source/native/attribution acceptance complete; root matrix/Python final receipt pending",
+  "source_tip": "9728ff74574f8398f90dcf7922fae90a7b42acde",
+  "measured_joint_source": "4d0cd81ff6c1f611bcc538311e92c12324a224f3",
+  "status_paragraph": "W48-BOTTOM-UP-BATCH5 preserves complete typed scalar-read plans instead of manufacturing a pointer identity for scalar destinations. Fresh conditional eight-home corpus4834:973\u2192975 Safe,3852\u21923850 Unknown,9 unchanged provisional Unsafe; system448 unchanged99/345/4, slice404:53\u219257 Safe,346\u2192342 Unknown,4 Pending/1 provisional Unsafe. No prior Safe regression. All5781 nested null dictionaries unchanged;3 corpus and2 slice added named candidate reads and custody/runtime envelopes retained and completely replayed. Existing declared cio_chunk_is_up gains native W4+entry standing. All169 semantic leaves accounted, whole original payloads retained, no source/graph truth transport. Shared joint gate: 8,475 Rust tests / 362 Lean audits; final matrix/Python receipt separate.",
+  "residual_plan": {
+    "retain": "W48-BOTTOM-UP-RESIDUAL-PLAN",
+    "close_only": "scalar-local read destination falsely carrying opaque pointer identity, including cio_chunk_is_up type at518 and adjacent is_file at531",
+    "open": [
+      "Actual logger/callback/TLS and ownership source contracts",
+      "Scheduler destroy/TLS ownership transport",
+      "cJSON string/member/Removed-result transport",
+      "Pointer/status carrier and unsupported casts/stores/effects",
+      "Source binding and guarded symbolic metadata truth obligations"
+    ],
+    "append_paragraph": "W48-BOTTOM-UP-BATCH5 closes only the scalar-local read destination identity leaf: complete typed scalar-read plans now preserve the integer destinations in cio_chunk_is_up (cio_chunk.c:518) and cio_chunk_is_file (cio_chunk.c:531). W48-BOTTOM-UP-RESIDUAL-PLAN remains Open. The refreshed 2,215-body planner retains conditional ceiling 362 and baseline closure 6/6; its sole row change is mk_stop own_leaves 2\u21921, with score and freed callers still zero. Logger/callback/TLS ownership, scheduler destroy/TLS ownership, cJSON string membership and Removed-result transport, pointer/status carriers, unsupported casts/stores/effects, and source-binding/guarded truth obligations remain Open. No next READY claim follows from the conditional ranking."
+  },
+  "ranking": {
+    "positive_top_and_ceilings_unchanged": true,
+    "exact_row_delta": "mk_stop own_leaves2\u21921, frees/score0 unchanged",
+    "bodies": 2215,
+    "ceiling": 362,
+    "baseline_same": 6,
+    "baseline_cross": 6,
+    "interpretation": "Planning ceilings conditional, not coverage/safety gains. Top logger3 and scheduler2 remain blocked."
+  },
+  "matrix": {
+    "report": "docs/reports/w48-bottom-up-batch5/README.md",
+    "fresh_native": "native-comparison.json",
+    "accounting": "semantic-review-summary.json",
+    "source_authority": "Open",
+    "fields_erased": 0
+  },
+  "increment": "wave-48-part11.md",
+  "root_owned_files": [
+    "docs/STATUS.md",
+    "docs/increments/wave-48-part11.md",
+    "acceptance generator/matrix",
+    "report index"
+  ],
+  "final_required": "Integrate report-only commits, regenerate and commit matrix, run root Python acceptance tests, retain actual count/exit/log receipt and update shared gate completion before calling complete.",
+  "increment_paragraph": "W48-BOTTOM-UP-BATCH5 preserves complete typed scalar-read plans and discharges the false scalar-local pointer identity in pinned cio_chunk_is_up and cio_chunk_is_file. Fresh exact-source native comparison keeps the 448-row system unchanged (99 Safe, 345 Unknown, 4 provisional Unsafe), moves the 404-row slice from 53 to 57 Safe (346\u2192342 Unknown; 4 Pending and 1 provisional Unsafe unchanged), and moves the 4,834-row corpus from 973 to 975 Safe (3,852\u21923,850 Unknown; 9 provisional Unsafe unchanged). No prior Safe regresses. All 5,781 nested null dictionaries remain identical, while five newly named candidate reads and custody/runtime envelopes are retained and replayed; all 169 remaining comparison leaves are accounted for without erasing fields. The focused set passes 60 Rust controls and ten audited Lean theorems; the shared frozen gate passes 8,475 Rust tests and 362 Lean audits with zero failures, placeholders, or project axioms. W48-BOTTOM-UP-RESIDUAL-PLAN and source-binding/guarded truth obligations remain Open. The final committed matrix and Python acceptance receipt are recorded separately by the integrator. See docs/reports/w48-bottom-up-batch5/README.md for exact build identities, retained failures, native provenance, and bounded claims."
+}
