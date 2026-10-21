@@ -610,6 +610,8 @@ Regenerate with `python3 scripts/build_docs_index.py`; validate with `--check`.
 
 | [plugin-package-build-write](plugin-package-build-write/README.md) | PLUGIN-PACKAGE-BUILD-WRITES-EXECUTABLE-IN-PROCESS: `package::build` holds no write descriptor on the executable |
 
+| [premise-contracts-integration](premise-contracts-integration/README.md) | Concrete premise contract integration |
+
 | [premise-decomposition-cycle1](premise-decomposition-cycle1/README.md) | cJSON representation premise decomposition, cycle 1 |
 
 | [premise-decomposition-cycle1b](premise-decomposition-cycle1b/README.md) | Libc reading-premise decomposition, cycle 1B |

@@ -1,0 +1,14 @@
+{
+  "command": [
+    "python3",
+    "scripts/reconciliation_sweep.py",
+    ".",
+    "--cards",
+    "premise-evidence-contracts",
+    "libc-reading-site-evidence",
+    "--residuals"
+  ],
+  "exit": 0,
+  "output": "private/premise-contracts-integration/residuals.txt",
+  "stderr": ""
+}

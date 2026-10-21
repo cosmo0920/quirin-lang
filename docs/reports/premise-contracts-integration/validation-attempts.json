@@ -1,0 +1,25 @@
+{
+  "initial_source": "44951dbb4cb6c4a0780506dbd832b29323d07b22",
+  "initial_attempt": "all commands run; Lean exit1, all other steps0",
+  "failure": "QCore.LibcReadingSiteEvidence.olean absent because root library did not import the module; own cached card audit did not expose missing fresh-build registration.",
+  "repair_source": "32e6f5dda334d6a017a1be4dcb02f72a9138c6a6",
+  "repair": "Only add library import; incidental final blank line normalized. No Rust, contract, model or theorem-statement change. Full351-audit retry0.",
+  "source_equality_command": "git diff --exit-code 44951dbb4 HEAD -- crates compiler providers scripts Cargo.toml Cargo.lock",
+  "source_equality_exit": 0,
+  "rust_summary": "/home/cosmo/Documents/GitHub/qcore-c/private/test-binaries/20261021T040202Z-48953/summary.json",
+  "native_environment_overrides": {
+    "CARGO_PROFILE_DEV_DEBUG": "0",
+    "CARGO_PROFILE_TEST_DEBUG": "0",
+    "CARGO_INCREMENTAL": "0"
+  },
+  "counts": {
+    "rust_passed": 8405,
+    "rust_failed": 0,
+    "rust_ignored": 15,
+    "units": 526,
+    "summaries": 539,
+    "lean_audits": 351,
+    "initial_python_passed": 374
+  },
+  "private_logs": "/home/cosmo/Documents/GitHub/qcore-c/private/premise-contracts-integration"
+}

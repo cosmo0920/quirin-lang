@@ -1,0 +1,23 @@
+{
+  "previous_main": "2619d1d5b478484ab1dbb001faa186a76a1676ee",
+  "libc": {
+    "tip": "7bdc99e48bfe91ed2a1747ce529f41cf39748ead",
+    "merge": "681ab8e8d9f8656090963d71861be5baad725152",
+    "source_equality_command": "git diff --exit-code 7bdc99e48 HEAD -- crates compiler proof providers scripts Cargo.toml Cargo.lock",
+    "source_equality_exit": 0
+  },
+  "combined_gate": "8405Rust/0failed/15ignored; full351Lean after recorded registration repair;374initialPython; final committedmatrix confirmation follows",
+  "concrete": {
+    "tip": "c6b9d8009024465f7c15e9a188121a52fc6f72da",
+    "merge": "44951dbb4cb6c4a0780506dbd832b29323d07b22"
+  },
+  "conflicts": {
+    "both_merges": [
+      "docs/STATUS.md",
+      "docs/development/increments/wave-48-part10.md",
+      "docs/reviews/r0_3/acceptance_matrix.json"
+    ],
+    "resolution": "Both increment/history paragraphs retained; exact three-way union of hand-maintained sections then generator, no manual derived matrix edit."
+  },
+  "proof_registration_repair": "32e6f5dda334d6a017a1be4dcb02f72a9138c6a6"
+}

@@ -1,0 +1,17 @@
+{
+  "command": [
+    "python3",
+    "-m",
+    "unittest",
+    "discover",
+    "-s",
+    "scripts/tests"
+  ],
+  "exit": 0,
+  "seconds": 58.500932931900024,
+  "committed_matrix_at": "791fea14f7608d0d1aa9d54950bc59d894c1c503",
+  "sha256_before": "d43bb0e31c672d08ff282a7d563844696f92e724133e7b4805d1769b44cae8db",
+  "sha256_after": "d43bb0e31c672d08ff282a7d563844696f92e724133e7b4805d1769b44cae8db",
+  "unchanged": true,
+  "log": "private/premise-contracts-integration/python-final-1/python.log"
+}

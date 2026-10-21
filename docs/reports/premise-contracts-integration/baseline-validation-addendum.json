@@ -1,0 +1,8 @@
+{
+  "proof_registration_source": "32e6f5dda334d6a017a1be4dcb02f72a9138c6a6",
+  "lean_retry_exit": 0,
+  "lean_audits": 351,
+  "binary_source": "44951dbb4cb6c4a0780506dbd832b29323d07b22",
+  "rust_contract_source_equality_exit": 0,
+  "note": "Original immutable binaryreceipt retained; after successful fullLeanrepair, jointgatecomplete. Later report commits do not change analyzer sources."
+}
