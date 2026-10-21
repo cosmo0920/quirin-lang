@@ -1252,5 +1252,24 @@
     "reason": "selected complete native trace returns nonnull without required callback/success event",
     "universal_original_atom_disposition_change": false,
     "upstreamUnsafe": false
+  },
+  "latest_admission": {
+    "source": "355db7892010672b00713a27f13f1730f36f43e0",
+    "receipt": "post-guard/checked.json",
+    "context": {
+      "artifact": "a18c2105cfd4db3d7303dc4956375b2ef5f566332c975c68bfe612f547d95819",
+      "property": "plugin_fixture_selected_domain_v1",
+      "semantic_profile": "plugin-loader-fixture-v1",
+      "scope": "complete-selected-20-case-domain-v1",
+      "bounds": "20-cases/single-thread/explicit-stubs",
+      "assumptions": "local-clang-posix-loader/real-pinned-headers/explicit-allocation-list-log-stubs/no-deployed-plugin-claim",
+      "source_identity": "2ea1c936998d85776b151f4fdab8e2fc27b198b74c756d219d2e8c5865ea5b43",
+      "build_identity": "94cf5b572e10b07a823c6f20372170348ed6904b141d4124819fc094866aea6e",
+      "evidence_version": "plugin-source-witness-v1/4f8c1e24342f60556511888607d7a4073e899e2ea7ff47f8d3a451ee975fc2d5"
+    },
+    "finite_cases": 20,
+    "refusals": 79,
+    "formal_identities": "post-guard/bounded-flow.json",
+    "historical_per_case_context_note": "finite_case_domain actual_context entries retain their original replay-5 checkpoint; use this separate latest context without relabeling those historical receipts."
   }
 }
