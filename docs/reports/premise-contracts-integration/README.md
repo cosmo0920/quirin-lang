@@ -41,3 +41,9 @@ the proof-only registration repair. Its SHA-256 is
 `17b72dc72bc23a6556fdba576179d4b46d34f04dc34704c7770e72dbb2a7a6bf`.
 The plugin follow-on covers 166 property-qualified sites and both loader envelopes;
 it remains a separate unfinished card requiring its own complete gates and measurements.
+
+Final authoritative confirmation: **374 Python tests pass / exit 0 in 58.277s**
+after committed matrix `791fea14f`; SHA-256 before and after is
+`d43bb0e31c672d08ff282a7d563844696f92e724133e7b4805d1769b44cae8db`.
+[The receipt](post-matrix-confirmation.json) records the command and unchanged matrix.
+No matrix regeneration follows this confirmation.
