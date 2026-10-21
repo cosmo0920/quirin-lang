@@ -170,7 +170,7 @@ go_base=r'''
 int FLBPluginInit(struct flbgo_output_plugin *ctx){return 0;}
 _Static_assert(__builtin_types_compatible_p(__typeof__(&FLBPluginInit),__typeof__(((struct flbgo_output_plugin*)0)->cb_init)),"actual Go init pointer ABI");
 extern void fixture_event(const char*);
-int FLBPluginRegister(struct flb_plugin_proxy_def *d){fixture_event("register");d->proxy=FLB_PROXY_GOLANG;d->type=FLB_PROXY_OUTPUT_PLUGIN;d->name="fixture";return 0;}
+int FLBPluginRegister(struct flb_plugin_proxy_def *d){fixture_event("register");d->proxy=FLB_PROXY_GOLANG;d->type=FLB_PROXY_OUTPUT_PLUGIN;d->name="fixture";fixture_event("register:success");return 0;}
 '''
 build('go_ok',goheader+golayout+go_base,3,True)
 build('go_pre_fail',goheader+golayout+go_base+'\nint FLBPluginPreRegister(int h){fixture_event("pre_register");return -1;}\n',3,True)

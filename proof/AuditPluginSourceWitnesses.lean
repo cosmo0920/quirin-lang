@@ -9,3 +9,5 @@ import QCore.PluginSourceWitnesses
 #print axioms QCore.PluginSourceWitnesses.c_context_failure_does_not_erase_prior_link
 #print axioms QCore.PluginSourceWitnesses.old_truth_remains_independent
 #print axioms QCore.PluginSourceWitnesses.duplicate_completion_fact
+#print axioms QCore.PluginSourceWitnesses.go_completion_fact
+#print axioms QCore.PluginSourceWitnesses.finite_go_implication_refuted

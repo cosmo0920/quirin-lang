@@ -41,7 +41,7 @@ def expected : Case → List String
   | .flb_c_filter_success => ["begin", "open", "allocate", "copy", "copy", "symbol:filter_probe_plugin", "allocate", "copy", "link", "free", "allocate", "retain", "link", "return:0", "end"]
   | .flb_c_output_success => ["begin", "open", "allocate", "copy", "copy", "symbol:out_probe_plugin", "allocate", "copy", "link", "free", "allocate", "retain", "link", "return:0", "end"]
   | .flb_c_context_alloc_fail => ["begin", "open", "allocate", "copy", "copy", "symbol:in_probe_plugin", "allocate", "copy", "link", "free", "allocate", "close", "return:error", "end"]
-  | .go_pre_optional_absent => ["begin", "open", "symbol:FLBPluginPreRegister", "symbol:FLBPluginRegister", "register", "allocate", "symbol:FLBPluginInit", "symbol:FLBPluginFlush", "symbol:FLBPluginFlushCtx", "symbol:FLBPluginExit", "symbol:FLBPluginExitCtx", "allocate", "link", "return:0", "init:present", "optional:absent", "close", "end"]
+  | .go_pre_optional_absent => ["begin", "open", "symbol:FLBPluginPreRegister", "symbol:FLBPluginRegister", "register", "register:success", "allocate", "symbol:FLBPluginInit", "symbol:FLBPluginFlush", "symbol:FLBPluginFlushCtx", "symbol:FLBPluginExit", "symbol:FLBPluginExitCtx", "allocate", "link", "return:0", "init:present", "optional:absent", "close", "end"]
   | .go_pre_failed => ["begin", "open", "symbol:FLBPluginPreRegister", "pre_register", "return:error", "close", "end"]
   | .go_register_missing => ["begin", "open", "symbol:FLBPluginPreRegister", "symbol:FLBPluginRegister", "return:error", "close", "end"]
   | .go_init_missing => ["begin", "open", "allocate", "symbol:FLBPluginInit", "free", "return:error", "close", "end"]
@@ -56,6 +56,15 @@ def DuplicateNoLoaderCalls (trace : List String) : Prop :=
 
 def DuplicateCompleted (trace : List String) : Prop :=
   "return:0" ∈ trace ∧ trace.getLast? = some "end"
+
+def GoCreatorCompleted (trace : List String) : Prop :=
+  "return:nonnull" ∈ trace ∧ trace.getLast? = some "end"
+
+def GoRegistrationSucceeded (trace : List String) : Prop :=
+  "register:success" ∈ trace
+
+def GoCreatorImpliesRegistration (trace : List String) : Prop :=
+  "return:nonnull" ∈ trace → GoRegistrationSucceeded trace
 
 structure Context where
   source artifact build property bounds environment : String
@@ -104,6 +113,16 @@ theorem admitted_preserves_exact_context (presented actual : Case → List Strin
     (pc ac : Context) (source typed native : Prop)
     (checked : admitted presented actual pc ac source typed native) : pc = ac :=
   checked.2.2.2.2.2
+
+theorem go_completion_fact (traces : Case → List String)
+    (checked : complete traces) : GoCreatorCompleted (traces .go_create_ignores_register_failure) := by
+  rw [checked .go_create_ignores_register_failure]
+  simp [GoCreatorCompleted, expected]
+
+theorem finite_go_implication_refuted (traces : Case → List String)
+    (checked : complete traces) : ¬ GoCreatorImpliesRegistration (traces .go_create_ignores_register_failure) := by
+  rw [checked .go_create_ignores_register_failure]
+  simp [GoCreatorImpliesRegistration, GoRegistrationSucceeded, expected]
 
 /-- This finite observation is deliberately weaker than registration success. -/
 theorem creator_return_is_not_registration_evidence :

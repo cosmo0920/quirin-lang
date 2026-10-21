@@ -173,6 +173,7 @@
     "symbol:FLBPluginPreRegister",
     "symbol:FLBPluginRegister",
     "register",
+    "register:success",
     "allocate",
     "symbol:FLBPluginInit",
     "symbol:FLBPluginFlush",

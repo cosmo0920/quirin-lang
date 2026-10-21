@@ -15,6 +15,8 @@ const PRODUCER: &str = include_str!("plugin_source_witnesses/observe.py");
 const MODEL: &str = include_str!("plugin_source_witnesses/trace_model.json");
 pub const BOUNDED_ATOM: &str = "rk_duplicate_fixture_no_loader_calls_v1";
 pub const COMPLETION_ATOM: &str = "rk_duplicate_fixture_complete_v1";
+pub const GO_COMPLETE_ATOM: &str = "go_creator_fixture_complete_v1";
+pub const GO_IMPLIES_ATOM: &str = "go_creator_fixture_implies_registration_v1";
 pub const PROFILE: &str = "plugin-loader-fixture-v1";
 const BOUNDS: &str = "20-cases/single-thread/explicit-stubs";
 const ASSUMPTIONS: &str = "local-clang-posix-loader/real-pinned-headers/explicit-allocation-list-log-stubs/no-deployed-plugin-claim";
@@ -473,7 +475,7 @@ pub fn context(observation: &Observation) -> Result<Context, String> {
             &observation.layouts,
             &observation.symbols,
         ))?,
-        property: BOUNDED_ATOM.into(),
+        property: "plugin_fixture_selected_domain_v1".into(),
         semantic_profile: PROFILE.into(),
         scope: "complete-selected-20-case-domain-v1".into(),
         bounds: BOUNDS.into(),
@@ -560,6 +562,7 @@ pub struct BoundedFlowResult {
     bounded_atom: String,
     source_observation_sha256: String,
     result: qcore_schemas::premise_flow::ProposedEvaluation,
+    evaluations: BTreeMap<String, qcore_schemas::premise_flow::ProposedEvaluation>,
 }
 /// Build separately held flow inputs for the new bounded predicate. None of the
 /// old seven universal plugin propositions occurs in this standalone graph.
@@ -580,9 +583,15 @@ contract {{
  requires resource_contract_v1;
  requires resource_hypothesis({BOUNDED_ATOM}, "The selected rk_duplicate fixture invocation under plugin-loader-fixture-v1 has exactly begin duplicate_test return:0 end; no loader operation occurs inside this invocation");
  requires resource_hypothesis({COMPLETION_ATOM}, "The selected rk_duplicate fixture invocation under plugin-loader-fixture-v1 returns zero and reaches its matching end marker");
- requires resource_premise_all(fixture_invocation_observations, {COMPLETION_ATOM}, {BOUNDED_ATOM});
+ requires resource_hypothesis({GO_COMPLETE_ATOM}, "The selected go_create_ignores_register_failure fixture invocation has a nonnull creator return and matching end marker");
+ requires resource_hypothesis({GO_IMPLIES_ATOM}, "Within this exact selected Go creator fixture invocation, a nonnull creator return implies that the required registration callback succeeded");
+ requires resource_premise_all(fixture_invocation_observations, {GO_COMPLETE_ATOM}, {GO_IMPLIES_ATOM}, {COMPLETION_ATOM}, {BOUNDED_ATOM});
  requires resource_premise_flow_v1(native_duplicate, {BOUNDED_ATOM});
- requires resource_premise_flow_v1(finished, (flow(native_duplicate) ->| {COMPLETION_ATOM}));
+ requires resource_premise_flow_v1(observed_counterexample, {GO_IMPLIES_ATOM});
+ requires resource_premise_flow_v1(known_error, ({GO_COMPLETE_ATOM} !-> {GO_IMPLIES_ATOM}));
+ requires resource_premise_flow_v1(alternative, ({BOUNDED_ATOM} |-> flow(known_error)));
+ requires resource_premise_flow_v1(combined, ({BOUNDED_ATOM} -> flow(known_error)));
+ requires resource_premise_flow_v1(finished, (flow(combined) ->| {COMPLETION_ATOM}));
  ensures normal resource_return_none();
 }};
 "#
@@ -617,6 +626,15 @@ contract {{
     completion.conclusion =
         "DuplicateCompleted trace: zero return and matching end of the same selected invocation"
             .into();
+    let mut go_complete = binding.clone();
+    go_complete.atom_sha256 = digest(&graph.atoms[GO_COMPLETE_ATOM])?;
+    go_complete.proposition = "QCore.PluginSourceWitnesses.GoCreatorCompleted".into();
+    go_complete.quantifiers=vec!["trace : List String; selected = go_create_ignores_register_failure; exact held Context and explicit stub environment".into()];
+    go_complete.conclusion = "GoCreatorCompleted trace for this exact selected invocation".into();
+    let mut go_implies = go_complete.clone();
+    go_implies.atom_sha256 = digest(&graph.atoms[GO_IMPLIES_ATOM])?;
+    go_implies.proposition = "QCore.PluginSourceWitnesses.GoCreatorImpliesRegistration".into();
+    go_implies.conclusion="GoCreatorImpliesRegistration trace for this exact selected invocation; a finite counterexample refutes only this implication".into();
     let models = BTreeMap::from([(
         "plugin_fixture_duplicate".into(),
         qcore_schemas::premise_flow::Model {
@@ -624,11 +642,45 @@ contract {{
             atoms: BTreeMap::from([
                 (BOUNDED_ATOM.into(), binding),
                 (COMPLETION_ATOM.into(), completion),
+                (GO_COMPLETE_ATOM.into(), go_complete),
+                (GO_IMPLIES_ATOM.into(), go_implies),
             ]),
         },
     )]);
     let artifacts = BTreeMap::from([(model_path.into(), model), (audit_path.into(), audit)]);
     Ok((sources, graphs, models, artifacts))
+}
+fn assignments(
+    cases: &BTreeMap<String, Vec<String>>,
+) -> Result<BTreeMap<&'static str, qcore_schemas::hypothesis::Disposition>, String> {
+    use qcore_schemas::hypothesis::Disposition;
+    let duplicate = cases
+        .get("rk_duplicate")
+        .ok_or("missing actual duplicate invocation")?;
+    let go = cases
+        .get("go_create_ignores_register_failure")
+        .ok_or("missing actual Go invocation")?;
+    let exact_duplicate = duplicate
+        == &vec![
+            "begin".to_owned(),
+            "duplicate_test".into(),
+            "return:0".into(),
+            "end".into(),
+        ];
+    let duplicate_complete =
+        duplicate.iter().any(|v| v == "return:0") && duplicate.last().is_some_and(|v| v == "end");
+    let returned = go.iter().any(|v| v == "return:nonnull");
+    let go_complete = returned && go.last().is_some_and(|v| v == "end");
+    let registered = go.iter().any(|v| v == "register:success");
+    if !exact_duplicate || !duplicate_complete || !go_complete || registered {
+        return Err("bounded predicates lack complete native assignment".into());
+    }
+    Ok(BTreeMap::from([
+        (BOUNDED_ATOM, Disposition::Supported),
+        (COMPLETION_ATOM, Disposition::Supported),
+        (GO_COMPLETE_ATOM, Disposition::Supported),
+        (GO_IMPLIES_ATOM, Disposition::Refuted),
+    ]))
 }
 impl CheckedWitness {
     /// Consume an admitted witness through the source-replayed operator API.
@@ -652,19 +704,24 @@ impl CheckedWitness {
             hypotheses: Instance {
                 graph_sha256: qcore_contract::hypothesis::digest(&graph)?,
                 context: self.context.clone(),
-                evidence: [BOUNDED_ATOM, COMPLETION_ATOM]
-                    .into_iter()
-                    .map(|id| {
-                        Ok(Evidence {
-                            atom: id.into(),
-                            atom_sha256: digest(&graph.atoms[id])?,
-                            context: self.context.clone(),
-                            disposition: Disposition::Supported,
-                            warrant: Warrant::Observed,
-                            reference: self.observation_sha256.clone(),
-                        })
+                evidence: [
+                    BOUNDED_ATOM,
+                    COMPLETION_ATOM,
+                    GO_COMPLETE_ATOM,
+                    GO_IMPLIES_ATOM,
+                ]
+                .into_iter()
+                .map(|id| {
+                    Ok(Evidence {
+                        atom: id.into(),
+                        atom_sha256: digest(&graph.atoms[id])?,
+                        context: self.context.clone(),
+                        disposition: assignments(&self.cases)?[id],
+                        warrant: Warrant::Observed,
+                        reference: self.observation_sha256.clone(),
                     })
-                    .collect::<Result<_, String>>()?,
+                })
+                .collect::<Result<_, String>>()?,
                 graph,
             },
         };
@@ -682,15 +739,51 @@ impl CheckedWitness {
         )?;
         if result.disposition != Disposition::Supported
             || !result.terminated
-            || result.atom_dependencies != vec![COMPLETION_ATOM.to_owned(), BOUNDED_ATOM.to_owned()]
+            || result.atom_dependencies
+                != vec![
+                    GO_COMPLETE_ATOM.to_owned(),
+                    GO_IMPLIES_ATOM.to_owned(),
+                    COMPLETION_ATOM.to_owned(),
+                    BOUNDED_ATOM.to_owned(),
+                ]
         {
             return Err("unexpected bounded flow result".into());
+        }
+        let mut evaluations = BTreeMap::new();
+        for entry in [
+            "native_duplicate",
+            "observed_counterexample",
+            "known_error",
+            "alternative",
+            "combined",
+            "finished",
+        ] {
+            let evaluated = premise_flow::evaluate_proposed(
+                &packet,
+                premise_flow::Expected {
+                    sources: &sources,
+                    graphs: &graphs,
+                    models: &models,
+                    artifacts: &artifacts,
+                    document: doc,
+                    context: &self.context,
+                },
+                entry,
+            )?;
+            if (entry == "observed_counterexample" && evaluated.disposition != Disposition::Refuted)
+                || (entry != "observed_counterexample"
+                    && evaluated.disposition != Disposition::Supported)
+            {
+                return Err("finite observed-error propagation mismatch".into());
+            }
+            evaluations.insert(entry.into(), evaluated);
         }
         Ok(BoundedFlowResult {
             checker: "quirin-source-analysis/plugin-source-witness-v1".into(),
             bounded_atom: BOUNDED_ATOM.into(),
             source_observation_sha256: self.observation_sha256.clone(),
             result,
+            evaluations,
         })
     }
 }
@@ -720,7 +813,7 @@ mod tests {
         let docs =
             qcore_contract::premise_flow::compile(&sources, &graphs, &models, &artifacts).unwrap();
         assert_eq!(docs.len(), 1);
-        assert_eq!(graphs["plugin_fixture_duplicate"].atoms.len(), 2);
+        assert_eq!(graphs["plugin_fixture_duplicate"].atoms.len(), 4);
         assert_eq!(graphs["plugin_fixture_duplicate"].premises.len(), 1);
         let mut wrong = artifacts.clone();
         wrong.values_mut().next().unwrap().push(b' ');
