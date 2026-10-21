@@ -1100,6 +1100,7 @@ fn record_projection(
             qcore_contract::hypothesis::replay(contracts.source_assumptions())?
         };
         let mut reading_binding_omissions = Vec::new();
+        let mut bound_readings = Vec::new();
         for function in row["functions"].as_array_mut().into_iter().flatten() {
             let mut context = hypothesis_context.clone();
             if let Some(source) = &dependencies.primary_source_sha256 {
@@ -1128,10 +1129,17 @@ fn record_projection(
                         if !consulted {
                             return Err("no actual row consultation closure".to_owned());
                         }
+                        qcore_c_gateway::reading_site_evidence::validate_observation_environment(
+                            observation,
+                            &dependencies.reading_environments,
+                        )?;
                         qcore_c_gateway::reading_site_evidence::bind(observation, &context, graph)
                     });
                 match binding {
-                    Ok(receipt) => readings.push(receipt),
+                    Ok(receipt) => {
+                        bound_readings.push(receipt.clone());
+                        readings.push(receipt)
+                    }
                     Err(reason) => reading_binding_omissions.push(serde_json::json!({
                         "function": name, "declaration": observation.declaration, "reason": reason
                     })),
@@ -1144,6 +1152,18 @@ fn record_projection(
             }
             function["hypothesis_context"] =
                 serde_json::to_value(context).map_err(|e| e.to_string())?;
+        }
+        let captured = qcore_c_gateway::reading_site_evidence::publication_environments(
+            &bound_readings,
+            &dependencies.reading_environments,
+        )?;
+        if !captured.is_empty() {
+            row["reading_site_environments"] = serde_json::json!({
+                "schema": qcore_c_gateway::reading_site_evidence::ENVIRONMENTS_SCHEMA,
+                "environments": captured,
+                "claim": "exact-canonical-effective-environment-bytes-only",
+                "universal_disposition": "open"
+            });
         }
         if !reading_binding_omissions.is_empty() {
             // Missing evidence bindings never acquire semantic authority: omit

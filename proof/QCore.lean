@@ -404,6 +404,7 @@ import QCore.LibcReadingPremises
 import QCore.CallFreeConditionReads
 import QCore.PremiseRefinement
 import QCore.PluginPremiseDecomposition
+import QCore.PluginReadingEnvironment
 
 /-! The executable formal core of QCore-C revision 0.1. -/
 

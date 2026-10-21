@@ -59,6 +59,9 @@ pub struct UnitRecord {
     /// Authoritative token stream, for selected site observations only.
     pub primary_token_sha256: Option<String>,
     pub reading_sites: Vec<crate::reading_site_evidence::Observation>,
+    /// Exact detached effective-environment bytes for retained observations.
+    /// Evidence-only: not a source contract, predicate, certificate or consumer.
+    pub reading_environments: BTreeMap<String, String>,
     pub reading_site_omissions: BTreeMap<String, usize>,
     /// S3 source member/stability facts, per analyzed function. Evidence only;
     /// runtime projection treats each as a closed-world fact needing coverage.
@@ -858,6 +861,15 @@ pub(crate) fn restore_reading_checkpoint(saved: &Option<ReadingCheckpoint>) {
     if let Some(saved) = saved {
         with_recorder(|r| {
             r.record.reading_sites.truncate(saved.length);
+            let kept = r
+                .record
+                .reading_sites
+                .iter()
+                .map(|observation| observation.environment_sha256.as_str())
+                .collect::<BTreeSet<_>>();
+            r.record
+                .reading_environments
+                .retain(|sha, _| kept.contains(sha.as_str()));
             r.record.reading_site_omissions.clone_from(&saved.omissions);
         });
     }
@@ -897,8 +909,22 @@ pub(crate) fn reading_omitted(reason: &str) {
     with_evidence(|r| *r.reading_site_omissions.entry(reason.into()).or_default() += 1);
 }
 
-pub(crate) fn reading_observed(observation: crate::reading_site_evidence::Observation) {
+pub(crate) fn reading_observed(
+    observation: crate::reading_site_evidence::Observation,
+    canonical_environment: String,
+) {
     with_evidence(|r| {
+        if qcore_schemas::sha256_hex(canonical_environment.as_bytes())
+            != observation.environment_sha256
+        {
+            *r.reading_site_omissions
+                .entry("effective-environment-digest-mismatch".into())
+                .or_default() += 1;
+            return;
+        }
+        r.reading_environments
+            .entry(observation.environment_sha256.clone())
+            .or_insert(canonical_environment);
         if !r.reading_sites.contains(&observation) {
             r.reading_sites.push(observation);
         }

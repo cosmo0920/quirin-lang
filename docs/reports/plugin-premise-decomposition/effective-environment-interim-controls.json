@@ -1,0 +1,47 @@
+{
+  "status": "interim evidence only; exact combined main and final gates pending",
+  "boundary_prediction": "EFFECTIVE-ENVIRONMENT-CAPTURE-PREDICTION.json",
+  "results": [
+    {
+      "command_key": "interim-effective-environment-check-1",
+      "exit": 0,
+      "check": "gateway/audit jobs1 type check"
+    },
+    {
+      "command_key": "interim-environment-actual-controls-1",
+      "exit": 0,
+      "passed": 6
+    },
+    {
+      "command_key": "interim-environment-recorder-controls-2",
+      "exit": 0,
+      "passed": 5
+    },
+    {
+      "command_key": "interim-environment-lean-2",
+      "exit": 0
+    },
+    {
+      "command_key": "interim-environment-audit-1",
+      "exit": 0,
+      "theorems": 8
+    }
+  ],
+  "retained_failures": [
+    {
+      "command_key": "interim-environment-lean-1",
+      "exit": 1,
+      "reason": "wrong Lean working directory; corrected using explicit proof cwd"
+    },
+    {
+      "command_key": "interim-environment-recorder-controls-1",
+      "exit": 101,
+      "passed": 4,
+      "failed": 1,
+      "reason": "fixture incorrectly expected exactly one effective environment; corrected to full independently held prior observation/environment map equality"
+    }
+  ],
+  "logs": "private/plugin-premise-decomposition/<command_key>.log",
+  "reconstruction_helper": "scripts/attribute_reading_environments.rs",
+  "helper_status": "prepared; actual paired diagnostics pending; refuses any unexplained effective import or Context delta rather than deleting fields"
+}
