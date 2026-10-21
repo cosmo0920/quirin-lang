@@ -1,0 +1,18 @@
+{
+  "base": "d08dcca8b77b35417a999474b608cedfe821cfdb",
+  "build_head": "d5d881126d42b38fbb5581bbb58266bd042efe9c",
+  "sha256": "e87e886d5aa0d680d65abcc0896545de0758238197b085ec72b51f60c60ca11f",
+  "binary": "/home/cosmo/.codex/worktrees/w48-bottom-up-batch5/qcore-c/private/w48-batch5/base-build/quirin-audit",
+  "command": [
+    "cargo",
+    "build",
+    "--release",
+    "-p",
+    "qcore-audit",
+    "--bin",
+    "quirin-audit"
+  ],
+  "exit": 0,
+  "log": "/home/cosmo/.codex/worktrees/w48-bottom-up-batch5/qcore-c/private/w48-batch5/base-build/build.log",
+  "note": "Build HEAD differs from base only by the pre-implementation report checkpoint; preserved binary predates all semantic edits."
+}

@@ -1,0 +1,270 @@
+{
+  "source_tip": "9728ff74574f8398f90dcf7922fae90a7b42acde",
+  "distinct_accepted_rust_tests": 60,
+  "new_unit_tests": 3,
+  "new_source_tests": 6,
+  "existing_boundary_tests": 51,
+  "lean_theorems": 10,
+  "lean_version": "4.35.0",
+  "full_standing_gate": "shared joint integration campaign, pending; these focused checks do not substitute for it",
+  "commands": [
+    {
+      "name": "clang",
+      "command": [
+        "/usr/lib/llvm-21/bin/clang",
+        "--version"
+      ],
+      "cwd": "/home/cosmo/.codex/worktrees/w48-bottom-up-batch5/qcore-c",
+      "started": "2026-10-21T17:45:48.867771+00:00",
+      "ended": "2026-10-21T17:45:48.880888+00:00",
+      "exit": 0,
+      "log": "/home/cosmo/.codex/worktrees/w48-bottom-up-batch5/qcore-c/private/w48-batch5/focused-tip-2/clang.log"
+    },
+    {
+      "name": "rust-unit",
+      "command": [
+        "cargo",
+        "test",
+        "-p",
+        "qcore-c-gateway",
+        "--lib",
+        "scalar_read_identity"
+      ],
+      "cwd": "/home/cosmo/.codex/worktrees/w48-bottom-up-batch5/qcore-c",
+      "started": "2026-10-21T17:45:48.881176+00:00",
+      "ended": "2026-10-21T17:46:22.113479+00:00",
+      "exit": 0,
+      "log": "/home/cosmo/.codex/worktrees/w48-bottom-up-batch5/qcore-c/private/w48-batch5/focused-tip-2/rust-unit.log"
+    },
+    {
+      "name": "rust-source",
+      "command": [
+        "cargo",
+        "test",
+        "-p",
+        "qcore-c-gateway",
+        "--test",
+        "scalar_read_identity"
+      ],
+      "cwd": "/home/cosmo/.codex/worktrees/w48-bottom-up-batch5/qcore-c",
+      "started": "2026-10-21T17:46:22.113966+00:00",
+      "ended": "2026-10-21T17:46:58.680064+00:00",
+      "exit": 101,
+      "log": "/home/cosmo/.codex/worktrees/w48-bottom-up-batch5/qcore-c/private/w48-batch5/focused-tip-2/rust-source.log"
+    },
+    {
+      "name": "rust-boundaries",
+      "command": [
+        "cargo",
+        "test",
+        "-p",
+        "qcore-c-gateway",
+        "--test",
+        "scalar_precedence",
+        "--test",
+        "descriptor_custody",
+        "--test",
+        "resource_kinds",
+        "--test",
+        "indirect_chain_access"
+      ],
+      "cwd": "/home/cosmo/.codex/worktrees/w48-bottom-up-batch5/qcore-c",
+      "started": "2026-10-21T17:46:58.680904+00:00",
+      "ended": "2026-10-21T17:47:03.135521+00:00",
+      "exit": 0,
+      "log": "/home/cosmo/.codex/worktrees/w48-bottom-up-batch5/qcore-c/private/w48-batch5/focused-tip-2/rust-boundaries.log"
+    },
+    {
+      "name": "clippy",
+      "command": [
+        "cargo",
+        "clippy",
+        "-p",
+        "qcore-c-gateway",
+        "--lib",
+        "--test",
+        "scalar_read_identity",
+        "--",
+        "-D",
+        "warnings"
+      ],
+      "cwd": "/home/cosmo/.codex/worktrees/w48-bottom-up-batch5/qcore-c",
+      "started": "2026-10-21T17:47:03.135929+00:00",
+      "ended": "2026-10-21T17:47:38.676620+00:00",
+      "exit": 0,
+      "log": "/home/cosmo/.codex/worktrees/w48-bottom-up-batch5/qcore-c/private/w48-batch5/focused-tip-2/clippy.log"
+    },
+    {
+      "name": "fmt",
+      "command": [
+        "cargo",
+        "fmt",
+        "--all",
+        "--",
+        "--check"
+      ],
+      "cwd": "/home/cosmo/.codex/worktrees/w48-bottom-up-batch5/qcore-c",
+      "started": "2026-10-21T17:47:38.677185+00:00",
+      "ended": "2026-10-21T17:47:49.449655+00:00",
+      "exit": 0,
+      "log": "/home/cosmo/.codex/worktrees/w48-bottom-up-batch5/qcore-c/private/w48-batch5/focused-tip-2/fmt.log"
+    },
+    {
+      "name": "lean-build",
+      "command": [
+        "lake",
+        "build",
+        "QCore.ScalarReadIdentity"
+      ],
+      "cwd": "/home/cosmo/.codex/worktrees/w48-bottom-up-batch5/qcore-c/proof",
+      "started": "2026-10-21T17:47:49.450634+00:00",
+      "ended": "2026-10-21T17:47:49.918351+00:00",
+      "exit": 0,
+      "log": "/home/cosmo/.codex/worktrees/w48-bottom-up-batch5/qcore-c/private/w48-batch5/focused-tip-2/lean-build.log"
+    },
+    {
+      "name": "lean-audit",
+      "command": [
+        "lake",
+        "env",
+        "lean",
+        "AuditScalarReadIdentity.lean"
+      ],
+      "cwd": "/home/cosmo/.codex/worktrees/w48-bottom-up-batch5/qcore-c/proof",
+      "started": "2026-10-21T17:47:49.918782+00:00",
+      "ended": "2026-10-21T17:47:50.155728+00:00",
+      "exit": 0,
+      "log": "/home/cosmo/.codex/worktrees/w48-bottom-up-batch5/qcore-c/private/w48-batch5/focused-tip-2/lean-audit.log"
+    },
+    {
+      "name": "source",
+      "command": [
+        "cargo",
+        "test",
+        "-p",
+        "qcore-c-gateway",
+        "--test",
+        "scalar_read_identity"
+      ],
+      "cwd": "/home/cosmo/.codex/worktrees/w48-bottom-up-batch5/qcore-c",
+      "started": "2026-10-21T17:49:48.971634+00:00",
+      "ended": "2026-10-21T17:49:50.349848+00:00",
+      "exit": 101,
+      "log": "/home/cosmo/.codex/worktrees/w48-bottom-up-batch5/qcore-c/private/w48-batch5/focused-tip-3/source.log"
+    },
+    {
+      "name": "clippy",
+      "command": [
+        "cargo",
+        "clippy",
+        "-p",
+        "qcore-c-gateway",
+        "--lib",
+        "--test",
+        "scalar_read_identity",
+        "--",
+        "-D",
+        "warnings"
+      ],
+      "cwd": "/home/cosmo/.codex/worktrees/w48-bottom-up-batch5/qcore-c",
+      "started": "2026-10-21T17:49:50.350254+00:00",
+      "ended": "2026-10-21T17:49:50.630771+00:00",
+      "exit": 0,
+      "log": "/home/cosmo/.codex/worktrees/w48-bottom-up-batch5/qcore-c/private/w48-batch5/focused-tip-3/clippy.log"
+    },
+    {
+      "name": "fmt",
+      "command": [
+        "cargo",
+        "fmt",
+        "--all",
+        "--",
+        "--check"
+      ],
+      "cwd": "/home/cosmo/.codex/worktrees/w48-bottom-up-batch5/qcore-c",
+      "started": "2026-10-21T17:49:50.633014+00:00",
+      "ended": "2026-10-21T17:49:58.245716+00:00",
+      "exit": 0,
+      "log": "/home/cosmo/.codex/worktrees/w48-bottom-up-batch5/qcore-c/private/w48-batch5/focused-tip-3/fmt.log"
+    },
+    {
+      "name": "lean-version",
+      "command": [
+        "lake",
+        "env",
+        "lean",
+        "--version"
+      ],
+      "cwd": "/home/cosmo/.codex/worktrees/w48-bottom-up-batch5/qcore-c/proof",
+      "started": "2026-10-21T17:49:58.246267+00:00",
+      "ended": "2026-10-21T17:49:58.392542+00:00",
+      "exit": 0,
+      "log": "/home/cosmo/.codex/worktrees/w48-bottom-up-batch5/qcore-c/private/w48-batch5/focused-tip-3/lean-version.log"
+    },
+    {
+      "name": "source",
+      "command": [
+        "cargo",
+        "test",
+        "-p",
+        "qcore-c-gateway",
+        "--test",
+        "scalar_read_identity"
+      ],
+      "cwd": "/home/cosmo/.codex/worktrees/w48-bottom-up-batch5/qcore-c",
+      "started": "2026-10-21T17:53:12.419113+00:00",
+      "ended": "2026-10-21T17:53:13.075945+00:00",
+      "exit": 0,
+      "log": "/home/cosmo/.codex/worktrees/w48-bottom-up-batch5/qcore-c/private/w48-batch5/focused-tip-4/source.log"
+    },
+    {
+      "name": "clippy",
+      "command": [
+        "cargo",
+        "clippy",
+        "-p",
+        "qcore-c-gateway",
+        "--lib",
+        "--test",
+        "scalar_read_identity",
+        "--",
+        "-D",
+        "warnings"
+      ],
+      "cwd": "/home/cosmo/.codex/worktrees/w48-bottom-up-batch5/qcore-c",
+      "started": "2026-10-21T17:53:13.076173+00:00",
+      "ended": "2026-10-21T17:53:13.209331+00:00",
+      "exit": 0,
+      "log": "/home/cosmo/.codex/worktrees/w48-bottom-up-batch5/qcore-c/private/w48-batch5/focused-tip-4/clippy.log"
+    },
+    {
+      "name": "fmt",
+      "command": [
+        "cargo",
+        "fmt",
+        "--all",
+        "--",
+        "--check"
+      ],
+      "cwd": "/home/cosmo/.codex/worktrees/w48-bottom-up-batch5/qcore-c",
+      "started": "2026-10-21T17:53:13.209560+00:00",
+      "ended": "2026-10-21T17:53:17.088473+00:00",
+      "exit": 0,
+      "log": "/home/cosmo/.codex/worktrees/w48-bottom-up-batch5/qcore-c/private/w48-batch5/focused-tip-4/fmt.log"
+    },
+    {
+      "name": "lean-version",
+      "command": [
+        "lake",
+        "env",
+        "lean",
+        "--version"
+      ],
+      "cwd": "/home/cosmo/.codex/worktrees/w48-bottom-up-batch5/qcore-c/proof",
+      "started": "2026-10-21T17:53:17.088856+00:00",
+      "ended": "2026-10-21T17:53:17.179834+00:00",
+      "exit": 0,
+      "log": "/home/cosmo/.codex/worktrees/w48-bottom-up-batch5/qcore-c/private/w48-batch5/focused-tip-4/lean-version.log"
+    }
+  ]
+}
