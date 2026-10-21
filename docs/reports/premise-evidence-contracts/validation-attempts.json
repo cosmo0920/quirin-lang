@@ -19,5 +19,37 @@
     "lean_audit_exit": 1,
     "release_build_exit": 0,
     "meaning": "Inheritance control exposes a legacy premise label p colliding with a formal p: generic positional substitution renamed the old literal label but correctly preserved new graph IDs, leaving no attachment target. Fix literal-label role preservation, not the fixture. Lean two ground derived-BEq goals need decide after simplification; other new proofs already elaborate. Initial missing-olean audit error is downstream of that failed build. Release build succeeds but is not final source freeze."
+  },
+  {
+    "attempt": "focused-2",
+    "commands": "/home/cosmo/.codex/worktrees/premise-decomposition-cycle1/qcore-c/private/premise-evidence-contracts/focused-2/commands.json",
+    "exit": 0,
+    "graph_tests": 15,
+    "binding_tests": 3,
+    "audit_controls": 11,
+    "lean_model_and_audit_exit": 0,
+    "release_exit": 0,
+    "note": "Corrected literal premise-label renaming and ground proof reductions; later nonvacuous actual-sidecar control adds one audit test."
+  },
+  {
+    "attempt": "pins-1",
+    "commands": "/home/cosmo/.codex/worktrees/premise-decomposition-cycle1/qcore-c/private/premise-evidence-contracts/pins-1/commands.json",
+    "exit": 0,
+    "note": "Both official source pin refreshes, provider inventory sync and check succeed."
+  },
+  {
+    "attempt": "standing-1",
+    "commands": "/home/cosmo/.codex/worktrees/premise-decomposition-cycle1/qcore-c/private/premise-evidence-contracts/standing-1/commands.json",
+    "exit": 1,
+    "rust_tests": 8397,
+    "rust_failed": 0,
+    "rust_ignored": 15,
+    "units": 525,
+    "summaries": 538,
+    "failed_steps": {
+      "clippy": 101,
+      "lean": 1
+    },
+    "note": "Complete Rust runner passes. Test-only clone lint and misplaced root Lean import fail subsequent checks. Both fixed without disabling any check; full corrected gate queued. Provider/release stages not executed in this failed pipeline."
   }
 ]
