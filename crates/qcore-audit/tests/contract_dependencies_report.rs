@@ -465,8 +465,8 @@ extern fn impact_free(p: ptr<mut,u8>) -> unit contract { requires resource_contr
             qcore_c_gateway::legacy_c::AnalysisStatus::Safe
         );
         let closure = hypothesis_closure(&actual_rows[name], &actual_graphs);
-        assert_eq!(closure["cJSON_DetachItemViaPointer"].len(), 1);
-        assert!(!closure["cJSON_DetachItemViaPointer"].contains("detach_no_writer"));
+        assert_eq!(closure["cJSON_DetachItemViaPointer"].len(), 10);
+        assert!(closure["cJSON_DetachItemViaPointer"].contains("detach_no_writer"));
     }
     let recording = Recording::start();
     let summary = analyze_legacy_c_translation_unit(source, "caller", &contracts).unwrap();

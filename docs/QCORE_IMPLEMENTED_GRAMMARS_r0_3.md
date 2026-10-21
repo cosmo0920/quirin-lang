@@ -3527,6 +3527,7 @@ resource_clause = "requires", "resource_contract_v1", ";"
                 | "requires", named_premise, ";"
                 | "requires", hypothesis_atom, ";"
                 | "requires", hypothesis_all, ";"
+                | "requires", hypothesis_decomposition, ";"
                 | "requires", discriminant, ";"
                 | "ensures", "normal", resource_predicate, ";"
                 | "ensures", "normal", arm_predicate, ";"
@@ -3536,6 +3537,7 @@ resource_clause = "requires", "resource_contract_v1", ";"
                 | "ensures", "normal", clause_revision_marker, ";" ;
 hypothesis_atom = "resource_hypothesis", "(", premise_name, ",", STRING, ")" ;
 hypothesis_all = "resource_premise_all", "(", premise_name, ",", premise_name, {",", premise_name}, ")" ;
+hypothesis_decomposition = "resource_premise_decomposition", "(", premise_name, ",", premise_name, {",", premise_name}, ")" ;
 named_premise =
     "resource_premise", "(", premise_name, ",", STRING, ")" ;
   (* card VERDICT-CONTRACT-DEPENDENCIES, contract specification C04.18:
@@ -3696,6 +3698,8 @@ The revision markers (card W45-CONTRACT-REVISION-MODE, contract specification C0
 The named premise `requires resource_premise(NAME, "STATEMENT");` (card VERDICT-CONTRACT-DEPENDENCIES, contract specification C04.18) names an assumption the declaration rests on: `NAME` a lowercase identifier, the statement one plain, non-blank string with no escape and no control character, each name at most once per declaration; any other shape, a repeated name and an `ensures` spelling each reject the whole module. It changes no mode, is rederived from the retained texts (`declaration_premises`), is part of the declaration's text and so of its contract digest and pin, and inheritance (G05a) copies it, compared by the agreement check. Since card LIBRDKAFKA-PLUGIN-PREMISE-REMAINDER the shape check belongs to the contract format: `crates/qcore-frontend/src/frontend.rs` (`premise_clause`) refuses, at parse, any other shape, an introducer other than `requires` and a repeated name in one declaration, in every module. A resource-v1, bounds-v1 (G05f, beside a member clause of any kind only) or Quirin model contract is rejected whole. A model contract's premises are read by `contract_loader::module_premises`.
 
 The conjunction-only graph extension (CONTRACT-HYPOTHESIS-GRAPH-V1, C04.18.1) admits `requires resource_hypothesis(ID, STRING);` and `requires resource_premise_all(NAME, ID {, ID});` in resource-v1 declarations. Both heads and IDs remain ordinary `Word` tokens: the reserved-word census adds zero words and zero lexer token variants. Statements use C04.18's plain-string restrictions. IDs are lowercase identifiers, with `legacy_` reserved. Conjunction references are nonempty, unique and strictly increasing; only atom references are admitted. Unused/missing/conflicting atoms and any typed predicate reject the whole module. Equal duplicate atoms coalesce. There is no `any` or `not` grammar and no graph clause under a scoped S3 prerequisite, FFI or bounds vocabulary. Inheritance preserves graph symbols, independent of formal renaming. All graph records remain evidence-only; C04.18.1 defines exact context, digest, replay and erasure rules.
+
+C04.18.2 additionally admits the ordinary-word contextual head `requires resource_premise_decomposition(EXISTING_NAME, ATOM {, ATOM});`. It resolves exactly one declared legacy premise in the same declaration, creates no named premise, and retains that premise's exact singleton/erasure. Only nonlegacy atom children are admitted; malformed, repeated, missing or noncanonical attachment data reject. Nonempty attachment maps use graph2; unchanged v1 bytes/digests remain canonical. Proposed conjunction composition is separate from original proposition truth. The plain module-comment binding marker and canonical explicitly supplied manifest are metadata outside the expression grammar, with strict version/content-address/reference checks under C04.18.2. No operators, reserved words or typed predicates are added.
 
 The checked-specification marker `requires resource_body_checked;` (card W45-FB-BACKLOG-CUSTODY, contract specification C06.3) takes no argument, occurs at most once and only as a contract-level requirement; a second one, an argument, and an `ensures` spelling each reject the whole module. It changes no mode: the loaded contract is the one the same declaration without it loads, and which declarations carry it is rederived from the retained texts (`declared_checked_specifications`), as the variadic tail and the literal premise are. Inheritance (G05a) copies it with the other clauses, and the inherited-declaration agreement check compares it. It composes with the revision and review markers: it is read after they are peeled, neither may wrap it, and a declaration a review marker withholds, or an unpinned declaration out of force, is never a specification.
 

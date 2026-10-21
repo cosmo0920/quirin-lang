@@ -1,4 +1,5 @@
 module contract;
+// qcore-premise-binding-manifest-v1 cJSON_DetachItemViaPointer detach_list_representation a511dd5d2efe7e0fae2c29207e6a54ce5730f7870d7d5ed34d0bdc2c4d9b721e
 
 // cJSON entity release — resource-projection vocabulary version 1.
 //
@@ -414,6 +415,16 @@ extern fn cJSON_DetachItemViaPointer(parent: ptr<mut, u8>, item: ptr<mut, u8>) -
 contract {
     requires resource_contract_v1;
     requires resource_premise(detach_list_representation, "For this removed-result declaration, the live parent represents exactly its owned children by a finite acyclic child and next chain; child is NULL precisely when the chain is empty, each nonfirst child's prev is its predecessor, the first child's prev is the last child, chain child identities are pairwise distinct, every non-NULL next or prev target is a live child of that same parent, the last child's next is NULL, the parent is not a child, and no concurrent writer mutates these links during the call");
+    requires resource_hypothesis(detach_chain, "For this removed-result declaration, the live parent represents exactly its owned children by a finite acyclic child and next chain");
+    requires resource_hypothesis(detach_distinct, "For this removed-result declaration, chain child identities are pairwise distinct");
+    requires resource_hypothesis(detach_empty, "For this removed-result declaration, child is NULL precisely when the child and next chain is empty");
+    requires resource_hypothesis(detach_first_prev, "For this removed-result declaration, the first child's prev is the last child");
+    requires resource_hypothesis(detach_last_next, "For this removed-result declaration, the last child's next is NULL");
+    requires resource_hypothesis(detach_link_targets, "For this removed-result declaration, every non-NULL next or prev target is a live child of that same parent");
+    requires resource_hypothesis(detach_no_writer, "For this removed-result declaration, no concurrent writer mutates these links during the call");
+    requires resource_hypothesis(detach_parent_outside, "For this removed-result declaration, the parent is not a child");
+    requires resource_hypothesis(detach_predecessor, "For this removed-result declaration, each nonfirst child's prev is its predecessor");
+    requires resource_premise_decomposition(detach_list_representation, detach_chain, detach_distinct, detach_empty, detach_first_prev, detach_last_next, detach_link_targets, detach_no_writer, detach_parent_outside, detach_predecessor);
     ensures normal resource_owned(parent, nonnull);
     ensures normal resource_removed(item, parent, nullable);
     ensures normal resource_return_removed(item, nullable);

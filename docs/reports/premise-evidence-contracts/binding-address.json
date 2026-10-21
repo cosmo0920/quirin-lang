@@ -1,0 +1,7 @@
+{
+  "manifest_sha256": "a511dd5d2efe7e0fae2c29207e6a54ce5730f7870d7d5ed34d0bdc2c4d9b721e",
+  "graph_sha256": "b0054bef60dba73581c88bb5320b2b3490b410229a1a17763c85f41eb87376ed",
+  "scope": "Independently held expected data frozen before resolver execution; source binding Open, no Derived/Supported claim.",
+  "model_sha256": "7f14f533993fb7551001a235992e85d25bddbed36a5d1db7e1c3fb484bcb4c07",
+  "audit_sha256": "387c3c21f1c9cd989c8c17f9fc8678739c8d72e824798f932f5a492ab05d2ccb"
+}

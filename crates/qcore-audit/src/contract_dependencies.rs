@@ -313,6 +313,7 @@ pub fn premises(contracts: &ResourceContracts) -> Result<Value, String> {
                     version: 1,
                     atoms: BTreeMap::new(),
                     premises: BTreeMap::new(),
+                    refinements: BTreeMap::new(),
                 });
         for record in records {
             let record: qcore_schemas::hypothesis::ErasedPremise =
@@ -329,6 +330,11 @@ pub fn premises(contracts: &ResourceContracts) -> Result<Value, String> {
         .map(|(name, graph)| Ok((name.clone(), qcore_contract::hypothesis::digest(graph)?)))
         .collect::<Result<BTreeMap<_, _>, String>>()?;
     let mut value = json!(premises);
+    let binding_requirements =
+        qcore_contract::hypothesis_bindings::requirements(contracts.source_assumptions(), &graphs)?;
+    if !binding_requirements.is_empty() {
+        value["$hypothesis_binding_requirements"] = json!(binding_requirements);
+    }
     value["$hypothesis_graphs"] = json!(graphs);
     value["$hypothesis_graph_digests"] = json!(digests);
     Ok(value)
@@ -808,6 +814,8 @@ pub fn erase_hypotheses(value: &mut Value) {
             // equally named declaration in a premise/inventory map.
             map.remove("$hypothesis_graphs");
             map.remove("$hypothesis_graph_digests");
+            map.remove("$hypothesis_binding_requirements");
+            map.remove("$checked_hypothesis_bindings");
             let function_row = map.get("function").is_some_and(Value::is_string)
                 && (map.contains_key("status") || map.contains_key("null"));
             let declaration =
@@ -836,4 +844,30 @@ pub fn erase_hypotheses(value: &mut Value) {
         }
         _ => {}
     }
+}
+
+/// Publish explicitly supplied, independently checked reference bindings beside
+/// the exact existing graph. Integrity only; source correspondence stays Open.
+pub fn publish_checked_bindings(
+    value: &mut Value,
+    sources: &BTreeMap<String, String>,
+    expected_graphs: &BTreeMap<String, qcore_schemas::hypothesis::Graph>,
+    expected_manifests: &BTreeMap<String, qcore_schemas::hypothesis::BindingManifest>,
+    presented_manifests: &BTreeMap<String, Vec<u8>>,
+    artifacts: &BTreeMap<String, Vec<u8>>,
+) -> Result<(), String> {
+    if value["$hypothesis_graphs"] != json!(expected_graphs) {
+        return Err("binding: independently expected graphs differ from published graphs".into());
+    }
+    let bindings = qcore_contract::hypothesis_bindings::resolve(
+        sources,
+        expected_graphs,
+        expected_manifests,
+        presented_manifests,
+        artifacts,
+    )?;
+    value["$checked_hypothesis_bindings"] = json!({
+        "warrant": "reference-integrity-only", "source_binding": "open", "manifests": bindings
+    });
+    Ok(())
 }
