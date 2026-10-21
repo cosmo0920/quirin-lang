@@ -25,31 +25,201 @@
   },
   "manual_decisions": {
     "contract-lifecycle-symbols": [
-      "typed parser/resource+hypothesis validation+Lean integrated",
-      "preserve original interpreted resource_lifecycle semantics",
-      "executable effects/invalidation remain in exact same existing production-discharge residual"
+      {
+        "item": "typed parser/resource+hypothesis validation+Lean integrated",
+        "verdict": "applied",
+        "note": "Applied within the component scope; semantic/source/lifecycle discharge obligations remain Open as recorded in the exact existing-ID amendment. The joint records own combined validation.",
+        "verify": [
+          {
+            "file": "docs/reports/contract-lifecycle-symbols/README.md",
+            "contains": "requires resource_lifecycle_v1(make_node, |^+ resource(node));"
+          }
+        ]
+      },
+      {
+        "item": "preserve original interpreted resource_lifecycle semantics",
+        "verdict": "applied",
+        "note": "Applied within the component scope; semantic/source/lifecycle discharge obligations remain Open as recorded in the exact existing-ID amendment. The joint records own combined validation.",
+        "verify": [
+          {
+            "file": "docs/reports/contract-lifecycle-symbols/README.md",
+            "contains": "requires resource_lifecycle_v1(make_node, |^+ resource(node));"
+          }
+        ]
+      },
+      {
+        "item": "executable effects/invalidation remain in exact same existing production-discharge residual",
+        "verdict": "applied",
+        "note": "Applied within the component scope; semantic/source/lifecycle discharge obligations remain Open as recorded in the exact existing-ID amendment. The joint records own combined validation.",
+        "verify": [
+          {
+            "file": "docs/reports/contract-lifecycle-symbols/README.md",
+            "contains": "requires resource_lifecycle_v1(make_node, |^+ resource(node));"
+          }
+        ]
+      }
     ],
     "premise-symbolic-adoption": [
-      "8 files/169declarations/1179atoms/1348extra clauses adopted",
-      "official pin/inventory workflow retained; original site identities and167bindings unchanged",
-      "apply exact followup-amendment after joint validation,810->810809otherrecords unchanged",
-      "exhaustive focused and finalroot gate/native+Python receipts attach"
+      {
+        "item": "8 files/169declarations/1179atoms/1348extra clauses adopted",
+        "verdict": "applied",
+        "note": "Applied within the component scope; semantic/source/lifecycle discharge obligations remain Open as recorded in the exact existing-ID amendment. The joint records own combined validation.",
+        "verify": [
+          {
+            "file": "docs/reports/premise-symbolic-adoption/README.md",
+            "contains": "1,348 extra clauses"
+          }
+        ]
+      },
+      {
+        "item": "official pin/inventory workflow retained; original site identities and167bindings unchanged",
+        "verdict": "applied",
+        "note": "Applied within the component scope; semantic/source/lifecycle discharge obligations remain Open as recorded in the exact existing-ID amendment. The joint records own combined validation.",
+        "verify": [
+          {
+            "file": "docs/reports/premise-symbolic-adoption/README.md",
+            "contains": "1,348 extra clauses"
+          }
+        ]
+      },
+      {
+        "item": "apply exact followup-amendment after joint validation,810->810809otherrecords unchanged",
+        "verdict": "applied",
+        "note": "Applied within the component scope; semantic/source/lifecycle discharge obligations remain Open as recorded in the exact existing-ID amendment. The joint records own combined validation.",
+        "verify": [
+          {
+            "file": "docs/reports/premise-symbolic-adoption/README.md",
+            "contains": "1,348 extra clauses"
+          }
+        ]
+      },
+      {
+        "item": "exhaustive focused and finalroot gate/native+Python receipts attach",
+        "verdict": "applied",
+        "note": "Applied within the component scope; semantic/source/lifecycle discharge obligations remain Open as recorded in the exact existing-ID amendment. The joint records own combined validation.",
+        "verify": [
+          {
+            "file": "docs/reports/premise-symbolic-adoption/README.md",
+            "contains": "1,348 extra clauses"
+          }
+        ]
+      }
     ],
     "premise-symbolic-metadata-bridge": [
-      "sealed exactsource kernel+9Lean proofs integrated",
-      "all source/pin/identity/fullrecords compared via fresh helperproducer bound toactualfrozenROOT",
-      "one increment paragraph already present; final replace checkpoint with exactrequest rather thanduplicate"
+      {
+        "item": "sealed exactsource kernel+9Lean proofs integrated",
+        "verdict": "applied",
+        "note": "Applied within the component scope; semantic/source/lifecycle discharge obligations remain Open as recorded in the exact existing-ID amendment. The joint records own combined validation.",
+        "verify": [
+          {
+            "file": "docs/reports/premise-symbolic-integration/joint-comparison-summary.json",
+            "contains": "\"reading_receipts\": 148"
+          }
+        ]
+      },
+      {
+        "item": "all source/pin/identity/fullrecords compared via fresh helperproducer bound toactualfrozenROOT",
+        "verdict": "applied",
+        "note": "Applied within the component scope; semantic/source/lifecycle discharge obligations remain Open as recorded in the exact existing-ID amendment. The joint records own combined validation.",
+        "verify": [
+          {
+            "file": "docs/reports/premise-symbolic-integration/joint-comparison-summary.json",
+            "contains": "\"reading_receipts\": 148"
+          }
+        ]
+      },
+      {
+        "item": "one increment paragraph already present; final replace checkpoint with exactrequest rather thanduplicate",
+        "verdict": "applied",
+        "note": "Applied within the component scope; semantic/source/lifecycle discharge obligations remain Open as recorded in the exact existing-ID amendment. The joint records own combined validation.",
+        "verify": [
+          {
+            "file": "docs/reports/premise-symbolic-integration/joint-comparison-summary.json",
+            "contains": "\"reading_receipts\": 148"
+          }
+        ]
+      }
     ],
     "premise-symbolic-overlap-admission": [
-      "shared validated complete typedmaps match",
-      "pure-null emptygraph case fully validates resource/no transport",
-      "13Lean obligations and focus14+2 recorded",
-      "one exactincrement added; finaljointreceipts attach"
+      {
+        "item": "shared validated complete typedmaps match",
+        "verdict": "applied",
+        "note": "Applied within the component scope; semantic/source/lifecycle discharge obligations remain Open as recorded in the exact existing-ID amendment. The joint records own combined validation.",
+        "verify": [
+          {
+            "file": "docs/reports/premise-symbolic-overlap-admission/README.md",
+            "contains": "Resource metadata is fully validated and nothing is copied into null scope."
+          }
+        ]
+      },
+      {
+        "item": "pure-null emptygraph case fully validates resource/no transport",
+        "verdict": "applied",
+        "note": "Applied within the component scope; semantic/source/lifecycle discharge obligations remain Open as recorded in the exact existing-ID amendment. The joint records own combined validation.",
+        "verify": [
+          {
+            "file": "docs/reports/premise-symbolic-overlap-admission/README.md",
+            "contains": "Resource metadata is fully validated and nothing is copied into null scope."
+          }
+        ]
+      },
+      {
+        "item": "13Lean obligations and focus14+2 recorded",
+        "verdict": "applied",
+        "note": "Applied within the component scope; semantic/source/lifecycle discharge obligations remain Open as recorded in the exact existing-ID amendment. The joint records own combined validation.",
+        "verify": [
+          {
+            "file": "docs/reports/premise-symbolic-overlap-admission/README.md",
+            "contains": "Resource metadata is fully validated and nothing is copied into null scope."
+          }
+        ]
+      },
+      {
+        "item": "one exactincrement added; finaljointreceipts attach",
+        "verdict": "applied",
+        "note": "Applied within the component scope; semantic/source/lifecycle discharge obligations remain Open as recorded in the exact existing-ID amendment. The joint records own combined validation.",
+        "verify": [
+          {
+            "file": "docs/reports/premise-symbolic-overlap-admission/README.md",
+            "contains": "Resource metadata is fully validated and nothing is copied into null scope."
+          }
+        ]
+      }
     ],
     "premise-symbolic-integration": [
-      "borrowedBASE explicitly pinned; freshTIP all3routes required",
-      "retain every failed gate/control/comparison",
-      "final matrix regen commits precede authoritativePython; merge+push only after evidence complete"
+      {
+        "item": "borrowedBASE explicitly pinned; freshTIP all3routes required",
+        "verdict": "applied",
+        "note": "Applied within the component scope; semantic/source/lifecycle discharge obligations remain Open as recorded in the exact existing-ID amendment. The joint records own combined validation.",
+        "verify": [
+          {
+            "file": "docs/reports/premise-symbolic-integration/post-matrix-confirmation.json",
+            "contains": "\"tests_per_run\": 374"
+          }
+        ]
+      },
+      {
+        "item": "retain every failed gate/control/comparison",
+        "verdict": "applied",
+        "note": "Applied within the component scope; semantic/source/lifecycle discharge obligations remain Open as recorded in the exact existing-ID amendment. The joint records own combined validation.",
+        "verify": [
+          {
+            "file": "docs/reports/premise-symbolic-integration/post-matrix-confirmation.json",
+            "contains": "\"tests_per_run\": 374"
+          }
+        ]
+      },
+      {
+        "item": "final matrix regen commits precede authoritativePython; merge+push only after evidence complete",
+        "verdict": "applied",
+        "note": "Applied within the component scope; semantic/source/lifecycle discharge obligations remain Open as recorded in the exact existing-ID amendment. The joint records own combined validation.",
+        "verify": [
+          {
+            "file": "docs/reports/premise-symbolic-integration/post-matrix-confirmation.json",
+            "contains": "\"tests_per_run\": 374"
+          }
+        ]
+      }
     ]
   },
   "followup_change": {
@@ -100,5 +270,7 @@
     "tests": 374,
     "matrix_sha256": "4408f2d1b3a267fd6f672b819d7d2d5b4d3c6f86b69845161583d5e026877c64",
     "receipt": "confirmation/matrix-python-2/receipt.json"
-  }
+  },
+  "manual_applied_items_with_verified_text": 17,
+  "manual_verified_content_claims": 17
 }
