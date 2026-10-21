@@ -30,7 +30,7 @@ fn actual() -> (qcore_audit::null_hypotheses::View, Graph, serde_json::Value) {
     )
     .unwrap();
     hypothesis::append_legacy(&mut graph, target.erasure.clone()).unwrap();
-    let row = json!({"artifact":"caller","null":{"state":"Safe","contract_dependencies":["member:rd_kafka_topic_s.rkt_topic"],"premises":[{"name":target.erasure.name,"statement":target.erasure.statement,"through":["member:rd_kafka_topic_s.rkt_topic"]}]}});
+    let row = json!({"artifact":"caller","null":{"property":"c.null.deref.v1","state":"Safe","contract_dependencies":["member:rd_kafka_topic_s.rkt_topic"],"premises":[{"name":target.erasure.name,"statement":target.erasure.statement,"through":["member:rd_kafka_topic_s.rkt_topic"]}]}});
     (
         qcore_audit::null_hypotheses::View::new(&environment, &sources).unwrap(),
         graph,
@@ -71,6 +71,13 @@ fn actual_member_consultation_retargets_only_metadata_and_keeps_original_nodes_a
 #[test]
 fn missing_dependency_changed_statement_and_wrong_actual_source_refuse() {
     let (view, original, row) = actual();
+    for property in [serde_json::Value::Null, json!("c.resource.custody.v1")] {
+        let mut foreign = row.clone();
+        foreign["null"]["property"] = property;
+        let mut untouched = original.clone();
+        assert!(view.attach(&foreign, &mut untouched).is_err());
+        assert_eq!(untouched, original);
+    }
     let mut missing = row.clone();
     missing["null"]["contract_dependencies"] = json!([]);
     assert!(view.attach(&missing, &mut original.clone()).is_err());

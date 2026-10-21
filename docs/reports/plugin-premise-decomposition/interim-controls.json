@@ -10,7 +10,7 @@
   "actual_null_dependency_controls": {
     "passed": 4,
     "failed": 0,
-    "includes": "real Clang actual member reader full null-row equality, real source direct/summary propagation and exact closed-world fact parity, transactional late refusal"
+    "includes": "real Clang actual member reader full null-row equality, real source direct/summary propagation and exact closed-world fact parity, transactional late refusal; wrong or missing published null property refuses before mutation"
   },
   "canonical_binding_counts": {
     "resource": 94,
@@ -82,23 +82,6 @@
       "log": "private/plugin-premise-decomposition/interim-inventory-sync-2.log"
     },
     {
-      "name": "interim-actual-null-clang-controls-1",
-      "command": [
-        "cargo",
-        "test",
-        "-p",
-        "qcore-audit",
-        "--test",
-        "plugin_null_hypotheses",
-        "--jobs",
-        "1"
-      ],
-      "exit": 0,
-      "started": "2026-10-21T02:54:35.789719+00:00",
-      "ended": "2026-10-21T02:55:09.157487+00:00",
-      "log": "private/plugin-premise-decomposition/interim-actual-null-clang-controls-1.log"
-    },
-    {
       "name": "interim-corpus-pin-controls-1",
       "command": [
         "cargo",
@@ -145,6 +128,23 @@
       "started": "2026-10-21T03:01:47.588672+00:00",
       "ended": "2026-10-21T03:01:57.507552+00:00",
       "log": "private/plugin-premise-decomposition/interim-binding-reproduction-controls-1.log"
+    },
+    {
+      "name": "interim-property-qualified-null-controls-1",
+      "command": [
+        "cargo",
+        "test",
+        "-p",
+        "qcore-audit",
+        "--test",
+        "plugin_null_hypotheses",
+        "--jobs",
+        "1"
+      ],
+      "exit": 0,
+      "started": "2026-10-21T03:17:58.225046+00:00",
+      "ended": "2026-10-21T03:18:11.890487+00:00",
+      "log": "private/plugin-premise-decomposition/interim-property-qualified-null-controls-1.log"
     }
   ],
   "retained_attempts": {

@@ -63,6 +63,9 @@ impl View {
         row: &Value,
         graph: &mut Graph,
     ) -> Result<Vec<BindingRequirement>, String> {
+        if row["null"]["property"].as_str() != Some(qcore_c_gateway::null_deref::NULL_PROPERTY) {
+            return Err("null hypothesis: wrong or missing row property".into());
+        }
         qcore_contract::hypothesis::validate(graph)?;
         let original = graph.clone();
         let mut used = BTreeSet::new();
