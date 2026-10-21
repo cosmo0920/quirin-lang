@@ -107,7 +107,7 @@ cargo run -p qcore-audit --example libc_local_source_domains -- \
 ```
 
 The output records all attempted domains and conservative refusals; a nonzero
-exit never becomes source support. The actual new BASE configured replay passes24/24 system and2/2 slice observations in all three selected recorded domains; [complete evidence](production-base-configured.json) retains actual source/compile/task/Context and impact records. Corpus122 remain binding-only until their own actual source/configuration/domain replay succeeds; [the actual auxiliary-DB correction](auxiliary-db-correction.md) records why no known-doomed probe was launched.
+exit never becomes source support. The actual new BASE configured replay passes24/24 system and2/2 slice observations in all three selected recorded domains; [complete evidence](production-base-configured.json) retains actual source/compile/task/Context and impact records. The [fresh corpus replay](production-base-corpus.json) now passes all122 observations in17 complete selected recorded domains, with five independently prepared home units/eight exported summaries. Together these are148/148 selected recorded BASE observations. Exact receipt equality remains unchanged; the retained complete definition census and actual link/interposition truth remain explicit prerequisites. The [auxiliary database](auxiliary-db-correction.md) and [imported environment](cross-unit-environment-correction.md) corrections retain every refusal and exact attribution. Fresh TIP replay and final joint acceptance remain pending.
 
 Integrator items: preserve all old frozen bytes and 810 follow-up tracking;
 amend only actually checked subobligations of
