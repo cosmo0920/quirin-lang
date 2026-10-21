@@ -1,0 +1,1332 @@
+{
+  "context": {
+    "artifact": "a18c2105cfd4db3d7303dc4956375b2ef5f566332c975c68bfe612f547d95819",
+    "property": "plugin_fixture_selected_domain_v1",
+    "semantic_profile": "plugin-loader-fixture-v1",
+    "scope": "complete-selected-20-case-domain-v1",
+    "bounds": "20-cases/single-thread/explicit-stubs",
+    "assumptions": "local-clang-posix-loader/real-pinned-headers/explicit-allocation-list-log-stubs/no-deployed-plugin-claim",
+    "source_identity": "2ea1c936998d85776b151f4fdab8e2fc27b198b74c756d219d2e8c5865ea5b43",
+    "build_identity": "dd0f26c4135a1b5c3427e67bf577d7496a4401220b1397f8b8660ed696f54b58",
+    "evidence_version": "plugin-source-witness-v1/eddd07f6e627befe470aa97010c1e2ae85a6534e7efa30a94d663fb8df6b11b1"
+  },
+  "observation_sha256": "d998d41ae7f46ea0220259c0106c262ce66b91e37aa86d24cd93d1bc4bd2dfb7",
+  "model_sha256": "4164c517db886dfd2fb4c4c35e8d44b976c207545ce5c8d1bd3a4f9263066b9e",
+  "producer_sha256": "444795afc1263f3c84572e61155d4963cfcdd0d19202507390937309c5a54440",
+  "source_facts": {
+    "destroy_plugin": {
+      "function": "destroy_plugin",
+      "calls": [
+        "flb_sds_destroy",
+        "dlclose",
+        "mk_list_del",
+        "flb_free"
+      ],
+      "guards": [],
+      "assigned_members": [],
+      "ignored_top_level_calls": [
+        "flb_sds_destroy",
+        "dlclose",
+        "mk_list_del",
+        "flb_free"
+      ],
+      "start": 4328,
+      "end": 4508
+    },
+    "flb_plugin_load": {
+      "function": "flb_plugin_load",
+      "calls": [
+        "get_handle",
+        "path_to_plugin_name",
+        "dlclose",
+        "load_symbol",
+        "flb_log_check",
+        "flb_log_print",
+        "flb_free",
+        "dlclose",
+        "is_input",
+        "flb_malloc",
+        "flb_errno_print",
+        "__errno_location",
+        "flb_free",
+        "dlclose",
+        "memcpy",
+        "mk_list_add",
+        "is_processor",
+        "flb_malloc",
+        "flb_errno_print",
+        "__errno_location",
+        "flb_free",
+        "dlclose",
+        "memcpy",
+        "mk_list_add",
+        "is_filter",
+        "flb_malloc",
+        "flb_errno_print",
+        "__errno_location",
+        "flb_free",
+        "dlclose",
+        "memcpy",
+        "mk_list_add",
+        "is_output",
+        "flb_malloc",
+        "flb_errno_print",
+        "__errno_location",
+        "flb_free",
+        "dlclose",
+        "memcpy",
+        "mk_list_add",
+        "flb_free",
+        "flb_log_check",
+        "flb_log_print",
+        "dlclose",
+        "flb_malloc",
+        "flb_errno_print",
+        "__errno_location",
+        "dlclose",
+        "flb_sds_create",
+        "mk_list_add",
+        "mk_list_add",
+        "mk_list_add",
+        "mk_list_add"
+      ],
+      "guards": [
+        {
+          "condition_calls": [],
+          "condition_members": [],
+          "condition_references": [
+            "dso_handle"
+          ],
+          "returns_in_guarded_subtree": 1
+        },
+        {
+          "condition_calls": [],
+          "condition_members": [],
+          "condition_references": [
+            "plugin_stname"
+          ],
+          "returns_in_guarded_subtree": 1
+        },
+        {
+          "condition_calls": [],
+          "condition_members": [],
+          "condition_references": [
+            "symbol"
+          ],
+          "returns_in_guarded_subtree": 1
+        },
+        {
+          "condition_calls": [
+            "flb_log_check"
+          ],
+          "condition_members": [],
+          "condition_references": [
+            "flb_log_check"
+          ],
+          "returns_in_guarded_subtree": 0
+        },
+        {
+          "condition_calls": [
+            "is_input"
+          ],
+          "condition_members": [],
+          "condition_references": [
+            "is_input",
+            "plugin_stname"
+          ],
+          "returns_in_guarded_subtree": 4
+        },
+        {
+          "condition_calls": [],
+          "condition_members": [],
+          "condition_references": [
+            "input"
+          ],
+          "returns_in_guarded_subtree": 1
+        },
+        {
+          "condition_calls": [
+            "is_processor"
+          ],
+          "condition_members": [],
+          "condition_references": [
+            "is_processor",
+            "plugin_stname"
+          ],
+          "returns_in_guarded_subtree": 3
+        },
+        {
+          "condition_calls": [],
+          "condition_members": [],
+          "condition_references": [
+            "processor"
+          ],
+          "returns_in_guarded_subtree": 1
+        },
+        {
+          "condition_calls": [
+            "is_filter"
+          ],
+          "condition_members": [],
+          "condition_references": [
+            "is_filter",
+            "plugin_stname"
+          ],
+          "returns_in_guarded_subtree": 2
+        },
+        {
+          "condition_calls": [],
+          "condition_members": [],
+          "condition_references": [
+            "filter"
+          ],
+          "returns_in_guarded_subtree": 1
+        },
+        {
+          "condition_calls": [
+            "is_output"
+          ],
+          "condition_members": [],
+          "condition_references": [
+            "is_output",
+            "plugin_stname"
+          ],
+          "returns_in_guarded_subtree": 1
+        },
+        {
+          "condition_calls": [],
+          "condition_members": [],
+          "condition_references": [
+            "output"
+          ],
+          "returns_in_guarded_subtree": 1
+        },
+        {
+          "condition_calls": [],
+          "condition_members": [],
+          "condition_references": [
+            "type"
+          ],
+          "returns_in_guarded_subtree": 1
+        },
+        {
+          "condition_calls": [
+            "flb_log_check"
+          ],
+          "condition_members": [],
+          "condition_references": [
+            "flb_log_check"
+          ],
+          "returns_in_guarded_subtree": 0
+        },
+        {
+          "condition_calls": [],
+          "condition_members": [],
+          "condition_references": [
+            "plugin"
+          ],
+          "returns_in_guarded_subtree": 1
+        },
+        {
+          "condition_calls": [],
+          "condition_members": [],
+          "condition_references": [
+            "type"
+          ],
+          "returns_in_guarded_subtree": 0
+        },
+        {
+          "condition_calls": [],
+          "condition_members": [],
+          "condition_references": [
+            "type"
+          ],
+          "returns_in_guarded_subtree": 0
+        },
+        {
+          "condition_calls": [],
+          "condition_members": [],
+          "condition_references": [
+            "type"
+          ],
+          "returns_in_guarded_subtree": 0
+        },
+        {
+          "condition_calls": [],
+          "condition_members": [],
+          "condition_references": [
+            "type"
+          ],
+          "returns_in_guarded_subtree": 0
+        }
+      ],
+      "assigned_members": [
+        "type",
+        "path",
+        "dso_handle"
+      ],
+      "ignored_top_level_calls": [
+        "flb_free"
+      ],
+      "start": 4909,
+      "end": 8792
+    },
+    "flb_plugin_proxy_create": {
+      "function": "flb_plugin_proxy_create",
+      "calls": [
+        "dlopen",
+        "flb_log_check",
+        "flb_log_print",
+        "dlerror",
+        "flb_malloc",
+        "flb_errno_print",
+        "__errno_location",
+        "dlclose",
+        "flb_api_create",
+        "dlclose",
+        "flb_free",
+        "flb_calloc",
+        "flb_errno_print",
+        "__errno_location",
+        "dlclose",
+        "flb_api_destroy",
+        "flb_free",
+        "mk_list_add",
+        "flb_plugin_proxy_register"
+      ],
+      "guards": [
+        {
+          "condition_calls": [],
+          "condition_members": [],
+          "condition_references": [
+            "handle"
+          ],
+          "returns_in_guarded_subtree": 1
+        },
+        {
+          "condition_calls": [
+            "flb_log_check"
+          ],
+          "condition_members": [],
+          "condition_references": [
+            "flb_log_check"
+          ],
+          "returns_in_guarded_subtree": 0
+        },
+        {
+          "condition_calls": [],
+          "condition_members": [],
+          "condition_references": [
+            "proxy"
+          ],
+          "returns_in_guarded_subtree": 1
+        },
+        {
+          "condition_calls": [],
+          "condition_members": [
+            "api"
+          ],
+          "condition_references": [
+            "proxy"
+          ],
+          "returns_in_guarded_subtree": 1
+        },
+        {
+          "condition_calls": [],
+          "condition_members": [
+            "def"
+          ],
+          "condition_references": [
+            "proxy"
+          ],
+          "returns_in_guarded_subtree": 1
+        }
+      ],
+      "assigned_members": [
+        "api",
+        "def",
+        "type",
+        "def",
+        "dso_handler",
+        "data"
+      ],
+      "ignored_top_level_calls": [
+        "mk_list_add",
+        "flb_plugin_proxy_register"
+      ],
+      "start": 17366,
+      "end": 18644
+    },
+    "flb_plugin_proxy_destroy": {
+      "function": "flb_plugin_proxy_destroy",
+      "calls": [
+        "flb_free",
+        "flb_api_destroy",
+        "dlclose",
+        "mk_list_del",
+        "flb_free"
+      ],
+      "guards": [],
+      "assigned_members": [],
+      "ignored_top_level_calls": [
+        "flb_free",
+        "flb_api_destroy",
+        "dlclose",
+        "mk_list_del",
+        "flb_free"
+      ],
+      "start": 18646,
+      "end": 18863
+    },
+    "flb_plugin_proxy_register": {
+      "function": "flb_plugin_proxy_register",
+      "calls": [
+        "flb_plugin_proxy_symbol",
+        "cb_pre_register",
+        "flb_plugin_proxy_symbol",
+        "cb_register",
+        "flb_free",
+        "proxy_go_output_register",
+        "proxy_go_input_register",
+        "proxy_go_custom_register",
+        "flb_proxy_register_output",
+        "flb_proxy_register_input",
+        "flb_proxy_register_custom"
+      ],
+      "guards": [
+        {
+          "condition_calls": [],
+          "condition_members": [],
+          "condition_references": [
+            "cb_pre_register"
+          ],
+          "returns_in_guarded_subtree": 1
+        },
+        {
+          "condition_calls": [],
+          "condition_members": [],
+          "condition_references": [
+            "ret"
+          ],
+          "returns_in_guarded_subtree": 1
+        },
+        {
+          "condition_calls": [],
+          "condition_members": [],
+          "condition_references": [
+            "cb_register"
+          ],
+          "returns_in_guarded_subtree": 1
+        },
+        {
+          "condition_calls": [],
+          "condition_members": [],
+          "condition_references": [
+            "ret"
+          ],
+          "returns_in_guarded_subtree": 1
+        },
+        {
+          "condition_calls": [],
+          "condition_members": [
+            "proxy"
+          ],
+          "condition_references": [
+            "def"
+          ],
+          "returns_in_guarded_subtree": 0
+        },
+        {
+          "condition_calls": [],
+          "condition_members": [
+            "type"
+          ],
+          "condition_references": [
+            "def"
+          ],
+          "returns_in_guarded_subtree": 0
+        },
+        {
+          "condition_calls": [],
+          "condition_members": [
+            "type"
+          ],
+          "condition_references": [
+            "def"
+          ],
+          "returns_in_guarded_subtree": 0
+        },
+        {
+          "condition_calls": [],
+          "condition_members": [
+            "type"
+          ],
+          "condition_references": [
+            "def"
+          ],
+          "returns_in_guarded_subtree": 0
+        },
+        {
+          "condition_calls": [],
+          "condition_members": [],
+          "condition_references": [
+            "ret"
+          ],
+          "returns_in_guarded_subtree": 0
+        },
+        {
+          "condition_calls": [],
+          "condition_members": [
+            "type"
+          ],
+          "condition_references": [
+            "def"
+          ],
+          "returns_in_guarded_subtree": 0
+        },
+        {
+          "condition_calls": [],
+          "condition_members": [
+            "type"
+          ],
+          "condition_references": [
+            "def"
+          ],
+          "returns_in_guarded_subtree": 0
+        },
+        {
+          "condition_calls": [],
+          "condition_members": [
+            "type"
+          ],
+          "condition_references": [
+            "def"
+          ],
+          "returns_in_guarded_subtree": 0
+        }
+      ],
+      "assigned_members": [],
+      "ignored_top_level_calls": [],
+      "start": 13840,
+      "end": 16203
+    },
+    "flb_plugin_proxy_symbol": {
+      "function": "flb_plugin_proxy_symbol",
+      "calls": [
+        "dlerror",
+        "dlsym",
+        "dlerror"
+      ],
+      "guards": [
+        {
+          "condition_calls": [
+            "dlerror"
+          ],
+          "condition_members": [],
+          "condition_references": [
+            "dlerror"
+          ],
+          "returns_in_guarded_subtree": 1
+        }
+      ],
+      "assigned_members": [],
+      "ignored_top_level_calls": [
+        "dlerror"
+      ],
+      "start": 13581,
+      "end": 13838
+    },
+    "get_handle": {
+      "function": "get_handle",
+      "calls": [
+        "dlopen",
+        "flb_log_check",
+        "flb_log_print",
+        "dlerror"
+      ],
+      "guards": [
+        {
+          "condition_calls": [],
+          "condition_members": [],
+          "condition_references": [
+            "handle"
+          ],
+          "returns_in_guarded_subtree": 1
+        },
+        {
+          "condition_calls": [
+            "flb_log_check"
+          ],
+          "condition_members": [],
+          "condition_references": [
+            "flb_log_check"
+          ],
+          "returns_in_guarded_subtree": 0
+        }
+      ],
+      "assigned_members": [],
+      "ignored_top_level_calls": [],
+      "start": 2009,
+      "end": 2231
+    },
+    "is_filter": {
+      "function": "is_filter",
+      "calls": [
+        "strncmp"
+      ],
+      "guards": [
+        {
+          "condition_calls": [
+            "strncmp"
+          ],
+          "condition_members": [],
+          "condition_references": [
+            "strncmp",
+            "name"
+          ],
+          "returns_in_guarded_subtree": 1
+        }
+      ],
+      "assigned_members": [],
+      "ignored_top_level_calls": [],
+      "start": 1597,
+      "end": 1731
+    },
+    "is_input": {
+      "function": "is_input",
+      "calls": [
+        "strncmp"
+      ],
+      "guards": [
+        {
+          "condition_calls": [
+            "strncmp"
+          ],
+          "condition_members": [],
+          "condition_references": [
+            "strncmp",
+            "name"
+          ],
+          "returns_in_guarded_subtree": 1
+        }
+      ],
+      "assigned_members": [],
+      "ignored_top_level_calls": [],
+      "start": 1466,
+      "end": 1595
+    },
+    "is_output": {
+      "function": "is_output",
+      "calls": [
+        "strncmp"
+      ],
+      "guards": [
+        {
+          "condition_calls": [
+            "strncmp"
+          ],
+          "condition_members": [],
+          "condition_references": [
+            "strncmp",
+            "name"
+          ],
+          "returns_in_guarded_subtree": 1
+        }
+      ],
+      "assigned_members": [],
+      "ignored_top_level_calls": [],
+      "start": 1876,
+      "end": 2007
+    },
+    "is_processor": {
+      "function": "is_processor",
+      "calls": [
+        "strncmp"
+      ],
+      "guards": [
+        {
+          "condition_calls": [
+            "strncmp"
+          ],
+          "condition_members": [],
+          "condition_references": [
+            "strncmp",
+            "name"
+          ],
+          "returns_in_guarded_subtree": 1
+        }
+      ],
+      "assigned_members": [],
+      "ignored_top_level_calls": [],
+      "start": 1733,
+      "end": 1874
+    },
+    "load_symbol": {
+      "function": "load_symbol",
+      "calls": [
+        "dlerror",
+        "dlsym",
+        "dlerror"
+      ],
+      "guards": [
+        {
+          "condition_calls": [
+            "dlerror"
+          ],
+          "condition_members": [],
+          "condition_references": [
+            "dlerror"
+          ],
+          "returns_in_guarded_subtree": 1
+        }
+      ],
+      "assigned_members": [],
+      "ignored_top_level_calls": [
+        "dlerror"
+      ],
+      "start": 2233,
+      "end": 2433
+    },
+    "path_to_plugin_name": {
+      "function": "path_to_plugin_name",
+      "calls": [
+        "__xpg_basename",
+        "flb_log_check",
+        "flb_log_print",
+        "strlen",
+        "flb_log_check",
+        "flb_log_print",
+        "strncmp",
+        "flb_log_check",
+        "flb_log_print",
+        "strncmp",
+        "flb_log_check",
+        "flb_log_print",
+        "flb_malloc",
+        "flb_errno_print",
+        "__errno_location",
+        "memcpy",
+        "is_input",
+        "is_processor",
+        "is_filter",
+        "is_output",
+        "flb_log_check",
+        "flb_log_print",
+        "flb_free",
+        "memcpy"
+      ],
+      "guards": [
+        {
+          "condition_calls": [],
+          "condition_members": [],
+          "condition_references": [
+            "bname"
+          ],
+          "returns_in_guarded_subtree": 1
+        },
+        {
+          "condition_calls": [
+            "flb_log_check"
+          ],
+          "condition_members": [],
+          "condition_references": [
+            "flb_log_check"
+          ],
+          "returns_in_guarded_subtree": 0
+        },
+        {
+          "condition_calls": [],
+          "condition_members": [],
+          "condition_references": [
+            "len"
+          ],
+          "returns_in_guarded_subtree": 1
+        },
+        {
+          "condition_calls": [
+            "flb_log_check"
+          ],
+          "condition_members": [],
+          "condition_references": [
+            "flb_log_check"
+          ],
+          "returns_in_guarded_subtree": 0
+        },
+        {
+          "condition_calls": [
+            "strncmp"
+          ],
+          "condition_members": [],
+          "condition_references": [
+            "strncmp",
+            "bname"
+          ],
+          "returns_in_guarded_subtree": 1
+        },
+        {
+          "condition_calls": [
+            "flb_log_check"
+          ],
+          "condition_members": [],
+          "condition_references": [
+            "flb_log_check"
+          ],
+          "returns_in_guarded_subtree": 0
+        },
+        {
+          "condition_calls": [
+            "strncmp"
+          ],
+          "condition_members": [],
+          "condition_references": [
+            "strncmp",
+            "bname",
+            "len"
+          ],
+          "returns_in_guarded_subtree": 1
+        },
+        {
+          "condition_calls": [
+            "flb_log_check"
+          ],
+          "condition_members": [],
+          "condition_references": [
+            "flb_log_check"
+          ],
+          "returns_in_guarded_subtree": 0
+        },
+        {
+          "condition_calls": [],
+          "condition_members": [],
+          "condition_references": [
+            "name"
+          ],
+          "returns_in_guarded_subtree": 1
+        },
+        {
+          "condition_calls": [
+            "is_input",
+            "is_processor",
+            "is_filter",
+            "is_output"
+          ],
+          "condition_members": [],
+          "condition_references": [
+            "is_input",
+            "name",
+            "is_processor",
+            "name",
+            "is_filter",
+            "name",
+            "is_output",
+            "name"
+          ],
+          "returns_in_guarded_subtree": 1
+        },
+        {
+          "condition_calls": [
+            "flb_log_check"
+          ],
+          "condition_members": [],
+          "condition_references": [
+            "flb_log_check"
+          ],
+          "returns_in_guarded_subtree": 0
+        }
+      ],
+      "assigned_members": [],
+      "ignored_top_level_calls": [
+        "memcpy",
+        "memcpy"
+      ],
+      "start": 2561,
+      "end": 4326
+    },
+    "proxy_go_output_register": {
+      "function": "proxy_go_output_register",
+      "calls": [
+        "flb_malloc",
+        "flb_plugin_proxy_symbol",
+        "flb_log_check",
+        "flb_log_print",
+        "flb_free",
+        "flb_plugin_proxy_symbol",
+        "flb_plugin_proxy_symbol",
+        "flb_plugin_proxy_symbol",
+        "flb_plugin_proxy_symbol",
+        "flb_strdup"
+      ],
+      "guards": [
+        {
+          "condition_calls": [],
+          "condition_members": [],
+          "condition_references": [
+            "plugin"
+          ],
+          "returns_in_guarded_subtree": 1
+        },
+        {
+          "condition_calls": [],
+          "condition_members": [
+            "cb_init"
+          ],
+          "condition_references": [
+            "plugin"
+          ],
+          "returns_in_guarded_subtree": 1
+        },
+        {
+          "condition_calls": [
+            "flb_log_check"
+          ],
+          "condition_members": [],
+          "condition_references": [
+            "flb_log_check"
+          ],
+          "returns_in_guarded_subtree": 0
+        }
+      ],
+      "assigned_members": [
+        "cb_init",
+        "cb_flush",
+        "cb_flush_ctx",
+        "cb_exit",
+        "cb_exit_ctx",
+        "name",
+        "data"
+      ],
+      "ignored_top_level_calls": [],
+      "start": 1845,
+      "end": 3076
+    },
+    "rd_kafka_plugin_cmp": {
+      "function": "rd_kafka_plugin_cmp",
+      "calls": [
+        "strcmp"
+      ],
+      "guards": [],
+      "assigned_members": [],
+      "ignored_top_level_calls": [],
+      "start": 1836,
+      "end": 2008
+    },
+    "rd_kafka_plugin_destroy": {
+      "function": "rd_kafka_plugin_destroy",
+      "calls": [
+        "rd_dl_close",
+        "rd_free",
+        "rd_free"
+      ],
+      "guards": [],
+      "assigned_members": [],
+      "ignored_top_level_calls": [
+        "rd_dl_close",
+        "rd_free",
+        "rd_free"
+      ],
+      "start": 4871,
+      "end": 5044
+    },
+    "rd_kafka_plugin_new": {
+      "function": "rd_kafka_plugin_new",
+      "calls": [
+        "rd_list_find",
+        "snprintf",
+        "__builtin_expect",
+        "rd_kafka_log0",
+        "rd_dl_open",
+        "__builtin_expect",
+        "rd_kafka_log0",
+        "rd_dl_sym",
+        "rd_dl_close",
+        "__builtin_expect",
+        "rd_kafka_log0",
+        "conf_init",
+        "rd_dl_close",
+        "rd_calloc",
+        "rd_strdup",
+        "rd_list_add",
+        "__builtin_expect",
+        "rd_kafka_log0"
+      ],
+      "guards": [
+        {
+          "condition_calls": [
+            "rd_list_find"
+          ],
+          "condition_members": [
+            "plugins"
+          ],
+          "condition_references": [
+            "rd_list_find",
+            "conf",
+            "skel",
+            "rd_kafka_plugin_cmp"
+          ],
+          "returns_in_guarded_subtree": 1
+        },
+        {
+          "condition_calls": [
+            "__builtin_expect"
+          ],
+          "condition_members": [
+            "debug"
+          ],
+          "condition_references": [
+            "__builtin_expect",
+            "conf"
+          ],
+          "returns_in_guarded_subtree": 0
+        },
+        {
+          "condition_calls": [
+            "rd_dl_open"
+          ],
+          "condition_members": [],
+          "condition_references": [
+            "handle",
+            "rd_dl_open",
+            "path",
+            "errstr",
+            "errstr_size"
+          ],
+          "returns_in_guarded_subtree": 1
+        },
+        {
+          "condition_calls": [
+            "__builtin_expect"
+          ],
+          "condition_members": [
+            "debug"
+          ],
+          "condition_references": [
+            "__builtin_expect",
+            "conf"
+          ],
+          "returns_in_guarded_subtree": 0
+        },
+        {
+          "condition_calls": [
+            "rd_dl_sym"
+          ],
+          "condition_members": [],
+          "condition_references": [
+            "conf_init",
+            "rd_dl_sym",
+            "handle",
+            "errstr",
+            "errstr_size"
+          ],
+          "returns_in_guarded_subtree": 1
+        },
+        {
+          "condition_calls": [
+            "__builtin_expect"
+          ],
+          "condition_members": [
+            "debug"
+          ],
+          "condition_references": [
+            "__builtin_expect",
+            "conf"
+          ],
+          "returns_in_guarded_subtree": 0
+        },
+        {
+          "condition_calls": [
+            "conf_init"
+          ],
+          "condition_members": [],
+          "condition_references": [
+            "err",
+            "conf_init",
+            "conf",
+            "plug_opaque",
+            "errstr",
+            "errstr_size"
+          ],
+          "returns_in_guarded_subtree": 1
+        },
+        {
+          "condition_calls": [
+            "__builtin_expect"
+          ],
+          "condition_members": [
+            "debug"
+          ],
+          "condition_references": [
+            "__builtin_expect",
+            "conf"
+          ],
+          "returns_in_guarded_subtree": 0
+        }
+      ],
+      "assigned_members": [
+        "rkplug_path",
+        "rkplug_handle",
+        "rkplug_opaque"
+      ],
+      "ignored_top_level_calls": [
+        "rd_list_add"
+      ],
+      "start": 2378,
+      "end": 4454
+    }
+  },
+  "cases": {
+    "flb_c_context_alloc_fail": [
+      "begin",
+      "open",
+      "allocate",
+      "copy",
+      "copy",
+      "symbol:in_probe_plugin",
+      "allocate",
+      "copy",
+      "link",
+      "free",
+      "allocate",
+      "close",
+      "return:error",
+      "end"
+    ],
+    "flb_c_filter_success": [
+      "begin",
+      "open",
+      "allocate",
+      "copy",
+      "copy",
+      "symbol:filter_probe_plugin",
+      "allocate",
+      "copy",
+      "link",
+      "free",
+      "allocate",
+      "retain",
+      "link",
+      "return:0",
+      "end"
+    ],
+    "flb_c_input_success": [
+      "begin",
+      "open",
+      "allocate",
+      "copy",
+      "copy",
+      "symbol:in_probe_plugin",
+      "allocate",
+      "copy",
+      "link",
+      "free",
+      "allocate",
+      "retain",
+      "link",
+      "return:0",
+      "end"
+    ],
+    "flb_c_invalid_name": [
+      "begin",
+      "open",
+      "close",
+      "return:error",
+      "end"
+    ],
+    "flb_c_missing_structure": [
+      "begin",
+      "open",
+      "allocate",
+      "copy",
+      "copy",
+      "symbol:in_missing_plugin",
+      "free",
+      "close",
+      "return:error",
+      "end"
+    ],
+    "flb_c_open_fail": [
+      "begin",
+      "open",
+      "return:error",
+      "end"
+    ],
+    "flb_c_output_success": [
+      "begin",
+      "open",
+      "allocate",
+      "copy",
+      "copy",
+      "symbol:out_probe_plugin",
+      "allocate",
+      "copy",
+      "link",
+      "free",
+      "allocate",
+      "retain",
+      "link",
+      "return:0",
+      "end"
+    ],
+    "flb_c_processor_success": [
+      "begin",
+      "open",
+      "allocate",
+      "copy",
+      "copy",
+      "symbol:processor_probe_plugin",
+      "allocate",
+      "copy",
+      "link",
+      "free",
+      "allocate",
+      "retain",
+      "link",
+      "return:0",
+      "end"
+    ],
+    "go_create_ignores_register_failure": [
+      "begin",
+      "open",
+      "allocate",
+      "allocate",
+      "allocate",
+      "link",
+      "symbol:FLBPluginPreRegister",
+      "symbol:FLBPluginRegister",
+      "return:nonnull",
+      "free",
+      "close",
+      "free",
+      "end"
+    ],
+    "go_init_missing": [
+      "begin",
+      "open",
+      "allocate",
+      "symbol:FLBPluginInit",
+      "free",
+      "return:error",
+      "close",
+      "end"
+    ],
+    "go_optional_hooks_absent": [
+      "begin",
+      "open",
+      "allocate",
+      "symbol:FLBPluginInit",
+      "symbol:FLBPluginFlush",
+      "symbol:FLBPluginFlushCtx",
+      "symbol:FLBPluginExit",
+      "symbol:FLBPluginExitCtx",
+      "allocate",
+      "return:0",
+      "init:present",
+      "optional:absent",
+      "close",
+      "end"
+    ],
+    "go_pre_failed": [
+      "begin",
+      "open",
+      "symbol:FLBPluginPreRegister",
+      "pre_register",
+      "return:error",
+      "close",
+      "end"
+    ],
+    "go_pre_optional_absent": [
+      "begin",
+      "open",
+      "symbol:FLBPluginPreRegister",
+      "symbol:FLBPluginRegister",
+      "register",
+      "register:success",
+      "allocate",
+      "symbol:FLBPluginInit",
+      "symbol:FLBPluginFlush",
+      "symbol:FLBPluginFlushCtx",
+      "symbol:FLBPluginExit",
+      "symbol:FLBPluginExitCtx",
+      "allocate",
+      "link",
+      "return:0",
+      "init:present",
+      "optional:absent",
+      "close",
+      "end"
+    ],
+    "go_register_missing": [
+      "begin",
+      "open",
+      "symbol:FLBPluginPreRegister",
+      "symbol:FLBPluginRegister",
+      "return:error",
+      "close",
+      "end"
+    ],
+    "rk_conf_init_error": [
+      "begin",
+      "duplicate_test",
+      "open",
+      "symbol:conf_init",
+      "conf_init",
+      "close",
+      "return:error",
+      "end"
+    ],
+    "rk_conf_init_missing": [
+      "begin",
+      "duplicate_test",
+      "open",
+      "symbol:conf_init",
+      "close",
+      "return:error",
+      "end"
+    ],
+    "rk_duplicate": [
+      "begin",
+      "duplicate_test",
+      "return:0",
+      "end"
+    ],
+    "rk_load_destroy": [
+      "begin",
+      "duplicate_test",
+      "open",
+      "symbol:conf_init",
+      "conf_init",
+      "allocate",
+      "allocate",
+      "retain",
+      "close",
+      "free",
+      "free",
+      "return:0",
+      "end"
+    ],
+    "rk_load_success": [
+      "begin",
+      "duplicate_test",
+      "open",
+      "symbol:conf_init",
+      "conf_init",
+      "allocate",
+      "allocate",
+      "retain",
+      "return:0",
+      "end"
+    ],
+    "rk_open_fail": [
+      "begin",
+      "duplicate_test",
+      "open",
+      "return:error",
+      "end"
+    ]
+  },
+  "remaining_obligations": [
+    "deployed-artifact-inventory-and-loader-traces",
+    "foreign-callback-frame-custody-and-whole-world-closure",
+    "transitive-lifetime-and-unload-order",
+    "faithful-clang-extraction-and-maintained-rust-lean-correspondence"
+  ]
+}

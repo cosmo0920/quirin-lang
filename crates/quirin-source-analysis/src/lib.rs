@@ -13,6 +13,7 @@ pub mod lifecycle_census;
 // Card W47-LOOP-OWNER-CONTRACTS (gateway rule 10p).
 pub mod loop_owner_census;
 pub mod source_profiles;
+pub mod plugin_source_witnesses;
 pub mod typed_source_match;
 
 pub use qcore_c_gateway::legacy_c;

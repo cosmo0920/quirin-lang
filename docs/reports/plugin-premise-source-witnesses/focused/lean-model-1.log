@@ -1,0 +1,5 @@
+QCore/PluginSourceWitnesses.lean:70:40: error(lean.inferBinderTypeFailed): Failed to infer type of binder `environment`
+QCore/PluginSourceWitnesses.lean:70:33: error(lean.inferBinderTypeFailed): Failed to infer type of binder `bounds`
+QCore/PluginSourceWitnesses.lean:70:24: error(lean.inferBinderTypeFailed): Failed to infer type of binder `property`
+QCore/PluginSourceWitnesses.lean:70:18: error(lean.inferBinderTypeFailed): Failed to infer type of binder `build`
+QCore/PluginSourceWitnesses.lean:70:9: error(lean.inferBinderTypeFailed): Failed to infer type of binder `artifact`

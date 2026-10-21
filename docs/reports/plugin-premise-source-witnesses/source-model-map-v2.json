@@ -1,0 +1,1256 @@
+{
+  "version": 2,
+  "previous_catalog": {
+    "path": "docs/reports/plugin-premise-decomposition/outer-catalog.json",
+    "sha256": "093712024ff2f893185580d39556dcb97746ed9d21a4344a2e31a98efda4c5ba"
+  },
+  "source_inventory_sha256": "2ea1c936998d85776b151f4fdab8e2fc27b198b74c756d219d2e8c5865ea5b43",
+  "finite_case_domain": {
+    "rk_duplicate": {
+      "family": "librdkafka",
+      "source_functions": [
+        "rd_kafka_plugin_new"
+      ],
+      "predicate": "QCore.PluginSourceWitnesses.expected .rk_duplicate",
+      "quantifier": "this named single-thread fixture invocation under exact source/build/header/artifact/stub Context only",
+      "required_full_trace": [
+        "begin",
+        "duplicate_test",
+        "return:0",
+        "end"
+      ],
+      "model_assignment": "exact word equality, conditional on actual independent producer replay; not universal callback behavior",
+      "admission": "Observed bounded exact-word predicate checked by actual independent replay-5",
+      "remaining_prerequisites": [
+        "host compiler/loader execution and faithful original typed AST",
+        "maintained Rust/Lean correspondence",
+        "explicit allocation/list/log boundary stubs and successful guarded allocations unless selected failure"
+      ],
+      "actual_context": {
+        "artifact": "a18c2105cfd4db3d7303dc4956375b2ef5f566332c975c68bfe612f547d95819",
+        "property": "plugin_fixture_selected_domain_v1",
+        "semantic_profile": "plugin-loader-fixture-v1",
+        "scope": "complete-selected-20-case-domain-v1",
+        "bounds": "20-cases/single-thread/explicit-stubs",
+        "assumptions": "local-clang-posix-loader/real-pinned-headers/explicit-allocation-list-log-stubs/no-deployed-plugin-claim",
+        "source_identity": "2ea1c936998d85776b151f4fdab8e2fc27b198b74c756d219d2e8c5865ea5b43",
+        "build_identity": "dd0f26c4135a1b5c3427e67bf577d7496a4401220b1397f8b8660ed696f54b58",
+        "evidence_version": "plugin-source-witness-v1/eddd07f6e627befe470aa97010c1e2ae85a6534e7efa30a94d663fb8df6b11b1"
+      },
+      "receipt_reference": "checked.json",
+      "native_execution": "actual original-body projection under declared fixture environment"
+    },
+    "rk_open_fail": {
+      "family": "librdkafka",
+      "source_functions": [
+        "rd_kafka_plugin_new"
+      ],
+      "predicate": "QCore.PluginSourceWitnesses.expected .rk_open_fail",
+      "quantifier": "this named single-thread fixture invocation under exact source/build/header/artifact/stub Context only",
+      "required_full_trace": [
+        "begin",
+        "duplicate_test",
+        "open",
+        "return:error",
+        "end"
+      ],
+      "model_assignment": "exact word equality, conditional on actual independent producer replay; not universal callback behavior",
+      "admission": "Observed bounded exact-word predicate checked by actual independent replay-5",
+      "remaining_prerequisites": [
+        "host compiler/loader execution and faithful original typed AST",
+        "maintained Rust/Lean correspondence",
+        "explicit allocation/list/log boundary stubs and successful guarded allocations unless selected failure"
+      ],
+      "actual_context": {
+        "artifact": "a18c2105cfd4db3d7303dc4956375b2ef5f566332c975c68bfe612f547d95819",
+        "property": "plugin_fixture_selected_domain_v1",
+        "semantic_profile": "plugin-loader-fixture-v1",
+        "scope": "complete-selected-20-case-domain-v1",
+        "bounds": "20-cases/single-thread/explicit-stubs",
+        "assumptions": "local-clang-posix-loader/real-pinned-headers/explicit-allocation-list-log-stubs/no-deployed-plugin-claim",
+        "source_identity": "2ea1c936998d85776b151f4fdab8e2fc27b198b74c756d219d2e8c5865ea5b43",
+        "build_identity": "dd0f26c4135a1b5c3427e67bf577d7496a4401220b1397f8b8660ed696f54b58",
+        "evidence_version": "plugin-source-witness-v1/eddd07f6e627befe470aa97010c1e2ae85a6534e7efa30a94d663fb8df6b11b1"
+      },
+      "receipt_reference": "checked.json",
+      "native_execution": "actual original-body projection under declared fixture environment"
+    },
+    "rk_conf_init_missing": {
+      "family": "librdkafka",
+      "source_functions": [
+        "rd_kafka_plugin_new"
+      ],
+      "predicate": "QCore.PluginSourceWitnesses.expected .rk_conf_init_missing",
+      "quantifier": "this named single-thread fixture invocation under exact source/build/header/artifact/stub Context only",
+      "required_full_trace": [
+        "begin",
+        "duplicate_test",
+        "open",
+        "symbol:conf_init",
+        "close",
+        "return:error",
+        "end"
+      ],
+      "model_assignment": "exact word equality, conditional on actual independent producer replay; not universal callback behavior",
+      "admission": "Observed bounded exact-word predicate checked by actual independent replay-5",
+      "remaining_prerequisites": [
+        "host compiler/loader execution and faithful original typed AST",
+        "maintained Rust/Lean correspondence",
+        "explicit allocation/list/log boundary stubs and successful guarded allocations unless selected failure"
+      ],
+      "actual_context": {
+        "artifact": "a18c2105cfd4db3d7303dc4956375b2ef5f566332c975c68bfe612f547d95819",
+        "property": "plugin_fixture_selected_domain_v1",
+        "semantic_profile": "plugin-loader-fixture-v1",
+        "scope": "complete-selected-20-case-domain-v1",
+        "bounds": "20-cases/single-thread/explicit-stubs",
+        "assumptions": "local-clang-posix-loader/real-pinned-headers/explicit-allocation-list-log-stubs/no-deployed-plugin-claim",
+        "source_identity": "2ea1c936998d85776b151f4fdab8e2fc27b198b74c756d219d2e8c5865ea5b43",
+        "build_identity": "dd0f26c4135a1b5c3427e67bf577d7496a4401220b1397f8b8660ed696f54b58",
+        "evidence_version": "plugin-source-witness-v1/eddd07f6e627befe470aa97010c1e2ae85a6534e7efa30a94d663fb8df6b11b1"
+      },
+      "receipt_reference": "checked.json",
+      "native_execution": "actual original-body projection under declared fixture environment"
+    },
+    "rk_conf_init_error": {
+      "family": "librdkafka",
+      "source_functions": [
+        "rd_kafka_plugin_new"
+      ],
+      "predicate": "QCore.PluginSourceWitnesses.expected .rk_conf_init_error",
+      "quantifier": "this named single-thread fixture invocation under exact source/build/header/artifact/stub Context only",
+      "required_full_trace": [
+        "begin",
+        "duplicate_test",
+        "open",
+        "symbol:conf_init",
+        "conf_init",
+        "close",
+        "return:error",
+        "end"
+      ],
+      "model_assignment": "exact word equality, conditional on actual independent producer replay; not universal callback behavior",
+      "admission": "Observed bounded exact-word predicate checked by actual independent replay-5",
+      "remaining_prerequisites": [
+        "host compiler/loader execution and faithful original typed AST",
+        "maintained Rust/Lean correspondence",
+        "explicit allocation/list/log boundary stubs and successful guarded allocations unless selected failure"
+      ],
+      "actual_context": {
+        "artifact": "a18c2105cfd4db3d7303dc4956375b2ef5f566332c975c68bfe612f547d95819",
+        "property": "plugin_fixture_selected_domain_v1",
+        "semantic_profile": "plugin-loader-fixture-v1",
+        "scope": "complete-selected-20-case-domain-v1",
+        "bounds": "20-cases/single-thread/explicit-stubs",
+        "assumptions": "local-clang-posix-loader/real-pinned-headers/explicit-allocation-list-log-stubs/no-deployed-plugin-claim",
+        "source_identity": "2ea1c936998d85776b151f4fdab8e2fc27b198b74c756d219d2e8c5865ea5b43",
+        "build_identity": "dd0f26c4135a1b5c3427e67bf577d7496a4401220b1397f8b8660ed696f54b58",
+        "evidence_version": "plugin-source-witness-v1/eddd07f6e627befe470aa97010c1e2ae85a6534e7efa30a94d663fb8df6b11b1"
+      },
+      "receipt_reference": "checked.json",
+      "native_execution": "actual original-body projection under declared fixture environment"
+    },
+    "rk_load_success": {
+      "family": "librdkafka",
+      "source_functions": [
+        "rd_kafka_plugin_new"
+      ],
+      "predicate": "QCore.PluginSourceWitnesses.expected .rk_load_success",
+      "quantifier": "this named single-thread fixture invocation under exact source/build/header/artifact/stub Context only",
+      "required_full_trace": [
+        "begin",
+        "duplicate_test",
+        "open",
+        "symbol:conf_init",
+        "conf_init",
+        "allocate",
+        "allocate",
+        "retain",
+        "return:0",
+        "end"
+      ],
+      "model_assignment": "exact word equality, conditional on actual independent producer replay; not universal callback behavior",
+      "admission": "Observed bounded exact-word predicate checked by actual independent replay-5",
+      "remaining_prerequisites": [
+        "host compiler/loader execution and faithful original typed AST",
+        "maintained Rust/Lean correspondence",
+        "explicit allocation/list/log boundary stubs and successful guarded allocations unless selected failure"
+      ],
+      "actual_context": {
+        "artifact": "a18c2105cfd4db3d7303dc4956375b2ef5f566332c975c68bfe612f547d95819",
+        "property": "plugin_fixture_selected_domain_v1",
+        "semantic_profile": "plugin-loader-fixture-v1",
+        "scope": "complete-selected-20-case-domain-v1",
+        "bounds": "20-cases/single-thread/explicit-stubs",
+        "assumptions": "local-clang-posix-loader/real-pinned-headers/explicit-allocation-list-log-stubs/no-deployed-plugin-claim",
+        "source_identity": "2ea1c936998d85776b151f4fdab8e2fc27b198b74c756d219d2e8c5865ea5b43",
+        "build_identity": "dd0f26c4135a1b5c3427e67bf577d7496a4401220b1397f8b8660ed696f54b58",
+        "evidence_version": "plugin-source-witness-v1/eddd07f6e627befe470aa97010c1e2ae85a6534e7efa30a94d663fb8df6b11b1"
+      },
+      "receipt_reference": "checked.json",
+      "native_execution": "actual original-body projection under declared fixture environment"
+    },
+    "rk_load_destroy": {
+      "family": "librdkafka",
+      "source_functions": [
+        "rd_kafka_plugin_new",
+        "rd_kafka_plugin_destroy"
+      ],
+      "predicate": "QCore.PluginSourceWitnesses.expected .rk_load_destroy",
+      "quantifier": "this named single-thread fixture invocation under exact source/build/header/artifact/stub Context only",
+      "required_full_trace": [
+        "begin",
+        "duplicate_test",
+        "open",
+        "symbol:conf_init",
+        "conf_init",
+        "allocate",
+        "allocate",
+        "retain",
+        "close",
+        "free",
+        "free",
+        "return:0",
+        "end"
+      ],
+      "model_assignment": "exact word equality, conditional on actual independent producer replay; not universal callback behavior",
+      "admission": "Observed bounded exact-word predicate checked by actual independent replay-5",
+      "remaining_prerequisites": [
+        "host compiler/loader execution and faithful original typed AST",
+        "maintained Rust/Lean correspondence",
+        "explicit allocation/list/log boundary stubs and successful guarded allocations unless selected failure"
+      ],
+      "actual_context": {
+        "artifact": "a18c2105cfd4db3d7303dc4956375b2ef5f566332c975c68bfe612f547d95819",
+        "property": "plugin_fixture_selected_domain_v1",
+        "semantic_profile": "plugin-loader-fixture-v1",
+        "scope": "complete-selected-20-case-domain-v1",
+        "bounds": "20-cases/single-thread/explicit-stubs",
+        "assumptions": "local-clang-posix-loader/real-pinned-headers/explicit-allocation-list-log-stubs/no-deployed-plugin-claim",
+        "source_identity": "2ea1c936998d85776b151f4fdab8e2fc27b198b74c756d219d2e8c5865ea5b43",
+        "build_identity": "dd0f26c4135a1b5c3427e67bf577d7496a4401220b1397f8b8660ed696f54b58",
+        "evidence_version": "plugin-source-witness-v1/eddd07f6e627befe470aa97010c1e2ae85a6534e7efa30a94d663fb8df6b11b1"
+      },
+      "receipt_reference": "checked.json",
+      "native_execution": "actual original-body projection under declared fixture environment"
+    },
+    "flb_c_open_fail": {
+      "family": "fluent-bit-c",
+      "source_functions": [
+        "flb_plugin_load",
+        "get_handle",
+        "path_to_plugin_name",
+        "load_symbol"
+      ],
+      "predicate": "QCore.PluginSourceWitnesses.expected .flb_c_open_fail",
+      "quantifier": "this named single-thread fixture invocation under exact source/build/header/artifact/stub Context only",
+      "required_full_trace": [
+        "begin",
+        "open",
+        "return:error",
+        "end"
+      ],
+      "model_assignment": "exact word equality, conditional on actual independent producer replay; not universal callback behavior",
+      "admission": "Observed bounded exact-word predicate checked by actual independent replay-5",
+      "remaining_prerequisites": [
+        "host compiler/loader execution and faithful original typed AST",
+        "maintained Rust/Lean correspondence",
+        "explicit allocation/list/log boundary stubs and successful guarded allocations unless selected failure"
+      ],
+      "actual_context": {
+        "artifact": "a18c2105cfd4db3d7303dc4956375b2ef5f566332c975c68bfe612f547d95819",
+        "property": "plugin_fixture_selected_domain_v1",
+        "semantic_profile": "plugin-loader-fixture-v1",
+        "scope": "complete-selected-20-case-domain-v1",
+        "bounds": "20-cases/single-thread/explicit-stubs",
+        "assumptions": "local-clang-posix-loader/real-pinned-headers/explicit-allocation-list-log-stubs/no-deployed-plugin-claim",
+        "source_identity": "2ea1c936998d85776b151f4fdab8e2fc27b198b74c756d219d2e8c5865ea5b43",
+        "build_identity": "dd0f26c4135a1b5c3427e67bf577d7496a4401220b1397f8b8660ed696f54b58",
+        "evidence_version": "plugin-source-witness-v1/eddd07f6e627befe470aa97010c1e2ae85a6534e7efa30a94d663fb8df6b11b1"
+      },
+      "receipt_reference": "checked.json",
+      "native_execution": "actual original-body projection under declared fixture environment"
+    },
+    "flb_c_invalid_name": {
+      "family": "fluent-bit-c",
+      "source_functions": [
+        "flb_plugin_load",
+        "get_handle",
+        "path_to_plugin_name",
+        "load_symbol"
+      ],
+      "predicate": "QCore.PluginSourceWitnesses.expected .flb_c_invalid_name",
+      "quantifier": "this named single-thread fixture invocation under exact source/build/header/artifact/stub Context only",
+      "required_full_trace": [
+        "begin",
+        "open",
+        "close",
+        "return:error",
+        "end"
+      ],
+      "model_assignment": "exact word equality, conditional on actual independent producer replay; not universal callback behavior",
+      "admission": "Observed bounded exact-word predicate checked by actual independent replay-5",
+      "remaining_prerequisites": [
+        "host compiler/loader execution and faithful original typed AST",
+        "maintained Rust/Lean correspondence",
+        "explicit allocation/list/log boundary stubs and successful guarded allocations unless selected failure"
+      ],
+      "actual_context": {
+        "artifact": "a18c2105cfd4db3d7303dc4956375b2ef5f566332c975c68bfe612f547d95819",
+        "property": "plugin_fixture_selected_domain_v1",
+        "semantic_profile": "plugin-loader-fixture-v1",
+        "scope": "complete-selected-20-case-domain-v1",
+        "bounds": "20-cases/single-thread/explicit-stubs",
+        "assumptions": "local-clang-posix-loader/real-pinned-headers/explicit-allocation-list-log-stubs/no-deployed-plugin-claim",
+        "source_identity": "2ea1c936998d85776b151f4fdab8e2fc27b198b74c756d219d2e8c5865ea5b43",
+        "build_identity": "dd0f26c4135a1b5c3427e67bf577d7496a4401220b1397f8b8660ed696f54b58",
+        "evidence_version": "plugin-source-witness-v1/eddd07f6e627befe470aa97010c1e2ae85a6534e7efa30a94d663fb8df6b11b1"
+      },
+      "receipt_reference": "checked.json",
+      "native_execution": "actual original-body projection under declared fixture environment"
+    },
+    "flb_c_missing_structure": {
+      "family": "fluent-bit-c",
+      "source_functions": [
+        "flb_plugin_load",
+        "get_handle",
+        "path_to_plugin_name",
+        "load_symbol"
+      ],
+      "predicate": "QCore.PluginSourceWitnesses.expected .flb_c_missing_structure",
+      "quantifier": "this named single-thread fixture invocation under exact source/build/header/artifact/stub Context only",
+      "required_full_trace": [
+        "begin",
+        "open",
+        "allocate",
+        "copy",
+        "copy",
+        "symbol:in_missing_plugin",
+        "free",
+        "close",
+        "return:error",
+        "end"
+      ],
+      "model_assignment": "exact word equality, conditional on actual independent producer replay; not universal callback behavior",
+      "admission": "Observed bounded exact-word predicate checked by actual independent replay-5",
+      "remaining_prerequisites": [
+        "host compiler/loader execution and faithful original typed AST",
+        "maintained Rust/Lean correspondence",
+        "explicit allocation/list/log boundary stubs and successful guarded allocations unless selected failure"
+      ],
+      "actual_context": {
+        "artifact": "a18c2105cfd4db3d7303dc4956375b2ef5f566332c975c68bfe612f547d95819",
+        "property": "plugin_fixture_selected_domain_v1",
+        "semantic_profile": "plugin-loader-fixture-v1",
+        "scope": "complete-selected-20-case-domain-v1",
+        "bounds": "20-cases/single-thread/explicit-stubs",
+        "assumptions": "local-clang-posix-loader/real-pinned-headers/explicit-allocation-list-log-stubs/no-deployed-plugin-claim",
+        "source_identity": "2ea1c936998d85776b151f4fdab8e2fc27b198b74c756d219d2e8c5865ea5b43",
+        "build_identity": "dd0f26c4135a1b5c3427e67bf577d7496a4401220b1397f8b8660ed696f54b58",
+        "evidence_version": "plugin-source-witness-v1/eddd07f6e627befe470aa97010c1e2ae85a6534e7efa30a94d663fb8df6b11b1"
+      },
+      "receipt_reference": "checked.json",
+      "native_execution": "actual original-body projection under declared fixture environment"
+    },
+    "flb_c_input_success": {
+      "family": "fluent-bit-c",
+      "source_functions": [
+        "flb_plugin_load",
+        "get_handle",
+        "path_to_plugin_name",
+        "load_symbol"
+      ],
+      "predicate": "QCore.PluginSourceWitnesses.expected .flb_c_input_success",
+      "quantifier": "this named single-thread fixture invocation under exact source/build/header/artifact/stub Context only",
+      "required_full_trace": [
+        "begin",
+        "open",
+        "allocate",
+        "copy",
+        "copy",
+        "symbol:in_probe_plugin",
+        "allocate",
+        "copy",
+        "link",
+        "free",
+        "allocate",
+        "retain",
+        "link",
+        "return:0",
+        "end"
+      ],
+      "model_assignment": "exact word equality, conditional on actual independent producer replay; not universal callback behavior",
+      "admission": "Observed bounded exact-word predicate checked by actual independent replay-5",
+      "remaining_prerequisites": [
+        "host compiler/loader execution and faithful original typed AST",
+        "maintained Rust/Lean correspondence",
+        "explicit allocation/list/log boundary stubs and successful guarded allocations unless selected failure"
+      ],
+      "actual_context": {
+        "artifact": "a18c2105cfd4db3d7303dc4956375b2ef5f566332c975c68bfe612f547d95819",
+        "property": "plugin_fixture_selected_domain_v1",
+        "semantic_profile": "plugin-loader-fixture-v1",
+        "scope": "complete-selected-20-case-domain-v1",
+        "bounds": "20-cases/single-thread/explicit-stubs",
+        "assumptions": "local-clang-posix-loader/real-pinned-headers/explicit-allocation-list-log-stubs/no-deployed-plugin-claim",
+        "source_identity": "2ea1c936998d85776b151f4fdab8e2fc27b198b74c756d219d2e8c5865ea5b43",
+        "build_identity": "dd0f26c4135a1b5c3427e67bf577d7496a4401220b1397f8b8660ed696f54b58",
+        "evidence_version": "plugin-source-witness-v1/eddd07f6e627befe470aa97010c1e2ae85a6534e7efa30a94d663fb8df6b11b1"
+      },
+      "receipt_reference": "checked.json",
+      "native_execution": "actual original-body projection under declared fixture environment"
+    },
+    "flb_c_processor_success": {
+      "family": "fluent-bit-c",
+      "source_functions": [
+        "flb_plugin_load",
+        "get_handle",
+        "path_to_plugin_name",
+        "load_symbol"
+      ],
+      "predicate": "QCore.PluginSourceWitnesses.expected .flb_c_processor_success",
+      "quantifier": "this named single-thread fixture invocation under exact source/build/header/artifact/stub Context only",
+      "required_full_trace": [
+        "begin",
+        "open",
+        "allocate",
+        "copy",
+        "copy",
+        "symbol:processor_probe_plugin",
+        "allocate",
+        "copy",
+        "link",
+        "free",
+        "allocate",
+        "retain",
+        "link",
+        "return:0",
+        "end"
+      ],
+      "model_assignment": "exact word equality, conditional on actual independent producer replay; not universal callback behavior",
+      "admission": "Observed bounded exact-word predicate checked by actual independent replay-5",
+      "remaining_prerequisites": [
+        "host compiler/loader execution and faithful original typed AST",
+        "maintained Rust/Lean correspondence",
+        "explicit allocation/list/log boundary stubs and successful guarded allocations unless selected failure"
+      ],
+      "actual_context": {
+        "artifact": "a18c2105cfd4db3d7303dc4956375b2ef5f566332c975c68bfe612f547d95819",
+        "property": "plugin_fixture_selected_domain_v1",
+        "semantic_profile": "plugin-loader-fixture-v1",
+        "scope": "complete-selected-20-case-domain-v1",
+        "bounds": "20-cases/single-thread/explicit-stubs",
+        "assumptions": "local-clang-posix-loader/real-pinned-headers/explicit-allocation-list-log-stubs/no-deployed-plugin-claim",
+        "source_identity": "2ea1c936998d85776b151f4fdab8e2fc27b198b74c756d219d2e8c5865ea5b43",
+        "build_identity": "dd0f26c4135a1b5c3427e67bf577d7496a4401220b1397f8b8660ed696f54b58",
+        "evidence_version": "plugin-source-witness-v1/eddd07f6e627befe470aa97010c1e2ae85a6534e7efa30a94d663fb8df6b11b1"
+      },
+      "receipt_reference": "checked.json",
+      "native_execution": "actual original-body projection under declared fixture environment"
+    },
+    "flb_c_filter_success": {
+      "family": "fluent-bit-c",
+      "source_functions": [
+        "flb_plugin_load",
+        "get_handle",
+        "path_to_plugin_name",
+        "load_symbol"
+      ],
+      "predicate": "QCore.PluginSourceWitnesses.expected .flb_c_filter_success",
+      "quantifier": "this named single-thread fixture invocation under exact source/build/header/artifact/stub Context only",
+      "required_full_trace": [
+        "begin",
+        "open",
+        "allocate",
+        "copy",
+        "copy",
+        "symbol:filter_probe_plugin",
+        "allocate",
+        "copy",
+        "link",
+        "free",
+        "allocate",
+        "retain",
+        "link",
+        "return:0",
+        "end"
+      ],
+      "model_assignment": "exact word equality, conditional on actual independent producer replay; not universal callback behavior",
+      "admission": "Observed bounded exact-word predicate checked by actual independent replay-5",
+      "remaining_prerequisites": [
+        "host compiler/loader execution and faithful original typed AST",
+        "maintained Rust/Lean correspondence",
+        "explicit allocation/list/log boundary stubs and successful guarded allocations unless selected failure"
+      ],
+      "actual_context": {
+        "artifact": "a18c2105cfd4db3d7303dc4956375b2ef5f566332c975c68bfe612f547d95819",
+        "property": "plugin_fixture_selected_domain_v1",
+        "semantic_profile": "plugin-loader-fixture-v1",
+        "scope": "complete-selected-20-case-domain-v1",
+        "bounds": "20-cases/single-thread/explicit-stubs",
+        "assumptions": "local-clang-posix-loader/real-pinned-headers/explicit-allocation-list-log-stubs/no-deployed-plugin-claim",
+        "source_identity": "2ea1c936998d85776b151f4fdab8e2fc27b198b74c756d219d2e8c5865ea5b43",
+        "build_identity": "dd0f26c4135a1b5c3427e67bf577d7496a4401220b1397f8b8660ed696f54b58",
+        "evidence_version": "plugin-source-witness-v1/eddd07f6e627befe470aa97010c1e2ae85a6534e7efa30a94d663fb8df6b11b1"
+      },
+      "receipt_reference": "checked.json",
+      "native_execution": "actual original-body projection under declared fixture environment"
+    },
+    "flb_c_output_success": {
+      "family": "fluent-bit-c",
+      "source_functions": [
+        "flb_plugin_load",
+        "get_handle",
+        "path_to_plugin_name",
+        "load_symbol"
+      ],
+      "predicate": "QCore.PluginSourceWitnesses.expected .flb_c_output_success",
+      "quantifier": "this named single-thread fixture invocation under exact source/build/header/artifact/stub Context only",
+      "required_full_trace": [
+        "begin",
+        "open",
+        "allocate",
+        "copy",
+        "copy",
+        "symbol:out_probe_plugin",
+        "allocate",
+        "copy",
+        "link",
+        "free",
+        "allocate",
+        "retain",
+        "link",
+        "return:0",
+        "end"
+      ],
+      "model_assignment": "exact word equality, conditional on actual independent producer replay; not universal callback behavior",
+      "admission": "Observed bounded exact-word predicate checked by actual independent replay-5",
+      "remaining_prerequisites": [
+        "host compiler/loader execution and faithful original typed AST",
+        "maintained Rust/Lean correspondence",
+        "explicit allocation/list/log boundary stubs and successful guarded allocations unless selected failure"
+      ],
+      "actual_context": {
+        "artifact": "a18c2105cfd4db3d7303dc4956375b2ef5f566332c975c68bfe612f547d95819",
+        "property": "plugin_fixture_selected_domain_v1",
+        "semantic_profile": "plugin-loader-fixture-v1",
+        "scope": "complete-selected-20-case-domain-v1",
+        "bounds": "20-cases/single-thread/explicit-stubs",
+        "assumptions": "local-clang-posix-loader/real-pinned-headers/explicit-allocation-list-log-stubs/no-deployed-plugin-claim",
+        "source_identity": "2ea1c936998d85776b151f4fdab8e2fc27b198b74c756d219d2e8c5865ea5b43",
+        "build_identity": "dd0f26c4135a1b5c3427e67bf577d7496a4401220b1397f8b8660ed696f54b58",
+        "evidence_version": "plugin-source-witness-v1/eddd07f6e627befe470aa97010c1e2ae85a6534e7efa30a94d663fb8df6b11b1"
+      },
+      "receipt_reference": "checked.json",
+      "native_execution": "actual original-body projection under declared fixture environment"
+    },
+    "flb_c_context_alloc_fail": {
+      "family": "fluent-bit-c",
+      "source_functions": [
+        "flb_plugin_load",
+        "get_handle",
+        "path_to_plugin_name",
+        "load_symbol"
+      ],
+      "predicate": "QCore.PluginSourceWitnesses.expected .flb_c_context_alloc_fail",
+      "quantifier": "this named single-thread fixture invocation under exact source/build/header/artifact/stub Context only",
+      "required_full_trace": [
+        "begin",
+        "open",
+        "allocate",
+        "copy",
+        "copy",
+        "symbol:in_probe_plugin",
+        "allocate",
+        "copy",
+        "link",
+        "free",
+        "allocate",
+        "close",
+        "return:error",
+        "end"
+      ],
+      "model_assignment": "exact word equality, conditional on actual independent producer replay; not universal callback behavior",
+      "admission": "Observed bounded exact-word predicate checked by actual independent replay-5",
+      "remaining_prerequisites": [
+        "host compiler/loader execution and faithful original typed AST",
+        "maintained Rust/Lean correspondence",
+        "explicit allocation/list/log boundary stubs and successful guarded allocations unless selected failure"
+      ],
+      "actual_context": {
+        "artifact": "a18c2105cfd4db3d7303dc4956375b2ef5f566332c975c68bfe612f547d95819",
+        "property": "plugin_fixture_selected_domain_v1",
+        "semantic_profile": "plugin-loader-fixture-v1",
+        "scope": "complete-selected-20-case-domain-v1",
+        "bounds": "20-cases/single-thread/explicit-stubs",
+        "assumptions": "local-clang-posix-loader/real-pinned-headers/explicit-allocation-list-log-stubs/no-deployed-plugin-claim",
+        "source_identity": "2ea1c936998d85776b151f4fdab8e2fc27b198b74c756d219d2e8c5865ea5b43",
+        "build_identity": "dd0f26c4135a1b5c3427e67bf577d7496a4401220b1397f8b8660ed696f54b58",
+        "evidence_version": "plugin-source-witness-v1/eddd07f6e627befe470aa97010c1e2ae85a6534e7efa30a94d663fb8df6b11b1"
+      },
+      "receipt_reference": "checked.json",
+      "native_execution": "actual original-body projection under declared fixture environment"
+    },
+    "go_pre_optional_absent": {
+      "family": "fluent-bit-go-proxy",
+      "source_functions": [
+        "flb_plugin_proxy_register",
+        "flb_plugin_proxy_symbol"
+      ],
+      "predicate": "QCore.PluginSourceWitnesses.expected .go_pre_optional_absent",
+      "quantifier": "this named single-thread fixture invocation under exact source/build/header/artifact/stub Context only",
+      "required_full_trace": [
+        "begin",
+        "open",
+        "symbol:FLBPluginPreRegister",
+        "symbol:FLBPluginRegister",
+        "register",
+        "register:success",
+        "allocate",
+        "symbol:FLBPluginInit",
+        "symbol:FLBPluginFlush",
+        "symbol:FLBPluginFlushCtx",
+        "symbol:FLBPluginExit",
+        "symbol:FLBPluginExitCtx",
+        "allocate",
+        "link",
+        "return:0",
+        "init:present",
+        "optional:absent",
+        "close",
+        "end"
+      ],
+      "model_assignment": "exact word equality, conditional on actual independent producer replay; not universal callback behavior",
+      "admission": "Observed bounded exact-word predicate checked by actual independent replay-5",
+      "remaining_prerequisites": [
+        "host compiler/loader execution and faithful original typed AST",
+        "maintained Rust/Lean correspondence",
+        "explicit allocation/list/log boundary stubs and successful guarded allocations unless selected failure"
+      ],
+      "actual_context": {
+        "artifact": "a18c2105cfd4db3d7303dc4956375b2ef5f566332c975c68bfe612f547d95819",
+        "property": "plugin_fixture_selected_domain_v1",
+        "semantic_profile": "plugin-loader-fixture-v1",
+        "scope": "complete-selected-20-case-domain-v1",
+        "bounds": "20-cases/single-thread/explicit-stubs",
+        "assumptions": "local-clang-posix-loader/real-pinned-headers/explicit-allocation-list-log-stubs/no-deployed-plugin-claim",
+        "source_identity": "2ea1c936998d85776b151f4fdab8e2fc27b198b74c756d219d2e8c5865ea5b43",
+        "build_identity": "dd0f26c4135a1b5c3427e67bf577d7496a4401220b1397f8b8660ed696f54b58",
+        "evidence_version": "plugin-source-witness-v1/eddd07f6e627befe470aa97010c1e2ae85a6534e7efa30a94d663fb8df6b11b1"
+      },
+      "receipt_reference": "checked.json",
+      "native_execution": "actual original-body projection under declared fixture environment"
+    },
+    "go_pre_failed": {
+      "family": "fluent-bit-go-proxy",
+      "source_functions": [
+        "flb_plugin_proxy_register",
+        "flb_plugin_proxy_symbol"
+      ],
+      "predicate": "QCore.PluginSourceWitnesses.expected .go_pre_failed",
+      "quantifier": "this named single-thread fixture invocation under exact source/build/header/artifact/stub Context only",
+      "required_full_trace": [
+        "begin",
+        "open",
+        "symbol:FLBPluginPreRegister",
+        "pre_register",
+        "return:error",
+        "close",
+        "end"
+      ],
+      "model_assignment": "exact word equality, conditional on actual independent producer replay; not universal callback behavior",
+      "admission": "Observed bounded exact-word predicate checked by actual independent replay-5",
+      "remaining_prerequisites": [
+        "host compiler/loader execution and faithful original typed AST",
+        "maintained Rust/Lean correspondence",
+        "explicit allocation/list/log boundary stubs and successful guarded allocations unless selected failure"
+      ],
+      "actual_context": {
+        "artifact": "a18c2105cfd4db3d7303dc4956375b2ef5f566332c975c68bfe612f547d95819",
+        "property": "plugin_fixture_selected_domain_v1",
+        "semantic_profile": "plugin-loader-fixture-v1",
+        "scope": "complete-selected-20-case-domain-v1",
+        "bounds": "20-cases/single-thread/explicit-stubs",
+        "assumptions": "local-clang-posix-loader/real-pinned-headers/explicit-allocation-list-log-stubs/no-deployed-plugin-claim",
+        "source_identity": "2ea1c936998d85776b151f4fdab8e2fc27b198b74c756d219d2e8c5865ea5b43",
+        "build_identity": "dd0f26c4135a1b5c3427e67bf577d7496a4401220b1397f8b8660ed696f54b58",
+        "evidence_version": "plugin-source-witness-v1/eddd07f6e627befe470aa97010c1e2ae85a6534e7efa30a94d663fb8df6b11b1"
+      },
+      "receipt_reference": "checked.json",
+      "native_execution": "actual original-body projection under declared fixture environment"
+    },
+    "go_register_missing": {
+      "family": "fluent-bit-go-proxy",
+      "source_functions": [
+        "flb_plugin_proxy_register",
+        "flb_plugin_proxy_symbol"
+      ],
+      "predicate": "QCore.PluginSourceWitnesses.expected .go_register_missing",
+      "quantifier": "this named single-thread fixture invocation under exact source/build/header/artifact/stub Context only",
+      "required_full_trace": [
+        "begin",
+        "open",
+        "symbol:FLBPluginPreRegister",
+        "symbol:FLBPluginRegister",
+        "return:error",
+        "close",
+        "end"
+      ],
+      "model_assignment": "exact word equality, conditional on actual independent producer replay; not universal callback behavior",
+      "admission": "Observed bounded exact-word predicate checked by actual independent replay-5",
+      "remaining_prerequisites": [
+        "host compiler/loader execution and faithful original typed AST",
+        "maintained Rust/Lean correspondence",
+        "explicit allocation/list/log boundary stubs and successful guarded allocations unless selected failure"
+      ],
+      "actual_context": {
+        "artifact": "a18c2105cfd4db3d7303dc4956375b2ef5f566332c975c68bfe612f547d95819",
+        "property": "plugin_fixture_selected_domain_v1",
+        "semantic_profile": "plugin-loader-fixture-v1",
+        "scope": "complete-selected-20-case-domain-v1",
+        "bounds": "20-cases/single-thread/explicit-stubs",
+        "assumptions": "local-clang-posix-loader/real-pinned-headers/explicit-allocation-list-log-stubs/no-deployed-plugin-claim",
+        "source_identity": "2ea1c936998d85776b151f4fdab8e2fc27b198b74c756d219d2e8c5865ea5b43",
+        "build_identity": "dd0f26c4135a1b5c3427e67bf577d7496a4401220b1397f8b8660ed696f54b58",
+        "evidence_version": "plugin-source-witness-v1/eddd07f6e627befe470aa97010c1e2ae85a6534e7efa30a94d663fb8df6b11b1"
+      },
+      "receipt_reference": "checked.json",
+      "native_execution": "actual original-body projection under declared fixture environment"
+    },
+    "go_init_missing": {
+      "family": "fluent-bit-go-proxy",
+      "source_functions": [
+        "proxy_go_output_register"
+      ],
+      "predicate": "QCore.PluginSourceWitnesses.expected .go_init_missing",
+      "quantifier": "this named single-thread fixture invocation under exact source/build/header/artifact/stub Context only",
+      "required_full_trace": [
+        "begin",
+        "open",
+        "allocate",
+        "symbol:FLBPluginInit",
+        "free",
+        "return:error",
+        "close",
+        "end"
+      ],
+      "model_assignment": "exact word equality, conditional on actual independent producer replay; not universal callback behavior",
+      "admission": "Observed bounded exact-word predicate checked by actual independent replay-5",
+      "remaining_prerequisites": [
+        "host compiler/loader execution and faithful original typed AST",
+        "maintained Rust/Lean correspondence",
+        "explicit allocation/list/log boundary stubs and successful guarded allocations unless selected failure"
+      ],
+      "actual_context": {
+        "artifact": "a18c2105cfd4db3d7303dc4956375b2ef5f566332c975c68bfe612f547d95819",
+        "property": "plugin_fixture_selected_domain_v1",
+        "semantic_profile": "plugin-loader-fixture-v1",
+        "scope": "complete-selected-20-case-domain-v1",
+        "bounds": "20-cases/single-thread/explicit-stubs",
+        "assumptions": "local-clang-posix-loader/real-pinned-headers/explicit-allocation-list-log-stubs/no-deployed-plugin-claim",
+        "source_identity": "2ea1c936998d85776b151f4fdab8e2fc27b198b74c756d219d2e8c5865ea5b43",
+        "build_identity": "dd0f26c4135a1b5c3427e67bf577d7496a4401220b1397f8b8660ed696f54b58",
+        "evidence_version": "plugin-source-witness-v1/eddd07f6e627befe470aa97010c1e2ae85a6534e7efa30a94d663fb8df6b11b1"
+      },
+      "receipt_reference": "checked.json",
+      "native_execution": "actual original-body projection under declared fixture environment"
+    },
+    "go_optional_hooks_absent": {
+      "family": "fluent-bit-go-proxy",
+      "source_functions": [
+        "proxy_go_output_register"
+      ],
+      "predicate": "QCore.PluginSourceWitnesses.expected .go_optional_hooks_absent",
+      "quantifier": "this named single-thread fixture invocation under exact source/build/header/artifact/stub Context only",
+      "required_full_trace": [
+        "begin",
+        "open",
+        "allocate",
+        "symbol:FLBPluginInit",
+        "symbol:FLBPluginFlush",
+        "symbol:FLBPluginFlushCtx",
+        "symbol:FLBPluginExit",
+        "symbol:FLBPluginExitCtx",
+        "allocate",
+        "return:0",
+        "init:present",
+        "optional:absent",
+        "close",
+        "end"
+      ],
+      "model_assignment": "exact word equality, conditional on actual independent producer replay; not universal callback behavior",
+      "admission": "Observed bounded exact-word predicate checked by actual independent replay-5",
+      "remaining_prerequisites": [
+        "host compiler/loader execution and faithful original typed AST",
+        "maintained Rust/Lean correspondence",
+        "explicit allocation/list/log boundary stubs and successful guarded allocations unless selected failure"
+      ],
+      "actual_context": {
+        "artifact": "a18c2105cfd4db3d7303dc4956375b2ef5f566332c975c68bfe612f547d95819",
+        "property": "plugin_fixture_selected_domain_v1",
+        "semantic_profile": "plugin-loader-fixture-v1",
+        "scope": "complete-selected-20-case-domain-v1",
+        "bounds": "20-cases/single-thread/explicit-stubs",
+        "assumptions": "local-clang-posix-loader/real-pinned-headers/explicit-allocation-list-log-stubs/no-deployed-plugin-claim",
+        "source_identity": "2ea1c936998d85776b151f4fdab8e2fc27b198b74c756d219d2e8c5865ea5b43",
+        "build_identity": "dd0f26c4135a1b5c3427e67bf577d7496a4401220b1397f8b8660ed696f54b58",
+        "evidence_version": "plugin-source-witness-v1/eddd07f6e627befe470aa97010c1e2ae85a6534e7efa30a94d663fb8df6b11b1"
+      },
+      "receipt_reference": "checked.json",
+      "native_execution": "actual original-body projection under declared fixture environment"
+    },
+    "go_create_ignores_register_failure": {
+      "family": "fluent-bit-go-proxy",
+      "source_functions": [
+        "flb_plugin_proxy_register",
+        "flb_plugin_proxy_symbol",
+        "flb_plugin_proxy_create",
+        "flb_plugin_proxy_destroy"
+      ],
+      "predicate": "QCore.PluginSourceWitnesses.expected .go_create_ignores_register_failure",
+      "quantifier": "this named single-thread fixture invocation under exact source/build/header/artifact/stub Context only",
+      "required_full_trace": [
+        "begin",
+        "open",
+        "allocate",
+        "allocate",
+        "allocate",
+        "link",
+        "symbol:FLBPluginPreRegister",
+        "symbol:FLBPluginRegister",
+        "return:nonnull",
+        "free",
+        "close",
+        "free",
+        "end"
+      ],
+      "model_assignment": "exact word equality, conditional on actual independent producer replay; not universal callback behavior",
+      "admission": "Observed bounded exact-word predicate checked by actual independent replay-5",
+      "remaining_prerequisites": [
+        "host compiler/loader execution and faithful original typed AST",
+        "maintained Rust/Lean correspondence",
+        "explicit allocation/list/log boundary stubs and successful guarded allocations unless selected failure"
+      ],
+      "actual_context": {
+        "artifact": "a18c2105cfd4db3d7303dc4956375b2ef5f566332c975c68bfe612f547d95819",
+        "property": "plugin_fixture_selected_domain_v1",
+        "semantic_profile": "plugin-loader-fixture-v1",
+        "scope": "complete-selected-20-case-domain-v1",
+        "bounds": "20-cases/single-thread/explicit-stubs",
+        "assumptions": "local-clang-posix-loader/real-pinned-headers/explicit-allocation-list-log-stubs/no-deployed-plugin-claim",
+        "source_identity": "2ea1c936998d85776b151f4fdab8e2fc27b198b74c756d219d2e8c5865ea5b43",
+        "build_identity": "dd0f26c4135a1b5c3427e67bf577d7496a4401220b1397f8b8660ed696f54b58",
+        "evidence_version": "plugin-source-witness-v1/eddd07f6e627befe470aa97010c1e2ae85a6534e7efa30a94d663fb8df6b11b1"
+      },
+      "receipt_reference": "checked.json",
+      "native_execution": "actual original-body projection under declared fixture environment"
+    }
+  },
+  "independent_envelopes": {
+    "flb_external_plugin": {
+      "original_outer_sha256": "545119edfb1834a4b51d5a0003ca18acb648775b28c197b673ef6638662490f9",
+      "original_definition": "flb_plugin_load",
+      "atoms": {
+        "artifact_symbol_abi": {
+          "original_proposition": "QCore.PluginPremiseDecomposition.artifactSymbolAbi",
+          "original_quantifiers": [
+            "all required symbols of every loaded artifact"
+          ],
+          "original_source_binding": "open (frozen original catalog)",
+          "finite_subobligation_cases": [
+            "rk_duplicate",
+            "rk_open_fail",
+            "rk_conf_init_missing",
+            "rk_conf_init_error",
+            "rk_load_success",
+            "rk_load_destroy",
+            "flb_c_open_fail",
+            "flb_c_invalid_name",
+            "flb_c_missing_structure",
+            "flb_c_input_success",
+            "flb_c_processor_success",
+            "flb_c_filter_success",
+            "flb_c_output_success",
+            "flb_c_context_alloc_fail",
+            "go_pre_optional_absent",
+            "go_pre_failed",
+            "go_register_missing",
+            "go_init_missing",
+            "go_optional_hooks_absent",
+            "go_create_ignores_register_failure"
+          ],
+          "bounded_progress": "Local artifact bytes, dynamic symbols, real-header sizeof/alignment/used-field offsets and selected callback pointer type are checked. Arbitrary deployed artifact and behavioral ABI completeness are absent.",
+          "universal_discharge": false,
+          "remaining_obligation": "Independently held deployed artifact domain, exact runtime loader/callback phase and full quantified source/model evidence required; absence is not refutation."
+        },
+        "callback_public_candidates": {
+          "original_proposition": "QCore.PluginPremiseDecomposition.publicCallbackRegistration",
+          "original_quantifiers": [
+            "every public callback registration of this plugin"
+          ],
+          "original_source_binding": "open (frozen original catalog)",
+          "finite_subobligation_cases": [],
+          "bounded_progress": "No selected case proves this universally quantified callback/frame/custody fact.",
+          "universal_discharge": false,
+          "remaining_obligation": "Independently held deployed artifact domain, exact runtime loader/callback phase and full quantified source/model evidence required; absence is not refutation."
+        },
+        "cjson_hook_frame": {
+          "original_proposition": "QCore.PluginPremiseDecomposition.cjsonHooks",
+          "original_quantifiers": [
+            "every event of loaded code and transitive calls"
+          ],
+          "original_source_binding": "open (frozen original catalog)",
+          "finite_subobligation_cases": [],
+          "bounded_progress": "No selected case proves this universally quantified callback/frame/custody fact.",
+          "universal_discharge": false,
+          "remaining_obligation": "Independently held deployed artifact domain, exact runtime loader/callback phase and full quantified source/model evidence required; absence is not refutation."
+        },
+        "cjson_shape_frame": {
+          "original_proposition": "QCore.PluginPremiseDecomposition.cjsonShape",
+          "original_quantifiers": [
+            "every link write and cJSON API call of loaded code"
+          ],
+          "original_source_binding": "open (frozen original catalog)",
+          "finite_subobligation_cases": [],
+          "bounded_progress": "No selected case proves this universally quantified callback/frame/custody fact.",
+          "universal_discharge": false,
+          "remaining_obligation": "Independently held deployed artifact domain, exact runtime loader/callback phase and full quantified source/model evidence required; absence is not refutation."
+        },
+        "code_context_lifetime": {
+          "original_proposition": "QCore.PluginPremiseDecomposition.codeContextLifetime",
+          "original_quantifiers": [
+            "every ordinary/destruction callback invocation including copied on_new"
+          ],
+          "original_source_binding": "open (frozen original catalog)",
+          "finite_subobligation_cases": [
+            "flb_c_input_success",
+            "flb_c_processor_success",
+            "flb_c_filter_success",
+            "flb_c_output_success",
+            "go_optional_hooks_absent"
+          ],
+          "bounded_progress": "Selected native handle/context retention/copy/link or optional-slot assignment is observed; last invocation and transitive lifetime remain unproved.",
+          "universal_discharge": false,
+          "remaining_obligation": "Independently held deployed artifact domain, exact runtime loader/callback phase and full quantified source/model evidence required; absence is not refutation."
+        },
+        "core_instance_config_frame": {
+          "original_proposition": "QCore.PluginPremiseDecomposition.coreFrame",
+          "original_quantifiers": [
+            "every store by loaded Fluent Bit C/Go code and transitive calls"
+          ],
+          "original_source_binding": "open (frozen original catalog)",
+          "finite_subobligation_cases": [],
+          "bounded_progress": "No selected case proves this universally quantified callback/frame/custody fact.",
+          "universal_discharge": false,
+          "remaining_obligation": "Independently held deployed artifact domain, exact runtime loader/callback phase and full quantified source/model evidence required; absence is not refutation."
+        },
+        "final_unload_order": {
+          "original_proposition": "QCore.PluginPremiseDecomposition.unloadOrder",
+          "original_quantifiers": [
+            "every final matching close and loader-reference copy"
+          ],
+          "original_source_binding": "open (frozen original catalog)",
+          "finite_subobligation_cases": [
+            "flb_c_invalid_name",
+            "flb_c_missing_structure",
+            "flb_c_context_alloc_fail",
+            "go_create_ignores_register_failure"
+          ],
+          "bounded_progress": "Selected failure/destroy closes are ordered by complete finite traces; no global callback-after-close or loader-reference-copy theorem is supplied.",
+          "universal_discharge": false,
+          "remaining_obligation": "Independently held deployed artifact domain, exact runtime loader/callback phase and full quantified source/model evidence required; absence is not refutation."
+        },
+        "handed_access_no_forgery": {
+          "original_proposition": "QCore.PluginPremiseDecomposition.handedAccess",
+          "original_quantifiers": [
+            "every pointer creation/access by loaded Fluent Bit C/Go code"
+          ],
+          "original_source_binding": "open (frozen original catalog)",
+          "finite_subobligation_cases": [],
+          "bounded_progress": "No selected case proves this universally quantified callback/frame/custody fact.",
+          "universal_discharge": false,
+          "remaining_obligation": "Independently held deployed artifact domain, exact runtime loader/callback phase and full quantified source/model evidence required; absence is not refutation."
+        },
+        "interceptor_candidates": {
+          "original_proposition": "QCore.PluginPremiseDecomposition.interceptorCandidates",
+          "original_quantifiers": [
+            "every interceptor registration of this plugin"
+          ],
+          "original_source_binding": "open (frozen original catalog)",
+          "finite_subobligation_cases": [],
+          "bounded_progress": "No selected case proves this universally quantified callback/frame/custody fact.",
+          "universal_discharge": false,
+          "remaining_obligation": "Independently held deployed artifact domain, exact runtime loader/callback phase and full quantified source/model evidence required; absence is not refutation."
+        },
+        "interceptor_custody": {
+          "original_proposition": "QCore.PluginPremiseDecomposition.interceptorCustody",
+          "original_quantifiers": [
+            "every transitive event within each interceptor activation"
+          ],
+          "original_source_binding": "open (frozen original catalog)",
+          "finite_subobligation_cases": [],
+          "bounded_progress": "No selected case proves this universally quantified callback/frame/custody fact.",
+          "universal_discharge": false,
+          "remaining_obligation": "Independently held deployed artifact domain, exact runtime loader/callback phase and full quantified source/model evidence required; absence is not refutation."
+        },
+        "interceptor_lifecycle": {
+          "original_proposition": "QCore.PluginPremiseDecomposition.registrationLifecycle",
+          "original_quantifiers": [
+            "every interceptor registration of this plugin"
+          ],
+          "original_source_binding": "open (frozen original catalog)",
+          "finite_subobligation_cases": [],
+          "bounded_progress": "No selected case proves this universally quantified callback/frame/custody fact.",
+          "universal_discharge": false,
+          "remaining_obligation": "Independently held deployed artifact domain, exact runtime loader/callback phase and full quantified source/model evidence required; absence is not refutation."
+        },
+        "internal_frame_public_apis": {
+          "original_proposition": "QCore.PluginPremiseDecomposition.internalFrameApi",
+          "original_quantifiers": [
+            "every loaded-code store and librdkafka API/symbol call"
+          ],
+          "original_source_binding": "open (frozen original catalog)",
+          "finite_subobligation_cases": [],
+          "bounded_progress": "No selected case proves this universally quantified callback/frame/custody fact.",
+          "universal_discharge": false,
+          "remaining_obligation": "Independently held deployed artifact domain, exact runtime loader/callback phase and full quantified source/model evidence required; absence is not refutation."
+        },
+        "loader_environment": {
+          "original_proposition": "QCore.PluginPremiseDecomposition.loaderEnvironment",
+          "original_quantifiers": [
+            "all actually loaded artifacts"
+          ],
+          "original_source_binding": "open (frozen original catalog)",
+          "finite_subobligation_cases": [
+            "flb_c_open_fail",
+            "flb_c_invalid_name",
+            "flb_c_missing_structure",
+            "flb_c_input_success",
+            "flb_c_processor_success",
+            "flb_c_filter_success",
+            "flb_c_output_success",
+            "flb_c_context_alloc_fail",
+            "go_pre_optional_absent",
+            "go_pre_failed",
+            "go_register_missing",
+            "go_init_missing",
+            "go_optional_hooks_absent",
+            "go_create_ignores_register_failure"
+          ],
+          "bounded_progress": "Actual source flags/headers/compiler/target, local DSO open and selected guards are checked for this finite fixture environment.",
+          "universal_discharge": false,
+          "remaining_obligation": "Independently held deployed artifact domain, exact runtime loader/callback phase and full quantified source/model evidence required; absence is not refutation."
+        },
+        "preexisting_allocator_hooks": {
+          "original_proposition": "QCore.PluginPremiseDecomposition.preexistingAllocatorHooks",
+          "original_quantifiers": [
+            "actual allocator hooks installed before each plugin load"
+          ],
+          "original_source_binding": "open (frozen original catalog)",
+          "finite_subobligation_cases": [],
+          "bounded_progress": "No selected case proves this universally quantified callback/frame/custody fact.",
+          "universal_discharge": false,
+          "remaining_obligation": "Independently held deployed artifact domain, exact runtime loader/callback phase and full quantified source/model evidence required; absence is not refutation."
+        }
+      },
+      "bridge": "Selected loader facts are additional scoped prerequisites only. Neither original envelope nor the seven callback atoms follows from them."
+    },
+    "rk_plugin_library": {
+      "original_outer_sha256": "0c309c2cb0ca67354f3276bf1ed1a8de797d5b64630a5f3f1e542c7371b43575",
+      "original_definition": "rd_kafka_plugin_new",
+      "atoms": {
+        "artifact_symbol_abi": {
+          "original_proposition": "QCore.PluginPremiseDecomposition.artifactSymbolAbi",
+          "original_quantifiers": [
+            "all required symbols of every loaded artifact"
+          ],
+          "original_source_binding": "open (frozen original catalog)",
+          "finite_subobligation_cases": [
+            "rk_duplicate",
+            "rk_open_fail",
+            "rk_conf_init_missing",
+            "rk_conf_init_error",
+            "rk_load_success",
+            "rk_load_destroy"
+          ],
+          "bounded_progress": "Local artifact bytes, dynamic symbols, real-header sizeof/alignment/used-field offsets and selected callback pointer type are checked. Arbitrary deployed artifact and behavioral ABI completeness are absent.",
+          "universal_discharge": false,
+          "remaining_obligation": "Independently held deployed artifact domain, exact runtime loader/callback phase and full quantified source/model evidence required; absence is not refutation."
+        },
+        "callback_public_candidates": {
+          "original_proposition": "QCore.PluginPremiseDecomposition.publicCallbackRegistration",
+          "original_quantifiers": [
+            "every public callback registration of this plugin"
+          ],
+          "original_source_binding": "open (frozen original catalog)",
+          "finite_subobligation_cases": [],
+          "bounded_progress": "No selected case proves this universally quantified callback/frame/custody fact.",
+          "universal_discharge": false,
+          "remaining_obligation": "Independently held deployed artifact domain, exact runtime loader/callback phase and full quantified source/model evidence required; absence is not refutation."
+        },
+        "cjson_hook_frame": {
+          "original_proposition": "QCore.PluginPremiseDecomposition.cjsonHooks",
+          "original_quantifiers": [
+            "every event of loaded code and transitive calls"
+          ],
+          "original_source_binding": "open (frozen original catalog)",
+          "finite_subobligation_cases": [],
+          "bounded_progress": "No selected case proves this universally quantified callback/frame/custody fact.",
+          "universal_discharge": false,
+          "remaining_obligation": "Independently held deployed artifact domain, exact runtime loader/callback phase and full quantified source/model evidence required; absence is not refutation."
+        },
+        "cjson_shape_frame": {
+          "original_proposition": "QCore.PluginPremiseDecomposition.cjsonShape",
+          "original_quantifiers": [
+            "every link write and cJSON API call of loaded code"
+          ],
+          "original_source_binding": "open (frozen original catalog)",
+          "finite_subobligation_cases": [],
+          "bounded_progress": "No selected case proves this universally quantified callback/frame/custody fact.",
+          "universal_discharge": false,
+          "remaining_obligation": "Independently held deployed artifact domain, exact runtime loader/callback phase and full quantified source/model evidence required; absence is not refutation."
+        },
+        "code_context_lifetime": {
+          "original_proposition": "QCore.PluginPremiseDecomposition.codeContextLifetime",
+          "original_quantifiers": [
+            "every ordinary/destruction callback invocation including copied on_new"
+          ],
+          "original_source_binding": "open (frozen original catalog)",
+          "finite_subobligation_cases": [
+            "rk_load_success",
+            "rk_load_destroy"
+          ],
+          "bounded_progress": "Selected native handle/context retention/copy/link or optional-slot assignment is observed; last invocation and transitive lifetime remain unproved.",
+          "universal_discharge": false,
+          "remaining_obligation": "Independently held deployed artifact domain, exact runtime loader/callback phase and full quantified source/model evidence required; absence is not refutation."
+        },
+        "final_unload_order": {
+          "original_proposition": "QCore.PluginPremiseDecomposition.unloadOrder",
+          "original_quantifiers": [
+            "every final matching close and loader-reference copy"
+          ],
+          "original_source_binding": "open (frozen original catalog)",
+          "finite_subobligation_cases": [
+            "rk_conf_init_missing",
+            "rk_conf_init_error",
+            "rk_load_destroy"
+          ],
+          "bounded_progress": "Selected failure/destroy closes are ordered by complete finite traces; no global callback-after-close or loader-reference-copy theorem is supplied.",
+          "universal_discharge": false,
+          "remaining_obligation": "Independently held deployed artifact domain, exact runtime loader/callback phase and full quantified source/model evidence required; absence is not refutation."
+        },
+        "interceptor_candidates": {
+          "original_proposition": "QCore.PluginPremiseDecomposition.interceptorCandidates",
+          "original_quantifiers": [
+            "every interceptor registration of this plugin"
+          ],
+          "original_source_binding": "open (frozen original catalog)",
+          "finite_subobligation_cases": [],
+          "bounded_progress": "No selected case proves this universally quantified callback/frame/custody fact.",
+          "universal_discharge": false,
+          "remaining_obligation": "Independently held deployed artifact domain, exact runtime loader/callback phase and full quantified source/model evidence required; absence is not refutation."
+        },
+        "interceptor_custody": {
+          "original_proposition": "QCore.PluginPremiseDecomposition.interceptorCustody",
+          "original_quantifiers": [
+            "every transitive event within each interceptor activation"
+          ],
+          "original_source_binding": "open (frozen original catalog)",
+          "finite_subobligation_cases": [],
+          "bounded_progress": "No selected case proves this universally quantified callback/frame/custody fact.",
+          "universal_discharge": false,
+          "remaining_obligation": "Independently held deployed artifact domain, exact runtime loader/callback phase and full quantified source/model evidence required; absence is not refutation."
+        },
+        "interceptor_lifecycle": {
+          "original_proposition": "QCore.PluginPremiseDecomposition.registrationLifecycle",
+          "original_quantifiers": [
+            "every interceptor registration of this plugin"
+          ],
+          "original_source_binding": "open (frozen original catalog)",
+          "finite_subobligation_cases": [],
+          "bounded_progress": "No selected case proves this universally quantified callback/frame/custody fact.",
+          "universal_discharge": false,
+          "remaining_obligation": "Independently held deployed artifact domain, exact runtime loader/callback phase and full quantified source/model evidence required; absence is not refutation."
+        },
+        "internal_frame_public_apis": {
+          "original_proposition": "QCore.PluginPremiseDecomposition.internalFrameApi",
+          "original_quantifiers": [
+            "every loaded-code store and librdkafka API/symbol call"
+          ],
+          "original_source_binding": "open (frozen original catalog)",
+          "finite_subobligation_cases": [],
+          "bounded_progress": "No selected case proves this universally quantified callback/frame/custody fact.",
+          "universal_discharge": false,
+          "remaining_obligation": "Independently held deployed artifact domain, exact runtime loader/callback phase and full quantified source/model evidence required; absence is not refutation."
+        },
+        "loader_environment": {
+          "original_proposition": "QCore.PluginPremiseDecomposition.loaderEnvironment",
+          "original_quantifiers": [
+            "all actually loaded artifacts"
+          ],
+          "original_source_binding": "open (frozen original catalog)",
+          "finite_subobligation_cases": [
+            "rk_duplicate",
+            "rk_open_fail",
+            "rk_conf_init_missing",
+            "rk_conf_init_error",
+            "rk_load_success",
+            "rk_load_destroy"
+          ],
+          "bounded_progress": "Actual source flags/headers/compiler/target, local DSO open and selected guards are checked for this finite fixture environment.",
+          "universal_discharge": false,
+          "remaining_obligation": "Independently held deployed artifact domain, exact runtime loader/callback phase and full quantified source/model evidence required; absence is not refutation."
+        },
+        "preexisting_allocator_hooks": {
+          "original_proposition": "QCore.PluginPremiseDecomposition.preexistingAllocatorHooks",
+          "original_quantifiers": [
+            "actual allocator hooks installed before each plugin load"
+          ],
+          "original_source_binding": "open (frozen original catalog)",
+          "finite_subobligation_cases": [],
+          "bounded_progress": "No selected case proves this universally quantified callback/frame/custody fact.",
+          "universal_discharge": false,
+          "remaining_obligation": "Independently held deployed artifact domain, exact runtime loader/callback phase and full quantified source/model evidence required; absence is not refutation."
+        }
+      },
+      "bridge": "Selected loader facts are additional scoped prerequisites only. Neither original envelope nor the seven callback atoms follows from them."
+    }
+  },
+  "deployed_evidence": {
+    "status": "absent/actionable",
+    "required_inputs": [
+      "complete selected deployed plugin artifact inventory with actual bytes and linker/ABI identity",
+      "matching deployment loader/registration/lifetime traces with justified event completeness",
+      "source/model assignments for foreign/transitive callbacks and original universal frame/custody predicates"
+    ]
+  },
+  "guarded_go_counterexample": "Ignored registration result is a counterexample only to the separately named finite creator-implies-registration proposition; not either original envelope, seven old atoms, or Unsafe.",
+  "checked_source_functions": 17,
+  "native_exercised_source_functions": 15,
+  "source_checked_not_native_exercised": [
+    "rd_kafka_plugin_cmp",
+    "destroy_plugin"
+  ],
+  "actual_header_inputs": 527,
+  "actual_native_artifacts": 40,
+  "actual_refusals": 78,
+  "finite_error_assignment": {
+    "atom": "go_creator_fixture_implies_registration_v1",
+    "disposition": "Refuted",
+    "warrant": "Observed",
+    "exact_context": {
+      "artifact": "a18c2105cfd4db3d7303dc4956375b2ef5f566332c975c68bfe612f547d95819",
+      "property": "plugin_fixture_selected_domain_v1",
+      "semantic_profile": "plugin-loader-fixture-v1",
+      "scope": "complete-selected-20-case-domain-v1",
+      "bounds": "20-cases/single-thread/explicit-stubs",
+      "assumptions": "local-clang-posix-loader/real-pinned-headers/explicit-allocation-list-log-stubs/no-deployed-plugin-claim",
+      "source_identity": "2ea1c936998d85776b151f4fdab8e2fc27b198b74c756d219d2e8c5865ea5b43",
+      "build_identity": "dd0f26c4135a1b5c3427e67bf577d7496a4401220b1397f8b8660ed696f54b58",
+      "evidence_version": "plugin-source-witness-v1/eddd07f6e627befe470aa97010c1e2ae85a6534e7efa30a94d663fb8df6b11b1"
+    },
+    "reason": "selected complete native trace returns nonnull without required callback/success event",
+    "universal_original_atom_disposition_change": false,
+    "upstreamUnsafe": false
+  }
+}
