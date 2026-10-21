@@ -91,9 +91,13 @@ contract {
     requires resource_contract_v1;
     requires resource_revision(flexible);
     requires resource_hypothesis(checked_reading_route, "a dereference of this call's result is read only under the checked reading rules: either the nested-call admission of O04-TRACE and CONSTRUCTOR-RESIDUALS (N1-N10, including a whole Borrowed or data-tail actual modulo the dereference wrapper and exact written arity), or W48-BOTTOM-UP-BATCH3 scalar condition admission (an external zero-argument call with this no-custody result, no container effect, exactly one dereference compared by equality or inequality with a decimal literal, the ordinary call checks retained and both outcomes explored)");
+    requires resource_lifecycle_v1(introduce_checked_reading_route, |^+ hypothesis(checked_reading_route));
     requires resource_hypothesis(scalar_declaration, "both checked reading routes require this unit's unambiguous declaration to return exactly one pointer level over a scalar type");
+    requires resource_lifecycle_v1(introduce_scalar_declaration, |^+ hypothesis(scalar_declaration));
     requires resource_hypothesis(untracked_effects, "both checked reading routes bind, release, escape and address nothing the projection tracks");
+    requires resource_lifecycle_v1(introduce_untracked_effects, |^+ hypothesis(untracked_effects));
     requires resource_premise_all(nested_call_admission, checked_reading_route, scalar_declaration, untracked_effects);
+    requires resource_premise_flow_v1(decompose_nested_call_admission, ((checked_reading_route |-> scalar_declaration) |-> untracked_effects));
     ensures normal resource_return_none();
 };
 
@@ -132,11 +136,17 @@ contract {
     requires resource_contract_v1;
     requires resource_revision(flexible);
     requires resource_hypothesis(checked_nested_site, "a call of this function nested whole in another call's argument is read only where card O04-TRACE's nested-call admission holds at the call site");
+    requires resource_lifecycle_v1(introduce_checked_nested_site, |^+ hypothesis(checked_nested_site));
     requires resource_hypothesis(contract_in_force, "this declaration meets nested-call admission premise N3: a contract in force");
+    requires resource_lifecycle_v1(introduce_contract_in_force, |^+ hypothesis(contract_in_force));
     requires resource_hypothesis(no_custody_result, "this declaration meets nested-call admission premise N6: result mode None");
+    requires resource_lifecycle_v1(introduce_no_custody_result, |^+ hypothesis(no_custody_result));
     requires resource_hypothesis(parameters_borrowed, "this declaration meets nested-call admission premise N7: every parameter Borrowed");
+    requires resource_lifecycle_v1(introduce_parameters_borrowed, |^+ hypothesis(parameters_borrowed));
     requires resource_hypothesis(remaining_site_checks, "the nested-call admission checks the rest of its premises per site");
+    requires resource_lifecycle_v1(introduce_remaining_site_checks, |^+ hypothesis(remaining_site_checks));
     requires resource_premise_all(nested_call_admission, checked_nested_site, contract_in_force, no_custody_result, parameters_borrowed, remaining_site_checks);
+    requires resource_premise_flow_v1(decompose_nested_call_admission, ((((checked_nested_site |-> contract_in_force) |-> no_custody_result) |-> parameters_borrowed) |-> remaining_site_checks));
     ensures normal resource_borrowed(errnum);
     ensures normal resource_return_none();
 };
