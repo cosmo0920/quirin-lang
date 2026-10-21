@@ -63,8 +63,8 @@ fn production_bindings_resolve_only_from_explicit_independent_inputs() {
         "QCore.CjsonRepresentationPremises.noWriter"
     );
     assert_eq!(
-        m.atoms["detach_no_writer"].prerequisites,
-        [m.environment.id.clone()]
+        m.atoms["detach_no_writer"].prerequisites.as_slice(),
+        std::slice::from_ref(&m.environment.id)
     );
 }
 #[test]

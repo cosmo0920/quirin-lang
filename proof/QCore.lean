@@ -402,7 +402,7 @@ import QCore.CjsonRepresentationPremises
 import QCore.HypothesisGraph
 import QCore.LibcReadingPremises
 import QCore.CallFreeConditionReads
+import QCore.PremiseRefinement
 
 /-! The executable formal core of QCore-C revision 0.1. -/
 
-import QCore.PremiseRefinement

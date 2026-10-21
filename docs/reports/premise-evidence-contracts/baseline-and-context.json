@@ -45,5 +45,14 @@
       }
     ]
   },
-  "scope": "Fresh own snapshots of current merged eight-home context, not prior six-home evidence. Shared baseline binary only; all card route measurements remain fresh."
+  "scope": "Fresh own snapshots of current merged eight-home context, not prior six-home evidence. Shared baseline binary only; all card route measurements remain fresh.",
+  "preflight_correction": {
+    "initial_archive_omitted": "cycle19-resource-contracts.json",
+    "corrected_before_any_audit": true,
+    "reason": "profile.json resource_contract_manifest ../../../cycle19-resource-contracts.json resolves snapshot root; explicit root manifest required, no baked-root fallback.",
+    "additional_exact_base_files": {
+      "cycle19-resource-contracts.json": "75f29cdb3e54f1e5638bfcc619d0ac5a1b7ad425db87f75afeb647ce7a438d3a"
+    },
+    "initial_incomplete_archive_retained": "/home/cosmo/.codex/worktrees/premise-decomposition-cycle1/qcore-c/private/premise-evidence-contracts/base-inputs.tar"
+  }
 }
