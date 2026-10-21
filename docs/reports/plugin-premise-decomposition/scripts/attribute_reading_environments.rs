@@ -9,7 +9,7 @@ use std::{collections::BTreeMap, fs};
 fn read(path: &Value) -> Vec<u8> { fs::read(path.as_str().expect("explicit file path")).unwrap() }
 fn value(path: &Value) -> Value { serde_json::from_slice(&read(path)).unwrap() }
 fn typed(value: &Value) -> ResourceContracts { serde_json::from_value(value.clone()).unwrap() }
-fn digest<T: serde::Serialize>(v: &T) -> String { qcore_schemas::sha256_hex(&serde_json::to_vec(v).unwrap()) }
+fn digest(v: &BTreeMap<String,String>) -> String { qcore_schemas::sha256_hex(&serde_json::to_vec(v).unwrap()) }
 fn main() {
     let args=std::env::args().collect::<Vec<_>>();
     assert_eq!(args.len(),3,"INPUT OUTPUT");

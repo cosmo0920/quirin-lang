@@ -7,7 +7,7 @@ prerequisite/formal/source maps for both actual `rk_plugin_library` and
 `flb_external_plugin` outer envelopes. [Census](census.json) separates the two
 outer definitions and inherited proxy reference from function premises.
 
-Production development now uses the explicitly authorized interim Graph v2 checkpoint `5a556d827`. [The committed interim prediction](INTERIM-BASE-PREDICTION.json) predates production edits. Final standing/provider gates and measurements remain deferred until the exact serially merged baseline is supplied and the prediction is refreshed. Exact classification is 94 resource-v1 sites, 71 bounds-v1 sites and one declared Quirin model; see CLASSIFICATION-ADDENDUM.md.
+Production development began at the explicitly authorized interim Graph v2 checkpoint `5a556d827`; its committed prediction predates production edits. The card is now synchronized onto exact completed combined base `44951dbb4cb6c4a0780506dbd832b29323d07b22`. [The final base prediction](FINAL-BASE-PREDICTION.json) freezes the production and detached-environment boundary before final gates and six fresh audits. Exact classification is 94 resource-v1 sites, 71 bounds-v1 sites and one declared Quirin model; see CLASSIFICATION-ADDENDUM.md.
 Original legacy premise names/text, outer names/text/digests/selection and all
 static/closed-world/runtime semantics must remain unchanged. Catalog bindings
 convey reference integrity only; every source/environment binding remains Open.
@@ -19,9 +19,9 @@ proves artifact identity, ABI, whole-world closure, neutrality or lifetime.
 
 ## Open work and residuals
 
-The production WIP includes all 166 same-name attachments and exact per-property canonical manifests, additive bounds/null/model replay, and dependency-selected null graph publication. The frozen +1,328 clause pins are installed. Five focused contract controls and two actual null-dependency controls pass; [interim receipts](interim-controls.json) distinguish these from final gates. Every original selected module reconstructs byte-for-byte after removing only the new metadata (bindings/index.json).
+The production WIP includes all 166 same-name attachments and exact per-property canonical manifests, additive bounds/null/model replay, and dependency-selected null graph publication. The frozen +1,328 clause pins are installed. Five focused contract controls and four null-dependency controls pass; [interim receipts](interim-controls.json) distinguish these from final gates. Every original selected module reconstructs byte-for-byte after removing only the new metadata (bindings/index.json).
 
-Remaining work includes the merged-base refresh, final independently bound outer catalog controls and actual source/context impact replay, official pin/inventory checks, full standing/provider gates and six fresh paired audits. No completed final gate or measurement is claimed.
+Remaining work includes final independently bound outer catalog controls and actual source/context impact replay, official pin/inventory checks, full standing/provider gates and six fresh paired audits. No completed final gate or measurement is claimed.
 
 Track `PLUGIN-PREMISE-SOURCE-BINDING` for actual deployed code, trace, ABI,
 artifact resolution and context evidence; `PLUGIN-PREMISE-OUTER-TRUTH` for
@@ -33,3 +33,5 @@ only). Existing `RK-INTERCEPTOR-STATIC-LIST-CLOSURE` and
 The conditional formal draft now compiles as a single file with existing dependencies, including metadata erasure and exact-context impact. Draft-check receipts preserve the initial reserved-identifier failure and unused-simp warning. This is preparation only; registered full Lean/Rust/provider gates remain due. Original outer identity expectations and all three actual source-set observations are in outer-identity-freeze.json.
 
 The final comparison harness reverses only the seven exact proposed atoms, their same-name attachment and pinned new reference requirements, with canonical graph digests checked against all166 typed Rust producer records. It preserves every legacy node, other refinement and Context coordinate; exact source/environment/configuration/time changes remain separately attributed. Fresh actual sidecar replay is still due.
+
+The detached effective-environment capture preserves existing libc Observation/Receipt schemas and publishes exact canonical bytes only for successfully bound receipts. Five recorder/rollback controls, six actual reader/binding controls and eight matching conditional Lean theorems pass at the interim checkpoint; failures and corrections remain in [the control receipt](effective-environment-interim-controls.json). Final paired attribution must reconstruct every effective BASE environment to its independently held hash and preserve every other observation field.

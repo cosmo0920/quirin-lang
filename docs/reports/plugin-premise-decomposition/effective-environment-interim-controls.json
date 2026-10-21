@@ -25,6 +25,11 @@
       "command_key": "interim-environment-audit-1",
       "exit": 0,
       "theorems": 8
+    },
+    {
+      "command_key": "environment-helper-typecheck-2",
+      "exit": 0,
+      "note": "standalone helper typecheck using recorded existing libraries; final unique release libraries still required"
     }
   ],
   "retained_failures": [
@@ -39,6 +44,11 @@
       "passed": 4,
       "failed": 1,
       "reason": "fixture incorrectly expected exactly one effective environment; corrected to full independently held prior observation/environment map equality"
+    },
+    {
+      "command_key": "environment-helper-typecheck-1",
+      "exit": 1,
+      "reason": "unnecessary generic Serialize bound selected mismatched standalone serde rlib; replaced with exact string-map type, no serde direct dependency"
     }
   ],
   "logs": "private/plugin-premise-decomposition/<command_key>.log",
