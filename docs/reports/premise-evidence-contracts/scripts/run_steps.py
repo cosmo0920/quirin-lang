@@ -18,7 +18,7 @@ receipts=[]
 for i,(cwd,command) in enumerate(steps[a.stage]):
  start=datetime.datetime.now(datetime.timezone.utc).isoformat();log=out/f'{i:02}.log'
  with log.open('wb') as stream:code=subprocess.run(command,cwd=cwd,env=env,stdout=stream,stderr=subprocess.STDOUT).returncode
- row=dict(command=command,cwd=str(cwd),environment={k:env[k] for k in ['CARGO_PROFILE_DEV_DEBUG','CARGO_PROFILE_TEST_DEBUG','CARGO_INCREMENTAL']},start=start,end=datetime.datetime.now(datetime.timezone.utc).isoformat(),exit=code,log=str(log),head=subprocess.check_output(['git','rev-parse','HEAD'],cwd=ROOT,text=True).strip())
+ row=dict(command=command,cwd=str(cwd),environment={k:env.get(k) for k in ['CARGO_PROFILE_DEV_DEBUG','CARGO_PROFILE_TEST_DEBUG','CARGO_INCREMENTAL','QCORE_AUDIT_BUILD_COMMIT','RUSTFLAGS','CARGO_ENCODED_RUSTFLAGS','RUSTUP_TOOLCHAIN','ELAN_TOOLCHAIN','QCORE_CLANG']},start=start,end=datetime.datetime.now(datetime.timezone.utc).isoformat(),exit=code,log=str(log),head=subprocess.check_output(['git','rev-parse','HEAD'],cwd=ROOT,text=True).strip())
  receipts.append(row);(out/'commands.json').write_text(json.dumps(receipts,indent=2)+'\n');(out/f'{i:02}.exit').write_text(str(code)+'\n');print(json.dumps(row),flush=True)
  if code and a.stage=='pins':raise SystemExit(code)
 raise SystemExit(0 if all(row['exit']==0 for row in receipts) else 1)
