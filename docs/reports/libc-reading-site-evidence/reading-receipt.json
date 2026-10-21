@@ -1,0 +1,8 @@
+{
+  "previous_complete_packet": "../premise-decomposition-cycle1b/reading-retrieval.json",
+  "current_union": "reading-union.json",
+  "selected_files_same16": true,
+  "supplement": "Read exact git diff40be5667046ffdb075476626f24b68570f89da32..c5c298db2 for docs/agents and STATUS; full new Batch4 rule5h amendment and changed10k condition plus all new status paragraphs read before freeze. Previously read full remaining rule text remains unchanged.",
+  "semantic_specs": "C04.18.1/G05 and existing graph model/report; GENERALIZATION sections2-3 previously read, unchanged",
+  "metrics_claim": "selection and retrieval are separate; no token/cost improvement claimed"
+}
