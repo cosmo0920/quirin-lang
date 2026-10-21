@@ -62,14 +62,21 @@ theorem unrelated_record_unchanged (expected held : Context)
 /-- A model reference matching its expected digest is compatible with an
     environment that refutes noWriter. Reference integrity cannot establish
     the environmental antecedent or imported C correspondence. -/
-theorem reference_identity_does_not_establish_no_writer :
-    ∃ e : CjsonRepresentationPremises.Environment,
-      ("model-sha" : String) = "model-sha" ∧ ¬ CjsonRepresentationPremises.noWriter e := by
+structure BoundReference where
+  modelDigest : String
+  environment : CjsonRepresentationPremises.Environment
+
+def referenceIntegrity (expected : String) (r : BoundReference) : Prop :=
+  r.modelDigest = expected
+
+theorem reference_identity_does_not_establish_no_writer (expected : String) :
+    ∃ r : BoundReference, referenceIntegrity expected r ∧
+      ¬ CjsonRepresentationPremises.noWriter r.environment := by
   let step : CjsonRepresentationPremises.Step := ⟨1, true⟩
   let e : CjsonRepresentationPremises.Environment :=
     ⟨0, 2, [], fun _ => False, fun _ => True, none, fun _ => none,
       fun _ => none, [step]⟩
-  refine ⟨e, rfl, ?_⟩
+  refine ⟨⟨expected, e⟩, rfl, ?_⟩
   exact CjsonRepresentationPremises.a_writing_step_refutes_no_writer e step
     (by simp [e]) (by decide) rfl
 
