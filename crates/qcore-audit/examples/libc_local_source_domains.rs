@@ -1,0 +1,254 @@
+//! Explicit held-source replay of every recorded libc observation domain.
+//! INPUT_ROOT CHECKOUT REPO DIAGNOSTICS FRESH_OUTPUT_DIRECTORY.
+//! Refused domains are retained and never counted as source-bound successes.
+use qcore_c_gateway::{
+    legacy_c::{C11TranslationUnit, LegacyFunctionScope, prepare_translation_unit},
+    reading_site_domain::{self, HeldDomain},
+    reading_site_evidence::{BINDINGS, Receipt},
+};
+use qcore_schemas::hypothesis::Context;
+use serde_json::{Value, json};
+use std::{
+    collections::{BTreeMap, BTreeSet},
+    fs,
+    path::{Path, PathBuf},
+};
+fn read(path: impl AsRef<Path>) -> Result<Vec<u8>, String> {
+    fs::read(path).map_err(|e| e.to_string())
+}
+fn main() -> Result<(), String> {
+    let args = std::env::args().collect::<Vec<_>>();
+    if args.len() != 6 {
+        return Err("INPUT_ROOT CHECKOUT REPO DIAGNOSTICS FRESH_OUTPUT_DIRECTORY".into());
+    }
+    let inputs = Path::new(&args[1]);
+    let checkout = Path::new(&args[2]);
+    let repo = Path::new(&args[3]);
+    let diagnostics = Path::new(&args[4]);
+    let out = PathBuf::from(&args[5]);
+    fs::create_dir(&out).map_err(|e| e.to_string())?;
+    let profile_dir = inputs.join("contract/profiles/fluent-bit");
+    let profile: Value = serde_json::from_slice(&read(profile_dir.join("profile.json"))?)
+        .map_err(|e| e.to_string())?;
+    let manifest = profile_dir.join(
+        profile["resource_contract_manifest"]
+            .as_str()
+            .ok_or("profile manifest absent")?,
+    );
+    let text = String::from_utf8(read(&manifest)?).map_err(|e| e.to_string())?;
+    let mut contracts =
+        qcore_contract::contract_loader::load_resource_contract_manifest(&manifest)?;
+    qcore_audit::contract_revision::apply_pins(
+        &mut contracts,
+        &qcore_audit::contract_revision::ModuleOwners::for_manifest(&manifest, &text)?,
+        checkout,
+    )?;
+    let sidecar_bytes = read(diagnostics.with_extension("contracts.json"))?;
+    let sidecar: Value = serde_json::from_slice(&sidecar_bytes).map_err(|e| e.to_string())?;
+    let mut applied = qcore_schemas::contract_refutation::RefutationTable::new();
+    for r in sidecar["refuted_contracts"]["entries"]
+        .as_array()
+        .ok_or("refutation entries absent")?
+    {
+        if r["applied"] == true {
+            applied.insert(
+                r["function"].as_str().ok_or("function absent")?.into(),
+                serde_json::from_value(r["refutations"].clone()).map_err(|e| e.to_string())?,
+            );
+        }
+    }
+    if sidecar["refuted_contracts"]["table_sha256"].as_str()
+        != Some(qcore_schemas::contract_refutation::table_digest(&applied).as_str())
+    {
+        return Err("applied refutation table differs".into());
+    }
+    contracts = qcore_audit::refuted_contracts::with_table(&contracts, &applied);
+    let graphs = qcore_contract::hypothesis::replay(contracts.source_assumptions())?;
+    let formal: Value = serde_json::from_str(BINDINGS).map_err(|e| e.to_string())?;
+    let artifacts: BTreeMap<String, Vec<u8>> = formal["artifacts"]
+        .as_object()
+        .ok_or("artifacts absent")?
+        .values()
+        .map(|v| {
+            let p = v["path"].as_str().ok_or("path absent")?;
+            Ok((p.to_owned(), read(repo.join(p))?))
+        })
+        .collect::<Result<_, String>>()?;
+    let invocation_bytes = read(diagnostics.parent().unwrap().join("invocation.json"))?;
+    let invocation: Value = serde_json::from_slice(&invocation_bytes).map_err(|e| e.to_string())?;
+    let configured = invocation["compile_database"].as_str().is_some();
+    let database = invocation["compile_database"]
+        .as_str()
+        .map(PathBuf::from)
+        .unwrap_or_else(|| checkout.join("build/compile_commands.json"));
+    let dbbytes = read(&database)?;
+    if configured
+        && invocation["compile_database_sha256"].as_str()
+            != Some(qcore_schemas::sha256_hex(&dbbytes).as_str())
+    {
+        return Err("held compile DB differs from actual invocation".into());
+    }
+    let entries = qcore_audit::compile_db::compile_entries(
+        std::str::from_utf8(&dbbytes).map_err(|e| e.to_string())?,
+    )?;
+    let raw = read(diagnostics)?;
+    let data: Value = serde_json::from_slice(&raw).map_err(|e| e.to_string())?;
+    let mut results = Vec::new();
+    let mut all_records = 0;
+    let mut checked_records = 0;
+    for (number, u) in data["units"]
+        .as_array()
+        .ok_or("units absent")?
+        .iter()
+        .enumerate()
+    {
+        let mut expected = Vec::<Receipt>::new();
+        let mut contexts = BTreeMap::<String, Context>::new();
+        for row in u["functions"].as_array().ok_or("functions absent")? {
+            for r in row["reading_site_evidence"]
+                .as_array()
+                .into_iter()
+                .flatten()
+            {
+                let receipt: Receipt =
+                    serde_json::from_value(r.clone()).map_err(|e| e.to_string())?;
+                let ctx: Context = serde_json::from_value(row["hypothesis_context"].clone())
+                    .map_err(|e| e.to_string())?;
+                if receipt.context != ctx {
+                    return Err("receipt vs independently held row Context differs".into());
+                }
+                let deps = &row["contract_dependencies"]["hypothesis_dependencies"]
+                    [&receipt.observation.declaration];
+                if !receipt.atom_sha256.keys().all(|a| {
+                    deps.as_array()
+                        .is_some_and(|d| d.iter().any(|v| v.as_str() == Some(a)))
+                }) {
+                    return Err("actual consultation atom closure missing".into());
+                }
+                contexts.insert(receipt.observation.function.clone(), ctx);
+                expected.push(receipt);
+            }
+        }
+        if expected.is_empty() {
+            continue;
+        }
+        all_records += expected.len();
+        let owners = expected
+            .iter()
+            .map(|r| r.observation.function.clone())
+            .collect::<BTreeSet<_>>();
+        let declarations = expected
+            .iter()
+            .map(|r| r.observation.declaration.clone())
+            .collect::<BTreeSet<_>>();
+        let file = u["file"].as_str().ok_or("file absent")?;
+        let cfg = &u["compile_configuration"];
+        let candidates = entries
+            .iter()
+            .filter(|e| {
+                if configured {
+                    Some(e.file.to_string_lossy().as_ref()) == cfg["file"].as_str()
+                        && Some(e.directory.to_string_lossy().as_ref()) == cfg["directory"].as_str()
+                        && Some(e.command.as_str()) == cfg["command"].as_str()
+                } else {
+                    e.file.ends_with(file)
+                }
+            })
+            .collect::<Vec<_>>();
+        let mut attempts = Vec::new();
+        let mut success = false;
+        for (candidate, entry) in candidates.iter().enumerate() {
+            let checked = (|| -> Result<Value, String> {
+                let source_bytes = read(&entry.file)?;
+                let source = std::str::from_utf8(&source_bytes).map_err(|e| e.to_string())?;
+                let rawsha = qcore_schemas::sha256_hex(&source_bytes);
+                if configured && cfg["raw_source_sha256"].as_str() != Some(rawsha.as_str()) {
+                    return Err("held raw source differs".into());
+                }
+                let options = if configured {
+                    qcore_audit::compile_db::compiler_options(entry)?
+                } else {
+                    qcore_audit::compile_db::compiler_options_compatibility(entry)?
+                };
+                let unit = C11TranslationUnit {
+                    source,
+                    include_paths: options.include_paths,
+                    definitions: options.definitions,
+                    preprocessor_options: options.preprocessor_options,
+                    dialect: options.dialect,
+                    function_scope: LegacyFunctionScope::MainSourceDefinitions,
+                    input: options.input,
+                };
+                let prepared = prepare_translation_unit(&unit);
+                let pp = prepared.preprocessed_source().map_err(|e| e.to_string())?;
+                let selected: Vec<String> =
+                    serde_json::from_str(&contexts.values().next().unwrap().scope)
+                        .map_err(|e| e.to_string())?;
+                if prepared.inventory().definitions() != selected.as_slice() {
+                    return Err("actual prepared selected definition inventory differs".into());
+                }
+                if contexts
+                    .values()
+                    .any(|ctx| ctx.source_identity != qcore_schemas::sha256_hex(pp.as_bytes()))
+                {
+                    return Err("actual preprocessing does not match held source Context".into());
+                }
+                let compile=serde_json::to_string(&json!({"file":entry.file,"directory":entry.directory,"command":entry.command,"database_sha256":qcore_schemas::sha256_hex(&dbbytes),"transport":unit.input,"dialect":format!("{:?}",unit.dialect)})).unwrap();
+                fs::write(
+                    out.join(format!("unit-{number}-candidate-{candidate}.prepared.c")),
+                    pp,
+                )
+                .map_err(|e| e.to_string())?;
+                let held = HeldDomain {
+                    source: pp,
+                    raw_source: &source_bytes,
+                    raw_sha256: &rawsha,
+                    compile_configuration: &compile,
+                    expected_compile_configuration: &compile,
+                    entry: owners.iter().next().unwrap(),
+                    contracts: &contracts,
+                    selected: Some(&selected),
+                    dialect: unit.dialect,
+                    graphs: &graphs,
+                    contexts: &contexts,
+                    owners: &owners,
+                    declarations: &declarations,
+                    expected: &expected,
+                    binding_manifest: BINDINGS.as_bytes(),
+                    formal_artifacts: &artifacts,
+                };
+                let result = reading_site_domain::check(&held, &expected)?;
+                let mut truncated = expected.clone();
+                truncated.pop();
+                if reading_site_domain::check(&held, &truncated).is_ok() {
+                    return Err("truncated-domain negative did not refuse".into());
+                }
+                Ok(
+                    json!({"checked":result,"actual_compile_configuration":serde_json::from_str::<Value>(&compile).unwrap(),"held_definition_inventory":selected,"truncated_domain_negative_rejected":true}),
+                )
+            })();
+            attempts.push(json!({"candidate":candidate,"file":entry.file,"result":checked}));
+            if checked.is_ok() {
+                checked_records += expected.len();
+                success = true;
+                break;
+            }
+        }
+        results.push(json!({"unit_index":number,"library":u["library"],"file":file,"held_observation_count":expected.len(),"owners":owners,"declarations":declarations,"candidate_count":candidates.len(),"complete_selected_recorded_domain_reproduced":success,"attempts":attempts,"universal_atoms":"open"}));
+    }
+    let result = json!({"schema":"libc-local-source-domain-production.v1","diagnostics_sha256":qcore_schemas::sha256_hex(&raw),"invocation_sha256":qcore_schemas::sha256_hex(&invocation_bytes),"sidecar_sha256":qcore_schemas::sha256_hex(&sidecar_bytes),"actual_compile_database":database,"actual_compile_database_sha256":qcore_schemas::sha256_hex(&dbbytes),"held_recorded_observations":all_records,"source_reproduced_observations":checked_records,"all_selected_recorded_domains_reproduced":all_records>0&&all_records==checked_records,"units":results,"universal_atoms":"open","unproved_boundaries":["complete relevant C site universe","external library behavior","compiler execution attestation","whole-C extraction","Rust-Lean correspondence"]});
+    fs::write(
+        out.join("result.json"),
+        serde_json::to_vec_pretty(&result).unwrap(),
+    )
+    .map_err(|e| e.to_string())?;
+    println!(
+        "source-bound {checked_records}/{all_records} held observations; all failures retained; universal atoms Open"
+    );
+    if all_records == 0 || all_records != checked_records {
+        return Err(
+            "not every selected recorded domain reproduced; see retained result.json".into(),
+        );
+    }
+    Ok(())
+}
