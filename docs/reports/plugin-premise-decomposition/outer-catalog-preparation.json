@@ -1,0 +1,344 @@
+{
+  "status": "preparation only, exact production model/audit/Graphv2 execution remains due",
+  "initial_driver_sha256": "28952ff816b22ae6ded56145261a2e4cc3854f57a3903b0fb090e482423467fa",
+  "initial_driver_retained": "private/plugin-premise-decomposition/outer_catalog_controls-attempt1.py",
+  "initial_command": [
+    "python3",
+    "docs/reports/plugin-premise-decomposition/scripts/outer_catalog_controls.py",
+    "private/plugin-premise-decomposition/outer-catalog-draft-controls-1",
+    "--binary",
+    "private/plugin-premise-decomposition/outer-catalog-replay-attempt1",
+    "--model",
+    "docs/reports/plugin-premise-decomposition/drafts/PluginPremiseDecomposition.lean.draft",
+    "--audit",
+    "docs/reports/plugin-premise-decomposition/drafts/AuditPluginPremiseDecomposition.lean.draft"
+  ],
+  "initial_exit": 0,
+  "build": {
+    "command": [
+      "rustc",
+      "--edition=2024",
+      "/home/cosmo/.codex/worktrees/w48-bottom-up-batch4/qcore-c/private/plugin-premise-decomposition/outer_catalog_replay-attempt1.rs",
+      "-L",
+      "dependency=/home/cosmo/.codex/worktrees/w48-bottom-up-batch4/qcore-c/target/release/deps",
+      "--extern",
+      "qcore_contract=/home/cosmo/.codex/worktrees/w48-bottom-up-batch4/qcore-c/target/release/deps/libqcore_contract-68876726193bb2d2.rlib",
+      "--extern",
+      "qcore_schemas=/home/cosmo/.codex/worktrees/w48-bottom-up-batch4/qcore-c/target/release/deps/libqcore_schemas-edb315d9d169061e.rlib",
+      "--extern",
+      "serde_json=/home/cosmo/.codex/worktrees/w48-bottom-up-batch4/qcore-c/target/release/deps/libserde_json-08241b9b75b89117.rlib",
+      "-o",
+      "/home/cosmo/.codex/worktrees/w48-bottom-up-batch4/qcore-c/private/plugin-premise-decomposition/outer-catalog-replay-attempt1"
+    ],
+    "exit": 0,
+    "started": "2026-10-21T01:50:13.634165+00:00",
+    "ended": "2026-10-21T01:50:14.854140+00:00",
+    "source_sha256": "6270decd5ce1bb3635512da52cb1984d457154b7500d8de820a32d19fe2177bd",
+    "rlib_sha256": {
+      "/home/cosmo/.codex/worktrees/w48-bottom-up-batch4/qcore-c/target/release/deps/libqcore_contract-68876726193bb2d2.rlib": "d0d74bfa4efd3288179372c5134733f3141ac0b13d5356d2bf9296b6cd91aa49",
+      "/home/cosmo/.codex/worktrees/w48-bottom-up-batch4/qcore-c/target/release/deps/libqcore_schemas-edb315d9d169061e.rlib": "d01f3e2248d5f5357f0c38e8a6536e74fe7bf3aa2ce7214cf44908ee2274c41b",
+      "/home/cosmo/.codex/worktrees/w48-bottom-up-batch4/qcore-c/target/release/deps/libserde_json-08241b9b75b89117.rlib": "e4c75aa4440971e682bba85dfe4d47ba555e80c8b5cab338149a047161e3dd56"
+    },
+    "rlib_unchanged": true,
+    "log": "/home/cosmo/.codex/worktrees/w48-bottom-up-batch4/qcore-c/private/plugin-premise-decomposition/outer-catalog-build-attempt1.log",
+    "note": "Preparation only: existing release dependencies from prior batch4, used outer/source/schema hash helpers unchanged on current main. Final helper build/replay against Graphv2 card source remains due."
+  },
+  "controls": [
+    {
+      "name": "actual-two-envelopes",
+      "command": [
+        "/home/cosmo/.codex/worktrees/w48-bottom-up-batch4/qcore-c/private/plugin-premise-decomposition/outer-catalog-replay-attempt1",
+        "/home/cosmo/.codex/worktrees/w48-bottom-up-batch4/qcore-c/private/plugin-premise-decomposition/outer-catalog-draft-controls-1/held-expected.json",
+        "/home/cosmo/.codex/worktrees/w48-bottom-up-batch4/qcore-c/private/plugin-premise-decomposition/outer-catalog-draft-controls-1/actual-two-envelopes/presented.json",
+        "/home/cosmo/.codex/worktrees/w48-bottom-up-batch4/qcore-c/private/plugin-premise-decomposition/outer-catalog-draft-controls-1/source-index.json",
+        "/home/cosmo/.codex/worktrees/w48-bottom-up-batch4/qcore-c/private/plugin-premise-decomposition/outer-catalog-draft-controls-1/artifact-index.json",
+        "/home/cosmo/.codex/worktrees/w48-bottom-up-batch4/qcore-c/private/plugin-premise-decomposition/outer-catalog-draft-controls-1/actual-two-envelopes/result.json"
+      ],
+      "exit": 0,
+      "expected_exit": 0,
+      "started": "2026-10-21T01:52:54.436354+00:00",
+      "ended": "2026-10-21T01:52:54.469108+00:00",
+      "log": "/home/cosmo/.codex/worktrees/w48-bottom-up-batch4/qcore-c/private/plugin-premise-decomposition/outer-catalog-draft-controls-1/actual-two-envelopes/console.log"
+    },
+    {
+      "name": "unsupported-source-truth-even-if-expected-changed",
+      "command": [
+        "/home/cosmo/.codex/worktrees/w48-bottom-up-batch4/qcore-c/private/plugin-premise-decomposition/outer-catalog-replay-attempt1",
+        "/home/cosmo/.codex/worktrees/w48-bottom-up-batch4/qcore-c/private/plugin-premise-decomposition/outer-catalog-draft-controls-1/unsupported-source-truth-even-if-expected-changed/held.json",
+        "/home/cosmo/.codex/worktrees/w48-bottom-up-batch4/qcore-c/private/plugin-premise-decomposition/outer-catalog-draft-controls-1/unsupported-source-truth-even-if-expected-changed/presented.json",
+        "/home/cosmo/.codex/worktrees/w48-bottom-up-batch4/qcore-c/private/plugin-premise-decomposition/outer-catalog-draft-controls-1/source-index.json",
+        "/home/cosmo/.codex/worktrees/w48-bottom-up-batch4/qcore-c/private/plugin-premise-decomposition/outer-catalog-draft-controls-1/artifact-index.json",
+        "/home/cosmo/.codex/worktrees/w48-bottom-up-batch4/qcore-c/private/plugin-premise-decomposition/outer-catalog-draft-controls-1/unsupported-source-truth-even-if-expected-changed/result.json"
+      ],
+      "exit": 1,
+      "expected_exit": 1,
+      "started": "2026-10-21T01:52:54.471323+00:00",
+      "ended": "2026-10-21T01:52:54.482081+00:00",
+      "log": "/home/cosmo/.codex/worktrees/w48-bottom-up-batch4/qcore-c/private/plugin-premise-decomposition/outer-catalog-draft-controls-1/unsupported-source-truth-even-if-expected-changed/console.log"
+    },
+    {
+      "name": "unsupported-version-even-if-expected-changed",
+      "command": [
+        "/home/cosmo/.codex/worktrees/w48-bottom-up-batch4/qcore-c/private/plugin-premise-decomposition/outer-catalog-replay-attempt1",
+        "/home/cosmo/.codex/worktrees/w48-bottom-up-batch4/qcore-c/private/plugin-premise-decomposition/outer-catalog-draft-controls-1/unsupported-version-even-if-expected-changed/held.json",
+        "/home/cosmo/.codex/worktrees/w48-bottom-up-batch4/qcore-c/private/plugin-premise-decomposition/outer-catalog-draft-controls-1/unsupported-version-even-if-expected-changed/presented.json",
+        "/home/cosmo/.codex/worktrees/w48-bottom-up-batch4/qcore-c/private/plugin-premise-decomposition/outer-catalog-draft-controls-1/source-index.json",
+        "/home/cosmo/.codex/worktrees/w48-bottom-up-batch4/qcore-c/private/plugin-premise-decomposition/outer-catalog-draft-controls-1/artifact-index.json",
+        "/home/cosmo/.codex/worktrees/w48-bottom-up-batch4/qcore-c/private/plugin-premise-decomposition/outer-catalog-draft-controls-1/unsupported-version-even-if-expected-changed/result.json"
+      ],
+      "exit": 1,
+      "expected_exit": 1,
+      "started": "2026-10-21T01:52:54.484118+00:00",
+      "ended": "2026-10-21T01:52:54.496102+00:00",
+      "log": "/home/cosmo/.codex/worktrees/w48-bottom-up-batch4/qcore-c/private/plugin-premise-decomposition/outer-catalog-draft-controls-1/unsupported-version-even-if-expected-changed/console.log"
+    },
+    {
+      "name": "wrong-rk-definition",
+      "command": [
+        "/home/cosmo/.codex/worktrees/w48-bottom-up-batch4/qcore-c/private/plugin-premise-decomposition/outer-catalog-replay-attempt1",
+        "/home/cosmo/.codex/worktrees/w48-bottom-up-batch4/qcore-c/private/plugin-premise-decomposition/outer-catalog-draft-controls-1/wrong-rk-definition/held.json",
+        "/home/cosmo/.codex/worktrees/w48-bottom-up-batch4/qcore-c/private/plugin-premise-decomposition/outer-catalog-draft-controls-1/wrong-rk-definition/presented.json",
+        "/home/cosmo/.codex/worktrees/w48-bottom-up-batch4/qcore-c/private/plugin-premise-decomposition/outer-catalog-draft-controls-1/source-index.json",
+        "/home/cosmo/.codex/worktrees/w48-bottom-up-batch4/qcore-c/private/plugin-premise-decomposition/outer-catalog-draft-controls-1/artifact-index.json",
+        "/home/cosmo/.codex/worktrees/w48-bottom-up-batch4/qcore-c/private/plugin-premise-decomposition/outer-catalog-draft-controls-1/wrong-rk-definition/result.json"
+      ],
+      "exit": 1,
+      "expected_exit": 1,
+      "started": "2026-10-21T01:52:54.498267+00:00",
+      "ended": "2026-10-21T01:52:54.530079+00:00",
+      "log": "/home/cosmo/.codex/worktrees/w48-bottom-up-batch4/qcore-c/private/plugin-premise-decomposition/outer-catalog-draft-controls-1/wrong-rk-definition/console.log"
+    },
+    {
+      "name": "missing-go-host",
+      "command": [
+        "/home/cosmo/.codex/worktrees/w48-bottom-up-batch4/qcore-c/private/plugin-premise-decomposition/outer-catalog-replay-attempt1",
+        "/home/cosmo/.codex/worktrees/w48-bottom-up-batch4/qcore-c/private/plugin-premise-decomposition/outer-catalog-draft-controls-1/missing-go-host/held.json",
+        "/home/cosmo/.codex/worktrees/w48-bottom-up-batch4/qcore-c/private/plugin-premise-decomposition/outer-catalog-draft-controls-1/missing-go-host/presented.json",
+        "/home/cosmo/.codex/worktrees/w48-bottom-up-batch4/qcore-c/private/plugin-premise-decomposition/outer-catalog-draft-controls-1/source-index.json",
+        "/home/cosmo/.codex/worktrees/w48-bottom-up-batch4/qcore-c/private/plugin-premise-decomposition/outer-catalog-draft-controls-1/artifact-index.json",
+        "/home/cosmo/.codex/worktrees/w48-bottom-up-batch4/qcore-c/private/plugin-premise-decomposition/outer-catalog-draft-controls-1/missing-go-host/result.json"
+      ],
+      "exit": 1,
+      "expected_exit": 1,
+      "started": "2026-10-21T01:52:54.532421+00:00",
+      "ended": "2026-10-21T01:52:54.545436+00:00",
+      "log": "/home/cosmo/.codex/worktrees/w48-bottom-up-batch4/qcore-c/private/plugin-premise-decomposition/outer-catalog-draft-controls-1/missing-go-host/console.log"
+    },
+    {
+      "name": "wrong-outer-digest",
+      "command": [
+        "/home/cosmo/.codex/worktrees/w48-bottom-up-batch4/qcore-c/private/plugin-premise-decomposition/outer-catalog-replay-attempt1",
+        "/home/cosmo/.codex/worktrees/w48-bottom-up-batch4/qcore-c/private/plugin-premise-decomposition/outer-catalog-draft-controls-1/wrong-outer-digest/held.json",
+        "/home/cosmo/.codex/worktrees/w48-bottom-up-batch4/qcore-c/private/plugin-premise-decomposition/outer-catalog-draft-controls-1/wrong-outer-digest/presented.json",
+        "/home/cosmo/.codex/worktrees/w48-bottom-up-batch4/qcore-c/private/plugin-premise-decomposition/outer-catalog-draft-controls-1/source-index.json",
+        "/home/cosmo/.codex/worktrees/w48-bottom-up-batch4/qcore-c/private/plugin-premise-decomposition/outer-catalog-draft-controls-1/artifact-index.json",
+        "/home/cosmo/.codex/worktrees/w48-bottom-up-batch4/qcore-c/private/plugin-premise-decomposition/outer-catalog-draft-controls-1/wrong-outer-digest/result.json"
+      ],
+      "exit": 1,
+      "expected_exit": 1,
+      "started": "2026-10-21T01:52:54.547715+00:00",
+      "ended": "2026-10-21T01:52:54.574627+00:00",
+      "log": "/home/cosmo/.codex/worktrees/w48-bottom-up-batch4/qcore-c/private/plugin-premise-decomposition/outer-catalog-draft-controls-1/wrong-outer-digest/console.log"
+    },
+    {
+      "name": "foreign-manifest-environment",
+      "command": [
+        "/home/cosmo/.codex/worktrees/w48-bottom-up-batch4/qcore-c/private/plugin-premise-decomposition/outer-catalog-replay-attempt1",
+        "/home/cosmo/.codex/worktrees/w48-bottom-up-batch4/qcore-c/private/plugin-premise-decomposition/outer-catalog-draft-controls-1/held-expected.json",
+        "/home/cosmo/.codex/worktrees/w48-bottom-up-batch4/qcore-c/private/plugin-premise-decomposition/outer-catalog-draft-controls-1/foreign-manifest-environment/presented.json",
+        "/home/cosmo/.codex/worktrees/w48-bottom-up-batch4/qcore-c/private/plugin-premise-decomposition/outer-catalog-draft-controls-1/source-index.json",
+        "/home/cosmo/.codex/worktrees/w48-bottom-up-batch4/qcore-c/private/plugin-premise-decomposition/outer-catalog-draft-controls-1/artifact-index.json",
+        "/home/cosmo/.codex/worktrees/w48-bottom-up-batch4/qcore-c/private/plugin-premise-decomposition/outer-catalog-draft-controls-1/foreign-manifest-environment/result.json"
+      ],
+      "exit": 1,
+      "expected_exit": 1,
+      "started": "2026-10-21T01:52:54.578009+00:00",
+      "ended": "2026-10-21T01:52:54.590638+00:00",
+      "log": "/home/cosmo/.codex/worktrees/w48-bottom-up-batch4/qcore-c/private/plugin-premise-decomposition/outer-catalog-draft-controls-1/foreign-manifest-environment/console.log"
+    },
+    {
+      "name": "missing-prerequisite",
+      "command": [
+        "/home/cosmo/.codex/worktrees/w48-bottom-up-batch4/qcore-c/private/plugin-premise-decomposition/outer-catalog-replay-attempt1",
+        "/home/cosmo/.codex/worktrees/w48-bottom-up-batch4/qcore-c/private/plugin-premise-decomposition/outer-catalog-draft-controls-1/missing-prerequisite/held.json",
+        "/home/cosmo/.codex/worktrees/w48-bottom-up-batch4/qcore-c/private/plugin-premise-decomposition/outer-catalog-draft-controls-1/missing-prerequisite/presented.json",
+        "/home/cosmo/.codex/worktrees/w48-bottom-up-batch4/qcore-c/private/plugin-premise-decomposition/outer-catalog-draft-controls-1/source-index.json",
+        "/home/cosmo/.codex/worktrees/w48-bottom-up-batch4/qcore-c/private/plugin-premise-decomposition/outer-catalog-draft-controls-1/artifact-index.json",
+        "/home/cosmo/.codex/worktrees/w48-bottom-up-batch4/qcore-c/private/plugin-premise-decomposition/outer-catalog-draft-controls-1/missing-prerequisite/result.json"
+      ],
+      "exit": 1,
+      "expected_exit": 1,
+      "started": "2026-10-21T01:52:54.592666+00:00",
+      "ended": "2026-10-21T01:52:54.618093+00:00",
+      "log": "/home/cosmo/.codex/worktrees/w48-bottom-up-batch4/qcore-c/private/plugin-premise-decomposition/outer-catalog-draft-controls-1/missing-prerequisite/console.log"
+    },
+    {
+      "name": "wrong-model-hash",
+      "command": [
+        "/home/cosmo/.codex/worktrees/w48-bottom-up-batch4/qcore-c/private/plugin-premise-decomposition/outer-catalog-replay-attempt1",
+        "/home/cosmo/.codex/worktrees/w48-bottom-up-batch4/qcore-c/private/plugin-premise-decomposition/outer-catalog-draft-controls-1/wrong-model-hash/held.json",
+        "/home/cosmo/.codex/worktrees/w48-bottom-up-batch4/qcore-c/private/plugin-premise-decomposition/outer-catalog-draft-controls-1/wrong-model-hash/presented.json",
+        "/home/cosmo/.codex/worktrees/w48-bottom-up-batch4/qcore-c/private/plugin-premise-decomposition/outer-catalog-draft-controls-1/source-index.json",
+        "/home/cosmo/.codex/worktrees/w48-bottom-up-batch4/qcore-c/private/plugin-premise-decomposition/outer-catalog-draft-controls-1/artifact-index.json",
+        "/home/cosmo/.codex/worktrees/w48-bottom-up-batch4/qcore-c/private/plugin-premise-decomposition/outer-catalog-draft-controls-1/wrong-model-hash/result.json"
+      ],
+      "exit": 1,
+      "expected_exit": 1,
+      "started": "2026-10-21T01:52:54.620193+00:00",
+      "ended": "2026-10-21T01:52:54.649515+00:00",
+      "log": "/home/cosmo/.codex/worktrees/w48-bottom-up-batch4/qcore-c/private/plugin-premise-decomposition/outer-catalog-draft-controls-1/wrong-model-hash/console.log"
+    },
+    {
+      "name": "unsafe-audit-reference",
+      "command": [
+        "/home/cosmo/.codex/worktrees/w48-bottom-up-batch4/qcore-c/private/plugin-premise-decomposition/outer-catalog-replay-attempt1",
+        "/home/cosmo/.codex/worktrees/w48-bottom-up-batch4/qcore-c/private/plugin-premise-decomposition/outer-catalog-draft-controls-1/unsafe-audit-reference/held.json",
+        "/home/cosmo/.codex/worktrees/w48-bottom-up-batch4/qcore-c/private/plugin-premise-decomposition/outer-catalog-draft-controls-1/unsafe-audit-reference/presented.json",
+        "/home/cosmo/.codex/worktrees/w48-bottom-up-batch4/qcore-c/private/plugin-premise-decomposition/outer-catalog-draft-controls-1/source-index.json",
+        "/home/cosmo/.codex/worktrees/w48-bottom-up-batch4/qcore-c/private/plugin-premise-decomposition/outer-catalog-draft-controls-1/artifact-index.json",
+        "/home/cosmo/.codex/worktrees/w48-bottom-up-batch4/qcore-c/private/plugin-premise-decomposition/outer-catalog-draft-controls-1/unsafe-audit-reference/result.json"
+      ],
+      "exit": 1,
+      "expected_exit": 1,
+      "started": "2026-10-21T01:52:54.651601+00:00",
+      "ended": "2026-10-21T01:52:54.685107+00:00",
+      "log": "/home/cosmo/.codex/worktrees/w48-bottom-up-batch4/qcore-c/private/plugin-premise-decomposition/outer-catalog-draft-controls-1/unsafe-audit-reference/console.log"
+    },
+    {
+      "name": "empty-flb-atoms",
+      "command": [
+        "/home/cosmo/.codex/worktrees/w48-bottom-up-batch4/qcore-c/private/plugin-premise-decomposition/outer-catalog-replay-attempt1",
+        "/home/cosmo/.codex/worktrees/w48-bottom-up-batch4/qcore-c/private/plugin-premise-decomposition/outer-catalog-draft-controls-1/empty-flb-atoms/held.json",
+        "/home/cosmo/.codex/worktrees/w48-bottom-up-batch4/qcore-c/private/plugin-premise-decomposition/outer-catalog-draft-controls-1/empty-flb-atoms/presented.json",
+        "/home/cosmo/.codex/worktrees/w48-bottom-up-batch4/qcore-c/private/plugin-premise-decomposition/outer-catalog-draft-controls-1/source-index.json",
+        "/home/cosmo/.codex/worktrees/w48-bottom-up-batch4/qcore-c/private/plugin-premise-decomposition/outer-catalog-draft-controls-1/artifact-index.json",
+        "/home/cosmo/.codex/worktrees/w48-bottom-up-batch4/qcore-c/private/plugin-premise-decomposition/outer-catalog-draft-controls-1/empty-flb-atoms/result.json"
+      ],
+      "exit": 1,
+      "expected_exit": 1,
+      "started": "2026-10-21T01:52:54.686849+00:00",
+      "ended": "2026-10-21T01:52:54.711080+00:00",
+      "log": "/home/cosmo/.codex/worktrees/w48-bottom-up-batch4/qcore-c/private/plugin-premise-decomposition/outer-catalog-draft-controls-1/empty-flb-atoms/console.log"
+    },
+    {
+      "name": "missing-model-input",
+      "command": [
+        "/home/cosmo/.codex/worktrees/w48-bottom-up-batch4/qcore-c/private/plugin-premise-decomposition/outer-catalog-replay-attempt1",
+        "/home/cosmo/.codex/worktrees/w48-bottom-up-batch4/qcore-c/private/plugin-premise-decomposition/outer-catalog-draft-controls-1/held-expected.json",
+        "/home/cosmo/.codex/worktrees/w48-bottom-up-batch4/qcore-c/private/plugin-premise-decomposition/outer-catalog-draft-controls-1/missing-model-input/presented.json",
+        "/home/cosmo/.codex/worktrees/w48-bottom-up-batch4/qcore-c/private/plugin-premise-decomposition/outer-catalog-draft-controls-1/source-index.json",
+        "/home/cosmo/.codex/worktrees/w48-bottom-up-batch4/qcore-c/private/plugin-premise-decomposition/outer-catalog-draft-controls-1/missing-model-input/artifacts.json",
+        "/home/cosmo/.codex/worktrees/w48-bottom-up-batch4/qcore-c/private/plugin-premise-decomposition/outer-catalog-draft-controls-1/missing-model-input/result.json"
+      ],
+      "exit": 1,
+      "expected_exit": 1,
+      "started": "2026-10-21T01:52:54.712556+00:00",
+      "ended": "2026-10-21T01:52:54.744094+00:00",
+      "log": "/home/cosmo/.codex/worktrees/w48-bottom-up-batch4/qcore-c/private/plugin-premise-decomposition/outer-catalog-draft-controls-1/missing-model-input/console.log"
+    },
+    {
+      "name": "missing-candidate-input",
+      "command": [
+        "/home/cosmo/.codex/worktrees/w48-bottom-up-batch4/qcore-c/private/plugin-premise-decomposition/outer-catalog-replay-attempt1",
+        "/home/cosmo/.codex/worktrees/w48-bottom-up-batch4/qcore-c/private/plugin-premise-decomposition/outer-catalog-draft-controls-1/held-expected.json",
+        "/home/cosmo/.codex/worktrees/w48-bottom-up-batch4/qcore-c/private/plugin-premise-decomposition/outer-catalog-draft-controls-1/missing-candidate-input/presented.json",
+        "/home/cosmo/.codex/worktrees/w48-bottom-up-batch4/qcore-c/private/plugin-premise-decomposition/outer-catalog-draft-controls-1/source-index.json",
+        "/home/cosmo/.codex/worktrees/w48-bottom-up-batch4/qcore-c/private/plugin-premise-decomposition/outer-catalog-draft-controls-1/missing-candidate-input/artifacts.json",
+        "/home/cosmo/.codex/worktrees/w48-bottom-up-batch4/qcore-c/private/plugin-premise-decomposition/outer-catalog-draft-controls-1/missing-candidate-input/result.json"
+      ],
+      "exit": 1,
+      "expected_exit": 1,
+      "started": "2026-10-21T01:52:54.745696+00:00",
+      "ended": "2026-10-21T01:52:54.758053+00:00",
+      "log": "/home/cosmo/.codex/worktrees/w48-bottom-up-batch4/qcore-c/private/plugin-premise-decomposition/outer-catalog-draft-controls-1/missing-candidate-input/console.log"
+    },
+    {
+      "name": "missing-outer-source",
+      "command": [
+        "/home/cosmo/.codex/worktrees/w48-bottom-up-batch4/qcore-c/private/plugin-premise-decomposition/outer-catalog-replay-attempt1",
+        "/home/cosmo/.codex/worktrees/w48-bottom-up-batch4/qcore-c/private/plugin-premise-decomposition/outer-catalog-draft-controls-1/held-expected.json",
+        "/home/cosmo/.codex/worktrees/w48-bottom-up-batch4/qcore-c/private/plugin-premise-decomposition/outer-catalog-draft-controls-1/missing-outer-source/presented.json",
+        "/home/cosmo/.codex/worktrees/w48-bottom-up-batch4/qcore-c/private/plugin-premise-decomposition/outer-catalog-draft-controls-1/missing-outer-source/sources.json",
+        "/home/cosmo/.codex/worktrees/w48-bottom-up-batch4/qcore-c/private/plugin-premise-decomposition/outer-catalog-draft-controls-1/artifact-index.json",
+        "/home/cosmo/.codex/worktrees/w48-bottom-up-batch4/qcore-c/private/plugin-premise-decomposition/outer-catalog-draft-controls-1/missing-outer-source/result.json"
+      ],
+      "exit": 1,
+      "expected_exit": 1,
+      "started": "2026-10-21T01:52:54.759454+00:00",
+      "ended": "2026-10-21T01:52:54.774089+00:00",
+      "log": "/home/cosmo/.codex/worktrees/w48-bottom-up-batch4/qcore-c/private/plugin-premise-decomposition/outer-catalog-draft-controls-1/missing-outer-source/console.log"
+    },
+    {
+      "name": "altered-candidate-bytes",
+      "command": [
+        "/home/cosmo/.codex/worktrees/w48-bottom-up-batch4/qcore-c/private/plugin-premise-decomposition/outer-catalog-replay-attempt1",
+        "/home/cosmo/.codex/worktrees/w48-bottom-up-batch4/qcore-c/private/plugin-premise-decomposition/outer-catalog-draft-controls-1/held-expected.json",
+        "/home/cosmo/.codex/worktrees/w48-bottom-up-batch4/qcore-c/private/plugin-premise-decomposition/outer-catalog-draft-controls-1/altered-candidate-bytes/presented.json",
+        "/home/cosmo/.codex/worktrees/w48-bottom-up-batch4/qcore-c/private/plugin-premise-decomposition/outer-catalog-draft-controls-1/source-index.json",
+        "/home/cosmo/.codex/worktrees/w48-bottom-up-batch4/qcore-c/private/plugin-premise-decomposition/outer-catalog-draft-controls-1/altered-candidate-bytes/artifacts.json",
+        "/home/cosmo/.codex/worktrees/w48-bottom-up-batch4/qcore-c/private/plugin-premise-decomposition/outer-catalog-draft-controls-1/altered-candidate-bytes/result.json"
+      ],
+      "exit": 1,
+      "expected_exit": 1,
+      "started": "2026-10-21T01:52:54.775628+00:00",
+      "ended": "2026-10-21T01:52:54.789062+00:00",
+      "log": "/home/cosmo/.codex/worktrees/w48-bottom-up-batch4/qcore-c/private/plugin-premise-decomposition/outer-catalog-draft-controls-1/altered-candidate-bytes/console.log"
+    },
+    {
+      "name": "actual-two-envelopes-after-controls",
+      "command": [
+        "/home/cosmo/.codex/worktrees/w48-bottom-up-batch4/qcore-c/private/plugin-premise-decomposition/outer-catalog-replay-attempt1",
+        "/home/cosmo/.codex/worktrees/w48-bottom-up-batch4/qcore-c/private/plugin-premise-decomposition/outer-catalog-draft-controls-1/held-expected.json",
+        "/home/cosmo/.codex/worktrees/w48-bottom-up-batch4/qcore-c/private/plugin-premise-decomposition/outer-catalog-draft-controls-1/actual-two-envelopes/presented.json",
+        "/home/cosmo/.codex/worktrees/w48-bottom-up-batch4/qcore-c/private/plugin-premise-decomposition/outer-catalog-draft-controls-1/source-index.json",
+        "/home/cosmo/.codex/worktrees/w48-bottom-up-batch4/qcore-c/private/plugin-premise-decomposition/outer-catalog-draft-controls-1/artifact-index.json",
+        "/home/cosmo/.codex/worktrees/w48-bottom-up-batch4/qcore-c/private/plugin-premise-decomposition/outer-catalog-draft-controls-1/actual-two-envelopes-after-controls/result.json"
+      ],
+      "exit": 0,
+      "expected_exit": 0,
+      "started": "2026-10-21T01:53:56.861000+00:00",
+      "ended": "2026-10-21T01:53:56.887142+00:00",
+      "log": "private/plugin-premise-decomposition/outer-catalog-draft-controls-1/actual-two-envelopes-after-controls/console.log"
+    }
+  ],
+  "summary": {
+    "schema": 1,
+    "positive_controls": 2,
+    "negative_controls": 14,
+    "all_expected_outcomes": true,
+    "binary_sha256": "c1ec17449858151f213859425f03cf41bb83e99ca5c0543d2bdfc0a06edc8e7f",
+    "model_sha256": "ed37be6bd3773e6c6a11026c20350ff86a8d827adc042aa2d8fa0ee7e85157eb",
+    "audit_sha256": "40dc50da8d20fc69e354af4b3c21747e721c274cdf24727f5fbb013591f72892",
+    "held_catalog_sha256": "2cff20fa4b8a5c00534830867fafe9a0d5e16e5a44037cad89cb211d1171e22d",
+    "outer_source_digests": {
+      "qcore-provider-librdkafka:librdkafka/outer.qv": "ca88ccbf79699b9fd1033a69b958ec1a116cb24c040f0829299c5e65e797704a",
+      "quirin-provider-fluent-bit:fluent_bit/outer.qv": "282408a08e6fc19b6f87d3cde8d2c12d2ab0627b002b2f2e2a914bb8460c133d"
+    },
+    "ignored-registration-return": {
+      "source": "src/flb_plugin_proxy.c",
+      "sha256": "00ca65b30aabad04495496fdac049e8ef95ed9adef0c48eaefcf3e7f15e8e87f",
+      "reference_check_disposition": "open",
+      "meaning": "Absence of a checked return proves neither successful registration nor failed old envelope. No Supported source evidence or upstream Unsafe is minted."
+    },
+    "meaning": "Reference integrity checks only; source/model/prose/environment binding and all component truths remain Open. Final production model/audit + independently held Graph/Context checks are separate.",
+    "post_negative_baseline_confirmation": "actual-two-envelopes-after-controls"
+  },
+  "axiom_check": {
+    "command": [
+      "lake",
+      "env",
+      "lean",
+      "/home/cosmo/.codex/worktrees/w48-bottom-up-batch4/qcore-c/private/plugin-premise-decomposition/AuditPluginCombined-attempt1.lean"
+    ],
+    "cwd": "proof",
+    "exit": 0,
+    "started": "2026-10-21T01:50:55.107436+00:00",
+    "ended": "2026-10-21T01:50:56.389154+00:00",
+    "combined_input_sha256": "fe3f93a8b3d95a2d2f0e2bde967c7b7c6710d7523c361d6ce66916721e83b075",
+    "model_draft_sha256": "ed37be6bd3773e6c6a11026c20350ff86a8d827adc042aa2d8fa0ee7e85157eb",
+    "audit_draft_sha256": "40dc50da8d20fc69e354af4b3c21747e721c274cdf24727f5fbb013591f72892",
+    "log": "private/plugin-premise-decomposition/lean-draft-axioms-attempt1.log",
+    "note": "Preliminary combined-file check of exact model draft followed by audit commands. Final production module imports/registration and full349+audit gate remain due."
+  },
+  "axiom_output": "'QCore.PluginPremiseDecomposition.resolved_loaded_symbol_has_expected_abi' does not depend on any axioms\n'QCore.PluginPremiseDecomposition.loaded_callback_after_close_is_refuted' does not depend on any axioms\n'QCore.PluginPremiseDecomposition.loaded_fluent_core_store_is_refuted' does not depend on any axioms\n'QCore.PluginPremiseDecomposition.callback_without_registration_or_default_is_refuted' does not depend on any axioms\n'QCore.PluginPremiseDecomposition.semanticClauses_append' depends on axioms: [propext]\n'QCore.PluginPremiseDecomposition.attachment_preserves_original_clause_interpretation' depends on axioms: [propext]\n'QCore.PluginPremiseDecomposition.attachment_preserves_any_existing_null_checker' depends on axioms: [propext]\n'QCore.PluginPremiseDecomposition.impact_requires_exact_context_and_dependency' depends on axioms: [propext, Quot.sound]\n'QCore.PluginPremiseDecomposition.foreign_property_is_not_selected' depends on axioms: [propext, Quot.sound]\n"
+}

@@ -49,6 +49,7 @@ structure Event where
 structure Environment where
   trace : List Event
   loaded : Nat → Family → Prop
+  loaderEnabled : Family → Bool
   actualArtifact : Nat → String
   expectedArtifact : Nat → String
   actualBuild : Nat → String
@@ -73,7 +74,8 @@ abbrev Loaded (e : Environment) (p : Nat) : Prop := ∃ f, e.loaded p f
 
 def loaderEnvironment (e : Environment) (p : Nat) : Prop :=
   e.actualBuild p = e.expectedBuild p ∧
-  e.actualInventory = e.expectedInventory
+  e.actualInventory = e.expectedInventory ∧
+  ∀ family, e.loaded p family → e.loaderEnabled family = true
 
 def artifactSymbolAbi (e : Environment) (p : Nat) : Prop :=
   e.actualArtifact p = e.expectedArtifact p ∧
@@ -233,15 +235,17 @@ theorem loaded_fluent_core_store_is_refuted
   intro h
   exact ((h.bridge.2 p loaded).core ev eventIn same) write
 
-theorem callback_has_candidate_and_registration_or_default
-    (h : CallbackRefinement e) (eventIn : ev ∈ e.trace)
-    (invoked : ev.action = .invoke) :
-    e.memberCandidate ev.member ev.function ∧
-      (e.staticDefault ev.member ev.function ∨
-       ∃ reg ∈ e.trace, reg.action = .register ∧
-         reg.function = ev.function ∧ reg.member = ev.member ∧
-         reg.time < ev.time ∧ reg.result = 0 ∧ reg.publicSetter = true) := by
-  exact h.callback ev eventIn invoked
+theorem callback_without_registration_or_default_is_refuted
+    (eventIn : ev ∈ e.trace) (invoked : ev.action = .invoke)
+    (noDefault : ¬ e.staticDefault ev.member ev.function)
+    (noRegistration : ¬ ∃ reg ∈ e.trace, reg.action = .register ∧
+      reg.function = ev.function ∧ reg.member = ev.member ∧
+      reg.time < ev.time ∧ reg.result = 0 ∧ reg.publicSetter = true) :
+    ¬ CallbackRefinement e := by
+  intro h
+  rcases (h.callback ev eventIn invoked).2 with default | registered
+  · exact noDefault default
+  · exact noRegistration registered
 
 /-! Property-specific metadata erasure models the bounds/null parser boundary.
 The generic graph checker remains a prerequisite, not proved by this erasure. -/

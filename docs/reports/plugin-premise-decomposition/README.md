@@ -8,7 +8,7 @@ prerequisite/formal/source maps for both actual `rk_plugin_library` and
 outer definitions and inherited proxy reference from function premises.
 
 Production edits wait for the serially merged Graph v2/schema20 attachment API.
-The preparation freeze is refreshed against that exact new base before edits.
+The preparation freeze is refreshed against that exact new base before production edits. Exact classification is 94 resource-v1 sites, 71 bounds-v1 sites and one declared Quirin model; see CLASSIFICATION-ADDENDUM.md.
 Original legacy premise names/text, outer names/text/digests/selection and all
 static/closed-world/runtime semantics must remain unchanged. Catalog bindings
 convey reference integrity only; every source/environment binding remains Open.
@@ -32,3 +32,5 @@ independent review/proof of both whole-code envelopes and their bridge;
 `PLUGIN-PREMISE-OPERATOR-DESIGN` for future source-language operators (design
 only). Existing `RK-INTERCEPTOR-STATIC-LIST-CLOSURE` and
 `RK-OUTER-LOADER-REACH-PRECISION` remain open and are not discharged by this card.
+
+The conditional formal draft now compiles as a single file with existing dependencies, including metadata erasure and exact-context impact. Draft-check receipts preserve the initial reserved-identifier failure and unused-simp warning. This is preparation only; registered full Lean/Rust/provider gates remain due. Original outer identity expectations and all three actual source-set observations are in outer-identity-freeze.json.
