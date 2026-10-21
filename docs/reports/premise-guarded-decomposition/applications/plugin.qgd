@@ -1,0 +1,6 @@
+guarded_decomposition_v1;
+(environment ∧ plugin_artifact_symbol_abi ∧ plugin_callback_candidates ∧ plugin_code_context_lifetime ∧ plugin_interceptor_custody ∧ plugin_interceptor_registration ∧ plugin_lifecycle_unload ∧ plugin_outer_bridge) |-> invoke;
+unregistered !-> invoke;
+invoke ||-> registered_case / default_case;
+registered_case ->| registered_lifetime_valid;
+default_case ->| default_lifetime_valid;

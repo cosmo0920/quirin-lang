@@ -1,0 +1,171 @@
+{
+  "bindings": {
+    "default_case": {
+      "dependencies": [
+        "plugin_artifact_symbol_abi",
+        "plugin_callback_candidates",
+        "plugin_code_context_lifetime",
+        "plugin_interceptor_custody",
+        "plugin_interceptor_registration",
+        "plugin_lifecycle_unload",
+        "plugin_outer_bridge"
+      ],
+      "proposition": "The actual exact member candidate is a stated static default in the selected build; this case is independent of the loaded registration case.",
+      "role": "case"
+    },
+    "default_lifetime_valid": {
+      "dependencies": [
+        "plugin_artifact_symbol_abi",
+        "plugin_callback_candidates",
+        "plugin_code_context_lifetime",
+        "plugin_interceptor_custody",
+        "plugin_interceptor_registration",
+        "plugin_lifecycle_unload",
+        "plugin_outer_bridge"
+      ],
+      "proposition": "Every invocation in the static-default case has live code and opaque context through the last invocation; no loaded-envelope truth follows.",
+      "role": "postcondition"
+    },
+    "environment": {
+      "dependencies": [
+        "plugin_artifact_symbol_abi",
+        "plugin_callback_candidates",
+        "plugin_code_context_lifetime",
+        "plugin_interceptor_custody",
+        "plugin_interceptor_registration",
+        "plugin_lifecycle_unload",
+        "plugin_outer_bridge"
+      ],
+      "proposition": "Exact selected PluginPremiseDecomposition.Environment including every loaded RK and Fluent Bit C/Go artifact, every callback event, build/ABI/inventory and full context; source trace completeness remains Open.",
+      "role": "environment"
+    },
+    "invoke": {
+      "dependencies": [
+        "plugin_artifact_symbol_abi",
+        "plugin_callback_candidates",
+        "plugin_code_context_lifetime",
+        "plugin_interceptor_custody",
+        "plugin_interceptor_registration",
+        "plugin_lifecycle_unload",
+        "plugin_outer_bridge"
+      ],
+      "proposition": "Admission of every reached rk_conf callback invocation under the selected rd_kafka_dump0 callback-closure premise; not permission inferred from a sampled callback.",
+      "role": "operation"
+    },
+    "plugin_artifact_symbol_abi": {
+      "dependencies": [
+        "plugin_artifact_symbol_abi"
+      ],
+      "proposition": "For every reached loaded artifact, exact selected build/inventory, artifact identity and required symbol/address/ABI prerequisites hold.",
+      "role": "prerequisite"
+    },
+    "plugin_callback_candidates": {
+      "dependencies": [
+        "plugin_callback_candidates"
+      ],
+      "proposition": "Every actual rk_conf invocation has its exact declared member candidate and a prior successful public registration or stated static default.",
+      "role": "prerequisite"
+    },
+    "plugin_code_context_lifetime": {
+      "dependencies": [
+        "plugin_code_context_lifetime"
+      ],
+      "proposition": "Every loaded callback invocation, including destruction and copied on_new paths, has live code and opaque context.",
+      "role": "prerequisite"
+    },
+    "plugin_interceptor_custody": {
+      "dependencies": [
+        "plugin_interceptor_custody"
+      ],
+      "proposition": "Every interceptor-descendant pointer and scalar resource is borrowed, with no retain/transfer/global custody and each local acquisition dropped before its activation returns.",
+      "role": "prerequisite"
+    },
+    "plugin_interceptor_registration": {
+      "dependencies": [
+        "plugin_interceptor_registration"
+      ],
+      "proposition": "Every loaded interceptor uses a successful public setter with the exact pinned list/union-arm candidate and permitted configuration/client lifecycle.",
+      "role": "prerequisite"
+    },
+    "plugin_lifecycle_unload": {
+      "dependencies": [
+        "plugin_lifecycle_unload"
+      ],
+      "proposition": "Every callback invocation precedes matching final unload and copied registrations retain actual loader references.",
+      "role": "prerequisite"
+    },
+    "plugin_outer_bridge": {
+      "dependencies": [
+        "plugin_outer_bridge"
+      ],
+      "proposition": "Actually loaded RK and Fluent Bit C/Go code independently meet their respectively bound proposed outer envelopes; one envelope covers no missing obligation of another.",
+      "role": "prerequisite"
+    },
+    "registered_case": {
+      "dependencies": [
+        "plugin_artifact_symbol_abi",
+        "plugin_callback_candidates",
+        "plugin_code_context_lifetime",
+        "plugin_interceptor_custody",
+        "plugin_interceptor_registration",
+        "plugin_lifecycle_unload",
+        "plugin_outer_bridge"
+      ],
+      "proposition": "The actual exact member candidate was registered by a prior successful public registration in this selected trace.",
+      "role": "case"
+    },
+    "registered_lifetime_valid": {
+      "dependencies": [
+        "plugin_artifact_symbol_abi",
+        "plugin_callback_candidates",
+        "plugin_code_context_lifetime",
+        "plugin_interceptor_custody",
+        "plugin_interceptor_registration",
+        "plugin_lifecycle_unload",
+        "plugin_outer_bridge"
+      ],
+      "proposition": "Every invocation in the registered case has live code and opaque context and precedes matching final unload, including destruction and copied registrations.",
+      "role": "postcondition"
+    },
+    "unregistered": {
+      "dependencies": [
+        "plugin_artifact_symbol_abi",
+        "plugin_callback_candidates",
+        "plugin_code_context_lifetime",
+        "plugin_interceptor_custody",
+        "plugin_interceptor_registration",
+        "plugin_lifecycle_unload",
+        "plugin_outer_bridge"
+      ],
+      "proposition": "Positive evidence that a reached callback has neither its required successful public registration nor a stated static default; failed registration proof alone does not establish this.",
+      "role": "condition"
+    }
+  },
+  "boundary": "Proposed guarded obligations bound to actual existing source hypotheses. Dependencies are not equivalence/implication proofs. No inline adoption or source-truth receipt.",
+  "declaration": "rd_kafka_dump0",
+  "formal_model": "proof/QCore/GuardedContractApplications.lean",
+  "module": "providers/qcore-provider-librdkafka/contracts/librdkafka/kafka_mem.qv",
+  "provenance": [
+    {
+      "path": "docs/reports/plugin-premise-decomposition/source-readiness.json",
+      "sha256": "9de14d0e6eefc63778c5cd72ba5b411b2fb78ce1de7a69df9564f0112ffa8c9f"
+    },
+    {
+      "path": "proof/QCore/PluginPremiseDecomposition.lean",
+      "sha256": "c8537b922b10a53648b3c24904ca4ac45fca14ca149fc3c3f0a3368bec805940"
+    },
+    {
+      "path": "proof/QCore/GuardedContractApplications.lean",
+      "sha256": "5797d14a7563145bcb79b63f077bf50edcd94f892843df090d0e1ab73a08a459"
+    },
+    {
+      "path": "docs/reports/premise-guarded-decomposition/source-observations.json",
+      "sha256": "b345301413d26c708cb7a8104c6b4c705ee419bf75169f6d743640560e97d7e4"
+    }
+  ],
+  "source_binding": "open",
+  "source_correspondence": "open; formal propositions are conditional model definitions, not statements proved of imported C",
+  "source_sha256": "459a1cb32e3512e97c267a4651ca1629943179e41e136b28b6c71e19b639d0d3",
+  "version": 1,
+  "view": "resource"
+}

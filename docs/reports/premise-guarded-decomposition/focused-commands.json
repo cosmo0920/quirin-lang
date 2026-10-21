@@ -1,0 +1,278 @@
+{
+  "base": "d08dcca8b77b35417a999474b608cedfe821cfdb",
+  "records": [
+    {
+      "stage": "clippy-focused-1",
+      "command": "cargo clippy -p qcore-contract -p qcore-frontend --all-targets -- -D warnings",
+      "exit": 0,
+      "log": "/home/cosmo/.codex/worktrees/premise-guarded-decomposition/qcore-c/private/premise-guarded-decomposition/clippy-focused-1.log",
+      "log_sha256": "cff5cd56e6c4e7d86062b58c86625b9ba760b9fe091203ad692907a34b011e65",
+      "scope": "focused developmental control, not standing gate",
+      "environment": {
+        "CARGO_PROFILE_DEV_DEBUG": "0",
+        "CARGO_PROFILE_TEST_DEBUG": "0",
+        "CARGO_INCREMENTAL": "0"
+      }
+    },
+    {
+      "stage": "fmt-1",
+      "command": "cargo fmt --all -- --check",
+      "exit": 0,
+      "log": "/home/cosmo/.codex/worktrees/premise-guarded-decomposition/qcore-c/private/premise-guarded-decomposition/fmt-1.log",
+      "log_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "scope": "focused developmental control, not standing gate",
+      "environment": {
+        "CARGO_PROFILE_DEV_DEBUG": "0",
+        "CARGO_PROFILE_TEST_DEBUG": "0",
+        "CARGO_INCREMENTAL": "0"
+      }
+    },
+    {
+      "stage": "focused-1",
+      "command": "cargo test -p qcore-contract --test guarded_decomposition -- --nocapture",
+      "exit": 0,
+      "log": "/home/cosmo/.codex/worktrees/premise-guarded-decomposition/qcore-c/private/premise-guarded-decomposition/focused-1.log",
+      "log_sha256": "2e6003739067ff7560812c62f6fa5cc23d136c054c678cba61450fdbbe77956b",
+      "scope": "focused developmental control, not standing gate",
+      "environment": {
+        "CARGO_PROFILE_DEV_DEBUG": "0",
+        "CARGO_PROFILE_TEST_DEBUG": "0",
+        "CARGO_INCREMENTAL": "0"
+      },
+      "libtest_summaries": [
+        {
+          "result": "ok",
+          "passed": 7,
+          "failed": 0,
+          "ignored": 0
+        }
+      ]
+    },
+    {
+      "stage": "focused-2",
+      "command": "cargo test -p qcore-contract --test guarded_decomposition -- --nocapture",
+      "exit": 0,
+      "log": "/home/cosmo/.codex/worktrees/premise-guarded-decomposition/qcore-c/private/premise-guarded-decomposition/focused-2.log",
+      "log_sha256": "dcae50f8c60760a2ec59640fdd7ed6d350fb60a18c401cf3b4183b4b6fb8c0f6",
+      "scope": "focused developmental control, not standing gate",
+      "environment": {
+        "CARGO_PROFILE_DEV_DEBUG": "0",
+        "CARGO_PROFILE_TEST_DEBUG": "0",
+        "CARGO_INCREMENTAL": "0"
+      },
+      "libtest_summaries": [
+        {
+          "result": "ok",
+          "passed": 8,
+          "failed": 0,
+          "ignored": 0
+        }
+      ]
+    },
+    {
+      "stage": "focused-3",
+      "command": "cargo test -p qcore-contract --test guarded_decomposition -- --nocapture",
+      "exit": 0,
+      "log": "/home/cosmo/.codex/worktrees/premise-guarded-decomposition/qcore-c/private/premise-guarded-decomposition/focused-3.log",
+      "log_sha256": "5539a6f3ba6b02a58568078ee2561a14e602f5e8f70b827b0d8c5a7e761b941c",
+      "scope": "focused developmental control, not standing gate",
+      "environment": {
+        "CARGO_PROFILE_DEV_DEBUG": "0",
+        "CARGO_PROFILE_TEST_DEBUG": "0",
+        "CARGO_INCREMENTAL": "0"
+      },
+      "libtest_summaries": [
+        {
+          "result": "ok",
+          "passed": 8,
+          "failed": 0,
+          "ignored": 0
+        }
+      ]
+    },
+    {
+      "stage": "focused-4",
+      "command": "cargo test -p qcore-contract --test guarded_decomposition -- --nocapture",
+      "exit": 0,
+      "log": "/home/cosmo/.codex/worktrees/premise-guarded-decomposition/qcore-c/private/premise-guarded-decomposition/focused-4.log",
+      "log_sha256": "10901bf4f6a3c492a254fceae8da6f609fa3eeb8f6adf49077991f8e702d55c1",
+      "scope": "focused developmental control, not standing gate",
+      "environment": {
+        "CARGO_PROFILE_DEV_DEBUG": "0",
+        "CARGO_PROFILE_TEST_DEBUG": "0",
+        "CARGO_INCREMENTAL": "0"
+      },
+      "libtest_summaries": [
+        {
+          "result": "ok",
+          "passed": 8,
+          "failed": 0,
+          "ignored": 0
+        }
+      ]
+    },
+    {
+      "stage": "lean-audit-1",
+      "command": "lake env lean AuditGuardedDecomposition.lean",
+      "exit": 0,
+      "log": "/home/cosmo/.codex/worktrees/premise-guarded-decomposition/qcore-c/private/premise-guarded-decomposition/lean-audit-1.log",
+      "log_sha256": "d42b7d645c75e4f1f5c42b4b51a54cb228169953b8a543902ca8a99c8c3219ca",
+      "scope": "focused developmental control, not standing gate",
+      "environment": {
+        "working_directory": "proof",
+        "toolchain": "proof/lean-toolchain"
+      }
+    },
+    {
+      "stage": "lean-audit-2",
+      "command": "lake env lean AuditGuardedDecomposition.lean",
+      "exit": 1,
+      "log": "/home/cosmo/.codex/worktrees/premise-guarded-decomposition/qcore-c/private/premise-guarded-decomposition/lean-audit-2.log",
+      "log_sha256": "8fd4f5776e36ad42ff81a65be8416393f4869438235eaaf39b145d6c1b1c7349",
+      "scope": "focused developmental control, not standing gate",
+      "environment": {
+        "working_directory": "proof",
+        "toolchain": "proof/lean-toolchain"
+      }
+    },
+    {
+      "stage": "lean-audit-3",
+      "command": "lake env lean AuditGuardedDecomposition.lean",
+      "exit": 1,
+      "log": "/home/cosmo/.codex/worktrees/premise-guarded-decomposition/qcore-c/private/premise-guarded-decomposition/lean-audit-3.log",
+      "log_sha256": "8fd4f5776e36ad42ff81a65be8416393f4869438235eaaf39b145d6c1b1c7349",
+      "scope": "focused developmental control, not standing gate",
+      "environment": {
+        "working_directory": "proof",
+        "toolchain": "proof/lean-toolchain"
+      }
+    },
+    {
+      "stage": "lean-audit-4",
+      "command": "lake env lean AuditGuardedDecomposition.lean",
+      "exit": 0,
+      "log": "/home/cosmo/.codex/worktrees/premise-guarded-decomposition/qcore-c/private/premise-guarded-decomposition/lean-audit-4.log",
+      "log_sha256": "edb46eb498683b2484a975820487d0daa24d223c65e0dbd76d3cd875c6207b5e",
+      "scope": "focused developmental control, not standing gate",
+      "environment": {
+        "working_directory": "proof",
+        "toolchain": "proof/lean-toolchain"
+      }
+    },
+    {
+      "stage": "lean-audit-5",
+      "command": "lake env lean AuditGuardedDecomposition.lean",
+      "exit": 0,
+      "log": "/home/cosmo/.codex/worktrees/premise-guarded-decomposition/qcore-c/private/premise-guarded-decomposition/lean-audit-5.log",
+      "log_sha256": "edb46eb498683b2484a975820487d0daa24d223c65e0dbd76d3cd875c6207b5e",
+      "scope": "focused developmental control, not standing gate",
+      "environment": {
+        "working_directory": "proof",
+        "toolchain": "proof/lean-toolchain"
+      }
+    },
+    {
+      "stage": "lean-audit-6",
+      "command": "lake env lean AuditGuardedDecomposition.lean",
+      "exit": 0,
+      "log": "/home/cosmo/.codex/worktrees/premise-guarded-decomposition/qcore-c/private/premise-guarded-decomposition/lean-audit-6.log",
+      "log_sha256": "edb46eb498683b2484a975820487d0daa24d223c65e0dbd76d3cd875c6207b5e",
+      "scope": "focused developmental control, not standing gate",
+      "environment": {
+        "working_directory": "proof",
+        "toolchain": "proof/lean-toolchain"
+      }
+    },
+    {
+      "stage": "lean-focused-1",
+      "command": "lake build QCore.GuardedContractApplications",
+      "exit": 0,
+      "log": "/home/cosmo/.codex/worktrees/premise-guarded-decomposition/qcore-c/private/premise-guarded-decomposition/lean-focused-1.log",
+      "log_sha256": "6c22713dee90700bdc8e53ef561a198d9bc15829427f1b243f167c2fa1ea2556",
+      "scope": "focused developmental control, not standing gate",
+      "environment": {
+        "working_directory": "proof",
+        "toolchain": "proof/lean-toolchain"
+      }
+    },
+    {
+      "stage": "lean-focused-2",
+      "command": "lake build QCore.GuardedContractApplications",
+      "exit": 0,
+      "log": "/home/cosmo/.codex/worktrees/premise-guarded-decomposition/qcore-c/private/premise-guarded-decomposition/lean-focused-2.log",
+      "log_sha256": "ca942788864989bc93f3b5240ca71ada44e295a4c06470b9065a12811d80d137",
+      "scope": "focused developmental control, not standing gate",
+      "environment": {
+        "working_directory": "proof",
+        "toolchain": "proof/lean-toolchain"
+      }
+    },
+    {
+      "stage": "lean-focused-3",
+      "command": "lake build QCore.GuardedContractApplications",
+      "exit": 1,
+      "log": "/home/cosmo/.codex/worktrees/premise-guarded-decomposition/qcore-c/private/premise-guarded-decomposition/lean-focused-3.log",
+      "log_sha256": "5974be791a8d71710853d3e47a3ba7f8c812356e8e7d2739b3ba38913b3bdba6",
+      "scope": "focused developmental control, not standing gate",
+      "environment": {
+        "working_directory": "proof",
+        "toolchain": "proof/lean-toolchain"
+      }
+    },
+    {
+      "stage": "lean-focused-4",
+      "command": "lake build QCore.GuardedContractApplications",
+      "exit": 1,
+      "log": "/home/cosmo/.codex/worktrees/premise-guarded-decomposition/qcore-c/private/premise-guarded-decomposition/lean-focused-4.log",
+      "log_sha256": "542a2d5a2f43e6d73af42ba1f40965ed8113675b9f58d04e9d443eece9b1db24",
+      "scope": "focused developmental control, not standing gate",
+      "environment": {
+        "working_directory": "proof",
+        "toolchain": "proof/lean-toolchain"
+      }
+    },
+    {
+      "stage": "lean-focused-5",
+      "command": "lake build QCore.GuardedContractApplications",
+      "exit": 0,
+      "log": "/home/cosmo/.codex/worktrees/premise-guarded-decomposition/qcore-c/private/premise-guarded-decomposition/lean-focused-5.log",
+      "log_sha256": "fe128205acb82bc7ffd77a92dafdc9030a13220bdb6c904059f7769844196fe4",
+      "scope": "focused developmental control, not standing gate",
+      "environment": {
+        "working_directory": "proof",
+        "toolchain": "proof/lean-toolchain"
+      }
+    },
+    {
+      "stage": "lean-focused-6",
+      "command": "lake build QCore.GuardedContractApplications",
+      "exit": 0,
+      "log": "/home/cosmo/.codex/worktrees/premise-guarded-decomposition/qcore-c/private/premise-guarded-decomposition/lean-focused-6.log",
+      "log_sha256": "0114aa50f794434a2cf1ff747a68188c8cecaba58bec4c7cb065ef5bf9889095",
+      "scope": "focused developmental control, not standing gate",
+      "environment": {
+        "working_directory": "proof",
+        "toolchain": "proof/lean-toolchain"
+      }
+    },
+    {
+      "stage": "lean-focused-7",
+      "command": "lake build QCore.GuardedContractApplications",
+      "exit": 0,
+      "log": "/home/cosmo/.codex/worktrees/premise-guarded-decomposition/qcore-c/private/premise-guarded-decomposition/lean-focused-7.log",
+      "log_sha256": "65cd6fa038dda2cd51c7866489754bf3463a5e550e261178b0e1209f305926f7",
+      "scope": "focused developmental control, not standing gate",
+      "environment": {
+        "working_directory": "proof",
+        "toolchain": "proof/lean-toolchain"
+      }
+    }
+  ],
+  "initial_compile": {
+    "command": "cargo check -p qcore-contract",
+    "exit": 0,
+    "exit_basis": "observed tool completion; not a saved exit file",
+    "log": "/home/cosmo/.codex/worktrees/premise-guarded-decomposition/qcore-c/private/premise-guarded-decomposition/check-1.log",
+    "log_sha256": "c9ada00881f9b55662fb2ec15458a576e723b042a71eb6103023268b6971b53c"
+  }
+}

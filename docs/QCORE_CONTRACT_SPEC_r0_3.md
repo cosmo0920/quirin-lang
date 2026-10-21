@@ -1007,6 +1007,81 @@ The target tags are distinct namespaces. `hypothesis(ID)` must refer to an alrea
 
 These are records only. Creation proves no existence/freshness/liveness or hypothesis support; retirement releases nothing, changes no evidence disposition, proves no negation and performs no dependency invalidation. No executable schedule, create-before-retire order or linear-use judgment is asserted; repeated target operations with distinct entry IDs can therefore be represented. Implementing checked lifetimes, ownership/alias effects and versioned hypothesis invalidation is separate work. The source inspection API `qcore_contract::contract_lifecycle::replay` reruns the selected resource/bounds loader or existing declared-model graph replay and returns typed records bound to module/declaration/source SHA. This is not an evidence receipt. The wire schema and old graph/flow documents gain no field, and all original interpreted clauses, legacy graph erasure, trust, standing and verdict effects remain unchanged. Missing lifecycle metadata creates no default fact.
 
+### C04.18.5. Explicit guarded decomposition documents (version 1)
+
+The standalone `guarded_decomposition_v1;` document is an explicit proposed
+contract layer, inspected by `qcore_contract::guarded_decomposition::replay`.
+It is **not** a clause admitted inside `.qv` contracts, an ordinary expression,
+a flow-v1 expression or an extension of lifecycle-v1. Existing operator meanings
+in every other context remain unchanged. G05-guarded gives its complete grammar.
+
+Every symbol has one explicit role and proposed proposition: environment,
+prerequisite, operation admission, positive invalidity condition, case or terminal
+postcondition. Operation symbols mean proposed admission/eligibility, never an
+observed execution. A symbol's listed existing graph atoms are dependencies,
+not asserted equivalences or implication proofs. Replay first reruns the complete
+selected resource/bounds/declared-model loader and independently compares the
+whole expected graph. It binds exact module and declaration, entire source SHA,
+graph SHA, readable document SHA, view, and the complete symbol/proposition map.
+It never strips unsupported source clauses to rescue a failed loader.
+
+The explicit lowering is:
+
+* `(environment ∧ prerequisite [∧ prerequisite]*) |-> operation` records the
+  **necessary** entry obligation `admit(operation) → (environment ∧ all
+  prerequisites)`. True prerequisites do not execute or independently admit an
+  operation. Positive admission with a Refuted prerequisite is Refuted; missing
+  prerequisites keep it Open. This differs deliberately from flow-v1 conjunction.
+* `invalidity !-> operation` records `invalidity → ¬admit(operation)`. Satisfying
+  this obligation requires both Supported invalidity and **positively Refuted**
+  admission; absence, Open evidence or a failed proof supplies neither negation.
+* `operation ||-> case / case [/ case]*` records an alternative-coverage
+  obligation `admit(operation) → (case₁ ∨ case₂ ∨ …)`, retaining **every** declared
+  case and its dependencies. This does not prove C-path exhaustiveness or make
+  cases exclusive. Supported case metadata never hides another case's terminal.
+* `case ->| postcondition` records the separate obligation
+  `case → postcondition`. It is never an entry prerequisite, an assertion of
+  eventual C termination or a replacement for another case's terminal check.
+
+The obligation status is separate from proposition disposition. A positively
+Refuted antecedent is **Inactive**, not proof of a safety claim. An Open
+antecedent or an active Open conclusion is **Open**. A Supported antecedent and
+Supported conclusion is **Satisfied**; a Supported antecedent and Refuted
+conclusion is **Refuted**. Forbidden obligations positively negate their admission
+conclusion. Conjunction refutes on any Refuted operand, supports only if all
+support, otherwise stays Open. Alternative coverage supports on a Supported
+case, refutes only if all cases are Refuted, otherwise stays Open. Every case's
+terminal obligation is nevertheless evaluated and returned separately.
+
+Validation is total-or-reject: every operation has exactly one entry guard and
+one alternatives list; every case belongs to one operation and has exactly one
+terminal; all symbols are used with the correct role; duplicate clauses,
+prerequisites, cases or references refuse. Bounds are65,536 document bytes,
+4,096 bytes per statement/proposition,256 clauses/symbols/dependencies per
+binding,128-byte lowercase ASCII identifiers,1–32 entry prerequisites and2–32
+cases per operation. Dependencies are strictly increasing existing graph atoms.
+Malformed/unsupported versions, empty statements and missing final semicolons
+refuse; no partial document is returned.
+
+Proposed assignment evaluation compares all nine independently held Context
+coordinates, exact symbol digests and every supplied assignment, even for an
+unchosen alternative. Duplicate/conflicting, Derived or provider-proposed
+assignments refuse; missing assignments remain Open. The caller's exact expected
+context remains an explicit scope assumption, not a source extraction theorem.
+Dependency impact conservatively propagates recheck requests from environment,
+prerequisite or positive invalidity through admission, **all** cases and terminal
+postconditions in that same context. A terminal change cannot flow backwards to
+establish an entry guard. Recheck requests assign no truth, invalidate no
+production evidence automatically, and construct no Unsafe verdict.
+
+This API publishes proposed obligations only: no production semantic/lifecycle
+consumer, allocation/release, prose equivalence, standing, verdict or outer
+truth authority is added. Existing source universals stay Open. Inline adoption
+requires its own explicit grammar/loader extension, sealed whole-source metadata
+bridge extension and deliberate reviewed-source identity maintenance; a standalone
+document bypasses none of these. Matching audited Lean defines conditional model
+semantics and concrete cJSON/plugin propositions, not imported-C correspondence.
+
 ### C04.19. Callback contracts
 
 Card CG22-CALLBACK-REGISTRY-CONTRACT (gateway rules 13u–13z), on the user's decision of 2026-10-05 recorded in C04.14: class 1 shape (c), callbacks over retained elements, goes through callback contracts. The callback relation itself is the core's `callback_trace` (rule 11p, `QCore.IndirectCalls`): a registration needs a live context and no earlier teardown, an invocation the registration in force and the context live, the context's release a prior unregistration.

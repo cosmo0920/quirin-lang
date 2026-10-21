@@ -1,0 +1,22 @@
+{
+  "card": "PREMISE-GUARDED-DECOMPOSITION",
+  "base": "d08dcca8b77b35417a999474b608cedfe821cfdb",
+  "shared_files_owned_by_integrator": [
+    "docs/STATUS.md",
+    "docs/development/increments/wave-48-part11.md",
+    "docs/reports/README.md",
+    "docs/reviews/r0_3/acceptance_matrix.json"
+  ],
+  "increment": "Explicit guarded decomposition adds a separately versioned readable document layer and typed Rust lowering with audited Lean: guard-left notation lowers proposed admission to necessary environment/prerequisites, forbidden admission requires positive invalidity and positive refutation, all OR alternatives remain recorded, and each terminal has its own postcondition check. Actual cJSON detach and rd_kafka_dump0 plugin sidecars retain16 original hypothesis propositions and expose10 obligations over31 symbols, with exact source/graph/model provenance and same-context downstream recheck propagation. Existing flow/lifecycle operators, production sources/pins/graphs/bindings, verdict/standing/outer truth remain unchanged; all source correspondences stay Open. Focused8 Rust and17 Lean theorem checks pass; the root joint standing/native campaign owns full acceptance.",
+  "followup_amendment": {
+    "id": "PREMISE-FLOW-PRODUCTION-DISCHARGE",
+    "append": "Explicit guarded_decomposition_v1 standalone documents now lower readable guard-left notation to admission -> (environment AND all prerequisites), positive-invalidity forbidden admission, all declared alternative cases, and separately checked terminal postconditions, with matching audited Lean and actual cJSON9-atom/plugin7-atom proposed applications. Dependency impact marks every downstream case/terminal for same-context recheck without assigning truth or rewriting verdicts. This supplies no production semantic consumer or C/source/prose correspondence. Inline adoption remains separate: explicitly extend the source grammar/property loaders and sealed whole-source metadata bridge, deliberately maintain reviewed source pins, then require exact graph/erasure/classification/standing/full-route parity before any authority. Every original complete scoped source/model/prose/environment and feasible-path criterion, typed predicate/consumer/invalidation requirement, nine-coordinate Context/refutation control and independent source/outer residual remains Open."
+  },
+  "integrator_checklist": [
+    "Merge this card source/docs/application artifacts and exact independent prediction; preserve existing flow-v1 and lifecycle-v1 meanings.",
+    "Run one frozen combined full standing gate and fresh TIP/native full-record comparisons against the exact declared BASE; record shared joint evidence, not an own-card campaign.",
+    "Provider files/schema/wire/package inputs are unchanged here; provider gate scope is determined by integrated changes.",
+    "Apply this exact same-ID follow-up append, one increment paragraph and current-status/report-index updates from actual root joint evidence; do not retire source or production-discharge residuals.",
+    "Final authoritative matrix Python must follow committed regenerated matrix. This card never merges or pushes main."
+  ]
+}

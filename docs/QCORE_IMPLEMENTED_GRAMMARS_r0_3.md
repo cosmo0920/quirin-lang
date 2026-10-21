@@ -3743,6 +3743,31 @@ lifecycle_target = ("resource" | "hypothesis"), "(", target_id, ")" ;
 
 The enclosing source clause is `requires lifecycle_clause;`. Operators are atomic by longest match and remain unsupported in ordinary expressions, flow-v1 expressions and other contract vocabularies. No untyped operand, target path, nested lifecycle expression or trailing token is admitted. IDs are literal metadata with the exact bounds/reference/inheritance rules of C04.18.4. These forms retain typed symbolic intents only; they introduce no executable lifecycle or proof authority. Existing maps-to, flow, pipe and arithmetic spellings keep their identities.
 
+### G05-guarded. Standalone readable guarded decomposition
+
+C04.18.5 defines this separate version1 document. It is **not** an ordinary
+source program or a `.qv` contract clause; `.qgd` is used for the two explicit
+report-owned applications. No source-language word or lexer token is added.
+
+```ebnf
+guarded_document = "guarded_decomposition_v1", ";", guarded_clause, { guarded_clause } ;
+guarded_clause = "(", environment_id, "∧", prerequisite_id,
+                   { "∧", prerequisite_id }, ")", "|->", operation_id, ";"
+               | condition_id, "!->", operation_id, ";"
+               | operation_id, "||->", case_id, "/", case_id, { "/", case_id }, ";"
+               | case_id, "->|", postcondition_id, ";" ;
+```
+
+IDs match `[a-z][a-z0-9_]*`. Only surrounding whitespace is insignificant;
+operator spellings are atomic, and the conjunction symbol is exactly `∧`.
+Every symbol is resolved against an explicitly supplied typed proposition map
+bound to a fully replayed property-specific source graph. No nesting, precedence,
+flow reference, lifecycle operation, implicit case or trailing token is supplied.
+All operations/cases must be completely paired with guards, alternatives and
+separate terminals. Exact role/reference/size limits, admission-direction
+lowering, positive-refutation and Context checks are C04.18.5. Existing G05-flow,
+G05-lifecycle and maps-to meanings are unchanged.
+
 ## G05a. Contract inclusion and inheritance
 
 Card CONTRACT-INHERIT. A directive layer read by
