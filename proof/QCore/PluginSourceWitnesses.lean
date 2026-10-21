@@ -54,6 +54,9 @@ def complete (traces : Case → List String) : Prop :=
 def DuplicateNoLoaderCalls (trace : List String) : Prop :=
   trace = ["begin", "duplicate_test", "return:0", "end"]
 
+def DuplicateCompleted (trace : List String) : Prop :=
+  "return:0" ∈ trace ∧ trace.getLast? = some "end"
+
 structure Context where
   source artifact build property bounds environment : String
   deriving DecidableEq
@@ -67,6 +70,11 @@ def admitted (presented actual : Case → List String)
 theorem duplicate_finite_fact (traces : Case → List String)
     (checked : complete traces) : DuplicateNoLoaderCalls (traces .rk_duplicate) := by
   exact checked .rk_duplicate
+
+theorem duplicate_completion_fact (traces : Case → List String)
+    (checked : complete traces) : DuplicateCompleted (traces .rk_duplicate) := by
+  rw [checked .rk_duplicate]
+  simp [DuplicateCompleted, expected]
 
 theorem duplicate_has_no_open (traces : Case → List String)
     (checked : complete traces) : "open" ∉ traces .rk_duplicate := by

@@ -9,9 +9,11 @@ use serde_json::Value;
 use std::{collections::BTreeMap, fs, path::Path, process::Command};
 
 const INVENTORY: &[u8] = include_bytes!("../../../docs/reports/plugin-premise-source-witnesses/input-inventory.json");
+const CHECKER: &[u8] = include_bytes!("plugin_source_witnesses.rs");
 const PRODUCER: &str = include_str!("plugin_source_witnesses/observe.py");
 const MODEL: &str = include_str!("plugin_source_witnesses/trace_model.json");
 pub const BOUNDED_ATOM: &str = "rk_duplicate_fixture_no_loader_calls_v1";
+pub const COMPLETION_ATOM: &str = "rk_duplicate_fixture_complete_v1";
 pub const PROFILE: &str = "plugin-loader-fixture-v1";
 const BOUNDS: &str = "20-cases/single-thread/explicit-stubs";
 const ASSUMPTIONS: &str = "local-clang-posix-loader/real-pinned-headers/explicit-allocation-list-log-stubs/no-deployed-plugin-claim";
@@ -39,6 +41,7 @@ pub struct Observation {
     pub artifacts: BTreeMap<String, String>,
     pub symbols: BTreeMap<String, String>,
     pub layouts: BTreeMap<String, Vec<String>>,
+    pub header_inputs: BTreeMap<String, String>,
     pub traces: BTreeMap<String, Vec<String>>,
 }
 #[derive(Clone, Debug, PartialEq, Eq, Serialize)]
@@ -146,6 +149,10 @@ fn validate(observation: &Observation) -> Result<BTreeMap<String,SourceFacts>,St
         if !observation.symbols.get(name).is_some_and(|s|s.lines().any(|line|line.split_whitespace().last()==Some(required) && !line.contains(" UND "))) {return Err("actual ELF symbol missing".into())}
     }
     if observation.layouts.len()!=20 || observation.layouts.iter().any(|(case,layout)| if case.ends_with("open_fail") { !layout.is_empty() } else {layout.len()!=1 || !layout[0].starts_with("LAYOUT:")}) {return Err("native cross-artifact layout check incomplete".into())}
+    if observation.header_inputs.is_empty(){return Err("missing real dependency bytes".into())}
+    for (path,hash) in &observation.header_inputs {
+        if sha256_hex(&fs::read(path).map_err(|e|e.to_string())?)!=*hash{return Err("actual dependency bytes changed".into())}
+    }
     source_facts(observation)
 }
 /// Produces an UNTRUSTED observation using fixed reviewed code and pinned input
@@ -161,7 +168,7 @@ pub fn observe(directory:&Path)->Result<Observation,String> {
 /// Required exact context derived from actual independently replayed identities.
 /// Its public construction grants nothing; `replay` checks every field anew.
 pub fn context(observation:&Observation)->Result<Context,String> {
-    Ok(Context{artifact:digest(&observation.artifacts)?,property:BOUNDED_ATOM.into(),semantic_profile:PROFILE.into(),scope: "complete-selected-20-case-domain-v1".into(),bounds:BOUNDS.into(),assumptions:ASSUMPTIONS.into(),source_identity:sha256_hex(INVENTORY),build_identity:digest(&(observation.compiler.clone(),observation.target.clone(),sha256_hex(PRODUCER.as_bytes())))?,evidence_version:"plugin-source-witness-v1".into()})
+    Ok(Context{artifact:digest(&observation.artifacts)?,property:BOUNDED_ATOM.into(),semantic_profile:PROFILE.into(),scope: "complete-selected-20-case-domain-v1".into(),bounds:BOUNDS.into(),assumptions:ASSUMPTIONS.into(),source_identity:sha256_hex(INVENTORY),build_identity:digest(&(observation.compiler.clone(),observation.target.clone(),sha256_hex(PRODUCER.as_bytes()),sha256_hex(CHECKER),sha256_hex(MODEL.as_bytes()),digest(&observation.header_inputs)?))?,evidence_version:format!("plugin-source-witness-v1/{}",sha256_hex(CHECKER))})
 }
 /// Every admission independently repeats the native source observation. No raw
 /// JSON/status/receipt can bypass that replay. IDs and AST allocator addresses
@@ -172,8 +179,8 @@ pub fn replay(presented:&Observation,expected_context:&Context,fresh_directory:&
     if context(presented)?!=*expected_context {return Err("foreign declared context".into())}
     let actual=observe(fresh_directory)?;
     let source_facts=validate(&actual)?;
-    if presented_facts!=source_facts || presented.projections!=actual.projections || presented.artifacts!=actual.artifacts || presented.symbols!=actual.symbols || presented.layouts!=actual.layouts || presented.compiler!=actual.compiler || presented.target!=actual.target || presented.traces!=actual.traces || context(&actual)?!=*expected_context || context(presented)?!=*expected_context {return Err("independent source/native/context replay mismatch".into())}
-    Ok(CheckedWitness{context:expected_context.clone(),observation_sha256:digest(&(actual.inventory_sha256,&actual.artifacts,&actual.traces,&source_facts))?,model_sha256:sha256_hex(MODEL.as_bytes()),producer_sha256:sha256_hex(PRODUCER.as_bytes()),source_facts,cases:actual.traces,remaining_obligations:vec!["deployed-artifact-inventory-and-loader-traces".into(),"foreign-callback-frame-custody-and-whole-world-closure".into(),"transitive-lifetime-and-unload-order".into(),"faithful-clang-extraction-and-maintained-rust-lean-correspondence".into()]})
+    if presented_facts!=source_facts || presented.projections!=actual.projections || presented.artifacts!=actual.artifacts || presented.symbols!=actual.symbols || presented.layouts!=actual.layouts || presented.header_inputs!=actual.header_inputs || presented.compiler!=actual.compiler || presented.target!=actual.target || presented.traces!=actual.traces || context(&actual)?!=*expected_context || context(presented)?!=*expected_context {return Err("independent source/native/context replay mismatch".into())}
+    Ok(CheckedWitness{context:expected_context.clone(),observation_sha256:digest(&(actual.inventory_sha256,&actual.artifacts,&actual.layouts,&actual.header_inputs,&actual.traces,&source_facts))?,model_sha256:sha256_hex(MODEL.as_bytes()),producer_sha256:sha256_hex(PRODUCER.as_bytes()),source_facts,cases:actual.traces,remaining_obligations:vec!["deployed-artifact-inventory-and-loader-traces".into(),"foreign-callback-frame-custody-and-whole-world-closure".into(),"transitive-lifetime-and-unload-order".into(),"faithful-clang-extraction-and-maintained-rust-lean-correspondence".into()]})
 }
 impl CheckedWitness {
     pub fn context(&self)->&Context{&self.context}
@@ -203,8 +210,10 @@ extern fn plugin_fixture_duplicate() -> unit
 contract {{
  requires resource_contract_v1;
  requires resource_hypothesis({BOUNDED_ATOM}, "The selected rk_duplicate fixture invocation under plugin-loader-fixture-v1 has exactly begin duplicate_test return:0 end; no loader operation occurs inside this invocation");
+ requires resource_hypothesis({COMPLETION_ATOM}, "The selected rk_duplicate fixture invocation under plugin-loader-fixture-v1 returns zero and reaches its matching end marker");
+ requires resource_premise_all(fixture_invocation_observations, {COMPLETION_ATOM}, {BOUNDED_ATOM});
  requires resource_premise_flow_v1(native_duplicate, {BOUNDED_ATOM});
- requires resource_premise_flow_v1(finished, (flow(native_duplicate) ->. {BOUNDED_ATOM}));
+ requires resource_premise_flow_v1(finished, (flow(native_duplicate) ->| {COMPLETION_ATOM}));
  ensures normal resource_return_none();
 }};
 "#);
@@ -218,19 +227,21 @@ contract {{
     let environment=EnvironmentDefinition{id:PROFILE.into(),variables:BTreeMap::from([
         ("source_inventory_sha256".into(),sha256_hex(INVENTORY)),
         ("native_producer_sha256".into(),sha256_hex(PRODUCER.as_bytes())),
+        ("checker_sha256".into(),sha256_hex(CHECKER)),
         ("trace_model_sha256".into(),sha256_hex(MODEL.as_bytes())),
         ("scope".into(),BOUNDS.into()),
         ("assumptions".into(),ASSUMPTIONS.into()),
     ])};
     let binding=FormalBinding{atom_sha256:digest(&graph.atoms[BOUNDED_ATOM])?,proposition:"QCore.PluginSourceWitnesses.DuplicateNoLoaderCalls".into(),model:ArtifactReference{path:model_path.into(),sha256:sha256_hex(&model)},audit:ArtifactReference{path:audit_path.into(),sha256:sha256_hex(&audit)},environment:environment.id.clone(),quantifiers:vec!["trace : List String; selected = rk_duplicate; exact held Context and explicit stub environment".into()],prerequisites:vec![environment.id.clone()],conclusion:"DuplicateNoLoaderCalls trace for this selected invocation only; old plugin atoms/envelopes remain independent".into()};
-    let models=BTreeMap::from([("plugin_fixture_duplicate".into(),qcore_schemas::premise_flow::Model{environment,atoms:BTreeMap::from([(BOUNDED_ATOM.into(),binding)])})]);
+    let mut completion=binding.clone();completion.atom_sha256=digest(&graph.atoms[COMPLETION_ATOM])?;completion.proposition="QCore.PluginSourceWitnesses.DuplicateCompleted".into();completion.conclusion="DuplicateCompleted trace: zero return and matching end of the same selected invocation".into();
+    let models=BTreeMap::from([("plugin_fixture_duplicate".into(),qcore_schemas::premise_flow::Model{environment,atoms:BTreeMap::from([(BOUNDED_ATOM.into(),binding),(COMPLETION_ATOM.into(),completion)])})]);
     let artifacts=BTreeMap::from([(model_path.into(),model),(audit_path.into(),audit)]);
     Ok((sources,graphs,models,artifacts))
 }
 impl CheckedWitness {
     /// Consume an admitted witness through the source-replayed operator API.
-    /// The repeated leaf in the root terminal is idempotent; it is not counted
-    /// as a second independent proof. No caller-provided Supported is accepted.
+    /// The distinct completion leaf and no-loader leaf come from the same
+    /// complete trace; no caller-provided Supported is accepted.
     pub fn evaluate_duplicate_flow(&self)->Result<BoundedFlowResult,String> {
         use qcore_schemas::hypothesis::{Disposition,Evidence,Instance,Warrant};
         use qcore_contract::premise_flow::{self,FlowInstance};
@@ -239,9 +250,9 @@ impl CheckedWitness {
         let docs=premise_flow::compile(&sources,&graphs,&models,&artifacts)?;
         let doc=docs.get("plugin_fixture_duplicate").ok_or("fixture flow missing")?;
         let graph=graphs["plugin_fixture_duplicate"].clone();
-        let packet=FlowInstance{document:doc.clone(),document_sha256:premise_flow::document_digest(doc)?,hypotheses:Instance{graph_sha256:qcore_contract::hypothesis::digest(&graph)?,context:self.context.clone(),evidence:vec![Evidence{atom:BOUNDED_ATOM.into(),atom_sha256:digest(&graph.atoms[BOUNDED_ATOM])?,context:self.context.clone(),disposition:Disposition::Supported,warrant:Warrant::Observed,reference:self.observation_sha256.clone()}],graph}};
+        let packet=FlowInstance{document:doc.clone(),document_sha256:premise_flow::document_digest(doc)?,hypotheses:Instance{graph_sha256:qcore_contract::hypothesis::digest(&graph)?,context:self.context.clone(),evidence:[BOUNDED_ATOM,COMPLETION_ATOM].into_iter().map(|id|Ok(Evidence{atom:id.into(),atom_sha256:digest(&graph.atoms[id])?,context:self.context.clone(),disposition:Disposition::Supported,warrant:Warrant::Observed,reference:self.observation_sha256.clone()})).collect::<Result<_,String>>()?,graph}};
         let result=premise_flow::evaluate_proposed(&packet,premise_flow::Expected{sources:&sources,graphs:&graphs,models:&models,artifacts:&artifacts,document:doc,context:&self.context},"finished")?;
-        if result.disposition!=Disposition::Supported || !result.terminated || result.atom_dependencies!=vec![BOUNDED_ATOM.to_owned()] {return Err("unexpected bounded flow result".into())}
+        if result.disposition!=Disposition::Supported || !result.terminated || result.atom_dependencies!=vec![COMPLETION_ATOM.to_owned(),BOUNDED_ATOM.to_owned()] {return Err("unexpected bounded flow result".into())}
         Ok(BoundedFlowResult{checker:"quirin-source-analysis/plugin-source-witness-v1".into(),bounded_atom:BOUNDED_ATOM.into(),source_observation_sha256:self.observation_sha256.clone(),result})
     }
 }
@@ -262,8 +273,8 @@ mod tests {
         let (sources,graphs,models,artifacts)=flow_inputs().unwrap();
         let docs=qcore_contract::premise_flow::compile(&sources,&graphs,&models,&artifacts).unwrap();
         assert_eq!(docs.len(),1);
-        assert_eq!(graphs["plugin_fixture_duplicate"].atoms.len(),1);
-        assert!(graphs["plugin_fixture_duplicate"].premises.is_empty());
+        assert_eq!(graphs["plugin_fixture_duplicate"].atoms.len(),2);
+        assert_eq!(graphs["plugin_fixture_duplicate"].premises.len(),1);
         let mut wrong=artifacts.clone();wrong.values_mut().next().unwrap().push(b' ');
         assert!(qcore_contract::premise_flow::compile(&sources,&graphs,&models,&wrong).is_err());
         let mut missing=models.clone();missing.values_mut().next().unwrap().atoms.clear();

@@ -8,3 +8,4 @@ import QCore.PluginSourceWitnesses
 #print axioms QCore.PluginSourceWitnesses.creator_return_is_not_registration_evidence
 #print axioms QCore.PluginSourceWitnesses.c_context_failure_does_not_erase_prior_link
 #print axioms QCore.PluginSourceWitnesses.old_truth_remains_independent
+#print axioms QCore.PluginSourceWitnesses.duplicate_completion_fact

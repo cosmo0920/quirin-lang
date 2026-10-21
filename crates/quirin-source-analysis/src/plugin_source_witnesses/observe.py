@@ -34,7 +34,7 @@ def extraction(text,name):
         c=mask[end];depth+=(c=='{')-(c=='}');end+=1
     return start,end,text[start:end]
 
-sources=[]; projections=[]; asts={}; allflags=[]
+sources=[]; projections=[]; asts={}; allflags=[]; header_inputs={}
 function_sets=[['rd_kafka_plugin_cmp','rd_kafka_plugin_new','rd_kafka_plugin_destroy'],['is_input','is_filter','is_processor','is_output','get_handle','load_symbol','path_to_plugin_name','destroy_plugin','flb_plugin_load'],['flb_plugin_proxy_symbol','flb_plugin_proxy_register','flb_plugin_proxy_create','flb_plugin_proxy_destroy'],['proxy_go_output_register']]
 for index,(sf,ce,names) in enumerate(zip(inventory['source_files'],inventory['source_compile_entries'],function_sets)):
     raw=pathlib.Path(sf['actual_path']).read_bytes()
@@ -42,6 +42,10 @@ for index,(sf,ce,names) in enumerate(zip(inventory['source_files'],inventory['so
     text=raw.decode();sources.append(text); entry=ce['selected_entry']; f=flags(entry);allflags.append(f)
     # Original actual selected translation unit: full dependencies and PP bytes.
     dep=run(['/usr/bin/clang',*f,'-M',entry['file']],entry['directory']);(out/f'{index}.d').write_bytes(dep)
+    dependencies=shlex.split(dep.decode().replace('\\\n',' ').split(':',1)[1])
+    for spelling in dependencies:
+        path=pathlib.Path(spelling); path=path if path.is_absolute() else pathlib.Path(entry['directory'])/path
+        header_inputs[str(path)]=sha(path.read_bytes())
     pp=run(['/usr/bin/clang',*f,'-E',entry['file']],entry['directory']);(out/f'{index}.i').write_bytes(pp)
     for name in names:
         start,end,body=extraction(text,name)
@@ -192,5 +196,5 @@ for case in inventory['selected_case_domain']:
     traces[case]=[x[len(case)+1:] for x in lines]
 artifacts={p.name:sha(p.read_bytes()) for p in sorted(out.iterdir()) if p.suffix in ('.so','.c','.i','.d') or p.name.endswith('_projection')}
 symbols={p.name:run(['/usr/bin/readelf','--dyn-syms','--wide',str(p)]).decode() for p in sorted(out.glob('*.so'))}
-result={'layouts':layouts,'symbols':symbols,'version':1,'inventory_sha256':sha(pathlib.Path(sys.argv[1]).read_bytes()),'compiler':run(['/usr/bin/clang','--version']).decode(),'target':run(['/usr/bin/clang','-dumpmachine']).decode().strip(),'projections':projections,'asts':asts,'artifacts':artifacts,'traces':traces}
+result={'header_inputs':header_inputs,'layouts':layouts,'symbols':symbols,'version':1,'inventory_sha256':sha(pathlib.Path(sys.argv[1]).read_bytes()),'compiler':run(['/usr/bin/clang','--version']).decode(),'target':run(['/usr/bin/clang','-dumpmachine']).decode().strip(),'projections':projections,'asts':asts,'artifacts':artifacts,'traces':traces}
 (out/'commands.json').write_text(json.dumps(commands,indent=2));(out/'observation.json').write_text(json.dumps(result,indent=2));print(json.dumps(result))
