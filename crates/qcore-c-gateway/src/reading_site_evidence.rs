@@ -14,6 +14,56 @@ pub const PREMISE: &str = "nested_call_admission";
 pub const BINDINGS: &str =
     include_str!("../../../docs/reports/libc-reading-site-evidence/bindings.json");
 
+/// Detached diagnostics only; the existing Observation/Receipt schemas stay v1.
+pub const ENVIRONMENTS_SCHEMA: &str = "libc-reading-site-effective-environments.v1";
+
+/// Exact canonical effective environment, bound to an existing observation hash.
+/// Parsing these bytes confers neither source correspondence nor premise truth.
+pub fn validate_environment(
+    canonical: &str,
+    expected_sha256: &str,
+) -> Result<ResourceContracts, String> {
+    if qcore_schemas::sha256_hex(canonical.as_bytes()) != expected_sha256 {
+        return Err("reading-site environment: digest mismatch".into());
+    }
+    let environment: ResourceContracts =
+        serde_json::from_str(canonical).map_err(|e| e.to_string())?;
+    if serde_json::to_string(&environment).map_err(|e| e.to_string())? != canonical {
+        return Err("reading-site environment: noncanonical or unknown fields".into());
+    }
+    Ok(environment)
+}
+
+/// Require exact bytes and the selected loaded contract before publication.
+pub fn validate_observation_environment(
+    observation: &Observation,
+    captured: &BTreeMap<String, String>,
+) -> Result<(), String> {
+    let canonical = captured
+        .get(&observation.environment_sha256)
+        .ok_or("reading-site environment: captured bytes missing")?;
+    let environment = validate_environment(canonical, &observation.environment_sha256)?;
+    if environment.contract(&observation.declaration) != Some(&observation.contract) {
+        return Err("reading-site environment: selected loaded contract differs".into());
+    }
+    Ok(())
+}
+
+/// Select only actual successfully bound receipts. Other captured fragments do
+/// not enlarge the published domain, and no verdict reads this returned map.
+pub fn publication_environments(
+    receipts: &[Receipt],
+    captured: &BTreeMap<String, String>,
+) -> Result<BTreeMap<String, String>, String> {
+    let mut selected = BTreeMap::new();
+    for receipt in receipts {
+        validate_observation_environment(&receipt.observation, captured)?;
+        let sha = &receipt.observation.environment_sha256;
+        selected.insert(sha.clone(), captured[sha].clone());
+    }
+    Ok(selected)
+}
+
 /// Independently held artifact bytes resolve the references. This verifies
 /// identity and a named source anchor, not Lean validity or source extraction.
 pub fn resolve_bindings(
@@ -197,31 +247,34 @@ pub(crate) fn capture(input: Capture<'_>) {
         Route::ScalarCondition => "QCore.ScalarAccessorCondition.admission_needs_every_fact",
         Route::NestedArgument => "QCore.VariadicNested.an_admitted_nested_slot_is_data",
     };
-    recording::reading_observed(Observation {
-        schema: SCHEMA.into(),
-        function: input.function.into(),
-        declaration: input.declaration.into(),
-        route: input.route,
-        primary_source_sha256,
-        token_stream_sha256,
-        environment_sha256: qcore_schemas::sha256_hex(
-            &serde_json::to_vec(input.environment).expect("environment serializes"),
-        ),
-        statement,
-        call,
-        outer_argument,
-        siblings,
-        contract: input.contract.clone(),
-        checked_predicates: input.checked_predicates,
-        prerequisite_ids: vec![
-            "C02.declaration-completeness".into(),
-            "C02-P.alias-and-actual-closure".into(),
-            "boundary28.source-extraction".into(),
-            "boundary28.rust-lean-correspondence".into(),
-            "loaded-contract-mode-truth".into(),
-        ],
-        model_ids: vec![model.into(), "QCore.LibcReadingPremises".into()],
-    });
+    let canonical_environment =
+        serde_json::to_string(input.environment).expect("environment serializes");
+    recording::reading_observed(
+        Observation {
+            schema: SCHEMA.into(),
+            function: input.function.into(),
+            declaration: input.declaration.into(),
+            route: input.route,
+            primary_source_sha256,
+            token_stream_sha256,
+            environment_sha256: qcore_schemas::sha256_hex(canonical_environment.as_bytes()),
+            statement,
+            call,
+            outer_argument,
+            siblings,
+            contract: input.contract.clone(),
+            checked_predicates: input.checked_predicates,
+            prerequisite_ids: vec![
+                "C02.declaration-completeness".into(),
+                "C02-P.alias-and-actual-closure".into(),
+                "boundary28.source-extraction".into(),
+                "boundary28.rust-lean-correspondence".into(),
+                "loaded-contract-mode-truth".into(),
+            ],
+            model_ids: vec![model.into(), "QCore.LibcReadingPremises".into()],
+        },
+        canonical_environment,
+    );
 }
 
 fn atoms(declaration: &str) -> Option<&'static [&'static str]> {
@@ -395,7 +448,9 @@ mod tests {
             )
             .unwrap();
         }
-        assert!(record.finish().reading_sites.is_empty());
+        let discarded = record.finish();
+        assert!(discarded.reading_sites.is_empty());
+        assert!(discarded.reading_environments.is_empty());
         let record = recording::Recording::start();
         {
             let mut accepted = recording::ReadingTransaction::start();
@@ -409,7 +464,12 @@ mod tests {
             .unwrap();
             accepted.commit();
         }
-        assert!(!record.finish().reading_sites.is_empty());
+        let accepted = record.finish();
+        assert!(!accepted.reading_sites.is_empty());
+        assert!(!accepted.reading_environments.is_empty());
+        for observation in &accepted.reading_sites {
+            validate_observation_environment(observation, &accepted.reading_environments).unwrap();
+        }
     }
     #[test]
     fn hypothetical_and_unrecorded_analysis_cannot_publish_success() {
@@ -433,8 +493,88 @@ mod tests {
                 CCompilerDialect::C11,
             );
         });
-        assert!(record.finish().reading_sites.is_empty());
+        let discarded = record.finish();
+        assert!(discarded.reading_sites.is_empty());
+        assert!(discarded.reading_environments.is_empty());
     }
+    #[test]
+    fn effective_environment_rollback_keeps_only_prior_observation_payloads() {
+        let first = contracts();
+        let mut second = first.clone();
+        second.insert_contract(
+            "unrelated_fixture_only",
+            ResourceFunctionContract::new(
+                Vec::<qcore_schemas::contract::ResourceParameterMode>::new(),
+                qcore_schemas::contract::ResourceReturnMode::None,
+            ),
+        );
+        let baseline_recording = recording::Recording::start();
+        crate::legacy_c::replay_reading_observations(
+            SOURCE,
+            "f",
+            &first,
+            None,
+            CCompilerDialect::C11,
+        )
+        .unwrap();
+        let baseline = baseline_recording.finish();
+        let recording = recording::Recording::start();
+        crate::legacy_c::replay_reading_observations(
+            SOURCE,
+            "f",
+            &first,
+            None,
+            CCompilerDialect::C11,
+        )
+        .unwrap();
+        let before = recording::reading_checkpoint().unwrap();
+        {
+            let _rollback = recording::ReadingTransaction::start();
+            crate::legacy_c::replay_reading_observations(
+                SOURCE,
+                "f",
+                &second,
+                None,
+                CCompilerDialect::C11,
+            )
+            .unwrap();
+        }
+        assert_eq!(recording::reading_checkpoint().unwrap(), before);
+        let kept = recording.finish();
+        assert_eq!(kept.reading_sites, baseline.reading_sites);
+        assert_eq!(kept.reading_environments, baseline.reading_environments);
+        assert!(kept.reading_sites.iter().all(|observation| {
+            kept.reading_environments
+                .contains_key(&observation.environment_sha256)
+        }));
+        for observation in &kept.reading_sites {
+            validate_observation_environment(observation, &kept.reading_environments).unwrap();
+        }
+    }
+
+    #[test]
+    fn inconsistent_detached_capture_is_omitted_before_any_receipt() {
+        let c = contracts();
+        let recording = recording::Recording::start();
+        crate::legacy_c::replay_reading_observations(SOURCE, "f", &c, None, CCompilerDialect::C11)
+            .unwrap();
+        let good = recording.finish();
+        let observation = good.reading_sites[0].clone();
+        let changed = format!(
+            "{} ",
+            good.reading_environments[&observation.environment_sha256]
+        );
+        let recording = recording::Recording::start();
+        recording::reading_observed(observation, changed);
+        let bad = recording.finish();
+        assert!(bad.reading_sites.is_empty());
+        assert!(bad.reading_environments.is_empty());
+        assert_eq!(
+            bad.reading_site_omissions["effective-environment-digest-mismatch"],
+            1
+        );
+    }
+
     #[test]
     fn same_line_duplicate_token_windows_are_omitted_not_guessed() {
         let tokens = crate::legacy_c::tokenize("f(); f();");

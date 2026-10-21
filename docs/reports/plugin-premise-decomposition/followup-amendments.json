@@ -1,0 +1,31 @@
+{
+  "apply_after_exact_merged_base_refresh": true,
+  "new_named_followups": [
+    {
+      "id": "PLUGIN-PREMISE-SOURCE-BINDING",
+      "title": "Bind deployed plugin prerequisite evidence to actual artifacts, loader traces and exact property contexts",
+      "why": "PLUGIN-PREMISE-DECOMPOSITION factors166 existing same-name occurrences and two outer-envelope catalogs into explicit conditional propositions, environments and prerequisite references. All source bindings remain Open: artifact and symbol/ABI resolution, build and loader environment, complete registration/candidate events, callback/context liveness, transitive custody and final unload need independently supplied source/trace evidence. In particular the pinned Go proxy creator ignores the register return; allocation establishes no successful registration. DISCHARGE: source-bound evidence for these exact prerequisites and all nine Context coordinates, explicit replay/negative controls and exact dependent-row propagation, without prose equivalence, implicit provider authority or automatic Unsafe.",
+      "source": "docs/reports/plugin-premise-decomposition/README.md",
+      "recorded_by": "PLUGIN-PREMISE-DECOMPOSITION"
+    },
+    {
+      "id": "PLUGIN-PREMISE-OUTER-TRUTH",
+      "title": "Establish both plugin outer-envelope propositions and their guarded callback bridge",
+      "why": "The unchanged rk_plugin_library and flb_external_plugin outer declarations retain independent names/prose/digests/selection. Their proposed12/14-atom catalogs are deliberately additional guarded obligations, not asserted equivalences. Model/audit/source/candidate hashes establish reference integrity only. DISCHARGE: independent source/model/prose/environment correspondence and complete guarded proofs or validated refutations for both actual loaded-code families and the selected callback bridge; preserve separate authority, registration, frame/cJSON, borrowing, lifetime and unload assumptions. A sample callback set or dlsym success supplies no whole-world closure. Existing static interceptor closure and loader reach residuals remain separately open.",
+      "source": "docs/reports/plugin-premise-decomposition/README.md",
+      "recorded_by": "PLUGIN-PREMISE-DECOMPOSITION"
+    },
+    {
+      "id": "PLUGIN-PREMISE-OPERATOR-DESIGN",
+      "title": "Design explicit premise operators and prerequisite composition without changing current source syntax",
+      "why": "The card implements only conjunction-only opaque atoms and neutral same-name attachments. Loader/build/runtime environments and dependencies are assigned formal propositions/catalogs; no new operator, typed predicate, evidence consumer or general dependency-DAG source syntax is supplied. DISCHARGE: a separately frozen language/API design with total-or-reject grammar, explicit quantifier/prerequisite/evidence semantics, exact context/refutation propagation, Rust/Lean parity and its own source/provider/all-route validation. This is design-only follow-on work and cannot license truth transport or automatic Unsafe.",
+      "source": "docs/reports/plugin-premise-decomposition/README.md",
+      "recorded_by": "PLUGIN-PREMISE-DECOMPOSITION"
+    }
+  ],
+  "retain_existing": [
+    "RK-INTERCEPTOR-STATIC-LIST-CLOSURE",
+    "RK-OUTER-LOADER-REACH-PRECISION"
+  ],
+  "completed_followups": []
+}

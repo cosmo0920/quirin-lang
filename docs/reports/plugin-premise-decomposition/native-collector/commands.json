@@ -1,0 +1,206 @@
+[
+  {
+    "label": "freeze-tip",
+    "command": [
+      "/usr/bin/python3",
+      "/home/cosmo/.codex/worktrees/w48-bottom-up-batch4/qcore-c/docs/reports/plugin-premise-decomposition/scripts/freeze_inputs.py",
+      "/home/cosmo/.codex/worktrees/w48-bottom-up-batch4/qcore-c/private/plugin-premise-decomposition/tip-freeze",
+      "--source",
+      "c1625baf713e4d8498c39282238675749237005d",
+      "--binary",
+      "/home/cosmo/.codex/worktrees/w48-bottom-up-batch4/qcore-c/private/plugin-premise-decomposition/final-gate-4/quirin-audit",
+      "--binary-sha256",
+      "ddb51170371d1dd46d221ad96f7ff17421de1704b4b8ac81ee51c7a98cf97327",
+      "--binary-receipt",
+      "/home/cosmo/.codex/worktrees/w48-bottom-up-batch4/qcore-c/private/plugin-premise-decomposition/final-gate-4/binary-receipt.json"
+    ],
+    "cwd": "/home/cosmo/.codex/worktrees/w48-bottom-up-batch4/qcore-c",
+    "start": "2026-10-21T05:10:23.364313+00:00",
+    "end": "2026-10-21T05:10:23.717026+00:00",
+    "exit": 0,
+    "log": "/home/cosmo/.codex/worktrees/w48-bottom-up-batch4/qcore-c/private/plugin-premise-decomposition/collector-2/freeze-tip.log",
+    "stdout": null
+  },
+  {
+    "label": "binding-helper-build",
+    "command": [
+      "cargo",
+      "build",
+      "-p",
+      "qcore-contract",
+      "--example",
+      "plugin_binding_catalog",
+      "--example",
+      "plugin_outer_catalog_replay",
+      "--jobs",
+      "1"
+    ],
+    "cwd": "/home/cosmo/.codex/worktrees/w48-bottom-up-batch4/qcore-c",
+    "start": "2026-10-21T05:10:23.717271+00:00",
+    "end": "2026-10-21T05:10:24.335129+00:00",
+    "exit": 0,
+    "log": "/home/cosmo/.codex/worktrees/w48-bottom-up-batch4/qcore-c/private/plugin-premise-decomposition/collector-2/binding-helper-build.log",
+    "stdout": null
+  },
+  {
+    "label": "binding-controls",
+    "command": [
+      "/usr/bin/python3",
+      "/home/cosmo/.codex/worktrees/w48-bottom-up-batch4/qcore-c/docs/reports/plugin-premise-decomposition/scripts/binding_controls.py",
+      "/home/cosmo/.codex/worktrees/w48-bottom-up-batch4/qcore-c/target/debug/examples/plugin_binding_catalog",
+      "/home/cosmo/.codex/worktrees/w48-bottom-up-batch4/qcore-c/private/plugin-premise-decomposition/final-binding-inputs",
+      "/home/cosmo/.codex/worktrees/w48-bottom-up-batch4/qcore-c/private/plugin-premise-decomposition/collector-2/binding-controls"
+    ],
+    "cwd": "/home/cosmo/.codex/worktrees/w48-bottom-up-batch4/qcore-c",
+    "start": "2026-10-21T05:10:24.335392+00:00",
+    "end": "2026-10-21T05:10:30.716871+00:00",
+    "exit": 0,
+    "log": "/home/cosmo/.codex/worktrees/w48-bottom-up-batch4/qcore-c/private/plugin-premise-decomposition/collector-2/binding-controls.log",
+    "stdout": null
+  },
+  {
+    "label": "outer-controls",
+    "command": [
+      "/usr/bin/python3",
+      "/home/cosmo/.codex/worktrees/w48-bottom-up-batch4/qcore-c/docs/reports/plugin-premise-decomposition/scripts/outer_catalog_controls.py",
+      "/home/cosmo/.codex/worktrees/w48-bottom-up-batch4/qcore-c/private/plugin-premise-decomposition/collector-2/outer-controls",
+      "--binary",
+      "/home/cosmo/.codex/worktrees/w48-bottom-up-batch4/qcore-c/target/debug/examples/plugin_outer_catalog_replay",
+      "--model",
+      "/home/cosmo/.codex/worktrees/w48-bottom-up-batch4/qcore-c/proof/QCore/PluginPremiseDecomposition.lean",
+      "--audit",
+      "/home/cosmo/.codex/worktrees/w48-bottom-up-batch4/qcore-c/proof/AuditPluginPremiseDecomposition.lean"
+    ],
+    "cwd": "/home/cosmo/.codex/worktrees/w48-bottom-up-batch4/qcore-c",
+    "start": "2026-10-21T05:10:30.717127+00:00",
+    "end": "2026-10-21T05:10:31.043067+00:00",
+    "exit": 0,
+    "log": "/home/cosmo/.codex/worktrees/w48-bottom-up-batch4/qcore-c/private/plugin-premise-decomposition/collector-2/outer-controls.log",
+    "stdout": null
+  },
+  {
+    "label": "environment-helper-build",
+    "command": [
+      "/usr/bin/python3",
+      "/home/cosmo/.codex/worktrees/w48-bottom-up-batch4/qcore-c/docs/reports/plugin-premise-decomposition/scripts/build_replay.py",
+      "/home/cosmo/.codex/worktrees/w48-bottom-up-batch4/qcore-c/docs/reports/plugin-premise-decomposition/scripts/attribute_reading_environments.rs",
+      "/home/cosmo/.codex/worktrees/w48-bottom-up-batch4/qcore-c/private/plugin-premise-decomposition/collector-2/attribute-reading-environments",
+      "--binary",
+      "/home/cosmo/.codex/worktrees/w48-bottom-up-batch4/qcore-c/target/release/quirin-audit",
+      "--extern",
+      "qcore_c_gateway",
+      "qcore_contract",
+      "qcore_schemas",
+      "serde_json"
+    ],
+    "cwd": "/home/cosmo/.codex/worktrees/w48-bottom-up-batch4/qcore-c",
+    "start": "2026-10-21T05:10:31.080008+00:00",
+    "end": "2026-10-21T05:10:31.956937+00:00",
+    "exit": 0,
+    "log": "/home/cosmo/.codex/worktrees/w48-bottom-up-batch4/qcore-c/private/plugin-premise-decomposition/collector-2/environment-helper-build.log",
+    "stdout": null
+  },
+  {
+    "label": "environment-system-base",
+    "command": [
+      "/home/cosmo/.codex/worktrees/w48-bottom-up-batch4/qcore-c/target/debug/examples/premise_environment",
+      "/home/cosmo/.codex/worktrees/w48-bottom-up-batch4/qcore-c/private/plugin-premise-decomposition/base-freeze/inputs/contract/profiles/fluent-bit/../../../cycle19-resource-contracts.json",
+      "/home/cosmo/Documents/GitHub/qcore-c/private/w45-fb/w46-external-callee-contracts/attempt-1/fluent-bit-clang-source",
+      "/home/cosmo/.codex/worktrees/w48-bottom-up-batch4/qcore-c/private/plugin-premise-decomposition/route-environments/system/base-environment.json"
+    ],
+    "cwd": "/home/cosmo/.codex/worktrees/w48-bottom-up-batch4/qcore-c",
+    "start": "2026-10-21T05:10:31.957352+00:00",
+    "end": "2026-10-21T05:10:44.511691+00:00",
+    "exit": 0,
+    "log": "/home/cosmo/.codex/worktrees/w48-bottom-up-batch4/qcore-c/private/plugin-premise-decomposition/collector-2/environment-system-base.log",
+    "stdout": "/home/cosmo/.codex/worktrees/w48-bottom-up-batch4/qcore-c/private/plugin-premise-decomposition/route-environments/system/base-environment-hashes.json"
+  },
+  {
+    "label": "environment-system-tip",
+    "command": [
+      "/home/cosmo/.codex/worktrees/w48-bottom-up-batch4/qcore-c/target/debug/examples/premise_environment",
+      "/home/cosmo/.codex/worktrees/w48-bottom-up-batch4/qcore-c/private/plugin-premise-decomposition/tip-freeze/inputs/contract/profiles/fluent-bit/../../../cycle19-resource-contracts.json",
+      "/home/cosmo/Documents/GitHub/qcore-c/private/w45-fb/w46-external-callee-contracts/attempt-1/fluent-bit-clang-source",
+      "/home/cosmo/.codex/worktrees/w48-bottom-up-batch4/qcore-c/private/plugin-premise-decomposition/route-environments/system/tip-environment.json"
+    ],
+    "cwd": "/home/cosmo/.codex/worktrees/w48-bottom-up-batch4/qcore-c",
+    "start": "2026-10-21T05:10:44.512002+00:00",
+    "end": "2026-10-21T05:10:57.328051+00:00",
+    "exit": 0,
+    "log": "/home/cosmo/.codex/worktrees/w48-bottom-up-batch4/qcore-c/private/plugin-premise-decomposition/collector-2/environment-system-tip.log",
+    "stdout": "/home/cosmo/.codex/worktrees/w48-bottom-up-batch4/qcore-c/private/plugin-premise-decomposition/route-environments/system/tip-environment-hashes.json"
+  },
+  {
+    "label": "environment-slice-base",
+    "command": [
+      "/home/cosmo/.codex/worktrees/w48-bottom-up-batch4/qcore-c/target/debug/examples/premise_environment",
+      "/home/cosmo/.codex/worktrees/w48-bottom-up-batch4/qcore-c/private/plugin-premise-decomposition/base-freeze/inputs/contract/profiles/fluent-bit/../../../cycle19-resource-contracts.json",
+      "/home/cosmo/Documents/GitHub/qcore-c/private/w47-tail/attempt-1/prep/fluent-bit-clang-source",
+      "/home/cosmo/.codex/worktrees/w48-bottom-up-batch4/qcore-c/private/plugin-premise-decomposition/route-environments/slice/base-environment.json"
+    ],
+    "cwd": "/home/cosmo/.codex/worktrees/w48-bottom-up-batch4/qcore-c",
+    "start": "2026-10-21T05:10:57.328410+00:00",
+    "end": "2026-10-21T05:11:09.644515+00:00",
+    "exit": 0,
+    "log": "/home/cosmo/.codex/worktrees/w48-bottom-up-batch4/qcore-c/private/plugin-premise-decomposition/collector-2/environment-slice-base.log",
+    "stdout": "/home/cosmo/.codex/worktrees/w48-bottom-up-batch4/qcore-c/private/plugin-premise-decomposition/route-environments/slice/base-environment-hashes.json"
+  },
+  {
+    "label": "environment-slice-tip",
+    "command": [
+      "/home/cosmo/.codex/worktrees/w48-bottom-up-batch4/qcore-c/target/debug/examples/premise_environment",
+      "/home/cosmo/.codex/worktrees/w48-bottom-up-batch4/qcore-c/private/plugin-premise-decomposition/tip-freeze/inputs/contract/profiles/fluent-bit/../../../cycle19-resource-contracts.json",
+      "/home/cosmo/Documents/GitHub/qcore-c/private/w47-tail/attempt-1/prep/fluent-bit-clang-source",
+      "/home/cosmo/.codex/worktrees/w48-bottom-up-batch4/qcore-c/private/plugin-premise-decomposition/route-environments/slice/tip-environment.json"
+    ],
+    "cwd": "/home/cosmo/.codex/worktrees/w48-bottom-up-batch4/qcore-c",
+    "start": "2026-10-21T05:11:09.645169+00:00",
+    "end": "2026-10-21T05:11:23.072669+00:00",
+    "exit": 0,
+    "log": "/home/cosmo/.codex/worktrees/w48-bottom-up-batch4/qcore-c/private/plugin-premise-decomposition/collector-2/environment-slice-tip.log",
+    "stdout": "/home/cosmo/.codex/worktrees/w48-bottom-up-batch4/qcore-c/private/plugin-premise-decomposition/route-environments/slice/tip-environment-hashes.json"
+  },
+  {
+    "label": "environment-corpus-base",
+    "command": [
+      "/home/cosmo/.codex/worktrees/w48-bottom-up-batch4/qcore-c/target/debug/examples/premise_environment",
+      "/home/cosmo/.codex/worktrees/w48-bottom-up-batch4/qcore-c/private/plugin-premise-decomposition/base-freeze/inputs/contract/profiles/fluent-bit/../../../cycle19-resource-contracts.json",
+      "/home/cosmo/Documents/GitHub/qcore-c/build/cycle19/c-gateway-wave-pin/fluent-bit-clang-source",
+      "/home/cosmo/.codex/worktrees/w48-bottom-up-batch4/qcore-c/private/plugin-premise-decomposition/route-environments/corpus/base-environment.json"
+    ],
+    "cwd": "/home/cosmo/.codex/worktrees/w48-bottom-up-batch4/qcore-c",
+    "start": "2026-10-21T05:11:23.073119+00:00",
+    "end": "2026-10-21T05:11:35.510072+00:00",
+    "exit": 0,
+    "log": "/home/cosmo/.codex/worktrees/w48-bottom-up-batch4/qcore-c/private/plugin-premise-decomposition/collector-2/environment-corpus-base.log",
+    "stdout": "/home/cosmo/.codex/worktrees/w48-bottom-up-batch4/qcore-c/private/plugin-premise-decomposition/route-environments/corpus/base-environment-hashes.json"
+  },
+  {
+    "label": "environment-corpus-tip",
+    "command": [
+      "/home/cosmo/.codex/worktrees/w48-bottom-up-batch4/qcore-c/target/debug/examples/premise_environment",
+      "/home/cosmo/.codex/worktrees/w48-bottom-up-batch4/qcore-c/private/plugin-premise-decomposition/tip-freeze/inputs/contract/profiles/fluent-bit/../../../cycle19-resource-contracts.json",
+      "/home/cosmo/Documents/GitHub/qcore-c/build/cycle19/c-gateway-wave-pin/fluent-bit-clang-source",
+      "/home/cosmo/.codex/worktrees/w48-bottom-up-batch4/qcore-c/private/plugin-premise-decomposition/route-environments/corpus/tip-environment.json"
+    ],
+    "cwd": "/home/cosmo/.codex/worktrees/w48-bottom-up-batch4/qcore-c",
+    "start": "2026-10-21T05:11:35.510379+00:00",
+    "end": "2026-10-21T05:11:48.225019+00:00",
+    "exit": 0,
+    "log": "/home/cosmo/.codex/worktrees/w48-bottom-up-batch4/qcore-c/private/plugin-premise-decomposition/collector-2/environment-corpus-tip.log",
+    "stdout": "/home/cosmo/.codex/worktrees/w48-bottom-up-batch4/qcore-c/private/plugin-premise-decomposition/route-environments/corpus/tip-environment-hashes.json"
+  },
+  {
+    "label": "six-fresh-routes",
+    "command": [
+      "/usr/bin/python3",
+      "/home/cosmo/.codex/worktrees/w48-bottom-up-batch4/qcore-c/private/plugin-premise-decomposition/measure_all.py"
+    ],
+    "cwd": "/home/cosmo/.codex/worktrees/w48-bottom-up-batch4/qcore-c",
+    "start": "2026-10-21T05:11:48.225578+00:00",
+    "end": "2026-10-21T06:42:00.892516+00:00",
+    "exit": 0,
+    "log": "/home/cosmo/.codex/worktrees/w48-bottom-up-batch4/qcore-c/private/plugin-premise-decomposition/collector-2/six-fresh-routes.log",
+    "stdout": null
+  }
+]

@@ -1269,6 +1269,14 @@ fn load_function(path: &str, decl: &SourceDeclaration) -> Result<BoundsFunctionC
             selectors += 1;
             continue;
         }
+        // Graph-v2 attachments are reference metadata, never bounds/null facts.
+        // Full declaration validation below checks the original premise target.
+        if crate::hypothesis::is_clause(&clause.expression_source) {
+            if !requires || clause.expression_source.starts_with("resource_premise_all") {
+                return Err("bounds hypothesis: only requires atoms and same-name decompositions are admitted".into());
+            }
+            continue;
+        }
         if let Some((BOUNDS_REVIEW_MARKER, groups)) = call(&tokens) {
             let wraps = groups
                 .first()
@@ -1400,6 +1408,21 @@ fn load_function(path: &str, decl: &SourceDeclaration) -> Result<BoundsFunctionC
                 .into(),
         );
     }
+    let legacy = clauses
+        .iter()
+        .filter_map(|entry| match &entry.clause {
+            BoundsClause::Premise { name, statement } => {
+                Some(crate::contract_loader::DeclaredPremise {
+                    name: name.clone(),
+                    statement: statement.clone(),
+                    origin: crate::contract_loader::PremiseOrigin::Declared,
+                })
+            }
+            _ => None,
+        })
+        .collect::<Vec<_>>();
+    let graph = crate::hypothesis::declaration(decl, &legacy)?;
+    crate::bounds_hypotheses::require_neutral_erasure(&graph, &legacy)?;
     frame_conditions(&parameters, &clauses)?;
     let canonical_sha256 =
         crate::deref_parts::canonical_sha256(&normalised[0], &clauses, contract_review.as_ref());

@@ -312,6 +312,10 @@ impl AuditReport {
             &self.null_evidence,
             &crate::bounds_selection::null_environment(),
         );
+        let hypothesis_view = crate::null_hypotheses::View::new(
+            &crate::bounds_selection::null_environment(),
+            &crate::bounds_selection::null_hypothesis_sources()?,
+        )?;
         // Bind the null property's own consulted premise records after its fold.
         // Contexts follow the same unit/configuration order as the custody rows.
         let mut contexts = std::collections::BTreeMap::<
@@ -341,7 +345,11 @@ impl AuditReport {
                     origin: "declared".into(),
                 })
                 .collect::<Vec<_>>();
-            let graph = qcore_contract::hypothesis::legacy_records(&records)?;
+            let mut graph = qcore_contract::hypothesis::legacy_records(&records)?;
+            let references = hypothesis_view.attach(row, &mut graph)?;
+            if !references.is_empty() {
+                row["hypothesis_binding_requirements"] = json!(references);
+            }
             row["hypothesis_graph"] = serde_json::to_value(&graph).map_err(|e| e.to_string())?;
             row["hypothesis_graph_sha256"] = qcore_contract::hypothesis::digest(&graph)?.into();
             let key = (

@@ -1,0 +1,113 @@
+{
+  "commands": [
+    {
+      "command": [
+        "lake",
+        "env",
+        "lean",
+        "/home/cosmo/.codex/worktrees/w48-bottom-up-batch4/qcore-c/private/plugin-premise-decomposition/PluginPremiseDecomposition.lean"
+      ],
+      "cwd": "proof",
+      "exit": 1,
+      "started": "2026-10-21T01:35:32.441158+00:00",
+      "ended": "2026-10-21T01:35:34.321218+00:00",
+      "log": "private/plugin-premise-decomposition/lean-draft-attempt1.log",
+      "source_sha256": "acd22d0b830af5d7f4cd0f46b0a38ea3f5843398eab3819dec9877ab13b0645b",
+      "retained_input": "private/plugin-premise-decomposition/PluginPremiseDecomposition-attempt1.lean",
+      "input_provenance": "Attempt1 reconstructed exactly from frozen4813d47ec draft; attempt2 current source asserted equal to actual private compile input. No source/model proof or full audit gate claimed."
+    },
+    {
+      "command": [
+        "lake",
+        "env",
+        "lean",
+        "/home/cosmo/.codex/worktrees/w48-bottom-up-batch4/qcore-c/private/plugin-premise-decomposition/PluginPremiseDecomposition.lean"
+      ],
+      "cwd": "proof",
+      "exit": 0,
+      "started": "2026-10-21T01:36:14.457407+00:00",
+      "ended": "2026-10-21T01:36:15.808125+00:00",
+      "log": "private/plugin-premise-decomposition/lean-draft-attempt2.log",
+      "source_sha256": "470eb5b8f1459deff14e6cde93c895c001f10297cfab26988c91a471a6830063",
+      "retained_input": "private/plugin-premise-decomposition/PluginPremiseDecomposition-attempt2.lean",
+      "input_provenance": "Attempt1 reconstructed exactly from frozen4813d47ec draft; attempt2 current source asserted equal to actual private compile input. No source/model proof or full audit gate claimed."
+    },
+    {
+      "command": [
+        "lake",
+        "env",
+        "lean",
+        "/home/cosmo/.codex/worktrees/w48-bottom-up-batch4/qcore-c/private/plugin-premise-decomposition/PluginPremiseDecomposition-attempt3.lean"
+      ],
+      "cwd": "proof",
+      "exit": 0,
+      "source_sha256": "c5f072159fbd5957ff7dba04d021bbded53eda238f7caa4863c24147ebb9e125",
+      "started": "2026-10-21T01:41:01.635648+00:00",
+      "ended": "2026-10-21T01:41:02.380081+00:00",
+      "log": "private/plugin-premise-decomposition/lean-draft-attempt3.log"
+    },
+    {
+      "command": [
+        "lake",
+        "env",
+        "lean",
+        "/home/cosmo/.codex/worktrees/w48-bottom-up-batch4/qcore-c/private/plugin-premise-decomposition/PluginPremiseDecomposition-attempt4.lean"
+      ],
+      "cwd": "proof",
+      "exit": 0,
+      "source_sha256": "2fa4b341f2930dd7cfea62fd1a4b41a31a798fb2c20ce9f7e821705290640970",
+      "started": "2026-10-21T01:41:23.677455+00:00",
+      "ended": "2026-10-21T01:41:24.181201+00:00",
+      "log": "private/plugin-premise-decomposition/lean-draft-attempt4.log"
+    },
+    {
+      "command": [
+        "lake",
+        "env",
+        "lean",
+        "/home/cosmo/.codex/worktrees/w48-bottom-up-batch4/qcore-c/private/plugin-premise-decomposition/PluginPremiseDecomposition-attempt5.lean"
+      ],
+      "cwd": "proof",
+      "exit": 0,
+      "source_sha256": "ea49331545e8073f33240678af698f87193467150a9b4410cf857b55da90354c",
+      "started": "2026-10-21T01:46:55.766330+00:00",
+      "ended": "2026-10-21T01:46:56.237380+00:00",
+      "log": "private/plugin-premise-decomposition/lean-draft-attempt5.log"
+    },
+    {
+      "command": [
+        "lake",
+        "env",
+        "lean",
+        "/home/cosmo/.codex/worktrees/w48-bottom-up-batch4/qcore-c/private/plugin-premise-decomposition/PluginPremiseDecomposition-attempt6.lean"
+      ],
+      "cwd": "proof",
+      "exit": 0,
+      "source_sha256": "ed37be6bd3773e6c6a11026c20350ff86a8d827adc042aa2d8fa0ee7e85157eb",
+      "started": "2026-10-21T01:49:30.867758+00:00",
+      "ended": "2026-10-21T01:49:32.628336+00:00",
+      "log": "private/plugin-premise-decomposition/lean-draft-attempt6.log"
+    },
+    {
+      "command": [
+        "lake",
+        "env",
+        "lean",
+        "/home/cosmo/.codex/worktrees/w48-bottom-up-batch4/qcore-c/private/plugin-premise-decomposition/AuditPluginCombined-attempt2.lean"
+      ],
+      "cwd": "proof",
+      "exit": 0,
+      "started": "2026-10-21T01:59:19.860626+00:00",
+      "ended": "2026-10-21T01:59:21.167202+00:00",
+      "combined_input_sha256": "1feeab10b3e2311fa1e3c3340dabc79bbf852b716b26f7f56f762c7552bcb8f4",
+      "log": "private/plugin-premise-decomposition/lean-draft-axioms-attempt2.log",
+      "note": "Draft axiom closure plus #check for every formal catalog proposition; distinct RK public-symbol and Fluent Bit exported-API access fields. Full registered gate remains due."
+    }
+  ],
+  "first_failure": "Lean reserves opaque; rename Event.opaque to opaqueId. No proposition change.",
+  "result": "One-file draft compiles0 against existing HypothesisGraph; full registered model/audit gate remains due after merged API base refresh.",
+  "attempt3_warning": "Unused simp argument and_assoc; removed without disabling linter. Attempt4 has empty output and exit0. No full gate claim.",
+  "attempt5": "Added explicit per-family loader-enabled obligation to separate runtime availability from build/artifact/symbol facts; zero warnings/exit0.",
+  "attempt6": "Replace simple callback-field projection theorem with guarded missing-successful-registration/default refutation; no claim that ignored proxy return proves that guard.",
+  "latest": "All actual named catalog Props checked by Lean; initial source/audit draft preparation controls retain their original frozen SHA snapshots at eef391ca3, not current draft identity. Final controls will use production model/audit source."
+}

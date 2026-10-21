@@ -1,0 +1,10 @@
+"""Run exact typed full-observation/environment replay with input byte guards."""
+import argparse,datetime,hashlib,json,pathlib,subprocess,os
+root=pathlib.Path.cwd();p=root/'private/plugin-premise-decomposition';a=argparse.ArgumentParser();a.add_argument('route');a.add_argument('out',type=pathlib.Path);args=a.parse_args();out=args.out.resolve();out.mkdir(parents=True,exist_ok=False);base=p/'measure-1'/args.route/'base';tip=p/'measure-1'/args.route/'tip';environments=p/'route-environments'/args.route
+sha=lambda path:hashlib.sha256(path.read_bytes()).hexdigest();spec={}
+for side,directory in [('base',base),('tip',tip)]:
+ inv=json.loads((directory/'invocation.json').read_text());assert inv['exit']==0
+ spec[side+'_environment']=str(environments/(side+'-environment.json'));spec[side+'_diagnostics']=str(directory/'resource-diagnostics.json');spec[side+'_contracts']=str(directory/'resource-diagnostics.contracts.json');spec[side+'_build_commit']=inv['analyzer_source'];spec[side+'_inputs_root']=inv['inputs_snapshot']
+inputs={key:sha(pathlib.Path(value)) for key,value in spec.items() if not key.endswith(('_build_commit','_inputs_root'))};file=out/'input.json';file.write_text(json.dumps(spec,indent=2)+'\n');helper=p/'attribute-reading-environments-v6';command=[str(helper),str(file),str(out/'proof.json')];start=datetime.datetime.now(datetime.timezone.utc).isoformat()
+with (out/'command.log').open('wb') as stream:code=subprocess.run(command,cwd=root,stdout=stream,stderr=subprocess.STDOUT,env={**os.environ,"QCORE_CLANG":"/usr/lib/llvm-21/bin/clang"}).returncode
+record={'command':command,'environment':{'QCORE_CLANG':'/usr/lib/llvm-21/bin/clang'},'cwd':str(root),'exit':code,'start':start,'end':datetime.datetime.now(datetime.timezone.utc).isoformat(),'helper_sha256':sha(helper),'input_sha256':inputs,'input_sha256_after':{key:sha(pathlib.Path(spec[key])) for key in inputs},'source_binding':'open'};(out/'command.json').write_text(json.dumps(record,indent=2)+'\n');assert record['input_sha256']==record['input_sha256_after'];print(json.dumps({'route':args.route,'exit':code}));raise SystemExit(code)

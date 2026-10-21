@@ -422,3 +422,66 @@ fn entailment_refuses_a_domain_it_cannot_enumerate() {
         .join(" and ");
     assert!(entails(&premises, &goal).is_err());
 }
+
+#[test]
+fn null_resource_overlap_accepts_only_replayed_matching_neutral_metadata() {
+    let baseline = modules();
+    check_registry(&baseline, REGISTERED_RELATIONS).unwrap();
+    let name = "rd_kafka_toppar_new0";
+    let bounds_module = "librdkafka/null_deref.qv";
+    let source = &baseline[bounds_module];
+    let start = source.find(&format!("extern fn {name}(")).unwrap();
+    let end = start + source[start..].find("\n};").unwrap() + "\n};".len();
+    let declaration = &source[start..end];
+    let atom = "For every reached loaded artifact, exact selected build/inventory, artifact identity and required symbol/address/ABI prerequisites hold.";
+    for (from, to) in [
+        (atom, "unmatched proposed property statement"),
+        (
+            "resource_premise_decomposition(rk_plugin_callback_closure,",
+            "resource_premise_decomposition(missing_legacy_premise,",
+        ),
+        (
+            "requires bounds_contract_v1;",
+            "requires resource_contract_v1;",
+        ),
+        (
+            "requires bounds_contract_v1;",
+            "requires bounds_contract_v1;\n    ensures normal resource_return_none();",
+        ),
+    ] {
+        assert!(declaration.contains(from));
+        let changed = declaration.replacen(from, to, 1);
+        let mut input = baseline.clone();
+        input.insert(
+            bounds_module.into(),
+            source.replacen(declaration, &changed, 1),
+        );
+        assert!(
+            check_registry(&input, REGISTERED_RELATIONS).is_err(),
+            "accepted {to}"
+        );
+    }
+    // A valid bounds graph cannot borrow a missing resource-side attachment.
+    let resource_module = "librdkafka/client.qv";
+    let source = &baseline[resource_module];
+    let start = source.find(&format!("extern fn {name}(")).unwrap();
+    let end = start + source[start..].find("\n};").unwrap() + "\n};".len();
+    let declaration = &source[start..end];
+    let changed = declaration
+        .lines()
+        .filter(|line| {
+            !line
+                .trim()
+                .starts_with("requires resource_premise_decomposition(rk_plugin_callback_closure,")
+        })
+        .collect::<Vec<_>>()
+        .join("\n");
+    assert_ne!(changed, declaration);
+    let mut input = baseline.clone();
+    input.insert(
+        resource_module.into(),
+        source.replacen(declaration, &changed, 1),
+    );
+    assert!(check_registry(&input, REGISTERED_RELATIONS).is_err());
+    check_registry(&baseline, REGISTERED_RELATIONS).unwrap();
+}

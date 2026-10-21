@@ -45,6 +45,7 @@ pub mod c_identity;
 pub mod contract_pin;
 pub mod contract_revision;
 pub mod null_fold;
+pub mod null_hypotheses;
 // Card OUTER-CONTRACT (rule 31): the runtime projection.
 pub mod outer_candidates;
 pub mod outer_selection;

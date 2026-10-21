@@ -1,0 +1,14 @@
+{
+  "status": "frozen before adding matching independently paired overlap model",
+  "reason": "The repaired registered overlap admission has an explicit independent resource-peer metadata condition in addition to erasure. Model that admission itself, not only semantic erasure.",
+  "source_rule": "REPAIR-PREDICTION.json",
+  "new_files": [
+    "proof/QCore/PluginNeutralOverlap.lean",
+    "proof/AuditPluginNeutralOverlap.lean"
+  ],
+  "model": "Exact proposed atom identity/statement and refinement children/targeted legacy-erasure matching; full bounds parse and neutral erasure are explicit prerequisites. Accepted semantic clauses remain the original null clauses. Resource/null legacy vectors and Contexts remain separate. Missing/changed atom or refinement refuses; no premise truth/source correspondence is established.",
+  "existing_166_binding_model_audit_bytes": "unchanged; separate module imports existing erasure theorem",
+  "anticipated_Lean_audits": 354,
+  "actual_gate_authoritative": true,
+  "zero_verdict_null_runtime_prediction": "unchanged"
+}

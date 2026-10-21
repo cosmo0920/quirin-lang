@@ -74,6 +74,8 @@ struct Installed {
     /// Card NULL-SAFETY-PROPERTY: the environment as loaded and pinned, the
     /// null-dereference property's source of `quant null-deref` clauses.
     full: Arc<BoundsContracts>,
+    // Exact selected texts for property-specific evidence replay only.
+    hypothesis_sources: BTreeMap<String, String>,
     record: Value,
 }
 
@@ -99,6 +101,17 @@ pub fn null_environment() -> Arc<BoundsContracts> {
         .ok()
         .and_then(|installed| installed.as_ref().map(|i| Arc::clone(&i.full)))
         .unwrap_or_default()
+}
+
+/// Exact already-selected bounds texts; no filesystem lookup or resource-view merge.
+pub(crate) fn null_hypothesis_sources() -> Result<BTreeMap<String, String>, String> {
+    let slot = INSTALLED
+        .read()
+        .map_err(|_| "bounds hypothesis: environment lock poisoned")?;
+    Ok(slot
+        .as_ref()
+        .map(|i| i.hypothesis_sources.clone())
+        .unwrap_or_default())
 }
 
 /// The selection record of the installed environment, if any.
@@ -138,13 +151,27 @@ pub fn apply_refutation_table(table: &BTreeSet<String>) {
 /// What the record's refutation table means.
 pub const REFUTATION_MEANING: &str = "bounds declarations whose own body refuted them in some unit's first phase (an access outside a quant check, a write beyond a declared frame, a return contradicting a declared extent or relation): the route's second phase analysed every unit's bounds rows with each withdrawn from its callers, who then see an uncontracted callee (C06.4's two phases, gateway rule 14h); the defining body keeps its own declaration";
 
-fn install(contracts: BoundsContracts, record: Value) -> Result<(), String> {
+fn install(
+    contracts: BoundsContracts,
+    record: Value,
+    sources: BTreeMap<String, String>,
+) -> Result<(), String> {
+    let actual = sources
+        .iter()
+        .map(|(key, text)| (key.clone(), sha256_hex(text.as_bytes())))
+        .collect::<BTreeMap<_, _>>();
+    if actual != contracts.sources {
+        return Err(
+            "bounds hypothesis: installed source bytes do not match selected environment".into(),
+        );
+    }
     let mut slot = INSTALLED
         .write()
         .map_err(|_| "the bounds environment lock is poisoned".to_owned())?;
     *slot = Some(Installed {
         contracts: Arc::new(contracts.for_bounds()),
         full: Arc::new(contracts),
+        hypothesis_sources: sources,
         record,
     });
     Ok(())
@@ -178,6 +205,18 @@ pub fn manifest_load_path(
 ///
 /// A view the bounds loader refuses refuses the whole selection.
 pub fn load_views(manifest: &LoadPathManifest) -> Result<(BoundsContracts, Vec<Value>), String> {
+    let (sources, modules) = selected_sources(manifest)?;
+    if sources.is_empty() {
+        return Ok((BoundsContracts::default(), modules));
+    }
+    let contracts = load_bounds_contract_sources(&sources)
+        .map_err(|error| format!("the bounds views do not load together: {error}"))?;
+    Ok((contracts, modules))
+}
+
+fn selected_sources(
+    manifest: &LoadPathManifest,
+) -> Result<(BTreeMap<String, String>, Vec<Value>), String> {
     let mut sources = BTreeMap::new();
     let mut modules = Vec::new();
     for (crate_name, view) in &manifest.bounds_views {
@@ -196,12 +235,7 @@ pub fn load_views(manifest: &LoadPathManifest) -> Result<(BoundsContracts, Vec<V
             sources.insert(format!("{crate_name}:{module}"), text.clone());
         }
     }
-    if sources.is_empty() {
-        return Ok((BoundsContracts::default(), modules));
-    }
-    let contracts = load_bounds_contract_sources(&sources)
-        .map_err(|error| format!("the bounds views do not load together: {error}"))?;
-    Ok((contracts, modules))
+    Ok((sources, modules))
 }
 
 /// The bounds lock of the crate owning a `crate:module` key, when the file
@@ -426,6 +460,7 @@ pub fn select_for_route(
                 "environment_sha256": BoundsContracts::default().digest(),
                 "rule": RULE,
             }),
+            BTreeMap::new(),
         );
     };
     let manifest =
@@ -477,5 +512,6 @@ pub fn select_for_route(
             json!(qcore_contract::deref_parts::canonical_digests(&contracts));
         record["live_backing"] = json!(live_backing);
     }
-    install(contracts, record)
+    let (sources, _) = selected_sources(&manifest)?;
+    install(contracts, record, sources)
 }

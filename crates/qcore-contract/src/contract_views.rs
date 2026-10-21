@@ -886,10 +886,55 @@ fn pointer_nominal(type_source: &str) -> Option<&str> {
 /// Card NULL-SAFETY-PROPERTY: the bounds declaration of a
 /// [`RelationCheck::NullDerefBeside`] pair states the bounds selector and
 /// `quant null-deref` checks only, so it says nothing custody could read.
-fn check_null_deref_only(declaration: &ViewDeclaration) -> Result<(), String> {
+fn check_null_deref_only(
+    declaration: &ViewDeclaration,
+    resource: &ViewDeclaration,
+) -> Result<(), String> {
+    // Graph metadata is neutral only after this exact bounds/property source
+    // passes the full loader and same-name legacy-erasure replay. A familiar
+    // head alone never licenses a new semantic clause or premise.
+    let has_metadata = declaration.clauses.iter().any(|clause| {
+        clause.kind == "requires" && crate::hypothesis::is_clause(&clause.expression)
+    });
+    if has_metadata {
+        let sources = BTreeMap::from([(
+            declaration.module.clone(),
+            format!("module contract;\n{}\n", declaration.text),
+        )]);
+        let bounds_graphs = crate::bounds_hypotheses::replay(&sources)?;
+        let resource_sources = BTreeMap::from([(
+            resource.module.clone(),
+            format!("module contract;\n{}\n", resource.text),
+        )]);
+        let resource_graphs = crate::hypothesis::replay(&resource_sources)?;
+        let graph = &bounds_graphs[&declaration.name];
+        let peer = &resource_graphs[&resource.name];
+        // Compare proposed metadata only. Original premise vectors, graph
+        // identities and property Contexts are independently retained.
+        for (name, attachment) in &graph.refinements {
+            let expected = peer
+                .refinements
+                .get(name)
+                .ok_or("null view: metadata has no independently declared resource peer")?;
+            if attachment.children != expected.children
+                || graph.premises[&attachment.premise].erasure
+                    != peer.premises[&expected.premise].erasure
+            {
+                return Err("null view: neutral attachment differs from resource peer".into());
+            }
+        }
+        for (id, atom) in &graph.atoms {
+            if !id.starts_with("legacy_atom_") && peer.atoms.get(id) != Some(atom) {
+                return Err("null view: proposed atom differs from resource peer".into());
+            }
+        }
+    }
     let only = !declaration.clauses.is_empty()
         && declaration.clauses.iter().all(|clause| {
             (clause.kind == "requires" && clause.expression == "bounds_contract_v1")
+                || (has_metadata
+                    && clause.kind == "requires"
+                    && crate::hypothesis::is_clause(&clause.expression))
                 || clause.kind == "quant null-deref"
                 // Card NULL-CANDIDATE-TRIAGE: the null property's member and
                 // result declarations (G05e), which custody never reads; card
@@ -1550,7 +1595,7 @@ pub fn check_relation(
                 dropped_premises: Vec::new(),
             })
         }
-        RelationCheck::NullDerefBeside => check_null_deref_only(detailed).and_then(|()| {
+        RelationCheck::NullDerefBeside => check_null_deref_only(detailed, view).and_then(|()| {
             check_signature_agreement(detailed, view).map(|discharged| RelationEvidence {
                 function: detailed.name.clone(),
                 detailed: detailed.module.clone(),

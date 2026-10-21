@@ -1,0 +1,28 @@
+{
+  "command": [
+    "python3",
+    "-B",
+    "docs/reports/corpus-repin/diff_artifacts.py",
+    "--archived",
+    "/home/cosmo/.codex/worktrees/w48-bottom-up-batch4/qcore-c/private/plugin-premise-decomposition/five-artifact-diff/slice/archived",
+    "--measured",
+    "/home/cosmo/.codex/worktrees/w48-bottom-up-batch4/qcore-c/private/plugin-premise-decomposition/five-artifact-diff/slice/measured",
+    "--output",
+    "/home/cosmo/.codex/worktrees/w48-bottom-up-batch4/qcore-c/private/plugin-premise-decomposition/five-artifact-diff/slice/diff.json"
+  ],
+  "exit": 0,
+  "explicit_transport": [
+    {
+      "side": "base",
+      "source_sha256": "e53e77c28a1987084489469ab460fd34d93ad56c5bbc05269efdc926e976100f",
+      "adapter_sha256": "99b121d4b2a0ff078c86cb59e35f59d61a0d9072dcdfd9e54f697de7c06d2c67",
+      "operation": "rename existing top-level contracts source map to sources for legacy tool, all original fields retained in raw comparison"
+    },
+    {
+      "side": "tip",
+      "source_sha256": "4b7708c00157edfa77f9bb0c32f14bb52360e5f3ec89fb4b5d835f45999f9388",
+      "adapter_sha256": "0c1dfdd8cfffec1700d828c4963a8699e54f4c3b2c9d6e0eddd0d48ec41d92b2",
+      "operation": "rename existing top-level contracts source map to sources for legacy tool, all original fields retained in raw comparison"
+    }
+  ]
+}

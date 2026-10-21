@@ -1,0 +1,29 @@
+[
+  {
+    "command": [
+      "python3",
+      "-m",
+      "unittest",
+      "discover",
+      "-s",
+      "scripts/tests"
+    ],
+    "cwd": "/home/cosmo/.codex/worktrees/w48-bottom-up-batch4/qcore-c",
+    "environment": {
+      "CARGO_PROFILE_DEV_DEBUG": "0",
+      "CARGO_PROFILE_TEST_DEBUG": "0",
+      "CARGO_INCREMENTAL": "0",
+      "QCORE_AUDIT_BUILD_COMMIT": null,
+      "RUSTFLAGS": null,
+      "CARGO_ENCODED_RUSTFLAGS": null,
+      "RUSTUP_TOOLCHAIN": null,
+      "ELAN_TOOLCHAIN": null,
+      "QCORE_CLANG": null
+    },
+    "start": "2026-10-21T06:52:26.519477+00:00",
+    "end": "2026-10-21T06:53:01.427687+00:00",
+    "exit": 0,
+    "log": "/home/cosmo/.codex/worktrees/w48-bottom-up-batch4/qcore-c/private/plugin-premise-decomposition/post-matrix-python-final/00.log",
+    "head": "bcdc5426e33388281897a9198c2de5e70b5b5980"
+  }
+]

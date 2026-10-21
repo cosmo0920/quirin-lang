@@ -1,0 +1,28 @@
+[
+  {
+    "mode": "resource",
+    "command": [
+      "/home/cosmo/.codex/worktrees/w48-bottom-up-batch4/qcore-c/target/debug/examples/plugin_sidecar_bindings",
+      "/home/cosmo/.codex/worktrees/w48-bottom-up-batch4/qcore-c/private/plugin-premise-decomposition/actual-bindings/system/resource/input.json",
+      "/home/cosmo/.codex/worktrees/w48-bottom-up-batch4/qcore-c/private/plugin-premise-decomposition/actual-bindings/system/resource/result.json"
+    ],
+    "exit": 0,
+    "started": "2026-10-21T05:43:29.221588+00:00",
+    "ended": "2026-10-21T05:43:30.754296+00:00",
+    "input_sha256": "177774e5e99df01e6df4a9a329646ae759949486c61be6e82d14672c5a86bbd8",
+    "publication_sha256": "e38c5027cd733cd756c8b3fdfee6d86f7bc6c2f08eaf653482cf02eee8fe6ac6"
+  },
+  {
+    "mode": "null",
+    "command": [
+      "/home/cosmo/.codex/worktrees/w48-bottom-up-batch4/qcore-c/target/debug/examples/plugin_sidecar_bindings",
+      "/home/cosmo/.codex/worktrees/w48-bottom-up-batch4/qcore-c/private/plugin-premise-decomposition/actual-bindings/system/null/input.json",
+      "/home/cosmo/.codex/worktrees/w48-bottom-up-batch4/qcore-c/private/plugin-premise-decomposition/actual-bindings/system/null/result.json"
+    ],
+    "exit": 0,
+    "started": "2026-10-21T05:43:30.770849+00:00",
+    "ended": "2026-10-21T05:43:31.670170+00:00",
+    "input_sha256": "d799a94b2d2a8e775265fe95aeb4e5582b6a65f4ecdc368502226e5488514c69",
+    "publication_sha256": "004103f00d0ee1e9c2bf3d00f3207c28b2e9a909897748731d437e2ae55ed810"
+  }
+]

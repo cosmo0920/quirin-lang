@@ -257,3 +257,107 @@ fn reference_resolution_rejects_missing_or_changed_independent_artifacts() {
     assert!(resolve_bindings(BINDINGS.as_bytes(), &held).is_err());
     assert!(resolve_bindings(b"{}", &artifacts()).is_err());
 }
+
+#[test]
+fn detached_effective_environment_preserves_existing_receipt_shape_and_exact_bytes() {
+    let contracts = contracts();
+    let recording = Recording::start();
+    let _ = analyze_legacy_c_translation_unit(SCALAR, "read_errno", &contracts);
+    let recorded = recording.finish();
+    assert!(!recorded.reading_sites.is_empty());
+    let graphs = hypothesis::replay(contracts.source_assumptions()).unwrap();
+    let ctx = context(SCALAR, "read_errno");
+    let receipts = recorded
+        .reading_sites
+        .iter()
+        .map(|observation| {
+            validate_observation_environment(observation, &recorded.reading_environments).unwrap();
+            let canonical = &recorded.reading_environments[&observation.environment_sha256];
+            let environment =
+                validate_environment(canonical, &observation.environment_sha256).unwrap();
+            assert_eq!(serde_json::to_string(&environment).unwrap(), *canonical);
+            assert_eq!(
+                environment.contract(&observation.declaration),
+                Some(&observation.contract)
+            );
+            let receipt = bind(observation, &ctx, &graphs[&observation.declaration]).unwrap();
+            // Original production tuple, before this detached census extension.
+            let old_id = qcore_schemas::sha256_hex(
+                &serde_json::to_vec(&(
+                    observation,
+                    &ctx,
+                    &receipt.graph_sha256,
+                    &receipt.atom_sha256,
+                ))
+                .unwrap(),
+            );
+            assert_eq!(receipt.id, old_id);
+            let value = serde_json::to_value(&receipt).unwrap();
+            let fields = value
+                .as_object()
+                .unwrap()
+                .keys()
+                .map(String::as_str)
+                .collect::<std::collections::BTreeSet<_>>();
+            assert_eq!(
+                fields,
+                std::collections::BTreeSet::from([
+                    "schema",
+                    "id",
+                    "claim",
+                    "coverage",
+                    "observation",
+                    "context",
+                    "binding_manifest_sha256",
+                    "graph_sha256",
+                    "atom_sha256",
+                    "proposition_ids",
+                    "universal_disposition"
+                ])
+            );
+            assert!(value.get("environments").is_none());
+            receipt
+        })
+        .collect::<Vec<_>>();
+    let published = publication_environments(&receipts, &recorded.reading_environments).unwrap();
+    assert_eq!(
+        published.len(),
+        receipts
+            .iter()
+            .map(|r| &r.observation.environment_sha256)
+            .collect::<std::collections::BTreeSet<_>>()
+            .len()
+    );
+    assert!(
+        publication_environments(&[], &recorded.reading_environments)
+            .unwrap()
+            .is_empty()
+    );
+}
+
+#[test]
+fn detached_effective_environment_missing_changed_noncanonical_or_foreign_contract_refuses() {
+    let contracts = contracts();
+    let recording = Recording::start();
+    let _ = analyze_legacy_c_translation_unit(SCALAR, "read_errno", &contracts);
+    let recorded = recording.finish();
+    let observation = &recorded.reading_sites[0];
+    let canonical = &recorded.reading_environments[&observation.environment_sha256];
+    assert!(validate_observation_environment(observation, &BTreeMap::new()).is_err());
+    let changed = format!("{canonical} ");
+    assert!(validate_environment(&changed, &observation.environment_sha256).is_err());
+    assert!(
+        validate_environment(&changed, &qcore_schemas::sha256_hex(changed.as_bytes())).is_err(),
+        "recomputed digest does not admit noncanonical bytes"
+    );
+    let mut unknown: serde_json::Value = serde_json::from_str(canonical).unwrap();
+    unknown["unrecognized_authority"] = serde_json::json!(true);
+    let unknown = serde_json::to_string(&unknown).unwrap();
+    assert!(
+        validate_environment(&unknown, &qcore_schemas::sha256_hex(unknown.as_bytes())).is_err()
+    );
+    let mut foreign = observation.clone();
+    foreign.contract =
+        ResourceFunctionContract::new([ResourceParameterMode::Borrowed], ResourceReturnMode::None);
+    assert!(validate_observation_environment(&foreign, &recorded.reading_environments).is_err());
+}

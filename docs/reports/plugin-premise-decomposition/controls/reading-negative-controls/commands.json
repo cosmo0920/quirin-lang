@@ -1,0 +1,72 @@
+[
+  {
+    "name": "wrong-build-context",
+    "actual_exit": 101,
+    "expected": "refuse exact one-fact change",
+    "command": [
+      "/home/cosmo/.codex/worktrees/w48-bottom-up-batch4/qcore-c/private/plugin-premise-decomposition/attribute-reading-environments-v5",
+      "/home/cosmo/.codex/worktrees/w48-bottom-up-batch4/qcore-c/private/plugin-premise-decomposition/reading-negative-controls/wrong-build-context/input.json",
+      "/home/cosmo/.codex/worktrees/w48-bottom-up-batch4/qcore-c/private/plugin-premise-decomposition/reading-negative-controls/wrong-build-context/should-not-exist.json"
+    ],
+    "started": "2026-10-21T05:45:49.618329+00:00",
+    "ended": "2026-10-21T05:45:50.370938+00:00",
+    "presented_sha256": "cf26c297464059f1fb558a78c5d43ecbe6125d88dbd9c03ae69ef6e5c085e96e",
+    "disposition_created": false
+  },
+  {
+    "name": "wrong-property-context",
+    "actual_exit": 101,
+    "expected": "refuse exact one-fact change",
+    "command": [
+      "/home/cosmo/.codex/worktrees/w48-bottom-up-batch4/qcore-c/private/plugin-premise-decomposition/attribute-reading-environments-v5",
+      "/home/cosmo/.codex/worktrees/w48-bottom-up-batch4/qcore-c/private/plugin-premise-decomposition/reading-negative-controls/wrong-property-context/input.json",
+      "/home/cosmo/.codex/worktrees/w48-bottom-up-batch4/qcore-c/private/plugin-premise-decomposition/reading-negative-controls/wrong-property-context/should-not-exist.json"
+    ],
+    "started": "2026-10-21T05:45:50.391412+00:00",
+    "ended": "2026-10-21T05:45:51.092172+00:00",
+    "presented_sha256": "70426f273ab994d01755c29c5d2b6c9b6626866967a19f801a6291f6bd45708d",
+    "disposition_created": false
+  },
+  {
+    "name": "missing-effective-environment",
+    "actual_exit": 101,
+    "expected": "refuse exact one-fact change",
+    "command": [
+      "/home/cosmo/.codex/worktrees/w48-bottom-up-batch4/qcore-c/private/plugin-premise-decomposition/attribute-reading-environments-v5",
+      "/home/cosmo/.codex/worktrees/w48-bottom-up-batch4/qcore-c/private/plugin-premise-decomposition/reading-negative-controls/missing-effective-environment/input.json",
+      "/home/cosmo/.codex/worktrees/w48-bottom-up-batch4/qcore-c/private/plugin-premise-decomposition/reading-negative-controls/missing-effective-environment/should-not-exist.json"
+    ],
+    "started": "2026-10-21T05:45:51.113606+00:00",
+    "ended": "2026-10-21T05:45:51.824108+00:00",
+    "presented_sha256": "59e8505a63f223ea1febeadb3a58b7f0ba9b8274797a2c63aed34353be558248",
+    "disposition_created": false
+  },
+  {
+    "name": "noncanonical-effective-environment",
+    "actual_exit": 101,
+    "expected": "refuse exact one-fact change",
+    "command": [
+      "/home/cosmo/.codex/worktrees/w48-bottom-up-batch4/qcore-c/private/plugin-premise-decomposition/attribute-reading-environments-v5",
+      "/home/cosmo/.codex/worktrees/w48-bottom-up-batch4/qcore-c/private/plugin-premise-decomposition/reading-negative-controls/noncanonical-effective-environment/input.json",
+      "/home/cosmo/.codex/worktrees/w48-bottom-up-batch4/qcore-c/private/plugin-premise-decomposition/reading-negative-controls/noncanonical-effective-environment/should-not-exist.json"
+    ],
+    "started": "2026-10-21T05:45:51.843093+00:00",
+    "ended": "2026-10-21T05:45:52.505157+00:00",
+    "presented_sha256": "d2809e56314eba8a6a0b17e10852c38a75bcf55a5ea3d63e5f232a8dc1980281",
+    "disposition_created": false
+  },
+  {
+    "name": "tampered-effective-environment",
+    "actual_exit": 101,
+    "expected": "refuse exact one-fact change",
+    "command": [
+      "/home/cosmo/.codex/worktrees/w48-bottom-up-batch4/qcore-c/private/plugin-premise-decomposition/attribute-reading-environments-v5",
+      "/home/cosmo/.codex/worktrees/w48-bottom-up-batch4/qcore-c/private/plugin-premise-decomposition/reading-negative-controls/tampered-effective-environment/input.json",
+      "/home/cosmo/.codex/worktrees/w48-bottom-up-batch4/qcore-c/private/plugin-premise-decomposition/reading-negative-controls/tampered-effective-environment/should-not-exist.json"
+    ],
+    "started": "2026-10-21T05:45:52.531444+00:00",
+    "ended": "2026-10-21T05:45:53.255045+00:00",
+    "presented_sha256": "e47c07884c9fabbed0d7c5d80837401e1dbe7cd827fc1a66fea4829ede06ef48",
+    "disposition_created": false
+  }
+]

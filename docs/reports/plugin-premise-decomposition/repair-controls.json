@@ -1,0 +1,135 @@
+{
+  "status": "bounded repair controls green; final full rerun and all measurements still due",
+  "failed_gate_source": "686628c915f91143b8ad9fbdb4ba664db76abb16",
+  "pre_edit_predictions": [
+    "REPAIR-PREDICTION.json",
+    "REPAIR-LEAN-ADDENDUM.json"
+  ],
+  "focused_failed_unit_rechecks": [
+    {
+      "command_key": "repair-failed-units-1",
+      "counts": {
+        "passed": 10,
+        "failed": 0,
+        "ignored": 0
+      },
+      "exit": 0,
+      "log": "private/plugin-premise-decomposition/repair-failed-units-1.log"
+    },
+    {
+      "command_key": "repair-gateway-failures-1",
+      "counts": {
+        "passed": 26,
+        "failed": 0,
+        "ignored": 0
+      },
+      "exit": 0,
+      "log": "private/plugin-premise-decomposition/repair-gateway-failures-1.log"
+    },
+    {
+      "command_key": "repair-compiler-failures-1",
+      "counts": {
+        "passed": 10,
+        "failed": 0,
+        "ignored": 0
+      },
+      "exit": 0,
+      "log": "private/plugin-premise-decomposition/repair-compiler-failures-1.log"
+    }
+  ],
+  "new_Lean": {
+    "definitions": "proof/QCore/PluginNeutralOverlap.lean",
+    "audit": "proof/AuditPluginNeutralOverlap.lean",
+    "audited_theorems": 7,
+    "check_exit": 0,
+    "audit_exit": 0,
+    "source_bindings": "open",
+    "notable_boundary": "Independent proposed-metadata matching; no original graph/premise-vector identification or Context transport"
+  },
+  "source_modules": [
+    {
+      "path": "providers/qcore-provider-librdkafka/contracts/librdkafka/client.qv",
+      "actual_sha256": "288d0fa65ffe6832d11dd06acd5ebf3d8b3d211e5a76f382e130c0a13c402946",
+      "independently_held_base_sha256": "c0f6b7a2538ac14c1daa9d81f5412b4308e449ed4dada15cc142209ac7e83499",
+      "exact_original_reconstruction": true,
+      "starts_module_header": true
+    },
+    {
+      "path": "providers/qcore-provider-librdkafka/contracts/librdkafka/kafka_mem.qv",
+      "actual_sha256": "3924b280719d1064dfcf821f4d6eec5e00033f2b2551e8a6cc6b4dc0784624be",
+      "independently_held_base_sha256": "d75b18e45520ee4f93f20286ad99587e32431bed6751f3409b1a329f32fcde83",
+      "exact_original_reconstruction": true,
+      "starts_module_header": true
+    },
+    {
+      "path": "providers/qcore-provider-librdkafka/contracts/librdkafka/memory.qv",
+      "actual_sha256": "a20e69e5bb5d5012bce683508e534388701ac3a9b2ac44b1e95bd89d2cc56012",
+      "independently_held_base_sha256": "bd69c0fe6859ccf6f621c2b001748d1f4d987601fb9115af15e3aa83918c2a67",
+      "exact_original_reconstruction": true,
+      "starts_module_header": true
+    },
+    {
+      "path": "providers/qcore-provider-librdkafka/contracts/librdkafka/null_deref.qv",
+      "actual_sha256": "76904006ed920a3352c62b60006e22e6c192c52356ce4043b31bfcfb07a41616",
+      "independently_held_base_sha256": "ba5d7a7a49f00aea49df1dbff8f56e2fd3bf53f39838a0afb4f00fb3b5cde537",
+      "exact_original_reconstruction": true,
+      "starts_module_header": true
+    },
+    {
+      "path": "providers/qcore-provider-librdkafka/contracts/librdkafka/queue_destructor.qv",
+      "actual_sha256": "5e66e4b28144008620c9fe0295cbffcca6c331846352c6066b71e0c24e5836e8",
+      "independently_held_base_sha256": "fa88928d00caa91eba736362e8ba36d88abb97efc5d50f1dd45f51dd7f64e238",
+      "exact_original_reconstruction": true,
+      "starts_module_header": true
+    },
+    {
+      "path": "providers/quirin-provider-fluent-bit/contracts/fluent_bit/logging.qv",
+      "actual_sha256": "c5fa867ac7e7c02bdc4d693788637620fd1c496e146e2afb656211424d618ad8",
+      "independently_held_base_sha256": "4a026ffe209161dce22bd8be63a9cbb3c3983b330e74993cdfb67e8d1348181c",
+      "exact_original_reconstruction": true,
+      "starts_module_header": true
+    }
+  ],
+  "selected_C_identities": {
+    "count": 165,
+    "official_commands": 6,
+    "all_source_identities_exact": true,
+    "receipt": "private/plugin-premise-decomposition/repair-repins-2/identities.json"
+  },
+  "official_inventory_sync": {
+    "command_key": "repair-official-sync-1",
+    "exit": 0
+  },
+  "retained_failed_attempts": [
+    {
+      "command_key": "repair-repin-1",
+      "exit": 1,
+      "reason": "Wrong quirin language driver has no pin command; refused before any source pin write. Correct official quirin-audit invocation2 all0."
+    },
+    {
+      "command_key": "repair-overlap-lean-1",
+      "exit": 1,
+      "reason": "Reserved matches token and accidental builtin id name; corrected explicit pairedMetadata and Nat keys. No source placeholders or project axioms."
+    },
+    {
+      "command_key": "repair-environment-helper-1",
+      "exit": 1,
+      "log": "direct functions tool output, before structured recorder",
+      "reason": "Unique rlib assumption refused two retained feature artifacts; no helper produced. Exact actual-binary Cargo fingerprint selection replaces assumption."
+    },
+    {
+      "command_key": "repair-environment-helper-2",
+      "exit": 1,
+      "reason": "Initial explicit fingerprint path normalized serde_json package spelling incorrectly; fixed exact lib receipt lookup."
+    }
+  ],
+  "attribution_helper_typecheck": {
+    "command_key": "repair-environment-helper-3",
+    "exit": 0,
+    "note": "Actual6866 release dependency identity; fresh repaired final release helper still required"
+  },
+  "unchanged_166_formal_bindings": {
+    "proof/QCore/PluginPremiseDecomposition.lean": "c8537b922b10a53648b3c24904ca4ac45fca14ca149fc3c3f0a3368bec805940",
+    "proof/AuditPluginPremiseDecomposition.lean": "9c9df17ba6253a9f52aec821023e80aecb252f388992f4406239ae7c0daa0f2c"
+  }
+}

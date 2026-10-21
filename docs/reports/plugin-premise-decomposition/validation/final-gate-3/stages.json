@@ -1,0 +1,18 @@
+[
+  {
+    "stage": "standing",
+    "exit": 1
+  },
+  {
+    "stage": "provider",
+    "exit": 0
+  },
+  {
+    "stage": "examples",
+    "exit": 0
+  },
+  {
+    "stage": "release",
+    "exit": 0
+  }
+]

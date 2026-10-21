@@ -1,0 +1,30 @@
+{
+  "status": "frozen before authorized essential evidence-only producer extension; not final merged-base measurement prediction",
+  "interim_source": "6737afd815ca1c4383329eeafd1b2050d03139d7",
+  "parents": [
+    "5a556d8272b17b35a47a5036bad1f6d614ee698b",
+    "681ab8e8d"
+  ],
+  "purpose": "Exact independent preservation/attribution of existing libc selected reading observations under changed plugin contract metadata",
+  "existing_records": "Libc Observation and Receipt schema, all fields, graph/atoms/formal bindings, source spans, sibling sets, predicate/prerequisite/model IDs and source evidence authority remain unchanged. Never erase these as a new plugin addition.",
+  "new_diagnostic_field": {
+    "name": "reading_site_environments",
+    "location": "unit diagnostics, beside existing reading_site_domain and function receipt records",
+    "schema": "libc-reading-site-effective-environments.v1",
+    "payload": "map observation.environment_sha256 to exact canonical UTF-8 serde_json::to_vec(ResourceContracts) string; one unique captured effective environment per digest",
+    "selection": "Publish only environment bytes referenced by successfully bound receipts in that actual unit. Captures run outside hypothetical/unrecorded work; rejected probes/late-instantiation rollback prune environments with no remaining observation.",
+    "semantics": "diagnostic/reference integrity only; no solver/verdict/proposition support/provider authority/source discovery or new operator; no change to existing Observation/Receipt wire or IDs"
+  },
+  "attribution": "Use actual TIP canonical effective environments plus independently established exact old/new source/metadata/import differences from held BASE/TIP input environments; typed canonical reconstruction must equal the independently held actual BASE observation.environment_sha256. Preserve the full non-environment observation payload. Rebuild both receipt IDs with unchanged production bind and independently reconstructed nine-coordinate Contexts; unexplained fields fail.",
+  "controls": [
+    "exact source/canonical bytes and digest binding",
+    "missing/tampered/noncanonical environment refusal",
+    "actual successful scalar/nested parser capture",
+    "rollback/hypothetical/unrecorded pruning",
+    "actually-bound receipt publication domain",
+    "foreign Context/graph/selected contract refusal",
+    "unchanged original observation/receipt structure and static/null/runtime outcomes"
+  ],
+  "formal": "Separate matching Lean environment/reference/rollback/noninterference module and audit; no changes to existing166 atom model/audit hashes. Likely final353 audits versus root351; actual gate authoritative.",
+  "final_required": "Root exact combinedmain synchronization and committed final prediction before all full standing/provider/audit measurements. All six own fresh routes remain due."
+}

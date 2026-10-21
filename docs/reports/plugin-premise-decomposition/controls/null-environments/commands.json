@@ -1,0 +1,80 @@
+[
+  {
+    "route": "system",
+    "side": "base",
+    "command": [
+      "/home/cosmo/.codex/worktrees/w48-bottom-up-batch4/qcore-c/private/plugin-premise-decomposition/null-environment-provenance",
+      "/home/cosmo/.codex/worktrees/w48-bottom-up-batch4/qcore-c/private/plugin-premise-decomposition/base-freeze/inputs/cycle19-resource-contracts.json",
+      "/home/cosmo/Documents/GitHub/qcore-c/private/w45-fb/w46-external-callee-contracts/attempt-1/fluent-bit-clang-source",
+      "/home/cosmo/.codex/worktrees/w48-bottom-up-batch4/qcore-c/private/plugin-premise-decomposition/null-environments/system-base.json"
+    ],
+    "exit": 0,
+    "started": "2026-10-21T05:39:58.247044+00:00",
+    "ended": "2026-10-21T05:39:59.548240+00:00"
+  },
+  {
+    "route": "system",
+    "side": "tip",
+    "command": [
+      "/home/cosmo/.codex/worktrees/w48-bottom-up-batch4/qcore-c/private/plugin-premise-decomposition/null-environment-provenance",
+      "/home/cosmo/.codex/worktrees/w48-bottom-up-batch4/qcore-c/private/plugin-premise-decomposition/tip-freeze/inputs/cycle19-resource-contracts.json",
+      "/home/cosmo/Documents/GitHub/qcore-c/private/w45-fb/w46-external-callee-contracts/attempt-1/fluent-bit-clang-source",
+      "/home/cosmo/.codex/worktrees/w48-bottom-up-batch4/qcore-c/private/plugin-premise-decomposition/null-environments/system-tip.json"
+    ],
+    "exit": 0,
+    "started": "2026-10-21T05:39:59.551648+00:00",
+    "ended": "2026-10-21T05:40:00.857139+00:00"
+  },
+  {
+    "route": "slice",
+    "side": "base",
+    "command": [
+      "/home/cosmo/.codex/worktrees/w48-bottom-up-batch4/qcore-c/private/plugin-premise-decomposition/null-environment-provenance",
+      "/home/cosmo/.codex/worktrees/w48-bottom-up-batch4/qcore-c/private/plugin-premise-decomposition/base-freeze/inputs/cycle19-resource-contracts.json",
+      "/home/cosmo/Documents/GitHub/qcore-c/private/w47-tail/attempt-1/prep/fluent-bit-clang-source",
+      "/home/cosmo/.codex/worktrees/w48-bottom-up-batch4/qcore-c/private/plugin-premise-decomposition/null-environments/slice-base.json"
+    ],
+    "exit": 0,
+    "started": "2026-10-21T05:40:00.858713+00:00",
+    "ended": "2026-10-21T05:40:01.982755+00:00"
+  },
+  {
+    "route": "slice",
+    "side": "tip",
+    "command": [
+      "/home/cosmo/.codex/worktrees/w48-bottom-up-batch4/qcore-c/private/plugin-premise-decomposition/null-environment-provenance",
+      "/home/cosmo/.codex/worktrees/w48-bottom-up-batch4/qcore-c/private/plugin-premise-decomposition/tip-freeze/inputs/cycle19-resource-contracts.json",
+      "/home/cosmo/Documents/GitHub/qcore-c/private/w47-tail/attempt-1/prep/fluent-bit-clang-source",
+      "/home/cosmo/.codex/worktrees/w48-bottom-up-batch4/qcore-c/private/plugin-premise-decomposition/null-environments/slice-tip.json"
+    ],
+    "exit": 0,
+    "started": "2026-10-21T05:40:01.984159+00:00",
+    "ended": "2026-10-21T05:40:03.197568+00:00"
+  },
+  {
+    "route": "corpus",
+    "side": "base",
+    "command": [
+      "/home/cosmo/.codex/worktrees/w48-bottom-up-batch4/qcore-c/private/plugin-premise-decomposition/null-environment-provenance",
+      "/home/cosmo/.codex/worktrees/w48-bottom-up-batch4/qcore-c/private/plugin-premise-decomposition/base-freeze/inputs/cycle19-resource-contracts.json",
+      "/home/cosmo/Documents/GitHub/qcore-c/build/cycle19/c-gateway-wave-pin/fluent-bit-clang-source",
+      "/home/cosmo/.codex/worktrees/w48-bottom-up-batch4/qcore-c/private/plugin-premise-decomposition/null-environments/corpus-base.json"
+    ],
+    "exit": 0,
+    "started": "2026-10-21T05:40:03.199078+00:00",
+    "ended": "2026-10-21T05:40:04.407584+00:00"
+  },
+  {
+    "route": "corpus",
+    "side": "tip",
+    "command": [
+      "/home/cosmo/.codex/worktrees/w48-bottom-up-batch4/qcore-c/private/plugin-premise-decomposition/null-environment-provenance",
+      "/home/cosmo/.codex/worktrees/w48-bottom-up-batch4/qcore-c/private/plugin-premise-decomposition/tip-freeze/inputs/cycle19-resource-contracts.json",
+      "/home/cosmo/Documents/GitHub/qcore-c/build/cycle19/c-gateway-wave-pin/fluent-bit-clang-source",
+      "/home/cosmo/.codex/worktrees/w48-bottom-up-batch4/qcore-c/private/plugin-premise-decomposition/null-environments/corpus-tip.json"
+    ],
+    "exit": 0,
+    "started": "2026-10-21T05:40:04.409182+00:00",
+    "ended": "2026-10-21T05:40:05.576723+00:00"
+  }
+]

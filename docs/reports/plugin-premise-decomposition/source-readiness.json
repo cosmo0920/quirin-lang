@@ -1,0 +1,39 @@
+{
+  "revision": "66910c10a4d7eafa810b84229cf2dcf7b0f26f97",
+  "root": "/home/cosmo/Documents/GitHub/qcore-c/build/cycle19/c-gateway-wave-pin/fluent-bit-clang-source",
+  "files": [
+    {
+      "path": "lib/librdkafka-2.15.0/src/rdkafka_plugin.c",
+      "sha256": "8e8ac3380dc8c99e083ae9c279f6046c645f5fc05a28696a3f797940640ee12e"
+    },
+    {
+      "path": "lib/librdkafka-2.15.0/src/rddl.c",
+      "sha256": "95d11a6057615c7586fa212e15bd5999f36475a68fb67eda93d3687576b642d5"
+    },
+    {
+      "path": "lib/librdkafka-2.15.0/src/rdkafka_interceptor.c",
+      "sha256": "f6bdee517cbc9d21a13cdc461daf23a02f2baeeb05fede6488f3651843111834"
+    },
+    {
+      "path": "src/flb_plugin.c",
+      "sha256": "99a616b2f0599a4cd52a36cf6b132201c8dca27bf924c643758a5ab87aec2fa1"
+    },
+    {
+      "path": "src/flb_plugin_proxy.c",
+      "sha256": "00ca65b30aabad04495496fdac049e8ef95ed9adef0c48eaefcf3e7f15e8e87f"
+    },
+    {
+      "path": "src/proxy/go/go.c",
+      "sha256": "7e51665520f324b1da6cee1935d53c71028a05aec80c341c2e3210d5ebe1e59e"
+    }
+  ],
+  "observations": [
+    "rd_kafka_plugin_new duplicate path returns0 without a fresh conf_init; new path requires rd_dl_open, conf_init resolution and conf_init0 before list insertion.",
+    "rddl uses RTLD_NOW|RTLD_LOCAL under WITH_LIBDL, alternative LoadLibrary/GetProcAddress on Windows; extension fallback is real.",
+    "rd_kafka_plugin_destroy closes handle after caller-promised conf_destroy; loader refcount and actual order remain explicit environment obligations.",
+    "flb_plugin_load uses RTLD_LAZY and copies typed descriptor bytes; dlsym success alone establishes neither descriptor ABI nor callback effects.",
+    "flb_plugin_proxy_create ignores flb_plugin_proxy_register return and returns allocated proxy; proxy allocation or load success does not establish successful registration.",
+    "Go proxy resolves FLBPluginInit as required, optional flush/exit alternatives separately; instance/API/context are handed to loaded code.",
+    "Interceptor registration success, exact list/union arm, live conf/on_new-before-initialized and nonshare restrictions are independently needed; samples do not establish whole-world closure."
+  ]
+}

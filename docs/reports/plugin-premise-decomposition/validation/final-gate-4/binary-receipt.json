@@ -1,0 +1,29 @@
+{
+  "source": "c1625baf713e4d8498c39282238675749237005d",
+  "base": "32e6f5dda334d6a017a1be4dcb02f72a9138c6a6",
+  "binary": "/home/cosmo/.codex/worktrees/w48-bottom-up-batch4/qcore-c/private/plugin-premise-decomposition/final-gate-4/quirin-audit",
+  "sha256": "ddb51170371d1dd46d221ad96f7ff17421de1704b4b8ac81ee51c7a98cf97327",
+  "features": "default",
+  "build_commit_override": "c1625baf713e4d8498c39282238675749237005d",
+  "rustc": "rustc 1.99.0 (b940084d7 2026-09-28)\nbinary: rustc\ncommit-hash: b940084d7eb6a299eb4bfeb8e34901bc051e7ac4\ncommit-date: 2026-09-28\nhost: x86_64-unknown-linux-gnu\nrelease: 1.99.0\nLLVM version: 23.1.1\n",
+  "cargo": "cargo 1.99.0 (5f94df478 2026-08-27)\n",
+  "source_clean": true,
+  "stages": [
+    {
+      "stage": "standing",
+      "exit": 0
+    },
+    {
+      "stage": "provider",
+      "exit": 0
+    },
+    {
+      "stage": "examples",
+      "exit": 0
+    },
+    {
+      "stage": "release",
+      "exit": 0
+    }
+  ]
+}

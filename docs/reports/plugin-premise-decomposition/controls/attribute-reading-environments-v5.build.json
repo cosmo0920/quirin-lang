@@ -1,0 +1,65 @@
+{
+  "command": [
+    "rustc",
+    "--edition=2024",
+    "/home/cosmo/.codex/worktrees/w48-bottom-up-batch4/qcore-c/private/plugin-premise-decomposition/attribute_reading_environments-v5.rs",
+    "-L",
+    "dependency=/home/cosmo/.codex/worktrees/w48-bottom-up-batch4/qcore-c/target/release/deps",
+    "--extern",
+    "qcore_audit=/home/cosmo/.codex/worktrees/w48-bottom-up-batch4/qcore-c/target/release/deps/libqcore_audit-0100539337b1c72a.rlib",
+    "--extern",
+    "qcore_c_gateway=/home/cosmo/.codex/worktrees/w48-bottom-up-batch4/qcore-c/target/release/deps/libqcore_c_gateway-b0839670ad16debd.rlib",
+    "--extern",
+    "qcore_contract=/home/cosmo/.codex/worktrees/w48-bottom-up-batch4/qcore-c/target/release/deps/libqcore_contract-dcdd6c8b69ba9424.rlib",
+    "--extern",
+    "qcore_schemas=/home/cosmo/.codex/worktrees/w48-bottom-up-batch4/qcore-c/target/release/deps/libqcore_schemas-19523d71093f8190.rlib",
+    "--extern",
+    "serde_json=/home/cosmo/.codex/worktrees/w48-bottom-up-batch4/qcore-c/target/release/deps/libserde_json-08241b9b75b89117.rlib",
+    "-o",
+    "/home/cosmo/.codex/worktrees/w48-bottom-up-batch4/qcore-c/private/plugin-premise-decomposition/attribute-reading-environments-v5"
+  ],
+  "exit": 0,
+  "source_sha256": "cedffebcf1882d411f3de1c9081f65a0c48a908a4cefe00c5fb390d65460f2bf",
+  "actual_analyzer_sha256": "ddb51170371d1dd46d221ad96f7ff17421de1704b4b8ac81ee51c7a98cf97327",
+  "cargo_receipt": "/home/cosmo/.codex/worktrees/w48-bottom-up-batch4/qcore-c/target/release/.fingerprint/qcore-audit-5e8b87dfc422fb47/bin-quirin-audit.json",
+  "cargo_receipt_sha256": "fdf09e1b21ced823d9f6249ec8f8002d038a300713b7fa44d9a1c90b5d88fac1",
+  "libraries": {
+    "qcore_audit": {
+      "path": "/home/cosmo/.codex/worktrees/w48-bottom-up-batch4/qcore-c/target/release/deps/libqcore_audit-0100539337b1c72a.rlib",
+      "sha256": "e53b8b51ea1060378b2ac047bf3c1c6a07cd5f9b071a6c064488c697064c389a",
+      "cargo_dependency_fingerprint": 16756112596262433527,
+      "receipt": "/home/cosmo/.codex/worktrees/w48-bottom-up-batch4/qcore-c/target/release/.fingerprint/qcore-audit-0100539337b1c72a/lib-qcore_audit",
+      "receipt_sha256": "14ed04c1c4536d2e7a906775e2c653f1108e51081090555a3ffb39454f0ff1a7"
+    },
+    "qcore_c_gateway": {
+      "path": "/home/cosmo/.codex/worktrees/w48-bottom-up-batch4/qcore-c/target/release/deps/libqcore_c_gateway-b0839670ad16debd.rlib",
+      "sha256": "c6d529e6a809b2e14afe82cd02b644a89e614f5a9fd85206e5fec73f228960c6",
+      "cargo_dependency_fingerprint": 12558282815779062883,
+      "receipt": "/home/cosmo/.codex/worktrees/w48-bottom-up-batch4/qcore-c/target/release/.fingerprint/qcore-c-gateway-b0839670ad16debd/lib-qcore_c_gateway",
+      "receipt_sha256": "89263395d7767c98a48df3521dfe22e27155c6ba45022f510e6690d89dbc63e9"
+    },
+    "qcore_contract": {
+      "path": "/home/cosmo/.codex/worktrees/w48-bottom-up-batch4/qcore-c/target/release/deps/libqcore_contract-dcdd6c8b69ba9424.rlib",
+      "sha256": "a32027df977ce3fcbe3d92aa709b21d817983874ace95b9bcabb00b5f60afe7b",
+      "cargo_dependency_fingerprint": 12990415445958744707,
+      "receipt": "/home/cosmo/.codex/worktrees/w48-bottom-up-batch4/qcore-c/target/release/.fingerprint/qcore-contract-dcdd6c8b69ba9424/lib-qcore_contract",
+      "receipt_sha256": "7ac7e5420009d82981ef6f748d64d2c30345877fa88a65e0981e2f636204698d"
+    },
+    "qcore_schemas": {
+      "path": "/home/cosmo/.codex/worktrees/w48-bottom-up-batch4/qcore-c/target/release/deps/libqcore_schemas-19523d71093f8190.rlib",
+      "sha256": "b482517c1c387938c99d74678cda4a2f9194745ff979ed4994d70602aa8fa286",
+      "cargo_dependency_fingerprint": 12580969597152474984,
+      "receipt": "/home/cosmo/.codex/worktrees/w48-bottom-up-batch4/qcore-c/target/release/.fingerprint/qcore-schemas-19523d71093f8190/lib-qcore_schemas",
+      "receipt_sha256": "68983fd29863b80ef1528f9671b5e77634ddb82698c99661f8af77576825398e"
+    },
+    "serde_json": {
+      "path": "/home/cosmo/.codex/worktrees/w48-bottom-up-batch4/qcore-c/target/release/deps/libserde_json-08241b9b75b89117.rlib",
+      "sha256": "e4c75aa4440971e682bba85dfe4d47ba555e80c8b5cab338149a047161e3dd56",
+      "cargo_dependency_fingerprint": 351392698914915616,
+      "receipt": "/home/cosmo/.codex/worktrees/w48-bottom-up-batch4/qcore-c/target/release/.fingerprint/serde_json-08241b9b75b89117/lib-serde_json",
+      "receipt_sha256": "f2f8b73cdc6c4b78466c8e352a60cc7d39e08aa158a8ead54fa0f379b343b098"
+    }
+  },
+  "log": "private/plugin-premise-decomposition/attribute-reading-environments-v5.build.log",
+  "meaning": "Exact actual-binary dependency identity only; no truth or source binding"
+}

@@ -1,0 +1,19 @@
+{
+  "frozen_measured_source": "c1625baf713e4d8498c39282238675749237005d",
+  "merged_published_main": "590d8ea4f1ff5de1bd912e1b46d4729406cc16b1",
+  "post_merge_head": "c1742b21fc2100d84e38f21b0e8341616e4c80c1",
+  "checked_paths": [
+    "crates",
+    "compiler",
+    "proof",
+    "providers",
+    "contract",
+    "scripts",
+    "Cargo.toml",
+    "Cargo.lock",
+    "docs/QCORE_CONTRACT_SPEC_r0_3.md",
+    "docs/QCORE_IMPLEMENTED_GRAMMARS_r0_3.md"
+  ],
+  "source_proof_provider_and_authoritative_grammar_differences": [],
+  "merge_exit": 0
+}

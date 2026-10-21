@@ -1,0 +1,28 @@
+{
+  "base": "5a556d8272b17b35a47a5036bad1f6d614ee698b",
+  "all_load_path_resource_bounds_outer_views_and_published_pins_exact": true,
+  "unchanged_outer_sources_inventory_locks": {
+    "providers/qcore-provider-librdkafka/contracts/librdkafka/outer.qv": {
+      "byte_exact": true,
+      "sha256": "ca88ccbf79699b9fd1033a69b958ec1a116cb24c040f0829299c5e65e797704a"
+    },
+    "providers/quirin-provider-fluent-bit/contracts/fluent_bit/outer.qv": {
+      "byte_exact": true,
+      "sha256": "282408a08e6fc19b6f87d3cde8d2c12d2ab0627b002b2f2e2a914bb8460c133d"
+    },
+    "providers/qcore-provider-librdkafka/outer-candidates.json": {
+      "byte_exact": true,
+      "sha256": "5c3f8c4723832c0e9e6ebb784be6a57ebc0264d519421d5b95a18a8f68c18147"
+    },
+    "providers/qcore-provider-librdkafka/outer-contracts.lock": {
+      "byte_exact": true,
+      "sha256": "a80f67f6b284e60ce3b7f4c8fd5d56726b4f584bdc85a3e8ed2dab2a07f7123b"
+    },
+    "providers/quirin-provider-fluent-bit/outer-contracts.lock": {
+      "byte_exact": true,
+      "sha256": "6bdabe473897b6b5f15f30431725785d46c2c77ebcaf4851b44865afa12bc2db"
+    }
+  },
+  "source_binding": "open",
+  "status": "interim source identity control; final merged-base comparison remains due"
+}

@@ -1,0 +1,6 @@
+{
+  "pid": 1029858,
+  "time": "2026-10-21T05:09:17.266519+00:00",
+  "scope": "child-free waiter; no lock acquisition/command/input snapshot/measurement",
+  "reason": "Point build replay at actual target binary with Cargo receipts, while separately checking immutable copied binary SHA"
+}

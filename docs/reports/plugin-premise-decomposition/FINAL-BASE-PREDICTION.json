@@ -1,0 +1,91 @@
+{
+  "status": "final combined-base prediction frozen before full standing/provider/fresh paired audits",
+  "card": "PLUGIN-PREMISE-DECOMPOSITION",
+  "base": "32e6f5dda334d6a017a1be4dcb02f72a9138c6a6",
+  "synchronized_at": "61fd1d1c9f956f8f6c4bcf94f6f48ad7f9540e52",
+  "interim_preserved": "codex/plugin-premise-interim-04e90d",
+  "production_boundary": {
+    "resource_occurrences": 94,
+    "bounds_occurrences": 71,
+    "declared_model_occurrences": 1,
+    "total": 166,
+    "proposed_atoms_each": 7,
+    "additional_structured_clauses": 1328,
+    "outer_catalogs": [
+      "rk_plugin_library",
+      "flb_external_plugin"
+    ],
+    "schema": 20,
+    "graph": 2,
+    "atomization": "same existing legacy names/text/vectors and independent proposed refinement; no prose equivalence or support",
+    "bounds_extension": "additive metadata and property-qualified replay/publication; resource loader still refuses wrong vocabulary; no new null fact",
+    "reading_environment_extension": "detached exact canonical effective environments only for actually bound unchanged libc receipts; rollback pruning; existing wire and receipt IDs unchanged"
+  },
+  "predicted_semantics": {
+    "corpus": {
+      "rows": 4834,
+      "Safe": 973,
+      "Unknown": 3852,
+      "provisionalUnsafe": 9
+    },
+    "system": {
+      "Safe": 99,
+      "Unknown": 345,
+      "provisionalUnsafe": 4
+    },
+    "slice": {
+      "Safe": 53,
+      "Unknown": 346,
+      "Pending": 4,
+      "provisionalUnsafe": 1
+    },
+    "null_rows": 5781,
+    "all_verdict_changes": 0,
+    "static_runtime_standing_closed_world_facts": "full preservation; compare every record, not just tallies",
+    "all_source_bindings": "open"
+  },
+  "deliberate_metadata_deltas": [
+    "seven exact proposed atoms/refinement at selected declarations",
+    "canonical independently held property-specific manifests and bound reference requirements",
+    "selected dependency metadata closure, preserving original premise and graph nodes",
+    "written module/pin/inclusion metadata and exact source-assumption hashes",
+    "resulting exact effective environment and nine-coordinate Context/receipt identities with independent reconstruction",
+    "new detached environment diagnostic bytes only where unchanged receipts bind",
+    "source-build evidence version and exact producer-replayed time/cwd/configuration metadata where observed"
+  ],
+  "forbidden_attribution": "No erasing existing libc observations, graph/formal payload, non-environment observation fields or arbitrary Context/task/environment leaf. Reconstructed canonical effective bytes must hit held actual BASE hash; unexplained leaf fails.",
+  "gates": {
+    "standing": "full gate + post-committed-matrix Python",
+    "provider": "fresh133Rust/25Python expected, all five rebuilt verified; actual results authoritative",
+    "lean_expected": 354,
+    "measurements": "six fresh own actual routes, symmetric eight-home map, full-null/runtime/rawmetadata comparison",
+    "lock": "/tmp/qcore-c-card-validation-20261021.lock; root combined gate precedes this card"
+  },
+  "link_map_sha256": "98a4db761ace9fd4846b000c4c98defdc2e39ce6f95684c67c30f9b8b6f38ad3",
+  "frozen_artifacts": {
+    "proof/QCore/PluginPremiseDecomposition.lean": "c8537b922b10a53648b3c24904ca4ac45fca14ca149fc3c3f0a3368bec805940",
+    "proof/AuditPluginPremiseDecomposition.lean": "9c9df17ba6253a9f52aec821023e80aecb252f388992f4406239ae7c0daa0f2c",
+    "proof/QCore/PluginReadingEnvironment.lean": "a776da5bec0c6e439014cfd51d36948ea113c109c0a8a3906dcdec00650907e6",
+    "proof/AuditPluginReadingEnvironment.lean": "d61784fd4d2b5e3a048d7f71060597b50e582231569dcfe75b041df1dc4c895c",
+    "docs/reports/plugin-premise-decomposition/outer-catalog.json": "093712024ff2f893185580d39556dcb97746ed9d21a4344a2e31a98efda4c5ba",
+    "docs/reports/plugin-premise-decomposition/census.json": "9b91cd238789eef85b80ca33f230db6d63986c947075d79cb95e9887b96ee675",
+    "proof/QCore/PluginNeutralOverlap.lean": "d895d5ac185ec19ce2f94e39b33f3cf557527cd39ad3f28715645c3dd2e8b29d",
+    "proof/AuditPluginNeutralOverlap.lean": "76473a65410c713c6d015eba51dbf494515f768cca87b73a1313731197b72150"
+  },
+  "reading_packet": "private/plugin-premise-decomposition/final-task-context.txt; refreshed status/operations/validation/evidence reviewed; previously applicable broader rules retained",
+  "residuals": "followup-amendments.json; no source/outer-truth/operator closure",
+  "previous_final_prediction_base": "44951dbb4cb6c4a0780506dbd832b29323d07b22",
+  "repair": "Only missing libc reading-site Lean library registration changed. Existing theorem statements, Rust, contracts and input artifacts byte-identical; all three new/current imports preserved.",
+  "base_analyzer": {
+    "actual_build_source": "44951dbb4cb6c4a0780506dbd832b29323d07b22",
+    "snapshot_source": "32e6f5dda334d6a017a1be4dcb02f72a9138c6a6",
+    "binary_sha256": "17b72dc72bc23a6556fdba576179d4b46d34f04dc34704c7770e72dbb2a7a6bf",
+    "source_delta_paths": [
+      "proof/QCore.lean"
+    ],
+    "source_equivalence": "Exact git diff only proof/QCore.lean; Rust/contract/runtime input trees unchanged. Context evidence_version must retain actual build44951, not32e6."
+  },
+  "repair_prediction": "REPAIR-PREDICTION.json",
+  "overlap_formal_addendum": "REPAIR-LEAN-ADDENDUM.json",
+  "repaired_source_will_include": "Explicit matched-neutral resource/null relation model and7 audited refusal/noninterference theorems, all original166 model/audit references unchanged"
+}

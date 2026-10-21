@@ -1,0 +1,9 @@
+import QCore.PluginReadingEnvironment
+#print axioms QCore.PluginReadingEnvironment.valid_binds_exact_canonical_bytes
+#print axioms QCore.PluginReadingEnvironment.stale_digest_refuses
+#print axioms QCore.PluginReadingEnvironment.noncanonical_bytes_refuse
+#print axioms QCore.PluginReadingEnvironment.publication_requires_retained_reference
+#print axioms QCore.PluginReadingEnvironment.no_snapshot_survives_empty_rollback
+#print axioms QCore.PluginReadingEnvironment.original_payload_is_unchanged
+#print axioms QCore.PluginReadingEnvironment.no_existing_semantic_consumer_changes
+#print axioms QCore.PluginReadingEnvironment.exact_reconstruction_has_held_digest

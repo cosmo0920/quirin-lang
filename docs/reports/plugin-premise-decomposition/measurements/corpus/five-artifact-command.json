@@ -1,0 +1,15 @@
+{
+  "command": [
+    "python3",
+    "-B",
+    "docs/reports/corpus-repin/diff_artifacts.py",
+    "--archived",
+    "/home/cosmo/.codex/worktrees/w48-bottom-up-batch4/qcore-c/private/plugin-premise-decomposition/five-artifact-diff/corpus/archived",
+    "--measured",
+    "/home/cosmo/.codex/worktrees/w48-bottom-up-batch4/qcore-c/private/plugin-premise-decomposition/five-artifact-diff/corpus/measured",
+    "--output",
+    "/home/cosmo/.codex/worktrees/w48-bottom-up-batch4/qcore-c/private/plugin-premise-decomposition/five-artifact-diff/corpus/diff.json"
+  ],
+  "exit": 0,
+  "explicit_transport": []
+}

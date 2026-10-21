@@ -1,0 +1,8 @@
+import QCore.PluginNeutralOverlap
+#print axioms QCore.PluginNeutralOverlap.matched_atoms_retain_exact_statement
+#print axioms QCore.PluginNeutralOverlap.matched_refinements_retain_children_and_target
+#print axioms QCore.PluginNeutralOverlap.missing_or_changed_atom_refuses
+#print axioms QCore.PluginNeutralOverlap.missing_or_changed_refinement_refuses
+#print axioms QCore.PluginNeutralOverlap.failed_bounds_parse_refuses
+#print axioms QCore.PluginNeutralOverlap.absent_metadata_uses_original_predicate
+#print axioms QCore.PluginNeutralOverlap.independently_matched_attachment_preserves_original_predicate

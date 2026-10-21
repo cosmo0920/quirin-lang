@@ -1,0 +1,18 @@
+{
+  "first_after_committed_matrix": {
+    "commit": "6f69890cae819ab0c64b0da25b360a2086739e19",
+    "tests": 374,
+    "failures": 0,
+    "seconds": 34.892,
+    "commands": "validation/python-first/commands.json",
+    "log": "validation/python-first/python.log.gz"
+  },
+  "final_after_authoritative_committed_matrix": {
+    "commit": "bcdc5426e33388281897a9198c2de5e70b5b5980",
+    "tests": 374,
+    "failures": 0,
+    "seconds": 34.759,
+    "commands": "validation/python-final/commands.json",
+    "log": "validation/python-final/python.log.gz"
+  }
+}

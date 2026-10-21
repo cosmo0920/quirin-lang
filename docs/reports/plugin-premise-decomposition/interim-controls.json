@@ -1,0 +1,200 @@
+{
+  "status": "INTERIM development controls only; final gates and measurements deferred to root exact merged base",
+  "base": "5a556d8272b17b35a47a5036bad1f6d614ee698b",
+  "source_binding": "open",
+  "contract_controls": {
+    "passed": 5,
+    "failed": 0,
+    "includes": "wrong resource/null vocabulary refused in model-only view"
+  },
+  "actual_null_dependency_controls": {
+    "passed": 4,
+    "failed": 0,
+    "includes": "real Clang actual member reader full null-row equality, real source direct/summary propagation and exact closed-world fact parity, transactional late refusal; wrong or missing published null property refuses before mutation"
+  },
+  "canonical_binding_counts": {
+    "resource": 94,
+    "null": 71,
+    "model": 1
+  },
+  "original_bytes_reconstruction": "bindings/index.json proves all six original module SHAs after removing only this card metadata",
+  "commands": [
+    {
+      "name": "interim-outer-controls-1",
+      "command": [
+        "python3",
+        "docs/reports/plugin-premise-decomposition/scripts/outer_catalog_controls.py",
+        "private/plugin-premise-decomposition/outer-controls-production-1",
+        "--binary",
+        "target/debug/examples/plugin_outer_catalog_replay",
+        "--model",
+        "proof/QCore/PluginPremiseDecomposition.lean",
+        "--audit",
+        "proof/AuditPluginPremiseDecomposition.lean"
+      ],
+      "exit": 0,
+      "started": "2026-10-21T02:48:33.991287+00:00",
+      "ended": "2026-10-21T02:48:34.483373+00:00",
+      "log": "private/plugin-premise-decomposition/interim-outer-controls-1.log"
+    },
+    {
+      "name": "interim-official-repins-2",
+      "command": [
+        "python3",
+        "docs/reports/plugin-premise-decomposition/scripts/repin.py",
+        "target/debug/quirin-audit",
+        "private/plugin-premise-decomposition/repins-2"
+      ],
+      "exit": 0,
+      "started": "2026-10-21T02:50:59.607698+00:00",
+      "ended": "2026-10-21T02:51:49.607554+00:00",
+      "log": "private/plugin-premise-decomposition/interim-official-repins-2.log"
+    },
+    {
+      "name": "interim-contract-controls-2",
+      "command": [
+        "cargo",
+        "test",
+        "-p",
+        "qcore-contract",
+        "--test",
+        "plugin_premise_decomposition",
+        "--jobs",
+        "1"
+      ],
+      "exit": 0,
+      "started": "2026-10-21T02:51:55.658035+00:00",
+      "ended": "2026-10-21T02:52:00.668516+00:00",
+      "log": "private/plugin-premise-decomposition/interim-contract-controls-2.log"
+    },
+    {
+      "name": "interim-inventory-sync-2",
+      "command": [
+        "env",
+        "CARGO_BUILD_JOBS=1",
+        "python3",
+        "providers/contracts.py",
+        "sync"
+      ],
+      "exit": 0,
+      "started": "2026-10-21T02:52:47.941211+00:00",
+      "ended": "2026-10-21T02:54:18.305558+00:00",
+      "log": "private/plugin-premise-decomposition/interim-inventory-sync-2.log"
+    },
+    {
+      "name": "interim-corpus-pin-controls-1",
+      "command": [
+        "cargo",
+        "test",
+        "-p",
+        "qcore-compiler",
+        "--test",
+        "qcore_contract_corpus",
+        "--jobs",
+        "1"
+      ],
+      "exit": 0,
+      "started": "2026-10-21T02:58:17.503824+00:00",
+      "ended": "2026-10-21T02:58:20.946179+00:00",
+      "log": "private/plugin-premise-decomposition/interim-corpus-pin-controls-1.log"
+    },
+    {
+      "name": "interim-sidecar-helper-check-2",
+      "command": [
+        "cargo",
+        "check",
+        "-p",
+        "qcore-audit",
+        "--example",
+        "plugin_sidecar_bindings",
+        "--jobs",
+        "1"
+      ],
+      "exit": 0,
+      "started": "2026-10-21T03:00:58.096432+00:00",
+      "ended": "2026-10-21T03:00:58.207580+00:00",
+      "log": "private/plugin-premise-decomposition/interim-sidecar-helper-check-2.log"
+    },
+    {
+      "name": "interim-binding-reproduction-controls-1",
+      "command": [
+        "python3",
+        "docs/reports/plugin-premise-decomposition/scripts/binding_controls.py",
+        "target/debug/examples/plugin_binding_catalog",
+        "private/plugin-premise-decomposition/reproduction-inputs-1",
+        "private/plugin-premise-decomposition/binding-reproduction-1"
+      ],
+      "exit": 0,
+      "started": "2026-10-21T03:01:47.588672+00:00",
+      "ended": "2026-10-21T03:01:57.507552+00:00",
+      "log": "private/plugin-premise-decomposition/interim-binding-reproduction-controls-1.log"
+    },
+    {
+      "name": "interim-property-qualified-null-controls-1",
+      "command": [
+        "cargo",
+        "test",
+        "-p",
+        "qcore-audit",
+        "--test",
+        "plugin_null_hypotheses",
+        "--jobs",
+        "1"
+      ],
+      "exit": 0,
+      "started": "2026-10-21T03:17:58.225046+00:00",
+      "ended": "2026-10-21T03:18:11.890487+00:00",
+      "log": "private/plugin-premise-decomposition/interim-property-qualified-null-controls-1.log"
+    }
+  ],
+  "retained_attempts": {
+    "interim-check-*-1": "Started while catalog rebuild2 waited for cargo lock; previous helper performed actual replay/typed integrity but regenerated expectations. Not claimed as independent frozen-input controls. Rebuilt helper replay attempts2 use explicit separately held graph/manifest paths.",
+    "interim-inventory-sync-1": "Expected stale lock refusal after new metadata; successful rerun2 follows official repins.",
+    "interim-official-repins-1": "Wrapper erroneously included unpinned model among resource function arguments. CLI refused it, actual model source was not pinned; corrected wrapper2 skips original_entries=[] and asserts165 unchanged existing C identities.",
+    "interim-resource-summary-controls-1": "Test harness supplied wrong custody_facts arguments; compilation101 retained. Corrected actual-summary controls2 exit0.",
+    "interim-binding-negative-controls-1": "Control driver assumed serialized empty refinement maps were present; Graph v1 serde omits them. Driver KeyError retained, fixed optional-map handling, all three views pass6positive/15negative in reproduction-controls1.",
+    "interim-metadata-attribution-controls-1": "The comparator initially equated legacy atom and premise IDs. Strict assertion refused; correction separately validates the singleton legacy_atom payload, preserving distinct IDs. Attempt2 checks all166 canonical graph digests with332 expected tamper rejections."
+  },
+  "official_inventory_sync": {
+    "exit": 0,
+    "log": "/home/cosmo/.codex/worktrees/w48-bottom-up-batch4/qcore-c/private/plugin-premise-decomposition/interim-inventory-sync-2.log"
+  },
+  "official_repins": {
+    "exit": 0,
+    "commands": 6,
+    "exact_existing_reviewed_source_identities": 165,
+    "model_only": "one unpinned Quirin declaration retained outside C ABI/views"
+  },
+  "binding_controls": {
+    "status": "reference integrity only; no source binding or proposition truth",
+    "source_binding": "open",
+    "counts": {
+      "resource": 94,
+      "null": 71,
+      "model": 1
+    },
+    "positive": 6,
+    "negative": 15,
+    "all_expected_outcomes": true,
+    "binary_sha256": "0e393c8231ca17bdfbac23076e4e67f3aa15f1c514b67aee565fc4cf55d3563e"
+  },
+  "compiler_corpus_controls": {
+    "passed": 5,
+    "failed": 0,
+    "exit": 0,
+    "log": "/home/cosmo/.codex/worktrees/w48-bottom-up-batch4/qcore-c/private/plugin-premise-decomposition/interim-corpus-pin-controls-1.log"
+  },
+  "graph_attribution_controls": {
+    "held_canonical_Rust_graph_digest_checks": 166,
+    "changed_atom_negative_controls": 166,
+    "missing_atom_negative_controls": 166,
+    "legacy_nodes_removed": 0,
+    "Context_fields_removed": 0,
+    "command": [
+      "python3",
+      "docs/reports/plugin-premise-decomposition/scripts/graph_metadata.py"
+    ],
+    "exit": 0,
+    "log": "/home/cosmo/.codex/worktrees/w48-bottom-up-batch4/qcore-c/private/plugin-premise-decomposition/interim-metadata-attribution-controls-2.log"
+  }
+}

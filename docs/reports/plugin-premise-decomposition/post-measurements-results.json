@@ -1,0 +1,42 @@
+[
+  {
+    "name": "reading-corpus-1",
+    "exit": 0,
+    "end": "2026-10-21T06:42:12.343757+00:00"
+  },
+  {
+    "name": "configuration-corpus-2",
+    "exit": 0,
+    "end": "2026-10-21T06:42:13.082244+00:00"
+  },
+  {
+    "name": "known-corpus-enriched-1",
+    "exit": 0,
+    "end": "2026-10-21T06:42:15.120977+00:00"
+  },
+  {
+    "name": "comparison-corpus-1",
+    "exit": 1,
+    "end": "2026-10-21T06:42:34.796546+00:00"
+  },
+  {
+    "name": "actual-bindings-corpus-1",
+    "exit": 0,
+    "end": "2026-10-21T06:42:40.017999+00:00"
+  },
+  {
+    "name": "facts-corpus-1",
+    "exit": 0,
+    "end": "2026-10-21T06:42:42.039842+00:00"
+  },
+  {
+    "name": "impact-corpus-2",
+    "exit": 0,
+    "end": "2026-10-21T06:42:43.955655+00:00"
+  },
+  {
+    "name": "five-artifact-corpus-1",
+    "exit": 0,
+    "end": "2026-10-21T06:42:47.255165+00:00"
+  }
+]
