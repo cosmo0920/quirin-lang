@@ -12,7 +12,7 @@ required={'submodules','clang','rust','fmt','clippy','probe','followup','lean','
 assert required == {x['name'] for x in commands} and len(commands)==len(required);assert (a.gate/'released.json').exists()
 assert not (a.gate/'head-guard-failure.json').exists(), 'gate wrapper HEAD guard failed'
 completion_raw=(a.gate/'completion.json').read_bytes();completion=json.loads(completion_raw)
-assert completion['wrapper_exit']==0 and completion['source']==frozen and completion['head_after']==frozen and completion['clean_after'] is True
+assert completion['wrapper_exit']==0 and completion['source']==frozen and completion['head_after']==frozen and completion['clean_after'] is True, 'independent wrapper/source/clean status invalid'
 assert completion['all_commands_zero'] is True and completion['command_count']==22 and completion['commands_sha256']==sha(a.gate/'commands.json'), 'independent successful wrapper completion required'
 overrides={'QCORE_AUDIT_BUILD_COMMIT':frozen,'CARGO_PROFILE_DEV_DEBUG':'0','CARGO_PROFILE_TEST_DEBUG':'0','CARGO_INCREMENTAL':'0'};env=dict(os.environ,**overrides)
 def guard():
