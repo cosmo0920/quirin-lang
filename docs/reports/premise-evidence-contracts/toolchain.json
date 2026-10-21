@@ -1,0 +1,13 @@
+{
+  "rustc": "rustc 1.99.0 (b940084d7 2026-09-28)\nbinary: rustc\ncommit-hash: b940084d7eb6a299eb4bfeb8e34901bc051e7ac4\ncommit-date: 2026-09-28\nhost: x86_64-unknown-linux-gnu\nrelease: 1.99.0\nLLVM version: 23.1.1\n",
+  "cargo": "cargo 1.99.0 (5f94df478 2026-08-27)\n",
+  "root_lock_sha256": "bdd28c1c24979708cc0c6fbfe57747e2996d12f74395a9791cae958da5b0246e",
+  "provider_lock_sha256": "1a5a64ce337863a2cec80f86bc1b8ed56fdfe77adc289f2f07fab29078880375",
+  "release_features": "default; no --features or --no-default-features",
+  "test_build_environment": {
+    "CARGO_PROFILE_DEV_DEBUG": "0",
+    "CARGO_PROFILE_TEST_DEBUG": "0",
+    "CARGO_INCREMENTAL": "0"
+  },
+  "scope": "Own observed toolchain and lock bytes before corrected standing/provider/release; source/base binary build attestations remain in their exact command receipts."
+}
