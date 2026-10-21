@@ -1,0 +1,12 @@
+{
+  "command": [
+    "python3",
+    "docs/reports/libc-reading-site-evidence/scripts/compare.py",
+    "slice",
+    "private/libc-reading-site-evidence/runs-1/slice/before",
+    "private/libc-reading-site-evidence/runs-1/slice/after",
+    "private/libc-reading-site-evidence/comparison-slice-1"
+  ],
+  "exit": 1,
+  "meaning": "All full static/null/runtime dictionaries agree after additive receipt/version attribution; four empty Monkey lifetime-summary key leaves remain unattributed until fresh exact fullsource __TIME__ replay. No hash ignored."
+}

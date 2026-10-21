@@ -44,7 +44,11 @@ fn the_snapshot_carries_exactly_the_probe_state_class() {
         PROBE_STATE_FIELDS
             .iter()
             .map(|name| (*name).to_owned())
-            .chain(["list_frame_count".to_owned(), "consultations".to_owned()])
+            .chain([
+                "list_frame_count".to_owned(),
+                "consultations".to_owned(),
+                "reading_site_checkpoint".to_owned()
+            ])
             .collect::<Vec<_>>()
     );
     let class = PARSER_FIELDS
@@ -236,4 +240,85 @@ fn the_scoped_probe_restores_only_on_decline_and_keeps_monotone_facts() {
     assert_ne!(parser.probe_state(), before);
     let logged = qcore_schemas::contract_consultation::close(enclosing);
     assert!(logged.found.contains("probed_callee"));
+}
+
+#[test]
+fn actual_nested_capture_is_removed_by_declined_probe_and_late_instantiation_refusal() {
+    use crate::contract_dependencies::{Recording, primary_source};
+    use qcore_schemas::contract::{
+        ResourceFunctionContract, ResourceParameterMode, ResourceReturnMode,
+    };
+    let mut contracts = crate::contract_loader::load_resource_contract_sources(
+        &std::collections::BTreeMap::from([(
+            "errno.qv".to_owned(),
+            include_str!("../../../../providers/quirin-provider-libc/contracts/libc/errno.qv")
+                .to_owned(),
+        )]),
+    )
+    .unwrap();
+    contracts.insert_contract(
+        "consume",
+        ResourceFunctionContract::new([ResourceParameterMode::Borrowed], ResourceReturnMode::None),
+    );
+    let source = "char *strerror(int n);\nvoid consume(char *p);\nvoid subject(void) { consume(strerror(1)); }\n";
+    let stream = crate::legacy_c::tokenize(source);
+    let expression = crate::legacy_c::tokenize("consume(strerror(1))");
+    // Retain the actual primary statement's line identity.
+    let start = stream
+        .windows(expression.len())
+        .position(|w| w.iter().zip(&expression).all(|(a, b)| a.text == b.text))
+        .unwrap();
+    let statement = &stream[start..start + expression.len()];
+    let texts = stream.iter().map(|t| t.text.as_str()).collect::<Vec<_>>();
+    let setup = || {
+        let mut parser = bare(&stream, &contracts);
+        parser.typed_model = crate::typed_field_access::TypedAccessModel::read(&texts);
+        parser.typed_types = crate::typed_field_access::FunctionTypes::read(
+            &parser.typed_model,
+            &["void"],
+            &[],
+            &BTreeSet::new(),
+        );
+        parser
+            .declared_callees
+            .extend(["consume".to_owned(), "strerror".to_owned()]);
+        parser
+    };
+    let mut parser = setup();
+    let record = Recording::start();
+    primary_source(source);
+    let accepted = parser.classify_simple(statement);
+    assert!(
+        matches!(accepted, LegacyInstruction::ContractCall { .. }),
+        "{accepted:?}"
+    );
+    assert_eq!(
+        record.finish().reading_sites.len(),
+        1,
+        "non-vacuous accepted nested capture"
+    );
+
+    let mut parser = setup();
+    let record = Recording::start();
+    primary_source(source);
+    parser.probe(|p| {
+        p.classify_simple(statement);
+        Probe::Decline(())
+    });
+    assert!(record.finish().reading_sites.is_empty());
+
+    let mut parser = setup();
+    let record = Recording::start();
+    primary_source(source);
+    let refused = parser.instantiate_call(
+        "consume",
+        statement,
+        Some("wrong_destination"),
+        crate::call_instantiation::ResultUse::Discarded,
+    );
+    assert!(matches!(
+        refused,
+        Err(super::super::call_instantiation_route::CallRefusal::UnexpectedDestination)
+    ));
+    assert!(record.finish().reading_sites.is_empty());
 }

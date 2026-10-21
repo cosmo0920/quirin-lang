@@ -1,0 +1,47 @@
+{
+  "route": "system",
+  "checks": {
+    "identical_input_paths": true,
+    "identical_process_cwd": true,
+    "all_existing_artifacts_equal_after_exact_additive_erasure_and_version_attribution": false,
+    "static_counts_equal": true,
+    "full_null_equal": true,
+    "null_summary_equal": true,
+    "full_runtime_equal": true
+  },
+  "before_counts": {
+    "Unknown": 345,
+    "Safe": 99,
+    "Unsafe": 4
+  },
+  "after_counts": {
+    "Unknown": 345,
+    "Safe": 99,
+    "Unsafe": 4
+  },
+  "null_records": 454,
+  "site_observations": 24,
+  "site_observations_by_declaration": {
+    "__errno_location": 24
+  },
+  "raw_differences": {
+    "diagnostics": 471,
+    "contracts": 1262,
+    "chunk-contracts": 0,
+    "source-effects": 0,
+    "null": 448,
+    "null-summary": 0,
+    "outer": 0
+  },
+  "residual_differences": {
+    "diagnostics": 0,
+    "contracts": 4,
+    "chunk-contracts": 0,
+    "source-effects": 0,
+    "null": 0,
+    "null-summary": 0,
+    "outer": 0
+  },
+  "version_records": 2154,
+  "all_pass": false
+}

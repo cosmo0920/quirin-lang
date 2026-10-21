@@ -1,0 +1,13 @@
+{
+  "note": "Integration of premise-decomposition-cycle1, merge44fd04b8c, own card gate8376Rust/347Lean; merged measuredsourcec5c298db2 has8387Rust/349Lean. Serial integration on measured sourcec5c298db2ab7dedb5d39d29f4cfd097727e267b2; merges44fd04b8c,6d83fd57f,91cc0ea41. Actual unrestricted fullgate8387Rust/0failed/15ignored(524units537summaries),349Lean,374Python; allsteps0. Initial sandbox8279pass/108fail and submodule128 retained, complete source-unchanged unrestricted retry passes. Provider133Rust/25Python/all5packages is BORROWED measured cycle1B evidence for byte-identical provider source, not a fresh integration provider gate; exact provenance in provider-provenance.json. No composed production census; card six/eight-home measurements retain scope. Actual Clang recording from this integration run sits beside gate. Final gate-backed matrix confirmation follows commit.",
+  "workspace_tests": 8387,
+  "provider_tests": 133,
+  "python_evidence_validator_tests": 374,
+  "reevaluation_probe_exit": 0,
+  "reevaluation_followup_exit": 0,
+  "cargo_fmt": "clean",
+  "cargo_clippy": "clean",
+  "standing_gate": "complete",
+  "lean_audits": 349,
+  "clang": "present: Ubuntu clang version 21.1.8 (6ubuntu1)"
+}

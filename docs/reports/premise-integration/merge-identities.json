@@ -1,0 +1,21 @@
+{
+  "base": "2d8f6d34257db14031a2578ce14f941bee25fc19",
+  "source_tip": "c5c298db2ab7dedb5d39d29f4cfd097727e267b2",
+  "merges": [
+    {
+      "card": "premise-decomposition-cycle1",
+      "merge": "44fd04b8c",
+      "tip": "f510a7ab25c81ecec29a3275a4d8dad0ba0567ed"
+    },
+    {
+      "card": "premise-decomposition-cycle1b",
+      "merge": "6d83fd57f",
+      "tip": "40be5667046ffdb075476626f24b68570f89da32"
+    },
+    {
+      "card": "w48-bottom-up-batch4",
+      "merge": "91cc0ea41",
+      "tip": "14c05a449e03c7af8d75084c85d2e7d958dc9335"
+    }
+  ]
+}

@@ -1,0 +1,28 @@
+{
+  "binary": "/home/cosmo/Documents/GitHub/qcore-c/private/premise-integration/baseline/quirin-audit",
+  "sha256_independently_read": "1e9e70c262d6e28a423cde0ad96eec3d0bb899fc599a07aaa9b3195de3cc06dd",
+  "receipt": "/home/cosmo/Documents/GitHub/qcore-c/private/premise-integration/baseline/receipt.json",
+  "receipt_sha256": "52730eb0720baa89e5ad22d8debebd170cf827406a6c99d854799a7ab123f06a",
+  "build_receipt": {
+    "source": "c5c298db2ab7dedb5d39d29f4cfd097727e267b2",
+    "command": [
+      "cargo",
+      "build",
+      "--release",
+      "-p",
+      "qcore-audit",
+      "--bin",
+      "quirin-audit"
+    ],
+    "exit": 0,
+    "seconds": 96.62017297744751,
+    "feature_selection": "default, no feature flags",
+    "manifest_dir": "/home/cosmo/Documents/GitHub/qcore-c/crates/qcore-audit",
+    "binary": "/home/cosmo/Documents/GitHub/qcore-c/private/premise-integration/baseline/quirin-audit",
+    "sha256": "1e9e70c262d6e28a423cde0ad96eec3d0bb899fc599a07aaa9b3195de3cc06dd",
+    "rustc": "rustc 1.99.0 (b940084d7 2026-09-28)\nbinary: rustc\ncommit-hash: b940084d7eb6a299eb4bfeb8e34901bc051e7ac4\ncommit-date: 2026-09-28\nhost: x86_64-unknown-linux-gnu\nrelease: 1.99.0\nLLVM version: 23.1.1\n"
+  },
+  "reuse_scope": "executable only; every paired run fresh, source/input/profile/env/context receipts independent",
+  "initial_input_archive_sha256": "d389e55be285375741abb5eeea436062d9ceae3bd06085a45d2015b9e0d1ef63",
+  "own_complete_input_archive_sha256": "93c9033830cba61314ba6737449651348cf74cd3d5538732db21de0cb17ad9fb"
+}

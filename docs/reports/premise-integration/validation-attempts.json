@@ -1,0 +1,67 @@
+{
+  "source": "c5c298db2",
+  "attempt": "default-sandbox-full-standing",
+  "rust": {
+    "exit": 101,
+    "passed": 8279,
+    "failed": 108,
+    "ignored": 15,
+    "units": 524,
+    "summaries": 537,
+    "log": "private/premise-integration/gate-1/rust.log"
+  },
+  "identified_restrictions": [
+    "LeakSanitizer fatal under process tracing",
+    "unshare(CLONE_NEWUSER | CLONE_NEWNET) Operation not permitted"
+  ],
+  "submodules": {
+    "initial_exit": 128,
+    "retry_exit": 0,
+    "reason": "sandbox blocked .git/modules config write; approved retry retained"
+  },
+  "remaining_steps": [
+    {
+      "name": "clang",
+      "exit": 0,
+      "seconds": 0.01471090316772461,
+      "log": "/home/cosmo/Documents/GitHub/qcore-c/private/premise-integration/gate-1/clang.log"
+    },
+    {
+      "name": "fmt",
+      "exit": 0,
+      "seconds": 4.386102914810181,
+      "log": "/home/cosmo/Documents/GitHub/qcore-c/private/premise-integration/gate-1/fmt.log"
+    },
+    {
+      "name": "clippy",
+      "exit": 0,
+      "seconds": 37.21633863449097,
+      "log": "/home/cosmo/Documents/GitHub/qcore-c/private/premise-integration/gate-1/clippy.log"
+    },
+    {
+      "name": "probe",
+      "exit": 0,
+      "seconds": 0.09072041511535645,
+      "log": "/home/cosmo/Documents/GitHub/qcore-c/private/premise-integration/gate-1/probe.log"
+    },
+    {
+      "name": "followup",
+      "exit": 0,
+      "seconds": 0.44820284843444824,
+      "log": "/home/cosmo/Documents/GitHub/qcore-c/private/premise-integration/gate-1/followup.log"
+    },
+    {
+      "name": "lean",
+      "exit": 0,
+      "seconds": 16.971166849136353,
+      "log": "/home/cosmo/Documents/GitHub/qcore-c/private/premise-integration/gate-1/lean.log"
+    },
+    {
+      "name": "python",
+      "exit": 0,
+      "seconds": 32.08086562156677,
+      "log": "/home/cosmo/Documents/GitHub/qcore-c/private/premise-integration/gate-1/python.log"
+    }
+  ],
+  "correction": "No test, policy or source changes; complete unrestricted standing gate queued; first attempt is not validation success."
+}

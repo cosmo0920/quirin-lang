@@ -1,0 +1,12 @@
+{
+  "command": [
+    "python3",
+    "docs/reports/libc-reading-site-evidence/scripts/compare.py",
+    "system",
+    "private/libc-reading-site-evidence/runs-1/system/before",
+    "private/libc-reading-site-evidence/runs-1/system/after",
+    "private/libc-reading-site-evidence/comparison-system-1"
+  ],
+  "exit": 1,
+  "meaning": "Every existing full static/null/runtime/source-effect/standing field equals after exact additive/version attribution; only four empty Monkey __TIME__ summary-key leaves require independent fresh source provenance replay."
+}

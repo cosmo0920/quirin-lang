@@ -1,0 +1,17 @@
+{
+  "command": [
+    "python3",
+    "-m",
+    "unittest",
+    "discover",
+    "-s",
+    "scripts/tests"
+  ],
+  "exit": 0,
+  "seconds": 42.49204874038696,
+  "tests": 374,
+  "matrix_sha256": "e40c4bac2ff5be93ac03ecbcbe1e13c95fc0f6f232ae110b871f9ac418d95389",
+  "matrix_unchanged": true,
+  "committed_head": "f6768b5e35bedbc2cc86195a582b42c92ffd5bc3",
+  "log": "private/libc-reading-site-evidence/python-1.log"
+}

@@ -1733,6 +1733,62 @@ impl Parser<'_> {
                     raw_arguments.as_deref(),
                     &self.caller_formals,
                 );
+                // Capture only the final accepted local fragment. These records
+                // do not assert that a later whole-function projection succeeds.
+                for selected in &nested {
+                    if selected.function == "strerror"
+                        || (selected.function == "__errno_location" && selected.dereferenced)
+                    {
+                        use crate::reading_site_evidence::{Capture, Route, Sibling, Span};
+                        crate::reading_site_evidence::capture(Capture {
+                            function: &self.typed_path_function,
+                            declaration: &selected.function,
+                            route: Route::NestedArgument,
+                            full: self.tokens,
+                            statement: tokens,
+                            call: Span {
+                                start: selected.start,
+                                end: selected.end,
+                            },
+                            outer_argument: Some(Span {
+                                start: selected.argument_start,
+                                end: selected.argument_end,
+                            }),
+                            siblings: nested
+                                .iter()
+                                .map(|n| Sibling {
+                                    function: n.function.clone(),
+                                    argument: n.argument,
+                                    call: Span {
+                                        start: n.start,
+                                        end: n.end,
+                                    },
+                                    outer_argument: Span {
+                                        start: n.argument_start,
+                                        end: n.argument_end,
+                                    },
+                                    dereferenced: n.dereferenced,
+                                })
+                                .collect(),
+                            contract: &selected.contract,
+                            environment: self.contracts,
+                            checked_predicates: [
+                                "whole-argument-or-checked-dereference",
+                                "all-sibling-nested-sites-accepted",
+                                "one-level-no-inner-call",
+                                "in-force-loaded-contract",
+                                "declared-no-custody-result",
+                                "declared-all-parameters-borrowed-no-container-effect",
+                                "outer-position-borrowed-or-declared-tail",
+                                "inner-arity-and-data-actuals-accepted",
+                                "enclosing-call-final-local-checks-accepted",
+                            ]
+                            .into_iter()
+                            .map(|id| (id.to_owned(), true))
+                            .collect(),
+                        });
+                    }
+                }
                 return LegacyInstruction::ContractCall {
                     container,
                     retention: None,

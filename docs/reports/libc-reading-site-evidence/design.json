@@ -1,0 +1,156 @@
+{
+  "base": "c5c298db2ab7dedb5d39d29f4cfd097727e267b2",
+  "status": "preimplementation frozen design",
+  "selected_functions": [
+    "__errno_location",
+    "strerror"
+  ],
+  "propositions": [
+    {
+      "id": "libc.__errno_location.nested_call_admission.checked_reading_route.v1",
+      "declaration": "__errno_location",
+      "atom": "checked_reading_route",
+      "evidence_source": "scalar route: exact callee/eligible + ordinary instantiate_call + is_identity_call; nested route: entire admitted_nested_calls sibling-set check. One successful route witnesses OR at this site, never both required.",
+      "universal_disposition": "Open",
+      "claim_scope": "selected independently bound successful checker observation only",
+      "external_or_inherited_assumptions": [
+        "faithful source/preprocessing/type extraction and Rust/Lean correspondence (boundary28)",
+        "loaded declaration custody/mode truth",
+        "declaration completeness/alias and actual-argument closure where applicable"
+      ],
+      "negative": "changed input binding rejects stale evidence; refusal is not logical refutation; an actual guarded counterexample needs exact Context and independently established antecedent"
+    },
+    {
+      "id": "libc.__errno_location.nested_call_admission.scalar_declaration.v1",
+      "declaration": "__errno_location",
+      "atom": "scalar_declaration",
+      "evidence_source": "TypedAccessModel.scalar_pointer_result meet of recognized declarations; capture exact source/reader snapshot. Extraction/declaration completeness stays conditional.",
+      "universal_disposition": "Open",
+      "claim_scope": "selected independently bound successful checker observation only",
+      "external_or_inherited_assumptions": [
+        "faithful source/preprocessing/type extraction and Rust/Lean correspondence (boundary28)",
+        "loaded declaration custody/mode truth",
+        "declaration completeness/alias and actual-argument closure where applicable"
+      ],
+      "negative": "changed input binding rejects stale evidence; refusal is not logical refutation; an actual guarded counterexample needs exact Context and independently established antecedent"
+    },
+    {
+      "id": "libc.__errno_location.nested_call_admission.untracked_effects.v1",
+      "declaration": "__errno_location",
+      "atom": "untracked_effects",
+      "evidence_source": "actual admitted ordinary ContractCall identity fields, no produced/consumed/address/destination/container effect. Model claim under loaded contract modes, not external C body truth.",
+      "universal_disposition": "Open",
+      "claim_scope": "selected independently bound successful checker observation only",
+      "external_or_inherited_assumptions": [
+        "faithful source/preprocessing/type extraction and Rust/Lean correspondence (boundary28)",
+        "loaded declaration custody/mode truth",
+        "declaration completeness/alias and actual-argument closure where applicable"
+      ],
+      "negative": "changed input binding rejects stale evidence; refusal is not logical refutation; an actual guarded counterexample needs exact Context and independently established antecedent"
+    },
+    {
+      "id": "libc.strerror.nested_call_admission.checked_nested_site.v1",
+      "declaration": "strerror",
+      "atom": "checked_nested_site",
+      "evidence_source": "entire accepted nested call plus whole outer argument and complete sibling span set, final local ContractCall construction.",
+      "universal_disposition": "Open",
+      "claim_scope": "selected independently bound successful checker observation only",
+      "external_or_inherited_assumptions": [
+        "faithful source/preprocessing/type extraction and Rust/Lean correspondence (boundary28)",
+        "loaded declaration custody/mode truth",
+        "declaration completeness/alias and actual-argument closure where applicable"
+      ],
+      "negative": "changed input binding rejects stale evidence; refusal is not logical refutation; an actual guarded counterexample needs exact Context and independently established antecedent"
+    },
+    {
+      "id": "libc.strerror.nested_call_admission.contract_in_force.v1",
+      "declaration": "strerror",
+      "atom": "contract_in_force",
+      "evidence_source": "actual successful ResourceContracts.contract lookup under independently held effective environment/contract digest; body truth not implied.",
+      "universal_disposition": "Open",
+      "claim_scope": "selected independently bound successful checker observation only",
+      "external_or_inherited_assumptions": [
+        "faithful source/preprocessing/type extraction and Rust/Lean correspondence (boundary28)",
+        "loaded declaration custody/mode truth",
+        "declaration completeness/alias and actual-argument closure where applicable"
+      ],
+      "negative": "changed input binding rejects stale evidence; refusal is not logical refutation; an actual guarded counterexample needs exact Context and independently established antecedent"
+    },
+    {
+      "id": "libc.strerror.nested_call_admission.no_custody_result.v1",
+      "declaration": "strerror",
+      "atom": "no_custody_result",
+      "evidence_source": "actual looked-up ResourceReturnMode::None; declares projection mode, not callee behavior proof.",
+      "universal_disposition": "Open",
+      "claim_scope": "selected independently bound successful checker observation only",
+      "external_or_inherited_assumptions": [
+        "faithful source/preprocessing/type extraction and Rust/Lean correspondence (boundary28)",
+        "loaded declaration custody/mode truth",
+        "declaration completeness/alias and actual-argument closure where applicable"
+      ],
+      "negative": "changed input binding rejects stale evidence; refusal is not logical refutation; an actual guarded counterexample needs exact Context and independently established antecedent"
+    },
+    {
+      "id": "libc.strerror.nested_call_admission.parameters_borrowed.v1",
+      "declaration": "strerror",
+      "atom": "parameters_borrowed",
+      "evidence_source": "actual looked-up all ResourceParameterMode::Borrowed; declaration-mode fact, not real borrowing proof.",
+      "universal_disposition": "Open",
+      "claim_scope": "selected independently bound successful checker observation only",
+      "external_or_inherited_assumptions": [
+        "faithful source/preprocessing/type extraction and Rust/Lean correspondence (boundary28)",
+        "loaded declaration custody/mode truth",
+        "declaration completeness/alias and actual-argument closure where applicable"
+      ],
+      "negative": "changed input binding rejects stale evidence; refusal is not logical refutation; an actual guarded counterexample needs exact Context and independently established antecedent"
+    },
+    {
+      "id": "libc.strerror.nested_call_admission.remaining_site_checks.v1",
+      "declaration": "strerror",
+      "atom": "remaining_site_checks",
+      "evidence_source": "N0/readability and remaining N1-N10 site guards including shape/depth/arity/position/data actuals/container identity; complete sibling set. Remains conditional on extraction/alias closure.",
+      "universal_disposition": "Open",
+      "claim_scope": "selected independently bound successful checker observation only",
+      "external_or_inherited_assumptions": [
+        "faithful source/preprocessing/type extraction and Rust/Lean correspondence (boundary28)",
+        "loaded declaration custody/mode truth",
+        "declaration completeness/alias and actual-argument closure where applicable"
+      ],
+      "negative": "changed input binding rejects stale evidence; refusal is not logical refutation; an actual guarded counterexample needs exact Context and independently established antecedent"
+    }
+  ],
+  "prediction": "zero published static/null/runtime verdict or diagnostic/standing movement after exact additive evidence erasure and attributable provenance metadata; all8 opaque atoms remain Open.",
+  "domain": "selected accepted checker-fragment observations, never universal finite-domain completeness merely from collected successes",
+  "receipt_identity": [
+    "schema/checker version",
+    "primary authoritative source SHA256",
+    "full parser token-stream digest",
+    "function and parser route",
+    "exact half-open original token call/outer-argument ranges and complete sibling spans",
+    "loaded environment/contract digests",
+    "existing graph digest and exact atom digests",
+    "independently held complete9-coordinate Context",
+    "stable model/prerequisite/environment IDs"
+  ],
+  "replay": "Independent source and expected retained-source graphs/environment/context are required. Reanalyze/recollect selected observations under caller-held inputs and compare; never accept self-consistent receipt hashes or context copied from receipt. Binding/guard replays and full analysis replay have distinct claim labels.",
+  "probe_and_hypothetical": "Snapshot/restore capture log on declined probes; suppress hypothetical/unrecorded captures; foreign/rewrite streams are separately bound or excluded with incomplete selected-domain labeling. No silent primary-source substitution.",
+  "refutation": "Evidence-only exact Context/atom/site dependency report. Stale/mismatched/inconsistent prerequisites reject evidence, do not mint Refuted or Unsafe. A supplied exact logical counterexample is distinct from reachable C violation. No cross-property/context transport or verdict invalidation.",
+  "generic_owner_boundary": "No qcore-schemas, graph-v2/parser/loader, provider/qv, legacy v1 graph/erasure edits. Existing structured libc graph receives outside receipt references; generic owner retains legacy-only v2 attachment.",
+  "planned_code": [
+    "gateway reading_site_evidence.rs/lib.rs",
+    "gateway contract_dependencies.rs/legacy_condition_desugar.rs/legacy_classify.rs/legacy_probe_state.rs",
+    "gateway minimal legacy_c.rs initialization/identity plumbing if needed",
+    "audit projection.rs/report.rs publication",
+    "isolated Rust controls and Lean conditional receipt/replay/domain/probe model"
+  ],
+  "acceptance": [
+    "successful scalar+nested source controls and actual production receipt publication",
+    "ordinary result/identity/declaration/shape/arity/sibling prerequisite mutations; source/graph/atom/context/evidenceversion mismatch refusal",
+    "probe/hypothetical and duplicated/noncovered site controls; identical no-recording behavior",
+    "selected observations cannot establish complete domain or any universal atom",
+    "actual direct/summary potential dependency trace, exact affected vs other-context/unrelated evidence controls, no rewritten verdicts",
+    "full standing gate, paired own corpus/system/slice complete records; provider gate conditional only if provider/public contract schema changed",
+    "matrix regenerated/committed before authoritative Python; retain all failed attempts/commands/counts/private logs"
+  ],
+  "heavy_gate": "Root holds lock; no cargo/Lean/provider/arbiter until exact-base immutable binary receipt/release announced"
+}

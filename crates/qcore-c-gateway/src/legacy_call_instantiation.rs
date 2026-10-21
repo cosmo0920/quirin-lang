@@ -119,6 +119,7 @@ impl Parser<'_> {
         destination: Option<&str>,
         use_: ResultUse,
     ) -> Result<Vec<LegacyInstruction>, CallRefusal> {
+        let mut reading_transaction = crate::contract_dependencies::ReadingTransaction::start();
         let standing = self.call_standing(callee);
         if standing == Standing::Recursive {
             return Err(CallRefusal::Declined(Decline::RecursiveLocal));
@@ -169,6 +170,7 @@ impl Parser<'_> {
                     use_,
                 )
                 .map_err(CallRefusal::Declined)?;
+                reading_transaction.commit();
                 Ok(sequence)
             }
             LegacyInstruction::Unknown { description, .. } => {

@@ -1,0 +1,29 @@
+[
+  {
+    "command": [
+      "python3",
+      "/home/cosmo/.codex/worktrees/premise-decomposition-cycle1b/qcore-c/docs/reports/libc-reading-site-evidence/scripts/attribute_time_identity.py",
+      "system",
+      "/home/cosmo/.codex/worktrees/premise-decomposition-cycle1b/qcore-c/private/libc-reading-site-evidence/comparison-system-1"
+    ],
+    "exit": 0
+  },
+  {
+    "command": [
+      "python3",
+      "/home/cosmo/.codex/worktrees/premise-decomposition-cycle1b/qcore-c/docs/reports/libc-reading-site-evidence/scripts/attribute_time_identity.py",
+      "slice",
+      "/home/cosmo/.codex/worktrees/premise-decomposition-cycle1b/qcore-c/private/libc-reading-site-evidence/comparison-slice-1"
+    ],
+    "exit": 0
+  },
+  {
+    "command": [
+      "python3",
+      "/home/cosmo/.codex/worktrees/premise-decomposition-cycle1b/qcore-c/docs/reports/libc-reading-site-evidence/scripts/attribute_time_identity.py",
+      "corpus",
+      "/home/cosmo/.codex/worktrees/premise-decomposition-cycle1b/qcore-c/private/libc-reading-site-evidence/comparison-corpus-1"
+    ],
+    "exit": 0
+  }
+]

@@ -1,0 +1,13 @@
+{
+  "note": "Frozen analyzer/proof/control source ccb354a7d: 8,395 Rust passed / 0 failed / 15 ignored (525 units, 538 summaries), 350 Lean audits, formatting, Clippy, both reevaluation examples, submodules and release all exit 0. Six fresh native audits exit 0; all old static, 5,781 full null and full runtime records agree after exact additive/version/full-source-time attribution, with all raw differences retained. All 148 selected __errno_location reference bindings pass; one system and one slice held-source replay pass with changed-source negatives; corpus evidence is binding-only. Three report-owned conditional leaf theorems pass with no axioms; 444 hypothetical exact-context impact controls mutate zero verdicts. All eight universals remain Open. First post-committed-f676 matrix Python: 374 passed in 42.492s; final post-final-committed-matrix confirmation is recorded separately at validation/python-final.json. Provider 133 is explicitly carried exact-c5c-base evidence only: unchanged provider/schema/qv sources make a fresh package gate inapplicable. The actual own Clang recording is copied from this worktree gate-1/clang.log; it is not borrowed from another report.",
+  "workspace_tests": 8395,
+  "provider_tests": 133,
+  "python_evidence_validator_tests": 374,
+  "reevaluation_probe_exit": 0,
+  "reevaluation_followup_exit": 0,
+  "cargo_fmt": "clean",
+  "cargo_clippy": "clean",
+  "standing_gate": "passed",
+  "lean_audits": 350,
+  "clang": "present: Ubuntu clang version 21.1.8 (6ubuntu1)"
+}

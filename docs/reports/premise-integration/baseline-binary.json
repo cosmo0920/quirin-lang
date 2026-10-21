@@ -1,0 +1,19 @@
+{
+  "source": "c5c298db2ab7dedb5d39d29f4cfd097727e267b2",
+  "command": [
+    "cargo",
+    "build",
+    "--release",
+    "-p",
+    "qcore-audit",
+    "--bin",
+    "quirin-audit"
+  ],
+  "exit": 0,
+  "seconds": 96.62017297744751,
+  "feature_selection": "default, no feature flags",
+  "manifest_dir": "/home/cosmo/Documents/GitHub/qcore-c/crates/qcore-audit",
+  "binary": "/home/cosmo/Documents/GitHub/qcore-c/private/premise-integration/baseline/quirin-audit",
+  "sha256": "1e9e70c262d6e28a423cde0ad96eec3d0bb899fc599a07aaa9b3195de3cc06dd",
+  "rustc": "rustc 1.99.0 (b940084d7 2026-09-28)\nbinary: rustc\ncommit-hash: b940084d7eb6a299eb4bfeb8e34901bc051e7ac4\ncommit-date: 2026-09-28\nhost: x86_64-unknown-linux-gnu\nrelease: 1.99.0\nLLVM version: 23.1.1\n"
+}

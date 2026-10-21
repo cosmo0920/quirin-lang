@@ -522,6 +522,8 @@ Regenerate with `python3 scripts/build_docs_index.py`; validate with `--check`.
 
 | [lexical-scalar-noop-alias-read](lexical-scalar-noop-alias-read/README.md) | LEXICAL-SCALAR-NOOP-ALIAS-READ |
 
+| [libc-reading-site-evidence](libc-reading-site-evidence/README.md) | Libc reading-site evidence v1 |
+
 | [librdkafka-plugin-premise](librdkafka-plugin-premise/README.md) | LIBRDKAFKA-PLUGIN-PREMISE-UNSTATED: the plugin premise on every dependent declaration |
 
 | [librdkafka-plugin-premise-remainder](librdkafka-plugin-premise-remainder/README.md) | LIBRDKAFKA-PLUGIN-PREMISE-REMAINDER: the plugin premise on member facts, the crash path and a model contract |

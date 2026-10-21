@@ -1,0 +1,136 @@
+{
+  "source": "ccb354a7d8279faf6078d611919ff5fe56ad7ed4",
+  "resource_environment": {
+    "CARGO_PROFILE_DEV_DEBUG": "0",
+    "CARGO_PROFILE_TEST_DEBUG": "0",
+    "CARGO_INCREMENTAL": "0"
+  },
+  "steps": [
+    {
+      "step": "submodules",
+      "command": [
+        "git",
+        "submodule",
+        "update",
+        "--init",
+        "--recursive"
+      ],
+      "exit": 0,
+      "seconds": 0.021175384521484375,
+      "source": "ccb354a7d8279faf6078d611919ff5fe56ad7ed4",
+      "log": "/home/cosmo/.codex/worktrees/premise-decomposition-cycle1b/qcore-c/private/libc-reading-site-evidence/gate-1/submodules.log"
+    },
+    {
+      "step": "clang",
+      "command": [
+        "clang",
+        "--version"
+      ],
+      "exit": 0,
+      "seconds": 0.012419462203979492,
+      "source": "ccb354a7d8279faf6078d611919ff5fe56ad7ed4",
+      "log": "/home/cosmo/.codex/worktrees/premise-decomposition-cycle1b/qcore-c/private/libc-reading-site-evidence/gate-1/clang.log"
+    },
+    {
+      "step": "rust",
+      "command": [
+        "python3",
+        "scripts/run_test_binaries.py",
+        "--jobs",
+        "16"
+      ],
+      "exit": 0,
+      "seconds": 361.2477834224701,
+      "source": "ccb354a7d8279faf6078d611919ff5fe56ad7ed4",
+      "log": "/home/cosmo/.codex/worktrees/premise-decomposition-cycle1b/qcore-c/private/libc-reading-site-evidence/gate-1/rust.log"
+    },
+    {
+      "step": "fmt",
+      "command": [
+        "cargo",
+        "fmt",
+        "--all",
+        "--",
+        "--check"
+      ],
+      "exit": 0,
+      "seconds": 4.081879615783691,
+      "source": "ccb354a7d8279faf6078d611919ff5fe56ad7ed4",
+      "log": "/home/cosmo/.codex/worktrees/premise-decomposition-cycle1b/qcore-c/private/libc-reading-site-evidence/gate-1/fmt.log"
+    },
+    {
+      "step": "clippy",
+      "command": [
+        "cargo",
+        "clippy",
+        "--all-targets",
+        "--",
+        "-D",
+        "warnings"
+      ],
+      "exit": 0,
+      "seconds": 29.920109748840332,
+      "source": "ccb354a7d8279faf6078d611919ff5fe56ad7ed4",
+      "log": "/home/cosmo/.codex/worktrees/premise-decomposition-cycle1b/qcore-c/private/libc-reading-site-evidence/gate-1/clippy.log"
+    },
+    {
+      "step": "reevaluation-probe",
+      "command": [
+        "cargo",
+        "run",
+        "-p",
+        "qcore-compiler",
+        "--example",
+        "reevaluation_probe"
+      ],
+      "exit": 0,
+      "seconds": 0.07083344459533691,
+      "source": "ccb354a7d8279faf6078d611919ff5fe56ad7ed4",
+      "log": "/home/cosmo/.codex/worktrees/premise-decomposition-cycle1b/qcore-c/private/libc-reading-site-evidence/gate-1/reevaluation-probe.log"
+    },
+    {
+      "step": "reevaluation-followup",
+      "command": [
+        "cargo",
+        "run",
+        "-p",
+        "qcore-compiler",
+        "--example",
+        "reevaluation_followup"
+      ],
+      "exit": 0,
+      "seconds": 0.408078670501709,
+      "source": "ccb354a7d8279faf6078d611919ff5fe56ad7ed4",
+      "log": "/home/cosmo/.codex/worktrees/premise-decomposition-cycle1b/qcore-c/private/libc-reading-site-evidence/gate-1/reevaluation-followup.log"
+    },
+    {
+      "step": "lean",
+      "command": [
+        "python3",
+        "scripts/check_lean_audits.py"
+      ],
+      "exit": 0,
+      "seconds": 14.960699081420898,
+      "source": "ccb354a7d8279faf6078d611919ff5fe56ad7ed4",
+      "log": "/home/cosmo/.codex/worktrees/premise-decomposition-cycle1b/qcore-c/private/libc-reading-site-evidence/gate-1/lean.log"
+    },
+    {
+      "step": "release",
+      "command": [
+        "cargo",
+        "build",
+        "--release",
+        "-p",
+        "qcore-audit",
+        "--bin",
+        "quirin-audit"
+      ],
+      "exit": 0,
+      "seconds": 93.042897939682,
+      "source": "ccb354a7d8279faf6078d611919ff5fe56ad7ed4",
+      "log": "/home/cosmo/.codex/worktrees/premise-decomposition-cycle1b/qcore-c/private/libc-reading-site-evidence/gate-1/release.log"
+    }
+  ],
+  "python": "deferred until final regenerated matrix committed",
+  "providers": "N/A: no provider-owned/public schema/qv edits"
+}

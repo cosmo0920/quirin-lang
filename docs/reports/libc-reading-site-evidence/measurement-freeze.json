@@ -1,0 +1,47 @@
+{
+  "base": "c5c298db2ab7dedb5d39d29f4cfd097727e267b2",
+  "timing": "before any paired audit; preparatory source checks only",
+  "binary_base": "/home/cosmo/Documents/GitHub/qcore-c/private/premise-integration/baseline/quirin-audit",
+  "expected_binary_base_sha256": "1e9e70c262d6e28a423cde0ad96eec3d0bb899fc599a07aaa9b3195de3cc06dd",
+  "inputs": "one independently archived exact c5c contract/profiles/providers/latest batch4 eight-home map, identical paths and bytes BOTH sides",
+  "process_cwd": "same isolated worktree both sides, no side-specific archive cwd",
+  "link_map": "docs/reports/w48-bottom-up-batch4/link-map.corpus.json",
+  "link_map_sha256": "98a4db761ace9fd4846b000c4c98defdc2e39ce6f95684c67c30f9b8b6f38ad3",
+  "parallelism": {
+    "corpus": 16,
+    "configured": 8
+  },
+  "paired_routes": [
+    "corpus",
+    "system",
+    "slice"
+  ],
+  "predicted_verdict_movement": 0,
+  "predicted_null_runtime_movement": 0,
+  "baseline_reference_counts": {
+    "corpus": {
+      "Safe": 973,
+      "Unknown": 3852,
+      "Unsafe": 9
+    },
+    "system": {
+      "Safe": 99,
+      "Unknown": 345,
+      "Unsafe": 4
+    },
+    "slice": {
+      "Safe": 53,
+      "Unknown": 346,
+      "Pending": 4,
+      "Unsafe": 1
+    }
+  },
+  "reference_note": "eight-home previous batch4 census is a comparison target, never substituted for fresh observations",
+  "allowed_differences": "exact additive reading_site_evidence/domain publication; exact analyzer evidence-version metadata under independent build receipts; time-dependent empty Monkey body identities only after fresh fullsource replay; no blanket hash/status erasure",
+  "providers": "no provider-owned source/public schemas/qv changed; package gate conditional N/A unless scope changes",
+  "resource_build_environment": {
+    "CARGO_PROFILE_DEV_DEBUG": "0",
+    "CARGO_PROFILE_TEST_DEBUG": "0",
+    "CARGO_INCREMENTAL": "0"
+  }
+}

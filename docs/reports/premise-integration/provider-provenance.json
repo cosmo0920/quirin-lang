@@ -1,0 +1,8 @@
+{
+  "source": "c5c298db2",
+  "provider_tree_equals_completed_card": true,
+  "completed_card_tip": "40be5667046ffdb075476626f24b68570f89da32",
+  "receipt": "docs/reports/premise-decomposition-cycle1b/gate/commands.json",
+  "receipt_sha256": "ad683acbab9806ea2b6962c822e4037af012b1641cf06ae71e336d54169cddff",
+  "claim": "No fresh integration provider run;133 Rust,25 Python,all5packages are borrowed measured card evidence for exactly equal provider source tree. Full root integration gate measured separately."
+}

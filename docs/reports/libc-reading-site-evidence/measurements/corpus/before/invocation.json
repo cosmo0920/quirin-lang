@@ -1,0 +1,36 @@
+{
+  "analyzer_source_commit": "c5c298db2ab7dedb5d39d29f4cfd097727e267b2",
+  "command": [
+    "/home/cosmo/Documents/GitHub/qcore-c/private/premise-integration/baseline/quirin-audit",
+    "pinned",
+    "--jobs",
+    "16",
+    "/home/cosmo/Documents/GitHub/qcore-c/build/cycle19/c-gateway-wave-pin/fluent-bit-clang-source",
+    "/home/cosmo/Documents/GitHub/qcore-c/build/cycle19/c-gateway-wave-pin/monkey/monkey-build/compile_commands.json",
+    "/home/cosmo/.codex/worktrees/premise-decomposition-cycle1b/qcore-c/private/libc-reading-site-evidence/runs-1/corpus/before/monkey-source.json",
+    "/home/cosmo/.codex/worktrees/premise-decomposition-cycle1b/qcore-c/private/libc-reading-site-evidence/runs-1/corpus/before/resource-diagnostics.json"
+  ],
+  "jobs": 16,
+  "binary": "/home/cosmo/Documents/GitHub/qcore-c/private/premise-integration/baseline/quirin-audit",
+  "binary_sha256": "1e9e70c262d6e28a423cde0ad96eec3d0bb899fc599a07aaa9b3195de3cc06dd",
+  "source_head": "66910c10a4d7eafa810b84229cf2dcf7b0f26f97",
+  "link_map": "/home/cosmo/.codex/worktrees/premise-decomposition-cycle1b/qcore-c/private/libc-reading-site-evidence/base-inputs/docs/reports/w48-bottom-up-batch4/link-map.corpus.json",
+  "link_map_sha256": "98a4db761ace9fd4846b000c4c98defdc2e39ce6f95684c67c30f9b8b6f38ad3",
+  "contract_inputs_root": "/home/cosmo/.codex/worktrees/premise-decomposition-cycle1b/qcore-c/private/libc-reading-site-evidence/base-inputs",
+  "process_cwd": "/home/cosmo/.codex/worktrees/premise-decomposition-cycle1b/qcore-c",
+  "environment": {
+    "QCORE_PROFILES": "/home/cosmo/.codex/worktrees/premise-decomposition-cycle1b/qcore-c/private/libc-reading-site-evidence/base-inputs/contract/profiles",
+    "QCORE_CLANG": "/usr/lib/llvm-21/bin/clang",
+    "QCORE_CHUNKIO_PACKAGE": "/home/cosmo/Documents/GitHub/qcore-c/build/cycle19/provider-packages-wave20/qcore.chunkio",
+    "QCORE_CROSS_UNIT_LINK_MAP": "/home/cosmo/.codex/worktrees/premise-decomposition-cycle1b/qcore-c/private/libc-reading-site-evidence/base-inputs/docs/reports/w48-bottom-up-batch4/link-map.corpus.json",
+    "QCORE_NULL_PROPERTY": "/home/cosmo/.codex/worktrees/premise-decomposition-cycle1b/qcore-c/private/libc-reading-site-evidence/runs-1/corpus/before/corpus-null.jsonl",
+    "QCORE_OUTER_PROJECTION": "/home/cosmo/.codex/worktrees/premise-decomposition-cycle1b/qcore-c/private/libc-reading-site-evidence/runs-1/corpus/before/corpus-outer.json",
+    "QCORE_SOURCE_CONTRACTS": "unset",
+    "QCORE_RETURN_CENSUS": "unset"
+  },
+  "report_driver_sha256": "a022c7a98498601914bdc83bfe7294cb0a7544105be14344b1910248aa59b64d",
+  "started": "2026-10-21T00:56:07.981984+00:00",
+  "exit": 0,
+  "ended": "2026-10-21T01:30:10.061455+00:00",
+  "binary_sha256_after": "1e9e70c262d6e28a423cde0ad96eec3d0bb899fc599a07aaa9b3195de3cc06dd"
+}
