@@ -19,7 +19,7 @@ for route in ['system','slice','corpus']:
  manifest[route]={str(p.relative_to(target)):{'bytes':p.stat().st_size,'sha256':hashlib.sha256(p.read_bytes()).hexdigest()} for p in sorted(target.rglob('*')) if p.is_file()}
 (out/'manifest.json').write_text(json.dumps(manifest,indent=2)+'\n')
 receipts=card/'validation';receipts.mkdir(exist_ok=True)
-for name in ['measurement-commands.json','production-check-commands.json','comparison-commands.json','formal-leaves-1.json','formal-leaves-1.log','binding-helper-build-1.json','binding-helper-build-2.json','baseline-reuse.json','base-input-manifest.json','base-input-manifest.incomplete.json']:
+for name in ['measurement-commands.json','production-check-commands.json','comparison-commands.json','formal-leaves-1.json','formal-leaves-1.log','binding-helper-build-1.json','binding-helper-build-2.json','baseline-reuse.json','base-input-manifest.json','base-input-manifest.incomplete.json','input-integrity-after.json']:
  shutil.copyfile(private/name,receipts/name)
 shutil.copyfile(private/'gate-1/commands.json',receipts/'source-gate-commands.json')
 shutil.copyfile(private/'gate-1/binary.json',receipts/'tip-binary.json')

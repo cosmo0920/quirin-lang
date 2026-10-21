@@ -15,7 +15,8 @@
       "guard": "e.observed s means the intended reading domain, not successful checker capture",
       "bindings": "exact nine-coordinate Context, actual source and effective environment SHA256, parent graph/atom identities, inherited prerequisite IDs in parent manifest",
       "disposition": "open",
-      "transport": "none; no receipt supports a universal solely by existing"
+      "transport": "none; no receipt supports a universal solely by existing",
+      "formula": "forall s : Site, e.observed s -> (e.nestedRoute s OR e.scalarRoute s)"
     },
     "libc.__errno_location.nested_call_admission.scalar_declaration.v1": {
       "declaration": "__errno_location",
@@ -26,7 +27,8 @@
       "guard": "e.observed s means the intended reading domain, not successful checker capture",
       "bindings": "exact nine-coordinate Context, actual source and effective environment SHA256, parent graph/atom identities, inherited prerequisite IDs in parent manifest",
       "disposition": "open",
-      "transport": "none; no receipt supports a universal solely by existing"
+      "transport": "none; no receipt supports a universal solely by existing",
+      "formula": "forall s : Site, e.observed s -> e.scalarDeclaration s"
     },
     "libc.__errno_location.nested_call_admission.untracked_effects.v1": {
       "declaration": "__errno_location",
@@ -37,7 +39,8 @@
       "guard": "e.observed s means the intended reading domain, not successful checker capture",
       "bindings": "exact nine-coordinate Context, actual source and effective environment SHA256, parent graph/atom identities, inherited prerequisite IDs in parent manifest",
       "disposition": "open",
-      "transport": "none; no receipt supports a universal solely by existing"
+      "transport": "none; no receipt supports a universal solely by existing",
+      "formula": "forall s : Site, e.observed s -> e.untrackedEffects s"
     },
     "libc.strerror.nested_call_admission.checked_nested_site.v1": {
       "declaration": "strerror",
@@ -48,40 +51,44 @@
       "guard": "e.observed s means the intended reading domain, not successful checker capture",
       "bindings": "exact nine-coordinate Context, actual source and effective environment SHA256, parent graph/atom identities, inherited prerequisite IDs in parent manifest",
       "disposition": "open",
-      "transport": "none; no receipt supports a universal solely by existing"
+      "transport": "none; no receipt supports a universal solely by existing",
+      "formula": "forall s : Site, e.observed s -> e.checkedSite s"
     },
     "libc.strerror.nested_call_admission.contract_in_force.v1": {
       "declaration": "strerror",
       "atom": "contract_in_force",
       "definition": "QCore.LibcReadingLeafBindings.contractForce",
       "environment": "QCore.LibcReadingPremises.NestedEnvironment",
-      "site_subject": "an arbitrary relevant original reading position in the independently held audited Context",
-      "guard": "e.observed s means the intended reading domain, not successful checker capture",
+      "site_subject": "the selected strerror declaration and loaded modes in the independently held audited environment",
+      "guard": "declaration-level proposition; no per-site antecedent",
       "bindings": "exact nine-coordinate Context, actual source and effective environment SHA256, parent graph/atom identities, inherited prerequisite IDs in parent manifest",
       "disposition": "open",
-      "transport": "none; no receipt supports a universal solely by existing"
+      "transport": "none; no receipt supports a universal solely by existing",
+      "formula": "e.contractInForce"
     },
     "libc.strerror.nested_call_admission.no_custody_result.v1": {
       "declaration": "strerror",
       "atom": "no_custody_result",
       "definition": "QCore.LibcReadingLeafBindings.resultNone",
       "environment": "QCore.LibcReadingPremises.NestedEnvironment",
-      "site_subject": "an arbitrary relevant original reading position in the independently held audited Context",
-      "guard": "e.observed s means the intended reading domain, not successful checker capture",
+      "site_subject": "the selected strerror declaration and loaded modes in the independently held audited environment",
+      "guard": "declaration-level proposition; no per-site antecedent",
       "bindings": "exact nine-coordinate Context, actual source and effective environment SHA256, parent graph/atom identities, inherited prerequisite IDs in parent manifest",
       "disposition": "open",
-      "transport": "none; no receipt supports a universal solely by existing"
+      "transport": "none; no receipt supports a universal solely by existing",
+      "formula": "e.noCustodyResult"
     },
     "libc.strerror.nested_call_admission.parameters_borrowed.v1": {
       "declaration": "strerror",
       "atom": "parameters_borrowed",
       "definition": "QCore.LibcReadingLeafBindings.parametersBorrowed",
       "environment": "QCore.LibcReadingPremises.NestedEnvironment",
-      "site_subject": "an arbitrary relevant original reading position in the independently held audited Context",
-      "guard": "e.observed s means the intended reading domain, not successful checker capture",
+      "site_subject": "the selected strerror declaration and loaded modes in the independently held audited environment",
+      "guard": "declaration-level proposition; no per-site antecedent",
       "bindings": "exact nine-coordinate Context, actual source and effective environment SHA256, parent graph/atom identities, inherited prerequisite IDs in parent manifest",
       "disposition": "open",
-      "transport": "none; no receipt supports a universal solely by existing"
+      "transport": "none; no receipt supports a universal solely by existing",
+      "formula": "e.parametersBorrowed"
     },
     "libc.strerror.nested_call_admission.remaining_site_checks.v1": {
       "declaration": "strerror",
@@ -92,7 +99,8 @@
       "guard": "e.observed s means the intended reading domain, not successful checker capture",
       "bindings": "exact nine-coordinate Context, actual source and effective environment SHA256, parent graph/atom identities, inherited prerequisite IDs in parent manifest",
       "disposition": "open",
-      "transport": "none; no receipt supports a universal solely by existing"
+      "transport": "none; no receipt supports a universal solely by existing",
+      "formula": "forall s : Site, e.observed s -> e.remainingChecks s"
     }
   },
   "meaning": "report-owned named Prop leaves definitionally matching the existing audited decomposition; no graph/registry/producer manifest change"

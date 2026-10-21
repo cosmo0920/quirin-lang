@@ -4,6 +4,11 @@ import hashlib,json,os,subprocess
 from pathlib import Path
 repo=Path(__file__).resolve().parents[4];private=repo/'private/libc-reading-site-evidence'
 records=json.loads((private/'measurement-commands.json').read_text());assert len(records)==6 and all(r['exit']==0 for r in records)
+input_manifest=json.loads((private/'base-input-manifest.json').read_text())
+for name,digest in input_manifest['files'].items():assert hashlib.sha256((private/'base-inputs'/name).read_bytes()).hexdigest()==digest,name
+binaries={str(record['command'][-3]):hashlib.sha256(Path(record['command'][-3]).read_bytes()).hexdigest() for record in records}
+assert set(binaries.values())=={'1e9e70c262d6e28a423cde0ad96eec3d0bb899fc599a07aaa9b3195de3cc06dd','18451156d7eb3c51209875076aef360884b453ff67a26c4d82b2f1a372fedec1'}
+(private/'input-integrity-after.json').write_text(json.dumps(dict(input_files_checked=len(input_manifest['files']),all_input_hashes_equal_to_pre_run_manifest=True,binaries=binaries),indent=2)+'\n')
 formal=repo/'docs/reports/libc-reading-site-evidence/formal-leaves.json';leaves=json.loads(formal.read_text())
 assert hashlib.sha256((repo/'docs/reports/libc-reading-site-evidence/bindings.json').read_bytes()).hexdigest()==leaves['parent_binding_manifest_sha256']
 assert hashlib.sha256((repo/leaves['source']).read_bytes()).hexdigest()==leaves['source_sha256']

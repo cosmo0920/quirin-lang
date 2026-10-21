@@ -21,7 +21,9 @@ if a.route=='corpus':
  database=Path(audit_command[4])/'build/compile_commands.json'
 else:
  database=Path(audit_command[audit_command.index('--compile-database')+1])
-raw_database=database.read_bytes();entries=[entry for entry in json.loads(raw_database) if entry['file'].endswith('/lib/monkey/mk_bin/monkey.c')];assert len(entries)==1
+raw_database=database.read_bytes()
+if a.route!='corpus':assert hashlib.sha256(raw_database).hexdigest()==invocation['compile_database_sha256']
+entries=[entry for entry in json.loads(raw_database) if entry['file'].endswith('/lib/monkey/mk_bin/monkey.c')];assert len(entries)==1
 entry=entries[0];words=shlex.split(entry['command']);command=[words[0]];skip=False
 for word in words[1:]:
  if skip:skip=False;continue
