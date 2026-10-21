@@ -1,0 +1,18 @@
+{
+  "count_before": 810,
+  "count_after": 810,
+  "changed_ids": [
+    "W48-BOTTOM-UP-RESIDUAL-PLAN",
+    "PREMISE-FLOW-PRODUCTION-DISCHARGE"
+  ],
+  "unchanged_records": 808,
+  "added": [],
+  "retired": [],
+  "unchanged_canonical_digest": "c7ba2925c886a6c5fe5c535bff6ba00e249a4889cd9ca9fd5f92e2715c7d0409",
+  "path_corrections": {
+    "guarded_index": "docs/reports/INDEX.md (generated index, rather than proposed docs/reports/README.md)",
+    "implementation_increment": "docs/development/increments/wave-48-part11.md"
+  },
+  "exact_guarded_append_applied": true,
+  "implementation_append": "W48-BOTTOM-UP-BATCH5 closes only the scalar-local read destination identity leaf: complete typed scalar-read plans now preserve the integer destinations in cio_chunk_is_up (cio_chunk.c:518) and cio_chunk_is_file (cio_chunk.c:531). W48-BOTTOM-UP-RESIDUAL-PLAN remains Open. The refreshed 2,215-body planner retains conditional ceiling 362 and baseline closure 6/6; its sole row change is mk_stop own_leaves 2→1, with score and freed callers still zero. Logger/callback/TLS ownership, scheduler destroy/TLS ownership, cJSON string membership and Removed-result transport, pointer/status carriers, unsupported casts/stores/effects, and source-binding/guarded truth obligations remain Open. No next READY claim follows from the conditional ranking."
+}

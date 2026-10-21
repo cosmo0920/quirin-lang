@@ -1,0 +1,10 @@
+{
+  "native_source": "4d0cd81ff6c1f611bcc538311e92c12324a224f3",
+  "final_gate_source": "5c55ae39c1d682b96dea851cb616c0a9e6ed7fe3",
+  "reporting_head_before_publication": "a1bdf740c721e9fa2119064d0a7bc04b49675748",
+  "non_documentation_changes": [
+    "crates/qcore-audit/tests/subcommand_plugins.rs"
+  ],
+  "interpretation": "Only plugin test fixture serialization differs outside docs. Production analyzer, Lean, runtime/source bindings, packages and guarded applications remain exact; final standing gate checks the merged fixture. Native binary retains actual4d0 evidence version.",
+  "final_gate_commands_sha256": "a587c0787ff4a8d2f682375b838df9b54f1680544bf439e4caadde32bf8e3ecc"
+}

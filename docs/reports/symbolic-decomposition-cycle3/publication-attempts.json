@@ -1,0 +1,30 @@
+{
+  "attempts": [
+    {
+      "command": [
+        "python3",
+        "/tmp/finalize-cycle3.py"
+      ],
+      "exit": 1,
+      "stage": "report publication only",
+      "reason": "Expected clang-version.txt beside private gate; driver actually retains clang-version.log. No gate failed; only compact JSON receipts had been copied.",
+      "correction": "Use actual captured clang-version.log and the corresponding command exit. The successful retry applied all amendments once.",
+      "retained_script": "/tmp/finalize-cycle3.py",
+      "raw_failure": "tool transcript; no independent private log was captured"
+    },
+    {
+      "command": [
+        "python3",
+        "/tmp/finalize-cycle3.py"
+      ],
+      "exit": 0,
+      "stage": "report publication complete"
+    },
+    {
+      "stage": "manual claim preparation",
+      "exit": 1,
+      "reason": "Incorrectly escaped unicode in a JSON text claim although generator emits literal unicode. Semantic append was already exact. Checker caught mismatch; corrected literal claim passes0.",
+      "effect": "no source, matrix or ledger amendment changed"
+    }
+  ]
+}

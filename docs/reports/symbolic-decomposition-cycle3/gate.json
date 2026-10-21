@@ -1,0 +1,13 @@
+{
+  "note": "Fresh combined merged source 5c55ae39c1d682b96dea851cb616c0a9e6ed7fe3: all11 stages and source guard0; Rust8475/0failed/15ignored (537units550summaries), Lean362. Native actual4d0 has exact production-source equality; all3 BASE/TIP comparisons account169 semantic leaves and5781 nested null rows. Provider gate N/A: unchanged inputs; provider133 count explicitly BORROWED from preceding accepted symbolic integration checkpoint. Python374 count explicitly BORROWED from preceding committed matrix until fresh post-commit confirmation; actual final confirmation lives in post-matrix-confirmation.json. No completion inferred before that receipt.",
+  "workspace_tests": 8475,
+  "provider_tests": 133,
+  "python_evidence_validator_tests": 374,
+  "reevaluation_probe_exit": 0,
+  "reevaluation_followup_exit": 0,
+  "cargo_fmt": "clean",
+  "cargo_clippy": "clean",
+  "standing_gate": "source/native complete; authoritative post-commit matrix Python confirmation recorded separately",
+  "lean_audits": 362,
+  "clang": "present: Ubuntu clang version 21.1.8 (6ubuntu1)"
+}

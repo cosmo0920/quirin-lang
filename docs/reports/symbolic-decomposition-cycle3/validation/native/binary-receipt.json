@@ -1,0 +1,34 @@
+{
+  "source": "4d0cd81ff6c1f611bcc538311e92c12324a224f3",
+  "sha256": "fc1c4903cb99d24c8495f00b6d585ef9a2c16549fea8497b66c21bf17b65c5ac",
+  "binary": "/home/cosmo/.codex/worktrees/symbolic-cycle3-integration/qcore-c/target/release/quirin-audit",
+  "build": {
+    "name": "release",
+    "command": [
+      "cargo",
+      "build",
+      "--release",
+      "-p",
+      "qcore-audit",
+      "--bin",
+      "quirin-audit"
+    ],
+    "cwd": "/home/cosmo/.codex/worktrees/symbolic-cycle3-integration/qcore-c",
+    "source": "4d0cd81ff6c1f611bcc538311e92c12324a224f3",
+    "started": "2026-10-21T18:06:46.560050+00:00",
+    "ended": "2026-10-21T18:08:16.026628+00:00",
+    "seconds": 89.46658640299984,
+    "exit": 0,
+    "environment_overrides": {
+      "CARGO_PROFILE_DEV_DEBUG": "0",
+      "CARGO_PROFILE_TEST_DEBUG": "0",
+      "CARGO_INCREMENTAL": "0",
+      "QCORE_AUDIT_BUILD_COMMIT": "4d0cd81ff6c1f611bcc538311e92c12324a224f3"
+    },
+    "log": "/home/cosmo/.codex/worktrees/symbolic-cycle3-integration/qcore-c/private/symbolic-decomposition-cycle3/joint-gate-1/release.log",
+    "head_after": "4d0cd81ff6c1f611bcc538311e92c12324a224f3",
+    "clean_after": true
+  },
+  "gate_commands_sha256": "6209a5826e6b23ee5c283aa8620a08caa25d258143f1af7b0255a0b5dd97f0e6",
+  "reporting_source": "9ed46cc4ea92adb27791200dedb1c320f337427d"
+}

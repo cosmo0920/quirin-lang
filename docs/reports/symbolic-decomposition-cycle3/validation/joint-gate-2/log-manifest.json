@@ -1,0 +1,148 @@
+{
+  "files": [
+    {
+      "path": "/home/cosmo/.codex/worktrees/symbolic-cycle3-integration/qcore-c/private/symbolic-decomposition-cycle3/joint-gate-2/acquired.json",
+      "sha256": "159114270c4b26c8aaffbdd22634907f90f770fcbb52b09efd69c28ba65de3f8",
+      "bytes": 104
+    },
+    {
+      "path": "/home/cosmo/.codex/worktrees/symbolic-cycle3-integration/qcore-c/private/symbolic-decomposition-cycle3/joint-gate-2/audit-examples.exit",
+      "sha256": "9a271f2a916b0b6ee6cecb2426f0b3206ef074578be55d9bc94f6f3fe3ab86aa",
+      "bytes": 2
+    },
+    {
+      "path": "/home/cosmo/.codex/worktrees/symbolic-cycle3-integration/qcore-c/private/symbolic-decomposition-cycle3/joint-gate-2/audit-examples.log",
+      "sha256": "47d1ebe904a90b00c5b9e4f31a52db52e92ee8caeaa47e1a29a4a65b6baf0c9d",
+      "bytes": 60
+    },
+    {
+      "path": "/home/cosmo/.codex/worktrees/symbolic-cycle3-integration/qcore-c/private/symbolic-decomposition-cycle3/joint-gate-2/clang-version.exit",
+      "sha256": "9a271f2a916b0b6ee6cecb2426f0b3206ef074578be55d9bc94f6f3fe3ab86aa",
+      "bytes": 2
+    },
+    {
+      "path": "/home/cosmo/.codex/worktrees/symbolic-cycle3-integration/qcore-c/private/symbolic-decomposition-cycle3/joint-gate-2/clang-version.log",
+      "sha256": "77467400b91c4cebb6c3e29d8a611af518a2f4078c22baf276b0a1373e996bf5",
+      "bytes": 122
+    },
+    {
+      "path": "/home/cosmo/.codex/worktrees/symbolic-cycle3-integration/qcore-c/private/symbolic-decomposition-cycle3/joint-gate-2/clippy.exit",
+      "sha256": "9a271f2a916b0b6ee6cecb2426f0b3206ef074578be55d9bc94f6f3fe3ab86aa",
+      "bytes": 2
+    },
+    {
+      "path": "/home/cosmo/.codex/worktrees/symbolic-cycle3-integration/qcore-c/private/symbolic-decomposition-cycle3/joint-gate-2/clippy.log",
+      "sha256": "d1f07ddc21a648017f6a19a39348288a0b64c61d42c59fa2dbffe0917e7f61c6",
+      "bytes": 290
+    },
+    {
+      "path": "/home/cosmo/.codex/worktrees/symbolic-cycle3-integration/qcore-c/private/symbolic-decomposition-cycle3/joint-gate-2/commands.json",
+      "sha256": "a587c0787ff4a8d2f682375b838df9b54f1680544bf439e4caadde32bf8e3ecc",
+      "bytes": 9724
+    },
+    {
+      "path": "/home/cosmo/.codex/worktrees/symbolic-cycle3-integration/qcore-c/private/symbolic-decomposition-cycle3/joint-gate-2/completion.json",
+      "sha256": "0559aa5d4a23aa43e71cbd30673ad4f62bb7bf66024593c3c856148f1ca90137",
+      "bytes": 568
+    },
+    {
+      "path": "/home/cosmo/.codex/worktrees/symbolic-cycle3-integration/qcore-c/private/symbolic-decomposition-cycle3/joint-gate-2/fmt.exit",
+      "sha256": "9a271f2a916b0b6ee6cecb2426f0b3206ef074578be55d9bc94f6f3fe3ab86aa",
+      "bytes": 2
+    },
+    {
+      "path": "/home/cosmo/.codex/worktrees/symbolic-cycle3-integration/qcore-c/private/symbolic-decomposition-cycle3/joint-gate-2/fmt.log",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "bytes": 0
+    },
+    {
+      "path": "/home/cosmo/.codex/worktrees/symbolic-cycle3-integration/qcore-c/private/symbolic-decomposition-cycle3/joint-gate-2/followup.exit",
+      "sha256": "9a271f2a916b0b6ee6cecb2426f0b3206ef074578be55d9bc94f6f3fe3ab86aa",
+      "bytes": 2
+    },
+    {
+      "path": "/home/cosmo/.codex/worktrees/symbolic-cycle3-integration/qcore-c/private/symbolic-decomposition-cycle3/joint-gate-2/followup.log",
+      "sha256": "3b2fb24dd99d4490bd7d8d824d9e14a21504767a26e877cca3b5dd870559e218",
+      "bytes": 12307
+    },
+    {
+      "path": "/home/cosmo/.codex/worktrees/symbolic-cycle3-integration/qcore-c/private/symbolic-decomposition-cycle3/joint-gate-2/lean.exit",
+      "sha256": "9a271f2a916b0b6ee6cecb2426f0b3206ef074578be55d9bc94f6f3fe3ab86aa",
+      "bytes": 2
+    },
+    {
+      "path": "/home/cosmo/.codex/worktrees/symbolic-cycle3-integration/qcore-c/private/symbolic-decomposition-cycle3/joint-gate-2/lean.log",
+      "sha256": "2643f71bfcc0a43643512d7fdfa0e4520fd30090b0043044299c797b289ed994",
+      "bytes": 871107
+    },
+    {
+      "path": "/home/cosmo/.codex/worktrees/symbolic-cycle3-integration/qcore-c/private/symbolic-decomposition-cycle3/joint-gate-2/probe.exit",
+      "sha256": "9a271f2a916b0b6ee6cecb2426f0b3206ef074578be55d9bc94f6f3fe3ab86aa",
+      "bytes": 2
+    },
+    {
+      "path": "/home/cosmo/.codex/worktrees/symbolic-cycle3-integration/qcore-c/private/symbolic-decomposition-cycle3/joint-gate-2/probe.log",
+      "sha256": "cc583a0728ec00b1e9038adb6b1924a3a1a38ae753c29468f17d877495e29faa",
+      "bytes": 2589
+    },
+    {
+      "path": "/home/cosmo/.codex/worktrees/symbolic-cycle3-integration/qcore-c/private/symbolic-decomposition-cycle3/joint-gate-2/release.exit",
+      "sha256": "9a271f2a916b0b6ee6cecb2426f0b3206ef074578be55d9bc94f6f3fe3ab86aa",
+      "bytes": 2
+    },
+    {
+      "path": "/home/cosmo/.codex/worktrees/symbolic-cycle3-integration/qcore-c/private/symbolic-decomposition-cycle3/joint-gate-2/release.log",
+      "sha256": "c61ecdfe651f39f2f69d12520e9558f3065247c29adcadab8e3d17c9b9068714",
+      "bytes": 181
+    },
+    {
+      "path": "/home/cosmo/.codex/worktrees/symbolic-cycle3-integration/qcore-c/private/symbolic-decomposition-cycle3/joint-gate-2/released.json",
+      "sha256": "a5a81f44a6c78395efafd6f179e4c455eba79f6323e0214f6c08450e1ea8d55d",
+      "bytes": 48
+    },
+    {
+      "path": "/home/cosmo/.codex/worktrees/symbolic-cycle3-integration/qcore-c/private/symbolic-decomposition-cycle3/joint-gate-2/rust.exit",
+      "sha256": "9a271f2a916b0b6ee6cecb2426f0b3206ef074578be55d9bc94f6f3fe3ab86aa",
+      "bytes": 2
+    },
+    {
+      "path": "/home/cosmo/.codex/worktrees/symbolic-cycle3-integration/qcore-c/private/symbolic-decomposition-cycle3/joint-gate-2/rust.log",
+      "sha256": "8f1372e8ff57667a039eec85cc9a696dc38f41035f26c31880625a8ca98eb1f6",
+      "bytes": 50211
+    },
+    {
+      "path": "/home/cosmo/.codex/worktrees/symbolic-cycle3-integration/qcore-c/private/symbolic-decomposition-cycle3/joint-gate-2/source-examples.exit",
+      "sha256": "9a271f2a916b0b6ee6cecb2426f0b3206ef074578be55d9bc94f6f3fe3ab86aa",
+      "bytes": 2
+    },
+    {
+      "path": "/home/cosmo/.codex/worktrees/symbolic-cycle3-integration/qcore-c/private/symbolic-decomposition-cycle3/joint-gate-2/source-examples.log",
+      "sha256": "492249c9f550482a9a491739745144c5a474b15b27fd7de5717f8cd83c68916d",
+      "bytes": 60
+    },
+    {
+      "path": "/home/cosmo/.codex/worktrees/symbolic-cycle3-integration/qcore-c/private/symbolic-decomposition-cycle3/joint-gate-2/submodules.exit",
+      "sha256": "9a271f2a916b0b6ee6cecb2426f0b3206ef074578be55d9bc94f6f3fe3ab86aa",
+      "bytes": 2
+    },
+    {
+      "path": "/home/cosmo/.codex/worktrees/symbolic-cycle3-integration/qcore-c/private/symbolic-decomposition-cycle3/joint-gate-2/submodules.log",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "bytes": 0
+    },
+    {
+      "path": "/home/cosmo/.codex/worktrees/symbolic-cycle3-integration/qcore-c/private/test-binaries/20261021T233833Z-582348/summary.json",
+      "sha256": "06f51bb9e8af0c81840e07a9eaac69c167c955473015c6b647f28fd68b54cae7",
+      "totals": {
+        "passed": 8475,
+        "failed": 0,
+        "ignored": 15,
+        "measured": 0,
+        "filtered": 0,
+        "summaries": 550
+      },
+      "units": 537
+    }
+  ],
+  "raw_logs": "private; not copied into source history"
+}

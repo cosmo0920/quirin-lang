@@ -1,0 +1,46 @@
+{
+  "analyzer_source": "4d0cd81ff6c1f611bcc538311e92c12324a224f3",
+  "reporting_source": "9ed46cc4ea92adb27791200dedb1c320f337427d",
+  "helpers": {
+    "reading-proof": {
+      "path": "/home/cosmo/.codex/worktrees/symbolic-cycle3-integration/qcore-c/private/symbolic-decomposition-cycle3/postgate-1/reading-proof",
+      "sha256": "fb04a0a1c47e67368a5080291841e89a6f547a0498049c81aca4240411b590f5",
+      "source": "docs/reports/premise-resolution-cycle2/scripts/attribute_reading_environments.rs",
+      "source_sha256": "419665c7488941489c90ec8b2aac9e22c74c0eebc1262fa7b74f7623fe49005a"
+    },
+    "metadata-replay": {
+      "path": "/home/cosmo/.codex/worktrees/symbolic-cycle3-integration/qcore-c/private/symbolic-decomposition-cycle3/postgate-1/metadata-replay",
+      "sha256": "800c3ef5739940c8e16f94f96a3c2d8cad8976774a30cf793e98007f454b5da8",
+      "source": "docs/reports/w48-bottom-up-batch4/scripts/metadata_replay.rs",
+      "source_sha256": "981d9256f99d2b875acf51ecce2bd9c27b7900c43149b0ecb9150532184ad79a"
+    }
+  },
+  "environment_exporter": {
+    "path": "/home/cosmo/.codex/worktrees/symbolic-cycle3-integration/qcore-c/target/debug/examples/premise_environment",
+    "sha256": "5c6ff54e14af1f3ea86490e7c95ef5190f633bca9d284f2a734a47a3ffe58d6a",
+    "gate_stage": "audit-examples",
+    "source": "4d0cd81ff6c1f611bcc538311e92c12324a224f3"
+  },
+  "exact_rlibs": {
+    "serde_json": {
+      "path": "/home/cosmo/.codex/worktrees/symbolic-cycle3-integration/qcore-c/target/release/deps/libserde_json-08241b9b75b89117.rlib",
+      "sha256": "d2f570b93433a9df5f1f200966f06a6d428575fc39f92aff59e4c3a5f6e2e48b"
+    },
+    "qcore_schemas": {
+      "path": "/home/cosmo/.codex/worktrees/symbolic-cycle3-integration/qcore-c/target/release/deps/libqcore_schemas-0de9b3a16b0fe98c.rlib",
+      "sha256": "e06649a87609d3592912a891fcd2cc3a2af96c0d7f62a13ceea4acafab91829c"
+    },
+    "qcore_contract": {
+      "path": "/home/cosmo/.codex/worktrees/symbolic-cycle3-integration/qcore-c/target/release/deps/libqcore_contract-1ae6fd14441b99d3.rlib",
+      "sha256": "38f6b54efaae4c7b7d421d0a9c5fde84cdf496164519a95be5366d0f68208090"
+    },
+    "qcore_c_gateway": {
+      "path": "/home/cosmo/.codex/worktrees/symbolic-cycle3-integration/qcore-c/target/release/deps/libqcore_c_gateway-e446ff2e15cc37d9.rlib",
+      "sha256": "fba7d96a07fd23be50d5820abd8c3574f36c2be5fc4b5b9c26527b975e96c50d"
+    },
+    "qcore_audit": {
+      "path": "/home/cosmo/.codex/worktrees/symbolic-cycle3-integration/qcore-c/target/release/deps/libqcore_audit-d1daecc62d7b472d.rlib",
+      "sha256": "dd8e3fdbcba7c7208abeddf055ef4a980abbb1ac6d99c2cd39f9cd4483682307"
+    }
+  }
+}

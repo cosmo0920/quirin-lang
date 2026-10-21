@@ -1,0 +1,19 @@
+{
+  "swept_items": [],
+  "residual_candidates": 201,
+  "current_card_candidates": [],
+  "manual_claim_check_exit": 0,
+  "deferred_decisions": [
+    "CT10-REASON-ROW",
+    "DOCS-COMPACT-CADENCE-DOES-CORRECTION-WORK",
+    "EXAMPLES-STYLE-SLICE-FANOUT",
+    "F02-WINDOWS-PIN-RUN",
+    "INDIRECT-CENSUS-FEATURE-UNBUILT",
+    "MATRIX-RECORDED-BY-DECISION",
+    "MATRIX-UPDATED-STALE-AT-WAVE-27",
+    "PLATFORM-RESIDUAL-FAMILY-PARTIALLY-TRACKED",
+    "Q-NAMESPACE-DECISION",
+    "SWEEP-RESIDUALS-PROSE-ONLY-ITEMS",
+    "SYNC-RULE-TOOLING-COMMIT-SCOPE"
+  ]
+}

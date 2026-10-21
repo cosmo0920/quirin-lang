@@ -1,0 +1,8 @@
+{
+  "exit": 0,
+  "reporting_source": "9ed46cc4ea92adb27791200dedb1c320f337427d",
+  "analyzer_source": "4d0cd81ff6c1f611bcc538311e92c12324a224f3",
+  "binary_sha256": "fc1c4903cb99d24c8495f00b6d585ef9a2c16549fea8497b66c21bf17b65c5ac",
+  "command_count": 7,
+  "commands_sha256": "f832c83c44f0361ad67af8b6d4581cff819f3195cef2d66fdd798f59f025f4ff"
+}

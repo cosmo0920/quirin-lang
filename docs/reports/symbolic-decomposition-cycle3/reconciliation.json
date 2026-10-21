@@ -1,0 +1,163 @@
+{
+  "wave": 48,
+  "scope": "two-card integration, not wave close",
+  "cards": [
+    "premise-guarded-decomposition",
+    "w48-bottom-up-batch5"
+  ],
+  "verdicts": {},
+  "no_section": {
+    "premise-guarded-decomposition": "Actual Integrator list heading is unrecognized by scanner. Its paragraph and all linked JSON obligations are manually processed in manual_items, not waived.",
+    "w48-bottom-up-batch5": "Instructions are final prose and linked integration-amendments.json rather than a recognized heading. Exact proposals and acceptance are processed in manual_items."
+  },
+  "manual_items": {
+    "guarded-source": {
+      "verdict": "applied",
+      "verify": [
+        {
+          "file": "docs/reports/premise-guarded-decomposition/applications/cjson.qgd",
+          "contains": "guarded_decomposition_v1;"
+        }
+      ]
+    },
+    "guarded-increment": {
+      "verdict": "applied",
+      "verify": [
+        {
+          "file": "docs/development/increments/wave-48-part11.md",
+          "contains": "Explicit guarded decomposition adds a separately versioned readable document layer and typed Rust lowering with audited Lean: guard-left notation lowers proposed admission to necessary environment/prerequisites, forbidden admission requires positive invalidity and positive refutation, all OR alternatives remain recorded, and each terminal has its own postcondition check. Actual cJSON detach and rd_kafka_dump0 plugin sidecars retain16 original hypothesis propositions and expose10 obligations over31 symbols, with exact source/graph/model provenance and same-context downstream recheck propagation. Existing flow/lifecycle operators, production sources/pins/graphs/bindings, verdict/standing/outer truth remain unchanged; all source correspondences stay Open. Focused8 Rust and17 Lean theorem checks pass; the root joint standing/native campaign owns full acceptance."
+        }
+      ]
+    },
+    "guarded-followup": {
+      "verdict": "applied",
+      "verify": [
+        {
+          "file": "docs/reviews/r0_3/acceptance_matrix.json",
+          "contains": "Explicit guarded_decomposition_v1 standalone documents now lower readable guard-left notation to admission -> (environment AND all prerequisites), positive-invalidity forbidden admission, all declared alternative cases, and separately checked terminal postconditions, with matching audited Lean and actual cJSON9-atom/plugin7-atom proposed applications. Dependency impact marks every downstream case/terminal for same-context recheck without assigning truth or rewriting verdicts. This supplies no production semantic consumer or C/source/prose correspondence. Inline adoption remains separate: explicitly extend the source grammar/property loaders and sealed whole-source metadata bridge, deliberately maintain reviewed source pins, then require exact graph/erasure/classification/standing/full-route parity before any authority. Every original complete scoped source/model/prose/environment and feasible-path criterion, typed predicate/consumer/invalidation requirement, nine-coordinate Context/refutation control and independent source/outer residual remains Open."
+        }
+      ]
+    },
+    "implementation-proposals": {
+      "verdict": "applied",
+      "verify": [
+        {
+          "file": "docs/STATUS.md",
+          "contains": "W48-BOTTOM-UP-BATCH5 preserves complete typed scalar-read plans instead of manufacturing a pointer identity for scalar destinations. Fresh conditional eight-home corpus4834:973→975 Safe,3852→3850 Unknown,9 unchanged provisional Unsafe; system448 unchanged99/345/4, slice404:53→57 Safe,346→342 Unknown,4 Pending/1 provisional Unsafe. No prior Safe regression. All5781 nested null dictionaries unchanged;3 corpus and2 slice added named candidate reads and custody/runtime envelopes retained and completely replayed. Existing declared cio_chunk_is_up gains native W4+entry standing. All169 semantic leaves accounted, whole original payloads retained, no source/graph truth transport. Shared joint gate: 8,475 Rust tests / 362 Lean audits; final matrix/Python receipt separate."
+        },
+        {
+          "file": "docs/development/increments/wave-48-part11.md",
+          "contains": "W48-BOTTOM-UP-BATCH5 preserves complete typed scalar-read plans and discharges the false scalar-local pointer identity in pinned cio_chunk_is_up and cio_chunk_is_file. Fresh exact-source native comparison keeps the 448-row system unchanged (99 Safe, 345 Unknown, 4 provisional Unsafe), moves the 404-row slice from 53 to 57 Safe (346→342 Unknown; 4 Pending and 1 provisional Unsafe unchanged), and moves the 4,834-row corpus from 973 to 975 Safe (3,852→3,850 Unknown; 9 provisional Unsafe unchanged). No prior Safe regresses. All 5,781 nested null dictionaries remain identical, while five newly named candidate reads and custody/runtime envelopes are retained and replayed; all 169 remaining comparison leaves are accounted for without erasing fields. The focused set passes 60 Rust controls and ten audited Lean theorems; the shared frozen gate passes 8,475 Rust tests and 362 Lean audits with zero failures, placeholders, or project axioms. W48-BOTTOM-UP-RESIDUAL-PLAN and source-binding/guarded truth obligations remain Open. The final committed matrix and Python acceptance receipt are recorded separately by the integrator. See docs/reports/w48-bottom-up-batch5/README.md for exact build identities, retained failures, native provenance, and bounded claims."
+        },
+        {
+          "file": "docs/reviews/r0_3/acceptance_matrix.json",
+          "contains": "W48-BOTTOM-UP-BATCH5 closes only the scalar-local read destination identity leaf: complete typed scalar-read plans now preserve the integer destinations in cio_chunk_is_up (cio_chunk.c:518) and cio_chunk_is_file (cio_chunk.c:531). W48-BOTTOM-UP-RESIDUAL-PLAN remains Open. The refreshed 2,215-body planner retains conditional ceiling 362 and baseline closure 6/6; its sole row change is mk_stop own_leaves 2→1, with score and freed callers still zero. Logger/callback/TLS ownership, scheduler destroy/TLS ownership, cJSON string membership and Removed-result transport, pointer/status carriers, unsupported casts/stores/effects, and source-binding/guarded truth obligations remain Open. No next READY claim follows from the conditional ranking."
+        }
+      ]
+    },
+    "joint-gate-native": {
+      "verdict": "applied",
+      "verify": [
+        {
+          "file": "docs/reports/symbolic-decomposition-cycle3/validation/joint-gate-2/completion.json",
+          "contains": "\"wrapper_exit\": 0"
+        },
+        {
+          "file": "docs/reports/w48-bottom-up-batch5/native-comparison.json",
+          "contains": "\"unexplained_semantic_leaves\": 0"
+        },
+        {
+          "file": "docs/reports/symbolic-decomposition-cycle3/ledger-amendments.json",
+          "contains": "\"retired\": []"
+        }
+      ]
+    },
+    "provider-scope": {
+      "verdict": "applied",
+      "verify": [
+        {
+          "file": "docs/reports/symbolic-decomposition-cycle3/validation/joint-gate-2/completion.json",
+          "contains": "\"provider_changed_paths\": []"
+        }
+      ]
+    },
+    "index-path-correction": {
+      "verdict": "applied",
+      "verify": [
+        {
+          "file": "docs/reports/INDEX.md",
+          "contains": "symbolic-decomposition-cycle3/README.md"
+        }
+      ]
+    },
+    "final-python": {
+      "verdict": "deferred",
+      "note": "Run after regenerated matrix commit, then publish actual count/exit/stability receipt before main push."
+    },
+    "main-push": {
+      "verdict": "deferred",
+      "note": "Authorized after authoritative Python; primary checkout foreign work is protected. Remote main can fast-forward from isolated branch."
+    },
+    "maintenance": {
+      "verdict": "deferred",
+      "note": "Compaction10 and stability review6 remain due at wave close; this integration discharges neither."
+    }
+  },
+  "manual_check": "reconciliation_sweep._check_claims(root, manual_items, True) exits0; standard --check covers scanner items and carried decisions.",
+  "deferred_decisions": {
+    "CT10-REASON-ROW": {
+      "verdict": "deferred",
+      "note": "Unchanged outside these two cards, carried to forthcoming wave close. Prior ground: Still deferred, an EIGHTH wave, and now with a second card asking for it: STABILITY-REEVAL-4's section 6 item 6 names CT24-CLEANUP-TASK-COMPOSITION and CT46-NOTES-PREDATE-TSAN-ROW as two names that reach no tracker precisely because the CT ledger row does not say where an unmapped or retired case's reason lives - which is this decision's question. NO NEW EVIDENCE ABOUT CT10 ITSELF: wave 40 moved no crate source at all (git diff --stat 6dc484ad 0c7b0cea over crates/ compiler/ proof/ providers/ is empty), so nothing touched compiler/tests/fixtures/ct/CT10/. The decision - whether to write such a row at all - is untaken and this close does not take it; what it did take is the general half, registered as RESIDUAL-QUIET-BY-PROSE-MENTION. Still double-carried as a named_followup (DECISION-ALSO-REGISTERED-AS-FOLLOWUP)."
+    },
+    "DOCS-COMPACT-CADENCE-DOES-CORRECTION-WORK": {
+      "verdict": "deferred",
+      "note": "Unchanged outside these two cards, carried to forthcoming wave close. Prior ground: Still deferred - a question raised for the user and not for a close to answer. NEW DATA POINT, offered as such and cutting BOTH ways this wave: DOCS-COMPACT-8 did fire, and it did nine corrections, which is the pattern the question is about; and this close STILL did correction work on top of it - constraint 14's reserved-word count was one short of what its own named authority matches (112 against 113), CLAUDE.md's stability-cadence bullet was a wave stale, and the merged-gate row's provenance named a non-ancestor tip. So correction work arrived from the compaction card AND from the close in the same wave. Neither reading is argued for here. DOCS-COMPACT-9 is recorded as due around wave 42 or 43 and not run."
+    },
+    "EXAMPLES-STYLE-SLICE-FANOUT": {
+      "verdict": "deferred",
+      "note": "Unchanged outside these two cards, carried to forthcoming wave close. Prior ground: Still deferred, an EIGHTH wave, and re-listed so it does not expire in silence. Measured at this base: examples/ did not move this wave at all (git diff --name-only 6dc484ad 0c7b0cea -- examples/ is empty), and there are 12 example family directories, unchanged. A two-card documentation wave produces no evidence either way about the slice fan-out spelling of existing programs, which is what the decision is about."
+    },
+    "F02-WINDOWS-PIN-RUN": {
+      "verdict": "deferred",
+      "note": "Unchanged outside these two cards, carried to forthcoming wave close. Prior ground: Still deferred, raised at wave 38 for the user: a user-validated Windows run of the F02 row at or after a re-pin, in the HTTP-V1-WINDOWS-RUN pattern. NEW EVIDENCE, which does not resolve it: STABILITY-REEVAL-4 re-read both pin sites this wave and reports the literals still disagree, so F02-WINDOWS-PIN-STALE-SINCE-WAVE-36 is red for a FIFTH wave; no wave-40 card claims a Windows or Apple run and neither could, both being documentation cards; this close's two gates report 10 ignored, the tenth being that #[ignore]d agreement test, the same count as wave 39's. No Linux gate can see this row, which is why the decision exists."
+    },
+    "INDIRECT-CENSUS-FEATURE-UNBUILT": {
+      "verdict": "deferred",
+      "note": "Unchanged outside these two cards, carried to forthcoming wave close. Prior ground: Still deferred and not resolved. Measured: no wave-40 commit touched a Cargo.toml feature or a CI job - the wave's whole diff outside docs/ is empty - so nothing builds either feature still. Both arms stand as written at wave 36: a CI job building the features, or a recorded decision that the instrumentation is disposable and a future census re-derives it."
+    },
+    "MATRIX-RECORDED-BY-DECISION": {
+      "verdict": "deferred",
+      "note": "Unchanged outside these two cards, carried to forthcoming wave close. Prior ground: Still deferred, raised at wave 38 for the user: back-fill the 67 entries without `recorded_by` with a five-key generator check, or record that `recorded_by` is optional and `source` is the provenance key. MEASURED at this close: still exactly 67 entries without the key, and every wave-40 registration carries it (23 STABILITY-REEVAL-4, 2 DOCS-COMPACT-8, 2 this close), so the unkeyed set is stable across another wave and the decision is untouched. Not decided here; no entry was back-filled by guess."
+    },
+    "MATRIX-UPDATED-STALE-AT-WAVE-27": {
+      "verdict": "deferred",
+      "note": "Unchanged outside these two cards, carried to forthcoming wave close. Prior ground: Still deferred; untaken. NEW EVIDENCE: the matrix was regenerated at least four more times this wave (each card's own, each merge's, and this close's two), and the `updated` field still opens '2026-09-12 (wave 27 complete' - read off the committed key at this close - so the prose now sits beside a file regenerated thirteen waves later. Still double-carried as a named_followup."
+    },
+    "PLATFORM-RESIDUAL-FAMILY-PARTIALLY-TRACKED": {
+      "verdict": "deferred",
+      "note": "Unchanged outside these two cards, carried to forthcoming wave close. Prior ground: Still deferred, and this close again did NOT resolve it by completing the registration, for the wave-35 ground: which arm to take IS the decision. NEW EVIDENCE: OWNED-FIELD-WINDOWS-RUN is still unregistered and now appears in CLAUDE.md, the wave-40 checkpoint page and DOCS-COMPACT-8's report as well as the wave-39 close - four documents, no tracker entry - and HTTP-V1-WINDOWS-RUN is still absent from named_followups by id while appearing twice in the matrix's prose, which is exactly the mechanism this close registered as RESIDUAL-QUIET-BY-PROSE-MENTION. The family is once more more partially tracked than before."
+    },
+    "Q-NAMESPACE-DECISION": {
+      "verdict": "deferred",
+      "note": "Unchanged outside these two cards, carried to forthcoming wave close. Prior ground: OPEN, NOT RESOLVED, and RE-AFFIRMED FOR WAVE 41 BY THIS CLOSE only in the sense the wave-39 close meant it - the decision itself (open Q101+ around the legacy bands, or take a new prefix) is integrator/spec work and is not a close's to take. MEASURED for wave 40: the consequence ran ZERO times and zero codes were allocated, because neither cadence card moves crate source (git diff --stat 6dc484ad 0c7b0cea -- crates/ compiler/ proof/ providers/ is empty). The tally therefore stands at eighteen instances on ten bands across waves 26-39, and AGENTS.md now says wave 40 added nothing to it. Carried so a later close re-lists it rather than reading the AGENTS.md sentence as a resolution. The 'held for N waves' figure is NOT restored - see this record's verdict on docs-compact-8 item 9."
+    },
+    "SWEEP-RESIDUALS-PROSE-ONLY-ITEMS": {
+      "verdict": "deferred",
+      "note": "Unchanged outside these two cards, carried to forthcoming wave close. Prior ground: Still deferred, raised at wave 37 for the user; NOT taken here, on the same ground: widening --residuals to prose needs a definition of the shape a test can make red by mutation, and none was designed or measured by this close. RELATED BUT DISTINCT, and registered separately so the two are not confused: RESIDUAL-QUIET-BY-PROSE-MENTION is the opposite direction - the tool reads TOO MUCH prose, matching a name inside another entry's `why` and calling it tracked - and it is a measured defect with a discharge condition rather than an open decision."
+    },
+    "SYNC-RULE-TOOLING-COMMIT-SCOPE": {
+      "verdict": "deferred",
+      "note": "Unchanged outside these two cards, carried to forthcoming wave close. Prior ground: Still deferred, and wave 40 repeats the shape a FOURTH time with one new wrinkle. --uncarded returned 9 commits: six DOCS-COMPACT-8 branch commits, two WAVE-39-CLOSE branch commits reachable only through the inclusive base merge, and ONE structural integrator commit outside any merge - f11ccbba, 'Open wave 40: create the increment record and move the index pointer', the same convention as 05bbd149 (wave 38) and 477b733d (wave 37). So the answer to 'zero integrator commits outside merges' is NO this wave, and the one that exists is the conventional wave-opening commit, carried on STABILITY-REEVAL-4's branch. The wrinkle: that commit is also what broke one of the wave-39 close's verify claims, so a structural commit nobody reports is now measurably load-bearing. Everything else the integrator did this wave lives INSIDE the two merges, indexed by nothing but their messages, which is again the only reason this close could sweep it (README section 4). The question the decision asks is unchanged."
+    }
+  },
+  "residual_sweep": {
+    "exit": 0,
+    "all_candidates": 201,
+    "current_card_candidates": [],
+    "interpretation": "Historical candidates remain in their owning reports/ledgers; no newly introduced current-card residual name is untracked. No ID retired."
+  },
+  "path_corrections": {
+    "guarded_index": "docs/reports/INDEX.md",
+    "implementation_increment": "docs/development/increments/wave-48-part11.md"
+  }
+}

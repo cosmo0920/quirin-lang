@@ -1,0 +1,222 @@
+[
+  {
+    "name": "freeze",
+    "command": [
+      "/usr/bin/python3",
+      "docs/reports/premise-symbolic-integration/scripts/freeze_inputs.py",
+      "/home/cosmo/.codex/worktrees/symbolic-cycle3-integration/qcore-c/private/symbolic-decomposition-cycle3/postgate-1/tip-freeze",
+      "--source",
+      "4d0cd81ff6c1f611bcc538311e92c12324a224f3",
+      "--binary",
+      "/home/cosmo/.codex/worktrees/symbolic-cycle3-integration/qcore-c/target/release/quirin-audit",
+      "--binary-sha256",
+      "fc1c4903cb99d24c8495f00b6d585ef9a2c16549fea8497b66c21bf17b65c5ac",
+      "--binary-receipt",
+      "/home/cosmo/.codex/worktrees/symbolic-cycle3-integration/qcore-c/private/symbolic-decomposition-cycle3/postgate-1/binary-receipt.json"
+    ],
+    "cwd": "/home/cosmo/.codex/worktrees/symbolic-cycle3-integration/qcore-c",
+    "exit": 0,
+    "source_before": {
+      "reporting_head": "9ed46cc4ea92adb27791200dedb1c320f337427d",
+      "analyzer_source": "4d0cd81ff6c1f611bcc538311e92c12324a224f3",
+      "clean": true
+    },
+    "source_after": {
+      "reporting_head": "9ed46cc4ea92adb27791200dedb1c320f337427d",
+      "analyzer_source": "4d0cd81ff6c1f611bcc538311e92c12324a224f3",
+      "clean": true
+    },
+    "ended": "2026-10-21T18:39:25.385236+00:00"
+  },
+  {
+    "name": "cargo-artifacts",
+    "command": [
+      "cargo",
+      "build",
+      "--release",
+      "-p",
+      "qcore-audit",
+      "--bin",
+      "quirin-audit",
+      "--message-format=json",
+      "-j1"
+    ],
+    "cwd": "/home/cosmo/.codex/worktrees/symbolic-cycle3-integration/qcore-c",
+    "exit": 0,
+    "source_before": {
+      "reporting_head": "9ed46cc4ea92adb27791200dedb1c320f337427d",
+      "analyzer_source": "4d0cd81ff6c1f611bcc538311e92c12324a224f3",
+      "clean": true
+    },
+    "source_after": {
+      "reporting_head": "9ed46cc4ea92adb27791200dedb1c320f337427d",
+      "analyzer_source": "4d0cd81ff6c1f611bcc538311e92c12324a224f3",
+      "clean": true
+    },
+    "ended": "2026-10-21T18:39:25.540873+00:00"
+  },
+  {
+    "name": "reading-proof-build",
+    "command": [
+      "rustc",
+      "--edition=2024",
+      "docs/reports/premise-resolution-cycle2/scripts/attribute_reading_environments.rs",
+      "-C",
+      "debuginfo=0",
+      "-L",
+      "dependency=/home/cosmo/.codex/worktrees/symbolic-cycle3-integration/qcore-c/target/release/deps",
+      "-o",
+      "/home/cosmo/.codex/worktrees/symbolic-cycle3-integration/qcore-c/private/symbolic-decomposition-cycle3/postgate-1/reading-proof",
+      "--extern",
+      "qcore_audit=/home/cosmo/.codex/worktrees/symbolic-cycle3-integration/qcore-c/target/release/deps/libqcore_audit-d1daecc62d7b472d.rlib",
+      "--extern",
+      "qcore_c_gateway=/home/cosmo/.codex/worktrees/symbolic-cycle3-integration/qcore-c/target/release/deps/libqcore_c_gateway-e446ff2e15cc37d9.rlib",
+      "--extern",
+      "qcore_contract=/home/cosmo/.codex/worktrees/symbolic-cycle3-integration/qcore-c/target/release/deps/libqcore_contract-1ae6fd14441b99d3.rlib",
+      "--extern",
+      "qcore_schemas=/home/cosmo/.codex/worktrees/symbolic-cycle3-integration/qcore-c/target/release/deps/libqcore_schemas-0de9b3a16b0fe98c.rlib",
+      "--extern",
+      "serde_json=/home/cosmo/.codex/worktrees/symbolic-cycle3-integration/qcore-c/target/release/deps/libserde_json-08241b9b75b89117.rlib"
+    ],
+    "cwd": "/home/cosmo/.codex/worktrees/symbolic-cycle3-integration/qcore-c",
+    "exit": 0,
+    "source_before": {
+      "reporting_head": "9ed46cc4ea92adb27791200dedb1c320f337427d",
+      "analyzer_source": "4d0cd81ff6c1f611bcc538311e92c12324a224f3",
+      "clean": true
+    },
+    "source_after": {
+      "reporting_head": "9ed46cc4ea92adb27791200dedb1c320f337427d",
+      "analyzer_source": "4d0cd81ff6c1f611bcc538311e92c12324a224f3",
+      "clean": true
+    },
+    "ended": "2026-10-21T18:39:26.347143+00:00"
+  },
+  {
+    "name": "metadata-replay-build",
+    "command": [
+      "rustc",
+      "--edition=2024",
+      "docs/reports/w48-bottom-up-batch4/scripts/metadata_replay.rs",
+      "-C",
+      "debuginfo=0",
+      "-L",
+      "dependency=/home/cosmo/.codex/worktrees/symbolic-cycle3-integration/qcore-c/target/release/deps",
+      "-o",
+      "/home/cosmo/.codex/worktrees/symbolic-cycle3-integration/qcore-c/private/symbolic-decomposition-cycle3/postgate-1/metadata-replay",
+      "--extern",
+      "qcore_audit=/home/cosmo/.codex/worktrees/symbolic-cycle3-integration/qcore-c/target/release/deps/libqcore_audit-d1daecc62d7b472d.rlib",
+      "--extern",
+      "qcore_c_gateway=/home/cosmo/.codex/worktrees/symbolic-cycle3-integration/qcore-c/target/release/deps/libqcore_c_gateway-e446ff2e15cc37d9.rlib",
+      "--extern",
+      "qcore_contract=/home/cosmo/.codex/worktrees/symbolic-cycle3-integration/qcore-c/target/release/deps/libqcore_contract-1ae6fd14441b99d3.rlib",
+      "--extern",
+      "qcore_schemas=/home/cosmo/.codex/worktrees/symbolic-cycle3-integration/qcore-c/target/release/deps/libqcore_schemas-0de9b3a16b0fe98c.rlib",
+      "--extern",
+      "serde_json=/home/cosmo/.codex/worktrees/symbolic-cycle3-integration/qcore-c/target/release/deps/libserde_json-08241b9b75b89117.rlib"
+    ],
+    "cwd": "/home/cosmo/.codex/worktrees/symbolic-cycle3-integration/qcore-c",
+    "exit": 0,
+    "source_before": {
+      "reporting_head": "9ed46cc4ea92adb27791200dedb1c320f337427d",
+      "analyzer_source": "4d0cd81ff6c1f611bcc538311e92c12324a224f3",
+      "clean": true
+    },
+    "source_after": {
+      "reporting_head": "9ed46cc4ea92adb27791200dedb1c320f337427d",
+      "analyzer_source": "4d0cd81ff6c1f611bcc538311e92c12324a224f3",
+      "clean": true
+    },
+    "ended": "2026-10-21T18:39:26.866453+00:00"
+  },
+  {
+    "name": "system",
+    "command": [
+      "/usr/bin/python3",
+      "docs/reports/w48-bottom-up-batch5/scripts/measure_strong.py",
+      "system",
+      "/home/cosmo/.codex/worktrees/symbolic-cycle3-integration/qcore-c/private/symbolic-decomposition-cycle3/postgate-1/system/tip",
+      "--link-map",
+      "/home/cosmo/.codex/worktrees/symbolic-cycle3-integration/qcore-c/docs/reports/w48-bottom-up-batch4/link-map.corpus.json",
+      "--inputs-snapshot",
+      "/home/cosmo/.codex/worktrees/symbolic-cycle3-integration/qcore-c/private/symbolic-decomposition-cycle3/postgate-1/tip-freeze/inputs",
+      "--binary-source",
+      "4d0cd81ff6c1f611bcc538311e92c12324a224f3",
+      "--jobs",
+      "16"
+    ],
+    "cwd": "/home/cosmo/.codex/worktrees/symbolic-cycle3-integration/qcore-c",
+    "exit": 0,
+    "source_before": {
+      "reporting_head": "9ed46cc4ea92adb27791200dedb1c320f337427d",
+      "analyzer_source": "4d0cd81ff6c1f611bcc538311e92c12324a224f3",
+      "clean": true
+    },
+    "source_after": {
+      "reporting_head": "9ed46cc4ea92adb27791200dedb1c320f337427d",
+      "analyzer_source": "4d0cd81ff6c1f611bcc538311e92c12324a224f3",
+      "clean": true
+    },
+    "ended": "2026-10-21T18:43:29.883394+00:00"
+  },
+  {
+    "name": "slice",
+    "command": [
+      "/usr/bin/python3",
+      "docs/reports/w48-bottom-up-batch5/scripts/measure_strong.py",
+      "slice",
+      "/home/cosmo/.codex/worktrees/symbolic-cycle3-integration/qcore-c/private/symbolic-decomposition-cycle3/postgate-1/slice/tip",
+      "--link-map",
+      "/home/cosmo/.codex/worktrees/symbolic-cycle3-integration/qcore-c/docs/reports/w48-bottom-up-batch4/link-map.corpus.json",
+      "--inputs-snapshot",
+      "/home/cosmo/.codex/worktrees/symbolic-cycle3-integration/qcore-c/private/symbolic-decomposition-cycle3/postgate-1/tip-freeze/inputs",
+      "--binary-source",
+      "4d0cd81ff6c1f611bcc538311e92c12324a224f3",
+      "--jobs",
+      "16"
+    ],
+    "cwd": "/home/cosmo/.codex/worktrees/symbolic-cycle3-integration/qcore-c",
+    "exit": 0,
+    "source_before": {
+      "reporting_head": "9ed46cc4ea92adb27791200dedb1c320f337427d",
+      "analyzer_source": "4d0cd81ff6c1f611bcc538311e92c12324a224f3",
+      "clean": true
+    },
+    "source_after": {
+      "reporting_head": "9ed46cc4ea92adb27791200dedb1c320f337427d",
+      "analyzer_source": "4d0cd81ff6c1f611bcc538311e92c12324a224f3",
+      "clean": true
+    },
+    "ended": "2026-10-21T18:46:59.724510+00:00"
+  },
+  {
+    "name": "corpus",
+    "command": [
+      "/usr/bin/python3",
+      "docs/reports/w48-bottom-up-batch5/scripts/measure_strong.py",
+      "corpus",
+      "/home/cosmo/.codex/worktrees/symbolic-cycle3-integration/qcore-c/private/symbolic-decomposition-cycle3/postgate-1/corpus/tip",
+      "--link-map",
+      "/home/cosmo/.codex/worktrees/symbolic-cycle3-integration/qcore-c/docs/reports/w48-bottom-up-batch4/link-map.corpus.json",
+      "--inputs-snapshot",
+      "/home/cosmo/.codex/worktrees/symbolic-cycle3-integration/qcore-c/private/symbolic-decomposition-cycle3/postgate-1/tip-freeze/inputs",
+      "--binary-source",
+      "4d0cd81ff6c1f611bcc538311e92c12324a224f3",
+      "--jobs",
+      "16"
+    ],
+    "cwd": "/home/cosmo/.codex/worktrees/symbolic-cycle3-integration/qcore-c",
+    "exit": 0,
+    "source_before": {
+      "reporting_head": "9ed46cc4ea92adb27791200dedb1c320f337427d",
+      "analyzer_source": "4d0cd81ff6c1f611bcc538311e92c12324a224f3",
+      "clean": true
+    },
+    "source_after": {
+      "reporting_head": "9ed46cc4ea92adb27791200dedb1c320f337427d",
+      "analyzer_source": "4d0cd81ff6c1f611bcc538311e92c12324a224f3",
+      "clean": true
+    },
+    "ended": "2026-10-21T19:16:57.270911+00:00"
+  }
+]
