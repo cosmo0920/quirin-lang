@@ -40,6 +40,11 @@
       "path": "proof/QCore/ScalarAccessorCondition.lean",
       "sha256": "5ddd9c4103bc0b954dec09f36ef149b9f068fe7fd84d5ef4b6a3913326f41282",
       "symbol": "theorem admission_needs_every_fact"
+    },
+    "nested-local-model": {
+      "path": "proof/QCore/VariadicNested.lean",
+      "sha256": "4a15efc9ce6968a6b290619357c823187247478986eaf59bab374dbcd5746299",
+      "symbol": "theorem an_admitted_nested_slot_is_data"
     }
   },
   "propositions": {
@@ -67,7 +72,21 @@
         "boundary28.rust-lean-correspondence"
       ],
       "refutation_obligation": "an independently established observed antecedent and failed conclusion in this exact Context; stale receipts/refused sites are not logical counterexamples",
-      "dependency_rule": "existing declaration/summary consultation closure conservatively reaches every atom; this local observation adds no verdict dependency rule"
+      "dependency_rule": "existing declaration/summary consultation closure conservatively reaches every atom; this local observation adds no verdict dependency rule",
+      "local_predicate_ids": {
+        "scalar-condition": [
+          "exact-zero-argument-scalar-condition",
+          "ordinary-instantiation-succeeded",
+          "instantiated-identity-call"
+        ],
+        "nested-argument": [
+          "whole-argument-or-checked-dereference",
+          "all-sibling-nested-sites-accepted",
+          "one-level-no-inner-call",
+          "inner-arity-and-data-actuals-accepted"
+        ]
+      },
+      "local_evidence_limit": "successful existing checker decision at this observed site under recorded effective environment only; no universal/external-C conclusion"
     },
     "libc.__errno_location.nested_call_admission.scalar_declaration.v1": {
       "declaration": "__errno_location",
@@ -93,7 +112,16 @@
         "boundary28.rust-lean-correspondence"
       ],
       "refutation_obligation": "an independently established observed antecedent and failed conclusion in this exact Context; stale receipts/refused sites are not logical counterexamples",
-      "dependency_rule": "existing declaration/summary consultation closure conservatively reaches every atom; this local observation adds no verdict dependency rule"
+      "dependency_rule": "existing declaration/summary consultation closure conservatively reaches every atom; this local observation adds no verdict dependency rule",
+      "local_predicate_ids": {
+        "scalar-condition": [
+          "single-level-scalar-pointer-declaration"
+        ],
+        "nested-argument": [
+          "whole-argument-or-checked-dereference"
+        ]
+      },
+      "local_evidence_limit": "successful existing checker decision at this observed site under recorded effective environment only; no universal/external-C conclusion"
     },
     "libc.__errno_location.nested_call_admission.untracked_effects.v1": {
       "declaration": "__errno_location",
@@ -119,7 +147,18 @@
         "boundary28.rust-lean-correspondence"
       ],
       "refutation_obligation": "an independently established observed antecedent and failed conclusion in this exact Context; stale receipts/refused sites are not logical counterexamples",
-      "dependency_rule": "existing declaration/summary consultation closure conservatively reaches every atom; this local observation adds no verdict dependency rule"
+      "dependency_rule": "existing declaration/summary consultation closure conservatively reaches every atom; this local observation adds no verdict dependency rule",
+      "local_predicate_ids": {
+        "scalar-condition": [
+          "instantiated-identity-call",
+          "declared-no-result-or-container-effect"
+        ],
+        "nested-argument": [
+          "declared-no-custody-result",
+          "declared-all-parameters-borrowed-no-container-effect"
+        ]
+      },
+      "local_evidence_limit": "successful existing checker decision at this observed site under recorded effective environment only; no universal/external-C conclusion"
     },
     "libc.strerror.nested_call_admission.checked_nested_site.v1": {
       "declaration": "strerror",
@@ -143,7 +182,14 @@
         "boundary28.rust-lean-correspondence"
       ],
       "refutation_obligation": "an independently established observed antecedent and failed conclusion in this exact Context; stale receipts/refused sites are not logical counterexamples",
-      "dependency_rule": "existing declaration/summary consultation closure conservatively reaches every atom; this local observation adds no verdict dependency rule"
+      "dependency_rule": "existing declaration/summary consultation closure conservatively reaches every atom; this local observation adds no verdict dependency rule",
+      "local_predicate_ids": {
+        "nested-argument": [
+          "whole-argument-or-checked-dereference",
+          "all-sibling-nested-sites-accepted"
+        ]
+      },
+      "local_evidence_limit": "successful existing checker decision at this observed site under recorded effective environment only; no universal/external-C conclusion"
     },
     "libc.strerror.nested_call_admission.contract_in_force.v1": {
       "declaration": "strerror",
@@ -167,7 +213,13 @@
         "boundary28.rust-lean-correspondence"
       ],
       "refutation_obligation": "an independently established observed antecedent and failed conclusion in this exact Context; stale receipts/refused sites are not logical counterexamples",
-      "dependency_rule": "existing declaration/summary consultation closure conservatively reaches every atom; this local observation adds no verdict dependency rule"
+      "dependency_rule": "existing declaration/summary consultation closure conservatively reaches every atom; this local observation adds no verdict dependency rule",
+      "local_predicate_ids": {
+        "nested-argument": [
+          "in-force-loaded-contract"
+        ]
+      },
+      "local_evidence_limit": "successful existing checker decision at this observed site under recorded effective environment only; no universal/external-C conclusion"
     },
     "libc.strerror.nested_call_admission.no_custody_result.v1": {
       "declaration": "strerror",
@@ -191,7 +243,13 @@
         "boundary28.rust-lean-correspondence"
       ],
       "refutation_obligation": "an independently established observed antecedent and failed conclusion in this exact Context; stale receipts/refused sites are not logical counterexamples",
-      "dependency_rule": "existing declaration/summary consultation closure conservatively reaches every atom; this local observation adds no verdict dependency rule"
+      "dependency_rule": "existing declaration/summary consultation closure conservatively reaches every atom; this local observation adds no verdict dependency rule",
+      "local_predicate_ids": {
+        "nested-argument": [
+          "declared-no-custody-result"
+        ]
+      },
+      "local_evidence_limit": "successful existing checker decision at this observed site under recorded effective environment only; no universal/external-C conclusion"
     },
     "libc.strerror.nested_call_admission.parameters_borrowed.v1": {
       "declaration": "strerror",
@@ -215,7 +273,13 @@
         "boundary28.rust-lean-correspondence"
       ],
       "refutation_obligation": "an independently established observed antecedent and failed conclusion in this exact Context; stale receipts/refused sites are not logical counterexamples",
-      "dependency_rule": "existing declaration/summary consultation closure conservatively reaches every atom; this local observation adds no verdict dependency rule"
+      "dependency_rule": "existing declaration/summary consultation closure conservatively reaches every atom; this local observation adds no verdict dependency rule",
+      "local_predicate_ids": {
+        "nested-argument": [
+          "declared-all-parameters-borrowed-no-container-effect"
+        ]
+      },
+      "local_evidence_limit": "successful existing checker decision at this observed site under recorded effective environment only; no universal/external-C conclusion"
     },
     "libc.strerror.nested_call_admission.remaining_site_checks.v1": {
       "declaration": "strerror",
@@ -239,7 +303,16 @@
         "boundary28.rust-lean-correspondence"
       ],
       "refutation_obligation": "an independently established observed antecedent and failed conclusion in this exact Context; stale receipts/refused sites are not logical counterexamples",
-      "dependency_rule": "existing declaration/summary consultation closure conservatively reaches every atom; this local observation adds no verdict dependency rule"
+      "dependency_rule": "existing declaration/summary consultation closure conservatively reaches every atom; this local observation adds no verdict dependency rule",
+      "local_predicate_ids": {
+        "nested-argument": [
+          "one-level-no-inner-call",
+          "outer-position-borrowed-or-declared-tail",
+          "inner-arity-and-data-actuals-accepted",
+          "enclosing-call-final-local-checks-accepted"
+        ]
+      },
+      "local_evidence_limit": "successful existing checker decision at this observed site under recorded effective environment only; no universal/external-C conclusion"
     }
   },
   "prerequisites": {
@@ -272,7 +345,7 @@
   "authority": "reference-integrity-only; all eight opaque atoms remain Open",
   "models": {
     "QCore.ScalarAccessorCondition.admission_needs_every_fact": "scalar-model",
-    "QCore.VariadicNested.an_admitted_nested_slot_is_data": "conditional-neutrality",
+    "QCore.VariadicNested.an_admitted_nested_slot_is_data": "nested-local-model",
     "QCore.LibcReadingPremises": "accessor-model/nested-model selected by declaration; module only, not automatic truth transport"
   }
 }

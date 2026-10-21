@@ -5,8 +5,9 @@ repo=Path(__file__).resolve().parents[4]
 out=repo/'private/libc-reading-site-evidence'/sys.argv[1]
 out.mkdir(parents=True,exist_ok=False)
 env=dict(os.environ,CARGO_PROFILE_DEV_DEBUG='0',CARGO_PROFILE_TEST_DEBUG='0',CARGO_INCREMENTAL='0')
-steps=[('format',['cargo','fmt','--all'],repo),('reader-tests',['cargo','test','-p','qcore-c-gateway','--test','libc_reading_site_evidence','--','--nocapture'],repo),('recorder-tests',['cargo','test','-p','qcore-c-gateway','--lib','reading_site_evidence','--','--nocapture'],repo),('probe-tests',['cargo','test','-p','qcore-c-gateway','--lib','legacy_probe_state','--','--nocapture'],repo),('lean',['lake','build','QCore.LibcReadingSiteEvidence'],repo/'proof')]
+steps=[('format',['cargo','fmt','--all'],repo),('reader-tests',['cargo','test','-p','qcore-c-gateway','--test','libc_reading_site_evidence','--','--nocapture'],repo),('recorder-tests',['cargo','test','-p','qcore-c-gateway','--lib','reading_site_evidence','--','--nocapture'],repo),('probe-tests',['cargo','test','-p','qcore-c-gateway','--lib','probe_state::tests','--','--nocapture'],repo),('lean',['lake','build','QCore.LibcReadingSiteEvidence'],repo/'proof')]
 receipts=[]
+failed=False
 for name,command,cwd in steps:
     start=time.time()
     with (out/(name+'.log')).open('wb') as log:
@@ -18,4 +19,5 @@ for name,command,cwd in steps:
         p=repo/'docs/reports/libc-reading-site-evidence/bindings.json';m=json.loads(p.read_text())
         for reference in m['artifacts'].values(): reference['sha256']=hashlib.sha256((repo/reference['path']).read_bytes()).hexdigest()
         p.write_text(json.dumps(m,indent=2)+'\n')
-    if code: raise SystemExit(code)
+    if code: failed=True
+raise SystemExit(1 if failed else 0)

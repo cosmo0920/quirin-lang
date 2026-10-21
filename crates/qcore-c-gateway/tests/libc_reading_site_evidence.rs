@@ -167,7 +167,19 @@ fn siblings_and_spans_replay_against_actual_source_not_a_self_consistent_receipt
     let c = contracts();
     let source = "char *strerror(int n);\nvoid consume(char *a, char *b);\nvoid use_errors(void) { consume(strerror(1), strerror(2)); }\n";
     let observations = observe(source, "use_errors", &c);
-    assert_eq!(observations.len(), 2, "both sibling sites captured once");
+    let spans = observations
+        .iter()
+        .map(|o| (o.call.start, o.call.end))
+        .collect::<std::collections::BTreeSet<_>>();
+    assert_eq!(spans.len(), 2, "both physical sibling sites captured");
+    // Distinct effective environments retain distinct observations; repeated
+    // replay in the same environment is deduplicated by the recorder.
+    assert!(
+        observations
+            .iter()
+            .enumerate()
+            .all(|(i, o)| !observations[..i].contains(o))
+    );
     assert!(observations.iter().all(|o| o.siblings.len() == 2));
     let graph = hypothesis::replay(c.source_assumptions()).unwrap();
     let ctx = context(source, "use_errors");

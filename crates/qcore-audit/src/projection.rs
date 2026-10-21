@@ -1099,6 +1099,7 @@ fn record_projection(
         } else {
             qcore_contract::hypothesis::replay(contracts.source_assumptions())?
         };
+        let mut reading_binding_omissions = Vec::new();
         for function in row["functions"].as_array_mut().into_iter().flatten() {
             let mut context = hypothesis_context.clone();
             if let Some(source) = &dependencies.primary_source_sha256 {
@@ -1116,12 +1117,24 @@ fn record_projection(
                 .iter()
                 .filter(|site| site.function == name)
             {
-                if let Some(graph) = reading_graphs.get(&observation.declaration) {
-                    readings.push(qcore_c_gateway::reading_site_evidence::bind(
-                        observation,
-                        &context,
-                        graph,
-                    )?);
+                let consulted = function["contract_dependencies"]["hypothesis_dependencies"]
+                    [&observation.declaration]
+                    .as_array()
+                    .is_some_and(|atoms| !atoms.is_empty());
+                let binding = reading_graphs
+                    .get(&observation.declaration)
+                    .ok_or_else(|| "selected production graph absent".to_owned())
+                    .and_then(|graph| {
+                        if !consulted {
+                            return Err("no actual row consultation closure".to_owned());
+                        }
+                        qcore_c_gateway::reading_site_evidence::bind(observation, &context, graph)
+                    });
+                match binding {
+                    Ok(receipt) => readings.push(receipt),
+                    Err(reason) => reading_binding_omissions.push(serde_json::json!({
+                        "function": name, "declaration": observation.declaration, "reason": reason
+                    })),
                 }
             }
             if !readings.is_empty() {
@@ -1131,6 +1144,12 @@ fn record_projection(
             }
             function["hypothesis_context"] =
                 serde_json::to_value(context).map_err(|e| e.to_string())?;
+        }
+        if !reading_binding_omissions.is_empty() {
+            // Missing evidence bindings never acquire semantic authority: omit
+            // the receipt and retain the settled result, with an exact reason.
+            row["reading_site_domain"]["binding_omissions"] =
+                serde_json::to_value(reading_binding_omissions).map_err(|e| e.to_string())?;
         }
     }
     // Card CG22-OP-CALLBACKS-AND-SERVED-QUEUES (rule 12n): the unit's member

@@ -353,8 +353,16 @@ pub fn replay(
         .map_err(|e: LegacyCError| format!("reading-site replay: {e:?}"))?;
     let fresh = recording.finish();
     for receipt in receipts {
-        if !fresh.reading_sites.contains(&receipt.observation) {
-            return Err("reading-site: observation not independently reproduced".into());
+        if !fresh.reading_sites.contains(&receipt.observation)
+            || !fresh
+                .functions
+                .get(&receipt.observation.function)
+                .is_some_and(|consulted| consulted.found.contains(&receipt.observation.declaration))
+        {
+            return Err(
+                "reading-site: observation or actual consultation not independently reproduced"
+                    .into(),
+            );
         }
     }
     Ok(())

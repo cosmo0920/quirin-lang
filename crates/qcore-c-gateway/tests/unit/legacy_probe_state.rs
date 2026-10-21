@@ -318,7 +318,7 @@ fn actual_nested_capture_is_removed_by_declined_probe_and_late_instantiation_ref
     );
     assert!(matches!(
         refused,
-        Err(super::super::call_instantiation::CallRefusal::UnexpectedDestination)
+        Err(super::super::call_instantiation_route::CallRefusal::UnexpectedDestination)
     ));
     assert!(record.finish().reading_sites.is_empty());
 }
