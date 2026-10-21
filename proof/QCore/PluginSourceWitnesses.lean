@@ -88,6 +88,18 @@ theorem non_boundary_prefix_refuses (low high first last : Nat) (whitespace : Bo
     ¬ checkedSpan low high first last false whitespace := by
   simp [checkedSpan]
 
+/-- The wire key-domain check admits exactly the finite Case domain. -/
+def completeLayoutDomain (layouts : Case → Option (List Nat)) : Prop :=
+  ∀ selected, ∃ recorded, layouts selected = some recorded
+
+theorem missing_layout_case_refuses (layouts : Case → Option (List Nat))
+    (selected : Case) (missing : layouts selected = none) :
+    ¬ completeLayoutDomain layouts := by
+  intro checked
+  obtain ⟨recorded, present⟩ := checked selected
+  rw [missing] at present
+  contradiction
+
 structure Context where
   source : String
   artifact : String

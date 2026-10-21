@@ -332,6 +332,15 @@ fn source_facts(observation: &Observation) -> Result<BTreeMap<String, SourceFact
 fn model() -> Result<BTreeMap<String, Vec<String>>, String> {
     serde_json::from_str(MODEL).map_err(|e| e.to_string())
 }
+fn exact_layout_domain(
+    layouts: &BTreeMap<String, Vec<String>>,
+    traces: &BTreeMap<String, Vec<String>>,
+) -> Result<(), String> {
+    if layouts.keys().ne(traces.keys()) {
+        return Err("native ABI-layout domain differs from complete selected trace domain".into());
+    }
+    Ok(())
+}
 fn validate(observation: &Observation) -> Result<BTreeMap<String, SourceFacts>, String> {
     if observation.version != 1
         || observation.inventory_sha256 != sha256_hex(INVENTORY)
@@ -359,6 +368,7 @@ fn validate(observation: &Observation) -> Result<BTreeMap<String, SourceFacts>, 
             return Err("actual ELF symbol missing".into());
         }
     }
+    exact_layout_domain(&observation.layouts, &observation.traces)?;
     if observation.layouts.len() != 20
         || observation.layouts.iter().any(|(case, layout)| {
             if case.ends_with("open_fail") {
@@ -478,6 +488,19 @@ pub fn refusal_controls(
     let mut changed = observation.clone();
     changed.artifacts.clear();
     refuse("missing-native-artifacts".into(), changed, held.clone())?;
+    let mut wrong_domain = observation.clone();
+    let held_layout = wrong_domain
+        .layouts
+        .remove("rk_duplicate")
+        .ok_or("actual rk_duplicate layout absent")?;
+    wrong_domain
+        .layouts
+        .insert("forged_unknown_case".into(), held_layout);
+    refuse(
+        "replaced-native-layout-case".into(),
+        wrong_domain,
+        held.clone(),
+    )?;
     let mut changed = observation.clone();
     changed.layouts.get_mut("rk_duplicate").unwrap()[0].push('0');
     refuse("forged-native-layout".into(), changed, held.clone())?;
@@ -865,6 +888,19 @@ impl CheckedWitness {
 #[cfg(test)]
 mod tests {
     use super::*;
+    #[test]
+    fn replaced_native_layout_case_refuses_exact_domain() {
+        let traces = model().unwrap();
+        let mut layouts = traces
+            .keys()
+            .map(|k| (k.clone(), vec!["LAYOUT:1:1".into()]))
+            .collect::<BTreeMap<_, _>>();
+        assert!(exact_layout_domain(&layouts, &traces).is_ok());
+        let held = layouts.remove("rk_duplicate").unwrap();
+        layouts.insert("forged_unknown_case".into(), held);
+        assert_eq!(layouts.len(), 20);
+        assert!(exact_layout_domain(&layouts, &traces).is_err());
+    }
     #[test]
     fn malformed_offsets_and_utf8_prefix_refuse_without_panics() {
         let projection = Projection {
