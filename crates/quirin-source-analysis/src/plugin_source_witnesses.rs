@@ -1,0 +1,179 @@
+//! Executable, finite plugin-loader witnesses. The compiler, host loader, real
+//! header interpretation and maintained C/model correspondence are explicit
+//! prerequisites, not attestation or a proof about arbitrary deployed plugins.
+//! Native JSON is untrusted. Admission reruns the embedded producer against
+//! separately held pinned sources, then checks the whole selected trace domain.
+use qcore_schemas::{hypothesis::Context, sha256_hex};
+use serde::{Deserialize, Serialize};
+use serde_json::Value;
+use std::{collections::BTreeMap, fs, path::Path, process::Command};
+
+const INVENTORY: &[u8] = include_bytes!("../../../docs/reports/plugin-premise-source-witnesses/input-inventory.json");
+const PRODUCER: &str = include_str!("plugin_source_witnesses/observe.py");
+const MODEL: &str = include_str!("plugin_source_witnesses/trace_model.json");
+pub const BOUNDED_ATOM: &str = "rk_duplicate_fixture_no_loader_calls_v1";
+pub const PROFILE: &str = "plugin-loader-fixture-v1";
+const BOUNDS: &str = "20-cases/single-thread/explicit-stubs";
+const ASSUMPTIONS: &str = "local-clang-posix-loader/real-pinned-headers/explicit-allocation-list-log-stubs/no-deployed-plugin-claim";
+
+#[derive(Clone, Debug, PartialEq, Eq, Serialize, Deserialize)]
+#[serde(deny_unknown_fields)]
+pub struct Projection {
+    pub module: String,
+    pub function: String,
+    pub start: usize,
+    pub end: usize,
+    pub body: String,
+    pub sha256: String,
+}
+/// Presentation only; deserialization supplies no checked receipt.
+#[derive(Clone, Debug, PartialEq, Eq, Serialize, Deserialize)]
+#[serde(deny_unknown_fields)]
+pub struct Observation {
+    pub version: u32,
+    pub inventory_sha256: String,
+    pub compiler: String,
+    pub target: String,
+    pub projections: Vec<Projection>,
+    pub asts: BTreeMap<String, String>,
+    pub artifacts: BTreeMap<String, String>,
+    pub symbols: BTreeMap<String, String>,
+    pub layouts: BTreeMap<String, Vec<String>>,
+    pub traces: BTreeMap<String, Vec<String>>,
+}
+#[derive(Clone, Debug, PartialEq, Eq, Serialize)]
+pub struct GuardFact {
+    condition_calls: Vec<String>,
+    condition_members: Vec<String>,
+    returns_in_guarded_subtree: usize,
+}
+#[derive(Clone, Debug, PartialEq, Eq, Serialize)]
+pub struct SourceFacts {
+    function: String,
+    calls: Vec<String>,
+    guards: Vec<GuardFact>,
+    assigned_members: Vec<String>,
+    ignored_top_level_calls: Vec<String>,
+    /// Exact main-source AST range, independently matched to the projection.
+    start: usize,
+    end: usize,
+}
+/// Not deserializable and no public constructor. It describes exactly twenty
+/// selected invocations, never the old seven atoms or either universal envelope.
+#[derive(Debug, Serialize)]
+pub struct CheckedWitness {
+    context: Context,
+    observation_sha256: String,
+    model_sha256: String,
+    producer_sha256: String,
+    source_facts: BTreeMap<String, SourceFacts>,
+    cases: BTreeMap<String, Vec<String>>,
+    remaining_obligations: Vec<String>,
+}
+fn digest<T: Serialize>(value: &T) -> Result<String, String> {
+    Ok(sha256_hex(&serde_json::to_vec(value).map_err(|e| e.to_string())?))
+}
+fn children(v: &Value) -> impl Iterator<Item = &Value> {
+    v.get("inner").and_then(Value::as_array).into_iter().flatten()
+}
+fn kind(v: &Value) -> &str { v.get("kind").and_then(Value::as_str).unwrap_or("") }
+fn collect<'a>(v: &'a Value, k: &str, out: &mut Vec<&'a Value>) {
+    if kind(v) == k {out.push(v)}
+    for c in children(v) {collect(c, k, out)}
+}
+fn nodes<'a>(v: &'a Value, k: &str) -> Vec<&'a Value> {
+    let mut out = vec![]; collect(v,k,&mut out); out
+}
+fn callee(v: &Value) -> Option<String> {
+    let first = children(v).next()?;
+    nodes(first,"DeclRefExpr").first()?.get("referencedDecl")?.get("name")?.as_str().map(str::to_owned)
+}
+fn calls(v: &Value) -> Vec<String> { nodes(v,"CallExpr").into_iter().filter_map(callee).collect() }
+fn members(v: &Value) -> Vec<String> {
+    nodes(v,"MemberExpr").into_iter().filter_map(|n|n.get("name")?.as_str().map(str::to_owned)).collect()
+}
+fn offset(v: &Value, edge: &str) -> Result<usize,String> {
+    v.get("range").and_then(|x|x.get(edge)).and_then(|x|x.get("offset")).and_then(Value::as_u64).map(|x|x as usize).ok_or_else(||"original main-source AST range missing".into())
+}
+fn source_facts(observation: &Observation) -> Result<BTreeMap<String,SourceFacts>,String> {
+    let inventory: Value = serde_json::from_slice(INVENTORY).map_err(|e|e.to_string())?;
+    let names: Vec<String> = serde_json::from_value(inventory["source_functions"].clone()).map_err(|e|e.to_string())?;
+    if observation.asts.keys().cloned().collect::<std::collections::BTreeSet<_>>() != names.iter().cloned().collect() || observation.projections.len()!=names.len() {
+        return Err("incomplete selected source domain".into())
+    }
+    let mut facts=BTreeMap::new();
+    for projection in &observation.projections {
+        let source=inventory["source_files"].as_array().ok_or("source inventory")?.iter().find(|v|v["path"].as_str()==Some(&projection.module)).ok_or("unselected source module")?;
+        let raw=fs::read(source["actual_path"].as_str().ok_or("source path")?).map_err(|e|e.to_string())?;
+        if sha256_hex(&raw)!=source["sha256"].as_str().unwrap_or("") || raw.get(projection.start..projection.end)!=Some(projection.body.as_bytes()) || sha256_hex(projection.body.as_bytes())!=projection.sha256 {
+            return Err("source projection changed or range forged".into())
+        }
+        let text=observation.asts.get(&projection.function).ok_or("missing original typed AST")?;
+        let values:Vec<Value>=serde_json::Deserializer::from_str(text).into_iter::<Value>().collect::<Result<_,_>>().map_err(|e|e.to_string())?;
+        let definitions:Vec<_>=values.iter().filter(|v|kind(v)=="FunctionDecl" && v["name"].as_str()==Some(&projection.function) && children(v).any(|c|kind(c)=="CompoundStmt")).collect();
+        if definitions.len()!=1{return Err("missing/ambiguous original typed definition".into())}
+        let def=definitions[0];let start=offset(def,"begin")?;let end=offset(def,"end")?+1;
+        // Extraction may include initial whitespace; the AST must delimit the
+        // complete same body, with no token before/after hidden by the producer.
+        if start<projection.start || end!=projection.end || !projection.body[..start-projection.start].trim().is_empty() {return Err("typed/source projection boundary mismatch".into())}
+        let compound=children(def).find(|c|kind(c)=="CompoundStmt").ok_or("body missing")?;
+        let guards=nodes(compound,"IfStmt").into_iter().map(|v| {
+            let c=children(v).next().ok_or("missing if condition")?;
+            Ok(GuardFact{condition_calls:calls(c),condition_members:members(c),returns_in_guarded_subtree:nodes(v,"ReturnStmt").len()})
+        }).collect::<Result<_,String>>()?;
+        let assigned_members=nodes(compound,"BinaryOperator").into_iter().filter(|v|v["opcode"]=="=").filter_map(|v|children(v).next()).flat_map(members).collect();
+        let ignored_top_level_calls=children(compound).filter(|v|kind(v)=="CallExpr").filter_map(callee).collect();
+        let f=SourceFacts{function:projection.function.clone(),calls:calls(compound),guards,assigned_members,ignored_top_level_calls,start,end};
+        if facts.insert(projection.function.clone(),f).is_some(){return Err("duplicate source definition".into())}
+    }
+    let require_calls=|function:&str,required:&[&str]|->Result<(),String>{
+        let f=facts.get(function).ok_or("missing source facts")?;
+        if required.iter().any(|x|!f.calls.iter().any(|c|c==x)){return Err(format!("missing actual source call in {function}"))} Ok(())
+    };
+    require_calls("rd_kafka_plugin_new", &["rd_list_find","rd_dl_open","rd_dl_sym","rd_dl_close","rd_list_add"])?;
+    require_calls("flb_plugin_load", &["get_handle","path_to_plugin_name","load_symbol","memcpy","mk_list_add"])?;
+    require_calls("proxy_go_output_register", &["flb_plugin_proxy_symbol"])?;
+    if !facts["flb_plugin_proxy_create"].ignored_top_level_calls.iter().any(|x|x=="flb_plugin_proxy_register") {return Err("actual ignored-register-return source fact absent".into())}
+    if !facts["rd_kafka_plugin_new"].guards.iter().any(|g|g.condition_calls.iter().any(|c|c=="rd_list_find") && g.returns_in_guarded_subtree>0){return Err("duplicate early-return source guard missing".into())}
+    Ok(facts)
+}
+fn model() -> Result<BTreeMap<String, Vec<String>>,String> {serde_json::from_str(MODEL).map_err(|e|e.to_string())}
+fn validate(observation: &Observation) -> Result<BTreeMap<String,SourceFacts>,String> {
+    if observation.version!=1 || observation.inventory_sha256!=sha256_hex(INVENTORY) || observation.target.is_empty() || !observation.compiler.contains("clang version") {return Err("source/build inventory mismatch".into())}
+    if observation.traces!=model()? {return Err("incomplete, truncated, reordered or changed selected trace".into())}
+    if observation.artifacts.is_empty() || observation.symbols.len()!=13 {return Err("native artifact inventory incomplete".into())}
+    for (name,required) in [("rk_ok.so","conf_init"),("go_ok.so","FLBPluginInit"),("flb-in_probe.so","in_probe_plugin")] {
+        if !observation.symbols.get(name).is_some_and(|s|s.lines().any(|line|line.split_whitespace().last()==Some(required) && !line.contains(" UND "))) {return Err("actual ELF symbol missing".into())}
+    }
+    if observation.layouts.len()!=20 || observation.layouts.iter().any(|(case,layout)| if case.ends_with("open_fail") { !layout.is_empty() } else {layout.len()!=1 || !layout[0].starts_with("LAYOUT:")}) {return Err("native cross-artifact layout check incomplete".into())}
+    source_facts(observation)
+}
+/// Produces an UNTRUSTED observation using fixed reviewed code and pinned input
+/// inventory. The directory must not exist; no arbitrary executable is accepted.
+pub fn observe(directory:&Path)->Result<Observation,String> {
+    fs::create_dir(directory).map_err(|e|format!("fresh private output directory required: {e}"))?;
+    let inventory=directory.join("inventory.json");fs::write(&inventory,INVENTORY).map_err(|e|e.to_string())?;
+    let output=Command::new("python3").args(["-c",PRODUCER]).arg(&inventory).arg(directory).env("SOURCE_DATE_EPOCH","1761004800").output().map_err(|e|e.to_string())?;
+    fs::write(directory.join("producer.stderr"),&output.stderr).map_err(|e|e.to_string())?;
+    if !output.status.success(){return Err(format!("native source observation failed {:?}; see producer.stderr",output.status.code()))}
+    serde_json::from_slice(&output.stdout).map_err(|e|e.to_string())
+}
+/// Required exact context derived from actual independently replayed identities.
+/// Its public construction grants nothing; `replay` checks every field anew.
+pub fn context(observation:&Observation)->Result<Context,String> {
+    Ok(Context{artifact:digest(&observation.artifacts)?,property:BOUNDED_ATOM.into(),semantic_profile:PROFILE.into(),scope: "complete-selected-20-case-domain-v1".into(),bounds:BOUNDS.into(),assumptions:ASSUMPTIONS.into(),source_identity:sha256_hex(INVENTORY),build_identity:digest(&(observation.compiler.clone(),observation.target.clone(),sha256_hex(PRODUCER.as_bytes())))?,evidence_version:"plugin-source-witness-v1".into()})
+}
+/// Every admission independently repeats the native source observation. No raw
+/// JSON/status/receipt can bypass that replay. IDs and AST allocator addresses
+/// are not propositions: compare derived typed facts, exact source projections,
+/// compiler, target, actual artifacts/symbols and the entire selected trace.
+pub fn replay(presented:&Observation,expected_context:&Context,fresh_directory:&Path)->Result<CheckedWitness,String> {
+    let actual=observe(fresh_directory)?;
+    let source_facts=validate(&actual)?;
+    if validate(presented)?!=source_facts || presented.projections!=actual.projections || presented.artifacts!=actual.artifacts || presented.symbols!=actual.symbols || presented.layouts!=actual.layouts || presented.compiler!=actual.compiler || presented.target!=actual.target || presented.traces!=actual.traces || context(&actual)?!=*expected_context || context(presented)?!=*expected_context {return Err("independent source/native/context replay mismatch".into())}
+    Ok(CheckedWitness{context:expected_context.clone(),observation_sha256:digest(&(actual.inventory_sha256,&actual.artifacts,&actual.traces,&source_facts))?,model_sha256:sha256_hex(MODEL.as_bytes()),producer_sha256:sha256_hex(PRODUCER.as_bytes()),source_facts,cases:actual.traces,remaining_obligations:vec!["deployed-artifact-inventory-and-loader-traces".into(),"foreign-callback-frame-custody-and-whole-world-closure".into(),"transitive-lifetime-and-unload-order".into(),"faithful-clang-extraction-and-maintained-rust-lean-correspondence".into()]})
+}
+impl CheckedWitness {
+    pub fn context(&self)->&Context{&self.context}
+    pub fn cases(&self)->&BTreeMap<String,Vec<String>>{&self.cases}
+}
