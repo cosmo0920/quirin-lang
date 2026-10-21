@@ -114,9 +114,11 @@ pub(crate) mod stack {
     //! in `/proc/self/pagemap` below the thread's first frame is the deepest
     //! point the closure's frames (and their drops) reached.
 
+    #[cfg(target_os = "linux")]
     use std::io::{Read, Seek, SeekFrom};
 
     const SIZE: usize = 64 << 20;
+    #[cfg(target_os = "linux")]
     const PAGE: usize = 4096;
 
     #[inline(never)]
@@ -127,6 +129,7 @@ pub(crate) mod stack {
 
     /// The deepest touched page at or below `top`, as KiB below `top`;
     /// `None` when pagemap cannot be read (the measurement is unavailable).
+    #[cfg(target_os = "linux")]
     fn touched_below(top: usize) -> Option<usize> {
         let high = top / PAGE;
         // The thread's first frame lies below its stack's top (the C
@@ -143,6 +146,11 @@ pub(crate) mod stack {
             bits & (0b11 << 62) != 0
         })?;
         Some((high - (low + lowest)) * PAGE / 1024)
+    }
+
+    #[cfg(not(target_os = "linux"))]
+    fn touched_below(_top: usize) -> Option<usize> {
+        None
     }
 
     /// `work`'s result and the KiB of stack it used below its caller's
@@ -174,7 +182,26 @@ mod tests {
     /// The budget a reader of an admitted document must stay within, in the
     /// debug test build: half the 2 MiB stack of an analysis worker (whose
     /// release frames are smaller still).
+    #[cfg(target_os = "linux")]
     const BUDGET_KIB: usize = 1024;
+
+    // Behavior controls run everywhere; pagemap observations are Linux-only.
+    // Failure to measure on Linux remains a failure, not a skipped assertion.
+    fn assert_stack_budget(kib: Option<usize>, context: &str) {
+        #[cfg(target_os = "linux")]
+        {
+            let kib = kib.expect("Linux /proc/self/pagemap must be readable");
+            eprintln!("{context}: {kib} KiB");
+            assert!(kib <= BUDGET_KIB, "{context}: {kib} KiB");
+        }
+        #[cfg(not(target_os = "linux"))]
+        {
+            assert_eq!(kib, None);
+            eprintln!(
+                "{context}: stack measurement unavailable (requires Linux /proc/self/pagemap)"
+            );
+        }
+    }
 
     const LEAN: &str = include_str!("../../../proof/QCore/DeepAstTransports.lean");
 
@@ -330,10 +357,6 @@ mod tests {
     /// the walks, the drop) stays within the budget. One arm deeper, the
     /// stream is beyond the bound and nothing is read (the refusing answer).
     #[test]
-    #[cfg_attr(
-        windows,
-        ignore = "Windows has no /proc/self/pagemap stack measurement"
-    )]
     fn the_analysed_unit_readers_fit_at_the_bound() {
         if !clang_available() {
             return;
@@ -393,9 +416,10 @@ mod tests {
                 (true, Some(false), Some(true), true, false, false),
                 "{arms} arms"
             );
-            let kib = kib.expect("pagemap readable");
-            eprintln!("rule 13q readers, {arms} arms, depth {deepest}: {kib} KiB");
-            assert!(kib <= BUDGET_KIB, "{kib} KiB at depth {deepest}");
+            assert_stack_budget(
+                kib,
+                &format!("rule 13q readers, {arms} arms, depth {deepest}"),
+            );
             let (beyond, _) = read(shape(arms + 1));
             // Beyond the bound nothing is read: the shadow reader refuses
             // (`true` for any name), as before the card.
@@ -484,9 +508,7 @@ int consume(void) {
             (shallow.store_order, shallow.load_order)
         );
         assert_eq!(deep.scope, shallow.scope);
-        let kib = kib.expect("pagemap readable");
-        eprintln!("rule 13q closed-world readers, {arms} arms: {kib} KiB");
-        assert!(kib <= BUDGET_KIB, "{kib} KiB");
+        assert_stack_budget(kib, &format!("rule 13q closed-world readers, {arms} arms"));
         let beyond = format!("{ATOMIC}{}", chain(arms + 3));
         let (refused, _) = high_water(move || atomic(&beyond));
         match refused {
@@ -562,8 +584,8 @@ int consume(void) {
     /// stack, and the figure is in the right range.
     #[test]
     #[cfg_attr(
-        windows,
-        ignore = "Windows has no /proc/self/pagemap stack measurement"
+        not(target_os = "linux"),
+        ignore = "stack high-water measurement requires Linux /proc/self/pagemap"
     )]
     fn the_high_water_mark_measures_recursion() {
         #[inline(never)]

@@ -275,8 +275,15 @@ fn longjmp_across_a_live_resource_is_refused() {
     let returns_twice = run("#include <setjmp.h>\n\
                              void subject(jmp_buf b) { void *p = q_alloc(); int r = setjmp(b); \
                              q_free(p); }");
+    // glibc's header redirects setjmp to _setjmp; Darwin keeps setjmp.
+    // Both must retain the complete named refusal and the Unknown verdict.
+    assert_eq!(returns_twice.status, AnalysisStatus::Unknown);
     assert!(
-        returns_twice.refused_prefix("`_setjmp` is a returns-twice call"),
+        ["setjmp", "_setjmp"]
+            .iter()
+            .any(|name| returns_twice.refused(&format!(
+                "`{name}` is a returns-twice call, which no resource contract or route models"
+            ))),
         "{returns_twice:?}"
     );
     for name in [

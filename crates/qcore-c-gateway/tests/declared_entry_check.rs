@@ -168,16 +168,13 @@ fn a_nullable_release_wrapper_is_validated_by_its_declared_entry_check() {
 }
 
 #[test]
-#[cfg_attr(
-    windows,
-    ignore = "glibc __assert_fail wrapper is not a Windows source shape"
-)]
 fn a_nullable_result_wrapper_is_validated_by_its_declared_entry_check() {
     if !clang_available() {
         return;
     }
     let declared = W_ALLOC;
-    let header = "#include <assert.h>\n\
+    // Declare the modelled glibc entry explicitly, independent of host headers.
+    let header = "extern void __assert_fail(const char *, const char *, unsigned int, const char *) __attribute__((__noreturn__));\n\
          static inline void *w(size_t n) { void *p = malloc(n); \
          if (!p) __assert_fail(\"p\", \"w.h\", 1, \"w\"); return p; }";
     let main = "void user(void) { void *p = w(4); free(p); }";

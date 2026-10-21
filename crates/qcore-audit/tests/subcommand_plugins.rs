@@ -29,7 +29,7 @@ const HOST: &str = env!("CARGO_BIN_EXE_quirin-audit");
 fn scratch(name: &str) -> PathBuf {
     let directory = Path::new(env!("CARGO_TARGET_TMPDIR"))
         .join("subcommand-plugins")
-        .join(name);
+        .join(format!("{}-{name}", std::process::id()));
     let _ = std::fs::remove_dir_all(&directory);
     std::fs::create_dir_all(directory.join("plugins")).unwrap();
     std::fs::create_dir_all(directory.join("out")).unwrap();
@@ -251,22 +251,42 @@ fn a_version_mismatch_is_unknown_with_a_named_reason() {
 #[test]
 fn a_timeout_is_unknown_and_kills_the_process_group() {
     let directory = scratch("timeout");
-    plugin(
-        &directory,
-        "slow",
-        "sleep 30 &\necho $! > child.pid\nsleep 30",
+    // Consume stdin with shell builtins: launching `cat` before publishing
+    // child.pid can spend the entire timeout in executable startup on macOS.
+    // This control needs no saved request; the 500 ms quota stays unchanged.
+    process_fixture::write_executable_mode(
+        &directory.join("plugins/quirin-audit-slow"),
+        format!(
+            "#!/bin/sh\n{}\nsleep 30 &\necho $! > child.pid\nwait\n",
+            process_fixture::READ_REQUEST
+        )
+        .as_bytes(),
+        0o755,
     );
     let started = std::time::Instant::now();
     let output = run(&directory, &["--timeout-ms", "500"], "slow", &[]);
     assert!(started.elapsed() < std::time::Duration::from_secs(20));
     assert_unknown(&directory, "slow", &output, "plugin-timeout");
-    let child = std::fs::read_to_string(directory.join("out/child.pid")).unwrap();
-    let child = child.trim();
-    // The background `sleep` was in the plugin's process group, so it is gone.
-    let alive = Path::new("/proc").join(child).exists()
-        && std::fs::read_to_string(Path::new("/proc").join(child).join("stat"))
-            .is_ok_and(|stat| !stat.contains(") Z "));
-    assert!(!alive, "the plugin's child {child} survived the group kill");
+    let child = std::fs::read_to_string(directory.join("out/child.pid"))
+        .expect("the timeout fixture must publish its child PID before teardown");
+    let child: u32 = child.trim().parse().expect("a numeric child PID");
+    assert!(child > 0);
+    // `ps` works on Darwin as well as Linux. A zombie has been killed but
+    // may not yet have been reaped by init; every other listed state is live.
+    let state = Command::new("ps")
+        .args(["-p", &child.to_string(), "-o", "stat="])
+        .output()
+        .expect("ps must inspect the plugin's child");
+    assert!(
+        matches!(state.status.code(), Some(0 | 1)) && state.stderr.is_empty(),
+        "could not inspect child {child}: {state:?}"
+    );
+    let state = String::from_utf8(state.stdout).expect("ps state is UTF-8");
+    let state = state.trim();
+    assert!(
+        state.is_empty() || state.starts_with('Z'),
+        "the plugin's child {child} survived the group kill: {state}"
+    );
 }
 
 #[test]

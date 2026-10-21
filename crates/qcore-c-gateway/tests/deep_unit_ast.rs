@@ -73,10 +73,21 @@ const W_ALLOC: &str = "extern fn w(n: usize) -> ptr<mut, u8>\ncontract {\n    re
 /// `w` releases its formal, which may be null (`rd_free`'s shape).
 const W_RELEASE: &str = "extern fn w(p: ptr<mut, u8>) -> unit\ncontract {\n    requires resource_contract_v1;\n    ensures normal resource_released(p, nullable);\n    ensures normal resource_return_none();\n};\n";
 
-/// `rd_malloc`'s body: glibc's `assert` is a statement expression under
-/// `gnu17`.
-const ASSERTING: &str = "#include <assert.h>\n\
-     static inline void *w(size_t n) { void *p = malloc(n); assert(p); return p; }";
+/// `rd_malloc`'s body with an explicit glibc-style GNU statement expression.
+/// Host assert headers (including Darwin's different expansion) must not
+/// change the source shape this depth regression exercises.
+const ASSERTING: &str = r#"
+extern _Bool __assert_single_arg(_Bool);
+extern void __assert_fail(const char *, const char *, unsigned int, const char *)
+    __attribute__((__noreturn__));
+static inline void *w(size_t n) {
+    void *p = malloc(n);
+    ((void) sizeof (__assert_single_arg(p)), __extension__ ({
+        if (p) ; else __assert_fail("p", "w.h", 1, __extension__ __PRETTY_FUNCTION__);
+    }));
+    return p;
+}
+"#;
 
 /// `rd_free`'s body.
 const RELEASING: &str = "static inline void w(void *p) { free(p); }";
@@ -176,7 +187,6 @@ const DEEP: usize = 80;
 const BEYOND: usize = 130;
 
 #[test]
-#[cfg_attr(windows, ignore = "models glibc assert as a GNU statement expression")]
 fn an_asserting_wrapper_is_validated_in_a_shallow_unit() {
     if !clang_available() {
         return;
@@ -196,7 +206,6 @@ fn an_asserting_wrapper_is_validated_in_a_shallow_unit() {
 }
 
 #[test]
-#[cfg_attr(windows, ignore = "models glibc assert as a GNU statement expression")]
 fn an_asserting_wrapper_is_validated_in_a_unit_deeper_than_the_default_limit() {
     if !clang_available() {
         return;
@@ -219,7 +228,6 @@ fn an_asserting_wrapper_is_validated_in_a_unit_deeper_than_the_default_limit() {
 }
 
 #[test]
-#[cfg_attr(windows, ignore = "models glibc assert as a GNU statement expression")]
 fn beyond_the_admitted_bound_the_unit_keeps_no_index_and_nothing_validates() {
     if !clang_available() {
         return;
