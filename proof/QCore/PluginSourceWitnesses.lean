@@ -66,6 +66,28 @@ def GoRegistrationSucceeded (trace : List String) : Prop :=
 def GoCreatorImpliesRegistration (trace : List String) : Prop :=
   "return:nonnull" ∈ trace → GoRegistrationSucceeded trace
 
+/-- Guarded machine-word increment and source/UTF-8 projection bounds. -/
+def checkedClosingToken (ending maximum : Nat) : Option Nat :=
+  if ending < maximum then some (ending + 1) else none
+
+def checkedSpan (low high first last : Nat) (boundary whitespace : Bool) : Prop :=
+  low ≤ first ∧ first ≤ last ∧ last = high ∧ boundary = true ∧ whitespace = true
+
+theorem closing_token_overflow_refuses (maximum : Nat) :
+    checkedClosingToken maximum maximum = none := by
+  simp [checkedClosingToken]
+
+theorem out_of_range_prefix_refuses (low high first last : Nat)
+    (boundary whitespace : Bool) (outside : high < first) :
+    ¬ checkedSpan low high first last boundary whitespace := by
+  intro checked
+  have ordered : first ≤ high := checked.2.2.1 ▸ checked.2.1
+  exact Nat.not_le_of_gt outside ordered
+
+theorem non_boundary_prefix_refuses (low high first last : Nat) (whitespace : Bool) :
+    ¬ checkedSpan low high first last false whitespace := by
+  simp [checkedSpan]
+
 structure Context where
   source : String
   artifact : String

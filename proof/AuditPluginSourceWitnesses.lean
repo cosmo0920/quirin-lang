@@ -11,3 +11,6 @@ import QCore.PluginSourceWitnesses
 #print axioms QCore.PluginSourceWitnesses.duplicate_completion_fact
 #print axioms QCore.PluginSourceWitnesses.go_completion_fact
 #print axioms QCore.PluginSourceWitnesses.finite_go_implication_refuted
+#print axioms QCore.PluginSourceWitnesses.closing_token_overflow_refuses
+#print axioms QCore.PluginSourceWitnesses.out_of_range_prefix_refuses
+#print axioms QCore.PluginSourceWitnesses.non_boundary_prefix_refuses
