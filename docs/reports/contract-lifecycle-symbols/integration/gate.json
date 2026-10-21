@@ -1,5 +1,5 @@
 {
-  "note": "BORROWED actual fresh joint-gate-3 measurement at merged-main eb0dc0cadb10e84ad6df79e36ca22996fd6ce528, same root worktree; main merge eb0 integrates c4b. Component prior complete gate4 was8446passed/1TSANfailed/15ignored and358Lean; joint integrated scope is8456/0/15 and360Lean. This is a changed integration measurement, not a relabeling of any failed component run. Clang recording copied from that actual main-based run. Exact joint commands/private logs and native parity are in docs/reports/premise-symbolic-integration/. Root authoritative Python374 currently BORROWED prior checkpoint pending committed-matrix confirmation.",
+  "note": "BORROWED actual fresh joint-gate-3 measurement at merged-main eb0dc0cadb10e84ad6df79e36ca22996fd6ce528, same root worktree; main merge eb0 integrates c4b. Component prior complete gate4 was8446passed/1TSANfailed/15ignored and358Lean; joint integrated scope is8456/0/15 and360Lean. This is a changed integration measurement, not a relabeling of any failed component run. Clang recording copied from that actual main-based run. Exact joint commands/private logs and native parity are in docs/reports/premise-symbolic-integration/. Fresh root phase1 committed-matrix Python374 passes0 at 21b32bee6359c16c6390bf5fe3eb7483c1f88fa4; final regenerated-matrix confirmation is recorded separately in the joint receipt.",
   "workspace_tests": 8456,
   "provider_tests": 133,
   "python_evidence_validator_tests": 374,
@@ -7,7 +7,7 @@
   "reevaluation_followup_exit": 0,
   "cargo_fmt": "clean",
   "cargo_clippy": "clean",
-  "standing_gate": "source/provider/native complete; authoritative committed-matrix Python pending",
+  "standing_gate": "complete; final regenerated committed-matrix confirmation recorded separately",
   "lean_audits": 360,
   "clang": "present: Ubuntu clang version 21.1.8 (6ubuntu1)"
 }

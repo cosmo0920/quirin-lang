@@ -1,5 +1,5 @@
 {
-  "status": "source/provider/native and exact ledger decisions APPLIED; fresh committed-matrix Python follows",
+  "status": "Exact ledger/source/provider/native decisions applied; phase1 committed-matrix Python374 passes0; final regenerated confirmation follows",
   "cards": [
     "contract-lifecycle-symbols",
     "premise-symbolic-adoption",
@@ -87,5 +87,11 @@
     "previous_close": "fb9e5f6e8cc4362e3d266ff201b6c469a85677d9",
     "authority": "docs/reports/premise-resolution-cycle2/reconciliation.json",
     "qualification": "No new source/card work or retirement is attributed to these already-closed cards."
+  },
+  "phase1_python": {
+    "head": "21b32bee6359c16c6390bf5fe3eb7483c1f88fa4",
+    "exit": 0,
+    "tests": 374,
+    "receipt": "confirmation/matrix-python-1/receipt.json"
   }
 }

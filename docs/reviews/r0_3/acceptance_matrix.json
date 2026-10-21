@@ -6754,7 +6754,7 @@
   "note": "providers/ is a separate Cargo workspace, excluded from the core workspace; P01 verified empirically that the core workspace builds and passes its full suite with providers/ moved out of the tree."
  },
  "validation": {
-  "note": "Fresh merged-main source eb0dc0cadb10e84ad6df79e36ca22996fd6ce528: joint-gate-3 all22 commands AND wrapper/head guard exit0; Rust8456/0failed/15ignored(535units548summaries), Lean360, provider133Rust/1ignored/25Python and all5 package builds/verifications. All3 freshTIP native audits and complete5781null/static/runtime/canonical comparisons pass after exact source/pin/identity/time reconstruction; no verdict movement. BASE explicitly BORROWED cycle2TIP. Python374 is BORROWED from the previous completed checkpoint ONLY until fresh post-committed-regenerated-matrix confirmation; that authoritative confirmation remains pending. Gate1Rust9failures and gate2all22green-but-finalHEADguard1 are retained. Exact commands/exits/private logs are in this report.",
+  "note": "Fresh merged-main source eb0dc0cadb10e84ad6df79e36ca22996fd6ce528: joint-gate-3 all22 commands AND wrapper/head guard exit0; Rust8456/0failed/15ignored(535units548summaries), Lean360, provider133Rust/1ignored/25Python and all5 package builds/verifications. All3 freshTIP native audits and complete5781null/static/runtime/canonical comparisons pass after exact source/pin/identity/time reconstruction; no verdict movement. BASE explicitly BORROWED cycle2TIP. Fresh phase1 committed-matrix Python374 passes0 at 21b32bee6359c16c6390bf5fe3eb7483c1f88fa4, with unchanged matrix digest. Final regenerated-matrix confirmation is recorded separately in the joint post-matrix-confirmation receipt. Gate1Rust9failures and gate2all22green-but-finalHEADguard1 are retained. Exact commands/exits/private logs are in this report.",
   "workspace_tests": 8456,
   "provider_tests": 133,
   "python_evidence_validator_tests": 374,
@@ -7125,7 +7125,7 @@
   "reevaluation_followup_exit": 0,
   "cargo_fmt": "clean",
   "cargo_clippy": "clean",
-  "standing_gate": "source/provider/native complete; authoritative committed-matrix Python pending",
+  "standing_gate": "complete; final regenerated committed-matrix confirmation recorded separately",
   "full_language_conformance": false,
   "measurement_provenance": "integrator_supplied (docs/reports/premise-symbolic-integration/gate.json)"
  },

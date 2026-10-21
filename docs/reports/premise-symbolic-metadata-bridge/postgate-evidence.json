@@ -2657,5 +2657,6 @@
       "accepted": false
     }
   ],
-  "publication_policy": "Finite selected statistics, reviewed diagnostics and path/size/SHA receipts only; raw source, canonical captures, reading proofs and full assertion payloads remain private."
+  "publication_policy": "Finite selected statistics, reviewed diagnostics and path/size/SHA receipts only; raw source, canonical captures, reading proofs and full assertion payloads remain private.",
+  "mutation_harness_qualification": "Additional completion-receipt preflight and altered-pin controls: measured once, harness not shipped; private per-case logs are retained with path/SHA identities."
 }

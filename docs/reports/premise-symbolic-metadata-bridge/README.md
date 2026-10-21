@@ -15,3 +15,5 @@ A fresh 307-file negative clone changed only the selected cJSON definition's sou
 [Postgate evidence](postgate-evidence.json) records finite results and exact private artifact path/size/SHA identities. Full raw source pairs, canonical captures, reading proofs, raw differences and full assertions remain private. Publication of a broad raw-payload archive was rejected by automatic approval review; the finite identity-only publication preserves those artifacts for controlled review. The parent owns final ledger/matrix integration, the post-commit Python check and push. Existing universal source truth, typed discharge and verdict authority remain unchanged.
 
 The original [prediction](PREDICTION.md) and [inventory](inventory-before.json) remain frozen. No report asset is compiled into the new kernel, test or example. Existing universal premise/source/allocator/writer obligations remain Open.
+
+The added completion-receipt preflight and pin-alteration runs are *measured once, harness not shipped*; exact finite results and private per-case log identities are preserved in postgate-evidence.json. Full assertion/canonical payloads are private.
