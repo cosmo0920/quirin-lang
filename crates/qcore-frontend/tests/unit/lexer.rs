@@ -457,7 +457,7 @@ fn lifecycle_symbols_are_atomic_and_preserve_neighboring_flow_and_pipe_tokens() 
         ]
     );
     assert!(
-        qcore_frontend::contract_lifecycle::parse_clause(
+        crate::contract_lifecycle::parse_clause(
             "resource_lifecycle_v1(x, | ^ + resource(n))"
         )
         .is_err()

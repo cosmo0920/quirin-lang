@@ -121,7 +121,7 @@ fn bounds_and_declared_model_views_preserve_original_graphs_and_bounds_facts() {
         let new = sources(source.clone());
         let old = sources(source.replace(SYMBOLS, ""));
         assert_eq!(
-            lifecycle::replay(view.clone(), &new).unwrap()["observed"]
+            lifecycle::replay(view, &new).unwrap()["observed"]
                 .entries
                 .len(),
             4
