@@ -1,0 +1,32 @@
+{
+  "schema": "local-source-production-configured.v1",
+  "analyzer_source": "c1625baf713e4d8498c39282238675749237005d",
+  "root_source_checkpoint": "882e128c12161babdbfa36806829894eadf600ba",
+  "helper_source": "9dd0cddf10b52648d2491a14a6e98179e06781f8",
+  "driver_sha256": "e910ea83f6d77f448ce51c2a961bce72592c8474f96bde8503cc6ba2a932fdde",
+  "system": {
+    "exit": 0,
+    "complete_domains": 2,
+    "reproduced_observations": 24,
+    "denominator": 24
+  },
+  "slice": {
+    "exit": 0,
+    "complete_domains": 1,
+    "reproduced_observations": 2,
+    "denominator": 2
+  },
+  "corpus": "not yet run; actual auxiliary DB repair required and root gate active",
+  "universal_atoms": "open",
+  "files": {
+    "production-base/build.log.gz": "deeda08e508d40ac1d982514ffe187fa12d6c187f39b89f8ad54fd584e3eaf74",
+    "production-base/commands.json.gz": "d5968f4519fb32de0c11a58a4eb1b915e5f51882a845cbf4411ca7712f006cf9",
+    "production-base/slice-result.json.gz": "6e1b717d381e6ba0c520f719129184c9f7d3dffb8e1a7fd6ae3cbcd543a9afd9",
+    "production-base/slice-unit-11-candidate-0.prepared.c.gz": "2d1d7cdb003ae0ddf4fc71d375ef192324f0ad47eec6409ea2c5fbd4ae831fd3",
+    "production-base/slice.log.gz": "ea222878a2ef1533c0d7503e24b1fd48dcc129c6d3119164e7e2a53d3d0d3798",
+    "production-base/system-result.json.gz": "55e6ae79b2a6a4f3e2bbf202af05842a5b088e05e426b26ce72550c02f1042b6",
+    "production-base/system-unit-5-candidate-0.prepared.c.gz": "d924695dbffcf630a398671258e49869d4da1e264cac00a293605495f00c9f4c",
+    "production-base/system-unit-6-candidate-0.prepared.c.gz": "d924695dbffcf630a398671258e49869d4da1e264cac00a293605495f00c9f4c",
+    "production-base/system.log.gz": "d2dc495035232793072d01d7a6cc941d07ed80479b9be0d1d32e1fcfe00469d5"
+  }
+}
