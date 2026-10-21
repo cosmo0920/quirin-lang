@@ -1,0 +1,42 @@
+[
+  {
+    "source": "/home/cosmo/Documents/GitHub/qcore-c/private/premise-resolution-cycle2/prepared-tip/slice/invocation.json",
+    "copy": "/home/cosmo/Documents/GitHub/qcore-c/private/premise-symbolic-integration/borrowed-base/slice/invocation.json",
+    "sha256": "671bb43eee714d3afa2ee807ad354f964bd556717b66d311bada3086cd7d0a4d"
+  },
+  {
+    "source": "/home/cosmo/Documents/GitHub/qcore-c/private/premise-resolution-cycle2/prepared-tip/slice/resource-diagnostics.chunk-contracts.json",
+    "copy": "/home/cosmo/Documents/GitHub/qcore-c/private/premise-symbolic-integration/borrowed-base/slice/resource-diagnostics.chunk-contracts.json",
+    "sha256": "a97259087e4ad89a4662edcb494b27c27e80f06c62e404a19076224bbc0a2bd8"
+  },
+  {
+    "source": "/home/cosmo/Documents/GitHub/qcore-c/private/premise-resolution-cycle2/prepared-tip/slice/resource-diagnostics.contracts.json",
+    "copy": "/home/cosmo/Documents/GitHub/qcore-c/private/premise-symbolic-integration/borrowed-base/slice/resource-diagnostics.contracts.json",
+    "sha256": "070e03e982907f37c7f6ffb3e05f3d21b361acb892cf04d4d0d8c2462c949193"
+  },
+  {
+    "source": "/home/cosmo/Documents/GitHub/qcore-c/private/premise-resolution-cycle2/prepared-tip/slice/resource-diagnostics.json",
+    "copy": "/home/cosmo/Documents/GitHub/qcore-c/private/premise-symbolic-integration/borrowed-base/slice/resource-diagnostics.json",
+    "sha256": "602225d8959cec6538abcce0437600ca8cb7d197044d0078bb034f221acc79b2"
+  },
+  {
+    "source": "/home/cosmo/Documents/GitHub/qcore-c/private/premise-resolution-cycle2/prepared-tip/slice/resource-diagnostics.source-effects.json",
+    "copy": "/home/cosmo/Documents/GitHub/qcore-c/private/premise-symbolic-integration/borrowed-base/slice/resource-diagnostics.source-effects.json",
+    "sha256": "a97259087e4ad89a4662edcb494b27c27e80f06c62e404a19076224bbc0a2bd8"
+  },
+  {
+    "source": "/home/cosmo/Documents/GitHub/qcore-c/private/premise-resolution-cycle2/prepared-tip/slice/slice-null.jsonl",
+    "copy": "/home/cosmo/Documents/GitHub/qcore-c/private/premise-symbolic-integration/borrowed-base/slice/slice-null.jsonl",
+    "sha256": "d623c9141fdda72c0c1eccf2b1750af585b26fb8de1ad43181973e3e53e9e435"
+  },
+  {
+    "source": "/home/cosmo/Documents/GitHub/qcore-c/private/premise-resolution-cycle2/prepared-tip/slice/slice-null.summary.json",
+    "copy": "/home/cosmo/Documents/GitHub/qcore-c/private/premise-symbolic-integration/borrowed-base/slice/slice-null.summary.json",
+    "sha256": "45acfd52ed91ac9e2ae64152e3c3a21b8b849df8aaf37c715ded3c5fda72ecc0"
+  },
+  {
+    "source": "/home/cosmo/Documents/GitHub/qcore-c/private/premise-resolution-cycle2/prepared-tip/slice/slice-outer.json",
+    "copy": "/home/cosmo/Documents/GitHub/qcore-c/private/premise-symbolic-integration/borrowed-base/slice/slice-outer.json",
+    "sha256": "e08ae0f7b48f3e01dbf3da0472532da0efad09f9e9226e2d295bad706c87f57f"
+  }
+]
