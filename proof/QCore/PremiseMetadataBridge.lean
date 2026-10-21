@@ -1,4 +1,4 @@
-import Mathlib.Data.List.Basic
+import Std
 
 namespace QCore.PremiseMetadataBridge
 
