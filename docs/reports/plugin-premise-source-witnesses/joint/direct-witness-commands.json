@@ -1,0 +1,69 @@
+[
+  {
+    "name": "plugin-source",
+    "command": [
+      "/home/cosmo/Documents/GitHub/qcore-c/target/debug/examples/plugin_source_witnesses",
+      "/home/cosmo/Documents/GitHub/qcore-c/private/premise-resolution-cycle2/postgate-source-1/plugin"
+    ],
+    "cwd": "/home/cosmo/Documents/GitHub/qcore-c",
+    "source": "62eebba95c51917c0fe841fbc23e2bf0d0e7e465",
+    "started": "2026-10-21T09:04:59.556308+00:00",
+    "ended": "2026-10-21T09:05:13.042939+00:00",
+    "exit": 0,
+    "log": "/home/cosmo/Documents/GitHub/qcore-c/private/premise-resolution-cycle2/postgate-source-1/plugin-source.log",
+    "QCORE_AUDIT_BUILD_COMMIT": "62eebba95c51917c0fe841fbc23e2bf0d0e7e465"
+  },
+  {
+    "name": "cjson-source",
+    "command": [
+      "/home/cosmo/Documents/GitHub/qcore-c/target/debug/examples/cjson_local_source",
+      "/home/cosmo/Documents/GitHub/qcore-c/private/w45-fb/w46-external-callee-contracts/attempt-1/fluent-bit-clang-source/lib/librdkafka-2.15.0/src/cJSON.c",
+      "/home/cosmo/Documents/GitHub/qcore-c/private/w45-fb/w46-external-callee-contracts/attempt-1/fluent-bit-clang-source/lib/librdkafka-2.15.0/src/cJSON.h",
+      "/home/cosmo/Documents/GitHub/qcore-c/private/premise-resolution-cycle2/postgate-source-1/cjson"
+    ],
+    "cwd": "/home/cosmo/Documents/GitHub/qcore-c",
+    "source": "62eebba95c51917c0fe841fbc23e2bf0d0e7e465",
+    "started": "2026-10-21T09:05:13.043171+00:00",
+    "ended": "2026-10-21T09:05:13.869316+00:00",
+    "exit": 0,
+    "log": "/home/cosmo/Documents/GitHub/qcore-c/private/premise-resolution-cycle2/postgate-source-1/cjson-source.log",
+    "QCORE_AUDIT_BUILD_COMMIT": "62eebba95c51917c0fe841fbc23e2bf0d0e7e465"
+  },
+  {
+    "name": "freeze-tip-inputs",
+    "command": [
+      "/usr/bin/python3",
+      "docs/reports/premise-resolution-cycle2/scripts/freeze_inputs.py",
+      "private/premise-resolution-cycle2/tip-freeze",
+      "--source",
+      "62eebba95c51917c0fe841fbc23e2bf0d0e7e465",
+      "--binary",
+      "/home/cosmo/Documents/GitHub/qcore-c/target/release/quirin-audit",
+      "--binary-sha256",
+      "5584d30e805afc8406350f389b5e84e5a59d810705ec8db0836414fdb1d67640",
+      "--binary-receipt",
+      "/home/cosmo/Documents/GitHub/qcore-c/private/premise-resolution-cycle2/postgate-source-1/binary-receipt.json"
+    ],
+    "cwd": "/home/cosmo/Documents/GitHub/qcore-c",
+    "source": "62eebba95c51917c0fe841fbc23e2bf0d0e7e465",
+    "started": "2026-10-21T09:05:13.890340+00:00",
+    "ended": "2026-10-21T09:05:14.157770+00:00",
+    "exit": 0,
+    "log": "/home/cosmo/Documents/GitHub/qcore-c/private/premise-resolution-cycle2/postgate-source-1/freeze-tip-inputs.log",
+    "QCORE_AUDIT_BUILD_COMMIT": "62eebba95c51917c0fe841fbc23e2bf0d0e7e465"
+  },
+  {
+    "name": "compile-comparison-helpers",
+    "command": [
+      "/usr/bin/python3",
+      "private/premise-resolution-cycle2/compile_comparator_helpers.py"
+    ],
+    "cwd": "/home/cosmo/Documents/GitHub/qcore-c",
+    "source": "62eebba95c51917c0fe841fbc23e2bf0d0e7e465",
+    "started": "2026-10-21T09:05:14.158252+00:00",
+    "ended": "2026-10-21T09:05:17.362136+00:00",
+    "exit": 0,
+    "log": "/home/cosmo/Documents/GitHub/qcore-c/private/premise-resolution-cycle2/postgate-source-1/compile-comparison-helpers.log",
+    "QCORE_AUDIT_BUILD_COMMIT": "62eebba95c51917c0fe841fbc23e2bf0d0e7e465"
+  }
+]
