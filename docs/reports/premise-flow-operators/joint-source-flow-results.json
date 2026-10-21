@@ -1,0 +1,158 @@
+{
+  "version": 1,
+  "frozen_integrated_source": "62eebba95c51917c0fe841fbc23e2bf0d0e7e465",
+  "evidence_owner": "actual root joint postgate source-example runs; these are finite separately checked source-adapter domains, not old universal premise truth",
+  "commands": [
+    {
+      "name": "plugin-source",
+      "command": [
+        "/home/cosmo/Documents/GitHub/qcore-c/target/debug/examples/plugin_source_witnesses",
+        "/home/cosmo/Documents/GitHub/qcore-c/private/premise-resolution-cycle2/postgate-source-1/plugin"
+      ],
+      "cwd": "/home/cosmo/Documents/GitHub/qcore-c",
+      "source": "62eebba95c51917c0fe841fbc23e2bf0d0e7e465",
+      "started": "2026-10-21T09:04:59.556308+00:00",
+      "ended": "2026-10-21T09:05:13.042939+00:00",
+      "exit": 0,
+      "log": "/home/cosmo/Documents/GitHub/qcore-c/private/premise-resolution-cycle2/postgate-source-1/plugin-source.log",
+      "QCORE_AUDIT_BUILD_COMMIT": "62eebba95c51917c0fe841fbc23e2bf0d0e7e465"
+    },
+    {
+      "name": "cjson-source",
+      "command": [
+        "/home/cosmo/Documents/GitHub/qcore-c/target/debug/examples/cjson_local_source",
+        "/home/cosmo/Documents/GitHub/qcore-c/private/w45-fb/w46-external-callee-contracts/attempt-1/fluent-bit-clang-source/lib/librdkafka-2.15.0/src/cJSON.c",
+        "/home/cosmo/Documents/GitHub/qcore-c/private/w45-fb/w46-external-callee-contracts/attempt-1/fluent-bit-clang-source/lib/librdkafka-2.15.0/src/cJSON.h",
+        "/home/cosmo/Documents/GitHub/qcore-c/private/premise-resolution-cycle2/postgate-source-1/cjson"
+      ],
+      "cwd": "/home/cosmo/Documents/GitHub/qcore-c",
+      "source": "62eebba95c51917c0fe841fbc23e2bf0d0e7e465",
+      "started": "2026-10-21T09:05:13.043171+00:00",
+      "ended": "2026-10-21T09:05:13.869316+00:00",
+      "exit": 0,
+      "log": "/home/cosmo/Documents/GitHub/qcore-c/private/premise-resolution-cycle2/postgate-source-1/cjson-source.log",
+      "QCORE_AUDIT_BUILD_COMMIT": "62eebba95c51917c0fe841fbc23e2bf0d0e7e465"
+    }
+  ],
+  "exact_artifacts": [
+    {
+      "path": "/home/cosmo/Documents/GitHub/qcore-c/private/premise-resolution-cycle2/postgate-source-1/plugin/bounded-flow.json",
+      "sha256": "a9956f1194db353055143fb6b4cbb7750f3ef53cff5469f011d2e923af7aa649"
+    },
+    {
+      "path": "/home/cosmo/Documents/GitHub/qcore-c/private/premise-resolution-cycle2/postgate-source-1/plugin/refusal-controls.json",
+      "sha256": "e037e6dac7c9ca540ea722e488520b922b43fb7b0779ba53973ee04fe80e7508"
+    },
+    {
+      "path": "/home/cosmo/Documents/GitHub/qcore-c/private/premise-resolution-cycle2/postgate-source-1/cjson/flows.json",
+      "sha256": "e012f6ee49509bfa372eac2b5b132596b92931ca46f9b20ded571e52cda009e6"
+    },
+    {
+      "path": "/home/cosmo/Documents/GitHub/qcore-c/private/premise-resolution-cycle2/postgate-source-1/cjson/checked.json",
+      "sha256": "0696fd4fa1f5b9334449acc910e55b72e3521eac148bea11bc98dfa34e607d1c"
+    }
+  ],
+  "results": {
+    "plugin": {
+      "alternative": {
+        "entry": "alternative",
+        "disposition": "supported",
+        "terminated": false,
+        "atom_dependencies": [
+          "go_creator_fixture_complete_v1",
+          "go_creator_fixture_implies_registration_v1",
+          "rk_duplicate_fixture_no_loader_calls_v1"
+        ]
+      },
+      "combined": {
+        "entry": "combined",
+        "disposition": "supported",
+        "terminated": false,
+        "atom_dependencies": [
+          "go_creator_fixture_complete_v1",
+          "go_creator_fixture_implies_registration_v1",
+          "rk_duplicate_fixture_no_loader_calls_v1"
+        ]
+      },
+      "finished": {
+        "entry": "finished",
+        "disposition": "supported",
+        "terminated": true,
+        "atom_dependencies": [
+          "go_creator_fixture_complete_v1",
+          "go_creator_fixture_implies_registration_v1",
+          "rk_duplicate_fixture_complete_v1",
+          "rk_duplicate_fixture_no_loader_calls_v1"
+        ]
+      },
+      "known_error": {
+        "entry": "known_error",
+        "disposition": "supported",
+        "terminated": false,
+        "atom_dependencies": [
+          "go_creator_fixture_complete_v1",
+          "go_creator_fixture_implies_registration_v1"
+        ]
+      },
+      "native_duplicate": {
+        "entry": "native_duplicate",
+        "disposition": "supported",
+        "terminated": false,
+        "atom_dependencies": [
+          "rk_duplicate_fixture_no_loader_calls_v1"
+        ]
+      },
+      "observed_counterexample": {
+        "entry": "observed_counterexample",
+        "disposition": "refuted",
+        "terminated": false,
+        "atom_dependencies": [
+          "go_creator_fixture_implies_registration_v1"
+        ]
+      }
+    },
+    "cjson": [
+      {
+        "entry": "entry_and_post",
+        "disposition": "supported",
+        "terminated": false,
+        "atom_dependencies": [
+          "finite_detach_post",
+          "finite_entry_equations"
+        ],
+        "universal_atoms": "open"
+      },
+      {
+        "entry": "entry_or_post",
+        "disposition": "supported",
+        "terminated": false,
+        "atom_dependencies": [
+          "finite_detach_post",
+          "finite_entry_equations"
+        ],
+        "universal_atoms": "open"
+      },
+      {
+        "entry": "post_except_incomplete",
+        "disposition": "supported",
+        "terminated": false,
+        "atom_dependencies": [
+          "finite_detach_post",
+          "incomplete_fixed_case_domain"
+        ],
+        "universal_atoms": "open"
+      },
+      {
+        "entry": "post_terminal",
+        "disposition": "supported",
+        "terminated": true,
+        "atom_dependencies": [
+          "finite_detach_post",
+          "finite_entry_equations"
+        ],
+        "universal_atoms": "open"
+      }
+    ]
+  },
+  "no_verdict_authority": true
+}
