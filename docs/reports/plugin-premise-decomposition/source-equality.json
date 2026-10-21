@@ -18,5 +18,7 @@
   "merge_exit": 0,
   "final_publication_source_differences": [],
   "checked_worktree": true,
-  "publication_head_before_authoritative_gate": "6f69890cae819ab0c64b0da25b360a2086739e19"
+  "publication_head_before_authoritative_gate": "6f69890cae819ab0c64b0da25b360a2086739e19",
+  "authoritative_matrix_commit_confirmed_by_python": "bcdc5426e33388281897a9198c2de5e70b5b5980",
+  "final_receipt_worktree_source_differences": []
 }

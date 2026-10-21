@@ -1986,5 +1986,42 @@
     "started": "2026-10-21T06:45:08.829246+00:00",
     "ended": "2026-10-21T06:45:10.703365+00:00",
     "log": "private/plugin-premise-decomposition/impact-corpus-final.log"
+  },
+  {
+    "name": "archive-evidence",
+    "command": [
+      "python3",
+      "private/plugin-premise-decomposition/archive_evidence.py"
+    ],
+    "exit": 0,
+    "started": "2026-10-21T06:45:10.727839+00:00",
+    "ended": "2026-10-21T06:45:15.918045+00:00",
+    "log": "private/plugin-premise-decomposition/archive-evidence.log"
+  },
+  {
+    "name": "post-committed-matrix-python-1",
+    "command": [
+      "python3",
+      "docs/reports/plugin-premise-decomposition/scripts/run_steps.py",
+      "python",
+      "private/plugin-premise-decomposition/post-matrix-python-1"
+    ],
+    "exit": 0,
+    "started": "2026-10-21T06:49:50.702397+00:00",
+    "ended": "2026-10-21T06:50:25.776379+00:00",
+    "log": "private/plugin-premise-decomposition/post-committed-matrix-python-1.log"
+  },
+  {
+    "name": "post-authoritative-matrix-python-final",
+    "command": [
+      "python3",
+      "docs/reports/plugin-premise-decomposition/scripts/run_steps.py",
+      "python",
+      "private/plugin-premise-decomposition/post-matrix-python-final"
+    ],
+    "exit": 0,
+    "started": "2026-10-21T06:52:26.479435+00:00",
+    "ended": "2026-10-21T06:53:01.438473+00:00",
+    "log": "private/plugin-premise-decomposition/post-authoritative-matrix-python-final.log"
   }
 ]
