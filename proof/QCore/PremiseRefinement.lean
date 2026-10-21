@@ -36,12 +36,12 @@ theorem foreign_context_refuses (expected held : Context) (legacy : List Atom)
 theorem supported_refinement_does_not_support_legacy (ctx : Context) (p : Premise) :
     report ctx [⟨0, ctx, .open, .declared⟩] ⟨p, [⟨1, ctx, .supported, .declared⟩]⟩ =
       (.open, .supported) := by
-  simp [report, compose, supported]
+  simp [report, compose, supported] <;> decide
 
 theorem refuted_refinement_does_not_refute_legacy (ctx : Context) (p : Premise) :
     report ctx [⟨0, ctx, .open, .declared⟩] ⟨p, [⟨1, ctx, .refuted, .declared⟩]⟩ =
       (.open, .refuted) := by
-  simp [report, compose, supported]
+  simp [report, compose, supported] <;> decide
 
 /-- Dependencies are the actual direct/summary declaration closure, independently
 provided; matching a name alone cannot transport evidence across contexts. -/

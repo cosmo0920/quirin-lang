@@ -1,0 +1,23 @@
+[
+  {
+    "attempt": "focused-1",
+    "commands": "/home/cosmo/.codex/worktrees/premise-decomposition-cycle1/qcore-c/private/premise-evidence-contracts/focused-1/commands.json",
+    "exit": 1,
+    "rust_contract_hypothesis": {
+      "passed": 14,
+      "failed": 1
+    },
+    "rust_bindings": {
+      "passed": 3,
+      "failed": 0
+    },
+    "audit_controls": {
+      "passed": 11,
+      "failed": 0
+    },
+    "lean_build_exit": 1,
+    "lean_audit_exit": 1,
+    "release_build_exit": 0,
+    "meaning": "Inheritance control exposes a legacy premise label p colliding with a formal p: generic positional substitution renamed the old literal label but correctly preserved new graph IDs, leaving no attachment target. Fix literal-label role preservation, not the fixture. Lean two ground derived-BEq goals need decide after simplification; other new proofs already elaborate. Initial missing-olean audit error is downstream of that failed build. Release build succeeds but is not final source freeze."
+  }
+]

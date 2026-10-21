@@ -837,10 +837,12 @@ fn rename_clauses(
     let position = |word: &str| parent_parameters.iter().position(|p| p == word);
     let mut renamed = Vec::with_capacity(clauses.len());
     for (introducer, expression) in clauses {
-        // Graph IDs are declaration-local symbols, not formal references.
-        // v1 admits opaque atoms only; future typed subjects need a separate
-        // capture-aware substitution rule before their registry can expand.
-        if crate::hypothesis::is_clause(expression) {
+        // Graph IDs and named-premise labels are declaration-local symbols,
+        // not formal references. Opaque statements also stay literal. Future
+        // typed subjects need a separate capture-aware substitution rule.
+        if crate::hypothesis::is_clause(expression)
+            || crate::contract_loader::premise_clause(expression)?.is_some()
+        {
             renamed.push((introducer.clone(), expression.clone()));
             continue;
         }
