@@ -1,0 +1,67 @@
+{
+  "schema_version": 1,
+  "contract_load_path": "../../../providers/contract-load-path.json",
+  "quirin_providers_only": false,
+  "libraries": {
+    "cmetrics": {
+      "providers": [
+        "quirin-provider-libc",
+        "quirin-provider-cfl",
+        "quirin-provider-mpack",
+        "quirin-provider-msgpack",
+        "qcore-provider-cmetrics"
+      ],
+      "dependent_libraries": []
+    },
+    "ctraces": {
+      "providers": [
+        "quirin-provider-libc",
+        "quirin-provider-cfl",
+        "quirin-provider-mpack",
+        "quirin-provider-msgpack",
+        "qcore-provider-ctraces"
+      ],
+      "dependent_libraries": [
+        "cmetrics"
+      ]
+    },
+    "chunkio": {
+      "providers": [
+        "quirin-provider-libc",
+        "qcore-provider-chunkio"
+      ],
+      "dependent_libraries": []
+    },
+    "librdkafka": {
+      "providers": [
+        "quirin-provider-libc",
+        "qcore-provider-librdkafka",
+        "quirin-provider-fluent-bit:fluent_bit/logging.qv"
+      ],
+      "dependent_libraries": []
+    },
+    "monkey-libevent": {
+      "providers": [
+        "quirin-provider-libc",
+        "qcore-provider-libevent"
+      ],
+      "dependent_libraries": []
+    },
+    "fluent_bit": {
+      "providers": [
+        "quirin-provider-libc",
+        "quirin-provider-cfl",
+        "quirin-provider-msgpack",
+        "quirin-provider-mpack",
+        "quirin-provider-fluent-bit"
+      ],
+      "dependent_libraries": [
+        "cmetrics",
+        "ctraces",
+        "chunkio",
+        "librdkafka",
+        "monkey-libevent"
+      ]
+    }
+  }
+}

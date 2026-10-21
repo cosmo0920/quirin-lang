@@ -41,6 +41,8 @@
 //! partly-validated declaration and no declared assumption is counted apart.
 
 use std::collections::{BTreeMap, BTreeSet};
+use std::hash::{DefaultHasher, Hash, Hasher};
+use std::sync::{Arc, Mutex, OnceLock};
 
 use qcore_c_gateway::contract_dependencies::{RowDependencies, UnitRecord, declared};
 use qcore_c_gateway::legacy_c::{LegacyProgramSummary, UnrestrictedLegacyResult};
@@ -228,51 +230,82 @@ pub fn unit_field(record: &UnitRecord, contracts: &ResourceContracts) -> Option<
 /// The unit field's key of the per-clause coverage (rule 13j).
 pub const CLAUSES_KEY: &str = "clauses";
 
-/// Add the row and unit fields to the unit row `row` the report just
-/// recorded for `result`, from the unit's `record` under `contracts`.
-pub fn annotate_unit(
-    row: &mut Value,
-    record: &UnitRecord,
-    result: &Result<UnrestrictedLegacyResult, impl Sized>,
-    contracts: &ResourceContracts,
-) -> Result<(), String> {
-    let Some(summary) = summary_of(result) else {
-        return Ok(());
-    };
-    let dependencies =
-        qcore_c_gateway::contract_dependencies::row_dependencies(record, summary, contracts);
-    let graphs: BTreeMap<String, qcore_schemas::hypothesis::Graph> =
-        serde_json::from_value(premises(contracts)?["$hypothesis_graphs"].clone())
-            .map_err(|e| e.to_string())?;
-    let invoked = crate::callback_member_fold::member_declarations(contracts);
-    let constructed = crate::callback_member_fold::constructed_declarations(contracts);
-    for function in row["functions"].as_array_mut().into_iter().flatten() {
-        let Some(name) = function["function"].as_str() else {
-            continue;
-        };
-        if let Some(dependencies) = dependencies.get(name) {
-            let mut field = row_field(dependencies);
-            add_member_keys(&mut field, dependencies, &invoked, &constructed);
-            field["hypothesis_dependencies"] = serde_json::json!(
-                qcore_c_gateway::contract_dependencies::hypothesis_closure(dependencies, &graphs)
-            );
-            function[ROW_KEY] = field;
-        }
-    }
-    if let Some(field) = unit_field(record, contracts) {
-        row[UNIT_KEY] = field;
-    }
-    Ok(())
+/// Cached derived contract artifacts for a [`ResourceContracts`] instance so
+/// per-unit annotation and reading-site binding reuse the parsed premises,
+/// hypothesis graphs, and callback-member declarations across units of a
+/// slice instead of re-parsing the contract corpus on every translation unit.
+struct CachedContractPremises {
+    assumptions: BTreeMap<String, String>,
+    result_holders: BTreeSet<String>,
+    invoked: BTreeMap<String, BTreeSet<String>>,
+    constructed: BTreeMap<String, BTreeMap<String, bool>>,
+    premises: Value,
+    graphs: Arc<BTreeMap<String, qcore_schemas::hypothesis::Graph>>,
+    replayed_graphs: Arc<BTreeMap<String, qcore_schemas::hypothesis::Graph>>,
 }
 
-/// The premises of every declaration of `contracts`: declared and
-/// literal-argument premises from the retained texts, and rule 13e's for a
-/// result holder. An unreadable source set is refused, never read as none.
-///
-/// # Errors
-///
-/// The loader's refusal of the retained texts.
-pub fn premises(contracts: &ResourceContracts) -> Result<Value, String> {
+static PREMISES_CACHE: OnceLock<Mutex<BTreeMap<u64, Arc<CachedContractPremises>>>> =
+    OnceLock::new();
+
+fn premises_cache() -> &'static Mutex<BTreeMap<u64, Arc<CachedContractPremises>>> {
+    PREMISES_CACHE.get_or_init(|| Mutex::new(BTreeMap::new()))
+}
+
+/// Drops any cached contract premises and hypothesis graphs (called between
+/// per-library audit slices when releasing a slice's contract environment).
+pub fn clear_premises_cache() {
+    if let Ok(mut guard) = premises_cache().lock() {
+        guard.clear();
+    }
+}
+
+fn result_holder_names(contracts: &ResourceContracts) -> BTreeSet<String> {
+    contracts
+        .retaining()
+        .iter()
+        .chain(contracts.guarded_retaining())
+        .filter(|(_, retaining)| {
+            retaining
+                .retentions
+                .iter()
+                .any(|retention| retention.holder == RetentionHolder::Result)
+        })
+        .map(|(name, _)| name.clone())
+        .collect()
+}
+
+fn cache_key(
+    assumptions: &BTreeMap<String, String>,
+    result_holders: &BTreeSet<String>,
+    invoked: &BTreeMap<String, BTreeSet<String>>,
+    constructed: &BTreeMap<String, BTreeMap<String, bool>>,
+) -> u64 {
+    let mut hasher = DefaultHasher::new();
+    assumptions.hash(&mut hasher);
+    result_holders.hash(&mut hasher);
+    invoked.hash(&mut hasher);
+    constructed.hash(&mut hasher);
+    hasher.finish()
+}
+
+fn cached_contract_premises(
+    contracts: &ResourceContracts,
+) -> Result<Arc<CachedContractPremises>, String> {
+    let assumptions = contracts.source_assumptions();
+    let result_holders = result_holder_names(contracts);
+    let invoked = crate::callback_member_fold::member_declarations(contracts);
+    let constructed = crate::callback_member_fold::constructed_declarations(contracts);
+    let key = cache_key(assumptions, &result_holders, &invoked, &constructed);
+    if let Ok(guard) = premises_cache().lock()
+        && let Some(cached) = guard.get(&key)
+        && &cached.assumptions == assumptions
+        && cached.result_holders == result_holders
+        && cached.invoked == invoked
+        && cached.constructed == constructed
+    {
+        return Ok(Arc::clone(cached));
+    }
+
     let mut premises = BTreeMap::<String, Vec<Value>>::new();
     for (name, declared) in qcore_contract::contract_loader::declared_premises(contracts)? {
         premises
@@ -286,25 +319,16 @@ pub fn premises(contracts: &ResourceContracts) -> Result<Value, String> {
                 })
             }));
     }
-    for (name, retaining) in contracts
-        .retaining()
-        .iter()
-        .chain(contracts.guarded_retaining())
-    {
-        if retaining
-            .retentions
-            .iter()
-            .any(|retention| retention.holder == RetentionHolder::Result)
-        {
-            premises
-                .entry(name.clone())
-                .or_default()
-                .extend(RESULT_HOLDER_PREMISES.iter().map(|(premise, statement)| {
-                    json!({"name": premise, "statement": statement, "origin": "rule-13e"})
-                }));
-        }
+    for name in &result_holders {
+        premises
+            .entry(name.clone())
+            .or_default()
+            .extend(RESULT_HOLDER_PREMISES.iter().map(|(premise, statement)| {
+                json!({"name": premise, "statement": statement, "origin": "rule-13e"})
+            }));
     }
-    let mut graphs = qcore_contract::hypothesis::replay(contracts.source_assumptions())?;
+    let replayed_graphs = qcore_contract::hypothesis::replay(assumptions)?;
+    let mut graphs = replayed_graphs.clone();
     for (name, records) in &premises {
         let graph =
             graphs
@@ -331,13 +355,92 @@ pub fn premises(contracts: &ResourceContracts) -> Result<Value, String> {
         .collect::<Result<BTreeMap<_, _>, String>>()?;
     let mut value = json!(premises);
     let binding_requirements =
-        qcore_contract::hypothesis_bindings::requirements(contracts.source_assumptions(), &graphs)?;
+        qcore_contract::hypothesis_bindings::requirements(assumptions, &graphs)?;
     if !binding_requirements.is_empty() {
         value["$hypothesis_binding_requirements"] = json!(binding_requirements);
     }
-    value["$hypothesis_graphs"] = json!(graphs);
+    value["$hypothesis_graphs"] = json!(&graphs);
     value["$hypothesis_graph_digests"] = json!(digests);
-    Ok(value)
+
+    let cached = Arc::new(CachedContractPremises {
+        assumptions: assumptions.clone(),
+        result_holders,
+        invoked,
+        constructed,
+        premises: value,
+        graphs: Arc::new(graphs),
+        replayed_graphs: Arc::new(replayed_graphs),
+    });
+    if let Ok(mut guard) = premises_cache().lock() {
+        guard.insert(key, Arc::clone(&cached));
+    }
+    Ok(cached)
+}
+
+/// Returns the cached replayed hypothesis graphs of `contracts`' source
+/// assumptions without re-parsing the contract corpus on every translation
+/// unit.
+///
+/// # Errors
+///
+/// The loader's or hypothesis replay's refusal of the retained texts.
+pub fn replayed_hypothesis_graphs(
+    contracts: &ResourceContracts,
+) -> Result<Arc<BTreeMap<String, qcore_schemas::hypothesis::Graph>>, String> {
+    Ok(Arc::clone(
+        &cached_contract_premises(contracts)?.replayed_graphs,
+    ))
+}
+
+/// Add the row and unit fields to the unit row `row` the report just
+/// recorded for `result`, from the unit's `record` under `contracts`.
+pub fn annotate_unit(
+    row: &mut Value,
+    record: &UnitRecord,
+    result: &Result<UnrestrictedLegacyResult, impl Sized>,
+    contracts: &ResourceContracts,
+) -> Result<(), String> {
+    let Some(summary) = summary_of(result) else {
+        return Ok(());
+    };
+    let dependencies =
+        qcore_c_gateway::contract_dependencies::row_dependencies(record, summary, contracts);
+    let cached = cached_contract_premises(contracts)?;
+    for function in row["functions"].as_array_mut().into_iter().flatten() {
+        let Some(name) = function["function"].as_str() else {
+            continue;
+        };
+        if let Some(dependencies) = dependencies.get(name) {
+            let mut field = row_field(dependencies);
+            add_member_keys(
+                &mut field,
+                dependencies,
+                &cached.invoked,
+                &cached.constructed,
+            );
+            field["hypothesis_dependencies"] =
+                serde_json::json!(qcore_c_gateway::contract_dependencies::hypothesis_closure(
+                    dependencies,
+                    &cached.graphs
+                ));
+            function[ROW_KEY] = field;
+        }
+    }
+    if let Some(field) = unit_field(record, contracts) {
+        row[UNIT_KEY] = field;
+    }
+    Ok(())
+}
+
+/// The premises of every declaration of `contracts`: declared and
+/// literal-argument premises from the retained texts, and rule 13e's for a
+/// result holder. An unreadable source set is refused, never read as none.
+///
+/// # Errors
+///
+/// The loader's refusal of the retained texts.
+pub fn premises(contracts: &ResourceContracts) -> Result<Value, String> {
+    Ok(cached_contract_premises(contracts)?.premises.clone())
 }
 
 /// What the section reads of the rows: a per-unit fold, so a composed

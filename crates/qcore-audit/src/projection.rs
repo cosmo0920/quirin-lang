@@ -1095,9 +1095,11 @@ fn record_projection(
             });
         }
         let reading_graphs = if dependencies.reading_sites.is_empty() {
-            Default::default()
+            None
         } else {
-            qcore_contract::hypothesis::replay(contracts.source_assumptions())?
+            Some(crate::contract_dependencies::replayed_hypothesis_graphs(
+                contracts,
+            )?)
         };
         let mut reading_binding_omissions = Vec::new();
         let mut bound_readings = Vec::new();
@@ -1123,7 +1125,8 @@ fn record_projection(
                     .as_array()
                     .is_some_and(|atoms| !atoms.is_empty());
                 let binding = reading_graphs
-                    .get(&observation.declaration)
+                    .as_deref()
+                    .and_then(|graphs| graphs.get(&observation.declaration))
                     .ok_or_else(|| "selected production graph absent".to_owned())
                     .and_then(|graph| {
                         if !consulted {

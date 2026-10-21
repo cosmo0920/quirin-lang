@@ -1360,7 +1360,6 @@ pub fn run_units(
             .map(|unit| fs::metadata(&unit.path).map_or(0, |metadata| metadata.len()))
             .collect::<Vec<_>>(),
     );
-    let mut products = Vec::with_capacity(units.len());
     let mut printed: Option<String> = None;
     let mut counts_per_library = BTreeMap::<&str, usize>::new();
     for unit in units {
@@ -1388,12 +1387,11 @@ pub fn run_units(
             (outcomes, stopped)
         },
         |outcomes| {
-            crate::refuted_contracts::table(
-                &outcomes
+            crate::refuted_contracts::table_from_rows(
+                outcomes
                     .iter()
                     .filter_map(|(_, outcome)| outcome.result.as_ref().ok())
-                    .flat_map(|products| products.unit_rows().iter().cloned())
-                    .collect::<Vec<_>>(),
+                    .flat_map(|products| products.unit_rows()),
             )
         },
         // Card CG16-BOUNDS-TRANSPORT-AND-CHUNKIO-NEIGHBOURS (rule 14h).
@@ -1418,12 +1416,10 @@ pub fn run_units(
             printed = Some(unit.library.clone());
         }
         print!("{}", outcome.output);
-        products.push(outcome.result?);
-    }
-    for product in products {
-        audit.absorb(product)?;
+        audit.absorb(outcome.result?)?;
     }
     let counts = audit.finish(report)?;
+    crate::contract_dependencies::clear_premises_cache();
     Ok(counts.gateway_failures != 0)
 }
 

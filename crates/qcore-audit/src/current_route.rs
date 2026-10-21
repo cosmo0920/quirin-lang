@@ -60,6 +60,11 @@ pub struct CurrentRoute<'a> {
     /// Card W45-FB-SYSTEM-SELECTION: an explicit unit selection replacing the
     /// profile's `audit.json` groups, or `None` for the profile's own groups.
     pub selection: Option<&'a UnitSelection>,
+    /// Optional per-library provider scoping table: each library slice is
+    /// audited sequentially under its own provider selection plus its
+    /// transitive `dependent_libraries` closure, dropping the slice's
+    /// contract environment and unit outcomes before the next slice starts.
+    pub library_providers: Option<&'a crate::providers::ResolvedLibraryProvidersTable>,
 }
 
 /// One configured-route compilation configuration, in selection order.
@@ -141,6 +146,7 @@ pub fn run_current_route_with_checkpoints(
     // Select all groups before auditing; missing groups cannot disappear from
     // the denominator. Different commands for one file remain separate tasks.
     let mut groups: Vec<Group<'_>> = Vec::new();
+    let mut group_keys: Vec<(String, String)> = Vec::new();
     let unresolved_for = |library: &qcore_schemas::profile::LibraryProfile| {
         (!library.required_evidence.is_empty()).then_some("selected library requires evidence unavailable in current-revision resource projection")
     };
@@ -163,6 +169,7 @@ pub fn run_current_route_with_checkpoints(
                     selected.push(Selected::Configured(entry));
                 }
             }
+            group_keys.push((group.library.clone(), group.label().to_owned()));
             groups.push((group.label().to_owned(), selected, unresolved_for(library)));
         }
     } else {
@@ -180,8 +187,10 @@ pub fn run_current_route_with_checkpoints(
             for entry in &selected {
                 crate::compile_db::require_clang_driver(entry)?;
             }
+            let label = selection.label.unwrap_or_else(|| selection.library.clone());
+            group_keys.push((selection.library, label.clone()));
             groups.push((
-                selection.label.unwrap_or(selection.library),
+                label,
                 selected.into_iter().map(Selected::Configured).collect(),
                 unresolved_for(library),
             ));
@@ -268,6 +277,7 @@ pub fn run_current_route_with_checkpoints(
         }
     }
     if let Some((source_root, entries, unresolved)) = &monkey {
+        group_keys.push(("monkey-libevent".into(), "monkey-libevent".into()));
         headers.push(format!(
             "monkey-libevent: {} selected compilation configuration(s)",
             entries.len()
@@ -314,8 +324,98 @@ pub fn run_current_route_with_checkpoints(
         audit.set_refuted_table(&found);
         return crate::checkpoint_run::run(route, &audit, plan, options).map(|(failed, _)| failed);
     }
+    if let Some(library_table) = route.library_providers {
+        if cross_unit_links.is_some() {
+            return Err(
+                "cross-unit imports are not supported with per-library provider scoping".into(),
+            );
+        }
+        let mut accumulated_refutations =
+            qcore_schemas::contract_refutation::RefutationTable::new();
+        for (group_idx, header) in headers.iter().enumerate() {
+            let (library_name, label) = &group_keys[group_idx];
+            let slice_providers = library_table
+                .slice_for(label)
+                .or_else(|_| library_table.slice_for(library_name))?;
+            audit.activate_slice_contracts(&slice_providers.input)?;
+            let slice_tasks: Vec<ConfiguredTask<'_>> = tasks
+                .iter()
+                .filter(|task| task.group == group_idx)
+                .cloned()
+                .collect();
+            let slice_dispatch = task_dispatch(&slice_tasks);
+            let base_refutations: qcore_schemas::contract_refutation::RefutationTable =
+                accumulated_refutations
+                    .iter()
+                    .filter(|(name, _)| {
+                        qcore_c_gateway::contract_dependencies::declared(audit.contracts(), name)
+                    })
+                    .map(|(name, entry)| (name.clone(), entry.clone()))
+                    .collect();
+            let phases = crate::refuted_contracts::run_two_phases_with_bounds(
+                |table| {
+                    let mut effective = base_refutations.clone();
+                    effective.extend(table.iter().map(|(k, v)| (k.clone(), v.clone())));
+                    audit.set_refuted_table(&effective);
+                    let mut outcomes = Vec::new();
+                    let stopped = run_ordered(
+                        slice_tasks.clone(),
+                        route.jobs,
+                        Some(slice_dispatch.clone()),
+                        |task| (task.group, evaluate_task(&audit, &task)),
+                        |(group, outcome): (usize, EntryOutcome)| {
+                            let failed = outcome.result.is_err();
+                            outcomes.push((group, outcome));
+                            if failed { Err(()) } else { Ok(()) }
+                        },
+                    )
+                    .err();
+                    (outcomes, stopped)
+                },
+                |outcomes| {
+                    let mut found = base_refutations.clone();
+                    found.extend(crate::refuted_contracts::table_from_rows(
+                        outcomes
+                            .iter()
+                            .filter_map(|(_, outcome)| outcome.result.as_ref().ok())
+                            .flat_map(|products| products.unit_rows()),
+                    ));
+                    found
+                },
+                |outcomes| {
+                    crate::bounds_evidence::refutation_table(
+                        &outcomes
+                            .iter()
+                            .filter_map(|(_, outcome)| outcome.result.as_ref().ok())
+                            .flat_map(|products| products.bounds_evidence().iter().cloned())
+                            .collect::<Vec<_>>(),
+                    )
+                },
+            );
+            accumulated_refutations.extend(base_refutations);
+            accumulated_refutations.extend(phases.applied);
+            println!("{header}");
+            for (_, outcome) in phases.results {
+                print!("{}", outcome.output);
+                audit.absorb_entry(outcome.result?)?;
+            }
+            crate::contract_dependencies::clear_premises_cache();
+        }
+        audit.restore_run_contracts(
+            &library_table.union_input,
+            &accumulated_refutations,
+            library_table.record(),
+        )?;
+        let counts = audit.finish(route.diagnostic_report)?;
+        write_unknown_sidecars(
+            &unknown_sidecar(&revision, route.historical_reference_revision),
+            route.diagnostic_report,
+            route.monkey_source_report,
+            route.binding_directory,
+        )?;
+        return Ok(counts.gateway_failures != 0);
+    }
     let mut printed_headers = 0;
-    let mut products = Vec::with_capacity(tasks.len());
     let dispatch = task_dispatch(&tasks);
     // Card W45-REFUTED-CONTRACT-WITHDRAWAL: every task is analysed under the
     // loaded contracts and, when a body refutes its own declaration, once more
@@ -422,13 +522,10 @@ pub fn run_current_route_with_checkpoints(
         }
         printed_headers = printed_headers.max(group + 1);
         print!("{}", outcome.output);
-        products.push(outcome.result?);
+        audit.absorb_entry(outcome.result?)?;
     }
     for header in &headers[printed_headers..] {
         println!("{header}");
-    }
-    for entry in products {
-        audit.absorb_entry(entry)?;
     }
     let counts = audit.finish(route.diagnostic_report)?;
     write_unknown_sidecars(

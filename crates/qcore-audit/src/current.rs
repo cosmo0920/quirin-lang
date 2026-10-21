@@ -394,6 +394,71 @@ impl CurrentAudit {
         &self.refuted
     }
 
+    /// Rebind this audit to one library slice's scoped [`ContractInput`],
+    /// releasing the previously cached premises/hypothesis graphs and updating
+    /// compile-task identity dependencies for the slice.
+    pub fn activate_slice_contracts(&mut self, slice_input: &ContractInput) -> Result<(), String> {
+        crate::contract_dependencies::clear_premises_cache();
+        let mut contracts = slice_input.load()?;
+        let pins = crate::contract_revision::apply_pins(
+            &mut contracts,
+            &crate::contract_revision::ModuleOwners::for_manifest(
+                slice_input.manifest_path(),
+                slice_input.manifest_text(),
+            )?,
+            &self.checkout,
+        )?;
+        crate::bounds_selection::select_for_route(
+            "configured",
+            slice_input.manifest_path(),
+            slice_input.manifest_text(),
+            &self.checkout,
+            &contracts,
+        )?;
+        crate::outer_selection::select_for_route(
+            "configured",
+            slice_input.manifest_path(),
+            slice_input.manifest_text(),
+            &self.checkout,
+        )?;
+        let manifest_text = slice_input.manifest_text();
+        self.dependencies.insert(
+            "resource_contract_manifest".into(),
+            sha256_hex(manifest_text.as_bytes()),
+        );
+        self.dependencies.insert(
+            "resource_contract_sources".into(),
+            sha256_hex(
+                serde_json::to_string(&contracts.source_assumptions())
+                    .map_err(|error| error.to_string())?
+                    .as_bytes(),
+            ),
+        );
+        self.loaded_contracts = contracts.clone();
+        self.contracts = contracts;
+        self.pins = pins;
+        self.refuted = qcore_schemas::contract_refutation::RefutationTable::new();
+        self.cross_unit_homes.clear();
+        Ok(())
+    }
+
+    /// Restore the run-wide union contract environment and accumulated
+    /// refutation table after sequential per-library slices complete so the
+    /// unified sidecar sections (`contract_revision`, `contract_dependencies`,
+    /// `pending_human_review`, `refuted_contracts`) are folded over all
+    /// consulted declarations, and record `library_provider_selection`.
+    pub fn restore_run_contracts(
+        &mut self,
+        union_input: &ContractInput,
+        table: &qcore_schemas::contract_refutation::RefutationTable,
+        library_selection_record: Value,
+    ) -> Result<(), String> {
+        self.activate_slice_contracts(union_input)?;
+        self.set_refuted_table(table);
+        self.assumptions["library_provider_selection"] = library_selection_record;
+        Ok(())
+    }
+
     /// expected_source is the path in the selected Git checkout corresponding
     /// to the compiled bytes; copied build inputs must also match this blob.
     pub fn audit_entry(
@@ -741,6 +806,7 @@ impl CurrentAudit {
             )
             .map_err(|error| error.to_string())?;
         }
+        crate::contract_dependencies::clear_premises_cache();
         Ok(self.counts)
     }
 }

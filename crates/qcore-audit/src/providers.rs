@@ -63,7 +63,7 @@ use qcore_contract::load_path_manifest::{
     LoadPathExtension, LoadPathManifest, load_contract_load_path_manifest,
 };
 use qcore_schemas::sha256_hex;
-use serde::Serialize;
+use serde::{Deserialize, Serialize};
 use serde_json::{Value, json};
 
 /// Where a selection was declared. Both may declare one run; see
@@ -171,6 +171,16 @@ pub fn resolve_providers(
     quirin_providers_only: bool,
     source: SelectionSource,
 ) -> Result<ResolvedProviders, String> {
+    resolve_provider_entries(load_path, entries, quirin_providers_only, source, false)
+}
+
+fn resolve_provider_entries(
+    load_path: &Path,
+    entries: &[String],
+    quirin_providers_only: bool,
+    source: SelectionSource,
+    deduplicate_cross_library_modules: bool,
+) -> Result<ResolvedProviders, String> {
     if entries.is_empty() {
         return Err("provider selection is empty: name at least one provider crate".into());
     }
@@ -258,6 +268,9 @@ pub fn resolve_providers(
         selected_crates.insert(crate_name.to_owned());
         for module in wanted {
             if !seen.insert((crate_name.to_owned(), module.clone())) {
+                if deduplicate_cross_library_modules {
+                    continue;
+                }
                 return Err(format!(
                     "contract module `{crate_name}:{module}` is selected twice"
                 ));
@@ -713,4 +726,411 @@ impl ContractInput {
             &self.manifest_text,
         )
     }
+}
+
+/// Per-library contract scope: a library's own provider entries (`NAME` or
+/// `NAME:MODULE`) and the dependent libraries whose provider scopes are
+/// transitively brought into scope when auditing this library slice.
+#[derive(Clone, Debug, Default, PartialEq, Eq, Serialize, Deserialize)]
+#[serde(deny_unknown_fields)]
+pub struct LibraryProviderScope {
+    /// Provider entries (`NAME` or `NAME:MODULE`) owned or required directly
+    /// by this library slice.
+    #[serde(default, skip_serializing_if = "Vec::is_empty")]
+    pub providers: Vec<String>,
+    /// Names of dependent libraries whose `providers` (and transitive
+    /// `dependent_libraries`) are also loaded when auditing this library.
+    #[serde(default, skip_serializing_if = "Vec::is_empty")]
+    pub dependent_libraries: Vec<String>,
+}
+
+impl LibraryProviderScope {
+    /// Whether this scope declares any per-library provider or dependent-library
+    /// entry.
+    #[must_use]
+    pub fn is_empty(&self) -> bool {
+        self.providers.is_empty() && self.dependent_libraries.is_empty()
+    }
+}
+
+const fn default_library_providers_schema_version() -> u32 {
+    1
+}
+
+/// A standalone per-library provider scoping document (`--library-providers FILE`
+/// or `<profile_directory>/library-providers.json`).
+#[derive(Clone, Debug, PartialEq, Eq, Serialize, Deserialize)]
+#[serde(deny_unknown_fields)]
+pub struct LibraryProvidersFile {
+    #[serde(default = "default_library_providers_schema_version")]
+    pub schema_version: u32,
+    #[serde(default, skip_serializing_if = "Option::is_none")]
+    pub contract_load_path: Option<PathBuf>,
+    #[serde(default)]
+    pub quirin_providers_only: bool,
+    pub libraries: BTreeMap<String, LibraryProviderScope>,
+}
+
+impl LibraryProvidersFile {
+    /// Load and validate the document structure of a per-library provider
+    /// scoping file. Accepts either `{ "schema_version": 1, "libraries": { ... } }`
+    /// or a direct `{ "<library>": { "providers": [...], "dependent_libraries": [...] } }`
+    /// map.
+    pub fn load(path: &Path) -> Result<Self, String> {
+        let bytes = fs::read(path).map_err(|error| format!("{}: {error}", path.display()))?;
+        Self::parse(path, &bytes)
+    }
+
+    pub fn parse(path: &Path, bytes: &[u8]) -> Result<Self, String> {
+        let at = |message: String| format!("{}: {message}", path.display());
+        let raw: Value = serde_json::from_slice(bytes).map_err(|error| at(error.to_string()))?;
+        let file = if raw.get("libraries").is_some() {
+            serde_json::from_value::<Self>(raw).map_err(|error| at(error.to_string()))?
+        } else {
+            let libraries = serde_json::from_value::<BTreeMap<String, LibraryProviderScope>>(raw)
+                .map_err(|error| at(error.to_string()))?;
+            Self {
+                schema_version: 1,
+                contract_load_path: None,
+                quirin_providers_only: false,
+                libraries,
+            }
+        };
+        if file.schema_version != 1 {
+            return Err(at(format!(
+                "unsupported library providers schema_version {}",
+                file.schema_version
+            )));
+        }
+        if file.libraries.is_empty() {
+            return Err(at(
+                "library providers table is empty: declare at least one library scope".into(),
+            ));
+        }
+        Ok(file)
+    }
+}
+
+/// The resolved provider selection for one library slice, combining the
+/// library's own `providers` with those of its transitive `dependent_libraries`
+/// in first-visited order.
+#[derive(Clone, Debug)]
+pub struct ResolvedLibraryProviders {
+    pub library: String,
+    pub own_providers: Vec<String>,
+    pub dependent_libraries: Vec<String>,
+    /// Ordered transitive library closure `[library, ...dependent_libraries]`.
+    pub library_closure: Vec<String>,
+    pub resolved: ResolvedProviders,
+    pub input: ContractInput,
+}
+
+impl ResolvedLibraryProviders {
+    #[must_use]
+    pub fn record(&self) -> Value {
+        json!({
+            "library": self.library,
+            "own_providers": self.own_providers,
+            "dependent_libraries": self.dependent_libraries,
+            "library_closure": self.library_closure,
+            "entries": self.resolved.entries,
+            "modules": self.resolved.modules().iter().map(|module| json!({
+                "crate": module.crate_name,
+                "module": module.module,
+                "sha256": module.sha256,
+            })).collect::<Vec<_>>(),
+            "lowered_manifest_sha256": sha256_hex(self.resolved.manifest_text().as_bytes()),
+        })
+    }
+}
+
+/// A resolved per-library provider scoping table for all libraries in an audit
+/// run, together with the deduplicated run-wide union [`ContractInput`].
+#[derive(Clone, Debug)]
+pub struct ResolvedLibraryProvidersTable {
+    pub load_path: PathBuf,
+    pub quirin_providers_only: bool,
+    pub slices: BTreeMap<String, ResolvedLibraryProviders>,
+    pub union_resolved: ResolvedProviders,
+    pub union_input: ContractInput,
+    sources: BTreeSet<SelectionSource>,
+}
+
+impl ResolvedLibraryProvidersTable {
+    /// Look up the resolved contract input for `library`.
+    pub fn slice_for(&self, library: &str) -> Result<&ResolvedLibraryProviders, String> {
+        self.slices.get(library).ok_or_else(|| {
+            format!(
+                "library provider scope is not resolved for library `{library}` (resolved: {})",
+                self.slices
+                    .keys()
+                    .map(String::as_str)
+                    .collect::<Vec<_>>()
+                    .join(", ")
+            )
+        })
+    }
+
+    /// The sidecar record for `library_provider_selection`.
+    #[must_use]
+    pub fn record(&self) -> Value {
+        json!({
+            "selection_version": 1,
+            "mode": "per-library-slice",
+            "sources": self.sources.iter().map(|s| s.as_str()).collect::<Vec<_>>(),
+            "load_path": self.load_path,
+            "quirin_providers_only": self.quirin_providers_only,
+            "libraries": self.slices.values().map(ResolvedLibraryProviders::record).collect::<Vec<_>>(),
+            "union_lowered_manifest_sha256": sha256_hex(self.union_resolved.manifest_text().as_bytes()),
+            "rule": "each library slice is audited under its own provider selection plus the transitive dependent_libraries closure in declared order; within a single library's providers list duplicates refuse, while shared modules across a library and its dependent_libraries are deduplicated in first-seen order; each slice's contract environment and unit outcomes are dropped after the slice is absorbed",
+        })
+    }
+}
+
+/// Compute the ordered transitive closure `[library, ...dependent_libraries]`,
+/// refusing unknown libraries or dependency cycles.
+pub fn resolve_dependent_library_closure(
+    scopes: &BTreeMap<String, LibraryProviderScope>,
+    library: &str,
+) -> Result<Vec<String>, String> {
+    let known = || {
+        scopes
+            .keys()
+            .map(String::as_str)
+            .collect::<Vec<_>>()
+            .join(", ")
+    };
+    if !scopes.contains_key(library) {
+        return Err(format!(
+            "library provider scope is not declared for library `{library}` (declared libraries: {})",
+            known()
+        ));
+    }
+    let mut closure = Vec::new();
+    let mut visited = BTreeSet::new();
+    let mut visiting = Vec::<String>::new();
+
+    fn dfs(
+        current: &str,
+        scopes: &BTreeMap<String, LibraryProviderScope>,
+        known: &dyn Fn() -> String,
+        visiting: &mut Vec<String>,
+        visited: &mut BTreeSet<String>,
+        closure: &mut Vec<String>,
+    ) -> Result<(), String> {
+        if let Some(pos) = visiting.iter().position(|item| item == current) {
+            let mut cycle = visiting[pos..].to_vec();
+            cycle.push(current.to_owned());
+            return Err(format!(
+                "library dependency cycle in library provider scopes: {}",
+                cycle.join(" -> ")
+            ));
+        }
+        if visited.contains(current) {
+            return Ok(());
+        }
+        let scope = scopes.get(current).ok_or_else(|| {
+            let owner = visiting.last().map_or("<root>", String::as_str);
+            format!(
+                "library `{owner}` names unknown dependent library `{current}` (declared libraries: {})",
+                known()
+            )
+        })?;
+        visiting.push(current.to_owned());
+        visited.insert(current.to_owned());
+        closure.push(current.to_owned());
+        for dep in &scope.dependent_libraries {
+            if !scopes.contains_key(dep.as_str()) {
+                return Err(format!(
+                    "library `{current}` names unknown dependent library `{dep}` (declared libraries: {})",
+                    known()
+                ));
+            }
+            dfs(dep, scopes, known, visiting, visited, closure)?;
+        }
+        visiting.pop();
+        Ok(())
+    }
+
+    dfs(
+        library,
+        scopes,
+        &known,
+        &mut visiting,
+        &mut visited,
+        &mut closure,
+    )?;
+    Ok(closure)
+}
+
+/// Resolve the provider contract selection for one `library` slice from
+/// `scopes`: validates each library in `[library, ...dependent_libraries]`
+/// individually (so an empty or duplicate entry inside a single library's
+/// `providers` refuses) and then resolves the combined slice selection with
+/// cross-library module deduplication.
+pub fn resolve_library_providers(
+    load_path: &Path,
+    scopes: &BTreeMap<String, LibraryProviderScope>,
+    library: &str,
+    quirin_providers_only: bool,
+    source: SelectionSource,
+    profile_manifest: Option<&Path>,
+) -> Result<ResolvedLibraryProviders, String> {
+    let library_closure = resolve_dependent_library_closure(scopes, library)?;
+    let mut combined_entries = Vec::new();
+    for member in &library_closure {
+        let scope = &scopes[member];
+        if scope.providers.is_empty() {
+            return Err(format!(
+                "library `{member}` declares an empty provider selection: name at least one provider crate"
+            ));
+        }
+        // Validate each library's own provider list with strict duplicate checking.
+        resolve_providers(load_path, &scope.providers, quirin_providers_only, source)
+            .map_err(|error| format!("library `{member}`: {error}"))?;
+        for entry in &scope.providers {
+            if !combined_entries.contains(entry) {
+                combined_entries.push(entry.clone());
+            }
+        }
+    }
+    let resolved = resolve_provider_entries(
+        load_path,
+        &combined_entries,
+        quirin_providers_only,
+        source,
+        true,
+    )?;
+    let input = ContractInput::providers(&resolved, profile_manifest);
+    let own = &scopes[library];
+    Ok(ResolvedLibraryProviders {
+        library: library.to_owned(),
+        own_providers: own.providers.clone(),
+        dependent_libraries: own.dependent_libraries.clone(),
+        library_closure,
+        resolved,
+        input,
+    })
+}
+
+/// Resolve per-library provider scopes for all `audited_libraries` in a run
+/// upfront (fail-closed before any unit is analysed), also checking every
+/// declared scope in `scopes` for cycles or invalid providers and building the
+/// run-wide union [`ContractInput`].
+pub fn resolve_library_providers_table(
+    load_path: &Path,
+    scopes: &BTreeMap<String, LibraryProviderScope>,
+    audited_libraries: &[String],
+    quirin_providers_only: bool,
+    source: SelectionSource,
+    profile_manifest: Option<&Path>,
+) -> Result<ResolvedLibraryProvidersTable, String> {
+    if scopes.is_empty() {
+        return Err("library providers table is empty: declare at least one library scope".into());
+    }
+    // Validate every declared scope in `scopes` first so cycles or invalid
+    // providers in helper/dependent entries are refused even if not directly
+    // named as a top-level group.
+    for declared in scopes.keys() {
+        let _ = resolve_library_providers(
+            load_path,
+            scopes,
+            declared,
+            quirin_providers_only,
+            source,
+            profile_manifest,
+        )?;
+    }
+    let mut slices = BTreeMap::new();
+    let mut union_entries = Vec::new();
+    for library in audited_libraries {
+        let slice = resolve_library_providers(
+            load_path,
+            scopes,
+            library,
+            quirin_providers_only,
+            source,
+            profile_manifest,
+        )?;
+        for entry in &slice.resolved.entries {
+            if !union_entries.contains(entry) {
+                union_entries.push(entry.clone());
+            }
+        }
+        slices.insert(library.clone(), slice);
+    }
+    if union_entries.is_empty() {
+        for declared in scopes.keys() {
+            let slice = resolve_library_providers(
+                load_path,
+                scopes,
+                declared,
+                quirin_providers_only,
+                source,
+                profile_manifest,
+            )?;
+            for entry in &slice.resolved.entries {
+                if !union_entries.contains(entry) {
+                    union_entries.push(entry.clone());
+                }
+            }
+        }
+    }
+    let union_resolved = resolve_provider_entries(
+        load_path,
+        &union_entries,
+        quirin_providers_only,
+        source,
+        true,
+    )?;
+    let union_input = ContractInput::providers(&union_resolved, profile_manifest);
+    Ok(ResolvedLibraryProvidersTable {
+        load_path: load_path.to_path_buf(),
+        quirin_providers_only,
+        slices,
+        union_resolved,
+        union_input,
+        sources: BTreeSet::from([source]),
+    })
+}
+
+/// The both-forms rule for per-library provider scopes: when declared in two
+/// places (e.g. CLI `--library-providers` and configuration/selection), they
+/// must resolve to the exact same per-slice manifests on the same load path.
+pub fn agree_library_providers(
+    first: ResolvedLibraryProvidersTable,
+    second: ResolvedLibraryProvidersTable,
+) -> Result<ResolvedLibraryProvidersTable, String> {
+    if first.load_path != second.load_path {
+        return Err(format!(
+            "library provider selection conflict: one form resolves on {} and the other on {}",
+            first.load_path.display(),
+            second.load_path.display()
+        ));
+    }
+    if first.quirin_providers_only != second.quirin_providers_only {
+        return Err(
+            "library provider selection conflict: forms disagree on quirin_providers_only".into(),
+        );
+    }
+    let first_keys: Vec<&String> = first.slices.keys().collect();
+    let second_keys: Vec<&String> = second.slices.keys().collect();
+    if first_keys != second_keys {
+        return Err(format!(
+            "library provider selection conflict: one form scopes libraries {first_keys:?} and the other scopes {second_keys:?}"
+        ));
+    }
+    for (library, first_slice) in &first.slices {
+        let second_slice = &second.slices[library];
+        if first_slice.resolved.manifest_text() != second_slice.resolved.manifest_text()
+            || first_slice.library_closure != second_slice.library_closure
+        {
+            return Err(format!(
+                "library provider selection conflict on library `{library}`: forms resolve to different library closures or contract modules"
+            ));
+        }
+    }
+    let mut merged = first;
+    merged.sources.extend(second.sources);
+    Ok(merged)
 }

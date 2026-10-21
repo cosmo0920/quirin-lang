@@ -45,3 +45,15 @@ import QCore.ProviderSelection
 #print axioms QCore.ProviderSelection.jobs_positive
 #print axioms QCore.ProviderSelection.jobs_zero_flag_refused
 #print axioms QCore.ProviderSelection.jobs_zero_config_refused
+#print axioms QCore.ProviderSelection.libraryClosure_contains
+#print axioms QCore.ProviderSelection.libraryClosure_closed
+#print axioms QCore.ProviderSelection.libraryClosure_known
+#print axioms QCore.ProviderSelection.libraryClosure_unknown_refused
+#print axioms QCore.ProviderSelection.resolveLibrarySlice_unknown_library_refused
+#print axioms QCore.ProviderSelection.resolveLibrarySlice_contains_root
+#print axioms QCore.ProviderSelection.resolveLibrarySlice_closed_under_dependents
+#print axioms QCore.ProviderSelection.resolveSliceMembers_sound
+#print axioms QCore.ProviderSelection.joinSliceVerdict_assoc
+#print axioms QCore.ProviderSelection.joinSliceVerdict_comm
+#print axioms QCore.ProviderSelection.joinSliceVerdict_unknown_never_safe
+#print axioms QCore.ProviderSelection.foldSlices_append

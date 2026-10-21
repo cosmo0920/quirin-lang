@@ -1212,3 +1212,267 @@ fn a_selection_is_declared_once_and_refuses_when_malformed() {
     refused(&fixture.run(&args), "plain relative path");
     assert!(!fixture.0.join("escape").exists());
 }
+
+#[test]
+fn library_providers_resolve_dependent_library_closure_and_refuse_cycles_or_missing_libraries() {
+    use qcore_audit::providers::{
+        LibraryProviderScope, LibraryProvidersFile, SelectionSource, resolve_library_providers,
+        resolve_library_providers_table,
+    };
+    use std::collections::BTreeMap;
+
+    let repo_root = PathBuf::from(env!("CARGO_MANIFEST_DIR")).join("../..");
+    let fb_file = LibraryProvidersFile::load(
+        &repo_root.join("contract/profiles/fluent-bit/library-providers.json"),
+    )
+    .expect("fluent-bit library-providers.json must parse");
+    let load_path = repo_root.join("providers/contract-load-path.json");
+    let table = resolve_library_providers_table(
+        &load_path,
+        &fb_file.libraries,
+        &[
+            "cmetrics".into(),
+            "ctraces".into(),
+            "chunkio".into(),
+            "librdkafka".into(),
+            "fluent_bit".into(),
+            "monkey-libevent".into(),
+        ],
+        false,
+        SelectionSource::Configuration,
+        None,
+    )
+    .expect("fluent-bit library provider scopes must resolve");
+    // `chunkio` loads only libc + chunkio (much smaller than `fluent_bit`).
+    let chunkio_slice = table.slice_for("chunkio").unwrap();
+    let fb_slice = table.slice_for("fluent_bit").unwrap();
+    assert_eq!(chunkio_slice.library_closure, vec!["chunkio"]);
+    assert!(chunkio_slice.resolved.modules().len() < fb_slice.resolved.modules().len());
+    assert_eq!(
+        fb_slice.library_closure,
+        vec![
+            "fluent_bit",
+            "cmetrics",
+            "ctraces",
+            "chunkio",
+            "librdkafka",
+            "monkey-libevent",
+        ]
+    );
+
+    // Cycle refusal.
+    let cyclic = BTreeMap::from([
+        (
+            "a".to_owned(),
+            LibraryProviderScope {
+                providers: vec!["quirin-provider-libc".into()],
+                dependent_libraries: vec!["b".into()],
+            },
+        ),
+        (
+            "b".to_owned(),
+            LibraryProviderScope {
+                providers: vec!["qcore-provider-chunkio".into()],
+                dependent_libraries: vec!["a".into()],
+            },
+        ),
+    ]);
+    let err = resolve_library_providers(
+        &load_path,
+        &cyclic,
+        "a",
+        false,
+        SelectionSource::Configuration,
+        None,
+    )
+    .unwrap_err();
+    assert!(
+        err.contains("library dependency cycle"),
+        "unexpected: {err}"
+    );
+
+    // Unknown dependent library refusal.
+    let missing_dep = BTreeMap::from([(
+        "a".to_owned(),
+        LibraryProviderScope {
+            providers: vec!["quirin-provider-libc".into()],
+            dependent_libraries: vec!["nonexistent".into()],
+        },
+    )]);
+    let err = resolve_library_providers(
+        &load_path,
+        &missing_dep,
+        "a",
+        false,
+        SelectionSource::Configuration,
+        None,
+    )
+    .unwrap_err();
+    assert!(
+        err.contains("unknown dependent library `nonexistent`"),
+        "unexpected: {err}"
+    );
+}
+
+#[test]
+fn current_route_executes_per_library_slices_with_dependent_library_contracts() {
+    let Some(clang) = clang() else { return };
+    let fixture = Fixture::new(&clang, true);
+    let checkout = fixture.0.join("checkout");
+    let consumer_src = "unsigned char *alloc(void);\nvoid close_handle(unsigned char *p);\n\
+                        void consumer_fn(void) { unsigned char *p = alloc(); close_handle(p); }\n";
+    fs::write(checkout.join("src/consumer.c"), consumer_src).unwrap();
+    git(&checkout, &["add", "src/consumer.c"]);
+    git(
+        &checkout,
+        &[
+            "-c",
+            "user.name=Audit Fixture",
+            "-c",
+            "user.email=audit@example.invalid",
+            "commit",
+            "--quiet",
+            "-m",
+            "Add consumer unit",
+        ],
+    );
+    let commit = String::from_utf8(
+        Command::new("git")
+            .current_dir(&checkout)
+            .args(["rev-parse", "HEAD"])
+            .output()
+            .unwrap()
+            .stdout,
+    )
+    .unwrap()
+    .trim()
+    .to_owned();
+    let profile = fixture.0.join("profiles/sample");
+    let make_lib = |files: &[(&str, &str)]| {
+        json!({
+            "pin": "sample",
+            "source_roots": [{"root": "src", "selection": "top_level"}],
+            "audited_files": files.iter().map(|(path, text)| json!({
+                "path": path, "sha256": sha256_hex(text.as_bytes())
+            })).collect::<Vec<_>>(),
+            "source_witnesses": [], "permitted_mechanisms": [], "operation_summaries": {},
+            "api_dispositions": {}, "accepted_builds": [], "required_evidence": [],
+            "typed_import": null, "callback_summaries": {}, "boolean_field_models": [],
+            "provider": null,
+        })
+    };
+    fs::write(
+        profile.join("profile.json"),
+        json!({
+            "schema_version": 1,
+            "source_set": "sample",
+            "pins": {"sample": {"git_commit": commit, "clean_paths": [], "description": "multi-lib"}},
+            "libraries": {
+                "sample": make_lib(&[("src/unit.c", SOURCE)]),
+                "consumer": make_lib(&[("src/consumer.c", consumer_src)]),
+            },
+            "resource_contract_manifest": "../../contracts.json",
+            "provider_manifests": [],
+        })
+        .to_string(),
+    )
+    .unwrap();
+    let mut commands: Vec<Value> =
+        serde_json::from_str(&fs::read_to_string(fixture.0.join("compile_commands.json")).unwrap())
+            .unwrap();
+    commands.push(json!({
+        "directory": checkout,
+        "file": "src/consumer.c",
+        "arguments": [&clang, "-std=c11", "-c", "src/consumer.c", "-o", "src/consumer.o"],
+    }));
+    fs::write(
+        fixture.0.join("compile_commands.json"),
+        serde_json::to_string(&commands).unwrap(),
+    )
+    .unwrap();
+
+    // 1. With `dependent_libraries: ["sample"]`, `consumer` receives `quirin-provider-alpha`
+    // (`alloc`) in addition to its own `qcore-provider-beta` (`close_handle`), so all calls in
+    // both `sample` and `consumer` match declared contracts (`Pending` on unpinned provider
+    // contracts, with `contract_bound: true` on every function).
+    let selection = fixture.config(
+        "scoped-selection.json",
+        &json!({
+            "schema_version": 1,
+            "name": "scoped",
+            "groups": [
+                {
+                    "library": "sample",
+                    "files": ["src/unit.c"],
+                    "providers": ["quirin-provider-alpha"]
+                },
+                {
+                    "library": "consumer",
+                    "files": ["src/consumer.c"],
+                    "providers": ["qcore-provider-beta"],
+                    "dependent_libraries": ["sample"]
+                }
+            ]
+        }),
+    );
+    let mut args = fixture.base_args("scoped");
+    args.extend(strings(&[
+        "--selection",
+        &selection,
+        "--load-path",
+        "providers/contract-load-path.json",
+    ]));
+    succeeded(&fixture.run(&args));
+    let report = fixture.read("scoped/report.json");
+    let units = report["units"].as_array().unwrap();
+    assert_eq!(units.len(), 2);
+    assert_eq!(units[0]["library"], "sample");
+    assert_eq!(units[0]["status"], "Pending");
+    assert_eq!(units[0]["reason_code"], "contract-pin-mismatch");
+    assert_eq!(units[1]["library"], "consumer");
+    assert_eq!(units[1]["status"], "Pending");
+    assert_eq!(units[1]["reason_code"], "contract-pin-mismatch");
+    let sidecar = fixture.read("scoped/report.contracts.json");
+    assert_eq!(
+        sidecar["library_provider_selection"]["mode"],
+        "per-library-slice"
+    );
+    let recorded_libs = sidecar["library_provider_selection"]["libraries"]
+        .as_array()
+        .unwrap();
+    assert_eq!(recorded_libs.len(), 2);
+
+    // 2. Without `dependent_libraries: ["sample"]`, `consumer` loads only `qcore-provider-beta:beta/other.qcore`
+    // (no contract for `alloc`), so `consumer` is fail-closed (`Unknown`) while `sample` stays `Pending`.
+    let isolated_selection = fixture.config(
+        "isolated-selection.json",
+        &json!({
+            "schema_version": 1,
+            "name": "isolated",
+            "groups": [
+                {
+                    "library": "sample",
+                    "files": ["src/unit.c"],
+                    "providers": ["quirin-provider-alpha"]
+                },
+                {
+                    "library": "consumer",
+                    "files": ["src/consumer.c"],
+                    "providers": ["qcore-provider-beta:beta/other.qcore"]
+                }
+            ]
+        }),
+    );
+    let mut args = fixture.base_args("isolated");
+    args.extend(strings(&[
+        "--selection",
+        &isolated_selection,
+        "--load-path",
+        "providers/contract-load-path.json",
+    ]));
+    succeeded(&fixture.run(&args));
+    let isolated_report = fixture.read("isolated/report.json");
+    let isolated_units = isolated_report["units"].as_array().unwrap();
+    assert_eq!(isolated_units[0]["status"], "Pending");
+    assert_eq!(isolated_units[1]["status"], "Unknown");
+}

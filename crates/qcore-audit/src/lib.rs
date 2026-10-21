@@ -128,6 +128,12 @@ pub struct AuditConfig {
     /// read. Absent means the profile's manifest, exactly as before.
     #[serde(default)]
     pub providers: Option<Vec<String>>,
+    /// Per-library provider scoping table (`library -> { providers, dependent_libraries }`),
+    /// resolved on `load_path`. Each library slice is audited sequentially under
+    /// its own providers plus transitive `dependent_libraries` providers, and its
+    /// contract environment and unit outcomes are dropped after the slice.
+    #[serde(default)]
+    pub library_providers: Option<BTreeMap<String, providers::LibraryProviderScope>>,
     /// The contract load path a provider selection resolves on.
     #[serde(default)]
     pub load_path: Option<PathBuf>,
@@ -354,8 +360,31 @@ pub fn run_config_with_jobs(path: &Path, flag_jobs: Option<usize>) -> Result<Aud
         Some(selection) => compile_db::select_object_prefix(entries, &selection.object_prefix)?,
         None => entries,
     };
-    let contract_input = match &config.providers {
-        Some(entries) => {
+    if config.providers.is_some() && config.library_providers.is_some() {
+        return Err(
+            "a configuration cannot declare both `providers` and `library_providers`; give one"
+                .into(),
+        );
+    }
+    let resolved_library_table = match &config.library_providers {
+        Some(scopes) => {
+            let load_path = config.load_path.as_ref().ok_or(
+                "per-library provider scoping (`library_providers`) needs `load_path` (the contract load path)",
+            )?;
+            Some(providers::resolve_library_providers_table(
+                &resolve(base, load_path),
+                scopes,
+                &config.libraries,
+                config.quirin_providers_only,
+                providers::SelectionSource::Configuration,
+                profile.resource_contract_manifest_path().as_deref(),
+            )?)
+        }
+        None => None,
+    };
+    let contract_input = match (&resolved_library_table, &config.providers) {
+        (Some(table), _) => table.union_input.clone(),
+        (None, Some(entries)) => {
             let load_path = config
                 .load_path
                 .as_ref()
@@ -373,7 +402,7 @@ pub fn run_config_with_jobs(path: &Path, flag_jobs: Option<usize>) -> Result<Aud
         }
         // Card W44-PROVIDER-RESOURCE-VIEW: contracts only loads all contracts,
         // every load-path crate's resource view (`"selection": "all-loaded"`).
-        None if config.mode.is_contracts_only() => {
+        (None, None) if config.mode.is_contracts_only() => {
             let load_path = config.load_path.as_ref().ok_or(
                 "a contracts-only audit with no `providers` loads every crate's resource view on \
                  the contract load path: give `load_path`, or narrow it with `providers`",
@@ -386,7 +415,7 @@ pub fn run_config_with_jobs(path: &Path, flag_jobs: Option<usize>) -> Result<Aud
                 profile.resource_contract_manifest_path().as_deref(),
             )
         }
-        None => {
+        (None, None) => {
             if config.load_path.is_some() || config.quirin_providers_only {
                 return Err(
                     "`load_path` and `quirin_providers_only` apply only to a provider selection"
@@ -526,70 +555,192 @@ pub fn run_config_with_jobs(path: &Path, flag_jobs: Option<usize>) -> Result<Aud
     // unit order, and the first error in unit order is the one returned. The
     // source-contract route, which may dispatch a process provider, runs in
     // the fold, one unit at a time, exactly where the loop ran it.
-    let tasks: Vec<(&String, CompileEntry)> = work
-        .into_iter()
-        .flat_map(|(library, entries)| entries.into_iter().map(move |entry| (library, entry)))
-        .collect();
-    let dispatch = parallel::heaviest_first(
-        &tasks
-            .iter()
-            .map(|(_, entry)| current_route::source_weight(entry))
-            .collect::<Vec<_>>(),
-    );
     let retain_units = source_contracts.is_some();
-    // Card W45-REFUTED-CONTRACT-WITHDRAWAL: phase one under the loaded
-    // contracts and, when a body refutes its own declaration, phase two under
-    // the refutation table; only the published phase is folded, in unit order.
-    let phases = refuted_contracts::run_two_phases(
-        |table| {
-            let contracts = refuted_contracts::with_table(&contracts, table);
-            let mut outcomes = Vec::new();
-            let stopped = parallel::run_ordered(
-                tasks.clone(),
-                parallel::effective_jobs(jobs),
-                Some(dispatch.clone()),
-                |(library, entry): (&String, CompileEntry)| {
-                    let mut out = String::new();
-                    let result = configured_unit(ConfiguredUnit {
-                        library,
-                        entry: &entry,
-                        checkout: &checkout,
-                        profile: &profile,
-                        selected_head: selected_head.as_deref(),
-                        compiler: &compiler,
-                        task_dependencies: &task_dependencies,
-                        contracts: &contracts,
-                        source_profile_sha256: &source_profile_sha256,
-                        fragment: AuditReport::new(&revision),
-                        retain_unit: retain_units,
-                        out: &mut out,
-                    });
-                    (out, result.map(|products| (library, entry, products)))
-                },
-                |outcome: (
-                    String,
-                    Result<(&String, CompileEntry, UnitProducts), String>,
-                )| {
-                    let failed = outcome.1.is_err();
-                    outcomes.push(outcome);
-                    if failed { Err(()) } else { Ok(()) }
-                },
-            )
-            .err();
-            (outcomes, stopped)
-        },
-        |outcomes| {
-            refuted_contracts::table_from_rows(
-                outcomes
+    let mut refuted_table = qcore_schemas::contract_refutation::RefutationTable::new();
+    if let Some(library_table) = &resolved_library_table {
+        for (library, entries) in work {
+            contract_dependencies::clear_premises_cache();
+            let slice_providers = library_table.slice_for(library)?;
+            let mut slice_contracts = slice_providers.input.load()?;
+            let _ = contract_revision::apply_pins(
+                &mut slice_contracts,
+                &contract_revision::ModuleOwners::for_manifest(
+                    slice_providers.input.manifest_path(),
+                    slice_providers.input.manifest_text(),
+                )?,
+                &checkout,
+            )?;
+            let mut slice_task_dependencies = task_dependencies.clone();
+            slice_task_dependencies.insert(
+                "resource_contract_manifest".to_owned(),
+                qcore_contract::profile_loader::sha256_hex(
+                    slice_providers.input.manifest_text().as_bytes(),
+                ),
+            );
+            let slice_tasks: Vec<(&String, CompileEntry)> =
+                entries.into_iter().map(|entry| (library, entry)).collect();
+            let slice_dispatch = parallel::heaviest_first(
+                &slice_tasks
                     .iter()
-                    .filter_map(|(_, result)| result.as_ref().ok())
-                    .flat_map(|(_, _, products)| products.report.unit_rows()),
-            )
-        },
-    );
-    let refuted_table = phases.applied;
-    for (out, result) in phases.results {
-        {
+                    .map(|(_, entry)| current_route::source_weight(entry))
+                    .collect::<Vec<_>>(),
+            );
+            let base_refutations: qcore_schemas::contract_refutation::RefutationTable =
+                refuted_table
+                    .iter()
+                    .filter(|(name, _)| {
+                        qcore_c_gateway::contract_dependencies::declared(&slice_contracts, name)
+                    })
+                    .map(|(k, v)| (k.clone(), v.clone()))
+                    .collect();
+            let phases = refuted_contracts::run_two_phases(
+                |table| {
+                    let mut effective = base_refutations.clone();
+                    effective.extend(table.iter().map(|(k, v)| (k.clone(), v.clone())));
+                    let active_contracts =
+                        refuted_contracts::with_table(&slice_contracts, &effective);
+                    let mut outcomes = Vec::new();
+                    let stopped = parallel::run_ordered(
+                        slice_tasks.clone(),
+                        parallel::effective_jobs(jobs),
+                        Some(slice_dispatch.clone()),
+                        |(library, entry): (&String, CompileEntry)| {
+                            let mut out = String::new();
+                            let result = configured_unit(ConfiguredUnit {
+                                library,
+                                entry: &entry,
+                                checkout: &checkout,
+                                profile: &profile,
+                                selected_head: selected_head.as_deref(),
+                                compiler: &compiler,
+                                task_dependencies: &slice_task_dependencies,
+                                contracts: &active_contracts,
+                                source_profile_sha256: &source_profile_sha256,
+                                fragment: AuditReport::new(&revision),
+                                retain_unit: retain_units,
+                                out: &mut out,
+                            });
+                            (out, result.map(|products| (library, entry, products)))
+                        },
+                        |outcome: (
+                            String,
+                            Result<(&String, CompileEntry, UnitProducts), String>,
+                        )| {
+                            let failed = outcome.1.is_err();
+                            outcomes.push(outcome);
+                            if failed { Err(()) } else { Ok(()) }
+                        },
+                    )
+                    .err();
+                    (outcomes, stopped)
+                },
+                |outcomes| {
+                    let mut found = base_refutations.clone();
+                    found.extend(refuted_contracts::table_from_rows(
+                        outcomes
+                            .iter()
+                            .filter_map(|(_, result)| result.as_ref().ok())
+                            .flat_map(|(_, _, products)| products.report.unit_rows()),
+                    ));
+                    found
+                },
+            );
+            refuted_table.extend(base_refutations);
+            refuted_table.extend(phases.applied);
+            for (out, result) in phases.results {
+                print!("{out}");
+                let (library, entry, products) = result?;
+                let UnitProducts {
+                    file,
+                    source_sha256,
+                    compile_task,
+                    report: fragment,
+                    counts: tally,
+                    retained,
+                } = products;
+                source_identities.insert(format!("{library}/{file}"), source_sha256);
+                compile_tasks.push(compile_task);
+                report.absorb(fragment)?;
+                counts.absorb(tally);
+                if let (Some(audit), Some((source, prepared))) = (&mut source_contracts, retained) {
+                    let options = compiler_options(&entry)?;
+                    let unit = C11TranslationUnit {
+                        source: &source,
+                        include_paths: options.include_paths,
+                        definitions: options.definitions,
+                        preprocessor_options: options.preprocessor_options,
+                        dialect: options.dialect,
+                        function_scope: LegacyFunctionScope::MainSourceDefinitions,
+                        input: options.input,
+                    };
+                    audit.analyze_unit(library, &file, &unit, prepared.inventory(), &profile);
+                }
+            }
+            contract_dependencies::clear_premises_cache();
+        }
+    } else {
+        let tasks: Vec<(&String, CompileEntry)> = work
+            .into_iter()
+            .flat_map(|(library, entries)| entries.into_iter().map(move |entry| (library, entry)))
+            .collect();
+        let dispatch = parallel::heaviest_first(
+            &tasks
+                .iter()
+                .map(|(_, entry)| current_route::source_weight(entry))
+                .collect::<Vec<_>>(),
+        );
+        // Card W45-REFUTED-CONTRACT-WITHDRAWAL: phase one under the loaded
+        // contracts and, when a body refutes its own declaration, phase two under
+        // the refutation table; only the published phase is folded, in unit order.
+        let phases = refuted_contracts::run_two_phases(
+            |table| {
+                let contracts = refuted_contracts::with_table(&contracts, table);
+                let mut outcomes = Vec::new();
+                let stopped = parallel::run_ordered(
+                    tasks.clone(),
+                    parallel::effective_jobs(jobs),
+                    Some(dispatch.clone()),
+                    |(library, entry): (&String, CompileEntry)| {
+                        let mut out = String::new();
+                        let result = configured_unit(ConfiguredUnit {
+                            library,
+                            entry: &entry,
+                            checkout: &checkout,
+                            profile: &profile,
+                            selected_head: selected_head.as_deref(),
+                            compiler: &compiler,
+                            task_dependencies: &task_dependencies,
+                            contracts: &contracts,
+                            source_profile_sha256: &source_profile_sha256,
+                            fragment: AuditReport::new(&revision),
+                            retain_unit: retain_units,
+                            out: &mut out,
+                        });
+                        (out, result.map(|products| (library, entry, products)))
+                    },
+                    |outcome: (
+                        String,
+                        Result<(&String, CompileEntry, UnitProducts), String>,
+                    )| {
+                        let failed = outcome.1.is_err();
+                        outcomes.push(outcome);
+                        if failed { Err(()) } else { Ok(()) }
+                    },
+                )
+                .err();
+                (outcomes, stopped)
+            },
+            |outcomes| {
+                refuted_contracts::table_from_rows(
+                    outcomes
+                        .iter()
+                        .filter_map(|(_, result)| result.as_ref().ok())
+                        .flat_map(|(_, _, products)| products.report.unit_rows()),
+                )
+            },
+        );
+        refuted_table = phases.applied;
+        for (out, result) in phases.results {
             print!("{out}");
             let (library, entry, products) = result?;
             let UnitProducts {
@@ -647,6 +798,9 @@ pub fn run_config_with_jobs(path: &Path, flag_jobs: Option<usize>) -> Result<Aud
     }
     if let Some(record) = contract_input.provider_record() {
         assumptions["provider_selection"] = record.clone();
+    }
+    if let Some(library_table) = &resolved_library_table {
+        assumptions["library_provider_selection"] = library_table.record();
     }
     if let Some(record) = evidence_record {
         assumptions["evidence"] = record;
@@ -741,6 +895,7 @@ pub fn run_config_with_jobs(path: &Path, flag_jobs: Option<usize>) -> Result<Aud
             "scope": "invocation provenance of this run; not an input to any verdict",
         }),
     )?;
+    contract_dependencies::clear_premises_cache();
     Ok(counts)
 }
 
@@ -876,20 +1031,27 @@ fn configured_unit(unit_input: ConfiguredUnit<'_>) -> Result<UnitProducts, Strin
 
 /// Compatibility adapters can select named profile libraries and preserve
 /// historical report labels without carrying a source-path table in Rust.
-#[derive(Debug, Deserialize)]
+#[derive(Clone, Debug, Deserialize)]
 #[serde(deny_unknown_fields)]
 pub struct LibrarySelection {
     pub library: String,
     pub label: Option<String>,
+    #[serde(default)]
+    pub providers: Vec<String>,
+    #[serde(default)]
+    pub dependent_libraries: Vec<String>,
 }
 
-pub fn load_library_selections(path: &Path) -> Result<Vec<LibrarySelection>, String> {
-    #[derive(Deserialize)]
-    #[serde(deny_unknown_fields)]
-    struct SelectionFile {
-        schema_version: u32,
-        libraries: Vec<LibrarySelection>,
-    }
+#[derive(Deserialize)]
+#[serde(deny_unknown_fields)]
+struct SelectionFile {
+    schema_version: u32,
+    libraries: Vec<LibrarySelection>,
+    #[serde(default)]
+    dependency_libraries: BTreeMap<String, providers::LibraryProviderScope>,
+}
+
+fn parse_selection_file(path: &Path) -> Result<SelectionFile, String> {
     let selection: SelectionFile =
         serde_json::from_slice(&fs::read(path).map_err(|error| error.to_string())?)
             .map_err(|error| error.to_string())?;
@@ -912,7 +1074,40 @@ pub fn load_library_selections(path: &Path) -> Result<Vec<LibrarySelection>, Str
             );
         }
     }
-    Ok(selection.libraries)
+    Ok(selection)
+}
+
+pub fn load_library_selections(path: &Path) -> Result<Vec<LibrarySelection>, String> {
+    Ok(parse_selection_file(path)?.libraries)
+}
+
+/// Extract per-library provider scopes from `audit.json` if any library entry
+/// or `dependency_libraries` declares `providers` or `dependent_libraries`.
+pub fn load_audit_library_scopes(
+    path: &Path,
+) -> Result<Option<BTreeMap<String, providers::LibraryProviderScope>>, String> {
+    let selection = parse_selection_file(path)?;
+    let any_library = selection
+        .libraries
+        .iter()
+        .any(|lib| !lib.providers.is_empty() || !lib.dependent_libraries.is_empty());
+    if !any_library && selection.dependency_libraries.is_empty() {
+        return Ok(None);
+    }
+    let mut scopes = selection.dependency_libraries;
+    for lib in selection.libraries {
+        if !lib.providers.is_empty() || !lib.dependent_libraries.is_empty() {
+            let scope = providers::LibraryProviderScope {
+                providers: lib.providers,
+                dependent_libraries: lib.dependent_libraries,
+            };
+            scopes.insert(lib.library.clone(), scope.clone());
+            if let Some(label) = lib.label {
+                scopes.entry(label).or_insert(scope);
+            }
+        }
+    }
+    Ok(Some(scopes))
 }
 
 /// Read-only binary checkpoint inspector.

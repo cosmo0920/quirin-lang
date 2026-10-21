@@ -774,4 +774,281 @@ theorem jobs_zero_flag_refused (config env : Option Nat) (host : Nat) :
 theorem jobs_zero_config_refused (env : Option Nat) (host : Nat) :
     jobsWithPrecedence none (some 0) env host = .error .zeroJobs := rfl
 
+/-! ## 10. Per-library provider scoping and dependent-library closure -/
+
+abbrev LibraryName := Nat
+
+structure LibraryScope where
+  name : LibraryName
+  providers : List Entry
+  dependentLibraries : List LibraryName
+  deriving DecidableEq, Repr
+
+def findLibraryScope (scopes : List LibraryScope) (l : LibraryName) : Option LibraryScope :=
+  scopes.find? (fun s => s.name == l)
+
+/-- Worklist walk over `dependentLibraries` edges across declared library
+scopes. Fuel exhaustion (cycles) and unknown dependent libraries refuse. -/
+def libraryClosure (scopes : List LibraryScope) :
+    Nat → List LibraryName → List LibraryName → Except Refusal (List LibraryName)
+  | 0, _, _ => .error .exhausted
+  | _ + 1, [], acc => .ok acc
+  | fuel + 1, l :: rest, acc =>
+    if l ∈ acc then libraryClosure scopes fuel rest acc
+    else
+      match findLibraryScope scopes l with
+      | none => .error .unknownProvider
+      | some sc => libraryClosure scopes fuel (sc.dependentLibraries ++ rest) (l :: acc)
+
+theorem libraryClosure_contains {scopes : List LibraryScope} :
+    ∀ (fuel : Nat) (pending acc r : List LibraryName),
+      libraryClosure scopes fuel pending acc = .ok r →
+      ∀ l, (l ∈ pending ∨ l ∈ acc) → l ∈ r := by
+  intro fuel
+  induction fuel with
+  | zero => intro pending acc r h; simp [libraryClosure] at h
+  | succ f ih =>
+    intro pending acc r h l hl
+    cases pending with
+    | nil =>
+      simp only [libraryClosure] at h
+      cases h
+      simpa using hl
+    | cons m rest =>
+      simp only [libraryClosure] at h
+      split at h
+      · rename_i hm
+        apply ih rest acc r h l
+        rcases hl with hl | hl
+        · rcases List.mem_cons.mp hl with rfl | hl
+          · exact Or.inr hm
+          · exact Or.inl hl
+        · exact Or.inr hl
+      · split at h
+        · cases h
+        · rename_i sc _
+          apply ih (sc.dependentLibraries ++ rest) (m :: acc) r h l
+          rcases hl with hl | hl
+          · rcases List.mem_cons.mp hl with rfl | hl
+            · exact Or.inr (by simp)
+            · exact Or.inl (List.mem_append_right _ hl)
+          · exact Or.inr (List.mem_cons_of_mem _ hl)
+
+def LibraryDepsCovered (scopes : List LibraryScope) (acc pending : List LibraryName) : Prop :=
+  ∀ l ∈ acc, ∀ sc, findLibraryScope scopes l = some sc →
+    ∀ d ∈ sc.dependentLibraries, d ∈ acc ∨ d ∈ pending
+
+theorem libraryClosure_closed {scopes : List LibraryScope} :
+    ∀ (fuel : Nat) (pending acc r : List LibraryName),
+      libraryClosure scopes fuel pending acc = .ok r →
+      LibraryDepsCovered scopes acc pending →
+      ∀ l ∈ r, ∀ sc, findLibraryScope scopes l = some sc →
+        ∀ d ∈ sc.dependentLibraries, d ∈ r := by
+  intro fuel
+  induction fuel with
+  | zero => intro pending acc r h; simp [libraryClosure] at h
+  | succ f ih =>
+    intro pending acc r h inv
+    cases pending with
+    | nil =>
+      simp only [libraryClosure] at h
+      cases h
+      intro l hl sc hsc d hd
+      rcases inv l hl sc hsc d hd with hd | hd
+      · exact hd
+      · simp at hd
+    | cons m rest =>
+      simp only [libraryClosure] at h
+      split at h
+      · rename_i hm
+        apply ih rest acc r h
+        intro l hl sc hsc d hd
+        rcases inv l hl sc hsc d hd with hd | hd
+        · exact Or.inl hd
+        · rcases List.mem_cons.mp hd with rfl | hd
+          · exact Or.inl hm
+          · exact Or.inr hd
+      · split at h
+        · cases h
+        · rename_i scm hscm
+          apply ih (scm.dependentLibraries ++ rest) (m :: acc) r h
+          intro l hl sc hsc d hd
+          rcases List.mem_cons.mp hl with rfl | hl
+          · rw [hscm] at hsc
+            cases hsc
+            exact Or.inr (List.mem_append_left _ hd)
+          · rcases inv l hl sc hsc d hd with hd | hd
+            · exact Or.inl (List.mem_cons_of_mem _ hd)
+            · rcases List.mem_cons.mp hd with rfl | hd
+              · exact Or.inl (by simp)
+              · exact Or.inr (List.mem_append_right _ hd)
+
+def KnownLibraries (scopes : List LibraryScope) (acc : List LibraryName) : Prop :=
+  ∀ l ∈ acc, ∃ sc, findLibraryScope scopes l = some sc
+
+theorem libraryClosure_known {scopes : List LibraryScope} :
+    ∀ (fuel : Nat) (pending acc r : List LibraryName),
+      libraryClosure scopes fuel pending acc = .ok r →
+      KnownLibraries scopes acc → KnownLibraries scopes r := by
+  intro fuel
+  induction fuel with
+  | zero => intro pending acc r h; simp [libraryClosure] at h
+  | succ f ih =>
+    intro pending acc r h known
+    cases pending with
+    | nil =>
+      simp only [libraryClosure] at h
+      cases h
+      exact known
+    | cons m rest =>
+      simp only [libraryClosure] at h
+      split at h
+      · exact ih rest acc r h known
+      · split at h
+        · cases h
+        · rename_i scm hscm
+          apply ih (scm.dependentLibraries ++ rest) (m :: acc) r h
+          intro l hl
+          rcases List.mem_cons.mp hl with rfl | hl
+          · exact ⟨scm, hscm⟩
+          · exact known l hl
+
+theorem libraryClosure_unknown_refused {scopes : List LibraryScope} {fuel : Nat}
+    {l : LibraryName} {rest acc : List LibraryName}
+    (hl : l ∉ acc) (hsc : findLibraryScope scopes l = none) :
+    libraryClosure scopes (fuel + 1) (l :: rest) acc = .error .unknownProvider := by
+  simp [libraryClosure, hl, hsc]
+
+/-- Resolve each library in a slice's `libraryClosure` and collect its
+validated provider selections. -/
+def resolveSliceMembers (lp : List Crate) (scopes : List LibraryScope) (fuel : Nat)
+    (guard : Bool) : List LibraryName → Except Refusal (List (Name × Module))
+  | [] => .ok []
+  | l :: ls =>
+    match findLibraryScope scopes l with
+    | none => .error .unknownProvider
+    | some sc =>
+      match resolve lp fuel sc.providers guard with
+      | .error r => .error r
+      | .ok res =>
+        match resolveSliceMembers lp scopes fuel guard ls with
+        | .error r => .error r
+        | .ok rest => .ok (res.modules ++ rest)
+
+def resolveLibrarySlice (lp : List Crate) (scopes : List LibraryScope) (fuel : Nat)
+    (lib : LibraryName) (guard : Bool) :
+    Except Refusal (List LibraryName × List (Name × Module)) :=
+  match libraryClosure scopes fuel [lib] [] with
+  | .error r => .error r
+  | .ok libs =>
+    match resolveSliceMembers lp scopes fuel guard libs with
+    | .error r => .error r
+    | .ok mods => .ok (libs, mods)
+
+theorem resolveLibrarySlice_unknown_library_refused {lp : List Crate}
+    {scopes : List LibraryScope} {fuel : Nat} {lib : LibraryName} {guard : Bool}
+    (h : findLibraryScope scopes lib = none) :
+    resolveLibrarySlice lp scopes (fuel + 1) lib guard = .error .unknownProvider := by
+  simp [resolveLibrarySlice, libraryClosure, h]
+
+theorem resolveLibrarySlice_contains_root {lp : List Crate}
+    {scopes : List LibraryScope} {fuel : Nat} {lib : LibraryName} {guard : Bool}
+    {libs : List LibraryName} {mods : List (Name × Module)}
+    (h : resolveLibrarySlice lp scopes fuel lib guard = .ok (libs, mods)) :
+    lib ∈ libs := by
+  unfold resolveLibrarySlice at h
+  split at h
+  · cases h
+  · rename_i cl hcl
+    split at h
+    · cases h
+    · cases h
+      exact libraryClosure_contains fuel [lib] [] libs hcl lib (Or.inl (by simp))
+
+theorem resolveLibrarySlice_closed_under_dependents {lp : List Crate}
+    {scopes : List LibraryScope} {fuel : Nat} {lib : LibraryName} {guard : Bool}
+    {libs : List LibraryName} {mods : List (Name × Module)}
+    (h : resolveLibrarySlice lp scopes fuel lib guard = .ok (libs, mods)) :
+    ∀ l ∈ libs, ∀ sc, findLibraryScope scopes l = some sc →
+      ∀ d ∈ sc.dependentLibraries, d ∈ libs := by
+  unfold resolveLibrarySlice at h
+  split at h
+  · cases h
+  · rename_i cl hcl
+    split at h
+    · cases h
+    · cases h
+      exact libraryClosure_closed fuel [lib] [] libs hcl (by intro l hl; simp at hl)
+
+theorem resolveSliceMembers_sound {lp : List Crate} (hv : ViewsOwned lp)
+    {scopes : List LibraryScope} {fuel : Nat} {guard : Bool} :
+    ∀ {libs : List LibraryName} {mods : List (Name × Module)},
+      resolveSliceMembers lp scopes fuel guard libs = .ok mods →
+      ∀ p ∈ mods, Owned lp p := by
+  intro libs
+  induction libs with
+  | nil =>
+    intro mods h p hp
+    simp [resolveSliceMembers] at h
+    subst h
+    simp at hp
+  | cons l ls ih =>
+    intro mods h p hp
+    simp only [resolveSliceMembers] at h
+    split at h
+    · cases h
+    · split at h
+      · cases h
+      · rename_i res hres
+        split at h
+        · cases h
+        · rename_i rest hrest
+          cases h
+          rcases List.mem_append.mp hp with hp | hp
+          · exact (resolve_sound hv hres).2.2.1 p hp
+          · exact ih hrest p hp
+
+/-- Four-valued verdict lattice (`Safe < Pending < Unknown < Unsafe`, §L21.2)
+for sequential per-library slice composition. -/
+inductive SliceVerdict where
+  | safe
+  | pending
+  | unknown
+  | unsafe_
+  deriving DecidableEq, Repr
+
+def joinSliceVerdict : SliceVerdict → SliceVerdict → SliceVerdict
+  | .unsafe_, _ => .unsafe_
+  | _, .unsafe_ => .unsafe_
+  | .unknown, _ => .unknown
+  | _, .unknown => .unknown
+  | .pending, _ => .pending
+  | _, .pending => .pending
+  | .safe, .safe => .safe
+
+def foldSlices (vs : List SliceVerdict) : SliceVerdict :=
+  vs.foldl joinSliceVerdict .safe
+
+theorem joinSliceVerdict_assoc (a b c : SliceVerdict) :
+    joinSliceVerdict (joinSliceVerdict a b) c =
+      joinSliceVerdict a (joinSliceVerdict b c) := by
+  cases a <;> cases b <;> cases c <;> rfl
+
+theorem joinSliceVerdict_comm (a b : SliceVerdict) :
+    joinSliceVerdict a b = joinSliceVerdict b a := by
+  cases a <;> cases b <;> rfl
+
+/-- Fail-closed invariant: composing an `Unknown` slice with any other slice
+never produces `Safe`. -/
+theorem joinSliceVerdict_unknown_never_safe (v : SliceVerdict) :
+    joinSliceVerdict .unknown v ≠ .safe ∧ joinSliceVerdict v .unknown ≠ .safe := by
+  cases v <;> decide
+
+/-- Sequential slice composition equals whole-list composition over the
+concatenated slice verdicts. -/
+theorem foldSlices_append (xs ys : List SliceVerdict) :
+    xs.foldl joinSliceVerdict (ys.foldl joinSliceVerdict .safe) =
+      (ys ++ xs).foldl joinSliceVerdict .safe := by
+  rw [List.foldl_append]
+
 end QCore.ProviderSelection

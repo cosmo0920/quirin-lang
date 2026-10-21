@@ -325,6 +325,42 @@ must be declared by the profile. The invocation record (`selection`) and the
 and contents. `contract/profiles/fluent-bit/system-selection.json` is the
 Fluent Bit system slice ([W45-FB-SYSTEM-SELECTION](../../docs/reports/w45-fb-system-selection/README.md)).
 
+### Per-library contract scoping and slice execution
+
+To bound peak memory during multi-library audits, `quirin-audit` can scope
+loaded contracts to each library slice (`providers` plus the transitive
+`dependent_libraries` closure) and execute slices sequentially, absorbing unit
+outcomes and clearing the cached contract premises and hypothesis graphs at
+the end of each slice before loading the next slice's contracts.
+
+Per-library scopes can be declared in `--library-providers FILE` (for example
+`contract/profiles/fluent-bit/library-providers.json`), inline via
+`library_providers` in `CurrentConfig` / `AuditConfig`, or on each group in
+`selection.json` or `audit.json`:
+
+```json
+{
+  "schema_version": 1,
+  "libraries": {
+    "chunkio": {
+      "providers": ["quirin-provider-libc", "qcore-provider-chunkio"],
+      "dependent_libraries": []
+    },
+    "fluent_bit": {
+      "providers": ["quirin-provider-libc", "quirin-provider-fluent-bit"],
+      "dependent_libraries": ["cmetrics", "ctraces", "chunkio", "librdkafka", "monkey-libevent"]
+    }
+  }
+}
+```
+
+Resolution computes the transitive `dependent_libraries` closure (refusing
+cycles and unknown libraries), deduplicates provider entries in closure order,
+and resolves them against `--load-path`. Both `<report>.invocation.json` and
+`<report>.contracts.json` / `<report>.assumptions.json` record
+`library_provider_selection` (`mode: "per-library-slice"` and per-library
+resolved closures, modules and digests).
+
 ### Contracts only
 
 `--contracts-only`, or `"mode": "contracts-only"` in either configuration,

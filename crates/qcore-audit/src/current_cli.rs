@@ -28,6 +28,7 @@
 //! the load path, supersedes the profile's default manifest like any
 //! selection, and an explicit selection or manifest narrows it.
 
+use std::collections::BTreeMap;
 use std::path::{Path, PathBuf};
 use std::process::ExitCode;
 
@@ -41,7 +42,9 @@ use crate::current_route::{
 };
 use crate::evidence::EvidenceMode;
 use crate::providers::{
-    ContractInput, SelectionSource, agree, resolve_all_loaded, resolve_providers,
+    ContractInput, LibraryProviderScope, LibraryProvidersFile, SelectionSource, agree,
+    agree_library_providers, resolve_all_loaded, resolve_library_providers_table,
+    resolve_providers,
 };
 
 /// Usage text of `quirin-audit current`.
@@ -50,6 +53,13 @@ pub const USAGE: &str = "usage: quirin-audit current [--config FILE] [--checkout
 [--monkey-source-report PATH] [--binding-directory DIR] [--provider NAME[:MODULE]]... \
 [--load-path PATH] [--contract-manifest PATH] [--contracts-only] [--quirin-providers-only] \
 [--selection FILE] [--jobs N] [--checkpoint-dir DIR [--resume]]";
+
+#[derive(Clone, Debug, PartialEq, Eq, Deserialize)]
+#[serde(untagged)]
+enum LibraryProvidersSetting {
+    File(PathBuf),
+    Inline(BTreeMap<String, LibraryProviderScope>),
+}
 
 /// The JSON configuration of `quirin-audit current`. Relative paths resolve
 /// against the configuration file's directory.
@@ -73,6 +83,8 @@ struct CurrentConfig {
     binding_directory: Option<PathBuf>,
     #[serde(default)]
     providers: Option<Vec<String>>,
+    #[serde(default)]
+    library_providers: Option<LibraryProvidersSetting>,
     #[serde(default)]
     load_path: Option<PathBuf>,
     #[serde(default)]
@@ -112,6 +124,7 @@ struct Settings {
     monkey_source_report: Option<PathBuf>,
     binding_directory: Option<PathBuf>,
     providers: Option<Vec<String>>,
+    library_providers: Option<BTreeMap<String, LibraryProviderScope>>,
     load_path: Option<PathBuf>,
     contract_manifest: Option<PathBuf>,
     mode: Option<EvidenceMode>,
@@ -176,6 +189,24 @@ fn parse_command_line(
                         .clone(),
                 );
             }
+            "--library-providers" => {
+                let raw = value.ok_or("--library-providers requires a file path")?;
+                if settings.library_providers.is_some() {
+                    return Err("--library-providers is given twice".into());
+                }
+                let path = anchor(cwd, PathBuf::from(raw));
+                let parsed = LibraryProvidersFile::load(&path)?;
+                if settings.load_path.is_none()
+                    && let Some(lp) = parsed.contract_load_path
+                {
+                    let file_dir = path.parent().unwrap_or(cwd);
+                    settings.load_path = Some(anchor(file_dir, lp));
+                }
+                if parsed.quirin_providers_only {
+                    settings.quirin_providers_only = Some(true);
+                }
+                settings.library_providers = Some(parsed.libraries);
+            }
             "--jobs" => {
                 let text = value.ok_or("--jobs requires a positive integer")?;
                 if settings.jobs.is_some() {
@@ -224,6 +255,26 @@ fn read_config(path: &Path) -> Result<(Settings, Vec<u8>), String> {
         .parent()
         .ok_or("configuration has no parent directory")?;
     let anchor_all = |path: Option<PathBuf>| path.map(|path| anchor(base, path));
+    let mut cfg_load_path = anchor_all(config.load_path);
+    let mut cfg_quirin_only = config.quirin_providers_only;
+    let library_providers = match config.library_providers {
+        Some(LibraryProvidersSetting::File(file_path)) => {
+            let resolved_file = anchor(base, file_path);
+            let parsed = LibraryProvidersFile::load(&resolved_file)?;
+            if cfg_load_path.is_none()
+                && let Some(lp) = parsed.contract_load_path
+            {
+                let file_dir = resolved_file.parent().unwrap_or(base);
+                cfg_load_path = Some(anchor(file_dir, lp));
+            }
+            if parsed.quirin_providers_only && cfg_quirin_only.is_none() {
+                cfg_quirin_only = Some(true);
+            }
+            Some(parsed.libraries)
+        }
+        Some(LibraryProvidersSetting::Inline(map)) => Some(map),
+        None => None,
+    };
     Ok((
         Settings {
             checkout: anchor_all(config.checkout),
@@ -234,10 +285,11 @@ fn read_config(path: &Path) -> Result<(Settings, Vec<u8>), String> {
             monkey_source_report: anchor_all(config.monkey_source_report),
             binding_directory: anchor_all(config.binding_directory),
             providers: config.providers,
-            load_path: anchor_all(config.load_path),
+            library_providers,
+            load_path: cfg_load_path,
             contract_manifest: anchor_all(config.contract_manifest),
             mode: config.mode,
-            quirin_providers_only: config.quirin_providers_only,
+            quirin_providers_only: cfg_quirin_only,
             jobs: config.jobs,
             selection: anchor_all(config.selection),
             checkpoint_dir: anchor_all(config.checkpoint_dir),
@@ -450,15 +502,6 @@ fn run(arguments: &[String]) -> Result<bool, String> {
     let effective_jobs = crate::parallel::effective_jobs(jobs);
     let profile = load_profile_directory(&profile_directory).map_err(|error| error.to_string())?;
     let profile_manifest = profile.resource_contract_manifest_path();
-    let (contracts, contract_source) = choose_contracts(&ContractDeclarations {
-        command_line: command_line.providers.as_ref(),
-        configuration: configuration.providers.as_ref(),
-        load_path: load_path.as_deref(),
-        contract_manifest: contract_manifest.as_deref(),
-        mode,
-        quirin_providers_only,
-        profile_manifest: profile_manifest.as_deref(),
-    })?;
     let selection = selection_path
         .as_deref()
         .map(crate::unit_selection::UnitSelection::load)
@@ -474,6 +517,87 @@ fn run(arguments: &[String]) -> Result<bool, String> {
             }
         }
     }
+    let selection_scopes = match &selection {
+        Some(selection) => selection.library_provider_scopes(),
+        None => crate::load_audit_library_scopes(&profile_directory.join("audit.json"))?,
+    };
+    let has_library_providers = command_line.library_providers.is_some()
+        || configuration.library_providers.is_some()
+        || selection_scopes.is_some();
+    let mut audited_libraries = match &selection {
+        Some(selection) => selection
+            .groups
+            .iter()
+            .map(|group| group.library.clone())
+            .collect::<Vec<_>>(),
+        None => crate::load_library_selections(&profile_directory.join("audit.json"))?
+            .into_iter()
+            .map(|item| item.library)
+            .collect::<Vec<_>>(),
+    };
+    if monkey_database.is_some() {
+        audited_libraries.push("monkey-libevent".into());
+    }
+    let resolved_library_table = if has_library_providers {
+        if command_line.providers.is_some()
+            || configuration.providers.is_some()
+            || contract_manifest.is_some()
+        {
+            return Err(
+                "per-library provider scoping and an explicit provider list or contract manifest are two declarations of one input; give one"
+                    .into(),
+            );
+        }
+        let lp = load_path.as_deref().ok_or(
+            "per-library provider scoping needs the contract load path (--load-path providers/contract-load-path.json)",
+        )?;
+        let resolve_table = |scopes: &BTreeMap<String, LibraryProviderScope>,
+                             source: SelectionSource| {
+            resolve_library_providers_table(
+                lp,
+                scopes,
+                &audited_libraries,
+                quirin_providers_only,
+                source,
+                profile_manifest.as_deref(),
+            )
+        };
+        let mut resolved = None;
+        for (scopes_opt, source) in [
+            (
+                command_line.library_providers.as_ref(),
+                SelectionSource::CommandLine,
+            ),
+            (
+                configuration.library_providers.as_ref(),
+                SelectionSource::Configuration,
+            ),
+            (selection_scopes.as_ref(), SelectionSource::Configuration),
+        ] {
+            if let Some(scopes) = scopes_opt {
+                let next = resolve_table(scopes, source)?;
+                resolved = Some(match resolved {
+                    Some(prev) => agree_library_providers(prev, next)?,
+                    None => next,
+                });
+            }
+        }
+        resolved
+    } else {
+        None
+    };
+    let (contracts, contract_source) = match &resolved_library_table {
+        Some(table) => (table.union_input.clone(), "library_providers"),
+        None => choose_contracts(&ContractDeclarations {
+            command_line: command_line.providers.as_ref(),
+            configuration: configuration.providers.as_ref(),
+            load_path: load_path.as_deref(),
+            contract_manifest: contract_manifest.as_deref(),
+            mode,
+            quirin_providers_only,
+            profile_manifest: profile_manifest.as_deref(),
+        })?,
+    };
     let historical = match &selection {
         Some(selection) => historical_reference_revision_of(
             &profile,
@@ -512,6 +636,7 @@ fn run(arguments: &[String]) -> Result<bool, String> {
             historical_reference_revision: &historical,
             jobs: effective_jobs,
             selection: selection.as_ref(),
+            library_providers: resolved_library_table.as_ref(),
         },
         checkpoints.as_ref(),
     )?;

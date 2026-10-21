@@ -25,12 +25,14 @@
 //! The selection's path, digest and contents are recorded in the run's
 //! `.invocation.json` and `.contracts.json` sidecars.
 
-use std::collections::BTreeSet;
+use std::collections::{BTreeMap, BTreeSet};
 use std::path::{Component, Path, PathBuf};
 
 use qcore_contract::profile_loader::sha256_hex;
 use serde::Deserialize;
 use serde_json::{Value, json};
+
+use crate::providers::LibraryProviderScope;
 
 /// One group of a selection: a profile library, an optional report label and
 /// the exact files, relative to the checkout root, in audit order.
@@ -41,6 +43,10 @@ pub struct SelectedGroup {
     #[serde(default)]
     pub label: Option<String>,
     pub files: Vec<String>,
+    #[serde(default)]
+    pub providers: Vec<String>,
+    #[serde(default)]
+    pub dependent_libraries: Vec<String>,
 }
 
 impl SelectedGroup {
@@ -59,6 +65,8 @@ struct SelectionDocument {
     #[serde(default)]
     description: Option<String>,
     groups: Vec<SelectedGroup>,
+    #[serde(default)]
+    dependency_libraries: BTreeMap<String, LibraryProviderScope>,
 }
 
 /// A validated selection file.
@@ -69,6 +77,7 @@ pub struct UnitSelection {
     pub name: String,
     pub description: Option<String>,
     pub groups: Vec<SelectedGroup>,
+    pub dependency_libraries: BTreeMap<String, LibraryProviderScope>,
 }
 
 impl UnitSelection {
@@ -135,22 +144,62 @@ impl UnitSelection {
             name: document.name,
             description: document.description,
             groups: document.groups,
+            dependency_libraries: document.dependency_libraries,
         })
+    }
+
+    /// Extract per-library provider scopes if any group or `dependency_libraries`
+    /// entry declares `providers` or `dependent_libraries`.
+    #[must_use]
+    pub fn library_provider_scopes(&self) -> Option<BTreeMap<String, LibraryProviderScope>> {
+        let any_group = self
+            .groups
+            .iter()
+            .any(|g| !g.providers.is_empty() || !g.dependent_libraries.is_empty());
+        if !any_group && self.dependency_libraries.is_empty() {
+            return None;
+        }
+        let mut scopes = self.dependency_libraries.clone();
+        for group in &self.groups {
+            if !group.providers.is_empty() || !group.dependent_libraries.is_empty() {
+                scopes.insert(
+                    group.library.clone(),
+                    LibraryProviderScope {
+                        providers: group.providers.clone(),
+                        dependent_libraries: group.dependent_libraries.clone(),
+                    },
+                );
+            }
+        }
+        Some(scopes)
     }
 
     /// The record the sidecars carry.
     #[must_use]
     pub fn record(&self) -> Value {
-        json!({
+        let mut record = json!({
             "path": self.path,
             "sha256": self.sha256,
             "name": self.name,
             "description": self.description,
-            "groups": self.groups.iter().map(|group| json!({
-                "library": group.library, "label": group.label(), "files": group.files,
-            })).collect::<Vec<_>>(),
+            "groups": self.groups.iter().map(|group| {
+                let mut value = json!({
+                    "library": group.library, "label": group.label(), "files": group.files,
+                });
+                if !group.providers.is_empty() {
+                    value["providers"] = json!(group.providers);
+                }
+                if !group.dependent_libraries.is_empty() {
+                    value["dependent_libraries"] = json!(group.dependent_libraries);
+                }
+                value
+            }).collect::<Vec<_>>(),
             "scope": "an explicit unit choice over the unchanged source profile; it is not a verdict dependency, and a selected file without a compilation record stays in the denominator as Unknown",
-        })
+        });
+        if !self.dependency_libraries.is_empty() {
+            record["dependency_libraries"] = json!(self.dependency_libraries);
+        }
+        record
     }
 }
 
