@@ -20,7 +20,7 @@
         "external libc implementation/body mode truth",
         "whole-C extraction and Rust-Lean correspondence"
       ],
-      "evidence": "production-base-configured.json, production-base-corpus.json, production-tip-configured.json, production-tip-corpus.json, joint-validation.json; final parent comparison/matrix acceptance pending"
+      "evidence": "production-base-configured.json, production-base-corpus.json, production-tip-configured.json, production-tip-corpus.json, joint-validation.json; complete parent comparisons0; final committed-matrix Python pending"
     }
   }
 }
