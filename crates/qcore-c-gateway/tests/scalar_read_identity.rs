@@ -115,8 +115,8 @@ fn scalar_read_does_not_retain_an_old_zero_or_prune_the_other_branch() {
 #[test]
 fn unsupported_volatile_atomic_and_expression_effects_stay_refused() {
     for body in [
-        "int subject(struct Chunk *ch) { volatile int type = ch->st->type; if (type == 0) return 1; return 0; }",
-        "int subject(struct Chunk *ch) { _Atomic int type = ch->st->type; if (type == 0) return 1; return 0; }",
+        "struct Hot { volatile int value; }; int subject(struct Hot *p) { int value = p->value; if (value == 0) return 1; return 0; }",
+        "struct Atomic { _Atomic int value; }; int subject(struct Atomic *p) { int value = p->value; if (value == 0) return 1; return 0; }",
         "int subject(struct Chunk *ch) { int type; type = (ch->st->type++); if (type == 0) return 1; return 0; }",
         "int subject(struct Chunk *ch) { long type = (long) ch->st->pointer; if (type == 0) return 1; return 0; }",
     ] {
@@ -125,6 +125,37 @@ fn unsupported_volatile_atomic_and_expression_effects_stay_refused() {
             summary.functions["subject"].status,
             AnalysisStatus::Safe,
             "{summary:#?}"
+        );
+    }
+}
+
+#[test]
+fn inherited_volatile_destinations_keep_the_old_opaque_route() {
+    for body in [
+        "int subject(struct Chunk *ch) { volatile int type = ch->st->type; if (type == 0) return 1; return 0; }",
+        "int subject(struct Chunk *ch) { _Atomic int type = ch->st->type; if (type == 0) return 1; return 0; }",
+    ] {
+        let summary = run(body);
+        assert!(
+            summary.functions["subject"]
+                .cfg
+                .nodes
+                .iter()
+                .any(|node| matches!(
+            &node.instruction,
+            qcore_c_gateway::legacy_c::LegacyInstruction::OpaqueValue { destination, .. }
+            if destination == "type"))
+        );
+        assert!(
+            !summary.functions["subject"]
+                .cfg
+                .nodes
+                .iter()
+                .any(|node| matches!(
+            &node.instruction,
+            qcore_c_gateway::legacy_c::LegacyInstruction::IndirectScalarAccess {
+                destination: Some(destination), ..
+            } if destination == "type"))
         );
     }
 }
