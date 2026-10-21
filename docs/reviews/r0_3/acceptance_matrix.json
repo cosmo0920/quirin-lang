@@ -7,7 +7,7 @@
  "section_ownership": {
   "note": "Card D02-GEN-REST. Every top-level key of this file is labelled here, so no section is silently hand-maintained. `derived` sections are recomputed by the generator on every run and a hand edit to them is overwritten; `hand_maintained` sections are carried verbatim from the previous matrix, which is why a regeneration no longer reverts a later reconciliation; `integrator_supplied` numbers are measurements the generator cannot take.",
   "generator": "docs/reports/remaining-d02/build_matrix.py",
-  "carried_from": "private/premise-integration/union-previous.json",
+  "carried_from": "docs/reviews/r0_3/acceptance_matrix.json",
   "vocabulary": {
    "derived": "recomputed by docs/reports/remaining-d02/build_matrix.py from the named manifest, validated record or working tree; a hand edit here is overwritten on the next regeneration",
    "integrator_supplied": "a measurement this script cannot take; supplied through --gate, otherwise carried from the previous matrix and labelled as carried",
@@ -170,7 +170,7 @@
   "note": "Prose revision 0.3 is the specification revision. It is separate from, and does not move with, the package/protocol/evidence/schema versions below.",
   "prose_specification_revision": "0.3",
   "documentation_revision": "0.3",
-  "qcore_schemas_rust_api": "19.1.0",
+  "qcore_schemas_rust_api": "20.0.0",
   "qcore_schemas_version_cause": "P02 added the public PluginLimits::additional field (3.0.0); P04 then added the counter_summary module and one variant each to witness/obligation/plugin plus an optional request field, three source-incompatible additions the documented policy makes a major change (4.0.0). Every later major (5.0.0 through 13.0.0) is the same policy applied to a further source-incompatible Rust API addition as a transported vocabulary landed; 13.0.0 is P04-COMPOSE-FS's three enum variants plus CompositionFamilyInput::nested() returning a vector because that family has two nested questions and one slot could not publish both. Existing wire bytes are unchanged at every step and pinned by crates/qcore-schemas/tests/counter_request_wire.rs and crates/qcore-schemas/tests/composition_request_wire.rs; COMPOSITION_SOURCE_INPUT_VERSION stays 2, so no existing task digest moved; 14.0.0 is P04-COMPOSE-UNSUPPORTED's three enum variants for the fifth and last reachable composition family, with COMPOSITION_SOURCE_INPUT_VERSION still 2 and no accessor changing shape, because P04-COMPOSE-FS had already paid that cost.",
   "plugin_protocol": "v1 (unchanged)",
   "semantic_evidence": "v2 (unchanged)",
@@ -6758,7 +6758,7 @@
   "workspace_tests": 8376,
   "provider_tests": 133,
   "python_evidence_validator_tests": 374,
-  "lean_audits": 349,
+  "lean_audits": 350,
   "lean_audit_files": [
    "AuditAbiEnumConstPointer.lean",
    "AuditAggregateOwnedField.lean",
@@ -6975,6 +6975,7 @@
    "AuditPipeDesugaring.lean",
    "AuditPointerQualifierReader.lean",
    "AuditPointerStore.lean",
+   "AuditPremiseRefinement.lean",
    "AuditPrintRouteSelection.lean",
    "AuditProcessQuotaPlan.lean",
    "AuditProtectionGrowthEmission.lean",
