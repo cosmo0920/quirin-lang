@@ -1,0 +1,14 @@
+module contract;
+extern fn observed(p: ptr<mut, u8>) -> i32 contract {
+    requires resource_contract_v1;
+    requires resource_hypothesis(a, "assigned bounded proposition A");
+    requires resource_hypothesis(b, "assigned bounded proposition B");
+    requires resource_hypothesis(c, "assigned bounded proposition C");
+    requires resource_premise_all(assigned, a, b, c);
+    requires resource_premise_flow_v1(and_flow, (a |-> b));
+    requires resource_premise_flow_v1(or_flow, (a ||-> c));
+    requires resource_premise_flow_v1(not_flow, (a !-> c));
+    requires resource_premise_flow_v1(end_flow, (flow(and_flow) ->| flow(or_flow)));
+    ensures normal resource_borrowed(p);
+    ensures normal resource_return_none();
+};
