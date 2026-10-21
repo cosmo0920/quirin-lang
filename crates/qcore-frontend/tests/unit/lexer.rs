@@ -416,3 +416,23 @@ fn lexes_the_c_name_marker_apart_from_its_name() {
         ]
     );
 }
+
+#[test]
+fn premise_flow_longest_tokens_preserve_maps_to_exactly() {
+    let kinds = lex("|-> ||-> !-> ->| -> || !")
+        .unwrap()
+        .into_iter()
+        .map(|t| t.kind)
+        .collect::<Vec<_>>();
+    assert_eq!(
+        &kinds[..6],
+        &[
+            TokenKind::Symbol(Symbol::MapsTo),
+            TokenKind::Symbol(Symbol::FlowOr),
+            TokenKind::Symbol(Symbol::FlowExcept),
+            TokenKind::Symbol(Symbol::FlowTerminal),
+            TokenKind::Symbol(Symbol::Arrow),
+            TokenKind::Symbol(Symbol::PipePipe)
+        ]
+    );
+}
