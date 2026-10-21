@@ -1,0 +1,62 @@
+{
+  "card": "PREMISE-LOCAL-SOURCE-BINDINGS",
+  "base": "882e128c12161babdbfa36806829894eadf600ba",
+  "prediction": {
+    "static_verdict_changes": 0,
+    "null_verdict_changes": 0,
+    "runtime_verdict_changes": 0,
+    "legacy_truth_changes": 0,
+    "production_standing_changes": 0
+  },
+  "libc": {
+    "claim": "Every independently held recorded successful observation in an explicitly selected finite owner/source/build domain is reproduced by the original reader; exact domain equality, no selected-sample inference to all relevant C reads.",
+    "planned_production_scope": "Attempt all 24 system and 2 slice retained observations from the preceding immutable report; publish complete per-domain results, failures and omissions. Corpus122 remain binding-only unless independently replayed.",
+    "prerequisites": [
+      "held raw bytes and actual compile-command correspondence",
+      "exact prepared source and definition inventory",
+      "original graph/context/formal artifacts",
+      "loaded contract assumptions; source extraction and Rust/Lean correspondence remain Open"
+    ],
+    "accessor": "per-site scalar OR nested, never both required"
+  },
+  "cjson": {
+    "claim": "Concrete finite entry/post heap equations over native object identities, plus full typed detach body comparison against a fixed reviewed reference.",
+    "finite_domain": "Single-thread native harness, list lengths 1..4, each selected index (10 cases); parent and children created by actual cJSON constructors, read while allocated. Empty construction checked separately.",
+    "discharged_if_checked": [
+      "finite membership/acyclic next chain",
+      "distinct identities",
+      "empty/child-head equivalence",
+      "first-prev-last",
+      "last-next-null",
+      "live-domain link targets relative to retained allocation ledger",
+      "parent exclusion",
+      "predecessor equations",
+      "detached item null links and exact remaining order"
+    ],
+    "remain_open": [
+      "arbitrary caller heaps and custody ownership",
+      "arbitrary interference/noWriter trace",
+      "English equivalence",
+      "external allocator authority",
+      "whole-C extraction and Rust/Lean correspondence"
+    ]
+  },
+  "witnesses": "New versioned scoped witnesses alongside frozen v1 manifests/models. No semantic verdict consumer or default report publication.",
+  "negatives": [
+    "every nine-coordinate Context mismatch",
+    "source/model/graph/atom/property/environment mismatch",
+    "missing prerequisite",
+    "truncated or duplicated domain",
+    "source body and native snapshot mutation",
+    "wrong dependent context preserves unrelated records"
+  ],
+  "ownership": [
+    "crates/qcore-c-gateway/src/reading_site_domain.rs",
+    "crates/quirin-source-analysis/src/cjson_local_binding.rs",
+    "new isolated tests/examples",
+    "proof/QCore/LocalSourceBindings.lean and AuditLocalSourceBindings.lean",
+    "add imports/exports only",
+    "docs/reports/premise-local-source-bindings"
+  ],
+  "validation": "Focused Rust/Lean under shared flock; root converges all three implementation-ready tips and runs one joint complete standing/provider-conditional/six-native/final-matrix Python gate. No duplicate per-worker full gate."
+}
