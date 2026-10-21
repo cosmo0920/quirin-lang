@@ -160,12 +160,14 @@ fn complete_recorded_domain_replays_and_truncated_context_source_or_environment_
         let mut value = serde_json::to_value(&contexts["f"]).unwrap();
         value[key] = "foreign".into();
         let bad = BTreeMap::from([("f".into(), serde_json::from_value(value).unwrap())]);
-        held.contexts = &bad;
+        let bad_held = HeldDomain {
+            contexts: &bad,
+            ..held
+        };
         assert!(
-            reading_site_domain::check(&held, &expected).is_err(),
+            reading_site_domain::check(&bad_held, &expected).is_err(),
             "{key}"
         );
-        held.contexts = &contexts;
     }
     held.contexts = &contexts;
     let mut wrong = expected.clone();
