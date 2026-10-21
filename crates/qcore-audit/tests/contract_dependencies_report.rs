@@ -459,6 +459,92 @@ extern fn impact_free(p: ptr<mut,u8>) -> unit contract { requires resource_contr
     let actual_record = actual_recording.finish();
     let actual_rows = row_dependencies(&actual_record, &actual_summary, &actual);
     let actual_graphs = qcore_contract::hypothesis::replay(actual.source_assumptions()).unwrap();
+    // Resolve the exact production graph's formal references before the
+    // context-scoped synthetic refutation/impact control.
+    let manifest_bytes =
+        include_bytes!("../../../docs/reports/premise-evidence-contracts/binding-manifest.json");
+    let manifest_sha = qcore_schemas::sha256_hex(manifest_bytes);
+    let expected_manifests = BTreeMap::from([(
+        manifest_sha.clone(),
+        serde_json::from_slice(manifest_bytes).unwrap(),
+    )]);
+    let presented_manifests = BTreeMap::from([(manifest_sha, manifest_bytes.to_vec())]);
+    let artifacts = BTreeMap::from([
+        (
+            "proof/QCore/CjsonRepresentationPremises.lean".into(),
+            include_bytes!("../../../proof/QCore/CjsonRepresentationPremises.lean").to_vec(),
+        ),
+        (
+            "proof/AuditPremiseRefinement.lean".into(),
+            include_bytes!("../../../proof/AuditPremiseRefinement.lean").to_vec(),
+        ),
+    ]);
+    let resolved = qcore_contract::hypothesis_bindings::resolve(
+        actual.source_assumptions(),
+        &actual_graphs,
+        &expected_manifests,
+        &presented_manifests,
+        &artifacts,
+    )
+    .unwrap();
+    let bindings = resolved.values().next().unwrap();
+    let bound_graph = &actual_graphs["cJSON_DetachItemViaPointer"];
+    assert_eq!(
+        bindings.graph_sha256,
+        qcore_contract::hypothesis::digest(bound_graph).unwrap()
+    );
+    let held = qcore_schemas::hypothesis::Context {
+        artifact: "fixture.c#direct".into(),
+        property: "resource-custody.v1".into(),
+        semantic_profile: "test-fixture-profile".into(),
+        scope: "direct,caller,unrelated".into(),
+        bounds: "finite synthetic fixture; source binding Open".into(),
+        assumptions: "original declared representation premise".into(),
+        source_identity: qcore_schemas::sha256_hex(source.as_bytes()),
+        build_identity: "independently-held-test-build".into(),
+        evidence_version: "premise-evidence-contracts-control.v1".into(),
+    };
+    let claim = qcore_schemas::hypothesis::Instance {
+        graph: bound_graph.clone(),
+        graph_sha256: bindings.graph_sha256.clone(),
+        context: held.clone(),
+        evidence: vec![qcore_schemas::hypothesis::Evidence {
+            atom: "detach_no_writer".into(),
+            atom_sha256: bindings.atoms["detach_no_writer"].atom_sha256.clone(),
+            context: held.clone(),
+            disposition: qcore_schemas::hypothesis::Disposition::Refuted,
+            warrant: qcore_schemas::hypothesis::Warrant::Declared,
+            reference:
+                "synthetic model writer witness; source binding Open, no reachable C violation"
+                    .into(),
+        }],
+    };
+    assert_eq!(
+        qcore_contract::hypothesis::compose_refinement(
+            &claim,
+            &held,
+            bound_graph,
+            "detach_list_representation"
+        )
+        .unwrap(),
+        qcore_schemas::hypothesis::Disposition::Refuted
+    );
+    assert_eq!(
+        qcore_contract::hypothesis::compose(&claim, &held, bound_graph, "legacy_premise_00000000")
+            .unwrap(),
+        qcore_schemas::hypothesis::Disposition::Open
+    );
+    let mut caller_context = held.clone();
+    caller_context.artifact = "fixture.c#caller".into();
+    assert!(
+        qcore_contract::hypothesis::compose_refinement(
+            &claim,
+            &caller_context,
+            bound_graph,
+            "detach_list_representation"
+        )
+        .is_err()
+    );
     for name in ["direct", "caller"] {
         assert_eq!(
             actual_summary.functions[name].status,
@@ -525,4 +611,97 @@ fn a_companion_premise_changes_closed_world_classification_so_stays_report_owned
     );
     // This classification difference exists even when an Unknown verdict hides
     // it from the projection's moved-only records. No classifier exception is added.
+}
+
+#[test]
+fn concrete_attachment_preserves_closed_world_facts_and_publishes_checked_open_bindings() {
+    use qcore_audit::outer_selection::custody_facts;
+    let current =
+        include_str!("../../../providers/qcore-provider-librdkafka/contracts/librdkafka/cjson.qv");
+    let old = include_str!("../../../docs/reports/premise-decomposition-cycle1/proposed-cjson.qv")
+        .lines()
+        .filter(|line| {
+            !line.contains("resource_hypothesis(detach_")
+                && !line.contains("resource_premise_all(detach_representation_atoms,")
+        })
+        .collect::<Vec<_>>()
+        .join("\n");
+    let load = |text: String| {
+        qcore_contract::contract_loader::load_resource_contract_sources(&BTreeMap::from([(
+            "cjson.qv".into(),
+            text,
+        )]))
+        .unwrap()
+    };
+    let before = load(old);
+    let after = load(current.into());
+    assert_eq!(
+        qcore_contract::contract_loader::declared_premises(&before).unwrap(),
+        qcore_contract::contract_loader::declared_premises(&after).unwrap()
+    );
+    let old_meta = premises(&before).unwrap();
+    let mut metadata = premises(&after).unwrap();
+    let deps = json!({"declarations":["cJSON_DetachItemViaPointer"]});
+    assert_eq!(
+        custody_facts(&deps, &old_meta),
+        custody_facts(&deps, &metadata)
+    );
+    assert_eq!(
+        metadata["$hypothesis_binding_requirements"]
+            .as_array()
+            .unwrap()
+            .len(),
+        1
+    );
+    let expected_graphs = qcore_contract::hypothesis::replay(after.source_assumptions()).unwrap();
+    let bytes =
+        include_bytes!("../../../docs/reports/premise-evidence-contracts/binding-manifest.json");
+    let sha = qcore_schemas::sha256_hex(bytes);
+    let expected = BTreeMap::from([(sha.clone(), serde_json::from_slice(bytes).unwrap())]);
+    let presented = BTreeMap::from([(sha, bytes.to_vec())]);
+    let artifacts = BTreeMap::from([
+        (
+            "proof/QCore/CjsonRepresentationPremises.lean".into(),
+            include_bytes!("../../../proof/QCore/CjsonRepresentationPremises.lean").to_vec(),
+        ),
+        (
+            "proof/AuditPremiseRefinement.lean".into(),
+            include_bytes!("../../../proof/AuditPremiseRefinement.lean").to_vec(),
+        ),
+    ]);
+    qcore_audit::contract_dependencies::publish_checked_bindings(
+        &mut metadata,
+        after.source_assumptions(),
+        &expected_graphs,
+        &expected,
+        &presented,
+        &artifacts,
+    )
+    .unwrap();
+    assert_eq!(
+        metadata["$checked_hypothesis_bindings"]["warrant"],
+        "reference-integrity-only"
+    );
+    assert_eq!(
+        metadata["$checked_hypothesis_bindings"]["source_binding"],
+        "open"
+    );
+    let mut changed = metadata.clone();
+    changed["$hypothesis_graphs"]["cJSON_DetachItemViaPointer"]["version"] = json!(1);
+    assert!(
+        qcore_audit::contract_dependencies::publish_checked_bindings(
+            &mut changed,
+            after.source_assumptions(),
+            &expected_graphs,
+            &expected,
+            &presented,
+            &artifacts
+        )
+        .is_err()
+    );
+    let mut a = old_meta;
+    let mut b = metadata;
+    qcore_audit::contract_dependencies::erase_hypotheses(&mut a);
+    qcore_audit::contract_dependencies::erase_hypotheses(&mut b);
+    assert_eq!(a, b);
 }

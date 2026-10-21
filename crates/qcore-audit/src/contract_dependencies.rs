@@ -856,8 +856,20 @@ pub fn publish_checked_bindings(
     presented_manifests: &BTreeMap<String, Vec<u8>>,
     artifacts: &BTreeMap<String, Vec<u8>>,
 ) -> Result<(), String> {
-    if value["$hypothesis_graphs"] != json!(expected_graphs) {
-        return Err("binding: independently expected graphs differ from published graphs".into());
+    // Audit publication may also contain rule-owned legacy graphs. Bind the
+    // exact attached declarations; do not reinterpret unrelated rule metadata.
+    let requirements = qcore_contract::hypothesis_bindings::requirements(sources, expected_graphs)?;
+    for required in &requirements {
+        if value["$hypothesis_graphs"][&required.declaration]
+            != json!(expected_graphs[&required.declaration])
+        {
+            return Err(
+                "binding: independently expected attachment graph differs from publication".into(),
+            );
+        }
+    }
+    if value["$hypothesis_binding_requirements"] != json!(requirements) {
+        return Err("binding: independently expected requirements differ from publication".into());
     }
     let bindings = qcore_contract::hypothesis_bindings::resolve(
         sources,
