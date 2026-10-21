@@ -23,3 +23,12 @@ No effective environment is loaded from the captured reading-site bytes.
 Complete fresh receipt equality remains exact, with no hash erasure or guard
 weakening. All original universal atoms and the zero-verdict prediction remain
 unchanged. A fresh complete122 replay is required after the final helper repair.
+
+The first independent-home attempt refused `cio_file_hash`: raw source and root
+environment identities matched, but prepared source and analysis-request hashes
+differed. The exact cause is the pinned route's line7 import alias
+`compiler_options_compatibility as compiler_options`; the helper used the modern
+constructor. Before the next repair, select the identical compatibility constructor
+for pinned home exports too. This retains historical stdin/flag handling and
+requires unchanged exact identity comparisons. No timestamp or CPP normalization
+is admitted. Both prior attempts remain failed evidence.
