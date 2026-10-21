@@ -35,3 +35,5 @@ pub mod hypothesis;
 pub mod hypothesis_bindings;
 
 pub mod premise_flow;
+
+pub mod premise_metadata_bridge;
