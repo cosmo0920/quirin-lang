@@ -1,0 +1,39 @@
+{
+  "all_flow_dependencies": [
+    "a",
+    "c"
+  ],
+  "atom": "a",
+  "context": {
+    "artifact": "fixture.c#direct",
+    "assumptions": "assigned A and B; positively refuted C",
+    "bounds": "a,b,c; no source truth",
+    "build_identity": "example-assignment-model-v1",
+    "evidence_version": "1",
+    "property": "proposed-logical-expression",
+    "scope": "direct,caller,unrelated; assigned logical witness",
+    "semantic_profile": "flow-v1",
+    "source_identity": "7c9bce276bf05c9c1262d832904d0dc2bb7b5fdd3264eb8e0fcb5679e870bd46"
+  },
+  "dependent_other_context_unchanged": [
+    "caller"
+  ],
+  "disposition": "refuted",
+  "document_sha256": "39646712a62c2451d1958aea452870b745ddaaf66e3a4650217e0aaee382efe3",
+  "exact_context_affected": [
+    "direct"
+  ],
+  "flow": "not_flow",
+  "graph_sha256": "a6f21c07e52ff81316f8bd85e602160c082b2caacd145e550ef6faa32abd006a",
+  "potential_dependent_rows": [
+    "caller",
+    "direct"
+  ],
+  "refutation": "assigned finite model premise; no validated reachable C violation",
+  "rewritten_verdicts": 0,
+  "source_sha256": "7c9bce276bf05c9c1262d832904d0dc2bb7b5fdd3264eb8e0fcb5679e870bd46",
+  "unrelated_unchanged": [
+    "unrelated"
+  ],
+  "version": 1
+}

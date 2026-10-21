@@ -1,0 +1,172 @@
+{
+  "document": {
+    "declaration": "observed",
+    "entries": {
+      "and_flow": {
+        "kind": "and",
+        "left": {
+          "atom": "a",
+          "kind": "atom"
+        },
+        "right": {
+          "atom": "b",
+          "kind": "atom"
+        }
+      },
+      "end_flow": {
+        "kind": "terminal",
+        "left": {
+          "kind": "and",
+          "left": {
+            "flow": "and_flow",
+            "kind": "flow"
+          },
+          "right": {
+            "flow": "not_flow",
+            "kind": "flow"
+          }
+        },
+        "right": {
+          "flow": "or_flow",
+          "kind": "flow"
+        }
+      },
+      "not_flow": {
+        "kind": "except",
+        "left": {
+          "atom": "a",
+          "kind": "atom"
+        },
+        "right": {
+          "atom": "c",
+          "kind": "atom"
+        }
+      },
+      "or_flow": {
+        "kind": "or",
+        "left": {
+          "atom": "a",
+          "kind": "atom"
+        },
+        "right": {
+          "atom": "c",
+          "kind": "atom"
+        }
+      }
+    },
+    "graph_sha256": "a6f21c07e52ff81316f8bd85e602160c082b2caacd145e550ef6faa32abd006a",
+    "model_sha256": "7944aa2ac1662df79ed3ab457670fba8062ae5d0a256d69f69e6c57f58ec7b58",
+    "source_module": "example.qv",
+    "source_sha256": "0c74a52eb0591997f346e391c2b09552c4599ce602ce6936de33bd80dc86896f",
+    "version": 1,
+    "view": "resource"
+  },
+  "explicit_artifact_paths": [
+    "proof/QCore/PremiseFlow.lean",
+    "proof/AuditPremiseFlow.lean"
+  ],
+  "mode": "proposed logic only; assigned evidence; source binding Open",
+  "results": [
+    {
+      "atom_dependencies": [
+        "a",
+        "b"
+      ],
+      "context": {
+        "artifact": "premise-flow-example",
+        "assumptions": "assigned A and B; positively refuted C",
+        "bounds": "a,b,c; no source truth",
+        "build_identity": "example-assignment-model-v1",
+        "evidence_version": "1",
+        "property": "proposed-logical-expression",
+        "scope": "three assigned finite logical propositions",
+        "semantic_profile": "flow-v1",
+        "source_identity": "0c74a52eb0591997f346e391c2b09552c4599ce602ce6936de33bd80dc86896f"
+      },
+      "disposition": "supported",
+      "entry": "and_flow",
+      "terminated": false,
+      "warrants": {
+        "a": "declared",
+        "b": "declared",
+        "c": "declared"
+      }
+    },
+    {
+      "atom_dependencies": [
+        "a",
+        "c"
+      ],
+      "context": {
+        "artifact": "premise-flow-example",
+        "assumptions": "assigned A and B; positively refuted C",
+        "bounds": "a,b,c; no source truth",
+        "build_identity": "example-assignment-model-v1",
+        "evidence_version": "1",
+        "property": "proposed-logical-expression",
+        "scope": "three assigned finite logical propositions",
+        "semantic_profile": "flow-v1",
+        "source_identity": "0c74a52eb0591997f346e391c2b09552c4599ce602ce6936de33bd80dc86896f"
+      },
+      "disposition": "supported",
+      "entry": "or_flow",
+      "terminated": false,
+      "warrants": {
+        "a": "declared",
+        "b": "declared",
+        "c": "declared"
+      }
+    },
+    {
+      "atom_dependencies": [
+        "a",
+        "c"
+      ],
+      "context": {
+        "artifact": "premise-flow-example",
+        "assumptions": "assigned A and B; positively refuted C",
+        "bounds": "a,b,c; no source truth",
+        "build_identity": "example-assignment-model-v1",
+        "evidence_version": "1",
+        "property": "proposed-logical-expression",
+        "scope": "three assigned finite logical propositions",
+        "semantic_profile": "flow-v1",
+        "source_identity": "0c74a52eb0591997f346e391c2b09552c4599ce602ce6936de33bd80dc86896f"
+      },
+      "disposition": "supported",
+      "entry": "not_flow",
+      "terminated": false,
+      "warrants": {
+        "a": "declared",
+        "b": "declared",
+        "c": "declared"
+      }
+    },
+    {
+      "atom_dependencies": [
+        "a",
+        "b",
+        "c"
+      ],
+      "context": {
+        "artifact": "premise-flow-example",
+        "assumptions": "assigned A and B; positively refuted C",
+        "bounds": "a,b,c; no source truth",
+        "build_identity": "example-assignment-model-v1",
+        "evidence_version": "1",
+        "property": "proposed-logical-expression",
+        "scope": "three assigned finite logical propositions",
+        "semantic_profile": "flow-v1",
+        "source_identity": "0c74a52eb0591997f346e391c2b09552c4599ce602ce6936de33bd80dc86896f"
+      },
+      "disposition": "supported",
+      "entry": "end_flow",
+      "terminated": true,
+      "warrants": {
+        "a": "declared",
+        "b": "declared",
+        "c": "declared"
+      }
+    }
+  ]
+}

@@ -28,5 +28,89 @@
     "gateway": "not run after first failure",
     "lean": "not run",
     "standing": "joint gate pending"
+  },
+  "focused_3": {
+    "source_commit": "feccf07c0",
+    "environment": {
+      "CARGO_PROFILE_DEV_DEBUG": "0",
+      "CARGO_PROFILE_TEST_DEBUG": "0",
+      "CARGO_INCREMENTAL": "0"
+    },
+    "lock": "/tmp/qcore-c-cycle2-small-compile.lock",
+    "exit": 0,
+    "steps": [
+      {
+        "command": "cargo test -p qcore-contract --test premise_flow -j1",
+        "passed": 8,
+        "exit": 0,
+        "log": "contract.log"
+      },
+      {
+        "command": "cargo test -p qcore-c-gateway --test premise_flow_dependencies -j1",
+        "passed": 1,
+        "exit": 0,
+        "log": "gateway.log"
+      },
+      {
+        "command": "cargo test -p qcore-frontend --lib premise_flow_longest_tokens_preserve_maps_to_exactly -j1",
+        "passed": 1,
+        "exit": 0,
+        "log": "lexer.log"
+      },
+      {
+        "command": "cd proof && lake env lean -o .lake/build/lib/lean/QCore/PremiseFlow.olean QCore/PremiseFlow.lean",
+        "exit": 0,
+        "log": "lean.log"
+      },
+      {
+        "command": "cd proof && lake env lean AuditPremiseFlow.lean",
+        "exit": 0,
+        "project_axioms": 0,
+        "log": "audit.log"
+      },
+      {
+        "command": "cargo run -p qcore-contract --example premise_flow -j1 -- proof/QCore/PremiseFlow.lean proof/AuditPremiseFlow.lean",
+        "exit": 0,
+        "log": "example.log",
+        "output": "example.json"
+      }
+    ],
+    "private_directory": "private/premise-flow-operators/focused-3"
+  },
+  "focused_4": {
+    "source_commit": "f452aa7ad",
+    "environment": {
+      "CARGO_PROFILE_DEV_DEBUG": "0",
+      "CARGO_PROFILE_TEST_DEBUG": "0",
+      "CARGO_INCREMENTAL": "0"
+    },
+    "lock": "/tmp/qcore-c-cycle2-small-compile.lock",
+    "exit": 0,
+    "steps": [
+      {
+        "command": "cargo test -p qcore-c-gateway --test premise_flow_dependencies -j1 -- --nocapture",
+        "passed": 1,
+        "exit": 0,
+        "log": "gateway.log",
+        "published_output": "impact-output.json"
+      },
+      {
+        "command": "cd proof && lake env lean AuditPremiseFlow.lean",
+        "exit": 0,
+        "project_axioms": 0,
+        "log": "audit.log"
+      },
+      {
+        "command": "cargo run -p qcore-contract --example premise_flow -j1 -- proof/QCore/PremiseFlow.lean proof/AuditPremiseFlow.lean",
+        "exit": 0,
+        "log": "example.log",
+        "published_output": "example-output.json",
+        "output_sha256": "6ffd6b22847cbedb9b1c37f117e58169db0a872ef24866a29565537b552aba65"
+      }
+    ],
+    "private_directory": "private/premise-flow-operators/focused-4"
+  },
+  "joint_gate": {
+    "status": "pending actual frozen integrated source; no own-worktree standing/provider/native claim"
   }
 }

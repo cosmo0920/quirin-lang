@@ -1,0 +1,29 @@
+{
+  "version": 1,
+  "status": "proposed only; pending frozen integrated joint gate",
+  "base": "882e128c12161babdbfa36806829894eadf600ba",
+  "before": {
+    "id": "PLUGIN-PREMISE-OPERATOR-DESIGN",
+    "title": "Design explicit premise operators and prerequisite composition without changing current source syntax",
+    "why": "The card implements only conjunction-only opaque atoms and neutral same-name attachments. Loader/build/runtime environments and dependencies are assigned formal propositions/catalogs; no new operator, typed predicate, evidence consumer or general dependency-DAG source syntax is supplied. DISCHARGE: a separately frozen language/API design with total-or-reject grammar, explicit quantifier/prerequisite/evidence semantics, exact context/refutation propagation, Rust/Lean parity and its own source/provider/all-route validation. This is design-only follow-on work and cannot license truth transport or automatic Unsafe.",
+    "source": "docs/reports/plugin-premise-decomposition/README.md",
+    "recorded_by": "PLUGIN-PREMISE-DECOMPOSITION"
+  },
+  "criteria": {
+    "frozen_total_grammar": "design.md; C04.18.3; G05-flow; source parser/replay controls",
+    "quantifier_prerequisite_evidence": "explicit Model environment/FormalBinding; source/model/atom/artifact digests; proposed-only evaluation",
+    "exact_context_refutation_propagation": "all nine mismatch controls; actual C direct+summary closure; independently held function context and retained other-context rows",
+    "rust_lean_parity": "qcore-core/contract/gateway/lexer focused targets; QCore.PremiseFlow; AuditPremiseFlow",
+    "source_provider_all_route_validation": "PENDING actual joint frozen-source standing/provider/all-six audits and exact provenance; no own-worktree campaign claimed"
+  },
+  "apply_only_when": "all criteria above plus final joint matrix Python pass; root owns serial union",
+  "retire_on_acceptance": [
+    "PLUGIN-PREMISE-OPERATOR-DESIGN"
+  ],
+  "retain_all_other_followups": true,
+  "count_effect_if_no_other_cards_change_union": {
+    "before": 810,
+    "after": 809
+  },
+  "remaining_scope": "production flow adoption, whole-world source/prose truth and any typed safety consumer remain independently scoped; this retirement licenses none of them"
+}
