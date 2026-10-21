@@ -87,11 +87,27 @@
       "started": "2026-10-21T01:49:30.867758+00:00",
       "ended": "2026-10-21T01:49:32.628336+00:00",
       "log": "private/plugin-premise-decomposition/lean-draft-attempt6.log"
+    },
+    {
+      "command": [
+        "lake",
+        "env",
+        "lean",
+        "/home/cosmo/.codex/worktrees/w48-bottom-up-batch4/qcore-c/private/plugin-premise-decomposition/AuditPluginCombined-attempt2.lean"
+      ],
+      "cwd": "proof",
+      "exit": 0,
+      "started": "2026-10-21T01:59:19.860626+00:00",
+      "ended": "2026-10-21T01:59:21.167202+00:00",
+      "combined_input_sha256": "1feeab10b3e2311fa1e3c3340dabc79bbf852b716b26f7f56f762c7552bcb8f4",
+      "log": "private/plugin-premise-decomposition/lean-draft-axioms-attempt2.log",
+      "note": "Draft axiom closure plus #check for every formal catalog proposition; distinct RK public-symbol and Fluent Bit exported-API access fields. Full registered gate remains due."
     }
   ],
   "first_failure": "Lean reserves opaque; rename Event.opaque to opaqueId. No proposition change.",
   "result": "One-file draft compiles0 against existing HypothesisGraph; full registered model/audit gate remains due after merged API base refresh.",
   "attempt3_warning": "Unused simp argument and_assoc; removed without disabling linter. Attempt4 has empty output and exit0. No full gate claim.",
   "attempt5": "Added explicit per-family loader-enabled obligation to separate runtime availability from build/artifact/symbol facts; zero warnings/exit0.",
-  "attempt6": "Replace simple callback-field projection theorem with guarded missing-successful-registration/default refutation; no claim that ignored proxy return proves that guard."
+  "attempt6": "Replace simple callback-field projection theorem with guarded missing-successful-registration/default refutation; no claim that ignored proxy return proves that guard.",
+  "latest": "All actual named catalog Props checked by Lean; initial source/audit draft preparation controls retain their original frozen SHA snapshots at eef391ca3, not current draft identity. Final controls will use production model/audit source."
 }

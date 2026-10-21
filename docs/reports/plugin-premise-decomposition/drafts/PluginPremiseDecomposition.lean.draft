@@ -39,6 +39,8 @@ structure Event where
   shareConsumer : Bool
   handedObject : Bool
   exportedApi : Bool
+  isRkCall : Bool
+  publicRkSymbol : Bool
   forged : Bool
   apiPrecondition : Bool
   properList : Bool
@@ -148,7 +150,8 @@ def cjsonShape (e : Environment) (p : Nat) : Prop :=
 def internalFrameApi (e : Environment) (p : Nat) : Prop :=
   ∀ ev ∈ e.trace, ev.plugin = p →
     ev.action ≠ .internalWrite ∧
-    (ev.action = .apiCall → ev.exportedApi = true ∧ ev.apiPrecondition = true)
+    (ev.action = .apiCall → ev.isRkCall = true →
+      ev.publicRkSymbol = true ∧ ev.apiPrecondition = true)
 
 def coreFrame (e : Environment) (p : Nat) : Prop :=
   ∀ ev ∈ e.trace, ev.plugin = p → ev.action ≠ .coreWrite
