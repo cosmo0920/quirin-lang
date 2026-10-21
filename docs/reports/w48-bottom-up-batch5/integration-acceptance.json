@@ -1,0 +1,14 @@
+{
+  "status": "accepted within declared bounded source/native scope",
+  "root_report": "docs/reports/symbolic-decomposition-cycle3/README.md",
+  "source_gate": "5c55ae39c1d682b96dea851cb616c0a9e6ed7fe3",
+  "rust_passed": 8475,
+  "lean_audits": 362,
+  "post_committed_matrix_python": 374,
+  "python_exit": 0,
+  "python_source": "55cba9721bc637a18772821a7ed13e5097643fec",
+  "matrix_sha256": "b937e661df4d618a94ea2fd047e428b12ac34cac9dd68dc69afd888df84d0b0d",
+  "native_attribution": "docs/reports/w48-bottom-up-batch5/native-comparison.json",
+  "source_binding": "Open",
+  "production_inline_and_truth_discharge": "Open"
+}

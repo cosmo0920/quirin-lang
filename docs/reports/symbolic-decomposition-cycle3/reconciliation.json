@@ -91,12 +91,25 @@
       ]
     },
     "final-python": {
-      "verdict": "deferred",
-      "note": "Run after regenerated matrix commit, then publish actual count/exit/stability receipt before main push."
+      "verdict": "applied",
+      "verify": [
+        {
+          "file": "docs/reports/symbolic-decomposition-cycle3/post-matrix-confirmation.json",
+          "contains": "\"exit\": 0"
+        },
+        {
+          "file": "docs/reports/symbolic-decomposition-cycle3/post-matrix-confirmation.json",
+          "contains": "\"test_count\": 374"
+        },
+        {
+          "file": "docs/reports/symbolic-decomposition-cycle3/post-matrix-confirmation.json",
+          "contains": "\"source_and_matrix_stable\": true"
+        }
+      ]
     },
     "main-push": {
-      "verdict": "deferred",
-      "note": "Authorized after authoritative Python; primary checkout foreign work is protected. Remote main can fast-forward from isolated branch."
+      "verdict": "noted",
+      "note": "User-authorized git push origin HEAD:main follows the final evidence commit; its actual outcome and remote verification are retained privately under main-push-1. This reconciliation is a pre-publication checkpoint. Primary checkout unrelated work remains protected."
     },
     "maintenance": {
       "verdict": "deferred",

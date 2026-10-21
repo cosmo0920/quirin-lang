@@ -1,0 +1,22 @@
+{
+  "command": [
+    "/usr/bin/python3",
+    "-m",
+    "unittest",
+    "discover",
+    "-s",
+    "scripts/tests"
+  ],
+  "cwd": "/home/cosmo/.codex/worktrees/symbolic-cycle3-integration/qcore-c",
+  "source": "55cba9721bc637a18772821a7ed13e5097643fec",
+  "started": "2026-10-21T23:52:12.235685+00:00",
+  "ended": "2026-10-21T23:53:28.332649+00:00",
+  "exit": 0,
+  "test_count": 374,
+  "matrix_sha256_before": "b937e661df4d618a94ea2fd047e428b12ac34cac9dd68dc69afd888df84d0b0d",
+  "matrix_sha256_after": "b937e661df4d618a94ea2fd047e428b12ac34cac9dd68dc69afd888df84d0b0d",
+  "matrix_committed_before": true,
+  "source_and_matrix_stable": true,
+  "log": "/home/cosmo/.codex/worktrees/symbolic-cycle3-integration/qcore-c/private/symbolic-decomposition-cycle3/matrix-python-1/python.log",
+  "log_sha256": "ac812ce9da99c1d58af04ae61da98dbaabd3e1cf706b2921e75f617e24bb78d7"
+}
