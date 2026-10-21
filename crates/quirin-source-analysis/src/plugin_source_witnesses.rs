@@ -589,8 +589,8 @@ contract {{
  requires resource_premise_flow_v1(native_duplicate, {BOUNDED_ATOM});
  requires resource_premise_flow_v1(observed_counterexample, {GO_IMPLIES_ATOM});
  requires resource_premise_flow_v1(known_error, ({GO_COMPLETE_ATOM} !-> {GO_IMPLIES_ATOM}));
- requires resource_premise_flow_v1(alternative, ({BOUNDED_ATOM} |-> flow(known_error)));
- requires resource_premise_flow_v1(combined, ({BOUNDED_ATOM} -> flow(known_error)));
+ requires resource_premise_flow_v1(alternative, ({BOUNDED_ATOM} ||-> flow(known_error)));
+ requires resource_premise_flow_v1(combined, ({BOUNDED_ATOM} |-> flow(known_error)));
  requires resource_premise_flow_v1(finished, (flow(combined) ->| {COMPLETION_ATOM}));
  ensures normal resource_return_none();
 }};

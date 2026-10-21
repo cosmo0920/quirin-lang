@@ -67,7 +67,12 @@ def GoCreatorImpliesRegistration (trace : List String) : Prop :=
   "return:nonnull" ∈ trace → GoRegistrationSucceeded trace
 
 structure Context where
-  source artifact build property bounds environment : String
+  source : String
+  artifact : String
+  build : String
+  property : String
+  bounds : String
+  environment : String
   deriving DecidableEq
 
 /-- Independent source/native replay, not presentation agreement alone. -/
