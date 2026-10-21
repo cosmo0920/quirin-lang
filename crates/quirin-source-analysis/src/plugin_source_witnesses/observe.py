@@ -7,7 +7,7 @@ inventory=json.loads(pathlib.Path(sys.argv[1]).read_text()); out=pathlib.Path(sy
 commands=[]
 def run(args,cwd=None):
     p=subprocess.run(args,cwd=cwd,stdout=subprocess.PIPE,stderr=subprocess.PIPE)
-    commands.append({'args':args,'cwd':str(cwd) if cwd else None,'exit':p.returncode,'stderr':p.stderr.decode(errors='replace')})
+    commands.append({'args':args,'cwd':str(cwd) if cwd else None,'exit':p.returncode,'stderr':p.stderr.decode(errors='replace')}); (out/'commands.json').write_text(json.dumps(commands,indent=2))
     if p.returncode: raise RuntimeError(json.dumps(commands[-1]))
     return p.stdout
 
@@ -27,7 +27,7 @@ def extraction(text,name):
     # Mask strings/comments without changing offsets; delimiters inside them
     # cannot terminate the exact original-byte function projection.
     mask=re.sub(r'/\*.*?\*/|//[^\n]*|"(?:\\.|[^"\\])*"|\'(?:\\.|[^\'\\])*\'',lambda m:''.join('\n' if c=='\n' else ' ' for c in m[0]),text,flags=re.S)
-    matches=list(re.finditer(r'(?m)^[^\n;{}]*\b'+re.escape(name)+r'\s*\([^;{}]*\)\s*\{',mask))
+    matches=[m for m in re.finditer(r'(?m)^[^\n;{}]*\b'+re.escape(name)+r'\s*\([^;{}]*\)\s*\{',mask) if mask[m.start():mask.index(name,m.start())].strip() and not re.search(r'[=(]',mask[m.start():mask.index(name,m.start())])]
     if len(matches)!=1:raise ValueError(('ambiguous projection',name,len(matches)))
     m=matches[0];start=m.start();pos=mask.index('{',m.start());depth=1;end=pos+1
     while depth:
@@ -65,6 +65,7 @@ common=r'''
 #include <string.h>
 static const char *CASE; static int observing=1;
 static void ev(const char *e){if(observing)printf("%s:%s\n",CASE,e);}
+void fixture_event(const char *e){ev(e);}
 static void *real_open(const char *p,int f){ev("open");return dlopen(p,f);}
 static void *real_sym(void *h,const char *s){char b[160];snprintf(b,sizeof b,"symbol:%s",s);ev(b);return dlsym(h,s);}
 static int real_close(void *h){ev("close");return dlclose(h);}
@@ -101,12 +102,12 @@ static flb_sds_t sds_observed(const char *s){ev("retain");return strdup(s);}
 '''
 def build(name,text,index,shared=False):
     p=out/(name+'.c');p.write_text(text);target=out/(name+'.so' if shared else name)
-    args=['/usr/bin/clang',*allflags[index],'-O0','-g0','-ffunction-sections','-fdata-sections','-Wl,--gc-sections','-Wl,--build-id=none','-I'+str(pathlib.Path(inventory['source_files'][index]['actual_path']).parent),'-o',str(target),str(p),'-ldl']
+    args=['/usr/bin/clang',*allflags[index],'-O0','-g0','-ffunction-sections','-fdata-sections','-Wl,--gc-sections','-Wl,--build-id=none','-rdynamic','-I'+str(pathlib.Path(inventory['source_files'][index]['actual_path']).parent),'-o',str(target),str(p),'-ldl']
     if shared:args.insert(1,'-shared')
     run(args);return target
 # RK local DSOs export the real header's exact conf_init signature.
 rkheader=prefix(0)
-for name,code in [('rk_ok','rd_kafka_resp_err_t conf_init(rd_kafka_conf_t *c,void **o,char *e,size_t n){*o=(void*)0x123;return 0;}'),('rk_error','rd_kafka_resp_err_t conf_init(rd_kafka_conf_t *c,void **o,char *e,size_t n){return RD_KAFKA_RESP_ERR__INVALID_ARG;}'),('rk_empty','int empty_fixture;')]:build(name,rkheader+code,0,True)
+for name,code in [('rk_ok','rd_kafka_resp_err_t conf_init(rd_kafka_conf_t *c,void **o,char *e,size_t n){*o=(void*)0x123;return 0;}'),('rk_error','rd_kafka_resp_err_t conf_init(rd_kafka_conf_t *c,void **o,char *e,size_t n){return RD_KAFKA_RESP_ERR__INVALID_ARG;}'),('rk_empty','int empty_fixture;')]:build(name,rkheader+'\nextern void fixture_event(const char*);\n'+code.replace('{*o=', '{fixture_event("conf_init");*o=').replace('{return RD_KAFKA', '{fixture_event("conf_init");return RD_KAFKA'),0,True)
 rkstubs=r'''
 static int duplicate;static void *retained;
 static void *find_stub(const rd_list_t *l,const void *p,int(*cmp)(const void*,const void*)){ev("duplicate_test");return duplicate?(void*)p:NULL;}
@@ -151,10 +152,11 @@ proxyheader=proxyheader.replace('"proxy/go/go.h"','"'+str(pathlib.Path(inventory
 goheader=goheader.replace('"./go.h"','"'+str(pathlib.Path(inventory['source_files'][3]['actual_path']).parent/'go.h')+'"')
 go_base=r'''
 int FLBPluginInit(void *ctx){return 0;}
-int FLBPluginRegister(struct flb_plugin_proxy_def *d){d->proxy=FLB_PROXY_GOLANG;d->type=FLB_PROXY_OUTPUT_PLUGIN;d->name="fixture";return 0;}
+extern void fixture_event(const char*);
+int FLBPluginRegister(struct flb_plugin_proxy_def *d){fixture_event("register");d->proxy=FLB_PROXY_GOLANG;d->type=FLB_PROXY_OUTPUT_PLUGIN;d->name="fixture";return 0;}
 '''
 build('go_ok',goheader+go_base,3,True)
-build('go_pre_fail',goheader+go_base+'\nint FLBPluginPreRegister(int h){return -1;}\n',3,True)
+build('go_pre_fail',goheader+go_base+'\nint FLBPluginPreRegister(int h){fixture_event("pre_register");return -1;}\n',3,True)
 build('go_no_init',goheader+'\nint FLBPluginRegister(struct flb_plugin_proxy_def *d){return 0;}\n',3,True)
 build('go_empty',goheader+'\nint no_register;\n',3,True)
 proxystubs=r'''
@@ -181,5 +183,6 @@ for case in inventory['selected_case_domain']:
     if any(not x.startswith(case+':') for x in lines):raise ValueError('trace framing')
     traces[case]=[x[len(case)+1:] for x in lines]
 artifacts={p.name:sha(p.read_bytes()) for p in sorted(out.iterdir()) if p.suffix in ('.so','.c','.i','.d') or p.name.endswith('_projection')}
-result={'version':1,'inventory_sha256':sha(pathlib.Path(sys.argv[1]).read_bytes()),'compiler':run(['/usr/bin/clang','--version']).decode(),'target':run(['/usr/bin/clang','-dumpmachine']).decode().strip(),'projections':projections,'asts':asts,'artifacts':artifacts,'traces':traces}
+symbols={p.name:run(['/usr/bin/readelf','--dyn-syms','--wide',str(p)]).decode() for p in sorted(out.glob('*.so'))}
+result={'symbols':symbols,'version':1,'inventory_sha256':sha(pathlib.Path(sys.argv[1]).read_bytes()),'compiler':run(['/usr/bin/clang','--version']).decode(),'target':run(['/usr/bin/clang','-dumpmachine']).decode().strip(),'projections':projections,'asts':asts,'artifacts':artifacts,'traces':traces}
 (out/'commands.json').write_text(json.dumps(commands,indent=2));(out/'observation.json').write_text(json.dumps(result,indent=2));print(json.dumps(result))
