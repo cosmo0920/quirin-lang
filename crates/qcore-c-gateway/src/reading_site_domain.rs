@@ -139,6 +139,9 @@ pub fn check(held: &HeldDomain<'_>, presented: &[Receipt]) -> Result<CheckedDoma
         )?);
     }
     if canonical(&rebuilt)? != canonical(held.expected)? {
+        std::fs::write("/tmp/qcore-local-domain-fresh.json", serde_json::to_vec_pretty(&rebuilt).unwrap()).unwrap();
+        std::fs::write("/tmp/qcore-local-domain-held.json", serde_json::to_vec_pretty(held.expected).unwrap()).unwrap();
+        panic!("private diagnostic stop on first complete-domain mismatch");
         return Err(format!(
             "local domain: complete fresh recorded domain differs (fresh {}, held {})",
             rebuilt.len(),
