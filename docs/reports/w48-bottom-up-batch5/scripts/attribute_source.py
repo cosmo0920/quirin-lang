@@ -40,6 +40,22 @@ for i,(left,right) in enumerate(zip(docs['base']['units'],docs['tip']['units']))
   if name in x.get('validated',{}):continue
   payload={'methods':methods,'clauses':y.get('clauses',{}).get(name)};added.append({'function':name,'payload':payload,'existed_in_baseline_units':payload in known.get(name,[])})
  body.append({'index':i,'library':left['library'],'file':left['file'],'before':x,'after':y,'prior_validated_payloads_retained':retained,'prior_validated_payloads_changed':changed,'new_replay_payloads':added})
+premise_changes=[]
+for i,(left,right) in enumerate(zip(docs['base']['units'],docs['tip']['units'])):
+ for j,(before,after) in enumerate(zip(left['functions'],right['functions'])):
+  assert before['function']==after['function']
+  old,new=before.get('null_premises',[]),after.get('null_premises',[])
+  if old==new:continue
+  observations=[]
+  for premise in old+new:
+   if premise in old and premise in new:continue
+   origin=premise.get('origin','');spelling,separator,number=origin.rpartition(':')
+   if not separator or not number.isdigit():continue
+   candidates=[x for x in tracked if x==spelling or x.endswith('/'+spelling)]
+   if len(candidates)!=1:observations.append({'origin':origin,'unresolved_source_candidates':candidates});continue
+   path=a.source/candidates[0];raw=path.read_bytes();lines=raw.decode().splitlines();line=int(number)
+   observations.append({'origin':origin,'source_path':candidates[0],'file_sha256':sha(raw),'excerpt':'\n'.join(lines[max(0,line-3):line+3])})
+  premise_changes.append({'unit':i,'row':j,'library':left['library'],'file':left['file'],'function':before['function'],'before':old,'after':new,'source_observations':observations})
 assert before_identity==identity()
-result={'source_root':str(a.source.resolve()),'source_identity_before_after':before_identity,'rows':classified,'body_evidence_changes':body,'meaning':'Exact complete changes and source coordinates for review; C snippets do not discharge custody obligations. Replay/header multiplicity is not distinct native coverage.'}
+result={'source_root':str(a.source.resolve()),'source_identity_before_after':before_identity,'rows':classified,'body_evidence_changes':body,'named_null_premise_changes':premise_changes,'meaning':'Exact complete changes and source coordinates for review; C snippets do not discharge custody obligations. Replay/header multiplicity is not distinct native coverage.'}
 (out/'source-body-attribution.json').write_text(json.dumps(result,indent=2)+'\n');print(json.dumps({'semantic_rows':len(classified),'body_units':len(body),'prior_methods_changed':sum(len(x['prior_validated_payloads_changed']) for x in body)}))
