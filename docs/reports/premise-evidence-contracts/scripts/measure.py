@@ -76,6 +76,10 @@ def main():
               'environment': {k: env.get(k, 'unset') for k in ('QCORE_PROFILES', 'QCORE_CLANG', 'QCORE_CROSS_UNIT_LINK_MAP',
                               'QCORE_NULL_PROPERTY', 'QCORE_OUTER_PROJECTION', 'QCORE_SOURCE_CONTRACTS', 'QCORE_RETURN_CENSUS')},
               'started': datetime.datetime.now(datetime.timezone.utc).isoformat()}
+    if route == 'corpus':
+        record['driver_environment_overrides']={'QCORE_CLANG':'/usr/bin/clang','QCORE_CHUNKIO_PACKAGE':str(PRIMARY/'build/cycle19/provider-packages-wave20/qcore.chunkio')}
+        record['external_inputs_before']={str(p):sha(p) for p in [source/'build/compile_commands.json',PRIMARY/'build/cycle19/c-gateway-wave-pin/monkey/monkey-build/compile_commands.json']}
+        record['package_inputs_before']=tree_identity(PRIMARY/'build/cycle19/provider-packages-wave20/qcore.chunkio')
     if route != 'corpus':
         record.update(compile_database=str(database), compile_database_sha256=sha(database),
                       selection=str(selection), selection_sha256=sha(selection))
@@ -94,6 +98,11 @@ def main():
     if route != 'corpus':
         record['compile_database_sha256_after'] = sha(database)
         record['selection_sha256_after'] = sha(selection)
+    if route == 'corpus':
+        record['external_inputs_after']={p:sha(Path(p)) for p in record['external_inputs_before']}
+        record['package_inputs_after']=tree_identity(PRIMARY/'build/cycle19/provider-packages-wave20/qcore.chunkio')
+        record['retained_actual_driver_receipt']=str(out/'corpus/run.json')
+        assert record['external_inputs_before']==record['external_inputs_after'] and record['package_inputs_before']==record['package_inputs_after']
     stable = record['inputs_before']==record['inputs_after'] and all(record.get(k + '_after') == record[k] for k in ['source_identity', 'runner_sha256', 'profile_sha256', 'link_map_sha256', 'report_driver_sha256'] + ([] if route == 'corpus' else ['compile_database_sha256', 'selection_sha256']))
     if not stable or record['binary_sha256_after'] != record['binary_sha256'] or record['head_after'] != record['head']:
         record['identity_error'] = 'source or binary changed during route'
