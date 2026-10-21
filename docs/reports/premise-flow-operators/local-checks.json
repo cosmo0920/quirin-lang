@@ -121,5 +121,38 @@
     "lock": "/tmp/qcore-c-cycle2-small-compile.lock",
     "private_log": "private/premise-flow-operators/focused-5/contract.log",
     "reason": "required model fields now reject whitespace-only values; complete corrected contract target rerun"
+  },
+  "joint_gate_1": {
+    "source": "a7ba6a6d627778151ec60aaafcae231dae86d4b9",
+    "authority": "root-owned integrated attempt; not own-worktree gate",
+    "command": "python3 scripts/run_test_binaries.py --jobs 4",
+    "exit": 101,
+    "passed": 8438,
+    "failed": 2,
+    "ignored": 15,
+    "units": 532,
+    "summaries": 545,
+    "failures": [
+      {
+        "test": "workspace_dependencies_point_strictly_downward",
+        "reason": "frontend must depend only on core; newly added frontend-to-schemas dependency violated architecture",
+        "log": "/home/cosmo/Documents/GitHub/qcore-c/private/test-binaries/20261021T080506Z-1202176/qcore-compiler_test_workspace_layering.stdout.log"
+      },
+      {
+        "test": "lexes_maps_to_apart_from_the_pipe_the_or_and_the_arrow",
+        "reason": "old ||-> split-token pin must intentionally become longest-match FlowOr; MapsTo unchanged",
+        "log": "/home/cosmo/Documents/GitHub/qcore-c/private/test-binaries/20261021T080506Z-1202176/qcore-frontend_lib_qcore_frontend.stdout.log"
+      }
+    ],
+    "shared_ancillary": {
+      "fmt_exit": 1,
+      "reason_fmt": "source-analysis module order",
+      "clippy_exit": 0,
+      "lean_exit": 1,
+      "reason_lean": "merged root QCore.lean import after declarations; individual new flow module built successfully"
+    },
+    "own_repair_freeze": "d321ece1c",
+    "own_source_repair": "025b4902e",
+    "new_builds": "none while root locks held; restarted full joint gate required"
   }
 }
