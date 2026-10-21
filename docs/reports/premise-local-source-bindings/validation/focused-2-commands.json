@@ -1,0 +1,86 @@
+[
+  {
+    "step": "gateway-domain",
+    "command": [
+      "cargo",
+      "test",
+      "-p",
+      "qcore-c-gateway",
+      "--test",
+      "reading_site_domain",
+      "-j1"
+    ],
+    "cwd": "/home/cosmo/.codex/worktrees/premise-decomposition-cycle1b/qcore-c",
+    "exit": 101,
+    "seconds": 0.2667853832244873,
+    "source": "5e3dc1eefd44131bed980ceb318013ed1ef9ed70"
+  },
+  {
+    "step": "cjson-adapter",
+    "command": [
+      "cargo",
+      "test",
+      "-p",
+      "quirin-source-analysis",
+      "--lib",
+      "cjson_local_binding",
+      "-j1"
+    ],
+    "cwd": "/home/cosmo/.codex/worktrees/premise-decomposition-cycle1b/qcore-c",
+    "exit": 0,
+    "seconds": 8.575717449188232,
+    "source": "5e3dc1eefd44131bed980ceb318013ed1ef9ed70"
+  },
+  {
+    "step": "source-sealing-docs",
+    "command": [
+      "cargo",
+      "test",
+      "-p",
+      "quirin-source-analysis",
+      "--doc",
+      "cjson_local_binding",
+      "-j1"
+    ],
+    "cwd": "/home/cosmo/.codex/worktrees/premise-decomposition-cycle1b/qcore-c",
+    "exit": 0,
+    "seconds": 5.578125953674316,
+    "source": "5e3dc1eefd44131bed980ceb318013ed1ef9ed70"
+  },
+  {
+    "step": "production-driver-typing",
+    "command": [
+      "cargo",
+      "check",
+      "-p",
+      "qcore-audit",
+      "--example",
+      "libc_local_source_domains",
+      "-j1"
+    ],
+    "cwd": "/home/cosmo/.codex/worktrees/premise-decomposition-cycle1b/qcore-c",
+    "exit": 0,
+    "seconds": 10.777466535568237,
+    "source": "5e3dc1eefd44131bed980ceb318013ed1ef9ed70"
+  },
+  {
+    "step": "native-source-flow",
+    "command": [
+      "cargo",
+      "run",
+      "-p",
+      "quirin-source-analysis",
+      "--example",
+      "cjson_local_source",
+      "-j1",
+      "--",
+      "/home/cosmo/Documents/GitHub/qcore-c/private/w45-fb/w46-external-callee-contracts/attempt-1/fluent-bit-clang-source/lib/librdkafka-2.15.0/src/cJSON.c",
+      "/home/cosmo/Documents/GitHub/qcore-c/private/w45-fb/w46-external-callee-contracts/attempt-1/fluent-bit-clang-source/lib/librdkafka-2.15.0/src/cJSON.h",
+      "/home/cosmo/.codex/worktrees/premise-decomposition-cycle1b/qcore-c/private/premise-local-source-bindings/native-checked-2"
+    ],
+    "cwd": "/home/cosmo/.codex/worktrees/premise-decomposition-cycle1b/qcore-c",
+    "exit": 0,
+    "seconds": 3.4167320728302,
+    "source": "5e3dc1eefd44131bed980ceb318013ed1ef9ed70"
+  }
+]

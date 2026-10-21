@@ -1,3 +1,4 @@
+import QCore.LocalSourceBindings
 import QCore.PremiseFlow
 import QCore.ScalarAccessorCondition
 import QCore.ListLookup

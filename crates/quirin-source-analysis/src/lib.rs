@@ -41,3 +41,6 @@ pub(crate) use chunkio::chunk_source;
 
 #[cfg(test)]
 mod test_support;
+
+/// Source-specific finite native cJSON representation observations.
+pub mod cjson_local_binding;
