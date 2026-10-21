@@ -612,6 +612,8 @@ Regenerate with `python3 scripts/build_docs_index.py`; validate with `--check`.
 
 | [premise-decomposition-cycle1b](premise-decomposition-cycle1b/README.md) | Libc reading-premise decomposition, cycle 1B |
 
+| [premise-evidence-contracts](premise-evidence-contracts/README.md) | Concrete premise evidence contracts |
+
 | [premise-integration](premise-integration/README.md) | Serial premise and implementation integration |
 
 | [process-fixtures-fs-write](process-fixtures-fs-write/README.md) | PROCESS-FIXTURES-FS-WRITE-OUTSIDE-HOST-CRATE: one out-of-process writer for every executable test fixture |

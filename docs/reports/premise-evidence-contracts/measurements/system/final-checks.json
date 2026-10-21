@@ -1,0 +1,142 @@
+{
+  "route": "system",
+  "checks": {
+    "all_complete_record_differences_exactly_attributed": true,
+    "full_contract_environment_equal_after_exact_source_digest_root_restoration": true,
+    "all_complete_compile_configurations_attributed": true,
+    "all_actual_closed_world_facts_equal": true,
+    "lock_changed_only_exact_selected_digest": true,
+    "explicit_checked_binding_resolution": true,
+    "diagnostic_counts": true,
+    "full_null_dictionaries": true,
+    "null_summary": true,
+    "full_runtime_projection": true,
+    "declaration_and_clause_standing": true
+  },
+  "all_checks_pass": true,
+  "base": {
+    "Unknown": 345,
+    "Safe": 99,
+    "Unsafe": 4
+  },
+  "tip": {
+    "Unknown": 345,
+    "Safe": 99,
+    "Unsafe": 4
+  },
+  "null_rows": {
+    "base": 454,
+    "tip": 454
+  },
+  "potential_declaration_users": 0,
+  "hypothetically_affected_refinement_instances": 0,
+  "dependent_other_contexts_unchanged": 0,
+  "unrelated_custody_records": 448,
+  "production_verdict_or_legacy_premise_disposition_changes": 0,
+  "scope": "Fresh current eight-home context; actual production same-name attachment with explicit checked references. C/source/model/prose correspondence remains Open.",
+  "retained_initial_comparison_exit": 1,
+  "commands": [
+    {
+      "command": [
+        "/usr/bin/python3",
+        "/home/cosmo/.codex/worktrees/premise-decomposition-cycle1/qcore-c/docs/reports/premise-evidence-contracts/scripts/compare.py",
+        "system",
+        "/home/cosmo/.codex/worktrees/premise-decomposition-cycle1/qcore-c/private/premise-evidence-contracts/measure-1/system/base",
+        "/home/cosmo/.codex/worktrees/premise-decomposition-cycle1/qcore-c/private/premise-evidence-contracts/measure-1/system/tip",
+        "/home/cosmo/.codex/worktrees/premise-decomposition-cycle1/qcore-c/docs/reports/premise-evidence-contracts/measurements/system"
+      ],
+      "exit": 1,
+      "log": "/home/cosmo/.codex/worktrees/premise-decomposition-cycle1/qcore-c/private/premise-evidence-contracts/final-comparison-inputs/system/compare.log"
+    },
+    {
+      "command": [
+        "/usr/bin/python3",
+        "/home/cosmo/.codex/worktrees/premise-decomposition-cycle1/qcore-c/docs/reports/premise-evidence-contracts/scripts/attribute_metadata.py",
+        "system",
+        "--comparison",
+        "/home/cosmo/.codex/worktrees/premise-decomposition-cycle1/qcore-c/docs/reports/premise-evidence-contracts/measurements/system",
+        "--raw-root",
+        "/home/cosmo/.codex/worktrees/premise-decomposition-cycle1/qcore-c/private/premise-evidence-contracts/final-comparison-inputs/system",
+        "--environment-directory",
+        "/home/cosmo/.codex/worktrees/premise-decomposition-cycle1/qcore-c/private/premise-evidence-contracts/environment"
+      ],
+      "exit": 1,
+      "log": "/home/cosmo/.codex/worktrees/premise-decomposition-cycle1/qcore-c/private/premise-evidence-contracts/final-comparison-inputs/system/attribute_metadata.log"
+    },
+    {
+      "command": [
+        "/usr/bin/python3",
+        "/home/cosmo/.codex/worktrees/premise-decomposition-cycle1/qcore-c/docs/reports/premise-evidence-contracts/scripts/attribute_metadata.py",
+        "system",
+        "--comparison",
+        "/home/cosmo/.codex/worktrees/premise-decomposition-cycle1/qcore-c/docs/reports/premise-evidence-contracts/measurements/system",
+        "--raw-root",
+        "/home/cosmo/.codex/worktrees/premise-decomposition-cycle1/qcore-c/private/premise-evidence-contracts/final-comparison-inputs/system",
+        "--environment-directory",
+        "/home/cosmo/.codex/worktrees/premise-decomposition-cycle1/qcore-c/private/premise-evidence-contracts/route-environments/system"
+      ],
+      "exit": 0,
+      "log": "/home/cosmo/.codex/worktrees/premise-decomposition-cycle1/qcore-c/private/premise-evidence-contracts/final-comparison-inputs/system/attribute_metadata-2.log"
+    },
+    {
+      "command": [
+        "/usr/bin/python3",
+        "/home/cosmo/.codex/worktrees/premise-decomposition-cycle1/qcore-c/docs/reports/premise-evidence-contracts/scripts/attribute_time_identity.py",
+        "system",
+        "/home/cosmo/.codex/worktrees/premise-decomposition-cycle1/qcore-c/docs/reports/premise-evidence-contracts/measurements/system"
+      ],
+      "exit": 0,
+      "log": "/home/cosmo/.codex/worktrees/premise-decomposition-cycle1/qcore-c/private/premise-evidence-contracts/final-comparison-inputs/system/attribute_time_identity-2.log"
+    },
+    {
+      "command": [
+        "/usr/bin/python3",
+        "/home/cosmo/.codex/worktrees/premise-decomposition-cycle1/qcore-c/docs/reports/premise-evidence-contracts/scripts/five_artifacts.py",
+        "system",
+        "/home/cosmo/.codex/worktrees/premise-decomposition-cycle1/qcore-c/private/premise-evidence-contracts/measure-1/system/base",
+        "/home/cosmo/.codex/worktrees/premise-decomposition-cycle1/qcore-c/private/premise-evidence-contracts/measure-1/system/tip",
+        "/home/cosmo/.codex/worktrees/premise-decomposition-cycle1/qcore-c/docs/reports/premise-evidence-contracts/measurements/system/five-artifacts.json"
+      ],
+      "exit": 0,
+      "log": "/home/cosmo/.codex/worktrees/premise-decomposition-cycle1/qcore-c/private/premise-evidence-contracts/final-comparison-inputs/system/five_artifacts-2.log"
+    },
+    {
+      "command": [
+        "/home/cosmo/.codex/worktrees/premise-decomposition-cycle1/qcore-c/target/debug/examples/premise_outer_facts",
+        "/home/cosmo/.codex/worktrees/premise-decomposition-cycle1/qcore-c/private/premise-evidence-contracts/measure-1/system/base/resource-diagnostics.json",
+        "/home/cosmo/.codex/worktrees/premise-decomposition-cycle1/qcore-c/private/premise-evidence-contracts/measure-1/system/base/resource-diagnostics.contracts.json",
+        "/home/cosmo/.codex/worktrees/premise-decomposition-cycle1/qcore-c/private/premise-evidence-contracts/final-comparison-inputs/system/base-outer-facts.json"
+      ],
+      "exit": 0,
+      "output": "/home/cosmo/.codex/worktrees/premise-decomposition-cycle1/qcore-c/private/premise-evidence-contracts/final-comparison-inputs/system/base-outer-facts.json"
+    },
+    {
+      "command": [
+        "/home/cosmo/.codex/worktrees/premise-decomposition-cycle1/qcore-c/target/debug/examples/premise_outer_facts",
+        "/home/cosmo/.codex/worktrees/premise-decomposition-cycle1/qcore-c/private/premise-evidence-contracts/measure-1/system/tip/resource-diagnostics.json",
+        "/home/cosmo/.codex/worktrees/premise-decomposition-cycle1/qcore-c/private/premise-evidence-contracts/measure-1/system/tip/resource-diagnostics.contracts.json",
+        "/home/cosmo/.codex/worktrees/premise-decomposition-cycle1/qcore-c/private/premise-evidence-contracts/final-comparison-inputs/system/tip-outer-facts.json"
+      ],
+      "exit": 0,
+      "output": "/home/cosmo/.codex/worktrees/premise-decomposition-cycle1/qcore-c/private/premise-evidence-contracts/final-comparison-inputs/system/tip-outer-facts.json"
+    },
+    {
+      "command": [
+        "/home/cosmo/.codex/worktrees/premise-decomposition-cycle1/qcore-c/target/debug/examples/premise_bindings_replay",
+        "/home/cosmo/.codex/worktrees/premise-decomposition-cycle1/qcore-c/private/premise-evidence-contracts/measure-1/system/tip/resource-diagnostics.contracts.json",
+        "/home/cosmo/.codex/worktrees/premise-decomposition-cycle1/qcore-c/docs/reports/premise-evidence-contracts/expected-graph.json",
+        "/home/cosmo/.codex/worktrees/premise-decomposition-cycle1/qcore-c/docs/reports/premise-evidence-contracts/binding-manifest.json",
+        "/home/cosmo/.codex/worktrees/premise-decomposition-cycle1/qcore-c/docs/reports/premise-evidence-contracts/binding-manifest.json",
+        "/home/cosmo/.codex/worktrees/premise-decomposition-cycle1/qcore-c/private/premise-evidence-contracts/formal-artifact-index.json",
+        "/home/cosmo/.codex/worktrees/premise-decomposition-cycle1/qcore-c/private/premise-evidence-contracts/final-comparison-inputs/system/checked-binding-publication.json"
+      ],
+      "exit": 0,
+      "input_sha256": {
+        "/home/cosmo/.codex/worktrees/premise-decomposition-cycle1/qcore-c/private/premise-evidence-contracts/measure-1/system/tip/resource-diagnostics.contracts.json": "ed256c2228127f25abddfad97b99c21e969c779253203b5ddd74767285ad79f1",
+        "/home/cosmo/.codex/worktrees/premise-decomposition-cycle1/qcore-c/docs/reports/premise-evidence-contracts/expected-graph.json": "b0054bef60dba73581c88bb5320b2b3490b410229a1a17763c85f41eb87376ed",
+        "/home/cosmo/.codex/worktrees/premise-decomposition-cycle1/qcore-c/docs/reports/premise-evidence-contracts/binding-manifest.json": "a511dd5d2efe7e0fae2c29207e6a54ce5730f7870d7d5ed34d0bdc2c4d9b721e",
+        "/home/cosmo/.codex/worktrees/premise-decomposition-cycle1/qcore-c/private/premise-evidence-contracts/formal-artifact-index.json": "d174c87bdfcc8de62f9e305722fc35b93171ae04f07a8d3c92abbbe448e3d2b6"
+      }
+    }
+  ]
+}

@@ -51,5 +51,81 @@
       "lean": 1
     },
     "note": "Complete Rust runner passes. Test-only clone lint and misplaced root Lean import fail subsequent checks. Both fixed without disabling any check; full corrected gate queued. Provider/release stages not executed in this failed pipeline."
+  },
+  {
+    "attempt": "standing-2",
+    "commands": "/home/cosmo/.codex/worktrees/premise-decomposition-cycle1/qcore-c/private/premise-evidence-contracts/standing-2/commands.json",
+    "exit": 0,
+    "rust_passed": 8397,
+    "rust_failed": 0,
+    "rust_ignored": 15,
+    "units": 525,
+    "summaries": 538,
+    "lean_audits": 350
+  },
+  {
+    "attempt": "provider-1",
+    "commands": "/home/cosmo/.codex/worktrees/premise-decomposition-cycle1/qcore-c/private/premise-evidence-contracts/provider-1/commands.json",
+    "exit": 0,
+    "rust_passed": 133,
+    "rust_ignored": 1,
+    "python_passed": 25,
+    "packages_rebuilt_and_verified": 5
+  },
+  {
+    "attempt": "release-1",
+    "commands": "/home/cosmo/.codex/worktrees/premise-decomposition-cycle1/qcore-c/private/premise-evidence-contracts/release-1/commands.json",
+    "exit": 0
+  },
+  {
+    "attempt": "examples-2",
+    "commands": "/home/cosmo/.codex/worktrees/premise-decomposition-cycle1/qcore-c/private/premise-evidence-contracts/examples-2/commands.json",
+    "exit": 0
+  },
+  {
+    "attempt": "python-1",
+    "commands": "/home/cosmo/.codex/worktrees/premise-decomposition-cycle1/qcore-c/private/premise-evidence-contracts/python-1/commands.json",
+    "exit": 0,
+    "python_passed": 374,
+    "note": "After the committed regenerated schema-20/350-audit matrix; later gate-backed confirmation is recorded separately."
+  },
+  {
+    "attempt": "post-1-system",
+    "exit": 1,
+    "commands": "/home/cosmo/.codex/worktrees/premise-decomposition-cycle1/qcore-c/private/premise-evidence-contracts/post-1/commands.json",
+    "note": "Standalone comparison retains exact raw metadata differences. Subsequent metadata helper used corpus root-manifest/source spelling instead of configured lexical profile/../../../ manifest and route source; complete compile-configuration reconstruction correctly refused. No analyzer repair or semantic difference. Original logs and command remain; exact route environments independently reconstruct actual source-assumption/configuration hashes."
+  },
+  {
+    "attempt": "post-2-configured-and-corpus",
+    "exit": 0,
+    "final_checks": [
+      "/home/cosmo/.codex/worktrees/premise-decomposition-cycle1/qcore-c/docs/reports/premise-evidence-contracts/measurements/system/final-checks.json",
+      "/home/cosmo/.codex/worktrees/premise-decomposition-cycle1/qcore-c/docs/reports/premise-evidence-contracts/measurements/slice/final-checks.json",
+      "/home/cosmo/.codex/worktrees/premise-decomposition-cycle1/qcore-c/docs/reports/premise-evidence-contracts/measurements/corpus/final-checks.json"
+    ],
+    "note": "All complete records equal after exact metadata attribution, actual fresh preprocessing time-key reproduction, full closed-world facts and explicit binding replay. First comparison failures remain in each command list."
+  },
+  {
+    "attempt": "measure-1",
+    "exit": 0,
+    "commands": "/home/cosmo/.codex/worktrees/premise-decomposition-cycle1/qcore-c/docs/reports/premise-evidence-contracts/measurement-commands.json",
+    "audits": 6,
+    "scope": "Current symmetric eight-home context; no borrowed audit artifacts."
+  },
+  {
+    "attempt": "report-helper-syntax-preflight",
+    "initial_exit": 1,
+    "initial_error": "[Errno 30] Read-only file system while py_compile attempted scripts/__pycache__ under read-only sandbox worktree",
+    "corrected_exit": 0,
+    "corrected_command": [
+      "env",
+      "PYTHONPYCACHEPREFIX=/tmp/premise-evidence-pycache",
+      "python3",
+      "-m",
+      "py_compile",
+      "docs/reports/premise-evidence-contracts/scripts/reconstruct_environments.py",
+      "docs/reports/premise-evidence-contracts/scripts/collect.py"
+    ],
+    "meaning": "Report helper syntax checks pass with cache in the authorized temporary directory. No source, test, analyzer or gate behavior changed."
   }
 ]

@@ -1,0 +1,62 @@
+{
+  "base": {
+    "resource-diagnostics.json": {
+      "bytes": 2550138,
+      "sha256": "1ed8a24e580d429e26e68087aa70d5bbd445497b7e31a8b47414de83993be34b"
+    },
+    "resource-diagnostics.contracts.json": {
+      "bytes": 9034688,
+      "sha256": "0ee83df3956afcd6dd45e6d58bd1c78223cc0f39aae46305009024fcf58216f2"
+    },
+    "resource-diagnostics.chunk-contracts.json": {
+      "bytes": 385,
+      "sha256": "a97259087e4ad89a4662edcb494b27c27e80f06c62e404a19076224bbc0a2bd8"
+    },
+    "resource-diagnostics.source-effects.json": {
+      "bytes": 385,
+      "sha256": "a97259087e4ad89a4662edcb494b27c27e80f06c62e404a19076224bbc0a2bd8"
+    },
+    "slice-null.jsonl": {
+      "bytes": 1853353,
+      "sha256": "abab75b3a7d89c2472f6847ed392fa3ef8fd2c1a3e3d0456ea3ddf5c6f09d512"
+    },
+    "slice-null.summary.json": {
+      "bytes": 64487,
+      "sha256": "45acfd52ed91ac9e2ae64152e3c3a21b8b849df8aaf37c715ded3c5fda72ecc0"
+    },
+    "slice-outer.json": {
+      "bytes": 89114,
+      "sha256": "5b7390cf5ae95f877dd383b8a1b89551fba781d0ab3afc11a632f369848aec24"
+    }
+  },
+  "tip": {
+    "resource-diagnostics.json": {
+      "bytes": 2550124,
+      "sha256": "1996ea0a0786e02ef6c4ae38585fbaead328c8ff74a65486737b71e8b46b1813"
+    },
+    "resource-diagnostics.contracts.json": {
+      "bytes": 9038659,
+      "sha256": "9dbd2e46ce49061d7173b69d2175e1a4eafd0539f3e81764eb5628d7d7be549b"
+    },
+    "resource-diagnostics.chunk-contracts.json": {
+      "bytes": 385,
+      "sha256": "a97259087e4ad89a4662edcb494b27c27e80f06c62e404a19076224bbc0a2bd8"
+    },
+    "resource-diagnostics.source-effects.json": {
+      "bytes": 385,
+      "sha256": "a97259087e4ad89a4662edcb494b27c27e80f06c62e404a19076224bbc0a2bd8"
+    },
+    "slice-null.jsonl": {
+      "bytes": 1853353,
+      "sha256": "6b20ab92d543e15d96a862c813f31e44437fb2a2aac8dcfd285b92cb50511c1e"
+    },
+    "slice-null.summary.json": {
+      "bytes": 64487,
+      "sha256": "45acfd52ed91ac9e2ae64152e3c3a21b8b849df8aaf37c715ded3c5fda72ecc0"
+    },
+    "slice-outer.json": {
+      "bytes": 89109,
+      "sha256": "b4a58ff6bb277728d8c1fb81ffa766e8495e7cdf57aeda861dff5fb927bd60ef"
+    }
+  }
+}

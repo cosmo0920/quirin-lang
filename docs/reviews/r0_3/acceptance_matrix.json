@@ -6754,8 +6754,8 @@
   "note": "providers/ is a separate Cargo workspace, excluded from the core workspace; P01 verified empirically that the core workspace builds and passes its full suite with providers/ moved out of the tree."
  },
  "validation": {
-  "note": "PREMISE-DECOMPOSITION-CYCLE1 on exact base2d8f6d342: report-owned nine opaque atoms/three conditional theorems; no production contract, classifier or semantic reader change. Root runner522units/535summaries/8376passed/15ignored/0failed; 347Lean audits. Conditional provider gate inapplicable: final provider contracts/SDK/schema unchanged; provider_tests133 carries exact-base integration evidence only, with no fresh provider/package claim. RootPython374passed after committed derived matrix; final gate-backed confirmation documented separately. Six fresh original-input audits compare equal under same six-home link-map context; scoped corpus966Safe/3859Unknown/9provisionalUnsafe, system99/345/4, slice53/346/4Pending/1provisionalUnsafe. Complete null/runtime dictionaries and every-row closed-world classification equal; roots/environment/inventory/timestamp metadata exactly reconstructed. Historical seven-home967 coverage remains separately dated. Candidate production companion rejected by actual classifier control; all attempts retained. Actual local Clang recording accompanies this file.",
-  "workspace_tests": 8376,
+  "note": "PREMISE-EVIDENCE-CONTRACTS exact base c5c298db2, frozen analyzer/proof/production source 5a556d827. Same-name production cJSON graph-v2 attachment, exact legacy singleton/name/text/erasure retained; nine formal references integrity-checked, all source bindings Open. 525 Rust units/538 summaries/8397 passed/15 ignored/0 failed; 350 Lean audits. Fresh providers 133 Rust/1 ignored/25 Python; all five packages rebuilt and verified. Own 374 Python passed after committed regenerated matrix; final gate-backed confirmation recorded separately. All six fresh eight-home audits exit0 and complete static/null/runtime/standing/closed-world facts agree; system {'Unknown': 345, 'Safe': 99, 'Unsafe': 4}; slice {'Unknown': 346, 'Safe': 53, 'Pending': 4, 'Unsafe': 1}; corpus {'Unknown': 3852, 'Safe': 973, 'Unsafe': 9}. No verdict, classifier exception, typed consumer, standing or source truth promotion. All failures, exact route environment/configuration/lock/time attribution and historical helper correction retained. Actual local Clang recording accompanies this file.",
+  "workspace_tests": 8397,
   "provider_tests": 133,
   "python_evidence_validator_tests": 374,
   "lean_audits": 350,
@@ -7117,7 +7117,7 @@
   "cargo_clippy": "clean",
   "standing_gate": "complete",
   "full_language_conformance": false,
-  "measurement_provenance": "carried_from_previous_matrix: these numbers were NOT measured for this regeneration; pass --gate PATH with the standing-gate results of this checkpoint to replace them"
+  "measurement_provenance": "integrator_supplied (docs/reports/premise-evidence-contracts/gate.json)"
  },
  "named_followups": [
   {
@@ -12719,7 +12719,7 @@
   {
    "id": "CJSON-REPRESENTATION-PROSE-AND-SOURCE-BINDING",
    "title": "Bind the cJSON representation propositions to prose and exact caller environments",
-   "why": "PREMISE-DECOMPOSITION-CYCLE1 publishes a report-owned replayable variant with nine opaque/open representation atoms with explicit Lean Props and conditional model theorems while preserving the exact production detach_list_representation reader. The production companion is rejected because its new name changes closed-world classification even under Unknown; a neutral graph-attachment interface must preserve that classification before production publication. No proof equates the old prose and conjunction, identifies imported C heaps with the mathematical environment, or establishes arbitrary callers and writer traces satisfy the antecedents. DISCHARGE: prove/review precise prose-to-formal correspondence, independently bind exact heap/trace/source/build/bounds contexts, exercise missing/refuted/incompatible antecedents and transitive result impact, and retain declared/evidence-only standing until a separately reviewed typed consumer exists. Opaque text, observed source shape, agreement and LLM proposals confer no semantic authority. This card does not cover allocator hooks, insertion invariant or sibling-release/lookup/Removed transport residuals.",
+   "why": "PREMISE-DECOMPOSITION-CYCLE1 publishes a report-owned replayable variant with nine opaque/open representation atoms with explicit Lean Props and conditional model theorems while preserving the exact production detach_list_representation reader. The production companion is rejected because its new name changes closed-world classification even under Unknown; a neutral graph-attachment interface must preserve that classification before production publication. No proof equates the old prose and conjunction, identifies imported C heaps with the mathematical environment, or establishes arbitrary callers and writer traces satisfy the antecedents. DISCHARGE: prove/review precise prose-to-formal correspondence, independently bind exact heap/trace/source/build/bounds contexts, exercise missing/refuted/incompatible antecedents and transitive result impact, and retain declared/evidence-only standing until a separately reviewed typed consumer exists. Opaque text, observed source shape, agreement and LLM proposals confer no semantic authority. This card does not cover allocator hooks, insertion invariant or sibling-release/lookup/Removed transport residuals. AMENDED (PREMISE-EVIDENCE-CONTRACTS): a production same-name graph-v2 neutral attachment now preserves exact legacy name/text/singleton/erasure and all closed-world facts; nine formal references, prerequisite/environment IDs and explicit content-addressed model/audit bindings resolve integrity-only. Six fresh eight-home pairs preserve every static/null/runtime/standing/classification record; actual-context refutation impact and real direct/summary controls pass. The attachment interface portion is complete. All source/prose correspondences, actual heap/trace antecedents, evidence transport and typed semantic discharge remain Open; reference integrity is not truth. See docs/reports/premise-evidence-contracts/README.md, including the retained historical classifier-helper correction.",
    "source": "docs/reports/premise-decomposition-cycle1/README.md",
    "recorded_by": "PREMISE-DECOMPOSITION-CYCLE1"
   },
@@ -12731,5 +12731,5 @@
    "recorded_by": "PREMISE-DECOMPOSITION-CYCLE1B"
   }
  ],
- "updated": "2026-10-21 serial integration of premise cycles1/1B and W48 bottom-up batch4;807 followups; individual receipts retain their link contexts; composed standing gate pending."
+ "updated": "2026-10-21 PREMISE-EVIDENCE-CONTRACTS: neutral production cJSON graph-v2 attachment and schema20;807 followups remain; own six fresh eight-home compatibility audits and source/provider gates complete; no source truth or verdict movement."
 }

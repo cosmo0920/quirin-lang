@@ -7,7 +7,7 @@ PRIVATE=ROOT/'private/premise-evidence-contracts'
 p=argparse.ArgumentParser();p.add_argument('route');p.add_argument('--comparison',type=Path);p.add_argument('--raw-root',type=Path);p.add_argument('--environment-directory',type=Path);a=p.parse_args()
 out=a.comparison or ROOT/'docs/reports/premise-evidence-contracts/measurements'/a.route
 raw=a.raw_root or PRIVATE/'measure-1'/a.route
-environment_directory=a.environment_directory or PRIVATE
+environment_directory=a.environment_directory or PRIVATE/'route-environments'/a.route
 sha=lambda b:hashlib.sha256(b).hexdigest()
 read=lambda p:json.loads(p.read_bytes())
 inputs=PRIVATE/'base-inputs'

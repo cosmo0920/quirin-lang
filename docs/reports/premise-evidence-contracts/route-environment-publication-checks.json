@@ -1,0 +1,50 @@
+[
+  {
+    "route": "system",
+    "side": "base",
+    "sidecar_sha256": "1bf9a8a11b08d0b4ac39db841ed65ceec5d3c0d65def07a092fbe79f390bcb59",
+    "actual_complete_source_map_sha256": "8b437f43b8f6f8c000978967aa827d18ead4ff7f8c774a8f3e5cefe2a7cd8792",
+    "independently_reconstructed_source_map_sha256": "8b437f43b8f6f8c000978967aa827d18ead4ff7f8c774a8f3e5cefe2a7cd8792",
+    "equal": true
+  },
+  {
+    "route": "system",
+    "side": "tip",
+    "sidecar_sha256": "ed256c2228127f25abddfad97b99c21e969c779253203b5ddd74767285ad79f1",
+    "actual_complete_source_map_sha256": "2af42d9e04ee4ac542841d204d44bae199057c08bca0db9e03fe67b3e59c7d33",
+    "independently_reconstructed_source_map_sha256": "2af42d9e04ee4ac542841d204d44bae199057c08bca0db9e03fe67b3e59c7d33",
+    "equal": true
+  },
+  {
+    "route": "slice",
+    "side": "base",
+    "sidecar_sha256": "0ee83df3956afcd6dd45e6d58bd1c78223cc0f39aae46305009024fcf58216f2",
+    "actual_complete_source_map_sha256": "8b437f43b8f6f8c000978967aa827d18ead4ff7f8c774a8f3e5cefe2a7cd8792",
+    "independently_reconstructed_source_map_sha256": "8b437f43b8f6f8c000978967aa827d18ead4ff7f8c774a8f3e5cefe2a7cd8792",
+    "equal": true
+  },
+  {
+    "route": "slice",
+    "side": "tip",
+    "sidecar_sha256": "9dbd2e46ce49061d7173b69d2175e1a4eafd0539f3e81764eb5628d7d7be549b",
+    "actual_complete_source_map_sha256": "2af42d9e04ee4ac542841d204d44bae199057c08bca0db9e03fe67b3e59c7d33",
+    "independently_reconstructed_source_map_sha256": "2af42d9e04ee4ac542841d204d44bae199057c08bca0db9e03fe67b3e59c7d33",
+    "equal": true
+  },
+  {
+    "route": "corpus",
+    "side": "base",
+    "sidecar_sha256": "1f5f690cd25dc4bf48096ed053f3dbf9ecbd36dc7c5b3de950ad7136436f3319",
+    "actual_complete_source_map_sha256": "8b437f43b8f6f8c000978967aa827d18ead4ff7f8c774a8f3e5cefe2a7cd8792",
+    "independently_reconstructed_source_map_sha256": "8b437f43b8f6f8c000978967aa827d18ead4ff7f8c774a8f3e5cefe2a7cd8792",
+    "equal": true
+  },
+  {
+    "route": "corpus",
+    "side": "tip",
+    "sidecar_sha256": "4602cfa123783825172fe50886ea8127ef0485e1ef182b8939e159adff0e03ae",
+    "actual_complete_source_map_sha256": "2af42d9e04ee4ac542841d204d44bae199057c08bca0db9e03fe67b3e59c7d33",
+    "independently_reconstructed_source_map_sha256": "2af42d9e04ee4ac542841d204d44bae199057c08bca0db9e03fe67b3e59c7d33",
+    "equal": true
+  }
+]
