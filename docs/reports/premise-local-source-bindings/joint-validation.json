@@ -1,0 +1,36 @@
+{
+  "schema": "local-source-joint-validation.v1",
+  "authority": "parent joint premise-resolution-cycle2 integration gate; not an additional independent per-card run",
+  "source": "62eebba95c51917c0fe841fbc23e2bf0d0e7e465",
+  "source_exact_for_card_files": {
+    "crates/qcore-audit/examples/libc_local_source_domains.rs": "752b38d2d8ed40c0411688b9ec1cb644b70956e7f444fe4aa4d1b516c135f2ad",
+    "crates/qcore-c-gateway/src/reading_site_domain.rs": "55d7d5a12782e8c67451f0d0457870d4f190108a1a96427cc7f82d23ec2add98",
+    "crates/qcore-c-gateway/tests/reading_site_domain.rs": "5e749e35e36a2214c702571d94e2f28b106a3439e290f7d5954998370dd005d7",
+    "crates/quirin-source-analysis/src/cjson_local_binding.rs": "5a407f085f7874194c0bec3df52d1a203bc4e983046e94af5781daf175605af5",
+    "crates/quirin-source-analysis/examples/cjson_local_source.rs": "65f3102d1ca678edd5b8e174b4cbb243178bcc6ac7dcc49c3f391c88953263a2",
+    "proof/QCore/LocalSourceBindings.lean": "bb901fba0b6a051abc4227971aaa9b7ce4afd2b26a00dbf7823c78347c35270e",
+    "proof/AuditLocalSourceBindings.lean": "2aaa3ce31348e9120bfd4ff525261cafd6507c84f576229c62df012236e60fed",
+    "docs/reports/premise-local-source-bindings/native/cjson_heap.c": "bbd4c858c0681d82c5f9744bc03c4e90d4b85026d200a50f532efe8a8451def2"
+  },
+  "all22commands_exit_zero": true,
+  "counts": {
+    "rust_passed": 8441,
+    "rust_ignored": 15,
+    "lean_audits": 357,
+    "provider_rust_passed": 133,
+    "provider_rust_ignored": 1,
+    "provider_python_passed": 25,
+    "verified_provider_packages": 5
+  },
+  "command_archive": "joint-gate-commands.json.gz",
+  "command_archive_sha256": "c0abbe8ea1bde85b475f5704559b99e46e5c5375ebcd60ab01494b0d33fbd79d",
+  "private_logs": "/home/cosmo/Documents/GitHub/qcore-c/private/premise-resolution-cycle2/joint-gate-2",
+  "prior_failed_joint_gate": "/home/cosmo/Documents/GitHub/qcore-c/private/premise-resolution-cycle2/joint-gate-1",
+  "paired_native_runs": "parent reports all6actual runs0; final complete payload comparison and committed-matrix Python acceptance owned by parent",
+  "base_source_replayed": 148,
+  "tip_source_replayed": 148,
+  "source_replay_scope": "complete selected recorded20domains each side; not all relevant C readings",
+  "old_frozen_graphs_manifests_models": "unchanged",
+  "typed_registry": "empty",
+  "universal_atoms": "open"
+}

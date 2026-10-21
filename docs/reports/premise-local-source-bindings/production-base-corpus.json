@@ -23,8 +23,8 @@
   "checker_acceptance": "unchanged exact full receipt and complete domain equality; original checker bytes restored after private diagnostics",
   "recorded_definition_census_prerequisite": "independently held complete recorded all-unit census; actual five requested home inventories independently source-replayed; other bodies not re-enumerated",
   "universal_atoms": "open",
-  "tip_replay": "pending actual joint TIP outputs",
-  "joint_gate": "pending parent final combined source",
+  "tip_replay": "complete freshTIP148: production-tip-configured.json and production-tip-corpus.json",
+  "joint_gate": "all22commands0 at exactcombined62source; joint-validation.json; final parent acceptance pending",
   "files": {
     "production-corpus/attempt-1/acquired.json.gz": "a19e96614d2cc2d6838c01e554e4c576110ed7f538e765779667024e8d187523",
     "production-corpus/attempt-1/build.log.gz": "62ebcfe038f5f52bbbfe1916e887bc12f8e52cb79b959dac1513b96ac64cf637",

@@ -17,7 +17,7 @@
     "reproduced_observations": 2,
     "denominator": 2
   },
-  "corpus": "pending actual fresh TIP corpus completion and separate122 source-domain replay",
+  "corpus": "separate full122green at production-tip-corpus.json",
   "concurrency": "parent-authorized routine single-compiler CPP/replay under SMALL while corpus auditor16 held PRIMARY; no performance claim",
   "universal_atoms": "open",
   "files": {

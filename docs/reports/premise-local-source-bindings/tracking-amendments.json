@@ -10,17 +10,17 @@
         "arbitrary heap/custody/alias/lifetime/writer/allocator universal claims",
         "whole-C extraction and Rust-Lean correspondence"
       ],
-      "evidence": "native-evidence/checked.json.gz and flows.json.gz; scoped-bindings.json; joint final source/gate pending"
+      "evidence": "native-evidence/checked.json.gz and flows.json.gz; scoped-bindings.json; joint-validation.json (source-exact combined gate); parent fresh finalsource native11/all4 run also passed"
     },
     "LIBC-READING-PREMISES-TYPED-DISCHARGE": {
-      "supported_finite_subobligations": "All148 selected recorded BASE observations independently source-replayed:24system+2slice+122corpus in20 complete selected owner/declaration domains; exact old receipts, original scalar-OR-nested checks, effective environments, compile/source/profile/all9Context/graphs, consultation closure and truncation controls. Corpus imports reconstructed by8independently exported summaries from5actual home sources; complete other-unit recorded definition census and actual link/interposition truth remain explicit prerequisites.",
+      "supported_finite_subobligations": "All148 selected recorded BASE and148 freshTIP observations each independently source-replayed:24system+2slice+122corpus in20 complete selected owner/declaration domains; exact old receipts, original scalar-OR-nested checks, effective environments, compile/source/profile/all9Context/graphs, consultation closure and truncation controls. Corpus imports reconstructed by8independently exported summaries from5actual home sources; complete other-unit recorded definition census and actual link/interposition truth remain explicit prerequisites.",
       "remaining_open": [
         "all8original universal atoms",
         "complete all-relevant guarded-reading universe",
         "external libc implementation/body mode truth",
         "whole-C extraction and Rust-Lean correspondence"
       ],
-      "evidence": "production-base-configured.json and production-base-corpus.json; fresh TIP replay/joint final acceptance pending"
+      "evidence": "production-base-configured.json, production-base-corpus.json, production-tip-configured.json, production-tip-corpus.json, joint-validation.json; final parent comparison/matrix acceptance pending"
     }
   }
 }
