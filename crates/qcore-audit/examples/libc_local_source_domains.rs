@@ -1,5 +1,5 @@
 //! Explicit held-source replay of every recorded libc observation domain.
-//! INPUT_ROOT CHECKOUT REPO DIAGNOSTICS FRESH_OUTPUT_DIRECTORY.
+//! INPUT_ROOT CHECKOUT REPO DIAGNOSTICS FRESH_OUTPUT_DIRECTORY EXPECTED_GRAPH_EVIDENCE_VERSION.
 //! Refused domains are retained and never counted as source-bound successes.
 use qcore_c_gateway::{
     legacy_c::{C11TranslationUnit, LegacyFunctionScope, prepare_translation_unit},
@@ -18,8 +18,8 @@ fn read(path: impl AsRef<Path>) -> Result<Vec<u8>, String> {
 }
 fn main() -> Result<(), String> {
     let args = std::env::args().collect::<Vec<_>>();
-    if args.len() != 6 {
-        return Err("INPUT_ROOT CHECKOUT REPO DIAGNOSTICS FRESH_OUTPUT_DIRECTORY".into());
+    if args.len() != 7 {
+        return Err("INPUT_ROOT CHECKOUT REPO DIAGNOSTICS FRESH_OUTPUT_DIRECTORY EXPECTED_GRAPH_EVIDENCE_VERSION".into());
     }
     let inputs = Path::new(&args[1]);
     let checkout = Path::new(&args[2]);
@@ -153,6 +153,19 @@ fn main() -> Result<(), String> {
                     serde_json::from_value(r.clone()).map_err(|e| e.to_string())?;
                 let ctx: Context = serde_json::from_value(row["hypothesis_context"].clone())
                     .map_err(|e| e.to_string())?;
+                let artifact = format!(
+                    "{}/{}#{}",
+                    u["library"].as_str().ok_or("library absent")?,
+                    u["file"].as_str().ok_or("file absent")?,
+                    row["function"].as_str().ok_or("function absent")?
+                );
+                if ctx.artifact != artifact
+                    || ctx.property != "resource-custody.v1"
+                    || ctx.bounds != "existing gateway budgets; no new hypothesis discharge"
+                    || ctx.evidence_version != args[6]
+                {
+                    return Err("actual row artifact/property/bounds or independently held binary evidence version differs".into());
+                }
                 if receipt.context != ctx {
                     return Err("receipt vs independently held row Context differs".into());
                 }
