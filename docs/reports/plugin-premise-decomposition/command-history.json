@@ -1,0 +1,1990 @@
+[
+  {
+    "name": "interim-check-1",
+    "command": [
+      "cargo",
+      "check",
+      "-p",
+      "qcore-contract",
+      "-p",
+      "qcore-audit",
+      "--jobs",
+      "1"
+    ],
+    "exit": 0,
+    "started": "2026-10-21T02:35:31.129312+00:00",
+    "ended": "2026-10-21T02:36:35.275647+00:00",
+    "log": "private/plugin-premise-decomposition/interim-check-1.log"
+  },
+  {
+    "name": "interim-contract-controls-1",
+    "command": [
+      "cargo",
+      "test",
+      "-p",
+      "qcore-contract",
+      "--test",
+      "plugin_premise_decomposition",
+      "--jobs",
+      "1"
+    ],
+    "exit": 0,
+    "started": "2026-10-21T02:41:04.986299+00:00",
+    "ended": "2026-10-21T02:41:49.319564+00:00",
+    "log": "private/plugin-premise-decomposition/interim-contract-controls-1.log"
+  },
+  {
+    "name": "interim-catalog-build-1",
+    "command": [
+      "cargo",
+      "build",
+      "-p",
+      "qcore-contract",
+      "--example",
+      "plugin_binding_catalog",
+      "--jobs",
+      "1"
+    ],
+    "exit": 0,
+    "started": "2026-10-21T02:43:12.698188+00:00",
+    "ended": "2026-10-21T02:43:15.016578+00:00",
+    "log": "private/plugin-premise-decomposition/interim-catalog-build-1.log"
+  },
+  {
+    "name": "interim-catalog-resource-1",
+    "command": [
+      "target/debug/examples/plugin_binding_catalog",
+      "private/plugin-premise-decomposition/catalogs-1/resource-input.json",
+      "private/plugin-premise-decomposition/catalogs-1/resource.json"
+    ],
+    "exit": 0,
+    "started": "2026-10-21T02:44:33.578511+00:00",
+    "ended": "2026-10-21T02:44:34.588806+00:00",
+    "log": "private/plugin-premise-decomposition/interim-catalog-resource-1.log"
+  },
+  {
+    "name": "interim-catalog-null-1",
+    "command": [
+      "target/debug/examples/plugin_binding_catalog",
+      "private/plugin-premise-decomposition/catalogs-1/null-input.json",
+      "private/plugin-premise-decomposition/catalogs-1/null.json"
+    ],
+    "exit": 0,
+    "started": "2026-10-21T02:44:34.640887+00:00",
+    "ended": "2026-10-21T02:44:34.970684+00:00",
+    "log": "private/plugin-premise-decomposition/interim-catalog-null-1.log"
+  },
+  {
+    "name": "interim-catalog-model-1",
+    "command": [
+      "target/debug/examples/plugin_binding_catalog",
+      "private/plugin-premise-decomposition/catalogs-1/model-input.json",
+      "private/plugin-premise-decomposition/catalogs-1/model.json"
+    ],
+    "exit": 0,
+    "started": "2026-10-21T02:44:35.014301+00:00",
+    "ended": "2026-10-21T02:44:35.023543+00:00",
+    "log": "private/plugin-premise-decomposition/interim-catalog-model-1.log"
+  },
+  {
+    "name": "interim-install-bindings-1",
+    "command": [
+      "python3",
+      "docs/reports/plugin-premise-decomposition/scripts/install_bindings.py",
+      "private/plugin-premise-decomposition/catalogs-1",
+      "docs/reports/plugin-premise-decomposition",
+      "."
+    ],
+    "exit": 0,
+    "started": "2026-10-21T02:45:13.115450+00:00",
+    "ended": "2026-10-21T02:45:13.180564+00:00",
+    "log": "private/plugin-premise-decomposition/interim-install-bindings-1.log"
+  },
+  {
+    "name": "interim-format-1",
+    "command": [
+      "cargo",
+      "fmt",
+      "--all"
+    ],
+    "exit": 0,
+    "started": "2026-10-21T02:46:05.978158+00:00",
+    "ended": "2026-10-21T02:46:22.558130+00:00",
+    "log": "private/plugin-premise-decomposition/interim-format-1.log"
+  },
+  {
+    "name": "interim-check-resource-1",
+    "command": [
+      "target/debug/examples/plugin_binding_catalog",
+      "private/plugin-premise-decomposition/catalogs-1/resource-check-input.json",
+      "private/plugin-premise-decomposition/catalogs-1/resource-checked.json"
+    ],
+    "exit": 0,
+    "started": "2026-10-21T02:46:22.724784+00:00",
+    "ended": "2026-10-21T02:46:25.028066+00:00",
+    "log": "private/plugin-premise-decomposition/interim-check-resource-1.log"
+  },
+  {
+    "name": "interim-check-null-1",
+    "command": [
+      "target/debug/examples/plugin_binding_catalog",
+      "private/plugin-premise-decomposition/catalogs-1/null-check-input.json",
+      "private/plugin-premise-decomposition/catalogs-1/null-checked.json"
+    ],
+    "exit": 0,
+    "started": "2026-10-21T02:46:25.079868+00:00",
+    "ended": "2026-10-21T02:46:25.950286+00:00",
+    "log": "private/plugin-premise-decomposition/interim-check-null-1.log"
+  },
+  {
+    "name": "interim-check-model-1",
+    "command": [
+      "target/debug/examples/plugin_binding_catalog",
+      "private/plugin-premise-decomposition/catalogs-1/model-check-input.json",
+      "private/plugin-premise-decomposition/catalogs-1/model-checked.json"
+    ],
+    "exit": 0,
+    "started": "2026-10-21T02:46:25.999697+00:00",
+    "ended": "2026-10-21T02:46:26.023334+00:00",
+    "log": "private/plugin-premise-decomposition/interim-check-model-1.log"
+  },
+  {
+    "name": "interim-null-controls-1",
+    "command": [
+      "cargo",
+      "test",
+      "-p",
+      "qcore-audit",
+      "--test",
+      "plugin_null_hypotheses",
+      "--jobs",
+      "1"
+    ],
+    "exit": 0,
+    "started": "2026-10-21T02:44:05.229361+00:00",
+    "ended": "2026-10-21T02:46:37.435524+00:00",
+    "log": "private/plugin-premise-decomposition/interim-null-controls-1.log"
+  },
+  {
+    "name": "interim-catalog-build-2",
+    "command": [
+      "cargo",
+      "build",
+      "-p",
+      "qcore-contract",
+      "--example",
+      "plugin_binding_catalog",
+      "--jobs",
+      "1"
+    ],
+    "exit": 0,
+    "started": "2026-10-21T02:45:42.023287+00:00",
+    "ended": "2026-10-21T02:46:42.396458+00:00",
+    "log": "private/plugin-premise-decomposition/interim-catalog-build-2.log"
+  },
+  {
+    "name": "interim-check-resource-2",
+    "command": [
+      "target/debug/examples/plugin_binding_catalog",
+      "private/plugin-premise-decomposition/catalogs-1/resource-check-input.json",
+      "private/plugin-premise-decomposition/catalogs-1/resource-checked-2.json"
+    ],
+    "exit": 0,
+    "started": "2026-10-21T02:47:12.444555+00:00",
+    "ended": "2026-10-21T02:47:14.988189+00:00",
+    "log": "private/plugin-premise-decomposition/interim-check-resource-2.log"
+  },
+  {
+    "name": "interim-check-null-2",
+    "command": [
+      "target/debug/examples/plugin_binding_catalog",
+      "private/plugin-premise-decomposition/catalogs-1/null-check-input.json",
+      "private/plugin-premise-decomposition/catalogs-1/null-checked-2.json"
+    ],
+    "exit": 0,
+    "started": "2026-10-21T02:47:15.091838+00:00",
+    "ended": "2026-10-21T02:47:16.550423+00:00",
+    "log": "private/plugin-premise-decomposition/interim-check-null-2.log"
+  },
+  {
+    "name": "interim-check-model-2",
+    "command": [
+      "target/debug/examples/plugin_binding_catalog",
+      "private/plugin-premise-decomposition/catalogs-1/model-check-input.json",
+      "private/plugin-premise-decomposition/catalogs-1/model-checked-2.json"
+    ],
+    "exit": 0,
+    "started": "2026-10-21T02:47:16.628033+00:00",
+    "ended": "2026-10-21T02:47:16.664340+00:00",
+    "log": "private/plugin-premise-decomposition/interim-check-model-2.log"
+  },
+  {
+    "name": "interim-outer-helper-build-1",
+    "command": [
+      "cargo",
+      "build",
+      "-p",
+      "qcore-contract",
+      "--example",
+      "plugin_outer_catalog_replay",
+      "--jobs",
+      "1"
+    ],
+    "exit": 0,
+    "started": "2026-10-21T02:48:22.072869+00:00",
+    "ended": "2026-10-21T02:48:22.701353+00:00",
+    "log": "private/plugin-premise-decomposition/interim-outer-helper-build-1.log"
+  },
+  {
+    "name": "interim-outer-controls-1",
+    "command": [
+      "python3",
+      "docs/reports/plugin-premise-decomposition/scripts/outer_catalog_controls.py",
+      "private/plugin-premise-decomposition/outer-controls-production-1",
+      "--binary",
+      "target/debug/examples/plugin_outer_catalog_replay",
+      "--model",
+      "proof/QCore/PluginPremiseDecomposition.lean",
+      "--audit",
+      "proof/AuditPluginPremiseDecomposition.lean"
+    ],
+    "exit": 0,
+    "started": "2026-10-21T02:48:33.991287+00:00",
+    "ended": "2026-10-21T02:48:34.483373+00:00",
+    "log": "private/plugin-premise-decomposition/interim-outer-controls-1.log"
+  },
+  {
+    "name": "interim-inventory-sync-1",
+    "command": [
+      "env",
+      "CARGO_BUILD_JOBS=1",
+      "python3",
+      "providers/contracts.py",
+      "sync"
+    ],
+    "exit": 1,
+    "started": "2026-10-21T02:47:16.836745+00:00",
+    "ended": "2026-10-21T02:48:34.926976+00:00",
+    "log": "private/plugin-premise-decomposition/interim-inventory-sync-1.log"
+  },
+  {
+    "name": "interim-pin-binary-build-1",
+    "command": [
+      "cargo",
+      "build",
+      "-p",
+      "qcore-audit",
+      "--bin",
+      "quirin-audit",
+      "--jobs",
+      "1"
+    ],
+    "exit": 0,
+    "started": "2026-10-21T02:49:16.250302+00:00",
+    "ended": "2026-10-21T02:49:16.496505+00:00",
+    "log": "private/plugin-premise-decomposition/interim-pin-binary-build-1.log"
+  },
+  {
+    "name": "interim-official-repins-1",
+    "command": [
+      "python3",
+      "docs/reports/plugin-premise-decomposition/scripts/repin.py",
+      "target/debug/quirin-audit",
+      "private/plugin-premise-decomposition/repins-1"
+    ],
+    "exit": 1,
+    "started": "2026-10-21T02:49:47.923416+00:00",
+    "ended": "2026-10-21T02:50:10.274638+00:00",
+    "log": "private/plugin-premise-decomposition/interim-official-repins-1.log"
+  },
+  {
+    "name": "interim-resource-summary-controls-1",
+    "command": [
+      "cargo",
+      "test",
+      "-p",
+      "qcore-audit",
+      "--test",
+      "plugin_null_hypotheses",
+      "--jobs",
+      "1"
+    ],
+    "exit": 101,
+    "started": "2026-10-21T02:50:26.123672+00:00",
+    "ended": "2026-10-21T02:50:26.714568+00:00",
+    "log": "private/plugin-premise-decomposition/interim-resource-summary-controls-1.log"
+  },
+  {
+    "name": "interim-official-repins-2",
+    "command": [
+      "python3",
+      "docs/reports/plugin-premise-decomposition/scripts/repin.py",
+      "target/debug/quirin-audit",
+      "private/plugin-premise-decomposition/repins-2"
+    ],
+    "exit": 0,
+    "started": "2026-10-21T02:50:59.607698+00:00",
+    "ended": "2026-10-21T02:51:49.607554+00:00",
+    "log": "private/plugin-premise-decomposition/interim-official-repins-2.log"
+  },
+  {
+    "name": "interim-resource-summary-controls-2",
+    "command": [
+      "cargo",
+      "test",
+      "-p",
+      "qcore-audit",
+      "--test",
+      "plugin_null_hypotheses",
+      "--jobs",
+      "1"
+    ],
+    "exit": 0,
+    "started": "2026-10-21T02:51:49.690768+00:00",
+    "ended": "2026-10-21T02:51:58.092717+00:00",
+    "log": "private/plugin-premise-decomposition/interim-resource-summary-controls-2.log"
+  },
+  {
+    "name": "interim-contract-controls-2",
+    "command": [
+      "cargo",
+      "test",
+      "-p",
+      "qcore-contract",
+      "--test",
+      "plugin_premise_decomposition",
+      "--jobs",
+      "1"
+    ],
+    "exit": 0,
+    "started": "2026-10-21T02:51:55.658035+00:00",
+    "ended": "2026-10-21T02:52:00.668516+00:00",
+    "log": "private/plugin-premise-decomposition/interim-contract-controls-2.log"
+  },
+  {
+    "name": "interim-null-controls-3",
+    "command": [
+      "cargo",
+      "test",
+      "-p",
+      "qcore-audit",
+      "--test",
+      "plugin_null_hypotheses",
+      "--jobs",
+      "1"
+    ],
+    "exit": 0,
+    "started": "2026-10-21T02:53:16.609238+00:00",
+    "ended": "2026-10-21T02:53:37.252534+00:00",
+    "log": "private/plugin-premise-decomposition/interim-null-controls-3.log"
+  },
+  {
+    "name": "interim-inventory-sync-2",
+    "command": [
+      "env",
+      "CARGO_BUILD_JOBS=1",
+      "python3",
+      "providers/contracts.py",
+      "sync"
+    ],
+    "exit": 0,
+    "started": "2026-10-21T02:52:47.941211+00:00",
+    "ended": "2026-10-21T02:54:18.305558+00:00",
+    "log": "private/plugin-premise-decomposition/interim-inventory-sync-2.log"
+  },
+  {
+    "name": "interim-format-2",
+    "command": [
+      "cargo",
+      "fmt",
+      "--all"
+    ],
+    "exit": 0,
+    "started": "2026-10-21T02:54:18.345284+00:00",
+    "ended": "2026-10-21T02:54:29.423434+00:00",
+    "log": "private/plugin-premise-decomposition/interim-format-2.log"
+  },
+  {
+    "name": "interim-actual-null-clang-controls-1",
+    "command": [
+      "cargo",
+      "test",
+      "-p",
+      "qcore-audit",
+      "--test",
+      "plugin_null_hypotheses",
+      "--jobs",
+      "1"
+    ],
+    "exit": 0,
+    "started": "2026-10-21T02:54:35.789719+00:00",
+    "ended": "2026-10-21T02:55:09.157487+00:00",
+    "log": "private/plugin-premise-decomposition/interim-actual-null-clang-controls-1.log"
+  },
+  {
+    "name": "interim-catalog-build-3",
+    "command": [
+      "cargo",
+      "build",
+      "-p",
+      "qcore-contract",
+      "--example",
+      "plugin_binding_catalog",
+      "--jobs",
+      "1"
+    ],
+    "exit": 0,
+    "started": "2026-10-21T02:55:39.161151+00:00",
+    "ended": "2026-10-21T02:55:41.574430+00:00",
+    "log": "private/plugin-premise-decomposition/interim-catalog-build-3.log"
+  },
+  {
+    "name": "interim-binding-negative-controls-1",
+    "command": [
+      "python3",
+      "docs/reports/plugin-premise-decomposition/scripts/binding_controls.py",
+      "target/debug/examples/plugin_binding_catalog",
+      "private/plugin-premise-decomposition/catalogs-1",
+      "private/plugin-premise-decomposition/binding-controls-1"
+    ],
+    "exit": 1,
+    "started": "2026-10-21T02:56:35.603549+00:00",
+    "ended": "2026-10-21T02:56:36.916163+00:00",
+    "log": "private/plugin-premise-decomposition/interim-binding-negative-controls-1.log"
+  },
+  {
+    "name": "interim-format-3",
+    "command": [
+      "cargo",
+      "fmt",
+      "--all"
+    ],
+    "exit": 0,
+    "started": "2026-10-21T02:56:57.746128+00:00",
+    "ended": "2026-10-21T02:57:02.959855+00:00",
+    "log": "private/plugin-premise-decomposition/interim-format-3.log"
+  },
+  {
+    "name": "interim-binding-negative-controls-2",
+    "command": [
+      "python3",
+      "docs/reports/plugin-premise-decomposition/scripts/binding_controls.py",
+      "target/debug/examples/plugin_binding_catalog",
+      "private/plugin-premise-decomposition/catalogs-1",
+      "private/plugin-premise-decomposition/binding-controls-2"
+    ],
+    "exit": 0,
+    "started": "2026-10-21T02:58:09.529666+00:00",
+    "ended": "2026-10-21T02:58:17.474200+00:00",
+    "log": "private/plugin-premise-decomposition/interim-binding-negative-controls-2.log"
+  },
+  {
+    "name": "interim-corpus-pin-controls-1",
+    "command": [
+      "cargo",
+      "test",
+      "-p",
+      "qcore-compiler",
+      "--test",
+      "qcore_contract_corpus",
+      "--jobs",
+      "1"
+    ],
+    "exit": 0,
+    "started": "2026-10-21T02:58:17.503824+00:00",
+    "ended": "2026-10-21T02:58:20.946179+00:00",
+    "log": "private/plugin-premise-decomposition/interim-corpus-pin-controls-1.log"
+  },
+  {
+    "name": "interim-sidecar-helper-check-1",
+    "command": [
+      "cargo",
+      "check",
+      "-p",
+      "qcore-audit",
+      "--example",
+      "plugin_sidecar_bindings",
+      "--jobs",
+      "1"
+    ],
+    "exit": 0,
+    "started": "2026-10-21T03:00:15.276553+00:00",
+    "ended": "2026-10-21T03:00:20.796327+00:00",
+    "log": "private/plugin-premise-decomposition/interim-sidecar-helper-check-1.log"
+  },
+  {
+    "name": "interim-sidecar-helper-check-2",
+    "command": [
+      "cargo",
+      "check",
+      "-p",
+      "qcore-audit",
+      "--example",
+      "plugin_sidecar_bindings",
+      "--jobs",
+      "1"
+    ],
+    "exit": 0,
+    "started": "2026-10-21T03:00:58.096432+00:00",
+    "ended": "2026-10-21T03:00:58.207580+00:00",
+    "log": "private/plugin-premise-decomposition/interim-sidecar-helper-check-2.log"
+  },
+  {
+    "name": "interim-reproduction-inputs-1",
+    "command": [
+      "python3",
+      "docs/reports/plugin-premise-decomposition/scripts/prepare_binding_inputs.py",
+      "private/plugin-premise-decomposition/reproduction-inputs-1"
+    ],
+    "exit": 0,
+    "started": "2026-10-21T03:01:47.526513+00:00",
+    "ended": "2026-10-21T03:01:47.560423+00:00",
+    "log": "private/plugin-premise-decomposition/interim-reproduction-inputs-1.log"
+  },
+  {
+    "name": "interim-binding-reproduction-controls-1",
+    "command": [
+      "python3",
+      "docs/reports/plugin-premise-decomposition/scripts/binding_controls.py",
+      "target/debug/examples/plugin_binding_catalog",
+      "private/plugin-premise-decomposition/reproduction-inputs-1",
+      "private/plugin-premise-decomposition/binding-reproduction-1"
+    ],
+    "exit": 0,
+    "started": "2026-10-21T03:01:47.588672+00:00",
+    "ended": "2026-10-21T03:01:57.507552+00:00",
+    "log": "private/plugin-premise-decomposition/interim-binding-reproduction-controls-1.log"
+  },
+  {
+    "name": "interim-format-4",
+    "command": [
+      "cargo",
+      "fmt",
+      "--all"
+    ],
+    "exit": 0,
+    "started": "2026-10-21T03:03:15.580352+00:00",
+    "ended": "2026-10-21T03:03:26.579106+00:00",
+    "log": "private/plugin-premise-decomposition/interim-format-4.log"
+  },
+  {
+    "name": "interim-metadata-attribution-controls-1",
+    "command": [
+      "python3",
+      "docs/reports/plugin-premise-decomposition/scripts/graph_metadata.py"
+    ],
+    "exit": 1,
+    "started": "2026-10-21T03:09:28.082347+00:00",
+    "ended": "2026-10-21T03:09:28.322456+00:00",
+    "log": "private/plugin-premise-decomposition/interim-metadata-attribution-controls-1.log"
+  },
+  {
+    "name": "interim-metadata-attribution-controls-2",
+    "command": [
+      "python3",
+      "docs/reports/plugin-premise-decomposition/scripts/graph_metadata.py"
+    ],
+    "exit": 0,
+    "started": "2026-10-21T03:09:48.926199+00:00",
+    "ended": "2026-10-21T03:09:49.662671+00:00",
+    "log": "private/plugin-premise-decomposition/interim-metadata-attribution-controls-2.log"
+  },
+  {
+    "name": "interim-property-qualified-null-controls-1",
+    "command": [
+      "cargo",
+      "test",
+      "-p",
+      "qcore-audit",
+      "--test",
+      "plugin_null_hypotheses",
+      "--jobs",
+      "1"
+    ],
+    "exit": 0,
+    "started": "2026-10-21T03:17:58.225046+00:00",
+    "ended": "2026-10-21T03:18:11.890487+00:00",
+    "log": "private/plugin-premise-decomposition/interim-property-qualified-null-controls-1.log"
+  },
+  {
+    "name": "interim-format-5",
+    "command": [
+      "cargo",
+      "fmt",
+      "--all"
+    ],
+    "exit": 0,
+    "started": "2026-10-21T03:19:39.633962+00:00",
+    "ended": "2026-10-21T03:19:44.710701+00:00",
+    "log": "private/plugin-premise-decomposition/interim-format-5.log"
+  },
+  {
+    "name": "interim-effective-environment-check-1",
+    "command": [
+      "cargo",
+      "check",
+      "-p",
+      "qcore-c-gateway",
+      "-p",
+      "qcore-audit",
+      "--jobs",
+      "1"
+    ],
+    "exit": 0,
+    "started": "2026-10-21T03:51:53.078424+00:00",
+    "ended": "2026-10-21T03:52:30.960180+00:00",
+    "log": "private/plugin-premise-decomposition/interim-effective-environment-check-1.log"
+  },
+  {
+    "name": "interim-environment-lean-1",
+    "command": [
+      "lake",
+      "env",
+      "lean",
+      "proof/QCore/PluginReadingEnvironment.lean"
+    ],
+    "exit": 1,
+    "started": "2026-10-21T03:53:23.689135+00:00",
+    "ended": "2026-10-21T03:53:25.414053+00:00",
+    "log": "private/plugin-premise-decomposition/interim-environment-lean-1.log"
+  },
+  {
+    "name": "interim-environment-lean-2",
+    "command": [
+      "python3",
+      "private/plugin-premise-decomposition/lean_one.py",
+      "-o",
+      ".lake/build/lib/lean/QCore/PluginReadingEnvironment.olean",
+      "QCore/PluginReadingEnvironment.lean"
+    ],
+    "exit": 0,
+    "started": "2026-10-21T03:53:51.566077+00:00",
+    "ended": "2026-10-21T03:53:51.964193+00:00",
+    "log": "private/plugin-premise-decomposition/interim-environment-lean-2.log"
+  },
+  {
+    "name": "interim-environment-actual-controls-1",
+    "command": [
+      "cargo",
+      "test",
+      "-p",
+      "qcore-c-gateway",
+      "--test",
+      "libc_reading_site_evidence",
+      "--jobs",
+      "1"
+    ],
+    "exit": 0,
+    "started": "2026-10-21T03:54:33.063461+00:00",
+    "ended": "2026-10-21T03:55:20.166182+00:00",
+    "log": "private/plugin-premise-decomposition/interim-environment-actual-controls-1.log"
+  },
+  {
+    "name": "interim-environment-audit-1",
+    "command": [
+      "python3",
+      "private/plugin-premise-decomposition/lean_one.py",
+      "AuditPluginReadingEnvironment.lean"
+    ],
+    "exit": 0,
+    "started": "2026-10-21T03:55:20.194201+00:00",
+    "ended": "2026-10-21T03:55:20.394311+00:00",
+    "log": "private/plugin-premise-decomposition/interim-environment-audit-1.log"
+  },
+  {
+    "name": "interim-environment-recorder-controls-1",
+    "command": [
+      "cargo",
+      "test",
+      "-p",
+      "qcore-c-gateway",
+      "--lib",
+      "reading_site_evidence::tests",
+      "--jobs",
+      "1"
+    ],
+    "exit": 101,
+    "started": "2026-10-21T03:57:36.775743+00:00",
+    "ended": "2026-10-21T03:58:10.459755+00:00",
+    "log": "private/plugin-premise-decomposition/interim-environment-recorder-controls-1.log"
+  },
+  {
+    "name": "interim-environment-recorder-controls-2",
+    "command": [
+      "cargo",
+      "test",
+      "-p",
+      "qcore-c-gateway",
+      "--lib",
+      "reading_site_evidence::tests",
+      "--jobs",
+      "1"
+    ],
+    "exit": 0,
+    "started": "2026-10-21T04:01:35.044063+00:00",
+    "ended": "2026-10-21T04:01:47.032672+00:00",
+    "log": "private/plugin-premise-decomposition/interim-environment-recorder-controls-2.log"
+  },
+  {
+    "name": "final-binding-inputs-1",
+    "command": [
+      "python3",
+      "docs/reports/plugin-premise-decomposition/scripts/prepare_binding_inputs.py",
+      "private/plugin-premise-decomposition/final-binding-inputs"
+    ],
+    "exit": 0,
+    "started": "2026-10-21T04:07:40.762203+00:00",
+    "ended": "2026-10-21T04:07:40.849427+00:00",
+    "log": "private/plugin-premise-decomposition/final-binding-inputs-1.log"
+  },
+  {
+    "name": "final-freeze-base-1",
+    "command": [
+      "python3",
+      "docs/reports/plugin-premise-decomposition/scripts/freeze_inputs.py",
+      "private/plugin-premise-decomposition/base-freeze",
+      "--source",
+      "32e6f5dda334d6a017a1be4dcb02f72a9138c6a6",
+      "--binary",
+      "/home/cosmo/Documents/GitHub/qcore-c/private/premise-contracts-integration/baseline/quirin-audit",
+      "--binary-sha256",
+      "17b72dc72bc23a6556fdba576179d4b46d34f04dc34704c7770e72dbb2a7a6bf",
+      "--binary-receipt",
+      "/home/cosmo/Documents/GitHub/qcore-c/private/premise-contracts-integration/baseline/receipt.json"
+    ],
+    "exit": 0,
+    "started": "2026-10-21T04:16:39.147694+00:00",
+    "ended": "2026-10-21T04:16:39.784480+00:00",
+    "log": "private/plugin-premise-decomposition/final-freeze-base-1.log"
+  },
+  {
+    "name": "repair-build-cli-1",
+    "command": [
+      "env",
+      "CARGO_PROFILE_DEV_DEBUG=0",
+      "CARGO_PROFILE_TEST_DEBUG=0",
+      "CARGO_INCREMENTAL=0",
+      "cargo",
+      "build",
+      "-p",
+      "qcorec",
+      "--bin",
+      "quirin",
+      "--jobs",
+      "1"
+    ],
+    "exit": 0,
+    "started": "2026-10-21T04:41:27.397469+00:00",
+    "ended": "2026-10-21T04:42:29.257872+00:00",
+    "log": "private/plugin-premise-decomposition/repair-build-cli-1.log"
+  },
+  {
+    "name": "repair-failed-units-1",
+    "command": [
+      "env",
+      "CARGO_PROFILE_DEV_DEBUG=0",
+      "CARGO_PROFILE_TEST_DEBUG=0",
+      "CARGO_INCREMENTAL=0",
+      "cargo",
+      "test",
+      "-p",
+      "qcore-contract",
+      "--test",
+      "contract_views",
+      "--no-fail-fast",
+      "--jobs",
+      "1"
+    ],
+    "exit": 0,
+    "started": "2026-10-21T04:42:12.196299+00:00",
+    "ended": "2026-10-21T04:43:19.017075+00:00",
+    "log": "private/plugin-premise-decomposition/repair-failed-units-1.log"
+  },
+  {
+    "name": "repair-repin-1",
+    "command": [
+      "python3",
+      "docs/reports/plugin-premise-decomposition/scripts/repin.py",
+      "target/debug/quirin",
+      "private/plugin-premise-decomposition/repair-repins"
+    ],
+    "exit": 1,
+    "started": "2026-10-21T04:44:39.622791+00:00",
+    "ended": "2026-10-21T04:44:39.730110+00:00",
+    "log": "private/plugin-premise-decomposition/repair-repin-1.log"
+  },
+  {
+    "name": "repair-repin-2",
+    "command": [
+      "python3",
+      "docs/reports/plugin-premise-decomposition/scripts/repin.py",
+      "target/release/quirin-audit",
+      "private/plugin-premise-decomposition/repair-repins-2"
+    ],
+    "exit": 0,
+    "started": "2026-10-21T04:45:12.990266+00:00",
+    "ended": "2026-10-21T04:45:17.930479+00:00",
+    "log": "private/plugin-premise-decomposition/repair-repin-2.log"
+  },
+  {
+    "name": "repair-overlap-lean-1",
+    "command": [
+      "python3",
+      "private/plugin-premise-decomposition/lean_one.py",
+      "-o",
+      ".lake/build/lib/lean/QCore/PluginNeutralOverlap.olean",
+      "QCore/PluginNeutralOverlap.lean"
+    ],
+    "exit": 1,
+    "started": "2026-10-21T04:46:08.427980+00:00",
+    "ended": "2026-10-21T04:46:09.186266+00:00",
+    "log": "private/plugin-premise-decomposition/repair-overlap-lean-1.log"
+  },
+  {
+    "name": "repair-overlap-lean-2",
+    "command": [
+      "python3",
+      "private/plugin-premise-decomposition/lean_one.py",
+      "-o",
+      ".lake/build/lib/lean/QCore/PluginNeutralOverlap.olean",
+      "QCore/PluginNeutralOverlap.lean"
+    ],
+    "exit": 0,
+    "started": "2026-10-21T04:46:44.975423+00:00",
+    "ended": "2026-10-21T04:46:45.239518+00:00",
+    "log": "private/plugin-premise-decomposition/repair-overlap-lean-2.log"
+  },
+  {
+    "name": "repair-overlap-audit-1",
+    "command": [
+      "python3",
+      "private/plugin-premise-decomposition/lean_one.py",
+      "AuditPluginNeutralOverlap.lean"
+    ],
+    "exit": 0,
+    "started": "2026-10-21T04:46:45.272301+00:00",
+    "ended": "2026-10-21T04:46:45.486878+00:00",
+    "log": "private/plugin-premise-decomposition/repair-overlap-audit-1.log"
+  },
+  {
+    "name": "repair-official-sync-1",
+    "command": [
+      "env",
+      "CARGO_PROFILE_DEV_DEBUG=0",
+      "CARGO_PROFILE_TEST_DEBUG=0",
+      "CARGO_INCREMENTAL=0",
+      "CARGO_BUILD_JOBS=1",
+      "python3",
+      "providers/contracts.py",
+      "sync"
+    ],
+    "exit": 0,
+    "started": "2026-10-21T04:47:07.950412+00:00",
+    "ended": "2026-10-21T04:48:22.131259+00:00",
+    "log": "private/plugin-premise-decomposition/repair-official-sync-1.log"
+  },
+  {
+    "name": "repair-gateway-failures-1",
+    "command": [
+      "env",
+      "CARGO_PROFILE_DEV_DEBUG=0",
+      "CARGO_PROFILE_TEST_DEBUG=0",
+      "CARGO_INCREMENTAL=0",
+      "cargo",
+      "test",
+      "-p",
+      "qcore-c-gateway",
+      "--test",
+      "neighbours",
+      "--test",
+      "prod_contracts",
+      "--no-fail-fast",
+      "--jobs",
+      "1"
+    ],
+    "exit": 0,
+    "started": "2026-10-21T04:48:22.161819+00:00",
+    "ended": "2026-10-21T04:48:26.321677+00:00",
+    "log": "private/plugin-premise-decomposition/repair-gateway-failures-1.log"
+  },
+  {
+    "name": "repair-compiler-failures-1",
+    "command": [
+      "env",
+      "CARGO_PROFILE_DEV_DEBUG=0",
+      "CARGO_PROFILE_TEST_DEBUG=0",
+      "CARGO_INCREMENTAL=0",
+      "cargo",
+      "test",
+      "-p",
+      "qcore-compiler",
+      "--test",
+      "contract_inherit_qcore_provider",
+      "--test",
+      "contract_view_census",
+      "--no-fail-fast",
+      "--jobs",
+      "1"
+    ],
+    "exit": 0,
+    "started": "2026-10-21T04:48:26.348328+00:00",
+    "ended": "2026-10-21T04:48:34.106644+00:00",
+    "log": "private/plugin-premise-decomposition/repair-compiler-failures-1.log"
+  },
+  {
+    "name": "repair-environment-helper-2",
+    "command": [
+      "python3",
+      "docs/reports/plugin-premise-decomposition/scripts/build_replay.py",
+      "docs/reports/plugin-premise-decomposition/scripts/attribute_reading_environments.rs",
+      "private/plugin-premise-decomposition/attribute-reading-environments-repair-2",
+      "--binary",
+      "target/release/quirin-audit",
+      "--extern",
+      "qcore_c_gateway",
+      "qcore_contract",
+      "qcore_schemas",
+      "serde_json"
+    ],
+    "exit": 1,
+    "started": "2026-10-21T04:48:36.475859+00:00",
+    "ended": "2026-10-21T04:48:36.761489+00:00",
+    "log": "private/plugin-premise-decomposition/repair-environment-helper-2.log"
+  },
+  {
+    "name": "repair-environment-helper-3",
+    "command": [
+      "python3",
+      "docs/reports/plugin-premise-decomposition/scripts/build_replay.py",
+      "docs/reports/plugin-premise-decomposition/scripts/attribute_reading_environments.rs",
+      "private/plugin-premise-decomposition/attribute-reading-environments-repair-3",
+      "--binary",
+      "target/release/quirin-audit",
+      "--extern",
+      "qcore_c_gateway",
+      "qcore_contract",
+      "qcore_schemas",
+      "serde_json"
+    ],
+    "exit": 0,
+    "started": "2026-10-21T04:48:57.586574+00:00",
+    "ended": "2026-10-21T04:48:58.575547+00:00",
+    "log": "private/plugin-premise-decomposition/repair-environment-helper-3.log"
+  },
+  {
+    "name": "known-system-1",
+    "command": [
+      "python3",
+      "private/plugin-premise-decomposition/known_catalog-prepared.py",
+      "private/plugin-premise-decomposition/base-freeze/inputs",
+      "private/plugin-premise-decomposition/tip-freeze/inputs",
+      "private/plugin-premise-decomposition/route-environments/system",
+      "private/plugin-premise-decomposition/known-system-1.json"
+    ],
+    "exit": 1,
+    "started": "2026-10-21T05:14:04.397631+00:00",
+    "ended": "2026-10-21T05:14:04.712667+00:00",
+    "log": "private/plugin-premise-decomposition/known-system-1.log"
+  },
+  {
+    "name": "known-slice-1",
+    "command": [
+      "python3",
+      "private/plugin-premise-decomposition/known_catalog-prepared.py",
+      "private/plugin-premise-decomposition/base-freeze/inputs",
+      "private/plugin-premise-decomposition/tip-freeze/inputs",
+      "private/plugin-premise-decomposition/route-environments/slice",
+      "private/plugin-premise-decomposition/known-slice-1.json"
+    ],
+    "exit": 1,
+    "started": "2026-10-21T05:14:04.794332+00:00",
+    "ended": "2026-10-21T05:14:04.959470+00:00",
+    "log": "private/plugin-premise-decomposition/known-slice-1.log"
+  },
+  {
+    "name": "known-corpus-1",
+    "command": [
+      "python3",
+      "private/plugin-premise-decomposition/known_catalog-prepared.py",
+      "private/plugin-premise-decomposition/base-freeze/inputs",
+      "private/plugin-premise-decomposition/tip-freeze/inputs",
+      "private/plugin-premise-decomposition/route-environments/corpus",
+      "private/plugin-premise-decomposition/known-corpus-1.json"
+    ],
+    "exit": 1,
+    "started": "2026-10-21T05:14:05.036499+00:00",
+    "ended": "2026-10-21T05:14:05.233104+00:00",
+    "log": "private/plugin-premise-decomposition/known-corpus-1.log"
+  },
+  {
+    "name": "known-system-2",
+    "command": [
+      "python3",
+      "private/plugin-premise-decomposition/known_catalog-prepared.py",
+      "private/plugin-premise-decomposition/base-freeze/inputs",
+      "private/plugin-premise-decomposition/tip-freeze/inputs",
+      "private/plugin-premise-decomposition/route-environments/system",
+      "private/plugin-premise-decomposition/known-system-2.json"
+    ],
+    "exit": 1,
+    "started": "2026-10-21T05:14:40.994818+00:00",
+    "ended": "2026-10-21T05:14:41.341676+00:00",
+    "log": "private/plugin-premise-decomposition/known-system-2.log"
+  },
+  {
+    "name": "known-slice-2",
+    "command": [
+      "python3",
+      "private/plugin-premise-decomposition/known_catalog-prepared.py",
+      "private/plugin-premise-decomposition/base-freeze/inputs",
+      "private/plugin-premise-decomposition/tip-freeze/inputs",
+      "private/plugin-premise-decomposition/route-environments/slice",
+      "private/plugin-premise-decomposition/known-slice-2.json"
+    ],
+    "exit": 1,
+    "started": "2026-10-21T05:14:41.473060+00:00",
+    "ended": "2026-10-21T05:14:41.931600+00:00",
+    "log": "private/plugin-premise-decomposition/known-slice-2.log"
+  },
+  {
+    "name": "known-corpus-2",
+    "command": [
+      "python3",
+      "private/plugin-premise-decomposition/known_catalog-prepared.py",
+      "private/plugin-premise-decomposition/base-freeze/inputs",
+      "private/plugin-premise-decomposition/tip-freeze/inputs",
+      "private/plugin-premise-decomposition/route-environments/corpus",
+      "private/plugin-premise-decomposition/known-corpus-2.json"
+    ],
+    "exit": 1,
+    "started": "2026-10-21T05:14:42.046700+00:00",
+    "ended": "2026-10-21T05:14:42.638995+00:00",
+    "log": "private/plugin-premise-decomposition/known-corpus-2.log"
+  },
+  {
+    "name": "known-system-3",
+    "command": [
+      "python3",
+      "private/plugin-premise-decomposition/known_catalog-prepared.py",
+      "private/plugin-premise-decomposition/base-freeze/inputs",
+      "private/plugin-premise-decomposition/tip-freeze/inputs",
+      "private/plugin-premise-decomposition/route-environments/system",
+      "private/plugin-premise-decomposition/known-system-3.json"
+    ],
+    "exit": 1,
+    "started": "2026-10-21T05:15:32.992786+00:00",
+    "ended": "2026-10-21T05:15:33.606612+00:00",
+    "log": "private/plugin-premise-decomposition/known-system-3.log"
+  },
+  {
+    "name": "known-system-4",
+    "command": [
+      "python3",
+      "private/plugin-premise-decomposition/known_catalog-prepared.py",
+      "private/plugin-premise-decomposition/base-freeze/inputs",
+      "private/plugin-premise-decomposition/tip-freeze/inputs",
+      "private/plugin-premise-decomposition/route-environments/system",
+      "private/plugin-premise-decomposition/known-system-4.json"
+    ],
+    "exit": 0,
+    "started": "2026-10-21T05:16:07.661108+00:00",
+    "ended": "2026-10-21T05:16:07.794081+00:00",
+    "log": "private/plugin-premise-decomposition/known-system-4.log"
+  },
+  {
+    "name": "known-slice-4",
+    "command": [
+      "python3",
+      "private/plugin-premise-decomposition/known_catalog-prepared.py",
+      "private/plugin-premise-decomposition/base-freeze/inputs",
+      "private/plugin-premise-decomposition/tip-freeze/inputs",
+      "private/plugin-premise-decomposition/route-environments/slice",
+      "private/plugin-premise-decomposition/known-slice-4.json"
+    ],
+    "exit": 0,
+    "started": "2026-10-21T05:16:07.874325+00:00",
+    "ended": "2026-10-21T05:16:08.025077+00:00",
+    "log": "private/plugin-premise-decomposition/known-slice-4.log"
+  },
+  {
+    "name": "known-corpus-4",
+    "command": [
+      "python3",
+      "private/plugin-premise-decomposition/known_catalog-prepared.py",
+      "private/plugin-premise-decomposition/base-freeze/inputs",
+      "private/plugin-premise-decomposition/tip-freeze/inputs",
+      "private/plugin-premise-decomposition/route-environments/corpus",
+      "private/plugin-premise-decomposition/known-corpus-4.json"
+    ],
+    "exit": 0,
+    "started": "2026-10-21T05:16:08.072001+00:00",
+    "ended": "2026-10-21T05:16:08.209920+00:00",
+    "log": "private/plugin-premise-decomposition/known-corpus-4.log"
+  },
+  {
+    "name": "reading-slice-1",
+    "command": [
+      "python3",
+      "private/plugin-premise-decomposition/run_reading_proof.py",
+      "slice",
+      "private/plugin-premise-decomposition/reading-proof/slice/attempt1"
+    ],
+    "exit": 101,
+    "started": "2026-10-21T05:28:05.692122+00:00",
+    "ended": "2026-10-21T05:28:05.927976+00:00",
+    "log": "private/plugin-premise-decomposition/reading-slice-1.log"
+  },
+  {
+    "name": "reading-helper-v2-build",
+    "command": [
+      "python3",
+      "docs/reports/plugin-premise-decomposition/scripts/build_replay.py",
+      "private/plugin-premise-decomposition/attribute_reading_environments-v2.rs",
+      "private/plugin-premise-decomposition/attribute-reading-environments-v2",
+      "--binary",
+      "target/release/quirin-audit",
+      "--extern",
+      "qcore_c_gateway",
+      "qcore_contract",
+      "qcore_schemas",
+      "serde_json"
+    ],
+    "exit": 0,
+    "started": "2026-10-21T05:30:40.741497+00:00",
+    "ended": "2026-10-21T05:30:43.822559+00:00",
+    "log": "private/plugin-premise-decomposition/reading-helper-v2-build.log"
+  },
+  {
+    "name": "reading-slice-2",
+    "command": [
+      "python3",
+      "private/plugin-premise-decomposition/run_reading_proof.py",
+      "slice",
+      "private/plugin-premise-decomposition/reading-proof/slice/attempt2"
+    ],
+    "exit": 101,
+    "started": "2026-10-21T05:30:43.935708+00:00",
+    "ended": "2026-10-21T05:30:45.015688+00:00",
+    "log": "private/plugin-premise-decomposition/reading-slice-2.log"
+  },
+  {
+    "name": "reading-helper-v3-build",
+    "command": [
+      "python3",
+      "docs/reports/plugin-premise-decomposition/scripts/build_replay.py",
+      "private/plugin-premise-decomposition/attribute_reading_environments-v3.rs",
+      "private/plugin-premise-decomposition/attribute-reading-environments-v3",
+      "--binary",
+      "target/release/quirin-audit",
+      "--extern",
+      "qcore_audit",
+      "qcore_c_gateway",
+      "qcore_contract",
+      "qcore_schemas",
+      "serde_json"
+    ],
+    "exit": 0,
+    "started": "2026-10-21T05:36:38.739342+00:00",
+    "ended": "2026-10-21T05:36:42.962928+00:00",
+    "log": "private/plugin-premise-decomposition/reading-helper-v3-build.log"
+  },
+  {
+    "name": "reading-slice-3",
+    "command": [
+      "python3",
+      "private/plugin-premise-decomposition/run_reading_proof.py",
+      "slice",
+      "private/plugin-premise-decomposition/reading-proof/slice/attempt3"
+    ],
+    "exit": 101,
+    "started": "2026-10-21T05:36:43.111207+00:00",
+    "ended": "2026-10-21T05:36:45.330658+00:00",
+    "log": "private/plugin-premise-decomposition/reading-slice-3.log"
+  },
+  {
+    "name": "reading-slice-4",
+    "command": [
+      "python3",
+      "private/plugin-premise-decomposition/run_reading_proof.py",
+      "slice",
+      "private/plugin-premise-decomposition/reading-proof/slice/attempt4"
+    ],
+    "exit": 101,
+    "started": "2026-10-21T05:36:59.131703+00:00",
+    "ended": "2026-10-21T05:37:01.559477+00:00",
+    "log": "private/plugin-premise-decomposition/reading-slice-4.log"
+  },
+  {
+    "name": "reading-helper-v4-build",
+    "command": [
+      "python3",
+      "docs/reports/plugin-premise-decomposition/scripts/build_replay.py",
+      "private/plugin-premise-decomposition/attribute_reading_environments-v4.rs",
+      "private/plugin-premise-decomposition/attribute-reading-environments-v4",
+      "--binary",
+      "target/release/quirin-audit",
+      "--extern",
+      "qcore_audit",
+      "qcore_c_gateway",
+      "qcore_contract",
+      "qcore_schemas",
+      "serde_json"
+    ],
+    "exit": 0,
+    "started": "2026-10-21T05:37:30.147627+00:00",
+    "ended": "2026-10-21T05:37:33.515665+00:00",
+    "log": "private/plugin-premise-decomposition/reading-helper-v4-build.log"
+  },
+  {
+    "name": "reading-slice-5",
+    "command": [
+      "python3",
+      "private/plugin-premise-decomposition/run_reading_proof.py",
+      "slice",
+      "private/plugin-premise-decomposition/reading-proof/slice/attempt5"
+    ],
+    "exit": 0,
+    "started": "2026-10-21T05:37:33.600592+00:00",
+    "ended": "2026-10-21T05:37:37.019773+00:00",
+    "log": "private/plugin-premise-decomposition/reading-slice-5.log"
+  },
+  {
+    "name": "reading-system-1",
+    "command": [
+      "python3",
+      "private/plugin-premise-decomposition/run_reading_proof.py",
+      "system",
+      "private/plugin-premise-decomposition/reading-proof/system/attempt1"
+    ],
+    "exit": 101,
+    "started": "2026-10-21T05:37:45.688276+00:00",
+    "ended": "2026-10-21T05:37:46.954793+00:00",
+    "log": "private/plugin-premise-decomposition/reading-system-1.log"
+  },
+  {
+    "name": "reading-helper-v5-build",
+    "command": [
+      "python3",
+      "docs/reports/plugin-premise-decomposition/scripts/build_replay.py",
+      "private/plugin-premise-decomposition/attribute_reading_environments-v5.rs",
+      "private/plugin-premise-decomposition/attribute-reading-environments-v5",
+      "--binary",
+      "target/release/quirin-audit",
+      "--extern",
+      "qcore_audit",
+      "qcore_c_gateway",
+      "qcore_contract",
+      "qcore_schemas",
+      "serde_json"
+    ],
+    "exit": 0,
+    "started": "2026-10-21T05:38:58.511281+00:00",
+    "ended": "2026-10-21T05:39:01.437808+00:00",
+    "log": "private/plugin-premise-decomposition/reading-helper-v5-build.log"
+  },
+  {
+    "name": "reading-system-2",
+    "command": [
+      "python3",
+      "private/plugin-premise-decomposition/run_reading_proof.py",
+      "system",
+      "private/plugin-premise-decomposition/reading-proof/system/attempt2"
+    ],
+    "exit": 0,
+    "started": "2026-10-21T05:39:01.544451+00:00",
+    "ended": "2026-10-21T05:39:11.577405+00:00",
+    "log": "private/plugin-premise-decomposition/reading-system-2.log"
+  },
+  {
+    "name": "reading-slice-6",
+    "command": [
+      "python3",
+      "private/plugin-premise-decomposition/run_reading_proof.py",
+      "slice",
+      "private/plugin-premise-decomposition/reading-proof/slice/attempt6"
+    ],
+    "exit": 0,
+    "started": "2026-10-21T05:39:11.616241+00:00",
+    "ended": "2026-10-21T05:39:13.380352+00:00",
+    "log": "private/plugin-premise-decomposition/reading-slice-6.log"
+  },
+  {
+    "name": "null-environment-helper-build",
+    "command": [
+      "python3",
+      "docs/reports/plugin-premise-decomposition/scripts/build_replay.py",
+      "private/plugin-premise-decomposition/null_environment_provenance.rs",
+      "private/plugin-premise-decomposition/null-environment-provenance",
+      "--binary",
+      "target/release/quirin-audit",
+      "--extern",
+      "qcore_audit",
+      "qcore_c_gateway",
+      "qcore_contract",
+      "qcore_schemas",
+      "serde_json"
+    ],
+    "exit": 0,
+    "started": "2026-10-21T05:39:35.286813+00:00",
+    "ended": "2026-10-21T05:39:35.918339+00:00",
+    "log": "private/plugin-premise-decomposition/null-environment-helper-build.log"
+  },
+  {
+    "name": "null-environments-all",
+    "command": [
+      "python3",
+      "private/plugin-premise-decomposition/replay_null_environments.py"
+    ],
+    "exit": 0,
+    "started": "2026-10-21T05:39:58.217764+00:00",
+    "ended": "2026-10-21T05:40:05.586676+00:00",
+    "log": "private/plugin-premise-decomposition/null-environments-all.log"
+  },
+  {
+    "name": "configuration-slice-1",
+    "command": [
+      "python3",
+      "private/plugin-premise-decomposition/attribute_configurations.py",
+      "slice",
+      "private/plugin-premise-decomposition/configuration-slice-1.json"
+    ],
+    "exit": 1,
+    "started": "2026-10-21T05:40:39.588099+00:00",
+    "ended": "2026-10-21T05:40:39.702500+00:00",
+    "log": "private/plugin-premise-decomposition/configuration-slice-1.log"
+  },
+  {
+    "name": "configuration-system-1",
+    "command": [
+      "python3",
+      "private/plugin-premise-decomposition/attribute_configurations.py",
+      "system",
+      "private/plugin-premise-decomposition/configuration-system-1.json"
+    ],
+    "exit": 1,
+    "started": "2026-10-21T05:40:39.734092+00:00",
+    "ended": "2026-10-21T05:40:39.833916+00:00",
+    "log": "private/plugin-premise-decomposition/configuration-system-1.log"
+  },
+  {
+    "name": "configuration-slice-2",
+    "command": [
+      "python3",
+      "private/plugin-premise-decomposition/attribute_configurations.py",
+      "slice",
+      "private/plugin-premise-decomposition/configuration-slice-2.json"
+    ],
+    "exit": 0,
+    "started": "2026-10-21T05:40:56.496156+00:00",
+    "ended": "2026-10-21T05:40:56.619954+00:00",
+    "log": "private/plugin-premise-decomposition/configuration-slice-2.log"
+  },
+  {
+    "name": "configuration-system-2",
+    "command": [
+      "python3",
+      "private/plugin-premise-decomposition/attribute_configurations.py",
+      "system",
+      "private/plugin-premise-decomposition/configuration-system-2.json"
+    ],
+    "exit": 0,
+    "started": "2026-10-21T05:40:56.652792+00:00",
+    "ended": "2026-10-21T05:40:56.813276+00:00",
+    "log": "private/plugin-premise-decomposition/configuration-system-2.log"
+  },
+  {
+    "name": "known-slice-enriched-1",
+    "command": [
+      "python3",
+      "private/plugin-premise-decomposition/enrich_known.py",
+      "slice",
+      "private/plugin-premise-decomposition/known-slice-enriched-1.json"
+    ],
+    "exit": 0,
+    "started": "2026-10-21T05:41:34.761772+00:00",
+    "ended": "2026-10-21T05:41:34.978406+00:00",
+    "log": "private/plugin-premise-decomposition/known-slice-enriched-1.log"
+  },
+  {
+    "name": "known-system-enriched-1",
+    "command": [
+      "python3",
+      "private/plugin-premise-decomposition/enrich_known.py",
+      "system",
+      "private/plugin-premise-decomposition/known-system-enriched-1.json"
+    ],
+    "exit": 0,
+    "started": "2026-10-21T05:41:35.014756+00:00",
+    "ended": "2026-10-21T05:41:35.256227+00:00",
+    "log": "private/plugin-premise-decomposition/known-system-enriched-1.log"
+  },
+  {
+    "name": "comparison-slice-1",
+    "command": [
+      "python3",
+      "private/plugin-premise-decomposition/compare-prepared.py",
+      "slice",
+      "private/plugin-premise-decomposition/measure-1/slice/base",
+      "private/plugin-premise-decomposition/measure-1/slice/tip",
+      "private/plugin-premise-decomposition/comparison/slice/attempt1",
+      "--known",
+      "private/plugin-premise-decomposition/known-slice-enriched-1.json",
+      "--reading-proof",
+      "private/plugin-premise-decomposition/reading-proof/slice/attempt6/proof.json"
+    ],
+    "exit": 1,
+    "started": "2026-10-21T05:41:35.291388+00:00",
+    "ended": "2026-10-21T05:41:37.085795+00:00",
+    "log": "private/plugin-premise-decomposition/comparison-slice-1.log"
+  },
+  {
+    "name": "comparison-system-1",
+    "command": [
+      "python3",
+      "private/plugin-premise-decomposition/compare-prepared.py",
+      "system",
+      "private/plugin-premise-decomposition/measure-1/system/base",
+      "private/plugin-premise-decomposition/measure-1/system/tip",
+      "private/plugin-premise-decomposition/comparison/system/attempt1",
+      "--known",
+      "private/plugin-premise-decomposition/known-system-enriched-1.json",
+      "--reading-proof",
+      "private/plugin-premise-decomposition/reading-proof/system/attempt2/proof.json"
+    ],
+    "exit": 1,
+    "started": "2026-10-21T05:41:37.116702+00:00",
+    "ended": "2026-10-21T05:41:39.246081+00:00",
+    "log": "private/plugin-premise-decomposition/comparison-system-1.log"
+  },
+  {
+    "name": "comparison-slice-2",
+    "command": [
+      "python3",
+      "private/plugin-premise-decomposition/compare-prepared.py",
+      "slice",
+      "private/plugin-premise-decomposition/measure-1/slice/base",
+      "private/plugin-premise-decomposition/measure-1/slice/tip",
+      "private/plugin-premise-decomposition/comparison/slice/attempt2",
+      "--known",
+      "private/plugin-premise-decomposition/known-slice-enriched-1.json",
+      "--reading-proof",
+      "private/plugin-premise-decomposition/reading-proof/slice/attempt6/proof.json"
+    ],
+    "exit": 1,
+    "started": "2026-10-21T05:42:43.170001+00:00",
+    "ended": "2026-10-21T05:42:45.046263+00:00",
+    "log": "private/plugin-premise-decomposition/comparison-slice-2.log"
+  },
+  {
+    "name": "comparison-system-2",
+    "command": [
+      "python3",
+      "private/plugin-premise-decomposition/compare-prepared.py",
+      "system",
+      "private/plugin-premise-decomposition/measure-1/system/base",
+      "private/plugin-premise-decomposition/measure-1/system/tip",
+      "private/plugin-premise-decomposition/comparison/system/attempt2",
+      "--known",
+      "private/plugin-premise-decomposition/known-system-enriched-1.json",
+      "--reading-proof",
+      "private/plugin-premise-decomposition/reading-proof/system/attempt2/proof.json"
+    ],
+    "exit": 1,
+    "started": "2026-10-21T05:42:45.079376+00:00",
+    "ended": "2026-10-21T05:42:47.339270+00:00",
+    "log": "private/plugin-premise-decomposition/comparison-system-2.log"
+  },
+  {
+    "name": "time-slice-1",
+    "command": [
+      "python3",
+      "docs/reports/premise-evidence-contracts/scripts/attribute_time_identity.py",
+      "slice",
+      "private/plugin-premise-decomposition/comparison/slice/attempt2"
+    ],
+    "exit": 0,
+    "started": "2026-10-21T05:42:47.368326+00:00",
+    "ended": "2026-10-21T05:42:47.703899+00:00",
+    "log": "private/plugin-premise-decomposition/time-slice-1.log"
+  },
+  {
+    "name": "time-system-1",
+    "command": [
+      "python3",
+      "docs/reports/premise-evidence-contracts/scripts/attribute_time_identity.py",
+      "system",
+      "private/plugin-premise-decomposition/comparison/system/attempt2"
+    ],
+    "exit": 0,
+    "started": "2026-10-21T05:42:47.733904+00:00",
+    "ended": "2026-10-21T05:42:48.074693+00:00",
+    "log": "private/plugin-premise-decomposition/time-system-1.log"
+  },
+  {
+    "name": "actual-bindings-slice-1",
+    "command": [
+      "python3",
+      "private/plugin-premise-decomposition/check_actual_bindings.py",
+      "slice"
+    ],
+    "exit": 0,
+    "started": "2026-10-21T05:43:26.711269+00:00",
+    "ended": "2026-10-21T05:43:29.132039+00:00",
+    "log": "private/plugin-premise-decomposition/actual-bindings-slice-1.log"
+  },
+  {
+    "name": "actual-bindings-system-1",
+    "command": [
+      "python3",
+      "private/plugin-premise-decomposition/check_actual_bindings.py",
+      "system"
+    ],
+    "exit": 0,
+    "started": "2026-10-21T05:43:29.165055+00:00",
+    "ended": "2026-10-21T05:43:31.688116+00:00",
+    "log": "private/plugin-premise-decomposition/actual-bindings-system-1.log"
+  },
+  {
+    "name": "comparison-slice-3",
+    "command": [
+      "python3",
+      "private/plugin-premise-decomposition/compare-prepared.py",
+      "slice",
+      "private/plugin-premise-decomposition/measure-1/slice/base",
+      "private/plugin-premise-decomposition/measure-1/slice/tip",
+      "private/plugin-premise-decomposition/comparison/slice/attempt3",
+      "--known",
+      "private/plugin-premise-decomposition/known-slice-final.json",
+      "--reading-proof",
+      "private/plugin-premise-decomposition/reading-proof/slice/attempt6/proof.json"
+    ],
+    "exit": 0,
+    "started": "2026-10-21T05:43:52.920052+00:00",
+    "ended": "2026-10-21T05:43:54.861438+00:00",
+    "log": "private/plugin-premise-decomposition/comparison-slice-3.log"
+  },
+  {
+    "name": "comparison-system-3",
+    "command": [
+      "python3",
+      "private/plugin-premise-decomposition/compare-prepared.py",
+      "system",
+      "private/plugin-premise-decomposition/measure-1/system/base",
+      "private/plugin-premise-decomposition/measure-1/system/tip",
+      "private/plugin-premise-decomposition/comparison/system/attempt3",
+      "--known",
+      "private/plugin-premise-decomposition/known-system-final.json",
+      "--reading-proof",
+      "private/plugin-premise-decomposition/reading-proof/system/attempt2/proof.json"
+    ],
+    "exit": 0,
+    "started": "2026-10-21T05:43:54.897845+00:00",
+    "ended": "2026-10-21T05:43:57.195807+00:00",
+    "log": "private/plugin-premise-decomposition/comparison-system-3.log"
+  },
+  {
+    "name": "facts-slice-1",
+    "command": [
+      "python3",
+      "private/plugin-premise-decomposition/check_all_facts.py",
+      "slice"
+    ],
+    "exit": 0,
+    "started": "2026-10-21T05:44:33.072556+00:00",
+    "ended": "2026-10-21T05:44:33.444470+00:00",
+    "log": "private/plugin-premise-decomposition/facts-slice-1.log"
+  },
+  {
+    "name": "facts-system-1",
+    "command": [
+      "python3",
+      "private/plugin-premise-decomposition/check_all_facts.py",
+      "system"
+    ],
+    "exit": 0,
+    "started": "2026-10-21T05:44:33.476149+00:00",
+    "ended": "2026-10-21T05:44:33.889057+00:00",
+    "log": "private/plugin-premise-decomposition/facts-system-1.log"
+  },
+  {
+    "name": "impact-slice-1",
+    "command": [
+      "python3",
+      "private/plugin-premise-decomposition/impact-final-prepared.py",
+      "slice",
+      "private/plugin-premise-decomposition/measure-1/slice/tip",
+      "private/plugin-premise-decomposition/impact-slice.json.gz"
+    ],
+    "exit": 1,
+    "started": "2026-10-21T05:44:33.920921+00:00",
+    "ended": "2026-10-21T05:44:34.120046+00:00",
+    "log": "private/plugin-premise-decomposition/impact-slice-1.log"
+  },
+  {
+    "name": "impact-system-1",
+    "command": [
+      "python3",
+      "private/plugin-premise-decomposition/impact-final-prepared.py",
+      "system",
+      "private/plugin-premise-decomposition/measure-1/system/tip",
+      "private/plugin-premise-decomposition/impact-system.json.gz"
+    ],
+    "exit": 1,
+    "started": "2026-10-21T05:44:34.151468+00:00",
+    "ended": "2026-10-21T05:44:34.350328+00:00",
+    "log": "private/plugin-premise-decomposition/impact-system-1.log"
+  },
+  {
+    "name": "impact-slice-2",
+    "command": [
+      "python3",
+      "private/plugin-premise-decomposition/impact-final-prepared.py",
+      "slice",
+      "private/plugin-premise-decomposition/measure-1/slice/tip",
+      "private/plugin-premise-decomposition/impact-slice-2.json.gz"
+    ],
+    "exit": 0,
+    "started": "2026-10-21T05:44:57.767857+00:00",
+    "ended": "2026-10-21T05:44:57.938542+00:00",
+    "log": "private/plugin-premise-decomposition/impact-slice-2.log"
+  },
+  {
+    "name": "impact-system-2",
+    "command": [
+      "python3",
+      "private/plugin-premise-decomposition/impact-final-prepared.py",
+      "system",
+      "private/plugin-premise-decomposition/measure-1/system/tip",
+      "private/plugin-premise-decomposition/impact-system-2.json.gz"
+    ],
+    "exit": 0,
+    "started": "2026-10-21T05:44:57.976109+00:00",
+    "ended": "2026-10-21T05:44:58.140074+00:00",
+    "log": "private/plugin-premise-decomposition/impact-system-2.log"
+  },
+  {
+    "name": "reading-negative-controls-1",
+    "command": [
+      "python3",
+      "private/plugin-premise-decomposition/reading_negative_controls.py"
+    ],
+    "exit": 0,
+    "started": "2026-10-21T05:45:49.559674+00:00",
+    "ended": "2026-10-21T05:45:53.271581+00:00",
+    "log": "private/plugin-premise-decomposition/reading-negative-controls-1.log"
+  },
+  {
+    "name": "five-artifact-slice-1",
+    "command": [
+      "python3",
+      "private/plugin-premise-decomposition/five_artifact_diff.py",
+      "slice"
+    ],
+    "exit": 0,
+    "started": "2026-10-21T05:46:47.719094+00:00",
+    "ended": "2026-10-21T05:46:49.130882+00:00",
+    "log": "private/plugin-premise-decomposition/five-artifact-slice-1.log"
+  },
+  {
+    "name": "five-artifact-system-1",
+    "command": [
+      "python3",
+      "private/plugin-premise-decomposition/five_artifact_diff.py",
+      "system"
+    ],
+    "exit": 0,
+    "started": "2026-10-21T05:46:49.274677+00:00",
+    "ended": "2026-10-21T05:46:50.819803+00:00",
+    "log": "private/plugin-premise-decomposition/five-artifact-system-1.log"
+  },
+  {
+    "name": "reading-helper-v6-build",
+    "command": [
+      "python3",
+      "docs/reports/plugin-premise-decomposition/scripts/build_replay.py",
+      "private/plugin-premise-decomposition/attribute_reading_environments-v6.rs",
+      "private/plugin-premise-decomposition/attribute-reading-environments-v6",
+      "--binary",
+      "target/release/quirin-audit",
+      "--extern",
+      "qcore_audit",
+      "qcore_c_gateway",
+      "qcore_contract",
+      "qcore_schemas",
+      "serde_json"
+    ],
+    "exit": 0,
+    "started": "2026-10-21T05:57:37.171898+00:00",
+    "ended": "2026-10-21T05:57:39.899107+00:00",
+    "log": "private/plugin-premise-decomposition/reading-helper-v6-build.log"
+  },
+  {
+    "name": "base-graph-preflight-1",
+    "command": [
+      "python3",
+      "private/plugin-premise-decomposition/base_graph_preflight.py"
+    ],
+    "exit": 0,
+    "started": "2026-10-21T06:08:00.351630+00:00",
+    "ended": "2026-10-21T06:08:01.517682+00:00",
+    "log": "private/plugin-premise-decomposition/base-graph-preflight-1.log"
+  },
+  {
+    "name": "comparison-slice-4",
+    "command": [
+      "python3",
+      "private/plugin-premise-decomposition/compare-prepared.py",
+      "slice",
+      "private/plugin-premise-decomposition/measure-1/slice/base",
+      "private/plugin-premise-decomposition/measure-1/slice/tip",
+      "private/plugin-premise-decomposition/comparison/slice/attempt4",
+      "--known",
+      "private/plugin-premise-decomposition/known-slice-final.json",
+      "--reading-proof",
+      "private/plugin-premise-decomposition/reading-proof/slice/attempt6/proof.json"
+    ],
+    "exit": 0,
+    "started": "2026-10-21T06:18:16.019386+00:00",
+    "ended": "2026-10-21T06:18:18.494640+00:00",
+    "log": "private/plugin-premise-decomposition/comparison-slice-4.log"
+  },
+  {
+    "name": "comparison-system-4",
+    "command": [
+      "python3",
+      "private/plugin-premise-decomposition/compare-prepared.py",
+      "system",
+      "private/plugin-premise-decomposition/measure-1/system/base",
+      "private/plugin-premise-decomposition/measure-1/system/tip",
+      "private/plugin-premise-decomposition/comparison/system/attempt4",
+      "--known",
+      "private/plugin-premise-decomposition/known-system-final.json",
+      "--reading-proof",
+      "private/plugin-premise-decomposition/reading-proof/system/attempt2/proof.json"
+    ],
+    "exit": 0,
+    "started": "2026-10-21T06:18:18.526167+00:00",
+    "ended": "2026-10-21T06:18:21.451628+00:00",
+    "log": "private/plugin-premise-decomposition/comparison-system-4.log"
+  },
+  {
+    "name": "comparison-slice-5",
+    "command": [
+      "python3",
+      "private/plugin-premise-decomposition/compare-prepared.py",
+      "slice",
+      "private/plugin-premise-decomposition/measure-1/slice/base",
+      "private/plugin-premise-decomposition/measure-1/slice/tip",
+      "private/plugin-premise-decomposition/comparison/slice/attempt5",
+      "--known",
+      "private/plugin-premise-decomposition/known-slice-final.json",
+      "--reading-proof",
+      "private/plugin-premise-decomposition/reading-proof/slice/attempt6/proof.json"
+    ],
+    "exit": 0,
+    "started": "2026-10-21T06:20:26.987360+00:00",
+    "ended": "2026-10-21T06:20:29.659605+00:00",
+    "log": "private/plugin-premise-decomposition/comparison-slice-5.log"
+  },
+  {
+    "name": "comparison-system-5",
+    "command": [
+      "python3",
+      "private/plugin-premise-decomposition/compare-prepared.py",
+      "system",
+      "private/plugin-premise-decomposition/measure-1/system/base",
+      "private/plugin-premise-decomposition/measure-1/system/tip",
+      "private/plugin-premise-decomposition/comparison/system/attempt5",
+      "--known",
+      "private/plugin-premise-decomposition/known-system-final.json",
+      "--reading-proof",
+      "private/plugin-premise-decomposition/reading-proof/system/attempt2/proof.json"
+    ],
+    "exit": 0,
+    "started": "2026-10-21T06:20:29.691126+00:00",
+    "ended": "2026-10-21T06:20:32.792363+00:00",
+    "log": "private/plugin-premise-decomposition/comparison-system-5.log"
+  },
+  {
+    "name": "reading-corpus-1",
+    "command": [
+      "python3",
+      "private/plugin-premise-decomposition/run_reading_proof.py",
+      "corpus",
+      "private/plugin-premise-decomposition/reading-proof/corpus/attempt1"
+    ],
+    "exit": 0,
+    "started": "2026-10-21T06:42:01.951179+00:00",
+    "ended": "2026-10-21T06:42:12.337886+00:00",
+    "log": "private/plugin-premise-decomposition/reading-corpus-1.log"
+  },
+  {
+    "name": "configuration-corpus-2",
+    "command": [
+      "python3",
+      "private/plugin-premise-decomposition/attribute_configurations.py",
+      "corpus",
+      "private/plugin-premise-decomposition/configuration-corpus-2.json"
+    ],
+    "exit": 0,
+    "started": "2026-10-21T06:42:12.366120+00:00",
+    "ended": "2026-10-21T06:42:13.075921+00:00",
+    "log": "private/plugin-premise-decomposition/configuration-corpus-2.log"
+  },
+  {
+    "name": "known-corpus-enriched-1",
+    "command": [
+      "python3",
+      "private/plugin-premise-decomposition/enrich_known.py",
+      "corpus",
+      "private/plugin-premise-decomposition/known-corpus-enriched-1.json"
+    ],
+    "exit": 0,
+    "started": "2026-10-21T06:42:13.102217+00:00",
+    "ended": "2026-10-21T06:42:15.114103+00:00",
+    "log": "private/plugin-premise-decomposition/known-corpus-enriched-1.log"
+  },
+  {
+    "name": "comparison-corpus-1",
+    "command": [
+      "python3",
+      "private/plugin-premise-decomposition/compare-prepared.py",
+      "corpus",
+      "private/plugin-premise-decomposition/measure-1/corpus/base",
+      "private/plugin-premise-decomposition/measure-1/corpus/tip",
+      "private/plugin-premise-decomposition/comparison/corpus/attempt1",
+      "--known",
+      "private/plugin-premise-decomposition/known-corpus-enriched-1.json",
+      "--reading-proof",
+      "private/plugin-premise-decomposition/reading-proof/corpus/attempt1/proof.json"
+    ],
+    "exit": 1,
+    "started": "2026-10-21T06:42:15.145631+00:00",
+    "ended": "2026-10-21T06:42:34.789665+00:00",
+    "log": "private/plugin-premise-decomposition/comparison-corpus-1.log"
+  },
+  {
+    "name": "actual-bindings-corpus-1",
+    "command": [
+      "python3",
+      "private/plugin-premise-decomposition/check_actual_bindings.py",
+      "corpus"
+    ],
+    "exit": 0,
+    "started": "2026-10-21T06:42:34.817436+00:00",
+    "ended": "2026-10-21T06:42:40.012085+00:00",
+    "log": "private/plugin-premise-decomposition/actual-bindings-corpus-1.log"
+  },
+  {
+    "name": "facts-corpus-1",
+    "command": [
+      "python3",
+      "private/plugin-premise-decomposition/check_all_facts.py",
+      "corpus"
+    ],
+    "exit": 0,
+    "started": "2026-10-21T06:42:40.037889+00:00",
+    "ended": "2026-10-21T06:42:42.034402+00:00",
+    "log": "private/plugin-premise-decomposition/facts-corpus-1.log"
+  },
+  {
+    "name": "impact-corpus-2",
+    "command": [
+      "python3",
+      "private/plugin-premise-decomposition/impact-final-prepared.py",
+      "corpus",
+      "private/plugin-premise-decomposition/measure-1/corpus/tip",
+      "private/plugin-premise-decomposition/impact-corpus-2.json.gz"
+    ],
+    "exit": 0,
+    "started": "2026-10-21T06:42:42.058833+00:00",
+    "ended": "2026-10-21T06:42:43.948865+00:00",
+    "log": "private/plugin-premise-decomposition/impact-corpus-2.log"
+  },
+  {
+    "name": "five-artifact-corpus-1",
+    "command": [
+      "python3",
+      "private/plugin-premise-decomposition/five_artifact_diff.py",
+      "corpus"
+    ],
+    "exit": 0,
+    "started": "2026-10-21T06:42:43.980124+00:00",
+    "ended": "2026-10-21T06:42:47.249224+00:00",
+    "log": "private/plugin-premise-decomposition/five-artifact-corpus-1.log"
+  },
+  {
+    "name": "time-corpus-1",
+    "command": [
+      "python3",
+      "docs/reports/premise-evidence-contracts/scripts/attribute_time_identity.py",
+      "corpus",
+      "private/plugin-premise-decomposition/comparison/corpus/attempt1"
+    ],
+    "exit": 0,
+    "started": "2026-10-21T06:43:01.512692+00:00",
+    "ended": "2026-10-21T06:43:02.343367+00:00",
+    "log": "private/plugin-premise-decomposition/time-corpus-1.log"
+  },
+  {
+    "name": "comparison-corpus-final",
+    "command": [
+      "python3",
+      "private/plugin-premise-decomposition/compare-prepared.py",
+      "corpus",
+      "private/plugin-premise-decomposition/measure-1/corpus/base",
+      "private/plugin-premise-decomposition/measure-1/corpus/tip",
+      "private/plugin-premise-decomposition/comparison/corpus/FINAL",
+      "--known",
+      "private/plugin-premise-decomposition/known-corpus-final.json",
+      "--reading-proof",
+      "private/plugin-premise-decomposition/reading-proof/corpus/attempt1/proof.json"
+    ],
+    "exit": 0,
+    "started": "2026-10-21T06:43:21.833587+00:00",
+    "ended": "2026-10-21T06:43:41.442017+00:00",
+    "log": "private/plugin-premise-decomposition/comparison-corpus-final.log"
+  },
+  {
+    "name": "impact-slice-final",
+    "command": [
+      "python3",
+      "private/plugin-premise-decomposition/impact-final-prepared.py",
+      "slice",
+      "private/plugin-premise-decomposition/measure-1/slice/tip",
+      "private/plugin-premise-decomposition/impact-slice-final.json.gz"
+    ],
+    "exit": 0,
+    "started": "2026-10-21T06:45:08.509177+00:00",
+    "ended": "2026-10-21T06:45:08.631797+00:00",
+    "log": "private/plugin-premise-decomposition/impact-slice-final.log"
+  },
+  {
+    "name": "impact-system-final",
+    "command": [
+      "python3",
+      "private/plugin-premise-decomposition/impact-final-prepared.py",
+      "system",
+      "private/plugin-premise-decomposition/measure-1/system/tip",
+      "private/plugin-premise-decomposition/impact-system-final.json.gz"
+    ],
+    "exit": 0,
+    "started": "2026-10-21T06:45:08.664089+00:00",
+    "ended": "2026-10-21T06:45:08.803419+00:00",
+    "log": "private/plugin-premise-decomposition/impact-system-final.log"
+  },
+  {
+    "name": "impact-corpus-final",
+    "command": [
+      "python3",
+      "private/plugin-premise-decomposition/impact-final-prepared.py",
+      "corpus",
+      "private/plugin-premise-decomposition/measure-1/corpus/tip",
+      "private/plugin-premise-decomposition/impact-corpus-final.json.gz"
+    ],
+    "exit": 0,
+    "started": "2026-10-21T06:45:08.829246+00:00",
+    "ended": "2026-10-21T06:45:10.703365+00:00",
+    "log": "private/plugin-premise-decomposition/impact-corpus-final.log"
+  }
+]

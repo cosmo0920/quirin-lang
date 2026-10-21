@@ -1,0 +1,6 @@
+{
+  "pid": 226478,
+  "time": "2026-10-21T04:14:04.218270+00:00",
+  "scope": "unacquired lock waiter, no children/stages",
+  "reason": "Integrator priority repair: missing libc Lean import on combined base; await repaired exact source"
+}

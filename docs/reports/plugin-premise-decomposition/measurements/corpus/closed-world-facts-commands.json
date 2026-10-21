@@ -1,0 +1,20 @@
+[
+  {
+    "command": [
+      "/home/cosmo/.codex/worktrees/w48-bottom-up-batch4/qcore-c/target/debug/examples/premise_outer_facts",
+      "/home/cosmo/.codex/worktrees/w48-bottom-up-batch4/qcore-c/private/plugin-premise-decomposition/measure-1/corpus/base/resource-diagnostics.json",
+      "/home/cosmo/.codex/worktrees/w48-bottom-up-batch4/qcore-c/private/plugin-premise-decomposition/measure-1/corpus/base/resource-diagnostics.contracts.json",
+      "/home/cosmo/.codex/worktrees/w48-bottom-up-batch4/qcore-c/private/plugin-premise-decomposition/closed-world-facts/corpus/base.json"
+    ],
+    "exit": 0
+  },
+  {
+    "command": [
+      "/home/cosmo/.codex/worktrees/w48-bottom-up-batch4/qcore-c/target/debug/examples/premise_outer_facts",
+      "/home/cosmo/.codex/worktrees/w48-bottom-up-batch4/qcore-c/private/plugin-premise-decomposition/measure-1/corpus/tip/resource-diagnostics.json",
+      "/home/cosmo/.codex/worktrees/w48-bottom-up-batch4/qcore-c/private/plugin-premise-decomposition/measure-1/corpus/tip/resource-diagnostics.contracts.json",
+      "/home/cosmo/.codex/worktrees/w48-bottom-up-batch4/qcore-c/private/plugin-premise-decomposition/closed-world-facts/corpus/tip.json"
+    ],
+    "exit": 0
+  }
+]

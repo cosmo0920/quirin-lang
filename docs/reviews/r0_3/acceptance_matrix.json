@@ -7,7 +7,7 @@
  "section_ownership": {
   "note": "Card D02-GEN-REST. Every top-level key of this file is labelled here, so no section is silently hand-maintained. `derived` sections are recomputed by the generator on every run and a hand edit to them is overwritten; `hand_maintained` sections are carried verbatim from the previous matrix, which is why a regeneration no longer reverts a later reconciliation; `integrator_supplied` numbers are measurements the generator cannot take.",
   "generator": "docs/reports/remaining-d02/build_matrix.py",
-  "carried_from": "private/premise-contracts-integration/final-previous-matrix.json",
+  "carried_from": "private/plugin-premise-decomposition/matrix-previous-with-plugin.json",
   "vocabulary": {
    "derived": "recomputed by docs/reports/remaining-d02/build_matrix.py from the named manifest, validated record or working tree; a hand edit here is overwritten on the next regeneration",
    "integrator_supplied": "a measurement this script cannot take; supplied through --gate, otherwise carried from the previous matrix and labelled as carried",
@@ -195,7 +195,7 @@
   "ct_stage_names": 20,
   "ct_cells": 1000,
   "unverified_spec_items": 10,
-  "named_followups": 807
+  "named_followups": 810
  },
  "derivation": {
   "rule": "no count in a section this file marks `derived` is hand-copied from a status ledger; each is read from the manifest or validated run record named beside it. Sections marked `hand_maintained` are recorded analysis carried verbatim from the previous matrix, and `integrator_supplied` numbers name whether they were measured for this run or carried - see section_ownership.",
@@ -6758,7 +6758,7 @@
   "workspace_tests": 8405,
   "provider_tests": 133,
   "python_evidence_validator_tests": 374,
-  "lean_audits": 351,
+  "lean_audits": 354,
   "lean_audit_files": [
    "AuditAbiEnumConstPointer.lean",
    "AuditAggregateOwnedField.lean",
@@ -6974,6 +6974,9 @@
    "AuditPackageTemplateBinding.lean",
    "AuditParenthesisedCallee.lean",
    "AuditPipeDesugaring.lean",
+   "AuditPluginNeutralOverlap.lean",
+   "AuditPluginPremiseDecomposition.lean",
+   "AuditPluginReadingEnvironment.lean",
    "AuditPointerQualifierReader.lean",
    "AuditPointerStore.lean",
    "AuditPremiseRefinement.lean",
@@ -7118,7 +7121,7 @@
   "cargo_clippy": "clean",
   "standing_gate": "complete after recorded Lean registration repair",
   "full_language_conformance": false,
-  "measurement_provenance": "integrator_supplied (docs/reports/premise-contracts-integration/gate.json)"
+  "measurement_provenance": "carried_from_previous_matrix: these numbers were NOT measured for this regeneration; pass --gate PATH with the standing-gate results of this checkpoint to replace them"
  },
  "named_followups": [
   {
@@ -12730,7 +12733,28 @@
    "why": "Cycle1B migrates __errno_location and strerror nested_call_admission to3/5opaque atoms with stable formal proposition IDs, exact Context bindings, conditional Lean decomposition/counterexample theorems and direct/summary dependency controls. No typed registry entry, semantic consumer, verified library body or automatic verdict invalidation exists. DISCHARGE: independently establish each entire guarded proposition for its exact artifact/property/profile/scope/bounds/assumptions/source/build/evidence version and retained expected graph; preserve the accessor either-route alternative rather than requiring both. Any evidence recontextualization or checked verdict invalidation needs a separate scoped rule and matching proof; Unknown is not false and a refuted assumption is not a reachable C violation. Operator proposals AND/forbidden/OR/terminal remain separate semantics work. LIBC-READING-SITE-EVIDENCE-V1 adds transactional finite local-checker observations with exact spans, sibling sets, graph/atom/Context/environment references, named Prop leaves and conservative held-source replay controls. Selected successful captures do not enumerate the complete relevant reading domain or prove any of the eight opaque universal atoms; all remain Open. Source/preparation/environment reproduction refusals are evidence boundaries, not refutations or C violations.",
    "source": "docs/reports/libc-reading-site-evidence/README.md",
    "recorded_by": "LIBC-READING-SITE-EVIDENCE-V1"
+  },
+  {
+   "id": "PLUGIN-PREMISE-SOURCE-BINDING",
+   "title": "Bind deployed plugin prerequisite evidence to actual artifacts, loader traces and exact property contexts",
+   "why": "PLUGIN-PREMISE-DECOMPOSITION factors166 existing same-name occurrences and two outer-envelope catalogs into explicit conditional propositions, environments and prerequisite references. All source bindings remain Open: artifact and symbol/ABI resolution, build and loader environment, complete registration/candidate events, callback/context liveness, transitive custody and final unload need independently supplied source/trace evidence. In particular the pinned Go proxy creator ignores the register return; allocation establishes no successful registration. DISCHARGE: source-bound evidence for these exact prerequisites and all nine Context coordinates, explicit replay/negative controls and exact dependent-row propagation, without prose equivalence, implicit provider authority or automatic Unsafe.",
+   "source": "docs/reports/plugin-premise-decomposition/README.md",
+   "recorded_by": "PLUGIN-PREMISE-DECOMPOSITION"
+  },
+  {
+   "id": "PLUGIN-PREMISE-OUTER-TRUTH",
+   "title": "Establish both plugin outer-envelope propositions and their guarded callback bridge",
+   "why": "The unchanged rk_plugin_library and flb_external_plugin outer declarations retain independent names/prose/digests/selection. Their proposed12/14-atom catalogs are deliberately additional guarded obligations, not asserted equivalences. Model/audit/source/candidate hashes establish reference integrity only. DISCHARGE: independent source/model/prose/environment correspondence and complete guarded proofs or validated refutations for both actual loaded-code families and the selected callback bridge; preserve separate authority, registration, frame/cJSON, borrowing, lifetime and unload assumptions. A sample callback set or dlsym success supplies no whole-world closure. Existing static interceptor closure and loader reach residuals remain separately open.",
+   "source": "docs/reports/plugin-premise-decomposition/README.md",
+   "recorded_by": "PLUGIN-PREMISE-DECOMPOSITION"
+  },
+  {
+   "id": "PLUGIN-PREMISE-OPERATOR-DESIGN",
+   "title": "Design explicit premise operators and prerequisite composition without changing current source syntax",
+   "why": "The card implements only conjunction-only opaque atoms and neutral same-name attachments. Loader/build/runtime environments and dependencies are assigned formal propositions/catalogs; no new operator, typed predicate, evidence consumer or general dependency-DAG source syntax is supplied. DISCHARGE: a separately frozen language/API design with total-or-reject grammar, explicit quantifier/prerequisite/evidence semantics, exact context/refutation propagation, Rust/Lean parity and its own source/provider/all-route validation. This is design-only follow-on work and cannot license truth transport or automatic Unsafe.",
+   "source": "docs/reports/plugin-premise-decomposition/README.md",
+   "recorded_by": "PLUGIN-PREMISE-DECOMPOSITION"
   }
  ],
- "updated": "PREMISE-EVIDENCE-SERIAL-INTEGRATION: exact three-way union retains807followups; actual8405Rust/351Lean/374initialPython after documented Lean registration repair. Gate-backed committed-matrix confirmation follows."
+ "updated": "PLUGIN-PREMISE-DECOMPOSITION:166 same-name sites/7 conditional proposed atoms; separate12/14 outer catalogs; source/prose/environment assignments Open. Frozen c162 source8419Rust/354Lean and fresh133providerRust/25providerPython/all5packages. Six own symmetric8home audits and all5781 full null/runtime/static/classification records agree after exact preimage reconstruction;148 existing observations preserved. Three residuals added without dropping807 prior entries. Gate/Python attribution is recorded by the card report."
 }

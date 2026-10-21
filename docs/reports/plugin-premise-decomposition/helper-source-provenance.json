@@ -1,0 +1,67 @@
+[
+  {
+    "public": "docs/reports/plugin-premise-decomposition/scripts/attribute_reading_environments.rs",
+    "actual_executed_source": "/home/cosmo/.codex/worktrees/w48-bottom-up-batch4/qcore-c/private/plugin-premise-decomposition/attribute_reading_environments-v6.rs",
+    "sha256": "a7ef795971eff90dca6696cc4219bc15b402d31c3db954c5316ee927f9e2471d"
+  },
+  {
+    "public": "docs/reports/plugin-premise-decomposition/scripts/derive_input_identities.py",
+    "actual_executed_source": "/home/cosmo/.codex/worktrees/w48-bottom-up-batch4/qcore-c/private/plugin-premise-decomposition/known_catalog-prepared.py",
+    "sha256": "43416c47a91bc5e92d89400ddedd09f84784451c0a6e4c342fefbbbbe26881bb"
+  },
+  {
+    "public": "docs/reports/plugin-premise-decomposition/scripts/attribute_configurations.py",
+    "actual_executed_source": "/home/cosmo/.codex/worktrees/w48-bottom-up-batch4/qcore-c/private/plugin-premise-decomposition/attribute_configurations.py",
+    "sha256": "1fcd602459eeffd72445d473219c96c9524deb2bd94c075893ec4ea301aff836"
+  },
+  {
+    "public": "docs/reports/plugin-premise-decomposition/scripts/null_environment_provenance.rs",
+    "actual_executed_source": "/home/cosmo/.codex/worktrees/w48-bottom-up-batch4/qcore-c/private/plugin-premise-decomposition/null_environment_provenance.rs",
+    "sha256": "89e9e7acbe36404a977e186d9e775e0de7a28a9f740c73975d704337dc8bb7f9"
+  },
+  {
+    "public": "docs/reports/plugin-premise-decomposition/scripts/enrich_known.py",
+    "actual_executed_source": "/home/cosmo/.codex/worktrees/w48-bottom-up-batch4/qcore-c/private/plugin-premise-decomposition/enrich_known.py",
+    "sha256": "51604f0ba822773129395342f4d239b76a8e7700531a2e3ac207870605fca168"
+  },
+  {
+    "public": "docs/reports/plugin-premise-decomposition/scripts/compare_records.py",
+    "actual_executed_source": "/home/cosmo/.codex/worktrees/w48-bottom-up-batch4/qcore-c/private/plugin-premise-decomposition/compare-prepared.py",
+    "sha256": "ad2f6f1e5c3b1bb48382330e835a07f5131c27e7dace73f7de6e81be6246302f"
+  },
+  {
+    "public": "docs/reports/plugin-premise-decomposition/scripts/check_actual_bindings.py",
+    "actual_executed_source": "/home/cosmo/.codex/worktrees/w48-bottom-up-batch4/qcore-c/private/plugin-premise-decomposition/check_actual_bindings.py",
+    "sha256": "c8b194303be7e0ee844c85d6f326577ef459040f5009e1627fe3e909b9ee6653"
+  },
+  {
+    "public": "docs/reports/plugin-premise-decomposition/scripts/check_all_facts.py",
+    "actual_executed_source": "/home/cosmo/.codex/worktrees/w48-bottom-up-batch4/qcore-c/private/plugin-premise-decomposition/check_all_facts.py",
+    "sha256": "e70d2e84e9fc016cec600339af123172b8eb57ad520cb5bb4817273f81e1ac38"
+  },
+  {
+    "public": "docs/reports/plugin-premise-decomposition/scripts/impact.py",
+    "actual_executed_source": "/home/cosmo/.codex/worktrees/w48-bottom-up-batch4/qcore-c/private/plugin-premise-decomposition/impact-final-prepared.py",
+    "sha256": "0b70edea42d96a2f59fb9d22931359cc310252c87cf66986196be7e34721d43b"
+  },
+  {
+    "public": "docs/reports/plugin-premise-decomposition/scripts/five_artifact_diff.py",
+    "actual_executed_source": "/home/cosmo/.codex/worktrees/w48-bottom-up-batch4/qcore-c/private/plugin-premise-decomposition/five_artifact_diff.py",
+    "sha256": "77d35d7b919097111b600c8a9f9b89f70c9518b3e20cefcb12b5160905ec4e81"
+  },
+  {
+    "public": "docs/reports/plugin-premise-decomposition/scripts/run_reading_proof.py",
+    "actual_executed_source": "/home/cosmo/.codex/worktrees/w48-bottom-up-batch4/qcore-c/private/plugin-premise-decomposition/run_reading_proof.py",
+    "sha256": "eb788a7c81f3bfbe437b4c2e0d1500dbb1f08699d8bcf3cd9f21776a691f4335"
+  },
+  {
+    "public": "docs/reports/plugin-premise-decomposition/scripts/reading_negative_controls.py",
+    "actual_executed_source": "/home/cosmo/.codex/worktrees/w48-bottom-up-batch4/qcore-c/private/plugin-premise-decomposition/reading_negative_controls.py",
+    "sha256": "42691106ea520e71be281607a662037ce73e30fe8d59f59be3af9a62985b292d"
+  },
+  {
+    "public": "docs/reports/plugin-premise-decomposition/scripts/base_graph_preflight.py",
+    "actual_executed_source": "/home/cosmo/.codex/worktrees/w48-bottom-up-batch4/qcore-c/private/plugin-premise-decomposition/base_graph_preflight.py",
+    "sha256": "934e6d5978c0b519198e7bb5f2e5b40011583e52faa9fa54ff0cdc46b28ef3b6"
+  }
+]

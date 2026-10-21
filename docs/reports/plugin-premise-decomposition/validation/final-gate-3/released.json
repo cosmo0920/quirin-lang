@@ -1,0 +1,21 @@
+{
+  "released": "2026-10-21T04:39:31.685094+00:00",
+  "stages": [
+    {
+      "stage": "standing",
+      "exit": 1
+    },
+    {
+      "stage": "provider",
+      "exit": 0
+    },
+    {
+      "stage": "examples",
+      "exit": 0
+    },
+    {
+      "stage": "release",
+      "exit": 0
+    }
+  ]
+}

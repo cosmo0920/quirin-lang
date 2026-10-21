@@ -1,0 +1,6 @@
+{
+  "pid": 128054,
+  "time": "2026-10-21T04:09:11.035115+00:00",
+  "scope": "queued lock waiter only; no child/stage/acquisition",
+  "reason": "remove redundant focused stage already covered by standing full suite"
+}

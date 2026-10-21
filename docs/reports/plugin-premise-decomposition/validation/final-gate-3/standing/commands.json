@@ -1,0 +1,208 @@
+[
+  {
+    "command": [
+      "git",
+      "submodule",
+      "update",
+      "--init",
+      "--recursive"
+    ],
+    "cwd": "/home/cosmo/.codex/worktrees/w48-bottom-up-batch4/qcore-c",
+    "environment": {
+      "CARGO_PROFILE_DEV_DEBUG": "0",
+      "CARGO_PROFILE_TEST_DEBUG": "0",
+      "CARGO_INCREMENTAL": "0",
+      "QCORE_AUDIT_BUILD_COMMIT": "686628c915f91143b8ad9fbdb4ba664db76abb16",
+      "RUSTFLAGS": null,
+      "CARGO_ENCODED_RUSTFLAGS": null,
+      "RUSTUP_TOOLCHAIN": null,
+      "ELAN_TOOLCHAIN": null,
+      "QCORE_CLANG": null
+    },
+    "start": "2026-10-21T04:16:29.021898+00:00",
+    "end": "2026-10-21T04:16:29.046134+00:00",
+    "exit": 0,
+    "log": "/home/cosmo/.codex/worktrees/w48-bottom-up-batch4/qcore-c/private/plugin-premise-decomposition/final-gate-3/standing/00.log",
+    "head": "686628c915f91143b8ad9fbdb4ba664db76abb16"
+  },
+  {
+    "command": [
+      "clang",
+      "--version"
+    ],
+    "cwd": "/home/cosmo/.codex/worktrees/w48-bottom-up-batch4/qcore-c",
+    "environment": {
+      "CARGO_PROFILE_DEV_DEBUG": "0",
+      "CARGO_PROFILE_TEST_DEBUG": "0",
+      "CARGO_INCREMENTAL": "0",
+      "QCORE_AUDIT_BUILD_COMMIT": "686628c915f91143b8ad9fbdb4ba664db76abb16",
+      "RUSTFLAGS": null,
+      "CARGO_ENCODED_RUSTFLAGS": null,
+      "RUSTUP_TOOLCHAIN": null,
+      "ELAN_TOOLCHAIN": null,
+      "QCORE_CLANG": null
+    },
+    "start": "2026-10-21T04:16:29.047570+00:00",
+    "end": "2026-10-21T04:16:29.061076+00:00",
+    "exit": 0,
+    "log": "/home/cosmo/.codex/worktrees/w48-bottom-up-batch4/qcore-c/private/plugin-premise-decomposition/final-gate-3/standing/01.log",
+    "head": "686628c915f91143b8ad9fbdb4ba664db76abb16"
+  },
+  {
+    "command": [
+      "python3",
+      "scripts/run_test_binaries.py",
+      "--jobs",
+      "4"
+    ],
+    "cwd": "/home/cosmo/.codex/worktrees/w48-bottom-up-batch4/qcore-c",
+    "environment": {
+      "CARGO_PROFILE_DEV_DEBUG": "0",
+      "CARGO_PROFILE_TEST_DEBUG": "0",
+      "CARGO_INCREMENTAL": "0",
+      "QCORE_AUDIT_BUILD_COMMIT": "686628c915f91143b8ad9fbdb4ba664db76abb16",
+      "RUSTFLAGS": null,
+      "CARGO_ENCODED_RUSTFLAGS": null,
+      "RUSTUP_TOOLCHAIN": null,
+      "ELAN_TOOLCHAIN": null,
+      "QCORE_CLANG": null
+    },
+    "start": "2026-10-21T04:16:29.062807+00:00",
+    "end": "2026-10-21T04:25:00.767440+00:00",
+    "exit": 101,
+    "log": "/home/cosmo/.codex/worktrees/w48-bottom-up-batch4/qcore-c/private/plugin-premise-decomposition/final-gate-3/standing/02.log",
+    "head": "686628c915f91143b8ad9fbdb4ba664db76abb16"
+  },
+  {
+    "command": [
+      "cargo",
+      "fmt",
+      "--all",
+      "--",
+      "--check"
+    ],
+    "cwd": "/home/cosmo/.codex/worktrees/w48-bottom-up-batch4/qcore-c",
+    "environment": {
+      "CARGO_PROFILE_DEV_DEBUG": "0",
+      "CARGO_PROFILE_TEST_DEBUG": "0",
+      "CARGO_INCREMENTAL": "0",
+      "QCORE_AUDIT_BUILD_COMMIT": "686628c915f91143b8ad9fbdb4ba664db76abb16",
+      "RUSTFLAGS": null,
+      "CARGO_ENCODED_RUSTFLAGS": null,
+      "RUSTUP_TOOLCHAIN": null,
+      "ELAN_TOOLCHAIN": null,
+      "QCORE_CLANG": null
+    },
+    "start": "2026-10-21T04:25:00.769578+00:00",
+    "end": "2026-10-21T04:25:05.354818+00:00",
+    "exit": 0,
+    "log": "/home/cosmo/.codex/worktrees/w48-bottom-up-batch4/qcore-c/private/plugin-premise-decomposition/final-gate-3/standing/03.log",
+    "head": "686628c915f91143b8ad9fbdb4ba664db76abb16"
+  },
+  {
+    "command": [
+      "cargo",
+      "clippy",
+      "--all-targets",
+      "--",
+      "-D",
+      "warnings"
+    ],
+    "cwd": "/home/cosmo/.codex/worktrees/w48-bottom-up-batch4/qcore-c",
+    "environment": {
+      "CARGO_PROFILE_DEV_DEBUG": "0",
+      "CARGO_PROFILE_TEST_DEBUG": "0",
+      "CARGO_INCREMENTAL": "0",
+      "QCORE_AUDIT_BUILD_COMMIT": "686628c915f91143b8ad9fbdb4ba664db76abb16",
+      "RUSTFLAGS": null,
+      "CARGO_ENCODED_RUSTFLAGS": null,
+      "RUSTUP_TOOLCHAIN": null,
+      "ELAN_TOOLCHAIN": null,
+      "QCORE_CLANG": null
+    },
+    "start": "2026-10-21T04:25:05.356577+00:00",
+    "end": "2026-10-21T04:25:41.426772+00:00",
+    "exit": 0,
+    "log": "/home/cosmo/.codex/worktrees/w48-bottom-up-batch4/qcore-c/private/plugin-premise-decomposition/final-gate-3/standing/04.log",
+    "head": "686628c915f91143b8ad9fbdb4ba664db76abb16"
+  },
+  {
+    "command": [
+      "cargo",
+      "run",
+      "-p",
+      "qcore-compiler",
+      "--example",
+      "reevaluation_probe"
+    ],
+    "cwd": "/home/cosmo/.codex/worktrees/w48-bottom-up-batch4/qcore-c",
+    "environment": {
+      "CARGO_PROFILE_DEV_DEBUG": "0",
+      "CARGO_PROFILE_TEST_DEBUG": "0",
+      "CARGO_INCREMENTAL": "0",
+      "QCORE_AUDIT_BUILD_COMMIT": "686628c915f91143b8ad9fbdb4ba664db76abb16",
+      "RUSTFLAGS": null,
+      "CARGO_ENCODED_RUSTFLAGS": null,
+      "RUSTUP_TOOLCHAIN": null,
+      "ELAN_TOOLCHAIN": null,
+      "QCORE_CLANG": null
+    },
+    "start": "2026-10-21T04:25:41.428350+00:00",
+    "end": "2026-10-21T04:25:41.514727+00:00",
+    "exit": 0,
+    "log": "/home/cosmo/.codex/worktrees/w48-bottom-up-batch4/qcore-c/private/plugin-premise-decomposition/final-gate-3/standing/05.log",
+    "head": "686628c915f91143b8ad9fbdb4ba664db76abb16"
+  },
+  {
+    "command": [
+      "cargo",
+      "run",
+      "-p",
+      "qcore-compiler",
+      "--example",
+      "reevaluation_followup"
+    ],
+    "cwd": "/home/cosmo/.codex/worktrees/w48-bottom-up-batch4/qcore-c",
+    "environment": {
+      "CARGO_PROFILE_DEV_DEBUG": "0",
+      "CARGO_PROFILE_TEST_DEBUG": "0",
+      "CARGO_INCREMENTAL": "0",
+      "QCORE_AUDIT_BUILD_COMMIT": "686628c915f91143b8ad9fbdb4ba664db76abb16",
+      "RUSTFLAGS": null,
+      "CARGO_ENCODED_RUSTFLAGS": null,
+      "RUSTUP_TOOLCHAIN": null,
+      "ELAN_TOOLCHAIN": null,
+      "QCORE_CLANG": null
+    },
+    "start": "2026-10-21T04:25:41.516649+00:00",
+    "end": "2026-10-21T04:25:41.966804+00:00",
+    "exit": 0,
+    "log": "/home/cosmo/.codex/worktrees/w48-bottom-up-batch4/qcore-c/private/plugin-premise-decomposition/final-gate-3/standing/06.log",
+    "head": "686628c915f91143b8ad9fbdb4ba664db76abb16"
+  },
+  {
+    "command": [
+      "python3",
+      "scripts/check_lean_audits.py",
+      "--jobs",
+      "4"
+    ],
+    "cwd": "/home/cosmo/.codex/worktrees/w48-bottom-up-batch4/qcore-c",
+    "environment": {
+      "CARGO_PROFILE_DEV_DEBUG": "0",
+      "CARGO_PROFILE_TEST_DEBUG": "0",
+      "CARGO_INCREMENTAL": "0",
+      "QCORE_AUDIT_BUILD_COMMIT": "686628c915f91143b8ad9fbdb4ba664db76abb16",
+      "RUSTFLAGS": null,
+      "CARGO_ENCODED_RUSTFLAGS": null,
+      "RUSTUP_TOOLCHAIN": null,
+      "ELAN_TOOLCHAIN": null,
+      "QCORE_CLANG": null
+    },
+    "start": "2026-10-21T04:25:41.969454+00:00",
+    "end": "2026-10-21T04:26:12.078729+00:00",
+    "exit": 0,
+    "log": "/home/cosmo/.codex/worktrees/w48-bottom-up-batch4/qcore-c/private/plugin-premise-decomposition/final-gate-3/standing/07.log",
+    "head": "686628c915f91143b8ad9fbdb4ba664db76abb16"
+  }
+]

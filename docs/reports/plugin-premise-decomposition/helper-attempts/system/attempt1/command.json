@@ -1,0 +1,29 @@
+{
+  "command": [
+    "/home/cosmo/.codex/worktrees/w48-bottom-up-batch4/qcore-c/private/plugin-premise-decomposition/attribute-reading-environments-v4",
+    "/home/cosmo/.codex/worktrees/w48-bottom-up-batch4/qcore-c/private/plugin-premise-decomposition/reading-proof/system/attempt1/input.json",
+    "/home/cosmo/.codex/worktrees/w48-bottom-up-batch4/qcore-c/private/plugin-premise-decomposition/reading-proof/system/attempt1/proof.json"
+  ],
+  "cwd": "/home/cosmo/.codex/worktrees/w48-bottom-up-batch4/qcore-c",
+  "exit": 101,
+  "start": "2026-10-21T05:37:45.945089+00:00",
+  "end": "2026-10-21T05:37:46.728137+00:00",
+  "helper_sha256": "02ade260469784e7fa8137ff23431ec0fe4df7bb96842638433a1ca316a73ce9",
+  "input_sha256": {
+    "base_environment": "b9eb4d5926506cc8cdc58aaae6b882402da64b2bc7795fa6879a3ba9efaafaba",
+    "base_diagnostics": "f3be36707352b28da30739a9f6eba9d741e7e10703dc3dfdf1dd7af900f1df1c",
+    "base_contracts": "ff6bdbb11cf27547daf67a6ff00164be44adfbde125b1efecd00024f001c028d",
+    "tip_environment": "da6bc94af9594627505938dbbdc13f1f28b88d635339b9038c425ad47482bf5d",
+    "tip_diagnostics": "943f64102a19a749af82664eabba1f253e2671badc4b8d950ab252c4b1fc22a8",
+    "tip_contracts": "e38c5027cd733cd756c8b3fdfee6d86f7bc6c2f08eaf653482cf02eee8fe6ac6"
+  },
+  "input_sha256_after": {
+    "base_environment": "b9eb4d5926506cc8cdc58aaae6b882402da64b2bc7795fa6879a3ba9efaafaba",
+    "base_diagnostics": "f3be36707352b28da30739a9f6eba9d741e7e10703dc3dfdf1dd7af900f1df1c",
+    "base_contracts": "ff6bdbb11cf27547daf67a6ff00164be44adfbde125b1efecd00024f001c028d",
+    "tip_environment": "da6bc94af9594627505938dbbdc13f1f28b88d635339b9038c425ad47482bf5d",
+    "tip_diagnostics": "943f64102a19a749af82664eabba1f253e2671badc4b8d950ab252c4b1fc22a8",
+    "tip_contracts": "e38c5027cd733cd756c8b3fdfee6d86f7bc6c2f08eaf653482cf02eee8fe6ac6"
+  },
+  "source_binding": "open"
+}
