@@ -699,6 +699,22 @@ fn concrete_attachment_preserves_closed_world_facts_and_publishes_checked_open_b
         )
         .is_err()
     );
+    let units = vec![json!({"functions":[function("use_detach","Safe",deps.clone())]})];
+    let revision = json!({"contracts":{"cJSON_DetachItemViaPointer":{"status":"pinned-in-force","mode":"pinned","contract_sha256":"independently-held-test-pin","module":"cjson.qv"}}});
+    let mut rendered = render(&Facts::of_rows(&units), &revision, &metadata);
+    assert_eq!(
+        rendered["declarations"]["cJSON_DetachItemViaPointer"]["hypothesis_binding_requirements"],
+        metadata["$hypothesis_binding_requirements"]
+    );
+    let sidecar = json!({"contract_dependencies":rendered.clone()});
+    let view = qcore_audit::contract_dependencies::premise_view_from_sidecar(&sidecar).unwrap();
+    assert_eq!(custody_facts(&deps, &view), custody_facts(&deps, &old_meta));
+    qcore_audit::contract_dependencies::erase_hypotheses(&mut rendered);
+    assert!(
+        rendered["declarations"]["cJSON_DetachItemViaPointer"]
+            .get("hypothesis_binding_requirements")
+            .is_none()
+    );
     let mut a = old_meta;
     let mut b = metadata;
     qcore_audit::contract_dependencies::erase_hypotheses(&mut a);

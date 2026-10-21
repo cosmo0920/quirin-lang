@@ -647,6 +647,16 @@ pub fn render(facts: &Facts, revision: &Value, premises: &Value) -> Value {
         });
         if let Some(graph) = premises["$hypothesis_graphs"].get(name) {
             record["hypothesis_graph"] = graph.clone();
+            let references = premises["$hypothesis_binding_requirements"]
+                .as_array()
+                .into_iter()
+                .flatten()
+                .filter(|r| r["declaration"].as_str() == Some(name.as_str()))
+                .cloned()
+                .collect::<Vec<_>>();
+            if !references.is_empty() {
+                record["hypothesis_binding_requirements"] = json!(references);
+            }
             record["hypothesis_evidence"] = json!({
                 "disposition": "open", "warrant": "declared",
                 "graph_sha256": premises["$hypothesis_graph_digests"][name],
@@ -826,6 +836,7 @@ pub fn erase_hypotheses(value: &mut Value) {
                 map.remove("hypothesis_graph_sha256");
             }
             if declaration {
+                map.remove("hypothesis_binding_requirements");
                 map.remove("hypothesis_graph");
                 map.remove("hypothesis_graph_sha256");
                 map.remove("hypothesis_evidence");
