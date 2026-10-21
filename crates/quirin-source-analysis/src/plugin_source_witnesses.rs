@@ -10,6 +10,8 @@ use std::{collections::BTreeMap, fs, path::Path, process::Command};
 
 const INVENTORY: &[u8] =
     include_bytes!("../../../docs/reports/plugin-premise-source-witnesses/input-inventory.json");
+const FORMAL_MODEL: &[u8] = include_bytes!("../../../proof/QCore/PluginSourceWitnesses.lean");
+const FORMAL_AUDIT: &[u8] = include_bytes!("../../../proof/AuditPluginSourceWitnesses.lean");
 const CHECKER: &[u8] = include_bytes!("plugin_source_witnesses.rs");
 const PRODUCER: &str = include_str!("plugin_source_witnesses/observe.py");
 const MODEL: &str = include_str!("plugin_source_witnesses/trace_model.json");
@@ -332,6 +334,15 @@ fn source_facts(observation: &Observation) -> Result<BTreeMap<String, SourceFact
 fn model() -> Result<BTreeMap<String, Vec<String>>, String> {
     serde_json::from_str(MODEL).map_err(|e| e.to_string())
 }
+fn exact_layout_domain(
+    layouts: &BTreeMap<String, Vec<String>>,
+    traces: &BTreeMap<String, Vec<String>>,
+) -> Result<(), String> {
+    if layouts.keys().ne(traces.keys()) {
+        return Err("native ABI-layout domain differs from complete selected trace domain".into());
+    }
+    Ok(())
+}
 fn validate(observation: &Observation) -> Result<BTreeMap<String, SourceFacts>, String> {
     if observation.version != 1
         || observation.inventory_sha256 != sha256_hex(INVENTORY)
@@ -359,6 +370,7 @@ fn validate(observation: &Observation) -> Result<BTreeMap<String, SourceFacts>, 
             return Err("actual ELF symbol missing".into());
         }
     }
+    exact_layout_domain(&observation.layouts, &observation.traces)?;
     if observation.layouts.len() != 20
         || observation.layouts.iter().any(|(case, layout)| {
             if case.ends_with("open_fail") {
@@ -478,6 +490,19 @@ pub fn refusal_controls(
     let mut changed = observation.clone();
     changed.artifacts.clear();
     refuse("missing-native-artifacts".into(), changed, held.clone())?;
+    let mut wrong_domain = observation.clone();
+    let held_layout = wrong_domain
+        .layouts
+        .remove("rk_duplicate")
+        .ok_or("actual rk_duplicate layout absent")?;
+    wrong_domain
+        .layouts
+        .insert("forged_unknown_case".into(), held_layout);
+    refuse(
+        "replaced-native-layout-case".into(),
+        wrong_domain,
+        held.clone(),
+    )?;
     let mut changed = observation.clone();
     changed.layouts.get_mut("rk_duplicate").unwrap()[0].push('0');
     refuse("forged-native-layout".into(), changed, held.clone())?;
@@ -554,6 +579,8 @@ pub fn context(observation: &Observation) -> Result<Context, String> {
             sha256_hex(PRODUCER.as_bytes()),
             sha256_hex(CHECKER),
             sha256_hex(MODEL.as_bytes()),
+            sha256_hex(FORMAL_MODEL),
+            sha256_hex(FORMAL_AUDIT),
             digest(&observation.header_inputs)?,
         ))?,
         evidence_version: format!("plugin-source-witness-v1/{}", sha256_hex(CHECKER)),
@@ -629,6 +656,12 @@ pub struct BoundedFlowResult {
     source_observation_sha256: String,
     result: qcore_schemas::premise_flow::ProposedEvaluation,
     evaluations: BTreeMap<String, qcore_schemas::premise_flow::ProposedEvaluation>,
+    document_sha256: String,
+    graph_sha256: String,
+    flow_model_sha256: String,
+    source_contract_sha256: String,
+    formal_bindings: BTreeMap<String, qcore_schemas::hypothesis::FormalBinding>,
+    explicit_artifacts: BTreeMap<String, String>,
 }
 /// Build separately held flow inputs for the new bounded predicate. None of the
 /// old seven universal plugin propositions occurs in this standalone graph.
@@ -667,8 +700,8 @@ contract {{
         .ok_or("standalone fixture graph absent")?;
     let model_path = "proof/QCore/PluginSourceWitnesses.lean";
     let audit_path = "proof/AuditPluginSourceWitnesses.lean";
-    let model = include_bytes!("../../../proof/QCore/PluginSourceWitnesses.lean").to_vec();
-    let audit = include_bytes!("../../../proof/AuditPluginSourceWitnesses.lean").to_vec();
+    let model = FORMAL_MODEL.to_vec();
+    let audit = FORMAL_AUDIT.to_vec();
     let environment = EnvironmentDefinition {
         id: PROFILE.into(),
         variables: BTreeMap::from([
@@ -678,6 +711,8 @@ contract {{
                 sha256_hex(PRODUCER.as_bytes()),
             ),
             ("checker_sha256".into(), sha256_hex(CHECKER)),
+            ("formal_model_sha256".into(), sha256_hex(FORMAL_MODEL)),
+            ("formal_audit_sha256".into(), sha256_hex(FORMAL_AUDIT)),
             ("trace_model_sha256".into(), sha256_hex(MODEL.as_bytes())),
             ("scope".into(), BOUNDS.into()),
             ("assumptions".into(), ASSUMPTIONS.into()),
@@ -858,6 +893,15 @@ impl CheckedWitness {
             source_observation_sha256: self.observation_sha256.clone(),
             result,
             evaluations,
+            document_sha256: packet.document_sha256.clone(),
+            graph_sha256: packet.hypotheses.graph_sha256.clone(),
+            flow_model_sha256: doc.model_sha256.clone(),
+            source_contract_sha256: doc.source_sha256.clone(),
+            formal_bindings: models["plugin_fixture_duplicate"].atoms.clone(),
+            explicit_artifacts: artifacts
+                .iter()
+                .map(|(path, bytes)| (path.clone(), sha256_hex(bytes)))
+                .collect(),
         })
     }
 }
@@ -865,6 +909,19 @@ impl CheckedWitness {
 #[cfg(test)]
 mod tests {
     use super::*;
+    #[test]
+    fn replaced_native_layout_case_refuses_exact_domain() {
+        let traces = model().unwrap();
+        let mut layouts = traces
+            .keys()
+            .map(|k| (k.clone(), vec!["LAYOUT:1:1".into()]))
+            .collect::<BTreeMap<_, _>>();
+        assert!(exact_layout_domain(&layouts, &traces).is_ok());
+        let held = layouts.remove("rk_duplicate").unwrap();
+        layouts.insert("forged_unknown_case".into(), held);
+        assert_eq!(layouts.len(), 20);
+        assert!(exact_layout_domain(&layouts, &traces).is_err());
+    }
     #[test]
     fn malformed_offsets_and_utf8_prefix_refuse_without_panics() {
         let projection = Projection {
