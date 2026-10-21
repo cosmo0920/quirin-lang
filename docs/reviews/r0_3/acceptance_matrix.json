@@ -7,7 +7,7 @@
  "section_ownership": {
   "note": "Card D02-GEN-REST. Every top-level key of this file is labelled here, so no section is silently hand-maintained. `derived` sections are recomputed by the generator on every run and a hand edit to them is overwritten; `hand_maintained` sections are carried verbatim from the previous matrix, which is why a regeneration no longer reverts a later reconciliation; `integrator_supplied` numbers are measurements the generator cannot take.",
   "generator": "docs/reports/remaining-d02/build_matrix.py",
-  "carried_from": "private/plugin-premise-decomposition/matrix-previous-with-plugin.json",
+  "carried_from": "docs/reviews/r0_3/acceptance_matrix.json",
   "vocabulary": {
    "derived": "recomputed by docs/reports/remaining-d02/build_matrix.py from the named manifest, validated record or working tree; a hand edit here is overwritten on the next regeneration",
    "integrator_supplied": "a measurement this script cannot take; supplied through --gate, otherwise carried from the previous matrix and labelled as carried",
@@ -6754,8 +6754,8 @@
   "note": "providers/ is a separate Cargo workspace, excluded from the core workspace; P01 verified empirically that the core workspace builds and passes its full suite with providers/ moved out of the tree."
  },
  "validation": {
-  "note": "Combined source44951dbb4 after merges681ab8e8d/libc and44951dbb4/concrete: actual unrestricted8405Rust/0failed/15ignored(526units539summaries),fmt/Clippy/examples/submodules/release/Python374 all0. InitialLean1 exposed missing LibcReadingSiteEvidence libraryimport; repair32e6f5dda registers it and full library407jobs/351audits pass0. Rust/checker/contracts/models/theoremstatements unchanged by repair, source equality explicitlychecked. Provider133Rust/1ignored/25Python/allfivepackages is BORROWED completed generic-card measurement for byte-identical providers+schemas+contract trees; not fresh rootprovidermeasurement. Each card owns its fresh six-audit census, no composed census asserted. Actual local Clang recording accompaniesgate. Final gate-backed committedmatrixPython follows receiptcommit.",
-  "workspace_tests": 8405,
+  "note": "PLUGIN-PREMISE-DECOMPOSITION frozen c162 source:8419Rust passed/0failed/15ignored,528units541summaries;354Lean audits,fmt/Clippy/examples/submodules/defaultrelease all0. Fresh providers133Rust/1ignored/25Python/all5packages rebuilt+verified. All six own8home audits0; exhaustive raw-field/static/null/runtime/standing/classification comparisons0 unexplained leaves after exact preimage reconstruction; all148 existing observations and5781 full null records preserved. First post-committed354-audit/810-followup matrix Python374passed at6f69890ca; source/prose/environment assignments remain Open. No truth, classifier exception, typed consumer, operator or automaticUnsafe added. Failed firstgate13tests and all helper attempts retained. Exact binary44951/base32 repair and c162 analyzer provenance/source equality are separate from final report commits.",
+  "workspace_tests": 8419,
   "provider_tests": 133,
   "python_evidence_validator_tests": 374,
   "lean_audits": 354,
@@ -7119,9 +7119,9 @@
   "reevaluation_followup_exit": 0,
   "cargo_fmt": "clean",
   "cargo_clippy": "clean",
-  "standing_gate": "complete after recorded Lean registration repair",
+  "standing_gate": "complete",
   "full_language_conformance": false,
-  "measurement_provenance": "carried_from_previous_matrix: these numbers were NOT measured for this regeneration; pass --gate PATH with the standing-gate results of this checkpoint to replace them"
+  "measurement_provenance": "integrator_supplied (/home/cosmo/.codex/worktrees/w48-bottom-up-batch4/qcore-c/docs/reports/plugin-premise-decomposition/gate.json)"
  },
  "named_followups": [
   {

@@ -1,0 +1,13 @@
+{
+  "note": "PLUGIN-PREMISE-DECOMPOSITION frozen c162 source:8419Rust passed/0failed/15ignored,528units541summaries;354Lean audits,fmt/Clippy/examples/submodules/defaultrelease all0. Fresh providers133Rust/1ignored/25Python/all5packages rebuilt+verified. All six own8home audits0; exhaustive raw-field/static/null/runtime/standing/classification comparisons0 unexplained leaves after exact preimage reconstruction; all148 existing observations and5781 full null records preserved. First post-committed354-audit/810-followup matrix Python374passed at6f69890ca; source/prose/environment assignments remain Open. No truth, classifier exception, typed consumer, operator or automaticUnsafe added. Failed firstgate13tests and all helper attempts retained. Exact binary44951/base32 repair and c162 analyzer provenance/source equality are separate from final report commits.",
+  "workspace_tests": 8419,
+  "provider_tests": 133,
+  "python_evidence_validator_tests": 374,
+  "reevaluation_probe_exit": 0,
+  "reevaluation_followup_exit": 0,
+  "cargo_fmt": "clean",
+  "cargo_clippy": "clean",
+  "standing_gate": "complete",
+  "lean_audits": 354,
+  "clang": "present: Ubuntu clang version 21.1.8 (6ubuntu1)"
+}

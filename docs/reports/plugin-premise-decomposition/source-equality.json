@@ -17,5 +17,6 @@
   "source_proof_provider_and_authoritative_grammar_differences": [],
   "merge_exit": 0,
   "final_publication_source_differences": [],
-  "checked_worktree": true
+  "checked_worktree": true,
+  "publication_head_before_authoritative_gate": "6f69890cae819ab0c64b0da25b360a2086739e19"
 }

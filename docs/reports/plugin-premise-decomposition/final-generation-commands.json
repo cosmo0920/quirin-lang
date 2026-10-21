@@ -1,0 +1,39 @@
+[
+  {
+    "name": "matrix",
+    "command": [
+      "python3",
+      "docs/reports/remaining-d02/build_matrix.py",
+      ".",
+      "--gate",
+      "/home/cosmo/.codex/worktrees/w48-bottom-up-batch4/qcore-c/docs/reports/plugin-premise-decomposition/gate.json"
+    ],
+    "exit": 0,
+    "started": "2026-10-21T06:52:18.287798+00:00",
+    "ended": "2026-10-21T06:52:18.345986+00:00",
+    "log": "/home/cosmo/.codex/worktrees/w48-bottom-up-batch4/qcore-c/private/plugin-premise-decomposition/final-matrix.log"
+  },
+  {
+    "name": "docs-index",
+    "command": [
+      "python3",
+      "scripts/build_docs_index.py"
+    ],
+    "exit": 0,
+    "started": "2026-10-21T06:52:18.346223+00:00",
+    "ended": "2026-10-21T06:52:18.395410+00:00",
+    "log": "/home/cosmo/.codex/worktrees/w48-bottom-up-batch4/qcore-c/private/plugin-premise-decomposition/final-docs-index.log"
+  },
+  {
+    "name": "docs-index-check",
+    "command": [
+      "python3",
+      "scripts/build_docs_index.py",
+      "--check"
+    ],
+    "exit": 0,
+    "started": "2026-10-21T06:52:18.395781+00:00",
+    "ended": "2026-10-21T06:52:18.455727+00:00",
+    "log": "/home/cosmo/.codex/worktrees/w48-bottom-up-batch4/qcore-c/private/plugin-premise-decomposition/final-docs-index-check.log"
+  }
+]
