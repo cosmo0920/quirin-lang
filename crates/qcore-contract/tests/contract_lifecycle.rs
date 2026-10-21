@@ -179,3 +179,36 @@ fn inheritance_keeps_literal_symbol_ids_when_formal_parameter_names_collide() {
         lifecycle::Target::Resource("node".into())
     );
 }
+
+#[test]
+fn legacy_interpreted_lifecycle_and_new_symbolic_lifecycle_coexist() {
+    use qcore_contract::contract_loader::{lifecycle_obligations, load_resource_contract_sources};
+    for operation in ["start", "stop", "destroy"] {
+        let add_legacy =
+            |source: String| {
+                source.replace("requires resource_contract_v1;",
+            &format!("requires resource_contract_v1; requires resource_lifecycle(p, {operation});"))
+            };
+        let old = sources(add_legacy(resource("")));
+        let new = sources(add_legacy(resource(SYMBOLS)));
+        assert_eq!(
+            lifecycle::replay(View::Resource, &new).unwrap()["observed"]
+                .entries
+                .len(),
+            4
+        );
+        assert!(lifecycle::replay(View::Resource, &old).unwrap().is_empty());
+        let before = lifecycle_obligations(&old).unwrap();
+        assert_eq!(before.len(), 1);
+        assert_eq!(before, lifecycle_obligations(&new).unwrap());
+        assert_eq!(
+            load_resource_contract_sources(&old).unwrap().functions(),
+            load_resource_contract_sources(&new).unwrap().functions()
+        );
+        let invalid = sources(new["lifecycle.qv"].replace(
+            &format!("resource_lifecycle(p, {operation})"),
+            "resource_lifecycle(p, restart)",
+        ));
+        assert!(lifecycle::replay(View::Resource, &invalid).is_err());
+    }
+}

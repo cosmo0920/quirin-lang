@@ -22,7 +22,7 @@ pub fn is_clause(source: &str) -> bool {
         .trim_start()
         .split(|c: char| !c.is_ascii_alphanumeric() && c != '_')
         .next()
-        .is_some_and(|head| head.starts_with("resource_lifecycle"))
+        .is_some_and(|head| head.starts_with("resource_lifecycle_v"))
 }
 
 /// IDs are literal declaration-local metadata, never C places or formals.
