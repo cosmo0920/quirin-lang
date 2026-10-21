@@ -8,7 +8,8 @@
 //!   `libevent`, ...), and exactly two new contract-use edges to libc.
 //! * **Parity**, per conversion: `librdkafka/memory.qv` and
 //!   `monkey/memory.qv` elaborate, declaration by declaration and token by
-//!   token, to the files as they stood at `2d0b77e1`
+//!   token after erasing the eight separately validated proposed symbolic
+//!   annotations, to the files as they stood at `2d0b77e1`
 //!   (`fixtures/contract_inherit_qcore_provider/*_hand_written.qcore`); the
 //!   loaded records, ABI projections, premises and tails are equal; and the
 //!   Cycle 19 selection gives an environment equal to the hand-written one.
@@ -166,7 +167,26 @@ fn converted_wrappers_elaborate_to_the_hand_written_contracts() {
         let elaborated = elaborate_contract_module(&manifest.load_path, krate, module).unwrap();
         let evidence = elaborated.evidence.expect("the module uses inclusion");
         let before = fixture(hand);
-        let after = parse_source_program(&elaborated.text).unwrap();
+        // Keep the historical token fixture frozen. Only the new, separately
+        // validated symbolic annotations are omitted from this legacy token
+        // comparison; the full current text is loaded and compared below.
+        let mut omitted = 0;
+        let legacy_text = elaborated
+            .text
+            .lines()
+            .filter(|line| {
+                let line = line.trim();
+                let symbolic = line.starts_with("requires resource_lifecycle_v1(introduce_plugin_")
+                    || line.starts_with(
+                        "requires resource_premise_flow_v1(decompose_rk_plugin_callback_closure,",
+                    );
+                omitted += usize::from(symbolic);
+                !symbolic
+            })
+            .collect::<Vec<_>>()
+            .join("\n");
+        assert_eq!(omitted, if krate == LIBRDKAFKA { 8 } else { 0 }, "{module}");
+        let after = parse_source_program(&legacy_text).unwrap();
         let hand_parsed = parse_source_program(&before).unwrap();
         let names = |parsed: &qcore_frontend::frontend::SourceProgram| {
             parsed

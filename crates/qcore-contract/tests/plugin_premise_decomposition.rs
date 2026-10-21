@@ -27,6 +27,11 @@ fn erase_plugin_metadata(text: &str) -> String {
                 || line.starts_with(
                     "requires resource_premise_decomposition(rk_plugin_callback_closure,",
                 )
+                // Dependent symbolic metadata must be erased with its graph atoms.
+                || line.starts_with("requires resource_lifecycle_v1(introduce_plugin_")
+                || line.starts_with(
+                    "requires resource_premise_flow_v1(decompose_rk_plugin_callback_closure,",
+                )
                 || (line.starts_with("// qcore-premise-binding-manifest-v1 ")
                     && line.contains(" rk_plugin_callback_closure ")))
         })
