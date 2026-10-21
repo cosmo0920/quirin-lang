@@ -9,7 +9,14 @@ fn main() {
     assert_eq!(args.len(), 6, "INPUT_ROOT CHECKOUT REPO DIAGNOSTICS OUTPUT");
     let inputs = Path::new(&args[1]);
     let repo = Path::new(&args[3]);
-    let manifest = inputs.join("cycle19-resource-contracts.json");
+    let profile_directory = inputs.join("contract/profiles/fluent-bit");
+    let profile: Value =
+        serde_json::from_slice(&fs::read(profile_directory.join("profile.json")).unwrap()).unwrap();
+    let manifest = profile_directory.join(profile["resource_contract_manifest"].as_str().unwrap());
+    assert_eq!(
+        fs::canonicalize(&manifest).unwrap(),
+        fs::canonicalize(inputs.join("cycle19-resource-contracts.json")).unwrap()
+    );
     let mut contracts = load_resource_contract_manifest(&manifest).unwrap();
     let text = fs::read_to_string(&manifest).unwrap();
     qcore_audit::contract_revision::apply_pins(
@@ -33,6 +40,41 @@ fn main() {
         })
         .collect();
     resolve_bindings(&held_manifest, &artifacts).unwrap();
+    let leaf_manifest_bytes =
+        fs::read(repo.join("docs/reports/libc-reading-site-evidence/formal-leaves.json")).unwrap();
+    let leaf_manifest: Value = serde_json::from_slice(&leaf_manifest_bytes).unwrap();
+    assert_eq!(
+        leaf_manifest["parent_binding_manifest_sha256"].as_str(),
+        Some(qcore_schemas::sha256_hex(&held_manifest).as_str())
+    );
+    let leaf_source = fs::read(repo.join(leaf_manifest["source"].as_str().unwrap())).unwrap();
+    assert_eq!(
+        leaf_manifest["source_sha256"].as_str(),
+        Some(qcore_schemas::sha256_hex(&leaf_source).as_str())
+    );
+    let parent_source =
+        fs::read(repo.join(leaf_manifest["parent_model_source"].as_str().unwrap())).unwrap();
+    assert_eq!(
+        leaf_manifest["parent_model_source_sha256"].as_str(),
+        Some(qcore_schemas::sha256_hex(&parent_source).as_str())
+    );
+    for (id, row) in bindings["propositions"].as_object().unwrap() {
+        let leaf = &leaf_manifest["leaves"][id];
+        assert_eq!(leaf["declaration"], row["declaration"]);
+        assert_eq!(leaf["atom"], row["atom"]);
+        let name = leaf["definition"]
+            .as_str()
+            .unwrap()
+            .rsplit('.')
+            .next()
+            .unwrap();
+        assert!(
+            std::str::from_utf8(&leaf_source)
+                .unwrap()
+                .contains(&format!("def {name} ("))
+        );
+        assert_eq!(leaf["disposition"], "open");
+    }
     let raw = fs::read(&args[4]).unwrap();
     let data: Value = serde_json::from_slice(&raw).unwrap();
     let sidecar_path = Path::new(&args[4])
@@ -103,11 +145,28 @@ fn main() {
                         "unresolved model {id}"
                     );
                 }
-                for id in receipt.proposition_ids.values() {
-                    assert!(
-                        bindings["propositions"].get(id).is_some(),
-                        "unresolved proposition {id}"
+                let route = serde_json::to_value(&receipt.observation.route).unwrap();
+                for (atom, id) in &receipt.proposition_ids {
+                    let definition = bindings["propositions"]
+                        .get(id)
+                        .expect("unresolved proposition");
+                    assert_eq!(
+                        definition["declaration"].as_str(),
+                        Some(declaration.as_str())
                     );
+                    assert_eq!(definition["atom"].as_str(), Some(atom.as_str()));
+                    for predicate in definition["local_predicate_ids"][route.as_str().unwrap()]
+                        .as_array()
+                        .expect("route has no local predicate binding")
+                    {
+                        assert_eq!(
+                            receipt
+                                .observation
+                                .checked_predicates
+                                .get(predicate.as_str().unwrap()),
+                            Some(&true)
+                        );
+                    }
                 }
                 let actual_dependencies = row["contract_dependencies"]["hypothesis_dependencies"]
                     [declaration]
@@ -258,9 +317,9 @@ fn main() {
                         source_replays.push(json!({"receipt":receipt.id,"declaration":declaration,"result":run,"not_a_C_execution_or_universal_proof":true}));
                     }
                 }
-                results.push(json!({"receipt":receipt.id,"owner":row["function"],"declaration":declaration,"exact_graph_atom_context_binding":true,"loaded_selected_contract_equal":true,"all_formal_prerequisite_references_resolved":true,"actual_consultation_atoms_present":true,"this_binding_record_claims_source_reanalysis":false,"universal_disposition":"open"}));
+                results.push(json!({"receipt":receipt.id,"owner":row["function"],"declaration":declaration,"exact_graph_atom_context_binding":true,"loaded_selected_contract_equal":true,"all_formal_prerequisite_references_resolved":true,"local_predicate_reference_edges_resolved":true,"actual_consultation_atoms_present":true,"this_binding_record_claims_source_reanalysis":false,"universal_disposition":"open"}));
             }
         }
     }
-    fs::write(&args[5], serde_json::to_vec_pretty(&json!({"schema":"libc-production-reference-replay.v1","diagnostics_sha256":qcore_schemas::sha256_hex(&raw),"binding_manifest_sha256":qcore_schemas::sha256_hex(&held_manifest),"independently_held_sidecar_sha256":qcore_schemas::sha256_hex(&sidecar_bytes),"reconstructed_applied_refutation_table_sha256":qcore_schemas::contract_refutation::table_digest(&applied),"checked_receipts":results.len(),"records":results,"bounded_production_source_replays":source_replays,"source_replayed_declarations":replayed,"meaning":"Independent retained graph, selected contract, full Context and formal-artifact binding checks only. Full source replay is separately exercised by actual-reader controls; no claim of production source reanalysis or universal discharge."})).unwrap()).unwrap();
+    fs::write(&args[5], serde_json::to_vec_pretty(&json!({"schema":"libc-production-reference-replay.v1","diagnostics_sha256":qcore_schemas::sha256_hex(&raw),"binding_manifest_sha256":qcore_schemas::sha256_hex(&held_manifest),"formal_leaf_manifest_sha256":qcore_schemas::sha256_hex(&leaf_manifest_bytes),"independently_held_sidecar_sha256":qcore_schemas::sha256_hex(&sidecar_bytes),"reconstructed_applied_refutation_table_sha256":qcore_schemas::contract_refutation::table_digest(&applied),"checked_receipts":results.len(),"records":results,"bounded_production_source_replays":source_replays,"source_replayed_declarations":replayed,"meaning":"Independent retained graph, selected contract, full Context and formal-artifact binding checks only. Reference records alone confer no source-reanalysis claim. Bounded production_source_replays separately report exact held-source/request successes or conservative refusals for selected observations only; no universal discharge or C execution is proved."})).unwrap()).unwrap();
 }

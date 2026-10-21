@@ -4,6 +4,17 @@ import hashlib,json,os,subprocess
 from pathlib import Path
 repo=Path(__file__).resolve().parents[4];private=repo/'private/libc-reading-site-evidence'
 records=json.loads((private/'measurement-commands.json').read_text());assert len(records)==6 and all(r['exit']==0 for r in records)
+formal=repo/'docs/reports/libc-reading-site-evidence/formal-leaves.json';leaves=json.loads(formal.read_text())
+assert hashlib.sha256((repo/'docs/reports/libc-reading-site-evidence/bindings.json').read_bytes()).hexdigest()==leaves['parent_binding_manifest_sha256']
+assert hashlib.sha256((repo/leaves['source']).read_bytes()).hexdigest()==leaves['source_sha256']
+assert hashlib.sha256((repo/leaves['parent_model_source']).read_bytes()).hexdigest()==leaves['parent_model_source_sha256']
+command=['lake','env','lean',str(repo/leaves['source'])]
+with (private/'formal-leaves-1.log').open('wb') as log:code=subprocess.run(command,cwd=repo/'proof',stdout=log,stderr=subprocess.STDOUT).returncode
+(private/'formal-leaves-1.json').write_text(json.dumps(dict(command=command,exit=code,manifest_sha256=hashlib.sha256(formal.read_bytes()).hexdigest()),indent=2)+'\n')
+if code:raise SystemExit(code)
+lean_output=(private/'formal-leaves-1.log').read_text()
+assert lean_output.count('does not depend on any axioms')==3,lean_output
+assert 'warning:' not in lean_output and 'sorryAx' not in lean_output
 helper=private/'check-production-bindings-2';deps=repo/'target/release/deps';source=repo/'docs/reports/libc-reading-site-evidence/scripts/check_production_bindings.rs'
 command=['rustc','--edition=2024',str(source),'-L','dependency='+str(deps)]
 libraries={}
