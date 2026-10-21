@@ -91,6 +91,82 @@ fn main() -> Result<(), String> {
     let entries = qcore_audit::compile_db::compile_entries(
         std::str::from_utf8(&dbbytes).map_err(|e| e.to_string())?,
     )?;
+    let mut database_receipts = vec![
+        json!({"path":database,"sha256":qcore_schemas::sha256_hex(&dbbytes),"selection":"main"}),
+    ];
+    let mut auxiliary_entries = Vec::new();
+    let mut auxiliary_database = None::<PathBuf>;
+    let mut auxiliary_sha = None::<String>;
+    let actual_clang_spelling = if configured {
+        invocation["environment"]["QCORE_CLANG"]
+            .as_str()
+            .ok_or("actual configured Clang selection absent")?
+            .to_owned()
+    } else {
+        let nested_path = invocation["retained_actual_driver_receipt"]
+            .as_str()
+            .ok_or("actual nested pinned driver receipt path absent")?;
+        let nested_bytes = read(nested_path)?;
+        let nested: Value = serde_json::from_slice(&nested_bytes).map_err(|e| e.to_string())?;
+        if invocation["actual_driver_receipt"] != nested
+            || nested["binary_sha256"] != invocation["binary_sha256"]
+        {
+            return Err("actual nested receipt/executable digest differs from independently held outer receipt".into());
+        }
+        let command = nested["command"]
+            .as_array()
+            .ok_or("actual pinned command absent")?;
+        let words = command
+            .iter()
+            .map(|v| v.as_str().ok_or("actual command word absent"))
+            .collect::<Result<Vec<_>, _>>()?;
+        if words.get(1) != Some(&"pinned")
+            || words.first().copied() != invocation["binary"].as_str()
+            || !words.contains(&checkout.to_string_lossy().as_ref())
+        {
+            return Err("actual pinned binary/source command does not match held target".into());
+        }
+        let databases = words
+            .iter()
+            .filter(|word| word.ends_with("compile_commands.json"))
+            .copied()
+            .collect::<Vec<_>>();
+        let [auxiliary] = databases.as_slice() else {
+            return Err(
+                "actual pinned command must identify exactly one explicit auxiliary database"
+                    .into(),
+            );
+        };
+        let aux_path = PathBuf::from(auxiliary);
+        if aux_path == database {
+            return Err("actual main/auxiliary database identities collide".into());
+        }
+        let aux_bytes = read(&aux_path)?;
+        let aux_hash = qcore_schemas::sha256_hex(&aux_bytes);
+        for (path, sha) in [
+            (&database, qcore_schemas::sha256_hex(&dbbytes)),
+            (&aux_path, aux_hash.clone()),
+        ] {
+            let spelled = path.to_str().ok_or("database path not UTF8")?;
+            if invocation["external_inputs_before"][spelled].as_str() != Some(sha.as_str())
+                || invocation["external_inputs_after"][spelled].as_str() != Some(sha.as_str())
+            {
+                return Err(format!(
+                    "actual database lexical path/hash not independently bound before and after: {spelled}"
+                ));
+            }
+        }
+        auxiliary_entries = qcore_audit::compile_db::compile_entries(
+            std::str::from_utf8(&aux_bytes).map_err(|e| e.to_string())?,
+        )?;
+        auxiliary_database = Some(aux_path.clone());
+        auxiliary_sha = Some(aux_hash.clone());
+        database_receipts.push(json!({"path":aux_path,"sha256":aux_hash,"selection":"actual-monkey-libevent-command","nested_receipt_path":nested_path,"nested_receipt_sha256":qcore_schemas::sha256_hex(&nested_bytes)}));
+        nested["environment"]["QCORE_CLANG"]
+            .as_str()
+            .ok_or("actual inner Clang spelling absent")?
+            .to_owned()
+    };
     let raw = read(diagnostics)?;
     let data: Value = serde_json::from_slice(&raw).map_err(|e| e.to_string())?;
     let source_digest = qcore_schemas::sha256_hex(
@@ -99,6 +175,12 @@ fn main() -> Result<(), String> {
             .as_bytes(),
     );
     let compiler = qcore_c_gateway::ClangIdentity::capture()?;
+    if compiler.program() != actual_clang_spelling {
+        return Err(
+            "actual active Clang spelling differs from held actual route environment".into(),
+        );
+    }
+
     let actual_profile = qcore_contract::profile_loader::load_profile_directory(&profile_dir)
         .map_err(|e| e.to_string())?;
     let profile_sha = actual_profile.manifest_digest().to_owned();
@@ -200,7 +282,27 @@ fn main() -> Result<(), String> {
             .collect::<BTreeSet<_>>();
         let file = u["file"].as_str().ok_or("file absent")?;
         let cfg = &u["compile_configuration"];
-        let candidates = entries
+        let uses_auxiliary = !configured && u["library"].as_str() == Some("monkey-libevent");
+        let selected_entries = if uses_auxiliary {
+            &auxiliary_entries
+        } else {
+            &entries
+        };
+        let selected_database = if uses_auxiliary {
+            auxiliary_database
+                .as_ref()
+                .ok_or("actual Monkey database absent")?
+        } else {
+            &database
+        };
+        let selected_database_sha = if uses_auxiliary {
+            auxiliary_sha
+                .clone()
+                .ok_or("actual Monkey database hash absent")?
+        } else {
+            qcore_schemas::sha256_hex(&dbbytes)
+        };
+        let candidates = selected_entries
             .iter()
             .filter(|e| {
                 if configured {
@@ -308,7 +410,7 @@ fn main() -> Result<(), String> {
                     }
                     json!({"kind":"unchanged-production-historical-debug-preimage","digest":digest,"actual_recorded_process_cwd":cwd,"wrong_cwd_negative_rejected":true})
                 };
-                let compile=serde_json::to_string(&json!({"file":entry.file,"directory":entry.directory,"command":entry.command,"database_sha256":qcore_schemas::sha256_hex(&dbbytes),"transport":unit.input,"dialect":format!("{:?}",unit.dialect)})).unwrap();
+                let compile=serde_json::to_string(&json!({"file":entry.file,"directory":entry.directory,"command":entry.command,"database_path":selected_database,"database_sha256":selected_database_sha,"transport":unit.input,"dialect":format!("{:?}",unit.dialect)})).unwrap();
                 fs::write(
                     out.join(format!("unit-{number}-candidate-{candidate}.prepared.c")),
                     pp,
@@ -366,7 +468,7 @@ fn main() -> Result<(), String> {
         }
         results.push(json!({"unit_index":number,"library":u["library"],"file":file,"held_observation_count":expected.len(),"owners":owners,"declarations":declarations,"candidate_count":candidates.len(),"complete_selected_recorded_domain_reproduced":success,"attempts":attempts,"universal_atoms":"open"}));
     }
-    let result = json!({"schema":"libc-local-source-domain-production.v1","diagnostics_sha256":qcore_schemas::sha256_hex(&raw),"invocation_sha256":qcore_schemas::sha256_hex(&invocation_bytes),"sidecar_sha256":qcore_schemas::sha256_hex(&sidecar_bytes),"actual_compile_database":database,"actual_compile_database_sha256":qcore_schemas::sha256_hex(&dbbytes),"held_recorded_observations":all_records,"source_reproduced_observations":checked_records,"all_selected_recorded_domains_reproduced":all_records>0&&all_records==checked_records,"units":results,"universal_atoms":"open","unproved_boundaries":["complete relevant C site universe","external library behavior","compiler execution attestation","whole-C extraction","Rust-Lean correspondence"]});
+    let result = json!({"schema":"libc-local-source-domain-production.v1","diagnostics_sha256":qcore_schemas::sha256_hex(&raw),"invocation_sha256":qcore_schemas::sha256_hex(&invocation_bytes),"sidecar_sha256":qcore_schemas::sha256_hex(&sidecar_bytes),"actual_compile_database":database,"actual_compile_database_sha256":qcore_schemas::sha256_hex(&dbbytes),"independently_held_database_receipts":database_receipts,"actual_clang_spelling":actual_clang_spelling,"held_recorded_observations":all_records,"source_reproduced_observations":checked_records,"all_selected_recorded_domains_reproduced":all_records>0&&all_records==checked_records,"units":results,"universal_atoms":"open","unproved_boundaries":["complete relevant C site universe","external library behavior","compiler execution attestation","whole-C extraction","Rust-Lean correspondence"]});
     fs::write(
         out.join("result.json"),
         serde_json::to_vec_pretty(&result).unwrap(),
