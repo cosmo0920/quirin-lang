@@ -34,8 +34,12 @@ and five package rebuild/verify outcomes are explicitly borrowed evidence,
 [bound to the card receipt](provider-provenance.json), not a fresh provider run.
 Integration gate files beside each card record their own gate count versus the
 combined count, tested source and associated merge SHA. No composed production
-census is claimed. A separate Python confirmation follows the committed final
-regenerated matrix.
+census is claimed. The authoritative Python confirmation after committed gate-backed matrix
+`f7034fb22` passes all374 tests, exit0 in33.124s (process33.243s).
+[Confirmation](post-matrix-confirmation.json) binds unchanged matrix SHA256
+`73c50a5f745f0057f2d664afc16e9378e3391d0853921416e5eece620e512464`;
+the complete compressed log is retained beside it. This receipt-only update
+changes no source, matrix or measured inputs.
 
 The next implementation work proceeds from this exact merged base in isolated
 branches: production cJSON same-name graph attachment with independently bound

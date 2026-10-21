@@ -1,0 +1,16 @@
+{
+  "source": "f7034fb225d46c09c3987437668d0c681422ab4a",
+  "command": [
+    "python3",
+    "-m",
+    "unittest",
+    "discover",
+    "-s",
+    "scripts/tests"
+  ],
+  "exit": 0,
+  "seconds": 33.24289608001709,
+  "log": "/home/cosmo/Documents/GitHub/qcore-c/private/premise-integration/python-post-matrix.log",
+  "matrix_sha256_before": "73c50a5f745f0057f2d664afc16e9378e3391d0853921416e5eece620e512464",
+  "matrix_sha256_after": "73c50a5f745f0057f2d664afc16e9378e3391d0853921416e5eece620e512464"
+}
