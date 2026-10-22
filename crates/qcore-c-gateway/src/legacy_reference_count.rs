@@ -41,7 +41,7 @@ use crate::reference_count::{
 const HELD_BOUND: u32 = 16;
 
 /// One reference operand of a call, in clause order.
-#[derive(Clone, Debug, PartialEq, Eq)]
+#[derive(Clone, Debug, PartialEq, Eq, serde::Serialize, serde::Deserialize)]
 pub struct ReferenceOperand {
     pub operation: ReferenceOperation,
     /// The name the actual denotes (a plain name, or a pointer cast of one),

@@ -48,7 +48,7 @@ pub const UNSTATED: &str = "member-path-unstated";
 pub const DIRECT: &str = "member-path-direct";
 
 /// The member-path reading of one invocation at one parameter position.
-#[derive(Clone, Debug, PartialEq, Eq)]
+#[derive(Clone, Debug, PartialEq, Eq, serde::Serialize, serde::Deserialize)]
 pub struct MemberPathOperands {
     /// The object's actual, as spelled.
     pub object: Vec<String>,
@@ -277,7 +277,7 @@ pub(super) fn invocation_states<'a>(
 /// Card **FB-TEARDOWN-DESTROY-DECLARATIONS** (rule 30 at a direct call): the
 /// states one direct call of a member-path declaration leaves at one
 /// parameter position, each guard decided at the call.
-#[derive(Clone, Debug, PartialEq, Eq)]
+#[derive(Clone, Debug, PartialEq, Eq, serde::Serialize, serde::Deserialize)]
 pub struct DirectOperands {
     /// The actual at the position, as spelled.
     pub object: Vec<String>,

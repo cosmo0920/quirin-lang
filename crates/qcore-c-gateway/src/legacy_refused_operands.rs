@@ -91,7 +91,9 @@ use super::{
 
 /// How a statement hands a place on, weakest first. The stronger tag wins when
 /// two statements of one line hand the same place on differently.
-#[derive(Clone, Copy, Debug, PartialEq, Eq, PartialOrd, Ord)]
+#[derive(
+    Clone, Copy, Debug, PartialEq, Eq, PartialOrd, Ord, serde::Serialize, serde::Deserialize,
+)]
 pub enum HandOn {
     /// Named as an operand outside the value side and outside every call.
     Operand,
@@ -105,7 +107,7 @@ pub enum HandOn {
 pub(crate) const WITHDRAWN_FROM: HandOn = HandOn::Operand;
 
 /// The places one line's statements hand on, split by position.
-#[derive(Clone, Debug, Default, PartialEq, Eq)]
+#[derive(Clone, Debug, Default, PartialEq, Eq, serde::Serialize, serde::Deserialize)]
 pub struct LineHandOns {
     /// Handed on by the condition of an `if`, `while` or `switch`, or by a
     /// clause of a `for` header.

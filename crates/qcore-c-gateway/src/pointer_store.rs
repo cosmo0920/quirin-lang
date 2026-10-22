@@ -268,7 +268,7 @@ pub(crate) const DECISION_VECTORS: &[(&str, &str, bool, &str, &str)] = &[
 /// The admitted store the flow decides ([`LegacyInstruction::PointerStore`]).
 ///
 /// [`LegacyInstruction::PointerStore`]: crate::legacy_c::LegacyInstruction::PointerStore
-#[derive(Clone, Debug, PartialEq, Eq)]
+#[derive(Clone, Debug, PartialEq, Eq, serde::Serialize)]
 pub struct PointerStore {
     /// The destination's root name.
     pub root: String,
@@ -281,6 +281,49 @@ pub struct PointerStore {
     pub value: &'static str,
     /// The named value of a function-pointer name, decided by the flow.
     pub name: Option<String>,
+}
+
+// Decode through owned data; never leak or borrow a serialized static label.
+impl<'de> serde::Deserialize<'de> for PointerStore {
+    fn deserialize<D: serde::Deserializer<'de>>(deserializer: D) -> Result<Self, D::Error> {
+        #[derive(serde::Deserialize)]
+        #[serde(deny_unknown_fields)]
+        struct Owned {
+            root: String,
+            place: String,
+            owner: Option<AccessChain>,
+            value: String,
+            name: Option<String>,
+        }
+        let owned = Owned::deserialize(deserializer)?;
+        let classes = [
+            ValueClass::Null,
+            ValueClass::StringLiteral,
+            ValueClass::Function,
+            ValueClass::FunctionPointerName,
+            ValueClass::SelfAddress,
+            ValueClass::InteriorAddress,
+            ValueClass::FormalPointer,
+            ValueClass::LocalPointer,
+            ValueClass::PointerRead,
+            ValueClass::Call,
+            ValueClass::Arithmetic,
+            ValueClass::OtherAddress,
+            ValueClass::Other,
+        ];
+        let value = classes
+            .into_iter()
+            .map(ValueClass::code)
+            .find(|label| *label == owned.value)
+            .ok_or_else(|| serde::de::Error::custom("unknown pointer-store value class"))?;
+        Ok(Self {
+            root: owned.root,
+            place: owned.place,
+            owner: owned.owner,
+            value,
+            name: owned.name,
+        })
+    }
 }
 
 /// Whether `node` (a left-hand side) is a place of pointer type this rule

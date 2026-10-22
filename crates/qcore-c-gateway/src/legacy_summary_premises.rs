@@ -34,7 +34,7 @@
 //! derivation (`position: "summary-premises-graph"`), so the arbiter can name
 //! every summary the premise withdraws and every caller that rested on it.
 
-use std::collections::{BTreeMap, BTreeSet};
+use std::collections::BTreeMap;
 
 use qcore_schemas::contract::{ResourceContracts, ResourceFunctionContract, ResourceParameterMode};
 
@@ -234,7 +234,7 @@ fn record_with_label(
 /// recorded once per derivation so a withdrawn summary's callers, and every
 /// published summary's own row, can be named.
 pub(super) fn record_derivation(
-    graph: &BTreeMap<String, BTreeSet<String>>,
+    plan: &crate::audit_ir::AuditPlan,
     inferred: &BTreeMap<String, ResourceFunctionContract>,
     declared: &ResourceContracts,
 ) {
@@ -257,7 +257,7 @@ pub(super) fn record_derivation(
         .collect::<Vec<_>>();
     crate::typed_access_path::record_row(serde_json::json!({
         "position": "summary-premises-graph",
-        "graph": graph,
+        "graph": plan.named_graph(),
         "summaries": summaries,
     }));
 }

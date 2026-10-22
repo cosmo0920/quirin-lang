@@ -1,0 +1,376 @@
+{
+  "attempts": [
+    {
+      "private_directory": "/home/cosmo/Documents/GitHub/qcore-c/private/audit-ir-fragments/20261021T233628Z",
+      "completed_steps": [
+        {
+          "name": "submodules",
+          "argv": [
+            "git",
+            "submodule",
+            "update",
+            "--init",
+            "--recursive"
+          ],
+          "exit": 0,
+          "seconds": 0.025,
+          "log": "/home/cosmo/Documents/GitHub/qcore-c/private/audit-ir-fragments/20261021T233628Z/submodules.log"
+        },
+        {
+          "name": "clang-version",
+          "argv": [
+            "clang",
+            "--version"
+          ],
+          "exit": 0,
+          "seconds": 0.011,
+          "log": "/home/cosmo/Documents/GitHub/qcore-c/private/audit-ir-fragments/20261021T233628Z/clang-version.log"
+        },
+        {
+          "name": "focused-store",
+          "argv": [
+            "cargo",
+            "test",
+            "-p",
+            "qcore-c-gateway",
+            "--lib",
+            "audit_ir_store::tests",
+            "--",
+            "--nocapture"
+          ],
+          "exit": 0,
+          "seconds": 17.652,
+          "log": "/home/cosmo/Documents/GitHub/qcore-c/private/audit-ir-fragments/20261021T233628Z/focused-store.log"
+        },
+        {
+          "name": "focused-cli",
+          "argv": [
+            "cargo",
+            "test",
+            "-p",
+            "qcore-audit",
+            "--test",
+            "configured_cli",
+            "ir_capture",
+            "--",
+            "--nocapture"
+          ],
+          "exit": 0,
+          "seconds": 29.019,
+          "log": "/home/cosmo/Documents/GitHub/qcore-c/private/audit-ir-fragments/20261021T233628Z/focused-cli.log"
+        },
+        {
+          "name": "fmt",
+          "argv": [
+            "cargo",
+            "fmt",
+            "--all",
+            "--",
+            "--check"
+          ],
+          "exit": 0,
+          "seconds": 3.731,
+          "log": "/home/cosmo/Documents/GitHub/qcore-c/private/audit-ir-fragments/20261021T233628Z/fmt.log"
+        },
+        {
+          "name": "clippy",
+          "argv": [
+            "cargo",
+            "clippy",
+            "--all-targets",
+            "--",
+            "-D",
+            "warnings"
+          ],
+          "exit": 0,
+          "seconds": 32.148,
+          "log": "/home/cosmo/Documents/GitHub/qcore-c/private/audit-ir-fragments/20261021T233628Z/clippy.log"
+        }
+      ],
+      "interruption": {
+        "reason": "User requested .qc artifacts; cancel prior format validation before editing",
+        "captured_pids": [
+          602625,
+          606981,
+          608196,
+          608641,
+          608639,
+          608637,
+          608584,
+          574530,
+          574525,
+          570839
+        ]
+      },
+      "driver_exit": 143
+    },
+    {
+      "private_directory": "/home/cosmo/Documents/GitHub/qcore-c/private/audit-ir-fragments/20261021T234018Z",
+      "completed_steps": [
+        {
+          "name": "submodules",
+          "argv": [
+            "git",
+            "submodule",
+            "update",
+            "--init",
+            "--recursive"
+          ],
+          "exit": 0,
+          "seconds": 0.079,
+          "log": "/home/cosmo/Documents/GitHub/qcore-c/private/audit-ir-fragments/20261021T234018Z/submodules.log"
+        },
+        {
+          "name": "clang-version",
+          "argv": [
+            "clang",
+            "--version"
+          ],
+          "exit": 0,
+          "seconds": 0.038,
+          "log": "/home/cosmo/Documents/GitHub/qcore-c/private/audit-ir-fragments/20261021T234018Z/clang-version.log"
+        },
+        {
+          "name": "focused-store",
+          "argv": [
+            "cargo",
+            "test",
+            "-p",
+            "qcore-c-gateway",
+            "--lib",
+            "audit_ir_store::tests",
+            "--",
+            "--nocapture"
+          ],
+          "exit": 0,
+          "seconds": 46.76,
+          "log": "/home/cosmo/Documents/GitHub/qcore-c/private/audit-ir-fragments/20261021T234018Z/focused-store.log"
+        },
+        {
+          "name": "focused-cli",
+          "argv": [
+            "cargo",
+            "test",
+            "-p",
+            "qcore-audit",
+            "--test",
+            "configured_cli",
+            "ir_capture",
+            "--",
+            "--nocapture"
+          ],
+          "exit": 0,
+          "seconds": 60.036,
+          "log": "/home/cosmo/Documents/GitHub/qcore-c/private/audit-ir-fragments/20261021T234018Z/focused-cli.log"
+        },
+        {
+          "name": "fmt",
+          "argv": [
+            "cargo",
+            "fmt",
+            "--all",
+            "--",
+            "--check"
+          ],
+          "exit": 0,
+          "seconds": 6.993,
+          "log": "/home/cosmo/Documents/GitHub/qcore-c/private/audit-ir-fragments/20261021T234018Z/fmt.log"
+        }
+      ],
+      "interruption": {
+        "reason": "User prioritized AST/CFG release implementation; cancel before source edits",
+        "captured_pids": [
+          694707,
+          694736,
+          694751,
+          694774,
+          678277,
+          678226,
+          627421
+        ]
+      },
+      "driver_exit": 143
+    },
+    {
+      "private_directory": "/home/cosmo/Documents/GitHub/qcore-c/private/audit-ir-lifetimes/20261021T234521Z",
+      "completed_steps": [
+        {
+          "name": "submodules",
+          "argv": [
+            "git",
+            "submodule",
+            "update",
+            "--init",
+            "--recursive"
+          ],
+          "exit": 0,
+          "seconds": 0.02,
+          "log": "/home/cosmo/Documents/GitHub/qcore-c/private/audit-ir-lifetimes/20261021T234521Z/submodules.log"
+        },
+        {
+          "name": "clang-version",
+          "argv": [
+            "clang",
+            "--version"
+          ],
+          "exit": 0,
+          "seconds": 0.011,
+          "log": "/home/cosmo/Documents/GitHub/qcore-c/private/audit-ir-lifetimes/20261021T234521Z/clang-version.log"
+        },
+        {
+          "name": "focused-store",
+          "argv": [
+            "cargo",
+            "test",
+            "-p",
+            "qcore-c-gateway",
+            "--lib",
+            "audit_ir_store::tests",
+            "--",
+            "--nocapture"
+          ],
+          "exit": 101,
+          "seconds": 11.61,
+          "log": "/home/cosmo/Documents/GitHub/qcore-c/private/audit-ir-lifetimes/20261021T234521Z/focused-store.log"
+        }
+      ],
+      "reason": "Lifetime test referred to a private helper; corrected to existing crate-visible analyze_cfg_with_entry. Driver stops after focused-store exit 101."
+    },
+    {
+      "private_directory": "/home/cosmo/Documents/GitHub/qcore-c/private/audit-ir-lifetimes/20261021T234614Z",
+      "completed_steps": [
+        {
+          "name": "submodules",
+          "argv": [
+            "git",
+            "submodule",
+            "update",
+            "--init",
+            "--recursive"
+          ],
+          "exit": 0,
+          "seconds": 0.021,
+          "log": "/home/cosmo/Documents/GitHub/qcore-c/private/audit-ir-lifetimes/20261021T234614Z/submodules.log"
+        },
+        {
+          "name": "clang-version",
+          "argv": [
+            "clang",
+            "--version"
+          ],
+          "exit": 0,
+          "seconds": 0.012,
+          "log": "/home/cosmo/Documents/GitHub/qcore-c/private/audit-ir-lifetimes/20261021T234614Z/clang-version.log"
+        },
+        {
+          "name": "focused-store",
+          "argv": [
+            "cargo",
+            "test",
+            "-p",
+            "qcore-c-gateway",
+            "--lib",
+            "audit_ir_store::tests",
+            "--",
+            "--nocapture"
+          ],
+          "exit": 0,
+          "seconds": 18.915,
+          "log": "/home/cosmo/Documents/GitHub/qcore-c/private/audit-ir-lifetimes/20261021T234614Z/focused-store.log"
+        },
+        {
+          "name": "focused-lifetimes",
+          "argv": [
+            "cargo",
+            "test",
+            "-p",
+            "qcore-c-gateway",
+            "--lib",
+            "audit_lifetime_tests"
+          ],
+          "exit": 0,
+          "seconds": 0.051,
+          "log": "/home/cosmo/Documents/GitHub/qcore-c/private/audit-ir-lifetimes/20261021T234614Z/focused-lifetimes.log"
+        },
+        {
+          "name": "focused-contextual",
+          "argv": [
+            "cargo",
+            "test",
+            "-p",
+            "qcore-c-gateway",
+            "--lib",
+            "final_contextual_body_moves"
+          ],
+          "exit": 0,
+          "seconds": 0.044,
+          "log": "/home/cosmo/Documents/GitHub/qcore-c/private/audit-ir-lifetimes/20261021T234614Z/focused-contextual.log"
+        },
+        {
+          "name": "focused-cli",
+          "argv": [
+            "cargo",
+            "test",
+            "-p",
+            "qcore-audit",
+            "--test",
+            "configured_cli",
+            "ir_capture",
+            "--",
+            "--nocapture"
+          ],
+          "exit": 0,
+          "seconds": 34.494,
+          "log": "/home/cosmo/Documents/GitHub/qcore-c/private/audit-ir-lifetimes/20261021T234614Z/focused-cli.log"
+        },
+        {
+          "name": "fmt",
+          "argv": [
+            "cargo",
+            "fmt",
+            "--all",
+            "--",
+            "--check"
+          ],
+          "exit": 0,
+          "seconds": 4.422,
+          "log": "/home/cosmo/Documents/GitHub/qcore-c/private/audit-ir-lifetimes/20261021T234614Z/fmt.log"
+        },
+        {
+          "name": "clippy",
+          "argv": [
+            "cargo",
+            "clippy",
+            "--all-targets",
+            "--",
+            "-D",
+            "warnings"
+          ],
+          "exit": 0,
+          "seconds": 26.227,
+          "log": "/home/cosmo/Documents/GitHub/qcore-c/private/audit-ir-lifetimes/20261021T234614Z/clippy.log"
+        }
+      ],
+      "interruption": {
+        "reason": "Extend prioritized lifetime work to release obsolete contract environments in all three settlement routes",
+        "captured_pids": [
+          905406,
+          843047,
+          912005,
+          911999,
+          878543,
+          879591,
+          882256,
+          899027,
+          900085,
+          906031,
+          911742,
+          758526,
+          752493
+        ]
+      },
+      "driver_exit": 143
+    }
+  ],
+  "fragment_development": "/home/cosmo/Documents/GitHub/qcore-c/private/audit-ir-fragments/development-attempts.json"
+}

@@ -1,0 +1,42 @@
+{
+  "scope": "bounded component-plan parity, not full corpus or memory acceptance",
+  "base": "d03f6c864f84cfc837db09f7bdb0a2292bc32aab",
+  "original_function_sha256": "68a5c49ae1c9077ddcacbb9f6089b8ba382550fecaa66aadf02a0f80f835c015",
+  "test_oracle_equals_original_after_function_name_restore": true,
+  "graphs": 66067,
+  "vertices": [
+    0,
+    1,
+    2,
+    3,
+    4
+  ],
+  "includes_self_edges": true,
+  "checks": [
+    "exact ordered SCC membership",
+    "recursive flags",
+    "lossless parity JSON graph",
+    "complete one-time body membership",
+    "forward/reverse edge agreement",
+    "component dependencies precede consumers"
+  ],
+  "additional_controls": [
+    "non-body boundary retention",
+    "20000-body chain on a 256 KiB thread stack"
+  ],
+  "test_command": [
+    "cargo",
+    "test",
+    "-p",
+    "qcore-c-gateway",
+    "--lib",
+    "audit_ir::tests",
+    "--",
+    "--nocapture"
+  ],
+  "exit": 0,
+  "passed": 3,
+  "failed": 0,
+  "log": "/home/cosmo/Documents/GitHub/qcore-c/private/audit-ir-plan/20261021T173818Z/focused.log",
+  "harness": "crates/qcore-c-gateway/tests/unit/audit_ir.rs"
+}

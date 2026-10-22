@@ -342,7 +342,7 @@ pub(crate) fn admits_descriptor_read(
 }
 
 /// What a validity test establishes on one edge.
-#[derive(Clone, Copy, Debug, PartialEq, Eq)]
+#[derive(Clone, Copy, Debug, PartialEq, Eq, serde::Serialize, serde::Deserialize)]
 pub enum ValidityFact {
     /// The identity is the failure sentinel on this edge: no resource exists.
     Invalid,

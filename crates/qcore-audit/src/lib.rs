@@ -24,6 +24,7 @@ pub mod cycle18_composition;
 mod cycle18_inputs;
 pub mod event_payload;
 pub mod evidence;
+mod ir_capture;
 pub mod native_platform_matrix;
 pub mod no_build;
 pub mod observed_wait;
@@ -673,7 +674,9 @@ pub fn run_config_with_jobs(path: &Path, flag_jobs: Option<usize>) -> Result<Aud
                         function_scope: LegacyFunctionScope::MainSourceDefinitions,
                         input: options.input,
                     };
-                    audit.analyze_unit(library, &file, &unit, prepared.inventory(), &profile);
+                    qcore_c_gateway::with_audit_unit_lifetimes(|| {
+                        audit.analyze_unit(library, &file, &unit, prepared.inventory(), &profile);
+                    });
                 }
             }
             contract_dependencies::clear_premises_cache();
@@ -766,7 +769,9 @@ pub fn run_config_with_jobs(path: &Path, flag_jobs: Option<usize>) -> Result<Aud
                     function_scope: LegacyFunctionScope::MainSourceDefinitions,
                     input: options.input,
                 };
-                audit.analyze_unit(library, &file, &unit, prepared.inventory(), &profile);
+                qcore_c_gateway::with_audit_unit_lifetimes(|| {
+                    audit.analyze_unit(library, &file, &unit, prepared.inventory(), &profile);
+                });
             }
         }
     }
@@ -929,6 +934,10 @@ struct UnitProducts {
 /// The body of the configured route's unit loop, unchanged, recording into
 /// its own report fragment, tally and console buffer.
 fn configured_unit(unit_input: ConfiguredUnit<'_>) -> Result<UnitProducts, String> {
+    qcore_c_gateway::with_audit_unit_lifetimes(|| configured_unit_unscoped(unit_input))
+}
+
+fn configured_unit_unscoped(unit_input: ConfiguredUnit<'_>) -> Result<UnitProducts, String> {
     let ConfiguredUnit {
         library,
         entry,
@@ -1006,18 +1015,26 @@ fn configured_unit(unit_input: ConfiguredUnit<'_>) -> Result<UnitProducts, Strin
     // to the resource projection, the report and the source-contract
     // route. Two independent computations of the denominator could
     // disagree; one cannot.
-    projection::project_prepared_unit_into(
-        library,
-        &file,
+    ir_capture::configured(
         &prepared,
+        &identity,
         contracts,
-        PreparedAuditCertificateContext {
-            compile_task_identity: &identity,
-            source_profile_sha256,
+        source_profile_sha256,
+        || {
+            projection::project_prepared_unit_into(
+                library,
+                &file,
+                &prepared,
+                contracts,
+                PreparedAuditCertificateContext {
+                    compile_task_identity: &identity,
+                    source_profile_sha256,
+                },
+                &mut report,
+                &mut counts,
+                out,
+            )
         },
-        &mut report,
-        &mut counts,
-        out,
     )?;
     Ok(UnitProducts {
         file,
@@ -1025,7 +1042,7 @@ fn configured_unit(unit_input: ConfiguredUnit<'_>) -> Result<UnitProducts, Strin
         compile_task,
         report,
         counts,
-        retained: retain_unit.then(|| (source.clone(), prepared)),
+        retained: retain_unit.then_some((source, prepared)),
     })
 }
 

@@ -38,6 +38,7 @@ They are not interchangeable.
 | Registered open work | `named_followups` in the [acceptance matrix](reviews/r0_3/acceptance_matrix.json), then the named card's report |
 | Planned `.qv` / `.qr` / `.qrlib` naming | [Quirin extension migration](plans/quirin-extension-migration/README.md) |
 | Architecture and W0–W7 direction | [Generalization plan](GENERALIZATION_PLAN.md) |
+| Component audit IR and a 6–7 GB audit budget | [AUDIT-IR implementation card](development/audit-ir-card.md) |
 | Prospective backlog, retry and engine cards | [Fluent Bit system coverage queue](plans/fluent-bit-system-coverage/README.md) |
 | Prospective coverage cards (typed access paths, callee closure) | [Unsupported coverage queue](plans/unsupported-coverage/README.md) |
 | Prospective expression, place and core-connection cards from the Clang gap analysis | [Clang gap card queue](plans/clang-gap-cards/README.md) |

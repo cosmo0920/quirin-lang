@@ -850,3 +850,123 @@ fn deferred_source_location_builtins_reject_instead_of_answering_for_the_wrong_f
         "{stderr}{stdout}"
     );
 }
+
+// AUDIT-IR-FRAGMENTS: capture is a side artifact, not a new verdict path.
+fn run_ir_capture(fixture: &Fixture, directory: Option<&std::path::Path>) -> Output {
+    let mut command = Command::new(env!("CARGO_BIN_EXE_quirin-audit"));
+    command
+        .current_dir(&fixture.0)
+        .arg(fixture.0.join("audit.json"));
+    match directory {
+        Some(path) => {
+            command.env("QCORE_AUDIT_IR_DIR", path);
+        }
+        None => {
+            command.env_remove("QCORE_AUDIT_IR_DIR");
+        }
+    }
+    command.output().unwrap()
+}
+
+#[test]
+fn ir_capture_round_trips_real_cfgs_without_changing_configured_report() {
+    if !clang_available() {
+        return;
+    }
+    let fixture = Fixture::new(
+        "void external(void); void subject(void) { return; } void undecided(void) { external(); }\n",
+    );
+    let baseline = run_ir_capture(&fixture, None);
+    assert!(
+        baseline.status.success(),
+        "{}",
+        String::from_utf8_lossy(&baseline.stderr)
+    );
+    let report = fs::read(fixture.0.join("output/report.json")).unwrap();
+    let artifacts = fixture.0.join("ir");
+    let captured = run_ir_capture(&fixture, Some(&artifacts));
+    assert!(
+        captured.status.success(),
+        "{}",
+        String::from_utf8_lossy(&captured.stderr)
+    );
+    assert_eq!(
+        fs::read(fixture.0.join("output/report.json")).unwrap(),
+        report
+    );
+    // Walks below inspect only this test's own temporary output directory.
+    let unit = fs::read_dir(artifacts.join("units"))
+        .unwrap()
+        .next()
+        .unwrap()
+        .unwrap()
+        .path();
+    let index_path = fs::read_dir(unit).unwrap().next().unwrap().unwrap().path();
+    assert_eq!(index_path.extension().unwrap(), "qc");
+    for object in fs::read_dir(artifacts.join("objects")).unwrap() {
+        assert_eq!(object.unwrap().path().extension().unwrap(), "qc");
+    }
+    let index: qcore_c_gateway::audit_ir_capture::CaptureIndex =
+        serde_json::from_slice(&fs::read(index_path).unwrap()).unwrap();
+    assert_eq!(
+        index
+            .targets
+            .iter()
+            .map(|t| t.function.as_str())
+            .collect::<Vec<_>>(),
+        ["subject", "undecided"]
+    );
+    assert!(index.requires_fresh_lowering);
+    assert!(index.targets.iter().all(|t| !t.cfgs.is_empty()));
+    let original_count = fs::read_dir(artifacts.join("objects")).unwrap().count();
+    let again = run_ir_capture(&fixture, Some(&artifacts));
+    assert!(
+        again.status.success(),
+        "{}",
+        String::from_utf8_lossy(&again.stderr)
+    );
+    assert_eq!(
+        fs::read_dir(artifacts.join("objects")).unwrap().count(),
+        original_count
+    );
+    assert_eq!(
+        fs::read(fixture.0.join("output/report.json")).unwrap(),
+        report
+    );
+}
+
+#[test]
+fn corrupt_ir_capture_aborts_without_overwriting_or_publishing_a_new_report() {
+    if !clang_available() {
+        return;
+    }
+    let fixture = Fixture::new("void subject(void) { return; }\n");
+    let artifacts = fixture.0.join("ir");
+    let captured = run_ir_capture(&fixture, Some(&artifacts));
+    assert!(
+        captured.status.success(),
+        "{}",
+        String::from_utf8_lossy(&captured.stderr)
+    );
+    let unit = fs::read_dir(artifacts.join("units"))
+        .unwrap()
+        .next()
+        .unwrap()
+        .unwrap()
+        .file_name();
+    let corrupt = artifacts
+        .join("objects")
+        .join(format!("{}.qc", unit.to_string_lossy()));
+    fs::write(&corrupt, b"truncated").unwrap();
+    fs::remove_file(fixture.0.join("output/report.json")).unwrap();
+    let output = run_ir_capture(&fixture, Some(&artifacts));
+    assert!(!output.status.success());
+    assert!(!fixture.0.join("output/report.json").exists());
+    assert_eq!(fs::read(corrupt).unwrap(), b"truncated");
+    let disabled = run_ir_capture(&fixture, None);
+    assert!(
+        disabled.status.success(),
+        "{}",
+        String::from_utf8_lossy(&disabled.stderr)
+    );
+}

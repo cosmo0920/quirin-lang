@@ -106,7 +106,9 @@ pub(crate) const CHAIN_SELECTION_LIMIT: usize = 4;
 /// `LegacyInstruction::IndirectScalarAccess::chains`.
 ///
 /// `pub` only because `LegacyInstruction` is; the module is crate-private.
-#[derive(Clone, Debug, PartialEq, Eq, PartialOrd, Ord, Hash)]
+#[derive(
+    Clone, Debug, PartialEq, Eq, PartialOrd, Ord, Hash, serde::Serialize, serde::Deserialize,
+)]
 pub struct AccessChain {
     /// The root name: a record pointer `R` or a record object `S`.
     pub root: String,

@@ -457,7 +457,7 @@ use crate::typed_field_access::{FunctionTypes, TypedAccessModel};
 /// abstract state, which is exactly why the order C leaves unspecified cannot
 /// be observed. The alias obligations of its own reads travel with the outer
 /// call's in `alias_reads`.
-#[derive(Clone, Debug, PartialEq, Eq)]
+#[derive(Clone, Debug, PartialEq, Eq, serde::Serialize, serde::Deserialize)]
 pub struct NestedContractCall {
     pub function: String,
     pub contract: ResourceFunctionContract,
@@ -471,7 +471,7 @@ pub struct NestedContractCall {
 // allocation per call statement to buy nothing; the crate's precedent at
 // `UnrestrictedLegacyResult` makes the same decision.
 #[allow(clippy::large_enum_variant)]
-#[derive(Clone, Debug, PartialEq, Eq)]
+#[derive(Clone, Debug, PartialEq, Eq, serde::Serialize, serde::Deserialize)]
 pub enum LegacyInstruction {
     Acquire {
         destination: String,
@@ -838,7 +838,7 @@ pub enum LegacyInstruction {
 
 /// Card **W43-INDEX-TRAVERSAL**: what a pointer step does to the pointer's
 /// position in its object, as far as the rule commits to it.
-#[derive(Clone, Copy, Debug, PartialEq, Eq)]
+#[derive(Clone, Copy, Debug, PartialEq, Eq, serde::Serialize, serde::Deserialize)]
 pub enum StepOffset {
     /// `P++`, `++P`, `P += N`, `Q + N` with `N` a positive decimal integer
     /// literal: the result lies strictly after the pointer it was computed
@@ -865,7 +865,7 @@ pub enum StepOffset {
 ///
 /// Both are empty when the declaration reader refused the function, which
 /// restores every pre-card answer there.
-#[derive(Clone, Debug, Default, PartialEq, Eq)]
+#[derive(Clone, Debug, Default, PartialEq, Eq, serde::Serialize, serde::Deserialize)]
 pub struct TraversalNames {
     pub scalars: BTreeSet<String>,
     pub pointers: BTreeSet<String>,
@@ -886,7 +886,7 @@ pub struct TraversalNames {
 /// keeps its `Unsupported` diagnostic, still poisons the path
 /// ([`is_path_poisoning`]) and still makes its function `Unknown`. It only
 /// stops the refusal from destroying facts about names it cannot have written.
-#[derive(Clone, Debug, PartialEq, Eq)]
+#[derive(Clone, Debug, PartialEq, Eq, serde::Serialize, serde::Deserialize)]
 pub enum RefusedWrites {
     /// Nothing bounds this refusal's effect on the binding environment, so
     /// every binding is poisoned. This is the answer for every refusal that
@@ -1084,7 +1084,7 @@ fn frame_protected_locals(
 /// typed rule reads, so W4 derivation, W4 validation and
 /// [`check_legacy_safety_certificate`] all reproduce them from the
 /// certificate's own content.
-#[derive(Clone, Debug, PartialEq, Eq)]
+#[derive(Clone, Debug, PartialEq, Eq, serde::Serialize, serde::Deserialize)]
 pub struct AliasPeers {
     pub place: String,
     pub peers: Vec<String>,
@@ -1092,7 +1092,7 @@ pub struct AliasPeers {
 
 /// Source-derived indexed lookup call descriptor. The ordinary ContractCall
 /// remains visible to every contract, condition and lifetime consumer.
-#[derive(Clone, Debug, PartialEq, Eq)]
+#[derive(Clone, Debug, PartialEq, Eq, serde::Serialize, serde::Deserialize)]
 pub struct CheckedLookupCall {
     pub callee: String,
     pub parent: String,
@@ -1105,14 +1105,14 @@ pub struct CheckedLookupCall {
 
 /// A read point in the exact retained indexed lookup frame. The ordinary
 /// IndirectScalarAccess and every original obligation remain intact.
-#[derive(Clone, Debug, PartialEq, Eq)]
+#[derive(Clone, Debug, PartialEq, Eq, serde::Serialize, serde::Deserialize)]
 pub struct CheckedLookupRead {
     pub parent: String,
     pub cursor: String,
     pub guarded_cursor: bool,
 }
 
-#[derive(Clone, Debug, PartialEq, Eq)]
+#[derive(Clone, Debug, PartialEq, Eq, serde::Serialize, serde::Deserialize)]
 pub struct LegacyCfgNode {
     /// Exact retained assigned-call/callee frame, rederived during replay.
     /// Absence never supplies a child identity or membership fact.
@@ -1137,7 +1137,7 @@ pub struct LegacyCfgNode {
     pub loop_exit_edge: Option<usize>,
 }
 
-#[derive(Clone, Debug, PartialEq, Eq)]
+#[derive(Clone, Debug, PartialEq, Eq, serde::Serialize, serde::Deserialize)]
 pub struct LegacyCfg {
     pub function: String,
     pub entry: LegacyNodeId,
@@ -2341,27 +2341,36 @@ fn analyze_legacy_c_tokens_under_holds(
     let tokens = pin_held_tokens.as_deref().unwrap_or(tokens);
     let agreement = declared_abi::AbiAgreement::read(tokens, contracts);
     let withdrawn_environment = agreement.withdraw_environment(contracts);
-    let contracts = withdrawn_environment.as_ref().unwrap_or(contracts);
+    let mut settled_environment = withdrawn_environment.map_or(
+        std::borrow::Cow::Borrowed(contracts),
+        std::borrow::Cow::Owned,
+    );
     let withdrawn_tokens = agreement.withdraw_call_sites(tokens);
     let tokens = withdrawn_tokens.as_deref().unwrap_or(tokens);
     // Card W43-ABI-ENUM-AND-CONST-PP (rule 12w): a guarded retention whose
     // body this unit defines stands only when the body validates it.
-    let guards_settled = retention_guard::settle(tokens, contracts);
-    let contracts = guards_settled.as_ref().unwrap_or(contracts);
+    if let Some(next) = retention_guard::settle(tokens, &settled_environment) {
+        settled_environment = std::borrow::Cow::Owned(next);
+    }
     // Card SLOT-MOVE-AND-INTERIOR-BORROW (rule 13a): a slot or borrowed-result
     // declaration whose body this unit defines stands only when it validates.
-    let slots_settled = slot_move_route::settle(tokens, contracts);
-    let contracts = slots_settled.as_ref().unwrap_or(contracts);
+    if let Some(next) = slot_move_route::settle(tokens, &settled_environment) {
+        settled_environment = std::borrow::Cow::Owned(next);
+    }
     // Card REFCOUNT-RESOURCE-KIND (rule 13c): a reference declaration whose
     // body this unit defines stands only when the body validates it.
-    let detach_settled = detach_route::settle(tokens, contracts);
-    let contracts = detach_settled.as_ref().unwrap_or(contracts);
-    let references_settled = reference_route::settle(tokens, contracts);
-    let contracts = references_settled.as_ref().unwrap_or(contracts);
+    if let Some(next) = detach_route::settle(tokens, &settled_environment) {
+        settled_environment = std::borrow::Cow::Owned(next);
+    }
+    if let Some(next) = reference_route::settle(tokens, &settled_environment) {
+        settled_environment = std::borrow::Cow::Owned(next);
+    }
     // Card CG22-CALLBACK-REGISTRY-CONTRACT (rule 13y): a callback declaration
     // whose body this unit defines stands only when the body validates it.
-    let callbacks_settled = callback_route::settle(tokens, contracts);
-    let contracts = callbacks_settled.as_ref().unwrap_or(contracts);
+    if let Some(next) = callback_route::settle(tokens, &settled_environment) {
+        settled_environment = std::borrow::Cow::Owned(next);
+    }
+    let contracts = settled_environment.as_ref();
     // Card LOADER-ABI-MODES, applied here for the same uniformity reason: this
     // entry point does not pass through the translation-unit pass, so a
     // declaration a body in the same stream contradicts would otherwise still
@@ -3042,26 +3051,35 @@ pub(crate) fn recursive_component_census(
     let tokens = pin_hold::hold_call_sites(&tokens, contracts).unwrap_or(tokens);
     let agreement = declared_abi::AbiAgreement::read(&tokens, contracts);
     let withdrawn_environment = agreement.withdraw_environment(contracts);
-    let contracts = withdrawn_environment.as_ref().unwrap_or(contracts);
+    let mut settled_environment = withdrawn_environment.map_or(
+        std::borrow::Cow::Borrowed(contracts),
+        std::borrow::Cow::Owned,
+    );
     let withdrawn_tokens = agreement.withdraw_call_sites(&tokens);
     let tokens = withdrawn_tokens.unwrap_or(tokens);
     // Card W43-ABI-ENUM-AND-CONST-PP (rule 12w): a guarded retention whose
     // body this unit defines stands only when the body validates it.
-    let guards_settled = retention_guard::settle(&tokens, contracts);
-    let contracts = guards_settled.as_ref().unwrap_or(contracts);
+    if let Some(next) = retention_guard::settle(&tokens, &settled_environment) {
+        settled_environment = std::borrow::Cow::Owned(next);
+    }
     // Card SLOT-MOVE-AND-INTERIOR-BORROW (rule 13a).
-    let slots_settled = slot_move_route::settle(&tokens, contracts);
-    let contracts = slots_settled.as_ref().unwrap_or(contracts);
+    if let Some(next) = slot_move_route::settle(&tokens, &settled_environment) {
+        settled_environment = std::borrow::Cow::Owned(next);
+    }
     // Card REFCOUNT-RESOURCE-KIND (rule 13c): a reference declaration whose
     // body this unit defines stands only when the body validates it.
-    let detach_settled = detach_route::settle(&tokens, contracts);
-    let contracts = detach_settled.as_ref().unwrap_or(contracts);
-    let references_settled = reference_route::settle(&tokens, contracts);
-    let contracts = references_settled.as_ref().unwrap_or(contracts);
+    if let Some(next) = detach_route::settle(&tokens, &settled_environment) {
+        settled_environment = std::borrow::Cow::Owned(next);
+    }
+    if let Some(next) = reference_route::settle(&tokens, &settled_environment) {
+        settled_environment = std::borrow::Cow::Owned(next);
+    }
     // Card CG22-CALLBACK-REGISTRY-CONTRACT (rule 13y): a callback declaration
     // whose body this unit defines stands only when the body validates it.
-    let callbacks_settled = callback_route::settle(&tokens, contracts);
-    let contracts = callbacks_settled.as_ref().unwrap_or(contracts);
+    if let Some(next) = callback_route::settle(&tokens, &settled_environment) {
+        settled_environment = std::borrow::Cow::Owned(next);
+    }
+    let contracts = settled_environment.as_ref();
     let mut names = function_names(&tokens, &conditionals).definitions;
     // Card W44-CORPUS-CALLEE-SUMMARIES: the same derivation scope as the analysis.
     let definitions = names.clone();
@@ -3222,26 +3240,35 @@ fn analyze_translation_unit_under_holds(
     if let Some(after) = &withdrawn_environment {
         crate::contract_dependencies::withdrawn_between(input, after, "abi", true);
     }
-    let contracts = withdrawn_environment.as_ref().unwrap_or(contracts);
+    let mut settled_environment = withdrawn_environment.map_or(
+        std::borrow::Cow::Borrowed(contracts),
+        std::borrow::Cow::Owned,
+    );
     let withdrawn_tokens = agreement.withdraw_call_sites(&tokens);
     let tokens = withdrawn_tokens.unwrap_or(tokens);
     // Card W43-ABI-ENUM-AND-CONST-PP (rule 12w): a guarded retention whose
     // body this unit defines stands only when the body validates it.
-    let guards_settled = retention_guard::settle(&tokens, contracts);
-    let contracts = guards_settled.as_ref().unwrap_or(contracts);
+    if let Some(next) = retention_guard::settle(&tokens, &settled_environment) {
+        settled_environment = std::borrow::Cow::Owned(next);
+    }
     // Card SLOT-MOVE-AND-INTERIOR-BORROW (rule 13a).
-    let slots_settled = slot_move_route::settle(&tokens, contracts);
-    let contracts = slots_settled.as_ref().unwrap_or(contracts);
+    if let Some(next) = slot_move_route::settle(&tokens, &settled_environment) {
+        settled_environment = std::borrow::Cow::Owned(next);
+    }
     // Card REFCOUNT-RESOURCE-KIND (rule 13c): a reference declaration whose
     // body this unit defines stands only when the body validates it.
-    let detach_settled = detach_route::settle(&tokens, contracts);
-    let contracts = detach_settled.as_ref().unwrap_or(contracts);
-    let references_settled = reference_route::settle(&tokens, contracts);
-    let contracts = references_settled.as_ref().unwrap_or(contracts);
+    if let Some(next) = detach_route::settle(&tokens, &settled_environment) {
+        settled_environment = std::borrow::Cow::Owned(next);
+    }
+    if let Some(next) = reference_route::settle(&tokens, &settled_environment) {
+        settled_environment = std::borrow::Cow::Owned(next);
+    }
     // Card CG22-CALLBACK-REGISTRY-CONTRACT (rule 13y): a callback declaration
     // whose body this unit defines stands only when the body validates it.
-    let callbacks_settled = callback_route::settle(&tokens, contracts);
-    let contracts = callbacks_settled.as_ref().unwrap_or(contracts);
+    if let Some(next) = callback_route::settle(&tokens, &settled_environment) {
+        settled_environment = std::borrow::Cow::Owned(next);
+    }
+    let contracts = settled_environment.as_ref();
     let mut names = function_names(&tokens, &conditionals).definitions;
     // Card W44-CORPUS-CALLEE-SUMMARIES: every definition, kept before the
     // selection narrows `names`, for the derivation scope below.
@@ -3304,7 +3331,7 @@ fn analyze_translation_unit_under_holds(
         .cloned()
         .collect::<Vec<_>>();
     let tokens = gate.tokens.unwrap_or(tokens);
-    let derivation = gate.derivation;
+    let mut derivation = gate.derivation;
     // Card CG30-DIALECTS-FLAGS-TYPES (rule 11y): extension types are refused
     // by name, read from each definition's typed AST where the unit spells one.
     let extensions = dialect_hook::Extensions::of(&tokens);
@@ -3332,8 +3359,11 @@ fn analyze_translation_unit_under_holds(
     );
     let mut functions = BTreeMap::new();
     let mut projection_failures = Vec::new();
+    // Global declared-body and dependency evidence above are the final readers
+    // of unselected contextual bodies. Callee summaries remain in force.
+    derivation.retain_contextual_cfgs(&names);
     for name in names {
-        match analyze_defined_function(&tokens, &name, &derivation) {
+        match analyze_defined_function(&tokens, &name, &mut derivation) {
             Ok(mut summary) => {
                 // Card CG30-DIALECTS-FLAGS-TYPES (rule 11y).
                 dialect_hook::name_refusals(
@@ -3399,11 +3429,14 @@ fn analyze_translation_unit_under_holds(
 fn analyze_defined_function(
     tokens: &[Token],
     function: &str,
-    derivation: &CustodyDerivation,
+    derivation: &mut CustodyDerivation,
 ) -> Result<LegacyFunctionSummary, LegacyCError> {
+    // Move the final contextual body into its consumer instead of cloning it
+    // and retaining the original until every selected row has finished.
+    let contextual = derivation.take_contextual_cfg(function);
     // Card VERDICT-CONTRACT-DEPENDENCIES (rule 13f).
     crate::contract_dependencies::within(function, || {
-        analyze_defined_function_unscoped(tokens, function, derivation)
+        analyze_defined_function_unscoped(tokens, function, derivation, contextual)
     })
 }
 
@@ -3411,9 +3444,11 @@ fn analyze_defined_function_unscoped(
     tokens: &[Token],
     function: &str,
     derivation: &CustodyDerivation,
+    contextual: Option<LegacyCfg>,
 ) -> Result<LegacyFunctionSummary, LegacyCError> {
-    let cfg = match derivation.contextual_cfg(function) {
-        Some(cfg) => cfg.clone(),
+    let has_contextual = contextual.is_some();
+    let cfg = match contextual {
+        Some(cfg) => cfg,
         None => build_function_cfg(tokens, function, derivation.environment())?,
     };
     let double_releases = member_release::callee_double_releases(&cfg);
@@ -3425,7 +3460,7 @@ fn analyze_defined_function_unscoped(
                 // not validate falls back to the ordinary CFG's contract-free
                 // analysis, exactly as any other failed entry does.
                 let entry_cfg = if matches!(contract.result, ResourceReturnMode::Derived { .. })
-                    && derivation.contextual_cfg(function).is_none()
+                    && !has_contextual
                 {
                     build_derived_return_cfg(tokens, function, derivation.environment()).ok()
                 } else {
@@ -3592,9 +3627,18 @@ fn build_function_cfg_with(
 ) -> Result<LegacyCfg, LegacyCError> {
     // Card VERDICT-CONTRACT-DEPENDENCIES (rule 13f): every lookup this build
     // makes is `function`'s consultation; the identity without a recording.
-    crate::contract_dependencies::within(function, || {
+    let result = crate::contract_dependencies::within(function, || {
         build_function_cfg_unscoped(tokens, function, contracts, admit_derived_returns, own)
-    })
+    });
+    crate::audit_ir_capture::record_build(
+        function,
+        tokens,
+        contracts,
+        admit_derived_returns,
+        own,
+        &result,
+    );
+    result
 }
 
 fn build_function_cfg_unscoped(

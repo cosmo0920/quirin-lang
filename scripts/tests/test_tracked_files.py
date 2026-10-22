@@ -30,6 +30,8 @@ REVIEWED_WALKS = {
     "compiler/tests/std_event.rs": 1,  # the system temporary directory (Windows)
     "compiler/tests/support/ct_atomic_publication.rs": 1,  # CT41's fixture directory
     "compiler/tests/unit/pinned_lifecycle.rs": 1,  # the vendored fixture tree, copied
+    "crates/qcore-audit/tests/configured_cli.rs": 6,  # .qc artifacts in its own temporary fixture
+    "crates/qcore-c-gateway/tests/unit/audit_ir_fragments.rs": 1,  # its own temporary object store
     "crates/qcore-audit/tests/checkpoint_cli.rs": 1,  # checkpoint files in its own temporary fixture
     "crates/qcore-audit/tests/user_contract_plugins.rs": 2,  # fixture copy; its scratch copy
     "crates/qcore-contract/tests/contract_inherit.rs": 1,  # its fixture crates

@@ -102,14 +102,14 @@ use crate::typed_field_access::{
 };
 
 /// Whether the stored member holds a scalar or exactly one pointer.
-#[derive(Clone, Copy, Debug, PartialEq, Eq)]
+#[derive(Clone, Copy, Debug, PartialEq, Eq, serde::Serialize, serde::Deserialize)]
 pub enum MemberKind {
     Scalar,
     Pointer,
 }
 
 /// The destination of one admitted sub-object store.
-#[derive(Clone, Debug, PartialEq, Eq)]
+#[derive(Clone, Debug, PartialEq, Eq, serde::Serialize, serde::Deserialize)]
 pub struct Destination {
     /// The pointer the store dereferences (`R` of `R->F` and `R[I].F`);
     /// `None` for a store into this function's own record object.
@@ -120,7 +120,7 @@ pub struct Destination {
 }
 
 /// The stored value, as the classifier read it.
-#[derive(Clone, Debug, PartialEq, Eq)]
+#[derive(Clone, Debug, PartialEq, Eq, serde::Serialize, serde::Deserialize)]
 pub enum StoredValue {
     /// A scalar expression; the bases its typed accesses dereference carry
     /// W43's obligation.

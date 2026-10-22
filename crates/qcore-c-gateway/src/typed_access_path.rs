@@ -386,6 +386,11 @@ thread_local! {
     static UNIT_LAYOUTS: UnitCache<String> = const { UnitCache::new() };
 }
 
+pub(crate) fn release_reuse_caches() {
+    UNIT_ASTS.with(UnitCache::clear);
+    UNIT_LAYOUTS.with(UnitCache::clear);
+}
+
 struct SourceContext {
     source: Arc<String>,
     source_sha256: String,
@@ -2522,5 +2527,60 @@ mod lifetime_cache_tests {
                 }
             });
         }
+    }
+}
+
+#[cfg(test)]
+mod audit_lifetime_tests {
+    use super::*;
+
+    #[test]
+    fn unit_boundaries_release_ast_ownership_but_preserve_active_readers() {
+        release_reuse_caches();
+        let source = Arc::new("void subject(void) {}".to_owned());
+        let frontend = Arc::new("request".to_owned());
+        let key = || UnitKey::new(CCompilerDialect::C11, &frontend, &source);
+        let lease = UNIT_ASTS.with(|cache| {
+            cache
+                .get_or_launch(key(), || {
+                    Some(AstIndex::from_ast(
+                        serde_json::json!({"kind":"TranslationUnitDecl","inner":[]}),
+                        &source,
+                    ))
+                })
+                .unwrap()
+        });
+        let weak = Rc::downgrade(&lease);
+        crate::with_audit_unit_lifetimes(|| {
+            assert_eq!(Rc::strong_count(&lease), 1);
+            assert!(lease.functions.is_empty());
+        });
+        assert!(weak.upgrade().is_some());
+        drop(lease);
+        assert!(weak.upgrade().is_none());
+
+        let weak = crate::with_audit_unit_lifetimes(|| {
+            let value = UNIT_LAYOUTS.with(|cache| {
+                cache
+                    .get_or_launch(key(), || Some("layout".to_owned()))
+                    .unwrap()
+            });
+            Rc::downgrade(&value)
+        });
+        assert!(weak.upgrade().is_none());
+        let mut weak = None;
+        let result = std::panic::catch_unwind(std::panic::AssertUnwindSafe(|| {
+            crate::with_audit_unit_lifetimes(|| {
+                let value = UNIT_LAYOUTS.with(|cache| {
+                    cache
+                        .get_or_launch(key(), || Some("layout".to_owned()))
+                        .unwrap()
+                });
+                weak = Some(Rc::downgrade(&value));
+                panic!("cancel audit unit");
+            });
+        }));
+        assert!(result.is_err());
+        assert!(weak.unwrap().upgrade().is_none());
     }
 }

@@ -44,7 +44,9 @@
 use std::collections::BTreeSet;
 
 /// A symbolic index bound.
-#[derive(Clone, Debug, PartialEq, Eq, PartialOrd, Ord, Hash)]
+#[derive(
+    Clone, Debug, PartialEq, Eq, PartialOrd, Ord, Hash, serde::Serialize, serde::Deserialize,
+)]
 pub enum Term {
     /// A literal index.
     Const(u64),
@@ -639,7 +641,7 @@ impl Collection {
 }
 
 /// How an element place spells its index.
-#[derive(Clone, Debug, PartialEq, Eq)]
+#[derive(Clone, Debug, PartialEq, Eq, serde::Serialize, serde::Deserialize)]
 pub enum IndexSpelling {
     Name(String),
     Literal(u64),

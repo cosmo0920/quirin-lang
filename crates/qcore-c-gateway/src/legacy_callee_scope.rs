@@ -269,7 +269,7 @@ pub(crate) mod census {
             .cloned()
             .collect::<BTreeSet<_>>();
         let gate = ModeGate::apply(tokens, &scope, contracts);
-        let derivation = gate.derivation;
+        let mut derivation = gate.derivation;
         let rewritten = gate.tokens;
         let tokens = rewritten.as_deref().unwrap_or(tokens);
         let mut callees = Vec::new();
@@ -301,7 +301,7 @@ pub(crate) mod census {
             }
             .to_owned();
             row.summary = inferred.map(|contract| format!("{contract:?}"));
-            if let Ok(summary) = analyze_defined_function(tokens, &name, &derivation) {
+            if let Ok(summary) = analyze_defined_function(tokens, &name, &mut derivation) {
                 row.body_status = Some(
                     match summary.status {
                         AnalysisStatus::Safe => "Safe",

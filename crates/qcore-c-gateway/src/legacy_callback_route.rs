@@ -34,7 +34,7 @@ use crate::typed_c_ast::{children, kind};
 use qcore_schemas::arm_release::{ArmEffect, ArmJoin, join_at};
 
 /// A registry holder's actual, as spelled.
-#[derive(Clone, Debug, PartialEq, Eq)]
+#[derive(Clone, Debug, PartialEq, Eq, serde::Serialize, serde::Deserialize)]
 pub enum RegistryHolder {
     /// `&L`, `L` an automatic object of this frame named only at registry and
     /// retention holder positions.
@@ -103,7 +103,7 @@ impl Classified {
 }
 
 /// One registry effect of a call, in clause order.
-#[derive(Clone, Debug, PartialEq, Eq)]
+#[derive(Clone, Debug, PartialEq, Eq, serde::Serialize, serde::Deserialize)]
 pub enum RegistryUse {
     /// `resource_callback_registered(F, H)`: the candidates (empty: no
     /// callback) with the contract each has in force here.
@@ -130,7 +130,7 @@ pub enum RegistryUse {
 }
 
 /// The registry operands of one call, applied by [`apply`].
-#[derive(Clone, Debug, PartialEq, Eq)]
+#[derive(Clone, Debug, PartialEq, Eq, serde::Serialize, serde::Deserialize)]
 pub struct Operands {
     pub uses: Vec<RegistryUse>,
     /// The holder actual's text, per use (for refusals).
@@ -162,7 +162,7 @@ pub struct Operands {
 /// type-switched release at one call, joined over every arm (the
 /// discriminant is never decided at a call: no declared constructor states
 /// it, `OP-CONSTRUCTOR-DECLARATIONS`).
-#[derive(Clone, Debug, PartialEq, Eq)]
+#[derive(Clone, Debug, PartialEq, Eq, serde::Serialize, serde::Deserialize)]
 pub struct ArmOperands {
     /// The discriminated object's actual, as spelled.
     pub object: Vec<String>,
@@ -174,14 +174,14 @@ pub struct ArmOperands {
 }
 
 /// What a holder keys on in the path state.
-#[derive(Clone, Debug, PartialEq, Eq, PartialOrd, Ord)]
+#[derive(Clone, Debug, PartialEq, Eq, PartialOrd, Ord, serde::Serialize, serde::Deserialize)]
 pub enum RegistryKey {
     Frame(String),
     Site(usize),
 }
 
 /// A registration as the path state keeps it.
-#[derive(Clone, Debug, PartialEq, Eq, PartialOrd, Ord)]
+#[derive(Clone, Debug, PartialEq, Eq, PartialOrd, Ord, serde::Serialize, serde::Deserialize)]
 pub enum Registration {
     /// Made on every arriving path alike.
     InForce {

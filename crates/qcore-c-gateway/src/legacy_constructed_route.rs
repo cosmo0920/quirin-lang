@@ -38,7 +38,7 @@ use crate::constructed_state::{
 use crate::typed_c_ast::children;
 
 /// A per-path state of a tracked object's member.
-#[derive(Clone, Debug, PartialEq, Eq, PartialOrd, Ord)]
+#[derive(Clone, Debug, PartialEq, Eq, PartialOrd, Ord, serde::Serialize, serde::Deserialize)]
 pub enum ObjectState {
     /// The discriminant's decided value.
     Discriminant(i64),
@@ -47,7 +47,7 @@ pub enum ObjectState {
 }
 
 /// What a constructor call states of its result.
-#[derive(Clone, Debug, PartialEq, Eq)]
+#[derive(Clone, Debug, PartialEq, Eq, serde::Serialize, serde::Deserialize)]
 pub struct ConstructedOperands {
     /// Every member the declaration states (cleared before recording).
     pub keys: BTreeSet<String>,
@@ -57,7 +57,7 @@ pub struct ConstructedOperands {
 
 /// A member invocation the unit's closure refuses, read at the transfer
 /// against the object's path state.
-#[derive(Clone, Debug, PartialEq, Eq)]
+#[derive(Clone, Debug, PartialEq, Eq, serde::Serialize, serde::Deserialize)]
 pub struct MemberUse {
     /// The object's actual.
     pub object: String,
@@ -82,7 +82,7 @@ pub struct MemberUse {
 /// The decided-arm reading of a type-switched release: the arms, the mask
 /// and, per stated member whose path is the discriminant's field, what the
 /// stores keep.
-#[derive(Clone, Debug, PartialEq, Eq)]
+#[derive(Clone, Debug, PartialEq, Eq, serde::Serialize, serde::Deserialize)]
 pub struct DecidedArms {
     pub arms: Vec<ArmClause>,
     pub mask: u64,
