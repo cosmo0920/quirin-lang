@@ -2,7 +2,7 @@
   "schema_version": 1,
   "plugin_id": "qcore.librdkafka",
   "contracts": {
-    "contracts/librdkafka/cjson.qv": "d1fa3d6e01857a42db485441887794b250a92ad719a46044e0e77bfb9b6e3353",
+    "contracts/librdkafka/cjson.qv": "7bd5aa98433e29bdd7bf53ecf781f6679343a27a869382533a0c568daa31559d",
     "contracts/librdkafka/client.qv": "a09f66246bb7cd2d7285ba553e9698c8f3bfab89b2347f7390a56f299fecd7f6",
     "contracts/librdkafka/kafka_mem.qv": "459a1cb32e3512e97c267a4651ca1629943179e41e136b28b6c71e19b639d0d3",
     "contracts/librdkafka/logging.qv": "17fcbea1eb6559fce4d1be34a2840f64a413582e69fe324986d6a0a30c8cdcb8",

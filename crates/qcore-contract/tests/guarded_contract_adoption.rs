@@ -247,10 +247,7 @@ fn source_identity_and_all_context_coordinates_bind_proposed_evidence() {
     )
     .unwrap();
     let mut changed = after.clone();
-    changed.get_mut(&p.module).unwrap().push_str(
-        "
-",
-    );
+    changed.get_mut(&p.module).unwrap().push('\n');
     let other = g::replay_inline(
         View::Resource,
         &changed,
@@ -295,4 +292,108 @@ fn source_identity_and_all_context_coordinates_bind_proposed_evidence() {
             "{key}"
         );
     }
+}
+
+#[test]
+fn source_envelope_duplicate_missing_unused_and_budget_boundaries_refuse() {
+    let (_, p, _, after) = fixture();
+    let source = &after[&p.module];
+    let atom_line = source
+        .lines()
+        .find(|l| {
+            l.trim_start()
+                .starts_with("requires resource_guarded_symbol_v1(detach,")
+        })
+        .unwrap();
+    let doc = format!(
+        "    requires resource_guarded_decomposition_v1({}, \"{}\");\n",
+        p.metadata.entry, p.metadata.readable
+    );
+    let changes = [
+        source.replace(atom_line, &format!("{atom_line}\n{atom_line}")),
+        source.replace(&doc, ""),
+        source.replace(&doc, &format!("{doc}{doc}")),
+        source.replace(atom_line, &format!("{atom_line}\n    requires resource_guarded_symbol_v1(unused, condition, \"An unused proposed statement\");")),
+        source.replace("detach_chain, detach_distinct", "detach_distinct, detach_chain"),
+    ];
+    for (i, bad) in changes.into_iter().enumerate() {
+        assert_ne!(bad, *source);
+        assert!(
+            qcore_contract::contract_loader::load_resource_contract_sources(&BTreeMap::from([(
+                p.module.clone(),
+                bad
+            )]))
+            .is_err(),
+            "mutation {i}"
+        );
+    }
+    use qcore_frontend::guarded_decomposition::parse_source_clause as parse;
+    for text in [
+        "resource_guarded_unknown_v1(x, y)",
+        "resource_guarded_symbol_v2(x, y, \"s\")",
+        "resource_guarded_symbol_v1(x, environment, \"escaped\\ntext\")",
+        "resource_guarded_symbol_v1(x, environment, \"s\",)",
+        "resource_guarded_symbol_v1(x, environment, \"s\") trailing",
+        "resource_guarded_decomposition_v1(x, \"guarded_decomposition_v1;\")",
+    ] {
+        assert!(parse(text).is_err(), "{text}");
+    }
+    assert!(parse(&"resource_guarded_".repeat(10000)).is_err());
+    let mut map = p.metadata.clone();
+    map.bindings.get_mut("detach").unwrap().proposition = "p".repeat(4097);
+    let addition = bridge::render(&map).unwrap();
+    let altered = source.replace(&bridge::render(&p.metadata).unwrap(), &addition);
+    assert!(
+        qcore_contract::contract_loader::load_resource_contract_sources(&BTreeMap::from([(
+            p.module.clone(),
+            altered
+        )]))
+        .is_err()
+    );
+}
+
+#[test]
+fn declared_model_view_validates_complete_guarded_metadata_without_c_body_authority() {
+    let (_, p, _, after) = fixture();
+    let model_type = "resource type GuardedOwner {
+repr: ptr<mut, u8>;
+footprint: { objects = 1 };
+destructor: model_drop noexcept;
+copy: forbidden;
+move: allowed;
+}\n";
+    let mut source = after.clone();
+    let text = source.get_mut(&p.module).unwrap();
+    *text = text.replacen(
+        "module contract;",
+        &format!("module contract;\n{model_type}"),
+        1,
+    );
+    let d = g::replay_inline(
+        View::Model,
+        &source,
+        &p.module,
+        &p.declaration,
+        &p.graph,
+        &p.metadata,
+    )
+    .unwrap();
+    assert_ne!(d.source_sha256(), p.after_sha256);
+    assert_eq!(d.bindings(), &p.metadata.bindings);
+    let mut wrong = p.metadata.clone();
+    wrong.bindings.get_mut("failure_case").unwrap().role = g::Role::Operation;
+    assert!(
+        g::replay_inline(
+            View::Model,
+            &source,
+            &p.module,
+            &p.declaration,
+            &p.graph,
+            &wrong
+        )
+        .is_err()
+    );
+    let text = source.get_mut(&p.module).unwrap();
+    *text = text.replace("failure_case, case,", "failure_case, operation,");
+    assert!(qcore_contract::bounds_hypotheses::replay_model(&source).is_err());
 }

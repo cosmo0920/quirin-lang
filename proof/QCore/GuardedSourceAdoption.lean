@@ -17,8 +17,8 @@ structure Plan where
   version : Nat
   before : Snapshot
   after : Snapshot
-  prefix : List Nat
-  suffix : List Nat
+  leftBytes : List Nat
+  rightBytes : List Nat
   addition : List Nat
   roles : Nat → Option GuardedDecomposition.Role
   document : GuardedDecomposition.Lowered
@@ -27,8 +27,8 @@ structure Plan where
 semantic outputs must agree; a familiar clause head is insufficient. -/
 def admissible (p : Plan) : Bool :=
   decide (p.version = 2 ∧
-    p.before.source = p.prefix ++ p.suffix ∧
-    p.after.source = p.prefix ++ p.addition ++ p.suffix ∧
+    p.before.source = p.leftBytes ++ p.rightBytes ∧
+    p.after.source = p.leftBytes ++ p.addition ++ p.rightBytes ∧
     p.before.graph = p.after.graph ∧
     p.before.interpreted = p.after.interpreted ∧
     p.before.abi = p.after.abi ∧ p.before.premises = p.after.premises) &&
@@ -43,7 +43,7 @@ theorem recovered_only_for_exact_tip (p : Plan) (presented original : Snapshot)
     (accepted : recover p presented = some original) : presented = p.after := by
   unfold recover at accepted
   split at accepted
-  next h => exact of_decide_eq_true (Bool.and_eq_true.mp h).2
+  next h => exact of_decide_eq_true (Bool.and_eq_true_iff.mp h).2
   next => contradiction
 
 theorem changed_tip_refuses (p : Plan) (presented : Snapshot)
@@ -70,7 +70,7 @@ theorem changed_legacy_premises_refuse (p : Plan)
 theorem accepted_metadata_was_fully_validated (p : Plan)
     (accepted : admissible p = true) :
     GuardedDecomposition.admissible p.roles p.document = true :=
-  (Bool.and_eq_true.mp accepted).2
+  (Bool.and_eq_true_iff.mp accepted).2
 
 theorem recovery_retains_complete_original (p : Plan) (presented original : Snapshot)
     (accepted : recover p presented = some original) : original = p.before := by
