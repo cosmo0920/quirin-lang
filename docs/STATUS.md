@@ -8,7 +8,13 @@ it does not enforce an RSS ceiling. Pre-pass rounds borrow accumulated facts;
 executor items release optional caches and Linux/glibc free pages. Phase-start
 cgroup headroom can reduce later concurrency as retained facts grow. The final
 combined source gate passes 8,500 Rust tests, 362 Lean audits and 374 Python tests.
-Fresh whole-job measurement follows;
+The fresh default current resource audit completes at **6,985,576,448 bytes**
+whole-cgroup peak, zero swap/OOM, in **3,369.250 seconds** (auditor time):
+156 sources / 157 configurations, requested 4 jobs, planned maximum 2 and
+heavy phases admitted at 1. Build/setup and `.qc` capture are excluded.
+This is one observed run with uncontrolled host file cache and an overlapping
+gate, leaving only 14,422,016 bytes below the effective ceiling. The 6 GB target,
+comfortable CI margin, cold/warm repeats and other selections remain open;
 the prior four-job 7 GB OOM remains a failed result.
 
 [Borrowed audit-certificate admission](reports/audit-ir-admission/README.md)

@@ -209,6 +209,12 @@ estimates; they enforce neither RSS nor a cgroup ceiling, and 7168 MiB is not
 Selected units are never removed to meet a budget. Retained two-phase results,
 final summary bodies during replay and per-component paging remain follow-ons.
 [Implementation and measurements](../reports/audit-ir-working-set/README.md).
+One full default current-resource run now completes at 6,985,576,448 bytes
+whole-cgroup peak, zero swap/OOM, in 3,369.250 seconds: 156 sources / 157
+configurations, maximum 2 jobs with heavy phases admitted at 1. Build/setup,
+`.qc` capture and bounds/null sidecars are excluded. This one shared-host run
+leaves only 14,422,016 bytes below the effective ceiling; it does not discharge
+the 6 GB target, CI margin, cold/warm repeats or other selections.
 
 ### AUDIT-IR-BUDGET
 

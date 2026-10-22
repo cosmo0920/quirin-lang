@@ -1,0 +1,341 @@
+{
+  "service": "quirin-audit-memory-22c9d915d87843e8ba28977b7ff29c42",
+  "service_properties": {
+    "ActiveState": "active",
+    "SubState": "exited",
+    "Result": "success",
+    "ExecMainStartTimestampMonotonic": "21768110592",
+    "ExecMainExitTimestampMonotonic": "25137432460",
+    "ExecMainCode": "1",
+    "ExecMainStatus": "0",
+    "ControlGroup": "",
+    "MemoryPeak": "6985576448",
+    "MemorySwapPeak": "0",
+    "CPUUsageNSec": "3403312623000"
+  },
+  "worker": {
+    "argv": [
+      "/tmp/qcore-audit-ir-next-target/release/quirin-audit",
+      "current",
+      "--config",
+      "/home/cosmo/Documents/GitHub/qcore-c/private/audit-ir-working-set/memory-input-admission2/audit.json",
+      "--jobs",
+      "4"
+    ],
+    "exit": 0,
+    "elapsed_seconds": 3369.25,
+    "binary_sha256": "27a4e9a2abbe7c3067a82efe9142b6e0b40d93667c286acf1b17142159e8fbea",
+    "configuration_sha256": "7d2851e0c6c447d33f71d75f033100a4c8f112a2ab9ec14094b2f28b80324b22",
+    "inputs_unchanged": true,
+    "cgroup": "/user.slice/user-1000.slice/user@1000.service/app.slice/quirin-audit-memory-22c9d915d87843e8ba28977b7ff29c42.service",
+    "observed_before_exit": {
+      "memory.max": "6999998464",
+      "memory.swap.max": "0",
+      "memory.peak": "6985576448",
+      "memory.events": "low 0\nhigh 0\nmax 0\noom 0\noom_kill 0\noom_group_kill 0\nsock_throttled 0"
+    },
+    "environment": {
+      "PATH": "/home/cosmo/bin:./.cabal-sandbox/bin:/home/cosmo/bin:/home/cosmo/.elan/bin:/home/cosmo/bin:/home/cosmo/.codex/tmp/arg0/codex-arg0jCZmu9:/home/cosmo/.cache/codex-runtimes/codex-primary-runtime/dependencies/bin/override:/home/cosmo/.local/bin:./.cabal-sandbox/bin:/home/cosmo/bin:/home/cosmo/.elan/bin:/home/cosmo/bin:/home/cosmo/.elan/bin:/home/cosmo/bin:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin:/usr/games:/usr/local/games:/snap/bin:/snap/bin:/home/cosmo/.cache/codex-runtimes/codex-primary-runtime/dependencies/bin/fallback:/usr/lib/chatgpt/resources",
+      "QCORE_CLANG": null,
+      "QCORE_AUDIT_IR_DIR": null,
+      "QCORE_BOUNDS_PROPERTY": null,
+      "QCORE_NULL_PROPERTY": null
+    }
+  },
+  "memory_peak_bytes": 6985576448,
+  "memory_events": {
+    "low": 0,
+    "high": 0,
+    "max": 0,
+    "oom": 0,
+    "oom_kill": 0,
+    "oom_group_kill": 0,
+    "sock_throttled": 0
+  },
+  "requested_limit_bytes": 7000000000,
+  "audit_completed_without_oom": true,
+  "monitored_elapsed_seconds": 3371.049,
+  "scope": "Complete default five-library resource selection; unchanged 1419-entry GNU17 database and frozen contract/profile archive from 93eb17441. Requested jobs 4, budget caps actual jobs. Fresh process caches, uncontrolled host file cache. Separate hard 7000000000-byte cgroup ceiling, zero swap. No paired comparison with the earlier unoptimized dev profile.",
+  "private_directory": "/home/cosmo/Documents/GitHub/qcore-c/private/audit-ir-working-set/memory-release-admission2",
+  "cleanup": {
+    "stop_exit": 0,
+    "stop_stderr": ""
+  },
+  "launch": {
+    "argv": [
+      "systemd-run",
+      "--user",
+      "--unit=quirin-audit-memory-22c9d915d87843e8ba28977b7ff29c42",
+      "--property=MemoryAccounting=yes",
+      "--property=MemoryMax=7000000000",
+      "--property=MemorySwapMax=0",
+      "--property=RemainAfterExit=yes",
+      "--working-directory=/home/cosmo/Documents/GitHub/qcore-c",
+      "--setenv=PATH=/home/cosmo/bin:./.cabal-sandbox/bin:/home/cosmo/bin:/home/cosmo/.elan/bin:/home/cosmo/bin:/home/cosmo/.codex/tmp/arg0/codex-arg0jCZmu9:/home/cosmo/.cache/codex-runtimes/codex-primary-runtime/dependencies/bin/override:/home/cosmo/.local/bin:./.cabal-sandbox/bin:/home/cosmo/bin:/home/cosmo/.elan/bin:/home/cosmo/bin:/home/cosmo/.elan/bin:/home/cosmo/bin:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin:/usr/games:/usr/local/games:/snap/bin:/snap/bin:/home/cosmo/.cache/codex-runtimes/codex-primary-runtime/dependencies/bin/fallback:/usr/lib/chatgpt/resources",
+      "/usr/bin/python3",
+      "/home/cosmo/Documents/GitHub/qcore-c/docs/reports/audit-ir-admission/scripts/measure_memory.py",
+      "--worker",
+      "--binary",
+      "/tmp/qcore-audit-ir-next-target/release/quirin-audit",
+      "--config",
+      "/home/cosmo/Documents/GitHub/qcore-c/private/audit-ir-working-set/memory-input-admission2/audit.json",
+      "--output",
+      "/home/cosmo/Documents/GitHub/qcore-c/private/audit-ir-working-set/memory-release-admission2",
+      "--jobs",
+      "4",
+      "--route",
+      "current"
+    ],
+    "exit": 0
+  },
+  "configuration": {
+    "schema_version": 1,
+    "checkout": "/home/cosmo/Documents/GitHub/qcore-c/build/cycle19/clang/046accf6aded7906f66a1baf0202da349e521736/fluent-bit-clang-source",
+    "profile_directory": "/home/cosmo/Documents/GitHub/qcore-c/private/audit-ir-admission/frozen-inputs-93eb17441/contract/profiles/fluent-bit",
+    "compile_database": "/home/cosmo/Documents/GitHub/qcore-c/build/cycle19/clang/046accf6aded7906f66a1baf0202da349e521736/fluent-bit-clang-production/compile_commands.json",
+    "contract_manifest": "/home/cosmo/Documents/GitHub/qcore-c/private/audit-ir-admission/frozen-inputs-93eb17441/cycle19-resource-contracts.json",
+    "report": "/home/cosmo/Documents/GitHub/qcore-c/private/audit-ir-working-set/memory-input-admission2/resource-diagnostics.json",
+    "memory_budget_mib": 6144
+  },
+  "configuration_sha256_after_run": "7d2851e0c6c447d33f71d75f033100a4c8f112a2ab9ec14094b2f28b80324b22",
+  "source": {
+    "published_main": null,
+    "candidate_base_main": "df1bc3183885687c062f7d0fdc690ef5f542abd2",
+    "candidate_rust_snapshot": "/home/cosmo/Documents/GitHub/qcore-c/private/audit-ir-working-set/phase-admission-candidate/source.json",
+    "candidate_rust_snapshot_sha256": "383320b592c856133828a876aacaf16feb7651dcca79c24e3230f2d900ea335f",
+    "uncommitted_rust_sha256": {
+      "crates/qcore-audit/src/parallel.rs": "6ab3c8e2239c38921569056e5ad8635924d120014bbe006798d58301312ac015",
+      "crates/qcore-audit/src/current_cli.rs": "89bf5c740e84e1a78d7c2327170db89d6a3b7f71c455054c2d19349542449eeb",
+      "crates/qcore-audit/src/lib.rs": "b2f716acee3d74e71910cb65c04a625dcd4b0c164dd44671e4ca33f5182dc322"
+    },
+    "release_binary": {
+      "path": "/tmp/qcore-audit-ir-next-target/release/quirin-audit",
+      "sha256": "27a4e9a2abbe7c3067a82efe9142b6e0b40d93667c286acf1b17142159e8fbea"
+    },
+    "full_standing_gate_at_measurement_start": "pending; focused ordered/CLI controls pass; later source equality and complete gate must be recorded separately"
+  },
+  "provenance": {
+    "source_revision": "046accf6aded7906f66a1baf0202da349e521736",
+    "input_snapshot": {
+      "commit": "93eb17441c141f6b3272d2ed874d1b83db55bc37",
+      "paths": [
+        "contract",
+        "providers",
+        "cycle19-resource-contracts.json"
+      ],
+      "archive_sha256": "b818560eddc23a1ec15b80815ea883905ed3a5967510e15012242e0584ad433e",
+      "scope": "Immutable input data copy only; no worktree or Git checkout."
+    },
+    "configuration": {
+      "schema_version": 1,
+      "checkout": "/home/cosmo/Documents/GitHub/qcore-c/build/cycle19/clang/046accf6aded7906f66a1baf0202da349e521736/fluent-bit-clang-source",
+      "profile_directory": "/home/cosmo/Documents/GitHub/qcore-c/private/audit-ir-admission/frozen-inputs-93eb17441/contract/profiles/fluent-bit",
+      "compile_database": "/home/cosmo/Documents/GitHub/qcore-c/build/cycle19/clang/046accf6aded7906f66a1baf0202da349e521736/fluent-bit-clang-production/compile_commands.json",
+      "contract_manifest": "/home/cosmo/Documents/GitHub/qcore-c/private/audit-ir-admission/frozen-inputs-93eb17441/cycle19-resource-contracts.json",
+      "report": "/home/cosmo/Documents/GitHub/qcore-c/private/audit-ir-working-set/memory-input-admission2/resource-diagnostics.json",
+      "memory_budget_mib": 6144
+    },
+    "files": {
+      "configuration": {
+        "path": "/home/cosmo/Documents/GitHub/qcore-c/private/audit-ir-working-set/memory-input-admission2/audit.json",
+        "sha256": "7d2851e0c6c447d33f71d75f033100a4c8f112a2ab9ec14094b2f28b80324b22"
+      },
+      "compile_database": {
+        "path": "/home/cosmo/Documents/GitHub/qcore-c/build/cycle19/clang/046accf6aded7906f66a1baf0202da349e521736/fluent-bit-clang-production/compile_commands.json",
+        "sha256": "93e9e67e1d38b3670d80b06cc7ed521918d6aaee700181de9536e02f5ff99583"
+      },
+      "selection": {
+        "path": "/home/cosmo/Documents/GitHub/qcore-c/private/audit-ir-admission/frozen-inputs-93eb17441/contract/profiles/fluent-bit/audit.json",
+        "sha256": "27a19bc283fb215421c003bd4dce2a4db6932f3a7a8e6edfd4979cb439e97315"
+      },
+      "contract_manifest": {
+        "path": "/home/cosmo/Documents/GitHub/qcore-c/private/audit-ir-admission/frozen-inputs-93eb17441/cycle19-resource-contracts.json",
+        "sha256": "75f29cdb3e54f1e5638bfcc619d0ac5a1b7ad425db87f75afeb647ce7a438d3a"
+      }
+    },
+    "scope": "Same frozen source, contract archive and compile database as prior budget attempts; configuration below identifies this attempt-specific planning budget and report destination."
+  },
+  "build": {
+    "profile": "release",
+    "build_setup_excluded": true,
+    "source_commit": null
+  },
+  "published_source_mapping": {
+    "published_main": "52d2a3c8626eccb69ad2897ff70199934c8c2775",
+    "matched_tracked_rust_files": 1498,
+    "mismatches": [],
+    "candidate_snapshot_sha256": "383320b592c856133828a876aacaf16feb7651dcca79c24e3230f2d900ea335f",
+    "candidate_snapshot_private_path": "/home/cosmo/Documents/GitHub/qcore-c/private/audit-ir-working-set/phase-admission-candidate/source.json",
+    "embedded_build_commit": "df1bc3183885687c062f7d0fdc690ef5f542abd2",
+    "binary_sha256": "27a4e9a2abbe7c3067a82efe9142b6e0b40d93667c286acf1b17142159e8fbea",
+    "gate": "final-gate/gate.json",
+    "scope": "All tracked Rust source blobs match the published commit. Build-time HEAD was the candidate base with the captured source edits; this does not claim a clean build from the published commit."
+  },
+  "completed_inventory": {
+    "sources": 156,
+    "compile_configurations": 157,
+    "configuration_statuses": {
+      "Unknown": 142,
+      "Safe": 7,
+      "data_only": 4,
+      "Unsafe": 4
+    },
+    "configuration_libraries": {
+      "cmetrics": 31,
+      "ctraces": 17,
+      "librdkafka": 94,
+      "chunkio": 13,
+      "fluent-bit-chunk": 2
+    },
+    "function_rows": 4564,
+    "gateway_failures": false,
+    "prepass": {
+      "database_entries": 1419,
+      "read_units": 1038,
+      "unread_units": 36
+    },
+    "meaning": "Complete default five-library current resource selection in this frozen prepared database; unit Unsafe is provisional, Unknown stays in the denominator. Not the historical 185-unit pinned selection or whole-library conformance."
+  },
+  "scheduling": {
+    "jobs": {
+      "effective": 2,
+      "memory_budget_mib": 6144,
+      "memory_limit_enforced": false,
+      "memory_planning_reserve_mib": {
+        "coordinator": 1024,
+        "per_worker": 2048
+      },
+      "requested": 4,
+      "source": "command_line",
+      "unit_reclamation": "optional-clang-caches-and-glibc-free-pages"
+    },
+    "memory_admission": {
+      "omitted": 0,
+      "per_worker_reserve_bytes": 3221225472,
+      "phases": [
+        {
+          "admitted": 2,
+          "observation": {
+            "current_bytes": 118378496,
+            "limit_bytes": 6999998464,
+            "path": "/sys/fs/cgroup/user.slice/user-1000.slice/user@1000.service/app.slice/quirin-audit-memory-22c9d915d87843e8ba28977b7ff29c42.service"
+          },
+          "observation_status": "available",
+          "requested_maximum": 2,
+          "tasks": 1419
+        },
+        {
+          "admitted": 1,
+          "observation": {
+            "current_bytes": 659767296,
+            "limit_bytes": 6999998464,
+            "path": "/sys/fs/cgroup/user.slice/user-1000.slice/user@1000.service/app.slice/quirin-audit-memory-22c9d915d87843e8ba28977b7ff29c42.service"
+          },
+          "observation_status": "available",
+          "requested_maximum": 2,
+          "tasks": 100
+        },
+        {
+          "admitted": 1,
+          "observation": {
+            "current_bytes": 667230208,
+            "limit_bytes": 6999998464,
+            "path": "/sys/fs/cgroup/user.slice/user-1000.slice/user@1000.service/app.slice/quirin-audit-memory-22c9d915d87843e8ba28977b7ff29c42.service"
+          },
+          "observation_status": "available",
+          "requested_maximum": 2,
+          "tasks": 676
+        },
+        {
+          "admitted": 1,
+          "observation": {
+            "current_bytes": 671969280,
+            "limit_bytes": 6999998464,
+            "path": "/sys/fs/cgroup/user.slice/user-1000.slice/user@1000.service/app.slice/quirin-audit-memory-22c9d915d87843e8ba28977b7ff29c42.service"
+          },
+          "observation_status": "available",
+          "requested_maximum": 2,
+          "tasks": 985
+        },
+        {
+          "admitted": 1,
+          "observation": {
+            "current_bytes": 5917712384,
+            "limit_bytes": 6999998464,
+            "path": "/sys/fs/cgroup/user.slice/user-1000.slice/user@1000.service/app.slice/quirin-audit-memory-22c9d915d87843e8ba28977b7ff29c42.service"
+          },
+          "observation_status": "available",
+          "requested_maximum": 2,
+          "tasks": 88
+        },
+        {
+          "admitted": 1,
+          "observation": {
+            "current_bytes": 5922234368,
+            "limit_bytes": 6999998464,
+            "path": "/sys/fs/cgroup/user.slice/user-1000.slice/user@1000.service/app.slice/quirin-audit-memory-22c9d915d87843e8ba28977b7ff29c42.service"
+          },
+          "observation_status": "available",
+          "requested_maximum": 2,
+          "tasks": 53
+        },
+        {
+          "admitted": 1,
+          "observation": {
+            "current_bytes": 5459873792,
+            "limit_bytes": 6999998464,
+            "path": "/sys/fs/cgroup/user.slice/user-1000.slice/user@1000.service/app.slice/quirin-audit-memory-22c9d915d87843e8ba28977b7ff29c42.service"
+          },
+          "observation_status": "available",
+          "requested_maximum": 2,
+          "tasks": 157
+        }
+      ],
+      "scope": "bounded parallel-dispatch attempts on the coordinating thread; serial requests are not listed; planning estimates only, not a hard memory limit or verdict input"
+    }
+  },
+  "outputs": {
+    "resource-diagnostics.invocation.json": {
+      "private_path": "/home/cosmo/Documents/GitHub/qcore-c/private/audit-ir-working-set/memory-input-admission2/resource-diagnostics.invocation.json",
+      "sha256": "1ce7d09c39009d505355e690cc5cda23e3483030cc890ed2866855b60e7c77b5",
+      "bytes": 5888
+    },
+    "resource-diagnostics.chunk-contracts.json": {
+      "private_path": "/home/cosmo/Documents/GitHub/qcore-c/private/audit-ir-working-set/memory-input-admission2/resource-diagnostics.chunk-contracts.json",
+      "sha256": "e7e0d254d9e7ee199672b981e3fc764b702b35a1757bb0f4570a9438e6b87922",
+      "bytes": 385
+    },
+    "resource-diagnostics.json": {
+      "private_path": "/home/cosmo/Documents/GitHub/qcore-c/private/audit-ir-working-set/memory-input-admission2/resource-diagnostics.json",
+      "sha256": "73fc5fee5d6ad021ad4f123bcf35d89201c05e2941c95b24cb0b8ef6f5ed9ea4",
+      "bytes": 90194304
+    },
+    "resource-diagnostics.source-effects.json": {
+      "private_path": "/home/cosmo/Documents/GitHub/qcore-c/private/audit-ir-working-set/memory-input-admission2/resource-diagnostics.source-effects.json",
+      "sha256": "e7e0d254d9e7ee199672b981e3fc764b702b35a1757bb0f4570a9438e6b87922",
+      "bytes": 385
+    },
+    "resource-diagnostics.contracts.json": {
+      "private_path": "/home/cosmo/Documents/GitHub/qcore-c/private/audit-ir-working-set/memory-input-admission2/resource-diagnostics.contracts.json",
+      "sha256": "360012a0664496e0363486edda3e7598c994a8fe92f3a975a282545bc05928d1",
+      "bytes": 42824623
+    }
+  },
+  "sampled_observations": {
+    "samples": 662,
+    "private_path": "/home/cosmo/Documents/GitHub/qcore-c/private/audit-ir-working-set/memory-release-admission2/cgroup-samples.jsonl",
+    "sha256": "91d99d05885c999aab4703f1f328ded98c22773517e350e4c6d2f9294deb0681",
+    "scope": "Partial five-second observations, including processes and anonymous/file/kernel memory. The systemd whole-cgroup peak above remains authoritative; per-process RSS is not summed."
+  },
+  "acceptance_boundary": {
+    "measured_once": true,
+    "hard_limit_bytes": 6999998464,
+    "headroom_at_peak_bytes": 14422016,
+    "build_setup_excluded": true,
+    "qc_capture_enabled": false,
+    "bounds_or_null_sidecars_enabled": false,
+    "host_file_cache_controlled": false,
+    "gate_overlap": "The final standing gate overlapped this run; elapsed time is shared-host timing, not an isolated performance comparison.",
+    "remaining": "6 GB target, repeat/cold/warm and other source selections, oversize-unit admission, stable CI margin and component/body/row paging remain open. This is one successful sub-7 GB run, not a universal guarantee or proof of a 17 GB reduction ratio."
+  }
+}

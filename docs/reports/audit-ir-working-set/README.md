@@ -176,3 +176,54 @@ bounded phase trace with observations/unavailability and an omission count;
 serial requests are not included. An unavailable observation is not a memory
 claim. Oversize single units can still fail: this is not enforced admission.
 The run's final budget outcome is recorded separately when it completes.
+
+
+## Completed 7 GB measurement
+
+The phase-admission release audit **completes, exit 0**, at a whole-cgroup peak
+of **6,985,576,448 bytes**, zero swap and zero `max`/`oom`/`oom_kill` events.
+The requested ceiling is 7,000,000,000 bytes; the effective page-rounded ceiling
+is 6,999,998,464 bytes, leaving **14,422,016 bytes** at the peak. Auditor elapsed
+time is **3,369.250 seconds**; driver monitoring takes **3,371.049 seconds**.
+The measurement is observed once, with the final gate overlapping on the host;
+it is not an isolated speed comparison or a controlled cold/warm pair.
+[Exact receipt](memory-release-admission2.json).
+
+The unchanged 1,419-entry GNU17 database and frozen contract/profile archive
+select **156 source files / 157 configurations** across cmetrics (31), ctraces
+(17), librdkafka (94), chunkio (13) and fluent-bit-chunk (2). The pre-pass reads
+1,038 units and records 36 unread units. Final output contains 4,564 function
+rows; configuration statuses are 7 Safe, 0 Pending, 4 provisional Unsafe,
+142 Unknown and 4 data-only, with no gateway failures. Unknowns remain in the
+denominator. This current-resource selection is not the historical 185-unit
+pinned archive, whole-library conformance or new safety coverage. No selected
+configuration was removed to meet the budget.
+
+Requested jobs 4 and `memory_budget_mib: 6144` establish a maximum of 2. The
+recorded phase trace admits 2 for the initial 1,419-task dispatch, then 1 for
+the remaining six dispatches, including all 157 final configurations. There
+are no omitted trace entries. Thus this is not evidence that three concurrent
+heavy units fit. It includes final report and invocation publication, but
+excludes the separately prepared build/toolchain setup. `.qc` capture and
+bounds/null sidecars are disabled. Fresh process caches and uncontrolled host
+file cache are disclosed; the aggregate peak includes child processes and
+charged file cache.
+
+The worker records stable binary/config hashes before and after execution;
+service result is `success`, worker exit is 0 and exact-service cleanup exits 0.
+All 1,498 tracked Rust blobs in the build snapshot match published main
+`52d2a3c8626eccb69ad2897ff70199934c8c2775`. The executable's embedded build
+commit remains the candidate base `df1bc3183885687c062f7d0fdc690ef5f542abd2`
+with the separately hashed source edits; no clean build from the later commit
+is claimed. Binary SHA-256 is
+`27a4e9a2abbe7c3067a82efe9142b6e0b40d93667c286acf1b17142159e8fbea`.
+The exact output hashes, invocation/phase observations, source mapping and private
+paths are in the receipt. Raw logs live in
+`private/audit-ir-working-set/memory-release-admission2/`; outputs live in
+`private/audit-ir-working-set/memory-input-admission2/`. The sampler exits 0
+with 662 partial five-second observations; systemd accounting owns the peak.
+
+This establishes one completed sub-7 GB audit for that configuration. The
+6 GB target, comfortable CI margin, repeated cold/warm runs, other selections,
+oversize-unit admission and component/body/row paging remain open in the parent
+Card. The prior failed measurements and their gate receipts remain frozen.
