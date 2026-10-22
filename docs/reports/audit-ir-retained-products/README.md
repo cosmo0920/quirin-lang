@@ -79,7 +79,8 @@ rerun the missing historical executable.
 One additional private projection-result compaction is pending user approval.
 Automatic approval review twice rejected that edit as affecting verdict-producing
 code without recognized authorization. It has not been applied; its review-only
-diff is `/tmp/audit-ir-retained-products-proposed.patch`. The original projection
+diff is [archived here](proposed-private-cfg-release.patch) (the original
+review file is `/tmp/audit-ir-retained-products-proposed.patch`). The original projection
 result retains its CFGs through its existing final tally/console use. This is
 separate from the accepted exact-replay and final-fold ownership releases above.
 
