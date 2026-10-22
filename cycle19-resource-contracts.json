@@ -38,6 +38,7 @@
     "providers/qcore-provider-librdkafka/contracts/librdkafka/cjson.qv",
     "providers/qcore-provider-librdkafka/contracts/librdkafka/client.qv",
     "providers/qcore-provider-librdkafka/contracts/librdkafka/kafka_mem.qv",
+    "providers/qcore-provider-librdkafka/contracts/librdkafka/logging.qv",
     "providers/qcore-provider-librdkafka/contracts/librdkafka/lz4_stream.qv",
     "providers/qcore-provider-librdkafka/contracts/librdkafka/topic_partition.qv",
     "providers/quirin-provider-fluent-bit/contracts/fluent_bit/hash_table_publication.qv",

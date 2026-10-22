@@ -169,6 +169,7 @@
         "librdkafka/cjson.qv",
         "librdkafka/client.qv",
         "librdkafka/kafka_mem.qv",
+        "librdkafka/logging.qv",
         "librdkafka/lz4_stream.qv",
         "librdkafka/memory.qv",
         "librdkafka/null_deref.qv",
@@ -183,6 +184,7 @@
         "librdkafka/cjson.qv",
         "librdkafka/client.qv",
         "librdkafka/kafka_mem.qv",
+        "librdkafka/logging.qv",
         "librdkafka/lz4_stream.qv",
         "librdkafka/memory.qv",
         "librdkafka/topic_partition.qv"

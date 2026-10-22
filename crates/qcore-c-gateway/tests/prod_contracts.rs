@@ -934,5 +934,5 @@ fn the_modules_under_test_are_the_production_ones() {
     // 61 -> 63 by card FB-EVENT-LOOP-RETENTION-AND-REGISTRATION:
     // `monkey/event_loop.qv` and `fluent_bit/input_collector_registration.qv`.
     // 63 -> 64 by card FB-TEARDOWN-DESTROY-DECLARATIONS: `fluent_bit/teardown_destroy.qv`.
-    assert_eq!(contracts.source_assumptions().len(), 64);
+    assert_eq!(contracts.source_assumptions().len(), 65);
 }

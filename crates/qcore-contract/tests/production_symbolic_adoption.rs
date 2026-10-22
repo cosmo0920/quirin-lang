@@ -211,13 +211,45 @@ fn artifacts_and_models(
     }
     (models, artifacts)
 }
+// Replay the frozen adoption inventory in its historical module layout using
+// the current bytes. The callback card and its bindings now live in Kafka's
+// logging module; the byte comparison below still checks every original byte.
+const FLB_LOGGING: &str = "providers/quirin-provider-fluent-bit/contracts/fluent_bit/logging.qv";
+const RK_LOGGING: &str = "providers/qcore-provider-librdkafka/contracts/librdkafka/logging.qv";
+fn current_checkpoint_text(path: &str) -> String {
+    let text = fs::read_to_string(root().join(path)).unwrap();
+    if path != FLB_LOGGING {
+        return text;
+    }
+    let kafka = fs::read_to_string(root().join(RK_LOGGING)).unwrap();
+    let bindings = kafka
+        .split_inclusive('\n')
+        .filter(|line| line.starts_with("// qcore-premise-binding-manifest-v1 "))
+        .collect::<String>();
+    let card = &kafka[kafka
+        .find("// BEGIN OP-APP-RK-CALLBACKS-VIA-POLL-CB")
+        .unwrap()..];
+    let text = text.replacen(
+        "module contract;\n",
+        &format!("module contract;\n{bindings}"),
+        1,
+    );
+    format!("{}\n\n{card}", text.trim_end_matches('\n'))
+}
 #[test]
 fn every_actual_hypothesis_is_introduced_and_every_original_group_is_an_open_conjunction() {
     let inv = inventory();
     let files = inv["files"].as_array().unwrap();
     let expected_paths = files
         .iter()
-        .map(|f| root().join(f["path"].as_str().unwrap()))
+        .map(|f| {
+            let path = f["path"].as_str().unwrap();
+            root().join(if path == FLB_LOGGING {
+                RK_LOGGING
+            } else {
+                path
+            })
+        })
         .collect::<BTreeSet<_>>();
     let actual = tracked_files::tracked_files(&root().join("providers"))
         .into_iter()
@@ -234,7 +266,7 @@ fn every_actual_hypothesis_is_introduced_and_every_original_group_is_an_open_con
         let path = file["path"].as_str().unwrap();
         let before =
             fs::read_to_string(root().join(file["before_asset"].as_str().unwrap())).unwrap();
-        let after = fs::read_to_string(root().join(path)).unwrap();
+        let after = current_checkpoint_text(path);
         assert_eq!(
             qcore_schemas::sha256_hex(before.as_bytes()),
             file["sha256"].as_str().unwrap()

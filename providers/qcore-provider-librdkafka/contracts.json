@@ -5,6 +5,7 @@
     "contracts/librdkafka/cjson.qv": "d1fa3d6e01857a42db485441887794b250a92ad719a46044e0e77bfb9b6e3353",
     "contracts/librdkafka/client.qv": "a09f66246bb7cd2d7285ba553e9698c8f3bfab89b2347f7390a56f299fecd7f6",
     "contracts/librdkafka/kafka_mem.qv": "459a1cb32e3512e97c267a4651ca1629943179e41e136b28b6c71e19b639d0d3",
+    "contracts/librdkafka/logging.qv": "17fcbea1eb6559fce4d1be34a2840f64a413582e69fe324986d6a0a30c8cdcb8",
     "contracts/librdkafka/lz4_stream.qv": "0b3c92fc7476d1f0a0d11d5954a9445882c66897d2409eda55e9efbd6db8ce74",
     "contracts/librdkafka/memory.qv": "ac2111a6de7554e1d1633bd9d7cc43a56384c5a03e10dee32cde853acc712807",
     "contracts/librdkafka/null_deref.qv": "4fd3563c67ad3698fcdcacea683d6990c01d4c8a6763956910f1e91d938dbe71",

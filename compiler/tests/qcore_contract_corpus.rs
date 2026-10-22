@@ -645,10 +645,6 @@ const EXPECTED_CONTRACTS: &[(&str, &str, usize)] = &[
     // result. No variadic tail — the C declaration is not variadic.
     ("fluent_bit/logging.qv", "flb_errno_print", 5),
     ("fluent_bit/logging.qv", "flb_log_print", 7),
-    // Card OP-APP-RK-CALLBACKS-VIA-POLL-CB: Fluent Bit's registered rk_conf callbacks.
-    ("fluent_bit/logging.qv", "cb_kafka_msg", 22),
-    ("fluent_bit/logging.qv", "cb_kafka_logger", 23),
-    ("fluent_bit/logging.qv", "oauthbearer_token_refresh_cb", 22),
     // Card W47-LOOP-OWNER-CONTRACTS: the marker, the loop-owner obligation, two
     // borrowed arguments, the neutral user clause and the scalar result.
     ("fluent_bit/loop_owner.qv", "flb_input_collector_running", 6),
@@ -1613,6 +1609,10 @@ const EXPECTED_CONTRACTS: &[(&str, &str, usize)] = &[
     // wrapper (marker, three borrowed, an owned nullable result).
     ("librdkafka/kafka_mem.qv", "rd_bytes_hash", 4),
     ("librdkafka/kafka_mem.qv", "rd_kafka_mem_calloc", 5),
+    // Card OP-APP-RK-CALLBACKS-VIA-POLL-CB: Fluent Bit's registered rk_conf callbacks.
+    ("librdkafka/logging.qv", "cb_kafka_msg", 22),
+    ("librdkafka/logging.qv", "cb_kafka_logger", 23),
+    ("librdkafka/logging.qv", "oauthbearer_token_refresh_cb", 22),
     // Card W37-CORPUS-CONTRACTS-4: the deprecated in-place LZ4 stream reset,
     // sole blocker of `LZ4_resetStreamState`. ZEROING IS NOT RELEASING — the
     // body is one `MEM_INIT` (memset) through the parameter, and the freeing
@@ -2432,7 +2432,8 @@ fn every_qcore_contract_source_parses_round_trips_and_compiles() {
     // outer contract v1 module (pinned in `outer-contracts.lock`, outside
     // every resource and bounds view).
     // 135 -> 136 by RK-PLUGIN-LIBRARY-OUTER-ENVELOPE's librdkafka/outer.qv.
-    assert_eq!(sources.len(), 136, "unexpected contract corpus size");
+    // Callback placement adds librdkafka/logging.qv; declarations and clauses are unchanged.
+    assert_eq!(sources.len(), 137, "unexpected contract corpus size");
 
     for (logical, path) in &sources {
         let written = fs::read_to_string(path).expect("contract source is readable");
