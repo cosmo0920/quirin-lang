@@ -770,12 +770,15 @@ pub fn run(
     // and at its end every exclusion holds against the final tokens.
     loop {
         rounds += 1;
-        let mut units = read.values().cloned().collect::<Vec<_>>();
-        units.push(declarations.clone());
-        let views = units.iter().collect::<Vec<_>>();
         tokens = lifetime_tokens.clone();
-        for member in &members {
-            tokens.extend(closure_tokens(&views, member));
+        {
+            // Retain only references while computing this round's closure.
+            // No duplicate facts remain live during the next unit reads.
+            let mut views = read.values().collect::<Vec<_>>();
+            views.push(&declarations);
+            for member in &members {
+                tokens.extend(closure_tokens(&views, member));
+            }
         }
         let hashes = tokens
             .iter()

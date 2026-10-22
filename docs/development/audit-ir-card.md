@@ -183,6 +183,8 @@ report fields, without cloning all rows or buffering the encoded document.
 Move ordinary CFGs into entry candidates and recover their unchanged CFG for
 contract-free fallback; derived-return candidates retain their distinct fallback.
 All source replay and certificate equality checks remain mandatory.
+Pre-pass fixed-point rounds also borrow previously read unit facts rather than
+cloning the complete set and retaining that duplicate during subsequent reads.
 
 `current --memory-budget-mib N` (or `memory_budget_mib` in either JSON route)
 caps requested jobs by an initial planning model: 1024 MiB coordinator plus

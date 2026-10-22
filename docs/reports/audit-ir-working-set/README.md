@@ -92,3 +92,26 @@ ending that borrow before mutation. `closure_tokens` already accepts references;
 there is no need to retain a second owned copy. Preserve the same member order,
 closure tokens, reading fixed point, exclusions, refusals and published facts.
 This removes a concrete ownership duplicate; its memory share is not yet measured.
+
+The same pre-follow-up release binary also fails with **two workers** at the
+7 GB ceiling after **457.566 seconds**, `Result=oom-kill`, zero swap, driver
+exit 1. Stop/reset exit 0. The [two-worker receipt](memory-release-budget2.json)
+retains 57 partial cgroup samples: the largest sampled current charge is mostly
+anonymous memory and the audit process dominates observed RSS, with no Clang
+process active in that particular sample. This is not an allocator attribution
+or an independent aggregate peak. The exact baseline binary is retained at
+`private/audit-ir-working-set/before-prepass-borrow/quirin-audit`.
+
+The follow-up now computes round closure tokens using ordered references to
+`read.values()` followed by the declaration unit. That borrow ends before the
+read map can grow; no owned copy of all previous unit facts spans the next
+reads. All selection, exclusion, fixed-point and refusal code is unchanged.
+Its fresh standing gate and measurement are recorded separately below.
+
+The [follow-up standing gate](prepass-gate/gate.json) exits **0** with all
+commands passing: **537 units / 550 summaries, 8,498 Rust passed, 0 failed,
+15 ignored; 362 Lean audits; 374 Python tests**. The pre-pass focused controls
+pass 5 tests (already included in that full count). Format, Clippy, the correct
+census feature, submodules, Clang and both reevaluation examples also exit 0.
+All 1,498 tracked Rust sources remain unchanged throughout. This is a new gate
+for the follow-up; the original gate and failed probes remain frozen above.

@@ -1,0 +1,160 @@
+{
+  "service": "quirin-audit-memory-a5f5db85f7af47ff99d0c6907c9bd1af",
+  "service_properties": {
+    "ActiveState": "failed",
+    "SubState": "failed",
+    "Result": "oom-kill",
+    "ExecMainStartTimestampMonotonic": "17940093842",
+    "ExecMainExitTimestampMonotonic": "18397214250",
+    "ExecMainCode": "2",
+    "ExecMainStatus": "15",
+    "ControlGroup": "",
+    "MemoryPeak": "6999998464",
+    "MemorySwapPeak": "0",
+    "CPUUsageNSec": "943399415000"
+  },
+  "worker": null,
+  "memory_peak_bytes": 6999998464,
+  "memory_events": null,
+  "requested_limit_bytes": 7000000000,
+  "audit_completed_without_oom": false,
+  "monitored_elapsed_seconds": 457.566,
+  "scope": "Complete default five-library resource selection; unchanged 1419-entry GNU17 database and frozen contract/profile archive from 93eb17441. Requested jobs 4, budget caps actual jobs. Fresh process caches, uncontrolled host file cache. Separate hard 7000000000-byte cgroup ceiling, zero swap. No paired comparison with the earlier unoptimized dev profile.",
+  "private_directory": "/home/cosmo/Documents/GitHub/qcore-c/private/audit-ir-working-set/memory-release-budget2",
+  "cleanup": {
+    "stop_exit": 0,
+    "stop_stderr": "",
+    "reset_failed_exit": 0,
+    "reset_failed_stderr": ""
+  },
+  "launch": {
+    "argv": [
+      "systemd-run",
+      "--user",
+      "--unit=quirin-audit-memory-a5f5db85f7af47ff99d0c6907c9bd1af",
+      "--property=MemoryAccounting=yes",
+      "--property=MemoryMax=7000000000",
+      "--property=MemorySwapMax=0",
+      "--property=RemainAfterExit=yes",
+      "--working-directory=/home/cosmo/Documents/GitHub/qcore-c",
+      "--setenv=PATH=/home/cosmo/bin:./.cabal-sandbox/bin:/home/cosmo/bin:/home/cosmo/.elan/bin:/home/cosmo/bin:/home/cosmo/.codex/tmp/arg0/codex-arg0jCZmu9:/home/cosmo/.cache/codex-runtimes/codex-primary-runtime/dependencies/bin/override:/home/cosmo/.local/bin:./.cabal-sandbox/bin:/home/cosmo/bin:/home/cosmo/.elan/bin:/home/cosmo/bin:/home/cosmo/.elan/bin:/home/cosmo/bin:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin:/usr/games:/usr/local/games:/snap/bin:/snap/bin:/home/cosmo/.cache/codex-runtimes/codex-primary-runtime/dependencies/bin/fallback:/usr/lib/chatgpt/resources",
+      "/usr/bin/python3",
+      "/home/cosmo/Documents/GitHub/qcore-c/docs/reports/audit-ir-admission/scripts/measure_memory.py",
+      "--worker",
+      "--binary",
+      "/tmp/qcore-audit-ir-next-target/release/quirin-audit",
+      "--config",
+      "/home/cosmo/Documents/GitHub/qcore-c/private/audit-ir-working-set/memory-input-2/audit.json",
+      "--output",
+      "/home/cosmo/Documents/GitHub/qcore-c/private/audit-ir-working-set/memory-release-budget2",
+      "--jobs",
+      "4",
+      "--route",
+      "current"
+    ],
+    "exit": 0
+  },
+  "configuration": {
+    "schema_version": 1,
+    "checkout": "/home/cosmo/Documents/GitHub/qcore-c/build/cycle19/clang/046accf6aded7906f66a1baf0202da349e521736/fluent-bit-clang-source",
+    "profile_directory": "/home/cosmo/Documents/GitHub/qcore-c/private/audit-ir-admission/frozen-inputs-93eb17441/contract/profiles/fluent-bit",
+    "compile_database": "/home/cosmo/Documents/GitHub/qcore-c/build/cycle19/clang/046accf6aded7906f66a1baf0202da349e521736/fluent-bit-clang-production/compile_commands.json",
+    "contract_manifest": "/home/cosmo/Documents/GitHub/qcore-c/private/audit-ir-admission/frozen-inputs-93eb17441/cycle19-resource-contracts.json",
+    "report": "/home/cosmo/Documents/GitHub/qcore-c/private/audit-ir-working-set/memory-input-2/resource-diagnostics.json",
+    "memory_budget_mib": 6144
+  },
+  "configuration_sha256_after_run": "c18e4d3a98443e762360ba3658eaaa70728df2eacafef95318420f2a93990d4e",
+  "source": {
+    "rust_source_changes_since_gate": [],
+    "published_main": "62f10abdaa556c5a2607727d73d6d31edb1da439",
+    "release_binary": {
+      "path": "/tmp/qcore-audit-ir-next-target/release/quirin-audit",
+      "sha256": "44d38b70ddd295752c0592f19d89f64e66a76d6440904a07a2156c6a6217a194"
+    }
+  },
+  "provenance": {
+    "source_revision": "046accf6aded7906f66a1baf0202da349e521736",
+    "input_snapshot": {
+      "commit": "93eb17441c141f6b3272d2ed874d1b83db55bc37",
+      "paths": [
+        "contract",
+        "providers",
+        "cycle19-resource-contracts.json"
+      ],
+      "archive_sha256": "b818560eddc23a1ec15b80815ea883905ed3a5967510e15012242e0584ad433e",
+      "scope": "Immutable input data copy only; no worktree or Git checkout."
+    },
+    "configuration": {
+      "schema_version": 1,
+      "checkout": "/home/cosmo/Documents/GitHub/qcore-c/build/cycle19/clang/046accf6aded7906f66a1baf0202da349e521736/fluent-bit-clang-source",
+      "profile_directory": "/home/cosmo/Documents/GitHub/qcore-c/private/audit-ir-admission/frozen-inputs-93eb17441/contract/profiles/fluent-bit",
+      "compile_database": "/home/cosmo/Documents/GitHub/qcore-c/build/cycle19/clang/046accf6aded7906f66a1baf0202da349e521736/fluent-bit-clang-production/compile_commands.json",
+      "contract_manifest": "/home/cosmo/Documents/GitHub/qcore-c/private/audit-ir-admission/frozen-inputs-93eb17441/cycle19-resource-contracts.json",
+      "report": "/home/cosmo/Documents/GitHub/qcore-c/private/audit-ir-working-set/memory-input-2/resource-diagnostics.json",
+      "memory_budget_mib": 6144
+    },
+    "files": {
+      "configuration": {
+        "path": "/home/cosmo/Documents/GitHub/qcore-c/private/audit-ir-working-set/memory-input-2/audit.json",
+        "sha256": "c18e4d3a98443e762360ba3658eaaa70728df2eacafef95318420f2a93990d4e"
+      },
+      "compile_database": {
+        "path": "/home/cosmo/Documents/GitHub/qcore-c/build/cycle19/clang/046accf6aded7906f66a1baf0202da349e521736/fluent-bit-clang-production/compile_commands.json",
+        "sha256": "93e9e67e1d38b3670d80b06cc7ed521918d6aaee700181de9536e02f5ff99583"
+      },
+      "selection": {
+        "path": "/home/cosmo/Documents/GitHub/qcore-c/private/audit-ir-admission/frozen-inputs-93eb17441/contract/profiles/fluent-bit/audit.json",
+        "sha256": "27a19bc283fb215421c003bd4dce2a4db6932f3a7a8e6edfd4979cb439e97315"
+      },
+      "contract_manifest": {
+        "path": "/home/cosmo/Documents/GitHub/qcore-c/private/audit-ir-admission/frozen-inputs-93eb17441/cycle19-resource-contracts.json",
+        "sha256": "75f29cdb3e54f1e5638bfcc619d0ac5a1b7ad425db87f75afeb647ce7a438d3a"
+      }
+    },
+    "scope": "Same frozen source, contract archive and compile database as prior budget attempts; configuration below identifies this attempt-specific planning budget and report destination."
+  },
+  "build": {
+    "profile": "release",
+    "build_setup_excluded": true,
+    "source_commit": "62f10abdaa556c5a2607727d73d6d31edb1da439"
+  },
+  "limitation": "Worker was killed before its final binary/config before-after hash receipt and memory.events capture; missing fields remain unavailable, not zero. This is a failed budget attempt.",
+  "sampled_observations": {
+    "private_log": "/home/cosmo/Documents/GitHub/qcore-c/private/audit-ir-working-set/memory-release-budget2/cgroup-samples.jsonl",
+    "sha256": "8fe6320044f63eeb471bff053365059f59f23f1c764ac32f4db8bce70e16c2b2",
+    "samples": 57,
+    "highest_sampled_memory_current": {
+      "seconds": 280.416,
+      "memory_current": 6958379008,
+      "memory_peak": 6999998464,
+      "events": {
+        "low": "0",
+        "high": "0",
+        "max": "606",
+        "oom": "0",
+        "oom_kill": "0",
+        "oom_group_kill": "0",
+        "sock_throttled": "0"
+      },
+      "stat": {
+        "anon": 6910169088,
+        "file": 31485952,
+        "kernel": 14761984,
+        "pagetables": 13774848
+      },
+      "processes": [
+        {
+          "pid": 2033491,
+          "name": "python3",
+          "vm_rss": "22204 kB"
+        },
+        {
+          "pid": 2033493,
+          "name": "quirin-audit",
+          "vm_rss": "6756344 kB"
+        }
+      ]
+    },
+    "scope": "Samples at five-second intervals, started after the audit; not the whole-job peak or an allocator attribution. Process RSS is not added to estimate aggregate memory."
+  }
+}
