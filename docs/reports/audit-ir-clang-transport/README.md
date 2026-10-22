@@ -69,3 +69,14 @@ is best effort; tmpfs and other platforms cannot inherit a measured disk-backed
 Linux reduction. No complete current-resource, cold/warm, platform-matrix or
 whole-C correctness claim follows from a single-unit control. Those remain
 parent follow-ons, not an excuse to omit selected configurations.
+
+[Focused controls](focused-controls.json) retain the real-Clang before/after
+preflight's identical complete normalized AST bytes and an isolated storage
+failure: unavailable temporary storage exits **1** (expected), emits a transport
+failure and publishes no AST. The same unchanged 2,000-definition input with
+valid storage exits **0**, with all 2,000 definitions retained. This is one
+observed storage fault/positive control, not a production mutation campaign.
+The source recipe, exact argv, configurations, hashes and private paths are
+retained. Ordinary source checks also cover complete malformed suffixes,
+subprocess rejection/stderr precedence, simultaneous large stdin/stdout/stderr,
+spool cleanup, duplicate keys, scalar/Unicode failures and depth boundaries.
