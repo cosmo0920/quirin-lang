@@ -56,7 +56,7 @@ checker plugin, public checkpoint encoding or Lean semantic definition changes.
 Existing audited models remain the semantic correspondence; serialization
 controls are observations, not a new Rust-to-Lean refinement proof.
 
-## Verification and remaining measurement
+## Verification and measured limits
 
 The six focused controls pass (exit 0): exact ordered payload round trips;
 complete report bytes and every serialized sidecar/fact vector; real Clang-derived callback closures and two exact run demotions; incomplete, corrupt, missing,
@@ -73,8 +73,8 @@ submodule setup, Clang detection and the release build all exit 0.
 [Gate receipt](gate.json) records every command, exit, elapsed time and absolute
 private log path; [Clang recording](clang-version.txt) was taken in this worktree.
 The source guard verifies all 1,499 tracked Rust files against the recorded
-snapshot. The full production measurement remains queued under
-`/tmp/quirin-audit-ir-next-heavy.lock`; no memory outcome is claimed yet.
+snapshot. The full production measurement is complete under the same shared heavy lock;
+its result and limits are recorded below.
 
 The first gate attempt failed because generated debug builds exhausted the
 filesystem: Rust build exit 101, formatting exit 0, then clippy storage errors
@@ -91,13 +91,15 @@ exists. Fresh focused parity therefore builds the exact base in this worktree's
 private source clone, with a separate target directory; it does not claim to
 rerun the missing historical executable.
 
-One additional private projection-result compaction is pending user approval.
-Automatic approval review twice rejected that edit as affecting verdict-producing
-code without recognized authorization. It has not been applied; its review-only
-diff is [archived here](proposed-private-cfg-release.patch) (the original
-review file is `/tmp/audit-ir-retained-products-proposed.patch`). The original projection
-result retains its CFGs through its existing final tally/console use. This is
-separate from the accepted exact-replay and final-fold ownership releases above.
+The private projection-result release remains **unapplied**. Automatic approval
+review rejected it twice initially. The user explicitly approved the archived
+edit through the question reply on 2026-10-22; a third attempt was still rejected
+because automatic review treated that reply as embedded/untrusted authorization
+for verdict-producing code. The rejected command did not execute, and
+`projection.rs` has no change. The [review-only diff](proposed-private-cfg-release.patch)
+is retained (original `/tmp/audit-ir-retained-products-proposed.patch`). The
+original projection result therefore keeps its CFGs through final tally/console
+use. This is an approval-system blocker, not an outstanding user preference.
 
 The member-fact spool uses the existing checkpoint serialization surface.
 `MemberFacts` explicitly excludes eight construction-only scratch maps/sets from
@@ -129,3 +131,64 @@ wrappers exit 143 after explicitly stopping only their captured PIDs, before any
 audit starts: the first is replaced to raise the known-too-short 1800-second
 harness deadline to 7200, the second to make the production comparison an
 explicitly labelled fixed-build-identity control. Their private wait logs remain.
+
+## Complete production observation
+
+[Memory receipt](production-memory.json), [full comparison receipt](production-parity.json),
+and [timestamp identity control](timestamp-probe.md) preserve the exact evidence.
+The audit, measurement wrapper and service cleanup all exit 0. The unchanged
+156 sources / 157 configurations produce 4,564 function rows: 7 Safe units,
+0 Pending, 4 provisional Unsafe, 142 Unknown, 4 data-only and 0 gateway failures.
+These are the same coverage/verdict records, not new safety coverage or upstream
+defect claims. Requested jobs remain 4, configured maximum 2; all seven phase
+admission counts match baseline, with the heavy phases admitted at 1.
+
+| Observation | Frozen baseline | This source |
+|---|---:|---:|
+| Whole-cgroup peak, bytes | 6,985,576,448 | 6,999,998,464 |
+| Effective ceiling, bytes | 6,999,998,464 | 6,999,998,464 |
+| `memory.events max` | 0 | 69 |
+| OOM / OOM kills / peak swap | 0 / 0 / 0 | 0 / 0 / 0 |
+| Auditor seconds, excluding build/setup | 3,369.250 | 3,737.685 |
+
+The new observation reaches the ceiling and demonstrates **no whole-job memory
+improvement**. The 6 GB target and comfortable CI headroom remain unmet. These
+are unpaired shared-host observations with uncontrolled host page cache, not a
+cold/warm comparison or causal speed estimate. The spool retains a full encoded
+object temporarily and final rows remain resident; this report does not assign
+the measured peak to one owner without further instrumentation.
+
+The 90,194,304-byte main report and both 385-byte property sidecars are
+byte-identical. The strict four-artifact comparator exits **1**, because the
+42,824,623-byte contracts sidecar differs in exactly one empty lifetime-summary
+identity at two locations. The native descriptor plus preprocessed Monkey source
+reproduce both hashes by changing only `__TIME__` from 12:08:53 to 17:54:05.
+All remaining contracts-sidecar values match. No report was rewritten, no field
+was dropped, and raw full-sidecar byte parity is **not** claimed. Invocation
+metadata differs only in configuration/report paths, cwd, configuration digest,
+and cgroup observation path/current bytes; all other invocation fields match.
+The fixed build label is explicitly a comparison control: actual source
+`ae2cab6253ad0bbc7ab543cebb2c3565deb0fc9f` and binary digest are retained separately.
+The worker's `inputs_unchanged` checks executable/configuration bytes, not every
+transitively included input; source identity checks and exact report comparison
+supply the separately stated evidence.
+
+Private production logs and raw outputs are under
+`private/audit-ir-retained-products/production-memory/` and `production-input/`;
+comparison, identity-probe and wrapper exits are beside them. The service is
+stopped and the wrapper has exited; no measurement job remains. All 1,499 tracked
+Rust files still match the source snapshot used by the gate. Subsequent edits
+are documentation and evidence tools only.
+
+## Integration and residuals
+
+No merge, push or main advance was performed. Preserve this worktree for review.
+Shared documentation edits in `docs/STATUS.md`, `docs/development/audit-ir-card.md`
+and the single new increment paragraph require reconciliation with sibling
+cards; keep each card's own measurement and source provenance. Gateway changes
+are confined to the independent certificate reconstruction's release point;
+MemberFacts implementation, member pre-pass and Clang transport remain untouched.
+The unapplied projection patch, run-wide pre-pass ownership, final-row streaming,
+bounded encoding/page-cache accounting, oversize-component admission and broader
+cold/warm measurements remain open. Do not present this slice as closing the
+parent memory-budget objective.

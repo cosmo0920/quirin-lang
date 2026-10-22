@@ -22,8 +22,11 @@ checked run-local `.qc` storage for complete report rows and member evidence.
 Independent replay CFGs release after equality; final current-route member inputs
 release after their folds. Six focused integrity/full-record controls pass;
 the complete gate passes 8,506 Rust tests, 362 Lean audits and 374 Python tests.
-The fresh production observation is pending. Final report rows
-remain resident and no new memory acceptance or coverage is claimed here.
+The fresh 156-source / 157-configuration run completes without OOM but reaches
+the 6,999,998,464-byte ceiling with 69 pressure events, demonstrating no whole-job
+memory gain. Its main report is byte-identical; the contracts sidecar differs
+only in one independently reproduced `__TIME__` identity at two locations.
+Final rows remain resident; no new memory acceptance or safety coverage is claimed.
 
 [Borrowed audit-certificate admission](reports/audit-ir-admission/README.md)
 removes the temporary full-certificate copy while retaining independent source
