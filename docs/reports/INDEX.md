@@ -1581,6 +1581,8 @@ Regenerate with `python3 scripts/build_docs_index.py`; validate with `--check`.
 
 | [windows-vs2026](windows-vs2026/README.md) | Windows Visual Studio 2026 toolchain repair |
 
+| [worktree-sweep-20261022](worktree-sweep-20261022/README.md) | Obsolete worktree sweep — 2026-10-22 |
+
 | [write-lend-tasks](write-lend-tasks/README.md) | WRITE-LEND-TASKS — write lends crossing the spawn boundary (wave 31) |
 
 | [write-lend-tasks-exercise](write-lend-tasks-exercise/README.md) | `WRITE-LEND-TASKS-EXERCISE` — the worker exercises its range write lease |
