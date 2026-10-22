@@ -731,6 +731,7 @@ impl CurrentAudit {
                 .set_member_prepass(prepass.facts, prepass.section);
         }
         let (members, from_safe, from_pending) = self.report.fold_callback_members(&self.contracts);
+        self.report.release_final_fold_inputs();
         self.counts.safe_units -= from_safe;
         self.counts.pending_units -= from_pending;
         self.counts.unknown_units += from_safe + from_pending;

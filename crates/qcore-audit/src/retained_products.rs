@@ -19,7 +19,7 @@ pub(crate) struct Spool {
 
 impl Spool {
     pub(crate) fn write(value: &impl Serialize) -> Result<Self, String> {
-        let bytes = serde_json::to_vec(value).map_err(|e| e.to_string())?;
+        let bytes = serde_json::to_vec(&(1u32, value)).map_err(|e| e.to_string())?;
         if bytes.len() as u64 > MAX_BYTES {
             return Err("retained report exceeds the 1 GiB spool object limit".into());
         }
@@ -71,7 +71,12 @@ impl Spool {
         {
             return Err("retained report content mismatch".into());
         }
-        serde_json::from_slice(&bytes).map_err(|e| format!("retained report decode: {e}"))
+        let (version, value): (u32, T) =
+            serde_json::from_slice(&bytes).map_err(|e| format!("retained report decode: {e}"))?;
+        if version != 1 {
+            return Err("retained report schema mismatch".into());
+        }
+        Ok(value)
     }
 }
 
@@ -114,6 +119,22 @@ mod tests {
             assert!(spool.read::<Value>().is_err());
             drop(spool);
             assert!(!directory.exists());
+        }
+    }
+
+    #[test]
+    fn same_length_corruption_and_trailing_bytes_refuse() {
+        for trailing in [false, true] {
+            let spool = Spool::write(&json!([1])).unwrap();
+            let path = spool.directory.join("product.qc");
+            let mut bytes = fs::read(&path).unwrap();
+            if trailing {
+                bytes.push(b' ');
+            } else {
+                bytes[1] = b'2';
+            }
+            fs::write(path, bytes).unwrap();
+            assert!(spool.read::<Value>().is_err());
         }
     }
 

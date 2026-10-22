@@ -1769,3 +1769,12 @@ mod retained_tests {
         );
     }
 }
+
+impl AuditReport {
+    /// Called only by the consuming final-run owner after callback and lifetime
+    /// folds. Checkpoint APIs and the repeatable public fold retain their facts.
+    pub(crate) fn release_final_fold_inputs(&mut self) {
+        self.callback_members = Vec::new();
+        self.member_prepass = None;
+    }
+}
