@@ -1,0 +1,42 @@
+{
+  "source": "552773f0c64e2e6a3c7d4b752c61a7d26130975a",
+  "command_count": 22,
+  "all_commands_zero": true,
+  "source_stable": true,
+  "rust": {
+    "passed": 8532,
+    "failed": 0,
+    "ignored": 15,
+    "measured": 0,
+    "filtered": 0,
+    "summaries": 554,
+    "units": 541,
+    "summary": "/home/cosmo/.codex/worktrees/logger-effect-contracts/qcore-c/private/test-binaries/20261022T063121Z-300365/summary.json",
+    "summary_sha256": "3e06fb10659270d9164aa40c2c8e7baee046bf8b6fd370fad382b3ce5e369000"
+  },
+  "lean_audits": 365,
+  "provider_rust": {
+    "summaries": 43,
+    "passed": 133,
+    "failed": 0,
+    "ignored": 1
+  },
+  "provider_python": 25,
+  "packages": {
+    "package-build": 0,
+    "package-verify-chunkio": 0,
+    "package-verify-libevent": 0,
+    "package-verify-librdkafka": 0,
+    "package-verify-cmetrics": 0,
+    "package-verify-ctraces": 0
+  },
+  "private_logs": "/home/cosmo/.codex/worktrees/logger-effect-contracts/qcore-c/private/contract-cycle4-integration/joint-gate-2",
+  "commands_sha256": "34005de0de3b417e141160d8edc579b0e8ba664cd804314ba38c03db59ca7057",
+  "log_sha256": {
+    "rust": "ed016ffbe59e0939c3d64e3ab931098d272477f73a8b90c16322a6a50567645d",
+    "lean": "bb26c35c89616fc7168f3e18246c71660fc9cd881a2e3889934b0ad1dd2aeb9d",
+    "provider-rust": "882ccd35b5c73da1dea4c28ec3080a1d59a2b04c4ee0c363514bac33eaadd352",
+    "provider-python": "776caaba340435e0306c816e28a8aac272d5600e82c30d139ec32f5342e5960d"
+  },
+  "remaining": "Native acceptance and authoritative Python against the committed regenerated matrix are separate receipts."
+}
