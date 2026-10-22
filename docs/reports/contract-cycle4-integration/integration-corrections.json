@@ -53,7 +53,7 @@
       "change": "Exact count65 plus explicit module membership; no inventory/schema/view weakening."
     }
   ],
-  "acceptance": "Corrected combined gate552 passes all22 stages with stable clean source:8532 Rust/365 Lean; provider133 Rust/25 Python/allfivepackages. Native and post-committed-matrix Python acceptance remain pending.",
+  "acceptance": "Corrected combined source552 passes all22 stages with stable clean source:8532 Rust/365 Lean; provider133 Rust/25 Python/allfivepackages. Authoritative Python374 passes0 at clean source024048e35163f59475572b851ad663dcfa46d730 with committed matrix SHA unchanged. Native TIP/comparison acceptance remains pending.",
   "native_attempt_1": {
     "status": "failed; not acceptance",
     "baseline_source": "31c5ed500d9d4a1448a623b839e1644adb19efd1",
@@ -68,7 +68,7 @@
     "retained_attempt": "native-base-1/corpus",
     "failure_receipt": "native-controller-1/failure.txt",
     "repair_receipt": "native-base-runtime-binding-1/receipt.json",
-    "recovery": "native-controller-2; acceptance pending; original failed attempt remains retained"
+    "recovery": "native-controller-2: corrected fresh BASE corpus passes0 at10:34:52Z; complete TIP/comparison acceptance pending. Original failed attempt remains retained."
   },
   "status_inventory_correction": {
     "old": [

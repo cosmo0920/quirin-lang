@@ -1,6 +1,6 @@
 # Current status and evidence boundaries
 
-[Contract cycle4 integration](reports/contract-cycle4-integration/README.md) passes the fresh combined 8,532-Rust/365-Lean source gate, provider133 Rust/25 Python and all five package checks. Native acceptance and complete attribution remain pending; final committed-matrix Python is recorded separately. No source-Safe gain is inferred from these proposed decompositions.
+[Contract cycle4 integration](reports/contract-cycle4-integration/README.md) passes the fresh combined 8,532-Rust/365-Lean source gate, provider133 Rust/25 Python and all five package checks. Native acceptance and complete attribution remain pending; authoritative Python374 passes0 against the committed unchanged matrix (separate confirmation receipt). No source-Safe gain is inferred from these proposed decompositions.
 
 The logger effect contract card adds a bounded, source-bound proposed decomposition and refuses missing closure/custody/source facts. All fifteen universal effect/lifetime premises remain Open; this is a prerequisite for logger implementation and contributes no source-Safe gain.
 
@@ -383,8 +383,9 @@ with stable clean source. Providers pass **133 Rust / 0 failed / 1 ignored**,
 **25 Python**, and allfive package builds/verifications. Commands, exits,
 actual-run Clang recording and private log paths are in the shared gate receipts.
 Native comparison of BASE31c5 and TIP552 remains pending; failed attempts
-remain retained. No native completion is inferred from this source gate. The authoritative Python result against the committed
-regenerated matrix belongs to the separate post-matrix confirmation receipt.
+remain retained. No native completion is inferred from this source gate. Authoritative Python passes **374 tests**, exit0, at clean source
+`024048e35163f59475572b851ad663dcfa46d730`; committed matrix SHA remains unchanged.
+The separate post-matrix confirmation receipt binds the actual log and hashes.
 Logger/scheduler source truth and semantic/lifecycle discharge remain Open;
 readable metadata alone contributes no source-Safe gain.
 

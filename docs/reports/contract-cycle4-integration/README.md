@@ -17,8 +17,9 @@ The three prioritized cards are implemented together at measured source
   versioned grammar/property loaders and a sealed whole-source bridge.
 
 The corrected combined source/provider gate passes all22 stages with stable,
-clean source. Native acceptance and authoritative Python against the committed
-regenerated matrix remain pending. Focused model checks do not substitute for
+clean source. Authoritative Python passes374 tests against the committed unchanged matrix;
+[its receipt](post-matrix-confirmation.json) records source, matrix and log hashes.
+Native acceptance remains pending. Focused model checks do not substitute for
 those remaining integration obligations.
 
 ## Measured validation
@@ -36,7 +37,7 @@ commands and private paths; [run_gate.py](run_gate.py) is the producer.
 | Provider Rust workspace | exit0; 133 passed, 0 failed, 1 ignored; 43 summaries |
 | Provider Python | exit0; 25 passed |
 | Provider inventory, allfive package builds and verifications | each exit0 |
-| Authoritative committed-matrix Python | pending; no fresh success claimed here |
+| `python3 -m unittest discover -s scripts/tests` after matrix commit | exit0; 374 passed; clean source and matrix SHA unchanged |
 | Six BASE/TIP native routes and complete attribution | pending |
 
 Full source/provider logs are private at
@@ -73,7 +74,8 @@ all266 Libevent tracked-file hashes, including the seven bundled files checked
 by the gate. Successful configured BASE routes retain their original bytes,
 with explicit copy custody and route-dependency evidence. The failed attempt
 remains private under guarded adoption's `native-base-1/corpus`, and recovery
-acceptance is still pending.
+TIP comparison acceptance is still pending. The corrected BASE corpus retry
+subsequently passes0; the original failed attempt remains retained.
 
 ## Evidence boundaries and integration
 
