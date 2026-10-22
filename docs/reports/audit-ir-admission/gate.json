@@ -1,0 +1,300 @@
+{
+  "card": "AUDIT-IR-ADMISSION",
+  "main_cherry_pick": "93eb17441c141f6b3272d2ed874d1b83db55bc37",
+  "remote_main_integration_base": "9b13cae73",
+  "validation_head": "93eb17441c141f6b3272d2ed874d1b83db55bc37",
+  "full_standing_gate_passed": true,
+  "changed_rust_source_sha256": {
+    "crates/qcore-audit/src/certificate_context.rs": "aed660dd141635d336d7fb7c6766c75199e015d3590a716ebd2b33c9c7f639f7",
+    "crates/qcore-audit/src/current.rs": "316278eb3f139de50a2045269b11057ea08ee05345dc534cf6633b793f445ea0",
+    "crates/qcore-audit/src/lib.rs": "635ea342beca8f3dba9e28573d7290650a348567cfbf35e3c5c4678da5f5dcaa",
+    "crates/qcore-audit/src/pinned_route.rs": "336c4211a8102d3058c692050e5ec2346642ce19377e57506d0958b3b919e58e",
+    "crates/qcore-audit/src/projection.rs": "e3902a104f71b2954d0677de4ae99b18b8c750d50b40ea158e3079d08403da9a",
+    "crates/qcore-audit/tests/certificate_context.rs": "15c72727b12624b520015bb1062d8500aa6ee8cb122abd1d63a7ff39d1d0c4a9",
+    "crates/qcore-c-gateway/src/legacy_c.rs": "b5ffeea7896ce8796a28437431dcc3c7f7549cb88d36f4b01fd082fbd804ad49"
+  },
+  "all_tracked_rust_snapshot_sha256": "3e17e30f9f0fc1077dbaa4d219ec87cca3452aa1a08e98453e5625ea34b2d321",
+  "all_tracked_rust_files": 1498,
+  "private_environment_record": "/home/cosmo/Documents/GitHub/qcore-c/private/audit-ir-admission/20261022T001745Z/environment.json",
+  "environment": {
+    "cwd": "/home/cosmo/Documents/GitHub/qcore-c",
+    "CARGO_BUILD_JOBS": "4",
+    "CARGO_INCREMENTAL": "0",
+    "CARGO_PROFILE_DEV_DEBUG": "0",
+    "CARGO_TARGET_DIR": "/tmp/qcore-audit-ir-next-target"
+  },
+  "clang": "present: Ubuntu clang version 21.1.8 (6ubuntu1)",
+  "steps": [
+    {
+      "name": "submodules",
+      "argv": [
+        "git",
+        "submodule",
+        "update",
+        "--init",
+        "--recursive"
+      ],
+      "exit": 0,
+      "seconds": 0.03,
+      "log": "/home/cosmo/Documents/GitHub/qcore-c/private/audit-ir-admission/20261022T001745Z/submodules.log"
+    },
+    {
+      "name": "clang-version",
+      "argv": [
+        "clang",
+        "--version"
+      ],
+      "exit": 0,
+      "seconds": 0.012,
+      "log": "/home/cosmo/Documents/GitHub/qcore-c/private/audit-ir-admission/20261022T001745Z/clang-version.log"
+    },
+    {
+      "name": "focused-admission",
+      "argv": [
+        "cargo",
+        "test",
+        "-p",
+        "qcore-audit",
+        "--test",
+        "certificate_context"
+      ],
+      "exit": 0,
+      "seconds": 34.983,
+      "log": "/home/cosmo/Documents/GitHub/qcore-c/private/audit-ir-admission/20261022T001745Z/focused-admission.log"
+    },
+    {
+      "name": "focused-current",
+      "argv": [
+        "cargo",
+        "test",
+        "-p",
+        "qcore-audit",
+        "--test",
+        "current_cli"
+      ],
+      "exit": 0,
+      "seconds": 4.158,
+      "log": "/home/cosmo/Documents/GitHub/qcore-c/private/audit-ir-admission/20261022T001745Z/focused-current.log"
+    },
+    {
+      "name": "focused-pinned",
+      "argv": [
+        "cargo",
+        "test",
+        "-p",
+        "qcore-audit",
+        "--test",
+        "pinned_cli"
+      ],
+      "exit": 0,
+      "seconds": 0.12,
+      "log": "/home/cosmo/Documents/GitHub/qcore-c/private/audit-ir-admission/20261022T001745Z/focused-pinned.log"
+    },
+    {
+      "name": "focused-store",
+      "argv": [
+        "cargo",
+        "test",
+        "-p",
+        "qcore-c-gateway",
+        "--lib",
+        "audit_ir_store::tests",
+        "--",
+        "--nocapture"
+      ],
+      "exit": 0,
+      "seconds": 26.219,
+      "log": "/home/cosmo/Documents/GitHub/qcore-c/private/audit-ir-admission/20261022T001745Z/focused-store.log"
+    },
+    {
+      "name": "focused-lifetimes",
+      "argv": [
+        "cargo",
+        "test",
+        "-p",
+        "qcore-c-gateway",
+        "--lib",
+        "audit_lifetime_tests"
+      ],
+      "exit": 0,
+      "seconds": 0.043,
+      "log": "/home/cosmo/Documents/GitHub/qcore-c/private/audit-ir-admission/20261022T001745Z/focused-lifetimes.log"
+    },
+    {
+      "name": "focused-contextual",
+      "argv": [
+        "cargo",
+        "test",
+        "-p",
+        "qcore-c-gateway",
+        "--lib",
+        "final_contextual_body_moves"
+      ],
+      "exit": 0,
+      "seconds": 0.038,
+      "log": "/home/cosmo/Documents/GitHub/qcore-c/private/audit-ir-admission/20261022T001745Z/focused-contextual.log"
+    },
+    {
+      "name": "focused-cli",
+      "argv": [
+        "cargo",
+        "test",
+        "-p",
+        "qcore-audit",
+        "--test",
+        "configured_cli",
+        "ir_capture",
+        "--",
+        "--nocapture"
+      ],
+      "exit": 0,
+      "seconds": 5.87,
+      "log": "/home/cosmo/Documents/GitHub/qcore-c/private/audit-ir-admission/20261022T001745Z/focused-cli.log"
+    },
+    {
+      "name": "fmt",
+      "argv": [
+        "cargo",
+        "fmt",
+        "--all",
+        "--",
+        "--check"
+      ],
+      "exit": 0,
+      "seconds": 3.789,
+      "log": "/home/cosmo/Documents/GitHub/qcore-c/private/audit-ir-admission/20261022T001745Z/fmt.log"
+    },
+    {
+      "name": "clippy",
+      "argv": [
+        "cargo",
+        "clippy",
+        "--all-targets",
+        "--",
+        "-D",
+        "warnings"
+      ],
+      "exit": 0,
+      "seconds": 33.522,
+      "log": "/home/cosmo/Documents/GitHub/qcore-c/private/audit-ir-admission/20261022T001745Z/clippy.log"
+    },
+    {
+      "name": "census-feature",
+      "argv": [
+        "cargo",
+        "check",
+        "-p",
+        "qcore-c-gateway",
+        "--features",
+        "indirect-census"
+      ],
+      "exit": 0,
+      "seconds": 14.702,
+      "log": "/home/cosmo/Documents/GitHub/qcore-c/private/audit-ir-admission/20261022T001745Z/census-feature.log"
+    },
+    {
+      "name": "rust",
+      "argv": [
+        "python3",
+        "scripts/run_test_binaries.py",
+        "--jobs",
+        "8",
+        "--log-dir",
+        "/home/cosmo/Documents/GitHub/qcore-c/private/audit-ir-admission/20261022T001745Z/rust-binaries"
+      ],
+      "exit": 0,
+      "seconds": 561.003,
+      "log": "/home/cosmo/Documents/GitHub/qcore-c/private/audit-ir-admission/20261022T001745Z/rust.log"
+    },
+    {
+      "name": "reevaluation-probe",
+      "argv": [
+        "cargo",
+        "run",
+        "-p",
+        "qcore-compiler",
+        "--example",
+        "reevaluation_probe"
+      ],
+      "exit": 0,
+      "seconds": 0.047,
+      "log": "/home/cosmo/Documents/GitHub/qcore-c/private/audit-ir-admission/20261022T001745Z/reevaluation-probe.log"
+    },
+    {
+      "name": "reevaluation-followup",
+      "argv": [
+        "cargo",
+        "run",
+        "-p",
+        "qcore-compiler",
+        "--example",
+        "reevaluation_followup"
+      ],
+      "exit": 0,
+      "seconds": 0.397,
+      "log": "/home/cosmo/Documents/GitHub/qcore-c/private/audit-ir-admission/20261022T001745Z/reevaluation-followup.log"
+    },
+    {
+      "name": "lean",
+      "argv": [
+        "python3",
+        "scripts/check_lean_audits.py",
+        "--jobs",
+        "2"
+      ],
+      "exit": 0,
+      "seconds": 32.159,
+      "log": "/home/cosmo/Documents/GitHub/qcore-c/private/audit-ir-admission/20261022T001745Z/lean.log"
+    },
+    {
+      "name": "python",
+      "argv": [
+        "python3",
+        "-m",
+        "unittest",
+        "discover",
+        "-s",
+        "scripts/tests"
+      ],
+      "exit": 0,
+      "seconds": 31.051,
+      "log": "/home/cosmo/Documents/GitHub/qcore-c/private/audit-ir-admission/20261022T001745Z/python.log"
+    }
+  ],
+  "rust": {
+    "jobs": 8,
+    "units_run": 537,
+    "totals": {
+      "passed": 8492,
+      "failed": 0,
+      "ignored": 15,
+      "measured": 0,
+      "filtered": 0,
+      "summaries": 550
+    },
+    "units_failed": [],
+    "ok": true,
+    "phases_seconds": {
+      "build": 100.499,
+      "capture": 7.537,
+      "run": 452.844
+    }
+  },
+  "lean": {
+    "exit": 0,
+    "audits": 362
+  },
+  "python": {
+    "exit": 0,
+    "tests": 374,
+    "passed": 374,
+    "failures": 0
+  },
+  "source_guard": {
+    "changed": [],
+    "head_at_end": "93eb17441c141f6b3272d2ed874d1b83db55bc37"
+  },
+  "previous_gate": "../audit-ir-lifetimes/gate.json",
+  "previous_gate_boundary": "Previous snapshot at 45cff3b24 retains its own matrix mismatch and failure; newer remote main supplied the reconciled matrix. No historical receipt was overwritten.",
+  "memory": "Recorded separately; this gate alone claims no memory acceptance."
+}

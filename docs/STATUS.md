@@ -1,5 +1,13 @@
 # Current status and evidence boundaries
 
+[Borrowed audit-certificate admission](reports/audit-ir-admission/README.md)
+removes the temporary full-certificate copy while retaining independent source
+replay and exact context/CFG checks. Current and pinned units now release optional
+Clang reuse at their boundaries, and configured source-contract products reuse
+prepared raw source. The fresh combined main gate passes 8,492 Rust tests,
+362 Lean audits and 374 Python tests. Dedicated-cgroup measurements are separate;
+no whole-job 6–7 GB acceptance is claimed by these gate counts.
+
 The [audit IR Card](development/audit-ir-card.md) has an interned component
 planner, opt-in `.qc` CFG captures with fresh-source equality checks, and
 [configured-unit working-set release](reports/audit-ir-lifetimes/README.md).

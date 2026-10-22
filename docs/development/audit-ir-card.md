@@ -5,6 +5,7 @@ Base: `d03f6c864f84cfc837db09f7bdb0a2292bc32aab`.
 Initial implementation/evidence: [AUDIT-IR-PLAN](../reports/audit-ir-plan/README.md).
 Fragment implementation/evidence: [AUDIT-IR-FRAGMENTS](../reports/audit-ir-fragments/README.md).
 Lifetime implementation/evidence: [AUDIT-IR-LIFETIMES](../reports/audit-ir-lifetimes/README.md).
+Admission implementation/evidence: [AUDIT-IR-ADMISSION](../reports/audit-ir-admission/README.md).
 
 ## Objective and acceptance
 
@@ -150,6 +151,24 @@ Measure bytes and lifetimes separately for contracts, AST/Clang output, CFGs,
 analysis states, caches and final report products. Demonstrate cold-cache and
 warm-cache equality and fault/cancellation behavior before default adoption.
 
+### AUDIT-IR-ADMISSION
+
+Configured audit admission borrows the existing certificate's CFGs, contracts
+and source artifacts instead of cloning them into a temporary owned binding.
+Both paths share the same binding/context checks and independent fresh-source
+replay, in the same order. The original certificate remains available for
+fail-closed downgrade on admission failure. Keep the public owned binding API
+for callers that actually need to retain one. Compare exact successful and
+refused results for changed compilation, contracts, profiles, source, CFGs and
+target inventories; retain full equality checking and the `.qc` trust boundary.
+
+Extend unit cache release to current and pinned unit routes. Configured
+source-contract products retain their existing prepared source directly rather
+than another raw string. After deriving the final contract environment, release
+the settled environment owner before final function analysis; preserve the
+original caller input for declared-body evidence. These changes still retain
+final summary CFGs for replay. Per-component body paging remains open.
+
 ### AUDIT-IR-BUDGET
 
 Add a user-visible audit memory budget with bounded concurrency and bounded
@@ -182,8 +201,9 @@ carry those mechanisms into the lifetime census rather than assuming contracts
 are the dominant allocation. AST transport/depth and certificate-scope rules
 remain in force. No whole-C extraction theorem is claimed.
 
-Work stays in the current checkout; no delegated worktree, merge or push is
-authorized by this card. Keep implementation in the gateway/audit layers and
+Work stays in the current checkout. The user subsequently authorized committing
+and pushing the changes directly on configured `main`; preserve remote work and
+use no forced push. No delegated worktree is requested. Keep implementation in the gateway/audit layers and
 published portable data in schemas only when a versioned interface is needed.
 Report each slice's evidence and open successors under `docs/reports/` and add
 one increment paragraph. A blocked measurement is a recorded limitation, not

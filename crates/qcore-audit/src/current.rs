@@ -500,15 +500,17 @@ impl CurrentAudit {
             .member_prepass
             .as_ref()
             .map(|prepass| prepass.facts.clone());
-        let result = qcore_c_gateway::member_run_facts::scoped(facts, || {
-            self.evaluate_entry_into(
-                library,
-                expected_source,
-                entry,
-                unresolved,
-                &mut products,
-                &mut output,
-            )
+        let result = qcore_c_gateway::with_audit_unit_lifetimes(|| {
+            qcore_c_gateway::member_run_facts::scoped(facts, || {
+                self.evaluate_entry_into(
+                    library,
+                    expected_source,
+                    entry,
+                    unresolved,
+                    &mut products,
+                    &mut output,
+                )
+            })
         })
         .map(|()| products);
         EntryOutcome { output, result }

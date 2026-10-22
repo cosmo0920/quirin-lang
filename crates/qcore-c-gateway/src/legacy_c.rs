@@ -3332,6 +3332,10 @@ fn analyze_translation_unit_under_holds(
         .collect::<Vec<_>>();
     let tokens = gate.tokens.unwrap_or(tokens);
     let mut derivation = gate.derivation;
+    // The settled caller environment has handed all later call-site duties to
+    // the derivation. Retain the original input for body evidence, not another
+    // obsolete owned copy of its settled environment.
+    drop(settled_environment);
     // Card CG30-DIALECTS-FLAGS-TYPES (rule 11y): extension types are refused
     // by name, read from each definition's typed AST where the unit spells one.
     let extensions = dialect_hook::Extensions::of(&tokens);

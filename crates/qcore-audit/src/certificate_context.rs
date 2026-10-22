@@ -107,18 +107,53 @@ pub fn bind_audit_legacy_safety_certificate(
     source_profile_sha256: &str,
     contract_trust_policy: AuditContractTrustPolicy,
 ) -> Result<AuditBoundLegacySafetyCertificate, String> {
+    let trust_context = binding_trust_context(
+        certificate,
+        &compile_task_identity,
+        source_profile_sha256,
+        contract_trust_policy,
+    )?;
+    Ok(AuditBoundLegacySafetyCertificate {
+        certificate: certificate.clone(),
+        compile_task_identity,
+        trust_context,
+    })
+}
+
+fn binding_trust_context(
+    certificate: &LegacySafetyCertificate,
+    compile_task_identity: &CompileTaskIdentity,
+    source_profile_sha256: &str,
+    contract_trust_policy: AuditContractTrustPolicy,
+) -> Result<AuditTrustContextIdentity, String> {
     compile_task_identity.validate_certificate_binding(certificate)?;
     let trust_context = AuditTrustContextIdentity::derive(
         &certificate.contracts,
         source_profile_sha256,
         contract_trust_policy,
     )?;
-    trust_context.validate_compile_task(&compile_task_identity)?;
-    Ok(AuditBoundLegacySafetyCertificate {
-        certificate: certificate.clone(),
+    trust_context.validate_compile_task(compile_task_identity)?;
+    Ok(trust_context)
+}
+
+/// Admit an already owned certificate without cloning its CFGs, contracts or
+/// source artifacts into a temporary wrapper. These are actual issuer inputs;
+/// `expected` remains independently held by the accepting caller. This runs
+/// exactly the same binding checks and fresh-source replay as the owned route.
+pub fn check_audit_legacy_safety_certificate_in_context(
+    certificate: &LegacySafetyCertificate,
+    compile_task_identity: &CompileTaskIdentity,
+    source_profile_sha256: &str,
+    contract_trust_policy: AuditContractTrustPolicy,
+    expected: &ExpectedAuditCertificateContext,
+) -> Result<(), String> {
+    let trust_context = binding_trust_context(
+        certificate,
         compile_task_identity,
-        trust_context,
-    })
+        source_profile_sha256,
+        contract_trust_policy,
+    )?;
+    check_certificate_parts(certificate, compile_task_identity, &trust_context, expected)
 }
 
 /// Derive expected values from the caller's prepared request, compile task,
@@ -149,33 +184,43 @@ pub fn check_audit_legacy_safety_certificate_for(
     bound: &AuditBoundLegacySafetyCertificate,
     expected: &ExpectedAuditCertificateContext,
 ) -> Result<(), String> {
-    bound
-        .compile_task_identity
-        .validate_certificate_binding(&bound.certificate)?;
+    check_certificate_parts(
+        &bound.certificate,
+        &bound.compile_task_identity,
+        &bound.trust_context,
+        expected,
+    )
+}
+
+fn check_certificate_parts(
+    certificate: &LegacySafetyCertificate,
+    compile_task_identity: &CompileTaskIdentity,
+    trust_context: &AuditTrustContextIdentity,
+    expected: &ExpectedAuditCertificateContext,
+) -> Result<(), String> {
+    compile_task_identity.validate_certificate_binding(certificate)?;
     expected.compile_task_identity.validate_for_certificate()?;
-    bound
-        .trust_context
-        .validate_compile_task(&bound.compile_task_identity)?;
+    trust_context.validate_compile_task(compile_task_identity)?;
     expected
         .trust_context
         .validate_compile_task(&expected.compile_task_identity)?;
     let presented_trust = AuditTrustContextIdentity::derive(
-        &bound.certificate.contracts,
-        &bound.trust_context.source_profile_sha256,
-        bound.trust_context.contract_trust_policy,
+        &certificate.contracts,
+        &trust_context.source_profile_sha256,
+        trust_context.contract_trust_policy,
     )?;
-    if presented_trust != bound.trust_context {
+    if presented_trust != *trust_context {
         return Err(
             "certificate contracts differ from the bound contract/profile/trust identity".into(),
         );
     }
-    check_legacy_safety_certificate_for(&bound.certificate, &expected.target)?;
-    if bound.compile_task_identity != expected.compile_task_identity {
+    check_legacy_safety_certificate_for(certificate, &expected.target)?;
+    if compile_task_identity != &expected.compile_task_identity {
         return Err(
             "certificate compile-task provenance differs from the expected audit task".into(),
         );
     }
-    if bound.trust_context != expected.trust_context {
+    if trust_context != &expected.trust_context {
         return Err(
             "certificate contract/profile/trust identity differs from the expected audit context"
                 .into(),

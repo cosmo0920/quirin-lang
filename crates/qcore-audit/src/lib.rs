@@ -663,10 +663,10 @@ pub fn run_config_with_jobs(path: &Path, flag_jobs: Option<usize>) -> Result<Aud
                 compile_tasks.push(compile_task);
                 report.absorb(fragment)?;
                 counts.absorb(tally);
-                if let (Some(audit), Some((source, prepared))) = (&mut source_contracts, retained) {
+                if let (Some(audit), Some(prepared)) = (&mut source_contracts, retained) {
                     let options = compiler_options(&entry)?;
                     let unit = C11TranslationUnit {
-                        source: &source,
+                        source: prepared.raw_source(),
                         include_paths: options.include_paths,
                         definitions: options.definitions,
                         preprocessor_options: options.preprocessor_options,
@@ -758,10 +758,10 @@ pub fn run_config_with_jobs(path: &Path, flag_jobs: Option<usize>) -> Result<Aud
             compile_tasks.push(compile_task);
             report.absorb(fragment)?;
             counts.absorb(tally);
-            if let (Some(audit), Some((source, prepared))) = (&mut source_contracts, retained) {
+            if let (Some(audit), Some(prepared)) = (&mut source_contracts, retained) {
                 let options = compiler_options(&entry)?;
                 let unit = C11TranslationUnit {
-                    source: &source,
+                    source: prepared.raw_source(),
                     include_paths: options.include_paths,
                     definitions: options.definitions,
                     preprocessor_options: options.preprocessor_options,
@@ -928,7 +928,7 @@ struct UnitProducts {
     report: AuditReport,
     counts: AuditCounts,
     /// The source and its preparation, kept for the source-contract route.
-    retained: Option<(String, qcore_c_gateway::legacy_c::PreparedTranslationUnit)>,
+    retained: Option<qcore_c_gateway::legacy_c::PreparedTranslationUnit>,
 }
 
 /// The body of the configured route's unit loop, unchanged, recording into
@@ -1042,7 +1042,7 @@ fn configured_unit_unscoped(unit_input: ConfiguredUnit<'_>) -> Result<UnitProduc
         compile_task,
         report,
         counts,
-        retained: retain_unit.then_some((source, prepared)),
+        retained: retain_unit.then_some(prepared),
     })
 }
 

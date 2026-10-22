@@ -1093,6 +1093,33 @@ fn audit_unit(
     provider: &Mutex<()>,
     out: &mut String,
 ) -> Result<UnitProducts, String> {
+    qcore_c_gateway::with_audit_unit_lifetimes(|| {
+        audit_unit_unscoped(
+            plan,
+            context,
+            entry,
+            revision,
+            contracts,
+            homes,
+            source_contracts,
+            provider,
+            out,
+        )
+    })
+}
+
+#[allow(clippy::too_many_arguments)]
+fn audit_unit_unscoped(
+    plan: &LibraryPlan,
+    context: &LibraryContext,
+    entry: &CompileEntry,
+    revision: &str,
+    contracts: &ResourceContracts,
+    homes: &[CrossUnitHomeEvidence],
+    source_contracts: &SourceContractConfiguration,
+    provider: &Mutex<()>,
+    out: &mut String,
+) -> Result<UnitProducts, String> {
     let library = plan.library.as_str();
     let source_root = plan.source_root.as_path();
     let LibraryContext {

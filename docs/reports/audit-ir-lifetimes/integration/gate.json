@@ -1,0 +1,20 @@
+{
+  "scope": "IR/lifetime changes applied on latest remote main, with the subsequent borrowed-admission ownership slice",
+  "cherry_pick_sha": "93eb17441c141f6b3272d2ed874d1b83db55bc37",
+  "remote_main_base": "9b13cae73",
+  "measurement_receipt": "../../audit-ir-admission/gate.json",
+  "rust": {
+    "passed": 8492,
+    "failed": 0,
+    "ignored": 15,
+    "units": 537,
+    "summaries": 550
+  },
+  "lean_audits": 362,
+  "python": {
+    "passed": 374,
+    "failed": 0
+  },
+  "all_gate_steps_exit": 0,
+  "boundary": "Original lifetime receipt remains frozen at its original snapshot and counts. This combined working-source gate is identified by the source hashes in the linked receipt; no memory acceptance is implied."
+}

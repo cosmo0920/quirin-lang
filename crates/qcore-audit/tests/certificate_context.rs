@@ -5,7 +5,8 @@ use std::sync::atomic::{AtomicUsize, Ordering};
 
 use qcore_audit::certificate_context::{
     AuditContractTrustPolicy, bind_audit_legacy_safety_certificate,
-    check_audit_legacy_safety_certificate_for, expected_audit_certificate_context,
+    check_audit_legacy_safety_certificate_for, check_audit_legacy_safety_certificate_in_context,
+    expected_audit_certificate_context,
 };
 use qcore_audit::compile_db::{
     CompileEntry, CompileTaskIdentity, EffectiveInput, compile_task_identity, compiler_options,
@@ -263,6 +264,47 @@ fn audit_acceptance_binds_compile_contract_profile_and_trust_context() {
     )
     .unwrap();
     assert!(check_audit_legacy_safety_certificate_for(&bound, &profile_expected).is_err());
+
+    // Both routes use the same gate and exact refusal ordering. The borrowed
+    // route still independently reanalyzes the bodies under every context.
+    for context in [
+        &expected,
+        &compiler_expected,
+        &build_expected,
+        &dependency_expected,
+        &contract_expected,
+        &profile_expected,
+    ] {
+        assert_eq!(
+            check_audit_legacy_safety_certificate_in_context(
+                &certificate,
+                &identity,
+                &profile,
+                policy,
+                context,
+            ),
+            check_audit_legacy_safety_certificate_for(&bound, context),
+        );
+    }
+    for mutation in ["source", "body", "inventory"] {
+        let mut stale = certificate.clone();
+        match mutation {
+            "source" => stale.preprocessed_source.push('\n'),
+            "body" => stale.summary.functions.get_mut("alpha").unwrap().cfg.nodes[0].line += 1,
+            "inventory" => stale.target_scope.inventory_sha256 = digest("stale inventory"),
+            _ => unreachable!(),
+        }
+        let owned =
+            bind_audit_legacy_safety_certificate(&stale, identity.clone(), &profile, policy)
+                .and_then(|presented| {
+                    check_audit_legacy_safety_certificate_for(&presented, &expected)
+                });
+        let borrowed = check_audit_legacy_safety_certificate_in_context(
+            &stale, &identity, &profile, policy, &expected,
+        );
+        assert!(borrowed.is_err(), "{mutation}");
+        assert_eq!(borrowed, owned, "{mutation}");
+    }
 
     // Replacing the certificate with another fully structural certificate
     // while retaining the stale wrapper trust identity must be detected at
