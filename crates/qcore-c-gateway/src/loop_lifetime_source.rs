@@ -533,8 +533,8 @@ pub fn read_unit(
     unit: &crate::legacy_c::C11TranslationUnit<'_>,
     contracts: &ResourceContracts,
 ) -> Result<SourceFacts, String> {
-    crate::typed_c_ast::translation_unit_ast_with(source, unit, |bytes| {
-        let ast = crate::deep_unit_ast::from_slice::<Value>(bytes)?;
+    crate::typed_c_ast::translation_unit_ast_read(source, unit, |reader| {
+        let ast = crate::deep_unit_ast::from_reader::<Value>(reader)?;
         // Recursive source walkers run only after an iterative resource-bound
         // check. Truncation is never treated as an empty/closed census.
         let mut pending = vec![(&ast, 0usize)];

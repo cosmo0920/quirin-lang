@@ -135,7 +135,70 @@ fn launch_declarations(
 /// the default parse first, and only when it fails, a document nesting at most
 /// 256 levels again without the limit on a dedicated stack.
 pub fn translation_unit_ast(source: &str, unit: &C11TranslationUnit<'_>) -> Result<Value, String> {
-    translation_unit_ast_with(source, unit, crate::deep_unit_ast::from_slice)
+    translation_unit_ast_read(source, unit, crate::deep_unit_ast::from_reader)
+}
+
+/// Seekable transport for readers that need retries or multiple declaration
+/// passes. Large outputs spool to a private disposable `.qc`; small outputs
+/// stay in memory. Parsing starts only after Clang exits successfully.
+pub(crate) fn translation_unit_ast_read<T>(
+    source: &str,
+    unit: &C11TranslationUnit<'_>,
+    parse: impl FnOnce(&mut crate::clang_ast_input::AstInput) -> Result<T, serde_json::Error>,
+) -> Result<T, String> {
+    let mut command = crate::clang::command()?;
+    unit.append_frontend_flags(&mut command);
+    let dialect = unit.dialect.clang_invocation_argument()?;
+    command.args([
+        "-x",
+        "c",
+        dialect,
+        "-fsyntax-only",
+        "-Xclang",
+        "-ast-dump=json",
+        "-",
+    ]);
+    launch_ast_read(command, source, parse)
+}
+
+fn launch_ast_read<T>(
+    mut command: std::process::Command,
+    source: &str,
+    parse: impl FnOnce(&mut crate::clang_ast_input::AstInput) -> Result<T, serde_json::Error>,
+) -> Result<T, String> {
+    let mut child = command
+        .stdin(Stdio::piped())
+        .stdout(Stdio::piped())
+        .stderr(Stdio::piped())
+        .spawn()
+        .map_err(|error| format!("Clang AST unavailable: {error}"))?;
+    let mut stdin = child.stdin.take().ok_or("Clang stdin unavailable")?;
+    let stdout = child.stdout.take().ok_or("Clang stdout unavailable")?;
+    let (output, input) = std::thread::scope(|scope| {
+        let writer = scope.spawn(move || stdin.write_all(source.as_bytes()));
+        let reader = scope.spawn(move || crate::clang_ast_input::AstInput::capture(stdout));
+        // wait_with_output drains stderr while the reader drains stdout.
+        let output = child.wait_with_output();
+        let written = writer
+            .join()
+            .map_err(|_| "Clang input writer panicked".to_owned());
+        let captured = reader
+            .join()
+            .map_err(|_| "Clang output reader panicked".to_owned());
+        written?.map_err(|error| format!("Clang input failed: {error}"))?;
+        let output = output.map_err(|error| format!("Clang AST failed: {error}"))?;
+        if !output.status.success() {
+            return Err(format!(
+                "Clang AST rejected source: {}",
+                String::from_utf8_lossy(&output.stderr).trim()
+            ));
+        }
+        let input = captured?.map_err(|error| format!("Clang AST failed: {error}"))?;
+        Ok((output, input))
+    })?;
+    drop(output);
+    let mut input = input;
+    parse(&mut input).map_err(|error| format!("unsupported Clang AST JSON: {error}"))
 }
 
 /// Run the same Clang transport while letting an internal reader deserialize
@@ -303,5 +366,50 @@ mod audit_lifetime_tests {
             .unwrap();
         assert_eq!(launches, 3);
         release_reuse_caches();
+    }
+}
+
+#[cfg(all(test, unix))]
+mod transport_tests {
+    use super::*;
+
+    fn shell(script: &str) -> std::process::Command {
+        let mut command = std::process::Command::new("sh");
+        command.args(["-c", script]);
+        command
+    }
+
+    #[test]
+    fn refuses_successful_prefix_with_malformed_suffix() {
+        let error = launch_ast_read(
+            shell("cat >/dev/null; printf '{} garbage'"),
+            "input",
+            crate::deep_unit_ast::from_reader::<Value>,
+        )
+        .unwrap_err();
+        assert!(error.starts_with("unsupported Clang AST JSON: trailing characters"));
+    }
+
+    #[test]
+    fn child_rejection_precedes_json_and_preserves_stderr() {
+        let error = launch_ast_read(
+            shell("cat >/dev/null; printf 'not JSON'; printf 'rejected details' >&2; exit 7"),
+            "input",
+            crate::deep_unit_ast::from_reader::<Value>,
+        )
+        .unwrap_err();
+        assert_eq!(error, "Clang AST rejected source: rejected details");
+    }
+
+    #[test]
+    fn drains_both_outputs_while_feeding_large_input() {
+        let script = "printf '{\"padding\":\"'; head -c 2097152 /dev/zero | tr '\\000' x; printf '\"}'; head -c 131072 /dev/zero >&2; cat >/dev/null";
+        let value = launch_ast_read(
+            shell(script),
+            &"x".repeat(2 * 1024 * 1024),
+            crate::deep_unit_ast::from_reader::<Value>,
+        )
+        .unwrap();
+        assert_eq!(value["padding"].as_str().unwrap().len(), 2097152);
     }
 }

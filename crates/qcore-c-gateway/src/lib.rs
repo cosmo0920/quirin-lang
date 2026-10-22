@@ -29,6 +29,7 @@ pub mod call_use_source;
 pub mod c_numeric;
 pub mod c_numeric_obligations;
 mod clang;
+mod clang_ast_input;
 // Card VERDICT-CONTRACT-DEPENDENCIES (rules 13f-13h): the declarations each
 // row's derivation consulted, and the unit's body evidence; evidence only.
 pub mod contract_dependencies;

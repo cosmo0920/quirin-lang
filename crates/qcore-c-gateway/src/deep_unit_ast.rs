@@ -105,6 +105,70 @@ pub(crate) fn from_slice<T: DeserializeOwned + Send>(bytes: &[u8]) -> Result<T, 
     }
 }
 
+/// Seekable equivalent of `from_slice`: same default error and full-document
+/// retry rule, without keeping a whole raw byte buffer beside the decoded tree.
+pub(crate) fn from_reader<T: DeserializeOwned + Send>(
+    reader: &mut (impl std::io::Read + std::io::Seek + Send),
+) -> Result<T, serde_json::Error> {
+    use std::io::{BufReader, SeekFrom};
+    let start = reader.stream_position().map_err(serde_json::Error::io)?;
+    let error = match serde_json::from_reader(BufReader::new(&mut *reader)) {
+        Ok(value) => return Ok(value),
+        Err(error) => error,
+    };
+    reader
+        .seek(SeekFrom::Start(start))
+        .map_err(serde_json::Error::io)?;
+    let mut open = 0usize;
+    let mut deepest = 0usize;
+    let mut in_string = false;
+    let mut escaped = false;
+    let mut chunk = [0; 64 * 1024];
+    loop {
+        let count = reader.read(&mut chunk).map_err(serde_json::Error::io)?;
+        if count == 0 {
+            break;
+        }
+        for &byte in &chunk[..count] {
+            if in_string {
+                if escaped {
+                    escaped = false;
+                } else if byte == b'\\' {
+                    escaped = true;
+                } else if byte == b'"' {
+                    in_string = false;
+                }
+            } else {
+                match byte {
+                    b'"' => in_string = true,
+                    b'[' | b'{' => {
+                        open += 1;
+                        deepest = deepest.max(open);
+                    }
+                    b']' | b'}' => open = open.saturating_sub(1),
+                    _ => {}
+                }
+            }
+        }
+    }
+    if !admitted(deepest) {
+        return Err(error);
+    }
+    reader
+        .seek(SeekFrom::Start(start))
+        .map_err(serde_json::Error::io)?;
+    match on_parse_stack(|| {
+        let mut deserializer = serde_json::Deserializer::from_reader(BufReader::new(reader));
+        deserializer.disable_recursion_limit();
+        let value = T::deserialize(&mut deserializer)?;
+        deserializer.end()?;
+        Ok(value)
+    }) {
+        Some(Ok(value)) => Ok(value),
+        Some(Err(_)) | None => Err(error),
+    }
+}
+
 /// The parse without the default limit, on its own stack. `None` when the
 /// thread cannot start or panics.
 fn unlimited<T: DeserializeOwned + Send>(bytes: &[u8]) -> Option<Result<T, serde_json::Error>> {

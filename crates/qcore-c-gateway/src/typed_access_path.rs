@@ -22,7 +22,9 @@ use crate::indirect_chain_access::AccessChain;
 // Card W47-TYPED-CONST-POINTER-VALUE (rule 10m): the value check and the
 // pointer-destination source.
 use crate::legacy_c::{C11TranslationUnit, CCompilerDialect, LegacyCertificateRequest, tokenize};
-use crate::typed_c_ast::{children, kind, translation_unit_ast_with};
+#[cfg(test)]
+use crate::typed_c_ast::translation_unit_ast_with;
+use crate::typed_c_ast::{children, kind};
 use crate::typed_const_pointer_value::{pointer_source, pointer_value};
 use crate::typed_field_access::TypedScalarPlan;
 
@@ -592,12 +594,20 @@ impl<'de> Deserialize<'de> for RetainedRoot {
 }
 
 impl AstIndex {
+    #[cfg(test)]
     fn from_json(bytes: &[u8], source: &str) -> Result<Self, serde_json::Error> {
+        Self::from_reader(&mut std::io::Cursor::new(bytes), source)
+    }
+
+    fn from_reader(
+        reader: &mut (impl std::io::Read + std::io::Seek + Send),
+        source: &str,
+    ) -> Result<Self, serde_json::Error> {
         // `from_slice` checks the entire document, including trailing bytes.
         // Card RDHTTP-HEADER-SUMMARY-GAP (rules 13o, 13p): a document the
         // default recursion limit refuses is read again without it when it
         // nests within the admitted bound.
-        let RetainedRoot(retained) = crate::deep_unit_ast::from_slice(bytes)?;
+        let RetainedRoot(retained) = crate::deep_unit_ast::from_reader(reader)?;
         Ok(Self {
             functions: retained.functions,
             fields: Arc::new(retained.fields),
@@ -885,9 +895,11 @@ fn unit_ast(context: &SourceContext) -> Option<&AstIndex> {
             };
             UNIT_ASTS.with(|asts| {
                 asts.get_or_launch(context.launch_key(), || {
-                    translation_unit_ast_with(&context.source, &unit, |bytes| {
-                        AstIndex::from_json(bytes, &context.source)
-                    })
+                    crate::typed_c_ast::translation_unit_ast_read(
+                        &context.source,
+                        &unit,
+                        |reader| AstIndex::from_reader(reader, &context.source),
+                    )
                     .ok()
                 })
             })
