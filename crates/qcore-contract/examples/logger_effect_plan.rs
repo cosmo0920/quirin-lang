@@ -6,6 +6,9 @@ fn main() -> Result<(), Box<dyn std::error::Error>> {
         return Err("usage: logger_effect_plan DOCUMENT EXPECTED_SHA256 SOURCE_ROOT".into());
     }
     let document = std::fs::read(&args[1])?;
+    if document.len() > 131_072 || qcore_schemas::sha256_hex(&document) != args[2] {
+        return Err("document digest or byte bound".into());
+    }
     let plan: qcore_contract::logger_effects::Plan = serde_json::from_slice(&document)?;
     let root = PathBuf::from(&args[3]);
     let mut sources = BTreeMap::new();

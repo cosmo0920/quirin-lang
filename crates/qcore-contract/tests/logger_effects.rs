@@ -4,7 +4,10 @@ const REVIEWED: &[u8] = include_bytes!("../../../docs/reports/logger-effect-cont
 
 #[test]
 fn reviewed_model_has_an_independently_pinned_digest() {
-    assert_eq!(qcore_schemas::sha256_hex(REVIEWED), "1c1ffedb049c363f1003c3eaa1e3110c08828375ab85e12e647578a3f423ed18");
+    assert_eq!(
+        qcore_schemas::sha256_hex(REVIEWED),
+        "1c1ffedb049c363f1003c3eaa1e3110c08828375ab85e12e647578a3f423ed18"
+    );
 }
 
 // Synthetic bytes test the checker independently of access to external source
