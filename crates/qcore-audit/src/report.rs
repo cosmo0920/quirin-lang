@@ -1778,3 +1778,71 @@ impl AuditReport {
         self.member_prepass = None;
     }
 }
+
+#[cfg(test)]
+mod retained_member_tests {
+    use super::*;
+    use crate::callback_member_fold::{FoldEnvironment, fold_in};
+    use qcore_c_gateway::callback_member_closure::{closure, read_unit};
+    use qcore_c_gateway::legacy_c::C11TranslationUnit;
+
+    #[test]
+    fn parked_real_member_evidence_preserves_closures_and_run_demotions() {
+        let mut report = AuditReport::new("revision");
+        for name in ["first", "second"] {
+            let source = format!(
+                "typedef void (*Callback)(void); enum Choice {{ Set = 1 }}; \
+                 struct holder {{ Callback cb; }}; void {name}(void) {{}} \
+                 struct holder value = {{ {name} }};"
+            );
+            let unit = C11TranslationUnit {
+                source: &source,
+                ..Default::default()
+            };
+            let facts =
+                read_unit(&source, &unit).expect("Clang is required for source evidence controls");
+            assert_eq!(
+                closure(&[&facts], "holder.cb"),
+                Ok(std::collections::BTreeSet::from([name.to_owned()]))
+            );
+            report.units.push(json!({"library":"l", "file":name, "status":"Safe",
+                "reason":null, "diagnostic_counts":{}, "functions":[{"function":"f",
+                "status":"Safe", "diagnostics":[], "contract_dependencies":{"declarations":["invoke"]}}]}));
+            report.record_callback_members("l", name, Some(facts), None);
+        }
+        let original_facts = report.callback_members.clone();
+        let mut original_rows = report.units.clone();
+        let evidence = serde_json::to_value(&original_facts).unwrap();
+        let mut restored = report.park().unwrap().restore().unwrap();
+        assert_eq!(
+            serde_json::to_value(&restored.callback_members).unwrap(),
+            evidence
+        );
+        let environment = FoldEnvironment {
+            declarations: BTreeMap::from([(
+                "invoke".into(),
+                std::collections::BTreeSet::from(["holder.cb".into()]),
+            )]),
+            ..Default::default()
+        };
+        let mut before_counts = BTreeMap::new();
+        let before = fold_in(
+            &environment,
+            &mut original_rows,
+            &original_facts,
+            &mut before_counts,
+            None,
+        );
+        let after = fold_in(
+            &environment,
+            &mut restored.units,
+            &restored.callback_members,
+            &mut restored.diagnostic_counts,
+            None,
+        );
+        assert_eq!(before["demoted"].as_array().unwrap().len(), 2);
+        assert_eq!(before, after);
+        assert_eq!(original_rows, restored.units);
+        assert_eq!(before_counts, restored.diagnostic_counts);
+    }
+}

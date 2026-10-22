@@ -34,10 +34,19 @@ for label in ['after1','after2']:
  files=sorted(p.name for p in before.iterdir());assert files==sorted(p.name for p in (root/label/'published').iterdir())
  for name in files:
   left=(before/name).read_bytes();right=(root/label/'published'/name).read_bytes();equal=left==right
-  comparisons.append({'after':label,'file':name,'byte_equal':equal,'before_sha256':hashlib.sha256(left).hexdigest(),'after_sha256':hashlib.sha256(right).hexdigest()})
+  scheduling_only = False
+  if name == 'report.invocation.json' and label == 'after2':
+   l=json.loads(left);r=json.loads(right)
+   assert l.pop('jobs') == {'effective':1,'requested':1,'source':'command_line'}
+   assert r.pop('jobs') == {'effective':2,'requested':2,'source':'command_line'}
+   assert l['memory_admission'].pop('phases') == []
+   phases=r['memory_admission'].pop('phases')
+   assert len(phases)==2 and all(x['tasks']==4 and x['requested_maximum']==2 and 1<=x['admitted']<=2 for x in phases)
+   scheduling_only=l==r
+  comparisons.append({'scheduling_only':scheduling_only,'after':label,'file':name,'byte_equal':equal,'before_sha256':hashlib.sha256(left).hexdigest(),'after_sha256':hashlib.sha256(right).hexdigest()})
 report=json.loads((before/'report.json').read_text());sidecar=json.loads((before/'report.assumptions.json').read_text())
-receipt={'runs':records,'comparisons':comparisons,'units':len(report['units']),'functions':sum(len(u.get('functions',[])) for u in report['units']),'refutations':sidecar.get('refuted_contracts'),'scope':'Same cwd and exact inputs; synthetic declared counted-user and custody refutations, cross-unit callers, Safe certificate replay, and data-only units. All published file bytes compared; no timing normalization.'}
+receipt={'after_source':run(['git','rev-parse','HEAD'],Path.cwd()),'fixed_build_identity':'31c5ed500d9d4a1448a623b839e1644adb19efd1','runs':records,'comparisons':comparisons,'units':len(report['units']),'functions':sum(len(u.get('functions',[])) for u in report['units']),'refutations':sidecar.get('refuted_contracts'),'scope':'Same cwd and exact inputs; synthetic declared counted-user and custody refutations, cross-unit callers, Safe certificate replay, and data-only units. All report/assumptions bytes must match. Invocation metadata at jobs=2 may differ only in explicitly checked jobs and two phase observations; raw hashes retained. No timing normalization. Candidate built with QCORE_AUDIT_BUILD_COMMIT fixed to base for this control only.'}
 (root/'parity.json').write_text(json.dumps(receipt,indent=2)+'\n')
-assert all(x['byte_equal'] for x in comparisons),receipt
+assert all(x['byte_equal'] or x['scheduling_only'] for x in comparisons),receipt
 assert sidecar['refuted_contracts']['phases']==2,sidecar['refuted_contracts']
 print(json.dumps(receipt,indent=2))
