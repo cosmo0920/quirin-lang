@@ -1,0 +1,367 @@
+{
+  "measured_source": "552773f0c64e2e6a3c7d4b752c61a7d26130975a",
+  "observed_committed_head": "861e71f37e6f79983814d77120e78fd1abe70725",
+  "protected_file_count": 25144,
+  "protected_git_object_map_sha256": "3e2a377fb2b8a9e81c5e2fd95f2da8a84f0cec1ccb2d809486b3a2cd53d1f31a",
+  "protected_maps_equal": true,
+  "compiled_in_checked_models_equal": true,
+  "post_gate_changes": [
+    {
+      "path": "docs/STATUS.md",
+      "before": {
+        "mode": "100644",
+        "kind": "blob",
+        "object_id": "c9c8182290c69c8c10e97a04f9841f1d66ebb5ea"
+      },
+      "after": {
+        "mode": "100644",
+        "kind": "blob",
+        "object_id": "c88bcdaec326e496db7507faa145b4e72f6653f6"
+      }
+    },
+    {
+      "path": "docs/development/increments/wave-48-part11.md",
+      "before": {
+        "mode": "100644",
+        "kind": "blob",
+        "object_id": "8ed57d71b51c7d25a836b66ab1d1063b2be74428"
+      },
+      "after": {
+        "mode": "100644",
+        "kind": "blob",
+        "object_id": "6ee70487908195edc6cf9cc1ffe8d36c472f4e88"
+      }
+    },
+    {
+      "path": "docs/reports/INDEX.md",
+      "before": {
+        "mode": "100644",
+        "kind": "blob",
+        "object_id": "d7c10982a676d85b9963bff28b9b7796a5f0ca7f"
+      },
+      "after": {
+        "mode": "100644",
+        "kind": "blob",
+        "object_id": "46eb8f56e4fc6def92f75e0a9e213bab02a4ed83"
+      }
+    },
+    {
+      "path": "docs/reports/contract-cycle4-integration/README.md",
+      "before": {
+        "mode": "100644",
+        "kind": "blob",
+        "object_id": "ee5d138e5dceb712733fdd99dc242bb8160e19fc"
+      },
+      "after": {
+        "mode": "100644",
+        "kind": "blob",
+        "object_id": "aa7877290c52aecbfcfaaaf8aa4da3a1b346fe79"
+      }
+    },
+    {
+      "path": "docs/reports/contract-cycle4-integration/clang-version.exit",
+      "before": null,
+      "after": {
+        "mode": "100644",
+        "kind": "blob",
+        "object_id": "573541ac9702dd3969c9bc859d2b91ec1f7e6e56"
+      }
+    },
+    {
+      "path": "docs/reports/contract-cycle4-integration/clang-version.txt",
+      "before": null,
+      "after": {
+        "mode": "100644",
+        "kind": "blob",
+        "object_id": "8c46e19d20f7ad7c4ae33d009163eeddefd8bac7"
+      }
+    },
+    {
+      "path": "docs/reports/contract-cycle4-integration/collect_source_gate.py",
+      "before": null,
+      "after": {
+        "mode": "100644",
+        "kind": "blob",
+        "object_id": "e6384ea45837b3dea2bc45070117fcbb29c9cb6e"
+      }
+    },
+    {
+      "path": "docs/reports/contract-cycle4-integration/contract-module-inventory.json",
+      "before": null,
+      "after": {
+        "mode": "100644",
+        "kind": "blob",
+        "object_id": "08daf9e5e2475dc395ca42add992e5a0dc1e3138"
+      }
+    },
+    {
+      "path": "docs/reports/contract-cycle4-integration/gate.json",
+      "before": null,
+      "after": {
+        "mode": "100644",
+        "kind": "blob",
+        "object_id": "12a4533e6996686de6f4c0c3b8efd23bb3233552"
+      }
+    },
+    {
+      "path": "docs/reports/contract-cycle4-integration/integration-corrections.json",
+      "before": {
+        "mode": "100644",
+        "kind": "blob",
+        "object_id": "cb18579e21038ce6731233829c1e353baaeb5efe"
+      },
+      "after": {
+        "mode": "100644",
+        "kind": "blob",
+        "object_id": "afac57add598bcd72a029994bcd8afe14ce6c0b7"
+      }
+    },
+    {
+      "path": "docs/reports/contract-cycle4-integration/ledger-amendments.json",
+      "before": null,
+      "after": {
+        "mode": "100644",
+        "kind": "blob",
+        "object_id": "9cb5304c9344d03ac60cc62a8afcd5239b62e193"
+      }
+    },
+    {
+      "path": "docs/reports/contract-cycle4-integration/manual-reconciliation-claims.json",
+      "before": null,
+      "after": {
+        "mode": "100644",
+        "kind": "blob",
+        "object_id": "65aade759219d746167b291b36340b8a615a9328"
+      }
+    },
+    {
+      "path": "docs/reports/contract-cycle4-integration/matrix-publication.json",
+      "before": null,
+      "after": {
+        "mode": "100644",
+        "kind": "blob",
+        "object_id": "be5772cf78156073b0b04e3dc9fabce21bc01e23"
+      }
+    },
+    {
+      "path": "docs/reports/contract-cycle4-integration/reconciliation-inputs.json",
+      "before": null,
+      "after": {
+        "mode": "100644",
+        "kind": "blob",
+        "object_id": "2086406ac894f55f5e94c7d7a83f4db4041e59cb"
+      }
+    },
+    {
+      "path": "docs/reports/contract-cycle4-integration/reconciliation.json",
+      "before": null,
+      "after": {
+        "mode": "100644",
+        "kind": "blob",
+        "object_id": "701470baae6ba5f31e9aa5b4ffcf9d836d909e46"
+      }
+    },
+    {
+      "path": "docs/reports/contract-cycle4-integration/run_matrix_python.py",
+      "before": null,
+      "after": {
+        "mode": "100644",
+        "kind": "blob",
+        "object_id": "ea26478f713af722605c6003fbd171ca788fad91"
+      }
+    },
+    {
+      "path": "docs/reports/contract-cycle4-integration/source-gate-summary.json",
+      "before": null,
+      "after": {
+        "mode": "100644",
+        "kind": "blob",
+        "object_id": "fd14f139bed67bd4c85700da77f783a2516d8393"
+      }
+    },
+    {
+      "path": "docs/reports/contract-cycle4-integration/validation/joint-gate-2/acquired.json",
+      "before": null,
+      "after": {
+        "mode": "100644",
+        "kind": "blob",
+        "object_id": "949971dedc2afb65c2785359b4ebc74283d0ef4c"
+      }
+    },
+    {
+      "path": "docs/reports/contract-cycle4-integration/validation/joint-gate-2/commands.json",
+      "before": null,
+      "after": {
+        "mode": "100644",
+        "kind": "blob",
+        "object_id": "bffaa837f631f53a691d233a7f1dd16c49e5c674"
+      }
+    },
+    {
+      "path": "docs/reports/contract-cycle4-integration/validation/joint-gate-2/completion.json",
+      "before": null,
+      "after": {
+        "mode": "100644",
+        "kind": "blob",
+        "object_id": "6d0af02be184cb2c22efdaf1fb1d70cd848c4ddc"
+      }
+    },
+    {
+      "path": "docs/reports/contract-cycle4-integration/validation/joint-gate-2/released.json",
+      "before": null,
+      "after": {
+        "mode": "100644",
+        "kind": "blob",
+        "object_id": "506cc8a53987d9384683467c00a56fbd51413183"
+      }
+    },
+    {
+      "path": "docs/reports/guarded-contract-adoption/integration/clang-version.exit",
+      "before": null,
+      "after": {
+        "mode": "100644",
+        "kind": "blob",
+        "object_id": "573541ac9702dd3969c9bc859d2b91ec1f7e6e56"
+      }
+    },
+    {
+      "path": "docs/reports/guarded-contract-adoption/integration/clang-version.txt",
+      "before": null,
+      "after": {
+        "mode": "100644",
+        "kind": "blob",
+        "object_id": "8c46e19d20f7ad7c4ae33d009163eeddefd8bac7"
+      }
+    },
+    {
+      "path": "docs/reports/guarded-contract-adoption/integration/gate.json",
+      "before": null,
+      "after": {
+        "mode": "100644",
+        "kind": "blob",
+        "object_id": "7cd94c6b777eb63d6aed5238aa8fa7ad7ecd9ead"
+      }
+    },
+    {
+      "path": "docs/reports/logger-effect-contracts/integration/clang-version.exit",
+      "before": null,
+      "after": {
+        "mode": "100644",
+        "kind": "blob",
+        "object_id": "573541ac9702dd3969c9bc859d2b91ec1f7e6e56"
+      }
+    },
+    {
+      "path": "docs/reports/logger-effect-contracts/integration/clang-version.txt",
+      "before": null,
+      "after": {
+        "mode": "100644",
+        "kind": "blob",
+        "object_id": "8c46e19d20f7ad7c4ae33d009163eeddefd8bac7"
+      }
+    },
+    {
+      "path": "docs/reports/logger-effect-contracts/integration/gate.json",
+      "before": null,
+      "after": {
+        "mode": "100644",
+        "kind": "blob",
+        "object_id": "558af3ef167919923d15cfdf24b342878fab8eb0"
+      }
+    },
+    {
+      "path": "docs/reports/scheduler-lifetime-contracts/README.md",
+      "before": {
+        "mode": "100644",
+        "kind": "blob",
+        "object_id": "f8ec9fef7e9f6bff750d8d40641d9fee6f24b66c"
+      },
+      "after": {
+        "mode": "100644",
+        "kind": "blob",
+        "object_id": "95e804957ed6d199de2030666213431787cf6d18"
+      }
+    },
+    {
+      "path": "docs/reports/scheduler-lifetime-contracts/collect_tls_role_fix.py",
+      "before": null,
+      "after": {
+        "mode": "100644",
+        "kind": "blob",
+        "object_id": "0493d0397745a105c87e3c6ec1933cac5b6d5256"
+      }
+    },
+    {
+      "path": "docs/reports/scheduler-lifetime-contracts/integration-amendments.json",
+      "before": {
+        "mode": "100644",
+        "kind": "blob",
+        "object_id": "b881f6a5a22d2a34f31468203ba8f7d3a6d9eef3"
+      },
+      "after": {
+        "mode": "100644",
+        "kind": "blob",
+        "object_id": "2e71f077c2b50306125a5c4ed4b221e4f5dc925c"
+      }
+    },
+    {
+      "path": "docs/reports/scheduler-lifetime-contracts/integration/clang-version.exit",
+      "before": null,
+      "after": {
+        "mode": "100644",
+        "kind": "blob",
+        "object_id": "573541ac9702dd3969c9bc859d2b91ec1f7e6e56"
+      }
+    },
+    {
+      "path": "docs/reports/scheduler-lifetime-contracts/integration/clang-version.txt",
+      "before": null,
+      "after": {
+        "mode": "100644",
+        "kind": "blob",
+        "object_id": "8c46e19d20f7ad7c4ae33d009163eeddefd8bac7"
+      }
+    },
+    {
+      "path": "docs/reports/scheduler-lifetime-contracts/integration/gate.json",
+      "before": null,
+      "after": {
+        "mode": "100644",
+        "kind": "blob",
+        "object_id": "357001aab41f44927eefa93e826aa76f9f7494f4"
+      }
+    },
+    {
+      "path": "docs/reports/scheduler-lifetime-contracts/tls-role-fix-driver.sh",
+      "before": null,
+      "after": {
+        "mode": "100644",
+        "kind": "blob",
+        "object_id": "69d28e656b4a161adab58cd6df17790fea5a13a1"
+      }
+    },
+    {
+      "path": "docs/reports/scheduler-lifetime-contracts/tls-role-fix-receipts.json",
+      "before": null,
+      "after": {
+        "mode": "100644",
+        "kind": "blob",
+        "object_id": "34c9882d6d6b49de64c99c789ddacb12739fe53d"
+      }
+    },
+    {
+      "path": "docs/reviews/r0_3/acceptance_matrix.json",
+      "before": {
+        "mode": "100644",
+        "kind": "blob",
+        "object_id": "605b4f31c6d5a0f6283e1a88961960dcbd7f351b"
+      },
+      "after": {
+        "mode": "100644",
+        "kind": "blob",
+        "object_id": "e9fdaf4cec517e6e82d063df97a40f8f574af611"
+      }
+    }
+  ],
+  "boundary": "Production, test, proof, provider and contract sources, checked model artifacts and historical evidence remain byte-identical to552. Only current report/evidence producers, receipts, status, increments, index and matrix differ. Native helper/producer exact source and binary bindings belong to guarded-contract-adoption/native-acceptance.json. Later receipt-only commits preserve this protected map; no new Rust/Lean measurement is claimed."
+}
