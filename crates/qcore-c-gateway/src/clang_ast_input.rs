@@ -163,7 +163,12 @@ impl Seek for AstInput {
     fn seek(&mut self, position: SeekFrom) -> io::Result<u64> {
         match self {
             Self::Memory(cursor) => cursor.seek(position),
-            Self::Spool(spool) => spool.file.as_mut().unwrap().seek(position),
+            Self::Spool(spool) => {
+                let position = spool.file.as_mut().unwrap().seek(position)?;
+                spool.read_position = position;
+                spool.advised_position = position;
+                Ok(position)
+            }
         }
     }
 }
@@ -208,6 +213,10 @@ mod tests {
         };
         for _ in 0..2 {
             input.rewind().unwrap();
+            if let AstInput::Spool(spool) = &input {
+                assert_eq!(spool.read_position, 0);
+                assert_eq!(spool.advised_position, 0);
+            }
             let mut read = Vec::new();
             input.read_to_end(&mut read).unwrap();
             assert_eq!(read, bytes);
