@@ -462,7 +462,9 @@ class LoadPathManifest(unittest.TestCase):
         # 63 -> 64 by card FB-TEARDOWN-DESTROY-DECLARATIONS:
         # `fluent_bit/teardown_destroy.qv`.
         views = {c["name"]: c["resource_view"] for c in manifest["crates"]}
-        self.assertEqual(sum(len(view) for view in views.values()), 64)
+        # b5f74d79a added librdkafka/logging.qv: the committed view is65.
+        self.assertEqual(sum(len(view) for view in views.values()), 65)
+        self.assertIn("librdkafka/logging.qv", views["qcore-provider-librdkafka"])
         self.assertEqual(views["quirin-provider-shared"], [])
         self.assertEqual(len(views["quirin-provider-libc"]), 17)
         # Card CHUNKIO-META-LEN-BOUNDS-CONTRACTS: the one bounds module, in its

@@ -1,0 +1,555 @@
+[
+  {
+    "name": "submodules",
+    "command": [
+      "git",
+      "submodule",
+      "update",
+      "--init",
+      "--recursive"
+    ],
+    "cwd": "/home/cosmo/.codex/worktrees/logger-effect-contracts/qcore-c",
+    "source": "c2ea7bf492ad003260770f93f14fc1061045e043",
+    "started": "2026-10-22T05:51:23.884385+00:00",
+    "ended": "2026-10-22T05:51:23.906049+00:00",
+    "seconds": 0.02168085500034067,
+    "exit": 0,
+    "environment_overrides": {
+      "CARGO_PROFILE_DEV_DEBUG": "0",
+      "CARGO_PROFILE_TEST_DEBUG": "0",
+      "CARGO_INCREMENTAL": "0",
+      "QCORE_AUDIT_BUILD_COMMIT": "c2ea7bf492ad003260770f93f14fc1061045e043"
+    },
+    "log": "/home/cosmo/.codex/worktrees/logger-effect-contracts/qcore-c/private/contract-cycle4-integration/joint-gate-1/submodules.log",
+    "head_after": "c2ea7bf492ad003260770f93f14fc1061045e043",
+    "clean_after": true
+  },
+  {
+    "name": "clang-version",
+    "command": [
+      "clang",
+      "--version"
+    ],
+    "cwd": "/home/cosmo/.codex/worktrees/logger-effect-contracts/qcore-c",
+    "source": "c2ea7bf492ad003260770f93f14fc1061045e043",
+    "started": "2026-10-22T05:51:23.948892+00:00",
+    "ended": "2026-10-22T05:51:23.961964+00:00",
+    "seconds": 0.013071014000161085,
+    "exit": 0,
+    "environment_overrides": {
+      "CARGO_PROFILE_DEV_DEBUG": "0",
+      "CARGO_PROFILE_TEST_DEBUG": "0",
+      "CARGO_INCREMENTAL": "0",
+      "QCORE_AUDIT_BUILD_COMMIT": "c2ea7bf492ad003260770f93f14fc1061045e043"
+    },
+    "log": "/home/cosmo/.codex/worktrees/logger-effect-contracts/qcore-c/private/contract-cycle4-integration/joint-gate-1/clang-version.log",
+    "head_after": "c2ea7bf492ad003260770f93f14fc1061045e043",
+    "clean_after": true
+  },
+  {
+    "name": "rust",
+    "command": [
+      "/usr/bin/python3",
+      "scripts/run_test_binaries.py",
+      "--jobs",
+      "4"
+    ],
+    "cwd": "/home/cosmo/.codex/worktrees/logger-effect-contracts/qcore-c",
+    "source": "c2ea7bf492ad003260770f93f14fc1061045e043",
+    "started": "2026-10-22T05:51:24.006787+00:00",
+    "ended": "2026-10-22T06:00:13.179544+00:00",
+    "seconds": 529.1727778619997,
+    "exit": 101,
+    "environment_overrides": {
+      "CARGO_PROFILE_DEV_DEBUG": "0",
+      "CARGO_PROFILE_TEST_DEBUG": "0",
+      "CARGO_INCREMENTAL": "0",
+      "QCORE_AUDIT_BUILD_COMMIT": "c2ea7bf492ad003260770f93f14fc1061045e043"
+    },
+    "log": "/home/cosmo/.codex/worktrees/logger-effect-contracts/qcore-c/private/contract-cycle4-integration/joint-gate-1/rust.log",
+    "head_after": "c2ea7bf492ad003260770f93f14fc1061045e043",
+    "clean_after": true
+  },
+  {
+    "name": "fmt",
+    "command": [
+      "cargo",
+      "fmt",
+      "--all",
+      "--",
+      "--check"
+    ],
+    "cwd": "/home/cosmo/.codex/worktrees/logger-effect-contracts/qcore-c",
+    "source": "c2ea7bf492ad003260770f93f14fc1061045e043",
+    "started": "2026-10-22T06:00:13.221411+00:00",
+    "ended": "2026-10-22T06:00:18.727597+00:00",
+    "seconds": 5.506196501999511,
+    "exit": 0,
+    "environment_overrides": {
+      "CARGO_PROFILE_DEV_DEBUG": "0",
+      "CARGO_PROFILE_TEST_DEBUG": "0",
+      "CARGO_INCREMENTAL": "0",
+      "QCORE_AUDIT_BUILD_COMMIT": "c2ea7bf492ad003260770f93f14fc1061045e043"
+    },
+    "log": "/home/cosmo/.codex/worktrees/logger-effect-contracts/qcore-c/private/contract-cycle4-integration/joint-gate-1/fmt.log",
+    "head_after": "c2ea7bf492ad003260770f93f14fc1061045e043",
+    "clean_after": true
+  },
+  {
+    "name": "clippy",
+    "command": [
+      "cargo",
+      "clippy",
+      "--all-targets",
+      "--",
+      "-D",
+      "warnings"
+    ],
+    "cwd": "/home/cosmo/.codex/worktrees/logger-effect-contracts/qcore-c",
+    "source": "c2ea7bf492ad003260770f93f14fc1061045e043",
+    "started": "2026-10-22T06:00:18.770033+00:00",
+    "ended": "2026-10-22T06:00:52.778086+00:00",
+    "seconds": 34.00807294800052,
+    "exit": 0,
+    "environment_overrides": {
+      "CARGO_PROFILE_DEV_DEBUG": "0",
+      "CARGO_PROFILE_TEST_DEBUG": "0",
+      "CARGO_INCREMENTAL": "0",
+      "QCORE_AUDIT_BUILD_COMMIT": "c2ea7bf492ad003260770f93f14fc1061045e043"
+    },
+    "log": "/home/cosmo/.codex/worktrees/logger-effect-contracts/qcore-c/private/contract-cycle4-integration/joint-gate-1/clippy.log",
+    "head_after": "c2ea7bf492ad003260770f93f14fc1061045e043",
+    "clean_after": true
+  },
+  {
+    "name": "probe",
+    "command": [
+      "cargo",
+      "run",
+      "-p",
+      "qcore-compiler",
+      "--example",
+      "reevaluation_probe"
+    ],
+    "cwd": "/home/cosmo/.codex/worktrees/logger-effect-contracts/qcore-c",
+    "source": "c2ea7bf492ad003260770f93f14fc1061045e043",
+    "started": "2026-10-22T06:00:52.822856+00:00",
+    "ended": "2026-10-22T06:00:52.907601+00:00",
+    "seconds": 0.08474967900019692,
+    "exit": 0,
+    "environment_overrides": {
+      "CARGO_PROFILE_DEV_DEBUG": "0",
+      "CARGO_PROFILE_TEST_DEBUG": "0",
+      "CARGO_INCREMENTAL": "0",
+      "QCORE_AUDIT_BUILD_COMMIT": "c2ea7bf492ad003260770f93f14fc1061045e043"
+    },
+    "log": "/home/cosmo/.codex/worktrees/logger-effect-contracts/qcore-c/private/contract-cycle4-integration/joint-gate-1/probe.log",
+    "head_after": "c2ea7bf492ad003260770f93f14fc1061045e043",
+    "clean_after": true
+  },
+  {
+    "name": "followup",
+    "command": [
+      "cargo",
+      "run",
+      "-p",
+      "qcore-compiler",
+      "--example",
+      "reevaluation_followup"
+    ],
+    "cwd": "/home/cosmo/.codex/worktrees/logger-effect-contracts/qcore-c",
+    "source": "c2ea7bf492ad003260770f93f14fc1061045e043",
+    "started": "2026-10-22T06:00:52.948047+00:00",
+    "ended": "2026-10-22T06:00:53.385147+00:00",
+    "seconds": 0.43712079400029324,
+    "exit": 0,
+    "environment_overrides": {
+      "CARGO_PROFILE_DEV_DEBUG": "0",
+      "CARGO_PROFILE_TEST_DEBUG": "0",
+      "CARGO_INCREMENTAL": "0",
+      "QCORE_AUDIT_BUILD_COMMIT": "c2ea7bf492ad003260770f93f14fc1061045e043"
+    },
+    "log": "/home/cosmo/.codex/worktrees/logger-effect-contracts/qcore-c/private/contract-cycle4-integration/joint-gate-1/followup.log",
+    "head_after": "c2ea7bf492ad003260770f93f14fc1061045e043",
+    "clean_after": true
+  },
+  {
+    "name": "lean",
+    "command": [
+      "/usr/bin/python3",
+      "scripts/check_lean_audits.py"
+    ],
+    "cwd": "/home/cosmo/.codex/worktrees/logger-effect-contracts/qcore-c",
+    "source": "c2ea7bf492ad003260770f93f14fc1061045e043",
+    "started": "2026-10-22T06:00:53.428789+00:00",
+    "ended": "2026-10-22T06:02:44.786026+00:00",
+    "seconds": 111.35725181699945,
+    "exit": 1,
+    "environment_overrides": {
+      "CARGO_PROFILE_DEV_DEBUG": "0",
+      "CARGO_PROFILE_TEST_DEBUG": "0",
+      "CARGO_INCREMENTAL": "0",
+      "QCORE_AUDIT_BUILD_COMMIT": "c2ea7bf492ad003260770f93f14fc1061045e043"
+    },
+    "log": "/home/cosmo/.codex/worktrees/logger-effect-contracts/qcore-c/private/contract-cycle4-integration/joint-gate-1/lean.log",
+    "head_after": "c2ea7bf492ad003260770f93f14fc1061045e043",
+    "clean_after": true
+  },
+  {
+    "name": "audit-examples",
+    "command": [
+      "cargo",
+      "build",
+      "-p",
+      "qcore-audit",
+      "--examples"
+    ],
+    "cwd": "/home/cosmo/.codex/worktrees/logger-effect-contracts/qcore-c",
+    "source": "c2ea7bf492ad003260770f93f14fc1061045e043",
+    "started": "2026-10-22T06:02:44.830348+00:00",
+    "ended": "2026-10-22T06:02:44.907838+00:00",
+    "seconds": 0.07750708699950337,
+    "exit": 0,
+    "environment_overrides": {
+      "CARGO_PROFILE_DEV_DEBUG": "0",
+      "CARGO_PROFILE_TEST_DEBUG": "0",
+      "CARGO_INCREMENTAL": "0",
+      "QCORE_AUDIT_BUILD_COMMIT": "c2ea7bf492ad003260770f93f14fc1061045e043"
+    },
+    "log": "/home/cosmo/.codex/worktrees/logger-effect-contracts/qcore-c/private/contract-cycle4-integration/joint-gate-1/audit-examples.log",
+    "head_after": "c2ea7bf492ad003260770f93f14fc1061045e043",
+    "clean_after": true
+  },
+  {
+    "name": "source-examples",
+    "command": [
+      "cargo",
+      "build",
+      "-p",
+      "quirin-source-analysis",
+      "--examples"
+    ],
+    "cwd": "/home/cosmo/.codex/worktrees/logger-effect-contracts/qcore-c",
+    "source": "c2ea7bf492ad003260770f93f14fc1061045e043",
+    "started": "2026-10-22T06:02:44.950971+00:00",
+    "ended": "2026-10-22T06:03:17.086282+00:00",
+    "seconds": 32.13532218599994,
+    "exit": 0,
+    "environment_overrides": {
+      "CARGO_PROFILE_DEV_DEBUG": "0",
+      "CARGO_PROFILE_TEST_DEBUG": "0",
+      "CARGO_INCREMENTAL": "0",
+      "QCORE_AUDIT_BUILD_COMMIT": "c2ea7bf492ad003260770f93f14fc1061045e043"
+    },
+    "log": "/home/cosmo/.codex/worktrees/logger-effect-contracts/qcore-c/private/contract-cycle4-integration/joint-gate-1/source-examples.log",
+    "head_after": "c2ea7bf492ad003260770f93f14fc1061045e043",
+    "clean_after": true
+  },
+  {
+    "name": "release",
+    "command": [
+      "cargo",
+      "build",
+      "--release",
+      "-p",
+      "qcore-audit",
+      "--bin",
+      "quirin-audit"
+    ],
+    "cwd": "/home/cosmo/.codex/worktrees/logger-effect-contracts/qcore-c",
+    "source": "c2ea7bf492ad003260770f93f14fc1061045e043",
+    "started": "2026-10-22T06:03:17.129875+00:00",
+    "ended": "2026-10-22T06:05:04.160924+00:00",
+    "seconds": 107.03105899399998,
+    "exit": 0,
+    "environment_overrides": {
+      "CARGO_PROFILE_DEV_DEBUG": "0",
+      "CARGO_PROFILE_TEST_DEBUG": "0",
+      "CARGO_INCREMENTAL": "0",
+      "QCORE_AUDIT_BUILD_COMMIT": "c2ea7bf492ad003260770f93f14fc1061045e043"
+    },
+    "log": "/home/cosmo/.codex/worktrees/logger-effect-contracts/qcore-c/private/contract-cycle4-integration/joint-gate-1/release.log",
+    "head_after": "c2ea7bf492ad003260770f93f14fc1061045e043",
+    "clean_after": true
+  },
+  {
+    "name": "provider-rust",
+    "command": [
+      "cargo",
+      "test",
+      "--manifest-path",
+      "providers/Cargo.toml",
+      "--workspace",
+      "--locked",
+      "--offline",
+      "--no-fail-fast"
+    ],
+    "cwd": "/home/cosmo/.codex/worktrees/logger-effect-contracts/qcore-c",
+    "source": "c2ea7bf492ad003260770f93f14fc1061045e043",
+    "started": "2026-10-22T06:05:04.202437+00:00",
+    "ended": "2026-10-22T06:17:55.514122+00:00",
+    "seconds": 771.3116919209997,
+    "exit": 0,
+    "environment_overrides": {
+      "CARGO_PROFILE_DEV_DEBUG": "0",
+      "CARGO_PROFILE_TEST_DEBUG": "0",
+      "CARGO_INCREMENTAL": "0",
+      "QCORE_AUDIT_BUILD_COMMIT": "c2ea7bf492ad003260770f93f14fc1061045e043"
+    },
+    "log": "/home/cosmo/.codex/worktrees/logger-effect-contracts/qcore-c/private/contract-cycle4-integration/joint-gate-1/provider-rust.log",
+    "head_after": "c2ea7bf492ad003260770f93f14fc1061045e043",
+    "clean_after": true
+  },
+  {
+    "name": "provider-fmt",
+    "command": [
+      "cargo",
+      "fmt",
+      "--manifest-path",
+      "providers/Cargo.toml",
+      "--all",
+      "--",
+      "--check"
+    ],
+    "cwd": "/home/cosmo/.codex/worktrees/logger-effect-contracts/qcore-c",
+    "source": "c2ea7bf492ad003260770f93f14fc1061045e043",
+    "started": "2026-10-22T06:17:55.557145+00:00",
+    "ended": "2026-10-22T06:18:01.822366+00:00",
+    "seconds": 6.265227352999318,
+    "exit": 0,
+    "environment_overrides": {
+      "CARGO_PROFILE_DEV_DEBUG": "0",
+      "CARGO_PROFILE_TEST_DEBUG": "0",
+      "CARGO_INCREMENTAL": "0",
+      "QCORE_AUDIT_BUILD_COMMIT": "c2ea7bf492ad003260770f93f14fc1061045e043"
+    },
+    "log": "/home/cosmo/.codex/worktrees/logger-effect-contracts/qcore-c/private/contract-cycle4-integration/joint-gate-1/provider-fmt.log",
+    "head_after": "c2ea7bf492ad003260770f93f14fc1061045e043",
+    "clean_after": true
+  },
+  {
+    "name": "provider-clippy",
+    "command": [
+      "cargo",
+      "clippy",
+      "--manifest-path",
+      "providers/Cargo.toml",
+      "--workspace",
+      "--all-targets",
+      "--locked",
+      "--offline",
+      "--",
+      "-D",
+      "warnings"
+    ],
+    "cwd": "/home/cosmo/.codex/worktrees/logger-effect-contracts/qcore-c",
+    "source": "c2ea7bf492ad003260770f93f14fc1061045e043",
+    "started": "2026-10-22T06:18:01.869853+00:00",
+    "ended": "2026-10-22T06:18:31.235095+00:00",
+    "seconds": 29.36524731099962,
+    "exit": 0,
+    "environment_overrides": {
+      "CARGO_PROFILE_DEV_DEBUG": "0",
+      "CARGO_PROFILE_TEST_DEBUG": "0",
+      "CARGO_INCREMENTAL": "0",
+      "QCORE_AUDIT_BUILD_COMMIT": "c2ea7bf492ad003260770f93f14fc1061045e043"
+    },
+    "log": "/home/cosmo/.codex/worktrees/logger-effect-contracts/qcore-c/private/contract-cycle4-integration/joint-gate-1/provider-clippy.log",
+    "head_after": "c2ea7bf492ad003260770f93f14fc1061045e043",
+    "clean_after": true
+  },
+  {
+    "name": "provider-python",
+    "command": [
+      "/usr/bin/python3",
+      "-m",
+      "unittest",
+      "discover",
+      "-s",
+      "providers/tests"
+    ],
+    "cwd": "/home/cosmo/.codex/worktrees/logger-effect-contracts/qcore-c",
+    "source": "c2ea7bf492ad003260770f93f14fc1061045e043",
+    "started": "2026-10-22T06:18:31.278298+00:00",
+    "ended": "2026-10-22T06:19:04.081798+00:00",
+    "seconds": 32.803503168000134,
+    "exit": 1,
+    "environment_overrides": {
+      "CARGO_PROFILE_DEV_DEBUG": "0",
+      "CARGO_PROFILE_TEST_DEBUG": "0",
+      "CARGO_INCREMENTAL": "0",
+      "QCORE_AUDIT_BUILD_COMMIT": "c2ea7bf492ad003260770f93f14fc1061045e043"
+    },
+    "log": "/home/cosmo/.codex/worktrees/logger-effect-contracts/qcore-c/private/contract-cycle4-integration/joint-gate-1/provider-python.log",
+    "head_after": "c2ea7bf492ad003260770f93f14fc1061045e043",
+    "clean_after": true
+  },
+  {
+    "name": "provider-contracts",
+    "command": [
+      "/usr/bin/python3",
+      "providers/contracts.py",
+      "check"
+    ],
+    "cwd": "/home/cosmo/.codex/worktrees/logger-effect-contracts/qcore-c",
+    "source": "c2ea7bf492ad003260770f93f14fc1061045e043",
+    "started": "2026-10-22T06:19:04.125787+00:00",
+    "ended": "2026-10-22T06:19:39.557858+00:00",
+    "seconds": 35.4320828660002,
+    "exit": 0,
+    "environment_overrides": {
+      "CARGO_PROFILE_DEV_DEBUG": "0",
+      "CARGO_PROFILE_TEST_DEBUG": "0",
+      "CARGO_INCREMENTAL": "0",
+      "QCORE_AUDIT_BUILD_COMMIT": "c2ea7bf492ad003260770f93f14fc1061045e043"
+    },
+    "log": "/home/cosmo/.codex/worktrees/logger-effect-contracts/qcore-c/private/contract-cycle4-integration/joint-gate-1/provider-contracts.log",
+    "head_after": "c2ea7bf492ad003260770f93f14fc1061045e043",
+    "clean_after": true
+  },
+  {
+    "name": "package-build",
+    "command": [
+      "/usr/bin/python3",
+      "providers/package.py",
+      "build",
+      "--output",
+      "/home/cosmo/.codex/worktrees/logger-effect-contracts/qcore-c/private/contract-cycle4-integration/joint-gate-1/packages"
+    ],
+    "cwd": "/home/cosmo/.codex/worktrees/logger-effect-contracts/qcore-c",
+    "source": "c2ea7bf492ad003260770f93f14fc1061045e043",
+    "started": "2026-10-22T06:19:39.604045+00:00",
+    "ended": "2026-10-22T06:20:43.147208+00:00",
+    "seconds": 63.543165496000256,
+    "exit": 0,
+    "environment_overrides": {
+      "CARGO_PROFILE_DEV_DEBUG": "0",
+      "CARGO_PROFILE_TEST_DEBUG": "0",
+      "CARGO_INCREMENTAL": "0",
+      "QCORE_AUDIT_BUILD_COMMIT": "c2ea7bf492ad003260770f93f14fc1061045e043"
+    },
+    "log": "/home/cosmo/.codex/worktrees/logger-effect-contracts/qcore-c/private/contract-cycle4-integration/joint-gate-1/package-build.log",
+    "head_after": "c2ea7bf492ad003260770f93f14fc1061045e043",
+    "clean_after": true
+  },
+  {
+    "name": "package-verify-chunkio",
+    "command": [
+      "/usr/bin/python3",
+      "providers/package.py",
+      "verify",
+      "/home/cosmo/.codex/worktrees/logger-effect-contracts/qcore-c/private/contract-cycle4-integration/joint-gate-1/packages/qcore.chunkio"
+    ],
+    "cwd": "/home/cosmo/.codex/worktrees/logger-effect-contracts/qcore-c",
+    "source": "c2ea7bf492ad003260770f93f14fc1061045e043",
+    "started": "2026-10-22T06:20:43.190395+00:00",
+    "ended": "2026-10-22T06:20:43.328676+00:00",
+    "seconds": 0.1382903849998911,
+    "exit": 0,
+    "environment_overrides": {
+      "CARGO_PROFILE_DEV_DEBUG": "0",
+      "CARGO_PROFILE_TEST_DEBUG": "0",
+      "CARGO_INCREMENTAL": "0",
+      "QCORE_AUDIT_BUILD_COMMIT": "c2ea7bf492ad003260770f93f14fc1061045e043"
+    },
+    "log": "/home/cosmo/.codex/worktrees/logger-effect-contracts/qcore-c/private/contract-cycle4-integration/joint-gate-1/package-verify-chunkio.log",
+    "head_after": "c2ea7bf492ad003260770f93f14fc1061045e043",
+    "clean_after": true
+  },
+  {
+    "name": "package-verify-libevent",
+    "command": [
+      "/usr/bin/python3",
+      "providers/package.py",
+      "verify",
+      "/home/cosmo/.codex/worktrees/logger-effect-contracts/qcore-c/private/contract-cycle4-integration/joint-gate-1/packages/qcore.libevent"
+    ],
+    "cwd": "/home/cosmo/.codex/worktrees/logger-effect-contracts/qcore-c",
+    "source": "c2ea7bf492ad003260770f93f14fc1061045e043",
+    "started": "2026-10-22T06:20:43.372053+00:00",
+    "ended": "2026-10-22T06:20:43.512583+00:00",
+    "seconds": 0.140536236999651,
+    "exit": 0,
+    "environment_overrides": {
+      "CARGO_PROFILE_DEV_DEBUG": "0",
+      "CARGO_PROFILE_TEST_DEBUG": "0",
+      "CARGO_INCREMENTAL": "0",
+      "QCORE_AUDIT_BUILD_COMMIT": "c2ea7bf492ad003260770f93f14fc1061045e043"
+    },
+    "log": "/home/cosmo/.codex/worktrees/logger-effect-contracts/qcore-c/private/contract-cycle4-integration/joint-gate-1/package-verify-libevent.log",
+    "head_after": "c2ea7bf492ad003260770f93f14fc1061045e043",
+    "clean_after": true
+  },
+  {
+    "name": "package-verify-librdkafka",
+    "command": [
+      "/usr/bin/python3",
+      "providers/package.py",
+      "verify",
+      "/home/cosmo/.codex/worktrees/logger-effect-contracts/qcore-c/private/contract-cycle4-integration/joint-gate-1/packages/qcore.librdkafka"
+    ],
+    "cwd": "/home/cosmo/.codex/worktrees/logger-effect-contracts/qcore-c",
+    "source": "c2ea7bf492ad003260770f93f14fc1061045e043",
+    "started": "2026-10-22T06:20:43.557643+00:00",
+    "ended": "2026-10-22T06:20:43.753313+00:00",
+    "seconds": 0.19567211600042356,
+    "exit": 0,
+    "environment_overrides": {
+      "CARGO_PROFILE_DEV_DEBUG": "0",
+      "CARGO_PROFILE_TEST_DEBUG": "0",
+      "CARGO_INCREMENTAL": "0",
+      "QCORE_AUDIT_BUILD_COMMIT": "c2ea7bf492ad003260770f93f14fc1061045e043"
+    },
+    "log": "/home/cosmo/.codex/worktrees/logger-effect-contracts/qcore-c/private/contract-cycle4-integration/joint-gate-1/package-verify-librdkafka.log",
+    "head_after": "c2ea7bf492ad003260770f93f14fc1061045e043",
+    "clean_after": true
+  },
+  {
+    "name": "package-verify-cmetrics",
+    "command": [
+      "/usr/bin/python3",
+      "providers/package.py",
+      "verify",
+      "/home/cosmo/.codex/worktrees/logger-effect-contracts/qcore-c/private/contract-cycle4-integration/joint-gate-1/packages/qcore.cmetrics"
+    ],
+    "cwd": "/home/cosmo/.codex/worktrees/logger-effect-contracts/qcore-c",
+    "source": "c2ea7bf492ad003260770f93f14fc1061045e043",
+    "started": "2026-10-22T06:20:43.797573+00:00",
+    "ended": "2026-10-22T06:20:43.925297+00:00",
+    "seconds": 0.1277285779997328,
+    "exit": 0,
+    "environment_overrides": {
+      "CARGO_PROFILE_DEV_DEBUG": "0",
+      "CARGO_PROFILE_TEST_DEBUG": "0",
+      "CARGO_INCREMENTAL": "0",
+      "QCORE_AUDIT_BUILD_COMMIT": "c2ea7bf492ad003260770f93f14fc1061045e043"
+    },
+    "log": "/home/cosmo/.codex/worktrees/logger-effect-contracts/qcore-c/private/contract-cycle4-integration/joint-gate-1/package-verify-cmetrics.log",
+    "head_after": "c2ea7bf492ad003260770f93f14fc1061045e043",
+    "clean_after": true
+  },
+  {
+    "name": "package-verify-ctraces",
+    "command": [
+      "/usr/bin/python3",
+      "providers/package.py",
+      "verify",
+      "/home/cosmo/.codex/worktrees/logger-effect-contracts/qcore-c/private/contract-cycle4-integration/joint-gate-1/packages/qcore.ctraces"
+    ],
+    "cwd": "/home/cosmo/.codex/worktrees/logger-effect-contracts/qcore-c",
+    "source": "c2ea7bf492ad003260770f93f14fc1061045e043",
+    "started": "2026-10-22T06:20:43.970117+00:00",
+    "ended": "2026-10-22T06:20:44.105317+00:00",
+    "seconds": 0.1352009360007287,
+    "exit": 0,
+    "environment_overrides": {
+      "CARGO_PROFILE_DEV_DEBUG": "0",
+      "CARGO_PROFILE_TEST_DEBUG": "0",
+      "CARGO_INCREMENTAL": "0",
+      "QCORE_AUDIT_BUILD_COMMIT": "c2ea7bf492ad003260770f93f14fc1061045e043"
+    },
+    "log": "/home/cosmo/.codex/worktrees/logger-effect-contracts/qcore-c/private/contract-cycle4-integration/joint-gate-1/package-verify-ctraces.log",
+    "head_after": "c2ea7bf492ad003260770f93f14fc1061045e043",
+    "clean_after": true
+  }
+]

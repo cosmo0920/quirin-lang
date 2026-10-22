@@ -1,0 +1,57 @@
+{
+  "first_gate": {
+    "source": "c2ea7bf492ad003260770f93f14fc1061045e043",
+    "command_count": 22,
+    "wrapper_exit": 1,
+    "failed_commands": {
+      "rust": 101,
+      "lean": 1,
+      "provider-python": 1
+    },
+    "rust": {
+      "passed": 8528,
+      "failed": 1,
+      "ignored": 15,
+      "units": 541,
+      "summaries": 554
+    },
+    "provider_rust": {
+      "passed": 133,
+      "failed": 0,
+      "ignored": 1
+    },
+    "provider_python": {
+      "ran": 25,
+      "failed": 1
+    },
+    "all_five_package_builds_and_verifications": 0,
+    "raw_logs": "/home/cosmo/.codex/worktrees/logger-effect-contracts/qcore-c/private/contract-cycle4-integration/joint-gate-1"
+  },
+  "corrections": [
+    {
+      "kind": "finite model logical error",
+      "source": "1b315995a835ac7f1829bcac95fc8dd1ed80060c",
+      "change": "Current-thread TLS must name a live modeled unretired parent, not a callee or params token. New Rust negative/survival/empty controls and matching Lean role premise. No C defect or source truth inferred."
+    },
+    {
+      "kind": "historical production data control",
+      "source": "af0fefc0a",
+      "change": "Checked version2 source recovery only at old-byte erasure seam; actual current metadata still exercised and original count/proposition/byte assertions retained."
+    },
+    {
+      "kind": "integration import ordering",
+      "change": "Move scheduler/guarded Lean imports before trailing module documentation, preserving every import and model definition."
+    },
+    {
+      "kind": "inherited provider test pin",
+      "old_expected": 64,
+      "actual_before_and_after": 65,
+      "manifest_equal_to_base": true,
+      "manifest_sha256": "bfa750eaa8588582cec1aca674b70c137291165b776861293cdc06c4801939a8",
+      "introducing_commit": "b5f74d79a",
+      "introduced_module": "librdkafka/logging.qv",
+      "change": "Exact count65 plus explicit module membership; no inventory/schema/view weakening."
+    }
+  ],
+  "acceptance": "Pending corrected combined gate, native comparison and committed-matrix Python. First gate is retained failed evidence."
+}
