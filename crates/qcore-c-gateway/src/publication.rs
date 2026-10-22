@@ -309,7 +309,7 @@ fn truncate_at_initializer<'a, 'b>(group: &'b [&'a str]) -> &'b [&'a str] {
 /// well be released through the published object, so that `Leak` is an
 /// overclaim in exactly the sense card `CTWIN-PUBLISH` §3 withdrew for the
 /// direct shape.
-#[derive(Clone, Debug, PartialEq, Eq)]
+#[derive(Clone, Debug, PartialEq, Eq, serde::Serialize, serde::Deserialize)]
 pub struct IndirectPublication {
     /// The static-storage object the store reaches into, named in the
     /// diagnostic.
@@ -426,7 +426,7 @@ fn simple_assignment(statement: &[&str]) -> Option<usize> {
 /// Grouped into one record because all three are read from the same token
 /// stream at the same moment and travel together onto
 /// [`crate::legacy_c::LegacyCfg`].
-#[derive(Clone, Debug, Default, PartialEq, Eq)]
+#[derive(Clone, Debug, Default, PartialEq, Eq, serde::Serialize, serde::Deserialize)]
 pub struct PublicationFacts {
     /// The assignment destinations whose object outlives the call.
     pub destinations: BTreeSet<String>,

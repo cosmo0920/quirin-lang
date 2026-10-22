@@ -85,7 +85,7 @@ use super::{
 ///
 /// This is deliberately a closed enumeration: an "unanalyzable" row asserts a
 /// *named* form, never an unexplained absence.
-#[derive(Clone, Copy, Debug, PartialEq, Eq, PartialOrd, Ord)]
+#[derive(Clone, Copy, Debug, PartialEq, Eq, PartialOrd, Ord, serde::Serialize)]
 pub enum UnanalyzableForm {
     /// A K&R definition: `f(a, b) int a; int b; { … }`. The analyzer's body
     /// finder requires `)` immediately followed by `{`, so it never reads one.
@@ -122,7 +122,7 @@ impl UnanalyzableForm {
 }
 
 /// One enumerated definition that carries no analysis of its own.
-#[derive(Clone, Debug, PartialEq, Eq, PartialOrd, Ord)]
+#[derive(Clone, Debug, PartialEq, Eq, PartialOrd, Ord, serde::Serialize)]
 pub struct UnanalyzableDefinition {
     function: String,
     form: UnanalyzableForm,
@@ -144,7 +144,7 @@ impl UnanalyzableDefinition {
 
 /// Why an inventory does not claim to be the complete main-source definition
 /// set. Every ground is mechanical; none is a judgement call.
-#[derive(Clone, Copy, Debug, PartialEq, Eq, PartialOrd, Ord)]
+#[derive(Clone, Copy, Debug, PartialEq, Eq, PartialOrd, Ord, serde::Serialize)]
 pub enum EnumerationRefusal {
     /// The enumeration-only line-marked preprocessing did not run, so a
     /// definition that exists only after expansion cannot be seen at all.
@@ -248,7 +248,7 @@ impl EnumerationRefusal {
 }
 
 /// The enumerated main-source definition inventory of one translation unit.
-#[derive(Clone, Debug, Default, PartialEq, Eq)]
+#[derive(Clone, Debug, Default, PartialEq, Eq, serde::Serialize)]
 pub struct SourceDefinitionInventory {
     definitions: Vec<String>,
     unanalyzable: Vec<UnanalyzableDefinition>,

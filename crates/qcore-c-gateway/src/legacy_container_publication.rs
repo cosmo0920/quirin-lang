@@ -113,7 +113,7 @@ use super::{
 };
 
 /// The object an entry actual designates.
-#[derive(Clone, Debug, PartialEq, Eq)]
+#[derive(Clone, Debug, PartialEq, Eq, serde::Serialize, serde::Deserialize)]
 pub enum Entry {
     /// `&B->F` or `B`: the object `B` points to.
     Name(String),
@@ -122,7 +122,7 @@ pub enum Entry {
 }
 
 /// Where a published object's container lives.
-#[derive(Clone, Debug, PartialEq, Eq)]
+#[derive(Clone, Debug, PartialEq, Eq, serde::Serialize, serde::Deserialize)]
 pub enum Container {
     /// Reached from this formal, which the body never rebinds.
     CallerFormal(String),
@@ -135,7 +135,7 @@ pub enum Container {
 
 /// One container effect at one call. `formal` records that the entry names a
 /// formal of the function, whose object the caller holds.
-#[derive(Clone, Debug, PartialEq, Eq)]
+#[derive(Clone, Debug, PartialEq, Eq, serde::Serialize, serde::Deserialize)]
 pub enum Operand {
     Published {
         entry: Entry,
@@ -152,14 +152,14 @@ pub enum Operand {
 
 /// An admitted foreign unlink: the fresh site the element's custody takes, and
 /// the containers its bindings reach it through, as spelled.
-#[derive(Clone, Debug, PartialEq, Eq)]
+#[derive(Clone, Debug, PartialEq, Eq, serde::Serialize, serde::Deserialize)]
 pub struct Foreign {
     pub site: usize,
     pub containers: Vec<String>,
 }
 
 /// Every container effect of one call, in parameter order.
-#[derive(Clone, Debug, PartialEq, Eq)]
+#[derive(Clone, Debug, PartialEq, Eq, serde::Serialize, serde::Deserialize)]
 pub struct Operands(pub Vec<Operand>);
 
 /// The names of one body a container may be reached from.

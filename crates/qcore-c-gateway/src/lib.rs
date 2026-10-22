@@ -14,6 +14,9 @@
 pub mod access_path_census;
 mod aggregate_store;
 pub mod atomic_publication_source;
+pub mod audit_ir;
+pub mod audit_ir_capture;
+pub mod audit_ir_store;
 // Card CG19-ATOMIC-SOURCE-ROUTE (gateway rule 11i): C atomics routed to the
 // core weak-memory model.
 pub mod atomic_source_route;
@@ -37,6 +40,7 @@ pub mod contract_clause_standing;
 // Card GATEWAY-ANALYSIS-PATH-OPTIMIZATION: one unit's Clang results reused
 // across the analysis scopes of a worker thread.
 mod clang_reuse;
+pub use clang_reuse::with_audit_unit_lifetimes;
 pub mod cleanup_replay_source;
 pub mod composition_source;
 #[cfg(feature = "indirect-census")]

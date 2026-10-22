@@ -713,7 +713,7 @@ pub fn read_unit(
 
 /// What the stores of a member let a stated state carry: the rewrites and
 /// flag bits a decided discriminant's values close under.
-#[derive(Clone, Debug, Default, PartialEq, Eq)]
+#[derive(Clone, Debug, Default, PartialEq, Eq, serde::Serialize, serde::Deserialize)]
 pub struct Stable {
     pub rewrites: Vec<Rewrite>,
     pub flags: BTreeSet<u64>,

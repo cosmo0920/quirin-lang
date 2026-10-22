@@ -114,6 +114,10 @@ impl<T> UnitCache<T> {
         }
     }
 
+    pub(crate) fn clear(&self) {
+        self.entries.borrow_mut().clear();
+    }
+
     /// The stored result for `key`, or `launch`'s, stored only when it
     /// succeeded. Without a key (an unreusable launch) this is `launch()`.
     pub(crate) fn get_or_launch(
@@ -187,6 +191,10 @@ impl<T: Clone> LaunchCache<T> {
         }
     }
 
+    pub(crate) fn clear(&self) {
+        self.entries.borrow_mut().clear();
+    }
+
     /// `launch(command)`'s result, or the stored result of an identical
     /// earlier launch on this thread. Only a success is stored.
     pub(crate) fn get_or_launch(
@@ -224,6 +232,27 @@ impl<T: Clone> LaunchCache<T> {
         entries.push((key, Rc::new(value.clone())));
         Ok(value)
     }
+}
+
+/// Bound optional Clang reuse to one audit unit, including its certificate
+/// rechecks. Active source/statement readers own their own Rc/Arc leases;
+/// clearing a reuse table cannot invalidate them. Nested boundaries may cause
+/// fresh launches but cannot substitute weaker evidence. Cleanup also runs on
+/// errors and unwinding. This affects only the calling worker thread.
+pub fn with_audit_unit_lifetimes<T>(work: impl FnOnce() -> T) -> T {
+    fn release() {
+        crate::typed_access_path::release_reuse_caches();
+        crate::typed_c_ast::release_reuse_caches();
+    }
+    struct Release;
+    impl Drop for Release {
+        fn drop(&mut self) {
+            release();
+        }
+    }
+    release();
+    let _release = Release;
+    work()
 }
 
 #[cfg(test)]

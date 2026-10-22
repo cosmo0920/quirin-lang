@@ -183,6 +183,18 @@ impl CustodyDerivation {
         self.contextual.get(function)
     }
 
+    /// Final row analysis owns its contextual body after all unit-level body
+    /// evidence has been recorded. Summary records do not contain these CFGs.
+    pub(crate) fn take_contextual_cfg(&mut self, function: &str) -> Option<LegacyCfg> {
+        self.contextual.remove(function)
+    }
+
+    pub(crate) fn retain_contextual_cfgs(&mut self, selected: &[String]) {
+        let selected = selected.iter().map(String::as_str).collect::<BTreeSet<_>>();
+        self.contextual
+            .retain(|name, _| selected.contains(name.as_str()));
+    }
+
     pub(crate) fn environment(&self) -> &ResourceContracts {
         &self.environment
     }
@@ -279,6 +291,9 @@ pub(crate) fn derive_custody_summaries(
         })
         .collect::<BTreeMap<_, _>>();
 
+    let plan = crate::audit_ir::AuditPlan::from_call_graph(graph);
+    drop(candidates);
+
     // Card CG23-RELATIONAL-POSTCONDITIONS: a declared return-code
     // disposition is a declaration of its component like any other.
     let declared = |name: &String| {
@@ -287,7 +302,12 @@ pub(crate) fn derive_custody_summaries(
             || contracts.retaining().contains_key(name)
             || contracts.has_guarded_interface(name)
     };
-    for component in strongly_connected_components(&graph) {
+    for planned in plan.components() {
+        let component = planned
+            .members()
+            .iter()
+            .map(|id| plan.name(*id).expect("plan member").to_owned())
+            .collect::<Vec<_>>();
         // Seeded at "no summary" and iterated until nothing more installs.
         // A member is retried only while some other member of the same
         // component became available, which keeps this linear for the singleton
@@ -432,7 +452,7 @@ pub(crate) fn derive_custody_summaries(
                 break;
             }
         }
-        let recursive = component.len() > 1 || graph[&component[0]].contains(&component[0]);
+        let recursive = planned.is_recursive();
         // (U7) Inside a recursive component a declared contract is what the
         // recursive call site reads, so an inferred record for any member of it
         // repeats that declaration instead of corroborating it. Record the
@@ -539,7 +559,7 @@ pub(crate) fn derive_custody_summaries(
             });
         }
     }
-    premises::record_derivation(&graph, &derivation.inferred, contracts);
+    premises::record_derivation(&plan, &derivation.inferred, contracts);
     // Card VERDICT-CONTRACT-DEPENDENCIES (rule 13f): every name this
     // derivation gave an in-unit summary, which a consulting row's
     // dependencies read through.
@@ -1642,105 +1662,6 @@ fn result_matches(
                 }
         }
     }
-}
-
-/// Tarjan's algorithm, iteratively, returning components in reverse
-/// topological order: every callee's component precedes its callers'.
-fn strongly_connected_components(graph: &BTreeMap<String, BTreeSet<String>>) -> Vec<Vec<String>> {
-    #[derive(Clone, Copy)]
-    struct Node {
-        index: usize,
-        low: usize,
-        on_stack: bool,
-    }
-
-    let nodes = graph.keys().cloned().collect::<Vec<_>>();
-    let position = nodes
-        .iter()
-        .enumerate()
-        .map(|(index, name)| (name.clone(), index))
-        .collect::<BTreeMap<_, _>>();
-    let successors = nodes
-        .iter()
-        .map(|name| {
-            graph[name]
-                .iter()
-                .filter_map(|callee| position.get(callee).copied())
-                .collect::<Vec<_>>()
-        })
-        .collect::<Vec<_>>();
-
-    let mut state = vec![None::<Node>; nodes.len()];
-    let mut stack = Vec::new();
-    let mut components = Vec::new();
-    let mut next_index = 0usize;
-
-    for root in 0..nodes.len() {
-        if state[root].is_some() {
-            continue;
-        }
-        // (node, next successor to visit)
-        let mut work = vec![(root, 0usize)];
-        state[root] = Some(Node {
-            index: next_index,
-            low: next_index,
-            on_stack: true,
-        });
-        next_index += 1;
-        stack.push(root);
-        while let Some((node, cursor)) = work.pop() {
-            if cursor < successors[node].len() {
-                work.push((node, cursor + 1));
-                let successor = successors[node][cursor];
-                match state[successor] {
-                    None => {
-                        state[successor] = Some(Node {
-                            index: next_index,
-                            low: next_index,
-                            on_stack: true,
-                        });
-                        next_index += 1;
-                        stack.push(successor);
-                        work.push((successor, 0));
-                    }
-                    Some(existing) if existing.on_stack => {
-                        let current = state[node].expect("visited node");
-                        state[node] = Some(Node {
-                            low: current.low.min(existing.index),
-                            ..current
-                        });
-                    }
-                    Some(_) => {}
-                }
-                continue;
-            }
-            let current = state[node].expect("visited node");
-            if current.low == current.index {
-                let mut component = Vec::new();
-                while let Some(member) = stack.pop() {
-                    let member_state = state[member].expect("stacked node");
-                    state[member] = Some(Node {
-                        on_stack: false,
-                        ..member_state
-                    });
-                    component.push(nodes[member].clone());
-                    if member == node {
-                        break;
-                    }
-                }
-                component.sort();
-                components.push(component);
-            }
-            if let Some((parent, _)) = work.last().copied() {
-                let parent_state = state[parent].expect("visited node");
-                state[parent] = Some(Node {
-                    low: parent_state.low.min(current.low),
-                    ..parent_state
-                });
-            }
-        }
-    }
-    components
 }
 
 #[path = "legacy_neutral.rs"]

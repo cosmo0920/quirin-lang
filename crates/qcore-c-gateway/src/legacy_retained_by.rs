@@ -35,7 +35,7 @@ use crate::retained_by::{
 };
 
 /// A retained pointer's actual, as spelled.
-#[derive(Clone, Debug, PartialEq, Eq)]
+#[derive(Clone, Debug, PartialEq, Eq, serde::Serialize, serde::Deserialize)]
 pub enum RetainedSpelling {
     /// A string literal.
     Literal,
@@ -50,7 +50,7 @@ pub enum RetainedSpelling {
 }
 
 /// A holder's actual, as spelled.
-#[derive(Clone, Debug, PartialEq, Eq)]
+#[derive(Clone, Debug, PartialEq, Eq, serde::Serialize, serde::Deserialize)]
 pub enum HolderSpelling {
     /// `&L`, `L` a frame holder of the calling function.
     Frame(String),
@@ -70,7 +70,7 @@ pub enum HolderSpelling {
 }
 
 /// The operands of one retaining call, in clause order.
-#[derive(Clone, PartialEq, Eq)]
+#[derive(Clone, PartialEq, Eq, serde::Serialize, serde::Deserialize)]
 pub struct Operands {
     /// `(retained, its spelling, holder, its spelling)`.
     pub retentions: Vec<(RetainedSpelling, String, HolderSpelling, String)>,

@@ -1945,3 +1945,29 @@ fn a_declared_middle_wrapper_governs_its_callers_and_publishes_no_record() {
         contracts.contract("middle")
     );
 }
+
+#[test]
+fn final_contextual_body_moves_without_losing_summary_or_body_data() {
+    let tokens =
+        crate::legacy_c::tokenize("void subject(void) { return; } void other(void) { return; }");
+    let contracts = ResourceContracts::default();
+    let cfg = build_function_cfg(&tokens, "subject", &contracts).unwrap();
+    let mut derivation = CustodyDerivation {
+        environment: contracts,
+        ..CustodyDerivation::default()
+    };
+    derivation.contextual.insert("subject".into(), cfg.clone());
+    derivation.contextual.insert("other".into(), cfg.clone());
+    let before = derivation.records();
+    derivation.retain_contextual_cfgs(&["subject".to_owned()]);
+    assert!(derivation.contextual_cfg("other").is_none());
+    let moved = derivation.take_contextual_cfg("subject").unwrap();
+    assert_eq!(moved, cfg);
+    assert!(derivation.contextual_cfg("subject").is_none());
+    assert!(derivation.take_contextual_cfg("subject").is_none());
+    assert_eq!(derivation.records(), before);
+    assert_eq!(
+        analyze_cfg_with_entry(moved, &EntryCustody::default()),
+        analyze_cfg_with_entry(cfg, &EntryCustody::default())
+    );
+}

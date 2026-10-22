@@ -1,0 +1,221 @@
+{
+  "card": "AUDIT-IR-PLAN",
+  "implementation_base": "d03f6c864f84cfc837db09f7bdb0a2292bc32aab",
+  "validation_head": "45cff3b248fb1ac26ffc2829efe377bb7a1eb63f",
+  "source_sha256": {
+    "crates/qcore-c-gateway/src/audit_ir.rs": "b55e1015c7c8918ad94c306bf6c0ac6c1b3087147082b8862f33821e65d4b68d",
+    "crates/qcore-c-gateway/src/legacy_summary.rs": "5783e0c0a691af89464b3f8e7bc7bdcb1e92dc91a3bcbe9d53974b15ce24fa56",
+    "crates/qcore-c-gateway/src/legacy_summary_premises.rs": "bd82815ff82f49a3538c30bb2ae6e47c64b38dd784a691fb46dfdffc54ddd781",
+    "crates/qcore-c-gateway/src/lib.rs": "0bb8abc95ef31abc772f349d957231ee0f97cbf7e556034a5307c6ee82d9f32f",
+    "crates/qcore-c-gateway/tests/unit/audit_ir.rs": "92760157de29fba4862f27b3d7187f617149e1306d771db9e1a2a7dbed504e23"
+  },
+  "full_standing_gate_passed": false,
+  "reason": "Python committed-matrix test fails: committed HEAD has 361 Lean audits but matrix says 360; own changes add no Lean source. Raw full Rust runner exit remains 101; failed units are separately rechecked.",
+  "steps": [
+    {
+      "name": "clang-version",
+      "argv": [
+        "clang",
+        "--version"
+      ],
+      "exit": 0,
+      "seconds": 0.016,
+      "log": "/home/cosmo/Documents/GitHub/qcore-c/private/audit-ir-plan/20261021T173818Z/clang-version.log"
+    },
+    {
+      "name": "submodules",
+      "argv": [
+        "git",
+        "submodule",
+        "update",
+        "--init",
+        "--recursive"
+      ],
+      "exit": 128,
+      "seconds": 0.024,
+      "log": "/home/cosmo/Documents/GitHub/qcore-c/private/audit-ir-plan/20261021T173818Z/submodules.log"
+    },
+    {
+      "name": "focused",
+      "argv": [
+        "cargo",
+        "test",
+        "-p",
+        "qcore-c-gateway",
+        "--lib",
+        "audit_ir::tests",
+        "--",
+        "--nocapture"
+      ],
+      "exit": 0,
+      "seconds": 33.728,
+      "log": "/home/cosmo/Documents/GitHub/qcore-c/private/audit-ir-plan/20261021T173818Z/focused.log"
+    },
+    {
+      "name": "fmt",
+      "argv": [
+        "cargo",
+        "fmt",
+        "--all",
+        "--",
+        "--check"
+      ],
+      "exit": 0,
+      "seconds": 4.384,
+      "log": "/home/cosmo/Documents/GitHub/qcore-c/private/audit-ir-plan/20261021T173818Z/fmt.log"
+    },
+    {
+      "name": "clippy",
+      "argv": [
+        "cargo",
+        "clippy",
+        "--all-targets",
+        "--",
+        "-D",
+        "warnings"
+      ],
+      "exit": 0,
+      "seconds": 48.929,
+      "log": "/home/cosmo/Documents/GitHub/qcore-c/private/audit-ir-plan/20261021T173818Z/clippy.log"
+    },
+    {
+      "name": "rust",
+      "argv": [
+        "python3",
+        "scripts/run_test_binaries.py",
+        "--jobs",
+        "4",
+        "--log-dir",
+        "/home/cosmo/Documents/GitHub/qcore-c/private/audit-ir-plan/20261021T174337Z-retry/rust-binaries"
+      ],
+      "exit": 101,
+      "seconds": 599.234,
+      "log": "/home/cosmo/Documents/GitHub/qcore-c/private/audit-ir-plan/20261021T174337Z-retry/rust.log"
+    },
+    {
+      "name": "reevaluation-probe",
+      "argv": [
+        "cargo",
+        "run",
+        "-p",
+        "qcore-compiler",
+        "--example",
+        "reevaluation_probe"
+      ],
+      "exit": 0,
+      "seconds": 1.001,
+      "log": "/home/cosmo/Documents/GitHub/qcore-c/private/audit-ir-plan/20261021T174337Z-retry/reevaluation-probe.log"
+    },
+    {
+      "name": "reevaluation-followup",
+      "argv": [
+        "cargo",
+        "run",
+        "-p",
+        "qcore-compiler",
+        "--example",
+        "reevaluation_followup"
+      ],
+      "exit": 0,
+      "seconds": 1.001,
+      "log": "/home/cosmo/Documents/GitHub/qcore-c/private/audit-ir-plan/20261021T174337Z-retry/reevaluation-followup.log"
+    },
+    {
+      "name": "lean",
+      "argv": [
+        "python3",
+        "scripts/check_lean_audits.py",
+        "--jobs",
+        "2"
+      ],
+      "exit": 0,
+      "seconds": 36.007,
+      "log": "/home/cosmo/Documents/GitHub/qcore-c/private/audit-ir-plan/20261021T174337Z-retry/lean.log"
+    },
+    {
+      "name": "python",
+      "argv": [
+        "python3",
+        "-m",
+        "unittest",
+        "discover",
+        "-s",
+        "scripts/tests"
+      ],
+      "exit": 1,
+      "seconds": 38.014,
+      "log": "/home/cosmo/Documents/GitHub/qcore-c/private/audit-ir-plan/20261021T174337Z-retry/python.log"
+    }
+  ],
+  "submodule_retry": {
+    "argv": [
+      "git",
+      "submodule",
+      "update",
+      "--init",
+      "--recursive"
+    ],
+    "exit": 0,
+    "output": "",
+    "execution": "approved outside read-only sandbox; previously installed commit matched gitlink"
+  },
+  "rust": {
+    "raw_runner_exit": 101,
+    "raw_units": 536,
+    "raw_summaries": 549,
+    "raw_totals": {
+      "passed": 8361,
+      "failed": 108,
+      "ignored": 15,
+      "measured": 0,
+      "filtered": 0,
+      "summaries": 549
+    },
+    "failed_units": 47,
+    "sequential_unsandboxed_rechecks_exit": 0,
+    "rechecks": "/home/cosmo/Documents/GitHub/qcore-c/private/audit-ir-plan/20261021T175508Z-unsandboxed-rechecks/rechecks.json",
+    "same_test_inventory_and_denominators": true,
+    "latest_per_unit_evidence": {
+      "scope": "composition of original passing units and exact failed-unit rechecks; not a fresh full-run exit 0",
+      "units": 536,
+      "summaries": 549,
+      "totals": {
+        "passed": 8469,
+        "failed": 0,
+        "ignored": 15,
+        "measured": 0,
+        "filtered": 0
+      }
+    }
+  },
+  "lean": {
+    "exit": 0,
+    "audits": 361
+  },
+  "python": {
+    "exit": 1,
+    "tests": 374,
+    "passed": 373,
+    "failures": 1,
+    "boundary": "committed-matrix-boundary.json",
+    "final_post_tracking": {
+      "argv": [
+        "python3",
+        "-m",
+        "unittest",
+        "discover",
+        "-s",
+        "scripts/tests"
+      ],
+      "exit": 1,
+      "seconds": 57.4,
+      "log": "/home/cosmo/Documents/GitHub/qcore-c/private/audit-ir-plan/20261021T175857Z-final-python/python.log",
+      "scope": "final Python after tracking all card files; no matrix regeneration"
+    }
+  },
+  "excluded_attempts": [
+    "/home/cosmo/Documents/GitHub/qcore-c/private/audit-ir-plan/initial-compile.txt",
+    "/home/cosmo/Documents/GitHub/qcore-c/private/audit-ir-plan/20261021T173818Z/interruption.json"
+  ],
+  "memory_acceptance": "unmeasured; parent AUDIT-IR remains open"
+}

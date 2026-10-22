@@ -1,0 +1,17 @@
+{
+  "head": "45cff3b248fb1ac26ffc2829efe377bb7a1eb63f",
+  "committed_matrix_lean_audits": 360,
+  "committed_audit_sources": 361,
+  "new_audit_since_design_base": [
+    "proof/AuditGuardedDecomposition.lean",
+    "proof/QCore.lean",
+    "proof/QCore/GuardedContractApplications.lean",
+    "proof/QCore/GuardedDecomposition.lean"
+  ],
+  "own_proof_changes": [],
+  "python_exit": 1,
+  "tests_run": 374,
+  "failures": 1,
+  "failure": "test_build_matrix_sections.BuildMatrixSections.test_the_derived_facts_are_recomputed_rather_than_carried",
+  "disposition": "pre-existing committed integration inconsistency; matrix regeneration belongs to integration owner, not this representation-only card"
+}

@@ -87,6 +87,11 @@ thread_local! {
         const { crate::clang_reuse::LaunchCache::new() };
 }
 
+pub(crate) fn release_reuse_caches() {
+    FILTERED_DECLARATIONS.with(crate::clang_reuse::LaunchCache::clear);
+    UNIT_DECLARATIONS.with(crate::clang_reuse::LaunchCache::clear);
+}
+
 fn launch_declarations(
     mut command: std::process::Command,
     source: &str,
@@ -256,4 +261,47 @@ pub fn kind(node: &Value) -> &str {
 /// Read raw child nodes; absent or malformed arrays yield an empty slice.
 pub fn children(node: &Value) -> &[Value] {
     node["inner"].as_array().map_or(&[], Vec::as_slice)
+}
+
+#[cfg(test)]
+mod audit_lifetime_tests {
+    use super::*;
+
+    #[test]
+    fn filtered_ast_ownership_is_released_on_error_and_nested_exit() {
+        let command = || std::process::Command::new("audit-lifetime-test-clang");
+        let mut launches = 0;
+        let result: Result<(), ()> = crate::with_audit_unit_lifetimes(|| {
+            FILTERED_DECLARATIONS
+                .with(|cache| {
+                    cache.get_or_launch(command(), "int x;", |_| {
+                        launches += 1;
+                        Ok(vec![serde_json::json!({"kind":"VarDecl"})])
+                    })
+                })
+                .unwrap();
+            crate::with_audit_unit_lifetimes(|| {
+                FILTERED_DECLARATIONS
+                    .with(|cache| {
+                        cache.get_or_launch(command(), "int x;", |_| {
+                            launches += 1;
+                            Ok(vec![])
+                        })
+                    })
+                    .unwrap();
+            });
+            Err(())
+        });
+        assert!(result.is_err());
+        FILTERED_DECLARATIONS
+            .with(|cache| {
+                cache.get_or_launch(command(), "int x;", |_| {
+                    launches += 1;
+                    Ok(vec![])
+                })
+            })
+            .unwrap();
+        assert_eq!(launches, 3);
+        release_reuse_caches();
+    }
 }

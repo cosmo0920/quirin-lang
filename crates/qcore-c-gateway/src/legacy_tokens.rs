@@ -7,7 +7,7 @@
 
 use super::*;
 
-#[derive(Clone, Debug)]
+#[derive(Clone, Debug, serde::Serialize, serde::Deserialize)]
 pub(crate) struct Token {
     pub(crate) text: String,
     pub(crate) line: usize,

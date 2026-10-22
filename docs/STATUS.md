@@ -1,5 +1,17 @@
 # Current status and evidence boundaries
 
+The [audit IR Card](development/audit-ir-card.md) has an interned component
+planner, opt-in `.qc` CFG captures with fresh-source equality checks, and
+[configured-unit working-set release](reports/audit-ir-lifetimes/README.md).
+Optional Clang AST/layout caches now end at unit boundaries and contextual
+CFGs move into final row analysis after global body evidence is recorded.
+The three contract-settlement routes release obsolete owned environments as
+successors are produced.
+This supplies no new safety coverage. Per-component AST loading, final-summary
+CFG eviction and the 6 GB target / 7 GB whole-job ceiling remain unmeasured.
+The combined gate passes 8,483 Rust tests and 361 Lean audits; Python passes
+373 of 374 with the existing committed-matrix Lean count mismatch retained.
+
 [Actual symbolic hypothesis adoption](reports/premise-symbolic-integration/README.md) adds1,179 typed introductions and169 conjunction flows across eight provider modules while preserving all original hypotheses/graphs/bindings/interpreted facts and reviewed C identities. All169 evidence-free flows remain Open. Fresh merged-main gate3 passes8,456 Rust/360 Lean, providers and allfive packages; allthree freshTIP audits/full-record comparisons preserve5,781 null records,148 reading receipts and50 canonical capture instances with zero verdict movement. BASE is explicitly borrowed from the prior completed TIP. Fresh committed-matrix Python374 passes0 at `21b32bee6359c16c6390bf5fe3eb7483c1f88fa4`; final regenerated-matrix Python374 also passes0 with matrix SHA unchanged, recorded in the joint receipt.
 
 [Typed contract lifecycle symbols](reports/contract-lifecycle-symbols/README.md) support contextual `|^+`/`|^-` metadata for literal resource IDs and separately declared hypothesis atoms. The source/graph/erasure/inheritance controls and matching audited Lean models pass the joint gate. This supplies no executable lifecycle, truth mutation, evidence invalidation or verdict promotion; source bindings remain Open.

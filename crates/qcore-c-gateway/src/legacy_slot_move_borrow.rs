@@ -28,7 +28,7 @@ use crate::slot_move_borrow::{
 };
 
 /// A slot actual, as spelled.
-#[derive(Clone, Debug, PartialEq, Eq)]
+#[derive(Clone, Debug, PartialEq, Eq, serde::Serialize, serde::Deserialize)]
 pub enum SlotActual {
     /// `&L`.
     Local(String),
@@ -39,14 +39,14 @@ pub enum SlotActual {
 }
 
 /// A derived out slot's base actual.
-#[derive(Clone, Debug, PartialEq, Eq)]
+#[derive(Clone, Debug, PartialEq, Eq, serde::Serialize, serde::Deserialize)]
 pub enum BaseActual {
     Place(String),
     Untracked,
 }
 
 /// One slot clause's operands at a call.
-#[derive(Clone, Debug, PartialEq, Eq)]
+#[derive(Clone, Debug, PartialEq, Eq, serde::Serialize, serde::Deserialize)]
 pub enum SlotOperand {
     Move {
         text: String,

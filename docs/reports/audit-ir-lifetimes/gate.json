@@ -1,0 +1,310 @@
+{
+  "cards": [
+    "AUDIT-IR-FRAGMENTS",
+    "AUDIT-IR-LIFETIMES"
+  ],
+  "validation_head": "45cff3b248fb1ac26ffc2829efe377bb7a1eb63f",
+  "source_sha256": {
+    "crates/qcore-audit/src/ir_capture.rs": "a71803597e8521bb8302b8efc46d2708b34aa6ba1d849bb51709287ae127df9c",
+    "crates/qcore-audit/src/lib.rs": "b4084a67e421a73077c075d0f3b36a2d5fc0561173df928bb94534319dc84a6c",
+    "crates/qcore-audit/tests/configured_cli.rs": "3829c06cd4a4f2e42fe578f0c972d2d975b1d7157443b6244a85892d9ec539ad",
+    "crates/qcore-c-gateway/src/audit_ir.rs": "b55e1015c7c8918ad94c306bf6c0ac6c1b3087147082b8862f33821e65d4b68d",
+    "crates/qcore-c-gateway/src/audit_ir_capture.rs": "68330e57df97ea9028a4b4bca208e5f8eb34c7b9d3e85b903f9c2f259f48ed48",
+    "crates/qcore-c-gateway/src/audit_ir_store.rs": "e2cdbb2e939bacbf2c3451303ef621b97d201d1c7670c669ae9f610af9656d1c",
+    "crates/qcore-c-gateway/src/clang_reuse.rs": "ad681d246e3e5653ff3559de082c090eb640df4a190e3e648bfea2f4df8bf807",
+    "crates/qcore-c-gateway/src/constructed_state.rs": "2a3bcbf0fb5944e9d925fc3ac085fd15f023def2c12b2bd360570b158cadd27a",
+    "crates/qcore-c-gateway/src/indexed_collection.rs": "2298f9624af1182dffdc3b5b4e4e1c64904d0e321239a878928721fb46e5262b",
+    "crates/qcore-c-gateway/src/indirect_chain_access.rs": "8521ef3d541c1c6bdaf63b3f4c21222d30570465fba9245c662fbcba0cd14fa0",
+    "crates/qcore-c-gateway/src/legacy_c.rs": "f39e7b34fff6f3f17d4f17035e97cb4693c7485cf2ed244455b2be80b43e8de5",
+    "crates/qcore-c-gateway/src/legacy_callback_route.rs": "0c75e1f5736fda4536f0f3adc64aca2b5983429096d7a7eaee0c8613862e828d",
+    "crates/qcore-c-gateway/src/legacy_callee_scope.rs": "4de2efc21102d095dfa4633a1bd9078c6d7b8af626e88bc3401b5ab14c255361",
+    "crates/qcore-c-gateway/src/legacy_constructed_route.rs": "5929368adc077ceb914cbec52fce77a3b1de7b693e48819266661e8b76b4544e",
+    "crates/qcore-c-gateway/src/legacy_container_publication.rs": "18b20a7d5b046e4d50cb51f9020a03b2dbd33590347c0d02f161623b539fa018",
+    "crates/qcore-c-gateway/src/legacy_descriptor_custody.rs": "0c4d35721bd2c8b10bd154536f8a98a95c3702b60d035db2c5c235a856e4a203",
+    "crates/qcore-c-gateway/src/legacy_enumeration.rs": "89962b8cc5e24bbf26b941c038f51b20065b2d541868abc65582ff876747b205",
+    "crates/qcore-c-gateway/src/legacy_member_path_route.rs": "2792f2a56756fa9264aceee8613165479bff1e5122567331a7ddf6c150278b9a",
+    "crates/qcore-c-gateway/src/legacy_reference_count.rs": "df00c7a1e4e2cf13f814a4ed81259867d2c4d6e1b75f1cf632b9a6b315ae6ec3",
+    "crates/qcore-c-gateway/src/legacy_refused_operands.rs": "5d223660224b40c2eb86d7239b5d5efa374b0c56f7eec602f9b895554a3e2380",
+    "crates/qcore-c-gateway/src/legacy_retained_by.rs": "e3233e647b563e1dd185ee8e611496fefbba3542be44070499ce8b992368b1cc",
+    "crates/qcore-c-gateway/src/legacy_slot_move_borrow.rs": "c99961b345bc4d76cd931227f1b87634dff27b36674bcd235595a8e8e4066322",
+    "crates/qcore-c-gateway/src/legacy_sub_object_store.rs": "eb4e4610daca2944ffbf065ae829a268e96481d24d6bc9c44e02328e36d5f42c",
+    "crates/qcore-c-gateway/src/legacy_summary.rs": "da4c6837a9e67e1b183f8ed6281de8c7f9536421635ad8e6655f210c82f5bf6a",
+    "crates/qcore-c-gateway/src/legacy_summary_premises.rs": "bd82815ff82f49a3538c30bb2ae6e47c64b38dd784a691fb46dfdffc54ddd781",
+    "crates/qcore-c-gateway/src/legacy_tokens.rs": "236c5531857c387704d6a389539730a3f1b500f0a4a3bccd63f0d4e6f80728e6",
+    "crates/qcore-c-gateway/src/lib.rs": "85ff7876a050ee1d6fc4c874c8928123778c5f30ce6f8fe412a75a6ddc91973f",
+    "crates/qcore-c-gateway/src/pointer_store.rs": "de9b584422b054b0ae3b3b49fdd160ed2066e8f66b090da1539e91e924e223e1",
+    "crates/qcore-c-gateway/src/publication.rs": "4253bf462b1698a5682b38e0d1983d1f6f46fdde549e5b885f5be03c20b23dd6",
+    "crates/qcore-c-gateway/src/typed_access_path.rs": "eab5daf029d94bf510b91dc07822bdf266a7bdae2519efe2c188f76e80e6951d",
+    "crates/qcore-c-gateway/src/typed_c_ast.rs": "56649293e16b09c775e1823919b228aa2c4cae7bb27cde077b1d14778b499d3c",
+    "crates/qcore-c-gateway/tests/unit/audit_ir.rs": "92760157de29fba4862f27b3d7187f617149e1306d771db9e1a2a7dbed504e23",
+    "crates/qcore-c-gateway/tests/unit/audit_ir_fragments.rs": "5b42f3fc65dd486bf1e1f6531277d7d2f333108ee9dc5f4c238289533f3b66de",
+    "crates/qcore-c-gateway/tests/unit/legacy_summary.rs": "38d8e866e8d84ee6dc470527b3b54b042baa4846b664821678ff1cad11f89ec8"
+  },
+  "environment": {
+    "cwd": "/home/cosmo/Documents/GitHub/qcore-c",
+    "CARGO_BUILD_JOBS": "4",
+    "CARGO_INCREMENTAL": "0",
+    "CARGO_PROFILE_DEV_DEBUG": "0",
+    "CARGO_TARGET_DIR": "/tmp/qcore-audit-ir-fragments-target"
+  },
+  "full_standing_gate_passed": false,
+  "reason": "Final Python has one pre-existing committed-matrix failure: Lean count 360 in matrix, 361 Audit sources in unchanged HEAD; no proof or matrix edits.",
+  "clang": "present: Ubuntu clang version 21.1.8 (6ubuntu1)",
+  "steps": [
+    {
+      "name": "submodules",
+      "argv": [
+        "git",
+        "submodule",
+        "update",
+        "--init",
+        "--recursive"
+      ],
+      "exit": 0,
+      "seconds": 0.021,
+      "log": "/home/cosmo/Documents/GitHub/qcore-c/private/audit-ir-lifetimes/20261021T235334Z/submodules.log"
+    },
+    {
+      "name": "clang-version",
+      "argv": [
+        "clang",
+        "--version"
+      ],
+      "exit": 0,
+      "seconds": 0.013,
+      "log": "/home/cosmo/Documents/GitHub/qcore-c/private/audit-ir-lifetimes/20261021T235334Z/clang-version.log"
+    },
+    {
+      "name": "focused-store",
+      "argv": [
+        "cargo",
+        "test",
+        "-p",
+        "qcore-c-gateway",
+        "--lib",
+        "audit_ir_store::tests",
+        "--",
+        "--nocapture"
+      ],
+      "exit": 0,
+      "seconds": 17.814,
+      "log": "/home/cosmo/Documents/GitHub/qcore-c/private/audit-ir-lifetimes/20261021T235334Z/focused-store.log"
+    },
+    {
+      "name": "focused-lifetimes",
+      "argv": [
+        "cargo",
+        "test",
+        "-p",
+        "qcore-c-gateway",
+        "--lib",
+        "audit_lifetime_tests"
+      ],
+      "exit": 0,
+      "seconds": 0.039,
+      "log": "/home/cosmo/Documents/GitHub/qcore-c/private/audit-ir-lifetimes/20261021T235334Z/focused-lifetimes.log"
+    },
+    {
+      "name": "focused-contextual",
+      "argv": [
+        "cargo",
+        "test",
+        "-p",
+        "qcore-c-gateway",
+        "--lib",
+        "final_contextual_body_moves"
+      ],
+      "exit": 0,
+      "seconds": 0.04,
+      "log": "/home/cosmo/Documents/GitHub/qcore-c/private/audit-ir-lifetimes/20261021T235334Z/focused-contextual.log"
+    },
+    {
+      "name": "focused-cli",
+      "argv": [
+        "cargo",
+        "test",
+        "-p",
+        "qcore-audit",
+        "--test",
+        "configured_cli",
+        "ir_capture",
+        "--",
+        "--nocapture"
+      ],
+      "exit": 0,
+      "seconds": 29.722,
+      "log": "/home/cosmo/Documents/GitHub/qcore-c/private/audit-ir-lifetimes/20261021T235334Z/focused-cli.log"
+    },
+    {
+      "name": "fmt",
+      "argv": [
+        "cargo",
+        "fmt",
+        "--all",
+        "--",
+        "--check"
+      ],
+      "exit": 0,
+      "seconds": 3.753,
+      "log": "/home/cosmo/Documents/GitHub/qcore-c/private/audit-ir-lifetimes/20261021T235334Z/fmt.log"
+    },
+    {
+      "name": "clippy",
+      "argv": [
+        "cargo",
+        "clippy",
+        "--all-targets",
+        "--",
+        "-D",
+        "warnings"
+      ],
+      "exit": 0,
+      "seconds": 22.86,
+      "log": "/home/cosmo/Documents/GitHub/qcore-c/private/audit-ir-lifetimes/20261021T235334Z/clippy.log"
+    },
+    {
+      "name": "census-feature",
+      "argv": [
+        "cargo",
+        "check",
+        "-p",
+        "qcore-c-gateway",
+        "--features",
+        "indirect-census"
+      ],
+      "exit": 0,
+      "seconds": 8.708,
+      "log": "/home/cosmo/Documents/GitHub/qcore-c/private/audit-ir-lifetimes/20261021T235334Z/census-feature.log"
+    },
+    {
+      "name": "rust",
+      "argv": [
+        "python3",
+        "scripts/run_test_binaries.py",
+        "--jobs",
+        "8",
+        "--log-dir",
+        "/home/cosmo/Documents/GitHub/qcore-c/private/audit-ir-lifetimes/20261021T235334Z/rust-binaries"
+      ],
+      "exit": 0,
+      "seconds": 551.561,
+      "log": "/home/cosmo/Documents/GitHub/qcore-c/private/audit-ir-lifetimes/20261021T235334Z/rust.log"
+    },
+    {
+      "name": "reevaluation-probe",
+      "argv": [
+        "cargo",
+        "run",
+        "-p",
+        "qcore-compiler",
+        "--example",
+        "reevaluation_probe"
+      ],
+      "exit": 0,
+      "seconds": 0.05,
+      "log": "/home/cosmo/Documents/GitHub/qcore-c/private/audit-ir-lifetimes/20261021T235334Z/reevaluation-probe.log"
+    },
+    {
+      "name": "reevaluation-followup",
+      "argv": [
+        "cargo",
+        "run",
+        "-p",
+        "qcore-compiler",
+        "--example",
+        "reevaluation_followup"
+      ],
+      "exit": 0,
+      "seconds": 0.398,
+      "log": "/home/cosmo/Documents/GitHub/qcore-c/private/audit-ir-lifetimes/20261021T235334Z/reevaluation-followup.log"
+    },
+    {
+      "name": "lean",
+      "argv": [
+        "python3",
+        "scripts/check_lean_audits.py",
+        "--jobs",
+        "2"
+      ],
+      "exit": 0,
+      "seconds": 31.707,
+      "log": "/home/cosmo/Documents/GitHub/qcore-c/private/audit-ir-lifetimes/20261021T235334Z/lean.log"
+    },
+    {
+      "name": "python",
+      "argv": [
+        "python3",
+        "-m",
+        "unittest",
+        "discover",
+        "-s",
+        "scripts/tests"
+      ],
+      "exit": 1,
+      "seconds": 31.15,
+      "log": "/home/cosmo/Documents/GitHub/qcore-c/private/audit-ir-lifetimes/20261021T235334Z/python.log"
+    }
+  ],
+  "rust": {
+    "jobs": 8,
+    "phases_seconds": {
+      "build": 91.026,
+      "capture": 7.806,
+      "run": 452.603
+    },
+    "problems": [],
+    "totals": {
+      "passed": 8483,
+      "failed": 0,
+      "ignored": 15,
+      "measured": 0,
+      "filtered": 0,
+      "summaries": 549
+    },
+    "units_run": 536,
+    "units_failed": [],
+    "ok": true
+  },
+  "lean": {
+    "exit": 0,
+    "audits": 361
+  },
+  "python": {
+    "initial": {
+      "exit": 1,
+      "tests": 374,
+      "passed": 372,
+      "failures": 2,
+      "reason": "Existing matrix mismatch plus unregistered test-owned walks."
+    },
+    "final": {
+      "name": "python-post-hygiene",
+      "argv": [
+        "python3",
+        "-m",
+        "unittest",
+        "discover",
+        "-s",
+        "scripts/tests"
+      ],
+      "exit": 1,
+      "seconds": 30.86,
+      "log": "/home/cosmo/Documents/GitHub/qcore-c/private/audit-ir-lifetimes/20261022T000620Z-python/python.log",
+      "test_hygiene_sha256": "4a13fd5a93ce246ad0ab904630f84881e78389ed83770bfb9c910dbb5d20659e",
+      "test_hygiene_unchanged": true,
+      "rust_sources_changed_since_gate": [],
+      "head": "45cff3b248fb1ac26ffc2829efe377bb7a1eb63f",
+      "tests": 374,
+      "passed": 373,
+      "failures": 1,
+      "failure": "test_build_matrix_sections.BuildMatrixSections.test_the_derived_facts_are_recomputed_rather_than_carried"
+    },
+    "baseline_boundary": "../audit-ir-plan/committed-matrix-boundary.json"
+  },
+  "source_guard": {
+    "changed": [],
+    "head_at_end": "45cff3b248fb1ac26ffc2829efe377bb7a1eb63f"
+  },
+  "incomplete_attempts": "attempts.json",
+  "memory_acceptance": "unmeasured; no 6 GB target / 7 GB ceiling claim; parent card remains open"
+}
