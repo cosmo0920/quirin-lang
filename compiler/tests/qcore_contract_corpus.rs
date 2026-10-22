@@ -2092,6 +2092,9 @@ const EXPECTED_CONTRACTS: &[(&str, &str, usize)] = &[
     // Card W45-CALLEE-CASCADE-RESIDUAL round 3: the FIFO queue destructor: marker,
     // borrowed `ctx`, released `q`, `none`.
     ("monkey/intrusive_list.qv", "mk_fifo_queue_destroy", 4),
+    // Card W48-SCHED-CLEANUP-PRODUCTION (gateway rule 34): the element
+    // destroyer, eight named premises beside its three ensures.
+    ("monkey/intrusive_list.qv", "mk_http_thread_destroy", 12),
     // Card W36-CORPUS-CONTRACTS-3: this card's ONE variadic declaration, the
     // `fluent_bit/logging.qv` shape one library over — five clauses because
     // of `resource_variadic_data_tail()`. Read from
