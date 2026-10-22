@@ -6862,7 +6862,7 @@
   "workspace_tests": 8532,
   "provider_tests": 133,
   "python_evidence_validator_tests": 374,
-  "lean_audits": 365,
+  "lean_audits": 366,
   "lean_audit_files": [
    "AuditAbiEnumConstPointer.lean",
    "AuditAggregateOwnedField.lean",
@@ -6977,6 +6977,7 @@
    "AuditDialectTargetIdentity.lean",
    "AuditDisjointFootprint.lean",
    "AuditElaborationCore.lean",
+   "AuditElementDestroyer.lean",
    "AuditElaboratorCallFootprints.lean",
    "AuditEnumerationAttribution.lean",
    "AuditEpochAccounting.lean",
