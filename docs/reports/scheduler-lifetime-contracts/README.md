@@ -26,7 +26,7 @@ global hypothesis negation.
 
 The actual source path is `sched_thread_cleanup` (scheduler.c:614–632) to
 `mk_http_thread_destroy` (http_thread.c:251–276), then inline
-`mk_thread_destroy` (thread_libco.h:62–80). Destruction conditionally frees the
+`mk_thread_destroy` (thread_libco.h:64–80). Destruction conditionally frees the
 current thread's libco params and clears **that** TLS slot, unlinks the HTTP
 node, resets the borrowed session/channel/event type, invokes optional
 `cb_destroy` on the embedded data, deletes the coroutine, then frees the
@@ -49,7 +49,7 @@ no guarded failure/unchanged branch. Its result type carries no Safe verdict
 or standing, and no production analysis caller reads it.
 
 The source-bound wrapper additionally checks all seven complete source hashes
-and all nine independently expected Context coordinates. A finite trace is a
+and all nine independently expected Context coordinates. Its context digest also binds the exact readable specification, symbol inventory, Rust model and Lean model bytes. A finite trace is a
 mathematical input; authenticating its actual C execution and callback closure
 is a separate Open obligation. Lean models admission, each callback effect,
 ordered complete cleanup replay and retirement; twelve registered theorems

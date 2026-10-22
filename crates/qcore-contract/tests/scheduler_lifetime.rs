@@ -54,17 +54,35 @@ fn tls_absent_and_empty_list_are_distinct_real_alternatives() {
 }
 #[test]
 fn positive_callback_effects_are_checked_and_not_assumed_neutral() {
-    let mut m = model();
-    let effects = vec![
-        CallbackEffect::Read(2),
-        CallbackEffect::Write(10),
-        CallbackEffect::Release(10),
-    ];
-    m.threads.get_mut(&2).unwrap().callback = Some(effects.clone());
-    let mut t = trace();
-    t.insert(4, Step::Callback(2, effects));
-    assert!(!check_model(&m, &t).unwrap().after().live.contains(&10));
-    assert!(check_model(&m, &trace()).is_err());
+    for params in [false, true] {
+        for effects in [
+            vec![],
+            vec![
+                CallbackEffect::Read(2),
+                CallbackEffect::Write(10),
+                CallbackEffect::Release(10),
+            ],
+        ] {
+            let mut m = model();
+            if !params {
+                m.tls_params = None;
+            }
+            m.threads.get_mut(&2).unwrap().callback = Some(effects.clone());
+            let mut t = if params {
+                trace()
+            } else {
+                trace()[2..].to_vec()
+            };
+            t.insert(
+                if params { 4 } else { 2 },
+                Step::Callback(2, effects.clone()),
+            );
+            let checked = check_model(&m, &t).unwrap();
+            assert_eq!(checked.after().live.contains(&10), effects.is_empty());
+            t.remove(if params { 4 } else { 2 });
+            assert!(check_model(&m, &t).is_err());
+        }
+    }
 }
 #[test]
 fn callback_cannot_release_parent_callee_borrow_or_saved_successor() {
