@@ -57,7 +57,22 @@ impl SourceBinding {
             }
         }
         Ok(Self {
-            digest: sha256_hex(&serde_json::to_vec(SOURCE_FILES).map_err(|e| e.to_string())?),
+            digest: sha256_hex(
+                &serde_json::to_vec(&(
+                    "monkey-scheduler-lifetime-model-v1",
+                    SOURCE_REVISION,
+                    SOURCE_FILES,
+                    include_str!(
+                        "../../../docs/reports/scheduler-lifetime-contracts/scheduler.qgd"
+                    ),
+                    include_str!(
+                        "../../../docs/reports/scheduler-lifetime-contracts/hypotheses.json"
+                    ),
+                    include_str!("scheduler_lifetime.rs"),
+                    include_str!("../../../proof/QCore/SchedulerLifetime.lean"),
+                ))
+                .map_err(|e| e.to_string())?,
+            ),
         })
     }
     pub fn digest(&self) -> &str {
@@ -180,6 +195,13 @@ pub fn check_model(before: &Model, trace: &[Step]) -> Result<CheckedModel, Strin
             .tls_params
             .is_some_and(|p| before.callback_owned.contains(&p))
         || !before.event_connection.is_subset(&before.live)
+        || before
+            .event_connection
+            .iter()
+            .any(|p| !before.threads.values().any(|t| t.borrowed[2] == *p))
+        || before
+            .current_thread
+            .is_some_and(|p| before.callback_owned.contains(&p))
         || before
             .current_thread
             .is_some_and(|p| !before.live.contains(&p))

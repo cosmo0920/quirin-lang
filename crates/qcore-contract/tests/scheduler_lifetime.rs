@@ -172,3 +172,13 @@ fn source_binding_refuses_missing_added_and_modified_inventory() {
     sources.insert("extra".into(), vec![]);
     assert!(SourceBinding::verify(&sources).is_err());
 }
+
+#[test]
+fn event_state_and_current_tls_cannot_alias_callback_owned_storage() {
+    let mut m = model();
+    m.event_connection.insert(2);
+    assert!(check_model(&m, &trace()).is_err());
+    m = model();
+    m.current_thread = Some(10);
+    assert!(check_model(&m, &trace()).is_err());
+}

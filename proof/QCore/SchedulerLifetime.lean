@@ -66,10 +66,10 @@ def admission (s : State) : Prop :=
     (∀ p ∈ t.borrowed, p ∈ s.live ∧ p ∉ ownedIds s) ∧
     (∀ es, t.callback = some es → es.length ≤ 64)) ∧
   (∀ p ∈ s.callbackOwned, p ∈ s.live ∧ p ∉ ownedIds s ∧
-    p ∉ borrowedIds s ∧ s.tlsParams ≠ some p) ∧
+    p ∉ borrowedIds s ∧ s.tlsParams ≠ some p ∧ s.currentThread ≠ some p) ∧
   (∀ p, s.tlsParams = some p → p ∈ s.live ∧ p ∉ ownedIds s ∧ p ∉ borrowedIds s) ∧
   (∀ p, s.currentThread = some p → p ∈ s.live ∧ p ∉ s.selected) ∧
-  (∀ p ∈ s.eventConnection, p ∈ s.live)
+  (∀ p ∈ s.eventConnection, p ∈ s.live ∧ ∃ t ∈ s.threads, t.borrowed[2]! = p)
 
 /-- Ordered effects of one C destroy call, with both explicit callback branches. -/
 def destroyTrace (params : Option Nat) (t : Thread) (event : Nat) : List Step :=
@@ -80,6 +80,49 @@ def destroyTrace (params : Option Nat) (t : Thread) (event : Nat) : List Step :=
 
 /-- Resource retirement is deletion, never a proof that a C free occurred. -/
 def retire (ids live : List Nat) := live.filter (fun p => !(p ∈ ids))
+
+/-- Full ordered cleanup replay; inputs are abstract allocation tokens. -/
+def cleanup (protectedIds : List Nat) : List Nat → State → Option (State × List Step)
+  | [], s => some (s, [])
+  | parent :: rest, s => do
+    let thread ← s.threads.find? (fun t => t.parent == parent)
+    let event := thread.borrowed[2]!
+    let live := match s.tlsParams with
+      | none => s.live
+      | some p => s.live.filter (· != p)
+    let (live, callbackOwned) ← match thread.callback with
+      | none => some (live, s.callbackOwned)
+      | some effects => callbackReplay protectedIds live s.callbackOwned effects
+    let next := { s with
+      tlsParams := none
+      selected := s.selected.filter (· != parent)
+      threads := s.threads.filter (fun t => t.parent != parent)
+      live := retire [thread.parent, thread.coroutine] live
+      callbackOwned := callbackOwned
+      eventConnection := if event ∈ s.eventConnection then s.eventConnection else event :: s.eventConnection }
+    let (after, tail) ← cleanup protectedIds rest next
+    pure (after, destroyTrace s.tlsParams thread event ++ tail)
+
+/-- This mathematical decision is not extraction of the Rust implementation. -/
+noncomputable def checkModel (before : State) (trace : List Step) : Option State := by
+  classical
+  exact if admission before ∧ trace.length ≤ 2560 then
+    match cleanup (ownedIds before ++ borrowedIds before ++ before.tlsParams.toList)
+        before.selected before with
+    | none => none
+    | some (after, expected) => if trace = expected then some after else none
+  else none
+
+theorem wrong_worker_refuses (before : State) (trace : List Step)
+    (wrong : before.worker ≠ before.currentWorker) : checkModel before trace = none := by
+  simp only [checkModel]
+  split
+  next h => exact False.elim (wrong h.1.1)
+  next => rfl
+
+theorem empty_cleanup_has_no_effects (s : State) (protectedIds : List Nat) :
+    cleanup protectedIds [] s = some (s, []) := by rfl
+
 
 theorem release_protected_refuses (protectedIds live owned : List Nat) (p : Nat)
     (inProtected : p ∈ protectedIds) :
@@ -115,7 +158,7 @@ theorem retiring_current_tls_forbids_admission (s : State) (p : Nat)
   intro h
   exact (h.2.2.2.2.2.2.2.2.2.2.2.1 p tls).2 selected
 
-theorem no_tls_clear_in_empty_cleanup :
+theorem tls_absent_destroy_has_no_params_free_and_clear :
     destroyTrace none { parent := 1, coroutine := 2, suspended := true, borrowed := [3,4,5], callback := none } 5 =
     [.unlink 1, .resetEvent 5, .deleteCoroutine 2, .freeParent 1] := by rfl
 

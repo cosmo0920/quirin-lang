@@ -7,5 +7,8 @@ import QCore.SchedulerLifetime
 #print axioms QCore.SchedulerLifetime.retired_owner_cannot_remain
 #print axioms QCore.SchedulerLifetime.invalid_membership_forbids_admission
 #print axioms QCore.SchedulerLifetime.retiring_current_tls_forbids_admission
-#print axioms QCore.SchedulerLifetime.no_tls_clear_in_empty_cleanup
+#print axioms QCore.SchedulerLifetime.tls_absent_destroy_has_no_params_free_and_clear
 #print axioms QCore.SchedulerLifetime.callback_is_explicit_before_retirement
+
+#print axioms QCore.SchedulerLifetime.wrong_worker_refuses
+#print axioms QCore.SchedulerLifetime.empty_cleanup_has_no_effects
