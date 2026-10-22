@@ -1,0 +1,71 @@
+{
+  "note": "DETACH-RESULT-WRAPPER-COMPOSITION gate attempt 2 at 9ecc941d5f18739296cf573a2476dbb51a59fbb1 (code equal to c3301ff41; the measured TIP snapshot source), run in this worktree under the shared validation lock with CARGO_BUILD_JOBS=6, CARGO_INCREMENTAL=0 and dev/test debug info off (build tuning only; attempt 1 exhausted the shared disk and is retained as not evidence). Rust 542 units/555 summaries, 8549 passed/0 failed/15 ignored/0 filtered; fmt, Clippy (-D warnings) and both reevaluation examples exit 0; 366 Lean audits pass. Root Python ran 374 tests with exactly one failure, the expected stale committed matrix (lean_audits 365 vs produced 366), which the integrator's matrix regeneration closes. providers/ is unchanged, so no provider gate. The Clang recording beside this file comes from this same gate run.",
+  "workspace_tests": 8549,
+  "python_evidence_validator_tests": 374,
+  "python_failures": 1,
+  "python_failure": "test_build_matrix_sections derived facts: committed lean_audits 365 != produced 366 (stale matrix, integrator-owned)",
+  "reevaluation_probe_exit": 0,
+  "reevaluation_followup_exit": 0,
+  "cargo_fmt": "clean",
+  "cargo_clippy": "clean",
+  "standing_gate": "complete except the stale-matrix Python failure",
+  "lean_audits": 366,
+  "clang": "present: Ubuntu clang version 21.1.8 (6ubuntu1)",
+  "steps": {
+    "submodules": {
+      "exit": 0,
+      "start": "2026-10-22T18:30:18Z",
+      "end": "2026-10-22T18:30:18Z",
+      "log": "/home/cosmo/Documents/GitHub/qcore-c/.claude/worktrees/agent-a9d84cd5d8c0b76b8/private/detach-wrapper/gate-2/submodules.log"
+    },
+    "clang": {
+      "exit": 0,
+      "start": "2026-10-22T18:30:18Z",
+      "end": "2026-10-22T18:30:18Z",
+      "log": "/home/cosmo/Documents/GitHub/qcore-c/.claude/worktrees/agent-a9d84cd5d8c0b76b8/private/detach-wrapper/gate-2/clang.log"
+    },
+    "rust": {
+      "exit": 0,
+      "start": "2026-10-22T18:30:18Z",
+      "end": "2026-10-22T18:40:06Z",
+      "log": "/home/cosmo/Documents/GitHub/qcore-c/.claude/worktrees/agent-a9d84cd5d8c0b76b8/private/detach-wrapper/gate-2/rust.log"
+    },
+    "fmt": {
+      "exit": 0,
+      "start": "2026-10-22T18:40:06Z",
+      "end": "2026-10-22T18:40:10Z",
+      "log": "/home/cosmo/Documents/GitHub/qcore-c/.claude/worktrees/agent-a9d84cd5d8c0b76b8/private/detach-wrapper/gate-2/fmt.log"
+    },
+    "clippy": {
+      "exit": 0,
+      "start": "2026-10-22T18:40:10Z",
+      "end": "2026-10-22T18:40:43Z",
+      "log": "/home/cosmo/Documents/GitHub/qcore-c/.claude/worktrees/agent-a9d84cd5d8c0b76b8/private/detach-wrapper/gate-2/clippy.log"
+    },
+    "probe": {
+      "exit": 0,
+      "start": "2026-10-22T18:40:43Z",
+      "end": "2026-10-22T18:40:43Z",
+      "log": "/home/cosmo/Documents/GitHub/qcore-c/.claude/worktrees/agent-a9d84cd5d8c0b76b8/private/detach-wrapper/gate-2/probe.log"
+    },
+    "followup": {
+      "exit": 0,
+      "start": "2026-10-22T18:40:43Z",
+      "end": "2026-10-22T18:40:43Z",
+      "log": "/home/cosmo/Documents/GitHub/qcore-c/.claude/worktrees/agent-a9d84cd5d8c0b76b8/private/detach-wrapper/gate-2/followup.log"
+    },
+    "lean": {
+      "exit": 0,
+      "start": "2026-10-22T18:40:43Z",
+      "end": "2026-10-22T18:40:57Z",
+      "log": "/home/cosmo/Documents/GitHub/qcore-c/.claude/worktrees/agent-a9d84cd5d8c0b76b8/private/detach-wrapper/gate-2/lean.log"
+    },
+    "python": {
+      "exit": 1,
+      "start": "2026-10-22T18:40:57Z",
+      "end": "2026-10-22T18:41:33Z",
+      "log": "/home/cosmo/Documents/GitHub/qcore-c/.claude/worktrees/agent-a9d84cd5d8c0b76b8/private/detach-wrapper/gate-2/python.log"
+    }
+  },
+  "test_binaries_summary": "/home/cosmo/Documents/GitHub/qcore-c/.claude/worktrees/agent-a9d84cd5d8c0b76b8/private/detach-wrapper/gate-2/test-binaries/summary.json"
+}
