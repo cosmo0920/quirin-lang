@@ -12,3 +12,5 @@ import QCore.SchedulerLifetime
 
 #print axioms QCore.SchedulerLifetime.wrong_worker_refuses
 #print axioms QCore.SchedulerLifetime.empty_cleanup_has_no_effects
+
+#print axioms QCore.SchedulerLifetime.non_parent_current_tls_forbids_admission

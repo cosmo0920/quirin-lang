@@ -68,7 +68,8 @@ def admission (s : State) : Prop :=
   (∀ p ∈ s.callbackOwned, p ∈ s.live ∧ p ∉ ownedIds s ∧
     p ∉ borrowedIds s ∧ s.tlsParams ≠ some p ∧ s.currentThread ≠ some p) ∧
   (∀ p, s.tlsParams = some p → p ∈ s.live ∧ p ∉ ownedIds s ∧ p ∉ borrowedIds s) ∧
-  (∀ p, s.currentThread = some p → p ∈ s.live ∧ p ∉ s.selected) ∧
+  (∀ p, s.currentThread = some p → p ∈ s.live ∧ p ∉ s.selected ∧
+    ∃ t ∈ s.threads, t.parent = p) ∧
   (∀ p ∈ s.eventConnection, p ∈ s.live ∧ ∃ t ∈ s.threads, t.borrowed[2]! = p)
 
 /-- Ordered effects of one C destroy call, with both explicit callback branches. -/
@@ -156,7 +157,17 @@ theorem invalid_membership_forbids_admission (s : State) (p : Nat)
 theorem retiring_current_tls_forbids_admission (s : State) (p : Nat)
     (tls : s.currentThread = some p) (selected : p ∈ s.selected) : ¬ admission s := by
   intro h
-  exact (h.2.2.2.2.2.2.2.2.2.2.2.1 p tls).2 selected
+  exact (h.2.2.2.2.2.2.2.2.2.2.2.1 p tls).2.1 selected
+
+/-- TLS carries a parent role, never an arbitrary live allocation token. This
+also holds for empty cleanup; emptiness does not repair a malformed role. -/
+theorem non_parent_current_tls_forbids_admission (s : State) (p : Nat)
+    (tls : s.currentThread = some p)
+    (nonparent : ∀ t ∈ s.threads, t.parent ≠ p) : ¬ admission s := by
+  intro h
+  obtain ⟨t, member, equal⟩ := (h.2.2.2.2.2.2.2.2.2.2.2.1 p tls).2.2
+  exact nonparent t member equal
+
 
 theorem tls_absent_destroy_has_no_params_free_and_clear :
     destroyTrace none { parent := 1, coroutine := 2, suspended := true, borrowed := [3,4,5], callback := none } 5 =
