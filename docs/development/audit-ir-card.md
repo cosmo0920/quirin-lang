@@ -185,6 +185,20 @@ contract-free fallback; derived-return candidates retain their distinct fallback
 All source replay and certificate equality checks remain mandatory.
 Pre-pass fixed-point rounds also borrow previously read unit facts rather than
 cloning the complete set and retaining that duplicate during subsequent reads.
+Every executor work item, including the pre-pass and sequential route, also
+uses the existing unit cache boundary. Linux/glibc attempts to return already
+free allocator pages with `malloc_trim(0)` after that boundary, on normal return
+and unwinding. Other platforms retain cache release. Live results/leases are
+never reclaimed, and neither operation supplies a verdict or a hard RSS bound.
+Before each parallel dispatch phase, reclaim idle pages and sample available
+cgroup-v2 memory at the process group and its finite ancestors. Use the tightest
+headroom with a 3 GiB per-worker estimate to reduce that phase's maximum,
+retaining at least one worker and all selected tasks. Missing observations are
+reported as unavailable, not as a memory guarantee. Invocation provenance
+records up to 256 coordinator parallel-phase observations and an omitted count;
+serial requests are outside that trace. The ordinary `jobs.effective` remains
+the configured/census maximum, with phase reductions recorded separately.
+
 
 `current --memory-budget-mib N` (or `memory_budget_mib` in either JSON route)
 caps requested jobs by an initial planning model: 1024 MiB coordinator plus
@@ -198,8 +212,8 @@ final summary bodies during replay and per-component paging remain follow-ons.
 
 ### AUDIT-IR-BUDGET
 
-Add a user-visible audit memory budget with bounded concurrency and bounded
-caches; account for child processes and oversize components. Establish the
+Extend the initial scheduling estimates into enforced memory admission and
+bounded caches; account for child processes and oversize components. Establish the
 6 GB target / 7 GB ceiling with fresh cgroup measurements on pinned corpus,
 configured system and slice selections, both cold and warm. Record elapsed
 time to expose a slowdown bought by serial execution. Only then add a standard

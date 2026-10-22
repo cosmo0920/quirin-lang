@@ -145,8 +145,160 @@ pub(crate) fn jobs_record(
         record["memory_planning_reserve_mib"] =
             serde_json::json!({"coordinator": 1024, "per_worker": 2048});
         record["memory_limit_enforced"] = serde_json::json!(false);
+        record["unit_reclamation"] =
+            serde_json::json!(if cfg!(all(target_os = "linux", target_env = "gnu")) {
+                "optional-clang-caches-and-glibc-free-pages"
+            } else {
+                "optional-clang-caches"
+            });
     }
     record
+}
+
+const PHASE_WORKER_RESERVE: u64 = 3 << 30;
+const MAX_PHASE_RECORDS: usize = 256;
+
+#[derive(serde::Serialize)]
+struct MemoryObservation {
+    path: String,
+    limit_bytes: u64,
+    current_bytes: u64,
+}
+impl MemoryObservation {
+    fn available(&self) -> u64 {
+        self.limit_bytes.saturating_sub(self.current_bytes)
+    }
+}
+
+fn headroom_jobs(requested: usize, available: u64) -> usize {
+    let allowed = (available / PHASE_WORKER_RESERVE).max(1);
+    requested.min(usize::try_from(allowed).unwrap_or(usize::MAX))
+}
+
+#[cfg(any(target_os = "linux", test))]
+fn read_cgroup_levels(
+    root: &std::path::Path,
+    relative: &std::path::Path,
+) -> Option<MemoryObservation> {
+    use std::path::Component;
+    if relative
+        .components()
+        .any(|c| !matches!(c, Component::Normal(_) | Component::CurDir))
+    {
+        return None;
+    }
+    let mut path = root.join(relative);
+    let mut tightest: Option<MemoryObservation> = None;
+    loop {
+        let values = std::fs::read_to_string(path.join("memory.max"))
+            .ok()
+            .and_then(|limit| limit.trim().parse::<u64>().ok())
+            .zip(
+                std::fs::read_to_string(path.join("memory.current"))
+                    .ok()
+                    .and_then(|current| current.trim().parse::<u64>().ok()),
+            );
+        if let Some((limit_bytes, current_bytes)) = values {
+            let observation = MemoryObservation {
+                path: path.display().to_string(),
+                limit_bytes,
+                current_bytes,
+            };
+            if tightest
+                .as_ref()
+                .is_none_or(|old| observation.available() < old.available())
+            {
+                tightest = Some(observation);
+            }
+        }
+        if path == root || !path.pop() {
+            break;
+        }
+    }
+    tightest
+}
+
+fn observe_memory() -> Option<MemoryObservation> {
+    #[cfg(target_os = "linux")]
+    {
+        let membership = std::fs::read_to_string("/proc/self/cgroup").ok()?;
+        let relative = membership
+            .lines()
+            .find_map(|line| line.strip_prefix("0::"))?;
+        read_cgroup_levels(
+            std::path::Path::new("/sys/fs/cgroup"),
+            std::path::Path::new(relative.trim_start_matches('/')),
+        )
+    }
+    #[cfg(not(target_os = "linux"))]
+    {
+        None
+    }
+}
+
+#[derive(Default)]
+struct PhaseTrace {
+    records: Vec<serde_json::Value>,
+    omitted: usize,
+}
+thread_local! {
+    static PHASE_TRACE: std::cell::RefCell<PhaseTrace> = std::cell::RefCell::new(PhaseTrace::default());
+}
+
+pub(crate) fn reset_admission_trace() {
+    PHASE_TRACE.with(|trace| *trace.borrow_mut() = PhaseTrace::default());
+}
+
+pub(crate) fn take_admission_trace() -> serde_json::Value {
+    let trace = PHASE_TRACE.with(|trace| std::mem::take(&mut *trace.borrow_mut()));
+    serde_json::json!({
+        "scope": "bounded parallel-dispatch attempts on the coordinating thread; serial requests are not listed; planning estimates only, not a hard memory limit or verdict input",
+        "per_worker_reserve_bytes": PHASE_WORKER_RESERVE,
+        "phases": trace.records, "omitted": trace.omitted,
+    })
+}
+
+fn admit_phase(requested: usize, tasks: usize) -> usize {
+    // Free idle pages before observing retained coordinator and ancestor use.
+    scoped_work(|| ());
+    let observation = observe_memory();
+    let admitted = observation.as_ref().map_or(requested, |memory| {
+        headroom_jobs(requested, memory.available())
+    });
+    PHASE_TRACE.with(|trace| {
+        let mut trace = trace.borrow_mut();
+        if trace.records.len() < MAX_PHASE_RECORDS {
+            trace.records.push(serde_json::json!({"tasks": tasks, "requested_maximum": requested,
+                "admitted": admitted, "observation": observation,
+                "observation_status": if observation.is_some() { "available" } else { "unavailable-no-extra-cap" }}));
+        } else { trace.omitted = trace.omitted.saturating_add(1); }
+    });
+    admitted
+}
+
+/// Release optional unit caches before asking the allocator to return free
+/// pages. Results and active Rc/Arc leases remain live and must stay valid.
+/// This is an allocation policy only: it cannot establish any audit result.
+fn scoped_work<R>(work: impl FnOnce() -> R) -> R {
+    struct ReclaimOnExit;
+    impl Drop for ReclaimOnExit {
+        fn drop(&mut self) {
+            #[cfg(all(target_os = "linux", target_env = "gnu"))]
+            {
+                unsafe extern "C" {
+                    fn malloc_trim(pad: usize) -> std::ffi::c_int;
+                }
+                // SAFETY: glibc's thread-safe allocator operation accepts a
+                // size_t pad and only releases already free pages; it cannot
+                // invalidate live Rust allocations, including the result.
+                unsafe {
+                    malloc_trim(0);
+                }
+            }
+        }
+    }
+    let _reclaim = ReclaimOnExit;
+    qcore_c_gateway::with_audit_unit_lifetimes(work)
 }
 
 /// A dispatch order for [`run_ordered`] that starts the heaviest tasks first
@@ -197,7 +349,7 @@ where
     let count = tasks.len();
     if jobs <= 1 || count <= 1 {
         for task in tasks {
-            consume(work(task))?;
+            consume(scoped_work(|| work(task)))?;
         }
         return Ok(());
     }
@@ -215,6 +367,15 @@ where
         }
         None => (0..count).collect(),
     };
+    // Validate the caller's dispatch permutation before any pressure-based
+    // reduction to one job, so malformed plans never become accepted.
+    let jobs = admit_phase(jobs, count);
+    if jobs == 1 {
+        for task in tasks {
+            consume(scoped_work(|| work(task)))?;
+        }
+        return Ok(());
+    }
     // Bound started-but-not-consumed tasks, including completed results.
     // Priority applies only inside this moving window: a slow early unit
     // cannot cause the rest of the corpus to accumulate behind it.
@@ -264,10 +425,11 @@ where
                         }
                     };
                     let Some((index, task)) = next else { break };
-                    let outcome = match catch_unwind(AssertUnwindSafe(|| work(task))) {
-                        Ok(result) => Slot::Done(result),
-                        Err(payload) => Slot::Panicked(payload),
-                    };
+                    let outcome =
+                        match catch_unwind(AssertUnwindSafe(|| scoped_work(|| work(task)))) {
+                            Ok(result) => Slot::Done(result),
+                            Err(payload) => Slot::Panicked(payload),
+                        };
                     state.lock().unwrap_or_else(PoisonError::into_inner).slots[index] = outcome;
                     ready.notify_all();
                 }
@@ -302,6 +464,58 @@ mod tests {
     use super::*;
     use std::sync::atomic::{AtomicUsize, Ordering};
     use std::time::Duration;
+
+    #[test]
+    fn phase_headroom_never_omits_a_unit_or_exceeds_the_requested_maximum() {
+        assert_eq!(headroom_jobs(4, 7_000_000_000), 2);
+        assert_eq!(headroom_jobs(4, 1_500_000_000), 1);
+        assert_eq!(headroom_jobs(4, 0), 1);
+        for requested in 1..16 {
+            for available in [0, 1, PHASE_WORKER_RESERVE, u64::MAX] {
+                let admitted = headroom_jobs(requested, available);
+                assert!((1..=requested).contains(&admitted));
+            }
+        }
+    }
+
+    #[test]
+    fn cgroup_observations_use_the_tightest_finite_ancestor_and_reject_escape() {
+        let root = std::env::temp_dir().join(format!(
+            "qcore-memory-plan-{}-{:?}",
+            std::process::id(),
+            std::thread::current().id()
+        ));
+        let leaf = root.join("parent/leaf");
+        std::fs::create_dir_all(&leaf).unwrap();
+        std::fs::write(root.join("memory.max"), "10000000000\n").unwrap();
+        std::fs::write(root.join("memory.current"), "1000000000\n").unwrap();
+        std::fs::write(leaf.join("memory.max"), "7000000000\n").unwrap();
+        std::fs::write(leaf.join("memory.current"), "6000000000\n").unwrap();
+        assert_eq!(
+            read_cgroup_levels(&root, std::path::Path::new("parent/leaf"))
+                .unwrap()
+                .available(),
+            1_000_000_000
+        );
+        std::fs::write(leaf.join("memory.max"), "max\n").unwrap();
+        assert_eq!(
+            read_cgroup_levels(&root, std::path::Path::new("parent/leaf"))
+                .unwrap()
+                .available(),
+            9_000_000_000
+        );
+        std::fs::write(root.join("memory.current"), "12000000000\n").unwrap();
+        assert_eq!(
+            read_cgroup_levels(&root, std::path::Path::new("parent/leaf"))
+                .unwrap()
+                .available(),
+            0
+        );
+        assert!(read_cgroup_levels(&root, std::path::Path::new("../escape")).is_none());
+        std::fs::write(root.join("memory.max"), "unavailable").unwrap();
+        assert!(read_cgroup_levels(&root, std::path::Path::new("parent/leaf")).is_none());
+        std::fs::remove_dir_all(root).unwrap();
+    }
 
     #[test]
     fn the_window_bounds_live_products_including_out_of_order_completions() {

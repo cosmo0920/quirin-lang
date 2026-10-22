@@ -451,6 +451,7 @@ pub fn main(arguments: Vec<String>) -> ExitCode {
 }
 
 fn run(arguments: &[String]) -> Result<bool, String> {
+    crate::parallel::reset_admission_trace();
     let cwd = std::env::current_dir().map_err(|error| error.to_string())?;
     let (command_line, config_path) = parse_command_line(arguments, &cwd)?;
     let (configuration, config_bytes) = match &config_path {
@@ -700,6 +701,7 @@ fn run(arguments: &[String]) -> Result<bool, String> {
                 "manifest_sha256": sha256_hex(contracts.manifest_text().as_bytes()),
             },
             "mode": mode,
+            "memory_admission": crate::parallel::take_admission_trace(),
             "jobs": crate::parallel::jobs_record(jobs, effective_jobs, jobs_source, memory_budget_mib),
             "environment": {
                 "QCORE_CLANG": std::env::var("QCORE_CLANG").ok(),

@@ -154,3 +154,25 @@ Unavailable observations add no new cap and are identified as unavailable;
 no task is omitted or accepted on that basis. Record bounded coordinator-phase
 planning observations in invocation provenance, outside verdict identities.
 Preserve ordered consumption/errors/panics and malformed-dispatch validation.
+
+## Gated phase-admission implementation
+
+The [final source gate](final-gate/gate.json) exits **0**: **537 units / 550
+summaries, 8,500 Rust passed, 0 failed, 15 ignored; 362 Lean audits; 374 Python
+tests**. Every standing command, format/Clippy and the correct census feature
+passes. Focused parallel controls pass 14 tests and current CLI 17. The entire
+1,498-file Rust snapshot is unchanged and matches the candidate's build snapshot.
+The gate overlaps the separately limited memory run; its timing is disclosed as
+shared-host timing. The source rules and Lean semantic definitions are unchanged.
+
+Every executor item now ends optional Clang reuse; on Linux/glibc it requests
+free allocator pages back after release, including unwinding. Active results
+and leases remain owned. Before parallel dispatch, another reclamation precedes
+the tightest finite cgroup/ancestor headroom snapshot. A 3 GiB worker estimate
+can reduce that phase to one, without omitting selected tasks. Dispatch is
+validated before this reduction. Configured/census maxima and semantic report
+order remain unchanged. Current/configured invocation provenance carries a
+bounded phase trace with observations/unavailability and an omission count;
+serial requests are not included. An unavailable observation is not a memory
+claim. Oversize single units can still fail: this is not enforced admission.
+The run's final budget outcome is recorded separately when it completes.

@@ -4,9 +4,11 @@
 started-but-unconsumed tasks to the worker count, stream final report JSON
 from borrowed rows, and recover ordinary entry-candidate CFGs without a copy.
 An optional MiB planning budget caps concurrency and records its estimates;
-it does not enforce an RSS ceiling. A follow-up removes the pre-pass round's
-complete facts clone; its measurement is pending. The combined gate passes 8,498 Rust tests,
-362 Lean audits and 374 Python tests. Fresh whole-job measurement follows;
+it does not enforce an RSS ceiling. Pre-pass rounds borrow accumulated facts;
+executor items release optional caches and Linux/glibc free pages. Phase-start
+cgroup headroom can reduce later concurrency as retained facts grow. The final
+combined source gate passes 8,500 Rust tests, 362 Lean audits and 374 Python tests.
+Fresh whole-job measurement follows;
 the prior four-job 7 GB OOM remains a failed result.
 
 [Borrowed audit-certificate admission](reports/audit-ir-admission/README.md)

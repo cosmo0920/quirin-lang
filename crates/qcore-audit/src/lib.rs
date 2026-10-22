@@ -326,6 +326,7 @@ pub fn run_config(path: &Path) -> Result<AuditCounts, String> {
 /// parallelism capped at 16 ([`parallel::jobs_with_precedence`]); one job is
 /// the sequential loop, and every output is the same at any count.
 pub fn run_config_with_jobs(path: &Path, flag_jobs: Option<usize>) -> Result<AuditCounts, String> {
+    parallel::reset_admission_trace();
     let path = path.canonicalize().map_err(|error| error.to_string())?;
     let base = path
         .parent()
@@ -889,6 +890,7 @@ pub fn run_config_with_jobs(path: &Path, flag_jobs: Option<usize>) -> Result<Aud
                     .provider_record()
                     .map(|record| record["selection"].clone()),
             },
+            "memory_admission": parallel::take_admission_trace(),
             "jobs": parallel::jobs_record(requested_jobs, parallel::effective_jobs(jobs),
                 if flag_jobs.is_some() { "command_line" }
                 else if config.jobs.is_some() { "configuration" }
