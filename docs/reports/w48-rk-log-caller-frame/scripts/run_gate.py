@@ -60,8 +60,14 @@ def main():
         head = git("rev-parse", "HEAD")
         if git("status", "--porcelain", "--untracked-files=no"):
             raise RuntimeError("the gate requires a clean committed source")
-        env = dict(os.environ, CARGO_BUILD_JOBS="6")
-        (out / "acquired.json").write_text(json.dumps({"source": head, "utc": now()}, indent=2) + "\n")
+        # As contract-cycle4-integration's gate: no debuginfo and no incremental
+        # cache, which keep the workspace test build within the shared disk
+        # (an earlier attempt's debug target reached 77 GB).
+        overrides = {"CARGO_BUILD_JOBS": "6", "CARGO_PROFILE_DEV_DEBUG": "0",
+                     "CARGO_PROFILE_TEST_DEBUG": "0", "CARGO_INCREMENTAL": "0"}
+        env = dict(os.environ, **overrides)
+        (out / "acquired.json").write_text(json.dumps(
+            {"source": head, "utc": now(), "environment_overrides": overrides}, indent=2) + "\n")
         for name, command in commands:
             started, start = now(), time.monotonic()
             print("START", name, started, flush=True)
