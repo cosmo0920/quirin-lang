@@ -133,3 +133,24 @@ analysis evidence. Other platforms retain cache release without a native trim
 claim. This is an attempted reclamation, not a guaranteed memory bound or a
 replacement for reducing live facts. Preserve owned results, ordered errors,
 unwinding and all verdict/source checks; measure the identical full workload.
+
+The cache/page-reclaim candidate passes ordered controls 12 and current CLI 17,
+and builds in release, but still fails the two-worker full audit at **861.567
+seconds**, peak **6,999,998,464 bytes**, `Result=oom-kill`, zero swap. Stop/reset
+exit 0. It completes the 1,419-unit pre-pass (1,038 read, 36 unread) before the
+later audit fails. [Receipt](memory-release-reclaim2.json) identifies the exact
+candidate snapshot/binary; a full gate for that candidate was still pending.
+No completed budget acceptance is claimed. The candidate source file is retained
+under its private build directory alongside the full tracked-Rust hashes.
+
+Prediction before phase-admission implementation: before parallel dispatch,
+release idle caches/pages and read the tightest available cgroup-v2 headroom
+snapshot from the process's group and ancestors. Cap that phase's workers by a
+3 GiB per-worker planning reserve, always permitting one for progress; keep the
+user/config/census maximum and selected inventory. Retained pre-pass facts can
+therefore reduce later analysis concurrency instead of overlapping it with two
+new unit states. This remains an estimate, not a guaranteed memory bound.
+Unavailable observations add no new cap and are identified as unavailable;
+no task is omitted or accepted on that basis. Record bounded coordinator-phase
+planning observations in invocation provenance, outside verdict identities.
+Preserve ordered consumption/errors/panics and malformed-dispatch validation.
