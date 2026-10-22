@@ -53,5 +53,21 @@
       "change": "Exact count65 plus explicit module membership; no inventory/schema/view weakening."
     }
   ],
-  "acceptance": "Corrected combined gate552 passes all22 stages with stable clean source:8532 Rust/365 Lean; provider133 Rust/25 Python/allfivepackages. Native and post-committed-matrix Python acceptance remain pending."
+  "acceptance": "Corrected combined gate552 passes all22 stages with stable clean source:8532 Rust/365 Lean; provider133 Rust/25 Python/allfivepackages. Native and post-committed-matrix Python acceptance remain pending.",
+  "native_attempt_1": {
+    "status": "failed; not acceptance",
+    "baseline_source": "31c5ed500d9d4a1448a623b839e1644adb19efd1",
+    "route": "corpus",
+    "exit": 1,
+    "expected_libevent_revision": "d82464a277d0f42703702c4dfd9af6af38595a83",
+    "observed_parent_revision": "f91d17358479619fb0443b787009595beb5608e1",
+    "cause": "Fresh Git archive omitted the libevent gitlink checkout required at the baseline binary compile-time CARGO_MANIFEST_DIR path. Release build did not consume that runtime source. Git verification in the absent checkout resolved its containing repository and correctly refused the mismatched revision.",
+    "repair": "Materialize the exact baseline gitlink checkout as a separately receipted runtime environment prerequisite. Preserve all archived main-file hashes and the baseline binary. Check both binaries actual compile-time Libevent roots and complete tracked-file maps before and after native recovery.",
+    "baseline_binary_sha256": "20f3af5e0334b04ee6a26ca25101ee341daa7f629347aab18ad33077b85eb8b8",
+    "private_root": "/home/cosmo/.codex/worktrees/guarded-contract-adoption/qcore-c/private/guarded-contract-adoption",
+    "retained_attempt": "native-base-1/corpus",
+    "failure_receipt": "native-controller-1/failure.txt",
+    "repair_receipt": "native-base-runtime-binding-1/receipt.json",
+    "recovery": "native-controller-2; acceptance pending; original failed attempt remains retained"
+  }
 }
