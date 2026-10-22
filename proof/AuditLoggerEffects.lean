@@ -1,0 +1,13 @@
+import QCore.LoggerEffects
+#print axioms QCore.LoggerEffects.step_preserves_paired_custody
+#print axioms QCore.LoggerEffects.run_preserves_paired_custody
+#print axioms QCore.LoggerEffects.annihilation_requires_text_cleanup
+#print axioms QCore.LoggerEffects.creation_requires_fresh_resources
+#print axioms QCore.LoggerEffects.transfer_preserves_both_resources
+#print axioms QCore.LoggerEffects.queued_resource_cannot_be_freed_locally
+#print axioms QCore.LoggerEffects.dead_operation_cannot_be_recreated
+#print axioms QCore.LoggerEffects.immediate_callback_has_no_owned_allocation
+#print axioms QCore.LoggerEffects.forwarding_then_disabled_can_destroy
+#print axioms QCore.LoggerEffects.forwarded_failure_still_returns_one
+#print axioms QCore.LoggerEffects.cyclic_closure_retains_all_reachable_effects
+#print axioms QCore.LoggerEffects.mutually_recursive_calls_reach_both

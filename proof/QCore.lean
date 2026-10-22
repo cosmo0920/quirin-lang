@@ -1,3 +1,4 @@
+import QCore.LoggerEffects
 import QCore.GuardedContractApplications
 import QCore.GuardedDecomposition
 import QCore.SymbolicOverlapAdmission

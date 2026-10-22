@@ -1,0 +1,273 @@
+{
+  "version": "logger-effects-v1",
+  "revision": "66910c10a4d7eafa810b84229cf2dcf7b0f26f97",
+  "profile": "raw-C-reviewed-decomposition; no build equivalence",
+  "root": "rd_kafka_log0",
+  "max_nodes": 64,
+  "max_events": 64,
+  "max_forwarding": 16,
+  "sources": {
+    "lib/librdkafka-2.15.0/src/rdkafka.c": {
+      "sha256": "c9451ca15c744f913ce2a6ed708dc36c04c47ab6730252afb0a2bb418d82d1d0",
+      "sites": [
+        {
+          "first": 280,
+          "last": 306,
+          "sha256": "fdac1f4e2b2b07f883a9b805c10c9d0f087c24a9b5a163af02e19bb558cc50d5"
+        },
+        {
+          "first": 312,
+          "last": 348,
+          "sha256": "95fa075f85e295219948be0e761c18137afa6d843fd1b61243b54412ed2b8efb"
+        },
+        {
+          "first": 5998,
+          "last": 6005,
+          "sha256": "c91bf9ce51aaee729fbd5d644eace06e2b82062b8d77a6fe94015902269db760"
+        }
+      ]
+    },
+    "lib/librdkafka-2.15.0/src/rdkafka_queue.h": {
+      "sha256": "107e2292d4eeeda622828ecc115cf48cd43c7a1a82ee6da732a5426905686da2",
+      "sites": [
+        {
+          "first": 399,
+          "last": 409,
+          "sha256": "edefd8a5b5a62fce1f0b4c950d385f09808fecb4710cf60146206636dac12d4f"
+        },
+        {
+          "first": 428,
+          "last": 473,
+          "sha256": "f0b0bf49b6f4c50a94ebb0ea0e2dd2b7f45b41e33d1fcb0beeca161983e79839"
+        },
+        {
+          "first": 484,
+          "last": 487,
+          "sha256": "7641052d91c699d9615c592d6c3cf431f1efbf0e4313b064011db3b79ba985cb"
+        },
+        {
+          "first": 810,
+          "last": 838,
+          "sha256": "8206750ccf452365a3eef8fec3a642a6f8b51e718264d7a48a959b00e9375d03"
+        }
+      ]
+    },
+    "lib/librdkafka-2.15.0/src/rdkafka_op.c": {
+      "sha256": "6fdcbcc4e76adb7260de0572e48ed53986414ece262009d1b7e2a04dc202c554",
+      "sites": [
+        {
+          "first": 329,
+          "last": 342,
+          "sha256": "e2ab0f30ba262a894889af1e335eb0325dea96fbe8ce51433b83b7ecf371173e"
+        },
+        {
+          "first": 345,
+          "last": 361,
+          "sha256": "bf5746be666b262327101871f6398c1ea6d81a2658e55e99248294d9a88882f0"
+        },
+        {
+          "first": 452,
+          "last": 454,
+          "sha256": "d0961354a82a2cf07c435bbe254592a21df4b32a11582863fbd6c4f18c25e758"
+        },
+        {
+          "first": 610,
+          "last": 620,
+          "sha256": "98badd3091a93ed0f1af09fc54b5c1e95c20ceb12fca257408e454d45d1be56c"
+        },
+        {
+          "first": 804,
+          "last": 817,
+          "sha256": "6fb710dfae531cadde9ce22dddf456bf9d3d146708e9b44cf9dc0ab02089be7a"
+        }
+      ]
+    }
+  },
+  "obligations": {
+    "formatting_extent": "Formatting honors capacities and validates fmt/extra/fac strings and stack-buffer lifetime; stack borrow does not escape the synchronous callback.",
+    "tls_thread_name": "Thread-name TLS is initialized and live throughout formatting; its accessor effects and thread locality are preserved.",
+    "configuration_lifetime": "conf and optional rk, logq, callback, opaque context and their referenced data remain live with compatible configuration throughout the operation.",
+    "allocator_fail_stop": "rd_calloc/rd_strdup allocation-or-fail-stop behavior, allocation freshness and requested extents match the selected configuration; exceptional termination is outside returning traces.",
+    "copy_extent": "rd_strlcpy receives valid strings and fac array capacity; copies and field initialization stay inside the fresh operation.",
+    "queue_synchronization": "Queue locks, readiness, forwarding references, insertion links/counters and signals obey their actual synchronization/liveness contracts.",
+    "forwarding_termination": "A particular returning enqueue trace has finite forwarding and reply depth within the declared bound. Cyclic effect closure alone supplies no termination proof.",
+    "io_event_effects": "rd_kafka_q_io_event may invoke queue callback or perform IO; all callback, opaque-state, lifetime, reentrancy and effect obligations remain explicit.",
+    "serve_callback_effects": "Copied rko_serve/rkq_serve callback and opaque lifetime, authority and later consumption/KEEP/YIELD effects require independently checked contracts.",
+    "log_callback_effects": "Immediate and deferred log_cb may reenter logging or mutate arbitrary reachable state. Callee effects, non-retention of borrowed text, code/context lifetime and return behavior remain unproved.",
+    "destroy_callback_effects": "Generic op destruction may invoke rko_op_cb; callback return must satisfy its asserted restrictions and preserve cleanup ownership.",
+    "reply_queue_effects": "Reply enqueue mutates type/error, transfers or destroys the op, preserves replyq reference/version rules and may recursively forward; return bits alone do not establish ownership.",
+    "generic_cleanup_effects": "Generic operation cleanup includes error/toppar/replyq cleanup and refcount/development-build effects; LOG type/zero initialization and field invariants need source-to-model checking.",
+    "eventual_consumer_cleanup": "Queue transfer discharges caller custody only. A future consumer, event API, queue purge or destroy must eventually release log.str and op without retention/double free.",
+    "source_model_correspondence": "The reviewed finite decomposition covers the selected preprocessed C semantics, macros, type/layout/build and all reachable effects. Exact raw-source binding is not this theorem."
+  },
+  "nodes": {
+    "rd_kafka_log0": {
+      "calls": [
+        "rd_kafka_log_buf"
+      ],
+      "obligations": [
+        "formatting_extent",
+        "tls_thread_name",
+        "configuration_lifetime",
+        "source_model_correspondence"
+      ]
+    },
+    "rd_kafka_log_buf": {
+      "calls": [
+        "rd_kafka_op_new0",
+        "rd_kafka_q_enq",
+        "log_callback"
+      ],
+      "obligations": [
+        "allocator_fail_stop",
+        "copy_extent"
+      ]
+    },
+    "rd_kafka_op_new0": {
+      "calls": [],
+      "obligations": [
+        "allocator_fail_stop",
+        "generic_cleanup_effects"
+      ]
+    },
+    "rd_kafka_q_enq": {
+      "calls": [
+        "rd_kafka_q_enq1"
+      ],
+      "obligations": [
+        "queue_synchronization"
+      ]
+    },
+    "rd_kafka_q_enq1": {
+      "calls": [
+        "rd_kafka_q_enq1",
+        "rd_kafka_op_reply",
+        "rd_kafka_q_enq0"
+      ],
+      "obligations": [
+        "queue_synchronization",
+        "forwarding_termination",
+        "io_event_effects",
+        "serve_callback_effects",
+        "generic_cleanup_effects"
+      ]
+    },
+    "rd_kafka_q_enq0": {
+      "calls": [],
+      "obligations": [
+        "queue_synchronization",
+        "eventual_consumer_cleanup"
+      ]
+    },
+    "rd_kafka_op_reply": {
+      "calls": [
+        "rd_kafka_op_destroy",
+        "rd_kafka_replyq_enq"
+      ],
+      "obligations": [
+        "reply_queue_effects"
+      ]
+    },
+    "rd_kafka_replyq_enq": {
+      "calls": [
+        "rd_kafka_q_enq"
+      ],
+      "obligations": [
+        "reply_queue_effects"
+      ]
+    },
+    "rd_kafka_op_destroy": {
+      "calls": [],
+      "obligations": [
+        "destroy_callback_effects",
+        "generic_cleanup_effects"
+      ]
+    },
+    "log_callback": {
+      "calls": [
+        "rd_kafka_log0"
+      ],
+      "obligations": [
+        "log_callback_effects",
+        "configuration_lifetime"
+      ]
+    }
+  },
+  "paths": {
+    "filtered": {
+      "events": [],
+      "terminal": "untouched"
+    },
+    "queue_missing_terminating": {
+      "events": [],
+      "terminal": "untouched"
+    },
+    "callback_absent": {
+      "events": [],
+      "terminal": "untouched"
+    },
+    "immediate_callback": {
+      "events": [
+        "callback"
+      ],
+      "terminal": "untouched"
+    },
+    "local_queue": {
+      "events": [
+        "create-op",
+        "create-text",
+        "transfer"
+      ],
+      "terminal": "queued"
+    },
+    "forwarded_queue": {
+      "events": [
+        "create-op",
+        "create-text",
+        "forward",
+        "transfer"
+      ],
+      "terminal": "queued"
+    },
+    "disabled_no_reply": {
+      "events": [
+        "create-op",
+        "create-text",
+        "destroy-text",
+        "destroy-op"
+      ],
+      "terminal": "destroyed"
+    },
+    "disabled_reply_queue": {
+      "events": [
+        "create-op",
+        "create-text",
+        "reply",
+        "transfer"
+      ],
+      "terminal": "queued"
+    },
+    "forwarded_disabled_no_reply": {
+      "events": [
+        "create-op",
+        "create-text",
+        "forward",
+        "destroy-text",
+        "destroy-op"
+      ],
+      "terminal": "destroyed"
+    },
+    "consumer_callback_cleanup": {
+      "events": [
+        "create-op",
+        "create-text",
+        "transfer",
+        "take",
+        "callback",
+        "destroy-text",
+        "destroy-op"
+      ],
+      "terminal": "destroyed"
+    }
+  }
+}
