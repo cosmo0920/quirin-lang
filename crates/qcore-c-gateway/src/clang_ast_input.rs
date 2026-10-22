@@ -17,12 +17,15 @@ pub(crate) struct Spool {
     read_position: u64,
     advised_position: u64,
     path: PathBuf,
+    linked: bool,
 }
 
 impl Drop for Spool {
     fn drop(&mut self) {
         drop(self.file.take());
-        let _ = std::fs::remove_file(&self.path);
+        if self.linked {
+            let _ = std::fs::remove_file(&self.path);
+        }
     }
 }
 
@@ -31,7 +34,10 @@ impl AstInput {
         let mut memory = Vec::new();
         let mut chunk = [0; 64 * 1024];
         loop {
-            let count = input.read(&mut chunk)?;
+            let count = match input.read(&mut chunk) {
+                Err(error) if error.kind() == io::ErrorKind::Interrupted => continue,
+                result => result?,
+            };
             if count == 0 {
                 return Ok(Self::Memory(Cursor::new(memory)));
             }
@@ -57,7 +63,7 @@ impl AstInput {
 
 impl Spool {
     fn discard_cache(&self, offset: u64, length: u64) {
-        #[cfg(target_os = "linux")]
+        #[cfg(all(target_os = "linux", target_pointer_width = "64"))]
         {
             use std::os::fd::AsRawFd;
             unsafe extern "C" {
@@ -76,7 +82,7 @@ impl Spool {
                 }
             }
         }
-        #[cfg(not(target_os = "linux"))]
+        #[cfg(not(all(target_os = "linux", target_pointer_width = "64")))]
         let _ = (offset, length);
     }
 
@@ -98,15 +104,20 @@ impl Spool {
             }
             match options.open(&path) {
                 Ok(file) => {
-                    let spool = Self {
+                    #[allow(unused_mut)]
+                    let mut spool = Self {
                         file: Some(file),
                         read_position: 0,
                         advised_position: 0,
                         path,
+                        linked: true,
                     };
                     // An open unlinked file is reclaimed even on process death.
                     #[cfg(unix)]
-                    std::fs::remove_file(&spool.path)?;
+                    {
+                        std::fs::remove_file(&spool.path)?;
+                        spool.linked = false;
+                    }
                     return Ok(spool);
                 }
                 Err(error) if error.kind() == io::ErrorKind::AlreadyExists => continue,
