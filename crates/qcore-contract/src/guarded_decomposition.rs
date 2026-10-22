@@ -123,6 +123,17 @@ pub fn replay(
     {
         return Err("guarded-decomposition: declaration belongs to another module".into());
     }
+    lower(view, module, declaration, source, graph, bindings, readable)
+}
+fn lower(
+    view: View,
+    module: &str,
+    declaration: &str,
+    source: &str,
+    graph: &Graph,
+    bindings: &BTreeMap<String, Binding>,
+    readable: &str,
+) -> Result<Lowered, String> {
     let clauses = qcore_frontend::guarded_decomposition::parse(readable)?;
     if bindings.len() > 256 {
         return Err("guarded-decomposition: symbol limit".into());
@@ -490,4 +501,129 @@ pub fn affected_obligations(
         terminal_indices: affected(&document.terminal_postconditions),
         symbols_requiring_recheck: dirty.into_iter().collect(),
     })
+}
+
+/// Whole declaration metadata. Serialization cannot construct checked lowering.
+#[derive(Clone, Debug, PartialEq, Eq, Serialize, Deserialize)]
+#[serde(deny_unknown_fields)]
+pub struct Inline {
+    pub entry: String,
+    pub bindings: BTreeMap<String, Binding>,
+    pub readable: String,
+}
+pub fn is_source_clause(source: &str) -> bool {
+    qcore_frontend::guarded_decomposition::is_source_clause(source)
+}
+/// Validate every source symbol and obligation before a property loader treats
+/// it as proposed metadata. Nothing is inferred from a familiar head.
+pub fn declaration(
+    decl: &qcore_frontend::frontend::SourceDeclaration,
+    graph: &Graph,
+) -> Result<Option<Inline>, String> {
+    use qcore_frontend::{
+        frontend::SourceContractClauseKind,
+        guarded_decomposition::{SourceClause, parse_source_clause},
+    };
+    let mut bindings = BTreeMap::new();
+    let mut document = None;
+    for clause in decl.function_contract.iter().flat_map(|c| &c.clauses) {
+        let Some(parsed) = parse_source_clause(&clause.value.expression_source)? else {
+            continue;
+        };
+        if clause.value.kind != SourceContractClauseKind::Requires {
+            return Err("guarded source: only requires metadata admitted".into());
+        }
+        match parsed {
+            SourceClause::Symbol {
+                id,
+                role,
+                proposition,
+                dependencies,
+            } => {
+                let role = match role.as_str() {
+                    "environment" => Role::Environment,
+                    "prerequisite" => Role::Prerequisite,
+                    "operation" => Role::Operation,
+                    "condition" => Role::Condition,
+                    "case" => Role::Case,
+                    "postcondition" => Role::Postcondition,
+                    _ => return Err("guarded source: unknown role".into()),
+                };
+                if bindings
+                    .insert(
+                        id,
+                        Binding {
+                            role,
+                            proposition,
+                            dependencies,
+                        },
+                    )
+                    .is_some()
+                {
+                    return Err("guarded source: duplicate symbol".into());
+                }
+            }
+            SourceClause::Document { id, readable } => {
+                if document.replace((id, readable)).is_some() {
+                    return Err("guarded source: exactly one document per declaration".into());
+                }
+            }
+        }
+    }
+    let Some((entry, readable)) = document else {
+        return if bindings.is_empty() {
+            Ok(None)
+        } else {
+            Err("guarded source: symbols without document".into())
+        };
+    };
+    // Local validation does not publish the synthetic identities; full replay
+    // below seals the actual whole-module/property identities afresh.
+    lower(
+        View::Resource,
+        "",
+        &decl.name,
+        "",
+        graph,
+        &bindings,
+        &readable,
+    )?;
+    Ok(Some(Inline {
+        entry,
+        bindings,
+        readable,
+    }))
+}
+/// Replay the complete original property source first, then compare the entire
+/// actual source metadata with the independently expected document and graph.
+pub fn replay_inline(
+    view: View,
+    sources: &BTreeMap<String, String>,
+    module: &str,
+    name: &str,
+    graph: &Graph,
+    expected: &Inline,
+) -> Result<Lowered, String> {
+    let checked = replay(
+        view,
+        sources,
+        module,
+        name,
+        graph,
+        &expected.bindings,
+        &expected.readable,
+    )?;
+    let parsed = qcore_frontend::frontend::parse_source_program(
+        sources.get(module).ok_or("guarded source: module absent")?,
+    )
+    .map_err(|e| e.to_string())?;
+    let matching = parsed
+        .declarations
+        .iter()
+        .filter(|d| d.value.name == name)
+        .collect::<Vec<_>>();
+    if matching.len() != 1 || declaration(&matching[0].value, graph)?.as_ref() != Some(expected) {
+        return Err("guarded source: complete independently held metadata mismatch".into());
+    }
+    Ok(checked)
 }

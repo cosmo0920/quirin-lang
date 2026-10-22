@@ -1,0 +1,10 @@
+import QCore.GuardedSourceAdoption
+#print axioms QCore.GuardedSourceAdoption.recovered_only_for_exact_tip
+#print axioms QCore.GuardedSourceAdoption.changed_tip_refuses
+#print axioms QCore.GuardedSourceAdoption.unsupported_version_refuses
+#print axioms QCore.GuardedSourceAdoption.changed_interpreted_output_refuses
+#print axioms QCore.GuardedSourceAdoption.changed_original_graph_refuses
+#print axioms QCore.GuardedSourceAdoption.changed_legacy_premises_refuse
+#print axioms QCore.GuardedSourceAdoption.accepted_metadata_was_fully_validated
+#print axioms QCore.GuardedSourceAdoption.recovery_retains_complete_original
+#print axioms QCore.GuardedSourceAdoption.absent_terminal_cannot_be_adopted

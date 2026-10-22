@@ -39,3 +39,5 @@ pub mod premise_flow;
 pub mod premise_metadata_bridge;
 
 pub mod guarded_decomposition;
+
+pub mod guarded_metadata_bridge;
