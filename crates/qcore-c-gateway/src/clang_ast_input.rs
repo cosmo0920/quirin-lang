@@ -124,6 +124,10 @@ impl Spool {
                         std::fs::remove_file(&spool.path)?;
                         spool.linked = false;
                     }
+                    #[cfg(windows)]
+                    {
+                        spool.linked = false;
+                    } // The handle owns delete-on-close.
                     return Ok(spool);
                 }
                 Err(error) if error.kind() == io::ErrorKind::AlreadyExists => continue,
