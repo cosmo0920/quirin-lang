@@ -866,3 +866,42 @@ impl EntryProducts {
         (self.source, self.report, self.counts, self.preparation)
     }
 }
+
+pub(crate) struct ParkedEntryOutcome {
+    pub(crate) output: String,
+    pub(crate) result: Result<ParkedEntryProducts, String>,
+}
+
+pub(crate) struct ParkedEntryProducts {
+    source: Option<PathBuf>,
+    pub(crate) report: crate::report::ParkedReport,
+    counts: AuditCounts,
+    preparation: crate::checkpoint::PreparationFacts,
+}
+
+impl EntryOutcome {
+    pub(crate) fn park(self) -> ParkedEntryOutcome {
+        ParkedEntryOutcome {
+            output: self.output,
+            result: self.result.and_then(|p| {
+                Ok(ParkedEntryProducts {
+                    source: p.source,
+                    report: p.report.park()?,
+                    counts: p.counts,
+                    preparation: p.preparation,
+                })
+            }),
+        }
+    }
+}
+
+impl ParkedEntryProducts {
+    pub(crate) fn restore(self) -> Result<EntryProducts, String> {
+        Ok(EntryProducts {
+            source: self.source,
+            report: self.report.restore()?,
+            counts: self.counts,
+            preparation: self.preparation,
+        })
+    }
+}

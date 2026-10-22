@@ -1652,3 +1652,120 @@ mod tests {
         fs::remove_dir_all(&directory).ok();
     }
 }
+
+/// Private phase retention: complete rows and member evidence on disk, small
+/// derived phase-selection tables in memory. Restoration never runs analysis.
+pub(crate) struct ParkedReport {
+    shell: AuditReport,
+    payload: crate::retained_products::Spool,
+    pub(crate) refutations: qcore_schemas::contract_refutation::RefutationTable,
+    pub(crate) bounds_refutations: std::collections::BTreeSet<String>,
+}
+
+#[derive(serde::Serialize, serde::Deserialize)]
+#[serde(deny_unknown_fields)]
+struct RetainedRows {
+    units: Vec<Value>,
+    bounds: Vec<Value>,
+    bounds_evidence: Vec<Value>,
+    null: Vec<Value>,
+    null_evidence: Vec<Value>,
+    callback_members: Vec<crate::callback_member_fold::UnitFacts>,
+}
+
+impl AuditReport {
+    pub(crate) fn park(mut self) -> Result<ParkedReport, String> {
+        let refutations = crate::refuted_contracts::table_from_rows(&self.units);
+        let bounds_refutations = crate::bounds_evidence::refutation_table(&self.bounds_evidence);
+        let rows = RetainedRows {
+            units: std::mem::take(&mut self.units),
+            bounds: std::mem::take(&mut self.bounds),
+            bounds_evidence: std::mem::take(&mut self.bounds_evidence),
+            null: std::mem::take(&mut self.null),
+            null_evidence: std::mem::take(&mut self.null_evidence),
+            callback_members: std::mem::take(&mut self.callback_members),
+        };
+        let payload = crate::retained_products::Spool::write(&rows)?;
+        Ok(ParkedReport {
+            shell: self,
+            payload,
+            refutations,
+            bounds_refutations,
+        })
+    }
+}
+
+impl ParkedReport {
+    pub(crate) fn restore(mut self) -> Result<AuditReport, String> {
+        let rows: RetainedRows = self.payload.read()?;
+        self.shell.units = rows.units;
+        self.shell.bounds = rows.bounds;
+        self.shell.bounds_evidence = rows.bounds_evidence;
+        self.shell.null = rows.null;
+        self.shell.null_evidence = rows.null_evidence;
+        self.shell.callback_members = rows.callback_members;
+        Ok(self.shell)
+    }
+}
+
+#[cfg(test)]
+mod retained_tests {
+    use super::*;
+
+    #[test]
+    fn parked_report_preserves_exact_document_and_every_sidecar() {
+        let mut report = AuditReport::new("revision");
+        report.units = vec![
+            serde_json::json!({
+                "file": "a.c", "status": "Unknown", "functions": [{
+                    "function": "f", "diagnostics": [{"line": 7, "description": "unmodeled"}],
+                    "contract_refutations": [{"kind": "custody_duty", "clause": "release", "reason": "body", "origin": "a.c:7"}]
+                }]
+            }),
+            serde_json::json!({"file": "b.c", "status": "Safe", "functions": []}),
+        ];
+        report.bounds_evidence =
+            vec![serde_json::json!({"declarations": [{"function": "f", "refutes": true}]})];
+        report.bounds = vec![serde_json::json!({"bound": 12})];
+        report.null = vec![serde_json::json!({"null": "unknown"})];
+        report.null_evidence = vec![serde_json::json!({"store": "a->b"})];
+        report.record_callback_members("library", "a.c", None, None);
+        report.diagnostic_counts.insert("unsupported".into(), 1);
+        let expected_rows = serde_json::to_value(RetainedRows {
+            units: report.units.clone(),
+            bounds: report.bounds.clone(),
+            bounds_evidence: report.bounds_evidence.clone(),
+            null: report.null.clone(),
+            null_evidence: report.null_evidence.clone(),
+            callback_members: report.callback_members.clone(),
+        })
+        .unwrap();
+        let mut before = Vec::new();
+        report
+            .write_document(&mut before, "source_revision")
+            .unwrap();
+        let parked = report.park().unwrap();
+        assert!(parked.shell.units.is_empty());
+        assert!(parked.shell.callback_members.is_empty());
+        assert!(parked.refutations.contains_key("f"));
+        assert!(parked.bounds_refutations.contains("f"));
+        let restored = parked.restore().unwrap();
+        let mut after = Vec::new();
+        restored
+            .write_document(&mut after, "source_revision")
+            .unwrap();
+        assert_eq!(before, after);
+        assert_eq!(
+            serde_json::to_value(RetainedRows {
+                units: restored.units,
+                bounds: restored.bounds,
+                bounds_evidence: restored.bounds_evidence,
+                null: restored.null,
+                null_evidence: restored.null_evidence,
+                callback_members: restored.callback_members,
+            })
+            .unwrap(),
+            expected_rows
+        );
+    }
+}
