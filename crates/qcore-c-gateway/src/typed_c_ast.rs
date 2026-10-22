@@ -166,38 +166,80 @@ fn launch_ast_read<T>(
     source: &str,
     parse: impl FnOnce(&mut crate::clang_ast_input::AstInput) -> Result<T, serde_json::Error>,
 ) -> Result<T, String> {
-    let mut child = command
+    let child = command
         .stdin(Stdio::piped())
         .stdout(Stdio::piped())
         .stderr(Stdio::piped())
         .spawn()
         .map_err(|error| format!("Clang AST unavailable: {error}"))?;
-    let mut stdin = child.stdin.take().ok_or("Clang stdin unavailable")?;
-    let stdout = child.stdout.take().ok_or("Clang stdout unavailable")?;
-    let (output, input) = std::thread::scope(|scope| {
-        let writer = scope.spawn(move || stdin.write_all(source.as_bytes()));
-        let reader = scope.spawn(move || crate::clang_ast_input::AstInput::capture(stdout));
-        // wait_with_output drains stderr while the reader drains stdout.
-        let output = child.wait_with_output();
+    let mut input = std::thread::scope(|scope| {
+        // This guard lives inside the scope callback, so unwinding or a
+        // failed thread launch kills/reaps Clang before scoped threads join.
+        struct ChildGuard {
+            child: std::process::Child,
+            armed: bool,
+        }
+        impl Drop for ChildGuard {
+            fn drop(&mut self) {
+                if self.armed {
+                    let _ = self.child.kill();
+                    let _ = self.child.wait();
+                }
+            }
+        }
+        let mut child = ChildGuard { child, armed: true };
+        let mut stdin = child.child.stdin.take().ok_or("Clang stdin unavailable")?;
+        let stdout = child
+            .child
+            .stdout
+            .take()
+            .ok_or("Clang stdout unavailable")?;
+        let mut stderr = child
+            .child
+            .stderr
+            .take()
+            .ok_or("Clang stderr unavailable")?;
+        let writer = std::thread::Builder::new()
+            .spawn_scoped(scope, move || stdin.write_all(source.as_bytes()))
+            .map_err(|error| format!("Clang input failed: {error}"))?;
+        let reader = std::thread::Builder::new()
+            .spawn_scoped(scope, move || {
+                crate::clang_ast_input::AstInput::capture(stdout)
+            })
+            .map_err(|error| format!("Clang AST failed: {error}"))?;
+        let errors = std::thread::Builder::new()
+            .spawn_scoped(scope, move || {
+                use std::io::Read;
+                let mut bytes = Vec::new();
+                stderr.read_to_end(&mut bytes).map(|_| bytes)
+            })
+            .map_err(|error| format!("Clang AST failed: {error}"))?;
+        let status = child.child.wait();
+        if status.is_ok() {
+            child.armed = false;
+        } else {
+            let _ = child.child.kill();
+        }
         let written = writer
             .join()
             .map_err(|_| "Clang input writer panicked".to_owned());
         let captured = reader
             .join()
             .map_err(|_| "Clang output reader panicked".to_owned());
+        let errors = errors
+            .join()
+            .map_err(|_| "Clang stderr reader panicked".to_owned());
         written?.map_err(|error| format!("Clang input failed: {error}"))?;
-        let output = output.map_err(|error| format!("Clang AST failed: {error}"))?;
-        if !output.status.success() {
+        let status = status.map_err(|error| format!("Clang AST failed: {error}"))?;
+        let stderr = errors?.map_err(|error| format!("Clang AST failed: {error}"))?;
+        if !status.success() {
             return Err(format!(
                 "Clang AST rejected source: {}",
-                String::from_utf8_lossy(&output.stderr).trim()
+                String::from_utf8_lossy(&stderr).trim()
             ));
         }
-        let input = captured?.map_err(|error| format!("Clang AST failed: {error}"))?;
-        Ok((output, input))
+        captured?.map_err(|error| format!("Clang AST failed: {error}"))
     })?;
-    drop(output);
-    let mut input = input;
     parse(&mut input).map_err(|error| format!("unsupported Clang AST JSON: {error}"))
 }
 

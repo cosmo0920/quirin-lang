@@ -102,6 +102,12 @@ impl Spool {
                 use std::os::unix::fs::OpenOptionsExt;
                 options.mode(0o600);
             }
+            #[cfg(windows)]
+            {
+                use std::os::windows::fs::OpenOptionsExt;
+                // FILE_FLAG_DELETE_ON_CLOSE also covers process termination.
+                options.custom_flags(0x04000000);
+            }
             match options.open(&path) {
                 Ok(file) => {
                     #[allow(unused_mut)]
