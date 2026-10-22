@@ -1,0 +1,83 @@
+{
+  "correction": "Current-thread TLS must carry a live unselected modeled parent role; callee/params tokens refuse even in empty cleanup.",
+  "model_source": "1b315995a835ac7f1829bcac95fc8dd1ed80060c",
+  "measured_input_hashes": {
+    "crates/qcore-contract/src/scheduler_lifetime.rs": "a4120629b26805895b8d205fe7763dc1d3f27769470f5023e1208b0b8767d8e9",
+    "crates/qcore-contract/tests/scheduler_lifetime.rs": "c376a7f9e3b13022f1afccc42610657c0284066ee9af017b0ba5e77fd1e39f04",
+    "crates/qcore-contract/examples/scheduler_lifetime_source.rs": "49c4fdb195d200cc39c12c53b5196b78cd1962987e0b52dddfe27e4062186c80",
+    "proof/QCore/SchedulerLifetime.lean": "411be681222d5862558c4ba19fdad8c7f9a28c65bb743c43ea07d8d002ad0823",
+    "proof/AuditSchedulerLifetime.lean": "aff9d60c96b4b38d7feaeef9e0c3326576e96dd6df7c8d6e3c25d56164ac92d7",
+    "docs/reports/scheduler-lifetime-contracts/scheduler.qgd": "17f1f7ab506e8583c91b8f887102b4e217bc038e753dac9f3e3e81dbec8bc3b2",
+    "docs/reports/scheduler-lifetime-contracts/hypotheses.json": "11be8e94f75cef8c2fbac5d33e2fc944973146c5f66281b8b1e04ffb31257a86"
+  },
+  "input_guard_exit": 0,
+  "inputs_before": {
+    "path": "/home/cosmo/.codex/worktrees/scheduler-lifetime-contracts/qcore-c/private/scheduler-lifetime-contracts/tls-role-fix-1/inputs-before.json",
+    "sha256": "71f30a4592f456dab6146470b974478cab44de3dd440f735df064ac489a05aec"
+  },
+  "inputs_after": {
+    "path": "/home/cosmo/.codex/worktrees/scheduler-lifetime-contracts/qcore-c/private/scheduler-lifetime-contracts/tls-role-fix-1/inputs-after.json",
+    "sha256": "71f30a4592f456dab6146470b974478cab44de3dd440f735df064ac489a05aec"
+  },
+  "producer": {
+    "path": "docs/reports/scheduler-lifetime-contracts/tls-role-fix-driver.sh",
+    "sha256": "f42f0d4c48a579f807a86098a8c99c971f5d0edcf9ac6b577abe1a482c296c89"
+  },
+  "rust_passed": 13,
+  "lean_audited_theorems": 13,
+  "source_result": {
+    "context_refusals": 9,
+    "parsed_clauses": 25,
+    "positive_model_controls": 1,
+    "scope": "exact pinned source binding plus finite model, no C execution/truth/standing",
+    "source_digest": "364ced8316feb055882ed9e91298b1c76a1ac0134b94b2af5b7ad506e6ea5d4f",
+    "source_refusals": 15
+  },
+  "parallel_lock": "/tmp/qcore-c-card-validation-20261022.lock",
+  "rows": [
+    {
+      "command": "cargo test -p qcore-contract --test scheduler_lifetime --no-fail-fast",
+      "cwd": "/home/cosmo/.codex/worktrees/scheduler-lifetime-contracts/qcore-c",
+      "exit": 0,
+      "private_log": "/home/cosmo/.codex/worktrees/scheduler-lifetime-contracts/qcore-c/private/scheduler-lifetime-contracts/tls-role-fix-1/rust.log",
+      "sha256": "6e9b81d56a43327f2d89923bdc183337da0cc29bb78c507bc38cfd4418e6414c"
+    },
+    {
+      "command": "cargo run -p qcore-contract --example scheduler_lifetime_source -- private/scheduler-lifetime-contracts/source",
+      "cwd": "/home/cosmo/.codex/worktrees/scheduler-lifetime-contracts/qcore-c",
+      "exit": 0,
+      "private_log": "/home/cosmo/.codex/worktrees/scheduler-lifetime-contracts/qcore-c/private/scheduler-lifetime-contracts/tls-role-fix-1/source.log",
+      "sha256": "e329bfc4baeaf454ee3a15e285731e76ec9a329a1f1a53944ddc526003dff458"
+    },
+    {
+      "command": "cargo fmt --all -- --check",
+      "cwd": "/home/cosmo/.codex/worktrees/scheduler-lifetime-contracts/qcore-c",
+      "exit": 0,
+      "private_log": "/home/cosmo/.codex/worktrees/scheduler-lifetime-contracts/qcore-c/private/scheduler-lifetime-contracts/tls-role-fix-1/fmt.log",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "command": "cargo clippy -p qcore-contract --all-targets -- -D warnings",
+      "cwd": "/home/cosmo/.codex/worktrees/scheduler-lifetime-contracts/qcore-c",
+      "exit": 0,
+      "private_log": "/home/cosmo/.codex/worktrees/scheduler-lifetime-contracts/qcore-c/private/scheduler-lifetime-contracts/tls-role-fix-1/clippy.log",
+      "sha256": "00a064c301809d2ccc0b441c99abecf16fbbf28727ad2ed57b6cc04075791a7f"
+    },
+    {
+      "command": "lake build QCore.SchedulerLifetime",
+      "cwd": "/home/cosmo/.codex/worktrees/scheduler-lifetime-contracts/qcore-c/proof",
+      "exit": 0,
+      "private_log": "/home/cosmo/.codex/worktrees/scheduler-lifetime-contracts/qcore-c/private/scheduler-lifetime-contracts/tls-role-fix-1/lean-build.log",
+      "sha256": "5bd9464ff2e28b8a47151c4dd8e1c95b6818d66ed7e2ce7e90148bb1b178541e"
+    },
+    {
+      "command": "lake env lean AuditSchedulerLifetime.lean",
+      "cwd": "/home/cosmo/.codex/worktrees/scheduler-lifetime-contracts/qcore-c/proof",
+      "exit": 0,
+      "private_log": "/home/cosmo/.codex/worktrees/scheduler-lifetime-contracts/qcore-c/private/scheduler-lifetime-contracts/tls-role-fix-1/lean-audit.log",
+      "sha256": "617cbd40d1c2d6a3719d4b466ed050f2f9192bb99b9b53a54f95a6224348afc2"
+    }
+  ],
+  "prior_receipts": "focused-receipts.json remains unchanged; old source-role admission hole is disclosed in README.md",
+  "boundary": "finite model/source artifact binding only; actual C TLS/callback/alias/list/deployment truth Open; root final frozen standing gate still required"
+}
