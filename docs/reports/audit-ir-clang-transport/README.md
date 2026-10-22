@@ -35,20 +35,24 @@ and the older callback-based byte-slice transport remain separate follow-ons;
 this card does not change member-facts retention or report products.
 
 Subprocess stdin, stdout and stderr drain concurrently. Input-write errors keep
-their prior precedence, then child exit/stderr, then parsing. The reader returns
+their prior precedence; transport I/O failures precede child rejection, and
+child exit/stderr precedes parsing. The reader returns
 nothing on a malformed suffix. Default decoding runs first; a refusal scans the
 same complete bytes for the same 256-level depth bound, seeks back and retries
 on the existing dedicated stack, retaining the default error if retry fails.
 The matching `QCore.DeepUnitAst` and `QCore.DeepAstTransports` models are unchanged.
 
 The spool is a private create-new `.qc` file with Unix mode 0600, immediately
-unlinked on Unix and removed on ordinary cleanup elsewhere. It supplies no
+unlinked on Unix, owned by a delete-on-close handle on Windows, and removed
+on ordinary cleanup on other platforms. It supplies no
 cache authority and enables no persisted IR reuse. On 64-bit Linux, after
 synchronizing writes and in read intervals, `posix_fadvise(DONTNEED)` requests
 release of charged disk-backed cache pages. Advice is not a hard memory bound.
 `TMPDIR` selects storage through the standard library: tmpfs still charges the
 raw spool to memory, so its result must not be described as disk-backed paging.
-Both temporary-storage conditions belong in the control measurement.
+Both temporary-storage conditions belong in the control measurement. Seeking
+resets the cache-advice positions so retries discard the ranges they actually
+read; the round-trip control asserts this after repeated rewinds.
 
 
 ## Integration and residuals
@@ -61,7 +65,8 @@ worktree was edited. The source change does not require a new semantic rule;
 existing matching audited Lean admission definitions remain authoritative.
 
 The remaining byte-slice transport callers and filtered streams still allocate
-complete stdout buffers. Lifetime-source still retains its complete decoded
+complete stdout buffers. Stderr remains buffered in full to preserve diagnostics.
+Lifetime-source still retains its complete decoded
 `Value` and cross-declaration facts; this card changes its raw input ownership,
 not its fact census. An individual large declaration/string or decoded unit can
 still exceed a runner's budget. Spooling introduces temporary-storage I/O and
@@ -88,9 +93,18 @@ spool cleanup, duplicate keys, scalar/Unicode failures and depth boundaries.
 The six focused Rust controls are included in the full count. Submodules,
 Clang recording, formatting, all-target Clippy, both reevaluation examples and
 the final release build exit 0. The private per-unit Rust summary is
-`private/test-binaries/20261022T074952Z-895698/summary.json`; other command logs
-and exits are under `private/audit-ir-clang-transport/gate/`. The receipt records
+`private/test-binaries/20261022T083727Z-1522714/summary.json`; other command logs
+and exits are under `private/audit-ir-clang-transport/gate2/`. The receipt records
 absolute paths, all argv, the unique target directory and the 1,500-file Rust
 snapshot, which matches the final source. An initial invalid context topic
 (exit 2) and the initial sandbox-read-only setup attempt are disclosed beside
 the accepted corrections. No failed gate result was discarded or borrowed.
+
+[Measurement attempts](measurement-attempts.json) retain the initial shared-disk
+exhaustion and the next attempt stopped while queued for the seek fix. Neither
+is a successful measurement; their private directories and logs are retained.
+
+The final gate validates implementation `1a397b951943a1dd9dc7f0b3f1a4ec6d1383e4e1`,
+including the seek-counter fix. The [prior gate](gate-before-seek-fix.json)
+retains its earlier implementation checkpoint; its counts are not added to the
+final run. All 1,500 tracked Rust files match the final run’s source snapshot.

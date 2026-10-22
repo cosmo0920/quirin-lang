@@ -1,0 +1,16 @@
+{
+  "attempts": [
+    {
+      "directory": "private/audit-ir-clang-transport/controls1",
+      "outcome": "No usable result; shared filesystem filled. Driver exit receipt is empty; shell session 17168 exited 1 and reported printf write error: no space left on device. Do not infer a measured child exit.",
+      "driver_log": "private/audit-ir-clang-transport/measurement-driver.log"
+    },
+    {
+      "directory": "private/audit-ir-clang-transport/controls2",
+      "outcome": "Terminated by this card while waiting for the shared lock, before any measured run, to validate the seek counter fix first.",
+      "driver_exit": 143,
+      "driver_log": "private/audit-ir-clang-transport/measurement2-driver.log",
+      "exit_path": "private/audit-ir-clang-transport/measurement2-driver.exit"
+    }
+  ]
+}
