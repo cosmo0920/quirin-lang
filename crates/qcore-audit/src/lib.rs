@@ -149,6 +149,10 @@ pub struct AuditConfig {
     /// precedence, and `QCORE_AUDIT_JOBS` applies only when both are absent.
     #[serde(default)]
     pub jobs: Option<usize>,
+    /// Planning estimate: 1024 MiB coordinator + 2048 MiB per worker.
+    /// Does not enforce a process/cgroup memory limit.
+    #[serde(default)]
+    pub memory_budget_mib: Option<usize>,
 }
 
 /// An explicit, declared narrowing of a multi-target compilation database.
@@ -335,7 +339,8 @@ pub fn run_config_with_jobs(path: &Path, flag_jobs: Option<usize>) -> Result<Aud
             config.schema_version
         ));
     }
-    let jobs = parallel::jobs_with_precedence(flag_jobs, config.jobs)?;
+    let requested_jobs = parallel::jobs_with_precedence(flag_jobs, config.jobs)?;
+    let jobs = parallel::budgeted_jobs(requested_jobs, config.memory_budget_mib)?;
     if config.mode.is_contracts_only() && config.source_contracts.is_some() {
         return Err("a contracts-only audit admits no source-contract checks: remove `source_contracts` (process packages and verifier-host execution) or drop `mode: contracts-only`".into());
     }
@@ -884,14 +889,11 @@ pub fn run_config_with_jobs(path: &Path, flag_jobs: Option<usize>) -> Result<Aud
                     .provider_record()
                     .map(|record| record["selection"].clone()),
             },
-            "jobs": {
-                "requested": jobs,
-                "effective": parallel::effective_jobs(jobs),
-                "source": if flag_jobs.is_some() { "command_line" }
-                    else if config.jobs.is_some() { "configuration" }
-                    else if std::env::var_os(parallel::JOBS_VARIABLE).is_some() { "environment" }
-                    else { "default" },
-            },
+            "jobs": parallel::jobs_record(requested_jobs, parallel::effective_jobs(jobs),
+                if flag_jobs.is_some() { "command_line" }
+                else if config.jobs.is_some() { "configuration" }
+                else if std::env::var_os(parallel::JOBS_VARIABLE).is_some() { "environment" }
+                else { "default" }, config.memory_budget_mib),
             "environment": {
                 "QCORE_CLANG": std::env::var("QCORE_CLANG").ok(),
                 "QCORE_AUDIT_JOBS": std::env::var(parallel::JOBS_VARIABLE).ok(),

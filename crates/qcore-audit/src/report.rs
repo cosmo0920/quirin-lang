@@ -1,6 +1,8 @@
 //! Diagnostic inventory only: never changes analysis verdicts or certificates.
+use serde::Serialize;
 use std::collections::BTreeMap;
 use std::fs;
+use std::io::{BufWriter, Write};
 use std::path::Path;
 
 use qcore_c_gateway::legacy_c::{
@@ -113,6 +115,16 @@ impl From<&str> for UnitRefusal {
     fn from(reason: &str) -> Self {
         Self::classified(reason)
     }
+}
+
+#[derive(Serialize)]
+#[serde(untagged)]
+enum ReportField<'a> {
+    Version(u32),
+    Text(&'a str),
+    Counts(&'a BTreeMap<String, usize>),
+    Units(&'a [Value]),
+    Json(&'a Value),
 }
 
 pub struct AuditReport {
@@ -910,34 +922,51 @@ impl AuditReport {
 
     /// Compatibility with an existing report schema; verdict contents are unchanged.
     pub fn write_with_revision_key(&self, path: &Path, revision_key: &str) -> Result<(), String> {
-        let report = self.document(revision_key);
-        let mut bytes = serde_json::to_vec_pretty(&report).map_err(|error| error.to_string())?;
-        bytes.push(b'\n');
-        fs::write(path, bytes)
+        let file = fs::File::create(path)
+            .map_err(|error| format!("could not write {}: {error}", path.display()))?;
+        let mut writer = BufWriter::new(file);
+        self.write_document(&mut writer, revision_key)
             .map_err(|error| format!("could not write {}: {error}", path.display()))
     }
 
-    /// The report document [`Self::write_with_revision_key`] writes (card
-    /// W45-AUDIT-CHECKPOINTS: a composed report is this document over the
-    /// merged tallies, with the groups' rows streamed into `units`).
+    fn write_document(&self, writer: &mut impl Write, revision_key: &str) -> Result<(), String> {
+        serde_json::to_writer_pretty(&mut *writer, &self.borrowed_document(revision_key))
+            .map_err(|error| error.to_string())?;
+        writer.write_all(b"\n").map_err(|error| error.to_string())?;
+        writer.flush().map_err(|error| error.to_string())
+    }
+
+    /// Materialize only for callers that require an owned checkpoint document.
     pub(crate) fn document(&self, revision_key: &str) -> Value {
-        let mut report = json!({
-            "schema_version": 1, revision_key: self.revision,
-            "scope": "generic resource projection; separate chunk/callback source profiles are not certificates here; an admitted scalar access through a pointer decides custody only, never bounds, alignment, or the liveness or nullness of an object the projection does not track; an index or pointer traversal (a stepped pointer, a moved index, a typed read in a loop condition) decides custody, use after release and invalid release only: no bounds claim; an indexed collection's element ranges decide which indices owe a release, never that an index is inside the allocation; a typed read handed to a borrowed or data-tail call actual (a scalar, a pointer read, a sub-object address) decides its base's custody only, never the liveness of an object a read pointer names",
-            "line_coordinates": "`line` is the Clang -E -P preprocessed translation unit's line, not the original file; line 0 is synthetic. It is retained as the internal leaf identity every pinned comparison is keyed on, and is not a coordinate anyone can open; `origin` beside it is the original pre-preprocessing coordinate and is what diagnostic text presents",
-            "origin_meaning": "the original `file:line` of the C a person wrote (card GATEWAY-C-LOCATION), derived from the line markers of the same unit's marked preprocessing and paired content line by content line with the analysed -E -P text; a diagnostic inside a macro expansion carries the expansion site's line. No presented file spelling is ever read from a flagless marker: an included file is named by its own entering (flag 1) marker and the primary input by this report's own `file`, so a `#line` directive in analysed source can neither move the audited scope (standing constraint 12) nor name a file here. A flagless marker that renames its frame withdraws that frame's coordinates instead of adopting the name, and `null` asserts no coordinate at all; `origin_coordinates` carries the per-unit account",
-            "not_projected_meaning": "raw source definitions absent from the projection, including build-excluded definitions; see unit reason for parser failures",
-            "enumeration_meaning": "the enumerated main-source definition denominator (E01-F1): `absent_from_raw_scan` names main-source definitions the historical raw token scan did not see — produced by macro expansion, or lost by that scan for another reason — each an ordinary definition in the preprocessed unit that the unmodified analyzer reads; `unanalyzable` definitions are counted but not read by the resource analyzer and carry their own classified Unknown row; `completeness: refused` means the definition set itself could not be established on the named ground, so no whole-unit Safe claim is published over it",
-            "reason_code_meaning": "closed reason-code vocabulary of QCORE_SPEC_r0_3 L21.1 classifying the sibling reason; null asserts no category, either because there is no reason or because the closed vocabulary does not recognise it; `environment-unavailable` says nothing about the analysed source and never contributes to a provisional Unsafe",
-            "diagnostic_counts": self.diagnostic_counts, "units": self.units,
-        });
-        if let Some(evidence) = &self.source_contracts {
-            report["source_contracts"] = evidence.clone();
+        serde_json::to_value(self.borrowed_document(revision_key))
+            .expect("report fields are JSON values")
+    }
+
+    fn borrowed_document<'a>(
+        &'a self,
+        revision_key: &'a str,
+    ) -> BTreeMap<&'a str, ReportField<'a>> {
+        let mut fields = BTreeMap::new();
+        fields.insert("schema_version", ReportField::Version(1));
+        fields.insert(revision_key, ReportField::Text(&self.revision));
+        fields.insert("scope", ReportField::Text("generic resource projection; separate chunk/callback source profiles are not certificates here; an admitted scalar access through a pointer decides custody only, never bounds, alignment, or the liveness or nullness of an object the projection does not track; an index or pointer traversal (a stepped pointer, a moved index, a typed read in a loop condition) decides custody, use after release and invalid release only: no bounds claim; an indexed collection's element ranges decide which indices owe a release, never that an index is inside the allocation; a typed read handed to a borrowed or data-tail call actual (a scalar, a pointer read, a sub-object address) decides its base's custody only, never the liveness of an object a read pointer names"));
+        fields.insert("line_coordinates", ReportField::Text("`line` is the Clang -E -P preprocessed translation unit's line, not the original file; line 0 is synthetic. It is retained as the internal leaf identity every pinned comparison is keyed on, and is not a coordinate anyone can open; `origin` beside it is the original pre-preprocessing coordinate and is what diagnostic text presents"));
+        fields.insert("origin_meaning", ReportField::Text("the original `file:line` of the C a person wrote (card GATEWAY-C-LOCATION), derived from the line markers of the same unit's marked preprocessing and paired content line by content line with the analysed -E -P text; a diagnostic inside a macro expansion carries the expansion site's line. No presented file spelling is ever read from a flagless marker: an included file is named by its own entering (flag 1) marker and the primary input by this report's own `file`, so a `#line` directive in analysed source can neither move the audited scope (standing constraint 12) nor name a file here. A flagless marker that renames its frame withdraws that frame's coordinates instead of adopting the name, and `null` asserts no coordinate at all; `origin_coordinates` carries the per-unit account"));
+        fields.insert("not_projected_meaning", ReportField::Text("raw source definitions absent from the projection, including build-excluded definitions; see unit reason for parser failures"));
+        fields.insert("enumeration_meaning", ReportField::Text("the enumerated main-source definition denominator (E01-F1): `absent_from_raw_scan` names main-source definitions the historical raw token scan did not see — produced by macro expansion, or lost by that scan for another reason — each an ordinary definition in the preprocessed unit that the unmodified analyzer reads; `unanalyzable` definitions are counted but not read by the resource analyzer and carry their own classified Unknown row; `completeness: refused` means the definition set itself could not be established on the named ground, so no whole-unit Safe claim is published over it"));
+        fields.insert("reason_code_meaning", ReportField::Text("closed reason-code vocabulary of QCORE_SPEC_r0_3 L21.1 classifying the sibling reason; null asserts no category, either because there is no reason or because the closed vocabulary does not recognise it; `environment-unavailable` says nothing about the analysed source and never contributes to a provisional Unsafe"));
+        fields.insert(
+            "diagnostic_counts",
+            ReportField::Counts(&self.diagnostic_counts),
+        );
+        fields.insert("units", ReportField::Units(&self.units));
+        if let Some(value) = &self.source_contracts {
+            fields.insert("source_contracts", ReportField::Json(value));
         }
-        if let Some(evidence) = &self.evidence {
-            report["evidence"] = evidence.clone();
+        if let Some(value) = &self.evidence {
+            fields.insert("evidence", ReportField::Json(value));
         }
-        report
+        fields
     }
 
     /// Card W45-AUDIT-CHECKPOINTS: a report with no rows, the given
@@ -1101,6 +1130,60 @@ fn diagnostic_description(
 
 #[cfg(test)]
 mod tests {
+    #[test]
+    fn streamed_report_matches_owned_encoding_with_optional_fields_and_writer_failures() {
+        let mut report = super::AuditReport::new("revision");
+        report.units.push(
+            serde_json::json!({"file":"a.c", "functions":[{"function":"f", "status":"Unknown"}]}),
+        );
+        report.diagnostic_counts.insert("parser".into(), 3);
+        for optional in [false, true] {
+            if optional {
+                report.evidence =
+                    Some(serde_json::json!({"mode":"contracts-only", "modules":["x"]}));
+                report.source_contracts = Some(serde_json::json!({"status":"Unknown"}));
+            }
+            for key in ["source_revision", "historical_revision"] {
+                let mut expected = serde_json::to_vec_pretty(&report.document(key)).unwrap();
+                expected.push(b'\n');
+                let mut actual = Vec::new();
+                report.write_document(&mut actual, key).unwrap();
+                assert_eq!(actual, expected);
+            }
+        }
+        struct Reject;
+        impl std::io::Write for Reject {
+            fn write(&mut self, _: &[u8]) -> std::io::Result<usize> {
+                Err(std::io::Error::other("write refused"))
+            }
+            fn flush(&mut self) -> std::io::Result<()> {
+                Ok(())
+            }
+        }
+        assert!(
+            report
+                .write_document(&mut Reject, "source_revision")
+                .unwrap_err()
+                .contains("write refused")
+        );
+        struct RejectFlush(Vec<u8>);
+        impl std::io::Write for RejectFlush {
+            fn write(&mut self, bytes: &[u8]) -> std::io::Result<usize> {
+                self.0.extend_from_slice(bytes);
+                Ok(bytes.len())
+            }
+            fn flush(&mut self) -> std::io::Result<()> {
+                Err(std::io::Error::other("flush refused"))
+            }
+        }
+        assert!(
+            report
+                .write_document(&mut RejectFlush(Vec::new()), "source_revision")
+                .unwrap_err()
+                .contains("flush refused")
+        );
+    }
+
     use super::*;
     use qcore_c_gateway::legacy_c::analyze_legacy_c_translation_unit;
     use qcore_contract::contract_loader::load_resource_contract_sources;

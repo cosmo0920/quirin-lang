@@ -3463,18 +3463,24 @@ fn analyze_defined_function_unscoped(
                 // the CFG that desugars a derived `return f(…)`; a body that does
                 // not validate falls back to the ordinary CFG's contract-free
                 // analysis, exactly as any other failed entry does.
-                let entry_cfg = if matches!(contract.result, ResourceReturnMode::Derived { .. })
-                    && !has_contextual
-                {
-                    build_derived_return_cfg(tokens, function, derivation.environment()).ok()
-                } else {
-                    Some(cfg.clone())
-                };
-                match entry_cfg.and_then(|entry_cfg| {
-                    EntryCustody::build(&entry_cfg, &parameters, contract)
-                        .map(|entry| (entry_cfg, entry))
-                }) {
-                    Some((entry_cfg, entry)) => {
+                let (entry_cfg, fallback) =
+                    if matches!(contract.result, ResourceReturnMode::Derived { .. })
+                        && !has_contextual
+                    {
+                        (
+                            build_derived_return_cfg(tokens, function, derivation.environment())
+                                .ok(),
+                            Some(cfg),
+                        )
+                    } else {
+                        (Some(cfg), None)
+                    };
+                (|| match entry_cfg {
+                    Some(entry_cfg) => {
+                        let Some(entry) = EntryCustody::build(&entry_cfg, &parameters, contract)
+                        else {
+                            return analyze_cfg(fallback.unwrap_or(entry_cfg));
+                        };
                         let (candidate, observations) = analyze_cfg_with_entry(entry_cfg, &entry);
                         if crate::legacy_summary::observations_match_contract(
                             contract,
@@ -3494,11 +3500,11 @@ fn analyze_defined_function_unscoped(
                             }
                             candidate
                         } else {
-                            analyze_cfg(cfg)
+                            analyze_cfg(fallback.unwrap_or(candidate.cfg))
                         }
                     }
-                    None => analyze_cfg(cfg),
-                }
+                    None => analyze_cfg(fallback.expect("derived CFG retains ordinary fallback")),
+                })()
             }
             None => analyze_cfg(cfg),
         },

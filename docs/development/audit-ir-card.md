@@ -174,6 +174,26 @@ budget acceptance. Account for retained final CFG/report products and bound
 concurrency across audit and replay in the next slice; per-component body paging
 remains open.
 
+### AUDIT-IR-WORKING-SET
+
+Bound started-but-not-consumed unit tasks to the worker count. Apply dispatch
+priority only inside that moving window, keeping publication, first-error and
+panic positions in selection order. Stream final pretty JSON from borrowed
+report fields, without cloning all rows or buffering the encoded document.
+Move ordinary CFGs into entry candidates and recover their unchanged CFG for
+contract-free fallback; derived-return candidates retain their distinct fallback.
+All source replay and certificate equality checks remain mandatory.
+
+`current --memory-budget-mib N` (or `memory_budget_mib` in either JSON route)
+caps requested jobs by an initial planning model: 1024 MiB coordinator plus
+2048 MiB per worker, minimum 3072 MiB. For example `--jobs 8
+--memory-budget-mib 7168` plans three workers. These binary-unit reserves are
+estimates; they enforce neither RSS nor a cgroup ceiling, and 7168 MiB is not
+7,000,000,000 bytes. Invocation records identify both the plan and this limit.
+Selected units are never removed to meet a budget. Retained two-phase results,
+final summary bodies during replay and per-component paging remain follow-ons.
+[Implementation and measurements](../reports/audit-ir-working-set/README.md).
+
 ### AUDIT-IR-BUDGET
 
 Add a user-visible audit memory budget with bounded concurrency and bounded

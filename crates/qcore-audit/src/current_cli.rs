@@ -52,7 +52,7 @@ pub const USAGE: &str = "usage: quirin-audit current [--config FILE] [--checkout
 [--profile-directory DIR] [--compile-database PATH] [--monkey-database PATH] [--report PATH] \
 [--monkey-source-report PATH] [--binding-directory DIR] [--provider NAME[:MODULE]]... \
 [--load-path PATH] [--contract-manifest PATH] [--contracts-only] [--quirin-providers-only] \
-[--selection FILE] [--jobs N] [--checkpoint-dir DIR [--resume]]";
+[--selection FILE] [--jobs N] [--memory-budget-mib N] [--checkpoint-dir DIR [--resume]]";
 
 #[derive(Clone, Debug, PartialEq, Eq, Deserialize)]
 #[serde(untagged)]
@@ -95,6 +95,7 @@ struct CurrentConfig {
     quirin_providers_only: Option<bool>,
     #[serde(default)]
     jobs: Option<usize>,
+    memory_budget_mib: Option<usize>,
     /// Card W45-FB-SYSTEM-SELECTION: an explicit unit selection file that
     /// replaces the profile's `audit.json` groups.
     #[serde(default)]
@@ -130,6 +131,7 @@ struct Settings {
     mode: Option<EvidenceMode>,
     quirin_providers_only: Option<bool>,
     jobs: Option<usize>,
+    memory_budget_mib: Option<usize>,
     selection: Option<PathBuf>,
     checkpoint_dir: Option<PathBuf>,
     resume: Option<bool>,
@@ -206,6 +208,17 @@ fn parse_command_line(
                     settings.quirin_providers_only = Some(true);
                 }
                 settings.library_providers = Some(parsed.libraries);
+            }
+            "--memory-budget-mib" => {
+                if settings.memory_budget_mib.is_some() {
+                    return Err("--memory-budget-mib is given twice".into());
+                }
+                let budget = value
+                    .ok_or("--memory-budget-mib requires an integer")?
+                    .parse::<usize>()
+                    .map_err(|_| "--memory-budget-mib requires an integer")?;
+                crate::parallel::budgeted_jobs(1, Some(budget))?;
+                settings.memory_budget_mib = Some(budget);
             }
             "--jobs" => {
                 let text = value.ok_or("--jobs requires a positive integer")?;
@@ -291,6 +304,7 @@ fn read_config(path: &Path) -> Result<(Settings, Vec<u8>), String> {
             mode: config.mode,
             quirin_providers_only: cfg_quirin_only,
             jobs: config.jobs,
+            memory_budget_mib: config.memory_budget_mib,
             selection: anchor_all(config.selection),
             checkpoint_dir: anchor_all(config.checkpoint_dir),
             resume: config.resume,
@@ -499,7 +513,13 @@ fn run(arguments: &[String]) -> Result<bool, String> {
         "default"
     };
     let jobs = crate::parallel::jobs_with_precedence(command_line.jobs, configuration.jobs)?;
-    let effective_jobs = crate::parallel::effective_jobs(jobs);
+    let memory_budget_mib = one(
+        "memory_budget_mib",
+        command_line.memory_budget_mib,
+        configuration.memory_budget_mib,
+    )?;
+    let effective_jobs =
+        crate::parallel::effective_jobs(crate::parallel::budgeted_jobs(jobs, memory_budget_mib)?);
     let profile = load_profile_directory(&profile_directory).map_err(|error| error.to_string())?;
     let profile_manifest = profile.resource_contract_manifest_path();
     let selection = selection_path
@@ -680,7 +700,7 @@ fn run(arguments: &[String]) -> Result<bool, String> {
                 "manifest_sha256": sha256_hex(contracts.manifest_text().as_bytes()),
             },
             "mode": mode,
-            "jobs": {"requested": jobs, "effective": effective_jobs, "source": jobs_source},
+            "jobs": crate::parallel::jobs_record(jobs, effective_jobs, jobs_source, memory_budget_mib),
             "environment": {
                 "QCORE_CLANG": std::env::var("QCORE_CLANG").ok(),
                 "QCORE_AUDIT_JOBS": std::env::var(crate::parallel::JOBS_VARIABLE).ok(),
@@ -708,6 +728,51 @@ fn run(arguments: &[String]) -> Result<bool, String> {
 
 #[cfg(test)]
 mod tests {
+    #[test]
+    fn memory_budget_flags_and_configuration_agree_and_refuse_bad_values() {
+        let cwd = std::path::Path::new("/tmp");
+        let args = vec![
+            "--memory-budget-mib".into(),
+            "7168".into(),
+            "--jobs".into(),
+            "8".into(),
+        ];
+        let (settings, _) = super::parse_command_line(&args, cwd).unwrap();
+        assert_eq!(settings.memory_budget_mib, Some(7168));
+        assert_eq!(settings.jobs, Some(8));
+        let config: super::CurrentConfig =
+            serde_json::from_str(r#"{"schema_version":1,"memory_budget_mib":7168}"#).unwrap();
+        assert_eq!(
+            super::one(
+                "memory_budget_mib",
+                settings.memory_budget_mib,
+                config.memory_budget_mib
+            )
+            .unwrap(),
+            Some(7168)
+        );
+        assert!(super::one("memory_budget_mib", Some(7168), Some(6144)).is_err());
+        for value in ["0", "3071", "x", "-1"] {
+            assert!(
+                super::parse_command_line(&["--memory-budget-mib".into(), value.into()], cwd)
+                    .is_err()
+            );
+        }
+        assert!(super::parse_command_line(&["--memory-budget-mib".into()], cwd).is_err());
+        assert!(
+            super::parse_command_line(
+                &[
+                    "--memory-budget-mib".into(),
+                    "7168".into(),
+                    "--memory-budget-mib".into(),
+                    "7168".into()
+                ],
+                cwd
+            )
+            .is_err()
+        );
+    }
+
     use super::*;
 
     fn args(values: &[&str]) -> Vec<String> {

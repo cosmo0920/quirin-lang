@@ -22,7 +22,6 @@
 use std::any::Any;
 use std::num::NonZeroUsize;
 use std::panic::{AssertUnwindSafe, catch_unwind, resume_unwind};
-use std::sync::atomic::{AtomicBool, Ordering};
 use std::sync::{Condvar, Mutex, PoisonError};
 
 /// The environment variable that selects the job count when no command-line
@@ -122,6 +121,34 @@ pub fn effective_jobs(requested: usize) -> usize {
     }
 }
 
+/// Cap concurrency by an explicit working-set planning budget (MiB).
+/// This reserve is an estimate, not an RSS limit or an admission proof.
+/// Oversize single units and retained report rows require cgroup measurement.
+pub fn budgeted_jobs(requested: usize, budget_mib: Option<usize>) -> Result<usize, String> {
+    match budget_mib {
+        None => Ok(requested),
+        Some(budget) if budget >= 3072 => Ok(requested.min((budget - 1024) / 2048)),
+        Some(_) => Err("memory_budget_mib must be at least 3072 (1024 MiB coordinator + 2048 MiB per worker planning reserve)".into()),
+    }
+}
+
+pub(crate) fn jobs_record(
+    requested: usize,
+    effective: usize,
+    source: &str,
+    budget: Option<usize>,
+) -> serde_json::Value {
+    let mut record =
+        serde_json::json!({"requested": requested, "effective": effective, "source": source});
+    if let Some(budget) = budget {
+        record["memory_budget_mib"] = serde_json::json!(budget);
+        record["memory_planning_reserve_mib"] =
+            serde_json::json!({"coordinator": 1024, "per_worker": 2048});
+        record["memory_limit_enforced"] = serde_json::json!(false);
+    }
+    record
+}
+
 /// A dispatch order for [`run_ordered`] that starts the heaviest tasks first
 /// (longest-processing-time-first), ties in task order.
 ///
@@ -146,7 +173,9 @@ enum Slot<R> {
 /// `consume` in task order, stopping at the first error `consume` returns.
 ///
 /// `dispatch` is the order in which tasks are *started* when `jobs > 1`: a
-/// permutation of `0..tasks.len()` (for example, longest first). It never
+/// permutation of `0..tasks.len()` (for example, longest first). Priority is
+/// restricted to the next `jobs` unconsumed positions, bounding active and
+/// completed-but-unconsumed products together. It never
 /// changes the order of consumption. `None` starts tasks in task order. It is
 /// ignored when `jobs == 1`, which computes each task just before consuming
 /// it.
@@ -186,64 +215,83 @@ where
         }
         None => (0..count).collect(),
     };
-    let mut pending = tasks.into_iter().map(Some).collect::<Vec<_>>();
-    let queue = Mutex::new(
-        order
-            .into_iter()
-            .map(|index| {
-                (
-                    index,
-                    pending[index].take().expect("each task dispatched once"),
-                )
-            })
-            .collect::<Vec<_>>()
-            .into_iter(),
-    );
-    let slots = Mutex::new((0..count).map(|_| Slot::Pending).collect::<Vec<Slot<R>>>());
+    // Bound started-but-not-consumed tasks, including completed results.
+    // Priority applies only inside this moving window: a slow early unit
+    // cannot cause the rest of the corpus to accumulate behind it.
+    struct State<T, R> {
+        pending: Vec<Option<T>>,
+        order: Vec<usize>,
+        slots: Vec<Slot<R>>,
+        frontier: usize,
+        stop: bool,
+    }
+    let state = Mutex::new(State {
+        pending: tasks.into_iter().map(Some).collect(),
+        order,
+        slots: (0..count).map(|_| Slot::Pending).collect(),
+        frontier: 0,
+        stop: false,
+    });
     let ready = Condvar::new();
-    let stop = AtomicBool::new(false);
-    // Stops the workers however the consumer leaves: an error, a re-raised
-    // panic, or a panic in the consumer itself.
-    struct StopOnExit<'a>(&'a AtomicBool);
-    impl Drop for StopOnExit<'_> {
+    struct StopOnExit<'a, T, R>(&'a Mutex<State<T, R>>, &'a Condvar);
+    impl<T, R> Drop for StopOnExit<'_, T, R> {
         fn drop(&mut self) {
-            self.0.store(true, Ordering::SeqCst);
+            self.0.lock().unwrap_or_else(PoisonError::into_inner).stop = true;
+            self.1.notify_all();
         }
     }
     std::thread::scope(|scope| {
         for _ in 0..jobs.min(count) {
             scope.spawn(|| {
                 loop {
-                    if stop.load(Ordering::SeqCst) {
-                        break;
-                    }
-                    let next = queue.lock().unwrap_or_else(PoisonError::into_inner).next();
-                    let Some((index, task)) = next else {
-                        break;
+                    let next = {
+                        let mut guard = state.lock().unwrap_or_else(PoisonError::into_inner);
+                        loop {
+                            if guard.stop || guard.order.is_empty() {
+                                break None;
+                            }
+                            let end = guard.frontier.saturating_add(jobs);
+                            if let Some(position) =
+                                guard.order.iter().position(|&index| index < end)
+                            {
+                                let index = guard.order.remove(position);
+                                let task = guard.pending[index]
+                                    .take()
+                                    .expect("each task dispatched once");
+                                break Some((index, task));
+                            }
+                            guard = ready.wait(guard).unwrap_or_else(PoisonError::into_inner);
+                        }
                     };
+                    let Some((index, task)) = next else { break };
                     let outcome = match catch_unwind(AssertUnwindSafe(|| work(task))) {
                         Ok(result) => Slot::Done(result),
                         Err(payload) => Slot::Panicked(payload),
                     };
-                    slots.lock().unwrap_or_else(PoisonError::into_inner)[index] = outcome;
+                    state.lock().unwrap_or_else(PoisonError::into_inner).slots[index] = outcome;
                     ready.notify_all();
                 }
             });
         }
-        let _stop = StopOnExit(&stop);
+        let _stop = StopOnExit(&state, &ready);
         for index in 0..count {
             let slot = {
-                let mut guard = slots.lock().unwrap_or_else(PoisonError::into_inner);
-                while matches!(guard[index], Slot::Pending) {
+                let mut guard = state.lock().unwrap_or_else(PoisonError::into_inner);
+                while matches!(guard.slots[index], Slot::Pending) {
                     guard = ready.wait(guard).unwrap_or_else(PoisonError::into_inner);
                 }
-                std::mem::replace(&mut guard[index], Slot::Taken)
+                std::mem::replace(&mut guard.slots[index], Slot::Taken)
             };
             match slot {
                 Slot::Done(result) => consume(result)?,
                 Slot::Panicked(payload) => resume_unwind(payload),
                 Slot::Pending | Slot::Taken => unreachable!("each slot is consumed once"),
             }
+            state
+                .lock()
+                .unwrap_or_else(PoisonError::into_inner)
+                .frontier = index + 1;
+            ready.notify_all();
         }
         Ok(())
     })
@@ -252,8 +300,78 @@ where
 #[cfg(test)]
 mod tests {
     use super::*;
-    use std::sync::atomic::AtomicUsize;
+    use std::sync::atomic::{AtomicUsize, Ordering};
     use std::time::Duration;
+
+    #[test]
+    fn the_window_bounds_live_products_including_out_of_order_completions() {
+        struct Product<'a>(&'a AtomicUsize);
+        impl Drop for Product<'_> {
+            fn drop(&mut self) {
+                self.0.fetch_sub(1, Ordering::SeqCst);
+            }
+        }
+        for jobs in [2, 3, 4] {
+            let live = AtomicUsize::new(0);
+            let consumed = AtomicUsize::new(0);
+            run_ordered(
+                (0..100).collect(),
+                jobs,
+                Some((0..100).rev().collect()),
+                |index| {
+                    assert!(index < consumed.load(Ordering::SeqCst) + jobs);
+                    assert!(live.fetch_add(1, Ordering::SeqCst) < jobs);
+                    if index == 0 {
+                        std::thread::sleep(Duration::from_millis(20));
+                    }
+                    (index, Product(&live))
+                },
+                |(index, product)| {
+                    assert_eq!(index, consumed.load(Ordering::SeqCst));
+                    drop(product);
+                    consumed.fetch_add(1, Ordering::SeqCst);
+                    Ok::<(), ()>(())
+                },
+            )
+            .unwrap();
+            assert_eq!(live.load(Ordering::SeqCst), 0);
+            assert_eq!(consumed.load(Ordering::SeqCst), 100);
+        }
+    }
+
+    #[test]
+    fn a_consumer_panic_wakes_workers_waiting_at_the_window_boundary() {
+        let outcome = catch_unwind(|| {
+            run_ordered(
+                (0..100).collect(),
+                3,
+                Some((0..100).rev().collect()),
+                |index| index,
+                |_| -> Result<(), ()> { panic!("consumer stopped") },
+            )
+        });
+        assert!(outcome.is_err());
+    }
+
+    #[test]
+    fn memory_planning_caps_explicit_jobs_without_claiming_a_hard_limit() {
+        assert_eq!(budgeted_jobs(16, Some(7168)), Ok(3));
+        assert_eq!(budgeted_jobs(16, Some(6144)), Ok(2));
+        assert_eq!(budgeted_jobs(16, Some(3072)), Ok(1));
+        assert_eq!(budgeted_jobs(2, Some(7168)), Ok(2));
+        assert_eq!(budgeted_jobs(16, None), Ok(16));
+        assert!(budgeted_jobs(16, Some(0)).is_err());
+        assert!(budgeted_jobs(16, Some(3071)).is_err());
+        assert_eq!(
+            jobs_record(16, 3, "command_line", Some(7168))["memory_limit_enforced"],
+            false
+        );
+        assert!(
+            jobs_record(4, 4, "default", None)
+                .get("memory_budget_mib")
+                .is_none()
+        );
+    }
 
     /// Card W44-QUIRIN-AUDIT-PROVIDERS: flag over configuration over
     /// environment over the capped host default.

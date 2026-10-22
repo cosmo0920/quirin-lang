@@ -877,6 +877,52 @@ fn the_plain_route_takes_providers_and_refuses_contracts_only_source_contracts()
     assert_eq!(sidecar["evidence"], report["evidence"]);
 }
 
+/// The budget changes scheduling provenance only, preserving all report bytes.
+#[test]
+fn a_memory_planning_budget_caps_jobs_and_preserves_the_complete_selection() {
+    let Some(clang) = clang() else { return };
+    let fixture = Fixture::new(&clang, true);
+    for (out, budget) in [("budget-baseline", None), ("budget-limited", Some("7168"))] {
+        let mut args = fixture.base_args(out);
+        let job = args.iter().position(|arg| arg == "--jobs").unwrap();
+        args[job + 1] = if budget.is_some() { "8" } else { "1" }.into();
+        args.extend(strings(&[
+            "--load-path",
+            "providers/contract-load-path.json",
+            "--provider",
+            "quirin-provider-alpha",
+        ]));
+        if let Some(budget) = budget {
+            args.extend(strings(&["--memory-budget-mib", budget]));
+        }
+        succeeded(
+            &Command::new(env!("CARGO_BIN_EXE_quirin-audit"))
+                .current_dir(&fixture.0)
+                .arg("current")
+                .args(args)
+                .output()
+                .unwrap(),
+        );
+    }
+    let invocation = fixture.read("budget-limited/report.invocation.json");
+    assert_eq!(invocation["jobs"]["requested"], 8);
+    assert_eq!(invocation["jobs"]["effective"], 3);
+    assert_eq!(invocation["jobs"]["memory_limit_enforced"], false);
+    assert_eq!(
+        fixture.read("budget-limited/report.json")["units"]
+            .as_array()
+            .unwrap()
+            .len(),
+        6
+    );
+    for name in ["report.json", "report.contracts.json"] {
+        assert_eq!(
+            fs::read(fixture.0.join("budget-baseline").join(name)).unwrap(),
+            fs::read(fixture.0.join("budget-limited").join(name)).unwrap()
+        );
+    }
+}
+
 /// The job count: `--jobs` over the configuration's `jobs` over
 /// QCORE_AUDIT_JOBS; one job is the sequential loop, and every output but the
 /// invocation record is byte-identical at any count, on both routes.

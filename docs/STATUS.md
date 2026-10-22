@@ -1,5 +1,13 @@
 # Current status and evidence boundaries
 
+[Bounded audit working sets](reports/audit-ir-working-set/README.md) limit
+started-but-unconsumed tasks to the worker count, stream final report JSON
+from borrowed rows, and recover ordinary entry-candidate CFGs without a copy.
+An optional MiB planning budget caps concurrency and records its estimates;
+it does not enforce an RSS ceiling. The combined gate passes 8,498 Rust tests,
+362 Lean audits and 374 Python tests. Fresh whole-job measurement follows;
+the prior four-job 7 GB OOM remains a failed result.
+
 [Borrowed audit-certificate admission](reports/audit-ir-admission/README.md)
 removes the temporary full-certificate copy while retaining independent source
 replay and exact context/CFG checks. Current and pinned units now release optional

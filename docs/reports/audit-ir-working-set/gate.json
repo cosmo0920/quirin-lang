@@ -1,0 +1,285 @@
+{
+  "card": "AUDIT-IR-WORKING-SET",
+  "base": "53e9b648eb05f8a3a2f2bfb94084d52f49a6422d",
+  "shared_main_integration": "b5f74d79a",
+  "full_standing_gate_passed": true,
+  "steps": [
+    {
+      "name": "submodules",
+      "argv": [
+        "git",
+        "submodule",
+        "update",
+        "--init",
+        "--recursive"
+      ],
+      "exit": 0,
+      "elapsed_seconds": 0.023,
+      "log": "/home/cosmo/Documents/GitHub/qcore-c/private/audit-ir-working-set/20261022T014206Z/submodules.log"
+    },
+    {
+      "name": "clang",
+      "argv": [
+        "clang",
+        "--version"
+      ],
+      "exit": 0,
+      "elapsed_seconds": 0.014,
+      "log": "/home/cosmo/Documents/GitHub/qcore-c/private/audit-ir-working-set/20261022T014206Z/clang.log"
+    },
+    {
+      "name": "focused-parallel",
+      "argv": [
+        "cargo",
+        "test",
+        "-p",
+        "qcore-audit",
+        "--lib",
+        "parallel::tests"
+      ],
+      "exit": 0,
+      "elapsed_seconds": 8.233,
+      "log": "/home/cosmo/Documents/GitHub/qcore-c/private/audit-ir-working-set/20261022T014206Z/focused-parallel.log"
+    },
+    {
+      "name": "focused-stream",
+      "argv": [
+        "cargo",
+        "test",
+        "-p",
+        "qcore-audit",
+        "--lib",
+        "streamed_report_matches"
+      ],
+      "exit": 0,
+      "elapsed_seconds": 0.055,
+      "log": "/home/cosmo/Documents/GitHub/qcore-c/private/audit-ir-working-set/20261022T014206Z/focused-stream.log"
+    },
+    {
+      "name": "focused-budget",
+      "argv": [
+        "cargo",
+        "test",
+        "-p",
+        "qcore-audit",
+        "--lib",
+        "memory_budget_flags"
+      ],
+      "exit": 0,
+      "elapsed_seconds": 0.054,
+      "log": "/home/cosmo/Documents/GitHub/qcore-c/private/audit-ir-working-set/20261022T014206Z/focused-budget.log"
+    },
+    {
+      "name": "focused-entry",
+      "argv": [
+        "cargo",
+        "test",
+        "-p",
+        "qcore-c-gateway",
+        "--test",
+        "declared_entry_check"
+      ],
+      "exit": 0,
+      "elapsed_seconds": 18.332,
+      "log": "/home/cosmo/Documents/GitHub/qcore-c/private/audit-ir-working-set/20261022T014206Z/focused-entry.log"
+    },
+    {
+      "name": "focused-cli",
+      "argv": [
+        "cargo",
+        "test",
+        "-p",
+        "qcore-audit",
+        "--test",
+        "current_cli"
+      ],
+      "exit": 0,
+      "elapsed_seconds": 11.864,
+      "log": "/home/cosmo/Documents/GitHub/qcore-c/private/audit-ir-working-set/20261022T014206Z/focused-cli.log"
+    },
+    {
+      "name": "fmt",
+      "argv": [
+        "cargo",
+        "fmt",
+        "--all",
+        "--",
+        "--check"
+      ],
+      "exit": 0,
+      "elapsed_seconds": 3.929,
+      "log": "/home/cosmo/Documents/GitHub/qcore-c/private/audit-ir-working-set/20261022T014206Z/fmt.log"
+    },
+    {
+      "name": "clippy",
+      "argv": [
+        "cargo",
+        "clippy",
+        "--all-targets",
+        "--",
+        "-D",
+        "warnings"
+      ],
+      "exit": 0,
+      "elapsed_seconds": 23.34,
+      "log": "/home/cosmo/Documents/GitHub/qcore-c/private/audit-ir-working-set/20261022T014206Z/clippy.log"
+    },
+    {
+      "name": "census-feature",
+      "argv": [
+        "cargo",
+        "check",
+        "-p",
+        "qcore-c-gateway",
+        "--features",
+        "semantic-census-sinks"
+      ],
+      "exit": 101,
+      "elapsed_seconds": 0.043,
+      "log": "/home/cosmo/Documents/GitHub/qcore-c/private/audit-ir-working-set/20261022T014206Z/census-feature.log"
+    },
+    {
+      "name": "rust",
+      "argv": [
+        "python3",
+        "scripts/run_test_binaries.py",
+        "--jobs",
+        "8",
+        "--log-dir",
+        "/home/cosmo/Documents/GitHub/qcore-c/private/audit-ir-working-set/20261022T014206Z/rust-binaries"
+      ],
+      "exit": 0,
+      "elapsed_seconds": 563.392,
+      "log": "/home/cosmo/Documents/GitHub/qcore-c/private/audit-ir-working-set/20261022T014206Z/rust.log"
+    },
+    {
+      "name": "reevaluation-probe",
+      "argv": [
+        "cargo",
+        "run",
+        "-p",
+        "qcore-compiler",
+        "--example",
+        "reevaluation_probe"
+      ],
+      "exit": 0,
+      "elapsed_seconds": 0.053,
+      "log": "/home/cosmo/Documents/GitHub/qcore-c/private/audit-ir-working-set/20261022T014206Z/reevaluation-probe.log"
+    },
+    {
+      "name": "reevaluation-followup",
+      "argv": [
+        "cargo",
+        "run",
+        "-p",
+        "qcore-compiler",
+        "--example",
+        "reevaluation_followup"
+      ],
+      "exit": 0,
+      "elapsed_seconds": 0.411,
+      "log": "/home/cosmo/Documents/GitHub/qcore-c/private/audit-ir-working-set/20261022T014206Z/reevaluation-followup.log"
+    },
+    {
+      "name": "lean",
+      "argv": [
+        "python3",
+        "scripts/check_lean_audits.py"
+      ],
+      "exit": 0,
+      "elapsed_seconds": 13.561,
+      "log": "/home/cosmo/Documents/GitHub/qcore-c/private/audit-ir-working-set/20261022T014206Z/lean.log"
+    },
+    {
+      "name": "python",
+      "argv": [
+        "python3",
+        "-m",
+        "unittest",
+        "discover",
+        "-s",
+        "scripts/tests"
+      ],
+      "exit": 0,
+      "elapsed_seconds": 31.147,
+      "log": "/home/cosmo/Documents/GitHub/qcore-c/private/audit-ir-working-set/20261022T014206Z/python.log"
+    }
+  ],
+  "rust": {
+    "totals": {
+      "passed": 8498,
+      "failed": 0,
+      "ignored": 15,
+      "measured": 0,
+      "filtered": 0,
+      "summaries": 550
+    },
+    "units_run": 537,
+    "units_failed": [],
+    "ok": true,
+    "phases_seconds": {
+      "build": 96.317,
+      "capture": 7.263,
+      "run": 459.702
+    }
+  },
+  "lean": {
+    "audits": 362,
+    "exit": 0
+  },
+  "python": {
+    "tests": 374,
+    "exit": 0
+  },
+  "source_guard": {
+    "changed": []
+  },
+  "changed_rust_sha256": {
+    "crates/qcore-audit/src/current_cli.rs": "f0c9e83446dab55fb5369aeb674c2836149de0bf46773160e19f141a649632ec",
+    "crates/qcore-audit/src/lib.rs": "4ad389507bf7b256dea6dcc9af2cfb8108fafabaaace4d718279ae0e8f768bec",
+    "crates/qcore-audit/src/parallel.rs": "a82cda4ff5ddf502e6fa2d9e4437dcaf2aa9252851848221a30a0b67f8e08197",
+    "crates/qcore-audit/src/report.rs": "70ca94e2d9849392d8e886d0ad0bb90b1fb2b7e5db6e0dcc6602688c6735f395",
+    "crates/qcore-audit/tests/current_cli.rs": "547d9c86d2d002a4c58f7864c82489ae4cf30e8e74591de36b9f2c1e23781658",
+    "crates/qcore-c-gateway/src/legacy_c.rs": "63a02be51847e0dbf3719d2220eb944e3ac4a843187bf71e8c0e85d60721ce67"
+  },
+  "all_tracked_rust_files": 1498,
+  "all_tracked_rust_snapshot_sha256": "66baf7ad3e0e41ab814da91ca1ecb9601cea0b82542af5daf95640aab8135f09",
+  "private_rust_snapshot": "/home/cosmo/Documents/GitHub/qcore-c/private/audit-ir-working-set/20261022T014206Z/source-before.json",
+  "private_logs": "/home/cosmo/Documents/GitHub/qcore-c/private/audit-ir-working-set/20261022T014206Z",
+  "environment": {
+    "CARGO_TARGET_DIR": "/tmp/qcore-audit-ir-next-target",
+    "CARGO_BUILD_JOBS": "4",
+    "CARGO_INCREMENTAL": "0",
+    "CARGO_PROFILE_DEV_DEBUG": "0"
+  },
+  "incomplete_attempts": [
+    {
+      "action": "first full-gate launch",
+      "result": "Approval review timed out before execution; retried once successfully."
+    },
+    {
+      "action": "initial focused parallel probe",
+      "wrapper_exit": 1,
+      "reason": "Shell variable status is read-only in zsh; underlying exit was not captured. Log shows 12 passed; accepted focused rerun above exits 0.",
+      "log": "/home/cosmo/Documents/GitHub/qcore-c/private/audit-ir-working-set/parallel.log"
+    }
+  ],
+  "raw_campaign_exit": 1,
+  "raw_campaign_exit_reason": "Only optional census check used nonexistent semantic-census-sinks feature; exact exit 101 retained. Corrected indirect-census check is recorded separately; no test or real feature failure is hidden.",
+  "supplemental_steps": [
+    {
+      "name": "census-feature-corrected",
+      "argv": [
+        "cargo",
+        "check",
+        "-p",
+        "qcore-c-gateway",
+        "--features",
+        "indirect-census"
+      ],
+      "exit": 0,
+      "seconds": 8.747,
+      "log": "/home/cosmo/Documents/GitHub/qcore-c/private/audit-ir-working-set/20261022T014206Z/census-feature-corrected.log"
+    }
+  ]
+}
