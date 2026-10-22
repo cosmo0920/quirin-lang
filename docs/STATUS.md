@@ -1,12 +1,20 @@
 # Current status and evidence boundaries
 
+[Contract cycle4 integration](reports/contract-cycle4-integration/README.md) passes the fresh combined 8,532-Rust/365-Lean source gate, provider133 Rust/25 Python and all five package checks. Native acceptance and complete attribution remain pending; final committed-matrix Python is recorded separately. No source-Safe gain is inferred from these proposed decompositions.
+
+The logger effect contract card adds a bounded, source-bound proposed decomposition and refuses missing closure/custody/source facts. All fifteen universal effect/lifetime premises remain Open; this is a prerequisite for logger implementation and contributes no source-Safe gain.
+
+The scheduler lifetime contract card adds a source-bound bounded cleanup model and concrete readable creation/purge/destruction alternatives. Actual C TLS, aliases, callback effects, list/embedding transport and failure closure remain Open; scheduler implementation stays blocked. No native verdict/standing promotion or provider/source pin change is claimed. See reports/scheduler-lifetime-contracts/README.md.
+
+Guarded production source embedding now applies the exact readable cJSON decomposition and all 17 proposed symbol bindings to cJSON_DetachItemViaPointer through explicit grammar/property-loader and sealed whole-source bridge versions. Its original nine hypotheses and all interpreted/ABI/premise outputs remain preserved; both reviewed source identities remain exact. Proposed inline metadata adds no source truth, semantic/lifecycle consumer, standing or verdict authority. Combined acceptance remains the integrator’s evidence.
+
 [Bounded audit working sets](reports/audit-ir-working-set/README.md) limit
 started-but-unconsumed tasks to the worker count, stream final report JSON
 from borrowed rows, and recover ordinary entry-candidate CFGs without a copy.
 An optional MiB planning budget caps concurrency and records its estimates;
 it does not enforce an RSS ceiling. Pre-pass rounds borrow accumulated facts;
 executor items release optional caches and Linux/glibc free pages. Phase-start
-cgroup headroom can reduce later concurrency as retained facts grow. The final
+cgroup headroom can reduce later concurrency as retained facts grow. That report’s frozen
 combined source gate passes 8,500 Rust tests, 362 Lean audits and 374 Python tests.
 The fresh default current resource audit completes at **6,985,576,448 bytes**
 whole-cgroup peak, zero swap/OOM, in **3,369.250 seconds** (auditor time):
@@ -21,7 +29,7 @@ the prior four-job 7 GB OOM remains a failed result.
 removes the temporary full-certificate copy while retaining independent source
 replay and exact context/CFG checks. Current and pinned units now release optional
 Clang reuse at their boundaries, and configured source-contract products reuse
-prepared raw source. The fresh combined main gate passes 8,492 Rust tests,
+prepared raw source. That report’s frozen combined main gate passes 8,492 Rust tests,
 362 Lean audits and 374 Python tests. The frozen-input four-job current resource audit was OOM-killed at its
 7 GB cgroup ceiling after 1,552.876 seconds; the 6–7 GB target remains open.
 The report retains exact input identities and failed-run accounting.
@@ -36,10 +44,10 @@ successors are produced.
 This supplies no new safety coverage. Per-component AST loading, final-summary
 CFG eviction remains open; the later admission report owns the failed
 7 GB whole-job measurement.
-The combined gate passes 8,483 Rust tests and 361 Lean audits; Python passes
+That report’s frozen combined gate passes 8,483 Rust tests and 361 Lean audits; Python passes
 373 of 374 with the existing committed-matrix Lean count mismatch retained.
 
-[Symbolic decomposition cycle3](reports/symbolic-decomposition-cycle3/README.md) adds standalone guarded notation with Rust/Lean lowering and two actual cJSON/plugin hypothesis sidecars:16 original propositions,31 symbols,10 obligations. Guard-left admission requires its environment and prerequisites; positive invalidity forbids admission, every alternative remains recorded, and terminal postconditions are checked separately. Source correspondences, inline adoption and semantic/lifecycle discharge remain Open. The merged source gate passes8,475 Rust/362 Lean audits; authoritative committed-matrix Python374 passes0 with unchanged matrix SHA. Previous symbolic adoption retains1,179 introductions/169 proposed flows without truth promotion.
+[Symbolic decomposition cycle3](reports/symbolic-decomposition-cycle3/README.md) adds standalone guarded notation with Rust/Lean lowering and two actual cJSON/plugin hypothesis sidecars:16 original propositions,31 symbols,10 obligations. Guard-left admission requires its environment and prerequisites; positive invalidity forbids admission, every alternative remains recorded, and terminal postconditions are checked separately. Source correspondences and semantic/lifecycle discharge remain Open; completed production inline adoption is recorded in cycle4 above. The merged source gate passes8,475 Rust/362 Lean audits; authoritative committed-matrix Python374 passes0 with unchanged matrix SHA. Previous symbolic adoption retains1,179 introductions/169 proposed flows without truth promotion.
 
 [Typed contract lifecycle symbols](reports/contract-lifecycle-symbols/README.md) support contextual `|^+`/`|^-` metadata for literal resource IDs and separately declared hypothesis atoms. The source/graph/erasure/inheritance controls and matching audited Lean models pass the joint gate. This supplies no executable lifecycle, truth mutation, evidence invalidation or verdict promotion; source bindings remain Open.
 
@@ -368,17 +376,17 @@ latest completed integration measurement.
 
 ## Latest validated gate
 
-The latest [plugin integration gate](reports/plugin-premise-integration/README.md)
-records merge `67697d6c5`: **8,419 core Rust passed / 0 failed /
-15 ignored, 528 units / 541 summaries; 354 Lean audits; 374 card Python tests**.
-Rust/Lean/provider and ancillary gates are explicitly borrowed from completed
-card source `c1625baf7`, which remains byte-identical after integration.
-Providers pass **133 Rust / 0 failed / 1 ignored**, **25 Python**, all five
-package builds/verifications. Commands, exits, measured-run Clang and private
-logs remain in the card; root Clang discovery is separately recorded.
-The integration receipt owns final committed-matrix Python confirmation.
-Each card's production census retains its own source identity and scope;
-no new composed production census or source truth is claimed.
+The latest [contract cycle4 source gate](reports/contract-cycle4-integration/README.md)
+measures source `552773f0c64e2e6a3c7d4b752c61a7d26130975a`: **8,532 core Rust passed / 0 failed /
+15 ignored, 541 units / 554 summaries; 365 Lean audits**. All22 stages pass
+with stable clean source. Providers pass **133 Rust / 0 failed / 1 ignored**,
+**25 Python**, and allfive package builds/verifications. Commands, exits,
+actual-run Clang recording and private log paths are in the shared gate receipts.
+Native comparison of BASE31c5 and TIP552 remains pending; failed attempts
+remain retained. No native completion is inferred from this source gate. The authoritative Python result against the committed
+regenerated matrix belongs to the separate post-matrix confirmation receipt.
+Logger/scheduler source truth and semantic/lifecycle discharge remain Open;
+readable metadata alone contributes no source-Safe gain.
 
 The five provider crates own **73** canonical contract modules; **48** shared or
 application-level modules live in six `providers/quirin-provider-*` crates: five

@@ -25,6 +25,16 @@ Regenerate with `python3 scripts/build_docs_index.py`; validate with `--check`.
 
 | [audit-checkpoint-inspector](audit-checkpoint-inspector/README.md) | Binary checkpoint inspector |
 
+| [audit-ir-admission](audit-ir-admission/README.md) | AUDIT-IR-ADMISSION: borrow certificate bodies during audit admission |
+
+| [audit-ir-fragments](audit-ir-fragments/README.md) | AUDIT-IR-FRAGMENTS: source-rechecked CFG artifacts |
+
+| [audit-ir-lifetimes](audit-ir-lifetimes/README.md) | AUDIT-IR-LIFETIMES: release obsolete audit working sets |
+
+| [audit-ir-plan](audit-ir-plan/README.md) | AUDIT-IR-PLAN implementation receipt |
+
+| [audit-ir-working-set](audit-ir-working-set/README.md) | AUDIT-IR-WORKING-SET |
+
 | [audit-memory-performance](audit-memory-performance/README.md) | Audit CPU and memory optimization |
 
 | [audit-pinned-replay-cli](audit-pinned-replay-cli/README.md) | Pinned replay CLI relocation |
@@ -178,6 +188,8 @@ Regenerate with `python3 scripts/build_docs_index.py`; validate with `--check`.
 | [confined-exit-precedence](confined-exit-precedence/README.md) | Confined process failure precedence |
 
 | [contract-check-load-path](contract-check-load-path/README.md) | CONTRACT-CHECK-LOAD-PATH |
+
+| [contract-cycle4-integration](contract-cycle4-integration/README.md) | Contract implementation cycle4 integration |
 
 | [contract-hypothesis-graph-v1](contract-hypothesis-graph-v1/README.md) | Evidence-only contract hypothesis graphs |
 
@@ -481,6 +493,8 @@ Regenerate with `python3 scripts/build_docs_index.py`; validate with `--check`.
 
 | [generalization-integration-20260907](generalization-integration-20260907/README.md) | Generalization integration checkpoint — 2026-09-07 |
 
+| [guarded-contract-adoption](guarded-contract-adoption/README.md) | Guarded production contract adoption |
+
 ## H
 
 | Card directory | Original report title |
@@ -529,6 +543,8 @@ Regenerate with `python3 scripts/build_docs_index.py`; validate with `--check`.
 | [librdkafka-plugin-premise](librdkafka-plugin-premise/README.md) | LIBRDKAFKA-PLUGIN-PREMISE-UNSTATED: the plugin premise on every dependent declaration |
 
 | [librdkafka-plugin-premise-remainder](librdkafka-plugin-premise-remainder/README.md) | LIBRDKAFKA-PLUGIN-PREMISE-REMAINDER: the plugin premise on member facts, the crash path and a model contract |
+
+| [logger-effect-contracts](logger-effect-contracts/README.md) | Logger effect contracts |
 
 | [loop-unroll-budget](loop-unroll-budget/README.md) | LOOP-UNROLL-BUDGET — the three-layer unrolling budget (wave 26) |
 
@@ -954,6 +970,8 @@ Regenerate with `python3 scripts/build_docs_index.py`; validate with `--check`.
 
 | [review-prepared-tu](review-prepared-tu/README.md) | Prepared translation unit sharing (review priority O1) |
 
+| [rk-callback-logging-placement](rk-callback-logging-placement/README.md) | Kafka callback contract placement |
+
 | [rk-outer-loader-scope](rk-outer-loader-scope/README.md) | RK outer loader scope correction |
 
 | [rk-plugin-interceptor-candidates](rk-plugin-interceptor-candidates/README.md) | RK-PLUGIN-INTERCEPTOR-CANDIDATES |
@@ -972,6 +990,8 @@ Regenerate with `python3 scripts/build_docs_index.py`; validate with `--check`.
 |---|---|
 
 | [scalar-route-exit-edge](scalar-route-exit-edge/README.md) | SCALAR-ROUTE-EXIT-EDGE (wave 37, first arbiter) |
+
+| [scheduler-lifetime-contracts](scheduler-lifetime-contracts/README.md) | Scheduler lifetime contracts |
 
 | [schema-1-compatibility](schema-1-compatibility/README.md) | Schema 1.0 compatibility and package evidence |
 

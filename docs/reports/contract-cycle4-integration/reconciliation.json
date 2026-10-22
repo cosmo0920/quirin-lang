@@ -1,0 +1,188 @@
+{
+  "wave": 48,
+  "scope": "three-card integration, not wave close",
+  "cards": [
+    "logger-effect-contracts",
+    "scheduler-lifetime-contracts",
+    "guarded-contract-adoption"
+  ],
+  "verdicts": {},
+  "no_section": {
+    "logger-effect-contracts": "Scanner recognizes zero integrator items in this report format. Actual report prose/Integrator list and linked integration-amendments.json are processed explicitly in manual_items; no obligations are waived.",
+    "scheduler-lifetime-contracts": "Scanner recognizes zero integrator items in this report format. Actual report prose/Integrator list and linked integration-amendments.json are processed explicitly in manual_items; no obligations are waived.",
+    "guarded-contract-adoption": "Scanner recognizes zero integrator items in this report format. Actual report prose/Integrator list and linked integration-amendments.json are processed explicitly in manual_items; no obligations are waived."
+  },
+  "manual_items": {
+    "logger-effect-contracts-residual": {
+      "verdict": "applied",
+      "verify": [
+        {
+          "file": "docs/reviews/r0_3/acceptance_matrix.json",
+          "contains": "LOGGER-EFFECT-CONTRACTS now supplies a source-bound proposed logger-effects-v1 model with ten cyclic dependency nodes, ten custody alternatives and fifteen explicit Open obligations. It does not unblock rd_kafka_log0: formatting/TLS/configuration lifetime, allocator/copy bounds, queue synchronization, finite forwarding/reply termination, IO/serve/log/destroy callbacks, generic/reply cleanup, eventual consumer cleanup and source-model correspondence still need independently checked semantic consumers. A forwarded enqueue return of one does not establish queue retention; queued and destroyed outcomes remain distinct. No neutral, consumed-op or acyclic callback premise is introduced."
+        }
+      ]
+    },
+    "logger-effect-contracts-increment": {
+      "verdict": "applied",
+      "verify": [
+        {
+          "file": "docs/development/increments/wave-48-part11.md",
+          "contains": "LOGGER-EFFECT-CONTRACTS adds an explicitly proposed logger-effects-v1 decomposition for pinned librdkafka rd_kafka_log0/rd_kafka_log_buf: ten cyclic effect nodes, ten independently checked paired operation/log-string custody alternatives, and fifteen Open source/effect obligations. Exact caller-held document and three complete raw-source digests plus twelve site digests refuse stale/missing inputs; bounded queue/reply recursion retains forwarding, transfer, generic destruction and callback dependencies without an acyclic or neutral premise. Nine focused Rust tests and twelve audited Lean theorems pass; source replay passes and changed-source/digest controls refuse. No provider contracts, source pins, production verdict consumers, graph truth or safety coverage change. Logger source-Safe closure remains Open pending complete build/source/callback/lifetime consumers; full standing acceptance belongs to the integrated gate."
+        }
+      ]
+    },
+    "logger-effect-contracts-status": {
+      "verdict": "applied",
+      "verify": [
+        {
+          "file": "docs/STATUS.md",
+          "contains": "The logger effect contract card adds a bounded, source-bound proposed decomposition and refuses missing closure/custody/source facts. All fifteen universal effect/lifetime premises remain Open; this is a prerequisite for logger implementation and contributes no source-Safe gain."
+        }
+      ]
+    },
+    "scheduler-lifetime-contracts-residual": {
+      "verdict": "applied",
+      "verify": [
+        {
+          "file": "docs/reviews/r0_3/acceptance_matrix.json",
+          "contains": "SCHEDULER-LIFETIME-CONTRACTS adds a proposed source-bound finite cleanup contract and readable creation/purge/destruction alternatives, without production authority or scheduler safety gains. Keep scheduler admission blocked on SCHEDULER-TLS-RETIREMENT (current mk_thread TLS is not cleared by source destruction), SCHEDULER-EXTERNAL-ALIAS-RETIREMENT (request/channel and other post-free aliases), SCHEDULER-CALLBACK-EFFECT-CLOSURE (positive complete callback/transitive effects preserving parent/callee/borrowed chain/saved successor), SCHEDULER-LIST-EMBEDDING-TRANSPORT (exact live circular membership, layout and no concurrent/reentrant writers), and SCHEDULER-CREATE-TLS-LIBCO-FAILURES (allocation/unstarted/plugin/unchecked co_create and ignored TLS API outcomes). Thirteen Rust model controls, exact seven-source/nine-context binding controls and thirteen audited Lean theorems prove only their finite model boundary. All actual C-source/deployment truth remains Open; production adoption requires checked source-to-effect consumers and reviewed official pin updates. Report: docs/reports/scheduler-lifetime-contracts/README.md. The initial finite TLS-role admission hole is corrected: current-thread TLS must identify an unselected live modeled parent, not a retiring callee/params token; valid empty cleanup preserves both parent and params."
+        }
+      ]
+    },
+    "scheduler-lifetime-contracts-increment": {
+      "verdict": "applied",
+      "verify": [
+        {
+          "file": "docs/development/increments/wave-48-part11.md",
+          "contains": "Scheduler lifetime contracts add an exact seven-file Monkey source binding, a 25-clause readable decomposition and a bounded cleanup replay consumer (32 threads/512 live allocation tokens/64 callback effects/2560 steps) with thirteen Rust controls and thirteen audited Lean theorems. Params-TLS and callback presence retain all four destroy alternatives; empty cleanup preserves params; parent/callee release preserves the borrowed session/channel/event chain. No production declaration, provider pin, graph, verdict or standing changes. Actual TLS/current-thread retirement, external alias retirement, C intrusive-list/embedding transport, callback/transitive effect closure and creation/TLS/libco failure paths remain Open. The scheduler score2 remains blocked; no neutral/consumed/acyclic premise or promised safety gain is inferred. See docs/reports/scheduler-lifetime-contracts/README.md; root supplies the combined standing gate and post-committed-matrix Python evidence. Integration correction1b315995a closes an initial finite current-thread role hole: only a live unselected modeled parent may occupy current-thread TLS; callee/params aliases refuse, including empty cleanup, while a valid unselected parent and untouched params survive."
+        }
+      ]
+    },
+    "scheduler-lifetime-contracts-status": {
+      "verdict": "applied",
+      "verify": [
+        {
+          "file": "docs/STATUS.md",
+          "contains": "The scheduler lifetime contract card adds a source-bound bounded cleanup model and concrete readable creation/purge/destruction alternatives. Actual C TLS, aliases, callback effects, list/embedding transport and failure closure remain Open; scheduler implementation stays blocked. No native verdict/standing promotion or provider/source pin change is claimed. See reports/scheduler-lifetime-contracts/README.md."
+        }
+      ]
+    },
+    "guarded-contract-adoption-residual": {
+      "verdict": "applied",
+      "verify": [
+        {
+          "file": "docs/reviews/r0_3/acceptance_matrix.json",
+          "contains": "GUARDED-CONTRACT-ADOPTION explicitly embeds the original cJSON readable guarded decomposition and its complete 17-symbol proposed map in the actual cJSON_DetachItemViaPointer production contract. The separately versioned source grammar, resource/bounds/declared-model loaders and sealed whole-source bridge v2 validate every role, reference, alternative and terminal while preserving all original graph/legacy/ABI/interpreted output. The 18 added metadata clauses retain the old nine atoms, old premise, flow-v1/lifecycle-v1 entries and frozen cJSON/plugin sidecar propositions. Official repinning preserves both reviewed source revisions and every original C site identity. This supplies inline proposed metadata only: no production semantic consumer, source/prose/environment/feasible-path proof, checked truth/lifecycle/invalidation authority, standing or verdict promotion is discharged. Every remaining original scoped consumer, nine-coordinate evidence/refutation and source/world/outer criterion remains Open; final combined standing/provider/native parity and committed-matrix Python acceptance are owned by the integrator."
+        }
+      ]
+    },
+    "guarded-contract-adoption-increment": {
+      "verdict": "applied",
+      "verify": [
+        {
+          "file": "docs/development/increments/wave-48-part11.md",
+          "contains": "GUARDED-CONTRACT-ADOPTION adds explicit source-v1 embedding of guarded_decomposition_v1 to the actual cJSON_DetachItemViaPointer production declaration: 17 proposed symbols and five guarded/alternative/terminal obligations, in 18 added clauses (25 to 43), with all nine original atoms, old premise and existing flow/lifecycle metadata unchanged. Full resource, bounds and declared-model replay validates complete maps; the separately versioned sealed bridge v2 admits only deterministic whole-source additions, preserves complete graph/ABI/premise/interpreted outputs and recovers the exact held original source only from the exact checked TIP map. Official pin/inventory refresh preserves both reviewed C revisions/sites and all unrelated contracts. Focused Rust passes 43 tests (42 contract/view/flow/bridge plus one actual pin boundary), formatting/Clippy pass and nine Lean theorem axiom checks pass under Lean 4.35.0 without project axioms. Development failures remain in the report. The integrator owns combined standing/provider/native parity and final committed-matrix Python; source universals, checked semantic/lifecycle consumers, invalidation, C termination and outer truth remain Open."
+        }
+      ]
+    },
+    "guarded-contract-adoption-status": {
+      "verdict": "applied",
+      "verify": [
+        {
+          "file": "docs/STATUS.md",
+          "contains": "Guarded production source embedding now applies the exact readable cJSON decomposition and all 17 proposed symbol bindings to cJSON_DetachItemViaPointer through explicit grammar/property-loader and sealed whole-source bridge versions. Its original nine hypotheses and all interpreted/ABI/premise outputs remain preserved; both reviewed source identities remain exact. Proposed inline metadata adds no source truth, semantic/lifecycle consumer, standing or verdict authority. Combined acceptance remains the integrator’s evidence."
+        }
+      ]
+    },
+    "joint-source-gate": {
+      "verdict": "applied",
+      "verify": [
+        {
+          "file": "docs/reports/contract-cycle4-integration/validation/joint-gate-2/completion.json",
+          "contains": "\"all_commands_zero\": true"
+        }
+      ]
+    },
+    "same-id-ledger-preservation": {
+      "verdict": "applied",
+      "verify": [
+        {
+          "file": "docs/reports/contract-cycle4-integration/ledger-amendments.json",
+          "contains": "\"unchanged_other_count\": 808"
+        }
+      ]
+    },
+    "all-packages": {
+      "verdict": "applied",
+      "verify": [
+        {
+          "file": "docs/reports/contract-cycle4-integration/validation/joint-gate-2/completion.json",
+          "contains": "all five packages rebuilt/verified"
+        }
+      ]
+    },
+    "report-index": {
+      "verdict": "applied",
+      "verify": [
+        {
+          "file": "docs/reports/INDEX.md",
+          "contains": "[contract-cycle4-integration]"
+        }
+      ]
+    },
+    "maintenance": {
+      "verdict": "deferred",
+      "note": "Compaction10 and stability review6 remain explicitly deferred to wave close; this is a three-card integration, not a wave close."
+    }
+  },
+  "manual_claim_check_exit": 0,
+  "manual_claim_check": "reconciliation_sweep._check_claims(root, manual_items, True); standard --check does not inspect this separate field.",
+  "deferred_decisions": {
+    "CT10-REASON-ROW": {
+      "verdict": "deferred",
+      "note": "Prior wave-close decision remains registered and is not discharged by this contract integration."
+    },
+    "DOCS-COMPACT-CADENCE-DOES-CORRECTION-WORK": {
+      "verdict": "deferred",
+      "note": "Prior wave-close decision remains registered and is not discharged by this contract integration."
+    },
+    "EXAMPLES-STYLE-SLICE-FANOUT": {
+      "verdict": "deferred",
+      "note": "Prior wave-close decision remains registered and is not discharged by this contract integration."
+    },
+    "F02-WINDOWS-PIN-RUN": {
+      "verdict": "deferred",
+      "note": "Prior wave-close decision remains registered and is not discharged by this contract integration."
+    },
+    "INDIRECT-CENSUS-FEATURE-UNBUILT": {
+      "verdict": "deferred",
+      "note": "Prior wave-close decision remains registered and is not discharged by this contract integration."
+    },
+    "MATRIX-RECORDED-BY-DECISION": {
+      "verdict": "deferred",
+      "note": "Prior wave-close decision remains registered and is not discharged by this contract integration."
+    },
+    "MATRIX-UPDATED-STALE-AT-WAVE-27": {
+      "verdict": "deferred",
+      "note": "Prior wave-close decision remains registered and is not discharged by this contract integration."
+    },
+    "PLATFORM-RESIDUAL-FAMILY-PARTIALLY-TRACKED": {
+      "verdict": "deferred",
+      "note": "Prior wave-close decision remains registered and is not discharged by this contract integration."
+    },
+    "Q-NAMESPACE-DECISION": {
+      "verdict": "deferred",
+      "note": "Prior wave-close decision remains registered and is not discharged by this contract integration."
+    },
+    "SWEEP-RESIDUALS-PROSE-ONLY-ITEMS": {
+      "verdict": "deferred",
+      "note": "Prior wave-close decision remains registered and is not discharged by this contract integration."
+    },
+    "SYNC-RULE-TOOLING-COMMIT-SCOPE": {
+      "verdict": "deferred",
+      "note": "Prior wave-close decision remains registered and is not discharged by this contract integration."
+    }
+  },
+  "residual_candidates": 201,
+  "residual_decision": "Five scheduler residual family names are explicitly retained under existing W48-BOTTOM-UP-RESIDUAL-PLAN. Completed card labels in report and increment headings are not newly discharged universals. Existing residual-shaped scanner candidates remain inherited; scanner output is not an authoritative tracking classification. All810 follow-ups remain registered, with only two same-ID append amendments and no retirement."
+}
