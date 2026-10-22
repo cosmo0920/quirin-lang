@@ -1,0 +1,105 @@
+{
+ "changed_rows_raw": 4834,
+ "changed_status": [
+  "librdkafka::cJSON.c::cJSON_DeleteItemFromArray",
+  "librdkafka::cJSON.c::cJSON_DetachItemFromArray"
+ ],
+ "cjson_unit_fields": [
+  "cross_unit_link_resolution",
+  "diagnostic_counts",
+  "reason"
+ ],
+ "counts": {
+  "base": {
+   "Safe": 975,
+   "Unknown": 3850,
+   "Unsafe": 9
+  },
+  "tip": {
+   "Safe": 977,
+   "Unknown": 3848,
+   "Unsafe": 9
+  }
+ },
+ "detach_clause_evidence": {
+  "base": null,
+  "tip": null
+ },
+ "detach_dependents": {
+  "base": {
+   "count": 4,
+   "rows": [
+    [
+     "librdkafka::cJSON.c::cJSON_DetachItemFromArray",
+     "Unknown"
+    ],
+    [
+     "librdkafka::cJSON.c::cJSON_DetachItemFromObject",
+     "Unknown"
+    ],
+    [
+     "librdkafka::cJSON.c::cJSON_DetachItemFromObjectCaseSensitive",
+     "Unknown"
+    ],
+    [
+     "librdkafka::cJSON.c::cJSON_DetachItemViaPointer",
+     "Unknown"
+    ]
+   ],
+   "safe": 0
+  },
+  "tip": {
+   "count": 5,
+   "rows": [
+    [
+     "librdkafka::cJSON.c::cJSON_DeleteItemFromArray",
+     "Safe"
+    ],
+    [
+     "librdkafka::cJSON.c::cJSON_DetachItemFromArray",
+     "Safe"
+    ],
+    [
+     "librdkafka::cJSON.c::cJSON_DetachItemFromObject",
+     "Unknown"
+    ],
+    [
+     "librdkafka::cJSON.c::cJSON_DetachItemFromObjectCaseSensitive",
+     "Unknown"
+    ],
+    [
+     "librdkafka::cJSON.c::cJSON_DetachItemViaPointer",
+     "Unknown"
+    ]
+   ],
+   "safe": 2
+  }
+ },
+ "diagnostic_counts": {
+  "base": {
+   "leak": 40,
+   "summary_conflict": 2,
+   "unknown_alias": 11047,
+   "unsupported": 27710
+  },
+  "tip": {
+   "leak": 40,
+   "summary_conflict": 2,
+   "unknown_alias": 11047,
+   "unsupported": 27708
+  }
+ },
+ "projections": {
+  "corpus-null.jsonl": {
+   "base": "527b6112352295167519fed2248657fcfc5a9bad9ed923a88617380406b4ef85",
+   "equal": false,
+   "tip": "3e7e8867351c6eb4f0927d0a4cdb07aebbaa206222b4afbe38d6584561bd5369"
+  },
+  "corpus-outer.json": {
+   "base": "93409fe1251de56f4486d3ae801e6a108613cdcbd1559ca66b2cc9fcf5d0d0ff",
+   "equal": false,
+   "tip": "5338472607741d6d1b13ca96ac1864678e917da0b20f667ee5e5bd2b13c88af1"
+  }
+ },
+ "units_with_unit_field_differences": 185
+}

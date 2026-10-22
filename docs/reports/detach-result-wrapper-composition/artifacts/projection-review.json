@@ -1,0 +1,249 @@
+{
+ "null_rows_changed": [
+  {
+   "combined": [
+    "Unknown",
+    "Safe"
+   ],
+   "custody": [
+    "Unknown",
+    "Safe"
+   ],
+   "null_fields_equal": true,
+   "row": "cJSON.c::cJSON_DeleteItemFromArray"
+  },
+  {
+   "combined": [
+    "Unknown",
+    "Safe"
+   ],
+   "custody": [
+    "Unknown",
+    "Safe"
+   ],
+   "null_fields_equal": true,
+   "row": "cJSON.c::cJSON_DetachItemFromArray"
+  }
+ ],
+ "null_rows_total": 4921,
+ "null_summary": [
+  {
+   "base": 847,
+   "path": ".combined.Safe",
+   "tip": 849
+  },
+  {
+   "base": 4047,
+   "path": ".combined.Unknown",
+   "tip": 4045
+  },
+  {
+   "base": 975,
+   "path": ".custody.Safe",
+   "tip": 977
+  },
+  {
+   "base": 3850,
+   "path": ".custody.Unknown",
+   "tip": 3848
+  }
+ ],
+ "outer": [
+  {
+   "only_base": [],
+   "only_tip": [
+    {
+     "file": "cJSON.c",
+     "function": "cJSON_DeleteItemFromArray",
+     "library": "librdkafka",
+     "occurrence": 0,
+     "part": "combined",
+     "runtime": "Unknown",
+     "static": "Safe"
+    },
+    {
+     "file": "cJSON.c",
+     "function": "cJSON_DeleteItemFromArray",
+     "library": "librdkafka",
+     "occurrence": 0,
+     "part": "custody",
+     "reasons": [
+      "outer-uncovered: premise:detach_list_representation is reachable from code `flb_external_plugin` loads and no envelope line covers it (runtime projection, rule 31)",
+      "outer-uncovered: premise:detach_list_representation is reachable from code `rk_plugin_library` loads and no envelope line covers it (runtime projection, rule 31)"
+     ],
+     "runtime": "Unknown",
+     "static": "Safe"
+    },
+    {
+     "file": "cJSON.c",
+     "function": "cJSON_DetachItemFromArray",
+     "library": "librdkafka",
+     "occurrence": 0,
+     "part": "combined",
+     "runtime": "Unknown",
+     "static": "Safe"
+    },
+    {
+     "file": "cJSON.c",
+     "function": "cJSON_DetachItemFromArray",
+     "library": "librdkafka",
+     "occurrence": 0,
+     "part": "custody",
+     "reasons": [
+      "outer-uncovered: premise:detach_list_representation is reachable from code `flb_external_plugin` loads and no envelope line covers it (runtime projection, rule 31)",
+      "outer-uncovered: premise:detach_list_representation is reachable from code `rk_plugin_library` loads and no envelope line covers it (runtime projection, rule 31)"
+     ],
+     "runtime": "Unknown",
+     "static": "Safe"
+    }
+   ],
+   "path": ".scenarios.all.moved"
+  },
+  {
+   "base": 1,
+   "path": ".scenarios.all.moves.combined.Safe -> Unknown",
+   "tip": 3
+  },
+  {
+   "base": null,
+   "path": ".scenarios.all.moves.custody.Safe -> Unknown",
+   "tip": 2
+  },
+  {
+   "only_base": [],
+   "only_tip": [
+    {
+     "file": "cJSON.c",
+     "function": "cJSON_DeleteItemFromArray",
+     "library": "librdkafka",
+     "occurrence": 0,
+     "part": "combined",
+     "runtime": "Unknown",
+     "static": "Safe"
+    },
+    {
+     "file": "cJSON.c",
+     "function": "cJSON_DeleteItemFromArray",
+     "library": "librdkafka",
+     "occurrence": 0,
+     "part": "custody",
+     "reasons": [
+      "outer-uncovered: premise:detach_list_representation is reachable from code `flb_external_plugin` loads and no envelope line covers it (runtime projection, rule 31)"
+     ],
+     "runtime": "Unknown",
+     "static": "Safe"
+    },
+    {
+     "file": "cJSON.c",
+     "function": "cJSON_DetachItemFromArray",
+     "library": "librdkafka",
+     "occurrence": 0,
+     "part": "combined",
+     "runtime": "Unknown",
+     "static": "Safe"
+    },
+    {
+     "file": "cJSON.c",
+     "function": "cJSON_DetachItemFromArray",
+     "library": "librdkafka",
+     "occurrence": 0,
+     "part": "custody",
+     "reasons": [
+      "outer-uncovered: premise:detach_list_representation is reachable from code `flb_external_plugin` loads and no envelope line covers it (runtime projection, rule 31)"
+     ],
+     "runtime": "Unknown",
+     "static": "Safe"
+    }
+   ],
+   "path": ".scenarios.flb_external_plugin.moved"
+  },
+  {
+   "base": null,
+   "path": ".scenarios.flb_external_plugin.moves.combined.Safe -> Unknown",
+   "tip": 2
+  },
+  {
+   "base": null,
+   "path": ".scenarios.flb_external_plugin.moves.custody.Safe -> Unknown",
+   "tip": 2
+  },
+  {
+   "only_base": [],
+   "only_tip": [
+    {
+     "file": "cJSON.c",
+     "function": "cJSON_DeleteItemFromArray",
+     "library": "librdkafka",
+     "occurrence": 0,
+     "part": "combined",
+     "runtime": "Unknown",
+     "static": "Safe"
+    },
+    {
+     "file": "cJSON.c",
+     "function": "cJSON_DeleteItemFromArray",
+     "library": "librdkafka",
+     "occurrence": 0,
+     "part": "custody",
+     "reasons": [
+      "outer-uncovered: premise:detach_list_representation is reachable from code `rk_plugin_library` loads and no envelope line covers it (runtime projection, rule 31)"
+     ],
+     "runtime": "Unknown",
+     "static": "Safe"
+    },
+    {
+     "file": "cJSON.c",
+     "function": "cJSON_DetachItemFromArray",
+     "library": "librdkafka",
+     "occurrence": 0,
+     "part": "combined",
+     "runtime": "Unknown",
+     "static": "Safe"
+    },
+    {
+     "file": "cJSON.c",
+     "function": "cJSON_DetachItemFromArray",
+     "library": "librdkafka",
+     "occurrence": 0,
+     "part": "custody",
+     "reasons": [
+      "outer-uncovered: premise:detach_list_representation is reachable from code `rk_plugin_library` loads and no envelope line covers it (runtime projection, rule 31)"
+     ],
+     "runtime": "Unknown",
+     "static": "Safe"
+    }
+   ],
+   "path": ".scenarios.rk_plugin_library.moved"
+  },
+  {
+   "base": 1,
+   "path": ".scenarios.rk_plugin_library.moves.combined.Safe -> Unknown",
+   "tip": 3
+  },
+  {
+   "base": null,
+   "path": ".scenarios.rk_plugin_library.moves.custody.Safe -> Unknown",
+   "tip": 2
+  },
+  {
+   "base": 847,
+   "path": ".static.combined.Safe",
+   "tip": 849
+  },
+  {
+   "base": 4047,
+   "path": ".static.combined.Unknown",
+   "tip": 4045
+  },
+  {
+   "base": 975,
+   "path": ".static.custody.Safe",
+   "tip": 977
+  },
+  {
+   "base": 3850,
+   "path": ".static.custody.Unknown",
+   "tip": 3848
+  }
+ ]
+}
