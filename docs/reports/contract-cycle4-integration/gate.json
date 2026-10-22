@@ -1,5 +1,5 @@
 {
-  "note": "Fresh complete combined source 552773f0c64e2e6a3c7d4b752c61a7d26130975a; 22 stages pass with stable clean source. Prior gate failures remain retained. Provider Rust133/Python25/all five package builds and verifications are fresh. All-route native acceptance remains pending; this source gate does not claim native completion. Python374 is explicitly BORROWED from preceding committed-matrix checkpoint until actual fresh post-commit confirmation, recorded separately; no full completion inferred before that receipt.",
+  "note": "Fresh complete combined source 552773f0c64e2e6a3c7d4b752c61a7d26130975a; 22 stages pass with stable clean source. Prior gate failures remain retained. Provider Rust133/Python25/all five package builds and verifications are fresh. Native acceptance was pending at source-gate capture; this frozen source/provider measurement does not claim native completion. Current native acceptance is separately receipted. Python374 is explicitly BORROWED from preceding committed-matrix checkpoint until actual fresh post-commit confirmation, recorded separately; no full completion inferred before that receipt.",
   "workspace_tests": 8532,
   "provider_tests": 133,
   "python_evidence_validator_tests": 374,
@@ -7,7 +7,7 @@
   "reevaluation_followup_exit": 0,
   "cargo_fmt": "clean",
   "cargo_clippy": "clean",
-  "standing_gate": "source/provider complete; native and authoritative post-committed-matrix Python pending",
+  "standing_gate": "source/provider complete; native and committed-matrix Python separately receipted",
   "lean_audits": 365,
   "clang": "present: Ubuntu clang version 21.1.8 (6ubuntu1)"
 }
