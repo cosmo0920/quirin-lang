@@ -216,6 +216,19 @@ configurations, maximum 2 jobs with heavy phases admitted at 1. Build/setup,
 leaves only 14,422,016 bytes below the effective ceiling; it does not discharge
 the 6 GB target, CI margin, cold/warm repeats or other selections.
 
+### AUDIT-IR-CLANG-TRANSPORT
+
+The public whole-unit AST reader, compact typed index and lifetime-source
+reader use a seekable transport: up to 1 MiB stays in memory; larger dumps
+spool into disposable `.qc` files before decoding. Full-document validation,
+default-error/depth retry and consumer facts remain unchanged. Unix unlinks the
+spool while open. On 64-bit Linux, cache-discard advice after synchronization
+and during reads can release disk-backed raw pages; tmpfs remains charged.
+[Card evidence and filesystem boundary](../reports/audit-ir-clang-transport/README.md).
+Filtered streams, remaining byte-slice readers and per-component body paging
+remain follow-ons. This bounded transport change does not close the parent
+6 GB target, CI margin, other selections or cold/warm acceptance.
+
 ### AUDIT-IR-BUDGET
 
 Extend the initial scheduling estimates into enforced memory admission and

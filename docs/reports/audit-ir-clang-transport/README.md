@@ -48,3 +48,24 @@ release of charged disk-backed cache pages. Advice is not a hard memory bound.
 `TMPDIR` selects storage through the standard library: tmpfs still charges the
 raw spool to memory, so its result must not be described as disk-backed paging.
 Both temporary-storage conditions belong in the control measurement.
+
+
+## Integration and residuals
+
+Integrate this card's source and evidence onto the eventual combined source;
+reconcile the new paragraph in `docs/STATUS.md`, the AUDIT-IR Card subsection
+and the one increment in `wave-48-part11.md` with sibling cards. No shared
+checkout, provider contracts, frozen inputs, prior receipts or other card's
+worktree was edited. The source change does not require a new semantic rule;
+existing matching audited Lean admission definitions remain authoritative.
+
+The remaining byte-slice transport callers and filtered streams still allocate
+complete stdout buffers. Lifetime-source still retains its complete decoded
+`Value` and cross-declaration facts; this card changes its raw input ownership,
+not its fact census. An individual large declaration/string or decoded unit can
+still exceed a runner's budget. Spooling introduces temporary-storage I/O and
+can refuse on an unavailable/full temporary filesystem. Cache-discard advice
+is best effort; tmpfs and other platforms cannot inherit a measured disk-backed
+Linux reduction. No complete current-resource, cold/warm, platform-matrix or
+whole-C correctness claim follows from a single-unit control. Those remain
+parent follow-ons, not an excuse to omit selected configurations.
