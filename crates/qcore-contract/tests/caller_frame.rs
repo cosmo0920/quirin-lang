@@ -27,7 +27,12 @@ fn edited(edit: impl FnOnce(&mut Projection)) -> Result<CheckedCallerFrame, Stri
     let mut doc: Projection = serde_json::from_slice(PROJECTION).unwrap();
     edit(&mut doc);
     let bytes = serde_json::to_vec(&doc).unwrap();
-    check(MODEL, MODEL_SHA256, &bytes, &qcore_schemas::sha256_hex(&bytes))
+    check(
+        MODEL,
+        MODEL_SHA256,
+        &bytes,
+        &qcore_schemas::sha256_hex(&bytes),
+    )
 }
 
 fn set(names: &[&str]) -> BTreeSet<String> {
@@ -142,44 +147,54 @@ fn a_wrong_digest_or_a_rebound_model_refuses() {
 
 #[test]
 fn an_unclassified_or_invented_obligation_or_event_refuses() {
-    assert!(edited(|d| {
-        d.frame.remove("tls_thread_name");
-    })
-    .is_err());
-    assert!(edited(|d| {
-        d.frame.insert(
-            "invented".into(),
-            Class::Internal(Internal {
-                internal: qcore_contract::caller_frame::Argument::LibraryState,
-                reason: "invented".into(),
-            }),
-        );
-    })
-    .is_err());
-    assert!(edited(|d| {
-        d.events.remove("take");
-    })
-    .is_err());
-    assert!(edited(|d| {
-        d.paths.remove("disabled_reply_queue");
-    })
-    .is_err());
+    assert!(
+        edited(|d| {
+            d.frame.remove("tls_thread_name");
+        })
+        .is_err()
+    );
+    assert!(
+        edited(|d| {
+            d.frame.insert(
+                "invented".into(),
+                Class::Internal(Internal {
+                    internal: qcore_contract::caller_frame::Argument::LibraryState,
+                    reason: "invented".into(),
+                }),
+            );
+        })
+        .is_err()
+    );
+    assert!(
+        edited(|d| {
+            d.events.remove("take");
+        })
+        .is_err()
+    );
+    assert!(
+        edited(|d| {
+            d.paths.remove("disabled_reply_queue");
+        })
+        .is_err()
+    );
 }
 
 #[test]
 fn reclassifying_a_caller_visible_effect_as_internal_changes_the_derivation_and_refuses() {
     // The IO-event callback read as queue-internal would prove the local path;
     // the document's stated standing then differs from the derived one.
-    assert!(edited(|d| {
-        d.events.get_mut("transfer").unwrap().obligations.insert(
-            "io_event_effects".into(),
-            Class::Internal(Internal {
-                internal: qcore_contract::caller_frame::Argument::QueueInternal,
-                reason: "claimed internal".into(),
-            }),
-        );
-    })
-    .is_err());
+    assert!(
+        edited(|d| {
+            d.events.get_mut("transfer").unwrap().obligations.insert(
+                "io_event_effects".into(),
+                Class::Internal(Internal {
+                    internal: qcore_contract::caller_frame::Argument::QueueInternal,
+                    reason: "claimed internal".into(),
+                }),
+            );
+        })
+        .is_err()
+    );
     // Restating the paths to match drops the premise from the derived set, so
     // the production declarations no longer state exactly that set.
     let weaker = edited(|d| {
@@ -190,10 +205,7 @@ fn reclassifying_a_caller_visible_effect_as_internal_changes_the_derivation_and_
                 reason: "claimed internal".into(),
             }),
         );
-        d.paths.insert(
-            "local_queue".into(),
-            Standing::Proved,
-        );
+        d.paths.insert("local_queue".into(), Standing::Proved);
         d.paths.insert(
             "forwarded_queue".into(),
             Standing::Premised {
@@ -209,47 +221,55 @@ fn reclassifying_a_caller_visible_effect_as_internal_changes_the_derivation_and_
 #[test]
 fn a_boundary_or_infeasible_event_must_carry_its_own_argument() {
     // A boundary event may only hold after-frame obligations.
-    assert!(edited(|d| {
-        d.events.get_mut("take").unwrap().obligations.insert(
-            "eventual_consumer_cleanup".into(),
-            Class::Internal(Internal {
-                internal: qcore_contract::caller_frame::Argument::QueueInternal,
-                reason: "not after the frame".into(),
-            }),
-        );
-    })
-    .is_err());
+    assert!(
+        edited(|d| {
+            d.events.get_mut("take").unwrap().obligations.insert(
+                "eventual_consumer_cleanup".into(),
+                Class::Internal(Internal {
+                    internal: qcore_contract::caller_frame::Argument::QueueInternal,
+                    reason: "not after the frame".into(),
+                }),
+            );
+        })
+        .is_err()
+    );
     // An infeasible event may only rest on the fresh object.
-    assert!(edited(|d| {
-        d.events.get_mut("reply").unwrap().obligations.insert(
-            "reply_queue_effects".into(),
-            Class::Internal(Internal {
-                internal: qcore_contract::caller_frame::Argument::BorrowedRead,
-                reason: "not fresh".into(),
-            }),
-        );
-    })
-    .is_err());
+    assert!(
+        edited(|d| {
+            d.events.get_mut("reply").unwrap().obligations.insert(
+                "reply_queue_effects".into(),
+                Class::Internal(Internal {
+                    internal: qcore_contract::caller_frame::Argument::BorrowedRead,
+                    reason: "not fresh".into(),
+                }),
+            );
+        })
+        .is_err()
+    );
 }
 
 #[test]
 fn an_outside_frame_path_must_name_its_in_frame_prefix() {
-    assert!(edited(|d| {
-        d.paths.insert(
-            "consumer_callback_cleanup".into(),
-            Standing::OutsideFrame {
-                prefix: "forwarded_queue".into(),
-            },
-        );
-    })
-    .is_err());
-    assert!(edited(|d| {
-        d.paths.insert(
-            "consumer_callback_cleanup".into(),
-            Standing::Premised {
-                premises: set(&[NOEV]),
-            },
-        );
-    })
-    .is_err());
+    assert!(
+        edited(|d| {
+            d.paths.insert(
+                "consumer_callback_cleanup".into(),
+                Standing::OutsideFrame {
+                    prefix: "forwarded_queue".into(),
+                },
+            );
+        })
+        .is_err()
+    );
+    assert!(
+        edited(|d| {
+            d.paths.insert(
+                "consumer_callback_cleanup".into(),
+                Standing::Premised {
+                    premises: set(&[NOEV]),
+                },
+            );
+        })
+        .is_err()
+    );
 }

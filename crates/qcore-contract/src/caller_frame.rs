@@ -200,9 +200,7 @@ fn event_name(event: Event) -> &'static str {
 fn identifier(name: &str) -> bool {
     !name.is_empty()
         && name.len() <= 128
-        && name
-            .bytes()
-            .all(|c| c.is_ascii_alphanumeric() || c == b'_')
+        && name.bytes().all(|c| c.is_ascii_alphanumeric() || c == b'_')
 }
 
 fn reason(text: &str) -> bool {
@@ -233,8 +231,7 @@ pub fn check(
     if model.len() > 131_072 || qcore_schemas::sha256_hex(model) != expected_model {
         return Err("caller-frame: model digest or byte bound".into());
     }
-    if projection.len() > 131_072 || qcore_schemas::sha256_hex(projection) != expected_projection
-    {
+    if projection.len() > 131_072 || qcore_schemas::sha256_hex(projection) != expected_projection {
         return Err("caller-frame: projection digest or byte bound".into());
     }
     let plan: Plan =
@@ -264,7 +261,13 @@ pub fn check(
         .values()
         .flat_map(|p| p.events.iter().map(|e| event_name(*e)))
         .collect();
-    if doc.events.keys().map(String::as_str).collect::<BTreeSet<_>>() != used {
+    if doc
+        .events
+        .keys()
+        .map(String::as_str)
+        .collect::<BTreeSet<_>>()
+        != used
+    {
         return Err("caller-frame: classified events differ from the model's".into());
     }
     if doc.paths.keys().ne(plan.paths.keys()) {
@@ -329,7 +332,11 @@ pub fn check(
     let mut derived = BTreeMap::new();
     let mut in_frame_events = BTreeMap::new();
     for (name, path) in &plan.paths {
-        if path.events.iter().any(|e| frame_of(*e) == Frame::Infeasible) {
+        if path
+            .events
+            .iter()
+            .any(|e| frame_of(*e) == Frame::Infeasible)
+        {
             derived.insert(name.clone(), Standing::Infeasible);
             continue;
         }
