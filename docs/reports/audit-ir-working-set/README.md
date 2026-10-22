@@ -72,3 +72,23 @@ memory acceptance is claimed by the test gate. The previous failed dev-profile
 measurement remains frozen in the admission report. Remaining work includes
 bounded two-phase retained rows, component bodies retained during independent
 replay, buffered whole-unit Clang output and per-component AST/CFG paging.
+
+## Release measurement and pre-pass follow-up prediction
+
+At source `62f10abda`, the complete three-worker release audit also fails:
+**6,999,998,464-byte peak**, `Result=oom-kill`, **299.069 seconds**, zero swap.
+The driver exits 1; stop/reset both exit 0. The worker is killed before final
+`memory.events` and input-hash receipts, so those fields remain unavailable.
+[memory-release-budget3.json](memory-release-budget3.json) owns the exact inputs,
+launch and accounting. No completed report or memory acceptance is claimed.
+A separate two-worker run of that same binary is in progress, explicitly a
+baseline for the next follow-up rather than evidence about code not yet built.
+
+Prediction before the follow-up implementation: `member_prepass::run` clones
+all previously read `MemberFacts` at every fixed-point round into a local vector,
+which stays in scope during the next selected-unit reads. Replace only this
+vector with ordered references to the existing map values and declaration unit,
+ending that borrow before mutation. `closure_tokens` already accepts references;
+there is no need to retain a second owned copy. Preserve the same member order,
+closure tokens, reading fixed point, exclusions, refusals and published facts.
+This removes a concrete ownership duplicate; its memory share is not yet measured.

@@ -280,6 +280,26 @@
       "exit": 0,
       "seconds": 8.747,
       "log": "/home/cosmo/Documents/GitHub/qcore-c/private/audit-ir-working-set/20261022T014206Z/census-feature-corrected.log"
+    },
+    {
+      "name": "release-build",
+      "argv": [
+        "cargo",
+        "build",
+        "-p",
+        "qcore-audit",
+        "--bin",
+        "quirin-audit",
+        "--release",
+        "--locked"
+      ],
+      "exit": 0,
+      "seconds": 138.658,
+      "log": "/home/cosmo/Documents/GitHub/qcore-c/private/audit-ir-working-set/20261022T014206Z/release-build.log"
     }
-  ]
+  ],
+  "release_binary": {
+    "path": "/tmp/qcore-audit-ir-next-target/release/quirin-audit",
+    "sha256": "44d38b70ddd295752c0592f19d89f64e66a76d6440904a07a2156c6a6217a194"
+  }
 }
