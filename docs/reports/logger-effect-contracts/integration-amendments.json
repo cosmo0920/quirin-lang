@@ -1,0 +1,15 @@
+{
+  "increment": "LOGGER-EFFECT-CONTRACTS adds an explicitly proposed logger-effects-v1 decomposition for pinned librdkafka rd_kafka_log0/rd_kafka_log_buf: ten cyclic effect nodes, ten independently checked paired operation/log-string custody alternatives, and fifteen Open source/effect obligations. Exact caller-held document and three complete raw-source digests plus twelve site digests refuse stale/missing inputs; bounded queue/reply recursion retains forwarding, transfer, generic destruction and callback dependencies without an acyclic or neutral premise. Nine focused Rust tests and twelve audited Lean theorems pass; source replay passes and changed-source/digest controls refuse. No provider contracts, source pins, production verdict consumers, graph truth or safety coverage change. Logger source-Safe closure remains Open pending complete build/source/callback/lifetime consumers; full standing acceptance belongs to the integrated gate.",
+  "followup_amendments": [
+    {
+      "id": "W48-BOTTOM-UP-RESIDUAL-PLAN",
+      "action": "append",
+      "text": " LOGGER-EFFECT-CONTRACTS now supplies a source-bound proposed logger-effects-v1 model with ten cyclic dependency nodes, ten custody alternatives and fifteen explicit Open obligations. It does not unblock rd_kafka_log0: formatting/TLS/configuration lifetime, allocator/copy bounds, queue synchronization, finite forwarding/reply termination, IO/serve/log/destroy callbacks, generic/reply cleanup, eventual consumer cleanup and source-model correspondence still need independently checked semantic consumers. A forwarded enqueue return of one does not establish queue retention; queued and destroyed outcomes remain distinct. No neutral, consumed-op or acyclic callback premise is introduced."
+    }
+  ],
+  "status_append": "The logger effect contract card adds a bounded, source-bound proposed decomposition and refuses missing closure/custody/source facts. All fifteen universal effect/lifetime premises remain Open; this is a prerequisite for logger implementation and contributes no source-Safe gain.",
+  "report_index": "Regenerate docs/reports/INDEX.md with scripts/build_docs_index.py.",
+  "standing_gate": "Pending root combined gate and post-committed-matrix Python; focused receipt is not a full standing-gate substitute.",
+  "provider_gate": "Inapplicable: providers, manifests, source pins and clause-count tables are byte-identical to the base.",
+  "retired_followups": []
+}

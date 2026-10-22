@@ -1,0 +1,258 @@
+{
+  "source_head": "b460762b428af334f6f767a8d46f5e63b28c70bb",
+  "model_sha256": "1c1ffedb049c363f1003c3eaa1e3110c08828375ab85e12e647578a3f423ed18",
+  "source_root": "/home/cosmo/Documents/GitHub/qcore-c/build/cycle19/c-gateway-wave-pin/fluent-bit-clang-source",
+  "reviewed_revision": "66910c10a4d7eafa810b84229cf2dcf7b0f26f97",
+  "source_before": {
+    "lib/librdkafka-2.15.0/src/rdkafka.c": "c9451ca15c744f913ce2a6ed708dc36c04c47ab6730252afb0a2bb418d82d1d0",
+    "lib/librdkafka-2.15.0/src/rdkafka_queue.h": "107e2292d4eeeda622828ecc115cf48cd43c7a1a82ee6da732a5426905686da2",
+    "lib/librdkafka-2.15.0/src/rdkafka_op.c": "6fdcbcc4e76adb7260de0572e48ed53986414ece262009d1b7e2a04dc202c554"
+  },
+  "source_after": {
+    "lib/librdkafka-2.15.0/src/rdkafka.c": "c9451ca15c744f913ce2a6ed708dc36c04c47ab6730252afb0a2bb418d82d1d0",
+    "lib/librdkafka-2.15.0/src/rdkafka_queue.h": "107e2292d4eeeda622828ecc115cf48cd43c7a1a82ee6da732a5426905686da2",
+    "lib/librdkafka-2.15.0/src/rdkafka_op.c": "6fdcbcc4e76adb7260de0572e48ed53986414ece262009d1b7e2a04dc202c554"
+  },
+  "commands": [
+    {
+      "label": "fmt",
+      "argv": [
+        "cargo",
+        "fmt",
+        "--all",
+        "--",
+        "--check"
+      ],
+      "cwd": "/home/cosmo/.codex/worktrees/logger-effect-contracts/qcore-c",
+      "source_head": "b460762b428af334f6f767a8d46f5e63b28c70bb",
+      "started_utc": "2026-10-22T05:39:08.900367+00:00",
+      "pid": 32741,
+      "exit": 0,
+      "finished_utc": "2026-10-22T05:39:14.422565+00:00",
+      "stdout": {
+        "path": "/home/cosmo/.codex/worktrees/logger-effect-contracts/qcore-c/private/logger-effect-contracts/final-1/fmt.stdout",
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      "stderr": {
+        "path": "/home/cosmo/.codex/worktrees/logger-effect-contracts/qcore-c/private/logger-effect-contracts/final-1/fmt.stderr",
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      }
+    },
+    {
+      "label": "rust",
+      "argv": [
+        "cargo",
+        "test",
+        "-p",
+        "qcore-contract",
+        "--test",
+        "logger_effects",
+        "--no-fail-fast"
+      ],
+      "cwd": "/home/cosmo/.codex/worktrees/logger-effect-contracts/qcore-c",
+      "source_head": "b460762b428af334f6f767a8d46f5e63b28c70bb",
+      "started_utc": "2026-10-22T05:39:14.422874+00:00",
+      "pid": 32807,
+      "exit": 0,
+      "finished_utc": "2026-10-22T05:39:14.698971+00:00",
+      "stdout": {
+        "path": "/home/cosmo/.codex/worktrees/logger-effect-contracts/qcore-c/private/logger-effect-contracts/final-1/rust.stdout",
+        "sha256": "4b88d74531d18ff3160f3dd56ebbc0af866a0fbe88d3f84158aef88066a3ced0"
+      },
+      "stderr": {
+        "path": "/home/cosmo/.codex/worktrees/logger-effect-contracts/qcore-c/private/logger-effect-contracts/final-1/rust.stderr",
+        "sha256": "27174702c30c648d39d824971f188867368565cc0245b84820f7451d4d2b2145"
+      }
+    },
+    {
+      "label": "clippy",
+      "argv": [
+        "cargo",
+        "clippy",
+        "-p",
+        "qcore-contract",
+        "--all-targets",
+        "--",
+        "-D",
+        "warnings"
+      ],
+      "cwd": "/home/cosmo/.codex/worktrees/logger-effect-contracts/qcore-c",
+      "source_head": "b460762b428af334f6f767a8d46f5e63b28c70bb",
+      "started_utc": "2026-10-22T05:39:14.699270+00:00",
+      "pid": 32852,
+      "exit": 0,
+      "finished_utc": "2026-10-22T05:39:24.578524+00:00",
+      "stdout": {
+        "path": "/home/cosmo/.codex/worktrees/logger-effect-contracts/qcore-c/private/logger-effect-contracts/final-1/clippy.stdout",
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      "stderr": {
+        "path": "/home/cosmo/.codex/worktrees/logger-effect-contracts/qcore-c/private/logger-effect-contracts/final-1/clippy.stderr",
+        "sha256": "da83a6fd974d771297e972b03a905e16da4ba543de9fe41a4dc3c5fab3b531d7"
+      }
+    },
+    {
+      "label": "lean-version",
+      "argv": [
+        "lake",
+        "env",
+        "lean",
+        "--version"
+      ],
+      "cwd": "/home/cosmo/.codex/worktrees/logger-effect-contracts/qcore-c/proof",
+      "source_head": "b460762b428af334f6f767a8d46f5e63b28c70bb",
+      "started_utc": "2026-10-22T05:39:24.578867+00:00",
+      "pid": 33193,
+      "exit": 0,
+      "finished_utc": "2026-10-22T05:39:24.651653+00:00",
+      "stdout": {
+        "path": "/home/cosmo/.codex/worktrees/logger-effect-contracts/qcore-c/private/logger-effect-contracts/final-1/lean-version.stdout",
+        "sha256": "eb22144228dd41cd51a0c84af4f976cd0cef473102dcf99b60be756b11f2b95a"
+      },
+      "stderr": {
+        "path": "/home/cosmo/.codex/worktrees/logger-effect-contracts/qcore-c/private/logger-effect-contracts/final-1/lean-version.stderr",
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      }
+    },
+    {
+      "label": "lean-model",
+      "argv": [
+        "lake",
+        "build",
+        "QCore.LoggerEffects"
+      ],
+      "cwd": "/home/cosmo/.codex/worktrees/logger-effect-contracts/qcore-c/proof",
+      "source_head": "b460762b428af334f6f767a8d46f5e63b28c70bb",
+      "started_utc": "2026-10-22T05:39:24.652113+00:00",
+      "pid": 33204,
+      "exit": 0,
+      "finished_utc": "2026-10-22T05:39:25.295109+00:00",
+      "stdout": {
+        "path": "/home/cosmo/.codex/worktrees/logger-effect-contracts/qcore-c/private/logger-effect-contracts/final-1/lean-model.stdout",
+        "sha256": "b05e36c0dd30512e446d528c2f2413769c6b29784e53c0e3375f2361258ba61c"
+      },
+      "stderr": {
+        "path": "/home/cosmo/.codex/worktrees/logger-effect-contracts/qcore-c/private/logger-effect-contracts/final-1/lean-model.stderr",
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      }
+    },
+    {
+      "label": "lean-audit",
+      "argv": [
+        "lake",
+        "env",
+        "lean",
+        "AuditLoggerEffects.lean"
+      ],
+      "cwd": "/home/cosmo/.codex/worktrees/logger-effect-contracts/qcore-c/proof",
+      "source_head": "b460762b428af334f6f767a8d46f5e63b28c70bb",
+      "started_utc": "2026-10-22T05:39:25.295538+00:00",
+      "pid": 33294,
+      "exit": 0,
+      "finished_utc": "2026-10-22T05:39:25.499330+00:00",
+      "stdout": {
+        "path": "/home/cosmo/.codex/worktrees/logger-effect-contracts/qcore-c/private/logger-effect-contracts/final-1/lean-audit.stdout",
+        "sha256": "71ea8fb9781004ace325ccc74764d2b759eb99a1ba46d5de684ba9156a98190e"
+      },
+      "stderr": {
+        "path": "/home/cosmo/.codex/worktrees/logger-effect-contracts/qcore-c/private/logger-effect-contracts/final-1/lean-audit.stderr",
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      }
+    },
+    {
+      "label": "source-replay",
+      "argv": [
+        "cargo",
+        "run",
+        "-p",
+        "qcore-contract",
+        "--example",
+        "logger_effect_plan",
+        "--",
+        "/home/cosmo/.codex/worktrees/logger-effect-contracts/qcore-c/docs/reports/logger-effect-contracts/model.json",
+        "1c1ffedb049c363f1003c3eaa1e3110c08828375ab85e12e647578a3f423ed18",
+        "/home/cosmo/Documents/GitHub/qcore-c/build/cycle19/c-gateway-wave-pin/fluent-bit-clang-source"
+      ],
+      "cwd": "/home/cosmo/.codex/worktrees/logger-effect-contracts/qcore-c",
+      "source_head": "b460762b428af334f6f767a8d46f5e63b28c70bb",
+      "started_utc": "2026-10-22T05:39:25.499745+00:00",
+      "pid": 33335,
+      "exit": 0,
+      "finished_utc": "2026-10-22T05:39:25.764608+00:00",
+      "stdout": {
+        "path": "/home/cosmo/.codex/worktrees/logger-effect-contracts/qcore-c/private/logger-effect-contracts/final-1/source-replay.stdout",
+        "sha256": "693ca1fbc21c8d44f1be1bb0895419f4f1082ba6789ab5a56194d68e957f9f23"
+      },
+      "stderr": {
+        "path": "/home/cosmo/.codex/worktrees/logger-effect-contracts/qcore-c/private/logger-effect-contracts/final-1/source-replay.stderr",
+        "sha256": "600362a9b04273ea5c9c6bca2301b1bf63fafce6a45895e2ce6a8d253154dcf0"
+      }
+    },
+    {
+      "label": "wrong-model-digest",
+      "argv": [
+        "/home/cosmo/.codex/worktrees/logger-effect-contracts/qcore-c/target/debug/examples/logger_effect_plan",
+        "/home/cosmo/.codex/worktrees/logger-effect-contracts/qcore-c/docs/reports/logger-effect-contracts/model.json",
+        "0000000000000000000000000000000000000000000000000000000000000000",
+        "/home/cosmo/Documents/GitHub/qcore-c/build/cycle19/c-gateway-wave-pin/fluent-bit-clang-source"
+      ],
+      "cwd": "/home/cosmo/.codex/worktrees/logger-effect-contracts/qcore-c",
+      "source_head": "b460762b428af334f6f767a8d46f5e63b28c70bb",
+      "started_utc": "2026-10-22T05:39:25.765019+00:00",
+      "pid": 33371,
+      "exit": 1,
+      "finished_utc": "2026-10-22T05:39:25.766780+00:00",
+      "stdout": {
+        "path": "/home/cosmo/.codex/worktrees/logger-effect-contracts/qcore-c/private/logger-effect-contracts/final-1/wrong-model-digest.stdout",
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      "stderr": {
+        "path": "/home/cosmo/.codex/worktrees/logger-effect-contracts/qcore-c/private/logger-effect-contracts/final-1/wrong-model-digest.stderr",
+        "sha256": "fddcf6365b6ea65f55efa8300440948f910f5fc10ec940eae6c0ee404071fd7d"
+      }
+    },
+    {
+      "label": "wrong-source",
+      "argv": [
+        "/home/cosmo/.codex/worktrees/logger-effect-contracts/qcore-c/target/debug/examples/logger_effect_plan",
+        "/home/cosmo/.codex/worktrees/logger-effect-contracts/qcore-c/docs/reports/logger-effect-contracts/model.json",
+        "1c1ffedb049c363f1003c3eaa1e3110c08828375ab85e12e647578a3f423ed18",
+        "/home/cosmo/.codex/worktrees/logger-effect-contracts/qcore-c/private/logger-effect-contracts/final-1/altered-source"
+      ],
+      "cwd": "/home/cosmo/.codex/worktrees/logger-effect-contracts/qcore-c",
+      "source_head": "b460762b428af334f6f767a8d46f5e63b28c70bb",
+      "started_utc": "2026-10-22T05:39:25.767824+00:00",
+      "pid": 33372,
+      "exit": 1,
+      "finished_utc": "2026-10-22T05:39:25.779670+00:00",
+      "stdout": {
+        "path": "/home/cosmo/.codex/worktrees/logger-effect-contracts/qcore-c/private/logger-effect-contracts/final-1/wrong-source.stdout",
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      "stderr": {
+        "path": "/home/cosmo/.codex/worktrees/logger-effect-contracts/qcore-c/private/logger-effect-contracts/final-1/wrong-source.stderr",
+        "sha256": "b8d1d55815b9afd30bb975c2c49e9c80515a8ef4d5b32f33fab71d214e32ea4f"
+      }
+    }
+  ],
+  "source_binding": "Open; exact raw input identity only",
+  "production_consumer": false,
+  "standing_gate": "pending integrator combined gate",
+  "private_completion": {
+    "path": "/home/cosmo/.codex/worktrees/logger-effect-contracts/qcore-c/private/logger-effect-contracts/final-1/completion.json",
+    "sha256": "22d7f4d858fcc2524a4dd9d300bc190e4359b732ad152b138c297c25aeaf6b81"
+  },
+  "rust": {
+    "passed": 9,
+    "failed": 0,
+    "ignored": 0
+  },
+  "lean": {
+    "theorems": 12,
+    "allowed_axioms": [
+      "propext"
+    ],
+    "project_axioms": false,
+    "placeholders": false
+  }
+}
