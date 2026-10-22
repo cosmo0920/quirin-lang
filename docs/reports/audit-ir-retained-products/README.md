@@ -56,7 +56,7 @@ checker plugin, public checkpoint encoding or Lean semantic definition changes.
 Existing audited models remain the semantic correspondence; serialization
 controls are observations, not a new Rust-to-Lean refinement proof.
 
-## Verification in progress
+## Verification and remaining measurement
 
 The six focused controls pass (exit 0): exact ordered payload round trips;
 complete report bytes and every serialized sidecar/fact vector; real Clang-derived callback closures and two exact run demotions; incomplete, corrupt, missing,
@@ -66,9 +66,24 @@ separate surviving owner. Logs are worktree-private under
 three-control run also passed before envelope versioning. Its intentional
 caught-panic message is the unwind test, not a failed test.
 
-The full standing gate and unchanged 157-configuration production measurement
-are queued under `/tmp/quirin-audit-ir-next-heavy.lock`. No outcome is claimed
-before their receipts exist. The frozen successful baseline is borrowed with
+The complete standing gate passes: 537 Rust units / 550 summaries, 8,506
+passed, zero failed, 15 ignored; all 362 Lean audits and 374 Python tests pass.
+Formatting, clippy with warnings denied, both reevaluation examples, recursive
+submodule setup, Clang detection and the release build all exit 0.
+[Gate receipt](gate.json) records every command, exit, elapsed time and absolute
+private log path; [Clang recording](clang-version.txt) was taken in this worktree.
+The source guard verifies all 1,499 tracked Rust files against the recorded
+snapshot. The full production measurement remains queued under
+`/tmp/quirin-audit-ir-next-heavy.lock`; no memory outcome is claimed yet.
+
+The first gate attempt failed because generated debug builds exhausted the
+filesystem: Rust build exit 101, formatting exit 0, then clippy storage errors
+and the driver exited 1 while unable to write its exit receipt. Its raw logs and
+partial receipt remain in `private/audit-ir-retained-products/gate-disk-full/`
+and `gate-disk-full-driver.log`. Only this card's generated debug outputs were
+removed, preserving logs and existing CLI executables. The complete passing
+retry uses `CARGO_PROFILE_DEV_DEBUG=0`, `CARGO_PROFILE_TEST_DEBUG=0` and
+`CARGO_INCREMENTAL=0`; the release optimization profile is unchanged. The frozen successful baseline is borrowed with
 explicit source mapping: its 1,498 Rust blobs match `52d2a3c8626eccb69ad2897ff70199934c8c2775`,
 and that commit has no Rust/Cargo difference from this card's base. The executable
 at its old `/tmp/qcore-audit-ir-next-target/release/quirin-audit` path no longer

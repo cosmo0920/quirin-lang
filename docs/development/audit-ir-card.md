@@ -227,7 +227,8 @@ after complete certificate equality. The consuming current-route owner releases
 callback/pre-pass inputs after both final folds; public full-record, repeatable
 fold and checkpoint APIs retain their records. Final report rows and sidecars
 remain resident, as do required prepared sources for configured source-contract
-consumers. Whole-job memory and complete validation remain in the slice's receipt;
+consumers. The complete gate passes 8,506 Rust tests, 362 Lean audits and 374
+Python tests; whole-job memory measurement remains pending in the slice's receipt;
 this implementation alone does not close the parent budget, final-row streaming,
 oversize-component admission or cold/warm evidence requirements.
 

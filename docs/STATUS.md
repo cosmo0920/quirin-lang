@@ -21,7 +21,8 @@ the prior four-job 7 GB OOM remains a failed result.
 checked run-local `.qc` storage for complete report rows and member evidence.
 Independent replay CFGs release after equality; final current-route member inputs
 release after their folds. Six focused integrity/full-record controls pass;
-the complete gate and fresh production observation are pending. Final report rows
+the complete gate passes 8,506 Rust tests, 362 Lean audits and 374 Python tests.
+The fresh production observation is pending. Final report rows
 remain resident and no new memory acceptance or coverage is claimed here.
 
 [Borrowed audit-certificate admission](reports/audit-ir-admission/README.md)
