@@ -1,0 +1,9 @@
+# Contract implementation cycle4 integration
+
+Three independently predicted cards are integrated from base31c5ed500d9d4a1448a623b839e1644adb19efd1: [logger effect contracts](../logger-effect-contracts/README.md), [scheduler lifetime contracts](../scheduler-lifetime-contracts/README.md) and [guarded production adoption](../guarded-contract-adoption/README.md). All source cards pass their focused Rust/Lean controls. Combined standing/provider/native/matrix acceptance remains pending; focused checks are not full acceptance.
+
+Logger10cyclic nodes/10custody alternatives/15Open obligations and scheduler7-file finite cleanup/creation/purge decomposition supply explicit prerequisite infrastructure, not production source-Safe closure. The scheduler source does not clear current-thread TLS; forwarded enqueue return1 does not prove retention. Actual callbacks, external aliases and lifetime effects remain independently Open.
+
+The real cJSON production declaration now embeds17proposed symbols/five guarded obligations through18explicit metadata clauses (25→43), versioned grammar/property loaders and a sealed whole-source bridge. Original nine atoms, original propositions, all older flow/lifecycle meanings, interpreted/ABI/legacy premise output and both reviewed C identities remain exact. Source universals, checked semantic/lifecycle consumers, evidence invalidation, C termination and outer truth remain Open.
+
+Integration resolves only Rust module/Lean import conflicts, retaining every registration. The primary checkout is untouched. The [prediction](PREDICTION.md) and [gate producer](run_gate.py) name the evidence plan; gate/native output uses ignored worktree-private paths, never target. Root owns exact increment/residual amendments, generated index and matrix, final Python, and serial main/remote integration. Compaction10/stability review6 remain deferred to wave close, not silently discharged here.
