@@ -115,3 +115,21 @@ pass 5 tests (already included in that full count). Format, Clippy, the correct
 census feature, submodules, Clang and both reevaluation examples also exit 0.
 All 1,498 tracked Rust sources remain unchanged throughout. This is a new gate
 for the follow-up; the original gate and failed probes remain frozen above.
+
+The borrowed-pre-pass-facts release at `e8efc940e` still fails its two-worker
+run: peak **6,999,998,464 bytes**, `Result=oom-kill`, **537.829 seconds**, zero
+swap; driver exit 1 and stop/reset exit 0. The worker's final events/hash receipt
+is unavailable. [Exact receipt](memory-release-prepass2.json). No runtime share
+or reduction factor is attributed to the removed clone from these capped,
+failed runs. The unchanged-input baseline binary is retained privately.
+
+Prediction before page-reclaim implementation: wrap every executor work item,
+including pre-pass facts reads and the sequential route, in the existing unit
+cache lifetime boundary. After local buffers and cache references are released,
+on Linux/glibc call `malloc_trim(0)` to request returning already free allocator
+pages to the OS. Its local system declaration is `int malloc_trim(size_t)` in
+`/usr/include/malloc.h`. It cannot release live allocations and supplies no
+analysis evidence. Other platforms retain cache release without a native trim
+claim. This is an attempted reclamation, not a guaranteed memory bound or a
+replacement for reducing live facts. Preserve owned results, ordered errors,
+unwinding and all verdict/source checks; measure the identical full workload.
