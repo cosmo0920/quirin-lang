@@ -1,0 +1,43 @@
+{
+  "source_revision": "66910c10a4d7eafa810b84229cf2dcf7b0f26f97",
+  "source_root": "/home/cosmo/Documents/GitHub/qcore-c/build/cycle19/c-gateway-wave-pin/fluent-bit-clang-source",
+  "private_retention": "/home/cosmo/.codex/worktrees/scheduler-lifetime-contracts/qcore-c/private/scheduler-lifetime-contracts/source",
+  "verification": "Every retained file equals git show revision:path byte-for-byte. No preprocessing/build/deployment equivalence inferred.",
+  "files": [
+    {
+      "path": "lib/monkey/mk_server/mk_scheduler.c",
+      "sha256": "9a515fa6d0cc79ee8e70457e5e26e65a9ab82c8febd0bb383c88d35bcc1aedda",
+      "bytes": 26606
+    },
+    {
+      "path": "lib/monkey/mk_server/mk_http_thread.c",
+      "sha256": "29fa43236d38b00d8609906f535386d93c600685744cefc1914a2a7ccff3d745",
+      "bytes": 8638
+    },
+    {
+      "path": "lib/monkey/include/monkey/mk_thread_libco.h",
+      "sha256": "4625fde94575742200f6ffa6eb4a8e30b12ee0079544cebd4f5de1d22f929fd3",
+      "bytes": 3133
+    },
+    {
+      "path": "lib/monkey/include/monkey/mk_http_thread.h",
+      "sha256": "0b33d6ba9cf1490d2a8ec481f08cd9032745c8e0879a2ef6fdb16a4f81b1b4f7",
+      "bytes": 2283
+    },
+    {
+      "path": "lib/monkey/include/monkey/mk_scheduler.h",
+      "sha256": "0f4e6c9f133eee464e58b5d02e671746adf982ecf1e4a5708ce46f847b192f0d",
+      "bytes": 11799
+    },
+    {
+      "path": "lib/monkey/include/monkey/mk_tls.h",
+      "sha256": "7b99725e937493d38d988ef5ad50944c505ce6c6aeab2eff6e73942191ed3096",
+      "bytes": 4429
+    },
+    {
+      "path": "lib/monkey/include/monkey/mk_core/mk_list.h",
+      "sha256": "2deacdc5bb1abfc317be4b46687d569be36aad32aa1816c127e4fe6d5f9e1af1",
+      "bytes": 6747
+    }
+  ]
+}

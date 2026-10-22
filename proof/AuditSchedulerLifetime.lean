@@ -1,0 +1,11 @@
+import QCore.SchedulerLifetime
+#print axioms QCore.SchedulerLifetime.release_protected_refuses
+#print axioms QCore.SchedulerLifetime.write_unowned_refuses
+#print axioms QCore.SchedulerLifetime.absent_lifetime_refuses
+#print axioms QCore.SchedulerLifetime.released_resource_is_absent
+#print axioms QCore.SchedulerLifetime.retirement_preserves_borrow
+#print axioms QCore.SchedulerLifetime.retired_owner_cannot_remain
+#print axioms QCore.SchedulerLifetime.invalid_membership_forbids_admission
+#print axioms QCore.SchedulerLifetime.retiring_current_tls_forbids_admission
+#print axioms QCore.SchedulerLifetime.no_tls_clear_in_empty_cleanup
+#print axioms QCore.SchedulerLifetime.callback_is_explicit_before_retirement

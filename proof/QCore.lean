@@ -419,3 +419,4 @@ import QCore.PluginNeutralOverlap
 
 /-! The executable formal core of QCore-C revision 0.1. -/
 
+import QCore.SchedulerLifetime

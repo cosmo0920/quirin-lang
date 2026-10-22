@@ -39,3 +39,6 @@ pub mod premise_flow;
 pub mod premise_metadata_bridge;
 
 pub mod guarded_decomposition;
+
+/// Finite source-bound Monkey scheduler lifetime obligations.
+pub mod scheduler_lifetime;
