@@ -1,5 +1,9 @@
 # Contract implementation cycle4 integration
 
+**Halted by the user (2026-10-22).** Guarded adoption has five successful native outputs, one retained prerequisite failure and one intentional TIP corpus interruption. All owned processes stopped; the controller exits143. Complete comparisons and native acceptance were not produced. [The checkpoint](../guarded-contract-adoption/NATIVE_CHECKPOINT.md) preserves the progress and [the supplemental card](../guarded-contract-adoption/SUPPLEMENTAL_CARD.md) is deferred, not launched.
+
+The local main merge `e282aaccc7763da989cf6f3c8f3c51cdd3c8de3c` resolves both status/history conflicts and preserves the separate Clang-transport implementation. It requires fresh combined standing/provider validation. The source552 gate, pre-main source-equality record and source024 matrix/Python receipt below do not validate that later merged code. No remote publication or further guarded compiler/native validation follows this halt.
+
 The three prioritized cards are implemented together at measured source
 `552773f0c64e2e6a3c7d4b752c61a7d26130975a`, based on
 `31c5ed500d9d4a1448a623b839e1644adb19efd1`:
@@ -19,7 +23,7 @@ The three prioritized cards are implemented together at measured source
 The corrected combined source/provider gate passes all22 stages with stable,
 clean source. Authoritative Python passes374 tests against the committed unchanged matrix;
 [its receipt](post-matrix-confirmation.json) records source, matrix and log hashes.
-Native acceptance remains pending. Focused model checks do not substitute for
+Guarded native acceptance is incomplete and paused. Focused model checks do not substitute for
 those remaining integration obligations.
 
 ## Measured validation
@@ -38,7 +42,7 @@ commands and private paths; [run_gate.py](run_gate.py) is the producer.
 | Provider Python | exit0; 25 passed |
 | Provider inventory, allfive package builds and verifications | each exit0 |
 | `python3 -m unittest discover -s scripts/tests` after matrix commit | exit0; 374 passed; clean source and matrix SHA unchanged |
-| Six BASE/TIP native routes and complete attribution | pending |
+| Six BASE/TIP native routes and complete attribution | halted: 5/6 successful outputs; TIP corpus interrupted; comparisons not started |
 
 Full source/provider logs are private at
 `/home/cosmo/.codex/worktrees/logger-effect-contracts/qcore-c/private/contract-cycle4-integration/joint-gate-2/`.

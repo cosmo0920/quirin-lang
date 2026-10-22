@@ -27,6 +27,8 @@ Regenerate with `python3 scripts/build_docs_index.py`; validate with `--check`.
 
 | [audit-ir-admission](audit-ir-admission/README.md) | AUDIT-IR-ADMISSION: borrow certificate bodies during audit admission |
 
+| [audit-ir-clang-transport](audit-ir-clang-transport/README.md) | AUDIT-IR-CLANG-TRANSPORT |
+
 | [audit-ir-fragments](audit-ir-fragments/README.md) | AUDIT-IR-FRAGMENTS: source-rechecked CFG artifacts |
 
 | [audit-ir-lifetimes](audit-ir-lifetimes/README.md) | AUDIT-IR-LIFETIMES: release obsolete audit working sets |

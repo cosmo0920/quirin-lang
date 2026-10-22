@@ -1,5 +1,7 @@
 # Current status and evidence boundaries
 
+Guarded contract adoption is **halted at the user’s request**. Five frozen native route outputs are preserved; TIP corpus was intentionally interrupted and complete comparisons were not started. The [supplemental card](reports/guarded-contract-adoption/SUPPLEMENTAL_CARD.md) is deferred and not launched. The source552 gate and earlier matrix/Python receipts remain scoped checkpoints; the later local main merge needs fresh combined validation and has not been pushed.
+
 [Clang AST transport](reports/audit-ir-clang-transport/README.md) now spools
 large complete-unit dumps for the public AST, compact-index and lifetime-source
 readers. Parser admission and fact construction remain unchanged. Aggregate

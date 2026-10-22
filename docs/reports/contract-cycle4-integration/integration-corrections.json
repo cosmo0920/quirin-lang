@@ -53,7 +53,7 @@
       "change": "Exact count65 plus explicit module membership; no inventory/schema/view weakening."
     }
   ],
-  "acceptance": "Corrected combined source552 passes all22 stages with stable clean source:8532 Rust/365 Lean; provider133 Rust/25 Python/allfivepackages. Authoritative Python374 passes0 at clean source024048e35163f59475572b851ad663dcfa46d730 with committed matrix SHA unchanged. Native TIP/comparison acceptance remains pending.",
+  "acceptance": "Source552 retains passed22stage/8532Rust/365Lean/provider133Rust25Python/allfivepackages; source024 retains Python374 with unchanged committed matrix. Guarded adoption is halted:5successful native outputs,1retained prerequisite failure,1intentionalTIPcorpus interruption; comparisons and native acceptance incomplete. Later main mergee282 requires fresh combined standing/provider validation; no push.",
   "native_attempt_1": {
     "status": "failed; not acceptance",
     "baseline_source": "31c5ed500d9d4a1448a623b839e1644adb19efd1",
@@ -68,7 +68,7 @@
     "retained_attempt": "native-base-1/corpus",
     "failure_receipt": "native-controller-1/failure.txt",
     "repair_receipt": "native-base-runtime-binding-1/receipt.json",
-    "recovery": "native-controller-2: corrected fresh BASE corpus passes0 at10:34:52Z; complete TIP/comparison acceptance pending. Original failed attempt remains retained."
+    "recovery": "Corrected BASE corpus passes0 at10:34:52Z. Human halt intentionally interrupts TIP corpus; no comparison/native acceptance. Original failure remains retained. See guarded-contract-adoption/native-checkpoint.json."
   },
   "status_inventory_correction": {
     "old": [

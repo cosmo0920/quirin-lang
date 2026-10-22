@@ -73,6 +73,10 @@ P1.2 integration when both change shared identity semantics; P1.3 can be a
 separate lane only after overlap is measured. P2's measurement can proceed
 independently after P0. No wave numbers or agents are assigned by this document.
 
+### Deferred contract-adoption continuation
+
+[GUARDED-CONTRACT-ADOPTION-SUPPLEMENT](../../reports/guarded-contract-adoption/SUPPLEMENTAL_CARD.md) records the explicitly halted native acceptance work. It is deferred, not launched, and requires explicit human authorization before restart. Its canonical brief owns prerequisites, environment, frozen-input custody and acceptance; existing `PREMISE-FLOW-PRODUCTION-DISCHARGE` and the four original source residuals remain Open. This pointer does not change the production queue order or retire tracking.
+
 ### CT mechanisms available to later briefs
 
 The original review figures above are a dated snapshot. Use [current status](../../STATUS.md)
