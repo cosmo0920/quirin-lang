@@ -38,5 +38,5 @@
     "provider-rust": "882ccd35b5c73da1dea4c28ec3080a1d59a2b04c4ee0c363514bac33eaadd352",
     "provider-python": "776caaba340435e0306c816e28a8aac272d5600e82c30d139ec32f5342e5960d"
   },
-  "remaining": "Native acceptance remains separate and pending. Authoritative Python374 passes0 against the committed unchanged matrix; post-matrix-confirmation.json owns that fresh receipt."
+  "remaining": "User halted guarded adoption. Five native outputs exist; TIP corpus interrupted, comparisons not started. The supplemental card is deferred/not launched. Source552 and source024 matrix/Python receipts retain their checkpoint claims. Later merged maine282 requires fresh combined standing/provider validation; no current-main native acceptance or push."
 }

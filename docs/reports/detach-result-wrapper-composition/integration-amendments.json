@@ -1,0 +1,51 @@
+{
+  "card": "DETACH-RESULT-WRAPPER-COMPOSITION",
+  "base": "e282aaccc7763da989cf6f3c8f3c51cdd3c8de3c",
+  "measured_source": "9ecc941d5f18739296cf573a2476dbb51a59fbb1",
+  "rule": "gateway 33 (docs/agents/gateway.md#constraint-33; router row in docs/agents/README.md)",
+  "increment": "wave-48-part11.md",
+  "increment_paragraph": "**DETACH-RESULT-WRAPPER-COMPOSITION (2026-10-22).** The [card](../../reports/detach-result-wrapper-composition/README.md) adds gateway rule 33: a checked removed-selection frame (`if (W < 0) return NULL; return D(P, L(P, (size_t)W));` over the checked indexed lookup and the exact same-item detach declaration, or `X(F(P, W));` with one nullable release) is analysed under a selection entry whose nullable selected child is a transported caller prerequisite, never fresh custody and never membership read off provenance or the representation premise; decimal-constant callers transport it only by expansion into the existing lookup, detach and release calls. Fresh pinned corpus BASE/TIP moves 975 to 977 Safe and 3,850 to 3,848 Unknown (9 provisional Unsafe unchanged): exactly cJSON_DetachItemFromArray and cJSON_DeleteItemFromArray, each conditional on detach_list_representation and get_array_item's null premise. The two object detaches and their deletes keep their refusals (no checked string-keyed membership). All 4,921 null dictionaries are unchanged; combined Safe 847 to 849; the runtime projection keeps both rows Unknown (premise uncovered). QCore.RemovedSelection proves the composition (19 theorems) and binds three shared vector tables. The standing gate passes 8,549 Rust tests (542 units / 555 summaries, 0 failed, 15 ignored), 366 Lean audits, fmt, Clippy and both reevaluation examples; root Python has only the expected stale-matrix failure until the matrix is regenerated.",
+  "status_paragraph": "DETACH-RESULT-WRAPPER-COMPOSITION (rule 33) promotes exactly cJSON_DetachItemFromArray and cJSON_DeleteItemFromArray through checked removed-selection frames, conditional on detach_list_representation and get_array_item's null premise: pinned corpus 975→977 Safe, 3,850→3,848 Unknown, 9 provisional Unsafe unchanged; null dictionaries unchanged; combined 847→849; runtime custody unchanged (both rows outer-uncovered). Object detaches/deletes remain Unknown pending string-keyed membership.",
+  "ledger": [
+    {
+      "id": "DETACH-RESULT-WRAPPER-COMPOSITION",
+      "operation": "amend",
+      "title": "Preserve removed identity through the object detach wrappers",
+      "text": "AMENDED DETACH-RESULT-WRAPPER-COMPOSITION (gateway rule 33, measured source 9ecc941d5 on base e282aaccc): checked removed-selection frames discharge the array wrappers. Fresh pinned corpus BASE/TIP 975→977 Safe, 3,850→3,848 Unknown, 9 provisional Unsafe unchanged: exactly cJSON_DetachItemFromArray and cJSON_DeleteItemFromArray become Safe, each conditional on the declaration's detach_list_representation (its nine detach_* hypotheses listed) and get_array_item's null premise; the selected child is a transported caller prerequisite and callers transport it only by decimal-constant expansion. Detach-declaration dependents 4 rows/0 Safe → 5 rows/2 Safe. Runtime projection keeps both rows Unknown (premise uncovered). REMAINING: cJSON_DetachItemFromObject, cJSON_DetachItemFromObjectCaseSensitive and their two delete wrappers keep their unchanged refusals (whole-return expression; nested object detach) until string-keyed membership has a checked frame; guarded/lifetime combinations remain refused. DISCHARGE: a checked keyed-lookup frame and caller key resolution, with audited Rust/Lean and fresh measurement.",
+      "source": "docs/reports/detach-result-wrapper-composition/README.md"
+    },
+    {
+      "id": "DETACH-LOOKUP-MEMBERSHIP",
+      "operation": "amend",
+      "text": "NARROWED by DETACH-RESULT-WRAPPER-COMPOSITION: indexed selection now transports through checked array wrapper frames (corpus 975→977 Safe, the two array wrappers only). Measured remaining scope: string-keyed lookup, where get_object_item has only a declared borrowed-from contract and its own body stays Unknown (two unmodeled loop conditions, two unresolved cursors), so no frame binds a key to one child and no caller can resolve a key; the four object detach/delete rows stay Unknown. Also still open: nonliteral/formal caller indices, opaque defining-typedef caller record aliases (production callers spell cJSON *), successor-link closure through contained children, and wrapper callers outside the main-source or W44 callee scope.",
+      "source": "docs/reports/detach-result-wrapper-composition/README.md"
+    },
+    {
+      "id": "DETACH-LIST-REPRESENTATION-CLOSURE",
+      "operation": "amend",
+      "text": "DETACH-RESULT-WRAPPER-COMPOSITION adds two Safe dependents (5 dependent rows, 2 Safe). Both rest on the unchanged DeclaredAssumption, and every loaded runtime scenario moves them Safe→Unknown because no envelope covers premise:detach_list_representation. No closure is claimed.",
+      "source": "docs/reports/detach-result-wrapper-composition/README.md"
+    },
+    {
+      "id": "W48-BOTTOM-UP-RESIDUAL-PLAN",
+      "operation": "append",
+      "text": "DETACH-RESULT-WRAPPER-COMPOSITION closes the cJSON array Removed-result transport: cJSON_DetachItemFromArray and cJSON_DeleteItemFromArray are conditionally Safe (corpus 975→977). Fresh planner 2,215→2,214 candidate bodies, 254→253 single-body waits, ceiling 362→360, no-extra-body closure 6/6→4/4 (the two rows leave the Unknown denominators); census quantities only. cJSON string-keyed membership and object Removed-result transport remain open, as do the logger/scheduler and other residuals listed above."
+    }
+  ],
+  "root_owned_files": [
+    "docs/STATUS.md",
+    "docs/development/increments/wave-48-part11.md",
+    "docs/reviews/r0_3/acceptance_matrix.json (regenerate; Lean audits 365→366)",
+    "docs/reports/INDEX.md (regenerate with scripts/build_docs_index.py)"
+  ],
+  "shared_files_touched": [
+    "crates/qcore-c-gateway/src/lib.rs (one module line)",
+    "crates/qcore-c-gateway/src/legacy_c.rs (module, build-stream stage, row branch)",
+    "crates/qcore-c-gateway/src/legacy_transfer.rs (EntryCustody/TransferContext/ExitObservation fields, transfer hook)",
+    "crates/qcore-c-gateway/src/legacy_summary.rs (selection map and derivation route)",
+    "proof/QCore.lean (one import)",
+    "docs/agents/gateway.md (rule 33 appended after 31)",
+    "docs/agents/README.md (row 33)"
+  ],
+  "final_required": "Regenerate and commit the matrix (the only pre-gate Python failure is the expected stale lean_audits 365→366), rebuild the report index, then rerun the root Python suite and record its count/exit."
+}

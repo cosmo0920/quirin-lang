@@ -1,0 +1,782 @@
+{
+ "cJSON_DeleteItemFromArray": {
+  "after": {
+   "contract_dependencies": {
+    "declarations": [
+     "cJSON_Delete",
+     "cJSON_DetachItemViaPointer"
+    ],
+    "hypothesis_dependencies": {
+     "cJSON_DetachItemViaPointer": [
+      "detach_chain",
+      "detach_distinct",
+      "detach_empty",
+      "detach_first_prev",
+      "detach_last_next",
+      "detach_link_targets",
+      "detach_no_writer",
+      "detach_parent_outside",
+      "detach_predecessor",
+      "legacy_atom_00000000"
+     ]
+    },
+    "null_premises": [
+     "null-deref:get_array_item:2770:current_child"
+    ],
+    "summaries": [
+     "get_array_item"
+    ]
+   },
+   "diagnostics": [],
+   "function": "cJSON_DeleteItemFromArray",
+   "hypothesis_context": {
+    "artifact": "librdkafka/cJSON.c#cJSON_DeleteItemFromArray",
+    "assumptions": "245bc25c3d345adb7c19b9d6b52e65580d8234ba6736815529f330b9c3e359b5",
+    "bounds": "existing gateway budgets; no new hypothesis discharge",
+    "build_identity": "53b0d3c2cc680fe08ac6a736466ba30dc2cd2168adf819aef9154cde642f151d",
+    "evidence_version": "contract-hypothesis-graph.v1:9ecc941d5f18739296cf573a2476dbb51a59fbb1",
+    "property": "resource-custody.v1",
+    "scope": "[\"add_item_to_array\",\"add_item_to_object\",\"buffer_skip_whitespace\",\"cJSON_AddArrayToObject\",\"cJSON_AddBoolToObject\",\"cJSON_AddFalseToObject\",\"cJSON_AddItemReferenceToArray\",\"cJSON_AddItemReferenceToObject\",\"cJSON_AddItemToArray\",\"cJSON_AddItemToObject\",\"cJSON_AddItemToObjectCS\",\"cJSON_AddNullToObject\",\"cJSON_AddNumberToObject\",\"cJSON_AddObjectToObject\",\"cJSON_AddRawToObject\",\"cJSON_AddStringToObject\",\"cJSON_AddTrueToObject\",\"cJSON_Compare\",\"cJSON_CreateArray\",\"cJSON_CreateArrayReference\",\"cJSON_CreateBool\",\"cJSON_CreateDoubleArray\",\"cJSON_CreateFalse\",\"cJSON_CreateFloatArray\",\"cJSON_CreateIntArray\",\"cJSON_CreateNull\",\"cJSON_CreateNumber\",\"cJSON_CreateObject\",\"cJSON_CreateObjectReference\",\"cJSON_CreateRaw\",\"cJSON_CreateString\",\"cJSON_CreateStringArray\",\"cJSON_CreateStringReference\",\"cJSON_CreateTrue\",\"cJSON_Delete\",\"cJSON_DeleteItemFromArray\",\"cJSON_DeleteItemFromObject\",\"cJSON_DeleteItemFromObjectCaseSensitive\",\"cJSON_DetachItemFromArray\",\"cJSON_DetachItemFromObject\",\"cJSON_DetachItemFromObjectCaseSensitive\",\"cJSON_DetachItemViaPointer\",\"cJSON_Duplicate\",\"cJSON_Duplicate_rec\",\"cJSON_GetArrayItem\",\"cJSON_GetArraySize\",\"cJSON_GetErrorPtr\",\"cJSON_GetNumberValue\",\"cJSON_GetObjectItem\",\"cJSON_GetObjectItemCaseSensitive\",\"cJSON_GetStringValue\",\"cJSON_HasObjectItem\",\"cJSON_InitHooks\",\"cJSON_InsertItemInArray\",\"cJSON_IsArray\",\"cJSON_IsBool\",\"cJSON_IsFalse\",\"cJSON_IsInvalid\",\"cJSON_IsNull\",\"cJSON_IsNumber\",\"cJSON_IsObject\",\"cJSON_IsRaw\",\"cJSON_IsString\",\"cJSON_IsTrue\",\"cJSON_Minify\",\"cJSON_New_Item\",\"cJSON_Parse\",\"cJSON_ParseWithLength\",\"cJSON_ParseWithLengthOpts\",\"cJSON_ParseWithOpts\",\"cJSON_Print\",\"cJSON_PrintBuffered\",\"cJSON_PrintPreallocated\",\"cJSON_PrintUnformatted\",\"cJSON_ReplaceItemInArray\",\"cJSON_ReplaceItemInObject\",\"cJSON_ReplaceItemInObjectCaseSensitive\",\"cJSON_ReplaceItemViaPointer\",\"cJSON_SetNumberHelper\",\"cJSON_SetValuestring\",\"cJSON_Version\",\"cJSON_free\",\"cJSON_malloc\",\"cJSON_strdup\",\"case_insensitive_strcmp\",\"cast_away_const\",\"compare_double\",\"create_reference\",\"ensure\",\"get_array_item\",\"get_decimal_point\",\"get_object_item\",\"internal_free\",\"internal_malloc\",\"internal_realloc\",\"minify_string\",\"parse_array\",\"parse_hex4\",\"parse_number\",\"parse_object\",\"parse_string\",\"parse_value\",\"print\",\"print_array\",\"print_number\",\"print_object\",\"print_string\",\"print_string_ptr\",\"print_value\",\"replace_item_in_object\",\"skip_multiline_comment\",\"skip_oneline_comment\",\"skip_utf8_bom\",\"suffix_object\",\"update_offset\",\"utf16_literal_to_utf8\"]",
+    "semantic_profile": "legacy-pinned-resource-profile",
+    "source_identity": "6b08e1a928efe8cca7049921e2d2367fc5bdbd5a301f198ec659e924d41d0276"
+   },
+   "status": "Safe"
+  },
+  "before": {
+   "contract_dependencies": {
+    "declarations": [
+     "cJSON_Delete"
+    ],
+    "hypothesis_dependencies": {}
+   },
+   "diagnostics": [
+    {
+     "category": "unsupported",
+     "description": "nested call `cJSON_DetachItemFromArray` inside a modeled call is outside the resource projection",
+     "line": 3059,
+     "origin": "cJSON.c:2291"
+    }
+   ],
+   "function": "cJSON_DeleteItemFromArray",
+   "hypothesis_context": {
+    "artifact": "librdkafka/cJSON.c#cJSON_DeleteItemFromArray",
+    "assumptions": "776718ac103e2fdaff7ba1e332c875916a88d1ad795cb47707887f4530e0e66c",
+    "bounds": "existing gateway budgets; no new hypothesis discharge",
+    "build_identity": "53b0d3c2cc680fe08ac6a736466ba30dc2cd2168adf819aef9154cde642f151d",
+    "evidence_version": "contract-hypothesis-graph.v1:9ecc941d5f18739296cf573a2476dbb51a59fbb1",
+    "property": "resource-custody.v1",
+    "scope": "[\"add_item_to_array\",\"add_item_to_object\",\"buffer_skip_whitespace\",\"cJSON_AddArrayToObject\",\"cJSON_AddBoolToObject\",\"cJSON_AddFalseToObject\",\"cJSON_AddItemReferenceToArray\",\"cJSON_AddItemReferenceToObject\",\"cJSON_AddItemToArray\",\"cJSON_AddItemToObject\",\"cJSON_AddItemToObjectCS\",\"cJSON_AddNullToObject\",\"cJSON_AddNumberToObject\",\"cJSON_AddObjectToObject\",\"cJSON_AddRawToObject\",\"cJSON_AddStringToObject\",\"cJSON_AddTrueToObject\",\"cJSON_Compare\",\"cJSON_CreateArray\",\"cJSON_CreateArrayReference\",\"cJSON_CreateBool\",\"cJSON_CreateDoubleArray\",\"cJSON_CreateFalse\",\"cJSON_CreateFloatArray\",\"cJSON_CreateIntArray\",\"cJSON_CreateNull\",\"cJSON_CreateNumber\",\"cJSON_CreateObject\",\"cJSON_CreateObjectReference\",\"cJSON_CreateRaw\",\"cJSON_CreateString\",\"cJSON_CreateStringArray\",\"cJSON_CreateStringReference\",\"cJSON_CreateTrue\",\"cJSON_Delete\",\"cJSON_DeleteItemFromArray\",\"cJSON_DeleteItemFromObject\",\"cJSON_DeleteItemFromObjectCaseSensitive\",\"cJSON_DetachItemFromArray\",\"cJSON_DetachItemFromObject\",\"cJSON_DetachItemFromObjectCaseSensitive\",\"cJSON_DetachItemViaPointer\",\"cJSON_Duplicate\",\"cJSON_Duplicate_rec\",\"cJSON_GetArrayItem\",\"cJSON_GetArraySize\",\"cJSON_GetErrorPtr\",\"cJSON_GetNumberValue\",\"cJSON_GetObjectItem\",\"cJSON_GetObjectItemCaseSensitive\",\"cJSON_GetStringValue\",\"cJSON_HasObjectItem\",\"cJSON_InitHooks\",\"cJSON_InsertItemInArray\",\"cJSON_IsArray\",\"cJSON_IsBool\",\"cJSON_IsFalse\",\"cJSON_IsInvalid\",\"cJSON_IsNull\",\"cJSON_IsNumber\",\"cJSON_IsObject\",\"cJSON_IsRaw\",\"cJSON_IsString\",\"cJSON_IsTrue\",\"cJSON_Minify\",\"cJSON_New_Item\",\"cJSON_Parse\",\"cJSON_ParseWithLength\",\"cJSON_ParseWithLengthOpts\",\"cJSON_ParseWithOpts\",\"cJSON_Print\",\"cJSON_PrintBuffered\",\"cJSON_PrintPreallocated\",\"cJSON_PrintUnformatted\",\"cJSON_ReplaceItemInArray\",\"cJSON_ReplaceItemInObject\",\"cJSON_ReplaceItemInObjectCaseSensitive\",\"cJSON_ReplaceItemViaPointer\",\"cJSON_SetNumberHelper\",\"cJSON_SetValuestring\",\"cJSON_Version\",\"cJSON_free\",\"cJSON_malloc\",\"cJSON_strdup\",\"case_insensitive_strcmp\",\"cast_away_const\",\"compare_double\",\"create_reference\",\"ensure\",\"get_array_item\",\"get_decimal_point\",\"get_object_item\",\"internal_free\",\"internal_malloc\",\"internal_realloc\",\"minify_string\",\"parse_array\",\"parse_hex4\",\"parse_number\",\"parse_object\",\"parse_string\",\"parse_value\",\"print\",\"print_array\",\"print_number\",\"print_object\",\"print_string\",\"print_string_ptr\",\"print_value\",\"replace_item_in_object\",\"skip_multiline_comment\",\"skip_oneline_comment\",\"skip_utf8_bom\",\"suffix_object\",\"update_offset\",\"utf16_literal_to_utf8\"]",
+    "semantic_profile": "legacy-pinned-resource-profile",
+    "source_identity": "6b08e1a928efe8cca7049921e2d2367fc5bdbd5a301f198ec659e924d41d0276"
+   },
+   "status": "Unknown"
+  }
+ },
+ "cJSON_DeleteItemFromObject": {
+  "after": {
+   "contract_dependencies": {
+    "declarations": [
+     "cJSON_Delete"
+    ],
+    "hypothesis_dependencies": {}
+   },
+   "diagnostics": [
+    {
+     "category": "unsupported",
+     "description": "nested call `cJSON_DetachItemFromObject` inside a modeled call is outside the resource projection",
+     "line": 3073,
+     "origin": "cJSON.c:2310"
+    }
+   ],
+   "function": "cJSON_DeleteItemFromObject",
+   "hypothesis_context": {
+    "artifact": "librdkafka/cJSON.c#cJSON_DeleteItemFromObject",
+    "assumptions": "245bc25c3d345adb7c19b9d6b52e65580d8234ba6736815529f330b9c3e359b5",
+    "bounds": "existing gateway budgets; no new hypothesis discharge",
+    "build_identity": "53b0d3c2cc680fe08ac6a736466ba30dc2cd2168adf819aef9154cde642f151d",
+    "evidence_version": "contract-hypothesis-graph.v1:9ecc941d5f18739296cf573a2476dbb51a59fbb1",
+    "property": "resource-custody.v1",
+    "scope": "[\"add_item_to_array\",\"add_item_to_object\",\"buffer_skip_whitespace\",\"cJSON_AddArrayToObject\",\"cJSON_AddBoolToObject\",\"cJSON_AddFalseToObject\",\"cJSON_AddItemReferenceToArray\",\"cJSON_AddItemReferenceToObject\",\"cJSON_AddItemToArray\",\"cJSON_AddItemToObject\",\"cJSON_AddItemToObjectCS\",\"cJSON_AddNullToObject\",\"cJSON_AddNumberToObject\",\"cJSON_AddObjectToObject\",\"cJSON_AddRawToObject\",\"cJSON_AddStringToObject\",\"cJSON_AddTrueToObject\",\"cJSON_Compare\",\"cJSON_CreateArray\",\"cJSON_CreateArrayReference\",\"cJSON_CreateBool\",\"cJSON_CreateDoubleArray\",\"cJSON_CreateFalse\",\"cJSON_CreateFloatArray\",\"cJSON_CreateIntArray\",\"cJSON_CreateNull\",\"cJSON_CreateNumber\",\"cJSON_CreateObject\",\"cJSON_CreateObjectReference\",\"cJSON_CreateRaw\",\"cJSON_CreateString\",\"cJSON_CreateStringArray\",\"cJSON_CreateStringReference\",\"cJSON_CreateTrue\",\"cJSON_Delete\",\"cJSON_DeleteItemFromArray\",\"cJSON_DeleteItemFromObject\",\"cJSON_DeleteItemFromObjectCaseSensitive\",\"cJSON_DetachItemFromArray\",\"cJSON_DetachItemFromObject\",\"cJSON_DetachItemFromObjectCaseSensitive\",\"cJSON_DetachItemViaPointer\",\"cJSON_Duplicate\",\"cJSON_Duplicate_rec\",\"cJSON_GetArrayItem\",\"cJSON_GetArraySize\",\"cJSON_GetErrorPtr\",\"cJSON_GetNumberValue\",\"cJSON_GetObjectItem\",\"cJSON_GetObjectItemCaseSensitive\",\"cJSON_GetStringValue\",\"cJSON_HasObjectItem\",\"cJSON_InitHooks\",\"cJSON_InsertItemInArray\",\"cJSON_IsArray\",\"cJSON_IsBool\",\"cJSON_IsFalse\",\"cJSON_IsInvalid\",\"cJSON_IsNull\",\"cJSON_IsNumber\",\"cJSON_IsObject\",\"cJSON_IsRaw\",\"cJSON_IsString\",\"cJSON_IsTrue\",\"cJSON_Minify\",\"cJSON_New_Item\",\"cJSON_Parse\",\"cJSON_ParseWithLength\",\"cJSON_ParseWithLengthOpts\",\"cJSON_ParseWithOpts\",\"cJSON_Print\",\"cJSON_PrintBuffered\",\"cJSON_PrintPreallocated\",\"cJSON_PrintUnformatted\",\"cJSON_ReplaceItemInArray\",\"cJSON_ReplaceItemInObject\",\"cJSON_ReplaceItemInObjectCaseSensitive\",\"cJSON_ReplaceItemViaPointer\",\"cJSON_SetNumberHelper\",\"cJSON_SetValuestring\",\"cJSON_Version\",\"cJSON_free\",\"cJSON_malloc\",\"cJSON_strdup\",\"case_insensitive_strcmp\",\"cast_away_const\",\"compare_double\",\"create_reference\",\"ensure\",\"get_array_item\",\"get_decimal_point\",\"get_object_item\",\"internal_free\",\"internal_malloc\",\"internal_realloc\",\"minify_string\",\"parse_array\",\"parse_hex4\",\"parse_number\",\"parse_object\",\"parse_string\",\"parse_value\",\"print\",\"print_array\",\"print_number\",\"print_object\",\"print_string\",\"print_string_ptr\",\"print_value\",\"replace_item_in_object\",\"skip_multiline_comment\",\"skip_oneline_comment\",\"skip_utf8_bom\",\"suffix_object\",\"update_offset\",\"utf16_literal_to_utf8\"]",
+    "semantic_profile": "legacy-pinned-resource-profile",
+    "source_identity": "6b08e1a928efe8cca7049921e2d2367fc5bdbd5a301f198ec659e924d41d0276"
+   },
+   "status": "Unknown"
+  },
+  "before": {
+   "contract_dependencies": {
+    "declarations": [
+     "cJSON_Delete"
+    ],
+    "hypothesis_dependencies": {}
+   },
+   "diagnostics": [
+    {
+     "category": "unsupported",
+     "description": "nested call `cJSON_DetachItemFromObject` inside a modeled call is outside the resource projection",
+     "line": 3073,
+     "origin": "cJSON.c:2310"
+    }
+   ],
+   "function": "cJSON_DeleteItemFromObject",
+   "hypothesis_context": {
+    "artifact": "librdkafka/cJSON.c#cJSON_DeleteItemFromObject",
+    "assumptions": "776718ac103e2fdaff7ba1e332c875916a88d1ad795cb47707887f4530e0e66c",
+    "bounds": "existing gateway budgets; no new hypothesis discharge",
+    "build_identity": "53b0d3c2cc680fe08ac6a736466ba30dc2cd2168adf819aef9154cde642f151d",
+    "evidence_version": "contract-hypothesis-graph.v1:9ecc941d5f18739296cf573a2476dbb51a59fbb1",
+    "property": "resource-custody.v1",
+    "scope": "[\"add_item_to_array\",\"add_item_to_object\",\"buffer_skip_whitespace\",\"cJSON_AddArrayToObject\",\"cJSON_AddBoolToObject\",\"cJSON_AddFalseToObject\",\"cJSON_AddItemReferenceToArray\",\"cJSON_AddItemReferenceToObject\",\"cJSON_AddItemToArray\",\"cJSON_AddItemToObject\",\"cJSON_AddItemToObjectCS\",\"cJSON_AddNullToObject\",\"cJSON_AddNumberToObject\",\"cJSON_AddObjectToObject\",\"cJSON_AddRawToObject\",\"cJSON_AddStringToObject\",\"cJSON_AddTrueToObject\",\"cJSON_Compare\",\"cJSON_CreateArray\",\"cJSON_CreateArrayReference\",\"cJSON_CreateBool\",\"cJSON_CreateDoubleArray\",\"cJSON_CreateFalse\",\"cJSON_CreateFloatArray\",\"cJSON_CreateIntArray\",\"cJSON_CreateNull\",\"cJSON_CreateNumber\",\"cJSON_CreateObject\",\"cJSON_CreateObjectReference\",\"cJSON_CreateRaw\",\"cJSON_CreateString\",\"cJSON_CreateStringArray\",\"cJSON_CreateStringReference\",\"cJSON_CreateTrue\",\"cJSON_Delete\",\"cJSON_DeleteItemFromArray\",\"cJSON_DeleteItemFromObject\",\"cJSON_DeleteItemFromObjectCaseSensitive\",\"cJSON_DetachItemFromArray\",\"cJSON_DetachItemFromObject\",\"cJSON_DetachItemFromObjectCaseSensitive\",\"cJSON_DetachItemViaPointer\",\"cJSON_Duplicate\",\"cJSON_Duplicate_rec\",\"cJSON_GetArrayItem\",\"cJSON_GetArraySize\",\"cJSON_GetErrorPtr\",\"cJSON_GetNumberValue\",\"cJSON_GetObjectItem\",\"cJSON_GetObjectItemCaseSensitive\",\"cJSON_GetStringValue\",\"cJSON_HasObjectItem\",\"cJSON_InitHooks\",\"cJSON_InsertItemInArray\",\"cJSON_IsArray\",\"cJSON_IsBool\",\"cJSON_IsFalse\",\"cJSON_IsInvalid\",\"cJSON_IsNull\",\"cJSON_IsNumber\",\"cJSON_IsObject\",\"cJSON_IsRaw\",\"cJSON_IsString\",\"cJSON_IsTrue\",\"cJSON_Minify\",\"cJSON_New_Item\",\"cJSON_Parse\",\"cJSON_ParseWithLength\",\"cJSON_ParseWithLengthOpts\",\"cJSON_ParseWithOpts\",\"cJSON_Print\",\"cJSON_PrintBuffered\",\"cJSON_PrintPreallocated\",\"cJSON_PrintUnformatted\",\"cJSON_ReplaceItemInArray\",\"cJSON_ReplaceItemInObject\",\"cJSON_ReplaceItemInObjectCaseSensitive\",\"cJSON_ReplaceItemViaPointer\",\"cJSON_SetNumberHelper\",\"cJSON_SetValuestring\",\"cJSON_Version\",\"cJSON_free\",\"cJSON_malloc\",\"cJSON_strdup\",\"case_insensitive_strcmp\",\"cast_away_const\",\"compare_double\",\"create_reference\",\"ensure\",\"get_array_item\",\"get_decimal_point\",\"get_object_item\",\"internal_free\",\"internal_malloc\",\"internal_realloc\",\"minify_string\",\"parse_array\",\"parse_hex4\",\"parse_number\",\"parse_object\",\"parse_string\",\"parse_value\",\"print\",\"print_array\",\"print_number\",\"print_object\",\"print_string\",\"print_string_ptr\",\"print_value\",\"replace_item_in_object\",\"skip_multiline_comment\",\"skip_oneline_comment\",\"skip_utf8_bom\",\"suffix_object\",\"update_offset\",\"utf16_literal_to_utf8\"]",
+    "semantic_profile": "legacy-pinned-resource-profile",
+    "source_identity": "6b08e1a928efe8cca7049921e2d2367fc5bdbd5a301f198ec659e924d41d0276"
+   },
+   "status": "Unknown"
+  }
+ },
+ "cJSON_DeleteItemFromObjectCaseSensitive": {
+  "after": {
+   "contract_dependencies": {
+    "declarations": [
+     "cJSON_Delete"
+    ],
+    "hypothesis_dependencies": {}
+   },
+   "diagnostics": [
+    {
+     "category": "unsupported",
+     "description": "nested call `cJSON_DetachItemFromObjectCaseSensitive` inside a modeled call is outside the resource projection",
+     "line": 3077,
+     "origin": "cJSON.c:2315"
+    }
+   ],
+   "function": "cJSON_DeleteItemFromObjectCaseSensitive",
+   "hypothesis_context": {
+    "artifact": "librdkafka/cJSON.c#cJSON_DeleteItemFromObjectCaseSensitive",
+    "assumptions": "245bc25c3d345adb7c19b9d6b52e65580d8234ba6736815529f330b9c3e359b5",
+    "bounds": "existing gateway budgets; no new hypothesis discharge",
+    "build_identity": "53b0d3c2cc680fe08ac6a736466ba30dc2cd2168adf819aef9154cde642f151d",
+    "evidence_version": "contract-hypothesis-graph.v1:9ecc941d5f18739296cf573a2476dbb51a59fbb1",
+    "property": "resource-custody.v1",
+    "scope": "[\"add_item_to_array\",\"add_item_to_object\",\"buffer_skip_whitespace\",\"cJSON_AddArrayToObject\",\"cJSON_AddBoolToObject\",\"cJSON_AddFalseToObject\",\"cJSON_AddItemReferenceToArray\",\"cJSON_AddItemReferenceToObject\",\"cJSON_AddItemToArray\",\"cJSON_AddItemToObject\",\"cJSON_AddItemToObjectCS\",\"cJSON_AddNullToObject\",\"cJSON_AddNumberToObject\",\"cJSON_AddObjectToObject\",\"cJSON_AddRawToObject\",\"cJSON_AddStringToObject\",\"cJSON_AddTrueToObject\",\"cJSON_Compare\",\"cJSON_CreateArray\",\"cJSON_CreateArrayReference\",\"cJSON_CreateBool\",\"cJSON_CreateDoubleArray\",\"cJSON_CreateFalse\",\"cJSON_CreateFloatArray\",\"cJSON_CreateIntArray\",\"cJSON_CreateNull\",\"cJSON_CreateNumber\",\"cJSON_CreateObject\",\"cJSON_CreateObjectReference\",\"cJSON_CreateRaw\",\"cJSON_CreateString\",\"cJSON_CreateStringArray\",\"cJSON_CreateStringReference\",\"cJSON_CreateTrue\",\"cJSON_Delete\",\"cJSON_DeleteItemFromArray\",\"cJSON_DeleteItemFromObject\",\"cJSON_DeleteItemFromObjectCaseSensitive\",\"cJSON_DetachItemFromArray\",\"cJSON_DetachItemFromObject\",\"cJSON_DetachItemFromObjectCaseSensitive\",\"cJSON_DetachItemViaPointer\",\"cJSON_Duplicate\",\"cJSON_Duplicate_rec\",\"cJSON_GetArrayItem\",\"cJSON_GetArraySize\",\"cJSON_GetErrorPtr\",\"cJSON_GetNumberValue\",\"cJSON_GetObjectItem\",\"cJSON_GetObjectItemCaseSensitive\",\"cJSON_GetStringValue\",\"cJSON_HasObjectItem\",\"cJSON_InitHooks\",\"cJSON_InsertItemInArray\",\"cJSON_IsArray\",\"cJSON_IsBool\",\"cJSON_IsFalse\",\"cJSON_IsInvalid\",\"cJSON_IsNull\",\"cJSON_IsNumber\",\"cJSON_IsObject\",\"cJSON_IsRaw\",\"cJSON_IsString\",\"cJSON_IsTrue\",\"cJSON_Minify\",\"cJSON_New_Item\",\"cJSON_Parse\",\"cJSON_ParseWithLength\",\"cJSON_ParseWithLengthOpts\",\"cJSON_ParseWithOpts\",\"cJSON_Print\",\"cJSON_PrintBuffered\",\"cJSON_PrintPreallocated\",\"cJSON_PrintUnformatted\",\"cJSON_ReplaceItemInArray\",\"cJSON_ReplaceItemInObject\",\"cJSON_ReplaceItemInObjectCaseSensitive\",\"cJSON_ReplaceItemViaPointer\",\"cJSON_SetNumberHelper\",\"cJSON_SetValuestring\",\"cJSON_Version\",\"cJSON_free\",\"cJSON_malloc\",\"cJSON_strdup\",\"case_insensitive_strcmp\",\"cast_away_const\",\"compare_double\",\"create_reference\",\"ensure\",\"get_array_item\",\"get_decimal_point\",\"get_object_item\",\"internal_free\",\"internal_malloc\",\"internal_realloc\",\"minify_string\",\"parse_array\",\"parse_hex4\",\"parse_number\",\"parse_object\",\"parse_string\",\"parse_value\",\"print\",\"print_array\",\"print_number\",\"print_object\",\"print_string\",\"print_string_ptr\",\"print_value\",\"replace_item_in_object\",\"skip_multiline_comment\",\"skip_oneline_comment\",\"skip_utf8_bom\",\"suffix_object\",\"update_offset\",\"utf16_literal_to_utf8\"]",
+    "semantic_profile": "legacy-pinned-resource-profile",
+    "source_identity": "6b08e1a928efe8cca7049921e2d2367fc5bdbd5a301f198ec659e924d41d0276"
+   },
+   "status": "Unknown"
+  },
+  "before": {
+   "contract_dependencies": {
+    "declarations": [
+     "cJSON_Delete"
+    ],
+    "hypothesis_dependencies": {}
+   },
+   "diagnostics": [
+    {
+     "category": "unsupported",
+     "description": "nested call `cJSON_DetachItemFromObjectCaseSensitive` inside a modeled call is outside the resource projection",
+     "line": 3077,
+     "origin": "cJSON.c:2315"
+    }
+   ],
+   "function": "cJSON_DeleteItemFromObjectCaseSensitive",
+   "hypothesis_context": {
+    "artifact": "librdkafka/cJSON.c#cJSON_DeleteItemFromObjectCaseSensitive",
+    "assumptions": "776718ac103e2fdaff7ba1e332c875916a88d1ad795cb47707887f4530e0e66c",
+    "bounds": "existing gateway budgets; no new hypothesis discharge",
+    "build_identity": "53b0d3c2cc680fe08ac6a736466ba30dc2cd2168adf819aef9154cde642f151d",
+    "evidence_version": "contract-hypothesis-graph.v1:9ecc941d5f18739296cf573a2476dbb51a59fbb1",
+    "property": "resource-custody.v1",
+    "scope": "[\"add_item_to_array\",\"add_item_to_object\",\"buffer_skip_whitespace\",\"cJSON_AddArrayToObject\",\"cJSON_AddBoolToObject\",\"cJSON_AddFalseToObject\",\"cJSON_AddItemReferenceToArray\",\"cJSON_AddItemReferenceToObject\",\"cJSON_AddItemToArray\",\"cJSON_AddItemToObject\",\"cJSON_AddItemToObjectCS\",\"cJSON_AddNullToObject\",\"cJSON_AddNumberToObject\",\"cJSON_AddObjectToObject\",\"cJSON_AddRawToObject\",\"cJSON_AddStringToObject\",\"cJSON_AddTrueToObject\",\"cJSON_Compare\",\"cJSON_CreateArray\",\"cJSON_CreateArrayReference\",\"cJSON_CreateBool\",\"cJSON_CreateDoubleArray\",\"cJSON_CreateFalse\",\"cJSON_CreateFloatArray\",\"cJSON_CreateIntArray\",\"cJSON_CreateNull\",\"cJSON_CreateNumber\",\"cJSON_CreateObject\",\"cJSON_CreateObjectReference\",\"cJSON_CreateRaw\",\"cJSON_CreateString\",\"cJSON_CreateStringArray\",\"cJSON_CreateStringReference\",\"cJSON_CreateTrue\",\"cJSON_Delete\",\"cJSON_DeleteItemFromArray\",\"cJSON_DeleteItemFromObject\",\"cJSON_DeleteItemFromObjectCaseSensitive\",\"cJSON_DetachItemFromArray\",\"cJSON_DetachItemFromObject\",\"cJSON_DetachItemFromObjectCaseSensitive\",\"cJSON_DetachItemViaPointer\",\"cJSON_Duplicate\",\"cJSON_Duplicate_rec\",\"cJSON_GetArrayItem\",\"cJSON_GetArraySize\",\"cJSON_GetErrorPtr\",\"cJSON_GetNumberValue\",\"cJSON_GetObjectItem\",\"cJSON_GetObjectItemCaseSensitive\",\"cJSON_GetStringValue\",\"cJSON_HasObjectItem\",\"cJSON_InitHooks\",\"cJSON_InsertItemInArray\",\"cJSON_IsArray\",\"cJSON_IsBool\",\"cJSON_IsFalse\",\"cJSON_IsInvalid\",\"cJSON_IsNull\",\"cJSON_IsNumber\",\"cJSON_IsObject\",\"cJSON_IsRaw\",\"cJSON_IsString\",\"cJSON_IsTrue\",\"cJSON_Minify\",\"cJSON_New_Item\",\"cJSON_Parse\",\"cJSON_ParseWithLength\",\"cJSON_ParseWithLengthOpts\",\"cJSON_ParseWithOpts\",\"cJSON_Print\",\"cJSON_PrintBuffered\",\"cJSON_PrintPreallocated\",\"cJSON_PrintUnformatted\",\"cJSON_ReplaceItemInArray\",\"cJSON_ReplaceItemInObject\",\"cJSON_ReplaceItemInObjectCaseSensitive\",\"cJSON_ReplaceItemViaPointer\",\"cJSON_SetNumberHelper\",\"cJSON_SetValuestring\",\"cJSON_Version\",\"cJSON_free\",\"cJSON_malloc\",\"cJSON_strdup\",\"case_insensitive_strcmp\",\"cast_away_const\",\"compare_double\",\"create_reference\",\"ensure\",\"get_array_item\",\"get_decimal_point\",\"get_object_item\",\"internal_free\",\"internal_malloc\",\"internal_realloc\",\"minify_string\",\"parse_array\",\"parse_hex4\",\"parse_number\",\"parse_object\",\"parse_string\",\"parse_value\",\"print\",\"print_array\",\"print_number\",\"print_object\",\"print_string\",\"print_string_ptr\",\"print_value\",\"replace_item_in_object\",\"skip_multiline_comment\",\"skip_oneline_comment\",\"skip_utf8_bom\",\"suffix_object\",\"update_offset\",\"utf16_literal_to_utf8\"]",
+    "semantic_profile": "legacy-pinned-resource-profile",
+    "source_identity": "6b08e1a928efe8cca7049921e2d2367fc5bdbd5a301f198ec659e924d41d0276"
+   },
+   "status": "Unknown"
+  }
+ },
+ "cJSON_DetachItemFromArray": {
+  "after": {
+   "contract_dependencies": {
+    "declarations": [
+     "cJSON_DetachItemViaPointer"
+    ],
+    "hypothesis_dependencies": {
+     "cJSON_DetachItemViaPointer": [
+      "detach_chain",
+      "detach_distinct",
+      "detach_empty",
+      "detach_first_prev",
+      "detach_last_next",
+      "detach_link_targets",
+      "detach_no_writer",
+      "detach_parent_outside",
+      "detach_predecessor",
+      "legacy_atom_00000000"
+     ]
+    },
+    "null_premises": [
+     "null-deref:get_array_item:2770:current_child"
+    ],
+    "summaries": [
+     "get_array_item"
+    ]
+   },
+   "diagnostics": [],
+   "function": "cJSON_DetachItemFromArray",
+   "hypothesis_context": {
+    "artifact": "librdkafka/cJSON.c#cJSON_DetachItemFromArray",
+    "assumptions": "245bc25c3d345adb7c19b9d6b52e65580d8234ba6736815529f330b9c3e359b5",
+    "bounds": "existing gateway budgets; no new hypothesis discharge",
+    "build_identity": "53b0d3c2cc680fe08ac6a736466ba30dc2cd2168adf819aef9154cde642f151d",
+    "evidence_version": "contract-hypothesis-graph.v1:9ecc941d5f18739296cf573a2476dbb51a59fbb1",
+    "property": "resource-custody.v1",
+    "scope": "[\"add_item_to_array\",\"add_item_to_object\",\"buffer_skip_whitespace\",\"cJSON_AddArrayToObject\",\"cJSON_AddBoolToObject\",\"cJSON_AddFalseToObject\",\"cJSON_AddItemReferenceToArray\",\"cJSON_AddItemReferenceToObject\",\"cJSON_AddItemToArray\",\"cJSON_AddItemToObject\",\"cJSON_AddItemToObjectCS\",\"cJSON_AddNullToObject\",\"cJSON_AddNumberToObject\",\"cJSON_AddObjectToObject\",\"cJSON_AddRawToObject\",\"cJSON_AddStringToObject\",\"cJSON_AddTrueToObject\",\"cJSON_Compare\",\"cJSON_CreateArray\",\"cJSON_CreateArrayReference\",\"cJSON_CreateBool\",\"cJSON_CreateDoubleArray\",\"cJSON_CreateFalse\",\"cJSON_CreateFloatArray\",\"cJSON_CreateIntArray\",\"cJSON_CreateNull\",\"cJSON_CreateNumber\",\"cJSON_CreateObject\",\"cJSON_CreateObjectReference\",\"cJSON_CreateRaw\",\"cJSON_CreateString\",\"cJSON_CreateStringArray\",\"cJSON_CreateStringReference\",\"cJSON_CreateTrue\",\"cJSON_Delete\",\"cJSON_DeleteItemFromArray\",\"cJSON_DeleteItemFromObject\",\"cJSON_DeleteItemFromObjectCaseSensitive\",\"cJSON_DetachItemFromArray\",\"cJSON_DetachItemFromObject\",\"cJSON_DetachItemFromObjectCaseSensitive\",\"cJSON_DetachItemViaPointer\",\"cJSON_Duplicate\",\"cJSON_Duplicate_rec\",\"cJSON_GetArrayItem\",\"cJSON_GetArraySize\",\"cJSON_GetErrorPtr\",\"cJSON_GetNumberValue\",\"cJSON_GetObjectItem\",\"cJSON_GetObjectItemCaseSensitive\",\"cJSON_GetStringValue\",\"cJSON_HasObjectItem\",\"cJSON_InitHooks\",\"cJSON_InsertItemInArray\",\"cJSON_IsArray\",\"cJSON_IsBool\",\"cJSON_IsFalse\",\"cJSON_IsInvalid\",\"cJSON_IsNull\",\"cJSON_IsNumber\",\"cJSON_IsObject\",\"cJSON_IsRaw\",\"cJSON_IsString\",\"cJSON_IsTrue\",\"cJSON_Minify\",\"cJSON_New_Item\",\"cJSON_Parse\",\"cJSON_ParseWithLength\",\"cJSON_ParseWithLengthOpts\",\"cJSON_ParseWithOpts\",\"cJSON_Print\",\"cJSON_PrintBuffered\",\"cJSON_PrintPreallocated\",\"cJSON_PrintUnformatted\",\"cJSON_ReplaceItemInArray\",\"cJSON_ReplaceItemInObject\",\"cJSON_ReplaceItemInObjectCaseSensitive\",\"cJSON_ReplaceItemViaPointer\",\"cJSON_SetNumberHelper\",\"cJSON_SetValuestring\",\"cJSON_Version\",\"cJSON_free\",\"cJSON_malloc\",\"cJSON_strdup\",\"case_insensitive_strcmp\",\"cast_away_const\",\"compare_double\",\"create_reference\",\"ensure\",\"get_array_item\",\"get_decimal_point\",\"get_object_item\",\"internal_free\",\"internal_malloc\",\"internal_realloc\",\"minify_string\",\"parse_array\",\"parse_hex4\",\"parse_number\",\"parse_object\",\"parse_string\",\"parse_value\",\"print\",\"print_array\",\"print_number\",\"print_object\",\"print_string\",\"print_string_ptr\",\"print_value\",\"replace_item_in_object\",\"skip_multiline_comment\",\"skip_oneline_comment\",\"skip_utf8_bom\",\"suffix_object\",\"update_offset\",\"utf16_literal_to_utf8\"]",
+    "semantic_profile": "legacy-pinned-resource-profile",
+    "source_identity": "6b08e1a928efe8cca7049921e2d2367fc5bdbd5a301f198ec659e924d41d0276"
+   },
+   "status": "Safe"
+  },
+  "before": {
+   "contract_dependencies": {
+    "declarations": [
+     "cJSON_DetachItemViaPointer"
+    ],
+    "hypothesis_dependencies": {
+     "cJSON_DetachItemViaPointer": [
+      "detach_chain",
+      "detach_distinct",
+      "detach_empty",
+      "detach_first_prev",
+      "detach_last_next",
+      "detach_link_targets",
+      "detach_no_writer",
+      "detach_parent_outside",
+      "detach_predecessor",
+      "legacy_atom_00000000"
+     ]
+    },
+    "null_premises": [
+     "null-deref:get_array_item:2770:current_child"
+    ],
+    "summaries": [
+     "get_array_item"
+    ]
+   },
+   "diagnostics": [
+    {
+     "category": "unsupported",
+     "description": "nested call `get_array_item` inside a modeled call is outside the resource projection",
+     "line": 3055,
+     "origin": "cJSON.c:2286"
+    }
+   ],
+   "function": "cJSON_DetachItemFromArray",
+   "hypothesis_context": {
+    "artifact": "librdkafka/cJSON.c#cJSON_DetachItemFromArray",
+    "assumptions": "776718ac103e2fdaff7ba1e332c875916a88d1ad795cb47707887f4530e0e66c",
+    "bounds": "existing gateway budgets; no new hypothesis discharge",
+    "build_identity": "53b0d3c2cc680fe08ac6a736466ba30dc2cd2168adf819aef9154cde642f151d",
+    "evidence_version": "contract-hypothesis-graph.v1:9ecc941d5f18739296cf573a2476dbb51a59fbb1",
+    "property": "resource-custody.v1",
+    "scope": "[\"add_item_to_array\",\"add_item_to_object\",\"buffer_skip_whitespace\",\"cJSON_AddArrayToObject\",\"cJSON_AddBoolToObject\",\"cJSON_AddFalseToObject\",\"cJSON_AddItemReferenceToArray\",\"cJSON_AddItemReferenceToObject\",\"cJSON_AddItemToArray\",\"cJSON_AddItemToObject\",\"cJSON_AddItemToObjectCS\",\"cJSON_AddNullToObject\",\"cJSON_AddNumberToObject\",\"cJSON_AddObjectToObject\",\"cJSON_AddRawToObject\",\"cJSON_AddStringToObject\",\"cJSON_AddTrueToObject\",\"cJSON_Compare\",\"cJSON_CreateArray\",\"cJSON_CreateArrayReference\",\"cJSON_CreateBool\",\"cJSON_CreateDoubleArray\",\"cJSON_CreateFalse\",\"cJSON_CreateFloatArray\",\"cJSON_CreateIntArray\",\"cJSON_CreateNull\",\"cJSON_CreateNumber\",\"cJSON_CreateObject\",\"cJSON_CreateObjectReference\",\"cJSON_CreateRaw\",\"cJSON_CreateString\",\"cJSON_CreateStringArray\",\"cJSON_CreateStringReference\",\"cJSON_CreateTrue\",\"cJSON_Delete\",\"cJSON_DeleteItemFromArray\",\"cJSON_DeleteItemFromObject\",\"cJSON_DeleteItemFromObjectCaseSensitive\",\"cJSON_DetachItemFromArray\",\"cJSON_DetachItemFromObject\",\"cJSON_DetachItemFromObjectCaseSensitive\",\"cJSON_DetachItemViaPointer\",\"cJSON_Duplicate\",\"cJSON_Duplicate_rec\",\"cJSON_GetArrayItem\",\"cJSON_GetArraySize\",\"cJSON_GetErrorPtr\",\"cJSON_GetNumberValue\",\"cJSON_GetObjectItem\",\"cJSON_GetObjectItemCaseSensitive\",\"cJSON_GetStringValue\",\"cJSON_HasObjectItem\",\"cJSON_InitHooks\",\"cJSON_InsertItemInArray\",\"cJSON_IsArray\",\"cJSON_IsBool\",\"cJSON_IsFalse\",\"cJSON_IsInvalid\",\"cJSON_IsNull\",\"cJSON_IsNumber\",\"cJSON_IsObject\",\"cJSON_IsRaw\",\"cJSON_IsString\",\"cJSON_IsTrue\",\"cJSON_Minify\",\"cJSON_New_Item\",\"cJSON_Parse\",\"cJSON_ParseWithLength\",\"cJSON_ParseWithLengthOpts\",\"cJSON_ParseWithOpts\",\"cJSON_Print\",\"cJSON_PrintBuffered\",\"cJSON_PrintPreallocated\",\"cJSON_PrintUnformatted\",\"cJSON_ReplaceItemInArray\",\"cJSON_ReplaceItemInObject\",\"cJSON_ReplaceItemInObjectCaseSensitive\",\"cJSON_ReplaceItemViaPointer\",\"cJSON_SetNumberHelper\",\"cJSON_SetValuestring\",\"cJSON_Version\",\"cJSON_free\",\"cJSON_malloc\",\"cJSON_strdup\",\"case_insensitive_strcmp\",\"cast_away_const\",\"compare_double\",\"create_reference\",\"ensure\",\"get_array_item\",\"get_decimal_point\",\"get_object_item\",\"internal_free\",\"internal_malloc\",\"internal_realloc\",\"minify_string\",\"parse_array\",\"parse_hex4\",\"parse_number\",\"parse_object\",\"parse_string\",\"parse_value\",\"print\",\"print_array\",\"print_number\",\"print_object\",\"print_string\",\"print_string_ptr\",\"print_value\",\"replace_item_in_object\",\"skip_multiline_comment\",\"skip_oneline_comment\",\"skip_utf8_bom\",\"suffix_object\",\"update_offset\",\"utf16_literal_to_utf8\"]",
+    "semantic_profile": "legacy-pinned-resource-profile",
+    "source_identity": "6b08e1a928efe8cca7049921e2d2367fc5bdbd5a301f198ec659e924d41d0276"
+   },
+   "status": "Unknown"
+  }
+ },
+ "cJSON_DetachItemFromObject": {
+  "after": {
+   "contract_dependencies": {
+    "declarations": [
+     "cJSON_DetachItemViaPointer",
+     "get_object_item"
+    ],
+    "hypothesis_dependencies": {
+     "cJSON_DetachItemViaPointer": [
+      "detach_chain",
+      "detach_distinct",
+      "detach_empty",
+      "detach_first_prev",
+      "detach_last_next",
+      "detach_link_targets",
+      "detach_no_writer",
+      "detach_parent_outside",
+      "detach_predecessor",
+      "legacy_atom_00000000"
+     ]
+    },
+    "summaries": [
+     "cJSON_GetObjectItem"
+    ]
+   },
+   "diagnostics": [
+    {
+     "category": "unsupported",
+     "description": "unmodeled call, aggregate or indirect access in return expression",
+     "line": 3064,
+     "origin": "cJSON.c:2298"
+    }
+   ],
+   "function": "cJSON_DetachItemFromObject",
+   "hypothesis_context": {
+    "artifact": "librdkafka/cJSON.c#cJSON_DetachItemFromObject",
+    "assumptions": "245bc25c3d345adb7c19b9d6b52e65580d8234ba6736815529f330b9c3e359b5",
+    "bounds": "existing gateway budgets; no new hypothesis discharge",
+    "build_identity": "53b0d3c2cc680fe08ac6a736466ba30dc2cd2168adf819aef9154cde642f151d",
+    "evidence_version": "contract-hypothesis-graph.v1:9ecc941d5f18739296cf573a2476dbb51a59fbb1",
+    "property": "resource-custody.v1",
+    "scope": "[\"add_item_to_array\",\"add_item_to_object\",\"buffer_skip_whitespace\",\"cJSON_AddArrayToObject\",\"cJSON_AddBoolToObject\",\"cJSON_AddFalseToObject\",\"cJSON_AddItemReferenceToArray\",\"cJSON_AddItemReferenceToObject\",\"cJSON_AddItemToArray\",\"cJSON_AddItemToObject\",\"cJSON_AddItemToObjectCS\",\"cJSON_AddNullToObject\",\"cJSON_AddNumberToObject\",\"cJSON_AddObjectToObject\",\"cJSON_AddRawToObject\",\"cJSON_AddStringToObject\",\"cJSON_AddTrueToObject\",\"cJSON_Compare\",\"cJSON_CreateArray\",\"cJSON_CreateArrayReference\",\"cJSON_CreateBool\",\"cJSON_CreateDoubleArray\",\"cJSON_CreateFalse\",\"cJSON_CreateFloatArray\",\"cJSON_CreateIntArray\",\"cJSON_CreateNull\",\"cJSON_CreateNumber\",\"cJSON_CreateObject\",\"cJSON_CreateObjectReference\",\"cJSON_CreateRaw\",\"cJSON_CreateString\",\"cJSON_CreateStringArray\",\"cJSON_CreateStringReference\",\"cJSON_CreateTrue\",\"cJSON_Delete\",\"cJSON_DeleteItemFromArray\",\"cJSON_DeleteItemFromObject\",\"cJSON_DeleteItemFromObjectCaseSensitive\",\"cJSON_DetachItemFromArray\",\"cJSON_DetachItemFromObject\",\"cJSON_DetachItemFromObjectCaseSensitive\",\"cJSON_DetachItemViaPointer\",\"cJSON_Duplicate\",\"cJSON_Duplicate_rec\",\"cJSON_GetArrayItem\",\"cJSON_GetArraySize\",\"cJSON_GetErrorPtr\",\"cJSON_GetNumberValue\",\"cJSON_GetObjectItem\",\"cJSON_GetObjectItemCaseSensitive\",\"cJSON_GetStringValue\",\"cJSON_HasObjectItem\",\"cJSON_InitHooks\",\"cJSON_InsertItemInArray\",\"cJSON_IsArray\",\"cJSON_IsBool\",\"cJSON_IsFalse\",\"cJSON_IsInvalid\",\"cJSON_IsNull\",\"cJSON_IsNumber\",\"cJSON_IsObject\",\"cJSON_IsRaw\",\"cJSON_IsString\",\"cJSON_IsTrue\",\"cJSON_Minify\",\"cJSON_New_Item\",\"cJSON_Parse\",\"cJSON_ParseWithLength\",\"cJSON_ParseWithLengthOpts\",\"cJSON_ParseWithOpts\",\"cJSON_Print\",\"cJSON_PrintBuffered\",\"cJSON_PrintPreallocated\",\"cJSON_PrintUnformatted\",\"cJSON_ReplaceItemInArray\",\"cJSON_ReplaceItemInObject\",\"cJSON_ReplaceItemInObjectCaseSensitive\",\"cJSON_ReplaceItemViaPointer\",\"cJSON_SetNumberHelper\",\"cJSON_SetValuestring\",\"cJSON_Version\",\"cJSON_free\",\"cJSON_malloc\",\"cJSON_strdup\",\"case_insensitive_strcmp\",\"cast_away_const\",\"compare_double\",\"create_reference\",\"ensure\",\"get_array_item\",\"get_decimal_point\",\"get_object_item\",\"internal_free\",\"internal_malloc\",\"internal_realloc\",\"minify_string\",\"parse_array\",\"parse_hex4\",\"parse_number\",\"parse_object\",\"parse_string\",\"parse_value\",\"print\",\"print_array\",\"print_number\",\"print_object\",\"print_string\",\"print_string_ptr\",\"print_value\",\"replace_item_in_object\",\"skip_multiline_comment\",\"skip_oneline_comment\",\"skip_utf8_bom\",\"suffix_object\",\"update_offset\",\"utf16_literal_to_utf8\"]",
+    "semantic_profile": "legacy-pinned-resource-profile",
+    "source_identity": "6b08e1a928efe8cca7049921e2d2367fc5bdbd5a301f198ec659e924d41d0276"
+   },
+   "status": "Unknown"
+  },
+  "before": {
+   "contract_dependencies": {
+    "declarations": [
+     "cJSON_DetachItemViaPointer",
+     "get_object_item"
+    ],
+    "hypothesis_dependencies": {
+     "cJSON_DetachItemViaPointer": [
+      "detach_chain",
+      "detach_distinct",
+      "detach_empty",
+      "detach_first_prev",
+      "detach_last_next",
+      "detach_link_targets",
+      "detach_no_writer",
+      "detach_parent_outside",
+      "detach_predecessor",
+      "legacy_atom_00000000"
+     ]
+    },
+    "summaries": [
+     "cJSON_GetObjectItem"
+    ]
+   },
+   "diagnostics": [
+    {
+     "category": "unsupported",
+     "description": "unmodeled call, aggregate or indirect access in return expression",
+     "line": 3064,
+     "origin": "cJSON.c:2298"
+    }
+   ],
+   "function": "cJSON_DetachItemFromObject",
+   "hypothesis_context": {
+    "artifact": "librdkafka/cJSON.c#cJSON_DetachItemFromObject",
+    "assumptions": "776718ac103e2fdaff7ba1e332c875916a88d1ad795cb47707887f4530e0e66c",
+    "bounds": "existing gateway budgets; no new hypothesis discharge",
+    "build_identity": "53b0d3c2cc680fe08ac6a736466ba30dc2cd2168adf819aef9154cde642f151d",
+    "evidence_version": "contract-hypothesis-graph.v1:9ecc941d5f18739296cf573a2476dbb51a59fbb1",
+    "property": "resource-custody.v1",
+    "scope": "[\"add_item_to_array\",\"add_item_to_object\",\"buffer_skip_whitespace\",\"cJSON_AddArrayToObject\",\"cJSON_AddBoolToObject\",\"cJSON_AddFalseToObject\",\"cJSON_AddItemReferenceToArray\",\"cJSON_AddItemReferenceToObject\",\"cJSON_AddItemToArray\",\"cJSON_AddItemToObject\",\"cJSON_AddItemToObjectCS\",\"cJSON_AddNullToObject\",\"cJSON_AddNumberToObject\",\"cJSON_AddObjectToObject\",\"cJSON_AddRawToObject\",\"cJSON_AddStringToObject\",\"cJSON_AddTrueToObject\",\"cJSON_Compare\",\"cJSON_CreateArray\",\"cJSON_CreateArrayReference\",\"cJSON_CreateBool\",\"cJSON_CreateDoubleArray\",\"cJSON_CreateFalse\",\"cJSON_CreateFloatArray\",\"cJSON_CreateIntArray\",\"cJSON_CreateNull\",\"cJSON_CreateNumber\",\"cJSON_CreateObject\",\"cJSON_CreateObjectReference\",\"cJSON_CreateRaw\",\"cJSON_CreateString\",\"cJSON_CreateStringArray\",\"cJSON_CreateStringReference\",\"cJSON_CreateTrue\",\"cJSON_Delete\",\"cJSON_DeleteItemFromArray\",\"cJSON_DeleteItemFromObject\",\"cJSON_DeleteItemFromObjectCaseSensitive\",\"cJSON_DetachItemFromArray\",\"cJSON_DetachItemFromObject\",\"cJSON_DetachItemFromObjectCaseSensitive\",\"cJSON_DetachItemViaPointer\",\"cJSON_Duplicate\",\"cJSON_Duplicate_rec\",\"cJSON_GetArrayItem\",\"cJSON_GetArraySize\",\"cJSON_GetErrorPtr\",\"cJSON_GetNumberValue\",\"cJSON_GetObjectItem\",\"cJSON_GetObjectItemCaseSensitive\",\"cJSON_GetStringValue\",\"cJSON_HasObjectItem\",\"cJSON_InitHooks\",\"cJSON_InsertItemInArray\",\"cJSON_IsArray\",\"cJSON_IsBool\",\"cJSON_IsFalse\",\"cJSON_IsInvalid\",\"cJSON_IsNull\",\"cJSON_IsNumber\",\"cJSON_IsObject\",\"cJSON_IsRaw\",\"cJSON_IsString\",\"cJSON_IsTrue\",\"cJSON_Minify\",\"cJSON_New_Item\",\"cJSON_Parse\",\"cJSON_ParseWithLength\",\"cJSON_ParseWithLengthOpts\",\"cJSON_ParseWithOpts\",\"cJSON_Print\",\"cJSON_PrintBuffered\",\"cJSON_PrintPreallocated\",\"cJSON_PrintUnformatted\",\"cJSON_ReplaceItemInArray\",\"cJSON_ReplaceItemInObject\",\"cJSON_ReplaceItemInObjectCaseSensitive\",\"cJSON_ReplaceItemViaPointer\",\"cJSON_SetNumberHelper\",\"cJSON_SetValuestring\",\"cJSON_Version\",\"cJSON_free\",\"cJSON_malloc\",\"cJSON_strdup\",\"case_insensitive_strcmp\",\"cast_away_const\",\"compare_double\",\"create_reference\",\"ensure\",\"get_array_item\",\"get_decimal_point\",\"get_object_item\",\"internal_free\",\"internal_malloc\",\"internal_realloc\",\"minify_string\",\"parse_array\",\"parse_hex4\",\"parse_number\",\"parse_object\",\"parse_string\",\"parse_value\",\"print\",\"print_array\",\"print_number\",\"print_object\",\"print_string\",\"print_string_ptr\",\"print_value\",\"replace_item_in_object\",\"skip_multiline_comment\",\"skip_oneline_comment\",\"skip_utf8_bom\",\"suffix_object\",\"update_offset\",\"utf16_literal_to_utf8\"]",
+    "semantic_profile": "legacy-pinned-resource-profile",
+    "source_identity": "6b08e1a928efe8cca7049921e2d2367fc5bdbd5a301f198ec659e924d41d0276"
+   },
+   "status": "Unknown"
+  }
+ },
+ "cJSON_DetachItemFromObjectCaseSensitive": {
+  "after": {
+   "contract_dependencies": {
+    "declarations": [
+     "cJSON_DetachItemViaPointer",
+     "get_object_item"
+    ],
+    "hypothesis_dependencies": {
+     "cJSON_DetachItemViaPointer": [
+      "detach_chain",
+      "detach_distinct",
+      "detach_empty",
+      "detach_first_prev",
+      "detach_last_next",
+      "detach_link_targets",
+      "detach_no_writer",
+      "detach_parent_outside",
+      "detach_predecessor",
+      "legacy_atom_00000000"
+     ]
+    },
+    "summaries": [
+     "cJSON_GetObjectItemCaseSensitive"
+    ]
+   },
+   "diagnostics": [
+    {
+     "category": "unsupported",
+     "description": "unmodeled call, aggregate or indirect access in return expression",
+     "line": 3069,
+     "origin": "cJSON.c:2305"
+    }
+   ],
+   "function": "cJSON_DetachItemFromObjectCaseSensitive",
+   "hypothesis_context": {
+    "artifact": "librdkafka/cJSON.c#cJSON_DetachItemFromObjectCaseSensitive",
+    "assumptions": "245bc25c3d345adb7c19b9d6b52e65580d8234ba6736815529f330b9c3e359b5",
+    "bounds": "existing gateway budgets; no new hypothesis discharge",
+    "build_identity": "53b0d3c2cc680fe08ac6a736466ba30dc2cd2168adf819aef9154cde642f151d",
+    "evidence_version": "contract-hypothesis-graph.v1:9ecc941d5f18739296cf573a2476dbb51a59fbb1",
+    "property": "resource-custody.v1",
+    "scope": "[\"add_item_to_array\",\"add_item_to_object\",\"buffer_skip_whitespace\",\"cJSON_AddArrayToObject\",\"cJSON_AddBoolToObject\",\"cJSON_AddFalseToObject\",\"cJSON_AddItemReferenceToArray\",\"cJSON_AddItemReferenceToObject\",\"cJSON_AddItemToArray\",\"cJSON_AddItemToObject\",\"cJSON_AddItemToObjectCS\",\"cJSON_AddNullToObject\",\"cJSON_AddNumberToObject\",\"cJSON_AddObjectToObject\",\"cJSON_AddRawToObject\",\"cJSON_AddStringToObject\",\"cJSON_AddTrueToObject\",\"cJSON_Compare\",\"cJSON_CreateArray\",\"cJSON_CreateArrayReference\",\"cJSON_CreateBool\",\"cJSON_CreateDoubleArray\",\"cJSON_CreateFalse\",\"cJSON_CreateFloatArray\",\"cJSON_CreateIntArray\",\"cJSON_CreateNull\",\"cJSON_CreateNumber\",\"cJSON_CreateObject\",\"cJSON_CreateObjectReference\",\"cJSON_CreateRaw\",\"cJSON_CreateString\",\"cJSON_CreateStringArray\",\"cJSON_CreateStringReference\",\"cJSON_CreateTrue\",\"cJSON_Delete\",\"cJSON_DeleteItemFromArray\",\"cJSON_DeleteItemFromObject\",\"cJSON_DeleteItemFromObjectCaseSensitive\",\"cJSON_DetachItemFromArray\",\"cJSON_DetachItemFromObject\",\"cJSON_DetachItemFromObjectCaseSensitive\",\"cJSON_DetachItemViaPointer\",\"cJSON_Duplicate\",\"cJSON_Duplicate_rec\",\"cJSON_GetArrayItem\",\"cJSON_GetArraySize\",\"cJSON_GetErrorPtr\",\"cJSON_GetNumberValue\",\"cJSON_GetObjectItem\",\"cJSON_GetObjectItemCaseSensitive\",\"cJSON_GetStringValue\",\"cJSON_HasObjectItem\",\"cJSON_InitHooks\",\"cJSON_InsertItemInArray\",\"cJSON_IsArray\",\"cJSON_IsBool\",\"cJSON_IsFalse\",\"cJSON_IsInvalid\",\"cJSON_IsNull\",\"cJSON_IsNumber\",\"cJSON_IsObject\",\"cJSON_IsRaw\",\"cJSON_IsString\",\"cJSON_IsTrue\",\"cJSON_Minify\",\"cJSON_New_Item\",\"cJSON_Parse\",\"cJSON_ParseWithLength\",\"cJSON_ParseWithLengthOpts\",\"cJSON_ParseWithOpts\",\"cJSON_Print\",\"cJSON_PrintBuffered\",\"cJSON_PrintPreallocated\",\"cJSON_PrintUnformatted\",\"cJSON_ReplaceItemInArray\",\"cJSON_ReplaceItemInObject\",\"cJSON_ReplaceItemInObjectCaseSensitive\",\"cJSON_ReplaceItemViaPointer\",\"cJSON_SetNumberHelper\",\"cJSON_SetValuestring\",\"cJSON_Version\",\"cJSON_free\",\"cJSON_malloc\",\"cJSON_strdup\",\"case_insensitive_strcmp\",\"cast_away_const\",\"compare_double\",\"create_reference\",\"ensure\",\"get_array_item\",\"get_decimal_point\",\"get_object_item\",\"internal_free\",\"internal_malloc\",\"internal_realloc\",\"minify_string\",\"parse_array\",\"parse_hex4\",\"parse_number\",\"parse_object\",\"parse_string\",\"parse_value\",\"print\",\"print_array\",\"print_number\",\"print_object\",\"print_string\",\"print_string_ptr\",\"print_value\",\"replace_item_in_object\",\"skip_multiline_comment\",\"skip_oneline_comment\",\"skip_utf8_bom\",\"suffix_object\",\"update_offset\",\"utf16_literal_to_utf8\"]",
+    "semantic_profile": "legacy-pinned-resource-profile",
+    "source_identity": "6b08e1a928efe8cca7049921e2d2367fc5bdbd5a301f198ec659e924d41d0276"
+   },
+   "status": "Unknown"
+  },
+  "before": {
+   "contract_dependencies": {
+    "declarations": [
+     "cJSON_DetachItemViaPointer",
+     "get_object_item"
+    ],
+    "hypothesis_dependencies": {
+     "cJSON_DetachItemViaPointer": [
+      "detach_chain",
+      "detach_distinct",
+      "detach_empty",
+      "detach_first_prev",
+      "detach_last_next",
+      "detach_link_targets",
+      "detach_no_writer",
+      "detach_parent_outside",
+      "detach_predecessor",
+      "legacy_atom_00000000"
+     ]
+    },
+    "summaries": [
+     "cJSON_GetObjectItemCaseSensitive"
+    ]
+   },
+   "diagnostics": [
+    {
+     "category": "unsupported",
+     "description": "unmodeled call, aggregate or indirect access in return expression",
+     "line": 3069,
+     "origin": "cJSON.c:2305"
+    }
+   ],
+   "function": "cJSON_DetachItemFromObjectCaseSensitive",
+   "hypothesis_context": {
+    "artifact": "librdkafka/cJSON.c#cJSON_DetachItemFromObjectCaseSensitive",
+    "assumptions": "776718ac103e2fdaff7ba1e332c875916a88d1ad795cb47707887f4530e0e66c",
+    "bounds": "existing gateway budgets; no new hypothesis discharge",
+    "build_identity": "53b0d3c2cc680fe08ac6a736466ba30dc2cd2168adf819aef9154cde642f151d",
+    "evidence_version": "contract-hypothesis-graph.v1:9ecc941d5f18739296cf573a2476dbb51a59fbb1",
+    "property": "resource-custody.v1",
+    "scope": "[\"add_item_to_array\",\"add_item_to_object\",\"buffer_skip_whitespace\",\"cJSON_AddArrayToObject\",\"cJSON_AddBoolToObject\",\"cJSON_AddFalseToObject\",\"cJSON_AddItemReferenceToArray\",\"cJSON_AddItemReferenceToObject\",\"cJSON_AddItemToArray\",\"cJSON_AddItemToObject\",\"cJSON_AddItemToObjectCS\",\"cJSON_AddNullToObject\",\"cJSON_AddNumberToObject\",\"cJSON_AddObjectToObject\",\"cJSON_AddRawToObject\",\"cJSON_AddStringToObject\",\"cJSON_AddTrueToObject\",\"cJSON_Compare\",\"cJSON_CreateArray\",\"cJSON_CreateArrayReference\",\"cJSON_CreateBool\",\"cJSON_CreateDoubleArray\",\"cJSON_CreateFalse\",\"cJSON_CreateFloatArray\",\"cJSON_CreateIntArray\",\"cJSON_CreateNull\",\"cJSON_CreateNumber\",\"cJSON_CreateObject\",\"cJSON_CreateObjectReference\",\"cJSON_CreateRaw\",\"cJSON_CreateString\",\"cJSON_CreateStringArray\",\"cJSON_CreateStringReference\",\"cJSON_CreateTrue\",\"cJSON_Delete\",\"cJSON_DeleteItemFromArray\",\"cJSON_DeleteItemFromObject\",\"cJSON_DeleteItemFromObjectCaseSensitive\",\"cJSON_DetachItemFromArray\",\"cJSON_DetachItemFromObject\",\"cJSON_DetachItemFromObjectCaseSensitive\",\"cJSON_DetachItemViaPointer\",\"cJSON_Duplicate\",\"cJSON_Duplicate_rec\",\"cJSON_GetArrayItem\",\"cJSON_GetArraySize\",\"cJSON_GetErrorPtr\",\"cJSON_GetNumberValue\",\"cJSON_GetObjectItem\",\"cJSON_GetObjectItemCaseSensitive\",\"cJSON_GetStringValue\",\"cJSON_HasObjectItem\",\"cJSON_InitHooks\",\"cJSON_InsertItemInArray\",\"cJSON_IsArray\",\"cJSON_IsBool\",\"cJSON_IsFalse\",\"cJSON_IsInvalid\",\"cJSON_IsNull\",\"cJSON_IsNumber\",\"cJSON_IsObject\",\"cJSON_IsRaw\",\"cJSON_IsString\",\"cJSON_IsTrue\",\"cJSON_Minify\",\"cJSON_New_Item\",\"cJSON_Parse\",\"cJSON_ParseWithLength\",\"cJSON_ParseWithLengthOpts\",\"cJSON_ParseWithOpts\",\"cJSON_Print\",\"cJSON_PrintBuffered\",\"cJSON_PrintPreallocated\",\"cJSON_PrintUnformatted\",\"cJSON_ReplaceItemInArray\",\"cJSON_ReplaceItemInObject\",\"cJSON_ReplaceItemInObjectCaseSensitive\",\"cJSON_ReplaceItemViaPointer\",\"cJSON_SetNumberHelper\",\"cJSON_SetValuestring\",\"cJSON_Version\",\"cJSON_free\",\"cJSON_malloc\",\"cJSON_strdup\",\"case_insensitive_strcmp\",\"cast_away_const\",\"compare_double\",\"create_reference\",\"ensure\",\"get_array_item\",\"get_decimal_point\",\"get_object_item\",\"internal_free\",\"internal_malloc\",\"internal_realloc\",\"minify_string\",\"parse_array\",\"parse_hex4\",\"parse_number\",\"parse_object\",\"parse_string\",\"parse_value\",\"print\",\"print_array\",\"print_number\",\"print_object\",\"print_string\",\"print_string_ptr\",\"print_value\",\"replace_item_in_object\",\"skip_multiline_comment\",\"skip_oneline_comment\",\"skip_utf8_bom\",\"suffix_object\",\"update_offset\",\"utf16_literal_to_utf8\"]",
+    "semantic_profile": "legacy-pinned-resource-profile",
+    "source_identity": "6b08e1a928efe8cca7049921e2d2367fc5bdbd5a301f198ec659e924d41d0276"
+   },
+   "status": "Unknown"
+  }
+ },
+ "cJSON_DetachItemViaPointer": {
+  "after": {
+   "contract_dependencies": {
+    "declarations": [
+     "cJSON_DetachItemViaPointer"
+    ],
+    "hypothesis_dependencies": {
+     "cJSON_DetachItemViaPointer": [
+      "detach_chain",
+      "detach_distinct",
+      "detach_empty",
+      "detach_first_prev",
+      "detach_last_next",
+      "detach_link_targets",
+      "detach_no_writer",
+      "detach_parent_outside",
+      "detach_predecessor",
+      "legacy_atom_00000000"
+     ]
+    }
+   },
+   "diagnostics": [
+    {
+     "category": "unsupported",
+     "description": "unmodeled call, aggregate or indirect access in branch condition",
+     "line": 3025,
+     "origin": "cJSON.c:2245"
+    },
+    {
+     "category": "unsupported",
+     "description": "unmodeled call, aggregate or indirect access in branch condition",
+     "line": 3029,
+     "origin": "cJSON.c:2250"
+    },
+    {
+     "category": "unsupported",
+     "description": "indirect memory access is outside the resource projection",
+     "line": 3031,
+     "origin": "cJSON.c:2253"
+    },
+    {
+     "category": "unknown_alias",
+     "description": "unresolved resource identity `item`",
+     "line": 3033,
+     "origin": "cJSON.c:2255"
+    },
+    {
+     "category": "unsupported",
+     "description": "indirect memory access is outside the resource projection",
+     "line": 3035,
+     "origin": "cJSON.c:2258"
+    },
+    {
+     "category": "unsupported",
+     "description": "unmodeled call, aggregate or indirect access in branch condition",
+     "line": 3037,
+     "origin": "cJSON.c:2261"
+    },
+    {
+     "category": "unsupported",
+     "description": "indirect memory access is outside the resource projection",
+     "line": 3039,
+     "origin": "cJSON.c:2264"
+    },
+    {
+     "category": "unknown_alias",
+     "description": "unresolved resource identity `item`",
+     "line": 3041,
+     "origin": "cJSON.c:2266"
+    },
+    {
+     "category": "unsupported",
+     "description": "indirect memory access is outside the resource projection",
+     "line": 3043,
+     "origin": "cJSON.c:2269"
+    },
+    {
+     "category": "unsupported",
+     "description": "indirect memory access is outside the resource projection",
+     "line": 3045,
+     "origin": "cJSON.c:2273"
+    },
+    {
+     "category": "unsupported",
+     "description": "indirect memory access is outside the resource projection",
+     "line": 3046,
+     "origin": "cJSON.c:2274"
+    }
+   ],
+   "function": "cJSON_DetachItemViaPointer",
+   "hypothesis_context": {
+    "artifact": "librdkafka/cJSON.c#cJSON_DetachItemViaPointer",
+    "assumptions": "245bc25c3d345adb7c19b9d6b52e65580d8234ba6736815529f330b9c3e359b5",
+    "bounds": "existing gateway budgets; no new hypothesis discharge",
+    "build_identity": "53b0d3c2cc680fe08ac6a736466ba30dc2cd2168adf819aef9154cde642f151d",
+    "evidence_version": "contract-hypothesis-graph.v1:9ecc941d5f18739296cf573a2476dbb51a59fbb1",
+    "property": "resource-custody.v1",
+    "scope": "[\"add_item_to_array\",\"add_item_to_object\",\"buffer_skip_whitespace\",\"cJSON_AddArrayToObject\",\"cJSON_AddBoolToObject\",\"cJSON_AddFalseToObject\",\"cJSON_AddItemReferenceToArray\",\"cJSON_AddItemReferenceToObject\",\"cJSON_AddItemToArray\",\"cJSON_AddItemToObject\",\"cJSON_AddItemToObjectCS\",\"cJSON_AddNullToObject\",\"cJSON_AddNumberToObject\",\"cJSON_AddObjectToObject\",\"cJSON_AddRawToObject\",\"cJSON_AddStringToObject\",\"cJSON_AddTrueToObject\",\"cJSON_Compare\",\"cJSON_CreateArray\",\"cJSON_CreateArrayReference\",\"cJSON_CreateBool\",\"cJSON_CreateDoubleArray\",\"cJSON_CreateFalse\",\"cJSON_CreateFloatArray\",\"cJSON_CreateIntArray\",\"cJSON_CreateNull\",\"cJSON_CreateNumber\",\"cJSON_CreateObject\",\"cJSON_CreateObjectReference\",\"cJSON_CreateRaw\",\"cJSON_CreateString\",\"cJSON_CreateStringArray\",\"cJSON_CreateStringReference\",\"cJSON_CreateTrue\",\"cJSON_Delete\",\"cJSON_DeleteItemFromArray\",\"cJSON_DeleteItemFromObject\",\"cJSON_DeleteItemFromObjectCaseSensitive\",\"cJSON_DetachItemFromArray\",\"cJSON_DetachItemFromObject\",\"cJSON_DetachItemFromObjectCaseSensitive\",\"cJSON_DetachItemViaPointer\",\"cJSON_Duplicate\",\"cJSON_Duplicate_rec\",\"cJSON_GetArrayItem\",\"cJSON_GetArraySize\",\"cJSON_GetErrorPtr\",\"cJSON_GetNumberValue\",\"cJSON_GetObjectItem\",\"cJSON_GetObjectItemCaseSensitive\",\"cJSON_GetStringValue\",\"cJSON_HasObjectItem\",\"cJSON_InitHooks\",\"cJSON_InsertItemInArray\",\"cJSON_IsArray\",\"cJSON_IsBool\",\"cJSON_IsFalse\",\"cJSON_IsInvalid\",\"cJSON_IsNull\",\"cJSON_IsNumber\",\"cJSON_IsObject\",\"cJSON_IsRaw\",\"cJSON_IsString\",\"cJSON_IsTrue\",\"cJSON_Minify\",\"cJSON_New_Item\",\"cJSON_Parse\",\"cJSON_ParseWithLength\",\"cJSON_ParseWithLengthOpts\",\"cJSON_ParseWithOpts\",\"cJSON_Print\",\"cJSON_PrintBuffered\",\"cJSON_PrintPreallocated\",\"cJSON_PrintUnformatted\",\"cJSON_ReplaceItemInArray\",\"cJSON_ReplaceItemInObject\",\"cJSON_ReplaceItemInObjectCaseSensitive\",\"cJSON_ReplaceItemViaPointer\",\"cJSON_SetNumberHelper\",\"cJSON_SetValuestring\",\"cJSON_Version\",\"cJSON_free\",\"cJSON_malloc\",\"cJSON_strdup\",\"case_insensitive_strcmp\",\"cast_away_const\",\"compare_double\",\"create_reference\",\"ensure\",\"get_array_item\",\"get_decimal_point\",\"get_object_item\",\"internal_free\",\"internal_malloc\",\"internal_realloc\",\"minify_string\",\"parse_array\",\"parse_hex4\",\"parse_number\",\"parse_object\",\"parse_string\",\"parse_value\",\"print\",\"print_array\",\"print_number\",\"print_object\",\"print_string\",\"print_string_ptr\",\"print_value\",\"replace_item_in_object\",\"skip_multiline_comment\",\"skip_oneline_comment\",\"skip_utf8_bom\",\"suffix_object\",\"update_offset\",\"utf16_literal_to_utf8\"]",
+    "semantic_profile": "legacy-pinned-resource-profile",
+    "source_identity": "6b08e1a928efe8cca7049921e2d2367fc5bdbd5a301f198ec659e924d41d0276"
+   },
+   "status": "Unknown"
+  },
+  "before": {
+   "contract_dependencies": {
+    "declarations": [
+     "cJSON_DetachItemViaPointer"
+    ],
+    "hypothesis_dependencies": {
+     "cJSON_DetachItemViaPointer": [
+      "detach_chain",
+      "detach_distinct",
+      "detach_empty",
+      "detach_first_prev",
+      "detach_last_next",
+      "detach_link_targets",
+      "detach_no_writer",
+      "detach_parent_outside",
+      "detach_predecessor",
+      "legacy_atom_00000000"
+     ]
+    }
+   },
+   "diagnostics": [
+    {
+     "category": "unsupported",
+     "description": "unmodeled call, aggregate or indirect access in branch condition",
+     "line": 3025,
+     "origin": "cJSON.c:2245"
+    },
+    {
+     "category": "unsupported",
+     "description": "unmodeled call, aggregate or indirect access in branch condition",
+     "line": 3029,
+     "origin": "cJSON.c:2250"
+    },
+    {
+     "category": "unsupported",
+     "description": "indirect memory access is outside the resource projection",
+     "line": 3031,
+     "origin": "cJSON.c:2253"
+    },
+    {
+     "category": "unknown_alias",
+     "description": "unresolved resource identity `item`",
+     "line": 3033,
+     "origin": "cJSON.c:2255"
+    },
+    {
+     "category": "unsupported",
+     "description": "indirect memory access is outside the resource projection",
+     "line": 3035,
+     "origin": "cJSON.c:2258"
+    },
+    {
+     "category": "unsupported",
+     "description": "unmodeled call, aggregate or indirect access in branch condition",
+     "line": 3037,
+     "origin": "cJSON.c:2261"
+    },
+    {
+     "category": "unsupported",
+     "description": "indirect memory access is outside the resource projection",
+     "line": 3039,
+     "origin": "cJSON.c:2264"
+    },
+    {
+     "category": "unknown_alias",
+     "description": "unresolved resource identity `item`",
+     "line": 3041,
+     "origin": "cJSON.c:2266"
+    },
+    {
+     "category": "unsupported",
+     "description": "indirect memory access is outside the resource projection",
+     "line": 3043,
+     "origin": "cJSON.c:2269"
+    },
+    {
+     "category": "unsupported",
+     "description": "indirect memory access is outside the resource projection",
+     "line": 3045,
+     "origin": "cJSON.c:2273"
+    },
+    {
+     "category": "unsupported",
+     "description": "indirect memory access is outside the resource projection",
+     "line": 3046,
+     "origin": "cJSON.c:2274"
+    }
+   ],
+   "function": "cJSON_DetachItemViaPointer",
+   "hypothesis_context": {
+    "artifact": "librdkafka/cJSON.c#cJSON_DetachItemViaPointer",
+    "assumptions": "776718ac103e2fdaff7ba1e332c875916a88d1ad795cb47707887f4530e0e66c",
+    "bounds": "existing gateway budgets; no new hypothesis discharge",
+    "build_identity": "53b0d3c2cc680fe08ac6a736466ba30dc2cd2168adf819aef9154cde642f151d",
+    "evidence_version": "contract-hypothesis-graph.v1:9ecc941d5f18739296cf573a2476dbb51a59fbb1",
+    "property": "resource-custody.v1",
+    "scope": "[\"add_item_to_array\",\"add_item_to_object\",\"buffer_skip_whitespace\",\"cJSON_AddArrayToObject\",\"cJSON_AddBoolToObject\",\"cJSON_AddFalseToObject\",\"cJSON_AddItemReferenceToArray\",\"cJSON_AddItemReferenceToObject\",\"cJSON_AddItemToArray\",\"cJSON_AddItemToObject\",\"cJSON_AddItemToObjectCS\",\"cJSON_AddNullToObject\",\"cJSON_AddNumberToObject\",\"cJSON_AddObjectToObject\",\"cJSON_AddRawToObject\",\"cJSON_AddStringToObject\",\"cJSON_AddTrueToObject\",\"cJSON_Compare\",\"cJSON_CreateArray\",\"cJSON_CreateArrayReference\",\"cJSON_CreateBool\",\"cJSON_CreateDoubleArray\",\"cJSON_CreateFalse\",\"cJSON_CreateFloatArray\",\"cJSON_CreateIntArray\",\"cJSON_CreateNull\",\"cJSON_CreateNumber\",\"cJSON_CreateObject\",\"cJSON_CreateObjectReference\",\"cJSON_CreateRaw\",\"cJSON_CreateString\",\"cJSON_CreateStringArray\",\"cJSON_CreateStringReference\",\"cJSON_CreateTrue\",\"cJSON_Delete\",\"cJSON_DeleteItemFromArray\",\"cJSON_DeleteItemFromObject\",\"cJSON_DeleteItemFromObjectCaseSensitive\",\"cJSON_DetachItemFromArray\",\"cJSON_DetachItemFromObject\",\"cJSON_DetachItemFromObjectCaseSensitive\",\"cJSON_DetachItemViaPointer\",\"cJSON_Duplicate\",\"cJSON_Duplicate_rec\",\"cJSON_GetArrayItem\",\"cJSON_GetArraySize\",\"cJSON_GetErrorPtr\",\"cJSON_GetNumberValue\",\"cJSON_GetObjectItem\",\"cJSON_GetObjectItemCaseSensitive\",\"cJSON_GetStringValue\",\"cJSON_HasObjectItem\",\"cJSON_InitHooks\",\"cJSON_InsertItemInArray\",\"cJSON_IsArray\",\"cJSON_IsBool\",\"cJSON_IsFalse\",\"cJSON_IsInvalid\",\"cJSON_IsNull\",\"cJSON_IsNumber\",\"cJSON_IsObject\",\"cJSON_IsRaw\",\"cJSON_IsString\",\"cJSON_IsTrue\",\"cJSON_Minify\",\"cJSON_New_Item\",\"cJSON_Parse\",\"cJSON_ParseWithLength\",\"cJSON_ParseWithLengthOpts\",\"cJSON_ParseWithOpts\",\"cJSON_Print\",\"cJSON_PrintBuffered\",\"cJSON_PrintPreallocated\",\"cJSON_PrintUnformatted\",\"cJSON_ReplaceItemInArray\",\"cJSON_ReplaceItemInObject\",\"cJSON_ReplaceItemInObjectCaseSensitive\",\"cJSON_ReplaceItemViaPointer\",\"cJSON_SetNumberHelper\",\"cJSON_SetValuestring\",\"cJSON_Version\",\"cJSON_free\",\"cJSON_malloc\",\"cJSON_strdup\",\"case_insensitive_strcmp\",\"cast_away_const\",\"compare_double\",\"create_reference\",\"ensure\",\"get_array_item\",\"get_decimal_point\",\"get_object_item\",\"internal_free\",\"internal_malloc\",\"internal_realloc\",\"minify_string\",\"parse_array\",\"parse_hex4\",\"parse_number\",\"parse_object\",\"parse_string\",\"parse_value\",\"print\",\"print_array\",\"print_number\",\"print_object\",\"print_string\",\"print_string_ptr\",\"print_value\",\"replace_item_in_object\",\"skip_multiline_comment\",\"skip_oneline_comment\",\"skip_utf8_bom\",\"suffix_object\",\"update_offset\",\"utf16_literal_to_utf8\"]",
+    "semantic_profile": "legacy-pinned-resource-profile",
+    "source_identity": "6b08e1a928efe8cca7049921e2d2367fc5bdbd5a301f198ec659e924d41d0276"
+   },
+   "status": "Unknown"
+  }
+ },
+ "cJSON_GetArrayItem": {
+  "after": {
+   "contract_dependencies": {
+    "declarations": [],
+    "hypothesis_dependencies": {},
+    "null_premises": [
+     "null-deref:get_array_item:2770:current_child"
+    ],
+    "summaries": [
+     "get_array_item"
+    ]
+   },
+   "diagnostics": [],
+   "function": "cJSON_GetArrayItem",
+   "hypothesis_context": {
+    "artifact": "librdkafka/cJSON.c#cJSON_GetArrayItem",
+    "assumptions": "245bc25c3d345adb7c19b9d6b52e65580d8234ba6736815529f330b9c3e359b5",
+    "bounds": "existing gateway budgets; no new hypothesis discharge",
+    "build_identity": "53b0d3c2cc680fe08ac6a736466ba30dc2cd2168adf819aef9154cde642f151d",
+    "evidence_version": "contract-hypothesis-graph.v1:9ecc941d5f18739296cf573a2476dbb51a59fbb1",
+    "property": "resource-custody.v1",
+    "scope": "[\"add_item_to_array\",\"add_item_to_object\",\"buffer_skip_whitespace\",\"cJSON_AddArrayToObject\",\"cJSON_AddBoolToObject\",\"cJSON_AddFalseToObject\",\"cJSON_AddItemReferenceToArray\",\"cJSON_AddItemReferenceToObject\",\"cJSON_AddItemToArray\",\"cJSON_AddItemToObject\",\"cJSON_AddItemToObjectCS\",\"cJSON_AddNullToObject\",\"cJSON_AddNumberToObject\",\"cJSON_AddObjectToObject\",\"cJSON_AddRawToObject\",\"cJSON_AddStringToObject\",\"cJSON_AddTrueToObject\",\"cJSON_Compare\",\"cJSON_CreateArray\",\"cJSON_CreateArrayReference\",\"cJSON_CreateBool\",\"cJSON_CreateDoubleArray\",\"cJSON_CreateFalse\",\"cJSON_CreateFloatArray\",\"cJSON_CreateIntArray\",\"cJSON_CreateNull\",\"cJSON_CreateNumber\",\"cJSON_CreateObject\",\"cJSON_CreateObjectReference\",\"cJSON_CreateRaw\",\"cJSON_CreateString\",\"cJSON_CreateStringArray\",\"cJSON_CreateStringReference\",\"cJSON_CreateTrue\",\"cJSON_Delete\",\"cJSON_DeleteItemFromArray\",\"cJSON_DeleteItemFromObject\",\"cJSON_DeleteItemFromObjectCaseSensitive\",\"cJSON_DetachItemFromArray\",\"cJSON_DetachItemFromObject\",\"cJSON_DetachItemFromObjectCaseSensitive\",\"cJSON_DetachItemViaPointer\",\"cJSON_Duplicate\",\"cJSON_Duplicate_rec\",\"cJSON_GetArrayItem\",\"cJSON_GetArraySize\",\"cJSON_GetErrorPtr\",\"cJSON_GetNumberValue\",\"cJSON_GetObjectItem\",\"cJSON_GetObjectItemCaseSensitive\",\"cJSON_GetStringValue\",\"cJSON_HasObjectItem\",\"cJSON_InitHooks\",\"cJSON_InsertItemInArray\",\"cJSON_IsArray\",\"cJSON_IsBool\",\"cJSON_IsFalse\",\"cJSON_IsInvalid\",\"cJSON_IsNull\",\"cJSON_IsNumber\",\"cJSON_IsObject\",\"cJSON_IsRaw\",\"cJSON_IsString\",\"cJSON_IsTrue\",\"cJSON_Minify\",\"cJSON_New_Item\",\"cJSON_Parse\",\"cJSON_ParseWithLength\",\"cJSON_ParseWithLengthOpts\",\"cJSON_ParseWithOpts\",\"cJSON_Print\",\"cJSON_PrintBuffered\",\"cJSON_PrintPreallocated\",\"cJSON_PrintUnformatted\",\"cJSON_ReplaceItemInArray\",\"cJSON_ReplaceItemInObject\",\"cJSON_ReplaceItemInObjectCaseSensitive\",\"cJSON_ReplaceItemViaPointer\",\"cJSON_SetNumberHelper\",\"cJSON_SetValuestring\",\"cJSON_Version\",\"cJSON_free\",\"cJSON_malloc\",\"cJSON_strdup\",\"case_insensitive_strcmp\",\"cast_away_const\",\"compare_double\",\"create_reference\",\"ensure\",\"get_array_item\",\"get_decimal_point\",\"get_object_item\",\"internal_free\",\"internal_malloc\",\"internal_realloc\",\"minify_string\",\"parse_array\",\"parse_hex4\",\"parse_number\",\"parse_object\",\"parse_string\",\"parse_value\",\"print\",\"print_array\",\"print_number\",\"print_object\",\"print_string\",\"print_string_ptr\",\"print_value\",\"replace_item_in_object\",\"skip_multiline_comment\",\"skip_oneline_comment\",\"skip_utf8_bom\",\"suffix_object\",\"update_offset\",\"utf16_literal_to_utf8\"]",
+    "semantic_profile": "legacy-pinned-resource-profile",
+    "source_identity": "6b08e1a928efe8cca7049921e2d2367fc5bdbd5a301f198ec659e924d41d0276"
+   },
+   "status": "Safe"
+  },
+  "before": {
+   "contract_dependencies": {
+    "declarations": [],
+    "hypothesis_dependencies": {},
+    "null_premises": [
+     "null-deref:get_array_item:2770:current_child"
+    ],
+    "summaries": [
+     "get_array_item"
+    ]
+   },
+   "diagnostics": [],
+   "function": "cJSON_GetArrayItem",
+   "hypothesis_context": {
+    "artifact": "librdkafka/cJSON.c#cJSON_GetArrayItem",
+    "assumptions": "776718ac103e2fdaff7ba1e332c875916a88d1ad795cb47707887f4530e0e66c",
+    "bounds": "existing gateway budgets; no new hypothesis discharge",
+    "build_identity": "53b0d3c2cc680fe08ac6a736466ba30dc2cd2168adf819aef9154cde642f151d",
+    "evidence_version": "contract-hypothesis-graph.v1:9ecc941d5f18739296cf573a2476dbb51a59fbb1",
+    "property": "resource-custody.v1",
+    "scope": "[\"add_item_to_array\",\"add_item_to_object\",\"buffer_skip_whitespace\",\"cJSON_AddArrayToObject\",\"cJSON_AddBoolToObject\",\"cJSON_AddFalseToObject\",\"cJSON_AddItemReferenceToArray\",\"cJSON_AddItemReferenceToObject\",\"cJSON_AddItemToArray\",\"cJSON_AddItemToObject\",\"cJSON_AddItemToObjectCS\",\"cJSON_AddNullToObject\",\"cJSON_AddNumberToObject\",\"cJSON_AddObjectToObject\",\"cJSON_AddRawToObject\",\"cJSON_AddStringToObject\",\"cJSON_AddTrueToObject\",\"cJSON_Compare\",\"cJSON_CreateArray\",\"cJSON_CreateArrayReference\",\"cJSON_CreateBool\",\"cJSON_CreateDoubleArray\",\"cJSON_CreateFalse\",\"cJSON_CreateFloatArray\",\"cJSON_CreateIntArray\",\"cJSON_CreateNull\",\"cJSON_CreateNumber\",\"cJSON_CreateObject\",\"cJSON_CreateObjectReference\",\"cJSON_CreateRaw\",\"cJSON_CreateString\",\"cJSON_CreateStringArray\",\"cJSON_CreateStringReference\",\"cJSON_CreateTrue\",\"cJSON_Delete\",\"cJSON_DeleteItemFromArray\",\"cJSON_DeleteItemFromObject\",\"cJSON_DeleteItemFromObjectCaseSensitive\",\"cJSON_DetachItemFromArray\",\"cJSON_DetachItemFromObject\",\"cJSON_DetachItemFromObjectCaseSensitive\",\"cJSON_DetachItemViaPointer\",\"cJSON_Duplicate\",\"cJSON_Duplicate_rec\",\"cJSON_GetArrayItem\",\"cJSON_GetArraySize\",\"cJSON_GetErrorPtr\",\"cJSON_GetNumberValue\",\"cJSON_GetObjectItem\",\"cJSON_GetObjectItemCaseSensitive\",\"cJSON_GetStringValue\",\"cJSON_HasObjectItem\",\"cJSON_InitHooks\",\"cJSON_InsertItemInArray\",\"cJSON_IsArray\",\"cJSON_IsBool\",\"cJSON_IsFalse\",\"cJSON_IsInvalid\",\"cJSON_IsNull\",\"cJSON_IsNumber\",\"cJSON_IsObject\",\"cJSON_IsRaw\",\"cJSON_IsString\",\"cJSON_IsTrue\",\"cJSON_Minify\",\"cJSON_New_Item\",\"cJSON_Parse\",\"cJSON_ParseWithLength\",\"cJSON_ParseWithLengthOpts\",\"cJSON_ParseWithOpts\",\"cJSON_Print\",\"cJSON_PrintBuffered\",\"cJSON_PrintPreallocated\",\"cJSON_PrintUnformatted\",\"cJSON_ReplaceItemInArray\",\"cJSON_ReplaceItemInObject\",\"cJSON_ReplaceItemInObjectCaseSensitive\",\"cJSON_ReplaceItemViaPointer\",\"cJSON_SetNumberHelper\",\"cJSON_SetValuestring\",\"cJSON_Version\",\"cJSON_free\",\"cJSON_malloc\",\"cJSON_strdup\",\"case_insensitive_strcmp\",\"cast_away_const\",\"compare_double\",\"create_reference\",\"ensure\",\"get_array_item\",\"get_decimal_point\",\"get_object_item\",\"internal_free\",\"internal_malloc\",\"internal_realloc\",\"minify_string\",\"parse_array\",\"parse_hex4\",\"parse_number\",\"parse_object\",\"parse_string\",\"parse_value\",\"print\",\"print_array\",\"print_number\",\"print_object\",\"print_string\",\"print_string_ptr\",\"print_value\",\"replace_item_in_object\",\"skip_multiline_comment\",\"skip_oneline_comment\",\"skip_utf8_bom\",\"suffix_object\",\"update_offset\",\"utf16_literal_to_utf8\"]",
+    "semantic_profile": "legacy-pinned-resource-profile",
+    "source_identity": "6b08e1a928efe8cca7049921e2d2367fc5bdbd5a301f198ec659e924d41d0276"
+   },
+   "status": "Safe"
+  }
+ },
+ "get_array_item": {
+  "after": {
+   "contract_dependencies": {
+    "declarations": [],
+    "hypothesis_dependencies": {},
+    "null_premises": [
+     "null-deref:get_array_item:2770:current_child"
+    ]
+   },
+   "diagnostics": [],
+   "function": "get_array_item",
+   "hypothesis_context": {
+    "artifact": "librdkafka/cJSON.c#get_array_item",
+    "assumptions": "245bc25c3d345adb7c19b9d6b52e65580d8234ba6736815529f330b9c3e359b5",
+    "bounds": "existing gateway budgets; no new hypothesis discharge",
+    "build_identity": "53b0d3c2cc680fe08ac6a736466ba30dc2cd2168adf819aef9154cde642f151d",
+    "evidence_version": "contract-hypothesis-graph.v1:9ecc941d5f18739296cf573a2476dbb51a59fbb1",
+    "property": "resource-custody.v1",
+    "scope": "[\"add_item_to_array\",\"add_item_to_object\",\"buffer_skip_whitespace\",\"cJSON_AddArrayToObject\",\"cJSON_AddBoolToObject\",\"cJSON_AddFalseToObject\",\"cJSON_AddItemReferenceToArray\",\"cJSON_AddItemReferenceToObject\",\"cJSON_AddItemToArray\",\"cJSON_AddItemToObject\",\"cJSON_AddItemToObjectCS\",\"cJSON_AddNullToObject\",\"cJSON_AddNumberToObject\",\"cJSON_AddObjectToObject\",\"cJSON_AddRawToObject\",\"cJSON_AddStringToObject\",\"cJSON_AddTrueToObject\",\"cJSON_Compare\",\"cJSON_CreateArray\",\"cJSON_CreateArrayReference\",\"cJSON_CreateBool\",\"cJSON_CreateDoubleArray\",\"cJSON_CreateFalse\",\"cJSON_CreateFloatArray\",\"cJSON_CreateIntArray\",\"cJSON_CreateNull\",\"cJSON_CreateNumber\",\"cJSON_CreateObject\",\"cJSON_CreateObjectReference\",\"cJSON_CreateRaw\",\"cJSON_CreateString\",\"cJSON_CreateStringArray\",\"cJSON_CreateStringReference\",\"cJSON_CreateTrue\",\"cJSON_Delete\",\"cJSON_DeleteItemFromArray\",\"cJSON_DeleteItemFromObject\",\"cJSON_DeleteItemFromObjectCaseSensitive\",\"cJSON_DetachItemFromArray\",\"cJSON_DetachItemFromObject\",\"cJSON_DetachItemFromObjectCaseSensitive\",\"cJSON_DetachItemViaPointer\",\"cJSON_Duplicate\",\"cJSON_Duplicate_rec\",\"cJSON_GetArrayItem\",\"cJSON_GetArraySize\",\"cJSON_GetErrorPtr\",\"cJSON_GetNumberValue\",\"cJSON_GetObjectItem\",\"cJSON_GetObjectItemCaseSensitive\",\"cJSON_GetStringValue\",\"cJSON_HasObjectItem\",\"cJSON_InitHooks\",\"cJSON_InsertItemInArray\",\"cJSON_IsArray\",\"cJSON_IsBool\",\"cJSON_IsFalse\",\"cJSON_IsInvalid\",\"cJSON_IsNull\",\"cJSON_IsNumber\",\"cJSON_IsObject\",\"cJSON_IsRaw\",\"cJSON_IsString\",\"cJSON_IsTrue\",\"cJSON_Minify\",\"cJSON_New_Item\",\"cJSON_Parse\",\"cJSON_ParseWithLength\",\"cJSON_ParseWithLengthOpts\",\"cJSON_ParseWithOpts\",\"cJSON_Print\",\"cJSON_PrintBuffered\",\"cJSON_PrintPreallocated\",\"cJSON_PrintUnformatted\",\"cJSON_ReplaceItemInArray\",\"cJSON_ReplaceItemInObject\",\"cJSON_ReplaceItemInObjectCaseSensitive\",\"cJSON_ReplaceItemViaPointer\",\"cJSON_SetNumberHelper\",\"cJSON_SetValuestring\",\"cJSON_Version\",\"cJSON_free\",\"cJSON_malloc\",\"cJSON_strdup\",\"case_insensitive_strcmp\",\"cast_away_const\",\"compare_double\",\"create_reference\",\"ensure\",\"get_array_item\",\"get_decimal_point\",\"get_object_item\",\"internal_free\",\"internal_malloc\",\"internal_realloc\",\"minify_string\",\"parse_array\",\"parse_hex4\",\"parse_number\",\"parse_object\",\"parse_string\",\"parse_value\",\"print\",\"print_array\",\"print_number\",\"print_object\",\"print_string\",\"print_string_ptr\",\"print_value\",\"replace_item_in_object\",\"skip_multiline_comment\",\"skip_oneline_comment\",\"skip_utf8_bom\",\"suffix_object\",\"update_offset\",\"utf16_literal_to_utf8\"]",
+    "semantic_profile": "legacy-pinned-resource-profile",
+    "source_identity": "6b08e1a928efe8cca7049921e2d2367fc5bdbd5a301f198ec659e924d41d0276"
+   },
+   "status": "Safe"
+  },
+  "before": {
+   "contract_dependencies": {
+    "declarations": [],
+    "hypothesis_dependencies": {},
+    "null_premises": [
+     "null-deref:get_array_item:2770:current_child"
+    ]
+   },
+   "diagnostics": [],
+   "function": "get_array_item",
+   "hypothesis_context": {
+    "artifact": "librdkafka/cJSON.c#get_array_item",
+    "assumptions": "776718ac103e2fdaff7ba1e332c875916a88d1ad795cb47707887f4530e0e66c",
+    "bounds": "existing gateway budgets; no new hypothesis discharge",
+    "build_identity": "53b0d3c2cc680fe08ac6a736466ba30dc2cd2168adf819aef9154cde642f151d",
+    "evidence_version": "contract-hypothesis-graph.v1:9ecc941d5f18739296cf573a2476dbb51a59fbb1",
+    "property": "resource-custody.v1",
+    "scope": "[\"add_item_to_array\",\"add_item_to_object\",\"buffer_skip_whitespace\",\"cJSON_AddArrayToObject\",\"cJSON_AddBoolToObject\",\"cJSON_AddFalseToObject\",\"cJSON_AddItemReferenceToArray\",\"cJSON_AddItemReferenceToObject\",\"cJSON_AddItemToArray\",\"cJSON_AddItemToObject\",\"cJSON_AddItemToObjectCS\",\"cJSON_AddNullToObject\",\"cJSON_AddNumberToObject\",\"cJSON_AddObjectToObject\",\"cJSON_AddRawToObject\",\"cJSON_AddStringToObject\",\"cJSON_AddTrueToObject\",\"cJSON_Compare\",\"cJSON_CreateArray\",\"cJSON_CreateArrayReference\",\"cJSON_CreateBool\",\"cJSON_CreateDoubleArray\",\"cJSON_CreateFalse\",\"cJSON_CreateFloatArray\",\"cJSON_CreateIntArray\",\"cJSON_CreateNull\",\"cJSON_CreateNumber\",\"cJSON_CreateObject\",\"cJSON_CreateObjectReference\",\"cJSON_CreateRaw\",\"cJSON_CreateString\",\"cJSON_CreateStringArray\",\"cJSON_CreateStringReference\",\"cJSON_CreateTrue\",\"cJSON_Delete\",\"cJSON_DeleteItemFromArray\",\"cJSON_DeleteItemFromObject\",\"cJSON_DeleteItemFromObjectCaseSensitive\",\"cJSON_DetachItemFromArray\",\"cJSON_DetachItemFromObject\",\"cJSON_DetachItemFromObjectCaseSensitive\",\"cJSON_DetachItemViaPointer\",\"cJSON_Duplicate\",\"cJSON_Duplicate_rec\",\"cJSON_GetArrayItem\",\"cJSON_GetArraySize\",\"cJSON_GetErrorPtr\",\"cJSON_GetNumberValue\",\"cJSON_GetObjectItem\",\"cJSON_GetObjectItemCaseSensitive\",\"cJSON_GetStringValue\",\"cJSON_HasObjectItem\",\"cJSON_InitHooks\",\"cJSON_InsertItemInArray\",\"cJSON_IsArray\",\"cJSON_IsBool\",\"cJSON_IsFalse\",\"cJSON_IsInvalid\",\"cJSON_IsNull\",\"cJSON_IsNumber\",\"cJSON_IsObject\",\"cJSON_IsRaw\",\"cJSON_IsString\",\"cJSON_IsTrue\",\"cJSON_Minify\",\"cJSON_New_Item\",\"cJSON_Parse\",\"cJSON_ParseWithLength\",\"cJSON_ParseWithLengthOpts\",\"cJSON_ParseWithOpts\",\"cJSON_Print\",\"cJSON_PrintBuffered\",\"cJSON_PrintPreallocated\",\"cJSON_PrintUnformatted\",\"cJSON_ReplaceItemInArray\",\"cJSON_ReplaceItemInObject\",\"cJSON_ReplaceItemInObjectCaseSensitive\",\"cJSON_ReplaceItemViaPointer\",\"cJSON_SetNumberHelper\",\"cJSON_SetValuestring\",\"cJSON_Version\",\"cJSON_free\",\"cJSON_malloc\",\"cJSON_strdup\",\"case_insensitive_strcmp\",\"cast_away_const\",\"compare_double\",\"create_reference\",\"ensure\",\"get_array_item\",\"get_decimal_point\",\"get_object_item\",\"internal_free\",\"internal_malloc\",\"internal_realloc\",\"minify_string\",\"parse_array\",\"parse_hex4\",\"parse_number\",\"parse_object\",\"parse_string\",\"parse_value\",\"print\",\"print_array\",\"print_number\",\"print_object\",\"print_string\",\"print_string_ptr\",\"print_value\",\"replace_item_in_object\",\"skip_multiline_comment\",\"skip_oneline_comment\",\"skip_utf8_bom\",\"suffix_object\",\"update_offset\",\"utf16_literal_to_utf8\"]",
+    "semantic_profile": "legacy-pinned-resource-profile",
+    "source_identity": "6b08e1a928efe8cca7049921e2d2367fc5bdbd5a301f198ec659e924d41d0276"
+   },
+   "status": "Safe"
+  }
+ }
+}

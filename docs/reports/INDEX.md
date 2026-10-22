@@ -27,6 +27,8 @@ Regenerate with `python3 scripts/build_docs_index.py`; validate with `--check`.
 
 | [audit-ir-admission](audit-ir-admission/README.md) | AUDIT-IR-ADMISSION: borrow certificate bodies during audit admission |
 
+| [audit-ir-clang-transport](audit-ir-clang-transport/README.md) | AUDIT-IR-CLANG-TRANSPORT |
+
 | [audit-ir-fragments](audit-ir-fragments/README.md) | AUDIT-IR-FRAGMENTS: source-rechecked CFG artifacts |
 
 | [audit-ir-lifetimes](audit-ir-lifetimes/README.md) | AUDIT-IR-LIFETIMES: release obsolete audit working sets |
@@ -405,6 +407,8 @@ Regenerate with `python3 scripts/build_docs_index.py`; validate with `--check`.
 | [deep-ast-transports-and-wall-time](deep-ast-transports-and-wall-time/README.md) | DEEP-AST-TRANSPORTS-AND-WALL-TIME: every Clang JSON transport's nesting, and `rdhttp.c`'s own time |
 
 | [detach-lookup-membership](detach-lookup-membership/README.md) | Checked array lookup identity and membership |
+
+| [detach-result-wrapper-composition](detach-result-wrapper-composition/README.md) | Checked removed-selection composition (rule 33) |
 
 | [development-docs-structure](development-docs-structure/README.md) | Development documentation structure and retrieval |
 
@@ -1578,6 +1582,8 @@ Regenerate with `python3 scripts/build_docs_index.py`; validate with `--check`.
 | [windows-test-portability](windows-test-portability/README.md) | Windows test portability and F02 pin repair |
 
 | [windows-vs2026](windows-vs2026/README.md) | Windows Visual Studio 2026 toolchain repair |
+
+| [worktree-sweep-20261022](worktree-sweep-20261022/README.md) | Obsolete worktree sweep — 2026-10-22 |
 
 | [write-lend-tasks](write-lend-tasks/README.md) | WRITE-LEND-TASKS — write lends crossing the spawn boundary (wave 31) |
 

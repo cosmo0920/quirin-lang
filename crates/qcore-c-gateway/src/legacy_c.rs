@@ -348,6 +348,10 @@ pub(crate) mod retention_guard;
 mod detach_route;
 #[path = "legacy_lookup.rs"]
 mod lookup_route;
+// Card DETACH-RESULT-WRAPPER-COMPOSITION (rule 33): checked removed-selection
+// frames, their build-stream expansion and their selection entry.
+#[path = "legacy_selection.rs"]
+pub(crate) mod selection_route;
 #[path = "legacy_slot_move_borrow.rs"]
 pub(crate) mod slot_move_route;
 // Card REFCOUNT-RESOURCE-KIND (rules 13b, 13c): reference counts (the
@@ -3508,6 +3512,17 @@ fn analyze_defined_function_unscoped(
             }
             None => analyze_cfg(cfg),
         },
+        // Card DETACH-RESULT-WRAPPER-COMPOSITION (rule 33): a validated
+        // selection frame is decided under its selection entry; a run that
+        // does not validate falls back to the contract-free analysis.
+        None if let Some(frame) = derivation.selection(function) => {
+            match function_parameters(tokens, function)
+                .and_then(|parameters| selection_route::row(cfg.clone(), &parameters, frame))
+            {
+                Some(summary) => summary,
+                None => analyze_cfg(cfg),
+            }
+        }
         // Card CALLEE-RETENTION-CLASS1 (rule 12s(2)): a function whose own
         // return-code disposition is in force is decided per class.
         None => derivation
@@ -3681,6 +3696,12 @@ fn build_function_cfg_unscoped(
     let resolved = generic_selection::resolve_in_body(tokens, function);
     census_stage("generic-selection", tokens, resolved.as_ref());
     let tokens = resolved.as_deref().unwrap_or(tokens);
+    // Card DETACH-RESULT-WRAPPER-COMPOSITION (rule 33): a checked selection
+    // frame's own body, and its decimal-constant caller statements, read as
+    // their constituent calls. The identity on every other body.
+    let expanded = selection_route::expand(tokens, function, contracts);
+    census_stage("removed-selection", tokens, expanded.as_ref());
+    let tokens = expanded.as_deref().unwrap_or(tokens);
     // Card HASH-CONTRACTS. A declared literal-argument premise restricts a
     // contract to the call sites whose named argument is the named literal;
     // every other call is rewritten to an undeclared callee, so the restriction

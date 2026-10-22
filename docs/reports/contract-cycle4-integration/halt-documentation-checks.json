@@ -1,0 +1,42 @@
+{
+  "scope": "Documentation-only human-halt checkpoint; no compiler/native implementation or validation resumed",
+  "commands": [
+    {
+      "command": [
+        "python3",
+        "scripts/build_docs_index.py",
+        "--check"
+      ],
+      "exit": 0,
+      "output": "Report index matches all report directories\n"
+    },
+    {
+      "command": [
+        "git",
+        "diff",
+        "--check"
+      ],
+      "exit": 0,
+      "output": ""
+    },
+    {
+      "command": [
+        "python3",
+        "scripts/reconciliation_sweep.py",
+        ".",
+        "--cards",
+        "logger-effect-contracts",
+        "scheduler-lifetime-contracts",
+        "guarded-contract-adoption",
+        "--check",
+        "docs/reports/contract-cycle4-integration/reconciliation.json"
+      ],
+      "exit": 0,
+      "output": "every swept item carries a recorded verdict. This says nothing about whether any item was applied - read the notes.\n0 content claims (0 present, 0 absent) verified at their named locations across 0 files; 0 of 0 'applied' verdicts carry checkable text, 0 declared unverifiable with a ground.\nA verified claim says the close's own string is at the close's own named location. Whether it is the RIGHT string stays a person's judgment.\n"
+    }
+  ],
+  "manual_claim_check_exit": 0,
+  "manual_applied_claims": 14,
+  "manual_verify_entries": 15,
+  "note": "The standard scanner recognizes zero integrator items; its zero claims are not substituted for the separately checked manual claims. Existing source552 and source024 gate/Python receipts remain frozen. Later merged-source standing acceptance is deferred, not passed."
+}

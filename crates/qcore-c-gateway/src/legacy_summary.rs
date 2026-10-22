@@ -176,6 +176,11 @@ pub(crate) struct CustodyDerivation {
     /// Card VERDICT-CONTRACT-DEPENDENCIES (rule 13g): declared dispositions
     /// this derivation withdrew because their body contradicts them (11r).
     relational_contradicted: BTreeSet<String>,
+    /// Card DETACH-RESULT-WRAPPER-COMPOSITION (rule 33): checked selection
+    /// frames whose own row validated under their selection entry. Never a
+    /// `ResourceFunctionContract`: callers read them only by expansion, so no
+    /// other route, unit or fresh-result reading sees the selected child.
+    selections: BTreeMap<String, crate::legacy_c::selection_route::Frame>,
 }
 
 impl CustodyDerivation {
@@ -197,6 +202,15 @@ impl CustodyDerivation {
 
     pub(crate) fn environment(&self) -> &ResourceContracts {
         &self.environment
+    }
+
+    /// Card DETACH-RESULT-WRAPPER-COMPOSITION (rule 33): the validated
+    /// selection frame `function`'s row is decided under, if any.
+    pub(crate) fn selection(
+        &self,
+        function: &str,
+    ) -> Option<&crate::legacy_c::selection_route::Frame> {
+        self.selections.get(function)
     }
 
     /// The recursive-component census this derivation recorded (C03-REACH).
@@ -323,6 +337,29 @@ pub(crate) fn derive_custody_summaries(
                 if contracts.retaining().contains_key(&name)
                     || contracts.has_guarded_interface(&name)
                 {
+                    continue;
+                }
+                // Card DETACH-RESULT-WRAPPER-COMPOSITION (rule 33): an
+                // undeclared checked selection frame whose own row validates
+                // under its selection entry. It installs nothing in the
+                // environment; a frame that does not validate falls through
+                // to every older route unchanged.
+                if contracts.contract(&name).is_none()
+                    && contracts.relational_contract(&name).is_none()
+                    && let Some(frame) = crate::legacy_c::selection_route::frame(
+                        tokens,
+                        &name,
+                        &derivation.environment,
+                    )
+                    && crate::legacy_c::selection_route::reserved_unspelled(tokens)
+                    && crate::legacy_c::selection_route::validates_frame(
+                        tokens,
+                        &name,
+                        &derivation.environment,
+                        &frame,
+                    )
+                {
+                    derivation.selections.insert(name, frame);
                     continue;
                 }
                 // Card CG23-RELATIONAL-POSTCONDITIONS (rule 11r): a declared
@@ -567,7 +604,8 @@ pub(crate) fn derive_custody_summaries(
         let installed = (derivation.environment.functions().contains_key(name)
             && !contracts.functions().contains_key(name))
             || (derivation.environment.relational().contains_key(name)
-                && !contracts.relational().contains_key(name));
+                && !contracts.relational().contains_key(name))
+            || derivation.selections.contains_key(name);
         if installed {
             crate::contract_dependencies::inferred(name);
         }

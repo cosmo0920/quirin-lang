@@ -1,0 +1,73 @@
+{
+  "removed": [
+    {
+      "name": "audit-ir-clang-transport",
+      "method": "Git removal after exact merged/clean/inactive checks and clean submodule deinitialization",
+      "head": "01dd844e6ca6167bdf674830e0c51ac635778b00",
+      "initial_plain_remove_exit": 128,
+      "reason": "Git requires force for worktrees containing submodules even after deinitialization",
+      "scoped_force_remove_exit": 0
+    },
+    {
+      "name": "scheduler-lifetime-contracts",
+      "method": "Codex recoverable worktree archive",
+      "head": "3ce5bc4a1ba80014e3c67e903dd0a9ca46603f97",
+      "archived_artifact_id": "01a16351-d15f-7d83-bf87-f530275d276f",
+      "archived_identity_key": "/home/cosmo/.codex/worktrees/scheduler-lifetime-contracts/qcore-c"
+    }
+  ],
+  "preserved_evidence": [
+    {
+      "worktree": "/home/cosmo/.codex/worktrees/audit-ir-clang-transport/qcore-c",
+      "head": "01dd844e6ca6167bdf674830e0c51ac635778b00",
+      "old_private_root": "/home/cosmo/.codex/worktrees/audit-ir-clang-transport/qcore-c/private",
+      "preserved_private_root": "/home/cosmo/Documents/GitHub/qcore-c/private/worktree-sweep-20261022-1/audit-ir-clang-transport/private",
+      "preservation": "same-filesystem atomic rename of complete evidence directory; directory device/inode unchanged",
+      "device": 66310,
+      "inode": 40404853,
+      "merged_into_main": true,
+      "submodule_deinit": {
+        "command": [
+          "git",
+          "submodule",
+          "deinit",
+          "--all"
+        ],
+        "exit": 0,
+        "output": "Cleared directory 'third_party/libevent'\nSubmodule 'third_party/libevent' (https://github.com/libevent/libevent.git) unregistered for path 'third_party/libevent'\n"
+      }
+    },
+    {
+      "worktree": "/home/cosmo/.codex/worktrees/scheduler-lifetime-contracts/qcore-c",
+      "head": "3ce5bc4a1ba80014e3c67e903dd0a9ca46603f97",
+      "old_private_root": "/home/cosmo/.codex/worktrees/scheduler-lifetime-contracts/qcore-c/private",
+      "preserved_private_root": "/home/cosmo/Documents/GitHub/qcore-c/private/worktree-sweep-20261022-1/scheduler-lifetime-contracts/private",
+      "preservation": "same-filesystem atomic rename of complete evidence directory; directory device/inode unchanged",
+      "device": 66310,
+      "inode": 39585115,
+      "merged_into_main": true,
+      "submodule_deinit": {
+        "command": [
+          "git",
+          "submodule",
+          "deinit",
+          "--all"
+        ],
+        "exit": 0,
+        "output": "Cleared directory 'third_party/libevent'\n"
+      }
+    }
+  ],
+  "retained": {
+    "audit-ir-facts-retention": "unmerged committed work",
+    "audit-ir-retained-products": "unmerged committed work",
+    "guarded-contract-adoption": "paused supplemental card and frozen runtime/evidence capsules",
+    "logger-effect-contracts": "required compile-time source root and evidence for paused guarded campaign",
+    "claude_worktrees": "active process/locked agent checkouts; new ones appeared during sweep and were not removed"
+  },
+  "submodule_registration_restored": true,
+  "remaining_guarded_and_logger_libevent": "d82464a277d0f42703702c4dfd9af6af38595a83",
+  "matrix_unchanged": true,
+  "native_progress_resumed": false,
+  "inventory_after": "worktree /home/cosmo/Documents/GitHub/qcore-c\nHEAD fcb3883a02781157dc0f68fa6629e3dc9c898c42\nbranch refs/heads/main\n\nworktree /home/cosmo/.codex/worktrees/audit-ir-facts-retention/qcore-c\nHEAD 15550ed058cd67c28ad8b2672f6ac14076c28b24\ndetached\n\nworktree /home/cosmo/.codex/worktrees/audit-ir-retained-products/qcore-c\nHEAD 559287e8a5487ba34a6da8f9517e1fe478480110\ndetached\n\nworktree /home/cosmo/.codex/worktrees/guarded-contract-adoption/qcore-c\nHEAD 737e28595698e3c180cbd8f21c1a17517c5cb6e2\nbranch refs/heads/codex/guarded-contract-adoption\n\nworktree /home/cosmo/.codex/worktrees/logger-effect-contracts/qcore-c\nHEAD cac6c25b2d541adeba420fc4866af9b75ec5e1bf\nbranch refs/heads/codex/contract-cycle4-integration\n\nworktree /home/cosmo/Documents/GitHub/qcore-c/.claude/worktrees/agent-a3c4ae9dd6f580cee\nHEAD e282aaccc7763da989cf6f3c8f3c51cdd3c8de3c\nbranch refs/heads/card/w48-sched-cleanup-production\nlocked claude agent agent-a3c4ae9dd6f580cee (pid 1937057 start 2383613)\n\nworktree /home/cosmo/Documents/GitHub/qcore-c/.claude/worktrees/agent-a9d84cd5d8c0b76b8\nHEAD e282aaccc7763da989cf6f3c8f3c51cdd3c8de3c\nbranch refs/heads/card/detach-result-wrapper-composition\nlocked claude agent agent-a9d84cd5d8c0b76b8 (pid 1937057 start 2383613)\n\nworktree /home/cosmo/Documents/GitHub/qcore-c/.claude/worktrees/agent-af8b2df032da9c24c\nHEAD e282aaccc7763da989cf6f3c8f3c51cdd3c8de3c\nbranch refs/heads/card/w48-rk-log-caller-frame\nlocked claude agent agent-af8b2df032da9c24c (pid 1937057 start 2383613)\n\nworktree /home/cosmo/Documents/GitHub/qcore-c/.claude/worktrees/restore-implementation-cards-53ca04\nHEAD e282aaccc7763da989cf6f3c8f3c51cdd3c8de3c\nbranch refs/heads/claude/restore-implementation-cards-53ca04\n\n"
+}

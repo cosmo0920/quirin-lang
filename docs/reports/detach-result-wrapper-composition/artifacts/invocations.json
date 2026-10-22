@@ -1,0 +1,152 @@
+{
+ "base": {
+  "analyzer_source": "e282aaccc7763da989cf6f3c8f3c51cdd3c8de3c",
+  "binary": "/home/cosmo/Documents/GitHub/qcore-c/.claude/worktrees/agent-a9d84cd5d8c0b76b8/private/detach-wrapper/base-src/target/release/quirin-audit",
+  "binary_sha256": "8f915218c61f090db17fc2723d85c0a589f9c0d71d04b9d2a92ad9ca4b072db7",
+  "binary_sha256_after": "8f915218c61f090db17fc2723d85c0a589f9c0d71d04b9d2a92ad9ca4b072db7",
+  "command": [
+   "/usr/bin/python3",
+   "/home/cosmo/Documents/GitHub/qcore-c/.claude/worktrees/agent-a9d84cd5d8c0b76b8/private/detach-wrapper/base-src/scripts/run_pinned_audit.py",
+   "/home/cosmo/Documents/GitHub/qcore-c/.claude/worktrees/agent-a9d84cd5d8c0b76b8/private/detach-wrapper/measure-base-2/corpus/corpus",
+   "66910c10",
+   "--inputs-root",
+   "/home/cosmo/Documents/GitHub/qcore-c/build/cycle19",
+   "--jobs",
+   "4"
+  ],
+  "ended": "2026-10-22T18:30:17.986917+00:00",
+  "environment": {
+   "QCORE_CLANG": "/usr/lib/llvm-21/bin/clang",
+   "QCORE_CROSS_UNIT_LINK_MAP": "/home/cosmo/Documents/GitHub/qcore-c/.claude/worktrees/agent-a9d84cd5d8c0b76b8/docs/reports/detach-result-wrapper-composition/link-map.corpus.json",
+   "QCORE_NULL_PROPERTY": "/home/cosmo/Documents/GitHub/qcore-c/.claude/worktrees/agent-a9d84cd5d8c0b76b8/private/detach-wrapper/measure-base-2/corpus/corpus-null.jsonl",
+   "QCORE_OUTER_PROJECTION": "/home/cosmo/Documents/GitHub/qcore-c/.claude/worktrees/agent-a9d84cd5d8c0b76b8/private/detach-wrapper/measure-base-2/corpus/corpus-outer.json",
+   "QCORE_PROFILES": "/home/cosmo/Documents/GitHub/qcore-c/.claude/worktrees/agent-a9d84cd5d8c0b76b8/private/detach-wrapper/base-src/contract/profiles",
+   "QCORE_RETURN_CENSUS": "unset",
+   "QCORE_SOURCE_CONTRACTS": "unset"
+  },
+  "exit": 0,
+  "head": "9ecc941d5f18739296cf573a2476dbb51a59fbb1",
+  "head_after": "9ecc941d5f18739296cf573a2476dbb51a59fbb1",
+  "inputs_snapshot": "/home/cosmo/Documents/GitHub/qcore-c/.claude/worktrees/agent-a9d84cd5d8c0b76b8/private/detach-wrapper/base-src",
+  "jobs": 4,
+  "link_map": "/home/cosmo/Documents/GitHub/qcore-c/.claude/worktrees/agent-a9d84cd5d8c0b76b8/docs/reports/detach-result-wrapper-composition/link-map.corpus.json",
+  "link_map_sha256": "98a4db761ace9fd4846b000c4c98defdc2e39ce6f95684c67c30f9b8b6f38ad3",
+  "link_map_sha256_after": "98a4db761ace9fd4846b000c4c98defdc2e39ce6f95684c67c30f9b8b6f38ad3",
+  "profile_sha256": "37309028f4fa1d50682829be2cbca880931a1a65d57b47d1fccb78a9b74965f3",
+  "profile_sha256_after": "37309028f4fa1d50682829be2cbca880931a1a65d57b47d1fccb78a9b74965f3",
+  "report_driver_sha256": "f59af8101e8722a96a6b664ec9a0dd4052ed67533543cf6c484d29ec3e2fa205",
+  "report_driver_sha256_after": "f59af8101e8722a96a6b664ec9a0dd4052ed67533543cf6c484d29ec3e2fa205",
+  "runner_sha256": "7bfb5768fd2e2a466763a051a216a242e2f10355e9544f3dc1fdd09e73781e5f",
+  "runner_sha256_after": "7bfb5768fd2e2a466763a051a216a242e2f10355e9544f3dc1fdd09e73781e5f",
+  "source_head": "66910c10a4d7eafa810b84229cf2dcf7b0f26f97",
+  "source_identity": {
+   "head": "66910c10a4d7eafa810b84229cf2dcf7b0f26f97",
+   "tracked_delta_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  },
+  "source_identity_after": {
+   "head": "66910c10a4d7eafa810b84229cf2dcf7b0f26f97",
+   "tracked_delta_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  },
+  "started": "2026-10-22T17:10:31.667033+00:00"
+ },
+ "base_failed_attempt_1": {
+  "analyzer_source": "e282aaccc7763da989cf6f3c8f3c51cdd3c8de3c",
+  "binary": "/home/cosmo/Documents/GitHub/qcore-c/.claude/worktrees/agent-a9d84cd5d8c0b76b8/private/detach-wrapper/base-src/target/release/quirin-audit",
+  "binary_sha256": "8f915218c61f090db17fc2723d85c0a589f9c0d71d04b9d2a92ad9ca4b072db7",
+  "binary_sha256_after": "8f915218c61f090db17fc2723d85c0a589f9c0d71d04b9d2a92ad9ca4b072db7",
+  "command": [
+   "/usr/bin/python3",
+   "/home/cosmo/Documents/GitHub/qcore-c/.claude/worktrees/agent-a9d84cd5d8c0b76b8/private/detach-wrapper/base-src/scripts/run_pinned_audit.py",
+   "/home/cosmo/Documents/GitHub/qcore-c/.claude/worktrees/agent-a9d84cd5d8c0b76b8/private/detach-wrapper/measure-base-1/corpus/corpus",
+   "66910c10",
+   "--inputs-root",
+   "/home/cosmo/Documents/GitHub/qcore-c/build/cycle19",
+   "--jobs",
+   "4"
+  ],
+  "ended": "2026-10-22T14:39:07.086581+00:00",
+  "environment": {
+   "QCORE_CLANG": "/usr/lib/llvm-21/bin/clang",
+   "QCORE_CROSS_UNIT_LINK_MAP": "/home/cosmo/Documents/GitHub/qcore-c/.claude/worktrees/agent-a9d84cd5d8c0b76b8/docs/reports/detach-result-wrapper-composition/link-map.corpus.json",
+   "QCORE_NULL_PROPERTY": "/home/cosmo/Documents/GitHub/qcore-c/.claude/worktrees/agent-a9d84cd5d8c0b76b8/private/detach-wrapper/measure-base-1/corpus/corpus-null.jsonl",
+   "QCORE_OUTER_PROJECTION": "/home/cosmo/Documents/GitHub/qcore-c/.claude/worktrees/agent-a9d84cd5d8c0b76b8/private/detach-wrapper/measure-base-1/corpus/corpus-outer.json",
+   "QCORE_PROFILES": "/home/cosmo/Documents/GitHub/qcore-c/.claude/worktrees/agent-a9d84cd5d8c0b76b8/private/detach-wrapper/base-src/contract/profiles",
+   "QCORE_RETURN_CENSUS": "unset",
+   "QCORE_SOURCE_CONTRACTS": "unset"
+  },
+  "exit": 1,
+  "head": "9ecc941d5f18739296cf573a2476dbb51a59fbb1",
+  "head_after": "9ecc941d5f18739296cf573a2476dbb51a59fbb1",
+  "inputs_snapshot": "/home/cosmo/Documents/GitHub/qcore-c/.claude/worktrees/agent-a9d84cd5d8c0b76b8/private/detach-wrapper/base-src",
+  "jobs": 4,
+  "link_map": "/home/cosmo/Documents/GitHub/qcore-c/.claude/worktrees/agent-a9d84cd5d8c0b76b8/docs/reports/detach-result-wrapper-composition/link-map.corpus.json",
+  "link_map_sha256": "98a4db761ace9fd4846b000c4c98defdc2e39ce6f95684c67c30f9b8b6f38ad3",
+  "link_map_sha256_after": "98a4db761ace9fd4846b000c4c98defdc2e39ce6f95684c67c30f9b8b6f38ad3",
+  "profile_sha256": "37309028f4fa1d50682829be2cbca880931a1a65d57b47d1fccb78a9b74965f3",
+  "profile_sha256_after": "37309028f4fa1d50682829be2cbca880931a1a65d57b47d1fccb78a9b74965f3",
+  "report_driver_sha256": "f59af8101e8722a96a6b664ec9a0dd4052ed67533543cf6c484d29ec3e2fa205",
+  "report_driver_sha256_after": "f59af8101e8722a96a6b664ec9a0dd4052ed67533543cf6c484d29ec3e2fa205",
+  "runner_sha256": "7bfb5768fd2e2a466763a051a216a242e2f10355e9544f3dc1fdd09e73781e5f",
+  "runner_sha256_after": "7bfb5768fd2e2a466763a051a216a242e2f10355e9544f3dc1fdd09e73781e5f",
+  "source_head": "66910c10a4d7eafa810b84229cf2dcf7b0f26f97",
+  "source_identity": {
+   "head": "66910c10a4d7eafa810b84229cf2dcf7b0f26f97",
+   "tracked_delta_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  },
+  "source_identity_after": {
+   "head": "66910c10a4d7eafa810b84229cf2dcf7b0f26f97",
+   "tracked_delta_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  },
+  "started": "2026-10-22T13:19:25.258676+00:00"
+ },
+ "tip": {
+  "analyzer_source": "9ecc941d5f18739296cf573a2476dbb51a59fbb1",
+  "binary": "/home/cosmo/Documents/GitHub/qcore-c/.claude/worktrees/agent-a9d84cd5d8c0b76b8/private/detach-wrapper/tip-src/target/release/quirin-audit",
+  "binary_sha256": "6eb216eab269278c06263bfd45503881d8a479f55383d4d22edcdd0a68f981ac",
+  "binary_sha256_after": "6eb216eab269278c06263bfd45503881d8a479f55383d4d22edcdd0a68f981ac",
+  "command": [
+   "/usr/bin/python3",
+   "/home/cosmo/Documents/GitHub/qcore-c/.claude/worktrees/agent-a9d84cd5d8c0b76b8/private/detach-wrapper/tip-src/scripts/run_pinned_audit.py",
+   "/home/cosmo/Documents/GitHub/qcore-c/.claude/worktrees/agent-a9d84cd5d8c0b76b8/private/detach-wrapper/measure-tip-1/corpus/corpus",
+   "66910c10",
+   "--inputs-root",
+   "/home/cosmo/Documents/GitHub/qcore-c/build/cycle19",
+   "--jobs",
+   "4"
+  ],
+  "ended": "2026-10-22T16:02:55.418934+00:00",
+  "environment": {
+   "QCORE_CLANG": "/usr/lib/llvm-21/bin/clang",
+   "QCORE_CROSS_UNIT_LINK_MAP": "/home/cosmo/Documents/GitHub/qcore-c/.claude/worktrees/agent-a9d84cd5d8c0b76b8/docs/reports/detach-result-wrapper-composition/link-map.corpus.json",
+   "QCORE_NULL_PROPERTY": "/home/cosmo/Documents/GitHub/qcore-c/.claude/worktrees/agent-a9d84cd5d8c0b76b8/private/detach-wrapper/measure-tip-1/corpus/corpus-null.jsonl",
+   "QCORE_OUTER_PROJECTION": "/home/cosmo/Documents/GitHub/qcore-c/.claude/worktrees/agent-a9d84cd5d8c0b76b8/private/detach-wrapper/measure-tip-1/corpus/corpus-outer.json",
+   "QCORE_PROFILES": "/home/cosmo/Documents/GitHub/qcore-c/.claude/worktrees/agent-a9d84cd5d8c0b76b8/private/detach-wrapper/tip-src/contract/profiles",
+   "QCORE_RETURN_CENSUS": "unset",
+   "QCORE_SOURCE_CONTRACTS": "unset"
+  },
+  "exit": 0,
+  "head": "9ecc941d5f18739296cf573a2476dbb51a59fbb1",
+  "head_after": "9ecc941d5f18739296cf573a2476dbb51a59fbb1",
+  "inputs_snapshot": "/home/cosmo/Documents/GitHub/qcore-c/.claude/worktrees/agent-a9d84cd5d8c0b76b8/private/detach-wrapper/tip-src",
+  "jobs": 4,
+  "link_map": "/home/cosmo/Documents/GitHub/qcore-c/.claude/worktrees/agent-a9d84cd5d8c0b76b8/docs/reports/detach-result-wrapper-composition/link-map.corpus.json",
+  "link_map_sha256": "98a4db761ace9fd4846b000c4c98defdc2e39ce6f95684c67c30f9b8b6f38ad3",
+  "link_map_sha256_after": "98a4db761ace9fd4846b000c4c98defdc2e39ce6f95684c67c30f9b8b6f38ad3",
+  "profile_sha256": "37309028f4fa1d50682829be2cbca880931a1a65d57b47d1fccb78a9b74965f3",
+  "profile_sha256_after": "37309028f4fa1d50682829be2cbca880931a1a65d57b47d1fccb78a9b74965f3",
+  "report_driver_sha256": "f59af8101e8722a96a6b664ec9a0dd4052ed67533543cf6c484d29ec3e2fa205",
+  "report_driver_sha256_after": "f59af8101e8722a96a6b664ec9a0dd4052ed67533543cf6c484d29ec3e2fa205",
+  "runner_sha256": "7bfb5768fd2e2a466763a051a216a242e2f10355e9544f3dc1fdd09e73781e5f",
+  "runner_sha256_after": "7bfb5768fd2e2a466763a051a216a242e2f10355e9544f3dc1fdd09e73781e5f",
+  "source_head": "66910c10a4d7eafa810b84229cf2dcf7b0f26f97",
+  "source_identity": {
+   "head": "66910c10a4d7eafa810b84229cf2dcf7b0f26f97",
+   "tracked_delta_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  },
+  "source_identity_after": {
+   "head": "66910c10a4d7eafa810b84229cf2dcf7b0f26f97",
+   "tracked_delta_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  },
+  "started": "2026-10-22T14:41:11.483767+00:00"
+ }
+}
