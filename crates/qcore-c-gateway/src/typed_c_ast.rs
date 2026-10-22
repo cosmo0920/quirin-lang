@@ -230,6 +230,7 @@ fn launch_ast_read<T>(
             .join()
             .map_err(|_| "Clang stderr reader panicked".to_owned());
         written?.map_err(|error| format!("Clang input failed: {error}"))?;
+        let input = captured?.map_err(|error| format!("Clang AST failed: {error}"))?;
         let status = status.map_err(|error| format!("Clang AST failed: {error}"))?;
         let stderr = errors?.map_err(|error| format!("Clang AST failed: {error}"))?;
         if !status.success() {
@@ -238,7 +239,7 @@ fn launch_ast_read<T>(
                 String::from_utf8_lossy(&stderr).trim()
             ));
         }
-        captured?.map_err(|error| format!("Clang AST failed: {error}"))
+        Ok(input)
     })?;
     parse(&mut input).map_err(|error| format!("unsupported Clang AST JSON: {error}"))
 }
