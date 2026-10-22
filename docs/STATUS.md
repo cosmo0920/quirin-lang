@@ -17,6 +17,13 @@ gate, leaving only 14,422,016 bytes below the effective ceiling. The 6 GB target
 comfortable CI margin, cold/warm repeats and other selections remain open;
 the prior four-job 7 GB OOM remains a failed result.
 
+[Retained phase products](reports/audit-ir-retained-products/README.md) now use
+checked run-local `.qc` storage for complete report rows and member evidence.
+Independent replay CFGs release after equality; final current-route member inputs
+release after their folds. Five focused integrity/full-record controls pass;
+the complete gate and fresh production observation are pending. Final report rows
+remain resident and no new memory acceptance or coverage is claimed here.
+
 [Borrowed audit-certificate admission](reports/audit-ir-admission/README.md)
 removes the temporary full-certificate copy while retaining independent source
 replay and exact context/CFG checks. Current and pinned units now release optional

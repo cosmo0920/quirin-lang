@@ -22,3 +22,63 @@ controls and the complete standing gate are required. Heavy gates and production
 measurements use `/tmp/quirin-audit-ir-next-heavy.lock`. All new private outputs and
 builds belong to this worktree. No semantic, coverage or 6 GB acceptance claim is
 made by this prediction; the parent card remains open.
+
+## Implemented ownership boundaries
+
+| Owner | Last use and retained representation |
+|---|---|
+| Independent certificate reconstruction | Full summaries, including every CFG, are still compared with the presented certificate. The private reconstructed record is dropped immediately after exact equality; remaining checks read the presented certificate. |
+| Public `LegacyFunctionSummary` / certificate | Complete CFGs remain present. No empty-CFG substitute or public full-record API change. |
+| Current and configured JSON phase outcomes | Complete unit rows, bounds rows/evidence, null rows/evidence and callback/state facts are parked in one transactional `.qc` object per report fragment. Small refutation sets are derived from the original rows before parking; the same union chooses the second phase. Console strings, counts, source/compile identity and required prepared source leases remain owned. |
+| Repeated and cross-unit phases | Discarding a phase drops its spool owners. A potentially promoted cross-unit phase and its fallback can coexist as spooled products. Accepted products restore in original task order; a restore failure aborts rather than publishing incomplete evidence. |
+| Final current-route fold | Complete rows and member facts restore for existing run-wide callback/lifetime folds. Once both finish, the consuming owner releases callback facts and its pre-pass lease. Public repeated-fold and checkpoint APIs retain their full records. |
+| Final report/sidecar readers | All final rows, diagnostic counts, sidecars and assumptions remain resident until publication. This slice does not make the final fold itself streaming or claim a bounded whole-job peak. |
+
+The version-1 run-local JSON envelope is written to `pending.qc`, synced, then
+renamed to `product.qc` in an exclusively created process/sequence directory under
+`private/audit-retained-products/` in the invocation's working directory. Readers
+use caller-held length and SHA-256, check actual length, read at most expected
+length plus one byte, verify exact contents, then decode. The maximum serialized
+object is 1 GiB; exceeding it or any I/O/decode/integrity failure is an explicit
+command failure, never omitted rows or optimistic admission. Serialization and
+restoration temporarily hold one encoded product; this is not constant-space
+encoding. Serde's recursion limit stays enabled. Objects have no cross-run reuse
+or independent evidence authority. Opt-in source IR capture remains separate.
+
+RAII removes owned product directories on normal consumption, discarded phases,
+errors and Rust unwinding. It never scans or deletes another run's directory.
+An externally killed process can leave disposable stale directories; a later run
+skips their names rather than trusting or overwriting them. Cleanup during Drop
+is best-effort, so disk/filesystem cleanup failure is not a claim of removal.
+
+No inference rule, summary-validation gate, source identity, refusal precedence,
+checker plugin, public checkpoint encoding or Lean semantic definition changes.
+Existing audited models remain the semantic correspondence; serialization
+controls are observations, not a new Rust-to-Lean refinement proof.
+
+## Verification in progress
+
+The five focused controls pass (exit 0): exact ordered payload round trips;
+complete report bytes and every sidecar/fact vector; incomplete, corrupt, missing,
+same-length substituted and trailing data refusals; unwinding cleanup with a
+separate surviving owner. Logs are worktree-private under
+`private/audit-ir-retained-products/focused-retained.{log,exit}`. The earlier
+three-control run also passed before envelope versioning. Its intentional
+caught-panic message is the unwind test, not a failed test.
+
+The full standing gate and unchanged 157-configuration production measurement
+are queued under `/tmp/quirin-audit-ir-next-heavy.lock`. No outcome is claimed
+before their receipts exist. The frozen successful baseline is borrowed with
+explicit source mapping: its 1,498 Rust blobs match `52d2a3c8626eccb69ad2897ff70199934c8c2775`,
+and that commit has no Rust/Cargo difference from this card's base. The executable
+at its old `/tmp/qcore-audit-ir-next-target/release/quirin-audit` path no longer
+exists. Fresh focused parity therefore builds the exact base in this worktree's
+private source clone, with a separate target directory; it does not claim to
+rerun the missing historical executable.
+
+One additional private projection-result compaction is pending user approval.
+Automatic approval review twice rejected that edit as affecting verdict-producing
+code without recognized authorization. It has not been applied; its review-only
+diff is `/tmp/audit-ir-retained-products-proposed.patch`. The original projection
+result retains its CFGs through its existing final tally/console use. This is
+separate from the accepted exact-replay and final-fold ownership releases above.
