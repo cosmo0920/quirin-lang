@@ -1609,6 +1609,11 @@ const EXPECTED_CONTRACTS: &[(&str, &str, usize)] = &[
     // wrapper (marker, three borrowed, an owned nullable result).
     ("librdkafka/kafka_mem.qv", "rd_bytes_hash", 4),
     ("librdkafka/kafka_mem.qv", "rd_kafka_mem_calloc", 5),
+    // Card W48-RK-LOG-CALLER-FRAME (rule 32): the logger read from its callers'
+    // frame: marker, three premises, every formal borrowed, `none`; `rd_kafka_log0`
+    // also its borrowed variadic tail.
+    ("librdkafka/log_caller_frame.qv", "rd_kafka_log_buf", 11),
+    ("librdkafka/log_caller_frame.qv", "rd_kafka_log0", 13),
     // Card OP-APP-RK-CALLBACKS-VIA-POLL-CB: Fluent Bit's registered rk_conf callbacks.
     ("librdkafka/logging.qv", "cb_kafka_msg", 22),
     ("librdkafka/logging.qv", "cb_kafka_logger", 23),
@@ -2433,7 +2438,8 @@ fn every_qcore_contract_source_parses_round_trips_and_compiles() {
     // every resource and bounds view).
     // 135 -> 136 by RK-PLUGIN-LIBRARY-OUTER-ENVELOPE's librdkafka/outer.qv.
     // Callback placement adds librdkafka/logging.qv; declarations and clauses are unchanged.
-    assert_eq!(sources.len(), 137, "unexpected contract corpus size");
+    // 137 -> 138 by card W48-RK-LOG-CALLER-FRAME's librdkafka/log_caller_frame.qv.
+    assert_eq!(sources.len(), 138, "unexpected contract corpus size");
 
     for (logical, path) in &sources {
         let written = fs::read_to_string(path).expect("contract source is readable");

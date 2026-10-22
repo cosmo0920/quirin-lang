@@ -1,0 +1,17 @@
+import QCore.RkLogCallerFrame
+#print axioms QCore.RkLogCallerFrame.mem_dedup
+#print axioms QCore.RkLogCallerFrame.premised_covers_every_caller_event
+#print axioms QCore.RkLogCallerFrame.proved_path_needs_no_premise
+#print axioms QCore.RkLogCallerFrame.a_reply_path_is_infeasible
+#print axioms QCore.RkLogCallerFrame.model_paths_derive
+#print axioms QCore.RkLogCallerFrame.the_consumer_path_leaves_the_frame_after_the_local_enqueue
+#print axioms QCore.RkLogCallerFrame.each_premise_is_needed
+#print axioms QCore.RkLogCallerFrame.run_append
+#print axioms QCore.RkLogCallerFrame.enq_restores_and_destroys_nothing
+#print axioms QCore.RkLogCallerFrame.enq_links_only_the_fresh_op
+#print axioms QCore.RkLogCallerFrame.a_tracked_object_is_untouched
+#print axioms QCore.RkLogCallerFrame.the_disabled_reply_frees_only_the_fresh_objects
+#print axioms QCore.RkLogCallerFrame.caller_frame_admission
+#print axioms QCore.RkLogCallerFrame.an_interleaved_release_makes_the_forward_drop_last
+#print axioms QCore.RkLogCallerFrame.without_the_interleaving_nothing_is_destroyed
+#print axioms QCore.RkLogCallerFrame.an_event_callback_can_release_a_tracked_object
