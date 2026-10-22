@@ -163,6 +163,30 @@ mod tests {
     use super::*;
 
     #[test]
+    fn reader_keeps_scalar_duplicate_key_and_invalid_text_behavior() {
+        let texts: &[&[u8]] = &[
+            br#"{"inner":[],"inner":null,"n":1.25e-3,"s":"[\\\"{"}"#,
+            br#"[null,true,false,1,-1,18446744073709551616]"#,
+            br#"{"x":"\uD800"}"#,
+            b"[1,]",
+            b"{",
+            b"null false",
+            b"\"\xff\"",
+            b"1e9999",
+        ];
+        for bytes in texts {
+            let before = crate::deep_unit_ast::from_slice::<serde_json::Value>(bytes);
+            let after =
+                crate::deep_unit_ast::from_reader::<serde_json::Value>(&mut Cursor::new(bytes));
+            match (before, after) {
+                (Ok(before), Ok(after)) => assert_eq!(before, after),
+                (Err(before), Err(after)) => assert_eq!(before.to_string(), after.to_string()),
+                result => panic!("reader differs on {bytes:?}: {result:?}"),
+            }
+        }
+    }
+
+    #[test]
     fn large_spool_round_trip_and_cleanup() {
         let bytes: Vec<_> = (0..3 * MEMORY_LIMIT + 17)
             .map(|i| (i % 251) as u8)
