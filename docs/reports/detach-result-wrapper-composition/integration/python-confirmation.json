@@ -1,0 +1,10 @@
+{
+  "command": "python3 -m unittest discover -s scripts/tests",
+  "exit": 0,
+  "tests": 374,
+  "failures": 0,
+  "source_commit": "e139570875be5bdd58672bd0f1ebdcc9d8c23404",
+  "matrix_sha256": "a6280caf834b6611e79b81d16de3ef7dcfa97e1b65f333ba1bf45393ed52cf81",
+  "log": "private/detach-integration/python.log (worktree restore-implementation-cards-53ca04)",
+  "log_sha256": "e9cd655a279a0aa89cee8a75d19db845b726439e1d0baec0763a1def3e887f37"
+}

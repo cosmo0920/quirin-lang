@@ -1,0 +1,59 @@
+#!/usr/bin/env python3
+"""Retain failed corpus; exact-custody reuse of successful routes and pinned retry."""
+import datetime,fcntl,hashlib,json,shutil,subprocess,sys,traceback
+from pathlib import Path
+ROOT=Path(__file__).resolve().parents[2];REPORT=ROOT/'docs/reports/guarded-contract-adoption/scripts';P=ROOT/'private/guarded-contract-adoption'
+OUT=P/'native-controller-2';OUT.mkdir(exist_ok=False);BASE=P/'native-base-complete-1';BASE.mkdir(exist_ok=False)
+B=P/'native-base-build-1';T=P/'native-tip-preparation-1';ORIGINAL=P/'native-base-1';EXPECTED='d82464a277d0f42703702c4dfd9af6af38595a83';head='f91d17358479619fb0443b787009595beb5608e1'
+sha=lambda p:hashlib.sha256(p.read_bytes()).hexdigest();read=lambda p:json.loads(p.read_bytes());records=[]
+self_sha=sha(Path(__file__));builds={'base':read(B/'binary-receipt.json'),'tip':read(T/'binary-receipt.json')};pins={}
+def tree(root):return {str(p.relative_to(root)):sha(p) for p in sorted(root.rglob('*')) if p.is_file()}
+def rootguard():
+ assert subprocess.check_output(['git','rev-parse','HEAD'],cwd=ROOT,text=True).strip()==head
+ assert not subprocess.check_output(['git','status','--porcelain'],cwd=ROOT,text=True)
+ assert sha(Path(__file__))==self_sha
+ for side,receipt in builds.items():
+  assert sha(Path(receipt['binary']))==receipt['sha256']
+  frozen=read((B if side=='base' else T)/'freeze/receipt.json');assert frozen['binary_sha256']==receipt['sha256']
+  for name,digest in frozen['inputs'].items():assert sha((B if side=='base' else T)/'freeze/inputs'/name)==digest,name
+ for side,record in pins.items():
+  root=Path(record['checkout']);assert subprocess.check_output(['git','-C',str(root),'rev-parse','HEAD'],text=True).strip()==EXPECTED
+  assert not subprocess.check_output(['git','-C',str(root),'status','--porcelain'],text=True)
+  assert {name:sha(root/name) for name in record['tracked_files']}==record['tracked_files']
+def execute(name,command):
+ rootguard();start=datetime.datetime.now(datetime.timezone.utc).isoformat();print('START',name,start,flush=True)
+ with (OUT/(name+'.stdout.log')).open('wb') as o,(OUT/(name+'.stderr.log')).open('wb') as e:r=subprocess.run(list(map(str,command)),cwd=ROOT,stdout=o,stderr=e)
+ records.append({'name':name,'command':list(map(str,command)),'cwd':str(ROOT),'started':start,'ended':datetime.datetime.now(datetime.timezone.utc).isoformat(),'exit':r.returncode});(OUT/'commands.json').write_text(json.dumps(records,indent=2)+'\n');rootguard();print('END',name,r.returncode,flush=True);assert r.returncode==0,name
+try:
+ with open('/tmp/qcore-c-card-validation-20261022.lock','a') as lock:
+  print('WAITING FOR RECOVERY PREFLIGHT/CORPUS LOCK',flush=True);fcntl.flock(lock,fcntl.LOCK_EX);rootguard()
+  for side,receipt in builds.items():
+   root=Path(receipt['build']['cwd'])/'third_party/libevent';assert subprocess.check_output(['git','-C',str(root),'rev-parse','HEAD'],text=True).strip()==EXPECTED
+   assert not subprocess.check_output(['git','-C',str(root),'status','--porcelain'],text=True)
+   names=[n for n in subprocess.check_output(['git','-C',str(root),'ls-files','-z']).decode().split('\0') if n];pins[side]={'checkout':str(root),'gitlink':EXPECTED,'tracked_files':{n:sha(root/n) for n in names}}
+  assert pins['base']['tracked_files']==pins['tip']['tracked_files'] and len(pins['base']['tracked_files'])==266
+  gate=read(OUT.parent/'native-controller-1/gate-acceptance.json');assert gate['source']=='552773f0c64e2e6a3c7d4b752c61a7d26130975a' and gate['all_22_commands_zero']
+  original=read(ORIGINAL/'commands.json');assert [x['exit'] for x in original]==[0,0,1]
+  copied=[];commands=[]
+  for route in ['system','slice']:
+   src=ORIGINAL/route;inv=read(src/'invocation.json');assert inv['exit']==0 and 'identity_error' not in inv and inv['head']==inv['head_after']==head
+   assert inv['analyzer_source']==builds['base']['source'] and inv['binary_sha256']==inv['binary_sha256_after']==builds['base']['sha256']
+   assert sha(REPORT/'measure.py')==inv['report_driver_sha256']==inv['report_driver_sha256_after']
+   assert inv['inputs_before']==inv['inputs_after'];assert inv['source_identity']==inv['source_identity_after']
+   source=Path(inv['source_root']);assert subprocess.check_output(['git','-C',str(source),'rev-parse','HEAD'],text=True).strip()==inv['source_head']
+   delta=subprocess.check_output(['git','-C',str(source),'diff','--no-ext-diff','--binary','HEAD']);assert hashlib.sha256(delta).hexdigest()==inv['source_identity']['tracked_delta_sha256']
+   for field in ['compile_database','selection','link_map']:
+    assert sha(Path(inv[field]))==inv[field+'_sha256']==inv[field+'_sha256_after']
+   snapshot=Path(inv['inputs_snapshot']);assert sha(snapshot/'scripts/run_pinned_audit.py')==inv['runner_sha256']==inv['runner_sha256_after'];assert sha(snapshot/'contract/profiles/fluent-bit/profile.json')==inv['profile_sha256']==inv['profile_sha256_after']
+   shutil.copytree(src,BASE/route);assert tree(src)==tree(BASE/route)
+   copied.append({'route':route,'original':str(src),'copy':str(BASE/route),'complete_file_sha256':tree(src),'source_and_producers_currently_exact':True,'source_binding_note':'Only failed pinned route consumes the newly materialized compile-time Libevent source (pinned_route::audit_monkey_libevent_contract); these current-route records are retained unchanged.'})
+   row=next(x for x in original if x['route']==route);commands.append(dict(row,reused_unchanged_from=str(src)))
+  (OUT/'libevent-runtime-bindings-before.json').write_text(json.dumps(pins,indent=2)+'\n');(OUT/'exact-copy-custody.json').write_text(json.dumps(copied,indent=2)+'\n');rootguard()
+  command=[sys.executable,REPORT/'measure.py','corpus',BASE/'corpus','--link-map',ROOT/'docs/reports/w48-bottom-up-batch4/link-map.corpus.json','--inputs-snapshot',B/'freeze/inputs','--binary-source',builds['base']['source'],'--jobs','4']
+  execute('base-corpus-retry',command);row=records[-1];commands.append(dict(row,route='corpus'));(BASE/'commands.json').write_text(json.dumps(commands,indent=2)+'\n')
+  (BASE/'completion.json').write_text(json.dumps({'exit':0,'side':'base','analyzer_source':builds['base']['source'],'reporting_head':head,'commands_sha256':sha(BASE/'commands.json'),'build_receipt':str(B/'binary-receipt.json'),'build_receipt_sha256':sha(B/'binary-receipt.json'),'freeze_receipt_sha256':sha(B/'freeze/receipt.json'),'exact_configured_copy_custody':str(OUT/'exact-copy-custody.json'),'failed_original_corpus_retained':str(ORIGINAL/'corpus'),'runtime_libevent_binding':str(OUT/'libevent-runtime-bindings-before.json')},indent=2)+'\n')
+ execute('tip',[sys.executable,REPORT/'run_side.py','tip','--freeze',T/'freeze','--build-receipt',T/'binary-receipt.json','--run','native-tip-1'])
+ execute('compare',[sys.executable,REPORT/'compare_all.py','--base',BASE,'--tip',P/'native-tip-1','--base-build',B/'binary-receipt.json','--tip-preparation',T,'--run','native-comparison-1'])
+ rootguard();(OUT/'libevent-runtime-bindings-after.json').write_text(json.dumps(pins,indent=2)+'\n');(OUT/'completion.json').write_text(json.dumps({'exit':0,'head':head,'commands_sha256':sha(OUT/'commands.json'),'source':'552773f0c64e2e6a3c7d4b752c61a7d26130975a','private_producer_sha256':self_sha,'failed_attempt_retained':str(P/'native-controller-1')},indent=2)+'\n')
+except BaseException:
+ (OUT/'failure.txt').write_text(traceback.format_exc());print('RECOVERY STOPPED WITH RETAINED FAILURE',flush=True);raise

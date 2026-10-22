@@ -1,6 +1,6 @@
 {
   "wave": 48,
-  "scope": "three-card integration, not wave close",
+  "scope": "Three-card checkpoint plus explicit guarded-adoption human halt; not wave close or completed merged-source acceptance",
   "cards": [
     "logger-effect-contracts",
     "scheduler-lifetime-contracts",
@@ -133,10 +133,31 @@
     "maintenance": {
       "verdict": "deferred",
       "note": "Compaction10 and stability review6 remain explicitly deferred to wave close; this is a three-card integration, not a wave close."
+    },
+    "guarded-native-halt": {
+      "verdict": "deferred",
+      "note": "Explicit human halt: TIP corpus intentionally interrupted, comparisons not started and native acceptance incomplete. Supplemental card remains deferred/not launched; no source/world truth is discharged."
+    },
+    "guarded-supplemental-card": {
+      "verdict": "applied",
+      "verify": [
+        {
+          "file": "docs/reports/guarded-contract-adoption/SUPPLEMENTAL_CARD.md",
+          "contains": "Status: **deferred; not launched**."
+        },
+        {
+          "file": "docs/plans/fluent-bit-system-coverage/README.md",
+          "contains": "GUARDED-CONTRACT-ADOPTION-SUPPLEMENT"
+        }
+      ]
+    },
+    "later-main-validation": {
+      "verdict": "deferred",
+      "note": "Local main mergee282 includes separate Clang transport source. Fresh combined standing/provider validation and any current-main native claim are not established by source552 receipts. No remote push or new compiler/native validation after the human halt."
     }
   },
   "manual_claim_check_exit": 0,
-  "manual_claim_check": "reconciliation_sweep._check_claims(root, manual_items, True); standard --check does not inspect this separate field.",
+  "manual_claim_check": "Actual reconciliation_sweep._check_claims(root, manual_items, True) checks halt-era claims; standard --check does not inspect this separate field.",
   "deferred_decisions": {
     "CT10-REASON-ROW": {
       "verdict": "deferred",
@@ -184,5 +205,7 @@
     }
   },
   "residual_candidates": 201,
-  "residual_decision": "Five scheduler residual family names are explicitly retained under existing W48-BOTTOM-UP-RESIDUAL-PLAN. Completed card labels in report and increment headings are not newly discharged universals. Existing residual-shaped scanner candidates remain inherited; scanner output is not an authoritative tracking classification. All810 follow-ups remain registered, with only two same-ID append amendments and no retirement."
+  "residual_decision": "Five scheduler residual family names are explicitly retained under existing W48-BOTTOM-UP-RESIDUAL-PLAN. Completed card labels in report and increment headings are not newly discharged universals. Existing residual-shaped scanner candidates remain inherited; scanner output is not an authoritative tracking classification. All810 follow-ups remain registered, with only two same-ID append amendments and no retirement.",
+  "manual_applied_claims": 14,
+  "manual_verify_entries": 15
 }

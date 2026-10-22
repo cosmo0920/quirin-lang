@@ -1,0 +1,40 @@
+{
+  "status": "guarded adoption halted by explicit human instruction",
+  "observed_report_merge_head": "f3e9de506fbe108383be73c21eb22482c766fe3e",
+  "source_main_merge": "e282aaccc7763da989cf6f3c8f3c51cdd3c8de3c",
+  "parents": {
+    "main": "01dd844e6ca6167bdf674830e0c51ac635778b00",
+    "contract_integration": "cac6c25b2d541adeba420fc4866af9b75ec5e1bf"
+  },
+  "resolved_conflicts": [
+    "docs/STATUS.md",
+    "docs/development/increments/wave-48-part11.md"
+  ],
+  "preserved_source_domains": {
+    "main_paths": 7,
+    "contract_paths": 30,
+    "disjoint": true,
+    "staged_source_blobs_equal_respective_parents": true
+  },
+  "guarded_report_checkpoint": "737e28595698e3c180cbd8f21c1a17517c5cb6e2",
+  "native_checkpoint": "docs/reports/guarded-contract-adoption/native-checkpoint.json",
+  "supplemental_card": {
+    "id": "GUARDED-CONTRACT-ADOPTION-SUPPLEMENT",
+    "path": "docs/reports/guarded-contract-adoption/SUPPLEMENTAL_CARD.md",
+    "status": "deferred; not launched; explicit human resume required",
+    "existing_tracker": "PREMISE-FLOW-PRODUCTION-DISCHARGE; original source residuals stay Open"
+  },
+  "processes_stopped": true,
+  "controller_exit": 143,
+  "measured_successful_route_outputs": 5,
+  "required_route_outputs": 6,
+  "comparison_status": "not_started",
+  "unexplained_movement_count": null,
+  "matrix_sha256_unchanged": "da372e789643fb555f8c4e1acb2198608eb5a7919e79d87b8e55a7c594013486",
+  "followups_registered": 810,
+  "retired_followups": [],
+  "private_evidence_root": "/home/cosmo/.codex/worktrees/guarded-contract-adoption/qcore-c/private/guarded-contract-adoption",
+  "interruption_receipt": "/home/cosmo/.codex/worktrees/guarded-contract-adoption/qcore-c/private/guarded-contract-adoption/halt-1/interruption.json",
+  "next_gate": "Fresh combined standing/provider gate on later merged source; final matrix/Python after any regeneration. Deferred with supplemental acceptance; no compiler/native launch now.",
+  "publication": "local main only; not pushed; no merged-source acceptance claimed"
+}

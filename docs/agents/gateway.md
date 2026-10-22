@@ -8569,6 +8569,74 @@ safety claim and no validation of the detach representation premise.
     `QCore.OuterListCandidates`; `outer_candidates`' Rust tests;
     [report](../reports/rk-plugin-interceptor-candidates/README.md).
 
+<a id="constraint-33"></a>
+
+33. **A checked removed-selection frame transports its selected child as a
+    caller prerequisite: it is never fresh custody, and its membership is
+    never read off borrowed provenance or the representation premise.** Card
+    DETACH-RESULT-WRAPPER-COMPOSITION (`legacy_selection.rs`, pure decisions
+    `removed_selection.rs`). A *selection detach* `F` is a function whose
+    complete body, after renaming and the detach/lookup readers' NULL
+    normalization, is exactly `if (W < 0) { return NULL; } return D(P, L(P,
+    (size_t)W));` for a `R *P` naming the lookup's canonical record (a direct
+    defining-typedef alias or `struct` tag), an `int W`, an unsigned
+    `size_t`, an `L` that passes rule 13a's complete indexed lookup frame with
+    its borrowed-from summary in force, and a `D` in force with exactly the
+    same-item `Removed` shape, heap kinds, no container, lifetime, retaining
+    or guarded clause and the exact named `detach_list_representation`
+    premise. A *selection release* `G` is exactly `void G(R *P, int W) {
+    X(F(P, W)); }` for such an `F` and an `X` in force with exactly one
+    nullable heap `Released` formal and no result. An external-linkage
+    `inline` definition is no frame (C11 6.7.4p7); every other frame
+    definition is the body this unit's calls run, as for a selected summary.
+    The selected child is `sel(P, W) = (W < 0) ? NULL : L(P, (size_t)W)`.
+
+    Each frame's own row is analysed by the ordinary analyzer over its
+    expanded body (the build-stream rewrite beside the other body rewrites;
+    the reserved `__qcore_selection_*` places must be unspelled) under a
+    *selection entry*: `P` one live, settled, non-NULL owned site and `W`
+    borrowed. At the frame's one lookup call, reached from entry through
+    branches and reserved initializations only, the selected child appears as
+    one nullable child uniquely contained by `P` (`materialize`: frame node,
+    live owner identity, pristine path, fresh child, surviving borrowed
+    result). It is recorded as a contained identity, not a borrow. The
+    existing same-item adapter then decides the detach unchanged. The row
+    validates only when the run is diagnostic-free and `Safe`, selects on
+    some path and accepts every exit (`accept_exit`): `P` live, no caller
+    containment, out slot, pending replacement or derived-base effect, and
+    for `F` either never selected and returning nothing (the `W < 0` arm the
+    exact frame isolates) or returning exactly the escaped detached child;
+    for `G` returning nothing with the child absent or released. A row that
+    does not validate falls back to the contract-free analysis. Nothing is
+    published as a `ResourceFunctionContract` or summary record, so no other
+    route, unit or ordinary W4/fresh-result reading sees the selected child.
+
+    A caller transports the summary only by expansion: a statement `d =
+    F(q, K);`, `R *d = F(q, K);`, `struct T *d = F(q, K);`, `F(q, K);` or
+    `G(q, K);`, starting after `;`, `{` or `}`, with a plain parent name and
+    a decimal constant `K` in 0–255, becomes the frame's own constituent
+    calls with the guard decided (`K >= 0`) and `(size_t)K == K`. Rule 13a's
+    lookup identity, explicit physical prefix and record binding, the
+    same-item membership, NULL and alias checks and `D`'s declaration with
+    its named premise then apply unchanged at the caller. Every other use of
+    `F` or `G` (a formal or nonliteral index, a nested, returned, cast or
+    conditional call, an unknown or wrong parent) keeps the uncontracted-call
+    refusal. **Do not** derive the selected child's membership from the
+    representation premise, borrowed-from provenance or a lookup summary;
+    publish a frame as an ordinary contract; admit a frame whose detach,
+    lookup or release is not exactly the checked shape; or expand any other
+    call shape. String-keyed object lookup has no checked membership frame
+    and stays refused. Every promoted row remains conditional on `D`'s
+    `DeclaredAssumption` premise and `L`'s null premise.
+    `QCore.RemovedSelection` (`selected_is_a_member`,
+    `nonnegative_constant_is_the_lookup`, `the_result_is_the_selection`,
+    `detach_inventory_is_preserved`, `delete_releases_exactly_the_selection`,
+    `materialization_needs_every_fact`,
+    `accepted_detach_exit_returns_the_selection_or_nothing`,
+    `accepted_release_exit_keeps_no_selection` and the three shared vector
+    tables); `crates/qcore-c-gateway/tests/detach_wrapper_composition.rs`;
+    [report](../reports/detach-result-wrapper-composition/README.md).
+
 <a id="constraint-34"></a>
 
 34. **An element destroyer unlinks, then releases; nothing else about the

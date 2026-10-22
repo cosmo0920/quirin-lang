@@ -1,0 +1,491 @@
+{
+  "schema_version": 1,
+  "acceptance_status": "intentionally_interrupted",
+  "card": "GUARDED-CONTRACT-ADOPTION",
+  "supplemental_card": {
+    "id": "GUARDED-CONTRACT-ADOPTION-SUPPLEMENT",
+    "path": "docs/reports/guarded-contract-adoption/SUPPLEMENTAL_CARD.md",
+    "status": "deferred; not launched; explicit human resume required"
+  },
+  "base_source": "31c5ed500d9d4a1448a623b839e1644adb19efd1",
+  "tip_source": "552773f0c64e2e6a3c7d4b752c61a7d26130975a",
+  "reporting_source": "f91d17358479619fb0443b787009595beb5608e1",
+  "later_merged_main_not_covered": "e282aaccc7763da989cf6f3c8f3c51cdd3c8de3c",
+  "metadata_plan_sha256": "f19cb3d1f20df83b5eb1396d1baf9dadeb9d6ca7dd3570edba10e42eb817219e",
+  "scope": {
+    "routes": [
+      "system",
+      "slice",
+      "corpus"
+    ],
+    "requested_jobs": 4,
+    "link_map_sha256": "98a4db761ace9fd4846b000c4c98defdc2e39ce6f95684c67c30f9b8b6f38ad3",
+    "null": true,
+    "outer": true,
+    "library_providers": false,
+    "cwd": "/home/cosmo/.codex/worktrees/guarded-contract-adoption/qcore-c"
+  },
+  "builds": {
+    "base": {
+      "source": "31c5ed500d9d4a1448a623b839e1644adb19efd1",
+      "binary_sha256": "20f3af5e0334b04ee6a26ca25101ee341daa7f629347aab18ad33077b85eb8b8",
+      "actual_build_receipt": {
+        "private_path": "private/guarded-contract-adoption/native-base-build-1/binary-receipt.json",
+        "bytes": 1549,
+        "sha256": "127e76d467ee08b2cc5dcfe7d5ab1a2308b31ecf85aa2388229c8c65e1896e50"
+      },
+      "freeze_receipt": {
+        "private_path": "private/guarded-contract-adoption/native-base-build-1/freeze/receipt.json",
+        "bytes": 45060,
+        "sha256": "e576006f75dd6d7ba72b1a7e2439e305a6388bfd5d560a8bc5d4a6c354275a1c"
+      }
+    },
+    "tip": {
+      "source": "552773f0c64e2e6a3c7d4b752c61a7d26130975a",
+      "binary_sha256": "d3f0bc597457c6d37449625112931bb7504c45672762e1a68bf8e3a4c8700e5d",
+      "actual_build_receipt": {
+        "private_path": "private/guarded-contract-adoption/native-tip-preparation-1/binary-receipt.json",
+        "bytes": 1448,
+        "sha256": "276d7ee9a68ee9da10c5d43245eb8b3d75a489d67831961643b342184b82a6b1"
+      },
+      "freeze_receipt": {
+        "private_path": "private/guarded-contract-adoption/native-tip-preparation-1/freeze/receipt.json",
+        "bytes": 44896,
+        "sha256": "8c41390bb38571861dc3e93f89ef9d333348ffd1fb498f22260df95093596ff6"
+      }
+    }
+  },
+  "runtime_input_delta": {
+    "equal_file_domain": true,
+    "changed_paths": [
+      {
+        "path": "providers/qcore-provider-librdkafka/contracts.json",
+        "before_sha256": "4dd8180355f1bd9e164422866cc8c6e6396266d4f650ce5262df08338af48337",
+        "after_sha256": "12e1b51f30e7cf3c2c877a8eb89e866680e93c4e0928e28285d1663811026f0d",
+        "classification": "guarded source / official pin / inventory identity; final comparison not executed"
+      },
+      {
+        "path": "providers/qcore-provider-librdkafka/contracts.lock",
+        "before_sha256": "e56433cade1629b9a858f71f5098b084d39435fdebae678e704e7dbc8a5d6577",
+        "after_sha256": "ac0c0480987703b5c3b95713a31d61c902412e17b0cfd5f9bb8d5a1f68b5f431",
+        "classification": "guarded source / official pin / inventory identity; final comparison not executed"
+      },
+      {
+        "path": "providers/qcore-provider-librdkafka/contracts/librdkafka/cjson.qv",
+        "before_sha256": "d1fa3d6e01857a42db485441887794b250a92ad719a46044e0e77bfb9b6e3353",
+        "after_sha256": "7bd5aa98433e29bdd7bf53ecf781f6679343a27a869382533a0c568daa31559d",
+        "classification": "guarded source / official pin / inventory identity; final comparison not executed"
+      },
+      {
+        "path": "providers/tests/test_contract_load_path.py",
+        "before_sha256": "ea77e9b46f21af53fc71f6038fd6af5139ae4d583f0e40cce50a6792af1f44d7",
+        "after_sha256": "0c8d02c4ae0290c1af4091755441a8c3b6bd79140142f2a903b380a26257f452",
+        "classification": "non-consumed provider test-source correction"
+      },
+      {
+        "path": "target/release/quirin-audit",
+        "before_sha256": "20f3af5e0334b04ee6a26ca25101ee341daa7f629347aab18ad33077b85eb8b8",
+        "after_sha256": "d3f0bc597457c6d37449625112931bb7504c45672762e1a68bf8e3a4c8700e5d",
+        "classification": "actual frozen binary identity"
+      }
+    ],
+    "all_raw_frozen_input_maps_preserved_in_receipts": true
+  },
+  "runtime_source_bindings": {
+    "libevent": {
+      "gitlink": "d82464a277d0f42703702c4dfd9af6af38595a83",
+      "before_receipt": {
+        "private_path": "private/guarded-contract-adoption/native-controller-2/libevent-runtime-bindings-before.json",
+        "bytes": 52041,
+        "sha256": "cb9663a6e8c7d74ee80e251f9a01a95d6183a71389c63734b6787121cda163e0"
+      },
+      "tracked_file_count": 266,
+      "maps_checked_exact_before_recovery": true,
+      "last_outer_guard": "successful corrected BASE completion and TIP launch; final after-map was not reached",
+      "after_receipt": null,
+      "post_interruption_binding_validation": "not performed: explicit human halt",
+      "materialization_receipt": {
+        "private_path": "private/guarded-contract-adoption/native-base-runtime-binding-1/receipt.json",
+        "bytes": 26247,
+        "sha256": "19b2bc704f22e09c7dd38dea41e7d33967c7190135b126320d18dd9573bbd0d7"
+      },
+      "all_archived_main_files_unchanged_at_materialization": 25123,
+      "base_binary_unchanged_at_materialization": "20f3af5e0334b04ee6a26ca25101ee341daa7f629347aab18ad33077b85eb8b8"
+    },
+    "bundled_seven_file_preflight": {
+      "private_path": "private/guarded-contract-adoption/native-controller-2/libevent-bundled-preflight.json",
+      "bytes": 1939,
+      "sha256": "80af091bbf640ca7ac3a005df553178238e735a72e7f7d515b6020f1db9c5ea3"
+    }
+  },
+  "routes": {
+    "system": {
+      "base": {
+        "status": "measured_success",
+        "exit": 0,
+        "source": "31c5ed500d9d4a1448a623b839e1644adb19efd1",
+        "reporting_head": "f91d17358479619fb0443b787009595beb5608e1",
+        "rows": 448,
+        "row_status": {
+          "Unknown": 345,
+          "Safe": 99,
+          "Unsafe": 4
+        },
+        "null_rows": 454,
+        "reading_observations": 24,
+        "invocation_receipt": {
+          "private_path": "private/guarded-contract-adoption/native-base-complete-1/system/invocation.json",
+          "bytes": 97283,
+          "sha256": "7f140d19d1c99c9c5df926f2da99a6e9654879955956bb606abbf8cbf0c80587"
+        },
+        "started": "2026-10-22T07:00:43.386050+00:00",
+        "ended": "2026-10-22T07:08:30.094847+00:00",
+        "actual_requested_jobs": 4,
+        "actual_effective_jobs": 4,
+        "phase_trace": {
+          "records": 8,
+          "omitted": 0,
+          "complete_original_sidecar": {
+            "private_path": "private/guarded-contract-adoption/native-base-complete-1/system/resource-diagnostics.invocation.json",
+            "bytes": 6522,
+            "sha256": "eec1f3c856831ebdc2fb2e869d0251c9ef1638dd03a6df7b822d7671c24502de"
+          }
+        }
+      },
+      "tip": {
+        "status": "measured_success",
+        "exit": 0,
+        "source": "552773f0c64e2e6a3c7d4b752c61a7d26130975a",
+        "reporting_head": "f91d17358479619fb0443b787009595beb5608e1",
+        "rows": 448,
+        "row_status": {
+          "Unknown": 345,
+          "Safe": 99,
+          "Unsafe": 4
+        },
+        "null_rows": 454,
+        "reading_observations": 24,
+        "invocation_receipt": {
+          "private_path": "private/guarded-contract-adoption/native-tip-1/system/invocation.json",
+          "bytes": 97337,
+          "sha256": "3982c8d8a6e466510428a815b68fedc296e29095e683957a7c15c40c8fef3045"
+        },
+        "started": "2026-10-22T10:35:26.359431+00:00",
+        "ended": "2026-10-22T10:43:25.462596+00:00",
+        "actual_requested_jobs": 4,
+        "actual_effective_jobs": 4,
+        "phase_trace": {
+          "records": 8,
+          "omitted": 0,
+          "complete_original_sidecar": {
+            "private_path": "private/guarded-contract-adoption/native-tip-1/system/resource-diagnostics.invocation.json",
+            "bytes": 6545,
+            "sha256": "169687458e90cb3243cd7c691c22d448985df50f5d678b5839e190476e9ecbe8"
+          }
+        }
+      },
+      "comparison": {
+        "status": "not_started",
+        "exit": null,
+        "unexplained_movement_count": null
+      }
+    },
+    "slice": {
+      "base": {
+        "status": "measured_success",
+        "exit": 0,
+        "source": "31c5ed500d9d4a1448a623b839e1644adb19efd1",
+        "reporting_head": "f91d17358479619fb0443b787009595beb5608e1",
+        "rows": 404,
+        "row_status": {
+          "Unknown": 342,
+          "Safe": 57,
+          "Pending": 4,
+          "Unsafe": 1
+        },
+        "null_rows": 406,
+        "reading_observations": 2,
+        "invocation_receipt": {
+          "private_path": "private/guarded-contract-adoption/native-base-complete-1/slice/invocation.json",
+          "bytes": 97686,
+          "sha256": "6ec326d3edd9f568b2271629eb5362c08297235c318450a7f22f304ad79dfe84"
+        },
+        "started": "2026-10-22T07:08:30.306546+00:00",
+        "ended": "2026-10-22T07:15:04.389445+00:00",
+        "actual_requested_jobs": 4,
+        "actual_effective_jobs": 4,
+        "phase_trace": {
+          "records": 7,
+          "omitted": 0,
+          "complete_original_sidecar": {
+            "private_path": "private/guarded-contract-adoption/native-base-complete-1/slice/resource-diagnostics.invocation.json",
+            "bytes": 7023,
+            "sha256": "b3b5fc138db911fb4683608dea34d0064f78408c3951186af7ba3336403d4f21"
+          }
+        }
+      },
+      "tip": {
+        "status": "measured_success",
+        "exit": 0,
+        "source": "552773f0c64e2e6a3c7d4b752c61a7d26130975a",
+        "reporting_head": "f91d17358479619fb0443b787009595beb5608e1",
+        "rows": 404,
+        "row_status": {
+          "Unknown": 342,
+          "Safe": 57,
+          "Pending": 4,
+          "Unsafe": 1
+        },
+        "null_rows": 406,
+        "reading_observations": 2,
+        "invocation_receipt": {
+          "private_path": "private/guarded-contract-adoption/native-tip-1/slice/invocation.json",
+          "bytes": 97740,
+          "sha256": "a4e4a9f65beb9071826ecc40207e65ef61b2f97a533bd8cca9a52a4c8052a77b"
+        },
+        "started": "2026-10-22T10:43:25.689019+00:00",
+        "ended": "2026-10-22T10:50:24.198558+00:00",
+        "actual_requested_jobs": 4,
+        "actual_effective_jobs": 4,
+        "phase_trace": {
+          "records": 7,
+          "omitted": 0,
+          "complete_original_sidecar": {
+            "private_path": "private/guarded-contract-adoption/native-tip-1/slice/resource-diagnostics.invocation.json",
+            "bytes": 7046,
+            "sha256": "a02741fe12ed49f704de96d331b3bf9ecfb5cfb040f96556eee9ce0c5dabc395"
+          }
+        }
+      },
+      "comparison": {
+        "status": "not_started",
+        "exit": null,
+        "unexplained_movement_count": null
+      }
+    },
+    "corpus": {
+      "base": {
+        "status": "measured_success",
+        "exit": 0,
+        "source": "31c5ed500d9d4a1448a623b839e1644adb19efd1",
+        "reporting_head": "f91d17358479619fb0443b787009595beb5608e1",
+        "rows": 4834,
+        "row_status": {
+          "Unknown": 3850,
+          "Safe": 975,
+          "Unsafe": 9
+        },
+        "null_rows": 4921,
+        "reading_observations": 122,
+        "invocation_receipt": {
+          "private_path": "private/guarded-contract-adoption/native-base-complete-1/corpus/invocation.json",
+          "bytes": 91618,
+          "sha256": "e5e5f068ee939bffd9444c3c4c92cd75ea13d60a0c3aa642960f1135db2b8830"
+        },
+        "started": "2026-10-22T09:09:13.601538+00:00",
+        "ended": "2026-10-22T10:34:52.288888+00:00",
+        "actual_requested_jobs": 4,
+        "actual_effective_jobs": null,
+        "phase_trace": {
+          "status": "unavailable",
+          "reason": "Historical pinned route emits no phase/admission sidecar; not zero"
+        }
+      },
+      "tip": {
+        "status": "intentionally_interrupted",
+        "exit": null,
+        "termination_signal": "SIGTERM",
+        "normal_native_exit_not_captured": true,
+        "controller_session_exit": 143,
+        "source": "552773f0c64e2e6a3c7d4b752c61a7d26130975a",
+        "binary_sha256": "d3f0bc597457c6d37449625112931bb7504c45672762e1a68bf8e3a4c8700e5d",
+        "partial_invocation_receipt": {
+          "private_path": "private/guarded-contract-adoption/native-tip-1/corpus/invocation.json",
+          "bytes": 46116,
+          "sha256": "082bade61002ffbeea00e1b5b0810e97fa862a0635e7a56bb97f08c4d14c96a4"
+        },
+        "partial_artifacts": [
+          {
+            "private_path": "private/guarded-contract-adoption/native-tip-1/corpus/console.log",
+            "bytes": 0,
+            "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+          },
+          {
+            "private_path": "private/guarded-contract-adoption/native-tip-1/corpus/corpus/audit.log",
+            "bytes": 1332,
+            "sha256": "216b7507454840d09512e40499202df5133e40d658ecee1f9126676f14be1489"
+          },
+          {
+            "private_path": "private/guarded-contract-adoption/native-tip-1/corpus/corpus/resource-diagnostics.contracts.json",
+            "bytes": 1123622,
+            "sha256": "91f2ca016863ead43958ac942e74abce37c9c410aa80376d41c71fcdc835cc1a"
+          },
+          {
+            "private_path": "private/guarded-contract-adoption/native-tip-1/corpus/invocation.json",
+            "bytes": 46116,
+            "sha256": "082bade61002ffbeea00e1b5b0810e97fa862a0635e7a56bb97f08c4d14c96a4"
+          },
+          {
+            "private_path": "private/guarded-contract-adoption/native-tip-1/corpus/stderr.log",
+            "bytes": 0,
+            "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+          }
+        ],
+        "rows": null,
+        "null_rows": null,
+        "reading_observations": null,
+        "acceptance": false
+      },
+      "comparison": {
+        "status": "not_started",
+        "exit": null,
+        "unexplained_movement_count": null
+      }
+    }
+  },
+  "totals": {
+    "required_successful_route_outputs": 6,
+    "measured_successful_route_outputs": 5,
+    "native_invocations_started": 7,
+    "producer_failed_native_invocations": 1,
+    "intentionally_interrupted_native_invocations": 1,
+    "base_complete_rows": 5686,
+    "base_complete_null_rows": 5781,
+    "base_complete_reading_observations": 148,
+    "tip_successful_configured_rows": 852,
+    "tip_successful_configured_null_rows": 860,
+    "tip_successful_configured_reading_observations": 26
+  },
+  "comparison": {
+    "status": "not_started",
+    "exit": null,
+    "unexplained_movement_count": null,
+    "zero_movement_prediction_is_not_acceptance": true,
+    "completion_receipt": null
+  },
+  "retained_failure": {
+    "initial_controller_exit": 1,
+    "initial_base_corpus_exit": 1,
+    "expected_libevent_pin": "d82464a277d0f42703702c4dfd9af6af38595a83",
+    "observed_libevent_pin": "f91d17358479619fb0443b787009595beb5608e1",
+    "cause": "Producer preflight omitted the Git-archive gitlink at the baseline binary compile-time runtime source root; Git verification fell through to containing reporting repository HEAD",
+    "failure_receipt": {
+      "private_path": "private/guarded-contract-adoption/native-controller-1/failure.txt",
+      "bytes": 1308,
+      "sha256": "69500708cec9301f0c2da05e54bf2e6aedbd106160f502b0a2042864d7230ea3"
+    },
+    "actual_failed_invocation": {
+      "private_path": "private/guarded-contract-adoption/native-base-1/corpus/invocation.json",
+      "bytes": 91564,
+      "sha256": "4dc0cb67f32b1934ba02ad48f394a0e8ceb348edf3b3c8897daffccade556d0e"
+    },
+    "actual_failed_native_wrapper": {
+      "private_path": "private/guarded-contract-adoption/native-base-1/corpus/corpus/run.json",
+      "bytes": 1263,
+      "sha256": "f1a0858e754f90c339c72128d702780d9b7039999547debc3417ade391dffa2d"
+    },
+    "repair_receipt": {
+      "private_path": "private/guarded-contract-adoption/native-base-runtime-binding-1/receipt.json",
+      "bytes": 26247,
+      "sha256": "19b2bc704f22e09c7dd38dea41e7d33967c7190135b126320d18dd9573bbd0d7"
+    },
+    "successful_route_copy_custody": {
+      "private_path": "private/guarded-contract-adoption/native-controller-2/exact-copy-custody.json",
+      "bytes": 3656,
+      "sha256": "e8001be7d8669284f3bea99642cbae051cb9f9f24eb04bfd4d282e58c5f16070"
+    },
+    "configured_route_dependency": {
+      "private_path": "private/guarded-contract-adoption/native-controller-2/configured-route-dependency.json",
+      "bytes": 2256,
+      "sha256": "6c0f515a36be7425581cc972b8e0c932263496abfbcbf82a9cc48bdcf6f5fa98"
+    }
+  },
+  "interruption": {
+    "reason": "Explicit human halt",
+    "signal": "SIGTERM",
+    "owned_pgid": 1761378,
+    "stopped_pids": [
+      1761378,
+      1883542,
+      1918089,
+      1918118,
+      1918119
+    ],
+    "all_owned_processes_stopped": true,
+    "controller_session_exit": 143,
+    "started": "2026-10-22T11:03:42.483147+00:00",
+    "completed": "2026-10-22T11:03:42.683845+00:00",
+    "receipt": {
+      "private_path": "private/guarded-contract-adoption/halt-1/interruption.json",
+      "bytes": 3360,
+      "sha256": "b609fef459b19725777f59ac60768f48cc6e730595e6ca24f76ac3bfc8adbbed"
+    },
+    "no_comparisons_or_further_native_compiler_validation_after_halt": true
+  },
+  "diagnostics": {
+    "ptrace": {
+      "exit": 1,
+      "status": "unavailable; attach refused",
+      "commands": {
+        "private_path": "private/guarded-contract-adoption/native-diagnostics-1/commands.json",
+        "bytes": 699,
+        "sha256": "46851c9c9bf40ada43da948860f63e07bc496088bb74928ac7a7498b1daa79e2"
+      }
+    },
+    "cohort_observation": {
+      "commands": {
+        "private_path": "private/guarded-contract-adoption/native-diagnostics-2/commands.json",
+        "bytes": 549,
+        "sha256": "18b1eae15a768d0f909f92f64cabe33a96976134d6cd07b33b4648fc0efff117"
+      }
+    },
+    "perf": {
+      "exit": 255,
+      "status": "unavailable; perf_event_paranoid4; no profile",
+      "commands": {
+        "private_path": "private/guarded-contract-adoption/native-diagnostics-3/commands.json",
+        "bytes": 432,
+        "sha256": "3cc3acc05dc99e72033f4ab9b5a24a492b9a030ec06438f7f4e0741e5ef215e1"
+      }
+    },
+    "acceptance_authority": false
+  },
+  "producer_receipts": {
+    "initial_controller_commands": {
+      "private_path": "private/guarded-contract-adoption/native-controller-1/commands.json",
+      "bytes": 1371,
+      "sha256": "5a7e49929b5985c2532c723d51d2d2b4693286b09d55d847fc39f021bea5b9fa"
+    },
+    "recovery_commands_completed_before_interrupt": {
+      "private_path": "private/guarded-contract-adoption/native-controller-2/commands.json",
+      "bytes": 983,
+      "sha256": "be55ad55ae70a8b0e53a3e7ca9e9f02ebab82a9ee82949e5ca265f7a1b0eaed0"
+    },
+    "base_scope_commands": {
+      "private_path": "private/guarded-contract-adoption/native-base-complete-1/commands.json",
+      "bytes": 3224,
+      "sha256": "10cca4180a8eb3b3c3c2f48e6c2532989964f08d7677a2c0d07ed9f8eae7d818"
+    },
+    "tip_completed_scope_commands": {
+      "private_path": "private/guarded-contract-adoption/native-tip-1/commands.json",
+      "bytes": 1930,
+      "sha256": "0725d141f55c77be36baaeac6dfaa3b8f10177012b5e9c5269c209385cdf1fe3"
+    },
+    "recovery_producer_original": {
+      "private_path": "private/guarded-contract-adoption/recover_campaign.py",
+      "bytes": 7412,
+      "sha256": "c965fa3178d1afb150ebada51021fbdb1e8bf45d92bc4048c0607308f1b9d565"
+    },
+    "recovery_producer_frozen_public_copy": "docs/reports/guarded-contract-adoption/producers/recovery-controller-2.py.txt",
+    "base_completion": {
+      "private_path": "private/guarded-contract-adoption/native-base-complete-1/completion.json",
+      "bytes": 1125,
+      "sha256": "a7df6c7a046d731e33dd71c50d2821762f5cdb7d4cf6eac9d7835c5406543b5b"
+    },
+    "tip_completion": null,
+    "comparisons_started": false
+  },
+  "source_truth_and_standing": "Open; no promotion or native acceptance",
+  "private_artifact_manifest": "docs/reports/guarded-contract-adoption/native-private-artifact-manifest.json",
+  "recorded_at": "2026-10-22T11:07:37.655457+00:00"
+}

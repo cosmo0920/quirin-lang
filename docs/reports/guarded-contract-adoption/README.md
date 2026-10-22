@@ -17,3 +17,7 @@ No own full standing, provider-package or native campaign is claimed. The root i
 ## Integrator list
 
 Apply or explicitly reconcile the exact [increment, status and existing residual amendments](integration-amendments.json); retire no source/world obligation. Merge the `lib.rs`/`QCore.lean` import additions alongside the other two cards. Apply official pin/inventory edits only to cJSON; preserve every unrelated logger/scheduler file. The full matrix and report index remain root-owned. Native reading provenance should call `guarded_metadata_bridge::check` with the independently held plan hash and complete source pair, then `recover_before` on the exact checked TIP module; no blanket metadata deletion or normalization is allowed. Complete the agreed combined standing/provider/native and final committed-matrix Python checks before publishing acceptance.
+
+## Human halt checkpoint
+
+The later native campaign was intentionally stopped on explicit human instruction after five successful outputs; TIP corpus is incomplete and no complete comparison/native acceptance exists. [Exact checkpoint](NATIVE_CHECKPOINT.md), [machine-readable receipts](native-checkpoint.json) and the deferred [GUARDED-CONTRACT-ADOPTION-SUPPLEMENT](SUPPLEMENTAL_CARD.md) preserve failed prerequisites, corrected runtime source bindings, successful output custody and the interruption. Existing focused/source-gate checkpoint claims and integration-amendments.json are unchanged. No native claim covers the later merged main.

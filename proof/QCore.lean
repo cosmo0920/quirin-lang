@@ -10,6 +10,7 @@ import QCore.PremiseFlow
 import QCore.ScalarAccessorCondition
 import QCore.ListLookup
 import QCore.DetachSameItem
+import QCore.RemovedSelection
 import QCore.ScalarPrecedence
 import QCore.RuntimeImports
 import QCore.ReturnPositionEscape
