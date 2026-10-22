@@ -8568,3 +8568,47 @@ safety claim and no validation of the detach representation premise.
     closure is inferred. An in-force covered runtime fact remains Pending.
     `QCore.OuterListCandidates`; `outer_candidates`' Rust tests;
     [report](../reports/rk-plugin-interceptor-candidates/README.md).
+
+<a id="constraint-34"></a>
+
+34. **An element destroyer unlinks, then releases; nothing else about the
+    entry changes.** Card W48-SCHED-CLEANUP-PRODUCTION (contract
+    specification C04.8, last paragraph). A declaration may state
+    `resource_unpublished(p)` beside `resource_released(p, …)`
+    (`qcore_contract::contract_counted_users::validate`; a publication's
+    entry stays `resource_borrowed`, and an unlink beside any other custody
+    mode rejects the module). At a call, `container_publication::destroyer_split`
+    takes those unlinks out of the call's container operands and the
+    `ContractCall` arm of `legacy_transfer.rs` applies them **before** the
+    call's own reading, so its release ends exactly the custody the unlink
+    took: rule 10d's restored published site, or rule 10f(2)'s admitted
+    foreign element (a `container_of` element of a safe iteration, or a
+    `->next` lookup, over a container rooted at an unrebound formal, a local
+    initialised from one, or a static object) at its fresh site. Every other
+    entry keeps the unlink's refusal (`unlink by ... which this function has
+    not published`): a formal's own object, a body acquisition never
+    published, a local, rebound or callee-returned container, an element
+    name written another way, an element already unlinked, a second
+    destroyer. A plain iteration and a saved successor keep rule 5l's
+    refusals; a use after the destroyer reads a released binding; a release
+    after it is a double release. Rule 10f(3) is unchanged: a body that
+    lowers such an unlink publishes no summary, so its callers keep their
+    uncontracted call. The premises are P-CRR-MEMBER and P-CRR-LINKED at the
+    caller, and whatever the declaration names. First production use:
+    `mk_http_thread_destroy` (`qcore-provider-libevent`,
+    `monkey/intrusive_list.qv`, pinned at `046accf6` and `66910c10`), whose
+    eight `resource_premise` clauses carry the scheduler decomposition's
+    Open hypotheses (parent embedding, callback footprint with the
+    creation-NULL source reading, params key ownership and API success,
+    coroutine, borrowed chain, membership and writers, later aliases,
+    Valgrind request); every row resting on it lists them. **Do not** apply
+    the release before the unlink, admit an entry 10d/10f do not, read a
+    destroyer as a borrow anywhere a container effect must refuse, or drop
+    10f(3)'s summary gate without a caller-side rule that forgets the
+    published sites the call may release. `QCore.ElementDestroyer`
+    (`destroying_an_admitted_element_is_safe`,
+    `the_release_never_precedes_the_unlink`,
+    `the_modelled_destroy_is_an_unlink_then_a_release`,
+    `a_modelled_cleanup_unlinks_and_retires`, …);
+    `crates/qcore-c-gateway/tests/element_destroyer.rs`;
+    [report](../reports/w48-sched-cleanup-production/README.md).
