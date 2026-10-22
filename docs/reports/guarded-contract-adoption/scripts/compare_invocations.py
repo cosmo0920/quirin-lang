@@ -34,7 +34,7 @@ else:
    equal_leaves+=1;return
   if path==('argv',) or path==('reports','report'):
    coordinates.append({'path':path,'before':b,'after':t,'proof':'each complete value matched its actual held wrapper argv/output immediately above'});return
-  if path and path[0]=='jobs':
+  if len(path)==2 and path[0]=='jobs':
    assert path==('jobs','effective')
    scheduling.append({'path':path,'before':b,'after':t});return
   if len(path)>=4 and path[:2]==('memory_admission','phases'):
