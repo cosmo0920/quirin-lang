@@ -25,8 +25,8 @@ remain lifecycle metadata here, carrying neither allocation/release proof nor
 global hypothesis negation.
 
 The actual source path is `sched_thread_cleanup` (scheduler.c:614–632) to
-`mk_http_thread_destroy` (http_thread.c:251–276), then inline
-`mk_thread_destroy` (thread_libco.h:64–80). Destruction conditionally frees the
+`mk_http_thread_destroy` (http_thread.c:251–272), then inline
+`mk_thread_destroy` (thread_libco.h:64–78). Destruction conditionally frees the
 current thread's libco params and clears **that** TLS slot, unlinks the HTTP
 node, resets the borrowed session/channel/event type, invokes optional
 `cb_destroy` on the embedded data, deletes the coroutine, then frees the
@@ -39,7 +39,7 @@ own parent. The complete selected and other list footprints are protected.
 The Rust consumer checks exact ordered effects against a finite state:
 32 threads, 512 live allocation tokens, 64 effects per callback and 2,560 trace
 steps. It checks worker identity, exact disjoint membership, suspended
-coroutines, parent/callee ownership, borrowed lifetimes and TLS separation.
+coroutines, parent/callee ownership, borrowed lifetimes, parent-role current TLS and params-TLS separation.
 A callback may read live resources and write/release its separately owned
 resources; it cannot invalidate any parent, coroutine, borrowed chain, params
 or saved successor. Missing, reordered, extra or mismatched effects refuse.
@@ -52,9 +52,9 @@ The source-bound wrapper additionally checks all seven complete source hashes
 and all nine independently expected Context coordinates. Its context digest also binds the exact readable specification, symbol inventory, Rust model and Lean model bytes. A finite trace is a
 mathematical input; authenticating its actual C execution and callback closure
 is a separate Open obligation. Lean models admission, each callback effect,
-ordered complete cleanup replay and retirement; twelve registered theorems
+ordered complete cleanup replay and retirement; thirteen registered theorems
 cover protected/unowned/dead callback refusals, release absence, surviving
-borrows, membership/current-TLS prohibitions, exact ordering, wrong worker and
+borrows, membership/current-TLS role and retirement prohibitions, exact ordering, wrong worker and
 empty cleanup. Rust-to-Lean correspondence remains maintained, not extracted.
 
 Creation and failure paths remain concrete and distinct:
@@ -94,7 +94,7 @@ explicit pin updates; the current model does not silently support them.
 
 [Focused receipts](focused-receipts.json) record exact commands, exits and
 private logs, including the first Lean parser failure and its missing-object
-follow-on. Focused Rust passes 10 tests; exact-source replay checks one positive
+follow-on. Initial focused Rust passes 10 tests; exact-source replay checks one positive
 model, nine Context-coordinate refusals and fifteen source inventory refusals.
 Clippy/fmt and twelve Lean theorem audits pass. Root owns the combined frozen
 standing gate, authoritative post-matrix Python acceptance and ledger changes;
@@ -104,3 +104,28 @@ inapplicable to this card: no provider input or interface changed.
 [Integration amendments](integration-amendments.json) give exact same-ID
 residual and increment wording. Do not retire `W48-BOTTOM-UP-RESIDUAL-PLAN` or
 promote scheduler source truth from this finite model.
+
+Integration correction: the initial finite API accepted any live token in
+`current_thread`, while its retirement check only excluded selected parent
+keys. A presented callee token or params token could therefore survive as stale
+TLS after that resource was freed. This was a model admission defect, with no
+production caller or C-source safety claim. Patch `1b315995a` requires this TLS
+slot to be absent or name a live parent key in the modeled thread map, and still
+forbids retiring that parent. A live unselected parent is preserved through
+cleanup. With an empty selected list, a valid current parent and nonnull params
+both remain unchanged; a callee/params token in current-thread TLS still refuses
+because its role is malformed, even though that empty operation frees nothing.
+The matching Lean admission premise requires an explicit parent witness, with
+`non_parent_current_tls_forbids_admission`. This is a finite model role
+restriction, not a new claim about C TLS behavior or a global alias proof.
+The original focused receipts remain frozen; the separate [TLS-role correction
+receipt](tls-role-fix-receipts.json) records the subsequent commands, updated
+artifact-binding digest and three additional Rust controls. All correction
+stages passed: 13 Rust tests, 13 Lean theorem audits, fmt, Clippy and exact-source
+replay (one positive model, nine context refusals, fifteen source refusals).
+Before/after hashes for seven model/test/proof/decomposition artifacts equal
+exact patch Git objects. SourceBinding digest is
+`364ced8316feb055882ed9e91298b1c76a1ac0134b94b2af5b7ad506e6ea5d4f`.
+[Driver](tls-role-fix-driver.sh) and [collector](collect_tls_role_fix.py) retain
+the finite correction producer; root's final integrated standing gate remains
+separate.
