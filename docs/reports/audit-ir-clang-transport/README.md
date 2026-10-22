@@ -25,8 +25,9 @@ gate. Serialize heavy gates and measurements with
 context only, not before/after evidence for this change, and the parent memory
 target remains open.
 
-The implementation keeps at most 1 MiB of small raw output in memory and
-spools larger complete translation-unit dumps before parsing. The public
+The implementation uses a 1 MiB raw-payload threshold and spools larger
+complete translation-unit dumps before parsing (allocator capacity and decoded
+values are not included in that threshold). The public
 whole-unit reader, compact typed index and lifetime-source reader use the new
 seekable input. Existing root and per-declaration visitors, lifetime depth/node
 checks, facts construction and source hashing are unchanged. Filtered streams
@@ -80,3 +81,16 @@ The source recipe, exact argv, configurations, hashes and private paths are
 retained. Ordinary source checks also cover complete malformed suffixes,
 subprocess rejection/stderr precedence, simultaneous large stdin/stdout/stderr,
 spool cleanup, duplicate keys, scalar/Unicode failures and depth boundaries.
+
+
+[The full standing gate](gate.json) passes **8,506 Rust tests / 0 failed /
+15 ignored, 537 units / 550 summaries; 362 Lean audits; 374 Python tests**.
+The six focused Rust controls are included in the full count. Submodules,
+Clang recording, formatting, all-target Clippy, both reevaluation examples and
+the final release build exit 0. The private per-unit Rust summary is
+`private/test-binaries/20261022T074952Z-895698/summary.json`; other command logs
+and exits are under `private/audit-ir-clang-transport/gate/`. The receipt records
+absolute paths, all argv, the unique target directory and the 1,500-file Rust
+snapshot, which matches the final source. An initial invalid context topic
+(exit 2) and the initial sandbox-read-only setup attempt are disclosed beside
+the accepted corrections. No failed gate result was discarded or borrowed.

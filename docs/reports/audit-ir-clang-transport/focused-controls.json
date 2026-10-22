@@ -49,5 +49,12 @@
     "output_sha256": "e53bc8784affcbadf88c1390af1e190b29517b5c24b09f695b9743427d1c7ae1"
   },
   "storage_source_recipe": "''.join(f'int f{i}(int x) {{ return x + {i}; }}\\n' for i in range(2000))",
-  "storage_control_scope": "Measured once; configuration, exact argv, source recipe and private logs retained. Not a corpus mutation campaign."
+  "storage_control_scope": "Measured once; configuration, exact argv, source recipe and private logs retained. Not a corpus mutation campaign.",
+  "private_logs": [
+    "/home/cosmo/.codex/worktrees/audit-ir-clang-transport/qcore-c/private/audit-ir-clang-transport/smoke/before.log",
+    "/home/cosmo/.codex/worktrees/audit-ir-clang-transport/qcore-c/private/audit-ir-clang-transport/smoke/after.log",
+    "/home/cosmo/.codex/worktrees/audit-ir-clang-transport/qcore-c/private/audit-ir-clang-transport/storage-fault/stderr.log",
+    "/home/cosmo/.codex/worktrees/audit-ir-clang-transport/qcore-c/private/audit-ir-clang-transport/storage-fault/stdout.log",
+    "/home/cosmo/.codex/worktrees/audit-ir-clang-transport/qcore-c/private/audit-ir-clang-transport/storage-fault/green.log"
+  ]
 }

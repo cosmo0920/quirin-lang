@@ -1,0 +1,231 @@
+{
+  "card": "AUDIT-IR-CLANG-TRANSPORT",
+  "base": "31c5ed500d9d4a1448a623b839e1644adb19efd1",
+  "implementation_commit": "585d7986bccb572d9e06cf814ad26d6a64cb72ee",
+  "full_standing_gate_passed": true,
+  "raw_campaign_exit": 0,
+  "steps": [
+    {
+      "name": "submodules",
+      "argv": [
+        "git",
+        "submodule",
+        "update",
+        "--init",
+        "--recursive"
+      ],
+      "exit": 0,
+      "log": "/home/cosmo/.codex/worktrees/audit-ir-clang-transport/qcore-c/private/audit-ir-clang-transport/submodules.log"
+    },
+    {
+      "name": "clang",
+      "argv": [
+        "clang",
+        "--version"
+      ],
+      "exit": 0,
+      "seconds": 0.01204572700044082,
+      "log": "/home/cosmo/.codex/worktrees/audit-ir-clang-transport/qcore-c/private/audit-ir-clang-transport/gate/clang.log"
+    },
+    {
+      "name": "focused",
+      "argv": [
+        "cargo",
+        "test",
+        "-p",
+        "qcore-c-gateway",
+        "--lib",
+        "transport_tests",
+        "--",
+        "--nocapture"
+      ],
+      "exit": 0,
+      "seconds": 0.13003952400140406,
+      "log": "/home/cosmo/.codex/worktrees/audit-ir-clang-transport/qcore-c/private/audit-ir-clang-transport/gate/focused.log"
+    },
+    {
+      "name": "spool",
+      "argv": [
+        "cargo",
+        "test",
+        "-p",
+        "qcore-c-gateway",
+        "--lib",
+        "clang_ast_input",
+        "--",
+        "--nocapture"
+      ],
+      "exit": 0,
+      "seconds": 1.121178969999164,
+      "log": "/home/cosmo/.codex/worktrees/audit-ir-clang-transport/qcore-c/private/audit-ir-clang-transport/gate/spool.log"
+    },
+    {
+      "name": "rust",
+      "argv": [
+        "python3",
+        "scripts/run_test_binaries.py",
+        "--jobs",
+        "4"
+      ],
+      "exit": 0,
+      "seconds": 1113.1867859810009,
+      "log": "/home/cosmo/.codex/worktrees/audit-ir-clang-transport/qcore-c/private/audit-ir-clang-transport/gate/rust.log"
+    },
+    {
+      "name": "fmt",
+      "argv": [
+        "cargo",
+        "fmt",
+        "--all",
+        "--",
+        "--check"
+      ],
+      "exit": 0,
+      "seconds": 5.031941696999638,
+      "log": "/home/cosmo/.codex/worktrees/audit-ir-clang-transport/qcore-c/private/audit-ir-clang-transport/gate/fmt.log"
+    },
+    {
+      "name": "clippy",
+      "argv": [
+        "cargo",
+        "clippy",
+        "--all-targets",
+        "--",
+        "-D",
+        "warnings"
+      ],
+      "exit": 0,
+      "seconds": 49.59486629699859,
+      "log": "/home/cosmo/.codex/worktrees/audit-ir-clang-transport/qcore-c/private/audit-ir-clang-transport/gate/clippy.log"
+    },
+    {
+      "name": "probe",
+      "argv": [
+        "cargo",
+        "run",
+        "-p",
+        "qcore-compiler",
+        "--example",
+        "reevaluation_probe"
+      ],
+      "exit": 0,
+      "seconds": 2.952240389999133,
+      "log": "/home/cosmo/.codex/worktrees/audit-ir-clang-transport/qcore-c/private/audit-ir-clang-transport/gate/probe.log"
+    },
+    {
+      "name": "followup",
+      "argv": [
+        "cargo",
+        "run",
+        "-p",
+        "qcore-compiler",
+        "--example",
+        "reevaluation_followup"
+      ],
+      "exit": 0,
+      "seconds": 1.119919476999712,
+      "log": "/home/cosmo/.codex/worktrees/audit-ir-clang-transport/qcore-c/private/audit-ir-clang-transport/gate/followup.log"
+    },
+    {
+      "name": "lean",
+      "argv": [
+        "python3",
+        "scripts/check_lean_audits.py"
+      ],
+      "exit": 0,
+      "seconds": 173.36086242199963,
+      "log": "/home/cosmo/.codex/worktrees/audit-ir-clang-transport/qcore-c/private/audit-ir-clang-transport/gate/lean.log"
+    },
+    {
+      "name": "python",
+      "argv": [
+        "python3",
+        "-m",
+        "unittest",
+        "discover",
+        "-s",
+        "scripts/tests"
+      ],
+      "exit": 0,
+      "seconds": 43.39015607799956,
+      "log": "/home/cosmo/.codex/worktrees/audit-ir-clang-transport/qcore-c/private/audit-ir-clang-transport/gate/python.log"
+    },
+    {
+      "name": "release",
+      "argv": [
+        "cargo",
+        "build",
+        "--release",
+        "-p",
+        "qcore-c-gateway",
+        "--example",
+        "clang_transport_measure"
+      ],
+      "exit": 0,
+      "seconds": 66.69402157399963,
+      "log": "/home/cosmo/.codex/worktrees/audit-ir-clang-transport/qcore-c/private/audit-ir-clang-transport/gate/release.log"
+    }
+  ],
+  "rust": {
+    "totals": {
+      "passed": 8506,
+      "failed": 0,
+      "ignored": 15,
+      "measured": 0,
+      "filtered": 0,
+      "summaries": 550
+    },
+    "units_run": 537,
+    "units_failed": [],
+    "ok": true,
+    "phases_seconds": {
+      "build": 225.214,
+      "capture": 260.107,
+      "run": 627.484
+    }
+  },
+  "lean": {
+    "audits": 362,
+    "exit": 0
+  },
+  "python": {
+    "tests": 374,
+    "exit": 0
+  },
+  "clang": "present: Ubuntu clang version 21.1.8 (6ubuntu1)",
+  "source_guard": {
+    "tracked_rust_files": 1500,
+    "private_snapshot": "/home/cosmo/.codex/worktrees/audit-ir-clang-transport/qcore-c/private/audit-ir-clang-transport/source-snapshot.json",
+    "snapshot_sha256": "710c5657eeef3447e7044103e683bc622708eb67903a1ac287cb7fbc2d077ebf",
+    "final_sources_match_snapshot": true
+  },
+  "private_logs": "/home/cosmo/.codex/worktrees/audit-ir-clang-transport/qcore-c/private/audit-ir-clang-transport",
+  "preflight_attempts": [
+    {
+      "argv": [
+        "python3",
+        "scripts/task_context.py",
+        "--base",
+        "31c5ed500d9d4a1448a623b839e1644adb19efd1",
+        "--topic",
+        "audit-ir",
+        "--path",
+        "crates/quirin-c-gateway/src/typed_c_ast.rs",
+        "--render"
+      ],
+      "exit": 2,
+      "reason": "invalid topic; corrected to gateway/source with the actual qcore-c-gateway path"
+    },
+    {
+      "action": "initial worktree mkdir/submodule redirection",
+      "result": "sandbox read-only; no initialization occurred; authorized escalated rerun passed"
+    }
+  ],
+  "scope": "Fresh full standing gate on isolated worktree; sibling heavy jobs serialized by /tmp/quirin-audit-ir-next-heavy.lock; host otherwise shared. No new production audit census.",
+  "environment": {
+    "CARGO_TARGET_DIR": "/home/cosmo/.codex/worktrees/audit-ir-clang-transport/qcore-c/private/audit-ir-clang-transport/target",
+    "QCORE_CLANG": null,
+    "heavy_lock": "/tmp/quirin-audit-ir-next-heavy.lock",
+    "host_isolated": false
+  }
+}
