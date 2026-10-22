@@ -886,6 +886,10 @@ pub(crate) struct EntryCustody {
     /// contract names none, so every probed formal is heap, and a body that
     /// releases one with another kind's release refuses its own summary.
     pub(crate) site_kinds: BTreeMap<usize, ResourceKind>,
+    /// Card **DETACH-RESULT-WRAPPER-COMPOSITION** (rule 33): the selection a
+    /// checked selection frame's own row is analysed under. `None` for every
+    /// other entry.
+    pub(crate) selection: Option<selection_route::SelectionEntry>,
 }
 
 impl EntryCustody {
@@ -916,6 +920,7 @@ impl EntryCustody {
             },
             derived_bases: BTreeMap::new(),
             site_kinds: BTreeMap::new(),
+            selection: None,
         };
         if let ResourceReturnMode::Derived { parameter, .. } = contract.result {
             // The base must be a borrowed, named formal: the summary claims the
@@ -1082,6 +1087,9 @@ pub(crate) struct ExitObservation {
     /// derived-result summary claims its base is borrowed, so it requires this
     /// to be `false` at every exit. Always `false` when there is no such base.
     pub(crate) derived_base_touched: bool,
+    /// Card **DETACH-RESULT-WRAPPER-COMPOSITION** (rule 33): the selected
+    /// child's disposition at this exit, under a selection entry only.
+    pub(crate) selected: Option<SiteDisposition>,
 }
 
 #[derive(Clone, Copy, Debug, PartialEq, Eq)]
@@ -1317,6 +1325,10 @@ pub(super) fn observe_exit(
         derived_base_touched: entry.derived_bases.keys().any(|site| {
             state.resources.contains_key(site) || state.unresolved_effect_sites.contains(site)
         }),
+        selected: entry
+            .selection
+            .as_ref()
+            .map(|selection| site_disposition(state, selection.phantom)),
     }
 }
 
@@ -1784,6 +1796,9 @@ pub(super) struct TransferContext<'a> {
     /// element operations and counted loops read. Empty in every function
     /// with none, so no other function's state gains a fact.
     pub(super) collection_names: BTreeSet<String>,
+    /// Card **DETACH-RESULT-WRAPPER-COMPOSITION** (rule 33): the selection
+    /// entry's facts; `None` in every other analysis.
+    pub(super) selection: Option<selection_route::SelectionEntry>,
 }
 
 /// The kind of `site` under `kinds`: heap unless recorded otherwise.
@@ -1855,7 +1870,8 @@ fn analyze_cfg_with_entry_collected(
     entry_custody: &EntryCustody,
 ) -> (LegacyFunctionSummary, Vec<ExitObservation>) {
     let context = TransferContext {
-        lookup_tracking: cfg.nodes.iter().any(|node| node.lookup.is_some()),
+        lookup_tracking: cfg.nodes.iter().any(|node| node.lookup.is_some())
+            || entry_custody.selection.is_some(),
         lookup_pointer_records: cfg
             .nodes
             .iter()
@@ -1875,10 +1891,13 @@ fn analyze_cfg_with_entry_collected(
             .flatten()
             .copied()
             .chain(entry_custody.derived_bases.keys().copied())
+            // Rule 33: the selected child belongs to the caller's parent.
+            .chain(entry_custody.selection.as_ref().map(|s| s.phantom))
             .collect(),
         publications: cfg.publications.clone(),
         collection_names: collection_names(&cfg),
         derived_bases: entry_custody.derived_bases.keys().copied().collect(),
+        selection: entry_custody.selection.clone(),
         traversal: cfg.traversal.clone(),
         site_kinds: descriptor_custody::site_kinds(cfg.nodes.iter().map(|node| &node.instruction))
             .into_iter()
@@ -2706,6 +2725,10 @@ pub(super) fn transfer(
     slot_move_route::after(node, &mut output);
     if context.lookup_tracking {
         lookup_route::after(node, &mut output, lookup_result, lookup_store);
+    }
+    // Card DETACH-RESULT-WRAPPER-COMPOSITION (rule 33).
+    if let Some(selection) = &context.selection {
+        selection_route::materialize(node, &mut output, selection);
     }
     in_place_custody::forget_witnesses(&node.instruction, &mut output, writes_scalar);
     in_place_custody::record_witness(&node.instruction, &mut output);
