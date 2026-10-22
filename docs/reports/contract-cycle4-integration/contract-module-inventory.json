@@ -1,0 +1,24 @@
+{
+  "observed_committed_head": "bb9d02fe3dbcb14585689138f65ac8c52d95e831",
+  "baseline": "31c5ed500d9d4a1448a623b839e1644adb19efd1",
+  "corpus_manifest_sha256": "7f1b7f55a149c9082c22d668472ce07c8df5be64c54d5f83643426f3583090b9",
+  "tracked_module_paths_equal_to_baseline": true,
+  "tracked_module_paths_sha256": "49fb031261f73af63ec687e88355b38dbdc093586dfdc240b3dc4de5415cca5a",
+  "counts_by_root": {
+    "../providers/quirin-provider-shared/contracts": 4,
+    "../providers/quirin-provider-libc/contracts": 17,
+    "../providers/quirin-provider-cfl/contracts": 5,
+    "../providers/quirin-provider-mpack/contracts": 1,
+    "../providers/quirin-provider-msgpack/contracts": 1,
+    "../providers/quirin-provider-fluent-bit/contracts": 26,
+    "../providers/qcore-provider-chunkio/contracts": 46,
+    "../providers/qcore-provider-cmetrics/contracts": 5,
+    "../providers/qcore-provider-ctraces/contracts": 1,
+    "../providers/qcore-provider-libevent/contracts": 19,
+    "../providers/qcore-provider-librdkafka/contracts": 12
+  },
+  "library_provider_modules": 83,
+  "shared_application_modules": 54,
+  "total": 137,
+  "meaning": "Corrects stale current STATUS inventory figures. No module was introduced or removed by cycle4; changed metadata clauses do not count as modules."
+}

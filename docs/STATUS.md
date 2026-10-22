@@ -388,11 +388,11 @@ regenerated matrix belongs to the separate post-matrix confirmation receipt.
 Logger/scheduler source truth and semantic/lifecycle discharge remain Open;
 readable metadata alone contributes no source-Safe gain.
 
-The five provider crates own **73** canonical contract modules; **48** shared or
+The five provider crates own **83** canonical contract modules; **54** shared or
 application-level modules live in six `providers/quirin-provider-*` crates: five
 per-library data crates (libc only in `quirin-provider-libc`) and
 `quirin-provider-shared`, which also holds the providers' shared runtime and
-bundles the five. `contract/corpus.json` indexes all **121** without duplicate
+bundles the five. `contract/corpus.json` indexes all **137** without duplicate
 snapshots. Retained integration adapters embed the provider-owned data directly;
 generic core crates retain no provider executable dependency;
 package inventories bind supplied contract bytes to their executables, and

@@ -69,5 +69,20 @@
     "failure_receipt": "native-controller-1/failure.txt",
     "repair_receipt": "native-base-runtime-binding-1/receipt.json",
     "recovery": "native-controller-2; acceptance pending; original failed attempt remains retained"
+  },
+  "status_inventory_correction": {
+    "old": [
+      73,
+      48,
+      121
+    ],
+    "actual": [
+      83,
+      54,
+      137
+    ],
+    "source": "contract-module-inventory.json",
+    "module_paths_equal_to_baseline": true,
+    "meaning": "Current STATUS inventory correction only; no cycle4 module inventory expansion."
   }
 }
