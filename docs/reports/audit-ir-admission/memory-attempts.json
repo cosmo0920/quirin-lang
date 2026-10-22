@@ -1,0 +1,43 @@
+{
+  "attempts": [
+    {
+      "private_directory": "/home/cosmo/Documents/GitHub/qcore-c/private/audit-ir-admission/memory-20261022T0030Z",
+      "reason": "Original database omits explicit C standard; audit refuses.",
+      "memory_peak_bytes": 227586048,
+      "accepted": false,
+      "worker_exit": 1,
+      "cleanup": {
+        "stop_exit": 0,
+        "stop_stderr": "",
+        "reset_failed_exit": 0,
+        "reset_failed_stderr": ""
+      }
+    },
+    {
+      "private_directory": "/home/cosmo/Documents/GitHub/qcore-c/private/audit-ir-admission/memory-prepared-20261022T0034Z",
+      "reason": "Single-configuration JSON route refuses distinct static/shared commands; no configurations removed.",
+      "memory_peak_bytes": 229359616,
+      "accepted": false,
+      "worker_exit": 1,
+      "cleanup": {
+        "stop_exit": 0,
+        "stop_stderr": "",
+        "reset_failed_exit": 0,
+        "reset_failed_stderr": ""
+      }
+    },
+    {
+      "private_directory": "/home/cosmo/Documents/GitHub/qcore-c/private/audit-ir-admission/memory-current-20261022T0038Z",
+      "reason": "Invalidated by unrelated concurrent provider/manifest edits; stopped before accepting any result.",
+      "memory_peak_bytes": null,
+      "accepted": false,
+      "worker_exit": null,
+      "cleanup": {
+        "stop_exit": 5,
+        "stop_stderr": "Failed to stop quirin-audit-memory-fcfb5cae17a34c8a9a9aede46efb5401.service: Unit quirin-audit-memory-fcfb5cae17a34c8a9a9aede46efb5401.service not loaded.\n"
+      }
+    }
+  ],
+  "original_measurement_tool_sha256": "979ca1a1f074becd69af4103a31a3494bb6040473bff50e7cc3e4839e5f4c880",
+  "original_tool_private_copy": "/home/cosmo/Documents/GitHub/qcore-c/private/audit-ir-admission/measurement-tool-v1.py"
+}

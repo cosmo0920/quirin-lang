@@ -1,0 +1,8 @@
+{
+  "published_main_commit": "c8b15aa6caa295a5d0b8049489bf3fb04fa5ed98",
+  "validation_head": "93eb17441c141f6b3272d2ed874d1b83db55bc37",
+  "all_rust_files_match": true,
+  "rust_files": 1498,
+  "contract_input_tree_unchanged_from_validation_head": true,
+  "scope": "Compare published Git blobs against the completed gate snapshot; unrelated changes in the shared working tree are excluded."
+}

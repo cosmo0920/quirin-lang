@@ -1,0 +1,106 @@
+{
+  "service": "quirin-audit-memory-86cf4375a4a24b2eb1c6864bfbc451f8",
+  "service_properties": {
+    "ActiveState": "failed",
+    "SubState": "failed",
+    "Result": "oom-kill",
+    "ExecMainStartTimestampMonotonic": "14160133563",
+    "ExecMainExitTimestampMonotonic": "15712752777",
+    "ExecMainCode": "2",
+    "ExecMainStatus": "15",
+    "ControlGroup": "",
+    "MemoryPeak": "6999998464",
+    "MemorySwapPeak": "0",
+    "CPUUsageNSec": "5585515777000"
+  },
+  "worker": null,
+  "memory_peak_bytes": 6999998464,
+  "memory_events": null,
+  "requested_limit_bytes": 7000000000,
+  "audit_completed_without_oom": false,
+  "monitored_elapsed_seconds": 1552.876,
+  "scope": "Public current resource audit, default complete five-library profile selection, four jobs, original distinct compilation configurations retained. Fresh process caches; host page-cache state uncontrolled. No baseline comparison to the original 17 GB command.",
+  "private_directory": "/home/cosmo/Documents/GitHub/qcore-c/private/audit-ir-admission/memory-frozen-20261022T0042Z",
+  "cleanup": {
+    "stop_exit": 0,
+    "stop_stderr": "",
+    "reset_failed_exit": 0,
+    "reset_failed_stderr": ""
+  },
+  "provenance": {
+    "source_revision": "046accf6aded7906f66a1baf0202da349e521736",
+    "input_snapshot": {
+      "commit": "93eb17441c141f6b3272d2ed874d1b83db55bc37",
+      "paths": [
+        "contract",
+        "providers",
+        "cycle19-resource-contracts.json"
+      ],
+      "archive_sha256": "b818560eddc23a1ec15b80815ea883905ed3a5967510e15012242e0584ad433e",
+      "scope": "Immutable input data copy only; no worktree or Git checkout."
+    },
+    "configuration": {
+      "schema_version": 1,
+      "checkout": "/home/cosmo/Documents/GitHub/qcore-c/build/cycle19/clang/046accf6aded7906f66a1baf0202da349e521736/fluent-bit-clang-source",
+      "profile_directory": "/home/cosmo/Documents/GitHub/qcore-c/private/audit-ir-admission/frozen-inputs-93eb17441/contract/profiles/fluent-bit",
+      "compile_database": "/home/cosmo/Documents/GitHub/qcore-c/build/cycle19/clang/046accf6aded7906f66a1baf0202da349e521736/fluent-bit-clang-production/compile_commands.json",
+      "contract_manifest": "/home/cosmo/Documents/GitHub/qcore-c/private/audit-ir-admission/frozen-inputs-93eb17441/cycle19-resource-contracts.json",
+      "report": "/home/cosmo/Documents/GitHub/qcore-c/private/audit-ir-admission/memory-frozen-input/resource-diagnostics.json"
+    },
+    "files": {
+      "configuration": {
+        "path": "/home/cosmo/Documents/GitHub/qcore-c/private/audit-ir-admission/memory-frozen-input/audit.json",
+        "sha256": "7961ad04d17c95bd92a3c28f3cc1906110367ae68e2998f141f351a260ebb18d"
+      },
+      "compile_database": {
+        "path": "/home/cosmo/Documents/GitHub/qcore-c/build/cycle19/clang/046accf6aded7906f66a1baf0202da349e521736/fluent-bit-clang-production/compile_commands.json",
+        "sha256": "93e9e67e1d38b3670d80b06cc7ed521918d6aaee700181de9536e02f5ff99583"
+      },
+      "selection": {
+        "path": "/home/cosmo/Documents/GitHub/qcore-c/private/audit-ir-admission/frozen-inputs-93eb17441/contract/profiles/fluent-bit/audit.json",
+        "sha256": "27a19bc283fb215421c003bd4dce2a4db6932f3a7a8e6edfd4979cb439e97315"
+      },
+      "contract_manifest": {
+        "path": "/home/cosmo/Documents/GitHub/qcore-c/private/audit-ir-admission/frozen-inputs-93eb17441/cycle19-resource-contracts.json",
+        "sha256": "75f29cdb3e54f1e5638bfcc619d0ac5a1b7ad425db87f75afeb647ce7a438d3a"
+      }
+    }
+  },
+  "published_source_receipt": "published-source.json",
+  "audit_binary_build": {
+    "profile": "unoptimized dev",
+    "CARGO_PROFILE_DEV_DEBUG": "0",
+    "build_and_setup_excluded": true,
+    "target_directory": "/tmp/qcore-audit-ir-next-target",
+    "binary_sha256_after_run": "24f018b0bedfd83f317dbbf6576b4019adf9b79f45ebe1b0ee5687495ce62c4a",
+    "limitation": "Worker died before its final before/after hash receipt; published Rust source matches the completed gate. This failed run establishes no successful budget or identity acceptance."
+  },
+  "launch": {
+    "argv": [
+      "systemd-run",
+      "--user",
+      "--unit=quirin-audit-memory-86cf4375a4a24b2eb1c6864bfbc451f8",
+      "--property=MemoryAccounting=yes",
+      "--property=MemoryMax=7000000000",
+      "--property=MemorySwapMax=0",
+      "--property=RemainAfterExit=yes",
+      "--working-directory=/home/cosmo/Documents/GitHub/qcore-c",
+      "--setenv=PATH=/home/cosmo/bin:./.cabal-sandbox/bin:/home/cosmo/bin:/home/cosmo/.elan/bin:/home/cosmo/bin:/home/cosmo/.codex/tmp/arg0/codex-arg0jCZmu9:/home/cosmo/.cache/codex-runtimes/codex-primary-runtime/dependencies/bin/override:/home/cosmo/.local/bin:./.cabal-sandbox/bin:/home/cosmo/bin:/home/cosmo/.elan/bin:/home/cosmo/bin:/home/cosmo/.elan/bin:/home/cosmo/bin:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin:/usr/games:/usr/local/games:/snap/bin:/snap/bin:/home/cosmo/.cache/codex-runtimes/codex-primary-runtime/dependencies/bin/fallback:/usr/lib/chatgpt/resources",
+      "/usr/bin/python3",
+      "/home/cosmo/Documents/GitHub/qcore-c/docs/reports/audit-ir-admission/scripts/measure_memory.py",
+      "--worker",
+      "--binary",
+      "/tmp/qcore-audit-ir-next-target/debug/quirin-audit",
+      "--config",
+      "/home/cosmo/Documents/GitHub/qcore-c/private/audit-ir-admission/memory-frozen-input/audit.json",
+      "--output",
+      "/home/cosmo/Documents/GitHub/qcore-c/private/audit-ir-admission/memory-frozen-20261022T0042Z",
+      "--jobs",
+      "4",
+      "--route",
+      "current"
+    ],
+    "exit": 0
+  },
+  "measurement_conclusion": "Failed: systemd Result=oom-kill at the page-rounded 7 GB ceiling; no completed audit, verdict totals, or memory-budget acceptance."
+}

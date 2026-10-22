@@ -5,8 +5,9 @@ removes the temporary full-certificate copy while retaining independent source
 replay and exact context/CFG checks. Current and pinned units now release optional
 Clang reuse at their boundaries, and configured source-contract products reuse
 prepared raw source. The fresh combined main gate passes 8,492 Rust tests,
-362 Lean audits and 374 Python tests. Dedicated-cgroup measurements are separate;
-no whole-job 6–7 GB acceptance is claimed by these gate counts.
+362 Lean audits and 374 Python tests. The frozen-input four-job current resource audit was OOM-killed at its
+7 GB cgroup ceiling after 1,552.876 seconds; the 6–7 GB target remains open.
+The report retains exact input identities and failed-run accounting.
 
 The [audit IR Card](development/audit-ir-card.md) has an interned component
 planner, opt-in `.qc` CFG captures with fresh-source equality checks, and
@@ -16,7 +17,8 @@ CFGs move into final row analysis after global body evidence is recorded.
 The three contract-settlement routes release obsolete owned environments as
 successors are produced.
 This supplies no new safety coverage. Per-component AST loading, final-summary
-CFG eviction and the 6 GB target / 7 GB whole-job ceiling remain unmeasured.
+CFG eviction remains open; the later admission report owns the failed
+7 GB whole-job measurement.
 The combined gate passes 8,483 Rust tests and 361 Lean audits; Python passes
 373 of 374 with the existing committed-matrix Lean count mismatch retained.
 

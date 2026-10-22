@@ -69,3 +69,34 @@ JSON route deliberately rejects. The actual DB is not edited, configurations
 are not collapsed and no target is removed to force acceptance. A measurement
 of the published current route with its complete five-library profile selection
 is in progress; numeric acceptance is recorded only when it has completed.
+
+## Completed memory measurement, 2026-10-22
+
+The frozen-input, four-job `current --config` resource audit **failed** at its
+7,000,000,000-byte requested cgroup limit: systemd reports `Result=oom-kill`,
+peak **6,999,998,464 bytes** (the page-rounded ceiling), swap peak **0 bytes**,
+and elapsed **1,552.876 seconds**. No completed report or verdict totals were
+produced. The worker was killed before it could capture final `memory.events`;
+that unavailable field is not reported as zero. The measurement driver exits 1.
+Stopping and resetting the exact service both exit 0; no measurement job remains.
+The 6 GB target / 7 GB acceptance ceiling is **not achieved** by this slice.
+
+[memory.json](memory.json) records the launch, accounting, cleanup and input
+identities. [memory-attempts.json](memory-attempts.json) retains the earlier
+refused/invalidated attempts. [published-source.json](published-source.json)
+confirms that all 1,498 published Rust blobs at `c8b15aa6c` match the completed
+standing-gate snapshot. The measurement uses that unoptimized dev binary with
+debug info disabled; build/setup is excluded. Contracts, profiles and provider
+manifests are a data-only Git archive of validated `93eb17441`, isolating this
+run from unrelated concurrent working-tree contract edits. The prepared source
+is `046accf6aded7906f66a1baf0202da349e521736`, with the original 1,419-entry
+GNU17 compile database and complete default cmetrics/ctraces/librdkafka/chunkio/
+fluent_bit selection. Distinct static/shared configurations remain present.
+
+This is one post-change sample with fresh processes and uncontrolled host page
+cache, not a before/after comparison with the user's original 17 GB command.
+The next budget slice must account for retained CFG/final-report products,
+component body eviction and bounded concurrency across both audit and replay;
+unit cache clearing and borrowed certificate admission alone are insufficient.
+The parent Card remains open. Raw logs, exact configuration and archived input
+provenance are under `private/audit-ir-admission/memory-frozen-20261022T0042Z/`.

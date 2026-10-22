@@ -167,7 +167,12 @@ source-contract products retain their existing prepared source directly rather
 than another raw string. After deriving the final contract environment, release
 the settled environment owner before final function analysis; preserve the
 original caller input for declared-body evidence. These changes still retain
-final summary CFGs for replay. Per-component body paging remains open.
+final summary CFGs for replay. The frozen-input four-job current resource audit
+reached the 7 GB cgroup ceiling and was OOM-killed after 1,552.876 seconds;
+[measurement](../reports/audit-ir-admission/memory.json). It provides no completed
+budget acceptance. Account for retained final CFG/report products and bound
+concurrency across audit and replay in the next slice; per-component body paging
+remains open.
 
 ### AUDIT-IR-BUDGET
 
