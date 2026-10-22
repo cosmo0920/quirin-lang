@@ -236,6 +236,55 @@ fn current_checkpoint_text(path: &str) -> String {
     );
     format!("{}\n\n{card}", text.trim_end_matches('\n'))
 }
+// Only the historical byte-erasure seam uses this recovered checkpoint.
+// Every graph/loader/binding/flow/lifecycle check below still reads `after`,
+// the actual current source with its complete guarded metadata present.
+fn historical_symbolic_checkpoint(path: &str, current: &str) -> String {
+    const CJSON: &str = "providers/qcore-provider-librdkafka/contracts/librdkafka/cjson.qv";
+    if path != CJSON {
+        return current.into();
+    }
+    use qcore_contract::{guarded_decomposition as guarded, guarded_metadata_bridge as bridge};
+    const PLAN_SHA: &str = "f19cb3d1f20df83b5eb1396d1baf9dadeb9d6ca7dd3570edba10e42eb817219e";
+    let bytes =
+        include_bytes!("../../../docs/reports/guarded-contract-adoption/adoption-plan.json");
+    assert_eq!(qcore_schemas::sha256_hex(bytes), PLAN_SHA);
+    let plan: bridge::Plan = serde_json::from_slice(bytes).unwrap();
+    assert_eq!(plan.module, path);
+    let addition = bridge::render(&plan.metadata).unwrap();
+    assert_eq!(current.matches(&addition).count(), 1);
+    // Candidate recovery is untrusted until the complete held-source bridge
+    // compares both source hashes, canonical additions and interpreted output.
+    let candidate = BTreeMap::from([(path.into(), current.replacen(&addition, "", 1))]);
+    let actual = BTreeMap::from([(path.into(), current.into())]);
+    let checked = bridge::check(bytes, PLAN_SHA, &candidate, &actual).unwrap();
+    let document = guarded::replay_inline(
+        View::Resource,
+        &actual,
+        path,
+        &plan.declaration,
+        &plan.graph,
+        &plan.metadata,
+    )
+    .unwrap();
+    assert_eq!(document.bindings(), &plan.metadata.bindings);
+    assert_eq!(
+        (
+            document.guards().len(),
+            document.alternatives().len(),
+            document.terminal_postconditions().len()
+        ),
+        (2, 1, 2)
+    );
+    let mut wrong = actual.clone();
+    wrong.get_mut(path).unwrap().push('\n');
+    assert!(checked.recover_before(&wrong).is_err());
+    checked
+        .recover_before(&actual)
+        .unwrap()
+        .remove(path)
+        .unwrap()
+}
 #[test]
 fn every_actual_hypothesis_is_introduced_and_every_original_group_is_an_open_conjunction() {
     let inv = inventory();
@@ -271,7 +320,8 @@ fn every_actual_hypothesis_is_introduced_and_every_original_group_is_an_open_con
             qcore_schemas::sha256_hex(before.as_bytes()),
             file["sha256"].as_str().unwrap()
         );
-        let erased = after
+        let historical = historical_symbolic_checkpoint(path, &after);
+        let erased = historical
             .split_inclusive('\n')
             .filter(|l| {
                 !l.trim_start()
