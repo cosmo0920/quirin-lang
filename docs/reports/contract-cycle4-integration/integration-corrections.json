@@ -53,5 +53,5 @@
       "change": "Exact count65 plus explicit module membership; no inventory/schema/view weakening."
     }
   ],
-  "acceptance": "Pending corrected combined gate, native comparison and committed-matrix Python. First gate is retained failed evidence."
+  "acceptance": "Corrected combined gate552 passes all22 stages with stable clean source:8532 Rust/365 Lean; provider133 Rust/25 Python/allfivepackages. Native and post-committed-matrix Python acceptance remain pending."
 }

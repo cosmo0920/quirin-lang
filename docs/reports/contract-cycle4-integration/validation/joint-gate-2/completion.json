@@ -1,0 +1,19 @@
+{
+  "wrapper_exit": 0,
+  "source": "552773f0c64e2e6a3c7d4b752c61a7d26130975a",
+  "head_after": "552773f0c64e2e6a3c7d4b752c61a7d26130975a",
+  "clean_after": true,
+  "all_commands_zero": true,
+  "source_stable": true,
+  "command_count": 22,
+  "commands_sha256": "34005de0de3b417e141160d8edc579b0e8ba664cd804314ba38c03db59ca7057",
+  "matrix_python": "pending: run after regenerated matrix is committed",
+  "provider_gate": "applicable: cJSON contract metadata and official pin/inventory changed; all five packages rebuilt/verified",
+  "provider_delta_base": "31c5ed500d9d4a1448a623b839e1644adb19efd1",
+  "provider_changed_paths": [
+    "providers/qcore-provider-librdkafka/contracts.json",
+    "providers/qcore-provider-librdkafka/contracts.lock",
+    "providers/qcore-provider-librdkafka/contracts/librdkafka/cjson.qv",
+    "providers/tests/test_contract_load_path.py"
+  ]
+}
