@@ -1,0 +1,31 @@
+{
+  "base": "31c5ed500d9d4a1448a623b839e1644adb19efd1",
+  "measured_source": "b460762b4",
+  "git_objects": {
+    "providers": {
+      "base": "c607c73a6e346a5446e7859eccc9c4fcffbe7a2c",
+      "measured": "c607c73a6e346a5446e7859eccc9c4fcffbe7a2c"
+    },
+    "contract": {
+      "base": "4788ef9bd81e042f8064cb843c8c0ea3e7c06500",
+      "measured": "4788ef9bd81e042f8064cb843c8c0ea3e7c06500"
+    },
+    "cycle19-resource-contracts.json": {
+      "base": "311a4b33b1f63c734560ad3b79742ece81029b6b",
+      "measured": "311a4b33b1f63c734560ad3b79742ece81029b6b"
+    },
+    "crates/qcore-c-gateway": {
+      "base": "48ce5f7f2fc05d82ef327caf28cdd612acd762ee",
+      "measured": "48ce5f7f2fc05d82ef327caf28cdd612acd762ee"
+    },
+    "crates/qcore-audit": {
+      "base": "c5d63892c8df9ec46e4f9c0791ef1dd08f440734",
+      "measured": "c5d63892c8df9ec46e4f9c0791ef1dd08f440734"
+    },
+    "crates/qcore-schemas": {
+      "base": "1f74d15748d180606930791b3a388886d7640157",
+      "measured": "1f74d15748d180606930791b3a388886d7640157"
+    }
+  },
+  "interpretation": "Production consumers/provider inputs unchanged; new logger model has no production caller. No verdict movement claimed."
+}

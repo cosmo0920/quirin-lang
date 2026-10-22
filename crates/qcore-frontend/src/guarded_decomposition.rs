@@ -132,3 +132,93 @@ pub fn parse(source: &str) -> Result<Vec<Clause>, String> {
     }
     Ok(clauses)
 }
+
+/// Explicit source embedding; these heads never share flow-v1's semantics.
+#[derive(Clone, Debug, PartialEq, Eq)]
+pub enum SourceClause {
+    Symbol {
+        id: String,
+        role: String,
+        proposition: String,
+        dependencies: Vec<String>,
+    },
+    Document {
+        id: String,
+        readable: String,
+    },
+}
+pub fn is_source_clause(source: &str) -> bool {
+    source
+        .split(|c: char| !c.is_ascii_alphanumeric() && c != '_')
+        .next()
+        .is_some_and(|s| s.starts_with("resource_guarded_"))
+}
+pub fn parse_source_clause(source: &str) -> Result<Option<SourceClause>, String> {
+    use crate::lexer::{Symbol, TokenKind, lex};
+    if !is_source_clause(source) {
+        return Ok(None);
+    }
+    if source.len() > 131072 {
+        return Err("guarded source: byte limit".into());
+    }
+    let tokens = lex(source)
+        .map_err(|e| e.to_string())?
+        .into_iter()
+        .map(|t| t.kind)
+        .collect::<Vec<_>>();
+    let word = |t: &TokenKind| match t {
+        TokenKind::Word(s) => identifier(s),
+        _ => Err("guarded source: identifier required".into()),
+    };
+    let string = |t: &TokenKind| -> Result<String, String> {
+        match t {
+            TokenKind::StringLiteral(s) if !s.contains('\\') => Ok(s.clone()),
+            _ => Err("guarded source: literal unescaped string required".into()),
+        }
+    };
+    let bad = || "guarded source: exact versioned clause required".to_string();
+    if tokens.len() < 7
+        || tokens[1] != TokenKind::Symbol(Symbol::LeftParen)
+        || tokens[3] != TokenKind::Symbol(Symbol::Comma)
+        || tokens[tokens.len() - 2] != TokenKind::Symbol(Symbol::RightParen)
+        || tokens.last() != Some(&TokenKind::Eof)
+    {
+        return Err(bad());
+    }
+    let id = word(&tokens[2])?;
+    match tokens.first() {
+        Some(TokenKind::Word(h))
+            if h == "resource_guarded_decomposition_v1" && tokens.len() == 7 =>
+        {
+            let readable = string(&tokens[4])?;
+            parse(&readable)?;
+            Ok(Some(SourceClause::Document { id, readable }))
+        }
+        Some(TokenKind::Word(h)) if h == "resource_guarded_symbol_v1" && tokens.len() >= 9 => {
+            let role = word(&tokens[4])?;
+            if tokens[5] != TokenKind::Symbol(Symbol::Comma) {
+                return Err(bad());
+            }
+            let proposition = string(&tokens[6])?;
+            let mut dependencies = Vec::new();
+            let mut at = 7;
+            while at < tokens.len() - 2 {
+                if tokens[at] != TokenKind::Symbol(Symbol::Comma) {
+                    return Err(bad());
+                }
+                dependencies.push(word(tokens.get(at + 1).ok_or_else(bad)?)?);
+                at += 2;
+            }
+            if at != tokens.len() - 2 {
+                return Err(bad());
+            }
+            Ok(Some(SourceClause::Symbol {
+                id,
+                role,
+                proposition,
+                dependencies,
+            }))
+        }
+        _ => Err(bad()),
+    }
+}

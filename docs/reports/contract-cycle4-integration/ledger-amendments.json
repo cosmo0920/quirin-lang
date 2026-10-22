@@ -1,0 +1,13 @@
+{
+  "count_before": 810,
+  "count_after": 810,
+  "amended": [
+    "PREMISE-FLOW-PRODUCTION-DISCHARGE",
+    "W48-BOTTOM-UP-RESIDUAL-PLAN"
+  ],
+  "added": [],
+  "retired": [],
+  "unchanged_other_count": 808,
+  "unchanged_other_canonical_sha256": "173ad4c78f70b2ed3a4b060a9637d25f24225cc21b71271c65b9d34850cf3961",
+  "source_residuals": "Four source universal IDs remain registered unchanged and Open."
+}

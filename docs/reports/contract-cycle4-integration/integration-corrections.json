@@ -1,0 +1,88 @@
+{
+  "first_gate": {
+    "source": "c2ea7bf492ad003260770f93f14fc1061045e043",
+    "command_count": 22,
+    "wrapper_exit": 1,
+    "failed_commands": {
+      "rust": 101,
+      "lean": 1,
+      "provider-python": 1
+    },
+    "rust": {
+      "passed": 8528,
+      "failed": 1,
+      "ignored": 15,
+      "units": 541,
+      "summaries": 554
+    },
+    "provider_rust": {
+      "passed": 133,
+      "failed": 0,
+      "ignored": 1
+    },
+    "provider_python": {
+      "ran": 25,
+      "failed": 1
+    },
+    "all_five_package_builds_and_verifications": 0,
+    "raw_logs": "/home/cosmo/.codex/worktrees/logger-effect-contracts/qcore-c/private/contract-cycle4-integration/joint-gate-1"
+  },
+  "corrections": [
+    {
+      "kind": "finite model logical error",
+      "source": "1b315995a835ac7f1829bcac95fc8dd1ed80060c",
+      "change": "Current-thread TLS must name a live modeled unretired parent, not a callee or params token. New Rust negative/survival/empty controls and matching Lean role premise. No C defect or source truth inferred."
+    },
+    {
+      "kind": "historical production data control",
+      "source": "af0fefc0a",
+      "change": "Checked version2 source recovery only at old-byte erasure seam; actual current metadata still exercised and original count/proposition/byte assertions retained."
+    },
+    {
+      "kind": "integration import ordering",
+      "change": "Move scheduler/guarded Lean imports before trailing module documentation, preserving every import and model definition."
+    },
+    {
+      "kind": "inherited provider test pin",
+      "old_expected": 64,
+      "actual_before_and_after": 65,
+      "manifest_equal_to_base": true,
+      "manifest_sha256": "bfa750eaa8588582cec1aca674b70c137291165b776861293cdc06c4801939a8",
+      "introducing_commit": "b5f74d79a",
+      "introduced_module": "librdkafka/logging.qv",
+      "change": "Exact count65 plus explicit module membership; no inventory/schema/view weakening."
+    }
+  ],
+  "acceptance": "Corrected combined source552 passes all22 stages with stable clean source:8532 Rust/365 Lean; provider133 Rust/25 Python/allfivepackages. Authoritative Python374 passes0 at clean source024048e35163f59475572b851ad663dcfa46d730 with committed matrix SHA unchanged. Native TIP/comparison acceptance remains pending.",
+  "native_attempt_1": {
+    "status": "failed; not acceptance",
+    "baseline_source": "31c5ed500d9d4a1448a623b839e1644adb19efd1",
+    "route": "corpus",
+    "exit": 1,
+    "expected_libevent_revision": "d82464a277d0f42703702c4dfd9af6af38595a83",
+    "observed_parent_revision": "f91d17358479619fb0443b787009595beb5608e1",
+    "cause": "Fresh Git archive omitted the libevent gitlink checkout required at the baseline binary compile-time CARGO_MANIFEST_DIR path. Release build did not consume that runtime source. Git verification in the absent checkout resolved its containing repository and correctly refused the mismatched revision.",
+    "repair": "Materialize the exact baseline gitlink checkout as a separately receipted runtime environment prerequisite. Preserve all archived main-file hashes and the baseline binary. Check both binaries actual compile-time Libevent roots and complete tracked-file maps before and after native recovery.",
+    "baseline_binary_sha256": "20f3af5e0334b04ee6a26ca25101ee341daa7f629347aab18ad33077b85eb8b8",
+    "private_root": "/home/cosmo/.codex/worktrees/guarded-contract-adoption/qcore-c/private/guarded-contract-adoption",
+    "retained_attempt": "native-base-1/corpus",
+    "failure_receipt": "native-controller-1/failure.txt",
+    "repair_receipt": "native-base-runtime-binding-1/receipt.json",
+    "recovery": "native-controller-2: corrected fresh BASE corpus passes0 at10:34:52Z; complete TIP/comparison acceptance pending. Original failed attempt remains retained."
+  },
+  "status_inventory_correction": {
+    "old": [
+      73,
+      48,
+      121
+    ],
+    "actual": [
+      83,
+      54,
+      137
+    ],
+    "source": "contract-module-inventory.json",
+    "module_paths_equal_to_baseline": true,
+    "meaning": "Current STATUS inventory correction only; no cycle4 module inventory expansion."
+  }
+}

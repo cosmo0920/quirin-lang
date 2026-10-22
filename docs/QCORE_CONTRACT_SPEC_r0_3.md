@@ -1011,8 +1011,9 @@ These are records only. Creation proves no existence/freshness/liveness or hypot
 
 The standalone `guarded_decomposition_v1;` document is an explicit proposed
 contract layer, inspected by `qcore_contract::guarded_decomposition::replay`.
-It is **not** a clause admitted inside `.qv` contracts, an ordinary expression,
-a flow-v1 expression or an extension of lifecycle-v1. Existing operator meanings
+It is not an ordinary expression, a flow-v1 expression or an extension of
+lifecycle-v1. C04.18.6 separately admits an explicit source embedding inside
+`.qv` contracts. Existing operator meanings
 in every other context remain unchanged. G05-guarded gives its complete grammar.
 
 Every symbol has one explicit role and proposed proposition: environment,
@@ -1076,11 +1077,57 @@ production evidence automatically, and construct no Unsafe verdict.
 
 This API publishes proposed obligations only: no production semantic/lifecycle
 consumer, allocation/release, prose equivalence, standing, verdict or outer
-truth authority is added. Existing source universals stay Open. Inline adoption
-requires its own explicit grammar/loader extension, sealed whole-source metadata
-bridge extension and deliberate reviewed-source identity maintenance; a standalone
-document bypasses none of these. Matching audited Lean defines conditional model
+truth authority is added. Existing source universals stay Open. C04.18.6 supplies
+an explicit inline grammar/loader and sealed whole-source metadata bridge for
+a narrow production adoption; a standalone document bypasses none of those
+checks. Matching audited Lean defines conditional model
 semantics and concrete cJSON/plugin propositions, not imported-C correspondence.
+
+### C04.18.6. Guarded production source embedding (source version 1; bridge version 2)
+
+A declaration may explicitly embed one guarded document using
+`requires resource_guarded_decomposition_v1(ENTRY, "DOCUMENT");` and its complete
+symbol table using `requires resource_guarded_symbol_v1(ID, ROLE, "PROPOSITION",
+DEPENDENCY, ...);`. Zero dependencies are allowed. The roles are exactly
+`environment`, `prerequisite`, `operation`, `condition`, `case`, `postcondition`.
+The unescaped string literal may contain LF and Unicode, preserving the readable
+operator layer verbatim. Backslash escapes are refused; literal quotes cannot
+occur inside it. Existing source lexing applies outside these explicit heads.
+
+Every resource, bounds and declared-model loader validates the whole symbol map
+and document against its original hypothesis graph before admitting this metadata.
+Missing/duplicate document or symbol, unknown version/role, dangling or unsorted
+dependency, wrong clause placement, unused symbol, incomplete alternatives or
+terminal map and malformed original semantic clauses refuse the whole source.
+The document is proposed metadata: it adds no interpreted prerequisite, C effect,
+truth disposition, standing, classifier exemption or safety verdict. Bounds/null
+view relations compare the complete typed guarded map alongside existing flow
+and lifecycle maps. An independently pure null view remains separate and gains
+no resource metadata authority. No meanings of flow-v1 or lifecycle-v1 change.
+
+`guarded_decomposition::replay_inline` runs the full selected property source
+loader and independently compares the complete graph, exact module/declaration,
+whole-source identity and complete expected metadata. Proposed assignments retain
+C04.18.5's exact symbol digests and nine-coordinate Context checks.
+
+The separate `guarded_metadata_bridge` version-2 plan is independently hash-held.
+Its deliberately bounded scope is one resource module and one declaration.
+It checks exact BASE/TIP whole-source SHA identities, deterministic complete
+symbol/document insertion after the target's last standalone LF clause, equality
+of complete original graph maps, ABI maps and premise erasures, and equality of
+every interpreted `ResourceContracts` field after reconstructing the exact held
+original source map. Every other source byte is preserved. No arbitrary clause
+stripping, generic hash waiver or field-deletion normalization is available.
+Only a successful private-constructor receipt can recover the complete original
+map from the exact checked TIP map; missing, extra or changed modules refuse.
+The original bridge version 1 continues to check only its original insertion
+language. Resource-source adoption requires official source repinning and package
+inventory updates; matching text is not source truth. The cJSON production
+application retains the frozen standalone cJSON/plugin propositions, all nine
+original cJSON atoms, the old premise and every existing flow/lifecycle entry.
+Source universals, deployed callbacks, executable lifecycle and C termination
+remain Open. Lean models conditional admission/recovery; Rust/extraction
+correspondence is maintained, not a proved refinement theorem.
 
 ### C04.19. Callback contracts
 

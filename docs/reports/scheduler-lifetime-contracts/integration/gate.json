@@ -1,0 +1,20 @@
+{
+  "note": "This card’s focused checks and the combined workspace counts have different scope. Fresh combined measurement at 552773f0c64e2e6a3c7d4b752c61a7d26130975a is recorded in contract-cycle4-integration; these are shared measurements, not additional runs. Fresh complete combined source 552773f0c64e2e6a3c7d4b752c61a7d26130975a; 22 stages pass with stable clean source. Prior gate failures remain retained. Provider Rust133/Python25/all five package builds and verifications are fresh. Native acceptance was pending at source-gate capture; this frozen source/provider measurement does not claim native completion. Current native acceptance is separately receipted. Python374 is explicitly BORROWED from preceding committed-matrix checkpoint until actual fresh post-commit confirmation, recorded separately; no full completion inferred before that receipt. Clang recording is explicitly BORROWED from the actual shared gate in this same integration worktree.",
+  "workspace_tests": 8532,
+  "provider_tests": 133,
+  "python_evidence_validator_tests": 374,
+  "reevaluation_probe_exit": 0,
+  "reevaluation_followup_exit": 0,
+  "cargo_fmt": "clean",
+  "cargo_clippy": "clean",
+  "standing_gate": "source/provider complete; native and committed-matrix Python separately receipted",
+  "lean_audits": 365,
+  "clang": "present: Ubuntu clang version 21.1.8 (6ubuntu1)",
+  "measured_source": "552773f0c64e2e6a3c7d4b752c61a7d26130975a",
+  "integration_identity": {
+    "merge_sha": "2a8a83ffb0521421f22ceb13d9f4c477e0bd7801",
+    "correction_merge_sha": "7b88844e1292b184782d155ed08816ce60ae104e",
+    "report_receipts_merge_sha": "874ecaf62346b76850301462d58edf52e22a13ed"
+  },
+  "shared_gate": "../../contract-cycle4-integration/gate.json"
+}

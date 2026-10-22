@@ -1,3 +1,4 @@
+import QCore.LoggerEffects
 import QCore.GuardedContractApplications
 import QCore.GuardedDecomposition
 import QCore.SymbolicOverlapAdmission
@@ -416,6 +417,9 @@ import QCore.LibcReadingSiteEvidence
 import QCore.PluginPremiseDecomposition
 import QCore.PluginReadingEnvironment
 import QCore.PluginNeutralOverlap
+
+import QCore.SchedulerLifetime
+import QCore.GuardedSourceAdoption
 
 /-! The executable formal core of QCore-C revision 0.1. -/
 

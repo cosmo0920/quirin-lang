@@ -1,0 +1,256 @@
+{
+  "version": 1,
+  "authority": "proposed source-bound decomposition only; no original graph or production declaration modified",
+  "bounds": {
+    "threads": 32,
+    "live_resources": 512,
+    "callback_effects_per_thread": 64,
+    "trace_steps": 2560
+  },
+  "symbols": {
+    "active_unlinked_purge_member": {
+      "role": "postcondition",
+      "proposition": "Exactly one active node migrates to purge; parent ownership unchanged; no free.",
+      "source_truth": "Open"
+    },
+    "allocated_parent_unresolved": {
+      "role": "postcondition",
+      "proposition": "Allocated parent remains outstanding on explicit data-null edge unless independently proved infeasible.",
+      "source_truth": "Open"
+    },
+    "allocation_extent": {
+      "role": "prerequisite",
+      "proposition": "Allocation arithmetic, alignment and MK_THREAD_DATA extent agree; failure/data-null alternatives retained.",
+      "source_truth": "Open"
+    },
+    "allocation_failed": {
+      "role": "case",
+      "proposition": "mk_thread_new returns NULL, producing no new owner.",
+      "source_truth": "Open"
+    },
+    "borrowed_chain_live": {
+      "role": "prerequisite",
+      "proposition": "Session, channel and event survive through reset; destruction releases none of these borrowed objects.",
+      "source_truth": "Open"
+    },
+    "callback_checked_parent_callee_params_retired": {
+      "role": "postcondition",
+      "proposition": "Free/clear params, unlink/reset, explicit callback, callee delete, parent free; borrowed objects survive.",
+      "source_truth": "Open"
+    },
+    "callback_checked_parent_callee_retired": {
+      "role": "postcondition",
+      "proposition": "No params; explicit callback after reset and before callee/parent retirement; independent footprint evidence required.",
+      "source_truth": "Open"
+    },
+    "callback_dispatch_closure": {
+      "role": "prerequisite",
+      "proposition": "Library callback code/data/request/session lifetime and all transitive effects separately established; plugin dispatch remains FIXME, allocation/event failures retained.",
+      "source_truth": "Open"
+    },
+    "callback_footprint": {
+      "role": "prerequisite",
+      "proposition": "Every optional cb_destroy and transitive effect has independently established returning trace preserving parent, callee, borrowed chain, complete list/saved-successor footprint until enclosing destruction; no neutral/circular assumption.",
+      "source_truth": "Open"
+    },
+    "callee_live": {
+      "role": "prerequisite",
+      "proposition": "Libco callee is initialized, live, compatible with co_delete and not running.",
+      "source_truth": "Open"
+    },
+    "cleanup": {
+      "role": "operation",
+      "proposition": "Proposed admission of bounded safe-list iteration, counting once per completed destroy.",
+      "source_truth": "Open"
+    },
+    "coroutine_creation_failed": {
+      "role": "case",
+      "proposition": "co_create NULL after insertion/request assignment; source proceeds to params/switch unchecked. No successful creation or rollback inferred.",
+      "source_truth": "Open"
+    },
+    "create": {
+      "role": "operation",
+      "proposition": "Proposed admission of source creation including every early-return and unchecked coroutine outcome; finite cleanup checker does not validate creation.",
+      "source_truth": "Open"
+    },
+    "created": {
+      "role": "case",
+      "proposition": "Valid parent/embedded data/callee, params initialized, initialization context switch returns; all dependent effects established independently.",
+      "source_truth": "Open"
+    },
+    "creation_no_new_owner": {
+      "role": "postcondition",
+      "proposition": "Allocation failure creates no cleanup duty; pre-existing caller resources survive.",
+      "source_truth": "Open"
+    },
+    "creation_unchanged": {
+      "role": "postcondition",
+      "proposition": "Missing scheduler creates no owner and edits no list/request.",
+      "source_truth": "Open"
+    },
+    "data_null": {
+      "role": "case",
+      "proposition": "Explicit MK_THREAD_DATA NULL test returns NULL after parent allocation without source free; reachability under defined layout remains Open.",
+      "source_truth": "Open"
+    },
+    "destroy": {
+      "role": "operation",
+      "proposition": "Proposed admission of params free/clear, unlink, event reset, optional callback, callee delete and parent free in source order.",
+      "source_truth": "Open"
+    },
+    "empty_list": {
+      "role": "case",
+      "proposition": "No selected member and no destroy call; nonnull params TLS remains untouched.",
+      "source_truth": "Open"
+    },
+    "environment": {
+      "role": "environment",
+      "proposition": "Exact seven pinned source files, correct ABI/layout/libco/TLS configuration; finite sequential model, no extraction/deployment proof.",
+      "source_truth": "Open"
+    },
+    "exact_parent_embedding": {
+      "role": "prerequisite",
+      "proposition": "Node is _head of the HTTP object embedded in exactly one live sufficiently large parent allocation; parent field identifies it.",
+      "source_truth": "Open"
+    },
+    "invalid_membership": {
+      "role": "condition",
+      "proposition": "Positive absent/duplicate/wrong-list/stale membership forbids admission; source has no complete membership guard.",
+      "source_truth": "Open"
+    },
+    "linked_owner_with_unresolved_switch": {
+      "role": "postcondition",
+      "proposition": "Linked parent and request alias exist before unchecked callee failure; attempted switch effects and termination Open.",
+      "source_truth": "Open"
+    },
+    "linked_parent_and_borrowed_request": {
+      "role": "postcondition",
+      "proposition": "Parent owns embedded HTTP object/callee; request/session/handler data borrowed; active list gains one node, conditional on creation prerequisites.",
+      "source_truth": "Open"
+    },
+    "missing_purge_scheduler": {
+      "role": "case",
+      "proposition": "Purge scheduler lookup NULL returns -1 before close/list edit.",
+      "source_truth": "Open"
+    },
+    "missing_scheduler": {
+      "role": "case",
+      "proposition": "Create scheduler lookup NULL before parent allocation.",
+      "source_truth": "Open"
+    },
+    "moved_to_purge": {
+      "role": "case",
+      "proposition": "Same-owner scheduler found, close assigned, node unlinked then inserted in purge list; zero return.",
+      "source_truth": "Open"
+    },
+    "no_concurrent_writer": {
+      "role": "prerequisite",
+      "proposition": "No concurrent list, coroutine, borrowed-chain or TLS mutation.",
+      "source_truth": "Open"
+    },
+    "no_later_alias_use": {
+      "role": "prerequisite",
+      "proposition": "All external aliases, request->thread and channel.thread are retired or never read/resumed after parent free. Source does not clear them.",
+      "source_truth": "Open"
+    },
+    "nonempty_list": {
+      "role": "case",
+      "proposition": "One or more admitted suspended members destroyed once in original safe-iteration order.",
+      "source_truth": "Open"
+    },
+    "original_lists_unchanged": {
+      "role": "postcondition",
+      "proposition": "Missing-scheduler purge leaves lists, close and ownership unchanged.",
+      "source_truth": "Open"
+    },
+    "original_state_unchanged": {
+      "role": "postcondition",
+      "proposition": "Empty cleanup has no modeled effects, return count zero, no params free.",
+      "source_truth": "Open"
+    },
+    "parent_callee_params_retired_borrows_live": {
+      "role": "postcondition",
+      "proposition": "Free/clear params, unlink, event reset, callee delete, parent free; borrowed objects survive.",
+      "source_truth": "Open"
+    },
+    "parent_callee_retired_borrows_live": {
+      "role": "postcondition",
+      "proposition": "Unlink, event reset, callee delete, parent free; borrowed objects survive; no params existed.",
+      "source_truth": "Open"
+    },
+    "parent_live": {
+      "role": "prerequisite",
+      "proposition": "Parent allocation has exclusive release authority and is neither borrowed nor already freed.",
+      "source_truth": "Open"
+    },
+    "purge": {
+      "role": "operation",
+      "proposition": "Proposed admission of close assignment and active-to-purge migration; no ownership release.",
+      "source_truth": "Open"
+    },
+    "request_live": {
+      "role": "prerequisite",
+      "proposition": "Request/session and writable fields remain live on every path reaching their uses.",
+      "source_truth": "Open"
+    },
+    "retiring_current_tls": {
+      "role": "condition",
+      "proposition": "Current mk_thread TLS aliases retiring parent; bounded consumer refuses because source never clears it. Broader rebind protocol requires proof.",
+      "source_truth": "Open"
+    },
+    "selected_list_empty_and_borrows_live": {
+      "role": "postcondition",
+      "proposition": "Selected parents/callees retired once; other list/borrowed chain survive; events reset; count matches original length; params freed at most once.",
+      "source_truth": "Open"
+    },
+    "suspended_coroutines": {
+      "role": "prerequisite",
+      "proposition": "Every retiring coroutine is suspended, not co_active; no concurrent resume, destruction or re-entry.",
+      "source_truth": "Open"
+    },
+    "tls_absent_callback_absent": {
+      "role": "case",
+      "proposition": "Explicit destroy branch: tls absent callback absent. Presence/absence positive; callback effects independently required.",
+      "source_truth": "Open"
+    },
+    "tls_absent_callback_present": {
+      "role": "case",
+      "proposition": "Explicit destroy branch: tls absent callback present. Presence/absence positive; callback effects independently required.",
+      "source_truth": "Open"
+    },
+    "tls_api_success": {
+      "role": "prerequisite",
+      "proposition": "TLS initialization/get/set configuration established; ignored pthread key/set return values must succeed, not inferred from source binding.",
+      "source_truth": "Open"
+    },
+    "tls_params_owned": {
+      "role": "prerequisite",
+      "proposition": "Params TLS is NULL or independently allocated live releasable storage, disjoint from owned/borrowed/callback resources.",
+      "source_truth": "Open"
+    },
+    "tls_present_callback_absent": {
+      "role": "case",
+      "proposition": "Explicit destroy branch: tls present callback absent. Presence/absence positive; callback effects independently required.",
+      "source_truth": "Open"
+    },
+    "tls_present_callback_present": {
+      "role": "case",
+      "proposition": "Explicit destroy branch: tls present callback present. Presence/absence positive; callback effects independently required.",
+      "source_truth": "Open"
+    },
+    "valid_membership": {
+      "role": "prerequisite",
+      "proposition": "Valid circular sentinels, reciprocal links, distinct live embedded nodes, exact disjoint membership and valid saved successor.",
+      "source_truth": "Open"
+    },
+    "worker_tls": {
+      "role": "prerequisite",
+      "proposition": "Current OS thread owns selected scheduler; worker TLS identifies it. Current-thread TLS is absent or a live modeled parent token, never a callee/params/borrowed allocation token. Cleanup itself ignores sched.",
+      "source_truth": "Open"
+    }
+  },
+  "lifecycle_metadata": {
+    "creation": "|^+ introduces resource/hypothesis metadata; no allocation fact follows",
+    "retirement": "|^- retires resource/hypothesis metadata; no C free/global negation follows"
+  }
+}

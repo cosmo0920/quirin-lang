@@ -883,11 +883,14 @@ fn pointer_nominal(type_source: &str) -> Option<&str> {
 
 // These heads identify a validation obligation, not permission to skip a clause.
 fn symbolic_metadata_head(expression: &str) -> bool {
-    crate::premise_flow::is_clause(expression) || crate::contract_lifecycle::is_clause(expression)
+    crate::premise_flow::is_clause(expression)
+        || crate::contract_lifecycle::is_clause(expression)
+        || crate::guarded_decomposition::is_source_clause(expression)
 }
 
 #[derive(PartialEq, Eq)]
 struct ValidatedSymbolicMetadata {
+    guarded: Option<crate::guarded_decomposition::Inline>,
     flows: BTreeMap<String, qcore_schemas::premise_flow::Expr>,
     lifecycle: BTreeMap<String, crate::contract_lifecycle::Entry>,
 }
@@ -907,6 +910,7 @@ fn validated_symbolic_metadata(
         .find(|declaration| declaration.value.name == view.name)
         .ok_or("null view: missing actual declaration for metadata replay")?;
     Ok(ValidatedSymbolicMetadata {
+        guarded: crate::guarded_decomposition::declaration(&declaration.value, graph)?,
         flows: crate::premise_flow::declaration(&declaration.value, graph)?,
         lifecycle: crate::contract_lifecycle::declaration(&declaration.value, graph)?,
     })
@@ -982,6 +986,7 @@ fn check_null_deref_only(
             && graph.refinements.is_empty()
             && null_metadata.flows.is_empty()
             && null_metadata.lifecycle.is_empty()
+            && null_metadata.guarded.is_none()
             && declaration.clauses.iter().all(|clause| {
                 (clause.kind == "requires" && clause.expression == "bounds_contract_v1")
                     || clause.kind == "quant null-deref"

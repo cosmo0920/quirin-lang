@@ -3768,6 +3768,30 @@ separate terminals. Exact role/reference/size limits, admission-direction
 lowering, positive-refutation and Context checks are C04.18.5. Existing G05-flow,
 G05-lifecycle and maps-to meanings are unchanged.
 
+### G05-guarded-source. Explicit guarded source embedding
+
+C04.18.6 extends the contract metadata vocabulary explicitly. Existing contextual
+flow-v1/lifecycle-v1 expressions retain their meanings. The ordinary lexer
+retains the raw content of a quoted multiline literal; this extension refuses
+backslash escapes rather than applying JSON/C escape decoding.
+
+```ebnf
+guarded_symbol = "requires", "resource_guarded_symbol_v1", "(", ID, ",", role,
+                 ",", RAW_STRING, { ",", graph_atom_id }, ")", ";" ;
+guarded_source = "requires", "resource_guarded_decomposition_v1", "(", entry_id,
+                 ",", RAW_GUARDED_DOCUMENT_STRING, ")", ";" ;
+role = "environment" | "prerequisite" | "operation" | "condition" | "case" | "postcondition" ;
+```
+
+`RAW_GUARDED_DOCUMENT_STRING` contains the complete G05-guarded versioned document,
+including its final semicolon. One document and its complete role/proposition map
+are required per participating declaration. The source clause limit is131,072
+bytes; embedded document/statement/identifier/symbol/dependency bounds remain
+C04.18.5's. Every `resource_guarded_` head is reserved to this total-or-reject
+reader, including unsupported versions. No executable lifecycle or source truth
+is introduced. The sealed bridge version2 is separately bounded to one resource
+module/declaration; it is not a general source eraser.
+
 ## G05a. Contract inclusion and inheritance
 
 Card CONTRACT-INHERIT. A directive layer read by

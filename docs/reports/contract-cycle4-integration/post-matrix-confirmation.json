@@ -1,0 +1,22 @@
+{
+  "command": [
+    "/usr/bin/python3",
+    "-m",
+    "unittest",
+    "discover",
+    "-s",
+    "scripts/tests"
+  ],
+  "cwd": "/home/cosmo/.codex/worktrees/logger-effect-contracts/qcore-c",
+  "source": "024048e35163f59475572b851ad663dcfa46d730",
+  "started": "2026-10-22T10:34:52.612450+00:00",
+  "ended": "2026-10-22T10:35:26.201806+00:00",
+  "exit": 0,
+  "test_count": 374,
+  "matrix_sha256_before": "da372e789643fb555f8c4e1acb2198608eb5a7919e79d87b8e55a7c594013486",
+  "matrix_sha256_after": "da372e789643fb555f8c4e1acb2198608eb5a7919e79d87b8e55a7c594013486",
+  "matrix_committed_before": true,
+  "source_and_matrix_stable": true,
+  "log": "/home/cosmo/.codex/worktrees/logger-effect-contracts/qcore-c/private/contract-cycle4-integration/matrix-python-1/python.log",
+  "log_sha256": "88e2d7508532af25365f5844e08d3b7001f8760e313cb7ae0479285878f45910"
+}

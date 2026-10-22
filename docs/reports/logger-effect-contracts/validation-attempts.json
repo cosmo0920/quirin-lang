@@ -1,0 +1,74 @@
+[
+  {
+    "run": "focused-1",
+    "logs": [
+      {
+        "command_stage": "fmt",
+        "exit": 0,
+        "log_path": "/home/cosmo/.codex/worktrees/logger-effect-contracts/qcore-c/private/logger-effect-contracts/focused-1/fmt.log",
+        "log_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      {
+        "command_stage": "lean",
+        "exit": 1,
+        "log_path": "/home/cosmo/.codex/worktrees/logger-effect-contracts/qcore-c/private/logger-effect-contracts/focused-1/lean.log",
+        "log_sha256": "63db7af23012b6c566b64e2046534e87e57b30017cf237cbb770ffc81e6d836a"
+      },
+      {
+        "command_stage": "rust",
+        "exit": 0,
+        "log_path": "/home/cosmo/.codex/worktrees/logger-effect-contracts/qcore-c/private/logger-effect-contracts/focused-1/rust.log",
+        "log_sha256": "8164b6c0507e984494c6c03557308a56125d43993d6a86772a41bcf9787516e7"
+      }
+    ],
+    "interpretation": "Rust8/8 and fmt0 passed. Lean failed on constructor spelling local, a Lean keyword; no Lean acceptance claimed."
+  },
+  {
+    "run": "focused-2",
+    "logs": [
+      {
+        "command_stage": "lean",
+        "exit": 1,
+        "log_path": "/home/cosmo/.codex/worktrees/logger-effect-contracts/qcore-c/private/logger-effect-contracts/focused-2/lean.log",
+        "log_sha256": "f5a6c3caaa2ce2b34e707cae6804f9c134bfe8c4ee4aab682b6d40100d8e43c7"
+      }
+    ],
+    "interpretation": "Lean parsing fixed; closure induction failed because the induction context retained a dependent local-effect premise."
+  },
+  {
+    "run": "focused-3",
+    "logs": [
+      {
+        "command_stage": "audit",
+        "exit": 1,
+        "log_path": "/home/cosmo/.codex/worktrees/logger-effect-contracts/qcore-c/private/logger-effect-contracts/focused-3/audit.log",
+        "log_sha256": "658732fc0582a1d168d482b46f38e1f518d6030feb65260f2a66e79570750a45"
+      },
+      {
+        "command_stage": "lean",
+        "exit": 1,
+        "log_path": "/home/cosmo/.codex/worktrees/logger-effect-contracts/qcore-c/private/logger-effect-contracts/focused-3/lean.log",
+        "log_sha256": "26045c51bb2a0aaa948097d61775de4e62d4792e261c3f74f5ea160f172bc24d"
+      }
+    ],
+    "interpretation": "Induction repaired; direct lean -o could not create an absent Lake output parent, and audit import failed. Infrastructure failure, no accepted audit."
+  },
+  {
+    "run": "focused-4",
+    "logs": [
+      {
+        "command_stage": "audit",
+        "exit": 0,
+        "log_path": "/home/cosmo/.codex/worktrees/logger-effect-contracts/qcore-c/private/logger-effect-contracts/focused-4/audit.log",
+        "log_sha256": "c5d4ce58049b8adf0598506ecf08b2f218ca3f9de179fba4558a226c4ab13314"
+      },
+      {
+        "command_stage": "lean",
+        "exit": 0,
+        "log_path": "/home/cosmo/.codex/worktrees/logger-effect-contracts/qcore-c/private/logger-effect-contracts/focused-4/lean.log",
+        "log_sha256": "7d441f38ef4d016ac3f61401eb75648717892dfb12273680d47a05befaa1b89e"
+      }
+    ],
+    "interpretation": "Targeted lake build and audit passed0. Final measured run repeats both on the final theorem statements."
+  }
+]

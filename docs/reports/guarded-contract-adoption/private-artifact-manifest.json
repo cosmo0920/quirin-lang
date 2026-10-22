@@ -1,0 +1,157 @@
+[
+  {
+    "path": "private/guarded-contract-adoption/lean-audit-1/audit.log",
+    "bytes": 920,
+    "sha256": "8078d937c6288bd7968a56f2c0be9c90fb5acd1308ddeaf1b568dbb0e061fbad"
+  },
+  {
+    "path": "private/guarded-contract-adoption/lean-audit-1/audit.exit",
+    "bytes": 2,
+    "sha256": "9a271f2a916b0b6ee6cecb2426f0b3206ef074578be55d9bc94f6f3fe3ab86aa"
+  },
+  {
+    "path": "private/guarded-contract-adoption/focused-final-2/02.log",
+    "bytes": 182,
+    "sha256": "6bca51dba4f2819daf11761fda7ddaf941a8951065e5bca8e7d596dec60ff294"
+  },
+  {
+    "path": "private/guarded-contract-adoption/focused-final-2/01.log",
+    "bytes": 0,
+    "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  },
+  {
+    "path": "private/guarded-contract-adoption/focused-final-2/commands.json",
+    "bytes": 2596,
+    "sha256": "d5aaabf318f9d170c3182642f6559c7e489c7ce18f59fbb556dad283aeea4676"
+  },
+  {
+    "path": "private/guarded-contract-adoption/focused-final-2/03.log",
+    "bytes": 4767,
+    "sha256": "b9dd65012d387336ea64fdee5b5967271b1750b45306edf188bb4ff3cd402e43"
+  },
+  {
+    "path": "private/guarded-contract-adoption/focused-final-2/00.log",
+    "bytes": 4736,
+    "sha256": "e2f96eb1444f5c3323ac0d52dbf505ee2a5aa67def76432df36dc8b73d2bb793"
+  },
+  {
+    "path": "private/guarded-contract-adoption/build-pin-1/build.exit",
+    "bytes": 2,
+    "sha256": "9a271f2a916b0b6ee6cecb2426f0b3206ef074578be55d9bc94f6f3fe3ab86aa"
+  },
+  {
+    "path": "private/guarded-contract-adoption/build-pin-1/build.log",
+    "bytes": 1860,
+    "sha256": "527d32efce05da79a1fd3d46ee81b5eb502d70ad12e5531cadf1c595f8e546bd"
+  },
+  {
+    "path": "private/guarded-contract-adoption/pins-1/02.log",
+    "bytes": 6627,
+    "sha256": "3beb37f368100d637e851b95230b2fb9f0dc576fb50d1f2bf88c9ed30245e2ed"
+  },
+  {
+    "path": "private/guarded-contract-adoption/pins-1/01.log",
+    "bytes": 372,
+    "sha256": "7fa9e5ed01c64778631678ed2d864f9bf57866529a0893363cab5c722e81ef1f"
+  },
+  {
+    "path": "private/guarded-contract-adoption/pins-1/commands.json",
+    "bytes": 2660,
+    "sha256": "204f94d08f93ec06a57f9c6c3eb723a4470f6bdb06b85ccfd99e926607151ebf"
+  },
+  {
+    "path": "private/guarded-contract-adoption/pins-1/03.log",
+    "bytes": 6627,
+    "sha256": "3beb37f368100d637e851b95230b2fb9f0dc576fb50d1f2bf88c9ed30245e2ed"
+  },
+  {
+    "path": "private/guarded-contract-adoption/pins-1/00.log",
+    "bytes": 412,
+    "sha256": "ae0029805d23f1be89fda3fe52fa649dcae177979bc168db8a3e0b570038c76e"
+  },
+  {
+    "path": "private/guarded-contract-adoption/pin-control-1/tests.log",
+    "bytes": 482,
+    "sha256": "6234f1a254acc462d1ca555f2262ce37dd9478317505c743c9c7a7d646da9a1c"
+  },
+  {
+    "path": "private/guarded-contract-adoption/pin-control-1/tests.exit",
+    "bytes": 2,
+    "sha256": "9a271f2a916b0b6ee6cecb2426f0b3206ef074578be55d9bc94f6f3fe3ab86aa"
+  },
+  {
+    "path": "private/guarded-contract-adoption/focused-2/tests.log",
+    "bytes": 1440,
+    "sha256": "9b9a2aaad31f420dce29a049688bf42ecaeba46acef8b0a7ef5bd211bb53b184"
+  },
+  {
+    "path": "private/guarded-contract-adoption/focused-2/tests.exit",
+    "bytes": 4,
+    "sha256": "39b8dc3fc8b44765c8e6f1adee04c5b465e555ab791cc42d0d9e810d5b64297c"
+  },
+  {
+    "path": "private/guarded-contract-adoption/focused-3/tests.log",
+    "bytes": 1592,
+    "sha256": "4435c89495688bf7e9b3b7a953ac8eaf969cf5d7ca531c50902494b8e5875323"
+  },
+  {
+    "path": "private/guarded-contract-adoption/focused-3/tests.exit",
+    "bytes": 4,
+    "sha256": "39b8dc3fc8b44765c8e6f1adee04c5b465e555ab791cc42d0d9e810d5b64297c"
+  },
+  {
+    "path": "private/guarded-contract-adoption/focused-1/check.log",
+    "bytes": 1395,
+    "sha256": "e64c690b6591b82ef6f5225afd9ef3192968e25d2f8c138f85af41844248b635"
+  },
+  {
+    "path": "private/guarded-contract-adoption/focused-1/check.exit",
+    "bytes": 4,
+    "sha256": "39b8dc3fc8b44765c8e6f1adee04c5b465e555ab791cc42d0d9e810d5b64297c"
+  },
+  {
+    "path": "private/guarded-contract-adoption/focused-final-1/02.log",
+    "bytes": 1311,
+    "sha256": "445288734d915bb367370eb27a4a3dc9d347ee7b0699c03f91997028eeeca6b7"
+  },
+  {
+    "path": "private/guarded-contract-adoption/focused-final-1/01.log",
+    "bytes": 0,
+    "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  },
+  {
+    "path": "private/guarded-contract-adoption/focused-final-1/commands.json",
+    "bytes": 2031,
+    "sha256": "f1d00a1322c356e0f17874591f573a5273e6b7ef5f20ef7014f2b6ba2e942cf1"
+  },
+  {
+    "path": "private/guarded-contract-adoption/focused-final-1/00.log",
+    "bytes": 4643,
+    "sha256": "8b8e70b444519de56c7e01bd3aa85e1a4053f6b4ad6bd6e555c5c2d50543450f"
+  },
+  {
+    "path": "private/guarded-contract-adoption/lean-2/build.exit",
+    "bytes": 2,
+    "sha256": "9a271f2a916b0b6ee6cecb2426f0b3206ef074578be55d9bc94f6f3fe3ab86aa"
+  },
+  {
+    "path": "private/guarded-contract-adoption/lean-2/version.log",
+    "bytes": 106,
+    "sha256": "eb22144228dd41cd51a0c84af4f976cd0cef473102dcf99b60be756b11f2b95a"
+  },
+  {
+    "path": "private/guarded-contract-adoption/lean-2/build.log",
+    "bytes": 91,
+    "sha256": "1d5a792d83634c5e7f71a10c770b2e9a29e2fc328c4d4ad2a92b2e555fcb38ef"
+  },
+  {
+    "path": "private/guarded-contract-adoption/focused-4/tests.log",
+    "bytes": 2225,
+    "sha256": "40ff32426ecaaffbbc953459413d66bc6bbb3f6b28d0b8c6d2b37dbf61f0cbc6"
+  },
+  {
+    "path": "private/guarded-contract-adoption/focused-4/tests.exit",
+    "bytes": 2,
+    "sha256": "9a271f2a916b0b6ee6cecb2426f0b3206ef074578be55d9bc94f6f3fe3ab86aa"
+  }
+]

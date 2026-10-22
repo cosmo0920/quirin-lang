@@ -1,0 +1,39 @@
+{
+  "card": "SCHEDULER-LIFETIME-CONTRACTS",
+  "base": "31c5ed500d9d4a1448a623b839e1644adb19efd1",
+  "increment": {
+    "target": "current record selected by docs/development/increments/README.md",
+    "text": "Scheduler lifetime contracts add an exact seven-file Monkey source binding, a 25-clause readable decomposition and a bounded cleanup replay consumer (32 threads/512 live allocation tokens/64 callback effects/2560 steps) with thirteen Rust controls and thirteen audited Lean theorems. Params-TLS and callback presence retain all four destroy alternatives; empty cleanup preserves params; parent/callee release preserves the borrowed session/channel/event chain. No production declaration, provider pin, graph, verdict or standing changes. Actual TLS/current-thread retirement, external alias retirement, C intrusive-list/embedding transport, callback/transitive effect closure and creation/TLS/libco failure paths remain Open. The scheduler score2 remains blocked; no neutral/consumed/acyclic premise or promised safety gain is inferred. See docs/reports/scheduler-lifetime-contracts/README.md; root supplies the combined standing gate and post-committed-matrix Python evidence. Integration correction1b315995a closes an initial finite current-thread role hole: only a live unselected modeled parent may occupy current-thread TLS; callee/params aliases refuse, including empty cleanup, while a valid unselected parent and untouched params survive."
+  },
+  "followup_amendment": {
+    "id": "W48-BOTTOM-UP-RESIDUAL-PLAN",
+    "mode": "append",
+    "text": " SCHEDULER-LIFETIME-CONTRACTS adds a proposed source-bound finite cleanup contract and readable creation/purge/destruction alternatives, without production authority or scheduler safety gains. Keep scheduler admission blocked on SCHEDULER-TLS-RETIREMENT (current mk_thread TLS is not cleared by source destruction), SCHEDULER-EXTERNAL-ALIAS-RETIREMENT (request/channel and other post-free aliases), SCHEDULER-CALLBACK-EFFECT-CLOSURE (positive complete callback/transitive effects preserving parent/callee/borrowed chain/saved successor), SCHEDULER-LIST-EMBEDDING-TRANSPORT (exact live circular membership, layout and no concurrent/reentrant writers), and SCHEDULER-CREATE-TLS-LIBCO-FAILURES (allocation/unstarted/plugin/unchecked co_create and ignored TLS API outcomes). Thirteen Rust model controls, exact seven-source/nine-context binding controls and thirteen audited Lean theorems prove only their finite model boundary. All actual C-source/deployment truth remains Open; production adoption requires checked source-to-effect consumers and reviewed official pin updates. Report: docs/reports/scheduler-lifetime-contracts/README.md. The initial finite TLS-role admission hole is corrected: current-thread TLS must identify an unselected live modeled parent, not a retiring callee/params token; valid empty cleanup preserves both parent and params."
+  },
+  "status_amendment": {
+    "mode": "optional additive boundary paragraph; no current native counts replaced",
+    "text": "The scheduler lifetime contract card adds a source-bound bounded cleanup model and concrete readable creation/purge/destruction alternatives. Actual C TLS, aliases, callback effects, list/embedding transport and failure closure remain Open; scheduler implementation stays blocked. No native verdict/standing promotion or provider/source pin change is claimed. See reports/scheduler-lifetime-contracts/README.md."
+  },
+  "integrator_list": [
+    {
+      "action": "register report index",
+      "target": "docs/reports/INDEX.md"
+    },
+    {
+      "action": "run combined standing gate and authoritative Python after committed matrix",
+      "evidence": "delegated focused evidence is not full acceptance"
+    },
+    {
+      "action": "append same-ID residual in exact words; preserve all source truth Open",
+      "id": "W48-BOTTOM-UP-RESIDUAL-PLAN"
+    },
+    {
+      "action": "keep raw source bytes private; public source hashes and producer retained",
+      "target": "source-inventory.json"
+    },
+    {
+      "action": "do not retire scheduler follow-ons or infer2gains from measured priority",
+      "target": "W48-BOTTOM-UP-RESIDUAL-PLAN"
+    }
+  ]
+}
