@@ -1,0 +1,15 @@
+{
+  "command": [
+    "python3",
+    "docs/reports/remaining-d02/build_matrix.py",
+    "/home/cosmo/.codex/worktrees/logger-effect-contracts/qcore-c",
+    "--gate",
+    "/home/cosmo/.codex/worktrees/logger-effect-contracts/qcore-c/docs/reports/contract-cycle4-integration/gate.json"
+  ],
+  "exit": 0,
+  "followups": 810,
+  "other808_canonical_sha256": "173ad4c78f70b2ed3a4b060a9637d25f24225cc21b71271c65b9d34850cf3961",
+  "log": "/home/cosmo/.codex/worktrees/logger-effect-contracts/qcore-c/private/contract-cycle4-integration/matrix-publication-1/matrix.log",
+  "log_sha256": "27ef44fec434ff8223757e0633a2fb02bac4f0a12293cff2129bae3013dcca2d",
+  "boundary": "Freeze source/provider measurement matrix. Native and final Python are independently published; later receipt-only commits do not regenerate this matrix."
+}
