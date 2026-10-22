@@ -103,6 +103,8 @@ pub struct Thread {
 pub struct Model {
     pub worker: u32,
     pub current_worker: u32,
+    /// None, or a live parent token in `threads`; callee/params/borrowed tokens
+    /// are invalid roles even when the selected list is empty.
     pub current_thread: Option<u32>,
     pub tls_params: Option<u32>,
     /// Ordered membership of the selected active OR purge list.
@@ -220,6 +222,12 @@ pub fn check_model(before: &Model, trace: &[Step]) -> Result<CheckedModel, Strin
         })
     {
         return Err(refuse("TLS/owned/borrowed separation"));
+    }
+    if before
+        .current_thread
+        .is_some_and(|p| !before.threads.contains_key(&p))
+    {
+        return Err(refuse("current-thread TLS role must be a modeled parent"));
     }
     // mk_thread_destroy does not clear mk_thread TLS. Never manufacture that
     // clear: reject a retiring current-thread alias in this bounded profile.

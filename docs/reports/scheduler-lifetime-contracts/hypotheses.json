@@ -245,7 +245,7 @@
     },
     "worker_tls": {
       "role": "prerequisite",
-      "proposition": "Current OS thread owns selected scheduler; worker TLS identifies it. Cleanup itself ignores sched.",
+      "proposition": "Current OS thread owns selected scheduler; worker TLS identifies it. Current-thread TLS is absent or a live modeled parent token, never a callee/params/borrowed allocation token. Cleanup itself ignores sched.",
       "source_truth": "Open"
     }
   },

@@ -21,7 +21,7 @@ for text in (ROOT/'scheduler.qgd').read_text().split(';')[1:]:
         case,post=text.split('->|');ROLES[case.strip()]='case';ROLES[post.strip()]='postcondition'
 PROPS={
 'environment':'Exact seven pinned source files, correct ABI/layout/libco/TLS configuration; finite sequential model, no extraction/deployment proof.',
-'worker_tls':'Current OS thread owns selected scheduler; worker TLS identifies it. Cleanup itself ignores sched.',
+'worker_tls':'Current OS thread owns selected scheduler; worker TLS identifies it. Current-thread TLS is absent or a live modeled parent token, never a callee/params/borrowed allocation token. Cleanup itself ignores sched.',
 'valid_membership':'Valid circular sentinels, reciprocal links, distinct live embedded nodes, exact disjoint membership and valid saved successor.',
 'suspended_coroutines':'Every retiring coroutine is suspended, not co_active; no concurrent resume, destruction or re-entry.',
 'exact_parent_embedding':'Node is _head of the HTTP object embedded in exactly one live sufficiently large parent allocation; parent field identifies it.',

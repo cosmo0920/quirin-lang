@@ -200,3 +200,50 @@ fn event_state_and_current_tls_cannot_alias_callback_owned_storage() {
     m.current_thread = Some(10);
     assert!(check_model(&m, &trace()).is_err());
 }
+
+#[test]
+fn current_tls_callee_and_params_retirement_aliases_refuse_by_role() {
+    // Both aliases were previously accepted and then left stale after free.
+    for alias in [3, 9] {
+        let mut m = model();
+        m.current_thread = Some(alias);
+        let original = m.clone();
+        assert!(check_model(&m, &trace()).unwrap_err().contains("TLS role"));
+        assert_eq!(m, original);
+    }
+}
+#[test]
+fn unselected_parent_tls_remains_live_after_cleanup() {
+    let mut m = model();
+    m.threads.insert(
+        7,
+        Thread {
+            parent: 7,
+            coroutine: 8,
+            suspended: true,
+            borrowed: [4, 5, 6],
+            callback: None,
+        },
+    );
+    m.live.extend([7, 8]);
+    m.other.push(7);
+    m.current_thread = Some(7);
+    let checked = check_model(&m, &trace()).unwrap();
+    assert_eq!(checked.after().current_thread, Some(7));
+    assert!(checked.after().live.contains(&7));
+    assert!(checked.after().live.contains(&8));
+    assert_eq!(checked.after().other, vec![7]);
+}
+#[test]
+fn empty_cleanup_preserves_valid_current_parent_and_params_but_rejects_wrong_roles() {
+    let mut m = model();
+    m.other = std::mem::take(&mut m.selected);
+    m.current_thread = Some(2);
+    assert_eq!(check_model(&m, &[]).unwrap().after(), &m);
+    assert_eq!(m.tls_params, Some(9));
+    assert!(m.live.contains(&9));
+    for alias in [3, 9] {
+        m.current_thread = Some(alias);
+        assert!(check_model(&m, &[]).unwrap_err().contains("TLS role"));
+    }
+}
