@@ -288,7 +288,10 @@ fn every_entry_rule_10f_does_not_admit_keeps_the_unlink_refusal() {
         assert_ne!(status, AnalysisStatus::Safe, "{body}\n{diagnostics:?}");
         assert!(has(&diagnostics, NOT_PUBLISHED), "{body}\n{diagnostics:?}");
         assert_eq!(
-            count(&diagnostics, |kind| matches!(kind, LegacyDiagnosticKind::Leak { .. })),
+            count(&diagnostics, |kind| matches!(
+                kind,
+                LegacyDiagnosticKind::Leak { .. }
+            )),
             0,
             "{body}\n{diagnostics:?}"
         );

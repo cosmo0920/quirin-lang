@@ -4092,12 +4092,16 @@ pub(super) fn transfer_base(
             // declared release ends the custody the unlink took.
             let (destroyers, container) = match container {
                 Some(operands) => {
-                    let (before, after) = container_publication::destroyer_split(contract, operands);
+                    let (before, after) =
+                        container_publication::destroyer_split(contract, operands);
                     (Some(before), Some(after))
                 }
                 None => (None, None),
             };
-            if let Some(operands) = destroyers.as_ref().filter(|operands| !operands.0.is_empty()) {
+            if let Some(operands) = destroyers
+                .as_ref()
+                .filter(|operands| !operands.0.is_empty())
+            {
                 container_publication::apply(
                     function,
                     node.line,
