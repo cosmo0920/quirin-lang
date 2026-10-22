@@ -408,6 +408,8 @@ Regenerate with `python3 scripts/build_docs_index.py`; validate with `--check`.
 
 | [detach-lookup-membership](detach-lookup-membership/README.md) | Checked array lookup identity and membership |
 
+| [detach-result-wrapper-composition](detach-result-wrapper-composition/README.md) | Checked removed-selection composition (rule 33) |
+
 | [development-docs-structure](development-docs-structure/README.md) | Development documentation structure and retrieval |
 
 | [docs-compact-2](docs-compact-2/README.md) | DOCS-COMPACT-2 — second compaction pass over `AGENTS.md`, `CLAUDE.md` and `README.md` |

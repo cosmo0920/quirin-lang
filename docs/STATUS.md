@@ -1,5 +1,7 @@
 # Current status and evidence boundaries
 
+DETACH-RESULT-WRAPPER-COMPOSITION (rule 33) promotes exactly cJSON_DetachItemFromArray and cJSON_DeleteItemFromArray through checked removed-selection frames, conditional on detach_list_representation and get_array_item's null premise: pinned corpus 975→977 Safe, 3,850→3,848 Unknown, 9 provisional Unsafe unchanged; null dictionaries unchanged; combined 847→849; runtime custody unchanged (both rows outer-uncovered). Object detaches/deletes remain Unknown pending string-keyed membership.
+
 Guarded contract adoption is **halted at the user’s request**. Five frozen native route outputs are preserved; TIP corpus was intentionally interrupted and complete comparisons were not started. The [supplemental card](reports/guarded-contract-adoption/SUPPLEMENTAL_CARD.md) is deferred and not launched. The source552 gate and earlier matrix/Python receipts remain scoped checkpoints; the later local main merge needs fresh combined validation and has not been pushed.
 
 [Clang AST transport](reports/audit-ir-clang-transport/README.md) now spools

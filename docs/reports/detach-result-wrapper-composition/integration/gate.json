@@ -1,0 +1,13 @@
+{
+  "workspace_tests": 8549,
+  "python_evidence_validator_tests": 374,
+  "reevaluation_probe_exit": 0,
+  "reevaluation_followup_exit": 0,
+  "cargo_fmt": "clean",
+  "cargo_clippy": "clean",
+  "lean_audits": 366,
+  "clang": "present: Ubuntu clang version 21.1.8 (6ubuntu1)",
+  "provider_tests": 133,
+  "note": "Integration of DETACH-RESULT-WRAPPER-COMPOSITION onto origin/main f73bad68d (merge af9135e78). Main moved only by docs-only gated commits since the card base e282aaccc, so under the landing-race policy the card's own full gate at 9ecc941d5 (Rust 8549 passed/0 failed/15 ignored, 366 Lean audits, fmt/Clippy/examples 0) is the code evidence, with a targeted integration check: matrix regeneration, report index rebuild and the root Python suite rerun after the matrix commit (its count/exit recorded in python-confirmation.json). providers/ unchanged, so provider_tests 133 is CARRIED from the contract-cycle4 integration gate, not re-run.",
+  "standing_gate": "card full gate borrowed (code-identical); integration targeted check: matrix, index, Python"
+}
