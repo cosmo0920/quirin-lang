@@ -6,7 +6,14 @@
 set -u
 run=$1
 here=$(pwd)
-mkdir -p "$run"
+mkdir -p "$run" || exit 2
+# A disk-exhausted run measures disk, not the program: refuse below 40 GiB.
+free=$(df --output=avail -B1 . | tail -1)
+echo "$free" >"$run/free-bytes-before" || exit 2
+if [ "$free" -lt 42949672960 ]; then
+  echo "refused: $free bytes free" >"$run/job.refused"
+  exit 3
+fi
 step() {
   name=$1
   shift
