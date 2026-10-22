@@ -704,3 +704,61 @@ fn original_pure_null_pairs_keep_resource_metadata_independent_and_validate_it()
         }
     }
 }
+
+#[test]
+fn guarded_source_metadata_compares_complete_bounds_resource_maps_without_truth_transport() {
+    let name = "rd_kafka_toppar_new0";
+    let original = symbolic_overlap_pair(name);
+    let mut pair = original.clone();
+    let metadata =
+        "\nrequires resource_guarded_symbol_v1(env, environment, \"Proposed environment\");
+requires resource_guarded_symbol_v1(pre, prerequisite, \"Proposed prerequisite\");
+requires resource_guarded_symbol_v1(op, operation, \"Proposed admission\");
+requires resource_guarded_symbol_v1(ok_case, case, \"Proposed success case\");
+requires resource_guarded_symbol_v1(err_case, case, \"Proposed failure case\");
+requires resource_guarded_symbol_v1(ok_post, postcondition, \"Proposed success postcondition\");
+requires resource_guarded_symbol_v1(err_post, postcondition, \"Proposed failure postcondition\");
+requires resource_guarded_decomposition_v1(guarded, \"guarded_decomposition_v1;
+(env ∧ pre) |-> op;
+op ||-> ok_case / err_case;
+ok_case ->| ok_post;
+err_case ->| err_post;
+\");\n";
+    for source in pair.values_mut() {
+        *source = source.replace("\n};", &format!("{metadata}\n}};"));
+    }
+    let checked =
+        qcore_contract::contract_views::check_relation(overlap_relation(name), &pair).unwrap();
+    let old =
+        qcore_contract::contract_views::check_relation(overlap_relation(name), &original).unwrap();
+    assert_eq!(
+        serde_json::to_value(checked).unwrap(),
+        serde_json::to_value(old).unwrap()
+    );
+    for module in ["librdkafka/null_deref.qv", "librdkafka/client.qv"] {
+        for (from, to) in [
+            (metadata, ""),
+            (
+                "Proposed failure postcondition",
+                "Changed failure postcondition",
+            ),
+            ("err_post, postcondition", "err_post, operation"),
+            (
+                "resource_guarded_decomposition_v1",
+                "resource_guarded_decomposition_v2",
+            ),
+            ("err_case ->| err_post;", "err_case ->| missing;"),
+        ] {
+            let mut changed = pair.clone();
+            let s = changed.get_mut(module).unwrap();
+            let edited = s.replacen(from, to, 1);
+            assert_ne!(*s, edited);
+            *s = edited;
+            assert!(
+                qcore_contract::contract_views::check_relation(overlap_relation(name), &changed)
+                    .is_err()
+            );
+        }
+    }
+    qcore_contract::contract_views::check_relation(overlap_relation(name), &pair).unwrap();
+}

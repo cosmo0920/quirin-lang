@@ -27,7 +27,32 @@ fn application(
         serde_json::from_slice(&fs::read(dir.join(format!("{name}.json"))).unwrap()).unwrap();
     let module = metadata["module"].as_str().unwrap().to_string();
     let declaration = metadata["declaration"].as_str().unwrap().to_string();
-    let source = fs::read_to_string(root().join(&module)).unwrap();
+    let mut source = fs::read_to_string(root().join(&module)).unwrap();
+    if name == "cjson" {
+        // The frozen sidecar checkpoint retains its original source identity.
+        // Recover that exact source only through the checked version-2 bridge.
+        let plan_bytes =
+            fs::read(root().join("docs/reports/guarded-contract-adoption/adoption-plan.json"))
+                .unwrap();
+        let plan: qcore_contract::guarded_metadata_bridge::Plan =
+            serde_json::from_slice(&plan_bytes).unwrap();
+        let addition = qcore_contract::guarded_metadata_bridge::render(&plan.metadata).unwrap();
+        let candidate = source.replacen(&addition, "", 1);
+        let tip = BTreeMap::from([(module.clone(), source)]);
+        let old = BTreeMap::from([(module.clone(), candidate)]);
+        let checked = qcore_contract::guarded_metadata_bridge::check(
+            &plan_bytes,
+            &qcore_schemas::sha256_hex(&plan_bytes),
+            &old,
+            &tip,
+        )
+        .unwrap();
+        source = checked
+            .recover_before(&tip)
+            .unwrap()
+            .remove(&module)
+            .unwrap();
+    }
     assert_eq!(
         qcore_schemas::sha256_hex(source.as_bytes()),
         metadata["source_sha256"]

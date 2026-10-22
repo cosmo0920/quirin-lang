@@ -1,0 +1,370 @@
+[
+  {
+    "command": [
+      "target/debug/quirin-audit",
+      "pin",
+      "--source-root",
+      "/home/cosmo/Documents/GitHub/qcore-c/build/cycle19/c-gateway-wave-pin/fluent-bit-clang-source",
+      "--crate",
+      "qcore-provider-librdkafka",
+      "--function",
+      "cJSON_DetachItemViaPointer"
+    ],
+    "cwd": "/home/cosmo/.codex/worktrees/guarded-contract-adoption/qcore-c",
+    "start": "2026-10-22T05:40:48.209061+00:00",
+    "end": "2026-10-22T05:40:50.176813+00:00",
+    "exit": 0,
+    "log": "/home/cosmo/.codex/worktrees/guarded-contract-adoption/qcore-c/private/guarded-contract-adoption/pins-1/00.log",
+    "log_sha256": "ae0029805d23f1be89fda3fe52fa649dcae177979bc168db8a3e0b570038c76e",
+    "head": "bcb09a1e87743dbbb72f08df63b795ba9a44868c"
+  },
+  {
+    "command": [
+      "target/debug/quirin-audit",
+      "pin",
+      "--source-root",
+      "/home/cosmo/Documents/GitHub/qcore-c/private/w45-fb/w46-external-callee-contracts/attempt-1/fluent-bit-clang-source",
+      "--crate",
+      "qcore-provider-librdkafka",
+      "--function",
+      "cJSON_DetachItemViaPointer"
+    ],
+    "cwd": "/home/cosmo/.codex/worktrees/guarded-contract-adoption/qcore-c",
+    "start": "2026-10-22T05:40:50.178932+00:00",
+    "end": "2026-10-22T05:40:52.191266+00:00",
+    "exit": 0,
+    "log": "/home/cosmo/.codex/worktrees/guarded-contract-adoption/qcore-c/private/guarded-contract-adoption/pins-1/01.log",
+    "log_sha256": "7fa9e5ed01c64778631678ed2d864f9bf57866529a0893363cab5c722e81ef1f",
+    "head": "bcb09a1e87743dbbb72f08df63b795ba9a44868c"
+  },
+  {
+    "command": [
+      "python3",
+      "providers/contracts.py",
+      "sync"
+    ],
+    "cwd": "/home/cosmo/.codex/worktrees/guarded-contract-adoption/qcore-c",
+    "start": "2026-10-22T05:40:52.193554+00:00",
+    "end": "2026-10-22T05:41:28.468723+00:00",
+    "exit": 0,
+    "log": "/home/cosmo/.codex/worktrees/guarded-contract-adoption/qcore-c/private/guarded-contract-adoption/pins-1/02.log",
+    "log_sha256": "3beb37f368100d637e851b95230b2fb9f0dc576fb50d1f2bf88c9ed30245e2ed",
+    "head": "bcb09a1e87743dbbb72f08df63b795ba9a44868c"
+  },
+  {
+    "command": [
+      "python3",
+      "providers/contracts.py",
+      "check"
+    ],
+    "cwd": "/home/cosmo/.codex/worktrees/guarded-contract-adoption/qcore-c",
+    "start": "2026-10-22T05:41:28.470579+00:00",
+    "end": "2026-10-22T05:42:03.778016+00:00",
+    "exit": 0,
+    "log": "/home/cosmo/.codex/worktrees/guarded-contract-adoption/qcore-c/private/guarded-contract-adoption/pins-1/03.log",
+    "log_sha256": "3beb37f368100d637e851b95230b2fb9f0dc576fb50d1f2bf88c9ed30245e2ed",
+    "head": "bcb09a1e87743dbbb72f08df63b795ba9a44868c"
+  },
+  {
+    "command": [
+      "cargo",
+      "test",
+      "-p",
+      "qcore-contract",
+      "--no-fail-fast",
+      "--test",
+      "guarded_contract_adoption",
+      "--test",
+      "guarded_decomposition",
+      "--test",
+      "premise_metadata_bridge",
+      "--test",
+      "contract_views",
+      "--test",
+      "premise_flow",
+      "-j",
+      "2"
+    ],
+    "cwd": "/home/cosmo/.codex/worktrees/guarded-contract-adoption/qcore-c",
+    "start": "2026-10-22T05:42:16.740982+00:00",
+    "end": "2026-10-22T05:42:58.417698+00:00",
+    "exit": 0,
+    "log": "/home/cosmo/.codex/worktrees/guarded-contract-adoption/qcore-c/private/guarded-contract-adoption/focused-final-1/00.log",
+    "log_sha256": "8b8e70b444519de56c7e01bd3aa85e1a4053f6b4ad6bd6e555c5c2d50543450f",
+    "head": "bcb09a1e87743dbbb72f08df63b795ba9a44868c"
+  },
+  {
+    "command": [
+      "cargo",
+      "fmt",
+      "--all",
+      "--",
+      "--check"
+    ],
+    "cwd": "/home/cosmo/.codex/worktrees/guarded-contract-adoption/qcore-c",
+    "start": "2026-10-22T05:42:58.420245+00:00",
+    "end": "2026-10-22T05:43:03.904723+00:00",
+    "exit": 0,
+    "log": "/home/cosmo/.codex/worktrees/guarded-contract-adoption/qcore-c/private/guarded-contract-adoption/focused-final-1/01.log",
+    "log_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "head": "bcb09a1e87743dbbb72f08df63b795ba9a44868c"
+  },
+  {
+    "command": [
+      "cargo",
+      "clippy",
+      "-p",
+      "qcore-contract",
+      "--all-targets",
+      "--",
+      "-D",
+      "warnings"
+    ],
+    "cwd": "/home/cosmo/.codex/worktrees/guarded-contract-adoption/qcore-c",
+    "start": "2026-10-22T05:43:03.907048+00:00",
+    "end": "2026-10-22T05:43:13.321510+00:00",
+    "exit": 101,
+    "log": "/home/cosmo/.codex/worktrees/guarded-contract-adoption/qcore-c/private/guarded-contract-adoption/focused-final-1/02.log",
+    "log_sha256": "445288734d915bb367370eb27a4a3dc9d347ee7b0699c03f91997028eeeca6b7",
+    "head": "bcb09a1e87743dbbb72f08df63b795ba9a44868c"
+  },
+  {
+    "command": [
+      "cargo",
+      "test",
+      "-p",
+      "qcore-contract",
+      "--no-fail-fast",
+      "--test",
+      "guarded_contract_adoption",
+      "--test",
+      "guarded_decomposition",
+      "--test",
+      "premise_metadata_bridge",
+      "--test",
+      "contract_views",
+      "--test",
+      "premise_flow",
+      "-j",
+      "2"
+    ],
+    "cwd": "/home/cosmo/.codex/worktrees/guarded-contract-adoption/qcore-c",
+    "start": "2026-10-22T05:43:38.994576+00:00",
+    "end": "2026-10-22T05:44:21.152388+00:00",
+    "exit": 0,
+    "log": "/home/cosmo/.codex/worktrees/guarded-contract-adoption/qcore-c/private/guarded-contract-adoption/focused-final-2/00.log",
+    "log_sha256": "e2f96eb1444f5c3323ac0d52dbf505ee2a5aa67def76432df36dc8b73d2bb793",
+    "head": "bcb09a1e87743dbbb72f08df63b795ba9a44868c"
+  },
+  {
+    "command": [
+      "cargo",
+      "fmt",
+      "--all",
+      "--",
+      "--check"
+    ],
+    "cwd": "/home/cosmo/.codex/worktrees/guarded-contract-adoption/qcore-c",
+    "start": "2026-10-22T05:44:21.154716+00:00",
+    "end": "2026-10-22T05:44:26.630200+00:00",
+    "exit": 0,
+    "log": "/home/cosmo/.codex/worktrees/guarded-contract-adoption/qcore-c/private/guarded-contract-adoption/focused-final-2/01.log",
+    "log_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "head": "bcb09a1e87743dbbb72f08df63b795ba9a44868c"
+  },
+  {
+    "command": [
+      "cargo",
+      "clippy",
+      "-p",
+      "qcore-contract",
+      "--all-targets",
+      "--",
+      "-D",
+      "warnings"
+    ],
+    "cwd": "/home/cosmo/.codex/worktrees/guarded-contract-adoption/qcore-c",
+    "start": "2026-10-22T05:44:26.632565+00:00",
+    "end": "2026-10-22T05:44:27.495404+00:00",
+    "exit": 0,
+    "log": "/home/cosmo/.codex/worktrees/guarded-contract-adoption/qcore-c/private/guarded-contract-adoption/focused-final-2/02.log",
+    "log_sha256": "6bca51dba4f2819daf11761fda7ddaf941a8951065e5bca8e7d596dec60ff294",
+    "head": "bcb09a1e87743dbbb72f08df63b795ba9a44868c"
+  },
+  {
+    "command": [
+      "lake",
+      "build",
+      "QCore.GuardedSourceAdoption"
+    ],
+    "cwd": "/home/cosmo/.codex/worktrees/guarded-contract-adoption/qcore-c/proof",
+    "start": "2026-10-22T05:44:27.497836+00:00",
+    "end": "2026-10-22T05:44:29.042736+00:00",
+    "exit": 1,
+    "log": "/home/cosmo/.codex/worktrees/guarded-contract-adoption/qcore-c/private/guarded-contract-adoption/focused-final-2/03.log",
+    "log_sha256": "b9dd65012d387336ea64fdee5b5967271b1750b45306edf188bb4ff3cd402e43",
+    "head": "bcb09a1e87743dbbb72f08df63b795ba9a44868c"
+  },
+  {
+    "command": [
+      "cargo",
+      "check",
+      "-p",
+      "qcore-contract",
+      "--tests",
+      "-j",
+      "2"
+    ],
+    "cwd": "/home/cosmo/.codex/worktrees/guarded-contract-adoption/qcore-c",
+    "exit": 101,
+    "log": "/home/cosmo/.codex/worktrees/guarded-contract-adoption/qcore-c/private/guarded-contract-adoption/focused-1/check.log",
+    "log_sha256": "e64c690b6591b82ef6f5225afd9ef3192968e25d2f8c138f85af41844248b635",
+    "timing": "not independently captured for this early focused command",
+    "scope": "focused, not frozen standing or native evidence"
+  },
+  {
+    "command": [
+      "cargo",
+      "test",
+      "-p",
+      "qcore-contract",
+      "--test",
+      "guarded_contract_adoption",
+      "--test",
+      "guarded_decomposition",
+      "--test",
+      "premise_metadata_bridge",
+      "-j",
+      "2"
+    ],
+    "cwd": "/home/cosmo/.codex/worktrees/guarded-contract-adoption/qcore-c",
+    "exit": 101,
+    "log": "/home/cosmo/.codex/worktrees/guarded-contract-adoption/qcore-c/private/guarded-contract-adoption/focused-2/tests.log",
+    "log_sha256": "9b9a2aaad31f420dce29a049688bf42ecaeba46acef8b0a7ef5bd211bb53b184",
+    "timing": "not independently captured for this early focused command",
+    "scope": "focused, not frozen standing or native evidence"
+  },
+  {
+    "command": [
+      "cargo",
+      "test",
+      "-p",
+      "qcore-contract",
+      "--test",
+      "guarded_contract_adoption",
+      "--test",
+      "guarded_decomposition",
+      "--test",
+      "premise_metadata_bridge",
+      "-j",
+      "2"
+    ],
+    "cwd": "/home/cosmo/.codex/worktrees/guarded-contract-adoption/qcore-c",
+    "exit": 101,
+    "log": "/home/cosmo/.codex/worktrees/guarded-contract-adoption/qcore-c/private/guarded-contract-adoption/focused-3/tests.log",
+    "log_sha256": "4435c89495688bf7e9b3b7a953ac8eaf969cf5d7ca531c50902494b8e5875323",
+    "timing": "not independently captured for this early focused command",
+    "scope": "focused, not frozen standing or native evidence"
+  },
+  {
+    "command": [
+      "cargo",
+      "test",
+      "-p",
+      "qcore-contract",
+      "--no-fail-fast",
+      "--test",
+      "guarded_contract_adoption",
+      "--test",
+      "guarded_decomposition",
+      "--test",
+      "premise_metadata_bridge",
+      "-j",
+      "2"
+    ],
+    "cwd": "/home/cosmo/.codex/worktrees/guarded-contract-adoption/qcore-c",
+    "exit": 0,
+    "log": "/home/cosmo/.codex/worktrees/guarded-contract-adoption/qcore-c/private/guarded-contract-adoption/focused-4/tests.log",
+    "log_sha256": "40ff32426ecaaffbbc953459413d66bc6bbb3f6b28d0b8c6d2b37dbf61f0cbc6",
+    "timing": "not independently captured for this early focused command",
+    "scope": "focused, not frozen standing or native evidence"
+  },
+  {
+    "command": [
+      "cargo",
+      "build",
+      "-p",
+      "qcore-audit",
+      "--bin",
+      "quirin-audit",
+      "-j",
+      "2"
+    ],
+    "cwd": "/home/cosmo/.codex/worktrees/guarded-contract-adoption/qcore-c",
+    "exit": 0,
+    "log": "/home/cosmo/.codex/worktrees/guarded-contract-adoption/qcore-c/private/guarded-contract-adoption/build-pin-1/build.log",
+    "log_sha256": "527d32efce05da79a1fd3d46ee81b5eb502d70ad12e5531cadf1c595f8e546bd",
+    "timing": "not independently captured for this early focused command",
+    "scope": "focused, not frozen standing or native evidence"
+  },
+  {
+    "command": [
+      "cargo",
+      "test",
+      "-p",
+      "qcore-audit",
+      "--no-fail-fast",
+      "--test",
+      "guarded_contract_pin",
+      "-j",
+      "2"
+    ],
+    "cwd": "/home/cosmo/.codex/worktrees/guarded-contract-adoption/qcore-c",
+    "exit": 0,
+    "log": "/home/cosmo/.codex/worktrees/guarded-contract-adoption/qcore-c/private/guarded-contract-adoption/pin-control-1/tests.log",
+    "log_sha256": "6234f1a254acc462d1ca555f2262ce37dd9478317505c743c9c7a7d646da9a1c",
+    "timing": "not independently captured for this early focused command",
+    "scope": "focused, not frozen standing or native evidence"
+  },
+  {
+    "command": [
+      "lake",
+      "env",
+      "lean",
+      "--version"
+    ],
+    "cwd": "/home/cosmo/.codex/worktrees/guarded-contract-adoption/qcore-c/proof",
+    "exit": 0,
+    "log": "/home/cosmo/.codex/worktrees/guarded-contract-adoption/qcore-c/private/guarded-contract-adoption/lean-2/version.log",
+    "log_sha256": "eb22144228dd41cd51a0c84af4f976cd0cef473102dcf99b60be756b11f2b95a",
+    "timing": "not independently captured for this early focused command",
+    "scope": "focused, not frozen standing or native evidence"
+  },
+  {
+    "command": [
+      "lake",
+      "build",
+      "QCore.GuardedSourceAdoption"
+    ],
+    "cwd": "/home/cosmo/.codex/worktrees/guarded-contract-adoption/qcore-c/proof",
+    "exit": 0,
+    "log": "/home/cosmo/.codex/worktrees/guarded-contract-adoption/qcore-c/private/guarded-contract-adoption/lean-2/build.log",
+    "log_sha256": "1d5a792d83634c5e7f71a10c770b2e9a29e2fc328c4d4ad2a92b2e555fcb38ef",
+    "timing": "not independently captured for this early focused command",
+    "scope": "focused, not frozen standing or native evidence"
+  },
+  {
+    "command": [
+      "lake",
+      "env",
+      "lean",
+      "AuditGuardedSourceAdoption.lean"
+    ],
+    "cwd": "/home/cosmo/.codex/worktrees/guarded-contract-adoption/qcore-c/proof",
+    "exit": 0,
+    "log": "/home/cosmo/.codex/worktrees/guarded-contract-adoption/qcore-c/private/guarded-contract-adoption/lean-audit-1/audit.log",
+    "log_sha256": "8078d937c6288bd7968a56f2c0be9c90fb5acd1308ddeaf1b568dbb0e061fbad",
+    "timing": "not independently captured for this early focused command",
+    "scope": "focused, not frozen standing or native evidence"
+  }
+]
