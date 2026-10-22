@@ -64,7 +64,7 @@ fn main() -> Result<(), Box<dyn std::error::Error>> {
                 .spawn()?;
             let mut stdin = child.stdin.take().ok_or("stdin missing")?;
             std::thread::scope(|scope| -> Result<Value, Box<dyn std::error::Error>> {
-                let writer = scope.spawn(|| stdin.write_all(source.as_bytes()));
+                let writer = scope.spawn(move || stdin.write_all(source.as_bytes()));
                 let output = child.wait_with_output()?;
                 writer.join().map_err(|_| "writer panic")??;
                 if !output.status.success() {
