@@ -224,7 +224,10 @@ spool into disposable `.qc` files before decoding. Full-document validation,
 default-error/depth retry and consumer facts remain unchanged. Unix unlinks the
 spool while open. On 64-bit Linux, cache-discard advice after synchronization
 and during reads can release disk-backed raw pages; tmpfs remains charged.
-[Card evidence and filesystem boundary](../reports/audit-ir-clang-transport/README.md).
+[Card evidence and filesystem boundary](../reports/audit-ir-clang-transport/README.md):
+one shared-host 30,000-function control lowers whole-cgroup peak by
+486,486,016 bytes (8.249%) with disk-backed storage; tmpfs shows no reduction.
+All four complete normalized ASTs match, with zero swap/OOM.
 Filtered streams, remaining byte-slice readers and per-component body paging
 remain follow-ons. This bounded transport change does not close the parent
 6 GB target, CI margin, other selections or cold/warm acceptance.

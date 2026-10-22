@@ -1,0 +1,513 @@
+{
+  "card": "AUDIT-IR-CLANG-TRANSPORT",
+  "implementation_commit": "1a397b951943a1dd9dc7f0b3f1a4ec6d1383e4e1",
+  "scope": "Four sequential single-unit controls on one shared Linux x86-64 host, not a production audit or cold/warm campaign",
+  "instrumentation_scope_correction": "The reused frozen measure_memory.py labels its generic executable receipt as Configured resource audit. That label does not describe this benchmark; actual_scope and argv above govern.",
+  "before": "Reference buffered wait_with_output and shallow serde_json::from_slice path transcribed from the original transport, within the same executable; not a separately built base audit binary",
+  "after": "Final public translation_unit_ast seekable transport with the same complete Value retained",
+  "source_definitions": 30000,
+  "source_sha256": "8b9ff36819abf9d6437e3398c0648ce424575d739a7857db329bccd6055a1093",
+  "normalization": "All hexadecimal address strings renamed consistently in traversal order; generated source contains no hexadecimal source strings. Complete normalized AST bytes compared, not only counts.",
+  "full_ast_equal": true,
+  "pairs": {
+    "disk": {
+      "before_peak_bytes": 5897371648,
+      "after_peak_bytes": 5410885632,
+      "reduction_bytes": 486486016,
+      "reduction_percent": 8.249,
+      "before_worker_seconds": 11.432,
+      "after_worker_seconds": 13.865
+    },
+    "tmpfs": {
+      "before_peak_bytes": 5896781824,
+      "after_peak_bytes": 5900382208,
+      "reduction_bytes": -3600384,
+      "reduction_percent": -0.061,
+      "before_worker_seconds": 12.498,
+      "after_worker_seconds": 13.959
+    }
+  },
+  "runs": [
+    {
+      "name": "before-disk",
+      "driver_argv": [
+        "/usr/bin/python3",
+        "docs/reports/audit-ir-admission/scripts/measure_memory.py",
+        "--binary",
+        "/home/cosmo/.codex/worktrees/audit-ir-clang-transport/qcore-c/private/audit-ir-clang-transport/target/release/examples/clang_transport_measure",
+        "--config",
+        "/home/cosmo/.codex/worktrees/audit-ir-clang-transport/qcore-c/private/audit-ir-clang-transport/controls3/before-disk.json",
+        "--output",
+        "/home/cosmo/.codex/worktrees/audit-ir-clang-transport/qcore-c/private/audit-ir-clang-transport/controls3/before-disk",
+        "--jobs",
+        "1",
+        "--timeout",
+        "900"
+      ],
+      "driver_exit": 0,
+      "actual_scope": "Single generated C translation unit, complete Value decoding, address normalization and complete AST publication; not a resource audit",
+      "ast_bytes": 286930122,
+      "ast_sha256": "1bac523b85f815ed5d9326637ccdd3fcc79de252a3893d6172877b641cc23aac",
+      "configuration": {
+        "mode": "before",
+        "source": "/home/cosmo/.codex/worktrees/audit-ir-clang-transport/qcore-c/private/audit-ir-clang-transport/controls3/large.c",
+        "output": "/home/cosmo/.codex/worktrees/audit-ir-clang-transport/qcore-c/private/audit-ir-clang-transport/controls3/before-disk.qc",
+        "temporary_directory": "/home/cosmo/.codex/worktrees/audit-ir-clang-transport/qcore-c/private/audit-ir-clang-transport/controls3/spool"
+      },
+      "instrumentation_result": {
+        "service": "quirin-audit-memory-b094237396934357aef104ad7b6dc8dd",
+        "service_properties": {
+          "ActiveState": "active",
+          "SubState": "exited",
+          "Result": "success",
+          "ExecMainStartTimestampMonotonic": "19690047976",
+          "ExecMainExitTimestampMonotonic": "19701552189",
+          "ExecMainCode": "1",
+          "ExecMainStatus": "0",
+          "ControlGroup": "",
+          "MemoryPeak": "5897371648",
+          "MemorySwapPeak": "0",
+          "CPUUsageNSec": "12304904000"
+        },
+        "worker": {
+          "argv": [
+            "/home/cosmo/.codex/worktrees/audit-ir-clang-transport/qcore-c/private/audit-ir-clang-transport/target/release/examples/clang_transport_measure",
+            "/home/cosmo/.codex/worktrees/audit-ir-clang-transport/qcore-c/private/audit-ir-clang-transport/controls3/before-disk.json",
+            "--jobs",
+            "1"
+          ],
+          "exit": 0,
+          "elapsed_seconds": 11.432,
+          "binary_sha256": "ed3a8be93271ec47529a1acefca20946db797bcf8b0ab47cdbfdd4f0347a71d3",
+          "configuration_sha256": "2dc2fae837e182c94c3051a177234f770e61f1c1557153b785e9a2a79890b711",
+          "inputs_unchanged": true,
+          "cgroup": "/user.slice/user-1000.slice/user@1000.service/app.slice/quirin-audit-memory-b094237396934357aef104ad7b6dc8dd.service",
+          "observed_before_exit": {
+            "memory.max": "6999998464",
+            "memory.swap.max": "0",
+            "memory.peak": "5897371648",
+            "memory.events": "low 0\nhigh 0\nmax 0\noom 0\noom_kill 0\noom_group_kill 0\nsock_throttled 0"
+          },
+          "environment": {
+            "PATH": "/home/cosmo/.elan/bin:/home/cosmo/bin:/home/cosmo/.codex/tmp/arg0/codex-arg0nkbadu:/home/cosmo/.cache/codex-runtimes/codex-primary-runtime/dependencies/bin/override:/home/cosmo/.local/bin:./.cabal-sandbox/bin:/home/cosmo/bin:/home/cosmo/.elan/bin:/home/cosmo/bin:/home/cosmo/.elan/bin:/home/cosmo/bin:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin:/usr/games:/usr/local/games:/snap/bin:/snap/bin:/home/cosmo/.cache/codex-runtimes/codex-primary-runtime/dependencies/bin/fallback:/usr/lib/chatgpt/resources",
+            "QCORE_CLANG": null,
+            "QCORE_AUDIT_IR_DIR": null,
+            "QCORE_BOUNDS_PROPERTY": null,
+            "QCORE_NULL_PROPERTY": null
+          }
+        },
+        "memory_peak_bytes": 5897371648,
+        "memory_events": {
+          "low": 0,
+          "high": 0,
+          "max": 0,
+          "oom": 0,
+          "oom_kill": 0,
+          "oom_group_kill": 0,
+          "sock_throttled": 0
+        },
+        "requested_limit_bytes": 7000000000,
+        "audit_completed_without_oom": true,
+        "monitored_elapsed_seconds": 12.057,
+        "scope": "Configured resource audit, existing build/setup excluded; fresh process caches, host page-cache state uncontrolled."
+      },
+      "launch": {
+        "argv": [
+          "systemd-run",
+          "--user",
+          "--unit=quirin-audit-memory-b094237396934357aef104ad7b6dc8dd",
+          "--property=MemoryAccounting=yes",
+          "--property=MemoryMax=7000000000",
+          "--property=MemorySwapMax=0",
+          "--property=RemainAfterExit=yes",
+          "--working-directory=/home/cosmo/.codex/worktrees/audit-ir-clang-transport/qcore-c",
+          "--setenv=PATH=/home/cosmo/.elan/bin:/home/cosmo/bin:/home/cosmo/.codex/tmp/arg0/codex-arg0nkbadu:/home/cosmo/.cache/codex-runtimes/codex-primary-runtime/dependencies/bin/override:/home/cosmo/.local/bin:./.cabal-sandbox/bin:/home/cosmo/bin:/home/cosmo/.elan/bin:/home/cosmo/bin:/home/cosmo/.elan/bin:/home/cosmo/bin:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin:/usr/games:/usr/local/games:/snap/bin:/snap/bin:/home/cosmo/.cache/codex-runtimes/codex-primary-runtime/dependencies/bin/fallback:/usr/lib/chatgpt/resources",
+          "/usr/bin/python3",
+          "/home/cosmo/.codex/worktrees/audit-ir-clang-transport/qcore-c/docs/reports/audit-ir-admission/scripts/measure_memory.py",
+          "--worker",
+          "--binary",
+          "/home/cosmo/.codex/worktrees/audit-ir-clang-transport/qcore-c/private/audit-ir-clang-transport/target/release/examples/clang_transport_measure",
+          "--config",
+          "/home/cosmo/.codex/worktrees/audit-ir-clang-transport/qcore-c/private/audit-ir-clang-transport/controls3/before-disk.json",
+          "--output",
+          "/home/cosmo/.codex/worktrees/audit-ir-clang-transport/qcore-c/private/audit-ir-clang-transport/controls3/before-disk",
+          "--jobs",
+          "1",
+          "--route",
+          "configured"
+        ],
+        "exit": 0
+      },
+      "cleanup": {
+        "stop_exit": 0,
+        "stop_stderr": ""
+      },
+      "private_directory": "/home/cosmo/.codex/worktrees/audit-ir-clang-transport/qcore-c/private/audit-ir-clang-transport/controls3/before-disk"
+    },
+    {
+      "name": "after-disk",
+      "driver_argv": [
+        "/usr/bin/python3",
+        "docs/reports/audit-ir-admission/scripts/measure_memory.py",
+        "--binary",
+        "/home/cosmo/.codex/worktrees/audit-ir-clang-transport/qcore-c/private/audit-ir-clang-transport/target/release/examples/clang_transport_measure",
+        "--config",
+        "/home/cosmo/.codex/worktrees/audit-ir-clang-transport/qcore-c/private/audit-ir-clang-transport/controls3/after-disk.json",
+        "--output",
+        "/home/cosmo/.codex/worktrees/audit-ir-clang-transport/qcore-c/private/audit-ir-clang-transport/controls3/after-disk",
+        "--jobs",
+        "1",
+        "--timeout",
+        "900"
+      ],
+      "driver_exit": 0,
+      "actual_scope": "Single generated C translation unit, complete Value decoding, address normalization and complete AST publication; not a resource audit",
+      "ast_bytes": 286930122,
+      "ast_sha256": "1bac523b85f815ed5d9326637ccdd3fcc79de252a3893d6172877b641cc23aac",
+      "configuration": {
+        "mode": "after",
+        "source": "/home/cosmo/.codex/worktrees/audit-ir-clang-transport/qcore-c/private/audit-ir-clang-transport/controls3/large.c",
+        "output": "/home/cosmo/.codex/worktrees/audit-ir-clang-transport/qcore-c/private/audit-ir-clang-transport/controls3/after-disk.qc",
+        "temporary_directory": "/home/cosmo/.codex/worktrees/audit-ir-clang-transport/qcore-c/private/audit-ir-clang-transport/controls3/spool"
+      },
+      "instrumentation_result": {
+        "service": "quirin-audit-memory-b55f16020061433d98703d834f71a306",
+        "service_properties": {
+          "ActiveState": "active",
+          "SubState": "exited",
+          "Result": "success",
+          "ExecMainStartTimestampMonotonic": "19702176434",
+          "ExecMainExitTimestampMonotonic": "19716112762",
+          "ExecMainCode": "1",
+          "ExecMainStatus": "0",
+          "ControlGroup": "",
+          "MemoryPeak": "5410885632",
+          "MemorySwapPeak": "0",
+          "CPUUsageNSec": "14600853000"
+        },
+        "worker": {
+          "argv": [
+            "/home/cosmo/.codex/worktrees/audit-ir-clang-transport/qcore-c/private/audit-ir-clang-transport/target/release/examples/clang_transport_measure",
+            "/home/cosmo/.codex/worktrees/audit-ir-clang-transport/qcore-c/private/audit-ir-clang-transport/controls3/after-disk.json",
+            "--jobs",
+            "1"
+          ],
+          "exit": 0,
+          "elapsed_seconds": 13.865,
+          "binary_sha256": "ed3a8be93271ec47529a1acefca20946db797bcf8b0ab47cdbfdd4f0347a71d3",
+          "configuration_sha256": "d91bb2450fb6881fd50fe8cd57b5bee15e09ce31519c08a0b1e009310a09210a",
+          "inputs_unchanged": true,
+          "cgroup": "/user.slice/user-1000.slice/user@1000.service/app.slice/quirin-audit-memory-b55f16020061433d98703d834f71a306.service",
+          "observed_before_exit": {
+            "memory.max": "6999998464",
+            "memory.swap.max": "0",
+            "memory.peak": "5410885632",
+            "memory.events": "low 0\nhigh 0\nmax 0\noom 0\noom_kill 0\noom_group_kill 0\nsock_throttled 0"
+          },
+          "environment": {
+            "PATH": "/home/cosmo/.elan/bin:/home/cosmo/bin:/home/cosmo/.codex/tmp/arg0/codex-arg0nkbadu:/home/cosmo/.cache/codex-runtimes/codex-primary-runtime/dependencies/bin/override:/home/cosmo/.local/bin:./.cabal-sandbox/bin:/home/cosmo/bin:/home/cosmo/.elan/bin:/home/cosmo/bin:/home/cosmo/.elan/bin:/home/cosmo/bin:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin:/usr/games:/usr/local/games:/snap/bin:/snap/bin:/home/cosmo/.cache/codex-runtimes/codex-primary-runtime/dependencies/bin/fallback:/usr/lib/chatgpt/resources",
+            "QCORE_CLANG": null,
+            "QCORE_AUDIT_IR_DIR": null,
+            "QCORE_BOUNDS_PROPERTY": null,
+            "QCORE_NULL_PROPERTY": null
+          }
+        },
+        "memory_peak_bytes": 5410885632,
+        "memory_events": {
+          "low": 0,
+          "high": 0,
+          "max": 0,
+          "oom": 0,
+          "oom_kill": 0,
+          "oom_group_kill": 0,
+          "sock_throttled": 0
+        },
+        "requested_limit_bytes": 7000000000,
+        "audit_completed_without_oom": true,
+        "monitored_elapsed_seconds": 14.066,
+        "scope": "Configured resource audit, existing build/setup excluded; fresh process caches, host page-cache state uncontrolled."
+      },
+      "launch": {
+        "argv": [
+          "systemd-run",
+          "--user",
+          "--unit=quirin-audit-memory-b55f16020061433d98703d834f71a306",
+          "--property=MemoryAccounting=yes",
+          "--property=MemoryMax=7000000000",
+          "--property=MemorySwapMax=0",
+          "--property=RemainAfterExit=yes",
+          "--working-directory=/home/cosmo/.codex/worktrees/audit-ir-clang-transport/qcore-c",
+          "--setenv=PATH=/home/cosmo/.elan/bin:/home/cosmo/bin:/home/cosmo/.codex/tmp/arg0/codex-arg0nkbadu:/home/cosmo/.cache/codex-runtimes/codex-primary-runtime/dependencies/bin/override:/home/cosmo/.local/bin:./.cabal-sandbox/bin:/home/cosmo/bin:/home/cosmo/.elan/bin:/home/cosmo/bin:/home/cosmo/.elan/bin:/home/cosmo/bin:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin:/usr/games:/usr/local/games:/snap/bin:/snap/bin:/home/cosmo/.cache/codex-runtimes/codex-primary-runtime/dependencies/bin/fallback:/usr/lib/chatgpt/resources",
+          "/usr/bin/python3",
+          "/home/cosmo/.codex/worktrees/audit-ir-clang-transport/qcore-c/docs/reports/audit-ir-admission/scripts/measure_memory.py",
+          "--worker",
+          "--binary",
+          "/home/cosmo/.codex/worktrees/audit-ir-clang-transport/qcore-c/private/audit-ir-clang-transport/target/release/examples/clang_transport_measure",
+          "--config",
+          "/home/cosmo/.codex/worktrees/audit-ir-clang-transport/qcore-c/private/audit-ir-clang-transport/controls3/after-disk.json",
+          "--output",
+          "/home/cosmo/.codex/worktrees/audit-ir-clang-transport/qcore-c/private/audit-ir-clang-transport/controls3/after-disk",
+          "--jobs",
+          "1",
+          "--route",
+          "configured"
+        ],
+        "exit": 0
+      },
+      "cleanup": {
+        "stop_exit": 0,
+        "stop_stderr": ""
+      },
+      "private_directory": "/home/cosmo/.codex/worktrees/audit-ir-clang-transport/qcore-c/private/audit-ir-clang-transport/controls3/after-disk"
+    },
+    {
+      "name": "before-tmpfs",
+      "driver_argv": [
+        "/usr/bin/python3",
+        "docs/reports/audit-ir-admission/scripts/measure_memory.py",
+        "--binary",
+        "/home/cosmo/.codex/worktrees/audit-ir-clang-transport/qcore-c/private/audit-ir-clang-transport/target/release/examples/clang_transport_measure",
+        "--config",
+        "/home/cosmo/.codex/worktrees/audit-ir-clang-transport/qcore-c/private/audit-ir-clang-transport/controls3/before-tmpfs.json",
+        "--output",
+        "/home/cosmo/.codex/worktrees/audit-ir-clang-transport/qcore-c/private/audit-ir-clang-transport/controls3/before-tmpfs",
+        "--jobs",
+        "1",
+        "--timeout",
+        "900"
+      ],
+      "driver_exit": 0,
+      "actual_scope": "Single generated C translation unit, complete Value decoding, address normalization and complete AST publication; not a resource audit",
+      "ast_bytes": 286930122,
+      "ast_sha256": "1bac523b85f815ed5d9326637ccdd3fcc79de252a3893d6172877b641cc23aac",
+      "configuration": {
+        "mode": "before",
+        "source": "/home/cosmo/.codex/worktrees/audit-ir-clang-transport/qcore-c/private/audit-ir-clang-transport/controls3/large.c",
+        "output": "/home/cosmo/.codex/worktrees/audit-ir-clang-transport/qcore-c/private/audit-ir-clang-transport/controls3/before-tmpfs.qc",
+        "temporary_directory": "/tmp"
+      },
+      "instrumentation_result": {
+        "service": "quirin-audit-memory-019a9e3e6c614e898570201aef7cf8dc",
+        "service_properties": {
+          "ActiveState": "active",
+          "SubState": "exited",
+          "Result": "success",
+          "ExecMainStartTimestampMonotonic": "19716307321",
+          "ExecMainExitTimestampMonotonic": "19728883513",
+          "ExecMainCode": "1",
+          "ExecMainStatus": "0",
+          "ControlGroup": "",
+          "MemoryPeak": "5896781824",
+          "MemorySwapPeak": "0",
+          "CPUUsageNSec": "13425784000"
+        },
+        "worker": {
+          "argv": [
+            "/home/cosmo/.codex/worktrees/audit-ir-clang-transport/qcore-c/private/audit-ir-clang-transport/target/release/examples/clang_transport_measure",
+            "/home/cosmo/.codex/worktrees/audit-ir-clang-transport/qcore-c/private/audit-ir-clang-transport/controls3/before-tmpfs.json",
+            "--jobs",
+            "1"
+          ],
+          "exit": 0,
+          "elapsed_seconds": 12.498,
+          "binary_sha256": "ed3a8be93271ec47529a1acefca20946db797bcf8b0ab47cdbfdd4f0347a71d3",
+          "configuration_sha256": "e4f8ad8adfaa1fadb859aed1a65ccd4d3a832e4cf724c976350bf496cc388352",
+          "inputs_unchanged": true,
+          "cgroup": "/user.slice/user-1000.slice/user@1000.service/app.slice/quirin-audit-memory-019a9e3e6c614e898570201aef7cf8dc.service",
+          "observed_before_exit": {
+            "memory.max": "6999998464",
+            "memory.swap.max": "0",
+            "memory.peak": "5896781824",
+            "memory.events": "low 0\nhigh 0\nmax 0\noom 0\noom_kill 0\noom_group_kill 0\nsock_throttled 0"
+          },
+          "environment": {
+            "PATH": "/home/cosmo/.elan/bin:/home/cosmo/bin:/home/cosmo/.codex/tmp/arg0/codex-arg0nkbadu:/home/cosmo/.cache/codex-runtimes/codex-primary-runtime/dependencies/bin/override:/home/cosmo/.local/bin:./.cabal-sandbox/bin:/home/cosmo/bin:/home/cosmo/.elan/bin:/home/cosmo/bin:/home/cosmo/.elan/bin:/home/cosmo/bin:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin:/usr/games:/usr/local/games:/snap/bin:/snap/bin:/home/cosmo/.cache/codex-runtimes/codex-primary-runtime/dependencies/bin/fallback:/usr/lib/chatgpt/resources",
+            "QCORE_CLANG": null,
+            "QCORE_AUDIT_IR_DIR": null,
+            "QCORE_BOUNDS_PROPERTY": null,
+            "QCORE_NULL_PROPERTY": null
+          }
+        },
+        "memory_peak_bytes": 5896781824,
+        "memory_events": {
+          "low": 0,
+          "high": 0,
+          "max": 0,
+          "oom": 0,
+          "oom_kill": 0,
+          "oom_group_kill": 0,
+          "sock_throttled": 0
+        },
+        "requested_limit_bytes": 7000000000,
+        "audit_completed_without_oom": true,
+        "monitored_elapsed_seconds": 14.07,
+        "scope": "Configured resource audit, existing build/setup excluded; fresh process caches, host page-cache state uncontrolled."
+      },
+      "launch": {
+        "argv": [
+          "systemd-run",
+          "--user",
+          "--unit=quirin-audit-memory-019a9e3e6c614e898570201aef7cf8dc",
+          "--property=MemoryAccounting=yes",
+          "--property=MemoryMax=7000000000",
+          "--property=MemorySwapMax=0",
+          "--property=RemainAfterExit=yes",
+          "--working-directory=/home/cosmo/.codex/worktrees/audit-ir-clang-transport/qcore-c",
+          "--setenv=PATH=/home/cosmo/.elan/bin:/home/cosmo/bin:/home/cosmo/.codex/tmp/arg0/codex-arg0nkbadu:/home/cosmo/.cache/codex-runtimes/codex-primary-runtime/dependencies/bin/override:/home/cosmo/.local/bin:./.cabal-sandbox/bin:/home/cosmo/bin:/home/cosmo/.elan/bin:/home/cosmo/bin:/home/cosmo/.elan/bin:/home/cosmo/bin:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin:/usr/games:/usr/local/games:/snap/bin:/snap/bin:/home/cosmo/.cache/codex-runtimes/codex-primary-runtime/dependencies/bin/fallback:/usr/lib/chatgpt/resources",
+          "/usr/bin/python3",
+          "/home/cosmo/.codex/worktrees/audit-ir-clang-transport/qcore-c/docs/reports/audit-ir-admission/scripts/measure_memory.py",
+          "--worker",
+          "--binary",
+          "/home/cosmo/.codex/worktrees/audit-ir-clang-transport/qcore-c/private/audit-ir-clang-transport/target/release/examples/clang_transport_measure",
+          "--config",
+          "/home/cosmo/.codex/worktrees/audit-ir-clang-transport/qcore-c/private/audit-ir-clang-transport/controls3/before-tmpfs.json",
+          "--output",
+          "/home/cosmo/.codex/worktrees/audit-ir-clang-transport/qcore-c/private/audit-ir-clang-transport/controls3/before-tmpfs",
+          "--jobs",
+          "1",
+          "--route",
+          "configured"
+        ],
+        "exit": 0
+      },
+      "cleanup": {
+        "stop_exit": 0,
+        "stop_stderr": ""
+      },
+      "private_directory": "/home/cosmo/.codex/worktrees/audit-ir-clang-transport/qcore-c/private/audit-ir-clang-transport/controls3/before-tmpfs"
+    },
+    {
+      "name": "after-tmpfs",
+      "driver_argv": [
+        "/usr/bin/python3",
+        "docs/reports/audit-ir-admission/scripts/measure_memory.py",
+        "--binary",
+        "/home/cosmo/.codex/worktrees/audit-ir-clang-transport/qcore-c/private/audit-ir-clang-transport/target/release/examples/clang_transport_measure",
+        "--config",
+        "/home/cosmo/.codex/worktrees/audit-ir-clang-transport/qcore-c/private/audit-ir-clang-transport/controls3/after-tmpfs.json",
+        "--output",
+        "/home/cosmo/.codex/worktrees/audit-ir-clang-transport/qcore-c/private/audit-ir-clang-transport/controls3/after-tmpfs",
+        "--jobs",
+        "1",
+        "--timeout",
+        "900"
+      ],
+      "driver_exit": 0,
+      "actual_scope": "Single generated C translation unit, complete Value decoding, address normalization and complete AST publication; not a resource audit",
+      "ast_bytes": 286930122,
+      "ast_sha256": "1bac523b85f815ed5d9326637ccdd3fcc79de252a3893d6172877b641cc23aac",
+      "configuration": {
+        "mode": "after",
+        "source": "/home/cosmo/.codex/worktrees/audit-ir-clang-transport/qcore-c/private/audit-ir-clang-transport/controls3/large.c",
+        "output": "/home/cosmo/.codex/worktrees/audit-ir-clang-transport/qcore-c/private/audit-ir-clang-transport/controls3/after-tmpfs.qc",
+        "temporary_directory": "/tmp"
+      },
+      "instrumentation_result": {
+        "service": "quirin-audit-memory-11c030ca632442b592bb15454d2e9832",
+        "service_properties": {
+          "ActiveState": "active",
+          "SubState": "exited",
+          "Result": "success",
+          "ExecMainStartTimestampMonotonic": "19730452778",
+          "ExecMainExitTimestampMonotonic": "19744504021",
+          "ExecMainCode": "1",
+          "ExecMainStatus": "0",
+          "ControlGroup": "",
+          "MemoryPeak": "5900382208",
+          "MemorySwapPeak": "0",
+          "CPUUsageNSec": "14767720000"
+        },
+        "worker": {
+          "argv": [
+            "/home/cosmo/.codex/worktrees/audit-ir-clang-transport/qcore-c/private/audit-ir-clang-transport/target/release/examples/clang_transport_measure",
+            "/home/cosmo/.codex/worktrees/audit-ir-clang-transport/qcore-c/private/audit-ir-clang-transport/controls3/after-tmpfs.json",
+            "--jobs",
+            "1"
+          ],
+          "exit": 0,
+          "elapsed_seconds": 13.959,
+          "binary_sha256": "ed3a8be93271ec47529a1acefca20946db797bcf8b0ab47cdbfdd4f0347a71d3",
+          "configuration_sha256": "fbe7b8b8661f8fb0ca943626b74f82a1a4c5a38a65e19c0e3cc47f55c6569dfb",
+          "inputs_unchanged": true,
+          "cgroup": "/user.slice/user-1000.slice/user@1000.service/app.slice/quirin-audit-memory-11c030ca632442b592bb15454d2e9832.service",
+          "observed_before_exit": {
+            "memory.max": "6999998464",
+            "memory.swap.max": "0",
+            "memory.peak": "5900382208",
+            "memory.events": "low 0\nhigh 0\nmax 0\noom 0\noom_kill 0\noom_group_kill 0\nsock_throttled 0"
+          },
+          "environment": {
+            "PATH": "/home/cosmo/.elan/bin:/home/cosmo/bin:/home/cosmo/.codex/tmp/arg0/codex-arg0nkbadu:/home/cosmo/.cache/codex-runtimes/codex-primary-runtime/dependencies/bin/override:/home/cosmo/.local/bin:./.cabal-sandbox/bin:/home/cosmo/bin:/home/cosmo/.elan/bin:/home/cosmo/bin:/home/cosmo/.elan/bin:/home/cosmo/bin:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin:/usr/games:/usr/local/games:/snap/bin:/snap/bin:/home/cosmo/.cache/codex-runtimes/codex-primary-runtime/dependencies/bin/fallback:/usr/lib/chatgpt/resources",
+            "QCORE_CLANG": null,
+            "QCORE_AUDIT_IR_DIR": null,
+            "QCORE_BOUNDS_PROPERTY": null,
+            "QCORE_NULL_PROPERTY": null
+          }
+        },
+        "memory_peak_bytes": 5900382208,
+        "memory_events": {
+          "low": 0,
+          "high": 0,
+          "max": 0,
+          "oom": 0,
+          "oom_kill": 0,
+          "oom_group_kill": 0,
+          "sock_throttled": 0
+        },
+        "requested_limit_bytes": 7000000000,
+        "audit_completed_without_oom": true,
+        "monitored_elapsed_seconds": 14.068,
+        "scope": "Configured resource audit, existing build/setup excluded; fresh process caches, host page-cache state uncontrolled."
+      },
+      "launch": {
+        "argv": [
+          "systemd-run",
+          "--user",
+          "--unit=quirin-audit-memory-11c030ca632442b592bb15454d2e9832",
+          "--property=MemoryAccounting=yes",
+          "--property=MemoryMax=7000000000",
+          "--property=MemorySwapMax=0",
+          "--property=RemainAfterExit=yes",
+          "--working-directory=/home/cosmo/.codex/worktrees/audit-ir-clang-transport/qcore-c",
+          "--setenv=PATH=/home/cosmo/.elan/bin:/home/cosmo/bin:/home/cosmo/.codex/tmp/arg0/codex-arg0nkbadu:/home/cosmo/.cache/codex-runtimes/codex-primary-runtime/dependencies/bin/override:/home/cosmo/.local/bin:./.cabal-sandbox/bin:/home/cosmo/bin:/home/cosmo/.elan/bin:/home/cosmo/bin:/home/cosmo/.elan/bin:/home/cosmo/bin:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin:/usr/games:/usr/local/games:/snap/bin:/snap/bin:/home/cosmo/.cache/codex-runtimes/codex-primary-runtime/dependencies/bin/fallback:/usr/lib/chatgpt/resources",
+          "/usr/bin/python3",
+          "/home/cosmo/.codex/worktrees/audit-ir-clang-transport/qcore-c/docs/reports/audit-ir-admission/scripts/measure_memory.py",
+          "--worker",
+          "--binary",
+          "/home/cosmo/.codex/worktrees/audit-ir-clang-transport/qcore-c/private/audit-ir-clang-transport/target/release/examples/clang_transport_measure",
+          "--config",
+          "/home/cosmo/.codex/worktrees/audit-ir-clang-transport/qcore-c/private/audit-ir-clang-transport/controls3/after-tmpfs.json",
+          "--output",
+          "/home/cosmo/.codex/worktrees/audit-ir-clang-transport/qcore-c/private/audit-ir-clang-transport/controls3/after-tmpfs",
+          "--jobs",
+          "1",
+          "--route",
+          "configured"
+        ],
+        "exit": 0
+      },
+      "cleanup": {
+        "stop_exit": 0,
+        "stop_stderr": ""
+      },
+      "private_directory": "/home/cosmo/.codex/worktrees/audit-ir-clang-transport/qcore-c/private/audit-ir-clang-transport/controls3/after-tmpfs"
+    }
+  ],
+  "environment": {
+    "platform": "Linux-7.0.0-38-generic-x86_64-with-glibc2.43",
+    "machine": "x86_64",
+    "clang_path": "/usr/lib/llvm-21/bin/clang",
+    "clang_sha256": "412bbe8c60571a1eb06f48fde89635033621caeb01a9b4ee76d46711bae8e932",
+    "filesystem": {
+      ".": "ext2/ext3",
+      "/tmp": "tmpfs"
+    },
+    "host_page_cache": "uncontrolled",
+    "host_isolated": false,
+    "QCORE_CLANG": null
+  },
+  "gate": "gate.json",
+  "attempts": "measurement-attempts.json",
+  "driver_exit": 0,
+  "private_driver_log": "/home/cosmo/.codex/worktrees/audit-ir-clang-transport/qcore-c/private/audit-ir-clang-transport/measurement3-driver.log"
+}

@@ -5,8 +5,11 @@ large complete-unit dumps for the public AST, compact-index and lifetime-source
 readers. Parser admission and fact construction remain unchanged. Aggregate
 memory depends on temporary storage: tmpfs still charges the raw spool;
 64-bit Linux requests release of disk-backed cache pages. The isolated card gate passes 8,506 Rust tests, 362 Lean audits and 374 Python
-tests. The card owns its single-unit control evidence; it does not replace the full current audit below
-or discharge the parent 6 GB target.
+tests. In one shared-host 30,000-function control, disk-backed storage lowers
+whole-cgroup peak from 5,897,371,648 to 5,410,885,632 bytes (8.249%); tmpfs
+shows no reduction. All four complete normalized ASTs match, with zero swap/OOM.
+This single-unit evidence does not replace the full current audit below or
+discharge the parent 6 GB target.
 
 [Bounded audit working sets](reports/audit-ir-working-set/README.md) limit
 started-but-unconsumed tasks to the worker count, stream final report JSON

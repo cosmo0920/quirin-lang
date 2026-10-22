@@ -1,60 +1,101 @@
 {
-  "scope": "Focused transport controls, not a production audit census",
-  "real_clang_preflight": {
-    "commands": [
-      {
-        "argv": [
-          "/home/cosmo/.codex/worktrees/audit-ir-clang-transport/qcore-c/private/audit-ir-clang-transport/target/release/examples/clang_transport_measure",
-          "/home/cosmo/.codex/worktrees/audit-ir-clang-transport/qcore-c/private/audit-ir-clang-transport/smoke/before.json"
-        ],
-        "exit": 0
-      },
-      {
-        "argv": [
-          "/home/cosmo/.codex/worktrees/audit-ir-clang-transport/qcore-c/private/audit-ir-clang-transport/target/release/examples/clang_transport_measure",
-          "/home/cosmo/.codex/worktrees/audit-ir-clang-transport/qcore-c/private/audit-ir-clang-transport/smoke/after.json"
-        ],
-        "exit": 0
-      }
-    ],
-    "bytes": 6092,
-    "sha256": "cc60ef349a7f2acc3500ec102522c9dbba3c9cba6b3d4360a6586d1e3f7517f5",
-    "full_ast_equal": true
-  },
-  "storage_failure": {
-    "argv": [
-      "/home/cosmo/.codex/worktrees/audit-ir-clang-transport/qcore-c/private/audit-ir-clang-transport/target/release/examples/clang_transport_measure",
-      "/home/cosmo/.codex/worktrees/audit-ir-clang-transport/qcore-c/private/audit-ir-clang-transport/storage-fault/config.json"
-    ],
-    "exit": 1,
-    "expected_exit": 1,
-    "configuration": {
-      "mode": "after",
-      "source": "/home/cosmo/.codex/worktrees/audit-ir-clang-transport/qcore-c/private/audit-ir-clang-transport/storage-fault/source.c",
-      "output": "/home/cosmo/.codex/worktrees/audit-ir-clang-transport/qcore-c/private/audit-ir-clang-transport/storage-fault/result.qc",
-      "temporary_directory": "/home/cosmo/.codex/worktrees/audit-ir-clang-transport/qcore-c/private/audit-ir-clang-transport/storage-fault/missing-directory"
+  "scope": "Final-source real-Clang preflight and storage fault/positive controls; not a production census",
+  "implementation_commit": "1a397b951943a1dd9dc7f0b3f1a4ec6d1383e4e1",
+  "binary_sha256": "ed3a8be93271ec47529a1acefca20946db797bcf8b0ab47cdbfdd4f0347a71d3",
+  "environment": {
+    "platform": "Linux-7.0.0-38-generic-x86_64-with-glibc2.43",
+    "machine": "x86_64",
+    "clang_path": "/usr/lib/llvm-21/bin/clang",
+    "clang_sha256": "412bbe8c60571a1eb06f48fde89635033621caeb01a9b4ee76d46711bae8e932",
+    "filesystem": {
+      ".": "ext2/ext3",
+      "/tmp": "tmpfs"
     },
-    "source_sha256": "16472c0bc571198779d38a60669732be881e6fa1ec952edfb1d3acdef87970db",
-    "published_ast": false,
-    "transport_failure": true
+    "host_page_cache": "uncontrolled",
+    "host_isolated": false,
+    "QCORE_CLANG": null
   },
-  "storage_restored": {
-    "argv": [
-      "/home/cosmo/.codex/worktrees/audit-ir-clang-transport/qcore-c/private/audit-ir-clang-transport/target/release/examples/clang_transport_measure",
-      "/home/cosmo/.codex/worktrees/audit-ir-clang-transport/qcore-c/private/audit-ir-clang-transport/storage-fault/green.json"
-    ],
-    "exit": 0,
-    "source_unchanged": true,
-    "top_level_functions": 2000,
-    "output_sha256": "e53bc8784affcbadf88c1390af1e190b29517b5c24b09f695b9743427d1c7ae1"
-  },
-  "storage_source_recipe": "''.join(f'int f{i}(int x) {{ return x + {i}; }}\\n' for i in range(2000))",
-  "storage_control_scope": "Measured once; configuration, exact argv, source recipe and private logs retained. Not a corpus mutation campaign.",
-  "private_logs": [
-    "/home/cosmo/.codex/worktrees/audit-ir-clang-transport/qcore-c/private/audit-ir-clang-transport/smoke/before.log",
-    "/home/cosmo/.codex/worktrees/audit-ir-clang-transport/qcore-c/private/audit-ir-clang-transport/smoke/after.log",
-    "/home/cosmo/.codex/worktrees/audit-ir-clang-transport/qcore-c/private/audit-ir-clang-transport/storage-fault/stderr.log",
-    "/home/cosmo/.codex/worktrees/audit-ir-clang-transport/qcore-c/private/audit-ir-clang-transport/storage-fault/stdout.log",
-    "/home/cosmo/.codex/worktrees/audit-ir-clang-transport/qcore-c/private/audit-ir-clang-transport/storage-fault/green.log"
-  ]
+  "runs": [
+    {
+      "name": "before",
+      "argv": [
+        "/home/cosmo/.codex/worktrees/audit-ir-clang-transport/qcore-c/private/audit-ir-clang-transport/target/release/examples/clang_transport_measure",
+        "/home/cosmo/.codex/worktrees/audit-ir-clang-transport/qcore-c/private/audit-ir-clang-transport/final-focused/before.json"
+      ],
+      "exit": 0,
+      "expected_exit": 0,
+      "configuration": {
+        "mode": "before",
+        "source": "/home/cosmo/.codex/worktrees/audit-ir-clang-transport/qcore-c/private/audit-ir-clang-transport/smoke/source.c",
+        "output": "/home/cosmo/.codex/worktrees/audit-ir-clang-transport/qcore-c/private/audit-ir-clang-transport/final-focused/before.qc",
+        "temporary_directory": "/home/cosmo/.codex/worktrees/audit-ir-clang-transport/qcore-c/private/audit-ir-clang-transport/smoke"
+      },
+      "configuration_sha256": "86b33ba4e934aa6be0fcd13ac69131aaa9339961abdba6cfb02ef2d34699b526",
+      "source_sha256": "d7c9f94b7ee3c6e9ad16943f8e689d2cd7b0d1b6c29bb699458868722877be50",
+      "log": "/home/cosmo/.codex/worktrees/audit-ir-clang-transport/qcore-c/private/audit-ir-clang-transport/final-focused/before.log",
+      "output_sha256": "cc60ef349a7f2acc3500ec102522c9dbba3c9cba6b3d4360a6586d1e3f7517f5"
+    },
+    {
+      "name": "after",
+      "argv": [
+        "/home/cosmo/.codex/worktrees/audit-ir-clang-transport/qcore-c/private/audit-ir-clang-transport/target/release/examples/clang_transport_measure",
+        "/home/cosmo/.codex/worktrees/audit-ir-clang-transport/qcore-c/private/audit-ir-clang-transport/final-focused/after.json"
+      ],
+      "exit": 0,
+      "expected_exit": 0,
+      "configuration": {
+        "mode": "after",
+        "source": "/home/cosmo/.codex/worktrees/audit-ir-clang-transport/qcore-c/private/audit-ir-clang-transport/smoke/source.c",
+        "output": "/home/cosmo/.codex/worktrees/audit-ir-clang-transport/qcore-c/private/audit-ir-clang-transport/final-focused/after.qc",
+        "temporary_directory": "/home/cosmo/.codex/worktrees/audit-ir-clang-transport/qcore-c/private/audit-ir-clang-transport/smoke"
+      },
+      "configuration_sha256": "bc3da60e3a5fcc2631c7edcc30547cc0a4a5b3cccff74ab3f77ad9f4ae0f1e8f",
+      "source_sha256": "d7c9f94b7ee3c6e9ad16943f8e689d2cd7b0d1b6c29bb699458868722877be50",
+      "log": "/home/cosmo/.codex/worktrees/audit-ir-clang-transport/qcore-c/private/audit-ir-clang-transport/final-focused/after.log",
+      "output_sha256": "cc60ef349a7f2acc3500ec102522c9dbba3c9cba6b3d4360a6586d1e3f7517f5"
+    },
+    {
+      "name": "storage-failure",
+      "argv": [
+        "/home/cosmo/.codex/worktrees/audit-ir-clang-transport/qcore-c/private/audit-ir-clang-transport/target/release/examples/clang_transport_measure",
+        "/home/cosmo/.codex/worktrees/audit-ir-clang-transport/qcore-c/private/audit-ir-clang-transport/final-focused/storage-failure.json"
+      ],
+      "exit": 1,
+      "expected_exit": 1,
+      "configuration": {
+        "mode": "after",
+        "source": "/home/cosmo/.codex/worktrees/audit-ir-clang-transport/qcore-c/private/audit-ir-clang-transport/storage-fault/source.c",
+        "output": "/home/cosmo/.codex/worktrees/audit-ir-clang-transport/qcore-c/private/audit-ir-clang-transport/final-focused/storage-failure.qc",
+        "temporary_directory": "/home/cosmo/.codex/worktrees/audit-ir-clang-transport/qcore-c/private/audit-ir-clang-transport/storage-fault/missing-directory"
+      },
+      "configuration_sha256": "3b8904f8f63896d1d2628ba7bd1f80bcf6aa3216bf36b31de246daf2db4f617f",
+      "source_sha256": "16472c0bc571198779d38a60669732be881e6fa1ec952edfb1d3acdef87970db",
+      "log": "/home/cosmo/.codex/worktrees/audit-ir-clang-transport/qcore-c/private/audit-ir-clang-transport/final-focused/storage-failure.log",
+      "output_sha256": null
+    },
+    {
+      "name": "storage-restored",
+      "argv": [
+        "/home/cosmo/.codex/worktrees/audit-ir-clang-transport/qcore-c/private/audit-ir-clang-transport/target/release/examples/clang_transport_measure",
+        "/home/cosmo/.codex/worktrees/audit-ir-clang-transport/qcore-c/private/audit-ir-clang-transport/final-focused/storage-restored.json"
+      ],
+      "exit": 0,
+      "expected_exit": 0,
+      "configuration": {
+        "mode": "after",
+        "source": "/home/cosmo/.codex/worktrees/audit-ir-clang-transport/qcore-c/private/audit-ir-clang-transport/storage-fault/source.c",
+        "output": "/home/cosmo/.codex/worktrees/audit-ir-clang-transport/qcore-c/private/audit-ir-clang-transport/final-focused/storage-restored.qc",
+        "temporary_directory": "/home/cosmo/.codex/worktrees/audit-ir-clang-transport/qcore-c/private/audit-ir-clang-transport/storage-fault"
+      },
+      "configuration_sha256": "4eb26cdbe2c81aa4b55a3f9c643e27ec37249382a86f591aa2696b52e0c0f07d",
+      "source_sha256": "16472c0bc571198779d38a60669732be881e6fa1ec952edfb1d3acdef87970db",
+      "log": "/home/cosmo/.codex/worktrees/audit-ir-clang-transport/qcore-c/private/audit-ir-clang-transport/final-focused/storage-restored.log",
+      "output_sha256": "e53bc8784affcbadf88c1390af1e190b29517b5c24b09f695b9743427d1c7ae1"
+    }
+  ],
+  "full_preflight_ast_equal": true,
+  "storage_failure_published_ast": false,
+  "storage_restored_functions": 2000,
+  "development_preflight": "focused-controls-development.json",
+  "storage_source_recipe": "''.join(f'int f{i}(int x) {{ return x + {i}; }}\\n' for i in range(2000))"
 }

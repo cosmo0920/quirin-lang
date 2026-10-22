@@ -15,7 +15,7 @@ or change the other cards' member closure and CFG/report work.
 The intended outcome is a measured reduction in transient single-unit memory,
 including Clang and any charged file cache, with exact source-reading parity.
 No new semantic admission, verdict movement, selected-configuration omission,
-cache authority or default `.qc` capture is intended. Temporary persisted AST
+cache authority or default retained IR capture is intended. Temporary persisted AST
 transport uses `.qc` and is disposable, never trusted evidence. Retain cleanup
 on errors and unwinding. Existing matching Lean depth/transport definitions
 remain applicable if admission is unchanged; any semantic edit requires matching
@@ -55,6 +55,35 @@ resets the cache-advice positions so retries discard the ranges they actually
 read; the round-trip control asserts this after repeated rewinds.
 
 
+## Measured single-unit outcome
+
+The [final memory receipt](memory.json) records four successful sequential
+controls on one shared Linux x86-64 host. Each processes the same 30,000-function
+translation unit and retains the complete decoded AST. Whole-cgroup peaks include
+Clang, the worker and charged file cache; build/setup is excluded.
+
+| Temporary storage | Buffered peak (bytes) | Seekable peak (bytes) | Peak reduction | Worker seconds, before → after |
+| --- | ---: | ---: | ---: | ---: |
+| Disk-backed | 5,897,371,648 | 5,410,885,632 | 486,486,016 bytes (8.249%) | 11.432 → 13.865 |
+| Tmpfs (`/tmp`) | 5,896,781,824 | 5,900,382,208 | −3,600,384 bytes (−0.061%) | 12.498 → 13.959 |
+
+All four driver/worker runs exit **0**, with zero swap peak, OOM and OOM-kill
+events, unchanged inputs and successful service cleanup. Each publishes the
+same complete 286,930,122-byte normalized AST, SHA-256
+`1bac523b85f815ed5d9326637ccdd3fcc79de252a3893d6172877b641cc23aac`.
+The disk-backed pair demonstrates a bounded reduction with longer elapsed time;
+the tmpfs pair demonstrates **no reduction**. Default temporary storage on this
+host is tmpfs, so the observed benefit requires selecting disk-backed `TMPDIR`.
+This one pair per storage condition is not a repeatability, cold/warm or
+production-audit claim and does not discharge the parent's 6 GB target.
+
+Exact commands, configurations, executable/source hashes, raw instrumentation,
+cleanup and private log paths are in the receipt. The reused meter's inherited
+“Configured resource audit” label is explicitly corrected there to this
+single-unit transport-control scope. The campaign driver exits **0**; private
+results are under `private/audit-ir-clang-transport/controls3/` and its log is
+`private/audit-ir-clang-transport/measurement3-driver.log`.
+
 ## Integration and residuals
 
 Integrate this card's source and evidence onto the eventual combined source;
@@ -82,8 +111,10 @@ failure: unavailable temporary storage exits **1** (expected), emits a transport
 failure and publishes no AST. The same unchanged 2,000-definition input with
 valid storage exits **0**, with all 2,000 definitions retained. This is one
 observed storage fault/positive control, not a production mutation campaign.
-The source recipe, exact argv, configurations, hashes and private paths are
-retained. Ordinary source checks also cover complete malformed suffixes,
+These controls were rerun against the final measured executable: exits are
+0/0/1/0, with exact argv, configurations, binary/source hashes and private paths
+in the receipt. The [development preflight](focused-controls-development.json)
+is preserved separately; its observations are not added to the final results. Ordinary source checks also cover complete malformed suffixes,
 subprocess rejection/stderr precedence, simultaneous large stdin/stdout/stderr,
 spool cleanup, duplicate keys, scalar/Unicode failures and depth boundaries.
 
@@ -108,3 +139,27 @@ The final gate validates implementation `1a397b951943a1dd9dc7f0b3f1a4ec6d1383e4e
 including the seek-counter fix. The [prior gate](gate-before-seek-fix.json)
 retains its earlier implementation checkpoint; its counts are not added to the
 final run. All 1,500 tracked Rust files match the final run’s source snapshot.
+
+## Reproducing the bounded control
+
+Build `cargo build --release -p qcore-c-gateway --example clang_transport_measure`
+in the card worktree with its private `CARGO_TARGET_DIR`, then run
+`scripts/measure.py` from this report with `--binary` naming that executable
+and `--output` naming a fresh directory. The script generates 30,000 shallow C
+function definitions and serializes four runs under the shared heavy-job lock:
+buffered reference and seekable transport with disk-backed `TMPDIR`, then the
+same pair with `/tmp` (tmpfs on this host). It writes configurations, complete
+normalized `.qc` ASTs and a full-byte comparison receipt. The normalization
+consistently renames Clang's process-local hexadecimal node addresses; the
+generated source contains no hexadecimal string values.
+
+Both modes retain the same complete `serde_json::Value`, normalize its addresses
+and publish the entire AST. The buffered reference transcribes the original
+successful shallow-document transport in the same executable; it is not a
+separately built base audit binary. The frozen admission measurement utility
+runs each executable in its own systemd cgroup with a requested 7,000,000,000-byte
+limit and no swap. Its generic receipt text says “Configured resource audit”;
+that inherited label does **not** describe these single-unit transport controls.
+The benchmark argv and this scope govern. Build/setup is excluded, host cache
+state is uncontrolled, and one sequential pair is neither a cold/warm campaign
+nor a production-audit result.
