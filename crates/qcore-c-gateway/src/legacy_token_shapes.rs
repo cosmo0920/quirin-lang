@@ -185,6 +185,10 @@ pub(super) fn contains_unmodeled_access(texts: &[&str]) -> bool {
                         .get(index + 1)
                         .is_some_and(|right| right.bytes().all(|byte| byte.is_ascii_digit()))
             }
+            // Card W48-BU-SINGLE-LEAF-BODIES (rule 35, arm 1): a `*` applied
+            // to a literal that is only read reads a constant of a static
+            // object, never a pointer the projection names.
+            "*" if crate::literal_dereference::exempt(texts, index) => false,
             "*" => !texts.get(index.wrapping_sub(1)).is_some_and(|left| {
                 (is_identifier(left) || left.bytes().all(|byte| byte.is_ascii_digit()))
                     && !matches!(

@@ -407,6 +407,16 @@ impl StatementIndex {
                 address = true;
                 true
             }
+            // Card W48-BU-SINGLE-LEAF-BODIES (rule 35, arm 2): an array
+            // member decayed to a pointer is `&PATH[0]`, read as rule 14c's
+            // scalar element address. `value` refuses every decayed actual
+            // before it reads anything, so asking this first changes no
+            // older answer.
+            Some(value) if crate::array_member_decay::decayed_operand(value).is_some() => {
+                reader.decayed_address(value)?;
+                address = true;
+                true
+            }
             _ => reader.value(actual)?,
         };
         // A borrowed actual hands nothing out of the body: the never-bound
