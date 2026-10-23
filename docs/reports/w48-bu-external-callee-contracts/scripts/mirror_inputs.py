@@ -12,8 +12,8 @@ On 2026-10-23 the primary checkout moved to /media/Data/GitHub/quirin-lang and
 compile database still spells its paths under the old prefix, while
 run_pinned_audit.py resolves its inputs root to the real path and the audit
 selects units by comparing path strings (pinned_route.rs `plan_library`,
-current.rs `export_cross_unit_home`). No unit then matches its checkout and
-every route fails before analysis (run 4, a retained failed attempt).
+current.rs `export_cross_unit_home`). A unit can then fail to match its checkout and the route stops before analysis.
+This card retains its own failed BASE corpus attempt separately.
 
 This script copies file content and explicitly changes compile-database path
 spellings. Such spellings can affect preprocessing (for example __FILE__);

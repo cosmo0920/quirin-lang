@@ -1,0 +1,20 @@
+{
+  "meaning": "Existing interpreted effect kinds and fail-closed gates; this data-only card adds no semantic rule. These models do not prove libc bodies or C extraction/Rust correspondence. Full audit run still pending.",
+  "files": {
+    "proof/QCore/DeclaredAbiAgreement.lean": "e2276e73b185b7e4bd01865e136ba438bbb08a84b843c57337fbb84f111f2b68",
+    "proof/AuditDeclaredAbiAgreement.lean": "5e8829a0d7b484f102f8efbc0d1bcdbef3c2c2994c910c101b55da040aa849d8",
+    "proof/QCore/BorrowLiveness.lean": "adab0c5c0abeeaf488058686607d9df34e4b57d6faefa22fa041c2c23e5d9b9a",
+    "proof/AuditBorrowLiveness.lean": "d0b3183332d4f0b9f22e26f121058a1d0bc2327bb42b195ab4d3cc501ade686f",
+    "proof/QCore/CallInstantiation.lean": "e31ff8c1774253e6132ada5efa94545e5b6074f90d9a57d378a6567664a287f0",
+    "proof/AuditCallInstantiation.lean": "dffcce16762a322dfef924190886ec122743a309d1150af9805c3d928b46c288",
+    "proof/QCore/KindedCustody.lean": "a0551523ff818bc8870ed706ed219849da7b3244accd41b5f29395f49e10cdff",
+    "proof/AuditKindedCustody.lean": "5d8af83e8f862b4bbb97ac96792fd579502b81b82d9c71e447f0216819e58cd4"
+  },
+  "examples": [
+    "DeclaredAbiAgreement.a_disagreement_withdraws",
+    "DeclaredAbiAgreement.an_undeclared_callee_is_never_applied",
+    "BorrowLiveness.a_settled_released_identity_is_refused",
+    "CallInstantiation.Mode.custody (.borrowed=false)",
+    "CallInstantiation.substOne"
+  ]
+}
