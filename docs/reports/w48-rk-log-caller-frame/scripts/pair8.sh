@@ -40,7 +40,12 @@ for side in base tip; do
   sha256sum "$run/snap-$side/target/release/quirin-audit" >"$run/binary-$side.sha256"
 done
 date -u +%FT%TZ >"$run/built"
-measure="$wt/docs/reports/w48-rk-log-caller-frame/scripts/measure8.py"
+# The scheduler card's driver, byte for byte: the frozen pinned inputs'
+# compile database spells the primary checkout through its symlink
+# (/home/cosmo/Documents/GitHub/qcore-c), so a driver rooted at the real
+# directory selects no source (attempt pair8-1: "compile database contains no
+# selected cmetrics sources", exit 1 on both sides). Inputs are only read.
+measure="$wt/docs/reports/w48-sched-cleanup-production/scripts/measure.py"
 map="$wt/docs/reports/w48-sched-cleanup-production/link-map.corpus.json"
 for side in base tip; do
   (python3 "$measure" corpus "$run/$side-corpus" --link-map "$map" --inputs-snapshot "$run/snap-$side" \
