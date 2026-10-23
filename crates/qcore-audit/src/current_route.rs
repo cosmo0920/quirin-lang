@@ -364,6 +364,7 @@ pub fn run_current_route_with_checkpoints(
                         Some(slice_dispatch.clone()),
                         |task| (task.group, evaluate_task(&audit, &task)),
                         |(group, outcome): (usize, EntryOutcome)| {
+                            let outcome = outcome.park();
                             let failed = outcome.result.is_err();
                             outcomes.push((group, outcome));
                             if failed { Err(()) } else { Ok(()) }
@@ -374,21 +375,20 @@ pub fn run_current_route_with_checkpoints(
                 },
                 |outcomes| {
                     let mut found = base_refutations.clone();
-                    found.extend(crate::refuted_contracts::table_from_rows(
+                    found.extend(retained_refutations(
                         outcomes
                             .iter()
                             .filter_map(|(_, outcome)| outcome.result.as_ref().ok())
-                            .flat_map(|products| products.unit_rows()),
+                            .map(|products| &products.report.refutations),
                     ));
                     found
                 },
                 |outcomes| {
-                    crate::bounds_evidence::refutation_table(
-                        &outcomes
+                    retained_bounds(
+                        outcomes
                             .iter()
                             .filter_map(|(_, outcome)| outcome.result.as_ref().ok())
-                            .flat_map(|products| products.bounds_evidence().iter().cloned())
-                            .collect::<Vec<_>>(),
+                            .map(|products| &products.report.bounds_refutations),
                     )
                 },
             );
@@ -397,7 +397,7 @@ pub fn run_current_route_with_checkpoints(
             println!("{header}");
             for (_, outcome) in phases.results {
                 print!("{}", outcome.output);
-                audit.absorb_entry(outcome.result?)?;
+                audit.absorb_entry(outcome.result?.restore()?)?;
             }
             crate::contract_dependencies::clear_premises_cache();
         }
@@ -431,6 +431,7 @@ pub fn run_current_route_with_checkpoints(
                 Some(dispatch.clone()),
                 |task| (task.group, evaluate_task(&audit, &task)),
                 |(group, outcome): (usize, EntryOutcome)| {
+                    let outcome = outcome.park();
                     let failed = outcome.result.is_err();
                     outcomes.push((group, outcome));
                     if failed { Err(()) } else { Ok(()) }
@@ -440,21 +441,20 @@ pub fn run_current_route_with_checkpoints(
             (outcomes, stopped)
         },
         |outcomes| {
-            crate::refuted_contracts::table_from_rows(
+            retained_refutations(
                 outcomes
                     .iter()
                     .filter_map(|(_, outcome)| outcome.result.as_ref().ok())
-                    .flat_map(|products| products.unit_rows()),
+                    .map(|products| &products.report.refutations),
             )
         },
         // Card CG16-BOUNDS-TRANSPORT-AND-CHUNKIO-NEIGHBOURS (rule 14h).
         |outcomes| {
-            crate::bounds_evidence::refutation_table(
-                &outcomes
+            retained_bounds(
+                outcomes
                     .iter()
                     .filter_map(|(_, outcome)| outcome.result.as_ref().ok())
-                    .flat_map(|products| products.bounds_evidence().iter().cloned())
-                    .collect::<Vec<_>>(),
+                    .map(|products| &products.report.bounds_refutations),
             )
         },
     );
@@ -492,17 +492,18 @@ pub fn run_current_route_with_checkpoints(
                 Some(dispatch.clone()),
                 |task| (task.group, evaluate_task(&audit, &task)),
                 |(group, outcome): (usize, EntryOutcome)| {
+                    let outcome = outcome.park();
                     let failed = outcome.result.is_err();
                     promoted.push((group, outcome));
                     if failed { Err(()) } else { Ok(()) }
                 },
             )
             .is_err();
-            let new_refutations = crate::refuted_contracts::table_from_rows(
+            let new_refutations = retained_refutations(
                 promoted
                     .iter()
                     .filter_map(|(_, outcome)| outcome.result.as_ref().ok())
-                    .flat_map(|products| products.unit_rows()),
+                    .map(|products| &products.report.refutations),
             );
             if !stopped && promoted.len() == tasks.len() && new_refutations == phases.applied {
                 published = promoted;
@@ -522,7 +523,7 @@ pub fn run_current_route_with_checkpoints(
         }
         printed_headers = printed_headers.max(group + 1);
         print!("{}", outcome.output);
-        audit.absorb_entry(outcome.result?)?;
+        audit.absorb_entry(outcome.result?.restore()?)?;
     }
     for header in &headers[printed_headers..] {
         println!("{header}");
@@ -765,4 +766,19 @@ pub fn write_invocation(report: &Path, invocation: &Value) -> Result<(), String>
     let mut bytes = serde_json::to_vec_pretty(invocation).map_err(|error| error.to_string())?;
     bytes.push(b'\n');
     fs::write(&path, bytes).map_err(|error| format!("{}: {error}", path.display()))
+}
+
+pub(crate) fn retained_refutations<'a>(
+    tables: impl Iterator<Item = &'a qcore_schemas::contract_refutation::RefutationTable>,
+) -> qcore_schemas::contract_refutation::RefutationTable {
+    tables.fold(
+        Default::default(),
+        qcore_schemas::contract_refutation::union,
+    )
+}
+
+fn retained_bounds<'a>(
+    tables: impl Iterator<Item = &'a std::collections::BTreeSet<String>>,
+) -> std::collections::BTreeSet<String> {
+    tables.flat_map(|table| table.iter().cloned()).collect()
 }

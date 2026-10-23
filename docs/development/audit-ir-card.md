@@ -232,6 +232,26 @@ Filtered streams, remaining byte-slice readers and per-component body paging
 remain follow-ons. This bounded transport change does not close the parent
 6 GB target, CI margin, other selections or cold/warm acceptance.
 
+### AUDIT-IR-RETAINED-PRODUCTS
+
+[Retained-product implementation](../reports/audit-ir-retained-products/README.md)
+parks complete phase report vectors and callback/state facts in transactional,
+run-local `.qc` objects, with caller-held length/digest checks and ordered
+restoration. Original rows determine the small refutation tables before parking;
+no spool becomes source-free admission. Independent reconstruction CFGs drop
+after complete certificate equality. The consuming current-route owner releases
+callback/pre-pass inputs after both final folds; public full-record, repeatable
+fold and checkpoint APIs retain their records. Final report rows and sidecars
+remain resident, as do required prepared sources for configured source-contract
+consumers. The complete gate passes 8,506 Rust tests, 362 Lean audits and 374
+Python tests. The full production run completes without OOM at the effective
+6,999,998,464-byte ceiling with 69 pressure events, showing no whole-job memory
+gain; main-report bytes match, with one explained volatile pre-pass identity in
+the contracts sidecar. The additional private projection release remains blocked
+by automatic approval review despite the user’s explicit approval;
+this implementation alone does not close the parent budget, final-row streaming,
+oversize-component admission or cold/warm evidence requirements.
+
 ### AUDIT-IR-BUDGET
 
 Extend the initial scheduling estimates into enforced memory admission and

@@ -575,6 +575,38 @@
       ]
     },
     {
+      "function": "mk_http_thread_destroy",
+      "module": "monkey/intrusive_list.qv",
+      "contract_sha256": "e10c50d35a79227fafbff57262bf8e8636ea06b07b546184827e39e162077300",
+      "identities": [
+        {
+          "reviewed_at": [
+            {
+              "kind": "git",
+              "revision": "046accf6aded7906f66a1baf0202da349e521736"
+            },
+            {
+              "kind": "git",
+              "revision": "66910c10a4d7eafa810b84229cf2dcf7b0f26f97"
+            }
+          ],
+          "sites": [
+            {
+              "path": "lib/monkey/include/monkey/mk_http_thread.h",
+              "kind": "declaration",
+              "declaration_sha256": "81f50df1862c66b435de8f967086c1ebf58e26bfc77f953b6f5e9cff8b6a7f29"
+            },
+            {
+              "path": "lib/monkey/mk_server/mk_http_thread.c",
+              "kind": "definition",
+              "declaration_sha256": "81f50df1862c66b435de8f967086c1ebf58e26bfc77f953b6f5e9cff8b6a7f29",
+              "body_sha256": "b6796bec968303806904c0969c66ab76c3fd93f3c40961a48578beb492ba120f"
+            }
+          ]
+        }
+      ]
+    },
+    {
       "function": "mk_list_add",
       "module": "monkey/intrusive_list.qv",
       "contract_sha256": "748bf3d90bd350fe94aeb48d10bcd5efab02f4cbbec9c2093d113352288bf493",

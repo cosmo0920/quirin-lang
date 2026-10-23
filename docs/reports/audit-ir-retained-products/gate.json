@@ -1,0 +1,168 @@
+{
+  "base": "31c5ed500d9d4a1448a623b839e1644adb19efd1",
+  "steps": [
+    {
+      "name": "submodules",
+      "argv": [
+        "git",
+        "submodule",
+        "update",
+        "--init",
+        "--recursive"
+      ],
+      "exit": 0,
+      "seconds": 0.029,
+      "log": "/home/cosmo/.codex/worktrees/audit-ir-retained-products/qcore-c/private/audit-ir-retained-products/gate/submodules.log"
+    },
+    {
+      "name": "clang",
+      "argv": [
+        "clang",
+        "--version"
+      ],
+      "exit": 0,
+      "seconds": 0.015,
+      "log": "/home/cosmo/.codex/worktrees/audit-ir-retained-products/qcore-c/private/audit-ir-retained-products/gate/clang.log"
+    },
+    {
+      "name": "rust",
+      "argv": [
+        "python3",
+        "scripts/run_test_binaries.py",
+        "--jobs",
+        "4",
+        "--log-dir",
+        "/home/cosmo/.codex/worktrees/audit-ir-retained-products/qcore-c/private/audit-ir-retained-products/gate/rust-units"
+      ],
+      "exit": 0,
+      "seconds": 724.107,
+      "log": "/home/cosmo/.codex/worktrees/audit-ir-retained-products/qcore-c/private/audit-ir-retained-products/gate/rust.log"
+    },
+    {
+      "name": "fmt",
+      "argv": [
+        "cargo",
+        "fmt",
+        "--all",
+        "--",
+        "--check"
+      ],
+      "exit": 0,
+      "seconds": 5.332,
+      "log": "/home/cosmo/.codex/worktrees/audit-ir-retained-products/qcore-c/private/audit-ir-retained-products/gate/fmt.log"
+    },
+    {
+      "name": "clippy",
+      "argv": [
+        "cargo",
+        "clippy",
+        "--all-targets",
+        "--",
+        "-D",
+        "warnings"
+      ],
+      "exit": 0,
+      "seconds": 46.344,
+      "log": "/home/cosmo/.codex/worktrees/audit-ir-retained-products/qcore-c/private/audit-ir-retained-products/gate/clippy.log"
+    },
+    {
+      "name": "probe",
+      "argv": [
+        "cargo",
+        "run",
+        "-p",
+        "qcore-compiler",
+        "--example",
+        "reevaluation_probe"
+      ],
+      "exit": 0,
+      "seconds": 0.085,
+      "log": "/home/cosmo/.codex/worktrees/audit-ir-retained-products/qcore-c/private/audit-ir-retained-products/gate/probe.log"
+    },
+    {
+      "name": "followup",
+      "argv": [
+        "cargo",
+        "run",
+        "-p",
+        "qcore-compiler",
+        "--example",
+        "reevaluation_followup"
+      ],
+      "exit": 0,
+      "seconds": 0.46,
+      "log": "/home/cosmo/.codex/worktrees/audit-ir-retained-products/qcore-c/private/audit-ir-retained-products/gate/followup.log"
+    },
+    {
+      "name": "lean",
+      "argv": [
+        "python3",
+        "scripts/check_lean_audits.py",
+        "--jobs",
+        "4"
+      ],
+      "exit": 0,
+      "seconds": 132.966,
+      "log": "/home/cosmo/.codex/worktrees/audit-ir-retained-products/qcore-c/private/audit-ir-retained-products/gate/lean.log"
+    },
+    {
+      "name": "python",
+      "argv": [
+        "python3",
+        "-m",
+        "unittest",
+        "discover",
+        "-s",
+        "scripts/tests"
+      ],
+      "exit": 0,
+      "seconds": 42.009,
+      "log": "/home/cosmo/.codex/worktrees/audit-ir-retained-products/qcore-c/private/audit-ir-retained-products/gate/python.log"
+    },
+    {
+      "name": "release",
+      "argv": [
+        "cargo",
+        "build",
+        "--release",
+        "-p",
+        "qcore-audit",
+        "--bin",
+        "quirin-audit"
+      ],
+      "exit": 0,
+      "seconds": 165.931,
+      "log": "/home/cosmo/.codex/worktrees/audit-ir-retained-products/qcore-c/private/audit-ir-retained-products/gate/release.log"
+    }
+  ],
+  "build_environment": {
+    "CARGO_TARGET_DIR": "/home/cosmo/.codex/worktrees/audit-ir-retained-products/qcore-c/private/audit-ir-retained-products/target",
+    "CARGO_BUILD_JOBS": "4",
+    "CARGO_PROFILE_DEV_DEBUG": "0",
+    "CARGO_PROFILE_TEST_DEBUG": "0",
+    "CARGO_INCREMENTAL": "0"
+  },
+  "source_commit": "1d75d3a77939b2e817d1f2b79f409482273cb81c",
+  "rust_source_snapshot": {
+    "path": "/home/cosmo/.codex/worktrees/audit-ir-retained-products/qcore-c/private/audit-ir-retained-products/source-snapshot.json",
+    "sha256": "2eb5d802ad6e2052ad68bb55e9faff9b33e8435067c10f30e8890df1bdc81180",
+    "files": 1499
+  },
+  "totals": {
+    "rust_units": 537,
+    "rust_summaries": 550,
+    "rust_passed": 8506,
+    "rust_failed": 0,
+    "rust_ignored": 15,
+    "lean_audits": 362,
+    "python_tests": 374
+  },
+  "prior_attempt": {
+    "directory": "/home/cosmo/.codex/worktrees/audit-ir-retained-products/qcore-c/private/audit-ir-retained-products/gate-disk-full",
+    "driver_exit": 1,
+    "rust_exit": 101,
+    "fmt_exit": 0,
+    "clippy_exit": null,
+    "reason": "Disk exhausted during debug linking and clippy; clippy exit receipt could not be written. Raw logs and partial receipt retained. Only this card generated debug artifacts were removed before complete retry."
+  }
+}

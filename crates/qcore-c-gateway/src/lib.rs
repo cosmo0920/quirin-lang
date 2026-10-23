@@ -13,10 +13,12 @@
 #[cfg(feature = "indirect-census")]
 pub mod access_path_census;
 mod aggregate_store;
+mod array_member_decay;
 pub mod atomic_publication_source;
 pub mod audit_ir;
 pub mod audit_ir_capture;
 pub mod audit_ir_store;
+mod literal_dereference;
 // Card CG19-ATOMIC-SOURCE-ROUTE (gateway rule 11i): C atomics routed to the
 // core weak-memory model.
 pub mod atomic_source_route;

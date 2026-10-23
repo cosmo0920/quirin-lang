@@ -119,3 +119,76 @@ contract {
     ensures normal resource_released(q, nonnull);
     ensures normal resource_return_none();
 };
+
+// Card W48-SCHED-CLEANUP-PRODUCTION (gateway rule 34): `mk_http_thread_destroy`,
+// the element destroyer of the scheduler's thread lists.
+//
+// Read at both audited revisions (`lib/monkey/mk_server/mk_http_thread.c:251-272`
+// with the inline `mk_thread_destroy` of
+// `lib/monkey/include/monkey/mk_thread_libco.h:64-78`, byte-identical at
+// `66910c10` and `046accf6`; the seven files of the scheduler decomposition,
+// docs/reports/scheduler-lifetime-contracts/, hash-equal). It is the only
+// uncontracted call of `sched_thread_cleanup` and `mk_sched_threads_destroy_conn`.
+//
+//     int mk_http_thread_destroy(struct mk_http_thread *mth)
+//     {
+//         libco_params = MK_TLS_GET(mk_http_thread_libco_params);
+//         if (libco_params != NULL) {
+//             mk_mem_free(libco_params);
+//             MK_TLS_SET(mk_http_thread_libco_params, NULL);
+//         }
+//         mk_list_del(&mth->_head);
+//         th = mth->parent;
+//         mth->session->channel->event->type = MK_EVENT_CONNECTION;
+//         mk_thread_destroy(th);   /* cb_destroy?, Valgrind request,
+//                                     co_delete(th->callee), mk_mem_free(th) */
+//         return 0;
+//     }
+//
+// What the custody projection states: the call unlinks the object `mth`
+// designates from the list holding it (`resource_unpublished`) and then ends
+// it (`resource_released`): `mth` is the data area of its parent allocation
+// (`mk_http_thread_create`: `mth = MK_THREAD_DATA(th)`, `mth->parent = th`),
+// and freeing `th` ends the storage `mth` lives in. A caller applies the
+// unlink first (rule 34): an element of a safe iteration over a list its
+// formal reaches, or an object it published, and nothing else. The result is
+// always 0.
+//
+// What no generic rule proves is carried as named premises, which every row
+// resting on this declaration lists. They reuse the scheduler decomposition's
+// hypothesis names (hypotheses.json) and are Open source truth:
+//
+// * the parent embedding (`exact_parent_embedding`);
+// * the callback footprint (`callback_footprint`): read from source, the only
+//   inserters into `sched->threads` and `threads_purge` are
+//   `mk_http_thread_create` and `mk_http_thread_purge`, creation passes a
+//   NULL `cb_destroy` to `mk_thread_new`, and no other Monkey source writes
+//   it; the premise is that it is still NULL, or a returning callback that
+//   releases and mutates neither the saved successor, nor its parent, nor
+//   any other list element. No neutral-callback reading is made;
+// * the params slot (`tls_params_owned`, `tls_api_success`);
+// * the coroutine (`callee_live`, `suspended_coroutines`);
+// * the borrowed session chain (`borrowed_chain_live`);
+// * list membership and writers (`valid_membership`, `no_concurrent_writer`);
+// * the aliases the source leaves behind (`no_later_alias_use`);
+// * the Valgrind client request `MK_HAVE_VALGRIND` compiles in.
+//
+// NOT CLAIMED: anything about the current thread's `mk_thread` key, which
+// destruction does not clear; that `mth` is on any particular list; creation,
+// purge or dispatch.
+
+extern fn mk_http_thread_destroy(mth: ptr<mut, u8>) -> i32
+contract {
+    requires resource_contract_v1;
+    requires resource_premise(scheduler_exact_parent_embedding, "mth is the mk_http_thread embedded at MK_THREAD_DATA of exactly one live mk_thread allocation that mth->parent names and nothing else releases; freeing mth->parent ends the storage of mth (scheduler decomposition exact_parent_embedding and parent_live; established at creation by mk_http_thread_create, not by this body)");
+    requires resource_premise(scheduler_callback_footprint, "th->cb_destroy is NULL, as mk_http_thread_create sets it through mk_thread_new and no other Monkey source writes it, or a returning callback whose transitive effects release and mutate neither the saved successor of a caller's iteration, nor its parent, nor any other list element, coroutine or borrowed object (scheduler decomposition callback_footprint); no neutral-callback reading is made");
+    requires resource_premise(scheduler_tls_params_owned, "the mk_http_thread_libco_params key of the current thread holds NULL or one live allocation it alone owns, disjoint from every caller-tracked object; pthread_getspecific and pthread_setspecific of that key succeed, so the freed params are no longer reachable from the key (scheduler decomposition tls_params_owned and tls_api_success)");
+    requires resource_premise(scheduler_callee_live, "th->callee is a coroutine co_delete accepts, created for this thread, suspended and not co_active, with no concurrent resume or deletion (scheduler decomposition callee_live and suspended_coroutines)");
+    requires resource_premise(scheduler_borrowed_chain_live, "mth->session, its channel and that channel's event are live borrowed objects this call neither releases nor ends; the call writes one scalar through them (scheduler decomposition borrowed_chain_live)");
+    requires resource_premise(scheduler_valid_membership, "mth->_head is linked in exactly one valid circular mk_list, the one its caller reaches it through, with reciprocal links and no concurrent or reentrant writer of that list, the coroutine, the borrowed chain or the key (scheduler decomposition valid_membership and no_concurrent_writer)");
+    requires resource_premise(scheduler_no_later_alias_use, "no alias the source leaves behind, request->thread, channel.thread or the current thread's mk_thread key, is read or resumed after the call (scheduler decomposition no_later_alias_use)");
+    requires resource_premise(scheduler_valgrind_request_neutral, "the Valgrind client request VALGRIND_STACK_DEREGISTER compiled in under MK_HAVE_VALGRIND reads th->valgrind_stack_id and changes no object the projection tracks");
+    ensures normal resource_unpublished(mth);
+    ensures normal resource_released(mth, nonnull);
+    ensures normal resource_return_none();
+};

@@ -26,7 +26,10 @@
 //! Every position these clauses name keeps its `resource_borrowed` custody
 //! mode, which [`validate`] requires: a counted user is not custody of the
 //! object, and a publication's custody move is the container effect itself,
-//! which a consumer that does not apply it must refuse.
+//! which a consumer that does not apply it must refuse. One exception (card
+//! W48-SCHED-CLEANUP-PRODUCTION, gateway rule 34): `resource_unpublished(p)`
+//! may sit beside `resource_released(p, …)`, the element destroyer that
+//! unlinks the object and then ends it; a consumer applies the unlink first.
 
 use std::collections::BTreeMap;
 
@@ -271,7 +274,16 @@ pub(super) fn validate(
         }
     };
     for (&position, effect) in &collected.container_effects {
-        borrowed_pointer(position, "a container effect")?;
+        // Card W48-SCHED-CLEANUP-PRODUCTION (gateway rule 34): an unlink may
+        // also sit beside a release of the same object, the element
+        // destroyer: the call unlinks the object and then ends it. No other
+        // custody mode carries a container effect.
+        let destroyer = matches!(effect, ContainerEffect::Unpublished)
+            && matches!(parameters[position], ResourceParameterMode::Released { .. })
+            && pointer(position);
+        if !destroyer {
+            borrowed_pointer(position, "a container effect")?;
+        }
         if let ContainerEffect::Published {
             container_parameter,
         } = effect

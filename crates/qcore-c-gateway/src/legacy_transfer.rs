@@ -4110,6 +4110,31 @@ pub(super) fn transfer_base(
                     diagnostics,
                 );
             }
+            // Card W48-SCHED-CLEANUP-PRODUCTION (rule 34): an element
+            // destroyer's unlink, before the call's own reading, so that the
+            // declared release ends the custody the unlink took.
+            let (destroyers, container) = match container {
+                Some(operands) => {
+                    let (before, after) =
+                        container_publication::destroyer_split(contract, operands);
+                    (Some(before), Some(after))
+                }
+                None => (None, None),
+            };
+            if let Some(operands) = destroyers
+                .as_ref()
+                .filter(|operands| !operands.0.is_empty())
+            {
+                container_publication::apply(
+                    function,
+                    node.line,
+                    called,
+                    operands,
+                    &mut state,
+                    diagnostics,
+                );
+            }
+            let container = container.as_ref().filter(|operands| !operands.0.is_empty());
             let unsanctioned = destination
                 .as_deref()
                 .filter(|place| is_indirect_place(place) && !context.sanctioned.contains(place));

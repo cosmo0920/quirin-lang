@@ -35,6 +35,8 @@ Regenerate with `python3 scripts/build_docs_index.py`; validate with `--check`.
 
 | [audit-ir-plan](audit-ir-plan/README.md) | AUDIT-IR-PLAN implementation receipt |
 
+| [audit-ir-retained-products](audit-ir-retained-products/README.md) | AUDIT-IR-RETAINED-PRODUCTS |
+
 | [audit-ir-working-set](audit-ir-working-set/README.md) | AUDIT-IR-WORKING-SET |
 
 | [audit-memory-performance](audit-memory-performance/README.md) | Audit CPU and memory optimization |
