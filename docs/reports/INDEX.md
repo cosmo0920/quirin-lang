@@ -1393,6 +1393,8 @@ Regenerate with `python3 scripts/build_docs_index.py`; validate with `--check`.
 
 | [w48-qrlib-macos](w48-qrlib-macos/README.md) | W48-QRLIB-MACOS — card 5m: the macOS linkage path, run |
 
+| [w48-sched-cleanup-production](w48-sched-cleanup-production/README.md) | Scheduler element destroyer in production (rule 34) |
+
 | [w48-w44-rk-integration](w48-w44-rk-integration/README.md) | W48, W44 and outer-contract stage 2 integration |
 
 | [w5-chunk-summary-boundary](w5-chunk-summary-boundary/README.md) | W5 chunk lifecycle and summary boundary |
