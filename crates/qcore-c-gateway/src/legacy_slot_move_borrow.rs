@@ -641,6 +641,7 @@ fn mutation(instruction: &LegacyInstruction) -> Mutation {
         }
         LegacyInstruction::Escape { .. }
         | LegacyInstruction::EscapeIfOwned { .. }
+        | LegacyInstruction::ExactFormalReturn { .. }
         | LegacyInstruction::BranchOnNull { .. }
         | LegacyInstruction::BranchOnValidity { .. }
         | LegacyInstruction::BranchOnDistinct { .. }

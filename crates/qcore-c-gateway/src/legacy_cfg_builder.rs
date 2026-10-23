@@ -103,6 +103,9 @@ impl CfgBuilder {
                 // `EscapeIfOwned`, so `observe_exit` needs no arm for a call
                 // result.
                 if let Some(call) = returned_evaluation {
+                    if matches!(**call, LegacyInstruction::ExactFormalReturn { .. }) {
+                        return self.push((**call).clone(), Vec::new(), *line, true);
+                    }
                     let exit_instruction = if *returned_evaluation_escapes {
                         LegacyInstruction::EscapeIfOwned {
                             source: return_call::RETURN_RESULT_PLACE.to_owned(),

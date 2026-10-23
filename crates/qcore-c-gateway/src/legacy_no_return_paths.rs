@@ -89,6 +89,7 @@ pub(super) fn called(instruction: &LegacyInstruction, out: &mut Vec<String>) {
         | LegacyInstruction::Release { .. }
         | LegacyInstruction::Escape { .. }
         | LegacyInstruction::EscapeIfOwned { .. }
+        | LegacyInstruction::ExactFormalReturn { .. }
         | LegacyInstruction::BranchOnNull { .. }
         | LegacyInstruction::BranchOnValidity { .. }
         | LegacyInstruction::BranchOnDistinct { .. }

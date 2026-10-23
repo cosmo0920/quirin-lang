@@ -100,6 +100,7 @@ import QCore.GnuBuiltinReader
 import QCore.LiteralTailActual
 import QCore.DerivedResult
 import QCore.DerivedResultInference
+import QCore.ExactFormalReturn
 import QCore.CalleeSummaryScope
 import QCore.CrossUnitSummary
 import QCore.KindedCustody

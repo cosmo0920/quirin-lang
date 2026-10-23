@@ -1,4 +1,5 @@
 import QCore.DerivedResultInference
+import QCore.ExactFormalReturn
 
 /-! Card **W43-RESULT-ALIAS-RETURNED**: inferred derived-result summaries
 (`crates/qcore-c-gateway/src/legacy_derived_summary.rs`) and the gate's derived
@@ -54,3 +55,16 @@ correspondence premise). A candidate is never a validated upstream defect. -/
 #print axioms QCore.DerivedResultInference.the_exact_wrapper_witness
 #print axioms QCore.DerivedResultInference.the_nullable_interior_wrapper_witness
 #print axioms QCore.DerivedResultInference.the_mixed_exit_witness
+
+-- Rule 36: exact original borrowed-formal source/flow admission.
+#print axioms QCore.ExactFormalReturn.missing_source_fact_refuses
+#print axioms QCore.ExactFormalReturn.admitted_transfer_preserves_every_field
+#print axioms QCore.ExactFormalReturn.every_transfer_preserves_owed_resources
+#print axioms QCore.ExactFormalReturn.every_transfer_preserves_pointer_and_frame
+#print axioms QCore.ExactFormalReturn.refusal_keeps_prior_obligations_and_adds_unknown
+#print axioms QCore.ExactFormalReturn.exact_observation_denotes_original_value
+#print axioms QCore.ExactFormalReturn.null_base_is_never_promoted_to_nonnull
+#print axioms QCore.ExactFormalReturn.interior_base_offset_is_preserved
+#print axioms QCore.ExactFormalReturn.refused_exit_never_validates
+#print axioms QCore.ExactFormalReturn.prior_unknown_cannot_be_cleared
+#print axioms QCore.ExactFormalReturn.shared_flow_vectors

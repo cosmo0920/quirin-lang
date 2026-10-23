@@ -281,7 +281,9 @@ fn custody_names(instruction: &LegacyInstruction) -> Vec<(&str, bool)> {
             destination,
             source,
         } => vec![(destination, true), (source, false)],
-        Release { source } | Escape { source } => vec![(source, false)],
+        Release { source } | Escape { source } | ExactFormalReturn { source, .. } => {
+            vec![(source, false)]
+        }
         ContractCall {
             destination,
             arguments,
@@ -514,5 +516,43 @@ pub(super) fn settle_volatile(cfg: &mut LegacyCfg, facts: &FunctionFacts, functi
                 "neutral"
             },
         }));
+    }
+}
+
+#[cfg(test)]
+mod exact_formal_tests {
+    use super::*;
+    #[test]
+    fn exact_formal_identity_is_a_volatile_sensitive_read() {
+        let mut cfg = LegacyCfg {
+            function: "identity".into(),
+            entry: 0,
+            nodes: vec![super::super::LegacyCfgNode {
+                lookup: None,
+                lookup_read: None,
+                instruction: LegacyInstruction::ExactFormalReturn {
+                    source: "p".into(),
+                    parameter: 0,
+                },
+                successors: vec![],
+                line: 1,
+                is_exit: true,
+                loop_exit_edge: None,
+            }],
+            publications: Default::default(),
+            conditional_names: Default::default(),
+            tie_names: Default::default(),
+            traversal: Default::default(),
+        };
+        let facts = FunctionFacts {
+            volatile_objects: BTreeSet::from(["p".into()]),
+            ..Default::default()
+        };
+        settle_volatile(&mut cfg, &facts, "identity");
+        assert!(matches!(
+            cfg.nodes[0].instruction,
+            LegacyInstruction::Unknown { .. }
+        ));
+        assert!(cfg.nodes[0].is_exit);
     }
 }

@@ -351,6 +351,7 @@ fn check_instruction_depth(cfg: &LegacyCfg) -> Result<(), String> {
                 | Release { .. }
                 | Escape { .. }
                 | EscapeIfOwned { .. }
+                | ExactFormalReturn { .. }
                 | ContractCall { .. }
                 | BranchOnNull { .. }
                 | BranchOnValidity { .. }

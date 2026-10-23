@@ -1236,6 +1236,19 @@ pub(super) fn observe_exit(
     kinds: &BTreeMap<usize, ResourceKind>,
 ) -> ExitObservation {
     let returned = match &node.instruction {
+        LegacyInstruction::ExactFormalReturn { source, parameter } => {
+            match exact_formal_return::classify(state, source, *parameter, &entry.derived_bases) {
+                exact_formal_return::Flow::Null => ReturnedValue::Null,
+                exact_formal_return::Flow::Exact(site) => ReturnedValue::Derived {
+                    site,
+                    extent: DerivedExtent::Exact,
+                    nullable: false,
+                    const_dropped: false,
+                },
+                exact_formal_return::Flow::Refuse => ReturnedValue::Ambiguous,
+            }
+        }
+
         LegacyInstruction::EscapeIfOwned { source } if source == return_call::NULL_RETURN_PLACE => {
             ReturnedValue::Null
         }
@@ -1785,6 +1798,7 @@ pub(super) struct TransferContext<'a> {
     /// a derived result may be derived from ([`EntryCustody::derived_bases`]).
     /// Returning a derived binding over one of them escapes nothing.
     pub(super) derived_bases: BTreeSet<usize>,
+    pub(super) exact_return_bases: BTreeMap<usize, usize>,
     /// Card **W43-INDEX-TRAVERSAL**: the declared scalar and pointer names a
     /// copy from an unbound source is read against.
     pub(super) traversal: TraversalNames,
@@ -1897,6 +1911,7 @@ fn analyze_cfg_with_entry_collected(
         publications: cfg.publications.clone(),
         collection_names: collection_names(&cfg),
         derived_bases: entry_custody.derived_bases.keys().copied().collect(),
+        exact_return_bases: entry_custody.derived_bases.clone(),
         selection: entry_custody.selection.clone(),
         traversal: cfg.traversal.clone(),
         site_kinds: descriptor_custody::site_kinds(cfg.nodes.iter().map(|node| &node.instruction))
@@ -4021,6 +4036,17 @@ pub(super) fn transfer_base(
                 diagnostics,
                 false,
                 false,
+            );
+        }
+        LegacyInstruction::ExactFormalReturn { source, parameter } => {
+            exact_formal_return::apply(
+                &mut state,
+                source,
+                *parameter,
+                &context.exact_return_bases,
+                diagnostics,
+                function,
+                node.line,
             );
         }
         LegacyInstruction::Escape { source } => {

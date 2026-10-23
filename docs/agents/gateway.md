@@ -8735,3 +8735,34 @@ safety claim and no validation of the detach representation premise.
     `a_modelled_cleanup_unlinks_and_retires`, …);
     `crates/qcore-c-gateway/tests/element_destroyer.rs`;
     [report](../reports/w48-sched-cleanup-production/README.md).
+
+<a id="constraint-36"></a>
+
+36. **An exact borrowed-formal return preserves identity and custody.**
+    W48-BU-CMT-MAP-METRIC-GET's narrowed first feature. The derived-result CFG
+    alone may lower a bare `return P;` to `ExactFormalReturn`. A positive,
+    unambiguous declaration reading must give the result and the original
+    formal matching depth-one object-pointer types. The typed source reader
+    must confirm the formal's parameter index, declaration identity, original
+    return reference, complete spans and matching lexical/AST occurrences;
+    writes or address-taking of that formal, conflicting value bindings,
+    volatile/atomic pointer objects, or missing facts decline. Existing source
+    queries and earlier summary routes retain precedence. The exit admits only
+    a known identity: definitely NULL, or one status-free original formal site
+    with the matching index and no unresolved effect. Known non-null untracked,
+    unknown, mixed, derived, owned, released or unrelated bindings refuse. An
+    admitted transfer preserves every state field; a refusal adds UnknownAlias
+    and the existing unresolved-effect exposure without changing resource
+    status, binding or containment. The new instruction is appended to preserve
+    existing serialized tags, participates in volatile settlement, and admits
+    no descriptor read. The ordinary full-body, all-reachable-exit,
+    untouched-base and fresh reported-premise validation gates still decide the
+    summary. Callers apply the existing `Derived(Exact)` semantics: the alias
+    retains the base's nullness and invalidation, owns nothing and discharges
+    no allocation obligation. `QCore.ExactFormalReturn` models the source
+    conjunction, classifier and transfer, proves preservation and relative
+    exactness including NULL/interior bases, and shares fourteen flow vectors
+    with Rust. Source extraction and Rust correspondence remain premise 28.
+    This establishes none of the CMetrics getter chain's foreign-member,
+    collection, secondary-index or cache ownership obligations; its remainder
+    stays Open. [Design](../reports/w48-bu-cmt-map-metric-get/DESIGN.md).
