@@ -5744,7 +5744,7 @@ pub(crate) use self::cfg_builder::*;
 // transfer functions: pointers, derivations, entry custody, exit
 // observations and the flow analysis over a CFG.
 #[path = "legacy_exact_formal_return.rs"]
-mod exact_formal_return;
+pub(crate) mod exact_formal_return;
 
 #[path = "legacy_transfer.rs"]
 mod transfer;

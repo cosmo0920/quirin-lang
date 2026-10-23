@@ -735,9 +735,26 @@ fn infer_validated_summary(
     // Card VERDICT-CONTRACT-DEPENDENCIES (rule 13f): the inference's lookups
     // are `function`'s consultations.
     crate::contract_dependencies::within(function, || {
-        infer_live_entry_summary(tokens, function, environment)
-            .or_else(|| infer_removed_wrapper(tokens, function, environment))
-            .or_else(|| infer_derived_result(tokens, function, environment))
+        let earlier = infer_live_entry_summary(tokens, function, environment)
+            .or_else(|| infer_removed_wrapper(tokens, function, environment));
+        if let Some(ordinary) = earlier {
+            // Rule 36: the live-entry route may publish None for a bare
+            // borrowed-formal return. Preserve its custody vector exactly,
+            // but refine that neutral result with a freshly validated alias.
+            // Every non-neutral result and every failed refinement retain
+            // the earlier route unchanged.
+            if ordinary.result == ResourceReturnMode::None
+                && crate::legacy_c::exact_formal_return::candidate(tokens, function)
+                && let Some(exact) = infer_derived_result(tokens, function, environment)
+                && exact.parameters == ordinary.parameters
+            {
+                Some(exact)
+            } else {
+                Some(ordinary)
+            }
+        } else {
+            infer_derived_result(tokens, function, environment)
+        }
     })
 }
 
@@ -793,7 +810,8 @@ fn infer_lifetime_summary(
 }
 
 /// Card **W43-RESULT-ALIAS-RETURNED**: the derived-result route, consulted
-/// only after both routes above published nothing. See [`derived`].
+/// after both routes above decline, or to refine a neutral result under rule
+/// 36's identical-custody-vector gate. See [`derived`].
 fn infer_derived_result(
     tokens: &[Token],
     function: &str,

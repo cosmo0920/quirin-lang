@@ -123,6 +123,7 @@ fn bare<'a>(stream: &'a [Token], contracts: &'a ResourceContracts) -> Parser<'a>
         variadic_tail_readings: std::cell::RefCell::new(None),
         condition_cycles: Default::default(),
         typed_place_origin: std::cell::Cell::new(None),
+        exact_formal_returns: std::cell::OnceCell::new(),
         typed_root_declarations: std::cell::OnceCell::new(),
         readonly_list_count_certified: std::cell::OnceCell::new(),
         declared_no_return: std::cell::OnceCell::new(),

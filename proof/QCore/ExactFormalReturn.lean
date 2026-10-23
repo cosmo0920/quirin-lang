@@ -1,4 +1,5 @@
 import QCore.DerivedResultInference
+import QCore.NullTriagePaths
 
 /-!
 Rule 36: exact original borrowed-formal returns. This models the new source
@@ -74,8 +75,11 @@ def observe : Flow → Returned
 def transfer (s : State α) (bases : List (Nat × Nat)) (parameter : Nat)
     (exposure : List Nat) : State α :=
   match classify s bases parameter with
-  | .refuse => { s with unresolved := s.unresolved ++ exposure,
-      unmodeled := true, diagnostics := 0 :: s.diagnostics }
+  | .refuse =>
+      { s with
+        unresolved := s.unresolved ++ exposure
+        unmodeled := true
+        diagnostics := 0 :: s.diagnostics }
   | _ => s
 
 theorem admitted_transfer_preserves_every_field (s : State α) (bases : List (Nat × Nat))
@@ -126,6 +130,56 @@ theorem refused_exit_never_validates (spec : Spec) (base : Nat) (touched : Bool)
 theorem prior_unknown_cannot_be_cleared (spec : Spec) (base : Nat) (exits : List Exit) :
     validates spec base false exits = false := by
   rfl
+
+/-- The path search's bounded reading: false is known NULL, true non-null;
+none cuts the path as unresolved. No absolute non-null fact is guessed. -/
+def witnessNull (isExact : Bool) : Option Bool → Option Bool
+  | some true => some true
+  | some false => if isExact then some false else none
+  | none => none
+
+theorem exact_witness_preserves_null : witnessNull true (some false) = some false := by
+  rfl
+
+theorem unknown_derived_base_cannot_prove_infeasible (isExact : Bool) :
+    witnessNull isExact none = none ∧
+    QCore.NullTriagePaths.conclude false false false = "unresolved" := by
+  exact ⟨rfl, rfl⟩
+
+inductive Result where
+  | neutral
+  | other
+  | derived (spec : Spec)
+  deriving DecidableEq, Repr
+
+structure Contract where
+  parameters : List Nat
+  result : Result
+  deriving DecidableEq, Repr
+
+/-- A validated candidate refines only a neutral result and exactly the same
+custody vector. `validated` stands for the unchanged fresh all-exit gate. -/
+def refine (old : Contract) (candidate : Contract) (sourceChecked validated : Bool) : Contract :=
+  if old.result = .neutral ∧ old.parameters = candidate.parameters ∧
+      sourceChecked = true ∧ validated = true then candidate else old
+
+theorem nonneutral_result_retains_precedence (old candidate : Contract)
+    (sourceChecked validated : Bool) (h : old.result ≠ .neutral) :
+    refine old candidate sourceChecked validated = old := by
+  simp [refine, h]
+
+theorem failed_validation_retains_old_summary (old candidate : Contract) (sourceChecked : Bool) :
+    refine old candidate sourceChecked false = old := by
+  simp [refine]
+
+theorem refinement_preserves_parameter_custody (old candidate : Contract)
+    (sourceChecked validated : Bool) :
+    (refine old candidate sourceChecked validated).parameters = old.parameters := by
+  unfold refine
+  split
+  next h =>
+    exact h.2.1.symm
+  next => rfl
 
 -- Same fourteen concrete classifier cases as the Rust flow vector test.
 def initial : State Unit :=

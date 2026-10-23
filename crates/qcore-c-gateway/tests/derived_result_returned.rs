@@ -862,3 +862,63 @@ fn returning_an_exact_borrow_of_a_fresh_allocation_is_not_an_owned_handoff() {
     );
     assert_ne!(function_outcome(&result, "carrier").0, "Safe");
 }
+
+#[test]
+fn a_released_other_formal_cannot_revive_an_alias_when_actuals_coincide() {
+    if !clang_available() {
+        return;
+    }
+    let helper = "char *identity(char*p,char*q) { d_free(q); return p; }";
+    let summaries = certified_summaries(&format!("{helper} void w(void) {{}}"));
+    let contract = &summaries["identity"];
+    assert_eq!(contract.parameters[0], ResourceParameterMode::Borrowed);
+    assert!(matches!(
+        contract.parameters[1],
+        ResourceParameterMode::Released { .. }
+    ));
+    assert_eq!(
+        contract.result,
+        ResourceReturnMode::Derived {
+            parameter: 0,
+            extent: DerivedExtent::Exact,
+            nullable: false,
+            const_dropped: false
+        }
+    );
+    let result = analyze(&format!(
+        "{helper} void w(void) {{ char*p=d_alloc(8); if(!p)return; char*q=identity(p,p); d_len(q); }}"
+    ));
+    let (status, diagnostics) = function_outcome(&result, "w");
+    assert_ne!(status, "Safe");
+    assert!(
+        diagnostics.iter().any(|d| d == "use_after_release"),
+        "{diagnostics:?}"
+    );
+}
+
+#[test]
+fn an_unresolved_exact_alias_base_cannot_make_null_search_infeasible() {
+    if !clang_available() {
+        return;
+    }
+    let summaries = certified_summaries("char *identity(char*p) { return p; } void w(void) {}");
+    let mut environment = contracts();
+    environment.insert_contract("identity", summaries["identity"].clone());
+    let source = "char*external(void); char*identity(char*p){return p;} int w(void){char*p=external();char*q=identity(p);return*q;}";
+    let report = qcore_c_gateway::null_deref::analyze_null_c11(
+        &C11TranslationUnit {
+            source,
+            ..Default::default()
+        },
+        &["identity".into(), "w".into()],
+        &environment,
+        &qcore_contract::bounds_contract::BoundsContracts::default(),
+    )
+    .unwrap();
+    let caller = report.functions.iter().find(|r| r.function == "w").unwrap();
+    assert_ne!(caller.verdict, "Safe", "{caller:?}");
+    assert!(
+        caller.triage.iter().all(|r| r.status != "infeasible"),
+        "{caller:?}"
+    );
+}

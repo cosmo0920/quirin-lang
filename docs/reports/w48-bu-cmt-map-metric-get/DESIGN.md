@@ -1,12 +1,12 @@
 # Rule 36: exact borrowed-formal return
 
-The human narrowed this card on 2026-10-23 to one audited feature. This is a design, not an implementation or a verdict result. The CMetrics getter chain remains open.
+The human narrowed this card on 2026-10-23 to one audited feature. The bounded rule is implemented; validation and native attribution are still in progress. The CMetrics getter chain remains open.
 
 A body that returns its borrowed pointer formal itself should be able to publish an exact derived-result summary. The existing derived-result route already handles returning a declared exact alias of the formal, but refuses the bare formal. The new exit records the same non-owning relation. It creates, discharges and transfers no resource obligation.
 
 ## Source and flow obligations
 
-1. The written return expression is one bare named formal. The derived CFG alone selects the new exit. Ordinary CFGs and the earlier live-entry and removed-result summary routes retain precedence.
+1. The written return expression is one bare named formal. The derived CFG alone selects the new exit. Ordinary CFGs are unchanged. Earlier non-neutral results retain precedence. A live-entry `None` result may be refined only by a freshly validated derived summary with the identical parameter custody vector. Failed refinements retain the earlier result.
 2. The declaration reader positively and unambiguously reads the formal and result as matching depth-one object pointers. Unknown declarations, incompatible qualifiers, scalar and function-pointer results decline. The AST must answer a unique typed formal at the exact parameter index used by the summary; a local, wrong index or shadowing declines. The new source route also requires that the formal is never rebound. This keeps existing summaries for a formal assigned a declared derived result on their existing route, rather than replacing that route with an exact-identity exit.
 3. At that exit, the flow binding is either definitely NULL or one known identity over the original formal's name-only site. An owned or derived target, unresolved identity, mixed target, touched site, or another formal's site declines.
 4. The accepted identity is observed as an exact derived result. NULL is observed as NULL. The admitted transfer preserves the complete state. A refusal records `UnknownAlias` and uses the existing unresolved-effect marking for possibly escaping targets; it changes no resource status and discharges nothing. A binding rejected at transfer or observation cannot publish a summary.
@@ -23,3 +23,9 @@ Source tests cover plain and NULL-guarded returns, a later formal, const pointer
 ## CMetrics remainder
 
 `metric_prepare_storage` also allocates directly into a caller-supplied metric's members. `map_metric_create` returns a nullable metric owning a list of labels and SDS values. The getter publishes the metric in a primary owned list, adds a secondary hash index membership, caches it, and returns a borrow from the map. Exact returns alone establish none of those storage, collection, indexing or borrow obligations. Hash helper declarations and CFL list effects likewise remain independently required. They must be tracked with discharge conditions in the final integration amendments; this card will not count their conditional planner ceiling as a measured gain.
+
+## Implementation finding after the prediction
+
+Focused tests showed that the existing live-entry route publishes a neutral `None` result for plain `return p;`. Leaving that result first makes the new route unreachable and can lose caller alias lifetime facts. Rule 36 therefore permits the bounded neutral-result refinement above. This can expose caller lifetime diagnostics behind formerly neutral results; any such native movement must be retained and attributed against the committed forecast, whose preservation expectation is not rewritten. No non-neutral result or parameter custody mode is replaced.
+
+The independent NULL control also exposed a path-search bug: a non-nullable exact-derived call discarded a known NULL base and could produce `path-search:infeasible`. The bounded repair preserves known NULL for an exact alias, retains known non-null, and cuts unresolved bases as unresolved. This prevents a false Safe result when applying the newly published summary. It records the consulted resource contract and is modeled in the same Lean module.

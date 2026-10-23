@@ -41,7 +41,7 @@
 use std::collections::{BTreeMap, BTreeSet};
 
 use qcore_core::null_triage::{Condition, FindingClass, Triage};
-use qcore_schemas::contract::ResourceReturnMode;
+use qcore_schemas::contract::{DerivedExtent, ResourceReturnMode};
 use serde_json::Value;
 
 use super::ast::{self, callee_name, kids, render, ty};
@@ -1420,11 +1420,26 @@ impl<'a, 'e> Run<'a, 'e> {
             Some(ResourceReturnMode::Derived {
                 nullable: false,
                 parameter,
+                extent,
                 ..
-            }) => match values.get(parameter) {
-                Some(V::Ptr(P::NonNull, _)) => P::NonNull,
-                _ => P::Opaque(Origin::Other(format!("derived:{callee_name}")), true),
-            },
+            }) => {
+                // Rule 36: relative non-nullability is not an absolute
+                // non-null result. Exact aliases preserve a known NULL base.
+                // An unresolved base cuts the search; it cannot prove the
+                // target infeasible by losing its possible NULL value.
+                self.consulted.insert(format!("declared:{callee_name}"));
+                match values.get(parameter) {
+                    Some(V::Ptr(P::NonNull, _)) => P::NonNull,
+                    Some(V::Ptr(P::Null(why), _)) if extent == DerivedExtent::Exact => {
+                        P::Null(why.clone())
+                    }
+                    _ => {
+                        return Err(End::Unresolved(format!(
+                            "the nullness of derived result `{callee_name}` is unresolved from its base"
+                        )));
+                    }
+                }
+            }
             Some(ResourceReturnMode::None | ResourceReturnMode::Removed { .. }) | None => {
                 P::Opaque(Origin::Uncontracted(callee_name), false)
             }

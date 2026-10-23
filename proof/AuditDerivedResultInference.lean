@@ -68,3 +68,8 @@ correspondence premise). A candidate is never a validated upstream defect. -/
 #print axioms QCore.ExactFormalReturn.refused_exit_never_validates
 #print axioms QCore.ExactFormalReturn.prior_unknown_cannot_be_cleared
 #print axioms QCore.ExactFormalReturn.shared_flow_vectors
+#print axioms QCore.ExactFormalReturn.exact_witness_preserves_null
+#print axioms QCore.ExactFormalReturn.unknown_derived_base_cannot_prove_infeasible
+#print axioms QCore.ExactFormalReturn.nonneutral_result_retains_precedence
+#print axioms QCore.ExactFormalReturn.failed_validation_retains_old_summary
+#print axioms QCore.ExactFormalReturn.refinement_preserves_parameter_custody

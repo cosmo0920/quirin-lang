@@ -170,6 +170,8 @@ impl Parser<'_> {
             variadic_tail_readings,
             condition_cycles: _,
             typed_place_origin,
+            // Rule 36: immutable source facts, like typed_path_index.
+            exact_formal_returns: _,
             typed_root_declarations: _,
             readonly_list_count_certified: _,
             declared_no_return: _,

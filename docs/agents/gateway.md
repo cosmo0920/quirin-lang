@@ -8747,7 +8747,10 @@ safety claim and no validation of the detach representation premise.
     return reference, complete spans and matching lexical/AST occurrences;
     writes or address-taking of that formal, conflicting value bindings,
     volatile/atomic pointer objects, or missing facts decline. Existing source
-    queries and earlier summary routes retain precedence. The exit admits only
+    queries and earlier non-neutral results retain precedence. A neutral `None`
+    result may be refined only by a freshly validated derived summary with the
+    identical parameter custody vector; a failed refinement retains the old
+    result. The exit admits only
     a known identity: definitely NULL, or one status-free original formal site
     with the matching index and no unresolved effect. Known non-null untracked,
     unknown, mixed, derived, owned, released or unrelated bindings refuse. An
@@ -8758,7 +8761,10 @@ safety claim and no validation of the detach representation premise.
     no descriptor read. The ordinary full-body, all-reachable-exit,
     untouched-base and fresh reported-premise validation gates still decide the
     summary. Callers apply the existing `Derived(Exact)` semantics: the alias
-    retains the base's nullness and invalidation, owns nothing and discharges
+    retains the base's nullness and invalidation. The independent NULL path
+    search preserves known NULL for an exact result and cuts an unresolved
+    derived base as unresolved, never infeasible by loss of that base. The alias
+    owns nothing and discharges
     no allocation obligation. `QCore.ExactFormalReturn` models the source
     conjunction, classifier and transfer, proves preservation and relative
     exactness including NULL/interior bases, and shares fourteen flow vectors

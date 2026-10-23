@@ -85,7 +85,7 @@ fn object_pointer(node: &Value) -> bool {
     })
 }
 
-pub(super) fn candidate(tokens: &[Token], function: &str) -> bool {
+pub(crate) fn candidate(tokens: &[Token], function: &str) -> bool {
     let Some(parameters) = function_parameters(tokens, function) else {
         return false;
     };

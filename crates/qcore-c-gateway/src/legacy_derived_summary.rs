@@ -71,7 +71,8 @@
 //!    gate, including `result_matches`' derived arm.
 //!
 //! The ordinary live-entry search and the removed-wrapper route run first, so
-//! no summary either of them publishes is replaced or weakened.
+//! no non-neutral result either publishes is replaced. Rule 36 may refine a
+//! neutral None result with a validated alias and identical parameter modes.
 //!
 //! # What is deliberately not inferred
 //!
