@@ -70,11 +70,16 @@ fn the_two_ledger_shapes_are_admitted() {
 fn a_body_with_no_derived_return_is_not_a_candidate() {
     for body in [
         "unsigned long f(char *d) { return d_len(d); }",
-        "char *f(char *d) { return d; }",
         "void f(char *d) { d_copy(d, \"x\", 1); }",
     ] {
         assert_eq!(refusal(body, "f"), DerivedRefusal::NotCandidate, "{body}");
     }
+    // Rule 36's cheap pointer-formal candidate still refuses without the
+    // prepared typed AST. No source fact is guessed from these tokens.
+    assert_eq!(
+        refusal("char *f(char *d) { return d; }", "f"),
+        DerivedRefusal::NoDerivedExit
+    );
     // A derived call whose result no exit returns.
     for body in [
         "char *f(char *d) { d_copy(d, \"x\", 1); return 0; }",

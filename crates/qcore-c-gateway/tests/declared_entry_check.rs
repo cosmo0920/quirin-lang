@@ -14,7 +14,7 @@
 //! * **refusing:** a wrapper that hands its nullable formal to a non-null
 //!   release keeps its `conflict` failure; a wrapper that keeps its formal,
 //!   one that calls an uncontracted function, one that releases on one path,
-//!   a declared alias result the entry check does not establish, and a
+//!   a declared alias returning unrelated NULL, and a
 //!   declaration with a counted-user clause are never `13m`;
 //! * **evidence only:** every row is identical with and without a recording
 //!   (the conflicting row keeps its `SummaryConflict`), and the check adds no
@@ -243,14 +243,29 @@ fn guarded_release_wrappers_and_a_conflicting_row_are_validated() {
 }
 
 #[test]
-fn a_declared_alias_the_entry_check_does_not_establish_keeps_its_failure() {
+fn a_declared_original_formal_alias_is_now_validated_by_w4() {
+    if !clang_available() {
+        return;
+    }
+    let header = "static inline void *w(void *p) { return p; }";
+    let main = "void user(void) { void *p = malloc(4); void *q = w(p); (void) q; free(p); }";
+    let run = run("alias", header, main, &contracts(W_ALIAS), true);
+    assert_eq!(
+        evidence(&run.record, "w"),
+        BTreeSet::from(["W4".to_owned()])
+    );
+    assert!(!run.record.failed.contains_key("w"), "{:?}", run.record);
+}
+
+#[test]
+fn a_declared_alias_returning_unrelated_null_keeps_its_failure() {
     if !clang_available() {
         return;
     }
     let declared = W_ALIAS;
-    let header = "static inline void *w(void *p) { return p; }";
+    let header = "static inline void *w(void *p) { return 0; }";
     let main = "void user(void) { void *p = malloc(4); void *q = w(p); (void) q; free(p); }";
-    let run = run("alias", header, main, &contracts(declared), true);
+    let run = run("alias-null", header, main, &contracts(declared), true);
     assert!(evidence(&run.record, "w").is_empty(), "{:?}", run.record);
     assert!(
         run.record

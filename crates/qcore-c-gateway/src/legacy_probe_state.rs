@@ -69,6 +69,7 @@ pub(super) const PARSER_FIELDS: &[(&str, FieldClass)] = &[
     ("variadic_tail_readings", FieldClass::ProbeState),
     ("condition_cycles", FieldClass::FunctionFact),
     ("typed_place_origin", FieldClass::ProbeState),
+    ("exact_formal_returns", FieldClass::LazyCache),
     ("typed_root_declarations", FieldClass::LazyCache),
     ("readonly_list_count_certified", FieldClass::LazyCache),
     ("declared_no_return", FieldClass::LazyCache),
