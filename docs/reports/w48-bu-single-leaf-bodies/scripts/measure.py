@@ -15,6 +15,13 @@ across cards. Two changes: PRIMARY is the real checkout path (the old
 qcore-c path is a symlink to it), and the slice route reads the tail-pause
 preparation (`private/w47-tail/attempt-1/prep`) as batch5's measure_strong.py
 does; the scheduler card never ran the slice route.
+
+After the checkout move (run 4, a failed attempt) the pinned compile
+databases no longer match any checkout spelling, so every route reads the
+re-spelled inputs `mirror_inputs.py` writes (`--inputs-mirror`): the corpus
+inputs root is the mirror, and the system and slice routes read the mirror's
+re-spelled database against the real prepared checkout. The mirror manifest's
+digest is recorded.
 """
 import argparse
 import datetime
@@ -46,6 +53,7 @@ def main():
     parser.add_argument('--inputs-snapshot', type=Path, required=True)
     parser.add_argument('--binary-source', required=True)
     parser.add_argument('--jobs', type=int, default=4)
+    parser.add_argument('--inputs-mirror', type=Path, required=True)
     args = parser.parse_args()
     assert args.jobs > 0
     free = shutil.disk_usage(PRIMARY).free
@@ -56,6 +64,7 @@ def main():
     snapshot = args.inputs_snapshot.resolve()
     binary = snapshot / 'target/release/quirin-audit'
     link_map = args.link_map.resolve()
+    mirror = args.inputs_mirror.resolve()
     env = dict(os.environ)
     for key in ('QCORE_SOURCE_CONTRACTS', 'QCORE_RETURN_CENSUS', 'QCORE_CHUNKIO_PACKAGE'):
         env.pop(key, None)
@@ -65,21 +74,22 @@ def main():
                QCORE_OUTER_PROJECTION=str(out / f'{route}-outer.json'))
     if route == 'corpus':
         command = [sys.executable, str(snapshot / 'scripts/run_pinned_audit.py'), str(out / 'corpus'),
-                   '66910c10', '--inputs-root', str(PRIMARY / 'build/cycle19'), '--jobs', str(args.jobs)]
-        externals = [PRIMARY / 'build/cycle19/c-gateway-wave-pin/fluent-bit-clang-source/build/compile_commands.json',
-                     PRIMARY / 'build/cycle19/c-gateway-wave-pin/monkey/monkey-build/compile_commands.json']
+                   '66910c10', '--inputs-root', str(mirror), '--jobs', str(args.jobs)]
+        externals = [mirror / 'c-gateway-wave-pin/fluent-bit-clang-source/build/compile_commands.json',
+                     mirror / 'c-gateway-wave-pin/monkey/monkey-build/compile_commands.json',
+                     mirror / 'manifest.json']
     else:
         prepared = PRIMARY / ('private/w45-fb/w46-external-callee-contracts/attempt-1' if route == 'system'
                               else 'private/w47-tail/attempt-1/prep')
         source = prepared / 'fluent-bit-clang-source'
-        database = prepared / 'fluent-bit-clang-production/compile_commands.json'
+        database = mirror / f'{route}-compile_commands.json'
         selection = snapshot / 'contract/profiles/fluent-bit' / ('system-selection.json' if route == 'system'
                                                           else 'tail-pause-selection.json')
         command = [str(binary), 'current', '--checkout', str(source), '--profile-directory',
                    str(snapshot / 'contract/profiles/fluent-bit'), '--compile-database', str(database),
                    '--selection', str(selection), '--jobs', str(args.jobs),
                    '--report', str(out / 'resource-diagnostics.json')]
-        externals = [database, selection]
+        externals = [database, selection, mirror / 'manifest.json']
     record = {'analyzer_source': args.binary_source, 'inputs_snapshot': str(snapshot),
               'inputs_before': tree_identity(snapshot),
               'report_driver_sha256': sha(Path(__file__)),
