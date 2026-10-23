@@ -187,6 +187,9 @@ fn instruction(instruction: &LegacyInstruction) -> String {
         LegacyInstruction::Release { source } => format!("Release {source}"),
         LegacyInstruction::Escape { source } => format!("Escape {source}"),
         LegacyInstruction::EscapeIfOwned { source } => format!("EscapeIfOwned {source}"),
+        LegacyInstruction::ExactFormalReturn { source, parameter } => {
+            format!("ExactFormalReturn {source} parameter {parameter}")
+        }
         LegacyInstruction::ContractCall {
             function,
             destination,
