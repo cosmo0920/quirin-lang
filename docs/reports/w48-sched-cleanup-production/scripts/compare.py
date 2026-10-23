@@ -57,6 +57,29 @@ def normalize(value):
     return value
 
 
+# Digests derived from the whole contract environment. The TIP environment
+# holds one more declaration (`mk_http_thread_destroy`), so every one of these
+# moves on every record by construction; the second comparison blanks them to
+# show what else differs.
+ENVIRONMENT_DIGESTS = {'assumptions', 'build_identity', 'environment_sha256',
+                       'resource_contracts_sha256', 'id'}
+
+
+def blank_environment(value):
+    """Blank environment digests; `reading_site_evidence` is ordered by its
+    digest ids, so it is compared as a multiset."""
+    if isinstance(value, dict):
+        blanked = {k: ('ENV' if k in ENVIRONMENT_DIGESTS and isinstance(v, str) else blank_environment(v))
+                   for k, v in value.items()}
+        if isinstance(blanked.get('reading_site_evidence'), list):
+            blanked['reading_site_evidence'] = sorted(blanked['reading_site_evidence'],
+                                                      key=lambda v: json.dumps(v, sort_keys=True))
+        return blanked
+    if isinstance(value, list):
+        return [blank_environment(v) for v in value]
+    return value
+
+
 def lines(path):
     path = pathlib.Path(path)
     if not path.exists():
@@ -104,7 +127,20 @@ def main():
         null_diff = {'base_records': len(null_base), 'tip_records': len(null_tip),
                      'only_base': [json.loads(x) for x in sorted((cb - ct).elements())],
                      'only_tip': [json.loads(x) for x in sorted((ct - cb).elements())]}
+    env_rows = [list(k) for k in sorted(set(base) & set(tip), key=lambda k: tuple(str(p) for p in k))
+                if blank_environment(base[k]) != blank_environment(tip[k])]
+    env_null = None
+    if null_base is not None and null_tip is not None:
+        nb = collections.Counter(json.dumps(blank_environment(json.loads(x)), sort_keys=True) for x in null_base)
+        nt = collections.Counter(json.dumps(blank_environment(json.loads(x)), sort_keys=True) for x in null_tip)
+        env_null = {'only_base': [json.loads(x) for x in sorted((nb - nt).elements())],
+                    'only_tip': [json.loads(x) for x in sorted((nt - nb).elements())]}
+    outer = [normalize(json.loads((pathlib.Path(d) / 'corpus-outer.json').read_text())) for d in (base_dir, tip_dir)]
     document = {
+        'environment_digest_fields': sorted(ENVIRONMENT_DIGESTS),
+        'rows_differing_beyond_environment_digests': env_rows,
+        'null_records_differing_beyond_environment_digests': env_null,
+        'outer_equal_beyond_environment_digests': blank_environment(outer[0]) == blank_environment(outer[1]),
         'base_rows': len(base), 'tip_rows': len(tip),
         'base_custody': tally(base), 'tip_custody': tally(tip),
         'status_moves': [c for c in changes if 'status' in c and c['status'][0] != c['status'][1]],
@@ -124,6 +160,10 @@ def main():
     if null_diff:
         print('null records', null_diff['base_records'], null_diff['tip_records'],
               'only base', len(null_diff['only_base']), 'only tip', len(null_diff['only_tip']))
+    print('rows differing beyond environment digests:', len(document['rows_differing_beyond_environment_digests']))
+    if env_null is not None:
+        print('null records differing beyond environment digests:', len(env_null['only_base']), len(env_null['only_tip']))
+    print('outer equal beyond environment digests:', document['outer_equal_beyond_environment_digests'])
     print('outer bytes equal:', document['outer_projection_sha256'][0] == document['outer_projection_sha256'][1],
           'outer equal after normalization:', document['outer_projection_equal_after_normalization'])
 
