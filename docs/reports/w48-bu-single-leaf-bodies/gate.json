@@ -1,0 +1,30 @@
+{
+ "card": "W48-BU-SINGLE-LEAF-BODIES",
+ "gated_commit": "d81a788d2ebe4b13887838b65f8dbd06897aca40",
+ "job": "flock /tmp/qcore-c-card-validation-20261022.lock sh docs/reports/w48-bu-single-leaf-bodies/scripts/gate_job.sh private/slb/gate-1",
+ "environment": "CARGO_BUILD_JOBS=6 CARGO_INCREMENTAL=0 CARGO_PROFILE_DEV_DEBUG=0 CARGO_PROFILE_TEST_DEBUG=0",
+ "started": "2026-10-23T14:15:41Z",
+ "ended": "2026-10-23T14:28:54Z",
+ "head_before": "d81a788d2ebe4b13887838b65f8dbd06897aca40",
+ "head_after": "d81a788d2ebe4b13887838b65f8dbd06897aca40",
+ "tree_clean_before_and_after": true,
+ "steps": {
+  "git submodule update --init --recursive": 0,
+  "python3 scripts/run_test_binaries.py": 0,
+  "cargo fmt --all -- --check": 0,
+  "cargo clippy --all-targets -- -D warnings": 0,
+  "cargo run -p qcore-compiler --example reevaluation_probe": 0,
+  "cargo run -p qcore-compiler --example reevaluation_followup": 0,
+  "python3 scripts/check_lean_audits.py": 0,
+  "python3 -m unittest discover -s scripts/tests": 0,
+  "clang --version": 0
+ },
+ "rust": "test binaries: 545 units, 558 summaries; 8587 passed; 0 failed; 15 ignored; 0 measured; 0 filtered out",
+ "rust_logs": "private/test-binaries/20261023T141541Z-1505378 (card worktree)",
+ "lean_audits": 369,
+ "python_tests": 374,
+ "python_failures": 0,
+ "clang": "Ubuntu clang version 21.1.8 (6ubuntu1)",
+ "private_logs": "private/slb/gate-1 (card worktree)",
+ "provider_gate": "not required: providers/ unchanged by this card"
+}

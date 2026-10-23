@@ -8769,3 +8769,52 @@ safety claim and no validation of the detach representation premise.
     `a_modelled_cleanup_unlinks_and_retires`, …);
     `crates/qcore-c-gateway/tests/element_destroyer.rs`;
     [report](../reports/w48-sched-cleanup-production/README.md).
+
+<a id="constraint-35"></a>
+
+35. **A `*` applied to a string literal that is only read is constant data,
+    and an array member decayed at a `Borrowed` or data-tail call actual is
+    rule 14c's element address `&PATH[0]`.** Card W48-BU-SINGLE-LEAF-BODIES
+    (`literal_dereference.rs`, a thin hook in
+    `legacy_token_shapes::contains_unmodeled_access`; `array_member_decay.rs`,
+    a thin hook in `typed_access_positions::StatementIndex::argument`). It
+    amends the lexical access gate (arm 1) and rules 10n(1) and 14c (arm 2);
+    every other refusal of theirs stands. (1) **Literal read.** A `*` token
+    whose next token is a literal (the lexer spells every string and
+    character literal `__qcore_literal__`) is not an access when the literal
+    run is not followed by `=` (other than `==`), a compound assignment, `++`
+    or `--`. A string literal is an array of static storage duration (C11
+    6.4.5p6), so `*"..."` reads its first character: no pointer the
+    projection names is read and no binding, field link or obligation
+    changes; `* 'c'` can only be a multiplication. No value is folded
+    (constraint 5a), so both edges of a branch on it stay. Every other token
+    of the predicate answers as before (`->`, `.`, `[`, `]` and every other
+    `*`), so the exempted stars are a subset of the old refusals. This is
+    librdkafka's `rd_assert(!*"...")`, `RD_NOTREACHED()` and `RD_BUG(...)`.
+    (2) **Decayed array member.** At a call actual the W44 typed reader
+    reads (positions the caller already found admissible), an
+    `ImplicitCastExpr` of kind `ArrayToPointerDecay` whose operand, through
+    parentheses, is a member place of a one-dimensional array of builtin
+    scalars, neither `volatile` nor `_Atomic`, is read as the address of its
+    initial element (C11 6.3.2.1p3): rule 10n(1)'s address reading with every
+    hop's obligation, the array not read, and the never-bound premise on
+    every root unchanged. **Do not** exempt a stored or incremented literal,
+    a subscripted literal (`"..."[I]`) or any other `*`; read a decayed
+    element of pointer, record, union, array, enumeration or opaque type, a
+    qualified member, a decayed local or file-scope array (the older routes
+    keep their answer), or relax the root premise; or use the decay at a
+    custody-taking position. Parity runs record each decay decision as a
+    `typed-place` place (`rule: "35"`). Premises stated, not proved: faithful
+    lexing of literals and Clang's cast kinds and member types (trust
+    boundary 28), and, as for rule 14c, that a callee writes within the
+    array the address points into. `QCore.LiteralDecayReadings`
+    (`literal_vectors_hold`, `a_star_is_exempt_exactly_on_a_read_literal`,
+    `the_gate_only_admits`, `every_other_token_is_unchanged`,
+    `a_run_refused_only_at_literal_stars_is_admitted`,
+    `a_literal_read_changes_no_binding_and_owes_nothing`,
+    `decay_vectors_hold`, `a_decay_is_admitted_exactly_for_a_scalar_member`,
+    `the_decay_is_the_first_element_address`,
+    `an_admitted_decay_is_a_14c_element_address` and four more), bound to
+    both Rust `DECISION_VECTORS` tables;
+    `crates/qcore-c-gateway/tests/literal_decay_readings.rs`;
+    [report](../reports/w48-bu-single-leaf-bodies/README.md).

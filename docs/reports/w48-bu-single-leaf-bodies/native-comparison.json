@@ -1,0 +1,3166 @@
+{
+ "card": "W48-BU-SINGLE-LEAF-BODIES",
+ "rule": "gateway 35",
+ "route": "conditional eight-home pinned corpus (batch4 link map) plus configured system and tail-pause slice, each through the re-spelled inputs mirror (mirror_inputs.py)",
+ "sides": {
+  "base": "4dd8c80135f8c35d56f64bcce9305b0b081ef9fd",
+  "tipoff": "8879c2d8984fd677c6561bfd9375bea42dbe4f8e with DECAY_ARM and LITERAL_ARM false",
+  "tip": "8879c2d8984fd677c6561bfd9375bea42dbe4f8e"
+ },
+ "invocations": {
+  "base": {
+   "corpus": {
+    "analyzer_source": "4dd8c80135f8c35d56f64bcce9305b0b081ef9fd",
+    "binary_sha256": "e4240cb11676b3539dc5c0f768cb412fec6997fb0dc2f017e2b20b40078310f2",
+    "binary_sha256_after": "e4240cb11676b3539dc5c0f768cb412fec6997fb0dc2f017e2b20b40078310f2",
+    "exit": 0,
+    "identity_error": null,
+    "started": "2026-10-23T07:28:36.207567+00:00",
+    "ended": "2026-10-23T09:35:55.442291+00:00",
+    "jobs": 4,
+    "link_map_sha256": "98a4db761ace9fd4846b000c4c98defdc2e39ce6f95684c67c30f9b8b6f38ad3",
+    "report_driver_sha256": "856fefa89d4902e2e290e44c910ae960eefd566081826a7ba0fccfd6b695a6ae"
+   },
+   "system": {
+    "analyzer_source": "4dd8c80135f8c35d56f64bcce9305b0b081ef9fd",
+    "binary_sha256": "e4240cb11676b3539dc5c0f768cb412fec6997fb0dc2f017e2b20b40078310f2",
+    "binary_sha256_after": "e4240cb11676b3539dc5c0f768cb412fec6997fb0dc2f017e2b20b40078310f2",
+    "exit": 0,
+    "identity_error": null,
+    "started": "2026-10-23T09:56:29.274522+00:00",
+    "ended": "2026-10-23T10:09:58.880028+00:00",
+    "jobs": 4,
+    "link_map_sha256": "98a4db761ace9fd4846b000c4c98defdc2e39ce6f95684c67c30f9b8b6f38ad3",
+    "report_driver_sha256": "856fefa89d4902e2e290e44c910ae960eefd566081826a7ba0fccfd6b695a6ae"
+   },
+   "slice": {
+    "analyzer_source": "4dd8c80135f8c35d56f64bcce9305b0b081ef9fd",
+    "binary_sha256": "e4240cb11676b3539dc5c0f768cb412fec6997fb0dc2f017e2b20b40078310f2",
+    "binary_sha256_after": "e4240cb11676b3539dc5c0f768cb412fec6997fb0dc2f017e2b20b40078310f2",
+    "exit": 0,
+    "identity_error": null,
+    "started": "2026-10-23T07:28:36.221555+00:00",
+    "ended": "2026-10-23T07:49:04.921196+00:00",
+    "jobs": 4,
+    "link_map_sha256": "98a4db761ace9fd4846b000c4c98defdc2e39ce6f95684c67c30f9b8b6f38ad3",
+    "report_driver_sha256": "856fefa89d4902e2e290e44c910ae960eefd566081826a7ba0fccfd6b695a6ae"
+   }
+  },
+  "tipoff": {
+   "corpus": {
+    "analyzer_source": "8879c2d8984fd677c6561bfd9375bea42dbe4f8e+rule35-arms-off",
+    "binary_sha256": "b2d666dcce38136700ca38afb1729c614bd76ef8f312f64252d874d9d72dddb5",
+    "binary_sha256_after": "b2d666dcce38136700ca38afb1729c614bd76ef8f312f64252d874d9d72dddb5",
+    "exit": 0,
+    "identity_error": null,
+    "started": "2026-10-23T07:28:36.131297+00:00",
+    "ended": "2026-10-23T09:56:26.307295+00:00",
+    "jobs": 4,
+    "link_map_sha256": "98a4db761ace9fd4846b000c4c98defdc2e39ce6f95684c67c30f9b8b6f38ad3",
+    "report_driver_sha256": "856fefa89d4902e2e290e44c910ae960eefd566081826a7ba0fccfd6b695a6ae"
+   },
+   "system": {
+    "analyzer_source": "8879c2d8984fd677c6561bfd9375bea42dbe4f8e+rule35-arms-off",
+    "binary_sha256": "b2d666dcce38136700ca38afb1729c614bd76ef8f312f64252d874d9d72dddb5",
+    "binary_sha256_after": "b2d666dcce38136700ca38afb1729c614bd76ef8f312f64252d874d9d72dddb5",
+    "exit": 0,
+    "identity_error": null,
+    "started": "2026-10-23T09:56:29.193549+00:00",
+    "ended": "2026-10-23T10:10:07.589113+00:00",
+    "jobs": 4,
+    "link_map_sha256": "98a4db761ace9fd4846b000c4c98defdc2e39ce6f95684c67c30f9b8b6f38ad3",
+    "report_driver_sha256": "856fefa89d4902e2e290e44c910ae960eefd566081826a7ba0fccfd6b695a6ae"
+   },
+   "slice": {
+    "analyzer_source": "8879c2d8984fd677c6561bfd9375bea42dbe4f8e+rule35-arms-off",
+    "binary_sha256": "b2d666dcce38136700ca38afb1729c614bd76ef8f312f64252d874d9d72dddb5",
+    "binary_sha256_after": "b2d666dcce38136700ca38afb1729c614bd76ef8f312f64252d874d9d72dddb5",
+    "exit": 0,
+    "identity_error": null,
+    "started": "2026-10-23T07:28:36.309287+00:00",
+    "ended": "2026-10-23T07:48:51.755389+00:00",
+    "jobs": 4,
+    "link_map_sha256": "98a4db761ace9fd4846b000c4c98defdc2e39ce6f95684c67c30f9b8b6f38ad3",
+    "report_driver_sha256": "856fefa89d4902e2e290e44c910ae960eefd566081826a7ba0fccfd6b695a6ae"
+   }
+  },
+  "tip": {
+   "corpus": {
+    "analyzer_source": "8879c2d8984fd677c6561bfd9375bea42dbe4f8e",
+    "binary_sha256": "adde592e5df392c2ec44e4c19a7842f8988ada5e3a4239e209fe2a37b741d0a4",
+    "binary_sha256_after": "adde592e5df392c2ec44e4c19a7842f8988ada5e3a4239e209fe2a37b741d0a4",
+    "exit": 0,
+    "identity_error": null,
+    "started": "2026-10-23T07:28:36.010105+00:00",
+    "ended": "2026-10-23T09:55:30.526889+00:00",
+    "jobs": 4,
+    "link_map_sha256": "98a4db761ace9fd4846b000c4c98defdc2e39ce6f95684c67c30f9b8b6f38ad3",
+    "report_driver_sha256": "856fefa89d4902e2e290e44c910ae960eefd566081826a7ba0fccfd6b695a6ae"
+   },
+   "system": {
+    "analyzer_source": "8879c2d8984fd677c6561bfd9375bea42dbe4f8e",
+    "binary_sha256": "adde592e5df392c2ec44e4c19a7842f8988ada5e3a4239e209fe2a37b741d0a4",
+    "binary_sha256_after": "adde592e5df392c2ec44e4c19a7842f8988ada5e3a4239e209fe2a37b741d0a4",
+    "exit": 0,
+    "identity_error": null,
+    "started": "2026-10-23T09:56:29.227363+00:00",
+    "ended": "2026-10-23T10:10:02.695597+00:00",
+    "jobs": 4,
+    "link_map_sha256": "98a4db761ace9fd4846b000c4c98defdc2e39ce6f95684c67c30f9b8b6f38ad3",
+    "report_driver_sha256": "856fefa89d4902e2e290e44c910ae960eefd566081826a7ba0fccfd6b695a6ae"
+   },
+   "slice": {
+    "analyzer_source": "8879c2d8984fd677c6561bfd9375bea42dbe4f8e",
+    "binary_sha256": "adde592e5df392c2ec44e4c19a7842f8988ada5e3a4239e209fe2a37b741d0a4",
+    "binary_sha256_after": "adde592e5df392c2ec44e4c19a7842f8988ada5e3a4239e209fe2a37b741d0a4",
+    "exit": 0,
+    "identity_error": null,
+    "started": "2026-10-23T07:28:36.294093+00:00",
+    "ended": "2026-10-23T07:48:48.740454+00:00",
+    "jobs": 4,
+    "link_map_sha256": "98a4db761ace9fd4846b000c4c98defdc2e39ce6f95684c67c30f9b8b6f38ad3",
+    "report_driver_sha256": "856fefa89d4902e2e290e44c910ae960eefd566081826a7ba0fccfd6b695a6ae"
+   }
+  }
+ },
+ "routes": {
+  "corpus": {
+   "tipoff->tip": {
+    "attribution": "rule 35",
+    "custody": [
+     {
+      "Safe": 987,
+      "Unknown": 3838,
+      "Unsafe": 9
+     },
+     {
+      "Safe": 999,
+      "Unknown": 3826,
+      "Unsafe": 9
+     }
+    ],
+    "static_combined": [
+     {
+      "Pending": 0,
+      "Safe": 851,
+      "Unknown": 4043,
+      "Unsafe": 27
+     },
+     {
+      "Pending": 0,
+      "Safe": 859,
+      "Unknown": 4035,
+      "Unsafe": 27
+     }
+    ],
+    "static_null": [
+     {
+      "Pending": 0,
+      "Safe": 2549,
+      "Unknown": 2354,
+      "Unsafe": 18
+     },
+     {
+      "Pending": 0,
+      "Safe": 2549,
+      "Unknown": 2354,
+      "Unsafe": 18
+     }
+    ],
+    "status_moves": [
+     {
+      "row": [
+       "librdkafka",
+       "rdkafka.c",
+       "rd_kafka_log_print"
+      ],
+      "status": [
+       "Unknown",
+       "Safe"
+      ],
+      "leaves_removed": [
+       {
+        "description": "indirect memory access is outside the resource projection",
+        "origin": "rdkafka.c:388"
+       }
+      ],
+      "leaves_added": []
+     },
+     {
+      "row": [
+       "librdkafka",
+       "rdkafka.c",
+       "rd_kafka_log_syslog"
+      ],
+      "status": [
+       "Unknown",
+       "Safe"
+      ],
+      "leaves_removed": [
+       {
+        "description": "unmodeled call, aggregate or indirect access in branch condition",
+        "origin": "rdkafka.c:404"
+       }
+      ],
+      "leaves_added": []
+     },
+     {
+      "row": [
+       "librdkafka",
+       "rdkafka.c",
+       "rd_kafka_set_logger"
+      ],
+      "status": [
+       "Unknown",
+       "Safe"
+      ],
+      "leaves_removed": [
+       {
+        "description": "unmodeled call, aggregate or indirect access in branch condition",
+        "origin": "rdkafka.c:415"
+       }
+      ],
+      "leaves_added": []
+     },
+     {
+      "row": [
+       "librdkafka",
+       "rdkafka_conf.c",
+       "rd_kafka_anyconf_set_modified"
+      ],
+      "status": [
+       "Unknown",
+       "Safe"
+      ],
+      "leaves_removed": [
+       {
+        "description": "unresolved resource identity `conf`",
+        "origin": "rdkafka_conf.c:269"
+       },
+       {
+        "description": "unmodeled call, aggregate or indirect access in branch condition",
+        "origin": "rdkafka_conf.c:271"
+       }
+      ],
+      "leaves_added": []
+     },
+     {
+      "row": [
+       "librdkafka",
+       "rdkafka_mock.c",
+       "rd_kafka_mock_cluster_io_clear_events"
+      ],
+      "status": [
+       "Unknown",
+       "Safe"
+      ],
+      "leaves_removed": [
+       {
+        "description": "unmodeled call, aggregate or indirect access in branch condition",
+        "origin": "rdkafka_mock.c:1173"
+       }
+      ],
+      "leaves_added": []
+     },
+     {
+      "row": [
+       "librdkafka",
+       "rdkafka_mock.c",
+       "rd_kafka_mock_cluster_io_set_event"
+      ],
+      "status": [
+       "Unknown",
+       "Safe"
+      ],
+      "leaves_removed": [
+       {
+        "description": "unmodeled call, aggregate or indirect access in branch condition",
+        "origin": "rdkafka_mock.c:1153"
+       }
+      ],
+      "leaves_added": []
+     },
+     {
+      "row": [
+       "librdkafka",
+       "rdkafka_mock.c",
+       "rd_kafka_mock_cluster_io_set_events"
+      ],
+      "status": [
+       "Unknown",
+       "Safe"
+      ],
+      "leaves_removed": [
+       {
+        "description": "unmodeled call, aggregate or indirect access in branch condition",
+        "origin": "rdkafka_mock.c:1130"
+       }
+      ],
+      "leaves_added": []
+     },
+     {
+      "row": [
+       "librdkafka",
+       "rdkafka_mock.c",
+       "rd_kafka_mock_connection_set_blocking"
+      ],
+      "status": [
+       "Unknown",
+       "Safe"
+      ],
+      "leaves_removed": [
+       {
+        "description": "call to uncontracted function `rd_kafka_mock_cluster_io_set_event`",
+        "origin": "rdkafka_mock.c:1693"
+       }
+      ],
+      "leaves_added": []
+     },
+     {
+      "row": [
+       "librdkafka",
+       "rdkafka_sasl_oauthbearer_oidc.c",
+       "rd_kafka_oidc_assertion_get_algo_label"
+      ],
+      "status": [
+       "Unknown",
+       "Safe"
+      ],
+      "leaves_removed": [
+       {
+        "description": "unmodeled call, aggregate or indirect access in branch condition",
+        "origin": "rdkafka_sasl_oauthbearer_oidc.c:241"
+       }
+      ],
+      "leaves_added": []
+     },
+     {
+      "row": [
+       "librdkafka",
+       "rdkafka_telemetry_decode.c",
+       "unit_test_telemetry_decode_error"
+      ],
+      "status": [
+       "Unknown",
+       "Safe"
+      ],
+      "leaves_removed": [
+       {
+        "description": "unmodeled call, aggregate or indirect access in branch condition",
+        "origin": "rdkafka_telemetry_decode.c:522"
+       }
+      ],
+      "leaves_added": []
+     },
+     {
+      "row": [
+       "librdkafka",
+       "rdkafka_txnmgr.c",
+       "rd_kafka_txn_state_transition_is_valid"
+      ],
+      "status": [
+       "Unknown",
+       "Safe"
+      ],
+      "leaves_removed": [
+       {
+        "description": "unmodeled call, aggregate or indirect access in branch condition",
+        "origin": "rdkafka_txnmgr.c:220"
+       }
+      ],
+      "leaves_added": []
+     },
+     {
+      "row": [
+       "monkey-libevent",
+       "mk_server/mk_config.c",
+       "mk_config_signature"
+      ],
+      "status": [
+       "Unknown",
+       "Safe"
+      ],
+      "leaves_removed": [
+       {
+        "description": "indirect memory access is outside the resource projection",
+        "origin": "mk_server/mk_config.c:505"
+       },
+       {
+        "description": "indirect memory access is outside the resource projection",
+        "origin": "mk_server/mk_config.c:510"
+       },
+       {
+        "description": "indirect memory access is outside the resource projection",
+        "origin": "mk_server/mk_config.c:514"
+       }
+      ],
+      "leaves_added": []
+     }
+    ],
+    "rows_differing_beyond_environment_digests": 116,
+    "null_records_differing_beyond_environment_digests": [
+     {
+      "function": "mk_config_signature",
+      "custody": "Safe",
+      "combined": "Safe",
+      "null_verdict": "Safe"
+     },
+     {
+      "function": "rd_kafka_log_print",
+      "custody": "Safe",
+      "combined": "Safe",
+      "null_verdict": "Safe"
+     },
+     {
+      "function": "rd_kafka_log_syslog",
+      "custody": "Safe",
+      "combined": "Safe",
+      "null_verdict": "Safe"
+     },
+     {
+      "function": "rd_kafka_set_logger",
+      "custody": "Safe",
+      "combined": "Safe",
+      "null_verdict": "Safe"
+     },
+     {
+      "function": "rd_kafka_anyconf_set_modified",
+      "custody": "Safe",
+      "combined": "Safe",
+      "null_verdict": "Safe"
+     },
+     {
+      "function": "rd_kafka_oidc_assertion_get_algo_label",
+      "custody": "Safe",
+      "combined": "Safe",
+      "null_verdict": "Safe"
+     },
+     {
+      "function": "unit_test_telemetry_decode_error",
+      "custody": "Safe",
+      "combined": "Safe",
+      "null_verdict": "Safe"
+     },
+     {
+      "function": "rd_kafka_txn_state_transition_is_valid",
+      "custody": "Safe",
+      "combined": "Safe",
+      "null_verdict": "Safe"
+     },
+     {
+      "function": "rd_kafka_mock_cluster_io_clear_events",
+      "custody": "Safe",
+      "combined": "Unknown",
+      "null_verdict": "Unknown"
+     },
+     {
+      "function": "rd_kafka_mock_cluster_io_set_event",
+      "custody": "Safe",
+      "combined": "Unknown",
+      "null_verdict": "Unknown"
+     },
+     {
+      "function": "rd_kafka_mock_cluster_io_set_events",
+      "custody": "Safe",
+      "combined": "Unknown",
+      "null_verdict": "Unknown"
+     },
+     {
+      "function": "rd_kafka_mock_connection_set_blocking",
+      "custody": "Safe",
+      "combined": "Unknown",
+      "null_verdict": "Unknown"
+     },
+     {
+      "function": "rd_kafka_header_cmp_str",
+      "custody": "Unknown",
+      "combined": "Unknown",
+      "null_verdict": "Safe"
+     },
+     {
+      "function": "rd_kafka_mock_connection_write_out_tmr_cb",
+      "custody": "Unknown",
+      "combined": "Unknown",
+      "null_verdict": "Unknown"
+     }
+    ],
+    "leaf_trade": [
+     {
+      "arm": "",
+      "count": 1,
+      "description": "call to uncontracted function `rd_http_error_new`",
+      "side": "added"
+     },
+     {
+      "arm": "",
+      "count": 1,
+      "description": "call to uncontracted function `rd_kafka_ConfigEntry_new`",
+      "side": "added"
+     },
+     {
+      "arm": "",
+      "count": 1,
+      "description": "call to uncontracted function `rd_kafka_interceptors_on_request_sent`",
+      "side": "added"
+     },
+     {
+      "arm": "",
+      "count": 1,
+      "description": "call to uncontracted function `rd_strtup_new`",
+      "side": "added"
+     },
+     {
+      "arm": "",
+      "count": 1,
+      "description": "unresolved resource identity `conf`",
+      "side": "added"
+     },
+     {
+      "arm": "",
+      "count": 1,
+      "description": "unresolved resource identity `mconn`",
+      "side": "added"
+     },
+     {
+      "arm": "",
+      "count": 1,
+      "description": "unresolved resource identity `mrkb`",
+      "side": "added"
+     },
+     {
+      "arm": "",
+      "count": 1,
+      "description": "unresolved resource identity `names`",
+      "side": "added"
+     },
+     {
+      "arm": "other-line",
+      "count": 1,
+      "description": "call to uncontracted function `rd_kafka_anyconf_set_modified`",
+      "side": "removed"
+     },
+     {
+      "arm": "other-line",
+      "count": 1,
+      "description": "call to uncontracted function `rd_kafka_mock_cluster_io_clear_events`",
+      "side": "removed"
+     },
+     {
+      "arm": "other-line",
+      "count": 1,
+      "description": "call to uncontracted function `rd_kafka_mock_cluster_io_set_event`",
+      "side": "removed"
+     },
+     {
+      "arm": "other-line",
+      "count": 2,
+      "description": "call to uncontracted function `rd_kafka_mock_cluster_io_set_events`",
+      "side": "removed"
+     },
+     {
+      "arm": "other-line",
+      "count": 14,
+      "description": "indirect memory access is outside the resource projection",
+      "side": "removed"
+     },
+     {
+      "arm": "literal",
+      "count": 68,
+      "description": "unmodeled call, aggregate or indirect access in branch condition",
+      "side": "removed"
+     },
+     {
+      "arm": "other-line",
+      "count": 45,
+      "description": "unmodeled call, aggregate or indirect access in branch condition",
+      "side": "removed"
+     },
+     {
+      "arm": "other-line",
+      "count": 1,
+      "description": "unresolved resource identity `conf`",
+      "side": "removed"
+     },
+     {
+      "arm": "other-line",
+      "count": 4,
+      "description": "unresolved resource identity `prop`",
+      "side": "removed"
+     },
+     {
+      "arm": "literal",
+      "count": 1,
+      "description": "unresolved resource identity `rkb`",
+      "side": "removed"
+     }
+    ],
+    "outer_rows_added_to_moved": {
+     "all": [],
+     "flb_external_plugin": [],
+     "rk_plugin_library": []
+    },
+    "twelve_brief_bodies": {
+     "librdkafka::rdkafka_admin.c::rd_kafka_MemberDescription_copy::0": {
+      "before": "Unknown",
+      "after": "Unknown",
+      "after_leaves": [
+       {
+        "description": "indirect memory access is outside the resource projection",
+        "origin": "rdkafka_admin.c:7898"
+       }
+      ]
+     },
+     "librdkafka::rdkafka_aux.c::rd_kafka_group_result_copy::0": {
+      "before": "Unknown",
+      "after": "Unknown",
+      "after_leaves": [
+       {
+        "description": "indirect memory access is outside the resource projection",
+        "origin": "rdkafka_aux.c:120"
+       }
+      ]
+     },
+     "librdkafka::rdkafka_broker.c::rd_kafka_broker_ApiVersion_at_least::0": {
+      "before": "Unknown",
+      "after": "Unknown",
+      "after_leaves": [
+       {
+        "description": "unmodeled call, aggregate or indirect access in return expression",
+        "origin": "rdkafka_broker.c:327"
+       }
+      ]
+     },
+     "librdkafka::rdkafka_mock.c::rd_kafka_mock_cluster_io_set_event::0": {
+      "before": "Unknown",
+      "after": "Safe",
+      "after_leaves": []
+     },
+     "librdkafka::rdkafka_partition.c::rd_kafka_topic_partition_list_cmp::0": {
+      "before": "Unknown",
+      "after": "Unknown",
+      "after_leaves": [
+       {
+        "description": "indirect memory access is outside the resource projection",
+        "origin": "rdkafka_partition.c:3346"
+       }
+      ]
+     },
+     "librdkafka::rdkafka_partition.c::rd_kafka_topic_partition_list_grow::0": {
+      "before": "Unknown",
+      "after": "Unknown",
+      "after_leaves": [
+       {
+        "description": "indirect memory access is outside the resource projection",
+        "origin": "rdkafka_partition.c:2822"
+       }
+      ]
+     },
+     "librdkafka::rdkafka_sasl.c::rd_kafka_queue_get_sasl::0": {
+      "before": "Unknown",
+      "after": "Unknown",
+      "after_leaves": [
+       {
+        "description": "indirect memory access is outside the resource projection",
+        "origin": "rdkafka_sasl.c:291"
+       }
+      ]
+     },
+     "librdkafka::rdmap.c::rd_map_init::0": {
+      "before": "Unknown",
+      "after": "Unknown",
+      "after_leaves": [
+       {
+        "description": "indirect memory access is outside the resource projection",
+        "origin": "rdmap.c:208"
+       }
+      ]
+     },
+     "librdkafka::rdxxhash.c::XXH32_digest_endian::0": {
+      "before": "Unknown",
+      "after": "Unknown",
+      "after_leaves": [
+       {
+        "description": "indirect memory access is outside the resource projection",
+        "origin": "rdxxhash.c:542"
+       }
+      ]
+     },
+     "librdkafka::rdxxhash.c::XXH64_digest_endian::0": {
+      "before": "Unknown",
+      "after": "Unknown",
+      "after_leaves": [
+       {
+        "description": "indirect memory access is outside the resource projection",
+        "origin": "rdxxhash.c:1002"
+       }
+      ]
+     },
+     "librdkafka::tinycthread_extra.c::thrd_setname::0": {
+      "before": "Unknown",
+      "after": "Unknown",
+      "after_leaves": [
+       {
+        "description": "unmodeled call, aggregate or indirect access in branch condition",
+        "origin": "tinycthread_extra.c:42"
+       }
+      ]
+     },
+     "monkey-libevent::mk_core/mk_iov.c::mk_iov_free_marked::0": {
+      "before": "Unknown",
+      "after": "Unknown",
+      "after_leaves": [
+       {
+        "description": "indirect memory access is outside the resource projection",
+        "origin": "mk_core/mk_iov.c:145"
+       }
+      ]
+     }
+    }
+   },
+   "base->tipoff": {
+    "attribution": "sibling rules 32 and 34",
+    "custody": [
+     {
+      "Safe": 977,
+      "Unknown": 3848,
+      "Unsafe": 9
+     },
+     {
+      "Safe": 987,
+      "Unknown": 3838,
+      "Unsafe": 9
+     }
+    ],
+    "static_combined": [
+     {
+      "Pending": 0,
+      "Safe": 849,
+      "Unknown": 4045,
+      "Unsafe": 27
+     },
+     {
+      "Pending": 0,
+      "Safe": 851,
+      "Unknown": 4043,
+      "Unsafe": 27
+     }
+    ],
+    "static_null": [
+     {
+      "Pending": 0,
+      "Safe": 2549,
+      "Unknown": 2354,
+      "Unsafe": 18
+     },
+     {
+      "Pending": 0,
+      "Safe": 2549,
+      "Unknown": 2354,
+      "Unsafe": 18
+     }
+    ],
+    "status_moves": [
+     {
+      "row": [
+       "librdkafka",
+       "rdkafka.c",
+       "rd_kafka_log0"
+      ],
+      "status": [
+       "Unknown",
+       "Safe"
+      ],
+      "leaves_removed": [
+       {
+        "description": "call to uncontracted function `rd_kafka_log_buf`",
+        "origin": "rdkafka.c:347"
+       }
+      ],
+      "leaves_added": []
+     },
+     {
+      "row": [
+       "librdkafka",
+       "rdkafka.c",
+       "rd_kafka_share_ack_commit_cb_register_op"
+      ],
+      "status": [
+       "Unknown",
+       "Safe"
+      ],
+      "leaves_removed": [
+       {
+        "description": "indirect memory access is outside the resource projection",
+        "origin": "rdkafka.c:3250"
+       }
+      ],
+      "leaves_added": []
+     },
+     {
+      "row": [
+       "librdkafka",
+       "rdkafka.c",
+       "rd_kafka_share_log_fetch_stall"
+      ],
+      "status": [
+       "Unknown",
+       "Safe"
+      ],
+      "leaves_removed": [
+       {
+        "description": "unresolved resource identity `rkcg`",
+        "origin": "rdkafka.c:2379"
+       },
+       {
+        "description": "indirect memory access is outside the resource projection",
+        "origin": "rdkafka.c:2377"
+       }
+      ],
+      "leaves_added": []
+     },
+     {
+      "row": [
+       "librdkafka",
+       "rdkafka_mock_cgrp.c",
+       "rd_kafka_mock_cgrp_classic_member_active"
+      ],
+      "status": [
+       "Unknown",
+       "Safe"
+      ],
+      "leaves_removed": [
+       {
+        "description": "call to uncontracted function `rd_kafka_log0`",
+        "origin": "rdkafka_mock_cgrp.c:75"
+       }
+      ],
+      "leaves_added": []
+     },
+     {
+      "row": [
+       "librdkafka",
+       "rdkafka_mock_cgrp.c",
+       "rd_kafka_mock_cgrp_classic_set_state"
+      ],
+      "status": [
+       "Unknown",
+       "Safe"
+      ],
+      "leaves_removed": [
+       {
+        "description": "indirect memory access is outside the resource projection",
+        "origin": "rdkafka_mock_cgrp.c:58"
+       }
+      ],
+      "leaves_added": []
+     },
+     {
+      "row": [
+       "librdkafka",
+       "rdkafka_mock_cgrp.c",
+       "rd_kafka_mock_cgrp_consumer_member_active"
+      ],
+      "status": [
+       "Unknown",
+       "Safe"
+      ],
+      "leaves_removed": [
+       {
+        "description": "call to uncontracted function `rd_kafka_log0`",
+        "origin": "rdkafka_mock_cgrp.c:1338"
+       }
+      ],
+      "leaves_added": []
+     },
+     {
+      "row": [
+       "librdkafka",
+       "rdkafka_mock_sharegrp.c",
+       "rd_kafka_mock_sharegroup_member_active"
+      ],
+      "status": [
+       "Unknown",
+       "Safe"
+      ],
+      "leaves_removed": [
+       {
+        "description": "call to uncontracted function `rd_kafka_log0`",
+        "origin": "rdkafka_mock_sharegrp.c:219"
+       }
+      ],
+      "leaves_added": []
+     },
+     {
+      "row": [
+       "librdkafka",
+       "rdkafka_topic.c",
+       "rd_kafka_topic_set_state"
+      ],
+      "status": [
+       "Unknown",
+       "Safe"
+      ],
+      "leaves_removed": [
+       {
+        "description": "indirect memory access is outside the resource projection",
+        "origin": "rdkafka_topic.c:713"
+       }
+      ],
+      "leaves_added": []
+     },
+     {
+      "row": [
+       "monkey-libevent",
+       "mk_server/mk_scheduler.c",
+       "mk_sched_threads_destroy_conn"
+      ],
+      "status": [
+       "Unknown",
+       "Safe"
+      ],
+      "leaves_removed": [
+       {
+        "description": "unresolved resource identity `mth`",
+        "origin": "mk_server/mk_scheduler.c:668"
+       },
+       {
+        "description": "call to uncontracted function `mk_http_thread_destroy`",
+        "origin": "mk_server/mk_scheduler.c:669"
+       }
+      ],
+      "leaves_added": []
+     },
+     {
+      "row": [
+       "monkey-libevent",
+       "mk_server/mk_scheduler.c",
+       "sched_thread_cleanup"
+      ],
+      "status": [
+       "Unknown",
+       "Safe"
+      ],
+      "leaves_removed": [
+       {
+        "description": "call to uncontracted function `mk_http_thread_destroy`",
+        "origin": "mk_server/mk_scheduler.c:625"
+       }
+      ],
+      "leaves_added": []
+     }
+    ],
+    "rows_differing_beyond_environment_digests": 557,
+    "null_records_differing_beyond_environment_digests": [
+     {
+      "function": "rd_kafka_log0",
+      "custody": "Safe",
+      "combined": "Safe",
+      "null_verdict": "Safe"
+     },
+     {
+      "function": "rd_kafka_topic_set_state",
+      "custody": "Safe",
+      "combined": "Safe",
+      "null_verdict": "Safe"
+     },
+     {
+      "function": "rd_kafka_share_log_fetch_stall",
+      "custody": "Safe",
+      "combined": "Unknown",
+      "null_verdict": "Unknown"
+     },
+     {
+      "function": "mk_sched_threads_destroy_conn",
+      "custody": "Safe",
+      "combined": "Unknown",
+      "null_verdict": "Unknown"
+     },
+     {
+      "function": "sched_thread_cleanup",
+      "custody": "Safe",
+      "combined": "Unknown",
+      "null_verdict": "Unknown"
+     },
+     {
+      "function": "rd_kafka_share_ack_commit_cb_register_op",
+      "custody": "Safe",
+      "combined": "Unknown",
+      "null_verdict": "Unknown"
+     },
+     {
+      "function": "rd_kafka_mock_cgrp_classic_member_active",
+      "custody": "Safe",
+      "combined": "Unknown",
+      "null_verdict": "Unknown"
+     },
+     {
+      "function": "rd_kafka_mock_cgrp_classic_set_state",
+      "custody": "Safe",
+      "combined": "Unknown",
+      "null_verdict": "Unknown"
+     },
+     {
+      "function": "rd_kafka_mock_cgrp_consumer_member_active",
+      "custody": "Safe",
+      "combined": "Unknown",
+      "null_verdict": "Unknown"
+     },
+     {
+      "function": "rd_kafka_mock_sharegroup_member_active",
+      "custody": "Safe",
+      "combined": "Unknown",
+      "null_verdict": "Unknown"
+     },
+     {
+      "function": "rd_kafka_msgset_reader_peek_msg_version",
+      "custody": "Unknown",
+      "combined": "Unknown",
+      "null_verdict": "Unknown"
+     },
+     {
+      "function": "rd_kafka_transport_ssl_passwd_cb",
+      "custody": "Unknown",
+      "combined": "Unknown",
+      "null_verdict": "Safe"
+     },
+     {
+      "function": "rd_kafka_sasl_oauthbearer_build_client_first_message",
+      "custody": "Unknown",
+      "combined": "Unknown",
+      "null_verdict": "Unknown"
+     },
+     {
+      "function": "rd_kafka_ssl_cert_callback",
+      "custody": "Unknown",
+      "combined": "Unknown",
+      "null_verdict": "Unknown"
+     },
+     {
+      "function": "rd_kafka_cgrp_handle_LeaveGroup",
+      "custody": "Unknown",
+      "combined": "Unknown",
+      "null_verdict": "Unknown"
+     },
+     {
+      "function": "rd_kafka_cgrp_handle_ConsumerGroupHeartbeat_leave",
+      "custody": "Unknown",
+      "combined": "Unknown",
+      "null_verdict": "Unknown"
+     },
+     {
+      "function": "rd_kafka_cgrp_handle_ShareGroupHeartbeat_leave",
+      "custody": "Unknown",
+      "combined": "Unknown",
+      "null_verdict": "Unknown"
+     },
+     {
+      "function": "rd_kafka_DeleteRecords_response_merge",
+      "custody": "Unknown",
+      "combined": "Unknown",
+      "null_verdict": "Unknown"
+     },
+     {
+      "function": "rd_kafka_mock_buf_write_Metadata_Topic",
+      "custody": "Unknown",
+      "combined": "Unknown",
+      "null_verdict": "Unknown"
+     },
+     {
+      "function": "rd_kafka_anyconf_warn_deprecated",
+      "custody": "Unknown",
+      "combined": "Unknown",
+      "null_verdict": "Unknown"
+     }
+    ],
+    "leaf_trade": [
+     {
+      "arm": "",
+      "count": 1,
+      "description": "call to uncontracted function `cnd_broadcast`",
+      "side": "added"
+     },
+     {
+      "arm": "",
+      "count": 1,
+      "description": "call to uncontracted function `cnd_signal`",
+      "side": "added"
+     },
+     {
+      "arm": "",
+      "count": 2,
+      "description": "call to uncontracted function `rd_atomic32_set`",
+      "side": "added"
+     },
+     {
+      "arm": "",
+      "count": 1,
+      "description": "call to uncontracted function `rd_kafka_timer_next`",
+      "side": "added"
+     },
+     {
+      "arm": "",
+      "count": 1,
+      "description": "call to uncontracted function `rd_kafka_timer_start0`",
+      "side": "added"
+     },
+     {
+      "arm": "",
+      "count": 4,
+      "description": "call to uncontracted function `rd_kafka_timer_stop`",
+      "side": "added"
+     },
+     {
+      "arm": "",
+      "count": 1,
+      "description": "call to uncontracted function `rd_list_apply`",
+      "side": "added"
+     },
+     {
+      "arm": "",
+      "count": 11,
+      "description": "indirect memory access is outside the resource projection",
+      "side": "added"
+     },
+     {
+      "arm": "",
+      "count": 1,
+      "description": "unresolved resource identity `arr`",
+      "side": "added"
+     },
+     {
+      "arm": "",
+      "count": 1,
+      "description": "unresolved resource identity `mpart_leader`",
+      "side": "added"
+     },
+     {
+      "arm": "",
+      "count": 2,
+      "description": "unresolved resource identity `mth`",
+      "side": "added"
+     },
+     {
+      "arm": "",
+      "count": 1,
+      "description": "unresolved resource identity `mtopic`",
+      "side": "added"
+     },
+     {
+      "arm": "",
+      "count": 1,
+      "description": "unresolved resource identity `partition`",
+      "side": "added"
+     },
+     {
+      "arm": "",
+      "count": 1,
+      "description": "unresolved resource identity `payload`",
+      "side": "added"
+     },
+     {
+      "arm": "",
+      "count": 2,
+      "description": "unresolved resource identity `prop`",
+      "side": "added"
+     },
+     {
+      "arm": "",
+      "count": 1,
+      "description": "unresolved resource identity `psecret`",
+      "side": "added"
+     },
+     {
+      "arm": "",
+      "count": 1,
+      "description": "unresolved resource identity `rkbuf`",
+      "side": "added"
+     },
+     {
+      "arm": "",
+      "count": 3,
+      "description": "unresolved resource identity `rkcg`",
+      "side": "added"
+     },
+     {
+      "arm": "",
+      "count": 2,
+      "description": "unresolved resource identity `rkt`",
+      "side": "added"
+     },
+     {
+      "arm": "",
+      "count": 1,
+      "description": "unresolved resource identity `rktp`",
+      "side": "added"
+     },
+     {
+      "arm": "",
+      "count": 1,
+      "description": "unresolved resource identity `tinfo`",
+      "side": "added"
+     },
+     {
+      "arm": "",
+      "count": 2,
+      "description": "unresolved resource identity `tp_key`",
+      "side": "added"
+     },
+     {
+      "arm": "other-line",
+      "count": 2,
+      "description": "call to uncontracted function `mk_http_thread_destroy`",
+      "side": "removed"
+     },
+     {
+      "arm": "other-line",
+      "count": 47,
+      "description": "call to uncontracted function `rd_kafka_log0`",
+      "side": "removed"
+     },
+     {
+      "arm": "other-line",
+      "count": 1,
+      "description": "call to uncontracted function `rd_kafka_log_buf`",
+      "side": "removed"
+     },
+     {
+      "arm": "other-line",
+      "count": 3,
+      "description": "call to uncontracted function `rd_kafka_mock_cgrp_classic_member_active`",
+      "side": "removed"
+     },
+     {
+      "arm": "other-line",
+      "count": 6,
+      "description": "call to uncontracted function `rd_kafka_mock_cgrp_classic_set_state`",
+      "side": "removed"
+     },
+     {
+      "arm": "other-line",
+      "count": 1,
+      "description": "call to uncontracted function `rd_kafka_mock_cgrp_consumer_member_active`",
+      "side": "removed"
+     },
+     {
+      "arm": "other-line",
+      "count": 2,
+      "description": "call to uncontracted function `rd_kafka_mock_sharegroup_member_active`",
+      "side": "removed"
+     },
+     {
+      "arm": "other-line",
+      "count": 2,
+      "description": "call to uncontracted function `rd_kafka_share_log_fetch_stall`",
+      "side": "removed"
+     },
+     {
+      "arm": "other-line",
+      "count": 4,
+      "description": "call to uncontracted function `rd_kafka_topic_set_state`",
+      "side": "removed"
+     },
+     {
+      "arm": "other-line",
+      "count": 64,
+      "description": "indirect memory access is outside the resource projection",
+      "side": "removed"
+     },
+     {
+      "arm": "other-line",
+      "count": 4,
+      "description": "unmodeled call, aggregate or indirect access in branch condition",
+      "side": "removed"
+     },
+     {
+      "arm": "other-line",
+      "count": 1,
+      "description": "unmodeled call, aggregate or indirect access in for-loop condition",
+      "side": "removed"
+     },
+     {
+      "arm": "other-line",
+      "count": 1,
+      "description": "unresolved resource identity `member`",
+      "side": "removed"
+     },
+     {
+      "arm": "other-line",
+      "count": 1,
+      "description": "unresolved resource identity `mth`",
+      "side": "removed"
+     },
+     {
+      "arm": "other-line",
+      "count": 1,
+      "description": "unresolved resource identity `paths`",
+      "side": "removed"
+     },
+     {
+      "arm": "other-line",
+      "count": 57,
+      "description": "unresolved resource identity `rk`",
+      "side": "removed"
+     },
+     {
+      "arm": "other-line",
+      "count": 1,
+      "description": "unresolved resource identity `rkcg`",
+      "side": "removed"
+     },
+     {
+      "arm": "other-line",
+      "count": 2,
+      "description": "unresolved resource identity `rkt`",
+      "side": "removed"
+     }
+    ],
+    "outer_rows_added_to_moved": {
+     "all": [
+      [
+       "mk_server/mk_scheduler.c",
+       "mk_sched_threads_destroy_conn",
+       "custody"
+      ],
+      [
+       "mk_server/mk_scheduler.c",
+       "sched_thread_cleanup",
+       "custody"
+      ],
+      [
+       "rdkafka.c",
+       "rd_kafka_log0",
+       "combined"
+      ],
+      [
+       "rdkafka.c",
+       "rd_kafka_log0",
+       "custody"
+      ],
+      [
+       "rdkafka.c",
+       "rd_kafka_share_ack_commit_cb_register_op",
+       "custody"
+      ],
+      [
+       "rdkafka.c",
+       "rd_kafka_share_log_fetch_stall",
+       "custody"
+      ],
+      [
+       "rdkafka_mock_cgrp.c",
+       "rd_kafka_mock_cgrp_classic_member_active",
+       "custody"
+      ],
+      [
+       "rdkafka_mock_cgrp.c",
+       "rd_kafka_mock_cgrp_classic_set_state",
+       "custody"
+      ],
+      [
+       "rdkafka_mock_cgrp.c",
+       "rd_kafka_mock_cgrp_consumer_member_active",
+       "custody"
+      ],
+      [
+       "rdkafka_mock_sharegrp.c",
+       "rd_kafka_mock_sharegroup_member_active",
+       "custody"
+      ],
+      [
+       "rdkafka_topic.c",
+       "rd_kafka_topic_set_state",
+       "combined"
+      ],
+      [
+       "rdkafka_topic.c",
+       "rd_kafka_topic_set_state",
+       "custody"
+      ]
+     ],
+     "flb_external_plugin": [
+      [
+       "mk_server/mk_scheduler.c",
+       "mk_sched_threads_destroy_conn",
+       "custody"
+      ],
+      [
+       "mk_server/mk_scheduler.c",
+       "sched_thread_cleanup",
+       "custody"
+      ],
+      [
+       "rdkafka.c",
+       "rd_kafka_log0",
+       "combined"
+      ],
+      [
+       "rdkafka.c",
+       "rd_kafka_log0",
+       "custody"
+      ],
+      [
+       "rdkafka.c",
+       "rd_kafka_share_ack_commit_cb_register_op",
+       "custody"
+      ],
+      [
+       "rdkafka.c",
+       "rd_kafka_share_log_fetch_stall",
+       "custody"
+      ],
+      [
+       "rdkafka_mock_cgrp.c",
+       "rd_kafka_mock_cgrp_classic_member_active",
+       "custody"
+      ],
+      [
+       "rdkafka_mock_cgrp.c",
+       "rd_kafka_mock_cgrp_classic_set_state",
+       "custody"
+      ],
+      [
+       "rdkafka_mock_cgrp.c",
+       "rd_kafka_mock_cgrp_consumer_member_active",
+       "custody"
+      ],
+      [
+       "rdkafka_mock_sharegrp.c",
+       "rd_kafka_mock_sharegroup_member_active",
+       "custody"
+      ],
+      [
+       "rdkafka_topic.c",
+       "rd_kafka_topic_set_state",
+       "combined"
+      ],
+      [
+       "rdkafka_topic.c",
+       "rd_kafka_topic_set_state",
+       "custody"
+      ]
+     ],
+     "rk_plugin_library": [
+      [
+       "mk_server/mk_scheduler.c",
+       "mk_sched_threads_destroy_conn",
+       "custody"
+      ],
+      [
+       "mk_server/mk_scheduler.c",
+       "sched_thread_cleanup",
+       "custody"
+      ],
+      [
+       "rdkafka.c",
+       "rd_kafka_log0",
+       "combined"
+      ],
+      [
+       "rdkafka.c",
+       "rd_kafka_log0",
+       "custody"
+      ],
+      [
+       "rdkafka.c",
+       "rd_kafka_share_ack_commit_cb_register_op",
+       "custody"
+      ],
+      [
+       "rdkafka.c",
+       "rd_kafka_share_log_fetch_stall",
+       "custody"
+      ],
+      [
+       "rdkafka_mock_cgrp.c",
+       "rd_kafka_mock_cgrp_classic_member_active",
+       "custody"
+      ],
+      [
+       "rdkafka_mock_cgrp.c",
+       "rd_kafka_mock_cgrp_classic_set_state",
+       "custody"
+      ],
+      [
+       "rdkafka_mock_cgrp.c",
+       "rd_kafka_mock_cgrp_consumer_member_active",
+       "custody"
+      ],
+      [
+       "rdkafka_mock_sharegrp.c",
+       "rd_kafka_mock_sharegroup_member_active",
+       "custody"
+      ],
+      [
+       "rdkafka_topic.c",
+       "rd_kafka_topic_set_state",
+       "combined"
+      ],
+      [
+       "rdkafka_topic.c",
+       "rd_kafka_topic_set_state",
+       "custody"
+      ]
+     ]
+    }
+   },
+   "base->tip": {
+    "attribution": "all",
+    "custody": [
+     {
+      "Safe": 977,
+      "Unknown": 3848,
+      "Unsafe": 9
+     },
+     {
+      "Safe": 999,
+      "Unknown": 3826,
+      "Unsafe": 9
+     }
+    ],
+    "static_combined": [
+     {
+      "Pending": 0,
+      "Safe": 849,
+      "Unknown": 4045,
+      "Unsafe": 27
+     },
+     {
+      "Pending": 0,
+      "Safe": 859,
+      "Unknown": 4035,
+      "Unsafe": 27
+     }
+    ],
+    "static_null": [
+     {
+      "Pending": 0,
+      "Safe": 2549,
+      "Unknown": 2354,
+      "Unsafe": 18
+     },
+     {
+      "Pending": 0,
+      "Safe": 2549,
+      "Unknown": 2354,
+      "Unsafe": 18
+     }
+    ],
+    "status_moves": [
+     {
+      "row": [
+       "librdkafka",
+       "rdkafka.c",
+       "rd_kafka_log0"
+      ],
+      "status": [
+       "Unknown",
+       "Safe"
+      ],
+      "leaves_removed": [
+       {
+        "description": "call to uncontracted function `rd_kafka_log_buf`",
+        "origin": "rdkafka.c:347"
+       }
+      ],
+      "leaves_added": []
+     },
+     {
+      "row": [
+       "librdkafka",
+       "rdkafka.c",
+       "rd_kafka_log_print"
+      ],
+      "status": [
+       "Unknown",
+       "Safe"
+      ],
+      "leaves_removed": [
+       {
+        "description": "indirect memory access is outside the resource projection",
+        "origin": "rdkafka.c:388"
+       }
+      ],
+      "leaves_added": []
+     },
+     {
+      "row": [
+       "librdkafka",
+       "rdkafka.c",
+       "rd_kafka_log_syslog"
+      ],
+      "status": [
+       "Unknown",
+       "Safe"
+      ],
+      "leaves_removed": [
+       {
+        "description": "unmodeled call, aggregate or indirect access in branch condition",
+        "origin": "rdkafka.c:404"
+       }
+      ],
+      "leaves_added": []
+     },
+     {
+      "row": [
+       "librdkafka",
+       "rdkafka.c",
+       "rd_kafka_set_logger"
+      ],
+      "status": [
+       "Unknown",
+       "Safe"
+      ],
+      "leaves_removed": [
+       {
+        "description": "unmodeled call, aggregate or indirect access in branch condition",
+        "origin": "rdkafka.c:415"
+       }
+      ],
+      "leaves_added": []
+     },
+     {
+      "row": [
+       "librdkafka",
+       "rdkafka.c",
+       "rd_kafka_share_ack_commit_cb_register_op"
+      ],
+      "status": [
+       "Unknown",
+       "Safe"
+      ],
+      "leaves_removed": [
+       {
+        "description": "indirect memory access is outside the resource projection",
+        "origin": "rdkafka.c:3250"
+       }
+      ],
+      "leaves_added": []
+     },
+     {
+      "row": [
+       "librdkafka",
+       "rdkafka.c",
+       "rd_kafka_share_log_fetch_stall"
+      ],
+      "status": [
+       "Unknown",
+       "Safe"
+      ],
+      "leaves_removed": [
+       {
+        "description": "unresolved resource identity `rkcg`",
+        "origin": "rdkafka.c:2379"
+       },
+       {
+        "description": "indirect memory access is outside the resource projection",
+        "origin": "rdkafka.c:2377"
+       }
+      ],
+      "leaves_added": []
+     },
+     {
+      "row": [
+       "librdkafka",
+       "rdkafka_conf.c",
+       "rd_kafka_anyconf_set_modified"
+      ],
+      "status": [
+       "Unknown",
+       "Safe"
+      ],
+      "leaves_removed": [
+       {
+        "description": "unresolved resource identity `conf`",
+        "origin": "rdkafka_conf.c:269"
+       },
+       {
+        "description": "unmodeled call, aggregate or indirect access in branch condition",
+        "origin": "rdkafka_conf.c:271"
+       }
+      ],
+      "leaves_added": []
+     },
+     {
+      "row": [
+       "librdkafka",
+       "rdkafka_mock.c",
+       "rd_kafka_mock_cluster_io_clear_events"
+      ],
+      "status": [
+       "Unknown",
+       "Safe"
+      ],
+      "leaves_removed": [
+       {
+        "description": "unmodeled call, aggregate or indirect access in branch condition",
+        "origin": "rdkafka_mock.c:1173"
+       }
+      ],
+      "leaves_added": []
+     },
+     {
+      "row": [
+       "librdkafka",
+       "rdkafka_mock.c",
+       "rd_kafka_mock_cluster_io_set_event"
+      ],
+      "status": [
+       "Unknown",
+       "Safe"
+      ],
+      "leaves_removed": [
+       {
+        "description": "unmodeled call, aggregate or indirect access in branch condition",
+        "origin": "rdkafka_mock.c:1153"
+       }
+      ],
+      "leaves_added": []
+     },
+     {
+      "row": [
+       "librdkafka",
+       "rdkafka_mock.c",
+       "rd_kafka_mock_cluster_io_set_events"
+      ],
+      "status": [
+       "Unknown",
+       "Safe"
+      ],
+      "leaves_removed": [
+       {
+        "description": "unmodeled call, aggregate or indirect access in branch condition",
+        "origin": "rdkafka_mock.c:1130"
+       }
+      ],
+      "leaves_added": []
+     },
+     {
+      "row": [
+       "librdkafka",
+       "rdkafka_mock.c",
+       "rd_kafka_mock_connection_set_blocking"
+      ],
+      "status": [
+       "Unknown",
+       "Safe"
+      ],
+      "leaves_removed": [
+       {
+        "description": "call to uncontracted function `rd_kafka_mock_cluster_io_set_event`",
+        "origin": "rdkafka_mock.c:1693"
+       }
+      ],
+      "leaves_added": []
+     },
+     {
+      "row": [
+       "librdkafka",
+       "rdkafka_mock_cgrp.c",
+       "rd_kafka_mock_cgrp_classic_member_active"
+      ],
+      "status": [
+       "Unknown",
+       "Safe"
+      ],
+      "leaves_removed": [
+       {
+        "description": "call to uncontracted function `rd_kafka_log0`",
+        "origin": "rdkafka_mock_cgrp.c:75"
+       }
+      ],
+      "leaves_added": []
+     },
+     {
+      "row": [
+       "librdkafka",
+       "rdkafka_mock_cgrp.c",
+       "rd_kafka_mock_cgrp_classic_set_state"
+      ],
+      "status": [
+       "Unknown",
+       "Safe"
+      ],
+      "leaves_removed": [
+       {
+        "description": "indirect memory access is outside the resource projection",
+        "origin": "rdkafka_mock_cgrp.c:58"
+       }
+      ],
+      "leaves_added": []
+     },
+     {
+      "row": [
+       "librdkafka",
+       "rdkafka_mock_cgrp.c",
+       "rd_kafka_mock_cgrp_consumer_member_active"
+      ],
+      "status": [
+       "Unknown",
+       "Safe"
+      ],
+      "leaves_removed": [
+       {
+        "description": "call to uncontracted function `rd_kafka_log0`",
+        "origin": "rdkafka_mock_cgrp.c:1338"
+       }
+      ],
+      "leaves_added": []
+     },
+     {
+      "row": [
+       "librdkafka",
+       "rdkafka_mock_sharegrp.c",
+       "rd_kafka_mock_sharegroup_member_active"
+      ],
+      "status": [
+       "Unknown",
+       "Safe"
+      ],
+      "leaves_removed": [
+       {
+        "description": "call to uncontracted function `rd_kafka_log0`",
+        "origin": "rdkafka_mock_sharegrp.c:219"
+       }
+      ],
+      "leaves_added": []
+     },
+     {
+      "row": [
+       "librdkafka",
+       "rdkafka_sasl_oauthbearer_oidc.c",
+       "rd_kafka_oidc_assertion_get_algo_label"
+      ],
+      "status": [
+       "Unknown",
+       "Safe"
+      ],
+      "leaves_removed": [
+       {
+        "description": "unmodeled call, aggregate or indirect access in branch condition",
+        "origin": "rdkafka_sasl_oauthbearer_oidc.c:241"
+       }
+      ],
+      "leaves_added": []
+     },
+     {
+      "row": [
+       "librdkafka",
+       "rdkafka_telemetry_decode.c",
+       "unit_test_telemetry_decode_error"
+      ],
+      "status": [
+       "Unknown",
+       "Safe"
+      ],
+      "leaves_removed": [
+       {
+        "description": "unmodeled call, aggregate or indirect access in branch condition",
+        "origin": "rdkafka_telemetry_decode.c:522"
+       }
+      ],
+      "leaves_added": []
+     },
+     {
+      "row": [
+       "librdkafka",
+       "rdkafka_topic.c",
+       "rd_kafka_topic_set_state"
+      ],
+      "status": [
+       "Unknown",
+       "Safe"
+      ],
+      "leaves_removed": [
+       {
+        "description": "indirect memory access is outside the resource projection",
+        "origin": "rdkafka_topic.c:713"
+       }
+      ],
+      "leaves_added": []
+     },
+     {
+      "row": [
+       "librdkafka",
+       "rdkafka_txnmgr.c",
+       "rd_kafka_txn_state_transition_is_valid"
+      ],
+      "status": [
+       "Unknown",
+       "Safe"
+      ],
+      "leaves_removed": [
+       {
+        "description": "unmodeled call, aggregate or indirect access in branch condition",
+        "origin": "rdkafka_txnmgr.c:220"
+       }
+      ],
+      "leaves_added": []
+     },
+     {
+      "row": [
+       "monkey-libevent",
+       "mk_server/mk_config.c",
+       "mk_config_signature"
+      ],
+      "status": [
+       "Unknown",
+       "Safe"
+      ],
+      "leaves_removed": [
+       {
+        "description": "indirect memory access is outside the resource projection",
+        "origin": "mk_server/mk_config.c:505"
+       },
+       {
+        "description": "indirect memory access is outside the resource projection",
+        "origin": "mk_server/mk_config.c:510"
+       },
+       {
+        "description": "indirect memory access is outside the resource projection",
+        "origin": "mk_server/mk_config.c:514"
+       }
+      ],
+      "leaves_added": []
+     },
+     {
+      "row": [
+       "monkey-libevent",
+       "mk_server/mk_scheduler.c",
+       "mk_sched_threads_destroy_conn"
+      ],
+      "status": [
+       "Unknown",
+       "Safe"
+      ],
+      "leaves_removed": [
+       {
+        "description": "unresolved resource identity `mth`",
+        "origin": "mk_server/mk_scheduler.c:668"
+       },
+       {
+        "description": "call to uncontracted function `mk_http_thread_destroy`",
+        "origin": "mk_server/mk_scheduler.c:669"
+       }
+      ],
+      "leaves_added": []
+     },
+     {
+      "row": [
+       "monkey-libevent",
+       "mk_server/mk_scheduler.c",
+       "sched_thread_cleanup"
+      ],
+      "status": [
+       "Unknown",
+       "Safe"
+      ],
+      "leaves_removed": [
+       {
+        "description": "call to uncontracted function `mk_http_thread_destroy`",
+        "origin": "mk_server/mk_scheduler.c:625"
+       }
+      ],
+      "leaves_added": []
+     }
+    ],
+    "rows_differing_beyond_environment_digests": 648,
+    "null_records_differing_beyond_environment_digests": [
+     {
+      "function": "mk_config_signature",
+      "custody": "Safe",
+      "combined": "Safe",
+      "null_verdict": "Safe"
+     },
+     {
+      "function": "rd_kafka_log0",
+      "custody": "Safe",
+      "combined": "Safe",
+      "null_verdict": "Safe"
+     },
+     {
+      "function": "rd_kafka_log_print",
+      "custody": "Safe",
+      "combined": "Safe",
+      "null_verdict": "Safe"
+     },
+     {
+      "function": "rd_kafka_log_syslog",
+      "custody": "Safe",
+      "combined": "Safe",
+      "null_verdict": "Safe"
+     },
+     {
+      "function": "rd_kafka_set_logger",
+      "custody": "Safe",
+      "combined": "Safe",
+      "null_verdict": "Safe"
+     },
+     {
+      "function": "rd_kafka_anyconf_set_modified",
+      "custody": "Safe",
+      "combined": "Safe",
+      "null_verdict": "Safe"
+     },
+     {
+      "function": "rd_kafka_oidc_assertion_get_algo_label",
+      "custody": "Safe",
+      "combined": "Safe",
+      "null_verdict": "Safe"
+     },
+     {
+      "function": "unit_test_telemetry_decode_error",
+      "custody": "Safe",
+      "combined": "Safe",
+      "null_verdict": "Safe"
+     },
+     {
+      "function": "rd_kafka_topic_set_state",
+      "custody": "Safe",
+      "combined": "Safe",
+      "null_verdict": "Safe"
+     },
+     {
+      "function": "rd_kafka_txn_state_transition_is_valid",
+      "custody": "Safe",
+      "combined": "Safe",
+      "null_verdict": "Safe"
+     },
+     {
+      "function": "rd_kafka_share_log_fetch_stall",
+      "custody": "Safe",
+      "combined": "Unknown",
+      "null_verdict": "Unknown"
+     },
+     {
+      "function": "mk_sched_threads_destroy_conn",
+      "custody": "Safe",
+      "combined": "Unknown",
+      "null_verdict": "Unknown"
+     },
+     {
+      "function": "sched_thread_cleanup",
+      "custody": "Safe",
+      "combined": "Unknown",
+      "null_verdict": "Unknown"
+     },
+     {
+      "function": "rd_kafka_share_ack_commit_cb_register_op",
+      "custody": "Safe",
+      "combined": "Unknown",
+      "null_verdict": "Unknown"
+     },
+     {
+      "function": "rd_kafka_mock_cluster_io_clear_events",
+      "custody": "Safe",
+      "combined": "Unknown",
+      "null_verdict": "Unknown"
+     },
+     {
+      "function": "rd_kafka_mock_cluster_io_set_event",
+      "custody": "Safe",
+      "combined": "Unknown",
+      "null_verdict": "Unknown"
+     },
+     {
+      "function": "rd_kafka_mock_cluster_io_set_events",
+      "custody": "Safe",
+      "combined": "Unknown",
+      "null_verdict": "Unknown"
+     },
+     {
+      "function": "rd_kafka_mock_connection_set_blocking",
+      "custody": "Safe",
+      "combined": "Unknown",
+      "null_verdict": "Unknown"
+     },
+     {
+      "function": "rd_kafka_mock_cgrp_classic_member_active",
+      "custody": "Safe",
+      "combined": "Unknown",
+      "null_verdict": "Unknown"
+     },
+     {
+      "function": "rd_kafka_mock_cgrp_classic_set_state",
+      "custody": "Safe",
+      "combined": "Unknown",
+      "null_verdict": "Unknown"
+     },
+     {
+      "function": "rd_kafka_mock_cgrp_consumer_member_active",
+      "custody": "Safe",
+      "combined": "Unknown",
+      "null_verdict": "Unknown"
+     },
+     {
+      "function": "rd_kafka_mock_sharegroup_member_active",
+      "custody": "Safe",
+      "combined": "Unknown",
+      "null_verdict": "Unknown"
+     },
+     {
+      "function": "rd_kafka_header_cmp_str",
+      "custody": "Unknown",
+      "combined": "Unknown",
+      "null_verdict": "Safe"
+     },
+     {
+      "function": "rd_kafka_msgset_reader_peek_msg_version",
+      "custody": "Unknown",
+      "combined": "Unknown",
+      "null_verdict": "Unknown"
+     },
+     {
+      "function": "rd_kafka_transport_ssl_passwd_cb",
+      "custody": "Unknown",
+      "combined": "Unknown",
+      "null_verdict": "Safe"
+     },
+     {
+      "function": "rd_kafka_sasl_oauthbearer_build_client_first_message",
+      "custody": "Unknown",
+      "combined": "Unknown",
+      "null_verdict": "Unknown"
+     },
+     {
+      "function": "rd_kafka_ssl_cert_callback",
+      "custody": "Unknown",
+      "combined": "Unknown",
+      "null_verdict": "Unknown"
+     },
+     {
+      "function": "rd_kafka_cgrp_handle_LeaveGroup",
+      "custody": "Unknown",
+      "combined": "Unknown",
+      "null_verdict": "Unknown"
+     },
+     {
+      "function": "rd_kafka_cgrp_handle_ConsumerGroupHeartbeat_leave",
+      "custody": "Unknown",
+      "combined": "Unknown",
+      "null_verdict": "Unknown"
+     },
+     {
+      "function": "rd_kafka_cgrp_handle_ShareGroupHeartbeat_leave",
+      "custody": "Unknown",
+      "combined": "Unknown",
+      "null_verdict": "Unknown"
+     },
+     {
+      "function": "rd_kafka_mock_connection_write_out_tmr_cb",
+      "custody": "Unknown",
+      "combined": "Unknown",
+      "null_verdict": "Unknown"
+     },
+     {
+      "function": "rd_kafka_DeleteRecords_response_merge",
+      "custody": "Unknown",
+      "combined": "Unknown",
+      "null_verdict": "Unknown"
+     },
+     {
+      "function": "rd_kafka_mock_buf_write_Metadata_Topic",
+      "custody": "Unknown",
+      "combined": "Unknown",
+      "null_verdict": "Unknown"
+     },
+     {
+      "function": "rd_kafka_anyconf_warn_deprecated",
+      "custody": "Unknown",
+      "combined": "Unknown",
+      "null_verdict": "Unknown"
+     }
+    ],
+    "leaf_trade": [
+     {
+      "arm": "",
+      "count": 1,
+      "description": "call to uncontracted function `cnd_broadcast`",
+      "side": "added"
+     },
+     {
+      "arm": "",
+      "count": 1,
+      "description": "call to uncontracted function `cnd_signal`",
+      "side": "added"
+     },
+     {
+      "arm": "",
+      "count": 2,
+      "description": "call to uncontracted function `rd_atomic32_set`",
+      "side": "added"
+     },
+     {
+      "arm": "",
+      "count": 1,
+      "description": "call to uncontracted function `rd_http_error_new`",
+      "side": "added"
+     },
+     {
+      "arm": "",
+      "count": 1,
+      "description": "call to uncontracted function `rd_kafka_ConfigEntry_new`",
+      "side": "added"
+     },
+     {
+      "arm": "",
+      "count": 1,
+      "description": "call to uncontracted function `rd_kafka_interceptors_on_request_sent`",
+      "side": "added"
+     },
+     {
+      "arm": "",
+      "count": 1,
+      "description": "call to uncontracted function `rd_kafka_timer_next`",
+      "side": "added"
+     },
+     {
+      "arm": "",
+      "count": 1,
+      "description": "call to uncontracted function `rd_kafka_timer_start0`",
+      "side": "added"
+     },
+     {
+      "arm": "",
+      "count": 4,
+      "description": "call to uncontracted function `rd_kafka_timer_stop`",
+      "side": "added"
+     },
+     {
+      "arm": "",
+      "count": 1,
+      "description": "call to uncontracted function `rd_list_apply`",
+      "side": "added"
+     },
+     {
+      "arm": "",
+      "count": 1,
+      "description": "call to uncontracted function `rd_strtup_new`",
+      "side": "added"
+     },
+     {
+      "arm": "",
+      "count": 11,
+      "description": "indirect memory access is outside the resource projection",
+      "side": "added"
+     },
+     {
+      "arm": "",
+      "count": 1,
+      "description": "unresolved resource identity `arr`",
+      "side": "added"
+     },
+     {
+      "arm": "",
+      "count": 1,
+      "description": "unresolved resource identity `conf`",
+      "side": "added"
+     },
+     {
+      "arm": "",
+      "count": 1,
+      "description": "unresolved resource identity `mconn`",
+      "side": "added"
+     },
+     {
+      "arm": "",
+      "count": 1,
+      "description": "unresolved resource identity `mpart_leader`",
+      "side": "added"
+     },
+     {
+      "arm": "",
+      "count": 1,
+      "description": "unresolved resource identity `mrkb`",
+      "side": "added"
+     },
+     {
+      "arm": "",
+      "count": 2,
+      "description": "unresolved resource identity `mth`",
+      "side": "added"
+     },
+     {
+      "arm": "",
+      "count": 1,
+      "description": "unresolved resource identity `mtopic`",
+      "side": "added"
+     },
+     {
+      "arm": "",
+      "count": 1,
+      "description": "unresolved resource identity `names`",
+      "side": "added"
+     },
+     {
+      "arm": "",
+      "count": 1,
+      "description": "unresolved resource identity `partition`",
+      "side": "added"
+     },
+     {
+      "arm": "",
+      "count": 1,
+      "description": "unresolved resource identity `payload`",
+      "side": "added"
+     },
+     {
+      "arm": "",
+      "count": 2,
+      "description": "unresolved resource identity `prop`",
+      "side": "added"
+     },
+     {
+      "arm": "",
+      "count": 1,
+      "description": "unresolved resource identity `psecret`",
+      "side": "added"
+     },
+     {
+      "arm": "",
+      "count": 1,
+      "description": "unresolved resource identity `rkbuf`",
+      "side": "added"
+     },
+     {
+      "arm": "",
+      "count": 3,
+      "description": "unresolved resource identity `rkcg`",
+      "side": "added"
+     },
+     {
+      "arm": "",
+      "count": 2,
+      "description": "unresolved resource identity `rkt`",
+      "side": "added"
+     },
+     {
+      "arm": "",
+      "count": 1,
+      "description": "unresolved resource identity `rktp`",
+      "side": "added"
+     },
+     {
+      "arm": "",
+      "count": 1,
+      "description": "unresolved resource identity `tinfo`",
+      "side": "added"
+     },
+     {
+      "arm": "",
+      "count": 2,
+      "description": "unresolved resource identity `tp_key`",
+      "side": "added"
+     },
+     {
+      "arm": "other-line",
+      "count": 2,
+      "description": "call to uncontracted function `mk_http_thread_destroy`",
+      "side": "removed"
+     },
+     {
+      "arm": "other-line",
+      "count": 1,
+      "description": "call to uncontracted function `rd_kafka_anyconf_set_modified`",
+      "side": "removed"
+     },
+     {
+      "arm": "other-line",
+      "count": 47,
+      "description": "call to uncontracted function `rd_kafka_log0`",
+      "side": "removed"
+     },
+     {
+      "arm": "other-line",
+      "count": 1,
+      "description": "call to uncontracted function `rd_kafka_log_buf`",
+      "side": "removed"
+     },
+     {
+      "arm": "other-line",
+      "count": 3,
+      "description": "call to uncontracted function `rd_kafka_mock_cgrp_classic_member_active`",
+      "side": "removed"
+     },
+     {
+      "arm": "other-line",
+      "count": 6,
+      "description": "call to uncontracted function `rd_kafka_mock_cgrp_classic_set_state`",
+      "side": "removed"
+     },
+     {
+      "arm": "other-line",
+      "count": 1,
+      "description": "call to uncontracted function `rd_kafka_mock_cgrp_consumer_member_active`",
+      "side": "removed"
+     },
+     {
+      "arm": "other-line",
+      "count": 1,
+      "description": "call to uncontracted function `rd_kafka_mock_cluster_io_clear_events`",
+      "side": "removed"
+     },
+     {
+      "arm": "other-line",
+      "count": 1,
+      "description": "call to uncontracted function `rd_kafka_mock_cluster_io_set_event`",
+      "side": "removed"
+     },
+     {
+      "arm": "other-line",
+      "count": 2,
+      "description": "call to uncontracted function `rd_kafka_mock_cluster_io_set_events`",
+      "side": "removed"
+     },
+     {
+      "arm": "other-line",
+      "count": 2,
+      "description": "call to uncontracted function `rd_kafka_mock_sharegroup_member_active`",
+      "side": "removed"
+     },
+     {
+      "arm": "other-line",
+      "count": 2,
+      "description": "call to uncontracted function `rd_kafka_share_log_fetch_stall`",
+      "side": "removed"
+     },
+     {
+      "arm": "other-line",
+      "count": 4,
+      "description": "call to uncontracted function `rd_kafka_topic_set_state`",
+      "side": "removed"
+     },
+     {
+      "arm": "other-line",
+      "count": 78,
+      "description": "indirect memory access is outside the resource projection",
+      "side": "removed"
+     },
+     {
+      "arm": "literal",
+      "count": 68,
+      "description": "unmodeled call, aggregate or indirect access in branch condition",
+      "side": "removed"
+     },
+     {
+      "arm": "other-line",
+      "count": 49,
+      "description": "unmodeled call, aggregate or indirect access in branch condition",
+      "side": "removed"
+     },
+     {
+      "arm": "other-line",
+      "count": 1,
+      "description": "unmodeled call, aggregate or indirect access in for-loop condition",
+      "side": "removed"
+     },
+     {
+      "arm": "other-line",
+      "count": 1,
+      "description": "unresolved resource identity `conf`",
+      "side": "removed"
+     },
+     {
+      "arm": "other-line",
+      "count": 1,
+      "description": "unresolved resource identity `member`",
+      "side": "removed"
+     },
+     {
+      "arm": "other-line",
+      "count": 1,
+      "description": "unresolved resource identity `mth`",
+      "side": "removed"
+     },
+     {
+      "arm": "other-line",
+      "count": 1,
+      "description": "unresolved resource identity `paths`",
+      "side": "removed"
+     },
+     {
+      "arm": "other-line",
+      "count": 4,
+      "description": "unresolved resource identity `prop`",
+      "side": "removed"
+     },
+     {
+      "arm": "other-line",
+      "count": 57,
+      "description": "unresolved resource identity `rk`",
+      "side": "removed"
+     },
+     {
+      "arm": "literal",
+      "count": 1,
+      "description": "unresolved resource identity `rkb`",
+      "side": "removed"
+     },
+     {
+      "arm": "other-line",
+      "count": 1,
+      "description": "unresolved resource identity `rkcg`",
+      "side": "removed"
+     },
+     {
+      "arm": "other-line",
+      "count": 2,
+      "description": "unresolved resource identity `rkt`",
+      "side": "removed"
+     }
+    ],
+    "outer_rows_added_to_moved": {
+     "all": [
+      [
+       "mk_server/mk_scheduler.c",
+       "mk_sched_threads_destroy_conn",
+       "custody"
+      ],
+      [
+       "mk_server/mk_scheduler.c",
+       "sched_thread_cleanup",
+       "custody"
+      ],
+      [
+       "rdkafka.c",
+       "rd_kafka_log0",
+       "combined"
+      ],
+      [
+       "rdkafka.c",
+       "rd_kafka_log0",
+       "custody"
+      ],
+      [
+       "rdkafka.c",
+       "rd_kafka_share_ack_commit_cb_register_op",
+       "custody"
+      ],
+      [
+       "rdkafka.c",
+       "rd_kafka_share_log_fetch_stall",
+       "custody"
+      ],
+      [
+       "rdkafka_mock_cgrp.c",
+       "rd_kafka_mock_cgrp_classic_member_active",
+       "custody"
+      ],
+      [
+       "rdkafka_mock_cgrp.c",
+       "rd_kafka_mock_cgrp_classic_set_state",
+       "custody"
+      ],
+      [
+       "rdkafka_mock_cgrp.c",
+       "rd_kafka_mock_cgrp_consumer_member_active",
+       "custody"
+      ],
+      [
+       "rdkafka_mock_sharegrp.c",
+       "rd_kafka_mock_sharegroup_member_active",
+       "custody"
+      ],
+      [
+       "rdkafka_topic.c",
+       "rd_kafka_topic_set_state",
+       "combined"
+      ],
+      [
+       "rdkafka_topic.c",
+       "rd_kafka_topic_set_state",
+       "custody"
+      ]
+     ],
+     "flb_external_plugin": [
+      [
+       "mk_server/mk_scheduler.c",
+       "mk_sched_threads_destroy_conn",
+       "custody"
+      ],
+      [
+       "mk_server/mk_scheduler.c",
+       "sched_thread_cleanup",
+       "custody"
+      ],
+      [
+       "rdkafka.c",
+       "rd_kafka_log0",
+       "combined"
+      ],
+      [
+       "rdkafka.c",
+       "rd_kafka_log0",
+       "custody"
+      ],
+      [
+       "rdkafka.c",
+       "rd_kafka_share_ack_commit_cb_register_op",
+       "custody"
+      ],
+      [
+       "rdkafka.c",
+       "rd_kafka_share_log_fetch_stall",
+       "custody"
+      ],
+      [
+       "rdkafka_mock_cgrp.c",
+       "rd_kafka_mock_cgrp_classic_member_active",
+       "custody"
+      ],
+      [
+       "rdkafka_mock_cgrp.c",
+       "rd_kafka_mock_cgrp_classic_set_state",
+       "custody"
+      ],
+      [
+       "rdkafka_mock_cgrp.c",
+       "rd_kafka_mock_cgrp_consumer_member_active",
+       "custody"
+      ],
+      [
+       "rdkafka_mock_sharegrp.c",
+       "rd_kafka_mock_sharegroup_member_active",
+       "custody"
+      ],
+      [
+       "rdkafka_topic.c",
+       "rd_kafka_topic_set_state",
+       "combined"
+      ],
+      [
+       "rdkafka_topic.c",
+       "rd_kafka_topic_set_state",
+       "custody"
+      ]
+     ],
+     "rk_plugin_library": [
+      [
+       "mk_server/mk_scheduler.c",
+       "mk_sched_threads_destroy_conn",
+       "custody"
+      ],
+      [
+       "mk_server/mk_scheduler.c",
+       "sched_thread_cleanup",
+       "custody"
+      ],
+      [
+       "rdkafka.c",
+       "rd_kafka_log0",
+       "combined"
+      ],
+      [
+       "rdkafka.c",
+       "rd_kafka_log0",
+       "custody"
+      ],
+      [
+       "rdkafka.c",
+       "rd_kafka_share_ack_commit_cb_register_op",
+       "custody"
+      ],
+      [
+       "rdkafka.c",
+       "rd_kafka_share_log_fetch_stall",
+       "custody"
+      ],
+      [
+       "rdkafka_mock_cgrp.c",
+       "rd_kafka_mock_cgrp_classic_member_active",
+       "custody"
+      ],
+      [
+       "rdkafka_mock_cgrp.c",
+       "rd_kafka_mock_cgrp_classic_set_state",
+       "custody"
+      ],
+      [
+       "rdkafka_mock_cgrp.c",
+       "rd_kafka_mock_cgrp_consumer_member_active",
+       "custody"
+      ],
+      [
+       "rdkafka_mock_sharegrp.c",
+       "rd_kafka_mock_sharegroup_member_active",
+       "custody"
+      ],
+      [
+       "rdkafka_topic.c",
+       "rd_kafka_topic_set_state",
+       "combined"
+      ],
+      [
+       "rdkafka_topic.c",
+       "rd_kafka_topic_set_state",
+       "custody"
+      ]
+     ]
+    }
+   }
+  },
+  "system": {
+   "tipoff->tip": {
+    "attribution": "rule 35",
+    "custody": [
+     {
+      "Safe": 99,
+      "Unknown": 345,
+      "Unsafe": 4
+     },
+     {
+      "Safe": 99,
+      "Unknown": 345,
+      "Unsafe": 4
+     }
+    ],
+    "static_combined": [
+     {
+      "Pending": 0,
+      "Safe": 65,
+      "Unknown": 385,
+      "Unsafe": 4
+     },
+     {
+      "Pending": 0,
+      "Safe": 65,
+      "Unknown": 385,
+      "Unsafe": 4
+     }
+    ],
+    "static_null": [
+     {
+      "Pending": 0,
+      "Safe": 211,
+      "Unknown": 243,
+      "Unsafe": 0
+     },
+     {
+      "Pending": 0,
+      "Safe": 211,
+      "Unknown": 243,
+      "Unsafe": 0
+     }
+    ],
+    "status_moves": [],
+    "rows_differing_beyond_environment_digests": 8,
+    "null_records_differing_beyond_environment_digests": [
+     {
+      "function": "print_storage_info",
+      "custody": "Unknown",
+      "combined": "Unknown",
+      "null_verdict": "Safe"
+     },
+     {
+      "function": "print_storage_info",
+      "custody": "Unknown",
+      "combined": "Unknown",
+      "null_verdict": "Safe"
+     }
+    ],
+    "leaf_trade": [
+     {
+      "arm": "other-line",
+      "count": 4,
+      "description": "indirect memory access is outside the resource projection",
+      "side": "removed"
+     }
+    ],
+    "outer_rows_added_to_moved": {
+     "all": [],
+     "flb_external_plugin": [],
+     "rk_plugin_library": []
+    }
+   },
+   "base->tipoff": {
+    "attribution": "sibling rules 32 and 34",
+    "custody": [
+     {
+      "Safe": 99,
+      "Unknown": 345,
+      "Unsafe": 4
+     },
+     {
+      "Safe": 99,
+      "Unknown": 345,
+      "Unsafe": 4
+     }
+    ],
+    "static_combined": [
+     {
+      "Pending": 0,
+      "Safe": 65,
+      "Unknown": 385,
+      "Unsafe": 4
+     },
+     {
+      "Pending": 0,
+      "Safe": 65,
+      "Unknown": 385,
+      "Unsafe": 4
+     }
+    ],
+    "static_null": [
+     {
+      "Pending": 0,
+      "Safe": 211,
+      "Unknown": 243,
+      "Unsafe": 0
+     },
+     {
+      "Pending": 0,
+      "Safe": 211,
+      "Unknown": 243,
+      "Unsafe": 0
+     }
+    ],
+    "status_moves": [],
+    "rows_differing_beyond_environment_digests": 4,
+    "null_records_differing_beyond_environment_digests": [],
+    "leaf_trade": [],
+    "outer_rows_added_to_moved": {
+     "all": [],
+     "flb_external_plugin": [],
+     "rk_plugin_library": []
+    }
+   },
+   "base->tip": {
+    "attribution": "all",
+    "custody": [
+     {
+      "Safe": 99,
+      "Unknown": 345,
+      "Unsafe": 4
+     },
+     {
+      "Safe": 99,
+      "Unknown": 345,
+      "Unsafe": 4
+     }
+    ],
+    "static_combined": [
+     {
+      "Pending": 0,
+      "Safe": 65,
+      "Unknown": 385,
+      "Unsafe": 4
+     },
+     {
+      "Pending": 0,
+      "Safe": 65,
+      "Unknown": 385,
+      "Unsafe": 4
+     }
+    ],
+    "static_null": [
+     {
+      "Pending": 0,
+      "Safe": 211,
+      "Unknown": 243,
+      "Unsafe": 0
+     },
+     {
+      "Pending": 0,
+      "Safe": 211,
+      "Unknown": 243,
+      "Unsafe": 0
+     }
+    ],
+    "status_moves": [],
+    "rows_differing_beyond_environment_digests": 8,
+    "null_records_differing_beyond_environment_digests": [
+     {
+      "function": "print_storage_info",
+      "custody": "Unknown",
+      "combined": "Unknown",
+      "null_verdict": "Safe"
+     },
+     {
+      "function": "print_storage_info",
+      "custody": "Unknown",
+      "combined": "Unknown",
+      "null_verdict": "Safe"
+     }
+    ],
+    "leaf_trade": [
+     {
+      "arm": "other-line",
+      "count": 4,
+      "description": "indirect memory access is outside the resource projection",
+      "side": "removed"
+     }
+    ],
+    "outer_rows_added_to_moved": {
+     "all": [],
+     "flb_external_plugin": [],
+     "rk_plugin_library": []
+    }
+   }
+  },
+  "slice": {
+   "tipoff->tip": {
+    "attribution": "rule 35",
+    "custody": [
+     {
+      "Pending": 4,
+      "Safe": 57,
+      "Unknown": 342,
+      "Unsafe": 1
+     },
+     {
+      "Pending": 4,
+      "Safe": 57,
+      "Unknown": 342,
+      "Unsafe": 1
+     }
+    ],
+    "static_combined": [
+     {
+      "Pending": 2,
+      "Safe": 35,
+      "Unknown": 368,
+      "Unsafe": 1
+     },
+     {
+      "Pending": 2,
+      "Safe": 35,
+      "Unknown": 368,
+      "Unsafe": 1
+     }
+    ],
+    "static_null": [
+     {
+      "Pending": 0,
+      "Safe": 190,
+      "Unknown": 216,
+      "Unsafe": 0
+     },
+     {
+      "Pending": 0,
+      "Safe": 190,
+      "Unknown": 216,
+      "Unsafe": 0
+     }
+    ],
+    "status_moves": [],
+    "rows_differing_beyond_environment_digests": 17,
+    "null_records_differing_beyond_environment_digests": [],
+    "leaf_trade": [
+     {
+      "arm": "",
+      "count": 2,
+      "description": "call to uncontracted function `flb_pipe_create`",
+      "side": "added"
+     },
+     {
+      "arm": "",
+      "count": 1,
+      "description": "call to uncontracted function `flb_sqldb_open`",
+      "side": "added"
+     },
+     {
+      "arm": "other-line",
+      "count": 11,
+      "description": "indirect memory access is outside the resource projection",
+      "side": "removed"
+     }
+    ],
+    "outer_rows_added_to_moved": {
+     "all": [],
+     "flb_external_plugin": [],
+     "rk_plugin_library": []
+    }
+   },
+   "base->tipoff": {
+    "attribution": "sibling rules 32 and 34",
+    "custody": [
+     {
+      "Pending": 4,
+      "Safe": 57,
+      "Unknown": 342,
+      "Unsafe": 1
+     },
+     {
+      "Pending": 4,
+      "Safe": 57,
+      "Unknown": 342,
+      "Unsafe": 1
+     }
+    ],
+    "static_combined": [
+     {
+      "Pending": 2,
+      "Safe": 35,
+      "Unknown": 368,
+      "Unsafe": 1
+     },
+     {
+      "Pending": 2,
+      "Safe": 35,
+      "Unknown": 368,
+      "Unsafe": 1
+     }
+    ],
+    "static_null": [
+     {
+      "Pending": 0,
+      "Safe": 190,
+      "Unknown": 216,
+      "Unsafe": 0
+     },
+     {
+      "Pending": 0,
+      "Safe": 190,
+      "Unknown": 216,
+      "Unsafe": 0
+     }
+    ],
+    "status_moves": [],
+    "rows_differing_beyond_environment_digests": 8,
+    "null_records_differing_beyond_environment_digests": [],
+    "leaf_trade": [],
+    "outer_rows_added_to_moved": {
+     "all": [],
+     "flb_external_plugin": [],
+     "rk_plugin_library": []
+    }
+   },
+   "base->tip": {
+    "attribution": "all",
+    "custody": [
+     {
+      "Pending": 4,
+      "Safe": 57,
+      "Unknown": 342,
+      "Unsafe": 1
+     },
+     {
+      "Pending": 4,
+      "Safe": 57,
+      "Unknown": 342,
+      "Unsafe": 1
+     }
+    ],
+    "static_combined": [
+     {
+      "Pending": 2,
+      "Safe": 35,
+      "Unknown": 368,
+      "Unsafe": 1
+     },
+     {
+      "Pending": 2,
+      "Safe": 35,
+      "Unknown": 368,
+      "Unsafe": 1
+     }
+    ],
+    "static_null": [
+     {
+      "Pending": 0,
+      "Safe": 190,
+      "Unknown": 216,
+      "Unsafe": 0
+     },
+     {
+      "Pending": 0,
+      "Safe": 190,
+      "Unknown": 216,
+      "Unsafe": 0
+     }
+    ],
+    "status_moves": [],
+    "rows_differing_beyond_environment_digests": 17,
+    "null_records_differing_beyond_environment_digests": [],
+    "leaf_trade": [
+     {
+      "arm": "",
+      "count": 2,
+      "description": "call to uncontracted function `flb_pipe_create`",
+      "side": "added"
+     },
+     {
+      "arm": "",
+      "count": 1,
+      "description": "call to uncontracted function `flb_sqldb_open`",
+      "side": "added"
+     },
+     {
+      "arm": "other-line",
+      "count": 11,
+      "description": "indirect memory access is outside the resource projection",
+      "side": "removed"
+     }
+    ],
+    "outer_rows_added_to_moved": {
+     "all": [],
+     "flb_external_plugin": [],
+     "rk_plugin_library": []
+    }
+   }
+  }
+ },
+ "planner": {
+  "base": {
+   "bodies": 2214,
+   "ceiling": 360,
+   "baseline_same": 4,
+   "baseline_cross": 4,
+   "ceiling_waits_on_bodies": {
+    "0": 4,
+    "1": 253,
+    "2": 68,
+    "3": 14,
+    "4": 5,
+    "5": 5,
+    "6": 5,
+    "7": 2,
+    "9": 2,
+    "11": 1,
+    "13": 1
+   },
+   "positive_bodies": 232
+  },
+  "tipoff": {
+   "bodies": 2203,
+   "ceiling": 358,
+   "baseline_same": 6,
+   "baseline_cross": 6,
+   "ceiling_waits_on_bodies": {
+    "0": 6,
+    "1": 248,
+    "2": 70,
+    "3": 13,
+    "4": 5,
+    "5": 5,
+    "6": 5,
+    "7": 2,
+    "9": 2,
+    "11": 1,
+    "13": 1
+   },
+   "positive_bodies": 229
+  },
+  "tip": {
+   "bodies": 2200,
+   "ceiling": 383,
+   "baseline_same": 6,
+   "baseline_cross": 6,
+   "ceiling_waits_on_bodies": {
+    "0": 6,
+    "1": 249,
+    "2": 94,
+    "3": 13,
+    "4": 5,
+    "5": 5,
+    "6": 5,
+    "7": 2,
+    "8": 1,
+    "9": 1,
+    "11": 1,
+    "13": 1
+   },
+   "positive_bodies": 230
+  }
+ },
+ "unsafe_qualification": "provisional; not an upstream defect claim"
+}

@@ -8,9 +8,9 @@ set -u
 binary=$1
 out=$2
 mkdir -p "$out"
-fb=/home/cosmo/Documents/GitHub/qcore-c/build/cycle19/c-gateway-wave-pin/fluent-bit-clang-source
-mb=/home/cosmo/Documents/GitHub/qcore-c/build/cycle19/c-gateway-wave-pin/monkey/monkey-build
-ms=/home/cosmo/Documents/GitHub/qcore-c/build/cycle19/c-gateway-wave-pin/monkey/monkey-source
+fb=/media/Data/GitHub/quirin-lang/build/cycle19/c-gateway-wave-pin/fluent-bit-clang-source
+mb=/media/Data/GitHub/quirin-lang/build/cycle19/c-gateway-wave-pin/monkey/monkey-build
+ms=/media/Data/GitHub/quirin-lang/build/cycle19/c-gateway-wave-pin/monkey/monkey-source
 "$binary" contracts --source-root "$fb" \
   "$fb/lib/monkey/mk_server/mk_scheduler.c" "$fb/lib/monkey/mk_server/mk_http_thread.c" \
   -I "$mb/mk_core/deps/libevent/include" -I "$ms/mk_core/deps/libevent/include" \

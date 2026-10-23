@@ -1,0 +1,13 @@
+{
+  "note": "Integration of W48-BU-SINGLE-LEAF-BODIES (rule 35): main fast-forwarded to the card tip c96d4325c, which already contained main 8991b7b58. The card's full standing gate ran at d81a788d2ebe4b13887838b65f8dbd06897aca40 (Rust 8587 passed/0 failed/15 ignored, 545 units; fmt, Clippy and both examples 0; 369 Lean audits; 374 Python) under the shared lock; c96d4325c adds only its gate record. Integration adds docs/records only (status, increment, ledger, regenerated matrix and index), so the card gate stands, plus a Python rerun against the committed matrix. providers/ unchanged: provider_tests 133 is CARRIED (not run).",
+  "workspace_tests": 8587,
+  "provider_tests": 133,
+  "python_evidence_validator_tests": 374,
+  "reevaluation_probe_exit": 0,
+  "reevaluation_followup_exit": 0,
+  "cargo_fmt": "clean",
+  "cargo_clippy": "clean",
+  "standing_gate": "card full gate at d81a788d2ebe4b13887838b65f8dbd06897aca40; integration docs-only",
+  "lean_audits": 369,
+  "clang": "present: Ubuntu clang version 21.1.8 (6ubuntu1)"
+}
