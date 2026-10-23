@@ -1,0 +1,42 @@
+{
+  "card": "W48-BU-CMT-MAP-METRIC-GET",
+  "scope": "exact borrowed-formal returns; CMetrics ownership chain remains open",
+  "attempts": [
+    {
+      "id": "BASE-corpus-1",
+      "semantic_source": "8991b7b58fcbd33da082bbb44e819d47a0fb2561",
+      "binary_sha256": "b533088b903f10ad03f78ad4245267fe8b108e853fd410c744a657f32446adde",
+      "queued_at": "2026-10-23T07:18:59.319659+00:00",
+      "audit_started": "2026-10-23T12:08:02.493642+00:00",
+      "ended": "2026-10-23T12:08:02.583679+00:00",
+      "exit": 1,
+      "audit_exit": 1,
+      "failure": "frozen snapshot omitted tracked root cycle19-resource-contracts.json referenced by fluent-bit profile",
+      "analysis_result": "none; failed before corpus analysis",
+      "planner": "not run; prerequisite exit propagated as 1",
+      "logs": [
+        "private/w48-cmt-map/base-measure.log",
+        "private/w48-cmt-map/base-corpus/audit.log",
+        "private/w48-cmt-map/base-corpus/run.json",
+        "private/w48-cmt-map/base-invocation.json"
+      ],
+      "retained": true
+    }
+  ],
+  "retry_preparation": {
+    "created": "2026-10-23T12:09:12.739664+00:00",
+    "reason": "attempt 1 omitted tracked root resource manifest; retained unchanged",
+    "original_snapshot": "private/w48-cmt-map/base-inputs",
+    "retry_snapshot": "private/w48-cmt-map/base-inputs-v2",
+    "files": 310,
+    "added": {
+      "cycle19-resource-contracts.json": "2226e66b96b7a12dcf335e3e4660e6e3c33ce19997efb9be5e6db81441a417a0"
+    },
+    "binary_sha256": "b533088b903f10ad03f78ad4245267fe8b108e853fd410c744a657f32446adde",
+    "all_original_309_inputs_unchanged": true,
+    "root_manifest_from_semantic_base": true,
+    "root_manifest_modules_resolve": true
+  },
+  "retry_state": "queued, no successful BASE or planner claim",
+  "ordering": "successful fresh BASE and planner, then committed prediction, then semantic implementation"
+}
