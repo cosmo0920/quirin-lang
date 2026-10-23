@@ -1,0 +1,32 @@
+{
+ "card": "W48-SCHED-CLEANUP-PRODUCTION",
+ "attempts": [
+  {"name": "base-corpus-8", "revision": "e282aaccc7763da989cf6f3c8f3c51cdd3c8de3c", "route": "corpus", "exit": 0,
+   "custody": {"Safe": 975, "Unknown": 3850, "Unsafe": 9},
+   "binary_sha256": "ebe6cfc6f96d55de273f4a946b93e84d93c845421930d299b813458ab390514f",
+   "private": "private/w48-sched/base-corpus-8", "status": "completed; the first BASE, retained"},
+  {"name": "focus-tip-1", "revision": "e2ef6e832 (debug binary)", "route": "contracts-only run of mk_scheduler.c and mk_http_thread.c (scripts/focus_units.sh)", "exit": 0,
+   "result": "sched_thread_cleanup Safe, mk_sched_threads_destroy_conn Safe, mk_sched_threads_purge/destroy_all Unknown, mk_http_thread_destroy Unknown",
+   "private": "private/w48-sched/focus-tip-1", "status": "iteration evidence only"},
+  {"name": "tip-job-1", "status": "failed: host ENOSPC at its first mkdir after acquiring the lock; no step ran",
+   "private": "private/w48-sched/failed-attempts/tip-job-1.output"},
+  {"name": "tip-job-2", "revision": "c061371d6",
+   "status": "stopped by the card (captured PIDs) nine minutes into its TIP corpus when the integrator asked for a re-measurement on main 49a946c8a; no result",
+   "private": "private/w48-sched/tip-job-2"},
+  {"name": "merged-1 corpus", "revision": "BASE2 49a946c8a / TIP2 403d42214", "exit": [0, 0],
+   "custody": {"base": {"Safe": 977, "Unknown": 3848, "Unsafe": 9}, "tip": {"Safe": 979, "Unknown": 3846, "Unsafe": 9}},
+   "status": "completed; retained as native-comparison-49a946c8a.json", "private": "private/w48-sched/merged-1"},
+  {"name": "merged-1 gate", "status": "interrupted by the controlling-session restart during gate-rust; no exit recorded; a failed attempt",
+   "private": "private/w48-sched/merged-1/gate.interrupted"},
+  {"name": "gate-2", "status": "queued on the lock, never started; withdrawn before the fast-forward to integration main 0217006f2"},
+  {"name": "provider-gate-1", "revision": "e2ef6e832..9325a04b3",
+   "status": "failed: stale qcore-provider-libevent contracts.json inventory before providers/contracts.py sync (provider Rust 1 failed, Python 1 error, inventory and package build exit 1)",
+   "private": "private/w48-sched/provider-gate-1"},
+  {"name": "provider-gate-2", "revision": "489dab482",
+   "status": "passed: provider Rust 133 passed / 0 failed / 1 ignored (43 summaries), Python 25, inventory, five packages built and verified",
+   "private": "private/w48-sched/provider-gate-2"},
+  {"name": "provider-gate-3", "revision": "bde5716da (main 49a946c8a merged)",
+   "status": "passed: provider Rust 133 / 0 / 1 (43 summaries), Python 25, inventory, five packages built and verified",
+   "private": "private/w48-sched/provider-gate-3"}
+ ]
+}
