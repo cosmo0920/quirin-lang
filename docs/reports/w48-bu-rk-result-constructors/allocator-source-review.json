@@ -1,0 +1,48 @@
+{
+  "reviewed": [
+    {
+      "root": "/media/Data/GitHub/quirin-lang/build/cycle19/c-gateway-wave-pin/fluent-bit-clang-source",
+      "revision": "66910c10a4d7eafa810b84229cf2dcf7b0f26f97",
+      "file": "lib/librdkafka-2.15.0/src/rd.h",
+      "file_sha256": "00ab63a66691e80c1a28a5e14b90a7e8df3fc7a25e998b184fcd6390c15f7b0b",
+      "bodies": {
+        "rd_calloc": {
+          "line": 139,
+          "source": "static RD_INLINE RD_UNUSED void *rd_calloc(size_t num, size_t sz) {\n        void *p = calloc(num, sz);\n        rd_assert(p);\n        return p;\n}\n",
+          "sha256": "74dc7a4488f59cecf2f9d093723400f026522711458b8eb903573393f76cfe61"
+        },
+        "rd_strdup": {
+          "line": 161,
+          "source": "static RD_INLINE RD_UNUSED char *rd_strdup(const char *s) {\n#ifndef _WIN32\n        char *n = strdup(s);\n#else\n        char *n = _strdup(s);\n#endif\n        rd_assert(n);\n        return n;\n}\n",
+          "sha256": "f18eafeaf3b767a35502b65aef06181f833f8fb284101de446fe99a76cc5a525"
+        }
+      }
+    },
+    {
+      "root": "/media/Data/GitHub/quirin-lang/private/w45-fb/w46-external-callee-contracts/attempt-1/fluent-bit-clang-source",
+      "revision": "046accf6aded7906f66a1baf0202da349e521736",
+      "file": "lib/librdkafka-2.15.0/src/rd.h",
+      "file_sha256": "00ab63a66691e80c1a28a5e14b90a7e8df3fc7a25e998b184fcd6390c15f7b0b",
+      "bodies": {
+        "rd_calloc": {
+          "line": 139,
+          "source": "static RD_INLINE RD_UNUSED void *rd_calloc(size_t num, size_t sz) {\n        void *p = calloc(num, sz);\n        rd_assert(p);\n        return p;\n}\n",
+          "sha256": "74dc7a4488f59cecf2f9d093723400f026522711458b8eb903573393f76cfe61"
+        },
+        "rd_strdup": {
+          "line": 161,
+          "source": "static RD_INLINE RD_UNUSED char *rd_strdup(const char *s) {\n#ifndef _WIN32\n        char *n = strdup(s);\n#else\n        char *n = _strdup(s);\n#endif\n        rd_assert(n);\n        return n;\n}\n",
+          "sha256": "f18eafeaf3b767a35502b65aef06181f833f8fb284101de446fe99a76cc5a525"
+        }
+      }
+    }
+  ],
+  "body_bytes_identical": true,
+  "obligation": "A non-null wrapper specification must be checked against the complete preprocessed body; the normal return depends on the declared noreturn failure call. Disabled assertion must withdraw a checked non-null specification.",
+  "assertion_source": {
+    "posix": "rdposix.h:159 maps rd_assert(EXPR) to assert(EXPR) unless __COVERITY__ is set; the alternate Coverity failure call must remain independently modeled or refuse.",
+    "windows": "rdwin32.h:217 maps rd_assert(EXPR) to assert(EXPR); no Windows native evidence claimed.",
+    "failure_contract": "quirin-provider-libc:libc/stdlib.qv declares __assert_fail Borrowed -> None, resource_no_return; the source preprocessor and checked body decide whether that call is present.",
+    "configuration_flags_observation": "The pinned rdkafka_admin.c, rdkafka_aux.c and rdkafka_partition.c compile commands carry no explicit NDEBUG flag. This observation alone is not a non-null proof."
+  }
+}

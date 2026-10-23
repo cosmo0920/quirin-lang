@@ -1,0 +1,53 @@
+[
+  {
+    "step": "initial branch creation and submodule initialization",
+    "outer_exit": 1,
+    "result": "Git metadata write refused by read-only mount; neither setup substep completed."
+  },
+  {
+    "step": "escalated retry",
+    "outer_exit": 0,
+    "branch_substep": "failed because the first attempt had created the branch reference; its separate exit was not captured",
+    "submodule": "completed at d82464a277d0f42703702c4dfd9af6af38595a83"
+  },
+  {
+    "step": "attach existing card branch",
+    "exit": 0,
+    "head": "8991b7b58fcbd33da082bbb44e819d47a0fb2561"
+  },
+  {
+    "step": "initial queued BASE command",
+    "captured_host_pid": 529041,
+    "result": "cancelled with TERM before acquiring the heavy lock, because its command omitted the conditional eight-home link map; no build or audit output was produced",
+    "replacement_session": 3611,
+    "exit": 143
+  },
+  {
+    "step": "BASE corpus attempt 1",
+    "build_exit": 0,
+    "audit_exit": 1,
+    "inputs_roundtrip_exit": 0,
+    "log": "private/w48-rk-constructors/base-corpus/audit.log",
+    "failure": "canonicalized /media root does not match the frozen database old Documents path; compile database contains no selected cmetrics sources",
+    "evidence": "excluded as a completed baseline"
+  },
+  {
+    "step": "queued configured BASE attempt 1",
+    "captured_host_pid": 653796,
+    "exit": 143,
+    "result": "cancelled before lock acquisition; shared migrated-path failure predicted; no configured measurement output"
+  },
+  {
+    "step": "private original-path namespace probe in tool sandbox",
+    "exit": 1,
+    "log": "private/w48-rk-constructors/namespace-probe.log",
+    "failure": "nested unprivileged namespaces denied"
+  },
+  {
+    "step": "private original-path namespace probe outside tool sandbox",
+    "exit": 0,
+    "log": "private/w48-rk-constructors/namespace-probe-host.log",
+    "selected_cmetrics_entries": 31,
+    "writes_to_archive_or_host_layout": false
+  }
+]
