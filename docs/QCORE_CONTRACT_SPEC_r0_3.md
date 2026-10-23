@@ -586,6 +586,8 @@ Both name `resource_borrowed` pointer parameters, which keep that mode for the A
 
 A derived summary states custody only, so it is compared with a declaration's custody projection; the container and counted-user clauses are not part of that comparison. The Lean model is `QCore.ContainerPublication`.
 
+**The element destroyer** (card W48-SCHED-CLEANUP-PRODUCTION, gateway rule 34). One exception to the `resource_borrowed` placement: `resource_unpublished(p)` MAY sit beside `resource_released(p, nullable|nonnull)` on the same parameter. The call unlinks the object `p` designates from the container holding it and then ends it. A consumer MUST apply the unlink (rule 3, or gateway rule 10f(2)'s foreign element of an admitted iteration) **before** the release, so the release ends exactly the custody the unlink took, and every entry rule 3 or 10f(2) does not admit keeps the unlink's refusal. A publication's entry, and an unlink beside any other custody mode, still reject the whole module. A body that lowers such an unlink publishes no summary (rule 10f(3)). The Lean model is `QCore.ElementDestroyer`.
+
 ### C04.9. The loop-owner obligation
 
 Card W47-LOOP-OWNER-CONTRACTS (gateway rule 10p). A collector or loop operation reads or mutates state that only the thread waiting on the loop may touch: Monkey's userspace priority-queue links and a collector's `running` flag are not protected by the kernel's own `epoll_ctl` thread safety. A resource-v1 declaration MAY carry, beside the selector, at most one

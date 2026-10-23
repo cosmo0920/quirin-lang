@@ -2938,6 +2938,9 @@ pub fn check_legacy_safety_certificate(
     if recomputed.summary != certificate.summary {
         return Err("program summary does not match the preprocessed source".into());
     }
+    // The complete independently reconstructed record has now matched. Its
+    // CFGs have no remaining consumer; later checks read the presented record.
+    drop(recomputed);
     let expected_identity = certificate_input_identity(
         certificate.dialect,
         certificate.function_scope,

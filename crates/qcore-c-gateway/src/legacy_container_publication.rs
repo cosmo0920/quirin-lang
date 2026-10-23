@@ -1104,6 +1104,36 @@ pub(crate) fn settle_foreign_unlinks(
     }
 }
 
+/// Card W48-SCHED-CLEANUP-PRODUCTION (gateway rule 34): the element
+/// destroyer. A declaration may state `resource_unpublished(p)` beside
+/// `resource_released(p, …)`: the call unlinks the object `p` designates and
+/// then ends it. Split one call's container operands into those unlinks,
+/// which apply **before** the call's own reading so that its release ends the
+/// custody the unlink took (rule 4's restored published site, or rule 6's
+/// foreign element at its fresh site), and every other effect, which applies
+/// after it exactly as before. Operands are built in the contract's
+/// position order ([`operands`]), so they pair with its container effects.
+pub(super) fn destroyer_split(
+    contract: &ResourceFunctionContract,
+    operands: &Operands,
+) -> (Operands, Operands) {
+    let mut before = Vec::new();
+    let mut after = Vec::new();
+    for ((&index, effect), operand) in contract.container_effects.iter().zip(&operands.0) {
+        let destroyer = matches!(effect, ContainerEffect::Unpublished)
+            && matches!(
+                contract.parameters.get(index),
+                Some(ResourceParameterMode::Released { .. })
+            );
+        if destroyer {
+            before.push(operand.clone());
+        } else {
+            after.push(operand.clone());
+        }
+    }
+    (Operands(before), Operands(after))
+}
+
 /// The sites rule 6 lowered into one call's container effects.
 pub(crate) fn foreign_sites(operands: &Operands) -> impl Iterator<Item = usize> + '_ {
     operands.0.iter().filter_map(|operand| match operand {

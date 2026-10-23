@@ -95,7 +95,8 @@ fn production_contracts_preserve_the_previous_resource_modes() {
     // `monkey/event_loop.qv` and `fluent_bit/input_collector_registration.qv`.
     // 63 -> 64 by card FB-TEARDOWN-DESTROY-DECLARATIONS: `fluent_bit/teardown_destroy.qv`.
     // Kafka callback placement adds librdkafka/logging.qv to the selected sources.
-    assert_eq!(contracts.source_assumptions().len(), 65);
+    // 65 -> 66 by card W48-RK-LOG-CALLER-FRAME: `librdkafka/log_caller_frame.qv`.
+    assert_eq!(contracts.source_assumptions().len(), 66);
     check_source_assumptions(&contracts).unwrap();
     let mut old = ResourceContracts::default();
     for name in [
@@ -754,6 +755,15 @@ fn production_contracts_preserve_the_previous_resource_modes() {
             .container_effects
             .insert(0, ContainerEffect::Unpublished);
         old.insert_contract("mk_list_del", list_del);
+        // Card W48-SCHED-CLEANUP-PRODUCTION (gateway rule 34): the element
+        // destroyer `mk_http_thread_destroy` unlinks its object and releases
+        // it, an addition listed explicitly.
+        let mut thread_destroy =
+            ResourceFunctionContract::new([P::Released { nullable: false }], R::None);
+        thread_destroy
+            .container_effects
+            .insert(0, ContainerEffect::Unpublished);
+        old.insert_contract("mk_http_thread_destroy", thread_destroy);
         let operation = |effect| UserOperation {
             effect,
             counter: "users".to_owned(),
@@ -1438,7 +1448,8 @@ fn certificates_replay_exact_assumptions_and_reject_table_mutation() {
     // 61 -> 63 by card FB-EVENT-LOOP-RETENTION-AND-REGISTRATION:
     // `monkey/event_loop.qv` and `fluent_bit/input_collector_registration.qv`.
     // 63 -> 64 by card FB-TEARDOWN-DESTROY-DECLARATIONS: `fluent_bit/teardown_destroy.qv`.
-    assert_eq!(certificate.contracts.source_assumptions().len(), 65);
+    // 65 -> 66 by card W48-RK-LOG-CALLER-FRAME: `librdkafka/log_caller_frame.qv`.
+    assert_eq!(certificate.contracts.source_assumptions().len(), 66);
     certificate
         .contracts
         .insert("malloc", ResourceApiKind::Neutral);
@@ -1713,7 +1724,8 @@ fn every_corpus_module_outside_the_v1_vocabulary_is_rejected_not_skipped() {
     // resource-v1 rejects both loader declarations.
     // 135 -> 136: RK-PLUGIN-LIBRARY-OUTER-ENVELOPE adds
     // `librdkafka/outer.qv` (one outer-only loader declaration).
-    assert_eq!(modules.len(), 137, "corpus module count");
+    // 137 -> 138 by card W48-RK-LOG-CALLER-FRAME: `librdkafka/log_caller_frame.qv`.
+    assert_eq!(modules.len(), 138, "corpus module count");
 
     let mut selected = 0;
     let mut v1_declarations = 0;
@@ -2060,9 +2072,12 @@ fn every_corpus_module_outside_the_v1_vocabulary_is_rejected_not_skipped() {
     // Checked same-item detach adds one v1 declaration to the existing cJSON
     // module: 491 -> 492; selected modules and rejected declarations unchanged.
     // Kafka callback placement adds one selected module; declaration counts stay fixed.
+    // 492 -> 493 by card W48-SCHED-CLEANUP-PRODUCTION: the element destroyer
+    // `mk_http_thread_destroy` in the existing `monkey/intrusive_list.qv`.
+    // Selected modules and rejected declarations unchanged.
     assert_eq!(
         (selected, v1_declarations, rejected_declarations),
-        (65, 492, 331)
+        (65, 493, 331)
     );
     // A declaration held for human review is loaded and withheld from the
     // function map (contract spec C06.1): the map plus the held set is every

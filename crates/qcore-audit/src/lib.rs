@@ -32,6 +32,7 @@ mod observed_wait_inputs;
 pub mod parallel;
 pub mod pinned_cli;
 pub mod pinned_route;
+mod retained_products;
 // Card W45-CONTRACT-DEFERRED-REVIEW: the pending-review report section.
 pub mod pending_review;
 // Card W47-REVIEW-HOLD-CONCRETE-REASON: each held row's concrete review reasons.
@@ -633,6 +634,12 @@ pub fn run_config_with_jobs(path: &Path, flag_jobs: Option<usize>) -> Result<Aud
                             String,
                             Result<(&String, CompileEntry, UnitProducts), String>,
                         )| {
+                            let outcome = (
+                                outcome.0,
+                                outcome.1.and_then(|(library, entry, products)| {
+                                    Ok((library, entry, products.park()?))
+                                }),
+                            );
                             let failed = outcome.1.is_err();
                             outcomes.push(outcome);
                             if failed { Err(()) } else { Ok(()) }
@@ -643,11 +650,11 @@ pub fn run_config_with_jobs(path: &Path, flag_jobs: Option<usize>) -> Result<Aud
                 },
                 |outcomes| {
                     let mut found = base_refutations.clone();
-                    found.extend(refuted_contracts::table_from_rows(
+                    found.extend(current_route::retained_refutations(
                         outcomes
                             .iter()
                             .filter_map(|(_, result)| result.as_ref().ok())
-                            .flat_map(|(_, _, products)| products.report.unit_rows()),
+                            .map(|(_, _, products)| &products.report.refutations),
                     ));
                     found
                 },
@@ -657,6 +664,7 @@ pub fn run_config_with_jobs(path: &Path, flag_jobs: Option<usize>) -> Result<Aud
             for (out, result) in phases.results {
                 print!("{out}");
                 let (library, entry, products) = result?;
+                let products = products.restore()?;
                 let UnitProducts {
                     file,
                     source_sha256,
@@ -731,6 +739,12 @@ pub fn run_config_with_jobs(path: &Path, flag_jobs: Option<usize>) -> Result<Aud
                         String,
                         Result<(&String, CompileEntry, UnitProducts), String>,
                     )| {
+                        let outcome = (
+                            outcome.0,
+                            outcome.1.and_then(|(library, entry, products)| {
+                                Ok((library, entry, products.park()?))
+                            }),
+                        );
                         let failed = outcome.1.is_err();
                         outcomes.push(outcome);
                         if failed { Err(()) } else { Ok(()) }
@@ -740,11 +754,11 @@ pub fn run_config_with_jobs(path: &Path, flag_jobs: Option<usize>) -> Result<Aud
                 (outcomes, stopped)
             },
             |outcomes| {
-                refuted_contracts::table_from_rows(
+                current_route::retained_refutations(
                     outcomes
                         .iter()
                         .filter_map(|(_, result)| result.as_ref().ok())
-                        .flat_map(|(_, _, products)| products.report.unit_rows()),
+                        .map(|(_, _, products)| &products.report.refutations),
                 )
             },
         );
@@ -752,6 +766,7 @@ pub fn run_config_with_jobs(path: &Path, flag_jobs: Option<usize>) -> Result<Aud
         for (out, result) in phases.results {
             print!("{out}");
             let (library, entry, products) = result?;
+            let products = products.restore()?;
             let UnitProducts {
                 file,
                 source_sha256,
@@ -1135,3 +1150,38 @@ pub fn load_audit_library_scopes(
 pub mod dump_checkpoint_cli;
 
 mod loop_lifetime_fold;
+
+struct ParkedUnitProducts {
+    file: String,
+    source_sha256: String,
+    compile_task: serde_json::Value,
+    report: report::ParkedReport,
+    counts: AuditCounts,
+    retained: Option<qcore_c_gateway::legacy_c::PreparedTranslationUnit>,
+}
+
+impl UnitProducts {
+    fn park(self) -> Result<ParkedUnitProducts, String> {
+        Ok(ParkedUnitProducts {
+            file: self.file,
+            source_sha256: self.source_sha256,
+            compile_task: self.compile_task,
+            report: self.report.park()?,
+            counts: self.counts,
+            retained: self.retained,
+        })
+    }
+}
+
+impl ParkedUnitProducts {
+    fn restore(self) -> Result<UnitProducts, String> {
+        Ok(UnitProducts {
+            file: self.file,
+            source_sha256: self.source_sha256,
+            compile_task: self.compile_task,
+            report: self.report.restore()?,
+            counts: self.counts,
+            retained: self.retained,
+        })
+    }
+}

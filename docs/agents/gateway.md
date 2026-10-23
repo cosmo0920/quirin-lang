@@ -8569,6 +8569,61 @@ safety claim and no validation of the detach representation premise.
     `QCore.OuterListCandidates`; `outer_candidates`' Rust tests;
     [report](../reports/rk-plugin-interceptor-candidates/README.md).
 
+<a id="constraint-32"></a>
+
+32. **A caller-frame declaration states exactly the premises its body's
+    effects leave visible from the caller's frame.** Card
+    W48-RK-LOG-CALLER-FRAME, on the user's decision of 2026-10-22 (a
+    caller-facing contract with a named premise, challenged for Safe
+    outright). A caller-frame declaration borrows every formal and its
+    variadic tail (`resource_variadic_borrowed_tail()`), returns nothing and
+    carries no other custody clause, so its callers read the call as the
+    identity on their own custody. `qcore_contract::caller_frame` checks
+    a projection (`caller-frame-v1`) of a reviewed effect model
+    (`logger-effects-v1`, held by its digest): every model obligation is
+    classified at each event that raises it as `internal` (fresh object,
+    borrowed read, library state, queue state reached only through a
+    borrowed formal, after the frame, non-returning traces only, trust
+    boundary 28) or as covered by a named `premise`; each path's standing is
+    derived (proved, premised with exactly the premises its in-frame events
+    name, infeasible for a fresh object, or outside the frame with its
+    in-frame prefix equal to an in-frame path) and a stated standing that
+    differs refuses; `check_declarations` then requires every declaration
+    the projection names to be caller-frame shaped (textually and as loaded)
+    and to state exactly the derived premise set, no more and no fewer. No
+    obligation is discharged: the model's are all still Open; an `internal`
+    one is only not the caller's. Declared in `qcore-provider-librdkafka`
+    (`librdkafka/log_caller_frame.qv`): `rd_kafka_log0` and the static
+    `rd_kafka_log_buf`, each naming `rk_plugin_callback_closure` (the log
+    callback), `rk_log_enqueue_no_event_callback` (a queue event callback
+    `rd_kafka_q_io_event` runs synchronously) and
+    `rk_log_enqueue_forward_not_last` (a concurrent unforward-and-release
+    that makes the forward drop the last). Proved without a premise: the
+    filtered, `rk == NULL`, `!log_queue`, `!rk->rk_logq` and no-callback
+    paths, the disabled-queue reply of the fresh op (its empty reply queue:
+    destroyed, freeing only its own string), the copied serve callback
+    (never invoked by the enqueue) and the balanced forward keep/drop in
+    sequential execution; so callers are **conditionally Safe**, never Safe
+    outright. The declarations' bodies are checked by the existing route
+    (W4/`entry`, rule 13i: the variadic tail and the premises are never
+    covered; rule 10g withdraws a refuted one). MEASURED_PLACEHOLDER **Do
+    not** declare a caller-frame contract whose premises differ from its
+    projection's derived set, classify a callback, a reference release that
+    may be the last or a write to an object the caller may hold as
+    `internal`, or read a premise as discharged by the projection.
+    `QCore.RkLogCallerFrame` (`premised_covers_every_caller_event`,
+    `proved_path_needs_no_premise`, `a_reply_path_is_infeasible`,
+    `model_paths_derive`,
+    `the_consumer_path_leaves_the_frame_after_the_local_enqueue`,
+    `each_premise_is_needed`, `enq_restores_and_destroys_nothing`,
+    `enq_links_only_the_fresh_op`, `a_tracked_object_is_untouched`,
+    `the_disabled_reply_frees_only_the_fresh_objects`,
+    `caller_frame_admission`,
+    `an_interleaved_release_makes_the_forward_drop_last`,
+    `an_event_callback_can_release_a_tracked_object`);
+    `crates/qcore-contract/tests/caller_frame.rs`;
+    [report](../reports/w48-rk-log-caller-frame/README.md).
+
 <a id="constraint-33"></a>
 
 33. **A checked removed-selection frame transports its selected child as a
@@ -8636,6 +8691,50 @@ safety claim and no validation of the detach representation premise.
     `accepted_release_exit_keeps_no_selection` and the three shared vector
     tables); `crates/qcore-c-gateway/tests/detach_wrapper_composition.rs`;
     [report](../reports/detach-result-wrapper-composition/README.md).
+
+<a id="constraint-34"></a>
+
+34. **An element destroyer unlinks, then releases; nothing else about the
+    entry changes.** Card W48-SCHED-CLEANUP-PRODUCTION (contract
+    specification C04.8, last paragraph). A declaration may state
+    `resource_unpublished(p)` beside `resource_released(p, …)`
+    (`qcore_contract::contract_counted_users::validate`; a publication's
+    entry stays `resource_borrowed`, and an unlink beside any other custody
+    mode rejects the module). At a call, `container_publication::destroyer_split`
+    takes those unlinks out of the call's container operands and the
+    `ContractCall` arm of `legacy_transfer.rs` applies them **before** the
+    call's own reading, so its release ends exactly the custody the unlink
+    took: rule 10d's restored published site, or rule 10f(2)'s admitted
+    foreign element (a `container_of` element of a safe iteration, or a
+    `->next` lookup, over a container rooted at an unrebound formal, a local
+    initialised from one, or a static object) at its fresh site. Every other
+    entry keeps the unlink's refusal (`unlink by ... which this function has
+    not published`): a formal's own object, a body acquisition never
+    published, a local, rebound or callee-returned container, an element
+    name written another way, an element already unlinked, a second
+    destroyer. A plain iteration and a saved successor keep rule 5l's
+    refusals; a use after the destroyer reads a released binding; a release
+    after it is a double release. Rule 10f(3) is unchanged: a body that
+    lowers such an unlink publishes no summary, so its callers keep their
+    uncontracted call. The premises are P-CRR-MEMBER and P-CRR-LINKED at the
+    caller, and whatever the declaration names. First production use:
+    `mk_http_thread_destroy` (`qcore-provider-libevent`,
+    `monkey/intrusive_list.qv`, pinned at `046accf6` and `66910c10`), whose
+    eight `resource_premise` clauses carry the scheduler decomposition's
+    Open hypotheses (parent embedding, callback footprint with the
+    creation-NULL source reading, params key ownership and API success,
+    coroutine, borrowed chain, membership and writers, later aliases,
+    Valgrind request); every row resting on it lists them. **Do not** apply
+    the release before the unlink, admit an entry 10d/10f do not, read a
+    destroyer as a borrow anywhere a container effect must refuse, or drop
+    10f(3)'s summary gate without a caller-side rule that forgets the
+    published sites the call may release. `QCore.ElementDestroyer`
+    (`destroying_an_admitted_element_is_safe`,
+    `the_release_never_precedes_the_unlink`,
+    `the_modelled_destroy_is_an_unlink_then_a_release`,
+    `a_modelled_cleanup_unlinks_and_retires`, …);
+    `crates/qcore-c-gateway/tests/element_destroyer.rs`;
+    [report](../reports/w48-sched-cleanup-production/README.md).
 
 <a id="constraint-35"></a>
 
