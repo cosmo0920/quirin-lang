@@ -1,5 +1,7 @@
 # Current status and evidence boundaries
 
+Main carries three **unfinished, halted** implementation cards: gateway rules 32 (logger caller frame), 34 (scheduler cleanup) and 35 (single-leaf bodies). None of them has a completed full gate or a published BASE/TIP measurement on main, and rule 35's prediction followed its first semantic commit. No corpus, system or slice figure from these rules is claimed here; the headline figures below predate them. Rule 32 also has an open review: `rd_kafka_log0` rests on its own declared-assumption contract. See the [halt record](reports/w48-impl-round1-halt/README.md).
+
 DETACH-RESULT-WRAPPER-COMPOSITION (rule 33) promotes exactly cJSON_DetachItemFromArray and cJSON_DeleteItemFromArray through checked removed-selection frames, conditional on detach_list_representation and get_array_item's null premise: pinned corpus 975→977 Safe, 3,850→3,848 Unknown, 9 provisional Unsafe unchanged; null dictionaries unchanged; combined 847→849; runtime custody unchanged (both rows outer-uncovered). Object detaches/deletes remain Unknown pending string-keyed membership.
 
 Guarded contract adoption is **halted at the user’s request**. Five frozen native route outputs are preserved; TIP corpus was intentionally interrupted and complete comparisons were not started. The [supplemental card](reports/guarded-contract-adoption/SUPPLEMENTAL_CARD.md) is deferred and not launched. The source552 gate and earlier matrix/Python receipts remain scoped checkpoints; the later local main merge needs fresh combined validation and has not been pushed.
