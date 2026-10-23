@@ -301,6 +301,35 @@ fn inspect_returns(
     Some(())
 }
 
+/// Rule 13q's stack control exercises the actual new walks even when its
+/// synthetic deep function returns a scalar and would not license this rule.
+#[cfg(test)]
+pub(crate) fn exercise_source_readers() -> Option<bool> {
+    let index = StatementIndex::read("chain")?;
+    let body = children(&index.function)
+        .iter()
+        .find(|node| kind(node) == "CompoundStmt")?;
+    let mut names = BTreeMap::new();
+    let mut eligible = BTreeMap::new();
+    for (parameter, node) in children(&index.function)
+        .iter()
+        .filter(|node| kind(node) == "ParmVarDecl")
+        .enumerate()
+    {
+        value_name(node, &mut names)?;
+        if object_pointer(node) {
+            eligible.insert(
+                node["name"].as_str()?.to_owned(),
+                (parameter, node["id"].as_str()?.to_owned()),
+            );
+        }
+    }
+    inspect_body(body, &mut names, &mut BTreeSet::new())?;
+    references(body, &mut BTreeSet::new())?;
+    inspect_returns(body, &index, &eligible, &mut BTreeMap::new())?;
+    Some(true)
+}
+
 #[cfg(test)]
 mod tests {
     use super::*;

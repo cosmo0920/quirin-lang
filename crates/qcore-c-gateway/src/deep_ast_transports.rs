@@ -420,6 +420,40 @@ mod tests {
                 kib,
                 &format!("rule 13q readers, {arms} arms, depth {deepest}"),
             );
+            // Rule 36 adds readers of this band. Measure their actual walks
+            // at the deepest index this shape admits (the whole-unit index
+            // can add outer JSON levels to the filtered definition).
+            let read_formal = |source: String| {
+                high_water(move || {
+                    let _scope = crate::typed_access_path::enter_source(
+                        &source,
+                        CCompilerDialect::Gnu17,
+                        None,
+                    );
+                    crate::legacy_c::exact_formal_return::exercise_source_readers()
+                })
+            };
+            let mut measured = false;
+            for backoff in 0..=3 {
+                let source = shape(arms - backoff);
+                let source_depth = filtered_depth(&source);
+                let (answer, formal_kib) = read_formal(source);
+                if answer == Some(true) {
+                    assert!(source_depth > DEFAULT_LIMIT);
+                    assert_stack_budget(
+                        formal_kib,
+                        &format!(
+                            "rule 36 source readers, {} arms, filtered depth {source_depth}",
+                            arms - backoff
+                        ),
+                    );
+                    measured = true;
+                    break;
+                }
+                assert_eq!(answer, None);
+            }
+            assert!(measured, "rule 36 must exercise a deep admitted index");
+            assert_eq!(read_formal(shape(arms + 1)).0, None);
             let (beyond, _) = read(shape(arms + 1));
             // Beyond the bound nothing is read: the shadow reader refuses
             // (`true` for any name), as before the card.
