@@ -141,6 +141,7 @@ impl Parser<'_> {
         ) || review_hold::held_callee(callee).is_some()
             || pin_hold::held_callee(callee).is_some()
             || refuted_contract::held_callee(callee).is_some()
+            || super::caller_frame_hold::held_callee(callee).is_some()
         {
             return None;
         }
