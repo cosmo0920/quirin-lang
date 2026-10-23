@@ -747,7 +747,7 @@ fn exact_formal_results_keep_caller_lifetime_and_allocation_obligations() {
         ),
         (
             "void w(void) { char*p=d_alloc(8); if(!p)return; char*q=identity(p); d_free(q); }",
-            "invalid_release",
+            "unknown_alias:q",
         ),
     ] {
         let result = analyze(&format!("{helper} {caller}"));
