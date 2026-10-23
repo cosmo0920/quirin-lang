@@ -8606,7 +8606,11 @@ safety claim and no validation of the detach representation premise.
     sequential execution; so callers are **conditionally Safe**, never Safe
     outright. The declarations' bodies are checked by the existing route
     (W4/`entry`, rule 13i: the variadic tail and the premises are never
-    covered; rule 10g withdraws a refuted one). MEASURED_PLACEHOLDER **Do
+    covered; rule 10g withdraws a refuted one), and the declarations serve only
+    callers outside the frame (rule 32a). Measured on the eight-home corpus
+    (BASE `4dd8c8013`, TIP `f53a127e1`): seven callers Unknown→Safe on the
+    three premises, the planner's three included; `rd_kafka_log0` and
+    `rd_kafka_log_buf` stay Unknown. **Do
     not** declare a caller-frame contract whose premises differ from its
     projection's derived set, classify a callback, a reference release that
     may be the last or a write to an object the caller may hold as
@@ -8622,6 +8626,36 @@ safety claim and no validation of the detach representation premise.
     `an_interleaved_release_makes_the_forward_drop_last`,
     `an_event_callback_can_release_a_tracked_object`);
     `crates/qcore-contract/tests/caller_frame.rs`;
+    [report](../reports/w48-rk-log-caller-frame/README.md).
+
+<a id="constraint-32a"></a>
+
+32a. **A caller-frame declaration serves only callers outside its frame.**
+    Card W48-RK-LOG-CALLER-FRAME (the halted review of 2026-10-23: the
+    logger's own row became `Safe` by reading its sibling's declaration). The
+    members of a reviewed caller-frame projection are its `declarations`,
+    registered in `qcore_contract::caller_frame::FRAMES` (held equal to the
+    checked projection by test). Inside a member's own body, every call to a
+    member of the same frame whose declaration is in force, the recursive
+    call included, is **held**: rewritten to `qcore_caller_frame_self__`
+    (`legacy_caller_frame_hold`, beside the pin hold in all three token
+    pipelines, so W4 derivation, validation and a certificate recheck
+    reproduce it; the prefix is reserved and a source spelling is escaped).
+    The statement refuses `Unknown`, never `Pending`, with reason key
+    `caller-frame-self-reliance` (category `incomplete-obligation-coverage`:
+    the frame's own obligations have no derivation). Each member's row is
+    therefore decided by its body, with the model's obligations still Open;
+    a caller outside the frame reads the declarations unchanged, with their
+    premises. Monotone: the hold never moves a row towards `Safe`. **Do
+    not** let a member's row read its own or a sibling's caller-frame
+    declaration, register a frame member set that differs from its checked
+    projection's declarations, or treat the hold as a refutation (the
+    declaration still serves outside callers). `QCore.RkLogCallerFrame`
+    (`a_frame_hold_is_unknown`, `a_member_never_reads_a_member_declaration`,
+    `a_held_member_row_is_never_safe`,
+    `an_outside_caller_reads_the_declaration`, `the_hold_never_certifies`,
+    `the_logger_rows_are_decided_by_their_bodies`);
+    `crates/qcore-c-gateway/tests/caller_frame_hold.rs`;
     [report](../reports/w48-rk-log-caller-frame/README.md).
 
 <a id="constraint-33"></a>
