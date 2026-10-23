@@ -1,0 +1,88 @@
+module contract;
+
+// # librdkafka's logger, read from its callers' frame
+//
+// Card W48-RK-LOG-CALLER-FRAME (gateway rule 32), on the user's decision of
+// 2026-10-22: a caller-facing contract with named premises, challenged for
+// whether callers can be Safe outright. Bodies read at Fluent Bit
+// 66910c10a4d7eafa810b84229cf2dcf7b0f26f97 (librdkafka 2.15.0,
+// `lib/librdkafka-2.15.0/src/`), the pinned corpus revision. Each declaration
+// is pinned (C06.2). Its premises are exactly the caller-visible residue of
+// the checked caller-frame projection of the `logger-effects-v1` model
+// (`docs/reports/w48-rk-log-caller-frame/caller-frame.json`,
+// `qcore_contract::caller_frame`); the model's fifteen internal obligations
+// stay Open.
+//
+// ## The bodies
+//
+// `rd_kafka_log0(conf, rk, extra, level, ctx, fac, fmt, ...)`
+// (`rdkafka.c:312-348`): returns when `level > conf->log_level`; otherwise
+// `snprintf`s the thread name (`RD_TLS rd_kafka_thread_name`) and `extra`
+// into a 2,048-byte stack buffer, `vsnprintf`s `fmt` and the trailing
+// arguments after them (`va_start` / `va_end`), and calls `rd_kafka_log_buf`.
+// It keeps, releases and returns nothing; the trailing arguments are format
+// data read by `vsnprintf` (C17 7.21.6.1: `%s` and `%p` read, `%n` stores a
+// count through a borrowed `int *`, nothing frees, stores or returns an
+// argument).
+//
+// `rd_kafka_log_buf(conf, rk, level, ctx, fac, buf)` (`rdkafka.c:280-306`,
+// static): returns on the same level test; with `rk && conf->log_queue`,
+// returns when `!rk->rk_logq` (terminating), else makes a fresh
+// `RD_KAFKA_OP_LOG` (`rd_kafka_op_new`, `rd_calloc`: every other field zero,
+// its reply queue empty), copies `fac` into it (`rd_strlcpy`), stores a fresh
+// `rd_strdup(buf)` in it and enqueues it on `rk->rk_logq`
+// (`rd_kafka_q_enq`); otherwise calls `conf->log_cb(rk, level, fac, buf)` when
+// set. `buf` is copied, never kept.
+//
+// ## What the caller sees (rule 32's projection)
+//
+// Proved, no premise: the filtered, `rk == NULL`, `!log_queue`,
+// `!rk->rk_logq` and no-callback paths touch nothing; a disabled queue
+// replies to the fresh op, whose reply queue is empty, so
+// `rd_kafka_op_reply` destroys it, and LOG destruction frees only its own
+// fresh string (no `rko_op_cb`, `rko_rktp`, `rko_error` or reply queue on a
+// fresh op); the copied serve callback is stored on the fresh op and never
+// invoked by the enqueue; the forward keep (`rd_kafka_q_fwd_get`) and drop
+// (`rd_kafka_q_destroy`) are balanced, so in sequential execution the drop is
+// never the last. The op and its string are fresh and leave the frame in
+// queue custody or destroyed; the queue is reached only through the borrowed
+// `rk`.
+//
+// Premised: the log callback (`rk_plugin_callback_closure`); a queue IO-event
+// callback that `rd_kafka_q_io_event` runs synchronously
+// (`rk_log_enqueue_no_event_callback`); and a concurrent unforward-and-release
+// that makes the forward drop the last (`rk_log_enqueue_forward_not_last`).
+// None of the three is proved, so a caller resting on these declarations is
+// conditionally Safe, never Safe outright.
+
+extern fn rd_kafka_log_buf(conf: ptr<const, u8>, rk: ptr<const, u8>, level: i32, ctx: i32, fac: ptr<const, u8>, buf: ptr<const, u8>) -> unit
+contract {
+    requires resource_contract_v1;
+    requires resource_premise(rk_plugin_callback_closure, "P-RK-PLUGIN-CALLBACK-CLOSURE: in the static scope every rk_conf callback a call may run, including rd_kafka_log_buf's log callback, is a run registration or a stated default with a declared candidate; with loaded external code, extra registrations depend on the applicable pinned rk_plugin_library and flb_external_plugin outer envelopes (OP-APP-RK-CALLBACKS-VIA-POLL-CB, C04.20)");
+    requires resource_premise(rk_log_enqueue_no_event_callback, "P-RK-LOG-ENQUEUE-NO-EVENT-CALLBACK: no queue event callback is registered on rk->rk_logq or on any queue it is forwarded to while rd_kafka_log_buf enqueues on it, so rd_kafka_q_io_event runs no callback (rd_kafka_q_cb_event_enable is reached only from the public rd_kafka_queue_cb_event_enable, which no analysed unit calls; loaded code may) (W48-RK-LOG-CALLER-FRAME, rule 32)");
+    requires resource_premise(rk_log_enqueue_forward_not_last, "P-RK-LOG-ENQUEUE-FORWARD-NOT-LAST: the forward-queue reference rd_kafka_q_enq1 takes with rd_kafka_q_fwd_get is not the last when it releases it with rd_kafka_q_destroy, so the enqueue destroys no queue: no other thread unforwards that queue and releases its last other reference during the call (in sequential execution it never is) (W48-RK-LOG-CALLER-FRAME, rule 32)");
+    ensures normal resource_borrowed(conf);
+    ensures normal resource_borrowed(rk);
+    ensures normal resource_borrowed(level);
+    ensures normal resource_borrowed(ctx);
+    ensures normal resource_borrowed(fac);
+    ensures normal resource_borrowed(buf);
+    ensures normal resource_return_none();
+};
+
+extern fn rd_kafka_log0(conf: ptr<const, u8>, rk: ptr<const, u8>, extra: ptr<const, u8>, level: i32, ctx: i32, fac: ptr<const, u8>, fmt: ptr<const, u8>) -> unit
+contract {
+    requires resource_contract_v1;
+    requires resource_premise(rk_plugin_callback_closure, "P-RK-PLUGIN-CALLBACK-CLOSURE: in the static scope every rk_conf callback a call may run, including rd_kafka_log_buf's log callback, is a run registration or a stated default with a declared candidate; with loaded external code, extra registrations depend on the applicable pinned rk_plugin_library and flb_external_plugin outer envelopes (OP-APP-RK-CALLBACKS-VIA-POLL-CB, C04.20)");
+    requires resource_premise(rk_log_enqueue_no_event_callback, "P-RK-LOG-ENQUEUE-NO-EVENT-CALLBACK: no queue event callback is registered on rk->rk_logq or on any queue it is forwarded to while rd_kafka_log_buf enqueues on it, so rd_kafka_q_io_event runs no callback (rd_kafka_q_cb_event_enable is reached only from the public rd_kafka_queue_cb_event_enable, which no analysed unit calls; loaded code may) (W48-RK-LOG-CALLER-FRAME, rule 32)");
+    requires resource_premise(rk_log_enqueue_forward_not_last, "P-RK-LOG-ENQUEUE-FORWARD-NOT-LAST: the forward-queue reference rd_kafka_q_enq1 takes with rd_kafka_q_fwd_get is not the last when it releases it with rd_kafka_q_destroy, so the enqueue destroys no queue: no other thread unforwards that queue and releases its last other reference during the call (in sequential execution it never is) (W48-RK-LOG-CALLER-FRAME, rule 32)");
+    ensures normal resource_borrowed(conf);
+    ensures normal resource_borrowed(rk);
+    ensures normal resource_borrowed(extra);
+    ensures normal resource_borrowed(level);
+    ensures normal resource_borrowed(ctx);
+    ensures normal resource_borrowed(fac);
+    ensures normal resource_borrowed(fmt);
+    ensures normal resource_variadic_borrowed_tail();
+    ensures normal resource_return_none();
+};

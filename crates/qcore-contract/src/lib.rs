@@ -44,5 +44,9 @@ pub mod guarded_metadata_bridge;
 
 pub mod logger_effects;
 
+/// Card W48-RK-LOG-CALLER-FRAME (rule 32): the caller-frame projection of a
+/// reviewed logger effect model and its declarations' exact premise sets.
+pub mod caller_frame;
+
 /// Finite source-bound Monkey scheduler lifetime obligations.
 pub mod scheduler_lifetime;

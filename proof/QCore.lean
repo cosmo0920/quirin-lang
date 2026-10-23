@@ -1,4 +1,5 @@
 import QCore.LoggerEffects
+import QCore.RkLogCallerFrame
 import QCore.GuardedContractApplications
 import QCore.GuardedDecomposition
 import QCore.SymbolicOverlapAdmission
