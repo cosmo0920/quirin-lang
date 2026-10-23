@@ -49,5 +49,51 @@
     "log": "private/w48-rk-constructors/namespace-probe-host.log",
     "selected_cmetrics_entries": 31,
     "writes_to_archive_or_host_layout": false
+  },
+  {
+    "step": "BASE namespace attempt 2",
+    "captured_host_pid": 700868,
+    "session": 62107,
+    "exit": 1,
+    "failed_stage": "pre-audit input capture",
+    "native_audit_started": false,
+    "failure": "Git could not open /dev/null read/write: namespace root bind did not grant device access",
+    "log": "private/w48-rk-constructors/base-retry2-inputs-before.log",
+    "configuration_archive": "private/w48-rk-constructors/attempt2-configuration",
+    "evidence": "excluded as completed BASE"
+  },
+  {
+    "step": "corrected namespace smoke and full input roundtrip probe",
+    "exit": 0,
+    "device_fix": "standard bwrap --dev /dev mount; archive binds stay read-only",
+    "smoke_checks": {
+      "git_ls_files": 0,
+      "clang_version": 0,
+      "cargo_metadata_no_deps": 0,
+      "lean_version": 0
+    },
+    "full_input_capture_before_exit": 0,
+    "full_input_capture_after_exit": 0,
+    "receipts": [
+      "private/w48-rk-constructors/namespace-smoke3.json",
+      "private/w48-rk-constructors/namespace-full-input-probe3"
+    ],
+    "native_audit_started": false,
+    "evidence": "environment preflight only, not BASE or standing gate"
+  },
+  {
+    "step": "namespace Clang parse and upstream identity probe",
+    "exit": 1,
+    "substeps": {
+      "tiny_clang_c11_ast_parse": 0,
+      "corpus_git_revision": 0,
+      "system_git_revision": 0,
+      "slice_git_revision": 0
+    },
+    "failed_assumption": "system and slice revisions were incorrectly assumed equal",
+    "observed_slice_revision": "34155955e4962a56d94eb23c03a002880899a0d1",
+    "log": "private/w48-rk-constructors/namespace-runtime-probe3.json",
+    "resolution": "Reviewed the byte-identical rd.h and assertion headers at the third, clean slice checkout; prepared a third source pin. No provider data changed.",
+    "native_audit_started": false
   }
 ]

@@ -13,6 +13,7 @@ def sha(path):return hashlib.sha256(Path(path).read_bytes()).hexdigest()
 def tree(path):return {str(x.relative_to(path)):sha(x) for x in sorted(path.rglob('*')) if x.is_file() and '.git' not in x.relative_to(path).parts}
 def data():
  paths=[ROOT/'providers/contract-load-path.json',ROOT/'contract/corpus.json']
+ paths.extend(ROOT.glob('*.json'))
  for krate in (ROOT/'providers').iterdir():
   if krate.is_dir():
    paths.extend(x for x in krate.glob('*contracts.lock') if x.is_file())
