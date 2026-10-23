@@ -755,6 +755,15 @@ fn production_contracts_preserve_the_previous_resource_modes() {
             .container_effects
             .insert(0, ContainerEffect::Unpublished);
         old.insert_contract("mk_list_del", list_del);
+        // Card W48-SCHED-CLEANUP-PRODUCTION (gateway rule 34): the element
+        // destroyer `mk_http_thread_destroy` unlinks its object and releases
+        // it, an addition listed explicitly.
+        let mut thread_destroy =
+            ResourceFunctionContract::new([P::Released { nullable: false }], R::None);
+        thread_destroy
+            .container_effects
+            .insert(0, ContainerEffect::Unpublished);
+        old.insert_contract("mk_http_thread_destroy", thread_destroy);
         let operation = |effect| UserOperation {
             effect,
             counter: "users".to_owned(),
@@ -2063,9 +2072,12 @@ fn every_corpus_module_outside_the_v1_vocabulary_is_rejected_not_skipped() {
     // Checked same-item detach adds one v1 declaration to the existing cJSON
     // module: 491 -> 492; selected modules and rejected declarations unchanged.
     // Kafka callback placement adds one selected module; declaration counts stay fixed.
+    // 492 -> 493 by card W48-SCHED-CLEANUP-PRODUCTION: the element destroyer
+    // `mk_http_thread_destroy` in the existing `monkey/intrusive_list.qv`.
+    // Selected modules and rejected declarations unchanged.
     assert_eq!(
         (selected, v1_declarations, rejected_declarations),
-        (65, 492, 331)
+        (65, 493, 331)
     );
     // A declaration held for human review is loaded and withheld from the
     // function map (contract spec C06.1): the map plus the held set is every

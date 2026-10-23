@@ -6978,6 +6978,7 @@
    "AuditDisjointFootprint.lean",
    "AuditElaborationCore.lean",
    "AuditElaboratorCallFootprints.lean",
+   "AuditElementDestroyer.lean",
    "AuditEnumerationAttribution.lean",
    "AuditEpochAccounting.lean",
    "AuditEpochSourceLowering.lean",
