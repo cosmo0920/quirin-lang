@@ -1,0 +1,193 @@
+{
+  "before": "/home/cosmo/Documents/GitHub/qcore-c/private/audit-ir-working-set/memory-input-admission2",
+  "after": "/home/cosmo/.codex/worktrees/audit-ir-retained-products/qcore-c/private/audit-ir-retained-products/production-input",
+  "comparisons": [
+    {
+      "file": "resource-diagnostics.json",
+      "before_bytes": 90194304,
+      "after_bytes": 90194304,
+      "before_sha256": "73fc5fee5d6ad021ad4f123bcf35d89201c05e2941c95b24cb0b8ef6f5ed9ea4",
+      "after_sha256": "73fc5fee5d6ad021ad4f123bcf35d89201c05e2941c95b24cb0b8ef6f5ed9ea4",
+      "byte_equal": true
+    },
+    {
+      "file": "resource-diagnostics.contracts.json",
+      "before_bytes": 42824623,
+      "after_bytes": 42824623,
+      "before_sha256": "360012a0664496e0363486edda3e7598c994a8fe92f3a975a282545bc05928d1",
+      "after_sha256": "b278ab1b259574d3bb5433fdfae8540cf435ca1844d166337e20e9d10883baa8",
+      "byte_equal": false
+    },
+    {
+      "file": "resource-diagnostics.chunk-contracts.json",
+      "before_bytes": 385,
+      "after_bytes": 385,
+      "before_sha256": "e7e0d254d9e7ee199672b981e3fc764b702b35a1757bb0f4570a9438e6b87922",
+      "after_sha256": "e7e0d254d9e7ee199672b981e3fc764b702b35a1757bb0f4570a9438e6b87922",
+      "byte_equal": true
+    },
+    {
+      "file": "resource-diagnostics.source-effects.json",
+      "before_bytes": 385,
+      "after_bytes": 385,
+      "before_sha256": "e7e0d254d9e7ee199672b981e3fc764b702b35a1757bb0f4570a9438e6b87922",
+      "after_sha256": "e7e0d254d9e7ee199672b981e3fc764b702b35a1757bb0f4570a9438e6b87922",
+      "byte_equal": true
+    }
+  ],
+  "invocation": {
+    "before_sha256": "1ce7d09c39009d505355e690cc5cda23e3483030cc890ed2866855b60e7c77b5",
+    "after_sha256": "810cfa55a80775a72294c21e8962bb999bb1c3b6c35b7da4cc38cb846be7448e",
+    "differences": [
+      {
+        "path": "/argv/3",
+        "before": "/home/cosmo/Documents/GitHub/qcore-c/private/audit-ir-working-set/memory-input-admission2/audit.json",
+        "after": "/home/cosmo/.codex/worktrees/audit-ir-retained-products/qcore-c/private/audit-ir-retained-products/production-input/audit.json"
+      },
+      {
+        "path": "/configuration",
+        "before": "/home/cosmo/Documents/GitHub/qcore-c/private/audit-ir-working-set/memory-input-admission2/audit.json",
+        "after": "/home/cosmo/.codex/worktrees/audit-ir-retained-products/qcore-c/private/audit-ir-retained-products/production-input/audit.json"
+      },
+      {
+        "path": "/configuration_sha256",
+        "before": "7d2851e0c6c447d33f71d75f033100a4c8f112a2ab9ec14094b2f28b80324b22",
+        "after": "15bc368664d93ba0705c933e3c8f82575e22b1d977058da5030e0ff3ce05ef6c"
+      },
+      {
+        "path": "/cwd",
+        "before": "/home/cosmo/Documents/GitHub/qcore-c",
+        "after": "/home/cosmo/.codex/worktrees/audit-ir-retained-products/qcore-c"
+      },
+      {
+        "path": "/memory_admission/phases/0/observation/current_bytes",
+        "before": 118378496,
+        "after": 155598848
+      },
+      {
+        "path": "/memory_admission/phases/0/observation/path",
+        "before": "/sys/fs/cgroup/user.slice/user-1000.slice/user@1000.service/app.slice/quirin-audit-memory-22c9d915d87843e8ba28977b7ff29c42.service",
+        "after": "/sys/fs/cgroup/user.slice/user-1000.slice/user@1000.service/app.slice/quirin-audit-memory-eb7068e1c0ef427b8dfbde3591b23af0.service"
+      },
+      {
+        "path": "/memory_admission/phases/1/observation/current_bytes",
+        "before": 659767296,
+        "after": 721231872
+      },
+      {
+        "path": "/memory_admission/phases/1/observation/path",
+        "before": "/sys/fs/cgroup/user.slice/user-1000.slice/user@1000.service/app.slice/quirin-audit-memory-22c9d915d87843e8ba28977b7ff29c42.service",
+        "after": "/sys/fs/cgroup/user.slice/user-1000.slice/user@1000.service/app.slice/quirin-audit-memory-eb7068e1c0ef427b8dfbde3591b23af0.service"
+      },
+      {
+        "path": "/memory_admission/phases/2/observation/current_bytes",
+        "before": 667230208,
+        "after": 730247168
+      },
+      {
+        "path": "/memory_admission/phases/2/observation/path",
+        "before": "/sys/fs/cgroup/user.slice/user-1000.slice/user@1000.service/app.slice/quirin-audit-memory-22c9d915d87843e8ba28977b7ff29c42.service",
+        "after": "/sys/fs/cgroup/user.slice/user-1000.slice/user@1000.service/app.slice/quirin-audit-memory-eb7068e1c0ef427b8dfbde3591b23af0.service"
+      },
+      {
+        "path": "/memory_admission/phases/3/observation/current_bytes",
+        "before": 671969280,
+        "after": 739770368
+      },
+      {
+        "path": "/memory_admission/phases/3/observation/path",
+        "before": "/sys/fs/cgroup/user.slice/user-1000.slice/user@1000.service/app.slice/quirin-audit-memory-22c9d915d87843e8ba28977b7ff29c42.service",
+        "after": "/sys/fs/cgroup/user.slice/user-1000.slice/user@1000.service/app.slice/quirin-audit-memory-eb7068e1c0ef427b8dfbde3591b23af0.service"
+      },
+      {
+        "path": "/memory_admission/phases/4/observation/current_bytes",
+        "before": 5917712384,
+        "after": 5997879296
+      },
+      {
+        "path": "/memory_admission/phases/4/observation/path",
+        "before": "/sys/fs/cgroup/user.slice/user-1000.slice/user@1000.service/app.slice/quirin-audit-memory-22c9d915d87843e8ba28977b7ff29c42.service",
+        "after": "/sys/fs/cgroup/user.slice/user-1000.slice/user@1000.service/app.slice/quirin-audit-memory-eb7068e1c0ef427b8dfbde3591b23af0.service"
+      },
+      {
+        "path": "/memory_admission/phases/5/observation/current_bytes",
+        "before": 5922234368,
+        "after": 6002749440
+      },
+      {
+        "path": "/memory_admission/phases/5/observation/path",
+        "before": "/sys/fs/cgroup/user.slice/user-1000.slice/user@1000.service/app.slice/quirin-audit-memory-22c9d915d87843e8ba28977b7ff29c42.service",
+        "after": "/sys/fs/cgroup/user.slice/user-1000.slice/user@1000.service/app.slice/quirin-audit-memory-eb7068e1c0ef427b8dfbde3591b23af0.service"
+      },
+      {
+        "path": "/memory_admission/phases/6/observation/current_bytes",
+        "before": 5459873792,
+        "after": 5538918400
+      },
+      {
+        "path": "/memory_admission/phases/6/observation/path",
+        "before": "/sys/fs/cgroup/user.slice/user-1000.slice/user@1000.service/app.slice/quirin-audit-memory-22c9d915d87843e8ba28977b7ff29c42.service",
+        "after": "/sys/fs/cgroup/user.slice/user-1000.slice/user@1000.service/app.slice/quirin-audit-memory-eb7068e1c0ef427b8dfbde3591b23af0.service"
+      },
+      {
+        "path": "/reports/report",
+        "before": "/home/cosmo/Documents/GitHub/qcore-c/private/audit-ir-working-set/memory-input-admission2/resource-diagnostics.json",
+        "after": "/home/cosmo/.codex/worktrees/audit-ir-retained-products/qcore-c/private/audit-ir-retained-products/production-input/resource-diagnostics.json"
+      }
+    ]
+  },
+  "units": 157,
+  "unique_files": 156,
+  "functions": 4564,
+  "scope": "Complete report and evidence sidecars, no removed or normalized fields. Invocation differences are recorded in full for separate review; their presence is not evidence parity.",
+  "strict_comparison_exit": 1,
+  "identity_explanation": {
+    "source": "lib/monkey/mk_bin/monkey.c",
+    "date_macro": "Oct 22 2026",
+    "matches": [
+      {
+        "run": "before",
+        "time_macro": "12:08:53",
+        "identity": "0fa43e89ca95ed1868fe9772ff905e626b45517039ed30047bb258c991b0946f"
+      },
+      {
+        "run": "after",
+        "time_macro": "17:54:05",
+        "identity": "aa40f55a6a8bab1aaad049bde8a7ccbbcb9555322e605cc6dfb86bdb966edcae"
+      }
+    ],
+    "descriptor_sha256": "09d016a77eca828c368d059b47492b2c5af7b1a534a5c5efcac241173490f33d",
+    "probe_source_sha256": "b933713032bef5f57bdeacfae4ee236f8eee3cd3d833434efe8668d45e64cced",
+    "probe_preprocessing": "recorded command fallback preprocessing",
+    "seconds": 0.414,
+    "explanation": "Reproduced both archived keys from the same current preprocessed bytes and exact native descriptor by changing only the eight __TIME__ bytes in MONKEY_BUILT. Both map to empty summary objects at both changed sidecar locations. No published artifact was rewritten or normalized."
+  },
+  "interpretation": "Main report and both property sidecars are byte-identical. Contracts sidecar is not byte-identical: exactly one empty summary key changes at two locations, exactly reproduced from Monkey __TIME__. All other contracts-sidecar JSON values are equal. Invocation differences are config/report paths, cwd, config digest and cgroup observation path/current bytes only; jobs and all seven admission records otherwise match. No published field was removed or normalized.",
+  "contracts_json_differences": [
+    {
+      "path": "/callback_members/lifetime_protocols/evidence/summaries/0fa43e89ca95ed1868fe9772ff905e626b45517039ed30047bb258c991b0946f",
+      "before_present": true,
+      "after_present": false,
+      "value": {}
+    },
+    {
+      "path": "/callback_members/lifetime_protocols/evidence/summaries/aa40f55a6a8bab1aaad049bde8a7ccbbcb9555322e605cc6dfb86bdb966edcae",
+      "before_present": false,
+      "after_present": true,
+      "value": {}
+    },
+    {
+      "path": "/callback_members/prepass/lifetime_protocols/summaries/0fa43e89ca95ed1868fe9772ff905e626b45517039ed30047bb258c991b0946f",
+      "before_present": true,
+      "after_present": false,
+      "value": {}
+    },
+    {
+      "path": "/callback_members/prepass/lifetime_protocols/summaries/aa40f55a6a8bab1aaad049bde8a7ccbbcb9555322e605cc6dfb86bdb966edcae",
+      "before_present": false,
+      "after_present": true,
+      "value": {}
+    }
+  ],
+  "scoped_difference_review_exit": 0
+}

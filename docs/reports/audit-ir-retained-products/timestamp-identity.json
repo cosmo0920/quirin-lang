@@ -1,0 +1,21 @@
+{
+  "source": "lib/monkey/mk_bin/monkey.c",
+  "date_macro": "Oct 22 2026",
+  "matches": [
+    {
+      "run": "before",
+      "time_macro": "12:08:53",
+      "identity": "0fa43e89ca95ed1868fe9772ff905e626b45517039ed30047bb258c991b0946f"
+    },
+    {
+      "run": "after",
+      "time_macro": "17:54:05",
+      "identity": "aa40f55a6a8bab1aaad049bde8a7ccbbcb9555322e605cc6dfb86bdb966edcae"
+    }
+  ],
+  "descriptor_sha256": "09d016a77eca828c368d059b47492b2c5af7b1a534a5c5efcac241173490f33d",
+  "probe_source_sha256": "b933713032bef5f57bdeacfae4ee236f8eee3cd3d833434efe8668d45e64cced",
+  "probe_preprocessing": "recorded command fallback preprocessing",
+  "seconds": 0.414,
+  "explanation": "Reproduced both archived keys from the same current preprocessed bytes and exact native descriptor by changing only the eight __TIME__ bytes in MONKEY_BUILT. Both map to empty summary objects at both changed sidecar locations. No published artifact was rewritten or normalized."
+}

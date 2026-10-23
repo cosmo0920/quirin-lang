@@ -1652,3 +1652,197 @@ mod tests {
         fs::remove_dir_all(&directory).ok();
     }
 }
+
+/// Private phase retention: complete rows and member evidence on disk, small
+/// derived phase-selection tables in memory. Restoration never runs analysis.
+pub(crate) struct ParkedReport {
+    shell: AuditReport,
+    payload: crate::retained_products::Spool,
+    pub(crate) refutations: qcore_schemas::contract_refutation::RefutationTable,
+    pub(crate) bounds_refutations: std::collections::BTreeSet<String>,
+}
+
+#[derive(serde::Serialize, serde::Deserialize)]
+#[serde(deny_unknown_fields)]
+struct RetainedRows {
+    units: Vec<Value>,
+    bounds: Vec<Value>,
+    bounds_evidence: Vec<Value>,
+    null: Vec<Value>,
+    null_evidence: Vec<Value>,
+    callback_members: Vec<crate::callback_member_fold::UnitFacts>,
+}
+
+impl AuditReport {
+    pub(crate) fn park(mut self) -> Result<ParkedReport, String> {
+        let refutations = crate::refuted_contracts::table_from_rows(&self.units);
+        let bounds_refutations = crate::bounds_evidence::refutation_table(&self.bounds_evidence);
+        let rows = RetainedRows {
+            units: std::mem::take(&mut self.units),
+            bounds: std::mem::take(&mut self.bounds),
+            bounds_evidence: std::mem::take(&mut self.bounds_evidence),
+            null: std::mem::take(&mut self.null),
+            null_evidence: std::mem::take(&mut self.null_evidence),
+            callback_members: std::mem::take(&mut self.callback_members),
+        };
+        let payload = crate::retained_products::Spool::write(&rows)?;
+        Ok(ParkedReport {
+            shell: self,
+            payload,
+            refutations,
+            bounds_refutations,
+        })
+    }
+}
+
+impl ParkedReport {
+    pub(crate) fn restore(mut self) -> Result<AuditReport, String> {
+        let rows: RetainedRows = self.payload.read()?;
+        self.shell.units = rows.units;
+        self.shell.bounds = rows.bounds;
+        self.shell.bounds_evidence = rows.bounds_evidence;
+        self.shell.null = rows.null;
+        self.shell.null_evidence = rows.null_evidence;
+        self.shell.callback_members = rows.callback_members;
+        Ok(self.shell)
+    }
+}
+
+#[cfg(test)]
+mod retained_tests {
+    use super::*;
+
+    #[test]
+    fn parked_report_preserves_exact_document_and_every_sidecar() {
+        let mut report = AuditReport::new("revision");
+        report.units = vec![
+            serde_json::json!({
+                "file": "a.c", "status": "Unknown", "functions": [{
+                    "function": "f", "diagnostics": [{"line": 7, "description": "unmodeled"}],
+                    "contract_refutations": [{"kind": "custody_duty", "clause": "release", "reason": "body", "origin": "a.c:7"}]
+                }]
+            }),
+            serde_json::json!({"file": "b.c", "status": "Safe", "functions": []}),
+        ];
+        report.bounds_evidence =
+            vec![serde_json::json!({"declarations": [{"function": "f", "refutes": true}]})];
+        report.bounds = vec![serde_json::json!({"bound": 12})];
+        report.null = vec![serde_json::json!({"null": "unknown"})];
+        report.null_evidence = vec![serde_json::json!({"store": "a->b"})];
+        report.record_callback_members("library", "a.c", None, None);
+        report.diagnostic_counts.insert("unsupported".into(), 1);
+        let expected_rows = serde_json::to_value(RetainedRows {
+            units: report.units.clone(),
+            bounds: report.bounds.clone(),
+            bounds_evidence: report.bounds_evidence.clone(),
+            null: report.null.clone(),
+            null_evidence: report.null_evidence.clone(),
+            callback_members: report.callback_members.clone(),
+        })
+        .unwrap();
+        let mut before = Vec::new();
+        report
+            .write_document(&mut before, "source_revision")
+            .unwrap();
+        let parked = report.park().unwrap();
+        assert!(parked.shell.units.is_empty());
+        assert!(parked.shell.callback_members.is_empty());
+        assert!(parked.refutations.contains_key("f"));
+        assert!(parked.bounds_refutations.contains("f"));
+        let restored = parked.restore().unwrap();
+        let mut after = Vec::new();
+        restored
+            .write_document(&mut after, "source_revision")
+            .unwrap();
+        assert_eq!(before, after);
+        assert_eq!(
+            serde_json::to_value(RetainedRows {
+                units: restored.units,
+                bounds: restored.bounds,
+                bounds_evidence: restored.bounds_evidence,
+                null: restored.null,
+                null_evidence: restored.null_evidence,
+                callback_members: restored.callback_members,
+            })
+            .unwrap(),
+            expected_rows
+        );
+    }
+}
+
+impl AuditReport {
+    /// Called only by the consuming final-run owner after callback and lifetime
+    /// folds. Checkpoint APIs and the repeatable public fold retain their facts.
+    pub(crate) fn release_final_fold_inputs(&mut self) {
+        self.callback_members = Vec::new();
+        self.member_prepass = None;
+    }
+}
+
+#[cfg(test)]
+mod retained_member_tests {
+    use super::*;
+    use crate::callback_member_fold::{FoldEnvironment, fold_in};
+    use qcore_c_gateway::callback_member_closure::{closure, read_unit};
+    use qcore_c_gateway::legacy_c::C11TranslationUnit;
+
+    #[test]
+    fn parked_real_member_evidence_preserves_closures_and_run_demotions() {
+        let mut report = AuditReport::new("revision");
+        for name in ["first", "second"] {
+            let source = format!(
+                "typedef void (*Callback)(void); enum Choice {{ Set = 1 }}; \
+                 struct holder {{ Callback cb; }}; void {name}(void) {{}} \
+                 struct holder value = {{ {name} }};"
+            );
+            let unit = C11TranslationUnit {
+                source: &source,
+                ..Default::default()
+            };
+            let facts =
+                read_unit(&source, &unit).expect("Clang is required for source evidence controls");
+            assert_eq!(
+                closure(&[&facts], "holder.cb"),
+                Ok(std::collections::BTreeSet::from([name.to_owned()]))
+            );
+            report.units.push(json!({"library":"l", "file":name, "status":"Safe",
+                "reason":null, "diagnostic_counts":{}, "functions":[{"function":"f",
+                "status":"Safe", "diagnostics":[], "contract_dependencies":{"declarations":["invoke"]}}]}));
+            report.record_callback_members("l", name, Some(facts), None);
+        }
+        let original_facts = report.callback_members.clone();
+        let mut original_rows = report.units.clone();
+        let evidence = serde_json::to_value(&original_facts).unwrap();
+        let mut restored = report.park().unwrap().restore().unwrap();
+        assert_eq!(
+            serde_json::to_value(&restored.callback_members).unwrap(),
+            evidence
+        );
+        let environment = FoldEnvironment {
+            declarations: BTreeMap::from([(
+                "invoke".into(),
+                std::collections::BTreeSet::from(["holder.cb".into()]),
+            )]),
+            ..Default::default()
+        };
+        let mut before_counts = BTreeMap::new();
+        let before = fold_in(
+            &environment,
+            &mut original_rows,
+            &original_facts,
+            &mut before_counts,
+            None,
+        );
+        let after = fold_in(
+            &environment,
+            &mut restored.units,
+            &restored.callback_members,
+            &mut restored.diagnostic_counts,
+            None,
+        );
+        assert_eq!(before["demoted"].as_array().unwrap().len(), 2);
+        assert_eq!(before, after);
+        assert_eq!(original_rows, restored.units);
+        assert_eq!(before_counts, restored.diagnostic_counts);
+    }
+}

@@ -1,0 +1,143 @@
+{
+  "service": "quirin-audit-memory-eb7068e1c0ef427b8dfbde3591b23af0",
+  "service_properties": {
+    "ActiveState": "active",
+    "SubState": "exited",
+    "Result": "success",
+    "ExecMainStartTimestampMonotonic": "15950593218",
+    "ExecMainExitTimestampMonotonic": "19688378834",
+    "ExecMainCode": "1",
+    "ExecMainStatus": "0",
+    "ControlGroup": "",
+    "MemoryPeak": "6999998464",
+    "MemorySwapPeak": "0",
+    "CPUUsageNSec": "3853293255000"
+  },
+  "worker": {
+    "argv": [
+      "/home/cosmo/.codex/worktrees/audit-ir-retained-products/qcore-c/private/audit-ir-retained-products/target/release/quirin-audit",
+      "current",
+      "--config",
+      "/home/cosmo/.codex/worktrees/audit-ir-retained-products/qcore-c/private/audit-ir-retained-products/production-input/audit.json",
+      "--jobs",
+      "4"
+    ],
+    "exit": 0,
+    "elapsed_seconds": 3737.685,
+    "binary_sha256": "aad07523794db91e2e2c681da62b20fe6e59298f27a7415b4e031b0345dfacc2",
+    "configuration_sha256": "15bc368664d93ba0705c933e3c8f82575e22b1d977058da5030e0ff3ce05ef6c",
+    "inputs_unchanged": true,
+    "cgroup": "/user.slice/user-1000.slice/user@1000.service/app.slice/quirin-audit-memory-eb7068e1c0ef427b8dfbde3591b23af0.service",
+    "observed_before_exit": {
+      "memory.max": "6999998464",
+      "memory.swap.max": "0",
+      "memory.peak": "6999998464",
+      "memory.events": "low 0\nhigh 0\nmax 69\noom 0\noom_kill 0\noom_group_kill 0\nsock_throttled 0"
+    },
+    "environment": {
+      "PATH": "/home/cosmo/.elan/bin:/home/cosmo/bin:/home/cosmo/.codex/tmp/arg0/codex-arg0nkbadu:/home/cosmo/.cache/codex-runtimes/codex-primary-runtime/dependencies/bin/override:/home/cosmo/.local/bin:./.cabal-sandbox/bin:/home/cosmo/bin:/home/cosmo/.elan/bin:/home/cosmo/bin:/home/cosmo/.elan/bin:/home/cosmo/bin:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin:/usr/games:/usr/local/games:/snap/bin:/snap/bin:/home/cosmo/.cache/codex-runtimes/codex-primary-runtime/dependencies/bin/fallback:/usr/lib/chatgpt/resources",
+      "QCORE_CLANG": null,
+      "QCORE_AUDIT_IR_DIR": null,
+      "QCORE_BOUNDS_PROPERTY": null,
+      "QCORE_NULL_PROPERTY": null
+    }
+  },
+  "memory_peak_bytes": 6999998464,
+  "memory_events": {
+    "low": 0,
+    "high": 0,
+    "max": 69,
+    "oom": 0,
+    "oom_kill": 0,
+    "oom_group_kill": 0,
+    "sock_throttled": 0
+  },
+  "requested_limit_bytes": 7000000000,
+  "audit_completed_without_oom": true,
+  "monitored_elapsed_seconds": 3739.386,
+  "scope": "Configured resource audit, existing build/setup excluded; fresh process caches, host page-cache state uncontrolled.",
+  "base": "31c5ed500d9d4a1448a623b839e1644adb19efd1",
+  "source_control": {
+    "argv": [
+      "cargo",
+      "build",
+      "--release",
+      "-p",
+      "qcore-audit",
+      "--bin",
+      "quirin-audit"
+    ],
+    "fixed_build_identity": "df1bc3183885687c062f7d0fdc690ef5f542abd2",
+    "actual_source_commit": "ae2cab6253ad0bbc7ab543cebb2c3565deb0fc9f",
+    "binary_sha256": "aad07523794db91e2e2c681da62b20fe6e59298f27a7415b4e031b0345dfacc2",
+    "scope": "Explicit build identity held equal to frozen baseline solely for exact report parity; actual modified source and binary digest are recorded separately. No claim this executable was built from the embedded commit alone."
+  },
+  "source_guard": {
+    "tracked_rust_files": 1499,
+    "snapshot_sha256": "2eb5d802ad6e2052ad68bb55e9faff9b33e8435067c10f30e8890df1bdc81180",
+    "unchanged_after_run": true
+  },
+  "baseline_provenance": {
+    "receipt": "/home/cosmo/Documents/GitHub/qcore-c/docs/reports/audit-ir-working-set/memory-release-admission2.json",
+    "receipt_sha256": "0face33d19ba098f641322f1801e97872cc83049e73ff870355c20a86266befc",
+    "baseline": {
+      "published_main": "52d2a3c8626eccb69ad2897ff70199934c8c2775",
+      "matched_tracked_rust_files": 1498,
+      "mismatches": [],
+      "candidate_snapshot_sha256": "383320b592c856133828a876aacaf16feb7651dcca79c24e3230f2d900ea335f",
+      "candidate_snapshot_private_path": "/home/cosmo/Documents/GitHub/qcore-c/private/audit-ir-working-set/phase-admission-candidate/source.json",
+      "embedded_build_commit": "df1bc3183885687c062f7d0fdc690ef5f542abd2",
+      "binary_sha256": "27a4e9a2abbe7c3067a82efe9142b6e0b40d93667c286acf1b17142159e8fbea",
+      "gate": "final-gate/gate.json",
+      "scope": "All tracked Rust source blobs match the published commit. Build-time HEAD was the candidate base with the captured source edits; this does not claim a clean build from the published commit."
+    },
+    "base": "31c5ed500d9d4a1448a623b839e1644adb19efd1",
+    "rust_diff": "",
+    "scope": "Reuse frozen successful full current-resource baseline; a new shared-host after observation, not a cold/warm pair or isolated causal speed comparison."
+  },
+  "configuration": {
+    "schema_version": 1,
+    "checkout": "/home/cosmo/Documents/GitHub/qcore-c/build/cycle19/clang/046accf6aded7906f66a1baf0202da349e521736/fluent-bit-clang-source",
+    "profile_directory": "/home/cosmo/Documents/GitHub/qcore-c/private/audit-ir-admission/frozen-inputs-93eb17441/contract/profiles/fluent-bit",
+    "compile_database": "/home/cosmo/Documents/GitHub/qcore-c/build/cycle19/clang/046accf6aded7906f66a1baf0202da349e521736/fluent-bit-clang-production/compile_commands.json",
+    "contract_manifest": "/home/cosmo/Documents/GitHub/qcore-c/private/audit-ir-admission/frozen-inputs-93eb17441/cycle19-resource-contracts.json",
+    "report": "/home/cosmo/.codex/worktrees/audit-ir-retained-products/qcore-c/private/audit-ir-retained-products/production-input/resource-diagnostics.json",
+    "memory_budget_mib": 6144
+  },
+  "cleanup": {
+    "stop_exit": 0,
+    "stop_stderr": ""
+  },
+  "private_directory": "/home/cosmo/.codex/worktrees/audit-ir-retained-products/qcore-c/private/audit-ir-retained-products/production-memory",
+  "command": [
+    "python3",
+    "/home/cosmo/Documents/GitHub/qcore-c/docs/reports/audit-ir-admission/scripts/measure_memory.py",
+    "--binary",
+    "/home/cosmo/.codex/worktrees/audit-ir-retained-products/qcore-c/private/audit-ir-retained-products/target/release/quirin-audit",
+    "--config",
+    "/home/cosmo/.codex/worktrees/audit-ir-retained-products/qcore-c/private/audit-ir-retained-products/production-input/audit.json",
+    "--output",
+    "/home/cosmo/.codex/worktrees/audit-ir-retained-products/qcore-c/private/audit-ir-retained-products/production-memory",
+    "--jobs",
+    "4",
+    "--route",
+    "current",
+    "--limit-bytes",
+    "7000000000",
+    "--timeout",
+    "7200"
+  ],
+  "measurement_exit": 0,
+  "interpretation": "Completed at the effective ceiling, with 69 memory.max pressure events, zero swap and zero OOM. No whole-job memory improvement or 6 GB acceptance demonstrated. Same 156 sources / 157 configurations and seven phase admission counts as baseline. Shared-host unpaired observation; not a cold/warm pair or causal timing comparison. inputs_unchanged checks only executable and configuration bytes.",
+  "counts": {
+    "sources": 156,
+    "configurations": 157,
+    "functions": 4564,
+    "safe_units": 7,
+    "pending_units": 0,
+    "provisional_unsafe_units": 4,
+    "unknown_units": 142,
+    "data_only_units": 4,
+    "gateway_failures": 0
+  }
+}
