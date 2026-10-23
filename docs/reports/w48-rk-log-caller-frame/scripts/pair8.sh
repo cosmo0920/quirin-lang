@@ -40,16 +40,16 @@ for side in base tip; do
   sha256sum "$run/snap-$side/target/release/quirin-audit" >"$run/binary-$side.sha256"
 done
 date -u +%FT%TZ >"$run/built"
-# The scheduler card's driver, byte for byte: the frozen pinned inputs'
-# compile database spells the primary checkout through its symlink
-# (/home/cosmo/Documents/GitHub/qcore-c), so a driver rooted at the real
-# directory selects no source (attempt pair8-1: "compile database contains no
-# selected cmetrics sources", exit 1 on both sides). Inputs are only read.
-measure="$wt/docs/reports/w48-sched-cleanup-production/scripts/measure.py"
+# The single-leaf card's driver (1a2ffed1d), reading the re-spelled input
+# mirror (mirror_inputs.py): after the checkout move the pinned compile
+# databases spell the old, now symlinked, path and the audit selects units by
+# path string (attempt pair8-1 failed on it). MIRROR is the mirror directory.
+measure="$wt/docs/reports/w48-rk-log-caller-frame/scripts/measure_mirror.py"
+mirror="${MIRROR:?MIRROR unset}"
 map="$wt/docs/reports/w48-sched-cleanup-production/link-map.corpus.json"
 for side in base tip; do
   (python3 "$measure" corpus "$run/$side-corpus" --link-map "$map" --inputs-snapshot "$run/snap-$side" \
-     --binary-source "${rev[$side]}" --jobs 4 >"$run/$side-corpus.driver.log" 2>&1
+     --binary-source "${rev[$side]}" --jobs 4 --inputs-mirror "$mirror" >"$run/$side-corpus.driver.log" 2>&1
    echo $? >"$run/$side-corpus.exit") &
 done
 wait
