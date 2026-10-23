@@ -1647,8 +1647,9 @@ const EXPECTED_CONTRACTS: &[(&str, &str, usize)] = &[
     ("librdkafka/lz4_stream.qv", "LZ4_compress_fast_continue", 9),
     ("librdkafka/lz4_stream.qv", "LZ4_compress_fast_extState", 10),
     ("librdkafka/memory.qv", "rd_malloc", 3),
-    ("librdkafka/memory.qv", "rd_calloc", 4),
-    ("librdkafka/memory.qv", "rd_strdup", 3),
+    // Rule 37: checked-body marker and named abort premise; result deliberately non-null.
+    ("librdkafka/memory.qv", "rd_calloc", 6),
+    ("librdkafka/memory.qv", "rd_strdup", 5),
     ("librdkafka/memory.qv", "rd_strndup", 4),
     ("librdkafka/memory.qv", "rd_free", 3),
     ("librdkafka/memory.qv", "rd_realloc", 4),
@@ -2768,8 +2769,6 @@ const EXPECTED_INHERITANCE: &[(&str, &str, &str)] = &[
     // clause (`compiler/tests/contract_inherit_qcore_provider.rs`), so the
     // elaborated clause pins in `EXPECTED_CONTRACTS` are unchanged.
     ("librdkafka/memory.qv", "rd_malloc", "libc::malloc"),
-    ("librdkafka/memory.qv", "rd_calloc", "libc::calloc"),
-    ("librdkafka/memory.qv", "rd_strdup", "libc::strdup"),
     ("librdkafka/memory.qv", "rd_strndup", "libc::strndup"),
     ("librdkafka/memory.qv", "rd_free", "libc::free"),
     ("monkey/memory.qv", "mk_mem_alloc", "libc::malloc"),

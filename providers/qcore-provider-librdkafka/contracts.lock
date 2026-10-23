@@ -822,13 +822,17 @@
     {
       "function": "rd_calloc",
       "module": "librdkafka/memory.qv",
-      "contract_sha256": "d1aaf76a5219a10c9de2dbefea47348efa821ef76441046dac5312e91aed7d50",
+      "contract_sha256": "7144aa74288d749a7aa4a6bde9ef57e82a21b56e66604eb2cc5f2e8ed73f2955",
       "identities": [
         {
           "reviewed_at": [
             {
               "kind": "git",
               "revision": "046accf6aded7906f66a1baf0202da349e521736"
+            },
+            {
+              "kind": "git",
+              "revision": "34155955e4962a56d94eb23c03a002880899a0d1"
             },
             {
               "kind": "git",
@@ -4955,13 +4959,17 @@
     {
       "function": "rd_strdup",
       "module": "librdkafka/memory.qv",
-      "contract_sha256": "881f127f35086ef04f4b1abbe1272c40d9b7e2427131dd7c0df2490e8d29fa5c",
+      "contract_sha256": "bfee2849269f2ac4907cb50613f1260df48608f29d67c4dfe7c895b8feee263b",
       "identities": [
         {
           "reviewed_at": [
             {
               "kind": "git",
               "revision": "046accf6aded7906f66a1baf0202da349e521736"
+            },
+            {
+              "kind": "git",
+              "revision": "34155955e4962a56d94eb23c03a002880899a0d1"
             },
             {
               "kind": "git",

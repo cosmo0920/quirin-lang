@@ -1,8 +1,7 @@
 # W48-BU-RK-RESULT-CONSTRUCTORS — validation pending
 
 Rule 37 is proposed for checked, non-VLA `sizeof` mentions in constructor
-ownership scans and checked non-null allocator-wrapper results. Active semantic
-implementation and its gates are pending. No TIP gains are claimed.
+ownership scans and checked non-null allocator-wrapper results. Rust/Lean implementation is prepared; execution of its gates is pending. No TIP gains are claimed.
 
 The own fresh BASE corpus passed (audit and input round-trip exit 0):
 999 Safe, 3,826 Unknown, 9 provisional Unsafe custody rows out of 4,834.
