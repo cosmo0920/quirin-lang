@@ -6626,7 +6626,7 @@
   ]
  },
  "corpus": {
-  "contract_modules": 137,
+  "contract_modules": 138,
   "contract_modules_pinned_by": "compiler/tests/qcore_contract_corpus.rs",
   "contract_clause_pin": {
    "const": "EXPECTED_CONTRACTS",
@@ -6862,7 +6862,7 @@
   "workspace_tests": 8549,
   "provider_tests": 133,
   "python_evidence_validator_tests": 374,
-  "lean_audits": 367,
+  "lean_audits": 369,
   "lean_audit_files": [
    "AuditAbiEnumConstPointer.lean",
    "AuditAggregateOwnedField.lean",
@@ -7024,6 +7024,7 @@
    "AuditListIteration.lean",
    "AuditListLookup.lean",
    "AuditLiteralArgumentPremise.lean",
+   "AuditLiteralDecayReadings.lean",
    "AuditLiteralTailActual.lean",
    "AuditLocalCondition.lean",
    "AuditLocalSourceBindings.lean",
@@ -7239,7 +7240,7 @@
   "cargo_clippy": "clean",
   "standing_gate": "card full gate borrowed (code-identical); integration targeted check: matrix, index, Python",
   "full_language_conformance": false,
-  "measurement_provenance": "integrator_supplied (docs/reports/detach-result-wrapper-composition/integration/gate.json)"
+  "measurement_provenance": "carried_from_previous_matrix: these numbers were NOT measured for this regeneration; pass --gate PATH with the standing-gate results of this checkpoint to replace them"
  },
  "named_followups": [
   {

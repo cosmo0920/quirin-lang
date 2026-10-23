@@ -66,3 +66,12 @@ branch. None is a status claim. `docs/STATUS.md` is unchanged.
 3. Merge the final commits into local `main`, regenerate the matrix, run one
    combined full gate and push.
 4. Then apply the approved CFG release patch, with its own gate and report parity.
+
+## Later: the integration branch was pushed (2026-10-23)
+
+After this record was written, the user pushed the integration branch. origin/main
+`30a3c717b` contains `0217006f2`, plus `4c3cbb8ec`, which pins the logger card's
+two declarations in `compiler/tests/contract_loader.rs`. Rules 32, 34 and 35 are
+therefore on main while unfinished. Their open items above still apply and are
+now fixed forward on main. This record was merged onto main at the same time as
+the matrix regeneration that corrects the stale Lean audit count.
