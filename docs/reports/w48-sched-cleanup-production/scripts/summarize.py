@@ -48,7 +48,7 @@ def main():
     for name, scenario in tip_outer['scenarios'].items():
         before = {json.dumps(x, sort_keys=True) for x in base_outer['scenarios'][name]['moved']}
         added[name] = [{'file': x['file'], 'function': x['function'], 'part': x['part'],
-                        'reasons': x['reasons']}
+                        'reasons': x.get('reasons'), 'runtime': x.get('runtime')}
                        for x in scenario['moved'] if json.dumps(x, sort_keys=True) not in before]
     rows_beyond = full['rows_differing_beyond_environment_digests']
     document = {

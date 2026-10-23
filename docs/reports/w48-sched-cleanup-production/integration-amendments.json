@@ -1,0 +1,67 @@
+{
+  "card": "W48-SCHED-CLEANUP-PRODUCTION",
+  "base": "4dd8c80135f8c35d56f64bcce9305b0b081ef9fd",
+  "measured_source": "b2f708d49bd9192897350a04d9cb0d0f4647a3b7",
+  "semantic_commits": [
+    "e2ef6e832 (rule 34 Rust, Lean QCore.ElementDestroyer, mk_http_thread_destroy declaration, pins)",
+    "d28d4cdc3 (rule 34 text, contract spec C04.8)",
+    "489dab482 (provider inventory sync)"
+  ],
+  "prediction": "385eaedd3, before e2ef6e832",
+  "rule": "gateway 34 (docs/agents/gateway.md#constraint-34; router row in docs/agents/README.md); already on main",
+  "increment": "wave-48-part11.md",
+  "increment_paragraph": "**W48-SCHED-CLEANUP-PRODUCTION (2026-10-23).** The [card](../../reports/w48-sched-cleanup-production/README.md) completes gateway rule 34, the element destroyer: a declaration may state `resource_unpublished(p)` beside `resource_released(p)`, and a caller applies rule 10d/10f's unlink first and then the release; every entry those rules do not admit keeps the unlink's refusal, and rule 10f(3)'s no-summary gate is unchanged. `mk_http_thread_destroy` is declared so in qcore-provider-libevent (pinned at 046accf6 and 66910c10) with eight named scheduler premises (parent embedding, callback footprint with the creation-NULL source reading, params TLS, coroutine, borrowed chain, membership and writers, later aliases, Valgrind request); QCore.ElementDestroyer proves 13 theorems. Fresh pinned corpus BASE 4dd8c8013 / TIP b2f708d49 over the re-spelled input mirror: 977 to 999 Safe, 3,848 to 3,826 Unknown, 9 provisional Unsafe unchanged; rule 34 owns exactly sched_thread_cleanup and mk_sched_threads_destroy_conn (custody Safe on the eight premises, null Unknown, runtime Unknown in both loaded scenarios), rule 32 eight moves and rule 35 twelve (siblings). mk_sched_threads_purge and mk_sched_threads_destroy_all stay Unknown on their call to sched_thread_cleanup, whose body publishes no summary under rule 10f(3) (SCHED-CLEANUP-CALLER-DRAIN). The standing gate passes {{GATE_SUMMARY}}; the provider gate passes {{PROVIDER_SUMMARY}}.",
+  "status_paragraph": "W48-SCHED-CLEANUP-PRODUCTION (rule 34) makes sched_thread_cleanup and mk_sched_threads_destroy_conn custody Safe, conditional on mk_http_thread_destroy's eight named scheduler premises (declared assumption; runtime Unknown, null Unknown, combined unchanged): pinned corpus BASE 4dd8c8013 977 Safe; of the 22 moves to TIP's 999, rule 34 owns 2, rule 32 8, rule 35 12. The planner callers mk_sched_threads_purge and mk_sched_threads_destroy_all remain Unknown pending a caller-side drain rule.",
+  "ledger": [
+    {
+      "id": "W48-BOTTOM-UP-RESIDUAL-PLAN",
+      "operation": "append",
+      "text": "W48-SCHED-CLEANUP-PRODUCTION (gateway rule 34, BASE 4dd8c8013 / TIP b2f708d49, pinned corpus 977 to 999 Safe of which rule 34 owns 2) connects the scheduler cleanup to production: mk_http_thread_destroy is declared an element destroyer (resource_unpublished then resource_released) in qcore-provider-libevent, and sched_thread_cleanup and mk_sched_threads_destroy_conn become custody Safe, conditional on eight named premises that carry SCHEDULER-LIST-EMBEDDING-TRANSPORT (scheduler_exact_parent_embedding, scheduler_valid_membership), SCHEDULER-CALLBACK-EFFECT-CLOSURE (scheduler_callback_footprint, scheduler_borrowed_chain_live), SCHEDULER-TLS-RETIREMENT and SCHEDULER-CREATE-TLS-LIBCO-FAILURES (scheduler_tls_params_owned, scheduler_callee_live), SCHEDULER-EXTERNAL-ALIAS-RETIREMENT (scheduler_no_later_alias_use) and the Valgrind request (scheduler_valgrind_request_neutral) into the verdicts' assumptions. None is discharged: they are Open source truth (SCHED-DESTROYER-PREMISES), the declaration's own body row stays Unknown, both rows stay null Unknown (SCHED-CLEANUP-NULL-TRAVERSAL), and both move to runtime Unknown in every loaded scenario. The planner's score-2 callers mk_sched_threads_purge and mk_sched_threads_destroy_all did not move: each keeps only `call to uncontracted function sched_thread_cleanup` (mk_scheduler.c:637; :645, :646) because rule 10f(3) withholds the summary of a body with a foreign unlink (SCHED-CLEANUP-CALLER-DRAIN). The current-thread mk_thread TLS key is still not cleared by destruction and is claimed nothing about. DISCHARGE (scheduler part): the three registered residuals.",
+      "source": "docs/reports/w48-sched-cleanup-production/README.md"
+    },
+    {
+      "id": "W44-CALLEE-DESTRUCTOR-SUMMARY",
+      "operation": "amend",
+      "text": "AMENDED (W48-SCHED-CLEANUP-PRODUCTION, gateway rule 34, corpus BASE 4dd8c8013 / TIP b2f708d49): sched_thread_cleanup's own body is now custody Safe through the element destroyer mk_http_thread_destroy (eight named premises), but it still publishes no summary (rule 10f(3), a foreign unlink), so its two callers stay blocked by it alone. Still no clause states 'releases every element of the container at #k'; the residual is SCHED-CLEANUP-CALLER-DRAIN.",
+      "source": "docs/reports/w48-sched-cleanup-production/README.md"
+    },
+    {
+      "id": "SCHED-CLEANUP-CALLER-DRAIN",
+      "operation": "register",
+      "title": "A body that destroys every element of a caller's list publishes no summary, so mk_sched_threads_purge and mk_sched_threads_destroy_all stay Unknown",
+      "why": "Card W48-SCHED-CLEANUP-PRODUCTION (gateway rule 34) makes sched_thread_cleanup custody Safe, conditional on mk_http_thread_destroy's eight named premises, but its two planner callers keep exactly their BASE leaves: mk_sched_threads_purge `call to uncontracted function sched_thread_cleanup` at mk_server/mk_scheduler.c:637, mk_sched_threads_destroy_all the same leaf at :645 and :646 (null property Safe on both). sched_thread_cleanup lowers a foreign unlink (rule 34 applies rule 10f(2)'s unlink of each element before the release), so rule 10f(3)'s gate (has_foreign_unlink in observations_match_contract) publishes no summary: a summary would read the list formal Borrowed although every element it held was ended, and a caller's own published objects in that list would keep being restored. Rules 10f and 34 forbid dropping the gate without a caller-side rule that forgets the published sites the call may release, and no summary clause states 'releases every element of the container at #k' (resource_elements_dropped is registry-only, W44-CALLEE-DESTRUCTOR-SUMMARY). DISCHARGE: a container-drain summary effect derived only from a body whose every container effect on formal #k is an admitted destroyer of an element of a safe iteration over it, its caller application (the actual rooted as rule 10f(2) requires; every site the caller published on the path is forgotten as released or the call refuses), the schema change, matching audited Lean, and a fresh BASE/TIP corpus measurement naming the two callers.",
+      "source": "docs/reports/w48-sched-cleanup-production/README.md",
+      "recorded_by": "W48-SCHED-CLEANUP-PRODUCTION"
+    },
+    {
+      "id": "SCHED-CLEANUP-NULL-TRAVERSAL",
+      "operation": "register",
+      "title": "The custody-Safe scheduler cleanup rows stay Unknown on the null property: list successors and the session chain",
+      "why": "Card W48-SCHED-CLEANUP-PRODUCTION: sched_thread_cleanup and mk_sched_threads_destroy_conn are custody Safe and null Unknown (combined Unknown). Their null candidates are the circular-list traversal reads (`list->next`, `head->next` at mk_server/mk_scheduler.c:623; `&sched->threads->next`, `head->next` at :666), `mth->session` at :668, and the moved inferred `mk_http_thread_destroy` precondition on `mth` (:625, :669). mk_http_thread_destroy's own null row is Unknown on mth->session, ->channel and ->event (mk_http_thread.c:268). The null model has no non-NULL successor of a valid circular mk_list and no non-NULL session chain. DISCHARGE: a checked circular-list successor reading (or a named premise in the null verdict's assumptions, scheduler_valid_membership's null half) and a non-NULL borrowed-chain reading, with Lean parity and a fresh measurement of the null projection.",
+      "source": "docs/reports/w48-sched-cleanup-production/README.md",
+      "recorded_by": "W48-SCHED-CLEANUP-PRODUCTION"
+    },
+    {
+      "id": "SCHED-DESTROYER-PREMISES",
+      "operation": "register",
+      "title": "mk_http_thread_destroy's eight scheduler premises are Open source truth on every row resting on it",
+      "why": "Card W48-SCHED-CLEANUP-PRODUCTION declares mk_http_thread_destroy (qcore-provider-libevent, contracts/monkey/intrusive_list.qv, pinned at 046accf6 and 66910c10) with resource_unpublished(mth), resource_released(mth, nonnull) and eight resource_premise clauses: scheduler_exact_parent_embedding, scheduler_callback_footprint, scheduler_tls_params_owned, scheduler_callee_live, scheduler_borrowed_chain_live, scheduler_valid_membership, scheduler_no_later_alias_use, scheduler_valgrind_request_neutral. sched_thread_cleanup and mk_sched_threads_destroy_conn are custody Safe only under them (their hypothesis_dependencies list the eight atoms); the declaration's own body row stays Unknown, so its standing is a declared assumption, and every loaded outer-runtime scenario moves both rows Safe -> Unknown because no envelope covers the premises. They map onto the named scheduler residuals of W48-BOTTOM-UP-RESIDUAL-PLAN: parent embedding and membership/writers (SCHEDULER-LIST-EMBEDDING-TRANSPORT), callback footprint and borrowed chain (SCHEDULER-CALLBACK-EFFECT-CLOSURE), params TLS (SCHEDULER-TLS-RETIREMENT, SCHEDULER-CREATE-TLS-LIBCO-FAILURES), coroutine (SCHEDULER-CREATE-TLS-LIBCO-FAILURES), later aliases (SCHEDULER-EXTERNAL-ALIAS-RETIREMENT); the Valgrind client request is new here. Source readings recorded, not assumed: cb_destroy is NULL at creation (mk_thread_new(sizeof(struct mk_http_thread), NULL), mk_http_thread.c:199) and no other Monkey source writes it; the embedded-data NULL branch returns before insertion; a NULL co_create result reaches cleanup only through co_delete's premise. DISCHARGE, per premise: a checked source-to-effect consumer (or the body itself validating against the declaration) that proves it at both pinned revisions, with audited Lean, after which the premise is removed from the declaration and the dependent rows are re-measured; a premise kept for deployment truth needs an outer-contract envelope that covers it.",
+      "source": "docs/reports/w48-sched-cleanup-production/README.md",
+      "recorded_by": "W48-SCHED-CLEANUP-PRODUCTION"
+    }
+  ],
+  "root_owned_files": [
+    "docs/STATUS.md (the halt paragraph's rule 34 part)",
+    "docs/development/increments/wave-48-part11.md",
+    "docs/reviews/r0_3/acceptance_matrix.json (named_followups per the ledger; regenerate)",
+    "docs/reports/INDEX.md (regenerate with scripts/build_docs_index.py)",
+    "docs/reports/w48-impl-round1-halt/ (record the card's completion if the integrator keeps that record current)"
+  ],
+  "shared_files_touched_since_halt": [
+    "none outside docs/reports/w48-sched-cleanup-production/ (rule 34's code, Lean, provider files and docs are already on main)"
+  ],
+  "evidence": {
+    "pair": "private/w48-sched/final-3 (BASE/TIP corpus, exits 0/0)",
+    "gate": "private/w48-sched/final-gate-1"
+  }
+}

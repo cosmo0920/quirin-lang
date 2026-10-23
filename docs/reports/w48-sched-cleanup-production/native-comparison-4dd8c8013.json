@@ -1,0 +1,1417 @@
+{
+ "card": "W48-SCHED-CLEANUP-PRODUCTION",
+ "route": "conditional eight-home pinned corpus (batch4 link map), run_pinned_audit.py from each side snapshot over the re-spelled input mirror (scripts/mirror_inputs.py; manifest sha256 3c7d2bb0a0ddb54730c1f0d1ff4ec44dd3cd99bad64f682e2e833cafb97a6466)",
+ "sides": {
+  "base": {
+   "revision": "4dd8c80135f8c35d56f64bcce9305b0b081ef9fd",
+   "binary_sha256": "12c088f4f0e0141248327ae5c1af5316b5ad441986fe99fb48853aa9c1706e50",
+   "binary_sha256_after": "12c088f4f0e0141248327ae5c1af5316b5ad441986fe99fb48853aa9c1706e50",
+   "exit": 0,
+   "identity_error": null,
+   "started": "2026-10-23T10:13:33.911802+00:00",
+   "ended": "2026-10-23T11:54:46.074617+00:00",
+   "jobs": 4,
+   "link_map_sha256": "98a4db761ace9fd4846b000c4c98defdc2e39ce6f95684c67c30f9b8b6f38ad3",
+   "free_bytes_before": 767239917568,
+   "free_bytes_after": 767067037696,
+   "environment": {
+    "QCORE_PROFILES": "/media/Data/GitHub/quirin-lang/.claude/worktrees/w48-sched-cleanup-production/private/w48-sched/final-3/base-snapshot/contract/profiles",
+    "QCORE_CLANG": "/usr/lib/llvm-21/bin/clang",
+    "QCORE_CROSS_UNIT_LINK_MAP": "/media/Data/GitHub/quirin-lang/.claude/worktrees/w48-sched-cleanup-production/docs/reports/w48-sched-cleanup-production/link-map.corpus.json",
+    "QCORE_NULL_PROPERTY": "/media/Data/GitHub/quirin-lang/.claude/worktrees/w48-sched-cleanup-production/private/w48-sched/final-3/base-corpus/corpus-null.jsonl",
+    "QCORE_OUTER_PROJECTION": "/media/Data/GitHub/quirin-lang/.claude/worktrees/w48-sched-cleanup-production/private/w48-sched/final-3/base-corpus/corpus-outer.json",
+    "QCORE_SOURCE_CONTRACTS": "unset",
+    "QCORE_RETURN_CENSUS": "unset",
+    "QCORE_CHUNKIO_PACKAGE": "unset",
+    "QCORE_AUDIT_JOBS": "unset"
+   },
+   "private_artifacts": "private/w48-sched/final-3/base-corpus"
+  },
+  "tip": {
+   "revision": "b2f708d49bd9192897350a04d9cb0d0f4647a3b7",
+   "binary_sha256": "7be5cdf4111e86cd051c5b5f632111d8a5ba4af0069a1f720a0bae00d879b442",
+   "binary_sha256_after": "7be5cdf4111e86cd051c5b5f632111d8a5ba4af0069a1f720a0bae00d879b442",
+   "exit": 0,
+   "identity_error": null,
+   "started": "2026-10-23T10:13:33.911817+00:00",
+   "ended": "2026-10-23T12:08:01.055251+00:00",
+   "jobs": 4,
+   "link_map_sha256": "98a4db761ace9fd4846b000c4c98defdc2e39ce6f95684c67c30f9b8b6f38ad3",
+   "free_bytes_before": 767239921664,
+   "free_bytes_after": 766897025024,
+   "environment": {
+    "QCORE_PROFILES": "/media/Data/GitHub/quirin-lang/.claude/worktrees/w48-sched-cleanup-production/private/w48-sched/final-3/tip-snapshot/contract/profiles",
+    "QCORE_CLANG": "/usr/lib/llvm-21/bin/clang",
+    "QCORE_CROSS_UNIT_LINK_MAP": "/media/Data/GitHub/quirin-lang/.claude/worktrees/w48-sched-cleanup-production/docs/reports/w48-sched-cleanup-production/link-map.corpus.json",
+    "QCORE_NULL_PROPERTY": "/media/Data/GitHub/quirin-lang/.claude/worktrees/w48-sched-cleanup-production/private/w48-sched/final-3/tip-corpus/corpus-null.jsonl",
+    "QCORE_OUTER_PROJECTION": "/media/Data/GitHub/quirin-lang/.claude/worktrees/w48-sched-cleanup-production/private/w48-sched/final-3/tip-corpus/corpus-outer.json",
+    "QCORE_SOURCE_CONTRACTS": "unset",
+    "QCORE_RETURN_CENSUS": "unset",
+    "QCORE_CHUNKIO_PACKAGE": "unset",
+    "QCORE_AUDIT_JOBS": "unset"
+   },
+   "private_artifacts": "private/w48-sched/final-3/tip-corpus"
+  }
+ },
+ "custody": {
+  "base": {
+   "Safe": 977,
+   "Unknown": 3848,
+   "Unsafe": 9
+  },
+  "tip": {
+   "Safe": 999,
+   "Unknown": 3826,
+   "Unsafe": 9
+  },
+  "rows": [
+   4834,
+   4834
+  ]
+ },
+ "status_moves": [
+  {
+   "key": [
+    "librdkafka",
+    "rdkafka.c",
+    "rd_kafka_log0",
+    0
+   ],
+   "status": [
+    "Unknown",
+    "Safe"
+   ],
+   "leaves_removed": [
+    {
+     "category": "unsupported",
+     "description": "call to uncontracted function `rd_kafka_log_buf`",
+     "origin": "rdkafka.c:347"
+    }
+   ],
+   "leaves_added": [],
+   "tip_declarations": [
+    "rd_kafka_log0",
+    "rd_kafka_log_buf",
+    "snprintf",
+    "vsnprintf"
+   ]
+  },
+  {
+   "key": [
+    "librdkafka",
+    "rdkafka.c",
+    "rd_kafka_log_print",
+    0
+   ],
+   "status": [
+    "Unknown",
+    "Safe"
+   ],
+   "leaves_removed": [
+    {
+     "category": "unsupported",
+     "description": "indirect memory access is outside the resource projection",
+     "origin": "rdkafka.c:388"
+    }
+   ],
+   "leaves_added": [],
+   "tip_declarations": {}
+  },
+  {
+   "key": [
+    "librdkafka",
+    "rdkafka.c",
+    "rd_kafka_log_syslog",
+    0
+   ],
+   "status": [
+    "Unknown",
+    "Safe"
+   ],
+   "leaves_removed": [
+    {
+     "category": "unsupported",
+     "description": "unmodeled call, aggregate or indirect access in branch condition",
+     "origin": "rdkafka.c:404"
+    }
+   ],
+   "leaves_added": [],
+   "tip_declarations": {}
+  },
+  {
+   "key": [
+    "librdkafka",
+    "rdkafka.c",
+    "rd_kafka_set_logger",
+    0
+   ],
+   "status": [
+    "Unknown",
+    "Safe"
+   ],
+   "leaves_removed": [
+    {
+     "category": "unsupported",
+     "description": "unmodeled call, aggregate or indirect access in branch condition",
+     "origin": "rdkafka.c:415"
+    }
+   ],
+   "leaves_added": [],
+   "tip_declarations": [
+    "__assert_fail"
+   ]
+  },
+  {
+   "key": [
+    "librdkafka",
+    "rdkafka.c",
+    "rd_kafka_share_ack_commit_cb_register_op",
+    0
+   ],
+   "status": [
+    "Unknown",
+    "Safe"
+   ],
+   "leaves_removed": [
+    {
+     "category": "unsupported",
+     "description": "indirect memory access is outside the resource projection",
+     "origin": "rdkafka.c:3250"
+    }
+   ],
+   "leaves_added": [],
+   "tip_declarations": [
+    "rd_kafka_log0",
+    "rd_kafka_share_ack_commit_cb_register_op"
+   ]
+  },
+  {
+   "key": [
+    "librdkafka",
+    "rdkafka.c",
+    "rd_kafka_share_log_fetch_stall",
+    0
+   ],
+   "status": [
+    "Unknown",
+    "Safe"
+   ],
+   "leaves_removed": [
+    {
+     "category": "unknown_alias",
+     "description": "unresolved resource identity `rkcg`",
+     "origin": "rdkafka.c:2379"
+    },
+    {
+     "category": "unsupported",
+     "description": "indirect memory access is outside the resource projection",
+     "origin": "rdkafka.c:2377"
+    }
+   ],
+   "leaves_added": [],
+   "tip_declarations": [
+    "clock_gettime",
+    "rd_kafka_log0"
+   ]
+  },
+  {
+   "key": [
+    "librdkafka",
+    "rdkafka_conf.c",
+    "rd_kafka_anyconf_set_modified",
+    0
+   ],
+   "status": [
+    "Unknown",
+    "Safe"
+   ],
+   "leaves_removed": [
+    {
+     "category": "unknown_alias",
+     "description": "unresolved resource identity `conf`",
+     "origin": "rdkafka_conf.c:269"
+    },
+    {
+     "category": "unsupported",
+     "description": "unmodeled call, aggregate or indirect access in branch condition",
+     "origin": "rdkafka_conf.c:271"
+    }
+   ],
+   "leaves_added": [],
+   "tip_declarations": {}
+  },
+  {
+   "key": [
+    "librdkafka",
+    "rdkafka_mock.c",
+    "rd_kafka_mock_cluster_io_clear_events",
+    0
+   ],
+   "status": [
+    "Unknown",
+    "Safe"
+   ],
+   "leaves_removed": [
+    {
+     "category": "unsupported",
+     "description": "unmodeled call, aggregate or indirect access in branch condition",
+     "origin": "rdkafka_mock.c:1173"
+    }
+   ],
+   "leaves_added": [],
+   "tip_declarations": {}
+  },
+  {
+   "key": [
+    "librdkafka",
+    "rdkafka_mock.c",
+    "rd_kafka_mock_cluster_io_set_event",
+    0
+   ],
+   "status": [
+    "Unknown",
+    "Safe"
+   ],
+   "leaves_removed": [
+    {
+     "category": "unsupported",
+     "description": "unmodeled call, aggregate or indirect access in branch condition",
+     "origin": "rdkafka_mock.c:1153"
+    }
+   ],
+   "leaves_added": [],
+   "tip_declarations": {}
+  },
+  {
+   "key": [
+    "librdkafka",
+    "rdkafka_mock.c",
+    "rd_kafka_mock_cluster_io_set_events",
+    0
+   ],
+   "status": [
+    "Unknown",
+    "Safe"
+   ],
+   "leaves_removed": [
+    {
+     "category": "unsupported",
+     "description": "unmodeled call, aggregate or indirect access in branch condition",
+     "origin": "rdkafka_mock.c:1130"
+    }
+   ],
+   "leaves_added": [],
+   "tip_declarations": {}
+  },
+  {
+   "key": [
+    "librdkafka",
+    "rdkafka_mock.c",
+    "rd_kafka_mock_connection_set_blocking",
+    0
+   ],
+   "status": [
+    "Unknown",
+    "Safe"
+   ],
+   "leaves_removed": [
+    {
+     "category": "unsupported",
+     "description": "call to uncontracted function `rd_kafka_mock_cluster_io_set_event`",
+     "origin": "rdkafka_mock.c:1693"
+    }
+   ],
+   "leaves_added": [],
+   "tip_declarations": [
+    "__assert_fail"
+   ]
+  },
+  {
+   "key": [
+    "librdkafka",
+    "rdkafka_mock_cgrp.c",
+    "rd_kafka_mock_cgrp_classic_member_active",
+    0
+   ],
+   "status": [
+    "Unknown",
+    "Safe"
+   ],
+   "leaves_removed": [
+    {
+     "category": "unsupported",
+     "description": "call to uncontracted function `rd_kafka_log0`",
+     "origin": "rdkafka_mock_cgrp.c:75"
+    }
+   ],
+   "leaves_added": [],
+   "tip_declarations": [
+    "clock_gettime",
+    "rd_kafka_log0"
+   ]
+  },
+  {
+   "key": [
+    "librdkafka",
+    "rdkafka_mock_cgrp.c",
+    "rd_kafka_mock_cgrp_classic_set_state",
+    0
+   ],
+   "status": [
+    "Unknown",
+    "Safe"
+   ],
+   "leaves_removed": [
+    {
+     "category": "unsupported",
+     "description": "indirect memory access is outside the resource projection",
+     "origin": "rdkafka_mock_cgrp.c:58"
+    }
+   ],
+   "leaves_added": [],
+   "tip_declarations": [
+    "rd_kafka_log0"
+   ]
+  },
+  {
+   "key": [
+    "librdkafka",
+    "rdkafka_mock_cgrp.c",
+    "rd_kafka_mock_cgrp_consumer_member_active",
+    0
+   ],
+   "status": [
+    "Unknown",
+    "Safe"
+   ],
+   "leaves_removed": [
+    {
+     "category": "unsupported",
+     "description": "call to uncontracted function `rd_kafka_log0`",
+     "origin": "rdkafka_mock_cgrp.c:1338"
+    }
+   ],
+   "leaves_added": [],
+   "tip_declarations": [
+    "clock_gettime",
+    "rd_kafka_log0"
+   ]
+  },
+  {
+   "key": [
+    "librdkafka",
+    "rdkafka_mock_sharegrp.c",
+    "rd_kafka_mock_sharegroup_member_active",
+    0
+   ],
+   "status": [
+    "Unknown",
+    "Safe"
+   ],
+   "leaves_removed": [
+    {
+     "category": "unsupported",
+     "description": "call to uncontracted function `rd_kafka_log0`",
+     "origin": "rdkafka_mock_sharegrp.c:219"
+    }
+   ],
+   "leaves_added": [],
+   "tip_declarations": [
+    "clock_gettime",
+    "rd_kafka_log0"
+   ]
+  },
+  {
+   "key": [
+    "librdkafka",
+    "rdkafka_sasl_oauthbearer_oidc.c",
+    "rd_kafka_oidc_assertion_get_algo_label",
+    0
+   ],
+   "status": [
+    "Unknown",
+    "Safe"
+   ],
+   "leaves_removed": [
+    {
+     "category": "unsupported",
+     "description": "unmodeled call, aggregate or indirect access in branch condition",
+     "origin": "rdkafka_sasl_oauthbearer_oidc.c:241"
+    }
+   ],
+   "leaves_added": [],
+   "tip_declarations": {}
+  },
+  {
+   "key": [
+    "librdkafka",
+    "rdkafka_telemetry_decode.c",
+    "unit_test_telemetry_decode_error",
+    0
+   ],
+   "status": [
+    "Unknown",
+    "Safe"
+   ],
+   "leaves_removed": [
+    {
+     "category": "unsupported",
+     "description": "unmodeled call, aggregate or indirect access in branch condition",
+     "origin": "rdkafka_telemetry_decode.c:522"
+    }
+   ],
+   "leaves_added": [],
+   "tip_declarations": {}
+  },
+  {
+   "key": [
+    "librdkafka",
+    "rdkafka_topic.c",
+    "rd_kafka_topic_set_state",
+    0
+   ],
+   "status": [
+    "Unknown",
+    "Safe"
+   ],
+   "leaves_removed": [
+    {
+     "category": "unsupported",
+     "description": "indirect memory access is outside the resource projection",
+     "origin": "rdkafka_topic.c:713"
+    }
+   ],
+   "leaves_added": [],
+   "tip_declarations": [
+    "clock_gettime",
+    "rd_kafka_log0"
+   ]
+  },
+  {
+   "key": [
+    "librdkafka",
+    "rdkafka_txnmgr.c",
+    "rd_kafka_txn_state_transition_is_valid",
+    0
+   ],
+   "status": [
+    "Unknown",
+    "Safe"
+   ],
+   "leaves_removed": [
+    {
+     "category": "unsupported",
+     "description": "unmodeled call, aggregate or indirect access in branch condition",
+     "origin": "rdkafka_txnmgr.c:220"
+    }
+   ],
+   "leaves_added": [],
+   "tip_declarations": {}
+  },
+  {
+   "key": [
+    "monkey-libevent",
+    "mk_server/mk_config.c",
+    "mk_config_signature",
+    0
+   ],
+   "status": [
+    "Unknown",
+    "Safe"
+   ],
+   "leaves_removed": [
+    {
+     "category": "unsupported",
+     "description": "indirect memory access is outside the resource projection",
+     "origin": "mk_server/mk_config.c:505"
+    },
+    {
+     "category": "unsupported",
+     "description": "indirect memory access is outside the resource projection",
+     "origin": "mk_server/mk_config.c:510"
+    },
+    {
+     "category": "unsupported",
+     "description": "indirect memory access is outside the resource projection",
+     "origin": "mk_server/mk_config.c:514"
+    }
+   ],
+   "leaves_added": [],
+   "tip_declarations": {}
+  },
+  {
+   "key": [
+    "monkey-libevent",
+    "mk_server/mk_scheduler.c",
+    "mk_sched_threads_destroy_conn",
+    0
+   ],
+   "status": [
+    "Unknown",
+    "Safe"
+   ],
+   "leaves_removed": [
+    {
+     "category": "unknown_alias",
+     "description": "unresolved resource identity `mth`",
+     "origin": "mk_server/mk_scheduler.c:668"
+    },
+    {
+     "category": "unsupported",
+     "description": "call to uncontracted function `mk_http_thread_destroy`",
+     "origin": "mk_server/mk_scheduler.c:669"
+    }
+   ],
+   "leaves_added": [],
+   "tip_declarations": [
+    "mk_http_thread_destroy"
+   ]
+  },
+  {
+   "key": [
+    "monkey-libevent",
+    "mk_server/mk_scheduler.c",
+    "sched_thread_cleanup",
+    0
+   ],
+   "status": [
+    "Unknown",
+    "Safe"
+   ],
+   "leaves_removed": [
+    {
+     "category": "unsupported",
+     "description": "call to uncontracted function `mk_http_thread_destroy`",
+     "origin": "mk_server/mk_scheduler.c:625"
+    }
+   ],
+   "leaves_added": [],
+   "tip_declarations": [
+    "mk_http_thread_destroy"
+   ]
+  }
+ ],
+ "environment_digest_fields": [
+  "assumptions",
+  "build_identity",
+  "environment_sha256",
+  "id",
+  "resource_contracts_sha256"
+ ],
+ "rows_with_any_byte_change": 4834,
+ "rows_differing_beyond_environment_digests": {
+  "count": 648,
+  "by_rule": {
+   "35 (by elimination)": 91,
+   "32": 554,
+   "34": 3
+  },
+  "full_list": "private_full_attribution"
+ },
+ "null_records": {
+  "base": 4921,
+  "tip": 4921,
+  "differing_beyond_environment_digests": {
+   "base_count": 34,
+   "tip_count": 34,
+   "rule_34": [
+    {
+     "function": "mk_sched_threads_destroy_conn",
+     "custody": "Unknown",
+     "combined": "Unknown"
+    },
+    {
+     "function": "sched_thread_cleanup",
+     "custody": "Unknown",
+     "combined": "Unknown"
+    },
+    {
+     "function": "mk_sched_threads_destroy_conn",
+     "custody": "Safe",
+     "combined": "Unknown"
+    },
+    {
+     "function": "sched_thread_cleanup",
+     "custody": "Safe",
+     "combined": "Unknown"
+    }
+   ]
+  }
+ },
+ "outer_runtime_projection": {
+  "summary": {
+   "base": {
+    "all": {
+     "moves": {
+      "combined": {
+       "Safe -> Pending": 30,
+       "Safe -> Unknown": 3
+      },
+      "custody": {
+       "Safe -> Pending": 30,
+       "Safe -> Unknown": 2
+      },
+      "null": {
+       "Safe -> Pending": 162,
+       "Safe -> Unknown": 1
+      }
+     },
+     "moved_rows": 228
+    },
+    "flb_external_plugin": {
+     "moves": {
+      "combined": {
+       "Safe -> Pending": 31,
+       "Safe -> Unknown": 2
+      },
+      "custody": {
+       "Safe -> Pending": 30,
+       "Safe -> Unknown": 2
+      },
+      "null": {
+       "Safe -> Pending": 163
+      }
+     },
+     "moved_rows": 228
+    },
+    "rk_plugin_library": {
+     "moves": {
+      "combined": {
+       "Safe -> Pending": 30,
+       "Safe -> Unknown": 3
+      },
+      "custody": {
+       "Safe -> Pending": 30,
+       "Safe -> Unknown": 2
+      },
+      "null": {
+       "Safe -> Pending": 162,
+       "Safe -> Unknown": 1
+      }
+     },
+     "moved_rows": 228
+    },
+    "static": {
+     "combined": {
+      "Pending": 0,
+      "Safe": 849,
+      "Unknown": 4045,
+      "Unsafe": 27
+     },
+     "custody": {
+      "Pending": 0,
+      "Safe": 977,
+      "Unknown": 3848,
+      "Unsafe": 9
+     },
+     "null": {
+      "Pending": 0,
+      "Safe": 2549,
+      "Unknown": 2354,
+      "Unsafe": 18
+     }
+    }
+   },
+   "tip": {
+    "all": {
+     "moves": {
+      "combined": {
+       "Safe -> Pending": 30,
+       "Safe -> Unknown": 5
+      },
+      "custody": {
+       "Safe -> Pending": 30,
+       "Safe -> Unknown": 12
+      },
+      "null": {
+       "Safe -> Pending": 162,
+       "Safe -> Unknown": 1
+      }
+     },
+     "moved_rows": 240
+    },
+    "flb_external_plugin": {
+     "moves": {
+      "combined": {
+       "Safe -> Pending": 31,
+       "Safe -> Unknown": 4
+      },
+      "custody": {
+       "Safe -> Pending": 30,
+       "Safe -> Unknown": 12
+      },
+      "null": {
+       "Safe -> Pending": 163
+      }
+     },
+     "moved_rows": 240
+    },
+    "rk_plugin_library": {
+     "moves": {
+      "combined": {
+       "Safe -> Pending": 30,
+       "Safe -> Unknown": 5
+      },
+      "custody": {
+       "Safe -> Pending": 30,
+       "Safe -> Unknown": 12
+      },
+      "null": {
+       "Safe -> Pending": 162,
+       "Safe -> Unknown": 1
+      }
+     },
+     "moved_rows": 240
+    },
+    "static": {
+     "combined": {
+      "Pending": 0,
+      "Safe": 859,
+      "Unknown": 4035,
+      "Unsafe": 27
+     },
+     "custody": {
+      "Pending": 0,
+      "Safe": 999,
+      "Unknown": 3826,
+      "Unsafe": 9
+     },
+     "null": {
+      "Pending": 0,
+      "Safe": 2549,
+      "Unknown": 2354,
+      "Unsafe": 18
+     }
+    }
+   }
+  },
+  "rows_added_to_moved": {
+   "all": [
+    {
+     "file": "rdkafka.c",
+     "function": "rd_kafka_log0",
+     "part": "custody",
+     "runtime": "Unknown"
+    },
+    {
+     "file": "rdkafka.c",
+     "function": "rd_kafka_share_ack_commit_cb_register_op",
+     "part": "custody",
+     "runtime": "Unknown"
+    },
+    {
+     "file": "rdkafka.c",
+     "function": "rd_kafka_share_log_fetch_stall",
+     "part": "custody",
+     "runtime": "Unknown"
+    },
+    {
+     "file": "rdkafka_mock_cgrp.c",
+     "function": "rd_kafka_mock_cgrp_classic_member_active",
+     "part": "custody",
+     "runtime": "Unknown"
+    },
+    {
+     "file": "rdkafka_mock_cgrp.c",
+     "function": "rd_kafka_mock_cgrp_classic_set_state",
+     "part": "custody",
+     "runtime": "Unknown"
+    },
+    {
+     "file": "rdkafka_mock_cgrp.c",
+     "function": "rd_kafka_mock_cgrp_consumer_member_active",
+     "part": "custody",
+     "runtime": "Unknown"
+    },
+    {
+     "file": "rdkafka_mock_sharegrp.c",
+     "function": "rd_kafka_mock_sharegroup_member_active",
+     "part": "custody",
+     "runtime": "Unknown"
+    },
+    {
+     "file": "rdkafka_topic.c",
+     "function": "rd_kafka_topic_set_state",
+     "part": "custody",
+     "runtime": "Unknown"
+    },
+    {
+     "file": "mk_server/mk_scheduler.c",
+     "function": "mk_sched_threads_destroy_conn",
+     "part": "custody",
+     "reasons": [
+      "outer-uncovered: premise:scheduler_borrowed_chain_live is reachable from code `flb_external_plugin` loads and no envelope line covers it (runtime projection, rule 31)",
+      "outer-uncovered: premise:scheduler_borrowed_chain_live is reachable from code `rk_plugin_library` loads and no envelope line covers it (runtime projection, rule 31)",
+      "outer-uncovered: premise:scheduler_callback_footprint is reachable from code `flb_external_plugin` loads and no envelope line covers it (runtime projection, rule 31)",
+      "outer-uncovered: premise:scheduler_callback_footprint is reachable from code `rk_plugin_library` loads and no envelope line covers it (runtime projection, rule 31)",
+      "outer-uncovered: premise:scheduler_callee_live is reachable from code `flb_external_plugin` loads and no envelope line covers it (runtime projection, rule 31)",
+      "outer-uncovered: premise:scheduler_callee_live is reachable from code `rk_plugin_library` loads and no envelope line covers it (runtime projection, rule 31)",
+      "outer-uncovered: premise:scheduler_exact_parent_embedding is reachable from code `flb_external_plugin` loads and no envelope line covers it (runtime projection, rule 31)",
+      "outer-uncovered: premise:scheduler_exact_parent_embedding is reachable from code `rk_plugin_library` loads and no envelope line covers it (runtime projection, rule 31)",
+      "outer-uncovered: premise:scheduler_no_later_alias_use is reachable from code `flb_external_plugin` loads and no envelope line covers it (runtime projection, rule 31)",
+      "outer-uncovered: premise:scheduler_no_later_alias_use is reachable from code `rk_plugin_library` loads and no envelope line covers it (runtime projection, rule 31)",
+      "outer-uncovered: premise:scheduler_tls_params_owned is reachable from code `flb_external_plugin` loads and no envelope line covers it (runtime projection, rule 31)",
+      "outer-uncovered: premise:scheduler_tls_params_owned is reachable from code `rk_plugin_library` loads and no envelope line covers it (runtime projection, rule 31)",
+      "outer-uncovered: premise:scheduler_valgrind_request_neutral is reachable from code `flb_external_plugin` loads and no envelope line covers it (runtime projection, rule 31)",
+      "outer-uncovered: premise:scheduler_valgrind_request_neutral is reachable from code `rk_plugin_library` loads and no envelope line covers it (runtime projection, rule 31)",
+      "outer-uncovered: premise:scheduler_valid_membership is reachable from code `flb_external_plugin` loads and no envelope line covers it (runtime projection, rule 31)",
+      "outer-uncovered: premise:scheduler_valid_membership is reachable from code `rk_plugin_library` loads and no envelope line covers it (runtime projection, rule 31)"
+     ],
+     "runtime": "Unknown"
+    },
+    {
+     "file": "mk_server/mk_scheduler.c",
+     "function": "sched_thread_cleanup",
+     "part": "custody",
+     "reasons": [
+      "outer-uncovered: premise:scheduler_borrowed_chain_live is reachable from code `flb_external_plugin` loads and no envelope line covers it (runtime projection, rule 31)",
+      "outer-uncovered: premise:scheduler_borrowed_chain_live is reachable from code `rk_plugin_library` loads and no envelope line covers it (runtime projection, rule 31)",
+      "outer-uncovered: premise:scheduler_callback_footprint is reachable from code `flb_external_plugin` loads and no envelope line covers it (runtime projection, rule 31)",
+      "outer-uncovered: premise:scheduler_callback_footprint is reachable from code `rk_plugin_library` loads and no envelope line covers it (runtime projection, rule 31)",
+      "outer-uncovered: premise:scheduler_callee_live is reachable from code `flb_external_plugin` loads and no envelope line covers it (runtime projection, rule 31)",
+      "outer-uncovered: premise:scheduler_callee_live is reachable from code `rk_plugin_library` loads and no envelope line covers it (runtime projection, rule 31)",
+      "outer-uncovered: premise:scheduler_exact_parent_embedding is reachable from code `flb_external_plugin` loads and no envelope line covers it (runtime projection, rule 31)",
+      "outer-uncovered: premise:scheduler_exact_parent_embedding is reachable from code `rk_plugin_library` loads and no envelope line covers it (runtime projection, rule 31)",
+      "outer-uncovered: premise:scheduler_no_later_alias_use is reachable from code `flb_external_plugin` loads and no envelope line covers it (runtime projection, rule 31)",
+      "outer-uncovered: premise:scheduler_no_later_alias_use is reachable from code `rk_plugin_library` loads and no envelope line covers it (runtime projection, rule 31)",
+      "outer-uncovered: premise:scheduler_tls_params_owned is reachable from code `flb_external_plugin` loads and no envelope line covers it (runtime projection, rule 31)",
+      "outer-uncovered: premise:scheduler_tls_params_owned is reachable from code `rk_plugin_library` loads and no envelope line covers it (runtime projection, rule 31)",
+      "outer-uncovered: premise:scheduler_valgrind_request_neutral is reachable from code `flb_external_plugin` loads and no envelope line covers it (runtime projection, rule 31)",
+      "outer-uncovered: premise:scheduler_valgrind_request_neutral is reachable from code `rk_plugin_library` loads and no envelope line covers it (runtime projection, rule 31)",
+      "outer-uncovered: premise:scheduler_valid_membership is reachable from code `flb_external_plugin` loads and no envelope line covers it (runtime projection, rule 31)",
+      "outer-uncovered: premise:scheduler_valid_membership is reachable from code `rk_plugin_library` loads and no envelope line covers it (runtime projection, rule 31)"
+     ],
+     "runtime": "Unknown"
+    },
+    {
+     "file": "rdkafka.c",
+     "function": "rd_kafka_log0",
+     "part": "combined",
+     "runtime": "Unknown"
+    },
+    {
+     "file": "rdkafka_topic.c",
+     "function": "rd_kafka_topic_set_state",
+     "part": "combined",
+     "runtime": "Unknown"
+    }
+   ],
+   "flb_external_plugin": [
+    {
+     "file": "rdkafka.c",
+     "function": "rd_kafka_log0",
+     "part": "custody",
+     "runtime": "Unknown"
+    },
+    {
+     "file": "rdkafka.c",
+     "function": "rd_kafka_share_ack_commit_cb_register_op",
+     "part": "custody",
+     "runtime": "Unknown"
+    },
+    {
+     "file": "rdkafka.c",
+     "function": "rd_kafka_share_log_fetch_stall",
+     "part": "custody",
+     "runtime": "Unknown"
+    },
+    {
+     "file": "rdkafka_mock_cgrp.c",
+     "function": "rd_kafka_mock_cgrp_classic_member_active",
+     "part": "custody",
+     "runtime": "Unknown"
+    },
+    {
+     "file": "rdkafka_mock_cgrp.c",
+     "function": "rd_kafka_mock_cgrp_classic_set_state",
+     "part": "custody",
+     "runtime": "Unknown"
+    },
+    {
+     "file": "rdkafka_mock_cgrp.c",
+     "function": "rd_kafka_mock_cgrp_consumer_member_active",
+     "part": "custody",
+     "runtime": "Unknown"
+    },
+    {
+     "file": "rdkafka_mock_sharegrp.c",
+     "function": "rd_kafka_mock_sharegroup_member_active",
+     "part": "custody",
+     "runtime": "Unknown"
+    },
+    {
+     "file": "rdkafka_topic.c",
+     "function": "rd_kafka_topic_set_state",
+     "part": "custody",
+     "runtime": "Unknown"
+    },
+    {
+     "file": "mk_server/mk_scheduler.c",
+     "function": "mk_sched_threads_destroy_conn",
+     "part": "custody",
+     "reasons": [
+      "outer-uncovered: premise:scheduler_borrowed_chain_live is reachable from code `flb_external_plugin` loads and no envelope line covers it (runtime projection, rule 31)",
+      "outer-uncovered: premise:scheduler_callback_footprint is reachable from code `flb_external_plugin` loads and no envelope line covers it (runtime projection, rule 31)",
+      "outer-uncovered: premise:scheduler_callee_live is reachable from code `flb_external_plugin` loads and no envelope line covers it (runtime projection, rule 31)",
+      "outer-uncovered: premise:scheduler_exact_parent_embedding is reachable from code `flb_external_plugin` loads and no envelope line covers it (runtime projection, rule 31)",
+      "outer-uncovered: premise:scheduler_no_later_alias_use is reachable from code `flb_external_plugin` loads and no envelope line covers it (runtime projection, rule 31)",
+      "outer-uncovered: premise:scheduler_tls_params_owned is reachable from code `flb_external_plugin` loads and no envelope line covers it (runtime projection, rule 31)",
+      "outer-uncovered: premise:scheduler_valgrind_request_neutral is reachable from code `flb_external_plugin` loads and no envelope line covers it (runtime projection, rule 31)",
+      "outer-uncovered: premise:scheduler_valid_membership is reachable from code `flb_external_plugin` loads and no envelope line covers it (runtime projection, rule 31)"
+     ],
+     "runtime": "Unknown"
+    },
+    {
+     "file": "mk_server/mk_scheduler.c",
+     "function": "sched_thread_cleanup",
+     "part": "custody",
+     "reasons": [
+      "outer-uncovered: premise:scheduler_borrowed_chain_live is reachable from code `flb_external_plugin` loads and no envelope line covers it (runtime projection, rule 31)",
+      "outer-uncovered: premise:scheduler_callback_footprint is reachable from code `flb_external_plugin` loads and no envelope line covers it (runtime projection, rule 31)",
+      "outer-uncovered: premise:scheduler_callee_live is reachable from code `flb_external_plugin` loads and no envelope line covers it (runtime projection, rule 31)",
+      "outer-uncovered: premise:scheduler_exact_parent_embedding is reachable from code `flb_external_plugin` loads and no envelope line covers it (runtime projection, rule 31)",
+      "outer-uncovered: premise:scheduler_no_later_alias_use is reachable from code `flb_external_plugin` loads and no envelope line covers it (runtime projection, rule 31)",
+      "outer-uncovered: premise:scheduler_tls_params_owned is reachable from code `flb_external_plugin` loads and no envelope line covers it (runtime projection, rule 31)",
+      "outer-uncovered: premise:scheduler_valgrind_request_neutral is reachable from code `flb_external_plugin` loads and no envelope line covers it (runtime projection, rule 31)",
+      "outer-uncovered: premise:scheduler_valid_membership is reachable from code `flb_external_plugin` loads and no envelope line covers it (runtime projection, rule 31)"
+     ],
+     "runtime": "Unknown"
+    },
+    {
+     "file": "rdkafka.c",
+     "function": "rd_kafka_log0",
+     "part": "combined",
+     "runtime": "Unknown"
+    },
+    {
+     "file": "rdkafka_topic.c",
+     "function": "rd_kafka_topic_set_state",
+     "part": "combined",
+     "runtime": "Unknown"
+    }
+   ],
+   "rk_plugin_library": [
+    {
+     "file": "rdkafka.c",
+     "function": "rd_kafka_log0",
+     "part": "custody",
+     "runtime": "Unknown"
+    },
+    {
+     "file": "rdkafka.c",
+     "function": "rd_kafka_share_ack_commit_cb_register_op",
+     "part": "custody",
+     "runtime": "Unknown"
+    },
+    {
+     "file": "rdkafka.c",
+     "function": "rd_kafka_share_log_fetch_stall",
+     "part": "custody",
+     "runtime": "Unknown"
+    },
+    {
+     "file": "rdkafka_mock_cgrp.c",
+     "function": "rd_kafka_mock_cgrp_classic_member_active",
+     "part": "custody",
+     "runtime": "Unknown"
+    },
+    {
+     "file": "rdkafka_mock_cgrp.c",
+     "function": "rd_kafka_mock_cgrp_classic_set_state",
+     "part": "custody",
+     "runtime": "Unknown"
+    },
+    {
+     "file": "rdkafka_mock_cgrp.c",
+     "function": "rd_kafka_mock_cgrp_consumer_member_active",
+     "part": "custody",
+     "runtime": "Unknown"
+    },
+    {
+     "file": "rdkafka_mock_sharegrp.c",
+     "function": "rd_kafka_mock_sharegroup_member_active",
+     "part": "custody",
+     "runtime": "Unknown"
+    },
+    {
+     "file": "rdkafka_topic.c",
+     "function": "rd_kafka_topic_set_state",
+     "part": "custody",
+     "runtime": "Unknown"
+    },
+    {
+     "file": "mk_server/mk_scheduler.c",
+     "function": "mk_sched_threads_destroy_conn",
+     "part": "custody",
+     "reasons": [
+      "outer-uncovered: premise:scheduler_borrowed_chain_live is reachable from code `rk_plugin_library` loads and no envelope line covers it (runtime projection, rule 31)",
+      "outer-uncovered: premise:scheduler_callback_footprint is reachable from code `rk_plugin_library` loads and no envelope line covers it (runtime projection, rule 31)",
+      "outer-uncovered: premise:scheduler_callee_live is reachable from code `rk_plugin_library` loads and no envelope line covers it (runtime projection, rule 31)",
+      "outer-uncovered: premise:scheduler_exact_parent_embedding is reachable from code `rk_plugin_library` loads and no envelope line covers it (runtime projection, rule 31)",
+      "outer-uncovered: premise:scheduler_no_later_alias_use is reachable from code `rk_plugin_library` loads and no envelope line covers it (runtime projection, rule 31)",
+      "outer-uncovered: premise:scheduler_tls_params_owned is reachable from code `rk_plugin_library` loads and no envelope line covers it (runtime projection, rule 31)",
+      "outer-uncovered: premise:scheduler_valgrind_request_neutral is reachable from code `rk_plugin_library` loads and no envelope line covers it (runtime projection, rule 31)",
+      "outer-uncovered: premise:scheduler_valid_membership is reachable from code `rk_plugin_library` loads and no envelope line covers it (runtime projection, rule 31)"
+     ],
+     "runtime": "Unknown"
+    },
+    {
+     "file": "mk_server/mk_scheduler.c",
+     "function": "sched_thread_cleanup",
+     "part": "custody",
+     "reasons": [
+      "outer-uncovered: premise:scheduler_borrowed_chain_live is reachable from code `rk_plugin_library` loads and no envelope line covers it (runtime projection, rule 31)",
+      "outer-uncovered: premise:scheduler_callback_footprint is reachable from code `rk_plugin_library` loads and no envelope line covers it (runtime projection, rule 31)",
+      "outer-uncovered: premise:scheduler_callee_live is reachable from code `rk_plugin_library` loads and no envelope line covers it (runtime projection, rule 31)",
+      "outer-uncovered: premise:scheduler_exact_parent_embedding is reachable from code `rk_plugin_library` loads and no envelope line covers it (runtime projection, rule 31)",
+      "outer-uncovered: premise:scheduler_no_later_alias_use is reachable from code `rk_plugin_library` loads and no envelope line covers it (runtime projection, rule 31)",
+      "outer-uncovered: premise:scheduler_tls_params_owned is reachable from code `rk_plugin_library` loads and no envelope line covers it (runtime projection, rule 31)",
+      "outer-uncovered: premise:scheduler_valgrind_request_neutral is reachable from code `rk_plugin_library` loads and no envelope line covers it (runtime projection, rule 31)",
+      "outer-uncovered: premise:scheduler_valid_membership is reachable from code `rk_plugin_library` loads and no envelope line covers it (runtime projection, rule 31)"
+     ],
+     "runtime": "Unknown"
+    },
+    {
+     "file": "rdkafka.c",
+     "function": "rd_kafka_log0",
+     "part": "combined",
+     "runtime": "Unknown"
+    },
+    {
+     "file": "rdkafka_topic.c",
+     "function": "rd_kafka_topic_set_state",
+     "part": "combined",
+     "runtime": "Unknown"
+    }
+   ]
+  }
+ },
+ "unsafe_qualification": "provisional; not an upstream defect claim",
+ "private_full_attribution": "private/w48-sched/final-3/attribution.json",
+ "attribution": {
+  "by_rule": {
+   "35 (by elimination)": {
+    "status_moves": 12,
+    "same_status_changes": 79,
+    "null_records": 21
+   },
+   "32": {
+    "status_moves": 8,
+    "same_status_changes": 546,
+    "null_records": 11
+   },
+   "34": {
+    "status_moves": 2,
+    "same_status_changes": 1,
+    "null_records": 2
+   }
+  },
+  "status_moves": [
+   {
+    "file": "rdkafka.c",
+    "function": "rd_kafka_log0",
+    "status": [
+     "Unknown",
+     "Safe"
+    ],
+    "rules": [
+     "32"
+    ]
+   },
+   {
+    "file": "rdkafka.c",
+    "function": "rd_kafka_log_print",
+    "status": [
+     "Unknown",
+     "Safe"
+    ],
+    "rules": [
+     "35 (by elimination)"
+    ]
+   },
+   {
+    "file": "rdkafka.c",
+    "function": "rd_kafka_log_syslog",
+    "status": [
+     "Unknown",
+     "Safe"
+    ],
+    "rules": [
+     "35 (by elimination)"
+    ]
+   },
+   {
+    "file": "rdkafka.c",
+    "function": "rd_kafka_set_logger",
+    "status": [
+     "Unknown",
+     "Safe"
+    ],
+    "rules": [
+     "35 (by elimination)"
+    ]
+   },
+   {
+    "file": "rdkafka.c",
+    "function": "rd_kafka_share_ack_commit_cb_register_op",
+    "status": [
+     "Unknown",
+     "Safe"
+    ],
+    "rules": [
+     "32"
+    ]
+   },
+   {
+    "file": "rdkafka.c",
+    "function": "rd_kafka_share_log_fetch_stall",
+    "status": [
+     "Unknown",
+     "Safe"
+    ],
+    "rules": [
+     "32"
+    ]
+   },
+   {
+    "file": "rdkafka_conf.c",
+    "function": "rd_kafka_anyconf_set_modified",
+    "status": [
+     "Unknown",
+     "Safe"
+    ],
+    "rules": [
+     "35 (by elimination)"
+    ]
+   },
+   {
+    "file": "rdkafka_mock.c",
+    "function": "rd_kafka_mock_cluster_io_clear_events",
+    "status": [
+     "Unknown",
+     "Safe"
+    ],
+    "rules": [
+     "35 (by elimination)"
+    ]
+   },
+   {
+    "file": "rdkafka_mock.c",
+    "function": "rd_kafka_mock_cluster_io_set_event",
+    "status": [
+     "Unknown",
+     "Safe"
+    ],
+    "rules": [
+     "35 (by elimination)"
+    ]
+   },
+   {
+    "file": "rdkafka_mock.c",
+    "function": "rd_kafka_mock_cluster_io_set_events",
+    "status": [
+     "Unknown",
+     "Safe"
+    ],
+    "rules": [
+     "35 (by elimination)"
+    ]
+   },
+   {
+    "file": "rdkafka_mock.c",
+    "function": "rd_kafka_mock_connection_set_blocking",
+    "status": [
+     "Unknown",
+     "Safe"
+    ],
+    "rules": [
+     "35 (by elimination)"
+    ]
+   },
+   {
+    "file": "rdkafka_mock_cgrp.c",
+    "function": "rd_kafka_mock_cgrp_classic_member_active",
+    "status": [
+     "Unknown",
+     "Safe"
+    ],
+    "rules": [
+     "32"
+    ]
+   },
+   {
+    "file": "rdkafka_mock_cgrp.c",
+    "function": "rd_kafka_mock_cgrp_classic_set_state",
+    "status": [
+     "Unknown",
+     "Safe"
+    ],
+    "rules": [
+     "32"
+    ]
+   },
+   {
+    "file": "rdkafka_mock_cgrp.c",
+    "function": "rd_kafka_mock_cgrp_consumer_member_active",
+    "status": [
+     "Unknown",
+     "Safe"
+    ],
+    "rules": [
+     "32"
+    ]
+   },
+   {
+    "file": "rdkafka_mock_sharegrp.c",
+    "function": "rd_kafka_mock_sharegroup_member_active",
+    "status": [
+     "Unknown",
+     "Safe"
+    ],
+    "rules": [
+     "32"
+    ]
+   },
+   {
+    "file": "rdkafka_sasl_oauthbearer_oidc.c",
+    "function": "rd_kafka_oidc_assertion_get_algo_label",
+    "status": [
+     "Unknown",
+     "Safe"
+    ],
+    "rules": [
+     "35 (by elimination)"
+    ]
+   },
+   {
+    "file": "rdkafka_telemetry_decode.c",
+    "function": "unit_test_telemetry_decode_error",
+    "status": [
+     "Unknown",
+     "Safe"
+    ],
+    "rules": [
+     "35 (by elimination)"
+    ]
+   },
+   {
+    "file": "rdkafka_topic.c",
+    "function": "rd_kafka_topic_set_state",
+    "status": [
+     "Unknown",
+     "Safe"
+    ],
+    "rules": [
+     "32"
+    ]
+   },
+   {
+    "file": "rdkafka_txnmgr.c",
+    "function": "rd_kafka_txn_state_transition_is_valid",
+    "status": [
+     "Unknown",
+     "Safe"
+    ],
+    "rules": [
+     "35 (by elimination)"
+    ]
+   },
+   {
+    "file": "mk_server/mk_config.c",
+    "function": "mk_config_signature",
+    "status": [
+     "Unknown",
+     "Safe"
+    ],
+    "rules": [
+     "35 (by elimination)"
+    ]
+   },
+   {
+    "file": "mk_server/mk_scheduler.c",
+    "function": "mk_sched_threads_destroy_conn",
+    "status": [
+     "Unknown",
+     "Safe"
+    ],
+    "rules": [
+     "34"
+    ]
+   },
+   {
+    "file": "mk_server/mk_scheduler.c",
+    "function": "sched_thread_cleanup",
+    "status": [
+     "Unknown",
+     "Safe"
+    ],
+    "rules": [
+     "34"
+    ]
+   }
+  ],
+  "rule_34_same_status_changes": [
+   {
+    "key": [
+     "monkey-libevent",
+     "mk_server/mk_http_thread.c",
+     "mk_http_thread_destroy",
+     0
+    ],
+    "status": [
+     "Unknown",
+     "Unknown"
+    ],
+    "rules": [
+     "34"
+    ],
+    "leaves_removed": [],
+    "leaves_added": [
+     {
+      "category": "unknown_alias",
+      "description": "unresolved resource identity `mth`",
+      "origin": "mk_server/mk_http_thread.c:267"
+     },
+     {
+      "category": "unknown_alias",
+      "description": "unresolved resource identity `mth`",
+      "origin": "mk_server/mk_http_thread.c:268"
+     }
+    ],
+    "contract_dependencies": [
+     {
+      "declarations": [
+       "mk_list_del",
+       "mk_mem_free"
+      ],
+      "hypothesis_dependencies": {}
+     },
+     {
+      "declarations": [
+       "mk_http_thread_destroy",
+       "mk_list_del",
+       "mk_mem_free"
+      ],
+      "hypothesis_dependencies": {
+       "mk_http_thread_destroy": [
+        "legacy_atom_00000000",
+        "legacy_atom_00000001",
+        "legacy_atom_00000002",
+        "legacy_atom_00000003",
+        "legacy_atom_00000004",
+        "legacy_atom_00000005",
+        "legacy_atom_00000006",
+        "legacy_atom_00000007"
+       ]
+      }
+     }
+    ],
+    "other_fields_changed": [
+     "hypothesis_context"
+    ]
+   }
+  ],
+  "method": "scripts/attribute.py: rows resting on or losing a leaf naming mk_http_thread_destroy, or Monkey scheduler/http-thread rows -> 34; rd_kafka_log0/rd_kafka_log_buf -> 32 (sibling); otherwise 35 by elimination (sibling)"
+ },
+ "private_rules": "private/w48-sched/final-3/rules.json"
+}

@@ -13,9 +13,10 @@ it:
   `mk_http_thread_destroy`, or is a Monkey scheduler/http-thread row;
 * rule 32 (sibling W48-RK-LOG-CALLER-FRAME): it rests on, or lost a leaf
   naming, `rd_kafka_log0` / `rd_kafka_log_buf`;
-* otherwise `unattributed`, listed with its removed and added leaves for a
-  reading (rule 35, sibling W48-BU-SINGLE-LEAF-BODIES, lifts leaves without a
-  declaration, so its rows land here and are named by reading them).
+* otherwise rule 35 by elimination (sibling W48-BU-SINGLE-LEAF-BODIES): the
+  only other semantic change between BASE and TIP (`array_member_decay.rs`,
+  `literal_dereference.rs`) lifts leaves without a declaration. Each such row
+  keeps its removed and added leaves for a reading.
 
 A row matching both 32 and 34 is reported under both. Null-projection records
 are attributed the same way by function name.
@@ -36,7 +37,7 @@ def rules_of(key, entry):
         rules.append('34')
     if any(n in text for n in RULE32_NAMES):
         rules.append('32')
-    return rules or ['unattributed']
+    return rules or ['35 (by elimination)']
 
 
 def main():
