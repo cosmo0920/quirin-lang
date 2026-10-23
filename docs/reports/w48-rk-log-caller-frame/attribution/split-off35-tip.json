@@ -1,0 +1,115 @@
+{
+ "rule32": {
+  "added": {},
+  "removed": {
+   "unsupported: call to uncontracted function `X`": 1,
+   "unsupported: indirect memory access is outside the resource projection": 1,
+   "unsupported: unmodeled call, aggregate or indirect access in branch condition": 26
+  },
+  "rows": 24,
+  "status": [],
+  "unknown_alias": [
+   306,
+   306
+  ],
+  "value_connective": [
+   0,
+   0
+  ]
+ },
+ "sibling": {
+  "added": {
+   "unknown_alias: unresolved resource identity `X`": 4,
+   "unsupported: call to uncontracted function `X`": 4
+  },
+  "removed": {
+   "unknown_alias: unresolved resource identity `X`": 6,
+   "unsupported: call to uncontracted function `X`": 4,
+   "unsupported: indirect memory access is outside the resource projection": 13,
+   "unsupported: unmodeled call, aggregate or indirect access in branch condition": 87
+  },
+  "rows": 91,
+  "status": [
+   [
+    "mk_server/mk_config.c",
+    "mk_config_signature",
+    "Unknown",
+    "Safe"
+   ],
+   [
+    "rdkafka.c",
+    "rd_kafka_log_print",
+    "Unknown",
+    "Safe"
+   ],
+   [
+    "rdkafka.c",
+    "rd_kafka_log_syslog",
+    "Unknown",
+    "Safe"
+   ],
+   [
+    "rdkafka.c",
+    "rd_kafka_set_logger",
+    "Unknown",
+    "Safe"
+   ],
+   [
+    "rdkafka_conf.c",
+    "rd_kafka_anyconf_set_modified",
+    "Unknown",
+    "Safe"
+   ],
+   [
+    "rdkafka_mock.c",
+    "rd_kafka_mock_cluster_io_clear_events",
+    "Unknown",
+    "Safe"
+   ],
+   [
+    "rdkafka_mock.c",
+    "rd_kafka_mock_cluster_io_set_event",
+    "Unknown",
+    "Safe"
+   ],
+   [
+    "rdkafka_mock.c",
+    "rd_kafka_mock_cluster_io_set_events",
+    "Unknown",
+    "Safe"
+   ],
+   [
+    "rdkafka_mock.c",
+    "rd_kafka_mock_connection_set_blocking",
+    "Unknown",
+    "Safe"
+   ],
+   [
+    "rdkafka_sasl_oauthbearer_oidc.c",
+    "rd_kafka_oidc_assertion_get_algo_label",
+    "Unknown",
+    "Safe"
+   ],
+   [
+    "rdkafka_telemetry_decode.c",
+    "unit_test_telemetry_decode_error",
+    "Unknown",
+    "Safe"
+   ],
+   [
+    "rdkafka_txnmgr.c",
+    "rd_kafka_txn_state_transition_is_valid",
+    "Unknown",
+    "Safe"
+   ]
+  ],
+  "unknown_alias": [
+   258,
+   256
+  ],
+  "value_connective": [
+   0,
+   0
+  ]
+ }
+}

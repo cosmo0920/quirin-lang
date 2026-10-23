@@ -1,0 +1,406 @@
+{
+ "base_logger_call_leaves": {},
+ "base_status": {
+  "Safe": 986,
+  "Unknown": 3839,
+  "Unsafe": 9
+ },
+ "base_unknown_alias_leaves": 11004,
+ "family_delta": {
+  "unknown_alias: unresolved resource identity `X`": [
+   11004,
+   11002
+  ],
+  "unsupported: call to uncontracted function `X`": [
+   10104,
+   10103
+  ],
+  "unsupported: indirect memory access is outside the resource projection": [
+   9933,
+   9919
+  ],
+  "unsupported: unmodeled call, aggregate or indirect access in branch condition": [
+   3358,
+   3245
+  ]
+ },
+ "keys_equal": true,
+ "leaf_only_changes": 103,
+ "leaf_trades": {
+  "added": {
+   "unknown_alias: unresolved resource identity `X`": 4,
+   "unsupported: call to uncontracted function `X`": 4
+  },
+  "added_leaves": [
+   {
+    "file": "rdhttp.c",
+    "function": "rd_http_req_perform_sync",
+    "leaf": [
+     "unsupported",
+     "call to uncontracted function `rd_http_error_new`"
+    ]
+   },
+   {
+    "file": "rdkafka_admin.c",
+    "function": "rd_kafka_ConfigEntry_copy",
+    "leaf": [
+     "unsupported",
+     "call to uncontracted function `rd_kafka_ConfigEntry_new`"
+    ]
+   },
+   {
+    "file": "rdkafka_conf.c",
+    "function": "rd_kafka_anyconf_set_prop0",
+    "leaf": [
+     "unknown_alias",
+     "unresolved resource identity `conf`"
+    ]
+   },
+   {
+    "file": "rdkafka_mock.c",
+    "function": "rd_kafka_mock_broker_cmd",
+    "leaf": [
+     "unknown_alias",
+     "unresolved resource identity `mrkb`"
+    ]
+   },
+   {
+    "file": "rdkafka_mock.c",
+    "function": "rd_kafka_mock_connection_write_out",
+    "leaf": [
+     "unknown_alias",
+     "unresolved resource identity `mconn`"
+    ]
+   },
+   {
+    "file": "rdkafka_op.c",
+    "function": "rd_kafka_op2str",
+    "leaf": [
+     "unknown_alias",
+     "unresolved resource identity `names`"
+    ]
+   },
+   {
+    "file": "rdkafka_transport.c",
+    "function": "rd_kafka_transport_request_sent",
+    "leaf": [
+     "unsupported",
+     "call to uncontracted function `rd_kafka_interceptors_on_request_sent`"
+    ]
+   },
+   {
+    "file": "rdstring.c",
+    "function": "rd_strtup_dup",
+    "leaf": [
+     "unsupported",
+     "call to uncontracted function `rd_strtup_new`"
+    ]
+   }
+  ],
+  "removed": {
+   "unknown_alias: unresolved resource identity `X`": 5,
+   "unsupported: call to uncontracted function `X`": 4,
+   "unsupported: indirect memory access is outside the resource projection": 10,
+   "unsupported: unmodeled call, aggregate or indirect access in branch condition": 104
+  }
+ },
+ "parity_examples": {},
+ "parity_rd_kafka_log0": {},
+ "status_changes": [
+  {
+   "base": "Unknown",
+   "base_leaves": [
+    [
+     "unsupported",
+     "indirect memory access is outside the resource projection",
+     6296
+    ],
+    [
+     "unsupported",
+     "indirect memory access is outside the resource projection",
+     6301
+    ],
+    [
+     "unsupported",
+     "indirect memory access is outside the resource projection",
+     6305
+    ]
+   ],
+   "file": "mk_server/mk_config.c",
+   "function": "mk_config_signature",
+   "row": 0,
+   "tip": "Safe",
+   "tip_dependencies": {
+    "declarations": [
+     "snprintf"
+    ],
+    "hypothesis_dependencies": {}
+   },
+   "tip_leaves": []
+  },
+  {
+   "base": "Unknown",
+   "base_leaves": [
+    [
+     "unsupported",
+     "indirect memory access is outside the resource projection",
+     21277
+    ]
+   ],
+   "file": "rdkafka.c",
+   "function": "rd_kafka_log_print",
+   "row": 0,
+   "tip": "Safe",
+   "tip_dependencies": {
+    "declarations": [
+     "fprintf",
+     "gettimeofday",
+     "rd_kafka_log_print"
+    ],
+    "hypothesis_dependencies": {}
+   },
+   "tip_leaves": []
+  },
+  {
+   "base": "Unknown",
+   "base_leaves": [
+    [
+     "unsupported",
+     "unmodeled call, aggregate or indirect access in branch condition",
+     21284
+    ]
+   ],
+   "file": "rdkafka.c",
+   "function": "rd_kafka_log_syslog",
+   "row": 0,
+   "tip": "Safe",
+   "tip_dependencies": {
+    "declarations": [
+     "__assert_fail"
+    ],
+    "hypothesis_dependencies": {}
+   },
+   "tip_leaves": []
+  },
+  {
+   "base": "Unknown",
+   "base_leaves": [
+    [
+     "unsupported",
+     "unmodeled call, aggregate or indirect access in branch condition",
+     21292
+    ]
+   ],
+   "file": "rdkafka.c",
+   "function": "rd_kafka_set_logger",
+   "row": 0,
+   "tip": "Safe",
+   "tip_dependencies": {
+    "declarations": [
+     "__assert_fail"
+    ],
+    "hypothesis_dependencies": {},
+    "summaries": [
+     "rd_kafka_log_syslog"
+    ]
+   },
+   "tip_leaves": []
+  },
+  {
+   "base": "Unknown",
+   "base_leaves": [
+    [
+     "unknown_alias",
+     "unresolved resource identity `conf`",
+     22725
+    ],
+    [
+     "unsupported",
+     "unmodeled call, aggregate or indirect access in branch condition",
+     22726
+    ]
+   ],
+   "file": "rdkafka_conf.c",
+   "function": "rd_kafka_anyconf_set_modified",
+   "row": 0,
+   "tip": "Safe",
+   "tip_dependencies": {
+    "declarations": [
+     "__assert_fail"
+    ],
+    "hypothesis_dependencies": {},
+    "null_premises": [
+     "null-deref:rd_kafka_anyconf_set_modified:22728:confhdr",
+     "null-deref:rd_kafka_anyconf_set_modified:22730:confhdr"
+    ],
+    "summaries": [
+     "rd_kafka_prop2idx"
+    ]
+   },
+   "tip_leaves": []
+  },
+  {
+   "base": "Unknown",
+   "base_leaves": [
+    [
+     "unsupported",
+     "unmodeled call, aggregate or indirect access in branch condition",
+     22020
+    ]
+   ],
+   "file": "rdkafka_mock.c",
+   "function": "rd_kafka_mock_cluster_io_clear_events",
+   "row": 0,
+   "tip": "Safe",
+   "tip_dependencies": {
+    "declarations": [
+     "__assert_fail"
+    ],
+    "hypothesis_dependencies": {}
+   },
+   "tip_leaves": []
+  },
+  {
+   "base": "Unknown",
+   "base_leaves": [
+    [
+     "unsupported",
+     "unmodeled call, aggregate or indirect access in branch condition",
+     22007
+    ]
+   ],
+   "file": "rdkafka_mock.c",
+   "function": "rd_kafka_mock_cluster_io_set_event",
+   "row": 0,
+   "tip": "Safe",
+   "tip_dependencies": {
+    "declarations": [
+     "__assert_fail"
+    ],
+    "hypothesis_dependencies": {}
+   },
+   "tip_leaves": []
+  },
+  {
+   "base": "Unknown",
+   "base_leaves": [
+    [
+     "unsupported",
+     "unmodeled call, aggregate or indirect access in branch condition",
+     21990
+    ]
+   ],
+   "file": "rdkafka_mock.c",
+   "function": "rd_kafka_mock_cluster_io_set_events",
+   "row": 0,
+   "tip": "Safe",
+   "tip_dependencies": {
+    "declarations": [
+     "__assert_fail"
+    ],
+    "hypothesis_dependencies": {}
+   },
+   "tip_leaves": []
+  },
+  {
+   "base": "Unknown",
+   "base_leaves": [
+    [
+     "unsupported",
+     "call to uncontracted function `rd_kafka_mock_cluster_io_set_event`",
+     22322
+    ]
+   ],
+   "file": "rdkafka_mock.c",
+   "function": "rd_kafka_mock_connection_set_blocking",
+   "row": 0,
+   "tip": "Safe",
+   "tip_dependencies": {
+    "declarations": [
+     "__assert_fail"
+    ],
+    "hypothesis_dependencies": {},
+    "summaries": [
+     "rd_kafka_mock_cluster_io_set_event"
+    ]
+   },
+   "tip_leaves": []
+  },
+  {
+   "base": "Unknown",
+   "base_leaves": [
+    [
+     "unsupported",
+     "unmodeled call, aggregate or indirect access in branch condition",
+     21368
+    ]
+   ],
+   "file": "rdkafka_sasl_oauthbearer_oidc.c",
+   "function": "rd_kafka_oidc_assertion_get_algo_label",
+   "row": 0,
+   "tip": "Safe",
+   "tip_dependencies": {
+    "declarations": [
+     "__assert_fail"
+    ],
+    "hypothesis_dependencies": {}
+   },
+   "tip_leaves": []
+  },
+  {
+   "base": "Unknown",
+   "base_leaves": [
+    [
+     "unsupported",
+     "unmodeled call, aggregate or indirect access in branch condition",
+     21768
+    ]
+   ],
+   "file": "rdkafka_telemetry_decode.c",
+   "function": "unit_test_telemetry_decode_error",
+   "row": 0,
+   "tip": "Safe",
+   "tip_dependencies": {
+    "declarations": [
+     "__assert_fail",
+     "fprintf",
+     "vsnprintf"
+    ],
+    "hypothesis_dependencies": {}
+   },
+   "tip_leaves": []
+  },
+  {
+   "base": "Unknown",
+   "base_leaves": [
+    [
+     "unsupported",
+     "unmodeled call, aggregate or indirect access in branch condition",
+     20350
+    ]
+   ],
+   "file": "rdkafka_txnmgr.c",
+   "function": "rd_kafka_txn_state_transition_is_valid",
+   "row": 0,
+   "tip": "Safe",
+   "tip_dependencies": {
+    "declarations": [
+     "__assert_fail",
+     "fprintf"
+    ],
+    "hypothesis_dependencies": {},
+    "summaries": [
+     "rd_kafka_txn_state2str"
+    ]
+   },
+   "tip_leaves": []
+  }
+ ],
+ "tip_logger_call_leaves": {},
+ "tip_status": {
+  "Safe": 998,
+  "Unknown": 3827,
+  "Unsafe": 9
+ },
+ "tip_unknown_alias_leaves": 11002
+}

@@ -1,0 +1,83 @@
+{
+ "old_prefix": "/home/cosmo/Documents/GitHub/qcore-c",
+ "real_prefix": "/media/Data/GitHub/quirin-lang",
+ "mirror": "/media/Data/GitHub/quirin-lang/.claude/worktrees/w48-rk-log-caller-frame/private/rkcf2/mirror-1",
+ "trees": {
+  "c-gateway-wave-pin/fluent-bit-clang-source": {
+   "original": "/media/Data/GitHub/quirin-lang/build/cycle19/c-gateway-wave-pin/fluent-bit-clang-source",
+   "copy": "/media/Data/GitHub/quirin-lang/.claude/worktrees/w48-rk-log-caller-frame/private/rkcf2/mirror-1/c-gateway-wave-pin/fluent-bit-clang-source",
+   "original_digest": "894886729f017906d6cb0567b5557adc1d2e8aaf8b23402ea58d6ba11669d0e5",
+   "copy_digest": "894886729f017906d6cb0567b5557adc1d2e8aaf8b23402ea58d6ba11669d0e5"
+  },
+  "c-gateway-wave-pin/monkey": {
+   "original": "/media/Data/GitHub/quirin-lang/build/cycle19/c-gateway-wave-pin/monkey",
+   "copy": "/media/Data/GitHub/quirin-lang/.claude/worktrees/w48-rk-log-caller-frame/private/rkcf2/mirror-1/c-gateway-wave-pin/monkey",
+   "original_digest": "a3282639fcc96ded39b99d9d7986ee5aea7064ac94e83b65a87ca2d987580ee3",
+   "copy_digest": "a3282639fcc96ded39b99d9d7986ee5aea7064ac94e83b65a87ca2d987580ee3"
+  },
+  "provider-packages-wave20": {
+   "original": "/media/Data/GitHub/quirin-lang/build/cycle19/provider-packages-wave20",
+   "copy": "/media/Data/GitHub/quirin-lang/.claude/worktrees/w48-rk-log-caller-frame/private/rkcf2/mirror-1/provider-packages-wave20",
+   "original_digest": "168ac07eb5cc190112745709bfb891a00565e5f04d3390c51dee9e1fed2c911b",
+   "copy_digest": "168ac07eb5cc190112745709bfb891a00565e5f04d3390c51dee9e1fed2c911b"
+  }
+ },
+ "databases": {
+  "corpus-fluent-bit": {
+   "original": "/media/Data/GitHub/quirin-lang/build/cycle19/c-gateway-wave-pin/fluent-bit-clang-source/build/compile_commands.json",
+   "original_sha256": "5e6868d9af26eaec97bc8020ed5f23496f2490abf44532443239bd4d365f7e78",
+   "rewritten": "/media/Data/GitHub/quirin-lang/.claude/worktrees/w48-rk-log-caller-frame/private/rkcf2/mirror-1/c-gateway-wave-pin/fluent-bit-clang-source/build/compile_commands.json",
+   "rewritten_sha256": "75fde45411eb1749f0b2ce7b0062e3ec9e46f5ebda59b56e3c30a7dc3a735161",
+   "rules": [
+    [
+     "/home/cosmo/Documents/GitHub/qcore-c/build/cycle19/c-gateway-wave-pin/fluent-bit-clang-source",
+     "/media/Data/GitHub/quirin-lang/.claude/worktrees/w48-rk-log-caller-frame/private/rkcf2/mirror-1/c-gateway-wave-pin/fluent-bit-clang-source"
+    ],
+    [
+     "/home/cosmo/Documents/GitHub/qcore-c",
+     "/media/Data/GitHub/quirin-lang"
+    ]
+   ]
+  },
+  "corpus-monkey": {
+   "original": "/media/Data/GitHub/quirin-lang/build/cycle19/c-gateway-wave-pin/monkey/monkey-build/compile_commands.json",
+   "original_sha256": "85cc996712bbd35675340b8b863b6ebc716cb94552253f2a6ad0288db920f331",
+   "rewritten": "/media/Data/GitHub/quirin-lang/.claude/worktrees/w48-rk-log-caller-frame/private/rkcf2/mirror-1/c-gateway-wave-pin/monkey/monkey-build/compile_commands.json",
+   "rewritten_sha256": "8e4e67a2c6a46708cd26095db66135db410a1caf0fab294ac5955c3cd066b5fa",
+   "rules": [
+    [
+     "/home/cosmo/Documents/GitHub/qcore-c/build/cycle19/c-gateway-wave-pin/monkey",
+     "/media/Data/GitHub/quirin-lang/.claude/worktrees/w48-rk-log-caller-frame/private/rkcf2/mirror-1/c-gateway-wave-pin/monkey"
+    ],
+    [
+     "/home/cosmo/Documents/GitHub/qcore-c",
+     "/media/Data/GitHub/quirin-lang"
+    ]
+   ]
+  },
+  "system": {
+   "original": "/media/Data/GitHub/quirin-lang/private/w45-fb/w46-external-callee-contracts/attempt-1/fluent-bit-clang-production/compile_commands.json",
+   "original_sha256": "2475e6374b14152538463f35a3457ffa98fbe30b2639d5df916ef9a216cb6876",
+   "rewritten": "/media/Data/GitHub/quirin-lang/.claude/worktrees/w48-rk-log-caller-frame/private/rkcf2/mirror-1/system-compile_commands.json",
+   "rewritten_sha256": "fab8cadc9540a2cb1a674437558cecab5b437a64a50d490a8f7c3f54e2d950a9",
+   "rules": [
+    [
+     "/home/cosmo/Documents/GitHub/qcore-c",
+     "/media/Data/GitHub/quirin-lang"
+    ]
+   ]
+  },
+  "slice": {
+   "original": "/media/Data/GitHub/quirin-lang/private/w47-tail/attempt-1/prep/fluent-bit-clang-production/compile_commands.json",
+   "original_sha256": "faf446759b31f892c9ffe03c76719875e9910682515cdd9acc908dc5142f8157",
+   "rewritten": "/media/Data/GitHub/quirin-lang/.claude/worktrees/w48-rk-log-caller-frame/private/rkcf2/mirror-1/slice-compile_commands.json",
+   "rewritten_sha256": "30de8c85606675a324c4f218954bdbe9c0e36f84eb72483e17cad83a3ee5c318",
+   "rules": [
+    [
+     "/home/cosmo/Documents/GitHub/qcore-c",
+     "/media/Data/GitHub/quirin-lang"
+    ]
+   ]
+  }
+ }
+}

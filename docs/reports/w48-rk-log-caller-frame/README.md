@@ -77,9 +77,14 @@ shared lock, `--jobs 4`.
 |---|---|---|---|---|---|
 | BASE | `4dd8c8013` | `90d222cc…` | 977 | 3848 | 9 |
 | TIP | `f53a127e1` | `3dae1137…` | 998 | 3827 | 9 |
-| TIP, rule 35 arms off | `f53a127e1` + `DECAY_ARM`/`LITERAL_ARM` false | SPLIT_BINARY | SPLIT_SAFE | SPLIT_UNKNOWN | SPLIT_UNSAFE |
+| TIP35OFF | `f53a127e1` with rule 35's `DECAY_ARM`/`LITERAL_ARM` false | `6e9b6216…` | 986 | 3839 | 9 |
 
 BASE equals the scheduler and single-leaf cards' BASE on this route (977).
+TIP35OFF uses the switch W48-BU-SINGLE-LEAF-BODIES used for its own TIPOFF
+(`scripts/off35.sh`; `off.diff` is exactly the two constants), so
+BASE→TIP35OFF holds rules 32 and 34 only and TIP35OFF→TIP rule 35 only. The
+merged tip `b4be13d47` (main `3353e1c63`) differs from `f53a127e1` only under
+`docs/`, so these figures are the merged tip's.
 Rows: 4,834 on both sides, identical keys; no Safe regression; no new Unsafe;
 no Pending.
 
@@ -95,21 +100,24 @@ premises, read from its row's hypothesis dependencies on `rd_kafka_log0`
 | `rd_kafka_mock_cgrp_classic_member_active` | rdkafka_mock_cgrp.c | planner-predicted; BASE leaf: `rd_kafka_log0` uncontracted |
 | `rd_kafka_mock_cgrp_consumer_member_active` | rdkafka_mock_cgrp.c | planner-predicted; same |
 | `rd_kafka_mock_sharegroup_member_active` | rdkafka_mock_sharegrp.c | planner-predicted; same |
-| `rd_kafka_mock_cgrp_classic_set_state` | rdkafka_mock_cgrp.c | BASE leaf: the log call's indirect-access actual, attributed to the uncontracted call |
+| `rd_kafka_mock_cgrp_classic_set_state` | rdkafka_mock_cgrp.c | BASE leaf: one indirect access (an actual of the then-uncontracted log call) |
 | `rd_kafka_topic_set_state` | rdkafka_topic.c | same |
-| `rd_kafka_share_log_fetch_stall` | rdkafka.c | same, plus an alias leaf on `rkcg` read through the borrowed call |
-| `rd_kafka_share_ack_commit_cb_register_op` | rdkafka.c | same; also rests on its own existing declaration's `rk_plugin_callback_closure` |
+| `rd_kafka_share_log_fetch_stall` | rdkafka.c | BASE leaves: one indirect access and one unresolved identity `rkcg` |
+| `rd_kafka_share_ack_commit_cb_register_op` | rdkafka.c | BASE leaf: one indirect access; also rests on its own existing declaration's `rk_plugin_callback_closure` |
 
 The planner predicted 3 freed callers; all 3 moved, and 4 more callers whose
 only blocker sat in the log call itself moved too. Of the 35 functions whose
 BASE row names `rd_kafka_log0` as an uncontracted callee, 3 move and 32 keep
 other leaves (457→423 leaves in total; their remaining families are in
-`callers-8-3.json`: unresolved identities, indirect accesses, uncontracted
+`attribution/callers-8-3.json`: unresolved identities, indirect accesses, uncontracted
 inner calls in the variadic tail such as `rd_kafka_err2str(...)`).
 
-`rd_kafka_log0` and `rd_kafka_log_buf` stay **Unknown**. At the halted TIP
-`rd_kafka_log0` was Safe on this route as well (W48-BU-SINGLE-LEAF-BODIES'
-BASE→TIPOFF, which held the unfixed rule 32, lists it among 10 moves).
+`rd_kafka_log0` and `rd_kafka_log_buf` stay **Unknown**. Of the 8 rule-32
+moves the sibling cards measured with the unfixed rule 32 (their BASE→TIPOFF,
+977→987 with rules 32 and 34), **7 remain**; the eighth, `rd_kafka_log0`
+itself, is the reviewed defect and no longer moves (977→986 here). Each of
+the 7 rests on exactly the three named premises; none rests on a frame
+member's own declaration.
 
 **Sibling effects, 14 rows**, reported only: rule 34 (W48-SCHED-CLEANUP-PRODUCTION)
 `sched_thread_cleanup`, `mk_sched_threads_destroy_conn` (on the scheduler
@@ -124,14 +132,22 @@ moves.
 
 ### Leaf trades
 
-SPLIT_LEAVES
+Rows whose leaves changed: rule 32, 93 (7 status, 86 leaf-only) in
+BASE→TIP35OFF, being the frame members and rows consulting either logger
+declaration; rule 34, 3 (2 status, 1 leaf-only), the rest of that segment;
+rule 35, all 115 of TIP35OFF→TIP (12 status, 103 leaf-only). Rule 32's
+trades (`attribution/split-base-off35.json`): removed 66 uncontracted calls, 64 indirect
+accesses, 62 unresolved identities, 4 branch-condition and 1 for-loop
+refusals; added 18 unresolved identities, 11 uncontracted calls (inner calls
+of the log arguments the uncontracted log call had covered, e.g.
+`rd_kafka_err2str`), 11 indirect accesses and the 1 hold.
 
 Logger call leaves: BASE 47 `rd_kafka_log0` and 1 `rd_kafka_log_buf`
 uncontracted → TIP 0 uncontracted, 1 held (`rd_kafka_log0`'s call to
 `rd_kafka_log_buf`, `caller-frame-self-reliance`).
 
 `W47-ALIAS-CALLEE-BORROWED-CLOSURE` (`unknown_alias` leaves): 11,047 → 11,002
-over the corpus; SPLIT_ALIAS. `CG06-VALUE-CONNECTIVE-RESIDUALS`: the shared
+over the corpus: rule 32 −44 (433→389 within its rows), rule 34 +1, rule 35 −2. `CG06-VALUE-CONNECTIVE-RESIDUALS`: the shared
 driver emits no typed-path parity, so this route has no consultation-level
 figure; no value-connective leaf changes. The retained pre-halt pair route
 (below), which did emit parity, admits 15 value-connective and 21
@@ -142,6 +158,11 @@ System and tail-pause slice: no librdkafka unit is selected
 (`contract/profiles/fluent-bit/{system,tail-pause}-selection.json` name none),
 and the hold acts only inside the two members' bodies, so neither route can
 move; neither was run.
+
+The committed attribution is under [`attribution/`](attribution/):
+`native-comparison.json` (sides, invocations, figures, row attribution),
+the per-pair `compare-*.json`, `split-*.json`, `premises-8-3.json`,
+`callers-8-3.json` and the mirror manifest.
 
 ## Attempts and retained evidence
 
@@ -154,7 +175,7 @@ All under `private/` in the card worktree; failed attempts are not evidence.
 | `private/rkcf2/pair8-1` | failed: both routes exit 1, "compile database contains no selected cmetrics sources" (inputs rooted at the real path; the databases spell the old one) |
 | `private/rkcf2/pair8-2` | cancelled while waiting for the lock (it would have read the inputs through the symlink); no output |
 | `private/rkcf2/pair8-3` | **evidence**: the table above; lock 12:13:37Z, both routes exit 0, done 14:10:00Z |
-| `private/rkcf2/off35-1` | SPLIT_RUN |
+| `private/rkcf2/off35-1` | **evidence**: TIP35OFF, build and route exit 0; lock 16:32:28Z, done 18:00:46Z |
 
 Two pre-halt receipts the halt record left unexplained:
 

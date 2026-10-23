@@ -1,0 +1,489 @@
+{
+ "callers": 35,
+ "moved": [
+  "rd_kafka_mock_cgrp_classic_member_active",
+  "rd_kafka_mock_cgrp_consumer_member_active",
+  "rd_kafka_mock_sharegroup_member_active"
+ ],
+ "remaining_families": {
+  "unknown_alias: unresolved resource identity `X`": 140,
+  "unsupported: C operator `X` requires type/operand analysis": 2,
+  "unsupported: braced initializer, expression, or declaration is not modeled": 3,
+  "unsupported: call to `X` with `X`: a drop of a reference this function does not hold, or whose count is undecided (reference-drop-unheld)": 2,
+  "unsupported: call to `X`: the registry at `X` would take `X`, which this body cannot hand it (callback-element-custody-undecided)": 1,
+  "unsupported: call to `X`: the registry holder `X` is not one this body names (callback-registry-undecided)": 5,
+  "unsupported: call to `X`: the registry holder `X` is not one this body tracks (callback-registry-undecided)": 3,
+  "unsupported: call to uncontracted function `X`": 69,
+  "unsupported: discarded owned result of resource API `X`": 1,
+  "unsupported: indirect memory access is outside the resource projection": 124,
+  "unsupported: local declaration may shadow a formal resource identity": 1,
+  "unsupported: loop re-acquisition: an earlier generation that may be live is still held": 2,
+  "unsupported: nested call `X` inside a modeled call is outside the resource projection": 1,
+  "unsupported: nullable resource `X` used by a non-null contract": 3,
+  "unsupported: resource call with a formal embedded in an unmodeled expression": 1,
+  "unsupported: store through `X` without an out-parameter contract": 8,
+  "unsupported: unmodeled call, aggregate or indirect access in branch condition": 37,
+  "unsupported: unmodeled call, aggregate or indirect access in for-loop condition": 9,
+  "unsupported: unrecognized assignment destination": 2,
+  "unsupported: unsupported assignment expression": 9
+ },
+ "rows": [
+  {
+   "base": "Unknown",
+   "base_leaves": 2,
+   "file": "rdkafka_cgrp.c",
+   "function": "rd_kafka_cgrp_assignment_clear_lost",
+   "tip": "Unknown",
+   "tip_families": {
+    "unsupported: call to uncontracted function `X`": 1
+   },
+   "tip_leaves": 1
+  },
+  {
+   "base": "Unknown",
+   "base_leaves": 2,
+   "file": "rdkafka_cgrp.c",
+   "function": "rd_kafka_cgrp_assignment_set_lost",
+   "tip": "Unknown",
+   "tip_families": {
+    "unsupported: call to uncontracted function `X`": 1
+   },
+   "tip_leaves": 1
+  },
+  {
+   "base": "Unknown",
+   "base_leaves": 20,
+   "file": "rdkafka_cgrp.c",
+   "function": "rd_kafka_cgrp_consumer_assignment_with_metadata",
+   "tip": "Unknown",
+   "tip_families": {
+    "unknown_alias: unresolved resource identity `X`": 6,
+    "unsupported: call to `X`: the registry holder `X` is not one this body tracks (callback-registry-undecided)": 1,
+    "unsupported: call to uncontracted function `X`": 5,
+    "unsupported: discarded owned result of resource API `X`": 1,
+    "unsupported: indirect memory access is outside the resource projection": 4,
+    "unsupported: local declaration may shadow a formal resource identity": 1,
+    "unsupported: loop re-acquisition: an earlier generation that may be live is still held": 2
+   },
+   "tip_leaves": 20
+  },
+  {
+   "base": "Unknown",
+   "base_leaves": 6,
+   "file": "rdkafka_cgrp.c",
+   "function": "rd_kafka_cgrp_consumer_expedite_next_heartbeat",
+   "tip": "Unknown",
+   "tip_families": {
+    "unsupported: call to uncontracted function `X`": 1,
+    "unsupported: indirect memory access is outside the resource projection": 2
+   },
+   "tip_leaves": 3
+  },
+  {
+   "base": "Unknown",
+   "base_leaves": 8,
+   "file": "rdkafka_cgrp.c",
+   "function": "rd_kafka_cgrp_consumer_group_heartbeat",
+   "tip": "Unknown",
+   "tip_families": {
+    "unknown_alias: unresolved resource identity `X`": 1,
+    "unsupported: call to uncontracted function `X`": 2,
+    "unsupported: indirect memory access is outside the resource projection": 4,
+    "unsupported: unmodeled call, aggregate or indirect access in branch condition": 1
+   },
+   "tip_leaves": 8
+  },
+  {
+   "base": "Unknown",
+   "base_leaves": 8,
+   "file": "rdkafka_cgrp.c",
+   "function": "rd_kafka_cgrp_group_assignment_set",
+   "tip": "Unknown",
+   "tip_families": {
+    "unsupported: call to uncontracted function `X`": 4,
+    "unsupported: indirect memory access is outside the resource projection": 2
+   },
+   "tip_leaves": 6
+  },
+  {
+   "base": "Unknown",
+   "base_leaves": 10,
+   "file": "rdkafka_cgrp.c",
+   "function": "rd_kafka_cgrp_partition_add",
+   "tip": "Unknown",
+   "tip_families": {
+    "unknown_alias: unresolved resource identity `X`": 3,
+    "unsupported: call to uncontracted function `X`": 1,
+    "unsupported: indirect memory access is outside the resource projection": 5
+   },
+   "tip_leaves": 9
+  },
+  {
+   "base": "Unknown",
+   "base_leaves": 10,
+   "file": "rdkafka_cgrp.c",
+   "function": "rd_kafka_cgrp_update_subscribed_topics",
+   "tip": "Unknown",
+   "tip_families": {
+    "unknown_alias: unresolved resource identity `X`": 1,
+    "unsupported: call to `X`: the registry holder `X` is not one this body tracks (callback-registry-undecided)": 1,
+    "unsupported: call to uncontracted function `X`": 1,
+    "unsupported: indirect memory access is outside the resource projection": 5,
+    "unsupported: unmodeled call, aggregate or indirect access in branch condition": 1,
+    "unsupported: unmodeled call, aggregate or indirect access in for-loop condition": 1
+   },
+   "tip_leaves": 10
+  },
+  {
+   "base": "Unknown",
+   "base_leaves": 33,
+   "file": "rdkafka_cgrp.c",
+   "function": "rd_kafka_cooperative_protocol_adjust_assignment",
+   "tip": "Unknown",
+   "tip_families": {
+    "unknown_alias: unresolved resource identity `X`": 6,
+    "unsupported: call to uncontracted function `X`": 8,
+    "unsupported: indirect memory access is outside the resource projection": 15,
+    "unsupported: unmodeled call, aggregate or indirect access in for-loop condition": 3
+   },
+   "tip_leaves": 32
+  },
+  {
+   "base": "Unknown",
+   "base_leaves": 16,
+   "file": "rdkafka_mock.c",
+   "function": "rd_kafka_mock_connection_new",
+   "tip": "Unknown",
+   "tip_families": {
+    "unknown_alias: unresolved resource identity `X`": 5,
+    "unsupported: call to uncontracted function `X`": 3,
+    "unsupported: indirect memory access is outside the resource projection": 6,
+    "unsupported: nullable resource `X` used by a non-null contract": 1,
+    "unsupported: unrecognized assignment destination": 1
+   },
+   "tip_leaves": 16
+  },
+  {
+   "base": "Unknown",
+   "base_leaves": 11,
+   "file": "rdkafka_mock.c",
+   "function": "rd_kafka_mock_topic_new",
+   "tip": "Unknown",
+   "tip_families": {
+    "unknown_alias: unresolved resource identity `X`": 3,
+    "unsupported: indirect memory access is outside the resource projection": 6,
+    "unsupported: nullable resource `X` used by a non-null contract": 1,
+    "unsupported: unrecognized assignment destination": 1
+   },
+   "tip_leaves": 11
+  },
+  {
+   "base": "Unknown",
+   "base_leaves": 1,
+   "file": "rdkafka_mock_cgrp.c",
+   "function": "rd_kafka_mock_cgrp_classic_member_active",
+   "tip": "Safe",
+   "tip_families": {},
+   "tip_leaves": 0
+  },
+  {
+   "base": "Unknown",
+   "base_leaves": 1,
+   "file": "rdkafka_mock_cgrp.c",
+   "function": "rd_kafka_mock_cgrp_consumer_member_active",
+   "tip": "Safe",
+   "tip_families": {},
+   "tip_leaves": 0
+  },
+  {
+   "base": "Unknown",
+   "base_leaves": 27,
+   "file": "rdkafka_mock_handlers.c",
+   "function": "rd_kafka_mock_buf_write_Metadata_Topic",
+   "tip": "Unknown",
+   "tip_families": {
+    "unknown_alias: unresolved resource identity `X`": 6,
+    "unsupported: call to uncontracted function `X`": 20,
+    "unsupported: indirect memory access is outside the resource projection": 1
+   },
+   "tip_leaves": 27
+  },
+  {
+   "base": "Unknown",
+   "base_leaves": 1,
+   "file": "rdkafka_mock_sharegrp.c",
+   "function": "rd_kafka_mock_sharegroup_member_active",
+   "tip": "Safe",
+   "tip_families": {},
+   "tip_leaves": 0
+  },
+  {
+   "base": "Unknown",
+   "base_leaves": 92,
+   "file": "rdkafka_msgset_reader.c",
+   "function": "rd_kafka_msgset_reader_msg_v2",
+   "tip": "Unknown",
+   "tip_families": {
+    "unknown_alias: unresolved resource identity `X`": 46,
+    "unsupported: C operator `X` requires type/operand analysis": 2,
+    "unsupported: braced initializer, expression, or declaration is not modeled": 2,
+    "unsupported: call to uncontracted function `X`": 3,
+    "unsupported: indirect memory access is outside the resource projection": 26,
+    "unsupported: store through `X` without an out-parameter contract": 4,
+    "unsupported: unmodeled call, aggregate or indirect access in branch condition": 9
+   },
+   "tip_leaves": 92
+  },
+  {
+   "base": "Unknown",
+   "base_leaves": 44,
+   "file": "rdkafka_msgset_reader.c",
+   "function": "rd_kafka_msgset_reader_peek_msg_version",
+   "tip": "Unknown",
+   "tip_families": {
+    "unknown_alias: unresolved resource identity `X`": 13,
+    "unsupported: call to uncontracted function `X`": 2,
+    "unsupported: indirect memory access is outside the resource projection": 12,
+    "unsupported: unmodeled call, aggregate or indirect access in branch condition": 11,
+    "unsupported: unsupported assignment expression": 7
+   },
+   "tip_leaves": 45
+  },
+  {
+   "base": "Unknown",
+   "base_leaves": 2,
+   "file": "rdkafka_offset.c",
+   "function": "rd_kafka_offset_file_sync",
+   "tip": "Unknown",
+   "tip_families": {
+    "unsupported: indirect memory access is outside the resource projection": 1
+   },
+   "tip_leaves": 1
+  },
+  {
+   "base": "Unknown",
+   "base_leaves": 9,
+   "file": "rdkafka_partition.c",
+   "function": "rd_kafka_toppar_purge_internal_fetch_queue_maybe",
+   "tip": "Unknown",
+   "tip_families": {
+    "unknown_alias: unresolved resource identity `X`": 5,
+    "unsupported: indirect memory access is outside the resource projection": 1,
+    "unsupported: unsupported assignment expression": 1
+   },
+   "tip_leaves": 7
+  },
+  {
+   "base": "Unknown",
+   "base_leaves": 2,
+   "file": "rdkafka_partition.c",
+   "function": "rd_kafka_toppar_version_new_barrier0",
+   "tip": "Unknown",
+   "tip_families": {
+    "unsupported: call to uncontracted function `X`": 1
+   },
+   "tip_leaves": 1
+  },
+  {
+   "base": "Unknown",
+   "base_leaves": 19,
+   "file": "rdkafka_plugin.c",
+   "function": "rd_kafka_plugin_new",
+   "tip": "Unknown",
+   "tip_families": {
+    "unknown_alias: unresolved resource identity `X`": 4,
+    "unsupported: braced initializer, expression, or declaration is not modeled": 1,
+    "unsupported: call to uncontracted function `X`": 2,
+    "unsupported: indirect memory access is outside the resource projection": 4,
+    "unsupported: unmodeled call, aggregate or indirect access in branch condition": 4
+   },
+   "tip_leaves": 15
+  },
+  {
+   "base": "Unknown",
+   "base_leaves": 12,
+   "file": "rdkafka_plugin.c",
+   "function": "rd_kafka_plugins_conf_set0",
+   "tip": "Unknown",
+   "tip_families": {
+    "unknown_alias: unresolved resource identity `X`": 5,
+    "unsupported: call to uncontracted function `X`": 1,
+    "unsupported: indirect memory access is outside the resource projection": 3,
+    "unsupported: resource call with a formal embedded in an unmodeled expression": 1,
+    "unsupported: unmodeled call, aggregate or indirect access in branch condition": 1
+   },
+   "tip_leaves": 11
+  },
+  {
+   "base": "Unknown",
+   "base_leaves": 3,
+   "file": "rdkafka_sasl_cyrus.c",
+   "function": "rd_kafka_sasl_cyrus_cb_canon",
+   "tip": "Unknown",
+   "tip_families": {
+    "unknown_alias: unresolved resource identity `X`": 1,
+    "unsupported: unmodeled call, aggregate or indirect access in branch condition": 1
+   },
+   "tip_leaves": 2
+  },
+  {
+   "base": "Unknown",
+   "base_leaves": 3,
+   "file": "rdkafka_sasl_cyrus.c",
+   "function": "rd_kafka_sasl_cyrus_cb_chalprompt",
+   "tip": "Unknown",
+   "tip_families": {
+    "unknown_alias: unresolved resource identity `X`": 1,
+    "unsupported: store through `X` without an out-parameter contract": 1
+   },
+   "tip_leaves": 2
+  },
+  {
+   "base": "Unknown",
+   "base_leaves": 5,
+   "file": "rdkafka_sasl_cyrus.c",
+   "function": "rd_kafka_sasl_cyrus_cb_getopt",
+   "tip": "Unknown",
+   "tip_families": {
+    "unknown_alias: unresolved resource identity `X`": 2,
+    "unsupported: store through `X` without an out-parameter contract": 2
+   },
+   "tip_leaves": 4
+  },
+  {
+   "base": "Unknown",
+   "base_leaves": 3,
+   "file": "rdkafka_sasl_cyrus.c",
+   "function": "rd_kafka_sasl_cyrus_cb_getrealm",
+   "tip": "Unknown",
+   "tip_families": {
+    "unknown_alias: unresolved resource identity `X`": 1,
+    "unsupported: indirect memory access is outside the resource projection": 1
+   },
+   "tip_leaves": 2
+  },
+  {
+   "base": "Unknown",
+   "base_leaves": 5,
+   "file": "rdkafka_sasl_cyrus.c",
+   "function": "rd_kafka_sasl_cyrus_cb_getsimple",
+   "tip": "Unknown",
+   "tip_families": {
+    "unknown_alias: unresolved resource identity `X`": 2,
+    "unsupported: indirect memory access is outside the resource projection": 1,
+    "unsupported: store through `X` without an out-parameter contract": 1
+   },
+   "tip_leaves": 4
+  },
+  {
+   "base": "Unknown",
+   "base_leaves": 5,
+   "file": "rdkafka_sasl_cyrus.c",
+   "function": "rd_kafka_sasl_cyrus_cb_log",
+   "tip": "Unknown",
+   "tip_families": {
+    "unknown_alias: unresolved resource identity `X`": 1,
+    "unsupported: unmodeled call, aggregate or indirect access in branch condition": 1,
+    "unsupported: unsupported assignment expression": 1
+   },
+   "tip_leaves": 3
+  },
+  {
+   "base": "Unknown",
+   "base_leaves": 9,
+   "file": "rdkafka_sasl_oauthbearer.c",
+   "function": "rd_kafka_sasl_oauthbearer_build_client_first_message",
+   "tip": "Unknown",
+   "tip_families": {
+    "unsupported: call to uncontracted function `X`": 2,
+    "unsupported: indirect memory access is outside the resource projection": 4
+   },
+   "tip_leaves": 6
+  },
+  {
+   "base": "Unknown",
+   "base_leaves": 3,
+   "file": "rdkafka_sasl_scram.c",
+   "function": "rd_kafka_sasl_scram_HMAC",
+   "tip": "Unknown",
+   "tip_families": {
+    "unsupported: indirect memory access is outside the resource projection": 1,
+    "unsupported: unmodeled call, aggregate or indirect access in branch condition": 1
+   },
+   "tip_leaves": 2
+  },
+  {
+   "base": "Unknown",
+   "base_leaves": 7,
+   "file": "rdkafka_share_acknowledgement.c",
+   "function": "rd_kafka_share_ack_all",
+   "tip": "Unknown",
+   "tip_families": {
+    "unknown_alias: unresolved resource identity `X`": 4,
+    "unsupported: indirect memory access is outside the resource projection": 1,
+    "unsupported: unmodeled call, aggregate or indirect access in for-loop condition": 2
+   },
+   "tip_leaves": 7
+  },
+  {
+   "base": "Unknown",
+   "base_leaves": 36,
+   "file": "rdkafka_share_acknowledgement.c",
+   "function": "rd_kafka_share_build_ack_details",
+   "tip": "Unknown",
+   "tip_families": {
+    "unknown_alias: unresolved resource identity `X`": 11,
+    "unsupported: call to `X`: the registry at `X` would take `X`, which this body cannot hand it (callback-element-custody-undecided)": 1,
+    "unsupported: call to `X`: the registry holder `X` is not one this body names (callback-registry-undecided)": 5,
+    "unsupported: call to `X`: the registry holder `X` is not one this body tracks (callback-registry-undecided)": 1,
+    "unsupported: call to uncontracted function `X`": 3,
+    "unsupported: indirect memory access is outside the resource projection": 8,
+    "unsupported: nullable resource `X` used by a non-null contract": 1,
+    "unsupported: unmodeled call, aggregate or indirect access in branch condition": 3,
+    "unsupported: unmodeled call, aggregate or indirect access in for-loop condition": 3
+   },
+   "tip_leaves": 36
+  },
+  {
+   "base": "Unknown",
+   "base_leaves": 6,
+   "file": "rdkafka_ssl.c",
+   "function": "rd_kafka_transport_ssl_set_endpoint_id",
+   "tip": "Unknown",
+   "tip_families": {
+    "unsupported: call to uncontracted function `X`": 1,
+    "unsupported: indirect memory access is outside the resource projection": 2,
+    "unsupported: unmodeled call, aggregate or indirect access in branch condition": 2
+   },
+   "tip_leaves": 5
+  },
+  {
+   "base": "Unknown",
+   "base_leaves": 6,
+   "file": "rdkafka_ssl.c",
+   "function": "rd_kafka_transport_ssl_verify",
+   "tip": "Unknown",
+   "tip_families": {
+    "unsupported: call to uncontracted function `X`": 4,
+    "unsupported: unmodeled call, aggregate or indirect access in branch condition": 1
+   },
+   "tip_leaves": 5
+  },
+  {
+   "base": "Unknown",
+   "base_leaves": 30,
+   "file": "rdkafka_topic.c",
+   "function": "rd_kafka_toppar_leader_update",
+   "tip": "Unknown",
+   "tip_families": {
+    "unknown_alias: unresolved resource identity `X`": 13,
+    "unsupported: call to `X` with `X`: a drop of a reference this function does not hold, or whose count is undecided (reference-drop-unheld)": 2,
+    "unsupported: call to uncontracted function `X`": 3,
+    "unsupported: indirect memory access is outside the resource projection": 9,
+    "unsupported: nested call `X` inside a modeled call is outside the resource projection": 1,
+    "unsupported: unmodeled call, aggregate or indirect access in branch condition": 1
+   },
+   "tip_leaves": 29
+  }
+ ]
+}
