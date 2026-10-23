@@ -1118,6 +1118,11 @@ fn production_contracts_preserve_the_previous_resource_modes() {
             },
         ),
     );
+    // Card W48-RK-LOG-CALLER-FRAME (rule 32): the logger's caller-frame
+    // declarations, every formal borrowed, no result.
+    for name in ["rd_kafka_log0", "rd_kafka_log_buf"] {
+        old.insert_contract(name, ResourceFunctionContract::new([], R::None));
+    }
     // Explicitly borrowed trailing arguments were implicit in the old table.
     fn canonical(mut contract: ResourceFunctionContract) -> ResourceFunctionContract {
         while contract.parameters.last() == Some(&P::Borrowed) {
@@ -2063,9 +2068,12 @@ fn every_corpus_module_outside_the_v1_vocabulary_is_rejected_not_skipped() {
     // Checked same-item detach adds one v1 declaration to the existing cJSON
     // module: 491 -> 492; selected modules and rejected declarations unchanged.
     // Kafka callback placement adds one selected module; declaration counts stay fixed.
+    // 65 -> 66 selected and 492 -> 494 v1 declarations by card
+    // W48-RK-LOG-CALLER-FRAME: `librdkafka/log_caller_frame.qv`'s two
+    // caller-frame declarations; rejected unchanged.
     assert_eq!(
         (selected, v1_declarations, rejected_declarations),
-        (65, 492, 331)
+        (66, 494, 331)
     );
     // A declaration held for human review is loaded and withheld from the
     // function map (contract spec C06.1): the map plus the held set is every
