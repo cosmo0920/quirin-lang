@@ -421,6 +421,7 @@ import QCore.PluginNeutralOverlap
 
 import QCore.SchedulerLifetime
 import QCore.GuardedSourceAdoption
+import QCore.LiteralDecayReadings
 
 /-! The executable formal core of QCore-C revision 0.1. -/
 
