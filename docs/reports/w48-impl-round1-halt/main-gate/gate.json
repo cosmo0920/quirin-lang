@@ -1,0 +1,13 @@
+{
+  "note": "Full standing gate at 086a4f72a (origin/main after the halt-record merge), run in the isolated worktree /media/Data/GitHub/quirin-lang/.claude/worktrees/gate-086a4f72a under the shared validation lock with CARGO_BUILD_JOBS=6, CARGO_INCREMENTAL=0 and dev/test debug info off. Rust 545 units/558 summaries, 8587 passed/0 failed/15 ignored; fmt, Clippy -D warnings, both reevaluation examples, 369 Lean audits and 374 Python tests all exit 0 (exits.txt beside this file; logs private/main-gate/ in that worktree). The provider gate was NOT run at this tip: provider_tests 133 is CARRIED from the scheduler card's provider-gate-3 at bde5716da, and providers/ changed since (rules 32/34). This gate covers the halted rules 32/34/35 as code only; it is not a measurement of their verdict effects.",
+  "workspace_tests": 8587,
+  "provider_tests": 133,
+  "python_evidence_validator_tests": 374,
+  "reevaluation_probe_exit": 0,
+  "reevaluation_followup_exit": 0,
+  "cargo_fmt": "clean",
+  "cargo_clippy": "clean",
+  "standing_gate": "complete at 086a4f72a (provider gate not run; carried)",
+  "lean_audits": 369,
+  "clang": "present: Ubuntu clang version 21.1.8 (6ubuntu1)"
+}

@@ -6858,8 +6858,8 @@
   "note": "providers/ is a separate Cargo workspace, excluded from the core workspace; P01 verified empirically that the core workspace builds and passes its full suite with providers/ moved out of the tree."
  },
  "validation": {
-  "note": "Integration of DETACH-RESULT-WRAPPER-COMPOSITION onto origin/main f73bad68d (merge af9135e78). Main moved only by docs-only gated commits since the card base e282aaccc, so under the landing-race policy the card's own full gate at 9ecc941d5 (Rust 8549 passed/0 failed/15 ignored, 366 Lean audits, fmt/Clippy/examples 0) is the code evidence, with a targeted integration check: matrix regeneration, report index rebuild and the root Python suite rerun after the matrix commit (its count/exit recorded in python-confirmation.json). providers/ unchanged, so provider_tests 133 is CARRIED from the contract-cycle4 integration gate, not re-run.",
-  "workspace_tests": 8549,
+  "note": "Full standing gate at 086a4f72a (origin/main after the halt-record merge), run in the isolated worktree /media/Data/GitHub/quirin-lang/.claude/worktrees/gate-086a4f72a under the shared validation lock with CARGO_BUILD_JOBS=6, CARGO_INCREMENTAL=0 and dev/test debug info off. Rust 545 units/558 summaries, 8587 passed/0 failed/15 ignored; fmt, Clippy -D warnings, both reevaluation examples, 369 Lean audits and 374 Python tests all exit 0 (exits.txt beside this file; logs private/main-gate/ in that worktree). The provider gate was NOT run at this tip: provider_tests 133 is CARRIED from the scheduler card's provider-gate-3 at bde5716da, and providers/ changed since (rules 32/34). This gate covers the halted rules 32/34/35 as code only; it is not a measurement of their verdict effects.",
+  "workspace_tests": 8587,
   "provider_tests": 133,
   "python_evidence_validator_tests": 374,
   "lean_audits": 369,
@@ -7238,9 +7238,9 @@
   "reevaluation_followup_exit": 0,
   "cargo_fmt": "clean",
   "cargo_clippy": "clean",
-  "standing_gate": "card full gate borrowed (code-identical); integration targeted check: matrix, index, Python",
+  "standing_gate": "complete at 086a4f72a (provider gate not run; carried)",
   "full_language_conformance": false,
-  "measurement_provenance": "carried_from_previous_matrix: these numbers were NOT measured for this regeneration; pass --gate PATH with the standing-gate results of this checkpoint to replace them"
+  "measurement_provenance": "integrator_supplied (docs/reports/w48-impl-round1-halt/main-gate/gate.json)"
  },
  "named_followups": [
   {
