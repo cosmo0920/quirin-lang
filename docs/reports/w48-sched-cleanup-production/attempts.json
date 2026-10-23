@@ -42,6 +42,9 @@
    "binary_sha256": {"base": "12c088f4f0e0141248327ae5c1af5316b5ad441986fe99fb48853aa9c1706e50",
                      "tip": "7be5cdf4111e86cd051c5b5f632111d8a5ba4af0069a1f720a0bae00d879b442"},
    "status": "completed; published as native-comparison-4dd8c8013.json; rule 34 owns 2 of 22 moves",
-   "private": "private/w48-sched/final-3"}
+   "private": "private/w48-sched/final-3"},
+  {"name": "final-gate-1", "revision": "ceec066ee",
+   "status": "standing gate passed (Rust 8587/0/15 over 545 units / 558 summaries, fmt, Clippy, probe, followup, Lean 369, Python 374); provider gate: Rust 133/0/1 (43 summaries), fmt, Clippy, inventory, five packages built and verified, provider Python 1 failure of 25 (rule 32's load-path view pin 65 -> 66, a sibling effect); pin checks with the snapshot root refused QI014 (exit 2, a failed attempt); reruns pin-base-2 / pin-tip-2 exit 1/1/0 on both sides, only the pre-existing mk_vhost_set not in force",
+   "private": "private/w48-sched/final-gate-1"}
  ]
 }

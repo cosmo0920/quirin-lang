@@ -250,7 +250,35 @@ the Monkey provider at both audited revisions with the BASE and TIP binaries
 ([scripts/pin_check.sh](scripts/pin_check.sh)). Incremental compilation and
 dev/test debug info are off.
 
-GATE_RESULTS
+Results at `ceec066ee` (`private/w48-sched/final-gate-1`; `head` and
+`head-after` equal, tree clean):
+
+| Step | Exit | Count |
+|---|---|---|
+| submodules | 0 | |
+| Rust (`run_test_binaries.py`) | 0 | 545 units / 558 summaries, 8,587 passed, 0 failed, 15 ignored |
+| `cargo fmt --check` | 0 | |
+| Clippy `-D warnings` | 0 | |
+| `reevaluation_probe` / `reevaluation_followup` | 0 / 0 | |
+| Lean audits | 0 | 369 passed |
+| root Python | 0 | 374 tests |
+| provider Rust workspace | 0 | 43 summaries, 133 passed, 0 failed, 1 ignored |
+| provider fmt / Clippy | 0 / 0 | |
+| provider Python | **1** | 25 tests, 1 failure (below) |
+| provider inventory | 0 | |
+| package build, five verifies | 0, 0 ×5 | |
+| `pin --check` libevent, `046accf6` / `66910c10` | 1 / 1 (BASE 1 / 1) | TIP 26 recorded, BASE 25; at both, the only not-in-force entry is the pre-existing `mk_vhost_set` |
+| `pin --verify-contracts` | 0 (BASE 0) | |
+
+The provider Python failure is a sibling effect, not this card's.
+`test_the_real_workspace_manifest_is_current` pins 65 resource-view modules,
+and rule 32's `librdkafka/log_caller_frame.qv`, which main added to
+`providers/contract-load-path.json`, makes it 66. The pin is already 66 on
+`card/w48-rk-log-caller-frame` (`896b2da33`). This card's own provider change
+passed the same suite at `489dab482` and `bde5716da` (provider gates 2 and 3,
+25 tests). The first `pin --check` runs passed the snapshot root, not its
+manifest file, and were refused (`QI014`, exit 2). They are retained, and the
+reruns `pin-base-2` and `pin-tip-2` are the evidence.
 
 ## Attempts
 

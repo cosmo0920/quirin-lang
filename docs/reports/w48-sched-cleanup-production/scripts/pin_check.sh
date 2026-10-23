@@ -1,6 +1,7 @@
 #!/bin/sh
 # `pin --check` of the Monkey provider at both audited revisions, for one
 # binary and load path (BASE snapshot or TIP worktree).
+# LOAD_PATH is the load-path manifest file (providers/contract-load-path.json).
 # Usage: pin_check.sh BINARY LOAD_PATH LOGDIR
 set -u
 binary=$1
