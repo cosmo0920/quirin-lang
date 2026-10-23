@@ -1,10 +1,36 @@
 //! Rule 37: real provider specifications require their assertion-bearing bodies.
 use qcore_c_gateway::legacy_c::{
-    AnalysisStatus, C11TranslationUnit, LegacyFunctionSummary, UnrestrictedLegacyResult,
-    analyze_unrestricted_c11, check_legacy_safety_certificate,
+    AnalysisStatus, C11TranslationUnit, CSourceInput, LegacyFunctionSummary,
+    UnrestrictedLegacyResult, analyze_unrestricted_c11, check_legacy_safety_certificate,
 };
 use qcore_contract::contract_loader::load_resource_contract_manifest;
-use std::path::Path;
+use std::path::{Path, PathBuf};
+use std::sync::atomic::{AtomicU64, Ordering};
+
+struct SourceFixture(PathBuf);
+impl SourceFixture {
+    fn new(source: &str) -> Self {
+        static NEXT: AtomicU64 = AtomicU64::new(0);
+        let nonce = std::time::SystemTime::now()
+            .duration_since(std::time::UNIX_EPOCH)
+            .unwrap()
+            .as_nanos();
+        let directory = std::env::temp_dir().join(format!(
+            "qcore-rule37-{}-{}-{nonce}",
+            std::process::id(),
+            NEXT.fetch_add(1, Ordering::Relaxed)
+        ));
+        std::fs::create_dir(&directory).unwrap();
+        let fixture = Self(directory);
+        std::fs::write(fixture.0.join("wrapper.c"), source).unwrap();
+        fixture
+    }
+}
+impl Drop for SourceFixture {
+    fn drop(&mut self) {
+        std::fs::remove_dir_all(&self.0).unwrap();
+    }
+}
 
 fn run(disabled: bool, has_body: bool) -> LegacyFunctionSummary {
     let root = Path::new(env!("CARGO_MANIFEST_DIR"))
@@ -39,8 +65,13 @@ struct envelope *build(const char *name) {{
 }}
 "#
     );
+    let fixture = SourceFixture::new(&source);
     let unit = C11TranslationUnit {
         source: &source,
+        input: CSourceInput::DeclaredFile {
+            spelled: "wrapper.c".into(),
+            directory: fixture.0.clone(),
+        },
         definitions: if disabled {
             vec!["NDEBUG".into()]
         } else {
@@ -60,6 +91,9 @@ struct envelope *build(const char *name) {{
         other => panic!("no analyzed body: {other:?}"),
     }
 }
+// The real libc failure declaration used by this positive fixture is __assert_fail.
+// Other platforms retain the fail-closed controls; no Windows body proof is claimed.
+#[cfg(target_os = "linux")]
 #[test]
 fn asserted_wrappers_establish_the_real_provider_specifications() {
     let result = run(false, true);
