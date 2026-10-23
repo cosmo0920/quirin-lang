@@ -21,6 +21,25 @@
         "private/w48-cmt-map/base-invocation.json"
       ],
       "retained": true
+    },
+    {
+      "id": "BASE-corpus-2",
+      "semantic_source": "8991b7b58fcbd33da082bbb44e819d47a0fb2561",
+      "binary_sha256": "b533088b903f10ad03f78ad4245267fe8b108e853fd410c744a657f32446adde",
+      "started": "2026-10-23T14:10:00.410411+00:00",
+      "ended": "2026-10-23T14:15:40.535812+00:00",
+      "exit": 1,
+      "failure": "compile database contains no selected cmetrics sources: old absolute database paths differ from canonical checkout after folder migration",
+      "analysis_result": "member pre-pass only: 1415 units, 1035 read, 36 unread; no completed corpus projection",
+      "planner": "not run",
+      "recorded_input_hashes_stable": true,
+      "input_record_scope": "v2 hashed the explicit Monkey database, not the implicit root/build/compile_commands.json; v3 records both",
+      "logs": [
+        "private/w48-cmt-map/base-corpus-v2/audit.log",
+        "private/w48-cmt-map/base-corpus-v2-driver.log",
+        "private/w48-cmt-map/base-corpus-v2-invocation.json"
+      ],
+      "retained": true
     }
   ],
   "retry_preparation": {
@@ -37,6 +56,20 @@
     "root_manifest_from_semantic_base": true,
     "root_manifest_modules_resolve": true
   },
-  "retry_state": "queued, no successful BASE or planner claim",
-  "ordering": "successful fresh BASE and planner, then committed prediction, then semantic implementation"
+  "retry_state": "v3 prepared: read-only original-path namespace; no successful BASE/planner yet",
+  "ordering": "successful fresh BASE and planner, then committed prediction, then semantic implementation",
+  "path_repair": {
+    "wrapper": "scripts/original_paths.sh",
+    "preflight": "private/w48-cmt-map/route-paths-preflight-v2.json",
+    "selected_top_level_cmetrics_compile_rows": 31,
+    "shared_compile_databases_or_sources_modified": false,
+    "unavailable_generated_files_per_database": 7,
+    "unavailable_disposition": "retain native unread/Unknown behavior"
+  },
+  "development_slot": {
+    "state": "not_started",
+    "exit": 75,
+    "reason": "readiness record absent; released lock without checks",
+    "record": "private/w48-cmt-map/development-lock.json"
+  }
 }

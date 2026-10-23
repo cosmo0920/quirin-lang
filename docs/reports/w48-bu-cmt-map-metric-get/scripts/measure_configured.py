@@ -36,6 +36,7 @@ def main():
     parser.add_argument('--snapshot', type=Path, required=True)
     parser.add_argument('--semantic-source', required=True)
     parser.add_argument('--link-map', type=Path, required=True)
+    parser.add_argument('--primary-root', type=Path, default=PRIMARY)
     args = parser.parse_args()
     root = Path.cwd()
     out = args.out.resolve()
@@ -51,7 +52,7 @@ def main():
         raise RuntimeError('frozen input manifest mismatch')
     if shutil.disk_usage(root).free < 40 * 1024**3:
         raise RuntimeError('less than 40 GiB free; heavy work stopped')
-    prepared = PRIMARY / ('private/w45-fb/w46-external-callee-contracts/attempt-1'
+    prepared = args.primary_root / ('private/w45-fb/w46-external-callee-contracts/attempt-1'
                           if args.route == 'system' else 'private/w47-tail/attempt-1/prep')
     source = prepared / 'fluent-bit-clang-source'
     database = prepared / 'fluent-bit-clang-production/compile_commands.json'
@@ -73,7 +74,8 @@ def main():
         return {'binary': sha(binary), 'manifest': sha(snapshot / 'manifest.json'),
                 'inputs': inputs(), 'source': source_identity(source),
                 'database': sha(database), 'selection': sha(selection),
-                'link_map': sha(link_map), 'driver': sha(__file__)}
+                'link_map': sha(link_map), 'driver': sha(__file__),
+                'namespace_wrapper': sha(root / 'docs/reports/w48-bu-cmt-map-metric-get/scripts/original_paths.sh')}
     record = {'semantic_source': args.semantic_source, 'route': args.route,
               'working_head_before': subprocess.check_output(['git', 'rev-parse', 'HEAD'], text=True).strip(),
               'command': command, 'cwd': str(root), 'snapshot': str(snapshot),
