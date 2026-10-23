@@ -316,8 +316,19 @@ scores 1.0 (one own leaf, one caller freed). At TIP eleven remain at 1.0;
 
 ## Gate
 
-The full standing gate on the commit holding this report is recorded in
-[gate.json](gate.json) by the commit that follows it.
+The full standing gate ran on `d81a788d2`, the commit holding this report,
+under the shared lock (2026-10-23 14:15–14:29Z). [gate.json](gate.json) records
+it, and the logs are under `private/slb/gate-1` in the card worktree. Every step
+exits 0:
+
+- Rust: 545 units / 558 summaries, **8,587 passed, 0 failed, 15 ignored**;
+- fmt and Clippy;
+- both reevaluation examples;
+- **369 Lean audits**;
+- **374 Python tests**.
+
+The tree was clean before and after. Clang was 21.1.8. `providers/` is
+unchanged, so no provider gate applies.
 
 ## Residuals and follow-ups
 
