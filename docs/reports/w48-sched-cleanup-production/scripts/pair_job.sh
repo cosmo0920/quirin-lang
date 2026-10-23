@@ -10,11 +10,13 @@
 # into a `git archive` snapshot of its own revision; both corpus routes run
 # concurrently at --jobs 4 each.
 # Every step's exit is captured to a file, never piped.
-# Usage: pair_job.sh RUNDIR BASE_REV BRANCH
+# MIRROR is the re-spelled inputs root mirror_inputs.py wrote.
+# Usage: pair_job.sh RUNDIR BASE_REV BRANCH MIRROR
 set -u
 run=$1
 base_rev=$2
 branch=$3
+mirror=$4
 mkdir -p "$run" || exit 2
 free=$(df --output=avail -B1 . | tail -1)
 echo "$free" >"$run/free-bytes-before" || exit 2
@@ -55,10 +57,10 @@ measure=docs/reports/w48-sched-cleanup-production/scripts/measure.py
 map=docs/reports/w48-sched-cleanup-production/link-map.corpus.json
 date -u +%Y-%m-%dT%H:%M:%SZ >"$run/corpus.start"
 python3 "$measure" corpus "$run/base-corpus" --link-map "$map" --inputs-snapshot "$run/base-snapshot" \
-  --binary-source "$(cat "$run/base-head")" --jobs 4 >"$run/base-corpus.log" 2>&1 &
+  --binary-source "$(cat "$run/base-head")" --inputs-mirror "$mirror" --jobs 4 >"$run/base-corpus.log" 2>&1 &
 base_pid=$!
 python3 "$measure" corpus "$run/tip-corpus" --link-map "$map" --inputs-snapshot "$run/tip-snapshot" \
-  --binary-source "$tip_rev" --jobs 4 >"$run/tip-corpus.log" 2>&1 &
+  --binary-source "$tip_rev" --inputs-mirror "$mirror" --jobs 4 >"$run/tip-corpus.log" 2>&1 &
 tip_pid=$!
 echo "$base_pid $tip_pid" >"$run/corpus.pids"
 wait "$base_pid"
