@@ -19,7 +19,7 @@ import shutil
 import subprocess
 import sys
 
-PRIMARY = Path('/home/cosmo/Documents/GitHub/qcore-c')
+PRIMARY = Path('/media/Data/GitHub/quirin-lang')
 
 
 def sha(path):
