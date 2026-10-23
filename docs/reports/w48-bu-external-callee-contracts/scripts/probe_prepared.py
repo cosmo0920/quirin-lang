@@ -1,6 +1,8 @@
 from pathlib import Path
-import json,shlex,subprocess,hashlib,re
-p=Path(__file__).parent.resolve();m=p/'inputs-mirror-1';out=p/'prepared-probes';out.mkdir(exist_ok=False)
+import json,shlex,subprocess,hashlib,re,sys
+assert len(sys.argv)==3, 'Usage: probe_prepared.py INPUTS_MIRROR FRESH_OUTPUT_ROOT'
+m=Path(sys.argv[1]).resolve();p=Path(sys.argv[2]).resolve();p.mkdir(parents=True,exist_ok=False)
+out=p/'prepared-probes';out.mkdir(exist_ok=False)
 sha=lambda x:hashlib.sha256(Path(x).read_bytes()).hexdigest()
 records=[]
 for route,db,units in [('corpus',m/'c-gateway-wave-pin/fluent-bit-clang-source/build/compile_commands.json',{'tinycthread.c','tinycthread_extra.c','rdkafka_sasl_cyrus.c'}),('corpus-monkey',m/'c-gateway-wave-pin/monkey/monkey-build/compile_commands.json',{'mk_iov.c'}),('system',m/'system-compile_commands.json',{'tinycthread.c','tinycthread_extra.c','rdkafka_sasl_cyrus.c','mk_iov.c'}),('slice',m/'slice-compile_commands.json',{'tinycthread.c','tinycthread_extra.c','rdkafka_sasl_cyrus.c','mk_iov.c'})]:
