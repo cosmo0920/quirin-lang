@@ -40,6 +40,16 @@
         "private/w48-cmt-map/base-corpus-v2-invocation.json"
       ],
       "retained": true
+    },
+    {
+      "id": "BASE-corpus-3",
+      "exit": 0,
+      "planner_exit": 0,
+      "started": "2026-10-23T19:43:40.774489+00:00",
+      "ended": "2026-10-23T21:10:00.975773+00:00",
+      "inputs_stable": true,
+      "invocation": "private/w48-cmt-map/base-corpus-v3-invocation.json",
+      "receipt": "baseline-receipt.json"
     }
   ],
   "retry_preparation": {
@@ -56,7 +66,7 @@
     "root_manifest_from_semantic_base": true,
     "root_manifest_modules_resolve": true
   },
-  "retry_state": "v3 prepared: read-only original-path namespace; no successful BASE/planner yet",
+  "retry_state": "corpus and planner succeeded; configured baselines still running",
   "ordering": "successful fresh BASE and planner, then committed prediction, then semantic implementation",
   "path_repair": {
     "wrapper": "scripts/original_paths.sh",
