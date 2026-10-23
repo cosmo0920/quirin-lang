@@ -1,0 +1,32 @@
+{
+  "record": "W48-IMPL-ROUND1-HALT",
+  "date": "2026-10-23",
+  "decision": "human halt (user: 'Halt the three cards and record the progresses')",
+  "integration_branch": {"local_main": "0217006f2", "pushed": false, "origin_main": "49a946c8a",
+    "merges": {"4dd8c8013": "integrate/audit-ir-retained-products (edecc1d70)", "b2f62c237": "card/w48-rk-log-caller-frame @04a917472", "ce9b75dca": "card/w48-sched-cleanup-production @d8fdbdd76", "0217006f2": "card/w48-bu-single-leaf-bodies @b41a36512"},
+    "evaluation": {"cargo_check_all_targets_exit": 0, "python_tests": 374, "python_failures": 1, "python_failure": "committed matrix lean_audits 367 vs 369 audit files (stale, integrator-owned)", "full_gate": "not run"}},
+  "halt_mechanics": "agents stopped by the integrator; no process remained in any card worktree; no card held the shared validation lock; all trees clean (each card had committed and fast-forwarded to 0217006f2 before the halt)",
+  "cards": [
+    {"card": "W48-RK-LOG-CALLER-FRAME", "rule": 32, "branch": "card/w48-rk-log-caller-frame", "tip": "422e64b3e", "commits_beyond_local_main": 3,
+     "done": ["PREDICTION.md committed first (71aabbb0f)", "caller-frame contract log_caller_frame.qv for rd_kafka_log0/rd_kafka_log_buf, projection check, Lean (e76b048f6)", "module-count pins moved", "BASE 49a946c8a / TIP 04a917472 corpus pair measured (private/rkcf/base-2, tip-4; both exit 0)", "attribution scripts committed (422e64b3e)"],
+     "measured": {"route": "rkcf pair route; NOT the eight-home link-map route the detach/scheduler cards used (their BASE at 49a946c8a reads 977 Safe)", "base": {"Safe": 970, "Unknown": 3855, "Unsafe": 9}, "tip": {"Safe": 978, "Unknown": 3847, "Unsafe": 9},
+       "status_moves": ["rd_kafka_log0", "rd_kafka_share_ack_commit_cb_register_op", "rd_kafka_share_log_fetch_stall", "rd_kafka_mock_cgrp_classic_member_active", "rd_kafka_mock_cgrp_classic_set_state", "rd_kafka_mock_cgrp_consumer_member_active", "rd_kafka_mock_sharegroup_member_active", "rd_kafka_topic_set_state"],
+       "planner_predicted_callers_freed": 3, "planner_callers_moved": 3, "logger_call_leaves": {"base": 48, "tip": 0}, "unknown_alias_leaves": [11024, 10980], "leaf_only_changes": 85,
+       "evidence": "private/rkcf/compare-2-4.json, callers-2-4.json, standing-tip-4.txt (card worktree)"},
+     "open": ["final gate: gate-6 was waiting for the validation lock; gates 1-3 failed attempts retained", "TIP not re-measured on the 0217006f2 base (BASE 4dd8c8013 requested)", "report README and integration-amendments.json not written", "Python pyunit-pre exit 1 and providers sync-sync exit 1 recorded, unexplained in a report"],
+     "concern": "rd_kafka_log0 itself moves Unknown->Safe resting on its own declared contract (body_standing declared-assumption, unvalidated_units 1). The brief required its own verdict to stay governed by its body with its 15 internal logger-effect obligations Open; review before landing."},
+    {"card": "W48-SCHED-CLEANUP-PRODUCTION", "rule": 34, "branch": "card/w48-sched-cleanup-production", "tip": "2fe7708fa", "commits_beyond_local_main": 1,
+     "done": ["PREDICTION.md first (385eaedd3)", "gateway rule 34 element destroyer + mk_http_thread_destroy declaration, contract spec C04.8 (e2ef6e832, d28d4cdc3)", "provider gates 2 and 3 passed (Rust 133/0/1, Python 25, inventory, five packages)", "BASE2 49a946c8a / TIP2 403d42214 eight-home corpus pair measured and committed (native-comparison-49a946c8a.json)", "attempts ledger committed (attempts.json)"],
+     "measured": {"route": "conditional eight-home pinned corpus (batch4 link map)", "base": {"Safe": 977, "Unknown": 3848, "Unsafe": 9}, "tip": {"Safe": 979, "Unknown": 3846, "Unsafe": 9},
+       "status_moves": ["sched_thread_cleanup Unknown->Safe", "mk_sched_threads_destroy_conn Unknown->Safe"], "null_combined": "both rows stay Unknown on the null property",
+       "planner_predicted": "sched_thread_cleanup score 2 (mk_sched_threads_destroy_all, mk_sched_threads_purge)", "planner_callers_moved": "neither predicted caller moved; mk_sched_threads_destroy_conn moved instead",
+       "evidence": "docs/reports/w48-sched-cleanup-production/native-comparison-49a946c8a.json (card branch), private/w48-sched/merged-1"},
+     "open": ["full standing gate: merged-1 gate interrupted by the session restart; gate-2 queued, never ran", "TIP not re-measured on the 0217006f2 base", "report README and integration-amendments.json not written"]},
+    {"card": "W48-BU-SINGLE-LEAF-BODIES", "rule": 35, "branch": "card/w48-bu-single-leaf-bodies", "tip": "1482e0267", "commits_beyond_local_main": 3,
+     "done": ["measurement driver and link map (0bf8f9f47)", "rule 35 Rust + Lean (LiteralDecayReadings, AuditLiteralDecayReadings) committed as WIP (b41a36512)", "rule 35 text and router row (5e2d3c368)", "PREDICTION.md (1482e0267), committed AFTER the first semantic commit b41a36512 and before any measurement; the file states this chronology"],
+     "measured": "nothing on corpus/system/slice: run-3 had acquired the lock and was building base/tip/tip-off binaries when halted (interrupted, not evidence); earlier BASE attempts never acquired the lock; only synthetic fixtures ran",
+     "open": ["BASE 4dd8c8013 / TIP corpus, system, slice measurement", "full standing gate", "report README and integration-amendments.json", "lean-build-1 exit 1 then lean-build-2 exit 0 (development)"]}
+  ],
+  "not_halted_or_affected": ["AUDIT-IR-RETAINED-PRODUCTS: complete card already merged at 4dd8c8013; its merged-tree full gate never ran", "CFG release patch: user-approved, still unapplied, waits for the combined push"],
+  "resume": "per card: SendMessage to its agent or a fresh card from its branch tip; integration as decided: merge final commits into local main, regenerate matrix, one combined full gate, one push"
+}
