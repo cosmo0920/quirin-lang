@@ -1109,6 +1109,11 @@ fn production_contracts_preserve_the_previous_resource_modes() {
         "mk_event_loop_destroy",
         ResourceFunctionContract::new([P::Released { nullable: false }], R::None),
     );
+    // Card W48-RK-LOG-CALLER-FRAME: librdkafka's logger pair, every parameter
+    // borrowed, plain declarations.
+    for name in ["rd_kafka_log_buf", "rd_kafka_log0"] {
+        old.insert_contract(name, ResourceFunctionContract::new([], R::None));
+    }
     // Checked same-item detach deliberately extends the production mode table:
     // the result restores item (formal 1) from parent (formal 0), never fresh.
     old.insert_contract(
@@ -2075,9 +2080,12 @@ fn every_corpus_module_outside_the_v1_vocabulary_is_rejected_not_skipped() {
     // 492 -> 493 by card W48-SCHED-CLEANUP-PRODUCTION: the element destroyer
     // `mk_http_thread_destroy` in the existing `monkey/intrusive_list.qv`.
     // Selected modules and rejected declarations unchanged.
+    // 493 -> 495 and 65 -> 66 selected by card W48-RK-LOG-CALLER-FRAME:
+    // `librdkafka/log_caller_frame.qv`, plain declarations `rd_kafka_log_buf`
+    // and `rd_kafka_log0`. Rejected unchanged.
     assert_eq!(
         (selected, v1_declarations, rejected_declarations),
-        (65, 493, 331)
+        (66, 495, 331)
     );
     // A declaration held for human review is loaded and withheld from the
     // function map (contract spec C06.1): the map plus the held set is every
