@@ -93,9 +93,9 @@ struct envelope *build(const char *name) {{
     }
 }
 // The real libc failure declaration used by this positive fixture is __assert_fail.
-// Other platforms retain the fail-closed controls; no Windows body proof is claimed.
+// Other libc targets retain the fail-closed controls; no Windows body proof is claimed.
 // Pinned rdkafka_admin.c uses GNU17: strict C11 chooses a different assert expansion.
-#[cfg(target_os = "linux")]
+#[cfg(all(target_os = "linux", target_env = "gnu"))]
 #[test]
 fn asserted_wrappers_establish_the_real_provider_specifications() {
     let result = run(false, true, CCompilerDialect::Gnu17);
@@ -112,7 +112,7 @@ fn absent_wrapper_bodies_do_not_supply_nonnull_results() {
     assert_ne!(result.status, AnalysisStatus::Safe, "{result:#?}");
 }
 
-#[cfg(target_os = "linux")]
+#[cfg(all(target_os = "linux", target_env = "gnu"))]
 #[test]
 fn an_unread_strict_c11_assertion_does_not_supply_nonnull_results() {
     let result = run(false, true, CCompilerDialect::C11);
