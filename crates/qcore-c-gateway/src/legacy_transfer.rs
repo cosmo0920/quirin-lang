@@ -2779,11 +2779,22 @@ pub(super) fn transfer_dispatch(
     };
     match &node.instruction {
         // Card W45-SUB-OBJECT-STORES.
-        LegacyInstruction::SelfInitCall { base: actual, fallback, .. } => {
+        LegacyInstruction::SelfInitCall {
+            base: actual,
+            fallback,
+            ..
+        } => {
             if self_link_init::admits(&state, actual, context.allow_self_init_frame) {
                 state
             } else {
-                base(&LegacyCfgNode { instruction: *fallback.clone(), ..node.clone() }, state, diagnostics)
+                base(
+                    &LegacyCfgNode {
+                        instruction: *fallback.clone(),
+                        ..node.clone()
+                    },
+                    state,
+                    diagnostics,
+                )
             }
         }
         LegacyInstruction::SubObjectStore { .. } => {

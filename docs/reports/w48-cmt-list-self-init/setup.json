@@ -19,5 +19,5 @@
   "base_binary_sha256": "b10224067da2768e8bed9b428de8c45b857409cd15e0744563b2367e072906d6",
   "prediction_commit": "08b5546809e99124f384c0d91db7220c9c192520",
   "implementation_started_after_prediction": true,
-  "validation": "initial controls and matching Lean written; focused checks await held development slot"
+  "validation": "focused Rust 9/9 and deep-reader control pass; model and AuditPointerStore pass under Lean 4.35.0; full frozen gate pending"
 }

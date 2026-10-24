@@ -607,20 +607,29 @@ pub(crate) fn derive_custody_summaries(
             let consulted = qcore_schemas::contract_consultation::snapshot();
             let reading = crate::contract_dependencies::reading_checkpoint();
             let answer = (|| {
-            if !crate::legacy_c::self_link_init::candidate(tokens, name, &derivation.environment)
-                || contracts.contract(name).is_some()
-                || contracts.has_guarded_interface(name)
-                || derivation.environment.contract(name).is_some()
-                || derivation.environment.has_guarded_interface(name)
-                || derivation.selections.contains_key(name)
-            {
-                return false;
-            }
-            let Ok(cfg) = build_function_cfg(tokens, name, &derivation.environment) else {
-                return false;
-            };
-            crate::legacy_c::self_link_init::has_call(&cfg)
-                && crate::legacy_c::self_link_init::row(tokens, name, &derivation.environment, cfg).is_some()
+                if !crate::legacy_c::self_link_init::candidate(
+                    tokens,
+                    name,
+                    &derivation.environment,
+                ) || contracts.contract(name).is_some()
+                    || contracts.has_guarded_interface(name)
+                    || derivation.environment.contract(name).is_some()
+                    || derivation.environment.has_guarded_interface(name)
+                    || derivation.selections.contains_key(name)
+                {
+                    return false;
+                }
+                let Ok(cfg) = build_function_cfg(tokens, name, &derivation.environment) else {
+                    return false;
+                };
+                crate::legacy_c::self_link_init::has_call(&cfg)
+                    && crate::legacy_c::self_link_init::row(
+                        tokens,
+                        name,
+                        &derivation.environment,
+                        cfg,
+                    )
+                    .is_some()
             })();
             if !answer {
                 qcore_schemas::contract_consultation::restore(&consulted);

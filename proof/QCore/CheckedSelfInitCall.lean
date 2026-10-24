@@ -59,8 +59,11 @@ binding/frame result. That transfer changes no resource status. -/
 def transfer (s : State α) (enabled : Bool) (fallbackFrame : α)
     (fallbackPointer : Option Pointer) : State α :=
   if admits s enabled then s else
-    { s with frame := fallbackFrame, pointer := fallbackPointer,
-      unmodeled := true, diagnostics := 0 :: s.diagnostics }
+    { s with
+      frame := fallbackFrame
+      pointer := fallbackPointer
+      unmodeled := true
+      diagnostics := 0 :: s.diagnostics }
 
 theorem admitted_call_preserves_every_field (s : State α) (enabled : Bool)
     (f : α) (p : Option Pointer) (h : admits s enabled = true) :

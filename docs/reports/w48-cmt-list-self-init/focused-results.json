@@ -1,0 +1,176 @@
+{
+  "rust_first": {
+    "exit": 101,
+    "passed": 7,
+    "failed": 1,
+    "reason": "token identifier helper accepted a member-place key; fixed strict whole-name guard"
+  },
+  "rust_second": {
+    "exit": 0,
+    "passed": 8,
+    "failed": 0
+  },
+  "lean_first": {
+    "exit": 1,
+    "reason": "record-update layout syntax; fixed"
+  },
+  "lean_second": {
+    "exit": 0,
+    "toolchain": "4.35.0",
+    "audit": "AuditPointerStore"
+  },
+  "deep": {
+    "exit": 0,
+    "json_depth": 253,
+    "stack_KiB": 328,
+    "budget_KiB": 1024
+  },
+  "logs": "private/w48-cmt-member-storage/steps",
+  "rust_third": {
+    "exit": 0,
+    "passed": 9,
+    "failed": 0,
+    "includes": "unreachable-call lowering and older ordinary inference preservation"
+  },
+  "commands": [
+    {
+      "command": [
+        "cargo",
+        "fmt",
+        "--all"
+      ],
+      "started": "2026-10-24T04:50:14.914340+00:00",
+      "head": "ed77ba4d37b95edbd50de8dcd9df93950c371e72",
+      "dirty": false,
+      "log": "private/w48-cmt-member-storage/steps/fmt-initial.log",
+      "slot_pid": 3929359,
+      "exit": 0,
+      "seconds": 3.8534937399963383,
+      "ended": "2026-10-24T04:50:18.810690+00:00"
+    },
+    {
+      "command": [
+        "cargo",
+        "test",
+        "-p",
+        "qcore-c-gateway",
+        "--lib",
+        "self_link_init::tests",
+        "--",
+        "--nocapture"
+      ],
+      "started": "2026-10-24T04:50:41.532755+00:00",
+      "head": "ed77ba4d37b95edbd50de8dcd9df93950c371e72",
+      "dirty": true,
+      "log": "private/w48-cmt-member-storage/steps/checked-call-1.log",
+      "slot_pid": 3929359,
+      "exit": 101,
+      "seconds": 16.077921282005263,
+      "ended": "2026-10-24T04:50:57.652873+00:00"
+    },
+    {
+      "command": [
+        "cargo",
+        "test",
+        "-p",
+        "qcore-c-gateway",
+        "--lib",
+        "self_link_init::tests",
+        "--",
+        "--nocapture"
+      ],
+      "started": "2026-10-24T04:51:54.040500+00:00",
+      "head": "ed77ba4d37b95edbd50de8dcd9df93950c371e72",
+      "dirty": true,
+      "log": "private/w48-cmt-member-storage/steps/checked-call-2.log",
+      "slot_pid": 3929359,
+      "exit": 0,
+      "seconds": 6.684748973013484,
+      "ended": "2026-10-24T04:52:00.770975+00:00"
+    },
+    {
+      "command": [
+        "python3",
+        "private/w48-cmt-member-storage/focus_lean.py"
+      ],
+      "started": "2026-10-24T04:52:49.861399+00:00",
+      "head": "ed77ba4d37b95edbd50de8dcd9df93950c371e72",
+      "dirty": true,
+      "log": "private/w48-cmt-member-storage/steps/lean-call-1.log",
+      "slot_pid": 3929359,
+      "exit": 1,
+      "seconds": 0.6626431570039131,
+      "ended": "2026-10-24T04:52:50.567587+00:00"
+    },
+    {
+      "command": [
+        "python3",
+        "private/w48-cmt-member-storage/focus_lean.py"
+      ],
+      "started": "2026-10-24T04:53:15.331808+00:00",
+      "head": "ed77ba4d37b95edbd50de8dcd9df93950c371e72",
+      "dirty": true,
+      "log": "private/w48-cmt-member-storage/steps/lean-call-2.log",
+      "slot_pid": 3929359,
+      "exit": 0,
+      "seconds": 0.7712115030008135,
+      "ended": "2026-10-24T04:53:16.142391+00:00"
+    },
+    {
+      "command": [
+        "cargo",
+        "test",
+        "-p",
+        "qcore-c-gateway",
+        "--lib",
+        "checked_initializer_source_readers_fit_at_the_admitted_bound",
+        "--",
+        "--nocapture"
+      ],
+      "started": "2026-10-24T04:53:28.446533+00:00",
+      "head": "ed77ba4d37b95edbd50de8dcd9df93950c371e72",
+      "dirty": true,
+      "log": "private/w48-cmt-member-storage/steps/deep-call-1.log",
+      "slot_pid": 3929359,
+      "exit": 0,
+      "seconds": 8.862221507006325,
+      "ended": "2026-10-24T04:53:37.347583+00:00"
+    },
+    {
+      "command": [
+        "cargo",
+        "test",
+        "-p",
+        "qcore-c-gateway",
+        "--lib",
+        "self_link_init::tests",
+        "--",
+        "--nocapture"
+      ],
+      "started": "2026-10-24T04:54:07.052345+00:00",
+      "head": "ed77ba4d37b95edbd50de8dcd9df93950c371e72",
+      "dirty": true,
+      "log": "private/w48-cmt-member-storage/steps/checked-call-3.log",
+      "slot_pid": 3929359,
+      "exit": 0,
+      "seconds": 0.5214313760079676,
+      "ended": "2026-10-24T04:54:07.617096+00:00"
+    },
+    {
+      "command": [
+        "cargo",
+        "fmt",
+        "--all"
+      ],
+      "started": "2026-10-24T04:54:33.983457+00:00",
+      "head": "ed77ba4d37b95edbd50de8dcd9df93950c371e72",
+      "dirty": true,
+      "log": "private/w48-cmt-member-storage/steps/fmt-freeze.log",
+      "slot_pid": 3929359,
+      "exit": 0,
+      "seconds": 3.868307124997955,
+      "ended": "2026-10-24T04:54:37.896687+00:00"
+    }
+  ],
+  "note": "Focused runs used the recorded dirty working tree. The final clean frozen standing gate will be the primary validation record."
+}
