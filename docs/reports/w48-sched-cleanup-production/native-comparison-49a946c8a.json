@@ -1,0 +1,493 @@
+{
+ "card": "W48-SCHED-CLEANUP-PRODUCTION",
+ "route": "conditional eight-home pinned corpus (batch4 link map), run_pinned_audit.py from each side snapshot",
+ "sides": {
+  "base": {
+   "revision": "49a946c8aba0e234bfa4fa7f69e96e74ba8210b2",
+   "binary_sha256": "64483c3f21a43a4c03fa10e8cb94321dc88326d8e62127bb7c10aae8a41016d2",
+   "binary_sha256_after": "64483c3f21a43a4c03fa10e8cb94321dc88326d8e62127bb7c10aae8a41016d2",
+   "exit": 0,
+   "identity_error": null,
+   "started": "2026-10-22T19:00:35.324230+00:00",
+   "ended": "2026-10-22T20:43:20.208397+00:00",
+   "jobs": 4,
+   "link_map_sha256": "98a4db761ace9fd4846b000c4c98defdc2e39ce6f95684c67c30f9b8b6f38ad3",
+   "free_bytes_before": 104996802560,
+   "free_bytes_after": 96617844736,
+   "environment": {
+    "QCORE_PROFILES": "/home/cosmo/Documents/GitHub/qcore-c/.claude/worktrees/agent-a3c4ae9dd6f580cee/private/w48-sched/merged-1/base-snapshot/contract/profiles",
+    "QCORE_CLANG": "/usr/lib/llvm-21/bin/clang",
+    "QCORE_CROSS_UNIT_LINK_MAP": "/home/cosmo/Documents/GitHub/qcore-c/.claude/worktrees/agent-a3c4ae9dd6f580cee/docs/reports/w48-sched-cleanup-production/link-map.corpus.json",
+    "QCORE_NULL_PROPERTY": "/home/cosmo/Documents/GitHub/qcore-c/.claude/worktrees/agent-a3c4ae9dd6f580cee/private/w48-sched/merged-1/base-corpus/corpus-null.jsonl",
+    "QCORE_OUTER_PROJECTION": "/home/cosmo/Documents/GitHub/qcore-c/.claude/worktrees/agent-a3c4ae9dd6f580cee/private/w48-sched/merged-1/base-corpus/corpus-outer.json",
+    "QCORE_SOURCE_CONTRACTS": "unset",
+    "QCORE_RETURN_CENSUS": "unset",
+    "QCORE_CHUNKIO_PACKAGE": "unset",
+    "QCORE_AUDIT_JOBS": "unset"
+   },
+   "private_artifacts": "private/w48-sched/merged-1/base-corpus"
+  },
+  "tip": {
+   "revision": "403d42214041630850386a4f8157cdb4be2ce58f",
+   "binary_sha256": "d705258ac1db219dab88c467fa760b5c608926d5fa7ae911660fb5c39ab5aea9",
+   "binary_sha256_after": "d705258ac1db219dab88c467fa760b5c608926d5fa7ae911660fb5c39ab5aea9",
+   "exit": 0,
+   "identity_error": null,
+   "started": "2026-10-22T19:00:35.348944+00:00",
+   "ended": "2026-10-22T20:43:45.599108+00:00",
+   "jobs": 4,
+   "link_map_sha256": "98a4db761ace9fd4846b000c4c98defdc2e39ce6f95684c67c30f9b8b6f38ad3",
+   "free_bytes_before": 104996806656,
+   "free_bytes_after": 96450551808,
+   "environment": {
+    "QCORE_PROFILES": "/home/cosmo/Documents/GitHub/qcore-c/.claude/worktrees/agent-a3c4ae9dd6f580cee/private/w48-sched/merged-1/tip-snapshot/contract/profiles",
+    "QCORE_CLANG": "/usr/lib/llvm-21/bin/clang",
+    "QCORE_CROSS_UNIT_LINK_MAP": "/home/cosmo/Documents/GitHub/qcore-c/.claude/worktrees/agent-a3c4ae9dd6f580cee/docs/reports/w48-sched-cleanup-production/link-map.corpus.json",
+    "QCORE_NULL_PROPERTY": "/home/cosmo/Documents/GitHub/qcore-c/.claude/worktrees/agent-a3c4ae9dd6f580cee/private/w48-sched/merged-1/tip-corpus/corpus-null.jsonl",
+    "QCORE_OUTER_PROJECTION": "/home/cosmo/Documents/GitHub/qcore-c/.claude/worktrees/agent-a3c4ae9dd6f580cee/private/w48-sched/merged-1/tip-corpus/corpus-outer.json",
+    "QCORE_SOURCE_CONTRACTS": "unset",
+    "QCORE_RETURN_CENSUS": "unset",
+    "QCORE_CHUNKIO_PACKAGE": "unset",
+    "QCORE_AUDIT_JOBS": "unset"
+   },
+   "private_artifacts": "private/w48-sched/merged-1/tip-corpus"
+  }
+ },
+ "custody": {
+  "base": {
+   "Safe": 977,
+   "Unknown": 3848,
+   "Unsafe": 9
+  },
+  "tip": {
+   "Safe": 979,
+   "Unknown": 3846,
+   "Unsafe": 9
+  },
+  "rows": [
+   4834,
+   4834
+  ]
+ },
+ "status_moves": [
+  {
+   "key": [
+    "monkey-libevent",
+    "mk_server/mk_scheduler.c",
+    "mk_sched_threads_destroy_conn",
+    0
+   ],
+   "status": [
+    "Unknown",
+    "Safe"
+   ],
+   "leaves_removed": [
+    {
+     "category": "unknown_alias",
+     "description": "unresolved resource identity `mth`",
+     "origin": "mk_server/mk_scheduler.c:668"
+    },
+    {
+     "category": "unsupported",
+     "description": "call to uncontracted function `mk_http_thread_destroy`",
+     "origin": "mk_server/mk_scheduler.c:669"
+    }
+   ],
+   "leaves_added": [],
+   "contract_dependencies": [
+    {
+     "declarations": [],
+     "hypothesis_dependencies": {}
+    },
+    {
+     "declarations": [
+      "mk_http_thread_destroy"
+     ],
+     "hypothesis_dependencies": {
+      "mk_http_thread_destroy": [
+       "legacy_atom_00000000",
+       "legacy_atom_00000001",
+       "legacy_atom_00000002",
+       "legacy_atom_00000003",
+       "legacy_atom_00000004",
+       "legacy_atom_00000005",
+       "legacy_atom_00000006",
+       "legacy_atom_00000007"
+      ]
+     }
+    }
+   ],
+   "other_fields_changed": [
+    "hypothesis_context"
+   ]
+  },
+  {
+   "key": [
+    "monkey-libevent",
+    "mk_server/mk_scheduler.c",
+    "sched_thread_cleanup",
+    0
+   ],
+   "status": [
+    "Unknown",
+    "Safe"
+   ],
+   "leaves_removed": [
+    {
+     "category": "unsupported",
+     "description": "call to uncontracted function `mk_http_thread_destroy`",
+     "origin": "mk_server/mk_scheduler.c:625"
+    }
+   ],
+   "leaves_added": [],
+   "contract_dependencies": [
+    {
+     "declarations": [],
+     "hypothesis_dependencies": {}
+    },
+    {
+     "declarations": [
+      "mk_http_thread_destroy"
+     ],
+     "hypothesis_dependencies": {
+      "mk_http_thread_destroy": [
+       "legacy_atom_00000000",
+       "legacy_atom_00000001",
+       "legacy_atom_00000002",
+       "legacy_atom_00000003",
+       "legacy_atom_00000004",
+       "legacy_atom_00000005",
+       "legacy_atom_00000006",
+       "legacy_atom_00000007"
+      ]
+     }
+    }
+   ],
+   "other_fields_changed": [
+    "hypothesis_context"
+   ]
+  }
+ ],
+ "environment_digest_fields": [
+  "assumptions",
+  "build_identity",
+  "environment_sha256",
+  "id",
+  "resource_contracts_sha256"
+ ],
+ "rows_with_any_byte_change": 4834,
+ "rows_differing_beyond_environment_digests": [
+  [
+   "monkey-libevent",
+   "mk_server/mk_http_thread.c",
+   "mk_http_thread_destroy",
+   0
+  ],
+  [
+   "monkey-libevent",
+   "mk_server/mk_scheduler.c",
+   "mk_sched_threads_destroy_conn",
+   0
+  ],
+  [
+   "monkey-libevent",
+   "mk_server/mk_scheduler.c",
+   "sched_thread_cleanup",
+   0
+  ]
+ ],
+ "null_records": {
+  "base": 4921,
+  "tip": 4921,
+  "differing_beyond_environment_digests": {
+   "base": [
+    {
+     "function": "mk_sched_threads_destroy_conn",
+     "custody": "Unknown",
+     "combined": "Unknown"
+    },
+    {
+     "function": "sched_thread_cleanup",
+     "custody": "Unknown",
+     "combined": "Unknown"
+    }
+   ],
+   "tip": [
+    {
+     "function": "mk_sched_threads_destroy_conn",
+     "custody": "Safe",
+     "combined": "Unknown"
+    },
+    {
+     "function": "sched_thread_cleanup",
+     "custody": "Safe",
+     "combined": "Unknown"
+    }
+   ]
+  }
+ },
+ "outer_runtime_projection": {
+  "summary": {
+   "base": {
+    "all": {
+     "moves": {
+      "combined": {
+       "Safe -> Pending": 30,
+       "Safe -> Unknown": 3
+      },
+      "custody": {
+       "Safe -> Pending": 30,
+       "Safe -> Unknown": 2
+      },
+      "null": {
+       "Safe -> Pending": 162,
+       "Safe -> Unknown": 1
+      }
+     },
+     "moved_rows": 228
+    },
+    "flb_external_plugin": {
+     "moves": {
+      "combined": {
+       "Safe -> Pending": 31,
+       "Safe -> Unknown": 2
+      },
+      "custody": {
+       "Safe -> Pending": 30,
+       "Safe -> Unknown": 2
+      },
+      "null": {
+       "Safe -> Pending": 163
+      }
+     },
+     "moved_rows": 228
+    },
+    "rk_plugin_library": {
+     "moves": {
+      "combined": {
+       "Safe -> Pending": 30,
+       "Safe -> Unknown": 3
+      },
+      "custody": {
+       "Safe -> Pending": 30,
+       "Safe -> Unknown": 2
+      },
+      "null": {
+       "Safe -> Pending": 162,
+       "Safe -> Unknown": 1
+      }
+     },
+     "moved_rows": 228
+    },
+    "static": {
+     "combined": {
+      "Pending": 0,
+      "Safe": 849,
+      "Unknown": 4045,
+      "Unsafe": 27
+     },
+     "custody": {
+      "Pending": 0,
+      "Safe": 977,
+      "Unknown": 3848,
+      "Unsafe": 9
+     },
+     "null": {
+      "Pending": 0,
+      "Safe": 2549,
+      "Unknown": 2354,
+      "Unsafe": 18
+     }
+    }
+   },
+   "tip": {
+    "all": {
+     "moves": {
+      "combined": {
+       "Safe -> Pending": 30,
+       "Safe -> Unknown": 3
+      },
+      "custody": {
+       "Safe -> Pending": 30,
+       "Safe -> Unknown": 4
+      },
+      "null": {
+       "Safe -> Pending": 162,
+       "Safe -> Unknown": 1
+      }
+     },
+     "moved_rows": 230
+    },
+    "flb_external_plugin": {
+     "moves": {
+      "combined": {
+       "Safe -> Pending": 31,
+       "Safe -> Unknown": 2
+      },
+      "custody": {
+       "Safe -> Pending": 30,
+       "Safe -> Unknown": 4
+      },
+      "null": {
+       "Safe -> Pending": 163
+      }
+     },
+     "moved_rows": 230
+    },
+    "rk_plugin_library": {
+     "moves": {
+      "combined": {
+       "Safe -> Pending": 30,
+       "Safe -> Unknown": 3
+      },
+      "custody": {
+       "Safe -> Pending": 30,
+       "Safe -> Unknown": 4
+      },
+      "null": {
+       "Safe -> Pending": 162,
+       "Safe -> Unknown": 1
+      }
+     },
+     "moved_rows": 230
+    },
+    "static": {
+     "combined": {
+      "Pending": 0,
+      "Safe": 849,
+      "Unknown": 4045,
+      "Unsafe": 27
+     },
+     "custody": {
+      "Pending": 0,
+      "Safe": 979,
+      "Unknown": 3846,
+      "Unsafe": 9
+     },
+     "null": {
+      "Pending": 0,
+      "Safe": 2549,
+      "Unknown": 2354,
+      "Unsafe": 18
+     }
+    }
+   }
+  },
+  "rows_added_to_moved": {
+   "all": [
+    {
+     "file": "mk_server/mk_scheduler.c",
+     "function": "mk_sched_threads_destroy_conn",
+     "part": "custody",
+     "reasons": [
+      "outer-uncovered: premise:scheduler_borrowed_chain_live is reachable from code `flb_external_plugin` loads and no envelope line covers it (runtime projection, rule 31)",
+      "outer-uncovered: premise:scheduler_borrowed_chain_live is reachable from code `rk_plugin_library` loads and no envelope line covers it (runtime projection, rule 31)",
+      "outer-uncovered: premise:scheduler_callback_footprint is reachable from code `flb_external_plugin` loads and no envelope line covers it (runtime projection, rule 31)",
+      "outer-uncovered: premise:scheduler_callback_footprint is reachable from code `rk_plugin_library` loads and no envelope line covers it (runtime projection, rule 31)",
+      "outer-uncovered: premise:scheduler_callee_live is reachable from code `flb_external_plugin` loads and no envelope line covers it (runtime projection, rule 31)",
+      "outer-uncovered: premise:scheduler_callee_live is reachable from code `rk_plugin_library` loads and no envelope line covers it (runtime projection, rule 31)",
+      "outer-uncovered: premise:scheduler_exact_parent_embedding is reachable from code `flb_external_plugin` loads and no envelope line covers it (runtime projection, rule 31)",
+      "outer-uncovered: premise:scheduler_exact_parent_embedding is reachable from code `rk_plugin_library` loads and no envelope line covers it (runtime projection, rule 31)",
+      "outer-uncovered: premise:scheduler_no_later_alias_use is reachable from code `flb_external_plugin` loads and no envelope line covers it (runtime projection, rule 31)",
+      "outer-uncovered: premise:scheduler_no_later_alias_use is reachable from code `rk_plugin_library` loads and no envelope line covers it (runtime projection, rule 31)",
+      "outer-uncovered: premise:scheduler_tls_params_owned is reachable from code `flb_external_plugin` loads and no envelope line covers it (runtime projection, rule 31)",
+      "outer-uncovered: premise:scheduler_tls_params_owned is reachable from code `rk_plugin_library` loads and no envelope line covers it (runtime projection, rule 31)",
+      "outer-uncovered: premise:scheduler_valgrind_request_neutral is reachable from code `flb_external_plugin` loads and no envelope line covers it (runtime projection, rule 31)",
+      "outer-uncovered: premise:scheduler_valgrind_request_neutral is reachable from code `rk_plugin_library` loads and no envelope line covers it (runtime projection, rule 31)",
+      "outer-uncovered: premise:scheduler_valid_membership is reachable from code `flb_external_plugin` loads and no envelope line covers it (runtime projection, rule 31)",
+      "outer-uncovered: premise:scheduler_valid_membership is reachable from code `rk_plugin_library` loads and no envelope line covers it (runtime projection, rule 31)"
+     ]
+    },
+    {
+     "file": "mk_server/mk_scheduler.c",
+     "function": "sched_thread_cleanup",
+     "part": "custody",
+     "reasons": [
+      "outer-uncovered: premise:scheduler_borrowed_chain_live is reachable from code `flb_external_plugin` loads and no envelope line covers it (runtime projection, rule 31)",
+      "outer-uncovered: premise:scheduler_borrowed_chain_live is reachable from code `rk_plugin_library` loads and no envelope line covers it (runtime projection, rule 31)",
+      "outer-uncovered: premise:scheduler_callback_footprint is reachable from code `flb_external_plugin` loads and no envelope line covers it (runtime projection, rule 31)",
+      "outer-uncovered: premise:scheduler_callback_footprint is reachable from code `rk_plugin_library` loads and no envelope line covers it (runtime projection, rule 31)",
+      "outer-uncovered: premise:scheduler_callee_live is reachable from code `flb_external_plugin` loads and no envelope line covers it (runtime projection, rule 31)",
+      "outer-uncovered: premise:scheduler_callee_live is reachable from code `rk_plugin_library` loads and no envelope line covers it (runtime projection, rule 31)",
+      "outer-uncovered: premise:scheduler_exact_parent_embedding is reachable from code `flb_external_plugin` loads and no envelope line covers it (runtime projection, rule 31)",
+      "outer-uncovered: premise:scheduler_exact_parent_embedding is reachable from code `rk_plugin_library` loads and no envelope line covers it (runtime projection, rule 31)",
+      "outer-uncovered: premise:scheduler_no_later_alias_use is reachable from code `flb_external_plugin` loads and no envelope line covers it (runtime projection, rule 31)",
+      "outer-uncovered: premise:scheduler_no_later_alias_use is reachable from code `rk_plugin_library` loads and no envelope line covers it (runtime projection, rule 31)",
+      "outer-uncovered: premise:scheduler_tls_params_owned is reachable from code `flb_external_plugin` loads and no envelope line covers it (runtime projection, rule 31)",
+      "outer-uncovered: premise:scheduler_tls_params_owned is reachable from code `rk_plugin_library` loads and no envelope line covers it (runtime projection, rule 31)",
+      "outer-uncovered: premise:scheduler_valgrind_request_neutral is reachable from code `flb_external_plugin` loads and no envelope line covers it (runtime projection, rule 31)",
+      "outer-uncovered: premise:scheduler_valgrind_request_neutral is reachable from code `rk_plugin_library` loads and no envelope line covers it (runtime projection, rule 31)",
+      "outer-uncovered: premise:scheduler_valid_membership is reachable from code `flb_external_plugin` loads and no envelope line covers it (runtime projection, rule 31)",
+      "outer-uncovered: premise:scheduler_valid_membership is reachable from code `rk_plugin_library` loads and no envelope line covers it (runtime projection, rule 31)"
+     ]
+    }
+   ],
+   "flb_external_plugin": [
+    {
+     "file": "mk_server/mk_scheduler.c",
+     "function": "mk_sched_threads_destroy_conn",
+     "part": "custody",
+     "reasons": [
+      "outer-uncovered: premise:scheduler_borrowed_chain_live is reachable from code `flb_external_plugin` loads and no envelope line covers it (runtime projection, rule 31)",
+      "outer-uncovered: premise:scheduler_callback_footprint is reachable from code `flb_external_plugin` loads and no envelope line covers it (runtime projection, rule 31)",
+      "outer-uncovered: premise:scheduler_callee_live is reachable from code `flb_external_plugin` loads and no envelope line covers it (runtime projection, rule 31)",
+      "outer-uncovered: premise:scheduler_exact_parent_embedding is reachable from code `flb_external_plugin` loads and no envelope line covers it (runtime projection, rule 31)",
+      "outer-uncovered: premise:scheduler_no_later_alias_use is reachable from code `flb_external_plugin` loads and no envelope line covers it (runtime projection, rule 31)",
+      "outer-uncovered: premise:scheduler_tls_params_owned is reachable from code `flb_external_plugin` loads and no envelope line covers it (runtime projection, rule 31)",
+      "outer-uncovered: premise:scheduler_valgrind_request_neutral is reachable from code `flb_external_plugin` loads and no envelope line covers it (runtime projection, rule 31)",
+      "outer-uncovered: premise:scheduler_valid_membership is reachable from code `flb_external_plugin` loads and no envelope line covers it (runtime projection, rule 31)"
+     ]
+    },
+    {
+     "file": "mk_server/mk_scheduler.c",
+     "function": "sched_thread_cleanup",
+     "part": "custody",
+     "reasons": [
+      "outer-uncovered: premise:scheduler_borrowed_chain_live is reachable from code `flb_external_plugin` loads and no envelope line covers it (runtime projection, rule 31)",
+      "outer-uncovered: premise:scheduler_callback_footprint is reachable from code `flb_external_plugin` loads and no envelope line covers it (runtime projection, rule 31)",
+      "outer-uncovered: premise:scheduler_callee_live is reachable from code `flb_external_plugin` loads and no envelope line covers it (runtime projection, rule 31)",
+      "outer-uncovered: premise:scheduler_exact_parent_embedding is reachable from code `flb_external_plugin` loads and no envelope line covers it (runtime projection, rule 31)",
+      "outer-uncovered: premise:scheduler_no_later_alias_use is reachable from code `flb_external_plugin` loads and no envelope line covers it (runtime projection, rule 31)",
+      "outer-uncovered: premise:scheduler_tls_params_owned is reachable from code `flb_external_plugin` loads and no envelope line covers it (runtime projection, rule 31)",
+      "outer-uncovered: premise:scheduler_valgrind_request_neutral is reachable from code `flb_external_plugin` loads and no envelope line covers it (runtime projection, rule 31)",
+      "outer-uncovered: premise:scheduler_valid_membership is reachable from code `flb_external_plugin` loads and no envelope line covers it (runtime projection, rule 31)"
+     ]
+    }
+   ],
+   "rk_plugin_library": [
+    {
+     "file": "mk_server/mk_scheduler.c",
+     "function": "mk_sched_threads_destroy_conn",
+     "part": "custody",
+     "reasons": [
+      "outer-uncovered: premise:scheduler_borrowed_chain_live is reachable from code `rk_plugin_library` loads and no envelope line covers it (runtime projection, rule 31)",
+      "outer-uncovered: premise:scheduler_callback_footprint is reachable from code `rk_plugin_library` loads and no envelope line covers it (runtime projection, rule 31)",
+      "outer-uncovered: premise:scheduler_callee_live is reachable from code `rk_plugin_library` loads and no envelope line covers it (runtime projection, rule 31)",
+      "outer-uncovered: premise:scheduler_exact_parent_embedding is reachable from code `rk_plugin_library` loads and no envelope line covers it (runtime projection, rule 31)",
+      "outer-uncovered: premise:scheduler_no_later_alias_use is reachable from code `rk_plugin_library` loads and no envelope line covers it (runtime projection, rule 31)",
+      "outer-uncovered: premise:scheduler_tls_params_owned is reachable from code `rk_plugin_library` loads and no envelope line covers it (runtime projection, rule 31)",
+      "outer-uncovered: premise:scheduler_valgrind_request_neutral is reachable from code `rk_plugin_library` loads and no envelope line covers it (runtime projection, rule 31)",
+      "outer-uncovered: premise:scheduler_valid_membership is reachable from code `rk_plugin_library` loads and no envelope line covers it (runtime projection, rule 31)"
+     ]
+    },
+    {
+     "file": "mk_server/mk_scheduler.c",
+     "function": "sched_thread_cleanup",
+     "part": "custody",
+     "reasons": [
+      "outer-uncovered: premise:scheduler_borrowed_chain_live is reachable from code `rk_plugin_library` loads and no envelope line covers it (runtime projection, rule 31)",
+      "outer-uncovered: premise:scheduler_callback_footprint is reachable from code `rk_plugin_library` loads and no envelope line covers it (runtime projection, rule 31)",
+      "outer-uncovered: premise:scheduler_callee_live is reachable from code `rk_plugin_library` loads and no envelope line covers it (runtime projection, rule 31)",
+      "outer-uncovered: premise:scheduler_exact_parent_embedding is reachable from code `rk_plugin_library` loads and no envelope line covers it (runtime projection, rule 31)",
+      "outer-uncovered: premise:scheduler_no_later_alias_use is reachable from code `rk_plugin_library` loads and no envelope line covers it (runtime projection, rule 31)",
+      "outer-uncovered: premise:scheduler_tls_params_owned is reachable from code `rk_plugin_library` loads and no envelope line covers it (runtime projection, rule 31)",
+      "outer-uncovered: premise:scheduler_valgrind_request_neutral is reachable from code `rk_plugin_library` loads and no envelope line covers it (runtime projection, rule 31)",
+      "outer-uncovered: premise:scheduler_valid_membership is reachable from code `rk_plugin_library` loads and no envelope line covers it (runtime projection, rule 31)"
+     ]
+    }
+   ]
+  }
+ },
+ "unsafe_qualification": "provisional; not an upstream defect claim",
+ "private_full_attribution": "private/w48-sched/merged-1/attribution.json"
+}

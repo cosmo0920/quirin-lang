@@ -8,6 +8,13 @@ same environment (explicit link map, llvm-21 Clang for configured routes,
 null and outer projections, no source contracts or census), with the
 snapshot's own runner, profiles and release binary. Input identities are
 recorded before and after; any change fails the route (exit 101).
+
+After the checkout moved to /media/Data/GitHub/quirin-lang (the old qcore-c
+path is a symlink to it), the pinned compile databases no longer match the
+checkout spelling and the corpus route selects no unit (pair run final-2, a
+retained failed attempt). The corpus inputs root is therefore the re-spelled
+mirror `mirror_inputs.py` writes (`--inputs-mirror`), exactly as card
+W48-BU-SINGLE-LEAF-BODIES does; the mirror manifest's digest is recorded.
 """
 import argparse
 import datetime
@@ -19,7 +26,7 @@ import shutil
 import subprocess
 import sys
 
-PRIMARY = Path('/home/cosmo/Documents/GitHub/qcore-c')
+PRIMARY = Path('/media/Data/GitHub/quirin-lang')
 
 
 def sha(path):
@@ -39,6 +46,7 @@ def main():
     parser.add_argument('--inputs-snapshot', type=Path, required=True)
     parser.add_argument('--binary-source', required=True)
     parser.add_argument('--jobs', type=int, default=4)
+    parser.add_argument('--inputs-mirror', type=Path, required=True)
     args = parser.parse_args()
     assert args.jobs > 0
     free = shutil.disk_usage(PRIMARY).free
@@ -49,6 +57,7 @@ def main():
     snapshot = args.inputs_snapshot.resolve()
     binary = snapshot / 'target/release/quirin-audit'
     link_map = args.link_map.resolve()
+    mirror = args.inputs_mirror.resolve()
     env = dict(os.environ)
     for key in ('QCORE_SOURCE_CONTRACTS', 'QCORE_RETURN_CENSUS', 'QCORE_CHUNKIO_PACKAGE'):
         env.pop(key, None)
@@ -58,20 +67,21 @@ def main():
                QCORE_OUTER_PROJECTION=str(out / f'{route}-outer.json'))
     if route == 'corpus':
         command = [sys.executable, str(snapshot / 'scripts/run_pinned_audit.py'), str(out / 'corpus'),
-                   '66910c10', '--inputs-root', str(PRIMARY / 'build/cycle19'), '--jobs', str(args.jobs)]
-        externals = [PRIMARY / 'build/cycle19/c-gateway-wave-pin/fluent-bit-clang-source/build/compile_commands.json',
-                     PRIMARY / 'build/cycle19/c-gateway-wave-pin/monkey/monkey-build/compile_commands.json']
+                   '66910c10', '--inputs-root', str(mirror), '--jobs', str(args.jobs)]
+        externals = [mirror / 'c-gateway-wave-pin/fluent-bit-clang-source/build/compile_commands.json',
+                     mirror / 'c-gateway-wave-pin/monkey/monkey-build/compile_commands.json',
+                     mirror / 'manifest.json']
     else:
         prepared = PRIMARY / 'private/w45-fb/w46-external-callee-contracts/attempt-1'
         source = prepared / 'fluent-bit-clang-source'
-        database = prepared / 'fluent-bit-clang-production/compile_commands.json'
+        database = mirror / f'{route}-compile_commands.json'
         selection = snapshot / 'contract/profiles/fluent-bit' / ('system-selection.json' if route == 'system'
                                                           else 'tail-pause-selection.json')
         command = [str(binary), 'current', '--checkout', str(source), '--profile-directory',
                    str(snapshot / 'contract/profiles/fluent-bit'), '--compile-database', str(database),
                    '--selection', str(selection), '--jobs', str(args.jobs),
                    '--report', str(out / 'resource-diagnostics.json')]
-        externals = [database, selection]
+        externals = [database, selection, mirror / 'manifest.json']
     record = {'analyzer_source': args.binary_source, 'inputs_snapshot': str(snapshot),
               'inputs_before': tree_identity(snapshot),
               'report_driver_sha256': sha(Path(__file__)),

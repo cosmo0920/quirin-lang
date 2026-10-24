@@ -1,0 +1,137 @@
+{
+ "attribution": {
+  "rule 32": [
+   "rd_kafka_mock_cgrp_classic_member_active",
+   "rd_kafka_mock_cgrp_consumer_member_active",
+   "rd_kafka_mock_sharegroup_member_active",
+   "rd_kafka_mock_cgrp_classic_set_state",
+   "rd_kafka_topic_set_state",
+   "rd_kafka_share_log_fetch_stall",
+   "rd_kafka_share_ack_commit_cb_register_op"
+  ],
+  "rule 34 (sibling)": [
+   "sched_thread_cleanup",
+   "mk_sched_threads_destroy_conn"
+  ],
+  "rule 35 (sibling)": [
+   "mk_config_signature",
+   "rd_kafka_log_print",
+   "rd_kafka_log_syslog",
+   "rd_kafka_set_logger",
+   "rd_kafka_anyconf_set_modified",
+   "rd_kafka_mock_cluster_io_clear_events",
+   "rd_kafka_mock_cluster_io_set_event",
+   "rd_kafka_mock_cluster_io_set_events",
+   "rd_kafka_mock_connection_set_blocking",
+   "rd_kafka_oidc_assertion_get_algo_label",
+   "unit_test_telemetry_decode_error",
+   "rd_kafka_txn_state_transition_is_valid"
+  ]
+ },
+ "base": {
+  "analyzer_source": "4dd8c80135f8c35d56f64bcce9305b0b081ef9fd",
+  "binary_sha256": "90d222ccbd9f472084f75215123429224db41417b995e02f1e01a42b3f4474ae",
+  "command": [
+   "/usr/bin/python3",
+   "/media/Data/GitHub/quirin-lang/.claude/worktrees/w48-rk-log-caller-frame/private/rkcf2/pair8-3/snap-base/scripts/run_pinned_audit.py",
+   "/media/Data/GitHub/quirin-lang/.claude/worktrees/w48-rk-log-caller-frame/private/rkcf2/pair8-3/base-corpus/corpus",
+   "66910c10",
+   "--inputs-root",
+   "/media/Data/GitHub/quirin-lang/.claude/worktrees/w48-rk-log-caller-frame/private/rkcf2/mirror-1",
+   "--jobs",
+   "4"
+  ],
+  "ended": "2026-10-23T13:56:08.108995+00:00",
+  "exit": 0,
+  "externals_before": {
+   "/media/Data/GitHub/quirin-lang/.claude/worktrees/w48-rk-log-caller-frame/private/rkcf2/mirror-1/c-gateway-wave-pin/fluent-bit-clang-source/build/compile_commands.json": "75fde45411eb1749f0b2ce7b0062e3ec9e46f5ebda59b56e3c30a7dc3a735161",
+   "/media/Data/GitHub/quirin-lang/.claude/worktrees/w48-rk-log-caller-frame/private/rkcf2/mirror-1/c-gateway-wave-pin/monkey/monkey-build/compile_commands.json": "8e4e67a2c6a46708cd26095db66135db410a1caf0fab294ac5955c3cd066b5fa",
+   "/media/Data/GitHub/quirin-lang/.claude/worktrees/w48-rk-log-caller-frame/private/rkcf2/mirror-1/manifest.json": "4edb2e255e5cca7302da72d3256011762e0b5984fa725540e0030a9330179b4b"
+  },
+  "jobs": 4,
+  "link_map_sha256": "98a4db761ace9fd4846b000c4c98defdc2e39ce6f95684c67c30f9b8b6f38ad3",
+  "report_driver_sha256": "e0c8e459cf83aa4f91b0a32577f6260b7b510f0847e8bc6b17d8a8848e414c56",
+  "started": "2026-10-23T12:16:33.127985+00:00"
+ },
+ "failed_attempts": {
+  "pair8-1": "both routes exit 1: compile database contains no selected cmetrics sources (inputs not re-spelled)",
+  "pair8-2": "cancelled before acquiring the lock; no output"
+ },
+ "frame_members_tip": {
+  "rd_kafka_log0": "Unknown (held call to rd_kafka_log_buf, caller-frame-self-reliance)",
+  "rd_kafka_log_buf": "Unknown (its own 8 leaves)"
+ },
+ "route": "conditional eight-home pinned corpus, batch4 link map, re-spelled input mirror",
+ "rule32_premises": [
+  "rk_plugin_callback_closure",
+  "rk_log_enqueue_no_event_callback",
+  "rk_log_enqueue_forward_not_last"
+ ],
+ "status": {
+  "base": {
+   "Safe": 977,
+   "Unknown": 3848,
+   "Unsafe": 9
+  },
+  "tip": {
+   "Safe": 998,
+   "Unknown": 3827,
+   "Unsafe": 9
+  },
+  "tip35off": {
+   "Safe": 986,
+   "Unknown": 3839,
+   "Unsafe": 9
+  }
+ },
+ "tip": {
+  "analyzer_source": "f53a127e1de8b3a1adb79f0127f1650ec995d2cf",
+  "binary_sha256": "3dae1137411309a105e9c4cc852c831f7a090abab463cd06c2683d389505f688",
+  "command": [
+   "/usr/bin/python3",
+   "/media/Data/GitHub/quirin-lang/.claude/worktrees/w48-rk-log-caller-frame/private/rkcf2/pair8-3/snap-tip/scripts/run_pinned_audit.py",
+   "/media/Data/GitHub/quirin-lang/.claude/worktrees/w48-rk-log-caller-frame/private/rkcf2/pair8-3/tip-corpus/corpus",
+   "66910c10",
+   "--inputs-root",
+   "/media/Data/GitHub/quirin-lang/.claude/worktrees/w48-rk-log-caller-frame/private/rkcf2/mirror-1",
+   "--jobs",
+   "4"
+  ],
+  "ended": "2026-10-23T14:09:58.822828+00:00",
+  "exit": 0,
+  "externals_before": {
+   "/media/Data/GitHub/quirin-lang/.claude/worktrees/w48-rk-log-caller-frame/private/rkcf2/mirror-1/c-gateway-wave-pin/fluent-bit-clang-source/build/compile_commands.json": "75fde45411eb1749f0b2ce7b0062e3ec9e46f5ebda59b56e3c30a7dc3a735161",
+   "/media/Data/GitHub/quirin-lang/.claude/worktrees/w48-rk-log-caller-frame/private/rkcf2/mirror-1/c-gateway-wave-pin/monkey/monkey-build/compile_commands.json": "8e4e67a2c6a46708cd26095db66135db410a1caf0fab294ac5955c3cd066b5fa",
+   "/media/Data/GitHub/quirin-lang/.claude/worktrees/w48-rk-log-caller-frame/private/rkcf2/mirror-1/manifest.json": "4edb2e255e5cca7302da72d3256011762e0b5984fa725540e0030a9330179b4b"
+  },
+  "jobs": 4,
+  "link_map_sha256": "98a4db761ace9fd4846b000c4c98defdc2e39ce6f95684c67c30f9b8b6f38ad3",
+  "report_driver_sha256": "e0c8e459cf83aa4f91b0a32577f6260b7b510f0847e8bc6b17d8a8848e414c56",
+  "started": "2026-10-23T12:16:33.132099+00:00"
+ },
+ "tip35off": {
+  "analyzer_source": "f53a127e1de8b3a1adb79f0127f1650ec995d2cf+rule35-arms-off",
+  "binary_sha256": "6e9b621681caa70e83ab82cdfa8e550617d853baebbdf75a2981732bc30753b9",
+  "command": [
+   "/usr/bin/python3",
+   "/media/Data/GitHub/quirin-lang/.claude/worktrees/w48-rk-log-caller-frame/private/rkcf2/off35-1/snap-tip35off/scripts/run_pinned_audit.py",
+   "/media/Data/GitHub/quirin-lang/.claude/worktrees/w48-rk-log-caller-frame/private/rkcf2/off35-1/tip35off-corpus/corpus",
+   "66910c10",
+   "--inputs-root",
+   "/media/Data/GitHub/quirin-lang/.claude/worktrees/w48-rk-log-caller-frame/private/rkcf2/mirror-1",
+   "--jobs",
+   "4"
+  ],
+  "ended": "2026-10-23T18:00:45.062798+00:00",
+  "exit": 0,
+  "externals_before": {
+   "/media/Data/GitHub/quirin-lang/.claude/worktrees/w48-rk-log-caller-frame/private/rkcf2/mirror-1/c-gateway-wave-pin/fluent-bit-clang-source/build/compile_commands.json": "75fde45411eb1749f0b2ce7b0062e3ec9e46f5ebda59b56e3c30a7dc3a735161",
+   "/media/Data/GitHub/quirin-lang/.claude/worktrees/w48-rk-log-caller-frame/private/rkcf2/mirror-1/c-gateway-wave-pin/monkey/monkey-build/compile_commands.json": "8e4e67a2c6a46708cd26095db66135db410a1caf0fab294ac5955c3cd066b5fa",
+   "/media/Data/GitHub/quirin-lang/.claude/worktrees/w48-rk-log-caller-frame/private/rkcf2/mirror-1/manifest.json": "4edb2e255e5cca7302da72d3256011762e0b5984fa725540e0030a9330179b4b"
+  },
+  "jobs": 4,
+  "link_map_sha256": "98a4db761ace9fd4846b000c4c98defdc2e39ce6f95684c67c30f9b8b6f38ad3",
+  "report_driver_sha256": "e0c8e459cf83aa4f91b0a32577f6260b7b510f0847e8bc6b17d8a8848e414c56",
+  "started": "2026-10-23T16:34:40.980969+00:00"
+ }
+}

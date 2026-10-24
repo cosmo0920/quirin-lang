@@ -1,0 +1,13 @@
+{
+  "note": "Integration of W48-SCHED-CLEANUP-PRODUCTION (rule 34) onto main 722a1d0e9 (merge of card tip f0d84fb57). Since the halt the card changed only its report directory, so the merged tree's code equals main's. The card's full standing gate at ceec066ee (private/w48-sched/final-gate-1 in its worktree, retired to private/retired-worktrees/2026-10-23-w48-sched-cleanup-production) passed: Rust 8587 passed/0 failed/15 ignored (545 units), fmt, Clippy, both examples 0, 369 Lean audits, 374 Python; provider Rust 133 passed/0 failed/1 ignored, provider fmt/Clippy/inventory/package build and five verifies 0, but provider Python exit 1 (25 tests, 1 failure: test_the_real_workspace_manifest_is_current, 65 vs 66 resource views, caused by rule 32's log_caller_frame.qv already on main; fixed when that card lands). Integration adds docs/records only; Python rerun against the committed matrix.",
+  "workspace_tests": 8587,
+  "provider_tests": 133,
+  "python_evidence_validator_tests": 374,
+  "reevaluation_probe_exit": 0,
+  "reevaluation_followup_exit": 0,
+  "cargo_fmt": "clean",
+  "cargo_clippy": "clean",
+  "standing_gate": "card full gate at ceec066ee passed; provider Python 1 failure attributed to rule 32",
+  "lean_audits": 369,
+  "clang": "present: Ubuntu clang version 21.1.8 (6ubuntu1)"
+}

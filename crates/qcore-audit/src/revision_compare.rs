@@ -176,6 +176,11 @@ fn refusal_reasons(function: &Value) -> Vec<String> {
             reasons.insert(
                 qcore_c_gateway::legacy_c::refuted_contract::CONTRACT_REFUTED_BY_BODY.to_owned(),
             );
+        } else if qcore_c_gateway::legacy_c::caller_frame_hold::held_call(description).is_some() {
+            // Card W48-RK-LOG-CALLER-FRAME (rule 32a).
+            reasons.insert(
+                qcore_c_gateway::legacy_c::caller_frame_hold::CALLER_FRAME_SELF_RELIANCE.to_owned(),
+            );
         } else if let Some(category) = diagnostic["category"].as_str() {
             reasons.insert(category.to_owned());
         }

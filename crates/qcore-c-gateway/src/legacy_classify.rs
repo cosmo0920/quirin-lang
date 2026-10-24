@@ -1220,6 +1220,16 @@ impl Parser<'_> {
                 writes: self.refused_writes(&texts),
             };
         }
+        // Card W48-RK-LOG-CALLER-FRAME (rule 32a): likewise for a call inside
+        // its own caller frame.
+        if let Some(callee) =
+            find_call(&texts).and_then(|(_, function)| caller_frame_hold::held_callee(function))
+        {
+            return LegacyInstruction::Unknown {
+                description: caller_frame_hold::hold_description(callee),
+                writes: self.refused_writes(&texts),
+            };
+        }
         // Card W45-SR5-SOUNDNESS: a name the source spelled with a reserved
         // prefix, escaped, refuses as an uncontracted call under its own name.
         if let Some(callee) =

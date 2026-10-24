@@ -273,3 +273,26 @@ fn an_outside_frame_path_must_name_its_in_frame_prefix() {
         .is_err()
     );
 }
+
+/// Rule 32a: the gateway's frame registry is exactly the reviewed
+/// projection's declarations, and membership is read only within one frame.
+#[test]
+fn the_frame_registry_is_the_reviewed_projection_declarations() {
+    use qcore_contract::caller_frame::{FRAMES, is_frame_member, within_one_frame};
+    let checked = reviewed();
+    let declared: BTreeSet<&str> = checked.declarations().iter().map(String::as_str).collect();
+    assert_eq!(FRAMES.len(), 1);
+    let registered: BTreeSet<&str> = FRAMES[0].iter().copied().collect();
+    assert_eq!(registered, declared);
+    assert_eq!(registered.len(), FRAMES[0].len(), "no duplicate member");
+    assert!(within_one_frame("rd_kafka_log0", "rd_kafka_log_buf"));
+    assert!(within_one_frame("rd_kafka_log_buf", "rd_kafka_log0"));
+    assert!(within_one_frame("rd_kafka_log0", "rd_kafka_log0"));
+    assert!(!within_one_frame(
+        "rd_kafka_topic_set_state",
+        "rd_kafka_log0"
+    ));
+    assert!(!within_one_frame("rd_kafka_log0", "rd_kafka_q_enq"));
+    assert!(is_frame_member("rd_kafka_log_buf"));
+    assert!(!is_frame_member("cb_kafka_logger"));
+}

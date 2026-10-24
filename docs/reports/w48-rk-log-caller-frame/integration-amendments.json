@@ -1,0 +1,43 @@
+{
+ "card": "W48-RK-LOG-CALLER-FRAME",
+ "rules": [
+  "32",
+  "32a"
+ ],
+ "base": "4dd8c80135f8c35d56f64bcce9305b0b081ef9fd",
+ "measured_tip": "f53a127e1de8b3a1adb79f0127f1650ec995d2cf",
+ "merged_tip_note": "the card branch's merge of main 3353e1c63 differs from the measured tip only under docs/",
+ "increment": "wave-48-part11.md",
+ "increment_paragraph": "**W48-RK-LOG-CALLER-FRAME (gateway rules 32, 32a).** librdkafka's logger is read from its callers' frame. Rule 32's checked projection of the reviewed logger-effects-v1 model proves the filtered, rk == NULL, !log_queue, !rk->rk_logq and no-callback paths, the disabled-queue reply of the fresh op, the copied serve callback and the balanced sequential forward keep/drop, and leaves three caller-visible effects as named premises of the two caller-frame declarations in librdkafka/log_caller_frame.qv: rk_plugin_callback_closure, rk_log_enqueue_no_event_callback and rk_log_enqueue_forward_not_last. Callers are conditionally Safe, never Safe outright. The halted review item is fixed fail-closed by rule 32a: a caller-frame declaration serves only callers outside its frame, so a frame member's call to a member (the recursive call included) is held Unknown (caller-frame-self-reliance, incomplete-obligation-coverage), and rd_kafka_log0 and rd_kafka_log_buf are decided by their bodies, both Unknown, with the model's 15 obligations still Open. On the eight-home corpus over the re-spelled input mirror (BASE 4dd8c8013 977 Safe/3,848 Unknown/9 provisional Unsafe; TIP f53a127e1 998/3,827/9; a rule-35-arms-off TIP side 986/3,839/9), rule 32 moves 7 callers Unknown->Safe on the three premises, the planner's predicted 3 included, and removes every uncontracted logger call leaf (48->0, one held call added); the 8th move of the unfixed rule, rd_kafka_log0 itself, is gone. Sibling effects in the same pair: rule 34 two rows, rule 35 twelve. No Safe regression, no new Unsafe, no Pending. Rust (caller_frame registry, legacy_caller_frame_hold, 7 regression tests) and Lean (QCore.RkLogCallerFrame, six rule-32a theorems in AuditRkLogCallerFrame) close the card. See docs/reports/w48-rk-log-caller-frame/README.md.",
+ "status_paragraph": "Rule 32 (logger caller frame) is finished: callers of rd_kafka_log0 are conditionally Safe on three named premises (rk_plugin_callback_closure, rk_log_enqueue_no_event_callback, rk_log_enqueue_forward_not_last), and rule 32a keeps rd_kafka_log0 and rd_kafka_log_buf decided by their own bodies (both Unknown; logger-effects-v1's 15 obligations Open). Eight-home corpus BASE 4dd8c8013 977 -> TIP 998 Safe (3,848 -> 3,827 Unknown, 9 provisional Unsafe unchanged): rule 32 seven, rule 34 two, rule 35 twelve rows; the halted record's open review is closed.",
+ "followup_amendments": [
+  {
+   "id": "W48-BOTTOM-UP-RESIDUAL-PLAN",
+   "action": "append",
+   "text": " AMENDED W48-RK-LOG-CALLER-FRAME (rules 32, 32a; BASE 4dd8c8013, TIP f53a127e1, eight-home corpus over the re-spelled input mirror): the logger is no longer an uncontracted callee. Its callers read caller-frame declarations of rd_kafka_log0/rd_kafka_log_buf under three named premises; 7 callers move Unknown->Safe (the planner's 3: rd_kafka_mock_cgrp_classic_member_active, rd_kafka_mock_cgrp_consumer_member_active, rd_kafka_mock_sharegroup_member_active; plus rd_kafka_mock_cgrp_classic_set_state, rd_kafka_topic_set_state, rd_kafka_share_log_fetch_stall, rd_kafka_share_ack_commit_cb_register_op), and logger call leaves go 48->0. rd_kafka_log0 and rd_kafka_log_buf stay Unknown: rule 32a holds a frame member's call to a member, so neither row rests on the frame's own declarations; rd_kafka_log_buf keeps its 8 own leaves and logger-effects-v1's 15 obligations stay Open. 32 of the 35 functions that named rd_kafka_log0 as uncontracted keep other leaves (unresolved identities, indirect accesses, uncontracted inner calls in the log arguments). DISCHARGE (logger part): the logger's own rows need the 15 internal obligations discharged by checked consumers; the callers' Safe needs the three premises discharged (see P-RK-LOG-ENQUEUE-NO-EVENT-CALLBACK, P-RK-LOG-ENQUEUE-FORWARD-NOT-LAST and the existing callback-closure tracking)."
+  },
+  {
+   "id": "P-RK-LOG-ENQUEUE-NO-EVENT-CALLBACK",
+   "action": "add",
+   "title": "Premise: no queue event callback runs during the logger's enqueue",
+   "why": "W48-RK-LOG-CALLER-FRAME (rule 32) names rk_log_enqueue_no_event_callback on rd_kafka_log0/rd_kafka_log_buf: no queue event callback is registered on rk->rk_logq or any queue it forwards to while rd_kafka_log_buf enqueues, so rd_kafka_q_io_event runs none synchronously. rd_kafka_q_cb_event_enable is reached only from the public rd_kafka_queue_cb_event_enable, which no analysed unit calls; loaded code may. Lean an_event_callback_can_release_a_tracked_object shows the premise is not vacuous. Seven corpus callers are conditionally Safe on it. DISCHARGE: a checked closed-world proof that no analysed or loaded registration installs a queue event callback on the log queue's forward chain (or an outer contract covering loaded code, rule 31), with audited Lean and a fresh measurement showing the callers keep Safe without the premise.",
+   "source": "docs/reports/w48-rk-log-caller-frame/README.md"
+  },
+  {
+   "id": "P-RK-LOG-ENQUEUE-FORWARD-NOT-LAST",
+   "action": "add",
+   "title": "Premise: the logger enqueue's forward-queue release is never the last",
+   "why": "W48-RK-LOG-CALLER-FRAME (rule 32) names rk_log_enqueue_forward_not_last on rd_kafka_log0/rd_kafka_log_buf: the forward-queue reference rd_kafka_q_enq1 takes with rd_kafka_q_fwd_get is not the last when rd_kafka_q_destroy releases it, i.e. no other thread unforwards that queue and releases its last other reference during the call. Sequentially it is proved (Lean enq_restores_and_destroys_nothing); an interleaved unforward-and-release breaks it (an_interleaved_release_makes_the_forward_drop_last). Seven corpus callers are conditionally Safe on it. DISCHARGE: a checked concurrency argument (queue lock and forward-link reference discipline in rd_kafka_q_fwd_set0/rd_kafka_q_destroy) under the concurrency model, with audited Lean and a fresh measurement showing the callers keep Safe without the premise.",
+   "source": "docs/reports/w48-rk-log-caller-frame/README.md"
+  }
+ ],
+ "root_owned_files": [
+  "docs/STATUS.md",
+  "docs/development/increments/wave-48-part11.md",
+  "docs/reviews/r0_3/acceptance_matrix.json",
+  "docs/reports/INDEX.md"
+ ],
+ "report_index": "Regenerate docs/reports/INDEX.md (the report is new).",
+ "provider_gate": "providers/ differs from main 3353e1c63 only in providers/tests/test_contract_load_path.py: the 65->66 resource-view pin (plus an assertIn for librdkafka/log_caller_frame.qv) from c48f5d7a5, which main's failing test_the_real_workspace_manifest_is_current needs; it must land with this card. The provider gate on the merged tip is recorded in the report.",
+ "retired_followups": []
+}

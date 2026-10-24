@@ -523,3 +523,38 @@ pub fn check_declarations(checked: &CheckedCallerFrame, source: &str) -> Result<
     }
     Ok(())
 }
+
+/// Rule 32a: the members of each reviewed caller-frame projection, one slice
+/// per projection: exactly its `declarations` (the test
+/// `crates/qcore-contract/tests/caller_frame.rs` holds each slice equal to the
+/// checked projection's [`CheckedCallerFrame::declarations`]).
+///
+/// A caller-frame declaration serves only callers **outside** its frame. The
+/// frame's own bodies are the body the projection's model describes, and
+/// that model's obligations are all still Open: a member's row that read a
+/// member's declaration (its own, or a sibling's) would rest on the very
+/// obligations the projection only classifies as not the caller's. So the
+/// gateway holds every call from a member's body to a member
+/// (`qcore_c_gateway::legacy_c::caller_frame_hold`), and each member's row is
+/// decided by its body. Lean: `QCore.RkLogCallerFrame`
+/// (`a_member_never_reads_a_member_declaration`).
+pub const FRAMES: &[&[&str]] = &[
+    // `logger-effects-v1` (`docs/reports/w48-rk-log-caller-frame/caller-frame.json`).
+    &["rd_kafka_log_buf", "rd_kafka_log0"],
+];
+
+/// Whether `caller`'s body calling `callee` is a call inside one caller-frame
+/// (both members of the same reviewed projection, `caller == callee`
+/// included): such a call never reads the frame's declaration.
+#[must_use]
+pub fn within_one_frame(caller: &str, callee: &str) -> bool {
+    FRAMES
+        .iter()
+        .any(|members| members.contains(&caller) && members.contains(&callee))
+}
+
+/// Whether `name` is a member of any reviewed caller-frame projection.
+#[must_use]
+pub fn is_frame_member(name: &str) -> bool {
+    FRAMES.iter().any(|members| members.contains(&name))
+}

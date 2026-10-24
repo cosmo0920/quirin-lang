@@ -1,0 +1,41 @@
+{
+ "card": "W48-BU-SINGLE-LEAF-BODIES",
+ "evidence": "run-5",
+ "attempts": [
+  {
+   "id": "failed-attempt-1",
+   "date": "2026-10-22",
+   "what": "BASE corpus, system and slice at 49a946c8a, queued on the shared lock",
+   "outcome": "never acquired the lock; killed by the controlling-session restart before any route started",
+   "evidence": false
+  },
+  {
+   "id": "failed-attempt-2",
+   "date": "2026-10-23",
+   "what": "BASE at 49a946c8a, three routes in one lock hold",
+   "outcome": "queued 91 minutes, never acquired the lock; stopped (captured PID 3760681) when the integrator moved the BASE to 4dd8c8013",
+   "evidence": false
+  },
+  {
+   "id": "run-3",
+   "date": "2026-10-23",
+   "what": "BASE 4dd8c8013 / TIP 1482e0267 / arms-off builds and routes in one lock hold (lock acquired 05:05:25Z)",
+   "outcome": "interrupted by the human halt while building the three binaries; no route ran",
+   "evidence": false
+  },
+  {
+   "id": "run-4",
+   "date": "2026-10-23",
+   "what": "BASE 4dd8c8013 / TIP 8879c2d89 / arms-off: three release builds, then corpus, slice and system",
+   "outcome": "builds exit 0; all three corpus routes exit 1 ('compile database contains no selected cmetrics sources') and all three slice routes exit 1 ('cross-unit home lies outside checkout'); system phase stopped by killing the captured job PIDs. Cause: after the folder migration /home/cosmo/Documents/GitHub/qcore-c is a symlink, the pinned compile databases spell that prefix, run_pinned_audit.py resolves its inputs root to /media/Data, and the audit selects units by path string",
+   "evidence": false
+  },
+  {
+   "id": "run-5",
+   "date": "2026-10-23",
+   "what": "run-4's three binaries (sha256 recorded per invocation) through the re-spelled inputs mirror (mirror_inputs.py): corpus and slice 07:28Z-09:56Z, system 09:56Z-10:10Z",
+   "outcome": "all nine routes exit 0, no identity error",
+   "evidence": true
+  }
+ ]
+}

@@ -201,6 +201,14 @@ fn reason_corpus() -> Vec<(&'static str, ReasonCategory)> {
              (contract-refuted-by-body)",
             Stale,
         ),
+        // Card W48-RK-LOG-CALLER-FRAME (rule 32a): a call held inside its own
+        // caller frame (`qcore_c_gateway::legacy_c::caller_frame_hold`).
+        (
+            "call to `rd_kafka_log_buf` inside its own caller frame: a caller-frame declaration \
+             serves only callers outside the frame, whose own bodies decide their rows \
+             (caller-frame-self-reliance)",
+            Coverage,
+        ),
         // Card W45-USER-CONTRACT-PLUGINS: the plugin firewall's two
         // uncertified-claim spellings (`qcore_verifier_host::plugin_firewall`).
         (

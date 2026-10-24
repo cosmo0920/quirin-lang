@@ -75,3 +75,14 @@ two declarations in `compiler/tests/contract_loader.rs`. Rules 32, 34 and 35 are
 therefore on main while unfinished. Their open items above still apply and are
 now fixed forward on main. This record was merged onto main at the same time as
 the matrix regeneration that corrects the stale Lean audit count.
+
+## Closed (2026-10-24)
+
+All three halted cards finished after the resume and landed on main, each with
+its own report, before/after attribution and passing full gate:
+[rule 35](../w48-bu-single-leaf-bodies/README.md),
+[rule 34](../w48-sched-cleanup-production/README.md) and
+[rules 32/32a](../w48-rk-log-caller-frame/README.md). The `rd_kafka_log0`
+concern is resolved by rule 32a: frame members no longer read each other's
+declarations, so both logger rows are decided by their own bodies and stay
+Unknown. Seven caller moves remain, each conditional on three named premises.

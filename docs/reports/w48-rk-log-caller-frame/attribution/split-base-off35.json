@@ -1,0 +1,102 @@
+{
+ "rule32": {
+  "added": {
+   "unknown_alias: unresolved resource identity `X`": 18,
+   "unsupported: call to `X` inside its own caller frame: a caller-frame declaration serves only callers outside the frame, whose own bodies decide their rows (caller-frame-self-reliance)": 1,
+   "unsupported: call to uncontracted function `X`": 11,
+   "unsupported: indirect memory access is outside the resource projection": 11
+  },
+  "removed": {
+   "unknown_alias: unresolved resource identity `X`": 62,
+   "unsupported: call to uncontracted function `X`": 66,
+   "unsupported: indirect memory access is outside the resource projection": 64,
+   "unsupported: unmodeled call, aggregate or indirect access in branch condition": 4,
+   "unsupported: unmodeled call, aggregate or indirect access in for-loop condition": 1
+  },
+  "rows": 93,
+  "status": [
+   [
+    "rdkafka.c",
+    "rd_kafka_share_ack_commit_cb_register_op",
+    "Unknown",
+    "Safe"
+   ],
+   [
+    "rdkafka.c",
+    "rd_kafka_share_log_fetch_stall",
+    "Unknown",
+    "Safe"
+   ],
+   [
+    "rdkafka_mock_cgrp.c",
+    "rd_kafka_mock_cgrp_classic_member_active",
+    "Unknown",
+    "Safe"
+   ],
+   [
+    "rdkafka_mock_cgrp.c",
+    "rd_kafka_mock_cgrp_classic_set_state",
+    "Unknown",
+    "Safe"
+   ],
+   [
+    "rdkafka_mock_cgrp.c",
+    "rd_kafka_mock_cgrp_consumer_member_active",
+    "Unknown",
+    "Safe"
+   ],
+   [
+    "rdkafka_mock_sharegrp.c",
+    "rd_kafka_mock_sharegroup_member_active",
+    "Unknown",
+    "Safe"
+   ],
+   [
+    "rdkafka_topic.c",
+    "rd_kafka_topic_set_state",
+    "Unknown",
+    "Safe"
+   ]
+  ],
+  "unknown_alias": [
+   433,
+   389
+  ],
+  "value_connective": [
+   0,
+   0
+  ]
+ },
+ "sibling": {
+  "added": {
+   "unknown_alias: unresolved resource identity `X`": 2
+  },
+  "removed": {
+   "unknown_alias: unresolved resource identity `X`": 1,
+   "unsupported: call to uncontracted function `X`": 2
+  },
+  "rows": 3,
+  "status": [
+   [
+    "mk_server/mk_scheduler.c",
+    "mk_sched_threads_destroy_conn",
+    "Unknown",
+    "Safe"
+   ],
+   [
+    "mk_server/mk_scheduler.c",
+    "sched_thread_cleanup",
+    "Unknown",
+    "Safe"
+   ]
+  ],
+  "unknown_alias": [
+   2,
+   3
+  ],
+  "value_connective": [
+   0,
+   0
+  ]
+ }
+}
