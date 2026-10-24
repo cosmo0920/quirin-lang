@@ -1,0 +1,24 @@
+{
+  "exit": 0,
+  "rows": [
+    {
+      "route": "corpus",
+      "files": 309,
+      "full_archive_hash_match": true,
+      "invocation_sha256": "66f0c8119a2c9d6ffe15ae1a2962e6a94b09e6921b028f6e1580eb0fe4c48cc5"
+    },
+    {
+      "route": "system",
+      "files": 309,
+      "full_archive_hash_match": true,
+      "invocation_sha256": "e9afe7b52e0332ba84c92aedd211dec9c914d39e85f3cba689813eb3d7628cf1"
+    },
+    {
+      "route": "slice",
+      "files": 309,
+      "full_archive_hash_match": true,
+      "invocation_sha256": "6d9b668e63ee130a33bb2b2a9d817fd9eebfc098921db483a6ac38d33c20eed3"
+    }
+  ],
+  "meaning": "Every measured BASE runtime contract/provider/configuration file is byte-bound to the held BASE archive; future runtime updates do not erase the preimages."
+}

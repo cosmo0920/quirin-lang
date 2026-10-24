@@ -1,0 +1,38 @@
+{
+  "exit": 0,
+  "routes": [
+    {
+      "route": "corpus",
+      "database_sha256": "5e6868d9af26eaec97bc8020ed5f23496f2490abf44532443239bd4d365f7e78",
+      "recorded_configurations": {
+        "mk_iov.c": 1,
+        "tinycthread.c": 1,
+        "tinycthread_extra.c": 1,
+        "rdkafka_sasl_cyrus.c": 1
+      },
+      "all_configurations_probed": true
+    },
+    {
+      "route": "system",
+      "database_sha256": "2475e6374b14152538463f35a3457ffa98fbe30b2639d5df916ef9a216cb6876",
+      "recorded_configurations": {
+        "mk_iov.c": 1,
+        "tinycthread.c": 1,
+        "tinycthread_extra.c": 1,
+        "rdkafka_sasl_cyrus.c": 1
+      },
+      "all_configurations_probed": true
+    },
+    {
+      "route": "slice",
+      "database_sha256": "faf446759b31f892c9ffe03c76719875e9910682515cdd9acc908dc5142f8157",
+      "recorded_configurations": {
+        "mk_iov.c": 1,
+        "tinycthread.c": 1,
+        "tinycthread_extra.c": 1,
+        "rdkafka_sasl_cyrus.c": 1
+      },
+      "all_configurations_probed": true
+    }
+  ]
+}

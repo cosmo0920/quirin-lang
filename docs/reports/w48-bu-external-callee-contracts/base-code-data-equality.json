@@ -1,0 +1,18 @@
+{
+  "base": "8991b7b58fcbd33da082bbb44e819d47a0fb2561",
+  "actual_base_build_source": "15cc50053af74ee560233e5a26cfafbc83b40046",
+  "compared_paths": [
+    "crates",
+    "compiler",
+    "providers",
+    "scripts",
+    "proof",
+    "contract",
+    "cycle19-resource-contracts.json",
+    "Cargo.toml",
+    "Cargo.lock"
+  ],
+  "diff_bytes": 0,
+  "diff_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+  "scope": "Code and contract/configuration equality for explicitly listed inputs. Documentation-only commits are not relabeled as BASE build identities."
+}

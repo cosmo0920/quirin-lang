@@ -1,0 +1,21 @@
+{
+  "base_flexible": 130,
+  "tip_flexible": 132,
+  "unchanged_existing_entries": 130,
+  "new_entries": {
+    "thrd_current": {
+      "function": "thrd_current",
+      "module": "libc/threads.qv",
+      "contract_sha256": "1553568a41103276d8485f803a646de66084e78958e48dc141a06e5b4b869331"
+    },
+    "writev": {
+      "function": "writev",
+      "module": "libc/unistd.qv",
+      "contract_sha256": "a5740634008213a35b6e9673af12548e0edeacd49a18a870b0abbf642e82c32f"
+    }
+  },
+  "all_other_lock_fields_unchanged": true,
+  "generator_log": "/home/cosmo/.codex/worktrees/c1e4/quirin-lang/private/w48-bu-external-callee-contracts/final-campaign-1/pin-update.log",
+  "base_sha256": "50fcea7010327dbfed012df75775b0ba2e2dc0aaabfb560f66332577a91353c6",
+  "tip_sha256": "45966d0d42253ce00b9bec11c993971968ec4757892e14461b2a4fd44dcff982"
+}

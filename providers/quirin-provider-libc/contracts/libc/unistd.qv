@@ -231,3 +231,23 @@ contract {
     ensures normal resource_variadic_data_tail();
     ensures normal resource_return_none();
 };
+
+// ## Card W48-BU-EXTERNAL-CALLEE-CONTRACTS: POSIX writev custody.
+// POSIX.1-2017 writev / the configured <sys/uio.h> declaration:
+// ssize_t writev(int, const struct iovec *, int).
+// A normal return transfers or retains neither the caller's vector nor its
+// reachable buffers, and does not close the descriptor. The vector and count
+// are borrowed; the signed scalar result carries no resource custody.
+// This is a declared libc/ABI assumption (trust boundary 28), not a proof of
+// libc code. No purity, errno preservation, successful/full output, buffer
+// validity/bounds, nullness or cancellation guarantee is stated. The resource
+// projection does not check the liveness/bounds of reachable buffer objects.
+extern fn writev(fd: i32, iov: ptr<const, u8>, iovcnt: i32) -> isize
+contract {
+    requires resource_contract_v1;
+    requires resource_revision(flexible);
+    ensures normal resource_borrowed(fd);
+    ensures normal resource_borrowed(iov);
+    ensures normal resource_borrowed(iovcnt);
+    ensures normal resource_return_none();
+};

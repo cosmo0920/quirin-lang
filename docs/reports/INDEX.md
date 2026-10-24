@@ -1355,6 +1355,8 @@ Regenerate with `python3 scripts/build_docs_index.py`; validate with `--check`.
 
 | [w48-bottom-up-callee-bodies](w48-bottom-up-callee-bodies/README.md) | W48-BOTTOM-UP-CALLEE-BODIES: the bottom-up plan, and one body family lifted |
 
+| [w48-bu-external-callee-contracts](w48-bu-external-callee-contracts/README.md) | W48-BU-EXTERNAL-CALLEE-CONTRACTS |
+
 | [w48-bu-single-leaf-bodies](w48-bu-single-leaf-bodies/README.md) | Literal reads and decayed scalar array members (rule 35) |
 
 | [w48-callee-closure-r3](w48-callee-closure-r3/README.md) | W48-CALLEE-CLOSURE-R3: every blocking callee ranked, two libc facts declared |

@@ -1,0 +1,277 @@
+{
+  "records": [
+    {
+      "route": "corpus",
+      "counts": {
+        "base": {
+          "functions": 371,
+          "source_assumptions": 66,
+          "inclusion_evidence": 4,
+          "pending_review": 11,
+          "revision": 130,
+          "pin_mismatch": 4,
+          "relational": 6,
+          "retaining": 103
+        },
+        "tip": {
+          "functions": 373,
+          "source_assumptions": 66,
+          "inclusion_evidence": 4,
+          "pending_review": 11,
+          "revision": 132,
+          "pin_mismatch": 4,
+          "relational": 6,
+          "retaining": 103
+        }
+      },
+      "source_pairs": [
+        {
+          "key": "/home/cosmo/.codex/worktrees/c1e4/quirin-lang/private/w48-bu-external-callee-contracts/runtime-src/contract/profiles/fluent-bit/../../../providers/quirin-provider-libc/contracts/libc/threads.qv",
+          "relative": "providers/quirin-provider-libc/contracts/libc/threads.qv",
+          "base_sha256": "a0ccacd82d541743f208208534732550dc9893dd57452a3b2dd0632398998db3",
+          "tip_sha256": "febd75c6f2877ca7f4bccdf932d52d91c016a39a85d0d6602a54928f9a4e8da8",
+          "appended_sha256": "1c0c3be9eb3d873a982cbd09806e3d1ce0063996f5be333a74784784a38932f5"
+        },
+        {
+          "key": "/home/cosmo/.codex/worktrees/c1e4/quirin-lang/private/w48-bu-external-callee-contracts/runtime-src/contract/profiles/fluent-bit/../../../providers/quirin-provider-libc/contracts/libc/unistd.qv",
+          "relative": "providers/quirin-provider-libc/contracts/libc/unistd.qv",
+          "base_sha256": "be6f9f900e22c8127e71da391353b21587fc701a06bf59c985dafd4f8467a088",
+          "tip_sha256": "2d7606f2235d324105952f5fbc123995da6589b327b931ac012eb6ad7083f3c5",
+          "appended_sha256": "dd4296126310022035235fdc1fab8c7fe836e901dc8aa6d806768a53af4c820a"
+        }
+      ],
+      "hashes": {
+        "base": {
+          "environment_sha256": "2d47aa4d26ceff2bba91ca75b9ab4c3187f904a2593567b47ea4093dfaab16cf",
+          "function_table_sha256": "3add332c81f91b428f9c30c5330ac3a3216fce10128cacb33c1d243886d5763b",
+          "source_assumptions_sha256": "41c1d7e8f325a73941dba5c91e8cd706ec17458a65201cddcdc0abe67204a348"
+        },
+        "tip": {
+          "environment_sha256": "dcfb8d18f24002c9edec1d2c47d05c7ed8d77258db357f3292d773dd09dd88df",
+          "function_table_sha256": "f57f5e26ab7d4600728cc45baeac9fc60711670b62ec6aead5a4ecbb75b65425",
+          "source_assumptions_sha256": "14cda2d1086ba1582c06059c06e4a7cba028a134df1a26003f1f6e9f9e789974"
+        }
+      },
+      "new_functions": {
+        "writev": {
+          "parameters": [
+            "borrowed",
+            "borrowed",
+            "borrowed"
+          ],
+          "result": "none"
+        },
+        "thrd_current": {
+          "parameters": [],
+          "result": "none"
+        }
+      },
+      "new_revision_entries": {
+        "writev": {
+          "mode": "flexible",
+          "markers": [
+            {
+              "scope": "contract",
+              "mode": "flexible"
+            }
+          ]
+        },
+        "thrd_current": {
+          "mode": "flexible",
+          "markers": [
+            {
+              "scope": "contract",
+              "mode": "flexible"
+            }
+          ]
+        }
+      },
+      "complete_environment_equal_after_exact_preimage_reconstruction": true,
+      "typed_byte_equality": true,
+      "negative_comment_and_wrong_arity_sensitivity": true
+    },
+    {
+      "route": "system",
+      "counts": {
+        "base": {
+          "functions": 371,
+          "source_assumptions": 66,
+          "inclusion_evidence": 4,
+          "pending_review": 11,
+          "revision": 130,
+          "pin_mismatch": 3,
+          "relational": 6,
+          "retaining": 104
+        },
+        "tip": {
+          "functions": 373,
+          "source_assumptions": 66,
+          "inclusion_evidence": 4,
+          "pending_review": 11,
+          "revision": 132,
+          "pin_mismatch": 3,
+          "relational": 6,
+          "retaining": 104
+        }
+      },
+      "source_pairs": [
+        {
+          "key": "/home/cosmo/.codex/worktrees/c1e4/quirin-lang/private/w48-bu-external-callee-contracts/runtime-src/contract/profiles/fluent-bit/../../../providers/quirin-provider-libc/contracts/libc/threads.qv",
+          "relative": "providers/quirin-provider-libc/contracts/libc/threads.qv",
+          "base_sha256": "a0ccacd82d541743f208208534732550dc9893dd57452a3b2dd0632398998db3",
+          "tip_sha256": "febd75c6f2877ca7f4bccdf932d52d91c016a39a85d0d6602a54928f9a4e8da8",
+          "appended_sha256": "1c0c3be9eb3d873a982cbd09806e3d1ce0063996f5be333a74784784a38932f5"
+        },
+        {
+          "key": "/home/cosmo/.codex/worktrees/c1e4/quirin-lang/private/w48-bu-external-callee-contracts/runtime-src/contract/profiles/fluent-bit/../../../providers/quirin-provider-libc/contracts/libc/unistd.qv",
+          "relative": "providers/quirin-provider-libc/contracts/libc/unistd.qv",
+          "base_sha256": "be6f9f900e22c8127e71da391353b21587fc701a06bf59c985dafd4f8467a088",
+          "tip_sha256": "2d7606f2235d324105952f5fbc123995da6589b327b931ac012eb6ad7083f3c5",
+          "appended_sha256": "dd4296126310022035235fdc1fab8c7fe836e901dc8aa6d806768a53af4c820a"
+        }
+      ],
+      "hashes": {
+        "base": {
+          "environment_sha256": "cb55e0b19f2878d7af959abe35ee34c2df3d3ff234211ab9cd4792df057e1374",
+          "function_table_sha256": "3add332c81f91b428f9c30c5330ac3a3216fce10128cacb33c1d243886d5763b",
+          "source_assumptions_sha256": "41c1d7e8f325a73941dba5c91e8cd706ec17458a65201cddcdc0abe67204a348"
+        },
+        "tip": {
+          "environment_sha256": "e7909e776fdafcb7c6bd419ea1b5369e216bd50744e9a9bb172e4e199a9c86eb",
+          "function_table_sha256": "f57f5e26ab7d4600728cc45baeac9fc60711670b62ec6aead5a4ecbb75b65425",
+          "source_assumptions_sha256": "14cda2d1086ba1582c06059c06e4a7cba028a134df1a26003f1f6e9f9e789974"
+        }
+      },
+      "new_functions": {
+        "writev": {
+          "parameters": [
+            "borrowed",
+            "borrowed",
+            "borrowed"
+          ],
+          "result": "none"
+        },
+        "thrd_current": {
+          "parameters": [],
+          "result": "none"
+        }
+      },
+      "new_revision_entries": {
+        "writev": {
+          "mode": "flexible",
+          "markers": [
+            {
+              "scope": "contract",
+              "mode": "flexible"
+            }
+          ]
+        },
+        "thrd_current": {
+          "mode": "flexible",
+          "markers": [
+            {
+              "scope": "contract",
+              "mode": "flexible"
+            }
+          ]
+        }
+      },
+      "complete_environment_equal_after_exact_preimage_reconstruction": true,
+      "typed_byte_equality": true,
+      "negative_comment_and_wrong_arity_sensitivity": true
+    },
+    {
+      "route": "slice",
+      "counts": {
+        "base": {
+          "functions": 371,
+          "source_assumptions": 66,
+          "inclusion_evidence": 4,
+          "pending_review": 11,
+          "revision": 130,
+          "pin_mismatch": 1,
+          "relational": 6,
+          "retaining": 106
+        },
+        "tip": {
+          "functions": 373,
+          "source_assumptions": 66,
+          "inclusion_evidence": 4,
+          "pending_review": 11,
+          "revision": 132,
+          "pin_mismatch": 1,
+          "relational": 6,
+          "retaining": 106
+        }
+      },
+      "source_pairs": [
+        {
+          "key": "/home/cosmo/.codex/worktrees/c1e4/quirin-lang/private/w48-bu-external-callee-contracts/runtime-src/contract/profiles/fluent-bit/../../../providers/quirin-provider-libc/contracts/libc/threads.qv",
+          "relative": "providers/quirin-provider-libc/contracts/libc/threads.qv",
+          "base_sha256": "a0ccacd82d541743f208208534732550dc9893dd57452a3b2dd0632398998db3",
+          "tip_sha256": "febd75c6f2877ca7f4bccdf932d52d91c016a39a85d0d6602a54928f9a4e8da8",
+          "appended_sha256": "1c0c3be9eb3d873a982cbd09806e3d1ce0063996f5be333a74784784a38932f5"
+        },
+        {
+          "key": "/home/cosmo/.codex/worktrees/c1e4/quirin-lang/private/w48-bu-external-callee-contracts/runtime-src/contract/profiles/fluent-bit/../../../providers/quirin-provider-libc/contracts/libc/unistd.qv",
+          "relative": "providers/quirin-provider-libc/contracts/libc/unistd.qv",
+          "base_sha256": "be6f9f900e22c8127e71da391353b21587fc701a06bf59c985dafd4f8467a088",
+          "tip_sha256": "2d7606f2235d324105952f5fbc123995da6589b327b931ac012eb6ad7083f3c5",
+          "appended_sha256": "dd4296126310022035235fdc1fab8c7fe836e901dc8aa6d806768a53af4c820a"
+        }
+      ],
+      "hashes": {
+        "base": {
+          "environment_sha256": "e9bef6c62325dd6ab60396f9e42d2746932321e77c6371100a7e7ef98dad3a85",
+          "function_table_sha256": "3add332c81f91b428f9c30c5330ac3a3216fce10128cacb33c1d243886d5763b",
+          "source_assumptions_sha256": "41c1d7e8f325a73941dba5c91e8cd706ec17458a65201cddcdc0abe67204a348"
+        },
+        "tip": {
+          "environment_sha256": "912e6045407fd9d5f416f871a8947f908cea4f6d88a1cad71a4660f65afd8412",
+          "function_table_sha256": "f57f5e26ab7d4600728cc45baeac9fc60711670b62ec6aead5a4ecbb75b65425",
+          "source_assumptions_sha256": "14cda2d1086ba1582c06059c06e4a7cba028a134df1a26003f1f6e9f9e789974"
+        }
+      },
+      "new_functions": {
+        "writev": {
+          "parameters": [
+            "borrowed",
+            "borrowed",
+            "borrowed"
+          ],
+          "result": "none"
+        },
+        "thrd_current": {
+          "parameters": [],
+          "result": "none"
+        }
+      },
+      "new_revision_entries": {
+        "writev": {
+          "mode": "flexible",
+          "markers": [
+            {
+              "scope": "contract",
+              "mode": "flexible"
+            }
+          ]
+        },
+        "thrd_current": {
+          "mode": "flexible",
+          "markers": [
+            {
+              "scope": "contract",
+              "mode": "flexible"
+            }
+          ]
+        }
+      },
+      "complete_environment_equal_after_exact_preimage_reconstruction": true,
+      "typed_byte_equality": true,
+      "negative_comment_and_wrong_arity_sensitivity": true
+    }
+  ],
+  "fields_deleted": 0,
+  "fields_masked": 0,
+  "meaning": "Complete actual exported typed environments; equality after exactly two new ordinary function entries, two flexible revision entries and the exact two source-file suffixes. Does not prove libc implementations, source binding, C extraction or Rust-Lean correspondence."
+}
