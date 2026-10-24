@@ -1,0 +1,23 @@
+{
+  "card": "W48-CMT-LIST-SELF-INIT",
+  "rule": "36a",
+  "measured_source": "99457f141a90d7bc597516eda904dcf1821ada69",
+  "prediction_commit": "08b5546809e99124f384c0d91db7220c9c192520",
+  "base": "359f64a987b74b21852c5a691e5c23f75c15d570",
+  "increment_paragraph": "W48-CMT-LIST-SELF-INIT implements checked unit-local calls to existing self-link initializer leaves (gateway rule 36a), using positive complete source/ABI/field facts, actual CG11 leaf validation and a private empty-custody caller frame; no ordinary summary is published. Fresh BASE/planner precedes prediction 08b554680 and semantic implementation. Own paired corpus 4,834 remains 999 Safe / 3,826 Unknown / 9 provisional Unsafe; system 448 remains 99/345/4 and slice 404 remains 57 Safe / 342 Unknown / 4 Pending / 1 provisional Unsafe. All 5,781 NULL dictionaries and runtime projections remain unchanged after exact metadata attribution; 23,622 raw leaves are retained, 148 reading receipts replayed and 50 captured environments validated, with zero unexplained semantic leaves. The 2,200-body planner is byte-identical; getter ceiling 11 is conditional and measured getter closure gain 0. The frozen gate passes 8,612 Rust tests (545 units / 558 summaries, 15 ignored), 369 Lean 4.35.0 audits and 374 Python tests, all steps exit 0; failed and interrupted attempts remain archived. The deepest admitted reader control uses 328 KiB below 1 MiB. Parent CMT-MAP-METRIC-GET-OWNERSHIP-CHAIN, new W48-CMT-TRACKED-INTERIOR-SELF-INIT and W48-EXACT-RETURN-WITNESS-PRECISION remain Open. Card-native figures precede later main integration and are not a combined-main observation. See docs/reports/w48-cmt-list-self-init/README.md.",
+  "status_paragraph": "W48-CMT-LIST-SELF-INIT (gateway rule 36a, measured 99457f141) adds a private checked call frame for self-link initializer leaves, with matching audited Lean and no ordinary custody summary. Its fresh isolated BASE/TIP retains corpus 999 Safe / 3,826 Unknown / 9 provisional Unsafe, system 99/345/4 and slice 57 Safe / 342 Unknown / 4 Pending / 1 provisional Unsafe; complete resource, NULL and runtime results agree after exact metadata reconstruction. Getter closure gain 0. Gate 8,612 Rust / 369 Lean / 374 Python passes. Tracked/interior effect transport and the full getter chain remain Open; these card-local figures do not replace later main observations.",
+  "ledger": [
+    {
+      "id": "CMT-MAP-METRIC-GET-OWNERSHIP-CHAIN",
+      "operation": "append",
+      "text": "W48-CMT-LIST-SELF-INIT adds only a checked initializer-leaf call inside a simple unit-local empty-custody caller frame, with no ordinary summary or production getter gain. CG11 literal self-stores were already supported. Tracked/interior caller effect transport remains Open under W48-CMT-TRACKED-INTERIOR-SELF-INIT; all other parent obligations remain Open."
+    },
+    {
+      "id": "W48-CMT-TRACKED-INTERIOR-SELF-INIT",
+      "operation": "add",
+      "title": "Transport checked self-initializer effects to tracked or embedded caller objects",
+      "text": "Open after W48-CMT-LIST-SELF-INIT. Its private empty-frame call admits no tracked owner, interior/member-address actual or member-place alias and exports no ordinary summary. DISCHARGE: generic checked shape/effect transport for an exact live caller-owned object or embedded member, preserving actual CG11 writes, derived/member alias invalidation, custody and list-membership obligations; matching audited Rust/Lean without placeholders or project axioms, complete source/ABI/full-body/all-exit checks, wrong-owner/layout/alias and callback/export refusal controls, and fresh BASE/planner then committed prediction then implementation with complete resource/NULL/runtime native attribution. Never erase initializer writes into a neutral summary.",
+      "source": "docs/reports/w48-cmt-list-self-init/README.md"
+    }
+  ]
+}
