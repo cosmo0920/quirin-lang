@@ -238,10 +238,20 @@ fn current_checkpoint_text(path: &str) -> String {
 }
 const RK_MEMORY: &str = "providers/qcore-provider-librdkafka/contracts/librdkafka/memory.qv";
 fn rule37_checkpoint_prefixes() -> (&'static str, &'static str) {
-    let before = include_str!("../../../docs/reports/w48-cmt-list-self-init/integration/rule37-memory-before-prefix.txt");
-    let after = include_str!("../../../docs/reports/w48-cmt-list-self-init/integration/rule37-memory-after-prefix.txt");
-    assert_eq!(qcore_schemas::sha256_hex(before.as_bytes()), "97924dfb2064e3686b9c02244ca5039c1e69a781f1c02553e18527e8b7ac3f47");
-    assert_eq!(qcore_schemas::sha256_hex(after.as_bytes()), "69be583efacc9ac8a2acac6ba4e1ff9b33fd278b13158e19e75253339d9dd188");
+    let before = include_str!(
+        "../../../docs/reports/w48-cmt-list-self-init/integration/rule37-memory-before-prefix.txt"
+    );
+    let after = include_str!(
+        "../../../docs/reports/w48-cmt-list-self-init/integration/rule37-memory-after-prefix.txt"
+    );
+    assert_eq!(
+        qcore_schemas::sha256_hex(before.as_bytes()),
+        "97924dfb2064e3686b9c02244ca5039c1e69a781f1c02553e18527e8b7ac3f47"
+    );
+    assert_eq!(
+        qcore_schemas::sha256_hex(after.as_bytes()),
+        "69be583efacc9ac8a2acac6ba4e1ff9b33fd278b13158e19e75253339d9dd188"
+    );
     (before, after)
 }
 // The symbolic-adoption control uses current semantic contracts on both sides.
