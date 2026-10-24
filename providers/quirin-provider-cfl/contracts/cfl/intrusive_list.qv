@@ -42,6 +42,8 @@ contract {
 // `list` denotes the root or an embedded record, whose storage ends with its
 // owning root. The Rust abstraction forgets member facts rather than exporting
 // an empty-list, membership, child-custody or self-pointer postcondition.
+// In the audited CFL body the retained leaf fields are next and prev; the
+// effect records the actual checked set rather than assuming those names.
 extern fn cfl_list_init(
     list: borrow<'owner, mut, CflListEntry> use one
 ) -> unit
@@ -57,7 +59,7 @@ contract {
     requires no_child_containment_membership_collection_or_other_custody_frame;
     requires existing_rooted_member_facts_are_empty_or_name_the_same_owner;
     requires existing_indirect_access_check_has_no_diagnostic_or_state_change;
-    ensures normal instantiated_next_and_prev_self_write_paths_are_recorded;
+    ensures normal instantiated_leaf_self_write_paths_are_recorded;
     ensures normal all_owner_member_pointer_facts_are_forgotten_through_aliases;
     ensures normal plain_and_derived_alias_bindings_are_preserved;
     ensures normal all_resource_status_and_nullable_site_facts_are_preserved;

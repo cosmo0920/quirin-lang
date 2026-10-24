@@ -34,7 +34,7 @@ fn canonical_initializer_model_records_effects_without_granting_a_call_summary()
         .filter(|c| matches!(c.value.kind, SourceContractClauseKind::Ensures(_)))
         .map(|c| c.value.expression_source.as_str())
         .collect::<Vec<_>>();
-    assert!(effects.contains(&"instantiated_next_and_prev_self_write_paths_are_recorded"));
+    assert!(effects.contains(&"instantiated_leaf_self_write_paths_are_recorded"));
     assert!(effects.contains(&"all_owner_member_pointer_facts_are_forgotten_through_aliases"));
     assert!(effects.contains(&"all_resource_status_and_nullable_site_facts_are_preserved"));
     assert!(effects.contains(&"no_empty_list_membership_or_ordinary_summary_is_exported"));

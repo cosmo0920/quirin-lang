@@ -2107,9 +2107,11 @@ fn every_corpus_module_outside_the_v1_vocabulary_is_rejected_not_skipped() {
     // W48-RK-LOG-CALLER-FRAME: `librdkafka/log_caller_frame.qv`, plain
     // caller-frame declarations `rd_kafka_log_buf` and `rd_kafka_log0`.
     // Rejected declarations unchanged.
+    // W48-CMT-TRACKED-INTERIOR-SELF-INIT adds cfl_list_init as a declared
+    // model only: 331 -> 332 rejected; interpreted modules/declarations stay fixed.
     assert_eq!(
         (selected, v1_declarations, rejected_declarations),
-        (66, 495, 331)
+        (66, 495, 332)
     );
     // A declaration held for human review is loaded and withheld from the
     // function map (contract spec C06.1): the map plus the held set is every

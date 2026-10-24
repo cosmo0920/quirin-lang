@@ -59,8 +59,8 @@ BASE/TIP attribution and the standing gate, with failed attempts retained.
 The canonical CFL `cfl/intrusive_list.qv` declared model now reflects rule 36b
 with eleven source/target/frame preconditions, six effect clauses and the
 unchanged live-resource quantity. These are model propositions; neither the
-resource nor bounds loader admits this module. Its explicit next/prev write
-recording and conservative owner-member fact invalidation match the Rust
+resource nor bounds loader admits this module. Its actual leaf self-write
+recording (next/prev in the audited CFL body) and conservative owner-member fact invalidation match the Rust
 transfer and Lean abstraction. The source-to-model correspondence remains a
 reviewed premise under rule 28, not a generated refinement proof. The existing
 CG11 checker remains the call-specific authority. No resource-v1 declaration,
