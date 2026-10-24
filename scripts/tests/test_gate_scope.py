@@ -233,6 +233,34 @@ class Steps(unittest.TestCase):
                          list(scope_mod.PROVIDER_COMMANDS))
 
 
+class GateLeanRefusals(unittest.TestCase):
+    """scripts/gate_lean.py refuses before invoking Lake."""
+
+    def setUp(self):
+        import gate_lean
+        self.gate_lean = gate_lean
+
+    def quiet(self, argv):
+        with open(os.devnull, "w") as sink:
+            stderr, sys.stderr = sys.stderr, sink
+            try:
+                return self.gate_lean.main(argv)
+            finally:
+                sys.stderr = stderr
+
+    def test_audit_all_belongs_to_the_full_run(self):
+        self.assertEqual(self.quiet(["--audit", "AuditAll.lean"]), 1)
+
+    def test_a_missing_or_non_audit_file_refuses(self):
+        self.assertEqual(self.quiet(["--audit", "AuditNoSuchGateElastic.lean"]), 1)
+        self.assertEqual(self.quiet(["--audit", "QCore.lean"]), 1)
+
+    def test_nothing_to_do_is_a_usage_error(self):
+        with self.assertRaises(SystemExit) as raised:
+            self.quiet([])
+        self.assertEqual(raised.exception.code, 2)
+
+
 class GitDiff(unittest.TestCase):
     def git(self, root, *args):
         subprocess.run(["git", "-C", str(root), *args], check=True, capture_output=True,
