@@ -11,7 +11,7 @@ const EXPECTED_CONTRACTS: &[(&str, &str, usize)] = &[
     // Source-audited CMetrics API models; no interpreted call permission.
     ("cmetrics/map_lifetime.qv", "cmt_map_create", 11),
     ("cmetrics/map_lifetime.qv", "cmt_map_metric_get", 18),
-    ("cmetrics/map_lifetime.qv", "cmt_map_metric_get_val", 8),
+    ("cmetrics/map_lifetime.qv", "cmt_map_metric_get_val", 9),
     ("cmetrics/map_lifetime.qv", "cmt_map_metric_destroy", 10),
     ("cmetrics/map_lifetime.qv", "cmt_map_metrics_expire", 11),
     ("cmetrics/map_lifetime.qv", "cmt_map_destroy", 12),

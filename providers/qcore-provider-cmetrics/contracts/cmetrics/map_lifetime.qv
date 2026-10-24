@@ -61,6 +61,7 @@ extern fn cmt_map_metric_get_val(opts: ptr<mut, u8>, map: ptr<mut, u8>,
 contract {
     requires map_and_lookup_inputs_meet_the_getter_representation_obligations;
     requires out_val_is_writable_double_storage;
+    requires out_val_is_disjoint_from_lookup_mutation_and_retirement_footprints;
     requires no_retirement_races_between_lookup_unlock_and_value_read;
     ensures normal result_is_zero_or_minus_one;
     ensures normal zero_result_writes_metric_value_to_out_val;

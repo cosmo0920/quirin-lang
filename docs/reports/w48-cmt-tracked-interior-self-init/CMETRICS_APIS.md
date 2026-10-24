@@ -6,7 +6,7 @@ The user requested API contracts to support auditing Fluent Bit's core mechanism
 |---|---|
 | `cmt_map_create` | Fresh nullable owned map; copies label keys; retains nonowning opts/parent record views. Failed construction cleans its own partial graph. |
 | `cmt_map_metric_get` | Nullable borrow of an embedded record or map-owned metric. Creating a metric can precede storage-preparation failure, so NULL does not promise rollback. Read lookup can reindex. |
-| `cmt_map_metric_get_val` | Scalar output on success, unchanged output on lookup failure; lookup unlocks before the value read, requiring external retirement coordination. |
+| `cmt_map_metric_get_val` | Disjoint writable scalar output on success, unchanged output on lookup failure; lookup unlocks before the value read, requiring external retirement coordination. |
 | `cmt_map_metric_destroy` | Removes a valid dynamic primary child, its secondary link and cache reference, then releases it and nested storage; embedded static metrics are excluded. |
 | `cmt_map_metrics_expire` | Retires selected dynamic metrics and can reset embedded static storage; invalidates affected borrows while preserving the enclosing map. |
 | `cmt_map_destroy` | Releases the map's transitive owned graph and invalidates descendants; retained opts/parent records are not freed. |
