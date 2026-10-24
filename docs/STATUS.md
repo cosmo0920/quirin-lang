@@ -1,8 +1,10 @@
 # Current status and evidence boundaries
 
-The two CMetrics reports below are isolated card measurements at their named tips, before later main integrations. They establish no combined-main native count; integration source validation is recorded separately.
+CMetrics native measurements below belong to their named isolated card tips. Source gates and earlier main integrations are recorded separately; a card measurement is not relabelled as a combined-main observation.
 
-W48-CMT-LIST-SELF-INIT (gateway rule 36a, measured 99457f141) adds a private checked call frame for self-link initializer leaves, with matching audited Lean and no ordinary custody summary. Its fresh isolated BASE/TIP retains corpus 999 Safe / 3,826 Unknown / 9 provisional Unsafe, system 99/345/4 and slice 57 Safe / 342 Unknown / 4 Pending / 1 provisional Unsafe; complete resource, NULL and runtime results agree after exact metadata reconstruction. Getter closure gain 0. Gate 8,612 Rust / 369 Lean / 374 Python passes. Tracked/interior effect transport and the full getter chain remain Open; these card-local figures do not replace later main observations.
+W48-CMT-TRACKED-INTERIOR-SELF-INIT (rule 36b, measured e92d8aef3) adds checked writes into live owned roots/embedded records and their canonical CFL .qv model. Initializer transport preserves ownership and invalidates member facts through aliases. Later source validation adds six map/two opts declared lifecycle contracts with executable adoption still Open. Corpus BASE/TIP Safe / Unknown / Pending / provisional Unsafe: 1009 / 3816 / 0 / 9 → 1011 / 3814 / 0 / 9. Complete resource/NULL/runtime attribution leaves zero unexplained leaves and no prior Safe loss. Full getter ownership remains Open; the bounded initializer transport is closed and disjoint custody frames remain tracked. [Report](reports/w48-cmt-tracked-interior-self-init/README.md).
+
+W48-CMT-LIST-SELF-INIT (gateway rule 36a, measured 99457f141) adds a private checked call frame for self-link initializer leaves, with matching audited Lean and no ordinary custody summary. Its fresh isolated BASE/TIP retains corpus 999 Safe / 3,826 Unknown / 9 provisional Unsafe, system 99/345/4 and slice 57 Safe / 342 Unknown / 4 Pending / 1 provisional Unsafe; complete resource, NULL and runtime results agree after exact metadata reconstruction. Getter closure gain 0. Gate 8,612 Rust / 369 Lean / 374 Python passes. Rule 36b's later report owns bounded tracked/interior transport; the full getter chain remains Open. These card-local figures do not replace later observations.
 
 W48-BU-CMT-MAP-METRIC-GET (measured cc1d6c25a) adds exact borrowed-formal return validation with matching audited Lean. Fresh resource counts are unchanged: corpus 4,834 = 999 Safe / 3,826 Unknown / 9 provisional Unsafe; system 448 = 99 / 345 / 4; slice 404 = 57 Safe / 342 Unknown / 4 Pending / 1 provisional Unsafe. No getter gain or Safe regression. The NULL witness repair withdraws one Monkey provisional finding to Unknown and adds memcpy dependency records to two other rows; all 39 semantic leaves are accounted and all raw payloads retained. Gate 8,602 Rust / 369 Lean / 374 Python passes. Full CMetrics ownership closure and the documented witness precision recovery remain Open; projection is not whole-C safety.
 
@@ -414,15 +416,13 @@ latest completed integration measurement.
 
 ## Latest validated gate
 
-The [combined CMetrics/main gate](reports/w48-cmt-list-self-init/integration/gate.json) validates committed source `6874be01bfdf7a5ae349f50566d6915164d57501` after semantic merge `6cc54c3ae1eebd5aa75c7b801cbcd1af07230f42`. Root Rust: **8,639 passed / 0 failed / 15 ignored**, 549 units / 562 summaries. **370 Lean audits** pass under pinned 4.35.0, and **374 Python tests** pass against the committed matrix. Formatting, Clippy and both reevaluation examples exit 0. Providers pass **133 Rust / 0 failed / 1 ignored**, **25 Python**, inventory, package build and all five package verifications. Every gate step exits 0; actual Clang 21.1.8, commands, source guards and private logs are in the receipt. Isolated CMetrics resource/NULL/runtime comparisons remain at their named measured tips; this source gate supplies no new combined-main native count or discharge of source premises. Final regenerated-matrix Python confirmation is recorded separately.
+The [rule 36b gate](reports/w48-cmt-tracked-interior-self-init/gate.json) validates committed source `2d0d85299b830aa24d7f200d63a308653582363f`. Root Rust: **8,654 passed / 0 failed / 15 ignored**, 551 units / 564 summaries; **370 Lean audits** under pinned 4.35.0 and **374 Python tests** pass. Formatting, Clippy and both examples exit 0. Providers: **133 Rust / 0 failed / 1 ignored**, **25 Python**, inventory, package build and all five verifications pass. Actual Clang 21.1.8 and every command/exit/private log are in the receipt. The native pair uses the identical frozen BASE inputs; the canonical .qv declared-model delta is separately validated and grants no interpreted call permission. Final regenerated-matrix Python confirmation is recorded separately.
 
-Provider checks above were measured at `389090b6755b43045c8838989c91adce33e9aabe` and reused after exact runtime/provider source equality; repaired test expectations and documentation do not change those inputs. The repaired root gate and its adjacent Clang recording are fresh.
-
-The five provider crates own **84** canonical contract modules; **54** shared or
+The five provider crates own **86** canonical contract modules; **54** shared or
 application-level modules live in six `providers/quirin-provider-*` crates: five
 per-library data crates (libc only in `quirin-provider-libc`) and
 `quirin-provider-shared`, which also holds the providers' shared runtime and
-bundles the five. `contract/corpus.json` indexes all **138** without duplicate
+bundles the five. `contract/corpus.json` indexes all **140** without duplicate
 snapshots. Retained integration adapters embed the provider-owned data directly;
 generic core crates retain no provider executable dependency;
 package inventories bind supplied contract bytes to their executables, and

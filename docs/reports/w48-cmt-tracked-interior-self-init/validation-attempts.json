@@ -1,0 +1,1497 @@
+{
+  "standing_gate_attempts": [
+    {
+      "head": "4dc908fb80763cacfcb38cff5d3e307a0cb7e928",
+      "started": "20261024T134211Z",
+      "cwd": "/home/cosmo/.codex/worktrees/808d/quirin-lang",
+      "environment_overrides": {
+        "CARGO_BUILD_JOBS": "6",
+        "QCORE_CLANG": "/usr/lib/llvm-21/bin/clang"
+      },
+      "steps": [
+        {
+          "name": "submodules",
+          "command": [
+            "git",
+            "submodule",
+            "update",
+            "--init",
+            "--recursive"
+          ],
+          "exit": 0,
+          "seconds": 0.026266437998856418,
+          "log": "/home/cosmo/.codex/worktrees/808d/quirin-lang/private/w48-cmt-tracked-interior/gate/20261024T134211Z/submodules.log"
+        },
+        {
+          "name": "clang-version",
+          "command": [
+            "/usr/lib/llvm-21/bin/clang",
+            "--version"
+          ],
+          "exit": 0,
+          "seconds": 0.01577108599303756,
+          "log": "/home/cosmo/.codex/worktrees/808d/quirin-lang/private/w48-cmt-tracked-interior/gate/20261024T134211Z/clang-version.txt"
+        },
+        {
+          "name": "rust-tests",
+          "command": [
+            "python3",
+            "scripts/run_test_binaries.py",
+            "--jobs",
+            "6",
+            "--log-dir",
+            "/home/cosmo/.codex/worktrees/808d/quirin-lang/private/w48-cmt-tracked-interior/gate/20261024T134211Z/rust-binaries"
+          ],
+          "exit": 101,
+          "seconds": 726.7358939880069,
+          "log": "/home/cosmo/.codex/worktrees/808d/quirin-lang/private/w48-cmt-tracked-interior/gate/20261024T134211Z/rust-tests.log"
+        },
+        {
+          "name": "fmt",
+          "command": [
+            "cargo",
+            "fmt",
+            "--all",
+            "--",
+            "--check"
+          ],
+          "exit": 0,
+          "seconds": 3.875452469001175,
+          "log": "/home/cosmo/.codex/worktrees/808d/quirin-lang/private/w48-cmt-tracked-interior/gate/20261024T134211Z/fmt.log"
+        },
+        {
+          "name": "clippy",
+          "command": [
+            "cargo",
+            "clippy",
+            "--all-targets",
+            "--",
+            "-D",
+            "warnings"
+          ],
+          "exit": 0,
+          "seconds": 13.79886454899679,
+          "log": "/home/cosmo/.codex/worktrees/808d/quirin-lang/private/w48-cmt-tracked-interior/gate/20261024T134211Z/clippy.log"
+        },
+        {
+          "name": "reevaluation-probe",
+          "command": [
+            "cargo",
+            "run",
+            "-p",
+            "qcore-compiler",
+            "--example",
+            "reevaluation_probe"
+          ],
+          "exit": 0,
+          "seconds": 0.06907345999206882,
+          "log": "/home/cosmo/.codex/worktrees/808d/quirin-lang/private/w48-cmt-tracked-interior/gate/20261024T134211Z/reevaluation-probe.log"
+        },
+        {
+          "name": "reevaluation-followup",
+          "command": [
+            "cargo",
+            "run",
+            "-p",
+            "qcore-compiler",
+            "--example",
+            "reevaluation_followup"
+          ],
+          "exit": 0,
+          "seconds": 0.43599946799804457,
+          "log": "/home/cosmo/.codex/worktrees/808d/quirin-lang/private/w48-cmt-tracked-interior/gate/20261024T134211Z/reevaluation-followup.log"
+        },
+        {
+          "name": "lean-audits",
+          "command": [
+            "python3",
+            "scripts/check_lean_audits.py",
+            "--jobs",
+            "6"
+          ],
+          "exit": 1,
+          "seconds": 0.8626505459978944,
+          "log": "/home/cosmo/.codex/worktrees/808d/quirin-lang/private/w48-cmt-tracked-interior/gate/20261024T134211Z/lean-audits.log"
+        },
+        {
+          "name": "python-tests",
+          "command": [
+            "python3",
+            "-m",
+            "unittest",
+            "discover",
+            "-s",
+            "scripts/tests"
+          ],
+          "exit": 0,
+          "seconds": 33.15261940199707,
+          "log": "/home/cosmo/.codex/worktrees/808d/quirin-lang/private/w48-cmt-tracked-interior/gate/20261024T134211Z/python-tests.log"
+        }
+      ],
+      "head_after": "4dc908fb80763cacfcb38cff5d3e307a0cb7e928",
+      "clean_after": true,
+      "exit": 1,
+      "interruption": null
+    },
+    {
+      "head": "e92d8aef35a8bd14550e90219d19a56eb3b196e7",
+      "started": "20261024T135553Z",
+      "cwd": "/home/cosmo/.codex/worktrees/808d/quirin-lang",
+      "environment_overrides": {
+        "CARGO_BUILD_JOBS": "6",
+        "QCORE_CLANG": "/usr/lib/llvm-21/bin/clang"
+      },
+      "steps": [
+        {
+          "name": "submodules",
+          "command": [
+            "git",
+            "submodule",
+            "update",
+            "--init",
+            "--recursive"
+          ],
+          "exit": 0,
+          "seconds": 0.07528125699900556,
+          "log": "/home/cosmo/.codex/worktrees/808d/quirin-lang/private/w48-cmt-tracked-interior/gate/20261024T135553Z/submodules.log"
+        },
+        {
+          "name": "clang-version",
+          "command": [
+            "/usr/lib/llvm-21/bin/clang",
+            "--version"
+          ],
+          "exit": 0,
+          "seconds": 0.016720986008294858,
+          "log": "/home/cosmo/.codex/worktrees/808d/quirin-lang/private/w48-cmt-tracked-interior/gate/20261024T135553Z/clang-version.txt"
+        },
+        {
+          "name": "rust-tests",
+          "command": [
+            "python3",
+            "scripts/run_test_binaries.py",
+            "--jobs",
+            "6",
+            "--log-dir",
+            "/home/cosmo/.codex/worktrees/808d/quirin-lang/private/w48-cmt-tracked-interior/gate/20261024T135553Z/rust-binaries"
+          ],
+          "exit": 0,
+          "seconds": 528.9224295110034,
+          "log": "/home/cosmo/.codex/worktrees/808d/quirin-lang/private/w48-cmt-tracked-interior/gate/20261024T135553Z/rust-tests.log"
+        },
+        {
+          "name": "fmt",
+          "command": [
+            "cargo",
+            "fmt",
+            "--all",
+            "--",
+            "--check"
+          ],
+          "exit": 0,
+          "seconds": 3.8856060519901803,
+          "log": "/home/cosmo/.codex/worktrees/808d/quirin-lang/private/w48-cmt-tracked-interior/gate/20261024T135553Z/fmt.log"
+        },
+        {
+          "name": "clippy",
+          "command": [
+            "cargo",
+            "clippy",
+            "--all-targets",
+            "--",
+            "-D",
+            "warnings"
+          ],
+          "exit": 0,
+          "seconds": 3.5313451469992287,
+          "log": "/home/cosmo/.codex/worktrees/808d/quirin-lang/private/w48-cmt-tracked-interior/gate/20261024T135553Z/clippy.log"
+        },
+        {
+          "name": "reevaluation-probe",
+          "command": [
+            "cargo",
+            "run",
+            "-p",
+            "qcore-compiler",
+            "--example",
+            "reevaluation_probe"
+          ],
+          "exit": 0,
+          "seconds": 0.06463157200778369,
+          "log": "/home/cosmo/.codex/worktrees/808d/quirin-lang/private/w48-cmt-tracked-interior/gate/20261024T135553Z/reevaluation-probe.log"
+        },
+        {
+          "name": "reevaluation-followup",
+          "command": [
+            "cargo",
+            "run",
+            "-p",
+            "qcore-compiler",
+            "--example",
+            "reevaluation_followup"
+          ],
+          "exit": 0,
+          "seconds": 0.41959104900888633,
+          "log": "/home/cosmo/.codex/worktrees/808d/quirin-lang/private/w48-cmt-tracked-interior/gate/20261024T135553Z/reevaluation-followup.log"
+        },
+        {
+          "name": "lean-audits",
+          "command": [
+            "python3",
+            "scripts/check_lean_audits.py",
+            "--jobs",
+            "6"
+          ],
+          "exit": 0,
+          "seconds": 17.839507165001123,
+          "log": "/home/cosmo/.codex/worktrees/808d/quirin-lang/private/w48-cmt-tracked-interior/gate/20261024T135553Z/lean-audits.log"
+        },
+        {
+          "name": "python-tests",
+          "command": [
+            "python3",
+            "-m",
+            "unittest",
+            "discover",
+            "-s",
+            "scripts/tests"
+          ],
+          "exit": 0,
+          "seconds": 32.91806096100481,
+          "log": "/home/cosmo/.codex/worktrees/808d/quirin-lang/private/w48-cmt-tracked-interior/gate/20261024T135553Z/python-tests.log"
+        }
+      ],
+      "head_after": "e92d8aef35a8bd14550e90219d19a56eb3b196e7",
+      "clean_after": true,
+      "exit": 0,
+      "interruption": null
+    },
+    {
+      "head": "9c1759688264e1a686dc467b5678d5bbd4746ed3",
+      "started": "20261024T160621Z",
+      "cwd": "/home/cosmo/.codex/worktrees/808d/quirin-lang",
+      "environment_overrides": {
+        "CARGO_BUILD_JOBS": "6",
+        "QCORE_CLANG": "/usr/lib/llvm-21/bin/clang"
+      },
+      "steps": [
+        {
+          "name": "submodules",
+          "command": [
+            "git",
+            "submodule",
+            "update",
+            "--init",
+            "--recursive"
+          ],
+          "exit": 0,
+          "seconds": 0.02453674799471628,
+          "log": "/home/cosmo/.codex/worktrees/808d/quirin-lang/private/w48-cmt-tracked-interior/gate/20261024T160621Z/submodules.log"
+        },
+        {
+          "name": "clang-version",
+          "command": [
+            "/usr/lib/llvm-21/bin/clang",
+            "--version"
+          ],
+          "exit": 0,
+          "seconds": 0.011616158008109778,
+          "log": "/home/cosmo/.codex/worktrees/808d/quirin-lang/private/w48-cmt-tracked-interior/gate/20261024T160621Z/clang-version.txt"
+        },
+        {
+          "name": "rust-tests",
+          "command": [
+            "python3",
+            "scripts/run_test_binaries.py",
+            "--jobs",
+            "6",
+            "--log-dir",
+            "/home/cosmo/.codex/worktrees/808d/quirin-lang/private/w48-cmt-tracked-interior/gate/20261024T160621Z/rust-binaries"
+          ],
+          "exit": 101,
+          "seconds": 545.034230189005,
+          "log": "/home/cosmo/.codex/worktrees/808d/quirin-lang/private/w48-cmt-tracked-interior/gate/20261024T160621Z/rust-tests.log"
+        },
+        {
+          "name": "fmt",
+          "command": [
+            "cargo",
+            "fmt",
+            "--all",
+            "--",
+            "--check"
+          ],
+          "exit": 0,
+          "seconds": 3.9785550350061385,
+          "log": "/home/cosmo/.codex/worktrees/808d/quirin-lang/private/w48-cmt-tracked-interior/gate/20261024T160621Z/fmt.log"
+        },
+        {
+          "name": "clippy",
+          "command": [
+            "cargo",
+            "clippy",
+            "--all-targets",
+            "--",
+            "-D",
+            "warnings"
+          ],
+          "exit": 0,
+          "seconds": 3.608119562995853,
+          "log": "/home/cosmo/.codex/worktrees/808d/quirin-lang/private/w48-cmt-tracked-interior/gate/20261024T160621Z/clippy.log"
+        },
+        {
+          "name": "reevaluation-probe",
+          "command": [
+            "cargo",
+            "run",
+            "-p",
+            "qcore-compiler",
+            "--example",
+            "reevaluation_probe"
+          ],
+          "exit": 0,
+          "seconds": 0.06594616000074893,
+          "log": "/home/cosmo/.codex/worktrees/808d/quirin-lang/private/w48-cmt-tracked-interior/gate/20261024T160621Z/reevaluation-probe.log"
+        },
+        {
+          "name": "reevaluation-followup",
+          "command": [
+            "cargo",
+            "run",
+            "-p",
+            "qcore-compiler",
+            "--example",
+            "reevaluation_followup"
+          ],
+          "exit": 0,
+          "seconds": 0.4103671030024998,
+          "log": "/home/cosmo/.codex/worktrees/808d/quirin-lang/private/w48-cmt-tracked-interior/gate/20261024T160621Z/reevaluation-followup.log"
+        },
+        {
+          "name": "lean-audits",
+          "command": [
+            "python3",
+            "scripts/check_lean_audits.py",
+            "--jobs",
+            "6"
+          ],
+          "exit": 0,
+          "seconds": 16.784135688008973,
+          "log": "/home/cosmo/.codex/worktrees/808d/quirin-lang/private/w48-cmt-tracked-interior/gate/20261024T160621Z/lean-audits.log"
+        },
+        {
+          "name": "python-tests",
+          "command": [
+            "python3",
+            "-m",
+            "unittest",
+            "discover",
+            "-s",
+            "scripts/tests"
+          ],
+          "exit": 0,
+          "seconds": 33.220252861006884,
+          "log": "/home/cosmo/.codex/worktrees/808d/quirin-lang/private/w48-cmt-tracked-interior/gate/20261024T160621Z/python-tests.log"
+        }
+      ],
+      "head_after": "9c1759688264e1a686dc467b5678d5bbd4746ed3",
+      "clean_after": true,
+      "exit": 1,
+      "interruption": null
+    },
+    {
+      "head": "2d0d85299b830aa24d7f200d63a308653582363f",
+      "started": "20261024T161812Z",
+      "cwd": "/home/cosmo/.codex/worktrees/808d/quirin-lang",
+      "environment_overrides": {
+        "CARGO_BUILD_JOBS": "6",
+        "QCORE_CLANG": "/usr/lib/llvm-21/bin/clang"
+      },
+      "steps": [
+        {
+          "name": "submodules",
+          "command": [
+            "git",
+            "submodule",
+            "update",
+            "--init",
+            "--recursive"
+          ],
+          "exit": 0,
+          "seconds": 0.03391608801030088,
+          "log": "/home/cosmo/.codex/worktrees/808d/quirin-lang/private/w48-cmt-tracked-interior/gate/20261024T161812Z/submodules.log"
+        },
+        {
+          "name": "clang-version",
+          "command": [
+            "/usr/lib/llvm-21/bin/clang",
+            "--version"
+          ],
+          "exit": 0,
+          "seconds": 0.015024884007289074,
+          "log": "/home/cosmo/.codex/worktrees/808d/quirin-lang/private/w48-cmt-tracked-interior/gate/20261024T161812Z/clang-version.txt"
+        },
+        {
+          "name": "rust-tests",
+          "command": [
+            "python3",
+            "scripts/run_test_binaries.py",
+            "--jobs",
+            "6",
+            "--log-dir",
+            "/home/cosmo/.codex/worktrees/808d/quirin-lang/private/w48-cmt-tracked-interior/gate/20261024T161812Z/rust-binaries"
+          ],
+          "exit": 0,
+          "seconds": 541.9710559369996,
+          "log": "/home/cosmo/.codex/worktrees/808d/quirin-lang/private/w48-cmt-tracked-interior/gate/20261024T161812Z/rust-tests.log"
+        },
+        {
+          "name": "fmt",
+          "command": [
+            "cargo",
+            "fmt",
+            "--all",
+            "--",
+            "--check"
+          ],
+          "exit": 0,
+          "seconds": 3.883674094991875,
+          "log": "/home/cosmo/.codex/worktrees/808d/quirin-lang/private/w48-cmt-tracked-interior/gate/20261024T161812Z/fmt.log"
+        },
+        {
+          "name": "clippy",
+          "command": [
+            "cargo",
+            "clippy",
+            "--all-targets",
+            "--",
+            "-D",
+            "warnings"
+          ],
+          "exit": 0,
+          "seconds": 3.6356427790015005,
+          "log": "/home/cosmo/.codex/worktrees/808d/quirin-lang/private/w48-cmt-tracked-interior/gate/20261024T161812Z/clippy.log"
+        },
+        {
+          "name": "reevaluation-probe",
+          "command": [
+            "cargo",
+            "run",
+            "-p",
+            "qcore-compiler",
+            "--example",
+            "reevaluation_probe"
+          ],
+          "exit": 0,
+          "seconds": 0.06550753400370013,
+          "log": "/home/cosmo/.codex/worktrees/808d/quirin-lang/private/w48-cmt-tracked-interior/gate/20261024T161812Z/reevaluation-probe.log"
+        },
+        {
+          "name": "reevaluation-followup",
+          "command": [
+            "cargo",
+            "run",
+            "-p",
+            "qcore-compiler",
+            "--example",
+            "reevaluation_followup"
+          ],
+          "exit": 0,
+          "seconds": 0.40844708199438173,
+          "log": "/home/cosmo/.codex/worktrees/808d/quirin-lang/private/w48-cmt-tracked-interior/gate/20261024T161812Z/reevaluation-followup.log"
+        },
+        {
+          "name": "lean-audits",
+          "command": [
+            "python3",
+            "scripts/check_lean_audits.py",
+            "--jobs",
+            "6"
+          ],
+          "exit": 0,
+          "seconds": 16.26568242299254,
+          "log": "/home/cosmo/.codex/worktrees/808d/quirin-lang/private/w48-cmt-tracked-interior/gate/20261024T161812Z/lean-audits.log"
+        },
+        {
+          "name": "python-tests",
+          "command": [
+            "python3",
+            "-m",
+            "unittest",
+            "discover",
+            "-s",
+            "scripts/tests"
+          ],
+          "exit": 0,
+          "seconds": 33.33002831299382,
+          "log": "/home/cosmo/.codex/worktrees/808d/quirin-lang/private/w48-cmt-tracked-interior/gate/20261024T161812Z/python-tests.log"
+        }
+      ],
+      "head_after": "2d0d85299b830aa24d7f200d63a308653582363f",
+      "clean_after": true,
+      "exit": 0,
+      "interruption": null
+    }
+  ],
+  "focused_build_measurement_attribution_steps": [
+    {
+      "command": [
+        "python3",
+        "private/w48-cmt-tracked-interior/finish_accounting.py"
+      ],
+      "started": "2026-10-24T16:16:26.749910+00:00",
+      "head": "9c1759688264e1a686dc467b5678d5bbd4746ed3",
+      "dirty": false,
+      "log": "private/w48-cmt-tracked-interior/steps/accounting-1.log",
+      "slot_pid": 2134228,
+      "exit": 0,
+      "seconds": 0.33977202999813017,
+      "ended": "2026-10-24T16:16:27.122343+00:00",
+      "test_summaries": []
+    },
+    {
+      "command": [
+        "python3",
+        "private/w48-cmt-tracked-interior/after_tip.py"
+      ],
+      "started": "2026-10-24T16:02:26.471235+00:00",
+      "head": "7423710e458481dd2ad4e77680fb9a6e94b6aaf3",
+      "dirty": false,
+      "log": "private/w48-cmt-tracked-interior/steps/after-tip-1.log",
+      "slot_pid": 2134228,
+      "exit": 1,
+      "seconds": 12.92331656299939,
+      "ended": "2026-10-24T16:02:39.498726+00:00",
+      "test_summaries": []
+    },
+    {
+      "command": [
+        "cargo",
+        "test",
+        "-p",
+        "qcore-contract",
+        "--test",
+        "bounds_contract"
+      ],
+      "started": "2026-10-24T16:18:10.434787+00:00",
+      "head": "2d0d85299b830aa24d7f200d63a308653582363f",
+      "dirty": false,
+      "log": "private/w48-cmt-tracked-interior/steps/api-bounds-1.log",
+      "slot_pid": 2134228,
+      "exit": 0,
+      "seconds": 0.6077212399977725,
+      "ended": "2026-10-24T16:18:11.076583+00:00",
+      "test_summaries": [
+        "test result: ok. 6 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.25s"
+      ]
+    },
+    {
+      "command": [
+        "cargo",
+        "test",
+        "-p",
+        "qcore-compiler",
+        "--test",
+        "qcore_contract_corpus"
+      ],
+      "started": "2026-10-24T16:03:08.085581+00:00",
+      "head": "7423710e458481dd2ad4e77680fb9a6e94b6aaf3",
+      "dirty": true,
+      "log": "private/w48-cmt-tracked-interior/steps/api-corpus-1.log",
+      "slot_pid": 2134228,
+      "exit": 101,
+      "seconds": 2.1589766440010862,
+      "ended": "2026-10-24T16:03:10.275783+00:00",
+      "test_summaries": [
+        "test result: FAILED. 4 passed; 1 failed; 0 ignored; 0 measured; 0 filtered out; finished in 1.63s"
+      ]
+    },
+    {
+      "command": [
+        "cargo",
+        "test",
+        "-p",
+        "qcore-compiler",
+        "--test",
+        "qcore_contract_corpus"
+      ],
+      "started": "2026-10-24T16:04:48.852522+00:00",
+      "head": "4f2b5be6a61a2f125b7b7d2a368c85296d3aa017",
+      "dirty": false,
+      "log": "private/w48-cmt-tracked-interior/steps/api-corpus-2.log",
+      "slot_pid": 2134228,
+      "exit": 0,
+      "seconds": 3.7738917709939415,
+      "ended": "2026-10-24T16:04:52.672785+00:00",
+      "test_summaries": [
+        "test result: ok. 5 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 1.64s"
+      ]
+    },
+    {
+      "command": [
+        "python3",
+        "private/w48-cmt-tracked-interior/focus_api_lean.py"
+      ],
+      "started": "2026-10-24T16:03:10.295487+00:00",
+      "head": "7423710e458481dd2ad4e77680fb9a6e94b6aaf3",
+      "dirty": true,
+      "log": "private/w48-cmt-tracked-interior/steps/api-lean-1.log",
+      "slot_pid": 2134228,
+      "exit": 1,
+      "seconds": 0.43556368599820416,
+      "ended": "2026-10-24T16:03:10.833594+00:00",
+      "test_summaries": []
+    },
+    {
+      "command": [
+        "python3",
+        "private/w48-cmt-tracked-interior/focus_api_lean.py"
+      ],
+      "started": "2026-10-24T16:04:52.697462+00:00",
+      "head": "4f2b5be6a61a2f125b7b7d2a368c85296d3aa017",
+      "dirty": false,
+      "log": "private/w48-cmt-tracked-interior/steps/api-lean-2.log",
+      "slot_pid": 2134228,
+      "exit": 1,
+      "seconds": 0.4432501859992044,
+      "ended": "2026-10-24T16:04:53.177356+00:00",
+      "test_summaries": []
+    },
+    {
+      "command": [
+        "python3",
+        "private/w48-cmt-tracked-interior/focus_api_lean.py"
+      ],
+      "started": "2026-10-24T16:05:19.060785+00:00",
+      "head": "9c1759688264e1a686dc467b5678d5bbd4746ed3",
+      "dirty": false,
+      "log": "private/w48-cmt-tracked-interior/steps/api-lean-3.log",
+      "slot_pid": 2134228,
+      "exit": 0,
+      "seconds": 0.7706700339913368,
+      "ended": "2026-10-24T16:05:19.899568+00:00",
+      "test_summaries": []
+    },
+    {
+      "command": [
+        "cargo",
+        "test",
+        "-p",
+        "qcore-compiler",
+        "--test",
+        "contract_loader"
+      ],
+      "started": "2026-10-24T16:18:04.810588+00:00",
+      "head": "2d0d85299b830aa24d7f200d63a308653582363f",
+      "dirty": false,
+      "log": "private/w48-cmt-tracked-interior/steps/api-loader-1.log",
+      "slot_pid": 2134228,
+      "exit": 0,
+      "seconds": 5.556598996001412,
+      "ended": "2026-10-24T16:18:10.412042+00:00",
+      "test_summaries": [
+        "test result: ok. 10 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 3.33s"
+      ]
+    },
+    {
+      "command": [
+        "cargo",
+        "test",
+        "-p",
+        "qcore-contract",
+        "--test",
+        "cmetrics_api_models",
+        "--",
+        "--nocapture"
+      ],
+      "started": "2026-10-24T16:03:07.622463+00:00",
+      "head": "7423710e458481dd2ad4e77680fb9a6e94b6aaf3",
+      "dirty": true,
+      "log": "private/w48-cmt-tracked-interior/steps/api-rust-1.log",
+      "slot_pid": 2134228,
+      "exit": 0,
+      "seconds": 0.32861356300418265,
+      "ended": "2026-10-24T16:03:08.065796+00:00",
+      "test_summaries": [
+        "test result: ok. 2 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.01s"
+      ]
+    },
+    {
+      "command": [
+        "cargo",
+        "test",
+        "-p",
+        "qcore-audit",
+        "--test",
+        "source_contract_config"
+      ],
+      "started": "2026-10-24T16:18:11.101127+00:00",
+      "head": "2d0d85299b830aa24d7f200d63a308653582363f",
+      "dirty": false,
+      "log": "private/w48-cmt-tracked-interior/steps/api-source-config-1.log",
+      "slot_pid": 2134228,
+      "exit": 0,
+      "seconds": 0.8120627179887379,
+      "ended": "2026-10-24T16:18:11.952757+00:00",
+      "test_summaries": [
+        "test result: ok. 12 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.04s"
+      ]
+    },
+    {
+      "command": [
+        "python3",
+        "private/w48-cmt-tracked-interior/api_source_validation.py"
+      ],
+      "started": "2026-10-24T16:16:27.143814+00:00",
+      "head": "9c1759688264e1a686dc467b5678d5bbd4746ed3",
+      "dirty": false,
+      "log": "private/w48-cmt-tracked-interior/steps/api-source-validation-1.log",
+      "slot_pid": 2134228,
+      "exit": 1,
+      "seconds": 0.1827898199990159,
+      "ended": "2026-10-24T16:16:27.359592+00:00",
+      "test_summaries": []
+    },
+    {
+      "command": [
+        "python3",
+        "private/w48-cmt-tracked-interior/api_source_validation.py"
+      ],
+      "started": "2026-10-24T16:39:40.765602+00:00",
+      "head": "2d0d85299b830aa24d7f200d63a308653582363f",
+      "dirty": false,
+      "log": "private/w48-cmt-tracked-interior/steps/api-source-validation-2.log",
+      "slot_pid": 2134228,
+      "exit": 0,
+      "seconds": 0.2205297289910959,
+      "ended": "2026-10-24T16:39:41.019777+00:00",
+      "test_summaries": []
+    },
+    {
+      "command": [
+        "python3",
+        "providers/contracts.py",
+        "sync"
+      ],
+      "started": "2026-10-24T16:02:39.596631+00:00",
+      "head": "7423710e458481dd2ad4e77680fb9a6e94b6aaf3",
+      "dirty": false,
+      "log": "private/w48-cmt-tracked-interior/steps/api-sync-1.log",
+      "slot_pid": 2134228,
+      "exit": 0,
+      "seconds": 27.974203357996885,
+      "ended": "2026-10-24T16:03:07.602827+00:00",
+      "test_summaries": []
+    },
+    {
+      "command": [
+        "python3",
+        "providers/contracts.py",
+        "sync"
+      ],
+      "started": "2026-10-24T16:17:23.448857+00:00",
+      "head": "9c1759688264e1a686dc467b5678d5bbd4746ed3",
+      "dirty": true,
+      "log": "private/w48-cmt-tracked-interior/steps/api-sync-2.log",
+      "slot_pid": 2134228,
+      "exit": 0,
+      "seconds": 25.47637466501328,
+      "ended": "2026-10-24T16:17:48.972436+00:00",
+      "test_summaries": []
+    },
+    {
+      "command": [
+        "python3",
+        "private/w48-cmt-tracked-interior/attribute_compare.py",
+        "corpus"
+      ],
+      "started": "2026-10-24T16:06:15.060819+00:00",
+      "head": "9c1759688264e1a686dc467b5678d5bbd4746ed3",
+      "dirty": false,
+      "log": "private/w48-cmt-tracked-interior/steps/attribute-corpus-1.log",
+      "slot_pid": 2134228,
+      "exit": 0,
+      "seconds": 4.85326801201154,
+      "ended": "2026-10-24T16:06:19.947680+00:00",
+      "test_summaries": []
+    },
+    {
+      "command": [
+        "python3",
+        "private/w48-cmt-tracked-interior/attribute_compare.py",
+        "slice"
+      ],
+      "started": "2026-10-24T16:06:20.557383+00:00",
+      "head": "9c1759688264e1a686dc467b5678d5bbd4746ed3",
+      "dirty": false,
+      "log": "private/w48-cmt-tracked-interior/steps/attribute-slice-1.log",
+      "slot_pid": 2134228,
+      "exit": 0,
+      "seconds": 0.4645355410029879,
+      "ended": "2026-10-24T16:06:21.123872+00:00",
+      "test_summaries": []
+    },
+    {
+      "command": [
+        "python3",
+        "private/w48-cmt-tracked-interior/attribute_compare.py",
+        "system"
+      ],
+      "started": "2026-10-24T16:06:19.979518+00:00",
+      "head": "9c1759688264e1a686dc467b5678d5bbd4746ed3",
+      "dirty": false,
+      "log": "private/w48-cmt-tracked-interior/steps/attribute-system-1.log",
+      "slot_pid": 2134228,
+      "exit": 0,
+      "seconds": 0.5078937130019767,
+      "ended": "2026-10-24T16:06:20.527627+00:00",
+      "test_summaries": []
+    },
+    {
+      "command": [
+        "env",
+        "CARGO_BUILD_JOBS=6",
+        "QCORE_AUDIT_BUILD_COMMIT=e92d8aef35a8bd14550e90219d19a56eb3b196e7",
+        "cargo",
+        "build",
+        "--release",
+        "-p",
+        "qcore-audit",
+        "--bin",
+        "quirin-audit"
+      ],
+      "started": "2026-10-24T14:17:45.389883+00:00",
+      "head": "e92d8aef35a8bd14550e90219d19a56eb3b196e7",
+      "dirty": false,
+      "log": "private/w48-cmt-tracked-interior/steps/build-tip-1.log",
+      "slot_pid": 2134228,
+      "exit": 0,
+      "seconds": 87.89236116000393,
+      "ended": "2026-10-24T14:19:13.315236+00:00",
+      "test_summaries": []
+    },
+    {
+      "command": [
+        "env",
+        "CARGO_BUILD_JOBS=6",
+        "cargo",
+        "test",
+        "-p",
+        "qcore-contract",
+        "--test",
+        "tracked_self_init_model",
+        "--",
+        "--nocapture"
+      ],
+      "started": "2026-10-24T13:41:44.534519+00:00",
+      "head": "1e335107f4cb72b96b6c1c502d38428f497206dc",
+      "dirty": false,
+      "log": "private/w48-cmt-tracked-interior/steps/focus-contract-1.log",
+      "slot_pid": 2134228,
+      "exit": 0,
+      "seconds": 9.68281152700365,
+      "ended": "2026-10-24T13:41:54.260234+00:00",
+      "test_summaries": [
+        "test result: ok. 1 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s"
+      ]
+    },
+    {
+      "command": [
+        "env",
+        "CARGO_BUILD_JOBS=6",
+        "cargo",
+        "test",
+        "-p",
+        "qcore-compiler",
+        "--test",
+        "qcore_contract_corpus",
+        "--",
+        "--nocapture"
+      ],
+      "started": "2026-10-24T13:41:54.282812+00:00",
+      "head": "1e335107f4cb72b96b6c1c502d38428f497206dc",
+      "dirty": false,
+      "log": "private/w48-cmt-tracked-interior/steps/focus-corpus-1.log",
+      "slot_pid": 2134228,
+      "exit": 0,
+      "seconds": 3.7387771100038663,
+      "ended": "2026-10-24T13:41:58.058801+00:00",
+      "test_summaries": [
+        "test result: ok. 5 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 1.61s"
+      ]
+    },
+    {
+      "command": [
+        "env",
+        "CARGO_BUILD_JOBS=6",
+        "QCORE_CLANG=/usr/lib/llvm-21/bin/clang",
+        "cargo",
+        "test",
+        "-p",
+        "qcore-c-gateway",
+        "--lib",
+        "tracked_initializer_embedded_source_readers",
+        "--",
+        "--nocapture"
+      ],
+      "started": "2026-10-24T13:31:04.610478+00:00",
+      "head": "3926f2e1b326d950b225b7e4dac1bb6cc6841127",
+      "dirty": false,
+      "log": "private/w48-cmt-tracked-interior/steps/focus-deep-1.log",
+      "slot_pid": 2134228,
+      "exit": 101,
+      "seconds": 5.026925573009066,
+      "ended": "2026-10-24T13:31:09.673776+00:00",
+      "test_summaries": []
+    },
+    {
+      "command": [
+        "env",
+        "CARGO_BUILD_JOBS=6",
+        "QCORE_CLANG=/usr/lib/llvm-21/bin/clang",
+        "cargo",
+        "test",
+        "-p",
+        "qcore-c-gateway",
+        "--lib",
+        "tracked_initializer_embedded_source_readers",
+        "--",
+        "--nocapture"
+      ],
+      "started": "2026-10-24T13:32:28.602231+00:00",
+      "head": "4e34d153fe6e769a6e1633e2754da42278f19842",
+      "dirty": false,
+      "log": "private/w48-cmt-tracked-interior/steps/focus-deep-2.log",
+      "slot_pid": 2134228,
+      "exit": 0,
+      "seconds": 2.083224257992697,
+      "ended": "2026-10-24T13:32:30.724755+00:00",
+      "test_summaries": [
+        "test result: ok. 1 passed; 0 failed; 0 ignored; 0 measured; 1217 filtered out; finished in 2.05s"
+      ]
+    },
+    {
+      "command": [
+        "python3",
+        "private/w48-cmt-tracked-interior/focus_lean.py"
+      ],
+      "started": "2026-10-24T13:31:04.015097+00:00",
+      "head": "3926f2e1b326d950b225b7e4dac1bb6cc6841127",
+      "dirty": false,
+      "log": "private/w48-cmt-tracked-interior/steps/focus-lean-1.log",
+      "slot_pid": 2134228,
+      "exit": 1,
+      "seconds": 0.5377229400037322,
+      "ended": "2026-10-24T13:31:04.587135+00:00",
+      "test_summaries": []
+    },
+    {
+      "command": [
+        "python3",
+        "private/w48-cmt-tracked-interior/focus_lean.py"
+      ],
+      "started": "2026-10-24T13:32:27.833979+00:00",
+      "head": "4e34d153fe6e769a6e1633e2754da42278f19842",
+      "dirty": false,
+      "log": "private/w48-cmt-tracked-interior/steps/focus-lean-2.log",
+      "slot_pid": 2134228,
+      "exit": 0,
+      "seconds": 0.7027724179934012,
+      "ended": "2026-10-24T13:32:28.569437+00:00",
+      "test_summaries": []
+    },
+    {
+      "command": [
+        "env",
+        "CARGO_BUILD_JOBS=6",
+        "QCORE_CLANG=/usr/lib/llvm-21/bin/clang",
+        "cargo",
+        "test",
+        "-p",
+        "qcore-c-gateway",
+        "--lib",
+        "tracked_self_init",
+        "--",
+        "--nocapture"
+      ],
+      "started": "2026-10-24T13:30:56.516363+00:00",
+      "head": "3926f2e1b326d950b225b7e4dac1bb6cc6841127",
+      "dirty": false,
+      "log": "private/w48-cmt-tracked-interior/steps/focus-rust-1.log",
+      "slot_pid": 2134228,
+      "exit": 101,
+      "seconds": 7.4416954280022765,
+      "ended": "2026-10-24T13:31:03.991378+00:00",
+      "test_summaries": []
+    },
+    {
+      "command": [
+        "env",
+        "CARGO_BUILD_JOBS=6",
+        "QCORE_CLANG=/usr/lib/llvm-21/bin/clang",
+        "cargo",
+        "test",
+        "-p",
+        "qcore-c-gateway",
+        "--lib",
+        "tracked_self_init",
+        "--",
+        "--nocapture"
+      ],
+      "started": "2026-10-24T13:32:12.827012+00:00",
+      "head": "4e34d153fe6e769a6e1633e2754da42278f19842",
+      "dirty": false,
+      "log": "private/w48-cmt-tracked-interior/steps/focus-rust-2.log",
+      "slot_pid": 2134228,
+      "exit": 101,
+      "seconds": 14.941117037000367,
+      "ended": "2026-10-24T13:32:27.810828+00:00",
+      "test_summaries": [
+        "test result: FAILED. 10 passed; 1 failed; 0 ignored; 0 measured; 1207 filtered out; finished in 0.59s"
+      ]
+    },
+    {
+      "command": [
+        "env",
+        "CARGO_BUILD_JOBS=6",
+        "QCORE_CLANG=/usr/lib/llvm-21/bin/clang",
+        "cargo",
+        "test",
+        "-p",
+        "qcore-c-gateway",
+        "--lib",
+        "tracked_self_init",
+        "--",
+        "--nocapture"
+      ],
+      "started": "2026-10-24T13:39:19.076641+00:00",
+      "head": "7ece7f90a944bd119f1e7dfc571dd999aeda76b2",
+      "dirty": false,
+      "log": "private/w48-cmt-tracked-interior/steps/focus-rust-3.log",
+      "slot_pid": 2134228,
+      "exit": 0,
+      "seconds": 6.248304943001131,
+      "ended": "2026-10-24T13:39:25.366112+00:00",
+      "test_summaries": [
+        "test result: ok. 11 passed; 0 failed; 0 ignored; 0 measured; 1207 filtered out; finished in 0.63s"
+      ]
+    },
+    {
+      "command": [
+        "cargo",
+        "fmt",
+        "--all"
+      ],
+      "started": "2026-10-24T13:31:52.743060+00:00",
+      "head": "3926f2e1b326d950b225b7e4dac1bb6cc6841127",
+      "dirty": true,
+      "log": "private/w48-cmt-tracked-interior/steps/format-edit-2.log",
+      "slot_pid": 2134228,
+      "exit": 0,
+      "seconds": 3.8952216030011186,
+      "ended": "2026-10-24T13:31:56.678250+00:00",
+      "test_summaries": []
+    },
+    {
+      "command": [
+        "cargo",
+        "fmt",
+        "--all"
+      ],
+      "started": "2026-10-24T13:37:01.020366+00:00",
+      "head": "4e34d153fe6e769a6e1633e2754da42278f19842",
+      "dirty": true,
+      "log": "private/w48-cmt-tracked-interior/steps/format-edit-3.log",
+      "slot_pid": 2134228,
+      "exit": 0,
+      "seconds": 3.8350493580073817,
+      "ended": "2026-10-24T13:37:04.895907+00:00",
+      "test_summaries": []
+    },
+    {
+      "command": [
+        "cargo",
+        "fmt",
+        "--all"
+      ],
+      "started": "2026-10-24T13:41:04.059400+00:00",
+      "head": "08da23123aec69859150d9e94501509ffaa57bcb",
+      "dirty": true,
+      "log": "private/w48-cmt-tracked-interior/steps/format-edit-4.log",
+      "slot_pid": 2134228,
+      "exit": 0,
+      "seconds": 3.8975058829964837,
+      "ended": "2026-10-24T13:41:08.009481+00:00",
+      "test_summaries": []
+    },
+    {
+      "command": [
+        "cargo",
+        "fmt",
+        "--all"
+      ],
+      "started": "2026-10-24T13:41:25.366435+00:00",
+      "head": "08da23123aec69859150d9e94501509ffaa57bcb",
+      "dirty": true,
+      "log": "private/w48-cmt-tracked-interior/steps/format-edit-5.log",
+      "slot_pid": 2134228,
+      "exit": 0,
+      "seconds": 3.8851990770053817,
+      "ended": "2026-10-24T13:41:29.298376+00:00",
+      "test_summaries": []
+    },
+    {
+      "command": [
+        "cargo",
+        "fmt",
+        "--all"
+      ],
+      "started": "2026-10-24T13:55:26.686856+00:00",
+      "head": "4dc908fb80763cacfcb38cff5d3e307a0cb7e928",
+      "dirty": true,
+      "log": "private/w48-cmt-tracked-interior/steps/format-edit-6.log",
+      "slot_pid": 2134228,
+      "exit": 0,
+      "seconds": 3.890950517001329,
+      "ended": "2026-10-24T13:55:30.625716+00:00",
+      "test_summaries": []
+    },
+    {
+      "command": [
+        "python3",
+        "private/w48-cmt-tracked-interior/freeze_and_tip.py"
+      ],
+      "started": "2026-10-24T13:55:11.186048+00:00",
+      "head": "4dc908fb80763cacfcb38cff5d3e307a0cb7e928",
+      "dirty": false,
+      "log": "private/w48-cmt-tracked-interior/steps/freeze-build-and-tip-1.log",
+      "slot_pid": 2134228,
+      "exit": 1,
+      "seconds": 0.10335569101152942,
+      "ended": "2026-10-24T13:55:11.321530+00:00",
+      "test_summaries": []
+    },
+    {
+      "command": [
+        "python3",
+        "private/w48-cmt-tracked-interior/freeze_and_tip.py"
+      ],
+      "started": "2026-10-24T14:17:45.274940+00:00",
+      "head": "e92d8aef35a8bd14550e90219d19a56eb3b196e7",
+      "dirty": false,
+      "log": "private/w48-cmt-tracked-interior/steps/freeze-build-and-tip-2.log",
+      "slot_pid": 2134228,
+      "exit": 0,
+      "seconds": 6281.124166303998,
+      "ended": "2026-10-24T16:02:26.441293+00:00",
+      "test_summaries": []
+    },
+    {
+      "command": [
+        "sh",
+        "docs/reports/w48-bu-cmt-map-metric-get/scripts/original_paths.sh",
+        "python3",
+        "private/w48-cmt-tracked-interior/post_attribution.py",
+        "replay-v1"
+      ],
+      "started": "2026-10-24T16:02:35.267127+00:00",
+      "head": "7423710e458481dd2ad4e77680fb9a6e94b6aaf3",
+      "dirty": false,
+      "log": "private/w48-cmt-tracked-interior/steps/post-attribution-1.log",
+      "slot_pid": 2134228,
+      "exit": 1,
+      "seconds": 4.18839076400036,
+      "ended": "2026-10-24T16:02:39.490645+00:00",
+      "test_summaries": []
+    },
+    {
+      "command": [
+        "sh",
+        "docs/reports/w48-bu-cmt-map-metric-get/scripts/original_paths.sh",
+        "python3",
+        "private/w48-cmt-tracked-interior/post_attribution.py",
+        "replay-v2"
+      ],
+      "started": "2026-10-24T16:04:53.206032+00:00",
+      "head": "4f2b5be6a61a2f125b7b7d2a368c85296d3aa017",
+      "dirty": false,
+      "log": "private/w48-cmt-tracked-interior/steps/post-attribution-2.log",
+      "slot_pid": 2134228,
+      "exit": 0,
+      "seconds": 21.471944659002475,
+      "ended": "2026-10-24T16:05:14.710574+00:00",
+      "test_summaries": []
+    },
+    {
+      "command": [
+        "sh",
+        "docs/reports/w48-bu-cmt-map-metric-get/scripts/original_paths.sh",
+        "python3",
+        "private/w48-cmt-tracked-interior/post_attribution.py",
+        "replay-v3"
+      ],
+      "started": "2026-10-24T16:05:53.373396+00:00",
+      "head": "9c1759688264e1a686dc467b5678d5bbd4746ed3",
+      "dirty": false,
+      "log": "private/w48-cmt-tracked-interior/steps/post-attribution-3.log",
+      "slot_pid": 2134228,
+      "exit": 0,
+      "seconds": 21.55468072099029,
+      "ended": "2026-10-24T16:06:15.036979+00:00",
+      "test_summaries": []
+    },
+    {
+      "command": [
+        "python3",
+        "private/w48-cmt-tracked-interior/prepare_api.py"
+      ],
+      "started": "2026-10-24T16:02:39.521388+00:00",
+      "head": "7423710e458481dd2ad4e77680fb9a6e94b6aaf3",
+      "dirty": false,
+      "log": "private/w48-cmt-tracked-interior/steps/prepare-api-1.log",
+      "slot_pid": 2134228,
+      "exit": 1,
+      "seconds": 31.27619393999339,
+      "ended": "2026-10-24T16:03:10.841183+00:00",
+      "test_summaries": []
+    },
+    {
+      "command": [
+        "python3",
+        "private/w48-cmt-tracked-interior/production_targets.py"
+      ],
+      "started": "2026-10-24T16:06:21.150674+00:00",
+      "head": "9c1759688264e1a686dc467b5678d5bbd4746ed3",
+      "dirty": false,
+      "log": "private/w48-cmt-tracked-interior/steps/production-targets-1.log",
+      "slot_pid": 2134228,
+      "exit": 0,
+      "seconds": 0.512913419996039,
+      "ended": "2026-10-24T16:06:21.697076+00:00",
+      "test_summaries": []
+    },
+    {
+      "command": [
+        "python3",
+        "private/w48-cmt-tracked-interior/provider_api_gate.py"
+      ],
+      "started": "2026-10-24T16:16:25.326631+00:00",
+      "head": "9c1759688264e1a686dc467b5678d5bbd4746ed3",
+      "dirty": false,
+      "log": "private/w48-cmt-tracked-interior/steps/provider-api-gate-1.log",
+      "slot_pid": 2134228,
+      "exit": 1,
+      "seconds": 0.06033717200625688,
+      "ended": "2026-10-24T16:16:25.424940+00:00",
+      "test_summaries": []
+    },
+    {
+      "command": [
+        "python3",
+        "private/w48-cmt-tracked-interior/provider_api_gate.py"
+      ],
+      "started": "2026-10-24T16:28:12.055126+00:00",
+      "head": "2d0d85299b830aa24d7f200d63a308653582363f",
+      "dirty": false,
+      "log": "private/w48-cmt-tracked-interior/steps/provider-api-gate-2.log",
+      "slot_pid": 2134228,
+      "exit": 0,
+      "seconds": 688.6475164489966,
+      "ended": "2026-10-24T16:39:40.737664+00:00",
+      "test_summaries": []
+    },
+    {
+      "command": [
+        "python3",
+        "private/w48-cmt-tracked-interior/provider_gate.py"
+      ],
+      "started": "2026-10-24T13:55:11.068565+00:00",
+      "head": "4dc908fb80763cacfcb38cff5d3e307a0cb7e928",
+      "dirty": false,
+      "log": "private/w48-cmt-tracked-interior/steps/provider-gate-1.log",
+      "slot_pid": 2134228,
+      "exit": 1,
+      "seconds": 0.06119607400614768,
+      "ended": "2026-10-24T13:55:11.163425+00:00",
+      "test_summaries": []
+    },
+    {
+      "command": [
+        "python3",
+        "private/w48-cmt-tracked-interior/provider_gate.py"
+      ],
+      "started": "2026-10-24T14:05:41.999331+00:00",
+      "head": "e92d8aef35a8bd14550e90219d19a56eb3b196e7",
+      "dirty": false,
+      "log": "private/w48-cmt-tracked-interior/steps/provider-gate-2.log",
+      "slot_pid": 2134228,
+      "exit": 0,
+      "seconds": 723.2096308399923,
+      "ended": "2026-10-24T14:17:45.244440+00:00",
+      "test_summaries": []
+    },
+    {
+      "command": [
+        "python3",
+        "private/w48-cmt-tracked-interior/finalize_source_reports.py"
+      ],
+      "started": "2026-10-24T16:39:41.042992+00:00",
+      "head": "2d0d85299b830aa24d7f200d63a308653582363f",
+      "dirty": false,
+      "log": "private/w48-cmt-tracked-interior/steps/publication-1.log",
+      "slot_pid": 2134228,
+      "exit": 1,
+      "seconds": 0.2424473020073492,
+      "ended": "2026-10-24T16:39:41.321624+00:00",
+      "test_summaries": []
+    },
+    {
+      "command": [
+        "python3",
+        "private/w48-cmt-tracked-interior/retain_compare.py",
+        "corpus"
+      ],
+      "started": "2026-10-24T16:02:26.609416+00:00",
+      "head": "7423710e458481dd2ad4e77680fb9a6e94b6aaf3",
+      "dirty": false,
+      "log": "private/w48-cmt-tracked-interior/steps/retain-corpus-1.log",
+      "slot_pid": 2134228,
+      "exit": 0,
+      "seconds": 7.0271081590035465,
+      "ended": "2026-10-24T16:02:33.674952+00:00",
+      "test_summaries": []
+    },
+    {
+      "command": [
+        "python3",
+        "private/w48-cmt-tracked-interior/retain_compare.py",
+        "slice"
+      ],
+      "started": "2026-10-24T16:02:34.592819+00:00",
+      "head": "7423710e458481dd2ad4e77680fb9a6e94b6aaf3",
+      "dirty": false,
+      "log": "private/w48-cmt-tracked-interior/steps/retain-slice-1.log",
+      "slot_pid": 2134228,
+      "exit": 0,
+      "seconds": 0.6199955010088161,
+      "ended": "2026-10-24T16:02:35.246370+00:00",
+      "test_summaries": []
+    },
+    {
+      "command": [
+        "python3",
+        "private/w48-cmt-tracked-interior/retain_compare.py",
+        "system"
+      ],
+      "started": "2026-10-24T16:02:33.698754+00:00",
+      "head": "7423710e458481dd2ad4e77680fb9a6e94b6aaf3",
+      "dirty": false,
+      "log": "private/w48-cmt-tracked-interior/steps/retain-system-1.log",
+      "slot_pid": 2134228,
+      "exit": 0,
+      "seconds": 0.8323931719933171,
+      "ended": "2026-10-24T16:02:34.564888+00:00",
+      "test_summaries": []
+    },
+    {
+      "command": [
+        "python3",
+        "private/w48-cmt-tracked-interior/review_semantic.py"
+      ],
+      "started": "2026-10-24T16:16:25.445859+00:00",
+      "head": "9c1759688264e1a686dc467b5678d5bbd4746ed3",
+      "dirty": false,
+      "log": "private/w48-cmt-tracked-interior/steps/semantic-review-1.log",
+      "slot_pid": 2134228,
+      "exit": 0,
+      "seconds": 1.2484172279946506,
+      "ended": "2026-10-24T16:16:26.727624+00:00",
+      "test_summaries": []
+    },
+    {
+      "command": [
+        "python3",
+        "private/w48-cmt-tracked-interior/run_standing_gate.py"
+      ],
+      "started": "2026-10-24T13:42:11.440768+00:00",
+      "head": "4dc908fb80763cacfcb38cff5d3e307a0cb7e928",
+      "dirty": false,
+      "log": "private/w48-cmt-tracked-interior/steps/standing-gate-1.log",
+      "slot_pid": 2134228,
+      "exit": 1,
+      "seconds": 779.480568368992,
+      "ended": "2026-10-24T13:55:10.966251+00:00",
+      "test_summaries": []
+    },
+    {
+      "command": [
+        "python3",
+        "private/w48-cmt-tracked-interior/run_standing_gate.py"
+      ],
+      "started": "2026-10-24T13:55:53.828600+00:00",
+      "head": "e92d8aef35a8bd14550e90219d19a56eb3b196e7",
+      "dirty": false,
+      "log": "private/w48-cmt-tracked-interior/steps/standing-gate-2.log",
+      "slot_pid": 2134228,
+      "exit": 0,
+      "seconds": 588.1011530249962,
+      "ended": "2026-10-24T14:05:41.974031+00:00",
+      "test_summaries": []
+    },
+    {
+      "command": [
+        "python3",
+        "private/w48-cmt-tracked-interior/run_standing_gate.py"
+      ],
+      "started": "2026-10-24T16:06:21.722862+00:00",
+      "head": "9c1759688264e1a686dc467b5678d5bbd4746ed3",
+      "dirty": false,
+      "log": "private/w48-cmt-tracked-interior/steps/standing-gate-api-1.log",
+      "slot_pid": 2134228,
+      "exit": 1,
+      "seconds": 603.5453858909896,
+      "ended": "2026-10-24T16:16:25.302872+00:00",
+      "test_summaries": []
+    },
+    {
+      "command": [
+        "python3",
+        "private/w48-cmt-tracked-interior/run_standing_gate.py"
+      ],
+      "started": "2026-10-24T16:18:11.976627+00:00",
+      "head": "2d0d85299b830aa24d7f200d63a308653582363f",
+      "dirty": false,
+      "log": "private/w48-cmt-tracked-interior/steps/standing-gate-api-2.log",
+      "slot_pid": 2134228,
+      "exit": 0,
+      "seconds": 600.0157685799932,
+      "ended": "2026-10-24T16:28:12.028944+00:00",
+      "test_summaries": []
+    },
+    {
+      "command": [
+        "python3",
+        "private/w48-cmt-tracked-interior/tip_campaign.py"
+      ],
+      "started": "2026-10-24T14:19:13.334116+00:00",
+      "head": "e92d8aef35a8bd14550e90219d19a56eb3b196e7",
+      "dirty": false,
+      "log": "private/w48-cmt-tracked-interior/steps/tip-campaign-1.log",
+      "slot_pid": 2134228,
+      "exit": 0,
+      "seconds": 6193.064476565996,
+      "ended": "2026-10-24T16:02:26.432384+00:00",
+      "test_summaries": []
+    }
+  ],
+  "no_failed_attempt_hidden": true,
+  "premeasurement_queue_attempts": [
+    {
+      "ended": "2026-10-24T11:12:36.863166+00:00",
+      "own_flock_pid": 1640030,
+      "state": "cancelled_before_start",
+      "reason": "Native namespace and submodule operations require the already-established host execution permission; initial sandbox queue was corrected before any measurement began.",
+      "no_measurement_artifacts": true
+    }
+  ]
+}

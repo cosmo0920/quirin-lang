@@ -1,6 +1,6 @@
 # CMetrics map and opts API contracts
 
-The user requested API contracts to support auditing Fluent Bit's core mechanism. Canonical `.qv` declared models now cover `cmt_map_create`, `cmt_map_destroy`, `cmt_map_metric_get`, `cmt_map_metric_get_val`, `cmt_map_metric_destroy`, `cmt_map_metrics_expire`, `cmt_opts_init` and `cmt_opts_exit`. Source inspection uses Fluent Bit `66910c10a4d7eafa810b84229cf2dcf7b0f26f97`; the report's source-audit receipt records exact header/body hashes. Validation is pending until the frozen initializer measurement finishes and the API source gate runs.
+The user requested API contracts to support auditing Fluent Bit's core mechanism. Canonical `.qv` declared models now cover `cmt_map_create`, `cmt_map_destroy`, `cmt_map_metric_get`, `cmt_map_metric_get_val`, `cmt_map_metric_destroy`, `cmt_map_metrics_expire`, `cmt_opts_init` and `cmt_opts_exit`. Source inspection uses Fluent Bit `66910c10a4d7eafa810b84229cf2dcf7b0f26f97`; the report's source-audit receipt records exact header/body hashes. Current-source validation at `2d0d85299b830aa24d7f200d63a308653582363f` passes 8,654 Rust tests, 370 Lean audits and 374 Python tests; providers pass 133 Rust and 25 Python tests, inventory checks and all five package build/verifications. [Full gate](standing-gate.json), [provider gate](provider-gate/gate.json), [source separation](api-source-validation.json). Trusted executable API adoption remains Open.
 
 | API | Ownership/effect boundary |
 |---|---|

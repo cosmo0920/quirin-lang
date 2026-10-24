@@ -1,0 +1,55 @@
+{
+  "plugin_id": "qcore.libevent",
+  "package_version": "0.2.0",
+  "protocol_versions": [
+    1
+  ],
+  "evidence_versions": [
+    1,
+    2
+  ],
+  "entrypoint": {
+    "kind": "executable",
+    "path": "provider"
+  },
+  "package_digest": "280c4371d3fc9b64da34af678c63e685dd75e090dbe28aa2f34a1cc280fe8122",
+  "targets": [
+    {
+      "library": "libevent",
+      "revisions": [
+        "*"
+      ],
+      "profiles": [
+        "*"
+      ],
+      "dialects": [
+        "c11",
+        "qcore"
+      ],
+      "platforms": [
+        "*"
+      ],
+      "backends": [
+        "*"
+      ]
+    }
+  ],
+  "capabilities": [
+    "resource_contracts",
+    "event_traces",
+    "concurrency",
+    "observation_hooks"
+  ],
+  "required_foreign_summaries": [],
+  "required_observation_hooks": [],
+  "filesystem_inputs": [],
+  "network_access": false,
+  "limits": {
+    "timeout_ms": 5000,
+    "memory_bytes": 268435456,
+    "output_bytes": 4194304
+  },
+  "trust_class": "first_party",
+  "certificate_checker": "qcore.reactor_callback_program.v1",
+  "lean_theorem_family": "QCore.EventDriven"
+}

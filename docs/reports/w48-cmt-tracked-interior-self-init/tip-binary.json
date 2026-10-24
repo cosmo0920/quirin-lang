@@ -1,0 +1,28 @@
+{
+  "source": "e92d8aef35a8bd14550e90219d19a56eb3b196e7",
+  "build": {
+    "command": [
+      "env",
+      "CARGO_BUILD_JOBS=6",
+      "QCORE_AUDIT_BUILD_COMMIT=e92d8aef35a8bd14550e90219d19a56eb3b196e7",
+      "cargo",
+      "build",
+      "--release",
+      "-p",
+      "qcore-audit",
+      "--bin",
+      "quirin-audit"
+    ],
+    "started": "2026-10-24T14:17:45.389883+00:00",
+    "head": "e92d8aef35a8bd14550e90219d19a56eb3b196e7",
+    "dirty": false,
+    "log": "private/w48-cmt-tracked-interior/steps/build-tip-1.log",
+    "slot_pid": 2134228,
+    "exit": 0,
+    "seconds": 87.89236116000393,
+    "ended": "2026-10-24T14:19:13.315236+00:00"
+  },
+  "sha256": "305e260f17b4a202f4e0dc9592d4eb0d68802d3839d0a0bd8f3c27e6bd27f08f",
+  "binary": "/home/cosmo/.codex/worktrees/808d/quirin-lang/private/w48-cmt-tracked-interior/tip-runtime/target/release/quirin-audit",
+  "campaign_sha256": "f729a9e1015f084fc0b5a15b1cbdb7709c2e10abc326802ca2095bb8723bbadd"
+}

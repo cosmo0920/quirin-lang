@@ -1,0 +1,11 @@
+{
+  "command": [
+    "/home/cosmo/.codex/worktrees/808d/quirin-lang/private/w48-cmt-tracked-interior/replay-v2/projection-replay",
+    "/home/cosmo/.codex/worktrees/808d/quirin-lang/private/w48-cmt-tracked-interior/replay-v2/corpus-tip-projection-spec.json",
+    "/home/cosmo/.codex/worktrees/808d/quirin-lang/private/w48-cmt-tracked-interior/replay-v2/corpus-tip-projection-proof.json"
+  ],
+  "started": "2026-10-24T16:05:01.023348+00:00",
+  "log": "/home/cosmo/.codex/worktrees/808d/quirin-lang/private/w48-cmt-tracked-interior/replay-v2/corpus-tip-projection.log",
+  "exit": 0,
+  "ended": "2026-10-24T16:05:04.671737+00:00"
+}
