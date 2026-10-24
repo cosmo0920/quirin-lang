@@ -322,6 +322,9 @@ fn instruction(instruction: &LegacyInstruction) -> String {
         LegacyInstruction::PointerStore { store, .. } => {
             format!("PointerStore {} = {}", store.place, store.value)
         }
+        LegacyInstruction::SelfInitCall { function, base, .. } => {
+            format!("SelfInitCall {function}({base}) [checked empty frame]")
+        }
     }
 }
 

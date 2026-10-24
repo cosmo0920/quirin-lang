@@ -282,14 +282,13 @@ fn entry(cfg: &LegacyCfg, profile: &Profile, enabled: bool) -> Option<EntryCusto
 fn stores_match(cfg: &LegacyCfg, profile: &Profile) -> bool {
     let mut stores = BTreeSet::new();
     for node in &cfg.nodes {
-        if let LegacyInstruction::PointerStore { store, .. } = &node.instruction {
-            if store.root != profile.parameter
+        if let LegacyInstruction::PointerStore { store, .. } = &node.instruction
+            && (store.root != profile.parameter
                 || store.value != "self-address"
                 || store.name.is_some()
-                || !stores.insert((node.line, store.place.clone()))
-            {
-                return false;
-            }
+                || !stores.insert((node.line, store.place.clone())))
+        {
+            return false;
         }
     }
     stores == profile.stores
