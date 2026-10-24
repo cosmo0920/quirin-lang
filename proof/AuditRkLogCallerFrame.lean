@@ -15,3 +15,9 @@ import QCore.RkLogCallerFrame
 #print axioms QCore.RkLogCallerFrame.an_interleaved_release_makes_the_forward_drop_last
 #print axioms QCore.RkLogCallerFrame.without_the_interleaving_nothing_is_destroyed
 #print axioms QCore.RkLogCallerFrame.an_event_callback_can_release_a_tracked_object
+#print axioms QCore.RkLogCallerFrame.a_frame_hold_is_unknown
+#print axioms QCore.RkLogCallerFrame.a_member_never_reads_a_member_declaration
+#print axioms QCore.RkLogCallerFrame.a_held_member_row_is_never_safe
+#print axioms QCore.RkLogCallerFrame.an_outside_caller_reads_the_declaration
+#print axioms QCore.RkLogCallerFrame.the_hold_never_certifies
+#print axioms QCore.RkLogCallerFrame.the_logger_rows_are_decided_by_their_bodies

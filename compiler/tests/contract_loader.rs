@@ -1132,6 +1132,11 @@ fn production_contracts_preserve_the_previous_resource_modes() {
             },
         ),
     );
+    // Card W48-RK-LOG-CALLER-FRAME (rule 32): the logger's caller-frame
+    // declarations, every formal borrowed, no result.
+    for name in ["rd_kafka_log0", "rd_kafka_log_buf"] {
+        old.insert_contract(name, ResourceFunctionContract::new([], R::None));
+    }
     // Explicitly borrowed trailing arguments were implicit in the old table.
     fn canonical(mut contract: ResourceFunctionContract) -> ResourceFunctionContract {
         while contract.parameters.last() == Some(&P::Borrowed) {
@@ -2080,9 +2085,10 @@ fn every_corpus_module_outside_the_v1_vocabulary_is_rejected_not_skipped() {
     // 492 -> 493 by card W48-SCHED-CLEANUP-PRODUCTION: the element destroyer
     // `mk_http_thread_destroy` in the existing `monkey/intrusive_list.qv`.
     // Selected modules and rejected declarations unchanged.
-    // 493 -> 495 and 65 -> 66 selected by card W48-RK-LOG-CALLER-FRAME:
-    // `librdkafka/log_caller_frame.qv`, plain declarations `rd_kafka_log_buf`
-    // and `rd_kafka_log0`. Rejected unchanged.
+    // 65 -> 66 selected and 493 -> 495 v1 declarations by card
+    // W48-RK-LOG-CALLER-FRAME: `librdkafka/log_caller_frame.qv`, plain
+    // caller-frame declarations `rd_kafka_log_buf` and `rd_kafka_log0`.
+    // Rejected declarations unchanged.
     assert_eq!(
         (selected, v1_declarations, rejected_declarations),
         (66, 495, 331)

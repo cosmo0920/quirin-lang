@@ -1398,7 +1398,11 @@ impl<'a, 'e> Run<'a, 'e> {
             return Ok(V::Ptr(P::NonNull, id));
         }
         let contract = crate::contract_dependencies::unrecorded(|| {
-            self.env.resource.contract(&callee_name).cloned()
+            self.env
+                .resource
+                .contract(&callee_name)
+                .filter(|_| !self.env.checked_results.contains(&callee_name))
+                .cloned()
         });
         let p = match contract.map(|c| c.result) {
             Some(

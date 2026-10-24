@@ -9,7 +9,7 @@ module contract;
 // Detailed observation/lifecycle contracts remain separate semantic profiles.
 //
 // Card CONTRACT-INHERIT-QCORE-PROVIDER-NAMING: librdkafka's allocator and
-// string-duplication wrappers take their contracts from the libc declarations
+// string-duplication wrappers originally took their contracts from the libc declarations
 // they wrap instead of restating them. `src/rd.h` defines `rd_malloc`,
 // `rd_calloc`, `rd_strdup` and `rd_strndup` as `malloc`, `calloc`, `strdup`
 // (`_strdup` on Windows) and `strndup` (or `rd_malloc` + `memcpy` without
@@ -20,12 +20,36 @@ module contract;
 // parameter names included); an inherited contract is a trusted assumption of
 // the same strength as that hand-written one, never a proof. `rd_realloc`
 // stays written out: libc declares no `realloc`.
+// Rule 37 deliberately replaces only rd_calloc and rd_strdup inheritance with
+// checked non-null specifications below. The other inherited wrappers retain
+// their nullable, assert-disabled-build reading.
 
 extern fn rd_malloc(size: usize) -> ptr<mut, u8> contract inherit libc::malloc;
 
-extern fn rd_calloc(count: usize, size: usize) -> ptr<mut, u8> contract inherit libc::calloc;
+// Rule 37: this is a specification established against the whole in-unit
+// preprocessed wrapper, never an unchecked non-null allocator assumption.
+// With no body, a disabled assertion or an unread assertion, it is withdrawn.
+extern fn rd_calloc(count: usize, size: usize) -> ptr<mut, u8>
+contract {
+    requires resource_contract_v1;
+    requires resource_body_checked;
+    requires resource_premise(asserted_allocation, "the deployed build preserves the analyzed assertion and its declared terminating failure call; allocation failure has no normal return");
+    ensures normal resource_borrowed(count);
+    ensures normal resource_borrowed(size);
+    ensures normal resource_return_owned(nonnull);
+};
 
-extern fn rd_strdup(str: ptr<const, u8>) -> ptr<mut, u8> contract inherit libc::strdup;
+// Rule 37: this is a specification established against the whole in-unit
+// preprocessed wrapper, never an unchecked non-null allocator assumption.
+// With no body, a disabled assertion or an unread assertion, it is withdrawn.
+extern fn rd_strdup(str: ptr<const, u8>) -> ptr<mut, u8>
+contract {
+    requires resource_contract_v1;
+    requires resource_body_checked;
+    requires resource_premise(asserted_allocation, "the deployed build preserves the analyzed assertion and its declared terminating failure call; allocation failure has no normal return");
+    ensures normal resource_borrowed(str);
+    ensures normal resource_return_owned(nonnull);
+};
 
 extern fn rd_strndup(str: ptr<const, u8>, len: usize) -> ptr<mut, u8> contract inherit libc::strndup;
 

@@ -1,0 +1,622 @@
+{
+ "base_logger_call_leaves": {
+  "rd_kafka_log0:unc": 47,
+  "rd_kafka_log_buf:unc": 1
+ },
+ "base_status": {
+  "Safe": 977,
+  "Unknown": 3848,
+  "Unsafe": 9
+ },
+ "base_unknown_alias_leaves": 11047,
+ "family_delta": {
+  "unknown_alias: unresolved resource identity `X`": [
+   11047,
+   11004
+  ],
+  "unsupported: call to `X` inside its own caller frame: a caller-frame declaration serves only callers outside the frame, whose own bodies decide their rows (caller-frame-self-reliance)": [
+   0,
+   1
+  ],
+  "unsupported: call to uncontracted function `X`": [
+   10161,
+   10104
+  ],
+  "unsupported: indirect memory access is outside the resource projection": [
+   9986,
+   9933
+  ],
+  "unsupported: unmodeled call, aggregate or indirect access in branch condition": [
+   3362,
+   3358
+  ],
+  "unsupported: unmodeled call, aggregate or indirect access in for-loop condition": [
+   254,
+   253
+  ]
+ },
+ "keys_equal": true,
+ "leaf_only_changes": 87,
+ "leaf_trades": {
+  "added": {
+   "unknown_alias: unresolved resource identity `X`": 20,
+   "unsupported: call to `X` inside its own caller frame: a caller-frame declaration serves only callers outside the frame, whose own bodies decide their rows (caller-frame-self-reliance)": 1,
+   "unsupported: call to uncontracted function `X`": 11,
+   "unsupported: indirect memory access is outside the resource projection": 11
+  },
+  "added_leaves": [
+   {
+    "file": "mk_server/mk_http_thread.c",
+    "function": "mk_http_thread_destroy",
+    "leaf": [
+     "unknown_alias",
+     "unresolved resource identity `mth`"
+    ]
+   },
+   {
+    "file": "rdkafka.c",
+    "function": "rd_kafka_log0",
+    "leaf": [
+     "unsupported",
+     "call to `rd_kafka_log_buf` inside its own caller frame: a caller-frame declaration serves only callers outside the frame, whose own bodies decide their rows (caller-frame-self-reliance)"
+    ]
+   },
+   {
+    "file": "rdkafka_admin.c",
+    "function": "rd_kafka_DeleteRecords_response_merge",
+    "leaf": [
+     "unknown_alias",
+     "unresolved resource identity `partition`"
+    ]
+   },
+   {
+    "file": "rdkafka_broker.c",
+    "function": "rd_kafka_brokers_broadcast_state_change",
+    "leaf": [
+     "unsupported",
+     "call to uncontracted function `rd_list_apply`"
+    ]
+   },
+   {
+    "file": "rdkafka_broker.c",
+    "function": "rd_kafka_brokers_broadcast_state_change",
+    "leaf": [
+     "unsupported",
+     "call to uncontracted function `cnd_broadcast`"
+    ]
+   },
+   {
+    "file": "rdkafka_cgrp.c",
+    "function": "rd_kafka_cgrp_consumer_assignment_with_metadata",
+    "leaf": [
+     "unsupported",
+     "indirect memory access is outside the resource projection"
+    ]
+   },
+   {
+    "file": "rdkafka_cgrp.c",
+    "function": "rd_kafka_cgrp_consumer_group_heartbeat",
+    "leaf": [
+     "unsupported",
+     "indirect memory access is outside the resource projection"
+    ]
+   },
+   {
+    "file": "rdkafka_cgrp.c",
+    "function": "rd_kafka_cgrp_handle_ConsumerGroupHeartbeat_leave",
+    "leaf": [
+     "unknown_alias",
+     "unresolved resource identity `rkcg`"
+    ]
+   },
+   {
+    "file": "rdkafka_cgrp.c",
+    "function": "rd_kafka_cgrp_handle_LeaveGroup",
+    "leaf": [
+     "unknown_alias",
+     "unresolved resource identity `rkcg`"
+    ]
+   },
+   {
+    "file": "rdkafka_cgrp.c",
+    "function": "rd_kafka_cgrp_handle_ShareGroupHeartbeat_leave",
+    "leaf": [
+     "unknown_alias",
+     "unresolved resource identity `rkcg`"
+    ]
+   },
+   {
+    "file": "rdkafka_cgrp.c",
+    "function": "rd_kafka_cgrp_update_subscribed_topics",
+    "leaf": [
+     "unknown_alias",
+     "unresolved resource identity `tinfo`"
+    ]
+   },
+   {
+    "file": "rdkafka_conf.c",
+    "function": "rd_kafka_anyconf_dump_dbg",
+    "leaf": [
+     "unknown_alias",
+     "unresolved resource identity `arr`"
+    ]
+   },
+   {
+    "file": "rdkafka_conf.c",
+    "function": "rd_kafka_anyconf_warn_deprecated",
+    "leaf": [
+     "unknown_alias",
+     "unresolved resource identity `prop`"
+    ]
+   },
+   {
+    "file": "rdkafka_metadata.c",
+    "function": "rd_kafka_metadata_fast_leader_query",
+    "leaf": [
+     "unsupported",
+     "call to uncontracted function `rd_kafka_timer_next`"
+    ]
+   },
+   {
+    "file": "rdkafka_metadata.c",
+    "function": "rd_kafka_metadata_fast_leader_query",
+    "leaf": [
+     "unsupported",
+     "call to uncontracted function `rd_kafka_timer_start0`"
+    ]
+   },
+   {
+    "file": "rdkafka_mock.c",
+    "function": "rd_kafka_mock_connection_new",
+    "leaf": [
+     "unsupported",
+     "indirect memory access is outside the resource projection"
+    ]
+   },
+   {
+    "file": "rdkafka_mock.c",
+    "function": "rd_kafka_mock_topic_new",
+    "leaf": [
+     "unknown_alias",
+     "unresolved resource identity `mtopic`"
+    ]
+   },
+   {
+    "file": "rdkafka_mock_handlers.c",
+    "function": "rd_kafka_mock_buf_write_Metadata_Topic",
+    "leaf": [
+     "unknown_alias",
+     "unresolved resource identity `mpart_leader`"
+    ]
+   },
+   {
+    "file": "rdkafka_msgset_reader.c",
+    "function": "rd_kafka_msgset_reader_msg_v2",
+    "leaf": [
+     "unsupported",
+     "indirect memory access is outside the resource projection"
+    ]
+   },
+   {
+    "file": "rdkafka_msgset_reader.c",
+    "function": "rd_kafka_msgset_reader_peek_msg_version",
+    "leaf": [
+     "unknown_alias",
+     "unresolved resource identity `rkbuf`"
+    ]
+   },
+   {
+    "file": "rdkafka_msgset_reader.c",
+    "function": "rd_kafka_msgset_reader_peek_msg_version",
+    "leaf": [
+     "unknown_alias",
+     "unresolved resource identity `rktp`"
+    ]
+   },
+   {
+    "file": "rdkafka_partition.c",
+    "function": "rd_kafka_toppar_remove",
+    "leaf": [
+     "unsupported",
+     "call to uncontracted function `rd_kafka_timer_stop`"
+    ]
+   },
+   {
+    "file": "rdkafka_sasl_cyrus.c",
+    "function": "rd_kafka_sasl_cyrus_cb_getsecret",
+    "leaf": [
+     "unknown_alias",
+     "unresolved resource identity `psecret`"
+    ]
+   },
+   {
+    "file": "rdkafka_share_acknowledgement.c",
+    "function": "rd_kafka_share_ack_all",
+    "leaf": [
+     "unknown_alias",
+     "unresolved resource identity `tp_key`"
+    ]
+   },
+   {
+    "file": "rdkafka_share_acknowledgement.c",
+    "function": "rd_kafka_share_build_ack_details",
+    "leaf": [
+     "unsupported",
+     "indirect memory access is outside the resource projection"
+    ]
+   },
+   {
+    "file": "rdkafka_share_acknowledgement.c",
+    "function": "rd_kafka_share_build_ack_details",
+    "leaf": [
+     "unknown_alias",
+     "unresolved resource identity `tp_key`"
+    ]
+   },
+   {
+    "file": "rdkafka_ssl.c",
+    "function": "rd_kafka_transport_ssl_set_endpoint_id",
+    "leaf": [
+     "unsupported",
+     "indirect memory access is outside the resource projection"
+    ]
+   },
+   {
+    "file": "rdkafka_telemetry.c",
+    "function": "rd_kafka_push_telemetry_payload_compress",
+    "leaf": [
+     "unknown_alias",
+     "unresolved resource identity `payload`"
+    ]
+   },
+   {
+    "file": "rdkafka_telemetry.c",
+    "function": "rd_kafka_telemetry_set_terminated",
+    "leaf": [
+     "unsupported",
+     "call to uncontracted function `rd_kafka_timer_stop`"
+    ]
+   },
+   {
+    "file": "rdkafka_telemetry.c",
+    "function": "rd_kafka_telemetry_set_terminated",
+    "leaf": [
+     "unsupported",
+     "call to uncontracted function `cnd_signal`"
+    ]
+   },
+   {
+    "file": "rdkafka_topic.c",
+    "function": "rd_kafka_topic_new0",
+    "leaf": [
+     "unknown_alias",
+     "unresolved resource identity `rkt`"
+    ]
+   },
+   {
+    "file": "rdkafka_txnmgr.c",
+    "function": "rd_kafka_txn_set_state",
+    "leaf": [
+     "unsupported",
+     "call to uncontracted function `rd_atomic32_set`"
+    ]
+   }
+  ],
+  "removed": {
+   "unknown_alias: unresolved resource identity `X`": 61,
+   "unsupported: call to uncontracted function `X`": 63,
+   "unsupported: indirect memory access is outside the resource projection": 60,
+   "unsupported: unmodeled call, aggregate or indirect access in branch condition": 4,
+   "unsupported: unmodeled call, aggregate or indirect access in for-loop condition": 1
+  }
+ },
+ "parity_examples": {},
+ "parity_rd_kafka_log0": {},
+ "status_changes": [
+  {
+   "base": "Unknown",
+   "base_leaves": [
+    [
+     "unknown_alias",
+     "unresolved resource identity `mth`",
+     6842
+    ],
+    [
+     "unsupported",
+     "call to uncontracted function `mk_http_thread_destroy`",
+     6843
+    ]
+   ],
+   "file": "mk_server/mk_scheduler.c",
+   "function": "mk_sched_threads_destroy_conn",
+   "row": 0,
+   "tip": "Safe",
+   "tip_dependencies": {
+    "declarations": [
+     "mk_http_thread_destroy"
+    ],
+    "hypothesis_dependencies": {
+     "mk_http_thread_destroy": [
+      "legacy_atom_00000000",
+      "legacy_atom_00000001",
+      "legacy_atom_00000002",
+      "legacy_atom_00000003",
+      "legacy_atom_00000004",
+      "legacy_atom_00000005",
+      "legacy_atom_00000006",
+      "legacy_atom_00000007"
+     ]
+    }
+   },
+   "tip_leaves": []
+  },
+  {
+   "base": "Unknown",
+   "base_leaves": [
+    [
+     "unsupported",
+     "call to uncontracted function `mk_http_thread_destroy`",
+     6814
+    ]
+   ],
+   "file": "mk_server/mk_scheduler.c",
+   "function": "sched_thread_cleanup",
+   "row": 0,
+   "tip": "Safe",
+   "tip_dependencies": {
+    "declarations": [
+     "mk_http_thread_destroy"
+    ],
+    "hypothesis_dependencies": {
+     "mk_http_thread_destroy": [
+      "legacy_atom_00000000",
+      "legacy_atom_00000001",
+      "legacy_atom_00000002",
+      "legacy_atom_00000003",
+      "legacy_atom_00000004",
+      "legacy_atom_00000005",
+      "legacy_atom_00000006",
+      "legacy_atom_00000007"
+     ]
+    }
+   },
+   "tip_leaves": []
+  },
+  {
+   "base": "Unknown",
+   "base_leaves": [
+    [
+     "unsupported",
+     "indirect memory access is outside the resource projection",
+     22759
+    ]
+   ],
+   "file": "rdkafka.c",
+   "function": "rd_kafka_share_ack_commit_cb_register_op",
+   "row": 0,
+   "tip": "Safe",
+   "tip_dependencies": {
+    "declarations": [
+     "rd_kafka_log0",
+     "rd_kafka_share_ack_commit_cb_register_op"
+    ],
+    "hypothesis_dependencies": {
+     "rd_kafka_log0": [
+      "legacy_atom_00000000",
+      "legacy_atom_00000001",
+      "legacy_atom_00000002"
+     ],
+     "rd_kafka_share_ack_commit_cb_register_op": [
+      "legacy_atom_00000000",
+      "plugin_artifact_symbol_abi",
+      "plugin_callback_candidates",
+      "plugin_code_context_lifetime",
+      "plugin_interceptor_custody",
+      "plugin_interceptor_registration",
+      "plugin_lifecycle_unload",
+      "plugin_outer_bridge"
+     ]
+    }
+   },
+   "tip_leaves": []
+  },
+  {
+   "base": "Unknown",
+   "base_leaves": [
+    [
+     "unsupported",
+     "indirect memory access is outside the resource projection",
+     22223
+    ],
+    [
+     "unknown_alias",
+     "unresolved resource identity `rkcg`",
+     22224
+    ]
+   ],
+   "file": "rdkafka.c",
+   "function": "rd_kafka_share_log_fetch_stall",
+   "row": 0,
+   "tip": "Safe",
+   "tip_dependencies": {
+    "declarations": [
+     "clock_gettime",
+     "rd_kafka_log0"
+    ],
+    "hypothesis_dependencies": {
+     "rd_kafka_log0": [
+      "legacy_atom_00000000",
+      "legacy_atom_00000001",
+      "legacy_atom_00000002"
+     ]
+    },
+    "null_premises": [
+     "null-deref:rd_kafka_share_log_fetch_stall:22220:rkcg",
+     "null-deref:rd_kafka_share_log_fetch_stall:22224:rkcg"
+    ],
+    "summaries": [
+     "rd_clock"
+    ]
+   },
+   "tip_leaves": []
+  },
+  {
+   "base": "Unknown",
+   "base_leaves": [
+    [
+     "unsupported",
+     "call to uncontracted function `rd_kafka_log0`",
+     20745
+    ]
+   ],
+   "file": "rdkafka_mock_cgrp.c",
+   "function": "rd_kafka_mock_cgrp_classic_member_active",
+   "row": 0,
+   "tip": "Safe",
+   "tip_dependencies": {
+    "declarations": [
+     "clock_gettime",
+     "rd_kafka_log0"
+    ],
+    "hypothesis_dependencies": {
+     "rd_kafka_log0": [
+      "legacy_atom_00000000",
+      "legacy_atom_00000001",
+      "legacy_atom_00000002"
+     ]
+    },
+    "summaries": [
+     "rd_clock"
+    ]
+   },
+   "tip_leaves": []
+  },
+  {
+   "base": "Unknown",
+   "base_leaves": [
+    [
+     "unsupported",
+     "indirect memory access is outside the resource projection",
+     20739
+    ]
+   ],
+   "file": "rdkafka_mock_cgrp.c",
+   "function": "rd_kafka_mock_cgrp_classic_set_state",
+   "row": 0,
+   "tip": "Safe",
+   "tip_dependencies": {
+    "declarations": [
+     "rd_kafka_log0"
+    ],
+    "hypothesis_dependencies": {
+     "rd_kafka_log0": [
+      "legacy_atom_00000000",
+      "legacy_atom_00000001",
+      "legacy_atom_00000002"
+     ]
+    }
+   },
+   "tip_leaves": []
+  },
+  {
+   "base": "Unknown",
+   "base_leaves": [
+    [
+     "unsupported",
+     "call to uncontracted function `rd_kafka_log0`",
+     21511
+    ]
+   ],
+   "file": "rdkafka_mock_cgrp.c",
+   "function": "rd_kafka_mock_cgrp_consumer_member_active",
+   "row": 0,
+   "tip": "Safe",
+   "tip_dependencies": {
+    "declarations": [
+     "clock_gettime",
+     "rd_kafka_log0"
+    ],
+    "hypothesis_dependencies": {
+     "rd_kafka_log0": [
+      "legacy_atom_00000000",
+      "legacy_atom_00000001",
+      "legacy_atom_00000002"
+     ]
+    },
+    "summaries": [
+     "rd_clock"
+    ]
+   },
+   "tip_leaves": []
+  },
+  {
+   "base": "Unknown",
+   "base_leaves": [
+    [
+     "unsupported",
+     "call to uncontracted function `rd_kafka_log0`",
+     21954
+    ]
+   ],
+   "file": "rdkafka_mock_sharegrp.c",
+   "function": "rd_kafka_mock_sharegroup_member_active",
+   "row": 0,
+   "tip": "Safe",
+   "tip_dependencies": {
+    "declarations": [
+     "clock_gettime",
+     "rd_kafka_log0"
+    ],
+    "hypothesis_dependencies": {
+     "rd_kafka_log0": [
+      "legacy_atom_00000000",
+      "legacy_atom_00000001",
+      "legacy_atom_00000002"
+     ]
+    },
+    "summaries": [
+     "rd_clock"
+    ]
+   },
+   "tip_leaves": []
+  },
+  {
+   "base": "Unknown",
+   "base_leaves": [
+    [
+     "unsupported",
+     "indirect memory access is outside the resource projection",
+     20232
+    ]
+   ],
+   "file": "rdkafka_topic.c",
+   "function": "rd_kafka_topic_set_state",
+   "row": 0,
+   "tip": "Safe",
+   "tip_dependencies": {
+    "declarations": [
+     "clock_gettime",
+     "rd_kafka_log0"
+    ],
+    "hypothesis_dependencies": {
+     "rd_kafka_log0": [
+      "legacy_atom_00000000",
+      "legacy_atom_00000001",
+      "legacy_atom_00000002"
+     ]
+    },
+    "summaries": [
+     "rd_clock"
+    ]
+   },
+   "tip_leaves": []
+  }
+ ],
+ "tip_logger_call_leaves": {},
+ "tip_status": {
+  "Safe": 986,
+  "Unknown": 3839,
+  "Unsafe": 9
+ },
+ "tip_unknown_alias_leaves": 11004
+}

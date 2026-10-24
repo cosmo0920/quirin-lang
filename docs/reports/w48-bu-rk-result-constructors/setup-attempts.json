@@ -1,0 +1,178 @@
+[
+  {
+    "step": "initial branch creation and submodule initialization",
+    "outer_exit": 1,
+    "result": "Git metadata write refused by read-only mount; neither setup substep completed."
+  },
+  {
+    "step": "escalated retry",
+    "outer_exit": 0,
+    "branch_substep": "failed because the first attempt had created the branch reference; its separate exit was not captured",
+    "submodule": "completed at d82464a277d0f42703702c4dfd9af6af38595a83"
+  },
+  {
+    "step": "attach existing card branch",
+    "exit": 0,
+    "head": "8991b7b58fcbd33da082bbb44e819d47a0fb2561"
+  },
+  {
+    "step": "initial queued BASE command",
+    "captured_host_pid": 529041,
+    "result": "cancelled with TERM before acquiring the heavy lock, because its command omitted the conditional eight-home link map; no build or audit output was produced",
+    "replacement_session": 3611,
+    "exit": 143
+  },
+  {
+    "step": "BASE corpus attempt 1",
+    "build_exit": 0,
+    "audit_exit": 1,
+    "inputs_roundtrip_exit": 0,
+    "log": "private/w48-rk-constructors/base-corpus/audit.log",
+    "failure": "canonicalized /media root does not match the frozen database old Documents path; compile database contains no selected cmetrics sources",
+    "evidence": "excluded as a completed baseline"
+  },
+  {
+    "step": "queued configured BASE attempt 1",
+    "captured_host_pid": 653796,
+    "exit": 143,
+    "result": "cancelled before lock acquisition; shared migrated-path failure predicted; no configured measurement output"
+  },
+  {
+    "step": "private original-path namespace probe in tool sandbox",
+    "exit": 1,
+    "log": "private/w48-rk-constructors/namespace-probe.log",
+    "failure": "nested unprivileged namespaces denied"
+  },
+  {
+    "step": "private original-path namespace probe outside tool sandbox",
+    "exit": 0,
+    "log": "private/w48-rk-constructors/namespace-probe-host.log",
+    "selected_cmetrics_entries": 31,
+    "writes_to_archive_or_host_layout": false
+  },
+  {
+    "step": "BASE namespace attempt 2",
+    "captured_host_pid": 700868,
+    "session": 62107,
+    "exit": 1,
+    "failed_stage": "pre-audit input capture",
+    "native_audit_started": false,
+    "failure": "Git could not open /dev/null read/write: namespace root bind did not grant device access",
+    "log": "private/w48-rk-constructors/base-retry2-inputs-before.log",
+    "configuration_archive": "private/w48-rk-constructors/attempt2-configuration",
+    "evidence": "excluded as completed BASE"
+  },
+  {
+    "step": "corrected namespace smoke and full input roundtrip probe",
+    "exit": 0,
+    "device_fix": "standard bwrap --dev /dev mount; archive binds stay read-only",
+    "smoke_checks": {
+      "git_ls_files": 0,
+      "clang_version": 0,
+      "cargo_metadata_no_deps": 0,
+      "lean_version": 0
+    },
+    "full_input_capture_before_exit": 0,
+    "full_input_capture_after_exit": 0,
+    "receipts": [
+      "private/w48-rk-constructors/namespace-smoke3.json",
+      "private/w48-rk-constructors/namespace-full-input-probe3"
+    ],
+    "native_audit_started": false,
+    "evidence": "environment preflight only, not BASE or standing gate"
+  },
+  {
+    "step": "namespace Clang parse and upstream identity probe",
+    "exit": 1,
+    "substeps": {
+      "tiny_clang_c11_ast_parse": 0,
+      "corpus_git_revision": 0,
+      "system_git_revision": 0,
+      "slice_git_revision": 0
+    },
+    "failed_assumption": "system and slice revisions were incorrectly assumed equal",
+    "observed_slice_revision": "34155955e4962a56d94eb23c03a002880899a0d1",
+    "log": "private/w48-rk-constructors/namespace-runtime-probe3.json",
+    "resolution": "Reviewed the byte-identical rd.h and assertion headers at the third, clean slice checkout; prepared a third source pin. No provider data changed.",
+    "native_audit_started": false
+  },
+  {
+    "step": "first focused rule37 Rust run",
+    "exit": 101,
+    "tests": 18,
+    "passed": 17,
+    "failed": 1,
+    "ignored": 0,
+    "no_fail_fast": true,
+    "log": "private/w48-rk-constructors/focused-rust.log",
+    "failure": "enabled assert fixture used AnonymousText while assert expands __FILE__; UnsupportedInputIdentity correctly refused it before analysis",
+    "resolution": "fd6a0e15c declares a real on-disk wrapper.c with matching bytes; positive glibc assertion case scoped to Linux; source-identity guard unchanged",
+    "full_standing_or_provider_gate_started": false
+  },
+  {
+    "step": "automatic semantic commit watcher",
+    "exit": 1,
+    "log": "private/w48-rk-constructors/semantic-commit-watcher.log",
+    "failure": "conservative allowed-path check omitted generated providers/qcore-provider-librdkafka/contracts.json",
+    "resolution": "inventory diff inspected (memory.qv SHA only), source committed manually at1f1615cfa; no gate success inferred"
+  },
+  {
+    "step": "focused corrected-filename retry1",
+    "exit": 101,
+    "tests": 3,
+    "passed": 2,
+    "failed": 1,
+    "ignored": 0,
+    "log": "private/w48-rk-constructors/validation-retry1/focused-wrapper.log",
+    "failure": "strict C11 selects glibc conditional-expression assert; checked wrapper specifications withdraw, so enabled constructor remains Unknown",
+    "resolution": "90e72fd5876886d8b62c3b8e2d6a0684d89b5f75 makes the positive fixture GNU17, matching pinned rdkafka_admin.c; strict C11 retained as fourth non-Safe control; analyzer unchanged",
+    "full_standing_or_provider_gate_started": false
+  },
+  {
+    "step": "queued validation retry2 cancelled before lock",
+    "exit": 143,
+    "captured_host_pid": 3299547,
+    "session": 15375,
+    "validation_started": false,
+    "reason": "scope real-glibc positive and strict-C11 controls to Linux GNU targets; Linux alone also includes other libc assertion expansions",
+    "verified_waiting_lock_mode": "WRITE*",
+    "resolution": "532a930fb97054426cab8bde21faece3f34e0176 narrows test cfg only; no analyzer/provider changes; fresh retry3 queued separately"
+  },
+  {
+    "step": "validation retry3: GNU17 fixture pass, Lean companion failure",
+    "exit": 1,
+    "focused_wrapper_exit": 0,
+    "focused_wrapper_tests": 4,
+    "focused_wrapper_passed": 4,
+    "focused_wrapper_failed": 0,
+    "focused_wrapper_ignored": 0,
+    "lean_version_exit": 0,
+    "lean_companion_build_exit": 1,
+    "logs": [
+      "private/w48-rk-constructors/validation-retry3/focused-wrapper.log",
+      "private/w48-rk-constructors/validation-retry3/lean-companion-build.log"
+    ],
+    "failure": "Lean4.35.0 left the asserting-wrapper some case with h: some value = result and goal result != none; simp_all did not orient this rewrite",
+    "resolution": "ff2f55698b5d1288d81bd6953a2ff271a73e9db2 explicitly derives and rewrites the Option equality; theorem statement and runtime implementation unchanged",
+    "full_standing_or_provider_gate_started": false
+  },
+  {
+    "step": "bounded Lean repair preflight",
+    "exit": 0,
+    "command": [
+      "timeout",
+      "15s",
+      "lake",
+      "env",
+      "lean",
+      "QCore/ResultConstructors.lean"
+    ],
+    "cwd": "/home/cosmo/.codex/worktrees/cf0d/quirin-lang/proof",
+    "source_commit": "ff2f55698b5d1288d81bd6953a2ff271a73e9db2",
+    "proof_sha256": "42f1f8550f91f12ad75e940fcf19cb102f2e2ed66b6f781787009c5f29c64708",
+    "timing": "elapsed_seconds=0.25 max_rss_kib=502920",
+    "log": "private/w48-rk-constructors/lean-repair-preflight.log",
+    "scope": "single file elaboration with already compiled imports; not the full Lean audit or standing gate",
+    "warnings": 0
+  }
+]

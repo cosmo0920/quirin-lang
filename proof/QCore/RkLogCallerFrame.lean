@@ -1,3 +1,5 @@
+import QCore.VerdictSemigroup
+
 /-! Card W48-RK-LOG-CALLER-FRAME (gateway rule 32): librdkafka's logger read
 from its callers' frame.
 
@@ -19,7 +21,13 @@ Three parts, each a finite model, not a C refinement (trust boundary 28):
   and its string.
 * The premises are not vacuous: an interleaved unforward-and-release makes
   the forward drop the last and destroys a queue, and a synchronous queue
-  event callback can release a caller's object. -/
+  event callback can release a caller's object.
+* Rule 32a, the self-reliance refusal: a caller-frame declaration serves only
+  callers outside its frame. A call from a frame member's body to a member
+  (itself included) is held, `Unknown` with the analyser category
+  `incomplete-obligation-coverage`, so no member's row rests on the frame's
+  own declarations; a caller outside the frame reads them unchanged, and the
+  hold never moves a row towards `Safe`. -/
 namespace QCore.RkLogCallerFrame
 
 /-! ## The path split -/
@@ -352,5 +360,118 @@ P-RK-LOG-ENQUEUE-NO-EVENT-CALLBACK excludes exactly this. -/
 theorem an_event_callback_can_release_a_tracked_object :
     (run zero ([.link 9 0] ++ [.free 5])).destroyed 5 = true ∧
     (run zero (enq 9 [0])).destroyed 5 = false := by decide
+
+/-! ## Rule 32a: the declaration serves only callers outside the frame
+
+The gateway's frame registry is the reviewed projection's `declarations`
+(`qcore_contract::caller_frame::FRAMES`). A row is the fold of its links; a
+call link names its callee and the value the callee's declaration would
+contribute. Inside a member's body, a call to a member is held. That the
+gateway holds exactly these call sites is a Rust boundary, pinned by
+`crates/qcore-c-gateway/tests/caller_frame_hold.rs` (trust boundary 28). -/
+
+section SelfReliance
+
+open QCore.VerdictSemigroup
+open QCore.ReasonCategory
+
+/-- One link of a row: a call to a declared callee contributing `applied`
+when its declaration is read, or any other link. -/
+inductive Item where
+  | call (callee : String) (applied : V)
+  | other (v : V)
+  deriving DecidableEq, Repr
+
+/-- The value of a call held inside its own caller frame. -/
+def frameHeld : V := (Link.held .incompleteObligationCoverage).value
+
+/-- Whether `caller`'s body calling `callee` stays inside one frame. -/
+def withinFrame (members : List String) (caller callee : String) : Prop :=
+  caller ∈ members ∧ callee ∈ members
+
+instance (members : List String) (caller callee : String) :
+    Decidable (withinFrame members caller callee) := by
+  unfold withinFrame; infer_instance
+
+/-- The value one link contributes to `caller`'s row. -/
+def Item.value (members : List String) (caller : String) : Item → V
+  | .call callee v => if withinFrame members caller callee then frameHeld else v
+  | .other v => v
+
+/-- `caller`'s row under the frame `members`. -/
+def row (members : List String) (caller : String) (items : List Item) : V :=
+  fold (items.map (Item.value members caller))
+
+/-- The held value is `Unknown`, never `Pending`: the hold is the tool's
+decision, not a named human act. -/
+theorem a_frame_hold_is_unknown : frameHeld = .unknown := by
+  decide
+
+/-- A member's call to a member never reads a declaration: what the
+declaration would contribute never reaches the row. -/
+theorem a_member_never_reads_a_member_declaration (members : List String)
+    (caller callee : String) (hc : caller ∈ members) (hd : callee ∈ members) (v : V) :
+    Item.value members caller (.call callee v) = frameHeld := by
+  simp [Item.value, withinFrame, hc, hd]
+
+/-- So a member's row with a call to a member is neither `Safe` nor
+`Pending`, whatever the member declarations claim. -/
+theorem a_held_member_row_is_never_safe (members : List String) (caller callee : String)
+    (hc : caller ∈ members) (hd : callee ∈ members) (items : List Item) (v : V)
+    (member : Item.call callee v ∈ items) :
+    2 ≤ (row members caller items).rank := by
+  have link : Item.value members caller (.call callee v) ∈
+      items.map (Item.value members caller) := List.mem_map_of_mem member
+  have below := every_link_is_below_the_fold link
+  rw [a_member_never_reads_a_member_declaration members caller callee hc hd,
+    a_frame_hold_is_unknown] at below
+  exact below
+
+/-- A caller outside the frame reads the declaration exactly as declared. -/
+theorem an_outside_caller_reads_the_declaration (members : List String)
+    (caller callee : String) (outside : caller ∉ members) (v : V) :
+    Item.value members caller (.call callee v) = v := by
+  simp [Item.value, withinFrame, outside]
+
+/-- The hold never certifies: a row `Safe` or `Pending` under the frame has
+exactly the value it would have with no frame at all. -/
+theorem the_hold_never_certifies (members : List String) (caller : String)
+    (items : List Item) (low : (row members caller items).rank ≤ 1) :
+    row members caller items = row [] caller items := by
+  have values : ∀ i ∈ items, Item.value members caller i = Item.value [] caller i := by
+    intro i member
+    cases i with
+    | other v => rfl
+    | call callee v =>
+      by_cases h : withinFrame members caller callee
+      · exfalso
+        have link : Item.value members caller (.call callee v) ∈
+            items.map (Item.value members caller) := List.mem_map_of_mem member
+        have below := every_link_is_below_the_fold link
+        simp only [Item.value, h, ite_true, a_frame_hold_is_unknown] at below
+        unfold row at low
+        have two : V.unknown.rank = 2 := rfl
+        omega
+      · have h0 : ¬withinFrame [] caller callee := fun w => by
+          simp [withinFrame] at w
+        simp only [Item.value, h, h0, ite_false]
+  unfold row
+  congr 1
+  exact List.map_congr_left values
+
+/-- The logger frame: the halted regression. `rd_kafka_log0`'s row, whose
+only other link is `Safe`, read `rd_kafka_log_buf`'s caller-frame declaration
+(`Safe`) and was `Safe`; under the hold it is `Unknown`, while a caller
+outside the frame still reads `rd_kafka_log0`'s declaration. -/
+def logger : List String := ["rd_kafka_log_buf", "rd_kafka_log0"]
+
+theorem the_logger_rows_are_decided_by_their_bodies :
+    row [] "rd_kafka_log0" [.other .safe, .call "rd_kafka_log_buf" .safe] = .safe ∧
+    row logger "rd_kafka_log0" [.other .safe, .call "rd_kafka_log_buf" .safe] = .unknown ∧
+    row logger "rd_kafka_mock_cgrp_classic_member_active"
+      [.other .safe, .call "rd_kafka_log0" .safe] = .safe := by
+  decide
+
+end SelfReliance
 
 end QCore.RkLogCallerFrame

@@ -1,0 +1,13 @@
+{
+  "note": "Integration of W48-RK-LOG-CALLER-FRAME (rules 32, 32a): main fast-forwarded to card tip 585038570, which contains main 3353e1c63 (merge b4be13d47). The card's full standing gate plus provider gate ran ON THE MERGED TIP 6866e54c5 under the shared lock (scripts/run_gate.py 7; logs retired to private/retired-worktrees/2026-10-24-w48-rk-log-caller-frame/private/rkcf/gate-7): Rust 8595 passed/0 failed/15 ignored (546 units/559 summaries), fmt, Clippy, both examples 0, 369 Lean audits, 374 Python; provider Rust 133/0/1, provider fmt/Clippy 0, provider Python 25 OK (the 65->66 manifest pin lands with this card), provider contracts check, package build and five verifies 0. 585038570 adds only the gate receipt. Integration adds docs/records only; Python rerun against the committed matrix.",
+  "workspace_tests": 8595,
+  "provider_tests": 133,
+  "python_evidence_validator_tests": 374,
+  "reevaluation_probe_exit": 0,
+  "reevaluation_followup_exit": 0,
+  "cargo_fmt": "clean",
+  "cargo_clippy": "clean",
+  "standing_gate": "complete on merged tip 6866e54c5, including the provider gate",
+  "lean_audits": 369,
+  "clang": "present: Ubuntu clang version 21.1.8 (6ubuntu1)"
+}

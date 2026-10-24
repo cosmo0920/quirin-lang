@@ -1,0 +1,65 @@
+{
+ "card": "W48-BU-SINGLE-LEAF-BODIES",
+ "base": "4dd8c80135f8c35d56f64bcce9305b0b081ef9fd",
+ "measured_source": "8879c2d8984fd677c6561bfd9375bea42dbe4f8e",
+ "control": "8879c2d89 with DECAY_ARM and LITERAL_ARM false (rule 35 arms off)",
+ "rule": "gateway 35 (docs/agents/gateway.md#constraint-35; router row in docs/agents/README.md)",
+ "increment": "wave-48-part11.md",
+ "increment_paragraph": "**W48-BU-SINGLE-LEAF-BODIES (2026-10-23; resumed after the round-1 halt).** The [card](../../reports/w48-bu-single-leaf-bodies/README.md) adds gateway rule 35. A `*` applied to a string literal that is only read is constant data to the lexical access gate (librdkafka's `rd_assert(!*\"...\")`, `RD_NOTREACHED`, `RD_BUG`). An array member decayed at an admissible W44 call actual is rule 14c's `&PATH[0]`, only for a one-dimensional unqualified builtin-scalar array, with every root premise unchanged. Its prediction was committed after the first semantic commit and before any measurement; the report states this order. On the scheduler card's eight-home corpus route, the TIP measured against its own arms-off control moves exactly 12 rows Unknown→Safe: ten through the literal arm (all eight predicted sole-leaf rows, a two-line assert and one in-unit caller through a summary) and two through the decay arm (`rd_kafka_log_print`, `mk_config_signature`). BASE 4dd8c8013 → TIP reads 977→999 Safe and 3,848→3,826 Unknown, with 9 provisional Unsafe unchanged; the other +10 are sibling rules 32 (8) and 34 (2). No Safe regresses, leaks stay 40 and every null verdict is unchanged. Combined Safe rises 851→859, and no rule-35 row moves under any runtime scenario. System (99 Safe) and the tail-pause slice (57 Safe) keep every status. Of the twelve brief bodies only `rd_kafka_mock_cluster_io_set_event` is freed. XXH32/XXH64_digest_endian are a prediction miss: the decayed member in a whole-return call is not read. Run 4 failed on path spelling after the checkout move; run 5 measured through byte-identical inputs whose compile databases are re-spelled, and its BASE reproduces 977 Safe exactly. QCore.LiteralDecayReadings has 14 audited theorems.",
+ "status_paragraph": "W48-BU-SINGLE-LEAF-BODIES (rule 35) reads `*\"literal\"` as constant data and a decayed scalar array member at an admissible call actual as `&PATH[0]`. Pinned corpus TIP against its arms-off control: exactly 12 rows Unknown→Safe, conditional on faithful lexing and Clang extraction (trust boundary 28) and rule 14c's within-array write premise. BASE 4dd8c8013 → TIP: 977→999 Safe, 3,848→3,826 Unknown, 9 provisional Unsafe, of which +10 belong to rules 32 and 34. Null unchanged; combined 851→859 for rule 35; system and slice statuses unchanged.",
+ "ledger": [
+  {
+   "id": "W48-BOTTOM-UP-RESIDUAL-PLAN",
+   "operation": "append",
+   "text": "AMENDED W48-BU-SINGLE-LEAF-BODIES (gateway rule 35, measured source 8879c2d89 against BASE 4dd8c8013 and its own arms-off control, eight-home corpus route): the twelve single-own-leaf bodies were attacked through generic admissions. Rule 35 frees exactly rd_kafka_mock_cluster_io_set_event of the twelve, plus 11 other rows (corpus +12 Safe; with sibling rules 32/34, 977→999). Fresh planner on BASE diagnostics: 2,214 candidate bodies, 232 positive, ceiling 360, 253 one-body waits, closure 4/4. At TIP: 2,200 / 230 / 383 / 249 / 6/6. These are census quantities only. REMAINING of the twelve: XXH32_digest_endian and XXH64_digest_endian (decayed member in a whole-return call, W48-RETURN-CALL-DECAYED-MEMBER); rd_kafka_queue_get_sasl (retaining rd_kafka_queue_new0 declaration); rd_kafka_broker_ApiVersion_at_least (uncontracted rd_kafka_broker_ApiVersion_supported0); thrd_setname (no pthread_setname_np contract); rd_kafka_MemberDescription_copy and rd_kafka_group_result_copy (`?:` call actuals, Unknown callees); rd_kafka_topic_partition_list_grow (reallocated result stored to a member); rd_map_init (aggregate result with an owned member); mk_iov_free_marked (custody position); rd_kafka_topic_partition_list_cmp (rule 11p indirect call). DISCHARGE: each body's named question with audited Rust/Lean and a fresh BASE/TIP measurement.",
+   "source": "docs/reports/w48-bu-single-leaf-bodies/README.md"
+  },
+  {
+   "id": "CG10-INDIRECT-ACCESS-SOLE-RESIDUALS",
+   "operation": "amend",
+   "text": "AMENDED by W48-BU-SINGLE-LEAF-BODIES (gateway rule 35; corpus TIP 8879c2d89 against its arms-off control). Two access shapes the lexical and typed readers refused are now read: `*\"literal\"` (constant data, never a store or increment target) and a decayed one-dimensional unqualified builtin-scalar array member at an admissible W44 call actual (rule 14c's `&PATH[0]`). 12 rows Unknown→Safe. 14 corpus `indirect memory access` leaves and 113 branch-condition leaves are removed (68 on single literal lines). Unknown rows with a gate leaf on a literal line fall 61→7 (76→7 leaves). The seven left are RD_BUG with indirect arguments, rd_kafka_assert identity leaves and one cJSON sizeof leaf. Not re-measured by this entry's registering script.",
+   "source": "docs/reports/w48-bu-single-leaf-bodies/README.md"
+  },
+  {
+   "id": "W43-INDIRECT-UNTYPED-SINGLE-ACCESS",
+   "operation": "amend",
+   "text": "AMENDED by W48-BU-SINGLE-LEAF-BODIES (gateway rule 35): a decayed member of a one-dimensional unqualified builtin-scalar array at an admissible call actual is read as `&PATH[0]`. Measured corpus effect of the decay arm: rd_kafka_log_print and mk_config_signature become Safe, and decayed char/scalar member actuals elsewhere lose their access leaf (corpus snappy refill_tag, rd_kafka_transport_ssl_set_endpoint_id, rd_strtup_dup and others; system flb_output_proxy_tls_ca_check and print_storage_info; slice collector pause/resume/start and channel init, where the refusal moves to the uncontracted callee). Pointer, record, union, multi-dimensional, enumeration and opaque elements, qualified members and non-member decays stay refused. The arm does not reach a whole-return call actual (W48-RETURN-CALL-DECAYED-MEMBER).",
+   "source": "docs/reports/w48-bu-single-leaf-bodies/README.md"
+  },
+  {
+   "id": "W44-CONDITION-CALL-INDIRECT-ARGUMENT",
+   "operation": "amend",
+   "text": "AMENDED by W48-BU-SINGLE-LEAF-BODIES (gateway rule 35): the branch-condition refusal of librdkafka's literal assertions (`rd_assert(!*\"...\")`, `rd_assert(x && *\"...\")`, RD_BUG, RD_NOTREACHED and macros expanding them, such as RD_UT_FAIL and rd_kafka_anyconf_set_internal) was a literal dereference, not a call-argument access. Corpus TIP against arms-off: 113 branch-condition leaves are removed, and 10 rows Unknown→Safe through the literal arm (8 sole-leaf rows, rd_kafka_anyconf_set_modified, and rd_kafka_mock_connection_set_blocking through its callee's summary). Not re-measured by this entry's registering script.",
+   "source": "docs/reports/w48-bu-single-leaf-bodies/README.md"
+  },
+  {
+   "id": "W48-RETURN-CALL-DECAYED-MEMBER",
+   "operation": "register",
+   "title": "A decayed scalar array member as the actual of a whole-return call is not read by rule 35's decay arm",
+   "text": "Measured by W48-BU-SINGLE-LEAF-BODIES (corpus TIP 8879c2d89): XXH32_digest_endian and XXH64_digest_endian keep `indirect memory access is outside the resource projection` at `return XXH32_finalize(h32, state->mem32, ...)` (rdxxhash.c:542/:1002). Rule 35's decay arm sits in StatementIndex::argument and did not decide that actual. This contradicts the card's prediction, which expected the leaf to move to the callee. DISCHARGE: isolate the route that refuses the returned call's actual and extend the same decision to it, with matching audited Lean, a fixture and a fresh BASE/TIP measurement.",
+   "source": "docs/reports/w48-bu-single-leaf-bodies/README.md"
+  },
+  {
+   "id": "PINNED-INPUTS-PATH-AFTER-MIGRATION",
+   "operation": "register",
+   "title": "Pinned and configured routes fail on path spelling after the checkout move",
+   "text": "Measured by W48-BU-SINGLE-LEAF-BODIES run 4 (retained failed attempt). /home/cosmo/Documents/GitHub/qcore-c is now a symlink to /media/Data/GitHub/quirin-lang, and the pinned compile databases spell the old prefix. run_pinned_audit.py resolves its inputs root to the real path, and the audit selects units by path string (pinned_route.rs plan_library, current.rs export_cross_unit_home). The corpus fails with 'compile database contains no selected cmetrics sources' and the configured routes with 'cross-unit home lies outside checkout'. Interim: docs/reports/w48-bu-single-leaf-bodies/scripts/mirror_inputs.py copies the inputs byte for byte and re-spells only the database path prefixes, with digests; its BASE reproduces 977 Safe. DISCHARGE: regenerate the pinned inputs under the real path, or compare canonical paths in the audit, with its own gate and BASE parity.",
+   "source": "docs/reports/w48-bu-single-leaf-bodies/README.md"
+  }
+ ],
+ "root_owned_files": [
+  "docs/STATUS.md",
+  "docs/development/increments/wave-48-part11.md",
+  "docs/reviews/r0_3/acceptance_matrix.json (regenerate)",
+  "docs/reports/INDEX.md (regenerate with scripts/build_docs_index.py)"
+ ],
+ "shared_files_touched": [
+  "crates/qcore-c-gateway/src/lib.rs (two module lines)",
+  "crates/qcore-c-gateway/src/legacy_token_shapes.rs (arm 1 hook)",
+  "crates/qcore-c-gateway/src/typed_access_positions.rs (arm 2 hook)",
+  "proof/QCore.lean (one import)",
+  "docs/agents/gateway.md (rule 35)",
+  "docs/agents/README.md (row 35)"
+ ],
+ "final_required": "Merge with the rule 32 and 34 cards' final commits, regenerate the matrix and report index, then run one combined gate."
+}

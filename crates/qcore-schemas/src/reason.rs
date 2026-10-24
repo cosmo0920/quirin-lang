@@ -496,6 +496,16 @@ const REASON_RULES: &[(&str, ReasonCategory)] = &[
         "its own analysed body refutes",
         ReasonCategory::StaleEvidence,
     ),
+    // ---- a call inside its own caller frame (card W48-RK-LOG-CALLER-FRAME,
+    // gateway rule 32a): a caller-frame declaration serves only callers
+    // outside the frame, and the frame's own obligations have no derivation,
+    // so the held call is this increment's bound, never a statement about the
+    // source. Matched before every source-subject rule. Site:
+    // `qcore_c_gateway::legacy_c`'s held-call statement.
+    (
+        "inside its own caller frame",
+        ReasonCategory::IncompleteObligationCoverage,
+    ),
     // ---- plugin claim uncertified (card W45-USER-CONTRACT-PLUGINS): a
     // checker plugin's `Safe` or `Unsafe` claim with no independently checked
     // certificate or witness. Matched before every source-subject rule: the

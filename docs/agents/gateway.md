@@ -8606,7 +8606,11 @@ safety claim and no validation of the detach representation premise.
     sequential execution; so callers are **conditionally Safe**, never Safe
     outright. The declarations' bodies are checked by the existing route
     (W4/`entry`, rule 13i: the variadic tail and the premises are never
-    covered; rule 10g withdraws a refuted one). MEASURED_PLACEHOLDER **Do
+    covered; rule 10g withdraws a refuted one), and the declarations serve only
+    callers outside the frame (rule 32a). Measured on the eight-home corpus
+    (BASE `4dd8c8013`, TIP `f53a127e1`): seven callers Unknown→Safe on the
+    three premises, the planner's three included; `rd_kafka_log0` and
+    `rd_kafka_log_buf` stay Unknown. **Do
     not** declare a caller-frame contract whose premises differ from its
     projection's derived set, classify a callback, a reference release that
     may be the last or a write to an object the caller may hold as
@@ -8622,6 +8626,36 @@ safety claim and no validation of the detach representation premise.
     `an_interleaved_release_makes_the_forward_drop_last`,
     `an_event_callback_can_release_a_tracked_object`);
     `crates/qcore-contract/tests/caller_frame.rs`;
+    [report](../reports/w48-rk-log-caller-frame/README.md).
+
+<a id="constraint-32a"></a>
+
+32a. **A caller-frame declaration serves only callers outside its frame.**
+    Card W48-RK-LOG-CALLER-FRAME (the halted review of 2026-10-23: the
+    logger's own row became `Safe` by reading its sibling's declaration). The
+    members of a reviewed caller-frame projection are its `declarations`,
+    registered in `qcore_contract::caller_frame::FRAMES` (held equal to the
+    checked projection by test). Inside a member's own body, every call to a
+    member of the same frame whose declaration is in force, the recursive
+    call included, is **held**: rewritten to `qcore_caller_frame_self__`
+    (`legacy_caller_frame_hold`, beside the pin hold in all three token
+    pipelines, so W4 derivation, validation and a certificate recheck
+    reproduce it; the prefix is reserved and a source spelling is escaped).
+    The statement refuses `Unknown`, never `Pending`, with reason key
+    `caller-frame-self-reliance` (category `incomplete-obligation-coverage`:
+    the frame's own obligations have no derivation). Each member's row is
+    therefore decided by its body, with the model's obligations still Open;
+    a caller outside the frame reads the declarations unchanged, with their
+    premises. Monotone: the hold never moves a row towards `Safe`. **Do
+    not** let a member's row read its own or a sibling's caller-frame
+    declaration, register a frame member set that differs from its checked
+    projection's declarations, or treat the hold as a refutation (the
+    declaration still serves outside callers). `QCore.RkLogCallerFrame`
+    (`a_frame_hold_is_unknown`, `a_member_never_reads_a_member_declaration`,
+    `a_held_member_row_is_never_safe`,
+    `an_outside_caller_reads_the_declaration`, `the_hold_never_certifies`,
+    `the_logger_rows_are_decided_by_their_bodies`);
+    `crates/qcore-c-gateway/tests/caller_frame_hold.rs`;
     [report](../reports/w48-rk-log-caller-frame/README.md).
 
 <a id="constraint-33"></a>
@@ -8804,3 +8838,88 @@ safety claim and no validation of the detach representation premise.
     transport boundaries. Extraction and Rust correspondence remain premise 28;
     new readers must fit rule 13q's existing measured stack budget.
     [Design](../reports/w48-cmt-list-self-init/DESIGN.md).
+<a id="constraint-35"></a>
+
+35. **A `*` applied to a string literal that is only read is constant data,
+    and an array member decayed at a `Borrowed` or data-tail call actual is
+    rule 14c's element address `&PATH[0]`.** Card W48-BU-SINGLE-LEAF-BODIES
+    (`literal_dereference.rs`, a thin hook in
+    `legacy_token_shapes::contains_unmodeled_access`; `array_member_decay.rs`,
+    a thin hook in `typed_access_positions::StatementIndex::argument`). It
+    amends the lexical access gate (arm 1) and rules 10n(1) and 14c (arm 2);
+    every other refusal of theirs stands. (1) **Literal read.** A `*` token
+    whose next token is a literal (the lexer spells every string and
+    character literal `__qcore_literal__`) is not an access when the literal
+    run is not followed by `=` (other than `==`), a compound assignment, `++`
+    or `--`. A string literal is an array of static storage duration (C11
+    6.4.5p6), so `*"..."` reads its first character: no pointer the
+    projection names is read and no binding, field link or obligation
+    changes; `* 'c'` can only be a multiplication. No value is folded
+    (constraint 5a), so both edges of a branch on it stay. Every other token
+    of the predicate answers as before (`->`, `.`, `[`, `]` and every other
+    `*`), so the exempted stars are a subset of the old refusals. This is
+    librdkafka's `rd_assert(!*"...")`, `RD_NOTREACHED()` and `RD_BUG(...)`.
+    (2) **Decayed array member.** At a call actual the W44 typed reader
+    reads (positions the caller already found admissible), an
+    `ImplicitCastExpr` of kind `ArrayToPointerDecay` whose operand, through
+    parentheses, is a member place of a one-dimensional array of builtin
+    scalars, neither `volatile` nor `_Atomic`, is read as the address of its
+    initial element (C11 6.3.2.1p3): rule 10n(1)'s address reading with every
+    hop's obligation, the array not read, and the never-bound premise on
+    every root unchanged. **Do not** exempt a stored or incremented literal,
+    a subscripted literal (`"..."[I]`) or any other `*`; read a decayed
+    element of pointer, record, union, array, enumeration or opaque type, a
+    qualified member, a decayed local or file-scope array (the older routes
+    keep their answer), or relax the root premise; or use the decay at a
+    custody-taking position. Parity runs record each decay decision as a
+    `typed-place` place (`rule: "35"`). Premises stated, not proved: faithful
+    lexing of literals and Clang's cast kinds and member types (trust
+    boundary 28), and, as for rule 14c, that a callee writes within the
+    array the address points into. `QCore.LiteralDecayReadings`
+    (`literal_vectors_hold`, `a_star_is_exempt_exactly_on_a_read_literal`,
+    `the_gate_only_admits`, `every_other_token_is_unchanged`,
+    `a_run_refused_only_at_literal_stars_is_admitted`,
+    `a_literal_read_changes_no_binding_and_owes_nothing`,
+    `decay_vectors_hold`, `a_decay_is_admitted_exactly_for_a_scalar_member`,
+    `the_decay_is_the_first_element_address`,
+    `an_admitted_decay_is_a_14c_element_address` and four more), bound to
+    both Rust `DECISION_VECTORS` tables;
+    `crates/qcore-c-gateway/tests/literal_decay_readings.rs`;
+    [report](../reports/w48-bu-single-leaf-bodies/README.md).
+
+<a id="constraint-37"></a>
+
+37. **Checked result constructors.** Aggregate field stores may ignore a
+    pointer-name occurrence only inside a `sizeof` operand admitted by the
+    existing typed, non-variably-modified operand reader. A syntactic `sizeof`
+    alone supplies no exemption. The base must still be a uniquely bound local
+    aggregate with complete declarations, an admitted member shape, no alias or
+    evaluated escape, and a currently live, known, non-null owner. The exemption
+    establishes neither non-nullness nor a resource identity. Linked children
+    escape with a returned aggregate; a shallow release leaves a live child
+    outstanding, and overwriting a field cannot discharge its old identity.
+
+    A wrapper whose normal return is non-null only because allocation failure
+    terminates needs a checked-body specification and the named
+    `asserted_allocation` premise. Adopt it only after the complete preprocessed
+    body establishes the specification and the reviewed source pins match.
+    Missing bodies, disabled or unread assertions, and unproved terminating
+    effects withdraw the specification. Keep the premise visible in verdict
+    assumptions; a body observation does not prove the deployed-build premise.
+    Do not change unrelated libc or wrapper nullability by family or spelling.
+
+    The null-property readers must not treat a checked custody specification as
+    an unchecked non-null result fact. They may use an independent null source
+    summary or the null property's own established declaration. The resource
+    identity must bind relevant checked-result metadata. Ordinary unchecked
+    declarations retain their existing declared-assumption reading.
+
+    Rule 37's model proofs depend on faithful C extraction, faithful checked
+    operand spans, and Rust/model correspondence. Keep these premises separate
+    from fixture observations and production-body validation. Publish only the
+    card's fresh per-body and per-leaf BASE/TIP movements, with each movement's
+    bounds and assumptions; planner ceilings are not gains.
+
+    Lean: `QCore.ResultConstructors` (all companion theorems registered in
+    `AuditResultConstructors.lean`);
+    [report](../reports/w48-bu-rk-result-constructors/README.md).

@@ -233,6 +233,7 @@ pub(crate) fn is_field_place(place: &str) -> bool {
 /// The local aggregate pointers of `body` that premises 1-5 admit.
 pub(crate) fn store_bases(
     body: &[&str],
+    parameters: &[&str],
     formal_parameters: &BTreeSet<String>,
     contracts: &ResourceContracts,
     model: &TypedAccessModel,
@@ -241,12 +242,20 @@ pub(crate) fn store_bases(
     if !types.is_readable() {
         return AggregateStoreBases::default();
     }
+    // Rule 37: only the existing checked non-VLA reader makes a mention
+    // unevaluated. It supplies neither an owner identity nor non-nullness.
+    let operand_types = crate::sizeof_operand::OperandTypes::read(model, parameters, body);
+    let unevaluated = crate::sizeof_operand::unevaluated_spans(body, &operand_types);
     let mut candidates = BTreeSet::new();
     let mut refused = BTreeSet::new();
     let mut assignments: Vec<&str> = Vec::new();
     for index in 0..body.len() {
         let text = body[index];
-        if !is_name(text) {
+        if !is_name(text)
+            || unevaluated
+                .iter()
+                .any(|(start, end)| (*start..*end).contains(&index))
+        {
             continue;
         }
         let next = body.get(index + 1).copied();
@@ -351,7 +360,7 @@ pub(crate) fn store_bases(
     }
     refuse_rebinding_arguments(body, contracts, &mut refused);
     let admissible: BTreeSet<String> = candidates.difference(&refused).cloned().collect();
-    let insulated = insulated_bases(body, &admissible, contracts, model, types);
+    let insulated = insulated_bases(body, &admissible, contracts, model, types, &unevaluated);
     AggregateStoreBases {
         admissible,
         insulated,
@@ -409,6 +418,7 @@ fn insulated_bases(
     contracts: &ResourceContracts,
     model: &TypedAccessModel,
     types: &FunctionTypes,
+    unevaluated: &[(usize, usize)],
 ) -> BTreeSet<String> {
     let mut insulated = admissible.clone();
     for index in 0..body.len().saturating_sub(1) {
@@ -432,7 +442,7 @@ fn insulated_bases(
                 )
             );
             insulated.retain(|name| {
-                if !body[start..end].contains(&name.as_str()) {
+                if !crate::sizeof_operand::evaluated(&body[start..end], start, unevaluated).any(|text| text == name.as_str()) {
                     return true;
                 }
                 match &body[start..end] {
@@ -1067,7 +1077,7 @@ mod tests {
             &model,
             &types,
         );
-        let bases = store_bases(&body, &formal_set, &contracts, &model, &types);
+        let bases = store_bases(&body, &[], &formal_set, &contracts, &model, &types);
         Facts {
             model,
             types,

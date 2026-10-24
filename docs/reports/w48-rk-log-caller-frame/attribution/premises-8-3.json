@@ -1,0 +1,371 @@
+{
+ "rows": [
+  {
+   "base": "Unknown",
+   "declarations": [
+    "snprintf"
+   ],
+   "file": "mk_server/mk_config.c",
+   "function": "mk_config_signature",
+   "premises": {},
+   "standing": {},
+   "summaries": null,
+   "tip": "Safe"
+  },
+  {
+   "base": "Unknown",
+   "declarations": [
+    "mk_http_thread_destroy"
+   ],
+   "file": "mk_server/mk_scheduler.c",
+   "function": "mk_sched_threads_destroy_conn",
+   "premises": {
+    "mk_http_thread_destroy": [
+     "scheduler_borrowed_chain_live",
+     "scheduler_callback_footprint",
+     "scheduler_callee_live",
+     "scheduler_exact_parent_embedding",
+     "scheduler_no_later_alias_use",
+     "scheduler_tls_params_owned",
+     "scheduler_valgrind_request_neutral",
+     "scheduler_valid_membership"
+    ]
+   },
+   "standing": {
+    "mk_http_thread_destroy": "declared-assumption"
+   },
+   "summaries": null,
+   "tip": "Safe"
+  },
+  {
+   "base": "Unknown",
+   "declarations": [
+    "mk_http_thread_destroy"
+   ],
+   "file": "mk_server/mk_scheduler.c",
+   "function": "sched_thread_cleanup",
+   "premises": {
+    "mk_http_thread_destroy": [
+     "scheduler_borrowed_chain_live",
+     "scheduler_callback_footprint",
+     "scheduler_callee_live",
+     "scheduler_exact_parent_embedding",
+     "scheduler_no_later_alias_use",
+     "scheduler_tls_params_owned",
+     "scheduler_valgrind_request_neutral",
+     "scheduler_valid_membership"
+    ]
+   },
+   "standing": {
+    "mk_http_thread_destroy": "declared-assumption"
+   },
+   "summaries": null,
+   "tip": "Safe"
+  },
+  {
+   "base": "Unknown",
+   "declarations": [
+    "fprintf",
+    "gettimeofday",
+    "rd_kafka_log_print"
+   ],
+   "file": "rdkafka.c",
+   "function": "rd_kafka_log_print",
+   "premises": {},
+   "standing": {},
+   "summaries": null,
+   "tip": "Safe"
+  },
+  {
+   "base": "Unknown",
+   "declarations": [
+    "__assert_fail"
+   ],
+   "file": "rdkafka.c",
+   "function": "rd_kafka_log_syslog",
+   "premises": {},
+   "standing": {},
+   "summaries": null,
+   "tip": "Safe"
+  },
+  {
+   "base": "Unknown",
+   "declarations": [
+    "__assert_fail"
+   ],
+   "file": "rdkafka.c",
+   "function": "rd_kafka_set_logger",
+   "premises": {},
+   "standing": {},
+   "summaries": [
+    "rd_kafka_log_syslog"
+   ],
+   "tip": "Safe"
+  },
+  {
+   "base": "Unknown",
+   "declarations": [
+    "rd_kafka_log0",
+    "rd_kafka_share_ack_commit_cb_register_op"
+   ],
+   "file": "rdkafka.c",
+   "function": "rd_kafka_share_ack_commit_cb_register_op",
+   "premises": {
+    "rd_kafka_log0": [
+     "rk_log_enqueue_forward_not_last",
+     "rk_log_enqueue_no_event_callback",
+     "rk_plugin_callback_closure"
+    ],
+    "rd_kafka_share_ack_commit_cb_register_op": [
+     "rk_plugin_callback_closure"
+    ]
+   },
+   "standing": {
+    "rd_kafka_log0": "declared-assumption",
+    "rd_kafka_share_ack_commit_cb_register_op": "partly-validated"
+   },
+   "summaries": null,
+   "tip": "Safe"
+  },
+  {
+   "base": "Unknown",
+   "declarations": [
+    "clock_gettime",
+    "rd_kafka_log0"
+   ],
+   "file": "rdkafka.c",
+   "function": "rd_kafka_share_log_fetch_stall",
+   "premises": {
+    "rd_kafka_log0": [
+     "rk_log_enqueue_forward_not_last",
+     "rk_log_enqueue_no_event_callback",
+     "rk_plugin_callback_closure"
+    ]
+   },
+   "standing": {
+    "rd_kafka_log0": "declared-assumption"
+   },
+   "summaries": [
+    "rd_clock"
+   ],
+   "tip": "Safe"
+  },
+  {
+   "base": "Unknown",
+   "declarations": [
+    "__assert_fail"
+   ],
+   "file": "rdkafka_conf.c",
+   "function": "rd_kafka_anyconf_set_modified",
+   "premises": {},
+   "standing": {},
+   "summaries": [
+    "rd_kafka_prop2idx"
+   ],
+   "tip": "Safe"
+  },
+  {
+   "base": "Unknown",
+   "declarations": [
+    "__assert_fail"
+   ],
+   "file": "rdkafka_mock.c",
+   "function": "rd_kafka_mock_cluster_io_clear_events",
+   "premises": {},
+   "standing": {},
+   "summaries": null,
+   "tip": "Safe"
+  },
+  {
+   "base": "Unknown",
+   "declarations": [
+    "__assert_fail"
+   ],
+   "file": "rdkafka_mock.c",
+   "function": "rd_kafka_mock_cluster_io_set_event",
+   "premises": {},
+   "standing": {},
+   "summaries": null,
+   "tip": "Safe"
+  },
+  {
+   "base": "Unknown",
+   "declarations": [
+    "__assert_fail"
+   ],
+   "file": "rdkafka_mock.c",
+   "function": "rd_kafka_mock_cluster_io_set_events",
+   "premises": {},
+   "standing": {},
+   "summaries": null,
+   "tip": "Safe"
+  },
+  {
+   "base": "Unknown",
+   "declarations": [
+    "__assert_fail"
+   ],
+   "file": "rdkafka_mock.c",
+   "function": "rd_kafka_mock_connection_set_blocking",
+   "premises": {},
+   "standing": {},
+   "summaries": [
+    "rd_kafka_mock_cluster_io_set_event"
+   ],
+   "tip": "Safe"
+  },
+  {
+   "base": "Unknown",
+   "declarations": [
+    "clock_gettime",
+    "rd_kafka_log0"
+   ],
+   "file": "rdkafka_mock_cgrp.c",
+   "function": "rd_kafka_mock_cgrp_classic_member_active",
+   "premises": {
+    "rd_kafka_log0": [
+     "rk_log_enqueue_forward_not_last",
+     "rk_log_enqueue_no_event_callback",
+     "rk_plugin_callback_closure"
+    ]
+   },
+   "standing": {
+    "rd_kafka_log0": "declared-assumption"
+   },
+   "summaries": [
+    "rd_clock"
+   ],
+   "tip": "Safe"
+  },
+  {
+   "base": "Unknown",
+   "declarations": [
+    "rd_kafka_log0"
+   ],
+   "file": "rdkafka_mock_cgrp.c",
+   "function": "rd_kafka_mock_cgrp_classic_set_state",
+   "premises": {
+    "rd_kafka_log0": [
+     "rk_log_enqueue_forward_not_last",
+     "rk_log_enqueue_no_event_callback",
+     "rk_plugin_callback_closure"
+    ]
+   },
+   "standing": {
+    "rd_kafka_log0": "declared-assumption"
+   },
+   "summaries": null,
+   "tip": "Safe"
+  },
+  {
+   "base": "Unknown",
+   "declarations": [
+    "clock_gettime",
+    "rd_kafka_log0"
+   ],
+   "file": "rdkafka_mock_cgrp.c",
+   "function": "rd_kafka_mock_cgrp_consumer_member_active",
+   "premises": {
+    "rd_kafka_log0": [
+     "rk_log_enqueue_forward_not_last",
+     "rk_log_enqueue_no_event_callback",
+     "rk_plugin_callback_closure"
+    ]
+   },
+   "standing": {
+    "rd_kafka_log0": "declared-assumption"
+   },
+   "summaries": [
+    "rd_clock"
+   ],
+   "tip": "Safe"
+  },
+  {
+   "base": "Unknown",
+   "declarations": [
+    "clock_gettime",
+    "rd_kafka_log0"
+   ],
+   "file": "rdkafka_mock_sharegrp.c",
+   "function": "rd_kafka_mock_sharegroup_member_active",
+   "premises": {
+    "rd_kafka_log0": [
+     "rk_log_enqueue_forward_not_last",
+     "rk_log_enqueue_no_event_callback",
+     "rk_plugin_callback_closure"
+    ]
+   },
+   "standing": {
+    "rd_kafka_log0": "declared-assumption"
+   },
+   "summaries": [
+    "rd_clock"
+   ],
+   "tip": "Safe"
+  },
+  {
+   "base": "Unknown",
+   "declarations": [
+    "__assert_fail"
+   ],
+   "file": "rdkafka_sasl_oauthbearer_oidc.c",
+   "function": "rd_kafka_oidc_assertion_get_algo_label",
+   "premises": {},
+   "standing": {},
+   "summaries": null,
+   "tip": "Safe"
+  },
+  {
+   "base": "Unknown",
+   "declarations": [
+    "__assert_fail",
+    "fprintf",
+    "vsnprintf"
+   ],
+   "file": "rdkafka_telemetry_decode.c",
+   "function": "unit_test_telemetry_decode_error",
+   "premises": {},
+   "standing": {},
+   "summaries": null,
+   "tip": "Safe"
+  },
+  {
+   "base": "Unknown",
+   "declarations": [
+    "clock_gettime",
+    "rd_kafka_log0"
+   ],
+   "file": "rdkafka_topic.c",
+   "function": "rd_kafka_topic_set_state",
+   "premises": {
+    "rd_kafka_log0": [
+     "rk_log_enqueue_forward_not_last",
+     "rk_log_enqueue_no_event_callback",
+     "rk_plugin_callback_closure"
+    ]
+   },
+   "standing": {
+    "rd_kafka_log0": "declared-assumption"
+   },
+   "summaries": [
+    "rd_clock"
+   ],
+   "tip": "Safe"
+  },
+  {
+   "base": "Unknown",
+   "declarations": [
+    "__assert_fail",
+    "fprintf"
+   ],
+   "file": "rdkafka_txnmgr.c",
+   "function": "rd_kafka_txn_state_transition_is_valid",
+   "premises": {},
+   "standing": {},
+   "summaries": [
+    "rd_kafka_txn_state2str"
+   ],
+   "tip": "Safe"
+  }
+ ]
+}

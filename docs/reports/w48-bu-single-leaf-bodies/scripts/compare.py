@@ -48,10 +48,14 @@ def diagnostics_path(root, route):
 
 
 def rows(diagnostics):
-    out = {}
+    """Rows keyed by (library, unit file, function, occurrence index), so a
+    function analysed in more than one configuration replay stays distinct."""
+    out, seen = {}, collections.Counter()
     for unit in diagnostics['units']:
         for row in unit.get('functions', []):
-            out[(unit['library'], unit['file'], row['function'])] = row
+            key = (unit['library'], unit['file'], row['function'])
+            out[key + (str(seen[key]),)] = row
+            seen[key] += 1
     return out
 
 
@@ -109,6 +113,7 @@ def main():
                               for l, n in sorted(added.items())],
                 tip_dependencies=(after or {}).get('contract_dependencies')))
     units = {}
+    assert len(base['units']) == len(tip['units'])
     for b, t in zip(base['units'], tip['units']):
         assert (b['library'], b['file']) == (t['library'], t['file'])
         keys = sorted(k for k in set(b) | set(t) if k != 'functions' and b.get(k) != t.get(k))
