@@ -240,6 +240,19 @@ fn current_checkpoint_text(path: &str) -> String {
 // Every graph/loader/binding/flow/lifecycle check below still reads `after`,
 // the actual current source with its complete guarded metadata present.
 fn historical_symbolic_checkpoint(path: &str, current: &str) -> String {
+    // Rule 37 intentionally replaces these two inheritance declarations.
+    // Recover only the byte-erasure checkpoint through this exact pinned seam;
+    // all graph/loader/binding/flow/lifecycle checks still read current bytes.
+    const MEMORY: &str = "providers/qcore-provider-librdkafka/contracts/librdkafka/memory.qv";
+    if path == MEMORY {
+        let before = include_str!("../../../docs/reports/w48-cmt-list-self-init/integration/rule37-memory-before-prefix.txt");
+        let after = include_str!("../../../docs/reports/w48-cmt-list-self-init/integration/rule37-memory-after-prefix.txt");
+        assert_eq!(qcore_schemas::sha256_hex(before.as_bytes()), "97924dfb2064e3686b9c02244ca5039c1e69a781f1c02553e18527e8b7ac3f47");
+        assert_eq!(qcore_schemas::sha256_hex(after.as_bytes()), "69be583efacc9ac8a2acac6ba4e1ff9b33fd278b13158e19e75253339d9dd188");
+        assert!(current.starts_with(after), "rule37 source prefix changed");
+        assert_eq!(current.matches(after).count(), 1);
+        return current.replacen(after, before, 1);
+    }
     const CJSON: &str = "providers/qcore-provider-librdkafka/contracts/librdkafka/cjson.qv";
     if path != CJSON {
         return current.into();

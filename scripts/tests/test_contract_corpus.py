@@ -137,13 +137,12 @@ class CanonicalCorpus(unittest.TestCase):
         # librdkafka allocator wrappers, owned by the executable crates.
         monkey = "providers/qcore-provider-libevent/contracts/monkey/memory.qv"
         rdkafka = "providers/qcore-provider-librdkafka/contracts/librdkafka/memory.qv"
+        # Rule37: rd_calloc/rd_strdup are checked specifications, not inheritance.
         self.assertEqual(references, [
             (monkey, "mk_mem_alloc", "libc::malloc"),
             (monkey, "mk_mem_alloc_z", "libc::malloc"),
             (monkey, "mk_mem_free", "libc::free"),
             (rdkafka, "rd_malloc", "libc::malloc"),
-            (rdkafka, "rd_calloc", "libc::calloc"),
-            (rdkafka, "rd_strdup", "libc::strdup"),
             (rdkafka, "rd_strndup", "libc::strndup"),
             (rdkafka, "rd_free", "libc::free"),
             (memory, "flb_malloc", "libc::malloc"),

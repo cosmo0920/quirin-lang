@@ -1137,6 +1137,16 @@ fn production_contracts_preserve_the_previous_resource_modes() {
     for name in ["rd_kafka_log0", "rd_kafka_log_buf"] {
         old.insert_contract(name, ResourceFunctionContract::new([], R::None));
     }
+    // Rule 37 deliberately replaces only these nullable inherited modes.
+    // Their stronger result is a body-checked specification under the named
+    // allocation premise; it must never become an unchecked non-null fact.
+    let checked = qcore_compiler::contract_loader::declared_checked_specifications(&contracts).unwrap();
+    let premises = qcore_compiler::contract_loader::declared_premises(&contracts).unwrap();
+    for name in ["rd_calloc", "rd_strdup"] {
+        assert!(checked.contains(name), "{name} must remain body-checked");
+        assert!(premises[name].iter().any(|p| p.name == "asserted_allocation"));
+        old.insert_contract(name, ResourceFunctionContract::new([], R::Owned { nullable: false }));
+    }
     // Explicitly borrowed trailing arguments were implicit in the old table.
     fn canonical(mut contract: ResourceFunctionContract) -> ResourceFunctionContract {
         while contract.parameters.last() == Some(&P::Borrowed) {
