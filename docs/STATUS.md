@@ -414,24 +414,15 @@ latest completed integration measurement.
 
 ## Latest validated gate
 
-The latest [contract cycle4 source gate](reports/contract-cycle4-integration/README.md)
-measures source `552773f0c64e2e6a3c7d4b752c61a7d26130975a`: **8,532 core Rust passed / 0 failed /
-15 ignored, 541 units / 554 summaries; 365 Lean audits**. All22 stages pass
-with stable clean source. Providers pass **133 Rust / 0 failed / 1 ignored**,
-**25 Python**, and allfive package builds/verifications. Commands, exits,
-actual-run Clang recording and private log paths are in the shared gate receipts.
-Native comparison of BASE31c5 and TIP552 remains pending; failed attempts
-remain retained. No native completion is inferred from this source gate. Authoritative Python passes **374 tests**, exit0, at clean source
-`024048e35163f59475572b851ad663dcfa46d730`; committed matrix SHA remains unchanged.
-The separate post-matrix confirmation receipt binds the actual log and hashes.
-Logger/scheduler source truth and semantic/lifecycle discharge remain Open;
-readable metadata alone contributes no source-Safe gain.
+The [combined CMetrics/main gate](reports/w48-cmt-list-self-init/integration/gate.json) validates committed source `6874be01bfdf7a5ae349f50566d6915164d57501` after semantic merge `6cc54c3ae1eebd5aa75c7b801cbcd1af07230f42`. Root Rust: **8,639 passed / 0 failed / 15 ignored**, 549 units / 562 summaries. **370 Lean audits** pass under pinned 4.35.0, and **374 Python tests** pass against the committed matrix. Formatting, Clippy and both reevaluation examples exit 0. Providers pass **133 Rust / 0 failed / 1 ignored**, **25 Python**, inventory, package build and all five package verifications. Every gate step exits 0; actual Clang 21.1.8, commands, source guards and private logs are in the receipt. Isolated CMetrics resource/NULL/runtime comparisons remain at their named measured tips; this source gate supplies no new combined-main native count or discharge of source premises. Final regenerated-matrix Python confirmation is recorded separately.
 
-The five provider crates own **83** canonical contract modules; **54** shared or
+Provider checks above were measured at `389090b6755b43045c8838989c91adce33e9aabe` and reused after exact runtime/provider source equality; repaired test expectations and documentation do not change those inputs. The repaired root gate and its adjacent Clang recording are fresh.
+
+The five provider crates own **84** canonical contract modules; **54** shared or
 application-level modules live in six `providers/quirin-provider-*` crates: five
 per-library data crates (libc only in `quirin-provider-libc`) and
 `quirin-provider-shared`, which also holds the providers' shared runtime and
-bundles the five. `contract/corpus.json` indexes all **137** without duplicate
+bundles the five. `contract/corpus.json` indexes all **138** without duplicate
 snapshots. Retained integration adapters embed the provider-owned data directly;
 generic core crates retain no provider executable dependency;
 package inventories bind supplied contract bytes to their executables, and

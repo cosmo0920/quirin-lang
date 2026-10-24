@@ -6858,8 +6858,8 @@
   "note": "providers/ is a separate Cargo workspace, excluded from the core workspace; P01 verified empirically that the core workspace builds and passes its full suite with providers/ moved out of the tree."
  },
  "validation": {
-  "note": "Integration of W48-RK-LOG-CALLER-FRAME (rules 32, 32a): main fast-forwarded to card tip 585038570, which contains main 3353e1c63 (merge b4be13d47). The card's full standing gate plus provider gate ran ON THE MERGED TIP 6866e54c5 under the shared lock (scripts/run_gate.py 7; logs retired to private/retired-worktrees/2026-10-24-w48-rk-log-caller-frame/private/rkcf/gate-7): Rust 8595 passed/0 failed/15 ignored (546 units/559 summaries), fmt, Clippy, both examples 0, 369 Lean audits, 374 Python; provider Rust 133/0/1, provider fmt/Clippy 0, provider Python 25 OK (the 65->66 manifest pin lands with this card), provider contracts check, package build and five verifies 0. 585038570 adds only the gate receipt. Integration adds docs/records only; Python rerun against the committed matrix.",
-  "workspace_tests": 8595,
+  "note": "Combined CMetrics/main source 6874be01bfdf7a5ae349f50566d6915164d57501 (semantic merge 6cc54c3ae1eebd5aa75c7b801cbcd1af07230f42, main base 81df98c9d8edb2ca83c2478262c3afb90cadd9d7) passes the full root and provider gate under the acquired shared validation lock. Root 8639 passed/0 failed/15 ignored (549 units/562 summaries); 370 Lean audits, 374 Python. Provider 133 passed/0 failed/1 ignored, 25 Python; inventory, formatting, Clippy, package build and all five verifies pass. Every command exits 0. Actual Clang recording is adjacent, from this worktree and this run. Logs: /home/cosmo/.codex/worktrees/808d/quirin-lang/private/w48-cmt-member-storage/integration-repair-gate/20261024T104043Z. Complete commands/exits/source guards: standing-gate.json. Counts differ from the isolated card gate and are published separately. Card-native figures are not a combined-main measurement. Provider commands were measured at 389090b6755b43045c8838989c91adce33e9aabe in the retained first integration attempt and reused after exact confirmation that all provider/runtime inputs are unchanged; only three test expectations and documentation differ. They are not claimed as fresh commands at the repaired root tip.",
+  "workspace_tests": 8639,
   "provider_tests": 133,
   "python_evidence_validator_tests": 374,
   "lean_audits": 370,
@@ -7239,9 +7239,9 @@
   "reevaluation_followup_exit": 0,
   "cargo_fmt": "clean",
   "cargo_clippy": "clean",
-  "standing_gate": "complete on merged tip 6866e54c5, including the provider gate",
+  "standing_gate": "complete on combined committed source 6874be01bfdf7a5ae349f50566d6915164d57501; root and provider gates",
   "full_language_conformance": false,
-  "measurement_provenance": "carried_from_previous_matrix: these numbers were NOT measured for this regeneration; pass --gate PATH with the standing-gate results of this checkpoint to replace them"
+  "measurement_provenance": "integrator_supplied (docs/reports/w48-cmt-list-self-init/integration/gate.json)"
  },
  "named_followups": [
   {

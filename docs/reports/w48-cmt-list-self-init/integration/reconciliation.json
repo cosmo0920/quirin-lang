@@ -107,6 +107,7 @@
     }
   ],
   "remaining": [
-    "Regenerate report index and acceptance matrix; validate combined committed source; publish integration gate; run committed-matrix Python acceptance; merge main and push configured origin."
-  ]
+    "Regenerate matrix with actual combined gate, commit it, run committed-matrix Python acceptance, advance main and push configured origin."
+  ],
+  "integration_gate": "standing-gate.json"
 }

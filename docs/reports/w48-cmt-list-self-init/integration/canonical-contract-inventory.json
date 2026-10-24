@@ -1,0 +1,19 @@
+{
+  "source": "6874be01bfdf7a5ae349f50566d6915164d57501",
+  "tracked_indexed_roots": {
+    "providers/quirin-provider-shared/contracts/": 4,
+    "providers/quirin-provider-libc/contracts/": 17,
+    "providers/quirin-provider-cfl/contracts/": 5,
+    "providers/quirin-provider-mpack/contracts/": 1,
+    "providers/quirin-provider-msgpack/contracts/": 1,
+    "providers/quirin-provider-fluent-bit/contracts/": 26,
+    "providers/qcore-provider-chunkio/contracts/": 46,
+    "providers/qcore-provider-cmetrics/contracts/": 5,
+    "providers/qcore-provider-ctraces/contracts/": 1,
+    "providers/qcore-provider-libevent/contracts/": 19,
+    "providers/qcore-provider-librdkafka/contracts/": 13
+  },
+  "total": 138,
+  "five_executable_provider_roots": 84,
+  "six_shared_application_roots": 54
+}
