@@ -30,3 +30,8 @@ controls compare the same current semantic declarations, and checked result
 modes require their checked-specification and named premise. The superseded
 local fixture was removed. Current metadata, binding, flow and lifecycle
 checks remain active. Every provider command was rerun in the final gate.
+
+After matrix regeneration, all 374 Python tests pass on committed source
+`ef909ffe2`, with the matrix hash unchanged (`post-matrix-python.json`).
+`final-source.json` records the documentation-only difference from the fully
+validated source and incorporates main’s later publication/planning records.
