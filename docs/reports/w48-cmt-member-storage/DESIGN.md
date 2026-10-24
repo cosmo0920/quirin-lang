@@ -1,0 +1,9 @@
+# Next CMetrics ownership feature: source and model review
+
+The human requested the next audited feature in the CMetrics getter ownership chain, preserving fresh BASE/planner → committed prediction → semantic implementation. BASE is `359f64a987b74b21852c5a691e5c23f75c15d570`. The preceding exact borrowed-formal return report remains frozen.
+
+The next source boundary under review is `metric_prepare_storage`: it checks a caller-owned metric pointer member for NULL, allocates fresh nullable storage into that member, and returns the original metric borrow or NULL. Admission requires a truthful ownership effect for the initialized member; pointer storage cannot silently erase or transfer an outstanding obligation. Existing member-release and field-link routes do not by themselves license this caller-owned installation.
+
+Feasibility review will select a bounded generic feature with matching audited Lean, source/flow refusal controls and a clear caller obligation. It must not claim the full getter, nested label/SDS ownership, secondary hash indexing, caches, or the unrelated witness precision residual. No new source safety or forecast is asserted before the fresh BASE/planner. The reserved rule 36 family is retained; a sub-rule will be checked against the current router before registration.
+
+All heavy builds, validation and native measurements use `/tmp/qcore-c-card-validation-20261022.lock`, Cargo jobs 6, native jobs 4 and a 40 GiB free-space floor. The fresh baseline uses a new explicit build-version binary and a new 310-file input snapshot whose bytes match the current tracked inputs. The existing read-only original-path namespace wrapper preserves the compile databases without editing shared C sources or frozen evidence. Corpus, system and slice routes receive fresh paths and complete resource/NULL/runtime receipts.
