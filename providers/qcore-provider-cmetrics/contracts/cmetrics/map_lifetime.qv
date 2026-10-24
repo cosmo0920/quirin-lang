@@ -24,7 +24,7 @@ contract {
     requires allocation_sizes_and_list_cardinalities_fit_the_C_types;
     ensures normal result_is_null_or_fresh_exclusively_owned_map;
     ensures normal negative_count_returns_null_without_allocation;
-    ensures normal nonnull_result_owns_label_key_nodes_copied_sds_and_index_storage;
+    ensures normal present_result_owns_label_key_nodes_copied_sds_and_index_storage;
     ensures normal opts_and_parent_are_retained_nonowning_record_views;
     ensures normal input_label_array_and_strings_are_not_retained;
     ensures normal null_result_leaves_no_new_map_or_child_obligation;
@@ -45,7 +45,7 @@ contract {
     requires embedded_static_metric_label_list_has_no_owned_nodes;
     requires users_coordinate_returned_metric_uses_against_expiration_and_destroy;
     ensures normal result_is_null_or_borrowed_metric_from_map;
-    ensures normal nonnull_result_is_embedded_metric_or_map_owned_dynamic_child;
+    ensures normal present_result_is_embedded_metric_or_map_owned_dynamic_child;
     ensures normal result_creates_no_caller_release_obligation;
     ensures normal created_metric_labels_and_storage_remain_map_owned;
     ensures normal read_lookup_may_allocate_or_mutate_secondary_index;
