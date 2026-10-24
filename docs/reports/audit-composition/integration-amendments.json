@@ -1,0 +1,44 @@
+{
+ "card": "AUDIT-COMPOSITION",
+ "base": "52c8dd71bf8c606f3910d17f0a6a7863227ff161",
+ "measured_tip": "MEASURED-TIP-PLACEHOLDER",
+ "increment_paragraph": "INCREMENT-PLACEHOLDER",
+ "status_paragraph": "STATUS-PLACEHOLDER",
+ "ledger": [
+  {
+   "id": "COMPOSITION-PLUGIN-FIREWALL-WIRING",
+   "operation": "register",
+   "title": "The checker-plugin firewall still folds plugin answers into the host's unit row instead of contributing external-checker components",
+   "why": "Card AUDIT-COMPOSITION published the integration semigroup (qcore_schemas::composition; spec L21.2 'Composition across results') and made the audit report's unit rows a derived view over per-row components, but only host components exist: user_plugins::fold_unit and qcore_verifier_host::plugin_firewall still join a plugin's answer into the host row before it is recorded, so a checker's contribution cannot be removed or audited apart from the host's. DISCHARGE: the firewall emits one Component per plugin answer with Provenance.external_checker set (plugin id, version, binary digest), the host row stays the host's component, the published row is Contribution::derive over both, and an identity run shows every report without plugin bindings byte-identical while a plugin-bound fixture derives the same status it publishes today.",
+   "source": "docs/reports/audit-composition/README.md"
+  },
+  {
+   "id": "COMPOSITION-CONTRACT-LOADER-WIRING",
+   "operation": "register",
+   "title": "The contract loader unions bundles outside the composition interface",
+   "why": "Seam G makes the semigroup the only integration path for results and contracts. Card AUDIT-COMPOSITION built the results half; contract bundles still enter the environment through the loader's own union with a hard duplicate error, and the components' provenance records one 'resource-contracts' digest of the loaded environment rather than per-bundle digests. Supersession by pin stamp is the separate card CONTRACT-SUPERSESSION. DISCHARGE: the loader records one digest per provider bundle and the report's components carry them in Provenance.contract_bundles (so withdrawing a bundle is a removal over components), landed with or after CONTRACT-SUPERSESSION, with an identity run.",
+   "source": "docs/reports/audit-composition/README.md"
+  },
+  {
+   "id": "MEASURE-TOOL-COMPOSITION-CONSUMER",
+   "operation": "register",
+   "title": "MEASURE-TOOL must compose and compare through qcore_schemas::composition, as a quirin-audit subcommand",
+   "why": "Seam F's measurement tool (user decision 8: a quirin-audit subcommand plugin) is the intended consumer of the component sidecars card AUDIT-COMPOSITION writes beside every unit report (<report>.components.json, ComponentSidecar). Published baselines should store these components, a profile total is a derivation over them, and a rule's contribution is attribution by Contribution::remove, never a summed total. DISCHARGE: quirin-audit measure reads both sides' sidecars, composes a baseline with a TIP contribution through Contribution::union, reports conflicts (composition-conflict) and per-row derivation changes as its native-comparison record, and its tests reuse the shared vectors of proof/QCore/AuditComposition.lean.",
+   "source": "docs/reports/audit-composition/README.md"
+  },
+  {
+   "id": "COMPOSITION-PROPERTY-AND-CHECKPOINT-ROWS",
+   "operation": "register",
+   "title": "Property rows (null, bounds, outer projection) and checkpoint-composed reports carry no components",
+   "why": "Card AUDIT-COMPOSITION componentizes the unit rows written through AuditReport::write_with_revision_key (pinned, current, configured and contracts-only routes). The checkpoint-composed report (compose.rs, streamed from .qo checkpoints) writes no sidecar, and the null/bounds/outer-projection rows and their summaries are written directly. DISCHARGE: each of these writers derives its rows from a ComponentSidecar as the unit report does, each with an identity run, the checkpoint route's sidecar byte-equal to the uncheckpointed route's.",
+   "source": "docs/reports/audit-composition/README.md"
+  },
+  {
+   "id": "COMPOSITION-ANALYZER-IDENTITY",
+   "operation": "register",
+   "title": "A component's analyzer revision is package@version plus an optional build commit, not the binary digest",
+   "why": "report_components::analyzer_revision (card AUDIT-COMPOSITION) spells qcore-audit@<version>:<QCORE_AUDIT_BUILD_COMMIT or unrecorded-build>. Two different builds without a recorded commit share a provenance key, so joining their contributions surfaces as composition-conflict (fail-closed) rather than as two producers. DISCHARGE: put the analyzer binary's SHA-256 (as checkpoint_run::run_identity takes it) or a mandatory build commit into Provenance, with a test that two differing binaries never share a provenance key.",
+   "source": "docs/reports/audit-composition/README.md"
+  }
+ ]
+}
