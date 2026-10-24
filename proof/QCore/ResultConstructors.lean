@@ -83,7 +83,13 @@ def wrapperNormalResult (asserts : Bool) (allocation : Option Nat) : Option (Opt
 theorem an_asserting_wrapper_never_returns_null (allocation : Option Nat)
     (result : Option Nat) (h : wrapperNormalResult true allocation = some result) :
     result ≠ none := by
-  cases allocation <;> simp_all [wrapperNormalResult]
+  cases allocation with
+  | none => simp [wrapperNormalResult] at h
+  | some identity =>
+    have same : some identity = result := by
+      simpa [wrapperNormalResult] using h
+    rw [← same]
+    simp
 
 theorem an_assert_disabled_wrapper_can_return_null :
     wrapperNormalResult false none = some none := by decide
