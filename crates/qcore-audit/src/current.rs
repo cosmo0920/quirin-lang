@@ -41,37 +41,54 @@ pub fn distinct_configurations(
         .collect()
 }
 
+/// The configurations of a library's declared source roots. Card
+/// AUDIT-CANONICAL-PATHS: records match by located path
+/// ([`crate::input_paths`]) and keep their spelling; a record spelled under
+/// a root that resolves outside it is refused with the route's outside
+/// diagnostic, and two spellings of one file with `input-path-alias`.
 pub fn select_configurations(
     entries: &[CompileEntry],
     checkout: &Path,
     library: &LibraryProfile,
-) -> Vec<CompileEntry> {
-    distinct_configurations(
-        entries
-            .iter()
-            .filter(|entry| {
-                let entry_file = entry
-                    .file
-                    .canonicalize()
-                    .unwrap_or_else(|_| entry.file.clone());
-                entry_file.extension().is_some_and(|ext| ext == "c")
-                    && library.source_roots.iter().any(|root| {
-                        let declared_root =
-                            qcore_contract::profile_loader::source_root_path(checkout, &root.root);
-                        let source_root = declared_root
-                            .canonicalize()
-                            .unwrap_or_else(|_| declared_root.clone());
-                        match &root.selection {
-                            UnitSelection::TopLevel => {
-                                entry_file.parent() == Some(source_root.as_path())
-                            }
-                            UnitSelection::Recursive => entry_file.starts_with(source_root),
-                            UnitSelection::Exact { file } => entry_file == checkout.join(file),
-                        }
-                    })
-            })
-            .cloned(),
-    )
+) -> Result<Vec<CompileEntry>, String> {
+    use crate::input_paths::{Placement, locate, place, select_exact, select_under};
+    let is_c = |entry: &CompileEntry| {
+        locate(&entry.file)
+            .path()
+            .extension()
+            .is_some_and(|ext| ext == "c")
+    };
+    let outside =
+        |entry: &CompileEntry| format!("source outside current checkout: {}", entry.file.display());
+    let mut selected = Vec::new();
+    for root in &library.source_roots {
+        selected.extend(match &root.selection {
+            UnitSelection::TopLevel => select_under(
+                entries,
+                &qcore_contract::profile_loader::source_root_path(checkout, &root.root),
+                |entry, relative| relative.components().count() == 1 && is_c(entry),
+                outside,
+            )?,
+            UnitSelection::Recursive => select_under(
+                entries,
+                &qcore_contract::profile_loader::source_root_path(checkout, &root.root),
+                |entry, _| is_c(entry),
+                outside,
+            )?,
+            UnitSelection::Exact { file } => {
+                let target = checkout.join(file);
+                if place(&target, checkout) == Placement::Escapes {
+                    return Err(format!("source outside current checkout: {file}"));
+                }
+                select_exact(entries, &target)?
+                    .into_iter()
+                    .filter(|entry| is_c(entry))
+                    .collect()
+            }
+        });
+    }
+    crate::input_paths::refuse_aliases(selected.iter().copied())?;
+    Ok(distinct_configurations(selected.into_iter().cloned()))
 }
 
 pub struct CurrentAudit {
@@ -147,10 +164,12 @@ impl CurrentAudit {
         entry: &CompileEntry,
         links: &crate::cross_unit_links::LinkMap,
     ) -> Result<CrossUnitHomeScan, String> {
-        let file = expected_source
-            .strip_prefix(&self.checkout)
-            .map_err(|_| "cross-unit home lies outside checkout")?
-            .to_string_lossy();
+        // Card AUDIT-CANONICAL-PATHS: the home is placed by its located path,
+        // so a record spelled through a moved or symlinked checkout finds its
+        // unit key; one that resolves outside the checkout is still refused.
+        let file = crate::input_paths::relative_within(expected_source, &self.checkout)
+            .ok_or("cross-unit home lies outside checkout")?;
+        let file = file.to_string_lossy();
         let unit_key = format!("{library}/{file}");
         let requested = links.names_for(&unit_key);
         let bytes = std::fs::read(&entry.file).map_err(|error| error.to_string())?;

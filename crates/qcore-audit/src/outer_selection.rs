@@ -410,16 +410,17 @@ pub fn compute_reach(entries: &[CompileEntry]) -> Result<(), String> {
             );
             continue;
         }
+        // Card AUDIT-CANONICAL-PATHS: the loader's unit is found by located
+        // path, and two spellings of it are refused (`input-path-alias`).
+        let targets = paths
+            .iter()
+            .map(|path| crate::input_paths::locate(&root.join(path)))
+            .collect::<Vec<_>>();
         let matching = entries
             .iter()
-            .filter(|entry| {
-                let file = entry
-                    .file
-                    .canonicalize()
-                    .unwrap_or_else(|_| entry.file.clone());
-                paths.iter().any(|path| file == root.join(path))
-            })
+            .filter(|entry| targets.contains(&crate::input_paths::locate(&entry.file)))
             .collect::<Vec<_>>();
+        crate::input_paths::refuse_aliases(matching.iter().copied())?;
         if matching.is_empty() {
             computed.insert(
                 name.clone(),
