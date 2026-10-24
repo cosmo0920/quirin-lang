@@ -1,6 +1,7 @@
 //! Card CONTRACT-INHERIT-QCORE-PROVIDER-NAMING: the executable
 //! `qcore-provider-*` crates on the contract load path (the user's option B),
-//! the eight provider-owned allocator wrappers converted to inheritance, their
+//! the six provider-owned wrappers that retain inheritance, two checked result
+//! specifications, their
 //! real packages' include pins, and inheritance from derived-result parents.
 //!
 //! * The real load path now carries the five `qcore-provider-*` crates, each
@@ -11,8 +12,9 @@
 //!   token after erasing the eight separately validated proposed symbolic
 //!   annotations, to the files as they stood at `2d0b77e1`
 //!   (`fixtures/contract_inherit_qcore_provider/*_hand_written.qcore`); the
-//!   loaded records, ABI projections, premises and tails are equal; and the
-//!   Cycle 19 selection gives an environment equal to the hand-written one.
+//!   loaded records retain parity except for the exact two rule-37 non-null
+//!   results; ABI projections, literal premises and tails remain equal. The
+//!   checked markers and named abort premises are asserted separately.
 //! * The real package inventories pin their included libc parents, and the
 //!   Rust `ContractBundle` accepts the real layout and refuses a changed or a
 //!   missing parent.
@@ -82,17 +84,15 @@ fn libc_text(module: &str) -> String {
 /// One chain link: (child, parent declaration, parent module).
 type Chain = (&'static str, &'static str, &'static str);
 
-/// The eight conversions: (crate, module, hand-written fixture, chains).
+/// The six retained conversions: (crate, module, historical fixture, chains).
 const CONVERSIONS: [(&str, &str, &str, &[Chain]); 2] = [
     (
         LIBRDKAFKA,
         "librdkafka/memory.qv",
         "librdkafka_memory_hand_written.qv",
         &[
-            ("rd_calloc", "calloc", "libc/memory.qv"),
             ("rd_free", "free", "libc/memory.qv"),
             ("rd_malloc", "malloc", "libc/memory.qv"),
-            ("rd_strdup", "strdup", "libc/string.qv"),
             ("rd_strndup", "strndup", "libc/string.qv"),
         ],
     ),
@@ -156,9 +156,51 @@ fn the_executable_crates_are_on_the_load_path_with_derived_namespaces() {
 
 /// The brief's parity standard, per conversion: the elaboration of every
 /// converted declaration is the hand-written declaration it replaced, token for
-/// token (whitespace and comments aside), the loaded records are equal, and
+/// token (whitespace and comments aside), except for the two exact checked
+/// specifications asserted below. Only their result nullability evolves;
 /// each converted declaration has one chain link into the published libc
 /// module whose digest is that module's pin.
+// Rule 37 deliberately changes exactly these two historical nullable results.
+// The frozen fixture stays unchanged; the other six inheritance chains retain
+// their complete token and loaded-record parity.
+fn constructor_result_evolution(
+    mut functions: BTreeMap<String, qcore_schemas::contract::ResourceFunctionContract>,
+) -> BTreeMap<String, qcore_schemas::contract::ResourceFunctionContract> {
+    for name in ["rd_calloc", "rd_strdup"] {
+        if let Some(contract) = functions.get_mut(name) {
+            assert_eq!(
+                contract.result,
+                ResourceReturnMode::Owned { nullable: true }
+            );
+            contract.result = ResourceReturnMode::Owned { nullable: false };
+        }
+    }
+    functions
+}
+
+fn constructor_specification_tokens(name: &str) -> Vec<qcore_frontend::lexer::TokenKind> {
+    let (parameters, borrowed) = match name {
+        "rd_calloc" => (
+            "count: usize, size: usize",
+            "ensures normal resource_borrowed(count); ensures normal resource_borrowed(size);",
+        ),
+        "rd_strdup" => (
+            "str: ptr<const, u8>",
+            "ensures normal resource_borrowed(str);",
+        ),
+        _ => panic!("not a rule-37 checked wrapper"),
+    };
+    let source = format!(
+        r#"module contract; extern fn {name}({parameters}) -> ptr<mut, u8> contract {{ requires resource_contract_v1; requires resource_body_checked; requires resource_premise(asserted_allocation, "the deployed build preserves the analyzed assertion and its declared terminating failure call; allocation failure has no normal return"); {borrowed} ensures normal resource_return_owned(nonnull); }};"#
+    );
+    parse_source_program(&source)
+        .unwrap()
+        .declarations
+        .remove(0)
+        .value
+        .tokens
+}
+
 #[test]
 fn converted_wrappers_elaborate_to_the_hand_written_contracts() {
     let manifest = real_load_path();
@@ -197,6 +239,15 @@ fn converted_wrappers_elaborate_to_the_hand_written_contracts() {
         };
         assert_eq!(names(&after), names(&hand_parsed), "{module}");
         for (a, b) in after.declarations.iter().zip(&hand_parsed.declarations) {
+            if krate == LIBRDKAFKA && matches!(a.value.name.as_str(), "rd_calloc" | "rd_strdup") {
+                assert_eq!(
+                    a.value.tokens,
+                    constructor_specification_tokens(&a.value.name),
+                    "{module}#{}",
+                    a.value.name
+                );
+                continue;
+            }
             assert_eq!(
                 a.value.tokens, b.value.tokens,
                 "{module}#{}: the elaboration is not the hand-written declaration",
@@ -204,14 +255,25 @@ fn converted_wrappers_elaborate_to_the_hand_written_contracts() {
             );
         }
         let after_sources = BTreeMap::from([("m".to_owned(), elaborated.text.clone())]);
+        assert_eq!(
+            qcore_contract::contract_loader::checked_specifications(&after_sources).unwrap(),
+            if krate == LIBRDKAFKA {
+                BTreeSet::from(["rd_calloc".into(), "rd_strdup".into()])
+            } else {
+                BTreeSet::new()
+            }
+        );
         let before_sources = BTreeMap::from([("m".to_owned(), before.clone())]);
         assert_eq!(
             load_resource_contract_sources(&after_sources)
                 .unwrap()
                 .functions(),
-            load_resource_contract_sources(&before_sources)
-                .unwrap()
-                .functions(),
+            &constructor_result_evolution(
+                load_resource_contract_sources(&before_sources)
+                    .unwrap()
+                    .functions()
+                    .clone()
+            ),
             "{module}"
         );
         assert_eq!(
@@ -250,12 +312,12 @@ fn converted_wrappers_elaborate_to_the_hand_written_contracts() {
         // The module's own identity names the owning crate.
         assert_eq!(evidence.module.crate_name, krate);
     }
-    assert_eq!(converted, 8);
+    assert_eq!(converted, 6); // Rule 37: two wrappers are checked specifications.
 }
 
 /// The Cycle 19 manifest selects both converted modules by reference; with the
-/// hand-written modules in their place, the functions and every rederived fact
-/// are equal, the evidence replays, and the chains are published.
+/// historical modules in their place, only the two named result modes evolve;
+/// ABI, literal and tail facts remain equal and retained chains are published.
 #[test]
 fn the_resource_manifest_selects_the_converted_modules_with_equal_meaning() {
     let contracts =
@@ -291,7 +353,10 @@ fn the_resource_manifest_selects_the_converted_modules_with_equal_meaning() {
         );
     }
     let hand_loaded = load_resource_contract_sources(&hand).unwrap();
-    assert_eq!(hand_loaded.functions(), contracts.functions());
+    assert_eq!(
+        &constructor_result_evolution(hand_loaded.functions().clone()),
+        contracts.functions()
+    );
     let adopted = contracts.source_assumptions();
     assert_eq!(
         declared_abi_signatures(&hand).unwrap(),

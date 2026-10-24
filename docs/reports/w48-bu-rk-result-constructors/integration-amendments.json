@@ -1,0 +1,34 @@
+{
+  "card": "W48-BU-RK-RESULT-CONSTRUCTORS",
+  "rule": 37,
+  "status": "Pending validation and TIP attribution; no ledger closure or measured gain proposed yet",
+  "base": "8991b7b58fcbd33da082bbb44e819d47a0fb2561",
+  "semantic_source": "ff2f55698b5d1288d81bd6953a2ff271a73e9db2",
+  "report": "docs/reports/w48-bu-rk-result-constructors/README.md",
+  "root_owned_files": [
+    "docs/STATUS.md",
+    "docs/development/increments/wave-48-part11.md",
+    "docs/reviews/r0_3/acceptance_matrix.json"
+  ],
+  "tracking": [
+    {
+      "id": "W47-ALIAS-NONNULL-ALLOCATOR-RESULTS",
+      "proposed_status": "Open",
+      "amendment": "After passing gates and native attribution, append only measured rd_calloc/rd_strdup observations, with the asserted_allocation assumption and three reviewed source revisions. Preserve the historical W47 census and leave rd_malloc, rd_strndup, libc and other wrappers open."
+    },
+    {
+      "id": "W47-ALIAS-FLOW-RESIDUALS",
+      "proposed_status": "Open",
+      "amendment": "After passing gates and native attribution, append only the measured constructor sizeof/field-store subset. Keep alias, overwrite, shallow-release, evaluated-access, nested-call and unproved call-effect boundaries open."
+    }
+  ],
+  "increment_paragraph": null,
+  "status_paragraph": null,
+  "required_before_acceptance": [
+    "Corrected focused Rust control and matching audited Lean",
+    "Full standing and provider gates with actual exits, counts and private log paths",
+    "Fresh corpus, system and slice TIP runs with stable identities",
+    "Every verdict movement, diagnostic leaf trade and raw provenance difference attributed",
+    "Replace pending paragraphs with measured claims; finish all own background jobs"
+  ]
+}

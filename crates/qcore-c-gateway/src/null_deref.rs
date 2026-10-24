@@ -238,7 +238,8 @@ pub struct NullUnitReport {
     pub source_sha256: String,
     /// The bounds environment's digest (the clauses' source).
     pub contracts_sha256: String,
-    /// The resource environment's digest (result nullability).
+    /// Resource result modes and checked-result metadata; the legacy modes-only
+    /// identity is preserved when no checked non-null result is present.
     pub resource_contracts_sha256: String,
     pub functions: Vec<NullFunctionRow>,
     /// Card NULL-CANDIDATE-TRIAGE: every store to a declared member in the
@@ -722,8 +723,12 @@ impl<'de> serde::de::Visitor<'de> for InnerSeed<'_> {
 
 const ANALYSIS_STACK: usize = 256 << 20;
 
-fn resource_digest(resource: &ResourceContracts) -> String {
-    let bytes = serde_json::to_vec(resource.functions()).unwrap_or_default();
+fn resource_digest(resource: &ResourceContracts, checked_results: &BTreeSet<String>) -> String {
+    let bytes = if checked_results.is_empty() {
+        serde_json::to_vec(resource.functions()).unwrap_or_default()
+    } else {
+        serde_json::to_vec(&(resource.functions(), checked_results)).unwrap_or_default()
+    };
     qcore_schemas::digest::sha256_hex(&bytes)
 }
 
@@ -747,6 +752,28 @@ fn analyze_on_stack(
         .filter(|(_, b)| *b == b'\n')
         .map(|(i, _)| i)
         .collect::<Vec<_>>();
+    // Rule 37: a custody specification is not an unchecked null-result
+    // declaration. Independent null summaries are still derived bottom-up.
+    let checked_results =
+        qcore_contract::contract_loader::declared_checked_specifications(resource)?
+            .into_iter()
+            .filter(|name| {
+                resource.functions().get(name).is_some_and(|contract| {
+                    matches!(
+                        contract.result,
+                        qcore_schemas::contract::ResourceReturnMode::Owned { nullable: false }
+                            | qcore_schemas::contract::ResourceReturnMode::Reallocated {
+                                nullable: false,
+                                ..
+                            }
+                            | qcore_schemas::contract::ResourceReturnMode::Derived {
+                                nullable: false,
+                                ..
+                            }
+                    )
+                })
+            })
+            .collect::<BTreeSet<_>>();
     let declared = declared_clauses(bounds);
     let (members, results) = declared_members_and_results(bounds);
     let (stable, scopes) = scope::declared_stable_and_scopes(bounds);
@@ -786,6 +813,7 @@ fn analyze_on_stack(
         let env = Env {
             unit: &read,
             resource,
+            checked_results: &checked_results,
             declared: &declared,
             summaries: &summaries,
             newlines: &newlines,
@@ -839,7 +867,7 @@ fn analyze_on_stack(
         model_version: core::NULL_MODEL_VERSION,
         source_sha256: qcore_schemas::digest::sha256_hex(preprocessed.as_bytes()),
         contracts_sha256: bounds.digest(),
-        resource_contracts_sha256: resource_digest(resource),
+        resource_contracts_sha256: resource_digest(resource, &checked_results),
         functions: rows,
         member_stores,
         stable_stores,

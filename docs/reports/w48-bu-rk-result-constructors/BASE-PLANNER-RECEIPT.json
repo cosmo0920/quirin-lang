@@ -1,0 +1,394 @@
+{
+  "base": "8991b7b58fcbd33da082bbb44e819d47a0fb2561",
+  "binary_build_source": "1e99901c3bfd7568b0e5081c6cff7be3d8b24702",
+  "binary_sha256": "01a0402f62e9edd1187e644febe132c44c138072d291a2f11aedfe00d4e25fd0",
+  "source_equivalence": "all tracked non-report files identical to launch BASE; private/w48-rk-constructors/base-nonreport-parity.exit=0",
+  "started": "2026-10-23T18:00:47.386282+00:00",
+  "ended": "2026-10-23T19:26:23.099452+00:00",
+  "audit_exit": 0,
+  "input_roundtrip_exit": 0,
+  "diagnostics": {
+    "path": "private/w48-rk-constructors/base-corpus-retry3/resource-diagnostics.json",
+    "sha256": "7ecfe6c218cb05ed8a4de0f6172231ee19b88974d225f6ed545b3754e178cdc5"
+  },
+  "planner": {
+    "path": "private/w48-rk-constructors/base-plan.json",
+    "sha256": "98417b15fe3a5d5a1cdf50af2d015dc79308bb7652a6175bde81a2a944b7ad72",
+    "exit": 0,
+    "baseline_same": 6,
+    "baseline_cross": 6,
+    "ceiling": 383,
+    "bodies": 2200,
+    "positive": 230
+  },
+  "static_custody": {
+    "Unknown": 3826,
+    "Safe": 999,
+    "Unsafe": 9
+  },
+  "replay_rows": 4834,
+  "units": 185,
+  "link_map_sha256": "98a4db761ace9fd4846b000c4c98defdc2e39ce6f95684c67c30f9b8b6f38ad3",
+  "target_planner_rows": [
+    {
+      "body": "rdkafka_admin.c::rd_kafka_ListOffsetsResultInfo_new",
+      "library": "librdkafka",
+      "callers": 3,
+      "frees_same": 2,
+      "frees_cross": 2,
+      "ceiling_callers": 1,
+      "ceiling_alone": 1,
+      "own_leaves": 4,
+      "own_calls": {},
+      "own_families": {
+        "unknown_alias: unresolved resource identity `X`": 2,
+        "unsupported: indirect memory access is outside the resource projection": 1,
+        "unsupported: nullable resource `X` used by a non-null contract": 1
+      },
+      "score": 0.5,
+      "freed": [
+        "rdkafka_admin.c::rd_kafka_ListOffsetsResultInfo_copy",
+        "rdkafka_admin.c::rd_kafka_ListOffsetsResultInfo_copy_opaque"
+      ]
+    },
+    {
+      "body": "rdkafka_partition.c::rd_kafka_topic_partition_new",
+      "library": "librdkafka",
+      "callers": 13,
+      "frees_same": 1,
+      "frees_cross": 2,
+      "ceiling_callers": 2,
+      "ceiling_alone": 1,
+      "own_leaves": 4,
+      "own_calls": {},
+      "own_families": {
+        "unsupported: indirect memory access is outside the resource projection": 2,
+        "unknown_alias: unresolved resource identity `X`": 1,
+        "unsupported: nullable resource `X` used by a non-null contract": 1
+      },
+      "score": 0.5,
+      "freed": [
+        "rdkafka_partition.c::rd_kafka_topic_partition_new_with_id_and_name",
+        "rdunittest_fetcher.c::ut_create_rktpar_with_id"
+      ]
+    },
+    {
+      "body": "rdkafka_aux.c::rd_kafka_topic_partition_result_new",
+      "library": "librdkafka",
+      "callers": 2,
+      "frees_same": 2,
+      "frees_cross": 2,
+      "ceiling_callers": 1,
+      "ceiling_alone": 1,
+      "own_leaves": 5,
+      "own_calls": {},
+      "own_families": {
+        "unsupported: indirect memory access is outside the resource projection": 2,
+        "unknown_alias: unresolved resource identity `X`": 2,
+        "unsupported: nullable resource `X` used by a non-null contract": 1
+      },
+      "score": 0.4,
+      "freed": [
+        "rdkafka_aux.c::rd_kafka_topic_partition_result_copy",
+        "rdkafka_aux.c::rd_kafka_topic_partition_result_copy_opaque"
+      ]
+    },
+    {
+      "body": "rdkafka_admin.c::rd_kafka_ConsumerGroupListing_new",
+      "library": "librdkafka",
+      "callers": 2,
+      "frees_same": 2,
+      "frees_cross": 2,
+      "ceiling_callers": 1,
+      "ceiling_alone": 1,
+      "own_leaves": 6,
+      "own_calls": {},
+      "own_families": {
+        "unsupported: indirect memory access is outside the resource projection": 1,
+        "unknown_alias: unresolved resource identity `X`": 4,
+        "unsupported: nullable resource `X` used by a non-null contract": 1
+      },
+      "score": 0.333,
+      "freed": [
+        "rdkafka_admin.c::rd_kafka_ConsumerGroupListing_copy",
+        "rdkafka_admin.c::rd_kafka_ConsumerGroupListing_copy_opaque"
+      ]
+    },
+    {
+      "body": "rdkafka_admin.c::rd_kafka_ListConsumerGroupsResult_new",
+      "library": "librdkafka",
+      "callers": 4,
+      "frees_same": 2,
+      "frees_cross": 2,
+      "ceiling_callers": 1,
+      "ceiling_alone": 1,
+      "own_leaves": 6,
+      "own_calls": {
+        "rd_list_init_copy": 2,
+        "rd_list_copy_to": 2
+      },
+      "own_families": {
+        "unknown_alias: unresolved resource identity `X`": 1,
+        "unsupported: nullable resource `X` used by a non-null contract": 1
+      },
+      "score": 0.333,
+      "freed": [
+        "rdkafka_admin.c::rd_kafka_ListConsumerGroupsResult_copy",
+        "rdkafka_admin.c::rd_kafka_ListConsumerGroupsResult_copy_opaque"
+      ]
+    },
+    {
+      "body": "rdkafka_partition.c::rd_kafka_topic_partition_list_add0",
+      "library": "librdkafka",
+      "callers": 5,
+      "frees_same": 2,
+      "frees_cross": 2,
+      "ceiling_callers": 2,
+      "ceiling_alone": 1,
+      "own_leaves": 13,
+      "own_calls": {
+        "rd_kafka_topic_partition_list_grow": 1
+      },
+      "own_families": {
+        "unknown_alias: unresolved resource identity `X`": 4,
+        "unsupported: unmodeled increment or decrement expression": 1,
+        "unsupported: indirect memory access is outside the resource projection": 3,
+        "unsupported: use of `X` after its object moved or its parent changed (interior-borrow-ended)": 4
+      },
+      "score": 0.154,
+      "freed": [
+        "rdkafka_partition.c::rd_kafka_topic_partition_list_add",
+        "rdkafka_partition.c::rd_kafka_topic_partition_list_add_range"
+      ]
+    },
+    {
+      "body": "rdkafka_sasl_oauthbearer.c::rd_kafka_oauthbearer_set_token0",
+      "library": "librdkafka",
+      "callers": 2,
+      "frees_same": 0,
+      "frees_cross": 2,
+      "ceiling_callers": 1,
+      "ceiling_alone": 1,
+      "own_leaves": 21,
+      "own_calls": {
+        "rd_kafka_all_brokers_wakeup": 1
+      },
+      "own_families": {
+        "unsupported: unmodeled call, aggregate or indirect access in branch condition": 3,
+        "unsupported: indirect memory access is outside the resource projection": 12,
+        "unknown_alias: unresolved resource identity `X`": 5
+      },
+      "score": 0.095,
+      "freed": [
+        "rdkafka.c::rd_kafka_oauthbearer_set_token",
+        "rdkafka_sasl.c::rd_kafka_share_oauthbearer_set_token"
+      ]
+    },
+    {
+      "body": "rdkafka_request.c::rd_kafka_MetadataRequest0",
+      "library": "librdkafka",
+      "callers": 1,
+      "frees_same": 1,
+      "frees_cross": 2,
+      "ceiling_callers": 1,
+      "ceiling_alone": 1,
+      "own_leaves": 61,
+      "own_calls": {
+        "rd_kafka_broker_ApiVersion_supported": 1,
+        "rd_kafka_buf_new_request0": 1,
+        "rd_kafka_buf_write_i32": 1,
+        "rd_kafka_buf_finalize_arraycnt": 2,
+        "rd_kafka_buf_update_i32": 1,
+        "rd_kafka_buf_destroy_final": 1,
+        "rd_kafka_rebootstrap_tmr_start_maybe": 1,
+        "rd_kafka_buf_write_uuid": 2,
+        "rd_kafka_buf_write_str": 2,
+        "rd_kafka_buf_write_i8": 2,
+        "rd_kafka_buf_write_bool": 3,
+        "rd_kafka_replyq_make": 1,
+        "rd_kafka_broker_buf_enq_replyq": 1
+      },
+      "own_families": {
+        "unknown_alias: unresolved resource identity `X`": 20,
+        "unsupported: indirect memory access is outside the resource projection": 16,
+        "unsupported: unmodeled call, aggregate or indirect access in branch condition": 3,
+        "unsupported: braced initializer, expression, or declaration is not modeled": 1,
+        "unsupported: unmodeled call, aggregate or indirect access in for-loop condition": 2
+      },
+      "score": 0.033,
+      "freed": [
+        "rdkafka_admin.c::rd_kafka_admin_MetadataRequest",
+        "rdkafka_request.c::rd_kafka_MetadataRequest_resp_cb"
+      ]
+    },
+    {
+      "body": "rdkafka.c::rd_kafka_oauthbearer_set_token",
+      "library": "librdkafka",
+      "callers": 1,
+      "frees_same": 0,
+      "frees_cross": 1,
+      "ceiling_callers": 1,
+      "ceiling_alone": 1,
+      "own_leaves": 1,
+      "own_calls": {
+        "rd_kafka_oauthbearer_set_token0": 1
+      },
+      "own_families": {},
+      "score": 1.0,
+      "freed": [
+        "rdkafka_sasl.c::rd_kafka_share_oauthbearer_set_token"
+      ]
+    },
+    {
+      "body": "rdkafka_admin.c::rd_kafka_ConsumerGroupListing_copy",
+      "library": "librdkafka",
+      "callers": 1,
+      "frees_same": 1,
+      "frees_cross": 1,
+      "ceiling_callers": 1,
+      "ceiling_alone": 1,
+      "own_leaves": 1,
+      "own_calls": {
+        "rd_kafka_ConsumerGroupListing_new": 1
+      },
+      "own_families": {},
+      "score": 1.0,
+      "freed": [
+        "rdkafka_admin.c::rd_kafka_ConsumerGroupListing_copy_opaque"
+      ]
+    },
+    {
+      "body": "rdkafka_admin.c::rd_kafka_ListConsumerGroupsResult_copy",
+      "library": "librdkafka",
+      "callers": 1,
+      "frees_same": 1,
+      "frees_cross": 1,
+      "ceiling_callers": 1,
+      "ceiling_alone": 1,
+      "own_leaves": 1,
+      "own_calls": {
+        "rd_kafka_ListConsumerGroupsResult_new": 1
+      },
+      "own_families": {},
+      "score": 1.0,
+      "freed": [
+        "rdkafka_admin.c::rd_kafka_ListConsumerGroupsResult_copy_opaque"
+      ]
+    },
+    {
+      "body": "rdkafka_admin.c::rd_kafka_ListOffsetsResultInfo_copy",
+      "library": "librdkafka",
+      "callers": 1,
+      "frees_same": 1,
+      "frees_cross": 1,
+      "ceiling_callers": 1,
+      "ceiling_alone": 1,
+      "own_leaves": 1,
+      "own_calls": {
+        "rd_kafka_ListOffsetsResultInfo_new": 1
+      },
+      "own_families": {},
+      "score": 1.0,
+      "freed": [
+        "rdkafka_admin.c::rd_kafka_ListOffsetsResultInfo_copy_opaque"
+      ]
+    },
+    {
+      "body": "rdkafka_aux.c::rd_kafka_topic_partition_result_copy",
+      "library": "librdkafka",
+      "callers": 1,
+      "frees_same": 1,
+      "frees_cross": 1,
+      "ceiling_callers": 1,
+      "ceiling_alone": 1,
+      "own_leaves": 1,
+      "own_calls": {
+        "rd_kafka_topic_partition_result_new": 1
+      },
+      "own_families": {},
+      "score": 1.0,
+      "freed": [
+        "rdkafka_aux.c::rd_kafka_topic_partition_result_copy_opaque"
+      ]
+    },
+    {
+      "body": "rdkafka_partition.c::rd_kafka_topic_partition_list_add",
+      "library": "librdkafka",
+      "callers": 35,
+      "frees_same": 1,
+      "frees_cross": 1,
+      "ceiling_callers": 2,
+      "ceiling_alone": 1,
+      "own_leaves": 1,
+      "own_calls": {
+        "rd_kafka_topic_partition_list_add0": 1
+      },
+      "own_families": {},
+      "score": 1.0,
+      "freed": [
+        "rdkafka_partition.c::rd_kafka_topic_partition_list_add_range"
+      ]
+    },
+    {
+      "body": "rdkafka_partition.c::rd_kafka_topic_partition_new_with_id_and_name",
+      "library": "librdkafka",
+      "callers": 1,
+      "frees_same": 0,
+      "frees_cross": 1,
+      "ceiling_callers": 1,
+      "ceiling_alone": 1,
+      "own_leaves": 1,
+      "own_calls": {
+        "rd_kafka_topic_partition_new": 1
+      },
+      "own_families": {},
+      "score": 1.0,
+      "freed": [
+        "rdunittest_fetcher.c::ut_create_rktpar_with_id"
+      ]
+    },
+    {
+      "body": "rdkafka_request.c::rd_kafka_MetadataRequest_resp_cb",
+      "library": "librdkafka",
+      "callers": 1,
+      "frees_same": 0,
+      "frees_cross": 1,
+      "ceiling_callers": 1,
+      "ceiling_alone": 1,
+      "own_leaves": 1,
+      "own_calls": {
+        "rd_kafka_MetadataRequest0": 1
+      },
+      "own_families": {},
+      "score": 1.0,
+      "freed": [
+        "rdkafka_admin.c::rd_kafka_admin_MetadataRequest"
+      ]
+    },
+    {
+      "body": "rdkafka_partition.c::rd_kafka_topic_partition_copy",
+      "library": "librdkafka",
+      "callers": 1,
+      "frees_same": 1,
+      "frees_cross": 1,
+      "ceiling_callers": 1,
+      "ceiling_alone": 1,
+      "own_leaves": 2,
+      "own_calls": {
+        "rd_kafka_topic_partition_new": 1,
+        "rd_kafka_topic_partition_update": 1
+      },
+      "own_families": {},
+      "score": 0.5,
+      "freed": [
+        "rdkafka_partition.c::rd_kafka_topic_partition_copy_void"
+      ]
+    }
+  ],
+  "source_input_captures": {
+    "before": "1c1b3db1996b803b76d1030e2fc08996d49fafb2fc095affb13d87d882a4f8d9",
+    "after": "1c1b3db1996b803b76d1030e2fc08996d49fafb2fc095affb13d87d882a4f8d9"
+  },
+  "configured_BASE": "running with held BASE binary; no provider data will change until both finish",
+  "standing_and_provider_gates": "not run; pending implementation"
+}
