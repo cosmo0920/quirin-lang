@@ -291,6 +291,7 @@ pub(crate) fn admits_descriptor_read(
             plain(destination) && !names.contains(destination)
         }
         LegacyInstruction::ExactFormalReturn { .. }
+        | LegacyInstruction::SelfInitCall { .. }
         | LegacyInstruction::Acquire { .. }
         | LegacyInstruction::BranchOnNull { .. }
         | LegacyInstruction::BranchOnDistinct { .. }

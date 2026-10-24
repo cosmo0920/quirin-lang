@@ -1,4 +1,18 @@
 import QCore.PointerStore
+import QCore.CheckedSelfInitCall
+
+#print axioms QCore.CheckedSelfInitCall.a_missing_source_obligation_refuses
+#print axioms QCore.CheckedSelfInitCall.admitted_call_preserves_every_field
+#print axioms QCore.CheckedSelfInitCall.no_transfer_discharges_an_obligation
+#print axioms QCore.CheckedSelfInitCall.default_entry_refuses
+#print axioms QCore.CheckedSelfInitCall.a_tracked_frame_refuses
+#print axioms QCore.CheckedSelfInitCall.refusal_remains_unknown
+#print axioms QCore.CheckedSelfInitCall.no_ordinary_summary
+#print axioms QCore.CheckedSelfInitCall.no_callback_transport
+#print axioms QCore.CheckedSelfInitCall.no_cross_unit_transport
+#print axioms QCore.CheckedSelfInitCall.no_recursive_assumption
+#print axioms QCore.CheckedSelfInitCall.self_stores_preserve_reference_lifetimes
+#print axioms QCore.CheckedSelfInitCall.shared_flow_vectors
 
 /-! Audited companion to CG11-POINTER-VALUED-STORES (gateway rule 10v). -/
 

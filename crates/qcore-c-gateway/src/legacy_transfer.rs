@@ -856,6 +856,8 @@ impl AbstractState {
 /// claims about the call, and [`crate::legacy_summary`] checks that claim.
 #[derive(Clone, Debug, Default)]
 pub(crate) struct EntryCustody {
+    /// Rule 36a. Internal checked-frame activation, never contract data.
+    pub(crate) allow_self_init_frame: bool,
     pub(super) state: AbstractState,
     /// Abstract site bound to each formal parameter, when the contract gives
     /// that parameter observable custody. `None` for `Borrowed`/`Out` modes.
@@ -905,6 +907,7 @@ impl EntryCustody {
         }
         let base = first_free_site(cfg);
         let mut custody = Self {
+            allow_self_init_frame: false,
             state: AbstractState::default(),
             parameter_sites: vec![None; parameters.len()],
             out_slots: vec![None; parameters.len()],
@@ -1777,6 +1780,7 @@ impl TransferContext<'_> {
 /// here, and every permission it adds is re-checked at the exits.
 #[derive(Default)]
 pub(super) struct TransferContext<'a> {
+    pub(super) allow_self_init_frame: bool,
     /// No new link state is carried by functions without a checked call.
     pub(super) lookup_tracking: bool,
     pub(super) lookup_pointer_records: BTreeMap<String, String>,
@@ -1884,6 +1888,7 @@ fn analyze_cfg_with_entry_collected(
     entry_custody: &EntryCustody,
 ) -> (LegacyFunctionSummary, Vec<ExitObservation>) {
     let context = TransferContext {
+        allow_self_init_frame: entry_custody.allow_self_init_frame,
         lookup_tracking: cfg.nodes.iter().any(|node| node.lookup.is_some())
             || entry_custody.selection.is_some(),
         lookup_pointer_records: cfg
@@ -2774,6 +2779,13 @@ pub(super) fn transfer_dispatch(
     };
     match &node.instruction {
         // Card W45-SUB-OBJECT-STORES.
+        LegacyInstruction::SelfInitCall { base: actual, fallback, .. } => {
+            if self_link_init::admits(&state, actual, context.allow_self_init_frame) {
+                state
+            } else {
+                base(&LegacyCfgNode { instruction: *fallback.clone(), ..node.clone() }, state, diagnostics)
+            }
+        }
         LegacyInstruction::SubObjectStore { .. } => {
             sub_object_store::transfer(function, node, state, context, alias, diagnostics, &base)
         }
@@ -4398,6 +4410,9 @@ pub(super) fn transfer_base(
         // Card CG11-POINTER-VALUED-STORES: decided by [`transfer`].
         LegacyInstruction::PointerStore { .. } => {
             unreachable!("pointer stores are transferred by `transfer`")
+        }
+        LegacyInstruction::SelfInitCall { .. } => {
+            unreachable!("checked initializer calls are transferred by dispatch")
         }
     }
     // O04-B09B10: a custody-taking member read handed the linked child to the

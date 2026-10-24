@@ -844,6 +844,13 @@ pub enum LegacyInstruction {
         source: String,
         parameter: usize,
     },
+    /// Rule 36a: a source-checked initializer leaf, conditional on the
+    /// private row's empty custody frame. Never an ordinary call summary.
+    SelfInitCall {
+        function: String,
+        base: String,
+        fallback: Box<LegacyInstruction>,
+    },
 }
 
 /// Card **W43-INDEX-TRAVERSAL**: what a pointer step does to the pointer's
@@ -3524,6 +3531,10 @@ fn analyze_defined_function_unscoped(
         // Card DETACH-RESULT-WRAPPER-COMPOSITION (rule 33): a validated
         // selection frame is decided under its selection entry; a run that
         // does not validate falls back to the contract-free analysis.
+        None if derivation.self_init_frame(function) => {
+            self_link_init::row(tokens, function, derivation.environment(), cfg.clone())
+                .unwrap_or_else(|| analyze_cfg(cfg))
+        }
         None if let Some(frame) = derivation.selection(function) => {
             match function_parameters(tokens, function)
                 .and_then(|parameters| selection_route::row(cfg.clone(), &parameters, frame))
@@ -4033,6 +4044,7 @@ fn build_function_cfg_unscoped(
     member_release::oblige_member_null_tests(&mut cfg);
     lookup_route::settle(&mut cfg, tokens, function);
     lookup_route::settle_calls(&mut cfg, tokens, contracts);
+    self_link_init::restore_unreachable(&mut cfg);
     Ok(cfg)
 }
 
@@ -5745,6 +5757,8 @@ pub(crate) use self::cfg_builder::*;
 // observations and the flow analysis over a CFG.
 #[path = "legacy_exact_formal_return.rs"]
 pub(crate) mod exact_formal_return;
+#[path = "legacy_self_link_init.rs"]
+pub(crate) mod self_link_init;
 
 #[path = "legacy_transfer.rs"]
 mod transfer;

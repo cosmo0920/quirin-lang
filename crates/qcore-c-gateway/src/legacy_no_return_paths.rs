@@ -83,6 +83,9 @@ pub(super) fn called(instruction: &LegacyInstruction, out: &mut Vec<String>) {
             called(access, out);
             called(fallback, out);
         }
+        LegacyInstruction::SelfInitCall { function, .. } => {
+            out.push(function.clone());
+        }
         LegacyInstruction::Acquire { .. }
         | LegacyInstruction::Alias { .. }
         | LegacyInstruction::Clear { .. }

@@ -628,6 +628,9 @@ fn mutation(instruction: &LegacyInstruction) -> Mutation {
         LegacyInstruction::Release { source } => {
             Mutation::Names(root_of(source).into_iter().collect())
         }
+        LegacyInstruction::SelfInitCall { base, .. } => {
+            Mutation::Names(root_of(base).into_iter().collect())
+        }
         LegacyInstruction::Alias { destination, .. }
         | LegacyInstruction::Clear { destination }
         | LegacyInstruction::OpaqueValue { destination, .. } => {

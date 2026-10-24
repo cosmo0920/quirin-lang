@@ -181,9 +181,14 @@ pub(crate) struct CustodyDerivation {
     /// `ResourceFunctionContract`: callers read them only by expansion, so no
     /// other route, unit or fresh-result reading sees the selected child.
     selections: BTreeMap<String, crate::legacy_c::selection_route::Frame>,
+    /// Rule 36a: private checked rows, never ordinary custody summaries.
+    self_init_frames: BTreeSet<String>,
 }
 
 impl CustodyDerivation {
+    pub(crate) fn self_init_frame(&self, function: &str) -> bool {
+        self.self_init_frames.contains(function)
+    }
     pub(crate) fn contextual_cfg(&self, function: &str) -> Option<&LegacyCfg> {
         self.contextual.get(function)
     }
@@ -594,6 +599,28 @@ pub(crate) fn derive_custody_summaries(
                 members: component,
                 outcome,
             });
+        }
+    }
+    // Run only after every older route. No environment or summary is installed.
+    for name in names {
+        let checked = crate::contract_dependencies::within(name, || {
+            if contracts.contract(name).is_some()
+                || contracts.has_guarded_interface(name)
+                || derivation.environment.contract(name).is_some()
+                || derivation.environment.has_guarded_interface(name)
+                || derivation.selections.contains_key(name)
+                || !crate::legacy_c::self_link_init::candidate(tokens, name, &derivation.environment)
+            {
+                return false;
+            }
+            let Ok(cfg) = build_function_cfg(tokens, name, &derivation.environment) else {
+                return false;
+            };
+            crate::legacy_c::self_link_init::has_call(&cfg)
+                && crate::legacy_c::self_link_init::row(tokens, name, &derivation.environment, cfg).is_some()
+        });
+        if checked {
+            derivation.self_init_frames.insert(name.clone());
         }
     }
     premises::record_derivation(&plan, &derivation.inferred, contracts);
@@ -1448,7 +1475,9 @@ pub(crate) fn observations_match_contract(
     }
     // Card CG11-POINTER-VALUED-STORES (rule 10v): a body that overwrote a slot
     // of an untracked object tells no caller its formal was borrowed.
-    if crate::pointer_store::has_pointer_store(&summary.cfg) {
+    if crate::pointer_store::has_pointer_store(&summary.cfg)
+        || crate::legacy_c::self_link_init::has_call(&summary.cfg)
+    {
         return false;
     }
     // (2) A function with no reachable exit describes no call behavior.

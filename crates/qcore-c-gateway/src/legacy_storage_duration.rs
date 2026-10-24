@@ -284,6 +284,7 @@ fn custody_names(instruction: &LegacyInstruction) -> Vec<(&str, bool)> {
         Release { source } | Escape { source } | ExactFormalReturn { source, .. } => {
             vec![(source, false)]
         }
+        SelfInitCall { base, .. } => vec![(base, false)],
         ContractCall {
             destination,
             arguments,

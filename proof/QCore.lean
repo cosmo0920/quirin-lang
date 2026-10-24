@@ -320,6 +320,7 @@ import QCore.AggregateValue
 import QCore.CallInstantiation
 import QCore.ValueConnectives
 import QCore.PointerStore
+import QCore.CheckedSelfInitCall
 import QCore.UnionBitfieldPlace
 import QCore.ConditionAcquisition
 import QCore.LoopSiteGenerations
