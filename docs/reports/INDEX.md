@@ -493,6 +493,8 @@ Regenerate with `python3 scripts/build_docs_index.py`; validate with `--check`.
 
 | [gapo-return-correctness](gapo-return-correctness/README.md) | GAPO-RETURN-CORRECTNESS |
 
+| [gate-elastic](gate-elastic/README.md) | GATE-ELASTIC |
+
 | [gateway-analysis-path-optimization](gateway-analysis-path-optimization/README.md) | GATEWAY-ANALYSIS-PATH-OPTIMIZATION: the analysis paths mapped, made explicit and faster, verdict-identical |
 
 | [gateway-c-location](gateway-c-location/README.md) | GATEWAY-C-LOCATION — a gateway diagnostic names the C a person wrote — 2026-09-12 |

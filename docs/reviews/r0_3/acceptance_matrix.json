@@ -6858,10 +6858,10 @@
   "note": "providers/ is a separate Cargo workspace, excluded from the core workspace; P01 verified empirically that the core workspace builds and passes its full suite with providers/ moved out of the tree."
  },
  "validation": {
-  "note": "Merged-source standing/provider gate at 4d8d85976117f1eaaadd2fc37aef5a3bb172c259 (merge of main f00264193 and card 7d4ced73d), all 19 commands exit 0. Root Rust 550 units / 563 summaries, 8645 passed / 0 failed / 15 ignored. Card's isolated gate had 8593 passed; the merged measurement owns its actual count and does not rewrite that checkpoint. No combined native measurement is claimed. The adjacent Clang recording comes from this exact gate run. Full commands, source guards and private logs are in command-receipt.json.",
+  "note": "Full LANDING gate for GATE-ELASTIC at integration commit 66aa16683 (merge of card/gate-elastic bbd0e48d0 onto main 52c8dd71b), run with the card's own `scripts/gate_scope.py --base 52c8dd71b --full --no-slots` under the legacy lock in a detached worktree; logs and gate.json retired to private/retired-worktrees/2026-10-25-landing-gate-66aa16683/. fmt, Clippy -D warnings, Rust 8645 passed/0 failed/15 ignored (550 units/563 summaries), both reevaluation examples and 370 Lean audits exit 0. The Python suite failed exactly one test, the committed-matrix self-consistency check (dimensions.named_followups 820 vs 827), because the seven registered follow-ups were applied before this regeneration; this regeneration closes it and Python is rerun against the committed matrix. providers/ is unchanged relative to main 52c8dd71b, whose own landing ran the provider gate: provider_tests 133 is carried.",
   "workspace_tests": 8645,
   "provider_tests": 133,
-  "python_evidence_validator_tests": 374,
+  "python_evidence_validator_tests": 432,
   "lean_audits": 371,
   "lean_audit_files": [
    "AuditAbiEnumConstPointer.lean",
@@ -7240,7 +7240,7 @@
   "reevaluation_followup_exit": 0,
   "cargo_fmt": "clean",
   "cargo_clippy": "clean",
-  "standing_gate": "complete",
+  "standing_gate": "full landing gate at 66aa16683; Python rerun after matrix regeneration",
   "full_language_conformance": false,
   "measurement_provenance": "carried_from_previous_matrix: these numbers were NOT measured for this regeneration; pass --gate PATH with the standing-gate results of this checkpoint to replace them"
  },
