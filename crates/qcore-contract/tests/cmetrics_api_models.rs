@@ -89,7 +89,12 @@ fn eight_source_audited_api_models_are_retained_without_interpreted_permissions(
 #[test]
 fn lifecycle_witnesses_match_the_audited_lean_model() {
     let committed = [1_u32, 2];
-    let can_exit = |stored: &[u32], owned: &[u32]| stored.iter().all(|id| owned.contains(id));
+    let can_exit = |stored: &[u32], owned: &[u32]| {
+        stored
+            .iter()
+            .enumerate()
+            .all(|(i, id)| !stored[..i].contains(id) && owned.contains(id))
+    };
     let valid = |live: bool, epoch: u32, issued: u32, primary: &[u32], child: Option<u32>| {
         live && epoch == issued && child.is_none_or(|id| primary.contains(&id))
     };
@@ -106,15 +111,16 @@ fn lifecycle_witnesses_match_the_audited_lean_model() {
         valid(true, 1, 0, &[], Some(8)),
         attached.contains(&8),
         trusted,
+        can_exit(&[1, 1], &[1]),
     ];
     assert_eq!(
         actual,
         [
-            true, false, true, true, true, false, false, false, true, false
+            true, false, true, true, true, false, false, false, true, false, false
         ]
     );
     let lean = include_str!("../../../proof/QCore/CmetricsApiContracts.lean");
-    assert!(lean.contains("[true,false,true,true,true,false,false,false,true,false]"));
+    assert!(lean.contains("[true,false,true,true,true,false,false,false,true,false,false]"));
     // A NULL result after attachment is compatible with a live parent-owned
     // child; a failed initialization also retains its committed cleanup set.
     let returned: Option<u32> = None;

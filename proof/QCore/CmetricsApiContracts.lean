@@ -16,7 +16,8 @@ def partialInit (committed : List Nat) : Opts :=
   { stored := committed, owned := committed }
 
 def canExit (o : Opts) : Bool :=
-  o.storageLive && o.stored.all (fun id => o.owned.contains id)
+  o.storageLive && decide o.stored.Nodup &&
+    o.stored.all (fun id => o.owned.contains id)
 
 def cleanup (o : Opts) : Option Opts :=
   if canExit o then some { o with owned := [] } else none
@@ -133,9 +134,10 @@ def vectors : List Bool :=
    borrowValid (destroy { primary := [8] }) ⟨0, some 8⟩,
    borrowValid (expire { primary := [8] } [8]) ⟨0, some 8⟩,
    (failedGetAfterAttach {} 8).1.primary.contains 8,
-   modelPermission true]
+   modelPermission true,
+   canExit (partialInit [1,1])]
 
 theorem shared_vectors : vectors =
-    [true,false,true,true,true,false,false,false,true,false] := by decide
+    [true,false,true,true,true,false,false,false,true,false,false] := by decide
 
 end QCore.CmetricsApiContracts
