@@ -1,0 +1,302 @@
+"""Scope mapping of the scoped card gate (card GATE-ELASTIC)."""
+import json
+import os
+from pathlib import Path
+import re
+import shutil
+import subprocess
+import sys
+import tempfile
+import unittest
+
+sys.path.insert(0, str(Path(__file__).resolve().parents[1]))
+import gate_scope as scope_mod  # noqa: E402
+from gate_scope import Crate, Model  # noqa: E402
+
+REPO_ROOT = Path(__file__).resolve().parents[2]
+
+
+def crate(name, directory, deps=(), workspace="root"):
+    return Crate(name, workspace, directory, set(deps))
+
+
+# A small synthetic repository: crates, sources and fixtures, all in memory.
+CRATES = [
+    crate("qcore-core", "crates/qcore-core"),
+    crate("alpha", "crates/alpha", deps=["qcore-core"]),
+    crate("beta", "crates/beta", deps=["alpha"]),
+    crate("gamma", "crates/gamma"),
+    crate("delta", "crates/delta", deps=["gamma"]),
+    crate("qcore-compiler", "compiler", deps=["alpha"]),
+    crate("prov", "providers/prov", deps=["gamma"], workspace="providers"),
+]
+FILES = {
+    "crates/qcore-core/src/lib.rs": "pub fn core() {}\n",
+    "crates/alpha/src/lib.rs": "pub fn alpha() {}\n",
+    "crates/alpha/tests/fixtures/ct07/case.qr": "fn main() {}\n",
+    "crates/alpha/tests/fixtures/ct07/expected.json": "{}\n",
+    "crates/beta/src/lib.rs": "pub fn beta() {}\n",
+    # gamma's test reads alpha's fixture by include_str!: the fixture reader.
+    "crates/gamma/src/lib.rs": "pub fn gamma() {}\n",
+    "crates/gamma/tests/reads_fixture.rs": (
+        'const CASE: &str = include_str!("../../alpha/tests/fixtures/ct07/case.qr");\n'
+        '#[path = "../../../tests/support/helper.rs"]\nmod helper;\n'
+    ),
+    "crates/delta/src/lib.rs": "pub fn delta() {}\n",
+    "compiler/src/lib.rs": "pub fn compile() {}\n",
+    "compiler/tests/examples.rs": (
+        'fn root() -> std::path::PathBuf { std::path::PathBuf::from(env!("CARGO_MANIFEST_DIR"))'
+        '.join("..") }\n'
+        'fn examples() -> std::path::PathBuf { root().join("examples") }\n'
+    ),
+    "compiler/examples/inventory.rs": 'const A: &str = "docs/reports/x";\n',
+    # The helper reached through #[path] reads its own sibling by include_str!.
+    "tests/support/helper.rs": 'pub const DATA: &str = include_str!("helper.json");\n',
+    "tests/support/helper.json": "{}\n",
+    "examples/hello.qr": "fn main() {}\n",
+    "docs/reports/x/README.md": "# x\n",
+    "docs/agents/validation.md": "# gate\n",
+    "contract/orphan.qv": "fn orphan();\n",
+    "providers/prov/src/main.rs": "fn main() {}\n",
+    "providers/package.py": "\n",
+    "scripts/tool.py": "\n",
+    "proof/QCore.lean": "import QCore.A\nimport QCore.B\n",
+    "proof/QCore/A.lean": "import Init\n",
+    "proof/QCore/B.lean": "import QCore.A\n",
+    "proof/QCore/C.lean": "import Init\n",
+    "proof/AuditA.lean": "import QCore.A\n",
+    "proof/AuditB.lean": "import QCore.B\n",
+    "proof/AuditC.lean": "import QCore.C\n",
+    "proof/AuditAll.lean": "import QCore\n",
+    "proof/lakefile.toml": "name = \"qcore\"\n",
+}
+
+
+def model(granularity="directory", files=FILES):
+    return Model(CRATES, sorted(files), read_text=lambda path: files[path],
+                 granularity=granularity)
+
+
+def plan(paths, granularity="directory", files=FILES, **kwargs):
+    return scope_mod.plan(paths, model(granularity, files), exists=lambda p: p in files,
+                          read_text=lambda p: files[p], **kwargs)
+
+
+class OwnershipAndReverseDependencies(unittest.TestCase):
+    def test_reverse_dependencies_are_closed_over(self):
+        scope = plan(["crates/gamma/src/lib.rs"])
+        self.assertEqual(scope["mode"], "scoped")
+        self.assertEqual(sorted(scope["affected"]), ["delta", "gamma", "prov"])
+        self.assertEqual(scope["affected"]["delta"], ["depends on gamma"])
+        self.assertEqual(scope["affected"]["gamma"], ["owns crates/gamma/src/lib.rs"])
+        # Provider members are gated by the provider gate, not by the root suite.
+        self.assertEqual(scope["rust_packages"], ["delta", "gamma"])
+        self.assertFalse(scope["provider_gate"])
+        self.assertEqual(scope["provider_members_reached_without_providers_change"], ["prov"])
+
+    def test_transitive_reverse_dependency(self):
+        scope = plan(["crates/alpha/src/lib.rs"])
+        self.assertEqual(sorted(scope["affected"]), ["alpha", "beta", "qcore-compiler"])
+        self.assertTrue(scope["probes"], "qcore-compiler is affected, so the probes run")
+        self.assertNotIn("gamma", scope["affected"])
+
+    def test_an_unrelated_crate_is_not_selected(self):
+        scope = plan(["crates/beta/src/lib.rs"])
+        self.assertEqual(sorted(scope["affected"]), ["beta"])
+        self.assertFalse(scope["probes"])
+
+
+class FixtureReaders(unittest.TestCase):
+    def test_a_fixture_read_by_include_str_belongs_to_the_reading_crate(self):
+        scope = plan(["crates/alpha/tests/fixtures/ct07/case.qr"])
+        self.assertIn("gamma", scope["affected"])
+        reasons = " ".join(scope["affected"]["gamma"])
+        self.assertIn("include_str!", reasons)
+        self.assertIn("crates/gamma/tests/reads_fixture.rs:1", reasons)
+        # ...and its reverse dependencies follow.
+        self.assertIn("delta", scope["affected"])
+
+    def test_the_read_directory_belongs_to_the_reader_by_default(self):
+        sibling = "crates/alpha/tests/fixtures/ct07/expected.json"
+        self.assertIn("gamma", plan([sibling])["affected"])
+        self.assertNotIn("gamma", plan([sibling], granularity="file")["affected"])
+
+    def test_a_path_module_and_its_own_includes_belong_to_the_compiling_crate(self):
+        scope = plan(["tests/support/helper.rs"])
+        self.assertIn("compiles it via #[path]", " ".join(scope["affected"]["gamma"]))
+        # helper.rs is compiled by gamma, so its include_str! is gamma's read.
+        scope = plan(["tests/support/helper.json"], granularity="file")
+        self.assertIn("gamma", scope["affected"])
+        self.assertEqual(scope["mode"], "scoped")
+
+    def test_a_runtime_join_names_a_directory(self):
+        scope = plan(["examples/hello.qr"])
+        self.assertIn("qcore-compiler", scope["affected"])
+        self.assertIn('names examples in a string literal',
+                      " ".join(scope["affected"]["qcore-compiler"]))
+
+    def test_an_example_s_runtime_literal_is_not_a_test_read(self):
+        scope = plan(["docs/reports/x/README.md"])
+        self.assertEqual(scope["affected"], {})
+
+
+class FullSuiteTriggers(unittest.TestCase):
+    def test_a_core_crate_forces_the_full_suite(self):
+        scope = plan(["crates/qcore-core/src/lib.rs"])
+        self.assertEqual(scope["mode"], "full")
+        self.assertIn("the diff reaches qcore-core", scope["full_reasons"])
+        root_members = sorted(c.name for c in CRATES if c.workspace == "root")
+        self.assertEqual(scope["rust_packages"], root_members)
+
+    def test_each_named_core_crate_is_a_trigger(self):
+        self.assertEqual(scope_mod.FULL_CRATES,
+                         ("qcore-c-gateway", "qcore-core", "qcore-contract", "qcore-schemas"))
+
+    def test_workspace_files_and_the_runner_force_the_full_suite(self):
+        for path in ("Cargo.lock", "Cargo.toml", "scripts/run_test_binaries.py",
+                     "scripts/gate_scope.py"):
+            scope = plan([path], files={**FILES, path: ""})
+            self.assertEqual(scope["mode"], "full", path)
+
+    def test_an_unowned_unread_input_fails_closed_to_full(self):
+        scope = plan(["contract/orphan.qv"])
+        self.assertEqual(scope["mode"], "full")
+        self.assertIn("fail-closed", scope["full_reasons"][0])
+
+    def test_prose_and_python_alone_select_no_crate(self):
+        scope = plan(["docs/agents/validation.md", "scripts/tool.py"])
+        self.assertEqual(scope["mode"], "scoped")
+        self.assertEqual(scope["rust_packages"], [])
+        self.assertEqual(scope_mod.steps_for(scope, Path("/o"))[-1].name, "python")
+
+    def test_forced_full(self):
+        self.assertEqual(plan(["docs/agents/validation.md"], force_full=True)["mode"], "full")
+
+
+class LeanPlanning(unittest.TestCase):
+    def test_a_module_change_selects_its_importers_and_their_audits(self):
+        lean = plan(["proof/QCore/A.lean"])["lean"]
+        self.assertEqual(lean["mode"], "modules")
+        self.assertEqual(lean["modules"], ["QCore.A", "QCore.B"])
+        self.assertEqual(lean["audits"], ["AuditA.lean", "AuditB.lean"])
+
+    def test_an_audit_change_selects_that_audit(self):
+        lean = plan(["proof/AuditC.lean"])["lean"]
+        self.assertEqual((lean["modules"], lean["audits"]), ([], ["AuditC.lean"]))
+
+    def test_roots_configuration_deletion_and_the_runner_select_everything(self):
+        for path in ("proof/QCore.lean", "proof/AuditAll.lean", "proof/lakefile.toml",
+                     "proof/QCore/Gone.lean", "scripts/check_lean_audits.py",
+                     "scripts/gate_lean.py"):
+            self.assertEqual(plan([path])["lean"]["mode"], "all", path)
+
+    def test_no_proof_change_no_lean_step(self):
+        self.assertEqual(plan(["crates/beta/src/lib.rs"])["lean"]["mode"], "none")
+
+
+class Steps(unittest.TestCase):
+    def test_scoped_steps_restrict_the_suite_and_clippy(self):
+        scope = plan(["crates/gamma/src/lib.rs"])
+        steps = {s.name: s for s in scope_mod.steps_for(scope, Path("/o"))}
+        suite = steps["rust-suite"]
+        self.assertEqual(suite.slot, "rust-suite")
+        self.assertIn("--packages", suite.argv)
+        self.assertEqual(suite.argv[suite.argv.index("--packages") + 1], "delta,gamma")
+        self.assertEqual(steps["clippy"].argv[:6], ["cargo", "clippy", "-p", "delta", "-p", "gamma"])
+        self.assertNotIn("lean", steps)
+        self.assertNotIn("provider-test", steps)
+
+    def test_full_steps_are_the_standing_gate_commands(self):
+        scope = plan(["crates/qcore-core/src/lib.rs", "proof/QCore.lean"])
+        steps = {s.name: s for s in scope_mod.steps_for(scope, Path("/o"))}
+        self.assertNotIn("--packages", steps["rust-suite"].argv)
+        self.assertEqual(steps["clippy"].argv,
+                         ["cargo", "clippy", "--all-targets", "--", "-D", "warnings"])
+        self.assertEqual(steps["fmt"].argv, ["cargo", "fmt", "--all", "--", "--check"])
+        self.assertTrue(steps["lean"].argv[-1].endswith("check_lean_audits.py"))
+        self.assertEqual(steps["lean"].slot, "lean")
+        self.assertIn("probe-reevaluation_probe", steps)
+        self.assertIn("probe-reevaluation_followup", steps)
+
+    def test_a_providers_change_runs_the_provider_gate_under_the_suite_slot(self):
+        scope = plan(["providers/package.py"])
+        self.assertTrue(scope["provider_gate"])
+        steps = {s.name: s for s in scope_mod.steps_for(scope, Path("/o"))}
+        self.assertEqual(steps["provider-test"].slot, "rust-suite")
+        self.assertIn("/o/provider-packages", steps["provider-package-build"].argv)
+
+    def test_provider_commands_equal_the_provider_readme_block(self):
+        text = (REPO_ROOT / "providers" / "README.md").read_text(encoding="utf-8")
+        section = text.split("## Build, verify and reproduce", 1)[1]
+        block = re.findall(r"```sh\r?\n(.*?)```", section, re.S)[0]
+        self.assertEqual([line for line in block.splitlines() if line.strip()],
+                         list(scope_mod.PROVIDER_COMMANDS))
+
+
+class GitDiff(unittest.TestCase):
+    def git(self, root, *args):
+        subprocess.run(["git", "-C", str(root), *args], check=True, capture_output=True,
+                       env={**os.environ, "GIT_AUTHOR_NAME": "t", "GIT_AUTHOR_EMAIL": "t@t",
+                            "GIT_COMMITTER_NAME": "t", "GIT_COMMITTER_EMAIL": "t@t"})
+
+    def test_both_sides_of_a_rename_and_uncommitted_paths_are_in_scope(self):
+        if shutil.which("git") is None:
+            self.skipTest("git is not installed")
+        with tempfile.TemporaryDirectory() as directory:
+            root = Path(directory)
+            self.git(root, "init", "-q")
+            (root / "old.txt").write_text("same content\n" * 20)
+            (root / "keep.txt").write_text("k\n")
+            self.git(root, "add", ".")
+            self.git(root, "commit", "-qm", "base")
+            base = subprocess.run(["git", "-C", str(root), "rev-parse", "HEAD"],
+                                  capture_output=True, text=True, check=True).stdout.strip()
+            self.git(root, "mv", "old.txt", "new.txt")
+            self.git(root, "commit", "-qm", "rename")
+            (root / "keep.txt").write_text("changed\n")
+            (root / "untracked.txt").write_text("u\n")
+            base_sha, _, committed, uncommitted = scope_mod.diff_paths(base, root)
+            self.assertEqual(base_sha, base)
+            self.assertEqual(committed, ["new.txt", "old.txt"])
+            self.assertEqual(uncommitted, ["keep.txt", "untracked.txt"])
+
+    def test_an_unknown_base_refuses(self):
+        with self.assertRaises(scope_mod.ScopeError):
+            scope_mod.diff_paths("no-such-revision-gate-elastic", REPO_ROOT)
+
+
+@unittest.skipIf(shutil.which("cargo") is None, "cargo is not installed")
+class RealRepository(unittest.TestCase):
+    """The scanner over this repository finds the readers named in the records."""
+
+    @classmethod
+    def setUpClass(cls):
+        cls.model = Model(scope_mod.load_crates(), scope_mod.tracked_files())
+
+    def test_both_workspaces_are_mapped(self):
+        names = self.model.crates
+        self.assertEqual(names["qcore-compiler"].directory, "compiler")
+        self.assertEqual(names["qcore-provider-conformance"].workspace, "providers")
+        self.assertIn("qcore-audit", self.model.reverse["qcore-c-gateway"])
+        self.assertIn("qcore-provider-conformance", self.model.reverse["qcore-audit"])
+
+    def test_known_cross_crate_readers_are_found(self):
+        readers = {(r.crate, r.kind) for r in self.model.readers_of(
+            "crates/qcore-c-gateway/tests/fixtures/contracts/q_base.qv")}
+        self.assertIn(("qcore-compiler", "include_str"), readers)
+        readers = {r.crate for r in self.model.readers_of("tests/support/tracked_files.rs")}
+        self.assertLessEqual({"qcore-c-gateway", "qcore-compiler", "qcore-provider-conformance"},
+                             readers)
+        # CT-FIXTURE-EXTERNAL-READERS' own example: write_lend.rs reads CT07.
+        sources = {r.source.split(":")[0] for r in self.model.readers_of(
+            "compiler/tests/fixtures/ct/CT07/case.qr") if r.kind == "include_str"}
+        self.assertIn("compiler/tests/write_lend.rs", sources)
+
+    def test_the_census_is_json(self):
+        census = scope_mod.cross_crate_readers(self.model)
+        self.assertTrue(census["reads"])
+        json.dumps(census)
+
+
+if __name__ == "__main__":
+    unittest.main()
