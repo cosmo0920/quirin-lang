@@ -1087,6 +1087,8 @@ const EXPECTED_CONTRACTS: &[(&str, &str, usize)] = &[
     ("libc/threads.qv", "pthread_sigmask", 6),
     // CG22-CALLBACK-REGISTRY-CONTRACT: a synchronous initialiser.
     ("libc/threads.qv", "pthread_once", 6),
+    // W48-BU-EXTERNAL-CALLEE-CONTRACTS: marker, flexible revision, scalar result.
+    ("libc/threads.qv", "thrd_current", 3),
     ("libc/time.qv", "time", 4),
     ("libc/time.qv", "timegm", 4),
     ("libc/time.qv", "gmtime_r", 5),
@@ -1118,6 +1120,8 @@ const EXPECTED_CONTRACTS: &[(&str, &str, usize)] = &[
     // flexible, the premise `cmd == 2`, two borrowed parameters, the data
     // tail and `none` (7).
     ("libc/unistd.qv", "fcntl", 7),
+    // W48-BU-EXTERNAL-CALLEE-CONTRACTS: two markers, three borrows, no custody result.
+    ("libc/unistd.qv", "writev", 6),
     ("library/custody_evidence.qv", "publish_library_resource", 6),
     ("library/custody_evidence.qv", "handoff_library_resource", 6),
     ("library/custody_evidence.qv", "reclaim_library_resource", 6),

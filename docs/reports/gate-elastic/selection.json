@@ -1,0 +1,438 @@
+{
+ "schema": "gate-elastic-selection/1",
+ "rows": [
+  {
+   "path": "docs/agents/validation.md",
+   "granularity": "directory",
+   "mode": "scoped",
+   "rust_packages": [],
+   "lean": "none",
+   "provider_gate": false,
+   "full_reasons": []
+  },
+  {
+   "path": "docs/reports/gate-elastic/README.md",
+   "granularity": "directory",
+   "mode": "scoped",
+   "rust_packages": [],
+   "lean": "none",
+   "provider_gate": false,
+   "full_reasons": []
+  },
+  {
+   "path": "scripts/reconciliation_sweep.py",
+   "granularity": "directory",
+   "mode": "scoped",
+   "rust_packages": [],
+   "lean": "none",
+   "provider_gate": false,
+   "full_reasons": []
+  },
+  {
+   "path": "editors/README.md",
+   "granularity": "directory",
+   "mode": "scoped",
+   "rust_packages": [],
+   "lean": "none",
+   "provider_gate": false,
+   "full_reasons": []
+  },
+  {
+   "path": "examples/records/owned_field.qr",
+   "granularity": "directory",
+   "mode": "scoped",
+   "rust_packages": [
+    "qcore-compiler",
+    "qcorec"
+   ],
+   "lean": "none",
+   "provider_gate": false,
+   "full_reasons": []
+  },
+  {
+   "path": "compiler/tests/fixtures/ct/CT07/case.qr",
+   "granularity": "directory",
+   "mode": "scoped",
+   "rust_packages": [
+    "qcore-compiler",
+    "qcorec"
+   ],
+   "lean": "none",
+   "provider_gate": false,
+   "full_reasons": []
+  },
+  {
+   "path": "compiler/tests/fixtures/ct/CT07/expected.json",
+   "granularity": "directory",
+   "mode": "scoped",
+   "rust_packages": [
+    "qcore-compiler",
+    "qcorec"
+   ],
+   "lean": "none",
+   "provider_gate": false,
+   "full_reasons": []
+  },
+  {
+   "path": "crates/qcorec/src/main.rs",
+   "granularity": "directory",
+   "mode": "scoped",
+   "rust_packages": [
+    "qcore-audit",
+    "qcore-compiler",
+    "qcore-verification",
+    "qcorec",
+    "quirin-source-analysis"
+   ],
+   "lean": "none",
+   "provider_gate": false,
+   "full_reasons": []
+  },
+  {
+   "path": "crates/qcore-audit/src/lib.rs",
+   "granularity": "directory",
+   "mode": "scoped",
+   "rust_packages": [
+    "qcore-audit",
+    "qcore-compiler",
+    "qcore-verification",
+    "qcorec",
+    "quirin-source-analysis"
+   ],
+   "lean": "none",
+   "provider_gate": false,
+   "full_reasons": []
+  },
+  {
+   "path": "crates/qcore-verifier-host/src/lib.rs",
+   "granularity": "directory",
+   "mode": "scoped",
+   "rust_packages": [
+    "qcore-audit",
+    "qcore-compiler",
+    "qcore-verification",
+    "qcore-verifier-host",
+    "qcorec",
+    "quirin-source-analysis"
+   ],
+   "lean": "none",
+   "provider_gate": false,
+   "full_reasons": []
+  },
+  {
+   "path": "crates/quirin-audit-plugin-libevent/src/lib.rs",
+   "granularity": "directory",
+   "mode": "scoped",
+   "rust_packages": [
+    "qcore-audit",
+    "qcore-compiler",
+    "qcore-verification",
+    "qcorec",
+    "quirin-audit-plugin-libevent",
+    "quirin-source-analysis"
+   ],
+   "lean": "none",
+   "provider_gate": false,
+   "full_reasons": []
+  },
+  {
+   "path": "proof/QCore/RkLogCallerFrame.lean",
+   "granularity": "directory",
+   "mode": "full",
+   "rust_packages": "all",
+   "lean": "modules",
+   "provider_gate": false,
+   "full_reasons": [
+    "the diff reaches qcore-c-gateway",
+    "the diff reaches qcore-core",
+    "the diff reaches qcore-contract",
+    "the diff reaches qcore-schemas"
+   ]
+  },
+  {
+   "path": "proof/AuditRkLogCallerFrame.lean",
+   "granularity": "directory",
+   "mode": "full",
+   "rust_packages": "all",
+   "lean": "modules",
+   "provider_gate": false,
+   "full_reasons": [
+    "the diff reaches qcore-c-gateway",
+    "the diff reaches qcore-contract"
+   ]
+  },
+  {
+   "path": "providers/quirin-provider-libc/contracts/libc/errno.qv",
+   "granularity": "directory",
+   "mode": "full",
+   "rust_packages": "all",
+   "lean": "none",
+   "provider_gate": true,
+   "full_reasons": [
+    "the diff reaches qcore-c-gateway",
+    "the diff reaches qcore-contract"
+   ]
+  },
+  {
+   "path": "providers/package.py",
+   "granularity": "directory",
+   "mode": "full",
+   "rust_packages": "all",
+   "lean": "none",
+   "provider_gate": true,
+   "full_reasons": [
+    "the diff reaches qcore-contract"
+   ]
+  },
+  {
+   "path": "tests/support/tracked_files.rs",
+   "granularity": "directory",
+   "mode": "full",
+   "rust_packages": "all",
+   "lean": "none",
+   "provider_gate": false,
+   "full_reasons": [
+    "the diff reaches qcore-c-gateway",
+    "the diff reaches qcore-core",
+    "the diff reaches qcore-contract"
+   ]
+  },
+  {
+   "path": "crates/qcore-c-gateway/src/lib.rs",
+   "granularity": "directory",
+   "mode": "full",
+   "rust_packages": "all",
+   "lean": "none",
+   "provider_gate": false,
+   "full_reasons": [
+    "the diff reaches qcore-c-gateway"
+   ]
+  },
+  {
+   "path": "Cargo.lock",
+   "granularity": "directory",
+   "mode": "full",
+   "rust_packages": "all",
+   "lean": "none",
+   "provider_gate": false,
+   "full_reasons": [
+    "Cargo.lock: workspace manifest or toolchain"
+   ]
+  },
+  {
+   "path": "docs/agents/validation.md",
+   "granularity": "file",
+   "mode": "scoped",
+   "rust_packages": [],
+   "lean": "none",
+   "provider_gate": false,
+   "full_reasons": []
+  },
+  {
+   "path": "docs/reports/gate-elastic/README.md",
+   "granularity": "file",
+   "mode": "scoped",
+   "rust_packages": [],
+   "lean": "none",
+   "provider_gate": false,
+   "full_reasons": []
+  },
+  {
+   "path": "scripts/reconciliation_sweep.py",
+   "granularity": "file",
+   "mode": "scoped",
+   "rust_packages": [],
+   "lean": "none",
+   "provider_gate": false,
+   "full_reasons": []
+  },
+  {
+   "path": "editors/README.md",
+   "granularity": "file",
+   "mode": "scoped",
+   "rust_packages": [],
+   "lean": "none",
+   "provider_gate": false,
+   "full_reasons": []
+  },
+  {
+   "path": "examples/records/owned_field.qr",
+   "granularity": "file",
+   "mode": "scoped",
+   "rust_packages": [
+    "qcore-compiler",
+    "qcorec"
+   ],
+   "lean": "none",
+   "provider_gate": false,
+   "full_reasons": []
+  },
+  {
+   "path": "compiler/tests/fixtures/ct/CT07/case.qr",
+   "granularity": "file",
+   "mode": "scoped",
+   "rust_packages": [
+    "qcore-compiler",
+    "qcorec"
+   ],
+   "lean": "none",
+   "provider_gate": false,
+   "full_reasons": []
+  },
+  {
+   "path": "compiler/tests/fixtures/ct/CT07/expected.json",
+   "granularity": "file",
+   "mode": "scoped",
+   "rust_packages": [
+    "qcore-compiler",
+    "qcorec"
+   ],
+   "lean": "none",
+   "provider_gate": false,
+   "full_reasons": []
+  },
+  {
+   "path": "crates/qcorec/src/main.rs",
+   "granularity": "file",
+   "mode": "scoped",
+   "rust_packages": [
+    "qcore-audit",
+    "qcore-compiler",
+    "qcore-verification",
+    "qcorec",
+    "quirin-source-analysis"
+   ],
+   "lean": "none",
+   "provider_gate": false,
+   "full_reasons": []
+  },
+  {
+   "path": "crates/qcore-audit/src/lib.rs",
+   "granularity": "file",
+   "mode": "scoped",
+   "rust_packages": [
+    "qcore-audit",
+    "qcore-compiler",
+    "qcore-verification",
+    "qcorec",
+    "quirin-source-analysis"
+   ],
+   "lean": "none",
+   "provider_gate": false,
+   "full_reasons": []
+  },
+  {
+   "path": "crates/qcore-verifier-host/src/lib.rs",
+   "granularity": "file",
+   "mode": "scoped",
+   "rust_packages": [
+    "qcore-audit",
+    "qcore-compiler",
+    "qcore-verification",
+    "qcore-verifier-host",
+    "qcorec",
+    "quirin-source-analysis"
+   ],
+   "lean": "none",
+   "provider_gate": false,
+   "full_reasons": []
+  },
+  {
+   "path": "crates/quirin-audit-plugin-libevent/src/lib.rs",
+   "granularity": "file",
+   "mode": "scoped",
+   "rust_packages": [
+    "qcore-audit",
+    "qcore-compiler",
+    "qcore-verification",
+    "qcorec",
+    "quirin-audit-plugin-libevent",
+    "quirin-source-analysis"
+   ],
+   "lean": "none",
+   "provider_gate": false,
+   "full_reasons": []
+  },
+  {
+   "path": "proof/QCore/RkLogCallerFrame.lean",
+   "granularity": "file",
+   "mode": "scoped",
+   "rust_packages": [
+    "qcore-compiler",
+    "qcorec"
+   ],
+   "lean": "modules",
+   "provider_gate": false,
+   "full_reasons": []
+  },
+  {
+   "path": "proof/AuditRkLogCallerFrame.lean",
+   "granularity": "file",
+   "mode": "scoped",
+   "rust_packages": [
+    "qcore-compiler",
+    "qcorec"
+   ],
+   "lean": "modules",
+   "provider_gate": false,
+   "full_reasons": []
+  },
+  {
+   "path": "providers/quirin-provider-libc/contracts/libc/errno.qv",
+   "granularity": "file",
+   "mode": "full",
+   "rust_packages": "all",
+   "lean": "none",
+   "provider_gate": true,
+   "full_reasons": [
+    "the diff reaches qcore-c-gateway",
+    "the diff reaches qcore-contract"
+   ]
+  },
+  {
+   "path": "providers/package.py",
+   "granularity": "file",
+   "mode": "full",
+   "rust_packages": "all",
+   "lean": "none",
+   "provider_gate": true,
+   "full_reasons": [
+    "the diff reaches qcore-contract"
+   ]
+  },
+  {
+   "path": "tests/support/tracked_files.rs",
+   "granularity": "file",
+   "mode": "full",
+   "rust_packages": "all",
+   "lean": "none",
+   "provider_gate": false,
+   "full_reasons": [
+    "the diff reaches qcore-c-gateway",
+    "the diff reaches qcore-contract"
+   ]
+  },
+  {
+   "path": "crates/qcore-c-gateway/src/lib.rs",
+   "granularity": "file",
+   "mode": "full",
+   "rust_packages": "all",
+   "lean": "none",
+   "provider_gate": false,
+   "full_reasons": [
+    "the diff reaches qcore-c-gateway"
+   ]
+  },
+  {
+   "path": "Cargo.lock",
+   "granularity": "file",
+   "mode": "full",
+   "rust_packages": "all",
+   "lean": "none",
+   "provider_gate": false,
+   "full_reasons": [
+    "Cargo.lock: workspace manifest or toolchain"
+   ]
+  }
+ ]
+}

@@ -462,8 +462,8 @@ class LoadPathManifest(unittest.TestCase):
         # 63 -> 64 by card FB-TEARDOWN-DESTROY-DECLARATIONS:
         # `fluent_bit/teardown_destroy.qv`.
         views = {c["name"]: c["resource_view"] for c in manifest["crates"]}
-        # b5f74d79a added librdkafka/logging.qv: the committed view is65.
-        # 65 -> 66 by card W48-RK-LOG-CALLER-FRAME: `librdkafka/log_caller_frame.qv`.
+        # b5f74d79a added librdkafka/logging.qv: the committed view became 65.
+        # e76b048f6 added librdkafka/log_caller_frame.qv before this card: 66.
         self.assertEqual(sum(len(view) for view in views.values()), 66)
         self.assertIn("librdkafka/logging.qv", views["qcore-provider-librdkafka"])
         self.assertIn("librdkafka/log_caller_frame.qv", views["qcore-provider-librdkafka"])

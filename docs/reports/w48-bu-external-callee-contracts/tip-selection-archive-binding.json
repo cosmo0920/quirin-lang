@@ -1,0 +1,24 @@
+{
+  "exit": 0,
+  "rows": [
+    {
+      "route": "corpus",
+      "files": 309,
+      "full_archive_hash_match": true,
+      "invocation_sha256": "74c3bc1bd3ec6140f5c6baa31729393994240412be3e0fbe1a8118677c4c43b1"
+    },
+    {
+      "route": "system",
+      "files": 309,
+      "full_archive_hash_match": true,
+      "invocation_sha256": "8fd57f1ab3e30f74f0b55bb558375862a396cfe398e11ef89a1a519a2ba0e6cf"
+    },
+    {
+      "route": "slice",
+      "files": 309,
+      "full_archive_hash_match": true,
+      "invocation_sha256": "277fc402ffdaf688e236c5605c7b98086c6dbe813616344c30ae387296ccce5b"
+    }
+  ],
+  "meaning": "Every measured runtime selection file matches the held actual TIP source archive, and before/after selection bytes are identical for each successful route."
+}

@@ -1,0 +1,96 @@
+{
+  "exit": 0,
+  "checks": [
+    {
+      "route": "corpus",
+      "unit": "tinycthread.c",
+      "exit": 0,
+      "WITH_C11THREADS": 1,
+      "thrd_success": 0,
+      "thrd_t": "unsigned long int via __thrd_t"
+    },
+    {
+      "route": "corpus",
+      "unit": "tinycthread_extra.c",
+      "exit": 0,
+      "WITH_C11THREADS": 1,
+      "thrd_success": 0,
+      "thrd_t": "unsigned long int via __thrd_t"
+    },
+    {
+      "route": "corpus",
+      "unit": "rdkafka_sasl_cyrus.c",
+      "exit": 0,
+      "WITH_C11THREADS": 1,
+      "thrd_success": 0,
+      "thrd_t": "unsigned long int via __thrd_t"
+    },
+    {
+      "route": "corpus-monkey",
+      "unit": "mk_iov.c",
+      "exit": 0,
+      "declaration": "ssize_t writev(int,const struct iovec*,int) from sys/uio.h"
+    },
+    {
+      "route": "system",
+      "unit": "mk_iov.c",
+      "exit": 0,
+      "declaration": "ssize_t writev(int,const struct iovec*,int) from sys/uio.h"
+    },
+    {
+      "route": "system",
+      "unit": "tinycthread.c",
+      "exit": 0,
+      "WITH_C11THREADS": 1,
+      "thrd_success": 0,
+      "thrd_t": "unsigned long int via __thrd_t"
+    },
+    {
+      "route": "system",
+      "unit": "tinycthread_extra.c",
+      "exit": 0,
+      "WITH_C11THREADS": 1,
+      "thrd_success": 0,
+      "thrd_t": "unsigned long int via __thrd_t"
+    },
+    {
+      "route": "system",
+      "unit": "rdkafka_sasl_cyrus.c",
+      "exit": 0,
+      "WITH_C11THREADS": 1,
+      "thrd_success": 0,
+      "thrd_t": "unsigned long int via __thrd_t"
+    },
+    {
+      "route": "slice",
+      "unit": "mk_iov.c",
+      "exit": 0,
+      "declaration": "ssize_t writev(int,const struct iovec*,int) from sys/uio.h"
+    },
+    {
+      "route": "slice",
+      "unit": "tinycthread.c",
+      "exit": 0,
+      "WITH_C11THREADS": 1,
+      "thrd_success": 0,
+      "thrd_t": "unsigned long int via __thrd_t"
+    },
+    {
+      "route": "slice",
+      "unit": "tinycthread_extra.c",
+      "exit": 0,
+      "WITH_C11THREADS": 1,
+      "thrd_success": 0,
+      "thrd_t": "unsigned long int via __thrd_t"
+    },
+    {
+      "route": "slice",
+      "unit": "rdkafka_sasl_cyrus.c",
+      "exit": 0,
+      "WITH_C11THREADS": 1,
+      "thrd_success": 0,
+      "thrd_t": "unsigned long int via __thrd_t"
+    }
+  ],
+  "scope": "Configured declarations only; fresh native BASE and planner pending. The selected corpus mk_iov.c uses the standalone Monkey database, superseding the embedded-config preliminary probe for that unit."
+}

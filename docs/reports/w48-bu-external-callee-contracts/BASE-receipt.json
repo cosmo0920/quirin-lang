@@ -1,0 +1,23 @@
+{
+  "base": "8991b7b58fcbd33da082bbb44e819d47a0fb2561",
+  "actual_analyzer_source": "15cc50053af74ee560233e5a26cfafbc83b40046",
+  "binary_sha256": "836fa18e8835b5887949d3ffeaaf54b0bfa4ec29b79527d1b01137ea49adf92e",
+  "fresh_corpus": {
+    "path": "/home/cosmo/.codex/worktrees/c1e4/quirin-lang/private/w48-bu-external-callee-contracts/base-3/corpus/corpus/resource-diagnostics.json",
+    "sha256": "f9f8d3c20a1e44de54e40a149a22e26d8b506102c85d3935a5917f245d389832",
+    "exit": 0
+  },
+  "fresh_planner": {
+    "command": [
+      "python3",
+      "docs/reports/w48-bottom-up-callee-bodies/scripts/bottom_up_plan.py",
+      "private/w48-bu-external-callee-contracts/base-3/corpus/corpus/resource-diagnostics.json",
+      "private/w48-bu-external-callee-contracts/base-3-plan.json"
+    ],
+    "sha256": "3a13ba2f2cf3704c6a8b8494ac4d957deb4378c1f99a067ee7e6e8cbbca5d87b",
+    "script_sha256": "82723ea30d06d6702fef39487f9e56a2c0f9d51bec04c7e906f1783e6f64cdeb",
+    "exit": 0
+  },
+  "recorded": "2026-10-23T16:22:10.310273+00:00",
+  "remaining_BASE_routes": "system and tail-pause still running in the held batch; their results are not claimed here."
+}

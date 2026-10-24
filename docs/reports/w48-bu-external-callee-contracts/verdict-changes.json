@@ -1,0 +1,112 @@
+[
+ {
+  "base": {
+   "contract_dependencies": {
+    "declarations": [],
+    "hypothesis_dependencies": {}
+   },
+   "diagnostics": [
+    {
+     "category": "unsupported",
+     "description": "call to uncontracted function `thrd_current`",
+     "line": 2985,
+     "origin": "tinycthread_extra.c:69"
+    }
+   ],
+   "function": "thrd_current_id",
+   "hypothesis_context": {
+    "artifact": "librdkafka/tinycthread_extra.c#thrd_current_id",
+    "assumptions": "41c1d7e8f325a73941dba5c91e8cd706ec17458a65201cddcdc0abe67204a348",
+    "bounds": "existing gateway budgets; no new hypothesis discharge",
+    "build_identity": "1c7f29b55cb8d637586fb733a34e24d11b010630a16b99ebba0c4af1897b1f2a",
+    "evidence_version": "contract-hypothesis-graph.v1:15cc50053af74ee560233e5a26cfafbc83b40046",
+    "property": "resource-custody.v1",
+    "scope": "[\"cnd_timedwait_abs\",\"cnd_timedwait_ms\",\"cnd_timedwait_msp\",\"cnd_wait_enter\",\"cnd_wait_exit\",\"rwlock_destroy\",\"rwlock_init\",\"rwlock_rdlock\",\"rwlock_rdunlock\",\"rwlock_wrlock\",\"rwlock_wrunlock\",\"thrd_current_id\",\"thrd_is_current\",\"thrd_setname\"]",
+    "semantic_profile": "legacy-pinned-resource-profile",
+    "source_identity": "184d6326e3085862d3ec8d91ee71f74d058c19bcb71a29332efaa732c19b84af"
+   },
+   "status": "Unknown"
+  },
+  "file": "tinycthread_extra.c",
+  "function": "thrd_current_id",
+  "library": "librdkafka",
+  "tip": {
+   "contract_dependencies": {
+    "declarations": [
+     "thrd_current"
+    ],
+    "hypothesis_dependencies": {}
+   },
+   "diagnostics": [],
+   "function": "thrd_current_id",
+   "hypothesis_context": {
+    "artifact": "librdkafka/tinycthread_extra.c#thrd_current_id",
+    "assumptions": "14cda2d1086ba1582c06059c06e4a7cba028a134df1a26003f1f6e9f9e789974",
+    "bounds": "existing gateway budgets; no new hypothesis discharge",
+    "build_identity": "1c7f29b55cb8d637586fb733a34e24d11b010630a16b99ebba0c4af1897b1f2a",
+    "evidence_version": "contract-hypothesis-graph.v1:5dbe4a381acd5c3197057030ff3f9735caa72335",
+    "property": "resource-custody.v1",
+    "scope": "[\"cnd_timedwait_abs\",\"cnd_timedwait_ms\",\"cnd_timedwait_msp\",\"cnd_wait_enter\",\"cnd_wait_exit\",\"rwlock_destroy\",\"rwlock_init\",\"rwlock_rdlock\",\"rwlock_rdunlock\",\"rwlock_wrlock\",\"rwlock_wrunlock\",\"thrd_current_id\",\"thrd_is_current\",\"thrd_setname\"]",
+    "semantic_profile": "legacy-pinned-resource-profile",
+    "source_identity": "184d6326e3085862d3ec8d91ee71f74d058c19bcb71a29332efaa732c19b84af"
+   },
+   "status": "Safe"
+  },
+  "unit_index": 141
+ },
+ {
+  "base": {
+   "contract_dependencies": {
+    "declarations": [],
+    "hypothesis_dependencies": {}
+   },
+   "diagnostics": [
+    {
+     "category": "unsupported",
+     "description": "call to uncontracted function `writev`",
+     "line": 2150,
+     "origin": "mk_core/mk_iov.c:116"
+    }
+   ],
+   "function": "mk_iov_send",
+   "hypothesis_context": {
+    "artifact": "monkey-libevent/mk_core/mk_iov.c#mk_iov_send",
+    "assumptions": "41c1d7e8f325a73941dba5c91e8cd706ec17458a65201cddcdc0abe67204a348",
+    "bounds": "existing gateway budgets; no new hypothesis discharge",
+    "build_identity": "2213e66f38350145bc02f7bc2e4529282aec8f0711dffb5a40d831db24b3f152",
+    "evidence_version": "contract-hypothesis-graph.v1:15cc50053af74ee560233e5a26cfafbc83b40046",
+    "property": "resource-custody.v1",
+    "scope": "[\"mk_iov_consume\",\"mk_iov_create\",\"mk_iov_free\",\"mk_iov_free_marked\",\"mk_iov_print\",\"mk_iov_realloc\",\"mk_iov_send\",\"mk_iov_set_entry\"]",
+    "semantic_profile": "legacy-pinned-resource-profile",
+    "source_identity": "97387abadd1f6d46a0ecab0c618fa6db7d43bf71a0eab739cd3bbf54fc0d02a6"
+   },
+   "status": "Unknown"
+  },
+  "file": "mk_core/mk_iov.c",
+  "function": "mk_iov_send",
+  "library": "monkey-libevent",
+  "tip": {
+   "contract_dependencies": {
+    "declarations": [
+     "writev"
+    ],
+    "hypothesis_dependencies": {}
+   },
+   "diagnostics": [],
+   "function": "mk_iov_send",
+   "hypothesis_context": {
+    "artifact": "monkey-libevent/mk_core/mk_iov.c#mk_iov_send",
+    "assumptions": "14cda2d1086ba1582c06059c06e4a7cba028a134df1a26003f1f6e9f9e789974",
+    "bounds": "existing gateway budgets; no new hypothesis discharge",
+    "build_identity": "2213e66f38350145bc02f7bc2e4529282aec8f0711dffb5a40d831db24b3f152",
+    "evidence_version": "contract-hypothesis-graph.v1:5dbe4a381acd5c3197057030ff3f9735caa72335",
+    "property": "resource-custody.v1",
+    "scope": "[\"mk_iov_consume\",\"mk_iov_create\",\"mk_iov_free\",\"mk_iov_free_marked\",\"mk_iov_print\",\"mk_iov_realloc\",\"mk_iov_send\",\"mk_iov_set_entry\"]",
+    "semantic_profile": "legacy-pinned-resource-profile",
+    "source_identity": "97387abadd1f6d46a0ecab0c618fa6db7d43bf71a0eab739cd3bbf54fc0d02a6"
+   },
+   "status": "Safe"
+  },
+  "unit_index": 158
+ }
+]

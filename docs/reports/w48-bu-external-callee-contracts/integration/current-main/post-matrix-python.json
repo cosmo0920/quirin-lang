@@ -1,0 +1,21 @@
+{
+  "command": [
+    "python3",
+    "-m",
+    "unittest",
+    "discover",
+    "-s",
+    "scripts/tests"
+  ],
+  "source": "ef909ffe2de312ab9acdd95329784cfb66000de2",
+  "source_after": "ef909ffe2de312ab9acdd95329784cfb66000de2",
+  "status_after": "",
+  "matrix_sha256_before": "6dbf7eb35afb1d7217f13e782c2f4233d5b012675b9364f8ebc0d66d71d8066b",
+  "matrix_sha256_after": "6dbf7eb35afb1d7217f13e782c2f4233d5b012675b9364f8ebc0d66d71d8066b",
+  "exit": 0,
+  "started": "2026-10-24T11:20:38.618975+00:00",
+  "ended": "2026-10-24T11:21:30.428906+00:00",
+  "log": "/home/cosmo/.codex/worktrees/c1e4/quirin-lang/private/w48-bu-external-callee-contracts/integration-post-matrix-2.log",
+  "log_sha256": "64d842618835df5e69587e2c3c93b842f1dfb1cd1a4110a13ef943d4492633ce",
+  "tests": 374
+}

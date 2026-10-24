@@ -93,7 +93,8 @@ See [the public overview](README.md).
 
 ## Standing per-change gate
 
-Read and run [the full gate](docs/agents/validation.md#standing-per-change-gate).
+Read and run [the gate it assigns](docs/agents/validation.md#standing-per-change-gate):
+the scoped card gate for a card, the full gate per landing.
 
 ## Lean CI hygiene
 

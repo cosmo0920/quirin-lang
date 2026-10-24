@@ -493,6 +493,8 @@ Regenerate with `python3 scripts/build_docs_index.py`; validate with `--check`.
 
 | [gapo-return-correctness](gapo-return-correctness/README.md) | GAPO-RETURN-CORRECTNESS |
 
+| [gate-elastic](gate-elastic/README.md) | GATE-ELASTIC |
+
 | [gateway-analysis-path-optimization](gateway-analysis-path-optimization/README.md) | GATEWAY-ANALYSIS-PATH-OPTIMIZATION: the analysis paths mapped, made explicit and faster, verdict-identical |
 
 | [gateway-c-location](gateway-c-location/README.md) | GATEWAY-C-LOCATION — a gateway diagnostic names the C a person wrote — 2026-09-12 |
@@ -1356,6 +1358,8 @@ Regenerate with `python3 scripts/build_docs_index.py`; validate with `--check`.
 | [w48-bottom-up-callee-bodies](w48-bottom-up-callee-bodies/README.md) | W48-BOTTOM-UP-CALLEE-BODIES: the bottom-up plan, and one body family lifted |
 
 | [w48-bu-cmt-map-metric-get](w48-bu-cmt-map-metric-get/README.md) | W48-BU-CMT-MAP-METRIC-GET: exact borrowed-formal returns |
+
+| [w48-bu-external-callee-contracts](w48-bu-external-callee-contracts/README.md) | W48-BU-EXTERNAL-CALLEE-CONTRACTS |
 
 | [w48-bu-rk-result-constructors](w48-bu-rk-result-constructors/README.md) | W48-BU-RK-RESULT-CONSTRUCTORS — validation pending |
 
