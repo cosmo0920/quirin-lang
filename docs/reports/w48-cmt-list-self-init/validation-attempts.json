@@ -341,6 +341,23 @@
     {
       "command": [
         "python3",
+        "private/w48-cmt-member-storage/finish_accounting.py"
+      ],
+      "started": "2026-10-24T09:23:01.650636+00:00",
+      "head": "99457f141a90d7bc597516eda904dcf1821ada69",
+      "dirty": false,
+      "log": "private/w48-cmt-member-storage/steps/accounting-1.log",
+      "slot_pid": 51490,
+      "exit": 1,
+      "seconds": 1671.212236225998,
+      "ended": "2026-10-24T09:50:52.894900+00:00",
+      "test_summaries": [],
+      "native_calculation_exit": 0,
+      "combined_integration_handoff_exit": 1
+    },
+    {
+      "command": [
+        "python3",
         "private/w48-cmt-member-storage/attribute_compare.py",
         "corpus"
       ],
@@ -551,6 +568,22 @@
     },
     {
       "command": [
+        "cargo",
+        "fmt",
+        "--all"
+      ],
+      "started": "2026-10-24T10:39:36.330716+00:00",
+      "head": "02eaf935d5937b7c3f56cca3dc71da6d85320ee4",
+      "dirty": false,
+      "log": "private/w48-cmt-member-storage/steps/fmt-integration-repair.log",
+      "slot_pid": 1246470,
+      "exit": 0,
+      "seconds": 4.091283254994778,
+      "ended": "2026-10-24T10:39:40.534254+00:00",
+      "test_summaries": []
+    },
+    {
+      "command": [
         "python3",
         "private/w48-cmt-member-storage/focus_lean.py"
       ],
@@ -595,6 +628,25 @@
       "exit": 0,
       "seconds": 21.03509517699422,
       "ended": "2026-10-24T09:22:55.623468+00:00",
+      "test_summaries": []
+    },
+    {
+      "command": [
+        "python3",
+        "-m",
+        "unittest",
+        "discover",
+        "-s",
+        "scripts/tests"
+      ],
+      "started": "2026-10-24T10:52:14.458777+00:00",
+      "head": "18391a697f7d85f22592581d1e810b31f5337e78",
+      "dirty": false,
+      "log": "private/w48-cmt-member-storage/steps/post-matrix-python-1.log",
+      "slot_pid": 1246470,
+      "exit": 0,
+      "seconds": 32.83147734699014,
+      "ended": "2026-10-24T10:52:47.338233+00:00",
       "test_summaries": []
     },
     {
@@ -664,12 +716,62 @@
   "no_failed_attempt_hidden": true,
   "native_accounting_handoff": {
     "native_calculation_exit": 0,
-    "comparison": "native-comparison.json",
-    "readiness": {
-      "head": "99457f141a90d7bc597516eda904dcf1821ada69",
-      "at": "2026-10-24T09:23:02.052344+00:00",
-      "native_comparison_complete": true
+    "complete_raw_native_comparison": "native-comparison.json",
+    "first_combined_handoff_exit": 1,
+    "reason": "The optional post-native integration attempt found two Rust and one Python expectation failures. Native accounting had already completed successfully and its raw results were preserved.",
+    "repaired_root_exit": 0,
+    "provider_reused": true
+  },
+  "integration_attempts": [
+    {
+      "source": "389090b6755b43045c8838989c91adce33e9aabe",
+      "exit": 1,
+      "rust": {
+        "passed": 8637,
+        "failed": 2,
+        "ignored": 15,
+        "units": 549,
+        "summaries": 562
+      },
+      "python": {
+        "tests": 374,
+        "failed": 1
+      },
+      "lean": {
+        "audits": 370,
+        "exit": 0
+      },
+      "provider_commands_exit": 0,
+      "retained": "integration/attempts/20261024T092516Z"
     },
-    "note": "The accounting command continues under the acquired slot for the user-authorized integration; its final receipt is added after integration finishes."
-  }
+    {
+      "source": "6874be01bfdf7a5ae349f50566d6915164d57501",
+      "root_exit": 0,
+      "root_rust": {
+        "passed": 8639,
+        "failed": 0,
+        "ignored": 15,
+        "measured": 0,
+        "filtered": 0,
+        "summaries": 562
+      },
+      "lean": 370,
+      "python": 374,
+      "provider_origin": {
+        "measured_source": "389090b6755b43045c8838989c91adce33e9aabe",
+        "applicable_source": "6874be01bfdf7a5ae349f50566d6915164d57501",
+        "reason": "Only three test expectations and documentation changed; provider inputs and all runtime/library source remain byte-identical. Successful provider commands are reused, not rerun or relabelled as fresh.",
+        "changed_paths": [
+          "compiler/tests/contract_loader.rs",
+          "crates/qcore-contract/tests/production_symbolic_adoption.rs",
+          "docs/reports/w48-cmt-list-self-init/integration/rule37-memory-after-prefix.txt",
+          "docs/reports/w48-cmt-list-self-init/integration/rule37-memory-before-prefix.txt",
+          "docs/reports/w48-cmt-list-self-init/integration/rule37-memory-transition.json",
+          "scripts/tests/test_contract_corpus.py"
+        ],
+        "original_gate": "private/w48-cmt-member-storage/integration-gate/20261024T092516Z/gate-run.json"
+      },
+      "receipt": "integration/standing-gate.json"
+    }
+  ]
 }

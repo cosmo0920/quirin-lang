@@ -104,10 +104,40 @@
           "contains": "W48-CMT-LIST-SELF-INIT (gateway rule 36a, measured 99457f141) adds a private checked call frame for self-link initializer leaves, with matching audited Lean and no ordinary custody summary. Its fresh isolated BASE/TIP retains corpus 999 Safe / 3,826 Unknown / 9 provisional Unsafe, system 99/345/4 and slice 57 Safe / 342 Unknown / 4 Pending / 1 provisional Unsafe; complete resource, NULL and runtime results agree after exact metadata reconstruction. Getter closure gain 0. Gate 8,612 Rust / 369 Lean / 374 Python passes. Tracked/interior effect transport and the full getter chain remain Open; these card-local figures do not replace later main observations."
         }
       ]
+    },
+    {
+      "card": "both CMetrics increments",
+      "item": "report-index",
+      "decision": "applied",
+      "verify": [
+        {
+          "file": "docs/reports/INDEX.md",
+          "contains": "w48-cmt-list-self-init/README.md"
+        },
+        {
+          "file": "docs/reports/INDEX.md",
+          "contains": "w48-bu-cmt-map-metric-get/README.md"
+        }
+      ]
+    },
+    {
+      "card": "both CMetrics increments",
+      "item": "committed-matrix-and-python",
+      "decision": "applied",
+      "verify": [
+        {
+          "file": "docs/reviews/r0_3/acceptance_matrix.json",
+          "contains": "W48-CMT-TRACKED-INTERIOR-SELF-INIT"
+        },
+        {
+          "file": "docs/reports/w48-cmt-list-self-init/integration/post-matrix-confirmation.json",
+          "contains": "\"exit\": 0"
+        }
+      ]
     }
   ],
   "remaining": [
-    "Regenerate matrix with actual combined gate, commit it, run committed-matrix Python acceptance, advance main and push configured origin."
+    "Advance main and push configured origin; actual released-lock receipt follows."
   ],
   "integration_gate": "standing-gate.json"
 }

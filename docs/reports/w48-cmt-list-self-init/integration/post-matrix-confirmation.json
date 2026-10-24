@@ -1,0 +1,26 @@
+{
+  "head": "18391a697f7d85f22592581d1e810b31f5337e78",
+  "matrix_sha256": "731021ce21108bd22ed7aa2befda41733a295d0facd113b577bd69d4baefc2a7",
+  "command_receipt": {
+    "command": [
+      "python3",
+      "-m",
+      "unittest",
+      "discover",
+      "-s",
+      "scripts/tests"
+    ],
+    "started": "2026-10-24T10:52:14.458777+00:00",
+    "head": "18391a697f7d85f22592581d1e810b31f5337e78",
+    "dirty": false,
+    "log": "private/w48-cmt-member-storage/steps/post-matrix-python-1.log",
+    "slot_pid": 1246470,
+    "exit": 0,
+    "seconds": 32.83147734699014,
+    "ended": "2026-10-24T10:52:47.338233+00:00"
+  },
+  "tests": 374,
+  "exit": 0,
+  "log_sha256": "c0b6a1e3e943cd7e92770366594418895696dfe20e9ddb6ffd9722de5532f2b9",
+  "log": "post-matrix-python.log.gz"
+}

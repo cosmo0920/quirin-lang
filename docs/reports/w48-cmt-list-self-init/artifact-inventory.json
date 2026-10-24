@@ -8,8 +8,8 @@
     "bytes": 3544
   },
   "README.md": {
-    "sha256": "b263724749a28bfff793684c775256c6941ee672b003c5b70be269a4bd086063",
-    "bytes": 9948
+    "sha256": "7460c04cc69ba92c431a142ab6a6bb18af67b115a8a638556cebf6d113163f73",
+    "bytes": 10637
   },
   "artifacts/corpus/attributed-comparison.json": {
     "sha256": "d92de316414f390adc87164a8ac2f487b86c3dedc1b9fcd67c2ae686549a3675",
@@ -667,6 +667,10 @@
     "sha256": "72dd00336e834cb93c2c9d5e8f6e594d727092cf191074eaf1236a4a8944aee9",
     "bytes": 1645
   },
+  "integration/lock-lifecycle.json": {
+    "sha256": "75aaba42da3d03a385f2290a80a459a62124e9d1ed98bb4ceb571c2c5f2a2cc9",
+    "bytes": 1611
+  },
   "integration/logs/clang-version.exit.gz": {
     "sha256": "89ed3b723e0e40d8957a2df55fcb04d57b6d95fa665c5fe67b098df7f29694ae",
     "bytes": 22
@@ -835,9 +839,17 @@
     "sha256": "b7be9f10ad73ca401e1c08d19f7513b58d95de4158bebb8adc448723709842ac",
     "bytes": 508
   },
+  "integration/post-matrix-confirmation.json": {
+    "sha256": "19f7fc431a4aa28a4bc358843d34df2d510e113acea231b7ab61cff4b28f600f",
+    "bytes": 771
+  },
+  "integration/post-matrix-python.log.gz": {
+    "sha256": "b6e3746cb8c9df9e822a49427f072881acce896e5158e20d5c5d1f15a711f515",
+    "bytes": 459
+  },
   "integration/reconciliation.json": {
-    "sha256": "60608dcee64f0931a531963c85e1471f62917be8c81441cc20990beea37661c1",
-    "bytes": 10419
+    "sha256": "7b59e94143f1f2043c56d2988e76869559727c2aa03a2f35fb4cc3172a9fd905",
+    "bytes": 11197
   },
   "integration/rule37-memory-after-prefix.txt": {
     "sha256": "69be583efacc9ac8a2acac6ba4e1ff9b33fd278b13158e19e75253339d9dd188",
@@ -854,6 +866,10 @@
   "integration/rust-summary.json": {
     "sha256": "86d839fc030f79bd809efc46f5e577c92748f23fce02c3205e2a24090fa80df7",
     "bytes": 1344135
+  },
+  "integration/source-equality.json": {
+    "sha256": "98139f61c45e2a95c8d69c97e09c21ff938c4cdc45874afd4498e2157260f809",
+    "bytes": 9242
   },
   "integration/standing-gate.json": {
     "sha256": "e0520a12988acd42422d0542298238336f240d6be0783df8969ff4f464eef71f",
@@ -1119,6 +1135,10 @@
     "sha256": "d2d7aad04a5014d8c6db9c203c4d7f0730e64813cb8cdf11d682f96bf0feffb7",
     "bytes": 1984
   },
+  "scripts/finalize_integration.py": {
+    "sha256": "3c9c99dfccb70659864e4d0661f570ac09c1785920b8627faee678ab231d36de",
+    "bytes": 5095
+  },
   "scripts/finish_accounting.py": {
     "sha256": "bf7c4c67b3a30e229ba4b847db1b274ad1bc784700b3679e08e1212c259c221e",
     "bytes": 5457
@@ -1216,8 +1236,8 @@
     "bytes": 949
   },
   "validation-attempts.json": {
-    "sha256": "e06c42af548b28dd91ac781efa4497f49a3ddb0d1e55d8e5d097237020ff2bb2",
-    "bytes": 21217
+    "sha256": "e8bd6842a1f1ee617e0c9f25b92aedd5ec002ca6290d4771c9ec86f77f997441",
+    "bytes": 24579
   },
   "validation-logs/20261024T045544Z/clang-version.exit.gz": {
     "sha256": "89ed3b723e0e40d8957a2df55fcb04d57b6d95fa665c5fe67b098df7f29694ae",
@@ -1399,6 +1419,10 @@
     "sha256": "9ceffb7310338057cfe71a4ae1e2c98d2c485d81cdef906532a801f457a38d64",
     "bytes": 20
   },
+  "validation-logs/accounting-1.log.gz": {
+    "sha256": "79bb999ee9ca8b23fe797667d0a01fb6717df20412672ed7281bad439d40229e",
+    "bytes": 1157
+  },
   "validation-logs/attribute-corpus.log.gz": {
     "sha256": "fa0c9bea16d0d9f5c724de387ae47f4abb0e588120ffcf59a28cdd557ddb6e28",
     "bytes": 527
@@ -1443,6 +1467,10 @@
     "sha256": "9ceffb7310338057cfe71a4ae1e2c98d2c485d81cdef906532a801f457a38d64",
     "bytes": 20
   },
+  "validation-logs/fmt-integration-repair.log.gz": {
+    "sha256": "9ceffb7310338057cfe71a4ae1e2c98d2c485d81cdef906532a801f457a38d64",
+    "bytes": 20
+  },
   "validation-logs/lean-call-1.log.gz": {
     "sha256": "4a5fdb2f137b3a151b774987ecf6abd36f2e7ee56874d5fd76650f1394a2172b",
     "bytes": 502
@@ -1454,6 +1482,10 @@
   "validation-logs/post-attribution-1.log.gz": {
     "sha256": "29c1195f394bc8b7e5e800b25ce149230faf3f460c7983ef7680167ef97175f2",
     "bytes": 122
+  },
+  "validation-logs/post-matrix-python-1.log.gz": {
+    "sha256": "b6e3746cb8c9df9e822a49427f072881acce896e5158e20d5c5d1f15a711f515",
+    "bytes": 459
   },
   "validation-logs/retain-corpus.log.gz": {
     "sha256": "f0232bff902954fdb33c9f8b921d46d7dbceedd6496dbba449eac021fede28d6",
