@@ -12,6 +12,8 @@ const EXPECTED_CONTRACTS: &[(&str, &str, usize)] = &[
     ("cfl/arena_lifetime.qv", "cfl_arena_destroy", 5),
     ("cfl/intrusive_list.qv", "cfl_list_add", 4),
     ("cfl/intrusive_list.qv", "cfl_list_del", 5),
+    // Rule 36b: declared-model initializer effects, no resource-v1 authority.
+    ("cfl/intrusive_list.qv", "cfl_list_init", 18),
     // Card NULL-TRIAGE-UNRESOLVED-PATHS: `cfl_list_size`'s integer result
     // range (bounds contract v1, the crate's new bounds view, read only by
     // the null property): selector and one range. Read from

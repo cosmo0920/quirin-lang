@@ -55,3 +55,13 @@ the CMetrics getter ownership chain remain separate work. Rust/Lean
 correspondence and faithful Clang extraction remain premise 28; no C refinement
 or allocation-bounds proof is claimed. The report must own complete fresh
 BASE/TIP attribution and the standing gate, with failed attempts retained.
+
+The canonical CFL `cfl/intrusive_list.qv` declared model now reflects rule 36b
+with eleven source/target/frame preconditions, six effect clauses and the
+unchanged live-resource quantity. These are model propositions; neither the
+resource nor bounds loader admits this module. Its explicit next/prev write
+recording and conservative owner-member fact invalidation match the Rust
+transfer and Lean abstraction. The source-to-model correspondence remains a
+reviewed premise under rule 28, not a generated refinement proof. The existing
+CG11 checker remains the call-specific authority. No resource-v1 declaration,
+source pin, membership fact or ordinary exported summary is introduced.

@@ -32,3 +32,36 @@ contract {
     ensures normal entry_next_is_null;
     quant any live_resources == old(live_resources);
 };
+
+// W48-CMT-TRACKED-INTERIOR-SELF-INIT, gateway rule 36b.
+// Declared model of the checked initializer effect, matching
+// QCore.TrackedSelfInit and the gateway's shared source/flow vectors.
+// This is not resource_contract_v1 and grants no ordinary call summary.
+// Every call still needs fresh complete CG11 body/layout evidence; a function
+// name or this declaration alone cannot establish any of these preconditions.
+// `list` denotes the root or an embedded record, whose storage ends with its
+// owning root. The Rust abstraction forgets member facts rather than exporting
+// an empty-list, membership, child-custody or self-pointer postcondition.
+extern fn cfl_list_init(
+    list: borrow<'owner, mut, CflListEntry> use one
+) -> unit
+contract {
+    requires complete_source_bound_cg11_self_store_leaf;
+    requires direct_call_matches_exact_function_declaration;
+    requires actual_is_root_or_address_of_embedded_record;
+    requires embedded_path_has_at_most_three_ordinary_fields;
+    requires no_loaded_pointer_array_cast_union_or_qualified_member;
+    requires unique_root_declaration_and_compatible_complete_layout;
+    requires root_has_one_known_identity_and_is_nonnull;
+    requires root_is_exactly_live_and_not_nullable;
+    requires no_child_containment_membership_collection_or_other_custody_frame;
+    requires existing_rooted_member_facts_are_empty_or_name_the_same_owner;
+    requires existing_indirect_access_check_has_no_diagnostic_or_state_change;
+    ensures normal instantiated_next_and_prev_self_write_paths_are_recorded;
+    ensures normal all_owner_member_pointer_facts_are_forgotten_through_aliases;
+    ensures normal plain_and_derived_alias_bindings_are_preserved;
+    ensures normal all_resource_status_and_nullable_site_facts_are_preserved;
+    ensures normal no_resource_child_link_or_owning_alias_is_created;
+    ensures normal no_empty_list_membership_or_ordinary_summary_is_exported;
+    quant any live_resources == old(live_resources);
+};
