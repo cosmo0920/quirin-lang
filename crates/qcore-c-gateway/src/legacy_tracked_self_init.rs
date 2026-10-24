@@ -272,7 +272,7 @@ pub(crate) fn exercise_source_readers(source: &str) -> Option<bool> {
     let index = StatementIndex::read("chain")?;
     let (ty, _, writes) =
         self_link_init::checked_effect(&tokenize(source), "reset", &ResourceContracts::default())?;
-    let mut work = vec![&index.function];
+    let mut work = vec![index.function.as_ref()];
     while let Some(node) = work.pop() {
         if kind(node) == "CallExpr"
             && let [_, arg] = children(node)

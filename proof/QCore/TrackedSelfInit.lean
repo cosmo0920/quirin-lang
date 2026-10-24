@@ -100,7 +100,8 @@ theorem admitted_effect_removes_stale_member_facts (s : State α) (site : Nat)
     ∀ f ∈ (transfer s site facts frame).facts, affected site f = false := by
   simp only [transfer, h, ↓reduceIte]
   intro f hf
-  exact Bool.not_eq_true.mp (List.mem_filter.mp hf).2
+  have kept := (List.mem_filter.mp hf).2
+  cases value : affected site f <;> simp_all
 
 theorem unaffected_facts_survive (s : State α) (site : Nat)
     (facts : List Fact) (frame : α) (h : admits s site = true)

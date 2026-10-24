@@ -315,9 +315,10 @@ pub(super) fn checked_effect(
     // potentially large callee AST; the complete typed check still decides.
     let (start, _) = find_function_body(tokens, function)?;
     let end = matching(tokens, start, "{", "}")?;
-    if tokens[start..=end].windows(2).any(|pair| {
-        is_identifier(&pair[0].text) && pair[1].text == "(" && pair[0].text != "if"
-    }) {
+    if tokens[start..=end]
+        .windows(2)
+        .any(|pair| is_identifier(&pair[0].text) && pair[1].text == "(" && pair[0].text != "if")
+    {
         return None;
     }
     checked_leaf(tokens, function, contracts)?;
@@ -422,8 +423,8 @@ pub(crate) fn restore_unreachable(cfg: &mut LegacyCfg) {
     }
     for (id, node) in cfg.nodes.iter_mut().enumerate() {
         if !reachable.contains(&id)
-            && let (LegacyInstruction::SelfInitCall { fallback, .. }
-            | LegacyInstruction::TrackedSelfInit { fallback, .. }) = &node.instruction
+            && let LegacyInstruction::SelfInitCall { fallback, .. }
+            | LegacyInstruction::TrackedSelfInit { fallback, .. } = &node.instruction
         {
             node.instruction = *fallback.clone();
         }
