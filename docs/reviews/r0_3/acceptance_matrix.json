@@ -8343,8 +8343,8 @@
   {
    "id": "CT-FIXTURE-EXTERNAL-READERS",
    "title": "Eight CT fixture directories are read by include_str! from outside ct_corpus.rs, so a mapping lane can silently re-point another card's tests",
-   "why": "Card CT-LANE-5 hit this: compiler/tests/write_lend.rs include_str!'d compiler/tests/fixtures/ct/CT07/case.qr, so re-mapping CT07 onto the two-thread artifact handed card SLICE-PERMISSIONS-WRITE-LEND's own tests a task-route program. It was caught by a stale doc comment, which is luck rather than a mechanism, so the generality was then MEASURED: eight CT directories are read from outside the CT harness - CT01 (ct01_proof_leg.rs, ct12_ct14_proof_reach.rs, f02_trace_relation.rs, owned_source_tasks.rs, windows_threads.rs), CT03 (ct03_proof_leg.rs, windows_threads.rs), CT07 (write_lend.rs), CT12 and CT14 (ct12_ct14_proof_reach.rs), CT13 (source_tasks.rs), CT17 (windows_threads.rs, both case.qcore and track.h) and CT37 (ct37_proof_leg.rs). THREE of those are the proof-gated cases CT01, CT03 and CT37, which is the worst place for it: a lane re-pointing one of those would move a proof leg's artifact with nothing in the CT harness saying so, and the proof numerator would keep reading 3. The CT harness's own fixture-inventory check cannot see this, because it ranges over the directory and the case's expected.json, not over who else compiles those bytes. Measured by STABILITY-REEVAL-3: the harness refuses a manifest re-point (ct_corpus.rs:2894-2905, :3021-3036), so the silent direction is the reverse one - the proof stage credited to a `file::test` string nobody read - now checked by proof_gated_cases_name_a_live_test_that_reads_the_cases_own_fixture. DISCHARGE: a check that every include_str! of compiler/tests/fixtures/ct/ outside ct_corpus.rs is either declared in one place or refused - a close-rule or test-level check, not a card.",
-   "source": "docs/reports/ct-lane-5/README.md",
+   "why": "Card CT-LANE-5 hit this: compiler/tests/write_lend.rs include_str!'d compiler/tests/fixtures/ct/CT07/case.qr, so re-mapping CT07 onto the two-thread artifact handed card SLICE-PERMISSIONS-WRITE-LEND's own tests a task-route program. It was caught by a stale doc comment, which is luck rather than a mechanism, so the generality was then MEASURED: eight CT directories are read from outside the CT harness - CT01 (ct01_proof_leg.rs, ct12_ct14_proof_reach.rs, f02_trace_relation.rs, owned_source_tasks.rs, windows_threads.rs), CT03 (ct03_proof_leg.rs, windows_threads.rs), CT07 (write_lend.rs), CT12 and CT14 (ct12_ct14_proof_reach.rs), CT13 (source_tasks.rs), CT17 (windows_threads.rs, both case.qcore and track.h) and CT37 (ct37_proof_leg.rs). THREE of those are the proof-gated cases CT01, CT03 and CT37, which is the worst place for it: a lane re-pointing one of those would move a proof leg's artifact with nothing in the CT harness saying so, and the proof numerator would keep reading 3. The CT harness's own fixture-inventory check cannot see this, because it ranges over the directory and the case's expected.json, not over who else compiles those bytes. Measured by STABILITY-REEVAL-3: the harness refuses a manifest re-point (ct_corpus.rs:2894-2905, :3021-3036), so the silent direction is the reverse one - the proof stage credited to a `file::test` string nobody read - now checked by proof_gated_cases_name_a_live_test_that_reads_the_cases_own_fixture. DISCHARGE: a check that every include_str! of compiler/tests/fixtures/ct/ outside ct_corpus.rs is either declared in one place or refused - a close-rule or test-level check, not a card. Card GATE-ELASTIC (2026-10-24): scripts/gate_scope.py now finds include_str!/include_bytes!/include!/#[path] readers mechanically and gives a read file's directory to the reading crate (gate_scope.py --readers; docs/reports/gate-elastic/readers.json), which keeps the scoped card gate from missing a cross-crate fixture reader. It is crate-granular, so it does not discharge this entry: the CT directories read from outside ct_corpus.rs are all inside qcore-compiler, and the requested check over those includes is still unbuilt.",
+   "source": "docs/reports/ct-lane-5/README.md, docs/reports/gate-elastic/README.md",
    "recorded_by": "CT-LANE-5"
   },
   {
@@ -12937,6 +12937,48 @@
    "title": "Transport checked self-initializer effects to tracked or embedded caller objects",
    "why": "Open after W48-CMT-LIST-SELF-INIT. Its private empty-frame call admits no tracked owner, interior/member-address actual or member-place alias and exports no ordinary summary. DISCHARGE: generic checked shape/effect transport for an exact live caller-owned object or embedded member, preserving actual CG11 writes, derived/member alias invalidation, custody and list-membership obligations; matching audited Rust/Lean without placeholders or project axioms, complete source/ABI/full-body/all-exit checks, wrong-owner/layout/alias and callback/export refusal controls, and fresh BASE/planner then committed prediction then implementation with complete resource/NULL/runtime native attribution. Never erase initializer writes into a neutral summary.",
    "source": "docs/reports/w48-cmt-list-self-init/README.md"
+  },
+  {
+   "id": "GATE-SCOPE-RUNTIME-READS-HEURISTIC",
+   "title": "The scoped card gate finds run-time readers by a string-literal heuristic: it over-selects for broad walkers and cannot see data-derived paths or filtered whole-repository walks",
+   "why": "scripts/gate_scope.py (card GATE-ELASTIC) finds compile-time readers exactly (include_str!/include_bytes!/include!/#[path], 130 cross-crate rows, one unresolvable include that is text inside a string), but run-time readers only by string literals naming a tracked path or a parent directory. Measured consequence (docs/reports/gate-elastic/selection.json): workspace_layering.rs (.join(\"crates\")) and composition_bounds.rs (walks crates/) put qcore-compiler, qcore-verification and their dependents into the scope of every crate change (5-6 of 13 root members), and production_symbolic_adoption.rs (walks providers/) sends every providers/ change to qcore-contract and so the full suite. It cannot see a path a test computes from data (a manifest entry) or a whole-repository walk filtered afterwards (qcore-contract bounds_contract.rs, compiler tracked_inputs.rs), so the full gate per landing stays the arbiter. DISCHARGE: declare each repository walk's filter where it is made (for example a reviewed table of walker, root and extension the scoper reads, with a test that every tracked_files call outside a crate's own directory is listed), then measure the scope gain against selection.json.",
+   "source": "docs/reports/gate-elastic/README.md"
+  },
+  {
+   "id": "PROVIDER-CONFORMANCE-CORE-DEPS-UNGATED",
+   "title": "qcore-provider-conformance dev-depends on six core crates, but neither the full gate nor the scoped gate runs the provider suite on a core-only change",
+   "why": "cargo metadata (card GATE-ELASTIC): providers/conformance dev-depends on qcore-audit, qcore-c-gateway, qcore-contract, qcore-core, qcore-verification and qcore-verifier-host, and every provider member depends on qcore-schemas. The full standing gate runs the provider gate only when providers/ changes (constraint 18, operations card briefs), and the scoped gate follows it, listing such members in gate.json under provider_members_reached_without_providers_change. A core change can therefore break provider conformance with every gate green until a later providers/ change. DISCHARGE: decide whether a diff reaching a provider member through a core dependency runs the provider gate (scoped gate and landing gate alike), and record the decision in validation.md.",
+   "source": "docs/reports/gate-elastic/README.md"
+  },
+  {
+   "id": "GATE-SLOT-BUILDS-UNSLOTTED",
+   "title": "fmt, Clippy and cargo builds take no gate slot, so another card's build can load the host beside a rust-suite job's EXCLUSIVE phase",
+   "why": "scripts/gate_slot.py (card GATE-ELASTIC) defines rust-suite, audit and lean classes; a rust-suite job excludes audits but nothing excludes another card's Clippy or test build while its EXCLUSIVE phase runs constraint 16's load-sensitive rows. Under the legacy lock every heavy step was serialised, so this load path opens as cards move to slots. DISCHARGE: either give builds a class the rust-suite class excludes during its EXCLUSIVE phase only, or measure the load-sensitive rows under a concurrent build and record that they hold.",
+   "source": "docs/reports/gate-elastic/README.md"
+  },
+  {
+   "id": "PROVIDER-PYTHON-TESTS-UNGATED",
+   "title": "providers/tests/*.py (25 tests) are run by no gate step",
+   "why": "The standing gate runs python3 -m unittest discover -s scripts/tests; providers/README.md's provider gate runs package.py, cargo test, fmt and Clippy. providers/tests/test_contract_load_path.py and test_package_contracts.py (25 tests, measured passing in 81.9 s by card GATE-ELASTIC on its tip) are in neither, although the pluggable-cards plan names the first as part of the provider suite that stayed red for a day. DISCHARGE: add python3 -m unittest discover -s providers/tests to the provider gate block (and the scoped gate's mirror), or record why it stays out.",
+   "source": "docs/reports/gate-elastic/README.md"
+  },
+  {
+   "id": "TASK-CONTEXT-GATE-ROLES",
+   "title": "task_context.py lists the full gate and the scoped card gate as one undifferentiated block of required commands",
+   "why": "scripts/task_context.py extracts every ```sh block of docs/agents/validation.md; after card GATE-ELASTIC that is the full gate's commands followed by the scoped gate's command, with no statement that a card runs the latter and the integrator the former. DISCHARGE: label each extracted block with its heading (or emit only the gate the caller's role needs), with a test.",
+   "source": "docs/reports/gate-elastic/README.md"
+  },
+  {
+   "id": "LEGACY-GATE-LOCK-INTERLOCK",
+   "title": "Every gate slot holds the legacy validation lock shared until no card uses it",
+   "why": "During the transition (card GATE-ELASTIC) every scripts/gate_slot.py job holds /tmp/qcore-c-card-validation-20261022.lock shared, so `flock <legacy lock>` jobs and slot jobs exclude each other; a legacy exclusive waiter can wait indefinitely while slot jobs keep the lock shared. DISCHARGE: once no running brief names the legacy lock, remove the interlock from gate_slot.py and its tests, and the transition sentence from validation.md.",
+   "source": "docs/reports/gate-elastic/README.md"
+  },
+  {
+   "id": "GATE-SCOPED-RUN-UNEXERCISED",
+   "title": "No scoped (non-full) gate run, gate_lean.py against Lake, or live slot job has completed yet",
+   "why": "Card GATE-ELASTIC's own diff selects full mode, so its gate exercised gate_scope.py's full path only; the live demonstration of gate_slot.py rust-suite with run_test_binaries.py --packages qcorec,quirin-audit-plugin-libevent and of gate_slot.py lean with gate_lean.py waited about four hours behind legacy-lock jobs and was stopped (logs in that worktree's private/ge/demo*-attempt/). The restricted runner, slot accounting and gate_lean's refusals are covered by unit tests with real flock locks, not by a completed run. DISCHARGE: the first card that lands on the scoped gate in scoped mode with a Lean module step, under slots, publishes its gate.json and slot receipts, and its totals are checked against the units its --packages selection should build.",
+   "source": "docs/reports/gate-elastic/README.md"
   }
  ],
  "updated": "Completed plugin premise integration; exact hand-maintained union retains810followups, borrowed measured-source8419Rust/354Lean/freshcard133provider, exact source equivalence checked; authoritative root committed-matrix Python confirmation in integration receipt."
