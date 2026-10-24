@@ -9,13 +9,16 @@
 #                   real directory (unshare -rm ns_run.sh; measure.py --inputs namespace)
 #   base-original   BASE on the original inputs as they are (the run-4 failure,
 #                   reproduced; expected to exit nonzero)
-# Usage: run_identity.sh WORKTREE BASE_REV TIP_REV
+# Usage: [SIDES=...] [TIP_ORIGINAL_SNAPSHOT=dir] [BASE_NAMESPACE_SNAPSHOT=dir] run_identity.sh WORKTREE BASE_REV TIP_REV [RUNS_DIR_NAME [ROUTES]]
+# Snapshots are directories under private/acp; two sides sharing one snapshot
+# can trip each other's input-identity check (exit 101), because the audit
+# writes transient retained products under its working directory.
 set -u
 W=$1
 BASE_REV=$2
 TIP_REV=$3
 A=$W/private/acp
-R=$A/runs
+R=$A/${4:-runs}
 L=$W/docs/reports/w48-bu-single-leaf-bodies/link-map.corpus.json
 MIRROR_DRIVER=$W/docs/reports/w48-bu-single-leaf-bodies/scripts/measure.py
 DRIVER=$W/docs/reports/audit-canonical-paths/scripts/measure.py
@@ -30,19 +33,19 @@ side() {
     tip-mirror) python3 "$MIRROR_DRIVER" "$route" "$R/$name/$route" --link-map "$L" \
         --inputs-snapshot "$A/tip-src" --binary-source "$TIP_REV" --jobs 4 --inputs-mirror "$A/mirror" ;;
     tip-original) python3 "$DRIVER" "$route" "$R/$name/$route" --link-map "$L" \
-        --inputs-snapshot "$A/tip-src" --binary-source "$TIP_REV" --jobs 4 --inputs original ;;
+        --inputs-snapshot "$A/${TIP_ORIGINAL_SNAPSHOT:-tip-src}" --binary-source "$TIP_REV" --jobs 4 --inputs original ;;
     base-original) python3 "$DRIVER" "$route" "$R/$name/$route" --link-map "$L" \
         --inputs-snapshot "$A/base-src" --binary-source "$BASE_REV" --jobs 4 --inputs original ;;
     base-namespace) unshare -rm sh "$NS" python3 "$DRIVER" "$route" "$R/$name/$route" --link-map "$L" \
-        --inputs-snapshot "$A/base-src" --binary-source "$BASE_REV" --jobs 4 --inputs namespace ;;
+        --inputs-snapshot "$A/${BASE_NAMESPACE_SNAPSHOT:-base-src}" --binary-source "$BASE_REV" --jobs 4 --inputs namespace ;;
   esac >"$R/$name-$route.driver.log" 2>&1
   echo $? >"$R/$name-$route.driver.exit"
 }
 # Three phases bound memory (a corpus audit holds about 7 GB): every side's
 # corpus, then every slice, then every system route.
-for route in corpus slice system; do
+for route in ${5:-corpus slice system}; do
   date -u +%Y-%m-%dT%H:%M:%SZ >"$R/$route.start"
-  for name in base-mirror tip-mirror tip-original base-namespace base-original; do
+  for name in ${SIDES:-base-mirror tip-mirror tip-original base-namespace base-original}; do
     side "$name" "$route" &
   done
   wait
