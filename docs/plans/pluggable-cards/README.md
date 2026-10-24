@@ -79,7 +79,7 @@ verdict contract and Lean parity; the dependency direction of generalization
 §2.7. The standing gate's content is unchanged; what changes is *who runs it
 when* and *what a card must re-measure*.
 
-## 3. Six seams
+## 3. Seven seams
 
 ### A. Decouple implementation from contracts and corpus (the main issue)
 
@@ -123,6 +123,63 @@ when* and *what a card must re-measure*.
 What this does not do: it does not make a contract verified (it stays a
 declared assumption), and it does not shrink the denominator. Unknown rows stay
 counted; a frozen profile is frozen for all rows, not for the convenient ones.
+
+### G. The semigroup integration interface (user direction, 2026-10-24)
+
+Every integration of results or contracts goes through one interface whose
+operation is associative and erases nothing, so no contribution can
+contaminate another unit's audited result. The repository already has the
+pieces: the four-value join `Safe < Pending < Unknown < Unsafe` (§L21.2), the
+subcommand-plugin rule that "a row is the join of the host's verdict, the run's
+and the claims, so it never lowers a host verdict", and the first-answer route
+table. This seam names them, gives them one schema and one set of laws, and
+makes them the only path by which seams A and F integrate anything.
+
+Two compositions, kept distinct:
+
+1. **Across results (the integration semigroup).** The carrier is a
+   *contribution*: a set of components, each
+   `(unit identity, row key, property, profile, provenance, verdict tuple,
+   reason leaves)`, where provenance is the analyzer revision, the rule set
+   (with its off-list), the contract bundle digests and, for an external
+   checker, its identity. The operation `⊕` is provenance-keyed union of
+   components; a row's **published** verdict is derived at read time as the
+   join over its components, carrying every component's assumptions (§L21.2).
+   Laws, tested on vectors in Rust and proved in `QCore.AuditComposition`:
+   associative, commutative, identity (the empty contribution), idempotent
+   for byte-identical components; the join never lowers a verdict; adding a
+   component never removes an assumption. **Conflict is not resolved by
+   choice**: two components with the same provenance key and different bytes
+   leave the row `Unknown` with reason `composition-conflict`, and both
+   components stay. Removing a contribution (a rule switched off, a contract
+   bundle withdrawn, a checker dropped) is a re-join without it; nothing is
+   rewritten, so the removed atoms remain auditable.
+2. **Within one unit's analysis (the route semigroup).** Packages at a
+   position compose by ordered consultation: first answer wins, the identity
+   is refusal, the order is the registry's and is semantics. A package's
+   answer is admit-with-obligations or refuse; it cannot edit another's
+   answer. This composition is deliberately not commutative; what it shares
+   with the first is that nothing is erased and absence is refusal.
+
+**Contracts compose the same way.** A contract bundle is a contribution to the
+loaded environment: bundles union by `(library, declaration digest)`. Two
+bundles declaring the same function with different clauses do not pick a
+winner: the declaration is withheld (`contract-conflict`; `Unknown` at every
+call site) and both are recorded. `include`/`inherit` stay the only sanctioned
+refinement. A new contract can therefore change an existing unit's result only
+by supplying a declaration that was missing (a leaf discharges) or by
+conflicting (a named `Unknown`), never by silently replacing what another
+bundle declared.
+
+**Where it lives.** `qcore-schemas::composition` (serde types and the join
+functions; the only crate providers and plugins may depend on), consumed by the
+report emitter in `qcore-audit` (components stored per row; the report's rows
+become a deterministic derived view, byte-identical to today's output under an
+identity run), by `quirin-audit measure` (a baseline `⊕` a TIP contribution),
+by the checker-plugin firewall (already a join) and by the contract loader
+(bundle union). Published baselines (seam F) store components, not totals, so
+a profile total is a derivation over atoms from real runs, and a rule's ledger
+(seam A) is attribution over those atoms, never a substitute for the run.
 
 ### B. Gateway rule packages (code)
 
@@ -230,12 +287,13 @@ contribution ledger instead of a moved global total.
 | Phase | Cards | Analyzer semantics | Evidence |
 |---|---|---|---|
 | P0 infrastructure | `MEASURE-TOOL` (F), `GATE-SLOTS`, `GATE-SCOPE` (E), `AUDIT-CANONICAL-PATHS` (F) | none, except canonical path comparison (identity run) | scoped-gate argument recorded; identity run |
-| P1 decoupling data | `CONTRACT-LOCKS` (A: lock files, literal pins become readers), `EVALUATION-PROFILES` (A: profile records, cycle bindings, frozen/live policy), `LEAN-ROOTS-GENERATED` (C), `RULE-DOCS-GENERATED` and `AMENDMENTS-SCHEMA` (D) | none | lock-equals-tree and committed-equals-generated tests; every cycle names a profile |
+| P1 decoupling data | `AUDIT-COMPOSITION` (G: schema types, join laws in Rust vectors and Lean, per-row components in the report with an identity run, bundle-union conflict as `contract-conflict`), `CONTRACT-LOCKS` (A: lock files, literal pins become readers), `EVALUATION-PROFILES` (A: profile records, cycle bindings, frozen/live policy), `LEAN-ROOTS-GENERATED` (C), `RULE-DOCS-GENERATED` and `AMENDMENTS-SCHEMA` (D) | none; composition is a derived view (identity run) | lock-equals-tree and committed-equals-generated tests; composition laws audited; every cycle names a profile |
 | P2 rule API and pilots | `GATEWAY-RULE-API`, `RULE-SWITCHES`, `CONTRIBUTION-LEDGERS` (A), then one card per migrated rule (32a, 33, 34, 35, 36, 37) and `FRAMES-AS-CLAUSE` (A) | moves only; switches add a refusing arm; a clause replaces a table | identity run per move; ROUTE-MAP order test; contribution ledgers equal the cards' measured deltas |
 | P3 template | card-brief template and `operations.md` card section updated to §4; wave 3 launched on it | none | first wave-3 cards land with zero shared-file edits and a ledger each |
 
-P0 and P1 can run as parallel cards today. P2 waits for P0's tool and P1's
-locks and generated roots. The Codex wave-2 cards (rules 36, 37) land on the
+P0 and P1 can run as parallel cards today, except that `MEASURE-TOOL` consumes
+`AUDIT-COMPOSITION`'s schema and so follows it. P2 waits for P0's tool and
+P1's locks, composition and generated roots. The Codex wave-2 cards (rules 36, 37) land on the
 current structure first and are migrated in P2 like the others.
 
 ## 6. Decisions needed
@@ -261,6 +319,11 @@ current structure first and are migrated in P2 like the others.
    shared inputs once.
 8. **Where the measurement tool lives**: a `quirin-audit` subcommand plugin
    (recommended) or `scripts/`.
+9. **Decided by the user (2026-10-24):** results and contracts integrate only
+   through the semigroup interface of seam G. One sub-decision remains: on a
+   bundle conflict, withhold the declaration (`Unknown` at its call sites,
+   recommended: fail-closed and local) or refuse to load the bundle set (a
+   hard error that stops the whole run).
 
 ## 7. Risks and boundaries
 
@@ -272,6 +335,14 @@ current structure first and are migrated in P2 like the others.
 - Per-rule ledgers compose only if the comparison tool reports interactions
   (a row moved by two rules together) as their own named rows; the profile
   total is always re-derived from a real run at landing, never summed.
+- The two compositions of seam G must not be confused: the route semigroup is
+  order-sensitive and lives inside one run; the integration semigroup is
+  commutative and lives across runs. A tool that joined route answers across
+  runs, or consulted components in registry order, would be wrong in a way the
+  laws' tests are there to catch.
+- Storing components per row grows the report. The derived view keeps today's
+  bytes; the component store is a sidecar, and the identity run is what shows
+  the view unchanged.
 - Freezing a profile is a records decision, not evidence: a frozen cycle's
   figures describe the analyzer at that revision and say so.
 - Generated roots, routers and locks add "committed equals generated/tree"
