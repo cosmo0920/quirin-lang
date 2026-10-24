@@ -1393,6 +1393,8 @@ Regenerate with `python3 scripts/build_docs_index.py`; validate with `--check`.
 
 | [w48-qrlib-macos](w48-qrlib-macos/README.md) | W48-QRLIB-MACOS — card 5m: the macOS linkage path, run |
 
+| [w48-rk-log-caller-frame](w48-rk-log-caller-frame/README.md) | W48-RK-LOG-CALLER-FRAME: librdkafka's logger read from its callers' frame |
+
 | [w48-sched-cleanup-production](w48-sched-cleanup-production/README.md) | Scheduler element destroyer in production (rule 34) |
 
 | [w48-w44-rk-integration](w48-w44-rk-integration/README.md) | W48, W44 and outer-contract stage 2 integration |
