@@ -193,7 +193,31 @@ Two pre-halt receipts the halt record left unexplained:
 
 ## Gate
 
-GATE_SECTION
+Full standing gate plus provider gate on `6866e54c5` (the merged tip with this
+report before this section), `scripts/run_gate.py 7` under the shared lock,
+`CARGO_BUILD_JOBS=6`, dev/test debug info and incremental off; every step
+exit 0 (`private/rkcf/gate-7/gate.json`, one log per step beside it). Clang:
+Ubuntu clang 21.1.8.
+
+| Step | Exit | Count |
+|---|---|---|
+| `git submodule update --init --recursive` | 0 | |
+| `scripts/run_test_binaries.py --jobs 4` | 0 | 8,595 passed, 0 failed, 15 ignored (546 units) |
+| `cargo fmt --all -- --check` | 0 | |
+| `cargo clippy --all-targets -- -D warnings` | 0 | |
+| `reevaluation_probe` / `reevaluation_followup` | 0 / 0 | |
+| `scripts/check_lean_audits.py` | 0 | 369 audits, no placeholders or project axioms |
+| `python3 -m unittest discover -s scripts/tests` | 0 | 374 |
+| provider Rust workspace (`--locked --offline --no-fail-fast`) | 0 | 133 passed, 0 failed, 1 ignored |
+| provider fmt / clippy | 0 / 0 | |
+| provider Python | 0 | 25 |
+| `providers/contracts.py check` | 0 | |
+| `providers/package.py build` and the five `verify`s | 0 | chunkio, libevent, librdkafka, cmetrics, ctraces |
+
+Against main's last full gate (8,587 Rust at `086a4f72a`) the eight new Rust
+tests are this card's: seven in `caller_frame_hold.rs` and the registry test.
+Earlier gates 1–6 are failed or never-run attempts (`private/rkcf/failed-attempts/README`;
+gate-6 waited for the lock and was stopped by the halt).
 
 ## Boundaries
 
