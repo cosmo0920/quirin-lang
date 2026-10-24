@@ -26,11 +26,13 @@ fn run() -> Result<String, String> {
     let read = |path: &PathBuf| {
         std::fs::read(path).map_err(|error| format!("{}: {error}", path.display()))
     };
-    let mut deserializer = serde_json::Deserializer::from_slice(&read(&report)?[..]);
+    let report_bytes = read(&report)?;
+    let mut deserializer = serde_json::Deserializer::from_slice(&report_bytes);
     deserializer.disable_recursion_limit();
     let report_value: serde_json::Value = serde::Deserialize::deserialize(&mut deserializer)
         .map_err(|error| format!("{}: {error}", report.display()))?;
-    let mut deserializer = serde_json::Deserializer::from_slice(&read(&sidecar)?[..]);
+    let sidecar_bytes = read(&sidecar)?;
+    let mut deserializer = serde_json::Deserializer::from_slice(&sidecar_bytes);
     deserializer.disable_recursion_limit();
     let sidecar_value: ComponentSidecar = serde::Deserialize::deserialize(&mut deserializer)
         .map_err(|error| format!("{}: {error}", sidecar.display()))?;
