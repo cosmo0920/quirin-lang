@@ -234,3 +234,12 @@ fn source_target_vectors_are_bound_to_the_lean_table() {
         assert!(error.contains("no validated W4 summary"), "{error}");
     }
 
+
+#[test]
+fn initialized_owned_result_can_escape_and_plain_aliases_still_share_parent_release() {
+    let source = format!("{LEAF}struct Ring *make(void); struct Ring *subject(void) {{ struct Ring *p = make(); reset(p); reset(p); return p; }}");
+    let Some(r) = run(&source) else { return }; assert_eq!(summary(&r).functions["subject"].status, AnalysisStatus::Safe);
+    let source = format!("{LEAF}struct Ring *make(void); void drop(struct Ring *p); void subject(void) {{ struct Ring *p = make(); struct Ring *q = p; reset(q); drop(p); drop(q); }}");
+    let Some(r) = run(&source) else { return }; assert_ne!(summary(&r).functions["subject"].status, AnalysisStatus::Safe);
+    assert!(summary(&r).functions["subject"].diagnostics.iter().any(|d| matches!(d.kind, LegacyDiagnosticKind::DoubleRelease { .. })));
+}
