@@ -4150,6 +4150,7 @@ fn typed_access_facts(
         .collect::<BTreeSet<_>>();
     let stores = crate::aggregate_store::store_bases(
         &texts[body_start + 1..body_end],
+        &texts[open + 1..close],
         &formals,
         contracts,
         &model,

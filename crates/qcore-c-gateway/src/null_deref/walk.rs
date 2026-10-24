@@ -300,6 +300,8 @@ pub(super) fn record_tag(unit: &ast::Unit, base: &str, arrow: bool) -> Option<St
 pub(super) struct Env<'a> {
     pub(super) unit: &'a ast::Unit,
     pub(super) resource: &'a ResourceContracts,
+    /// Checked custody results require this property's independent source proof.
+    pub(super) checked_results: &'a BTreeSet<String>,
     pub(super) declared: &'a BTreeMap<String, Declared>,
     pub(super) summaries: &'a BTreeMap<String, Summary>,
     pub(super) newlines: &'a [usize],
@@ -2104,7 +2106,11 @@ impl<'a> Walker<'a> {
             ))));
         }
         let contract = crate::contract_dependencies::unrecorded(|| {
-            self.env.resource.contract(&callee_name).cloned()
+            self.env
+                .resource
+                .contract(&callee_name)
+                .filter(|_| !self.env.checked_results.contains(&callee_name))
+                .cloned()
         });
         let null = match contract.map(|c| c.result) {
             Some(ResourceReturnMode::Owned { nullable: true })
