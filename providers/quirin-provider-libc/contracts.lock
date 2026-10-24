@@ -617,6 +617,11 @@
       "contract_sha256": "828eeea0a95caaa82381e606d3c84476cac23e8f0db9b7fbf8e6b7c7f6901422"
     },
     {
+      "function": "thrd_current",
+      "module": "libc/threads.qv",
+      "contract_sha256": "1553568a41103276d8485f803a646de66084e78958e48dc141a06e5b4b869331"
+    },
+    {
       "function": "time",
       "module": "libc/time.qv",
       "contract_sha256": "0d1f335080f344836bd108e9633c4702179532729762c9a53951c64f1493486a"
@@ -655,6 +660,11 @@
       "function": "write",
       "module": "libc/unistd.qv",
       "contract_sha256": "1cc311b830803db70cd25cf721bdae0fc7907a5c3ba25a0d4dda86ba00d11180"
+    },
+    {
+      "function": "writev",
+      "module": "libc/unistd.qv",
+      "contract_sha256": "a5740634008213a35b6e9673af12548e0edeacd49a18a870b0abbf642e82c32f"
     }
   ]
 }

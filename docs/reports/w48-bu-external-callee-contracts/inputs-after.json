@@ -1,0 +1,135 @@
+{
+  "recorded": "2026-10-24T03:10:31.842978+00:00",
+  "scope": "All paths in the before manifests; additions separately enumerated for private mirror; no exclusions.",
+  "native-inputs-before": {
+    "files_checked": 46547,
+    "changes": []
+  },
+  "host-declarations-before": {
+    "files_checked": 4,
+    "changes": []
+  },
+  "mirror": {
+    "files_before": 14706,
+    "files_after": 14719,
+    "changes": [
+      {
+        "path": "c-gateway-wave-pin/fluent-bit-clang-source/Dockerfile",
+        "base": null,
+        "after": "a39aa0bf040d21a900ab4019b5243cd68ccac036a0e8adfd5cb242f617bc1ccc"
+      },
+      {
+        "path": "c-gateway-wave-pin/fluent-bit-clang-source/lib/wasm-micro-runtime-WAMR-2.4.1/language-bindings/python/LICENSE",
+        "base": null,
+        "after": "0a274df3755e61b169266fba62d842489378bc9a6e9a63fe24f02ee6f5de419f"
+      },
+      {
+        "path": "c-gateway-wave-pin/fluent-bit-clang-source/lib/zstd-1.5.7/tests/cli-tests/bin/unzstd",
+        "base": null,
+        "after": "808cc561268e42dd3ca2dcb1f39874661e19a568cc05374a1bff3d9d440e5022"
+      },
+      {
+        "path": "c-gateway-wave-pin/fluent-bit-clang-source/lib/zstd-1.5.7/tests/cli-tests/bin/zstdcat",
+        "base": null,
+        "after": "808cc561268e42dd3ca2dcb1f39874661e19a568cc05374a1bff3d9d440e5022"
+      },
+      {
+        "path": "c-gateway-wave-pin/fluent-bit-clang-source/tests/runtime/data/common/parsers.conf",
+        "base": null,
+        "after": "760e6a347874a6cbdc10c6cd21d82d1ee5388c8573ddfaab05ef37904749dbe1"
+      },
+      {
+        "path": "c-gateway-wave-pin/fluent-bit-clang-source/tests/runtime/in_cpu.c",
+        "base": null,
+        "after": "cfe7f0b1d0f0b2fd958fadaf5d0f33bfeff82809b38191f0315897e1baa5055a"
+      },
+      {
+        "path": "c-gateway-wave-pin/fluent-bit-clang-source/tests/runtime/in_disk.c",
+        "base": null,
+        "after": "cfe7f0b1d0f0b2fd958fadaf5d0f33bfeff82809b38191f0315897e1baa5055a"
+      },
+      {
+        "path": "c-gateway-wave-pin/fluent-bit-clang-source/tests/runtime/in_head.c",
+        "base": null,
+        "after": "cfe7f0b1d0f0b2fd958fadaf5d0f33bfeff82809b38191f0315897e1baa5055a"
+      },
+      {
+        "path": "c-gateway-wave-pin/fluent-bit-clang-source/tests/runtime/in_mem.c",
+        "base": null,
+        "after": "cfe7f0b1d0f0b2fd958fadaf5d0f33bfeff82809b38191f0315897e1baa5055a"
+      },
+      {
+        "path": "c-gateway-wave-pin/fluent-bit-clang-source/tests/runtime/in_proc.c",
+        "base": null,
+        "after": "cfe7f0b1d0f0b2fd958fadaf5d0f33bfeff82809b38191f0315897e1baa5055a"
+      },
+      {
+        "path": "c-gateway-wave-pin/monkey/monkey-build/lib/libevent-2.2.so",
+        "base": null,
+        "after": "ec2ee739b8ce75c936d50f044c2bcaf9a51bf20dad7e747dfa8400c46ee1bc7c"
+      },
+      {
+        "path": "c-gateway-wave-pin/monkey/monkey-build/lib/libevent-2.2.so.1",
+        "base": null,
+        "after": "ec2ee739b8ce75c936d50f044c2bcaf9a51bf20dad7e747dfa8400c46ee1bc7c"
+      },
+      {
+        "path": "c-gateway-wave-pin/monkey/monkey-build/lib/libevent.so",
+        "base": null,
+        "after": "ec2ee739b8ce75c936d50f044c2bcaf9a51bf20dad7e747dfa8400c46ee1bc7c"
+      }
+    ]
+  },
+  "clang": [
+    {
+      "unchanged": true,
+      "before": {
+        "command": [
+          "/usr/bin/clang",
+          "--version"
+        ],
+        "exit": 0,
+        "realpath": "/usr/lib/llvm-21/bin/clang",
+        "output": "Ubuntu clang version 21.1.8 (6ubuntu1)\nTarget: x86_64-pc-linux-gnu\nThread model: posix\nInstalledDir: /usr/lib/llvm-21/bin\n",
+        "stderr": "",
+        "binary_sha256": "412bbe8c60571a1eb06f48fde89635033621caeb01a9b4ee76d46711bae8e932"
+      },
+      "after": {
+        "command": [
+          "/usr/bin/clang",
+          "--version"
+        ],
+        "exit": 0,
+        "realpath": "/usr/lib/llvm-21/bin/clang",
+        "output": "Ubuntu clang version 21.1.8 (6ubuntu1)\nTarget: x86_64-pc-linux-gnu\nThread model: posix\nInstalledDir: /usr/lib/llvm-21/bin\n",
+        "stderr": "",
+        "binary_sha256": "412bbe8c60571a1eb06f48fde89635033621caeb01a9b4ee76d46711bae8e932"
+      }
+    },
+    {
+      "unchanged": true,
+      "before": {
+        "command": [
+          "/usr/lib/llvm-21/bin/clang",
+          "--version"
+        ],
+        "exit": 0,
+        "realpath": "/usr/lib/llvm-21/bin/clang",
+        "output": "Ubuntu clang version 21.1.8 (6ubuntu1)\nTarget: x86_64-pc-linux-gnu\nThread model: posix\nInstalledDir: /usr/lib/llvm-21/bin\n",
+        "stderr": "",
+        "binary_sha256": "412bbe8c60571a1eb06f48fde89635033621caeb01a9b4ee76d46711bae8e932"
+      },
+      "after": {
+        "command": [
+          "/usr/lib/llvm-21/bin/clang",
+          "--version"
+        ],
+        "exit": 0,
+        "realpath": "/usr/lib/llvm-21/bin/clang",
+        "output": "Ubuntu clang version 21.1.8 (6ubuntu1)\nTarget: x86_64-pc-linux-gnu\nThread model: posix\nInstalledDir: /usr/lib/llvm-21/bin\n",
+        "stderr": "",
+        "binary_sha256": "412bbe8c60571a1eb06f48fde89635033621caeb01a9b4ee76d46711bae8e932"
+      }
+    }
+  ]
+}

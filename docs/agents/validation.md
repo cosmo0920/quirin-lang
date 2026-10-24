@@ -7,7 +7,11 @@ in the [agent-cycle checkpoint](../development/increments/structure-checkpoints/
 <!-- preserved:validation:start -->
 ## Standing per-change gate
 
-Run before claiming any change complete:
+Who runs which gate (user decision 4 of 2026-10-24, card `GATE-ELASTIC`): a
+delegated card closes on the [scoped card gate](#scoped-card-gate) on its final
+commit; the integrator runs this full gate once per landing, on the merge result
+before pushing, and it is the arbiter whenever the two disagree. A change made
+outside a card runs this full gate. Its content:
 
 ```sh
 git submodule update --init --recursive   # every fresh checkout, worktrees included
@@ -116,6 +120,67 @@ and ChunkIO lock theorem remain usable. `docs/reports/w7-lean-ci/README.md`,
 `docs/reports/lean-build-performance/README.md`.
 
 <!-- preserved:validation:end -->
+
+## Scoped card gate
+
+```sh
+python3 scripts/gate_scope.py --base <card base>   # --plan previews; --no-slots under the legacy flock
+```
+
+It maps `git diff --name-only --no-renames <base>...HEAD`, plus uncommitted and
+untracked paths, to crates of both workspaces through `cargo metadata`, closes
+over reverse dependencies, and gives a path to every crate that reads it: by
+`include_str!`/`include_bytes!`/`include!` or a `#[path]` module, where the read
+file's whole directory belongs to the reader (`CT-FIXTURE-EXTERNAL-READERS`;
+`--readers` prints the census), and by a string literal naming the path or a
+parent directory in code `cargo test` runs. The Rust suite is then
+`run_test_binaries.py --packages <affected root members>`, its `EXCLUSIVE` phase
+unchanged, or the whole suite when the diff reaches `qcore-c-gateway`,
+`qcore-core`, `qcore-contract` or `qcore-schemas`, a workspace manifest or
+lockfile, the runner or the scoper, or a path that no crate owns or reads and
+that is not prose, Python, Lean or provider tooling. Beside it: the submodule
+state, fmt, Clippy on the same crates, both reevaluation examples when
+`qcore-compiler` is affected, Lean (`scripts/gate_lean.py` on the changed
+`proof/QCore` modules, their importers and the audits importing them, or all of
+`check_lean_audits.py` when a `proof/` root, a deletion or the Lean runner
+changes), the Python suite always, and the provider gate when `providers/`
+changes. Every step's argv, exit, counts and log go into `gate.json` in the
+run's directory (`private/gate-scope/<stamp>-<pid>/`); commit it to the card's
+report with the selection it printed. Exit 0 needs every step at exit 0.
+
+What the scope does not see, so the landing gate stays the arbiter: a path a test
+computes from data (a manifest entry) or a whole-repository walk filtered
+afterwards; cargo feature unification under `-p`, which can differ from
+`--workspace`; and provider-workspace members reached only through their
+dependencies on core crates, which `gate.json` lists but which, as in the full
+gate, get the provider gate only when `providers/` changes.
+
+## Gate slots
+
+Heavy jobs take a named slot from `scripts/gate_slot.py <class>
+[--memory-budget 7G|5G|4G] -- <cmd>` instead of one global lock (user decision
+5 of 2026-10-24). A slot is a `flock` on `/tmp/quirin-gate/<class>/<n>`; the
+command's exit is the script's, and a receipt records class, slots held,
+budget, the memory reading and the argv as run.
+
+| Class | Slots | Use |
+|---|---|---|
+| `rust-suite` | 1; while it runs it also holds every `audit` slot | the root Rust suite and the provider workspace's `cargo test` (constraint 16's load-sensitive rows never share the host with an audit) |
+| `audit` | `max(1, floor(MemAvailable / budget))` when it asks; budget 7 GiB by default, 5 or 4 GiB selectable | corpus, system, slice and other `quirin-audit` runs |
+| `lean` | 2 | `check_lean_audits.py`, `gate_lean.py` |
+
+The audit budget is the audit's own MiB planning budget (`audit-ir-working-set`):
+`quirin-audit current` gets `--memory-budget-mib`, a configuration's
+`memory_budget_mib` must equal it, and any other route gets `QCORE_AUDIT_JOBS`
+capped at `(budget - 1024) / 2048` workers, with an explicit `--jobs` above the
+cap refused, so a smaller budget lowers the run's own concurrency. During the
+transition every slot job holds the legacy lock
+`/tmp/qcore-c-card-validation-20261022.lock` shared, so a job under
+`flock <legacy lock>` excludes every slot and every slot excludes it. Limits:
+fmt, Clippy and builds take no slot, so another card's build can still load the
+host beside a `rust-suite` job; `MemAvailable` already excludes running audits'
+resident memory, so admission is conservative; an exclusive legacy waiter can
+wait while slot jobs keep the lock shared.
 
 <!-- generated:rules:start — edit docs/agents/rules/<id>.md, then run python3 scripts/gen_rule_docs.py -->
 

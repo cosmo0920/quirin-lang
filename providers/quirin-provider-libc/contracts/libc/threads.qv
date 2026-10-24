@@ -259,3 +259,20 @@ contract {
     ensures normal resource_callback_invoked(init_routine);
     ensures normal resource_return_none();
 };
+
+// ## Card W48-BU-EXTERNAL-CALLEE-CONTRACTS: C11 current-thread identifier.
+// C11 N1570 7.26.5.2: thrd_current returns the calling thread's identifier.
+// The audited WITH_C11THREADS=1 configurations select system <threads.h>,
+// not an analysed bundled TinyC body. Here thrd_t -> __thrd_t -> unsigned
+// long int, on LP64. u64 records that observed ABI; a pointer or incompatible
+// scalar declaration must withdraw this flexible contract at the ABI gate.
+// The identifier supplies no owning thread handle, synchronization fact or
+// thread-lifetime proof. This is a declared standard/ABI premise (boundary 28).
+// mtx_destroy remains undeclared: destroying in-place mutex resources is not
+// freeing their storage, and the global-owner lifecycle has no admitted kind.
+extern fn thrd_current() -> u64
+contract {
+    requires resource_contract_v1;
+    requires resource_revision(flexible);
+    ensures normal resource_return_none();
+};

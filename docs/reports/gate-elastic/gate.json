@@ -1,0 +1,382 @@
+{
+ "card": "GATE-ELASTIC",
+ "measured_tip": "4d8f568e78838c0f49d3a17065227239f2f4886b",
+ "note": "scripts/gate_scope.py --base fb5412930 --no-slots run under flock /tmp/qcore-c-card-validation-20261022.lock; the card's own diff selects full mode (run_test_binaries.py and gate_scope.py changed) and Lean 'all' (gate_lean.py changed), so its steps are the standing gate's commands",
+ "submodule_update": {
+  "argv": "git submodule update --init --recursive",
+  "exit": 0
+ },
+ "clang": "present: Ubuntu clang version 21.1.8 (6ubuntu1)",
+ "full_standing_gate_passed": true,
+ "schema": "quirin-gate-scope/1",
+ "source": "git diff",
+ "base": "fb5412930fd7c0a98586fd445029e1da4607074c",
+ "head": "4d8f568e78838c0f49d3a17065227239f2f4886b",
+ "committed": [
+  "AGENTS.md",
+  "docs/agents/operations.md",
+  "docs/agents/validation.md",
+  "docs/reports/gate-elastic/scripts/selection_table.py",
+  "docs/reports/gate-elastic/selection.json",
+  "scripts/gate_lean.py",
+  "scripts/gate_scope.py",
+  "scripts/gate_slot.py",
+  "scripts/run_test_binaries.py",
+  "scripts/tests/test_gate_scope.py",
+  "scripts/tests/test_gate_slot.py",
+  "scripts/tests/test_run_test_binaries.py"
+ ],
+ "uncommitted": [
+  "docs/reports/gate-elastic/README.md",
+  "docs/reports/gate-elastic/integration-amendments.json",
+  "docs/reports/gate-elastic/readers.json"
+ ],
+ "scope": {
+  "paths": [
+   "AGENTS.md",
+   "docs/agents/operations.md",
+   "docs/agents/validation.md",
+   "docs/reports/gate-elastic/README.md",
+   "docs/reports/gate-elastic/integration-amendments.json",
+   "docs/reports/gate-elastic/readers.json",
+   "docs/reports/gate-elastic/scripts/selection_table.py",
+   "docs/reports/gate-elastic/selection.json",
+   "scripts/gate_lean.py",
+   "scripts/gate_scope.py",
+   "scripts/gate_slot.py",
+   "scripts/run_test_binaries.py",
+   "scripts/tests/test_gate_scope.py",
+   "scripts/tests/test_gate_slot.py",
+   "scripts/tests/test_run_test_binaries.py"
+  ],
+  "attribution": {
+   "AGENTS.md": [
+    "class prose"
+   ],
+   "docs/agents/operations.md": [
+    "class prose"
+   ],
+   "docs/agents/validation.md": [
+    "class prose"
+   ],
+   "docs/reports/gate-elastic/README.md": [
+    "class prose"
+   ],
+   "docs/reports/gate-elastic/integration-amendments.json": [
+    "class prose"
+   ],
+   "docs/reports/gate-elastic/readers.json": [
+    "class prose"
+   ],
+   "docs/reports/gate-elastic/scripts/selection_table.py": [
+    "class prose"
+   ],
+   "docs/reports/gate-elastic/selection.json": [
+    "class prose"
+   ],
+   "scripts/gate_lean.py": [
+    "class python"
+   ],
+   "scripts/gate_scope.py": [
+    "class python"
+   ],
+   "scripts/gate_slot.py": [
+    "class python"
+   ],
+   "scripts/run_test_binaries.py": [
+    "class python"
+   ],
+   "scripts/tests/test_gate_scope.py": [
+    "class python"
+   ],
+   "scripts/tests/test_gate_slot.py": [
+    "class python"
+   ],
+   "scripts/tests/test_run_test_binaries.py": [
+    "class python"
+   ]
+  },
+  "affected": {},
+  "mode": "full",
+  "full_reasons": [
+   "scripts/gate_scope.py: the test runner or this scoper changed",
+   "scripts/run_test_binaries.py: the test runner or this scoper changed"
+  ],
+  "rust_packages": [
+   "qcore-audit",
+   "qcore-c-gateway",
+   "qcore-compiler",
+   "qcore-contract",
+   "qcore-core",
+   "qcore-frontend",
+   "qcore-schemas",
+   "qcore-verification",
+   "qcore-verifier-host",
+   "qcorec",
+   "quirin-audit-plugin",
+   "quirin-audit-plugin-libevent",
+   "quirin-source-analysis"
+  ],
+  "probes": true,
+  "lean": {
+   "mode": "all",
+   "reasons": [
+    "scripts/gate_lean.py: the Lean runner changed"
+   ],
+   "modules": [],
+   "audits": []
+  },
+  "python_reasons": [
+   "docs/reports/gate-elastic/scripts/selection_table.py: Python",
+   "scripts/gate_lean.py: Python",
+   "scripts/gate_scope.py: Python",
+   "scripts/gate_slot.py: Python",
+   "scripts/run_test_binaries.py: Python",
+   "scripts/tests/test_gate_scope.py: Python",
+   "scripts/tests/test_gate_slot.py: Python",
+   "scripts/tests/test_run_test_binaries.py: Python"
+  ],
+  "provider_gate": false,
+  "provider_reasons": [],
+  "provider_members_reached_without_providers_change": [],
+  "unresolved_includes": [
+   {
+    "crate": "qcore-compiler",
+    "source": "compiler/tests/ct_corpus.rs:8069",
+    "literal": "include_str!(\\\"fixtures/ct/{id}/case.qr\\\")\");",
+    "why": "argument is not a string literal (or the macro is inside a string)"
+   }
+  ]
+ },
+ "planned_steps": [
+  {
+   "name": "submodules",
+   "argv": [
+    "git",
+    "-C",
+    "/media/Data/GitHub/quirin-lang/.claude/worktrees/agent-a1ae7b31c8cc9bc80",
+    "submodule",
+    "status",
+    "--recursive"
+   ],
+   "slot": null
+  },
+  {
+   "name": "fmt",
+   "argv": [
+    "cargo",
+    "fmt",
+    "--all",
+    "--",
+    "--check"
+   ],
+   "slot": null
+  },
+  {
+   "name": "clippy",
+   "argv": [
+    "cargo",
+    "clippy",
+    "--all-targets",
+    "--",
+    "-D",
+    "warnings"
+   ],
+   "slot": null
+  },
+  {
+   "name": "rust-suite",
+   "argv": [
+    "/usr/bin/python3",
+    "/media/Data/GitHub/quirin-lang/.claude/worktrees/agent-a1ae7b31c8cc9bc80/scripts/run_test_binaries.py",
+    "--log-dir",
+    "/media/Data/GitHub/quirin-lang/.claude/worktrees/agent-a1ae7b31c8cc9bc80/private/ge/fullgate/rust-suite"
+   ],
+   "slot": "rust-suite"
+  },
+  {
+   "name": "probe-reevaluation_probe",
+   "argv": [
+    "cargo",
+    "run",
+    "-p",
+    "qcore-compiler",
+    "--example",
+    "reevaluation_probe"
+   ],
+   "slot": null
+  },
+  {
+   "name": "probe-reevaluation_followup",
+   "argv": [
+    "cargo",
+    "run",
+    "-p",
+    "qcore-compiler",
+    "--example",
+    "reevaluation_followup"
+   ],
+   "slot": null
+  },
+  {
+   "name": "lean",
+   "argv": [
+    "/usr/bin/python3",
+    "/media/Data/GitHub/quirin-lang/.claude/worktrees/agent-a1ae7b31c8cc9bc80/scripts/check_lean_audits.py"
+   ],
+   "slot": "lean"
+  },
+  {
+   "name": "python",
+   "argv": [
+    "/usr/bin/python3",
+    "-m",
+    "unittest",
+    "discover",
+    "-s",
+    "scripts/tests"
+   ],
+   "slot": null
+  }
+ ],
+ "slots": false,
+ "started": "20261024T131759Z",
+ "ran": true,
+ "steps": [
+  {
+   "name": "submodules",
+   "argv": [
+    "git",
+    "-C",
+    "/media/Data/GitHub/quirin-lang/.claude/worktrees/agent-a1ae7b31c8cc9bc80",
+    "submodule",
+    "status",
+    "--recursive"
+   ],
+   "exit": 0,
+   "seconds": 0.0,
+   "log": "/media/Data/GitHub/quirin-lang/.claude/worktrees/agent-a1ae7b31c8cc9bc80/private/ge/fullgate/submodules.log",
+   "counts": {
+    "submodules": 1,
+    "not_checked_out_or_moved": []
+   }
+  },
+  {
+   "name": "fmt",
+   "argv": [
+    "cargo",
+    "fmt",
+    "--all",
+    "--",
+    "--check"
+   ],
+   "exit": 0,
+   "seconds": 3.8,
+   "log": "/media/Data/GitHub/quirin-lang/.claude/worktrees/agent-a1ae7b31c8cc9bc80/private/ge/fullgate/fmt.log",
+   "counts": {}
+  },
+  {
+   "name": "clippy",
+   "argv": [
+    "cargo",
+    "clippy",
+    "--all-targets",
+    "--",
+    "-D",
+    "warnings"
+   ],
+   "exit": 0,
+   "seconds": 33.4,
+   "log": "/media/Data/GitHub/quirin-lang/.claude/worktrees/agent-a1ae7b31c8cc9bc80/private/ge/fullgate/clippy.log",
+   "counts": {}
+  },
+  {
+   "name": "rust-suite",
+   "argv": [
+    "/usr/bin/python3",
+    "/media/Data/GitHub/quirin-lang/.claude/worktrees/agent-a1ae7b31c8cc9bc80/scripts/run_test_binaries.py",
+    "--log-dir",
+    "/media/Data/GitHub/quirin-lang/.claude/worktrees/agent-a1ae7b31c8cc9bc80/private/ge/fullgate/rust-suite"
+   ],
+   "exit": 0,
+   "seconds": 580.6,
+   "log": "/media/Data/GitHub/quirin-lang/.claude/worktrees/agent-a1ae7b31c8cc9bc80/private/ge/fullgate/rust-suite.log",
+   "counts": {
+    "units": 549,
+    "passed": 8639,
+    "failed": 0,
+    "ignored": 15,
+    "measured": 0,
+    "filtered": 0,
+    "summaries": 562,
+    "packages": null,
+    "summary": "/media/Data/GitHub/quirin-lang/.claude/worktrees/agent-a1ae7b31c8cc9bc80/private/ge/fullgate/rust-suite/summary.json",
+    "ok": true
+   }
+  },
+  {
+   "name": "probe-reevaluation_probe",
+   "argv": [
+    "cargo",
+    "run",
+    "-p",
+    "qcore-compiler",
+    "--example",
+    "reevaluation_probe"
+   ],
+   "exit": 0,
+   "seconds": 0.1,
+   "log": "/media/Data/GitHub/quirin-lang/.claude/worktrees/agent-a1ae7b31c8cc9bc80/private/ge/fullgate/probe-reevaluation_probe.log",
+   "counts": {}
+  },
+  {
+   "name": "probe-reevaluation_followup",
+   "argv": [
+    "cargo",
+    "run",
+    "-p",
+    "qcore-compiler",
+    "--example",
+    "reevaluation_followup"
+   ],
+   "exit": 0,
+   "seconds": 0.4,
+   "log": "/media/Data/GitHub/quirin-lang/.claude/worktrees/agent-a1ae7b31c8cc9bc80/private/ge/fullgate/probe-reevaluation_followup.log",
+   "counts": {}
+  },
+  {
+   "name": "lean",
+   "argv": [
+    "/usr/bin/python3",
+    "/media/Data/GitHub/quirin-lang/.claude/worktrees/agent-a1ae7b31c8cc9bc80/scripts/check_lean_audits.py"
+   ],
+   "exit": 0,
+   "seconds": 117.0,
+   "log": "/media/Data/GitHub/quirin-lang/.claude/worktrees/agent-a1ae7b31c8cc9bc80/private/ge/fullgate/lean.log",
+   "counts": {
+    "audits": 370
+   }
+  },
+  {
+   "name": "python",
+   "argv": [
+    "/usr/bin/python3",
+    "-m",
+    "unittest",
+    "discover",
+    "-s",
+    "scripts/tests"
+   ],
+   "exit": 0,
+   "seconds": 41.5,
+   "log": "/media/Data/GitHub/quirin-lang/.claude/worktrees/agent-a1ae7b31c8cc9bc80/private/ge/fullgate/python.log",
+   "counts": {
+    "tests": 428,
+    "skipped": 0,
+    "ok": true
+   }
+  }
+ ],
+ "ok": true,
+ "finished": "20261024T133056Z"
+}

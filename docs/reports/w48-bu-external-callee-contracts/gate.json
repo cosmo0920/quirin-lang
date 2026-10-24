@@ -1,0 +1,279 @@
+{
+  "note": "Final full unconfined gate on clean test-pin-repair source 36e91795e35b76db6ac89fd8af4d4e926612e7d8. Actual native TIP remains 5dbe4a381. All failed attempts remain in validation-receipt.json; the adjacent Clang recording is from this exact gate run.",
+  "source": "36e91795e35b76db6ac89fd8af4d4e926612e7d8",
+  "workspace_tests": 8593,
+  "workspace_failed": 0,
+  "workspace_ignored": 15,
+  "python_evidence_validator_tests": 374,
+  "python_failures": 0,
+  "provider_rust_tests": 133,
+  "provider_rust_failures": 0,
+  "provider_rust_ignored": 1,
+  "provider_python_tests": 25,
+  "provider_python_failures": 0,
+  "reevaluation_probe_exit": 0,
+  "reevaluation_followup_exit": 0,
+  "cargo_fmt": "clean",
+  "cargo_clippy": "clean",
+  "standing_gate": "complete",
+  "provider_gate": "complete",
+  "lean_audits": 369,
+  "clang": "present: Ubuntu clang version 21.1.8 (6ubuntu1)",
+  "steps": {
+    "clang-version": {
+      "exit": 0,
+      "start": "2026-10-24T02:50:41.095801+00:00",
+      "end": "2026-10-24T02:50:41.106594+00:00",
+      "log": "/home/cosmo/.codex/worktrees/c1e4/quirin-lang/private/w48-bu-external-callee-contracts/gate-2-unconfined/clang-version.txt",
+      "command": [
+        "clang",
+        "--version"
+      ]
+    },
+    "rust": {
+      "exit": 0,
+      "start": "2026-10-24T02:50:41.148539+00:00",
+      "end": "2026-10-24T02:59:33.723814+00:00",
+      "log": "/home/cosmo/.codex/worktrees/c1e4/quirin-lang/private/w48-bu-external-callee-contracts/gate-2-unconfined/rust.log",
+      "command": [
+        "python3",
+        "scripts/run_test_binaries.py",
+        "--jobs",
+        "4",
+        "--log-dir",
+        "/home/cosmo/.codex/worktrees/c1e4/quirin-lang/private/w48-bu-external-callee-contracts/gate-2-unconfined/rust-units"
+      ]
+    },
+    "fmt": {
+      "exit": 0,
+      "start": "2026-10-24T02:59:33.775971+00:00",
+      "end": "2026-10-24T02:59:37.632017+00:00",
+      "log": "/home/cosmo/.codex/worktrees/c1e4/quirin-lang/private/w48-bu-external-callee-contracts/gate-2-unconfined/fmt.log",
+      "command": [
+        "cargo",
+        "fmt",
+        "--all",
+        "--",
+        "--check"
+      ]
+    },
+    "clippy": {
+      "exit": 0,
+      "start": "2026-10-24T02:59:37.675829+00:00",
+      "end": "2026-10-24T02:59:44.915937+00:00",
+      "log": "/home/cosmo/.codex/worktrees/c1e4/quirin-lang/private/w48-bu-external-callee-contracts/gate-2-unconfined/clippy.log",
+      "command": [
+        "cargo",
+        "clippy",
+        "--all-targets",
+        "--",
+        "-D",
+        "warnings"
+      ]
+    },
+    "reevaluation-probe": {
+      "exit": 0,
+      "start": "2026-10-24T02:59:44.960603+00:00",
+      "end": "2026-10-24T02:59:45.028014+00:00",
+      "log": "/home/cosmo/.codex/worktrees/c1e4/quirin-lang/private/w48-bu-external-callee-contracts/gate-2-unconfined/reevaluation-probe.log",
+      "command": [
+        "cargo",
+        "run",
+        "-p",
+        "qcore-compiler",
+        "--example",
+        "reevaluation_probe"
+      ]
+    },
+    "reevaluation-followup": {
+      "exit": 0,
+      "start": "2026-10-24T02:59:45.070042+00:00",
+      "end": "2026-10-24T02:59:45.480294+00:00",
+      "log": "/home/cosmo/.codex/worktrees/c1e4/quirin-lang/private/w48-bu-external-callee-contracts/gate-2-unconfined/reevaluation-followup.log",
+      "command": [
+        "cargo",
+        "run",
+        "-p",
+        "qcore-compiler",
+        "--example",
+        "reevaluation_followup"
+      ]
+    },
+    "lean": {
+      "exit": 0,
+      "start": "2026-10-24T02:59:45.520455+00:00",
+      "end": "2026-10-24T02:59:58.050141+00:00",
+      "log": "/home/cosmo/.codex/worktrees/c1e4/quirin-lang/private/w48-bu-external-callee-contracts/gate-2-unconfined/lean.log",
+      "command": [
+        "python3",
+        "scripts/check_lean_audits.py"
+      ]
+    },
+    "python": {
+      "exit": 0,
+      "start": "2026-10-24T02:59:58.115108+00:00",
+      "end": "2026-10-24T03:00:30.645653+00:00",
+      "log": "/home/cosmo/.codex/worktrees/c1e4/quirin-lang/private/w48-bu-external-callee-contracts/gate-2-unconfined/python.log",
+      "command": [
+        "python3",
+        "-m",
+        "unittest",
+        "discover",
+        "-s",
+        "scripts/tests"
+      ]
+    },
+    "provider-rust": {
+      "exit": 0,
+      "start": "2026-10-24T03:00:30.688427+00:00",
+      "end": "2026-10-24T03:09:01.477257+00:00",
+      "log": "/home/cosmo/.codex/worktrees/c1e4/quirin-lang/private/w48-bu-external-callee-contracts/gate-2-unconfined/provider-rust.log",
+      "command": [
+        "cargo",
+        "test",
+        "--manifest-path",
+        "providers/Cargo.toml",
+        "--workspace",
+        "--locked",
+        "--offline",
+        "--no-fail-fast"
+      ]
+    },
+    "provider-fmt": {
+      "exit": 0,
+      "start": "2026-10-24T03:09:01.523179+00:00",
+      "end": "2026-10-24T03:09:05.514884+00:00",
+      "log": "/home/cosmo/.codex/worktrees/c1e4/quirin-lang/private/w48-bu-external-callee-contracts/gate-2-unconfined/provider-fmt.log",
+      "command": [
+        "cargo",
+        "fmt",
+        "--manifest-path",
+        "providers/Cargo.toml",
+        "--all",
+        "--",
+        "--check"
+      ]
+    },
+    "provider-clippy": {
+      "exit": 0,
+      "start": "2026-10-24T03:09:05.560309+00:00",
+      "end": "2026-10-24T03:09:08.969916+00:00",
+      "log": "/home/cosmo/.codex/worktrees/c1e4/quirin-lang/private/w48-bu-external-callee-contracts/gate-2-unconfined/provider-clippy.log",
+      "command": [
+        "cargo",
+        "clippy",
+        "--manifest-path",
+        "providers/Cargo.toml",
+        "--workspace",
+        "--all-targets",
+        "--locked",
+        "--offline",
+        "--",
+        "-D",
+        "warnings"
+      ]
+    },
+    "inventory": {
+      "exit": 0,
+      "start": "2026-10-24T03:09:09.015563+00:00",
+      "end": "2026-10-24T03:09:33.435284+00:00",
+      "log": "/home/cosmo/.codex/worktrees/c1e4/quirin-lang/private/w48-bu-external-callee-contracts/gate-2-unconfined/inventory.log",
+      "command": [
+        "python3",
+        "providers/contracts.py",
+        "check"
+      ]
+    },
+    "provider-python": {
+      "exit": 0,
+      "start": "2026-10-24T03:09:33.482086+00:00",
+      "end": "2026-10-24T03:09:56.382903+00:00",
+      "log": "/home/cosmo/.codex/worktrees/c1e4/quirin-lang/private/w48-bu-external-callee-contracts/gate-2-unconfined/provider-python.log",
+      "command": [
+        "python3",
+        "-m",
+        "unittest",
+        "discover",
+        "-s",
+        "providers/tests"
+      ]
+    },
+    "packages": {
+      "exit": 0,
+      "start": "2026-10-24T03:09:56.509881+00:00",
+      "end": "2026-10-24T03:10:22.226991+00:00",
+      "log": "/home/cosmo/.codex/worktrees/c1e4/quirin-lang/private/w48-bu-external-callee-contracts/gate-2-unconfined/packages.log",
+      "command": [
+        "python3",
+        "providers/package.py",
+        "build",
+        "--output",
+        "/home/cosmo/.codex/worktrees/c1e4/quirin-lang/private/w48-bu-external-callee-contracts/gate-2-unconfined/packages",
+        "--target-dir",
+        "/home/cosmo/.codex/worktrees/c1e4/quirin-lang/private/w48-bu-external-callee-contracts/provider-release-target"
+      ]
+    },
+    "verify-qcore.libevent": {
+      "exit": 0,
+      "start": "2026-10-24T03:10:22.276630+00:00",
+      "end": "2026-10-24T03:10:22.379608+00:00",
+      "log": "/home/cosmo/.codex/worktrees/c1e4/quirin-lang/private/w48-bu-external-callee-contracts/gate-2-unconfined/verify-qcore.libevent.log",
+      "command": [
+        "python3",
+        "providers/package.py",
+        "verify",
+        "/home/cosmo/.codex/worktrees/c1e4/quirin-lang/private/w48-bu-external-callee-contracts/gate-2-unconfined/packages/qcore.libevent"
+      ]
+    },
+    "verify-qcore.chunkio": {
+      "exit": 0,
+      "start": "2026-10-24T03:10:22.422731+00:00",
+      "end": "2026-10-24T03:10:22.522252+00:00",
+      "log": "/home/cosmo/.codex/worktrees/c1e4/quirin-lang/private/w48-bu-external-callee-contracts/gate-2-unconfined/verify-qcore.chunkio.log",
+      "command": [
+        "python3",
+        "providers/package.py",
+        "verify",
+        "/home/cosmo/.codex/worktrees/c1e4/quirin-lang/private/w48-bu-external-callee-contracts/gate-2-unconfined/packages/qcore.chunkio"
+      ]
+    },
+    "verify-qcore.cmetrics": {
+      "exit": 0,
+      "start": "2026-10-24T03:10:22.569688+00:00",
+      "end": "2026-10-24T03:10:22.670173+00:00",
+      "log": "/home/cosmo/.codex/worktrees/c1e4/quirin-lang/private/w48-bu-external-callee-contracts/gate-2-unconfined/verify-qcore.cmetrics.log",
+      "command": [
+        "python3",
+        "providers/package.py",
+        "verify",
+        "/home/cosmo/.codex/worktrees/c1e4/quirin-lang/private/w48-bu-external-callee-contracts/gate-2-unconfined/packages/qcore.cmetrics"
+      ]
+    },
+    "verify-qcore.ctraces": {
+      "exit": 0,
+      "start": "2026-10-24T03:10:22.717537+00:00",
+      "end": "2026-10-24T03:10:22.809703+00:00",
+      "log": "/home/cosmo/.codex/worktrees/c1e4/quirin-lang/private/w48-bu-external-callee-contracts/gate-2-unconfined/verify-qcore.ctraces.log",
+      "command": [
+        "python3",
+        "providers/package.py",
+        "verify",
+        "/home/cosmo/.codex/worktrees/c1e4/quirin-lang/private/w48-bu-external-callee-contracts/gate-2-unconfined/packages/qcore.ctraces"
+      ]
+    },
+    "verify-qcore.librdkafka": {
+      "exit": 0,
+      "start": "2026-10-24T03:10:22.856352+00:00",
+      "end": "2026-10-24T03:10:23.004005+00:00",
+      "log": "/home/cosmo/.codex/worktrees/c1e4/quirin-lang/private/w48-bu-external-callee-contracts/gate-2-unconfined/verify-qcore.librdkafka.log",
+      "command": [
+        "python3",
+        "providers/package.py",
+        "verify",
+        "/home/cosmo/.codex/worktrees/c1e4/quirin-lang/private/w48-bu-external-callee-contracts/gate-2-unconfined/packages/qcore.librdkafka"
+      ]
+    }
+  },
+  "test_binaries_summary": "/home/cosmo/.codex/worktrees/c1e4/quirin-lang/private/w48-bu-external-callee-contracts/gate-2-unconfined/rust-units/summary.json",
+  "full_receipt": "validation-receipt.json"
+}

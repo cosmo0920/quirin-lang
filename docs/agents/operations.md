@@ -19,11 +19,12 @@ investigating why it exists.
   explain it in the change report and any commit message.
 - Preserve Safe/Unsafe/Unknown and unpromoted terminology. Projection is not
   conformance; provisional Unsafe is not a validated upstream defect.
-- Run the full [standing gate](validation.md), report actual exits (including
-  nonzero probes), counts, incomplete attempts and private log paths. The gate
-  and the rules' own evidence requirements are the verification this project
-  asks for; do not add self-review passes, re-verification subagents or repeated
-  runs beyond what a rule requires.
+- Run the gate [validation](validation.md#standing-per-change-gate) assigns (a
+  card: the scoped card gate; a landing: the full gate), report actual exits
+  (including nonzero probes), counts, incomplete attempts and private log
+  paths. The gate and the rules' own evidence requirements are the verification
+  this project asks for; do not add self-review passes, re-verification
+  subagents or repeated runs beyond what a rule requires.
 - Read [generalization](../GENERALIZATION_PLAN.md) §§2–3 before architecture or
   checker work. Put code in its target crate, not the compiler compatibility crate.
 - A card closes with Rust and matching audited Lean registered in an `Audit*.lean`;

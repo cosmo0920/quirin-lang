@@ -1114,6 +1114,13 @@ fn production_contracts_preserve_the_previous_resource_modes() {
     for name in ["rd_kafka_log_buf", "rd_kafka_log0"] {
         old.insert_contract(name, ResourceFunctionContract::new([], R::None));
     }
+    // W48-BU-EXTERNAL-CALLEE-CONTRACTS deliberately extends this expected
+    // table: borrowed writev arguments and the scalar current-thread identifier.
+    old.insert_contract(
+        "writev",
+        ResourceFunctionContract::new([P::Borrowed, P::Borrowed, P::Borrowed], R::None),
+    );
+    old.insert_contract("thrd_current", ResourceFunctionContract::new([], R::None));
     // Checked same-item detach deliberately extends the production mode table:
     // the result restores item (formal 1) from parent (formal 0), never fresh.
     old.insert_contract(
@@ -2107,9 +2114,11 @@ fn every_corpus_module_outside_the_v1_vocabulary_is_rejected_not_skipped() {
     // W48-RK-LOG-CALLER-FRAME: `librdkafka/log_caller_frame.qv`, plain
     // caller-frame declarations `rd_kafka_log_buf` and `rd_kafka_log0`.
     // Rejected declarations unchanged.
+    // 495 -> 497 by W48-BU-EXTERNAL-CALLEE-CONTRACTS: writev and thrd_current
+    // in existing libc modules; selected modules and rejected declarations unchanged.
     assert_eq!(
         (selected, v1_declarations, rejected_declarations),
-        (66, 495, 331)
+        (66, 497, 331)
     );
     // A declaration held for human review is loaded and withheld from the
     // function map (contract spec C06.1): the map plus the held set is every

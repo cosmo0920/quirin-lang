@@ -1,0 +1,923 @@
+{
+ "schema": "quirin-gate-readers/1",
+ "reads": [
+  {
+   "directory": "compiler/examples",
+   "owner": "qcore-compiler",
+   "reader": "qcore-audit",
+   "kind": "include_bytes",
+   "sites": 2
+  },
+  {
+   "directory": "compiler/tests/fixtures",
+   "owner": "qcore-compiler",
+   "reader": "qcore-verification",
+   "kind": "include_str",
+   "sites": 1
+  },
+  {
+   "directory": "compiler/tests/fixtures/chunkio",
+   "owner": "qcore-compiler",
+   "reader": "qcore-provider-conformance",
+   "kind": "include_str",
+   "sites": 3
+  },
+  {
+   "directory": "compiler/tests/fixtures/chunkio",
+   "owner": "qcore-compiler",
+   "reader": "qcore-verification",
+   "kind": "include_str",
+   "sites": 3
+  },
+  {
+   "directory": "compiler/tests/fixtures/ct/CT01",
+   "owner": "qcore-compiler",
+   "reader": "qcore-frontend",
+   "kind": "include_str",
+   "sites": 1
+  },
+  {
+   "directory": "compiler/tests/fixtures/ct/CT41",
+   "owner": "qcore-compiler",
+   "reader": "qcore-c-gateway",
+   "kind": "include_str",
+   "sites": 1
+  },
+  {
+   "directory": "compiler/tests/fixtures/epoch_credit/CT25",
+   "owner": "qcore-compiler",
+   "reader": "qcore-verification",
+   "kind": "include_str",
+   "sites": 1
+  },
+  {
+   "directory": "compiler/tests/fixtures/monkey",
+   "owner": "qcore-compiler",
+   "reader": "qcore-audit",
+   "kind": "include_bytes",
+   "sites": 1
+  },
+  {
+   "directory": "compiler/tests/fixtures/monkey",
+   "owner": "qcore-compiler",
+   "reader": "qcore-verification",
+   "kind": "include_str",
+   "sites": 17
+  },
+  {
+   "directory": "compiler/tests/fixtures/monkey/binding/all_paths",
+   "owner": "qcore-compiler",
+   "reader": "qcore-verification",
+   "kind": "include_bytes",
+   "sites": 1
+  },
+  {
+   "directory": "compiler/tests/fixtures/monkey/binding/all_paths",
+   "owner": "qcore-compiler",
+   "reader": "qcore-verification",
+   "kind": "include_str",
+   "sites": 1
+  },
+  {
+   "directory": "crates/qcore-audit/tests/fixtures",
+   "owner": "qcore-audit",
+   "reader": "qcore-provider-conformance",
+   "kind": "include_str",
+   "sites": 1
+  },
+  {
+   "directory": "crates/qcore-c-gateway/tests/fixtures/contracts",
+   "owner": "qcore-c-gateway",
+   "reader": "qcore-compiler",
+   "kind": "include_str",
+   "sites": 2
+  },
+  {
+   "directory": "crates/qcore-core/tests/fixtures/f02",
+   "owner": "qcore-core",
+   "reader": "qcore-compiler",
+   "kind": "include_str",
+   "sites": 4
+  },
+  {
+   "directory": "crates/qcore-verification/tests/fixtures",
+   "owner": "qcore-verification",
+   "reader": "qcore-compiler",
+   "kind": "path",
+   "sites": 6
+  },
+  {
+   "directory": "crates/qcore-verification/tests/fixtures",
+   "owner": "qcore-verification",
+   "reader": "qcore-provider-conformance",
+   "kind": "path",
+   "sites": 18
+  },
+  {
+   "directory": "docs/reports/cycle18-observed-integration/native",
+   "owner": null,
+   "reader": "qcore-verification",
+   "kind": "include_str",
+   "sites": 1
+  },
+  {
+   "directory": "docs/reports/cycle18-priority1-integration/payload-native",
+   "owner": null,
+   "reader": "qcore-verification",
+   "kind": "include_str",
+   "sites": 1
+  },
+  {
+   "directory": "docs/reports/cycle18-priority1-integration/timeout-native",
+   "owner": null,
+   "reader": "qcore-verification",
+   "kind": "include_str",
+   "sites": 1
+  },
+  {
+   "directory": "docs/reports/cycle18-wait-failures",
+   "owner": null,
+   "reader": "qcore-verification",
+   "kind": "include_bytes",
+   "sites": 1
+  },
+  {
+   "directory": "docs/reports/cycle19-descriptor-observations",
+   "owner": null,
+   "reader": "quirin-source-analysis",
+   "kind": "include_str",
+   "sites": 1
+  },
+  {
+   "directory": "docs/reports/guarded-contract-adoption",
+   "owner": null,
+   "reader": "qcore-contract",
+   "kind": "include_bytes",
+   "sites": 1
+  },
+  {
+   "directory": "docs/reports/libc-reading-site-evidence",
+   "owner": null,
+   "reader": "qcore-c-gateway",
+   "kind": "include_str",
+   "sites": 1
+  },
+  {
+   "directory": "docs/reports/logger-effect-contracts",
+   "owner": null,
+   "reader": "qcore-contract",
+   "kind": "include_bytes",
+   "sites": 2
+  },
+  {
+   "directory": "docs/reports/plugin-premise-source-witnesses",
+   "owner": null,
+   "reader": "quirin-source-analysis",
+   "kind": "include_bytes",
+   "sites": 1
+  },
+  {
+   "directory": "docs/reports/premise-decomposition-cycle1",
+   "owner": null,
+   "reader": "qcore-audit",
+   "kind": "include_str",
+   "sites": 4
+  },
+  {
+   "directory": "docs/reports/premise-decomposition-cycle1",
+   "owner": null,
+   "reader": "qcore-contract",
+   "kind": "include_str",
+   "sites": 2
+  },
+  {
+   "directory": "docs/reports/premise-decomposition-cycle1b",
+   "owner": null,
+   "reader": "qcore-contract",
+   "kind": "include_str",
+   "sites": 1
+  },
+  {
+   "directory": "docs/reports/premise-evidence-contracts",
+   "owner": null,
+   "reader": "qcore-audit",
+   "kind": "include_bytes",
+   "sites": 2
+  },
+  {
+   "directory": "docs/reports/premise-evidence-contracts",
+   "owner": null,
+   "reader": "qcore-contract",
+   "kind": "include_bytes",
+   "sites": 3
+  },
+  {
+   "directory": "docs/reports/premise-evidence-contracts",
+   "owner": null,
+   "reader": "quirin-source-analysis",
+   "kind": "include_str",
+   "sites": 2
+  },
+  {
+   "directory": "docs/reports/premise-local-source-bindings/native",
+   "owner": null,
+   "reader": "quirin-source-analysis",
+   "kind": "include_bytes",
+   "sites": 1
+  },
+  {
+   "directory": "docs/reports/premise-symbolic-adoption",
+   "owner": null,
+   "reader": "qcore-contract",
+   "kind": "include_str",
+   "sites": 1
+  },
+  {
+   "directory": "docs/reports/remaining-p06",
+   "owner": null,
+   "reader": "qcore-verification",
+   "kind": "include_str",
+   "sites": 2
+  },
+  {
+   "directory": "docs/reports/remaining-v03/probes",
+   "owner": null,
+   "reader": "qcore-compiler",
+   "kind": "include_str",
+   "sites": 2
+  },
+  {
+   "directory": "docs/reports/remaining-v04/probes",
+   "owner": null,
+   "reader": "qcore-compiler",
+   "kind": "include_str",
+   "sites": 2
+  },
+  {
+   "directory": "docs/reports/scheduler-lifetime-contracts",
+   "owner": null,
+   "reader": "qcore-contract",
+   "kind": "include_str",
+   "sites": 3
+  },
+  {
+   "directory": "docs/reports/w2-provider-discovery",
+   "owner": null,
+   "reader": "qcore-compiler",
+   "kind": "include_str",
+   "sites": 1
+  },
+  {
+   "directory": "docs/reports/w48-cmt-list-self-init/integration",
+   "owner": null,
+   "reader": "qcore-contract",
+   "kind": "include_str",
+   "sites": 2
+  },
+  {
+   "directory": "docs/reports/w48-rk-log-caller-frame",
+   "owner": null,
+   "reader": "qcore-contract",
+   "kind": "include_bytes",
+   "sites": 1
+  },
+  {
+   "directory": "examples",
+   "owner": null,
+   "reader": "qcore-compiler",
+   "kind": "include_str",
+   "sites": 2
+  },
+  {
+   "directory": "examples/branching",
+   "owner": null,
+   "reader": "qcore-compiler",
+   "kind": "include_str",
+   "sites": 8
+  },
+  {
+   "directory": "examples/events",
+   "owner": null,
+   "reader": "qcore-compiler",
+   "kind": "include_str",
+   "sites": 16
+  },
+  {
+   "directory": "examples/extern",
+   "owner": null,
+   "reader": "qcore-compiler",
+   "kind": "include_str",
+   "sites": 10
+  },
+  {
+   "directory": "examples/extern/contracts",
+   "owner": null,
+   "reader": "qcore-compiler",
+   "kind": "include_str",
+   "sites": 2
+  },
+  {
+   "directory": "examples/ffi",
+   "owner": null,
+   "reader": "qcore-compiler",
+   "kind": "include_str",
+   "sites": 2
+  },
+  {
+   "directory": "examples/http",
+   "owner": null,
+   "reader": "qcore-compiler",
+   "kind": "include_str",
+   "sites": 10
+  },
+  {
+   "directory": "examples/loops",
+   "owner": null,
+   "reader": "qcore-compiler",
+   "kind": "include_str",
+   "sites": 5
+  },
+  {
+   "directory": "examples/pipes",
+   "owner": null,
+   "reader": "qcore-compiler",
+   "kind": "include_str",
+   "sites": 6
+  },
+  {
+   "directory": "examples/records",
+   "owner": null,
+   "reader": "qcore-compiler",
+   "kind": "include_str",
+   "sites": 7
+  },
+  {
+   "directory": "examples/scalar",
+   "owner": null,
+   "reader": "qcore-compiler",
+   "kind": "include_str",
+   "sites": 17
+  },
+  {
+   "directory": "examples/sockets",
+   "owner": null,
+   "reader": "qcore-compiler",
+   "kind": "include_str",
+   "sites": 14
+  },
+  {
+   "directory": "examples/stdio",
+   "owner": null,
+   "reader": "qcore-compiler",
+   "kind": "include_str",
+   "sites": 8
+  },
+  {
+   "directory": "examples/strings",
+   "owner": null,
+   "reader": "qcore-compiler",
+   "kind": "include_str",
+   "sites": 10
+  },
+  {
+   "directory": "examples/threads",
+   "owner": null,
+   "reader": "qcore-compiler",
+   "kind": "include_str",
+   "sites": 26
+  },
+  {
+   "directory": "examples/unsafe-linkage",
+   "owner": null,
+   "reader": "qcore-compiler",
+   "kind": "include_str",
+   "sites": 7
+  },
+  {
+   "directory": "examples/unsafe-linkage",
+   "owner": null,
+   "reader": "qcorec",
+   "kind": "include_str",
+   "sites": 1
+  },
+  {
+   "directory": "proof",
+   "owner": null,
+   "reader": "qcore-audit",
+   "kind": "include_bytes",
+   "sites": 2
+  },
+  {
+   "directory": "proof",
+   "owner": null,
+   "reader": "qcore-c-gateway",
+   "kind": "include_bytes",
+   "sites": 1
+  },
+  {
+   "directory": "proof",
+   "owner": null,
+   "reader": "qcore-contract",
+   "kind": "include_bytes",
+   "sites": 3
+  },
+  {
+   "directory": "proof",
+   "owner": null,
+   "reader": "quirin-source-analysis",
+   "kind": "include_bytes",
+   "sites": 2
+  },
+  {
+   "directory": "proof/QCore",
+   "owner": null,
+   "reader": "qcore-audit",
+   "kind": "include_bytes",
+   "sites": 2
+  },
+  {
+   "directory": "proof/QCore",
+   "owner": null,
+   "reader": "qcore-audit",
+   "kind": "include_str",
+   "sites": 3
+  },
+  {
+   "directory": "proof/QCore",
+   "owner": null,
+   "reader": "qcore-c-gateway",
+   "kind": "include_bytes",
+   "sites": 2
+  },
+  {
+   "directory": "proof/QCore",
+   "owner": null,
+   "reader": "qcore-c-gateway",
+   "kind": "include_str",
+   "sites": 70
+  },
+  {
+   "directory": "proof/QCore",
+   "owner": null,
+   "reader": "qcore-compiler",
+   "kind": "include_str",
+   "sites": 12
+  },
+  {
+   "directory": "proof/QCore",
+   "owner": null,
+   "reader": "qcore-contract",
+   "kind": "include_bytes",
+   "sites": 3
+  },
+  {
+   "directory": "proof/QCore",
+   "owner": null,
+   "reader": "qcore-contract",
+   "kind": "include_str",
+   "sites": 1
+  },
+  {
+   "directory": "proof/QCore",
+   "owner": null,
+   "reader": "qcore-core",
+   "kind": "include_str",
+   "sites": 12
+  },
+  {
+   "directory": "proof/QCore",
+   "owner": null,
+   "reader": "qcore-schemas",
+   "kind": "include_str",
+   "sites": 4
+  },
+  {
+   "directory": "proof/QCore",
+   "owner": null,
+   "reader": "quirin-source-analysis",
+   "kind": "include_bytes",
+   "sites": 4
+  },
+  {
+   "directory": "proof/QCore",
+   "owner": null,
+   "reader": "quirin-source-analysis",
+   "kind": "include_str",
+   "sites": 1
+  },
+  {
+   "directory": "providers/qcore-provider-chunkio",
+   "owner": "qcore-provider-chunkio",
+   "reader": "quirin-provider-shared",
+   "kind": "include_str",
+   "sites": 9
+  },
+  {
+   "directory": "providers/qcore-provider-chunkio/contracts/chunkio",
+   "owner": "qcore-provider-chunkio",
+   "reader": "qcore-audit",
+   "kind": "include_str",
+   "sites": 1
+  },
+  {
+   "directory": "providers/qcore-provider-chunkio/contracts/chunkio",
+   "owner": "qcore-provider-chunkio",
+   "reader": "qcore-c-gateway",
+   "kind": "include_str",
+   "sites": 2
+  },
+  {
+   "directory": "providers/qcore-provider-chunkio/contracts/chunkio",
+   "owner": "qcore-provider-chunkio",
+   "reader": "qcore-compiler",
+   "kind": "include_str",
+   "sites": 22
+  },
+  {
+   "directory": "providers/qcore-provider-chunkio/contracts/chunkio",
+   "owner": "qcore-provider-chunkio",
+   "reader": "qcore-contract",
+   "kind": "include_str",
+   "sites": 2
+  },
+  {
+   "directory": "providers/qcore-provider-chunkio/contracts/chunkio",
+   "owner": "qcore-provider-chunkio",
+   "reader": "qcore-provider-conformance",
+   "kind": "include_str",
+   "sites": 29
+  },
+  {
+   "directory": "providers/qcore-provider-chunkio/contracts/chunkio",
+   "owner": "qcore-provider-chunkio",
+   "reader": "qcore-verification",
+   "kind": "include_str",
+   "sites": 37
+  },
+  {
+   "directory": "providers/qcore-provider-chunkio/contracts/chunkio",
+   "owner": "qcore-provider-chunkio",
+   "reader": "quirin-source-analysis",
+   "kind": "include_str",
+   "sites": 21
+  },
+  {
+   "directory": "providers/qcore-provider-chunkio/contracts/fluent_bit",
+   "owner": "qcore-provider-chunkio",
+   "reader": "quirin-source-analysis",
+   "kind": "include_str",
+   "sites": 1
+  },
+  {
+   "directory": "providers/qcore-provider-cmetrics/contracts/cmetrics",
+   "owner": "qcore-provider-cmetrics",
+   "reader": "qcore-c-gateway",
+   "kind": "include_str",
+   "sites": 3
+  },
+  {
+   "directory": "providers/qcore-provider-cmetrics/contracts/cmetrics",
+   "owner": "qcore-provider-cmetrics",
+   "reader": "qcore-provider-conformance",
+   "kind": "include_str",
+   "sites": 1
+  },
+  {
+   "directory": "providers/qcore-provider-ctraces/contracts/ctraces",
+   "owner": "qcore-provider-ctraces",
+   "reader": "qcore-c-gateway",
+   "kind": "include_str",
+   "sites": 1
+  },
+  {
+   "directory": "providers/qcore-provider-libevent/contracts/monkey",
+   "owner": "qcore-provider-libevent",
+   "reader": "qcore-audit",
+   "kind": "include_str",
+   "sites": 2
+  },
+  {
+   "directory": "providers/qcore-provider-libevent/contracts/monkey",
+   "owner": "qcore-provider-libevent",
+   "reader": "qcore-c-gateway",
+   "kind": "include_str",
+   "sites": 6
+  },
+  {
+   "directory": "providers/qcore-provider-libevent/contracts/monkey",
+   "owner": "qcore-provider-libevent",
+   "reader": "qcore-compiler",
+   "kind": "include_str",
+   "sites": 2
+  },
+  {
+   "directory": "providers/qcore-provider-libevent/contracts/monkey",
+   "owner": "qcore-provider-libevent",
+   "reader": "qcore-verification",
+   "kind": "include_str",
+   "sites": 19
+  },
+  {
+   "directory": "providers/qcore-provider-libevent/contracts/monkey",
+   "owner": "qcore-provider-libevent",
+   "reader": "quirin-source-analysis",
+   "kind": "include_str",
+   "sites": 4
+  },
+  {
+   "directory": "providers/qcore-provider-librdkafka",
+   "owner": "qcore-provider-librdkafka",
+   "reader": "qcore-audit",
+   "kind": "include_str",
+   "sites": 1
+  },
+  {
+   "directory": "providers/qcore-provider-librdkafka/contracts/librdkafka",
+   "owner": "qcore-provider-librdkafka",
+   "reader": "qcore-audit",
+   "kind": "include_str",
+   "sites": 6
+  },
+  {
+   "directory": "providers/qcore-provider-librdkafka/contracts/librdkafka",
+   "owner": "qcore-provider-librdkafka",
+   "reader": "qcore-c-gateway",
+   "kind": "include_str",
+   "sites": 6
+  },
+  {
+   "directory": "providers/qcore-provider-librdkafka/contracts/librdkafka",
+   "owner": "qcore-provider-librdkafka",
+   "reader": "qcore-contract",
+   "kind": "include_str",
+   "sites": 7
+  },
+  {
+   "directory": "providers/quirin-provider-cfl/contracts/cfl",
+   "owner": "quirin-provider-cfl",
+   "reader": "qcore-c-gateway",
+   "kind": "include_str",
+   "sites": 2
+  },
+  {
+   "directory": "providers/quirin-provider-fluent-bit/contracts/fluent_bit",
+   "owner": "quirin-provider-fluent-bit",
+   "reader": "qcore-audit",
+   "kind": "include_str",
+   "sites": 1
+  },
+  {
+   "directory": "providers/quirin-provider-fluent-bit/contracts/fluent_bit",
+   "owner": "quirin-provider-fluent-bit",
+   "reader": "qcore-c-gateway",
+   "kind": "include_str",
+   "sites": 14
+  },
+  {
+   "directory": "providers/quirin-provider-fluent-bit/contracts/fluent_bit",
+   "owner": "quirin-provider-fluent-bit",
+   "reader": "qcore-contract",
+   "kind": "include_str",
+   "sites": 1
+  },
+  {
+   "directory": "providers/quirin-provider-fluent-bit/contracts/fluent_bit",
+   "owner": "quirin-provider-fluent-bit",
+   "reader": "quirin-source-analysis",
+   "kind": "include_str",
+   "sites": 8
+  },
+  {
+   "directory": "providers/quirin-provider-libc/contracts/libc",
+   "owner": "quirin-provider-libc",
+   "reader": "qcore-c-gateway",
+   "kind": "include_str",
+   "sites": 30
+  },
+  {
+   "directory": "providers/quirin-provider-libc/contracts/libc",
+   "owner": "quirin-provider-libc",
+   "reader": "qcore-contract",
+   "kind": "include_str",
+   "sites": 5
+  },
+  {
+   "directory": "providers/quirin-provider-libc/contracts/libc",
+   "owner": "quirin-provider-libc",
+   "reader": "quirin-source-analysis",
+   "kind": "include_str",
+   "sites": 1
+  },
+  {
+   "directory": "providers/quirin-provider-mpack/contracts/mpack",
+   "owner": "quirin-provider-mpack",
+   "reader": "qcore-c-gateway",
+   "kind": "include_str",
+   "sites": 1
+  },
+  {
+   "directory": "providers/quirin-provider-shared/contracts/library",
+   "owner": "quirin-provider-shared",
+   "reader": "qcore-audit",
+   "kind": "include_str",
+   "sites": 3
+  },
+  {
+   "directory": "providers/quirin-provider-shared/contracts/library",
+   "owner": "quirin-provider-shared",
+   "reader": "qcore-c-gateway",
+   "kind": "include_str",
+   "sites": 2
+  },
+  {
+   "directory": "providers/quirin-provider-shared/contracts/library",
+   "owner": "quirin-provider-shared",
+   "reader": "qcore-compiler",
+   "kind": "include_str",
+   "sites": 2
+  },
+  {
+   "directory": "providers/quirin-provider-shared/contracts/library",
+   "owner": "quirin-provider-shared",
+   "reader": "qcore-contract",
+   "kind": "include_str",
+   "sites": 2
+  },
+  {
+   "directory": "providers/quirin-provider-shared/contracts/library",
+   "owner": "quirin-provider-shared",
+   "reader": "qcore-provider-conformance",
+   "kind": "include_str",
+   "sites": 4
+  },
+  {
+   "directory": "providers/quirin-provider-shared/contracts/library",
+   "owner": "quirin-provider-shared",
+   "reader": "qcore-verification",
+   "kind": "include_str",
+   "sites": 8
+  },
+  {
+   "directory": "providers/quirin-provider-shared/fixtures",
+   "owner": "quirin-provider-shared",
+   "reader": "qcore-provider-conformance",
+   "kind": "include_str",
+   "sites": 13
+  },
+  {
+   "directory": "tests/support",
+   "owner": null,
+   "reader": "qcore-audit",
+   "kind": "path",
+   "sites": 4
+  },
+  {
+   "directory": "tests/support",
+   "owner": null,
+   "reader": "qcore-c-gateway",
+   "kind": "path",
+   "sites": 3
+  },
+  {
+   "directory": "tests/support",
+   "owner": null,
+   "reader": "qcore-compiler",
+   "kind": "path",
+   "sites": 85
+  },
+  {
+   "directory": "tests/support",
+   "owner": null,
+   "reader": "qcore-contract",
+   "kind": "path",
+   "sites": 2
+  },
+  {
+   "directory": "tests/support",
+   "owner": null,
+   "reader": "qcore-core",
+   "kind": "path",
+   "sites": 2
+  },
+  {
+   "directory": "tests/support",
+   "owner": null,
+   "reader": "qcore-provider-chunkio",
+   "kind": "path",
+   "sites": 1
+  },
+  {
+   "directory": "tests/support",
+   "owner": null,
+   "reader": "qcore-provider-cmetrics",
+   "kind": "path",
+   "sites": 1
+  },
+  {
+   "directory": "tests/support",
+   "owner": null,
+   "reader": "qcore-provider-conformance",
+   "kind": "path",
+   "sites": 4
+  },
+  {
+   "directory": "tests/support",
+   "owner": null,
+   "reader": "qcore-provider-ctraces",
+   "kind": "path",
+   "sites": 1
+  },
+  {
+   "directory": "tests/support",
+   "owner": null,
+   "reader": "qcore-provider-libevent",
+   "kind": "path",
+   "sites": 1
+  },
+  {
+   "directory": "tests/support",
+   "owner": null,
+   "reader": "qcore-provider-librdkafka",
+   "kind": "path",
+   "sites": 1
+  },
+  {
+   "directory": "tests/support",
+   "owner": null,
+   "reader": "qcore-verification",
+   "kind": "path",
+   "sites": 2
+  },
+  {
+   "directory": "tests/support",
+   "owner": null,
+   "reader": "qcore-verifier-host",
+   "kind": "path",
+   "sites": 1
+  },
+  {
+   "directory": "tests/support",
+   "owner": null,
+   "reader": "qcorec",
+   "kind": "path",
+   "sites": 4
+  },
+  {
+   "directory": "tests/support",
+   "owner": null,
+   "reader": "quirin-provider-cfl",
+   "kind": "path",
+   "sites": 1
+  },
+  {
+   "directory": "tests/support",
+   "owner": null,
+   "reader": "quirin-provider-fluent-bit",
+   "kind": "path",
+   "sites": 1
+  },
+  {
+   "directory": "tests/support",
+   "owner": null,
+   "reader": "quirin-provider-libc",
+   "kind": "path",
+   "sites": 1
+  },
+  {
+   "directory": "tests/support",
+   "owner": null,
+   "reader": "quirin-provider-mpack",
+   "kind": "path",
+   "sites": 1
+  },
+  {
+   "directory": "tests/support",
+   "owner": null,
+   "reader": "quirin-provider-msgpack",
+   "kind": "path",
+   "sites": 1
+  },
+  {
+   "directory": "tests/support",
+   "owner": null,
+   "reader": "quirin-provider-shared",
+   "kind": "path",
+   "sites": 1
+  },
+  {
+   "directory": "third_party/libevent",
+   "owner": null,
+   "reader": "qcore-verification",
+   "kind": "include_bytes",
+   "sites": 2
+  }
+ ],
+ "unresolved_includes": [
+  {
+   "crate": "qcore-compiler",
+   "source": "compiler/tests/ct_corpus.rs:8069",
+   "literal": "include_str!(\\\"fixtures/ct/{id}/case.qr\\\")\");",
+   "why": "argument is not a string literal (or the macro is inside a string)"
+  }
+ ]
+}

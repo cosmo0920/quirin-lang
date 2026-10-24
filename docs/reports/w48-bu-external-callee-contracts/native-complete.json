@@ -1,0 +1,717 @@
+{
+  "base": "8991b7b58fcbd33da082bbb44e819d47a0fb2561",
+  "measured_tip": "5dbe4a381acd5c3197057030ff3f9735caa72335",
+  "routes": [
+    {
+      "route": "corpus",
+      "timing": {
+        "base": {
+          "started": "2026-10-23T14:53:13.102383+00:00",
+          "ended": "2026-10-23T16:17:57.794682+00:00",
+          "seconds": 5084.692299,
+          "exit": 0,
+          "analyzer_source": "15cc50053af74ee560233e5a26cfafbc83b40046",
+          "binary_sha256": "836fa18e8835b5887949d3ffeaaf54b0bfa4ec29b79527d1b01137ea49adf92e",
+          "invocation": "/home/cosmo/.codex/worktrees/c1e4/quirin-lang/private/w48-bu-external-callee-contracts/base-3/corpus/invocation.json"
+        },
+        "tip": {
+          "started": "2026-10-24T01:12:26.950560+00:00",
+          "ended": "2026-10-24T02:36:05.560185+00:00",
+          "seconds": 5018.609625,
+          "exit": 0,
+          "analyzer_source": "5dbe4a381acd5c3197057030ff3f9735caa72335",
+          "binary_sha256": "60d16f6f0b709dca9ae43ab9ed94d647a3c0436522768debb57758647efc1058",
+          "invocation": "/home/cosmo/.codex/worktrees/c1e4/quirin-lang/private/w48-bu-external-callee-contracts/tip-1/corpus/invocation.json"
+        }
+      },
+      "summary": {
+        "artifact_receipts": [
+          {
+            "artifact": "resource-diagnostics.json",
+            "base": {
+              "bytes": 86912118,
+              "path": "/home/cosmo/.codex/worktrees/c1e4/quirin-lang/private/w48-bu-external-callee-contracts/base-3/corpus/corpus/resource-diagnostics.json",
+              "sha256": "f9f8d3c20a1e44de54e40a149a22e26d8b506102c85d3935a5917f245d389832"
+            },
+            "base_present": true,
+            "tip": {
+              "bytes": 87011375,
+              "path": "/home/cosmo/.codex/worktrees/c1e4/quirin-lang/private/w48-bu-external-callee-contracts/tip-1/corpus/corpus/resource-diagnostics.json",
+              "sha256": "e66a801db9282a2d4312fbc6484bee22d461a67e3720c5686ee11608e0794281"
+            },
+            "tip_present": true
+          },
+          {
+            "artifact": "monkey-source.json",
+            "base": {
+              "bytes": 1667094,
+              "path": "/home/cosmo/.codex/worktrees/c1e4/quirin-lang/private/w48-bu-external-callee-contracts/base-3/corpus/corpus/monkey-source.json",
+              "sha256": "9199a7a0e2e8c03b437310c40dc2af5a045555093dcb73f9b1f21eadd24dd7b1"
+            },
+            "base_present": true,
+            "tip": {
+              "bytes": 1667094,
+              "path": "/home/cosmo/.codex/worktrees/c1e4/quirin-lang/private/w48-bu-external-callee-contracts/tip-1/corpus/corpus/monkey-source.json",
+              "sha256": "9199a7a0e2e8c03b437310c40dc2af5a045555093dcb73f9b1f21eadd24dd7b1"
+            },
+            "tip_present": true
+          },
+          {
+            "artifact": "resource-diagnostics.contracts.json",
+            "base": {
+              "bytes": 44468936,
+              "path": "/home/cosmo/.codex/worktrees/c1e4/quirin-lang/private/w48-bu-external-callee-contracts/base-3/corpus/corpus/resource-diagnostics.contracts.json",
+              "sha256": "a7e90a57c9c8d04396a843c92c73df5be77bb58201c5ca572085b3b1fdf3704f"
+            },
+            "base_present": true,
+            "tip": {
+              "bytes": 44477799,
+              "path": "/home/cosmo/.codex/worktrees/c1e4/quirin-lang/private/w48-bu-external-callee-contracts/tip-1/corpus/corpus/resource-diagnostics.contracts.json",
+              "sha256": "ac778805baeaf229b7bfafee25e72684bf67c1e46bcc194cb610c88c4220a134"
+            },
+            "tip_present": true
+          },
+          {
+            "artifact": "resource-diagnostics.source-effects.json",
+            "base": {
+              "bytes": 118505,
+              "path": "/home/cosmo/.codex/worktrees/c1e4/quirin-lang/private/w48-bu-external-callee-contracts/base-3/corpus/corpus/resource-diagnostics.source-effects.json",
+              "sha256": "d072a13f9bff4932c133a23cce39ff662deba68d46b3731693bb94e644290fe6"
+            },
+            "base_present": true,
+            "tip": {
+              "bytes": 118505,
+              "path": "/home/cosmo/.codex/worktrees/c1e4/quirin-lang/private/w48-bu-external-callee-contracts/tip-1/corpus/corpus/resource-diagnostics.source-effects.json",
+              "sha256": "d072a13f9bff4932c133a23cce39ff662deba68d46b3731693bb94e644290fe6"
+            },
+            "tip_present": true
+          },
+          {
+            "artifact": "resource-diagnostics.chunk-contracts.json",
+            "base": {
+              "bytes": 4186178,
+              "path": "/home/cosmo/.codex/worktrees/c1e4/quirin-lang/private/w48-bu-external-callee-contracts/base-3/corpus/corpus/resource-diagnostics.chunk-contracts.json",
+              "sha256": "cbbcfd9c176005146c1946d5fcd4dc83cc9ec041a3397b10b1f0ab16ae6c0484"
+            },
+            "base_present": true,
+            "tip": {
+              "bytes": 4186178,
+              "path": "/home/cosmo/.codex/worktrees/c1e4/quirin-lang/private/w48-bu-external-callee-contracts/tip-1/corpus/corpus/resource-diagnostics.chunk-contracts.json",
+              "sha256": "cbbcfd9c176005146c1946d5fcd4dc83cc9ec041a3397b10b1f0ab16ae6c0484"
+            },
+            "tip_present": true
+          },
+          {
+            "artifact": "corpus-null.jsonl",
+            "bytes": 29207547,
+            "path": "/home/cosmo/.codex/worktrees/c1e4/quirin-lang/private/w48-bu-external-callee-contracts/base-3/corpus/corpus-null.jsonl",
+            "sha256": "76578b8c3d30a6e0b3130862e8e13bf09e787ffbcf74950e30bf1c440d6f94c4",
+            "side": "base"
+          },
+          {
+            "artifact": "corpus-null.jsonl",
+            "bytes": 29207535,
+            "path": "/home/cosmo/.codex/worktrees/c1e4/quirin-lang/private/w48-bu-external-callee-contracts/tip-1/corpus/corpus-null.jsonl",
+            "sha256": "1de213baab88a6c8ac338bc72721b16d3960d5555af25a0edd8d0a09621116c0",
+            "side": "tip"
+          },
+          {
+            "artifact": "corpus-null.summary.json",
+            "bytes": 64899,
+            "path": "/home/cosmo/.codex/worktrees/c1e4/quirin-lang/private/w48-bu-external-callee-contracts/base-3/corpus/corpus-null.summary.json",
+            "sha256": "80686b37e81f7f75cb4077cb1bdeb63b836d539ba15bfeceada7bf2869f9ca3d",
+            "side": "base"
+          },
+          {
+            "artifact": "corpus-null.summary.json",
+            "bytes": 64900,
+            "path": "/home/cosmo/.codex/worktrees/c1e4/quirin-lang/private/w48-bu-external-callee-contracts/tip-1/corpus/corpus-null.summary.json",
+            "sha256": "ee3a91d34921a5e0edb3d05ecade1551c366f5056d3f6651fd2f860bc5286885",
+            "side": "tip"
+          },
+          {
+            "artifact": "corpus-outer.json",
+            "bytes": 715908,
+            "path": "/home/cosmo/.codex/worktrees/c1e4/quirin-lang/private/w48-bu-external-callee-contracts/base-3/corpus/corpus-outer.json",
+            "sha256": "ef1ed2dcbe97220414c4ea424d869f7e668658764e159fb556c4aafc929a0cc6",
+            "side": "base"
+          },
+          {
+            "artifact": "corpus-outer.json",
+            "bytes": 715909,
+            "path": "/home/cosmo/.codex/worktrees/c1e4/quirin-lang/private/w48-bu-external-callee-contracts/tip-1/corpus/corpus-outer.json",
+            "sha256": "eb7b8b0c00477bc8e5ae640db6aca67c2974cfae700782c09ba18be9cb597c02",
+            "side": "tip"
+          }
+        ],
+        "attribution_status": "Raw differences retained; interpretation and attribution must be written after inspection.",
+        "changed_rows": 4834,
+        "counts": {
+          "base": {
+            "Safe": 999,
+            "Unknown": 3826,
+            "Unsafe": 9
+          },
+          "tip": {
+            "Safe": 1001,
+            "Unknown": 3824,
+            "Unsafe": 9
+          }
+        },
+        "denominator_note": "Function tallies describe analyzed rows only, not whole-source safety coverage. Every selected unit remains in unit counts; raw source names and not_projected inventories are reported separately, including unread or compiled-out source. No safety percentage is inferred.",
+        "diagnostic_counts": {
+          "base": {
+            "leak": 40,
+            "summary_conflict": 2,
+            "unknown_alias": 11002,
+            "unsupported": 27465
+          },
+          "tip": {
+            "leak": 40,
+            "summary_conflict": 2,
+            "unknown_alias": 11002,
+            "unsupported": 27463
+          }
+        },
+        "diagnostic_trade_rows": 2,
+        "fields_erased": 0,
+        "fields_masked": 0,
+        "null_dictionary_changes": 0,
+        "null_full_record_changes": 4921,
+        "null_rows": 4921,
+        "raw_difference_counts": {
+          "corpus-null.summary.json": 4,
+          "corpus-outer.json": 16,
+          "monkey-source.json": 0,
+          "resource-diagnostics.chunk-contracts.json": 0,
+          "resource-diagnostics.contracts.json": 18976,
+          "resource-diagnostics.json": 12037,
+          "resource-diagnostics.source-effects.json": 0
+        },
+        "route": "corpus",
+        "source_inventory_counts": {
+          "base": {
+            "analyzed_function_rows": 4834,
+            "not_projected_entries": 87,
+            "raw_source_function_entries": 4921
+          },
+          "tip": {
+            "analyzed_function_rows": 4834,
+            "not_projected_entries": 87,
+            "raw_source_function_entries": 4921
+          }
+        },
+        "status_changes": [
+          {
+            "base": "Unknown",
+            "file": "tinycthread_extra.c",
+            "function": "thrd_current_id",
+            "library": "librdkafka",
+            "tip": "Safe",
+            "unit_index": 141
+          },
+          {
+            "base": "Unknown",
+            "file": "mk_core/mk_iov.c",
+            "function": "mk_iov_send",
+            "library": "monkey-libevent",
+            "tip": "Safe",
+            "unit_index": 158
+          }
+        ],
+        "unit_status_changes": [],
+        "unit_status_counts": {
+          "base": {
+            "Safe": 8,
+            "Unknown": 166,
+            "Unsafe": 7,
+            "data_only": 4
+          },
+          "tip": {
+            "Safe": 8,
+            "Unknown": 166,
+            "Unsafe": 7,
+            "data_only": 4
+          }
+        },
+        "units": 185
+      },
+      "complete_attribution": {
+        "path": "/home/cosmo/.codex/worktrees/c1e4/quirin-lang/private/w48-bu-external-callee-contracts/corpus-complete-attribution.json",
+        "sha256": "27e76f5c0587c2fa0cd06c7c238421bee1e2ac0a8b161e9fd96770597dfda1c7"
+      },
+      "all_invocation_before_after_guards_stable": true,
+      "paired_source_runner_profile_map_and_driver_equal": true,
+      "runtime_selection_changes": [
+        {
+          "relative": "providers/quirin-provider-libc/contracts/libc/threads.qv",
+          "base": "a0ccacd82d541743f208208534732550dc9893dd57452a3b2dd0632398998db3",
+          "tip": "febd75c6f2877ca7f4bccdf932d52d91c016a39a85d0d6602a54928f9a4e8da8"
+        },
+        {
+          "relative": "providers/quirin-provider-libc/contracts/libc/unistd.qv",
+          "base": "be6f9f900e22c8127e71da391353b21587fc701a06bf59c985dafd4f8467a088",
+          "tip": "2d7606f2235d324105952f5fbc123995da6589b327b931ac012eb6ad7083f3c5"
+        },
+        {
+          "relative": "providers/quirin-provider-libc/contracts.lock",
+          "base": "50fcea7010327dbfed012df75775b0ba2e2dc0aaabfb560f66332577a91353c6",
+          "tip": "45966d0d42253ce00b9bec11c993971968ec4757892e14461b2a4fd44dcff982"
+        }
+      ]
+    },
+    {
+      "route": "system",
+      "timing": {
+        "base": {
+          "started": "2026-10-23T16:18:01.116079+00:00",
+          "ended": "2026-10-23T16:25:42.943741+00:00",
+          "seconds": 461.827662,
+          "exit": 0,
+          "analyzer_source": "15cc50053af74ee560233e5a26cfafbc83b40046",
+          "binary_sha256": "836fa18e8835b5887949d3ffeaaf54b0bfa4ec29b79527d1b01137ea49adf92e",
+          "invocation": "/home/cosmo/.codex/worktrees/c1e4/quirin-lang/private/w48-bu-external-callee-contracts/base-3/system/invocation.json"
+        },
+        "tip": {
+          "started": "2026-10-24T02:36:07.357360+00:00",
+          "ended": "2026-10-24T02:43:51.068073+00:00",
+          "seconds": 463.710713,
+          "exit": 0,
+          "analyzer_source": "5dbe4a381acd5c3197057030ff3f9735caa72335",
+          "binary_sha256": "60d16f6f0b709dca9ae43ab9ed94d647a3c0436522768debb57758647efc1058",
+          "invocation": "/home/cosmo/.codex/worktrees/c1e4/quirin-lang/private/w48-bu-external-callee-contracts/tip-1/system/invocation.json"
+        }
+      },
+      "summary": {
+        "artifact_receipts": [
+          {
+            "artifact": "resource-diagnostics.json",
+            "base": {
+              "bytes": 7576521,
+              "path": "/home/cosmo/.codex/worktrees/c1e4/quirin-lang/private/w48-bu-external-callee-contracts/base-3/system/resource-diagnostics.json",
+              "sha256": "56a2d9739e2ea8ae9fc9e0609e417715ed18e666cd61c4511e33cb918f1b8752"
+            },
+            "base_present": true,
+            "tip": {
+              "bytes": 7585373,
+              "path": "/home/cosmo/.codex/worktrees/c1e4/quirin-lang/private/w48-bu-external-callee-contracts/tip-1/system/resource-diagnostics.json",
+              "sha256": "d4fdc62aa3fcb59833d21d124c34e5784164a69da3609de1bc96ff82af5529d2"
+            },
+            "tip_present": true
+          },
+          {
+            "artifact": "monkey-source.json",
+            "base_present": false,
+            "tip_present": false
+          },
+          {
+            "artifact": "resource-diagnostics.contracts.json",
+            "base": {
+              "bytes": 10868662,
+              "path": "/home/cosmo/.codex/worktrees/c1e4/quirin-lang/private/w48-bu-external-callee-contracts/base-3/system/resource-diagnostics.contracts.json",
+              "sha256": "dbd2a73e288917a49d40d138e190e0f5f8639d99b0314b2206f4d7c1d7ccffb2"
+            },
+            "base_present": true,
+            "tip": {
+              "bytes": 10871919,
+              "path": "/home/cosmo/.codex/worktrees/c1e4/quirin-lang/private/w48-bu-external-callee-contracts/tip-1/system/resource-diagnostics.contracts.json",
+              "sha256": "c6fbf4f166885a92fa92a853920001d2ec3701fa5a909b04839831e1aa1271b5"
+            },
+            "tip_present": true
+          },
+          {
+            "artifact": "resource-diagnostics.source-effects.json",
+            "base": {
+              "bytes": 385,
+              "path": "/home/cosmo/.codex/worktrees/c1e4/quirin-lang/private/w48-bu-external-callee-contracts/base-3/system/resource-diagnostics.source-effects.json",
+              "sha256": "e7e0d254d9e7ee199672b981e3fc764b702b35a1757bb0f4570a9438e6b87922"
+            },
+            "base_present": true,
+            "tip": {
+              "bytes": 385,
+              "path": "/home/cosmo/.codex/worktrees/c1e4/quirin-lang/private/w48-bu-external-callee-contracts/tip-1/system/resource-diagnostics.source-effects.json",
+              "sha256": "e7e0d254d9e7ee199672b981e3fc764b702b35a1757bb0f4570a9438e6b87922"
+            },
+            "tip_present": true
+          },
+          {
+            "artifact": "resource-diagnostics.chunk-contracts.json",
+            "base": {
+              "bytes": 385,
+              "path": "/home/cosmo/.codex/worktrees/c1e4/quirin-lang/private/w48-bu-external-callee-contracts/base-3/system/resource-diagnostics.chunk-contracts.json",
+              "sha256": "e7e0d254d9e7ee199672b981e3fc764b702b35a1757bb0f4570a9438e6b87922"
+            },
+            "base_present": true,
+            "tip": {
+              "bytes": 385,
+              "path": "/home/cosmo/.codex/worktrees/c1e4/quirin-lang/private/w48-bu-external-callee-contracts/tip-1/system/resource-diagnostics.chunk-contracts.json",
+              "sha256": "e7e0d254d9e7ee199672b981e3fc764b702b35a1757bb0f4570a9438e6b87922"
+            },
+            "tip_present": true
+          },
+          {
+            "artifact": "system-null.jsonl",
+            "bytes": 1873239,
+            "path": "/home/cosmo/.codex/worktrees/c1e4/quirin-lang/private/w48-bu-external-callee-contracts/base-3/system/system-null.jsonl",
+            "sha256": "643d38cc52baeab7f8e92fd396da7766d0fabcf3561ca2bc1abd21fbfcf583e7",
+            "side": "base"
+          },
+          {
+            "artifact": "system-null.jsonl",
+            "bytes": 1873239,
+            "path": "/home/cosmo/.codex/worktrees/c1e4/quirin-lang/private/w48-bu-external-callee-contracts/tip-1/system/system-null.jsonl",
+            "sha256": "d3fec836e3636f6826ddfe413762c7a78d34a124c21d87a2ec36bf08e288e3ad",
+            "side": "tip"
+          },
+          {
+            "artifact": "system-null.summary.json",
+            "bytes": 64384,
+            "path": "/home/cosmo/.codex/worktrees/c1e4/quirin-lang/private/w48-bu-external-callee-contracts/base-3/system/system-null.summary.json",
+            "sha256": "1d9ad9e838a54923bd90b3d984c324c8eb6892fa0903827be98b5f9401a3ea5c",
+            "side": "base"
+          },
+          {
+            "artifact": "system-null.summary.json",
+            "bytes": 64384,
+            "path": "/home/cosmo/.codex/worktrees/c1e4/quirin-lang/private/w48-bu-external-callee-contracts/tip-1/system/system-null.summary.json",
+            "sha256": "1d9ad9e838a54923bd90b3d984c324c8eb6892fa0903827be98b5f9401a3ea5c",
+            "side": "tip"
+          },
+          {
+            "artifact": "system-outer.json",
+            "bytes": 67539,
+            "path": "/home/cosmo/.codex/worktrees/c1e4/quirin-lang/private/w48-bu-external-callee-contracts/base-3/system/system-outer.json",
+            "sha256": "a62d98829d4ea6d476992839c4a25ef4681de6e6b85f925081f27e74a88d2ebc",
+            "side": "base"
+          },
+          {
+            "artifact": "system-outer.json",
+            "bytes": 67539,
+            "path": "/home/cosmo/.codex/worktrees/c1e4/quirin-lang/private/w48-bu-external-callee-contracts/tip-1/system/system-outer.json",
+            "sha256": "a62d98829d4ea6d476992839c4a25ef4681de6e6b85f925081f27e74a88d2ebc",
+            "side": "tip"
+          }
+        ],
+        "attribution_status": "Raw differences retained; interpretation and attribution must be written after inspection.",
+        "changed_rows": 448,
+        "counts": {
+          "base": {
+            "Safe": 99,
+            "Unknown": 345,
+            "Unsafe": 4
+          },
+          "tip": {
+            "Safe": 99,
+            "Unknown": 345,
+            "Unsafe": 4
+          }
+        },
+        "denominator_note": "Function tallies describe analyzed rows only, not whole-source safety coverage. Every selected unit remains in unit counts; raw source names and not_projected inventories are reported separately, including unread or compiled-out source. No safety percentage is inferred.",
+        "diagnostic_counts": {
+          "base": {
+            "counted_user": 4,
+            "summary_conflict": 4,
+            "unknown_alias": 948,
+            "unsupported": 2392
+          },
+          "tip": {
+            "counted_user": 4,
+            "summary_conflict": 4,
+            "unknown_alias": 948,
+            "unsupported": 2392
+          }
+        },
+        "diagnostic_trade_rows": 0,
+        "fields_erased": 0,
+        "fields_masked": 0,
+        "null_dictionary_changes": 0,
+        "null_full_record_changes": 454,
+        "null_rows": 454,
+        "raw_difference_counts": {
+          "resource-diagnostics.chunk-contracts.json": 0,
+          "resource-diagnostics.contracts.json": 3790,
+          "resource-diagnostics.json": 1577,
+          "resource-diagnostics.source-effects.json": 0,
+          "system-null.summary.json": 0,
+          "system-outer.json": 0
+        },
+        "route": "system",
+        "source_inventory_counts": {
+          "base": {
+            "analyzed_function_rows": 448,
+            "not_projected_entries": 6,
+            "raw_source_function_entries": 454
+          },
+          "tip": {
+            "analyzed_function_rows": 448,
+            "not_projected_entries": 6,
+            "raw_source_function_entries": 454
+          }
+        },
+        "status_changes": [],
+        "unit_status_changes": [],
+        "unit_status_counts": {
+          "base": {
+            "Unknown": 13,
+            "Unsafe": 2
+          },
+          "tip": {
+            "Unknown": 13,
+            "Unsafe": 2
+          }
+        },
+        "units": 15
+      },
+      "complete_attribution": {
+        "path": "/home/cosmo/.codex/worktrees/c1e4/quirin-lang/private/w48-bu-external-callee-contracts/system-complete-attribution.json",
+        "sha256": "315b6301f4fb249e6777f2dd0b68eb51a95231488032fdfda576268aac65a894"
+      },
+      "all_invocation_before_after_guards_stable": true,
+      "paired_source_runner_profile_map_and_driver_equal": true,
+      "runtime_selection_changes": [
+        {
+          "relative": "providers/quirin-provider-libc/contracts/libc/threads.qv",
+          "base": "a0ccacd82d541743f208208534732550dc9893dd57452a3b2dd0632398998db3",
+          "tip": "febd75c6f2877ca7f4bccdf932d52d91c016a39a85d0d6602a54928f9a4e8da8"
+        },
+        {
+          "relative": "providers/quirin-provider-libc/contracts/libc/unistd.qv",
+          "base": "be6f9f900e22c8127e71da391353b21587fc701a06bf59c985dafd4f8467a088",
+          "tip": "2d7606f2235d324105952f5fbc123995da6589b327b931ac012eb6ad7083f3c5"
+        },
+        {
+          "relative": "providers/quirin-provider-libc/contracts.lock",
+          "base": "50fcea7010327dbfed012df75775b0ba2e2dc0aaabfb560f66332577a91353c6",
+          "tip": "45966d0d42253ce00b9bec11c993971968ec4757892e14461b2a4fd44dcff982"
+        }
+      ]
+    },
+    {
+      "route": "slice",
+      "timing": {
+        "base": {
+          "started": "2026-10-23T16:25:45.022465+00:00",
+          "ended": "2026-10-23T16:32:28.247129+00:00",
+          "seconds": 403.224664,
+          "exit": 0,
+          "analyzer_source": "15cc50053af74ee560233e5a26cfafbc83b40046",
+          "binary_sha256": "836fa18e8835b5887949d3ffeaaf54b0bfa4ec29b79527d1b01137ea49adf92e",
+          "invocation": "/home/cosmo/.codex/worktrees/c1e4/quirin-lang/private/w48-bu-external-callee-contracts/base-3/slice/invocation.json"
+        },
+        "tip": {
+          "started": "2026-10-24T02:43:52.334771+00:00",
+          "ended": "2026-10-24T02:50:35.256346+00:00",
+          "seconds": 402.921575,
+          "exit": 0,
+          "analyzer_source": "5dbe4a381acd5c3197057030ff3f9735caa72335",
+          "binary_sha256": "60d16f6f0b709dca9ae43ab9ed94d647a3c0436522768debb57758647efc1058",
+          "invocation": "/home/cosmo/.codex/worktrees/c1e4/quirin-lang/private/w48-bu-external-callee-contracts/tip-1/slice/invocation.json"
+        }
+      },
+      "summary": {
+        "artifact_receipts": [
+          {
+            "artifact": "resource-diagnostics.json",
+            "base": {
+              "bytes": 3754503,
+              "path": "/home/cosmo/.codex/worktrees/c1e4/quirin-lang/private/w48-bu-external-callee-contracts/base-3/slice/resource-diagnostics.json",
+              "sha256": "3c54b90c9a07bdc9b99acfb3509b9511377dd1cb971293846bd82fe051a7dbed"
+            },
+            "base_present": true,
+            "tip": {
+              "bytes": 3756716,
+              "path": "/home/cosmo/.codex/worktrees/c1e4/quirin-lang/private/w48-bu-external-callee-contracts/tip-1/slice/resource-diagnostics.json",
+              "sha256": "611072397082fee6b49a09b6d239061342370574ec0ce0bab3cf0ad3875a5b8d"
+            },
+            "tip_present": true
+          },
+          {
+            "artifact": "monkey-source.json",
+            "base_present": false,
+            "tip_present": false
+          },
+          {
+            "artifact": "resource-diagnostics.contracts.json",
+            "base": {
+              "bytes": 9680551,
+              "path": "/home/cosmo/.codex/worktrees/c1e4/quirin-lang/private/w48-bu-external-callee-contracts/base-3/slice/resource-diagnostics.contracts.json",
+              "sha256": "614dddacb384c70e253c19c286ad1c8b2a71feb14558faeb543bb6733df5c577"
+            },
+            "base_present": true,
+            "tip": {
+              "bytes": 9683808,
+              "path": "/home/cosmo/.codex/worktrees/c1e4/quirin-lang/private/w48-bu-external-callee-contracts/tip-1/slice/resource-diagnostics.contracts.json",
+              "sha256": "184b420eb216ccb5a2f4b315aa304d43ca13ce828f3557e9b0464f747e8a54ae"
+            },
+            "tip_present": true
+          },
+          {
+            "artifact": "resource-diagnostics.source-effects.json",
+            "base": {
+              "bytes": 385,
+              "path": "/home/cosmo/.codex/worktrees/c1e4/quirin-lang/private/w48-bu-external-callee-contracts/base-3/slice/resource-diagnostics.source-effects.json",
+              "sha256": "a97259087e4ad89a4662edcb494b27c27e80f06c62e404a19076224bbc0a2bd8"
+            },
+            "base_present": true,
+            "tip": {
+              "bytes": 385,
+              "path": "/home/cosmo/.codex/worktrees/c1e4/quirin-lang/private/w48-bu-external-callee-contracts/tip-1/slice/resource-diagnostics.source-effects.json",
+              "sha256": "a97259087e4ad89a4662edcb494b27c27e80f06c62e404a19076224bbc0a2bd8"
+            },
+            "tip_present": true
+          },
+          {
+            "artifact": "resource-diagnostics.chunk-contracts.json",
+            "base": {
+              "bytes": 385,
+              "path": "/home/cosmo/.codex/worktrees/c1e4/quirin-lang/private/w48-bu-external-callee-contracts/base-3/slice/resource-diagnostics.chunk-contracts.json",
+              "sha256": "a97259087e4ad89a4662edcb494b27c27e80f06c62e404a19076224bbc0a2bd8"
+            },
+            "base_present": true,
+            "tip": {
+              "bytes": 385,
+              "path": "/home/cosmo/.codex/worktrees/c1e4/quirin-lang/private/w48-bu-external-callee-contracts/tip-1/slice/resource-diagnostics.chunk-contracts.json",
+              "sha256": "a97259087e4ad89a4662edcb494b27c27e80f06c62e404a19076224bbc0a2bd8"
+            },
+            "tip_present": true
+          },
+          {
+            "artifact": "slice-null.jsonl",
+            "bytes": 1853651,
+            "path": "/home/cosmo/.codex/worktrees/c1e4/quirin-lang/private/w48-bu-external-callee-contracts/base-3/slice/slice-null.jsonl",
+            "sha256": "b1ffa3eb79bdfeade7bac0f25e636f01e8367fd45c50a2473de6a63650b2ca9b",
+            "side": "base"
+          },
+          {
+            "artifact": "slice-null.jsonl",
+            "bytes": 1853651,
+            "path": "/home/cosmo/.codex/worktrees/c1e4/quirin-lang/private/w48-bu-external-callee-contracts/tip-1/slice/slice-null.jsonl",
+            "sha256": "4992251f9157b06d16e93d53790390d5a7fdc135102232a3c43be15ec6e4b777",
+            "side": "tip"
+          },
+          {
+            "artifact": "slice-null.summary.json",
+            "bytes": 64487,
+            "path": "/home/cosmo/.codex/worktrees/c1e4/quirin-lang/private/w48-bu-external-callee-contracts/base-3/slice/slice-null.summary.json",
+            "sha256": "df4be8b649b807ee4b83c0516250e7495e7e57355733c126c24a6b3828960c56",
+            "side": "base"
+          },
+          {
+            "artifact": "slice-null.summary.json",
+            "bytes": 64487,
+            "path": "/home/cosmo/.codex/worktrees/c1e4/quirin-lang/private/w48-bu-external-callee-contracts/tip-1/slice/slice-null.summary.json",
+            "sha256": "df4be8b649b807ee4b83c0516250e7495e7e57355733c126c24a6b3828960c56",
+            "side": "tip"
+          },
+          {
+            "artifact": "slice-outer.json",
+            "bytes": 89014,
+            "path": "/home/cosmo/.codex/worktrees/c1e4/quirin-lang/private/w48-bu-external-callee-contracts/base-3/slice/slice-outer.json",
+            "sha256": "bd73808faf15c5a505d983bf918af6e1a15f4c8c0ccd77ef3c994c0ab40b0ef7",
+            "side": "base"
+          },
+          {
+            "artifact": "slice-outer.json",
+            "bytes": 89014,
+            "path": "/home/cosmo/.codex/worktrees/c1e4/quirin-lang/private/w48-bu-external-callee-contracts/tip-1/slice/slice-outer.json",
+            "sha256": "bd73808faf15c5a505d983bf918af6e1a15f4c8c0ccd77ef3c994c0ab40b0ef7",
+            "side": "tip"
+          }
+        ],
+        "attribution_status": "Raw differences retained; interpretation and attribution must be written after inspection.",
+        "changed_rows": 404,
+        "counts": {
+          "base": {
+            "Pending": 4,
+            "Safe": 57,
+            "Unknown": 342,
+            "Unsafe": 1
+          },
+          "tip": {
+            "Pending": 4,
+            "Safe": 57,
+            "Unknown": 342,
+            "Unsafe": 1
+          }
+        },
+        "denominator_note": "Function tallies describe analyzed rows only, not whole-source safety coverage. Every selected unit remains in unit counts; raw source names and not_projected inventories are reported separately, including unread or compiled-out source. No safety percentage is inferred.",
+        "diagnostic_counts": {
+          "base": {
+            "counted_user": 1,
+            "unknown_alias": 1088,
+            "unsupported": 2480
+          },
+          "tip": {
+            "counted_user": 1,
+            "unknown_alias": 1088,
+            "unsupported": 2480
+          }
+        },
+        "diagnostic_trade_rows": 0,
+        "fields_erased": 0,
+        "fields_masked": 0,
+        "null_dictionary_changes": 0,
+        "null_full_record_changes": 406,
+        "null_rows": 406,
+        "raw_difference_counts": {
+          "resource-diagnostics.chunk-contracts.json": 0,
+          "resource-diagnostics.contracts.json": 2308,
+          "resource-diagnostics.json": 1272,
+          "resource-diagnostics.source-effects.json": 0,
+          "slice-null.summary.json": 0,
+          "slice-outer.json": 0
+        },
+        "route": "slice",
+        "source_inventory_counts": {
+          "base": {
+            "analyzed_function_rows": 404,
+            "not_projected_entries": 2,
+            "raw_source_function_entries": 406
+          },
+          "tip": {
+            "analyzed_function_rows": 404,
+            "not_projected_entries": 2,
+            "raw_source_function_entries": 406
+          }
+        },
+        "status_changes": [],
+        "unit_status_changes": [],
+        "unit_status_counts": {
+          "base": {
+            "Unknown": 15,
+            "Unsafe": 1
+          },
+          "tip": {
+            "Unknown": 15,
+            "Unsafe": 1
+          }
+        },
+        "units": 16
+      },
+      "complete_attribution": {
+        "path": "/home/cosmo/.codex/worktrees/c1e4/quirin-lang/private/w48-bu-external-callee-contracts/slice-complete-attribution.json",
+        "sha256": "cdda10c348f4fba4198778aac9fb3d75ae2feddc22bdc3ed7a527bf538fa9cae"
+      },
+      "all_invocation_before_after_guards_stable": true,
+      "paired_source_runner_profile_map_and_driver_equal": true,
+      "runtime_selection_changes": [
+        {
+          "relative": "providers/quirin-provider-libc/contracts/libc/threads.qv",
+          "base": "a0ccacd82d541743f208208534732550dc9893dd57452a3b2dd0632398998db3",
+          "tip": "febd75c6f2877ca7f4bccdf932d52d91c016a39a85d0d6602a54928f9a4e8da8"
+        },
+        {
+          "relative": "providers/quirin-provider-libc/contracts/libc/unistd.qv",
+          "base": "be6f9f900e22c8127e71da391353b21587fc701a06bf59c985dafd4f8467a088",
+          "tip": "2d7606f2235d324105952f5fbc123995da6589b327b931ac012eb6ad7083f3c5"
+        },
+        {
+          "relative": "providers/quirin-provider-libc/contracts.lock",
+          "base": "50fcea7010327dbfed012df75775b0ba2e2dc0aaabfb560f66332577a91353c6",
+          "tip": "45966d0d42253ce00b9bec11c993971968ec4757892e14461b2a4fd44dcff982"
+        }
+      ]
+    }
+  ],
+  "scope": "Own fresh measurements only; artifact identity and field accounting do not establish libc implementation behavior, C extraction or Rust-Lean correspondence."
+}

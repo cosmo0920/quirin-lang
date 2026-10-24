@@ -1,0 +1,44 @@
+{
+  "exit": 0,
+  "rows": [
+    {
+      "database": "corpus-fluent-bit",
+      "literal_prefix_only": true,
+      "replacement_counts": [
+        45856,
+        21514
+      ],
+      "original_sha256": "5e6868d9af26eaec97bc8020ed5f23496f2490abf44532443239bd4d365f7e78",
+      "rewritten_sha256": "6bee5f1a1077007c601e6113d567b8e146a965a4835b73b1a75e0b6a863ae4c7"
+    },
+    {
+      "database": "corpus-monkey",
+      "literal_prefix_only": true,
+      "replacement_counts": [
+        2319,
+        0
+      ],
+      "original_sha256": "85cc996712bbd35675340b8b863b6ebc716cb94552253f2a6ad0288db920f331",
+      "rewritten_sha256": "28dccee7b8b689bd09cecc2025c3784c39e2ac716981d4049dcf9d6c5142b555"
+    },
+    {
+      "database": "system",
+      "literal_prefix_only": true,
+      "replacement_counts": [
+        67665
+      ],
+      "original_sha256": "2475e6374b14152538463f35a3457ffa98fbe30b2639d5df916ef9a216cb6876",
+      "rewritten_sha256": "fab8cadc9540a2cb1a674437558cecab5b437a64a50d490a8f7c3f54e2d950a9"
+    },
+    {
+      "database": "slice",
+      "literal_prefix_only": true,
+      "replacement_counts": [
+        67771
+      ],
+      "original_sha256": "faf446759b31f892c9ffe03c76719875e9910682515cdd9acc908dc5142f8157",
+      "rewritten_sha256": "30de8c85606675a324c4f218954bdbe9c0e36f84eb72483e17cad83a3ee5c318"
+    }
+  ],
+  "scope": "Literal byte substitutions only; no equivalence claim for different path spellings."
+}

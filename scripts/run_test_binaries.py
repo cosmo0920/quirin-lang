@@ -35,6 +35,16 @@ Every unit's stdout and stderr are written to the log directory together with
 ``summary.json`` (per-unit outcomes, durations and sorted test lines).
 
 The equivalent reference command stays ``cargo test --workspace --no-fail-fast``.
+
+``--packages a,b`` (card GATE-ELASTIC) restricts every phase to those workspace
+members: the build and capture use ``-p a -p b`` instead of ``--workspace``, the
+doc-test unit covers the selected members that have a library target, and the
+stale-``EXCLUSIVE`` check covers the selected members only.  Every other rule is
+unchanged: an ``EXCLUSIVE`` binary of a selected member still runs alone after
+the parallel phase, and a stale entry for a selected member still fails the run.
+A restricted run is the scoped card gate's suite (``scripts/gate_scope.py``),
+never the standing gate's: ``summary.json`` and the totals line name the
+selection.
 """
 
 from __future__ import annotations
@@ -365,6 +375,38 @@ def package_names(cargo: str, extra: Sequence[str]) -> dict[str, str]:
     return {package["id"]: package["name"] for package in metadata(cargo, extra)["packages"]}
 
 
+LIBRARY_KINDS = frozenset({"lib", "rlib", "dylib", "cdylib", "staticlib", "proc-macro"})
+
+
+def library_packages(document: dict) -> set[str]:
+    """Workspace members with a library target (the only ones with doc-tests)."""
+    return {
+        package["name"]
+        for package in document["packages"]
+        if any(LIBRARY_KINDS & set(target["kind"]) for target in package["targets"])
+    }
+
+
+def parse_packages(values: Optional[Sequence[str]]) -> Optional[list[str]]:
+    """`--packages a,b --packages c` -> sorted unique names; None = whole workspace."""
+    if values is None:
+        return None
+    names = sorted({name.strip() for value in values for name in value.split(",") if name.strip()})
+    if not names:
+        raise ValueError("--packages names no package")
+    return names
+
+
+def selection_args(packages: Optional[Sequence[str]]) -> list[str]:
+    """cargo package selection: the whole workspace, or `-p` per selected member."""
+    if packages is None:
+        return ["--workspace"]
+    args: list[str] = []
+    for name in packages:
+        args += ["-p", name]
+    return args
+
+
 def manifest_args(extra: Sequence[str]) -> list[str]:
     result = []
     items = list(extra)
@@ -380,10 +422,11 @@ def unit_id(package: str, target: dict) -> str:
     return f"{package}::{'+'.join(target['kind'])}::{target['name']}"
 
 
-def build(cargo: str, extra: Sequence[str], log_dir: Path) -> tuple[int, dict[str, str]]:
+def build(cargo: str, extra: Sequence[str], log_dir: Path,
+          packages: Optional[Sequence[str]] = None) -> tuple[int, dict[str, str]]:
     """Build like `cargo test` does; return (exit, executable -> unit id)."""
     names = package_names(cargo, extra)
-    argv = [cargo, "test", "--workspace", "--no-run",
+    argv = [cargo, "test", *selection_args(packages), "--no-run",
             "--message-format=json-render-diagnostics", *extra]
     print(f"$ {shlex.join(argv)}", flush=True)
     executables: dict[str, str] = {}
@@ -427,16 +470,18 @@ def capture_command(capture_dir: Path) -> list[str]:
     return [sys.executable, "-I", "-S", "-c", CAPTURE_SOURCE, str(capture_dir.resolve())]
 
 
-def capture(cargo: str, extra: Sequence[str], log_dir: Path) -> tuple[int, list[dict]]:
+def capture(cargo: str, extra: Sequence[str], log_dir: Path,
+            packages: Optional[Sequence[str]] = None) -> tuple[int, list[dict]]:
     """Record cargo's own launch of every test executable without running it."""
     capture_dir = log_dir / "capture"
     capture_dir.mkdir()
     runner = capture_command(capture_dir)
     triple = host_triple(dict(os.environ))
     config = f"target.{triple}.runner=[{', '.join(json.dumps(part) for part in runner)}]"
-    argv = [cargo, "test", "--workspace", "--no-fail-fast", "--tests",
+    selection = selection_args(packages)
+    argv = [cargo, "test", *selection, "--no-fail-fast", "--tests",
             "--config", config, *extra]
-    print(f"$ cargo test --workspace --no-fail-fast --tests "
+    print(f"$ cargo test {shlex.join(selection)} --no-fail-fast --tests "
           f"--config target.{triple}.runner=<capture> {shlex.join(extra)}", flush=True)
     with open(log_dir / "capture.stdout.log", "wb") as out, \
             open(log_dir / "capture.stderr.log", "wb") as err:
@@ -515,12 +560,15 @@ def write_summary(
     phases: dict[str, float],
     jobs: int,
     runner: Optional[Runner],
+    packages: Optional[Sequence[str]] = None,
 ) -> dict:
     total = totals(results)
     failed_units = sorted(r.uid for r in results if not r.ok)
     document = {
         "schema": "qcore-test-binaries/1",
         "jobs": jobs,
+        # None: the whole workspace (the standing gate); a list: a scoped run.
+        "packages": list(packages) if packages is not None else None,
         "phases_seconds": phases,
         "problems": list(problems),
         "totals": total,
@@ -580,6 +628,9 @@ def parse_args(argv: Sequence[str]) -> argparse.Namespace:
                         help="after a successful run, write measured seconds here")
     parser.add_argument("--no-doc", action="store_true",
                         help="skip the doc-test unit (NOT gate-equivalent)")
+    parser.add_argument("--packages", action="append", metavar="A,B",
+                        help="restrict the run to these workspace members (repeatable, "
+                             "comma-separated); the scoped card gate, NOT the standing gate")
     parser.add_argument("cargo_args", nargs="*",
                         help="extra cargo arguments after `--`, e.g. --locked --offline")
     return parser.parse_args(argv)
@@ -589,7 +640,8 @@ def main(argv: Optional[Sequence[str]] = None) -> int:
     args = parse_args(list(sys.argv[1:] if argv is None else argv))
     extra = list(args.cargo_args)
     cargo = os.environ.get("CARGO", "cargo")
-    root = Path(metadata(cargo, extra)["workspace_root"]).resolve()
+    document_meta = metadata(cargo, extra)
+    root = Path(document_meta["workspace_root"]).resolve()
     if root != REPO_ROOT:
         # EXCLUSIVE is audited for the root workspace only. The provider
         # workspace's conformance binaries launch process providers under
@@ -597,49 +649,75 @@ def main(argv: Optional[Sequence[str]] = None) -> int:
         print(f"error: only the root workspace ({REPO_ROOT}) is supported, not {root}",
               file=sys.stderr)
         return 2
+    try:
+        packages = parse_packages(args.packages)
+    except ValueError as error:
+        print(f"error: {error}", file=sys.stderr)
+        return 2
+    members = {package["name"] for package in document_meta["packages"]}
+    if packages is not None:
+        unknown = sorted(set(packages) - members)
+        if unknown:
+            # Refused before building: a misspelt member must not shrink the suite.
+            print(f"error: --packages names non-members of the workspace: {', '.join(unknown)}",
+                  file=sys.stderr)
+            return 2
     stamp = datetime.datetime.now(datetime.timezone.utc).strftime("%Y%m%dT%H%M%SZ")
     log_dir = (args.log_dir or REPO_ROOT / "private" / "test-binaries" / f"{stamp}-{os.getpid()}")
     # Absolute: the capture runner is launched by cargo from each package root.
     log_dir = log_dir.resolve()
     log_dir.mkdir(parents=True, exist_ok=False)
     print(f"logs: {log_dir}", flush=True)
+    if packages is not None:
+        print(f"packages: {', '.join(packages)} (scoped run, not the standing gate)", flush=True)
     phases: dict[str, float] = {}
     problems: list[str] = []
 
     t0 = time.monotonic()
-    code, executables = build(cargo, extra, log_dir)
+    code, executables = build(cargo, extra, log_dir, packages)
     phases["build"] = round(time.monotonic() - t0, 3)
     if code != 0:
         problems.append(f"build failed with exit {code}")
-        write_summary(log_dir, [], problems, phases, args.jobs, None)
+        write_summary(log_dir, [], problems, phases, args.jobs, None, packages)
         print(f"error: build failed (exit {code})", file=sys.stderr)
         return 101
 
     t0 = time.monotonic()
-    code, records = capture(cargo, extra, log_dir)
+    code, records = capture(cargo, extra, log_dir, packages)
     phases["capture"] = round(time.monotonic() - t0, 3)
     if code != 0:
         problems.append(f"capture pass failed with exit {code}")
 
-    packages = set(package_names(cargo, extra).values())
+    selected = set(packages) if packages is not None else members
     doc_unit = None
     if not args.no_doc:
-        doc_unit = Unit(
-            uid="doc-tests",
-            argv=[cargo, "test", "--workspace", "--doc", "--no-fail-fast", *extra],
-            cwd=os.getcwd(),
-            env=dict(os.environ),
-            weight=1.0,
-        )
+        doc_selection: Optional[list[str]] = None
+        if packages is not None:
+            # `cargo test -p X --doc` refuses a member without a library target;
+            # `--workspace --doc` skips it. Select exactly the members that can
+            # have doc-tests, and run no doc unit when none of them can.
+            doc_selection = sorted(selected & library_packages(document_meta))
+        if doc_selection is None or doc_selection:
+            doc_unit = Unit(
+                uid="doc-tests",
+                argv=[cargo, "test", *selection_args(doc_selection), "--doc",
+                      "--no-fail-fast", *extra],
+                cwd=os.getcwd(),
+                env=dict(os.environ),
+                weight=1.0,
+            )
+        else:
+            print("doc-tests: no selected member has a library target; no doc unit",
+                  flush=True)
     units, plan_problems = plan_units(
-        executables, records, packages, load_weights(args.weights), doc_unit
+        executables, records, selected, load_weights(args.weights), doc_unit
     )
     problems += plan_problems
     for problem in problems:
         print(f"error: {problem}", file=sys.stderr)
     if problems:
         # Fail closed before running anything: the plan is not the suite.
-        write_summary(log_dir, [], problems, phases, args.jobs, None)
+        write_summary(log_dir, [], problems, phases, args.jobs, None, packages)
         print("error: the test plan is not trustworthy; nothing was run", file=sys.stderr)
         return 101
     exclusive_count = sum(1 for unit in units if unit.exclusive)
@@ -657,7 +735,7 @@ def main(argv: Optional[Sequence[str]] = None) -> int:
         print("interrupted", file=sys.stderr)
         return 130
     phases["run"] = round(time.monotonic() - t0, 3)
-    document = write_summary(log_dir, results, problems, phases, args.jobs, runner)
+    document = write_summary(log_dir, results, problems, phases, args.jobs, runner, packages)
 
     total = document["totals"]
     print()
