@@ -48,3 +48,20 @@ resource/NULL/runtime differences and their attribution. Unsafe results remain
 provisional. Full list operations, nested label/SDS ownership, primary versus
 secondary membership, caches, map-returned borrows and hashing stay under the
 parent chain. The unrelated exact-return witness precision residual stays Open.
+
+## Scope amendment requested after focused implementation
+
+The user additionally requests that the Rust audit changes be reflected in
+Quirin `.qv` contracts. This amendment precedes those contract edits. The
+fresh BASE/planner above and the original implementation forecast stay frozen.
+The CFL intrusive-list declared model will state the initializer's checked
+source/target and ownership-frame preconditions, explicit self writes, member
+fact invalidation and preserved resource obligations. It will grant no
+resource-v1 call summary: model clauses are not executable permissions.
+
+Expected production resource/NULL verdict effect of this model addition: zero.
+Provider inventory and corpus clause/declaration pins will change deliberately
+and receive their required checks. Paired native runs retain the same frozen
+BASE input snapshot; the report will distinguish that isolated Rust measurement
+from validation of the updated canonical `.qv` model and package contents.
+No source pin is fabricated for a declaration the resource loader cannot use.
