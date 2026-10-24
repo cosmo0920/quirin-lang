@@ -311,6 +311,15 @@ pub(super) fn checked_effect(
     function: &str,
     contracts: &ResourceContracts,
 ) -> Option<(String, String, BTreeSet<String>)> {
+    // A leaf contains no calls. Decline obvious calls before loading a
+    // potentially large callee AST; the complete typed check still decides.
+    let (start, _) = find_function_body(tokens, function)?;
+    let end = matching(tokens, start, "{", "}")?;
+    if tokens[start..=end].windows(2).any(|pair| {
+        is_identifier(&pair[0].text) && pair[1].text == "(" && pair[0].text != "if"
+    }) {
+        return None;
+    }
     checked_leaf(tokens, function, contracts)?;
     let leaf = profile(tokens, function, contracts, true)?;
     let fields = leaf

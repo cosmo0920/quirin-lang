@@ -195,7 +195,7 @@ def sourceTargetVectors : List Bool :=
   [ sourceAdmits completeSource,
     sourceAdmits { completeSource with boundedRootOnlyPath := false },
     sourceAdmits { completeSource with boundedRootOnlyPath := false },
-    sourceAdmits { completeSource with compatibleType := false },
+    sourceAdmits { completeSource with boundedRootOnlyPath := false },
     sourceAdmits { completeSource with completeOrdinaryEmbedding := false },
     sourceAdmits { completeSource with completeOrdinaryEmbedding := false } ]
 theorem shared_source_target_vectors :
