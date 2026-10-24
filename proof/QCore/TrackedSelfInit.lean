@@ -188,4 +188,17 @@ def flowVectors : List Bool :=
 theorem shared_flow_vectors : flowVectors =
     [true,false,false,false,false,false,false,false,false,false,false,false,true] := by decide
 
+/-- One ordinary embedded target followed by loaded pointer, indexed target,
+cast, volatile view and union embedding refusals, in Rust test order. -/
+def completeSource : Source := ⟨true,true,true,true,true,true,true,true⟩
+def sourceTargetVectors : List Bool :=
+  [ sourceAdmits completeSource,
+    sourceAdmits { completeSource with boundedRootOnlyPath := false },
+    sourceAdmits { completeSource with boundedRootOnlyPath := false },
+    sourceAdmits { completeSource with compatibleType := false },
+    sourceAdmits { completeSource with completeOrdinaryEmbedding := false },
+    sourceAdmits { completeSource with completeOrdinaryEmbedding := false } ]
+theorem shared_source_target_vectors :
+    sourceTargetVectors = [true,false,false,false,false,false] := by decide
+
 end QCore.TrackedSelfInit

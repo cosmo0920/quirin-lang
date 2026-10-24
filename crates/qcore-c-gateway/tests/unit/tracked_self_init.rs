@@ -139,3 +139,32 @@ fn shared_flow_vectors() {
     let lean = include_str!("../../../../proof/QCore/TrackedSelfInit.lean");
     assert!(lean.contains("[true,false,false,false,false,false,false,false,false,false,false,false,true]"));
 }
+
+#[test]
+fn unreachable_effects_keep_old_inference_and_declared_calls_keep_precedence() {
+    let source = format!("{LEAF}struct Ring *make(void); void drop(struct Ring *p); void subject(void) {{ return; struct Ring *p = make(); reset(p); drop(p); }}");
+    let Some(r) = run(&source) else { return }; assert_eq!(summary(&r).functions["subject"].status, AnalysisStatus::Safe); assert!(!has_call(&summary(&r).functions["subject"].cfg));
+    let source = format!("{LEAF}struct Ring *make(void); void drop(struct Ring *p); void subject(void) {{ struct Ring *p = make(); reset(p); drop(p); }}");
+    let mut c = contracts(); c.insert_contract("reset", ResourceFunctionContract::new(vec![ResourceParameterMode::Borrowed], ResourceReturnMode::None));
+    let r = analyze_unrestricted_c11(&C11TranslationUnit { source: &source, ..Default::default() }, "subject", &c).unwrap();
+    assert!(!has_call(&summary(&r).functions["subject"].cfg));
+    assert!(summary(&r).functions["subject"].cfg.nodes.iter().any(|n| matches!(&n.instruction, LegacyInstruction::ContractCall { function, .. } if function == "reset")));
+}
+
+#[test]
+fn source_target_vectors_are_bound_to_the_lean_table() {
+    let mut answers = vec![];
+    for (records, actual) in [
+        ("struct Owner { struct Ring ring; };", "&p->ring"),
+        ("struct Owner { struct Ring *ring; };", "p->ring"),
+        ("struct Owner { struct Ring ring[2]; };", "&p->ring[0]"),
+        ("struct Owner { struct Ring ring; };", "(struct Ring *)&p->ring"),
+        ("struct Owner { volatile struct Ring ring; };", "&p->ring"),
+        ("union Inner { struct Ring ring; int n; }; struct Owner { union Inner in; };", "&p->in.ring"),
+    ] {
+        let source = format!("{LEAF}{records}struct Owner *make(void); void drop(struct Owner *p); void subject(void) {{ struct Owner *p = make(); reset({actual}); drop(p); }}");
+        let Some(r) = run(&source) else { return }; answers.push(has_call(&summary(&r).functions["subject"].cfg));
+    }
+    assert_eq!(answers, [true,false,false,false,false,false]);
+    assert!(include_str!("../../../../proof/QCore/TrackedSelfInit.lean").contains("sourceTargetVectors = [true,false,false,false,false,false]"));
+}

@@ -55,3 +55,5 @@ import QCore.CheckedSelfInitCall
 #print axioms QCore.TrackedSelfInit.no_indirect_callback_transport
 #print axioms QCore.TrackedSelfInit.no_cross_unit_effect_privilege
 #print axioms QCore.TrackedSelfInit.shared_flow_vectors
+
+#print axioms QCore.TrackedSelfInit.shared_source_target_vectors
