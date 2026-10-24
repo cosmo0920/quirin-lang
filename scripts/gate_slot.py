@@ -240,6 +240,13 @@ class Lock:
                 return False
             raise
 
+    def lock_blocking(self, mode: int) -> None:
+        """Wait in the kernel's queue, beside `flock(1)` waiters, not by polling."""
+        self.path.parent.mkdir(parents=True, exist_ok=True)
+        if self.fd is None:
+            self.fd = os.open(self.path, os.O_RDWR | os.O_CREAT | os.O_CLOEXEC, 0o666)
+        fcntl.flock(self.fd, mode)
+
     def note(self, holder: dict) -> None:
         """Write who holds an exclusive slot into the slot file (diagnostics)."""
         assert self.fd is not None
@@ -317,10 +324,16 @@ class Gate:
         try:
             # 1. The legacy interlock, shared: excludes `flock <legacy>` jobs.
             legacy = Lock(self.legacy, "legacy")
+            what = f"the legacy lock {self.legacy} (held exclusive by a legacy job)"
             try:
-                self._wait(lambda: legacy.try_lock(fcntl.LOCK_SH),
-                           f"the legacy lock {self.legacy} (held exclusive by a legacy job)",
-                           deadline)
+                if deadline is None and not legacy.try_lock(fcntl.LOCK_SH):
+                    # A poller loses every race against `flock <legacy>` jobs
+                    # blocked in the kernel (measured on this card's own
+                    # demonstration), so an untimed wait blocks like them.
+                    self.echo(f"gate_slot: waiting for {what}")
+                    legacy.lock_blocking(fcntl.LOCK_SH)
+                else:
+                    self._wait(lambda: legacy.try_lock(fcntl.LOCK_SH), what, deadline)
             except BaseException:
                 legacy.release()
                 raise

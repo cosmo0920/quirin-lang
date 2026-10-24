@@ -185,6 +185,25 @@ class Accounting(unittest.TestCase):
             os.close(fd)
         self.gate().acquire("lean", timeout=1)
 
+    def test_an_untimed_wait_blocks_on_the_legacy_lock_until_it_is_released(self):
+        import threading
+        fd = os.open(self.legacy, os.O_RDWR | os.O_CREAT)
+        fcntl.flock(fd, fcntl.LOCK_EX)
+        released = threading.Event()
+
+        def release():
+            released.set()
+            os.close(fd)
+
+        timer = threading.Timer(0.3, release)
+        timer.start()
+        try:
+            record = self.gate().acquire("lean")  # no timeout: blocks in the kernel queue
+        finally:
+            timer.join()
+        self.assertTrue(released.is_set(), "admitted only after the legacy holder released")
+        self.assertEqual(record["legacy_lock"]["mode"], "shared")
+
     def test_a_slot_holder_excludes_a_legacy_job_but_not_other_slots(self):
         self.gate().acquire("lean", timeout=1)
         fd = os.open(self.legacy, os.O_RDWR | os.O_CREAT)
