@@ -1243,6 +1243,25 @@
     {
       "command": [
         "python3",
+        "-m",
+        "unittest",
+        "discover",
+        "-s",
+        "scripts/tests"
+      ],
+      "started": "2026-10-24T16:41:16.541830+00:00",
+      "head": "90b4aee9c42a951f902db91f5c98cfe7137718d0",
+      "dirty": false,
+      "log": "private/w48-cmt-tracked-interior/steps/post-matrix-python-1.log",
+      "slot_pid": 2134228,
+      "exit": 0,
+      "seconds": 33.441638693999266,
+      "ended": "2026-10-24T16:41:50.028164+00:00",
+      "test_summaries": []
+    },
+    {
+      "command": [
+        "python3",
         "private/w48-cmt-tracked-interior/prepare_api.py"
       ],
       "started": "2026-10-24T16:02:39.521388+00:00",
@@ -1343,6 +1362,21 @@
       "exit": 1,
       "seconds": 0.2424473020073492,
       "ended": "2026-10-24T16:39:41.321624+00:00",
+      "test_summaries": []
+    },
+    {
+      "command": [
+        "python3",
+        "private/w48-cmt-tracked-interior/finalize_source_reports.py"
+      ],
+      "started": "2026-10-24T16:40:40.196008+00:00",
+      "head": "2d0d85299b830aa24d7f200d63a308653582363f",
+      "dirty": true,
+      "log": "private/w48-cmt-tracked-interior/steps/publication-2.log",
+      "slot_pid": 2134228,
+      "exit": 0,
+      "seconds": 0.6784048650006298,
+      "ended": "2026-10-24T16:40:40.916626+00:00",
       "test_summaries": []
     },
     {

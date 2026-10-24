@@ -1,0 +1,16 @@
+{
+  "state": "released_after_all_owned_jobs_completed",
+  "released_at": "2026-10-24T16:43:32+00:00",
+  "session": 18655,
+  "slot_pid": 2134228,
+  "terminal_exit": 0,
+  "lock": "/tmp/qcore-c-card-validation-20261022.lock",
+  "root_gate": {
+    "path": "/home/cosmo/.codex/worktrees/808d/quirin-lang/private/w48-cmt-tracked-interior/gate/20261024T161812Z",
+    "exit": 0,
+    "head": "2d0d85299b830aa24d7f200d63a308653582363f"
+  },
+  "provider_gate_exit": 0,
+  "native_unexplained_leaves": 0,
+  "post_committed_matrix_python_exit": 0
+}
