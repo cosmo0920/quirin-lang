@@ -70,5 +70,5 @@
       ]
     }
   ],
-  "matrix": "Regenerated carrying prior gate provenance; replace only with actual combined gate receipt. Existing 817 named followups retained, no add/retire."
+  "matrix": "Final regeneration uses integration/gate.json from the actual merged-source gate. All 817 existing named followups preserved; no add/retire."
 }
