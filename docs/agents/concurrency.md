@@ -3,6 +3,8 @@
 Current rule text, routed by the [rule router](README.md), which says what to
 read. Rule numbers and anchors are stable; backticked paths are repository-relative.
 
+<!-- generated:rules:start — edit docs/agents/rules/<id>.md, then run python3 scripts/gen_rule_docs.py -->
+
 <a id="constraint-15n"></a>
 
 <!-- preserved:constraint-15n:start -->
@@ -194,6 +196,8 @@ read. Rule numbers and anchors are stable; backticked paths are repository-relat
     every declared condvar call. `QCore.CondvarJoin`;
     [report](../reports/w47-condvar-join-publication/README.md).
 <!-- preserved:constraint-27:end -->
+
+<!-- generated:rules:end -->
 
 ## Field-footprint profile boundary — CT10
 

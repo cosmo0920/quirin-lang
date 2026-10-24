@@ -1,0 +1,16 @@
+{
+ "card": "GENERATED-ROOTS",
+ "base": "fb5412930",
+ "measured_tip": "MEASURED_TIP",
+ "increment_paragraph": "**GENERATED-ROOTS** (refactoring round 1, pluggable-cards seams C and D; [report](../../reports/generated-roots/README.md)). The four files every implementation card edited are now generated. `scripts/gen_lean_roots.py` writes `proof/QCore.lean` (every module under `proof/QCore/`, sorted; import order fixes no build order or declaration, so there is no order file) and `proof/AuditAll.lean`; the environment importing the generated root has the byte-identical constant list of the base root (102,367 audited `QCore` constants, 310,354 in all), and `check_lean_audits.py` still discovers 370 audits. Each of the 210 router-indexed constraints, plus gateway's `11-series` lead-in, is one `docs/agents/rules/<id>.md` carrying its text byte for byte; `scripts/gen_rule_docs.py` regenerates the topic pages' constraint sections and the router's stable index (now in natural order) with every anchor and preserved marker kept and all 603 repository constraint links resolving. `scripts/tests/test_generated_roots.py` fails a hand edit. No analyzer, contract, theorem or verdict change.",
+ "status_paragraph": "",
+ "ledger": [
+  {
+   "id": "RULE-AMENDMENTS-OUTSIDE-RULE-FILES",
+   "operation": "register",
+   "title": "Rule amendments still live outside their rule files",
+   "text": "After GENERATED-ROOTS each router-indexed constraint is one docs/agents/rules/<id>.md, but amendment sections that qualify a rule remain hand-edited topic-page text outside the generated section: buffers-records.md and source-routes.md (constraint-15k-amendments, constraint-14-amendments and post-migration sections), effects.md's amendment to 15m, diagnostics.md's namespace and amendment sections, providers.md's CONTRACT-INHERIT amendment, and the trailing sections of concurrency.md, evidence.md, source-identity.md and validation.md. DISCHARGE: each is folded into its rule file or registered as its own rule, so the rule file is the rule's whole authority.",
+   "source": "docs/reports/generated-roots/README.md"
+  }
+ ]
+}
