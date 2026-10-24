@@ -106,6 +106,14 @@ when* and *what a card must re-measure*.
   the integrator from published baselines. `docs/cycles/CYCLE_*` and the
   matrix's requirement rows name their profile and policy, so an
   implementation change can no longer silently re-date a cycle's claim.
+  **Corpus cadence (user decision 2026-10-24).** Live profiles follow the
+  Fluent Bit repository: every one to two months, best effort, a
+  `REBASE-CORPUS` card prepares the inputs of a newer Fluent Bit revision,
+  re-reviews the pins whose sites changed (`pin --check` at the new revision,
+  C06.2), publishes the new baselines and moves the live profiles' inputs
+  manifest to it; the previous baseline stays published, so the two revisions
+  can be compared row by row. Frozen cycles are not moved. A re-base is a
+  records-and-inputs change with its own gate; it never edits a rule.
 - **Per-rule contribution ledgers.** Each rule package stores, per live
   profile, its measured contribution: rows moved (with their assumptions),
   leaves traded, rows that stay Unknown and why. It is measured from one
@@ -252,10 +260,14 @@ a profile total is a derivation over atoms from real runs, and a rule's ledger
   full suite. The affected set is written into the card's `gate.json`.
 - **Full gate per landing**, by the integrator, unchanged in content.
 - **Named slots instead of one lock.** `scripts/gate_slot.py <class> -- <cmd>`
-  with classes `rust-suite` (1 slot; constraint 16), `audit` (N = min(3,
-  floor(available memory / 9 GB)); two 7 GB audits side by side on this host)
-  and `lean` (2). The `rust-suite` class takes every `audit` slot while it
-  runs, so the suite never shares the host with an audit.
+  with classes `rust-suite` (1 slot; constraint 16), `audit` and `lean` (2).
+  The `audit` class has `floor(available memory / budget)` slots, where the
+  **budget is 7 GB per audit by default** and can be set to 4 or 5 GB
+  (`--memory-budget 4G|5G`, user decision 2026-10-24); the budget is passed to
+  the audit's existing MiB planning budget (`audit-ir-working-set`), so a
+  smaller budget lowers that run's own concurrency rather than overrunning
+  its slot, and `run.json` records both. The `rust-suite` class takes every
+  `audit` slot while it runs, so the suite never shares the host with an audit.
 
 ### F. Measurement as a tool
 
@@ -309,38 +321,32 @@ P0 and P1 can run as parallel cards today, except that `MEASURE-TOOL` consumes
 P1's locks, composition and generated roots. The Codex wave-2 cards (rules 36, 37) land on the
 current structure first and are migrated in P2 like the others.
 
-## 6. Decisions needed
+## 6. Decisions
 
-1. **Contract pins as lock files** read by the tests, instead of literals in
-   `qcore_contract_corpus.rs` and the provider Python. Recommended: yes; it is
-   generalization §2.6 applied, and it keeps hard invariant 5 as a reviewed
-   lock diff.
-2. **Cycles as evaluation profiles with a frozen/live policy.** Which existing
-   cycles freeze (at which analyzer revision) and which stay live is a
-   per-cycle decision. Recommended default: cycles up to 19 freeze at the
-   revision their last report measured; the eight-home corpus, system and
-   tail-pause slice stay live.
-3. **Rule switches at run time** (`QCORE_GATEWAY_RULES_OFF`) rather than
-   compile-time features. Recommended: run time.
-4. **Scoped gate as the card-level gate**, full gate once per landing. This
-   changes the standing gate's force from *per card* to *per landing* and needs
-   an edit to `docs/agents/validation.md`.
-5. **Audit slots**: two or three. Recommended: two, measured before raising.
-6. **Migration scope**: pilots (32a–37) only, or a standing rule that a card
-   touching an older route packages it first. Recommended: pilots first.
-7. **Path fix**: canonicalise in the audit (recommended) or re-spell the
-   shared inputs once.
-8. **Where the measurement tool lives**: a `quirin-audit` subcommand plugin
-   (recommended) or `scripts/`.
-9. **Decided by the user (2026-10-24):** results and contracts integrate only
-   through the semigroup interface of seam G, and same-function declarations
-   from different bundles are resolved by the newer pin stamp with the older
-   retained as superseded. One sub-decision remains: on migration to lock
-   version 3, existing entries have no `pinned_at`; either every provider is
-   re-pinned once (recommended: one reviewed stamp per declaration, a
-   records-only change in each provider crate) or the lock's generation time is
-   back-filled as the stamp (cheaper, but it makes every current declaration
-   "reviewed" at the same instant).
+Decided by the user on 2026-10-24 (items 1–7 and 9); two remain open.
+
+1. **Contract pins as lock files**: yes. Literal count tables become readers of
+   generated locks; a contract change is an intentional lock diff in the same
+   commit.
+2. **Cycles as evaluation profiles**: freeze cycles at the revision their last
+   report measured; keep the eight-home corpus, system and tail-pause slice
+   live, and re-base the live profiles onto a newer Fluent Bit revision every
+   one to two months, best effort (the `REBASE-CORPUS` cadence in seam A).
+3. **Rule switches at run time** (`QCORE_GATEWAY_RULES_OFF`): yes.
+4. **Scoped gate per card, full gate per landing**: yes. `docs/agents/validation.md`
+   is amended by the `GATE-SCOPE` card on this authority.
+5. **Audit slots**: by memory budget, 7 GB per audit by default, with a
+   selectable 4–5 GB budget; the load-sensitive Rust suite still runs alone.
+6. **Migration scope**: pilots first (rules 32a, 33, 34, 35, 36, 37); a
+   standing rule is decided after their parity cost is known.
+7. **Path fix**: canonicalise paths in the audit's unit selection.
+8. **Open: where the measurement tool lives.** Recommended: a `quirin-audit`
+   subcommand plugin (same firewall and receipts as other subcommands);
+   alternative: `scripts/`.
+9. **Semigroup integration and newer-stamp supersession**: yes (seam G).
+   **Open, 9a: stamp migration.** Recommended: re-pin every provider once so
+   each declaration gets a reviewed `pinned_at`; alternative: back-fill the
+   lock's generation time.
 
 ## 7. Risks and boundaries
 
