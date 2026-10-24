@@ -86,6 +86,13 @@ impl Parser<'_> {
         if texts.len() < 4 || !name(texts[0]) || texts[1] != "(" || texts.last() != Some(&")") {
             return fallback;
         }
+        let LegacyInstruction::Unknown { description, .. } = &fallback else { return fallback };
+        if !(description == "indirect memory access is outside the resource projection"
+            || *description == format!("call to uncontracted function `{}`", texts[0]))
+            || descriptor_custody::statement_reads_descriptor(&texts, &self.descriptor_names).is_some()
+            || texts.iter().any(|text| self.in_place_names.contains(text)) {
+            return fallback;
+        }
         // Cheap lexical shape filter. The AST and its exact occurrence decide below.
         let arg = &texts[2..texts.len()-1];
         if !(matches!(arg, [root] if name(root))
