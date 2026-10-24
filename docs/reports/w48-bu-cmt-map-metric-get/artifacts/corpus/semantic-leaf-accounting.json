@@ -1,0 +1,648 @@
+{
+  "route": "corpus",
+  "all_semantic_leaves_accounted": true,
+  "unexplained_leaves": 0,
+  "leaves": [
+    {
+      "artifact": "null.jsonl",
+      "difference": {
+        "path": [
+          2847,
+          "null",
+          "contract_dependencies"
+        ],
+        "before": [
+          "cross-unit-inferred:rd_kafka_buf_destroy_final",
+          "cross-unit-inferred:rd_kafka_mock_buf_new_response",
+          "cross-unit-inferred:rd_kafka_mock_cluster_get_coord",
+          "cross-unit-inferred:rd_kafka_mock_connection_send_response0",
+          "cross-unit-inferred:rd_kafka_mock_next_request_error",
+          "cross-unit-inferred:rd_slice_ensure_contig",
+          "cross-unit-inferred:rd_slice_read",
+          "cross-unit-inferred:rd_slice_read_uvarint",
+          "cross-unit-result:rd_kafka_mock_buf_new_response",
+          "inferred:rd_atomic32_sub",
+          "inferred:rd_kafka_buf_write",
+          "inferred:rd_kafka_buf_write_i16",
+          "inferred:rd_kafka_buf_write_i32",
+          "inferred:rd_kafka_buf_write_i64",
+          "inferred:rd_kafka_buf_write_i8",
+          "inferred:rd_kafka_mock_pid_bump",
+          "inferred:rd_kafka_mock_pid_find",
+          "inferred:rd_kafka_mock_pid_new",
+          "inferred:rd_kafkap_str_cmp_str",
+          "inferred:rd_refcnt_sub0",
+          "inferred:rd_slice_abs_offset",
+          "inferred:rd_slice_offset",
+          "rd_list_add"
+        ],
+        "after": [
+          "cross-unit-inferred:rd_kafka_buf_destroy_final",
+          "cross-unit-inferred:rd_kafka_mock_buf_new_response",
+          "cross-unit-inferred:rd_kafka_mock_cluster_get_coord",
+          "cross-unit-inferred:rd_kafka_mock_connection_send_response0",
+          "cross-unit-inferred:rd_kafka_mock_next_request_error",
+          "cross-unit-inferred:rd_slice_ensure_contig",
+          "cross-unit-inferred:rd_slice_read",
+          "cross-unit-inferred:rd_slice_read_uvarint",
+          "cross-unit-result:rd_kafka_mock_buf_new_response",
+          "declared:memcpy",
+          "inferred:rd_atomic32_sub",
+          "inferred:rd_kafka_buf_write",
+          "inferred:rd_kafka_buf_write_i16",
+          "inferred:rd_kafka_buf_write_i32",
+          "inferred:rd_kafka_buf_write_i64",
+          "inferred:rd_kafka_buf_write_i8",
+          "inferred:rd_kafka_mock_pid_bump",
+          "inferred:rd_kafka_mock_pid_find",
+          "inferred:rd_kafka_mock_pid_new",
+          "inferred:rd_kafkap_str_cmp_str",
+          "inferred:rd_refcnt_sub0",
+          "inferred:rd_slice_abs_offset",
+          "inferred:rd_slice_offset",
+          "rd_list_add"
+        ]
+      },
+      "attribution": "declared memcpy witness dependency, transitively retained by inferred helper summary"
+    },
+    {
+      "artifact": "null.jsonl",
+      "difference": {
+        "path": [
+          2874,
+          "null",
+          "checks",
+          4,
+          "proofs"
+        ],
+        "before": [
+          "path-search:infeasible"
+        ],
+        "after": [
+          "result:declared:memcpy",
+          "path-search:infeasible"
+        ]
+      },
+      "attribution": "declared memcpy witness dependency, transitively retained by inferred helper summary"
+    },
+    {
+      "artifact": "null.jsonl",
+      "difference": {
+        "path": [
+          2874,
+          "null",
+          "contract_dependencies"
+        ],
+        "before": [
+          "rd_list_add"
+        ],
+        "after": [
+          "declared:memcpy",
+          "rd_list_add"
+        ]
+      },
+      "attribution": "declared memcpy witness dependency, transitively retained by inferred helper summary"
+    },
+    {
+      "artifact": "null.jsonl",
+      "difference": {
+        "path": [
+          4685,
+          "combined"
+        ],
+        "before": "Unsafe",
+        "after": "Unknown"
+      },
+      "attribution": "conservative memcpy unresolved-base witness cut withdraws one provisional finding; W48-EXACT-RETURN-WITNESS-PRECISION remains Open"
+    },
+    {
+      "artifact": "null.jsonl",
+      "difference": {
+        "path": [
+          4685,
+          "null",
+          "checks",
+          12,
+          "outcome"
+        ],
+        "before": "finding",
+        "after": "candidate"
+      },
+      "attribution": "conservative memcpy unresolved-base witness cut withdraws one provisional finding; W48-EXACT-RETURN-WITNESS-PRECISION remains Open"
+    },
+    {
+      "artifact": "null.jsonl",
+      "difference": {
+        "path": [
+          4685,
+          "null",
+          "reasons"
+        ],
+        "before": [
+          "null-deref-candidate",
+          "null-deref-finding: 1 validated path(s) to a NULL dereference (provisional; never an upstream defect)"
+        ],
+        "after": [
+          "null-deref-candidate"
+        ]
+      },
+      "attribution": "conservative memcpy unresolved-base witness cut withdraws one provisional finding; W48-EXACT-RETURN-WITNESS-PRECISION remains Open"
+    },
+    {
+      "artifact": "null.jsonl",
+      "difference": {
+        "path": [
+          4685,
+          "null",
+          "triage",
+          0,
+          "class"
+        ],
+        "before_present": true,
+        "after_present": false,
+        "before": "null-on-allocation-failure",
+        "after": null
+      },
+      "attribution": "conservative memcpy unresolved-base witness cut withdraws one provisional finding; W48-EXACT-RETURN-WITNESS-PRECISION remains Open"
+    },
+    {
+      "artifact": "null.jsonl",
+      "difference": {
+        "path": [
+          4685,
+          "null",
+          "triage",
+          0,
+          "paths"
+        ],
+        "before": 9,
+        "after": 18
+      },
+      "attribution": "conservative memcpy unresolved-base witness cut withdraws one provisional finding; W48-EXACT-RETURN-WITNESS-PRECISION remains Open"
+    },
+    {
+      "artifact": "null.jsonl",
+      "difference": {
+        "path": [
+          4685,
+          "null",
+          "triage",
+          0,
+          "reason"
+        ],
+        "before": "the allocation `mk_mem_alloc` at line 6440 fails (returns NULL)",
+        "after": "the nullness of derived result `memcpy` is unresolved from its base"
+      },
+      "attribution": "conservative memcpy unresolved-base witness cut withdraws one provisional finding; W48-EXACT-RETURN-WITNESS-PRECISION remains Open"
+    },
+    {
+      "artifact": "null.jsonl",
+      "difference": {
+        "path": [
+          4685,
+          "null",
+          "triage",
+          0,
+          "status"
+        ],
+        "before": "finding",
+        "after": "unresolved"
+      },
+      "attribution": "conservative memcpy unresolved-base witness cut withdraws one provisional finding; W48-EXACT-RETURN-WITNESS-PRECISION remains Open"
+    },
+    {
+      "artifact": "null.jsonl",
+      "difference": {
+        "path": [
+          4685,
+          "null",
+          "triage",
+          0,
+          "witness",
+          "class"
+        ],
+        "before_present": true,
+        "after_present": false,
+        "before": "null-on-allocation-failure",
+        "after": null
+      },
+      "attribution": "conservative memcpy unresolved-base witness cut withdraws one provisional finding; W48-EXACT-RETURN-WITNESS-PRECISION remains Open"
+    },
+    {
+      "artifact": "null.jsonl",
+      "difference": {
+        "path": [
+          4685,
+          "null",
+          "triage",
+          0,
+          "witness",
+          "condition"
+        ],
+        "before_present": true,
+        "after_present": false,
+        "before": "the allocation `mk_mem_alloc` at line 6440 fails (returns NULL)",
+        "after": null
+      },
+      "attribution": "conservative memcpy unresolved-base witness cut withdraws one provisional finding; W48-EXACT-RETURN-WITNESS-PRECISION remains Open"
+    },
+    {
+      "artifact": "null.jsonl",
+      "difference": {
+        "path": [
+          4685,
+          "null",
+          "triage",
+          0,
+          "witness",
+          "path"
+        ],
+        "before": [
+          {
+            "line": 6428,
+            "origin": "mk_server/mk_http.c:545",
+            "step": "decision",
+            "text": "`sr->uri_processed.data[sr->uri_processed.len - 1] == 47` is false"
+          },
+          {
+            "line": 6431,
+            "origin": "mk_server/mk_http.c:549",
+            "step": "decision",
+            "text": "`sr->host.data` is true"
+          },
+          {
+            "line": 6431,
+            "origin": "mk_server/mk_http.c:549",
+            "step": "decision",
+            "text": "`sr->host.len <= 0` is false"
+          },
+          {
+            "line": 6436,
+            "origin": "mk_server/mk_http.c:555",
+            "step": "decision",
+            "text": "`host` is true"
+          },
+          {
+            "line": 6440,
+            "origin": "mk_server/mk_http.c:563",
+            "step": "null-event",
+            "text": "the allocation `mk_mem_alloc` at line 6440 fails (returns NULL)"
+          },
+          {
+            "line": 6442,
+            "origin": "mk_server/mk_http.c:565",
+            "step": "dereference",
+            "text": "location[sr->uri_processed.len]"
+          }
+        ],
+        "after": null
+      },
+      "attribution": "conservative memcpy unresolved-base witness cut withdraws one provisional finding; W48-EXACT-RETURN-WITNESS-PRECISION remains Open"
+    },
+    {
+      "artifact": "null.jsonl",
+      "difference": {
+        "path": [
+          4685,
+          "null",
+          "verdict"
+        ],
+        "before": "Unsafe",
+        "after": "Unknown"
+      },
+      "attribution": "conservative memcpy unresolved-base witness cut withdraws one provisional finding; W48-EXACT-RETURN-WITNESS-PRECISION remains Open"
+    },
+    {
+      "artifact": "outer.json",
+      "difference": {
+        "path": [
+          "scenarios",
+          "all",
+          "combined",
+          "Unknown"
+        ],
+        "before": 4040,
+        "after": 4041
+      },
+      "attribution": "complete production projection/null-tally replay from held rows and published premises"
+    },
+    {
+      "artifact": "outer.json",
+      "difference": {
+        "path": [
+          "scenarios",
+          "all",
+          "combined",
+          "Unsafe"
+        ],
+        "before": 27,
+        "after": 26
+      },
+      "attribution": "complete production projection/null-tally replay from held rows and published premises"
+    },
+    {
+      "artifact": "outer.json",
+      "difference": {
+        "path": [
+          "scenarios",
+          "all",
+          "null",
+          "Unknown"
+        ],
+        "before": 2355,
+        "after": 2356
+      },
+      "attribution": "complete production projection/null-tally replay from held rows and published premises"
+    },
+    {
+      "artifact": "outer.json",
+      "difference": {
+        "path": [
+          "scenarios",
+          "all",
+          "null",
+          "Unsafe"
+        ],
+        "before": 18,
+        "after": 17
+      },
+      "attribution": "complete production projection/null-tally replay from held rows and published premises"
+    },
+    {
+      "artifact": "outer.json",
+      "difference": {
+        "path": [
+          "scenarios",
+          "flb_external_plugin",
+          "combined",
+          "Unknown"
+        ],
+        "before": 4039,
+        "after": 4040
+      },
+      "attribution": "complete production projection/null-tally replay from held rows and published premises"
+    },
+    {
+      "artifact": "outer.json",
+      "difference": {
+        "path": [
+          "scenarios",
+          "flb_external_plugin",
+          "combined",
+          "Unsafe"
+        ],
+        "before": 27,
+        "after": 26
+      },
+      "attribution": "complete production projection/null-tally replay from held rows and published premises"
+    },
+    {
+      "artifact": "outer.json",
+      "difference": {
+        "path": [
+          "scenarios",
+          "flb_external_plugin",
+          "null",
+          "Unknown"
+        ],
+        "before": 2354,
+        "after": 2355
+      },
+      "attribution": "complete production projection/null-tally replay from held rows and published premises"
+    },
+    {
+      "artifact": "outer.json",
+      "difference": {
+        "path": [
+          "scenarios",
+          "flb_external_plugin",
+          "null",
+          "Unsafe"
+        ],
+        "before": 18,
+        "after": 17
+      },
+      "attribution": "complete production projection/null-tally replay from held rows and published premises"
+    },
+    {
+      "artifact": "outer.json",
+      "difference": {
+        "path": [
+          "scenarios",
+          "rk_plugin_library",
+          "combined",
+          "Unknown"
+        ],
+        "before": 4040,
+        "after": 4041
+      },
+      "attribution": "complete production projection/null-tally replay from held rows and published premises"
+    },
+    {
+      "artifact": "outer.json",
+      "difference": {
+        "path": [
+          "scenarios",
+          "rk_plugin_library",
+          "combined",
+          "Unsafe"
+        ],
+        "before": 27,
+        "after": 26
+      },
+      "attribution": "complete production projection/null-tally replay from held rows and published premises"
+    },
+    {
+      "artifact": "outer.json",
+      "difference": {
+        "path": [
+          "scenarios",
+          "rk_plugin_library",
+          "null",
+          "Unknown"
+        ],
+        "before": 2355,
+        "after": 2356
+      },
+      "attribution": "complete production projection/null-tally replay from held rows and published premises"
+    },
+    {
+      "artifact": "outer.json",
+      "difference": {
+        "path": [
+          "scenarios",
+          "rk_plugin_library",
+          "null",
+          "Unsafe"
+        ],
+        "before": 18,
+        "after": 17
+      },
+      "attribution": "complete production projection/null-tally replay from held rows and published premises"
+    },
+    {
+      "artifact": "outer.json",
+      "difference": {
+        "path": [
+          "static",
+          "combined",
+          "Unknown"
+        ],
+        "before": 4035,
+        "after": 4036
+      },
+      "attribution": "complete production projection/null-tally replay from held rows and published premises"
+    },
+    {
+      "artifact": "outer.json",
+      "difference": {
+        "path": [
+          "static",
+          "combined",
+          "Unsafe"
+        ],
+        "before": 27,
+        "after": 26
+      },
+      "attribution": "complete production projection/null-tally replay from held rows and published premises"
+    },
+    {
+      "artifact": "outer.json",
+      "difference": {
+        "path": [
+          "static",
+          "null",
+          "Unknown"
+        ],
+        "before": 2354,
+        "after": 2355
+      },
+      "attribution": "complete production projection/null-tally replay from held rows and published premises"
+    },
+    {
+      "artifact": "outer.json",
+      "difference": {
+        "path": [
+          "static",
+          "null",
+          "Unsafe"
+        ],
+        "before": 18,
+        "after": 17
+      },
+      "attribution": "complete production projection/null-tally replay from held rows and published premises"
+    },
+    {
+      "artifact": "null.summary.json",
+      "difference": {
+        "path": [
+          "checks",
+          "by_outcome",
+          "candidate"
+        ],
+        "before": 12644,
+        "after": 12645
+      },
+      "attribution": "complete production projection/null-tally replay from held rows and published premises"
+    },
+    {
+      "artifact": "null.summary.json",
+      "difference": {
+        "path": [
+          "checks",
+          "by_outcome",
+          "finding"
+        ],
+        "before": 29,
+        "after": 28
+      },
+      "attribution": "complete production projection/null-tally replay from held rows and published premises"
+    },
+    {
+      "artifact": "null.summary.json",
+      "difference": {
+        "path": [
+          "checks",
+          "candidates_by_library",
+          "monkey-libevent"
+        ],
+        "before": 623,
+        "after": 624
+      },
+      "attribution": "complete production projection/null-tally replay from held rows and published premises"
+    },
+    {
+      "artifact": "null.summary.json",
+      "difference": {
+        "path": [
+          "checks",
+          "candidates_by_source_kind",
+          "allocation"
+        ],
+        "before": 16,
+        "after": 17
+      },
+      "attribution": "complete production projection/null-tally replay from held rows and published premises"
+    },
+    {
+      "artifact": "null.summary.json",
+      "difference": {
+        "path": [
+          "combined",
+          "Unknown"
+        ],
+        "before": 4035,
+        "after": 4036
+      },
+      "attribution": "complete production projection/null-tally replay from held rows and published premises"
+    },
+    {
+      "artifact": "null.summary.json",
+      "difference": {
+        "path": [
+          "combined",
+          "Unsafe"
+        ],
+        "before": 27,
+        "after": 26
+      },
+      "attribution": "complete production projection/null-tally replay from held rows and published premises"
+    },
+    {
+      "artifact": "null.summary.json",
+      "difference": {
+        "path": [
+          "functions_by_reason_code",
+          "null-deref-finding"
+        ],
+        "before": 18,
+        "after": 17
+      },
+      "attribution": "complete production projection/null-tally replay from held rows and published premises"
+    },
+    {
+      "artifact": "null.summary.json",
+      "difference": {
+        "path": [
+          "null",
+          "Unknown"
+        ],
+        "before": 2354,
+        "after": 2355
+      },
+      "attribution": "complete production projection/null-tally replay from held rows and published premises"
+    },
+    {
+      "artifact": "null.summary.json",
+      "difference": {
+        "path": [
+          "null",
+          "Unsafe"
+        ],
+        "before": 18,
+        "after": 17
+      },
+      "attribution": "complete production projection/null-tally replay from held rows and published premises"
+    }
+  ]
+}

@@ -1,6 +1,6 @@
 # Rule 36: exact borrowed-formal return
 
-The human narrowed this card on 2026-10-23 to one audited feature. The bounded rule is implemented; validation and native attribution are still in progress. The CMetrics getter chain remains open.
+The human narrowed this card on 2026-10-23 to one audited feature. The bounded rule is implemented; the completed validation and native attribution are in [README.md](README.md). The CMetrics getter chain remains open.
 
 A body that returns its borrowed pointer formal itself should be able to publish an exact derived-result summary. The existing derived-result route already handles returning a declared exact alias of the formal, but refuses the bare formal. The new exit records the same non-owning relation. It creates, discharges and transfers no resource obligation.
 

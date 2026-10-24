@@ -1,0 +1,11 @@
+{
+  "command": [
+    "/home/cosmo/.codex/worktrees/808d/quirin-lang/private/w48-cmt-map/replay-v2/projection-replay",
+    "/home/cosmo/.codex/worktrees/808d/quirin-lang/private/w48-cmt-map/replay-v2/corpus-base-projection-spec.json",
+    "/home/cosmo/.codex/worktrees/808d/quirin-lang/private/w48-cmt-map/replay-v2/corpus-base-projection-proof.json"
+  ],
+  "started": "2026-10-24T00:12:53.686658+00:00",
+  "log": "/home/cosmo/.codex/worktrees/808d/quirin-lang/private/w48-cmt-map/replay-v2/corpus-base-projection.log",
+  "exit": 0,
+  "ended": "2026-10-24T00:12:57.152218+00:00"
+}

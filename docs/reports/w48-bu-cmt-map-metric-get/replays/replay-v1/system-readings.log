@@ -1,0 +1,4 @@
+
+thread 'main' (3065612) panicked at /home/cosmo/.codex/worktrees/808d/quirin-lang/private/w48-cmt-map/rebind_readings.rs:12:84:
+called `Result::unwrap()` on an `Err` value: Error("invalid type: null, expected a map", line: 0, column: 0)
+note: run with `RUST_BACKTRACE=1` environment variable to display a backtrace

@@ -50,6 +50,47 @@
       "inputs_stable": true,
       "invocation": "private/w48-cmt-map/base-corpus-v3-invocation.json",
       "receipt": "baseline-receipt.json"
+    },
+    {
+      "id": "BASE-system",
+      "exit": 0,
+      "inputs_stable": true,
+      "started": "2026-10-23T21:10:02.866127+00:00",
+      "ended": "2026-10-23T21:17:49.437826+00:00",
+      "invocation": "artifacts/system/base/producer-invocation.json.gz"
+    },
+    {
+      "id": "BASE-slice",
+      "exit": 0,
+      "inputs_stable": true,
+      "started": "2026-10-23T21:17:49.495515+00:00",
+      "ended": "2026-10-23T21:24:36.233399+00:00",
+      "invocation": "artifacts/slice/base/producer-invocation.json.gz"
+    },
+    {
+      "id": "TIP-system",
+      "exit": 0,
+      "inputs_stable": true,
+      "started": "2026-10-23T23:55:57.108620+00:00",
+      "ended": "2026-10-24T00:03:43.094221+00:00",
+      "invocation": "artifacts/system/tip/producer-invocation.json.gz"
+    },
+    {
+      "id": "TIP-slice",
+      "exit": 0,
+      "inputs_stable": true,
+      "started": "2026-10-24T00:03:43.148759+00:00",
+      "ended": "2026-10-24T00:10:29.985253+00:00",
+      "invocation": "artifacts/slice/tip/producer-invocation.json.gz"
+    },
+    {
+      "id": "TIP-corpus",
+      "exit": 0,
+      "planner_exit": 0,
+      "inputs_stable": true,
+      "started": "2026-10-23T22:30:18.303704+00:00",
+      "ended": "2026-10-23T23:55:57.061635+00:00",
+      "invocation": "artifacts/corpus/tip/producer-invocation.json.gz"
     }
   ],
   "retry_preparation": {
@@ -66,7 +107,7 @@
     "root_manifest_from_semantic_base": true,
     "root_manifest_modules_resolve": true
   },
-  "retry_state": "corpus and planner succeeded; configured baselines still running",
+  "retry_state": "all BASE and TIP corpus, system, slice and planner measurements completed successfully; paired hashes stable",
   "ordering": "successful fresh BASE and planner, then committed prediction, then semantic implementation",
   "path_repair": {
     "wrapper": "scripts/original_paths.sh",
@@ -77,9 +118,23 @@
     "unavailable_disposition": "retain native unread/Unknown behavior"
   },
   "development_slot": {
-    "state": "not_started",
-    "exit": 75,
-    "reason": "readiness record absent; released lock without checks",
-    "record": "private/w48-cmt-map/development-lock.json"
-  }
+    "first_attempt": {
+      "exit": 75,
+      "state": "not_started",
+      "record": "development-lock-attempt1.json"
+    },
+    "completed_slot": {
+      "released_at": "2026-10-24T00:14:54.566770+00:00",
+      "session": 38591,
+      "all_heavy_steps_finished": true,
+      "native_campaign_exit": 0,
+      "attribution_exit": 0,
+      "accounting_exit": 0
+    }
+  },
+  "supplemental_preparation_records": [
+    "preflight-attempts.json",
+    "cli-help-probe.json",
+    "route-paths-preflight-v2.json"
+  ]
 }

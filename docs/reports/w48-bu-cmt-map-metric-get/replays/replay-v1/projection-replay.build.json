@@ -1,0 +1,56 @@
+{
+  "command": [
+    "rustc",
+    "--edition=2024",
+    "/home/cosmo/.codex/worktrees/808d/quirin-lang/private/w48-cmt-map/projection_replay.rs",
+    "-L",
+    "dependency=/home/cosmo/.codex/worktrees/808d/quirin-lang/target/release/deps",
+    "--extern",
+    "qcore_audit=/home/cosmo/.codex/worktrees/808d/quirin-lang/target/release/deps/libqcore_audit-d1daecc62d7b472d.rlib",
+    "--extern",
+    "qcore_c_gateway=/home/cosmo/.codex/worktrees/808d/quirin-lang/target/release/deps/libqcore_c_gateway-e446ff2e15cc37d9.rlib",
+    "--extern",
+    "qcore_schemas=/home/cosmo/.codex/worktrees/808d/quirin-lang/target/release/deps/libqcore_schemas-0de9b3a16b0fe98c.rlib",
+    "--extern",
+    "serde_json=/home/cosmo/.codex/worktrees/808d/quirin-lang/target/release/deps/libserde_json-08241b9b75b89117.rlib",
+    "-o",
+    "/home/cosmo/.codex/worktrees/808d/quirin-lang/private/w48-cmt-map/replay-v1/projection-replay"
+  ],
+  "exit": 0,
+  "source_sha256": "24c6390d1373e36e4e03537f629559a874b6f94b4ee31eac9cbdaea9fda240d1",
+  "actual_analyzer_sha256": "d21686072eb7fc7bd7ae76de756392e52c87a0b7f061a13be89d65a961b55db9",
+  "cargo_receipt": "/home/cosmo/.codex/worktrees/808d/quirin-lang/target/release/.fingerprint/qcore-audit-b8f0cd650c1d7bd6/bin-quirin-audit.json",
+  "cargo_receipt_sha256": "ad2969df4e3ddb64b948821bd8fad3d23f7ca9e7dcd338f761d4b393d69a5a2a",
+  "libraries": {
+    "qcore_audit": {
+      "path": "/home/cosmo/.codex/worktrees/808d/quirin-lang/target/release/deps/libqcore_audit-d1daecc62d7b472d.rlib",
+      "sha256": "ba14248f337d611a09e3d2911641677a9aa4a21452a40dcf87d1e4aa309298e7",
+      "cargo_dependency_fingerprint": 17828152211351807853,
+      "receipt": "/home/cosmo/.codex/worktrees/808d/quirin-lang/target/release/.fingerprint/qcore-audit-d1daecc62d7b472d/lib-qcore_audit",
+      "receipt_sha256": "5799bbb46e7d909fae98d14fb66b870a0b50866f967f5566decb8a37695abd6e"
+    },
+    "qcore_c_gateway": {
+      "path": "/home/cosmo/.codex/worktrees/808d/quirin-lang/target/release/deps/libqcore_c_gateway-e446ff2e15cc37d9.rlib",
+      "sha256": "0f8d0324fe6a296446fe3c29f7d359db4610970ae420a96faeaf25c677f2ae08",
+      "cargo_dependency_fingerprint": 5299314066658064049,
+      "receipt": "/home/cosmo/.codex/worktrees/808d/quirin-lang/target/release/.fingerprint/qcore-c-gateway-e446ff2e15cc37d9/lib-qcore_c_gateway",
+      "receipt_sha256": "f8bc134dcb14d7d86d46acd75bacc0aaa56014aaef95ab04748df2a9472df338"
+    },
+    "qcore_schemas": {
+      "path": "/home/cosmo/.codex/worktrees/808d/quirin-lang/target/release/deps/libqcore_schemas-0de9b3a16b0fe98c.rlib",
+      "sha256": "8bd9270201cca7549e272aff8dd0887bb132fbee90dbe1089176284b341babb8",
+      "cargo_dependency_fingerprint": 12705045645198011209,
+      "receipt": "/home/cosmo/.codex/worktrees/808d/quirin-lang/target/release/.fingerprint/qcore-schemas-0de9b3a16b0fe98c/lib-qcore_schemas",
+      "receipt_sha256": "674c79dd7de2c9ce175c678ba31862c5fc62801526163a3ef1de4d7c325c950d"
+    },
+    "serde_json": {
+      "path": "/home/cosmo/.codex/worktrees/808d/quirin-lang/target/release/deps/libserde_json-08241b9b75b89117.rlib",
+      "sha256": "650609f27a1480b68689586c2e2625fbca1bf67908cd559b05f3619e42400378",
+      "cargo_dependency_fingerprint": 351392698914915616,
+      "receipt": "/home/cosmo/.codex/worktrees/808d/quirin-lang/target/release/.fingerprint/serde_json-08241b9b75b89117/lib-serde_json",
+      "receipt_sha256": "f2f8b73cdc6c4b78466c8e352a60cc7d39e08aa158a8ead54fa0f379b343b098"
+    }
+  },
+  "log": "/home/cosmo/.codex/worktrees/808d/quirin-lang/private/w48-cmt-map/replay-v1/projection-replay.build.log",
+  "meaning": "Exact actual-binary dependency identity only; no truth or source binding"
+}

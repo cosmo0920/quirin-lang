@@ -1,0 +1,91 @@
+{
+  "source": "/media/Data/GitHub/quirin-lang/build/cycle19/c-gateway-wave-pin/fluent-bit-clang-source/lib/cmetrics/src/cmt_map.c",
+  "source_sha256": "a02cdda1b17d6b7fbe70a8dfa5cd329261ce575960e58af369cf058e1fa12517",
+  "extraction": "bounded textual inventory; not typed evidence or a safety claim",
+  "functions": [
+    {
+      "function": "map_lock",
+      "line": 32,
+      "end_line": 36,
+      "body_sha256": "a14aa5b5f91bf011e6e3f41279ebcb7de3ea1ac27356ba26c0c97da165430b6e",
+      "body": "static void map_lock(struct cmt_map *map)\n{\n    while (cmt_atomic_compare_exchange(&map->metric_lock, 0, 1) == 0) {\n    }\n}"
+    },
+    {
+      "function": "map_unlock",
+      "line": 38,
+      "end_line": 41,
+      "body_sha256": "d0089fb8f9ac6457f4d82d0d1dfd240882853be176f724a063d129277b236e08",
+      "body": "static void map_unlock(struct cmt_map *map)\n{\n    cmt_atomic_store(&map->metric_lock, 0);\n}"
+    },
+    {
+      "function": "metric_release_storage",
+      "line": 43,
+      "end_line": 54,
+      "body_sha256": "2238eab07fa335e6704da5326a502c786d340cbe64ff3480f38ea83c248404f3",
+      "body": "static void metric_release_storage(struct cmt_metric *metric)\n{\n    free(metric->hist_buckets);\n    free(metric->exp_hist_positive_buckets);\n    free(metric->exp_hist_negative_buckets);\n    free(metric->sum_quantiles);\n\n    metric->hist_buckets = NULL;\n    metric->exp_hist_positive_buckets = NULL;\n    metric->exp_hist_negative_buckets = NULL;\n    metric->sum_quantiles = NULL;\n}"
+    },
+    {
+      "function": "metric_index_resize",
+      "line": 56,
+      "end_line": 84,
+      "body_sha256": "6af49c8e20c1daaaf70d8a19b7b162e8dba7c6d599e9c1657c461052efb86612",
+      "body": "static int metric_index_resize(struct cmt_map *map, size_t bucket_count)\n{\n    size_t index;\n    struct cfl_list *head;\n    struct cfl_list *buckets;\n    struct cmt_metric *metric;\n\n    buckets = calloc(bucket_count, sizeof(struct cfl_list));\n    if (buckets == NULL) {\n        return -1;\n    }\n    for (index = 0; index < bucket_count; index++) {\n        cfl_list_init(&buckets[index]);\n    }\n\n    cfl_list_foreach(head, &map->metrics) {\n        metric = cfl_list_entry(head, struct cmt_metric, _head);\n        if (metric->hash_indexed) {\n            cfl_list_del(&metric->_hash_head);\n            cfl_list_add(&metric->_hash_head,\n                         &buckets[metric->hash % bucket_count]);\n        }\n    }\n\n    free(map->metric_buckets);\n    map->metric_buckets = buckets;\n    map->metric_bucket_count = bucket_count;\n    return 0;\n}"
+    },
+    {
+      "function": "metric_index_add",
+      "line": 86,
+      "end_line": 107,
+      "body_sha256": "f70e534140a6904b36d0e083d653a2e2eac8590f335444610229eae4ef1c9e96",
+      "body": "static void metric_index_add(struct cmt_map *map, struct cmt_metric *metric)\n{\n    if (metric->hash_indexed) {\n        return;\n    }\n\n    if (map->metric_buckets == NULL &&\n        metric_index_resize(map, CMT_MAP_INITIAL_BUCKET_COUNT) != 0) {\n        return;\n    }\n\n    if (map->indexed_metric_count >=\n        map->metric_bucket_count * CMT_MAP_BUCKET_LOAD_FACTOR) {\n        metric_index_resize(map, map->metric_bucket_count * 2);\n    }\n\n    cfl_list_add(&metric->_hash_head,\n                 &map->metric_buckets[metric->hash % map->metric_bucket_count]);\n    metric->hash_indexed = CMT_TRUE;\n    metric->map = map;\n    map->indexed_metric_count++;\n}"
+    },
+    {
+      "function": "metric_labels_match",
+      "line": 169,
+      "end_line": 192,
+      "body_sha256": "3f044b5df6abd6fc0d67830c1b9a44800096bd2f0f0a15f4d3fd48f1518c1a47",
+      "body": "static int metric_labels_match(struct cmt_metric *metric,\n                               int labels_count, char **labels_val)\n{\n    int index = 0;\n    struct cfl_list *head;\n    struct cmt_map_label *label;\n\n    cfl_list_foreach(head, &metric->labels) {\n        if (index >= labels_count) {\n            return CMT_FALSE;\n        }\n\n        label = cfl_list_entry(head, struct cmt_map_label, _head);\n        if ((label->name == NULL) != (labels_val[index] == NULL)) {\n            return CMT_FALSE;\n        }\n        if (label->name != NULL && strcmp(label->name, labels_val[index]) != 0) {\n            return CMT_FALSE;\n        }\n        index++;\n    }\n\n    return index == labels_count;\n}"
+    },
+    {
+      "function": "metric_prepare_storage",
+      "line": 194,
+      "end_line": 234,
+      "body_sha256": "66a7b12cdb06cc24b1ed8669db28dbec71030d57e97f75df7a296bceba0b9acc",
+      "body": "static struct cmt_metric *metric_prepare_storage(struct cmt_map *map,\n                                                 struct cmt_metric *metric,\n                                                 int write_op)\n{\n    struct cmt_summary *summary;\n    struct cmt_histogram *histogram;\n\n    if (metric == NULL || !write_op) {\n        return metric;\n    }\n\n    if (map->type == CMT_HISTOGRAM && metric->hist_buckets == NULL) {\n        histogram = map->parent;\n        if (histogram == NULL || histogram->buckets == NULL) {\n            return NULL;\n        }\n        metric->hist_buckets = calloc(histogram->buckets->count + 1,\n                                      sizeof(uint64_t));\n        if (metric->hist_buckets == NULL) {\n            cmt_errno();\n            return NULL;\n        }\n    }\n    else if (map->type == CMT_SUMMARY && metric->sum_quantiles == NULL) {\n        summary = map->parent;\n        if (summary == NULL) {\n            return NULL;\n        }\n        if (summary->quantiles_count > 0) {\n            metric->sum_quantiles = calloc(summary->quantiles_count,\n                                           sizeof(uint64_t));\n            if (metric->sum_quantiles == NULL) {\n                cmt_errno();\n                return NULL;\n            }\n        }\n        metric->sum_quantiles_count = summary->quantiles_count;\n    }\n\n    return metric;\n}"
+    },
+    {
+      "function": "metric_hash_lookup",
+      "line": 236,
+      "end_line": 275,
+      "body_sha256": "8148a37e89268fe1569882dc739d3c17219d7c1a536030ec7ca6b290f4495830",
+      "body": "static struct cmt_metric *metric_hash_lookup(struct cmt_map *map, uint64_t hash,\n                                             int labels_count, char **labels_val)\n{\n    struct cfl_list *head;\n    struct cmt_metric *metric;\n\n    if (hash == 0) {\n        return &map->metric;\n    }\n\n    metric = map->last_metric;\n    if (metric != NULL && metric->hash == hash &&\n        metric_labels_match(metric, labels_count, labels_val)) {\n        return metric;\n    }\n\n    if (map->metric_buckets != NULL) {\n        cfl_list_foreach(head,\n                         &map->metric_buckets[hash % map->metric_bucket_count]) {\n            metric = cfl_list_entry(head, struct cmt_metric, _hash_head);\n            if (metric->hash == hash &&\n                metric_labels_match(metric, labels_count, labels_val)) {\n                return metric;\n            }\n        }\n    }\n\n    /* Decoders can populate the public metric list directly. Search only\n     * entries that have not yet been indexed, then index a successful match. */\n    cfl_list_foreach(head, &map->metrics) {\n        metric = cfl_list_entry(head, struct cmt_metric, _head);\n        if (!metric->hash_indexed && metric->hash == hash &&\n            metric_labels_match(metric, labels_count, labels_val)) {\n            metric_index_add(map, metric);\n            return metric;\n        }\n    }\n\n    return NULL;\n}"
+    },
+    {
+      "function": "map_metric_create",
+      "line": 277,
+      "end_line": 324,
+      "body_sha256": "ca14eb93967497c597878128180839d0bf4e6506d56cace5c17b2c883e333bc5",
+      "body": "static struct cmt_metric *map_metric_create(struct cmt_map *map, uint64_t hash,\n                                            int labels_count, char **labels_val)\n{\n    int i;\n    char *name;\n    struct cmt_metric *metric;\n    struct cmt_map_label *label;\n\n    metric = calloc(1, sizeof(struct cmt_metric));\n    if (!metric) {\n        cmt_errno();\n        return NULL;\n    }\n    cfl_list_init(&metric->labels);\n    cfl_list_init(&metric->_hash_head);\n    cmt_metric_set_double(metric, 0, 0.0);\n    metric->hash = hash;\n    metric->map = map;\n\n    for (i = 0; i < labels_count; i++) {\n        label = malloc(sizeof(struct cmt_map_label));\n        if (!label) {\n            cmt_errno();\n            goto error;\n        }\n\n        name = labels_val[i];\n        if (name == NULL) {\n            label->name = NULL;\n        }\n        else {\n            label->name = cfl_sds_create(name);\n            if (!label->name) {\n                cmt_errno();\n                free(label);\n                goto error;\n            }\n        }\n        cfl_list_add(&label->_head, &metric->labels);\n    }\n\n    return metric;\n\n error:\n    destroy_label_list(&metric->labels);\n    free(metric);\n    return NULL;\n}"
+    },
+    {
+      "function": "map_metric_get_unlocked",
+      "line": 377,
+      "end_line": 456,
+      "body_sha256": "83e00b500e416ffdb3579d34e2d025f0b55cd46b6dc9437a20d7bc615f36837d",
+      "body": "static struct cmt_metric *map_metric_get_unlocked(struct cmt_opts *opts,\n                                                  struct cmt_map *map,\n                                                  int labels_count,\n                                                  char **labels_val,\n                                                  int write_op)\n{\n    int i;\n    size_t len;\n    char *ptr;\n    uint64_t hash;\n    cfl_hash_state_t state;\n    struct cmt_metric *metric = NULL;\n\n    /* Enforce zero or exact labels */\n    if (labels_count > 0 && labels_count != map->label_count) {\n        return NULL;\n    }\n\n    /*\n     * If the caller wants the no-labeled metric (metric_static_set) make sure\n     * it was already pre-defined.\n     */\n    if (labels_count == 0) {\n        /*\n         * if an upcoming 'write operation' will be performed for a default\n         * static metric, just initialize it and return it.\n         */\n        if (map->metric_static_set) {\n            metric = &map->metric;\n        }\n        else if (write_op) {\n            metric = &map->metric;\n            if (!map->metric_static_set) {\n                map->metric_static_set = 1;\n            }\n        }\n\n        /* return the proper context or NULL */\n        return metric_prepare_storage(map, metric, write_op);\n    }\n\n    /* Lookup the metric */\n    cfl_hash_64bits_reset(&state);\n    cfl_hash_64bits_update(&state, opts->fqname, cfl_sds_len(opts->fqname));\n    for (i = 0; i < labels_count; i++) {\n        ptr = labels_val[i];\n        if (!ptr) {\n            cfl_hash_64bits_update(&state, \"_NULL_\", 6);\n        }\n        else {\n            len = strlen(ptr);\n            cfl_hash_64bits_update(&state, ptr, len);\n        }\n    }\n\n    hash = cfl_hash_64bits_digest(&state);\n    metric = metric_hash_lookup(map, hash, labels_count, labels_val);\n\n    if (metric) {\n        return metric_prepare_storage(map, metric, write_op);\n    }\n\n    /*\n     * If the metric was not found and the caller will not write a value, just\n     * return NULL.\n     */\n    if (!write_op) {\n        return NULL;\n    }\n\n    /* If the metric has not been found, just create it */\n    metric = map_metric_create(map, hash, labels_count, labels_val);\n    if (!metric) {\n        return NULL;\n    }\n    cfl_list_add(&metric->_head, &map->metrics);\n    metric_index_add(map, metric);\n    map->last_metric = metric;\n    return metric_prepare_storage(map, metric, write_op);\n}"
+    },
+    {
+      "function": "cmt_map_metric_get",
+      "line": 458,
+      "end_line": 470,
+      "body_sha256": "83d6bf4de10e6982ac9a448f4df98453de7a1276a2c87a34e3b22f5947e776c1",
+      "body": "struct cmt_metric *cmt_map_metric_get(struct cmt_opts *opts, struct cmt_map *map,\n                                      int labels_count, char **labels_val,\n                                      int write_op)\n{\n    struct cmt_metric *metric;\n\n    map_lock(map);\n    metric = map_metric_get_unlocked(opts, map, labels_count, labels_val,\n                                     write_op);\n    map_unlock(map);\n\n    return metric;\n}"
+    },
+    {
+      "function": "cmt_map_metric_get_val",
+      "line": 472,
+      "end_line": 487,
+      "body_sha256": "6a463a86baaae5961cb47d59c03d023474460fa04abfdd825e2e849177033fa3",
+      "body": "int cmt_map_metric_get_val(struct cmt_opts *opts, struct cmt_map *map,\n                           int labels_count, char **labels_val,\n                           double *out_val)\n{\n    double val = 0;\n    struct cmt_metric *metric;\n\n    metric = cmt_map_metric_get(opts, map, labels_count, labels_val, CMT_FALSE);\n    if (!metric) {\n        return -1;\n    }\n\n    val = cmt_metric_get_value(metric);\n    *out_val = val;\n    return 0;\n}"
+    }
+  ]
+}

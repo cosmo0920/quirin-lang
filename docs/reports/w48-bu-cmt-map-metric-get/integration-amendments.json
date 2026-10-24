@@ -1,0 +1,43 @@
+{
+  "card": "W48-BU-CMT-MAP-METRIC-GET",
+  "base": "8991b7b58fcbd33da082bbb44e819d47a0fb2561",
+  "status": "Narrowed source/native/attribution acceptance complete; integrator-owned ledger, matrix, status and increment amendments proposed",
+  "scope_decision": "Human narrowed to an audited first feature: exact borrowed-formal returns. Full getter chain remains open.",
+  "measured_source": "cc1d6c25a49b410c42a0473591ad226900995b25",
+  "rule": "gateway 36",
+  "increment": "wave-48-part11.md",
+  "increment_paragraph": "W48-BU-CMT-MAP-METRIC-GET implements audited exact borrowed-formal returns (gateway rule 36), preserving custody and caller alias lifetime through positive source/AST facts and fresh all-exit validation. The human narrowed the card and retained fresh BASE/planner \u2192 prediction \u2192 implementation ordering. Fresh paired corpus 4,834 remains 999 Safe / 3,826 Unknown / 9 provisional Unsafe; system 448 remains 99 / 345 / 4; slice 404 remains 57 Safe / 342 Unknown / 4 Pending / 1 provisional Unsafe. No prior Safe regresses and measured getter closure gain is zero. All 5,781 NULL dictionaries are compared: two gain truthful memcpy dependency metadata, and one Monkey provisional finding becomes Unknown under the fail-closed derived-base witness repair; precision recovery is Open under W48-EXACT-RETURN-WITNESS-PRECISION. All 23,720 raw differences are retained, 148 production reading bindings replayed, 50 captured environment entries validated, and 39 semantic leaves fully accounted with complete NULL/runtime replays and zero unexplained leaves. The 2,200-body planner is byte-identical; its getter 11-caller ceiling remains conditional. The full frozen gate passes 8,602 Rust tests (545 units / 558 summaries; 15 ignored), 369 Lean audits under 4.35.0, and 374 Python tests; all steps exit 0, without placeholders or project axioms. The full CMetrics storage/nested-owner/index/cache/borrow/CFL/XXH chain remains Open under CMT-MAP-METRIC-GET-OWNERSHIP-CHAIN, and Rust/source correspondence remains trust-boundary 28. See docs/reports/w48-bu-cmt-map-metric-get/README.md.",
+  "status_paragraph": "W48-BU-CMT-MAP-METRIC-GET (measured cc1d6c25a) adds exact borrowed-formal return validation with matching audited Lean. Fresh resource counts are unchanged: corpus 4,834 = 999 Safe / 3,826 Unknown / 9 provisional Unsafe; system 448 = 99 / 345 / 4; slice 404 = 57 Safe / 342 Unknown / 4 Pending / 1 provisional Unsafe. No getter gain or Safe regression. The NULL witness repair withdraws one Monkey provisional finding to Unknown and adds memcpy dependency records to two other rows; all 39 semantic leaves are accounted and all raw payloads retained. Gate 8,602 Rust / 369 Lean / 374 Python passes. Full CMetrics ownership closure and the documented witness precision recovery remain Open; projection is not whole-C safety.",
+  "ledger": [
+    {
+      "id": "CMT-MAP-METRIC-GET-OWNERSHIP-CHAIN",
+      "operation": "add",
+      "title": "Close the CMetrics map getter ownership chain",
+      "text": "Open after the human narrowed W48-BU-CMT-MAP-METRIC-GET to exact borrowed-formal returns. Remaining: caller-supplied metric member allocation and storage lifetime; nullable metric results owning nested label/SDS lists; primary owned membership versus secondary hash indexing and cached pointers; returning a checked borrow from the map; source-checked CFL list effects and truthful vendored XXH3 effects. DISCHARGE: generic Rust with matching audited Lean (no placeholders or project axioms), truthful and pinned contracts with provider gates if changed, full-body and all-exit validation without self-assumed contracts, and fresh BASE/TIP attribution of resource, null and outer/runtime results. A conditional planner caller ceiling is not a gain.",
+      "source": "docs/reports/w48-bu-cmt-map-metric-get/README.md"
+    },
+    {
+      "id": "W48-BOTTOM-UP-RESIDUAL-PLAN",
+      "operation": "append",
+      "text": "W48-BU-CMT-MAP-METRIC-GET was explicitly narrowed by the human to an audited exact borrowed-formal return feature. The full CMetrics getter chain remains Open under CMT-MAP-METRIC-GET-OWNERSHIP-CHAIN. This card claims no getter closure from its historical conditional 11-caller ceiling. Fresh paired measurements show zero resource-row verdict, diagnostic or dependency movements across corpus/system/slice and a byte-identical 2,200-body planner. The fail-closed witness repair separately withdraws one Monkey provisional NULL finding to Unknown; retain W48-EXACT-RETURN-WITNESS-PRECISION for its precision recovery."
+    },
+    {
+      "id": "W48-EXACT-RETURN-WITNESS-PRECISION",
+      "operation": "add",
+      "status": "Open",
+      "title": "Recover ignored-derived-call NULL witness precision without false infeasibility",
+      "text": "The exact borrowed-formal return controls exposed a NULL witness bug that could turn an unresolved nonnullable-derived base into path-search infeasible. The fail-closed repair cuts unresolved bases and preserves known NULL for an exact alias. Fresh native mk_http_directory_redirect_check consequently loses a provisional allocation-failure finding at memcpy/location and remains Unknown. DISCHARGE: checked generic witness transport for ignored derived results and/or allocation-base splitting, matching audited Lean with no placeholders or project axioms, both ignored-result precision and used-result false-Safe negative controls, and fresh complete resource/NULL/runtime native attribution. Until then retain Unknown; this is neither a C fix nor an upstream defect claim.",
+      "source": "docs/reports/w48-bu-cmt-map-metric-get/README.md"
+    }
+  ],
+  "root_owned_files": [
+    "docs/STATUS.md",
+    "docs/development/increments/wave-48-part11.md",
+    "docs/reviews/r0_3/acceptance_matrix.json",
+    "docs/reports/INDEX.md"
+  ],
+  "final_required": "Integrator applies or explicitly reconciles these additive proposals, adds the report index entry, regenerates and commits the root-owned acceptance matrix, and runs Python acceptance against that committed matrix. No main merge or push was performed by this card.",
+  "prediction_commit": "5467b72745299c7823d6f9b8876bd841f3774eda",
+  "native_comparison": "native-comparison.json",
+  "gate": "gate.json"
+}

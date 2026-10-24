@@ -1,0 +1,38 @@
+{
+  "all_null_row_custody_fields_and_production_joins_reproduced": true,
+  "all_production_null_tally_fields_reproduced": true,
+  "compile_database_sha256": "2475e6374b14152538463f35a3457ffa98fbe30b2639d5df916ef9a216cb6876",
+  "complete_outer_projection_reproduced": true,
+  "fresh_outer_pin_and_loader_reach_read": true,
+  "input_sha256": {
+    "contracts": "65deaab79ef7ad0ab7a661373a8ffcde6885d4515e870d5a1a8259d242adce95",
+    "database": "2475e6374b14152538463f35a3457ffa98fbe30b2639d5df916ef9a216cb6876",
+    "diagnostics": "648744fa0fa4fc2466032bb80b14174e13cdc35a87b85bd1ecc30454a295cb0e",
+    "manifest": "2226e66b96b7a12dcf335e3e4660e6e3c33ce19997efb9be5e6db81441a417a0",
+    "null": "13b82037a846d96d06aaa3c512fbb8195020a46f2f3719e546aa25650bcf36e3",
+    "null_summary": "1d9ad9e838a54923bd90b3d984c324c8eb6892fa0903827be98b5f9401a3ea5c",
+    "outer": "89dcad85c7953d70a6e50f375534a8f3948565ffdeefab5ebbc989f772e78d53"
+  },
+  "production_null_tally_keys": [
+    "checks",
+    "combined",
+    "custody",
+    "custody_null_premises",
+    "functions",
+    "functions_by_reason_code",
+    "inference",
+    "meaning",
+    "null",
+    "property",
+    "schema_version"
+  ],
+  "scope": "Exact replay of published rows and premise records with actual source/pin/reach inputs; no new custody/null source proof or outer-premise authority.",
+  "source_binding": "Open",
+  "status": "production projection and null-tally replay exact",
+  "supplemental_null_summary_keys_for_separate_complete_difference_review": [
+    "fold"
+  ],
+  "truth_transport": false,
+  "unprovided_null_premise_standing_negative_rejected": true,
+  "wrong_custody_status_negative_rejected": true
+}

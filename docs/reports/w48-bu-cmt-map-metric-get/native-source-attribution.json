@@ -1,0 +1,38 @@
+{
+  "sources": {
+    "/media/Data/GitHub/quirin-lang/build/cycle19/c-gateway-wave-pin/monkey/monkey-source/mk_server/mk_http.c": {
+      "sha256": "7e2a84eb42fdebfebdf7e4d2c1afe003d15b030b70d73dd38e30474f0afedb46",
+      "line_start": 530,
+      "line_end": 570,
+      "excerpt": "static int mk_http_directory_redirect_check(struct mk_http_session *cs,\n                                            struct mk_http_request *sr,\n                                            struct mk_server *server)\n{\n    int port_redirect = 0;\n    char *host;\n    char *location = 0;\n    char *real_location = 0;\n    char *protocol = \"http\";\n    unsigned long len;\n\n    /*\n     * We have to check if there is a slash at the end of\n     * this string. If it doesn't exist, we send a redirection header.\n     */\n    if (sr->uri_processed.data[sr->uri_processed.len - 1] == '/') {\n        return 0;\n    }\n\n    if (!sr->host.data || sr->host.len <= 0) {\n        mk_http_error(MK_CLIENT_BAD_REQUEST, cs, sr, server);\n        return -1;\n    }\n\n    host = mk_ptr_to_buf(sr->host);\n    if (!host) {\n        mk_http_error(MK_CLIENT_BAD_REQUEST, cs, sr, server);\n        return -1;\n    }\n\n    /*\n     * Add ending slash to the location string\n     */\n    location = mk_mem_alloc(sr->uri_processed.len + 2);\n    memcpy(location, sr->uri_processed.data, sr->uri_processed.len);\n    location[sr->uri_processed.len]     = '/';\n    location[sr->uri_processed.len + 1] = '\\0';\n\n    /* FIXME: should we done something similar for SSL = 443 */\n    if (sr->host.data && sr->port > 0) {\n        if (sr->port != server->standard_port) {",
+      "scope": "same C source bytes captured at paired native inputs; no C modification or upstream defect claim"
+    },
+    "/media/Data/GitHub/quirin-lang/build/cycle19/c-gateway-wave-pin/fluent-bit-clang-source/lib/librdkafka-2.15.0/src/rdkafka_mock_handlers.c": {
+      "sha256": "f9fb76cf087336cb2781202728a65af152134e4b5e5e9360be02623349c18364",
+      "line_start": 1948,
+      "line_end": 1976,
+      "excerpt": "\n/**\n * @brief Generate a unique ProducerID\n */\nstatic const rd_kafka_pid_t\nrd_kafka_mock_pid_new(rd_kafka_mock_cluster_t *mcluster,\n                      const rd_kafkap_str_t *TransactionalId) {\n        size_t tidlen =\n            TransactionalId ? RD_KAFKAP_STR_LEN(TransactionalId) : 0;\n        rd_kafka_mock_pid_t *mpid = rd_malloc(sizeof(*mpid) + tidlen);\n        rd_kafka_pid_t ret;\n\n        mpid->pid.id    = rd_jitter(1, 900000) * 1000;\n        mpid->pid.epoch = 0;\n\n        if (tidlen > 0)\n                memcpy(mpid->TransactionalId, TransactionalId->str, tidlen);\n        mpid->TransactionalId[tidlen] = '\\0';\n\n        mtx_lock(&mcluster->lock);\n        rd_list_add(&mcluster->pids, mpid);\n        ret = mpid->pid;\n        mtx_unlock(&mcluster->lock);\n\n        return ret;\n}\n\n\n/**",
+      "scope": "same C source bytes captured at paired native inputs; no C modification or upstream defect claim"
+    }
+  },
+  "witness_checker": "crates/qcore-c-gateway/src/null_deref/witness.rs",
+  "witness_sha256": "6ac64f6abdd6027da807a9dd153a1d04cca6069829176b964bb7304c197c1b62",
+  "null_changes": [
+    {
+      "function": "rd_kafka_mock_pid_new",
+      "status": "Safe unchanged",
+      "effect": "consulted declared memcpy alias dependency and result proof are now recorded at original line1964; existing rd_list_add dependency retained"
+    },
+    {
+      "function": "rd_kafka_mock_handle_InitProducerId",
+      "status": "Unknown unchanged",
+      "effect": "inherits declared memcpy dependency from inferred rd_kafka_mock_pid_new at original line2129"
+    },
+    {
+      "function": "mk_http_directory_redirect_check",
+      "status": "provisional Unsafe to Unknown",
+      "effect": "unresolved allocation/derived-base at memcpy line564 cuts witness search before location dereference line565; no C defect fixed or Safe result gained",
+      "followup": "W48-EXACT-RETURN-WITNESS-PRECISION"
+    }
+  ]
+}

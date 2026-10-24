@@ -1,0 +1,170 @@
+{
+  "card": "W48-BU-CMT-MAP-METRIC-GET",
+  "base": "8991b7b58fcbd33da082bbb44e819d47a0fb2561",
+  "implementation_commit": "cc1d6c25a49b410c42a0473591ad226900995b25",
+  "full_standing_gate_passed": true,
+  "raw_campaign_exit": 0,
+  "steps": [
+    {
+      "name": "submodules",
+      "command": [
+        "git",
+        "submodule",
+        "update",
+        "--init",
+        "--recursive"
+      ],
+      "exit": 0,
+      "seconds": 0.025504163997538853,
+      "log": "/home/cosmo/.codex/worktrees/808d/quirin-lang/private/w48-cmt-map/gate/20261023T221457Z/submodules.log"
+    },
+    {
+      "name": "clang-version",
+      "command": [
+        "/usr/lib/llvm-21/bin/clang",
+        "--version"
+      ],
+      "exit": 0,
+      "seconds": 0.01505702100257622,
+      "log": "/home/cosmo/.codex/worktrees/808d/quirin-lang/private/w48-cmt-map/gate/20261023T221457Z/clang-version.txt"
+    },
+    {
+      "name": "rust-tests",
+      "command": [
+        "python3",
+        "scripts/run_test_binaries.py",
+        "--jobs",
+        "6",
+        "--log-dir",
+        "/home/cosmo/.codex/worktrees/808d/quirin-lang/private/w48-cmt-map/gate/20261023T221457Z/rust-binaries"
+      ],
+      "exit": 0,
+      "seconds": 695.0918496390004,
+      "log": "/home/cosmo/.codex/worktrees/808d/quirin-lang/private/w48-cmt-map/gate/20261023T221457Z/rust-tests.log"
+    },
+    {
+      "name": "fmt",
+      "command": [
+        "cargo",
+        "fmt",
+        "--all",
+        "--",
+        "--check"
+      ],
+      "exit": 0,
+      "seconds": 3.9099296019994654,
+      "log": "/home/cosmo/.codex/worktrees/808d/quirin-lang/private/w48-cmt-map/gate/20261023T221457Z/fmt.log"
+    },
+    {
+      "name": "clippy",
+      "command": [
+        "cargo",
+        "clippy",
+        "--all-targets",
+        "--",
+        "-D",
+        "warnings"
+      ],
+      "exit": 0,
+      "seconds": 9.709590821003076,
+      "log": "/home/cosmo/.codex/worktrees/808d/quirin-lang/private/w48-cmt-map/gate/20261023T221457Z/clippy.log"
+    },
+    {
+      "name": "reevaluation-probe",
+      "command": [
+        "cargo",
+        "run",
+        "-p",
+        "qcore-compiler",
+        "--example",
+        "reevaluation_probe"
+      ],
+      "exit": 0,
+      "seconds": 0.06812049700238276,
+      "log": "/home/cosmo/.codex/worktrees/808d/quirin-lang/private/w48-cmt-map/gate/20261023T221457Z/reevaluation-probe.log"
+    },
+    {
+      "name": "reevaluation-followup",
+      "command": [
+        "cargo",
+        "run",
+        "-p",
+        "qcore-compiler",
+        "--example",
+        "reevaluation_followup"
+      ],
+      "exit": 0,
+      "seconds": 0.4393698610001593,
+      "log": "/home/cosmo/.codex/worktrees/808d/quirin-lang/private/w48-cmt-map/gate/20261023T221457Z/reevaluation-followup.log"
+    },
+    {
+      "name": "lean-audits",
+      "command": [
+        "python3",
+        "scripts/check_lean_audits.py",
+        "--jobs",
+        "6"
+      ],
+      "exit": 0,
+      "seconds": 15.539776189994882,
+      "log": "/home/cosmo/.codex/worktrees/808d/quirin-lang/private/w48-cmt-map/gate/20261023T221457Z/lean-audits.log"
+    },
+    {
+      "name": "python-tests",
+      "command": [
+        "python3",
+        "-m",
+        "unittest",
+        "discover",
+        "-s",
+        "scripts/tests"
+      ],
+      "exit": 0,
+      "seconds": 32.77194939099718,
+      "log": "/home/cosmo/.codex/worktrees/808d/quirin-lang/private/w48-cmt-map/gate/20261023T221457Z/python-tests.log"
+    }
+  ],
+  "rust": {
+    "totals": {
+      "passed": 8602,
+      "failed": 0,
+      "ignored": 15,
+      "measured": 0,
+      "filtered": 0,
+      "summaries": 558
+    },
+    "units_run": 545,
+    "units_failed": [],
+    "ok": true,
+    "phases_seconds": {
+      "build": 192.686,
+      "capture": 13.534,
+      "run": 488.732
+    }
+  },
+  "lean": {
+    "audits": 369,
+    "exit": 0,
+    "toolchain": "Lean 4.35.0 pinned"
+  },
+  "python": {
+    "tests": 374,
+    "exit": 0
+  },
+  "clang": "present: Ubuntu clang version 21.1.8 (6ubuntu1)",
+  "private_logs": "/home/cosmo/.codex/worktrees/808d/quirin-lang/private/w48-cmt-map/gate/20261023T221457Z",
+  "source_guard": {
+    "head_after": "cc1d6c25a49b410c42a0473591ad226900995b25",
+    "clean_after": true
+  },
+  "environment": {
+    "heavy_lock": "/tmp/qcore-c-card-validation-20261022.lock",
+    "CARGO_BUILD_JOBS": 6,
+    "native_jobs": 4,
+    "host_isolated": false
+  },
+  "provider_gate": {
+    "required": false,
+    "reason": "no providers or contracts modified"
+  }
+}

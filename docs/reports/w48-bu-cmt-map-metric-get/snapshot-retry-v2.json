@@ -1,0 +1,14 @@
+{
+  "created": "2026-10-23T12:09:12.739664+00:00",
+  "reason": "attempt 1 omitted tracked root resource manifest; retained unchanged",
+  "original_snapshot": "private/w48-cmt-map/base-inputs",
+  "retry_snapshot": "private/w48-cmt-map/base-inputs-v2",
+  "files": 310,
+  "added": {
+    "cycle19-resource-contracts.json": "2226e66b96b7a12dcf335e3e4660e6e3c33ce19997efb9be5e6db81441a417a0"
+  },
+  "binary_sha256": "b533088b903f10ad03f78ad4245267fe8b108e853fd410c744a657f32446adde",
+  "all_original_309_inputs_unchanged": true,
+  "root_manifest_from_semantic_base": true,
+  "root_manifest_modules_resolve": true
+}
