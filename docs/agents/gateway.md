@@ -8887,6 +8887,41 @@ safety claim and no validation of the detach representation premise.
     transport boundaries. Extraction and Rust correspondence remain premise 28;
     new readers must fit rule 13q's existing measured stack budget.
     [Design](../reports/w48-cmt-list-self-init/DESIGN.md).
+<a id="constraint-36b"></a>
+
+36b. **A tracked initializer transports writes without erasing ownership.**
+    A `TrackedSelfInit` may replace only the old refused direct-call or
+    indirect-access instruction after earlier modeled statements decline.
+    Reuse rule 36a's complete source/CG11 leaf validation, retaining the exact
+    declaration and self-write field set. The actual is a uniquely declared
+    depth-one struct pointer or the address of its embedded record through at
+    most three ordinary fields (one arrow followed by dots). Loaded pointer
+    members, arrays, casts, unions, bitfields, qualified or incomplete types,
+    descriptor/in-place effects and escaping callee designators decline.
+    The caller must hold one known, nonnull identity with exactly LIVE status
+    and no nullable-site fact; every custody field other than pointer bindings,
+    resource statuses and nullable sites must equal its default. No child,
+    containment, membership, publication, collection, retention, borrow,
+    callback or unresolved relation is discarded to satisfy that condition.
+    Existing rooted member facts may be empty or name only the same owner.
+    The existing indirect-access check must add no diagnostic or state change.
+    Admission forgets all owner-rooted member pointer facts through every alias,
+    preserving plain/derived aliases, every resource status and nullable fact.
+    It creates no identity or ownership link and exports no empty-list or
+    membership postcondition. Failure executes the exact old fallback;
+    structurally unreachable markers regain that fallback. The appended tag
+    never supplies an ordinary summary, callback permission or cross-unit
+    contract; the whole caller and its exits still decide its own result.
+    Full owned-list semantics and callers with nondefault custody frames stay
+    separate tracked obligations. The canonical CFL `cfl/intrusive_list.qv`
+    declares these preconditions/effects as a model, outside both interpreted
+    resource and bounds views; it grants no resource-v1 initializer contract.
+    `QCore.TrackedSelfInit`, registered in `AuditPointerStore`, models source
+    admission, invalidation, ledger preservation, finite composition and
+    embedding lifetime, with shared source/flow vectors. Faithful extraction,
+    parent embedding and Rust/model correspondence remain premise 28.
+    [Design](../reports/w48-cmt-tracked-interior-self-init/DESIGN.md).
+
 <a id="constraint-37"></a>
 
 37. **Checked result constructors.** Aggregate field stores may ignore a
