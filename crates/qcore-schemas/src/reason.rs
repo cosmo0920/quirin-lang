@@ -48,7 +48,7 @@ pub enum ReasonSubject {
     Environment,
 }
 
-/// The closed nine-category vocabulary of §L21.1.
+/// The closed twelve-category vocabulary of §L21.1.
 ///
 /// The wire spelling is the spec's kebab-case spelling; it is part of the
 /// schema surface and moving it is a compatibility event.
@@ -108,13 +108,21 @@ pub enum ReasonCategory {
     /// loads nothing. Subject: the analyser — the row says nothing about the
     /// analysed source and never contributes to a provisional `Unsafe`.
     OuterContract,
+    /// Card AUDIT-COMPOSITION (§L21.2, composition across results): two
+    /// components of one row under one provenance key differ byte for byte
+    /// (`qcore_schemas::composition`). Both are kept and neither is chosen, so
+    /// the row is at least `Unknown`. Subject: the analyser — the row says
+    /// nothing about the analysed source and never contributes to a
+    /// provisional `Unsafe`; it is not human-resolvable, because no single
+    /// named act decides which producer's account is right.
+    CompositionConflict,
 }
 
 impl ReasonCategory {
     /// Every category, in declaration order. The vocabulary is closed: adding a
     /// member is a compatibility event, and the totality tests enumerate this
     /// array rather than a hand-written list.
-    pub const ALL: [Self; 11] = [
+    pub const ALL: [Self; 12] = [
         Self::UnsupportedSyntax,
         Self::MissingPremise,
         Self::IncompleteObligationCoverage,
@@ -126,6 +134,7 @@ impl ReasonCategory {
         Self::ContractPinMismatch,
         Self::PluginClaimUncertified,
         Self::OuterContract,
+        Self::CompositionConflict,
     ];
 
     /// The spec spelling, identical to the serde representation.
@@ -143,6 +152,7 @@ impl ReasonCategory {
             Self::ContractPinMismatch => "contract-pin-mismatch",
             Self::PluginClaimUncertified => "plugin-claim-uncertified",
             Self::OuterContract => "outer-contract",
+            Self::CompositionConflict => "composition-conflict",
         }
     }
 
@@ -158,7 +168,8 @@ impl ReasonCategory {
             | Self::AwaitingHumanReview
             | Self::ContractPinMismatch
             | Self::PluginClaimUncertified
-            | Self::OuterContract => ReasonSubject::Analyser,
+            | Self::OuterContract
+            | Self::CompositionConflict => ReasonSubject::Analyser,
             Self::EnvironmentUnavailable => ReasonSubject::Environment,
         }
     }
@@ -521,6 +532,14 @@ const REASON_RULES: &[(&str, ReasonCategory)] = &[
     // about loaded code, never the analysed source. Site:
     // `qcore_audit::outer_selection`.
     ("rests on outer contract", ReasonCategory::OuterContract),
+    // ---- composition conflict (card AUDIT-COMPOSITION): two components of
+    // one row under one provenance key differ. Matched before every
+    // source-subject rule: the phrase names the composed record, never the
+    // analysed source. Site: `qcore_schemas::composition`'s conflict leaf.
+    (
+        "composition-conflict: ",
+        ReasonCategory::CompositionConflict,
+    ),
     // ---- missing premise: a declared assumption or trusted contract input
     // the analysis requires was refused or is unusable. The subject is the
     // declared premise, not the analysed source.
@@ -792,7 +811,7 @@ impl FromStr for ReasonCategory {
     }
 }
 
-/// The text is not one of the nine closed category spellings.
+/// The text is not one of the closed category spellings (`ReasonCategory::ALL`).
 #[derive(Clone, Copy, Debug, PartialEq, Eq, PartialOrd, Ord, Hash)]
 pub struct UnknownReasonCategory;
 

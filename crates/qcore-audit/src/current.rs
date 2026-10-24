@@ -797,6 +797,8 @@ impl CurrentAudit {
             }
             self.assumptions["source_file_count"] = json!(self.sources.len());
             self.assumptions["configuration_count"] = json!(self.counts.units);
+            // Card AUDIT-COMPOSITION: the contract bundle the components rest on.
+            self.report.record_contract_bundle(&self.contracts);
             self.report
                 .write_with_revision_key(path, "fluent_bit_revision")?;
             self.report.write_bounds_selection()?;

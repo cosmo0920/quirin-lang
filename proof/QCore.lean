@@ -1,3 +1,4 @@
+import QCore.AuditComposition
 import QCore.ResultConstructors
 import QCore.LoggerEffects
 import QCore.RkLogCallerFrame

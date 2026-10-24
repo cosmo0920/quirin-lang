@@ -1142,6 +1142,8 @@ impl NoBuildAudit {
                 "gateway_failures": self.counts.gateway_failures,
             });
             self.sidecar["files"] = json!(self.files);
+            // Card AUDIT-COMPOSITION: the contract bundle the components rest on.
+            self.report.record_contract_bundle(&self.contracts);
             self.report.write(path)?;
             // Card CHUNKIO-META-LEN-BOUNDS-CONTRACTS: the bounds rows, when the
             // property is selected (nothing otherwise).

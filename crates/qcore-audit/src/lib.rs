@@ -69,6 +69,8 @@ pub mod projection;
 pub mod providers;
 pub mod refuted_contracts;
 pub mod report;
+// Card AUDIT-COMPOSITION: per-row components and the derived report rows.
+pub mod report_components;
 pub mod revision_compare;
 mod source_audit;
 pub mod source_contract;
@@ -881,6 +883,8 @@ pub fn run_config_with_jobs(path: &Path, flag_jobs: Option<usize>) -> Result<Aud
     // Card W45-REFUTED-CONTRACT-WITHDRAWAL: the refutation table and the
     // calls it held.
     assumptions["refuted_contracts"] = refuted_contracts::section(&refuted_table, &report);
+    // Card AUDIT-COMPOSITION: the contract bundle the components rest on.
+    report.record_contract_bundle(&contracts);
     report.write(&report_path)?;
     fs::write(
         report_path.with_extension("assumptions.json"),
