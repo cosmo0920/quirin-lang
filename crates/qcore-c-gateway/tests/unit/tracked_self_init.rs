@@ -340,12 +340,28 @@ fn unreachable_effects_keep_old_inference_and_declared_calls_keep_precedence() {
     let source = format!(
         "{LEAF}struct Ring *make(void); void drop(struct Ring *p); void subject(void) {{ return; struct Ring *p = make(); reset(p); drop(p); }}"
     );
-    let Some(r) = run(&source) else { return };
-    assert_eq!(
-        summary(&r).functions["subject"].status,
-        AnalysisStatus::Safe
-    );
-    assert!(!has_call(&summary(&r).functions["subject"].cfg));
+    if crate::clang_command().is_err() {
+        assert!(
+            std::env::var_os("QCORE_CLANG").is_none(),
+            "invalid explicit Clang"
+        );
+        return;
+    }
+    {
+        let _scope = crate::typed_access_path::enter_source(&source, CCompilerDialect::Gnu17, None);
+        let tokens = tokenize(&source);
+        let cfg = build_function_cfg(&tokens, "subject", &contracts()).unwrap();
+        assert!(!has_call(&cfg));
+        assert!(cfg.nodes.iter().any(|n| matches!(&n.instruction,
+            LegacyInstruction::Unknown { description, .. } if description.contains("reset"))));
+        let derivation = crate::legacy_summary::derive_custody_summaries(
+            &tokens,
+            &["reset".into(), "subject".into()],
+            &contracts(),
+        );
+        assert!(derivation.records().iter().any(|r| r.function == "subject"
+            && r.contract == ResourceFunctionContract::new(vec![], ResourceReturnMode::None)));
+    }
     let source = format!(
         "{LEAF}struct Ring *make(void); void drop(struct Ring *p); void subject(void) {{ struct Ring *p = make(); reset(p); drop(p); }}"
     );
