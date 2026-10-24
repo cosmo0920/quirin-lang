@@ -1,0 +1,292 @@
+{
+  "route": "corpus",
+  "exit": 0,
+  "all_json_fields_accounted": true,
+  "unexplained_fields": 0,
+  "fields_erased": 0,
+  "fields_masked": 0,
+  "actual_status_changes": [
+    {
+      "base": "Unknown",
+      "file": "tinycthread_extra.c",
+      "function": "thrd_current_id",
+      "library": "librdkafka",
+      "tip": "Safe",
+      "unit_index": 141
+    },
+    {
+      "base": "Unknown",
+      "file": "mk_core/mk_iov.c",
+      "function": "mk_iov_send",
+      "library": "monkey-libevent",
+      "tip": "Safe",
+      "unit_index": 158
+    }
+  ],
+  "actual_diagnostic_trade_rows": 2,
+  "new_declaration_dependency_annotations": [
+    {
+      "artifact": [
+        "librdkafka",
+        "tinycthread_extra.c",
+        "thrd_current_id"
+      ],
+      "base": [],
+      "tip": [
+        "thrd_current"
+      ]
+    },
+    {
+      "artifact": [
+        "monkey-libevent",
+        "mk_core/mk_iov.c",
+        "mk_iov_send"
+      ],
+      "base": [],
+      "tip": [
+        "writev"
+      ]
+    },
+    {
+      "artifact": [
+        "monkey-libevent",
+        "mk_server/mk_stream.c",
+        "mk_channel_stream_write"
+      ],
+      "base": [],
+      "tip": [
+        "writev"
+      ]
+    },
+    {
+      "artifact": [
+        "monkey-libevent",
+        "mk_server/mk_stream.c",
+        "mk_channel_write"
+      ],
+      "base": [
+        "__errno_location"
+      ],
+      "tip": [
+        "__errno_location",
+        "writev"
+      ]
+    }
+  ],
+  "new_declaration_evidence_records": [
+    {
+      "function": "writev",
+      "rows": 3,
+      "safe_rows": 1,
+      "context_artifacts": [
+        "monkey-libevent/mk_core/mk_iov.c#mk_iov_send",
+        "monkey-libevent/mk_server/mk_stream.c#mk_channel_stream_write",
+        "monkey-libevent/mk_server/mk_stream.c#mk_channel_write"
+      ],
+      "full_record_reconstructed": true
+    },
+    {
+      "function": "thrd_current",
+      "rows": 1,
+      "safe_rows": 1,
+      "context_artifacts": [
+        "librdkafka/tinycthread_extra.c#thrd_current_id"
+      ],
+      "full_record_reconstructed": true
+    }
+  ],
+  "context_array_order": {
+    "producer": "crates/qcore-audit/src/contract_dependencies.rs",
+    "source_sha256": "ddef8f71f0c5453800a15b2ae16ee1e5ca348aa5fc01983198423a9c411ef919",
+    "rule": "Facts::absorb stores Value::to_string in BTreeSet; both actual arrays checked canonical and unique; reapply the same ordering after exact build-identity preimage reversal. Every context retained.",
+    "declarations_reordered": []
+  },
+  "combined_moves_with_unchanged_null_scopes": [
+    {
+      "artifact": [
+        "librdkafka",
+        "tinycthread_extra.c",
+        "thrd_current_id"
+      ],
+      "null_scope": "unconditional",
+      "null_assumptions": []
+    },
+    {
+      "artifact": [
+        "monkey-libevent",
+        "mk_core/mk_iov.c",
+        "mk_iov_send"
+      ],
+      "null_scope": "conditional on `mk_iov_send`'s null-deref preconditions: inferred quant null-deref #mk_io",
+      "null_assumptions": [
+        "inferred: `mk_iov_send` quant null-deref #mk_io"
+      ]
+    }
+  ],
+  "unchanged_byte_artifacts": [
+    "monkey-source.json",
+    "resource-diagnostics.source-effects.json",
+    "resource-diagnostics.chunk-contracts.json"
+  ],
+  "raw_difference_counts": {
+    "corpus-null.summary.json": 4,
+    "corpus-outer.json": 16,
+    "monkey-source.json": 0,
+    "resource-diagnostics.chunk-contracts.json": 0,
+    "resource-diagnostics.contracts.json": 18976,
+    "resource-diagnostics.json": 12037,
+    "resource-diagnostics.source-effects.json": 0
+  },
+  "effective_environment_captures_reconstructed": 45,
+  "typed_receipt_id_preimages_replayed": 122,
+  "empty_summary_key_moves": [
+    {
+      "path": [
+        "callback_members",
+        "lifetime_protocols",
+        "evidence",
+        "summaries"
+      ],
+      "base": "f2c0ad44cc900706412b8f2bfa56836b2e588e6fd16679bc30330d675b28db6c",
+      "tip": "359047748b6749b290495fe81a38ee86092a62c3fb787a16d832db09047a6899",
+      "payload": {}
+    },
+    {
+      "path": [
+        "callback_members",
+        "prepass",
+        "lifetime_protocols",
+        "summaries"
+      ],
+      "base": "f2c0ad44cc900706412b8f2bfa56836b2e588e6fd16679bc30330d675b28db6c",
+      "tip": "359047748b6749b290495fe81a38ee86092a62c3fb787a16d832db09047a6899",
+      "payload": {}
+    }
+  ],
+  "independent_proof_sha256": {
+    "identity-attribution": "99d07bc091fe10cecacb1f121d4f72547cb79b15c0dccc25e9a0f479f334b414",
+    "reading-attribution": "3186e87a3f4bc7b3bec6974f7f6bdadeb0d0ad6928e2a5008f3805225f3dd1bb",
+    "time-key-attribution": "62458c4ff6ce3adc7d55635304edf7fbbff096fd38efebce8e5f6b4d54d6e08d",
+    "contract-metadata-attribution": "d7862e56b7cf831452de86b01a5ae16eda7486af134824437234a52599fe7606"
+  },
+  "input_artifacts": [
+    {
+      "artifact": "resource-diagnostics.json",
+      "base": {
+        "bytes": 86912118,
+        "path": "/home/cosmo/.codex/worktrees/c1e4/quirin-lang/private/w48-bu-external-callee-contracts/base-3/corpus/corpus/resource-diagnostics.json",
+        "sha256": "f9f8d3c20a1e44de54e40a149a22e26d8b506102c85d3935a5917f245d389832"
+      },
+      "base_present": true,
+      "tip": {
+        "bytes": 87011375,
+        "path": "/home/cosmo/.codex/worktrees/c1e4/quirin-lang/private/w48-bu-external-callee-contracts/tip-1/corpus/corpus/resource-diagnostics.json",
+        "sha256": "e66a801db9282a2d4312fbc6484bee22d461a67e3720c5686ee11608e0794281"
+      },
+      "tip_present": true
+    },
+    {
+      "artifact": "monkey-source.json",
+      "base": {
+        "bytes": 1667094,
+        "path": "/home/cosmo/.codex/worktrees/c1e4/quirin-lang/private/w48-bu-external-callee-contracts/base-3/corpus/corpus/monkey-source.json",
+        "sha256": "9199a7a0e2e8c03b437310c40dc2af5a045555093dcb73f9b1f21eadd24dd7b1"
+      },
+      "base_present": true,
+      "tip": {
+        "bytes": 1667094,
+        "path": "/home/cosmo/.codex/worktrees/c1e4/quirin-lang/private/w48-bu-external-callee-contracts/tip-1/corpus/corpus/monkey-source.json",
+        "sha256": "9199a7a0e2e8c03b437310c40dc2af5a045555093dcb73f9b1f21eadd24dd7b1"
+      },
+      "tip_present": true
+    },
+    {
+      "artifact": "resource-diagnostics.contracts.json",
+      "base": {
+        "bytes": 44468936,
+        "path": "/home/cosmo/.codex/worktrees/c1e4/quirin-lang/private/w48-bu-external-callee-contracts/base-3/corpus/corpus/resource-diagnostics.contracts.json",
+        "sha256": "a7e90a57c9c8d04396a843c92c73df5be77bb58201c5ca572085b3b1fdf3704f"
+      },
+      "base_present": true,
+      "tip": {
+        "bytes": 44477799,
+        "path": "/home/cosmo/.codex/worktrees/c1e4/quirin-lang/private/w48-bu-external-callee-contracts/tip-1/corpus/corpus/resource-diagnostics.contracts.json",
+        "sha256": "ac778805baeaf229b7bfafee25e72684bf67c1e46bcc194cb610c88c4220a134"
+      },
+      "tip_present": true
+    },
+    {
+      "artifact": "resource-diagnostics.source-effects.json",
+      "base": {
+        "bytes": 118505,
+        "path": "/home/cosmo/.codex/worktrees/c1e4/quirin-lang/private/w48-bu-external-callee-contracts/base-3/corpus/corpus/resource-diagnostics.source-effects.json",
+        "sha256": "d072a13f9bff4932c133a23cce39ff662deba68d46b3731693bb94e644290fe6"
+      },
+      "base_present": true,
+      "tip": {
+        "bytes": 118505,
+        "path": "/home/cosmo/.codex/worktrees/c1e4/quirin-lang/private/w48-bu-external-callee-contracts/tip-1/corpus/corpus/resource-diagnostics.source-effects.json",
+        "sha256": "d072a13f9bff4932c133a23cce39ff662deba68d46b3731693bb94e644290fe6"
+      },
+      "tip_present": true
+    },
+    {
+      "artifact": "resource-diagnostics.chunk-contracts.json",
+      "base": {
+        "bytes": 4186178,
+        "path": "/home/cosmo/.codex/worktrees/c1e4/quirin-lang/private/w48-bu-external-callee-contracts/base-3/corpus/corpus/resource-diagnostics.chunk-contracts.json",
+        "sha256": "cbbcfd9c176005146c1946d5fcd4dc83cc9ec041a3397b10b1f0ab16ae6c0484"
+      },
+      "base_present": true,
+      "tip": {
+        "bytes": 4186178,
+        "path": "/home/cosmo/.codex/worktrees/c1e4/quirin-lang/private/w48-bu-external-callee-contracts/tip-1/corpus/corpus/resource-diagnostics.chunk-contracts.json",
+        "sha256": "cbbcfd9c176005146c1946d5fcd4dc83cc9ec041a3397b10b1f0ab16ae6c0484"
+      },
+      "tip_present": true
+    },
+    {
+      "artifact": "corpus-null.jsonl",
+      "bytes": 29207547,
+      "path": "/home/cosmo/.codex/worktrees/c1e4/quirin-lang/private/w48-bu-external-callee-contracts/base-3/corpus/corpus-null.jsonl",
+      "sha256": "76578b8c3d30a6e0b3130862e8e13bf09e787ffbcf74950e30bf1c440d6f94c4",
+      "side": "base"
+    },
+    {
+      "artifact": "corpus-null.jsonl",
+      "bytes": 29207535,
+      "path": "/home/cosmo/.codex/worktrees/c1e4/quirin-lang/private/w48-bu-external-callee-contracts/tip-1/corpus/corpus-null.jsonl",
+      "sha256": "1de213baab88a6c8ac338bc72721b16d3960d5555af25a0edd8d0a09621116c0",
+      "side": "tip"
+    },
+    {
+      "artifact": "corpus-null.summary.json",
+      "bytes": 64899,
+      "path": "/home/cosmo/.codex/worktrees/c1e4/quirin-lang/private/w48-bu-external-callee-contracts/base-3/corpus/corpus-null.summary.json",
+      "sha256": "80686b37e81f7f75cb4077cb1bdeb63b836d539ba15bfeceada7bf2869f9ca3d",
+      "side": "base"
+    },
+    {
+      "artifact": "corpus-null.summary.json",
+      "bytes": 64900,
+      "path": "/home/cosmo/.codex/worktrees/c1e4/quirin-lang/private/w48-bu-external-callee-contracts/tip-1/corpus/corpus-null.summary.json",
+      "sha256": "ee3a91d34921a5e0edb3d05ecade1551c366f5056d3f6651fd2f860bc5286885",
+      "side": "tip"
+    },
+    {
+      "artifact": "corpus-outer.json",
+      "bytes": 715908,
+      "path": "/home/cosmo/.codex/worktrees/c1e4/quirin-lang/private/w48-bu-external-callee-contracts/base-3/corpus/corpus-outer.json",
+      "sha256": "ef1ed2dcbe97220414c4ea424d869f7e668658764e159fb556c4aafc929a0cc6",
+      "side": "base"
+    },
+    {
+      "artifact": "corpus-outer.json",
+      "bytes": 715909,
+      "path": "/home/cosmo/.codex/worktrees/c1e4/quirin-lang/private/w48-bu-external-callee-contracts/tip-1/corpus/corpus-outer.json",
+      "sha256": "eb7b8b0c00477bc8e5ae640db6aca67c2974cfae700782c09ba18be9cb597c02",
+      "side": "tip"
+    }
+  ],
+  "meaning": "Every raw field retained and accounted by bounded exact producer preimages, reviewed two-declaration/source changes, and the enumerated observed semantics. No inverse comparison verdict is published; actual tuples and artifacts remain authoritative. C extraction, libc implementation behavior and Rust-Lean correspondence remain open declared boundaries."
+}

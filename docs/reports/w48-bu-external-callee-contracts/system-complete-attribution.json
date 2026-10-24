@@ -1,0 +1,237 @@
+{
+  "route": "system",
+  "exit": 0,
+  "all_json_fields_accounted": true,
+  "unexplained_fields": 0,
+  "fields_erased": 0,
+  "fields_masked": 0,
+  "actual_status_changes": [],
+  "actual_diagnostic_trade_rows": 0,
+  "new_declaration_dependency_annotations": [],
+  "new_declaration_evidence_records": [],
+  "context_array_order": {
+    "producer": "crates/qcore-audit/src/contract_dependencies.rs",
+    "source_sha256": "ddef8f71f0c5453800a15b2ae16ee1e5ca348aa5fc01983198423a9c411ef919",
+    "rule": "Facts::absorb stores Value::to_string in BTreeSet; both actual arrays checked canonical and unique; reapply the same ordering after exact build-identity preimage reversal. Every context retained.",
+    "declarations_reordered": [
+      "__errno_location",
+      "atoi",
+      "cfl_list_size",
+      "cfl_time_now",
+      "cio_chunk_close",
+      "cio_chunk_down",
+      "cio_chunk_get_content_size",
+      "cio_chunk_is_up",
+      "cio_chunk_open",
+      "cio_chunk_up_force",
+      "close",
+      "cmt_destroy",
+      "flb_calloc",
+      "flb_coro_destroy",
+      "flb_errno_print",
+      "flb_event_chunk_destroy",
+      "flb_free",
+      "flb_input_chunk_destroy",
+      "flb_input_chunk_destroy_direct_routes",
+      "flb_input_chunk_get_name",
+      "flb_input_chunk_get_real_size",
+      "flb_log_check",
+      "flb_log_print",
+      "flb_malloc",
+      "flb_output_flush_destroy",
+      "flb_output_flush_id_get",
+      "flb_output_instance_destroy",
+      "flb_output_thread_pool_flush",
+      "flb_sched_request_destroy",
+      "flb_sched_timer_destroy",
+      "flb_sds_destroy",
+      "flb_strdup",
+      "flb_task_destroy",
+      "flb_task_queue_destroy",
+      "flb_task_retry_count",
+      "flb_task_retry_destroy",
+      "flb_task_running_count",
+      "flb_task_set_route_status",
+      "flb_task_users_dec",
+      "flb_task_users_inc",
+      "listen",
+      "memcpy",
+      "memset",
+      "mk_event_channel_create",
+      "mk_event_channel_destroy",
+      "mk_event_timeout_create",
+      "mk_event_timeout_destroy",
+      "mk_list_add",
+      "mk_list_del",
+      "msgpack_packer_init",
+      "pthread_mutex_lock",
+      "pthread_mutex_unlock",
+      "read",
+      "snprintf",
+      "srand",
+      "strcasecmp",
+      "strcmp",
+      "strlen",
+      "strncmp",
+      "strrchr",
+      "strstr",
+      "time",
+      "write"
+    ]
+  },
+  "combined_moves_with_unchanged_null_scopes": [],
+  "unchanged_byte_artifacts": [
+    "resource-diagnostics.source-effects.json",
+    "resource-diagnostics.chunk-contracts.json"
+  ],
+  "raw_difference_counts": {
+    "resource-diagnostics.chunk-contracts.json": 0,
+    "resource-diagnostics.contracts.json": 3790,
+    "resource-diagnostics.json": 1577,
+    "resource-diagnostics.source-effects.json": 0,
+    "system-null.summary.json": 0,
+    "system-outer.json": 0
+  },
+  "effective_environment_captures_reconstructed": 4,
+  "typed_receipt_id_preimages_replayed": 24,
+  "empty_summary_key_moves": [
+    {
+      "path": [
+        "callback_members",
+        "lifetime_protocols",
+        "evidence",
+        "summaries"
+      ],
+      "base": "508980a2e2c63dc2d69062130505a6e3d001b19753e421c83b194744b5b1172f",
+      "tip": "279af85c127c499e4b3a25616179675159a62818142ec56e74903b688d474a7c",
+      "payload": {}
+    },
+    {
+      "path": [
+        "callback_members",
+        "prepass",
+        "lifetime_protocols",
+        "summaries"
+      ],
+      "base": "508980a2e2c63dc2d69062130505a6e3d001b19753e421c83b194744b5b1172f",
+      "tip": "279af85c127c499e4b3a25616179675159a62818142ec56e74903b688d474a7c",
+      "payload": {}
+    }
+  ],
+  "independent_proof_sha256": {
+    "identity-attribution": "72e6908b6318d38f6c7a3f89097c866eecfdd05e024260db829605e7565fd228",
+    "reading-attribution": "c514790ce8180c6810d5b42ad9710edbc802c290ec6d84bd8c03a4e12b299c33",
+    "time-key-attribution": "a012c60a623077ed217908620076ad8f908160cf29ec9df2140bdfa0cdeb3784",
+    "contract-metadata-attribution": "ad139fd1c2424079df9635f8cf57bff11029592b084741eb3a0f3c4c5a6508ce"
+  },
+  "input_artifacts": [
+    {
+      "artifact": "resource-diagnostics.json",
+      "base": {
+        "bytes": 7576521,
+        "path": "/home/cosmo/.codex/worktrees/c1e4/quirin-lang/private/w48-bu-external-callee-contracts/base-3/system/resource-diagnostics.json",
+        "sha256": "56a2d9739e2ea8ae9fc9e0609e417715ed18e666cd61c4511e33cb918f1b8752"
+      },
+      "base_present": true,
+      "tip": {
+        "bytes": 7585373,
+        "path": "/home/cosmo/.codex/worktrees/c1e4/quirin-lang/private/w48-bu-external-callee-contracts/tip-1/system/resource-diagnostics.json",
+        "sha256": "d4fdc62aa3fcb59833d21d124c34e5784164a69da3609de1bc96ff82af5529d2"
+      },
+      "tip_present": true
+    },
+    {
+      "artifact": "monkey-source.json",
+      "base_present": false,
+      "tip_present": false
+    },
+    {
+      "artifact": "resource-diagnostics.contracts.json",
+      "base": {
+        "bytes": 10868662,
+        "path": "/home/cosmo/.codex/worktrees/c1e4/quirin-lang/private/w48-bu-external-callee-contracts/base-3/system/resource-diagnostics.contracts.json",
+        "sha256": "dbd2a73e288917a49d40d138e190e0f5f8639d99b0314b2206f4d7c1d7ccffb2"
+      },
+      "base_present": true,
+      "tip": {
+        "bytes": 10871919,
+        "path": "/home/cosmo/.codex/worktrees/c1e4/quirin-lang/private/w48-bu-external-callee-contracts/tip-1/system/resource-diagnostics.contracts.json",
+        "sha256": "c6fbf4f166885a92fa92a853920001d2ec3701fa5a909b04839831e1aa1271b5"
+      },
+      "tip_present": true
+    },
+    {
+      "artifact": "resource-diagnostics.source-effects.json",
+      "base": {
+        "bytes": 385,
+        "path": "/home/cosmo/.codex/worktrees/c1e4/quirin-lang/private/w48-bu-external-callee-contracts/base-3/system/resource-diagnostics.source-effects.json",
+        "sha256": "e7e0d254d9e7ee199672b981e3fc764b702b35a1757bb0f4570a9438e6b87922"
+      },
+      "base_present": true,
+      "tip": {
+        "bytes": 385,
+        "path": "/home/cosmo/.codex/worktrees/c1e4/quirin-lang/private/w48-bu-external-callee-contracts/tip-1/system/resource-diagnostics.source-effects.json",
+        "sha256": "e7e0d254d9e7ee199672b981e3fc764b702b35a1757bb0f4570a9438e6b87922"
+      },
+      "tip_present": true
+    },
+    {
+      "artifact": "resource-diagnostics.chunk-contracts.json",
+      "base": {
+        "bytes": 385,
+        "path": "/home/cosmo/.codex/worktrees/c1e4/quirin-lang/private/w48-bu-external-callee-contracts/base-3/system/resource-diagnostics.chunk-contracts.json",
+        "sha256": "e7e0d254d9e7ee199672b981e3fc764b702b35a1757bb0f4570a9438e6b87922"
+      },
+      "base_present": true,
+      "tip": {
+        "bytes": 385,
+        "path": "/home/cosmo/.codex/worktrees/c1e4/quirin-lang/private/w48-bu-external-callee-contracts/tip-1/system/resource-diagnostics.chunk-contracts.json",
+        "sha256": "e7e0d254d9e7ee199672b981e3fc764b702b35a1757bb0f4570a9438e6b87922"
+      },
+      "tip_present": true
+    },
+    {
+      "artifact": "system-null.jsonl",
+      "bytes": 1873239,
+      "path": "/home/cosmo/.codex/worktrees/c1e4/quirin-lang/private/w48-bu-external-callee-contracts/base-3/system/system-null.jsonl",
+      "sha256": "643d38cc52baeab7f8e92fd396da7766d0fabcf3561ca2bc1abd21fbfcf583e7",
+      "side": "base"
+    },
+    {
+      "artifact": "system-null.jsonl",
+      "bytes": 1873239,
+      "path": "/home/cosmo/.codex/worktrees/c1e4/quirin-lang/private/w48-bu-external-callee-contracts/tip-1/system/system-null.jsonl",
+      "sha256": "d3fec836e3636f6826ddfe413762c7a78d34a124c21d87a2ec36bf08e288e3ad",
+      "side": "tip"
+    },
+    {
+      "artifact": "system-null.summary.json",
+      "bytes": 64384,
+      "path": "/home/cosmo/.codex/worktrees/c1e4/quirin-lang/private/w48-bu-external-callee-contracts/base-3/system/system-null.summary.json",
+      "sha256": "1d9ad9e838a54923bd90b3d984c324c8eb6892fa0903827be98b5f9401a3ea5c",
+      "side": "base"
+    },
+    {
+      "artifact": "system-null.summary.json",
+      "bytes": 64384,
+      "path": "/home/cosmo/.codex/worktrees/c1e4/quirin-lang/private/w48-bu-external-callee-contracts/tip-1/system/system-null.summary.json",
+      "sha256": "1d9ad9e838a54923bd90b3d984c324c8eb6892fa0903827be98b5f9401a3ea5c",
+      "side": "tip"
+    },
+    {
+      "artifact": "system-outer.json",
+      "bytes": 67539,
+      "path": "/home/cosmo/.codex/worktrees/c1e4/quirin-lang/private/w48-bu-external-callee-contracts/base-3/system/system-outer.json",
+      "sha256": "a62d98829d4ea6d476992839c4a25ef4681de6e6b85f925081f27e74a88d2ebc",
+      "side": "base"
+    },
+    {
+      "artifact": "system-outer.json",
+      "bytes": 67539,
+      "path": "/home/cosmo/.codex/worktrees/c1e4/quirin-lang/private/w48-bu-external-callee-contracts/tip-1/system/system-outer.json",
+      "sha256": "a62d98829d4ea6d476992839c4a25ef4681de6e6b85f925081f27e74a88d2ebc",
+      "side": "tip"
+    }
+  ],
+  "meaning": "Every raw field retained and accounted by bounded exact producer preimages, reviewed two-declaration/source changes, and the enumerated observed semantics. No inverse comparison verdict is published; actual tuples and artifacts remain authoritative. C extraction, libc implementation behavior and Rust-Lean correspondence remain open declared boundaries."
+}

@@ -1,5 +1,5 @@
 {
-  "meaning": "Existing interpreted effect kinds and fail-closed gates; this data-only card adds no semantic rule. These models do not prove libc bodies or C extraction/Rust correspondence. Full audit run still pending.",
+  "meaning": "Existing interpreted effect kinds and fail-closed gates; this data-only card adds no semantic rule. Both complete gate attempts pass 369 Lean audits. These models do not prove libc bodies, C extraction or Rust-Lean correspondence.",
   "files": {
     "proof/QCore/DeclaredAbiAgreement.lean": "e2276e73b185b7e4bd01865e136ba438bbb08a84b843c57337fbb84f111f2b68",
     "proof/AuditDeclaredAbiAgreement.lean": "5e8829a0d7b484f102f8efbc0d1bcdbef3c2c2994c910c101b55da040aa849d8",
@@ -16,5 +16,12 @@
     "BorrowLiveness.a_settled_released_identity_is_refused",
     "CallInstantiation.Mode.custody (.borrowed=false)",
     "CallInstantiation.substOne"
-  ]
+  ],
+  "validation": {
+    "gate": "gate-2-unconfined",
+    "source": "36e91795e35b76db6ac89fd8af4d4e926612e7d8",
+    "audits": 369,
+    "exit": 0,
+    "log": "/home/cosmo/.codex/worktrees/c1e4/quirin-lang/private/w48-bu-external-callee-contracts/gate-2-unconfined/lean.log"
+  }
 }

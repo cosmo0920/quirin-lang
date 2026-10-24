@@ -22,8 +22,9 @@ In pinned `lib/librdkafka-2.15.0/src/tinycthread.h:35`, WITH_C11THREADS selects
 `<threads.h>`; bundled declarations are the other branch. `tinycthread.c:28–932`
 wraps its implementations in `#if !WITH_C11THREADS`. Raw source discovery can
 therefore list names whose definitions the configured analyzer does not see.
-The fresh BASE native rows and planner receipt, not that raw name list alone,
-will settle the analyzed-body classification. No bundled-body contract is
+The fresh BASE and TIP native rows confirm zero analyzed functions and 30 raw
+discovered names in this unit. The planner's raw home names do not establish
+analyzed bodies. No bundled-body contract is
 justified by these configured routes.
 
 `writev` gathers bytes from caller-provided buffers to a descriptor and returns
@@ -56,7 +57,7 @@ The configured C11 `thrd_success` is 0 on all three routes
 is not the active status ABI here. That removes no missing kind/global-owner
 obligation. The earlier entry retains its dated checkpoint claims.
 
-Both proposed declarations remain libc-owned, revision flexible declared
+Both implemented declarations remain libc-owned, revision flexible declared
 assumptions under the existing standard/ABI trust boundary. They do not prove
 libc implementation bodies, source extraction, Rust–Lean correspondence or a
 whole C program. They add no semantic effect kind or gateway admission rule;

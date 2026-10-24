@@ -1,0 +1,273 @@
+{
+  "route": "system",
+  "exit": 0,
+  "input_diagnostics_sha256": {
+    "base": "56a2d9739e2ea8ae9fc9e0609e417715ed18e666cd61c4511e33cb918f1b8752",
+    "tip": "d4fdc62aa3fcb59833d21d124c34e5784164a69da3609de1bc96ff82af5529d2"
+  },
+  "identity_proof_sha256": "72e6908b6318d38f6c7a3f89097c866eecfdd05e024260db829605e7565fd228",
+  "effective_environment_captures": 4,
+  "receipts": 24,
+  "environment_records": [
+    {
+      "unit": 5,
+      "tip": "4f983c2efbf8f5be0911487df232ba9e60286525bb0b572735edb91632c849bf",
+      "base": "e1709ddc67d16744fbde94dd1aad44db2a0fbddfeecfee623b8259b08d9a5b48",
+      "cross_unit_environment_identities": 0,
+      "exact_canonical_bytes_match": true,
+      "two_functions_and_exact_source_suffixes_only": true
+    },
+    {
+      "unit": 5,
+      "tip": "b8b9493603aba5c28d5a993814fd717a44083c9923ae7734e5625927da578580",
+      "base": "86ca90f76f98ac383a0edba8b24812162601c88e50f8770bd2fb740ee5c71682",
+      "cross_unit_environment_identities": 0,
+      "exact_canonical_bytes_match": true,
+      "two_functions_and_exact_source_suffixes_only": true
+    },
+    {
+      "unit": 6,
+      "tip": "4f983c2efbf8f5be0911487df232ba9e60286525bb0b572735edb91632c849bf",
+      "base": "e1709ddc67d16744fbde94dd1aad44db2a0fbddfeecfee623b8259b08d9a5b48",
+      "cross_unit_environment_identities": 0,
+      "exact_canonical_bytes_match": true,
+      "two_functions_and_exact_source_suffixes_only": true
+    },
+    {
+      "unit": 6,
+      "tip": "b8b9493603aba5c28d5a993814fd717a44083c9923ae7734e5625927da578580",
+      "base": "86ca90f76f98ac383a0edba8b24812162601c88e50f8770bd2fb740ee5c71682",
+      "cross_unit_environment_identities": 0,
+      "exact_canonical_bytes_match": true,
+      "two_functions_and_exact_source_suffixes_only": true
+    }
+  ],
+  "receipt_records": [
+    {
+      "unit": 5,
+      "function": "flb_task_create",
+      "base": "5bb4c5f13b94a5eb5f35d2727b051d8cf65d7e62d26b2f310326a5c11919303b",
+      "tip": "66cacf33113ea71859711b74ccadf64990beb9ae23f25ea03f8123e47c9b2cf7",
+      "all_non_environment_observation_fields_exact": true,
+      "whole_restored_receipt_equals_actual_base": true,
+      "both_typed_id_preimages_verified": true
+    },
+    {
+      "unit": 5,
+      "function": "flb_task_create",
+      "base": "a3e889af6f1adf1ecb4d2a23aa6e751718b2152f47e960ff93cf36eae042606b",
+      "tip": "91e8d011cae444e5a2a2a58b7534b0ee0c296e7a6c533c84a34eecee94be1df8",
+      "all_non_environment_observation_fields_exact": true,
+      "whole_restored_receipt_equals_actual_base": true,
+      "both_typed_id_preimages_verified": true
+    },
+    {
+      "unit": 5,
+      "function": "flb_task_create",
+      "base": "5960e32d98b8977fd08424c0e46c98eabcf1cd48a18814ba7cf11f631d0f5c34",
+      "tip": "a8be4ac7516350ffe9a30179854b1164294f9156daf419184636fedc3966c885",
+      "all_non_environment_observation_fields_exact": true,
+      "whole_restored_receipt_equals_actual_base": true,
+      "both_typed_id_preimages_verified": true
+    },
+    {
+      "unit": 5,
+      "function": "flb_task_create",
+      "base": "7629804ff5fa18d50219048ba0ab9bcd5e7fd9b2cb2a0b5186144de88c6f96ec",
+      "tip": "a9295921f0c6b90ad4b7d02c6e5197b8ee1aa01fced5a50a9897bc1479895817",
+      "all_non_environment_observation_fields_exact": true,
+      "whole_restored_receipt_equals_actual_base": true,
+      "both_typed_id_preimages_verified": true
+    },
+    {
+      "unit": 5,
+      "function": "flb_task_create",
+      "base": "ada312a8f7b61c7ee420c067bfc61a79a0b4d6c9bee764c2f3495ae7fd05b383",
+      "tip": "ae530943e9fef1798aa5f85f4eff37e4a8dee5062bdaa315ea36f314b2977bab",
+      "all_non_environment_observation_fields_exact": true,
+      "whole_restored_receipt_equals_actual_base": true,
+      "both_typed_id_preimages_verified": true
+    },
+    {
+      "unit": 5,
+      "function": "flb_task_create",
+      "base": "bd3476fe60996dd47a09362680f5417398848c9f88b145d9ad913c0682cb4977",
+      "tip": "dabfdcf3a4ac846953003031cb4fde39082f17c75cd00e9f29061d5e9cb5b08e",
+      "all_non_environment_observation_fields_exact": true,
+      "whole_restored_receipt_equals_actual_base": true,
+      "both_typed_id_preimages_verified": true
+    },
+    {
+      "unit": 5,
+      "function": "flb_task_queue_create",
+      "base": "7f52af721ab75fd11c14150c70b816c9e41de0c99a22a340ce5b44ee4cfaf491",
+      "tip": "53f4439c24efaeb3fbf3e9570332a1023df1ff9612139d10d829f4c74080b5b1",
+      "all_non_environment_observation_fields_exact": true,
+      "whole_restored_receipt_equals_actual_base": true,
+      "both_typed_id_preimages_verified": true
+    },
+    {
+      "unit": 5,
+      "function": "flb_task_retry_create",
+      "base": "795f81524368f9550771d4e32a1467970e3742fcb4df01260680162a192b534a",
+      "tip": "466242c274b4d8cb2c12af40ad57129e3ffece8092a7324f73ec8f409fa2fc5b",
+      "all_non_environment_observation_fields_exact": true,
+      "whole_restored_receipt_equals_actual_base": true,
+      "both_typed_id_preimages_verified": true
+    },
+    {
+      "unit": 5,
+      "function": "task_alloc",
+      "base": "9e2b634bf63f5879e5f5d8fbca75f9fc1c47d5fae744da8ea4ecc052148e1938",
+      "tip": "5dbeb7e60480a47690029cd9a5acf258d3c349bcab900f84f26d3702b55556b7",
+      "all_non_environment_observation_fields_exact": true,
+      "whole_restored_receipt_equals_actual_base": true,
+      "both_typed_id_preimages_verified": true
+    },
+    {
+      "unit": 5,
+      "function": "task_alloc",
+      "base": "524d4e0afa8c8c119eaf4bcfce237f527fd67cd208d492512f674fbdeb89921d",
+      "tip": "8be33eca83d51a39de894721481fe2857caab53f7de1c0cb82eeeb31d547160d",
+      "all_non_environment_observation_fields_exact": true,
+      "whole_restored_receipt_equals_actual_base": true,
+      "both_typed_id_preimages_verified": true
+    },
+    {
+      "unit": 5,
+      "function": "task_collect_output_references",
+      "base": "e0eaa937a3c5ea7c957563bda5bc000980fbc7d7c309792625602195cc96affa",
+      "tip": "2dd2aa475157685b1ccbd2d1a45dfbe201cf0774075fb53293a235e49823ed6c",
+      "all_non_environment_observation_fields_exact": true,
+      "whole_restored_receipt_equals_actual_base": true,
+      "both_typed_id_preimages_verified": true
+    },
+    {
+      "unit": 5,
+      "function": "task_collect_output_references",
+      "base": "7197a072a550d06317be086b6b60ff18938ff5a97038b8cc8f3386748fb09aea",
+      "tip": "33b01e00c655c4969ec918f16da910929511394b9aeba495831d043e21017e0f",
+      "all_non_environment_observation_fields_exact": true,
+      "whole_restored_receipt_equals_actual_base": true,
+      "both_typed_id_preimages_verified": true
+    },
+    {
+      "unit": 6,
+      "function": "flb_task_create",
+      "base": "edecc868add0fd8fa411ad71fbea301ad278a0c935eaa0c5b63325fbde7bcb24",
+      "tip": "02072625fd862c62ece5f727af714d030539f6446d1459ef4e2535c0f89b1a5d",
+      "all_non_environment_observation_fields_exact": true,
+      "whole_restored_receipt_equals_actual_base": true,
+      "both_typed_id_preimages_verified": true
+    },
+    {
+      "unit": 6,
+      "function": "flb_task_create",
+      "base": "1501c6ca3ccfb8c7c6214728d528ee19665ac962e06d77a8a6a00c3e98e4ce5c",
+      "tip": "2677b5e22033319bb7d5a2be2a3dab86dbbb531938136101efe52e9555b57416",
+      "all_non_environment_observation_fields_exact": true,
+      "whole_restored_receipt_equals_actual_base": true,
+      "both_typed_id_preimages_verified": true
+    },
+    {
+      "unit": 6,
+      "function": "flb_task_create",
+      "base": "8b93d220a7cf82469516ec61707abf5938981361a8a5047773411614a9f741a9",
+      "tip": "463cba25ca1ce7ed5e346e09ce227415bd5dc63ee0396782f31c01ad0555252d",
+      "all_non_environment_observation_fields_exact": true,
+      "whole_restored_receipt_equals_actual_base": true,
+      "both_typed_id_preimages_verified": true
+    },
+    {
+      "unit": 6,
+      "function": "flb_task_create",
+      "base": "a2838ba51988fd5b2d10fdb2ecda92e5da6fa61d73cc8df0f692581bbc13ed45",
+      "tip": "4e65615d76e2e63d33cdc1202a65ac9da691f4cb841ea607e922b58a152a53a2",
+      "all_non_environment_observation_fields_exact": true,
+      "whole_restored_receipt_equals_actual_base": true,
+      "both_typed_id_preimages_verified": true
+    },
+    {
+      "unit": 6,
+      "function": "flb_task_create",
+      "base": "4b31a3269f279b64f9bf39ef41162954bb33c004108134beb6ca2940a4962794",
+      "tip": "6fc2d20a7bcee55364a17b986114ed889b7fad2b20af0c1244177bb4dc488d7c",
+      "all_non_environment_observation_fields_exact": true,
+      "whole_restored_receipt_equals_actual_base": true,
+      "both_typed_id_preimages_verified": true
+    },
+    {
+      "unit": 6,
+      "function": "flb_task_create",
+      "base": "e8c520ac78731ebc2f095508dd51147c879ab4eac354f07b27dd5a5254e18237",
+      "tip": "d206e2759bf1e60dbd83eb7b88bc3b0a7599e37e493dfc99ed852581d5d55ada",
+      "all_non_environment_observation_fields_exact": true,
+      "whole_restored_receipt_equals_actual_base": true,
+      "both_typed_id_preimages_verified": true
+    },
+    {
+      "unit": 6,
+      "function": "flb_task_queue_create",
+      "base": "6ecd17126a7a55375f7bdeed309ca952c5cab2f266e5c6c358909bf5b34e9792",
+      "tip": "0ef47ed9fe84dfcd2941528183c66efa05f604600174eee4c9db5f822c6ea9ba",
+      "all_non_environment_observation_fields_exact": true,
+      "whole_restored_receipt_equals_actual_base": true,
+      "both_typed_id_preimages_verified": true
+    },
+    {
+      "unit": 6,
+      "function": "flb_task_retry_create",
+      "base": "7ac8a038be2c537217b3778b58b30dd56d72e71acf356edabec273d7c2dc520e",
+      "tip": "a0891fced5b9e5449d209a8a6c0b2423132551332c36439353e72460968a8a21",
+      "all_non_environment_observation_fields_exact": true,
+      "whole_restored_receipt_equals_actual_base": true,
+      "both_typed_id_preimages_verified": true
+    },
+    {
+      "unit": 6,
+      "function": "task_alloc",
+      "base": "dcbef886c220226dd414e11f6e80f2f071a50c8a70d1748813385da9084e024f",
+      "tip": "49204ea25042abde3cac21896b1287b55faf4942122b2c11c8a8b120c6d8d933",
+      "all_non_environment_observation_fields_exact": true,
+      "whole_restored_receipt_equals_actual_base": true,
+      "both_typed_id_preimages_verified": true
+    },
+    {
+      "unit": 6,
+      "function": "task_alloc",
+      "base": "56e4d90c7763d9fa29327bd461413cba4bdb1c1c127528fb29d7506091f2f694",
+      "tip": "9634684371b62577897b47f3dc2f5a6a61e4cb22b2e5f83abbc9f66e276334f7",
+      "all_non_environment_observation_fields_exact": true,
+      "whole_restored_receipt_equals_actual_base": true,
+      "both_typed_id_preimages_verified": true
+    },
+    {
+      "unit": 6,
+      "function": "task_collect_output_references",
+      "base": "ddc5b09225a1ffc77010372ada5501e21a891aeb5d299ed19fb2e8a129342737",
+      "tip": "078ee06332340c68b24e7f6da0b311f8ce1a4ca7a823407dff7ba8e358bd5b2b",
+      "all_non_environment_observation_fields_exact": true,
+      "whole_restored_receipt_equals_actual_base": true,
+      "both_typed_id_preimages_verified": true
+    },
+    {
+      "unit": 6,
+      "function": "task_collect_output_references",
+      "base": "d9254c061f515f6a4ecfa9258c7d0b61e4f7040caa200279bf400832c8653878",
+      "tip": "46d88d890c73eefaa084f4c32c013697d3d3789d12af713fe388a79b8aef8075",
+      "all_non_environment_observation_fields_exact": true,
+      "whole_restored_receipt_equals_actual_base": true,
+      "both_typed_id_preimages_verified": true
+    }
+  ],
+  "producer_sources": {
+    "crates/qcore-c-gateway/src/reading_site_evidence.rs": "643d5f4ca49de685450053e158ec6151edbbb8b3eb7e8b9c786cf4ef61f49d17",
+    "crates/qcore-schemas/src/contract.rs": "18109ddfa8021d78e4d3c1d28e7ae7b5065cdd8d7c285aff1331022944d2292e",
+    "crates/qcore-schemas/src/hypothesis.rs": "30f20b9e40411f3000f24fe86f3b7fc2db6f10d7b331228467ba704abc684002"
+  },
+  "source_binding": "open",
+  "truth_transport": false,
+  "fields_erased": 0,
+  "fields_masked": 0,
+  "meaning": "Exact whole canonical environments reconstructed from reviewed two-function/two-source additions and independently proven home-environment identities; typed serde bind ID preimages on both actual receipts match, complete restored receipt sets equal actual BASE. Receipt order changes follow changed IDs. This replays identities, not C extraction or libc behavior."
+}
