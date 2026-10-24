@@ -1,3 +1,4 @@
+import QCore.CmetricsApiContracts
 import QCore.TrackedSelfInit
 import QCore.PointerStore
 import QCore.CheckedSelfInitCall
@@ -57,3 +58,19 @@ import QCore.CheckedSelfInitCall
 #print axioms QCore.TrackedSelfInit.shared_flow_vectors
 
 #print axioms QCore.TrackedSelfInit.shared_source_target_vectors
+
+#print axioms QCore.CmetricsApiContracts.failure_keeps_committed_obligations
+#print axioms QCore.CmetricsApiContracts.cleanup_discharges_contents
+#print axioms QCore.CmetricsApiContracts.cleanup_preserves_enclosing_storage
+#print axioms QCore.CmetricsApiContracts.cleanup_does_not_clear_pointer_fields
+#print axioms QCore.CmetricsApiContracts.a_nonempty_cleanup_is_not_generally_idempotent
+#print axioms QCore.CmetricsApiContracts.getter_failure_can_keep_new_map_owned_metric
+#print axioms QCore.CmetricsApiContracts.attaching_does_not_retire_the_parent
+#print axioms QCore.CmetricsApiContracts.attaching_preserves_old_primary_members
+#print axioms QCore.CmetricsApiContracts.embedded_result_needs_live_map
+#print axioms QCore.CmetricsApiContracts.destroy_invalidates_every_metric_borrow
+#print axioms QCore.CmetricsApiContracts.destroy_discharges_primary_ownership
+#print axioms QCore.CmetricsApiContracts.expiration_preserves_the_enclosing_map
+#print axioms QCore.CmetricsApiContracts.expiration_invalidates_an_old_borrow_epoch
+#print axioms QCore.CmetricsApiContracts.parsed_model_is_not_a_trusted_call
+#print axioms QCore.CmetricsApiContracts.shared_vectors

@@ -8,6 +8,15 @@ use qcore_compiler::{
 // PREMISE-SYMBOLIC-ADOPTION: deliberate +1,348 metadata-only clause pins
 // across 169 declarations. Original hypotheses/interpreted clauses are retained.
 const EXPECTED_CONTRACTS: &[(&str, &str, usize)] = &[
+    // Source-audited CMetrics API models; no interpreted call permission.
+    ("cmetrics/map_lifetime.qv", "cmt_map_create", 11),
+    ("cmetrics/map_lifetime.qv", "cmt_map_metric_get", 18),
+    ("cmetrics/map_lifetime.qv", "cmt_map_metric_get_val", 8),
+    ("cmetrics/map_lifetime.qv", "cmt_map_metric_destroy", 10),
+    ("cmetrics/map_lifetime.qv", "cmt_map_metrics_expire", 11),
+    ("cmetrics/map_lifetime.qv", "cmt_map_destroy", 12),
+    ("cmetrics/opts_lifetime.qv", "cmt_opts_init", 15),
+    ("cmetrics/opts_lifetime.qv", "cmt_opts_exit", 10),
     ("cfl/arena_lifetime.qv", "cfl_arena_create_with_options", 5),
     ("cfl/arena_lifetime.qv", "cfl_arena_destroy", 5),
     ("cfl/intrusive_list.qv", "cfl_list_add", 4),
@@ -2445,7 +2454,8 @@ fn every_qcore_contract_source_parses_round_trips_and_compiles() {
     // 135 -> 136 by RK-PLUGIN-LIBRARY-OUTER-ENVELOPE's librdkafka/outer.qv.
     // Callback placement adds librdkafka/logging.qv; declarations and clauses are unchanged.
     // 137 -> 138 by card W48-RK-LOG-CALLER-FRAME's librdkafka/log_caller_frame.qv.
-    assert_eq!(sources.len(), 138, "unexpected contract corpus size");
+    // Map and opts lifecycle models deliberately add two canonical modules.
+    assert_eq!(sources.len(), 140, "unexpected contract corpus size");
 
     for (logical, path) in &sources {
         let written = fs::read_to_string(path).expect("contract source is readable");

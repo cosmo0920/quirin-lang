@@ -1,3 +1,4 @@
+import QCore.CmetricsApiContracts
 import QCore.TrackedSelfInit
 import QCore.ResultConstructors
 import QCore.LoggerEffects

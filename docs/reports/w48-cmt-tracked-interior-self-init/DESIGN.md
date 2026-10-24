@@ -65,3 +65,11 @@ transfer and Lean abstraction. The source-to-model correspondence remains a
 reviewed premise under rule 28, not a generated refinement proof. The existing
 CG11 checker remains the call-specific authority. No resource-v1 declaration,
 source pin, membership fact or ordinary exported summary is introduced.
+
+The user additionally requested the CMetrics map and opts API contracts.
+[API audit specification](CMETRICS_APIS.md) describes all eight public APIs,
+including partial failure, retained views, nested ownership and retirement.
+They are declared models outside interpreted views; trusted adoption remains
+separate work and grants no neutral initializer permission. The native feature
+measurement retains its frozen binary and inputs, with later API-model source
+and provider checks reported at their actual checkpoint.

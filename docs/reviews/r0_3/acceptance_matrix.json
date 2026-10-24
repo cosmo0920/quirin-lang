@@ -195,7 +195,7 @@
   "ct_stage_names": 20,
   "ct_cells": 1000,
   "unverified_spec_items": 10,
-  "named_followups": 820
+  "named_followups": 822
  },
  "derivation": {
   "rule": "no count in a section this file marks `derived` is hand-copied from a status ledger; each is read from the manifest or validated run record named beside it. Sections marked `hand_maintained` are recorded analysis carried verbatim from the previous matrix, and `integrator_supplied` numbers name whether they were measured for this run or carried - see section_ownership.",
@@ -6626,7 +6626,7 @@
   ]
  },
  "corpus": {
-  "contract_modules": 138,
+  "contract_modules": 140,
   "contract_modules_pinned_by": "compiler/tests/qcore_contract_corpus.rs",
   "contract_clause_pin": {
    "const": "EXPECTED_CONTRACTS",
@@ -7241,7 +7241,7 @@
   "cargo_clippy": "clean",
   "standing_gate": "complete on combined committed source 6874be01bfdf7a5ae349f50566d6915164d57501; root and provider gates",
   "full_language_conformance": false,
-  "measurement_provenance": "integrator_supplied (docs/reports/w48-cmt-list-self-init/integration/gate.json)"
+  "measurement_provenance": "carried_from_previous_matrix: these numbers were NOT measured for this regeneration; pass --gate PATH with the standing-gate results of this checkpoint to replace them"
  },
  "named_followups": [
   {
@@ -12937,7 +12937,19 @@
    "title": "Transport checked self-initializer effects to tracked or embedded caller objects",
    "why": "Open after W48-CMT-LIST-SELF-INIT. Its private empty-frame call admits no tracked owner, interior/member-address actual or member-place alias and exports no ordinary summary. DISCHARGE: generic checked shape/effect transport for an exact live caller-owned object or embedded member, preserving actual CG11 writes, derived/member alias invalidation, custody and list-membership obligations; matching audited Rust/Lean without placeholders or project axioms, complete source/ABI/full-body/all-exit checks, wrong-owner/layout/alias and callback/export refusal controls, and fresh BASE/planner then committed prediction then implementation with complete resource/NULL/runtime native attribution. Never erase initializer writes into a neutral summary.",
    "source": "docs/reports/w48-cmt-list-self-init/README.md"
+  },
+  {
+   "id": "CMT-MAP-OPTS-CONTRACT-ADOPTION",
+   "title": "Discharge checked consumers for CMetrics map and opts API contracts",
+   "why": "Open after adding source-audited declared-model cmetrics/map_lifetime.qv and cmetrics/opts_lifetime.qv for six map and two opts APIs. They grant no interpreted resource/bounds/outer call permission. DISCHARGE: generic checked consumers with matching audited Rust/Lean for copied versus retained inputs, transitive map ownership, primary versus secondary/cache/backpointer relations, embedded versus dynamic metric borrows, getter NULL after committed mutation, expiration/destructor invalidation and external coordination, and opts partial initialization plus cleanup without clearing fields. Opts contents can retire before teardown-only map destruction. Prove source/ABI/body coverage and all representation/alias/lifetime obligations, use truthful reviewed pins for any eventual interpreted declaration, retain Unknown on missing proof, and own fresh prediction/native attribution for actual adoption. Never replace these effects by an ordinary neutral summary.",
+   "source": "docs/reports/w48-cmt-tracked-interior-self-init/CMETRICS_APIS.md"
+  },
+  {
+   "id": "CMT-LABELED-HASH-ZERO-STATIC-STORAGE",
+   "title": "Account for labeled zero-hash results reaching embedded metric storage",
+   "why": "Open source obligation, not a validated upstream defect: cmt_map.c metric_hash_lookup returns the embedded metric for hash zero even from labeled lookup; metric_prepare_storage may allocate embedded value storage, while destruction/expiration uses metric_static_set to decide embedded cleanup. DISCHARGE: establish that the labeled zero-hash case is unreachable under the audited hash/input profile, or model and validate its complete static-storage lifecycle, flag/accounting and alias obligations. Do not claim reachability or a defect without a validated witness, and do not assume collision exclusion from a function name. The declared map API model explicitly requires zero-hash exclusion or independently established embedded accounting.",
+   "source": "docs/reports/w48-cmt-tracked-interior-self-init/CMETRICS_APIS.md"
   }
  ],
- "updated": "Completed plugin premise integration; exact hand-maintained union retains810followups, borrowed measured-source8419Rust/354Lean/freshcard133provider, exact source equivalence checked; authoritative root committed-matrix Python confirmation in integration receipt."
+ "updated": "Completed plugin premise integration; exact hand-maintained union retains810followups, borrowed measured-source8419Rust/354Lean/freshcard133provider, exact source equivalence checked; authoritative root committed-matrix Python confirmation in integration receipt. CMetrics map/opts API model specifications added at the explicit user request. Eight declared-model API contracts remain outside interpreted views, with CMT-MAP-OPTS-CONTRACT-ADOPTION and CMT-LABELED-HASH-ZERO-STATIC-STORAGE Open. No API coverage or new gate is claimed; source validation is pending."
 }
