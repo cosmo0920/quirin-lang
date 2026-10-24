@@ -28,3 +28,9 @@ command had started and no output directory existed on resume. The new run
 uses fresh `integration-gate-1` outputs. The acceptance matrix is regenerated
 with `--gate docs/reports/w48-bu-external-callee-contracts/integration/gate.json`;
 the committed regenerated matrix receives a separate root Python check.
+
+The committed first matrix (`a2a900bb5`) passes all 374 root Python tests;
+`post-matrix-python.json` binds its unchanged matrix bytes and private log.
+During this validation, another chat advanced main to `81df98c9d` with rule 37.
+This first gate remains a scoped checkpoint; the combined source with that
+new main is measured separately under `current-main/`.
