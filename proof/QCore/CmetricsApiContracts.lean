@@ -29,26 +29,39 @@ theorem failure_keeps_committed_obligations (ids : List Nat) (id : Nat)
 theorem cleanup_discharges_contents (o out : Opts) (h : cleanup o = some out) :
     out.owned = [] := by
   unfold cleanup at h
-  split at h <;> simp_all
+  split at h
+  · injection h with hout
+    cases hout
+    rfl
+  · contradiction
 
 theorem cleanup_preserves_enclosing_storage (o out : Opts)
     (h : cleanup o = some out) : out.storageLive = o.storageLive := by
   unfold cleanup at h
-  split at h <;> simp_all
+  split at h
+  · injection h with hout
+    cases hout
+    rfl
+  · contradiction
 
 theorem cleanup_does_not_clear_pointer_fields (o out : Opts)
     (h : cleanup o = some out) : out.stored = o.stored := by
   unfold cleanup at h
-  split at h <;> simp_all
+  split at h
+  · injection h with hout
+    cases hout
+    rfl
+  · contradiction
 
 theorem a_nonempty_cleanup_is_not_generally_idempotent (o : Opts)
     (nonempty : o.stored ≠ []) : (cleanup o).bind cleanup = none := by
-  cases fields : o.stored with
-  | nil => exact False.elim (nonempty fields)
-  | cons id rest =>
-    by_cases h : canExit o = true
-    · simp [cleanup, h, canExit, fields]
-    · simp [cleanup, h]
+  have emptyCan : canExit { o with owned := [] } = false := by
+    cases fields : o.stored with
+    | nil => exact False.elim (nonempty fields)
+    | cons id rest => simp [canExit, fields]
+  by_cases h : canExit o = true
+  · simp [cleanup, h, emptyCan]
+  · simp [cleanup, h]
 
 structure MapState where
   live : Bool := true
@@ -82,9 +95,9 @@ def destroy (m : MapState) : MapState :=
 /-- Conservative abstract invalidation: retirement ends all older borrow epochs. -/
 def expire (m : MapState) (retired : List Nat) : MapState :=
   { m with epoch := m.epoch + 1,
-    primary := m.primary.filter (fun id => !retired.contains id),
-    secondary := m.secondary.filter (fun id => !retired.contains id),
-    cached := m.cached.filter (fun id => !retired.contains id) }
+           primary := m.primary.filter (fun id => !retired.contains id),
+           secondary := m.secondary.filter (fun id => !retired.contains id),
+           cached := m.cached.filter (fun id => !retired.contains id) }
 
 theorem getter_failure_can_keep_new_map_owned_metric (m : MapState) (id : Nat) :
     id ∈ (failedGetAfterAttach m id).1.primary ∧

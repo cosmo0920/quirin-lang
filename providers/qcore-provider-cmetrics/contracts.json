@@ -4,8 +4,10 @@
   "contracts": {
     "contracts/cmetrics/context_lifetime.qv": "1ba76df850e122ae7a37a529594f94ad2257c31de5383e0fe106e063c2731014",
     "contracts/cmetrics/counter_reset.qv": "0ac6d629272eea0c892f7b53527e051af73f3452b98f082f24e6ae0719a3d37c",
+    "contracts/cmetrics/map_lifetime.qv": "95bcfe327bd89cf324fe1488783825f77e47de27adbd8057c3ae195c3733cda6",
     "contracts/cmetrics/metric_values.qv": "c3db21d15d98e12fdf11fe6ffe3de98f674c94625256a94b3270f9db73be1a43",
     "contracts/cmetrics/mpack_utils.qv": "c0c2c64b6b569303a24ecffd7c257641668747417851f2d12825aa13d13a93a2",
-    "contracts/cmetrics/null_deref.qv": "4041672b8470b5553f70099da2f23fa2490cac2a7eba5801e847dccea861faf3"
+    "contracts/cmetrics/null_deref.qv": "4041672b8470b5553f70099da2f23fa2490cac2a7eba5801e847dccea861faf3",
+    "contracts/cmetrics/opts_lifetime.qv": "4b9ad1d7bf2bc8f06e2749b0e6ab4407ddd000fbc7bafed9c93d5dbd24ce1852"
   }
 }

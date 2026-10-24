@@ -8,15 +8,6 @@ use qcore_compiler::{
 // PREMISE-SYMBOLIC-ADOPTION: deliberate +1,348 metadata-only clause pins
 // across 169 declarations. Original hypotheses/interpreted clauses are retained.
 const EXPECTED_CONTRACTS: &[(&str, &str, usize)] = &[
-    // Source-audited CMetrics API models; no interpreted call permission.
-    ("cmetrics/map_lifetime.qv", "cmt_map_create", 11),
-    ("cmetrics/map_lifetime.qv", "cmt_map_metric_get", 18),
-    ("cmetrics/map_lifetime.qv", "cmt_map_metric_get_val", 9),
-    ("cmetrics/map_lifetime.qv", "cmt_map_metric_destroy", 10),
-    ("cmetrics/map_lifetime.qv", "cmt_map_metrics_expire", 11),
-    ("cmetrics/map_lifetime.qv", "cmt_map_destroy", 12),
-    ("cmetrics/opts_lifetime.qv", "cmt_opts_init", 15),
-    ("cmetrics/opts_lifetime.qv", "cmt_opts_exit", 10),
     ("cfl/arena_lifetime.qv", "cfl_arena_create_with_options", 5),
     ("cfl/arena_lifetime.qv", "cfl_arena_destroy", 5),
     ("cfl/intrusive_list.qv", "cfl_list_add", 4),
@@ -302,6 +293,13 @@ const EXPECTED_CONTRACTS: &[(&str, &str, usize)] = &[
     // the declarations are the neutral element, which a faithful summary of a
     // body that releases nothing cannot contradict. Read from
     // `lib/cmetrics/src/cmt_metric.c:244-251` and `:71-81`.
+    // Source-audited CMetrics API models; no interpreted call permission.
+    ("cmetrics/map_lifetime.qv", "cmt_map_create", 11),
+    ("cmetrics/map_lifetime.qv", "cmt_map_metric_get", 18),
+    ("cmetrics/map_lifetime.qv", "cmt_map_metric_get_val", 9),
+    ("cmetrics/map_lifetime.qv", "cmt_map_metric_destroy", 10),
+    ("cmetrics/map_lifetime.qv", "cmt_map_metrics_expire", 11),
+    ("cmetrics/map_lifetime.qv", "cmt_map_destroy", 12),
     ("cmetrics/metric_values.qv", "cmt_metric_get_timestamp", 3),
     ("cmetrics/metric_values.qv", "cmt_metric_set_double", 5),
     // W46-METRIC-TRACE-CONTRACT-GAPS: scalar-only reads, writes, and
@@ -390,6 +388,8 @@ const EXPECTED_CONTRACTS: &[(&str, &str, usize)] = &[
     // Card W36-CORPUS-CONTRACTS-3: `cmt_destroy`'s exact sibling one library
     // over, read from `lib/ctraces/src/ctraces.c:58-71`, `nonnull` on the same
     // ground. This is the corpus's first `ctraces` contract module.
+    ("cmetrics/opts_lifetime.qv", "cmt_opts_init", 15),
+    ("cmetrics/opts_lifetime.qv", "cmt_opts_exit", 10),
     ("ctraces/context_lifetime.qv", "ctr_destroy", 3),
     ("ctraces/context_lifetime.qv", "ctr_id_cmp", 4),
     ("ctraces/context_lifetime.qv", "ctr_id_get_len", 3),
