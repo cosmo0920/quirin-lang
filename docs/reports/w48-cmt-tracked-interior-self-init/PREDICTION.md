@@ -65,3 +65,25 @@ and receive their required checks. Paired native runs retain the same frozen
 BASE input snapshot; the report will distinguish that isolated Rust measurement
 from validation of the updated canonical `.qv` model and package contents.
 No source pin is fabricated for a declaration the resource loader cannot use.
+
+## CMetrics API contract scope amendment
+
+The user now explicitly requests `cmt_map_*` and, where possible, `cmt_opts_*`
+contracts to audit Fluent Bit's core mechanism. This amendment precedes those
+API contract edits. The original fresh BASE/planner and prediction remain
+frozen, as does the running initializer TIP binary at e92d8aef35a8bd14550e90219d19a56eb3b196e7.
+
+Add canonical source-audited declared-model `.qv` modules for the six public
+map APIs and two opts APIs. Record retained opts/parent views, transitive map
+ownership, map-borrowed metric results, primary/secondary/cache roles,
+retirement invalidation and external coordination. Opts init has partial
+failure ownership; exit neither frees the enclosing struct nor clears fields.
+No neutral resource-v1 summary or assumed complete rollback is permitted.
+
+Predicted interpreted resource/NULL/runtime verdict effect: zero, because these
+models remain outside interpreted views until their named source-effect
+obligations have checked consumers. Add matching audited Lean lifecycle models,
+Rust source/model/loader controls, deliberate corpus/inventory updates and fresh
+root/provider gates. Existing frozen native evidence remains attributed to its
+actual binary and inputs; the later API-model validation is a separate source
+checkpoint. No relabelling of the running measurement as an API-adoption run.
