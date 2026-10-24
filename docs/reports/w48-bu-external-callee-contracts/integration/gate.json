@@ -1,0 +1,13 @@
+{
+  "note": "Merged-source standing/provider gate at b7c2b77e1283256b8b300be89184ba43e7035ba9 (merge of main a7e5ed4cc and card 7d4ced73d), all 19 commands exit 0. Root Rust 547 units / 560 summaries, 8601 passed / 0 failed / 15 ignored. Card's isolated gate had 8593 passed; the merged measurement owns its actual count and does not rewrite that checkpoint. No combined native measurement is claimed. The adjacent Clang recording comes from this exact gate run. Full commands, source guards and private logs are in command-receipt.json.",
+  "workspace_tests": 8601,
+  "provider_tests": 133,
+  "python_evidence_validator_tests": 374,
+  "reevaluation_probe_exit": 0,
+  "reevaluation_followup_exit": 0,
+  "cargo_fmt": "clean",
+  "cargo_clippy": "clean",
+  "standing_gate": "complete",
+  "lean_audits": 369,
+  "clang": "present: Ubuntu clang version 21.1.8 (6ubuntu1)"
+}

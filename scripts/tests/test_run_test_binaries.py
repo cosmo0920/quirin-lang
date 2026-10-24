@@ -289,6 +289,58 @@ class WorkspaceTests(unittest.TestCase):
             self.assertFalse(log_dir.exists(), "nothing was built or run")
 
 
+class PackageSelectionTests(unittest.TestCase):
+    """`--packages` (card GATE-ELASTIC): the scoped card gate's restricted suite."""
+
+    def test_selection_arguments(self):
+        self.assertEqual(runner_mod.selection_args(None), ["--workspace"])
+        self.assertEqual(runner_mod.selection_args(["a", "b"]), ["-p", "a", "-p", "b"])
+        self.assertIsNone(runner_mod.parse_packages(None))
+        self.assertEqual(runner_mod.parse_packages(["b,a", "a", " c "]), ["a", "b", "c"])
+        with self.assertRaises(ValueError):
+            runner_mod.parse_packages([" , "])
+
+    def test_only_members_with_a_library_get_doc_tests(self):
+        document = {"packages": [
+            {"name": "lib", "targets": [{"kind": ["lib"]}, {"kind": ["test"]}]},
+            {"name": "bin", "targets": [{"kind": ["bin"]}, {"kind": ["test"]}]},
+            {"name": "macro", "targets": [{"kind": ["proc-macro"]}]},
+        ]}
+        self.assertEqual(runner_mod.library_packages(document), {"lib", "macro"})
+
+    def test_a_restricted_run_keeps_the_exclusive_phase_of_selected_members(self):
+        entry = "qcorec::test::plugin_packages"
+        self.assertIn(entry, runner_mod.EXCLUSIVE)
+        record = {"sequence": 0, "argv": ["/t/p"], "cwd": "/pkg", "env": {}}
+        units, problems = runner_mod.plan_units({"/t/p": entry}, [record], {"qcorec"}, {}, None)
+        self.assertEqual(problems, [])
+        self.assertTrue(units[0].exclusive)
+        # A selected member whose EXCLUSIVE binary was not built still fails closed.
+        _, problems = runner_mod.plan_units({}, [], {"qcorec"}, {}, None)
+        self.assertTrue(any(entry in problem for problem in problems), problems)
+
+    def test_the_summary_names_the_selection(self):
+        with tempfile.TemporaryDirectory() as directory:
+            document = runner_mod.write_summary(Path(directory), [], [], {}, 1, None, ["a", "b"])
+            self.assertEqual(document["packages"], ["a", "b"])
+            document = runner_mod.write_summary(Path(directory), [], [], {}, 1, None)
+            self.assertIsNone(document["packages"], "None is the whole workspace")
+
+    def test_a_non_member_is_refused_before_building(self):
+        with tempfile.TemporaryDirectory() as directory:
+            log_dir = Path(directory) / "logs"
+            with open(os.devnull, "w") as sink:
+                stderr = sys.stderr
+                sys.stderr = sink
+                try:
+                    code = runner_mod.main(["--log-dir", str(log_dir),
+                                            "--packages", "qcorec,no-such-member"])
+                finally:
+                    sys.stderr = stderr
+            self.assertEqual(code, 2)
+            self.assertFalse(log_dir.exists(), "nothing was built or run")
+
+
 class CaptureTests(unittest.TestCase):
     def test_capture_runner_records_argv_cwd_and_environment_without_running(self):
         with tempfile.TemporaryDirectory() as directory:

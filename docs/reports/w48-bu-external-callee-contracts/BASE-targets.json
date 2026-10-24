@@ -1,0 +1,360 @@
+{
+  "unit_status_counts": {
+    "Unknown": 166,
+    "Safe": 8,
+    "Unsafe": 7,
+    "data_only": 4
+  },
+  "not_projected_entries": 87,
+  "denominator_note": "Counts below describe analyzed function rows only. Every selected unit, unread or unprojected entry remains in the separate unit/source inventories; no whole-source safety percentage is inferred.",
+  "counts": {
+    "Unknown": 3826,
+    "Safe": 999,
+    "Unsafe": 9
+  },
+  "diagnostic_counts": {
+    "leak": 40,
+    "summary_conflict": 2,
+    "unknown_alias": 11002,
+    "unsupported": 27465
+  },
+  "target_rows": [
+    {
+      "library": "librdkafka",
+      "file": "rdkafka_sasl_cyrus.c",
+      "unit_index": 108,
+      "row": {
+        "contract_dependencies": {
+          "declarations": [],
+          "hypothesis_dependencies": {}
+        },
+        "diagnostics": [
+          {
+            "category": "unsupported",
+            "description": "call to uncontracted function `mtx_destroy`",
+            "line": 20772,
+            "origin": "rdkafka_sasl_cyrus.c:691"
+          }
+        ],
+        "function": "rd_kafka_sasl_cyrus_global_term",
+        "hypothesis_context": {
+          "artifact": "librdkafka/rdkafka_sasl_cyrus.c#rd_kafka_sasl_cyrus_global_term",
+          "assumptions": "41c1d7e8f325a73941dba5c91e8cd706ec17458a65201cddcdc0abe67204a348",
+          "bounds": "existing gateway budgets; no new hypothesis discharge",
+          "build_identity": "1c8ebaafc587c8ea6037c3fd39a4d1cbde02acba771a172d2ad607911e5a3557",
+          "evidence_version": "contract-hypothesis-graph.v1:15cc50053af74ee560233e5a26cfafbc83b40046",
+          "property": "resource-custody.v1",
+          "scope": "[\"rd_kafka_sasl_cyrus_cb_canon\",\"rd_kafka_sasl_cyrus_cb_chalprompt\",\"rd_kafka_sasl_cyrus_cb_getopt\",\"rd_kafka_sasl_cyrus_cb_getrealm\",\"rd_kafka_sasl_cyrus_cb_getsecret\",\"rd_kafka_sasl_cyrus_cb_getsimple\",\"rd_kafka_sasl_cyrus_cb_log\",\"rd_kafka_sasl_cyrus_client_new\",\"rd_kafka_sasl_cyrus_close\",\"rd_kafka_sasl_cyrus_conf_validate\",\"rd_kafka_sasl_cyrus_global_init\",\"rd_kafka_sasl_cyrus_global_term\",\"rd_kafka_sasl_cyrus_init\",\"rd_kafka_sasl_cyrus_kinit_refresh\",\"rd_kafka_sasl_cyrus_kinit_refresh_tmr_cb\",\"rd_kafka_sasl_cyrus_ready\",\"rd_kafka_sasl_cyrus_recv\",\"rd_kafka_sasl_cyrus_term\",\"render_callback\"]",
+          "semantic_profile": "legacy-pinned-resource-profile",
+          "source_identity": "92218bdc9a8512c094f485b5dde6fa2becfc5fb45036c08775fdbe7205dcedc7"
+        },
+        "status": "Unknown"
+      }
+    },
+    {
+      "library": "librdkafka",
+      "file": "tinycthread_extra.c",
+      "unit_index": 141,
+      "row": {
+        "contract_dependencies": {
+          "declarations": [],
+          "hypothesis_dependencies": {}
+        },
+        "diagnostics": [
+          {
+            "category": "unsupported",
+            "description": "call to uncontracted function `thrd_current`",
+            "line": 2985,
+            "origin": "tinycthread_extra.c:69"
+          }
+        ],
+        "function": "thrd_current_id",
+        "hypothesis_context": {
+          "artifact": "librdkafka/tinycthread_extra.c#thrd_current_id",
+          "assumptions": "41c1d7e8f325a73941dba5c91e8cd706ec17458a65201cddcdc0abe67204a348",
+          "bounds": "existing gateway budgets; no new hypothesis discharge",
+          "build_identity": "1c7f29b55cb8d637586fb733a34e24d11b010630a16b99ebba0c4af1897b1f2a",
+          "evidence_version": "contract-hypothesis-graph.v1:15cc50053af74ee560233e5a26cfafbc83b40046",
+          "property": "resource-custody.v1",
+          "scope": "[\"cnd_timedwait_abs\",\"cnd_timedwait_ms\",\"cnd_timedwait_msp\",\"cnd_wait_enter\",\"cnd_wait_exit\",\"rwlock_destroy\",\"rwlock_init\",\"rwlock_rdlock\",\"rwlock_rdunlock\",\"rwlock_wrlock\",\"rwlock_wrunlock\",\"thrd_current_id\",\"thrd_is_current\",\"thrd_setname\"]",
+          "semantic_profile": "legacy-pinned-resource-profile",
+          "source_identity": "184d6326e3085862d3ec8d91ee71f74d058c19bcb71a29332efaa732c19b84af"
+        },
+        "status": "Unknown"
+      }
+    },
+    {
+      "library": "monkey-libevent",
+      "file": "mk_core/mk_iov.c",
+      "unit_index": 158,
+      "row": {
+        "contract_dependencies": {
+          "declarations": [],
+          "hypothesis_dependencies": {}
+        },
+        "diagnostics": [
+          {
+            "category": "unsupported",
+            "description": "call to uncontracted function `writev`",
+            "line": 2150,
+            "origin": "mk_core/mk_iov.c:116"
+          }
+        ],
+        "function": "mk_iov_send",
+        "hypothesis_context": {
+          "artifact": "monkey-libevent/mk_core/mk_iov.c#mk_iov_send",
+          "assumptions": "41c1d7e8f325a73941dba5c91e8cd706ec17458a65201cddcdc0abe67204a348",
+          "bounds": "existing gateway budgets; no new hypothesis discharge",
+          "build_identity": "2213e66f38350145bc02f7bc2e4529282aec8f0711dffb5a40d831db24b3f152",
+          "evidence_version": "contract-hypothesis-graph.v1:15cc50053af74ee560233e5a26cfafbc83b40046",
+          "property": "resource-custody.v1",
+          "scope": "[\"mk_iov_consume\",\"mk_iov_create\",\"mk_iov_free\",\"mk_iov_free_marked\",\"mk_iov_print\",\"mk_iov_realloc\",\"mk_iov_send\",\"mk_iov_set_entry\"]",
+          "semantic_profile": "legacy-pinned-resource-profile",
+          "source_identity": "97387abadd1f6d46a0ecab0c618fa6db7d43bf71a0eab739cd3bbf54fc0d02a6"
+        },
+        "status": "Unknown"
+      }
+    }
+  ],
+  "callee_diagnostic_rows": [
+    {
+      "library": "librdkafka",
+      "file": "rdkafka.c",
+      "unit_index": 69,
+      "function": "rd_kafka_share_acquire",
+      "status": "Unknown",
+      "diagnostics": [
+        {
+          "category": "unsupported",
+          "description": "call to uncontracted function `thrd_current_id`",
+          "line": 22719,
+          "origin": "rdkafka.c:3186"
+        }
+      ]
+    },
+    {
+      "library": "librdkafka",
+      "file": "rdkafka_queue.c",
+      "unit_index": 103,
+      "function": "rd_kafka_q_destroy_final",
+      "status": "Unknown",
+      "diagnostics": [
+        {
+          "category": "unsupported",
+          "description": "call to uncontracted function `mtx_destroy`",
+          "line": 19702,
+          "origin": "rdkafka_queue.c:73"
+        }
+      ]
+    },
+    {
+      "library": "librdkafka",
+      "file": "rdkafka_sasl_cyrus.c",
+      "unit_index": 108,
+      "function": "rd_kafka_sasl_cyrus_global_term",
+      "status": "Unknown",
+      "diagnostics": [
+        {
+          "category": "unsupported",
+          "description": "call to uncontracted function `mtx_destroy`",
+          "line": 20772,
+          "origin": "rdkafka_sasl_cyrus.c:691"
+        }
+      ]
+    },
+    {
+      "library": "librdkafka",
+      "file": "rdkafka_ssl.c",
+      "unit_index": 114,
+      "function": "rd_kafka_transport_ssl_threadid_cb",
+      "status": "Unknown",
+      "diagnostics": [
+        {
+          "category": "unsupported",
+          "description": "call to uncontracted function `thrd_current_id`",
+          "line": 21194,
+          "origin": "rdkafka_ssl.c:2048"
+        }
+      ]
+    },
+    {
+      "library": "librdkafka",
+      "file": "rdkafka_telemetry.c",
+      "unit_index": 117,
+      "function": "rd_kafka_telemetry_clear",
+      "status": "Unknown",
+      "diagnostics": [
+        {
+          "category": "unsupported",
+          "description": "call to uncontracted function `mtx_destroy`",
+          "line": 20734,
+          "origin": "rdkafka_telemetry.c:118"
+        }
+      ]
+    },
+    {
+      "library": "librdkafka",
+      "file": "rdrand.c",
+      "unit_index": 130,
+      "function": "rd_seed",
+      "status": "Unknown",
+      "diagnostics": [
+        {
+          "category": "unsupported",
+          "description": "call to uncontracted function `thrd_current_id`",
+          "line": 6076,
+          "origin": "rdrand.c:55"
+        }
+      ]
+    },
+    {
+      "library": "librdkafka",
+      "file": "tinycthread_extra.c",
+      "unit_index": 141,
+      "function": "thrd_current_id",
+      "status": "Unknown",
+      "diagnostics": [
+        {
+          "category": "unsupported",
+          "description": "call to uncontracted function `thrd_current`",
+          "line": 2985,
+          "origin": "tinycthread_extra.c:69"
+        }
+      ]
+    },
+    {
+      "library": "monkey-libevent",
+      "file": "mk_core/mk_iov.c",
+      "unit_index": 158,
+      "function": "mk_iov_send",
+      "status": "Unknown",
+      "diagnostics": [
+        {
+          "category": "unsupported",
+          "description": "call to uncontracted function `writev`",
+          "line": 2150,
+          "origin": "mk_core/mk_iov.c:116"
+        }
+      ]
+    }
+  ],
+  "analyzed_homes": [
+    {
+      "library": "librdkafka",
+      "file": "tinycthread.c",
+      "unit_index": 140,
+      "unit_status": "Unknown",
+      "reason_code": "incomplete-obligation-coverage",
+      "analyzed_callee_names": [],
+      "analyzed_function_count": 0,
+      "source_functions": [
+        "_cnd_timedwait_win32",
+        "_thrd_wrapper_function",
+        "_tinycthread_tss_callback",
+        "_tinycthread_tss_cleanup",
+        "_tthread_timespec_get",
+        "call_once",
+        "cnd_broadcast",
+        "cnd_destroy",
+        "cnd_init",
+        "cnd_signal",
+        "cnd_timedwait",
+        "cnd_wait",
+        "mtx_destroy",
+        "mtx_init",
+        "mtx_lock",
+        "mtx_timedlock",
+        "mtx_trylock",
+        "mtx_unlock",
+        "thrd_create",
+        "thrd_current",
+        "thrd_detach",
+        "thrd_equal",
+        "thrd_exit",
+        "thrd_join",
+        "thrd_sleep",
+        "thrd_yield",
+        "tss_create",
+        "tss_delete",
+        "tss_get",
+        "tss_set"
+      ]
+    }
+  ],
+  "planner": {
+    "baseline_same": 6,
+    "baseline_cross": 6,
+    "ceiling": 383,
+    "ceiling_waits_on_bodies": {
+      "0": 6,
+      "1": 249,
+      "2": 94,
+      "3": 13,
+      "4": 5,
+      "5": 5,
+      "6": 5,
+      "7": 2,
+      "8": 1,
+      "9": 1,
+      "11": 1,
+      "13": 1
+    },
+    "bodies": 2200
+  },
+  "planner_targets": [
+    {
+      "body": "mk_core/mk_iov.c::mk_iov_send",
+      "library": "monkey-libevent",
+      "callers": 1,
+      "frees_same": 0,
+      "frees_cross": 1,
+      "ceiling_callers": 1,
+      "ceiling_alone": 1,
+      "own_leaves": 1,
+      "own_calls": {
+        "writev": 1
+      },
+      "own_families": {},
+      "score": 1.0,
+      "freed": [
+        "mk_server/mk_net.c::net_plain_writev"
+      ]
+    },
+    {
+      "body": "rdkafka_sasl_cyrus.c::rd_kafka_sasl_cyrus_global_term",
+      "library": "librdkafka",
+      "callers": 1,
+      "frees_same": 0,
+      "frees_cross": 1,
+      "ceiling_callers": 1,
+      "ceiling_alone": 1,
+      "own_leaves": 1,
+      "own_calls": {
+        "mtx_destroy": 1
+      },
+      "own_families": {},
+      "score": 1.0,
+      "freed": [
+        "rdkafka_sasl.c::rd_kafka_sasl_global_term"
+      ]
+    },
+    {
+      "body": "tinycthread_extra.c::thrd_current_id",
+      "library": "librdkafka",
+      "callers": 3,
+      "frees_same": 0,
+      "frees_cross": 1,
+      "ceiling_callers": 1,
+      "ceiling_alone": 1,
+      "own_leaves": 1,
+      "own_calls": {
+        "thrd_current": 1
+      },
+      "own_families": {},
+      "score": 1.0,
+      "freed": [
+        "rdkafka_ssl.c::rd_kafka_transport_ssl_threadid_cb"
+      ]
+    }
+  ]
+}

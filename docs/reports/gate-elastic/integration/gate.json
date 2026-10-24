@@ -1,0 +1,13 @@
+{
+  "note": "Full LANDING gate for GATE-ELASTIC at integration commit 66aa16683 (merge of card/gate-elastic bbd0e48d0 onto main 52c8dd71b), run with the card's own `scripts/gate_scope.py --base 52c8dd71b --full --no-slots` under the legacy lock in a detached worktree; logs and gate.json retired to private/retired-worktrees/2026-10-25-landing-gate-66aa16683/. fmt, Clippy -D warnings, Rust 8645 passed/0 failed/15 ignored (550 units/563 summaries), both reevaluation examples and 370 Lean audits exit 0. The Python suite failed exactly one test, the committed-matrix self-consistency check (dimensions.named_followups 820 vs 827), because the seven registered follow-ups were applied before this regeneration; this regeneration closes it and Python is rerun against the committed matrix. providers/ is unchanged relative to main 52c8dd71b, whose own landing ran the provider gate: provider_tests 133 is carried.",
+  "workspace_tests": 8645,
+  "provider_tests": 133,
+  "python_evidence_validator_tests": 432,
+  "reevaluation_probe_exit": 0,
+  "reevaluation_followup_exit": 0,
+  "cargo_fmt": "clean",
+  "cargo_clippy": "clean",
+  "standing_gate": "full landing gate at 66aa16683; Python rerun after matrix regeneration",
+  "lean_audits": 370,
+  "clang": "present: Ubuntu clang version 21.1.8 (6ubuntu1)"
+}

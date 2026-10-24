@@ -1,0 +1,42 @@
+[
+ {
+  "added": [],
+  "base_status": "Unknown",
+  "file": "tinycthread_extra.c",
+  "function": "thrd_current_id",
+  "library": "librdkafka",
+  "removed": [
+   {
+    "diagnostic": {
+     "category": "unsupported",
+     "description": "call to uncontracted function `thrd_current`",
+     "line": 2985,
+     "origin": "tinycthread_extra.c:69"
+    },
+    "multiplicity": 1
+   }
+  ],
+  "tip_status": "Safe",
+  "unit_index": 141
+ },
+ {
+  "added": [],
+  "base_status": "Unknown",
+  "file": "mk_core/mk_iov.c",
+  "function": "mk_iov_send",
+  "library": "monkey-libevent",
+  "removed": [
+   {
+    "diagnostic": {
+     "category": "unsupported",
+     "description": "call to uncontracted function `writev`",
+     "line": 2150,
+     "origin": "mk_core/mk_iov.c:116"
+    },
+    "multiplicity": 1
+   }
+  ],
+  "tip_status": "Safe",
+  "unit_index": 158
+ }
+]

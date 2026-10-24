@@ -1,0 +1,6 @@
+{
+  "recorded": "2026-10-24T02:16:23.189727+00:00",
+  "user_answer": "Include the pin repair",
+  "scope": "Repair the pre-existing provider resource-view count from 65 to 66, document and explicitly assert librdkafka/log_caller_frame.qv; no assertion weakening. Commit after all TIP native routes finish, before the full unconfined gate.",
+  "patch_sha256": "0c5872b0b243da9f02dcc919c73bc8ee2778dc2801ceca8f709db334c32e1418"
+}

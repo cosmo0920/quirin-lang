@@ -1,0 +1,160 @@
+{
+  "exit": 0,
+  "records": [
+    {
+      "route": "corpus",
+      "new_revision_entries": [
+        {
+          "function": "writev",
+          "entry": {
+            "contract_sha256": "a5740634008213a35b6e9673af12548e0edeacd49a18a870b0abbf642e82c32f",
+            "mode": "flexible",
+            "module": "/home/cosmo/.codex/worktrees/c1e4/quirin-lang/private/w48-bu-external-callee-contracts/runtime-src/contract/profiles/fluent-bit/../../../providers/quirin-provider-libc/contracts/libc/unistd.qv",
+            "status": "flexible-standing"
+          }
+        },
+        {
+          "function": "thrd_current",
+          "entry": {
+            "contract_sha256": "1553568a41103276d8485f803a646de66084e78958e48dc141a06e5b4b869331",
+            "mode": "flexible",
+            "module": "/home/cosmo/.codex/worktrees/c1e4/quirin-lang/private/w48-bu-external-callee-contracts/runtime-src/contract/profiles/fluent-bit/../../../providers/quirin-provider-libc/contracts/libc/threads.qv",
+            "status": "flexible-standing"
+          }
+        }
+      ],
+      "standing_before": 122,
+      "standing_after": 124,
+      "complete_revision_metadata_reconstructed": true,
+      "complete_sources_reconstructed": true,
+      "source_keys_changed": [
+        "/home/cosmo/.codex/worktrees/c1e4/quirin-lang/private/w48-bu-external-callee-contracts/runtime-src/contract/profiles/fluent-bit/../../../providers/quirin-provider-libc/contracts/libc/threads.qv",
+        "/home/cosmo/.codex/worktrees/c1e4/quirin-lang/private/w48-bu-external-callee-contracts/runtime-src/contract/profiles/fluent-bit/../../../providers/quirin-provider-libc/contracts/libc/unistd.qv"
+      ],
+      "input_metadata_sha256": {
+        "base": "a7e90a57c9c8d04396a843c92c73df5be77bb58201c5ca572085b3b1fdf3704f",
+        "tip": "ac778805baeaf229b7bfafee25e72684bf67c1e46bcc194cb610c88c4220a134"
+      },
+      "unchanged_other_fields": [
+        "audit_selection",
+        "contract_inclusion",
+        "manifest",
+        "pending_human_review",
+        "refuted_contracts",
+        "schema_version",
+        "source_profile",
+        "trust"
+      ],
+      "new_empty_graph_metadata_reconstructed": false,
+      "scope": "Contract dependencies and cross-unit imports are separately compared and attributed."
+    },
+    {
+      "route": "system",
+      "new_revision_entries": [
+        {
+          "function": "writev",
+          "entry": {
+            "contract_sha256": "a5740634008213a35b6e9673af12548e0edeacd49a18a870b0abbf642e82c32f",
+            "mode": "flexible",
+            "module": "/home/cosmo/.codex/worktrees/c1e4/quirin-lang/private/w48-bu-external-callee-contracts/runtime-src/contract/profiles/fluent-bit/../../../providers/quirin-provider-libc/contracts/libc/unistd.qv",
+            "status": "flexible-standing"
+          }
+        },
+        {
+          "function": "thrd_current",
+          "entry": {
+            "contract_sha256": "1553568a41103276d8485f803a646de66084e78958e48dc141a06e5b4b869331",
+            "mode": "flexible",
+            "module": "/home/cosmo/.codex/worktrees/c1e4/quirin-lang/private/w48-bu-external-callee-contracts/runtime-src/contract/profiles/fluent-bit/../../../providers/quirin-provider-libc/contracts/libc/threads.qv",
+            "status": "flexible-standing"
+          }
+        }
+      ],
+      "standing_before": 122,
+      "standing_after": 124,
+      "complete_revision_metadata_reconstructed": true,
+      "complete_sources_reconstructed": true,
+      "source_keys_changed": [
+        "/home/cosmo/.codex/worktrees/c1e4/quirin-lang/private/w48-bu-external-callee-contracts/runtime-src/contract/profiles/fluent-bit/../../../providers/quirin-provider-libc/contracts/libc/threads.qv",
+        "/home/cosmo/.codex/worktrees/c1e4/quirin-lang/private/w48-bu-external-callee-contracts/runtime-src/contract/profiles/fluent-bit/../../../providers/quirin-provider-libc/contracts/libc/unistd.qv"
+      ],
+      "input_metadata_sha256": {
+        "base": "dbd2a73e288917a49d40d138e190e0f5f8639d99b0314b2206f4d7c1d7ccffb2",
+        "tip": "c6fbf4f166885a92fa92a853920001d2ec3701fa5a909b04839831e1aa1271b5"
+      },
+      "unchanged_other_fields": [
+        "callback_member_declarations",
+        "configuration_count",
+        "contract_inclusion",
+        "contract_manifest",
+        "historical_evidence",
+        "pending_human_review",
+        "profile",
+        "profile_pin_role",
+        "refuted_contracts",
+        "schema_version",
+        "scope",
+        "source_file_count",
+        "source_revision",
+        "source_revision_policy",
+        "unit_selection"
+      ],
+      "new_empty_graph_metadata_reconstructed": true,
+      "scope": "Contract dependencies and cross-unit imports are separately compared and attributed."
+    },
+    {
+      "route": "slice",
+      "new_revision_entries": [
+        {
+          "function": "writev",
+          "entry": {
+            "contract_sha256": "a5740634008213a35b6e9673af12548e0edeacd49a18a870b0abbf642e82c32f",
+            "mode": "flexible",
+            "module": "/home/cosmo/.codex/worktrees/c1e4/quirin-lang/private/w48-bu-external-callee-contracts/runtime-src/contract/profiles/fluent-bit/../../../providers/quirin-provider-libc/contracts/libc/unistd.qv",
+            "status": "flexible-standing"
+          }
+        },
+        {
+          "function": "thrd_current",
+          "entry": {
+            "contract_sha256": "1553568a41103276d8485f803a646de66084e78958e48dc141a06e5b4b869331",
+            "mode": "flexible",
+            "module": "/home/cosmo/.codex/worktrees/c1e4/quirin-lang/private/w48-bu-external-callee-contracts/runtime-src/contract/profiles/fluent-bit/../../../providers/quirin-provider-libc/contracts/libc/threads.qv",
+            "status": "flexible-standing"
+          }
+        }
+      ],
+      "standing_before": 122,
+      "standing_after": 124,
+      "complete_revision_metadata_reconstructed": true,
+      "complete_sources_reconstructed": true,
+      "source_keys_changed": [
+        "/home/cosmo/.codex/worktrees/c1e4/quirin-lang/private/w48-bu-external-callee-contracts/runtime-src/contract/profiles/fluent-bit/../../../providers/quirin-provider-libc/contracts/libc/threads.qv",
+        "/home/cosmo/.codex/worktrees/c1e4/quirin-lang/private/w48-bu-external-callee-contracts/runtime-src/contract/profiles/fluent-bit/../../../providers/quirin-provider-libc/contracts/libc/unistd.qv"
+      ],
+      "input_metadata_sha256": {
+        "base": "614dddacb384c70e253c19c286ad1c8b2a71feb14558faeb543bb6733df5c577",
+        "tip": "184b420eb216ccb5a2f4b315aa304d43ca13ce828f3557e9b0464f747e8a54ae"
+      },
+      "unchanged_other_fields": [
+        "callback_member_declarations",
+        "configuration_count",
+        "contract_inclusion",
+        "contract_manifest",
+        "historical_evidence",
+        "pending_human_review",
+        "profile",
+        "profile_pin_role",
+        "refuted_contracts",
+        "schema_version",
+        "scope",
+        "source_file_count",
+        "source_revision",
+        "source_revision_policy",
+        "unit_selection"
+      ],
+      "new_empty_graph_metadata_reconstructed": true,
+      "scope": "Contract dependencies and cross-unit imports are separately compared and attributed."
+    }
+  ]
+}

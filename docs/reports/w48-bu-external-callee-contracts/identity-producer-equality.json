@@ -1,0 +1,30 @@
+{
+  "base_build_source": "15cc50053af74ee560233e5a26cfafbc83b40046",
+  "tip_implementation": "5dbe4a381acd5c3197057030ff3f9735caa72335",
+  "exact_source_bytes_equal": [
+    {
+      "path": "crates/qcore-audit/src/compile_db.rs",
+      "sha256": "4143ef788906ad0cb36c4a63db3b19ad17c9ebbac04309a8da390f8ef8d34d15"
+    },
+    {
+      "path": "crates/qcore-audit/src/projection.rs",
+      "sha256": "e3902a104f71b2954d0677de4ae99b18b8c750d50b40ea158e3079d08403da9a"
+    },
+    {
+      "path": "crates/qcore-c-gateway/src/clang.rs",
+      "sha256": "43d86381fd37e1a76bca0b6bc9bd427aa94358dc7b6e7be4dd5c78b1a4b061de"
+    },
+    {
+      "path": "crates/qcore-c-gateway/src/legacy_c.rs",
+      "sha256": "52ee35093ad9eaafc4c1c69f3cc147691365b0e69918d26ed00ae4601400e17d"
+    },
+    {
+      "path": "crates/qcore-c-gateway/src/null_deref.rs",
+      "sha256": "34ebdb7e98be1d0ee7152731450eacb6fb4883de18a95652fb1477b4d1a47216"
+    },
+    {
+      "path": "crates/qcore-audit/src/report.rs",
+      "sha256": "ca427932bb03d3cd1656edf5e95f30dc2bc84892ef80b51507081dd1c1f73ba2"
+    }
+  ]
+}

@@ -1,0 +1,72 @@
+{
+  "source": "bc3a01fd62356487c033a8feadd952ae3c1df2c0",
+  "commands": [
+    {
+      "name": "loader",
+      "command": [
+        "cargo",
+        "test",
+        "-p",
+        "qcore-compiler",
+        "--test",
+        "contract_loader",
+        "--no-fail-fast"
+      ],
+      "source": "bc3a01fd62356487c033a8feadd952ae3c1df2c0",
+      "started": "2026-10-24T10:54:15.394750+00:00",
+      "log": "/home/cosmo/.codex/worktrees/c1e4/quirin-lang/private/w48-bu-external-callee-contracts/repair-focused-1/loader.log",
+      "exit": 0,
+      "ended": "2026-10-24T10:54:25.742333+00:00"
+    },
+    {
+      "name": "symbolic",
+      "command": [
+        "cargo",
+        "test",
+        "-p",
+        "qcore-contract",
+        "--test",
+        "production_symbolic_adoption",
+        "--no-fail-fast"
+      ],
+      "source": "bc3a01fd62356487c033a8feadd952ae3c1df2c0",
+      "started": "2026-10-24T10:54:25.744130+00:00",
+      "log": "/home/cosmo/.codex/worktrees/c1e4/quirin-lang/private/w48-bu-external-callee-contracts/repair-focused-1/symbolic.log",
+      "exit": 101,
+      "ended": "2026-10-24T10:56:47.601990+00:00"
+    },
+    {
+      "name": "inheritance",
+      "command": [
+        "python3",
+        "-m",
+        "unittest",
+        "discover",
+        "-s",
+        "scripts/tests",
+        "-p",
+        "test_contract_corpus.py"
+      ],
+      "source": "bc3a01fd62356487c033a8feadd952ae3c1df2c0",
+      "started": "2026-10-24T10:56:47.604088+00:00",
+      "log": "/home/cosmo/.codex/worktrees/c1e4/quirin-lang/private/w48-bu-external-callee-contracts/repair-focused-1/inheritance.log",
+      "exit": 0,
+      "ended": "2026-10-24T10:57:01.082696+00:00"
+    }
+  ],
+  "logs": [
+    {
+      "path": "/home/cosmo/.codex/worktrees/c1e4/quirin-lang/private/w48-bu-external-callee-contracts/repair-focused-1/loader.log",
+      "sha256": "3cd73e48db446f75b34b3cac15b49a5b3b34a2974986921ffcda739ba4813f38"
+    },
+    {
+      "path": "/home/cosmo/.codex/worktrees/c1e4/quirin-lang/private/w48-bu-external-callee-contracts/repair-focused-1/symbolic.log",
+      "sha256": "3b00c4c31120d1db7f632606dbb77778ba10bdc152df63cb95a33436888f9229"
+    },
+    {
+      "path": "/home/cosmo/.codex/worktrees/c1e4/quirin-lang/private/w48-bu-external-callee-contracts/repair-focused-1/inheritance.log",
+      "sha256": "ba05aada16f431beb0f364961bd934a07520993ddc6f8f256d0b9b777e143bf4"
+    }
+  ],
+  "result": "Loader 10 and corpus Python checks pass; symbolic graph equality fails because the control still uses pre-rule37 semantic declarations. Full standing run was not launched. Main advanced concurrently to f00264193 with an independently passing exact semantic-checkpoint repair."
+}

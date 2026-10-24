@@ -1,0 +1,21 @@
+{
+  "exit": 0,
+  "rows": [
+    {
+      "route": "corpus",
+      "preprocessed": "private/w48-bu-external-callee-contracts/resolution-corpus-tinycthread.c-0.i",
+      "thrd_success": 0
+    },
+    {
+      "route": "system",
+      "preprocessed": "private/w48-bu-external-callee-contracts/resolution-system-tinycthread.c-0.i",
+      "thrd_success": 0
+    },
+    {
+      "route": "slice",
+      "preprocessed": "private/w48-bu-external-callee-contracts/resolution-slice-tinycthread.c-0.i",
+      "thrd_success": 0
+    }
+  ],
+  "scope": "Configured preprocessing only, not a mutex lifecycle proof or native safety verdict."
+}

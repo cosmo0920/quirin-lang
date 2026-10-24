@@ -1,0 +1,15 @@
+{
+  "base_measured_tip": "5dbe4a381acd5c3197057030ff3f9735caa72335",
+  "validation_source": "36e91795e35b76db6ac89fd8af4d4e926612e7d8",
+  "changed_file": "providers/tests/test_contract_load_path.py",
+  "patch_sha256": "0c5872b0b243da9f02dcc919c73bc8ee2778dc2801ceca8f709db334c32e1418",
+  "authorized_by": {
+    "recorded": "2026-10-24T02:16:23.189727+00:00",
+    "user_answer": "Include the pin repair",
+    "scope": "Repair the pre-existing provider resource-view count from 65 to 66, document and explicitly assert librdkafka/log_caller_frame.qv; no assertion weakening. Commit after all TIP native routes finish, before the full unconfined gate.",
+    "patch_sha256": "0c5872b0b243da9f02dcc919c73bc8ee2778dc2801ceca8f709db334c32e1418"
+  },
+  "committed": "2026-10-24T02:50:41.041454+00:00",
+  "production_code_contracts_and_native_inputs_unchanged": true,
+  "meaning": "Only a test expectation, explanatory comments and one presence assertion change. Native artifacts remain bound to their actual build source 5dbe4a381; do not relabel their evidence version."
+}
