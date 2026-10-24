@@ -58,7 +58,7 @@ theorem a_nonempty_cleanup_is_not_generally_idempotent (o : Opts)
   have emptyCan : canExit { o with owned := [] } = false := by
     cases fields : o.stored with
     | nil => exact False.elim (nonempty fields)
-    | cons id rest => simp [canExit, fields]
+    | cons id rest => simp [canExit]
   by_cases h : canExit o = true
   · simp [cleanup, h, emptyCan]
   · simp [cleanup, h]
