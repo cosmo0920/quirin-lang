@@ -363,28 +363,45 @@ mod tests {
 
     #[test]
     fn tracked_initializer_embedded_source_readers_fit_at_the_admitted_bound() {
-        if !clang_available() { return; }
-        let shape = |arms| self_init_chain(arms)
-            .replace("void chain(struct Link *p)", "struct Owner { struct Link link; }; void chain(struct Owner *p)")
-            .replace("reset(p);", "reset(&p->link);");
+        if !clang_available() {
+            return;
+        }
+        let shape = |arms| {
+            self_init_chain(arms)
+                .replace(
+                    "void chain(struct Link *p)",
+                    "struct Owner { struct Link link; }; void chain(struct Owner *p)",
+                )
+                .replace("reset(p);", "reset(&p->link);")
+        };
         let (arms, _) = deepest_admitted(shape, 50);
         let mut measured = false;
         for backoff in 0..=3 {
-            let source = shape(arms-backoff);
+            let source = shape(arms - backoff);
             let nesting = filtered_depth(&source);
             let (answer, kib) = high_water(move || {
-                let _scope = crate::typed_access_path::enter_source(&source, CCompilerDialect::Gnu17, None);
+                let _scope =
+                    crate::typed_access_path::enter_source(&source, CCompilerDialect::Gnu17, None);
                 crate::legacy_c::tracked_self_init::exercise_source_readers(&source)
             });
             if answer == Some(true) {
                 assert!(nesting > DEFAULT_LIMIT);
-                assert_stack_budget(kib, &format!("rule 36b embedded initializer source readers, depth {nesting}"));
+                assert_stack_budget(
+                    kib,
+                    &format!("rule 36b embedded initializer source readers, depth {nesting}"),
+                );
                 measured = true;
                 break;
             }
-            assert_eq!(answer, None, "a parsed deep caller must admit the checked embedded target");
+            assert_eq!(
+                answer, None,
+                "a parsed deep caller must admit the checked embedded target"
+            );
         }
-        assert!(measured, "must exercise a positive embedded target in the deep band");
+        assert!(
+            measured,
+            "must exercise a positive embedded target in the deep band"
+        );
     }
 
     #[test]

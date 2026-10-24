@@ -2797,7 +2797,12 @@ pub(super) fn transfer_dispatch(
                 )
             }
         }
-        LegacyInstruction::TrackedSelfInit { base: root, access, fallback, .. } => {
+        LegacyInstruction::TrackedSelfInit {
+            base: root,
+            access,
+            fallback,
+            ..
+        } => {
             if let Some(output) = tracked_self_init::apply(&state, root) {
                 let mut checked = BTreeSet::new();
                 let read_state = base(&with_instruction(node, access), state.clone(), &mut checked);

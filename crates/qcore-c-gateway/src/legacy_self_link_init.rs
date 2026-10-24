@@ -307,13 +307,21 @@ fn checked_leaf(tokens: &[Token], function: &str, contracts: &ResourceContracts)
 
 /// Source and full-CFG checked write set; never a custody summary.
 pub(super) fn checked_effect(
-    tokens: &[Token], function: &str, contracts: &ResourceContracts,
+    tokens: &[Token],
+    function: &str,
+    contracts: &ResourceContracts,
 ) -> Option<(String, String, BTreeSet<String>)> {
     checked_leaf(tokens, function, contracts)?;
     let leaf = profile(tokens, function, contracts, true)?;
-    let fields = leaf.stores.iter().map(|(_, place)| {
-        place.strip_prefix(&format!("{}->", leaf.parameter)).map(str::to_owned)
-    }).collect::<Option<BTreeSet<_>>>()?;
+    let fields = leaf
+        .stores
+        .iter()
+        .map(|(_, place)| {
+            place
+                .strip_prefix(&format!("{}->", leaf.parameter))
+                .map(str::to_owned)
+        })
+        .collect::<Option<BTreeSet<_>>>()?;
     Some((leaf.pointer_type, leaf.declaration, fields))
 }
 
@@ -406,7 +414,7 @@ pub(crate) fn restore_unreachable(cfg: &mut LegacyCfg) {
     for (id, node) in cfg.nodes.iter_mut().enumerate() {
         if !reachable.contains(&id)
             && let (LegacyInstruction::SelfInitCall { fallback, .. }
-                | LegacyInstruction::TrackedSelfInit { fallback, .. }) = &node.instruction
+            | LegacyInstruction::TrackedSelfInit { fallback, .. }) = &node.instruction
         {
             node.instruction = *fallback.clone();
         }
