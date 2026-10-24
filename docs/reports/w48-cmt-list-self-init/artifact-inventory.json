@@ -8,8 +8,8 @@
     "bytes": 3544
   },
   "README.md": {
-    "sha256": "7460c04cc69ba92c431a142ab6a6bb18af67b115a8a638556cebf6d113163f73",
-    "bytes": 10637
+    "sha256": "e09ed6bfa69cd0ad2333206abd40d675c8efb177cc83971c0e75da9575515070",
+    "bytes": 11033
   },
   "artifacts/corpus/attributed-comparison.json": {
     "sha256": "d92de316414f390adc87164a8ac2f487b86c3dedc1b9fcd67c2ae686549a3675",
@@ -847,9 +847,13 @@
     "sha256": "b6e3746cb8c9df9e822a49427f072881acce896e5158e20d5c5d1f15a711f515",
     "bytes": 459
   },
+  "integration/push-confirmation.json": {
+    "sha256": "ca805f31a04f5d4442ab05fbfa1363b1d31b56ebb077cb7fb7b2e63a2dff30d2",
+    "bytes": 1113
+  },
   "integration/reconciliation.json": {
-    "sha256": "7b59e94143f1f2043c56d2988e76869559727c2aa03a2f35fb4cc3172a9fd905",
-    "bytes": 11197
+    "sha256": "5793c70d1c60a02fa8f8837d43c6ca2f462b87dd54044cd142a8e7c7299b5711",
+    "bytes": 11300
   },
   "integration/rule37-memory-after-prefix.txt": {
     "sha256": "69be583efacc9ac8a2acac6ba4e1ff9b33fd278b13158e19e75253339d9dd188",

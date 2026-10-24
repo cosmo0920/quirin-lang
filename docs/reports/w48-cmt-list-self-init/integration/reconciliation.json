@@ -136,8 +136,12 @@
       ]
     }
   ],
-  "remaining": [
-    "Advance main and push configured origin; actual released-lock receipt follows."
-  ],
-  "integration_gate": "standing-gate.json"
+  "remaining": [],
+  "integration_gate": "standing-gate.json",
+  "main_integration": {
+    "decision": "applied",
+    "main_tip_published": "f0026419391339d91bcbe1b0bd2e6bb95c0c74de",
+    "push_exit": 0,
+    "verification": "push-confirmation.json"
+  }
 }

@@ -46,3 +46,5 @@ Provider checks were measured at `389090b6755b43045c8838989c91adce33e9aabe` in t
 Final committed-matrix Python acceptance passes all 374 tests at `18391a697f7d85f22592581d1e810b31f5337e78`; the [confirmation](integration/post-matrix-confirmation.json) binds the exact committed matrix hash and command. Only report/matrix/status documentation differs from the measured root source, and the pinned historical transition fixtures remain unchanged. Main advancement and pushing use these validated source bytes.
 
 All owned native and validation jobs have finished and the shared validation lock is released; the [lifecycle receipt](integration/lock-lifecycle.json) preserves both recovery owners and their actual terminal outcomes. The complete getter chain remains Open.
+
+Main was fast-forwarded from `81df98c9d` to `f0026419391339d91bcbe1b0bd2e6bb95c0c74de` and pushed to configured `origin`, exit 0; the exact remote main ref was verified. The [publication receipt](integration/push-confirmation.json) records that source/evidence commit. Its following receipt-only commit adds completion metadata, with no runtime, test, contract, proof or native-artifact change.
