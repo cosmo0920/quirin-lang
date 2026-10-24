@@ -161,15 +161,28 @@ Two compositions, kept distinct:
    answer. This composition is deliberately not commutative; what it shares
    with the first is that nothing is erased and absence is refusal.
 
-**Contracts compose the same way.** A contract bundle is a contribution to the
-loaded environment: bundles union by `(library, declaration digest)`. Two
-bundles declaring the same function with different clauses do not pick a
-winner: the declaration is withheld (`contract-conflict`; `Unknown` at every
-call site) and both are recorded. `include`/`inherit` stay the only sanctioned
-refinement. A new contract can therefore change an existing unit's result only
-by supplying a declaration that was missing (a leaf discharges) or by
-conflicting (a named `Unknown`), never by silently replacing what another
-bundle declared.
+**Contracts compose by supersession (new requirement, user direction
+2026-10-24).** A contract bundle is a contribution to the loaded environment.
+Bundles union by `(library, function)`. Where two bundles declare the same
+function with different text, the declaration with the **newer pin stamp** is in
+force and the older is **retained as superseded**, listed in the run's
+contract-revision section with both digests; it is never deleted. The stamp is
+`pinned_at`, written by `quirin-audit pin` into the declaration's lock entry
+when its current text is reviewed (lock version 3), so it is tied to the
+contract unit and to a human review, not to a file's mtime or a clock at load
+time. `pin --check` requires a re-pin to carry a later stamp than the entry it
+replaces. The operation is "greater stamp wins", a max over a total order, so
+it stays associative and commutative; its fail-closed residue is exactly the
+cases the order does not decide: equal stamps with different text, a missing or
+malformed stamp, or an unpinned declaration beside a pinned one (an unpinned
+declaration is not in force under C06.2 and never supersedes). Those withhold
+the declaration (`contract-conflict`; `Unknown` at every call site) with both
+texts recorded. `include`/`inherit` are unchanged. Call sites record the
+in-force declaration's digest in their assumptions as they do now, so a
+supersession that changes a verdict is a reviewed contract change (C06.2), not a
+refactor. This replaces today's hard loader error on a duplicate declaration;
+the loader card carries an identity run (no pinned corpus module currently
+declares a function twice, so every report must stay byte-identical).
 
 **Where it lives.** `qcore-schemas::composition` (serde types and the join
 functions; the only crate providers and plugins may depend on), consumed by the
@@ -287,7 +300,7 @@ contribution ledger instead of a moved global total.
 | Phase | Cards | Analyzer semantics | Evidence |
 |---|---|---|---|
 | P0 infrastructure | `MEASURE-TOOL` (F), `GATE-SLOTS`, `GATE-SCOPE` (E), `AUDIT-CANONICAL-PATHS` (F) | none, except canonical path comparison (identity run) | scoped-gate argument recorded; identity run |
-| P1 decoupling data | `AUDIT-COMPOSITION` (G: schema types, join laws in Rust vectors and Lean, per-row components in the report with an identity run, bundle-union conflict as `contract-conflict`), `CONTRACT-LOCKS` (A: lock files, literal pins become readers), `EVALUATION-PROFILES` (A: profile records, cycle bindings, frozen/live policy), `LEAN-ROOTS-GENERATED` (C), `RULE-DOCS-GENERATED` and `AMENDMENTS-SCHEMA` (D) | none; composition is a derived view (identity run) | lock-equals-tree and committed-equals-generated tests; composition laws audited; every cycle names a profile |
+| P1 decoupling data | `AUDIT-COMPOSITION` (G: schema types, join laws in Rust vectors and Lean, per-row components in the report with an identity run), `CONTRACT-SUPERSESSION` (G: lock version 3 with `pinned_at`, loader supersession replacing the duplicate error, `contract-conflict` residue, spec clause under C06, Lean supersession laws, identity run), `CONTRACT-LOCKS` (A: lock files, literal pins become readers), `EVALUATION-PROFILES` (A: profile records, cycle bindings, frozen/live policy), `LEAN-ROOTS-GENERATED` (C), `RULE-DOCS-GENERATED` and `AMENDMENTS-SCHEMA` (D) | none; composition is a derived view (identity run) | lock-equals-tree and committed-equals-generated tests; composition laws audited; every cycle names a profile |
 | P2 rule API and pilots | `GATEWAY-RULE-API`, `RULE-SWITCHES`, `CONTRIBUTION-LEDGERS` (A), then one card per migrated rule (32a, 33, 34, 35, 36, 37) and `FRAMES-AS-CLAUSE` (A) | moves only; switches add a refusing arm; a clause replaces a table | identity run per move; ROUTE-MAP order test; contribution ledgers equal the cards' measured deltas |
 | P3 template | card-brief template and `operations.md` card section updated to §4; wave 3 launched on it | none | first wave-3 cards land with zero shared-file edits and a ledger each |
 
@@ -320,10 +333,14 @@ current structure first and are migrated in P2 like the others.
 8. **Where the measurement tool lives**: a `quirin-audit` subcommand plugin
    (recommended) or `scripts/`.
 9. **Decided by the user (2026-10-24):** results and contracts integrate only
-   through the semigroup interface of seam G. One sub-decision remains: on a
-   bundle conflict, withhold the declaration (`Unknown` at its call sites,
-   recommended: fail-closed and local) or refuse to load the bundle set (a
-   hard error that stops the whole run).
+   through the semigroup interface of seam G, and same-function declarations
+   from different bundles are resolved by the newer pin stamp with the older
+   retained as superseded. One sub-decision remains: on migration to lock
+   version 3, existing entries have no `pinned_at`; either every provider is
+   re-pinned once (recommended: one reviewed stamp per declaration, a
+   records-only change in each provider crate) or the lock's generation time is
+   back-filled as the stamp (cheaper, but it makes every current declaration
+   "reviewed" at the same instant).
 
 ## 7. Risks and boundaries
 
