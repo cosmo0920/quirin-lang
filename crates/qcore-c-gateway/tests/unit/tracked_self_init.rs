@@ -51,6 +51,7 @@ fn owned_root_and_embedded_targets_replay_their_actual_write_sets() {
 #[test]
 fn source_uncertainty_and_escaping_effects_keep_the_old_call() {
     for (records, actual) in [
+        ("struct Other { struct Other *next, *prev; }; struct Owner { struct Other ring; };", "&p->ring"),
         ("struct Owner { struct Ring *ring; };", "p->ring"),
         ("struct Owner { struct Ring ring[2]; };", "&p->ring[0]"),
         ("struct Owner { struct Ring ring; };", "(struct Ring *)&p->ring"),
@@ -168,3 +169,68 @@ fn source_target_vectors_are_bound_to_the_lean_table() {
     assert_eq!(answers, [true,false,false,false,false,false]);
     assert!(include_str!("../../../../proof/QCore/TrackedSelfInit.lean").contains("sourceTargetVectors = [true,false,false,false,false,false]"));
 }
+
+    #[test]
+    fn tracked_rows_have_no_export_and_a_forged_neutral_import_fails_replay() {
+        let source = format!("{LEAF}struct Ring *make(void); void drop(struct Ring *p); void subject(void) {{ struct Ring *p = make(); reset(p); drop(p); }}");
+        let Some(checked) = run(&source) else { return };
+        assert_eq!(summary(&checked).functions["subject"].status, AnalysisStatus::Safe);
+        let unit = prepare_translation_unit(&C11TranslationUnit {
+            source: &source,
+            function_scope: LegacyFunctionScope::MainSourceDefinitions,
+            ..Default::default()
+        });
+        let wanted = BTreeSet::from(["subject".to_owned()]);
+        let digest = "a".repeat(64);
+        assert!(
+            export_cross_unit_homes(&unit, &contracts(), &wanted, &digest)
+                .unwrap()
+                .is_empty()
+        );
+        let neutral_source =
+            "struct Ring { struct Ring *next; }; void subject(void) { return; }";
+        let neutral = prepare_translation_unit(&C11TranslationUnit {
+            source: neutral_source,
+            function_scope: LegacyFunctionScope::MainSourceDefinitions,
+            ..Default::default()
+        });
+        let mut exported =
+            export_cross_unit_homes(&neutral, &contracts(), &wanted, &digest)
+                .unwrap()
+                .remove(0);
+        let request = LegacyCertificateRequest {
+            include_paths: unit.include_paths().to_vec(),
+            definitions: unit.definitions().to_vec(),
+            preprocessor_options: unit.preprocessor_options().to_vec(),
+            input: unit.input().clone(),
+        };
+        let scope = build_certificate_scope_from_evidence(
+            unit.dialect(),
+            LegacyFunctionScope::MainSourceDefinitions,
+            unit.preprocessed_source().unwrap(),
+            Some(unit.raw_source()),
+            unit.line_marked_source(),
+            request.clone(),
+        )
+        .unwrap();
+        exported.home.preprocessed_source = unit.preprocessed_source().unwrap().to_owned();
+        exported.home.raw_source = unit.raw_source().to_owned();
+        exported.home.line_marked_source = unit.line_marked_source().unwrap().to_owned();
+        exported.home.request = request;
+        exported.home.input_identity = scope.input_identity;
+        let mut contracts = contracts();
+        contracts.set_inferred_imports(BTreeMap::from([("subject".to_owned(), exported.contract)]));
+        contracts.set_cross_unit_import_identities(BTreeMap::from([(
+            "subject".to_owned(),
+            exported.home.import_identity(),
+        )]));
+        contracts.set_link_resolution_sha256(Some(digest));
+        let error = cross_unit::check_imports(
+            "void subject(void); void caller(void) {}",
+            &contracts,
+            &[exported.home],
+        )
+        .unwrap_err();
+        assert!(error.contains("no validated W4 summary"), "{error}");
+    }
+
