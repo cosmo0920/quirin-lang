@@ -1,0 +1,19 @@
+{
+  "command": [
+    "python3",
+    "docs/reports/plugin-premise-decomposition/scripts/build_replay.py",
+    "/home/cosmo/.codex/worktrees/808d/quirin-lang/private/w48-cmt-member-storage/rebind_readings.rs",
+    "/home/cosmo/.codex/worktrees/808d/quirin-lang/private/w48-cmt-member-storage/replay-v1/rebind-readings",
+    "--binary",
+    "target/release/quirin-audit",
+    "--extern",
+    "qcore_c_gateway",
+    "qcore_contract",
+    "qcore_schemas",
+    "serde_json"
+  ],
+  "started": "2026-10-24T09:22:34.612103+00:00",
+  "log": "/home/cosmo/.codex/worktrees/808d/quirin-lang/private/w48-cmt-member-storage/replay-v1/rebind-readings-build.log",
+  "exit": 0,
+  "ended": "2026-10-24T09:22:35.072692+00:00"
+}

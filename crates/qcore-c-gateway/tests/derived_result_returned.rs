@@ -522,13 +522,6 @@ fn a_result_derived_from_a_formal_the_body_releases_consumes_or_returns_is_refus
         &["unknown_alias:d", "unknown_alias:p"],
     );
     refused(
-        "the formal itself on one path",
-        "char *wrel(char *d, int n) { if (n) { return d; } return d_copy(d, \"x\", 1); }",
-        "wrel",
-        "wrel(s, 1)",
-        &[RETURN_REFUSAL],
-    );
-    refused(
         "released on a path that returns NULL",
         "char *wrel(char *d, int n) { if (n) { d_free(d); return 0; } \
          return d_copy(d, \"x\", 1); }",
@@ -652,5 +645,280 @@ fn an_offset_over_a_tracked_resource_never_reaches_the_derived_rule() {
                 "unsupported:call has an unmodeled formal address or borrowed expression",
             ],
         )],
+    );
+}
+
+// Rule 36: these use the same synthetic trusted fixture contracts as above.
+#[test]
+fn exact_original_formals_publish_checked_borrow_relations() {
+    if !clang_available() {
+        return;
+    }
+    for (definition, call, count, parameter, nullable) in [
+        (
+            "char *identity(char *p) { return p; }",
+            "identity(p)",
+            1,
+            0,
+            false,
+        ),
+        (
+            "char *identity(char *p) { if (!p) return 0; return p; }",
+            "identity(p)",
+            1,
+            0,
+            true,
+        ),
+        (
+            "char *identity(int n, char *p) { return p; }",
+            "identity(1,p)",
+            2,
+            1,
+            false,
+        ),
+        (
+            "const char *identity(const char *p) { return p; }",
+            "identity(p)",
+            1,
+            0,
+            false,
+        ),
+        (
+            "char *identity(char *const p) { return p; }",
+            "identity(p)",
+            1,
+            0,
+            false,
+        ),
+        (
+            "char *identity(char *p) { d_copy(p,\"x\",1); return p; }",
+            "identity(p)",
+            1,
+            0,
+            false,
+        ),
+        (
+            "char *identity(char *p,int n) { if(n) return p; return d_copy(p,\"x\",1); }",
+            "identity(p,1)",
+            2,
+            0,
+            false,
+        ),
+        (
+            "char *identity(char *p,int n) { if(n) return p; return p; }",
+            "identity(p,1)",
+            2,
+            0,
+            false,
+        ),
+    ] {
+        let body = format!(
+            "{definition} void w(void) {{ char *p=d_alloc(8); if(!p)return; const char *q={call}; if(q) d_len(q); d_free(p); }}"
+        );
+        let summaries = certified_summaries(&body);
+        assert_eq!(
+            summaries.get("identity"),
+            Some(&derived(
+                count,
+                parameter,
+                DerivedExtent::Exact,
+                nullable,
+                false
+            )),
+            "{definition}"
+        );
+    }
+}
+
+#[test]
+fn exact_formal_results_keep_caller_lifetime_and_allocation_obligations() {
+    if !clang_available() {
+        return;
+    }
+    let helper = "char *identity(char *p) { return p; }";
+    for (caller, required) in [
+        (
+            "void w(void) { char*p=d_alloc(8); if(!p)return; identity(p); }",
+            "leak",
+        ),
+        (
+            "void w(void) { char*p=d_alloc(8); if(!p)return; char*q=identity(p); d_free(p); d_len(q); }",
+            "use_after_release",
+        ),
+        (
+            "void w(void) { char*p=d_alloc(8); if(!p)return; char*q=identity(p); d_free(q); }",
+            "unknown_alias:q",
+        ),
+    ] {
+        let result = analyze(&format!("{helper} {caller}"));
+        let (status, diagnostics) = function_outcome(&result, "w");
+        assert_ne!(status, "Safe");
+        assert!(
+            diagnostics.iter().any(|d| d == required),
+            "{caller}: {diagnostics:?}"
+        );
+    }
+}
+
+#[test]
+fn unproved_effects_and_rebound_or_shadowed_formals_do_not_certify() {
+    if !clang_available() {
+        return;
+    }
+    for definition in [
+        "char *identity(char*p,char*q) { p=q; return p; }",
+        "char *identity(char*p,char*q) { p=p; return p; }",
+        "char *identity(char*p,char*q) { { char *p=q; return p; } }",
+        "char *identity(char*p,char*q) { { enum { p=0 }; return p; } }",
+        "char *identity(char*p,char*q) { d_free(p); return p; }",
+        "char *identity(char*p,char*q) { d_consume(p); return p; }",
+        "void mystery(void); char *identity(char*p,char*q) { mystery(); return p; }",
+        "char *identity(char*p,char*q) { char*x=d_alloc(8); return p; }",
+        "struct metric { char *value; }; char *identity(char*p,struct metric*q) { q->value=d_alloc(8); return p; }",
+    ] {
+        let body = format!("{definition} void w(char*p) {{ char*q=identity(p,0); d_len(q); }}");
+        let result = analyze(&body);
+        assert_ne!(function_outcome(&result, "w").0, "Safe", "{definition}");
+    }
+}
+
+#[test]
+fn older_assigned_derived_route_keeps_its_summary() {
+    if !clang_available() {
+        return;
+    }
+    let summaries = certified_summaries(
+        "char *identity(char*p) { p=d_copy(p,\"x\",1); return p; } void w(void) {}",
+    );
+    assert_eq!(
+        summaries.get("identity"),
+        Some(&derived(1, 0, DerivedExtent::Exact, false, false))
+    );
+}
+
+#[test]
+fn exact_summary_does_not_turn_a_null_actual_into_a_nonnull_result() {
+    if !clang_available() {
+        return;
+    }
+    let summaries = certified_summaries("char *identity(char*p) { return p; } void w(void) {}");
+    let mut environment = contracts();
+    environment.insert_contract("identity", summaries["identity"].clone());
+    let source = "char *identity(char*p) { return p; } int w(void) { char*p=identity((char*)0); return *p; }";
+    let report = qcore_c_gateway::null_deref::analyze_null_c11(
+        &C11TranslationUnit {
+            source,
+            ..Default::default()
+        },
+        &["identity".into(), "w".into()],
+        &environment,
+        &qcore_contract::bounds_contract::BoundsContracts::default(),
+    )
+    .unwrap();
+    let caller = report.functions.iter().find(|r| r.function == "w").unwrap();
+    assert_ne!(caller.verdict, "Safe", "{caller:?}");
+    assert!(
+        !report
+            .functions
+            .iter()
+            .find(|r| r.function == "identity")
+            .unwrap()
+            .returns_non_null
+    );
+}
+
+#[test]
+fn exact_formal_certificate_replay_rejects_a_wrong_parameter_record() {
+    if !clang_available() {
+        return;
+    }
+    let result = analyze("char *identity(char*p) { return p; } void w(void) {}");
+    let UnrestrictedLegacyResult::Safe(mut certificate) = result else {
+        panic!("identity must certify")
+    };
+    check_legacy_safety_certificate(&certificate).unwrap();
+    certificate
+        .summaries
+        .iter_mut()
+        .find(|r| r.function == "identity")
+        .unwrap()
+        .contract
+        .result = ResourceReturnMode::Derived {
+        parameter: 1,
+        extent: DerivedExtent::Exact,
+        nullable: false,
+        const_dropped: false,
+    };
+    assert!(check_legacy_safety_certificate(&certificate).is_err());
+}
+
+#[test]
+fn returning_an_exact_borrow_of_a_fresh_allocation_is_not_an_owned_handoff() {
+    if !clang_available() {
+        return;
+    }
+    let result = analyze(
+        "char *identity(char*p) { return p; } char *carrier(void) { char*p=d_alloc(8); if(!p)return 0; return identity(p); } void w(void) {}",
+    );
+    assert_ne!(function_outcome(&result, "carrier").0, "Safe");
+}
+
+#[test]
+fn a_released_other_formal_cannot_revive_an_alias_when_actuals_coincide() {
+    if !clang_available() {
+        return;
+    }
+    let helper = "char *identity(char*p,char*q) { d_free(q); return p; }";
+    let summaries = certified_summaries(&format!("{helper} void w(void) {{}}"));
+    let contract = &summaries["identity"];
+    assert_eq!(contract.parameters[0], ResourceParameterMode::Borrowed);
+    assert!(matches!(
+        contract.parameters[1],
+        ResourceParameterMode::Released { .. }
+    ));
+    assert_eq!(
+        contract.result,
+        ResourceReturnMode::Derived {
+            parameter: 0,
+            extent: DerivedExtent::Exact,
+            nullable: false,
+            const_dropped: false
+        }
+    );
+    let result = analyze(&format!(
+        "{helper} void w(void) {{ char*p=d_alloc(8); if(!p)return; char*q=identity(p,p); d_len(q); }}"
+    ));
+    let (status, diagnostics) = function_outcome(&result, "w");
+    assert_ne!(status, "Safe");
+    assert!(
+        diagnostics.iter().any(|d| d == "use_after_release"),
+        "{diagnostics:?}"
+    );
+}
+
+#[test]
+fn an_unresolved_exact_alias_base_cannot_make_null_search_infeasible() {
+    if !clang_available() {
+        return;
+    }
+    let summaries = certified_summaries("char *identity(char*p) { return p; } void w(void) {}");
+    let mut environment = contracts();
+    environment.insert_contract("identity", summaries["identity"].clone());
+    let source = "char*external(void); char*identity(char*p){return p;} int w(void){char*p=external();char*q=identity(p);return*q;}";
+    let report = qcore_c_gateway::null_deref::analyze_null_c11(
+        &C11TranslationUnit {
+            source,
+            ..Default::default()
+        },
+        &["identity".into(), "w".into()],
+        &environment,
+        &qcore_contract::bounds_contract::BoundsContracts::default(),
+    )
+    .unwrap();
+    let caller = report.functions.iter().find(|r| r.function == "w").unwrap();
+    assert_ne!(caller.verdict, "Safe", "{caller:?}");
+    assert!(
+        caller.triage.iter().all(|r| r.status != "infeasible"),
+        "{caller:?}"
     );
 }

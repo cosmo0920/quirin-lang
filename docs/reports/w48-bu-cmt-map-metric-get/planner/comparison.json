@@ -1,0 +1,9 @@
+{
+  "exact_bytes_equal": true,
+  "sha256": "98417b15fe3a5d5a1cdf50af2d015dc79308bb7652a6175bde81a2a944b7ad72",
+  "bodies": 2200,
+  "overall_conditional_ceiling": 383,
+  "getter_conditional_ceiling": 11,
+  "getter_measured_resource_closure_gain": 0,
+  "meaning": "conditional planning quantities; not whole-program safety or promised gain"
+}

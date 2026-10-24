@@ -1,0 +1,10 @@
+{
+  "time": "2026-10-23T14:01:20.635674+00:00",
+  "command": [
+    "private/w48-cmt-map/base-inputs-v2/target/release/quirin-audit",
+    "--help"
+  ],
+  "exit": 1,
+  "output": "audit rejected: No such file or directory (os error 2)",
+  "explanation": "CLI has no global --help; treated as missing configuration filename. No corpus or configured route was run. Source read instead; no preflight analysis or safety claim."
+}

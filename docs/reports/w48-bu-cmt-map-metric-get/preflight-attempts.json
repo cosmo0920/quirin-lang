@@ -1,0 +1,14 @@
+[
+  {
+    "probe": "bubblewrap namespace inside filesystem sandbox",
+    "exit": 1,
+    "reason": "namespace permission denied by sandbox",
+    "retry": "approved unsandboxed read-only namespace succeeded exit0"
+  },
+  {
+    "probe": "all compilation-database file paths exist",
+    "exit": 1,
+    "reason": "seven unavailable generated files, including lj_vm.S; no input changed",
+    "resolution": "record missingness and preserve native unread/Unknown; positive source-selection preflight exit0"
+  }
+]

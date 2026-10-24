@@ -1114,14 +1114,6 @@ fn production_contracts_preserve_the_previous_resource_modes() {
     for name in ["rd_kafka_log_buf", "rd_kafka_log0"] {
         old.insert_contract(name, ResourceFunctionContract::new([], R::None));
     }
-    // Rule 37 replaces only these two inherited nullable results with checked
-    // non-null specifications. Every other production mode remains pinned.
-    for name in ["rd_calloc", "rd_strdup"] {
-        old.insert_contract(
-            name,
-            ResourceFunctionContract::new([], R::Owned { nullable: false }),
-        );
-    }
     // W48-BU-EXTERNAL-CALLEE-CONTRACTS deliberately extends this expected
     // table: borrowed writev arguments and the scalar current-thread identifier.
     old.insert_contract(
@@ -1151,6 +1143,24 @@ fn production_contracts_preserve_the_previous_resource_modes() {
     // declarations, every formal borrowed, no result.
     for name in ["rd_kafka_log0", "rd_kafka_log_buf"] {
         old.insert_contract(name, ResourceFunctionContract::new([], R::None));
+    }
+    // Rule 37 deliberately replaces only these nullable inherited modes.
+    // Their stronger result is a body-checked specification under the named
+    // allocation premise; it must never become an unchecked non-null fact.
+    let checked =
+        qcore_compiler::contract_loader::declared_checked_specifications(&contracts).unwrap();
+    let premises = qcore_compiler::contract_loader::declared_premises(&contracts).unwrap();
+    for name in ["rd_calloc", "rd_strdup"] {
+        assert!(checked.contains(name), "{name} must remain body-checked");
+        assert!(
+            premises[name]
+                .iter()
+                .any(|p| p.name == "asserted_allocation")
+        );
+        old.insert_contract(
+            name,
+            ResourceFunctionContract::new([], R::Owned { nullable: false }),
+        );
     }
     // Explicitly borrowed trailing arguments were implicit in the old table.
     fn canonical(mut contract: ResourceFunctionContract) -> ResourceFunctionContract {

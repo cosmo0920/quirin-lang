@@ -26,3 +26,12 @@ changed checked-body marker are refused. The frozen evidence and production
 contracts/code/Lean remain unchanged. A focused retry and complete standing
 gate follow. Provider results retain their actual `b47349336` source, with
 production input equality checked across this test-only repair.
+
+The focused retry on `bc3a01fd6` passed the loader and corpus Python checks,
+but symbolic graph equality still compared different semantic declarations
+(`attempt-2/receipt.json`). No full standing run started. Concurrent main
+`f00264193` supplies the passing repair: frozen byte erasure remains exact,
+while graph controls compare the same current semantic declarations. The merge
+adopts that repair and its checked-specification/premise assertions, replacing
+the superseded local fixture. Current source and metadata checks remain active.
+A fresh complete standing/provider gate follows on this combined source.

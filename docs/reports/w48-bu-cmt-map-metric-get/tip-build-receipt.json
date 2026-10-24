@@ -1,0 +1,29 @@
+{
+  "semantic_source": "cc1d6c25a49b410c42a0473591ad226900995b25",
+  "binary": "/home/cosmo/.codex/worktrees/808d/quirin-lang/private/w48-cmt-map/tip-runtime/target/release/quirin-audit",
+  "sha256": "d21686072eb7fc7bd7ae76de756392e52c87a0b7f061a13be89d65a961b55db9",
+  "build": {
+    "command": [
+      "env",
+      "CARGO_BUILD_JOBS=6",
+      "QCORE_AUDIT_BUILD_COMMIT=cc1d6c25a49b410c42a0473591ad226900995b25",
+      "cargo",
+      "build",
+      "--release",
+      "-p",
+      "qcore-audit",
+      "--bin",
+      "quirin-audit"
+    ],
+    "started": "2026-10-23T22:28:35.783412+00:00",
+    "head": "cc1d6c25a49b410c42a0473591ad226900995b25",
+    "dirty": false,
+    "log": "private/w48-cmt-map/steps/build-tip-1.log",
+    "slot_pid": 2261077,
+    "exit": 0,
+    "seconds": 86.8528418249989,
+    "ended": "2026-10-23T22:30:02.680049+00:00"
+  },
+  "runner_sha256": "7bfb5768fd2e2a466763a051a216a242e2f10355e9544f3dc1fdd09e73781e5f",
+  "profiles_snapshot": "/home/cosmo/.codex/worktrees/808d/quirin-lang/private/w48-cmt-map/base-inputs-v2"
+}

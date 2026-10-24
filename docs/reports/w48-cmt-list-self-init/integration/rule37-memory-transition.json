@@ -1,0 +1,11 @@
+{
+  "module": "providers/qcore-provider-librdkafka/contracts/librdkafka/memory.qv",
+  "before_source": "f02dd8779",
+  "after_source": "81df98c9d8edb2ca83c2478262c3afb90cadd9d7",
+  "before_prefix_sha256": "97924dfb2064e3686b9c02244ca5039c1e69a781f1c02553e18527e8b7ac3f47",
+  "after_prefix_sha256": "69be583efacc9ac8a2acac6ba4e1ff9b33fd278b13158e19e75253339d9dd188",
+  "before_module_sha256": "ac2111a6de7554e1d1633bd9d7cc43a56384c5a03e10dee32cde853acc712807",
+  "after_module_sha256": "55c71fa47419acf0d7d143c50b0d5c10851d77e67d95978321eb482ed1786556",
+  "meaning": "Exactly rd_calloc/rd_strdup become checked non-null specifications under asserted_allocation, with the accompanying explanatory comments. No frozen checkpoint is changed; actual graph/binding/lifecycle checks still use actual current source.",
+  "comparison_control": "Apply the exact held rule37 prefix forward to the old semantic control for graph/mode equality; apply it inversely to actual current source only for the frozen raw-byte erasure check. Actual source continues to drive every graph, binding, flow and lifecycle check."
+}

@@ -187,6 +187,9 @@ fn instruction(instruction: &LegacyInstruction) -> String {
         LegacyInstruction::Release { source } => format!("Release {source}"),
         LegacyInstruction::Escape { source } => format!("Escape {source}"),
         LegacyInstruction::EscapeIfOwned { source } => format!("EscapeIfOwned {source}"),
+        LegacyInstruction::ExactFormalReturn { source, parameter } => {
+            format!("ExactFormalReturn {source} parameter {parameter}")
+        }
         LegacyInstruction::ContractCall {
             function,
             destination,
@@ -318,6 +321,9 @@ fn instruction(instruction: &LegacyInstruction) -> String {
         // Card CG11-POINTER-VALUED-STORES (gateway rule 10v).
         LegacyInstruction::PointerStore { store, .. } => {
             format!("PointerStore {} = {}", store.place, store.value)
+        }
+        LegacyInstruction::SelfInitCall { function, base, .. } => {
+            format!("SelfInitCall {function}({base}) [checked empty frame]")
         }
     }
 }

@@ -290,7 +290,9 @@ pub(crate) fn admits_descriptor_read(
         LegacyInstruction::ForgetScalar { destination } => {
             plain(destination) && !names.contains(destination)
         }
-        LegacyInstruction::Acquire { .. }
+        LegacyInstruction::ExactFormalReturn { .. }
+        | LegacyInstruction::SelfInitCall { .. }
+        | LegacyInstruction::Acquire { .. }
         | LegacyInstruction::BranchOnNull { .. }
         | LegacyInstruction::BranchOnDistinct { .. }
         | LegacyInstruction::OpaqueValue { .. }

@@ -1,0 +1,10 @@
+{
+  "card": "W48-BU-CMT-MAP-METRIC-GET",
+  "rule": 36,
+  "base": "8991b7b58fcbd33da082bbb44e819d47a0fb2561",
+  "branch": "codex/w48-cmt-map-metric-get",
+  "state": "setup; no semantic changes or measured verdict claims",
+  "submodule": "d82464a277d0f42703702c4dfd9af6af38595a83",
+  "evidence_root": "private/w48-cmt-map",
+  "heavy_lock": "/tmp/qcore-c-card-validation-20261022.lock"
+}

@@ -1,0 +1,14 @@
+{
+  "command": [
+    "git",
+    "submodule",
+    "update",
+    "--init",
+    "--recursive"
+  ],
+  "head": "8ae202b0b1bc78be14a7723377ba6f6a2feca1c7",
+  "semantic_base": "359f64a987b74b21852c5a691e5c23f75c15d570",
+  "started": "2026-10-24T03:10:23.194155+00:00",
+  "exit": 0,
+  "ended": "2026-10-24T03:10:23.215105+00:00"
+}

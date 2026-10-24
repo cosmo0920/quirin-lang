@@ -1,0 +1,34 @@
+{
+  "route": "system",
+  "resource_rows": 448,
+  "base_statuses": {
+    "Unknown": 345,
+    "Safe": 99,
+    "Unsafe": 4
+  },
+  "tip_statuses": {
+    "Unknown": 345,
+    "Safe": 99,
+    "Unsafe": 4
+  },
+  "resource_semantic_rows_changed": 0,
+  "safe_gains": [],
+  "safe_losses": [],
+  "null_rows": 454,
+  "complete_null_dictionary_changes": 0,
+  "raw_difference_counts": {
+    "resource-diagnostics.invocation.json": 2,
+    "invocation.json": 12,
+    "null.jsonl": 448,
+    "resource-diagnostics.chunk-contracts.json": 0,
+    "resource-diagnostics.json": 606,
+    "resource-diagnostics.source-effects.json": 0,
+    "null.summary.json": 0,
+    "outer.json": 0,
+    "resource-diagnostics.contracts.json": 1262,
+    "producer-invocation.json": 12
+  },
+  "all_raw_fields_retained": true,
+  "attribution": "complete; zero unexplained leaves; full raw fields retained",
+  "unsafe_qualification": "all Unsafe labels remain provisional, not upstream defect claims"
+}

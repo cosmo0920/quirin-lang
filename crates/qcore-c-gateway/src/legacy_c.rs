@@ -843,6 +843,19 @@ pub enum LegacyInstruction {
         /// rests on.
         writes: RefusedWrites,
     },
+    /// Rule 36: source-confirmed original borrowed-formal identity. Appended
+    /// to preserve every existing serialized instruction discriminant.
+    ExactFormalReturn {
+        source: String,
+        parameter: usize,
+    },
+    /// Rule 36a: a source-checked initializer leaf, conditional on the
+    /// private row's empty custody frame. Never an ordinary call summary.
+    SelfInitCall {
+        function: String,
+        base: String,
+        fallback: Box<LegacyInstruction>,
+    },
 }
 
 /// Card **W43-INDEX-TRAVERSAL**: what a pointer step does to the pointer's
@@ -3530,6 +3543,10 @@ fn analyze_defined_function_unscoped(
         // Card DETACH-RESULT-WRAPPER-COMPOSITION (rule 33): a validated
         // selection frame is decided under its selection entry; a run that
         // does not validate falls back to the contract-free analysis.
+        None if derivation.self_init_frame(function) => {
+            self_link_init::row(tokens, function, derivation.environment(), cfg.clone())
+                .unwrap_or_else(|| analyze_cfg(cfg))
+        }
         None if let Some(frame) = derivation.selection(function) => {
             match function_parameters(tokens, function)
                 .and_then(|parameters| selection_route::row(cfg.clone(), &parameters, frame))
@@ -3618,8 +3635,9 @@ pub(crate) fn body_calls_derived_result(
                 matches!(contract.result, ResourceReturnMode::Derived { .. })
             })
     });
-    (derived_call || lookup_route::read(tokens, function).is_some())
-        && body.iter().any(|token| token.text == "return")
+    ((derived_call || lookup_route::read(tokens, function).is_some())
+        && body.iter().any(|token| token.text == "return"))
+        || exact_formal_return::candidate(tokens, function)
 }
 
 /// Card **W43-RESULT-ALIAS-RETURNED**: the CFG a derived-result summary is
@@ -3938,6 +3956,7 @@ fn build_function_cfg_unscoped(
         variadic_tail_readings: std::cell::RefCell::new(None),
         condition_cycles: condition_acquisition_route::CycleRanges::read(tokens, body_start),
         typed_place_origin: std::cell::Cell::new(None),
+        exact_formal_returns: std::cell::OnceCell::new(),
         typed_root_declarations: std::cell::OnceCell::new(),
         readonly_list_count_certified: std::cell::OnceCell::new(),
         declared_no_return: std::cell::OnceCell::new(),
@@ -4037,6 +4056,7 @@ fn build_function_cfg_unscoped(
     member_release::oblige_member_null_tests(&mut cfg);
     lookup_route::settle(&mut cfg, tokens, function);
     lookup_route::settle_calls(&mut cfg, tokens, contracts);
+    self_link_init::restore_unreachable(&mut cfg);
     Ok(cfg)
 }
 
@@ -4640,6 +4660,7 @@ struct Parser<'a> {
     /// statement being classified, set only around its `classify_simple`.
     typed_place_origin: std::cell::Cell<Option<(usize, usize)>>,
     /// Card W47-TYPED-ROOT-DECLARATION-READER: the AST reader's answers.
+    exact_formal_returns: std::cell::OnceCell<BTreeMap<(usize, String), usize>>,
     typed_root_declarations: std::cell::OnceCell<crate::typed_root_declarations::RootDeclarations>,
     /// One exact header-body check per analysed function's translation unit.
     readonly_list_count_certified: std::cell::OnceCell<bool>,
@@ -5403,6 +5424,23 @@ impl Parser<'_> {
     /// and `;`. Card CG02-ELABORATION-CORE: also the lowering of the value
     /// operand the elaborator hands back after sequencing a comma (rule 10s).
     fn return_statement(&mut self, expression: Vec<Token>, line: usize) -> Statement {
+        if self.admit_derived_returns
+            && expression.len() == 1
+            && let Some(parameter) = self.exact_formal_return(&expression[0].text, line)
+        {
+            return Statement::Return {
+                line,
+                writes: self.expression_writes(&expression),
+                expression_supported: true,
+                returned_place: None,
+                returned_evaluation: Some(Box::new(LegacyInstruction::ExactFormalReturn {
+                    source: expression[0].text.clone(),
+                    parameter,
+                })),
+                returned_evaluation_escapes: false,
+                returns_null_constant: false,
+            };
+        }
         {
             {
                 let texts = expression
@@ -5730,6 +5768,11 @@ pub(crate) use self::cfg_builder::*;
 // Card GATEWAY-ANALYSIS-PATH-OPTIMIZATION: the abstract state and the
 // transfer functions: pointers, derivations, entry custody, exit
 // observations and the flow analysis over a CFG.
+#[path = "legacy_exact_formal_return.rs"]
+pub(crate) mod exact_formal_return;
+#[path = "legacy_self_link_init.rs"]
+pub(crate) mod self_link_init;
+
 #[path = "legacy_transfer.rs"]
 mod transfer;
 pub use self::transfer::*;

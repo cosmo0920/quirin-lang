@@ -1,0 +1,37 @@
+{
+  "lock": "/tmp/qcore-c-card-validation-20261022.lock",
+  "first_recovery_owner": {
+    "acquired_at": "2026-10-24T07:35:00.701286+00:00",
+    "state": "development_slot_acquired",
+    "head": "99457f141a90d7bc597516eda904dcf1821ada69",
+    "prediction_commit": "08b5546809e99124f384c0d91db7220c9c192520",
+    "pid": 51490
+  },
+  "first_recovery_terminal": {
+    "command": [
+      "python3",
+      "private/w48-cmt-member-storage/finish_accounting.py"
+    ],
+    "started": "2026-10-24T09:23:01.650636+00:00",
+    "head": "99457f141a90d7bc597516eda904dcf1821ada69",
+    "dirty": false,
+    "log": "private/w48-cmt-member-storage/steps/accounting-1.log",
+    "slot_pid": 51490,
+    "exit": 1,
+    "seconds": 1671.212236225998,
+    "ended": "2026-10-24T09:50:52.894900+00:00"
+  },
+  "first_recovery_native_calculation_exit": 0,
+  "first_recovery_combined_gate_exit": 1,
+  "repaired_slot": {
+    "state": "released",
+    "pid": 1246470,
+    "head": "02eaf935d5937b7c3f56cca3dc71da6d85320ee4",
+    "acquired_at": "2026-10-24T10:39:36.312008+00:00",
+    "purpose": "Repair combined-source test expectations and complete user-authorized main integration",
+    "released_at": "2026-10-24T10:54:15.364710+00:00"
+  },
+  "repaired_job_exit": 0,
+  "all_owned_campaigns_and_validation_jobs_complete": true,
+  "note": "The first recovery command exited1 only after its native accounting had succeeded, when the optional combined integration gate found three expectation failures. The repaired slot completed validation and committed-matrix acceptance, then released; other cards may independently use the shared lock."
+}

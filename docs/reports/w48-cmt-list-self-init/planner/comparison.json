@@ -1,0 +1,8 @@
+{
+  "exact_bytes_equal": true,
+  "sha256": "98417b15fe3a5d5a1cdf50af2d015dc79308bb7652a6175bde81a2a944b7ad72",
+  "getter_closure_gain": 0,
+  "conditional_getter_ceiling": 11,
+  "conditional_overall_ceiling": 383,
+  "bodies": 2200
+}

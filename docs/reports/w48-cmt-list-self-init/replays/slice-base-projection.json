@@ -1,0 +1,11 @@
+{
+  "command": [
+    "/home/cosmo/.codex/worktrees/808d/quirin-lang/private/w48-cmt-member-storage/replay-v1/projection-replay",
+    "/home/cosmo/.codex/worktrees/808d/quirin-lang/private/w48-cmt-member-storage/replay-v1/slice-base-projection-spec.json",
+    "/home/cosmo/.codex/worktrees/808d/quirin-lang/private/w48-cmt-member-storage/replay-v1/slice-base-projection-proof.json"
+  ],
+  "started": "2026-10-24T09:22:51.291376+00:00",
+  "log": "/home/cosmo/.codex/worktrees/808d/quirin-lang/private/w48-cmt-member-storage/replay-v1/slice-base-projection.log",
+  "exit": 0,
+  "ended": "2026-10-24T09:22:53.455317+00:00"
+}

@@ -1,0 +1,11 @@
+{
+  "diagnostics": "/home/cosmo/.codex/worktrees/808d/quirin-lang/private/w48-cmt-member-storage/tip-corpus/resource-diagnostics.json",
+  "contracts": "/home/cosmo/.codex/worktrees/808d/quirin-lang/private/w48-cmt-member-storage/tip-corpus/resource-diagnostics.contracts.json",
+  "null": "/home/cosmo/.codex/worktrees/808d/quirin-lang/private/w48-cmt-member-storage/tip-corpus-null.jsonl",
+  "null_summary": "/home/cosmo/.codex/worktrees/808d/quirin-lang/private/w48-cmt-member-storage/tip-corpus-null.summary.json",
+  "outer": "/home/cosmo/.codex/worktrees/808d/quirin-lang/private/w48-cmt-member-storage/tip-corpus-outer.json",
+  "manifest": "/home/cosmo/.codex/worktrees/808d/quirin-lang/private/w48-cmt-member-storage/inputs/contract/profiles/fluent-bit/../../../cycle19-resource-contracts.json",
+  "database": "/home/cosmo/Documents/GitHub/qcore-c/build/cycle19/c-gateway-wave-pin/fluent-bit-clang-source/build/compile_commands.json",
+  "route": "pinned",
+  "source_root": "/home/cosmo/Documents/GitHub/qcore-c/build/cycle19/c-gateway-wave-pin/fluent-bit-clang-source"
+}

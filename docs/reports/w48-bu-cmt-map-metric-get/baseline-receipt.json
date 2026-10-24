@@ -1,0 +1,171 @@
+{
+  "semantic_base": "8991b7b58fcbd33da082bbb44e819d47a0fb2561",
+  "binary_sha256": "b533088b903f10ad03f78ad4245267fe8b108e853fd410c744a657f32446adde",
+  "audit_exit": 0,
+  "planner_exit": 0,
+  "inputs_stable": true,
+  "resource_rows": 4834,
+  "resource_statuses": {
+    "Unknown": 3826,
+    "Safe": 999,
+    "Unsafe": 9
+  },
+  "unsafe_qualification": "provisional labels, not validated upstream defects",
+  "scope": "generic resource projection; separate chunk/callback source profiles are not certificates here; an admitted scalar access through a pointer decides custody only, never bounds, alignment, or the liveness or nullness of an object the projection does not track; an index or pointer traversal (a stepped pointer, a moved index, a typed read in a loop condition) decides custody, use after release and invalid release only: no bounds claim; an indexed collection's element ranges decide which indices owe a release, never that an index is inside the allocation; a typed read handed to a borrowed or data-tail call actual (a scalar, a pointer read, a sub-object address) decides its base's custody only, never the liveness of an object a read pointer names",
+  "diagnostics_sha256": "28e2a905c35d402aa38a37a669756f3a93f53acaa8ada3ee74ddaa6778b5d650",
+  "planner_sha256": "98417b15fe3a5d5a1cdf50af2d015dc79308bb7652a6175bde81a2a944b7ad72",
+  "invocation": "private/w48-cmt-map/base-corpus-v3-invocation.json",
+  "diagnostics": "private/w48-cmt-map/base-corpus-v3/resource-diagnostics.json",
+  "planner": "private/w48-cmt-map/base-plan-v3.json",
+  "planner_receipt": {
+    "baseline_same": 6,
+    "baseline_cross": 6,
+    "ceiling": 383,
+    "ceiling_waits_on_bodies": {
+      "0": 6,
+      "1": 249,
+      "2": 94,
+      "3": 13,
+      "4": 5,
+      "5": 5,
+      "6": 5,
+      "7": 2,
+      "8": 1,
+      "9": 1,
+      "11": 1,
+      "13": 1
+    },
+    "bodies": 2200,
+    "rows": [
+      {
+        "body": "cmt_map.c::map_metric_get_unlocked",
+        "library": "cmetrics",
+        "callers": 1,
+        "frees_same": 2,
+        "frees_cross": 2,
+        "ceiling_callers": 1,
+        "ceiling_alone": 1,
+        "own_leaves": 20,
+        "own_calls": {
+          "metric_prepare_storage": 3,
+          "XXH_INLINE_XXH3_64bits_reset": 1,
+          "XXH_INLINE_XXH3_64bits_update": 2,
+          "XXH_INLINE_XXH3_64bits_digest": 1,
+          "metric_hash_lookup": 1,
+          "map_metric_create": 1,
+          "cfl_list_add": 1,
+          "metric_index_add": 1
+        },
+        "own_families": {
+          "unsupported: indirect memory access is outside the resource projection": 4,
+          "unknown_alias: unresolved resource identity `X`": 5
+        },
+        "score": 0.1,
+        "freed": [
+          "cmt_map.c::cmt_map_metric_get",
+          "cmt_map.c::cmt_map_metric_get_val"
+        ]
+      },
+      {
+        "body": "cmt_map.c::cmt_map_metric_get",
+        "library": "cmetrics",
+        "callers": 14,
+        "frees_same": 1,
+        "frees_cross": 1,
+        "ceiling_callers": 11,
+        "ceiling_alone": 1,
+        "own_leaves": 1,
+        "own_calls": {
+          "map_metric_get_unlocked": 1
+        },
+        "own_families": {},
+        "score": 1.0,
+        "freed": [
+          "cmt_map.c::cmt_map_metric_get_val"
+        ]
+      },
+      {
+        "body": "cmt_map.c::metric_index_add",
+        "library": "cmetrics",
+        "callers": 2,
+        "frees_same": 0,
+        "frees_cross": 0,
+        "ceiling_callers": 0,
+        "ceiling_alone": 0,
+        "own_leaves": 4,
+        "own_calls": {
+          "metric_index_resize": 1
+        },
+        "own_families": {
+          "unsupported: unmodeled call, aggregate or indirect access in branch condition": 1,
+          "unsupported: indirect memory access is outside the resource projection": 2
+        },
+        "score": 0.0,
+        "freed": []
+      },
+      {
+        "body": "cmt_map.c::metric_prepare_storage",
+        "library": "cmetrics",
+        "callers": 1,
+        "frees_same": 0,
+        "frees_cross": 0,
+        "ceiling_callers": 0,
+        "ceiling_alone": 0,
+        "own_leaves": 6,
+        "own_calls": {},
+        "own_families": {
+          "unknown_alias: unresolved resource identity `X`": 2,
+          "unsupported: indirect memory access is outside the resource projection": 4
+        },
+        "score": 0.0,
+        "freed": []
+      },
+      {
+        "body": "cmt_map.c::metric_hash_lookup",
+        "library": "cmetrics",
+        "callers": 1,
+        "frees_same": 0,
+        "frees_cross": 0,
+        "ceiling_callers": 0,
+        "ceiling_alone": 0,
+        "own_leaves": 12,
+        "own_calls": {
+          "metric_index_add": 1
+        },
+        "own_families": {
+          "unsupported: unmodeled call, aggregate or indirect access in return expression": 1,
+          "unsupported: unmodeled call, aggregate or indirect access in branch condition": 3,
+          "unknown_alias: unresolved resource identity `X`": 4,
+          "unsupported: indirect memory access is outside the resource projection": 2,
+          "unsupported: `X` is the Clang extension node OffsetOfExpr, which no resource contract or route models": 1
+        },
+        "score": 0.0,
+        "freed": []
+      },
+      {
+        "body": "cmt_map.c::map_metric_create",
+        "library": "cmetrics",
+        "callers": 1,
+        "frees_same": 0,
+        "frees_cross": 0,
+        "ceiling_callers": 0,
+        "ceiling_alone": 0,
+        "own_leaves": 18,
+        "own_calls": {
+          "cfl_list_init": 2,
+          "cfl_list_add": 1,
+          "destroy_label_list": 1
+        },
+        "own_families": {
+          "unsupported: indirect memory access is outside the resource projection": 5,
+          "unknown_alias: unresolved resource identity `X`": 7,
+          "unsupported: loop re-acquisition: an earlier generation that may be live is still held": 1,
+          "unsupported: nullable resource `X` used by a non-null contract": 1
+        },
+        "score": 0.0,
+        "freed": []
+      }
+    ]
+  },
+  "completed": "2026-10-23T21:10:00.975773+00:00"
+}

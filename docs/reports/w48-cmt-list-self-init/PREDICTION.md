@@ -1,0 +1,17 @@
+# Rule 36a prediction: checked self-link initializer calls
+
+Semantic BASE: `359f64a987b74b21852c5a691e5c23f75c15d570`.
+The human requires fresh BASE/planner → committed prediction → semantic implementation. The own fresh corpus finished at 04:34:47 UTC on 2026-10-24 with exit 0, stable before/after identities, and 4,834 resource rows: 999 Safe, 3,826 Unknown and 9 provisional Unsafe. The planner then exited 0. No semantic Rust or Lean changes have been made. This prediction is committed before implementation.
+
+The fresh plan has 2,200 bodies and an overall conditional ceiling of 383. The getter's 11-caller ceiling remains conditional; it has one own leaf, and `map_metric_get_unlocked` has 20. `map_metric_create` has 18 own leaves, including two calls to `cfl_list_init`. These are planning and projection figures, not safety coverage. Exact receipts, hashes, build provenance and selected rows are in [baseline-receipt.json](baseline-receipt.json); the complete planner is retained in [base-plan.json.gz](base-plan.json.gz).
+
+CG11 already admits literal self-address stores and deliberately withholds their ordinary custody summaries. The new feature will audit a unit-local call to such a complete, checked initializer leaf from a simple same-formal void caller. It will preserve the existing store semantics, use an explicit empty-frame call guard, and publish no ordinary custody summary. Source/CFG uncertainty, tracked owners, member-address/interior actuals, aliases, larger callers, wrappers of wrappers, recursion and escaping function designators remain refused. The complete bounded design is in [DESIGN.md](DESIGN.md).
+
+Ex ante forecast:
+
+- Focused generic callers meeting the new source and frame conditions may become resource Safe. No fixed native gain is promised. The initializer's literal stores are existing CG11 behavior and will not be claimed as new admissions.
+- `metric_prepare_storage`, `map_metric_create`, `metric_index_add`, `map_metric_get_unlocked` and `cmt_map_metric_get` are expected to remain Unknown. Their tracked/interior list calls and remaining allocation, nested ownership, secondary membership, cached pointer and borrowing obligations are outside this increment. Predicted CMetrics getter closure gain: **0**.
+- No prior Safe route should regress. Existing modeled stores/calls and declared interfaces retain precedence, default inference/callback entries refuse the conditional call, no new ordinary summary is exported, and unreachable old calls retain their lowering. Unknown/owned/released/escaped/mixed/derived/member-alias frames must not acquire a new Safe claim.
+- No provider or trusted contract changes are planned. Source and dependency metadata may change where the new checked call reads source facts; all such changes require attribution. Resource safety is distinct from the independent NULL property. Every Unsafe label remains provisional.
+
+Acceptance requires matching registered placeholder-free Lean with shared source/flow vectors; positive and refusal controls covering the source, caller frame, summary/callback/export containment and certificate replay; the full standing gate; and fresh TIP measurements on the same frozen inputs for corpus, system and slice. Retain complete raw resource/NULL/runtime differences and explain every movement or leaf trade. Failed attempts remain in the evidence. The full getter chain and the separate exact-return witness precision residual remain Open; new tracked/interior initializer-effect transport is an explicit follow-up.

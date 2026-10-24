@@ -71,13 +71,15 @@
 //!    gate, including `result_matches`' derived arm.
 //!
 //! The ordinary live-entry search and the removed-wrapper route run first, so
-//! no summary either of them publishes is replaced or weakened.
+//! no non-neutral result either publishes is replaced. Rule 36 may refine a
+//! neutral None result with a validated alias and identical parameter modes.
 //!
 //! # What is deliberately not inferred
 //!
-//! * a formal handed back **itself** (`return dest;`): its name-only site is an
-//!   identity, whose escape refuses. It is not a derived result, and an exact
-//!   alias through a `return` of the formal is left to its own card;
+//! Rule 36 additionally admits a source-confirmed original borrowed formal
+//! through `ExactFormalReturn`; all other identity escapes still refuse.
+//!
+//! * a rebound, untyped, shadowed or custody-bearing formal;
 //! * derivation from anything but a formal: a local resource, a global, a
 //!   string literal, an untracked expression;
 //! * derivation through a local copy the body rebinds, or offsets by more than
@@ -211,10 +213,10 @@ fn returns_derived_destination(cfg: &LegacyCfg) -> bool {
         .collect::<BTreeSet<_>>();
     cfg.nodes.iter().any(|node| {
         node.is_exit
-            && matches!(
+            && (matches!(node.instruction, LegacyInstruction::ExactFormalReturn { .. }) || matches!(
                 &node.instruction,
                 LegacyInstruction::EscapeIfOwned { source } if destinations.contains(source.as_str())
-            )
+            ))
     })
 }
 

@@ -1,0 +1,147 @@
+{
+  "cards": [
+    "W48-BU-CMT-MAP-METRIC-GET",
+    "W48-CMT-LIST-SELF-INIT"
+  ],
+  "items": [
+    {
+      "card": "W48-BU-CMT-MAP-METRIC-GET",
+      "item": "CMT-MAP-METRIC-GET-OWNERSHIP-CHAIN",
+      "decision": "applied",
+      "verify": [
+        {
+          "file": "docs/reviews/r0_3/acceptance_matrix.json",
+          "contains": "Open after the human narrowed W48-BU-CMT-MAP-METRIC-GET to exact borrowed-formal returns. Remaining: caller-supplied metric member allocation and storage lifetime; nullable metric results owning nested label/SDS lists; primary owned membership versus secondary hash indexing and cached pointers; returning a checked borrow from the map; source-checked CFL list effects and truthful vendored XXH3 effects. DISCHARGE: generic Rust with matching audited Lean (no placeholders or project axioms), truthful and pinned contracts with provider gates if changed, full-body and all-exit validation without self-assumed contracts, and fresh BASE/TIP attribution of resource, null and outer/runtime results. A conditional planner caller ceiling is not a gain."
+        }
+      ]
+    },
+    {
+      "card": "W48-BU-CMT-MAP-METRIC-GET",
+      "item": "W48-BOTTOM-UP-RESIDUAL-PLAN",
+      "decision": "applied",
+      "verify": [
+        {
+          "file": "docs/reviews/r0_3/acceptance_matrix.json",
+          "contains": "W48-BU-CMT-MAP-METRIC-GET was explicitly narrowed by the human to an audited exact borrowed-formal return feature. The full CMetrics getter chain remains Open under CMT-MAP-METRIC-GET-OWNERSHIP-CHAIN. This card claims no getter closure from its historical conditional 11-caller ceiling. Fresh paired measurements show zero resource-row verdict, diagnostic or dependency movements across corpus/system/slice and a byte-identical 2,200-body planner. The fail-closed witness repair separately withdraws one Monkey provisional NULL finding to Unknown; retain W48-EXACT-RETURN-WITNESS-PRECISION for its precision recovery."
+        }
+      ]
+    },
+    {
+      "card": "W48-BU-CMT-MAP-METRIC-GET",
+      "item": "W48-EXACT-RETURN-WITNESS-PRECISION",
+      "decision": "applied",
+      "verify": [
+        {
+          "file": "docs/reviews/r0_3/acceptance_matrix.json",
+          "contains": "The exact borrowed-formal return controls exposed a NULL witness bug that could turn an unresolved nonnullable-derived base into path-search infeasible. The fail-closed repair cuts unresolved bases and preserves known NULL for an exact alias. Fresh native mk_http_directory_redirect_check consequently loses a provisional allocation-failure finding at memcpy/location and remains Unknown. DISCHARGE: checked generic witness transport for ignored derived results and/or allocation-base splitting, matching audited Lean with no placeholders or project axioms, both ignored-result precision and used-result false-Safe negative controls, and fresh complete resource/NULL/runtime native attribution. Until then retain Unknown; this is neither a C fix nor an upstream defect claim."
+        }
+      ]
+    },
+    {
+      "card": "W48-CMT-LIST-SELF-INIT",
+      "item": "CMT-MAP-METRIC-GET-OWNERSHIP-CHAIN",
+      "decision": "applied",
+      "verify": [
+        {
+          "file": "docs/reviews/r0_3/acceptance_matrix.json",
+          "contains": "W48-CMT-LIST-SELF-INIT adds only a checked initializer-leaf call inside a simple unit-local empty-custody caller frame, with no ordinary summary or production getter gain. CG11 literal self-stores were already supported. Tracked/interior caller effect transport remains Open under W48-CMT-TRACKED-INTERIOR-SELF-INIT; all other parent obligations remain Open."
+        }
+      ]
+    },
+    {
+      "card": "W48-CMT-LIST-SELF-INIT",
+      "item": "W48-CMT-TRACKED-INTERIOR-SELF-INIT",
+      "decision": "applied",
+      "verify": [
+        {
+          "file": "docs/reviews/r0_3/acceptance_matrix.json",
+          "contains": "Open after W48-CMT-LIST-SELF-INIT. Its private empty-frame call admits no tracked owner, interior/member-address actual or member-place alias and exports no ordinary summary. DISCHARGE: generic checked shape/effect transport for an exact live caller-owned object or embedded member, preserving actual CG11 writes, derived/member alias invalidation, custody and list-membership obligations; matching audited Rust/Lean without placeholders or project axioms, complete source/ABI/full-body/all-exit checks, wrong-owner/layout/alias and callback/export refusal controls, and fresh BASE/planner then committed prediction then implementation with complete resource/NULL/runtime native attribution. Never erase initializer writes into a neutral summary."
+        }
+      ]
+    },
+    {
+      "card": "W48-BU-CMT-MAP-METRIC-GET",
+      "item": "increment",
+      "decision": "applied",
+      "note": "Current history part selected by live index; next part opened if needed before 32 KiB.",
+      "verify": [
+        {
+          "file": "docs/development/increments/wave-48-part12.md",
+          "contains": "W48-BU-CMT-MAP-METRIC-GET implements audited exact borrowed-formal returns (gateway rule 36), preserving custody and caller alias lifetime through positive source/AST facts and fresh all-exit validation. The human narrowed the card and retained fresh BASE/planner \u2192 prediction \u2192 implementation ordering. Fresh paired corpus 4,834 remains 999 Safe / 3,826 Unknown / 9 provisional Unsafe; system 448 remains 99 / 345 / 4; slice 404 remains 57 Safe / 342 Unknown / 4 Pending / 1 provisional Unsafe. No prior Safe regresses and measured getter closure gain is zero. All 5,781 NULL dictionaries are compared: two gain truthful memcpy dependency metadata, and one Monkey provisional finding becomes Unknown under the fail-closed derived-base witness repair; precision recovery is Open under W48-EXACT-RETURN-WITNESS-PRECISION. All 23,720 raw differences are retained, 148 production reading bindings replayed, 50 captured environment entries validated, and 39 semantic leaves fully accounted with complete NULL/runtime replays and zero unexplained leaves. The 2,200-body planner is byte-identical; its getter 11-caller ceiling remains conditional. The full frozen gate passes 8,602 Rust tests (545 units / 558 summaries; 15 ignored), 369 Lean audits under 4.35.0, and 374 Python tests; all steps exit 0, without placeholders or project axioms. The full CMetrics storage/nested-owner/index/cache/borrow/CFL/XXH chain remains Open under CMT-MAP-METRIC-GET-OWNERSHIP-CHAIN, and Rust/source correspondence remains trust-boundary 28. See docs/reports/w48-bu-cmt-map-metric-get/README.md."
+        }
+      ]
+    },
+    {
+      "card": "W48-CMT-LIST-SELF-INIT",
+      "item": "increment",
+      "decision": "applied",
+      "note": "Current history part selected by live index; next part opened if needed before 32 KiB.",
+      "verify": [
+        {
+          "file": "docs/development/increments/wave-48-part12.md",
+          "contains": "W48-CMT-LIST-SELF-INIT implements checked unit-local calls to existing self-link initializer leaves (gateway rule 36a), using positive complete source/ABI/field facts, actual CG11 leaf validation and a private empty-custody caller frame; no ordinary summary is published. Fresh BASE/planner precedes prediction 08b554680 and semantic implementation. Own paired corpus 4,834 remains 999 Safe / 3,826 Unknown / 9 provisional Unsafe; system 448 remains 99/345/4 and slice 404 remains 57 Safe / 342 Unknown / 4 Pending / 1 provisional Unsafe. All 5,781 NULL dictionaries and runtime projections remain unchanged after exact metadata attribution; 23,622 raw leaves are retained, 148 reading receipts replayed and 50 captured environments validated, with zero unexplained semantic leaves. The 2,200-body planner is byte-identical; getter ceiling 11 is conditional and measured getter closure gain 0. The frozen gate passes 8,612 Rust tests (545 units / 558 summaries, 15 ignored), 369 Lean 4.35.0 audits and 374 Python tests, all steps exit 0; failed and interrupted attempts remain archived. The deepest admitted reader control uses 328 KiB below 1 MiB. Parent CMT-MAP-METRIC-GET-OWNERSHIP-CHAIN, new W48-CMT-TRACKED-INTERIOR-SELF-INIT and W48-EXACT-RETURN-WITNESS-PRECISION remain Open. Card-native figures precede later main integration and are not a combined-main observation. See docs/reports/w48-cmt-list-self-init/README.md."
+        }
+      ]
+    },
+    {
+      "card": "W48-BU-CMT-MAP-METRIC-GET",
+      "item": "status",
+      "decision": "applied",
+      "verify": [
+        {
+          "file": "docs/STATUS.md",
+          "contains": "W48-BU-CMT-MAP-METRIC-GET (measured cc1d6c25a) adds exact borrowed-formal return validation with matching audited Lean. Fresh resource counts are unchanged: corpus 4,834 = 999 Safe / 3,826 Unknown / 9 provisional Unsafe; system 448 = 99 / 345 / 4; slice 404 = 57 Safe / 342 Unknown / 4 Pending / 1 provisional Unsafe. No getter gain or Safe regression. The NULL witness repair withdraws one Monkey provisional finding to Unknown and adds memcpy dependency records to two other rows; all 39 semantic leaves are accounted and all raw payloads retained. Gate 8,602 Rust / 369 Lean / 374 Python passes. Full CMetrics ownership closure and the documented witness precision recovery remain Open; projection is not whole-C safety."
+        }
+      ]
+    },
+    {
+      "card": "W48-CMT-LIST-SELF-INIT",
+      "item": "status",
+      "decision": "applied",
+      "verify": [
+        {
+          "file": "docs/STATUS.md",
+          "contains": "W48-CMT-LIST-SELF-INIT (gateway rule 36a, measured 99457f141) adds a private checked call frame for self-link initializer leaves, with matching audited Lean and no ordinary custody summary. Its fresh isolated BASE/TIP retains corpus 999 Safe / 3,826 Unknown / 9 provisional Unsafe, system 99/345/4 and slice 57 Safe / 342 Unknown / 4 Pending / 1 provisional Unsafe; complete resource, NULL and runtime results agree after exact metadata reconstruction. Getter closure gain 0. Gate 8,612 Rust / 369 Lean / 374 Python passes. Tracked/interior effect transport and the full getter chain remain Open; these card-local figures do not replace later main observations."
+        }
+      ]
+    },
+    {
+      "card": "both CMetrics increments",
+      "item": "report-index",
+      "decision": "applied",
+      "verify": [
+        {
+          "file": "docs/reports/INDEX.md",
+          "contains": "w48-cmt-list-self-init/README.md"
+        },
+        {
+          "file": "docs/reports/INDEX.md",
+          "contains": "w48-bu-cmt-map-metric-get/README.md"
+        }
+      ]
+    },
+    {
+      "card": "both CMetrics increments",
+      "item": "committed-matrix-and-python",
+      "decision": "applied",
+      "verify": [
+        {
+          "file": "docs/reviews/r0_3/acceptance_matrix.json",
+          "contains": "W48-CMT-TRACKED-INTERIOR-SELF-INIT"
+        },
+        {
+          "file": "docs/reports/w48-cmt-list-self-init/integration/post-matrix-confirmation.json",
+          "contains": "\"exit\": 0"
+        }
+      ]
+    }
+  ],
+  "remaining": [],
+  "integration_gate": "standing-gate.json",
+  "main_integration": {
+    "decision": "applied",
+    "main_tip_published": "f0026419391339d91bcbe1b0bd2e6bb95c0c74de",
+    "push_exit": 0,
+    "verification": "push-confirmation.json"
+  }
+}

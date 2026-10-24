@@ -8819,6 +8819,74 @@ safety claim and no validation of the detach representation premise.
     `crates/qcore-c-gateway/tests/literal_decay_readings.rs`;
     [report](../reports/w48-bu-single-leaf-bodies/README.md).
 
+<a id="constraint-36"></a>
+
+36. **An exact borrowed-formal return preserves identity and custody.**
+    W48-BU-CMT-MAP-METRIC-GET's narrowed first feature. The derived-result CFG
+    alone may lower a bare `return P;` to `ExactFormalReturn`. A positive,
+    unambiguous declaration reading must give the result and the original
+    formal matching depth-one object-pointer types. The typed source reader
+    must confirm the formal's parameter index, declaration identity, original
+    return reference, complete spans and matching lexical/AST occurrences;
+    writes or address-taking of that formal, conflicting value bindings,
+    volatile/atomic pointer objects, or missing facts decline. Existing source
+    queries and earlier non-neutral results retain precedence. A neutral `None`
+    result may be refined only by a freshly validated derived summary with the
+    identical parameter custody vector; a failed refinement retains the old
+    result. The exit admits only
+    a known identity: definitely NULL, or one status-free original formal site
+    with the matching index and no unresolved effect. Known non-null untracked,
+    unknown, mixed, derived, owned, released or unrelated bindings refuse. An
+    admitted transfer preserves every state field; a refusal adds UnknownAlias
+    and the existing unresolved-effect exposure without changing resource
+    status, binding or containment. The new instruction is appended to preserve
+    existing serialized tags, participates in volatile settlement, and admits
+    no descriptor read. The ordinary full-body, all-reachable-exit,
+    untouched-base and fresh reported-premise validation gates still decide the
+    summary. Callers apply the existing `Derived(Exact)` semantics: the alias
+    retains the base's nullness and invalidation. The independent NULL path
+    search preserves known NULL for an exact result and cuts an unresolved
+    derived base as unresolved, never infeasible by loss of that base. The alias
+    owns nothing and discharges
+    no allocation obligation. `QCore.ExactFormalReturn` models the source
+    conjunction, classifier and transfer, proves preservation and relative
+    exactness including NULL/interior bases, and shares fourteen flow vectors
+    with Rust. Source extraction and Rust correspondence remain premise 28.
+    This establishes none of the CMetrics getter chain's foreign-member,
+    collection, secondary-index or cache ownership obligations; its remainder
+    stays Open. [Design](../reports/w48-bu-cmt-map-metric-get/DESIGN.md).
+
+<a id="constraint-36a"></a>
+
+36a. **A checked initializer call retains its caller-frame condition.**
+    CG11 already admits literal self-address stores and withholds their
+    ordinary summaries. A new `SelfInitCall` may replace only a refused direct
+    call in a complete source-checked void caller with one original depth-one
+    struct-pointer formal. Its body contains only blocks, unvalued returns,
+    base NULL guards, literal self-stores and direct calls passing that same
+    formal to initializer leaves. A leaf contains at least one self-store and
+    no calls. Complete matching source spans, exact declaration identities and
+    pointer types, and positive complete nonunion/nonbitfield member facts are
+    required. Missing facts, aliases, other effects, escaping function
+    designators, recursive calls and wrappers of wrappers decline. Every leaf's
+    actual CFG must validate through the existing CG11 stores, with its stores
+    matching the source and every reachable exit custody-empty.
+    The call is conditional on an internal checked-row entry capability,
+    default false, an empty modeled custody frame and no member-place aliases.
+    Admission preserves the complete state; refusal executes the exact old
+    Unknown fallback. Structurally unreachable markers retain their old
+    lowering. The marker is appended to preserve older serialized tags and
+    cannot establish an ordinary custody summary. A private caller row must
+    independently validate the complete CFG and every exit; nothing is
+    installed in the contract environment or summary records. Declared calls,
+    older modeled statements and interfaces retain precedence. Ordinary
+    inference, callbacks and cross-unit imports gain no unguarded effect.
+    Tracked/interior caller transport and full owned-list semantics remain
+    separate obligations. `QCore.CheckedSelfInitCall` models source and frame
+    refusal, state/ledger preservation, finite call composition, lifetime and
+    transport boundaries. Extraction and Rust correspondence remain premise 28;
+    new readers must fit rule 13q's existing measured stack budget.
+    [Design](../reports/w48-cmt-list-self-init/DESIGN.md).
 <a id="constraint-37"></a>
 
 37. **Checked result constructors.** Aggregate field stores may ignore a

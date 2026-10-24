@@ -350,6 +350,52 @@ mod tests {
         (arms, filtered_depth(&shape(arms)))
     }
 
+    fn self_init_chain(arms: usize) -> String {
+        let mut source = String::from(
+            "struct Link { struct Link *next; };\nvoid reset(struct Link *p) { p->next = p; }\nvoid chain(struct Link *p) {\n",
+        );
+        for _ in 0..arms {
+            source.push_str("if (p == 0) {} else ");
+        }
+        source.push_str("{}\nreset(p);\n}\n");
+        source
+    }
+
+    #[test]
+    fn checked_initializer_source_readers_fit_at_the_admitted_bound() {
+        if !clang_available() {
+            return;
+        }
+        let (arms, _) = deepest_admitted(self_init_chain, 50);
+        let mut measured = false;
+        for backoff in 0..=3 {
+            let source = self_init_chain(arms - backoff);
+            let nesting = filtered_depth(&source);
+            let (answer, kib) = high_water(move || {
+                let _scope =
+                    crate::typed_access_path::enter_source(&source, CCompilerDialect::Gnu17, None);
+                crate::legacy_c::self_link_init::exercise_source_readers(&source)
+            });
+            if answer == Some(true) {
+                assert!(nesting > DEFAULT_LIMIT);
+                assert_stack_budget(
+                    kib,
+                    &format!("rule 36a checked initializer source readers, depth {nesting}"),
+                );
+                measured = true;
+                break;
+            }
+            assert_eq!(
+                answer, None,
+                "an admitted index must check the complete source profile"
+            );
+        }
+        assert!(
+            measured,
+            "must exercise a positive source profile in the deep band"
+        );
+    }
+
     /// The analysed-unit consultations (rule 13q) and their readers on the
     /// deepest admitted definition: the definition is read, the rule-11y
     /// extension reader and the retention guard's shadow reader answer as on
@@ -420,6 +466,40 @@ mod tests {
                 kib,
                 &format!("rule 13q readers, {arms} arms, depth {deepest}"),
             );
+            // Rule 36 adds readers of this band. Measure their actual walks
+            // at the deepest index this shape admits (the whole-unit index
+            // can add outer JSON levels to the filtered definition).
+            let read_formal = |source: String| {
+                high_water(move || {
+                    let _scope = crate::typed_access_path::enter_source(
+                        &source,
+                        CCompilerDialect::Gnu17,
+                        None,
+                    );
+                    crate::legacy_c::exact_formal_return::exercise_source_readers()
+                })
+            };
+            let mut measured = false;
+            for backoff in 0..=3 {
+                let source = shape(arms - backoff);
+                let source_depth = filtered_depth(&source);
+                let (answer, formal_kib) = read_formal(source);
+                if answer == Some(true) {
+                    assert!(source_depth > DEFAULT_LIMIT);
+                    assert_stack_budget(
+                        formal_kib,
+                        &format!(
+                            "rule 36 source readers, {} arms, filtered depth {source_depth}",
+                            arms - backoff
+                        ),
+                    );
+                    measured = true;
+                    break;
+                }
+                assert_eq!(answer, None);
+            }
+            assert!(measured, "rule 36 must exercise a deep admitted index");
+            assert_eq!(read_formal(shape(arms + 1)).0, None);
             let (beyond, _) = read(shape(arms + 1));
             // Beyond the bound nothing is read: the shadow reader refuses
             // (`true` for any name), as before the card.

@@ -3,6 +3,11 @@
 Latest combined source gate for W48-BU-EXTERNAL-CALLEE-CONTRACTS integration (`b7c2b77e1`): 8,601 Rust tests (547 units / 560 summaries, zero failed, 15 ignored), 369 Lean audits, 374 root Python tests, 133 provider Rust tests (1 ignored), 25 provider Python tests, and all formatting, Clippy, reevaluation, inventory and five-package build/verify commands pass. [Integration receipt](reports/w48-bu-external-callee-contracts/integration/README.md). Native counts below remain their own scoped checkpoints; no combined native measurement is inferred.
 
 W48-BU-EXTERNAL-CALLEE-CONTRACTS owns an isolated checkpoint on BASE 8991b7b58 / analyzer 5dbe4a381: writev and thrd_current declarations move exactly mk_iov_send and thrd_current_id to Safe under named standard/configured LP64 ABI premises (corpus 999→1001 Safe, 3826→3824 Unknown, 9 provisional Unsafe unchanged; combined 859→861, mk_iov_send retains its null premise). All null dictionaries/unit statuses and system/tail-pause verdicts are unchanged. mtx_destroy and the two possible cross callers remain Unknown. This checkpoint is not a replacement for a merged global coverage measurement. The full unconfined standing/provider gate passes: 8,593 Rust tests (546 units / 559 summaries, 0 failed, 15 ignored), 369 Lean audits, 374 root Python tests, 133 provider Rust tests (0 failed, 1 ignored) and 25 provider Python tests; fmt, Clippy, both reevaluation examples, inventory and all five package builds/verifies exit 0.
+The two CMetrics reports below are isolated card measurements at their named tips, before later main integrations. They establish no combined-main native count; integration source validation is recorded separately.
+
+W48-CMT-LIST-SELF-INIT (gateway rule 36a, measured 99457f141) adds a private checked call frame for self-link initializer leaves, with matching audited Lean and no ordinary custody summary. Its fresh isolated BASE/TIP retains corpus 999 Safe / 3,826 Unknown / 9 provisional Unsafe, system 99/345/4 and slice 57 Safe / 342 Unknown / 4 Pending / 1 provisional Unsafe; complete resource, NULL and runtime results agree after exact metadata reconstruction. Getter closure gain 0. Gate 8,612 Rust / 369 Lean / 374 Python passes. Tracked/interior effect transport and the full getter chain remain Open; these card-local figures do not replace later main observations.
+
+W48-BU-CMT-MAP-METRIC-GET (measured cc1d6c25a) adds exact borrowed-formal return validation with matching audited Lean. Fresh resource counts are unchanged: corpus 4,834 = 999 Safe / 3,826 Unknown / 9 provisional Unsafe; system 448 = 99 / 345 / 4; slice 404 = 57 Safe / 342 Unknown / 4 Pending / 1 provisional Unsafe. No getter gain or Safe regression. The NULL witness repair withdraws one Monkey provisional finding to Unknown and adds memcpy dependency records to two other rows; all 39 semantic leaves are accounted and all raw payloads retained. Gate 8,602 Rust / 369 Lean / 374 Python passes. Full CMetrics ownership closure and the documented witness precision recovery remain Open; projection is not whole-C safety.
 
 Rule 32 (logger caller frame) is finished: callers of rd_kafka_log0 are conditionally Safe on three named premises (rk_plugin_callback_closure, rk_log_enqueue_no_event_callback, rk_log_enqueue_forward_not_last), and rule 32a keeps rd_kafka_log0 and rd_kafka_log_buf decided by their own bodies (both Unknown; logger-effects-v1's 15 obligations Open). Eight-home corpus BASE 4dd8c8013 977 -> TIP 998 Safe (3,848 -> 3,827 Unknown, 9 provisional Unsafe unchanged): rule 32 seven, rule 34 two, rule 35 twelve rows; the halted record's open review is closed. With rules 32/32a, 34 and 35 all on main, the eight-home pinned corpus reads 998 Safe / 3,827 Unknown / 9 provisional Unsafe (the rule 34 and 35 paragraphs below measured 999 on tips without rule 32a, where `rd_kafka_log0` still moved). No W48 implementation card remains halted on main; the [halt record](reports/w48-impl-round1-halt/README.md) is closed.
 
@@ -412,24 +417,15 @@ latest completed integration measurement.
 
 ## Latest validated gate
 
-The latest [contract cycle4 source gate](reports/contract-cycle4-integration/README.md)
-measures source `552773f0c64e2e6a3c7d4b752c61a7d26130975a`: **8,532 core Rust passed / 0 failed /
-15 ignored, 541 units / 554 summaries; 365 Lean audits**. All22 stages pass
-with stable clean source. Providers pass **133 Rust / 0 failed / 1 ignored**,
-**25 Python**, and allfive package builds/verifications. Commands, exits,
-actual-run Clang recording and private log paths are in the shared gate receipts.
-Native comparison of BASE31c5 and TIP552 remains pending; failed attempts
-remain retained. No native completion is inferred from this source gate. Authoritative Python passes **374 tests**, exit0, at clean source
-`024048e35163f59475572b851ad663dcfa46d730`; committed matrix SHA remains unchanged.
-The separate post-matrix confirmation receipt binds the actual log and hashes.
-Logger/scheduler source truth and semantic/lifecycle discharge remain Open;
-readable metadata alone contributes no source-Safe gain.
+The [combined CMetrics/main gate](reports/w48-cmt-list-self-init/integration/gate.json) validates committed source `6874be01bfdf7a5ae349f50566d6915164d57501` after semantic merge `6cc54c3ae1eebd5aa75c7b801cbcd1af07230f42`. Root Rust: **8,639 passed / 0 failed / 15 ignored**, 549 units / 562 summaries. **370 Lean audits** pass under pinned 4.35.0, and **374 Python tests** pass against the committed matrix. Formatting, Clippy and both reevaluation examples exit 0. Providers pass **133 Rust / 0 failed / 1 ignored**, **25 Python**, inventory, package build and all five package verifications. Every gate step exits 0; actual Clang 21.1.8, commands, source guards and private logs are in the receipt. Isolated CMetrics resource/NULL/runtime comparisons remain at their named measured tips; this source gate supplies no new combined-main native count or discharge of source premises. Final regenerated-matrix Python confirmation is recorded separately.
 
-The five provider crates own **83** canonical contract modules; **54** shared or
+Provider checks above were measured at `389090b6755b43045c8838989c91adce33e9aabe` and reused after exact runtime/provider source equality; repaired test expectations and documentation do not change those inputs. The repaired root gate and its adjacent Clang recording are fresh.
+
+The five provider crates own **84** canonical contract modules; **54** shared or
 application-level modules live in six `providers/quirin-provider-*` crates: five
 per-library data crates (libc only in `quirin-provider-libc`) and
 `quirin-provider-shared`, which also holds the providers' shared runtime and
-bundles the five. `contract/corpus.json` indexes all **137** without duplicate
+bundles the five. `contract/corpus.json` indexes all **138** without duplicate
 snapshots. Retained integration adapters embed the provider-owned data directly;
 generic core crates retain no provider executable dependency;
 package inventories bind supplied contract bytes to their executables, and

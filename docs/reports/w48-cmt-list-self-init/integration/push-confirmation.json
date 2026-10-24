@@ -1,0 +1,38 @@
+{
+  "remote": "origin",
+  "configured_url": "git@github.com:cosmo0920/quirin-lang.git",
+  "verified_published_commit": "f0026419391339d91bcbe1b0bd2e6bb95c0c74de",
+  "ref": "refs/heads/main",
+  "push_command": [
+    "git",
+    "push",
+    "origin",
+    "main"
+  ],
+  "push_exit": 0,
+  "verification_command": [
+    "git",
+    "ls-remote",
+    "--exit-code",
+    "origin",
+    "refs/heads/main"
+  ],
+  "verification_stdout": "f0026419391339d91bcbe1b0bd2e6bb95c0c74de\trefs/heads/main",
+  "verified_at": "2026-10-24T10:56:22.240300+00:00",
+  "merge": {
+    "before": "81df98c9d8edb2ca83c2478262c3afb90cadd9d7",
+    "after": "f0026419391339d91bcbe1b0bd2e6bb95c0c74de",
+    "command": [
+      "git",
+      "merge",
+      "--ff-only",
+      "--quiet",
+      "f0026419391339d91bcbe1b0bd2e6bb95c0c74de"
+    ],
+    "cwd": "/media/Data/GitHub/quirin-lang",
+    "exit": 0,
+    "at": "2026-10-24T10:55:18.902182+00:00",
+    "host_main_clean": true
+  },
+  "receipt_commit_follows": "This receipt records the verified source/evidence publication; the following commit adds only completion metadata and is pushed separately."
+}

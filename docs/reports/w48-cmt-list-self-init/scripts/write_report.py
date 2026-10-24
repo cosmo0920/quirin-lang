@@ -1,0 +1,47 @@
+from pathlib import Path
+import json
+p=Path('private/w48-cmt-member-storage');r=Path('docs/reports/w48-cmt-list-self-init');load=lambda f:json.loads(Path(f).read_text())
+n=load(p/'native-comparison.json');g=load(r/'gate.json');rust=g['rust'];tot=rust['totals'];b=load(p/'tip-binary.json')
+text=f'''# W48-CMT-LIST-SELF-INIT: checked calls to self-link initializers
+
+This increment implements gateway rule 36a: a source-checked call to an existing CG11 self-link initializer leaf can be analyzed inside a validated unit-local empty-custody frame. It publishes no ordinary custody summary. The full CMetrics getter ownership chain remains **Open**; its measured resource closure gain is **0**.
+
+Semantic BASE is `359f64a987b74b21852c5a691e5c23f75c15d570`; measured TIP is `{n['measured_tip']}`. Fresh BASE corpus and planner completed before prediction commit `08b5546809e99124f384c0d91db7220c9c192520`; the first semantic commit is `c35e7e809eb4aed22bd163ca3e896b337ddeae1d`. The unchanged [prediction](PREDICTION.md) and [baseline receipt](baseline-receipt.json) retain the requested BASE/planner → prediction → implementation order. Report and integration commits follow the measured source.
+
+## Implemented boundary
+
+CG11 already checks literal `p->self = p` stores. The new feature crosses only their call boundary: the entire void caller has one original depth-one struct-pointer formal and consists of blocks, void returns, base NULL guards, literal self-stores and direct same-formal calls to initializer leaves. Each leaf has at least one literal self-store and no calls. Complete AST/source spans, declaration identities, exact pointer types and positive complete nonunion/nonbitfield field facts are required. The leaf's actual full CFG must validate through existing CG11 and every store must match the source profile. Unsupported bodies, casts, aliases, escaping function designators, recursion, wrappers of wrappers, larger callers and tracked/interior/member-address actuals retain refusal.
+
+An internal capability defaults false and is enabled only for this freshly validated private row. Admission requires the complete modeled custody frame to be empty and all pointer keys to be plain names; the base is absent or an exact known single name-only identity. Unknown, mixed, derived, NULL and nontrivial targets refuse. Admission preserves the complete state and owed ledger; refusal executes the original Unknown instruction. Ordinary summaries explicitly reject the marker, callback and cross-unit publication receive no permission, and structurally unreachable markers retain their old lowering. Existing statements and declared/guarded interfaces keep precedence. Failed source probes restore their consultation and reading checkpoints.
+
+`proof/QCore/CheckedSelfInitCall.lean`, registered in `AuditPointerStore.lean`, models the source/frame conjunction, admitted-state preservation, refusal, repeated calls, lifetime preservation and publication boundaries. Rust and Lean share 14 flow and 9 source vectors. Extraction and Rust–Lean correspondence remain trust-boundary 28 premises. Nine focused Rust controls cover source/leaf failures, frame guards, unrelated custody, declared precedence, unreachable inference, export/home/certificate tampering and shared vectors. The actual admitted deep source-reader control reaches JSON depth 253 with 328 KiB stack high-water below the unchanged 1 MiB budget. No provider or contract bytes changed.
+
+## Native evidence
+
+All six fresh BASE/TIP routes and both planners exit 0 with stable before/after recorded inputs. Complete resource rows, diagnostics and contract dependencies remain unchanged:
+
+| Route | Rows | Safe | Unknown | Pending | Provisional Unsafe |
+|---|---:|---:|---:|---:|---:|
+| Corpus | 4,834 | 999 | 3,826 | 0 | 9 |
+| System | 448 | 99 | 345 | 0 | 4 |
+| Slice | 404 | 57 | 342 | 4 | 1 |
+
+These are the isolated card's measured scope, before later main integrations. All {n['null_dictionaries_compared']:,} complete NULL dictionaries and complete runtime projections agree after exact metadata attribution. No previous Safe regresses. The 2,200-body planner is byte-identical (SHA256 `{n['planner_sha256']}`); overall conditional ceiling 383 and getter ceiling 11 are planning quantities. `metric_prepare_storage`, `map_metric_create`, `metric_index_add`, `map_metric_get_unlocked` and `cmt_map_metric_get` remain Unknown. The generic feature is exercised by focused controls; unchanged native verdicts do not establish a production admission count.
+
+[Native comparison](native-comparison.json) retains {n['raw_differing_leaves_retained']:,} raw differing leaves, with {n['semantic_leaves_accounted']} remaining semantic leaves and zero unexplained leaves. Exact production binding replay accounts for {n['reading_receipts_replayed']} reading receipts and validates {n['captured_environment_entries_validated']} captured environment entries without changing observations or canonical environments. Version coordinates, receipt ordering and the exact empty preprocessed-source `__TIME__` summary identity are independently reconstructed; wrong-time controls reject. All raw fields remain archived. Both sides' complete production NULL tallies, custody/NULL joins and outer projections reproduce, including negative controls. Source binding remains Open and truth transport is false. Safe remains conditional on its published profile, scope, bounds and assumptions; provisional Unsafe is not an upstream defect claim, and projection is not whole-C safety.
+
+Both sides use the same 310-file input snapshot and unchanged measurement driver, four native jobs and six Cargo jobs. The original-path namespace wrapper presents existing C sources read-only at the compile databases' old spelling; unavailable generated inputs remain unavailable. Binary/source identity is recorded separately from working HEAD. BASE binary SHA256 is `b10224067da2768e8bed9b428de8c45b857409cd15e0744563b2367e072906d6`; TIP SHA256 is `{b['sha256']}`, built with explicit `QCORE_AUDIT_BUILD_COMMIT={n['measured_tip']}`. Every heavy check, build, measurement and replay runs beneath `/tmp/qcore-c-card-validation-20261022.lock`, with a 40 GiB disk floor. See raw invocations under [artifacts](artifacts/) and replay receipts under [replays](replays/).
+
+## Validation and attempts
+
+The full frozen source gate passes every command, exit 0: recursive submodule initialization; `python3 scripts/run_test_binaries.py --jobs 6`; `cargo fmt --all -- --check`; `cargo clippy --all-targets -- -D warnings`; both reevaluation examples; `python3 scripts/check_lean_audits.py --jobs 6`; and `python3 -m unittest discover -s scripts/tests`. Rust: {rust['units_run']} units / {tot['summaries']} summaries, **{tot['passed']:,} passed / {tot['failed']} failed / {tot['ignored']} ignored**, {tot['measured']} measured / {tot['filtered']} filtered. Lean: **{g['lean_audits']} audits**, pinned 4.35.0, no placeholders or project axioms. Python: **{g['python_tests']} passed**. Actual Clang is Ubuntu clang 21.1.8. [gate.json](gate.json) records actual commands, exits, times and private log paths; its adjacent Clang recording belongs to that run.
+
+[validation-attempts.json](validation-attempts.json) preserves focused failures (the initial plain-name guard accepted a member spelling; the initial Lean record-update layout failed to parse), both subsequently repaired and passed. The first full gate found the missing new-variant example formatter and a Clippy collapsible-if; both were repaired. The next gate was interrupted during the Rust build when its session disappeared, and is not claimed as a pass. The recovery gate and all actual later evidence attempts are recorded separately. Logs are archived under [validation-logs](validation-logs/); private originals remain under `private/w48-cmt-member-storage/gate/` and `steps/`. No check was weakened or failure hidden. The prior exact-return report remains frozen.
+
+## Follow-ons and integration
+
+`CMT-MAP-METRIC-GET-OWNERSHIP-CHAIN` remains Open. `W48-CMT-TRACKED-INTERIOR-SELF-INIT` tracks the next call-frame/effect transport: initializer writes on a caller-owned tracked object or exact embedded member, including invalidation of derived/member aliases and list membership, without erasing stores into a neutral ordinary summary. Discharge requires generic Rust with matching audited Lean, source/ABI/full-body/all-exit and caller lifetime controls, explicit refusal of wrong owner/layout/alias states, and complete fresh native attribution. Allocation, nested labels/SDS ownership, primary/secondary membership, cached pointers, returned borrows and truthful CFL/XXH3 effects remain in the parent chain. `W48-EXACT-RETURN-WITNESS-PRECISION` remains Open and unchanged by this increment.
+
+The user's subsequent instruction authorizes main integration and pushing the configured remote. Integration must preserve later main rules, apply both CMetrics reports' ledger/increment proposals, regenerate the matrix and run the standing gate on the combined source. Card-native figures above remain scoped to the measured TIP; the integration receipt identifies the actual merged source and validation. Shared files include `legacy_c.rs`, `legacy_summary.rs`, `legacy_transfer.rs`, `legacy_classify.rs`, the gateway rule/router, `proof/QCore.lean`, `AuditPointerStore.lean`, and root-owned status/matrix/increment/index files.
+'''
+(r/'README.md').write_text(text)

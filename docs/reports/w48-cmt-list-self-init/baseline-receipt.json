@@ -1,0 +1,195 @@
+{
+  "semantic_base": "359f64a987b74b21852c5a691e5c23f75c15d570",
+  "base_binary": {
+    "source": "359f64a987b74b21852c5a691e5c23f75c15d570",
+    "build": {
+      "command": [
+        "env",
+        "CARGO_BUILD_JOBS=6",
+        "QCORE_AUDIT_BUILD_COMMIT=359f64a987b74b21852c5a691e5c23f75c15d570",
+        "cargo",
+        "build",
+        "--release",
+        "-p",
+        "qcore-audit",
+        "--bin",
+        "quirin-audit"
+      ],
+      "head": "8ae202b0b1bc78be14a7723377ba6f6a2feca1c7",
+      "semantic_base": "359f64a987b74b21852c5a691e5c23f75c15d570",
+      "started": "2026-10-24T03:10:23.216408+00:00",
+      "exit": 0,
+      "ended": "2026-10-24T03:10:52.115738+00:00"
+    },
+    "sha256": "b10224067da2768e8bed9b428de8c45b857409cd15e0744563b2367e072906d6",
+    "binary": "/home/cosmo/.codex/worktrees/808d/quirin-lang/private/w48-cmt-member-storage/base-runtime/target/release/quirin-audit"
+  },
+  "corpus": {
+    "started": "2026-10-24T03:10:52.299672+00:00",
+    "ended": "2026-10-24T04:34:47.431461+00:00",
+    "exit": 0,
+    "stable": true,
+    "working_head_before": "8ae202b0b1bc78be14a7723377ba6f6a2feca1c7",
+    "working_head_after": "ff3fc6c1748158d0e87903cf1db285fb25a0f001",
+    "command": [
+      "python3",
+      "/home/cosmo/.codex/worktrees/808d/quirin-lang/private/w48-cmt-member-storage/base-runtime/scripts/run_pinned_audit.py",
+      "/home/cosmo/.codex/worktrees/808d/quirin-lang/private/w48-cmt-member-storage/base-corpus",
+      "359f64a987b74b21852c5a691e5c23f75c15d570",
+      "--inputs-root",
+      "/home/cosmo/Documents/GitHub/qcore-c/build/cycle19",
+      "--jobs",
+      "4"
+    ],
+    "environment": {
+      "QCORE_PROFILES": "/home/cosmo/.codex/worktrees/808d/quirin-lang/private/w48-cmt-member-storage/inputs/contract/profiles",
+      "QCORE_CROSS_UNIT_LINK_MAP": "/home/cosmo/.codex/worktrees/808d/quirin-lang/docs/reports/detach-result-wrapper-composition/link-map.corpus.json",
+      "QCORE_NULL_PROPERTY": "/home/cosmo/.codex/worktrees/808d/quirin-lang/private/w48-cmt-member-storage/base-corpus-null.jsonl",
+      "QCORE_OUTER_PROJECTION": "/home/cosmo/.codex/worktrees/808d/quirin-lang/private/w48-cmt-member-storage/base-corpus-outer.json"
+    }
+  },
+  "input_manifest_sha256": "395cec9653189469d33b8da06c84108d265034cabb9c46e7a9443a86de397fc3",
+  "resource_rows": 4834,
+  "statuses": {
+    "Unknown": 3826,
+    "Safe": 999,
+    "Unsafe": 9
+  },
+  "planner": {
+    "baseline_same": 6,
+    "baseline_cross": 6,
+    "ceiling": 383,
+    "ceiling_waits_on_bodies": {
+      "0": 6,
+      "1": 249,
+      "2": 94,
+      "3": 13,
+      "4": 5,
+      "5": 5,
+      "6": 5,
+      "7": 2,
+      "8": 1,
+      "9": 1,
+      "11": 1,
+      "13": 1
+    },
+    "bodies": 2200
+  },
+  "cmetrics_rows": [
+    {
+      "body": "cmt_map.c::map_metric_get_unlocked",
+      "library": "cmetrics",
+      "callers": 1,
+      "frees_same": 2,
+      "frees_cross": 2,
+      "ceiling_callers": 1,
+      "ceiling_alone": 1,
+      "own_leaves": 20,
+      "own_calls": {
+        "metric_prepare_storage": 3,
+        "XXH_INLINE_XXH3_64bits_reset": 1,
+        "XXH_INLINE_XXH3_64bits_update": 2,
+        "XXH_INLINE_XXH3_64bits_digest": 1,
+        "metric_hash_lookup": 1,
+        "map_metric_create": 1,
+        "cfl_list_add": 1,
+        "metric_index_add": 1
+      },
+      "own_families": {
+        "unsupported: indirect memory access is outside the resource projection": 4,
+        "unknown_alias: unresolved resource identity `X`": 5
+      },
+      "score": 0.1,
+      "freed": [
+        "cmt_map.c::cmt_map_metric_get",
+        "cmt_map.c::cmt_map_metric_get_val"
+      ]
+    },
+    {
+      "body": "cmt_map.c::cmt_map_metric_get",
+      "library": "cmetrics",
+      "callers": 14,
+      "frees_same": 1,
+      "frees_cross": 1,
+      "ceiling_callers": 11,
+      "ceiling_alone": 1,
+      "own_leaves": 1,
+      "own_calls": {
+        "map_metric_get_unlocked": 1
+      },
+      "own_families": {},
+      "score": 1.0,
+      "freed": [
+        "cmt_map.c::cmt_map_metric_get_val"
+      ]
+    },
+    {
+      "body": "cmt_map.c::metric_index_add",
+      "library": "cmetrics",
+      "callers": 2,
+      "frees_same": 0,
+      "frees_cross": 0,
+      "ceiling_callers": 0,
+      "ceiling_alone": 0,
+      "own_leaves": 4,
+      "own_calls": {
+        "metric_index_resize": 1
+      },
+      "own_families": {
+        "unsupported: unmodeled call, aggregate or indirect access in branch condition": 1,
+        "unsupported: indirect memory access is outside the resource projection": 2
+      },
+      "score": 0.0,
+      "freed": []
+    },
+    {
+      "body": "cmt_map.c::metric_prepare_storage",
+      "library": "cmetrics",
+      "callers": 1,
+      "frees_same": 0,
+      "frees_cross": 0,
+      "ceiling_callers": 0,
+      "ceiling_alone": 0,
+      "own_leaves": 6,
+      "own_calls": {},
+      "own_families": {
+        "unknown_alias: unresolved resource identity `X`": 2,
+        "unsupported: indirect memory access is outside the resource projection": 4
+      },
+      "score": 0.0,
+      "freed": []
+    },
+    {
+      "body": "cmt_map.c::map_metric_create",
+      "library": "cmetrics",
+      "callers": 1,
+      "frees_same": 0,
+      "frees_cross": 0,
+      "ceiling_callers": 0,
+      "ceiling_alone": 0,
+      "own_leaves": 18,
+      "own_calls": {
+        "cfl_list_init": 2,
+        "cfl_list_add": 1,
+        "destroy_label_list": 1
+      },
+      "own_families": {
+        "unsupported: indirect memory access is outside the resource projection": 5,
+        "unknown_alias: unresolved resource identity `X`": 7,
+        "unsupported: loop re-acquisition: an earlier generation that may be live is still held": 1,
+        "unsupported: nullable resource `X` used by a non-null contract": 1
+      },
+      "score": 0.0,
+      "freed": []
+    }
+  ],
+  "artifacts": {
+    "base-corpus-invocation.json": "c676afa9d48a99a31438ac51e7ee2e77068f4bfda5161ebeb7cd04c29cd16c88",
+    "base-plan.json": "98417b15fe3a5d5a1cdf50af2d015dc79308bb7652a6175bde81a2a944b7ad72",
+    "base-corpus/resource-diagnostics.json": "ac47ef7b947014bd0bda3791e4a3416d0aa9d6888913cc00323df03bf7b9206e",
+    "base-corpus/resource-diagnostics.contracts.json": "c4d482cf304aa5d7d048bea13c03308ad5c539dda96e4f946b169bc2f7a4d2d9",
+    "base-corpus-null.jsonl": "4c3bb2724a7edbe1d3b38b43a3b0c6ece73520550723522aa593b92916b5c192",
+    "base-corpus-outer.json": "a3d2fd4212b7a497234139c9f2143588a49bf7623f58c25b1f0529e4224d5ea3"
+  },
+  "note": "Working-head changes during the corpus run were committed documentation-only scope corrections; semantic paths match BASE. Provisional Unsafe is not an upstream defect claim."
+}

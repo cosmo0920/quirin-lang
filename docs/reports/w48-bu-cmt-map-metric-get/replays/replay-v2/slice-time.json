@@ -1,0 +1,13 @@
+{
+  "command": [
+    "python3",
+    "/home/cosmo/.codex/worktrees/808d/quirin-lang/private/w48-cmt-map/time_identity.py",
+    "slice",
+    "--artifacts-root",
+    "/home/cosmo/.codex/worktrees/808d/quirin-lang/private/w48-cmt-map/replay-v2/time"
+  ],
+  "started": "2026-10-24T00:13:06.074392+00:00",
+  "log": "/home/cosmo/.codex/worktrees/808d/quirin-lang/private/w48-cmt-map/replay-v2/slice-time.log",
+  "exit": 0,
+  "ended": "2026-10-24T00:13:06.345090+00:00"
+}

@@ -1,0 +1,20 @@
+{
+  "corpus": {
+    "lib/cmetrics/src/cmt_map.c": "a02cdda1b17d6b7fbe70a8dfa5cd329261ce575960e58af369cf058e1fa12517",
+    "lib/cfl/include/cfl/cfl_list.h": "fb8762edf6dab66e627e2f1d786580f47a5cecf0ae27f66e51d482069eba5bd3",
+    "lib/cfl/include/cfl/cfl_hash.h": "e22324995f628b6b01564d9fc96c00aba9b1ec483b6d99b98a0b2685052c46ea",
+    "lib/cfl/lib/xxhash/xxhash.h": "4f12938ecde575fd5477eb561e9b4cd16060b30ee496e2eeef6385c31721ca4b"
+  },
+  "system": {
+    "lib/cmetrics/src/cmt_map.c": "a02cdda1b17d6b7fbe70a8dfa5cd329261ce575960e58af369cf058e1fa12517",
+    "lib/cfl/include/cfl/cfl_list.h": "fb8762edf6dab66e627e2f1d786580f47a5cecf0ae27f66e51d482069eba5bd3",
+    "lib/cfl/include/cfl/cfl_hash.h": "e22324995f628b6b01564d9fc96c00aba9b1ec483b6d99b98a0b2685052c46ea",
+    "lib/cfl/lib/xxhash/xxhash.h": "4f12938ecde575fd5477eb561e9b4cd16060b30ee496e2eeef6385c31721ca4b"
+  },
+  "slice": {
+    "lib/cmetrics/src/cmt_map.c": "a02cdda1b17d6b7fbe70a8dfa5cd329261ce575960e58af369cf058e1fa12517",
+    "lib/cfl/include/cfl/cfl_list.h": "fb8762edf6dab66e627e2f1d786580f47a5cecf0ae27f66e51d482069eba5bd3",
+    "lib/cfl/include/cfl/cfl_hash.h": "e22324995f628b6b01564d9fc96c00aba9b1ec483b6d99b98a0b2685052c46ea",
+    "lib/cfl/lib/xxhash/xxhash.h": "4f12938ecde575fd5477eb561e9b4cd16060b30ee496e2eeef6385c31721ca4b"
+  }
+}

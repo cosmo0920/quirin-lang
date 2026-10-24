@@ -1,0 +1,116 @@
+{
+  "base": {
+    "audit.log": {
+      "source": "/home/cosmo/.codex/worktrees/808d/quirin-lang/private/w48-cmt-member-storage/base-corpus/audit.log",
+      "sha256": "b4091d2da9b96d635fb0b0d19d09eeae0d1ab9fe22a3d2384ee9e5043dd756ee",
+      "bytes": 135946
+    },
+    "monkey-source.json": {
+      "source": "/home/cosmo/.codex/worktrees/808d/quirin-lang/private/w48-cmt-member-storage/base-corpus/monkey-source.json",
+      "sha256": "57acfc58c4f7dddf2623efb3c9dc3e8f2dc276835e15cd18a157414696bb2f11",
+      "bytes": 1665950
+    },
+    "run.json": {
+      "source": "/home/cosmo/.codex/worktrees/808d/quirin-lang/private/w48-cmt-member-storage/base-corpus/run.json",
+      "sha256": "3463d42cc52f0520cfe122186685c56c0bd1b5acd9451508714f836148d8568f",
+      "bytes": 1182
+    },
+    "resource-diagnostics.chunk-contracts.json": {
+      "source": "/home/cosmo/.codex/worktrees/808d/quirin-lang/private/w48-cmt-member-storage/base-corpus/resource-diagnostics.chunk-contracts.json",
+      "sha256": "cbbcfd9c176005146c1946d5fcd4dc83cc9ec041a3397b10b1f0ab16ae6c0484",
+      "bytes": 4186178
+    },
+    "resource-diagnostics.json": {
+      "source": "/home/cosmo/.codex/worktrees/808d/quirin-lang/private/w48-cmt-member-storage/base-corpus/resource-diagnostics.json",
+      "sha256": "ac47ef7b947014bd0bda3791e4a3416d0aa9d6888913cc00323df03bf7b9206e",
+      "bytes": 86852615
+    },
+    "resource-diagnostics.source-effects.json": {
+      "source": "/home/cosmo/.codex/worktrees/808d/quirin-lang/private/w48-cmt-member-storage/base-corpus/resource-diagnostics.source-effects.json",
+      "sha256": "94603d0fa0700cf1e7fea2135e17f2e04958ef576519483cee7757dc53589766",
+      "bytes": 118505
+    },
+    "resource-diagnostics.contracts.json": {
+      "source": "/home/cosmo/.codex/worktrees/808d/quirin-lang/private/w48-cmt-member-storage/base-corpus/resource-diagnostics.contracts.json",
+      "sha256": "c4d482cf304aa5d7d048bea13c03308ad5c539dda96e4f946b169bc2f7a4d2d9",
+      "bytes": 44421718
+    },
+    "producer-invocation.json": {
+      "source": "/home/cosmo/.codex/worktrees/808d/quirin-lang/private/w48-cmt-member-storage/base-corpus-invocation.json",
+      "sha256": "c676afa9d48a99a31438ac51e7ee2e77068f4bfda5161ebeb7cd04c29cd16c88",
+      "bytes": 90026
+    },
+    "null.jsonl": {
+      "source": "/home/cosmo/.codex/worktrees/808d/quirin-lang/private/w48-cmt-member-storage/base-corpus-null.jsonl",
+      "sha256": "4c3bb2724a7edbe1d3b38b43a3b0c6ece73520550723522aa593b92916b5c192",
+      "bytes": 29206675
+    },
+    "outer.json": {
+      "source": "/home/cosmo/.codex/worktrees/808d/quirin-lang/private/w48-cmt-member-storage/base-corpus-outer.json",
+      "sha256": "a3d2fd4212b7a497234139c9f2143588a49bf7623f58c25b1f0529e4224d5ea3",
+      "bytes": 715573
+    },
+    "null.summary.json": {
+      "source": "/home/cosmo/.codex/worktrees/808d/quirin-lang/private/w48-cmt-member-storage/base-corpus-null.summary.json",
+      "sha256": "bd1db6c76f7bef72ae90aa27717f3cb8a6aee7fb6f9981db7c8bae7a9264b415",
+      "bytes": 64899
+    }
+  },
+  "tip": {
+    "audit.log": {
+      "source": "/home/cosmo/.codex/worktrees/808d/quirin-lang/private/w48-cmt-member-storage/tip-corpus/audit.log",
+      "sha256": "2c70304d2313958e22e0a0fcf0dd8e50b53110b85684aaaf4c34c2c50f86fb87",
+      "bytes": 135945
+    },
+    "monkey-source.json": {
+      "source": "/home/cosmo/.codex/worktrees/808d/quirin-lang/private/w48-cmt-member-storage/tip-corpus/monkey-source.json",
+      "sha256": "57acfc58c4f7dddf2623efb3c9dc3e8f2dc276835e15cd18a157414696bb2f11",
+      "bytes": 1665950
+    },
+    "run.json": {
+      "source": "/home/cosmo/.codex/worktrees/808d/quirin-lang/private/w48-cmt-member-storage/tip-corpus/run.json",
+      "sha256": "0924fe0b40d3eb7cc846390139a11297753d3fcd3459bef06f1a14d17ec6a65c",
+      "bytes": 1179
+    },
+    "resource-diagnostics.chunk-contracts.json": {
+      "source": "/home/cosmo/.codex/worktrees/808d/quirin-lang/private/w48-cmt-member-storage/tip-corpus/resource-diagnostics.chunk-contracts.json",
+      "sha256": "cbbcfd9c176005146c1946d5fcd4dc83cc9ec041a3397b10b1f0ab16ae6c0484",
+      "bytes": 4186178
+    },
+    "resource-diagnostics.json": {
+      "source": "/home/cosmo/.codex/worktrees/808d/quirin-lang/private/w48-cmt-member-storage/tip-corpus/resource-diagnostics.json",
+      "sha256": "d1ad9923a6be4f8ba9d595361f2c578716819a2a9b5bafe5f421e25572b1a873",
+      "bytes": 86852615
+    },
+    "resource-diagnostics.source-effects.json": {
+      "source": "/home/cosmo/.codex/worktrees/808d/quirin-lang/private/w48-cmt-member-storage/tip-corpus/resource-diagnostics.source-effects.json",
+      "sha256": "94603d0fa0700cf1e7fea2135e17f2e04958ef576519483cee7757dc53589766",
+      "bytes": 118505
+    },
+    "resource-diagnostics.contracts.json": {
+      "source": "/home/cosmo/.codex/worktrees/808d/quirin-lang/private/w48-cmt-member-storage/tip-corpus/resource-diagnostics.contracts.json",
+      "sha256": "47db2f9aa42a4b694b532ece46f70113f52affdd4591ecd16eafd68c6219d86f",
+      "bytes": 44421718
+    },
+    "producer-invocation.json": {
+      "source": "/home/cosmo/.codex/worktrees/808d/quirin-lang/private/w48-cmt-member-storage/tip-corpus-invocation.json",
+      "sha256": "b46cd0f22617f9d01f7c65be44781dc4d49a4591f4c14cd8b577f4ba7205d363",
+      "bytes": 90022
+    },
+    "null.jsonl": {
+      "source": "/home/cosmo/.codex/worktrees/808d/quirin-lang/private/w48-cmt-member-storage/tip-corpus-null.jsonl",
+      "sha256": "10f474b06045c1fe322d538b92bcb19465c88162a094ab486f6dfb75d6ab22f9",
+      "bytes": 29206675
+    },
+    "outer.json": {
+      "source": "/home/cosmo/.codex/worktrees/808d/quirin-lang/private/w48-cmt-member-storage/tip-corpus-outer.json",
+      "sha256": "a3d2fd4212b7a497234139c9f2143588a49bf7623f58c25b1f0529e4224d5ea3",
+      "bytes": 715573
+    },
+    "null.summary.json": {
+      "source": "/home/cosmo/.codex/worktrees/808d/quirin-lang/private/w48-cmt-member-storage/tip-corpus-null.summary.json",
+      "sha256": "bd1db6c76f7bef72ae90aa27717f3cb8a6aee7fb6f9981db7c8bae7a9264b415",
+      "bytes": 64899
+    }
+  }
+}
