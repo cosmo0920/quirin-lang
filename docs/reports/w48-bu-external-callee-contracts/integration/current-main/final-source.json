@@ -1,0 +1,18 @@
+{
+  "validated_source": "4d8d85976117f1eaaadd2fc37aef5a3bb172c259",
+  "post_matrix_source": "ef909ffe2de312ab9acdd95329784cfb66000de2",
+  "main_incorporated": "fb5412930fd7c0a98586fd445029e1da4607074c",
+  "post_gate_changed_paths": [
+    "docs/STATUS.md",
+    "docs/development/increments/wave-48-part11.md",
+    "docs/plans/pluggable-cards/README.md",
+    "docs/reports/w48-bu-external-callee-contracts/integration/current-main/README.md",
+    "docs/reports/w48-bu-external-callee-contracts/integration/current-main/clang-version.exit",
+    "docs/reports/w48-bu-external-callee-contracts/integration/current-main/clang-version.txt",
+    "docs/reports/w48-bu-external-callee-contracts/integration/current-main/command-receipt.json",
+    "docs/reports/w48-bu-external-callee-contracts/integration/current-main/gate.json",
+    "docs/reports/w48-bu-external-callee-contracts/integration/reconciliation.json",
+    "docs/reviews/r0_3/acceptance_matrix.json"
+  ],
+  "meaning": "Exhaustive Git diff after the passing full gate contains documentation only. Production, contracts, provider inputs, tests, dependencies and Lean source are identical to the measured source. Post-matrix Python 374 passes on the committed final matrix, with unchanged matrix hash. The final main merge message identifies this measured source and its own merge commit."
+}

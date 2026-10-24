@@ -1,0 +1,51 @@
+{
+  "route": "slice",
+  "exit": 0,
+  "input_diagnostics_sha256": {
+    "base": "3c54b90c9a07bdc9b99acfb3509b9511377dd1cb971293846bd82fe051a7dbed",
+    "tip": "611072397082fee6b49a09b6d239061342370574ec0ce0bab3cf0ad3875a5b8d"
+  },
+  "identity_proof_sha256": "d564cec76ae9a3fb4bced150a7d3f2f4a40a57e8e66b98d0c041cb75e2d871e1",
+  "effective_environment_captures": 1,
+  "receipts": 2,
+  "environment_records": [
+    {
+      "unit": 11,
+      "tip": "bacf3bd11a4a5a23ddcaa7a4d624e4cc67967e89f85a7c4b576e7df78a3eda40",
+      "base": "307483e7ba5f5d0f28cb92485be5f9c838d3fe64beac23baab239d15a6179e24",
+      "cross_unit_environment_identities": 0,
+      "exact_canonical_bytes_match": true,
+      "two_functions_and_exact_source_suffixes_only": true
+    }
+  ],
+  "receipt_records": [
+    {
+      "unit": 11,
+      "function": "configured_limit",
+      "base": "34ed2f5e4fe065666a98b3c0c9296b645f29302a43b9081d44f48f129849c9db",
+      "tip": "78e118bf27e745d9b0adc09634dcef258d4b5f81307ba884618db9e6d8b528cc",
+      "all_non_environment_observation_fields_exact": true,
+      "whole_restored_receipt_equals_actual_base": true,
+      "both_typed_id_preimages_verified": true
+    },
+    {
+      "unit": 11,
+      "function": "flb_tail_file_budget_create",
+      "base": "e901c762fc92df9863162b5fe779f9d0762360106c76d718372f07bfd4620795",
+      "tip": "6919431099cc753bcd225a62f0589d17ac6cb031beb2a2077f55ee01d63ed960",
+      "all_non_environment_observation_fields_exact": true,
+      "whole_restored_receipt_equals_actual_base": true,
+      "both_typed_id_preimages_verified": true
+    }
+  ],
+  "producer_sources": {
+    "crates/qcore-c-gateway/src/reading_site_evidence.rs": "643d5f4ca49de685450053e158ec6151edbbb8b3eb7e8b9c786cf4ef61f49d17",
+    "crates/qcore-schemas/src/contract.rs": "18109ddfa8021d78e4d3c1d28e7ae7b5065cdd8d7c285aff1331022944d2292e",
+    "crates/qcore-schemas/src/hypothesis.rs": "30f20b9e40411f3000f24fe86f3b7fc2db6f10d7b331228467ba704abc684002"
+  },
+  "source_binding": "open",
+  "truth_transport": false,
+  "fields_erased": 0,
+  "fields_masked": 0,
+  "meaning": "Exact whole canonical environments reconstructed from reviewed two-function/two-source additions and independently proven home-environment identities; typed serde bind ID preimages on both actual receipts match, complete restored receipt sets equal actual BASE. Receipt order changes follow changed IDs. This replays identities, not C extraction or libc behavior."
+}

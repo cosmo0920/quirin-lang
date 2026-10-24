@@ -1357,6 +1357,8 @@ Regenerate with `python3 scripts/build_docs_index.py`; validate with `--check`.
 
 | [w48-bu-cmt-map-metric-get](w48-bu-cmt-map-metric-get/README.md) | W48-BU-CMT-MAP-METRIC-GET: exact borrowed-formal returns |
 
+| [w48-bu-external-callee-contracts](w48-bu-external-callee-contracts/README.md) | W48-BU-EXTERNAL-CALLEE-CONTRACTS |
+
 | [w48-bu-rk-result-constructors](w48-bu-rk-result-constructors/README.md) | W48-BU-RK-RESULT-CONSTRUCTORS — validation pending |
 
 | [w48-bu-single-leaf-bodies](w48-bu-single-leaf-bodies/README.md) | Literal reads and decayed scalar array members (rule 35) |

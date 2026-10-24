@@ -1,0 +1,194 @@
+[
+  {
+    "side": "base",
+    "library": "librdkafka",
+    "file": "rdkafka_sasl_cyrus.c",
+    "row": {
+      "contract_dependencies": {
+        "declarations": [],
+        "hypothesis_dependencies": {}
+      },
+      "diagnostics": [
+        {
+          "category": "unsupported",
+          "description": "call to uncontracted function `mtx_destroy`",
+          "line": 20772,
+          "origin": "rdkafka_sasl_cyrus.c:691"
+        }
+      ],
+      "function": "rd_kafka_sasl_cyrus_global_term",
+      "hypothesis_context": {
+        "artifact": "librdkafka/rdkafka_sasl_cyrus.c#rd_kafka_sasl_cyrus_global_term",
+        "assumptions": "41c1d7e8f325a73941dba5c91e8cd706ec17458a65201cddcdc0abe67204a348",
+        "bounds": "existing gateway budgets; no new hypothesis discharge",
+        "build_identity": "1c8ebaafc587c8ea6037c3fd39a4d1cbde02acba771a172d2ad607911e5a3557",
+        "evidence_version": "contract-hypothesis-graph.v1:15cc50053af74ee560233e5a26cfafbc83b40046",
+        "property": "resource-custody.v1",
+        "scope": "[\"rd_kafka_sasl_cyrus_cb_canon\",\"rd_kafka_sasl_cyrus_cb_chalprompt\",\"rd_kafka_sasl_cyrus_cb_getopt\",\"rd_kafka_sasl_cyrus_cb_getrealm\",\"rd_kafka_sasl_cyrus_cb_getsecret\",\"rd_kafka_sasl_cyrus_cb_getsimple\",\"rd_kafka_sasl_cyrus_cb_log\",\"rd_kafka_sasl_cyrus_client_new\",\"rd_kafka_sasl_cyrus_close\",\"rd_kafka_sasl_cyrus_conf_validate\",\"rd_kafka_sasl_cyrus_global_init\",\"rd_kafka_sasl_cyrus_global_term\",\"rd_kafka_sasl_cyrus_init\",\"rd_kafka_sasl_cyrus_kinit_refresh\",\"rd_kafka_sasl_cyrus_kinit_refresh_tmr_cb\",\"rd_kafka_sasl_cyrus_ready\",\"rd_kafka_sasl_cyrus_recv\",\"rd_kafka_sasl_cyrus_term\",\"render_callback\"]",
+        "semantic_profile": "legacy-pinned-resource-profile",
+        "source_identity": "92218bdc9a8512c094f485b5dde6fa2becfc5fb45036c08775fdbe7205dcedc7"
+      },
+      "status": "Unknown"
+    }
+  },
+  {
+    "side": "base",
+    "library": "librdkafka",
+    "file": "rdkafka_ssl.c",
+    "row": {
+      "contract_dependencies": {
+        "declarations": [],
+        "hypothesis_dependencies": {}
+      },
+      "diagnostics": [
+        {
+          "category": "unsupported",
+          "description": "call to uncontracted function `thrd_current_id`",
+          "line": 21194,
+          "origin": "rdkafka_ssl.c:2048"
+        }
+      ],
+      "function": "rd_kafka_transport_ssl_threadid_cb",
+      "hypothesis_context": {
+        "artifact": "librdkafka/rdkafka_ssl.c#rd_kafka_transport_ssl_threadid_cb",
+        "assumptions": "41c1d7e8f325a73941dba5c91e8cd706ec17458a65201cddcdc0abe67204a348",
+        "bounds": "existing gateway budgets; no new hypothesis discharge",
+        "build_identity": "1542c9970685bc58e35ebc8702a7a1d534d5ab7146bd4fb82bfb303712989cd4",
+        "evidence_version": "contract-hypothesis-graph.v1:15cc50053af74ee560233e5a26cfafbc83b40046",
+        "property": "resource-custody.v1",
+        "scope": "[\"rd_kafka_ssl_OSSL_PROVIDER_free\",\"rd_kafka_ssl_PKEY_from_string\",\"rd_kafka_ssl_X509_from_string\",\"rd_kafka_ssl_cert_callback\",\"rd_kafka_ssl_cert_issuer_match\",\"rd_kafka_ssl_ctx_init\",\"rd_kafka_ssl_ctx_init_engine\",\"rd_kafka_ssl_ctx_load_providers\",\"rd_kafka_ssl_ctx_term\",\"rd_kafka_ssl_error\",\"rd_kafka_ssl_error0\",\"rd_kafka_ssl_hmac\",\"rd_kafka_ssl_init\",\"rd_kafka_ssl_last_error_str\",\"rd_kafka_ssl_normalize_hostname\",\"rd_kafka_ssl_probe_and_set_default_ca_location\",\"rd_kafka_ssl_read_cert_chain_from_BIO\",\"rd_kafka_ssl_set_ca_path\",\"rd_kafka_ssl_set_certs\",\"rd_kafka_ssl_term\",\"rd_kafka_ssl_win_load_cert_store\",\"rd_kafka_ssl_win_load_cert_stores\",\"rd_kafka_transport_libcrypto_THREADID_callback\",\"rd_kafka_transport_ssl_cert_verify_cb\",\"rd_kafka_transport_ssl_clear_error\",\"rd_kafka_transport_ssl_close\",\"rd_kafka_transport_ssl_connect\",\"rd_kafka_transport_ssl_handshake\",\"rd_kafka_transport_ssl_io_event\",\"rd_kafka_transport_ssl_io_update\",\"rd_kafka_transport_ssl_lock_cb\",\"rd_kafka_transport_ssl_passwd_cb\",\"rd_kafka_transport_ssl_recv\",\"rd_kafka_transport_ssl_send\",\"rd_kafka_transport_ssl_set_endpoint_id\",\"rd_kafka_transport_ssl_threadid_cb\",\"rd_kafka_transport_ssl_verify\",\"unittest_ssl\"]",
+        "semantic_profile": "legacy-pinned-resource-profile",
+        "source_identity": "8f60e462f61bb60108d3484127647fc46d8eaf9550f5b51cc5d7b335e70f6ab9"
+      },
+      "status": "Unknown"
+    }
+  },
+  {
+    "side": "base",
+    "library": "monkey-libevent",
+    "file": "mk_server/mk_net.c",
+    "row": {
+      "contract_dependencies": {
+        "declarations": [],
+        "hypothesis_dependencies": {}
+      },
+      "diagnostics": [
+        {
+          "category": "unsupported",
+          "description": "call to uncontracted function `mk_iov_send`",
+          "line": 5905,
+          "origin": "mk_server/mk_net.c:64"
+        }
+      ],
+      "function": "net_plain_writev",
+      "hypothesis_context": {
+        "artifact": "monkey-libevent/mk_server/mk_net.c#net_plain_writev",
+        "assumptions": "41c1d7e8f325a73941dba5c91e8cd706ec17458a65201cddcdc0abe67204a348",
+        "bounds": "existing gateway budgets; no new hypothesis discharge",
+        "build_identity": "41f7df18182e1eea12b15c0372e10d9330484b4f08412ed860a2ce1e9ed20ae6",
+        "evidence_version": "contract-hypothesis-graph.v1:15cc50053af74ee560233e5a26cfafbc83b40046",
+        "property": "resource-custody.v1",
+        "scope": "[\"mk_net_conn_create\",\"mk_net_conn_write\",\"mk_net_fd_connect\",\"mk_net_init\",\"mk_net_transport_default\",\"mk_net_transport_event_interest\",\"net_plain_close\",\"net_plain_read\",\"net_plain_send_file\",\"net_plain_write\",\"net_plain_writev\"]",
+        "semantic_profile": "legacy-pinned-resource-profile",
+        "source_identity": "3035a21638a7366eea796b4c4d394e2593469862f56234c765253dcd1cd31412"
+      },
+      "status": "Unknown"
+    }
+  },
+  {
+    "side": "tip",
+    "library": "librdkafka",
+    "file": "rdkafka_sasl_cyrus.c",
+    "row": {
+      "contract_dependencies": {
+        "declarations": [],
+        "hypothesis_dependencies": {}
+      },
+      "diagnostics": [
+        {
+          "category": "unsupported",
+          "description": "call to uncontracted function `mtx_destroy`",
+          "line": 20772,
+          "origin": "rdkafka_sasl_cyrus.c:691"
+        }
+      ],
+      "function": "rd_kafka_sasl_cyrus_global_term",
+      "hypothesis_context": {
+        "artifact": "librdkafka/rdkafka_sasl_cyrus.c#rd_kafka_sasl_cyrus_global_term",
+        "assumptions": "14cda2d1086ba1582c06059c06e4a7cba028a134df1a26003f1f6e9f9e789974",
+        "bounds": "existing gateway budgets; no new hypothesis discharge",
+        "build_identity": "1c8ebaafc587c8ea6037c3fd39a4d1cbde02acba771a172d2ad607911e5a3557",
+        "evidence_version": "contract-hypothesis-graph.v1:5dbe4a381acd5c3197057030ff3f9735caa72335",
+        "property": "resource-custody.v1",
+        "scope": "[\"rd_kafka_sasl_cyrus_cb_canon\",\"rd_kafka_sasl_cyrus_cb_chalprompt\",\"rd_kafka_sasl_cyrus_cb_getopt\",\"rd_kafka_sasl_cyrus_cb_getrealm\",\"rd_kafka_sasl_cyrus_cb_getsecret\",\"rd_kafka_sasl_cyrus_cb_getsimple\",\"rd_kafka_sasl_cyrus_cb_log\",\"rd_kafka_sasl_cyrus_client_new\",\"rd_kafka_sasl_cyrus_close\",\"rd_kafka_sasl_cyrus_conf_validate\",\"rd_kafka_sasl_cyrus_global_init\",\"rd_kafka_sasl_cyrus_global_term\",\"rd_kafka_sasl_cyrus_init\",\"rd_kafka_sasl_cyrus_kinit_refresh\",\"rd_kafka_sasl_cyrus_kinit_refresh_tmr_cb\",\"rd_kafka_sasl_cyrus_ready\",\"rd_kafka_sasl_cyrus_recv\",\"rd_kafka_sasl_cyrus_term\",\"render_callback\"]",
+        "semantic_profile": "legacy-pinned-resource-profile",
+        "source_identity": "92218bdc9a8512c094f485b5dde6fa2becfc5fb45036c08775fdbe7205dcedc7"
+      },
+      "status": "Unknown"
+    }
+  },
+  {
+    "side": "tip",
+    "library": "librdkafka",
+    "file": "rdkafka_ssl.c",
+    "row": {
+      "contract_dependencies": {
+        "declarations": [],
+        "hypothesis_dependencies": {}
+      },
+      "diagnostics": [
+        {
+          "category": "unsupported",
+          "description": "call to uncontracted function `thrd_current_id`",
+          "line": 21194,
+          "origin": "rdkafka_ssl.c:2048"
+        }
+      ],
+      "function": "rd_kafka_transport_ssl_threadid_cb",
+      "hypothesis_context": {
+        "artifact": "librdkafka/rdkafka_ssl.c#rd_kafka_transport_ssl_threadid_cb",
+        "assumptions": "14cda2d1086ba1582c06059c06e4a7cba028a134df1a26003f1f6e9f9e789974",
+        "bounds": "existing gateway budgets; no new hypothesis discharge",
+        "build_identity": "1542c9970685bc58e35ebc8702a7a1d534d5ab7146bd4fb82bfb303712989cd4",
+        "evidence_version": "contract-hypothesis-graph.v1:5dbe4a381acd5c3197057030ff3f9735caa72335",
+        "property": "resource-custody.v1",
+        "scope": "[\"rd_kafka_ssl_OSSL_PROVIDER_free\",\"rd_kafka_ssl_PKEY_from_string\",\"rd_kafka_ssl_X509_from_string\",\"rd_kafka_ssl_cert_callback\",\"rd_kafka_ssl_cert_issuer_match\",\"rd_kafka_ssl_ctx_init\",\"rd_kafka_ssl_ctx_init_engine\",\"rd_kafka_ssl_ctx_load_providers\",\"rd_kafka_ssl_ctx_term\",\"rd_kafka_ssl_error\",\"rd_kafka_ssl_error0\",\"rd_kafka_ssl_hmac\",\"rd_kafka_ssl_init\",\"rd_kafka_ssl_last_error_str\",\"rd_kafka_ssl_normalize_hostname\",\"rd_kafka_ssl_probe_and_set_default_ca_location\",\"rd_kafka_ssl_read_cert_chain_from_BIO\",\"rd_kafka_ssl_set_ca_path\",\"rd_kafka_ssl_set_certs\",\"rd_kafka_ssl_term\",\"rd_kafka_ssl_win_load_cert_store\",\"rd_kafka_ssl_win_load_cert_stores\",\"rd_kafka_transport_libcrypto_THREADID_callback\",\"rd_kafka_transport_ssl_cert_verify_cb\",\"rd_kafka_transport_ssl_clear_error\",\"rd_kafka_transport_ssl_close\",\"rd_kafka_transport_ssl_connect\",\"rd_kafka_transport_ssl_handshake\",\"rd_kafka_transport_ssl_io_event\",\"rd_kafka_transport_ssl_io_update\",\"rd_kafka_transport_ssl_lock_cb\",\"rd_kafka_transport_ssl_passwd_cb\",\"rd_kafka_transport_ssl_recv\",\"rd_kafka_transport_ssl_send\",\"rd_kafka_transport_ssl_set_endpoint_id\",\"rd_kafka_transport_ssl_threadid_cb\",\"rd_kafka_transport_ssl_verify\",\"unittest_ssl\"]",
+        "semantic_profile": "legacy-pinned-resource-profile",
+        "source_identity": "8f60e462f61bb60108d3484127647fc46d8eaf9550f5b51cc5d7b335e70f6ab9"
+      },
+      "status": "Unknown"
+    }
+  },
+  {
+    "side": "tip",
+    "library": "monkey-libevent",
+    "file": "mk_server/mk_net.c",
+    "row": {
+      "contract_dependencies": {
+        "declarations": [],
+        "hypothesis_dependencies": {}
+      },
+      "diagnostics": [
+        {
+          "category": "unsupported",
+          "description": "call to uncontracted function `mk_iov_send`",
+          "line": 5905,
+          "origin": "mk_server/mk_net.c:64"
+        }
+      ],
+      "function": "net_plain_writev",
+      "hypothesis_context": {
+        "artifact": "monkey-libevent/mk_server/mk_net.c#net_plain_writev",
+        "assumptions": "14cda2d1086ba1582c06059c06e4a7cba028a134df1a26003f1f6e9f9e789974",
+        "bounds": "existing gateway budgets; no new hypothesis discharge",
+        "build_identity": "41f7df18182e1eea12b15c0372e10d9330484b4f08412ed860a2ce1e9ed20ae6",
+        "evidence_version": "contract-hypothesis-graph.v1:5dbe4a381acd5c3197057030ff3f9735caa72335",
+        "property": "resource-custody.v1",
+        "scope": "[\"mk_net_conn_create\",\"mk_net_conn_write\",\"mk_net_fd_connect\",\"mk_net_init\",\"mk_net_transport_default\",\"mk_net_transport_event_interest\",\"net_plain_close\",\"net_plain_read\",\"net_plain_send_file\",\"net_plain_write\",\"net_plain_writev\"]",
+        "semantic_profile": "legacy-pinned-resource-profile",
+        "source_identity": "3035a21638a7366eea796b4c4d394e2593469862f56234c765253dcd1cd31412"
+      },
+      "status": "Unknown"
+    }
+  }
+]

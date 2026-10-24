@@ -1,0 +1,9 @@
+{
+  "recorded": "2026-10-24T02:16:23.189727+00:00",
+  "reason": "Direct human authorization for the concrete pre-existing pin repair; queued gate has not started. Apply it only after all sealed TIP measurements complete, then capture its actual clean commit for every gate step.",
+  "gate_driver_sha256_before": "9b1b524398650108b2deb45981b7dc264e97bd08fc7b441c879d96ef40e01156",
+  "gate_driver_sha256_after": "49d4ac9e283b77a83528ade7b4001168161d7120cae166d72b8b92fc7eaaab9c",
+  "repair_driver_sha256": "a88fe5bc87614a7960da4472006230576da194087f0ed2f1e296b70e3fe6983b",
+  "original_queue_receipt_retained": true,
+  "sanitizers_and_all_19_gate_commands_unchanged": true
+}

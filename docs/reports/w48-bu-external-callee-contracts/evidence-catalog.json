@@ -1,0 +1,1458 @@
+{
+  "recorded": "2026-10-24T03:10:51.849932+00:00",
+  "scope": "Compact public receipt index plus exact retained private records; no raw field deletion or normalized verdict substitution. Source/implementation truth remains a named boundary.",
+  "public": [
+    {
+      "path": "BASE-receipt.json",
+      "bytes": 1148,
+      "sha256": "ff639615e7f9d2c2b59320f3651a7ae980efb19b80fe4fda4f378684252cd84c"
+    },
+    {
+      "path": "BASE-targets.json",
+      "bytes": 11373,
+      "sha256": "e0af0b0185225f752f0b6becb7fb7c344cbd5b6a950eb494e3f39b498f99f8ab"
+    },
+    {
+      "path": "PREDICTION.md",
+      "bytes": 5794,
+      "sha256": "5b008c9ad21cb30d7e24c722b66abbc00f1cda9612874b3fa5433c08f927c215"
+    },
+    {
+      "path": "README.md",
+      "bytes": 21887,
+      "sha256": "5ddf6a0b8f6816f0ae2cfb3a1aee475909bd9d1940c59058b1c31feb042d273f"
+    },
+    {
+      "path": "RESOLUTION.md",
+      "bytes": 4434,
+      "sha256": "8eabb3ef696a3df5a53b3b99759b112f6a24e51aeeebff0945104bbf2ae268e0"
+    },
+    {
+      "path": "base-code-data-equality.json",
+      "bytes": 583,
+      "sha256": "5103a628ebc649e34464164513e2a2f9d991ac09366c96be3312579189a41164"
+    },
+    {
+      "path": "base-selection-archive-binding.json",
+      "bytes": 776,
+      "sha256": "a62c44619c4189d9d9d4fe7609fb23436de74b3af8094b8959def384c2162ff8"
+    },
+    {
+      "path": "clang-version.exit",
+      "bytes": 2,
+      "sha256": "9a271f2a916b0b6ee6cecb2426f0b3206ef074578be55d9bc94f6f3fe3ab86aa"
+    },
+    {
+      "path": "clang-version.txt",
+      "bytes": 122,
+      "sha256": "77467400b91c4cebb6c3e29d8a611af518a2f4078c22baf276b0a1373e996bf5"
+    },
+    {
+      "path": "conditional-callers-and-mutex.json",
+      "bytes": 11706,
+      "sha256": "3c4995e06618d0bd47d276265997fc62d7a7ae5cbb587e57564763c1ab383fd7"
+    },
+    {
+      "path": "configured-thread-success.json",
+      "bytes": 621,
+      "sha256": "c17d80c36e2edced55ea4e2a3af2606c7c7096126ef5529d64be4c5c7befcad6"
+    },
+    {
+      "path": "contract-metadata-attribution.json",
+      "bytes": 7260,
+      "sha256": "c301fbcdf438c54f0510b7321ef201be1c004f32f1cd8d39f9fd6958fd846a83"
+    },
+    {
+      "path": "corpus-complete-attribution.json",
+      "bytes": 10609,
+      "sha256": "27e76f5c0587c2fa0cd06c7c238421bee1e2ac0a8b161e9fd96770597dfda1c7"
+    },
+    {
+      "path": "corpus-reading-attribution.json",
+      "bytes": 65729,
+      "sha256": "3186e87a3f4bc7b3bec6974f7f6bdadeb0d0ad6928e2a5008f3805225f3dd1bb"
+    },
+    {
+      "path": "corpus-time-key-attribution.json",
+      "bytes": 10338,
+      "sha256": "62458c4ff6ce3adc7d55635304edf7fbbff096fd38efebce8e5f6b4d54d6e08d"
+    },
+    {
+      "path": "diagnostic-leaf-trades.json",
+      "bytes": 843,
+      "sha256": "03c120feb60cdde19a00a4ff14af90535e79b721a7b0f1bd1c02474292978e31"
+    },
+    {
+      "path": "environment-attribution.json",
+      "bytes": 10625,
+      "sha256": "b3dccc9e24e8f8e71e9556d8f411f3347ee9a8e11acb2e6c1c40066702e5fee6"
+    },
+    {
+      "path": "existing-lean-boundary.json",
+      "bytes": 1700,
+      "sha256": "e72c8f443d4ee3d761c221feedf719a41520e3dbf48613b3653ab268770474d7"
+    },
+    {
+      "path": "gate-2-driver-amendment.json",
+      "bytes": 673,
+      "sha256": "62053b3b386318a8db4cb1da6f049ed17c18e7628a7bb9d22ac72d6a756af9b8"
+    },
+    {
+      "path": "gate.json",
+      "bytes": 10074,
+      "sha256": "39468e9d5d511cd029c13f0b8625da8138332fa749c2168e5883aa5ec7ae335b"
+    },
+    {
+      "path": "identity-producer-equality.json",
+      "bytes": 1075,
+      "sha256": "b6660e0f9a6f254c6ca2971cf9500a898210f819ea3f58cb67c85267ce19617b"
+    },
+    {
+      "path": "inputs-after.json",
+      "bytes": 5065,
+      "sha256": "b698bd0deb512cd2aae63972c95cb88526dcb65624d876d78ac00ce0cfdddd09"
+    },
+    {
+      "path": "integration-amendments.json",
+      "bytes": 6550,
+      "sha256": "d4d57f63731c604550af4dc4a1f03ebcc4d76eebd6adb3cdf46316192730b50c"
+    },
+    {
+      "path": "libc-lock-attribution.json",
+      "bytes": 830,
+      "sha256": "aebe9b01e428699488ad4d9528a32191a3685784784d8a7218c8a6ab214f518d"
+    },
+    {
+      "path": "mirror-byte-transform-proof.json",
+      "bytes": 1432,
+      "sha256": "039d586424f14330a5510cc047ad36a27059cc2fdfd830e2630d23b037a925d9"
+    },
+    {
+      "path": "mirror-symlink-scope-review.json",
+      "bytes": 16051,
+      "sha256": "d15fb5fb8894207fb64ff849706feb70253ee8434b742f6f2df0e83a5dabbde2"
+    },
+    {
+      "path": "monkey-copy-preflight.json",
+      "bytes": 6498,
+      "sha256": "14cb6ee77c29a2566097008726e279c4ceefd2d0d4b2371b769a4ecd7cdf9e01"
+    },
+    {
+      "path": "native-complete.json",
+      "bytes": 32056,
+      "sha256": "cc07bcb116a9ee1def8ba740ffd9dafe8848fd3407b49c000f1a0408cabfe737"
+    },
+    {
+      "path": "pin-repair-authorization.json",
+      "bytes": 427,
+      "sha256": "58de1c555a515d08154560de2c092b3481d13fc8070296923fec5027c785a594"
+    },
+    {
+      "path": "pin-repair-commit.json",
+      "bytes": 1066,
+      "sha256": "d8d8babd8a87a38db518817c2f1e1f579f093f034448010b41af2bef4758daa7"
+    },
+    {
+      "path": "preparation.json",
+      "bytes": 7746,
+      "sha256": "35712a47234e719eccfdc435db3d62fb46c0ec4bd331eb846267cf16a91316f3"
+    },
+    {
+      "path": "prepared-resolution-checks.json",
+      "bytes": 2471,
+      "sha256": "97a74b5aa56b8ff3c14a9a384d17b73dedd25e2a0665e520ca97a3ca6d68e101"
+    },
+    {
+      "path": "prepared-resolution.json",
+      "bytes": 97975,
+      "sha256": "2c24b53e6d9fef5da61978e0a6204a5731e87fa184b83791578ec452f8bd4c7b"
+    },
+    {
+      "path": "provider-view-pin-baseline.json",
+      "bytes": 6634,
+      "sha256": "5826f854410f9b2cd742261d23eaa45ac2f4720c8af8cbaeb2841639b30ff754"
+    },
+    {
+      "path": "resolution-configuration-completeness.json",
+      "bytes": 1035,
+      "sha256": "bd31ff4166fab47fb21c15adbd5cd8c191cda92b2fa07d26ebdf30fff1cc528b"
+    },
+    {
+      "path": "resolution-preliminary.json",
+      "bytes": 9932,
+      "sha256": "3139441d174ec6eaef53d72d9538aa62ee51fb594eef72aab46335a09495fd73"
+    },
+    {
+      "path": "scripts/__pycache__/probe_prepared.cpython-314.pyc",
+      "bytes": 6273,
+      "sha256": "b930531c50ac452074c81025b66e90ab85ec08da53ec813668a0ad81ad94ad35"
+    },
+    {
+      "path": "scripts/attribute_environments.py",
+      "bytes": 4292,
+      "sha256": "fc36dff191b1c46deaab7bd93eb667419d1b2fb2197964baebbea6baa5acfcfa"
+    },
+    {
+      "path": "scripts/attribute_readings.py",
+      "bytes": 6666,
+      "sha256": "4b5e71d2d5f3b63c81a1f9d505b611344ad6883d3002f2dbbef419855512f5eb"
+    },
+    {
+      "path": "scripts/attribute_time_key.py",
+      "bytes": 5713,
+      "sha256": "b3997f1aa3a12b53ea28af8962b07bf16ee24a2e4f75d0d66dc4fc4b99c93ede"
+    },
+    {
+      "path": "scripts/check_contract_metadata.py",
+      "bytes": 4480,
+      "sha256": "e71f9350dbb1f7dc97ecde893a08f090f1e79f7662643a6d319fd1c4d5f591af"
+    },
+    {
+      "path": "scripts/check_inputs_after.py",
+      "bytes": 2336,
+      "sha256": "6f64dd1173c5e2bcb3c532a8306900dac3f0c5df2eeb6ca0ca40114c4ac2e0b9"
+    },
+    {
+      "path": "scripts/collect_validation.py",
+      "bytes": 2094,
+      "sha256": "b3313906e84d8b27133eb4bb9a562cfddd0e9e08d1a6bbc10190ad5f107b6d08"
+    },
+    {
+      "path": "scripts/compare.py",
+      "bytes": 7869,
+      "sha256": "b99ba2059384f4660c81e22143b24eb010f278559acd718c87f0e7d1e4687ab9"
+    },
+    {
+      "path": "scripts/derive_identities.py",
+      "bytes": 8435,
+      "sha256": "f36513f317234b061511fb9d63f1ece739894bf3c6af0d8153ccf622e9a2af37"
+    },
+    {
+      "path": "scripts/finalize_attribution.py",
+      "bytes": 11348,
+      "sha256": "0573886de1c21e8e3b6938abc6207e807334269f4f39ad944f09502afe6f1239"
+    },
+    {
+      "path": "scripts/mirror_inputs.py",
+      "bytes": 5166,
+      "sha256": "0062cee322fbad19e9d0337897528821c010d81c5cf6775589506c4a33cfe5af"
+    },
+    {
+      "path": "scripts/probe_prepared.py",
+      "bytes": 2481,
+      "sha256": "6c1e3390368ec0a766de17a28895a1fdd7471f6672a5536ef97a5eb307b6f5a2"
+    },
+    {
+      "path": "scripts/review_symlink_scope.py",
+      "bytes": 4009,
+      "sha256": "e56902ad8440225904719aafdd781f3f08f6792215bab2fdd6cfcd5b765e7306"
+    },
+    {
+      "path": "slice-complete-attribution.json",
+      "bytes": 8932,
+      "sha256": "cdda10c348f4fba4198778aac9fb3d75ae2feddc22bdc3ed7a527bf538fa9cae"
+    },
+    {
+      "path": "slice-reading-attribution.json",
+      "bytes": 2446,
+      "sha256": "74e2224eb02b2feb918c8bebc07d0fc884a6f8edfd56a75895217f2189a8e7c2"
+    },
+    {
+      "path": "slice-time-key-attribution.json",
+      "bytes": 8583,
+      "sha256": "de64d6f9082a981a5362eeb45f3fb9042fdea0e2c418aab5adf5e215ca87067e"
+    },
+    {
+      "path": "system-complete-attribution.json",
+      "bytes": 9255,
+      "sha256": "315b6301f4fb249e6777f2dd0b68eb51a95231488032fdfda576268aac65a894"
+    },
+    {
+      "path": "system-reading-attribution.json",
+      "bytes": 12187,
+      "sha256": "c514790ce8180c6810d5b42ad9710edbc802c290ec6d84bd8c03a4e12b299c33"
+    },
+    {
+      "path": "system-time-key-attribution.json",
+      "bytes": 9528,
+      "sha256": "a012c60a623077ed217908620076ad8f908160cf29ec9df2140bdfa0cdeb3784"
+    },
+    {
+      "path": "tip-selection-archive-binding.json",
+      "bytes": 776,
+      "sha256": "a6afb05fb9bf57e61d20643c3172f05d06affb63335ad0d05e12d237d212658f"
+    },
+    {
+      "path": "validation-receipt.json",
+      "bytes": 40098,
+      "sha256": "79a9bf2177cbcd3beb7d1224614cc9bc1645a5b85c5bf1d48331f5a760ae1b5a"
+    },
+    {
+      "path": "verdict-changes.json",
+      "bytes": 4801,
+      "sha256": "0416e4eca3fc984b76d5d8e7314efe93a78c779da9164d7830d436fe63f72c74"
+    }
+  ],
+  "private": [
+    {
+      "path": "/home/cosmo/.codex/worktrees/c1e4/quirin-lang/private/w48-bu-external-callee-contracts/analysis-clang-identities.json",
+      "bytes": 787,
+      "sha256": "780a0abc21ad3b6911b1a50e37b130b92dcfaf44c9daba88c96586dd20ee3222"
+    },
+    {
+      "path": "/home/cosmo/.codex/worktrees/c1e4/quirin-lang/private/w48-bu-external-callee-contracts/base-3/corpus/corpus/monkey-source.json",
+      "bytes": 1667094,
+      "sha256": "9199a7a0e2e8c03b437310c40dc2af5a045555093dcb73f9b1f21eadd24dd7b1"
+    },
+    {
+      "path": "/home/cosmo/.codex/worktrees/c1e4/quirin-lang/private/w48-bu-external-callee-contracts/base-3/corpus/corpus/resource-diagnostics.chunk-contracts.json",
+      "bytes": 4186178,
+      "sha256": "cbbcfd9c176005146c1946d5fcd4dc83cc9ec041a3397b10b1f0ab16ae6c0484"
+    },
+    {
+      "path": "/home/cosmo/.codex/worktrees/c1e4/quirin-lang/private/w48-bu-external-callee-contracts/base-3/corpus/corpus/resource-diagnostics.contracts.json",
+      "bytes": 44468936,
+      "sha256": "a7e90a57c9c8d04396a843c92c73df5be77bb58201c5ca572085b3b1fdf3704f"
+    },
+    {
+      "path": "/home/cosmo/.codex/worktrees/c1e4/quirin-lang/private/w48-bu-external-callee-contracts/base-3/corpus/corpus/resource-diagnostics.json",
+      "bytes": 86912118,
+      "sha256": "f9f8d3c20a1e44de54e40a149a22e26d8b506102c85d3935a5917f245d389832"
+    },
+    {
+      "path": "/home/cosmo/.codex/worktrees/c1e4/quirin-lang/private/w48-bu-external-callee-contracts/base-3/corpus/corpus/resource-diagnostics.source-effects.json",
+      "bytes": 118505,
+      "sha256": "d072a13f9bff4932c133a23cce39ff662deba68d46b3731693bb94e644290fe6"
+    },
+    {
+      "path": "/home/cosmo/.codex/worktrees/c1e4/quirin-lang/private/w48-bu-external-callee-contracts/base-3/corpus/corpus-null.jsonl",
+      "bytes": 29207547,
+      "sha256": "76578b8c3d30a6e0b3130862e8e13bf09e787ffbcf74950e30bf1c440d6f94c4"
+    },
+    {
+      "path": "/home/cosmo/.codex/worktrees/c1e4/quirin-lang/private/w48-bu-external-callee-contracts/base-3/corpus/corpus-null.summary.json",
+      "bytes": 64899,
+      "sha256": "80686b37e81f7f75cb4077cb1bdeb63b836d539ba15bfeceada7bf2869f9ca3d"
+    },
+    {
+      "path": "/home/cosmo/.codex/worktrees/c1e4/quirin-lang/private/w48-bu-external-callee-contracts/base-3/corpus/corpus-outer.json",
+      "bytes": 715908,
+      "sha256": "ef1ed2dcbe97220414c4ea424d869f7e668658764e159fb556c4aafc929a0cc6"
+    },
+    {
+      "path": "/home/cosmo/.codex/worktrees/c1e4/quirin-lang/private/w48-bu-external-callee-contracts/base-3/corpus/invocation.json",
+      "bytes": 88599,
+      "sha256": "66f0c8119a2c9d6ffe15ae1a2962e6a94b09e6921b028f6e1580eb0fe4c48cc5"
+    },
+    {
+      "path": "/home/cosmo/.codex/worktrees/c1e4/quirin-lang/private/w48-bu-external-callee-contracts/base-3/slice/invocation.json",
+      "bytes": 89773,
+      "sha256": "6d9b668e63ee130a33bb2b2a9d817fd9eebfc098921db483a6ac38d33c20eed3"
+    },
+    {
+      "path": "/home/cosmo/.codex/worktrees/c1e4/quirin-lang/private/w48-bu-external-callee-contracts/base-3/slice/resource-diagnostics.chunk-contracts.json",
+      "bytes": 385,
+      "sha256": "a97259087e4ad89a4662edcb494b27c27e80f06c62e404a19076224bbc0a2bd8"
+    },
+    {
+      "path": "/home/cosmo/.codex/worktrees/c1e4/quirin-lang/private/w48-bu-external-callee-contracts/base-3/slice/resource-diagnostics.contracts.json",
+      "bytes": 9680551,
+      "sha256": "614dddacb384c70e253c19c286ad1c8b2a71feb14558faeb543bb6733df5c577"
+    },
+    {
+      "path": "/home/cosmo/.codex/worktrees/c1e4/quirin-lang/private/w48-bu-external-callee-contracts/base-3/slice/resource-diagnostics.json",
+      "bytes": 3754503,
+      "sha256": "3c54b90c9a07bdc9b99acfb3509b9511377dd1cb971293846bd82fe051a7dbed"
+    },
+    {
+      "path": "/home/cosmo/.codex/worktrees/c1e4/quirin-lang/private/w48-bu-external-callee-contracts/base-3/slice/resource-diagnostics.source-effects.json",
+      "bytes": 385,
+      "sha256": "a97259087e4ad89a4662edcb494b27c27e80f06c62e404a19076224bbc0a2bd8"
+    },
+    {
+      "path": "/home/cosmo/.codex/worktrees/c1e4/quirin-lang/private/w48-bu-external-callee-contracts/base-3/slice/slice-null.jsonl",
+      "bytes": 1853651,
+      "sha256": "b1ffa3eb79bdfeade7bac0f25e636f01e8367fd45c50a2473de6a63650b2ca9b"
+    },
+    {
+      "path": "/home/cosmo/.codex/worktrees/c1e4/quirin-lang/private/w48-bu-external-callee-contracts/base-3/slice/slice-null.summary.json",
+      "bytes": 64487,
+      "sha256": "df4be8b649b807ee4b83c0516250e7495e7e57355733c126c24a6b3828960c56"
+    },
+    {
+      "path": "/home/cosmo/.codex/worktrees/c1e4/quirin-lang/private/w48-bu-external-callee-contracts/base-3/slice/slice-outer.json",
+      "bytes": 89014,
+      "sha256": "bd73808faf15c5a505d983bf918af6e1a15f4c8c0ccd77ef3c994c0ab40b0ef7"
+    },
+    {
+      "path": "/home/cosmo/.codex/worktrees/c1e4/quirin-lang/private/w48-bu-external-callee-contracts/base-3/system/invocation.json",
+      "bytes": 89795,
+      "sha256": "e9afe7b52e0332ba84c92aedd211dec9c914d39e85f3cba689813eb3d7628cf1"
+    },
+    {
+      "path": "/home/cosmo/.codex/worktrees/c1e4/quirin-lang/private/w48-bu-external-callee-contracts/base-3/system/resource-diagnostics.chunk-contracts.json",
+      "bytes": 385,
+      "sha256": "e7e0d254d9e7ee199672b981e3fc764b702b35a1757bb0f4570a9438e6b87922"
+    },
+    {
+      "path": "/home/cosmo/.codex/worktrees/c1e4/quirin-lang/private/w48-bu-external-callee-contracts/base-3/system/resource-diagnostics.contracts.json",
+      "bytes": 10868662,
+      "sha256": "dbd2a73e288917a49d40d138e190e0f5f8639d99b0314b2206f4d7c1d7ccffb2"
+    },
+    {
+      "path": "/home/cosmo/.codex/worktrees/c1e4/quirin-lang/private/w48-bu-external-callee-contracts/base-3/system/resource-diagnostics.json",
+      "bytes": 7576521,
+      "sha256": "56a2d9739e2ea8ae9fc9e0609e417715ed18e666cd61c4511e33cb918f1b8752"
+    },
+    {
+      "path": "/home/cosmo/.codex/worktrees/c1e4/quirin-lang/private/w48-bu-external-callee-contracts/base-3/system/resource-diagnostics.source-effects.json",
+      "bytes": 385,
+      "sha256": "e7e0d254d9e7ee199672b981e3fc764b702b35a1757bb0f4570a9438e6b87922"
+    },
+    {
+      "path": "/home/cosmo/.codex/worktrees/c1e4/quirin-lang/private/w48-bu-external-callee-contracts/base-3/system/system-null.jsonl",
+      "bytes": 1873239,
+      "sha256": "643d38cc52baeab7f8e92fd396da7766d0fabcf3561ca2bc1abd21fbfcf583e7"
+    },
+    {
+      "path": "/home/cosmo/.codex/worktrees/c1e4/quirin-lang/private/w48-bu-external-callee-contracts/base-3/system/system-null.summary.json",
+      "bytes": 64384,
+      "sha256": "1d9ad9e838a54923bd90b3d984c324c8eb6892fa0903827be98b5f9401a3ea5c"
+    },
+    {
+      "path": "/home/cosmo/.codex/worktrees/c1e4/quirin-lang/private/w48-bu-external-callee-contracts/base-3/system/system-outer.json",
+      "bytes": 67539,
+      "sha256": "a62d98829d4ea6d476992839c4a25ef4681de6e6b85f925081f27e74a88d2ebc"
+    },
+    {
+      "path": "/home/cosmo/.codex/worktrees/c1e4/quirin-lang/private/w48-bu-external-callee-contracts/base-3-plan.json",
+      "bytes": 1202333,
+      "sha256": "3a13ba2f2cf3704c6a8b8494ac4d957deb4378c1f99a067ee7e6e8cbbca5d87b"
+    },
+    {
+      "path": "/home/cosmo/.codex/worktrees/c1e4/quirin-lang/private/w48-bu-external-callee-contracts/base-code-data-equality.json",
+      "bytes": 583,
+      "sha256": "5103a628ebc649e34464164513e2a2f9d991ac09366c96be3312579189a41164"
+    },
+    {
+      "path": "/home/cosmo/.codex/worktrees/c1e4/quirin-lang/private/w48-bu-external-callee-contracts/base-compile-preimages.json",
+      "bytes": 11628,
+      "sha256": "f783de2452d3dfa08efb029b09ce5a73d3c54503558b0e850dc91cf27d5dbadb"
+    },
+    {
+      "path": "/home/cosmo/.codex/worktrees/c1e4/quirin-lang/private/w48-bu-external-callee-contracts/base-environment-preimages.json",
+      "bytes": 651,
+      "sha256": "b8b5e72ca9cf3a5bd91eec572e637459d4f0118c5602ac7ac59270760cb345f0"
+    },
+    {
+      "path": "/home/cosmo/.codex/worktrees/c1e4/quirin-lang/private/w48-bu-external-callee-contracts/base-selection-archive-binding.json",
+      "bytes": 776,
+      "sha256": "a62c44619c4189d9d9d4fe7609fb23436de74b3af8094b8959def384c2162ff8"
+    },
+    {
+      "path": "/home/cosmo/.codex/worktrees/c1e4/quirin-lang/private/w48-bu-external-callee-contracts/comparison-1/corpus/changed-rows.json.gz",
+      "bytes": 1280575,
+      "sha256": "f45449534ba873c2fb9b4b96bc1ce445dafe10eae574b3614d5d762dd29e0fca"
+    },
+    {
+      "path": "/home/cosmo/.codex/worktrees/c1e4/quirin-lang/private/w48-bu-external-callee-contracts/comparison-1/corpus/chunk-contracts-raw-leaf-differences.json.gz",
+      "bytes": 71,
+      "sha256": "ec8d7e3b70f1b634fe235ac43220b33db6e9827a8524eae1e4453ba3ef154613"
+    },
+    {
+      "path": "/home/cosmo/.codex/worktrees/c1e4/quirin-lang/private/w48-bu-external-callee-contracts/comparison-1/corpus/contracts-raw-leaf-differences.json.gz",
+      "bytes": 81491,
+      "sha256": "20b63e689a24820527a1da943119ef74c37ed5095d257a2d19f97f6c72f01dd9"
+    },
+    {
+      "path": "/home/cosmo/.codex/worktrees/c1e4/quirin-lang/private/w48-bu-external-callee-contracts/comparison-1/corpus/corpus-null.summary.json.raw-differences.json.gz",
+      "bytes": 194,
+      "sha256": "b4d5a8d03c2d123b390df40cc3d9594e29626bacbb0c11d16d7df966a8a6f283"
+    },
+    {
+      "path": "/home/cosmo/.codex/worktrees/c1e4/quirin-lang/private/w48-bu-external-callee-contracts/comparison-1/corpus/corpus-outer.json.raw-differences.json.gz",
+      "bytes": 316,
+      "sha256": "585d576b0e75530e927cd14db9b813fd3926dee5ed91c2149ad2adb61592bb82"
+    },
+    {
+      "path": "/home/cosmo/.codex/worktrees/c1e4/quirin-lang/private/w48-bu-external-callee-contracts/comparison-1/corpus/diagnostic-leaf-trades.json",
+      "bytes": 843,
+      "sha256": "03c120feb60cdde19a00a4ff14af90535e79b721a7b0f1bd1c02474292978e31"
+    },
+    {
+      "path": "/home/cosmo/.codex/worktrees/c1e4/quirin-lang/private/w48-bu-external-callee-contracts/comparison-1/corpus/diagnostics-raw-leaf-differences.json.gz",
+      "bytes": 17278905,
+      "sha256": "435b4c566443f4b7322a87d1e1bb6fae377415ceae9d7dcbaa9c07123dadbf53"
+    },
+    {
+      "path": "/home/cosmo/.codex/worktrees/c1e4/quirin-lang/private/w48-bu-external-callee-contracts/comparison-1/corpus/five-artifact-diff.exit",
+      "bytes": 2,
+      "sha256": "9a271f2a916b0b6ee6cecb2426f0b3206ef074578be55d9bc94f6f3fe3ab86aa"
+    },
+    {
+      "path": "/home/cosmo/.codex/worktrees/c1e4/quirin-lang/private/w48-bu-external-callee-contracts/comparison-1/corpus/five-artifact-diff.json",
+      "bytes": 268680059,
+      "sha256": "794d6328ddd44ac2f68d3a2f0ea3928b1e80aa5dcfe051432e837a9f647b8f24"
+    },
+    {
+      "path": "/home/cosmo/.codex/worktrees/c1e4/quirin-lang/private/w48-bu-external-callee-contracts/comparison-1/corpus/five-artifact-diff.log",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "/home/cosmo/.codex/worktrees/c1e4/quirin-lang/private/w48-bu-external-callee-contracts/comparison-1/corpus/null-dictionary-differences.json.gz",
+      "bytes": 62,
+      "sha256": "48f06dcb1a005e52e4413d2e3b5e6ea7604f2f0e5c39eaec1ec138e3c7335b1e"
+    },
+    {
+      "path": "/home/cosmo/.codex/worktrees/c1e4/quirin-lang/private/w48-bu-external-callee-contracts/comparison-1/corpus/null-full-record-differences.json.gz",
+      "bytes": 90464,
+      "sha256": "357663c352d9514838455ac3eacb4ed77a68e3ba979cc8dc68eaff942123d73d"
+    },
+    {
+      "path": "/home/cosmo/.codex/worktrees/c1e4/quirin-lang/private/w48-bu-external-callee-contracts/comparison-1/corpus/source-effects-raw-leaf-differences.json.gz",
+      "bytes": 70,
+      "sha256": "1a658d53fd7d46b2d4918d129de74d865a4aefe7c4271dfbe954fd72c9408f8a"
+    },
+    {
+      "path": "/home/cosmo/.codex/worktrees/c1e4/quirin-lang/private/w48-bu-external-callee-contracts/comparison-1/corpus/source-raw-leaf-differences.json.gz",
+      "bytes": 62,
+      "sha256": "15cca095db933fe8065ff5096bb237cd08b00b3a8cee0c7063901f0cb8b7d05d"
+    },
+    {
+      "path": "/home/cosmo/.codex/worktrees/c1e4/quirin-lang/private/w48-bu-external-callee-contracts/comparison-1/corpus/summary.json",
+      "bytes": 7326,
+      "sha256": "19665365dd874f312001a789ea8a0ca990e00ea34b02b8cbc22fc8389d21e791"
+    },
+    {
+      "path": "/home/cosmo/.codex/worktrees/c1e4/quirin-lang/private/w48-bu-external-callee-contracts/comparison-1/corpus/unit-status-changes.json",
+      "bytes": 3,
+      "sha256": "37517e5f3dc66819f61f5a7bb8ace1921282415f10551d2defa5c3eb0985b570"
+    },
+    {
+      "path": "/home/cosmo/.codex/worktrees/c1e4/quirin-lang/private/w48-bu-external-callee-contracts/comparison-1/corpus/unit-verdict-and-projection-changes.json",
+      "bytes": 2559,
+      "sha256": "f8fed123559f0f457916d35bf3704caeb3a4e3ca19ac26d16299d918aa5c6138"
+    },
+    {
+      "path": "/home/cosmo/.codex/worktrees/c1e4/quirin-lang/private/w48-bu-external-callee-contracts/comparison-1/corpus/verdict-changes.json",
+      "bytes": 4801,
+      "sha256": "0416e4eca3fc984b76d5d8e7314efe93a78c779da9164d7830d436fe63f72c74"
+    },
+    {
+      "path": "/home/cosmo/.codex/worktrees/c1e4/quirin-lang/private/w48-bu-external-callee-contracts/comparison-1/slice/changed-rows.json.gz",
+      "bytes": 107637,
+      "sha256": "f86747ce29c04d66d9ba44a68519d67f2d6d8d46ab2cc0d8e192f12a578ec28b"
+    },
+    {
+      "path": "/home/cosmo/.codex/worktrees/c1e4/quirin-lang/private/w48-bu-external-callee-contracts/comparison-1/slice/chunk-contracts-raw-leaf-differences.json.gz",
+      "bytes": 71,
+      "sha256": "b59c276814079d257361303f10b3cc480f80abb1389cfca1daa099e25a472513"
+    },
+    {
+      "path": "/home/cosmo/.codex/worktrees/c1e4/quirin-lang/private/w48-bu-external-callee-contracts/comparison-1/slice/contracts-raw-leaf-differences.json.gz",
+      "bytes": 27498,
+      "sha256": "1c876c8ee6b1b27d9e53088f19583de93a0397aa80a91968b5a01483a8f0d148"
+    },
+    {
+      "path": "/home/cosmo/.codex/worktrees/c1e4/quirin-lang/private/w48-bu-external-callee-contracts/comparison-1/slice/diagnostic-leaf-trades.json",
+      "bytes": 3,
+      "sha256": "37517e5f3dc66819f61f5a7bb8ace1921282415f10551d2defa5c3eb0985b570"
+    },
+    {
+      "path": "/home/cosmo/.codex/worktrees/c1e4/quirin-lang/private/w48-bu-external-callee-contracts/comparison-1/slice/diagnostics-raw-leaf-differences.json.gz",
+      "bytes": 391966,
+      "sha256": "00ca5466a3ed482e353a7b64f141b52d1efafdc0a8a29f35ac95afd8b973d2c9"
+    },
+    {
+      "path": "/home/cosmo/.codex/worktrees/c1e4/quirin-lang/private/w48-bu-external-callee-contracts/comparison-1/slice/five-artifact-diff.exit",
+      "bytes": 2,
+      "sha256": "9a271f2a916b0b6ee6cecb2426f0b3206ef074578be55d9bc94f6f3fe3ab86aa"
+    },
+    {
+      "path": "/home/cosmo/.codex/worktrees/c1e4/quirin-lang/private/w48-bu-external-callee-contracts/comparison-1/slice/five-artifact-diff.json",
+      "bytes": 29244369,
+      "sha256": "ce00a241b5d2d342d7305ebabe9097cdf4d8bca5969d7149374f1e2054c8e6ed"
+    },
+    {
+      "path": "/home/cosmo/.codex/worktrees/c1e4/quirin-lang/private/w48-bu-external-callee-contracts/comparison-1/slice/five-artifact-diff.log",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "/home/cosmo/.codex/worktrees/c1e4/quirin-lang/private/w48-bu-external-callee-contracts/comparison-1/slice/null-dictionary-differences.json.gz",
+      "bytes": 62,
+      "sha256": "566406daae0af4ce7c1de6b4b48ce2992e63910b0d04313c06ecf8804f1571aa"
+    },
+    {
+      "path": "/home/cosmo/.codex/worktrees/c1e4/quirin-lang/private/w48-bu-external-callee-contracts/comparison-1/slice/null-full-record-differences.json.gz",
+      "bytes": 9891,
+      "sha256": "2ad7e8e0a824d957212e4cda6645edc095f1caeaa2ce2faa1f4ce6be46910e55"
+    },
+    {
+      "path": "/home/cosmo/.codex/worktrees/c1e4/quirin-lang/private/w48-bu-external-callee-contracts/comparison-1/slice/slice-null.summary.json.raw-differences.json.gz",
+      "bytes": 74,
+      "sha256": "29fef3d4f98a2f460d0bc02c1206159ba1f1daa2c2a5bd2bb76411dc2571e3a3"
+    },
+    {
+      "path": "/home/cosmo/.codex/worktrees/c1e4/quirin-lang/private/w48-bu-external-callee-contracts/comparison-1/slice/slice-outer.json.raw-differences.json.gz",
+      "bytes": 67,
+      "sha256": "af441119057eafcef0ffdddb7596e5897f522fd6f62458c9227986c5e61aecc4"
+    },
+    {
+      "path": "/home/cosmo/.codex/worktrees/c1e4/quirin-lang/private/w48-bu-external-callee-contracts/comparison-1/slice/source-effects-raw-leaf-differences.json.gz",
+      "bytes": 70,
+      "sha256": "8146bf8ed718240e8f4a168944212411891583581c5c13efdc7d315248792710"
+    },
+    {
+      "path": "/home/cosmo/.codex/worktrees/c1e4/quirin-lang/private/w48-bu-external-callee-contracts/comparison-1/slice/summary.json",
+      "bytes": 6243,
+      "sha256": "01b176497e938c90fddc044499b8672b07f6ccc61163c3689b832e6abc0e818b"
+    },
+    {
+      "path": "/home/cosmo/.codex/worktrees/c1e4/quirin-lang/private/w48-bu-external-callee-contracts/comparison-1/slice/unit-status-changes.json",
+      "bytes": 3,
+      "sha256": "37517e5f3dc66819f61f5a7bb8ace1921282415f10551d2defa5c3eb0985b570"
+    },
+    {
+      "path": "/home/cosmo/.codex/worktrees/c1e4/quirin-lang/private/w48-bu-external-callee-contracts/comparison-1/slice/unit-verdict-and-projection-changes.json",
+      "bytes": 3,
+      "sha256": "37517e5f3dc66819f61f5a7bb8ace1921282415f10551d2defa5c3eb0985b570"
+    },
+    {
+      "path": "/home/cosmo/.codex/worktrees/c1e4/quirin-lang/private/w48-bu-external-callee-contracts/comparison-1/slice/verdict-changes.json",
+      "bytes": 3,
+      "sha256": "37517e5f3dc66819f61f5a7bb8ace1921282415f10551d2defa5c3eb0985b570"
+    },
+    {
+      "path": "/home/cosmo/.codex/worktrees/c1e4/quirin-lang/private/w48-bu-external-callee-contracts/comparison-1/system/changed-rows.json.gz",
+      "bytes": 111100,
+      "sha256": "db1cd096af94f04bc06d92f732d5aec1f68b135f5f8e8e5d4860d308246d3329"
+    },
+    {
+      "path": "/home/cosmo/.codex/worktrees/c1e4/quirin-lang/private/w48-bu-external-callee-contracts/comparison-1/system/chunk-contracts-raw-leaf-differences.json.gz",
+      "bytes": 71,
+      "sha256": "99b028c5221acaea17473ac9d95cb021ef73aa9957b1559f13c512514987cffa"
+    },
+    {
+      "path": "/home/cosmo/.codex/worktrees/c1e4/quirin-lang/private/w48-bu-external-callee-contracts/comparison-1/system/contracts-raw-leaf-differences.json.gz",
+      "bytes": 38007,
+      "sha256": "d4e7f20f17eeab245c560ca0217401e039b0593f8234722fc14620d9b8d8fd0b"
+    },
+    {
+      "path": "/home/cosmo/.codex/worktrees/c1e4/quirin-lang/private/w48-bu-external-callee-contracts/comparison-1/system/diagnostic-leaf-trades.json",
+      "bytes": 3,
+      "sha256": "37517e5f3dc66819f61f5a7bb8ace1921282415f10551d2defa5c3eb0985b570"
+    },
+    {
+      "path": "/home/cosmo/.codex/worktrees/c1e4/quirin-lang/private/w48-bu-external-callee-contracts/comparison-1/system/diagnostics-raw-leaf-differences.json.gz",
+      "bytes": 1538790,
+      "sha256": "1b0c3430dddd89f6b1d3acb6bfe55c731e07f550c95f3b20a5e30d06cee2b9af"
+    },
+    {
+      "path": "/home/cosmo/.codex/worktrees/c1e4/quirin-lang/private/w48-bu-external-callee-contracts/comparison-1/system/five-artifact-diff.exit",
+      "bytes": 2,
+      "sha256": "9a271f2a916b0b6ee6cecb2426f0b3206ef074578be55d9bc94f6f3fe3ab86aa"
+    },
+    {
+      "path": "/home/cosmo/.codex/worktrees/c1e4/quirin-lang/private/w48-bu-external-callee-contracts/comparison-1/system/five-artifact-diff.json",
+      "bytes": 39393827,
+      "sha256": "8572b27dcae206aeb93169c5a6d82a7913438f987f1151415f702f85b483249c"
+    },
+    {
+      "path": "/home/cosmo/.codex/worktrees/c1e4/quirin-lang/private/w48-bu-external-callee-contracts/comparison-1/system/five-artifact-diff.log",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "/home/cosmo/.codex/worktrees/c1e4/quirin-lang/private/w48-bu-external-callee-contracts/comparison-1/system/null-dictionary-differences.json.gz",
+      "bytes": 62,
+      "sha256": "5496e7d51afde84e1a8b03ae261b6e5cb11b61944b57e3992414b7154e61b82b"
+    },
+    {
+      "path": "/home/cosmo/.codex/worktrees/c1e4/quirin-lang/private/w48-bu-external-callee-contracts/comparison-1/system/null-full-record-differences.json.gz",
+      "bytes": 10339,
+      "sha256": "f192b41dc1661fb9706b1bd3d884649a23098758f1772541eca5aa3d0137f3da"
+    },
+    {
+      "path": "/home/cosmo/.codex/worktrees/c1e4/quirin-lang/private/w48-bu-external-callee-contracts/comparison-1/system/source-effects-raw-leaf-differences.json.gz",
+      "bytes": 70,
+      "sha256": "8b85048337932dd6e2f1b78c027273c77ac604be077e7520081acc292b235854"
+    },
+    {
+      "path": "/home/cosmo/.codex/worktrees/c1e4/quirin-lang/private/w48-bu-external-callee-contracts/comparison-1/system/summary.json",
+      "bytes": 6290,
+      "sha256": "f3b3c449fffa0bd27700f608b35922ea9f76a5ca10ee1b3eecd93dc2bc046cd0"
+    },
+    {
+      "path": "/home/cosmo/.codex/worktrees/c1e4/quirin-lang/private/w48-bu-external-callee-contracts/comparison-1/system/system-null.summary.json.raw-differences.json.gz",
+      "bytes": 75,
+      "sha256": "95d845a99203641d05125cbf32eb9aa0ccf3262007040105acac5c59803ac438"
+    },
+    {
+      "path": "/home/cosmo/.codex/worktrees/c1e4/quirin-lang/private/w48-bu-external-callee-contracts/comparison-1/system/system-outer.json.raw-differences.json.gz",
+      "bytes": 68,
+      "sha256": "1072d3104f175860d3bd9c6fb22209d5797d91fd8602a5a4f37cad7a1f627ab8"
+    },
+    {
+      "path": "/home/cosmo/.codex/worktrees/c1e4/quirin-lang/private/w48-bu-external-callee-contracts/comparison-1/system/unit-status-changes.json",
+      "bytes": 3,
+      "sha256": "37517e5f3dc66819f61f5a7bb8ace1921282415f10551d2defa5c3eb0985b570"
+    },
+    {
+      "path": "/home/cosmo/.codex/worktrees/c1e4/quirin-lang/private/w48-bu-external-callee-contracts/comparison-1/system/unit-verdict-and-projection-changes.json",
+      "bytes": 3,
+      "sha256": "37517e5f3dc66819f61f5a7bb8ace1921282415f10551d2defa5c3eb0985b570"
+    },
+    {
+      "path": "/home/cosmo/.codex/worktrees/c1e4/quirin-lang/private/w48-bu-external-callee-contracts/comparison-1/system/verdict-changes.json",
+      "bytes": 3,
+      "sha256": "37517e5f3dc66819f61f5a7bb8ace1921282415f10551d2defa5c3eb0985b570"
+    },
+    {
+      "path": "/home/cosmo/.codex/worktrees/c1e4/quirin-lang/private/w48-bu-external-callee-contracts/contract-metadata-attribution.json",
+      "bytes": 7260,
+      "sha256": "c301fbcdf438c54f0510b7321ef201be1c004f32f1cd8d39f9fd6958fd846a83"
+    },
+    {
+      "path": "/home/cosmo/.codex/worktrees/c1e4/quirin-lang/private/w48-bu-external-callee-contracts/controller-attempts.json",
+      "bytes": 214,
+      "sha256": "aad4c5c2876bd8928eba4b5c22c0a5e38428aee8d2d81e42b35b812ef4406b2e"
+    },
+    {
+      "path": "/home/cosmo/.codex/worktrees/c1e4/quirin-lang/private/w48-bu-external-callee-contracts/corpus-complete-attribution.json",
+      "bytes": 10609,
+      "sha256": "27e76f5c0587c2fa0cd06c7c238421bee1e2ac0a8b161e9fd96770597dfda1c7"
+    },
+    {
+      "path": "/home/cosmo/.codex/worktrees/c1e4/quirin-lang/private/w48-bu-external-callee-contracts/corpus-contract-metadata-attribution.json",
+      "bytes": 2194,
+      "sha256": "d7862e56b7cf831452de86b01a5ae16eda7486af134824437234a52599fe7606"
+    },
+    {
+      "path": "/home/cosmo/.codex/worktrees/c1e4/quirin-lang/private/w48-bu-external-callee-contracts/corpus-identity-attribution.json",
+      "bytes": 3127122,
+      "sha256": "99d07bc091fe10cecacb1f121d4f72547cb79b15c0dccc25e9a0f479f334b414"
+    },
+    {
+      "path": "/home/cosmo/.codex/worktrees/c1e4/quirin-lang/private/w48-bu-external-callee-contracts/corpus-reading-attribution.json",
+      "bytes": 65729,
+      "sha256": "3186e87a3f4bc7b3bec6974f7f6bdadeb0d0ad6928e2a5008f3805225f3dd1bb"
+    },
+    {
+      "path": "/home/cosmo/.codex/worktrees/c1e4/quirin-lang/private/w48-bu-external-callee-contracts/corpus-time-key-attribution.json",
+      "bytes": 10338,
+      "sha256": "62458c4ff6ce3adc7d55635304edf7fbbff096fd38efebce8e5f6b4d54d6e08d"
+    },
+    {
+      "path": "/home/cosmo/.codex/worktrees/c1e4/quirin-lang/private/w48-bu-external-callee-contracts/environment-attribution.json",
+      "bytes": 10625,
+      "sha256": "b3dccc9e24e8f8e71e9556d8f411f3347ee9a8e11acb2e6c1c40066702e5fee6"
+    },
+    {
+      "path": "/home/cosmo/.codex/worktrees/c1e4/quirin-lang/private/w48-bu-external-callee-contracts/final-campaign-1/active-command.json",
+      "bytes": 418,
+      "sha256": "3dda3df361668c1b2b5c95fc3d1e4867c44017b0c56757dbaf2c0d754dc29a70"
+    },
+    {
+      "path": "/home/cosmo/.codex/worktrees/c1e4/quirin-lang/private/w48-bu-external-callee-contracts/final-campaign-1/commands.json",
+      "bytes": 4079,
+      "sha256": "ac0d6f28d1d8650386a443c8fe7df2bcf85fe03501a30b7abbf190f375b469f6"
+    },
+    {
+      "path": "/home/cosmo/.codex/worktrees/c1e4/quirin-lang/private/w48-bu-external-callee-contracts/final-campaign-1/compiler-pins.exit",
+      "bytes": 4,
+      "sha256": "39b8dc3fc8b44765c8e6f1adee04c5b465e555ab791cc42d0d9e810d5b64297c"
+    },
+    {
+      "path": "/home/cosmo/.codex/worktrees/c1e4/quirin-lang/private/w48-bu-external-callee-contracts/final-campaign-1/compiler-pins.log",
+      "bytes": 1648,
+      "sha256": "1f5c05e1be37c8cc44203a09a07fb8220a4e72b82f9b6b3bb02aa99bb206185c"
+    },
+    {
+      "path": "/home/cosmo/.codex/worktrees/c1e4/quirin-lang/private/w48-bu-external-callee-contracts/final-campaign-1/focused-1.exit",
+      "bytes": 2,
+      "sha256": "9a271f2a916b0b6ee6cecb2426f0b3206ef074578be55d9bc94f6f3fe3ab86aa"
+    },
+    {
+      "path": "/home/cosmo/.codex/worktrees/c1e4/quirin-lang/private/w48-bu-external-callee-contracts/final-campaign-1/focused-1.log",
+      "bytes": 1274,
+      "sha256": "bdc430d595064587970e08d3ea5ccdde57b1e0cd523318f0c8c638420e6bc96c"
+    },
+    {
+      "path": "/home/cosmo/.codex/worktrees/c1e4/quirin-lang/private/w48-bu-external-callee-contracts/final-campaign-1/format-implementation.exit",
+      "bytes": 2,
+      "sha256": "9a271f2a916b0b6ee6cecb2426f0b3206ef074578be55d9bc94f6f3fe3ab86aa"
+    },
+    {
+      "path": "/home/cosmo/.codex/worktrees/c1e4/quirin-lang/private/w48-bu-external-callee-contracts/final-campaign-1/format-implementation.log",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "/home/cosmo/.codex/worktrees/c1e4/quirin-lang/private/w48-bu-external-callee-contracts/final-campaign-1/inventory-sync.exit",
+      "bytes": 2,
+      "sha256": "9a271f2a916b0b6ee6cecb2426f0b3206ef074578be55d9bc94f6f3fe3ab86aa"
+    },
+    {
+      "path": "/home/cosmo/.codex/worktrees/c1e4/quirin-lang/private/w48-bu-external-callee-contracts/final-campaign-1/inventory-sync.log",
+      "bytes": 6627,
+      "sha256": "d0db06c7eacc379939ac4a535da6c316e360f2882e9724af425191ef949235af"
+    },
+    {
+      "path": "/home/cosmo/.codex/worktrees/c1e4/quirin-lang/private/w48-bu-external-callee-contracts/final-campaign-1/pin-check.exit",
+      "bytes": 2,
+      "sha256": "9a271f2a916b0b6ee6cecb2426f0b3206ef074578be55d9bc94f6f3fe3ab86aa"
+    },
+    {
+      "path": "/home/cosmo/.codex/worktrees/c1e4/quirin-lang/private/w48-bu-external-callee-contracts/final-campaign-1/pin-check.log",
+      "bytes": 242,
+      "sha256": "460d1d4384fbe183c78e6dc47dc39b1a26cf9656345dfa5135a40dc85b19171d"
+    },
+    {
+      "path": "/home/cosmo/.codex/worktrees/c1e4/quirin-lang/private/w48-bu-external-callee-contracts/final-campaign-1/pin-update.exit",
+      "bytes": 2,
+      "sha256": "9a271f2a916b0b6ee6cecb2426f0b3206ef074578be55d9bc94f6f3fe3ab86aa"
+    },
+    {
+      "path": "/home/cosmo/.codex/worktrees/c1e4/quirin-lang/private/w48-bu-external-callee-contracts/final-campaign-1/pin-update.log",
+      "bytes": 255,
+      "sha256": "8ec37e71ccd106b979900d972ab2b6705e7d2ba290a387d2185b66aff870f25c"
+    },
+    {
+      "path": "/home/cosmo/.codex/worktrees/c1e4/quirin-lang/private/w48-bu-external-callee-contracts/final-campaign-1/pin-verify.exit",
+      "bytes": 2,
+      "sha256": "9a271f2a916b0b6ee6cecb2426f0b3206ef074578be55d9bc94f6f3fe3ab86aa"
+    },
+    {
+      "path": "/home/cosmo/.codex/worktrees/c1e4/quirin-lang/private/w48-bu-external-callee-contracts/final-campaign-1/pin-verify.log",
+      "bytes": 81,
+      "sha256": "750bb12f00aa50b35a000575ac07fdb1ddf99b89610723f8403117936d76c587"
+    },
+    {
+      "path": "/home/cosmo/.codex/worktrees/c1e4/quirin-lang/private/w48-bu-external-callee-contracts/final-campaign-1/process.json",
+      "bytes": 165,
+      "sha256": "b5df8bec45d85c0f136711e135114c33afdfa90d2fa0af0fcf219b28c36a0b9c"
+    },
+    {
+      "path": "/home/cosmo/.codex/worktrees/c1e4/quirin-lang/private/w48-bu-external-callee-contracts/final-campaign-2/active-command.json",
+      "bytes": 853,
+      "sha256": "95884fc850020609a6740a3cdabf91fccdf37c1e1b6328f01c3c33adc6e6ce68"
+    },
+    {
+      "path": "/home/cosmo/.codex/worktrees/c1e4/quirin-lang/private/w48-bu-external-callee-contracts/final-campaign-2/commands.json",
+      "bytes": 11597,
+      "sha256": "c5e7d6849e121ecfbd92cdf9d360f26d3c51e45f51e3ac48c86586cd6595019d"
+    },
+    {
+      "path": "/home/cosmo/.codex/worktrees/c1e4/quirin-lang/private/w48-bu-external-callee-contracts/final-campaign-2/compiler-pins.exit",
+      "bytes": 2,
+      "sha256": "9a271f2a916b0b6ee6cecb2426f0b3206ef074578be55d9bc94f6f3fe3ab86aa"
+    },
+    {
+      "path": "/home/cosmo/.codex/worktrees/c1e4/quirin-lang/private/w48-bu-external-callee-contracts/final-campaign-2/compiler-pins.log",
+      "bytes": 1639,
+      "sha256": "88b6cf378a77cdc5c143c7871838792ff6b0c24568c31a7fca04ee5f32c88772"
+    },
+    {
+      "path": "/home/cosmo/.codex/worktrees/c1e4/quirin-lang/private/w48-bu-external-callee-contracts/final-campaign-2/continue-after-commit.json",
+      "bytes": 229,
+      "sha256": "fa538327765818e66136f2f60396a0448091005388f1027a83b706c93430f5dd"
+    },
+    {
+      "path": "/home/cosmo/.codex/worktrees/c1e4/quirin-lang/private/w48-bu-external-callee-contracts/final-campaign-2/focused-1.exit",
+      "bytes": 2,
+      "sha256": "9a271f2a916b0b6ee6cecb2426f0b3206ef074578be55d9bc94f6f3fe3ab86aa"
+    },
+    {
+      "path": "/home/cosmo/.codex/worktrees/c1e4/quirin-lang/private/w48-bu-external-callee-contracts/final-campaign-2/focused-1.log",
+      "bytes": 743,
+      "sha256": "6e09f811b7a7795a249b1e2f238a1a5bdb74be139d537214baed25a83c0db0b5"
+    },
+    {
+      "path": "/home/cosmo/.codex/worktrees/c1e4/quirin-lang/private/w48-bu-external-callee-contracts/final-campaign-2/format-implementation.exit",
+      "bytes": 2,
+      "sha256": "9a271f2a916b0b6ee6cecb2426f0b3206ef074578be55d9bc94f6f3fe3ab86aa"
+    },
+    {
+      "path": "/home/cosmo/.codex/worktrees/c1e4/quirin-lang/private/w48-bu-external-callee-contracts/final-campaign-2/format-implementation.log",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "/home/cosmo/.codex/worktrees/c1e4/quirin-lang/private/w48-bu-external-callee-contracts/final-campaign-2/inventory-sync.exit",
+      "bytes": 2,
+      "sha256": "9a271f2a916b0b6ee6cecb2426f0b3206ef074578be55d9bc94f6f3fe3ab86aa"
+    },
+    {
+      "path": "/home/cosmo/.codex/worktrees/c1e4/quirin-lang/private/w48-bu-external-callee-contracts/final-campaign-2/inventory-sync.log",
+      "bytes": 6627,
+      "sha256": "d0db06c7eacc379939ac4a535da6c316e360f2882e9724af425191ef949235af"
+    },
+    {
+      "path": "/home/cosmo/.codex/worktrees/c1e4/quirin-lang/private/w48-bu-external-callee-contracts/final-campaign-2/pin-check.exit",
+      "bytes": 2,
+      "sha256": "9a271f2a916b0b6ee6cecb2426f0b3206ef074578be55d9bc94f6f3fe3ab86aa"
+    },
+    {
+      "path": "/home/cosmo/.codex/worktrees/c1e4/quirin-lang/private/w48-bu-external-callee-contracts/final-campaign-2/pin-check.log",
+      "bytes": 242,
+      "sha256": "460d1d4384fbe183c78e6dc47dc39b1a26cf9656345dfa5135a40dc85b19171d"
+    },
+    {
+      "path": "/home/cosmo/.codex/worktrees/c1e4/quirin-lang/private/w48-bu-external-callee-contracts/final-campaign-2/pin-update.exit",
+      "bytes": 2,
+      "sha256": "9a271f2a916b0b6ee6cecb2426f0b3206ef074578be55d9bc94f6f3fe3ab86aa"
+    },
+    {
+      "path": "/home/cosmo/.codex/worktrees/c1e4/quirin-lang/private/w48-bu-external-callee-contracts/final-campaign-2/pin-update.log",
+      "bytes": 207,
+      "sha256": "4748790d2c64644f6de2b171e54cee03b9948ed6388172f27bd284f04e7d98c9"
+    },
+    {
+      "path": "/home/cosmo/.codex/worktrees/c1e4/quirin-lang/private/w48-bu-external-callee-contracts/final-campaign-2/pin-verify.exit",
+      "bytes": 2,
+      "sha256": "9a271f2a916b0b6ee6cecb2426f0b3206ef074578be55d9bc94f6f3fe3ab86aa"
+    },
+    {
+      "path": "/home/cosmo/.codex/worktrees/c1e4/quirin-lang/private/w48-bu-external-callee-contracts/final-campaign-2/pin-verify.log",
+      "bytes": 81,
+      "sha256": "750bb12f00aa50b35a000575ac07fdb1ddf99b89610723f8403117936d76c587"
+    },
+    {
+      "path": "/home/cosmo/.codex/worktrees/c1e4/quirin-lang/private/w48-bu-external-callee-contracts/final-campaign-2/process.json",
+      "bytes": 165,
+      "sha256": "dee72d6e09d8da4c07aaf7c4392d40cfbd2963c55494b0e25ce62a4cf413a0b7"
+    },
+    {
+      "path": "/home/cosmo/.codex/worktrees/c1e4/quirin-lang/private/w48-bu-external-callee-contracts/final-campaign-2/standing-and-provider-gate.exit",
+      "bytes": 2,
+      "sha256": "4355a46b19d348dc2f57c046f8ef63d4538ebb936000f3c9ee954a27460dd865"
+    },
+    {
+      "path": "/home/cosmo/.codex/worktrees/c1e4/quirin-lang/private/w48-bu-external-callee-contracts/final-campaign-2/standing-and-provider-gate.log",
+      "bytes": 313,
+      "sha256": "3eeaf7a7c7852007eebb27f44e76bc944ca296c9db5dc3bcb41e83781ac6ea9e"
+    },
+    {
+      "path": "/home/cosmo/.codex/worktrees/c1e4/quirin-lang/private/w48-bu-external-callee-contracts/final-campaign-2/tip-build.exit",
+      "bytes": 2,
+      "sha256": "9a271f2a916b0b6ee6cecb2426f0b3206ef074578be55d9bc94f6f3fe3ab86aa"
+    },
+    {
+      "path": "/home/cosmo/.codex/worktrees/c1e4/quirin-lang/private/w48-bu-external-callee-contracts/final-campaign-2/tip-build.log",
+      "bytes": 43132,
+      "sha256": "95663f2be240ea724dfc926148e360ab91a54e9232895a703ff7fc8f72262bd5"
+    },
+    {
+      "path": "/home/cosmo/.codex/worktrees/c1e4/quirin-lang/private/w48-bu-external-callee-contracts/final-campaign-2/tip-corpus.exit",
+      "bytes": 2,
+      "sha256": "9a271f2a916b0b6ee6cecb2426f0b3206ef074578be55d9bc94f6f3fe3ab86aa"
+    },
+    {
+      "path": "/home/cosmo/.codex/worktrees/c1e4/quirin-lang/private/w48-bu-external-callee-contracts/final-campaign-2/tip-corpus.log",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "/home/cosmo/.codex/worktrees/c1e4/quirin-lang/private/w48-bu-external-callee-contracts/final-campaign-2/tip-environment-corpus.exit",
+      "bytes": 2,
+      "sha256": "9a271f2a916b0b6ee6cecb2426f0b3206ef074578be55d9bc94f6f3fe3ab86aa"
+    },
+    {
+      "path": "/home/cosmo/.codex/worktrees/c1e4/quirin-lang/private/w48-bu-external-callee-contracts/final-campaign-2/tip-environment-corpus.log",
+      "bytes": 276,
+      "sha256": "85a309a7898d1061c952090a8a6149aafc91d5e5efb44760349d21e4f462c768"
+    },
+    {
+      "path": "/home/cosmo/.codex/worktrees/c1e4/quirin-lang/private/w48-bu-external-callee-contracts/final-campaign-2/tip-environment-export-build.exit",
+      "bytes": 2,
+      "sha256": "9a271f2a916b0b6ee6cecb2426f0b3206ef074578be55d9bc94f6f3fe3ab86aa"
+    },
+    {
+      "path": "/home/cosmo/.codex/worktrees/c1e4/quirin-lang/private/w48-bu-external-callee-contracts/final-campaign-2/tip-environment-export-build.log",
+      "bytes": 28,
+      "sha256": "ead8f5f21221cc626206427d4007514fdebbb84b3251d41cf262a132a97c9b67"
+    },
+    {
+      "path": "/home/cosmo/.codex/worktrees/c1e4/quirin-lang/private/w48-bu-external-callee-contracts/final-campaign-2/tip-environment-slice.exit",
+      "bytes": 2,
+      "sha256": "9a271f2a916b0b6ee6cecb2426f0b3206ef074578be55d9bc94f6f3fe3ab86aa"
+    },
+    {
+      "path": "/home/cosmo/.codex/worktrees/c1e4/quirin-lang/private/w48-bu-external-callee-contracts/final-campaign-2/tip-environment-slice.log",
+      "bytes": 276,
+      "sha256": "6ca5317b547c5924df766cfa9af3129fd0915572d40c1edba5221ee2e9c245a5"
+    },
+    {
+      "path": "/home/cosmo/.codex/worktrees/c1e4/quirin-lang/private/w48-bu-external-callee-contracts/final-campaign-2/tip-environment-system.exit",
+      "bytes": 2,
+      "sha256": "9a271f2a916b0b6ee6cecb2426f0b3206ef074578be55d9bc94f6f3fe3ab86aa"
+    },
+    {
+      "path": "/home/cosmo/.codex/worktrees/c1e4/quirin-lang/private/w48-bu-external-callee-contracts/final-campaign-2/tip-environment-system.log",
+      "bytes": 276,
+      "sha256": "aaee286682ad4afba8a4fdc6a79785d4878db9d6ff5cbfb6a9d9334d8efb6343"
+    },
+    {
+      "path": "/home/cosmo/.codex/worktrees/c1e4/quirin-lang/private/w48-bu-external-callee-contracts/final-campaign-2/tip-slice.exit",
+      "bytes": 2,
+      "sha256": "9a271f2a916b0b6ee6cecb2426f0b3206ef074578be55d9bc94f6f3fe3ab86aa"
+    },
+    {
+      "path": "/home/cosmo/.codex/worktrees/c1e4/quirin-lang/private/w48-bu-external-callee-contracts/final-campaign-2/tip-slice.log",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "/home/cosmo/.codex/worktrees/c1e4/quirin-lang/private/w48-bu-external-callee-contracts/final-campaign-2/tip-system.exit",
+      "bytes": 2,
+      "sha256": "9a271f2a916b0b6ee6cecb2426f0b3206ef074578be55d9bc94f6f3fe3ab86aa"
+    },
+    {
+      "path": "/home/cosmo/.codex/worktrees/c1e4/quirin-lang/private/w48-bu-external-callee-contracts/final-campaign-2/tip-system.log",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "/home/cosmo/.codex/worktrees/c1e4/quirin-lang/private/w48-bu-external-callee-contracts/gate-1/clang-version.txt",
+      "bytes": 122,
+      "sha256": "77467400b91c4cebb6c3e29d8a611af518a2f4078c22baf276b0a1373e996bf5"
+    },
+    {
+      "path": "/home/cosmo/.codex/worktrees/c1e4/quirin-lang/private/w48-bu-external-callee-contracts/gate-1/clippy.log",
+      "bytes": 2249,
+      "sha256": "2828d27bd6624a0f9c84b47187fcc36dee7883d1a679ce07df734fadb3f9668f"
+    },
+    {
+      "path": "/home/cosmo/.codex/worktrees/c1e4/quirin-lang/private/w48-bu-external-callee-contracts/gate-1/fmt.log",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "/home/cosmo/.codex/worktrees/c1e4/quirin-lang/private/w48-bu-external-callee-contracts/gate-1/inventory.log",
+      "bytes": 6627,
+      "sha256": "d0db06c7eacc379939ac4a535da6c316e360f2882e9724af425191ef949235af"
+    },
+    {
+      "path": "/home/cosmo/.codex/worktrees/c1e4/quirin-lang/private/w48-bu-external-callee-contracts/gate-1/lean.log",
+      "bytes": 902124,
+      "sha256": "7947331f485674e35f161d22ae5da51e1599dc123a3e455ef945bc557048633a"
+    },
+    {
+      "path": "/home/cosmo/.codex/worktrees/c1e4/quirin-lang/private/w48-bu-external-callee-contracts/gate-1/packages.log",
+      "bytes": 11127,
+      "sha256": "7a7c26e1947b0f724233bc015ee61aa490cb0680c047c0fff407147b04dc0965"
+    },
+    {
+      "path": "/home/cosmo/.codex/worktrees/c1e4/quirin-lang/private/w48-bu-external-callee-contracts/gate-1/provider-clippy.log",
+      "bytes": 3462,
+      "sha256": "c614e91f888b5883afa468dc484fda91bdb2dbafd432ef3c3ec0271051be7ff4"
+    },
+    {
+      "path": "/home/cosmo/.codex/worktrees/c1e4/quirin-lang/private/w48-bu-external-callee-contracts/gate-1/provider-fmt.log",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "/home/cosmo/.codex/worktrees/c1e4/quirin-lang/private/w48-bu-external-callee-contracts/gate-1/provider-python.log",
+      "bytes": 774,
+      "sha256": "3ecce25405dc5ee79583929fb86090f7d9e9f8c30105c8bd6f25118526e7b2a6"
+    },
+    {
+      "path": "/home/cosmo/.codex/worktrees/c1e4/quirin-lang/private/w48-bu-external-callee-contracts/gate-1/provider-rust.log",
+      "bytes": 24713,
+      "sha256": "206e5ad7ec49acb9854e013199f35aef4311d88150cbd0cb8fa222936263c861"
+    },
+    {
+      "path": "/home/cosmo/.codex/worktrees/c1e4/quirin-lang/private/w48-bu-external-callee-contracts/gate-1/python.log",
+      "bytes": 3120,
+      "sha256": "083c208b83f7d544f999d23957aa021fa58779a69932a9d7fcdf0351d8413f7a"
+    },
+    {
+      "path": "/home/cosmo/.codex/worktrees/c1e4/quirin-lang/private/w48-bu-external-callee-contracts/gate-1/reevaluation-followup.log",
+      "bytes": 12307,
+      "sha256": "ffa5bee1fe5f1f0a68ec903fb026922b5a871e95c0adee2cf08cd50489edeb25"
+    },
+    {
+      "path": "/home/cosmo/.codex/worktrees/c1e4/quirin-lang/private/w48-bu-external-callee-contracts/gate-1/reevaluation-probe.log",
+      "bytes": 2589,
+      "sha256": "5595fcf69a0e85180af728a2e993a5dc5347128a9f2c89416a60c521a3348cbd"
+    },
+    {
+      "path": "/home/cosmo/.codex/worktrees/c1e4/quirin-lang/private/w48-bu-external-callee-contracts/gate-1/rust-units/summary.json",
+      "bytes": 1219296,
+      "sha256": "a6174d4682d0aaa1db86730bef693c1cf975f9b9d232a3b6b712554d09ea0820"
+    },
+    {
+      "path": "/home/cosmo/.codex/worktrees/c1e4/quirin-lang/private/w48-bu-external-callee-contracts/gate-1/rust.log",
+      "bytes": 75152,
+      "sha256": "dec54a21f31135b740e40ee616056aaa3b618338ab969162369542d16627af25"
+    },
+    {
+      "path": "/home/cosmo/.codex/worktrees/c1e4/quirin-lang/private/w48-bu-external-callee-contracts/gate-1/verify-qcore.chunkio.log",
+      "bytes": 1534,
+      "sha256": "39850d498b14dda97456e998a37e9ce97c31d783d077cbb1ddaae02acd70b7f7"
+    },
+    {
+      "path": "/home/cosmo/.codex/worktrees/c1e4/quirin-lang/private/w48-bu-external-callee-contracts/gate-1/verify-qcore.cmetrics.log",
+      "bytes": 1058,
+      "sha256": "c8dba9beed2788937b3c11dc09ff231487344f4870df58d405c372911a902c0b"
+    },
+    {
+      "path": "/home/cosmo/.codex/worktrees/c1e4/quirin-lang/private/w48-bu-external-callee-contracts/gate-1/verify-qcore.ctraces.log",
+      "bytes": 1002,
+      "sha256": "a7adfbcfa36710021af6ad7f051edaa58003582e7286054e2c6b813a38092d80"
+    },
+    {
+      "path": "/home/cosmo/.codex/worktrees/c1e4/quirin-lang/private/w48-bu-external-callee-contracts/gate-1/verify-qcore.libevent.log",
+      "bytes": 1073,
+      "sha256": "f759222ddd3a11014c4fbe28b3b0b2846ccf758f1834269028c8f317ddfbffff"
+    },
+    {
+      "path": "/home/cosmo/.codex/worktrees/c1e4/quirin-lang/private/w48-bu-external-callee-contracts/gate-1/verify-qcore.librdkafka.log",
+      "bytes": 1030,
+      "sha256": "c04a521c2cfd26ba0f2dcd80d558920ad1536815370e5470a7d40c65d072e87f"
+    },
+    {
+      "path": "/home/cosmo/.codex/worktrees/c1e4/quirin-lang/private/w48-bu-external-callee-contracts/gate-2-controller.exit",
+      "bytes": 2,
+      "sha256": "9a271f2a916b0b6ee6cecb2426f0b3206ef074578be55d9bc94f6f3fe3ab86aa"
+    },
+    {
+      "path": "/home/cosmo/.codex/worktrees/c1e4/quirin-lang/private/w48-bu-external-callee-contracts/gate-2-unconfined/clang-version.txt",
+      "bytes": 122,
+      "sha256": "77467400b91c4cebb6c3e29d8a611af518a2f4078c22baf276b0a1373e996bf5"
+    },
+    {
+      "path": "/home/cosmo/.codex/worktrees/c1e4/quirin-lang/private/w48-bu-external-callee-contracts/gate-2-unconfined/clippy.log",
+      "bytes": 251,
+      "sha256": "40524b030d15a41f89a033ba101c614125d051dac0b850ae66aa449ddfeb31ac"
+    },
+    {
+      "path": "/home/cosmo/.codex/worktrees/c1e4/quirin-lang/private/w48-bu-external-callee-contracts/gate-2-unconfined/fmt.log",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "/home/cosmo/.codex/worktrees/c1e4/quirin-lang/private/w48-bu-external-callee-contracts/gate-2-unconfined/inventory.log",
+      "bytes": 6627,
+      "sha256": "d0db06c7eacc379939ac4a535da6c316e360f2882e9724af425191ef949235af"
+    },
+    {
+      "path": "/home/cosmo/.codex/worktrees/c1e4/quirin-lang/private/w48-bu-external-callee-contracts/gate-2-unconfined/lean.log",
+      "bytes": 880517,
+      "sha256": "40671589c46de9bab65fbe23c986da4fc6316d561414c6b8310606e38d26d969"
+    },
+    {
+      "path": "/home/cosmo/.codex/worktrees/c1e4/quirin-lang/private/w48-bu-external-callee-contracts/gate-2-unconfined/packages.log",
+      "bytes": 9322,
+      "sha256": "634bf8051bf4f3834be1aa697140b99af88ecdae4230c40e9a1d323bb7209712"
+    },
+    {
+      "path": "/home/cosmo/.codex/worktrees/c1e4/quirin-lang/private/w48-bu-external-callee-contracts/gate-2-unconfined/provider-clippy.log",
+      "bytes": 276,
+      "sha256": "da2c0e5e6150b98a8f66d78af3b8c58ef3616885bd8cdb2ddad8308a4f439f10"
+    },
+    {
+      "path": "/home/cosmo/.codex/worktrees/c1e4/quirin-lang/private/w48-bu-external-callee-contracts/gate-2-unconfined/provider-fmt.log",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "/home/cosmo/.codex/worktrees/c1e4/quirin-lang/private/w48-bu-external-callee-contracts/gate-2-unconfined/provider-python.log",
+      "bytes": 125,
+      "sha256": "8fdbf8a0986e7c21eb80a3108899344299e52278759e22da356a661a5a36a4aa"
+    },
+    {
+      "path": "/home/cosmo/.codex/worktrees/c1e4/quirin-lang/private/w48-bu-external-callee-contracts/gate-2-unconfined/provider-rust.log",
+      "bytes": 20477,
+      "sha256": "62a724ad0056d0b9f1ac83a7790f2fd1e8840b2e1f00885076f026b91614294c"
+    },
+    {
+      "path": "/home/cosmo/.codex/worktrees/c1e4/quirin-lang/private/w48-bu-external-callee-contracts/gate-2-unconfined/python.log",
+      "bytes": 3120,
+      "sha256": "8180b010c6a1b0537634de54776f4c28dd4957a88dc6fcba97d9ad4801388ade"
+    },
+    {
+      "path": "/home/cosmo/.codex/worktrees/c1e4/quirin-lang/private/w48-bu-external-callee-contracts/gate-2-unconfined/reevaluation-followup.log",
+      "bytes": 12307,
+      "sha256": "ffa5bee1fe5f1f0a68ec903fb026922b5a871e95c0adee2cf08cd50489edeb25"
+    },
+    {
+      "path": "/home/cosmo/.codex/worktrees/c1e4/quirin-lang/private/w48-bu-external-callee-contracts/gate-2-unconfined/reevaluation-probe.log",
+      "bytes": 2589,
+      "sha256": "5595fcf69a0e85180af728a2e993a5dc5347128a9f2c89416a60c521a3348cbd"
+    },
+    {
+      "path": "/home/cosmo/.codex/worktrees/c1e4/quirin-lang/private/w48-bu-external-callee-contracts/gate-2-unconfined/rust-units/summary.json",
+      "bytes": 1228485,
+      "sha256": "70c467542d2d65975afcd7f61a550b12b7be7af876d7aa0f2dcbd0b8a4f751e4"
+    },
+    {
+      "path": "/home/cosmo/.codex/worktrees/c1e4/quirin-lang/private/w48-bu-external-callee-contracts/gate-2-unconfined/rust.log",
+      "bytes": 51006,
+      "sha256": "66795819ac36af8a621e39ba6a994b07952146c4e02f78c2fb9cabed46877247"
+    },
+    {
+      "path": "/home/cosmo/.codex/worktrees/c1e4/quirin-lang/private/w48-bu-external-callee-contracts/gate-2-unconfined/verify-qcore.chunkio.log",
+      "bytes": 1534,
+      "sha256": "39850d498b14dda97456e998a37e9ce97c31d783d077cbb1ddaae02acd70b7f7"
+    },
+    {
+      "path": "/home/cosmo/.codex/worktrees/c1e4/quirin-lang/private/w48-bu-external-callee-contracts/gate-2-unconfined/verify-qcore.cmetrics.log",
+      "bytes": 1058,
+      "sha256": "c8dba9beed2788937b3c11dc09ff231487344f4870df58d405c372911a902c0b"
+    },
+    {
+      "path": "/home/cosmo/.codex/worktrees/c1e4/quirin-lang/private/w48-bu-external-callee-contracts/gate-2-unconfined/verify-qcore.ctraces.log",
+      "bytes": 1002,
+      "sha256": "a7adfbcfa36710021af6ad7f051edaa58003582e7286054e2c6b813a38092d80"
+    },
+    {
+      "path": "/home/cosmo/.codex/worktrees/c1e4/quirin-lang/private/w48-bu-external-callee-contracts/gate-2-unconfined/verify-qcore.libevent.log",
+      "bytes": 1073,
+      "sha256": "f759222ddd3a11014c4fbe28b3b0b2846ccf758f1834269028c8f317ddfbffff"
+    },
+    {
+      "path": "/home/cosmo/.codex/worktrees/c1e4/quirin-lang/private/w48-bu-external-callee-contracts/gate-2-unconfined/verify-qcore.librdkafka.log",
+      "bytes": 1030,
+      "sha256": "c04a521c2cfd26ba0f2dcd80d558920ad1536815370e5470a7d40c65d072e87f"
+    },
+    {
+      "path": "/home/cosmo/.codex/worktrees/c1e4/quirin-lang/private/w48-bu-external-callee-contracts/host-declarations-before.json",
+      "bytes": 1164,
+      "sha256": "80a889d3f892c24a900c14b75eab79911f94c507d8a4207f4bd789daad6c9182"
+    },
+    {
+      "path": "/home/cosmo/.codex/worktrees/c1e4/quirin-lang/private/w48-bu-external-callee-contracts/identity-producer-equality.json",
+      "bytes": 1075,
+      "sha256": "b6660e0f9a6f254c6ca2971cf9500a898210f819ea3f58cb67c85267ce19617b"
+    },
+    {
+      "path": "/home/cosmo/.codex/worktrees/c1e4/quirin-lang/private/w48-bu-external-callee-contracts/libc-lock-attribution.json",
+      "bytes": 830,
+      "sha256": "aebe9b01e428699488ad4d9528a32191a3685784784d8a7218c8a6ab214f518d"
+    },
+    {
+      "path": "/home/cosmo/.codex/worktrees/c1e4/quirin-lang/private/w48-bu-external-callee-contracts/mirror-files-before.json",
+      "bytes": 2486191,
+      "sha256": "f6b49134b488da945aa0da92d8cbcbd2e8870a4bfdb72b044e09852e8d150b1d"
+    },
+    {
+      "path": "/home/cosmo/.codex/worktrees/c1e4/quirin-lang/private/w48-bu-external-callee-contracts/mirror-git-binding.json",
+      "bytes": 486,
+      "sha256": "27e89ed2056f2d7028c70b9ee84caeddba4060137ecae56388156f39430d8ee4"
+    },
+    {
+      "path": "/home/cosmo/.codex/worktrees/c1e4/quirin-lang/private/w48-bu-external-callee-contracts/native-inputs-before.json",
+      "bytes": 13973458,
+      "sha256": "45ef6828b4ab615dfeb352e1dc5e6e0de65cd0f07850f14b74e6604201d47682"
+    },
+    {
+      "path": "/home/cosmo/.codex/worktrees/c1e4/quirin-lang/private/w48-bu-external-callee-contracts/pin-repair-authorization.json",
+      "bytes": 427,
+      "sha256": "58de1c555a515d08154560de2c092b3481d13fc8070296923fec5027c785a594"
+    },
+    {
+      "path": "/home/cosmo/.codex/worktrees/c1e4/quirin-lang/private/w48-bu-external-callee-contracts/pin-repair-commit.json",
+      "bytes": 1066,
+      "sha256": "d8d8babd8a87a38db518817c2f1e1f579f093f034448010b41af2bef4758daa7"
+    },
+    {
+      "path": "/home/cosmo/.codex/worktrees/c1e4/quirin-lang/private/w48-bu-external-callee-contracts/production-code-equality.json",
+      "bytes": 201528,
+      "sha256": "9d35f7a9a2ae89791e7e5c00bb518ede0db2b4d97a6ca5fc67694512bc4a4910"
+    },
+    {
+      "path": "/home/cosmo/.codex/worktrees/c1e4/quirin-lang/private/w48-bu-external-callee-contracts/setup-attempts.json",
+      "bytes": 833,
+      "sha256": "29f8bd6fb40f35d9439e00a3a68f887ba47effb3cfc658b1bbd357bc7d10a20c"
+    },
+    {
+      "path": "/home/cosmo/.codex/worktrees/c1e4/quirin-lang/private/w48-bu-external-callee-contracts/setup.json",
+      "bytes": 799,
+      "sha256": "10c009f449047f9e40b4f9f54e451edcae5d25a448f8a2f641960e040771229d"
+    },
+    {
+      "path": "/home/cosmo/.codex/worktrees/c1e4/quirin-lang/private/w48-bu-external-callee-contracts/slice-complete-attribution.json",
+      "bytes": 8932,
+      "sha256": "cdda10c348f4fba4198778aac9fb3d75ae2feddc22bdc3ed7a527bf538fa9cae"
+    },
+    {
+      "path": "/home/cosmo/.codex/worktrees/c1e4/quirin-lang/private/w48-bu-external-callee-contracts/slice-contract-metadata-attribution.json",
+      "bytes": 2399,
+      "sha256": "374285dfcfe4b209c3f045dade40499c5f02bbb0fdd810cd0a3551a015375cac"
+    },
+    {
+      "path": "/home/cosmo/.codex/worktrees/c1e4/quirin-lang/private/w48-bu-external-callee-contracts/slice-identity-attribution.json",
+      "bytes": 284689,
+      "sha256": "d564cec76ae9a3fb4bced150a7d3f2f4a40a57e8e66b98d0c041cb75e2d871e1"
+    },
+    {
+      "path": "/home/cosmo/.codex/worktrees/c1e4/quirin-lang/private/w48-bu-external-callee-contracts/slice-reading-attribution.json",
+      "bytes": 2446,
+      "sha256": "74e2224eb02b2feb918c8bebc07d0fc884a6f8edfd56a75895217f2189a8e7c2"
+    },
+    {
+      "path": "/home/cosmo/.codex/worktrees/c1e4/quirin-lang/private/w48-bu-external-callee-contracts/slice-time-key-attribution.json",
+      "bytes": 8583,
+      "sha256": "de64d6f9082a981a5362eeb45f3fb9042fdea0e2c418aab5adf5e215ca87067e"
+    },
+    {
+      "path": "/home/cosmo/.codex/worktrees/c1e4/quirin-lang/private/w48-bu-external-callee-contracts/system-complete-attribution.json",
+      "bytes": 9255,
+      "sha256": "315b6301f4fb249e6777f2dd0b68eb51a95231488032fdfda576268aac65a894"
+    },
+    {
+      "path": "/home/cosmo/.codex/worktrees/c1e4/quirin-lang/private/w48-bu-external-callee-contracts/system-contract-metadata-attribution.json",
+      "bytes": 2400,
+      "sha256": "ad139fd1c2424079df9635f8cf57bff11029592b084741eb3a0f3c4c5a6508ce"
+    },
+    {
+      "path": "/home/cosmo/.codex/worktrees/c1e4/quirin-lang/private/w48-bu-external-callee-contracts/system-identity-attribution.json",
+      "bytes": 310751,
+      "sha256": "72e6908b6318d38f6c7a3f89097c866eecfdd05e024260db829605e7565fd228"
+    },
+    {
+      "path": "/home/cosmo/.codex/worktrees/c1e4/quirin-lang/private/w48-bu-external-callee-contracts/system-reading-attribution.json",
+      "bytes": 12187,
+      "sha256": "c514790ce8180c6810d5b42ad9710edbc802c290ec6d84bd8c03a4e12b299c33"
+    },
+    {
+      "path": "/home/cosmo/.codex/worktrees/c1e4/quirin-lang/private/w48-bu-external-callee-contracts/system-time-key-attribution.json",
+      "bytes": 9528,
+      "sha256": "a012c60a623077ed217908620076ad8f908160cf29ec9df2140bdfa0cdeb3784"
+    },
+    {
+      "path": "/home/cosmo/.codex/worktrees/c1e4/quirin-lang/private/w48-bu-external-callee-contracts/tip-1/corpus/corpus/monkey-source.json",
+      "bytes": 1667094,
+      "sha256": "9199a7a0e2e8c03b437310c40dc2af5a045555093dcb73f9b1f21eadd24dd7b1"
+    },
+    {
+      "path": "/home/cosmo/.codex/worktrees/c1e4/quirin-lang/private/w48-bu-external-callee-contracts/tip-1/corpus/corpus/resource-diagnostics.chunk-contracts.json",
+      "bytes": 4186178,
+      "sha256": "cbbcfd9c176005146c1946d5fcd4dc83cc9ec041a3397b10b1f0ab16ae6c0484"
+    },
+    {
+      "path": "/home/cosmo/.codex/worktrees/c1e4/quirin-lang/private/w48-bu-external-callee-contracts/tip-1/corpus/corpus/resource-diagnostics.contracts.json",
+      "bytes": 44477799,
+      "sha256": "ac778805baeaf229b7bfafee25e72684bf67c1e46bcc194cb610c88c4220a134"
+    },
+    {
+      "path": "/home/cosmo/.codex/worktrees/c1e4/quirin-lang/private/w48-bu-external-callee-contracts/tip-1/corpus/corpus/resource-diagnostics.json",
+      "bytes": 87011375,
+      "sha256": "e66a801db9282a2d4312fbc6484bee22d461a67e3720c5686ee11608e0794281"
+    },
+    {
+      "path": "/home/cosmo/.codex/worktrees/c1e4/quirin-lang/private/w48-bu-external-callee-contracts/tip-1/corpus/corpus/resource-diagnostics.source-effects.json",
+      "bytes": 118505,
+      "sha256": "d072a13f9bff4932c133a23cce39ff662deba68d46b3731693bb94e644290fe6"
+    },
+    {
+      "path": "/home/cosmo/.codex/worktrees/c1e4/quirin-lang/private/w48-bu-external-callee-contracts/tip-1/corpus/corpus-null.jsonl",
+      "bytes": 29207535,
+      "sha256": "1de213baab88a6c8ac338bc72721b16d3960d5555af25a0edd8d0a09621116c0"
+    },
+    {
+      "path": "/home/cosmo/.codex/worktrees/c1e4/quirin-lang/private/w48-bu-external-callee-contracts/tip-1/corpus/corpus-null.summary.json",
+      "bytes": 64900,
+      "sha256": "ee3a91d34921a5e0edb3d05ecade1551c366f5056d3f6651fd2f860bc5286885"
+    },
+    {
+      "path": "/home/cosmo/.codex/worktrees/c1e4/quirin-lang/private/w48-bu-external-callee-contracts/tip-1/corpus/corpus-outer.json",
+      "bytes": 715909,
+      "sha256": "eb7b8b0c00477bc8e5ae640db6aca67c2974cfae700782c09ba18be9cb597c02"
+    },
+    {
+      "path": "/home/cosmo/.codex/worktrees/c1e4/quirin-lang/private/w48-bu-external-callee-contracts/tip-1/corpus/invocation.json",
+      "bytes": 88596,
+      "sha256": "74c3bc1bd3ec6140f5c6baa31729393994240412be3e0fbe1a8118677c4c43b1"
+    },
+    {
+      "path": "/home/cosmo/.codex/worktrees/c1e4/quirin-lang/private/w48-bu-external-callee-contracts/tip-1/slice/invocation.json",
+      "bytes": 89770,
+      "sha256": "277fc402ffdaf688e236c5605c7b98086c6dbe813616344c30ae387296ccce5b"
+    },
+    {
+      "path": "/home/cosmo/.codex/worktrees/c1e4/quirin-lang/private/w48-bu-external-callee-contracts/tip-1/slice/resource-diagnostics.chunk-contracts.json",
+      "bytes": 385,
+      "sha256": "a97259087e4ad89a4662edcb494b27c27e80f06c62e404a19076224bbc0a2bd8"
+    },
+    {
+      "path": "/home/cosmo/.codex/worktrees/c1e4/quirin-lang/private/w48-bu-external-callee-contracts/tip-1/slice/resource-diagnostics.contracts.json",
+      "bytes": 9683808,
+      "sha256": "184b420eb216ccb5a2f4b315aa304d43ca13ce828f3557e9b0464f747e8a54ae"
+    },
+    {
+      "path": "/home/cosmo/.codex/worktrees/c1e4/quirin-lang/private/w48-bu-external-callee-contracts/tip-1/slice/resource-diagnostics.json",
+      "bytes": 3756716,
+      "sha256": "611072397082fee6b49a09b6d239061342370574ec0ce0bab3cf0ad3875a5b8d"
+    },
+    {
+      "path": "/home/cosmo/.codex/worktrees/c1e4/quirin-lang/private/w48-bu-external-callee-contracts/tip-1/slice/resource-diagnostics.source-effects.json",
+      "bytes": 385,
+      "sha256": "a97259087e4ad89a4662edcb494b27c27e80f06c62e404a19076224bbc0a2bd8"
+    },
+    {
+      "path": "/home/cosmo/.codex/worktrees/c1e4/quirin-lang/private/w48-bu-external-callee-contracts/tip-1/slice/slice-null.jsonl",
+      "bytes": 1853651,
+      "sha256": "4992251f9157b06d16e93d53790390d5a7fdc135102232a3c43be15ec6e4b777"
+    },
+    {
+      "path": "/home/cosmo/.codex/worktrees/c1e4/quirin-lang/private/w48-bu-external-callee-contracts/tip-1/slice/slice-null.summary.json",
+      "bytes": 64487,
+      "sha256": "df4be8b649b807ee4b83c0516250e7495e7e57355733c126c24a6b3828960c56"
+    },
+    {
+      "path": "/home/cosmo/.codex/worktrees/c1e4/quirin-lang/private/w48-bu-external-callee-contracts/tip-1/slice/slice-outer.json",
+      "bytes": 89014,
+      "sha256": "bd73808faf15c5a505d983bf918af6e1a15f4c8c0ccd77ef3c994c0ab40b0ef7"
+    },
+    {
+      "path": "/home/cosmo/.codex/worktrees/c1e4/quirin-lang/private/w48-bu-external-callee-contracts/tip-1/system/invocation.json",
+      "bytes": 89792,
+      "sha256": "8fd57f1ab3e30f74f0b55bb558375862a396cfe398e11ef89a1a519a2ba0e6cf"
+    },
+    {
+      "path": "/home/cosmo/.codex/worktrees/c1e4/quirin-lang/private/w48-bu-external-callee-contracts/tip-1/system/resource-diagnostics.chunk-contracts.json",
+      "bytes": 385,
+      "sha256": "e7e0d254d9e7ee199672b981e3fc764b702b35a1757bb0f4570a9438e6b87922"
+    },
+    {
+      "path": "/home/cosmo/.codex/worktrees/c1e4/quirin-lang/private/w48-bu-external-callee-contracts/tip-1/system/resource-diagnostics.contracts.json",
+      "bytes": 10871919,
+      "sha256": "c6fbf4f166885a92fa92a853920001d2ec3701fa5a909b04839831e1aa1271b5"
+    },
+    {
+      "path": "/home/cosmo/.codex/worktrees/c1e4/quirin-lang/private/w48-bu-external-callee-contracts/tip-1/system/resource-diagnostics.json",
+      "bytes": 7585373,
+      "sha256": "d4fdc62aa3fcb59833d21d124c34e5784164a69da3609de1bc96ff82af5529d2"
+    },
+    {
+      "path": "/home/cosmo/.codex/worktrees/c1e4/quirin-lang/private/w48-bu-external-callee-contracts/tip-1/system/resource-diagnostics.source-effects.json",
+      "bytes": 385,
+      "sha256": "e7e0d254d9e7ee199672b981e3fc764b702b35a1757bb0f4570a9438e6b87922"
+    },
+    {
+      "path": "/home/cosmo/.codex/worktrees/c1e4/quirin-lang/private/w48-bu-external-callee-contracts/tip-1/system/system-null.jsonl",
+      "bytes": 1873239,
+      "sha256": "d3fec836e3636f6826ddfe413762c7a78d34a124c21d87a2ec36bf08e288e3ad"
+    },
+    {
+      "path": "/home/cosmo/.codex/worktrees/c1e4/quirin-lang/private/w48-bu-external-callee-contracts/tip-1/system/system-null.summary.json",
+      "bytes": 64384,
+      "sha256": "1d9ad9e838a54923bd90b3d984c324c8eb6892fa0903827be98b5f9401a3ea5c"
+    },
+    {
+      "path": "/home/cosmo/.codex/worktrees/c1e4/quirin-lang/private/w48-bu-external-callee-contracts/tip-1/system/system-outer.json",
+      "bytes": 67539,
+      "sha256": "a62d98829d4ea6d476992839c4a25ef4681de6e6b85f925081f27e74a88d2ebc"
+    },
+    {
+      "path": "/home/cosmo/.codex/worktrees/c1e4/quirin-lang/private/w48-bu-external-callee-contracts/tip-selection-archive-binding.json",
+      "bytes": 776,
+      "sha256": "a6afb05fb9bf57e61d20643c3172f05d06affb63335ad0d05e12d237d212658f"
+    }
+  ]
+}

@@ -1,0 +1,190 @@
+{
+  "exit": 0,
+  "selected_units": 29,
+  "header_and_adapter_files": 7,
+  "files": [
+    {
+      "relative": "mk_core/mk_rconf.c",
+      "sha256": "e483dc6d2ee2b2da24548bdea7ce118599a5bbde2bc59b8fe71a93ef733771af",
+      "bytes": 19972
+    },
+    {
+      "relative": "mk_core/mk_string.c",
+      "sha256": "9c3cb46b8be931c25796c92211439c363bc152a19d2fdd9e889ebaff04e5d90d",
+      "bytes": 14319
+    },
+    {
+      "relative": "mk_core/mk_memory.c",
+      "sha256": "250c12971a7ad618b1ac0c8577432811290fb4b718081c643b9ba2155993d256",
+      "bytes": 1901
+    },
+    {
+      "relative": "mk_core/mk_event.c",
+      "sha256": "8ef958d26545ef52865f69cde0abf86cfdbeceb925557ff37af41031297b2382",
+      "bytes": 5470
+    },
+    {
+      "relative": "mk_core/mk_utils.c",
+      "sha256": "ed344a6545799d7dfd0b69073d7410bed9ca8c6bedff9f64d7adc068e9fed6c3",
+      "bytes": 9576
+    },
+    {
+      "relative": "mk_core/mk_file.c",
+      "sha256": "0adcb7b23356a9d21bd4cfd9f6fb168307556abc2e4110373ab2ca420771aff3",
+      "bytes": 3759
+    },
+    {
+      "relative": "mk_core/mk_iov.c",
+      "sha256": "eccfc9787f23195d3e1678368fb67b0ddada7fda9105f60516be46bccbc972f9",
+      "bytes": 5311
+    },
+    {
+      "relative": "mk_server/monkey.c",
+      "sha256": "821fe95aa0d812ef85015764dfe4a880686c0abbeaa5e527b5b68845430791b5",
+      "bytes": 7127
+    },
+    {
+      "relative": "mk_server/mk_lib.c",
+      "sha256": "f4f48d8efdb4cde301cc49dbb8fb89d2392dc4d4eacedac87e40be9902262883",
+      "bytes": 18802
+    },
+    {
+      "relative": "mk_server/mk_fifo.c",
+      "sha256": "1b43086ad3e1001d1c36f1324904322509819c9dcf7eb44821f7991805d5de2b",
+      "bytes": 11457
+    },
+    {
+      "relative": "mk_server/mk_mimetype.c",
+      "sha256": "4f770ba53285bb5ee1a8f36f29d8691ac2ad29e8325277ae72861a68efdfc9b2",
+      "bytes": 6356
+    },
+    {
+      "relative": "mk_server/mk_vhost.c",
+      "sha256": "f3671b4754d9a1d97a71910718480188dcb653feb31cddbfde307e458e40e77a",
+      "bytes": 23465
+    },
+    {
+      "relative": "mk_server/mk_header.c",
+      "sha256": "7ab8d8bac6c8760dd597eefc019c9d24185afe52af9b7368271ce9ae84005399",
+      "bytes": 15703
+    },
+    {
+      "relative": "mk_server/mk_config.c",
+      "sha256": "9e8bcce0ec0b7846e3fe874fd10f4553b379a387848d996d182a7146817ab7a7",
+      "bytes": 19868
+    },
+    {
+      "relative": "mk_server/mk_user.c",
+      "sha256": "a238174ae767b20760ba77d8839d11d8623370a67c1e176de4af9cb417892cf6",
+      "bytes": 4688
+    },
+    {
+      "relative": "mk_server/mk_utils.c",
+      "sha256": "9853b77bca880ca761c8e204409f956f9c0257205413d906b40202033612d517",
+      "bytes": 13719
+    },
+    {
+      "relative": "mk_server/mk_stream.c",
+      "sha256": "37d26918c71467b7c94ff271271925beeabb90bb52c0ff859fb3c5270f57226a",
+      "bytes": 10289
+    },
+    {
+      "relative": "mk_server/mk_scheduler.c",
+      "sha256": "9a515fa6d0cc79ee8e70457e5e26e65a9ab82c8febd0bb383c88d35bcc1aedda",
+      "bytes": 26606
+    },
+    {
+      "relative": "mk_server/mk_http.c",
+      "sha256": "7e2a84eb42fdebfebdf7e4d2c1afe003d15b030b70d73dd38e30474f0afedb46",
+      "bytes": 53688
+    },
+    {
+      "relative": "mk_server/mk_http_parser.c",
+      "sha256": "bb1fe87e129a64981271103305273f7e1eaa454329eb2d4cfaf113d682716ff9",
+      "bytes": 40142
+    },
+    {
+      "relative": "mk_server/mk_http_thread.c",
+      "sha256": "29fa43236d38b00d8609906f535386d93c600685744cefc1914a2a7ccff3d745",
+      "bytes": 8638
+    },
+    {
+      "relative": "mk_server/mk_socket.c",
+      "sha256": "b37b356b0c391c559e481551cf50121765484d680c70b482fd5626ba617ec794",
+      "bytes": 10146
+    },
+    {
+      "relative": "mk_server/mk_net.c",
+      "sha256": "59b1ea384cd84087790b7f92b3079602a64a3d4cd269f4acbc799b98e82d4cd3",
+      "bytes": 11600
+    },
+    {
+      "relative": "mk_server/mk_clock.c",
+      "sha256": "7197f65657d4bbd9fe1b9a47e67b6254d67a9403e171508ea086a90ba3a54ea7",
+      "bytes": 5030
+    },
+    {
+      "relative": "mk_server/mk_cache.c",
+      "sha256": "31e0d4b9b1224064cbe9ec63ae46a93ebe6a27e07e2d158f298a25477bc74a15",
+      "bytes": 2679
+    },
+    {
+      "relative": "mk_server/mk_server.c",
+      "sha256": "07a15b43f175df357109d21ebf29deeb9fdc5b5de3bf8f9db703e9214fdbdcdd",
+      "bytes": 21362
+    },
+    {
+      "relative": "mk_server/mk_kernel.c",
+      "sha256": "2f80c96bd569bbca082e85c79d135580dca9c6faa593339fbaa2e5fa1fcb9a6f",
+      "bytes": 4303
+    },
+    {
+      "relative": "mk_server/mk_plugin.c",
+      "sha256": "ae0744547457b30484904bf9efc86021a29e33edc1168ad5550665382aecebb6",
+      "bytes": 23031
+    },
+    {
+      "relative": "tls/tls_stub.c",
+      "sha256": "ba9405706922192969b3c1427b6585dcd0a134384c853fa07a87665b41c69159",
+      "bytes": 452
+    },
+    {
+      "relative": "mk_core/mk_event_libevent.c",
+      "sha256": "25df48e0974032a0e1482535daafee931bfafb3d2a28bad015b46f048a68cf1c",
+      "bytes": 13487
+    },
+    {
+      "relative": "include/monkey/mk_core/mk_event.h",
+      "sha256": "6a1123d6e94cd8a5bbc93043ae78a964caacd789bd64674604f2dcae9cba8de7",
+      "bytes": 5824
+    },
+    {
+      "relative": "include/monkey/mk_core/mk_event_libevent.h",
+      "sha256": "2cef581fd42f28762bd395f2b49ed3062a1ebe935269ae151a9c1f331761a5c3",
+      "bytes": 1968
+    },
+    {
+      "relative": "include/monkey/mk_core/mk_macros.h",
+      "sha256": "ec875a3474cdd226651e5211e9f864b797dffd0c6570dfdbae083b34860383e7",
+      "bytes": 5753
+    },
+    {
+      "relative": "include/monkey/mk_core/mk_memory.h",
+      "sha256": "576b95e3baef0f1fe6255e4fe438d5d154e26e7f9634bfb8ac3753e36bc7b3d5",
+      "bytes": 2599
+    },
+    {
+      "relative": "include/monkey/mk_core/mk_limits.h",
+      "sha256": "478943c1dfc9e014644b255295376e85a4bb94d0f7a1ec1f114022669c487a2b",
+      "bytes": 938
+    },
+    {
+      "relative": "include/monkey/mk_core/mk_list.h",
+      "sha256": "2deacdc5bb1abfc317be4b46687d569be36aad32aa1816c127e4fe6d5f9e1af1",
+      "bytes": 6747
+    }
+  ],
+  "scope": "Byte equality for exactly the selected units and seven textual includes checked by current_route::verify_monkey_source_copy; no standalone Monkey git revision claimed. Its source directory has no .git; git -C falls through to this card repository and is not a Monkey identity.",
+  "compile_database": "/home/cosmo/.codex/worktrees/c1e4/quirin-lang/private/w48-bu-external-callee-contracts/inputs-mirror-1/c-gateway-wave-pin/monkey/monkey-build/compile_commands.json",
+  "compile_database_sha256": "28dccee7b8b689bd09cecc2025c3784c39e2ac716981d4049dcf9d6c5142b555"
+}

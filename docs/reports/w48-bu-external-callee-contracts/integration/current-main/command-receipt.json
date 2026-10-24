@@ -1,0 +1,515 @@
+{
+  "recorded": "2026-10-24T11:20:10.732294+00:00",
+  "measured_tip": "4d8d85976117f1eaaadd2fc37aef5a3bb172c259",
+  "merge_source": "4d8d85976117f1eaaadd2fc37aef5a3bb172c259",
+  "main_before": "f0026419391339d91bcbe1b0bd2e6bb95c0c74de",
+  "card_tip": "7d4ced73ddeb345d43f13252dc778745892a698d",
+  "environment": {
+    "environment": {
+      "CARGO_BUILD_JOBS": "6",
+      "CARGO_PROFILE_DEV_DEBUG": "0",
+      "CARGO_PROFILE_TEST_DEBUG": "0",
+      "CARGO_INCREMENTAL": "0",
+      "QCORE_CLANG": "/usr/lib/llvm-21/bin/clang"
+    },
+    "source": {
+      "head": "4d8d85976117f1eaaadd2fc37aef5a3bb172c259",
+      "status": "",
+      "diff_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "gate_driver_sha256": "64856c3b5b3a95d72f625a072d5c962b9481a3e35c0d497c8290dc51a35828ff",
+    "repair_driver_sha256": "a88fe5bc87614a7960da4472006230576da194087f0ed2f1e296b70e3fe6983b"
+  },
+  "commands": [
+    {
+      "name": "clang-version",
+      "command": [
+        "clang",
+        "--version"
+      ],
+      "source": "4d8d85976117f1eaaadd2fc37aef5a3bb172c259",
+      "started": "2026-10-24T10:58:37.081685+00:00",
+      "log": "/home/cosmo/.codex/worktrees/c1e4/quirin-lang/private/w48-bu-external-callee-contracts/integration-gate-4/clang-version.txt",
+      "exit": 0,
+      "ended": "2026-10-24T10:58:37.097896+00:00",
+      "source_after": {
+        "head": "4d8d85976117f1eaaadd2fc37aef5a3bb172c259",
+        "status": "",
+        "diff_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      }
+    },
+    {
+      "name": "rust",
+      "command": [
+        "python3",
+        "scripts/run_test_binaries.py",
+        "--jobs",
+        "4",
+        "--log-dir",
+        "/home/cosmo/.codex/worktrees/c1e4/quirin-lang/private/w48-bu-external-callee-contracts/integration-gate-4/rust-units"
+      ],
+      "source": "4d8d85976117f1eaaadd2fc37aef5a3bb172c259",
+      "started": "2026-10-24T10:58:37.152495+00:00",
+      "log": "/home/cosmo/.codex/worktrees/c1e4/quirin-lang/private/w48-bu-external-callee-contracts/integration-gate-4/rust.log",
+      "exit": 0,
+      "ended": "2026-10-24T11:08:27.788456+00:00",
+      "source_after": {
+        "head": "4d8d85976117f1eaaadd2fc37aef5a3bb172c259",
+        "status": "",
+        "diff_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      }
+    },
+    {
+      "name": "fmt",
+      "command": [
+        "cargo",
+        "fmt",
+        "--all",
+        "--",
+        "--check"
+      ],
+      "source": "4d8d85976117f1eaaadd2fc37aef5a3bb172c259",
+      "started": "2026-10-24T11:08:27.837483+00:00",
+      "log": "/home/cosmo/.codex/worktrees/c1e4/quirin-lang/private/w48-bu-external-callee-contracts/integration-gate-4/fmt.log",
+      "exit": 0,
+      "ended": "2026-10-24T11:08:31.760133+00:00",
+      "source_after": {
+        "head": "4d8d85976117f1eaaadd2fc37aef5a3bb172c259",
+        "status": "",
+        "diff_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      }
+    },
+    {
+      "name": "clippy",
+      "command": [
+        "cargo",
+        "clippy",
+        "--all-targets",
+        "--",
+        "-D",
+        "warnings"
+      ],
+      "source": "4d8d85976117f1eaaadd2fc37aef5a3bb172c259",
+      "started": "2026-10-24T11:08:31.807062+00:00",
+      "log": "/home/cosmo/.codex/worktrees/c1e4/quirin-lang/private/w48-bu-external-callee-contracts/integration-gate-4/clippy.log",
+      "exit": 0,
+      "ended": "2026-10-24T11:08:54.675285+00:00",
+      "source_after": {
+        "head": "4d8d85976117f1eaaadd2fc37aef5a3bb172c259",
+        "status": "",
+        "diff_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      }
+    },
+    {
+      "name": "reevaluation-probe",
+      "command": [
+        "cargo",
+        "run",
+        "-p",
+        "qcore-compiler",
+        "--example",
+        "reevaluation_probe"
+      ],
+      "source": "4d8d85976117f1eaaadd2fc37aef5a3bb172c259",
+      "started": "2026-10-24T11:08:54.723973+00:00",
+      "log": "/home/cosmo/.codex/worktrees/c1e4/quirin-lang/private/w48-bu-external-callee-contracts/integration-gate-4/reevaluation-probe.log",
+      "exit": 0,
+      "ended": "2026-10-24T11:08:54.784593+00:00",
+      "source_after": {
+        "head": "4d8d85976117f1eaaadd2fc37aef5a3bb172c259",
+        "status": "",
+        "diff_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      }
+    },
+    {
+      "name": "reevaluation-followup",
+      "command": [
+        "cargo",
+        "run",
+        "-p",
+        "qcore-compiler",
+        "--example",
+        "reevaluation_followup"
+      ],
+      "source": "4d8d85976117f1eaaadd2fc37aef5a3bb172c259",
+      "started": "2026-10-24T11:08:54.830022+00:00",
+      "log": "/home/cosmo/.codex/worktrees/c1e4/quirin-lang/private/w48-bu-external-callee-contracts/integration-gate-4/reevaluation-followup.log",
+      "exit": 0,
+      "ended": "2026-10-24T11:08:55.238217+00:00",
+      "source_after": {
+        "head": "4d8d85976117f1eaaadd2fc37aef5a3bb172c259",
+        "status": "",
+        "diff_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      }
+    },
+    {
+      "name": "lean",
+      "command": [
+        "python3",
+        "scripts/check_lean_audits.py"
+      ],
+      "source": "4d8d85976117f1eaaadd2fc37aef5a3bb172c259",
+      "started": "2026-10-24T11:08:55.283555+00:00",
+      "log": "/home/cosmo/.codex/worktrees/c1e4/quirin-lang/private/w48-bu-external-callee-contracts/integration-gate-4/lean.log",
+      "exit": 0,
+      "ended": "2026-10-24T11:09:09.543574+00:00",
+      "source_after": {
+        "head": "4d8d85976117f1eaaadd2fc37aef5a3bb172c259",
+        "status": "",
+        "diff_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      }
+    },
+    {
+      "name": "python",
+      "command": [
+        "python3",
+        "-m",
+        "unittest",
+        "discover",
+        "-s",
+        "scripts/tests"
+      ],
+      "source": "4d8d85976117f1eaaadd2fc37aef5a3bb172c259",
+      "started": "2026-10-24T11:09:09.621909+00:00",
+      "log": "/home/cosmo/.codex/worktrees/c1e4/quirin-lang/private/w48-bu-external-callee-contracts/integration-gate-4/python.log",
+      "exit": 0,
+      "ended": "2026-10-24T11:09:42.958792+00:00",
+      "source_after": {
+        "head": "4d8d85976117f1eaaadd2fc37aef5a3bb172c259",
+        "status": "",
+        "diff_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      }
+    },
+    {
+      "name": "provider-rust",
+      "command": [
+        "cargo",
+        "test",
+        "--manifest-path",
+        "providers/Cargo.toml",
+        "--workspace",
+        "--locked",
+        "--offline",
+        "--no-fail-fast"
+      ],
+      "source": "4d8d85976117f1eaaadd2fc37aef5a3bb172c259",
+      "started": "2026-10-24T11:09:43.006682+00:00",
+      "log": "/home/cosmo/.codex/worktrees/c1e4/quirin-lang/private/w48-bu-external-callee-contracts/integration-gate-4/provider-rust.log",
+      "exit": 0,
+      "ended": "2026-10-24T11:18:33.659672+00:00",
+      "source_after": {
+        "head": "4d8d85976117f1eaaadd2fc37aef5a3bb172c259",
+        "status": "",
+        "diff_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      }
+    },
+    {
+      "name": "provider-fmt",
+      "command": [
+        "cargo",
+        "fmt",
+        "--manifest-path",
+        "providers/Cargo.toml",
+        "--all",
+        "--",
+        "--check"
+      ],
+      "source": "4d8d85976117f1eaaadd2fc37aef5a3bb172c259",
+      "started": "2026-10-24T11:18:33.705627+00:00",
+      "log": "/home/cosmo/.codex/worktrees/c1e4/quirin-lang/private/w48-bu-external-callee-contracts/integration-gate-4/provider-fmt.log",
+      "exit": 0,
+      "ended": "2026-10-24T11:18:37.730459+00:00",
+      "source_after": {
+        "head": "4d8d85976117f1eaaadd2fc37aef5a3bb172c259",
+        "status": "",
+        "diff_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      }
+    },
+    {
+      "name": "provider-clippy",
+      "command": [
+        "cargo",
+        "clippy",
+        "--manifest-path",
+        "providers/Cargo.toml",
+        "--workspace",
+        "--all-targets",
+        "--locked",
+        "--offline",
+        "--",
+        "-D",
+        "warnings"
+      ],
+      "source": "4d8d85976117f1eaaadd2fc37aef5a3bb172c259",
+      "started": "2026-10-24T11:18:37.840676+00:00",
+      "log": "/home/cosmo/.codex/worktrees/c1e4/quirin-lang/private/w48-bu-external-callee-contracts/integration-gate-4/provider-clippy.log",
+      "exit": 0,
+      "ended": "2026-10-24T11:18:52.130481+00:00",
+      "source_after": {
+        "head": "4d8d85976117f1eaaadd2fc37aef5a3bb172c259",
+        "status": "",
+        "diff_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      }
+    },
+    {
+      "name": "inventory",
+      "command": [
+        "python3",
+        "providers/contracts.py",
+        "check"
+      ],
+      "source": "4d8d85976117f1eaaadd2fc37aef5a3bb172c259",
+      "started": "2026-10-24T11:18:52.247831+00:00",
+      "log": "/home/cosmo/.codex/worktrees/c1e4/quirin-lang/private/w48-bu-external-callee-contracts/integration-gate-4/inventory.log",
+      "exit": 0,
+      "ended": "2026-10-24T11:19:16.749089+00:00",
+      "source_after": {
+        "head": "4d8d85976117f1eaaadd2fc37aef5a3bb172c259",
+        "status": "",
+        "diff_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      }
+    },
+    {
+      "name": "provider-python",
+      "command": [
+        "python3",
+        "-m",
+        "unittest",
+        "discover",
+        "-s",
+        "providers/tests"
+      ],
+      "source": "4d8d85976117f1eaaadd2fc37aef5a3bb172c259",
+      "started": "2026-10-24T11:19:16.796420+00:00",
+      "log": "/home/cosmo/.codex/worktrees/c1e4/quirin-lang/private/w48-bu-external-callee-contracts/integration-gate-4/provider-python.log",
+      "exit": 0,
+      "ended": "2026-10-24T11:19:39.469897+00:00",
+      "source_after": {
+        "head": "4d8d85976117f1eaaadd2fc37aef5a3bb172c259",
+        "status": "",
+        "diff_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      }
+    },
+    {
+      "name": "packages",
+      "command": [
+        "python3",
+        "providers/package.py",
+        "build",
+        "--output",
+        "/home/cosmo/.codex/worktrees/c1e4/quirin-lang/private/w48-bu-external-callee-contracts/integration-gate-4/packages",
+        "--target-dir",
+        "/home/cosmo/.codex/worktrees/c1e4/quirin-lang/private/w48-bu-external-callee-contracts/provider-release-target"
+      ],
+      "source": "4d8d85976117f1eaaadd2fc37aef5a3bb172c259",
+      "started": "2026-10-24T11:19:39.511905+00:00",
+      "log": "/home/cosmo/.codex/worktrees/c1e4/quirin-lang/private/w48-bu-external-callee-contracts/integration-gate-4/packages.log",
+      "exit": 0,
+      "ended": "2026-10-24T11:20:05.380526+00:00",
+      "source_after": {
+        "head": "4d8d85976117f1eaaadd2fc37aef5a3bb172c259",
+        "status": "",
+        "diff_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      }
+    },
+    {
+      "name": "verify-qcore.libevent",
+      "command": [
+        "python3",
+        "providers/package.py",
+        "verify",
+        "/home/cosmo/.codex/worktrees/c1e4/quirin-lang/private/w48-bu-external-callee-contracts/integration-gate-4/packages/qcore.libevent"
+      ],
+      "source": "4d8d85976117f1eaaadd2fc37aef5a3bb172c259",
+      "started": "2026-10-24T11:20:05.428460+00:00",
+      "log": "/home/cosmo/.codex/worktrees/c1e4/quirin-lang/private/w48-bu-external-callee-contracts/integration-gate-4/verify-qcore.libevent.log",
+      "exit": 0,
+      "ended": "2026-10-24T11:20:05.525961+00:00",
+      "source_after": {
+        "head": "4d8d85976117f1eaaadd2fc37aef5a3bb172c259",
+        "status": "",
+        "diff_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      }
+    },
+    {
+      "name": "verify-qcore.chunkio",
+      "command": [
+        "python3",
+        "providers/package.py",
+        "verify",
+        "/home/cosmo/.codex/worktrees/c1e4/quirin-lang/private/w48-bu-external-callee-contracts/integration-gate-4/packages/qcore.chunkio"
+      ],
+      "source": "4d8d85976117f1eaaadd2fc37aef5a3bb172c259",
+      "started": "2026-10-24T11:20:05.568241+00:00",
+      "log": "/home/cosmo/.codex/worktrees/c1e4/quirin-lang/private/w48-bu-external-callee-contracts/integration-gate-4/verify-qcore.chunkio.log",
+      "exit": 0,
+      "ended": "2026-10-24T11:20:05.669853+00:00",
+      "source_after": {
+        "head": "4d8d85976117f1eaaadd2fc37aef5a3bb172c259",
+        "status": "",
+        "diff_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      }
+    },
+    {
+      "name": "verify-qcore.cmetrics",
+      "command": [
+        "python3",
+        "providers/package.py",
+        "verify",
+        "/home/cosmo/.codex/worktrees/c1e4/quirin-lang/private/w48-bu-external-callee-contracts/integration-gate-4/packages/qcore.cmetrics"
+      ],
+      "source": "4d8d85976117f1eaaadd2fc37aef5a3bb172c259",
+      "started": "2026-10-24T11:20:05.714565+00:00",
+      "log": "/home/cosmo/.codex/worktrees/c1e4/quirin-lang/private/w48-bu-external-callee-contracts/integration-gate-4/verify-qcore.cmetrics.log",
+      "exit": 0,
+      "ended": "2026-10-24T11:20:05.810486+00:00",
+      "source_after": {
+        "head": "4d8d85976117f1eaaadd2fc37aef5a3bb172c259",
+        "status": "",
+        "diff_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      }
+    },
+    {
+      "name": "verify-qcore.ctraces",
+      "command": [
+        "python3",
+        "providers/package.py",
+        "verify",
+        "/home/cosmo/.codex/worktrees/c1e4/quirin-lang/private/w48-bu-external-callee-contracts/integration-gate-4/packages/qcore.ctraces"
+      ],
+      "source": "4d8d85976117f1eaaadd2fc37aef5a3bb172c259",
+      "started": "2026-10-24T11:20:05.858450+00:00",
+      "log": "/home/cosmo/.codex/worktrees/c1e4/quirin-lang/private/w48-bu-external-callee-contracts/integration-gate-4/verify-qcore.ctraces.log",
+      "exit": 0,
+      "ended": "2026-10-24T11:20:05.954678+00:00",
+      "source_after": {
+        "head": "4d8d85976117f1eaaadd2fc37aef5a3bb172c259",
+        "status": "",
+        "diff_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      }
+    },
+    {
+      "name": "verify-qcore.librdkafka",
+      "command": [
+        "python3",
+        "providers/package.py",
+        "verify",
+        "/home/cosmo/.codex/worktrees/c1e4/quirin-lang/private/w48-bu-external-callee-contracts/integration-gate-4/packages/qcore.librdkafka"
+      ],
+      "source": "4d8d85976117f1eaaadd2fc37aef5a3bb172c259",
+      "started": "2026-10-24T11:20:05.998463+00:00",
+      "log": "/home/cosmo/.codex/worktrees/c1e4/quirin-lang/private/w48-bu-external-callee-contracts/integration-gate-4/verify-qcore.librdkafka.log",
+      "exit": 0,
+      "ended": "2026-10-24T11:20:06.140335+00:00",
+      "source_after": {
+        "head": "4d8d85976117f1eaaadd2fc37aef5a3bb172c259",
+        "status": "",
+        "diff_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      }
+    }
+  ],
+  "root_rust": {
+    "units_run": 550,
+    "totals": {
+      "passed": 8645,
+      "failed": 0,
+      "ignored": 15,
+      "measured": 0,
+      "filtered": 0,
+      "summaries": 563
+    },
+    "units_failed": [],
+    "problems": [],
+    "summary": "/home/cosmo/.codex/worktrees/c1e4/quirin-lang/private/w48-bu-external-callee-contracts/integration-gate-4/rust-units/summary.json",
+    "sha256": "209d768f71af8e3482cbf9674f9ccacd09583eeb14d00c44a05664384f7790d8"
+  },
+  "provider_rust": {
+    "passed": 133,
+    "failed": 0,
+    "ignored": 1,
+    "summaries": 43
+  },
+  "python_tests": {
+    "python": 374,
+    "provider-python": 25
+  },
+  "lean_audits": 370,
+  "logs": [
+    {
+      "path": "/home/cosmo/.codex/worktrees/c1e4/quirin-lang/private/w48-bu-external-callee-contracts/integration-gate-4/clang-version.txt",
+      "sha256": "77467400b91c4cebb6c3e29d8a611af518a2f4078c22baf276b0a1373e996bf5"
+    },
+    {
+      "path": "/home/cosmo/.codex/worktrees/c1e4/quirin-lang/private/w48-bu-external-callee-contracts/integration-gate-4/rust.log",
+      "sha256": "3a01083eaf553d1ffce8eaa93e0f675f662b686224be4fd7c447d4d35dca3211"
+    },
+    {
+      "path": "/home/cosmo/.codex/worktrees/c1e4/quirin-lang/private/w48-bu-external-callee-contracts/integration-gate-4/fmt.log",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "/home/cosmo/.codex/worktrees/c1e4/quirin-lang/private/w48-bu-external-callee-contracts/integration-gate-4/clippy.log",
+      "sha256": "fdf6dc0973ac047fdef28e89e644abb78489a865ee2351eb3543e53ced134ae2"
+    },
+    {
+      "path": "/home/cosmo/.codex/worktrees/c1e4/quirin-lang/private/w48-bu-external-callee-contracts/integration-gate-4/reevaluation-probe.log",
+      "sha256": "5595fcf69a0e85180af728a2e993a5dc5347128a9f2c89416a60c521a3348cbd"
+    },
+    {
+      "path": "/home/cosmo/.codex/worktrees/c1e4/quirin-lang/private/w48-bu-external-callee-contracts/integration-gate-4/reevaluation-followup.log",
+      "sha256": "ffa5bee1fe5f1f0a68ec903fb026922b5a871e95c0adee2cf08cd50489edeb25"
+    },
+    {
+      "path": "/home/cosmo/.codex/worktrees/c1e4/quirin-lang/private/w48-bu-external-callee-contracts/integration-gate-4/lean.log",
+      "sha256": "8a2eef821665991ae8fe9533af4f48e5748918da8417c0a676944c1238ea033a"
+    },
+    {
+      "path": "/home/cosmo/.codex/worktrees/c1e4/quirin-lang/private/w48-bu-external-callee-contracts/integration-gate-4/python.log",
+      "sha256": "7483e6dbec57578fa800bf5ab2b8d558e12ff26fc80bbc6972e4d10c8a404541"
+    },
+    {
+      "path": "/home/cosmo/.codex/worktrees/c1e4/quirin-lang/private/w48-bu-external-callee-contracts/integration-gate-4/provider-rust.log",
+      "sha256": "8eacb0f11f1e2d2279feec91cf3a9c640a8b8a6f4ae80a980f70c475473bb9df"
+    },
+    {
+      "path": "/home/cosmo/.codex/worktrees/c1e4/quirin-lang/private/w48-bu-external-callee-contracts/integration-gate-4/provider-fmt.log",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "/home/cosmo/.codex/worktrees/c1e4/quirin-lang/private/w48-bu-external-callee-contracts/integration-gate-4/provider-clippy.log",
+      "sha256": "9ea1591d4c69c31b921e3a82950b418de39394f3ce110a06ae3fb0d3f88c28bd"
+    },
+    {
+      "path": "/home/cosmo/.codex/worktrees/c1e4/quirin-lang/private/w48-bu-external-callee-contracts/integration-gate-4/inventory.log",
+      "sha256": "38f43408ff20ce8ac0e0cd3426daf2b77ac094810d769418a881c8692cf7c6cd"
+    },
+    {
+      "path": "/home/cosmo/.codex/worktrees/c1e4/quirin-lang/private/w48-bu-external-callee-contracts/integration-gate-4/provider-python.log",
+      "sha256": "43d2ffaa22092a920ea1810614aefd7444ad43d8abfc93acbf9a4fd0ddf2679c"
+    },
+    {
+      "path": "/home/cosmo/.codex/worktrees/c1e4/quirin-lang/private/w48-bu-external-callee-contracts/integration-gate-4/packages.log",
+      "sha256": "8db5dbb380c4bde1b7be8081c1431fb35b670070f28a4fa2e4d3feccbc71440d"
+    },
+    {
+      "path": "/home/cosmo/.codex/worktrees/c1e4/quirin-lang/private/w48-bu-external-callee-contracts/integration-gate-4/verify-qcore.libevent.log",
+      "sha256": "f759222ddd3a11014c4fbe28b3b0b2846ccf758f1834269028c8f317ddfbffff"
+    },
+    {
+      "path": "/home/cosmo/.codex/worktrees/c1e4/quirin-lang/private/w48-bu-external-callee-contracts/integration-gate-4/verify-qcore.chunkio.log",
+      "sha256": "39850d498b14dda97456e998a37e9ce97c31d783d077cbb1ddaae02acd70b7f7"
+    },
+    {
+      "path": "/home/cosmo/.codex/worktrees/c1e4/quirin-lang/private/w48-bu-external-callee-contracts/integration-gate-4/verify-qcore.cmetrics.log",
+      "sha256": "c8dba9beed2788937b3c11dc09ff231487344f4870df58d405c372911a902c0b"
+    },
+    {
+      "path": "/home/cosmo/.codex/worktrees/c1e4/quirin-lang/private/w48-bu-external-callee-contracts/integration-gate-4/verify-qcore.ctraces.log",
+      "sha256": "a7adfbcfa36710021af6ad7f051edaa58003582e7286054e2c6b813a38092d80"
+    },
+    {
+      "path": "/home/cosmo/.codex/worktrees/c1e4/quirin-lang/private/w48-bu-external-callee-contracts/integration-gate-4/verify-qcore.librdkafka.log",
+      "sha256": "9dd64dd9668bb611d1097e61daa9447965c67e6e6e916ed7465b8436f22b56e4"
+    }
+  ]
+}

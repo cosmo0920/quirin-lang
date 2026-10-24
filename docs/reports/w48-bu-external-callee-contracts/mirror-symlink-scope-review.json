@@ -1,0 +1,300 @@
+{
+  "exit": 0,
+  "before_inventory_regular_files": 14706,
+  "after_regular_files": 14706,
+  "regular_files_exactly_unchanged": true,
+  "raw_after_only_file_symlinks": 13,
+  "records": [
+    {
+      "path": "c-gateway-wave-pin/fluent-bit-clang-source/Dockerfile",
+      "link_text_now": "./dockerfiles/Dockerfile",
+      "resolved_regular_target": "c-gateway-wave-pin/fluent-bit-clang-source/dockerfiles/Dockerfile",
+      "target_sha256_before_and_after": "a39aa0bf040d21a900ab4019b5243cd68ccac036a0e8adfd5cb242f617bc1ccc",
+      "raw_after_only_record": {
+        "path": "c-gateway-wave-pin/fluent-bit-clang-source/Dockerfile",
+        "base": null,
+        "after": "a39aa0bf040d21a900ab4019b5243cd68ccac036a0e8adfd5cb242f617bc1ccc"
+      },
+      "temporal_link_text_claim": true,
+      "current_donor_link_text_equal": true,
+      "pinned_git_symlink_blob": "77d1c948db874176026ce070cd757149300e3c4f",
+      "basis": "Both successful corpus invocations held the same pinned HEAD with empty tracked binary diff before and after; current link text equals its pinned 120000 blob."
+    },
+    {
+      "path": "c-gateway-wave-pin/fluent-bit-clang-source/lib/wasm-micro-runtime-WAMR-2.4.1/language-bindings/python/LICENSE",
+      "link_text_now": "../../LICENSE",
+      "resolved_regular_target": "c-gateway-wave-pin/fluent-bit-clang-source/lib/wasm-micro-runtime-WAMR-2.4.1/LICENSE",
+      "target_sha256_before_and_after": "0a274df3755e61b169266fba62d842489378bc9a6e9a63fe24f02ee6f5de419f",
+      "raw_after_only_record": {
+        "path": "c-gateway-wave-pin/fluent-bit-clang-source/lib/wasm-micro-runtime-WAMR-2.4.1/language-bindings/python/LICENSE",
+        "base": null,
+        "after": "0a274df3755e61b169266fba62d842489378bc9a6e9a63fe24f02ee6f5de419f"
+      },
+      "temporal_link_text_claim": true,
+      "current_donor_link_text_equal": true,
+      "pinned_git_symlink_blob": "30cff7403da04711c46979a06f6bf8eb10ee088a",
+      "basis": "Both successful corpus invocations held the same pinned HEAD with empty tracked binary diff before and after; current link text equals its pinned 120000 blob."
+    },
+    {
+      "path": "c-gateway-wave-pin/fluent-bit-clang-source/lib/zstd-1.5.7/tests/cli-tests/bin/unzstd",
+      "link_text_now": "zstd",
+      "resolved_regular_target": "c-gateway-wave-pin/fluent-bit-clang-source/lib/zstd-1.5.7/tests/cli-tests/bin/zstd",
+      "target_sha256_before_and_after": "808cc561268e42dd3ca2dcb1f39874661e19a568cc05374a1bff3d9d440e5022",
+      "raw_after_only_record": {
+        "path": "c-gateway-wave-pin/fluent-bit-clang-source/lib/zstd-1.5.7/tests/cli-tests/bin/unzstd",
+        "base": null,
+        "after": "808cc561268e42dd3ca2dcb1f39874661e19a568cc05374a1bff3d9d440e5022"
+      },
+      "temporal_link_text_claim": true,
+      "current_donor_link_text_equal": true,
+      "pinned_git_symlink_blob": "613f917fd7cc85716e148ab41b695e43f96c2fde",
+      "basis": "Both successful corpus invocations held the same pinned HEAD with empty tracked binary diff before and after; current link text equals its pinned 120000 blob."
+    },
+    {
+      "path": "c-gateway-wave-pin/fluent-bit-clang-source/lib/zstd-1.5.7/tests/cli-tests/bin/zstdcat",
+      "link_text_now": "zstd",
+      "resolved_regular_target": "c-gateway-wave-pin/fluent-bit-clang-source/lib/zstd-1.5.7/tests/cli-tests/bin/zstd",
+      "target_sha256_before_and_after": "808cc561268e42dd3ca2dcb1f39874661e19a568cc05374a1bff3d9d440e5022",
+      "raw_after_only_record": {
+        "path": "c-gateway-wave-pin/fluent-bit-clang-source/lib/zstd-1.5.7/tests/cli-tests/bin/zstdcat",
+        "base": null,
+        "after": "808cc561268e42dd3ca2dcb1f39874661e19a568cc05374a1bff3d9d440e5022"
+      },
+      "temporal_link_text_claim": true,
+      "current_donor_link_text_equal": true,
+      "pinned_git_symlink_blob": "613f917fd7cc85716e148ab41b695e43f96c2fde",
+      "basis": "Both successful corpus invocations held the same pinned HEAD with empty tracked binary diff before and after; current link text equals its pinned 120000 blob."
+    },
+    {
+      "path": "c-gateway-wave-pin/fluent-bit-clang-source/tests/runtime/data/common/parsers.conf",
+      "link_text_now": "../../../../conf/parsers.conf",
+      "resolved_regular_target": "c-gateway-wave-pin/fluent-bit-clang-source/conf/parsers.conf",
+      "target_sha256_before_and_after": "760e6a347874a6cbdc10c6cd21d82d1ee5388c8573ddfaab05ef37904749dbe1",
+      "raw_after_only_record": {
+        "path": "c-gateway-wave-pin/fluent-bit-clang-source/tests/runtime/data/common/parsers.conf",
+        "base": null,
+        "after": "760e6a347874a6cbdc10c6cd21d82d1ee5388c8573ddfaab05ef37904749dbe1"
+      },
+      "temporal_link_text_claim": true,
+      "current_donor_link_text_equal": true,
+      "pinned_git_symlink_blob": "944111e3137f7a81ff4c9a92ad48b35ce74212da",
+      "basis": "Both successful corpus invocations held the same pinned HEAD with empty tracked binary diff before and after; current link text equals its pinned 120000 blob."
+    },
+    {
+      "path": "c-gateway-wave-pin/fluent-bit-clang-source/tests/runtime/in_cpu.c",
+      "link_text_now": "in_simple_systems.c",
+      "resolved_regular_target": "c-gateway-wave-pin/fluent-bit-clang-source/tests/runtime/in_simple_systems.c",
+      "target_sha256_before_and_after": "cfe7f0b1d0f0b2fd958fadaf5d0f33bfeff82809b38191f0315897e1baa5055a",
+      "raw_after_only_record": {
+        "path": "c-gateway-wave-pin/fluent-bit-clang-source/tests/runtime/in_cpu.c",
+        "base": null,
+        "after": "cfe7f0b1d0f0b2fd958fadaf5d0f33bfeff82809b38191f0315897e1baa5055a"
+      },
+      "temporal_link_text_claim": true,
+      "current_donor_link_text_equal": true,
+      "pinned_git_symlink_blob": "b194a85396788ee493f1f2bdf8a80803ee5e84a8",
+      "basis": "Both successful corpus invocations held the same pinned HEAD with empty tracked binary diff before and after; current link text equals its pinned 120000 blob."
+    },
+    {
+      "path": "c-gateway-wave-pin/fluent-bit-clang-source/tests/runtime/in_disk.c",
+      "link_text_now": "in_simple_systems.c",
+      "resolved_regular_target": "c-gateway-wave-pin/fluent-bit-clang-source/tests/runtime/in_simple_systems.c",
+      "target_sha256_before_and_after": "cfe7f0b1d0f0b2fd958fadaf5d0f33bfeff82809b38191f0315897e1baa5055a",
+      "raw_after_only_record": {
+        "path": "c-gateway-wave-pin/fluent-bit-clang-source/tests/runtime/in_disk.c",
+        "base": null,
+        "after": "cfe7f0b1d0f0b2fd958fadaf5d0f33bfeff82809b38191f0315897e1baa5055a"
+      },
+      "temporal_link_text_claim": true,
+      "current_donor_link_text_equal": true,
+      "pinned_git_symlink_blob": "b194a85396788ee493f1f2bdf8a80803ee5e84a8",
+      "basis": "Both successful corpus invocations held the same pinned HEAD with empty tracked binary diff before and after; current link text equals its pinned 120000 blob."
+    },
+    {
+      "path": "c-gateway-wave-pin/fluent-bit-clang-source/tests/runtime/in_head.c",
+      "link_text_now": "in_simple_systems.c",
+      "resolved_regular_target": "c-gateway-wave-pin/fluent-bit-clang-source/tests/runtime/in_simple_systems.c",
+      "target_sha256_before_and_after": "cfe7f0b1d0f0b2fd958fadaf5d0f33bfeff82809b38191f0315897e1baa5055a",
+      "raw_after_only_record": {
+        "path": "c-gateway-wave-pin/fluent-bit-clang-source/tests/runtime/in_head.c",
+        "base": null,
+        "after": "cfe7f0b1d0f0b2fd958fadaf5d0f33bfeff82809b38191f0315897e1baa5055a"
+      },
+      "temporal_link_text_claim": true,
+      "current_donor_link_text_equal": true,
+      "pinned_git_symlink_blob": "b194a85396788ee493f1f2bdf8a80803ee5e84a8",
+      "basis": "Both successful corpus invocations held the same pinned HEAD with empty tracked binary diff before and after; current link text equals its pinned 120000 blob."
+    },
+    {
+      "path": "c-gateway-wave-pin/fluent-bit-clang-source/tests/runtime/in_mem.c",
+      "link_text_now": "in_simple_systems.c",
+      "resolved_regular_target": "c-gateway-wave-pin/fluent-bit-clang-source/tests/runtime/in_simple_systems.c",
+      "target_sha256_before_and_after": "cfe7f0b1d0f0b2fd958fadaf5d0f33bfeff82809b38191f0315897e1baa5055a",
+      "raw_after_only_record": {
+        "path": "c-gateway-wave-pin/fluent-bit-clang-source/tests/runtime/in_mem.c",
+        "base": null,
+        "after": "cfe7f0b1d0f0b2fd958fadaf5d0f33bfeff82809b38191f0315897e1baa5055a"
+      },
+      "temporal_link_text_claim": true,
+      "current_donor_link_text_equal": true,
+      "pinned_git_symlink_blob": "b194a85396788ee493f1f2bdf8a80803ee5e84a8",
+      "basis": "Both successful corpus invocations held the same pinned HEAD with empty tracked binary diff before and after; current link text equals its pinned 120000 blob."
+    },
+    {
+      "path": "c-gateway-wave-pin/fluent-bit-clang-source/tests/runtime/in_proc.c",
+      "link_text_now": "in_simple_systems.c",
+      "resolved_regular_target": "c-gateway-wave-pin/fluent-bit-clang-source/tests/runtime/in_simple_systems.c",
+      "target_sha256_before_and_after": "cfe7f0b1d0f0b2fd958fadaf5d0f33bfeff82809b38191f0315897e1baa5055a",
+      "raw_after_only_record": {
+        "path": "c-gateway-wave-pin/fluent-bit-clang-source/tests/runtime/in_proc.c",
+        "base": null,
+        "after": "cfe7f0b1d0f0b2fd958fadaf5d0f33bfeff82809b38191f0315897e1baa5055a"
+      },
+      "temporal_link_text_claim": true,
+      "current_donor_link_text_equal": true,
+      "pinned_git_symlink_blob": "b194a85396788ee493f1f2bdf8a80803ee5e84a8",
+      "basis": "Both successful corpus invocations held the same pinned HEAD with empty tracked binary diff before and after; current link text equals its pinned 120000 blob."
+    },
+    {
+      "path": "c-gateway-wave-pin/monkey/monkey-build/lib/libevent-2.2.so",
+      "link_text_now": "libevent-2.2.so.1",
+      "resolved_regular_target": "c-gateway-wave-pin/monkey/monkey-build/lib/libevent-2.2.so.1.0.1",
+      "target_sha256_before_and_after": "ec2ee739b8ce75c936d50f044c2bcaf9a51bf20dad7e747dfa8400c46ee1bc7c",
+      "raw_after_only_record": {
+        "path": "c-gateway-wave-pin/monkey/monkey-build/lib/libevent-2.2.so",
+        "base": null,
+        "after": "ec2ee739b8ce75c936d50f044c2bcaf9a51bf20dad7e747dfa8400c46ee1bc7c"
+      },
+      "temporal_link_text_claim": false,
+      "current_donor_link_text_equal": true,
+      "basis": "The original manifest did not inventory symlink texts. Current donor text and before/after target bytes agree; do not retroactively claim a before link-text capture."
+    },
+    {
+      "path": "c-gateway-wave-pin/monkey/monkey-build/lib/libevent-2.2.so.1",
+      "link_text_now": "libevent-2.2.so.1.0.1",
+      "resolved_regular_target": "c-gateway-wave-pin/monkey/monkey-build/lib/libevent-2.2.so.1.0.1",
+      "target_sha256_before_and_after": "ec2ee739b8ce75c936d50f044c2bcaf9a51bf20dad7e747dfa8400c46ee1bc7c",
+      "raw_after_only_record": {
+        "path": "c-gateway-wave-pin/monkey/monkey-build/lib/libevent-2.2.so.1",
+        "base": null,
+        "after": "ec2ee739b8ce75c936d50f044c2bcaf9a51bf20dad7e747dfa8400c46ee1bc7c"
+      },
+      "temporal_link_text_claim": false,
+      "current_donor_link_text_equal": true,
+      "basis": "The original manifest did not inventory symlink texts. Current donor text and before/after target bytes agree; do not retroactively claim a before link-text capture."
+    },
+    {
+      "path": "c-gateway-wave-pin/monkey/monkey-build/lib/libevent.so",
+      "link_text_now": "libevent-2.2.so.1.0.1",
+      "resolved_regular_target": "c-gateway-wave-pin/monkey/monkey-build/lib/libevent-2.2.so.1.0.1",
+      "target_sha256_before_and_after": "ec2ee739b8ce75c936d50f044c2bcaf9a51bf20dad7e747dfa8400c46ee1bc7c",
+      "raw_after_only_record": {
+        "path": "c-gateway-wave-pin/monkey/monkey-build/lib/libevent.so",
+        "base": null,
+        "after": "ec2ee739b8ce75c936d50f044c2bcaf9a51bf20dad7e747dfa8400c46ee1bc7c"
+      },
+      "temporal_link_text_claim": false,
+      "current_donor_link_text_equal": true,
+      "basis": "The original manifest did not inventory symlink texts. Current donor text and before/after target bytes agree; do not retroactively claim a before link-text capture."
+    }
+  ],
+  "current_all_symlink_texts": [
+    {
+      "path": "c-gateway-wave-pin/fluent-bit-clang-source/Dockerfile",
+      "text": "./dockerfiles/Dockerfile",
+      "target_exists": true,
+      "target_is_file": true
+    },
+    {
+      "path": "c-gateway-wave-pin/fluent-bit-clang-source/lib/wasm-micro-runtime-WAMR-2.4.1/language-bindings/python/LICENSE",
+      "text": "../../LICENSE",
+      "target_exists": true,
+      "target_is_file": true
+    },
+    {
+      "path": "c-gateway-wave-pin/fluent-bit-clang-source/lib/zstd-1.5.7/tests/cli-tests/bin/unzstd",
+      "text": "zstd",
+      "target_exists": true,
+      "target_is_file": true
+    },
+    {
+      "path": "c-gateway-wave-pin/fluent-bit-clang-source/lib/zstd-1.5.7/tests/cli-tests/bin/zstdcat",
+      "text": "zstd",
+      "target_exists": true,
+      "target_is_file": true
+    },
+    {
+      "path": "c-gateway-wave-pin/fluent-bit-clang-source/tests/runtime/data/common/parsers.conf",
+      "text": "../../../../conf/parsers.conf",
+      "target_exists": true,
+      "target_is_file": true
+    },
+    {
+      "path": "c-gateway-wave-pin/fluent-bit-clang-source/tests/runtime/in_cpu.c",
+      "text": "in_simple_systems.c",
+      "target_exists": true,
+      "target_is_file": true
+    },
+    {
+      "path": "c-gateway-wave-pin/fluent-bit-clang-source/tests/runtime/in_disk.c",
+      "text": "in_simple_systems.c",
+      "target_exists": true,
+      "target_is_file": true
+    },
+    {
+      "path": "c-gateway-wave-pin/fluent-bit-clang-source/tests/runtime/in_dummy.c",
+      "text": "#include \"in_simple_systems.c\"",
+      "target_exists": false,
+      "target_is_file": false
+    },
+    {
+      "path": "c-gateway-wave-pin/fluent-bit-clang-source/tests/runtime/in_head.c",
+      "text": "in_simple_systems.c",
+      "target_exists": true,
+      "target_is_file": true
+    },
+    {
+      "path": "c-gateway-wave-pin/fluent-bit-clang-source/tests/runtime/in_mem.c",
+      "text": "in_simple_systems.c",
+      "target_exists": true,
+      "target_is_file": true
+    },
+    {
+      "path": "c-gateway-wave-pin/fluent-bit-clang-source/tests/runtime/in_proc.c",
+      "text": "in_simple_systems.c",
+      "target_exists": true,
+      "target_is_file": true
+    },
+    {
+      "path": "c-gateway-wave-pin/fluent-bit-clang-source/tests/runtime/in_random.c",
+      "text": "#include \"in_simple_systems.c\"",
+      "target_exists": false,
+      "target_is_file": false
+    },
+    {
+      "path": "c-gateway-wave-pin/monkey/monkey-build/lib/libevent-2.2.so",
+      "text": "libevent-2.2.so.1",
+      "target_exists": true,
+      "target_is_file": true
+    },
+    {
+      "path": "c-gateway-wave-pin/monkey/monkey-build/lib/libevent-2.2.so.1",
+      "text": "libevent-2.2.so.1.0.1",
+      "target_exists": true,
+      "target_is_file": true
+    },
+    {
+      "path": "c-gateway-wave-pin/monkey/monkey-build/lib/libevent.so",
+      "text": "libevent-2.2.so.1.0.1",
+      "target_exists": true,
+      "target_is_file": true
+    }
+  ],
+  "after_receipt": "/home/cosmo/.codex/worktrees/c1e4/quirin-lang/private/w48-bu-external-callee-contracts/inputs-after.json",
+  "after_receipt_sha256": "b698bd0deb512cd2aae63972c95cb88526dcb65624d876d78ac00ce0cfdddd09",
+  "pinned_corpus_source_binding": {
+    "head": "66910c10a4d7eafa810b84229cf2dcf7b0f26f97",
+    "tracked_delta_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  },
+  "meaning": "All original regular-file entries, including Git metadata, unchanged. Thirteen after-only file-valued entries are symlinks absent from the regular-file before inventory. Their target contents are byte-bound before/after. Ten tracked link texts also have the pinned clean-Git binding; three build-library link texts have no original before snapshot. The raw additions are retained, not erased or relabeled as proven temporal link equality."
+}

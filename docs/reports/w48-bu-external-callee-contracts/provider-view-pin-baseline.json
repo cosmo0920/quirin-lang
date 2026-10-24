@@ -1,0 +1,196 @@
+{
+  "records": [
+    {
+      "revision": "8991b7b58fcbd33da082bbb44e819d47a0fb2561",
+      "sha256": "2cb0a56238a840e867156e93ddd44f3cf2ec5e0f27fc3fc4f15eeb83d2fc7043",
+      "resource_view_count": 66,
+      "views": {
+        "qcore-provider-chunkio": [
+          "chunkio/chunk_residency.qv",
+          "chunkio/chunk_sizes.qv",
+          "chunkio/resource_open_close.qv"
+        ],
+        "qcore-provider-cmetrics": [
+          "cmetrics/context_lifetime.qv",
+          "cmetrics/metric_values.qv",
+          "cmetrics/mpack_utils.qv"
+        ],
+        "qcore-provider-ctraces": [
+          "ctraces/context_lifetime.qv"
+        ],
+        "qcore-provider-libevent": [
+          "monkey/event_loop.qv",
+          "monkey/intrusive_list.qv",
+          "monkey/logging.qv",
+          "monkey/memory.qv",
+          "monkey/scalar_observation.qv",
+          "monkey/string.qv",
+          "monkey/vhost_set.qv"
+        ],
+        "qcore-provider-librdkafka": [
+          "librdkafka/cjson.qv",
+          "librdkafka/client.qv",
+          "librdkafka/kafka_mem.qv",
+          "librdkafka/log_caller_frame.qv",
+          "librdkafka/logging.qv",
+          "librdkafka/lz4_stream.qv",
+          "librdkafka/memory.qv",
+          "librdkafka/topic_partition.qv"
+        ],
+        "quirin-provider-cfl": [
+          "cfl/sds_lifetime.qv",
+          "cfl/time.qv"
+        ],
+        "quirin-provider-fluent-bit": [
+          "fluent_bit/hash_table_publication.qv",
+          "fluent_bit/input_chunk_destroy.qv",
+          "fluent_bit/input_chunk_destroy_direct_routes.qv",
+          "fluent_bit/input_chunk_helpers.qv",
+          "fluent_bit/input_chunk_is_up.qv",
+          "fluent_bit/input_chunk_name.qv",
+          "fluent_bit/input_chunk_sizes.qv",
+          "fluent_bit/input_chunk_total_size.qv",
+          "fluent_bit/input_collector_registration.qv",
+          "fluent_bit/input_instance.qv",
+          "fluent_bit/lib_engine_thread.qv",
+          "fluent_bit/logging.qv",
+          "fluent_bit/loop_owner.qv",
+          "fluent_bit/output_flush_id.qv",
+          "fluent_bit/output_singleplex.qv",
+          "fluent_bit/resource_memory.qv",
+          "fluent_bit/resource_string.qv",
+          "fluent_bit/routes_mask.qv",
+          "fluent_bit/storage_backlog.qv",
+          "fluent_bit/task_route_queries.qv",
+          "fluent_bit/task_users.qv",
+          "fluent_bit/teardown_destroy.qv",
+          "fluent_bit/time.qv"
+        ],
+        "quirin-provider-libc": [
+          "libc/dirent.qv",
+          "libc/dlfcn.qv",
+          "libc/errno.qv",
+          "libc/math.qv",
+          "libc/memory.qv",
+          "libc/process.qv",
+          "libc/pthread_mutex.qv",
+          "libc/pthread_sync.qv",
+          "libc/regex.qv",
+          "libc/socket.qv",
+          "libc/stdio.qv",
+          "libc/stdlib.qv",
+          "libc/string.qv",
+          "libc/sys_stat.qv",
+          "libc/threads.qv",
+          "libc/time.qv",
+          "libc/unistd.qv"
+        ],
+        "quirin-provider-mpack": [
+          "mpack/writer.qv"
+        ],
+        "quirin-provider-msgpack": [
+          "msgpack/packer.qv"
+        ],
+        "quirin-provider-shared": []
+      }
+    },
+    {
+      "revision": "5dbe4a381acd5c3197057030ff3f9735caa72335",
+      "sha256": "2cb0a56238a840e867156e93ddd44f3cf2ec5e0f27fc3fc4f15eeb83d2fc7043",
+      "resource_view_count": 66,
+      "views": {
+        "qcore-provider-chunkio": [
+          "chunkio/chunk_residency.qv",
+          "chunkio/chunk_sizes.qv",
+          "chunkio/resource_open_close.qv"
+        ],
+        "qcore-provider-cmetrics": [
+          "cmetrics/context_lifetime.qv",
+          "cmetrics/metric_values.qv",
+          "cmetrics/mpack_utils.qv"
+        ],
+        "qcore-provider-ctraces": [
+          "ctraces/context_lifetime.qv"
+        ],
+        "qcore-provider-libevent": [
+          "monkey/event_loop.qv",
+          "monkey/intrusive_list.qv",
+          "monkey/logging.qv",
+          "monkey/memory.qv",
+          "monkey/scalar_observation.qv",
+          "monkey/string.qv",
+          "monkey/vhost_set.qv"
+        ],
+        "qcore-provider-librdkafka": [
+          "librdkafka/cjson.qv",
+          "librdkafka/client.qv",
+          "librdkafka/kafka_mem.qv",
+          "librdkafka/log_caller_frame.qv",
+          "librdkafka/logging.qv",
+          "librdkafka/lz4_stream.qv",
+          "librdkafka/memory.qv",
+          "librdkafka/topic_partition.qv"
+        ],
+        "quirin-provider-cfl": [
+          "cfl/sds_lifetime.qv",
+          "cfl/time.qv"
+        ],
+        "quirin-provider-fluent-bit": [
+          "fluent_bit/hash_table_publication.qv",
+          "fluent_bit/input_chunk_destroy.qv",
+          "fluent_bit/input_chunk_destroy_direct_routes.qv",
+          "fluent_bit/input_chunk_helpers.qv",
+          "fluent_bit/input_chunk_is_up.qv",
+          "fluent_bit/input_chunk_name.qv",
+          "fluent_bit/input_chunk_sizes.qv",
+          "fluent_bit/input_chunk_total_size.qv",
+          "fluent_bit/input_collector_registration.qv",
+          "fluent_bit/input_instance.qv",
+          "fluent_bit/lib_engine_thread.qv",
+          "fluent_bit/logging.qv",
+          "fluent_bit/loop_owner.qv",
+          "fluent_bit/output_flush_id.qv",
+          "fluent_bit/output_singleplex.qv",
+          "fluent_bit/resource_memory.qv",
+          "fluent_bit/resource_string.qv",
+          "fluent_bit/routes_mask.qv",
+          "fluent_bit/storage_backlog.qv",
+          "fluent_bit/task_route_queries.qv",
+          "fluent_bit/task_users.qv",
+          "fluent_bit/teardown_destroy.qv",
+          "fluent_bit/time.qv"
+        ],
+        "quirin-provider-libc": [
+          "libc/dirent.qv",
+          "libc/dlfcn.qv",
+          "libc/errno.qv",
+          "libc/math.qv",
+          "libc/memory.qv",
+          "libc/process.qv",
+          "libc/pthread_mutex.qv",
+          "libc/pthread_sync.qv",
+          "libc/regex.qv",
+          "libc/socket.qv",
+          "libc/stdio.qv",
+          "libc/stdlib.qv",
+          "libc/string.qv",
+          "libc/sys_stat.qv",
+          "libc/threads.qv",
+          "libc/time.qv",
+          "libc/unistd.qv"
+        ],
+        "quirin-provider-mpack": [
+          "mpack/writer.qv"
+        ],
+        "quirin-provider-msgpack": [
+          "msgpack/packer.qv"
+        ],
+        "quirin-provider-shared": []
+      }
+    }
+  ],
+  "test_source_unchanged": true,
+  "test_source_sha256": "0c8d02c4ae0290c1af4091755441a8c3b6bd79140142f2a903b380a26257f452",
+  "expected_literal": 65,
+  "observed_tip_failure_log": "/home/cosmo/.codex/worktrees/c1e4/quirin-lang/private/w48-bu-external-callee-contracts/gate-1/provider-python.log"
+}
