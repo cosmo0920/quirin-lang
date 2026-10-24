@@ -70,5 +70,5 @@
       ]
     }
   ],
-  "matrix": "Final regeneration uses integration/gate.json from the actual merged-source gate. All 817 existing named followups preserved; no add/retire."
+  "matrix": "Final regeneration uses integration/current-main/gate.json from actual combined source 4d8d85976117f1eaaadd2fc37aef5a3bb172c259. All 820 named followups from incoming main are preserved; this card appends to two existing entries and adds/retires none."
 }
