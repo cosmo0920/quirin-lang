@@ -430,3 +430,5 @@ import QCore.LiteralDecayReadings
 
 /-! The executable formal core of QCore-C revision 0.1. -/
 
+
+import QCore.TrackedSelfInit

@@ -1495,6 +1495,7 @@ pub(crate) fn observations_match_contract(
     // of an untracked object tells no caller its formal was borrowed.
     if crate::pointer_store::has_pointer_store(&summary.cfg)
         || crate::legacy_c::self_link_init::has_call(&summary.cfg)
+        || crate::legacy_c::tracked_self_init::has_call(&summary.cfg)
     {
         return false;
     }

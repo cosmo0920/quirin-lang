@@ -342,7 +342,7 @@ fn check_instruction_depth(cfg: &LegacyCfg) -> Result<(), String> {
                 | SubObjectStore { fallback, .. } => push(fallback.as_ref()),
                 PointerStore {
                     access, fallback, ..
-                } => {
+                } | TrackedSelfInit { access, fallback, .. } => {
                     push(access.as_ref());
                     push(fallback.as_ref());
                 }

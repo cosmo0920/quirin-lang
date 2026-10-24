@@ -319,6 +319,9 @@ fn instruction(instruction: &LegacyInstruction) -> String {
         LegacyInstruction::Unknown { description, .. } => format!("Unknown: {description}"),
         LegacyInstruction::NoOp => "NoOp".to_owned(),
         // Card CG11-POINTER-VALUED-STORES (gateway rule 10v).
+        LegacyInstruction::TrackedSelfInit { function, base, path, writes, .. } => {
+            format!("TrackedSelfInit {function} {base} {path:?} {writes:?}")
+        }
         LegacyInstruction::PointerStore { store, .. } => {
             format!("PointerStore {} = {}", store.place, store.value)
         }

@@ -2797,6 +2797,16 @@ pub(super) fn transfer_dispatch(
                 )
             }
         }
+        LegacyInstruction::TrackedSelfInit { base: root, access, fallback, .. } => {
+            if let Some(output) = tracked_self_init::apply(&state, root) {
+                let mut checked = BTreeSet::new();
+                let read_state = base(&with_instruction(node, access), state.clone(), &mut checked);
+                if checked.is_empty() && read_state == state {
+                    return output;
+                }
+            }
+            base(&with_instruction(node, fallback), state, diagnostics)
+        }
         LegacyInstruction::SubObjectStore { .. } => {
             sub_object_store::transfer(function, node, state, context, alias, diagnostics, &base)
         }
@@ -4422,7 +4432,7 @@ pub(super) fn transfer_base(
         LegacyInstruction::PointerStore { .. } => {
             unreachable!("pointer stores are transferred by `transfer`")
         }
-        LegacyInstruction::SelfInitCall { .. } => {
+        LegacyInstruction::SelfInitCall { .. } | LegacyInstruction::TrackedSelfInit { .. } => {
             unreachable!("checked initializer calls are transferred by dispatch")
         }
     }
