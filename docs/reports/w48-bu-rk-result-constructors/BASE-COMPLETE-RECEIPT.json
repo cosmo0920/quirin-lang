@@ -1,0 +1,170 @@
+{
+  "checkpoint": "All own BASE routes complete before provider semantic changes; TIP pending",
+  "launch_base": "8991b7b58fcbd33da082bbb44e819d47a0fb2561",
+  "binary_build_source": "1e99901c3bfd7568b0e5081c6cff7be3d8b24702",
+  "binary_sha256": "01a0402f62e9edd1187e644febe132c44c138072d291a2f11aedfe00d4e25fd0",
+  "meaning": "Selected static custody replay rows; Unknown and Pending remain in the denominator. Unsafe is provisional with no upstream defect claim. Full per-row profile, scope, bounds, assumptions and evidence are retained in diagnostics and contracts/null/outer sidecars.",
+  "routes": {
+    "corpus": {
+      "exit": 0,
+      "identities_stable": true,
+      "upstream_revision": "66910c10a4d7eafa810b84229cf2dcf7b0f26f97",
+      "started": "2026-10-23T18:00:47.386282+00:00",
+      "ended": "2026-10-23T19:26:23.099452+00:00",
+      "units": 185,
+      "replay_rows": 4834,
+      "static_custody": {
+        "Safe": 999,
+        "Pending": 0,
+        "Unknown": 3826,
+        "Unsafe": 9
+      },
+      "diagnostic_leaf_counts": {
+        "leak": 40,
+        "summary_conflict": 2,
+        "unknown_alias": 11002,
+        "unsupported": 27465
+      },
+      "native_scope": "generic resource projection; separate chunk/callback source profiles are not certificates here; an admitted scalar access through a pointer decides custody only, never bounds, alignment, or the liveness or nullness of an object the projection does not track; an index or pointer traversal (a stepped pointer, a moved index, a typed read in a loop condition) decides custody, use after release and invalid release only: no bounds claim; an indexed collection's element ranges decide which indices owe a release, never that an index is inside the allocation; a typed read handed to a borrowed or data-tail call actual (a scalar, a pointer read, a sub-object address) decides its base's custody only, never the liveness of an object a read pointer names",
+      "artifacts": {
+        "diagnostics": {
+          "path": "private/w48-rk-constructors/base-corpus-retry3/resource-diagnostics.json",
+          "sha256": "7ecfe6c218cb05ed8a4de0f6172231ee19b88974d225f6ed545b3754e178cdc5",
+          "bytes": 86746595
+        },
+        "contracts": {
+          "path": "private/w48-rk-constructors/base-corpus-retry3/resource-diagnostics.contracts.json",
+          "sha256": "f264a16cb56f64194a165acf7d10b8d76fb8c004be35576fab4c3a1561f5efbe",
+          "bytes": 44354876
+        },
+        "null": {
+          "path": "private/w48-rk-constructors/base-retry3-null.jsonl",
+          "sha256": "17f8eeae3043373ffdc10e7d9fd48431a8916f03964e84b3a0534a2d38d36214",
+          "bytes": 29207547
+        },
+        "null_summary": {
+          "path": "private/w48-rk-constructors/base-retry3-null.summary.json",
+          "sha256": "80686b37e81f7f75cb4077cb1bdeb63b836d539ba15bfeceada7bf2869f9ca3d",
+          "bytes": 64899
+        },
+        "outer": {
+          "path": "private/w48-rk-constructors/base-retry3-outer.json",
+          "sha256": "39d4dca9d6276cfc74daba8320bc871f615e3b1c6d8e16c84d98848a0287ce5a",
+          "bytes": 715383
+        },
+        "invocation": {
+          "path": "private/w48-rk-constructors/base-corpus-retry3/run.json",
+          "sha256": "fc385287775842f31ee34ed19ffe48bf5606751297a2c7b23f3037d277549dc2",
+          "bytes": 1146
+        }
+      }
+    },
+    "system": {
+      "exit": 0,
+      "identities_stable": true,
+      "upstream_revision": "046accf6aded7906f66a1baf0202da349e521736",
+      "started": "2026-10-23T19:26:23.968855+00:00",
+      "ended": "2026-10-23T19:34:24.630739+00:00",
+      "units": 15,
+      "replay_rows": 448,
+      "static_custody": {
+        "Safe": 99,
+        "Pending": 0,
+        "Unknown": 345,
+        "Unsafe": 4
+      },
+      "diagnostic_leaf_counts": {
+        "counted_user": 4,
+        "summary_conflict": 4,
+        "unknown_alias": 948,
+        "unsupported": 2392
+      },
+      "native_scope": "generic resource projection; separate chunk/callback source profiles are not certificates here; an admitted scalar access through a pointer decides custody only, never bounds, alignment, or the liveness or nullness of an object the projection does not track; an index or pointer traversal (a stepped pointer, a moved index, a typed read in a loop condition) decides custody, use after release and invalid release only: no bounds claim; an indexed collection's element ranges decide which indices owe a release, never that an index is inside the allocation; a typed read handed to a borrowed or data-tail call actual (a scalar, a pointer read, a sub-object address) decides its base's custody only, never the liveness of an object a read pointer names",
+      "artifacts": {
+        "diagnostics": {
+          "path": "private/w48-rk-constructors/base-system/resource-diagnostics.json",
+          "sha256": "83c4424dafd73e4756e454232e25f762f94baea82c52abfb6aa1488db95c1715",
+          "bytes": 7577173
+        },
+        "contracts": {
+          "path": "private/w48-rk-constructors/base-system/resource-diagnostics.contracts.json",
+          "sha256": "8390538bf1a235626f9e395a8c78ca282a68282273fd3a2cb8e69d4f26a138f1",
+          "bytes": 10793339
+        },
+        "null": {
+          "path": "private/w48-rk-constructors/base-system/system-null.jsonl",
+          "sha256": "50b3398ec2c4fea53da0a6f0faf1ae38b54c7789cbd1ba31af9e6acba2374138",
+          "bytes": 1873239
+        },
+        "null_summary": {
+          "path": "private/w48-rk-constructors/base-system/system-null.summary.json",
+          "sha256": "1d9ad9e838a54923bd90b3d984c324c8eb6892fa0903827be98b5f9401a3ea5c",
+          "bytes": 64384
+        },
+        "outer": {
+          "path": "private/w48-rk-constructors/base-system/system-outer.json",
+          "sha256": "3d146b02ea36f0827119299e39068f9af4cb3dab628d6061efb071e1f7563fb2",
+          "bytes": 67304
+        },
+        "invocation": {
+          "path": "private/w48-rk-constructors/base-system/invocation.json",
+          "sha256": "f39627af96c14cc7809c0ebb8d8150997f38189d7eab3feb026fd42316101288",
+          "bytes": 54534
+        }
+      }
+    },
+    "slice": {
+      "exit": 0,
+      "identities_stable": true,
+      "upstream_revision": "34155955e4962a56d94eb23c03a002880899a0d1",
+      "started": "2026-10-23T19:34:25.279313+00:00",
+      "ended": "2026-10-23T19:41:20.799035+00:00",
+      "units": 16,
+      "replay_rows": 404,
+      "static_custody": {
+        "Safe": 57,
+        "Pending": 4,
+        "Unknown": 342,
+        "Unsafe": 1
+      },
+      "diagnostic_leaf_counts": {
+        "counted_user": 1,
+        "unknown_alias": 1088,
+        "unsupported": 2480
+      },
+      "native_scope": "generic resource projection; separate chunk/callback source profiles are not certificates here; an admitted scalar access through a pointer decides custody only, never bounds, alignment, or the liveness or nullness of an object the projection does not track; an index or pointer traversal (a stepped pointer, a moved index, a typed read in a loop condition) decides custody, use after release and invalid release only: no bounds claim; an indexed collection's element ranges decide which indices owe a release, never that an index is inside the allocation; a typed read handed to a borrowed or data-tail call actual (a scalar, a pointer read, a sub-object address) decides its base's custody only, never the liveness of an object a read pointer names",
+      "artifacts": {
+        "diagnostics": {
+          "path": "private/w48-rk-constructors/base-slice/resource-diagnostics.json",
+          "sha256": "29bf1f480a3ae5fdef42c7031ce8131f9db90876989a9b0de595f6b1295d55a6",
+          "bytes": 3765643
+        },
+        "contracts": {
+          "path": "private/w48-rk-constructors/base-slice/resource-diagnostics.contracts.json",
+          "sha256": "2b88667db016cd6515a80efcb900286b9c7f9277b39877cbd95ffc4ccf9fea34",
+          "bytes": 9605970
+        },
+        "null": {
+          "path": "private/w48-rk-constructors/base-slice/slice-null.jsonl",
+          "sha256": "0855892fffce7c22f432fb7c9d5d84b61e3cf6e77ec34d7e1175126930a7bd72",
+          "bytes": 1853651
+        },
+        "null_summary": {
+          "path": "private/w48-rk-constructors/base-slice/slice-null.summary.json",
+          "sha256": "df4be8b649b807ee4b83c0516250e7495e7e57355733c126c24a6b3828960c56",
+          "bytes": 64487
+        },
+        "outer": {
+          "path": "private/w48-rk-constructors/base-slice/slice-outer.json",
+          "sha256": "4f5a2ae41863365789a767f28e9d1a32f7c1c88fe33da0e8a58e0b0d1b9ec300",
+          "bytes": 88779
+        },
+        "invocation": {
+          "path": "private/w48-rk-constructors/base-slice/invocation.json",
+          "sha256": "7e8e702d8b99195167c99101d9b340bb46e6b3196355583f6160090a57a2a183",
+          "bytes": 54463
+        }
+      }
+    }
+  }
+}
