@@ -1,6 +1,6 @@
 //! Rule 37: real provider specifications require their assertion-bearing bodies.
 use qcore_c_gateway::legacy_c::{
-    AnalysisStatus, C11TranslationUnit, CSourceInput, LegacyFunctionSummary,
+    AnalysisStatus, C11TranslationUnit, CCompilerDialect, CSourceInput, LegacyFunctionSummary,
     UnrestrictedLegacyResult, analyze_unrestricted_c11, check_legacy_safety_certificate,
 };
 use qcore_contract::contract_loader::load_resource_contract_manifest;
@@ -32,7 +32,7 @@ impl Drop for SourceFixture {
     }
 }
 
-fn run(disabled: bool, has_body: bool) -> LegacyFunctionSummary {
+fn run(disabled: bool, has_body: bool, dialect: CCompilerDialect) -> LegacyFunctionSummary {
     let root = Path::new(env!("CARGO_MANIFEST_DIR"))
         .parent()
         .unwrap()
@@ -68,6 +68,7 @@ struct envelope *build(const char *name) {{
     let fixture = SourceFixture::new(&source);
     let unit = C11TranslationUnit {
         source: &source,
+        dialect,
         input: CSourceInput::DeclaredFile {
             spelled: "wrapper.c".into(),
             directory: fixture.0.clone(),
@@ -93,19 +94,27 @@ struct envelope *build(const char *name) {{
 }
 // The real libc failure declaration used by this positive fixture is __assert_fail.
 // Other platforms retain the fail-closed controls; no Windows body proof is claimed.
+// Pinned rdkafka_admin.c uses GNU17: strict C11 chooses a different assert expansion.
 #[cfg(target_os = "linux")]
 #[test]
 fn asserted_wrappers_establish_the_real_provider_specifications() {
-    let result = run(false, true);
+    let result = run(false, true, CCompilerDialect::Gnu17);
     assert_eq!(result.status, AnalysisStatus::Safe, "{result:#?}");
 }
 #[test]
 fn disabled_assertions_withdraw_the_nonnull_specifications() {
-    let result = run(true, true);
+    let result = run(true, true, CCompilerDialect::Gnu17);
     assert_ne!(result.status, AnalysisStatus::Safe, "{result:#?}");
 }
 #[test]
 fn absent_wrapper_bodies_do_not_supply_nonnull_results() {
-    let result = run(false, false);
+    let result = run(false, false, CCompilerDialect::Gnu17);
+    assert_ne!(result.status, AnalysisStatus::Safe, "{result:#?}");
+}
+
+#[cfg(target_os = "linux")]
+#[test]
+fn an_unread_strict_c11_assertion_does_not_supply_nonnull_results() {
+    let result = run(false, true, CCompilerDialect::C11);
     assert_ne!(result.status, AnalysisStatus::Safe, "{result:#?}");
 }
