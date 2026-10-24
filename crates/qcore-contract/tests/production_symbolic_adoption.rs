@@ -236,10 +236,47 @@ fn current_checkpoint_text(path: &str) -> String {
     );
     format!("{}\n\n{card}", text.trim_end_matches('\n'))
 }
+const RK_MEMORY: &str = "providers/qcore-provider-librdkafka/contracts/librdkafka/memory.qv";
+// Rule 37 is a later semantic change, not part of symbolic adoption. Bind the
+// entire reviewed before/after sources and reverse its literal hunks only for
+// the old byte-erasure comparison. All current graph/flow/binding checks below
+// continue to use the actual source; the mode comparison pins its exact delta.
+fn before_rule37(current: &str) -> Result<String, String> {
+    const DELTA: &str = include_str!("fixtures/rule37-memory-delta.json");
+    if qcore_schemas::sha256_hex(DELTA.as_bytes())
+        != "9f7913f63928f50ba385b8e20c58bab2566f60537390a30f9baa55752b92d98a"
+    {
+        return Err("rule-37 delta fixture changed".into());
+    }
+    let delta: serde_json::Value = serde_json::from_str(DELTA).unwrap();
+    if qcore_schemas::sha256_hex(current.as_bytes()) != delta["after_sha256"].as_str().unwrap() {
+        return Err("current memory source differs from the reviewed rule-37 source".into());
+    }
+    let mut before = current.to_owned();
+    for edit in delta["edits"].as_array().unwrap() {
+        let after = edit["after"].as_str().unwrap();
+        if after.is_empty() || before.matches(after).count() != 1 {
+            return Err("rule-37 literal hunk is not unique".into());
+        }
+        before = before.replacen(after, edit["before"].as_str().unwrap(), 1);
+    }
+    if qcore_schemas::sha256_hex(before.as_bytes()) != delta["before_sha256"].as_str().unwrap() {
+        return Err("recovered pre-rule-37 source differs".into());
+    }
+    Ok(before)
+}
 // Only the historical byte-erasure seam uses this recovered checkpoint.
 // Every graph/loader/binding/flow/lifecycle check below still reads `after`,
 // the actual current source with its complete guarded metadata present.
 fn historical_symbolic_checkpoint(path: &str, current: &str) -> String {
+    if path == RK_MEMORY {
+        assert!(before_rule37(&format!("{current}\n")).is_err());
+        assert!(
+            before_rule37(&current.replacen("resource_body_checked", "unreviewed_marker", 1))
+                .is_err()
+        );
+        return before_rule37(current).unwrap();
+    }
     const CJSON: &str = "providers/qcore-provider-librdkafka/contracts/librdkafka/cjson.qv";
     if path != CJSON {
         return current.into();
@@ -353,14 +390,30 @@ fn every_actual_hypothesis_is_introduced_and_every_original_group_is_an_open_con
             );
         }
         match view {
-            View::Resource => assert_eq!(
-                contract_loader::load_resource_contract_sources(&old)
-                    .unwrap()
-                    .functions(),
-                contract_loader::load_resource_contract_sources(&new)
-                    .unwrap()
-                    .functions()
-            ),
+            View::Resource => {
+                let original_modes = contract_loader::load_resource_contract_sources(&old).unwrap();
+                let current_modes = contract_loader::load_resource_contract_sources(&new).unwrap();
+                let mut expected = original_modes.functions().clone();
+                if path == RK_MEMORY {
+                    let old_checked = contract_loader::checked_specifications(&old).unwrap();
+                    let mut expected_checked = old_checked;
+                    for name in ["rd_calloc", "rd_strdup"] {
+                        let mode = expected.get_mut(name).unwrap();
+                        assert_eq!(
+                            mode.result,
+                            qcore_schemas::contract::ResourceReturnMode::Owned { nullable: true }
+                        );
+                        mode.result =
+                            qcore_schemas::contract::ResourceReturnMode::Owned { nullable: false };
+                        expected_checked.insert(name.into());
+                    }
+                    assert_eq!(
+                        contract_loader::checked_specifications(&new).unwrap(),
+                        expected_checked
+                    );
+                }
+                assert_eq!(current_modes.functions(), &expected);
+            }
             View::Bounds => {
                 let a = bounds_contract::load_bounds_contract_sources(&old).unwrap();
                 let b = bounds_contract::load_bounds_contract_sources(&new).unwrap();

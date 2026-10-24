@@ -1114,6 +1114,14 @@ fn production_contracts_preserve_the_previous_resource_modes() {
     for name in ["rd_kafka_log_buf", "rd_kafka_log0"] {
         old.insert_contract(name, ResourceFunctionContract::new([], R::None));
     }
+    // Rule 37 replaces only these two inherited nullable results with checked
+    // non-null specifications. Every other production mode remains pinned.
+    for name in ["rd_calloc", "rd_strdup"] {
+        old.insert_contract(
+            name,
+            ResourceFunctionContract::new([], R::Owned { nullable: false }),
+        );
+    }
     // W48-BU-EXTERNAL-CALLEE-CONTRACTS deliberately extends this expected
     // table: borrowed writev arguments and the scalar current-thread identifier.
     old.insert_contract(
