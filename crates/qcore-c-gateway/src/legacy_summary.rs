@@ -604,12 +604,15 @@ pub(crate) fn derive_custody_summaries(
     // Run only after every older route. No environment or summary is installed.
     for name in names {
         let checked = crate::contract_dependencies::within(name, || {
-            if contracts.contract(name).is_some()
+            let consulted = qcore_schemas::contract_consultation::snapshot();
+            let reading = crate::contract_dependencies::reading_checkpoint();
+            let answer = (|| {
+            if !crate::legacy_c::self_link_init::candidate(tokens, name, &derivation.environment)
+                || contracts.contract(name).is_some()
                 || contracts.has_guarded_interface(name)
                 || derivation.environment.contract(name).is_some()
                 || derivation.environment.has_guarded_interface(name)
                 || derivation.selections.contains_key(name)
-                || !crate::legacy_c::self_link_init::candidate(tokens, name, &derivation.environment)
             {
                 return false;
             }
@@ -618,6 +621,12 @@ pub(crate) fn derive_custody_summaries(
             };
             crate::legacy_c::self_link_init::has_call(&cfg)
                 && crate::legacy_c::self_link_init::row(tokens, name, &derivation.environment, cfg).is_some()
+            })();
+            if !answer {
+                qcore_schemas::contract_consultation::restore(&consulted);
+                crate::contract_dependencies::restore_reading_checkpoint(&reading);
+            }
+            answer
         });
         if checked {
             derivation.self_init_frames.insert(name.clone());

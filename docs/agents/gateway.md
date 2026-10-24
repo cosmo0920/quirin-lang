@@ -8772,3 +8772,35 @@ safety claim and no validation of the detach representation premise.
     This establishes none of the CMetrics getter chain's foreign-member,
     collection, secondary-index or cache ownership obligations; its remainder
     stays Open. [Design](../reports/w48-bu-cmt-map-metric-get/DESIGN.md).
+
+<a id="constraint-36a"></a>
+
+36a. **A checked initializer call retains its caller-frame condition.**
+    CG11 already admits literal self-address stores and withholds their
+    ordinary summaries. A new `SelfInitCall` may replace only a refused direct
+    call in a complete source-checked void caller with one original depth-one
+    struct-pointer formal. Its body contains only blocks, unvalued returns,
+    base NULL guards, literal self-stores and direct calls passing that same
+    formal to initializer leaves. A leaf contains at least one self-store and
+    no calls. Complete matching source spans, exact declaration identities and
+    pointer types, and positive complete nonunion/nonbitfield member facts are
+    required. Missing facts, aliases, other effects, escaping function
+    designators, recursive calls and wrappers of wrappers decline. Every leaf's
+    actual CFG must validate through the existing CG11 stores, with its stores
+    matching the source and every reachable exit custody-empty.
+    The call is conditional on an internal checked-row entry capability,
+    default false, an empty modeled custody frame and no member-place aliases.
+    Admission preserves the complete state; refusal executes the exact old
+    Unknown fallback. Structurally unreachable markers retain their old
+    lowering. The marker is appended to preserve older serialized tags and
+    cannot establish an ordinary custody summary. A private caller row must
+    independently validate the complete CFG and every exit; nothing is
+    installed in the contract environment or summary records. Declared calls,
+    older modeled statements and interfaces retain precedence. Ordinary
+    inference, callbacks and cross-unit imports gain no unguarded effect.
+    Tracked/interior caller transport and full owned-list semantics remain
+    separate obligations. `QCore.CheckedSelfInitCall` models source and frame
+    refusal, state/ledger preservation, finite call composition, lifetime and
+    transport boundaries. Extraction and Rust correspondence remain premise 28;
+    new readers must fit rule 13q's existing measured stack budget.
+    [Design](../reports/w48-cmt-list-self-init/DESIGN.md).

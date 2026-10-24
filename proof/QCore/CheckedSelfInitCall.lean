@@ -86,6 +86,17 @@ theorem refusal_remains_unknown (s : State α) (enabled : Bool)
     (transfer s enabled f p).diagnostics = 0 :: s.diagnostics := by
   simp [transfer, h]
 
+def repeatCalls (s : State α) (f : α) (p : Option Pointer) : Nat → State α
+  | 0 => s
+  | n + 1 => transfer (repeatCalls s f p n) true f p
+
+theorem finite_checked_calls_preserve_the_frame (s : State α) (f : α)
+    (p : Option Pointer) (h : admits s true = true) (n : Nat) :
+    repeatCalls s f p n = s := by
+  induction n with
+  | zero => rfl
+  | succ n ih => simp [repeatCalls, ih, transfer, h]
+
 inductive Consumer where
   | localRow | ordinarySummary | callback | exported | recursive
   deriving DecidableEq, Repr
@@ -130,5 +141,20 @@ def flowVectors : List Bool :=
 
 theorem shared_flow_vectors : flowVectors =
     [true,false,false,false,false,false,false,false,false,true,false,false,false,false] := by decide
+
+def completeSource : SourceFacts := ⟨true,true,true,true,true,true,true,true⟩
+def sourceVectors : List Bool :=
+  [ sourceAdmits completeSource,
+    sourceAdmits { completeSource with voidSingleFormal := false },
+    sourceAdmits { completeSource with completePureBody := false },
+    sourceAdmits { completeSource with typedSelfStores := false },
+    sourceAdmits { completeSource with originalDirectActual := false },
+    sourceAdmits { completeSource with nonEscaping := false },
+    sourceAdmits { completeSource with leafCfgChecked := false },
+    sourceAdmits { completeSource with exactStoreMapping := false },
+    sourceAdmits { completeSource with interfaceAbsent := false } ]
+
+theorem shared_source_vectors : sourceVectors =
+    [true,false,false,false,false,false,false,false,false] := by decide
 
 end QCore.CheckedSelfInitCall

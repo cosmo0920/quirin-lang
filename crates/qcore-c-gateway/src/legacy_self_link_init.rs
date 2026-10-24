@@ -236,7 +236,16 @@ mod tests {
 
     const LEAF: &str = "struct Ring { struct Ring *next, *prev; };\nstatic inline void reset(struct Ring *p) {\n if (p == (void *)0) return;\n p->next = p;\n p->prev = p;\n}\n";
 
-    fn clang() -> bool { crate::clang_command().is_ok() }
+    fn clang() -> bool {
+        match crate::clang_command() {
+            Ok(_) => true,
+            Err(reason) => {
+                assert!(std::env::var_os("QCORE_CLANG").is_none(), "invalid explicit Clang: {reason}");
+                eprintln!("skipping Clang-dependent checked-call control: {reason}");
+                false
+            }
+        }
+    }
 
     fn run(source: &str, contracts: &ResourceContracts) -> UnrestrictedLegacyResult {
         analyze_unrestricted_c11(&C11TranslationUnit { source, ..Default::default() }, "subject", contracts).expect("valid fixture")
@@ -306,6 +315,122 @@ mod tests {
         let result = run(&source, &contracts);
         assert!(!has_call(&summary(&result).functions["subject"].cfg));
         assert!(summary(&result).functions["subject"].cfg.nodes.iter().any(|n| matches!(&n.instruction, LegacyInstruction::ContractCall { function, .. } if function == "reset")));
+        let mut caller_contract = ResourceContracts::default();
+        caller_contract.insert_contract("subject", ResourceFunctionContract::new(vec![ResourceParameterMode::Borrowed], ResourceReturnMode::None));
+        let result = run(&source, &caller_contract);
+        assert!(!has_call(&summary(&result).functions["subject"].cfg));
+        assert_ne!(summary(&result).functions["subject"].status, AnalysisStatus::Safe);
+    }
+
+    #[test]
+    fn tracked_factories_and_destructors_do_not_gain_a_hidden_self_alias() {
+        if !clang() { return; }
+        let mut contracts = ResourceContracts::default();
+        contracts.insert_contract("owned", ResourceFunctionContract::new(vec![], ResourceReturnMode::Owned { nullable: false }));
+        contracts.insert_contract("drop_owned", ResourceFunctionContract::new(vec![ResourceParameterMode::Released { nullable: true }], ResourceReturnMode::None));
+        let prefix = format!("{LEAF}struct Ring *owned(void); void drop_owned(void *p);\n");
+        for tail in [
+            "void subject(struct Ring *p) { struct Ring *q = owned(); reset(p); }",
+            "void subject(struct Ring *p) { struct Ring *q = owned(); reset(p); drop_owned(q); }",
+            "struct Ring *factory(void) { struct Ring *p = owned(); reset(p); return p; } void destroy(struct Ring *p) { drop_owned(p->next); drop_owned(p); } void subject(struct Ring *p) { destroy(factory()); }",
+        ] {
+            let result = run(&format!("{prefix}{tail}"), &contracts);
+            assert_ne!(summary(&result).functions["subject"].status, AnalysisStatus::Safe, "{tail}");
+            assert!(summary(&result).functions.values().all(|row| !has_call(&row.cfg)), "{tail}");
+        }
+    }
+
+    fn source_checked(source: &str, contracts: &ResourceContracts) -> bool {
+        let _scope = crate::typed_access_path::enter_source(source, CCompilerDialect::Gnu17, None);
+        let tokens = tokenize(source);
+        candidate(&tokens, "subject", contracts) && checked_leaf(&tokens, "reset", contracts).is_some()
+    }
+
+    #[test]
+    fn source_and_leaf_vectors_match_lean() {
+        if !clang() { return; }
+        let good = format!("{LEAF}void subject(struct Ring *p) {{ reset(p); }}");
+        let contracts = ResourceContracts::default();
+        let mut vectors = vec![source_checked(&good, &contracts)];
+        for tail in [
+            "int subject(struct Ring *p) { reset(p); return 0; }",
+            "void subject(struct Ring *p) { int local = 1; reset(p); }",
+        ] { vectors.push(source_checked(&format!("{LEAF}{tail}"), &contracts)); }
+        vectors.push(source_checked("struct Ring { void *next; }; void reset(struct Ring *p) { p->next = p; } void subject(struct Ring *p) { reset(p); }", &contracts));
+        vectors.push(source_checked(&format!("{LEAF}void subject(struct Ring *p) {{ reset(p->next); }}"), &contracts));
+        vectors.push(source_checked(&format!("{good} void (*escaped)(struct Ring *) = subject;"), &contracts));
+        {
+            let _scope = crate::typed_access_path::enter_source(&good, CCompilerDialect::Gnu17, None);
+            let tokens = tokenize(&good);
+            let profile = profile(&tokens, "reset", &contracts, true).expect("positive leaf");
+            let cfg = build_function_cfg(&tokens, "reset", &contracts).unwrap();
+            assert!(stores_match(&cfg, &profile));
+            let mut invalid = cfg.clone();
+            let node = invalid.nodes.iter_mut().find(|n| matches!(n.instruction, LegacyInstruction::PointerStore { .. })).unwrap();
+            node.instruction = LegacyInstruction::Unknown { description: "failed leaf CFG control".into(), writes: RefusedWrites::Unbounded };
+            let entry = entry(&invalid, &profile, false).unwrap();
+            let (summary, exits) = analyze_cfg_with_entry(invalid, &entry);
+            vectors.push(empty_exits(&summary, &exits));
+            let mut invalid = cfg;
+            if let LegacyInstruction::PointerStore { store, .. } = &mut invalid.nodes.iter_mut().find(|n| matches!(n.instruction, LegacyInstruction::PointerStore { .. })).unwrap().instruction { store.place.push_str("_other"); }
+            vectors.push(stores_match(&invalid, &profile));
+        }
+        let mut declared = contracts;
+        declared.insert_contract("reset", ResourceFunctionContract::new(vec![ResourceParameterMode::Borrowed], ResourceReturnMode::None));
+        vectors.push(source_checked(&good, &declared));
+        assert_eq!(vectors, vec![true,false,false,false,false,false,false,false,false]);
+        for declaration in [
+            "struct Ring { struct Ring *volatile next; };",
+            "struct Ring { struct Ring *next; };",
+        ] {
+            let formal = if declaration.contains("volatile") { "struct Ring *p" } else { "struct Ring *volatile p" };
+            let source = format!("{declaration} void reset({formal}) {{ p->next = p; }} void subject(struct Ring *p) {{ reset(p); }}");
+            assert!(!source_checked(&source, &ResourceContracts::default()));
+        }
+        let source = "union Ring { union Ring *next; }; void reset(union Ring *p) { p->next=p; } void subject(union Ring *p) { reset(p); }";
+        assert!(!source_checked(source, &ResourceContracts::default()));
+    }
+
+    #[test]
+    fn missing_reference_facts_refuse() {
+        let good = serde_json::json!({"kind":"DeclRefExpr", "type":{"qualType":"struct Ring *"},
+            "referencedDecl":{"kind":"ParmVarDecl","name":"p","id":"formal"}});
+        assert!(original(&good,"p","formal","struct Ring *"));
+        for field in ["kind","name","id"] {
+            let mut bad = good.clone(); bad["referencedDecl"].as_object_mut().unwrap().remove(field);
+            assert!(!original(&bad,"p","formal","struct Ring *"));
+        }
+        let mut bad = good; bad.as_object_mut().unwrap().remove("type");
+        assert!(!original(&bad,"p","formal","struct Ring *"));
+    }
+
+    #[test]
+    fn checked_rows_have_no_export_and_a_forged_neutral_import_fails_replay() {
+        if !clang() { return; }
+        let source = format!("{LEAF}void subject(struct Ring *p) {{ reset(p); }}");
+        let unit = prepare_translation_unit(&C11TranslationUnit { source: &source,
+            function_scope: LegacyFunctionScope::MainSourceDefinitions, ..Default::default() });
+        let wanted = BTreeSet::from(["subject".to_owned()]);
+        let digest = "a".repeat(64);
+        assert!(export_cross_unit_homes(&unit, &ResourceContracts::default(), &wanted, &digest).unwrap().is_empty());
+        let neutral_source = "struct Ring { struct Ring *next; }; void subject(struct Ring *p) { return; }";
+        let neutral = prepare_translation_unit(&C11TranslationUnit { source: neutral_source,
+            function_scope: LegacyFunctionScope::MainSourceDefinitions, ..Default::default() });
+        let mut exported = export_cross_unit_homes(&neutral, &ResourceContracts::default(), &wanted, &digest).unwrap().remove(0);
+        let request = LegacyCertificateRequest { include_paths: unit.include_paths().to_vec(), definitions: unit.definitions().to_vec(),
+            preprocessor_options: unit.preprocessor_options().to_vec(), input: unit.input().clone() };
+        let scope = build_certificate_scope_from_evidence(unit.dialect(), LegacyFunctionScope::MainSourceDefinitions,
+            unit.preprocessed_source().unwrap(), Some(unit.raw_source()), unit.line_marked_source(), request.clone()).unwrap();
+        exported.home.preprocessed_source = unit.preprocessed_source().unwrap().to_owned();
+        exported.home.raw_source = unit.raw_source().to_owned();
+        exported.home.line_marked_source = unit.line_marked_source().unwrap().to_owned();
+        exported.home.request = request; exported.home.input_identity = scope.input_identity;
+        let mut contracts = ResourceContracts::default();
+        contracts.set_inferred_imports(BTreeMap::from([("subject".to_owned(), exported.contract)]));
+        contracts.set_cross_unit_import_identities(BTreeMap::from([("subject".to_owned(), exported.home.import_identity())]));
+        contracts.set_link_resolution_sha256(Some(digest));
+        let error = cross_unit::check_imports("struct Ring; void subject(struct Ring *p); void caller(void) {}", &contracts, &[exported.home]).unwrap_err();
+        assert!(error.contains("no validated W4 summary"), "{error}");
     }
 
     #[test]

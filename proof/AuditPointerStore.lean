@@ -7,12 +7,14 @@ import QCore.CheckedSelfInitCall
 #print axioms QCore.CheckedSelfInitCall.default_entry_refuses
 #print axioms QCore.CheckedSelfInitCall.a_tracked_frame_refuses
 #print axioms QCore.CheckedSelfInitCall.refusal_remains_unknown
+#print axioms QCore.CheckedSelfInitCall.finite_checked_calls_preserve_the_frame
 #print axioms QCore.CheckedSelfInitCall.no_ordinary_summary
 #print axioms QCore.CheckedSelfInitCall.no_callback_transport
 #print axioms QCore.CheckedSelfInitCall.no_cross_unit_transport
 #print axioms QCore.CheckedSelfInitCall.no_recursive_assumption
 #print axioms QCore.CheckedSelfInitCall.self_stores_preserve_reference_lifetimes
 #print axioms QCore.CheckedSelfInitCall.shared_flow_vectors
+#print axioms QCore.CheckedSelfInitCall.shared_source_vectors
 
 /-! Audited companion to CG11-POINTER-VALUED-STORES (gateway rule 10v). -/
 
