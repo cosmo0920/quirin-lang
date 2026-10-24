@@ -1,0 +1,4 @@
+outer contracts (pinned): 2 contract(s) on 3 loader(s) from 2 module(s); 3 pinned in force, 0 held (contract-pin-mismatch)
+outer contracts: `flb_plugin_load` reaches every record (`flb_config` member `dso_plugins`: `void *` is a void pointer)
+outer contracts: `flb_plugin_proxy_create` reaches every record (`flb_config` member `dso_plugins`: `void *` is a void pointer)
+outer contracts: `rd_kafka_plugin_new` reaches every record (`rd_kafka_conf_t *` is a pointer with an unclassified pointee)

@@ -1,0 +1,16 @@
+{
+  "command": [
+    "/home/cosmo/.codex/worktrees/808d/quirin-lang/private/w48-cmt-member-storage/replay-v1/rebind-readings",
+    "/home/cosmo/.codex/worktrees/808d/quirin-lang/private/w48-cmt-member-storage/base-corpus/resource-diagnostics.json",
+    "/home/cosmo/.codex/worktrees/808d/quirin-lang/private/w48-cmt-member-storage/tip-corpus/resource-diagnostics.json",
+    "/home/cosmo/.codex/worktrees/808d/quirin-lang/private/w48-cmt-member-storage/base-corpus/resource-diagnostics.contracts.json",
+    "/home/cosmo/.codex/worktrees/808d/quirin-lang/private/w48-cmt-member-storage/tip-corpus/resource-diagnostics.contracts.json",
+    "359f64a987b74b21852c5a691e5c23f75c15d570",
+    "99457f141a90d7bc597516eda904dcf1821ada69",
+    "/home/cosmo/.codex/worktrees/808d/quirin-lang/private/w48-cmt-member-storage/replay-v1/corpus-readings-proof.json"
+  ],
+  "started": "2026-10-24T09:22:35.479427+00:00",
+  "log": "/home/cosmo/.codex/worktrees/808d/quirin-lang/private/w48-cmt-member-storage/replay-v1/corpus-readings.log",
+  "exit": 0,
+  "ended": "2026-10-24T09:22:37.205099+00:00"
+}
