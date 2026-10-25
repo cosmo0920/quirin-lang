@@ -1,0 +1,34 @@
+{
+  "head": "5fdf7c00bcea6b4d988feef5ad389799cd157f20",
+  "command": [
+    "python3",
+    "-m",
+    "unittest",
+    "discover",
+    "-s",
+    "scripts/tests"
+  ],
+  "exit": 0,
+  "tests": 460,
+  "seconds": 41.51752895201207,
+  "log": "/home/cosmo/.codex/worktrees/808d/quirin-lang/private/cmetrics-setter-integration/post-matrix-1/python.log",
+  "log_sha256": "873035f69aef3baaf37797fb71d9745d9a06f9a0f475ca0ba7f6978091806450",
+  "matrix_sha256": "beb413e39671c243b6f6a07462aa6e0b36354358d19efc9fdb8c700be5c6c436",
+  "matrix_committed": true,
+  "matrix_unchanged": true,
+  "measured_source": "17b15ec24990f53690f0311be0ddb8dcf46f3c75",
+  "changes_since_full_gate": [
+    "docs/STATUS.md",
+    "docs/reports/cmetrics-setter-contracts/integration/README.md",
+    "docs/reports/cmetrics-setter-contracts/integration/clang-version.exit",
+    "docs/reports/cmetrics-setter-contracts/integration/clang-version.txt",
+    "docs/reports/cmetrics-setter-contracts/integration/command-receipt.json",
+    "docs/reports/cmetrics-setter-contracts/integration/counts.json",
+    "docs/reports/cmetrics-setter-contracts/integration/gate.json",
+    "docs/reports/cmetrics-setter-contracts/integration/reservation-source.json",
+    "docs/reports/cmetrics-setter-contracts/integration/source-identity.json",
+    "docs/reports/cmetrics-setter-contracts/integration/superseded-attempt.json",
+    "docs/reviews/r0_3/acceptance_matrix.json"
+  ],
+  "production_source_contract_proof_changes": []
+}
