@@ -12949,8 +12949,8 @@
   {
    "id": "PROVIDER-PYTHON-TESTS-UNGATED",
    "title": "providers/tests/*.py (25 tests) are run by no gate step",
-   "why": "The standing gate runs python3 -m unittest discover -s scripts/tests; providers/README.md's provider gate runs package.py, cargo test, fmt and Clippy. providers/tests/test_contract_load_path.py and test_package_contracts.py (25 tests, measured passing in 81.9 s by card GATE-ELASTIC on its tip) are in neither, although the pluggable-cards plan names the first as part of the provider suite that stayed red for a day. DISCHARGE: add python3 -m unittest discover -s providers/tests to the provider gate block (and the scoped gate's mirror), or record why it stays out.",
-   "source": "docs/reports/gate-elastic/README.md"
+   "why": "The standing gate runs python3 -m unittest discover -s scripts/tests; providers/README.md's provider gate runs package.py, cargo test, fmt and Clippy. providers/tests/test_contract_load_path.py and test_package_contracts.py (25 tests, measured passing in 81.9 s by card GATE-ELASTIC on its tip) are in neither, although the pluggable-cards plan names the first as part of the provider suite that stayed red for a day. DISCHARGE: add python3 -m unittest discover -s providers/tests to the provider gate block (and the scoped gate's mirror), or record why it stays out. CONTRACT-LOCKS adds one test (now 26), test_inventory_locks_are_generated_by_sync_and_checked, and moves the real-workspace test's view counts onto the inventory locks. The tree-equals-lock check itself is also in the standing gate through compiler/tests/qcore_contract_corpus.rs, byte form included; providers/contracts.py check is likewise run by no gate step. DISCHARGE (unchanged).",
+   "source": "docs/reports/gate-elastic/README.md, docs/reports/contract-locks/README.md"
   },
   {
    "id": "TASK-CONTEXT-GATE-ROLES",

@@ -1,5 +1,7 @@
 # Current status and evidence boundaries
 
+Contract pins (2026-10-25, CONTRACT-LOCKS): the corpus declaration/clause pins live in eleven generated `providers/*/contract-inventory.lock` files read by `compiler/tests/qcore_contract_corpus.rs`, not in literal tables; the counts are unchanged at 140 modules, 818 declarations, 7,721 elaborated clauses and 11 inheritance edges.
+
 The pinned corpus, the configured system route and the tail-pause slice run directly on the original pinned inputs after the checkout move (AUDIT-CANONICAL-PATHS): unit selection compares located paths, so the re-spelled mirror (`mirror_inputs.py`) is no longer needed. Verdicts are unchanged on all three routes.
 
 Gate policy (user decisions 4 and 5, 2026-10-24; card GATE-ELASTIC): a delegated card closes on the scoped card gate (scripts/gate_scope.py --base <rev>, gate.json in its report); the integrator runs the unchanged full standing gate once per landing and it stays the arbiter. Heavy jobs take named slots (scripts/gate_slot.py: rust-suite 1 and holding every audit slot, audit max(1, floor(MemAvailable/budget)) at 7 GiB default or 5/4 GiB, lean 2), interlocked with the legacy lock /tmp/qcore-c-card-validation-20261022.lock during the transition.
