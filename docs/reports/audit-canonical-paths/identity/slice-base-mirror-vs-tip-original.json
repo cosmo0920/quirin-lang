@@ -1,0 +1,2702 @@
+{
+ "route": "slice",
+ "left": "/media/Data/GitHub/quirin-lang/.claude/worktrees/agent-af4406ebe7df9c0d1/private/acp/runs2/base-mirror/slice",
+ "right": "/media/Data/GitHub/quirin-lang/.claude/worktrees/agent-af4406ebe7df9c0d1/private/acp/runs2/tip-original/slice",
+ "substitution": [
+  {
+   "from": "/media/Data/GitHub/quirin-lang/private/w47-tail/attempt-1/prep/fluent-bit-clang-production/compile_commands.json",
+   "to": "/media/Data/GitHub/quirin-lang/.claude/worktrees/agent-af4406ebe7df9c0d1/private/acp/mirror/slice-compile_commands.json"
+  },
+  {
+   "from": "/home/cosmo/Documents/GitHub/qcore-c/private/w47-tail/attempt-1/prep",
+   "to": "/media/Data/GitHub/quirin-lang/private/w47-tail/attempt-1/prep"
+  }
+ ],
+ "exits": {
+  "left": "0",
+  "right": "0"
+ },
+ "drivers": {
+  "left": {
+   "exit": 0,
+   "audit_exit": 0,
+   "identity_error": null,
+   "snapshot_files_changed": [],
+   "externals_stable": true,
+   "binary_stable": true,
+   "binary_sha256": "74c984ebf6dde780ed11839fd5359eb3a7b5f120b5c4e933b6e4969a7cfdd0f5"
+  },
+  "right": {
+   "exit": 0,
+   "audit_exit": 0,
+   "identity_error": null,
+   "snapshot_files_changed": [],
+   "externals_stable": true,
+   "binary_stable": true,
+   "binary_sha256": "3b3606ab493c25237569870e2632bdacaa60cec2aab5a523d3fd98e4aa0a0d35"
+  }
+ },
+ "only_left": [],
+ "only_right": [],
+ "files": {
+  "console.log": {
+   "bytes": [
+    14172,
+    14172
+   ],
+   "raw_identical": true,
+   "identical_after_substitution": true,
+   "substituted": {},
+   "target_collisions": {}
+  },
+  "resource-diagnostics.chunk-contracts.json": {
+   "bytes": [
+    385,
+    385
+   ],
+   "raw_identical": true,
+   "identical_after_substitution": true,
+   "substituted": {},
+   "target_collisions": {}
+  },
+  "resource-diagnostics.contracts.json": {
+   "bytes": [
+    9676605,
+    9678732
+   ],
+   "raw_identical": false,
+   "identical_after_substitution": false,
+   "substituted": {
+    "/home/cosmo/Documents/GitHub/qcore-c/private/w47-tail/attempt-1/prep": 428
+   },
+   "target_collisions": {
+    "/media/Data/GitHub/quirin-lang/private/w47-tail/attempt-1/prep": 2
+   },
+   "structural": {
+    "differing_leaves": 48412,
+    "pattern_count": 804,
+    "patterns": [
+     {
+      "path": "callback_members/lifetime_protocols/evidence/summaries/<sha256>/flb_input_coro_collect/open/*",
+      "count": 9440,
+      "example": [
+       "member stores prevent holder snapshot stability",
+       "<absent>"
+      ]
+     },
+     {
+      "path": "callback_members/prepass/lifetime_protocols/summaries/<sha256>/flb_input_coro_collect/open/*",
+      "count": 9440,
+      "example": [
+       "member stores prevent holder snapshot stability",
+       "<absent>"
+      ]
+     },
+     {
+      "path": "callback_members/lifetime_protocols/evidence/summaries/<sha256>/flb_input_coro_collect/may_poison",
+      "count": 1180,
+      "example": [
+       "[]",
+       "<absent>"
+      ]
+     },
+     {
+      "path": "callback_members/lifetime_protocols/evidence/summaries/<sha256>/flb_input_coro_collect/may_register",
+      "count": 1180,
+      "example": [
+       "[]",
+       "<absent>"
+      ]
+     },
+     {
+      "path": "callback_members/lifetime_protocols/evidence/summaries/<sha256>/flb_input_coro_collect/may_release",
+      "count": 1180,
+      "example": [
+       "[]",
+       "<absent>"
+      ]
+     },
+     {
+      "path": "callback_members/lifetime_protocols/evidence/summaries/<sha256>/flb_input_coro_collect/must_end",
+      "count": 1180,
+      "example": [
+       "[]",
+       "<absent>"
+      ]
+     },
+     {
+      "path": "callback_members/lifetime_protocols/evidence/summaries/<sha256>/flb_input_coro_collect/poison_all",
+      "count": 1180,
+      "example": [
+       "False",
+       "<absent>"
+      ]
+     },
+     {
+      "path": "callback_members/lifetime_protocols/evidence/summaries/<sha256>/flb_input_coro_collect/requirements",
+      "count": 1180,
+      "example": [
+       "[]",
+       "<absent>"
+      ]
+     },
+     {
+      "path": "callback_members/prepass/lifetime_protocols/summaries/<sha256>/flb_input_coro_collect/may_poison",
+      "count": 1180,
+      "example": [
+       "[]",
+       "<absent>"
+      ]
+     },
+     {
+      "path": "callback_members/prepass/lifetime_protocols/summaries/<sha256>/flb_input_coro_collect/may_register",
+      "count": 1180,
+      "example": [
+       "[]",
+       "<absent>"
+      ]
+     },
+     {
+      "path": "callback_members/prepass/lifetime_protocols/summaries/<sha256>/flb_input_coro_collect/may_release",
+      "count": 1180,
+      "example": [
+       "[]",
+       "<absent>"
+      ]
+     },
+     {
+      "path": "callback_members/prepass/lifetime_protocols/summaries/<sha256>/flb_input_coro_collect/must_end",
+      "count": 1180,
+      "example": [
+       "[]",
+       "<absent>"
+      ]
+     },
+     {
+      "path": "callback_members/prepass/lifetime_protocols/summaries/<sha256>/flb_input_coro_collect/poison_all",
+      "count": 1180,
+      "example": [
+       "False",
+       "<absent>"
+      ]
+     },
+     {
+      "path": "callback_members/prepass/lifetime_protocols/summaries/<sha256>/flb_input_coro_collect/requirements",
+      "count": 1180,
+      "example": [
+       "[]",
+       "<absent>"
+      ]
+     },
+     {
+      "path": "callback_members/lifetime_protocols/evidence/summaries/<sha256>",
+      "count": 712,
+      "example": [
+       "{}",
+       "<absent>"
+      ]
+     },
+     {
+      "path": "callback_members/prepass/lifetime_protocols/summaries/<sha256>",
+      "count": 712,
+      "example": [
+       "{}",
+       "<absent>"
+      ]
+     },
+     {
+      "path": "callback_members/lifetime_protocols/evidence/refused/*",
+      "count": 642,
+      "example": [
+       "000d23b6f26d40006ae854a8755b5d0aa722c4e14e087d5a849ebddfca7f98c0:flb_input_coro_collect",
+       "0060ec8e3c1bab275ac5b4540a39b644faf32a5ccbdffa9525c50dce45522af9:flb_input_coro_collect"
+      ]
+     },
+     {
+      "path": "callback_members/prepass/lifetime_protocols/refused/*",
+      "count": 642,
+      "example": [
+       "000d23b6f26d40006ae854a8755b5d0aa722c4e14e087d5a849ebddfca7f98c0:flb_input_coro_collect",
+       "0060ec8e3c1bab275ac5b4540a39b644faf32a5ccbdffa9525c50dce45522af9:flb_input_coro_collect"
+      ]
+     },
+     {
+      "path": "callback_members/lifetime_protocols/evidence/summaries/<sha256>/flb_input_init_all/open/*",
+      "count": 248,
+      "example": [
+       "indirect call has no lifetime summary",
+       "<absent>"
+      ]
+     },
+     {
+      "path": "callback_members/prepass/lifetime_protocols/summaries/<sha256>/flb_input_init_all/open/*",
+      "count": 248,
+      "example": [
+       "indirect call has no lifetime summary",
+       "<absent>"
+      ]
+     },
+     {
+      "path": "callback_members/lifetime_protocols/evidence/summaries/<sha256>/flb_input_instance_init/open/*",
+      "count": 232,
+      "example": [
+       "indirect call has no lifetime summary",
+       "<absent>"
+      ]
+     },
+     {
+      "path": "callback_members/prepass/lifetime_protocols/summaries/<sha256>/flb_input_instance_init/open/*",
+      "count": 232,
+      "example": [
+       "indirect call has no lifetime summary",
+       "<absent>"
+      ]
+     },
+     {
+      "path": "callback_members/lifetime_protocols/evidence/summaries/<sha256>/input_thread/open/*",
+      "count": 220,
+      "example": [
+       "indirect call has no lifetime summary",
+       "<absent>"
+      ]
+     },
+     {
+      "path": "callback_members/prepass/lifetime_protocols/summaries/<sha256>/input_thread/open/*",
+      "count": 220,
+      "example": [
+       "indirect call has no lifetime summary",
+       "<absent>"
+      ]
+     },
+     {
+      "path": "callback_members/lifetime_protocols/evidence/summaries/<sha256>/flb_input_init_all/may_release/*/object/fields/*",
+      "count": 160,
+      "example": [
+       "alias",
+       "<absent>"
+      ]
+     },
+     {
+      "path": "callback_members/prepass/lifetime_protocols/summaries/<sha256>/flb_input_init_all/may_release/*/object/fields/*",
+      "count": 160,
+      "example": [
+       "alias",
+       "<absent>"
+      ]
+     },
+     {
+      "path": "callback_members/lifetime_protocols/evidence/summaries/<sha256>/flb_input_init_all/may_release/*/destroyed_before",
+      "count": 144,
+      "example": [
+       "[]",
+       "<absent>"
+      ]
+     },
+     {
+      "path": "callback_members/lifetime_protocols/evidence/summaries/<sha256>/flb_input_init_all/may_release/*/object/root/Formal/index",
+      "count": 144,
+      "example": [
+       "0",
+       "<absent>"
+      ]
+     },
+     {
+      "path": "callback_members/lifetime_protocols/evidence/summaries/<sha256>/flb_input_init_all/may_release/*/object/root/Formal/scope",
+      "count": 144,
+      "example": [
+       "014c7665d60cd01258475820b5e4a99cec52d19d070dcbbb28a786d7bfc34470:flb_input_instance_destroy",
+       "<absent>"
+      ]
+     },
+     {
+      "path": "callback_members/prepass/lifetime_protocols/summaries/<sha256>/flb_input_init_all/may_release/*/destroyed_before",
+      "count": 144,
+      "example": [
+       "[]",
+       "<absent>"
+      ]
+     },
+     {
+      "path": "callback_members/prepass/lifetime_protocols/summaries/<sha256>/flb_input_init_all/may_release/*/object/root/Formal/index",
+      "count": 144,
+      "example": [
+       "0",
+       "<absent>"
+      ]
+     },
+     {
+      "path": "callback_members/prepass/lifetime_protocols/summaries/<sha256>/flb_input_init_all/may_release/*/object/root/Formal/scope",
+      "count": 144,
+      "example": [
+       "014c7665d60cd01258475820b5e4a99cec52d19d070dcbbb28a786d7bfc34470:flb_input_instance_destroy",
+       "<absent>"
+      ]
+     },
+     {
+      "path": "contract_dependencies/declarations/flb_log_print/hypothesis_evidence/contexts/*/build_identity",
+      "count": 121,
+      "example": [
+       "f4ceb875f0070e11722cd29fd4fa726afe79ca86395b09a3e0ea4205494742ad",
+       "86d2b75bbf1e434072bea7e5994b9fadb88c0aa2f047f8181682e428b4e48c13"
+      ]
+     },
+     {
+      "path": "contract_dependencies/declarations/flb_log_print/hypothesis_evidence/contexts/*/source_identity",
+      "count": 121,
+      "example": [
+       "e3cd4dd3abd26bd74b9814040b56999dd88833a64fa1331b93702144a09a0c86",
+       "cc93da0e5b200e52f6cfafbb9cbd1134d69ee0f77a33013e11e6c0c0d054bfc2"
+      ]
+     },
+     {
+      "path": "callback_members/lifetime_protocols/evidence/summaries/<sha256>/flb_input_plugin_property_check/open/*",
+      "count": 112,
+      "example": [
+       "member stores prevent holder snapshot stability",
+       "<absent>"
+      ]
+     },
+     {
+      "path": "callback_members/prepass/lifetime_protocols/summaries/<sha256>/flb_input_plugin_property_check/open/*",
+      "count": 112,
+      "example": [
+       "member stores prevent holder snapshot stability",
+       "<absent>"
+      ]
+     },
+     {
+      "path": "callback_members/lifetime_protocols/evidence/summaries/<sha256>/flb_input_net_property_check/open/*",
+      "count": 104,
+      "example": [
+       "member stores prevent holder snapshot stability",
+       "<absent>"
+      ]
+     },
+     {
+      "path": "callback_members/prepass/lifetime_protocols/summaries/<sha256>/flb_input_net_property_check/open/*",
+      "count": 104,
+      "example": [
+       "member stores prevent holder snapshot stability",
+       "<absent>"
+      ]
+     },
+     {
+      "path": "callback_members/lifetime_protocols/evidence/summaries/<sha256>/flb_input_http_server_property_check/open/*",
+      "count": 100,
+      "example": [
+       "member stores prevent holder snapshot stability",
+       "<absent>"
+      ]
+     },
+     {
+      "path": "callback_members/lifetime_protocols/evidence/summaries/<sha256>/flb_input_oauth2_jwt_property_check/open/*",
+      "count": 100,
+      "example": [
+       "member stores prevent holder snapshot stability",
+       "<absent>"
+      ]
+     },
+     {
+      "path": "callback_members/prepass/lifetime_protocols/summaries/<sha256>/flb_input_http_server_property_check/open/*",
+      "count": 100,
+      "example": [
+       "member stores prevent holder snapshot stability",
+       "<absent>"
+      ]
+     },
+     {
+      "path": "callback_members/prepass/lifetime_protocols/summaries/<sha256>/flb_input_oauth2_jwt_property_check/open/*",
+      "count": 100,
+      "example": [
+       "member stores prevent holder snapshot stability",
+       "<absent>"
+      ]
+     },
+     {
+      "path": "callback_members/lifetime_protocols/evidence/summaries/<sha256>/flb_input_exit_all/open/*",
+      "count": 92,
+      "example": [
+       "member stores prevent holder snapshot stability",
+       "<absent>"
+      ]
+     },
+     {
+      "path": "callback_members/prepass/lifetime_protocols/summaries/<sha256>/flb_input_exit_all/open/*",
+      "count": 92,
+      "example": [
+       "member stores prevent holder snapshot stability",
+       "<absent>"
+      ]
+     },
+     {
+      "path": "callback_members/lifetime_protocols/evidence/summaries/<sha256>/flb_input_instance_destroy/open/*",
+      "count": 84,
+      "example": [
+       "member stores prevent holder snapshot stability",
+       "<absent>"
+      ]
+     },
+     {
+      "path": "callback_members/prepass/lifetime_protocols/summaries/<sha256>/flb_input_instance_destroy/open/*",
+      "count": 84,
+      "example": [
+       "member stores prevent holder snapshot stability",
+       "<absent>"
+      ]
+     },
+     {
+      "path": "callback_members/lifetime_protocols/evidence/summaries/<sha256>/flb_input_exit_all/may_release/*/object/fields/*",
+      "count": 80,
+      "example": [
+       "alias",
+       "<absent>"
+      ]
+     },
+     {
+      "path": "callback_members/lifetime_protocols/evidence/summaries/<sha256>/flb_input_http_server_property_check/may_release/*/object/fields/*",
+      "count": 80,
+      "example": [
+       "alias",
+       "<absent>"
+      ]
+     },
+     {
+      "path": "callback_members/lifetime_protocols/evidence/summaries/<sha256>/flb_input_instance_destroy/may_release/*/object/fields/*",
+      "count": 80,
+      "example": [
+       "alias",
+       "<absent>"
+      ]
+     },
+     {
+      "path": "callback_members/lifetime_protocols/evidence/summaries/<sha256>/flb_input_instance_init/may_release/*/object/fields/*",
+      "count": 80,
+      "example": [
+       "alias",
+       "<absent>"
+      ]
+     },
+     {
+      "path": "callback_members/lifetime_protocols/evidence/summaries/<sha256>/flb_input_net_property_check/may_release/*/object/fields/*",
+      "count": 80,
+      "example": [
+       "alias",
+       "<absent>"
+      ]
+     },
+     {
+      "path": "callback_members/lifetime_protocols/evidence/summaries/<sha256>/flb_input_oauth2_jwt_property_check/may_release/*/object/fields/*",
+      "count": 80,
+      "example": [
+       "alias",
+       "<absent>"
+      ]
+     },
+     {
+      "path": "callback_members/lifetime_protocols/evidence/summaries/<sha256>/flb_input_plugin_property_check/may_release/*/object/fields/*",
+      "count": 80,
+      "example": [
+       "alias",
+       "<absent>"
+      ]
+     },
+     {
+      "path": "callback_members/prepass/lifetime_protocols/summaries/<sha256>/flb_input_exit_all/may_release/*/object/fields/*",
+      "count": 80,
+      "example": [
+       "alias",
+       "<absent>"
+      ]
+     },
+     {
+      "path": "callback_members/prepass/lifetime_protocols/summaries/<sha256>/flb_input_http_server_property_check/may_release/*/object/fields/*",
+      "count": 80,
+      "example": [
+       "alias",
+       "<absent>"
+      ]
+     },
+     {
+      "path": "callback_members/prepass/lifetime_protocols/summaries/<sha256>/flb_input_instance_destroy/may_release/*/object/fields/*",
+      "count": 80,
+      "example": [
+       "alias",
+       "<absent>"
+      ]
+     },
+     {
+      "path": "callback_members/prepass/lifetime_protocols/summaries/<sha256>/flb_input_instance_init/may_release/*/object/fields/*",
+      "count": 80,
+      "example": [
+       "alias",
+       "<absent>"
+      ]
+     },
+     {
+      "path": "callback_members/prepass/lifetime_protocols/summaries/<sha256>/flb_input_net_property_check/may_release/*/object/fields/*",
+      "count": 80,
+      "example": [
+       "alias",
+       "<absent>"
+      ]
+     },
+     {
+      "path": "callback_members/prepass/lifetime_protocols/summaries/<sha256>/flb_input_oauth2_jwt_property_check/may_release/*/object/fields/*",
+      "count": 80,
+      "example": [
+       "alias",
+       "<absent>"
+      ]
+     },
+     {
+      "path": "callback_members/prepass/lifetime_protocols/summaries/<sha256>/flb_input_plugin_property_check/may_release/*/object/fields/*",
+      "count": 80,
+      "example": [
+       "alias",
+       "<absent>"
+      ]
+     },
+     {
+      "path": "callback_members/lifetime_protocols/evidence/summaries/<sha256>/flb_input_exit_all/may_release/*/destroyed_before",
+      "count": 72,
+      "example": [
+       "[]",
+       "<absent>"
+      ]
+     },
+     {
+      "path": "callback_members/lifetime_protocols/evidence/summaries/<sha256>/flb_input_exit_all/may_release/*/object/root/Formal/index",
+      "count": 72,
+      "example": [
+       "0",
+       "<absent>"
+      ]
+     },
+     {
+      "path": "callback_members/lifetime_protocols/evidence/summaries/<sha256>/flb_input_exit_all/may_release/*/object/root/Formal/scope",
+      "count": 72,
+      "example": [
+       "014c7665d60cd01258475820b5e4a99cec52d19d070dcbbb28a786d7bfc34470:flb_input_instance_destroy",
+       "<absent>"
+      ]
+     },
+     {
+      "path": "callback_members/lifetime_protocols/evidence/summaries/<sha256>/flb_input_http_server_property_check/may_release/*/destroyed_before",
+      "count": 72,
+      "example": [
+       "[]",
+       "<absent>"
+      ]
+     },
+     {
+      "path": "callback_members/lifetime_protocols/evidence/summaries/<sha256>/flb_input_http_server_property_check/may_release/*/object/root/Formal/index",
+      "count": 72,
+      "example": [
+       "0",
+       "<absent>"
+      ]
+     },
+     {
+      "path": "callback_members/lifetime_protocols/evidence/summaries/<sha256>/flb_input_http_server_property_check/may_release/*/object/root/Formal/scope",
+      "count": 72,
+      "example": [
+       "014c7665d60cd01258475820b5e4a99cec52d19d070dcbbb28a786d7bfc34470:flb_input_http_server_property_check",
+       "<absent>"
+      ]
+     },
+     {
+      "path": "callback_members/lifetime_protocols/evidence/summaries/<sha256>/flb_input_instance_destroy/may_release/*/destroyed_before",
+      "count": 72,
+      "example": [
+       "[]",
+       "<absent>"
+      ]
+     },
+     {
+      "path": "callback_members/lifetime_protocols/evidence/summaries/<sha256>/flb_input_instance_destroy/may_release/*/object/root/Formal/index",
+      "count": 72,
+      "example": [
+       "0",
+       "<absent>"
+      ]
+     },
+     {
+      "path": "callback_members/lifetime_protocols/evidence/summaries/<sha256>/flb_input_instance_destroy/may_release/*/object/root/Formal/scope",
+      "count": 72,
+      "example": [
+       "014c7665d60cd01258475820b5e4a99cec52d19d070dcbbb28a786d7bfc34470:flb_input_instance_destroy",
+       "<absent>"
+      ]
+     },
+     {
+      "path": "callback_members/lifetime_protocols/evidence/summaries/<sha256>/flb_input_instance_init/may_release/*/destroyed_before",
+      "count": 72,
+      "example": [
+       "[]",
+       "<absent>"
+      ]
+     },
+     {
+      "path": "callback_members/lifetime_protocols/evidence/summaries/<sha256>/flb_input_instance_init/may_release/*/object/root/Formal/index",
+      "count": 72,
+      "example": [
+       "0",
+       "<absent>"
+      ]
+     },
+     {
+      "path": "callback_members/lifetime_protocols/evidence/summaries/<sha256>/flb_input_instance_init/may_release/*/object/root/Formal/scope",
+      "count": 72,
+      "example": [
+       "014c7665d60cd01258475820b5e4a99cec52d19d070dcbbb28a786d7bfc34470:flb_input_instance_init",
+       "<absent>"
+      ]
+     },
+     {
+      "path": "callback_members/lifetime_protocols/evidence/summaries/<sha256>/flb_input_net_property_check/may_release/*/destroyed_before",
+      "count": 72,
+      "example": [
+       "[]",
+       "<absent>"
+      ]
+     },
+     {
+      "path": "callback_members/lifetime_protocols/evidence/summaries/<sha256>/flb_input_net_property_check/may_release/*/object/root/Formal/index",
+      "count": 72,
+      "example": [
+       "0",
+       "<absent>"
+      ]
+     },
+     {
+      "path": "callback_members/lifetime_protocols/evidence/summaries/<sha256>/flb_input_net_property_check/may_release/*/object/root/Formal/scope",
+      "count": 72,
+      "example": [
+       "014c7665d60cd01258475820b5e4a99cec52d19d070dcbbb28a786d7bfc34470:flb_input_net_property_check",
+       "<absent>"
+      ]
+     },
+     {
+      "path": "callback_members/lifetime_protocols/evidence/summaries/<sha256>/flb_input_oauth2_jwt_property_check/may_release/*/destroyed_before",
+      "count": 72,
+      "example": [
+       "[]",
+       "<absent>"
+      ]
+     },
+     {
+      "path": "callback_members/lifetime_protocols/evidence/summaries/<sha256>/flb_input_oauth2_jwt_property_check/may_release/*/object/root/Formal/index",
+      "count": 72,
+      "example": [
+       "0",
+       "<absent>"
+      ]
+     },
+     {
+      "path": "callback_members/lifetime_protocols/evidence/summaries/<sha256>/flb_input_oauth2_jwt_property_check/may_release/*/object/root/Formal/scope",
+      "count": 72,
+      "example": [
+       "014c7665d60cd01258475820b5e4a99cec52d19d070dcbbb28a786d7bfc34470:flb_input_oauth2_jwt_property_check",
+       "<absent>"
+      ]
+     },
+     {
+      "path": "callback_members/lifetime_protocols/evidence/summaries/<sha256>/flb_input_plugin_property_check/may_release/*/destroyed_before",
+      "count": 72,
+      "example": [
+       "[]",
+       "<absent>"
+      ]
+     },
+     {
+      "path": "callback_members/lifetime_protocols/evidence/summaries/<sha256>/flb_input_plugin_property_check/may_release/*/object/root/Formal/index",
+      "count": 72,
+      "example": [
+       "0",
+       "<absent>"
+      ]
+     },
+     {
+      "path": "callback_members/lifetime_protocols/evidence/summaries/<sha256>/flb_input_plugin_property_check/may_release/*/object/root/Formal/scope",
+      "count": 72,
+      "example": [
+       "014c7665d60cd01258475820b5e4a99cec52d19d070dcbbb28a786d7bfc34470:flb_input_plugin_property_check",
+       "<absent>"
+      ]
+     },
+     {
+      "path": "callback_members/prepass/lifetime_protocols/summaries/<sha256>/flb_input_exit_all/may_release/*/destroyed_before",
+      "count": 72,
+      "example": [
+       "[]",
+       "<absent>"
+      ]
+     },
+     {
+      "path": "callback_members/prepass/lifetime_protocols/summaries/<sha256>/flb_input_exit_all/may_release/*/object/root/Formal/index",
+      "count": 72,
+      "example": [
+       "0",
+       "<absent>"
+      ]
+     },
+     {
+      "path": "callback_members/prepass/lifetime_protocols/summaries/<sha256>/flb_input_exit_all/may_release/*/object/root/Formal/scope",
+      "count": 72,
+      "example": [
+       "014c7665d60cd01258475820b5e4a99cec52d19d070dcbbb28a786d7bfc34470:flb_input_instance_destroy",
+       "<absent>"
+      ]
+     },
+     {
+      "path": "callback_members/prepass/lifetime_protocols/summaries/<sha256>/flb_input_http_server_property_check/may_release/*/destroyed_before",
+      "count": 72,
+      "example": [
+       "[]",
+       "<absent>"
+      ]
+     },
+     {
+      "path": "callback_members/prepass/lifetime_protocols/summaries/<sha256>/flb_input_http_server_property_check/may_release/*/object/root/Formal/index",
+      "count": 72,
+      "example": [
+       "0",
+       "<absent>"
+      ]
+     },
+     {
+      "path": "callback_members/prepass/lifetime_protocols/summaries/<sha256>/flb_input_http_server_property_check/may_release/*/object/root/Formal/scope",
+      "count": 72,
+      "example": [
+       "014c7665d60cd01258475820b5e4a99cec52d19d070dcbbb28a786d7bfc34470:flb_input_http_server_property_check",
+       "<absent>"
+      ]
+     },
+     {
+      "path": "callback_members/prepass/lifetime_protocols/summaries/<sha256>/flb_input_instance_destroy/may_release/*/destroyed_before",
+      "count": 72,
+      "example": [
+       "[]",
+       "<absent>"
+      ]
+     },
+     {
+      "path": "callback_members/prepass/lifetime_protocols/summaries/<sha256>/flb_input_instance_destroy/may_release/*/object/root/Formal/index",
+      "count": 72,
+      "example": [
+       "0",
+       "<absent>"
+      ]
+     },
+     {
+      "path": "callback_members/prepass/lifetime_protocols/summaries/<sha256>/flb_input_instance_destroy/may_release/*/object/root/Formal/scope",
+      "count": 72,
+      "example": [
+       "014c7665d60cd01258475820b5e4a99cec52d19d070dcbbb28a786d7bfc34470:flb_input_instance_destroy",
+       "<absent>"
+      ]
+     },
+     {
+      "path": "callback_members/prepass/lifetime_protocols/summaries/<sha256>/flb_input_instance_init/may_release/*/destroyed_before",
+      "count": 72,
+      "example": [
+       "[]",
+       "<absent>"
+      ]
+     },
+     {
+      "path": "callback_members/prepass/lifetime_protocols/summaries/<sha256>/flb_input_instance_init/may_release/*/object/root/Formal/index",
+      "count": 72,
+      "example": [
+       "0",
+       "<absent>"
+      ]
+     },
+     {
+      "path": "callback_members/prepass/lifetime_protocols/summaries/<sha256>/flb_input_instance_init/may_release/*/object/root/Formal/scope",
+      "count": 72,
+      "example": [
+       "014c7665d60cd01258475820b5e4a99cec52d19d070dcbbb28a786d7bfc34470:flb_input_instance_init",
+       "<absent>"
+      ]
+     },
+     {
+      "path": "callback_members/prepass/lifetime_protocols/summaries/<sha256>/flb_input_net_property_check/may_release/*/destroyed_before",
+      "count": 72,
+      "example": [
+       "[]",
+       "<absent>"
+      ]
+     },
+     {
+      "path": "callback_members/prepass/lifetime_protocols/summaries/<sha256>/flb_input_net_property_check/may_release/*/object/root/Formal/index",
+      "count": 72,
+      "example": [
+       "0",
+       "<absent>"
+      ]
+     },
+     {
+      "path": "callback_members/prepass/lifetime_protocols/summaries/<sha256>/flb_input_net_property_check/may_release/*/object/root/Formal/scope",
+      "count": 72,
+      "example": [
+       "014c7665d60cd01258475820b5e4a99cec52d19d070dcbbb28a786d7bfc34470:flb_input_net_property_check",
+       "<absent>"
+      ]
+     },
+     {
+      "path": "callback_members/prepass/lifetime_protocols/summaries/<sha256>/flb_input_oauth2_jwt_property_check/may_release/*/destroyed_before",
+      "count": 72,
+      "example": [
+       "[]",
+       "<absent>"
+      ]
+     },
+     {
+      "path": "callback_members/prepass/lifetime_protocols/summaries/<sha256>/flb_input_oauth2_jwt_property_check/may_release/*/object/root/Formal/index",
+      "count": 72,
+      "example": [
+       "0",
+       "<absent>"
+      ]
+     },
+     {
+      "path": "callback_members/prepass/lifetime_protocols/summaries/<sha256>/flb_input_oauth2_jwt_property_check/may_release/*/object/root/Formal/scope",
+      "count": 72,
+      "example": [
+       "014c7665d60cd01258475820b5e4a99cec52d19d070dcbbb28a786d7bfc34470:flb_input_oauth2_jwt_property_check",
+       "<absent>"
+      ]
+     },
+     {
+      "path": "callback_members/prepass/lifetime_protocols/summaries/<sha256>/flb_input_plugin_property_check/may_release/*/destroyed_before",
+      "count": 72,
+      "example": [
+       "[]",
+       "<absent>"
+      ]
+     },
+     {
+      "path": "callback_members/prepass/lifetime_protocols/summaries/<sha256>/flb_input_plugin_property_check/may_release/*/object/root/Formal/index",
+      "count": 72,
+      "example": [
+       "0",
+       "<absent>"
+      ]
+     },
+     {
+      "path": "callback_members/prepass/lifetime_protocols/summaries/<sha256>/flb_input_plugin_property_check/may_release/*/object/root/Formal/scope",
+      "count": 72,
+      "example": [
+       "014c7665d60cd01258475820b5e4a99cec52d19d070dcbbb28a786d7bfc34470:flb_input_plugin_property_check",
+       "<absent>"
+      ]
+     },
+     {
+      "path": "contract_dependencies/declarations/__errno_location/hypothesis_evidence/contexts/*/build_identity",
+      "count": 65,
+      "example": [
+       "f4ceb875f0070e11722cd29fd4fa726afe79ca86395b09a3e0ea4205494742ad",
+       "86d2b75bbf1e434072bea7e5994b9fadb88c0aa2f047f8181682e428b4e48c13"
+      ]
+     },
+     {
+      "path": "contract_dependencies/declarations/__errno_location/hypothesis_evidence/contexts/*/source_identity",
+      "count": 65,
+      "example": [
+       "e3cd4dd3abd26bd74b9814040b56999dd88833a64fa1331b93702144a09a0c86",
+       "cc93da0e5b200e52f6cfafbb9cbd1134d69ee0f77a33013e11e6c0c0d054bfc2"
+      ]
+     },
+     {
+      "path": "contract_dependencies/declarations/flb_errno_print/hypothesis_evidence/contexts/*/build_identity",
+      "count": 60,
+      "example": [
+       "f4ceb875f0070e11722cd29fd4fa726afe79ca86395b09a3e0ea4205494742ad",
+       "86d2b75bbf1e434072bea7e5994b9fadb88c0aa2f047f8181682e428b4e48c13"
+      ]
+     },
+     {
+      "path": "contract_dependencies/declarations/flb_errno_print/hypothesis_evidence/contexts/*/source_identity",
+      "count": 60,
+      "example": [
+       "e3cd4dd3abd26bd74b9814040b56999dd88833a64fa1331b93702144a09a0c86",
+       "cc93da0e5b200e52f6cfafbb9cbd1134d69ee0f77a33013e11e6c0c0d054bfc2"
+      ]
+     },
+     {
+      "path": "contract_dependencies/declarations/flb_log_check/hypothesis_evidence/contexts/*/build_identity",
+      "count": 55,
+      "example": [
+       "584383eb8a1e602f38eaf731af85537d8f040df5c2355b272c6ffc5e666a054b",
+       "dbfde0846af3c28d824ddbdadbf4463619845ee0097958c0de16c8ef3ffb2e99"
+      ]
+     },
+     {
+      "path": "contract_dependencies/declarations/flb_log_check/hypothesis_evidence/contexts/*/source_identity",
+      "count": 55,
+      "example": [
+       "bb1872166474e17758685128ae154d18bd15e8347c56f8baeb664864ef7e4a66",
+       "c4e32c5ad4a993381b13c666a85022a77ed4f32206c92550bdf508f134434acf"
+      ]
+     },
+     {
+      "path": "contract_dependencies/declarations/flb_free/hypothesis_evidence/contexts/*/build_identity",
+      "count": 48,
+      "example": [
+       "5cae0098ec2f2ca3f37e4c2bda8b85894853f2e4227f0654f9d703568fe6b35b",
+       "482576a07d10b1853d2491a001e289fa85b39deea591dd36800a18078fa1b9c0"
+      ]
+     },
+     {
+      "path": "contract_dependencies/declarations/flb_free/hypothesis_evidence/contexts/*/source_identity",
+      "count": 48,
+      "example": [
+       "80b1853663df16b3bc29adabad6e106ca4e625fffa8c27d39325eb81f0bc70ee",
+       "3d7cba13be593a0c562a8d352ac9c3c7b13bb20d646dd8ef90c9e01c62a4230b"
+      ]
+     },
+     {
+      "path": "callback_members/lifetime_protocols/evidence/summaries/<sha256>/flb_input_collector_fd/open/*",
+      "count": 44,
+      "example": [
+       "indirect call has no lifetime summary",
+       "<absent>"
+      ]
+     },
+     {
+      "path": "callback_members/lifetime_protocols/evidence/summaries/<sha256>/engine_handle_event/open/*",
+      "count": 44,
+      "example": [
+       "indirect call has no lifetime summary",
+       "<absent>"
+      ]
+     },
+     {
+      "path": "callback_members/lifetime_protocols/evidence/summaries/<sha256>/input_collector_fd/open/*",
+      "count": 44,
+      "example": [
+       "indirect call has no lifetime summary",
+       "<absent>"
+      ]
+     },
+     {
+      "path": "callback_members/prepass/lifetime_protocols/summaries/<sha256>/flb_input_collector_fd/open/*",
+      "count": 44,
+      "example": [
+       "indirect call has no lifetime summary",
+       "<absent>"
+      ]
+     },
+     {
+      "path": "callback_members/prepass/lifetime_protocols/summaries/<sha256>/engine_handle_event/open/*",
+      "count": 44,
+      "example": [
+       "indirect call has no lifetime summary",
+       "<absent>"
+      ]
+     },
+     {
+      "path": "callback_members/prepass/lifetime_protocols/summaries/<sha256>/input_collector_fd/open/*",
+      "count": 44,
+      "example": [
+       "indirect call has no lifetime summary",
+       "<absent>"
+      ]
+     },
+     {
+      "path": "callback_members/lifetime_protocols/evidence/summaries/<sha256>/flb_input_collectors_start/open/*",
+      "count": 40,
+      "example": [
+       "member stores prevent holder snapshot stability",
+       "<absent>"
+      ]
+     },
+     {
+      "path": "callback_members/prepass/lifetime_protocols/summaries/<sha256>/flb_input_collectors_start/open/*",
+      "count": 40,
+      "example": [
+       "member stores prevent holder snapshot stability",
+       "<absent>"
+      ]
+     },
+     {
+      "path": "callback_members/lifetime_protocols/evidence/summaries/<sha256>/collector_create/open/*",
+      "count": 36,
+      "example": [
+       "member stores prevent holder snapshot stability",
+       "<absent>"
+      ]
+     },
+     {
+      "path": "callback_members/lifetime_protocols/evidence/summaries/<sha256>/flb_input_collector_delete/open/*",
+      "count": 36,
+      "example": [
+       "member stores prevent holder snapshot stability",
+       "<absent>"
+      ]
+     },
+     {
+      "path": "callback_members/lifetime_protocols/evidence/summaries/<sha256>/flb_input_collectors_signal_start/open/*",
+      "count": 36,
+      "example": [
+       "member stores prevent holder snapshot stability",
+       "<absent>"
+      ]
+     },
+     {
+      "path": "callback_members/lifetime_protocols/evidence/summaries/<sha256>/flb_input_set_collector_event/open/*",
+      "count": 36,
+      "example": [
+       "member stores prevent holder snapshot stability",
+       "<absent>"
+      ]
+     },
+     {
+      "path": "callback_members/lifetime_protocols/evidence/summaries/<sha256>/flb_input_set_collector_socket/open/*",
+      "count": 36,
+      "example": [
+       "member stores prevent holder snapshot stability",
+       "<absent>"
+      ]
+     },
+     {
+      "path": "callback_members/lifetime_protocols/evidence/summaries/<sha256>/flb_input_set_collector_time/open/*",
+      "count": 36,
+      "example": [
+       "member stores prevent holder snapshot stability",
+       "<absent>"
+      ]
+     },
+     {
+      "path": "callback_members/prepass/lifetime_protocols/summaries/<sha256>/collector_create/open/*",
+      "count": 36,
+      "example": [
+       "member stores prevent holder snapshot stability",
+       "<absent>"
+      ]
+     },
+     {
+      "path": "callback_members/prepass/lifetime_protocols/summaries/<sha256>/flb_input_collector_delete/open/*",
+      "count": 36,
+      "example": [
+       "member stores prevent holder snapshot stability",
+       "<absent>"
+      ]
+     },
+     {
+      "path": "callback_members/prepass/lifetime_protocols/summaries/<sha256>/flb_input_collectors_signal_start/open/*",
+      "count": 36,
+      "example": [
+       "member stores prevent holder snapshot stability",
+       "<absent>"
+      ]
+     },
+     {
+      "path": "callback_members/prepass/lifetime_protocols/summaries/<sha256>/flb_input_set_collector_event/open/*",
+      "count": 36,
+      "example": [
+       "member stores prevent holder snapshot stability",
+       "<absent>"
+      ]
+     },
+     {
+      "path": "callback_members/prepass/lifetime_protocols/summaries/<sha256>/flb_input_set_collector_socket/open/*",
+      "count": 36,
+      "example": [
+       "member stores prevent holder snapshot stability",
+       "<absent>"
+      ]
+     },
+     {
+      "path": "callback_members/prepass/lifetime_protocols/summaries/<sha256>/flb_input_set_collector_time/open/*",
+      "count": 36,
+      "example": [
+       "member stores prevent holder snapshot stability",
+       "<absent>"
+      ]
+     },
+     {
+      "path": "callback_members/lifetime_protocols/evidence/summaries/<sha256>/flb_input_collector_start/open/*",
+      "count": 28,
+      "example": [
+       "member stores prevent holder snapshot stability",
+       "<absent>"
+      ]
+     },
+     {
+      "path": "callback_members/prepass/lifetime_protocols/summaries/<sha256>/flb_input_collector_start/open/*",
+      "count": 28,
+      "example": [
+       "member stores prevent holder snapshot stability",
+       "<absent>"
+      ]
+     },
+     {
+      "path": "callback_members/lifetime_protocols/evidence/callers/<sha256>:flb_input_instance_destroy/*",
+      "count": 24,
+      "example": [
+       "014c7665d60cd01258475820b5e4a99cec52d19d070dcbbb28a786d7bfc34470:flb_input_exit_all",
+       "<absent>"
+      ]
+     },
+     {
+      "path": "callback_members/lifetime_protocols/evidence/summaries/<sha256>/flb_input_collector_resume/open/*",
+      "count": 24,
+      "example": [
+       "member stores prevent holder snapshot stability",
+       "<absent>"
+      ]
+     },
+     {
+      "path": "callback_members/prepass/lifetime_protocols/callers/<sha256>:flb_input_instance_destroy/*",
+      "count": 24,
+      "example": [
+       "014c7665d60cd01258475820b5e4a99cec52d19d070dcbbb28a786d7bfc34470:flb_input_exit_all",
+       "<absent>"
+      ]
+     },
+     {
+      "path": "callback_members/prepass/lifetime_protocols/summaries/<sha256>/flb_input_collector_resume/open/*",
+      "count": 24,
+      "example": [
+       "member stores prevent holder snapshot stability",
+       "<absent>"
+      ]
+     },
+     {
+      "path": "callback_members/lifetime_protocols/evidence/summaries/<sha256>/flb_input_collector_pause/open/*",
+      "count": 20,
+      "example": [
+       "member stores prevent holder snapshot stability",
+       "<absent>"
+      ]
+     },
+     {
+      "path": "callback_members/prepass/lifetime_protocols/summaries/<sha256>/flb_input_collector_pause/open/*",
+      "count": 20,
+      "example": [
+       "member stores prevent holder snapshot stability",
+       "<absent>"
+      ]
+     },
+     {
+      "path": "contract_dependencies/declarations/read/hypothesis_evidence/contexts/*/build_identity",
+      "count": 18,
+      "example": [
+       "f4ceb875f0070e11722cd29fd4fa726afe79ca86395b09a3e0ea4205494742ad",
+       "86d2b75bbf1e434072bea7e5994b9fadb88c0aa2f047f8181682e428b4e48c13"
+      ]
+     },
+     {
+      "path": "contract_dependencies/declarations/read/hypothesis_evidence/contexts/*/source_identity",
+      "count": 18,
+      "example": [
+       "e3cd4dd3abd26bd74b9814040b56999dd88833a64fa1331b93702144a09a0c86",
+       "cc93da0e5b200e52f6cfafbb9cbd1134d69ee0f77a33013e11e6c0c0d054bfc2"
+      ]
+     },
+     {
+      "path": "contract_dependencies/declarations/stat/hypothesis_evidence/contexts/*/build_identity",
+      "count": 18,
+      "example": [
+       "f4ceb875f0070e11722cd29fd4fa726afe79ca86395b09a3e0ea4205494742ad",
+       "86d2b75bbf1e434072bea7e5994b9fadb88c0aa2f047f8181682e428b4e48c13"
+      ]
+     },
+     {
+      "path": "contract_dependencies/declarations/stat/hypothesis_evidence/contexts/*/source_identity",
+      "count": 18,
+      "example": [
+       "e3cd4dd3abd26bd74b9814040b56999dd88833a64fa1331b93702144a09a0c86",
+       "cc93da0e5b200e52f6cfafbb9cbd1134d69ee0f77a33013e11e6c0c0d054bfc2"
+      ]
+     },
+     {
+      "path": "contract_dependencies/declarations/write/hypothesis_evidence/contexts/*/build_identity",
+      "count": 18,
+      "example": [
+       "f4ceb875f0070e11722cd29fd4fa726afe79ca86395b09a3e0ea4205494742ad",
+       "86d2b75bbf1e434072bea7e5994b9fadb88c0aa2f047f8181682e428b4e48c13"
+      ]
+     },
+     {
+      "path": "contract_dependencies/declarations/write/hypothesis_evidence/contexts/*/source_identity",
+      "count": 18,
+      "example": [
+       "e3cd4dd3abd26bd74b9814040b56999dd88833a64fa1331b93702144a09a0c86",
+       "cc93da0e5b200e52f6cfafbb9cbd1134d69ee0f77a33013e11e6c0c0d054bfc2"
+      ]
+     },
+     {
+      "path": "contract_dependencies/declarations/cfl_time_now/hypothesis_evidence/contexts/*/build_identity",
+      "count": 17,
+      "example": [
+       "a9b1e8ba1a30b20abe5f61a211c9c079bd7b891f4d29f82b4c7b77004b2e5cbc",
+       "ea67228a37671a134aff13e98202f0346692e0df0293bdd43998181e7a6a743d"
+      ]
+     },
+     {
+      "path": "contract_dependencies/declarations/cfl_time_now/hypothesis_evidence/contexts/*/source_identity",
+      "count": 17,
+      "example": [
+       "800c1fed609b1e41d897f1a45dc194200385515af210abd1434b2e5924d785cd",
+       "c5e9a3e62eca7c261b572530e4cd331440cb8efeeaaf8541f2c751f993a63e9c"
+      ]
+     },
+     {
+      "path": "contract_dependencies/declarations/strlen/hypothesis_evidence/contexts/*/build_identity",
+      "count": 17,
+      "example": [
+       "a9b1e8ba1a30b20abe5f61a211c9c079bd7b891f4d29f82b4c7b77004b2e5cbc",
+       "ea67228a37671a134aff13e98202f0346692e0df0293bdd43998181e7a6a743d"
+      ]
+     },
+     {
+      "path": "contract_dependencies/declarations/strlen/hypothesis_evidence/contexts/*/source_identity",
+      "count": 17,
+      "example": [
+       "800c1fed609b1e41d897f1a45dc194200385515af210abd1434b2e5924d785cd",
+       "c5e9a3e62eca7c261b572530e4cd331440cb8efeeaaf8541f2c751f993a63e9c"
+      ]
+     },
+     {
+      "path": "callback_members/lifetime_protocols/evidence/summaries/<sha256>/collector_start/open/*",
+      "count": 16,
+      "example": [
+       "member stores prevent holder snapshot stability",
+       "<absent>"
+      ]
+     },
+     {
+      "path": "callback_members/prepass/lifetime_protocols/summaries/<sha256>/collector_start/open/*",
+      "count": 16,
+      "example": [
+       "member stores prevent holder snapshot stability",
+       "<absent>"
+      ]
+     },
+     {
+      "path": "contract_dependencies/declarations/mk_list_add/hypothesis_evidence/contexts/*/build_identity",
+      "count": 16,
+      "example": [
+       "a9b1e8ba1a30b20abe5f61a211c9c079bd7b891f4d29f82b4c7b77004b2e5cbc",
+       "ea67228a37671a134aff13e98202f0346692e0df0293bdd43998181e7a6a743d"
+      ]
+     },
+     {
+      "path": "contract_dependencies/declarations/mk_list_add/hypothesis_evidence/contexts/*/source_identity",
+      "count": 16,
+      "example": [
+       "800c1fed609b1e41d897f1a45dc194200385515af210abd1434b2e5924d785cd",
+       "c5e9a3e62eca7c261b572530e4cd331440cb8efeeaaf8541f2c751f993a63e9c"
+      ]
+     },
+     {
+      "path": "contract_dependencies/declarations/mk_list_del/hypothesis_evidence/contexts/*/build_identity",
+      "count": 15,
+      "example": [
+       "a9b1e8ba1a30b20abe5f61a211c9c079bd7b891f4d29f82b4c7b77004b2e5cbc",
+       "ea67228a37671a134aff13e98202f0346692e0df0293bdd43998181e7a6a743d"
+      ]
+     },
+     {
+      "path": "contract_dependencies/declarations/mk_list_del/hypothesis_evidence/contexts/*/source_identity",
+      "count": 15,
+      "example": [
+       "800c1fed609b1e41d897f1a45dc194200385515af210abd1434b2e5924d785cd",
+       "c5e9a3e62eca7c261b572530e4cd331440cb8efeeaaf8541f2c751f993a63e9c"
+      ]
+     },
+     {
+      "path": "contract_dependencies/declarations/flb_input_instance_destroy/hypothesis_evidence/contexts/*/build_identity",
+      "count": 14,
+      "example": [
+       "0429acabf942c3aeffb80d82932b2b5b748f9285a27dd59ef10317dae38886fe",
+       "ccd7738f4dd27ff7241db1123876f84885469673bf167ccbc9ef4849f1850406"
+      ]
+     },
+     {
+      "path": "contract_dependencies/declarations/flb_input_instance_destroy/hypothesis_evidence/contexts/*/source_identity",
+      "count": 14,
+      "example": [
+       "0f32e44c0dab84a5b29105379e6db8da8865b7817ee0b574687185a376282342",
+       "33ad1885b59faf5df2f4a7deb693d2e27de594c178626d21231a80105c17e524"
+      ]
+     },
+     {
+      "path": "contract_dependencies/declarations/flb_sds_destroy/hypothesis_evidence/contexts/*/build_identity",
+      "count": 14,
+      "example": [
+       "9235a65e2ad781ee3f1e6fda7f7b8de6cdd3a1f1087722122f9620747f170147",
+       "d8f31d63a3ac4aa4c9e3ebcaba67190d8dbe21f818e4d4903bb7168ae13f07f2"
+      ]
+     },
+     {
+      "path": "contract_dependencies/declarations/flb_sds_destroy/hypothesis_evidence/contexts/*/source_identity",
+      "count": 14,
+      "example": [
+       "975ddc12219ab7c1f204a69958df1d66d85a9608b145c6d291f00edbeb1a6adf",
+       "238d7d1802b747f1e12a7014c329fb251a83553c21d610b334ff97e2d6a06ce2"
+      ]
+     },
+     {
+      "path": "contract_dependencies/declarations/time/hypothesis_evidence/contexts/*/build_identity",
+      "count": 13,
+      "example": [
+       "9235a65e2ad781ee3f1e6fda7f7b8de6cdd3a1f1087722122f9620747f170147",
+       "d8f31d63a3ac4aa4c9e3ebcaba67190d8dbe21f818e4d4903bb7168ae13f07f2"
+      ]
+     },
+     {
+      "path": "contract_dependencies/declarations/time/hypothesis_evidence/contexts/*/source_identity",
+      "count": 13,
+      "example": [
+       "975ddc12219ab7c1f204a69958df1d66d85a9608b145c6d291f00edbeb1a6adf",
+       "238d7d1802b747f1e12a7014c329fb251a83553c21d610b334ff97e2d6a06ce2"
+      ]
+     },
+     {
+      "path": "callback_members/lifetime_protocols/evidence/callers/<sha256>:collector_create/*",
+      "count": 12,
+      "example": [
+       "014c7665d60cd01258475820b5e4a99cec52d19d070dcbbb28a786d7bfc34470:flb_input_set_collector_event",
+       "<absent>"
+      ]
+     },
+     {
+      "path": "callback_members/lifetime_protocols/evidence/summaries/<sha256>/collector_start/requirements/*/holder/fields/*",
+      "count": 12,
+      "example": [
+       "evl",
+       "<absent>"
+      ]
+     },
+     {
+      "path": "callback_members/lifetime_protocols/evidence/summaries/<sha256>/collector_start/requirements/*/object/fields/*",
+      "count": 12,
+      "example": [
+       "event",
+       "<absent>"
+      ]
+     },
+     {
+      "path": "callback_members/lifetime_protocols/evidence/summaries/<sha256>/flb_input_collector_start/requirements/*/holder/fields/*",
+      "count": 12,
+      "example": [
+       "evl",
+       "<absent>"
+      ]
+     },
+     {
+      "path": "callback_members/lifetime_protocols/evidence/summaries/<sha256>/flb_input_collector_start/requirements/*/object/fields/*",
+      "count": 12,
+      "example": [
+       "event",
+       "<absent>"
+      ]
+     },
+     {
+      "path": "callback_members/lifetime_protocols/evidence/summaries/<sha256>/flb_input_collectors_signal_start/requirements/*/holder/fields/*",
+      "count": 12,
+      "example": [
+       "evl",
+       "<absent>"
+      ]
+     },
+     {
+      "path": "callback_members/lifetime_protocols/evidence/summaries/<sha256>/flb_input_collectors_signal_start/requirements/*/object/fields/*",
+      "count": 12,
+      "example": [
+       "event",
+       "<absent>"
+      ]
+     },
+     {
+      "path": "callback_members/lifetime_protocols/evidence/summaries/<sha256>/flb_input_collectors_start/requirements/*/holder/fields/*",
+      "count": 12,
+      "example": [
+       "evl",
+       "<absent>"
+      ]
+     },
+     {
+      "path": "callback_members/lifetime_protocols/evidence/summaries/<sha256>/flb_input_collectors_start/requirements/*/object/fields/*",
+      "count": 12,
+      "example": [
+       "event",
+       "<absent>"
+      ]
+     },
+     {
+      "path": "callback_members/lifetime_protocols/evidence/summaries/<sha256>/flb_utils_print_setup/open/*",
+      "count": 12,
+      "example": [
+       "<absent>",
+       "unproved holder frame across call: flb_log_check"
+      ]
+     },
+     {
+      "path": "callback_members/prepass/lifetime_protocols/callers/<sha256>:collector_create/*",
+      "count": 12,
+      "example": [
+       "014c7665d60cd01258475820b5e4a99cec52d19d070dcbbb28a786d7bfc34470:flb_input_set_collector_event",
+       "<absent>"
+      ]
+     },
+     {
+      "path": "callback_members/prepass/lifetime_protocols/summaries/<sha256>/collector_start/requirements/*/holder/fields/*",
+      "count": 12,
+      "example": [
+       "evl",
+       "<absent>"
+      ]
+     },
+     {
+      "path": "callback_members/prepass/lifetime_protocols/summaries/<sha256>/collector_start/requirements/*/object/fields/*",
+      "count": 12,
+      "example": [
+       "event",
+       "<absent>"
+      ]
+     },
+     {
+      "path": "callback_members/prepass/lifetime_protocols/summaries/<sha256>/flb_input_collector_start/requirements/*/holder/fields/*",
+      "count": 12,
+      "example": [
+       "evl",
+       "<absent>"
+      ]
+     },
+     {
+      "path": "callback_members/prepass/lifetime_protocols/summaries/<sha256>/flb_input_collector_start/requirements/*/object/fields/*",
+      "count": 12,
+      "example": [
+       "event",
+       "<absent>"
+      ]
+     },
+     {
+      "path": "callback_members/prepass/lifetime_protocols/summaries/<sha256>/flb_input_collectors_signal_start/requirements/*/holder/fields/*",
+      "count": 12,
+      "example": [
+       "evl",
+       "<absent>"
+      ]
+     },
+     {
+      "path": "callback_members/prepass/lifetime_protocols/summaries/<sha256>/flb_input_collectors_signal_start/requirements/*/object/fields/*",
+      "count": 12,
+      "example": [
+       "event",
+       "<absent>"
+      ]
+     },
+     {
+      "path": "callback_members/prepass/lifetime_protocols/summaries/<sha256>/flb_input_collectors_start/requirements/*/holder/fields/*",
+      "count": 12,
+      "example": [
+       "evl",
+       "<absent>"
+      ]
+     },
+     {
+      "path": "callback_members/prepass/lifetime_protocols/summaries/<sha256>/flb_input_collectors_start/requirements/*/object/fields/*",
+      "count": 12,
+      "example": [
+       "event",
+       "<absent>"
+      ]
+     },
+     {
+      "path": "callback_members/prepass/lifetime_protocols/summaries/<sha256>/flb_utils_print_setup/open/*",
+      "count": 12,
+      "example": [
+       "<absent>",
+       "unproved holder frame across call: flb_log_check"
+      ]
+     },
+     {
+      "path": "contract_dependencies/declarations/flb_calloc/hypothesis_evidence/contexts/*/build_identity",
+      "count": 12,
+      "example": [
+       "5cae0098ec2f2ca3f37e4c2bda8b85894853f2e4227f0654f9d703568fe6b35b",
+       "482576a07d10b1853d2491a001e289fa85b39deea591dd36800a18078fa1b9c0"
+      ]
+     },
+     {
+      "path": "contract_dependencies/declarations/flb_calloc/hypothesis_evidence/contexts/*/source_identity",
+      "count": 12,
+      "example": [
+       "80b1853663df16b3bc29adabad6e106ca4e625fffa8c27d39325eb81f0bc70ee",
+       "3d7cba13be593a0c562a8d352ac9c3c7b13bb20d646dd8ef90c9e01c62a4230b"
+      ]
+     },
+     {
+      "path": "contract_dependencies/declarations/close/hypothesis_evidence/contexts/*/build_identity",
+      "count": 10,
+      "example": [
+       "a9b1e8ba1a30b20abe5f61a211c9c079bd7b891f4d29f82b4c7b77004b2e5cbc",
+       "ea67228a37671a134aff13e98202f0346692e0df0293bdd43998181e7a6a743d"
+      ]
+     },
+     {
+      "path": "contract_dependencies/declarations/close/hypothesis_evidence/contexts/*/source_identity",
+      "count": 10,
+      "example": [
+       "800c1fed609b1e41d897f1a45dc194200385515af210abd1434b2e5924d785cd",
+       "c5e9a3e62eca7c261b572530e4cd331440cb8efeeaaf8541f2c751f993a63e9c"
+      ]
+     },
+     {
+      "path": "contract_dependencies/declarations/flb_tail_file_remove/hypothesis_evidence/contexts/*/build_identity",
+      "count": 10,
+      "example": [
+       "f4ceb875f0070e11722cd29fd4fa726afe79ca86395b09a3e0ea4205494742ad",
+       "86d2b75bbf1e434072bea7e5994b9fadb88c0aa2f047f8181682e428b4e48c13"
+      ]
+     },
+     {
+      "path": "contract_dependencies/declarations/flb_tail_file_remove/hypothesis_evidence/contexts/*/source_identity",
+      "count": 10,
+      "example": [
+       "e3cd4dd3abd26bd74b9814040b56999dd88833a64fa1331b93702144a09a0c86",
+       "cc93da0e5b200e52f6cfafbb9cbd1134d69ee0f77a33013e11e6c0c0d054bfc2"
+      ]
+     },
+     {
+      "path": "contract_dependencies/declarations/fstat/hypothesis_evidence/contexts/*/build_identity",
+      "count": 10,
+      "example": [
+       "f4ceb875f0070e11722cd29fd4fa726afe79ca86395b09a3e0ea4205494742ad",
+       "86d2b75bbf1e434072bea7e5994b9fadb88c0aa2f047f8181682e428b4e48c13"
+      ]
+     },
+     {
+      "path": "contract_dependencies/declarations/fstat/hypothesis_evidence/contexts/*/source_identity",
+      "count": 10,
+      "example": [
+       "e3cd4dd3abd26bd74b9814040b56999dd88833a64fa1331b93702144a09a0c86",
+       "cc93da0e5b200e52f6cfafbb9cbd1134d69ee0f77a33013e11e6c0c0d054bfc2"
+      ]
+     },
+     {
+      "path": "contract_dependencies/declarations/memcpy/hypothesis_evidence/contexts/*/build_identity",
+      "count": 10,
+      "example": [
+       "c8593d7bd8b5119db54a6e3af7809ec0210fce0413ccb7a0d25db3beee70ccad",
+       "b4e7d03048740477cd6b013521870f9a1778b43da49aa350800560d75637ba8a"
+      ]
+     },
+     {
+      "path": "contract_dependencies/declarations/memcpy/hypothesis_evidence/contexts/*/source_identity",
+      "count": 10,
+      "example": [
+       "02ba72734d94008d46685597a0f541b801917777e9860c17805e1f9854b83a1e",
+       "676dbfc36a7d713afc936ffda0d6427c1bb96b4cc0d4c319bb092a2903fc3122"
+      ]
+     },
+     {
+      "path": "contract_dependencies/declarations/flb_malloc/hypothesis_evidence/contexts/*/build_identity",
+      "count": 9,
+      "example": [
+       "c8593d7bd8b5119db54a6e3af7809ec0210fce0413ccb7a0d25db3beee70ccad",
+       "b4e7d03048740477cd6b013521870f9a1778b43da49aa350800560d75637ba8a"
+      ]
+     },
+     {
+      "path": "contract_dependencies/declarations/flb_malloc/hypothesis_evidence/contexts/*/source_identity",
+      "count": 9,
+      "example": [
+       "02ba72734d94008d46685597a0f541b801917777e9860c17805e1f9854b83a1e",
+       "676dbfc36a7d713afc936ffda0d6427c1bb96b4cc0d4c319bb092a2903fc3122"
+      ]
+     },
+     {
+      "path": "contract_dependencies/declarations/memset/hypothesis_evidence/contexts/*/build_identity",
+      "count": 9,
+      "example": [
+       "f4ceb875f0070e11722cd29fd4fa726afe79ca86395b09a3e0ea4205494742ad",
+       "86d2b75bbf1e434072bea7e5994b9fadb88c0aa2f047f8181682e428b4e48c13"
+      ]
+     },
+     {
+      "path": "contract_dependencies/declarations/memset/hypothesis_evidence/contexts/*/source_identity",
+      "count": 9,
+      "example": [
+       "e3cd4dd3abd26bd74b9814040b56999dd88833a64fa1331b93702144a09a0c86",
+       "cc93da0e5b200e52f6cfafbb9cbd1134d69ee0f77a33013e11e6c0c0d054bfc2"
+      ]
+     },
+     {
+      "path": "contract_dependencies/declarations/snprintf/hypothesis_evidence/contexts/*/build_identity",
+      "count": 9,
+      "example": [
+       "9235a65e2ad781ee3f1e6fda7f7b8de6cdd3a1f1087722122f9620747f170147",
+       "d8f31d63a3ac4aa4c9e3ebcaba67190d8dbe21f818e4d4903bb7168ae13f07f2"
+      ]
+     },
+     {
+      "path": "contract_dependencies/declarations/snprintf/hypothesis_evidence/contexts/*/source_identity",
+      "count": 9,
+      "example": [
+       "975ddc12219ab7c1f204a69958df1d66d85a9608b145c6d291f00edbeb1a6adf",
+       "238d7d1802b747f1e12a7014c329fb251a83553c21d610b334ff97e2d6a06ce2"
+      ]
+     },
+     {
+      "path": "contract_dependencies/declarations/strcmp/hypothesis_evidence/contexts/*/build_identity",
+      "count": 9,
+      "example": [
+       "bc750756928e92b3ac6acd37faed859df8b1755e137b464c7d431948763eb5e0",
+       "7cc9cedcb46e7542d6aa2e8ecf13c5a1f292a627a28a8289963c116390cdfb29"
+      ]
+     },
+     {
+      "path": "contract_dependencies/declarations/strcmp/hypothesis_evidence/contexts/*/source_identity",
+      "count": 9,
+      "example": [
+       "296e8e76aa8b2b85e922f80333ed552d2a56102f3fbc60ae72b8fd063b47c878",
+       "6f63f90d8e7eae986ebd166c77c06374a9ac51d69afae146883ca2fa6c0a0770"
+      ]
+     },
+     {
+      "path": "callback_members/lifetime_protocols/evidence/callers/<sha256>:flb_input_coro_collect/*",
+      "count": 8,
+      "example": [
+       "014c7665d60cd01258475820b5e4a99cec52d19d070dcbbb28a786d7bfc34470:flb_input_collector_fd",
+       "<absent>"
+      ]
+     },
+     {
+      "path": "callback_members/lifetime_protocols/evidence/summaries/<sha256>/collector_start/requirements/*/holder/root/Formal/index",
+      "count": 8,
+      "example": [
+       "0",
+       "<absent>"
+      ]
+     },
+     {
+      "path": "callback_members/lifetime_protocols/evidence/summaries/<sha256>/collector_start/requirements/*/holder/root/Formal/scope",
+      "count": 8,
+      "example": [
+       "014c7665d60cd01258475820b5e4a99cec52d19d070dcbbb28a786d7bfc34470:collector_start",
+       "<absent>"
+      ]
+     },
+     {
+      "path": "callback_members/lifetime_protocols/evidence/summaries/<sha256>/collector_start/requirements/*/object/root/Formal/index",
+      "count": 8,
+      "example": [
+       "0",
+       "<absent>"
+      ]
+     },
+     {
+      "path": "callback_members/lifetime_protocols/evidence/summaries/<sha256>/collector_start/requirements/*/object/root/Formal/scope",
+      "count": 8,
+      "example": [
+       "014c7665d60cd01258475820b5e4a99cec52d19d070dcbbb28a786d7bfc34470:collector_start",
+       "<absent>"
+      ]
+     },
+     {
+      "path": "callback_members/lifetime_protocols/evidence/summaries/<sha256>/collector_start/requirements/*/reason",
+      "count": 8,
+      "example": [
+       "lifetime-precondition-undischarged",
+       "<absent>"
+      ]
+     },
+     {
+      "path": "callback_members/lifetime_protocols/evidence/summaries/<sha256>/flb_input_collector_start/requirements/*/holder/root/Formal/index",
+      "count": 8,
+      "example": [
+       "0",
+       "<absent>"
+      ]
+     },
+     {
+      "path": "callback_members/lifetime_protocols/evidence/summaries/<sha256>/flb_input_collector_start/requirements/*/holder/root/Formal/scope",
+      "count": 8,
+      "example": [
+       "014c7665d60cd01258475820b5e4a99cec52d19d070dcbbb28a786d7bfc34470:collector_start",
+       "<absent>"
+      ]
+     },
+     {
+      "path": "callback_members/lifetime_protocols/evidence/summaries/<sha256>/flb_input_collector_start/requirements/*/object/root/Formal/index",
+      "count": 8,
+      "example": [
+       "0",
+       "<absent>"
+      ]
+     },
+     {
+      "path": "callback_members/lifetime_protocols/evidence/summaries/<sha256>/flb_input_collector_start/requirements/*/object/root/Formal/scope",
+      "count": 8,
+      "example": [
+       "014c7665d60cd01258475820b5e4a99cec52d19d070dcbbb28a786d7bfc34470:collector_start",
+       "<absent>"
+      ]
+     },
+     {
+      "path": "callback_members/lifetime_protocols/evidence/summaries/<sha256>/flb_input_collector_start/requirements/*/reason",
+      "count": 8,
+      "example": [
+       "lifetime-precondition-undischarged",
+       "<absent>"
+      ]
+     },
+     {
+      "path": "callback_members/lifetime_protocols/evidence/summaries/<sha256>/flb_input_collectors_signal_start/requirements/*/holder/root/Formal/index",
+      "count": 8,
+      "example": [
+       "0",
+       "<absent>"
+      ]
+     },
+     {
+      "path": "callback_members/lifetime_protocols/evidence/summaries/<sha256>/flb_input_collectors_signal_start/requirements/*/holder/root/Formal/scope",
+      "count": 8,
+      "example": [
+       "014c7665d60cd01258475820b5e4a99cec52d19d070dcbbb28a786d7bfc34470:collector_start",
+       "<absent>"
+      ]
+     },
+     {
+      "path": "callback_members/lifetime_protocols/evidence/summaries/<sha256>/flb_input_collectors_signal_start/requirements/*/object/root/Formal/index",
+      "count": 8,
+      "example": [
+       "0",
+       "<absent>"
+      ]
+     },
+     {
+      "path": "callback_members/lifetime_protocols/evidence/summaries/<sha256>/flb_input_collectors_signal_start/requirements/*/object/root/Formal/scope",
+      "count": 8,
+      "example": [
+       "014c7665d60cd01258475820b5e4a99cec52d19d070dcbbb28a786d7bfc34470:collector_start",
+       "<absent>"
+      ]
+     },
+     {
+      "path": "callback_members/lifetime_protocols/evidence/summaries/<sha256>/flb_input_collectors_signal_start/requirements/*/reason",
+      "count": 8,
+      "example": [
+       "lifetime-precondition-undischarged",
+       "<absent>"
+      ]
+     },
+     {
+      "path": "callback_members/lifetime_protocols/evidence/summaries/<sha256>/flb_input_collectors_start/requirements/*/holder/root/Formal/index",
+      "count": 8,
+      "example": [
+       "0",
+       "<absent>"
+      ]
+     },
+     {
+      "path": "callback_members/lifetime_protocols/evidence/summaries/<sha256>/flb_input_collectors_start/requirements/*/holder/root/Formal/scope",
+      "count": 8,
+      "example": [
+       "014c7665d60cd01258475820b5e4a99cec52d19d070dcbbb28a786d7bfc34470:collector_start",
+       "<absent>"
+      ]
+     },
+     {
+      "path": "callback_members/lifetime_protocols/evidence/summaries/<sha256>/flb_input_collectors_start/requirements/*/object/root/Formal/index",
+      "count": 8,
+      "example": [
+       "0",
+       "<absent>"
+      ]
+     },
+     {
+      "path": "callback_members/lifetime_protocols/evidence/summaries/<sha256>/flb_input_collectors_start/requirements/*/object/root/Formal/scope",
+      "count": 8,
+      "example": [
+       "014c7665d60cd01258475820b5e4a99cec52d19d070dcbbb28a786d7bfc34470:collector_start",
+       "<absent>"
+      ]
+     },
+     {
+      "path": "callback_members/lifetime_protocols/evidence/summaries/<sha256>/flb_input_collectors_start/requirements/*/reason",
+      "count": 8,
+      "example": [
+       "lifetime-precondition-undischarged",
+       "<absent>"
+      ]
+     },
+     {
+      "path": "callback_members/lifetime_protocols/evidence/summaries/<sha256>/flb_input_init_all/may_release/*/object/fields",
+      "count": 8,
+      "example": [
+       "[]",
+       "<absent>"
+      ]
+     },
+     {
+      "path": "callback_members/lifetime_protocols/evidence/summaries/<sha256>/flb_input_thread_collectors_start/open/*",
+      "count": 8,
+      "example": [
+       "unproved holder frame across call: flb_input_collector_start",
+       "<absent>"
+      ]
+     },
+     {
+      "path": "callback_members/prepass/lifetime_protocols/callers/<sha256>:flb_input_coro_collect/*",
+      "count": 8,
+      "example": [
+       "014c7665d60cd01258475820b5e4a99cec52d19d070dcbbb28a786d7bfc34470:flb_input_collector_fd",
+       "<absent>"
+      ]
+     },
+     {
+      "path": "callback_members/prepass/lifetime_protocols/summaries/<sha256>/collector_start/requirements/*/holder/root/Formal/index",
+      "count": 8,
+      "example": [
+       "0",
+       "<absent>"
+      ]
+     },
+     {
+      "path": "callback_members/prepass/lifetime_protocols/summaries/<sha256>/collector_start/requirements/*/holder/root/Formal/scope",
+      "count": 8,
+      "example": [
+       "014c7665d60cd01258475820b5e4a99cec52d19d070dcbbb28a786d7bfc34470:collector_start",
+       "<absent>"
+      ]
+     },
+     {
+      "path": "callback_members/prepass/lifetime_protocols/summaries/<sha256>/collector_start/requirements/*/object/root/Formal/index",
+      "count": 8,
+      "example": [
+       "0",
+       "<absent>"
+      ]
+     },
+     {
+      "path": "callback_members/prepass/lifetime_protocols/summaries/<sha256>/collector_start/requirements/*/object/root/Formal/scope",
+      "count": 8,
+      "example": [
+       "014c7665d60cd01258475820b5e4a99cec52d19d070dcbbb28a786d7bfc34470:collector_start",
+       "<absent>"
+      ]
+     },
+     {
+      "path": "callback_members/prepass/lifetime_protocols/summaries/<sha256>/collector_start/requirements/*/reason",
+      "count": 8,
+      "example": [
+       "lifetime-precondition-undischarged",
+       "<absent>"
+      ]
+     },
+     {
+      "path": "callback_members/prepass/lifetime_protocols/summaries/<sha256>/flb_input_collector_start/requirements/*/holder/root/Formal/index",
+      "count": 8,
+      "example": [
+       "0",
+       "<absent>"
+      ]
+     },
+     {
+      "path": "callback_members/prepass/lifetime_protocols/summaries/<sha256>/flb_input_collector_start/requirements/*/holder/root/Formal/scope",
+      "count": 8,
+      "example": [
+       "014c7665d60cd01258475820b5e4a99cec52d19d070dcbbb28a786d7bfc34470:collector_start",
+       "<absent>"
+      ]
+     },
+     {
+      "path": "callback_members/prepass/lifetime_protocols/summaries/<sha256>/flb_input_collector_start/requirements/*/object/root/Formal/index",
+      "count": 8,
+      "example": [
+       "0",
+       "<absent>"
+      ]
+     },
+     {
+      "path": "callback_members/prepass/lifetime_protocols/summaries/<sha256>/flb_input_collector_start/requirements/*/object/root/Formal/scope",
+      "count": 8,
+      "example": [
+       "014c7665d60cd01258475820b5e4a99cec52d19d070dcbbb28a786d7bfc34470:collector_start",
+       "<absent>"
+      ]
+     },
+     {
+      "path": "callback_members/prepass/lifetime_protocols/summaries/<sha256>/flb_input_collector_start/requirements/*/reason",
+      "count": 8,
+      "example": [
+       "lifetime-precondition-undischarged",
+       "<absent>"
+      ]
+     },
+     {
+      "path": "callback_members/prepass/lifetime_protocols/summaries/<sha256>/flb_input_collectors_signal_start/requirements/*/holder/root/Formal/index",
+      "count": 8,
+      "example": [
+       "0",
+       "<absent>"
+      ]
+     },
+     {
+      "path": "callback_members/prepass/lifetime_protocols/summaries/<sha256>/flb_input_collectors_signal_start/requirements/*/holder/root/Formal/scope",
+      "count": 8,
+      "example": [
+       "014c7665d60cd01258475820b5e4a99cec52d19d070dcbbb28a786d7bfc34470:collector_start",
+       "<absent>"
+      ]
+     },
+     {
+      "path": "callback_members/prepass/lifetime_protocols/summaries/<sha256>/flb_input_collectors_signal_start/requirements/*/object/root/Formal/index",
+      "count": 8,
+      "example": [
+       "0",
+       "<absent>"
+      ]
+     },
+     {
+      "path": "callback_members/prepass/lifetime_protocols/summaries/<sha256>/flb_input_collectors_signal_start/requirements/*/object/root/Formal/scope",
+      "count": 8,
+      "example": [
+       "014c7665d60cd01258475820b5e4a99cec52d19d070dcbbb28a786d7bfc34470:collector_start",
+       "<absent>"
+      ]
+     },
+     {
+      "path": "callback_members/prepass/lifetime_protocols/summaries/<sha256>/flb_input_collectors_signal_start/requirements/*/reason",
+      "count": 8,
+      "example": [
+       "lifetime-precondition-undischarged",
+       "<absent>"
+      ]
+     },
+     {
+      "path": "callback_members/prepass/lifetime_protocols/summaries/<sha256>/flb_input_collectors_start/requirements/*/holder/root/Formal/index",
+      "count": 8,
+      "example": [
+       "0",
+       "<absent>"
+      ]
+     },
+     {
+      "path": "callback_members/prepass/lifetime_protocols/summaries/<sha256>/flb_input_collectors_start/requirements/*/holder/root/Formal/scope",
+      "count": 8,
+      "example": [
+       "014c7665d60cd01258475820b5e4a99cec52d19d070dcbbb28a786d7bfc34470:collector_start",
+       "<absent>"
+      ]
+     },
+     {
+      "path": "callback_members/prepass/lifetime_protocols/summaries/<sha256>/flb_input_collectors_start/requirements/*/object/root/Formal/index",
+      "count": 8,
+      "example": [
+       "0",
+       "<absent>"
+      ]
+     },
+     {
+      "path": "callback_members/prepass/lifetime_protocols/summaries/<sha256>/flb_input_collectors_start/requirements/*/object/root/Formal/scope",
+      "count": 8,
+      "example": [
+       "014c7665d60cd01258475820b5e4a99cec52d19d070dcbbb28a786d7bfc34470:collector_start",
+       "<absent>"
+      ]
+     },
+     {
+      "path": "callback_members/prepass/lifetime_protocols/summaries/<sha256>/flb_input_collectors_start/requirements/*/reason",
+      "count": 8,
+      "example": [
+       "lifetime-precondition-undischarged",
+       "<absent>"
+      ]
+     },
+     {
+      "path": "callback_members/prepass/lifetime_protocols/summaries/<sha256>/flb_input_init_all/may_release/*/object/fields",
+      "count": 8,
+      "example": [
+       "[]",
+       "<absent>"
+      ]
+     },
+     {
+      "path": "callback_members/prepass/lifetime_protocols/summaries/<sha256>/flb_input_thread_collectors_start/open/*",
+      "count": 8,
+      "example": [
+       "unproved holder frame across call: flb_input_collector_start",
+       "<absent>"
+      ]
+     },
+     {
+      "path": "contract_dependencies/declarations/flb_hash_table_del/hypothesis_evidence/contexts/*/build_identity",
+      "count": 8,
+      "example": [
+       "a9b1e8ba1a30b20abe5f61a211c9c079bd7b891f4d29f82b4c7b77004b2e5cbc",
+       "ea67228a37671a134aff13e98202f0346692e0df0293bdd43998181e7a6a743d"
+      ]
+     },
+     {
+      "path": "contract_dependencies/declarations/flb_hash_table_del/hypothesis_evidence/contexts/*/source_identity",
+      "count": 8,
+      "example": [
+       "800c1fed609b1e41d897f1a45dc194200385515af210abd1434b2e5924d785cd",
+       "c5e9a3e62eca7c261b572530e4cd331440cb8efeeaaf8541f2c751f993a63e9c"
+      ]
+     },
+     {
+      "path": "contract_dependencies/declarations/listen/hypothesis_evidence/contexts/*/build_identity",
+      "count": 8,
+      "example": [
+       "0429acabf942c3aeffb80d82932b2b5b748f9285a27dd59ef10317dae38886fe",
+       "ccd7738f4dd27ff7241db1123876f84885469673bf167ccbc9ef4849f1850406"
+      ]
+     },
+     {
+      "path": "contract_dependencies/declarations/listen/hypothesis_evidence/contexts/*/source_identity",
+      "count": 8,
+      "example": [
+       "0f32e44c0dab84a5b29105379e6db8da8865b7817ee0b574687185a376282342",
+       "33ad1885b59faf5df2f4a7deb693d2e27de594c178626d21231a80105c17e524"
+      ]
+     },
+     {
+      "path": "contract_dependencies/declarations/pthread_mutex_lock/hypothesis_evidence/contexts/*/build_identity",
+      "count": 8,
+      "example": [
+       "bc750756928e92b3ac6acd37faed859df8b1755e137b464c7d431948763eb5e0",
+       "7cc9cedcb46e7542d6aa2e8ecf13c5a1f292a627a28a8289963c116390cdfb29"
+      ]
+     },
+     {
+      "path": "contract_dependencies/declarations/pthread_mutex_lock/hypothesis_evidence/contexts/*/source_identity",
+      "count": 8,
+      "example": [
+       "296e8e76aa8b2b85e922f80333ed552d2a56102f3fbc60ae72b8fd063b47c878",
+       "6f63f90d8e7eae986ebd166c77c06374a9ac51d69afae146883ca2fa6c0a0770"
+      ]
+     },
+     {
+      "path": "contract_dependencies/declarations/pthread_mutex_unlock/hypothesis_evidence/contexts/*/build_identity",
+      "count": 8,
+      "example": [
+       "bc750756928e92b3ac6acd37faed859df8b1755e137b464c7d431948763eb5e0",
+       "7cc9cedcb46e7542d6aa2e8ecf13c5a1f292a627a28a8289963c116390cdfb29"
+      ]
+     },
+     {
+      "path": "contract_dependencies/declarations/pthread_mutex_unlock/hypothesis_evidence/contexts/*/source_identity",
+      "count": 8,
+      "example": [
+       "296e8e76aa8b2b85e922f80333ed552d2a56102f3fbc60ae72b8fd063b47c878",
+       "6f63f90d8e7eae986ebd166c77c06374a9ac51d69afae146883ca2fa6c0a0770"
+      ]
+     },
+     {
+      "path": "contract_dependencies/declarations/mk_event_channel_create/hypothesis_evidence/contexts/*/build_identity",
+      "count": 6,
+      "example": [
+       "0429acabf942c3aeffb80d82932b2b5b748f9285a27dd59ef10317dae38886fe",
+       "ccd7738f4dd27ff7241db1123876f84885469673bf167ccbc9ef4849f1850406"
+      ]
+     },
+     {
+      "path": "contract_dependencies/declarations/mk_event_channel_create/hypothesis_evidence/contexts/*/source_identity",
+      "count": 6,
+      "example": [
+       "0f32e44c0dab84a5b29105379e6db8da8865b7817ee0b574687185a376282342",
+       "33ad1885b59faf5df2f4a7deb693d2e27de594c178626d21231a80105c17e524"
+      ]
+     },
+     {
+      "path": "contract_dependencies/declarations/mk_event_del/hypothesis_evidence/contexts/*/build_identity",
+      "count": 6,
+      "example": [
+       "0429acabf942c3aeffb80d82932b2b5b748f9285a27dd59ef10317dae38886fe",
+       "ccd7738f4dd27ff7241db1123876f84885469673bf167ccbc9ef4849f1850406"
+      ]
+     },
+     {
+      "path": "contract_dependencies/declarations/mk_event_del/hypothesis_evidence/contexts/*/source_identity",
+      "count": 6,
+      "example": [
+       "0f32e44c0dab84a5b29105379e6db8da8865b7817ee0b574687185a376282342",
+       "33ad1885b59faf5df2f4a7deb693d2e27de594c178626d21231a80105c17e524"
+      ]
+     },
+     {
+      "path": "contract_dependencies/declarations/flb_input_set_collector_time/hypothesis_evidence/contexts/*/build_identity",
+      "count": 5,
+      "example": [
+       "f4ceb875f0070e11722cd29fd4fa726afe79ca86395b09a3e0ea4205494742ad",
+       "86d2b75bbf1e434072bea7e5994b9fadb88c0aa2f047f8181682e428b4e48c13"
+      ]
+     },
+     {
+      "path": "contract_dependencies/declarations/flb_input_set_collector_time/hypothesis_evidence/contexts/*/source_identity",
+      "count": 5,
+      "example": [
+       "e3cd4dd3abd26bd74b9814040b56999dd88833a64fa1331b93702144a09a0c86",
+       "cc93da0e5b200e52f6cfafbb9cbd1134d69ee0f77a33013e11e6c0c0d054bfc2"
+      ]
+     },
+     {
+      "path": "contract_dependencies/declarations/flb_tail_config_destroy/hypothesis_evidence/contexts/*/build_identity",
+      "count": 5,
+      "example": [
+       "f4ceb875f0070e11722cd29fd4fa726afe79ca86395b09a3e0ea4205494742ad",
+       "86d2b75bbf1e434072bea7e5994b9fadb88c0aa2f047f8181682e428b4e48c13"
+      ]
+     },
+     {
+      "path": "contract_dependencies/declarations/flb_tail_config_destroy/hypothesis_evidence/contexts/*/source_identity",
+      "count": 5,
+      "example": [
+       "e3cd4dd3abd26bd74b9814040b56999dd88833a64fa1331b93702144a09a0c86",
+       "cc93da0e5b200e52f6cfafbb9cbd1134d69ee0f77a33013e11e6c0c0d054bfc2"
+      ]
+     },
+     {
+      "path": "contract_dependencies/declarations/strcasecmp/hypothesis_evidence/contexts/*/build_identity",
+      "count": 5,
+      "example": [
+       "5cae0098ec2f2ca3f37e4c2bda8b85894853f2e4227f0654f9d703568fe6b35b",
+       "482576a07d10b1853d2491a001e289fa85b39deea591dd36800a18078fa1b9c0"
+      ]
+     },
+     {
+      "path": "contract_dependencies/declarations/strcasecmp/hypothesis_evidence/contexts/*/source_identity",
+      "count": 5,
+      "example": [
+       "80b1853663df16b3bc29adabad6e106ca4e625fffa8c27d39325eb81f0bc70ee",
+       "3d7cba13be593a0c562a8d352ac9c3c7b13bb20d646dd8ef90c9e01c62a4230b"
+      ]
+     },
+     {
+      "path": "contract_dependencies/declarations/strstr/hypothesis_evidence/contexts/*/build_identity",
+      "count": 5,
+      "example": [
+       "9235a65e2ad781ee3f1e6fda7f7b8de6cdd3a1f1087722122f9620747f170147",
+       "d8f31d63a3ac4aa4c9e3ebcaba67190d8dbe21f818e4d4903bb7168ae13f07f2"
+      ]
+     },
+     {
+      "path": "contract_dependencies/declarations/strstr/hypothesis_evidence/contexts/*/source_identity",
+      "count": 5,
+      "example": [
+       "975ddc12219ab7c1f204a69958df1d66d85a9608b145c6d291f00edbeb1a6adf",
+       "238d7d1802b747f1e12a7014c329fb251a83553c21d610b334ff97e2d6a06ce2"
+      ]
+     },
+     {
+      "path": "callback_members/lifetime_protocols/evidence/callers/<sha256>:collector_start/*",
+      "count": 4,
+      "example": [
+       "014c7665d60cd01258475820b5e4a99cec52d19d070dcbbb28a786d7bfc34470:flb_input_collector_start",
+       "<absent>"
+      ]
+     },
+     {
+      "path": "callback_members/lifetime_protocols/evidence/callers/<sha256>:flb_input_collector_destroy/*",
+      "count": 4,
+      "example": [
+       "014c7665d60cd01258475820b5e4a99cec52d19d070dcbbb28a786d7bfc34470:flb_input_instance_destroy",
+       "<absent>"
+      ]
+     },
+     {
+      "path": "callback_members/lifetime_protocols/evidence/callers/<sha256>:flb_input_collector_pause/*",
+      "count": 4,
+      "example": [
+       "014c7665d60cd01258475820b5e4a99cec52d19d070dcbbb28a786d7bfc34470:flb_input_collector_delete",
+       "<absent>"
+      ]
+     },
+     {
+      "path": "callback_members/lifetime_protocols/evidence/callers/<sha256>:flb_input_collector_start/*",
+      "count": 4,
+      "example": [
+       "014c7665d60cd01258475820b5e4a99cec52d19d070dcbbb28a786d7bfc34470:flb_input_collectors_signal_start",
+       "<absent>"
+      ]
+     },
+     {
+      "path": "callback_members/lifetime_protocols/evidence/callers/<sha256>:flb_input_collectors_signal_start/*",
+      "count": 4,
+      "example": [
+       "014c7665d60cd01258475820b5e4a99cec52d19d070dcbbb28a786d7bfc34470:flb_input_collectors_start",
+       "<absent>"
+      ]
+     },
+     {
+      "path": "callback_members/lifetime_protocols/evidence/callers/<sha256>:flb_input_http_server_property_check/*",
+      "count": 4,
+      "example": [
+       "014c7665d60cd01258475820b5e4a99cec52d19d070dcbbb28a786d7bfc34470:flb_input_instance_init",
+       "<absent>"
+      ]
+     },
+     {
+      "path": "callback_members/lifetime_protocols/evidence/callers/<sha256>:flb_input_instance_init/*",
+      "count": 4,
+      "example": [
+       "014c7665d60cd01258475820b5e4a99cec52d19d070dcbbb28a786d7bfc34470:flb_input_init_all",
+       "<absent>"
+      ]
+     },
+     {
+      "path": "callback_members/lifetime_protocols/evidence/callers/<sha256>:flb_input_net_property_check/*",
+      "count": 4,
+      "example": [
+       "014c7665d60cd01258475820b5e4a99cec52d19d070dcbbb28a786d7bfc34470:flb_input_instance_init",
+       "<absent>"
+      ]
+     },
+     {
+      "path": "callback_members/lifetime_protocols/evidence/callers/<sha256>:flb_input_oauth2_jwt_property_check/*",
+      "count": 4,
+      "example": [
+       "014c7665d60cd01258475820b5e4a99cec52d19d070dcbbb28a786d7bfc34470:flb_input_instance_init",
+       "<absent>"
+      ]
+     },
+     {
+      "path": "callback_members/lifetime_protocols/evidence/callers/<sha256>:flb_input_plugin_property_check/*",
+      "count": 4,
+      "example": [
+       "014c7665d60cd01258475820b5e4a99cec52d19d070dcbbb28a786d7bfc34470:flb_input_instance_init",
+       "<absent>"
+      ]
+     },
+     {
+      "path": "callback_members/lifetime_protocols/evidence/callers/<sha256>:engine_handle_event/*",
+      "count": 4,
+      "example": [
+       "038c223a8162b5234f549196c510f0ee9c636dbfd23bfd68ae6997175811bf5c:input_thread",
+       "<absent>"
+      ]
+     },
+     {
+      "path": "callback_members/lifetime_protocols/evidence/callers/<sha256>:flb_input_thread_collectors_start/*",
+      "count": 4,
+      "example": [
+       "038c223a8162b5234f549196c510f0ee9c636dbfd23bfd68ae6997175811bf5c:input_thread",
+       "<absent>"
+      ]
+     },
+     {
+      "path": "callback_members/lifetime_protocols/evidence/callers/<sha256>:input_collector_fd/*",
+      "count": 4,
+      "example": [
+       "038c223a8162b5234f549196c510f0ee9c636dbfd23bfd68ae6997175811bf5c:engine_handle_event",
+       "<absent>"
+      ]
+     },
+     {
+      "path": "callback_members/lifetime_protocols/evidence/summaries/<sha256>/collector_create/may_poison",
+      "count": 4,
+      "example": [
+       "[]",
+       "<absent>"
+      ]
+     },
+     {
+      "path": "callback_members/lifetime_protocols/evidence/summaries/<sha256>/collector_create/may_register",
+      "count": 4,
+      "example": [
+       "[]",
+       "<absent>"
+      ]
+     },
+     {
+      "path": "callback_members/lifetime_protocols/evidence/summaries/<sha256>/collector_create/may_release",
+      "count": 4,
+      "example": [
+       "[]",
+       "<absent>"
+      ]
+     },
+     {
+      "path": "callback_members/lifetime_protocols/evidence/summaries/<sha256>/collector_create/must_end",
+      "count": 4,
+      "example": [
+       "[]",
+       "<absent>"
+      ]
+     },
+     {
+      "path": "callback_members/lifetime_protocols/evidence/summaries/<sha256>/collector_create/poison_all",
+      "count": 4,
+      "example": [
+       "False",
+       "<absent>"
+      ]
+     },
+     {
+      "path": "callback_members/lifetime_protocols/evidence/summaries/<sha256>/collector_create/requirements",
+      "count": 4,
+      "example": [
+       "[]",
+       "<absent>"
+      ]
+     },
+     {
+      "path": "callback_members/lifetime_protocols/evidence/summaries/<sha256>/collector_start/may_poison",
+      "count": 4,
+      "example": [
+       "[]",
+       "<absent>"
+      ]
+     },
+     {
+      "path": "callback_members/lifetime_protocols/evidence/summaries/<sha256>/collector_start/may_register/*/holder/fields/*",
+      "count": 4,
+      "example": [
+       "evl",
+       "<absent>"
+      ]
+     },
+     {
+      "path": "callback_members/lifetime_protocols/evidence/summaries/<sha256>/collector_start/may_register/*/holder/root/Formal/index",
+      "count": 4,
+      "example": [
+       "0",
+       "<absent>"
+      ]
+     },
+     {
+      "path": "callback_members/lifetime_protocols/evidence/summaries/<sha256>/collector_start/may_register/*/holder/root/Formal/scope",
+      "count": 4,
+      "example": [
+       "014c7665d60cd01258475820b5e4a99cec52d19d070dcbbb28a786d7bfc34470:collector_start",
+       "<absent>"
+      ]
+     },
+     {
+      "path": "callback_members/lifetime_protocols/evidence/summaries/<sha256>/collector_start/may_register/*/object/fields/*",
+      "count": 4,
+      "example": [
+       "event",
+       "<absent>"
+      ]
+     },
+     {
+      "path": "callback_members/lifetime_protocols/evidence/summaries/<sha256>/collector_start/may_register/*/object/root/Formal/index",
+      "count": 4,
+      "example": [
+       "0",
+       "<absent>"
+      ]
+     },
+     {
+      "path": "callback_members/lifetime_protocols/evidence/summaries/<sha256>/collector_start/may_register/*/object/root/Formal/scope",
+      "count": 4,
+      "example": [
+       "014c7665d60cd01258475820b5e4a99cec52d19d070dcbbb28a786d7bfc34470:collector_start",
+       "<absent>"
+      ]
+     },
+     {
+      "path": "callback_members/lifetime_protocols/evidence/summaries/<sha256>/collector_start/may_register/*/poisoned",
+      "count": 4,
+      "example": [
+       "False",
+       "<absent>"
+      ]
+     },
+     {
+      "path": "callback_members/lifetime_protocols/evidence/summaries/<sha256>/collector_start/may_release/*/destroyed_before",
+      "count": 4,
+      "example": [
+       "[]",
+       "<absent>"
+      ]
+     },
+     {
+      "path": "callback_members/lifetime_protocols/evidence/summaries/<sha256>/collector_start/may_release/*/object/fields/*",
+      "count": 4,
+      "example": [
+       "fd_event",
+       "<absent>"
+      ]
+     },
+     {
+      "path": "callback_members/lifetime_protocols/evidence/summaries/<sha256>/collector_start/may_release/*/object/root/Formal/index",
+      "count": 4,
+      "example": [
+       "0",
+       "<absent>"
+      ]
+     },
+     {
+      "path": "callback_members/lifetime_protocols/evidence/summaries/<sha256>/collector_start/may_release/*/object/root/Formal/scope",
+      "count": 4,
+      "example": [
+       "014c7665d60cd01258475820b5e4a99cec52d19d070dcbbb28a786d7bfc34470:collector_start",
+       "<absent>"
+      ]
+     },
+     {
+      "path": "callback_members/lifetime_protocols/evidence/summaries/<sha256>/collector_start/must_end",
+      "count": 4,
+      "example": [
+       "[]",
+       "<absent>"
+      ]
+     },
+     {
+      "path": "callback_members/lifetime_protocols/evidence/summaries/<sha256>/collector_start/poison_all",
+      "count": 4,
+      "example": [
+       "False",
+       "<absent>"
+      ]
+     },
+     {
+      "path": "callback_members/lifetime_protocols/evidence/summaries/<sha256>/flb_input_collector_delete/may_poison",
+      "count": 4,
+      "example": [
+       "[]",
+       "<absent>"
+      ]
+     },
+     {
+      "path": "callback_members/lifetime_protocols/evidence/summaries/<sha256>/flb_input_collector_delete/may_register",
+      "count": 4,
+      "example": [
+       "[]",
+       "<absent>"
+      ]
+     },
+     {
+      "path": "callback_members/lifetime_protocols/evidence/summaries/<sha256>/flb_input_collector_delete/may_release",
+      "count": 4,
+      "example": [
+       "[]",
+       "<absent>"
+      ]
+     }
+    ]
+   }
+  },
+  "resource-diagnostics.invocation.json": {
+   "bytes": [
+    6790,
+    6776
+   ],
+   "raw_identical": false,
+   "identical_after_substitution": false,
+   "substituted": {
+    "/media/Data/GitHub/quirin-lang/private/w47-tail/attempt-1/prep/fluent-bit-clang-production/compile_commands.json": 2
+   },
+   "target_collisions": {
+    "/media/Data/GitHub/quirin-lang/private/w47-tail/attempt-1/prep": 4
+   },
+   "structural": {
+    "differing_leaves": 2,
+    "pattern_count": 2,
+    "patterns": [
+     {
+      "path": "compile_database_sha256",
+      "count": 1,
+      "example": [
+       "30de8c85606675a324c4f218954bdbe9c0e36f84eb72483e17cad83a3ee5c318",
+       "faf446759b31f892c9ffe03c76719875e9910682515cdd9acc908dc5142f8157"
+      ]
+     },
+     {
+      "path": "memory_admission/phases/*/tasks",
+      "count": 1,
+      "example": [
+       "676",
+       "814"
+      ]
+     }
+    ]
+   }
+  },
+  "resource-diagnostics.json": {
+   "bytes": [
+    3756952,
+    3772408
+   ],
+   "raw_identical": false,
+   "identical_after_substitution": false,
+   "substituted": {
+    "/home/cosmo/Documents/GitHub/qcore-c/private/w47-tail/attempt-1/prep": 2576
+   },
+   "target_collisions": {
+    "/media/Data/GitHub/quirin-lang/private/w47-tail/attempt-1/prep": 16
+   },
+   "structural": {
+    "differing_leaves": 848,
+    "pattern_count": 8,
+    "patterns": [
+     {
+      "path": "units/*/functions/*/hypothesis_context/build_identity",
+      "count": 404,
+      "example": [
+       "0429acabf942c3aeffb80d82932b2b5b748f9285a27dd59ef10317dae38886fe",
+       "ccd7738f4dd27ff7241db1123876f84885469673bf167ccbc9ef4849f1850406"
+      ]
+     },
+     {
+      "path": "units/*/functions/*/hypothesis_context/source_identity",
+      "count": 404,
+      "example": [
+       "0f32e44c0dab84a5b29105379e6db8da8865b7817ee0b574687185a376282342",
+       "33ad1885b59faf5df2f4a7deb693d2e27de594c178626d21231a80105c17e524"
+      ]
+     },
+     {
+      "path": "units/*/compile_configuration/compile_task_identity/preprocessed_source_sha256",
+      "count": 16,
+      "example": [
+       "0f32e44c0dab84a5b29105379e6db8da8865b7817ee0b574687185a376282342",
+       "33ad1885b59faf5df2f4a7deb693d2e27de594c178626d21231a80105c17e524"
+      ]
+     },
+     {
+      "path": "units/*/compile_configuration/inventory_sha256",
+      "count": 16,
+      "example": [
+       "585a99cc484a09bdb3965142cfeb31133a13c391cdb4c6c91ba26fe6fa2da055",
+       "e1755bca691156aa3d4bb0c1404c0737cb1c6cd3b9cb71b42dfdffff4a850094"
+      ]
+     },
+     {
+      "path": "units/*/functions/*/reading_site_evidence/*/context/build_identity",
+      "count": 2,
+      "example": [
+       "bc750756928e92b3ac6acd37faed859df8b1755e137b464c7d431948763eb5e0",
+       "7cc9cedcb46e7542d6aa2e8ecf13c5a1f292a627a28a8289963c116390cdfb29"
+      ]
+     },
+     {
+      "path": "units/*/functions/*/reading_site_evidence/*/context/source_identity",
+      "count": 2,
+      "example": [
+       "296e8e76aa8b2b85e922f80333ed552d2a56102f3fbc60ae72b8fd063b47c878",
+       "6f63f90d8e7eae986ebd166c77c06374a9ac51d69afae146883ca2fa6c0a0770"
+      ]
+     },
+     {
+      "path": "units/*/functions/*/reading_site_evidence/*/id",
+      "count": 2,
+      "example": [
+       "889c46473f38b3e70464913a5702110ce52594eeda39482d5a83c863a737f15d",
+       "91ea8d8c7ebd5b26f6ec781bf5dfcd575a50d442f57455eb9dd15529db67748b"
+      ]
+     },
+     {
+      "path": "units/*/functions/*/reading_site_evidence/*/observation/primary_source_sha256",
+      "count": 2,
+      "example": [
+       "296e8e76aa8b2b85e922f80333ed552d2a56102f3fbc60ae72b8fd063b47c878",
+       "6f63f90d8e7eae986ebd166c77c06374a9ac51d69afae146883ca2fa6c0a0770"
+      ]
+     }
+    ]
+   }
+  },
+  "resource-diagnostics.source-effects.json": {
+   "bytes": [
+    385,
+    385
+   ],
+   "raw_identical": true,
+   "identical_after_substitution": true,
+   "substituted": {},
+   "target_collisions": {}
+  },
+  "slice-null.jsonl": {
+   "bytes": [
+    1853651,
+    1853651
+   ],
+   "raw_identical": false,
+   "identical_after_substitution": false,
+   "substituted": {},
+   "target_collisions": {},
+   "structural": {
+    "differing_leaves": 1618,
+    "pattern_count": 4,
+    "patterns": [
+     {
+      "path": "identity/source_sha256",
+      "count": 406,
+      "example": [
+       "0f32e44c0dab84a5b29105379e6db8da8865b7817ee0b574687185a376282342",
+       "33ad1885b59faf5df2f4a7deb693d2e27de594c178626d21231a80105c17e524"
+      ]
+     },
+     {
+      "path": "hypothesis_context/assumptions",
+      "count": 404,
+      "example": [
+       "c3cdfa45d792b5a80e0da33d14e15e3e41b2187145d5898357021c6c91d02db6",
+       "6e696a53a3c43cb2bb74ba7149ad78e813fea6cf9d35a2e5a70b678029baa90a"
+      ]
+     },
+     {
+      "path": "hypothesis_context/build_identity",
+      "count": 404,
+      "example": [
+       "0429acabf942c3aeffb80d82932b2b5b748f9285a27dd59ef10317dae38886fe",
+       "ccd7738f4dd27ff7241db1123876f84885469673bf167ccbc9ef4849f1850406"
+      ]
+     },
+     {
+      "path": "hypothesis_context/source_identity",
+      "count": 404,
+      "example": [
+       "0f32e44c0dab84a5b29105379e6db8da8865b7817ee0b574687185a376282342",
+       "33ad1885b59faf5df2f4a7deb693d2e27de594c178626d21231a80105c17e524"
+      ]
+     }
+    ]
+   }
+  },
+  "slice-null.summary.json": {
+   "bytes": [
+    64487,
+    64487
+   ],
+   "raw_identical": true,
+   "identical_after_substitution": true,
+   "substituted": {},
+   "target_collisions": {}
+  },
+  "slice-outer.json": {
+   "bytes": [
+    88969,
+    88999
+   ],
+   "raw_identical": false,
+   "identical_after_substitution": true,
+   "substituted": {
+    "/home/cosmo/Documents/GitHub/qcore-c/private/w47-tail/attempt-1/prep": 5
+   },
+   "target_collisions": {}
+  },
+  "stderr.log": {
+   "bytes": [
+    0,
+    0
+   ],
+   "raw_identical": true,
+   "identical_after_substitution": true,
+   "substituted": {},
+   "target_collisions": {}
+  }
+ },
+ "substitution_totals": {
+  "/media/Data/GitHub/quirin-lang/private/w47-tail/attempt-1/prep/fluent-bit-clang-production/compile_commands.json": 2,
+  "/home/cosmo/Documents/GitHub/qcore-c/private/w47-tail/attempt-1/prep": 3009
+ },
+ "target_collisions_total": {
+  "/media/Data/GitHub/quirin-lang/.claude/worktrees/agent-af4406ebe7df9c0d1/private/acp/mirror/slice-compile_commands.json": 0,
+  "/media/Data/GitHub/quirin-lang/private/w47-tail/attempt-1/prep": 22
+ },
+ "identical": false
+}

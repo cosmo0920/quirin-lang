@@ -283,7 +283,7 @@ fn own_arguments(entry: &CompileEntry, drop_input: bool) -> Result<(String, Vec<
         } else {
             entry.directory.join(path)
         };
-        path == entry.file
+        crate::compile_db::same_existing_path(&path, &entry.file)
     };
     let mut args = Vec::new();
     let mut skip = false;

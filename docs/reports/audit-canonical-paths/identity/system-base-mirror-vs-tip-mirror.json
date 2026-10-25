@@ -1,0 +1,139 @@
+{
+ "route": "system",
+ "left": "/media/Data/GitHub/quirin-lang/.claude/worktrees/agent-af4406ebe7df9c0d1/private/acp/runs2/base-mirror/system",
+ "right": "/media/Data/GitHub/quirin-lang/.claude/worktrees/agent-af4406ebe7df9c0d1/private/acp/runs2/tip-mirror/system",
+ "substitution": [],
+ "exits": {
+  "left": "0",
+  "right": "0"
+ },
+ "drivers": {
+  "left": {
+   "exit": 0,
+   "audit_exit": 0,
+   "identity_error": null,
+   "snapshot_files_changed": [],
+   "externals_stable": true,
+   "binary_stable": true,
+   "binary_sha256": "74c984ebf6dde780ed11839fd5359eb3a7b5f120b5c4e933b6e4969a7cfdd0f5"
+  },
+  "right": {
+   "exit": 0,
+   "audit_exit": 0,
+   "identity_error": null,
+   "snapshot_files_changed": [],
+   "externals_stable": true,
+   "binary_stable": true,
+   "binary_sha256": "3b3606ab493c25237569870e2632bdacaa60cec2aab5a523d3fd98e4aa0a0d35"
+  }
+ },
+ "only_left": [],
+ "only_right": [],
+ "files": {
+  "console.log": {
+   "bytes": [
+    13280,
+    13280
+   ],
+   "raw_identical": true,
+   "identical_after_substitution": true
+  },
+  "resource-diagnostics.chunk-contracts.json": {
+   "bytes": [
+    385,
+    385
+   ],
+   "raw_identical": true,
+   "identical_after_substitution": true
+  },
+  "resource-diagnostics.contracts.json": {
+   "bytes": [
+    10864591,
+    10864591
+   ],
+   "raw_identical": false,
+   "identical_after_substitution": false,
+   "structural": {
+    "differing_leaves": 4,
+    "pattern_count": 2,
+    "patterns": [
+     {
+      "path": "callback_members/lifetime_protocols/evidence/summaries/<sha256>",
+      "count": 2,
+      "example": [
+       "{}",
+       "<absent>"
+      ]
+     },
+     {
+      "path": "callback_members/prepass/lifetime_protocols/summaries/<sha256>",
+      "count": 2,
+      "example": [
+       "{}",
+       "<absent>"
+      ]
+     }
+    ]
+   }
+  },
+  "resource-diagnostics.invocation.json": {
+   "bytes": [
+    6245,
+    6245
+   ],
+   "raw_identical": true,
+   "identical_after_substitution": true
+  },
+  "resource-diagnostics.json": {
+   "bytes": [
+    7580281,
+    7580281
+   ],
+   "raw_identical": true,
+   "identical_after_substitution": true
+  },
+  "resource-diagnostics.source-effects.json": {
+   "bytes": [
+    385,
+    385
+   ],
+   "raw_identical": true,
+   "identical_after_substitution": true
+  },
+  "stderr.log": {
+   "bytes": [
+    0,
+    0
+   ],
+   "raw_identical": true,
+   "identical_after_substitution": true
+  },
+  "system-null.jsonl": {
+   "bytes": [
+    1873239,
+    1873239
+   ],
+   "raw_identical": true,
+   "identical_after_substitution": true
+  },
+  "system-null.summary.json": {
+   "bytes": [
+    64384,
+    64384
+   ],
+   "raw_identical": true,
+   "identical_after_substitution": true
+  },
+  "system-outer.json": {
+   "bytes": [
+    67494,
+    67494
+   ],
+   "raw_identical": true,
+   "identical_after_substitution": true
+  }
+ },
+ "substitution_totals": {},
+ "target_collisions_total": {},
+ "identical": false
+}
