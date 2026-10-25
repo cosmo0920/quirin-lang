@@ -81,6 +81,36 @@ def loader_with_bounds(root, load_path_file):
     return result
 
 
+def inventory_like(root, load_path_file):
+    """A stand-in for `contracts.probe_inventories` (card CONTRACT-LOCKS):
+    one declaration per `extern fn`, its clauses the `requires`/`ensures`
+    lines up to the next declaration (an inheriting child gets its parent's
+    count, as elaboration would give it), `contract inherit` edges as written,
+    no premises and no binding pins."""
+    load_path_file = Path(load_path_file)
+    manifest = json.loads(load_path_file.read_text())
+    parent_clauses = PARENT.count("requires ") + PARENT.count("ensures ")
+    result = {}
+    for record in manifest["crates"]:
+        modules = {}
+        for module in record["modules"]:
+            text = (load_path_file.parent / record["contracts"] / module).read_text()
+            declarations, inherits = [], []
+            for chunk in text.split("extern fn ")[1:]:
+                name = chunk.split("(", 1)[0]
+                if "contract inherit " in chunk:
+                    parent = chunk.split("contract inherit ", 1)[1].split(";", 1)[0]
+                    inherits.append({"child": name, "parent": parent})
+                    clauses = parent_clauses
+                else:
+                    clauses = chunk.count("requires ") + chunk.count("ensures ")
+                declarations.append({"name": name, "clauses": clauses})
+            modules[module] = {"declarations": declarations, "inherits": inherits,
+                               "premises": {}, "premise_bindings": []}
+        result[record["name"]] = modules
+    return result
+
+
 def lib_rs(namespace, published):
     items = ", ".join(f'"{m}"' for m in published)
     return (f'pub const NAMESPACE: &str = "{namespace}";\n'
@@ -429,6 +459,89 @@ class LoadPathManifest(unittest.TestCase):
             with self.assertRaisesRegex(ValueError, "not a published load-path module"):
                 contracts.include_pins(provider, {"schema_version": 1, "crates": []}, tree.root)
 
+    def test_inventory_locks_are_generated_by_sync_and_checked(self):
+        """Card CONTRACT-LOCKS: `sync` writes one `contract-inventory.lock` per
+        load-path crate; `check` refuses a contract changed without its lock, a
+        lock changed without its contract, a missing lock, a lock outside every
+        load-path crate and a probe that does not describe exactly the tree."""
+        with tempfile.TemporaryDirectory() as temporary:
+            tree = Tree(temporary)
+            metadata = tree.metadata()
+            load_path = contracts.maintain_load_path(tree.root, sync=True, metadata=metadata,
+                                                     views=loader_like)
+            rows = contracts.maintain_inventory_locks(tree.root, load_path, sync=True,
+                                                      probe=inventory_like)
+            self.assertEqual([(r["crate"], r["files"], r["declarations"], r["clauses"])
+                              for r in rows],
+                             [("qcore-provider-exe", 1, 1, 3), ("quirin-provider-app", 1, 1, 3),
+                              ("quirin-provider-libc", 1, 1, 3)])
+            lock_file = tree.root / "quirin-provider-app" / contracts.INVENTORY_LOCK
+            lock = json.loads(lock_file.read_text())
+            source = tree.root / "quirin-provider-app/contracts/app/wrap.qcore"
+            self.assertEqual(lock["crate"], "quirin-provider-app")
+            self.assertEqual(lock["resource_view"], ["app/wrap.qcore"])
+            self.assertEqual((lock["bounds_view"], lock["outer_view"]), ([], []))
+            self.assertEqual(lock["files"]["app/wrap.qcore"], {
+                "sha256": hashlib.sha256(source.read_bytes()).hexdigest(),
+                "declaration_count": 1, "clause_count": 3,
+                "declarations": [{"name": "wrap_free", "clauses": 3}],
+                "inherits": [{"child": "wrap_free", "parent": "libc::free"}],
+                "premises": {}, "premise_bindings": []})
+            self.assertEqual(lock_file.read_text(), contracts.canonical(lock))
+            contracts.maintain_inventory_locks(tree.root, load_path, probe=inventory_like)
+
+            good_lock, good_source = lock_file.read_bytes(), source.read_bytes()
+            mutations = [
+                (source, good_source + b"// a comment changes the digest\n",
+                 r"stale contract inventory lock: .*app/wrap.qcore differs in \['sha256'\]"),
+                (lock_file, good_lock.replace(b'"clauses": 3', b'"clauses": 4'),
+                 r"app/wrap.qcore differs in \['declarations'\]"),
+                (lock_file, good_lock.replace(b'"libc::free"', b'"libc::malloc"'),
+                 r"app/wrap.qcore differs in \['inherits'\]"),
+                (lock_file, good_lock.replace(b'"app/wrap.qcore"\n  ]', b'\n  ]'),
+                 "resource_view differs"),
+                (lock_file, good_lock.replace(b"\n", b"\r\n"), "byte form differs"),
+            ]
+            for path, mutated, message in mutations:
+                with self.subTest(message=message):
+                    original = path.read_bytes()
+                    self.assertNotEqual(mutated, original)
+                    path.write_bytes(mutated)
+                    try:
+                        with self.assertRaisesRegex(ValueError, message):
+                            contracts.maintain_inventory_locks(tree.root, load_path,
+                                                               probe=inventory_like)
+                    finally:
+                        # Restored by rewriting the bytes; the round trip is exact.
+                        path.write_bytes(original)
+                    self.assertEqual(path.read_bytes(), original)
+
+            lock_file.unlink()
+            with self.assertRaisesRegex(ValueError, "missing contract inventory lock"):
+                contracts.maintain_inventory_locks(tree.root, load_path, probe=inventory_like)
+            lock_file.write_bytes(good_lock)
+            stray = tree.root / "conformance" / contracts.INVENTORY_LOCK
+            stray.write_text("{}\n")
+            with self.assertRaisesRegex(ValueError, "outside a load-path crate"):
+                contracts.maintain_inventory_locks(tree.root, load_path, probe=inventory_like)
+            stray.unlink()
+
+            def missing_module(root, load_path_file):
+                facts = inventory_like(root, load_path_file)
+                facts["quirin-provider-app"].pop("app/wrap.qcore")
+                return facts
+
+            def missing_crate(root, load_path_file):
+                facts = inventory_like(root, load_path_file)
+                facts.pop("qcore-provider-exe")
+                return facts
+
+            with self.assertRaisesRegex(ValueError, "not the contract files"):
+                contracts.maintain_inventory_locks(tree.root, load_path, probe=missing_module)
+            with self.assertRaisesRegex(ValueError, "not the load path's"):
+                contracts.maintain_inventory_locks(tree.root, load_path, probe=missing_crate)
+            contracts.maintain_inventory_locks(tree.root, load_path, probe=inventory_like)
+
     def test_the_real_workspace_manifest_is_current(self):
         manifest = contracts.maintain_load_path()
         names = [c["name"] for c in manifest["crates"]]
@@ -464,11 +577,25 @@ class LoadPathManifest(unittest.TestCase):
         views = {c["name"]: c["resource_view"] for c in manifest["crates"]}
         # b5f74d79a added librdkafka/logging.qv: the committed view became 65.
         # e76b048f6 added librdkafka/log_caller_frame.qv before this card: 66.
-        self.assertEqual(sum(len(view) for view in views.values()), 66)
+        # Card CONTRACT-LOCKS: the loader's views (recomputed above) are read
+        # against each crate's `contract-inventory.lock`, not a literal count
+        # (66 modules in all and 17 in libc at base 6c4855745), and every lock
+        # is checked against its tree with the loaders' own parser.
+        locks = {name: json.loads((HERE / name / contracts.INVENTORY_LOCK).read_text())
+                 for name in names}
+        for name in names:
+            for key in (contracts.RESOURCE_VIEW, contracts.BOUNDS_VIEW, contracts.OUTER_VIEW):
+                self.assertEqual(locks[name][key], next(
+                    c[key] for c in manifest["crates"] if c["name"] == name), (name, key))
+        self.assertEqual(sum(len(view) for view in views.values()),
+                         sum(len(lock["resource_view"]) for lock in locks.values()))
+        inventory = contracts.maintain_inventory_locks(load_path=manifest)
+        self.assertEqual([row["crate"] for row in inventory], names)
         self.assertIn("librdkafka/logging.qv", views["qcore-provider-librdkafka"])
         self.assertIn("librdkafka/log_caller_frame.qv", views["qcore-provider-librdkafka"])
         self.assertEqual(views["quirin-provider-shared"], [])
-        self.assertEqual(len(views["quirin-provider-libc"]), 17)
+        self.assertEqual(views["quirin-provider-libc"], locks["quirin-provider-libc"]["resource_view"])
+        self.assertTrue(views["quirin-provider-libc"])
         # Card CHUNKIO-META-LEN-BOUNDS-CONTRACTS: the one bounds module, in its
         # crate's bounds view and in no resource view. Card
         # CG16-BOUNDS-TRANSPORT-AND-CHUNKIO-NEIGHBOURS adds the second,

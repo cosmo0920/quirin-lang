@@ -1,0 +1,3265 @@
+{
+  "bounds_view": [
+    "librdkafka/null_deref.qv"
+  ],
+  "contracts": "qcore-provider-librdkafka/contracts",
+  "crate": "qcore-provider-librdkafka",
+  "files": {
+    "librdkafka/cjson.qv": {
+      "clause_count": 82,
+      "declaration_count": 8,
+      "declarations": [
+        {
+          "clauses": 3,
+          "name": "cJSON_Delete"
+        },
+        {
+          "clauses": 4,
+          "name": "cJSON_New_Item"
+        },
+        {
+          "clauses": 6,
+          "name": "add_item_to_array"
+        },
+        {
+          "clauses": 7,
+          "name": "replace_item_in_object"
+        },
+        {
+          "clauses": 5,
+          "name": "get_object_item"
+        },
+        {
+          "clauses": 8,
+          "name": "cJSON_ParseWithLengthOpts"
+        },
+        {
+          "clauses": 6,
+          "name": "print"
+        },
+        {
+          "clauses": 43,
+          "name": "cJSON_DetachItemViaPointer"
+        }
+      ],
+      "inherits": [],
+      "premise_bindings": [
+        {
+          "declaration": "cJSON_DetachItemViaPointer",
+          "premise": "detach_list_representation",
+          "sha256": "a511dd5d2efe7e0fae2c29207e6a54ce5730f7870d7d5ed34d0bdc2c4d9b721e"
+        }
+      ],
+      "premises": {
+        "add_item_to_array": [
+          {
+            "name": "cjson_list_invariant",
+            "origin": "declared"
+          }
+        ],
+        "cJSON_DetachItemViaPointer": [
+          {
+            "name": "detach_list_representation",
+            "origin": "declared"
+          }
+        ],
+        "cJSON_New_Item": [
+          {
+            "name": "cjson_allocator_hooks",
+            "origin": "declared"
+          }
+        ],
+        "print": [
+          {
+            "name": "cjson_allocator_hooks",
+            "origin": "declared"
+          }
+        ]
+      },
+      "sha256": "7bd5aa98433e29bdd7bf53ecf781f6679343a27a869382533a0c568daa31559d"
+    },
+    "librdkafka/client.qv": {
+      "clause_count": 2474,
+      "declaration_count": 128,
+      "declarations": [
+        {
+          "clauses": 5,
+          "name": "rd_kafka_error_new_v"
+        },
+        {
+          "clauses": 5,
+          "name": "rd_kafka_error_new"
+        },
+        {
+          "clauses": 23,
+          "name": "rd_kafka_err_action"
+        },
+        {
+          "clauses": 21,
+          "name": "rd_kafka_oauthbearer_set_token_failure"
+        },
+        {
+          "clauses": 24,
+          "name": "rd_kafka_toppars_pause_resume"
+        },
+        {
+          "clauses": 11,
+          "name": "rd_kafka_AclBinding_new0"
+        },
+        {
+          "clauses": 12,
+          "name": "rd_kafka_ConsumerGroupDescription_new"
+        },
+        {
+          "clauses": 5,
+          "name": "rd_kafka_admin_add_config0"
+        },
+        {
+          "clauses": 7,
+          "name": "rd_kafka_anyconf_dump"
+        },
+        {
+          "clauses": 8,
+          "name": "rd_kafka_confval_set_type"
+        },
+        {
+          "clauses": 8,
+          "name": "rd_kafka_interceptor_method_add"
+        },
+        {
+          "clauses": 6,
+          "name": "rd_flags2str"
+        },
+        {
+          "clauses": 4,
+          "name": "rd_kafka_admin_result_ret_topics"
+        },
+        {
+          "clauses": 4,
+          "name": "rd_kafka_admin_result_ret_resources"
+        },
+        {
+          "clauses": 4,
+          "name": "rd_kafka_admin_result_ret_groups"
+        },
+        {
+          "clauses": 3,
+          "name": "rd_kafka_topic_partition_get_private"
+        },
+        {
+          "clauses": 6,
+          "name": "rd_slice_reader0"
+        },
+        {
+          "clauses": 6,
+          "name": "rd_kafka_toppar_keep0"
+        },
+        {
+          "clauses": 4,
+          "name": "rd_kafka_q_keep"
+        },
+        {
+          "clauses": 4,
+          "name": "rd_kafka_q_keep_nolock"
+        },
+        {
+          "clauses": 4,
+          "name": "rd_kafka_topic_keep"
+        },
+        {
+          "clauses": 23,
+          "name": "rd_kafka_toppar_destroy0"
+        },
+        {
+          "clauses": 22,
+          "name": "rd_kafka_q_destroy0"
+        },
+        {
+          "clauses": 21,
+          "name": "rd_kafka_q_destroy_owner"
+        },
+        {
+          "clauses": 21,
+          "name": "rd_kafka_topic_destroy0"
+        },
+        {
+          "clauses": 23,
+          "name": "rd_kafka_enq_once_trigger"
+        },
+        {
+          "clauses": 5,
+          "name": "rd_kafka_queue_new0"
+        },
+        {
+          "clauses": 20,
+          "name": "rd_kafka_topic_partition_list_destroy"
+        },
+        {
+          "clauses": 22,
+          "name": "rd_kafka_topic_partition_destroy0"
+        },
+        {
+          "clauses": 20,
+          "name": "rd_kafka_AlterConsumerGroupOffsets_destroy"
+        },
+        {
+          "clauses": 20,
+          "name": "rd_kafka_DeleteConsumerGroupOffsets_destroy"
+        },
+        {
+          "clauses": 20,
+          "name": "rd_kafka_ListConsumerGroupOffsets_destroy"
+        },
+        {
+          "clauses": 20,
+          "name": "rd_kafka_topic_partition_result_destroy"
+        },
+        {
+          "clauses": 8,
+          "name": "rd_kafka_toppar_get0"
+        },
+        {
+          "clauses": 5,
+          "name": "rd_kafka_toppar_desired_get"
+        },
+        {
+          "clauses": 25,
+          "name": "rd_kafka_toppar_new0"
+        },
+        {
+          "clauses": 23,
+          "name": "rd_kafka_toppar_desired_add"
+        },
+        {
+          "clauses": 25,
+          "name": "rd_kafka_toppar_get2"
+        },
+        {
+          "clauses": 24,
+          "name": "rd_kafka_toppar_get_avail"
+        },
+        {
+          "clauses": 10,
+          "name": "rd_kafka_q_new0"
+        },
+        {
+          "clauses": 23,
+          "name": "ut_create_mock_toppar"
+        },
+        {
+          "clauses": 4,
+          "name": "ut_create_mock_queue"
+        },
+        {
+          "clauses": 21,
+          "name": "ut_destroy_mock_queue"
+        },
+        {
+          "clauses": 22,
+          "name": "rd_kafka_q_wait_result"
+        },
+        {
+          "clauses": 22,
+          "name": "rd_kafka_q_purge0"
+        },
+        {
+          "clauses": 4,
+          "name": "rd_kafka_toppar_needs_query"
+        },
+        {
+          "clauses": 22,
+          "name": "rd_kafka_toppar_fetch_backoff"
+        },
+        {
+          "clauses": 6,
+          "name": "rd_list_init"
+        },
+        {
+          "clauses": 5,
+          "name": "rd_list_new"
+        },
+        {
+          "clauses": 5,
+          "name": "rd_list_add"
+        },
+        {
+          "clauses": 7,
+          "name": "rd_list_destroy"
+        },
+        {
+          "clauses": 5,
+          "name": "rd_list_clear"
+        },
+        {
+          "clauses": 6,
+          "name": "pb_write"
+        },
+        {
+          "clauses": 5,
+          "name": "pb_encode_varint"
+        },
+        {
+          "clauses": 3,
+          "name": "rd_kafka_AclBinding_destroy"
+        },
+        {
+          "clauses": 3,
+          "name": "rd_kafka_ConfigResource_destroy"
+        },
+        {
+          "clauses": 3,
+          "name": "rd_kafka_NewPartitions_destroy"
+        },
+        {
+          "clauses": 3,
+          "name": "rd_kafka_NewTopic_destroy"
+        },
+        {
+          "clauses": 3,
+          "name": "rd_kafka_UserScramCredentialAlteration_destroy"
+        },
+        {
+          "clauses": 30,
+          "name": "unit_test_telemetry"
+        },
+        {
+          "clauses": 29,
+          "name": "rd_kafka_q_serve0"
+        },
+        {
+          "clauses": 28,
+          "name": "rd_kafka_q_serve"
+        },
+        {
+          "clauses": 28,
+          "name": "rd_kafka_q_serve_maybe_consume"
+        },
+        {
+          "clauses": 29,
+          "name": "rd_kafka_q_pop_serve0"
+        },
+        {
+          "clauses": 28,
+          "name": "rd_kafka_q_pop_serve"
+        },
+        {
+          "clauses": 28,
+          "name": "rd_kafka_q_pop_serve_maybe_consume"
+        },
+        {
+          "clauses": 192,
+          "name": "rd_kafka_op_destroy"
+        },
+        {
+          "clauses": 7,
+          "name": "rd_kafka_op_new0"
+        },
+        {
+          "clauses": 9,
+          "name": "rd_kafka_op_new_cb"
+        },
+        {
+          "clauses": 25,
+          "name": "rd_kafka_op_req0"
+        },
+        {
+          "clauses": 24,
+          "name": "rd_kafka_op_req"
+        },
+        {
+          "clauses": 23,
+          "name": "rd_kafka_op_req2"
+        },
+        {
+          "clauses": 23,
+          "name": "rd_kafka_broker_monitor_op_cb"
+        },
+        {
+          "clauses": 23,
+          "name": "rd_kafka_cgrp_assignor_handle_Metadata_op"
+        },
+        {
+          "clauses": 22,
+          "name": "rd_kafka_cgrp_consumer_handle_Metadata_op"
+        },
+        {
+          "clauses": 22,
+          "name": "rd_kafka_cgrp_handle_Metadata_op"
+        },
+        {
+          "clauses": 22,
+          "name": "rd_kafka_offset_reset_op_cb"
+        },
+        {
+          "clauses": 22,
+          "name": "rd_kafka_offset_validate_op_cb"
+        },
+        {
+          "clauses": 22,
+          "name": "rd_kafka_share_ack_commit_cb_register_op"
+        },
+        {
+          "clauses": 22,
+          "name": "rd_kafka_share_fetch_reply_op_cb"
+        },
+        {
+          "clauses": 22,
+          "name": "rd_kafka_txn_op_init_transactions"
+        },
+        {
+          "clauses": 22,
+          "name": "rd_kafka_txn_op_ack_init_transactions"
+        },
+        {
+          "clauses": 22,
+          "name": "rd_kafka_txn_op_begin_transaction"
+        },
+        {
+          "clauses": 22,
+          "name": "rd_kafka_txn_op_begin_commit"
+        },
+        {
+          "clauses": 22,
+          "name": "rd_kafka_txn_op_commit_transaction"
+        },
+        {
+          "clauses": 22,
+          "name": "rd_kafka_txn_op_commit_transaction_ack"
+        },
+        {
+          "clauses": 22,
+          "name": "rd_kafka_txn_op_begin_abort"
+        },
+        {
+          "clauses": 22,
+          "name": "rd_kafka_txn_op_abort_transaction"
+        },
+        {
+          "clauses": 22,
+          "name": "rd_kafka_txn_op_abort_transaction_ack"
+        },
+        {
+          "clauses": 24,
+          "name": "rd_kafka_cgrp_op_serve"
+        },
+        {
+          "clauses": 24,
+          "name": "rd_kafka_mock_cluster_op_serve"
+        },
+        {
+          "clauses": 23,
+          "name": "rd_kafka_conf_set_background_event_cb"
+        },
+        {
+          "clauses": 23,
+          "name": "rd_kafka_conf_set_dr_cb"
+        },
+        {
+          "clauses": 23,
+          "name": "rd_kafka_conf_set_dr_msg_cb"
+        },
+        {
+          "clauses": 23,
+          "name": "rd_kafka_conf_set_consume_cb"
+        },
+        {
+          "clauses": 23,
+          "name": "rd_kafka_conf_set_rebalance_cb"
+        },
+        {
+          "clauses": 23,
+          "name": "rd_kafka_conf_set_offset_commit_cb"
+        },
+        {
+          "clauses": 23,
+          "name": "rd_kafka_conf_set_error_cb"
+        },
+        {
+          "clauses": 23,
+          "name": "rd_kafka_conf_set_throttle_cb"
+        },
+        {
+          "clauses": 23,
+          "name": "rd_kafka_conf_set_log_cb"
+        },
+        {
+          "clauses": 23,
+          "name": "rd_kafka_conf_set_stats_cb"
+        },
+        {
+          "clauses": 23,
+          "name": "rd_kafka_conf_set_oauthbearer_token_refresh_cb"
+        },
+        {
+          "clauses": 23,
+          "name": "rd_kafka_conf_set_socket_cb"
+        },
+        {
+          "clauses": 23,
+          "name": "rd_kafka_conf_set_connect_cb"
+        },
+        {
+          "clauses": 23,
+          "name": "rd_kafka_conf_set_closesocket_cb"
+        },
+        {
+          "clauses": 23,
+          "name": "rd_kafka_conf_set_open_cb"
+        },
+        {
+          "clauses": 23,
+          "name": "rd_kafka_conf_set_resolve_cb"
+        },
+        {
+          "clauses": 23,
+          "name": "rd_kafka_conf_set_ssl_cert_verify_cb"
+        },
+        {
+          "clauses": 24,
+          "name": "rd_kafka_conf_new"
+        },
+        {
+          "clauses": 25,
+          "name": "rd_kafka_consume_cb"
+        },
+        {
+          "clauses": 33,
+          "name": "rd_kafka_background_queue_serve"
+        },
+        {
+          "clauses": 23,
+          "name": "rd_kafka_oauthbearer_refresh_op"
+        },
+        {
+          "clauses": 6,
+          "name": "rd_kafka_log_print"
+        },
+        {
+          "clauses": 22,
+          "name": "rd_kafka_oauthbearer_unsecured_token"
+        },
+        {
+          "clauses": 22,
+          "name": "rd_kafka_oidc_token_jwt_bearer_refresh_cb"
+        },
+        {
+          "clauses": 22,
+          "name": "rd_kafka_oidc_token_client_credentials_refresh_cb"
+        },
+        {
+          "clauses": 22,
+          "name": "rd_kafka_oidc_token_metadata_azure_imds_refresh_cb"
+        },
+        {
+          "clauses": 22,
+          "name": "rd_kafka_oidc_token_metadata_aws_iam_refresh_cb"
+        },
+        {
+          "clauses": 37,
+          "name": "rd_kafka_poll_cb"
+        },
+        {
+          "clauses": 23,
+          "name": "rd_kafka_txn_op_send_offsets_to_transaction"
+        },
+        {
+          "clauses": 27,
+          "name": "rd_kafka_admin_worker"
+        },
+        {
+          "clauses": 27,
+          "name": "rd_kafka_topic_partition_list_query_leaders_async_worker_op_cb"
+        },
+        {
+          "clauses": 23,
+          "name": "rd_kafka_admin_fanout_worker"
+        },
+        {
+          "clauses": 23,
+          "name": "rd_kafka_DeleteRecords_leaders_queried_cb"
+        },
+        {
+          "clauses": 23,
+          "name": "rd_kafka_ListOffsets_leaders_queried_cb"
+        },
+        {
+          "clauses": 23,
+          "name": "rd_kafka_share_commit_async_fanout_op"
+        },
+        {
+          "clauses": 24,
+          "name": "rd_kafka_share_fetch_fanout_op"
+        },
+        {
+          "clauses": 25,
+          "name": "rd_kafka_share_commit_sync_fanout_op"
+        }
+      ],
+      "inherits": [],
+      "premise_bindings": [
+        {
+          "declaration": "rd_kafka_AlterConsumerGroupOffsets_destroy",
+          "premise": "rk_plugin_callback_closure",
+          "sha256": "953131412908232f6d3137c63a725dd45d1683a7ee02327ecc2167152d3b7cb5"
+        },
+        {
+          "declaration": "rd_kafka_DeleteConsumerGroupOffsets_destroy",
+          "premise": "rk_plugin_callback_closure",
+          "sha256": "223161955075031fb2e31ae95aa5da79503a896ecd31b92f0d870bedd6fa8f86"
+        },
+        {
+          "declaration": "rd_kafka_DeleteRecords_leaders_queried_cb",
+          "premise": "rk_plugin_callback_closure",
+          "sha256": "ea62f945cb92e889829ca3cce240246af1f926e3df713c5ccb52cf19a037beb8"
+        },
+        {
+          "declaration": "rd_kafka_ListConsumerGroupOffsets_destroy",
+          "premise": "rk_plugin_callback_closure",
+          "sha256": "8a84835158e0d5205a900679cbe96307722e69a14627fbefe354a7a1ad2ff298"
+        },
+        {
+          "declaration": "rd_kafka_ListOffsets_leaders_queried_cb",
+          "premise": "rk_plugin_callback_closure",
+          "sha256": "6920c56bf0a83bdc4bd15ab99ff78c00cf2d35ff769530a51d6c95205cba74d9"
+        },
+        {
+          "declaration": "rd_kafka_admin_fanout_worker",
+          "premise": "rk_plugin_callback_closure",
+          "sha256": "c25886994a4ae6fbf36a980b3614a5aa5cb98849acd77744051eaf5703c6b228"
+        },
+        {
+          "declaration": "rd_kafka_admin_worker",
+          "premise": "rk_plugin_callback_closure",
+          "sha256": "eb6760e658ecf0d2453636feacee013ec01e9ca2aeeb5c150eae218a744bd508"
+        },
+        {
+          "declaration": "rd_kafka_background_queue_serve",
+          "premise": "rk_plugin_callback_closure",
+          "sha256": "028f06434879ecce0fa179e8fed2f8107541687097d3e2724f908c0cacdcc1c0"
+        },
+        {
+          "declaration": "rd_kafka_broker_monitor_op_cb",
+          "premise": "rk_plugin_callback_closure",
+          "sha256": "56288955a60e9c270542dfb9543cd9d5909b1edfab95f99aceed47aad0e812c5"
+        },
+        {
+          "declaration": "rd_kafka_cgrp_assignor_handle_Metadata_op",
+          "premise": "rk_plugin_callback_closure",
+          "sha256": "c6d02bfb743b32fc2752d445c5ef251edf804c6c5547b81385393495bcd3bf99"
+        },
+        {
+          "declaration": "rd_kafka_cgrp_consumer_handle_Metadata_op",
+          "premise": "rk_plugin_callback_closure",
+          "sha256": "e12faee62422b43fe2c34f7334fe90ae7982e115c712ac6cff67c7d4cd5406a4"
+        },
+        {
+          "declaration": "rd_kafka_cgrp_handle_Metadata_op",
+          "premise": "rk_plugin_callback_closure",
+          "sha256": "d0fe36a127eddcaf79297e6df0e2409076d2cd6a5199bd7258de2fe6d2c975e8"
+        },
+        {
+          "declaration": "rd_kafka_cgrp_op_serve",
+          "premise": "rk_plugin_callback_closure",
+          "sha256": "321f4d08681f91e4d21773dd618c8b46c6b036e08647b5608d09f37f71423bdf"
+        },
+        {
+          "declaration": "rd_kafka_conf_new",
+          "premise": "rk_plugin_callback_closure",
+          "sha256": "ec8990a4fa03fb0d1bb155ff7b3f4b4b1cf3a468541543b0d6c65046f9828416"
+        },
+        {
+          "declaration": "rd_kafka_conf_set_background_event_cb",
+          "premise": "rk_plugin_callback_closure",
+          "sha256": "d6b4059222fa9455c5b06493ffdc18e71abbec1547b37f0f36d405bf70f298f7"
+        },
+        {
+          "declaration": "rd_kafka_conf_set_closesocket_cb",
+          "premise": "rk_plugin_callback_closure",
+          "sha256": "7ff13d9ddfc3f6934966b7486fdaf03ddd6d20c64f645d9881c91bb7cfa35f9d"
+        },
+        {
+          "declaration": "rd_kafka_conf_set_connect_cb",
+          "premise": "rk_plugin_callback_closure",
+          "sha256": "2bdb3ac43239164967d664ed1c74eaa2d00c186c68759aa1e5b296bd268f6eca"
+        },
+        {
+          "declaration": "rd_kafka_conf_set_consume_cb",
+          "premise": "rk_plugin_callback_closure",
+          "sha256": "08222f5caa8882ddeff9b9d8271165acd3045ada042b55f06a320c80150930e4"
+        },
+        {
+          "declaration": "rd_kafka_conf_set_dr_cb",
+          "premise": "rk_plugin_callback_closure",
+          "sha256": "f349683d9238b85cc30ff8d948e638f7b17e5db1e0ec58e0f642d7c491704bcf"
+        },
+        {
+          "declaration": "rd_kafka_conf_set_dr_msg_cb",
+          "premise": "rk_plugin_callback_closure",
+          "sha256": "947711c6073e199a1dfd34938d8dbe9aa9b538c53a7d2b0eb6e758838b389558"
+        },
+        {
+          "declaration": "rd_kafka_conf_set_error_cb",
+          "premise": "rk_plugin_callback_closure",
+          "sha256": "b1eb8e03af48ff70d821e77448e37ea5d9b8fe3107fa589d0a4f095d0565fa2e"
+        },
+        {
+          "declaration": "rd_kafka_conf_set_log_cb",
+          "premise": "rk_plugin_callback_closure",
+          "sha256": "ac3fd632ae6eb94248df5259bf08aea5e07eafeb5eb5ae0da69fe6676fdf1a3c"
+        },
+        {
+          "declaration": "rd_kafka_conf_set_oauthbearer_token_refresh_cb",
+          "premise": "rk_plugin_callback_closure",
+          "sha256": "84a09e8b03d1f7cfda5da753d8afb68102805dba3a413f0623c0d686169eeaf9"
+        },
+        {
+          "declaration": "rd_kafka_conf_set_offset_commit_cb",
+          "premise": "rk_plugin_callback_closure",
+          "sha256": "949b0fbf56074a9167233bc8e49b5595316c9088694ae36a24be210a444cee3a"
+        },
+        {
+          "declaration": "rd_kafka_conf_set_open_cb",
+          "premise": "rk_plugin_callback_closure",
+          "sha256": "dd189e266586c6fa0d5af4aa541cbf2a10cb48bfb508815bccc376c8f4879fc7"
+        },
+        {
+          "declaration": "rd_kafka_conf_set_rebalance_cb",
+          "premise": "rk_plugin_callback_closure",
+          "sha256": "026df17a7d7d7abf04111079b6b18e2e7c02affcaf908f989ef6fa491eb8a02a"
+        },
+        {
+          "declaration": "rd_kafka_conf_set_resolve_cb",
+          "premise": "rk_plugin_callback_closure",
+          "sha256": "b51555a96525f67366f06025e64423608e0f50f4859addab9814be6036322a60"
+        },
+        {
+          "declaration": "rd_kafka_conf_set_socket_cb",
+          "premise": "rk_plugin_callback_closure",
+          "sha256": "cfad17282daba77112537735753d2ad3422ad5e57ef6fd46cf18ddab974a3193"
+        },
+        {
+          "declaration": "rd_kafka_conf_set_ssl_cert_verify_cb",
+          "premise": "rk_plugin_callback_closure",
+          "sha256": "b78e95877d932ca897ab369219347bca8561bf33f84d11191e6bd9c28b26c592"
+        },
+        {
+          "declaration": "rd_kafka_conf_set_stats_cb",
+          "premise": "rk_plugin_callback_closure",
+          "sha256": "0fe1dc5bcf6ba4b147b7c5eefc2cd03fa96504a3b1923c8b5def1cdaccc8d6ae"
+        },
+        {
+          "declaration": "rd_kafka_conf_set_throttle_cb",
+          "premise": "rk_plugin_callback_closure",
+          "sha256": "558f61f51180de39c5c35ad918bd5eff813a56e9ae451b89d0379ea74adcf129"
+        },
+        {
+          "declaration": "rd_kafka_consume_cb",
+          "premise": "rk_plugin_callback_closure",
+          "sha256": "cf79a324c4bb9c6f9655117de8268a890dd7b0b3a459eb0a42a5496d5bcaf5c6"
+        },
+        {
+          "declaration": "rd_kafka_enq_once_trigger",
+          "premise": "rk_plugin_callback_closure",
+          "sha256": "18c9aec12147c7d03c1933836b0c42353e5aa2a5f77cd765919f0043609a6006"
+        },
+        {
+          "declaration": "rd_kafka_err_action",
+          "premise": "rk_plugin_callback_closure",
+          "sha256": "ac03baa02332a1f6a4da52f5643c5ecc88e9443cc32e30bd62772b5865a2e0a2"
+        },
+        {
+          "declaration": "rd_kafka_mock_cluster_op_serve",
+          "premise": "rk_plugin_callback_closure",
+          "sha256": "76d62754c9f5b5148b5507a089737346a14eef71288212b59d742321a8415fc0"
+        },
+        {
+          "declaration": "rd_kafka_oauthbearer_refresh_op",
+          "premise": "rk_plugin_callback_closure",
+          "sha256": "4d050cf523791854ab948de8372051badba71e4dedae1b3a5cfb84c5b94f10b9"
+        },
+        {
+          "declaration": "rd_kafka_oauthbearer_set_token_failure",
+          "premise": "rk_plugin_callback_closure",
+          "sha256": "75c4082cae72a2c2908feccbb5dc2d70c0ede78cd8ae04b19d083a280e64a1f0"
+        },
+        {
+          "declaration": "rd_kafka_oauthbearer_unsecured_token",
+          "premise": "rk_plugin_callback_closure",
+          "sha256": "d524ab50d05d8595f3acb068b0102039bcc3715b1897df9e902d2b88c3f9c454"
+        },
+        {
+          "declaration": "rd_kafka_offset_reset_op_cb",
+          "premise": "rk_plugin_callback_closure",
+          "sha256": "1902d56cffcb74081707bdc506631170f1798b4eacd952bc57468a725092e16b"
+        },
+        {
+          "declaration": "rd_kafka_offset_validate_op_cb",
+          "premise": "rk_plugin_callback_closure",
+          "sha256": "b936958c1b44cd34c650460f5c129adc357d9386d754f82998bafaa98dddd362"
+        },
+        {
+          "declaration": "rd_kafka_oidc_token_client_credentials_refresh_cb",
+          "premise": "rk_plugin_callback_closure",
+          "sha256": "e3252d1901f58e17bc11eb57fc07a339a69bb81593ebdfd21c77dae47789d9ee"
+        },
+        {
+          "declaration": "rd_kafka_oidc_token_jwt_bearer_refresh_cb",
+          "premise": "rk_plugin_callback_closure",
+          "sha256": "9a05fdbc67bce13e9251804acf4728e00b17bee3c57862ddd8985d9c3881da76"
+        },
+        {
+          "declaration": "rd_kafka_oidc_token_metadata_aws_iam_refresh_cb",
+          "premise": "rk_plugin_callback_closure",
+          "sha256": "5812b14f707037888aab3dc9b2d499a1495a4db94efeafc785be5a2cceea1171"
+        },
+        {
+          "declaration": "rd_kafka_oidc_token_metadata_azure_imds_refresh_cb",
+          "premise": "rk_plugin_callback_closure",
+          "sha256": "74bf87e838200c9d0f60211234ffb53035375bcc24d85915aacfcd7484f1aa29"
+        },
+        {
+          "declaration": "rd_kafka_op_destroy",
+          "premise": "rk_plugin_callback_closure",
+          "sha256": "42d6be37821af6cfce05cabca7114da3e876b68ff724bf9b4baeb588695f7a4c"
+        },
+        {
+          "declaration": "rd_kafka_op_req",
+          "premise": "rk_plugin_callback_closure",
+          "sha256": "b689fc86ae806208644871ae165330fdb68d0324dedc6d44120d736c00106724"
+        },
+        {
+          "declaration": "rd_kafka_op_req0",
+          "premise": "rk_plugin_callback_closure",
+          "sha256": "dbbffce7592a04fc422acec33a9b04090b12904df4551d3903f4f6406ebfe86e"
+        },
+        {
+          "declaration": "rd_kafka_op_req2",
+          "premise": "rk_plugin_callback_closure",
+          "sha256": "91ea3f38d65d077452b07ca9914c5308ad9987911319cbac1425c452b2b0144e"
+        },
+        {
+          "declaration": "rd_kafka_poll_cb",
+          "premise": "rk_plugin_callback_closure",
+          "sha256": "bb864cf5a123ede79152f9a512c8b5864bc53d6f5767ea99af03633fddbe58b9"
+        },
+        {
+          "declaration": "rd_kafka_q_destroy0",
+          "premise": "rk_plugin_callback_closure",
+          "sha256": "bafde45ba73cd9fd460e41b4aaa31850004fb74619f34cef955ed70bc63ff88d"
+        },
+        {
+          "declaration": "rd_kafka_q_destroy_owner",
+          "premise": "rk_plugin_callback_closure",
+          "sha256": "d8d8877656d629d060d3773a9d1ebd80a89d7c067cf311cec406a255c0f3f335"
+        },
+        {
+          "declaration": "rd_kafka_q_pop_serve",
+          "premise": "rk_plugin_callback_closure",
+          "sha256": "969292d5d2306f7392bdaf1976fa0198688441de4902b6cc2408357a6fefc647"
+        },
+        {
+          "declaration": "rd_kafka_q_pop_serve0",
+          "premise": "rk_plugin_callback_closure",
+          "sha256": "f067b9127b9b46f4079e46b75e45bf77da93139afd2d1a76a8c588c5b6e65aae"
+        },
+        {
+          "declaration": "rd_kafka_q_pop_serve_maybe_consume",
+          "premise": "rk_plugin_callback_closure",
+          "sha256": "52383d0c1f78f09274118295ed1aab7c8a1277454c6e99d1be12319869ab3bf3"
+        },
+        {
+          "declaration": "rd_kafka_q_purge0",
+          "premise": "rk_plugin_callback_closure",
+          "sha256": "cfc73f659408416d5e8b1ca409db667bd034c4fe7274a03d14dc0603e8fa0228"
+        },
+        {
+          "declaration": "rd_kafka_q_serve",
+          "premise": "rk_plugin_callback_closure",
+          "sha256": "fdd5d51644c707f9734fa9e8866197687439f05bea04e56569ad4472d6b44b74"
+        },
+        {
+          "declaration": "rd_kafka_q_serve0",
+          "premise": "rk_plugin_callback_closure",
+          "sha256": "db2ad0206fe957c347f05709d89fd1fb4f293dfd26fb3403e6dd655a5d0ec97d"
+        },
+        {
+          "declaration": "rd_kafka_q_serve_maybe_consume",
+          "premise": "rk_plugin_callback_closure",
+          "sha256": "859808dd1d85877c1d0bc087969b8128ac9f8fc2238d04982da569b00bdbd0bf"
+        },
+        {
+          "declaration": "rd_kafka_q_wait_result",
+          "premise": "rk_plugin_callback_closure",
+          "sha256": "d1f8a236cb0b9b768ae23f8b1bc2c2d1e2e0050aa508ec83de16dd9c0b90b4fb"
+        },
+        {
+          "declaration": "rd_kafka_share_ack_commit_cb_register_op",
+          "premise": "rk_plugin_callback_closure",
+          "sha256": "3a13319f5e972447fe4f7a3aac0c612578b453e21944177520bb371e7d27bd19"
+        },
+        {
+          "declaration": "rd_kafka_share_commit_async_fanout_op",
+          "premise": "rk_plugin_callback_closure",
+          "sha256": "dac6a251b877e5da068c00299dcb9207385ceaefa33a1c8ee384ed5f6a2edb8f"
+        },
+        {
+          "declaration": "rd_kafka_share_commit_sync_fanout_op",
+          "premise": "rk_plugin_callback_closure",
+          "sha256": "d0f1b26e7b01ce27252db354bdd0a8c199ddfa51f475e7b82db424becce130b5"
+        },
+        {
+          "declaration": "rd_kafka_share_fetch_fanout_op",
+          "premise": "rk_plugin_callback_closure",
+          "sha256": "de4b514c73c63ca66e01d3f9f9d27d197b663d8613cdd63df6075c0c614a5196"
+        },
+        {
+          "declaration": "rd_kafka_share_fetch_reply_op_cb",
+          "premise": "rk_plugin_callback_closure",
+          "sha256": "3e05bb37236ac2f4c99ad5e311bf6e4a962256ce4740c4d9fcb1fd8616aa8cb4"
+        },
+        {
+          "declaration": "rd_kafka_topic_destroy0",
+          "premise": "rk_plugin_callback_closure",
+          "sha256": "4e37dcc344a3707b97f4790c3320d8c48e520fe39a7dd9fd3d0ce83a6123c03b"
+        },
+        {
+          "declaration": "rd_kafka_topic_partition_destroy0",
+          "premise": "rk_plugin_callback_closure",
+          "sha256": "48d64e6928c11650f700cea4fb8de5a4f3b2c76aa71094db5649f33793e9d75c"
+        },
+        {
+          "declaration": "rd_kafka_topic_partition_list_destroy",
+          "premise": "rk_plugin_callback_closure",
+          "sha256": "7e0b16a337a07cad664fdc37e82430e15b56049573de9e8bcf01d720293cc352"
+        },
+        {
+          "declaration": "rd_kafka_topic_partition_list_query_leaders_async_worker_op_cb",
+          "premise": "rk_plugin_callback_closure",
+          "sha256": "631f54f35cc01f75a14c4b6860ba27dbd46dc58d98acf0797124d4c40cbf035e"
+        },
+        {
+          "declaration": "rd_kafka_topic_partition_result_destroy",
+          "premise": "rk_plugin_callback_closure",
+          "sha256": "83d995b24833edf4e388114091cd264dba7a13aef1d7d82e07297467ddcda336"
+        },
+        {
+          "declaration": "rd_kafka_toppar_desired_add",
+          "premise": "rk_plugin_callback_closure",
+          "sha256": "2f7e7c484b20b45dec079bb62392d9f0004cd36829ff5f2a3ae40ee30f1cd4f1"
+        },
+        {
+          "declaration": "rd_kafka_toppar_destroy0",
+          "premise": "rk_plugin_callback_closure",
+          "sha256": "0507f9cd18d0a50d785debaeee30a8bd6f43180583f39ca6f315b8a0302b6cf0"
+        },
+        {
+          "declaration": "rd_kafka_toppar_fetch_backoff",
+          "premise": "rk_plugin_callback_closure",
+          "sha256": "399e193b6a6274e2bf7c8cd17e7e38e5cba34911d4311b21da3e92f94326917c"
+        },
+        {
+          "declaration": "rd_kafka_toppar_get2",
+          "premise": "rk_plugin_callback_closure",
+          "sha256": "7b5573a37ae508f8034061cc1c46ce3cd8123116ea356533676e751f4a9a65d0"
+        },
+        {
+          "declaration": "rd_kafka_toppar_get_avail",
+          "premise": "rk_plugin_callback_closure",
+          "sha256": "8783b7fe9aad2f6b1ed8d11fd94bdf20c0b91924513869957880482bfd23a8eb"
+        },
+        {
+          "declaration": "rd_kafka_toppar_new0",
+          "premise": "rk_plugin_callback_closure",
+          "sha256": "0a92d5cf59f0ceafef58a8c5f595bae6a126a9b5f76c9df241545c09626d074a"
+        },
+        {
+          "declaration": "rd_kafka_toppars_pause_resume",
+          "premise": "rk_plugin_callback_closure",
+          "sha256": "e522d2d52dc3cfd93010489727c8172066586fd424c90bf2800ec26d93d78958"
+        },
+        {
+          "declaration": "rd_kafka_txn_op_abort_transaction",
+          "premise": "rk_plugin_callback_closure",
+          "sha256": "4692f2a9018e67196bc830b6ff08aa384d27fe6f6236360a32b009ad89479b28"
+        },
+        {
+          "declaration": "rd_kafka_txn_op_abort_transaction_ack",
+          "premise": "rk_plugin_callback_closure",
+          "sha256": "8ec7043607368853dcdbc96e2885dd0804d62cebbde2609e9508ce53f75f2228"
+        },
+        {
+          "declaration": "rd_kafka_txn_op_ack_init_transactions",
+          "premise": "rk_plugin_callback_closure",
+          "sha256": "5b7a804d6b584d581958542f81e0272f9eba1def6db14b372084011fa3aed193"
+        },
+        {
+          "declaration": "rd_kafka_txn_op_begin_abort",
+          "premise": "rk_plugin_callback_closure",
+          "sha256": "922c6190b4b40d6a6fb5d3e344b215480964312354eb1025fbd3054e4e476528"
+        },
+        {
+          "declaration": "rd_kafka_txn_op_begin_commit",
+          "premise": "rk_plugin_callback_closure",
+          "sha256": "d74beb47ffba10132265e56bb3fe055933ec0de66b873b5c1bcf6dc65e45811b"
+        },
+        {
+          "declaration": "rd_kafka_txn_op_begin_transaction",
+          "premise": "rk_plugin_callback_closure",
+          "sha256": "f4cf0ef645f9b10506c52cad50e8337fb13ea3ced5d51c1acbc4afcdb04a91d7"
+        },
+        {
+          "declaration": "rd_kafka_txn_op_commit_transaction",
+          "premise": "rk_plugin_callback_closure",
+          "sha256": "b792b93b6ef0638561c9be1ed14b2be9002e19cb3d715c4d573212f127fdffba"
+        },
+        {
+          "declaration": "rd_kafka_txn_op_commit_transaction_ack",
+          "premise": "rk_plugin_callback_closure",
+          "sha256": "be74f5864931d5294d6532a780c7aee0acf16932bb6faae7ce3b461982e9737b"
+        },
+        {
+          "declaration": "rd_kafka_txn_op_init_transactions",
+          "premise": "rk_plugin_callback_closure",
+          "sha256": "c1a23b83c528c69de766b80e873f339bfc0f86221118cee3baf2ba3766b4aa22"
+        },
+        {
+          "declaration": "rd_kafka_txn_op_send_offsets_to_transaction",
+          "premise": "rk_plugin_callback_closure",
+          "sha256": "d99a4a4b69fe33f07439474481ea6d6d5324cb32da95309919bf670ceddead80"
+        },
+        {
+          "declaration": "unit_test_telemetry",
+          "premise": "rk_plugin_callback_closure",
+          "sha256": "96677275a35084dc39eb969e5a526da3a564e374511b22d96a0a5350366f03ff"
+        },
+        {
+          "declaration": "ut_create_mock_toppar",
+          "premise": "rk_plugin_callback_closure",
+          "sha256": "f8dd449a6d44e7e47ed3bb4244f5690e4ffd0020f869c8ddc721c3b3dbb997c9"
+        },
+        {
+          "declaration": "ut_destroy_mock_queue",
+          "premise": "rk_plugin_callback_closure",
+          "sha256": "c6ebdd7f9f1bf12e39ba723fea0fac2576d5e4d524c3b11e71374260a503c401"
+        }
+      ],
+      "premises": {
+        "rd_kafka_AlterConsumerGroupOffsets_destroy": [
+          {
+            "name": "rk_plugin_callback_closure",
+            "origin": "declared"
+          }
+        ],
+        "rd_kafka_DeleteConsumerGroupOffsets_destroy": [
+          {
+            "name": "rk_plugin_callback_closure",
+            "origin": "declared"
+          }
+        ],
+        "rd_kafka_DeleteRecords_leaders_queried_cb": [
+          {
+            "name": "rk_plugin_callback_closure",
+            "origin": "declared"
+          }
+        ],
+        "rd_kafka_ListConsumerGroupOffsets_destroy": [
+          {
+            "name": "rk_plugin_callback_closure",
+            "origin": "declared"
+          }
+        ],
+        "rd_kafka_ListOffsets_leaders_queried_cb": [
+          {
+            "name": "rk_plugin_callback_closure",
+            "origin": "declared"
+          }
+        ],
+        "rd_kafka_admin_fanout_worker": [
+          {
+            "name": "rk_plugin_callback_closure",
+            "origin": "declared"
+          }
+        ],
+        "rd_kafka_admin_worker": [
+          {
+            "name": "rk_plugin_callback_closure",
+            "origin": "declared"
+          }
+        ],
+        "rd_kafka_background_queue_serve": [
+          {
+            "name": "rk_plugin_callback_closure",
+            "origin": "declared"
+          }
+        ],
+        "rd_kafka_broker_monitor_op_cb": [
+          {
+            "name": "rk_plugin_callback_closure",
+            "origin": "declared"
+          },
+          {
+            "name": "broker_monitor_callback",
+            "origin": "declared"
+          }
+        ],
+        "rd_kafka_cgrp_assignor_handle_Metadata_op": [
+          {
+            "name": "rk_plugin_callback_closure",
+            "origin": "declared"
+          },
+          {
+            "name": "assignor_callback",
+            "origin": "declared"
+          }
+        ],
+        "rd_kafka_cgrp_consumer_handle_Metadata_op": [
+          {
+            "name": "rk_plugin_callback_closure",
+            "origin": "declared"
+          }
+        ],
+        "rd_kafka_cgrp_handle_Metadata_op": [
+          {
+            "name": "rk_plugin_callback_closure",
+            "origin": "declared"
+          }
+        ],
+        "rd_kafka_cgrp_op_serve": [
+          {
+            "name": "rk_plugin_callback_closure",
+            "origin": "declared"
+          }
+        ],
+        "rd_kafka_conf_new": [
+          {
+            "name": "asserted_allocation",
+            "origin": "declared"
+          },
+          {
+            "name": "conf_property_writer",
+            "origin": "declared"
+          },
+          {
+            "name": "rk_plugin_callback_closure",
+            "origin": "declared"
+          }
+        ],
+        "rd_kafka_conf_set_background_event_cb": [
+          {
+            "name": "conf_property_writer",
+            "origin": "declared"
+          },
+          {
+            "name": "rk_plugin_callback_closure",
+            "origin": "declared"
+          }
+        ],
+        "rd_kafka_conf_set_closesocket_cb": [
+          {
+            "name": "conf_property_writer",
+            "origin": "declared"
+          },
+          {
+            "name": "rk_plugin_callback_closure",
+            "origin": "declared"
+          }
+        ],
+        "rd_kafka_conf_set_connect_cb": [
+          {
+            "name": "conf_property_writer",
+            "origin": "declared"
+          },
+          {
+            "name": "rk_plugin_callback_closure",
+            "origin": "declared"
+          }
+        ],
+        "rd_kafka_conf_set_consume_cb": [
+          {
+            "name": "conf_property_writer",
+            "origin": "declared"
+          },
+          {
+            "name": "rk_plugin_callback_closure",
+            "origin": "declared"
+          }
+        ],
+        "rd_kafka_conf_set_dr_cb": [
+          {
+            "name": "conf_property_writer",
+            "origin": "declared"
+          },
+          {
+            "name": "rk_plugin_callback_closure",
+            "origin": "declared"
+          }
+        ],
+        "rd_kafka_conf_set_dr_msg_cb": [
+          {
+            "name": "conf_property_writer",
+            "origin": "declared"
+          },
+          {
+            "name": "rk_plugin_callback_closure",
+            "origin": "declared"
+          }
+        ],
+        "rd_kafka_conf_set_error_cb": [
+          {
+            "name": "conf_property_writer",
+            "origin": "declared"
+          },
+          {
+            "name": "rk_plugin_callback_closure",
+            "origin": "declared"
+          }
+        ],
+        "rd_kafka_conf_set_log_cb": [
+          {
+            "name": "conf_property_writer",
+            "origin": "declared"
+          },
+          {
+            "name": "rk_plugin_callback_closure",
+            "origin": "declared"
+          }
+        ],
+        "rd_kafka_conf_set_oauthbearer_token_refresh_cb": [
+          {
+            "name": "conf_property_writer",
+            "origin": "declared"
+          },
+          {
+            "name": "rk_plugin_callback_closure",
+            "origin": "declared"
+          }
+        ],
+        "rd_kafka_conf_set_offset_commit_cb": [
+          {
+            "name": "conf_property_writer",
+            "origin": "declared"
+          },
+          {
+            "name": "rk_plugin_callback_closure",
+            "origin": "declared"
+          }
+        ],
+        "rd_kafka_conf_set_open_cb": [
+          {
+            "name": "conf_property_writer",
+            "origin": "declared"
+          },
+          {
+            "name": "rk_plugin_callback_closure",
+            "origin": "declared"
+          }
+        ],
+        "rd_kafka_conf_set_rebalance_cb": [
+          {
+            "name": "conf_property_writer",
+            "origin": "declared"
+          },
+          {
+            "name": "rk_plugin_callback_closure",
+            "origin": "declared"
+          }
+        ],
+        "rd_kafka_conf_set_resolve_cb": [
+          {
+            "name": "conf_property_writer",
+            "origin": "declared"
+          },
+          {
+            "name": "rk_plugin_callback_closure",
+            "origin": "declared"
+          }
+        ],
+        "rd_kafka_conf_set_socket_cb": [
+          {
+            "name": "conf_property_writer",
+            "origin": "declared"
+          },
+          {
+            "name": "rk_plugin_callback_closure",
+            "origin": "declared"
+          }
+        ],
+        "rd_kafka_conf_set_ssl_cert_verify_cb": [
+          {
+            "name": "conf_property_writer",
+            "origin": "declared"
+          },
+          {
+            "name": "rk_plugin_callback_closure",
+            "origin": "declared"
+          }
+        ],
+        "rd_kafka_conf_set_stats_cb": [
+          {
+            "name": "conf_property_writer",
+            "origin": "declared"
+          },
+          {
+            "name": "rk_plugin_callback_closure",
+            "origin": "declared"
+          }
+        ],
+        "rd_kafka_conf_set_throttle_cb": [
+          {
+            "name": "conf_property_writer",
+            "origin": "declared"
+          },
+          {
+            "name": "rk_plugin_callback_closure",
+            "origin": "declared"
+          }
+        ],
+        "rd_kafka_consume_cb": [
+          {
+            "name": "rk_plugin_callback_closure",
+            "origin": "declared"
+          }
+        ],
+        "rd_kafka_enq_once_trigger": [
+          {
+            "name": "rk_plugin_callback_closure",
+            "origin": "declared"
+          }
+        ],
+        "rd_kafka_err_action": [
+          {
+            "name": "rk_plugin_callback_closure",
+            "origin": "declared"
+          }
+        ],
+        "rd_kafka_mock_cluster_op_serve": [
+          {
+            "name": "rk_plugin_callback_closure",
+            "origin": "declared"
+          }
+        ],
+        "rd_kafka_oauthbearer_refresh_op": [
+          {
+            "name": "rk_plugin_callback_closure",
+            "origin": "declared"
+          }
+        ],
+        "rd_kafka_oauthbearer_set_token_failure": [
+          {
+            "name": "rk_plugin_callback_closure",
+            "origin": "declared"
+          }
+        ],
+        "rd_kafka_oauthbearer_unsecured_token": [
+          {
+            "name": "rk_plugin_callback_closure",
+            "origin": "declared"
+          }
+        ],
+        "rd_kafka_offset_reset_op_cb": [
+          {
+            "name": "rk_plugin_callback_closure",
+            "origin": "declared"
+          }
+        ],
+        "rd_kafka_offset_validate_op_cb": [
+          {
+            "name": "rk_plugin_callback_closure",
+            "origin": "declared"
+          }
+        ],
+        "rd_kafka_oidc_token_client_credentials_refresh_cb": [
+          {
+            "name": "rk_plugin_callback_closure",
+            "origin": "declared"
+          }
+        ],
+        "rd_kafka_oidc_token_jwt_bearer_refresh_cb": [
+          {
+            "name": "rk_plugin_callback_closure",
+            "origin": "declared"
+          }
+        ],
+        "rd_kafka_oidc_token_metadata_aws_iam_refresh_cb": [
+          {
+            "name": "rk_plugin_callback_closure",
+            "origin": "declared"
+          }
+        ],
+        "rd_kafka_oidc_token_metadata_azure_imds_refresh_cb": [
+          {
+            "name": "rk_plugin_callback_closure",
+            "origin": "declared"
+          }
+        ],
+        "rd_kafka_op_destroy": [
+          {
+            "name": "rk_plugin_callback_closure",
+            "origin": "declared"
+          }
+        ],
+        "rd_kafka_op_new0": [
+          {
+            "name": "asserted_allocation",
+            "origin": "declared"
+          }
+        ],
+        "rd_kafka_op_new_cb": [
+          {
+            "name": "asserted_allocation",
+            "origin": "declared"
+          }
+        ],
+        "rd_kafka_op_req": [
+          {
+            "name": "rk_plugin_callback_closure",
+            "origin": "declared"
+          }
+        ],
+        "rd_kafka_op_req0": [
+          {
+            "name": "rk_plugin_callback_closure",
+            "origin": "declared"
+          }
+        ],
+        "rd_kafka_op_req2": [
+          {
+            "name": "rk_plugin_callback_closure",
+            "origin": "declared"
+          }
+        ],
+        "rd_kafka_poll_cb": [
+          {
+            "name": "rk_plugin_callback_closure",
+            "origin": "declared"
+          }
+        ],
+        "rd_kafka_q_destroy0": [
+          {
+            "name": "rk_plugin_callback_closure",
+            "origin": "declared"
+          }
+        ],
+        "rd_kafka_q_destroy_owner": [
+          {
+            "name": "rk_plugin_callback_closure",
+            "origin": "declared"
+          }
+        ],
+        "rd_kafka_q_new0": [
+          {
+            "name": "asserted_allocation",
+            "origin": "declared"
+          }
+        ],
+        "rd_kafka_q_pop_serve": [
+          {
+            "name": "rk_plugin_callback_closure",
+            "origin": "declared"
+          }
+        ],
+        "rd_kafka_q_pop_serve0": [
+          {
+            "name": "rk_plugin_callback_closure",
+            "origin": "declared"
+          }
+        ],
+        "rd_kafka_q_pop_serve_maybe_consume": [
+          {
+            "name": "rk_plugin_callback_closure",
+            "origin": "declared"
+          }
+        ],
+        "rd_kafka_q_purge0": [
+          {
+            "name": "rk_plugin_callback_closure",
+            "origin": "declared"
+          },
+          {
+            "name": "served_queue",
+            "origin": "declared"
+          }
+        ],
+        "rd_kafka_q_serve": [
+          {
+            "name": "rk_plugin_callback_closure",
+            "origin": "declared"
+          }
+        ],
+        "rd_kafka_q_serve0": [
+          {
+            "name": "rk_plugin_callback_closure",
+            "origin": "declared"
+          }
+        ],
+        "rd_kafka_q_serve_maybe_consume": [
+          {
+            "name": "rk_plugin_callback_closure",
+            "origin": "declared"
+          }
+        ],
+        "rd_kafka_q_wait_result": [
+          {
+            "name": "rk_plugin_callback_closure",
+            "origin": "declared"
+          },
+          {
+            "name": "served_queue",
+            "origin": "declared"
+          }
+        ],
+        "rd_kafka_share_ack_commit_cb_register_op": [
+          {
+            "name": "rk_plugin_callback_closure",
+            "origin": "declared"
+          }
+        ],
+        "rd_kafka_share_commit_async_fanout_op": [
+          {
+            "name": "rk_plugin_callback_closure",
+            "origin": "declared"
+          }
+        ],
+        "rd_kafka_share_commit_sync_fanout_op": [
+          {
+            "name": "rk_plugin_callback_closure",
+            "origin": "declared"
+          }
+        ],
+        "rd_kafka_share_fetch_fanout_op": [
+          {
+            "name": "rk_plugin_callback_closure",
+            "origin": "declared"
+          },
+          {
+            "name": "share_ack_batches_nonempty",
+            "origin": "declared"
+          }
+        ],
+        "rd_kafka_share_fetch_reply_op_cb": [
+          {
+            "name": "rk_plugin_callback_closure",
+            "origin": "declared"
+          }
+        ],
+        "rd_kafka_topic_destroy0": [
+          {
+            "name": "rk_plugin_callback_closure",
+            "origin": "declared"
+          }
+        ],
+        "rd_kafka_topic_partition_destroy0": [
+          {
+            "name": "rk_plugin_callback_closure",
+            "origin": "declared"
+          }
+        ],
+        "rd_kafka_topic_partition_list_destroy": [
+          {
+            "name": "rk_plugin_callback_closure",
+            "origin": "declared"
+          }
+        ],
+        "rd_kafka_topic_partition_list_query_leaders_async_worker_op_cb": [
+          {
+            "name": "rk_plugin_callback_closure",
+            "origin": "declared"
+          }
+        ],
+        "rd_kafka_topic_partition_result_destroy": [
+          {
+            "name": "rk_plugin_callback_closure",
+            "origin": "declared"
+          }
+        ],
+        "rd_kafka_toppar_desired_add": [
+          {
+            "name": "rk_plugin_callback_closure",
+            "origin": "declared"
+          },
+          {
+            "name": "asserted_allocation",
+            "origin": "declared"
+          }
+        ],
+        "rd_kafka_toppar_destroy0": [
+          {
+            "name": "rk_plugin_callback_closure",
+            "origin": "declared"
+          }
+        ],
+        "rd_kafka_toppar_fetch_backoff": [
+          {
+            "name": "rk_plugin_callback_closure",
+            "origin": "declared"
+          }
+        ],
+        "rd_kafka_toppar_get2": [
+          {
+            "name": "rk_plugin_callback_closure",
+            "origin": "declared"
+          }
+        ],
+        "rd_kafka_toppar_get_avail": [
+          {
+            "name": "rk_plugin_callback_closure",
+            "origin": "declared"
+          }
+        ],
+        "rd_kafka_toppar_new0": [
+          {
+            "name": "rk_plugin_callback_closure",
+            "origin": "declared"
+          },
+          {
+            "name": "asserted_allocation",
+            "origin": "declared"
+          }
+        ],
+        "rd_kafka_toppars_pause_resume": [
+          {
+            "name": "rk_plugin_callback_closure",
+            "origin": "declared"
+          }
+        ],
+        "rd_kafka_txn_op_abort_transaction": [
+          {
+            "name": "rk_plugin_callback_closure",
+            "origin": "declared"
+          }
+        ],
+        "rd_kafka_txn_op_abort_transaction_ack": [
+          {
+            "name": "rk_plugin_callback_closure",
+            "origin": "declared"
+          }
+        ],
+        "rd_kafka_txn_op_ack_init_transactions": [
+          {
+            "name": "rk_plugin_callback_closure",
+            "origin": "declared"
+          }
+        ],
+        "rd_kafka_txn_op_begin_abort": [
+          {
+            "name": "rk_plugin_callback_closure",
+            "origin": "declared"
+          }
+        ],
+        "rd_kafka_txn_op_begin_commit": [
+          {
+            "name": "rk_plugin_callback_closure",
+            "origin": "declared"
+          }
+        ],
+        "rd_kafka_txn_op_begin_transaction": [
+          {
+            "name": "rk_plugin_callback_closure",
+            "origin": "declared"
+          }
+        ],
+        "rd_kafka_txn_op_commit_transaction": [
+          {
+            "name": "rk_plugin_callback_closure",
+            "origin": "declared"
+          }
+        ],
+        "rd_kafka_txn_op_commit_transaction_ack": [
+          {
+            "name": "rk_plugin_callback_closure",
+            "origin": "declared"
+          }
+        ],
+        "rd_kafka_txn_op_init_transactions": [
+          {
+            "name": "rk_plugin_callback_closure",
+            "origin": "declared"
+          }
+        ],
+        "rd_kafka_txn_op_send_offsets_to_transaction": [
+          {
+            "name": "rk_plugin_callback_closure",
+            "origin": "declared"
+          }
+        ],
+        "unit_test_telemetry": [
+          {
+            "name": "rk_plugin_callback_closure",
+            "origin": "declared"
+          }
+        ],
+        "ut_create_mock_queue": [
+          {
+            "name": "asserted_allocation",
+            "origin": "declared"
+          }
+        ],
+        "ut_create_mock_toppar": [
+          {
+            "name": "rk_plugin_callback_closure",
+            "origin": "declared"
+          }
+        ],
+        "ut_destroy_mock_queue": [
+          {
+            "name": "rk_plugin_callback_closure",
+            "origin": "declared"
+          }
+        ]
+      },
+      "sha256": "a09f66246bb7cd2d7285ba553e9698c8f3bfab89b2347f7390a56f299fecd7f6"
+    },
+    "librdkafka/kafka_mem.qv": {
+      "clause_count": 53,
+      "declaration_count": 8,
+      "declarations": [
+        {
+          "clauses": 4,
+          "name": "rd_kafka_mem_free"
+        },
+        {
+          "clauses": 3,
+          "name": "load_descriptor_values"
+        },
+        {
+          "clauses": 6,
+          "name": "rd_kafka_aborted_txns_next_offset"
+        },
+        {
+          "clauses": 4,
+          "name": "rd_kafka_anyconf_desensitize"
+        },
+        {
+          "clauses": 22,
+          "name": "rd_kafka_dump0"
+        },
+        {
+          "clauses": 5,
+          "name": "rd_kafka_metadata_copy_internal"
+        },
+        {
+          "clauses": 4,
+          "name": "rd_bytes_hash"
+        },
+        {
+          "clauses": 5,
+          "name": "rd_kafka_mem_calloc"
+        }
+      ],
+      "inherits": [],
+      "premise_bindings": [
+        {
+          "declaration": "rd_kafka_dump0",
+          "premise": "rk_plugin_callback_closure",
+          "sha256": "f86b101a9461536b91018f23ba7df6881fd9a6970b2797b36cd3b3d587c204e4"
+        }
+      ],
+      "premises": {
+        "rd_kafka_dump0": [
+          {
+            "name": "rk_plugin_callback_closure",
+            "origin": "declared"
+          }
+        ]
+      },
+      "sha256": "459a1cb32e3512e97c267a4651ca1629943179e41e136b28b6c71e19b639d0d3"
+    },
+    "librdkafka/log_caller_frame.qv": {
+      "clause_count": 24,
+      "declaration_count": 2,
+      "declarations": [
+        {
+          "clauses": 11,
+          "name": "rd_kafka_log_buf"
+        },
+        {
+          "clauses": 13,
+          "name": "rd_kafka_log0"
+        }
+      ],
+      "inherits": [],
+      "premise_bindings": [],
+      "premises": {
+        "rd_kafka_log0": [
+          {
+            "name": "rk_plugin_callback_closure",
+            "origin": "declared"
+          },
+          {
+            "name": "rk_log_enqueue_no_event_callback",
+            "origin": "declared"
+          },
+          {
+            "name": "rk_log_enqueue_forward_not_last",
+            "origin": "declared"
+          }
+        ],
+        "rd_kafka_log_buf": [
+          {
+            "name": "rk_plugin_callback_closure",
+            "origin": "declared"
+          },
+          {
+            "name": "rk_log_enqueue_no_event_callback",
+            "origin": "declared"
+          },
+          {
+            "name": "rk_log_enqueue_forward_not_last",
+            "origin": "declared"
+          }
+        ]
+      },
+      "sha256": "6ca4cb178360d28bd039a052411777d1ab4eae5beaea76973a7e809163342593"
+    },
+    "librdkafka/logging.qv": {
+      "clause_count": 67,
+      "declaration_count": 3,
+      "declarations": [
+        {
+          "clauses": 22,
+          "name": "cb_kafka_msg"
+        },
+        {
+          "clauses": 23,
+          "name": "cb_kafka_logger"
+        },
+        {
+          "clauses": 22,
+          "name": "oauthbearer_token_refresh_cb"
+        }
+      ],
+      "inherits": [],
+      "premise_bindings": [
+        {
+          "declaration": "cb_kafka_logger",
+          "premise": "rk_plugin_callback_closure",
+          "sha256": "c0e4629e58ec35de1a0251dce6700fc152438ac9ab4d6d8cb4500638c063f061"
+        },
+        {
+          "declaration": "cb_kafka_msg",
+          "premise": "rk_plugin_callback_closure",
+          "sha256": "7a3a983e68e4a74083324f5c985948fc43f47eafc155152924489a55e4ccb482"
+        },
+        {
+          "declaration": "oauthbearer_token_refresh_cb",
+          "premise": "rk_plugin_callback_closure",
+          "sha256": "c355b4f4418cb176f0eff2bb45cc9176fa5771c69aec5afdad2f6e92a938a729"
+        }
+      ],
+      "premises": {
+        "cb_kafka_logger": [
+          {
+            "name": "rk_plugin_callback_closure",
+            "origin": "declared"
+          }
+        ],
+        "cb_kafka_msg": [
+          {
+            "name": "rk_plugin_callback_closure",
+            "origin": "declared"
+          }
+        ],
+        "oauthbearer_token_refresh_cb": [
+          {
+            "name": "rk_plugin_callback_closure",
+            "origin": "declared"
+          }
+        ]
+      },
+      "sha256": "17fcbea1eb6559fce4d1be34a2840f64a413582e69fe324986d6a0a30c8cdcb8"
+    },
+    "librdkafka/lz4_stream.qv": {
+      "clause_count": 71,
+      "declaration_count": 9,
+      "declarations": [
+        {
+          "clauses": 3,
+          "name": "LZ4_resetStream"
+        },
+        {
+          "clauses": 7,
+          "name": "LZ4_compress_HC"
+        },
+        {
+          "clauses": 8,
+          "name": "LZ4_decompress_unsafe_generic"
+        },
+        {
+          "clauses": 11,
+          "name": "LZ4_decompress_generic"
+        },
+        {
+          "clauses": 6,
+          "name": "LZ4_compress_default"
+        },
+        {
+          "clauses": 9,
+          "name": "LZ4_compress_HC_extStateHC"
+        },
+        {
+          "clauses": 8,
+          "name": "LZ4_compress_HC_continue"
+        },
+        {
+          "clauses": 9,
+          "name": "LZ4_compress_fast_continue"
+        },
+        {
+          "clauses": 10,
+          "name": "LZ4_compress_fast_extState"
+        }
+      ],
+      "inherits": [],
+      "premise_bindings": [],
+      "premises": {},
+      "sha256": "0b3c92fc7476d1f0a0d11d5954a9445882c66897d2409eda55e9efbd6db8ce74"
+    },
+    "librdkafka/memory.qv": {
+      "clause_count": 74,
+      "declaration_count": 13,
+      "declarations": [
+        {
+          "clauses": 3,
+          "name": "rd_malloc"
+        },
+        {
+          "clauses": 6,
+          "name": "rd_calloc"
+        },
+        {
+          "clauses": 5,
+          "name": "rd_strdup"
+        },
+        {
+          "clauses": 4,
+          "name": "rd_strndup"
+        },
+        {
+          "clauses": 3,
+          "name": "rd_free"
+        },
+        {
+          "clauses": 4,
+          "name": "rd_realloc"
+        },
+        {
+          "clauses": 3,
+          "name": "rd_atomic32_get"
+        },
+        {
+          "clauses": 5,
+          "name": "rd_file_read"
+        },
+        {
+          "clauses": 25,
+          "name": "rd_kafka_crash"
+        },
+        {
+          "clauses": 5,
+          "name": "cnd_timedwait_ms"
+        },
+        {
+          "clauses": 4,
+          "name": "rd_hdr_histogram_record"
+        },
+        {
+          "clauses": 4,
+          "name": "rd_atomic64_add"
+        },
+        {
+          "clauses": 3,
+          "name": "rd_atomic64_get"
+        }
+      ],
+      "inherits": [
+        {
+          "child": "rd_malloc",
+          "parent": "libc::malloc"
+        },
+        {
+          "child": "rd_strndup",
+          "parent": "libc::strndup"
+        },
+        {
+          "child": "rd_free",
+          "parent": "libc::free"
+        }
+      ],
+      "premise_bindings": [
+        {
+          "declaration": "rd_kafka_crash",
+          "premise": "rk_plugin_callback_closure",
+          "sha256": "1f7ed5118d85a487094ca3a46a81a264dedf8abe4f6c0a9515d80c6e95dafe21"
+        }
+      ],
+      "premises": {
+        "rd_calloc": [
+          {
+            "name": "asserted_allocation",
+            "origin": "declared"
+          }
+        ],
+        "rd_kafka_crash": [
+          {
+            "name": "rk_plugin_callback_closure",
+            "origin": "declared"
+          }
+        ],
+        "rd_strdup": [
+          {
+            "name": "asserted_allocation",
+            "origin": "declared"
+          }
+        ]
+      },
+      "sha256": "55c71fa47419acf0d7d143c50b0d5c10851d77e67d95978321eb482ed1786556"
+    },
+    "librdkafka/null_deref.qv": {
+      "clause_count": 1380,
+      "declaration_count": 86,
+      "declarations": [
+        {
+          "clauses": 2,
+          "name": "rd_kafka_destroy"
+        },
+        {
+          "clauses": 2,
+          "name": "rd_kafka_topic_partition_list_destroy"
+        },
+        {
+          "clauses": 2,
+          "name": "rd_kafka_topic_partition_list_add"
+        },
+        {
+          "clauses": 2,
+          "name": "rd_list_destroy"
+        },
+        {
+          "clauses": 2,
+          "name": "rd_list_add"
+        },
+        {
+          "clauses": 2,
+          "name": "rd_kafka_queue_destroy"
+        },
+        {
+          "clauses": 2,
+          "name": "rd_kafka_message_destroy"
+        },
+        {
+          "clauses": 19,
+          "name": "rd_kafka_toppar_new0"
+        },
+        {
+          "clauses": 20,
+          "name": "rd_kafka_topic_new0"
+        },
+        {
+          "clauses": 19,
+          "name": "rd_kafka_cgrp_new"
+        },
+        {
+          "clauses": 19,
+          "name": "rd_kafka_transport_new"
+        },
+        {
+          "clauses": 2,
+          "name": "rd_kafka_topic_keep"
+        },
+        {
+          "clauses": 2,
+          "name": "rd_kafka_flush"
+        },
+        {
+          "clauses": 2,
+          "name": "rd_kafka_message_errstr"
+        },
+        {
+          "clauses": 2,
+          "name": "rd_kafka_queue_poll"
+        },
+        {
+          "clauses": 2,
+          "name": "rd_kafka_event_error"
+        },
+        {
+          "clauses": 2,
+          "name": "rd_kafka_outq_len"
+        },
+        {
+          "clauses": 2,
+          "name": "rd_kafka_op_destroy"
+        },
+        {
+          "clauses": 2,
+          "name": "rd_kafka_topic_name"
+        },
+        {
+          "clauses": 19,
+          "name": "rd_kafka_broker_add"
+        },
+        {
+          "clauses": 19,
+          "name": "rd_kafka_ShareAcknowledgeRequest"
+        },
+        {
+          "clauses": 19,
+          "name": "rd_kafka_broker_active_toppar_add"
+        },
+        {
+          "clauses": 19,
+          "name": "rd_kafka_broker_active_toppar_del"
+        },
+        {
+          "clauses": 19,
+          "name": "rd_kafka_broker_buf_enq0"
+        },
+        {
+          "clauses": 19,
+          "name": "rd_kafka_broker_buf_retry"
+        },
+        {
+          "clauses": 19,
+          "name": "rd_kafka_broker_bufq_timeout_scan"
+        },
+        {
+          "clauses": 19,
+          "name": "rd_kafka_broker_conn_closed"
+        },
+        {
+          "clauses": 19,
+          "name": "rd_kafka_broker_connect"
+        },
+        {
+          "clauses": 19,
+          "name": "rd_kafka_broker_connect_auth"
+        },
+        {
+          "clauses": 19,
+          "name": "rd_kafka_broker_connect_done"
+        },
+        {
+          "clauses": 19,
+          "name": "rd_kafka_broker_connect_up"
+        },
+        {
+          "clauses": 19,
+          "name": "rd_kafka_broker_consumer_serve"
+        },
+        {
+          "clauses": 19,
+          "name": "rd_kafka_broker_destroy_final"
+        },
+        {
+          "clauses": 19,
+          "name": "rd_kafka_broker_feature_disable"
+        },
+        {
+          "clauses": 19,
+          "name": "rd_kafka_broker_feature_enable"
+        },
+        {
+          "clauses": 19,
+          "name": "rd_kafka_broker_features_set"
+        },
+        {
+          "clauses": 19,
+          "name": "rd_kafka_broker_fetch_backoff"
+        },
+        {
+          "clauses": 19,
+          "name": "rd_kafka_broker_fetch_toppars"
+        },
+        {
+          "clauses": 19,
+          "name": "rd_kafka_broker_handle_purge_queues"
+        },
+        {
+          "clauses": 19,
+          "name": "rd_kafka_broker_idle_check"
+        },
+        {
+          "clauses": 19,
+          "name": "rd_kafka_broker_internal_serve"
+        },
+        {
+          "clauses": 19,
+          "name": "rd_kafka_broker_needs_connection"
+        },
+        {
+          "clauses": 19,
+          "name": "rd_kafka_broker_produce_toppars"
+        },
+        {
+          "clauses": 19,
+          "name": "rd_kafka_broker_resolve"
+        },
+        {
+          "clauses": 19,
+          "name": "rd_kafka_broker_retry_bufs_move"
+        },
+        {
+          "clauses": 19,
+          "name": "rd_kafka_broker_serve"
+        },
+        {
+          "clauses": 19,
+          "name": "rd_kafka_broker_session_add_partition_to_toppars_in_session"
+        },
+        {
+          "clauses": 19,
+          "name": "rd_kafka_broker_session_remove_partition_from_toppars_in_session"
+        },
+        {
+          "clauses": 19,
+          "name": "rd_kafka_broker_session_reset"
+        },
+        {
+          "clauses": 19,
+          "name": "rd_kafka_broker_session_update_epoch"
+        },
+        {
+          "clauses": 19,
+          "name": "rd_kafka_broker_session_update_partitions"
+        },
+        {
+          "clauses": 19,
+          "name": "rd_kafka_broker_set_api_versions"
+        },
+        {
+          "clauses": 19,
+          "name": "rd_kafka_broker_set_nodename"
+        },
+        {
+          "clauses": 19,
+          "name": "rd_kafka_broker_set_state"
+        },
+        {
+          "clauses": 19,
+          "name": "rd_kafka_broker_share_fetch_session_clear"
+        },
+        {
+          "clauses": 19,
+          "name": "rd_kafka_broker_share_fetch_session_leave"
+        },
+        {
+          "clauses": 19,
+          "name": "rd_kafka_broker_share_rpc"
+        },
+        {
+          "clauses": 19,
+          "name": "rd_kafka_broker_share_session_toppar_add"
+        },
+        {
+          "clauses": 19,
+          "name": "rd_kafka_broker_timeout_scan"
+        },
+        {
+          "clauses": 19,
+          "name": "rd_kafka_broker_toppar_msgq_scan"
+        },
+        {
+          "clauses": 19,
+          "name": "rd_kafka_broker_wakeup"
+        },
+        {
+          "clauses": 19,
+          "name": "rd_kafka_buf_new_request0"
+        },
+        {
+          "clauses": 19,
+          "name": "rd_kafka_buf_retry"
+        },
+        {
+          "clauses": 19,
+          "name": "rd_kafka_bufq_connection_reset"
+        },
+        {
+          "clauses": 19,
+          "name": "rd_kafka_bufq_dump"
+        },
+        {
+          "clauses": 19,
+          "name": "rd_kafka_bufq_purge"
+        },
+        {
+          "clauses": 19,
+          "name": "rd_kafka_dr_implicit_ack"
+        },
+        {
+          "clauses": 19,
+          "name": "rd_kafka_features_check"
+        },
+        {
+          "clauses": 19,
+          "name": "rd_kafka_fetch_reply_handle_partition_error"
+        },
+        {
+          "clauses": 19,
+          "name": "rd_kafka_group_MemberMetadata_consumer_read"
+        },
+        {
+          "clauses": 19,
+          "name": "rd_kafka_handle_Produce_metadata_update"
+        },
+        {
+          "clauses": 19,
+          "name": "rd_kafka_idemp_request_pid_failed"
+        },
+        {
+          "clauses": 19,
+          "name": "rd_kafka_msgbatch_handle_Produce_result"
+        },
+        {
+          "clauses": 19,
+          "name": "rd_kafka_op_throttle_time"
+        },
+        {
+          "clauses": 19,
+          "name": "rd_kafka_parse_Metadata_update_topic"
+        },
+        {
+          "clauses": 19,
+          "name": "rd_kafka_recv"
+        },
+        {
+          "clauses": 19,
+          "name": "rd_kafka_req_response"
+        },
+        {
+          "clauses": 19,
+          "name": "rd_kafka_sasl_broker_init"
+        },
+        {
+          "clauses": 19,
+          "name": "rd_kafka_sasl_broker_term"
+        },
+        {
+          "clauses": 19,
+          "name": "rd_kafka_send"
+        },
+        {
+          "clauses": 19,
+          "name": "rd_kafka_ssl_hmac"
+        },
+        {
+          "clauses": 19,
+          "name": "rd_kafka_toppar_fetch_backoff"
+        },
+        {
+          "clauses": 19,
+          "name": "rd_kafka_transport_connect"
+        },
+        {
+          "clauses": 19,
+          "name": "rd_kafka_transport_ssl_connect"
+        },
+        {
+          "clauses": 19,
+          "name": "rd_kafka_waitresp_find"
+        },
+        {
+          "clauses": 19,
+          "name": "rd_kafkap_share_leader_changes_apply"
+        }
+      ],
+      "inherits": [],
+      "premise_bindings": [
+        {
+          "declaration": "rd_kafka_ShareAcknowledgeRequest",
+          "premise": "rk_plugin_callback_closure",
+          "sha256": "535a0ca6652b3ac29511583341b68f8d59ad3b03d56a5f637b0d29c398b736ac"
+        },
+        {
+          "declaration": "rd_kafka_broker_active_toppar_add",
+          "premise": "rk_plugin_callback_closure",
+          "sha256": "2ef1d9383b7ba09027b5b42318c8decdff9c2afc1a242e5e8d583d7cbaf7aeec"
+        },
+        {
+          "declaration": "rd_kafka_broker_active_toppar_del",
+          "premise": "rk_plugin_callback_closure",
+          "sha256": "85f929c2edc3e5e87b21850a85657e248668e56d9255dd57d97e54f8337c2313"
+        },
+        {
+          "declaration": "rd_kafka_broker_add",
+          "premise": "rk_plugin_callback_closure",
+          "sha256": "6f023a4159bbc8bf65cf49ef72b07a9537656bf4b578e3792aaa81e1cd763ccc"
+        },
+        {
+          "declaration": "rd_kafka_broker_buf_enq0",
+          "premise": "rk_plugin_callback_closure",
+          "sha256": "6b4043ca1e919c257e0df4144f7308ed89f8aeb318f146cf834a7e01fe3620b7"
+        },
+        {
+          "declaration": "rd_kafka_broker_buf_retry",
+          "premise": "rk_plugin_callback_closure",
+          "sha256": "c99ed0a26b90ccafcbfc6825e1f5a362178951a74866e4017b2679ec5621e3cf"
+        },
+        {
+          "declaration": "rd_kafka_broker_bufq_timeout_scan",
+          "premise": "rk_plugin_callback_closure",
+          "sha256": "5d6a41ff63238ab1aff3688cb2014f4230fdf1684a3f67820cb77ccad8e4401b"
+        },
+        {
+          "declaration": "rd_kafka_broker_conn_closed",
+          "premise": "rk_plugin_callback_closure",
+          "sha256": "34c765b22613f0d79891d5ba4a00d59585375e131d1b90e27c14d53ad5694029"
+        },
+        {
+          "declaration": "rd_kafka_broker_connect",
+          "premise": "rk_plugin_callback_closure",
+          "sha256": "b2c8b3733f6b8ae487c7bb186b0785192b921c07fe503eed892a2524b14a44c6"
+        },
+        {
+          "declaration": "rd_kafka_broker_connect_auth",
+          "premise": "rk_plugin_callback_closure",
+          "sha256": "3fde96016a5cbe1a4448f12c4786cc5ea7ed878437d8522ab1989de35e4122c2"
+        },
+        {
+          "declaration": "rd_kafka_broker_connect_done",
+          "premise": "rk_plugin_callback_closure",
+          "sha256": "06567103418a25c82bbc677ac22034d67686fc64a5bbdd0be3415f15fcda8a56"
+        },
+        {
+          "declaration": "rd_kafka_broker_connect_up",
+          "premise": "rk_plugin_callback_closure",
+          "sha256": "7b62fe621cd3c8bebccf1f825b9cb1d5f8e79a2d9e0d23ba3e428e6a0689b58e"
+        },
+        {
+          "declaration": "rd_kafka_broker_consumer_serve",
+          "premise": "rk_plugin_callback_closure",
+          "sha256": "3840f8bb6cc57de33ba934755d4e3c2401fe046724ba87a5bc3240618c5c83f3"
+        },
+        {
+          "declaration": "rd_kafka_broker_destroy_final",
+          "premise": "rk_plugin_callback_closure",
+          "sha256": "2995bd0ad1c9498e057422b2e4cf11dd0c398ee469c5bc002a6ddf93e357c48c"
+        },
+        {
+          "declaration": "rd_kafka_broker_feature_disable",
+          "premise": "rk_plugin_callback_closure",
+          "sha256": "fc0a67ed75d4e353f1633ea1beff71bb383da1fa14813ba187bb67293d26b60c"
+        },
+        {
+          "declaration": "rd_kafka_broker_feature_enable",
+          "premise": "rk_plugin_callback_closure",
+          "sha256": "e23d5ceb143f52eefc852d1dedbca91b1f3747c4af5ed0c1d51d2bc9f471952d"
+        },
+        {
+          "declaration": "rd_kafka_broker_features_set",
+          "premise": "rk_plugin_callback_closure",
+          "sha256": "46f23e414e4126933940b6ea75a9dd6806140c030d98c77230993acd24e448ae"
+        },
+        {
+          "declaration": "rd_kafka_broker_fetch_backoff",
+          "premise": "rk_plugin_callback_closure",
+          "sha256": "92a78c06e28c6df566e253cb91b784229e0d70717426fa1d2fb26fd9b7c17ded"
+        },
+        {
+          "declaration": "rd_kafka_broker_fetch_toppars",
+          "premise": "rk_plugin_callback_closure",
+          "sha256": "60ee4fff8555f1589852447847dc9d7eefa65bff253605d266ef379cae454672"
+        },
+        {
+          "declaration": "rd_kafka_broker_handle_purge_queues",
+          "premise": "rk_plugin_callback_closure",
+          "sha256": "2411a61b7d6244fdb4c98921dc1761167fc6d3a714c78fd467b4d3681be0c57e"
+        },
+        {
+          "declaration": "rd_kafka_broker_idle_check",
+          "premise": "rk_plugin_callback_closure",
+          "sha256": "b64a6ec74bf5741c53eb3c62274e71674a249f7b5fcec801a0f03abca5e7f58e"
+        },
+        {
+          "declaration": "rd_kafka_broker_internal_serve",
+          "premise": "rk_plugin_callback_closure",
+          "sha256": "7b9ad2cf88fd6536d567c285ea9537024e580d177ab5c3d3d527595454d15af4"
+        },
+        {
+          "declaration": "rd_kafka_broker_needs_connection",
+          "premise": "rk_plugin_callback_closure",
+          "sha256": "cdc5417b55a354a0baa6abda37009952c43152b1e19dac59390cb767632e6181"
+        },
+        {
+          "declaration": "rd_kafka_broker_produce_toppars",
+          "premise": "rk_plugin_callback_closure",
+          "sha256": "cfb7edf332ccf4cabedf8ea668070a0c74f23941d5ca584851920dbe8f60c03a"
+        },
+        {
+          "declaration": "rd_kafka_broker_resolve",
+          "premise": "rk_plugin_callback_closure",
+          "sha256": "a6f93143be9746252cbcc64aae525e8d164d802385943437aa271c64413ee407"
+        },
+        {
+          "declaration": "rd_kafka_broker_retry_bufs_move",
+          "premise": "rk_plugin_callback_closure",
+          "sha256": "f66f5cda6787a0c30a23a536bbaa2831021a0b809642b963715afb5f59aae084"
+        },
+        {
+          "declaration": "rd_kafka_broker_serve",
+          "premise": "rk_plugin_callback_closure",
+          "sha256": "6cfc5f8f0230ccf3f789eb4fcaae35a3a2b459aeb375e8d80ca28748a7aac71b"
+        },
+        {
+          "declaration": "rd_kafka_broker_session_add_partition_to_toppars_in_session",
+          "premise": "rk_plugin_callback_closure",
+          "sha256": "c4cadf85e6c5858994a23683797d73f4a93cbcc5e20af8a0bd6edff12615b66a"
+        },
+        {
+          "declaration": "rd_kafka_broker_session_remove_partition_from_toppars_in_session",
+          "premise": "rk_plugin_callback_closure",
+          "sha256": "2f70a5128233a9f2b9734760eef94f36e18dda6b86d6ec8bce07e918de65db38"
+        },
+        {
+          "declaration": "rd_kafka_broker_session_reset",
+          "premise": "rk_plugin_callback_closure",
+          "sha256": "12f8c8e585472daa45d3b635eceb2cba598bed2fd9b1ee56917949b4a88ff77a"
+        },
+        {
+          "declaration": "rd_kafka_broker_session_update_epoch",
+          "premise": "rk_plugin_callback_closure",
+          "sha256": "3f8fcce87cfa437d9524194c6022e1156ad944207a34bcfb910b6f1c50c88d0d"
+        },
+        {
+          "declaration": "rd_kafka_broker_session_update_partitions",
+          "premise": "rk_plugin_callback_closure",
+          "sha256": "a8f941e1b5367e08f3c47fd934434b51000e52c5964467b4b38cdf6f9da86e3b"
+        },
+        {
+          "declaration": "rd_kafka_broker_set_api_versions",
+          "premise": "rk_plugin_callback_closure",
+          "sha256": "cc0dcad2087f65980ac48424a167e2d01116dc68bcd7d8f7af91af514d6ff405"
+        },
+        {
+          "declaration": "rd_kafka_broker_set_nodename",
+          "premise": "rk_plugin_callback_closure",
+          "sha256": "16869c8aed4df167ac6ba688a4f011c1ebdaa99d2f6d514766a4853383bec8ce"
+        },
+        {
+          "declaration": "rd_kafka_broker_set_state",
+          "premise": "rk_plugin_callback_closure",
+          "sha256": "3c0f83a616aef0da8e07ced5d56cf0ac84d5cf586a54b08fa1b9a47b778cb789"
+        },
+        {
+          "declaration": "rd_kafka_broker_share_fetch_session_clear",
+          "premise": "rk_plugin_callback_closure",
+          "sha256": "8301139a06c75927a093d1122b3c252ea30f9a5847deb8888874364321c07f9f"
+        },
+        {
+          "declaration": "rd_kafka_broker_share_fetch_session_leave",
+          "premise": "rk_plugin_callback_closure",
+          "sha256": "2396b7fcec6ac6d9490c67048fbdca9e2c58c1beebf461b29ae4568e0ba2c03c"
+        },
+        {
+          "declaration": "rd_kafka_broker_share_rpc",
+          "premise": "rk_plugin_callback_closure",
+          "sha256": "279150a059003b91dc7dcd5921b97ab202c2d456519d05dfc2b210628eae281e"
+        },
+        {
+          "declaration": "rd_kafka_broker_share_session_toppar_add",
+          "premise": "rk_plugin_callback_closure",
+          "sha256": "6143e106c1b1b603714157abd17afe76c5e46e2f0ff9370ddb0ce0a45fd0dd6f"
+        },
+        {
+          "declaration": "rd_kafka_broker_timeout_scan",
+          "premise": "rk_plugin_callback_closure",
+          "sha256": "8c8788a43f5358a81527caccc00c9c2e9d6a166c9f13ea204fd3de51e4ee36a6"
+        },
+        {
+          "declaration": "rd_kafka_broker_toppar_msgq_scan",
+          "premise": "rk_plugin_callback_closure",
+          "sha256": "5b5162160e1621f56ace572769637149c98f5f04de8d0875f3a91e7ef771e395"
+        },
+        {
+          "declaration": "rd_kafka_broker_wakeup",
+          "premise": "rk_plugin_callback_closure",
+          "sha256": "e1a6e393b65e7827bedf7db531cb3b6014cfe936748d59adc86d1e64023e7563"
+        },
+        {
+          "declaration": "rd_kafka_buf_new_request0",
+          "premise": "rk_plugin_callback_closure",
+          "sha256": "48abe6348f9f90261a0bee7629b68648fa01e778ca23f2f1fb8cc95dfaa5c7e4"
+        },
+        {
+          "declaration": "rd_kafka_buf_retry",
+          "premise": "rk_plugin_callback_closure",
+          "sha256": "d0c7834ca1da02d17a9814c9d575c8aec0d34d6bd2d9696bd8820c1a0a101e14"
+        },
+        {
+          "declaration": "rd_kafka_bufq_connection_reset",
+          "premise": "rk_plugin_callback_closure",
+          "sha256": "ff6bceb8b3277b3c3757387e091abf47fca2b40644460a0a7e1aef4cb1fe55bc"
+        },
+        {
+          "declaration": "rd_kafka_bufq_dump",
+          "premise": "rk_plugin_callback_closure",
+          "sha256": "c555646d31043ddee22b6c24b7f2c580189346e59bfdfc7f205b2dc3ee236819"
+        },
+        {
+          "declaration": "rd_kafka_bufq_purge",
+          "premise": "rk_plugin_callback_closure",
+          "sha256": "0742a88fe39904ad173d2f18279739a841201f28bad1063fc08badfc9f36e3cc"
+        },
+        {
+          "declaration": "rd_kafka_cgrp_new",
+          "premise": "rk_plugin_callback_closure",
+          "sha256": "4e1625a43e2c1e9709e6da589ca50df05fb7b4ec464667581117857cf8644f24"
+        },
+        {
+          "declaration": "rd_kafka_dr_implicit_ack",
+          "premise": "rk_plugin_callback_closure",
+          "sha256": "a8f1b74474beeaecd3904a747f29c5f32dc12de20d4385f33c190a7d3bb88e4b"
+        },
+        {
+          "declaration": "rd_kafka_features_check",
+          "premise": "rk_plugin_callback_closure",
+          "sha256": "f7aba30dba5cdc58af07a842be1f692e194b9d14d0f9e07146413ab61379630c"
+        },
+        {
+          "declaration": "rd_kafka_fetch_reply_handle_partition_error",
+          "premise": "rk_plugin_callback_closure",
+          "sha256": "2a6915bd79f12f807f55683a702145103069212f991bfbb658e04a83c90a301f"
+        },
+        {
+          "declaration": "rd_kafka_group_MemberMetadata_consumer_read",
+          "premise": "rk_plugin_callback_closure",
+          "sha256": "00ebc112a1c8895056ed920b7b43905d206e56948316b3928eee2ac7b1c2ff50"
+        },
+        {
+          "declaration": "rd_kafka_handle_Produce_metadata_update",
+          "premise": "rk_plugin_callback_closure",
+          "sha256": "7c10f9d2401611688f65fd795d128cfc72b5f25b622962d7792045cb29f291f3"
+        },
+        {
+          "declaration": "rd_kafka_idemp_request_pid_failed",
+          "premise": "rk_plugin_callback_closure",
+          "sha256": "2287f786a04e70f2f3130a70eab611e9634b17808ed269d028e6443de7d38c26"
+        },
+        {
+          "declaration": "rd_kafka_msgbatch_handle_Produce_result",
+          "premise": "rk_plugin_callback_closure",
+          "sha256": "2b40453dc7ddd289b820235c8d1b94d7028e13f1f4cb854fccb0d06cc3171b47"
+        },
+        {
+          "declaration": "rd_kafka_op_throttle_time",
+          "premise": "rk_plugin_callback_closure",
+          "sha256": "990a1ccf6b9d44147b5f43bb68227d62c426dfa321752ac142109d36683c04fc"
+        },
+        {
+          "declaration": "rd_kafka_parse_Metadata_update_topic",
+          "premise": "rk_plugin_callback_closure",
+          "sha256": "dd7b2855fe2b89c8545dc5a747d053f17d4c2512cbafcc3a9c2f70455bbeef6b"
+        },
+        {
+          "declaration": "rd_kafka_recv",
+          "premise": "rk_plugin_callback_closure",
+          "sha256": "0178ff53b3c4b06e7e2a2f240436fc8d889b8e300403ba54e64d03d915bfd038"
+        },
+        {
+          "declaration": "rd_kafka_req_response",
+          "premise": "rk_plugin_callback_closure",
+          "sha256": "ed0d851ff8251d6b6c9575762d17be04dc6fff9e932d0b1d47a2192ee25c94a9"
+        },
+        {
+          "declaration": "rd_kafka_sasl_broker_init",
+          "premise": "rk_plugin_callback_closure",
+          "sha256": "f522099e3b27c0b7ae54eddb24df0deef177b6003910e17432135b920c595023"
+        },
+        {
+          "declaration": "rd_kafka_sasl_broker_term",
+          "premise": "rk_plugin_callback_closure",
+          "sha256": "0a8c316158bb9c8f8967c857ca716c33994298e9a84afaf4f0bc77be9936850d"
+        },
+        {
+          "declaration": "rd_kafka_send",
+          "premise": "rk_plugin_callback_closure",
+          "sha256": "a03010dec9d6e6427f01f7c0a500ca2c819c361315c46a8e89089edf0442a681"
+        },
+        {
+          "declaration": "rd_kafka_ssl_hmac",
+          "premise": "rk_plugin_callback_closure",
+          "sha256": "82a68a996272a8db84f228930c473fda4d3ebacc989ffdc16c1c844f6e43e8c7"
+        },
+        {
+          "declaration": "rd_kafka_topic_new0",
+          "premise": "rk_plugin_callback_closure",
+          "sha256": "358fccb9cd3ab4f28b8872d907c57997f78522346c0ea7f65fcb418be910f01b"
+        },
+        {
+          "declaration": "rd_kafka_toppar_fetch_backoff",
+          "premise": "rk_plugin_callback_closure",
+          "sha256": "a005bc4ffff3a03920af6c006058103067bcc9bbdde5c5f1bdac1fc04e491115"
+        },
+        {
+          "declaration": "rd_kafka_toppar_new0",
+          "premise": "rk_plugin_callback_closure",
+          "sha256": "ac8b7c6881d47ecbffa3ee572a4294e459868516a1533047ade141d0f819fc28"
+        },
+        {
+          "declaration": "rd_kafka_transport_connect",
+          "premise": "rk_plugin_callback_closure",
+          "sha256": "55a7f45a00736034516c9af46277cd5aaa3f054aa36b5ceedacbc8bcde1bc16a"
+        },
+        {
+          "declaration": "rd_kafka_transport_new",
+          "premise": "rk_plugin_callback_closure",
+          "sha256": "4fe7f49a8b64e75716e30481a928023631725d6ad02e2b5329cdeb07fd8ff83b"
+        },
+        {
+          "declaration": "rd_kafka_transport_ssl_connect",
+          "premise": "rk_plugin_callback_closure",
+          "sha256": "621d5957accc5ee81c5baf49358b7aca3fef4637d316cdb88970c212f2934cb8"
+        },
+        {
+          "declaration": "rd_kafka_waitresp_find",
+          "premise": "rk_plugin_callback_closure",
+          "sha256": "a5beca767e3bac5c681c629384b0bf62c4bbbc438c5440d2b9b01203d269afac"
+        },
+        {
+          "declaration": "rd_kafkap_share_leader_changes_apply",
+          "premise": "rk_plugin_callback_closure",
+          "sha256": "a180666072c56dd8acfa26b9a4d660b922ab803765e76a7c1103171b734d84fe"
+        }
+      ],
+      "premises": {
+        "rd_kafka_ShareAcknowledgeRequest": [
+          {
+            "name": "rk_plugin_callback_closure",
+            "origin": "declared"
+          }
+        ],
+        "rd_kafka_broker_active_toppar_add": [
+          {
+            "name": "rk_plugin_callback_closure",
+            "origin": "declared"
+          }
+        ],
+        "rd_kafka_broker_active_toppar_del": [
+          {
+            "name": "rk_plugin_callback_closure",
+            "origin": "declared"
+          }
+        ],
+        "rd_kafka_broker_add": [
+          {
+            "name": "rk_plugin_callback_closure",
+            "origin": "declared"
+          }
+        ],
+        "rd_kafka_broker_buf_enq0": [
+          {
+            "name": "rk_plugin_callback_closure",
+            "origin": "declared"
+          }
+        ],
+        "rd_kafka_broker_buf_retry": [
+          {
+            "name": "rk_plugin_callback_closure",
+            "origin": "declared"
+          }
+        ],
+        "rd_kafka_broker_bufq_timeout_scan": [
+          {
+            "name": "rk_plugin_callback_closure",
+            "origin": "declared"
+          }
+        ],
+        "rd_kafka_broker_conn_closed": [
+          {
+            "name": "rk_plugin_callback_closure",
+            "origin": "declared"
+          }
+        ],
+        "rd_kafka_broker_connect": [
+          {
+            "name": "rk_plugin_callback_closure",
+            "origin": "declared"
+          }
+        ],
+        "rd_kafka_broker_connect_auth": [
+          {
+            "name": "rk_plugin_callback_closure",
+            "origin": "declared"
+          }
+        ],
+        "rd_kafka_broker_connect_done": [
+          {
+            "name": "rk_plugin_callback_closure",
+            "origin": "declared"
+          }
+        ],
+        "rd_kafka_broker_connect_up": [
+          {
+            "name": "rk_plugin_callback_closure",
+            "origin": "declared"
+          }
+        ],
+        "rd_kafka_broker_consumer_serve": [
+          {
+            "name": "rk_plugin_callback_closure",
+            "origin": "declared"
+          }
+        ],
+        "rd_kafka_broker_destroy_final": [
+          {
+            "name": "rk_plugin_callback_closure",
+            "origin": "declared"
+          }
+        ],
+        "rd_kafka_broker_feature_disable": [
+          {
+            "name": "rk_plugin_callback_closure",
+            "origin": "declared"
+          }
+        ],
+        "rd_kafka_broker_feature_enable": [
+          {
+            "name": "rk_plugin_callback_closure",
+            "origin": "declared"
+          }
+        ],
+        "rd_kafka_broker_features_set": [
+          {
+            "name": "rk_plugin_callback_closure",
+            "origin": "declared"
+          }
+        ],
+        "rd_kafka_broker_fetch_backoff": [
+          {
+            "name": "rk_plugin_callback_closure",
+            "origin": "declared"
+          }
+        ],
+        "rd_kafka_broker_fetch_toppars": [
+          {
+            "name": "rk_plugin_callback_closure",
+            "origin": "declared"
+          }
+        ],
+        "rd_kafka_broker_handle_purge_queues": [
+          {
+            "name": "rk_plugin_callback_closure",
+            "origin": "declared"
+          }
+        ],
+        "rd_kafka_broker_idle_check": [
+          {
+            "name": "rk_plugin_callback_closure",
+            "origin": "declared"
+          }
+        ],
+        "rd_kafka_broker_internal_serve": [
+          {
+            "name": "rk_plugin_callback_closure",
+            "origin": "declared"
+          }
+        ],
+        "rd_kafka_broker_needs_connection": [
+          {
+            "name": "rk_plugin_callback_closure",
+            "origin": "declared"
+          }
+        ],
+        "rd_kafka_broker_produce_toppars": [
+          {
+            "name": "rk_plugin_callback_closure",
+            "origin": "declared"
+          }
+        ],
+        "rd_kafka_broker_resolve": [
+          {
+            "name": "rk_plugin_callback_closure",
+            "origin": "declared"
+          }
+        ],
+        "rd_kafka_broker_retry_bufs_move": [
+          {
+            "name": "rk_plugin_callback_closure",
+            "origin": "declared"
+          }
+        ],
+        "rd_kafka_broker_serve": [
+          {
+            "name": "rk_plugin_callback_closure",
+            "origin": "declared"
+          }
+        ],
+        "rd_kafka_broker_session_add_partition_to_toppars_in_session": [
+          {
+            "name": "rk_plugin_callback_closure",
+            "origin": "declared"
+          }
+        ],
+        "rd_kafka_broker_session_remove_partition_from_toppars_in_session": [
+          {
+            "name": "rk_plugin_callback_closure",
+            "origin": "declared"
+          }
+        ],
+        "rd_kafka_broker_session_reset": [
+          {
+            "name": "rk_plugin_callback_closure",
+            "origin": "declared"
+          }
+        ],
+        "rd_kafka_broker_session_update_epoch": [
+          {
+            "name": "rk_plugin_callback_closure",
+            "origin": "declared"
+          }
+        ],
+        "rd_kafka_broker_session_update_partitions": [
+          {
+            "name": "rk_plugin_callback_closure",
+            "origin": "declared"
+          }
+        ],
+        "rd_kafka_broker_set_api_versions": [
+          {
+            "name": "rk_plugin_callback_closure",
+            "origin": "declared"
+          }
+        ],
+        "rd_kafka_broker_set_nodename": [
+          {
+            "name": "rk_plugin_callback_closure",
+            "origin": "declared"
+          }
+        ],
+        "rd_kafka_broker_set_state": [
+          {
+            "name": "rk_plugin_callback_closure",
+            "origin": "declared"
+          }
+        ],
+        "rd_kafka_broker_share_fetch_session_clear": [
+          {
+            "name": "rk_plugin_callback_closure",
+            "origin": "declared"
+          }
+        ],
+        "rd_kafka_broker_share_fetch_session_leave": [
+          {
+            "name": "rk_plugin_callback_closure",
+            "origin": "declared"
+          }
+        ],
+        "rd_kafka_broker_share_rpc": [
+          {
+            "name": "rk_plugin_callback_closure",
+            "origin": "declared"
+          }
+        ],
+        "rd_kafka_broker_share_session_toppar_add": [
+          {
+            "name": "rk_plugin_callback_closure",
+            "origin": "declared"
+          }
+        ],
+        "rd_kafka_broker_timeout_scan": [
+          {
+            "name": "rk_plugin_callback_closure",
+            "origin": "declared"
+          }
+        ],
+        "rd_kafka_broker_toppar_msgq_scan": [
+          {
+            "name": "rk_plugin_callback_closure",
+            "origin": "declared"
+          }
+        ],
+        "rd_kafka_broker_wakeup": [
+          {
+            "name": "rk_plugin_callback_closure",
+            "origin": "declared"
+          }
+        ],
+        "rd_kafka_buf_new_request0": [
+          {
+            "name": "rk_plugin_callback_closure",
+            "origin": "declared"
+          }
+        ],
+        "rd_kafka_buf_retry": [
+          {
+            "name": "rk_plugin_callback_closure",
+            "origin": "declared"
+          }
+        ],
+        "rd_kafka_bufq_connection_reset": [
+          {
+            "name": "rk_plugin_callback_closure",
+            "origin": "declared"
+          }
+        ],
+        "rd_kafka_bufq_dump": [
+          {
+            "name": "rk_plugin_callback_closure",
+            "origin": "declared"
+          }
+        ],
+        "rd_kafka_bufq_purge": [
+          {
+            "name": "rk_plugin_callback_closure",
+            "origin": "declared"
+          }
+        ],
+        "rd_kafka_cgrp_new": [
+          {
+            "name": "rk_plugin_callback_closure",
+            "origin": "declared"
+          }
+        ],
+        "rd_kafka_dr_implicit_ack": [
+          {
+            "name": "rk_plugin_callback_closure",
+            "origin": "declared"
+          }
+        ],
+        "rd_kafka_features_check": [
+          {
+            "name": "rk_plugin_callback_closure",
+            "origin": "declared"
+          }
+        ],
+        "rd_kafka_fetch_reply_handle_partition_error": [
+          {
+            "name": "rk_plugin_callback_closure",
+            "origin": "declared"
+          }
+        ],
+        "rd_kafka_group_MemberMetadata_consumer_read": [
+          {
+            "name": "rk_plugin_callback_closure",
+            "origin": "declared"
+          }
+        ],
+        "rd_kafka_handle_Produce_metadata_update": [
+          {
+            "name": "rk_plugin_callback_closure",
+            "origin": "declared"
+          }
+        ],
+        "rd_kafka_idemp_request_pid_failed": [
+          {
+            "name": "rk_plugin_callback_closure",
+            "origin": "declared"
+          }
+        ],
+        "rd_kafka_msgbatch_handle_Produce_result": [
+          {
+            "name": "rk_plugin_callback_closure",
+            "origin": "declared"
+          }
+        ],
+        "rd_kafka_op_throttle_time": [
+          {
+            "name": "rk_plugin_callback_closure",
+            "origin": "declared"
+          }
+        ],
+        "rd_kafka_parse_Metadata_update_topic": [
+          {
+            "name": "rk_plugin_callback_closure",
+            "origin": "declared"
+          }
+        ],
+        "rd_kafka_recv": [
+          {
+            "name": "rk_plugin_callback_closure",
+            "origin": "declared"
+          }
+        ],
+        "rd_kafka_req_response": [
+          {
+            "name": "rk_plugin_callback_closure",
+            "origin": "declared"
+          }
+        ],
+        "rd_kafka_sasl_broker_init": [
+          {
+            "name": "rk_plugin_callback_closure",
+            "origin": "declared"
+          }
+        ],
+        "rd_kafka_sasl_broker_term": [
+          {
+            "name": "rk_plugin_callback_closure",
+            "origin": "declared"
+          }
+        ],
+        "rd_kafka_send": [
+          {
+            "name": "rk_plugin_callback_closure",
+            "origin": "declared"
+          }
+        ],
+        "rd_kafka_ssl_hmac": [
+          {
+            "name": "rk_plugin_callback_closure",
+            "origin": "declared"
+          }
+        ],
+        "rd_kafka_topic_new0": [
+          {
+            "name": "rk_plugin_callback_closure",
+            "origin": "declared"
+          }
+        ],
+        "rd_kafka_toppar_fetch_backoff": [
+          {
+            "name": "rk_plugin_callback_closure",
+            "origin": "declared"
+          }
+        ],
+        "rd_kafka_toppar_new0": [
+          {
+            "name": "rk_plugin_callback_closure",
+            "origin": "declared"
+          }
+        ],
+        "rd_kafka_transport_connect": [
+          {
+            "name": "rk_plugin_callback_closure",
+            "origin": "declared"
+          }
+        ],
+        "rd_kafka_transport_new": [
+          {
+            "name": "rk_plugin_callback_closure",
+            "origin": "declared"
+          }
+        ],
+        "rd_kafka_transport_ssl_connect": [
+          {
+            "name": "rk_plugin_callback_closure",
+            "origin": "declared"
+          }
+        ],
+        "rd_kafka_waitresp_find": [
+          {
+            "name": "rk_plugin_callback_closure",
+            "origin": "declared"
+          }
+        ],
+        "rd_kafkap_share_leader_changes_apply": [
+          {
+            "name": "rk_plugin_callback_closure",
+            "origin": "declared"
+          }
+        ]
+      },
+      "sha256": "4fd3563c67ad3698fcdcacea683d6990c01d4c8a6763956910f1e91d938dbe71"
+    },
+    "librdkafka/outer.qv": {
+      "clause_count": 81,
+      "declaration_count": 1,
+      "declarations": [
+        {
+          "clauses": 81,
+          "name": "rd_kafka_plugin_new"
+        }
+      ],
+      "inherits": [],
+      "premise_bindings": [],
+      "premises": {},
+      "sha256": "ca88ccbf79699b9fd1033a69b958ec1a116cb24c040f0829299c5e65e797704a"
+    },
+    "librdkafka/queue_destructor.qv": {
+      "clause_count": 23,
+      "declaration_count": 1,
+      "declarations": [
+        {
+          "clauses": 23,
+          "name": "rd_kafka_q_destroy_final"
+        }
+      ],
+      "inherits": [],
+      "premise_bindings": [
+        {
+          "declaration": "rd_kafka_q_destroy_final",
+          "premise": "rk_plugin_callback_closure",
+          "sha256": "a4d1ae87d10c769b4a210fcd876b6302b052cb488d6bfa7d1aeb9118d93861b8"
+        }
+      ],
+      "premises": {
+        "rd_kafka_q_destroy_final": [
+          {
+            "name": "rk_plugin_callback_closure",
+            "origin": "declared"
+          }
+        ]
+      },
+      "sha256": "a97cdd5583925ab0e999fe93f783b17687b67c9c3cabaf142c6f3de47ea31ed7"
+    },
+    "librdkafka/refcount.qv": {
+      "clause_count": 11,
+      "declaration_count": 3,
+      "declarations": [
+        {
+          "clauses": 4,
+          "name": "rd_refcnt_add0"
+        },
+        {
+          "clauses": 4,
+          "name": "rd_refcnt_sub0"
+        },
+        {
+          "clauses": 3,
+          "name": "rd_refcnt_destroy_final"
+        }
+      ],
+      "inherits": [],
+      "premise_bindings": [],
+      "premises": {},
+      "sha256": "725fcf995116042cde3a92a547f2e889d1a5503aa2ef230f2c5e6576034fc0bb"
+    },
+    "librdkafka/topic_partition.qv": {
+      "clause_count": 6,
+      "declaration_count": 1,
+      "declarations": [
+        {
+          "clauses": 6,
+          "name": "rd_kafka_topic_partition_list_sort"
+        }
+      ],
+      "inherits": [],
+      "premise_bindings": [],
+      "premises": {},
+      "sha256": "c7e28fa40acff1c6d80fea924af68c7e0f0395faa3ef473156afbbb57db758e2"
+    },
+    "librdkafka/typed_queue.qv": {
+      "clause_count": 10,
+      "declaration_count": 2,
+      "declarations": [
+        {
+          "clauses": 5,
+          "name": "rd_kafka_q_enq0"
+        },
+        {
+          "clauses": 5,
+          "name": "rd_kafka_q_deq0"
+        }
+      ],
+      "inherits": [],
+      "premise_bindings": [],
+      "premises": {},
+      "sha256": "cf9ff32d3b65d8ef38c6d7c95a91396899a99f89ca5ebd2a5cb89022c0af63b5"
+    }
+  },
+  "outer_view": [
+    "librdkafka/outer.qv"
+  ],
+  "regenerate": "python3 providers/contracts.py sync",
+  "resource_view": [
+    "librdkafka/cjson.qv",
+    "librdkafka/client.qv",
+    "librdkafka/kafka_mem.qv",
+    "librdkafka/log_caller_frame.qv",
+    "librdkafka/logging.qv",
+    "librdkafka/lz4_stream.qv",
+    "librdkafka/memory.qv",
+    "librdkafka/topic_partition.qv"
+  ],
+  "schema_version": 1
+}

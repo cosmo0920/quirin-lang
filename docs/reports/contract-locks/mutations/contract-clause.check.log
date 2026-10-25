@@ -1,0 +1,1 @@
+provider contracts: stale resource view in /media/Data/GitHub/quirin-lang/.claude/worktrees/agent-ab7ec0d74a33f2d6d/providers/contract-load-path.json: quirin-provider-msgpack declares modules the resource loader refuses: ['msgpack/packer.qv']; run `python3 providers/contracts.py sync`
