@@ -1,0 +1,647 @@
+{
+ "schema": "quirin-gate-scope/1",
+ "source": "git diff",
+ "base": "4753bfe62ab07b9be34ef8efb1640391720b101f",
+ "head": "abee04be99072cbba5ee1244ff1eed2f2f0b4e3c",
+ "committed": [
+  "crates/qcore-audit/README.md",
+  "crates/qcore-audit/src/compile_db.rs",
+  "crates/qcore-audit/src/current.rs",
+  "crates/qcore-audit/src/current_route.rs",
+  "crates/qcore-audit/src/input_paths.rs",
+  "crates/qcore-audit/src/lib.rs",
+  "crates/qcore-audit/src/member_prepass.rs",
+  "crates/qcore-audit/src/outer_selection.rs",
+  "crates/qcore-audit/src/pinned_route.rs",
+  "crates/qcore-audit/tests/canonical_paths.rs",
+  "docs/development/architecture.md",
+  "docs/reports/audit-canonical-paths/README.md",
+  "docs/reports/audit-canonical-paths/attempts.json",
+  "docs/reports/audit-canonical-paths/identity/corpus-base-mirror-vs-tip-mirror.json",
+  "docs/reports/audit-canonical-paths/identity/corpus-base-mirror-vs-tip-original.json",
+  "docs/reports/audit-canonical-paths/identity/corpus-base-namespace-vs-tip-original.json",
+  "docs/reports/audit-canonical-paths/identity/corpus-time-key-mirror.json",
+  "docs/reports/audit-canonical-paths/identity/corpus-time-key-original.json",
+  "docs/reports/audit-canonical-paths/identity/corpus-verdicts-base-mirror-vs-base-namespace.json",
+  "docs/reports/audit-canonical-paths/identity/corpus-verdicts-base-mirror-vs-tip-mirror.json",
+  "docs/reports/audit-canonical-paths/identity/corpus-verdicts-base-mirror-vs-tip-original.json",
+  "docs/reports/audit-canonical-paths/identity/slice-base-mirror-vs-tip-mirror.json",
+  "docs/reports/audit-canonical-paths/identity/slice-base-mirror-vs-tip-original.json",
+  "docs/reports/audit-canonical-paths/identity/slice-base-namespace-vs-tip-original.json",
+  "docs/reports/audit-canonical-paths/identity/slice-time-key-mirror.json",
+  "docs/reports/audit-canonical-paths/identity/slice-time-key-original.json",
+  "docs/reports/audit-canonical-paths/identity/slice-verdicts-base-mirror-vs-base-namespace.json",
+  "docs/reports/audit-canonical-paths/identity/slice-verdicts-base-mirror-vs-tip-mirror.json",
+  "docs/reports/audit-canonical-paths/identity/slice-verdicts-base-mirror-vs-tip-original.json",
+  "docs/reports/audit-canonical-paths/identity/system-base-mirror-vs-tip-mirror.json",
+  "docs/reports/audit-canonical-paths/identity/system-base-mirror-vs-tip-original.json",
+  "docs/reports/audit-canonical-paths/identity/system-base-namespace-vs-tip-original.json",
+  "docs/reports/audit-canonical-paths/identity/system-time-key-mirror.json",
+  "docs/reports/audit-canonical-paths/identity/system-time-key-original.json",
+  "docs/reports/audit-canonical-paths/identity/system-verdicts-base-mirror-vs-base-namespace.json",
+  "docs/reports/audit-canonical-paths/identity/system-verdicts-base-mirror-vs-tip-mirror.json",
+  "docs/reports/audit-canonical-paths/identity/system-verdicts-base-mirror-vs-tip-original.json",
+  "docs/reports/audit-canonical-paths/integration-amendments.json",
+  "docs/reports/audit-canonical-paths/scripts/campaign2.sh",
+  "docs/reports/audit-canonical-paths/scripts/compare.py",
+  "docs/reports/audit-canonical-paths/scripts/compare_all.sh",
+  "docs/reports/audit-canonical-paths/scripts/compare_runs2.sh",
+  "docs/reports/audit-canonical-paths/scripts/identity_all.sh",
+  "docs/reports/audit-canonical-paths/scripts/measure.py",
+  "docs/reports/audit-canonical-paths/scripts/ns_run.sh",
+  "docs/reports/audit-canonical-paths/scripts/pin_run.sh",
+  "docs/reports/audit-canonical-paths/scripts/rerun_namespace_corpus.sh",
+  "docs/reports/audit-canonical-paths/scripts/run_identity.sh",
+  "docs/reports/audit-canonical-paths/scripts/run_pinned_paths.sh",
+  "docs/reports/audit-canonical-paths/scripts/time_key.py",
+  "docs/reports/audit-canonical-paths/scripts/time_key_all.sh",
+  "docs/reports/audit-canonical-paths/scripts/verdicts.py",
+  "docs/reports/audit-canonical-paths/scripts/verdicts_all.sh"
+ ],
+ "uncommitted": [],
+ "scope": {
+  "paths": [
+   "crates/qcore-audit/README.md",
+   "crates/qcore-audit/src/compile_db.rs",
+   "crates/qcore-audit/src/current.rs",
+   "crates/qcore-audit/src/current_route.rs",
+   "crates/qcore-audit/src/input_paths.rs",
+   "crates/qcore-audit/src/lib.rs",
+   "crates/qcore-audit/src/member_prepass.rs",
+   "crates/qcore-audit/src/outer_selection.rs",
+   "crates/qcore-audit/src/pinned_route.rs",
+   "crates/qcore-audit/tests/canonical_paths.rs",
+   "docs/development/architecture.md",
+   "docs/reports/audit-canonical-paths/README.md",
+   "docs/reports/audit-canonical-paths/attempts.json",
+   "docs/reports/audit-canonical-paths/identity/corpus-base-mirror-vs-tip-mirror.json",
+   "docs/reports/audit-canonical-paths/identity/corpus-base-mirror-vs-tip-original.json",
+   "docs/reports/audit-canonical-paths/identity/corpus-base-namespace-vs-tip-original.json",
+   "docs/reports/audit-canonical-paths/identity/corpus-time-key-mirror.json",
+   "docs/reports/audit-canonical-paths/identity/corpus-time-key-original.json",
+   "docs/reports/audit-canonical-paths/identity/corpus-verdicts-base-mirror-vs-base-namespace.json",
+   "docs/reports/audit-canonical-paths/identity/corpus-verdicts-base-mirror-vs-tip-mirror.json",
+   "docs/reports/audit-canonical-paths/identity/corpus-verdicts-base-mirror-vs-tip-original.json",
+   "docs/reports/audit-canonical-paths/identity/slice-base-mirror-vs-tip-mirror.json",
+   "docs/reports/audit-canonical-paths/identity/slice-base-mirror-vs-tip-original.json",
+   "docs/reports/audit-canonical-paths/identity/slice-base-namespace-vs-tip-original.json",
+   "docs/reports/audit-canonical-paths/identity/slice-time-key-mirror.json",
+   "docs/reports/audit-canonical-paths/identity/slice-time-key-original.json",
+   "docs/reports/audit-canonical-paths/identity/slice-verdicts-base-mirror-vs-base-namespace.json",
+   "docs/reports/audit-canonical-paths/identity/slice-verdicts-base-mirror-vs-tip-mirror.json",
+   "docs/reports/audit-canonical-paths/identity/slice-verdicts-base-mirror-vs-tip-original.json",
+   "docs/reports/audit-canonical-paths/identity/system-base-mirror-vs-tip-mirror.json",
+   "docs/reports/audit-canonical-paths/identity/system-base-mirror-vs-tip-original.json",
+   "docs/reports/audit-canonical-paths/identity/system-base-namespace-vs-tip-original.json",
+   "docs/reports/audit-canonical-paths/identity/system-time-key-mirror.json",
+   "docs/reports/audit-canonical-paths/identity/system-time-key-original.json",
+   "docs/reports/audit-canonical-paths/identity/system-verdicts-base-mirror-vs-base-namespace.json",
+   "docs/reports/audit-canonical-paths/identity/system-verdicts-base-mirror-vs-tip-mirror.json",
+   "docs/reports/audit-canonical-paths/identity/system-verdicts-base-mirror-vs-tip-original.json",
+   "docs/reports/audit-canonical-paths/integration-amendments.json",
+   "docs/reports/audit-canonical-paths/scripts/campaign2.sh",
+   "docs/reports/audit-canonical-paths/scripts/compare.py",
+   "docs/reports/audit-canonical-paths/scripts/compare_all.sh",
+   "docs/reports/audit-canonical-paths/scripts/compare_runs2.sh",
+   "docs/reports/audit-canonical-paths/scripts/identity_all.sh",
+   "docs/reports/audit-canonical-paths/scripts/measure.py",
+   "docs/reports/audit-canonical-paths/scripts/ns_run.sh",
+   "docs/reports/audit-canonical-paths/scripts/pin_run.sh",
+   "docs/reports/audit-canonical-paths/scripts/rerun_namespace_corpus.sh",
+   "docs/reports/audit-canonical-paths/scripts/run_identity.sh",
+   "docs/reports/audit-canonical-paths/scripts/run_pinned_paths.sh",
+   "docs/reports/audit-canonical-paths/scripts/time_key.py",
+   "docs/reports/audit-canonical-paths/scripts/time_key_all.sh",
+   "docs/reports/audit-canonical-paths/scripts/verdicts.py",
+   "docs/reports/audit-canonical-paths/scripts/verdicts_all.sh"
+  ],
+  "attribution": {
+   "crates/qcore-audit/README.md": [
+    "owned by qcore-audit",
+    "read by qcore-audit (include_str, crates/qcore-audit/tests/dependency_graph.rs:88)",
+    "read by qcore-compiler (runtime, compiler/tests/workspace_layering.rs:68)",
+    "read by qcore-verification (runtime, crates/qcore-verification/tests/composition_bounds.rs:288)"
+   ],
+   "crates/qcore-audit/src/compile_db.rs": [
+    "owned by qcore-audit",
+    "read by qcore-audit (include_str, crates/qcore-audit/src/subcommand_plugins.rs:1234)",
+    "read by qcore-compiler (runtime, compiler/tests/workspace_layering.rs:68)",
+    "read by qcore-verification (runtime, crates/qcore-verification/tests/composition_bounds.rs:288)"
+   ],
+   "crates/qcore-audit/src/current.rs": [
+    "owned by qcore-audit",
+    "read by qcore-audit (include_str, crates/qcore-audit/src/subcommand_plugins.rs:1234)",
+    "read by qcore-compiler (runtime, compiler/tests/workspace_layering.rs:68)",
+    "read by qcore-verification (runtime, crates/qcore-verification/tests/composition_bounds.rs:288)"
+   ],
+   "crates/qcore-audit/src/current_route.rs": [
+    "owned by qcore-audit",
+    "read by qcore-audit (include_str, crates/qcore-audit/src/subcommand_plugins.rs:1234)",
+    "read by qcore-compiler (runtime, compiler/tests/workspace_layering.rs:68)",
+    "read by qcore-verification (runtime, crates/qcore-verification/tests/composition_bounds.rs:288)"
+   ],
+   "crates/qcore-audit/src/input_paths.rs": [
+    "owned by qcore-audit",
+    "read by qcore-audit (include_str, crates/qcore-audit/src/subcommand_plugins.rs:1234)",
+    "read by qcore-compiler (runtime, compiler/tests/workspace_layering.rs:68)",
+    "read by qcore-verification (runtime, crates/qcore-verification/tests/composition_bounds.rs:288)"
+   ],
+   "crates/qcore-audit/src/lib.rs": [
+    "owned by qcore-audit",
+    "read by qcore-audit (include_str, crates/qcore-audit/src/subcommand_plugins.rs:1234)",
+    "read by qcore-compiler (runtime, compiler/tests/workspace_layering.rs:68)",
+    "read by qcore-verification (runtime, crates/qcore-verification/tests/composition_bounds.rs:288)"
+   ],
+   "crates/qcore-audit/src/member_prepass.rs": [
+    "owned by qcore-audit",
+    "read by qcore-audit (include_str, crates/qcore-audit/src/subcommand_plugins.rs:1234)",
+    "read by qcore-compiler (runtime, compiler/tests/workspace_layering.rs:68)",
+    "read by qcore-verification (runtime, crates/qcore-verification/tests/composition_bounds.rs:288)"
+   ],
+   "crates/qcore-audit/src/outer_selection.rs": [
+    "owned by qcore-audit",
+    "read by qcore-audit (include_str, crates/qcore-audit/src/subcommand_plugins.rs:1234)",
+    "read by qcore-compiler (runtime, compiler/tests/workspace_layering.rs:68)",
+    "read by qcore-verification (runtime, crates/qcore-verification/tests/composition_bounds.rs:288)"
+   ],
+   "crates/qcore-audit/src/pinned_route.rs": [
+    "owned by qcore-audit",
+    "read by qcore-audit (include_str, crates/qcore-audit/src/subcommand_plugins.rs:1234)",
+    "read by qcore-compiler (runtime, compiler/tests/workspace_layering.rs:68)",
+    "read by qcore-verification (runtime, crates/qcore-verification/tests/composition_bounds.rs:288)"
+   ],
+   "crates/qcore-audit/tests/canonical_paths.rs": [
+    "owned by qcore-audit",
+    "read by qcore-compiler (runtime, compiler/tests/workspace_layering.rs:68)",
+    "read by qcore-verification (runtime, crates/qcore-verification/tests/composition_bounds.rs:288)"
+   ],
+   "docs/development/architecture.md": [
+    "class prose"
+   ],
+   "docs/reports/audit-canonical-paths/README.md": [
+    "class prose"
+   ],
+   "docs/reports/audit-canonical-paths/attempts.json": [
+    "class prose"
+   ],
+   "docs/reports/audit-canonical-paths/identity/corpus-base-mirror-vs-tip-mirror.json": [
+    "class prose"
+   ],
+   "docs/reports/audit-canonical-paths/identity/corpus-base-mirror-vs-tip-original.json": [
+    "class prose"
+   ],
+   "docs/reports/audit-canonical-paths/identity/corpus-base-namespace-vs-tip-original.json": [
+    "class prose"
+   ],
+   "docs/reports/audit-canonical-paths/identity/corpus-time-key-mirror.json": [
+    "class prose"
+   ],
+   "docs/reports/audit-canonical-paths/identity/corpus-time-key-original.json": [
+    "class prose"
+   ],
+   "docs/reports/audit-canonical-paths/identity/corpus-verdicts-base-mirror-vs-base-namespace.json": [
+    "class prose"
+   ],
+   "docs/reports/audit-canonical-paths/identity/corpus-verdicts-base-mirror-vs-tip-mirror.json": [
+    "class prose"
+   ],
+   "docs/reports/audit-canonical-paths/identity/corpus-verdicts-base-mirror-vs-tip-original.json": [
+    "class prose"
+   ],
+   "docs/reports/audit-canonical-paths/identity/slice-base-mirror-vs-tip-mirror.json": [
+    "class prose"
+   ],
+   "docs/reports/audit-canonical-paths/identity/slice-base-mirror-vs-tip-original.json": [
+    "class prose"
+   ],
+   "docs/reports/audit-canonical-paths/identity/slice-base-namespace-vs-tip-original.json": [
+    "class prose"
+   ],
+   "docs/reports/audit-canonical-paths/identity/slice-time-key-mirror.json": [
+    "class prose"
+   ],
+   "docs/reports/audit-canonical-paths/identity/slice-time-key-original.json": [
+    "class prose"
+   ],
+   "docs/reports/audit-canonical-paths/identity/slice-verdicts-base-mirror-vs-base-namespace.json": [
+    "class prose"
+   ],
+   "docs/reports/audit-canonical-paths/identity/slice-verdicts-base-mirror-vs-tip-mirror.json": [
+    "class prose"
+   ],
+   "docs/reports/audit-canonical-paths/identity/slice-verdicts-base-mirror-vs-tip-original.json": [
+    "class prose"
+   ],
+   "docs/reports/audit-canonical-paths/identity/system-base-mirror-vs-tip-mirror.json": [
+    "class prose"
+   ],
+   "docs/reports/audit-canonical-paths/identity/system-base-mirror-vs-tip-original.json": [
+    "class prose"
+   ],
+   "docs/reports/audit-canonical-paths/identity/system-base-namespace-vs-tip-original.json": [
+    "class prose"
+   ],
+   "docs/reports/audit-canonical-paths/identity/system-time-key-mirror.json": [
+    "class prose"
+   ],
+   "docs/reports/audit-canonical-paths/identity/system-time-key-original.json": [
+    "class prose"
+   ],
+   "docs/reports/audit-canonical-paths/identity/system-verdicts-base-mirror-vs-base-namespace.json": [
+    "class prose"
+   ],
+   "docs/reports/audit-canonical-paths/identity/system-verdicts-base-mirror-vs-tip-mirror.json": [
+    "class prose"
+   ],
+   "docs/reports/audit-canonical-paths/identity/system-verdicts-base-mirror-vs-tip-original.json": [
+    "class prose"
+   ],
+   "docs/reports/audit-canonical-paths/integration-amendments.json": [
+    "class prose"
+   ],
+   "docs/reports/audit-canonical-paths/scripts/campaign2.sh": [
+    "class prose"
+   ],
+   "docs/reports/audit-canonical-paths/scripts/compare.py": [
+    "class prose"
+   ],
+   "docs/reports/audit-canonical-paths/scripts/compare_all.sh": [
+    "class prose"
+   ],
+   "docs/reports/audit-canonical-paths/scripts/compare_runs2.sh": [
+    "class prose"
+   ],
+   "docs/reports/audit-canonical-paths/scripts/identity_all.sh": [
+    "class prose"
+   ],
+   "docs/reports/audit-canonical-paths/scripts/measure.py": [
+    "class prose"
+   ],
+   "docs/reports/audit-canonical-paths/scripts/ns_run.sh": [
+    "class prose"
+   ],
+   "docs/reports/audit-canonical-paths/scripts/pin_run.sh": [
+    "class prose"
+   ],
+   "docs/reports/audit-canonical-paths/scripts/rerun_namespace_corpus.sh": [
+    "class prose"
+   ],
+   "docs/reports/audit-canonical-paths/scripts/run_identity.sh": [
+    "class prose"
+   ],
+   "docs/reports/audit-canonical-paths/scripts/run_pinned_paths.sh": [
+    "class prose"
+   ],
+   "docs/reports/audit-canonical-paths/scripts/time_key.py": [
+    "class prose"
+   ],
+   "docs/reports/audit-canonical-paths/scripts/time_key_all.sh": [
+    "class prose"
+   ],
+   "docs/reports/audit-canonical-paths/scripts/verdicts.py": [
+    "class prose"
+   ],
+   "docs/reports/audit-canonical-paths/scripts/verdicts_all.sh": [
+    "class prose"
+   ]
+  },
+  "affected": {
+   "qcore-audit": [
+    "owns crates/qcore-audit/README.md",
+    "reads crates/qcore-audit/Cargo.toml in its directory with include_str!: crates/qcore-audit/README.md (crates/qcore-audit/tests/dependency_graph.rs:88)",
+    "owns crates/qcore-audit/src/compile_db.rs",
+    "reads crates/qcore-audit/src/main.rs in its directory with include_str!: crates/qcore-audit/src/compile_db.rs (crates/qcore-audit/src/subcommand_plugins.rs:1234)",
+    "owns crates/qcore-audit/src/current.rs",
+    "reads crates/qcore-audit/src/main.rs in its directory with include_str!: crates/qcore-audit/src/current.rs (crates/qcore-audit/src/subcommand_plugins.rs:1234)",
+    "owns crates/qcore-audit/src/current_route.rs",
+    "reads crates/qcore-audit/src/main.rs in its directory with include_str!: crates/qcore-audit/src/current_route.rs (crates/qcore-audit/src/subcommand_plugins.rs:1234)",
+    "owns crates/qcore-audit/src/input_paths.rs",
+    "reads crates/qcore-audit/src/main.rs in its directory with include_str!: crates/qcore-audit/src/input_paths.rs (crates/qcore-audit/src/subcommand_plugins.rs:1234)",
+    "owns crates/qcore-audit/src/lib.rs",
+    "reads crates/qcore-audit/src/main.rs in its directory with include_str!: crates/qcore-audit/src/lib.rs (crates/qcore-audit/src/subcommand_plugins.rs:1234)",
+    "owns crates/qcore-audit/src/member_prepass.rs",
+    "reads crates/qcore-audit/src/main.rs in its directory with include_str!: crates/qcore-audit/src/member_prepass.rs (crates/qcore-audit/src/subcommand_plugins.rs:1234)",
+    "owns crates/qcore-audit/src/outer_selection.rs",
+    "reads crates/qcore-audit/src/main.rs in its directory with include_str!: crates/qcore-audit/src/outer_selection.rs (crates/qcore-audit/src/subcommand_plugins.rs:1234)",
+    "owns crates/qcore-audit/src/pinned_route.rs",
+    "reads crates/qcore-audit/src/main.rs in its directory with include_str!: crates/qcore-audit/src/pinned_route.rs (crates/qcore-audit/src/subcommand_plugins.rs:1234)",
+    "owns crates/qcore-audit/tests/canonical_paths.rs"
+   ],
+   "qcore-compiler": [
+    "names crates/qcore-audit in a string literal: crates/qcore-audit/README.md (compiler/tests/workspace_layering.rs:68)",
+    "names crates/qcore-audit in a string literal: crates/qcore-audit/src/compile_db.rs (compiler/tests/workspace_layering.rs:68)",
+    "names crates/qcore-audit in a string literal: crates/qcore-audit/src/current.rs (compiler/tests/workspace_layering.rs:68)",
+    "names crates/qcore-audit in a string literal: crates/qcore-audit/src/current_route.rs (compiler/tests/workspace_layering.rs:68)",
+    "names crates/qcore-audit in a string literal: crates/qcore-audit/src/input_paths.rs (compiler/tests/workspace_layering.rs:68)",
+    "names crates/qcore-audit in a string literal: crates/qcore-audit/src/lib.rs (compiler/tests/workspace_layering.rs:68)",
+    "names crates/qcore-audit in a string literal: crates/qcore-audit/src/member_prepass.rs (compiler/tests/workspace_layering.rs:68)",
+    "names crates/qcore-audit in a string literal: crates/qcore-audit/src/outer_selection.rs (compiler/tests/workspace_layering.rs:68)",
+    "names crates/qcore-audit in a string literal: crates/qcore-audit/src/pinned_route.rs (compiler/tests/workspace_layering.rs:68)",
+    "names crates/qcore-audit in a string literal: crates/qcore-audit/tests/canonical_paths.rs (compiler/tests/workspace_layering.rs:68)"
+   ],
+   "qcore-provider-conformance": [
+    "depends on qcore-audit"
+   ],
+   "qcore-verification": [
+    "names crates in a string literal: crates/qcore-audit/README.md (crates/qcore-verification/tests/composition_bounds.rs:288)",
+    "names crates in a string literal: crates/qcore-audit/src/compile_db.rs (crates/qcore-verification/tests/composition_bounds.rs:288)",
+    "names crates in a string literal: crates/qcore-audit/src/current.rs (crates/qcore-verification/tests/composition_bounds.rs:288)",
+    "names crates in a string literal: crates/qcore-audit/src/current_route.rs (crates/qcore-verification/tests/composition_bounds.rs:288)",
+    "names crates in a string literal: crates/qcore-audit/src/input_paths.rs (crates/qcore-verification/tests/composition_bounds.rs:288)",
+    "names crates in a string literal: crates/qcore-audit/src/lib.rs (crates/qcore-verification/tests/composition_bounds.rs:288)",
+    "names crates in a string literal: crates/qcore-audit/src/member_prepass.rs (crates/qcore-verification/tests/composition_bounds.rs:288)",
+    "names crates in a string literal: crates/qcore-audit/src/outer_selection.rs (crates/qcore-verification/tests/composition_bounds.rs:288)",
+    "names crates in a string literal: crates/qcore-audit/src/pinned_route.rs (crates/qcore-verification/tests/composition_bounds.rs:288)",
+    "names crates in a string literal: crates/qcore-audit/tests/canonical_paths.rs (crates/qcore-verification/tests/composition_bounds.rs:288)"
+   ],
+   "qcorec": [
+    "depends on qcore-compiler"
+   ],
+   "quirin-source-analysis": [
+    "depends on qcore-verification"
+   ]
+  },
+  "mode": "scoped",
+  "full_reasons": [],
+  "rust_packages": [
+   "qcore-audit",
+   "qcore-compiler",
+   "qcore-verification",
+   "qcorec",
+   "quirin-source-analysis"
+  ],
+  "probes": true,
+  "lean": {
+   "mode": "none",
+   "reasons": [],
+   "modules": [],
+   "audits": []
+  },
+  "python_reasons": [
+   "docs/reports/audit-canonical-paths/scripts/compare.py: Python",
+   "docs/reports/audit-canonical-paths/scripts/measure.py: Python",
+   "docs/reports/audit-canonical-paths/scripts/time_key.py: Python",
+   "docs/reports/audit-canonical-paths/scripts/verdicts.py: Python"
+  ],
+  "provider_gate": false,
+  "provider_reasons": [],
+  "provider_members_reached_without_providers_change": [
+   "qcore-provider-conformance"
+  ],
+  "unresolved_includes": [
+   {
+    "crate": "qcore-compiler",
+    "source": "compiler/tests/ct_corpus.rs:8069",
+    "literal": "include_str!(\\\"fixtures/ct/{id}/case.qr\\\")\");",
+    "why": "argument is not a string literal (or the macro is inside a string)"
+   }
+  ]
+ },
+ "planned_steps": [
+  {
+   "name": "submodules",
+   "argv": [
+    "git",
+    "-C",
+    "/media/Data/GitHub/quirin-lang/.claude/worktrees/agent-af4406ebe7df9c0d1",
+    "submodule",
+    "status",
+    "--recursive"
+   ],
+   "slot": null
+  },
+  {
+   "name": "fmt",
+   "argv": [
+    "cargo",
+    "fmt",
+    "--all",
+    "--",
+    "--check"
+   ],
+   "slot": null
+  },
+  {
+   "name": "clippy",
+   "argv": [
+    "cargo",
+    "clippy",
+    "-p",
+    "qcore-audit",
+    "-p",
+    "qcore-compiler",
+    "-p",
+    "qcore-verification",
+    "-p",
+    "qcorec",
+    "-p",
+    "quirin-source-analysis",
+    "--all-targets",
+    "--",
+    "-D",
+    "warnings"
+   ],
+   "slot": null
+  },
+  {
+   "name": "rust-suite",
+   "argv": [
+    "/usr/bin/python3",
+    "/media/Data/GitHub/quirin-lang/.claude/worktrees/agent-af4406ebe7df9c0d1/scripts/run_test_binaries.py",
+    "--packages",
+    "qcore-audit,qcore-compiler,qcore-verification,qcorec,quirin-source-analysis",
+    "--log-dir",
+    "/media/Data/GitHub/quirin-lang/.claude/worktrees/agent-af4406ebe7df9c0d1/private/gate-scope/acp-final/rust-suite"
+   ],
+   "slot": "rust-suite"
+  },
+  {
+   "name": "probe-reevaluation_probe",
+   "argv": [
+    "cargo",
+    "run",
+    "-p",
+    "qcore-compiler",
+    "--example",
+    "reevaluation_probe"
+   ],
+   "slot": null
+  },
+  {
+   "name": "probe-reevaluation_followup",
+   "argv": [
+    "cargo",
+    "run",
+    "-p",
+    "qcore-compiler",
+    "--example",
+    "reevaluation_followup"
+   ],
+   "slot": null
+  },
+  {
+   "name": "python",
+   "argv": [
+    "/usr/bin/python3",
+    "-m",
+    "unittest",
+    "discover",
+    "-s",
+    "scripts/tests"
+   ],
+   "slot": null
+  }
+ ],
+ "slots": true,
+ "started": "20261025T072431Z",
+ "ran": true,
+ "steps": [
+  {
+   "name": "submodules",
+   "argv": [
+    "git",
+    "-C",
+    "/media/Data/GitHub/quirin-lang/.claude/worktrees/agent-af4406ebe7df9c0d1",
+    "submodule",
+    "status",
+    "--recursive"
+   ],
+   "exit": 0,
+   "seconds": 0.0,
+   "log": "/media/Data/GitHub/quirin-lang/.claude/worktrees/agent-af4406ebe7df9c0d1/private/gate-scope/acp-final/submodules.log",
+   "counts": {
+    "submodules": 1,
+    "not_checked_out_or_moved": []
+   }
+  },
+  {
+   "name": "fmt",
+   "argv": [
+    "cargo",
+    "fmt",
+    "--all",
+    "--",
+    "--check"
+   ],
+   "exit": 0,
+   "seconds": 4.0,
+   "log": "/media/Data/GitHub/quirin-lang/.claude/worktrees/agent-af4406ebe7df9c0d1/private/gate-scope/acp-final/fmt.log",
+   "counts": {}
+  },
+  {
+   "name": "clippy",
+   "argv": [
+    "cargo",
+    "clippy",
+    "-p",
+    "qcore-audit",
+    "-p",
+    "qcore-compiler",
+    "-p",
+    "qcore-verification",
+    "-p",
+    "qcorec",
+    "-p",
+    "quirin-source-analysis",
+    "--all-targets",
+    "--",
+    "-D",
+    "warnings"
+   ],
+   "exit": 0,
+   "seconds": 28.2,
+   "log": "/media/Data/GitHub/quirin-lang/.claude/worktrees/agent-af4406ebe7df9c0d1/private/gate-scope/acp-final/clippy.log",
+   "counts": {}
+  },
+  {
+   "name": "rust-suite",
+   "argv": [
+    "/usr/bin/python3",
+    "/media/Data/GitHub/quirin-lang/.claude/worktrees/agent-af4406ebe7df9c0d1/scripts/gate_slot.py",
+    "rust-suite",
+    "--receipt",
+    "/media/Data/GitHub/quirin-lang/.claude/worktrees/agent-af4406ebe7df9c0d1/private/gate-scope/acp-final/slots/rust-suite.json",
+    "--",
+    "/usr/bin/python3",
+    "/media/Data/GitHub/quirin-lang/.claude/worktrees/agent-af4406ebe7df9c0d1/scripts/run_test_binaries.py",
+    "--packages",
+    "qcore-audit,qcore-compiler,qcore-verification,qcorec,quirin-source-analysis",
+    "--log-dir",
+    "/media/Data/GitHub/quirin-lang/.claude/worktrees/agent-af4406ebe7df9c0d1/private/gate-scope/acp-final/rust-suite"
+   ],
+   "exit": 0,
+   "seconds": 785.1,
+   "log": "/media/Data/GitHub/quirin-lang/.claude/worktrees/agent-af4406ebe7df9c0d1/private/gate-scope/acp-final/rust-suite.log",
+   "counts": {
+    "units": 248,
+    "passed": 3254,
+    "failed": 0,
+    "ignored": 5,
+    "measured": 0,
+    "filtered": 0,
+    "summaries": 251,
+    "packages": [
+     "qcore-audit",
+     "qcore-compiler",
+     "qcore-verification",
+     "qcorec",
+     "quirin-source-analysis"
+    ],
+    "summary": "/media/Data/GitHub/quirin-lang/.claude/worktrees/agent-af4406ebe7df9c0d1/private/gate-scope/acp-final/rust-suite/summary.json",
+    "ok": true
+   },
+   "slot_receipt": "/media/Data/GitHub/quirin-lang/.claude/worktrees/agent-af4406ebe7df9c0d1/private/gate-scope/acp-final/slots/rust-suite.json"
+  },
+  {
+   "name": "probe-reevaluation_probe",
+   "argv": [
+    "cargo",
+    "run",
+    "-p",
+    "qcore-compiler",
+    "--example",
+    "reevaluation_probe"
+   ],
+   "exit": 0,
+   "seconds": 0.1,
+   "log": "/media/Data/GitHub/quirin-lang/.claude/worktrees/agent-af4406ebe7df9c0d1/private/gate-scope/acp-final/probe-reevaluation_probe.log",
+   "counts": {}
+  },
+  {
+   "name": "probe-reevaluation_followup",
+   "argv": [
+    "cargo",
+    "run",
+    "-p",
+    "qcore-compiler",
+    "--example",
+    "reevaluation_followup"
+   ],
+   "exit": 0,
+   "seconds": 0.4,
+   "log": "/media/Data/GitHub/quirin-lang/.claude/worktrees/agent-af4406ebe7df9c0d1/private/gate-scope/acp-final/probe-reevaluation_followup.log",
+   "counts": {}
+  },
+  {
+   "name": "python",
+   "argv": [
+    "/usr/bin/python3",
+    "-m",
+    "unittest",
+    "discover",
+    "-s",
+    "scripts/tests"
+   ],
+   "exit": 0,
+   "seconds": 48.9,
+   "log": "/media/Data/GitHub/quirin-lang/.claude/worktrees/agent-af4406ebe7df9c0d1/private/gate-scope/acp-final/python.log",
+   "counts": {
+    "tests": 443,
+    "skipped": 0,
+    "ok": true
+   }
+  }
+ ],
+ "ok": true,
+ "finished": "20261025T073857Z"
+}

@@ -1,0 +1,784 @@
+{
+ "route": "slice",
+ "left": "/media/Data/GitHub/quirin-lang/.claude/worktrees/agent-af4406ebe7df9c0d1/private/acp/runs2/base-namespace/slice",
+ "right": "/media/Data/GitHub/quirin-lang/.claude/worktrees/agent-af4406ebe7df9c0d1/private/acp/runs2/tip-original/slice",
+ "substitution": [
+  {
+   "from": "/media/Data/GitHub/quirin-lang/private/w47-tail/attempt-1/prep",
+   "to": "/home/cosmo/Documents/GitHub/qcore-c/private/w47-tail/attempt-1/prep"
+  }
+ ],
+ "exits": {
+  "left": "0",
+  "right": "0"
+ },
+ "drivers": {
+  "left": {
+   "exit": 0,
+   "audit_exit": 0,
+   "identity_error": null,
+   "snapshot_files_changed": [],
+   "externals_stable": true,
+   "binary_stable": true,
+   "binary_sha256": "74c984ebf6dde780ed11839fd5359eb3a7b5f120b5c4e933b6e4969a7cfdd0f5"
+  },
+  "right": {
+   "exit": 0,
+   "audit_exit": 0,
+   "identity_error": null,
+   "snapshot_files_changed": [],
+   "externals_stable": true,
+   "binary_stable": true,
+   "binary_sha256": "3b3606ab493c25237569870e2632bdacaa60cec2aab5a523d3fd98e4aa0a0d35"
+  }
+ },
+ "only_left": [],
+ "only_right": [],
+ "files": {
+  "console.log": {
+   "bytes": [
+    14172,
+    14172
+   ],
+   "raw_identical": true,
+   "identical_after_substitution": true,
+   "substituted": {},
+   "target_collisions": {}
+  },
+  "resource-diagnostics.chunk-contracts.json": {
+   "bytes": [
+    385,
+    385
+   ],
+   "raw_identical": true,
+   "identical_after_substitution": true,
+   "substituted": {},
+   "target_collisions": {}
+  },
+  "resource-diagnostics.contracts.json": {
+   "bytes": [
+    9679185,
+    9678732
+   ],
+   "raw_identical": false,
+   "identical_after_substitution": false,
+   "substituted": {
+    "/media/Data/GitHub/quirin-lang/private/w47-tail/attempt-1/prep": 2
+   },
+   "target_collisions": {
+    "/home/cosmo/Documents/GitHub/qcore-c/private/w47-tail/attempt-1/prep": 428
+   },
+   "structural": {
+    "differing_leaves": 74,
+    "pattern_count": 74,
+    "patterns": [
+     {
+      "path": "callback_members/prepass/scope/dropped//home/cosmo/Documents/GitHub/qcore-c/private/w47-tail/attempt-1/prep/fluent-bit-clang-source/lib/luajit-7152e154/src/host/buildvm.c",
+      "count": 1,
+      "example": [
+       "/home/cosmo/Documents/GitHub/qcore-c/private/w47-tail/attempt-1/prep/fluent-bit-clang-source/lib/luajit-7152e154/src/host/minilua.c names a token of the pre-pass (`event`)",
+       "/home/cosmo/Documents/GitHub/qcore-c/private/w47-tail/attempt-1/prep/fluent-bit-clang-source/lib/luajit-7152e154/src/lj_obj.h names a token of the pre-pass (`event`)"
+      ]
+     },
+     {
+      "path": "callback_members/prepass/scope/dropped//home/cosmo/Documents/GitHub/qcore-c/private/w47-tail/attempt-1/prep/fluent-bit-clang-source/lib/luajit-7152e154/src/host/buildvm_asm.c",
+      "count": 1,
+      "example": [
+       "/home/cosmo/Documents/GitHub/qcore-c/private/w47-tail/attempt-1/prep/fluent-bit-clang-source/lib/luajit-7152e154/src/host/minilua.c names a token of the pre-pass (`event`)",
+       "/home/cosmo/Documents/GitHub/qcore-c/private/w47-tail/attempt-1/prep/fluent-bit-clang-source/lib/luajit-7152e154/src/lua.h names a token of the pre-pass (`event`)"
+      ]
+     },
+     {
+      "path": "callback_members/prepass/scope/dropped//home/cosmo/Documents/GitHub/qcore-c/private/w47-tail/attempt-1/prep/fluent-bit-clang-source/lib/luajit-7152e154/src/host/buildvm_fold.c",
+      "count": 1,
+      "example": [
+       "/home/cosmo/Documents/GitHub/qcore-c/private/w47-tail/attempt-1/prep/fluent-bit-clang-source/lib/luajit-7152e154/src/host/minilua.c names a token of the pre-pass (`event`)",
+       "/home/cosmo/Documents/GitHub/qcore-c/private/w47-tail/attempt-1/prep/fluent-bit-clang-source/lib/luajit-7152e154/src/lj_obj.h names a token of the pre-pass (`event`)"
+      ]
+     },
+     {
+      "path": "callback_members/prepass/scope/dropped//home/cosmo/Documents/GitHub/qcore-c/private/w47-tail/attempt-1/prep/fluent-bit-clang-source/lib/luajit-7152e154/src/host/buildvm_lib.c",
+      "count": 1,
+      "example": [
+       "/home/cosmo/Documents/GitHub/qcore-c/private/w47-tail/attempt-1/prep/fluent-bit-clang-source/lib/luajit-7152e154/src/host/minilua.c names a token of the pre-pass (`event`)",
+       "/home/cosmo/Documents/GitHub/qcore-c/private/w47-tail/attempt-1/prep/fluent-bit-clang-source/lib/luajit-7152e154/src/lj_obj.h names a token of the pre-pass (`event`)"
+      ]
+     },
+     {
+      "path": "callback_members/prepass/scope/dropped//home/cosmo/Documents/GitHub/qcore-c/private/w47-tail/attempt-1/prep/fluent-bit-clang-source/lib/luajit-7152e154/src/host/buildvm_peobj.c",
+      "count": 1,
+      "example": [
+       "/home/cosmo/Documents/GitHub/qcore-c/private/w47-tail/attempt-1/prep/fluent-bit-clang-source/lib/luajit-7152e154/src/host/minilua.c names a token of the pre-pass (`event`)",
+       "/home/cosmo/Documents/GitHub/qcore-c/private/w47-tail/attempt-1/prep/fluent-bit-clang-source/lib/luajit-7152e154/src/lua.h names a token of the pre-pass (`event`)"
+      ]
+     },
+     {
+      "path": "callback_members/prepass/scope/dropped//home/cosmo/Documents/GitHub/qcore-c/private/w47-tail/attempt-1/prep/fluent-bit-clang-source/lib/luajit-7152e154/src/lib_aux.c",
+      "count": 1,
+      "example": [
+       "/home/cosmo/Documents/GitHub/qcore-c/private/w47-tail/attempt-1/prep/fluent-bit-clang-source/lib/luajit-7152e154/src/host/minilua.c names a token of the pre-pass (`event`)",
+       "/home/cosmo/Documents/GitHub/qcore-c/private/w47-tail/attempt-1/prep/fluent-bit-clang-source/lib/luajit-7152e154/src/lj_obj.h names a token of the pre-pass (`event`)"
+      ]
+     },
+     {
+      "path": "callback_members/prepass/scope/dropped//home/cosmo/Documents/GitHub/qcore-c/private/w47-tail/attempt-1/prep/fluent-bit-clang-source/lib/luajit-7152e154/src/lib_base.c",
+      "count": 1,
+      "example": [
+       "/home/cosmo/Documents/GitHub/qcore-c/private/w47-tail/attempt-1/prep/fluent-bit-clang-source/lib/luajit-7152e154/src/host/minilua.c names a token of the pre-pass (`event`)",
+       "/home/cosmo/Documents/GitHub/qcore-c/private/w47-tail/attempt-1/prep/fluent-bit-clang-source/lib/luajit-7152e154/src/lj_debug.h names a token of the pre-pass (`event`)"
+      ]
+     },
+     {
+      "path": "callback_members/prepass/scope/dropped//home/cosmo/Documents/GitHub/qcore-c/private/w47-tail/attempt-1/prep/fluent-bit-clang-source/lib/luajit-7152e154/src/lib_bit.c",
+      "count": 1,
+      "example": [
+       "/home/cosmo/Documents/GitHub/qcore-c/private/w47-tail/attempt-1/prep/fluent-bit-clang-source/lib/luajit-7152e154/src/host/minilua.c names a token of the pre-pass (`event`)",
+       "/home/cosmo/Documents/GitHub/qcore-c/private/w47-tail/attempt-1/prep/fluent-bit-clang-source/lib/luajit-7152e154/src/lj_obj.h names a token of the pre-pass (`event`)"
+      ]
+     },
+     {
+      "path": "callback_members/prepass/scope/dropped//home/cosmo/Documents/GitHub/qcore-c/private/w47-tail/attempt-1/prep/fluent-bit-clang-source/lib/luajit-7152e154/src/lib_buffer.c",
+      "count": 1,
+      "example": [
+       "/home/cosmo/Documents/GitHub/qcore-c/private/w47-tail/attempt-1/prep/fluent-bit-clang-source/lib/luajit-7152e154/src/host/minilua.c names a token of the pre-pass (`event`)",
+       "/home/cosmo/Documents/GitHub/qcore-c/private/w47-tail/attempt-1/prep/fluent-bit-clang-source/lib/luajit-7152e154/src/lj_obj.h names a token of the pre-pass (`event`)"
+      ]
+     },
+     {
+      "path": "callback_members/prepass/scope/dropped//home/cosmo/Documents/GitHub/qcore-c/private/w47-tail/attempt-1/prep/fluent-bit-clang-source/lib/luajit-7152e154/src/lib_debug.c",
+      "count": 1,
+      "example": [
+       "/home/cosmo/Documents/GitHub/qcore-c/private/w47-tail/attempt-1/prep/fluent-bit-clang-source/lib/luajit-7152e154/src/host/minilua.c names a token of the pre-pass (`event`)",
+       "/home/cosmo/Documents/GitHub/qcore-c/private/w47-tail/attempt-1/prep/fluent-bit-clang-source/lib/luajit-7152e154/src/lib_debug.c names a token of the pre-pass (`event`)"
+      ]
+     },
+     {
+      "path": "callback_members/prepass/scope/dropped//home/cosmo/Documents/GitHub/qcore-c/private/w47-tail/attempt-1/prep/fluent-bit-clang-source/lib/luajit-7152e154/src/lib_ffi.c",
+      "count": 1,
+      "example": [
+       "/home/cosmo/Documents/GitHub/qcore-c/private/w47-tail/attempt-1/prep/fluent-bit-clang-source/lib/luajit-7152e154/src/host/minilua.c names a token of the pre-pass (`event`)",
+       "/home/cosmo/Documents/GitHub/qcore-c/private/w47-tail/attempt-1/prep/fluent-bit-clang-source/lib/luajit-7152e154/src/lj_obj.h names a token of the pre-pass (`event`)"
+      ]
+     },
+     {
+      "path": "callback_members/prepass/scope/dropped//home/cosmo/Documents/GitHub/qcore-c/private/w47-tail/attempt-1/prep/fluent-bit-clang-source/lib/luajit-7152e154/src/lib_init.c",
+      "count": 1,
+      "example": [
+       "/home/cosmo/Documents/GitHub/qcore-c/private/w47-tail/attempt-1/prep/fluent-bit-clang-source/lib/luajit-7152e154/src/host/minilua.c names a token of the pre-pass (`event`)",
+       "/home/cosmo/Documents/GitHub/qcore-c/private/w47-tail/attempt-1/prep/fluent-bit-clang-source/lib/luajit-7152e154/src/lua.h names a token of the pre-pass (`event`)"
+      ]
+     },
+     {
+      "path": "callback_members/prepass/scope/dropped//home/cosmo/Documents/GitHub/qcore-c/private/w47-tail/attempt-1/prep/fluent-bit-clang-source/lib/luajit-7152e154/src/lib_io.c",
+      "count": 1,
+      "example": [
+       "/home/cosmo/Documents/GitHub/qcore-c/private/w47-tail/attempt-1/prep/fluent-bit-clang-source/lib/luajit-7152e154/src/host/minilua.c names a token of the pre-pass (`event`)",
+       "/home/cosmo/Documents/GitHub/qcore-c/private/w47-tail/attempt-1/prep/fluent-bit-clang-source/lib/luajit-7152e154/src/lj_obj.h names a token of the pre-pass (`event`)"
+      ]
+     },
+     {
+      "path": "callback_members/prepass/scope/dropped//home/cosmo/Documents/GitHub/qcore-c/private/w47-tail/attempt-1/prep/fluent-bit-clang-source/lib/luajit-7152e154/src/lib_jit.c",
+      "count": 1,
+      "example": [
+       "/home/cosmo/Documents/GitHub/qcore-c/private/w47-tail/attempt-1/prep/fluent-bit-clang-source/lib/luajit-7152e154/src/host/minilua.c names a token of the pre-pass (`event`)",
+       "/home/cosmo/Documents/GitHub/qcore-c/private/w47-tail/attempt-1/prep/fluent-bit-clang-source/lib/luajit-7152e154/src/lib_jit.c names a token of the pre-pass (`event`)"
+      ]
+     },
+     {
+      "path": "callback_members/prepass/scope/dropped//home/cosmo/Documents/GitHub/qcore-c/private/w47-tail/attempt-1/prep/fluent-bit-clang-source/lib/luajit-7152e154/src/lib_math.c",
+      "count": 1,
+      "example": [
+       "/home/cosmo/Documents/GitHub/qcore-c/private/w47-tail/attempt-1/prep/fluent-bit-clang-source/lib/luajit-7152e154/src/host/minilua.c names a token of the pre-pass (`event`)",
+       "/home/cosmo/Documents/GitHub/qcore-c/private/w47-tail/attempt-1/prep/fluent-bit-clang-source/lib/luajit-7152e154/src/lj_obj.h names a token of the pre-pass (`event`)"
+      ]
+     },
+     {
+      "path": "callback_members/prepass/scope/dropped//home/cosmo/Documents/GitHub/qcore-c/private/w47-tail/attempt-1/prep/fluent-bit-clang-source/lib/luajit-7152e154/src/lib_os.c",
+      "count": 1,
+      "example": [
+       "/home/cosmo/Documents/GitHub/qcore-c/private/w47-tail/attempt-1/prep/fluent-bit-clang-source/lib/luajit-7152e154/src/host/minilua.c names a token of the pre-pass (`event`)",
+       "/home/cosmo/Documents/GitHub/qcore-c/private/w47-tail/attempt-1/prep/fluent-bit-clang-source/lib/luajit-7152e154/src/lj_obj.h names a token of the pre-pass (`event`)"
+      ]
+     },
+     {
+      "path": "callback_members/prepass/scope/dropped//home/cosmo/Documents/GitHub/qcore-c/private/w47-tail/attempt-1/prep/fluent-bit-clang-source/lib/luajit-7152e154/src/lib_package.c",
+      "count": 1,
+      "example": [
+       "/home/cosmo/Documents/GitHub/qcore-c/private/w47-tail/attempt-1/prep/fluent-bit-clang-source/lib/luajit-7152e154/src/host/minilua.c names a token of the pre-pass (`event`)",
+       "/home/cosmo/Documents/GitHub/qcore-c/private/w47-tail/attempt-1/prep/fluent-bit-clang-source/lib/luajit-7152e154/src/lj_obj.h names a token of the pre-pass (`event`)"
+      ]
+     },
+     {
+      "path": "callback_members/prepass/scope/dropped//home/cosmo/Documents/GitHub/qcore-c/private/w47-tail/attempt-1/prep/fluent-bit-clang-source/lib/luajit-7152e154/src/lib_string.c",
+      "count": 1,
+      "example": [
+       "/home/cosmo/Documents/GitHub/qcore-c/private/w47-tail/attempt-1/prep/fluent-bit-clang-source/lib/luajit-7152e154/src/host/minilua.c names a token of the pre-pass (`event`)",
+       "/home/cosmo/Documents/GitHub/qcore-c/private/w47-tail/attempt-1/prep/fluent-bit-clang-source/lib/luajit-7152e154/src/lj_obj.h names a token of the pre-pass (`event`)"
+      ]
+     },
+     {
+      "path": "callback_members/prepass/scope/dropped//home/cosmo/Documents/GitHub/qcore-c/private/w47-tail/attempt-1/prep/fluent-bit-clang-source/lib/luajit-7152e154/src/lib_table.c",
+      "count": 1,
+      "example": [
+       "/home/cosmo/Documents/GitHub/qcore-c/private/w47-tail/attempt-1/prep/fluent-bit-clang-source/lib/luajit-7152e154/src/host/minilua.c names a token of the pre-pass (`event`)",
+       "/home/cosmo/Documents/GitHub/qcore-c/private/w47-tail/attempt-1/prep/fluent-bit-clang-source/lib/luajit-7152e154/src/lj_obj.h names a token of the pre-pass (`event`)"
+      ]
+     },
+     {
+      "path": "callback_members/prepass/scope/dropped//home/cosmo/Documents/GitHub/qcore-c/private/w47-tail/attempt-1/prep/fluent-bit-clang-source/lib/luajit-7152e154/src/lj_alloc.c",
+      "count": 1,
+      "example": [
+       "/home/cosmo/Documents/GitHub/qcore-c/private/w47-tail/attempt-1/prep/fluent-bit-clang-source/lib/luajit-7152e154/src/host/minilua.c names a token of the pre-pass (`event`)",
+       "/home/cosmo/Documents/GitHub/qcore-c/private/w47-tail/attempt-1/prep/fluent-bit-clang-source/lib/luajit-7152e154/src/lua.h names a token of the pre-pass (`event`)"
+      ]
+     },
+     {
+      "path": "callback_members/prepass/scope/dropped//home/cosmo/Documents/GitHub/qcore-c/private/w47-tail/attempt-1/prep/fluent-bit-clang-source/lib/luajit-7152e154/src/lj_api.c",
+      "count": 1,
+      "example": [
+       "/home/cosmo/Documents/GitHub/qcore-c/private/w47-tail/attempt-1/prep/fluent-bit-clang-source/lib/luajit-7152e154/src/host/minilua.c names a token of the pre-pass (`event`)",
+       "/home/cosmo/Documents/GitHub/qcore-c/private/w47-tail/attempt-1/prep/fluent-bit-clang-source/lib/luajit-7152e154/src/lj_debug.h names a token of the pre-pass (`event`)"
+      ]
+     },
+     {
+      "path": "callback_members/prepass/scope/dropped//home/cosmo/Documents/GitHub/qcore-c/private/w47-tail/attempt-1/prep/fluent-bit-clang-source/lib/luajit-7152e154/src/lj_asm.c",
+      "count": 1,
+      "example": [
+       "/home/cosmo/Documents/GitHub/qcore-c/private/w47-tail/attempt-1/prep/fluent-bit-clang-source/lib/luajit-7152e154/src/host/minilua.c names a token of the pre-pass (`event`)",
+       "/home/cosmo/Documents/GitHub/qcore-c/private/w47-tail/attempt-1/prep/fluent-bit-clang-source/lib/luajit-7152e154/src/lj_obj.h names a token of the pre-pass (`event`)"
+      ]
+     },
+     {
+      "path": "callback_members/prepass/scope/dropped//home/cosmo/Documents/GitHub/qcore-c/private/w47-tail/attempt-1/prep/fluent-bit-clang-source/lib/luajit-7152e154/src/lj_bc.c",
+      "count": 1,
+      "example": [
+       "/home/cosmo/Documents/GitHub/qcore-c/private/w47-tail/attempt-1/prep/fluent-bit-clang-source/lib/luajit-7152e154/src/host/minilua.c names a token of the pre-pass (`event`)",
+       "/home/cosmo/Documents/GitHub/qcore-c/private/w47-tail/attempt-1/prep/fluent-bit-clang-source/lib/luajit-7152e154/src/lj_obj.h names a token of the pre-pass (`event`)"
+      ]
+     },
+     {
+      "path": "callback_members/prepass/scope/dropped//home/cosmo/Documents/GitHub/qcore-c/private/w47-tail/attempt-1/prep/fluent-bit-clang-source/lib/luajit-7152e154/src/lj_bcread.c",
+      "count": 1,
+      "example": [
+       "/home/cosmo/Documents/GitHub/qcore-c/private/w47-tail/attempt-1/prep/fluent-bit-clang-source/lib/luajit-7152e154/src/host/minilua.c names a token of the pre-pass (`event`)",
+       "/home/cosmo/Documents/GitHub/qcore-c/private/w47-tail/attempt-1/prep/fluent-bit-clang-source/lib/luajit-7152e154/src/lj_obj.h names a token of the pre-pass (`event`)"
+      ]
+     },
+     {
+      "path": "callback_members/prepass/scope/dropped//home/cosmo/Documents/GitHub/qcore-c/private/w47-tail/attempt-1/prep/fluent-bit-clang-source/lib/luajit-7152e154/src/lj_bcwrite.c",
+      "count": 1,
+      "example": [
+       "/home/cosmo/Documents/GitHub/qcore-c/private/w47-tail/attempt-1/prep/fluent-bit-clang-source/lib/luajit-7152e154/src/host/minilua.c names a token of the pre-pass (`event`)",
+       "/home/cosmo/Documents/GitHub/qcore-c/private/w47-tail/attempt-1/prep/fluent-bit-clang-source/lib/luajit-7152e154/src/lj_obj.h names a token of the pre-pass (`event`)"
+      ]
+     },
+     {
+      "path": "callback_members/prepass/scope/dropped//home/cosmo/Documents/GitHub/qcore-c/private/w47-tail/attempt-1/prep/fluent-bit-clang-source/lib/luajit-7152e154/src/lj_buf.c",
+      "count": 1,
+      "example": [
+       "/home/cosmo/Documents/GitHub/qcore-c/private/w47-tail/attempt-1/prep/fluent-bit-clang-source/lib/luajit-7152e154/src/host/minilua.c names a token of the pre-pass (`event`)",
+       "/home/cosmo/Documents/GitHub/qcore-c/private/w47-tail/attempt-1/prep/fluent-bit-clang-source/lib/luajit-7152e154/src/lj_obj.h names a token of the pre-pass (`event`)"
+      ]
+     },
+     {
+      "path": "callback_members/prepass/scope/dropped//home/cosmo/Documents/GitHub/qcore-c/private/w47-tail/attempt-1/prep/fluent-bit-clang-source/lib/luajit-7152e154/src/lj_carith.c",
+      "count": 1,
+      "example": [
+       "/home/cosmo/Documents/GitHub/qcore-c/private/w47-tail/attempt-1/prep/fluent-bit-clang-source/lib/luajit-7152e154/src/host/minilua.c names a token of the pre-pass (`event`)",
+       "/home/cosmo/Documents/GitHub/qcore-c/private/w47-tail/attempt-1/prep/fluent-bit-clang-source/lib/luajit-7152e154/src/lj_obj.h names a token of the pre-pass (`event`)"
+      ]
+     },
+     {
+      "path": "callback_members/prepass/scope/dropped//home/cosmo/Documents/GitHub/qcore-c/private/w47-tail/attempt-1/prep/fluent-bit-clang-source/lib/luajit-7152e154/src/lj_ccall.c",
+      "count": 1,
+      "example": [
+       "/home/cosmo/Documents/GitHub/qcore-c/private/w47-tail/attempt-1/prep/fluent-bit-clang-source/lib/luajit-7152e154/src/host/minilua.c names a token of the pre-pass (`event`)",
+       "/home/cosmo/Documents/GitHub/qcore-c/private/w47-tail/attempt-1/prep/fluent-bit-clang-source/lib/luajit-7152e154/src/lj_obj.h names a token of the pre-pass (`event`)"
+      ]
+     },
+     {
+      "path": "callback_members/prepass/scope/dropped//home/cosmo/Documents/GitHub/qcore-c/private/w47-tail/attempt-1/prep/fluent-bit-clang-source/lib/luajit-7152e154/src/lj_ccallback.c",
+      "count": 1,
+      "example": [
+       "/home/cosmo/Documents/GitHub/qcore-c/private/w47-tail/attempt-1/prep/fluent-bit-clang-source/lib/luajit-7152e154/src/host/minilua.c names a token of the pre-pass (`event`)",
+       "/home/cosmo/Documents/GitHub/qcore-c/private/w47-tail/attempt-1/prep/fluent-bit-clang-source/lib/luajit-7152e154/src/lj_obj.h names a token of the pre-pass (`event`)"
+      ]
+     },
+     {
+      "path": "callback_members/prepass/scope/dropped//home/cosmo/Documents/GitHub/qcore-c/private/w47-tail/attempt-1/prep/fluent-bit-clang-source/lib/luajit-7152e154/src/lj_cconv.c",
+      "count": 1,
+      "example": [
+       "/home/cosmo/Documents/GitHub/qcore-c/private/w47-tail/attempt-1/prep/fluent-bit-clang-source/lib/luajit-7152e154/src/host/minilua.c names a token of the pre-pass (`event`)",
+       "/home/cosmo/Documents/GitHub/qcore-c/private/w47-tail/attempt-1/prep/fluent-bit-clang-source/lib/luajit-7152e154/src/lj_obj.h names a token of the pre-pass (`event`)"
+      ]
+     },
+     {
+      "path": "callback_members/prepass/scope/dropped//home/cosmo/Documents/GitHub/qcore-c/private/w47-tail/attempt-1/prep/fluent-bit-clang-source/lib/luajit-7152e154/src/lj_cdata.c",
+      "count": 1,
+      "example": [
+       "/home/cosmo/Documents/GitHub/qcore-c/private/w47-tail/attempt-1/prep/fluent-bit-clang-source/lib/luajit-7152e154/src/host/minilua.c names a token of the pre-pass (`event`)",
+       "/home/cosmo/Documents/GitHub/qcore-c/private/w47-tail/attempt-1/prep/fluent-bit-clang-source/lib/luajit-7152e154/src/lj_obj.h names a token of the pre-pass (`event`)"
+      ]
+     },
+     {
+      "path": "callback_members/prepass/scope/dropped//home/cosmo/Documents/GitHub/qcore-c/private/w47-tail/attempt-1/prep/fluent-bit-clang-source/lib/luajit-7152e154/src/lj_char.c",
+      "count": 1,
+      "example": [
+       "/home/cosmo/Documents/GitHub/qcore-c/private/w47-tail/attempt-1/prep/fluent-bit-clang-source/lib/luajit-7152e154/src/host/minilua.c names a token of the pre-pass (`event`)",
+       "/home/cosmo/Documents/GitHub/qcore-c/private/w47-tail/attempt-1/prep/fluent-bit-clang-source/lib/luajit-7152e154/src/lua.h names a token of the pre-pass (`event`)"
+      ]
+     },
+     {
+      "path": "callback_members/prepass/scope/dropped//home/cosmo/Documents/GitHub/qcore-c/private/w47-tail/attempt-1/prep/fluent-bit-clang-source/lib/luajit-7152e154/src/lj_clib.c",
+      "count": 1,
+      "example": [
+       "/home/cosmo/Documents/GitHub/qcore-c/private/w47-tail/attempt-1/prep/fluent-bit-clang-source/lib/luajit-7152e154/src/host/minilua.c names a token of the pre-pass (`event`)",
+       "/home/cosmo/Documents/GitHub/qcore-c/private/w47-tail/attempt-1/prep/fluent-bit-clang-source/lib/luajit-7152e154/src/lj_obj.h names a token of the pre-pass (`event`)"
+      ]
+     },
+     {
+      "path": "callback_members/prepass/scope/dropped//home/cosmo/Documents/GitHub/qcore-c/private/w47-tail/attempt-1/prep/fluent-bit-clang-source/lib/luajit-7152e154/src/lj_cparse.c",
+      "count": 1,
+      "example": [
+       "/home/cosmo/Documents/GitHub/qcore-c/private/w47-tail/attempt-1/prep/fluent-bit-clang-source/lib/luajit-7152e154/src/host/minilua.c names a token of the pre-pass (`event`)",
+       "/home/cosmo/Documents/GitHub/qcore-c/private/w47-tail/attempt-1/prep/fluent-bit-clang-source/lib/luajit-7152e154/src/lj_obj.h names a token of the pre-pass (`event`)"
+      ]
+     },
+     {
+      "path": "callback_members/prepass/scope/dropped//home/cosmo/Documents/GitHub/qcore-c/private/w47-tail/attempt-1/prep/fluent-bit-clang-source/lib/luajit-7152e154/src/lj_crecord.c",
+      "count": 1,
+      "example": [
+       "/home/cosmo/Documents/GitHub/qcore-c/private/w47-tail/attempt-1/prep/fluent-bit-clang-source/lib/luajit-7152e154/src/host/minilua.c names a token of the pre-pass (`event`)",
+       "/home/cosmo/Documents/GitHub/qcore-c/private/w47-tail/attempt-1/prep/fluent-bit-clang-source/lib/luajit-7152e154/src/lj_obj.h names a token of the pre-pass (`event`)"
+      ]
+     },
+     {
+      "path": "callback_members/prepass/scope/dropped//home/cosmo/Documents/GitHub/qcore-c/private/w47-tail/attempt-1/prep/fluent-bit-clang-source/lib/luajit-7152e154/src/lj_ctype.c",
+      "count": 1,
+      "example": [
+       "/home/cosmo/Documents/GitHub/qcore-c/private/w47-tail/attempt-1/prep/fluent-bit-clang-source/lib/luajit-7152e154/src/host/minilua.c names a token of the pre-pass (`event`)",
+       "/home/cosmo/Documents/GitHub/qcore-c/private/w47-tail/attempt-1/prep/fluent-bit-clang-source/lib/luajit-7152e154/src/lj_obj.h names a token of the pre-pass (`event`)"
+      ]
+     },
+     {
+      "path": "callback_members/prepass/scope/dropped//home/cosmo/Documents/GitHub/qcore-c/private/w47-tail/attempt-1/prep/fluent-bit-clang-source/lib/luajit-7152e154/src/lj_debug.c",
+      "count": 1,
+      "example": [
+       "/home/cosmo/Documents/GitHub/qcore-c/private/w47-tail/attempt-1/prep/fluent-bit-clang-source/lib/luajit-7152e154/src/host/minilua.c names a token of the pre-pass (`event`)",
+       "/home/cosmo/Documents/GitHub/qcore-c/private/w47-tail/attempt-1/prep/fluent-bit-clang-source/lib/luajit-7152e154/src/lj_debug.h names a token of the pre-pass (`event`)"
+      ]
+     },
+     {
+      "path": "callback_members/prepass/scope/dropped//home/cosmo/Documents/GitHub/qcore-c/private/w47-tail/attempt-1/prep/fluent-bit-clang-source/lib/luajit-7152e154/src/lj_dispatch.c",
+      "count": 1,
+      "example": [
+       "/home/cosmo/Documents/GitHub/qcore-c/private/w47-tail/attempt-1/prep/fluent-bit-clang-source/lib/luajit-7152e154/src/host/minilua.c names a token of the pre-pass (`event`)",
+       "/home/cosmo/Documents/GitHub/qcore-c/private/w47-tail/attempt-1/prep/fluent-bit-clang-source/lib/luajit-7152e154/src/lj_debug.h names a token of the pre-pass (`event`)"
+      ]
+     },
+     {
+      "path": "callback_members/prepass/scope/dropped//home/cosmo/Documents/GitHub/qcore-c/private/w47-tail/attempt-1/prep/fluent-bit-clang-source/lib/luajit-7152e154/src/lj_err.c",
+      "count": 1,
+      "example": [
+       "/home/cosmo/Documents/GitHub/qcore-c/private/w47-tail/attempt-1/prep/fluent-bit-clang-source/lib/luajit-7152e154/src/host/minilua.c names a token of the pre-pass (`event`)",
+       "/home/cosmo/Documents/GitHub/qcore-c/private/w47-tail/attempt-1/prep/fluent-bit-clang-source/lib/luajit-7152e154/src/lj_debug.h names a token of the pre-pass (`event`)"
+      ]
+     },
+     {
+      "path": "callback_members/prepass/scope/dropped//home/cosmo/Documents/GitHub/qcore-c/private/w47-tail/attempt-1/prep/fluent-bit-clang-source/lib/luajit-7152e154/src/lj_ffrecord.c",
+      "count": 1,
+      "example": [
+       "/home/cosmo/Documents/GitHub/qcore-c/private/w47-tail/attempt-1/prep/fluent-bit-clang-source/lib/luajit-7152e154/src/host/minilua.c names a token of the pre-pass (`event`)",
+       "/home/cosmo/Documents/GitHub/qcore-c/private/w47-tail/attempt-1/prep/fluent-bit-clang-source/lib/luajit-7152e154/src/lj_obj.h names a token of the pre-pass (`event`)"
+      ]
+     },
+     {
+      "path": "callback_members/prepass/scope/dropped//home/cosmo/Documents/GitHub/qcore-c/private/w47-tail/attempt-1/prep/fluent-bit-clang-source/lib/luajit-7152e154/src/lj_func.c",
+      "count": 1,
+      "example": [
+       "/home/cosmo/Documents/GitHub/qcore-c/private/w47-tail/attempt-1/prep/fluent-bit-clang-source/lib/luajit-7152e154/src/host/minilua.c names a token of the pre-pass (`event`)",
+       "/home/cosmo/Documents/GitHub/qcore-c/private/w47-tail/attempt-1/prep/fluent-bit-clang-source/lib/luajit-7152e154/src/lj_obj.h names a token of the pre-pass (`event`)"
+      ]
+     },
+     {
+      "path": "callback_members/prepass/scope/dropped//home/cosmo/Documents/GitHub/qcore-c/private/w47-tail/attempt-1/prep/fluent-bit-clang-source/lib/luajit-7152e154/src/lj_gc.c",
+      "count": 1,
+      "example": [
+       "/home/cosmo/Documents/GitHub/qcore-c/private/w47-tail/attempt-1/prep/fluent-bit-clang-source/lib/luajit-7152e154/src/host/minilua.c names a token of the pre-pass (`event`)",
+       "/home/cosmo/Documents/GitHub/qcore-c/private/w47-tail/attempt-1/prep/fluent-bit-clang-source/lib/luajit-7152e154/src/lj_obj.h names a token of the pre-pass (`event`)"
+      ]
+     },
+     {
+      "path": "callback_members/prepass/scope/dropped//home/cosmo/Documents/GitHub/qcore-c/private/w47-tail/attempt-1/prep/fluent-bit-clang-source/lib/luajit-7152e154/src/lj_gdbjit.c",
+      "count": 1,
+      "example": [
+       "/home/cosmo/Documents/GitHub/qcore-c/private/w47-tail/attempt-1/prep/fluent-bit-clang-source/lib/luajit-7152e154/src/host/minilua.c names a token of the pre-pass (`event`)",
+       "/home/cosmo/Documents/GitHub/qcore-c/private/w47-tail/attempt-1/prep/fluent-bit-clang-source/lib/luajit-7152e154/src/lj_debug.h names a token of the pre-pass (`event`)"
+      ]
+     },
+     {
+      "path": "callback_members/prepass/scope/dropped//home/cosmo/Documents/GitHub/qcore-c/private/w47-tail/attempt-1/prep/fluent-bit-clang-source/lib/luajit-7152e154/src/lj_ir.c",
+      "count": 1,
+      "example": [
+       "/home/cosmo/Documents/GitHub/qcore-c/private/w47-tail/attempt-1/prep/fluent-bit-clang-source/lib/luajit-7152e154/src/host/minilua.c names a token of the pre-pass (`event`)",
+       "/home/cosmo/Documents/GitHub/qcore-c/private/w47-tail/attempt-1/prep/fluent-bit-clang-source/lib/luajit-7152e154/src/lj_obj.h names a token of the pre-pass (`event`)"
+      ]
+     },
+     {
+      "path": "callback_members/prepass/scope/dropped//home/cosmo/Documents/GitHub/qcore-c/private/w47-tail/attempt-1/prep/fluent-bit-clang-source/lib/luajit-7152e154/src/lj_lex.c",
+      "count": 1,
+      "example": [
+       "/home/cosmo/Documents/GitHub/qcore-c/private/w47-tail/attempt-1/prep/fluent-bit-clang-source/lib/luajit-7152e154/src/host/minilua.c names a token of the pre-pass (`event`)",
+       "/home/cosmo/Documents/GitHub/qcore-c/private/w47-tail/attempt-1/prep/fluent-bit-clang-source/lib/luajit-7152e154/src/lj_obj.h names a token of the pre-pass (`event`)"
+      ]
+     },
+     {
+      "path": "callback_members/prepass/scope/dropped//home/cosmo/Documents/GitHub/qcore-c/private/w47-tail/attempt-1/prep/fluent-bit-clang-source/lib/luajit-7152e154/src/lj_lib.c",
+      "count": 1,
+      "example": [
+       "/home/cosmo/Documents/GitHub/qcore-c/private/w47-tail/attempt-1/prep/fluent-bit-clang-source/lib/luajit-7152e154/src/host/minilua.c names a token of the pre-pass (`event`)",
+       "/home/cosmo/Documents/GitHub/qcore-c/private/w47-tail/attempt-1/prep/fluent-bit-clang-source/lib/luajit-7152e154/src/lj_obj.h names a token of the pre-pass (`event`)"
+      ]
+     },
+     {
+      "path": "callback_members/prepass/scope/dropped//home/cosmo/Documents/GitHub/qcore-c/private/w47-tail/attempt-1/prep/fluent-bit-clang-source/lib/luajit-7152e154/src/lj_load.c",
+      "count": 1,
+      "example": [
+       "/home/cosmo/Documents/GitHub/qcore-c/private/w47-tail/attempt-1/prep/fluent-bit-clang-source/lib/luajit-7152e154/src/host/minilua.c names a token of the pre-pass (`event`)",
+       "/home/cosmo/Documents/GitHub/qcore-c/private/w47-tail/attempt-1/prep/fluent-bit-clang-source/lib/luajit-7152e154/src/lj_obj.h names a token of the pre-pass (`event`)"
+      ]
+     },
+     {
+      "path": "callback_members/prepass/scope/dropped//home/cosmo/Documents/GitHub/qcore-c/private/w47-tail/attempt-1/prep/fluent-bit-clang-source/lib/luajit-7152e154/src/lj_mcode.c",
+      "count": 1,
+      "example": [
+       "/home/cosmo/Documents/GitHub/qcore-c/private/w47-tail/attempt-1/prep/fluent-bit-clang-source/lib/luajit-7152e154/src/host/minilua.c names a token of the pre-pass (`event`)",
+       "/home/cosmo/Documents/GitHub/qcore-c/private/w47-tail/attempt-1/prep/fluent-bit-clang-source/lib/luajit-7152e154/src/lj_obj.h names a token of the pre-pass (`event`)"
+      ]
+     },
+     {
+      "path": "callback_members/prepass/scope/dropped//home/cosmo/Documents/GitHub/qcore-c/private/w47-tail/attempt-1/prep/fluent-bit-clang-source/lib/luajit-7152e154/src/lj_meta.c",
+      "count": 1,
+      "example": [
+       "/home/cosmo/Documents/GitHub/qcore-c/private/w47-tail/attempt-1/prep/fluent-bit-clang-source/lib/luajit-7152e154/src/host/minilua.c names a token of the pre-pass (`event`)",
+       "/home/cosmo/Documents/GitHub/qcore-c/private/w47-tail/attempt-1/prep/fluent-bit-clang-source/lib/luajit-7152e154/src/lj_obj.h names a token of the pre-pass (`event`)"
+      ]
+     },
+     {
+      "path": "callback_members/prepass/scope/dropped//home/cosmo/Documents/GitHub/qcore-c/private/w47-tail/attempt-1/prep/fluent-bit-clang-source/lib/luajit-7152e154/src/lj_obj.c",
+      "count": 1,
+      "example": [
+       "/home/cosmo/Documents/GitHub/qcore-c/private/w47-tail/attempt-1/prep/fluent-bit-clang-source/lib/luajit-7152e154/src/host/minilua.c names a token of the pre-pass (`event`)",
+       "/home/cosmo/Documents/GitHub/qcore-c/private/w47-tail/attempt-1/prep/fluent-bit-clang-source/lib/luajit-7152e154/src/lj_obj.h names a token of the pre-pass (`event`)"
+      ]
+     },
+     {
+      "path": "callback_members/prepass/scope/dropped//home/cosmo/Documents/GitHub/qcore-c/private/w47-tail/attempt-1/prep/fluent-bit-clang-source/lib/luajit-7152e154/src/lj_opt_dce.c",
+      "count": 1,
+      "example": [
+       "/home/cosmo/Documents/GitHub/qcore-c/private/w47-tail/attempt-1/prep/fluent-bit-clang-source/lib/luajit-7152e154/src/host/minilua.c names a token of the pre-pass (`event`)",
+       "/home/cosmo/Documents/GitHub/qcore-c/private/w47-tail/attempt-1/prep/fluent-bit-clang-source/lib/luajit-7152e154/src/lj_obj.h names a token of the pre-pass (`event`)"
+      ]
+     },
+     {
+      "path": "callback_members/prepass/scope/dropped//home/cosmo/Documents/GitHub/qcore-c/private/w47-tail/attempt-1/prep/fluent-bit-clang-source/lib/luajit-7152e154/src/lj_opt_fold.c",
+      "count": 1,
+      "example": [
+       "/home/cosmo/Documents/GitHub/qcore-c/private/w47-tail/attempt-1/prep/fluent-bit-clang-source/lib/luajit-7152e154/src/host/minilua.c names a token of the pre-pass (`event`)",
+       "/home/cosmo/Documents/GitHub/qcore-c/private/w47-tail/attempt-1/prep/fluent-bit-clang-source/lib/luajit-7152e154/src/lj_obj.h names a token of the pre-pass (`event`)"
+      ]
+     },
+     {
+      "path": "callback_members/prepass/scope/dropped//home/cosmo/Documents/GitHub/qcore-c/private/w47-tail/attempt-1/prep/fluent-bit-clang-source/lib/luajit-7152e154/src/lj_opt_loop.c",
+      "count": 1,
+      "example": [
+       "/home/cosmo/Documents/GitHub/qcore-c/private/w47-tail/attempt-1/prep/fluent-bit-clang-source/lib/luajit-7152e154/src/host/minilua.c names a token of the pre-pass (`event`)",
+       "/home/cosmo/Documents/GitHub/qcore-c/private/w47-tail/attempt-1/prep/fluent-bit-clang-source/lib/luajit-7152e154/src/lj_obj.h names a token of the pre-pass (`event`)"
+      ]
+     },
+     {
+      "path": "callback_members/prepass/scope/dropped//home/cosmo/Documents/GitHub/qcore-c/private/w47-tail/attempt-1/prep/fluent-bit-clang-source/lib/luajit-7152e154/src/lj_opt_mem.c",
+      "count": 1,
+      "example": [
+       "/home/cosmo/Documents/GitHub/qcore-c/private/w47-tail/attempt-1/prep/fluent-bit-clang-source/lib/luajit-7152e154/src/host/minilua.c names a token of the pre-pass (`event`)",
+       "/home/cosmo/Documents/GitHub/qcore-c/private/w47-tail/attempt-1/prep/fluent-bit-clang-source/lib/luajit-7152e154/src/lj_obj.h names a token of the pre-pass (`event`)"
+      ]
+     },
+     {
+      "path": "callback_members/prepass/scope/dropped//home/cosmo/Documents/GitHub/qcore-c/private/w47-tail/attempt-1/prep/fluent-bit-clang-source/lib/luajit-7152e154/src/lj_opt_narrow.c",
+      "count": 1,
+      "example": [
+       "/home/cosmo/Documents/GitHub/qcore-c/private/w47-tail/attempt-1/prep/fluent-bit-clang-source/lib/luajit-7152e154/src/host/minilua.c names a token of the pre-pass (`event`)",
+       "/home/cosmo/Documents/GitHub/qcore-c/private/w47-tail/attempt-1/prep/fluent-bit-clang-source/lib/luajit-7152e154/src/lj_obj.h names a token of the pre-pass (`event`)"
+      ]
+     },
+     {
+      "path": "callback_members/prepass/scope/dropped//home/cosmo/Documents/GitHub/qcore-c/private/w47-tail/attempt-1/prep/fluent-bit-clang-source/lib/luajit-7152e154/src/lj_opt_sink.c",
+      "count": 1,
+      "example": [
+       "/home/cosmo/Documents/GitHub/qcore-c/private/w47-tail/attempt-1/prep/fluent-bit-clang-source/lib/luajit-7152e154/src/host/minilua.c names a token of the pre-pass (`event`)",
+       "/home/cosmo/Documents/GitHub/qcore-c/private/w47-tail/attempt-1/prep/fluent-bit-clang-source/lib/luajit-7152e154/src/lj_obj.h names a token of the pre-pass (`event`)"
+      ]
+     },
+     {
+      "path": "callback_members/prepass/scope/dropped//home/cosmo/Documents/GitHub/qcore-c/private/w47-tail/attempt-1/prep/fluent-bit-clang-source/lib/luajit-7152e154/src/lj_opt_split.c",
+      "count": 1,
+      "example": [
+       "/home/cosmo/Documents/GitHub/qcore-c/private/w47-tail/attempt-1/prep/fluent-bit-clang-source/lib/luajit-7152e154/src/host/minilua.c names a token of the pre-pass (`event`)",
+       "/home/cosmo/Documents/GitHub/qcore-c/private/w47-tail/attempt-1/prep/fluent-bit-clang-source/lib/luajit-7152e154/src/lj_obj.h names a token of the pre-pass (`event`)"
+      ]
+     },
+     {
+      "path": "callback_members/prepass/scope/dropped//home/cosmo/Documents/GitHub/qcore-c/private/w47-tail/attempt-1/prep/fluent-bit-clang-source/lib/luajit-7152e154/src/lj_parse.c",
+      "count": 1,
+      "example": [
+       "/home/cosmo/Documents/GitHub/qcore-c/private/w47-tail/attempt-1/prep/fluent-bit-clang-source/lib/luajit-7152e154/src/host/minilua.c names a token of the pre-pass (`event`)",
+       "/home/cosmo/Documents/GitHub/qcore-c/private/w47-tail/attempt-1/prep/fluent-bit-clang-source/lib/luajit-7152e154/src/lj_debug.h names a token of the pre-pass (`event`)"
+      ]
+     },
+     {
+      "path": "callback_members/prepass/scope/dropped//home/cosmo/Documents/GitHub/qcore-c/private/w47-tail/attempt-1/prep/fluent-bit-clang-source/lib/luajit-7152e154/src/lj_prng.c",
+      "count": 1,
+      "example": [
+       "/home/cosmo/Documents/GitHub/qcore-c/private/w47-tail/attempt-1/prep/fluent-bit-clang-source/lib/luajit-7152e154/src/host/minilua.c names a token of the pre-pass (`event`)",
+       "/home/cosmo/Documents/GitHub/qcore-c/private/w47-tail/attempt-1/prep/fluent-bit-clang-source/lib/luajit-7152e154/src/lua.h names a token of the pre-pass (`event`)"
+      ]
+     },
+     {
+      "path": "callback_members/prepass/scope/dropped//home/cosmo/Documents/GitHub/qcore-c/private/w47-tail/attempt-1/prep/fluent-bit-clang-source/lib/luajit-7152e154/src/lj_profile.c",
+      "count": 1,
+      "example": [
+       "/home/cosmo/Documents/GitHub/qcore-c/private/w47-tail/attempt-1/prep/fluent-bit-clang-source/lib/luajit-7152e154/src/host/minilua.c names a token of the pre-pass (`event`)",
+       "/home/cosmo/Documents/GitHub/qcore-c/private/w47-tail/attempt-1/prep/fluent-bit-clang-source/lib/luajit-7152e154/src/lj_debug.h names a token of the pre-pass (`event`)"
+      ]
+     },
+     {
+      "path": "callback_members/prepass/scope/dropped//home/cosmo/Documents/GitHub/qcore-c/private/w47-tail/attempt-1/prep/fluent-bit-clang-source/lib/luajit-7152e154/src/lj_record.c",
+      "count": 1,
+      "example": [
+       "/home/cosmo/Documents/GitHub/qcore-c/private/w47-tail/attempt-1/prep/fluent-bit-clang-source/lib/luajit-7152e154/src/host/minilua.c names a token of the pre-pass (`event`)",
+       "/home/cosmo/Documents/GitHub/qcore-c/private/w47-tail/attempt-1/prep/fluent-bit-clang-source/lib/luajit-7152e154/src/lj_debug.h names a token of the pre-pass (`event`)"
+      ]
+     },
+     {
+      "path": "callback_members/prepass/scope/dropped//home/cosmo/Documents/GitHub/qcore-c/private/w47-tail/attempt-1/prep/fluent-bit-clang-source/lib/luajit-7152e154/src/lj_serialize.c",
+      "count": 1,
+      "example": [
+       "/home/cosmo/Documents/GitHub/qcore-c/private/w47-tail/attempt-1/prep/fluent-bit-clang-source/lib/luajit-7152e154/src/host/minilua.c names a token of the pre-pass (`event`)",
+       "/home/cosmo/Documents/GitHub/qcore-c/private/w47-tail/attempt-1/prep/fluent-bit-clang-source/lib/luajit-7152e154/src/lj_obj.h names a token of the pre-pass (`event`)"
+      ]
+     },
+     {
+      "path": "callback_members/prepass/scope/dropped//home/cosmo/Documents/GitHub/qcore-c/private/w47-tail/attempt-1/prep/fluent-bit-clang-source/lib/luajit-7152e154/src/lj_snap.c",
+      "count": 1,
+      "example": [
+       "/home/cosmo/Documents/GitHub/qcore-c/private/w47-tail/attempt-1/prep/fluent-bit-clang-source/lib/luajit-7152e154/src/host/minilua.c names a token of the pre-pass (`event`)",
+       "/home/cosmo/Documents/GitHub/qcore-c/private/w47-tail/attempt-1/prep/fluent-bit-clang-source/lib/luajit-7152e154/src/lj_obj.h names a token of the pre-pass (`event`)"
+      ]
+     },
+     {
+      "path": "callback_members/prepass/scope/dropped//home/cosmo/Documents/GitHub/qcore-c/private/w47-tail/attempt-1/prep/fluent-bit-clang-source/lib/luajit-7152e154/src/lj_state.c",
+      "count": 1,
+      "example": [
+       "/home/cosmo/Documents/GitHub/qcore-c/private/w47-tail/attempt-1/prep/fluent-bit-clang-source/lib/luajit-7152e154/src/host/minilua.c names a token of the pre-pass (`event`)",
+       "/home/cosmo/Documents/GitHub/qcore-c/private/w47-tail/attempt-1/prep/fluent-bit-clang-source/lib/luajit-7152e154/src/lj_obj.h names a token of the pre-pass (`event`)"
+      ]
+     },
+     {
+      "path": "callback_members/prepass/scope/dropped//home/cosmo/Documents/GitHub/qcore-c/private/w47-tail/attempt-1/prep/fluent-bit-clang-source/lib/luajit-7152e154/src/lj_str.c",
+      "count": 1,
+      "example": [
+       "/home/cosmo/Documents/GitHub/qcore-c/private/w47-tail/attempt-1/prep/fluent-bit-clang-source/lib/luajit-7152e154/src/host/minilua.c names a token of the pre-pass (`event`)",
+       "/home/cosmo/Documents/GitHub/qcore-c/private/w47-tail/attempt-1/prep/fluent-bit-clang-source/lib/luajit-7152e154/src/lj_obj.h names a token of the pre-pass (`event`)"
+      ]
+     },
+     {
+      "path": "callback_members/prepass/scope/dropped//home/cosmo/Documents/GitHub/qcore-c/private/w47-tail/attempt-1/prep/fluent-bit-clang-source/lib/luajit-7152e154/src/lj_strfmt.c",
+      "count": 1,
+      "example": [
+       "/home/cosmo/Documents/GitHub/qcore-c/private/w47-tail/attempt-1/prep/fluent-bit-clang-source/lib/luajit-7152e154/src/host/minilua.c names a token of the pre-pass (`event`)",
+       "/home/cosmo/Documents/GitHub/qcore-c/private/w47-tail/attempt-1/prep/fluent-bit-clang-source/lib/luajit-7152e154/src/lj_obj.h names a token of the pre-pass (`event`)"
+      ]
+     },
+     {
+      "path": "callback_members/prepass/scope/dropped//home/cosmo/Documents/GitHub/qcore-c/private/w47-tail/attempt-1/prep/fluent-bit-clang-source/lib/luajit-7152e154/src/lj_strfmt_num.c",
+      "count": 1,
+      "example": [
+       "/home/cosmo/Documents/GitHub/qcore-c/private/w47-tail/attempt-1/prep/fluent-bit-clang-source/lib/luajit-7152e154/src/host/minilua.c names a token of the pre-pass (`event`)",
+       "/home/cosmo/Documents/GitHub/qcore-c/private/w47-tail/attempt-1/prep/fluent-bit-clang-source/lib/luajit-7152e154/src/lj_obj.h names a token of the pre-pass (`event`)"
+      ]
+     },
+     {
+      "path": "callback_members/prepass/scope/dropped//home/cosmo/Documents/GitHub/qcore-c/private/w47-tail/attempt-1/prep/fluent-bit-clang-source/lib/luajit-7152e154/src/lj_strscan.c",
+      "count": 1,
+      "example": [
+       "/home/cosmo/Documents/GitHub/qcore-c/private/w47-tail/attempt-1/prep/fluent-bit-clang-source/lib/luajit-7152e154/src/host/minilua.c names a token of the pre-pass (`event`)",
+       "/home/cosmo/Documents/GitHub/qcore-c/private/w47-tail/attempt-1/prep/fluent-bit-clang-source/lib/luajit-7152e154/src/lj_obj.h names a token of the pre-pass (`event`)"
+      ]
+     },
+     {
+      "path": "callback_members/prepass/scope/dropped//home/cosmo/Documents/GitHub/qcore-c/private/w47-tail/attempt-1/prep/fluent-bit-clang-source/lib/luajit-7152e154/src/lj_tab.c",
+      "count": 1,
+      "example": [
+       "/home/cosmo/Documents/GitHub/qcore-c/private/w47-tail/attempt-1/prep/fluent-bit-clang-source/lib/luajit-7152e154/src/host/minilua.c names a token of the pre-pass (`event`)",
+       "/home/cosmo/Documents/GitHub/qcore-c/private/w47-tail/attempt-1/prep/fluent-bit-clang-source/lib/luajit-7152e154/src/lj_obj.h names a token of the pre-pass (`event`)"
+      ]
+     },
+     {
+      "path": "callback_members/prepass/scope/dropped//home/cosmo/Documents/GitHub/qcore-c/private/w47-tail/attempt-1/prep/fluent-bit-clang-source/lib/luajit-7152e154/src/lj_trace.c",
+      "count": 1,
+      "example": [
+       "/home/cosmo/Documents/GitHub/qcore-c/private/w47-tail/attempt-1/prep/fluent-bit-clang-source/lib/luajit-7152e154/src/host/minilua.c names a token of the pre-pass (`event`)",
+       "/home/cosmo/Documents/GitHub/qcore-c/private/w47-tail/attempt-1/prep/fluent-bit-clang-source/lib/luajit-7152e154/src/lj_debug.h names a token of the pre-pass (`event`)"
+      ]
+     },
+     {
+      "path": "callback_members/prepass/scope/dropped//home/cosmo/Documents/GitHub/qcore-c/private/w47-tail/attempt-1/prep/fluent-bit-clang-source/lib/luajit-7152e154/src/lj_udata.c",
+      "count": 1,
+      "example": [
+       "/home/cosmo/Documents/GitHub/qcore-c/private/w47-tail/attempt-1/prep/fluent-bit-clang-source/lib/luajit-7152e154/src/host/minilua.c names a token of the pre-pass (`event`)",
+       "/home/cosmo/Documents/GitHub/qcore-c/private/w47-tail/attempt-1/prep/fluent-bit-clang-source/lib/luajit-7152e154/src/lj_obj.h names a token of the pre-pass (`event`)"
+      ]
+     },
+     {
+      "path": "callback_members/prepass/scope/dropped//home/cosmo/Documents/GitHub/qcore-c/private/w47-tail/attempt-1/prep/fluent-bit-clang-source/lib/luajit-7152e154/src/lj_vmevent.c",
+      "count": 1,
+      "example": [
+       "/home/cosmo/Documents/GitHub/qcore-c/private/w47-tail/attempt-1/prep/fluent-bit-clang-source/lib/luajit-7152e154/src/host/minilua.c names a token of the pre-pass (`event`)",
+       "/home/cosmo/Documents/GitHub/qcore-c/private/w47-tail/attempt-1/prep/fluent-bit-clang-source/lib/luajit-7152e154/src/lj_obj.h names a token of the pre-pass (`event`)"
+      ]
+     },
+     {
+      "path": "callback_members/prepass/scope/dropped//home/cosmo/Documents/GitHub/qcore-c/private/w47-tail/attempt-1/prep/fluent-bit-clang-source/lib/luajit-7152e154/src/lj_vmmath.c",
+      "count": 1,
+      "example": [
+       "/home/cosmo/Documents/GitHub/qcore-c/private/w47-tail/attempt-1/prep/fluent-bit-clang-source/lib/luajit-7152e154/src/host/minilua.c names a token of the pre-pass (`event`)",
+       "/home/cosmo/Documents/GitHub/qcore-c/private/w47-tail/attempt-1/prep/fluent-bit-clang-source/lib/luajit-7152e154/src/lj_obj.h names a token of the pre-pass (`event`)"
+      ]
+     },
+     {
+      "path": "callback_members/prepass/scope/dropped//home/cosmo/Documents/GitHub/qcore-c/private/w47-tail/attempt-1/prep/fluent-bit-clang-source/lib/luajit-7152e154/src/luajit.c",
+      "count": 1,
+      "example": [
+       "/home/cosmo/Documents/GitHub/qcore-c/private/w47-tail/attempt-1/prep/fluent-bit-clang-source/lib/luajit-7152e154/src/host/minilua.c names a token of the pre-pass (`event`)",
+       "/home/cosmo/Documents/GitHub/qcore-c/private/w47-tail/attempt-1/prep/fluent-bit-clang-source/lib/luajit-7152e154/src/lua.h names a token of the pre-pass (`event`)"
+      ]
+     }
+    ]
+   }
+  },
+  "resource-diagnostics.invocation.json": {
+   "bytes": [
+    6800,
+    6776
+   ],
+   "raw_identical": false,
+   "identical_after_substitution": false,
+   "substituted": {
+    "/media/Data/GitHub/quirin-lang/private/w47-tail/attempt-1/prep": 4
+   },
+   "target_collisions": {},
+   "structural": {
+    "differing_leaves": 1,
+    "pattern_count": 1,
+    "patterns": [
+     {
+      "path": "memory_admission/phases/*/tasks",
+      "count": 1,
+      "example": [
+       "676",
+       "814"
+      ]
+     }
+    ]
+   }
+  },
+  "resource-diagnostics.json": {
+   "bytes": [
+    3772504,
+    3772408
+   ],
+   "raw_identical": false,
+   "identical_after_substitution": false,
+   "substituted": {
+    "/media/Data/GitHub/quirin-lang/private/w47-tail/attempt-1/prep": 16
+   },
+   "target_collisions": {
+    "/home/cosmo/Documents/GitHub/qcore-c/private/w47-tail/attempt-1/prep": 2576
+   },
+   "structural": {
+    "differing_leaves": 16,
+    "pattern_count": 1,
+    "patterns": [
+     {
+      "path": "units/*/compile_configuration/inventory_sha256",
+      "count": 16,
+      "example": [
+       "31d19cf5bcb37d8df316a7b3ff1f57ed5cc84056b70dba1be38ac92afc755dca",
+       "e1755bca691156aa3d4bb0c1404c0737cb1c6cd3b9cb71b42dfdffff4a850094"
+      ]
+     }
+    ]
+   }
+  },
+  "resource-diagnostics.source-effects.json": {
+   "bytes": [
+    385,
+    385
+   ],
+   "raw_identical": true,
+   "identical_after_substitution": true,
+   "substituted": {},
+   "target_collisions": {}
+  },
+  "slice-null.jsonl": {
+   "bytes": [
+    1853651,
+    1853651
+   ],
+   "raw_identical": true,
+   "identical_after_substitution": true,
+   "substituted": {},
+   "target_collisions": {}
+  },
+  "slice-null.summary.json": {
+   "bytes": [
+    64487,
+    64487
+   ],
+   "raw_identical": true,
+   "identical_after_substitution": true,
+   "substituted": {},
+   "target_collisions": {}
+  },
+  "slice-outer.json": {
+   "bytes": [
+    88999,
+    88999
+   ],
+   "raw_identical": true,
+   "identical_after_substitution": true,
+   "substituted": {},
+   "target_collisions": {
+    "/home/cosmo/Documents/GitHub/qcore-c/private/w47-tail/attempt-1/prep": 5
+   }
+  },
+  "stderr.log": {
+   "bytes": [
+    0,
+    0
+   ],
+   "raw_identical": true,
+   "identical_after_substitution": true,
+   "substituted": {},
+   "target_collisions": {}
+  }
+ },
+ "substitution_totals": {
+  "/media/Data/GitHub/quirin-lang/private/w47-tail/attempt-1/prep": 22
+ },
+ "target_collisions_total": {
+  "/home/cosmo/Documents/GitHub/qcore-c/private/w47-tail/attempt-1/prep": 3009
+ },
+ "identical": false
+}

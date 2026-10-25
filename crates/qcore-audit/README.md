@@ -32,7 +32,12 @@ The profile directory supplies `profile.json`, including the source pin,
 source selections, file digests and reference to a resource-contract manifest.
 Compilation database records accept either `command` or `arguments`, with an
 absolute compilation directory. Selected conflicting commands reject instead
-of choosing an arbitrary build. Selected source bytes are independently
+of choosing an arbitrary build. Units are selected by located (canonical)
+path, so a database spelled through a symlink to a moved checkout selects the
+same units; each selected record keeps its spelling for Clang and every
+report. A record spelled under a source root that resolves outside it, and two
+records spelling one source file two ways (`input-path-alias`), reject
+(`src/input_paths.rs`). Selected source bytes are independently
 compared with their pinned Git blob, including files omitted from a profile's
 audited-file list.
 
