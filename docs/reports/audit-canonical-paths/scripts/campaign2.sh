@@ -1,6 +1,7 @@
 #!/bin/sh
-# One lock hold: build each side's snapshot at the fixed path, then run every
-# route (run_pinned_paths.sh). Usage: campaign2.sh WORKTREE BASE_REV TIP_REV
+# Build each side's snapshot at the fixed path (builds take no gate slot), then
+# run every route, each in an audit slot (run_pinned_paths.sh).
+# Usage: campaign2.sh WORKTREE BASE_REV TIP_REV
 set -u
 W=$1
 A=$W/private/acp

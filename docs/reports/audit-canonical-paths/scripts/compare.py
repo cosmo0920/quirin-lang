@@ -67,7 +67,9 @@ def substitute(data, subs):
 
 
 def leaves(value, path, out):
-    if isinstance(value, dict):
+    if isinstance(value, (dict, list)) and not value:
+        out[path] = json.dumps(value)
+    elif isinstance(value, dict):
         for key, item in value.items():
             leaves(item, path + (key,), out)
     elif isinstance(value, list):
@@ -120,13 +122,26 @@ def main():
     left_files, right_files = artifacts(args.left, args.route), artifacts(args.right, args.route)
     exits = {side: (root / f'{args.route}.exit').read_text().strip()
              for side, root in (('left', args.left), ('right', args.right))}
+    # The driver's own record: the audit's exit and, for a driver exit 101,
+    # exactly which input changed during the route.
+    drivers = {}
+    for side, root in (('left', args.left), ('right', args.right)):
+        record = json.loads((root / 'invocation.json').read_text())
+        changed = sorted(key for key in set(record['inputs_before']) | set(record['inputs_after'])
+                         if record['inputs_before'].get(key) != record['inputs_after'].get(key))
+        drivers[side] = {'exit': record.get('exit'), 'audit_exit': record.get('audit_exit', record.get('exit')),
+                         'identity_error': record.get('identity_error'), 'snapshot_files_changed': changed,
+                         'externals_stable': record['externals_before'] == record['externals_after'],
+                         'binary_stable': record['binary_sha256'] == record['binary_sha256_after'],
+                         'binary_sha256': record['binary_sha256']}
     result = {'route': args.route, 'left': str(args.left), 'right': str(args.right),
               'substitution': [{'from': source, 'to': target} for source, target in subs],
-              'exits': exits, 'only_left': sorted(left_files - right_files),
+              'exits': exits, 'drivers': drivers, 'only_left': sorted(left_files - right_files),
               'only_right': sorted(right_files - left_files), 'files': {},
               'substitution_totals': collections.Counter(),
               'target_collisions_total': collections.Counter()}
-    identical = not result['only_left'] and not result['only_right'] and exits['left'] == exits['right'] == '0'
+    identical = (not result['only_left'] and not result['only_right']
+                 and drivers['left']['audit_exit'] == drivers['right']['audit_exit'] == 0)
     for relative in sorted(left_files & right_files):
         left = normalise(relative, (args.left / relative).read_bytes())
         right_raw = normalise(relative, (args.right / relative).read_bytes())
