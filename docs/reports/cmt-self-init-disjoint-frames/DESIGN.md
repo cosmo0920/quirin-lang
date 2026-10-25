@@ -33,6 +33,9 @@ ambiguous declarations and record tags decline. This restriction concerns logica
 resource identities under existing contracts and adds no physical allocation
 freshness claim. Source readers must use iterative walks in the admitted deep-AST
 band.
+The first subset also declines addresses of pointer-valued slots and declared
+Out/Stored/Removed parameter effects anywhere in the caller, so hidden rebinding
+cannot evade the assignment/type seal. Ordinary declared releases remain allowed.
 
 All current identity aliases of the owner must have compatible source types.
 Only already recorded protected direct-slot pointer facts through those aliases
