@@ -1,0 +1,60 @@
+{
+  "schema": "quirin-evaluation-profile/1",
+  "name": "cycle-18-libevent",
+  "description": "Cycle 18's pinned-Libevent source-contract audit: the twelve pinned files and their behaviour markers at the libevent submodule revision.",
+  "policy": {
+    "kind": "frozen",
+    "revision": "bb76178d5ecdc309667863238c75e611f3ff25f4"
+  },
+  "route": {
+    "kind": "source-contract-audit",
+    "command": "cargo run --quiet --example cycle18_libevent_audit"
+  },
+  "source": {
+    "repository": "libevent",
+    "revision": "d82464a277d0f42703702c4dfd9af6af38595a83",
+    "submodules": {
+      "third_party/libevent": "d82464a277d0f42703702c4dfd9af6af38595a83"
+    },
+    "note": "release-2.2.2-alpha-11-gd82464a2, the third_party/libevent submodule"
+  },
+  "inputs": {
+    "tracked": [
+      {
+        "path": "compiler/examples/cycle18_libevent_audit.rs",
+        "revision": "bb76178d5ecdc309667863238c75e611f3ff25f4",
+        "sha256": "f90018bf8d41f4b3ab42ea867bd24533b5e9ec17030b5586d88e708393934f76",
+        "role": "audit driver"
+      },
+      {
+        "path": "compiler/tests/libevent_submodule.rs",
+        "revision": "bb76178d5ecdc309667863238c75e611f3ff25f4",
+        "sha256": "4225490c8002ac7125685f8a5ed1c603823ada2949bcaa58857a05463db7c63b",
+        "role": "the same audit as an integration test"
+      },
+      {
+        "path": "docs/cycles/CYCLE_18_LIBEVENT_VALIDATION.md",
+        "revision": "bb76178d5ecdc309667863238c75e611f3ff25f4",
+        "sha256": "f0717d75797037234bdf0aefb7b7738c5ee0d1bcdec527ffe4738f0e5cc76c44",
+        "role": "the record that published the result"
+      }
+    ],
+    "untracked": []
+  },
+  "contract_set": {
+    "lock_set": {
+      "state": "retired",
+      "evidence_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "references": [],
+    "note": "frozen: the pinned behaviour markers live in the audit driver at the frozen revision; no pin-lock set was retained for this revision (it predates the lock-set window of decision 9a), so the contract set is identified by its evidence digest at the frozen revision"
+  },
+  "baseline": {
+    "path": "contract/evaluations/cycle-18-libevent/baseline.json",
+    "sha256": "75815c6dfa1824bc22beb8061f625a203923ec1c263f01c57266fb3e36efa556"
+  },
+  "evidence_version": {
+    "analyzer_revision": "bb76178d5ecdc309667863238c75e611f3ff25f4",
+    "semantic_evidence": "unrecorded at this revision (before the acceptance matrix)"
+  }
+}

@@ -2,6 +2,8 @@
 
 **Status: Bounded implementation and native platform matrix complete; aggregate acceptance pending**
 
+Evaluation profile: `cycle-18-libevent` (frozen at `bb76178d5`; [record](../../contract/evaluations/cycle-18-libevent/evaluation.json)).
+
 Cycle 18 defines and verifies an event-driven concurrency profile modeled on
 Libevent. It builds on Cycle 17's native backend and C11 memory relation; it
 does not claim that an event loop makes arbitrary callbacks sequential or that

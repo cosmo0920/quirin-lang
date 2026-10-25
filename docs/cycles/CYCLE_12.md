@@ -2,6 +2,8 @@
 
 **Status: Done**
 
+Evaluation profile: none (a language and model cycle: its acceptance is the standing gate's Rust tests and Lean audits; it claims no audit measurement over a pinned source set).
+
 Cycle 12 connects source files to the Cycle 11 whole-program checker and the
 cleanup-explicit C11 backend. The compiler accepts a deliberately conservative
 executable subset and reports every unsupported source form rather than

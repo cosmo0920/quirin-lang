@@ -2,6 +2,8 @@
 
 **Status: Done**
 
+Evaluation profile: none (a language and model cycle: its acceptance is the standing gate's Rust tests and Lean audits; it claims no audit measurement over a pinned source set).
+
 Cycle 7 implements Stage 7 of the prototype roadmap for the current non-MSVC
 host toolchain. It lowers a checked,
 linear source-path IR into a typed control-flow graph with edge-specific

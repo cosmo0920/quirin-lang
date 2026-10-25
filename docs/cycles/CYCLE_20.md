@@ -2,6 +2,8 @@
 
 **Status: Active — 20A, the generic 20B firewall, and the initial 20E model are implemented**
 
+Evaluation profile: none (an architecture cycle: its provider audits are bound through the configured-audit and live profiles, and it claims no audit figure of its own).
+
 Cycle 20 extracts library- and framework-specific verification from the core
 compiler into a versioned verifier-plugin ecosystem. The initial providers are
 Libevent, ChunkIO, librdkafka, CMetrics, and CTraces. Cycle 19 continues to own

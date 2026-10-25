@@ -2,6 +2,8 @@
 
 **Status: Done**
 
+Evaluation profile: none (a language and model cycle: its acceptance is the standing gate's Rust tests and Lean audits; it claims no audit measurement over a pinned source set).
+
 Cycle 11 connects the Cycle 10 typed source boundary to the sequential semantic
 engines from Cycles 2–7. It checks every source function as one transaction,
 computes interprocedural summaries, and produces a checked cleanup-explicit CFG.

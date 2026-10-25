@@ -1,0 +1,58 @@
+{
+  "schema": "quirin-evaluation-profile/1",
+  "name": "cmetrics-counter-configured",
+  "description": "The configured CMetrics counter audit of the cmetrics-counter source set (acceptance matrix corpus.configured_cmetrics_audit), last measured by card C02.",
+  "policy": {
+    "kind": "frozen",
+    "revision": "55145be4f17aeace12734032dfb1b24a201d36ee"
+  },
+  "route": {
+    "kind": "configured-source-set",
+    "command": "cargo run -p qcore-audit -- contract/profiles/cmetrics-counter/audit.json"
+  },
+  "source": {
+    "repository": "fluent-bit",
+    "revision": "66910c10a4d7eafa810b84229cf2dcf7b0f26f97",
+    "submodules": {},
+    "note": "lib/cmetrics/src/cmt_counter.c of Fluent Bit 66910c10a"
+  },
+  "inputs": {
+    "tracked": [
+      {
+        "path": "contract/profiles/cmetrics-counter/profile.json",
+        "revision": "55145be4f17aeace12734032dfb1b24a201d36ee",
+        "sha256": "25574f73e0edf902fc5eeaf478cd65c722b284d179b8633a847add5238dc070c",
+        "role": "source-set pins and audited files"
+      },
+      {
+        "path": "contract/profiles/cmetrics-counter/audit.json",
+        "revision": "55145be4f17aeace12734032dfb1b24a201d36ee",
+        "sha256": "d958ccdef973596c8ad5aa80d1aa2ed546f82591f73d50aab2656afc98c1eca0",
+        "role": "audit configuration"
+      },
+      {
+        "path": "contract/profiles/cmetrics-counter/source-contracts.json",
+        "revision": "55145be4f17aeace12734032dfb1b24a201d36ee",
+        "sha256": "9b0b63ff32c40332dc47c2900c26614a36262fcd7ef3eae9f301c39161be4c35",
+        "role": "source-contract bindings"
+      }
+    ],
+    "untracked": []
+  },
+  "contract_set": {
+    "lock_set": {
+      "state": "retired",
+      "evidence_sha256": "b6974fc00532e35572bbca52ac98a34c265292eb3a8113c25eb8115ac336a788"
+    },
+    "references": [],
+    "note": "frozen: the source contracts bound by source-contracts.json at the frozen revision; no pin-lock set was retained for this revision (it predates the lock-set window of decision 9a), so the contract set is identified by its evidence digest at the frozen revision"
+  },
+  "baseline": {
+    "path": "contract/evaluations/cmetrics-counter-configured/baseline.json",
+    "sha256": "762376ffc3d303ac9d78404487e444d4897557d9b983e71081b2650d2a3673fb"
+  },
+  "evidence_version": {
+    "analyzer_revision": "55145be4f17aeace12734032dfb1b24a201d36ee",
+    "semantic_evidence": "unrecorded at this revision (before the acceptance matrix)"
+  }
+}

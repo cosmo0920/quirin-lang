@@ -1,0 +1,93 @@
+{
+  "schema": "quirin-evaluation-profile/1",
+  "name": "eight-home",
+  "description": "The pinned Fluent Bit corpus (185 units of the fluent-bit source set's audit.json selection) under the conditional eight-home cross-unit link map, null and outer projections on, no source contracts or census: the corpus route every W48 card measures as BASE and TIP.",
+  "policy": {
+    "kind": "live"
+  },
+  "route": {
+    "kind": "pinned-corpus",
+    "command": "QCORE_CROSS_UNIT_LINK_MAP=<link map> QCORE_CLANG=/usr/lib/llvm-21/bin/clang QCORE_NULL_PROPERTY=<out>/corpus-null.jsonl QCORE_OUTER_PROJECTION=<out>/corpus-outer.json python3 scripts/run_pinned_audit.py <out>/corpus 66910c10 --inputs-root build/cycle19 --jobs N (docs/reports/audit-canonical-paths/scripts/measure.py corpus)"
+  },
+  "source": {
+    "repository": "fluent-bit",
+    "revision": "66910c10a4d7eafa810b84229cf2dcf7b0f26f97",
+    "submodules": {
+      "third_party/libevent": "d82464a277d0f42703702c4dfd9af6af38595a83"
+    },
+    "note": "Fluent Bit v5.1.1-127-g66910c10a with its vendored libraries in-tree; the Monkey gate reads the Cycle 18 libevent submodule at its pinned revision"
+  },
+  "inputs": {
+    "tracked": [
+      {
+        "path": "contract/profiles/fluent-bit/audit.json",
+        "sha256": "27a19bc283fb215421c003bd4dce2a4db6932f3a7a8e6edfd4979cb439e97315",
+        "role": "unit selection"
+      },
+      {
+        "path": "contract/profiles/fluent-bit/profile.json",
+        "sha256": "37309028f4fa1d50682829be2cbca880931a1a65d57b47d1fccb78a9b74965f3",
+        "role": "source-set pins and audited files"
+      },
+      {
+        "path": "contract/profiles/fluent-bit/member-facts-scope.json",
+        "sha256": "9e15544cd294a8316c94a6cd1359da4be6487b64bb2c8b0037d0bb67fedfca17",
+        "role": "member-facts pre-pass exclusions"
+      },
+      {
+        "path": "contract/evaluations/eight-home/link-map.json",
+        "sha256": "98a4db761ace9fd4846b000c4c98defdc2e39ce6f95684c67c30f9b8b6f38ad3",
+        "role": "cross-unit link map (QCORE_CROSS_UNIT_LINK_MAP), byte-identical to docs/reports/w48-bu-single-leaf-bodies/link-map.corpus.json"
+      }
+    ],
+    "untracked": [
+      {
+        "path": "build/cycle19/c-gateway-wave-pin/fluent-bit-clang-source/build/compile_commands.json",
+        "sha256": "5e6868d9af26eaec97bc8020ed5f23496f2490abf44532443239bd4d365f7e78",
+        "role": "Fluent Bit compile database"
+      },
+      {
+        "path": "build/cycle19/c-gateway-wave-pin/monkey/monkey-build/compile_commands.json",
+        "sha256": "85cc996712bbd35675340b8b863b6ebc716cb94552253f2a6ad0288db920f331",
+        "role": "Monkey compile database"
+      },
+      {
+        "path": "build/cycle19/c-gateway-wave-pin/fluent-bit-clang-source",
+        "sha256": null,
+        "role": "prepared Fluent Bit checkout at the source revision"
+      },
+      {
+        "path": "build/cycle19/provider-packages-wave20/qcore.chunkio",
+        "sha256": null,
+        "role": "ChunkIO provider package (QCORE_CHUNKIO_PACKAGE)"
+      }
+    ]
+  },
+  "contract_set": {
+    "lock_set": {
+      "state": "latest"
+    },
+    "references": [
+      "providers/contract-load-path.json",
+      "contract/profiles/fluent-bit/library-providers.json",
+      "contract/profiles/fluent-bit/source-contracts.json"
+    ],
+    "note": "live: bound to the latest Fluent Bit revision's pin-lock set (decision 9a), the tree's provider contracts, which each provider crate's lock files pin (CONTRACT-LOCKS); a contract change is reviewed there and moves this profile's results only through a recorded baseline"
+  },
+  "baseline": {
+    "path": "contract/evaluations/eight-home/baseline.json",
+    "sha256": "704c47c97fab413cd87e7c1bb429d3f4c747c52f91094293bce18cbb60f2836e"
+  },
+  "baseline_history": [
+    {
+      "sha256": "704c47c97fab413cd87e7c1bb429d3f4c747c52f91094293bce18cbb60f2836e",
+      "measured_revision": "710021bd713b90037e803d4a1f87d95eba6476c9",
+      "reason": "first published baseline of the live profile: BASE 710021bd7 measured by card EVALUATION-PROFILES with the AUDIT-CANONICAL-PATHS route driver on the original pinned inputs",
+      "source": "docs/reports/evaluation-profiles/README.md"
+    }
+  ],
+  "evidence_version": {
+    "analyzer_revision": "710021bd713b90037e803d4a1f87d95eba6476c9",
+    "semantic_evidence": "v2 (unchanged)"
+  }
+}

@@ -1,5 +1,7 @@
 # Cycle 17 CFL importer validation
 
+Evaluation profile: `cycle-17-cfl` (frozen at `b26b4aa35`; [record](../../contract/evaluations/cycle-17-cfl/evaluation.json)).
+
 The unrestricted-C gateway was exercised against the adjacent CFL source tree
 without changing that checkout.
 

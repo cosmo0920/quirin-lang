@@ -1,0 +1,69 @@
+{
+ "argv_requested": [
+  "python3",
+  "/media/Data/GitHub/quirin-lang/private/evaluation-profiles/snap/docs/reports/audit-canonical-paths/scripts/measure.py",
+  "slice",
+  "/media/Data/GitHub/quirin-lang/private/evaluation-profiles/runs-1/slice",
+  "--link-map",
+  "/media/Data/GitHub/quirin-lang/private/evaluation-profiles/snap/docs/reports/w48-bu-single-leaf-bodies/link-map.corpus.json",
+  "--inputs-snapshot",
+  "/media/Data/GitHub/quirin-lang/private/evaluation-profiles/snap",
+  "--binary-source",
+  "710021bd713b90037e803d4a1f87d95eba6476c9",
+  "--inputs",
+  "original",
+  "--jobs",
+  "3"
+ ],
+ "argv_run": [
+  "python3",
+  "/media/Data/GitHub/quirin-lang/private/evaluation-profiles/snap/docs/reports/audit-canonical-paths/scripts/measure.py",
+  "slice",
+  "/media/Data/GitHub/quirin-lang/private/evaluation-profiles/runs-1/slice",
+  "--link-map",
+  "/media/Data/GitHub/quirin-lang/private/evaluation-profiles/snap/docs/reports/w48-bu-single-leaf-bodies/link-map.corpus.json",
+  "--inputs-snapshot",
+  "/media/Data/GitHub/quirin-lang/private/evaluation-profiles/snap",
+  "--binary-source",
+  "710021bd713b90037e803d4a1f87d95eba6476c9",
+  "--inputs",
+  "original",
+  "--jobs",
+  "3"
+ ],
+ "budget": {
+  "QCORE_AUDIT_JOBS": {
+   "after": "3",
+   "before": null
+  },
+  "jobs_cap": 3,
+  "label": "7G",
+  "mechanism": "QCORE_AUDIT_JOBS",
+  "memory_budget_mib": 7168
+ },
+ "class": "audit",
+ "cwd": "/media/Data/GitHub/quirin-lang/.claude/worktrees/agent-aab8b9fd1a9023c58",
+ "exit": 0,
+ "finished": "2026-10-25T09:40:30+00:00",
+ "pid": 2803716,
+ "schema": "quirin-gate-slot/1",
+ "slot_record": {
+  "audit_slot_ceiling": 15,
+  "class": "audit",
+  "gate_dir": "/tmp/quirin-gate",
+  "held": [
+   "legacy",
+   "audit/0"
+  ],
+  "legacy_lock": {
+   "mode": "shared",
+   "path": "/tmp/qcore-c-card-validation-20261022.lock"
+  },
+  "mem_available_kib": 56239612,
+  "mem_total_kib": 63615012,
+  "slot": 0,
+  "slot_count": 7,
+  "waited_seconds": 124.015
+ },
+ "started": "2026-10-25T09:30:22+00:00"
+}

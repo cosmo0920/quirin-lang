@@ -1,0 +1,86 @@
+{
+  "schema": "quirin-evaluation-profile/1",
+  "name": "fluent-bit-tail-pause",
+  "description": "The Fluent Bit in_tail pause/resume slice audited through `quirin-audit current` with the explicit selection contract/profiles/fluent-bit/tail-pause-selection.json, every distinct compilation configuration kept, under the eight-home link map with null and outer projections on.",
+  "policy": {
+    "kind": "live"
+  },
+  "route": {
+    "kind": "configured-selection",
+    "command": "quirin-audit current --checkout private/w47-tail/attempt-1/prep/fluent-bit-clang-source --profile-directory contract/profiles/fluent-bit --compile-database private/w47-tail/attempt-1/prep/fluent-bit-clang-production/compile_commands.json --selection contract/profiles/fluent-bit/tail-pause-selection.json --jobs N --report <out>/resource-diagnostics.json (docs/reports/audit-canonical-paths/scripts/measure.py slice)"
+  },
+  "source": {
+    "repository": "fluent-bit",
+    "revision": "34155955e4962a56d94eb23c03a002880899a0d1",
+    "submodules": {},
+    "note": "the revision quirin-audit prepare recorded for the tail-pause preparation, a clone of the export of upstream 90978ac6a59e96d19621108f63e115eb4cd1c576 (tree 8d1f3cd78a00fcfb4095a39d3d0b3e7eaac80be4, per tail-pause-selection.json)"
+  },
+  "inputs": {
+    "tracked": [
+      {
+        "path": "contract/profiles/fluent-bit/tail-pause-selection.json",
+        "sha256": "11cc7e23b6e3e11a3b1b4443b51f2f4e12920a505e5a636ed586646b21f4d0af",
+        "role": "unit selection"
+      },
+      {
+        "path": "contract/profiles/fluent-bit/profile.json",
+        "sha256": "37309028f4fa1d50682829be2cbca880931a1a65d57b47d1fccb78a9b74965f3",
+        "role": "source-set pins and audited files"
+      },
+      {
+        "path": "contract/profiles/fluent-bit/member-facts-scope.json",
+        "sha256": "9e15544cd294a8316c94a6cd1359da4be6487b64bb2c8b0037d0bb67fedfca17",
+        "role": "member-facts pre-pass exclusions"
+      },
+      {
+        "path": "contract/evaluations/eight-home/link-map.json",
+        "sha256": "98a4db761ace9fd4846b000c4c98defdc2e39ce6f95684c67c30f9b8b6f38ad3",
+        "role": "cross-unit link map (QCORE_CROSS_UNIT_LINK_MAP), byte-identical to docs/reports/w48-bu-single-leaf-bodies/link-map.corpus.json"
+      }
+    ],
+    "untracked": [
+      {
+        "path": "private/w47-tail/attempt-1/prep/fluent-bit-clang-production/compile_commands.json",
+        "sha256": "faf446759b31f892c9ffe03c76719875e9910682515cdd9acc908dc5142f8157",
+        "role": "prepared Fluent Bit compile database"
+      },
+      {
+        "path": "private/w47-tail/attempt-1/prep/prepare.json",
+        "sha256": "cb80a291f85fd0b985d6512cfacaebb52fb505462642a9910d12629e12c6ac74",
+        "role": "quirin-audit prepare provenance"
+      },
+      {
+        "path": "private/w47-tail/attempt-1/prep/fluent-bit-clang-source",
+        "sha256": null,
+        "role": "prepared Fluent Bit checkout at the source revision"
+      }
+    ]
+  },
+  "contract_set": {
+    "lock_set": {
+      "state": "latest"
+    },
+    "references": [
+      "providers/contract-load-path.json",
+      "contract/profiles/fluent-bit/library-providers.json",
+      "contract/profiles/fluent-bit/source-contracts.json"
+    ],
+    "note": "live: bound to the latest Fluent Bit revision's pin-lock set (decision 9a), the tree's provider contracts, which each provider crate's lock files pin (CONTRACT-LOCKS); a contract change is reviewed there and moves this profile's results only through a recorded baseline"
+  },
+  "baseline": {
+    "path": "contract/evaluations/fluent-bit-tail-pause/baseline.json",
+    "sha256": "dce03b504b8967c470bc17d17ab9ccb03bac5a3a5bb6030a338b35241df3f2dc"
+  },
+  "baseline_history": [
+    {
+      "sha256": "dce03b504b8967c470bc17d17ab9ccb03bac5a3a5bb6030a338b35241df3f2dc",
+      "measured_revision": "710021bd713b90037e803d4a1f87d95eba6476c9",
+      "reason": "first published baseline of the live profile: BASE 710021bd7 measured by card EVALUATION-PROFILES with the AUDIT-CANONICAL-PATHS route driver on the original pinned inputs",
+      "source": "docs/reports/evaluation-profiles/README.md"
+    }
+  ],
+  "evidence_version": {
+    "analyzer_revision": "710021bd713b90037e803d4a1f87d95eba6476c9",
+    "semantic_evidence": "v2 (unchanged)"
+  }
+}

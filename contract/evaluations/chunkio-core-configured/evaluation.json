@@ -1,0 +1,52 @@
+{
+  "schema": "quirin-evaluation-profile/1",
+  "name": "chunkio-core-configured",
+  "description": "The configured ChunkIO core audit of the chunkio-core source set (acceptance matrix corpus.configured_chunkio_core_audit), last measured by card G03.",
+  "policy": {
+    "kind": "frozen",
+    "revision": "60eef72ac8572a6ffee99f442d57b975dcb2f9b2"
+  },
+  "route": {
+    "kind": "configured-source-set",
+    "command": "cargo run --quiet -p qcore-audit -- contract/profiles/chunkio-core/audit.json"
+  },
+  "source": {
+    "repository": "fluent-bit",
+    "revision": "66910c10a4d7eafa810b84229cf2dcf7b0f26f97",
+    "submodules": {},
+    "note": "lib/chunkio/src of Fluent Bit 66910c10a"
+  },
+  "inputs": {
+    "tracked": [
+      {
+        "path": "contract/profiles/chunkio-core/profile.json",
+        "revision": "60eef72ac8572a6ffee99f442d57b975dcb2f9b2",
+        "sha256": "1675ce7e3fe369ae8dbcf908b73f84cbc2516a6be36b9034b906d5e0ad33ebc3",
+        "role": "source-set pins and audited files"
+      },
+      {
+        "path": "contract/profiles/chunkio-core/audit.json",
+        "revision": "60eef72ac8572a6ffee99f442d57b975dcb2f9b2",
+        "sha256": "a99f93ee9972d7adc5148e7a05224585697aed232ce29404b18bc0942a833917",
+        "role": "audit configuration"
+      }
+    ],
+    "untracked": []
+  },
+  "contract_set": {
+    "lock_set": {
+      "state": "retired",
+      "evidence_sha256": "03da383fa11cde8c444c3bea5094841ff056a3153995cf120ac6142d65d2e91e"
+    },
+    "references": [],
+    "note": "frozen: the provider contracts of the tree at the frozen revision; no pin-lock set was retained for this revision (it predates the lock-set window of decision 9a), so the contract set is identified by its evidence digest at the frozen revision"
+  },
+  "baseline": {
+    "path": "contract/evaluations/chunkio-core-configured/baseline.json",
+    "sha256": "8fc56af7312ace3843cad17792e79394025713750dbc3ab08a215e15d3958686"
+  },
+  "evidence_version": {
+    "analyzer_revision": "60eef72ac8572a6ffee99f442d57b975dcb2f9b2",
+    "semantic_evidence": "unrecorded at this revision (before the acceptance matrix)"
+  }
+}

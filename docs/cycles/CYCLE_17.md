@@ -2,6 +2,8 @@
 
 **Status: Complete**
 
+Evaluation profile: `cycle-17-cfl` (frozen at `b26b4aa35`; [record](../../contract/evaluations/cycle-17-cfl/evaluation.json)).
+
 The executable and proof workstreams described below are implemented. The
 aggregate certificate deliberately still requires separately recorded Linux
 and Windows sanitizer runs. The Linux Rust/Lean results and the native Windows
