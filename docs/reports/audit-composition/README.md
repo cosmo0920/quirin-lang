@@ -9,9 +9,10 @@ implemented here. The card changes no verdict, route or analysis. The report's
 unit rows become a derived view over per-row components, and the identity run
 below shows every existing report artifact is byte-identical to BASE.
 
-Base: `52c8dd71b` (origin/main), merged with local main `66aa16683` (GATE-ELASTIC
-landed; fast-forward). The TIP analyzer was measured at `f7ef34d7a`. Later
-commits change no file compiled into `quirin-audit` (see "Source equivalence").
+Base: `52c8dd71b` (origin/main at launch). The branch merged local main as it
+moved: GATE-ELASTIC, GENERATED-ROOTS, and finally `c3d8ad3d4`
+(AUDIT-CANONICAL-PATHS and CMetrics). The identity run measured TIP
+`26be252f7` against BASE (see "Source equivalence after the run").
 
 ## What changed
 
@@ -40,8 +41,8 @@ it is not human-resolvable. The crate's policy treats a new variant on the
 exhaustive `ReasonCategory` as a major change, following the 17.0.0 and 18.0.0
 precedents, so the crate is now 21.0.0. The closed vocabulary grows from eleven
 categories to twelve. The classify marker is `composition-conflict: `, a string
-no earlier site spells, so no existing reason text classifies differently. All
-eleven workspace manifests that pin `qcore-schemas`, the provider workspace,
+no earlier site spells, so no existing reason text classifies differently. The
+nine root-workspace manifests that pin `qcore-schemas`, `providers/Cargo.toml`,
 the W3 provider fixture and the three lockfiles were moved to 21.0.0. The spec
 gains a §L21.1 table row and a §L21.2 paragraph, "Composition across results".
 `proof/QCore/ReasonCategory.lean` gains the category and its family.
@@ -128,16 +129,92 @@ rows: byte equality, borrowing, repeated units, refusals, conflict rendering,
 3. **Absence is refusal.** `derive` of a row with no component is `None`,
    never the join's identity `Safe`.
 4. **The acceptance matrix's derived fields were regenerated**
-   (`build_matrix.py .`). The schema version is now 21.0.0, Lean audits number
-   371 with the new file listed, and `dimensions.named_followups` moved
-   820 → 827, a stale count that the GATE-ELASTIC integration left. Gate figures
-   are carried and labelled as carried. Without this,
-   `test_the_derived_facts_are_recomputed_rather_than_carried` fails on the card's
-   own tree. The integrator owns the matrix and should regenerate it at landing.
+   (`build_matrix.py .`, on main's copy at each merge). Against main
+   `c3d8ad3d4` the change is: schema version 21.0.0, Lean audits 373 with the
+   new file listed, and `dimensions.named_followups` 830 → 832, a stale count
+   carried from main. Gate figures are carried and labelled as carried. Without
+   this, `test_the_derived_facts_are_recomputed_rather_than_carried` fails on
+   the card's own tree. The integrator owns the matrix and should regenerate it
+   at landing.
+5. **Lean roots** are generated (GENERATED-ROOTS). `proof/QCore.lean` gains
+   `import QCore.AuditComposition` through `scripts/gen_lean_roots.py`, not by
+   hand.
 
 ## Identity run
 
-IDENTITY-RUN-PLACEHOLDER
+**Result: every existing report artifact of the pinned eight-home corpus, the
+tail-pause slice and the system selection is byte-identical between BASE
+`52c8dd71b` and TIP `26be252f7`. The only new outputs are the three sidecars.
+Every published unit row re-derives from its sidecar.** Record:
+[identity.json](identity.json), from `scripts/compare_identity.py` over run 3.
+
+How it was run (`scripts/`). The snapshots are `git archive` of each revision,
+with `third_party/libevent` cloned at the pinned `d82464a2`. The pinned route
+verifies that clone. Without it, `git rev-parse` resolves the enclosing
+worktree's HEAD, which is what failed run 1's corpus on both sides. Each side
+is built (`build_side.sh`) and run (`run_identity.sh`) in its own mount
+namespace (`ns_side.sh`, `unshare -rm`), with its snapshot bound at the one path
+`private/ac/side-src` and with one explicit
+`QCORE_AUDIT_BUILD_COMMIT=audit-composition-identity`.
+
+This is needed because the audit embeds its own source path in contract-module
+paths, and digests over those paths reach the report (`assumptions`,
+`build_identity`, `home_environment_sha256`, hypothesis ids). Its build commit
+also reaches the report, in the hypothesis graph's `evidence_version`
+(`crates/qcore-audit/build.rs`). Run 2 kept separate snapshot paths and each
+side's own commit, and differed in exactly those digests and strings. They
+cannot be checked by a textual substitution, so they were removed at the
+source. The routes are the W48-BU-SINGLE-LEAF-BODIES driver (`measure.py`)
+through its re-spelled mirror (`mirror_inputs.py`; AUDIT-CANONICAL-PATHS had
+not landed when the runs started). Each route ran under an `audit` slot
+(`gate_slot.py`, 7 GiB, `--jobs 3`), BASE and TIP side by side. Binaries:
+BASE `c414ad52…`, TIP `997633eb…`.
+
+| Route | Report artifacts byte-identical | New on TIP | Unit rows re-derived (TIP and BASE report vs TIP sidecar) |
+|---|---|---|---|
+| corpus | 7: `resource-diagnostics.json`, `monkey-source.json`, `.chunk-contracts.json`, `.source-effects.json`, `corpus-null.jsonl`, `corpus-null.summary.json`, `corpus-outer.json` | `resource-diagnostics.components.json` (80.8 MB) | 185 rows, 185 components, 0 conflicts (12 Safe incl. 4 data-only, 166 Unknown, 7 Unsafe), all `unit#0` |
+| slice | 6 (same set; `slice-*`) | sidecar (3.1 MB) | 16 rows, 0 conflicts (15 Unknown, 1 Unsafe), 3 rows `unit#1` |
+| system | 6 (same set; `system-*`) | sidecar (6.9 MB) | 15 rows, 0 conflicts (13 Unknown, 2 Unsafe), 7 rows `unit#1` |
+
+Every exception is checked and listed, never skipped:
+
+- **`resource-diagnostics.contracts.json` differs in one map key per route,
+  for a reason unrelated to this card.** One key of
+  `callback_members/lifetime_protocols/…/summaries` is a lifetime-source unit
+  identity, and `loop_lifetime_source::read_unit` hashes the unit's
+  preprocessed text. Monkey's `mk_bin/monkey.c` expands `__DATE__`/`__TIME__`,
+  so that identity depends on the minute of preprocessing, whatever the binary.
+  Across all four corpus runs exactly one key varies. Two runs of the same BASE
+  code (runs 2 and 3) disagree on it. Run 2's BASE and TIP, started together,
+  agree on it. The comparison accepts the file only if exactly one key differs,
+  and only if swapping its text gives the TIP document as JSON and as a line
+  multiset. Follow-up: LIFETIME-SOURCE-IDENTITY-TIME-MACROS.
+- **Logs and driver records** are compared after the substitution of the BASE
+  run directory by the TIP one. `audit.log` and every
+  `resource-diagnostics.invocation.json` are equal after it. What remains is the
+  binary digest and timestamps in `run.json`/`console.log`, the `preparation:`
+  wall-clock line of the current route's console, and `invocation.json`'s
+  snapshot-tree digests. Those name the two revisions' own source files, by
+  design.
+- **The corpus driver exited 101 on both sides** with `identity_error`. The
+  only changed input is `third_party/libevent/.git/index`, the libevent clone's
+  stat cache, which the pinned route's own `git` call refreshed. `audit_exit`
+  is 0 on both sides. The slice and system routes, which ran after the index
+  was refreshed, exited 0.
+
+Earlier attempts, retained but not evidence ([attempts.json](attempts.json)):
+run 1 (libevent clone absent; corpus failed on both sides before writing a
+report; system phase stopped by captured PIDs while queued) and run 2 (separate
+snapshot paths; corpus exit 0, with the path and build-commit digests above).
+
+**Source equivalence after the run.** TIP `26be252f7` was measured. The branch
+then merged local main `c3d8ad3d4` (AUDIT-CANONICAL-PATHS, CMetrics,
+records). That merge changed no line of `crates/qcore-schemas`,
+`report.rs` or `report_components.rs`. Next to main's own changes in
+`current.rs`, `pinned_route.rs` and `lib.rs`, it carries this card's one
+`record_contract_bundle` call at each write site unchanged. Main's changes
+carry their own identity evidence, and no identity run was repeated on the
+merged tip. The landing gate is the arbiter.
 
 ## Gate
 

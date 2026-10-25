@@ -34,6 +34,13 @@
    "source": "docs/reports/audit-composition/README.md"
   },
   {
+   "id": "LIFETIME-SOURCE-IDENTITY-TIME-MACROS",
+   "operation": "register",
+   "title": "The contract sidecar's lifetime-source unit identities depend on the minute Monkey's monkey.c was preprocessed",
+   "why": "qcore_c_gateway::loop_lifetime_source::read_unit names a unit by the SHA-256 of its preprocessing options and preprocessed text, and Fluent Bit's lib/monkey/mk_bin/monkey.c expands __DATE__ and __TIME__. Card AUDIT-COMPOSITION's identity runs measured it: in resource-diagnostics.contracts.json (callback_members/lifetime_protocols/evidence/summaries and the prepass copy) exactly one key changes between any two runs of the same binary (runs 2 and 3 of the same BASE code disagree; BASE and TIP started together agree), on the corpus, slice and system routes alike. Every identity run must therefore special-case this key, and a published digest carries the wall clock. DISCHARGE: preprocess the lifetime-source read with fixed __DATE__/__TIME__ (or hash the text with those expansions normalised), so two runs of one binary write byte-identical contract sidecars, with a test that preprocesses a unit using both macros twice.",
+   "source": "docs/reports/audit-composition/README.md"
+  },
+  {
    "id": "COMPOSITION-ANALYZER-IDENTITY",
    "operation": "register",
    "title": "A component's analyzer revision is package@version plus an optional build commit, not the binary digest",
