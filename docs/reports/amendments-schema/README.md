@@ -126,4 +126,16 @@ It then compares each file with `<commit>`'s version.
 
 ## Gate
 
-Scoped card gate: see [gate.json](gate.json) and the record below.
+`python3 scripts/gate_scope.py --base 710021bd7 --out private/gate` at
+`5d6a890d4` ([gate.json](gate.json)): plan `mode: scoped`, 0 affected crates,
+no Rust suite, no Lean, no provider gate, Python suite always. Steps:
+submodules exit 0 (1 submodule), `cargo fmt --all -- --check` exit 0, `python3
+-m unittest discover -s scripts/tests` exit 0 (460 tests, 0 skipped). Overall
+exit 0. Console log:
+`/media/Data/GitHub/quirin-lang/private/amendments-schema/gate-console-2.log`.
+
+Attempt 1, at `b0e27b9ce`, exited 1, retained in
+`/media/Data/GitHub/quirin-lang/private/amendments-schema/gate-console.log`.
+`test_tracked_files` rejected the new test's `rglob` snapshot of its temporary
+fixture directory (constraint 29's walk census). `e8b32f7af` snapshots the
+fixture files by name instead.
