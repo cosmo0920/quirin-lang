@@ -323,7 +323,7 @@ current structure first and are migrated in P2 like the others.
 
 ## 6. Decisions
 
-Decided by the user on 2026-10-24 (items 1–7 and 9); two remain open.
+Decided by the user on 2026-10-24 and 2026-10-25 (items 1–9); one remains open (9a).
 
 1. **Contract pins as lock files**: yes. Literal count tables become readers of
    generated locks; a contract change is an intentional lock diff in the same
@@ -340,9 +340,11 @@ Decided by the user on 2026-10-24 (items 1–7 and 9); two remain open.
 6. **Migration scope**: pilots first (rules 32a, 33, 34, 35, 36, 37); a
    standing rule is decided after their parity cost is known.
 7. **Path fix**: canonicalise paths in the audit's unit selection.
-8. **Open: where the measurement tool lives.** Recommended: a `quirin-audit`
-   subcommand plugin (same firewall and receipts as other subcommands);
-   alternative: `scripts/`.
+8. **Measurement tool**: a `quirin-audit` subcommand plugin (user decision
+   2026-10-25), behind the same firewall and receipts as other subcommands.
+   Also decided 2026-10-25: `scripts/gate_scope.py` claims only the exact file a
+   compile-time read compiles in (`--reader-granularity file`, the default);
+   `directory` remains available as the conservative reading.
 9. **Semigroup integration and newer-stamp supersession**: yes (seam G).
    **Open, 9a: stamp migration.** Recommended: re-pin every provider once so
    each declaration gets a reviewed `pinned_at`; alternative: back-fill the
