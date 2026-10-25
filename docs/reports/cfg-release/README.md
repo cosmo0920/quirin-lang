@@ -191,7 +191,37 @@ Reading:
 
 ## Gate
 
-GATE_SECTION
+This is the scoped card gate (`python3 scripts/gate_scope.py --base
+710021bd7`, docs/agents/validation.md). It ran on `286ee7e7f` with a clean
+tree. It exited 0 with 7 of 7 steps passing ([gate.json](gate.json); logs
+under `/media/Data/GitHub/quirin-lang/private/cfg-release/gate/`, driver log
+`…/cfg-release/gate-driver.log`).
+
+Plan: `qcore-audit` owns the change. The reverse dependencies and string
+readers are `qcore-compiler`, `qcore-verification`, `qcorec` and
+`quirin-source-analysis`. `qcore-provider-conformance` is reached through
+core crates and is not gated here, as in the full gate. Neither Lean nor the
+provider gate was selected.
+
+- submodules: exit 0, 1 submodule, 0 problems;
+- fmt: exit 0;
+- Clippy on the five root crates, `-D warnings`: exit 0;
+- Rust suite (`run_test_binaries.py --packages qcore-audit,qcore-compiler,qcore-verification,qcorec,quirin-source-analysis`,
+  in a `rust-suite` slot): exit 0, 248 units, 251 summaries, 3,254 passed,
+  0 failed, 5 ignored. Its 1,246 s include the wait for the slot;
+- both reevaluation examples: exit 0;
+- Python suite: exit 0, 445 tests.
+
+Clang is recorded beside this file ([clang-version.txt](clang-version.txt),
+exit 0), in this worktree. The routes used `/usr/lib/llvm-21/bin/clang`
+(`QCORE_CLANG` in `measure.py`). The commit after the gate adds only this
+section and `gate.json`.
+
+Heavy steps waited for slots for long periods: the corpus pair about 2 h 10 m,
+the slice pair about 1 h 40 m and the system pair about 1 h 10 m. Those slots were held by
+other cards' `rust-suite` and audit jobs, including a `rust-suite` slot held
+by an interactive `bash`. Waiting changes no measurement: the memory
+observations cover only the audit processes' own scopes.
 
 ## Ledger
 
