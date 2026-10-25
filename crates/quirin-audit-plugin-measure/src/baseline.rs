@@ -135,9 +135,11 @@ pub fn inputs_record(
     route: &Route,
     spelling: &Value,
     databases: &BTreeMap<String, String>,
+    source_date_epoch: Option<u64>,
 ) -> Value {
     json!({
         "route_digest": route.digest(),
+        "source_date_epoch": source_date_epoch,
         "spelling": spelling["spelling"],
         "spelled_prefix": spelling["spelled_prefix"],
         "canonical_prefix": spelling["canonical_prefix"],
@@ -299,7 +301,12 @@ pub fn verify(
     if !manifest["binary_sha256"].as_str().is_some_and(is_sha256) {
         return refuse("no binary digest".into());
     }
-    for field in ["route_digest", "spelling", "databases_as_spelled"] {
+    for field in [
+        "route_digest",
+        "spelling",
+        "databases_as_spelled",
+        "source_date_epoch",
+    ] {
         if manifest["inputs"][field] != current_inputs[field] {
             return refuse(format!(
                 "inputs.{field} is {}, this measurement's is {}",

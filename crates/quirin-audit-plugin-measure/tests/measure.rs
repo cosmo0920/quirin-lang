@@ -314,11 +314,12 @@ fn rules_off_is_refused_unless_the_binary_advertises_the_switch() {
         invocation_record["environment"]["QCORE_GATEWAY_RULES_OFF"],
         "33"
     );
-    assert!(
-        invocation_record["environment"]
-            .get("QCORE_GATEWAY_RULES_OFF")
-            .is_some()
+    // Every side's routes preprocess under the one fixed SOURCE_DATE_EPOCH.
+    assert_eq!(
+        invocation_record["environment"]["SOURCE_DATE_EPOCH"],
+        "1767225600"
     );
+    assert_eq!(record["source_date_epoch"], 1_767_225_600);
     assert!(
         serde_json::from_slice::<serde_json::Value>(
             &std::fs::read(output.join("sides/tip/slice/invocation.json")).unwrap()

@@ -205,6 +205,7 @@ target/release/quirin-audit --plugin-path target/release --output ../measure/car
 | `--rules-off IDS` | Also measure the first comparison's after side with `QCORE_GATEWAY_RULES_OFF=IDS` and compare it with that side (the per-rule contribution). Refused, "not yet supported", unless the binary advertises the switch (card RULE-SWITCHES); after the run the components must record exactly that off-list |
 | `--repository DIR`, `--inputs-base DIR` | The repository (revisions, link map, `scripts/gate_slot.py`) and the root of the untracked prepared inputs (default: the repository) |
 | `--mirror auto\|always\|never` | Re-spell the compile databases into a digest-manifested mirror when they spell a non-canonical path (default `auto`); needed for analyzers built before AUDIT-CANONICAL-PATHS |
+| `--source-date-epoch SECONDS\|none` | `SOURCE_DATE_EPOCH` for every route of every side (default `1767225600`), so Clang expands Monkey's `__DATE__`/`__TIME__` identically and the lifetime-source pre-pass key does not move with the clock; recorded and part of a baseline's inputs |
 | `--legacy-rows` | Read reports without a component sidecar (written before AUDIT-COMPOSITION) by their unit rows |
 | `--jobs N`, `--build-jobs N`, `--no-slots`, `--mount-root DIR`, `--build-commit TEXT`, `--baselines DIR` | Audit workers (3, the 7 GiB slot's cap), build jobs (6), run without slots, the fixed path (`/tmp/quirin-measure`), an explicit build commit for identity runs, the baseline root (`<repository>/private/baselines`) |
 

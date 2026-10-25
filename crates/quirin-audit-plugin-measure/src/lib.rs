@@ -11,7 +11,8 @@
 //!     --side NAME=SPEC --side NAME=SPEC [--side ...] [--compare A B]... \
 //!     [--declared PREDICTION.md] [--rules-off IDS] [--repository DIR] \
 //!     [--inputs-base DIR] [--jobs N] [--build-jobs N] [--mirror auto|always|never] \
-//!     [--mount-root DIR] [--no-slots] [--build-commit TEXT] [--baselines DIR] \
+//!     [--mount-root DIR] [--no-slots] [--build-commit TEXT] \
+//!     [--source-date-epoch SECONDS|none] [--baselines DIR] \
 //!     [--legacy-rows]
 //! quirin-audit --plugin-path DIR --output <baselines>/<sha> measure publish \
 //!     --from OUT/sides/NAME [--routes R,...]
@@ -61,7 +62,7 @@ pub const USAGE: &str = "usage: quirin-audit --output OUT measure (--profile NAM
 [--routes R,...]) --side NAME=SPEC --side NAME=SPEC [--compare A B]... [--declared FILE] \
 [--rules-off IDS] [--repository DIR] [--inputs-base DIR] [--jobs N] [--build-jobs N] \
 [--mirror auto|always|never] [--mount-root DIR] [--no-slots] [--build-commit TEXT] \
-[--baselines DIR] [--legacy-rows]\n       quirin-audit --output <baselines>/<sha> measure \
+[--source-date-epoch SECONDS|none] [--baselines DIR] [--legacy-rows]\n       quirin-audit --output <baselines>/<sha> measure \
 publish --from OUT/sides/NAME [--routes R,...]\nSPEC: rev:<rev> | <directory> | <binary> | \
 baseline:<sha> | run:<side directory>";
 
@@ -96,6 +97,7 @@ pub struct Options {
     pub mount_root: Option<String>,
     pub no_slots: bool,
     pub build_commit: Option<String>,
+    pub source_date_epoch: Option<String>,
     pub baselines: Option<String>,
     pub legacy_rows: bool,
     pub publish_from: Option<String>,
@@ -207,6 +209,12 @@ pub fn parse(arguments: &[String]) -> Result<Options, String> {
                     }
                     "--mount-root" => once(&mut options.mount_root, flag, value)?,
                     "--build-commit" => once(&mut options.build_commit, flag, value)?,
+                    "--source-date-epoch" => {
+                        if value != "none" && value.parse::<u64>().is_err() {
+                            return Err("--source-date-epoch takes seconds or `none`".into());
+                        }
+                        once(&mut options.source_date_epoch, flag, value)?;
+                    }
                     "--baselines" => once(&mut options.baselines, flag, value)?,
                     "--from" => once(&mut options.publish_from, flag, value)?,
                     other => return Err(format!("unknown argument `{other}`\n{USAGE}")),
@@ -406,6 +414,11 @@ fn measure(request: &Request, options: &Options) -> Result<Response, String> {
         None => None,
     };
     let rules_off = options.rules_off.clone().unwrap_or_default();
+    let source_date_epoch = match options.source_date_epoch.as_deref() {
+        None => Some(sides::DEFAULT_SOURCE_DATE_EPOCH),
+        Some("none") => None,
+        Some(seconds) => seconds.parse().ok(),
+    };
     let context = Context {
         repository: repository.clone(),
         inputs_base: inputs_base.clone(),
@@ -415,6 +428,7 @@ fn measure(request: &Request, options: &Options) -> Result<Response, String> {
         build_jobs: options.build_jobs.unwrap_or(6),
         slot_script,
         build_commit: options.build_commit.clone(),
+        source_date_epoch,
         rules_off: Vec::new(),
     };
     // A rule-switched side is the after side of the first comparison,
@@ -479,7 +493,12 @@ fn measure(request: &Request, options: &Options) -> Result<Response, String> {
             })
             .transpose()?
             .unwrap_or_default();
-        Ok(baseline::inputs_record(route, &spelling, &databases))
+        Ok(baseline::inputs_record(
+            route,
+            &spelling,
+            &databases,
+            source_date_epoch,
+        ))
     };
     // Build every running side, in parallel.
     let running: Vec<&(String, SideSpec)> = specs.iter().filter(|(_, spec)| spec.runs()).collect();
@@ -853,6 +872,7 @@ fn measure(request: &Request, options: &Options) -> Result<Response, String> {
         "interactions": compare::interactions(&moved),
         "declared": declared_record,
         "rules_off": rules_off,
+        "source_date_epoch": source_date_epoch,
         "contribution": {
             "reserved": "per-rule contribution (plan seam A): filled from the `<tip>-off -> <tip>` \
                          comparison once RULE-SWITCHES lands; CONTRIBUTION-LEDGERS defines its ledger",

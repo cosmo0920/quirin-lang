@@ -44,6 +44,18 @@ pub const RULES_OFF_VARIABLE: &str = "QCORE_GATEWAY_RULES_OFF";
 /// output and private measurement directories).
 pub const NOT_INPUTS: [&str; 3] = ["target", "private", "measure"];
 
+/// Clang expands `__DATE__`/`__TIME__` from this variable when it is set.
+/// Fluent Bit's `lib/monkey/mk_bin/monkey.c` expands both, and the
+/// lifetime-source pre-pass keys each unit by a digest of its preprocessed
+/// text, so without one fixed value that key changes with the clock (ledger
+/// entries LIFETIME-SOURCE-IDENTITY-TIME-MACROS, PREPASS-CLOCK-DEPENDENT-KEY;
+/// CFG-RELEASE measured the fix). Every side of a measurement gets the same
+/// value; it is recorded and part of a baseline's inputs.
+pub const SOURCE_DATE_EPOCH: &str = "SOURCE_DATE_EPOCH";
+
+/// The default `SOURCE_DATE_EPOCH`: 2026-01-01T00:00:00Z.
+pub const DEFAULT_SOURCE_DATE_EPOCH: u64 = 1_767_225_600;
+
 /// The `audit` slot budget every route takes (`gate_slot.py --memory-budget
 /// 7G`), in the audit's MiB planning units.
 pub const SLOT_BUDGET_MIB: u32 = 7168;
@@ -118,6 +130,8 @@ pub struct Context {
     pub slot_script: Option<PathBuf>,
     pub build_commit: Option<String>,
     pub rules_off: Vec<String>,
+    /// `SOURCE_DATE_EPOCH` for every route (`None`: unset).
+    pub source_date_epoch: Option<u64>,
 }
 
 /// A side ready to run its routes.
@@ -590,6 +604,9 @@ pub fn run_route(
     if !context.rules_off.is_empty() {
         environment.insert(RULES_OFF_VARIABLE.into(), context.rules_off.join(","));
     }
+    if let Some(epoch) = context.source_date_epoch {
+        environment.insert(SOURCE_DATE_EPOCH.into(), epoch.to_string());
+    }
     let jobs = context.jobs.to_string();
     let command: Vec<String> = match &route.kind {
         RouteKind::PinnedCorpus { source_commit, .. } => vec![
@@ -705,7 +722,7 @@ pub fn run_route(
         "route_digest": route.digest(),
         "command": argv,
         "environment": environment.iter()
-            .filter(|(name, _)| name.starts_with("QCORE_"))
+            .filter(|(name, _)| name.starts_with("QCORE_") || *name == SOURCE_DATE_EPOCH)
             .collect::<BTreeMap<_, _>>(),
         "working_directory": work.display().to_string(),
         "jobs": context.jobs,
