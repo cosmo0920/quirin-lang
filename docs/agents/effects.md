@@ -3,6 +3,8 @@
 Current rule text, routed by the [rule router](README.md), which says what to
 read. Rule numbers and anchors are stable; backticked paths are repository-relative.
 
+<!-- generated:rules:start — edit docs/agents/rules/<id>.md, then run python3 scripts/gen_rule_docs.py -->
+
 <a id="constraint-15j"></a>
 
 <!-- preserved:constraint-15j:start -->
@@ -126,6 +128,8 @@ read. Rule numbers and anchors are stable; backticked paths are repository-relat
     `Q600` narrowing, in §L21. `region-credit-joins`, `region-joins-duties`,
     `region-joins-loan`.
 <!-- preserved:constraint-15m:end -->
+
+<!-- generated:rules:end -->
 
 ## Amendment to 15m — CT24 cleanup/task composition
 

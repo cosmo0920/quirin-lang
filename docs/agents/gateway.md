@@ -7,6 +7,8 @@ sentence, are kept verbatim
 in the [wave-45 compaction checkpoint](../development/increments/wave-45-compaction-checkpoints.md#gateway),
 which is not a second authority.
 
+<!-- generated:rules:start — edit docs/agents/rules/<id>.md, then run python3 scripts/gen_rule_docs.py -->
+
 <a id="constraint-4"></a>
 
 <!-- preserved:constraint-4:start -->
@@ -358,7 +360,6 @@ reaches a bound or a branch.
     admission. It evaluates the read and uses a `NoOp` exit. It must not escape a
     canonical spelling whose resource identity the classifier did not establish.
     These are maintained extraction/correspondence premises, not a whole-C proof.
-
 
 <a id="constraint-5f"></a>
 
@@ -2506,6 +2507,7 @@ refusal stays.
     `QCore.ConditionAcquisition`, bound to `USE_VECTORS`, `CARRIER_VECTORS`,
     `PLACEMENT_VECTORS` and `LEAF_VECTORS` by shared-vector tests;
     [report](../reports/cg04-condition-acquisition/README.md).
+
 <a id="constraint-10y"></a>
 
 10y. **A nested or sibling call's contract applies inside-out, through the one
@@ -2565,7 +2567,6 @@ refusal stays.
     `a_non_commuting_pair_is_refused`), bound to `OVERLAP_VECTORS` and
     `ORDER_VECTORS` by shared-vector tests; `QCore.CallInstantiation`'s passed
     row; [report](../reports/cg05-nested-call-effects/README.md).
-
 
 <a id="constraint-10z"></a>
 
@@ -3892,7 +3893,6 @@ own anchor here.
     `tests/cg22_indirect_calls.rs`;
     [report](../reports/cg22-indirect-calls-and-callbacks/README.md).
 
-
 <a id="constraint-11q"></a>
 
 11q. **C integer semantics are the target's as Clang reports them, the core's
@@ -4524,6 +4524,7 @@ own anchor here.
     `an_exhausted_budget_is_never_safe`), bound to `sign_guard` and
     `step_actual` by `guardVectors` and `stepVectors`;
     [report](../reports/cg27-loops-recursion-budgets/README.md).
+
 <a id="constraint-11y"></a>
 
 11y. **A dialect, a target and a type each have one identity, carried into
@@ -7279,6 +7280,7 @@ safety claim and no validation of the detach representation premise.
     `Unknown → Safe`, no leak, violation or `Unsafe` added; system 89 / 4 /
     355 and slice 45 / 1 / 354 / 4 Pending unchanged in status;
     [report](../reports/cg22-callback-registry-contract/README.md).
+
 <a id="constraint-14a"></a>
 
 14a. **A scalar statement whose value holds exactly one call is the call, then
@@ -8054,6 +8056,7 @@ safety claim and no validation of the detach representation premise.
     function's own row and every caller's row that depends on it list it.
     `QCore.NullMemberScope` (`a_scoped_use_sees_non_null`);
     `QCore.NullMemberPremise`.
+
 <a id="constraint-15q"></a>
 
 15q. **A call's integer result is bounded, never free.** Card
@@ -8887,6 +8890,7 @@ safety claim and no validation of the detach representation premise.
     transport boundaries. Extraction and Rust correspondence remain premise 28;
     new readers must fit rule 13q's existing measured stack budget.
     [Design](../reports/w48-cmt-list-self-init/DESIGN.md).
+
 <a id="constraint-37"></a>
 
 37. **Checked result constructors.** Aggregate field stores may ignore a
@@ -8923,3 +8927,5 @@ safety claim and no validation of the detach representation premise.
     Lean: `QCore.ResultConstructors` (all companion theorems registered in
     `AuditResultConstructors.lean`);
     [report](../reports/w48-bu-rk-result-constructors/README.md).
+
+<!-- generated:rules:end -->

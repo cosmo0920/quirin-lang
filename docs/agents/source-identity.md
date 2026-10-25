@@ -3,6 +3,8 @@
 Current rule text, routed by the [rule router](README.md), which says what to
 read. Rule numbers and anchors are stable; backticked paths are repository-relative.
 
+<!-- generated:rules:start — edit docs/agents/rules/<id>.md, then run python3 scripts/gen_rule_docs.py -->
+
 <a id="constraint-11"></a>
 
 <!-- preserved:constraint-11:start -->
@@ -85,6 +87,8 @@ read. Rule numbers and anchors are stable; backticked paths are repository-relat
     inventory status is `tip-in-force`, never `pinned-in-force`; a run with
     no tip entry is byte-identical to one before the card.
     [Report](../reports/contract-pin-tip-mode/README.md).
+
+<!-- generated:rules:end -->
 
 ## Certificate target scope
 

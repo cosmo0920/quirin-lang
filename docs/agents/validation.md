@@ -182,6 +182,8 @@ host beside a `rust-suite` job; `MemAvailable` already excludes running audits'
 resident memory, so admission is conservative; an exclusive legacy waiter can
 wait while slot jobs keep the lock shared.
 
+<!-- generated:rules:start — edit docs/agents/rules/<id>.md, then run python3 scripts/gen_rule_docs.py -->
+
 <a id="constraint-29"></a>
 
 ## Tracked test inputs
@@ -211,6 +213,8 @@ wait while slot jobs keep the lock shared.
     provider-gate step runs these tests outside a checkout;
     `providers/package.py` builds and verifies packages without running tests.
     [W45-TEST-HYGIENE](../reports/w45-test-hygiene/README.md).
+
+<!-- generated:rules:end -->
 
 ## Corpus arbiter and its job count
 

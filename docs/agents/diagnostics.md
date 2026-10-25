@@ -3,6 +3,8 @@
 Current rule text, routed by the [rule router](README.md), which says what to
 read. Rule numbers and anchors are stable; backticked paths are repository-relative.
 
+<!-- generated:rules:start — edit docs/agents/rules/<id>.md, then run python3 scripts/gen_rule_docs.py -->
+
 <a id="constraint-1"></a>
 
 <!-- preserved:constraint-1:start -->
@@ -39,6 +41,8 @@ read. Rule numbers and anchors are stable; backticked paths are repository-relat
    `remaining-reason-codes`, `remaining-d01`.
 
 <!-- preserved:constraint-3:end -->
+
+<!-- generated:rules:end -->
 
 ### Diagnostics namespaces
 
