@@ -63,8 +63,15 @@ def make_root(directory, record=RECORD):
     return root
 
 
+FIXTURE_FILES = ("docs/development/increments/README.md", "docs/development/increments/wave-99.md",
+                 "docs/STATUS.md", "docs/reviews/r0_3/acceptance_matrix.json", "amendments.json")
+
+
 def snapshot(root):
-    return {path: path.read_bytes() for path in sorted(Path(root).rglob("*")) if path.is_file()}
+    """The fixture's files by name (no directory walk; constraint 29)."""
+    root = Path(root)
+    return {root / name: (root / name).read_bytes()
+            for name in FIXTURE_FILES if (root / name).is_file()}
 
 
 def run(root, document, *flags):
