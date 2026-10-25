@@ -6862,7 +6862,7 @@
   "workspace_tests": 8674,
   "provider_tests": 133,
   "python_evidence_validator_tests": 460,
-  "lean_audits": 372,
+  "lean_audits": 373,
   "lean_audit_files": [
    "AuditAbiEnumConstPointer.lean",
    "AuditAggregateOwnedField.lean",
@@ -7206,6 +7206,7 @@
    "AuditTeardownAdmission.lean",
    "AuditTimeoutTeardown.lean",
    "AuditTrackedSelfInit.lean",
+   "AuditTrackedSelfInitDisjointFrame.lean",
    "AuditTransferability.lean",
    "AuditTwoDerivationAdmission.lean",
    "AuditTypedAccessPathPositionResiduals.lean",
@@ -7243,7 +7244,7 @@
   "cargo_clippy": "clean",
   "standing_gate": "all 20 required landing checks exit 0",
   "full_language_conformance": false,
-  "measurement_provenance": "integrator_supplied (/home/cosmo/.codex/worktrees/808d/quirin-lang/docs/reports/cmetrics-setter-contracts/integration/gate.json)"
+  "measurement_provenance": "carried_from_previous_matrix: these numbers were NOT measured for this regeneration; pass --gate PATH with the standing-gate results of this checkpoint to replace them"
  },
  "named_followups": [
   {
