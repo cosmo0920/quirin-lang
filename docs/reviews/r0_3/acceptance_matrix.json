@@ -195,7 +195,7 @@
   "ct_stage_names": 20,
   "ct_cells": 1000,
   "unverified_spec_items": 10,
-  "named_followups": 830
+  "named_followups": 832
  },
  "derivation": {
   "rule": "no count in a section this file marks `derived` is hand-copied from a status ledger; each is read from the manifest or validated run record named beside it. Sections marked `hand_maintained` are recorded analysis carried verbatim from the previous matrix, and `integrator_supplied` numbers name whether they were measured for this run or carried - see section_ownership.",
@@ -6858,8 +6858,8 @@
   "note": "providers/ is a separate Cargo workspace, excluded from the core workspace; P01 verified empirically that the core workspace builds and passes its full suite with providers/ moved out of the tree."
  },
  "validation": {
-  "note": "Fresh full combined landing gate on f350d8c5de1585b127d8ce45d0641cb5db37690f, integrating card c8cb7bd4b with main 6c4855745. All 20 final required checks exit 0 after the standalone Lean retry; exact commands, private paths and log hashes are in command-receipt.json. Every check ran freshly on the current-main merge; the Rust suites used the retained rust-suite reservation and the successful Lean check used an independent Lean reservation. Earlier schedules completed 18 checks on c6561aa81 and 18 on 7045d9d98 before main advanced. No Rust tests launched on either superseded source. The retained reservation redirected its unlaunched worker to this fresh full gate; the older coordinator source guard rejects attributing the new source to its old head. Earlier partial receipts are retained separately and are not the final gate. Historical card-native measurements remain isolated; no merged native count is inferred.",
-  "workspace_tests": 8660,
+  "note": "Integration of AUDIT-CANONICAL-PATHS: merge e8e281742 of card tip 957af05f9 onto main d5d041264, records commit c3d8ad3d4. Full standing gate ON c3d8ad3d4 through `scripts/gate_scope.py --base d5d041264 --full --out private/gate` with gate slots (private log /media/Data/GitHub/quirin-lang/private/landing-acp/console.log): submodules, fmt, Clippy, Rust 8671 passed/0 failed/15 ignored (553 units/566 summaries), both reevaluation examples, all exit 0. Python 445 ran with 1 failure: the committed matrix's dimensions.named_followups (830) predated regeneration against the applied ledger (832); after `build_matrix.py --gate` on this record, Python was rerun on the committed matrix. Provider workspace `cargo test --workspace` (qcore-provider-conformance depends on qcore-audit) via gate_slot rust-suite: 133 passed/0 failed/1 ignored, exit 0 (provider-rust.log beside the console). Lean: no proof/ change and Lean inputs identical to d5d041264; lean_audits 372 carried from the CMetrics landing gate (docs/reports/w48-cmt-tracked-interior-self-init/integration/gate.json), which measured these proof inputs.",
+  "workspace_tests": 8671,
   "provider_tests": 133,
   "python_evidence_validator_tests": 445,
   "lean_audits": 372,
@@ -7241,9 +7241,9 @@
   "reevaluation_followup_exit": 0,
   "cargo_fmt": "clean",
   "cargo_clippy": "clean",
-  "standing_gate": "all required landing checks pass on unchanged source after separate Lean scheduling retry",
+  "standing_gate": "full gate on integration tip c3d8ad3d4",
   "full_language_conformance": false,
-  "measurement_provenance": "integrator_supplied (docs/reports/w48-cmt-tracked-interior-self-init/integration/gate.json)"
+  "measurement_provenance": "integrator_supplied (docs/reports/audit-canonical-paths/integration/gate.json)"
  },
  "named_followups": [
   {

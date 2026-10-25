@@ -1,0 +1,13 @@
+{
+  "note": "Integration of AUDIT-CANONICAL-PATHS: merge e8e281742 of card tip 957af05f9 onto main d5d041264, records commit c3d8ad3d4. Full standing gate ON c3d8ad3d4 through `scripts/gate_scope.py --base d5d041264 --full --out private/gate` with gate slots (private log /media/Data/GitHub/quirin-lang/private/landing-acp/console.log): submodules, fmt, Clippy, Rust 8671 passed/0 failed/15 ignored (553 units/566 summaries), both reevaluation examples, all exit 0. Python 445 ran with 1 failure: the committed matrix's dimensions.named_followups (830) predated regeneration against the applied ledger (832); after `build_matrix.py --gate` on this record, Python was rerun on the committed matrix. Provider workspace `cargo test --workspace` (qcore-provider-conformance depends on qcore-audit) via gate_slot rust-suite: 133 passed/0 failed/1 ignored, exit 0 (provider-rust.log beside the console). Lean: no proof/ change and Lean inputs identical to d5d041264; lean_audits 372 carried from the CMetrics landing gate (docs/reports/w48-cmt-tracked-interior-self-init/integration/gate.json), which measured these proof inputs.",
+  "workspace_tests": 8671,
+  "provider_tests": 133,
+  "python_evidence_validator_tests": 445,
+  "reevaluation_probe_exit": 0,
+  "reevaluation_followup_exit": 0,
+  "cargo_fmt": "clean",
+  "cargo_clippy": "clean",
+  "standing_gate": "full gate on integration tip c3d8ad3d4",
+  "lean_audits": 372,
+  "clang": "present: Ubuntu clang version 21.1.8 (6ubuntu1)"
+}
