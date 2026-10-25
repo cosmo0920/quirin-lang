@@ -1,0 +1,99 @@
+module contract;
+
+// Declared effect models, outside resource/bounds/outer interpreted views.
+// Source: Fluent Bit 66910c10a4d7eafa810b84229cf2dcf7b0f26f97,
+// cmt_metric.c, cmt_metric_histogram.c, cmt_summary.c and their public headers.
+// Atomic backend/layout correctness is a premise. Normal postconditions do
+// not assert termination of CAS loops or a coherent multi-field snapshot.
+// Existing set_double/int64/uint64/timestamp/start_timestamp and unset_start_
+// timestamp declarations remain custody-only in metric_values.qv. Their
+// richer value/domain/synchronization obligations are documented in the report;
+// this file neither duplicates nor strengthens their interpreted permissions.
+
+extern fn cmt_metric_set(metric: ptr<mut, u8>, timestamp: u64, val: f64) -> unit
+contract {
+    requires metric_is_nonnull_live_writable_with_valid_atomic_field_layout;
+    requires retirement_and_conflicting_field_users_are_externally_coordinated;
+    requires val_has_defined_C_double_to_int64_and_uint64_conversions;
+    ensures normal delegates_to_cmt_metric_set_double;
+    ensures normal scalar_value_mirrors_timestamp_and_double_type_tag_are_stored;
+    ensures normal no_whole_record_atomic_snapshot_is_promised;
+    ensures normal metric_and_nested_storage_ownership_are_preserved;
+    ensures normal no_pointer_or_ownership_escapes;
+};
+
+extern fn cmt_metric_set_exp_hist_count(metric: ptr<mut, u8>, count: u64) -> unit
+contract {
+    requires metric_is_nonnull_live_writable_with_valid_atomic_field_layout;
+    requires retirement_and_conflicting_field_users_are_externally_coordinated;
+    ensures normal exp_hist_count_is_stored_without_updating_timestamp;
+    ensures normal metric_and_nested_storage_ownership_are_preserved;
+};
+
+extern fn cmt_metric_set_exp_hist_sum(metric: ptr<mut, u8>, sum_set: i32, sum: f64) -> unit
+contract {
+    requires metric_is_nonnull_live_writable_with_valid_atomic_field_layout;
+    requires retirement_and_conflicting_field_users_are_externally_coordinated;
+    ensures normal exp_hist_sum_set_is_normalized_to_zero_or_one;
+    ensures normal enabled_sum_is_stored_as_double_bits_else_sum_bits_are_zero;
+    ensures normal timestamp_is_not_updated_and_pair_is_not_a_single_atomic_store;
+    ensures normal metric_and_nested_storage_ownership_are_preserved;
+};
+
+extern fn cmt_metric_hist_count_set(metric: ptr<mut, u8>, timestamp: u64, count: u64) -> unit
+contract {
+    requires metric_is_nonnull_live_writable_with_valid_atomic_field_layout;
+    requires retirement_and_conflicting_field_users_are_externally_coordinated;
+    ensures normal successful_CAS_stores_hist_count_then_timestamp;
+    ensures normal no_joint_atomicity_or_wait_free_progress_is_promised;
+    ensures normal metric_and_nested_storage_ownership_are_preserved;
+};
+
+extern fn cmt_metric_hist_sum_set(metric: ptr<mut, u8>, timestamp: u64, val: f64) -> unit
+contract {
+    requires metric_is_nonnull_live_writable_with_valid_atomic_field_layout;
+    requires retirement_and_conflicting_field_users_are_externally_coordinated;
+    ensures normal successful_CAS_stores_hist_sum_double_bits_then_timestamp;
+    ensures normal no_joint_atomicity_or_wait_free_progress_is_promised;
+    ensures normal metric_and_nested_storage_ownership_are_preserved;
+};
+
+extern fn cmt_metric_hist_set(metric: ptr<mut, u8>, timestamp: u64, bucket_id: i32, val: f64) -> unit
+contract {
+    requires metric_is_nonnull_live_writable_with_valid_atomic_field_layout;
+    requires bucket_id_is_nonnegative_and_within_live_hist_buckets_extent;
+    requires val_has_defined_C_double_to_uint64_conversion;
+    requires retirement_and_conflicting_field_users_are_externally_coordinated;
+    ensures normal successful_CAS_stores_converted_integer_bucket_count_then_timestamp;
+    ensures normal no_joint_atomicity_or_wait_free_progress_is_promised;
+    ensures normal metric_and_nested_storage_ownership_are_preserved;
+};
+
+extern fn cmt_summary_quantile_set(metric: ptr<mut, u8>, timestamp: u64, quantile_id: i32, val: f64) -> unit
+contract {
+    requires nonnull_metric_is_live_and_has_valid_quantile_pointer_count_representation;
+    requires present_in_range_quantile_is_writable_with_valid_atomic_layout;
+    requires retirement_and_conflicting_field_users_are_externally_coordinated;
+    ensures normal null_metric_null_array_negative_or_out_of_range_id_is_a_noop;
+    ensures normal admitted_slot_CAS_stores_double_bits_then_timestamp;
+    ensures normal no_joint_atomicity_or_wait_free_progress_is_promised;
+    ensures normal metric_and_nested_storage_ownership_are_preserved;
+};
+
+extern fn cmt_summary_sum_set(metric: ptr<mut, u8>, timestamp: u64, val: f64) -> unit
+contract {
+    requires metric_is_nonnull_live_writable_with_valid_atomic_field_layout;
+    requires retirement_and_conflicting_field_users_are_externally_coordinated;
+    ensures normal successful_CAS_stores_summary_sum_double_bits_then_timestamp;
+    ensures normal no_joint_atomicity_or_wait_free_progress_is_promised;
+    ensures normal metric_and_nested_storage_ownership_are_preserved;
+};
+
+extern fn cmt_summary_count_set(metric: ptr<mut, u8>, timestamp: u64, count: u64) -> unit
+contract {
+    requires metric_is_nonnull_live_writable_with_valid_atomic_field_layout;
+    requires retirement_and_conflicting_field_users_are_externally_coordinated;
+    ensures normal successful_CAS_stores_summary_count_then_timestamp;
+    ensures normal no_joint_atomicity_or_wait_free_progress_is_promised;
+    ensures normal metric_and_nested_storage_ownership_are_preserved;
+};

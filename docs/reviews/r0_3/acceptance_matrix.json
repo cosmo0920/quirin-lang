@@ -6626,7 +6626,7 @@
   ]
  },
  "corpus": {
-  "contract_modules": 140,
+  "contract_modules": 142,
   "contract_modules_pinned_by": "compiler/tests/qcore_contract_corpus.rs",
   "contract_clause_pin": {
    "const": "EXPECTED_CONTRACTS",
@@ -7243,7 +7243,7 @@
   "cargo_clippy": "clean",
   "standing_gate": "all required landing checks pass on unchanged source after separate Lean scheduling retry",
   "full_language_conformance": false,
-  "measurement_provenance": "integrator_supplied (docs/reports/w48-cmt-tracked-interior-self-init/integration/gate.json)"
+  "measurement_provenance": "carried_from_previous_matrix: these numbers were NOT measured for this regeneration; pass --gate PATH with the standing-gate results of this checkpoint to replace them"
  },
  "named_followups": [
   {
@@ -12979,7 +12979,7 @@
   {
    "id": "CMT-MAP-OPTS-CONTRACT-ADOPTION",
    "title": "Discharge checked consumers for CMetrics map and opts API contracts",
-   "why": "Open after adding source-audited declared-model cmetrics/map_lifetime.qv and cmetrics/opts_lifetime.qv for six map and two opts APIs. They grant no interpreted resource/bounds/outer call permission. DISCHARGE: generic checked consumers with matching audited Rust/Lean for copied versus retained inputs, transitive map ownership, primary versus secondary/cache/backpointer relations, embedded versus dynamic metric borrows, getter NULL after committed mutation, expiration/destructor invalidation and external coordination, and opts partial initialization plus cleanup without clearing fields. Opts contents can retire before teardown-only map destruction. Prove source/ABI/body coverage and all representation/alias/lifetime obligations, use truthful reviewed pins for any eventual interpreted declaration, retain Unknown on missing proof, and own fresh prediction/native attribution for actual adoption. Never replace these effects by an ordinary neutral summary.",
+   "why": "Open after adding source-audited declared-model cmetrics/map_lifetime.qv and cmetrics/opts_lifetime.qv for six map and two opts APIs. They grant no interpreted resource/bounds/outer call permission. DISCHARGE: generic checked consumers with matching audited Rust/Lean for copied versus retained inputs, transitive map ownership, primary versus secondary/cache/backpointer relations, embedded versus dynamic metric borrows, getter NULL after committed mutation, expiration/destructor invalidation and external coordination, and opts partial initialization plus cleanup without clearing fields. Opts contents can retire before teardown-only map destruction. Prove source/ABI/body coverage and all representation/alias/lifetime obligations, use truthful reviewed pins for any eventual interpreted declaration, retain Unknown on missing proof, and own fresh prediction/native attribution for actual adoption. Never replace these effects by an ordinary neutral summary. Setter audit models in cmetrics/metric_setters.qv and cmetrics/typed_setters.qv also require checked consumers: defined scalar conversions, counter rejection after lookup, aggregate input/target extents, summary nullable quantiles, partial preparation, exponential-histogram array replacement and old-alias invalidation. Their source audit is docs/reports/cmetrics-setter-contracts/README.md; parsing these declarations supplies no executable permission.",
    "source": "docs/reports/w48-cmt-tracked-interior-self-init/CMETRICS_APIS.md"
   },
   {
