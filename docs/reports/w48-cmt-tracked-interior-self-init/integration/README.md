@@ -11,3 +11,5 @@ The initial nested Lean scheduling invocation exited 2 before running any Lean c
 The card's original report and 8,654-test gate remain frozen. Its native counts belong to its separately pinned BASE/TIP; this source integration grants no additional native coverage claim. The acceptance matrix is regenerated from this combined gate, with Python confirmed again after committing the regenerated matrix.
 
 The first matrix publication refused extra source-identity keys in the strict gate schema. Those identities now live in [source-identity.json](source-identity.json); [publication-repair.json](publication-repair.json) retains the refusal. Validation results are unchanged.
+
+The post-regeneration confirmation passes all 445 Python tests on committed publication `4b49a7b116b63ab7ab3ab10743ef467010df2718`, with the matrix hash unchanged. [Post-matrix receipt](post-matrix-python.json) records the command, exit 0, private log hash and documentation-only source difference.
