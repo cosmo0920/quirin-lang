@@ -1,0 +1,7 @@
+# CMetrics initializer disjoint custody frames
+
+Continue `W48-CMT-SELF-INIT-DISJOINT-FRAMES` at semantic BASE `47fc52a32abe8b5e56d711ff4773343ac6537167`. Scope: independently checked disjoint custody relations across source-checked self-initialization, preserving every obligation, affected alias-fact invalidation and exact old refusal on unsupported/overlapping/unresolved frames. The full getter ownership chain remains Open.
+
+Required ordering: fresh immutable BASE corpus and bottom-up planner, then a committed concrete prediction, then semantic Rust/Lean/.qv implementation. No feature implementation precedes that prediction. Complete paired resource/NULL/runtime attribution, actual source/flow/lifetime/refusal/export controls, audited placeholder-free Lean and truthful canonical CFL contracts are required. Contract/model parsing grants no interpreted call permission. Standing full gate and provider/package checks apply. Exactly one increment and current status/ledger changes will be recorded through the applicable amendment schema; earlier reports stay frozen.
+
+Open residuals in scope: the disjoint-frame follow-up above and its parent `CMT-MAP-METRIC-GET-OWNERSHIP-CHAIN`. Nested label/SDS ownership, list mutations, primary/secondary/cache accounting, returned map borrows, hashing effects, API checked adoption and labeled-zero-hash accounting remain separate unless this bounded feature independently discharges them. No getter closure gain is presumed; prediction waits for fresh BASE/planner evidence.
