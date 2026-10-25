@@ -1,0 +1,136 @@
+{
+  "base": {
+    "resource-diagnostics.invocation.json": {
+      "source": "/home/cosmo/.codex/worktrees/808d/quirin-lang/private/cmt-disjoint-frames/base-slice/resource-diagnostics.invocation.json",
+      "sha256": "c23021eecd3f98fc734afa9cd210bdbb74ae17264f5ef4af769c5b170c59e2ff",
+      "bytes": 6939
+    },
+    "exit": {
+      "source": "/home/cosmo/.codex/worktrees/808d/quirin-lang/private/cmt-disjoint-frames/base-slice/exit",
+      "sha256": "9a271f2a916b0b6ee6cecb2426f0b3206ef074578be55d9bc94f6f3fe3ab86aa",
+      "bytes": 2
+    },
+    "invocation.json": {
+      "source": "/home/cosmo/.codex/worktrees/808d/quirin-lang/private/cmt-disjoint-frames/base-slice/invocation.json",
+      "sha256": "c8966b2adc620716423ed7bad61b2525241414844646e9051136d6d110d05731",
+      "bytes": 91155
+    },
+    "null.jsonl": {
+      "source": "/home/cosmo/.codex/worktrees/808d/quirin-lang/private/cmt-disjoint-frames/base-slice/null.jsonl",
+      "sha256": "aab1a04713408153d66f31a436760c3e9b8ac0d682ec683dc6b901949150f6c2",
+      "bytes": 1853651
+    },
+    "console.log": {
+      "source": "/home/cosmo/.codex/worktrees/808d/quirin-lang/private/cmt-disjoint-frames/base-slice/console.log",
+      "sha256": "f90456673c14095f31318abb5489cecff60ac96abaa75e30c574300f2118365f",
+      "bytes": 14282
+    },
+    "stderr.log": {
+      "source": "/home/cosmo/.codex/worktrees/808d/quirin-lang/private/cmt-disjoint-frames/base-slice/stderr.log",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "bytes": 0
+    },
+    "resource-diagnostics.chunk-contracts.json": {
+      "source": "/home/cosmo/.codex/worktrees/808d/quirin-lang/private/cmt-disjoint-frames/base-slice/resource-diagnostics.chunk-contracts.json",
+      "sha256": "a97259087e4ad89a4662edcb494b27c27e80f06c62e404a19076224bbc0a2bd8",
+      "bytes": 385
+    },
+    "resource-diagnostics.json": {
+      "source": "/home/cosmo/.codex/worktrees/808d/quirin-lang/private/cmt-disjoint-frames/base-slice/resource-diagnostics.json",
+      "sha256": "221d5e02b845b23b85f2f92c130a205130d1778458fe1ef4d9fe68a446d19652",
+      "bytes": 3774310
+    },
+    "resource-diagnostics.source-effects.json": {
+      "source": "/home/cosmo/.codex/worktrees/808d/quirin-lang/private/cmt-disjoint-frames/base-slice/resource-diagnostics.source-effects.json",
+      "sha256": "a97259087e4ad89a4662edcb494b27c27e80f06c62e404a19076224bbc0a2bd8",
+      "bytes": 385
+    },
+    "null.summary.json": {
+      "source": "/home/cosmo/.codex/worktrees/808d/quirin-lang/private/cmt-disjoint-frames/base-slice/null.summary.json",
+      "sha256": "df4be8b649b807ee4b83c0516250e7495e7e57355733c126c24a6b3828960c56",
+      "bytes": 64487
+    },
+    "outer.json": {
+      "source": "/home/cosmo/.codex/worktrees/808d/quirin-lang/private/cmt-disjoint-frames/base-slice/outer.json",
+      "sha256": "bd4f01eeeb88f444067c86483cbf4a981666d15f56c1edcb258fff95832beb48",
+      "bytes": 88954
+    },
+    "resource-diagnostics.contracts.json": {
+      "source": "/home/cosmo/.codex/worktrees/808d/quirin-lang/private/cmt-disjoint-frames/base-slice/resource-diagnostics.contracts.json",
+      "sha256": "e214dfee20dd7a21d7704c8e31c3443591708b44dd232a9315abace79383d826",
+      "bytes": 9669011
+    },
+    "producer-invocation.json": {
+      "source": "/home/cosmo/.codex/worktrees/808d/quirin-lang/private/cmt-disjoint-frames/base-slice/invocation.json",
+      "sha256": "c8966b2adc620716423ed7bad61b2525241414844646e9051136d6d110d05731",
+      "bytes": 91155
+    }
+  },
+  "tip": {
+    "resource-diagnostics.invocation.json": {
+      "source": "/home/cosmo/.codex/worktrees/808d/quirin-lang/private/cmt-disjoint-frames/tip-slice/resource-diagnostics.invocation.json",
+      "sha256": "773c955c835955b37f06995d0aeae76617d6ee9851eb62d3080f60fb533d0d89",
+      "bytes": 6937
+    },
+    "exit": {
+      "source": "/home/cosmo/.codex/worktrees/808d/quirin-lang/private/cmt-disjoint-frames/tip-slice/exit",
+      "sha256": "9a271f2a916b0b6ee6cecb2426f0b3206ef074578be55d9bc94f6f3fe3ab86aa",
+      "bytes": 2
+    },
+    "invocation.json": {
+      "source": "/home/cosmo/.codex/worktrees/808d/quirin-lang/private/cmt-disjoint-frames/tip-slice/invocation.json",
+      "sha256": "0d1c1d8685a3fbcd0e79d22fa47f0f871e506f7ec573f43c469851959f7a5809",
+      "bytes": 91150
+    },
+    "null.jsonl": {
+      "source": "/home/cosmo/.codex/worktrees/808d/quirin-lang/private/cmt-disjoint-frames/tip-slice/null.jsonl",
+      "sha256": "093c5653ef60981ec00bc077c5d3c286e6a7eba69a6caa567e3f40c0ce9c65a2",
+      "bytes": 1853651
+    },
+    "console.log": {
+      "source": "/home/cosmo/.codex/worktrees/808d/quirin-lang/private/cmt-disjoint-frames/tip-slice/console.log",
+      "sha256": "44d5169f031d2fa5570eed97f645ff344a26fce68a85fc5da325626a13989879",
+      "bytes": 14282
+    },
+    "stderr.log": {
+      "source": "/home/cosmo/.codex/worktrees/808d/quirin-lang/private/cmt-disjoint-frames/tip-slice/stderr.log",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "bytes": 0
+    },
+    "resource-diagnostics.chunk-contracts.json": {
+      "source": "/home/cosmo/.codex/worktrees/808d/quirin-lang/private/cmt-disjoint-frames/tip-slice/resource-diagnostics.chunk-contracts.json",
+      "sha256": "a97259087e4ad89a4662edcb494b27c27e80f06c62e404a19076224bbc0a2bd8",
+      "bytes": 385
+    },
+    "resource-diagnostics.json": {
+      "source": "/home/cosmo/.codex/worktrees/808d/quirin-lang/private/cmt-disjoint-frames/tip-slice/resource-diagnostics.json",
+      "sha256": "55334f109022c7b23a62e48a1decf895cb1d42d2bcd535b5426df41028505a17",
+      "bytes": 3774310
+    },
+    "resource-diagnostics.source-effects.json": {
+      "source": "/home/cosmo/.codex/worktrees/808d/quirin-lang/private/cmt-disjoint-frames/tip-slice/resource-diagnostics.source-effects.json",
+      "sha256": "a97259087e4ad89a4662edcb494b27c27e80f06c62e404a19076224bbc0a2bd8",
+      "bytes": 385
+    },
+    "null.summary.json": {
+      "source": "/home/cosmo/.codex/worktrees/808d/quirin-lang/private/cmt-disjoint-frames/tip-slice/null.summary.json",
+      "sha256": "df4be8b649b807ee4b83c0516250e7495e7e57355733c126c24a6b3828960c56",
+      "bytes": 64487
+    },
+    "outer.json": {
+      "source": "/home/cosmo/.codex/worktrees/808d/quirin-lang/private/cmt-disjoint-frames/tip-slice/outer.json",
+      "sha256": "bd4f01eeeb88f444067c86483cbf4a981666d15f56c1edcb258fff95832beb48",
+      "bytes": 88954
+    },
+    "resource-diagnostics.contracts.json": {
+      "source": "/home/cosmo/.codex/worktrees/808d/quirin-lang/private/cmt-disjoint-frames/tip-slice/resource-diagnostics.contracts.json",
+      "sha256": "f9a84f2294884e11a6153e40dcfcaaeb82d0272d19ddaf2d6bf6945a4bdbf9a2",
+      "bytes": 9669011
+    },
+    "producer-invocation.json": {
+      "source": "/home/cosmo/.codex/worktrees/808d/quirin-lang/private/cmt-disjoint-frames/tip-slice/invocation.json",
+      "sha256": "0d1c1d8685a3fbcd0e79d22fa47f0f871e506f7ec573f43c469851959f7a5809",
+      "bytes": 91150
+    }
+  }
+}

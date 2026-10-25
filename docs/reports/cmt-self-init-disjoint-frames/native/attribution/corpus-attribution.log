@@ -1,0 +1,50 @@
+{
+  "route": "corpus",
+  "original_raw_difference_counts": {
+    "monkey-source.json": 0,
+    "run.json": 7,
+    "resource-diagnostics.chunk-contracts.json": 0,
+    "resource-diagnostics.json": 5351,
+    "resource-diagnostics.source-effects.json": 0,
+    "resource-diagnostics.contracts.json": 9191,
+    "producer-invocation.json": 13,
+    "null.jsonl": 4834,
+    "outer.json": 0,
+    "null.summary.json": 0
+  },
+  "remaining_difference_counts": {
+    "monkey-source.json": 0,
+    "resource-diagnostics.chunk-contracts.json": 0,
+    "resource-diagnostics.json": 0,
+    "resource-diagnostics.source-effects.json": 0,
+    "resource-diagnostics.contracts.json": 0,
+    "null.jsonl": 0,
+    "outer.json": 0,
+    "null.summary.json": 0
+  },
+  "complete_reading_receipts_replayed": 122,
+  "complete_canonical_captures_validated": 45,
+  "evidence_version_occurrences_reconstructed": 18855,
+  "empty_summary_time_remap_paths": [
+    [
+      "callback_members",
+      "lifetime_protocols",
+      "evidence",
+      "summaries"
+    ],
+    [
+      "callback_members",
+      "prepass",
+      "lifetime_protocols",
+      "summaries"
+    ]
+  ],
+  "measurement_metadata_files_separately_retained": [
+    "producer-invocation.json",
+    "run.json"
+  ],
+  "fields_erased": 0,
+  "unexplained_semantic_differences": "pending explicit native NULL and projection accounting",
+  "source_binding": "Open",
+  "truth_transport": false
+}

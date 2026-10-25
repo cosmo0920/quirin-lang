@@ -1,0 +1,19 @@
+{
+  "semantic_source": "342ca74c4a2ffca611dbc1b6ff51e0fe53920490",
+  "working_head": "b4e189f68f46172667d15cdaa19d54e3fa0ba248",
+  "semantic_delta_command": [
+    "git",
+    "diff",
+    "--name-only",
+    "342ca74c4a2ffca611dbc1b6ff51e0fe53920490",
+    "--",
+    "crates",
+    "compiler",
+    "proof",
+    "scripts",
+    "contract",
+    "providers"
+  ],
+  "semantic_delta_output": "",
+  "publication_changes": "report, evidence and documentation records only"
+}

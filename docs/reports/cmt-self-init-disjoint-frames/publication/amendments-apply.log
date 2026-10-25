@@ -1,0 +1,6 @@
+ledger: amended W48-CMT-SELF-INIT-DISJOINT-FRAMES
+ledger: appended CMT-MAP-METRIC-GET-OWNERSHIP-CHAIN
+apply_amendments: W48-CMT-SELF-INIT-DISJOINT-FRAMES: wrote docs/development/increments/wave-48-part12.md, docs/STATUS.md, docs/reviews/r0_3/acceptance_matrix.json
+follow-up (not run by this tool):
+  python3 docs/reports/remaining-d02/build_matrix.py --gate <landing gate.json>
+  python3 scripts/build_docs_index.py

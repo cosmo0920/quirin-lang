@@ -1,0 +1,14 @@
+wrote /home/cosmo/.codex/worktrees/808d/quirin-lang/docs/reviews/r0_3/acceptance_matrix.json
+carried hand-maintained sections from /home/cosmo/.codex/worktrees/808d/quirin-lang/docs/reviews/r0_3/acceptance_matrix.json
+gate provenance: integrator_supplied (docs/reports/cmt-self-init-disjoint-frames/gate/gate.json)
+requirements 17
+cells 68
+ct rows 50 stages 20
+histogram native_execution {'executed': 19, 'not_applicable': 31}
+depth {'atomic_publication_check': 1, 'elaborate': 4, 'epoch_bound_check': 4, 'footprint_check': 1, 'legacy_c_twin': 3, 'mutex_invariant_check': 8, 'native_execution': 6, 'native_sanitized': 8, 'proof': 5, 'sequential_whole_program': 1, 'task_ledger_check': 8, 'task_lowering': 1}
+observations {'atomic_publication_check': 1, 'c_emission': 36, 'elaborate': 46, 'epoch_bound_check': 7, 'epoch_lowering': 7, 'footprint_check': 1, 'footprint_lowering': 1, 'legacy_c_twin': 4, 'mutex_invariant_check': 11, 'mutex_lowering': 11, 'mutex_reference_execution': 3, 'native_execution': 51, 'native_sanitized': 32, 'parse': 50, 'proof': 5, 'sequential_reference_execution': 1, 'sequential_whole_program': 2, 'task_ledger_check': 23, 'task_lowering': 24, 'task_reference_execution': 29}
+buckets {}
+named followups 834
+lean audits 373
+provider packages {'qcore.chunkio': '0.13.0', 'qcore.cmetrics': '0.2.0', 'qcore.ctraces': '0.1.0', 'qcore.libevent': '0.2.0', 'qcore.librdkafka': '0.1.0'}
+contract modules 142

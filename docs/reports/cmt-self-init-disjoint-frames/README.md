@@ -14,8 +14,9 @@ closure clarification in `b593500d9`, both before implementation. The
 [brief](BRIEF.md), [pre-implementation design](DESIGN.md) and
 [unchanged prediction](PREDICTION.md) retain that ordering.
 
-Native TIP measurement and final attribution are pending. This report is a
-working record and does not yet close the card or establish a production gain.
+The bounded feature and its complete attribution are closed. Production Safe
+gain and getter closure gain are both **0**, matching the prediction. The broader
+frame follow-up and getter ownership chain remain Open.
 
 The source and flow boundary
 ----------------------------
@@ -122,8 +123,8 @@ hidden or used to weaken a diagnostic, test, theorem or audit. All subsequent
 focused controls and the complete gate pass. Private logs live under
 `private/cmt-disjoint-frames/`, primarily `gate-1/` and `focused-3/`.
 
-Native evidence custody and remaining work
------------------------------------------
+Native results, context and evidence custody
+-------------------------------------------
 
 The immutable BASE binary has SHA-256
 `077014346fe09d2127fd2c28ad48156fe5e467a63840f50afa932e1bcf477404`;
@@ -146,21 +147,93 @@ source/provider conformance. Provisional Unsafe rows are not validated upstream
 defects. [Configured BASE custody](base-configured-receipt.json) retains the
 identities, scopes and stable before/after hashes.
 
-The final comparison must retain all resource, NULL, dependency, reading and
-outer/runtime artifacts and explicitly attribute every changed leaf. Evidence
-version rebinding and any exact date/time source identity reconstruction must
-retain full receipts and negative controls. Source binding remains Open and
-truth transport false. Clang extraction, embedding, C bounds/no undefined
-behaviour, existing declared contracts and Rust/Lean correspondence remain
-reviewed trust premises.
+All three paired routes, both planners and the final attribution chain exit 0.
+The BASE/TIP counts are identical:
+
+| Route | Rows | Safe | Unknown | Pending | Provisional Unsafe |
+|---|---:|---:|---:|---:|---:|
+| Pinned corpus | 4,834 | 1,013 | 3,812 | 0 | 9 |
+| Configured system | 448 | 101 | 343 | 0 | 4 |
+| Tail-pause slice | 404 | 57 | 342 | 4 | 1 |
+
+All 5,686 resource rows retain their statuses, complete diagnostic lists and
+contract dependencies. All independent NULL dictionaries are unchanged across
+4,921 / 454 / 406 enumerated NULL rows. Outer/runtime documents, NULL summary
+payloads, chunk contracts and source effects are identical as complete parsed
+documents. The complete planner difference list is empty. The six
+selected CMetrics targets remain Unknown with own diagnostic counts 6 / 4 / 14 /
+20 / 21 / 1 in the order named in the prediction. Complete target rows are in
+[production-targets.json](native/production-targets.json).
+
+Attribution retains every raw artifact and raw leaf difference before any
+reconstruction. It validates all existing source modules, environments,
+observations and captures, and independently rebinds each complete reading
+receipt on both semantic versions. Exact Context evidence-version coordinates
+are reconstructed only after checking the complete context shape. Two empty
+lifetime-summary keys per route are the same duplicated source/configuration
+identity: an exact-command fresh preprocess reproduces both keys by replacing
+only `MONKEY_BUILT` date/time literals within the actual measurement windows.
+Wrong-time and wrong-date controls reject. No nonempty summary or authority is
+removed. Date rollover in corpus is explicitly reproduced, not normalized away.
+
+| Route | Complete reading receipts | Canonical captures | Evidence-version coordinates | Remaining semantic leaves |
+|---|---:|---:|---:|---:|
+| Corpus | 122 | 45 | 18,855 | 0 |
+| System | 24 | 4 | 2,154 | 0 |
+| Slice | 2 | 1 | 1,572 | 0 |
+
+All six BASE/TIP production projection replays reproduce the complete outer
+projection, NULL tally fields, NULL row custody fields and production joins.
+Wrong-custody-status and unprovided-NULL-premise controls reject on every replay.
+Complete diagnostic counts are independently reconstructed. Measurement
+provenance remains separately retained; fields erased = 0. The final
+[completion](native/completion.json) and
+[semantic review](native/semantic-review-reconstruction.json) discharge the
+intermediate collectors' historical pending accounting labels. There is no
+unrecognized remaining leaf and no real added consultation to explain away.
+
+Published result context is `(artifact, property, semantic profile, scope,
+bounds, assumptions, evidence version)`: artifacts are the retained per-function
+resource/NULL/outer rows, property `resource-custody.v1` plus the separately
+computed NULL and combined projections, semantic profile is the recorded legacy
+pinned resource profile or configured profile digest
+`37309028f4fa1d50682829be2cbca880931a1a65d57b47d1fccb78a9b74965f3`, scope is the
+selected pinned/configured compilation configurations, bounds are the existing
+gateway budgets with no new hypothesis discharge, assumptions are the complete
+retained contract/Context assumption sets, and evidence version is
+`contract-hypothesis-graph.v1:<semantic BASE or TIP>` with exact per-row source
+and build identities. The raw artifacts retain every complete context rather
+than substituting one context for all rows. Pinned Fluent Bit source is
+`66910c10a4d7eafa810b84229cf2dcf7b0f26f97`; actual system checkout is
+`046accf6aded7906f66a1baf0202da349e521736`, slice checkout
+`34155955e4962a56d94eb23c03a002880899a0d1`. Configured historical source/native/
+provider evidence stays Unknown, and profile pins are historical reference only.
+
+Source binding remains Open and truth transport false. Clang extraction,
+embedding, C bounds/no undefined behaviour, existing declared contracts and
+Rust/Lean correspondence remain reviewed trust premises. Neither the model
+proofs nor these observations establish whole-C or whole-Fluent-Bit safety.
+
+[native/receipt.json](native/receipt.json) records every native command and
+before/after identity. [native/manifest.json](native/manifest.json) covers raw
+compressed artifacts, complete differences, replay specifications/results,
+negative controls, exact source reconstruction, logs and scripts. Native and
+replay private logs remain under `private/cmt-disjoint-frames/`; the corpus log
+is `tip-corpus/audit.log`, configured logs `tip-system/` and `tip-slice/`, and
+attribution command logs `attribution-1/` with per-replay logs in `replay-v3/`.
+Corpus elapsed BASE 6,228.318 seconds, TIP 9,938.934 seconds on the uncontrolled
+shared host; no speed or memory improvement is claimed. The 7,168 MiB figure is
+a planning budget, not an RSS bound. All final input before/after hashes are
+stable. Preliminary gate failures remain disclosed separately above.
 
 The broader `W48-CMT-SELF-INIT-DISJOINT-FRAMES` and
 `CMT-MAP-METRIC-GET-OWNERSHIP-CHAIN` stay Open: foreign-owner frames,
 containment/member/collection relations, deeper or same-member paths,
 loaded/retyped pointer source forms, nonordinary calls, B08 source aliases,
 contract adoption, hash/cache/borrow/label effects and the other getter
-obligations remain. The final tracking amendment will qualify the earlier
-all-nondefault refusal claim with this bounded exception. A separate follow-on
+obligations remain. The [tracking amendment](integration-amendments.json) qualifies the earlier
+all-nondefault refusal claim with this bounded exception without retiring either
+entry. A separate follow-on
 is to investigate/document S3 pointer-type spelling sensitivity: the focused
 fixture rejects `ptr<mut,u8>` while canonical `ptr<mut, u8>` is accepted. No
 parser change is included here.

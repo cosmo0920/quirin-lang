@@ -1,0 +1,3 @@
+ledger: amended W48-CMT-SELF-INIT-DISJOINT-FRAMES
+ledger: appended CMT-MAP-METRIC-GET-OWNERSHIP-CHAIN
+apply_amendments: W48-CMT-SELF-INIT-DISJOINT-FRAMES: valid; would write docs/development/increments/wave-48-part12.md, docs/STATUS.md, docs/reviews/r0_3/acceptance_matrix.json

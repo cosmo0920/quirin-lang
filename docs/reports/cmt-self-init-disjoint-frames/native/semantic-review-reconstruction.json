@@ -1,0 +1,80 @@
+{
+  "routes": [
+    {
+      "route": "corpus",
+      "resource_rows": 4834,
+      "base_statuses": {
+        "Unknown": 3812,
+        "Safe": 1013,
+        "Unsafe": 9
+      },
+      "tip_statuses": {
+        "Unknown": 3812,
+        "Safe": 1013,
+        "Unsafe": 9
+      },
+      "resource_semantic_rows_changed": 0,
+      "independent_null_dictionary_changes": 0,
+      "remaining_semantic_leaves": 0,
+      "complete_diagnostic_counts_reproduced": true,
+      "both_full_production_projection_replays_passed": true,
+      "negative_controls_rejected": true,
+      "complete_raw_artifacts_retained": true,
+      "source_binding": "Open",
+      "truth_transport": false
+    },
+    {
+      "route": "system",
+      "resource_rows": 448,
+      "base_statuses": {
+        "Unknown": 343,
+        "Safe": 101,
+        "Unsafe": 4
+      },
+      "tip_statuses": {
+        "Unknown": 343,
+        "Safe": 101,
+        "Unsafe": 4
+      },
+      "resource_semantic_rows_changed": 0,
+      "independent_null_dictionary_changes": 0,
+      "remaining_semantic_leaves": 0,
+      "complete_diagnostic_counts_reproduced": true,
+      "both_full_production_projection_replays_passed": true,
+      "negative_controls_rejected": true,
+      "complete_raw_artifacts_retained": true,
+      "source_binding": "Open",
+      "truth_transport": false
+    },
+    {
+      "route": "slice",
+      "resource_rows": 404,
+      "base_statuses": {
+        "Unknown": 342,
+        "Safe": 57,
+        "Pending": 4,
+        "Unsafe": 1
+      },
+      "tip_statuses": {
+        "Unknown": 342,
+        "Safe": 57,
+        "Pending": 4,
+        "Unsafe": 1
+      },
+      "resource_semantic_rows_changed": 0,
+      "independent_null_dictionary_changes": 0,
+      "remaining_semantic_leaves": 0,
+      "complete_diagnostic_counts_reproduced": true,
+      "both_full_production_projection_replays_passed": true,
+      "negative_controls_rejected": true,
+      "complete_raw_artifacts_retained": true,
+      "source_binding": "Open",
+      "truth_transport": false
+    }
+  ],
+  "dependency_producer_source_equal_semantic_base": true,
+  "forecast_zero_production_safe_gain_matched": true,
+  "all_observed_leaf_kinds_explicitly_reviewed": true,
+  "no_unrecognized_leaf_admitted": true,
+  "qualification": "Only the strict zero-semantic-delta branch. Raw evidence versions, complete receipt rebinding, exact date/time keys and measurement provenance remain separately retained; no source truth transport."
+}

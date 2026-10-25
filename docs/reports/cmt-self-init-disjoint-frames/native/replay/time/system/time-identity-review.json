@@ -1,0 +1,176 @@
+{
+  "meaning": "Exactly four retained contract artifact leaves are one empty-summary identity remap duplicated in evidence/prepass. Replacing only MONKEY_BUILT __DATE__/__TIME__ in a fresh exact-command preprocess reproduces both complete source/configuration SHA256 keys; no summary value, decision or authority is removed.",
+  "paths": [
+    [
+      "callback_members",
+      "lifetime_protocols",
+      "evidence",
+      "summaries"
+    ],
+    [
+      "callback_members",
+      "prepass",
+      "lifetime_protocols",
+      "summaries"
+    ]
+  ],
+  "before_key": "30f14cda4c6e245a11bbb9edde3b8f80dfa446bab801d9ba8a0dcf0dddfcda14",
+  "after_key": "427b84109f9c19f92bbd5fa87a141d562157d054a1790e0794f8ac997cfb4431",
+  "matched_date_time_literals": {
+    "30f14cda4c6e245a11bbb9edde3b8f80dfa446bab801d9ba8a0dcf0dddfcda14": {
+      "date": "Oct 26 2026",
+      "time": "00:49:01"
+    },
+    "427b84109f9c19f92bbd5fa87a141d562157d054a1790e0794f8ac997cfb4431": {
+      "date": "Oct 26 2026",
+      "time": "07:04:28"
+    }
+  },
+  "empty_summary_payload_before": {},
+  "empty_summary_payload_after": {},
+  "fresh_preprocess": {
+    "command": [
+      "/usr/lib/llvm-21/bin/clang",
+      "-DFLB_EVENT_LOOP_AUTO_DISCOVERY",
+      "-DFLB_HAVE_CHUNK_TRACE",
+      "-DFLB_HAVE_DEV",
+      "-DFLB_HAVE_HTTP_CLIENT_DEBUG",
+      "-DFLB_HAVE_IN_STORAGE_BACKLOG",
+      "-DFLB_HAVE_PARSER",
+      "-DFLB_HAVE_RECORD_ACCESSOR",
+      "-DFLB_HAVE_SIMD",
+      "-DFLB_HAVE_STREAM_PROCESSOR",
+      "-DFLB_HAVE_SYS_WAIT_H",
+      "-DFLB_HAVE_UNICODE_ENCODER",
+      "-DFLB_HAVE_YYJSON",
+      "-DFLB_SYSTEM_LINUX",
+      "-DFLB_TRACE=1",
+      "-DJSMN_PARENT_LINKS",
+      "-DJSMN_STRICT",
+      "-DMK_HAVE_ACCEPT4",
+      "-DMK_HAVE_BACKTRACE",
+      "-DMK_HAVE_TLS",
+      "-DMK_HAVE_VALGRIND",
+      "-DMPACK_EXTENSIONS=1",
+      "-DMSGPACK_EMBED_STACK_SIZE=64",
+      "-DNGHTTP2_STATICLIB",
+      "-I/home/cosmo/Documents/GitHub/qcore-c/private/w45-fb/w46-external-callee-contracts/attempt-1/fluent-bit-clang-production/lib/monkey/include/monkey",
+      "-I/home/cosmo/Documents/GitHub/qcore-c/private/w45-fb/w46-external-callee-contracts/attempt-1/fluent-bit-clang-production/lib/monkey/include",
+      "-I/home/cosmo/Documents/GitHub/qcore-c/private/w45-fb/w46-external-callee-contracts/attempt-1/fluent-bit-clang-source/lib/monkey/include/monkey",
+      "-I/home/cosmo/Documents/GitHub/qcore-c/private/w45-fb/w46-external-callee-contracts/attempt-1/fluent-bit-clang-source/lib/monkey/include",
+      "-I/home/cosmo/Documents/GitHub/qcore-c/private/w45-fb/w46-external-callee-contracts/attempt-1/fluent-bit-clang-source/lib/monkey/deps/regex",
+      "-I/home/cosmo/Documents/GitHub/qcore-c/private/w45-fb/w46-external-callee-contracts/attempt-1/fluent-bit-clang-source/lib/monkey/deps/flb_libco",
+      "-I/home/cosmo/Documents/GitHub/qcore-c/private/w45-fb/w46-external-callee-contracts/attempt-1/fluent-bit-clang-source/lib/monkey/deps/rbtree",
+      "-I/home/cosmo/Documents/GitHub/qcore-c/private/w45-fb/w46-external-callee-contracts/attempt-1/fluent-bit-clang-source/lib/monkey/.",
+      "-I/home/cosmo/Documents/GitHub/qcore-c/private/w45-fb/w46-external-callee-contracts/attempt-1/fluent-bit-clang-production/generated/include",
+      "-I/home/cosmo/Documents/GitHub/qcore-c/private/w45-fb/w46-external-callee-contracts/attempt-1/fluent-bit-clang-source/include",
+      "-I/home/cosmo/Documents/GitHub/qcore-c/private/w45-fb/w46-external-callee-contracts/attempt-1/fluent-bit-clang-source/lib",
+      "-I/home/cosmo/Documents/GitHub/qcore-c/private/w45-fb/w46-external-callee-contracts/attempt-1/fluent-bit-clang-source/lib/fluent-otel-proto/include",
+      "-I/home/cosmo/Documents/GitHub/qcore-c/private/w45-fb/w46-external-callee-contracts/attempt-1/fluent-bit-clang-source/lib/fluent-otel-proto/proto_c",
+      "-I/home/cosmo/Documents/GitHub/qcore-c/private/w45-fb/w46-external-callee-contracts/attempt-1/fluent-bit-clang-source/lib/cfl/include",
+      "-I/home/cosmo/Documents/GitHub/qcore-c/private/w45-fb/w46-external-callee-contracts/attempt-1/fluent-bit-clang-source/lib/cfl/lib/xxhash",
+      "-I/home/cosmo/Documents/GitHub/qcore-c/private/w45-fb/w46-external-callee-contracts/attempt-1/fluent-bit-clang-source/lib/flb_libco",
+      "-I/home/cosmo/Documents/GitHub/qcore-c/private/w45-fb/w46-external-callee-contracts/attempt-1/fluent-bit-clang-source/lib/rbtree",
+      "-I/home/cosmo/Documents/GitHub/qcore-c/private/w45-fb/w46-external-callee-contracts/attempt-1/fluent-bit-clang-source/lib/chunkio/include",
+      "-I/home/cosmo/Documents/GitHub/qcore-c/private/w45-fb/w46-external-callee-contracts/attempt-1/fluent-bit-clang-production/lib/chunkio/include",
+      "-I/home/cosmo/Documents/GitHub/qcore-c/private/w45-fb/w46-external-callee-contracts/attempt-1/fluent-bit-clang-source/lib/mpack-amalgamation-1.1.1/src",
+      "-I/home/cosmo/Documents/GitHub/qcore-c/private/w45-fb/w46-external-callee-contracts/attempt-1/fluent-bit-clang-source/lib/miniz",
+      "-I/home/cosmo/Documents/GitHub/qcore-c/private/w45-fb/w46-external-callee-contracts/attempt-1/fluent-bit-clang-source/lib/snappy-fef67ac",
+      "-I/home/cosmo/Documents/GitHub/qcore-c/private/w45-fb/w46-external-callee-contracts/attempt-1/fluent-bit-clang-source/lib/cmetrics/include",
+      "-I/home/cosmo/Documents/GitHub/qcore-c/private/w45-fb/w46-external-callee-contracts/attempt-1/fluent-bit-clang-source/lib/ctraces/include",
+      "-I/home/cosmo/Documents/GitHub/qcore-c/private/w45-fb/w46-external-callee-contracts/attempt-1/fluent-bit-clang-source/lib/cprofiles/include",
+      "-I/home/cosmo/Documents/GitHub/qcore-c/private/w45-fb/w46-external-callee-contracts/attempt-1/fluent-bit-clang-source/lib/lwrb/lwrb/src/include",
+      "-I/home/cosmo/Documents/GitHub/qcore-c/private/w45-fb/w46-external-callee-contracts/attempt-1/fluent-bit-clang-production/lib/jansson-e23f558/include",
+      "-I/home/cosmo/Documents/GitHub/qcore-c/private/w45-fb/w46-external-callee-contracts/attempt-1/fluent-bit-clang-production/lib/cmetrics",
+      "-I/home/cosmo/Documents/GitHub/qcore-c/private/w45-fb/w46-external-callee-contracts/attempt-1/fluent-bit-clang-production/lib/cprofiles/include",
+      "-I/home/cosmo/Documents/GitHub/qcore-c/private/w45-fb/w46-external-callee-contracts/attempt-1/fluent-bit-clang-production/include",
+      "-I/home/cosmo/Documents/GitHub/qcore-c/private/w45-fb/w46-external-callee-contracts/attempt-1/fluent-bit-clang-source/lib/tutf8e/include",
+      "-I/home/cosmo/Documents/GitHub/qcore-c/private/w45-fb/w46-external-callee-contracts/attempt-1/fluent-bit-clang-source/lib/msgpack-c/include",
+      "-I/home/cosmo/Documents/GitHub/qcore-c/private/w45-fb/w46-external-callee-contracts/attempt-1/fluent-bit-clang-source/lib/zstd-1.5.7/lib",
+      "-I/home/cosmo/Documents/GitHub/qcore-c/private/w45-fb/w46-external-callee-contracts/attempt-1/fluent-bit-clang-source/lib/nghttp2-1.65.0/lib/includes",
+      "-I/home/cosmo/Documents/GitHub/qcore-c/private/w45-fb/w46-external-callee-contracts/attempt-1/fluent-bit-clang-production/lib/nghttp2",
+      "-I/home/cosmo/Documents/GitHub/qcore-c/private/w45-fb/w46-external-callee-contracts/attempt-1/fluent-bit-clang-production/lib/nghttp2/lib/includes",
+      "-I/home/cosmo/Documents/GitHub/qcore-c/private/w45-fb/w46-external-callee-contracts/attempt-1/fluent-bit-clang-source/lib/c-ares-1.34.6/include",
+      "-I/home/cosmo/Documents/GitHub/qcore-c/private/w45-fb/w46-external-callee-contracts/attempt-1/fluent-bit-clang-production/lib/c-ares-1.34.6",
+      "-std=gnu17",
+      "-Wall",
+      "-D__FLB_FILENAME__=__FILE__",
+      "-std=gnu99",
+      "-Wall",
+      "-Wextra",
+      "-D__FILENAME__=\"$$(subst /home/cosmo/Documents/GitHub/qcore-c/private/w45-fb/w46-external-callee-contracts/attempt-1/fluent-bit-clang-source/,,$$(abspath $$<))\"",
+      "-g",
+      "-std=gnu17",
+      "-fPIE",
+      "-Wa,--noexecstack",
+      "/home/cosmo/Documents/GitHub/qcore-c/private/w45-fb/w46-external-callee-contracts/attempt-1/fluent-bit-clang-source/lib/monkey/mk_bin/monkey.c",
+      "-E",
+      "-P"
+    ],
+    "cwd": "/home/cosmo/Documents/GitHub/qcore-c/private/w45-fb/w46-external-callee-contracts/attempt-1/fluent-bit-clang-production/lib/monkey/mk_bin",
+    "exit": 0,
+    "compile_database": "/media/Data/GitHub/quirin-lang/private/w45-fb/w46-external-callee-contracts/attempt-1/fluent-bit-clang-production/compile_commands.json",
+    "compile_database_sha256": "2475e6374b14152538463f35a3457ffa98fbe30b2639d5df916ef9a216cb6876",
+    "source_sha256": "b50b4435421ac28cec403e130d0dd09d25e43c6efb937ca224c811a8f4845cfc",
+    "bound_audit_command": [
+      "/home/cosmo/.codex/worktrees/808d/quirin-lang/private/cmt-disjoint-frames/tip-runtime/target/release/quirin-audit",
+      "current",
+      "--checkout",
+      "/media/Data/GitHub/quirin-lang/private/w45-fb/w46-external-callee-contracts/attempt-1/fluent-bit-clang-source",
+      "--profile-directory",
+      "/home/cosmo/.codex/worktrees/808d/quirin-lang/private/cmt-disjoint-frames/inputs/contract/profiles/fluent-bit",
+      "--compile-database",
+      "/media/Data/GitHub/quirin-lang/private/w45-fb/w46-external-callee-contracts/attempt-1/fluent-bit-clang-production/compile_commands.json",
+      "--selection",
+      "/home/cosmo/.codex/worktrees/808d/quirin-lang/private/cmt-disjoint-frames/inputs/contract/profiles/fluent-bit/system-selection.json",
+      "--jobs",
+      "3",
+      "--memory-budget-mib",
+      "7168",
+      "--report",
+      "/home/cosmo/.codex/worktrees/808d/quirin-lang/private/cmt-disjoint-frames/tip-system/resource-diagnostics.json"
+    ],
+    "bytes": 240007,
+    "sha256": "b82eaa99e4f7d51bdd673132c34c9e94418af709974be20718df131761e2b90e"
+  },
+  "descriptor_prefix_hex": "416e6f6e796d6f75735465787400476e753137005b5d005b5d005b5d00",
+  "date_literal": "Oct 26 2026",
+  "host_timezone_names": [
+    "JST",
+    "JST"
+  ],
+  "host_seconds_west_of_utc": -32400,
+  "measurement_windows_utc": {
+    "base": [
+      "2026-10-25T15:48:13.688195+00:00",
+      "2026-10-25T15:58:20.316269+00:00"
+    ],
+    "tip": [
+      "2026-10-25T22:03:45.523366+00:00",
+      "2026-10-25T22:12:48.580732+00:00"
+    ]
+  },
+  "wrong_time_negative_control": {
+    "time": "00:00:00",
+    "sha256": "790c3f30cfe024e02417bec9e89d086e015a7a714a594112739ba7b6959cfbf9",
+    "rejected": true
+  },
+  "wrong_date_negative_control": {
+    "date": "Jan  1 1970",
+    "time": "07:04:28",
+    "sha256": "8ac72b1a1866b4657898f31768f3c03123ff0f2c4952e0fdff3687b7fec813fc",
+    "rejected": true
+  },
+  "source_algorithms": [
+    "crates/qcore-c-gateway/src/loop_lifetime_source.rs:read_unit",
+    "crates/qcore-audit/src/member_prepass.rs:read_facts_in",
+    "crates/qcore-audit/src/member_prepass.rs:c_unit",
+    "crates/qcore-audit/src/compile_db.rs:compiler_options"
+  ],
+  "source_algorithms_sha256": {
+    "crates/qcore-c-gateway/src/loop_lifetime_source.rs": "707d79edbd76c7f36a62924b0d1e463e003e872b56439509c428ceb6ea4b5d3e",
+    "crates/qcore-audit/src/member_prepass.rs": "c4a807d64de37d9e5db55d373e1c73970b3124e99353c03f02887f97de3c2edb",
+    "crates/qcore-audit/src/compile_db.rs": "4b5e5cd74f2b61442a876d343fd1ab61f1c6af0958b7ae1cd83b9cdd70f5f726"
+  },
+  "source_algorithms_equal_semantic_base": true
+}
