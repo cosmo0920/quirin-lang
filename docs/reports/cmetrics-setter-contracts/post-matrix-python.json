@@ -1,0 +1,41 @@
+{
+  "head": "eedfac637d44fdd1f3823b335f8f025b2da1ecdb",
+  "measured_source": "6d88782ab6f2d17af15fb7924956bb2e1ec5dd84",
+  "changes_since_full_gate": [
+    "docs/STATUS.md",
+    "docs/development/increments/wave-48-part12.md",
+    "docs/reports/cmetrics-setter-contracts/README.md",
+    "docs/reports/cmetrics-setter-contracts/clang-version.exit",
+    "docs/reports/cmetrics-setter-contracts/clang-version.txt",
+    "docs/reports/cmetrics-setter-contracts/command-receipt.json",
+    "docs/reports/cmetrics-setter-contracts/counts.json",
+    "docs/reports/cmetrics-setter-contracts/development-attempts.json",
+    "docs/reports/cmetrics-setter-contracts/failed-gate/cmetrics-setter-models.stderr.log",
+    "docs/reports/cmetrics-setter-contracts/failed-gate/cmetrics-setter-models.stdout.log",
+    "docs/reports/cmetrics-setter-contracts/failed-gate/command-receipt.json",
+    "docs/reports/cmetrics-setter-contracts/failed-gate/counts.json",
+    "docs/reports/cmetrics-setter-contracts/gate.json",
+    "docs/reports/cmetrics-setter-contracts/source-correspondence.json",
+    "docs/reports/cmetrics-setter-contracts/superseded-attempt/cancellation.json",
+    "docs/reports/cmetrics-setter-contracts/superseded-attempt/receipt.json",
+    "docs/reports/cmetrics-setter-contracts/targeted-model-test.json",
+    "docs/reviews/r0_3/acceptance_matrix.json"
+  ],
+  "production_source_contract_proof_changes": [],
+  "command": [
+    "python3",
+    "-m",
+    "unittest",
+    "discover",
+    "-s",
+    "scripts/tests"
+  ],
+  "exit": 0,
+  "tests": 445,
+  "seconds": 37.40003294899361,
+  "log": "/home/cosmo/.codex/worktrees/808d/quirin-lang/private/cmt-map-set-val/post-matrix-1/python.log",
+  "log_sha256": "6e5baff5f89f73d9b5f27d2cf4c9df2deef2f8cbf679ffcd123738b424398b6e",
+  "matrix_sha256": "486d779ee00fa35c0ee81eec8e94776bcd8ad1d36f2cb33508f3cde9a1cf4bd4",
+  "matrix_committed": true,
+  "matrix_unchanged": true
+}

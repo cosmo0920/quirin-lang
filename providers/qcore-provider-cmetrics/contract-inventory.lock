@@ -71,6 +71,52 @@
       "premises": {},
       "sha256": "ecc6aab9be74aa57ed0842ad79f16b33000b9d10dd2834344837da502ff32436"
     },
+    "cmetrics/metric_setters.qv": {
+      "clause_count": 52,
+      "declaration_count": 9,
+      "declarations": [
+        {
+          "clauses": 8,
+          "name": "cmt_metric_set"
+        },
+        {
+          "clauses": 4,
+          "name": "cmt_metric_set_exp_hist_count"
+        },
+        {
+          "clauses": 6,
+          "name": "cmt_metric_set_exp_hist_sum"
+        },
+        {
+          "clauses": 5,
+          "name": "cmt_metric_hist_count_set"
+        },
+        {
+          "clauses": 5,
+          "name": "cmt_metric_hist_sum_set"
+        },
+        {
+          "clauses": 7,
+          "name": "cmt_metric_hist_set"
+        },
+        {
+          "clauses": 7,
+          "name": "cmt_summary_quantile_set"
+        },
+        {
+          "clauses": 5,
+          "name": "cmt_summary_sum_set"
+        },
+        {
+          "clauses": 5,
+          "name": "cmt_summary_count_set"
+        }
+      ],
+      "inherits": [],
+      "premise_bindings": [],
+      "premises": {},
+      "sha256": "1cbd66b5d9599148fbfa3278343ae2736329a58cf7b6d19e78d7c6d8e959af7e"
+    },
     "cmetrics/metric_values.qv": {
       "clause_count": 85,
       "declaration_count": 24,
@@ -230,6 +276,40 @@
       "premise_bindings": [],
       "premises": {},
       "sha256": "4b9ad1d7bf2bc8f06e2749b0e6ab4407ddd000fbc7bafed9c93d5dbd24ce1852"
+    },
+    "cmetrics/typed_setters.qv": {
+      "clause_count": 85,
+      "declaration_count": 6,
+      "declarations": [
+        {
+          "clauses": 13,
+          "name": "cmt_counter_set"
+        },
+        {
+          "clauses": 11,
+          "name": "cmt_gauge_set"
+        },
+        {
+          "clauses": 11,
+          "name": "cmt_untyped_set"
+        },
+        {
+          "clauses": 15,
+          "name": "cmt_histogram_set_default"
+        },
+        {
+          "clauses": 15,
+          "name": "cmt_summary_set_default"
+        },
+        {
+          "clauses": 20,
+          "name": "cmt_exp_histogram_set_default"
+        }
+      ],
+      "inherits": [],
+      "premise_bindings": [],
+      "premises": {},
+      "sha256": "dd8e873ac560cd67855d8582609b2242be7c86913d7977e6686a63a680206327"
     }
   },
   "outer_view": [],

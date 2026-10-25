@@ -1,0 +1,271 @@
+{
+  "head": "247867054789a3aad91f27853ebc4732bcc1bd16",
+  "cwd": "/home/cosmo/.codex/worktrees/808d/quirin-lang",
+  "started": "2026-10-25T08:53:44.010155+00:00",
+  "environment_overrides": {
+    "CARGO_BUILD_JOBS": "6",
+    "QCORE_CLANG": "/usr/lib/llvm-21/bin/clang"
+  },
+  "steps": [
+    {
+      "name": "submodules",
+      "command": [
+        "git",
+        "submodule",
+        "update",
+        "--init",
+        "--recursive"
+      ],
+      "exit": 0,
+      "seconds": 0.022627726022619754,
+      "log": "/home/cosmo/.codex/worktrees/808d/quirin-lang/private/cmetrics-setter-integration/gate-1/submodules.log",
+      "log_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "name": "clang-version",
+      "command": [
+        "/usr/lib/llvm-21/bin/clang",
+        "--version"
+      ],
+      "exit": 0,
+      "seconds": 0.015515703009441495,
+      "log": "/home/cosmo/.codex/worktrees/808d/quirin-lang/private/cmetrics-setter-integration/gate-1/clang-version.txt",
+      "log_sha256": "77467400b91c4cebb6c3e29d8a611af518a2f4078c22baf276b0a1373e996bf5"
+    },
+    {
+      "name": "fmt",
+      "command": [
+        "cargo",
+        "fmt",
+        "--all",
+        "--",
+        "--check"
+      ],
+      "exit": 0,
+      "seconds": 3.9880774049961474,
+      "log": "/home/cosmo/.codex/worktrees/808d/quirin-lang/private/cmetrics-setter-integration/gate-1/fmt.log",
+      "log_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "name": "clippy",
+      "command": [
+        "cargo",
+        "clippy",
+        "--all-targets",
+        "--",
+        "-D",
+        "warnings"
+      ],
+      "exit": 0,
+      "seconds": 5.691265830973862,
+      "log": "/home/cosmo/.codex/worktrees/808d/quirin-lang/private/cmetrics-setter-integration/gate-1/clippy.log",
+      "log_sha256": "942d1b7ed56422066f475384bdd62213f59271dfdf10b00c813dc4a76f38523b"
+    },
+    {
+      "name": "reevaluation-probe",
+      "command": [
+        "cargo",
+        "run",
+        "-p",
+        "qcore-compiler",
+        "--example",
+        "reevaluation_probe"
+      ],
+      "exit": 0,
+      "seconds": 6.3369316259922925,
+      "log": "/home/cosmo/.codex/worktrees/808d/quirin-lang/private/cmetrics-setter-integration/gate-1/reevaluation-probe.log",
+      "log_sha256": "60092f63b44065c7e86e79167ecfd9deac983d7754701781e1e7ced4a1c9cb38"
+    },
+    {
+      "name": "reevaluation-followup",
+      "command": [
+        "cargo",
+        "run",
+        "-p",
+        "qcore-compiler",
+        "--example",
+        "reevaluation_followup"
+      ],
+      "exit": 0,
+      "seconds": 0.8780288770212792,
+      "log": "/home/cosmo/.codex/worktrees/808d/quirin-lang/private/cmetrics-setter-integration/gate-1/reevaluation-followup.log",
+      "log_sha256": "b37b26b34bb093cd83377edbea9af04eb386c0bd7d725e89e54a1eee4c5910b9"
+    },
+    {
+      "name": "lean-audits",
+      "command": [
+        "python3",
+        "scripts/gate_slot.py",
+        "lean",
+        "--",
+        "python3",
+        "scripts/check_lean_audits.py",
+        "--jobs",
+        "6"
+      ],
+      "exit": 0,
+      "seconds": 15.552837231982267,
+      "log": "/home/cosmo/.codex/worktrees/808d/quirin-lang/private/cmetrics-setter-integration/gate-1/lean-audits.log",
+      "log_sha256": "0409bf91b2eb5878b0dd95e964abaaba03c22da8ddead52eb794b09815a6a3de"
+    },
+    {
+      "name": "python-tests",
+      "command": [
+        "python3",
+        "-m",
+        "unittest",
+        "discover",
+        "-s",
+        "scripts/tests"
+      ],
+      "exit": 1,
+      "seconds": 38.266975844017,
+      "log": "/home/cosmo/.codex/worktrees/808d/quirin-lang/private/cmetrics-setter-integration/gate-1/python-tests.log",
+      "log_sha256": "f8524d6cc53a1ca117c236d571cd4df572f3aed270f11c14019def4f765c51de"
+    },
+    {
+      "name": "contracts-check",
+      "command": [
+        "python3",
+        "providers/contracts.py",
+        "check"
+      ],
+      "exit": 0,
+      "seconds": 31.77355709200492,
+      "log": "/home/cosmo/.codex/worktrees/808d/quirin-lang/private/cmetrics-setter-integration/gate-1/contracts-check.log",
+      "log_sha256": "a2cfffe12a0bacd36e74eda2d5a4607f26299340ef09a45cfdc54d993f9baa53"
+    },
+    {
+      "name": "provider-fmt",
+      "command": [
+        "cargo",
+        "fmt",
+        "--manifest-path",
+        "providers/Cargo.toml",
+        "--all",
+        "--",
+        "--check"
+      ],
+      "exit": 0,
+      "seconds": 5.533544855978107,
+      "log": "/home/cosmo/.codex/worktrees/808d/quirin-lang/private/cmetrics-setter-integration/gate-1/provider-fmt.log",
+      "log_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "name": "provider-clippy",
+      "command": [
+        "cargo",
+        "clippy",
+        "--manifest-path",
+        "providers/Cargo.toml",
+        "--workspace",
+        "--all-targets",
+        "--locked",
+        "--offline",
+        "--",
+        "-D",
+        "warnings"
+      ],
+      "exit": 0,
+      "seconds": 3.254319914994994,
+      "log": "/home/cosmo/.codex/worktrees/808d/quirin-lang/private/cmetrics-setter-integration/gate-1/provider-clippy.log",
+      "log_sha256": "9c901995e4e761c8fb1f7c28b0a8fd8b2140e0b8e6b8114688cffa51d5d096da"
+    },
+    {
+      "name": "provider-python",
+      "command": [
+        "python3",
+        "-m",
+        "unittest",
+        "discover",
+        "-s",
+        "providers/tests"
+      ],
+      "exit": 0,
+      "seconds": 28.291549557005055,
+      "log": "/home/cosmo/.codex/worktrees/808d/quirin-lang/private/cmetrics-setter-integration/gate-1/provider-python.log",
+      "log_sha256": "4fd746ed9fa4be7c51c3fa79c4eb25331e36a9f05b6e1a02a564030cec2cc5cc"
+    },
+    {
+      "name": "package-build",
+      "command": [
+        "python3",
+        "providers/package.py",
+        "build",
+        "--output",
+        "/home/cosmo/.codex/worktrees/808d/quirin-lang/private/cmetrics-setter-integration/gate-1/packages"
+      ],
+      "exit": 0,
+      "seconds": 28.0692156360019,
+      "log": "/home/cosmo/.codex/worktrees/808d/quirin-lang/private/cmetrics-setter-integration/gate-1/package-build.log",
+      "log_sha256": "2e513e5881ef962923c0adaa7f89926fd08018b68a1d12655d9004553c1c26d4"
+    },
+    {
+      "name": "verify-chunkio",
+      "command": [
+        "python3",
+        "providers/package.py",
+        "verify",
+        "/home/cosmo/.codex/worktrees/808d/quirin-lang/private/cmetrics-setter-integration/gate-1/packages/qcore.chunkio"
+      ],
+      "exit": 0,
+      "seconds": 0.11156508099520579,
+      "log": "/home/cosmo/.codex/worktrees/808d/quirin-lang/private/cmetrics-setter-integration/gate-1/verify-chunkio.log",
+      "log_sha256": "f7ce231c27393556ca7f82fb47f1ee1e115bd817fdb01e017e4cd48aa7128a48"
+    },
+    {
+      "name": "verify-cmetrics",
+      "command": [
+        "python3",
+        "providers/package.py",
+        "verify",
+        "/home/cosmo/.codex/worktrees/808d/quirin-lang/private/cmetrics-setter-integration/gate-1/packages/qcore.cmetrics"
+      ],
+      "exit": 0,
+      "seconds": 0.10515066000516526,
+      "log": "/home/cosmo/.codex/worktrees/808d/quirin-lang/private/cmetrics-setter-integration/gate-1/verify-cmetrics.log",
+      "log_sha256": "5ff9a3b8ed272f4258e98a782e64f33f355de84d40adbc7e4c13f2c7077c4d36"
+    },
+    {
+      "name": "verify-ctraces",
+      "command": [
+        "python3",
+        "providers/package.py",
+        "verify",
+        "/home/cosmo/.codex/worktrees/808d/quirin-lang/private/cmetrics-setter-integration/gate-1/packages/qcore.ctraces"
+      ],
+      "exit": 0,
+      "seconds": 0.10304389899829403,
+      "log": "/home/cosmo/.codex/worktrees/808d/quirin-lang/private/cmetrics-setter-integration/gate-1/verify-ctraces.log",
+      "log_sha256": "7a6e6ccf803d0f62747b8cb927a6229206cb4c094ba639e27674854bd29774f5"
+    },
+    {
+      "name": "verify-libevent",
+      "command": [
+        "python3",
+        "providers/package.py",
+        "verify",
+        "/home/cosmo/.codex/worktrees/808d/quirin-lang/private/cmetrics-setter-integration/gate-1/packages/qcore.libevent"
+      ],
+      "exit": 0,
+      "seconds": 0.10085518300184049,
+      "log": "/home/cosmo/.codex/worktrees/808d/quirin-lang/private/cmetrics-setter-integration/gate-1/verify-libevent.log",
+      "log_sha256": "d0ba24a5989b6ccd922b95646fae11dbf05bb0041b4d48cca8e708a341c1d6bd"
+    },
+    {
+      "name": "verify-librdkafka",
+      "command": [
+        "python3",
+        "providers/package.py",
+        "verify",
+        "/home/cosmo/.codex/worktrees/808d/quirin-lang/private/cmetrics-setter-integration/gate-1/packages/qcore.librdkafka"
+      ],
+      "exit": 0,
+      "seconds": 0.1481548990122974,
+      "log": "/home/cosmo/.codex/worktrees/808d/quirin-lang/private/cmetrics-setter-integration/gate-1/verify-librdkafka.log",
+      "log_sha256": "37d1a62873f4a1f0835cfe1dd1c52f8f6aca5f77c670449669d0d51a07d1ee75"
+    }
+  ],
+  "finished": "2026-10-25T08:56:32.959817+00:00",
+  "exit": 1
+}

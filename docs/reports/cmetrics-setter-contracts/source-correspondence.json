@@ -1,0 +1,179 @@
+{
+  "measured_contract_commit": "6d88782ab6f2d17af15fb7924956bb2e1ec5dd84",
+  "reviewed_revision": "66910c10a4d7eafa810b84229cf2dcf7b0f26f97",
+  "all_19_working_source_files_equal_reviewed_git_blobs": true,
+  "model_modules": {
+    "cmetrics/metric_setters.qv": "1cbd66b5d9599148fbfa3278343ae2736329a58cf7b6d19e78d7c6d8e959af7e",
+    "cmetrics/typed_setters.qv": "dd8e873ac560cd67855d8582609b2242be7c86913d7977e6686a63a680206327"
+  },
+  "new_declarations": [
+    {
+      "function": "cmt_metric_set",
+      "model_module": "cmetrics/metric_setters.qv",
+      "model_clauses": 8,
+      "source_body": {
+        "path": "lib/cmetrics/src/cmt_metric.c",
+        "first_line": 66,
+        "last_line": 69,
+        "body_sha256": "19360958a80caa207028f6114aeacd2ba2ec97aa620253397f0217af9abe6224"
+      }
+    },
+    {
+      "function": "cmt_metric_set_exp_hist_count",
+      "model_module": "cmetrics/metric_setters.qv",
+      "model_clauses": 4,
+      "source_body": {
+        "path": "lib/cmetrics/src/cmt_metric.c",
+        "first_line": 280,
+        "last_line": 283,
+        "body_sha256": "5bccf7afc9c3da0c43756d8d6a2fed3b7ac0e187dc1fc6b986dbec57817ba85b"
+      }
+    },
+    {
+      "function": "cmt_metric_set_exp_hist_sum",
+      "model_module": "cmetrics/metric_setters.qv",
+      "model_clauses": 6,
+      "source_body": {
+        "path": "lib/cmetrics/src/cmt_metric.c",
+        "first_line": 285,
+        "last_line": 295,
+        "body_sha256": "04a80b7769450090d2deb566681b1d8f9ba5eaf9dae7ce01328c37e8e4538586"
+      }
+    },
+    {
+      "function": "cmt_metric_hist_count_set",
+      "model_module": "cmetrics/metric_setters.qv",
+      "model_clauses": 5,
+      "source_body": {
+        "path": "lib/cmetrics/src/cmt_metric_histogram.c",
+        "first_line": 108,
+        "last_line": 122,
+        "body_sha256": "f84cbb07ef2ffe2af7e24ebc740fba3e4f5c6e4b1e6cfa3f47b0822aca903255"
+      }
+    },
+    {
+      "function": "cmt_metric_hist_sum_set",
+      "model_module": "cmetrics/metric_setters.qv",
+      "model_clauses": 5,
+      "source_body": {
+        "path": "lib/cmetrics/src/cmt_metric_histogram.c",
+        "first_line": 139,
+        "last_line": 152,
+        "body_sha256": "9110de4a1ade0a2c243219e18e501042b1e94d184eecd68263094c76dc347ea4"
+      }
+    },
+    {
+      "function": "cmt_metric_hist_set",
+      "model_module": "cmetrics/metric_setters.qv",
+      "model_clauses": 7,
+      "source_body": {
+        "path": "lib/cmetrics/src/cmt_metric_histogram.c",
+        "first_line": 154,
+        "last_line": 168,
+        "body_sha256": "2a61c5b398d1744d910498113fce73a3459f7bbbbd4d69660b14c86975682846"
+      }
+    },
+    {
+      "function": "cmt_summary_quantile_set",
+      "model_module": "cmetrics/metric_setters.qv",
+      "model_clauses": 7,
+      "source_body": {
+        "path": "lib/cmetrics/src/cmt_summary.c",
+        "first_line": 217,
+        "last_line": 235,
+        "body_sha256": "70a21a2c4f84d926400a27078cf2736b9cc76d7b177e38989811c6e190d56371"
+      }
+    },
+    {
+      "function": "cmt_summary_sum_set",
+      "model_module": "cmetrics/metric_setters.qv",
+      "model_clauses": 5,
+      "source_body": {
+        "path": "lib/cmetrics/src/cmt_summary.c",
+        "first_line": 237,
+        "last_line": 249,
+        "body_sha256": "e392586498e3b04be966e1b967e7748b58be6faa6ca75d93d1527d6c61973574"
+      }
+    },
+    {
+      "function": "cmt_summary_count_set",
+      "model_module": "cmetrics/metric_setters.qv",
+      "model_clauses": 5,
+      "source_body": {
+        "path": "lib/cmetrics/src/cmt_summary.c",
+        "first_line": 251,
+        "last_line": 265,
+        "body_sha256": "a33a9aa0989280be9bf13a1aec1982568a90f615bb485f560e8d4361ac5b1183"
+      }
+    },
+    {
+      "function": "cmt_counter_set",
+      "model_module": "cmetrics/typed_setters.qv",
+      "model_clauses": 13,
+      "source_body": {
+        "path": "lib/cmetrics/src/cmt_counter.c",
+        "first_line": 138,
+        "last_line": 161,
+        "body_sha256": "e0bd1e685270b2870d0b8e9d2bd4381860488a233ecad2da5337c288acc690fe"
+      }
+    },
+    {
+      "function": "cmt_gauge_set",
+      "model_module": "cmetrics/typed_setters.qv",
+      "model_clauses": 11,
+      "source_body": {
+        "path": "lib/cmetrics/src/cmt_gauge.c",
+        "first_line": 94,
+        "last_line": 109,
+        "body_sha256": "ee23a54ed2fcf6a5f6310cb8b2a0a4100a534a0ba346f07dd99f0b324fbce91c"
+      }
+    },
+    {
+      "function": "cmt_untyped_set",
+      "model_module": "cmetrics/typed_setters.qv",
+      "model_clauses": 11,
+      "source_body": {
+        "path": "lib/cmetrics/src/cmt_untyped.c",
+        "first_line": 100,
+        "last_line": 117,
+        "body_sha256": "2d3c169b08cd689efe7f960635678df7ca434fa8cb9d528a94617ea1d721bffb"
+      }
+    },
+    {
+      "function": "cmt_histogram_set_default",
+      "model_module": "cmetrics/typed_setters.qv",
+      "model_clauses": 15,
+      "source_body": {
+        "path": "lib/cmetrics/src/cmt_histogram.c",
+        "first_line": 370,
+        "last_line": 403,
+        "body_sha256": "1c46fe08677b132a0de9520fef9ea8dc3bcf9791b19bc1e3b2882c86d715e019"
+      }
+    },
+    {
+      "function": "cmt_summary_set_default",
+      "model_module": "cmetrics/typed_setters.qv",
+      "model_clauses": 15,
+      "source_body": {
+        "path": "lib/cmetrics/src/cmt_summary.c",
+        "first_line": 267,
+        "last_line": 312,
+        "body_sha256": "5d02f48ddc5ceb353407e628d50a872ecd414a606e2635dc8bb647d4e3ff866f"
+      }
+    },
+    {
+      "function": "cmt_exp_histogram_set_default",
+      "model_module": "cmetrics/typed_setters.qv",
+      "model_clauses": 20,
+      "source_body": {
+        "path": "lib/cmetrics/src/cmt_exp_histogram.c",
+        "first_line": 102,
+        "last_line": 200,
+        "body_sha256": "e92a17640e86ccc96c6ae3f9cba850d9b6e0ed822fe964cd7e29227cb3f8d082"
+      }
+    }
+  ],
+  "clause_total": 137,
+  "model_binding": "Source inspection and finite abstract Rust/Lean controls; not extraction or C refinement",
+  "unchanged_interpreted_module_sha256": "c3db21d15d98e12fdf11fe6ffe3de98f674c94625256a94b3270f9db73be1a43"
+}

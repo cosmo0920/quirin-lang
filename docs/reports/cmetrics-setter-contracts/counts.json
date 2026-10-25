@@ -1,0 +1,27 @@
+{
+  "root": {
+    "units": 553,
+    "passed": 8663,
+    "failed": 0,
+    "ignored": 15,
+    "measured": 0,
+    "filtered": 0,
+    "summaries": 566
+  },
+  "provider": {
+    "passed": 133,
+    "failed": 0,
+    "ignored": 1
+  },
+  "root_python": 445,
+  "provider_python": 25,
+  "lean": 372,
+  "new_model_declarations": 15,
+  "new_clauses": 137,
+  "canonical_modules": 142,
+  "provider_owned_modules": 88,
+  "shared_modules": 54,
+  "resource_modules": 66,
+  "resource_declarations": 497,
+  "non_v1_declarations": 357
+}

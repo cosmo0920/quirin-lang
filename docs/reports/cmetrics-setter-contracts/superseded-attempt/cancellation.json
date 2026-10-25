@@ -1,0 +1,8 @@
+{
+  "stopped_own_coordinator": 888721,
+  "stopped_own_unlaunched_waiter": 925147,
+  "parent_command": "python3 private/cmt-map-set-val/standing_gate.py ",
+  "waiter_command": "python3 scripts/gate_slot.py rust-suite -- python3 scripts/run_test_binaries.py --jobs 6 --log-dir /home/cosmo/.codex/worktrees/808d/quirin-lang/private/cmt-map-set-val/standing-1/rust-binaries ",
+  "reason": "Correct contract writer-coordination precondition before any Rust tests launch; retain first 18 checks on old source",
+  "rust_tests_launched": false
+}

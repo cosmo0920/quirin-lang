@@ -1,0 +1,42 @@
+{
+  "head": "510ad599cb9dfaae13e15b6ace4d15662c71a356",
+  "gate_exit": 1,
+  "root": {
+    "units": 553,
+    "passed": 8662,
+    "failed": 1,
+    "ignored": 15,
+    "measured": 0,
+    "filtered": 0,
+    "summaries": 566
+  },
+  "failed_units": [
+    {
+      "uid": "qcore-contract::test::cmetrics_setter_models",
+      "executable": "/home/cosmo/.codex/worktrees/808d/quirin-lang/target/debug/deps/cmetrics_setter_models-227c6a04d3d06452",
+      "exclusive": false,
+      "ok": false,
+      "returncode": 101,
+      "signal": null,
+      "error": null,
+      "seconds": 0.007,
+      "summaries": [
+        {
+          "status": "FAILED",
+          "passed": 2,
+          "failed": 1,
+          "ignored": 0,
+          "measured": 0,
+          "filtered": 0
+        }
+      ],
+      "tests": [
+        "test failure_after_lookup_does_not_rollback_parent_owned_children ... ok",
+        "test setter_models_cover_existing_apis_and_refuse_interpreted_permissions ... FAILED",
+        "test shared_setter_lifecycle_vectors_match_audited_lean ... ok"
+      ],
+      "stdout_log": "/home/cosmo/.codex/worktrees/808d/quirin-lang/private/cmt-map-set-val/standing-2/rust-binaries/qcore-contract_test_cmetrics_setter_models.stdout.log",
+      "stderr_log": "/home/cosmo/.codex/worktrees/808d/quirin-lang/private/cmt-map-set-val/standing-2/rust-binaries/qcore-contract_test_cmetrics_setter_models.stderr.log"
+    }
+  ]
+}

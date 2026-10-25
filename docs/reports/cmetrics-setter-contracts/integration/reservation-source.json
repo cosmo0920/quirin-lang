@@ -1,0 +1,5 @@
+{
+  "original_queued_source": "247867054",
+  "actual_measured_source": "17b15ec24990f53690f0311be0ddb8dcf46f3c75",
+  "reason": "Main advanced while reservation waited; freeze updated merge before any Rust suite launches"
+}

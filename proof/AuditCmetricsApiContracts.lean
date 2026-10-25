@@ -15,3 +15,11 @@ import QCore.CmetricsApiContracts
 #print axioms QCore.CmetricsApiContracts.expiration_invalidates_an_old_borrow_epoch
 #print axioms QCore.CmetricsApiContracts.parsed_model_is_not_a_trusted_call
 #print axioms QCore.CmetricsApiContracts.shared_vectors
+#print axioms QCore.CmetricsApiContracts.refused_counter_keeps_lookup_effects
+#print axioms QCore.CmetricsApiContracts.counter_success_preserves_map_ownership
+#print axioms QCore.CmetricsApiContracts.preparation_failure_preserves_old_array_ownership
+#print axioms QCore.CmetricsApiContracts.replacement_retires_every_old_array
+#print axioms QCore.CmetricsApiContracts.replacement_invalidates_old_array_borrow
+#print axioms QCore.CmetricsApiContracts.replacement_preserves_metric_parent
+#print axioms QCore.CmetricsApiContracts.null_quantile_input_preserves_flag
+#print axioms QCore.CmetricsApiContracts.shared_setter_vectors

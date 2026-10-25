@@ -67,8 +67,8 @@ class CanonicalCorpus(unittest.TestCase):
         # 137 -> 138: W48-RK-LOG-CALLER-FRAME's librdkafka/log_caller_frame.qv
         # in qcore-provider-librdkafka (83 -> 84 owned).
         # Source-audited map/opts models add two CMetrics-owned modules.
-        self.assertEqual(len(modules), 140)
-        self.assertEqual(sum(any(part.startswith("qcore-provider-") for part in path.parts) for path in modules.values()), 86)
+        self.assertEqual(len(modules), 142)
+        self.assertEqual(sum(any(part.startswith("qcore-provider-") for part in path.parts) for path in modules.values()), 88)
         self.assertEqual(sum(any(part.startswith("quirin-provider-") for part in path.parts) for path in modules.values()), 54)
         libc = [path for name, path in modules.items() if name.startswith("libc/")]
         self.assertTrue(libc and all("quirin-provider-libc" in path.parts for path in libc))

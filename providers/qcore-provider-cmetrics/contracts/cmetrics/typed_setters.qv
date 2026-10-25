@@ -1,0 +1,135 @@
+module contract;
+
+// Complete-call exclusion covers the typed owner (if any), selected metric
+// and storage used by the call: conflicting writers/raw readers, replacement,
+// expiration and destruction. Internal locks do not supply this caller guard.
+
+// Source-audited declared models, no interpreted call permission.
+// Fluent Bit 66910c10a4d7eafa810b84229cf2dcf7b0f26f97:
+// cmt_{counter,gauge,untyped,histogram,summary,exp_histogram}.c and headers.
+// The named getter obligations are the complete cmt_map_metric_get contract
+// in map_lifetime.qv, including static hash-zero storage accounting.
+// A writable result of lookup is a borrow, never fresh caller ownership.
+// Logging/backend validity and C extraction/model correspondence are premises.
+
+extern fn cmt_counter_set(counter: ptr<mut, u8>, timestamp: u64, val: f64,
+                          labels_count: i32, label_vals: ptr<mut, ptr<mut, u8>>) -> i32
+contract {
+    requires counter_is_live_with_matching_opts_map_parent_and_counter_tag;
+    requires map_and_lookup_inputs_meet_the_getter_representation_obligations;
+    requires caller_excludes_retirement_and_conflicting_metric_users_for_the_complete_call;
+    requires val_has_defined_C_double_to_int64_and_uint64_conversions;
+    requires failure_logging_context_strings_and_backend_are_valid;
+    ensures normal result_is_zero_or_minus_one;
+    ensures normal lookup_is_called_with_write_op_true;
+    ensures normal minus_one_may_retain_committed_lookup_changes;
+    ensures normal lookup_failure_performs_no_following_scalar_set;
+    ensures normal decrease_with_allow_reset_zero_returns_minus_one_without_scalar_set;
+    ensures normal zero_result_sets_double_value_mirrors_type_and_timestamp;
+    ensures normal no_counter_map_or_metric_ownership_is_transferred;
+    ensures normal no_coherent_multi_field_snapshot_or_counter_compare_set_is_promised;
+};
+
+extern fn cmt_gauge_set(gauge: ptr<mut, u8>, timestamp: u64, val: f64,
+                        labels_count: i32, label_vals: ptr<mut, ptr<mut, u8>>) -> i32
+contract {
+    requires gauge_is_live_with_matching_opts_map_parent_and_gauge_tag;
+    requires map_and_lookup_inputs_meet_the_getter_representation_obligations;
+    requires caller_excludes_retirement_and_conflicting_metric_users_for_the_complete_call;
+    requires val_has_defined_C_double_to_int64_and_uint64_conversions;
+    requires failure_logging_context_strings_and_backend_are_valid;
+    ensures normal result_is_zero_or_minus_one;
+    ensures normal lookup_is_called_with_write_op_true;
+    ensures normal minus_one_may_retain_committed_lookup_changes_without_scalar_set;
+    ensures normal zero_result_sets_double_value_mirrors_type_and_timestamp;
+    ensures normal no_gauge_map_or_metric_ownership_is_transferred;
+    ensures normal no_coherent_multi_field_snapshot_is_promised;
+};
+
+extern fn cmt_untyped_set(untyped: ptr<mut, u8>, timestamp: u64, val: f64,
+                          labels_count: i32, label_vals: ptr<mut, ptr<mut, u8>>) -> i32
+contract {
+    requires untyped_is_live_with_matching_opts_map_parent_and_untyped_tag;
+    requires map_and_lookup_inputs_meet_the_getter_representation_obligations;
+    requires caller_excludes_retirement_and_conflicting_metric_users_for_the_complete_call;
+    requires val_has_defined_C_double_to_int64_and_uint64_conversions;
+    requires failure_logging_context_strings_and_backend_are_valid;
+    ensures normal result_is_zero_or_minus_one;
+    ensures normal lookup_is_called_with_write_op_true;
+    ensures normal minus_one_may_retain_committed_lookup_changes_without_scalar_set;
+    ensures normal zero_result_sets_double_value_mirrors_type_and_timestamp;
+    ensures normal no_untyped_map_or_metric_ownership_is_transferred;
+    ensures normal no_coherent_multi_field_snapshot_is_promised;
+};
+
+extern fn cmt_histogram_set_default(histogram: ptr<mut, u8>, timestamp: u64,
+                                    bucket_defaults: ptr<mut, u64>, sum: f64, count: u64,
+                                    labels_count: i32, label_vals: ptr<mut, ptr<mut, u8>>) -> i32
+contract {
+    requires histogram_is_live_with_matching_opts_map_parent_and_histogram_tag;
+    requires map_and_lookup_inputs_meet_the_getter_representation_obligations;
+    requires histogram_bucket_count_plus_one_and_allocation_sizes_fit_size_t_and_int_loop;
+    requires bucket_defaults_has_count_plus_one_stable_readable_u64_entries;
+    requires target_hist_buckets_is_null_or_owns_count_plus_one_writable_entries;
+    requires converted_bucket_defaults_have_defined_double_to_uint64_conversion;
+    requires input_arrays_are_disjoint_from_lookup_and_setter_mutation_footprints;
+    requires caller_excludes_retirement_and_conflicting_metric_users_for_the_complete_call;
+    requires failure_logging_context_strings_formats_and_backend_are_valid;
+    ensures normal result_is_zero_or_minus_one;
+    ensures normal minus_one_may_retain_lookup_or_storage_preparation_changes;
+    ensures normal zero_result_sets_all_count_plus_one_buckets_sum_count_and_timestamp;
+    ensures normal bucket_counts_follow_u64_to_double_to_u64_conversion_not_exact_copy;
+    ensures normal new_hist_bucket_storage_is_metric_owned_and_inputs_are_not_retained;
+    ensures normal no_whole_histogram_atomic_snapshot_is_promised;
+};
+
+extern fn cmt_summary_set_default(summary: ptr<mut, u8>, timestamp: u64,
+                                  quantile_values: ptr<mut, f64>, sum: f64, count: u64,
+                                  labels_count: i32, label_vars: ptr<mut, ptr<mut, u8>>) -> i32
+contract {
+    requires summary_is_live_with_matching_opts_map_parent_and_summary_tag;
+    requires map_and_lookup_inputs_meet_the_getter_representation_obligations;
+    requires quantiles_count_and_allocation_sizes_fit_size_t_and_int_loop;
+    requires present_quantile_values_has_quantiles_count_stable_readable_entries;
+    requires existing_quantile_storage_has_valid_owned_extent_and_count;
+    requires input_arrays_are_disjoint_from_lookup_and_setter_mutation_footprints;
+    requires caller_excludes_retirement_and_conflicting_metric_users_for_the_complete_call;
+    requires failure_logging_context_strings_and_backend_are_valid;
+    ensures normal result_is_zero_or_minus_one;
+    ensures normal minus_one_may_retain_lookup_or_storage_preparation_changes;
+    ensures normal zero_result_sets_sum_count_and_timestamp;
+    ensures normal present_input_sets_quantiles_flag_and_each_admitted_quantile_slot;
+    ensures normal null_input_preserves_quantile_values_and_set_flag_but_may_prepare_storage;
+    ensures normal new_quantile_storage_is_metric_owned_and_input_is_not_retained;
+    ensures normal no_whole_summary_atomic_snapshot_is_promised;
+};
+
+// LP64 projection: size_t is u64. This module grants no ABI or call permission.
+extern fn cmt_exp_histogram_set_default(exp_histogram: ptr<mut, u8>, timestamp: u64,
+    scale: i32, zero_count: u64, zero_threshold: f64,
+    positive_offset: i32, positive_bucket_count: u64, positive_bucket_counts: ptr<mut, u64>,
+    negative_offset: i32, negative_bucket_count: u64, negative_bucket_counts: ptr<mut, u64>,
+    sum_set: i32, sum: f64, count: u64,
+    labels_count: i32, label_vals: ptr<mut, ptr<mut, u8>>) -> i32
+contract {
+    requires size_t_matches_the_declared_u64_ABI_projection;
+    requires histogram_is_live_with_matching_opts_map_parent_and_exp_histogram_tag;
+    requires map_and_lookup_inputs_meet_the_getter_representation_obligations;
+    requires present_input_arrays_have_stable_readable_declared_u64_extents;
+    requires allocation_and_memcpy_sizes_fit_size_t;
+    requires old_positive_and_negative_arrays_are_distinct_exclusive_owned_or_null;
+    requires input_arrays_are_disjoint_from_lookup_and_setter_mutation_footprints;
+    requires all_old_array_borrowers_and_retirement_are_externally_coordinated;
+    requires caller_excludes_retirement_and_conflicting_metric_users_for_the_complete_call;
+    requires exp_hist_lock_backend_and_failure_logging_are_valid;
+    ensures normal result_is_zero_or_minus_one;
+    ensures normal positive_count_with_null_input_returns_minus_one_after_possible_lookup_changes;
+    ensures normal preparation_failure_preserves_old_arrays_and_frees_temporary_copies;
+    ensures normal minus_one_does_not_imply_lookup_rollback;
+    ensures normal zero_result_installs_fresh_owned_copies_or_null_for_zero_counts;
+    ensures normal zero_result_sets_scale_zero_fields_offsets_counts_sum_flag_sum_and_timestamp;
+    ensures normal old_arrays_are_freed_after_swap_and_unlock_and_old_aliases_are_invalidated;
+    ensures normal input_array_ownership_is_preserved_and_input_pointers_are_not_retained;
+    ensures normal map_metric_and_enclosing_histogram_ownership_are_preserved;
+    ensures normal internal_array_lock_does_not_supply_retirement_or_raw_alias_lifetime;
+};
