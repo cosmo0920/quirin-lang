@@ -501,6 +501,8 @@ Regenerate with `python3 scripts/build_docs_index.py`; validate with `--check`.
 
 | [generalization-integration-20260907](generalization-integration-20260907/README.md) | Generalization integration checkpoint — 2026-09-07 |
 
+| [generated-roots](generated-roots/README.md) | GENERATED-ROOTS: generated Lean roots and rule documents |
+
 | [guarded-contract-adoption](guarded-contract-adoption/README.md) | Guarded production contract adoption |
 
 ## H

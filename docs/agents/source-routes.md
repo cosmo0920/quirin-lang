@@ -3,6 +3,8 @@
 Current rule text, routed by the [rule router](README.md), which says what to
 read. Rule numbers and anchors are stable; backticked paths are repository-relative.
 
+<!-- generated:rules:start — edit docs/agents/rules/<id>.md, then run python3 scripts/gen_rule_docs.py -->
+
 <a id="constraint-13"></a>
 
 <!-- preserved:constraint-13:start -->
@@ -205,6 +207,8 @@ read. Rule numbers and anchors are stable; backticked paths are repository-relat
     28): the Rust rows are the Lean `driverTable`'s, in order (pinned by
     `the_table_is_the_pinned_order` and `closure_rules_follow_the_table`),
     and the selectors are pure.
+
+<!-- generated:rules:end -->
 
 <a id="amendments-after-the-migration-checkpoint"></a>
 

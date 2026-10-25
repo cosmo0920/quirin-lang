@@ -3,6 +3,8 @@
 Current rule text, routed by the [rule router](README.md), which says what to
 read. Rule numbers and anchors are stable; backticked paths are repository-relative.
 
+<!-- generated:rules:start — edit docs/agents/rules/<id>.md, then run python3 scripts/gen_rule_docs.py -->
+
 <a id="constraint-16"></a>
 
 <!-- preserved:constraint-16:start -->
@@ -338,6 +340,8 @@ read. Rule numbers and anchors are stable; backticked paths are repository-relat
     (`an_observation_implies_the_join` and five more).
     `quota-procs-descriptor-dup-fail-open`.
 <!-- preserved:constraint-26:end -->
+
+<!-- generated:rules:end -->
 
 ## Amendment: included contract parents in packages (CONTRACT-INHERIT)
 

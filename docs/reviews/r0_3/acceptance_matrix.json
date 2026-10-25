@@ -195,7 +195,7 @@
   "ct_stage_names": 20,
   "ct_cells": 1000,
   "unverified_spec_items": 10,
-  "named_followups": 827
+  "named_followups": 828
  },
  "derivation": {
   "rule": "no count in a section this file marks `derived` is hand-copied from a status ledger; each is read from the manifest or validated run record named beside it. Sections marked `hand_maintained` are recorded analysis carried verbatim from the previous matrix, and `integrator_supplied` numbers name whether they were measured for this run or carried - see section_ownership.",
@@ -6858,10 +6858,10 @@
   "note": "providers/ is a separate Cargo workspace, excluded from the core workspace; P01 verified empirically that the core workspace builds and passes its full suite with providers/ moved out of the tree."
  },
  "validation": {
-  "note": "Full LANDING gate for GATE-ELASTIC at integration commit 66aa16683 (merge of card/gate-elastic bbd0e48d0 onto main 52c8dd71b), run with the card's own `scripts/gate_scope.py --base 52c8dd71b --full --no-slots` under the legacy lock in a detached worktree; logs and gate.json retired to private/retired-worktrees/2026-10-25-landing-gate-66aa16683/. fmt, Clippy -D warnings, Rust 8645 passed/0 failed/15 ignored (550 units/563 summaries), both reevaluation examples and 370 Lean audits exit 0. The Python suite failed exactly one test, the committed-matrix self-consistency check (dimensions.named_followups 820 vs 827), because the seven registered follow-ups were applied before this regeneration; this regeneration closes it and Python is rerun against the committed matrix. providers/ is unchanged relative to main 52c8dd71b, whose own landing ran the provider gate: provider_tests 133 is carried.",
+  "note": "Integration of GENERATED-ROOTS: main fast-forwarded to card tip f864a7ecf, which contains main 1e3967b97 (merge 9caee67ba). The card's full standing gate ran ON THE MERGED TIP 9caee67ba through `scripts/gate_scope.py --base main --full` with gate slots (docs/reports/generated-roots/gate/gate.json): fmt, Clippy, Rust 8645 passed/0 failed/15 ignored (550 units/563 summaries), both reevaluation examples, 370 Lean audits (AuditAll over 102,367 declarations), 443 Python, all exit 0. f864a7ecf adds only the gate record; integration adds records only, with Python rerun against the committed matrix. providers/ unchanged: provider_tests 133 carried.",
   "workspace_tests": 8645,
   "provider_tests": 133,
-  "python_evidence_validator_tests": 432,
+  "python_evidence_validator_tests": 443,
   "lean_audits": 370,
   "lean_audit_files": [
    "AuditAbiEnumConstPointer.lean",
@@ -7239,9 +7239,9 @@
   "reevaluation_followup_exit": 0,
   "cargo_fmt": "clean",
   "cargo_clippy": "clean",
-  "standing_gate": "full landing gate at 66aa16683; Python rerun after matrix regeneration",
+  "standing_gate": "full gate on merged tip 9caee67ba",
   "full_language_conformance": false,
-  "measurement_provenance": "integrator_supplied (docs/reports/gate-elastic/integration/gate.json)"
+  "measurement_provenance": "integrator_supplied (docs/reports/generated-roots/integration/gate.json)"
  },
  "named_followups": [
   {
@@ -12979,6 +12979,12 @@
    "title": "No scoped (non-full) gate run, gate_lean.py against Lake, or live slot job has completed yet",
    "why": "Card GATE-ELASTIC's own diff selects full mode, so its gate exercised gate_scope.py's full path only; the live demonstration of gate_slot.py rust-suite with run_test_binaries.py --packages qcorec,quirin-audit-plugin-libevent and of gate_slot.py lean with gate_lean.py waited about four hours behind legacy-lock jobs and was stopped (logs in that worktree's private/ge/demo*-attempt/). The restricted runner, slot accounting and gate_lean's refusals are covered by unit tests with real flock locks, not by a completed run. DISCHARGE: the first card that lands on the scoped gate in scoped mode with a Lean module step, under slots, publishes its gate.json and slot receipts, and its totals are checked against the units its --packages selection should build.",
    "source": "docs/reports/gate-elastic/README.md"
+  },
+  {
+   "id": "RULE-AMENDMENTS-OUTSIDE-RULE-FILES",
+   "title": "Rule amendments still live outside their rule files",
+   "why": "After GENERATED-ROOTS each router-indexed constraint is one docs/agents/rules/<id>.md, but amendment sections that qualify a rule remain hand-edited topic-page text outside the generated section: buffers-records.md and source-routes.md (constraint-15k-amendments, constraint-14-amendments and post-migration sections), effects.md's amendment to 15m, diagnostics.md's namespace and amendment sections, providers.md's CONTRACT-INHERIT amendment, and the trailing sections of concurrency.md, evidence.md, source-identity.md and validation.md. DISCHARGE: each is folded into its rule file or registered as its own rule, so the rule file is the rule's whole authority.",
+   "source": "docs/reports/generated-roots/README.md"
   }
  ],
  "updated": "Completed plugin premise integration; exact hand-maintained union retains810followups, borrowed measured-source8419Rust/354Lean/freshcard133provider, exact source equivalence checked; authoritative root committed-matrix Python confirmation in integration receipt."

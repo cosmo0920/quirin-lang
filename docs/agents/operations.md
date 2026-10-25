@@ -103,6 +103,15 @@ up front:
 7. Time budget, when cards run in parallel: an advisory wall-clock budget
    the card paces itself against, not a stop rule.
 
+A card adds files rather than editing shared roots. A new rule is a new
+`docs/agents/rules/<id>.md` ([format](rules/README.md)); a new Lean module is
+`proof/QCore/<Module>.lean` with its own `proof/Audit<Module>.lean`. Then run
+`python3 scripts/gen_rule_docs.py` and `python3 scripts/gen_lean_roots.py` and
+commit what they write: the topic pages' constraint sections, the router's
+stable index, `proof/QCore.lean` and `proof/AuditAll.lean` are generated, and
+the Python suite fails on a hand edit. A merge conflict in a generated file is
+resolved by rerunning its generator.
+
 Split work into cards by the Working rules' delegation test, one card per
 large, independent track. The gate and the integration measurement are the
 checks, so no card or subagent is spawned to recheck another's work. A card's
