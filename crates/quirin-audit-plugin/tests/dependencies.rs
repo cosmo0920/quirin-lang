@@ -53,7 +53,11 @@ fn closures() -> BTreeMap<String, BTreeSet<String>> {
         .map(|node| (node["id"].as_str().unwrap(), node))
         .collect();
     let mut result = BTreeMap::new();
-    for root_name in ["quirin-audit-plugin", "quirin-audit-plugin-libevent"] {
+    for root_name in [
+        "quirin-audit-plugin",
+        "quirin-audit-plugin-libevent",
+        "quirin-audit-plugin-measure",
+    ] {
         let root = names
             .iter()
             .find(|(_, name)| **name == root_name)
@@ -97,6 +101,12 @@ fn the_sdk_links_no_core_analysis_crate_and_the_plugin_only_the_sdk() {
     );
     assert_eq!(
         closures["quirin-audit-plugin-libevent"],
+        BTreeSet::from(["qcore-schemas".to_owned(), "quirin-audit-plugin".to_owned()])
+    );
+    // Card MEASURE-TOOL: the measurement plugin reads components through
+    // `qcore_schemas::composition` and links no core analysis crate.
+    assert_eq!(
+        closures["quirin-audit-plugin-measure"],
         BTreeSet::from(["qcore-schemas".to_owned(), "quirin-audit-plugin".to_owned()])
     );
 }
