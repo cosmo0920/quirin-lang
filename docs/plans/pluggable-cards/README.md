@@ -323,7 +323,7 @@ current structure first and are migrated in P2 like the others.
 
 ## 6. Decisions
 
-Decided by the user on 2026-10-24 and 2026-10-25 (items 1–9); one remains open (9a).
+Decided by the user on 2026-10-24, 2026-10-25 and 2026-10-26 (items 1–9 and 9a).
 
 1. **Contract pins as lock files**: yes. Literal count tables become readers of
    generated locks; a contract change is an intentional lock diff in the same
@@ -346,9 +346,13 @@ Decided by the user on 2026-10-24 and 2026-10-25 (items 1–9); one remains open
    compile-time read compiles in (`--reader-granularity file`, the default);
    `directory` remains available as the conservative reading.
 9. **Semigroup integration and newer-stamp supersession**: yes (seam G).
-   **Open, 9a: stamp migration.** Recommended: re-pin every provider once so
-   each declaration gets a reviewed `pinned_at`; alternative: back-fill the
-   lock's generation time.
+   **9a, stamp migration** (decided 2026-10-26): re-pin every provider once
+   against the latest Fluent Bit revision, so each declaration gets a reviewed
+   `pinned_at` (back-filling the lock's generation time was rejected). Pin lock
+   sets are tied to a Fluent Bit revision and kept in a rolling window of three
+   revisions (the latest and the two before it); each re-base adds a set and
+   retires the oldest. Frozen cycles outside the window keep their report
+   evidence but no live lock.
 
 ## 7. Risks and boundaries
 
