@@ -1,0 +1,2918 @@
+{
+ "route": "corpus",
+ "left": "/media/Data/GitHub/quirin-lang/.claude/worktrees/agent-af4406ebe7df9c0d1/private/acp/runs2/base-mirror/corpus",
+ "right": "/media/Data/GitHub/quirin-lang/.claude/worktrees/agent-af4406ebe7df9c0d1/private/acp/runs2/tip-original/corpus",
+ "substitution": [
+  {
+   "from": "/home/cosmo/Documents/GitHub/qcore-c/build/cycle19/c-gateway-wave-pin/fluent-bit-clang-source",
+   "to": "/media/Data/GitHub/quirin-lang/.claude/worktrees/agent-af4406ebe7df9c0d1/private/acp/mirror/c-gateway-wave-pin/fluent-bit-clang-source"
+  },
+  {
+   "from": "/media/Data/GitHub/quirin-lang/build/cycle19/c-gateway-wave-pin/fluent-bit-clang-source",
+   "to": "/media/Data/GitHub/quirin-lang/.claude/worktrees/agent-af4406ebe7df9c0d1/private/acp/mirror/c-gateway-wave-pin/fluent-bit-clang-source"
+  },
+  {
+   "from": "/home/cosmo/Documents/GitHub/qcore-c/build/cycle19/c-gateway-wave-pin/monkey",
+   "to": "/media/Data/GitHub/quirin-lang/.claude/worktrees/agent-af4406ebe7df9c0d1/private/acp/mirror/c-gateway-wave-pin/monkey"
+  },
+  {
+   "from": "/media/Data/GitHub/quirin-lang/build/cycle19/c-gateway-wave-pin/monkey",
+   "to": "/media/Data/GitHub/quirin-lang/.claude/worktrees/agent-af4406ebe7df9c0d1/private/acp/mirror/c-gateway-wave-pin/monkey"
+  },
+  {
+   "from": "/media/Data/GitHub/quirin-lang/build/cycle19/provider-packages-wave20",
+   "to": "/media/Data/GitHub/quirin-lang/.claude/worktrees/agent-af4406ebe7df9c0d1/private/acp/mirror/provider-packages-wave20"
+  },
+  {
+   "from": "/home/cosmo/Documents/GitHub/qcore-c/build/cycle19",
+   "to": "/media/Data/GitHub/quirin-lang/build/cycle19"
+  }
+ ],
+ "exits": {
+  "left": "101",
+  "right": "101"
+ },
+ "drivers": {
+  "left": {
+   "exit": 101,
+   "audit_exit": 0,
+   "identity_error": "an input or the binary changed during the route",
+   "snapshot_files_changed": [
+    "third_party/libevent/.git/index"
+   ],
+   "externals_stable": true,
+   "binary_stable": true,
+   "binary_sha256": "74c984ebf6dde780ed11839fd5359eb3a7b5f120b5c4e933b6e4969a7cfdd0f5"
+  },
+  "right": {
+   "exit": 101,
+   "audit_exit": 0,
+   "identity_error": "an input or the binary changed during the route",
+   "snapshot_files_changed": [
+    "third_party/libevent/.git/index"
+   ],
+   "externals_stable": true,
+   "binary_stable": true,
+   "binary_sha256": "3b3606ab493c25237569870e2632bdacaa60cec2aab5a523d3fd98e4aa0a0d35"
+  }
+ },
+ "only_left": [],
+ "only_right": [],
+ "files": {
+  "corpus-null.jsonl": {
+   "bytes": [
+    29206615,
+    29206615
+   ],
+   "raw_identical": false,
+   "identical_after_substitution": false,
+   "substituted": {},
+   "target_collisions": {},
+   "structural": {
+    "differing_leaves": 15122,
+    "pattern_count": 4,
+    "patterns": [
+     {
+      "path": "hypothesis_context/build_identity",
+      "count": 4834,
+      "example": [
+       "bed423f521fb84714fe5ec3664a6475e9fce0d33361feb8e0a0352ceec0ad057",
+       "fe10a1ba0419b1235a8241506c46691f5f900426ef291ff7481d796793b6c7cc"
+      ]
+     },
+     {
+      "path": "identity/source_sha256",
+      "count": 3472,
+      "example": [
+       "72077420d7d8cf1a3c66ca450df97d532294505df67b37bb6c931db418d1e6f4",
+       "31db594e54ebcdb2bb8dc68900c3b3a624ede9311c4b6e59454b61a6aa6c1c19"
+      ]
+     },
+     {
+      "path": "hypothesis_context/assumptions",
+      "count": 3408,
+      "example": [
+       "ac03107c6f15daed540ea7fb81358cc3cf1082242a9dd4f6914cde4c26a5b4fd",
+       "12a1155506318494c3adc02ca45da471628003de116c5f36da922978ffc00319"
+      ]
+     },
+     {
+      "path": "hypothesis_context/source_identity",
+      "count": 3408,
+      "example": [
+       "72077420d7d8cf1a3c66ca450df97d532294505df67b37bb6c931db418d1e6f4",
+       "31db594e54ebcdb2bb8dc68900c3b3a624ede9311c4b6e59454b61a6aa6c1c19"
+      ]
+     }
+    ]
+   }
+  },
+  "corpus-null.summary.json": {
+   "bytes": [
+    64900,
+    64900
+   ],
+   "raw_identical": true,
+   "identical_after_substitution": true,
+   "substituted": {},
+   "target_collisions": {}
+  },
+  "corpus-outer.json": {
+   "bytes": [
+    711931,
+    711726
+   ],
+   "raw_identical": false,
+   "identical_after_substitution": true,
+   "substituted": {
+    "/home/cosmo/Documents/GitHub/qcore-c/build/cycle19/c-gateway-wave-pin/fluent-bit-clang-source": 5
+   },
+   "target_collisions": {}
+  },
+  "corpus/audit.log": {
+   "bytes": [
+    136255,
+    136150
+   ],
+   "raw_identical": false,
+   "identical_after_substitution": false,
+   "substituted": {
+    "/home/cosmo/Documents/GitHub/qcore-c/build/cycle19": 2
+   },
+   "target_collisions": {}
+  },
+  "corpus/monkey-source.json": {
+   "bytes": [
+    1666852,
+    1665950
+   ],
+   "raw_identical": false,
+   "identical_after_substitution": false,
+   "substituted": {
+    "/home/cosmo/Documents/GitHub/qcore-c/build/cycle19/c-gateway-wave-pin/monkey": 22
+   },
+   "target_collisions": {},
+   "structural": {
+    "differing_leaves": 7,
+    "pattern_count": 1,
+    "patterns": [
+     {
+      "path": "wrappers/*/paths/*/operations/*/arguments/*/expression/value/c_type",
+      "count": 7,
+      "example": [
+       "char[160]",
+       "char[119]"
+      ]
+     }
+    ]
+   }
+  },
+  "corpus/resource-diagnostics.chunk-contracts.json": {
+   "bytes": [
+    4186178,
+    4186178
+   ],
+   "raw_identical": true,
+   "identical_after_substitution": true,
+   "substituted": {},
+   "target_collisions": {}
+  },
+  "corpus/resource-diagnostics.contracts.json": {
+   "bytes": [
+    42788672,
+    42772524
+   ],
+   "raw_identical": false,
+   "identical_after_substitution": false,
+   "substituted": {
+    "/home/cosmo/Documents/GitHub/qcore-c/build/cycle19/c-gateway-wave-pin/fluent-bit-clang-source": 347,
+    "/media/Data/GitHub/quirin-lang/build/cycle19/c-gateway-wave-pin/fluent-bit-clang-source": 2,
+    "/home/cosmo/Documents/GitHub/qcore-c/build/cycle19": 82
+   },
+   "target_collisions": {
+    "/media/Data/GitHub/quirin-lang/build/cycle19": 2
+   },
+   "structural": {
+    "differing_leaves": 62931,
+    "pattern_count": 1403,
+    "patterns": [
+     {
+      "path": "callback_members/lifetime_protocols/evidence/summaries/<sha256>/flb_input_coro_collect/open/*",
+      "count": 9376,
+      "example": [
+       "<absent>",
+       "member stores prevent holder snapshot stability"
+      ]
+     },
+     {
+      "path": "callback_members/prepass/lifetime_protocols/summaries/<sha256>/flb_input_coro_collect/open/*",
+      "count": 9376,
+      "example": [
+       "<absent>",
+       "member stores prevent holder snapshot stability"
+      ]
+     },
+     {
+      "path": "callback_members/lifetime_protocols/evidence/summaries/<sha256>/flb_input_coro_collect/may_poison",
+      "count": 1172,
+      "example": [
+       "<absent>",
+       "[]"
+      ]
+     },
+     {
+      "path": "callback_members/lifetime_protocols/evidence/summaries/<sha256>/flb_input_coro_collect/may_register",
+      "count": 1172,
+      "example": [
+       "<absent>",
+       "[]"
+      ]
+     },
+     {
+      "path": "callback_members/lifetime_protocols/evidence/summaries/<sha256>/flb_input_coro_collect/may_release",
+      "count": 1172,
+      "example": [
+       "<absent>",
+       "[]"
+      ]
+     },
+     {
+      "path": "callback_members/lifetime_protocols/evidence/summaries/<sha256>/flb_input_coro_collect/must_end",
+      "count": 1172,
+      "example": [
+       "<absent>",
+       "[]"
+      ]
+     },
+     {
+      "path": "callback_members/lifetime_protocols/evidence/summaries/<sha256>/flb_input_coro_collect/poison_all",
+      "count": 1172,
+      "example": [
+       "<absent>",
+       "False"
+      ]
+     },
+     {
+      "path": "callback_members/lifetime_protocols/evidence/summaries/<sha256>/flb_input_coro_collect/requirements",
+      "count": 1172,
+      "example": [
+       "<absent>",
+       "[]"
+      ]
+     },
+     {
+      "path": "callback_members/prepass/lifetime_protocols/summaries/<sha256>/flb_input_coro_collect/may_poison",
+      "count": 1172,
+      "example": [
+       "<absent>",
+       "[]"
+      ]
+     },
+     {
+      "path": "callback_members/prepass/lifetime_protocols/summaries/<sha256>/flb_input_coro_collect/may_register",
+      "count": 1172,
+      "example": [
+       "<absent>",
+       "[]"
+      ]
+     },
+     {
+      "path": "callback_members/prepass/lifetime_protocols/summaries/<sha256>/flb_input_coro_collect/may_release",
+      "count": 1172,
+      "example": [
+       "<absent>",
+       "[]"
+      ]
+     },
+     {
+      "path": "callback_members/prepass/lifetime_protocols/summaries/<sha256>/flb_input_coro_collect/must_end",
+      "count": 1172,
+      "example": [
+       "<absent>",
+       "[]"
+      ]
+     },
+     {
+      "path": "callback_members/prepass/lifetime_protocols/summaries/<sha256>/flb_input_coro_collect/poison_all",
+      "count": 1172,
+      "example": [
+       "<absent>",
+       "False"
+      ]
+     },
+     {
+      "path": "callback_members/prepass/lifetime_protocols/summaries/<sha256>/flb_input_coro_collect/requirements",
+      "count": 1172,
+      "example": [
+       "<absent>",
+       "[]"
+      ]
+     },
+     {
+      "path": "callback_members/lifetime_protocols/evidence/summaries/<sha256>",
+      "count": 758,
+      "example": [
+       "{}",
+       "<absent>"
+      ]
+     },
+     {
+      "path": "callback_members/prepass/lifetime_protocols/summaries/<sha256>",
+      "count": 758,
+      "example": [
+       "{}",
+       "<absent>"
+      ]
+     },
+     {
+      "path": "callback_members/lifetime_protocols/evidence/refused/*",
+      "count": 638,
+      "example": [
+       "001c04826a2b0a490abd85fb338aaa9018e7aeee411f4f278214597e5b393bac:flb_input_coro_collect",
+       "0010d3474728e677917321c581e667eb719d5b90302dbe677f2f7da4873ec065:flb_input_coro_collect"
+      ]
+     },
+     {
+      "path": "callback_members/prepass/lifetime_protocols/refused/*",
+      "count": 638,
+      "example": [
+       "001c04826a2b0a490abd85fb338aaa9018e7aeee411f4f278214597e5b393bac:flb_input_coro_collect",
+       "0010d3474728e677917321c581e667eb719d5b90302dbe677f2f7da4873ec065:flb_input_coro_collect"
+      ]
+     },
+     {
+      "path": "contract_dependencies/declarations/rd_kafka_log0/hypothesis_evidence/contexts/*/build_identity",
+      "count": 553,
+      "example": [
+       "088f21e6db20eabf3ebe429e96b22af4fc6c9f7bc5125d600f3754381d9df228",
+       "ddb70e934ef6c7a026efe5e8da4d750ee06de3eaed3fa82088cc7acba54d555f"
+      ]
+     },
+     {
+      "path": "contract_dependencies/declarations/rd_kafka_log0/hypothesis_evidence/contexts/*/source_identity",
+      "count": 553,
+      "example": [
+       "f8874153022c07426a7c4b8b8c774bd2e9114c41fb86ca036daf833c1462b35c",
+       "0b4bc7d88b1a2c4d91f59c259d46944e5b51e95672ea189bd7dc591a6c7474a1"
+      ]
+     },
+     {
+      "path": "contract_dependencies/declarations/__assert_fail/hypothesis_evidence/contexts/*/build_identity",
+      "count": 551,
+      "example": [
+       "cb6b957eb6c6b8d095f5ba34c98b7512ce6d6977e1967e9fadcaba56ca162ce4",
+       "4977129e4e6ac3acaf5c7acd9269db65562976e1fc6bee06fe6511661b725a77"
+      ]
+     },
+     {
+      "path": "contract_dependencies/declarations/__assert_fail/hypothesis_evidence/contexts/*/source_identity",
+      "count": 549,
+      "example": [
+       "72077420d7d8cf1a3c66ca450df97d532294505df67b37bb6c931db418d1e6f4",
+       "31db594e54ebcdb2bb8dc68900c3b3a624ede9311c4b6e59454b61a6aa6c1c19"
+      ]
+     },
+     {
+      "path": "contract_dependencies/declarations/mtx_unlock/hypothesis_evidence/contexts/*/build_identity",
+      "count": 451,
+      "example": [
+       "301d4081958af6a4ef6cbf7e9655f43aa6c194aee491d3209ad5b004eef89a36",
+       "cf750df369550a1179cb5ead5d630f03e2ff86fcdf1d086c4d7680770613af24"
+      ]
+     },
+     {
+      "path": "contract_dependencies/declarations/mtx_unlock/hypothesis_evidence/contexts/*/source_identity",
+      "count": 451,
+      "example": [
+       "b8761c4a2cea02fd5bd2da2250d319da3dc89584ea65d22122fa23e634547ce0",
+       "2c96702b87ae1357693259512add5a8ebe03599de6b07c127424a9a9fa5a09e5"
+      ]
+     },
+     {
+      "path": "contract_dependencies/declarations/mtx_lock/hypothesis_evidence/contexts/*/build_identity",
+      "count": 450,
+      "example": [
+       "301d4081958af6a4ef6cbf7e9655f43aa6c194aee491d3209ad5b004eef89a36",
+       "cf750df369550a1179cb5ead5d630f03e2ff86fcdf1d086c4d7680770613af24"
+      ]
+     },
+     {
+      "path": "contract_dependencies/declarations/mtx_lock/hypothesis_evidence/contexts/*/source_identity",
+      "count": 450,
+      "example": [
+       "b8761c4a2cea02fd5bd2da2250d319da3dc89584ea65d22122fa23e634547ce0",
+       "2c96702b87ae1357693259512add5a8ebe03599de6b07c127424a9a9fa5a09e5"
+      ]
+     },
+     {
+      "path": "contract_dependencies/declarations/memcpy/hypothesis_evidence/contexts/*/build_identity",
+      "count": 430,
+      "example": [
+       "19abf7acc7d9e62a968a9be68f87fbabed66278ed2f594a294fb7420183ca3b6",
+       "9fb07b08a8433303153a4e4e50b9ffba60299b67dd55b3f99ccb32668d700099"
+      ]
+     },
+     {
+      "path": "contract_dependencies/declarations/strlen/hypothesis_evidence/contexts/*/build_identity",
+      "count": 429,
+      "example": [
+       "20dab78b0c9db1fb5a3c185cb2c1d8550ce243896568aaa5a192298d10dbfd16",
+       "ee1f1a5e64623e94323ff1138a32a9679838f0bf2bf877f61edd30f82d5de9cb"
+      ]
+     },
+     {
+      "path": "contract_dependencies/declarations/rd_free/hypothesis_evidence/contexts/*/build_identity",
+      "count": 409,
+      "example": [
+       "33b70fc0a7305f087401ce38f8e8ec4e88a82fe0228787f5c428ea915783be8e",
+       "5f4a4fb643fd45f467a970e64c0a8745c208ff8a0d87fc73cf275b00fecc2b04"
+      ]
+     },
+     {
+      "path": "contract_dependencies/declarations/rd_free/hypothesis_evidence/contexts/*/source_identity",
+      "count": 409,
+      "example": [
+       "fca23289d55ea615920ed7af298b57af88286ad5622efc90afe8f681521adb05",
+       "bafbc8c71d97d5486a60392bf06c9211c18350abca9c23990b212101a41e2cc0"
+      ]
+     },
+     {
+      "path": "contract_dependencies/declarations/strlen/hypothesis_evidence/contexts/*/source_identity",
+      "count": 382,
+      "example": [
+       "357b2fe746d804c294c0ded3cd18da2789046af7ecfca3b624057ab5baa8dd9a",
+       "8c632eb7a015f5c193261042e7792c1d3df07981e9b219f912894d2352985444"
+      ]
+     },
+     {
+      "path": "contract_dependencies/declarations/memcpy/hypothesis_evidence/contexts/*/source_identity",
+      "count": 359,
+      "example": [
+       "357b2fe746d804c294c0ded3cd18da2789046af7ecfca3b624057ab5baa8dd9a",
+       "8c632eb7a015f5c193261042e7792c1d3df07981e9b219f912894d2352985444"
+      ]
+     },
+     {
+      "path": "contract_dependencies/declarations/snprintf/hypothesis_evidence/contexts/*/build_identity",
+      "count": 359,
+      "example": [
+       "19abf7acc7d9e62a968a9be68f87fbabed66278ed2f594a294fb7420183ca3b6",
+       "9fb07b08a8433303153a4e4e50b9ffba60299b67dd55b3f99ccb32668d700099"
+      ]
+     },
+     {
+      "path": "contract_dependencies/declarations/snprintf/hypothesis_evidence/contexts/*/source_identity",
+      "count": 318,
+      "example": [
+       "a799f5adb56ac035af60e786b798feb8de91c65266f45d16f03c46060ff2b4f9",
+       "111c6759508d9323a3db9c2ce62653757837cb605800a3f1a9378ac0481a9539"
+      ]
+     },
+     {
+      "path": "contract_dependencies/declarations/fprintf/hypothesis_evidence/contexts/*/build_identity",
+      "count": 252,
+      "example": [
+       "20dab78b0c9db1fb5a3c185cb2c1d8550ce243896568aaa5a192298d10dbfd16",
+       "ee1f1a5e64623e94323ff1138a32a9679838f0bf2bf877f61edd30f82d5de9cb"
+      ]
+     },
+     {
+      "path": "callback_members/lifetime_protocols/evidence/summaries/<sha256>/flb_input_init_all/open/*",
+      "count": 244,
+      "example": [
+       "<absent>",
+       "indirect call has no lifetime summary"
+      ]
+     },
+     {
+      "path": "callback_members/prepass/lifetime_protocols/summaries/<sha256>/flb_input_init_all/open/*",
+      "count": 244,
+      "example": [
+       "<absent>",
+       "indirect call has no lifetime summary"
+      ]
+     },
+     {
+      "path": "contract_dependencies/declarations/fprintf/hypothesis_evidence/contexts/*/source_identity",
+      "count": 243,
+      "example": [
+       "de8a3f66157502f40261a2252f37692abdee05ad9a137933e77535acc12ac82c",
+       "ad4ebecb3ee56d7fef7dd53db77c4a4852288c55eff80d5648d2b8299a625e04"
+      ]
+     },
+     {
+      "path": "callback_members/lifetime_protocols/evidence/summaries/<sha256>/flb_input_instance_init/open/*",
+      "count": 228,
+      "example": [
+       "<absent>",
+       "indirect call has no lifetime summary"
+      ]
+     },
+     {
+      "path": "callback_members/prepass/lifetime_protocols/summaries/<sha256>/flb_input_instance_init/open/*",
+      "count": 228,
+      "example": [
+       "<absent>",
+       "indirect call has no lifetime summary"
+      ]
+     },
+     {
+      "path": "callback_members/lifetime_protocols/evidence/summaries/<sha256>/input_thread/open/*",
+      "count": 220,
+      "example": [
+       "<absent>",
+       "indirect call has no lifetime summary"
+      ]
+     },
+     {
+      "path": "callback_members/prepass/lifetime_protocols/summaries/<sha256>/input_thread/open/*",
+      "count": 220,
+      "example": [
+       "<absent>",
+       "indirect call has no lifetime summary"
+      ]
+     },
+     {
+      "path": "contract_dependencies/declarations/clock_gettime/hypothesis_evidence/contexts/*/build_identity",
+      "count": 202,
+      "example": [
+       "301d4081958af6a4ef6cbf7e9655f43aa6c194aee491d3209ad5b004eef89a36",
+       "cf750df369550a1179cb5ead5d630f03e2ff86fcdf1d086c4d7680770613af24"
+      ]
+     },
+     {
+      "path": "contract_dependencies/declarations/clock_gettime/hypothesis_evidence/contexts/*/source_identity",
+      "count": 202,
+      "example": [
+       "b8761c4a2cea02fd5bd2da2250d319da3dc89584ea65d22122fa23e634547ce0",
+       "2c96702b87ae1357693259512add5a8ebe03599de6b07c127424a9a9fa5a09e5"
+      ]
+     },
+     {
+      "path": "contract_dependencies/declarations/free/hypothesis_evidence/contexts/*/build_identity",
+      "count": 197,
+      "example": [
+       "20dab78b0c9db1fb5a3c185cb2c1d8550ce243896568aaa5a192298d10dbfd16",
+       "ee1f1a5e64623e94323ff1138a32a9679838f0bf2bf877f61edd30f82d5de9cb"
+      ]
+     },
+     {
+      "path": "contract_dependencies/declarations/strcmp/hypothesis_evidence/contexts/*/build_identity",
+      "count": 181,
+      "example": [
+       "8e4f02e5705a36ba0689a2fe5c9a562089c85fc2d42ad9ea9b985ef0804735de",
+       "345b4c940d2b8b6fbf8f8cdbc8034a85051681113f44a4dbbbbc35b33396262d"
+      ]
+     },
+     {
+      "path": "contract_dependencies/declarations/__errno_location/hypothesis_evidence/contexts/*/build_identity",
+      "count": 162,
+      "example": [
+       "a55d04cf63c03bb143780849f868f780c37d0e381716e229095c48864dff6afb",
+       "403c6d1f9be956791e2b15633105626f45ee51b1564f44b7e97b001ede841349"
+      ]
+     },
+     {
+      "path": "callback_members/lifetime_protocols/evidence/summaries/<sha256>/flb_input_init_all/may_release/*/object/fields/*",
+      "count": 152,
+      "example": [
+       "<absent>",
+       "alias"
+      ]
+     },
+     {
+      "path": "callback_members/prepass/lifetime_protocols/summaries/<sha256>/flb_input_init_all/may_release/*/object/fields/*",
+      "count": 152,
+      "example": [
+       "<absent>",
+       "alias"
+      ]
+     },
+     {
+      "path": "contract_dependencies/declarations/strcmp/hypothesis_evidence/contexts/*/source_identity",
+      "count": 147,
+      "example": [
+       "e8c77fdc6593289332c82ad8c8dfccf8ff64096c7ed00d466dea5ca598e7a261",
+       "b24efbad09170177eaf166d29f51dbaf2dca999a497cbe41b3cac29c3feca341"
+      ]
+     },
+     {
+      "path": "contract_dependencies/declarations/rd_list_add/hypothesis_evidence/contexts/*/build_identity",
+      "count": 143,
+      "example": [
+       "301d4081958af6a4ef6cbf7e9655f43aa6c194aee491d3209ad5b004eef89a36",
+       "cf750df369550a1179cb5ead5d630f03e2ff86fcdf1d086c4d7680770613af24"
+      ]
+     },
+     {
+      "path": "contract_dependencies/declarations/rd_list_add/hypothesis_evidence/contexts/*/source_identity",
+      "count": 143,
+      "example": [
+       "b8761c4a2cea02fd5bd2da2250d319da3dc89584ea65d22122fa23e634547ce0",
+       "2c96702b87ae1357693259512add5a8ebe03599de6b07c127424a9a9fa5a09e5"
+      ]
+     },
+     {
+      "path": "contract_dependencies/declarations/rd_atomic32_get/hypothesis_evidence/contexts/*/build_identity",
+      "count": 139,
+      "example": [
+       "088f21e6db20eabf3ebe429e96b22af4fc6c9f7bc5125d600f3754381d9df228",
+       "ddb70e934ef6c7a026efe5e8da4d750ee06de3eaed3fa82088cc7acba54d555f"
+      ]
+     },
+     {
+      "path": "contract_dependencies/declarations/rd_atomic32_get/hypothesis_evidence/contexts/*/source_identity",
+      "count": 139,
+      "example": [
+       "f8874153022c07426a7c4b8b8c774bd2e9114c41fb86ca036daf833c1462b35c",
+       "0b4bc7d88b1a2c4d91f59c259d46944e5b51e95672ea189bd7dc591a6c7474a1"
+      ]
+     },
+     {
+      "path": "callback_members/lifetime_protocols/evidence/summaries/<sha256>/flb_input_init_all/may_release/*/destroyed_before",
+      "count": 136,
+      "example": [
+       "<absent>",
+       "[]"
+      ]
+     },
+     {
+      "path": "callback_members/lifetime_protocols/evidence/summaries/<sha256>/flb_input_init_all/may_release/*/object/root/Formal/index",
+      "count": 136,
+      "example": [
+       "<absent>",
+       "0"
+      ]
+     },
+     {
+      "path": "callback_members/lifetime_protocols/evidence/summaries/<sha256>/flb_input_init_all/may_release/*/object/root/Formal/scope",
+      "count": 136,
+      "example": [
+       "<absent>",
+       "03bbc5ea4685c5abc844567bb3546dc50113e4dbaf61c7b7adec3e6bdeb575d0:flb_input_instance_destroy"
+      ]
+     },
+     {
+      "path": "callback_members/prepass/lifetime_protocols/summaries/<sha256>/flb_input_init_all/may_release/*/destroyed_before",
+      "count": 136,
+      "example": [
+       "<absent>",
+       "[]"
+      ]
+     },
+     {
+      "path": "callback_members/prepass/lifetime_protocols/summaries/<sha256>/flb_input_init_all/may_release/*/object/root/Formal/index",
+      "count": 136,
+      "example": [
+       "<absent>",
+       "0"
+      ]
+     },
+     {
+      "path": "callback_members/prepass/lifetime_protocols/summaries/<sha256>/flb_input_init_all/may_release/*/object/root/Formal/scope",
+      "count": 136,
+      "example": [
+       "<absent>",
+       "03bbc5ea4685c5abc844567bb3546dc50113e4dbaf61c7b7adec3e6bdeb575d0:flb_input_instance_destroy"
+      ]
+     },
+     {
+      "path": "contract_dependencies/declarations/rd_list_destroy/hypothesis_evidence/contexts/*/build_identity",
+      "count": 133,
+      "example": [
+       "301d4081958af6a4ef6cbf7e9655f43aa6c194aee491d3209ad5b004eef89a36",
+       "cf750df369550a1179cb5ead5d630f03e2ff86fcdf1d086c4d7680770613af24"
+      ]
+     },
+     {
+      "path": "contract_dependencies/declarations/rd_list_destroy/hypothesis_evidence/contexts/*/source_identity",
+      "count": 133,
+      "example": [
+       "b8761c4a2cea02fd5bd2da2250d319da3dc89584ea65d22122fa23e634547ce0",
+       "2c96702b87ae1357693259512add5a8ebe03599de6b07c127424a9a9fa5a09e5"
+      ]
+     },
+     {
+      "path": "contract_dependencies/declarations/calloc/hypothesis_evidence/contexts/*/build_identity",
+      "count": 130,
+      "example": [
+       "20dab78b0c9db1fb5a3c185cb2c1d8550ce243896568aaa5a192298d10dbfd16",
+       "ee1f1a5e64623e94323ff1138a32a9679838f0bf2bf877f61edd30f82d5de9cb"
+      ]
+     },
+     {
+      "path": "contract_dependencies/declarations/rd_list_init/hypothesis_evidence/contexts/*/build_identity",
+      "count": 121,
+      "example": [
+       "301d4081958af6a4ef6cbf7e9655f43aa6c194aee491d3209ad5b004eef89a36",
+       "cf750df369550a1179cb5ead5d630f03e2ff86fcdf1d086c4d7680770613af24"
+      ]
+     },
+     {
+      "path": "contract_dependencies/declarations/rd_list_init/hypothesis_evidence/contexts/*/source_identity",
+      "count": 121,
+      "example": [
+       "b8761c4a2cea02fd5bd2da2250d319da3dc89584ea65d22122fa23e634547ce0",
+       "2c96702b87ae1357693259512add5a8ebe03599de6b07c127424a9a9fa5a09e5"
+      ]
+     },
+     {
+      "path": "contract_dependencies/declarations/rd_malloc/hypothesis_evidence/contexts/*/build_identity",
+      "count": 117,
+      "example": [
+       "8c3ddccf20d217a0371b32081207fd46fb1ebe2423b567934718bc54ab9667de",
+       "f0bcbaa4c261a4be65a00213d6e52a5cfd944baa7591b2d92776467ba41f4294"
+      ]
+     },
+     {
+      "path": "contract_dependencies/declarations/rd_malloc/hypothesis_evidence/contexts/*/source_identity",
+      "count": 117,
+      "example": [
+       "6f967d13868f0bbf77346827ec1259b0761a687245ab38e7726e94a32b1a1e33",
+       "ead1b9bc62310657d57e632a2d0ab999506afdf0282cd4ce70601d6038a95c66"
+      ]
+     },
+     {
+      "path": "contract_dependencies/declarations/rd_kafka_topic_partition_list_destroy/hypothesis_evidence/contexts/*/build_identity",
+      "count": 113,
+      "example": [
+       "301d4081958af6a4ef6cbf7e9655f43aa6c194aee491d3209ad5b004eef89a36",
+       "cf750df369550a1179cb5ead5d630f03e2ff86fcdf1d086c4d7680770613af24"
+      ]
+     },
+     {
+      "path": "contract_dependencies/declarations/rd_kafka_topic_partition_list_destroy/hypothesis_evidence/contexts/*/source_identity",
+      "count": 113,
+      "example": [
+       "b8761c4a2cea02fd5bd2da2250d319da3dc89584ea65d22122fa23e634547ce0",
+       "2c96702b87ae1357693259512add5a8ebe03599de6b07c127424a9a9fa5a09e5"
+      ]
+     },
+     {
+      "path": "callback_members/lifetime_protocols/evidence/summaries/<sha256>/flb_input_plugin_property_check/open/*",
+      "count": 112,
+      "example": [
+       "<absent>",
+       "member stores prevent holder snapshot stability"
+      ]
+     },
+     {
+      "path": "callback_members/prepass/lifetime_protocols/summaries/<sha256>/flb_input_plugin_property_check/open/*",
+      "count": 112,
+      "example": [
+       "<absent>",
+       "member stores prevent holder snapshot stability"
+      ]
+     },
+     {
+      "path": "contract_dependencies/declarations/memset/hypothesis_evidence/contexts/*/build_identity",
+      "count": 109,
+      "example": [
+       "20dab78b0c9db1fb5a3c185cb2c1d8550ce243896568aaa5a192298d10dbfd16",
+       "ee1f1a5e64623e94323ff1138a32a9679838f0bf2bf877f61edd30f82d5de9cb"
+      ]
+     },
+     {
+      "path": "callback_members/lifetime_protocols/evidence/summaries/<sha256>/flb_input_net_property_check/open/*",
+      "count": 104,
+      "example": [
+       "<absent>",
+       "member stores prevent holder snapshot stability"
+      ]
+     },
+     {
+      "path": "callback_members/prepass/lifetime_protocols/summaries/<sha256>/flb_input_net_property_check/open/*",
+      "count": 104,
+      "example": [
+       "<absent>",
+       "member stores prevent holder snapshot stability"
+      ]
+     },
+     {
+      "path": "callback_members/lifetime_protocols/evidence/summaries/<sha256>/flb_input_http_server_property_check/open/*",
+      "count": 100,
+      "example": [
+       "<absent>",
+       "member stores prevent holder snapshot stability"
+      ]
+     },
+     {
+      "path": "callback_members/lifetime_protocols/evidence/summaries/<sha256>/flb_input_oauth2_jwt_property_check/open/*",
+      "count": 100,
+      "example": [
+       "<absent>",
+       "member stores prevent holder snapshot stability"
+      ]
+     },
+     {
+      "path": "callback_members/prepass/lifetime_protocols/summaries/<sha256>/flb_input_http_server_property_check/open/*",
+      "count": 100,
+      "example": [
+       "<absent>",
+       "member stores prevent holder snapshot stability"
+      ]
+     },
+     {
+      "path": "callback_members/prepass/lifetime_protocols/summaries/<sha256>/flb_input_oauth2_jwt_property_check/open/*",
+      "count": 100,
+      "example": [
+       "<absent>",
+       "member stores prevent holder snapshot stability"
+      ]
+     },
+     {
+      "path": "contract_dependencies/declarations/rd_kafka_op_new0/hypothesis_evidence/contexts/*/build_identity",
+      "count": 97,
+      "example": [
+       "301d4081958af6a4ef6cbf7e9655f43aa6c194aee491d3209ad5b004eef89a36",
+       "cf750df369550a1179cb5ead5d630f03e2ff86fcdf1d086c4d7680770613af24"
+      ]
+     },
+     {
+      "path": "contract_dependencies/declarations/rd_kafka_op_new0/hypothesis_evidence/contexts/*/source_identity",
+      "count": 97,
+      "example": [
+       "b8761c4a2cea02fd5bd2da2250d319da3dc89584ea65d22122fa23e634547ce0",
+       "2c96702b87ae1357693259512add5a8ebe03599de6b07c127424a9a9fa5a09e5"
+      ]
+     },
+     {
+      "path": "callback_members/lifetime_protocols/evidence/summaries/<sha256>/flb_input_exit_all/open/*",
+      "count": 92,
+      "example": [
+       "<absent>",
+       "member stores prevent holder snapshot stability"
+      ]
+     },
+     {
+      "path": "callback_members/prepass/lifetime_protocols/summaries/<sha256>/flb_input_exit_all/open/*",
+      "count": 92,
+      "example": [
+       "<absent>",
+       "member stores prevent holder snapshot stability"
+      ]
+     },
+     {
+      "path": "callback_members/lifetime_protocols/evidence/summaries/<sha256>/flb_input_instance_destroy/open/*",
+      "count": 84,
+      "example": [
+       "<absent>",
+       "member stores prevent holder snapshot stability"
+      ]
+     },
+     {
+      "path": "callback_members/prepass/lifetime_protocols/summaries/<sha256>/flb_input_instance_destroy/open/*",
+      "count": 84,
+      "example": [
+       "<absent>",
+       "member stores prevent holder snapshot stability"
+      ]
+     },
+     {
+      "path": "contract_dependencies/declarations/rd_kafka_op_destroy/hypothesis_evidence/contexts/*/build_identity",
+      "count": 83,
+      "example": [
+       "301d4081958af6a4ef6cbf7e9655f43aa6c194aee491d3209ad5b004eef89a36",
+       "cf750df369550a1179cb5ead5d630f03e2ff86fcdf1d086c4d7680770613af24"
+      ]
+     },
+     {
+      "path": "contract_dependencies/declarations/rd_kafka_op_destroy/hypothesis_evidence/contexts/*/source_identity",
+      "count": 83,
+      "example": [
+       "b8761c4a2cea02fd5bd2da2250d319da3dc89584ea65d22122fa23e634547ce0",
+       "2c96702b87ae1357693259512add5a8ebe03599de6b07c127424a9a9fa5a09e5"
+      ]
+     },
+     {
+      "path": "callback_members/lifetime_protocols/evidence/summaries/<sha256>/flb_input_exit_all/may_release/*/object/fields/*",
+      "count": 76,
+      "example": [
+       "<absent>",
+       "alias"
+      ]
+     },
+     {
+      "path": "callback_members/lifetime_protocols/evidence/summaries/<sha256>/flb_input_http_server_property_check/may_release/*/object/fields/*",
+      "count": 76,
+      "example": [
+       "<absent>",
+       "alias"
+      ]
+     },
+     {
+      "path": "callback_members/lifetime_protocols/evidence/summaries/<sha256>/flb_input_instance_destroy/may_release/*/object/fields/*",
+      "count": 76,
+      "example": [
+       "<absent>",
+       "alias"
+      ]
+     },
+     {
+      "path": "callback_members/lifetime_protocols/evidence/summaries/<sha256>/flb_input_instance_init/may_release/*/object/fields/*",
+      "count": 76,
+      "example": [
+       "<absent>",
+       "alias"
+      ]
+     },
+     {
+      "path": "callback_members/lifetime_protocols/evidence/summaries/<sha256>/flb_input_net_property_check/may_release/*/object/fields/*",
+      "count": 76,
+      "example": [
+       "<absent>",
+       "alias"
+      ]
+     },
+     {
+      "path": "callback_members/lifetime_protocols/evidence/summaries/<sha256>/flb_input_oauth2_jwt_property_check/may_release/*/object/fields/*",
+      "count": 76,
+      "example": [
+       "<absent>",
+       "alias"
+      ]
+     },
+     {
+      "path": "callback_members/lifetime_protocols/evidence/summaries/<sha256>/flb_input_plugin_property_check/may_release/*/object/fields/*",
+      "count": 76,
+      "example": [
+       "<absent>",
+       "alias"
+      ]
+     },
+     {
+      "path": "callback_members/prepass/lifetime_protocols/summaries/<sha256>/flb_input_exit_all/may_release/*/object/fields/*",
+      "count": 76,
+      "example": [
+       "<absent>",
+       "alias"
+      ]
+     },
+     {
+      "path": "callback_members/prepass/lifetime_protocols/summaries/<sha256>/flb_input_http_server_property_check/may_release/*/object/fields/*",
+      "count": 76,
+      "example": [
+       "<absent>",
+       "alias"
+      ]
+     },
+     {
+      "path": "callback_members/prepass/lifetime_protocols/summaries/<sha256>/flb_input_instance_destroy/may_release/*/object/fields/*",
+      "count": 76,
+      "example": [
+       "<absent>",
+       "alias"
+      ]
+     },
+     {
+      "path": "callback_members/prepass/lifetime_protocols/summaries/<sha256>/flb_input_instance_init/may_release/*/object/fields/*",
+      "count": 76,
+      "example": [
+       "<absent>",
+       "alias"
+      ]
+     },
+     {
+      "path": "callback_members/prepass/lifetime_protocols/summaries/<sha256>/flb_input_net_property_check/may_release/*/object/fields/*",
+      "count": 76,
+      "example": [
+       "<absent>",
+       "alias"
+      ]
+     },
+     {
+      "path": "callback_members/prepass/lifetime_protocols/summaries/<sha256>/flb_input_oauth2_jwt_property_check/may_release/*/object/fields/*",
+      "count": 76,
+      "example": [
+       "<absent>",
+       "alias"
+      ]
+     },
+     {
+      "path": "callback_members/prepass/lifetime_protocols/summaries/<sha256>/flb_input_plugin_property_check/may_release/*/object/fields/*",
+      "count": 76,
+      "example": [
+       "<absent>",
+       "alias"
+      ]
+     },
+     {
+      "path": "contract_dependencies/declarations/cfl_sds_destroy/hypothesis_evidence/contexts/*/build_identity",
+      "count": 72,
+      "example": [
+       "b6186c0429f350188e4b99bd6165c1e7d14c4ae27368fdbcece43a00ccaa9c14",
+       "9046c7162ce2f61c88eb69e7256ae535860dfb0f794ca9ce6e640adcfd798e45"
+      ]
+     },
+     {
+      "path": "contract_dependencies/declarations/memset/hypothesis_evidence/contexts/*/source_identity",
+      "count": 71,
+      "example": [
+       "d16720db05458aab921a53351e5e1e1144dd5ffdf9746abc46f2797c0009a014",
+       "b043be5470070b7beaaddccef7e41052f30ecbf1b2c55f977da3c43064df2d71"
+      ]
+     },
+     {
+      "path": "callback_members/lifetime_protocols/evidence/summaries/<sha256>/flb_input_exit_all/may_release/*/destroyed_before",
+      "count": 68,
+      "example": [
+       "<absent>",
+       "[]"
+      ]
+     },
+     {
+      "path": "callback_members/lifetime_protocols/evidence/summaries/<sha256>/flb_input_exit_all/may_release/*/object/root/Formal/index",
+      "count": 68,
+      "example": [
+       "<absent>",
+       "0"
+      ]
+     },
+     {
+      "path": "callback_members/lifetime_protocols/evidence/summaries/<sha256>/flb_input_exit_all/may_release/*/object/root/Formal/scope",
+      "count": 68,
+      "example": [
+       "<absent>",
+       "03bbc5ea4685c5abc844567bb3546dc50113e4dbaf61c7b7adec3e6bdeb575d0:flb_input_instance_destroy"
+      ]
+     },
+     {
+      "path": "callback_members/lifetime_protocols/evidence/summaries/<sha256>/flb_input_http_server_property_check/may_release/*/destroyed_before",
+      "count": 68,
+      "example": [
+       "<absent>",
+       "[]"
+      ]
+     },
+     {
+      "path": "callback_members/lifetime_protocols/evidence/summaries/<sha256>/flb_input_http_server_property_check/may_release/*/object/root/Formal/index",
+      "count": 68,
+      "example": [
+       "<absent>",
+       "0"
+      ]
+     },
+     {
+      "path": "callback_members/lifetime_protocols/evidence/summaries/<sha256>/flb_input_http_server_property_check/may_release/*/object/root/Formal/scope",
+      "count": 68,
+      "example": [
+       "<absent>",
+       "03bbc5ea4685c5abc844567bb3546dc50113e4dbaf61c7b7adec3e6bdeb575d0:flb_input_http_server_property_check"
+      ]
+     },
+     {
+      "path": "callback_members/lifetime_protocols/evidence/summaries/<sha256>/flb_input_instance_destroy/may_release/*/destroyed_before",
+      "count": 68,
+      "example": [
+       "<absent>",
+       "[]"
+      ]
+     },
+     {
+      "path": "callback_members/lifetime_protocols/evidence/summaries/<sha256>/flb_input_instance_destroy/may_release/*/object/root/Formal/index",
+      "count": 68,
+      "example": [
+       "<absent>",
+       "0"
+      ]
+     },
+     {
+      "path": "callback_members/lifetime_protocols/evidence/summaries/<sha256>/flb_input_instance_destroy/may_release/*/object/root/Formal/scope",
+      "count": 68,
+      "example": [
+       "<absent>",
+       "03bbc5ea4685c5abc844567bb3546dc50113e4dbaf61c7b7adec3e6bdeb575d0:flb_input_instance_destroy"
+      ]
+     },
+     {
+      "path": "callback_members/lifetime_protocols/evidence/summaries/<sha256>/flb_input_instance_init/may_release/*/destroyed_before",
+      "count": 68,
+      "example": [
+       "<absent>",
+       "[]"
+      ]
+     },
+     {
+      "path": "callback_members/lifetime_protocols/evidence/summaries/<sha256>/flb_input_instance_init/may_release/*/object/root/Formal/index",
+      "count": 68,
+      "example": [
+       "<absent>",
+       "0"
+      ]
+     },
+     {
+      "path": "callback_members/lifetime_protocols/evidence/summaries/<sha256>/flb_input_instance_init/may_release/*/object/root/Formal/scope",
+      "count": 68,
+      "example": [
+       "<absent>",
+       "03bbc5ea4685c5abc844567bb3546dc50113e4dbaf61c7b7adec3e6bdeb575d0:flb_input_instance_init"
+      ]
+     },
+     {
+      "path": "callback_members/lifetime_protocols/evidence/summaries/<sha256>/flb_input_net_property_check/may_release/*/destroyed_before",
+      "count": 68,
+      "example": [
+       "<absent>",
+       "[]"
+      ]
+     },
+     {
+      "path": "callback_members/lifetime_protocols/evidence/summaries/<sha256>/flb_input_net_property_check/may_release/*/object/root/Formal/index",
+      "count": 68,
+      "example": [
+       "<absent>",
+       "0"
+      ]
+     },
+     {
+      "path": "callback_members/lifetime_protocols/evidence/summaries/<sha256>/flb_input_net_property_check/may_release/*/object/root/Formal/scope",
+      "count": 68,
+      "example": [
+       "<absent>",
+       "03bbc5ea4685c5abc844567bb3546dc50113e4dbaf61c7b7adec3e6bdeb575d0:flb_input_net_property_check"
+      ]
+     },
+     {
+      "path": "callback_members/lifetime_protocols/evidence/summaries/<sha256>/flb_input_oauth2_jwt_property_check/may_release/*/destroyed_before",
+      "count": 68,
+      "example": [
+       "<absent>",
+       "[]"
+      ]
+     },
+     {
+      "path": "callback_members/lifetime_protocols/evidence/summaries/<sha256>/flb_input_oauth2_jwt_property_check/may_release/*/object/root/Formal/index",
+      "count": 68,
+      "example": [
+       "<absent>",
+       "0"
+      ]
+     },
+     {
+      "path": "callback_members/lifetime_protocols/evidence/summaries/<sha256>/flb_input_oauth2_jwt_property_check/may_release/*/object/root/Formal/scope",
+      "count": 68,
+      "example": [
+       "<absent>",
+       "03bbc5ea4685c5abc844567bb3546dc50113e4dbaf61c7b7adec3e6bdeb575d0:flb_input_oauth2_jwt_property_check"
+      ]
+     },
+     {
+      "path": "callback_members/lifetime_protocols/evidence/summaries/<sha256>/flb_input_plugin_property_check/may_release/*/destroyed_before",
+      "count": 68,
+      "example": [
+       "<absent>",
+       "[]"
+      ]
+     },
+     {
+      "path": "callback_members/lifetime_protocols/evidence/summaries/<sha256>/flb_input_plugin_property_check/may_release/*/object/root/Formal/index",
+      "count": 68,
+      "example": [
+       "<absent>",
+       "0"
+      ]
+     },
+     {
+      "path": "callback_members/lifetime_protocols/evidence/summaries/<sha256>/flb_input_plugin_property_check/may_release/*/object/root/Formal/scope",
+      "count": 68,
+      "example": [
+       "<absent>",
+       "03bbc5ea4685c5abc844567bb3546dc50113e4dbaf61c7b7adec3e6bdeb575d0:flb_input_plugin_property_check"
+      ]
+     },
+     {
+      "path": "callback_members/prepass/lifetime_protocols/summaries/<sha256>/flb_input_exit_all/may_release/*/destroyed_before",
+      "count": 68,
+      "example": [
+       "<absent>",
+       "[]"
+      ]
+     },
+     {
+      "path": "callback_members/prepass/lifetime_protocols/summaries/<sha256>/flb_input_exit_all/may_release/*/object/root/Formal/index",
+      "count": 68,
+      "example": [
+       "<absent>",
+       "0"
+      ]
+     },
+     {
+      "path": "callback_members/prepass/lifetime_protocols/summaries/<sha256>/flb_input_exit_all/may_release/*/object/root/Formal/scope",
+      "count": 68,
+      "example": [
+       "<absent>",
+       "03bbc5ea4685c5abc844567bb3546dc50113e4dbaf61c7b7adec3e6bdeb575d0:flb_input_instance_destroy"
+      ]
+     },
+     {
+      "path": "callback_members/prepass/lifetime_protocols/summaries/<sha256>/flb_input_http_server_property_check/may_release/*/destroyed_before",
+      "count": 68,
+      "example": [
+       "<absent>",
+       "[]"
+      ]
+     },
+     {
+      "path": "callback_members/prepass/lifetime_protocols/summaries/<sha256>/flb_input_http_server_property_check/may_release/*/object/root/Formal/index",
+      "count": 68,
+      "example": [
+       "<absent>",
+       "0"
+      ]
+     },
+     {
+      "path": "callback_members/prepass/lifetime_protocols/summaries/<sha256>/flb_input_http_server_property_check/may_release/*/object/root/Formal/scope",
+      "count": 68,
+      "example": [
+       "<absent>",
+       "03bbc5ea4685c5abc844567bb3546dc50113e4dbaf61c7b7adec3e6bdeb575d0:flb_input_http_server_property_check"
+      ]
+     },
+     {
+      "path": "callback_members/prepass/lifetime_protocols/summaries/<sha256>/flb_input_instance_destroy/may_release/*/destroyed_before",
+      "count": 68,
+      "example": [
+       "<absent>",
+       "[]"
+      ]
+     },
+     {
+      "path": "callback_members/prepass/lifetime_protocols/summaries/<sha256>/flb_input_instance_destroy/may_release/*/object/root/Formal/index",
+      "count": 68,
+      "example": [
+       "<absent>",
+       "0"
+      ]
+     },
+     {
+      "path": "callback_members/prepass/lifetime_protocols/summaries/<sha256>/flb_input_instance_destroy/may_release/*/object/root/Formal/scope",
+      "count": 68,
+      "example": [
+       "<absent>",
+       "03bbc5ea4685c5abc844567bb3546dc50113e4dbaf61c7b7adec3e6bdeb575d0:flb_input_instance_destroy"
+      ]
+     },
+     {
+      "path": "callback_members/prepass/lifetime_protocols/summaries/<sha256>/flb_input_instance_init/may_release/*/destroyed_before",
+      "count": 68,
+      "example": [
+       "<absent>",
+       "[]"
+      ]
+     },
+     {
+      "path": "callback_members/prepass/lifetime_protocols/summaries/<sha256>/flb_input_instance_init/may_release/*/object/root/Formal/index",
+      "count": 68,
+      "example": [
+       "<absent>",
+       "0"
+      ]
+     },
+     {
+      "path": "callback_members/prepass/lifetime_protocols/summaries/<sha256>/flb_input_instance_init/may_release/*/object/root/Formal/scope",
+      "count": 68,
+      "example": [
+       "<absent>",
+       "03bbc5ea4685c5abc844567bb3546dc50113e4dbaf61c7b7adec3e6bdeb575d0:flb_input_instance_init"
+      ]
+     },
+     {
+      "path": "callback_members/prepass/lifetime_protocols/summaries/<sha256>/flb_input_net_property_check/may_release/*/destroyed_before",
+      "count": 68,
+      "example": [
+       "<absent>",
+       "[]"
+      ]
+     },
+     {
+      "path": "callback_members/prepass/lifetime_protocols/summaries/<sha256>/flb_input_net_property_check/may_release/*/object/root/Formal/index",
+      "count": 68,
+      "example": [
+       "<absent>",
+       "0"
+      ]
+     },
+     {
+      "path": "callback_members/prepass/lifetime_protocols/summaries/<sha256>/flb_input_net_property_check/may_release/*/object/root/Formal/scope",
+      "count": 68,
+      "example": [
+       "<absent>",
+       "03bbc5ea4685c5abc844567bb3546dc50113e4dbaf61c7b7adec3e6bdeb575d0:flb_input_net_property_check"
+      ]
+     },
+     {
+      "path": "callback_members/prepass/lifetime_protocols/summaries/<sha256>/flb_input_oauth2_jwt_property_check/may_release/*/destroyed_before",
+      "count": 68,
+      "example": [
+       "<absent>",
+       "[]"
+      ]
+     },
+     {
+      "path": "callback_members/prepass/lifetime_protocols/summaries/<sha256>/flb_input_oauth2_jwt_property_check/may_release/*/object/root/Formal/index",
+      "count": 68,
+      "example": [
+       "<absent>",
+       "0"
+      ]
+     },
+     {
+      "path": "callback_members/prepass/lifetime_protocols/summaries/<sha256>/flb_input_oauth2_jwt_property_check/may_release/*/object/root/Formal/scope",
+      "count": 68,
+      "example": [
+       "<absent>",
+       "03bbc5ea4685c5abc844567bb3546dc50113e4dbaf61c7b7adec3e6bdeb575d0:flb_input_oauth2_jwt_property_check"
+      ]
+     },
+     {
+      "path": "callback_members/prepass/lifetime_protocols/summaries/<sha256>/flb_input_plugin_property_check/may_release/*/destroyed_before",
+      "count": 68,
+      "example": [
+       "<absent>",
+       "[]"
+      ]
+     },
+     {
+      "path": "callback_members/prepass/lifetime_protocols/summaries/<sha256>/flb_input_plugin_property_check/may_release/*/object/root/Formal/index",
+      "count": 68,
+      "example": [
+       "<absent>",
+       "0"
+      ]
+     },
+     {
+      "path": "callback_members/prepass/lifetime_protocols/summaries/<sha256>/flb_input_plugin_property_check/may_release/*/object/root/Formal/scope",
+      "count": 68,
+      "example": [
+       "<absent>",
+       "03bbc5ea4685c5abc844567bb3546dc50113e4dbaf61c7b7adec3e6bdeb575d0:flb_input_plugin_property_check"
+      ]
+     },
+     {
+      "path": "contract_dependencies/declarations/mk_mem_free/hypothesis_evidence/contexts/*/build_identity",
+      "count": 67,
+      "example": [
+       "ba58a9baf445bbd713d1abce5650c82c12d435153cfa91caa69dcded84504e16",
+       "d5285038b9149866b6c070d4b4b57839260df88e8a32cd527cf5a5512189a99b"
+      ]
+     },
+     {
+      "path": "contract_dependencies/declarations/rd_kafka_crash/hypothesis_evidence/contexts/*/build_identity",
+      "count": 67,
+      "example": [
+       "301d4081958af6a4ef6cbf7e9655f43aa6c194aee491d3209ad5b004eef89a36",
+       "cf750df369550a1179cb5ead5d630f03e2ff86fcdf1d086c4d7680770613af24"
+      ]
+     },
+     {
+      "path": "contract_dependencies/declarations/rd_kafka_crash/hypothesis_evidence/contexts/*/source_identity",
+      "count": 67,
+      "example": [
+       "b8761c4a2cea02fd5bd2da2250d319da3dc89584ea65d22122fa23e634547ce0",
+       "2c96702b87ae1357693259512add5a8ebe03599de6b07c127424a9a9fa5a09e5"
+      ]
+     },
+     {
+      "path": "contract_dependencies/declarations/__errno_location/hypothesis_evidence/contexts/*/source_identity",
+      "count": 64,
+      "example": [
+       "95855d0d9908ceae69c69c881fb94b4e977ee7ec859ca9662b62cc16a3c39eca",
+       "024edb8fb825b99004276035010a1647197be45e4e373bb8b7d82b5d09e66981"
+      ]
+     },
+     {
+      "path": "contract_dependencies/declarations/rd_kafka_error_new/hypothesis_evidence/contexts/*/build_identity",
+      "count": 63,
+      "example": [
+       "301d4081958af6a4ef6cbf7e9655f43aa6c194aee491d3209ad5b004eef89a36",
+       "cf750df369550a1179cb5ead5d630f03e2ff86fcdf1d086c4d7680770613af24"
+      ]
+     },
+     {
+      "path": "contract_dependencies/declarations/rd_kafka_error_new/hypothesis_evidence/contexts/*/source_identity",
+      "count": 63,
+      "example": [
+       "b8761c4a2cea02fd5bd2da2250d319da3dc89584ea65d22122fa23e634547ce0",
+       "2c96702b87ae1357693259512add5a8ebe03599de6b07c127424a9a9fa5a09e5"
+      ]
+     },
+     {
+      "path": "contract_dependencies/declarations/mk_mem_free/hypothesis_evidence/contexts/*/source_identity",
+      "count": 59,
+      "example": [
+       "da007b71e549863be44ab7e394a8a13c4b28d65237b5b1225b7cb2f77503b9c0",
+       "fc3487b5fe5c33e83ab513566e4740b7e328ae15f7b32a852f5006b712664851"
+      ]
+     },
+     {
+      "path": "contract_dependencies/declarations/rd_kafka_toppar_destroy0/hypothesis_evidence/contexts/*/build_identity",
+      "count": 56,
+      "example": [
+       "301d4081958af6a4ef6cbf7e9655f43aa6c194aee491d3209ad5b004eef89a36",
+       "cf750df369550a1179cb5ead5d630f03e2ff86fcdf1d086c4d7680770613af24"
+      ]
+     },
+     {
+      "path": "contract_dependencies/declarations/rd_kafka_toppar_destroy0/hypothesis_evidence/contexts/*/source_identity",
+      "count": 56,
+      "example": [
+       "b8761c4a2cea02fd5bd2da2250d319da3dc89584ea65d22122fa23e634547ce0",
+       "2c96702b87ae1357693259512add5a8ebe03599de6b07c127424a9a9fa5a09e5"
+      ]
+     },
+     {
+      "path": "contract_dependencies/declarations/mk_print/hypothesis_evidence/contexts/*/build_identity",
+      "count": 54,
+      "example": [
+       "ba58a9baf445bbd713d1abce5650c82c12d435153cfa91caa69dcded84504e16",
+       "d5285038b9149866b6c070d4b4b57839260df88e8a32cd527cf5a5512189a99b"
+      ]
+     },
+     {
+      "path": "contract_dependencies/declarations/cmt_atomic_store/hypothesis_evidence/contexts/*/build_identity",
+      "count": 51,
+      "example": [
+       "fe56f6633066149ac9d43b85b3227b371b602cf1185012546931f31c6bd349d4",
+       "06bb9f5326c2f794d86a103d14c96433c9876f9bbbb85ffe00d3167dee6a6be1"
+      ]
+     },
+     {
+      "path": "contract_dependencies/declarations/memcmp/hypothesis_evidence/contexts/*/build_identity",
+      "count": 48,
+      "example": [
+       "19abf7acc7d9e62a968a9be68f87fbabed66278ed2f594a294fb7420183ca3b6",
+       "9fb07b08a8433303153a4e4e50b9ffba60299b67dd55b3f99ccb32668d700099"
+      ]
+     },
+     {
+      "path": "contract_dependencies/declarations/rd_list_new/hypothesis_evidence/contexts/*/build_identity",
+      "count": 48,
+      "example": [
+       "301d4081958af6a4ef6cbf7e9655f43aa6c194aee491d3209ad5b004eef89a36",
+       "cf750df369550a1179cb5ead5d630f03e2ff86fcdf1d086c4d7680770613af24"
+      ]
+     },
+     {
+      "path": "contract_dependencies/declarations/rd_list_new/hypothesis_evidence/contexts/*/source_identity",
+      "count": 48,
+      "example": [
+       "b8761c4a2cea02fd5bd2da2250d319da3dc89584ea65d22122fa23e634547ce0",
+       "2c96702b87ae1357693259512add5a8ebe03599de6b07c127424a9a9fa5a09e5"
+      ]
+     },
+     {
+      "path": "contract_dependencies/declarations/memcmp/hypothesis_evidence/contexts/*/source_identity",
+      "count": 45,
+      "example": [
+       "d644c91a20938756f1c9a5a47437d138a2272cc6aa26e8bcb69daf9ed5eec9fc",
+       "8e3777de6d9f1c555a709212a22dbe5dc235515459a3601fd1df7bd80295b9ea"
+      ]
+     },
+     {
+      "path": "callback_members/lifetime_protocols/evidence/summaries/<sha256>/flb_input_collector_fd/open/*",
+      "count": 44,
+      "example": [
+       "<absent>",
+       "indirect call has no lifetime summary"
+      ]
+     },
+     {
+      "path": "callback_members/lifetime_protocols/evidence/summaries/<sha256>/engine_handle_event/open/*",
+      "count": 44,
+      "example": [
+       "<absent>",
+       "indirect call has no lifetime summary"
+      ]
+     },
+     {
+      "path": "callback_members/lifetime_protocols/evidence/summaries/<sha256>/input_collector_fd/open/*",
+      "count": 44,
+      "example": [
+       "<absent>",
+       "indirect call has no lifetime summary"
+      ]
+     },
+     {
+      "path": "callback_members/prepass/lifetime_protocols/summaries/<sha256>/flb_input_collector_fd/open/*",
+      "count": 44,
+      "example": [
+       "<absent>",
+       "indirect call has no lifetime summary"
+      ]
+     },
+     {
+      "path": "callback_members/prepass/lifetime_protocols/summaries/<sha256>/engine_handle_event/open/*",
+      "count": 44,
+      "example": [
+       "<absent>",
+       "indirect call has no lifetime summary"
+      ]
+     },
+     {
+      "path": "callback_members/prepass/lifetime_protocols/summaries/<sha256>/input_collector_fd/open/*",
+      "count": 44,
+      "example": [
+       "<absent>",
+       "indirect call has no lifetime summary"
+      ]
+     },
+     {
+      "path": "contract_dependencies/declarations/cfl_list_size/hypothesis_evidence/contexts/*/build_identity",
+      "count": 42,
+      "example": [
+       "0820e8822bfacec1a9482a2180209db01805533b25b6ef399bf7c35d9df770b8",
+       "b0bd0bea33125c0055f2f5ae7fcbff54ebc218eb46bc690951df3cb7cd174139"
+      ]
+     },
+     {
+      "path": "contract_dependencies/declarations/cfl_sds_len/hypothesis_evidence/contexts/*/build_identity",
+      "count": 42,
+      "example": [
+       "b6186c0429f350188e4b99bd6165c1e7d14c4ae27368fdbcece43a00ccaa9c14",
+       "9046c7162ce2f61c88eb69e7256ae535860dfb0f794ca9ce6e640adcfd798e45"
+      ]
+     },
+     {
+      "path": "contract_dependencies/declarations/mk_print/hypothesis_evidence/contexts/*/source_identity",
+      "count": 42,
+      "example": [
+       "da007b71e549863be44ab7e394a8a13c4b28d65237b5b1225b7cb2f77503b9c0",
+       "fc3487b5fe5c33e83ab513566e4740b7e328ae15f7b32a852f5006b712664851"
+      ]
+     },
+     {
+      "path": "callback_members/lifetime_protocols/evidence/summaries/<sha256>/flb_input_collectors_start/open/*",
+      "count": 40,
+      "example": [
+       "<absent>",
+       "member stores prevent holder snapshot stability"
+      ]
+     },
+     {
+      "path": "callback_members/prepass/lifetime_protocols/summaries/<sha256>/flb_input_collectors_start/open/*",
+      "count": 40,
+      "example": [
+       "<absent>",
+       "member stores prevent holder snapshot stability"
+      ]
+     },
+     {
+      "path": "contract_dependencies/declarations/rd_kafka_toppar_keep0/hypothesis_evidence/contexts/*/build_identity",
+      "count": 40,
+      "example": [
+       "301d4081958af6a4ef6cbf7e9655f43aa6c194aee491d3209ad5b004eef89a36",
+       "cf750df369550a1179cb5ead5d630f03e2ff86fcdf1d086c4d7680770613af24"
+      ]
+     },
+     {
+      "path": "contract_dependencies/declarations/rd_kafka_toppar_keep0/hypothesis_evidence/contexts/*/source_identity",
+      "count": 40,
+      "example": [
+       "b8761c4a2cea02fd5bd2da2250d319da3dc89584ea65d22122fa23e634547ce0",
+       "2c96702b87ae1357693259512add5a8ebe03599de6b07c127424a9a9fa5a09e5"
+      ]
+     },
+     {
+      "path": "contract_dependencies/declarations/strerror/hypothesis_evidence/contexts/*/build_identity",
+      "count": 40,
+      "example": [
+       "291acd2608b9527454e33dd994bfd15c4a9cc4c7c5883676a8234fd3f7002f9b",
+       "66c60c773db9fc2823d745121f430eecf50a9f8a721b000bd4692a855833cbb1"
+      ]
+     },
+     {
+      "path": "contract_dependencies/declarations/strerror/hypothesis_evidence/contexts/*/source_identity",
+      "count": 39,
+      "example": [
+       "fca23289d55ea615920ed7af298b57af88286ad5622efc90afe8f681521adb05",
+       "bafbc8c71d97d5486a60392bf06c9211c18350abca9c23990b212101a41e2cc0"
+      ]
+     },
+     {
+      "path": "contract_dependencies/declarations/cmt_atomic_load/hypothesis_evidence/contexts/*/build_identity",
+      "count": 38,
+      "example": [
+       "fe56f6633066149ac9d43b85b3227b371b602cf1185012546931f31c6bd349d4",
+       "06bb9f5326c2f794d86a103d14c96433c9876f9bbbb85ffe00d3167dee6a6be1"
+      ]
+     },
+     {
+      "path": "contract_dependencies/declarations/rd_kafka_q_destroy_owner/hypothesis_evidence/contexts/*/build_identity",
+      "count": 38,
+      "example": [
+       "301d4081958af6a4ef6cbf7e9655f43aa6c194aee491d3209ad5b004eef89a36",
+       "cf750df369550a1179cb5ead5d630f03e2ff86fcdf1d086c4d7680770613af24"
+      ]
+     },
+     {
+      "path": "contract_dependencies/declarations/rd_kafka_q_destroy_owner/hypothesis_evidence/contexts/*/source_identity",
+      "count": 38,
+      "example": [
+       "b8761c4a2cea02fd5bd2da2250d319da3dc89584ea65d22122fa23e634547ce0",
+       "2c96702b87ae1357693259512add5a8ebe03599de6b07c127424a9a9fa5a09e5"
+      ]
+     },
+     {
+      "path": "contract_dependencies/declarations/cfl_sds_cat_safe/hypothesis_evidence/contexts/*/build_identity",
+      "count": 37,
+      "example": [
+       "b6186c0429f350188e4b99bd6165c1e7d14c4ae27368fdbcece43a00ccaa9c14",
+       "9046c7162ce2f61c88eb69e7256ae535860dfb0f794ca9ce6e640adcfd798e45"
+      ]
+     },
+     {
+      "path": "contract_dependencies/declarations/rd_hdr_histogram_record/hypothesis_evidence/contexts/*/build_identity",
+      "count": 37,
+      "example": [
+       "3bfe38a32d638ed167c4615312623a48dfc526eab586ae4653c04341e21860da",
+       "3be1d3d565be091c94031ed5def46a90412e5575d226eb6ed300237d87937c11"
+      ]
+     },
+     {
+      "path": "contract_dependencies/declarations/rd_hdr_histogram_record/hypothesis_evidence/contexts/*/source_identity",
+      "count": 37,
+      "example": [
+       "0f832a5f6097d3b211bd019ae7fc1d43214b762d05e824017e26356f4c93c72d",
+       "74b61161c270f6cb7e21aafcfb2918040f53fbc82de38de17a647d35b66f5b44"
+      ]
+     },
+     {
+      "path": "callback_members/lifetime_protocols/evidence/protocols/*/standing/DeclaredAssumption/reasons/*",
+      "count": 36,
+      "example": [
+       "unread /media/Data/GitHub/quirin-lang/.claude/worktrees/agent-af4406ebe7df9c0d1/private/acp/mirror/c-gateway-wave-pin/fluent-bit-clang-source/lib/luajit-7152e154/src/host/buildvm.c: its preprocessing failed: /media/Data/GitHub/quirin-lang/.",
+       "unread /media/Data/GitHub/quirin-lang/build/cycle19/c-gateway-wave-pin/fluent-bit-clang-production/lib/luajit-cmake/lj_vm.S: its preprocessing failed: clang: error: no such file or directory: '/media/Data/GitHub/quirin-lang/build/cycle19/c-"
+      ]
+     },
+     {
+      "path": "callback_members/lifetime_protocols/evidence/summaries/<sha256>/collector_create/open/*",
+      "count": 36,
+      "example": [
+       "<absent>",
+       "member stores prevent holder snapshot stability"
+      ]
+     },
+     {
+      "path": "callback_members/lifetime_protocols/evidence/summaries/<sha256>/flb_input_collector_delete/open/*",
+      "count": 36,
+      "example": [
+       "<absent>",
+       "member stores prevent holder snapshot stability"
+      ]
+     },
+     {
+      "path": "callback_members/lifetime_protocols/evidence/summaries/<sha256>/flb_input_collectors_signal_start/open/*",
+      "count": 36,
+      "example": [
+       "<absent>",
+       "member stores prevent holder snapshot stability"
+      ]
+     },
+     {
+      "path": "callback_members/lifetime_protocols/evidence/summaries/<sha256>/flb_input_set_collector_event/open/*",
+      "count": 36,
+      "example": [
+       "<absent>",
+       "member stores prevent holder snapshot stability"
+      ]
+     },
+     {
+      "path": "callback_members/lifetime_protocols/evidence/summaries/<sha256>/flb_input_set_collector_socket/open/*",
+      "count": 36,
+      "example": [
+       "<absent>",
+       "member stores prevent holder snapshot stability"
+      ]
+     },
+     {
+      "path": "callback_members/lifetime_protocols/evidence/summaries/<sha256>/flb_input_set_collector_time/open/*",
+      "count": 36,
+      "example": [
+       "<absent>",
+       "member stores prevent holder snapshot stability"
+      ]
+     },
+     {
+      "path": "callback_members/prepass/lifetime_protocols/protocols/*/standing/DeclaredAssumption/reasons/*",
+      "count": 36,
+      "example": [
+       "unread /media/Data/GitHub/quirin-lang/.claude/worktrees/agent-af4406ebe7df9c0d1/private/acp/mirror/c-gateway-wave-pin/fluent-bit-clang-source/lib/luajit-7152e154/src/host/buildvm.c: its preprocessing failed: /media/Data/GitHub/quirin-lang/.",
+       "unread /media/Data/GitHub/quirin-lang/build/cycle19/c-gateway-wave-pin/fluent-bit-clang-production/lib/luajit-cmake/lj_vm.S: its preprocessing failed: clang: error: no such file or directory: '/media/Data/GitHub/quirin-lang/build/cycle19/c-"
+      ]
+     },
+     {
+      "path": "callback_members/prepass/lifetime_protocols/summaries/<sha256>/collector_create/open/*",
+      "count": 36,
+      "example": [
+       "<absent>",
+       "member stores prevent holder snapshot stability"
+      ]
+     },
+     {
+      "path": "callback_members/prepass/lifetime_protocols/summaries/<sha256>/flb_input_collector_delete/open/*",
+      "count": 36,
+      "example": [
+       "<absent>",
+       "member stores prevent holder snapshot stability"
+      ]
+     },
+     {
+      "path": "callback_members/prepass/lifetime_protocols/summaries/<sha256>/flb_input_collectors_signal_start/open/*",
+      "count": 36,
+      "example": [
+       "<absent>",
+       "member stores prevent holder snapshot stability"
+      ]
+     },
+     {
+      "path": "callback_members/prepass/lifetime_protocols/summaries/<sha256>/flb_input_set_collector_event/open/*",
+      "count": 36,
+      "example": [
+       "<absent>",
+       "member stores prevent holder snapshot stability"
+      ]
+     },
+     {
+      "path": "callback_members/prepass/lifetime_protocols/summaries/<sha256>/flb_input_set_collector_socket/open/*",
+      "count": 36,
+      "example": [
+       "<absent>",
+       "member stores prevent holder snapshot stability"
+      ]
+     },
+     {
+      "path": "callback_members/prepass/lifetime_protocols/summaries/<sha256>/flb_input_set_collector_time/open/*",
+      "count": 36,
+      "example": [
+       "<absent>",
+       "member stores prevent holder snapshot stability"
+      ]
+     },
+     {
+      "path": "contract_dependencies/declarations/mk_mem_alloc/hypothesis_evidence/contexts/*/build_identity",
+      "count": 36,
+      "example": [
+       "cf1bfb0cbffd9baa7c08a439fbed16492f8643efc95bd7b84328ee11e8f4a683",
+       "470f793fd210f5d9c53569ed89221362e69954e29dabcba7d13a466eb2ad1d77"
+      ]
+     },
+     {
+      "path": "contract_dependencies/declarations/cJSON_Delete/hypothesis_evidence/contexts/*/build_identity",
+      "count": 35,
+      "example": [
+       "b46b3604f4bde09a2b8207dc1390f4a23547d28afb779c98dcd55437634b76e2",
+       "97951c049c7062b0186582757d64111bf55943d47cb6090048db579889e33f05"
+      ]
+     },
+     {
+      "path": "contract_dependencies/declarations/rd_kafka_q_new0/hypothesis_evidence/contexts/*/build_identity",
+      "count": 34,
+      "example": [
+       "301d4081958af6a4ef6cbf7e9655f43aa6c194aee491d3209ad5b004eef89a36",
+       "cf750df369550a1179cb5ead5d630f03e2ff86fcdf1d086c4d7680770613af24"
+      ]
+     },
+     {
+      "path": "contract_dependencies/declarations/rd_kafka_q_new0/hypothesis_evidence/contexts/*/source_identity",
+      "count": 34,
+      "example": [
+       "b8761c4a2cea02fd5bd2da2250d319da3dc89584ea65d22122fa23e634547ce0",
+       "2c96702b87ae1357693259512add5a8ebe03599de6b07c127424a9a9fa5a09e5"
+      ]
+     },
+     {
+      "path": "contract_dependencies/declarations/cmt_atomic_compare_exchange/hypothesis_evidence/contexts/*/build_identity",
+      "count": 33,
+      "example": [
+       "fe56f6633066149ac9d43b85b3227b371b602cf1185012546931f31c6bd349d4",
+       "06bb9f5326c2f794d86a103d14c96433c9876f9bbbb85ffe00d3167dee6a6be1"
+      ]
+     },
+     {
+      "path": "contract_dependencies/declarations/strncmp/hypothesis_evidence/contexts/*/build_identity",
+      "count": 33,
+      "example": [
+       "8e4f02e5705a36ba0689a2fe5c9a562089c85fc2d42ad9ea9b985ef0804735de",
+       "345b4c940d2b8b6fbf8f8cdbc8034a85051681113f44a4dbbbbc35b33396262d"
+      ]
+     },
+     {
+      "path": "contract_dependencies/declarations/mk_list_add/hypothesis_evidence/contexts/*/build_identity",
+      "count": 32,
+      "example": [
+       "20dab78b0c9db1fb5a3c185cb2c1d8550ce243896568aaa5a192298d10dbfd16",
+       "ee1f1a5e64623e94323ff1138a32a9679838f0bf2bf877f61edd30f82d5de9cb"
+      ]
+     },
+     {
+      "path": "contract_dependencies/declarations/malloc/hypothesis_evidence/contexts/*/build_identity",
+      "count": 31,
+      "example": [
+       "20dab78b0c9db1fb5a3c185cb2c1d8550ce243896568aaa5a192298d10dbfd16",
+       "ee1f1a5e64623e94323ff1138a32a9679838f0bf2bf877f61edd30f82d5de9cb"
+      ]
+     },
+     {
+      "path": "contract_dependencies/declarations/cio_errno_print/hypothesis_evidence/contexts/*/build_identity",
+      "count": 30,
+      "example": [
+       "a55d04cf63c03bb143780849f868f780c37d0e381716e229095c48864dff6afb",
+       "403c6d1f9be956791e2b15633105626f45ee51b1564f44b7e97b001ede841349"
+      ]
+     },
+     {
+      "path": "contract_dependencies/declarations/ctr_errno_print/hypothesis_evidence/contexts/*/build_identity",
+      "count": 30,
+      "example": [
+       "172fa2ba443494dd58cdedc3774a9b9060773e4161f11a7dc79bca1c5f3cbfaa",
+       "6b8af1713a3b031710792997c27fe0ed2bd66b9e56c650d463276073ad4f9ee1"
+      ]
+     },
+     {
+      "path": "contract_dependencies/declarations/rd_atomic64_add/hypothesis_evidence/contexts/*/build_identity",
+      "count": 30,
+      "example": [
+       "15c07edf1fa2d2adc789cf5c29b3b7f98b188e05c60544fc65aed1d4f3844ab6",
+       "f1fe38e52132659547767b94c1ad747115650fcf56f7472d0eaaf9d0e6fdabc3"
+      ]
+     },
+     {
+      "path": "contract_dependencies/declarations/rd_atomic64_add/hypothesis_evidence/contexts/*/source_identity",
+      "count": 30,
+      "example": [
+       "357b2fe746d804c294c0ded3cd18da2789046af7ecfca3b624057ab5baa8dd9a",
+       "8c632eb7a015f5c193261042e7792c1d3df07981e9b219f912894d2352985444"
+      ]
+     },
+     {
+      "path": "contract_dependencies/declarations/cJSON_New_Item/hypothesis_evidence/contexts/*/build_identity",
+      "count": 29,
+      "example": [
+       "b46b3604f4bde09a2b8207dc1390f4a23547d28afb779c98dcd55437634b76e2",
+       "97951c049c7062b0186582757d64111bf55943d47cb6090048db579889e33f05"
+      ]
+     },
+     {
+      "path": "callback_members/lifetime_protocols/evidence/summaries/<sha256>/flb_input_collector_start/open/*",
+      "count": 28,
+      "example": [
+       "<absent>",
+       "member stores prevent holder snapshot stability"
+      ]
+     },
+     {
+      "path": "callback_members/prepass/lifetime_protocols/summaries/<sha256>/flb_input_collector_start/open/*",
+      "count": 28,
+      "example": [
+       "<absent>",
+       "member stores prevent holder snapshot stability"
+      ]
+     },
+     {
+      "path": "contract_dependencies/declarations/close/hypothesis_evidence/contexts/*/build_identity",
+      "count": 27,
+      "example": [
+       "66ee8b1462dceefa6f5349b607933c6b0ad3faf3d24fa670e826c86de53a9916",
+       "3ac64fc95eee6bc79117c7dd0f01e1fe49f25c37ee3faeb86b6e40cd6b2dee39"
+      ]
+     },
+     {
+      "path": "contract_dependencies/declarations/mk_list_del/hypothesis_evidence/contexts/*/build_identity",
+      "count": 27,
+      "example": [
+       "20dab78b0c9db1fb5a3c185cb2c1d8550ce243896568aaa5a192298d10dbfd16",
+       "ee1f1a5e64623e94323ff1138a32a9679838f0bf2bf877f61edd30f82d5de9cb"
+      ]
+     },
+     {
+      "path": "contract_dependencies/declarations/mk_mem_alloc/hypothesis_evidence/contexts/*/source_identity",
+      "count": 26,
+      "example": [
+       "3c7a2d5b820dc7ef4374f996a51f7888077031c3e931cf6d4c717e333beb9936",
+       "994cc2812cae0cd42e1500d5aa17e1a4013ea19b503bdf0de613ed2f17e906c9"
+      ]
+     },
+     {
+      "path": "contract_dependencies/declarations/mk_string_dup/hypothesis_evidence/contexts/*/build_identity",
+      "count": 26,
+      "example": [
+       "df2f382857bbf13be1c31c19444a88342c94c1a1a599d38b19c4d79015e074ca",
+       "c33716bf047de7ec1daca09eb569eb781cb4bb01973316610e0fc354893ac2b8"
+      ]
+     },
+     {
+      "path": "contract_dependencies/declarations/rd_kafka_op_req/hypothesis_evidence/contexts/*/build_identity",
+      "count": 26,
+      "example": [
+       "15c07edf1fa2d2adc789cf5c29b3b7f98b188e05c60544fc65aed1d4f3844ab6",
+       "f1fe38e52132659547767b94c1ad747115650fcf56f7472d0eaaf9d0e6fdabc3"
+      ]
+     },
+     {
+      "path": "contract_dependencies/declarations/rd_kafka_op_req/hypothesis_evidence/contexts/*/source_identity",
+      "count": 26,
+      "example": [
+       "357b2fe746d804c294c0ded3cd18da2789046af7ecfca3b624057ab5baa8dd9a",
+       "8c632eb7a015f5c193261042e7792c1d3df07981e9b219f912894d2352985444"
+      ]
+     },
+     {
+      "path": "contract_dependencies/declarations/rd_strndup/hypothesis_evidence/contexts/*/build_identity",
+      "count": 26,
+      "example": [
+       "301d4081958af6a4ef6cbf7e9655f43aa6c194aee491d3209ad5b004eef89a36",
+       "cf750df369550a1179cb5ead5d630f03e2ff86fcdf1d086c4d7680770613af24"
+      ]
+     },
+     {
+      "path": "contract_dependencies/declarations/rd_strndup/hypothesis_evidence/contexts/*/source_identity",
+      "count": 26,
+      "example": [
+       "b8761c4a2cea02fd5bd2da2250d319da3dc89584ea65d22122fa23e634547ce0",
+       "2c96702b87ae1357693259512add5a8ebe03599de6b07c127424a9a9fa5a09e5"
+      ]
+     },
+     {
+      "path": "contract_dependencies/declarations/vsnprintf/hypothesis_evidence/contexts/*/build_identity",
+      "count": 26,
+      "example": [
+       "4e8d9ca411ebb30493de2f2ba66c8d9116e3cfc34580536b0b78d882cc3de0f6",
+       "3c710f837d30e2a5764bb20d2d8ecd3b2fb304d6ae122a53aaeb1435925c9754"
+      ]
+     },
+     {
+      "path": "contract_dependencies/declarations/mk_mem_alloc_z/hypothesis_evidence/contexts/*/build_identity",
+      "count": 25,
+      "example": [
+       "ba58a9baf445bbd713d1abce5650c82c12d435153cfa91caa69dcded84504e16",
+       "d5285038b9149866b6c070d4b4b57839260df88e8a32cd527cf5a5512189a99b"
+      ]
+     },
+     {
+      "path": "contract_dependencies/declarations/strncmp/hypothesis_evidence/contexts/*/source_identity",
+      "count": 25,
+      "example": [
+       "357b2fe746d804c294c0ded3cd18da2789046af7ecfca3b624057ab5baa8dd9a",
+       "8c632eb7a015f5c193261042e7792c1d3df07981e9b219f912894d2352985444"
+      ]
+     },
+     {
+      "path": "callback_members/lifetime_protocols/evidence/callers/<sha256>:flb_input_instance_destroy/*",
+      "count": 24,
+      "example": [
+       "<absent>",
+       "03bbc5ea4685c5abc844567bb3546dc50113e4dbaf61c7b7adec3e6bdeb575d0:flb_input_exit_all"
+      ]
+     },
+     {
+      "path": "callback_members/lifetime_protocols/evidence/summaries/<sha256>/flb_input_collector_resume/open/*",
+      "count": 24,
+      "example": [
+       "<absent>",
+       "member stores prevent holder snapshot stability"
+      ]
+     },
+     {
+      "path": "callback_members/prepass/lifetime_protocols/callers/<sha256>:flb_input_instance_destroy/*",
+      "count": 24,
+      "example": [
+       "<absent>",
+       "03bbc5ea4685c5abc844567bb3546dc50113e4dbaf61c7b7adec3e6bdeb575d0:flb_input_exit_all"
+      ]
+     },
+     {
+      "path": "callback_members/prepass/lifetime_protocols/summaries/<sha256>/flb_input_collector_resume/open/*",
+      "count": 24,
+      "example": [
+       "<absent>",
+       "member stores prevent holder snapshot stability"
+      ]
+     },
+     {
+      "path": "contract_dependencies/declarations/close/hypothesis_evidence/contexts/*/source_identity",
+      "count": 24,
+      "example": [
+       "4ea05ba92f313526d39b4d24824e7e657ee1391721245701aba2e3e10a810a26",
+       "a45ea0c64b7bb4f31ac4a4757cb4e70fd7eabf1a8e7dcf8de70cb0bd8ee47dbe"
+      ]
+     },
+     {
+      "path": "contract_dependencies/declarations/strnlen/hypothesis_evidence/contexts/*/build_identity",
+      "count": 24,
+      "example": [
+       "61c14977f888d4e26baf680465a80a0d577b7201b7b12c7b498ce57636d182cc",
+       "f2e2bd80796247a568ea6e7b5c6d3a011fdc13e8c25cafca15d9e6e60f4c477b"
+      ]
+     },
+     {
+      "path": "contract_dependencies/declarations/strnlen/hypothesis_evidence/contexts/*/source_identity",
+      "count": 24,
+      "example": [
+       "a799f5adb56ac035af60e786b798feb8de91c65266f45d16f03c46060ff2b4f9",
+       "111c6759508d9323a3db9c2ce62653757837cb605800a3f1a9378ac0481a9539"
+      ]
+     },
+     {
+      "path": "contract_dependencies/declarations/cmt_mpack_consume_uint_tag/hypothesis_evidence/contexts/*/build_identity",
+      "count": 23,
+      "example": [
+       "b6186c0429f350188e4b99bd6165c1e7d14c4ae27368fdbcece43a00ccaa9c14",
+       "9046c7162ce2f61c88eb69e7256ae535860dfb0f794ca9ce6e640adcfd798e45"
+      ]
+     },
+     {
+      "path": "contract_dependencies/declarations/mk_list_add/hypothesis_evidence/contexts/*/source_identity",
+      "count": 23,
+      "example": [
+       "4ea05ba92f313526d39b4d24824e7e657ee1391721245701aba2e3e10a810a26",
+       "a45ea0c64b7bb4f31ac4a4757cb4e70fd7eabf1a8e7dcf8de70cb0bd8ee47dbe"
+      ]
+     },
+     {
+      "path": "contract_dependencies/declarations/rd_atomic64_get/hypothesis_evidence/contexts/*/build_identity",
+      "count": 23,
+      "example": [
+       "301d4081958af6a4ef6cbf7e9655f43aa6c194aee491d3209ad5b004eef89a36",
+       "cf750df369550a1179cb5ead5d630f03e2ff86fcdf1d086c4d7680770613af24"
+      ]
+     },
+     {
+      "path": "contract_dependencies/declarations/rd_atomic64_get/hypothesis_evidence/contexts/*/source_identity",
+      "count": 23,
+      "example": [
+       "b8761c4a2cea02fd5bd2da2250d319da3dc89584ea65d22122fa23e634547ce0",
+       "2c96702b87ae1357693259512add5a8ebe03599de6b07c127424a9a9fa5a09e5"
+      ]
+     },
+     {
+      "path": "contract_dependencies/declarations/strchr/hypothesis_evidence/contexts/*/build_identity",
+      "count": 23,
+      "example": [
+       "ed0b0bc152689ebf505bbb36791e41c03594b74a022d1a55074d27eb71717850",
+       "281579cb385f605bbe490255a5d79ba1b0b0ec1f8df982034c75fad77e7218d8"
+      ]
+     },
+     {
+      "path": "contract_dependencies/declarations/cmt_math_d64_to_uint64/hypothesis_evidence/contexts/*/build_identity",
+      "count": 22,
+      "example": [
+       "0820e8822bfacec1a9482a2180209db01805533b25b6ef399bf7c35d9df770b8",
+       "b0bd0bea33125c0055f2f5ae7fcbff54ebc218eb46bc690951df3cb7cd174139"
+      ]
+     },
+     {
+      "path": "contract_dependencies/declarations/printf/hypothesis_evidence/contexts/*/build_identity",
+      "count": 22,
+      "example": [
+       "19abf7acc7d9e62a968a9be68f87fbabed66278ed2f594a294fb7420183ca3b6",
+       "9fb07b08a8433303153a4e4e50b9ffba60299b67dd55b3f99ccb32668d700099"
+      ]
+     },
+     {
+      "path": "contract_dependencies/declarations/vsnprintf/hypothesis_evidence/contexts/*/source_identity",
+      "count": 22,
+      "example": [
+       "f55d1fa2c902eb14aa915703d6a3ef9fc830a083be6a9bd085473e5a96c7cc5b",
+       "e85264fd258e7fba11b3535e6059467ba69a482e79045f60cae93ffa8d7252a3"
+      ]
+     },
+     {
+      "path": "contract_dependencies/declarations/cmt_metric_get_value/hypothesis_evidence/contexts/*/build_identity",
+      "count": 21,
+      "example": [
+       "0820e8822bfacec1a9482a2180209db01805533b25b6ef399bf7c35d9df770b8",
+       "b0bd0bea33125c0055f2f5ae7fcbff54ebc218eb46bc690951df3cb7cd174139"
+      ]
+     },
+     {
+      "path": "contract_dependencies/declarations/mk_mem_alloc_z/hypothesis_evidence/contexts/*/source_identity",
+      "count": 21,
+      "example": [
+       "da007b71e549863be44ab7e394a8a13c4b28d65237b5b1225b7cb2f77503b9c0",
+       "fc3487b5fe5c33e83ab513566e4740b7e328ae15f7b32a852f5006b712664851"
+      ]
+     },
+     {
+      "path": "callback_members/lifetime_protocols/evidence/summaries/<sha256>/flb_input_collector_pause/open/*",
+      "count": 20,
+      "example": [
+       "<absent>",
+       "member stores prevent holder snapshot stability"
+      ]
+     },
+     {
+      "path": "callback_members/prepass/lifetime_protocols/summaries/<sha256>/flb_input_collector_pause/open/*",
+      "count": 20,
+      "example": [
+       "<absent>",
+       "member stores prevent holder snapshot stability"
+      ]
+     },
+     {
+      "path": "contract_dependencies/declarations/cmt_metric_get_timestamp/hypothesis_evidence/contexts/*/build_identity",
+      "count": 20,
+      "example": [
+       "0820e8822bfacec1a9482a2180209db01805533b25b6ef399bf7c35d9df770b8",
+       "b0bd0bea33125c0055f2f5ae7fcbff54ebc218eb46bc690951df3cb7cd174139"
+      ]
+     },
+     {
+      "path": "contract_dependencies/declarations/flb_log_print/hypothesis_evidence/contexts/*/build_identity",
+      "count": 20,
+      "example": [
+       "12ed039754b8bc503e82ee3a151308d0a683054028a14eb803a8eed516700a0f",
+       "a639c35316ceecabdd3de218e507b0552c2649f735205877bb9f6e4ca0b29640"
+      ]
+     },
+     {
+      "path": "contract_dependencies/declarations/flb_log_print/hypothesis_evidence/contexts/*/source_identity",
+      "count": 20,
+      "example": [
+       "95855d0d9908ceae69c69c881fb94b4e977ee7ec859ca9662b62cc16a3c39eca",
+       "024edb8fb825b99004276035010a1647197be45e4e373bb8b7d82b5d09e66981"
+      ]
+     },
+     {
+      "path": "contract_dependencies/declarations/flb_log_check/hypothesis_evidence/contexts/*/build_identity",
+      "count": 19,
+      "example": [
+       "12ed039754b8bc503e82ee3a151308d0a683054028a14eb803a8eed516700a0f",
+       "a639c35316ceecabdd3de218e507b0552c2649f735205877bb9f6e4ca0b29640"
+      ]
+     },
+     {
+      "path": "contract_dependencies/declarations/flb_log_check/hypothesis_evidence/contexts/*/source_identity",
+      "count": 19,
+      "example": [
+       "95855d0d9908ceae69c69c881fb94b4e977ee7ec859ca9662b62cc16a3c39eca",
+       "024edb8fb825b99004276035010a1647197be45e4e373bb8b7d82b5d09e66981"
+      ]
+     },
+     {
+      "path": "contract_dependencies/declarations/mk_list_del/hypothesis_evidence/contexts/*/source_identity",
+      "count": 19,
+      "example": [
+       "4ea05ba92f313526d39b4d24824e7e657ee1391721245701aba2e3e10a810a26",
+       "a45ea0c64b7bb4f31ac4a4757cb4e70fd7eabf1a8e7dcf8de70cb0bd8ee47dbe"
+      ]
+     },
+     {
+      "path": "contract_dependencies/declarations/mpack_write_cstr/hypothesis_evidence/contexts/*/build_identity",
+      "count": 19,
+      "example": [
+       "a6a4237b010c3c3304f2923161647ee917d882604845f8c0a5c003643d50ba2f",
+       "bf0363396b709c647ce3deeeb28bb7399681c7f99d444f6e80e5afce6f16ce78"
+      ]
+     },
+     {
+      "path": "contract_dependencies/declarations/rd_kafka_op_new_cb/hypothesis_evidence/contexts/*/build_identity",
+      "count": 19,
+      "example": [
+       "301d4081958af6a4ef6cbf7e9655f43aa6c194aee491d3209ad5b004eef89a36",
+       "cf750df369550a1179cb5ead5d630f03e2ff86fcdf1d086c4d7680770613af24"
+      ]
+     },
+     {
+      "path": "contract_dependencies/declarations/rd_kafka_op_new_cb/hypothesis_evidence/contexts/*/source_identity",
+      "count": 19,
+      "example": [
+       "b8761c4a2cea02fd5bd2da2250d319da3dc89584ea65d22122fa23e634547ce0",
+       "2c96702b87ae1357693259512add5a8ebe03599de6b07c127424a9a9fa5a09e5"
+      ]
+     },
+     {
+      "path": "contract_dependencies/declarations/rd_kafka_q_destroy0/hypothesis_evidence/contexts/*/build_identity",
+      "count": 18,
+      "example": [
+       "301d4081958af6a4ef6cbf7e9655f43aa6c194aee491d3209ad5b004eef89a36",
+       "cf750df369550a1179cb5ead5d630f03e2ff86fcdf1d086c4d7680770613af24"
+      ]
+     },
+     {
+      "path": "contract_dependencies/declarations/rd_kafka_q_destroy0/hypothesis_evidence/contexts/*/source_identity",
+      "count": 18,
+      "example": [
+       "b8761c4a2cea02fd5bd2da2250d319da3dc89584ea65d22122fa23e634547ce0",
+       "2c96702b87ae1357693259512add5a8ebe03599de6b07c127424a9a9fa5a09e5"
+      ]
+     },
+     {
+      "path": "contract_dependencies/declarations/rd_kafka_toppar_get0/hypothesis_evidence/contexts/*/build_identity",
+      "count": 18,
+      "example": [
+       "301d4081958af6a4ef6cbf7e9655f43aa6c194aee491d3209ad5b004eef89a36",
+       "cf750df369550a1179cb5ead5d630f03e2ff86fcdf1d086c4d7680770613af24"
+      ]
+     },
+     {
+      "path": "contract_dependencies/declarations/rd_kafka_toppar_get0/hypothesis_evidence/contexts/*/source_identity",
+      "count": 18,
+      "example": [
+       "b8761c4a2cea02fd5bd2da2250d319da3dc89584ea65d22122fa23e634547ce0",
+       "2c96702b87ae1357693259512add5a8ebe03599de6b07c127424a9a9fa5a09e5"
+      ]
+     },
+     {
+      "path": "contract_dependencies/declarations/cio_chunk_is_up/hypothesis_evidence/contexts/*/build_identity",
+      "count": 17,
+      "example": [
+       "a55d04cf63c03bb143780849f868f780c37d0e381716e229095c48864dff6afb",
+       "403c6d1f9be956791e2b15633105626f45ee51b1564f44b7e97b001ede841349"
+      ]
+     },
+     {
+      "path": "contract_dependencies/declarations/memmove/hypothesis_evidence/contexts/*/build_identity",
+      "count": 17,
+      "example": [
+       "19abf7acc7d9e62a968a9be68f87fbabed66278ed2f594a294fb7420183ca3b6",
+       "9fb07b08a8433303153a4e4e50b9ffba60299b67dd55b3f99ccb32668d700099"
+      ]
+     },
+     {
+      "path": "contract_dependencies/declarations/mpack_finish_map/hypothesis_evidence/contexts/*/build_identity",
+      "count": 17,
+      "example": [
+       "a6a4237b010c3c3304f2923161647ee917d882604845f8c0a5c003643d50ba2f",
+       "bf0363396b709c647ce3deeeb28bb7399681c7f99d444f6e80e5afce6f16ce78"
+      ]
+     },
+     {
+      "path": "contract_dependencies/declarations/rd_kafka_err_action/hypothesis_evidence/contexts/*/build_identity",
+      "count": 17,
+      "example": [
+       "eb204a27c3f54089683a977cec5479f91ac917a179aea1c3e2649184a23e7ac2",
+       "5c820b5db5752784e8f4edfaac3a5e06e3ddc9c002d28c2744d586cbf2e3fae9"
+      ]
+     },
+     {
+      "path": "contract_dependencies/declarations/rd_kafka_err_action/hypothesis_evidence/contexts/*/source_identity",
+      "count": 17,
+      "example": [
+       "f55d1fa2c902eb14aa915703d6a3ef9fc830a083be6a9bd085473e5a96c7cc5b",
+       "e85264fd258e7fba11b3535e6059467ba69a482e79045f60cae93ffa8d7252a3"
+      ]
+     },
+     {
+      "path": "contract_dependencies/declarations/strcasecmp/hypothesis_evidence/contexts/*/build_identity",
+      "count": 17,
+      "example": [
+       "301d4081958af6a4ef6cbf7e9655f43aa6c194aee491d3209ad5b004eef89a36",
+       "cf750df369550a1179cb5ead5d630f03e2ff86fcdf1d086c4d7680770613af24"
+      ]
+     },
+     {
+      "path": "contract_dependencies/declarations/strchr/hypothesis_evidence/contexts/*/source_identity",
+      "count": 17,
+      "example": [
+       "8eb6d5a2da16b77002a5bf78e7b30f8511a2e9f7734abc8505d0910db9886ec4",
+       "8e8f6943eb02b773f761cb4fa8481c48e114b3d10072f150696670fbadc21b27"
+      ]
+     },
+     {
+      "path": "callback_members/lifetime_protocols/evidence/summaries/<sha256>/collector_start/open/*",
+      "count": 16,
+      "example": [
+       "<absent>",
+       "member stores prevent holder snapshot stability"
+      ]
+     },
+     {
+      "path": "callback_members/prepass/lifetime_protocols/summaries/<sha256>/collector_start/open/*",
+      "count": 16,
+      "example": [
+       "<absent>",
+       "member stores prevent holder snapshot stability"
+      ]
+     },
+     {
+      "path": "contract_dependencies/declarations/memmove/hypothesis_evidence/contexts/*/source_identity",
+      "count": 16,
+      "example": [
+       "de8a3f66157502f40261a2252f37692abdee05ad9a137933e77535acc12ac82c",
+       "ad4ebecb3ee56d7fef7dd53db77c4a4852288c55eff80d5648d2b8299a625e04"
+      ]
+     },
+     {
+      "path": "contract_dependencies/declarations/mk_string_dup/hypothesis_evidence/contexts/*/source_identity",
+      "count": 16,
+      "example": [
+       "4ea05ba92f313526d39b4d24824e7e657ee1391721245701aba2e3e10a810a26",
+       "a45ea0c64b7bb4f31ac4a4757cb4e70fd7eabf1a8e7dcf8de70cb0bd8ee47dbe"
+      ]
+     },
+     {
+      "path": "contract_dependencies/declarations/rd_kafka_topic_destroy0/hypothesis_evidence/contexts/*/build_identity",
+      "count": 16,
+      "example": [
+       "c9b7240366eec55b1a27d9beaa39743b5d0c381bc88e1ca0b11323da4a859020",
+       "777553d0407b0dff776e58ccdb9611cee79442f3f7e755ad569f0a676082c32a"
+      ]
+     },
+     {
+      "path": "contract_dependencies/declarations/rd_kafka_topic_destroy0/hypothesis_evidence/contexts/*/source_identity",
+      "count": 16,
+      "example": [
+       "64aabda21a4816673c2419c831d193ae1710e463a0bb291985fffbea4d1dcf6f",
+       "eebc9bd447f2f1beee2a3a3e48b099e2e5b35839303cc6791c24c8042a4bb47c"
+      ]
+     },
+     {
+      "path": "contract_dependencies/declarations/rd_kafka_topic_partition_get_private/hypothesis_evidence/contexts/*/build_identity",
+      "count": 16,
+      "example": [
+       "d9730193e903cd0f187d6f2e39d3114a22ead9092b508797e69bacb1c684bf53",
+       "a13ef6ae151ed4bf152daaccf257138dbe213e7aba64e65b5daff5cdefd423c3"
+      ]
+     },
+     {
+      "path": "contract_dependencies/declarations/rd_kafka_topic_partition_get_private/hypothesis_evidence/contexts/*/source_identity",
+      "count": 16,
+      "example": [
+       "e8c77fdc6593289332c82ad8c8dfccf8ff64096c7ed00d466dea5ca598e7a261",
+       "b24efbad09170177eaf166d29f51dbaf2dca999a497cbe41b3cac29c3feca341"
+      ]
+     },
+     {
+      "path": "contract_dependencies/declarations/LZ4_decompress_generic/hypothesis_evidence/contexts/*/build_identity",
+      "count": 15,
+      "example": [
+       "d60e13e87f05432993489ecfb104b4fbfb7013e5b2d11b479e477017516f926a",
+       "0db4a53f34355f9b637f5a6329c67ed942346b0b4698398418d578a36f4aed28"
+      ]
+     },
+     {
+      "path": "contract_dependencies/declarations/mpack_finish_array/hypothesis_evidence/contexts/*/build_identity",
+      "count": 15,
+      "example": [
+       "a6a4237b010c3c3304f2923161647ee917d882604845f8c0a5c003643d50ba2f",
+       "bf0363396b709c647ce3deeeb28bb7399681c7f99d444f6e80e5afce6f16ce78"
+      ]
+     },
+     {
+      "path": "contract_dependencies/declarations/perror/hypothesis_evidence/contexts/*/build_identity",
+      "count": 15,
+      "example": [
+       "20dab78b0c9db1fb5a3c185cb2c1d8550ce243896568aaa5a192298d10dbfd16",
+       "ee1f1a5e64623e94323ff1138a32a9679838f0bf2bf877f61edd30f82d5de9cb"
+      ]
+     },
+     {
+      "path": "contract_dependencies/declarations/rd_kafka_interceptor_method_add/hypothesis_evidence/contexts/*/build_identity",
+      "count": 15,
+      "example": [
+       "f5223e9dd5f1e806d0bb064f5e12b48ff69939b7dfb9549c1d4d81217524c4f8",
+       "3b6bbac915c178f1d83054300898ac528f9adc76559fead1311d7f934e3289d4"
+      ]
+     },
+     {
+      "path": "contract_dependencies/declarations/rd_kafka_interceptor_method_add/hypothesis_evidence/contexts/*/source_identity",
+      "count": 15,
+      "example": [
+       "ba4f8d753196f15f015f12de585daa04ca9227ecd196016548e67a6f69855878",
+       "ad6c8b0a995fb73d8c48d50cd7cc082121ab6f39c7cac47e367a4412af5df12d"
+      ]
+     },
+     {
+      "path": "contract_dependencies/declarations/rd_kafka_poll_cb/hypothesis_evidence/contexts/*/build_identity",
+      "count": 15,
+      "example": [
+       "301d4081958af6a4ef6cbf7e9655f43aa6c194aee491d3209ad5b004eef89a36",
+       "cf750df369550a1179cb5ead5d630f03e2ff86fcdf1d086c4d7680770613af24"
+      ]
+     },
+     {
+      "path": "contract_dependencies/declarations/rd_kafka_poll_cb/hypothesis_evidence/contexts/*/source_identity",
+      "count": 15,
+      "example": [
+       "b8761c4a2cea02fd5bd2da2250d319da3dc89584ea65d22122fa23e634547ce0",
+       "2c96702b87ae1357693259512add5a8ebe03599de6b07c127424a9a9fa5a09e5"
+      ]
+     },
+     {
+      "path": "contract_dependencies/declarations/rd_realloc/hypothesis_evidence/contexts/*/build_identity",
+      "count": 15,
+      "example": [
+       "301d4081958af6a4ef6cbf7e9655f43aa6c194aee491d3209ad5b004eef89a36",
+       "cf750df369550a1179cb5ead5d630f03e2ff86fcdf1d086c4d7680770613af24"
+      ]
+     },
+     {
+      "path": "contract_dependencies/declarations/rd_realloc/hypothesis_evidence/contexts/*/source_identity",
+      "count": 15,
+      "example": [
+       "b8761c4a2cea02fd5bd2da2250d319da3dc89584ea65d22122fa23e634547ce0",
+       "2c96702b87ae1357693259512add5a8ebe03599de6b07c127424a9a9fa5a09e5"
+      ]
+     },
+     {
+      "path": "contract_dependencies/declarations/strcasecmp/hypothesis_evidence/contexts/*/source_identity",
+      "count": 15,
+      "example": [
+       "b8761c4a2cea02fd5bd2da2250d319da3dc89584ea65d22122fa23e634547ce0",
+       "2c96702b87ae1357693259512add5a8ebe03599de6b07c127424a9a9fa5a09e5"
+      ]
+     },
+     {
+      "path": "contract_dependencies/declarations/cfl_kvlist_count/hypothesis_evidence/contexts/*/build_identity",
+      "count": 14,
+      "example": [
+       "fcebbd69404b3423714b8346993a7af25fd68db763aef60151833608016809f0",
+       "f67a31bccec8578561743faa1d7bb1c415d18fa63d661e38cb8a4480ffd871dd"
+      ]
+     },
+     {
+      "path": "contract_dependencies/declarations/exit/hypothesis_evidence/contexts/*/build_identity",
+      "count": 14,
+      "example": [
+       "a637a2e19a7da03bf8a011d7f969c7a478e887e52e72cce931c79f4d30083e65",
+       "46cbe50ad168c712a56e5a9dbb22c8ff93573a741c792cc5257bcdb4266a56d2"
+      ]
+     },
+     {
+      "path": "contract_dependencies/declarations/gettimeofday/hypothesis_evidence/contexts/*/build_identity",
+      "count": 14,
+      "example": [
+       "301d4081958af6a4ef6cbf7e9655f43aa6c194aee491d3209ad5b004eef89a36",
+       "cf750df369550a1179cb5ead5d630f03e2ff86fcdf1d086c4d7680770613af24"
+      ]
+     },
+     {
+      "path": "contract_dependencies/declarations/gettimeofday/hypothesis_evidence/contexts/*/source_identity",
+      "count": 14,
+      "example": [
+       "b8761c4a2cea02fd5bd2da2250d319da3dc89584ea65d22122fa23e634547ce0",
+       "2c96702b87ae1357693259512add5a8ebe03599de6b07c127424a9a9fa5a09e5"
+      ]
+     },
+     {
+      "path": "contract_dependencies/declarations/pthread_mutex_lock/hypothesis_evidence/contexts/*/build_identity",
+      "count": 14,
+      "example": [
+       "12ed039754b8bc503e82ee3a151308d0a683054028a14eb803a8eed516700a0f",
+       "a639c35316ceecabdd3de218e507b0552c2649f735205877bb9f6e4ca0b29640"
+      ]
+     },
+     {
+      "path": "contract_dependencies/declarations/pthread_mutex_lock/hypothesis_evidence/contexts/*/source_identity",
+      "count": 14,
+      "example": [
+       "95855d0d9908ceae69c69c881fb94b4e977ee7ec859ca9662b62cc16a3c39eca",
+       "024edb8fb825b99004276035010a1647197be45e4e373bb8b7d82b5d09e66981"
+      ]
+     },
+     {
+      "path": "contract_dependencies/declarations/pthread_mutex_unlock/hypothesis_evidence/contexts/*/build_identity",
+      "count": 14,
+      "example": [
+       "12ed039754b8bc503e82ee3a151308d0a683054028a14eb803a8eed516700a0f",
+       "a639c35316ceecabdd3de218e507b0552c2649f735205877bb9f6e4ca0b29640"
+      ]
+     },
+     {
+      "path": "contract_dependencies/declarations/pthread_mutex_unlock/hypothesis_evidence/contexts/*/source_identity",
+      "count": 14,
+      "example": [
+       "95855d0d9908ceae69c69c881fb94b4e977ee7ec859ca9662b62cc16a3c39eca",
+       "024edb8fb825b99004276035010a1647197be45e4e373bb8b7d82b5d09e66981"
+      ]
+     },
+     {
+      "path": "contract_dependencies/declarations/rd_kafka_topic_keep/hypothesis_evidence/contexts/*/build_identity",
+      "count": 14,
+      "example": [
+       "15c07edf1fa2d2adc789cf5c29b3b7f98b188e05c60544fc65aed1d4f3844ab6",
+       "f1fe38e52132659547767b94c1ad747115650fcf56f7472d0eaaf9d0e6fdabc3"
+      ]
+     },
+     {
+      "path": "contract_dependencies/declarations/rd_kafka_topic_keep/hypothesis_evidence/contexts/*/source_identity",
+      "count": 14,
+      "example": [
+       "357b2fe746d804c294c0ded3cd18da2789046af7ecfca3b624057ab5baa8dd9a",
+       "8c632eb7a015f5c193261042e7792c1d3df07981e9b219f912894d2352985444"
+      ]
+     },
+     {
+      "path": "contract_dependencies/declarations/cmt_mpack_unpack_array/hypothesis_evidence/contexts/*/build_identity",
+      "count": 13,
+      "example": [
+       "b6186c0429f350188e4b99bd6165c1e7d14c4ae27368fdbcece43a00ccaa9c14",
+       "9046c7162ce2f61c88eb69e7256ae535860dfb0f794ca9ce6e640adcfd798e45"
+      ]
+     },
+     {
+      "path": "contract_dependencies/declarations/mk_event_add/hypothesis_evidence/contexts/*/build_identity",
+      "count": 13,
+      "example": [
+       "ba58a9baf445bbd713d1abce5650c82c12d435153cfa91caa69dcded84504e16",
+       "d5285038b9149866b6c070d4b4b57839260df88e8a32cd527cf5a5512189a99b"
+      ]
+     },
+     {
+      "path": "contract_dependencies/declarations/mk_event_add/hypothesis_evidence/contexts/*/source_identity",
+      "count": 13,
+      "example": [
+       "da007b71e549863be44ab7e394a8a13c4b28d65237b5b1225b7cb2f77503b9c0",
+       "fc3487b5fe5c33e83ab513566e4740b7e328ae15f7b32a852f5006b712664851"
+      ]
+     },
+     {
+      "path": "contract_dependencies/declarations/rd_kafka_conf_new/hypothesis_evidence/contexts/*/build_identity",
+      "count": 13,
+      "example": [
+       "301d4081958af6a4ef6cbf7e9655f43aa6c194aee491d3209ad5b004eef89a36",
+       "cf750df369550a1179cb5ead5d630f03e2ff86fcdf1d086c4d7680770613af24"
+      ]
+     },
+     {
+      "path": "contract_dependencies/declarations/rd_kafka_conf_new/hypothesis_evidence/contexts/*/source_identity",
+      "count": 13,
+      "example": [
+       "b8761c4a2cea02fd5bd2da2250d319da3dc89584ea65d22122fa23e634547ce0",
+       "2c96702b87ae1357693259512add5a8ebe03599de6b07c127424a9a9fa5a09e5"
+      ]
+     },
+     {
+      "path": "contract_dependencies/declarations/rd_kafka_confval_set_type/hypothesis_evidence/contexts/*/build_identity",
+      "count": 13,
+      "example": [
+       "61c14977f888d4e26baf680465a80a0d577b7201b7b12c7b498ce57636d182cc",
+       "f2e2bd80796247a568ea6e7b5c6d3a011fdc13e8c25cafca15d9e6e60f4c477b"
+      ]
+     },
+     {
+      "path": "contract_dependencies/declarations/rd_kafka_confval_set_type/hypothesis_evidence/contexts/*/source_identity",
+      "count": 13,
+      "example": [
+       "a799f5adb56ac035af60e786b798feb8de91c65266f45d16f03c46060ff2b4f9",
+       "111c6759508d9323a3db9c2ce62653757837cb605800a3f1a9378ac0481a9539"
+      ]
+     },
+     {
+      "path": "contract_dependencies/declarations/strstr/hypothesis_evidence/contexts/*/build_identity",
+      "count": 13,
+      "example": [
+       "ed0b0bc152689ebf505bbb36791e41c03594b74a022d1a55074d27eb71717850",
+       "281579cb385f605bbe490255a5d79ba1b0b0ec1f8df982034c75fad77e7218d8"
+      ]
+     },
+     {
+      "path": "callback_members/lifetime_protocols/evidence/callers/<sha256>:collector_create/*",
+      "count": 12,
+      "example": [
+       "<absent>",
+       "03bbc5ea4685c5abc844567bb3546dc50113e4dbaf61c7b7adec3e6bdeb575d0:flb_input_set_collector_event"
+      ]
+     },
+     {
+      "path": "callback_members/lifetime_protocols/evidence/summaries/<sha256>/collector_start/requirements/*/holder/fields/*",
+      "count": 12,
+      "example": [
+       "<absent>",
+       "evl"
+      ]
+     },
+     {
+      "path": "callback_members/lifetime_protocols/evidence/summaries/<sha256>/collector_start/requirements/*/object/fields/*",
+      "count": 12,
+      "example": [
+       "<absent>",
+       "event"
+      ]
+     },
+     {
+      "path": "callback_members/lifetime_protocols/evidence/summaries/<sha256>/flb_input_collector_start/requirements/*/holder/fields/*",
+      "count": 12,
+      "example": [
+       "<absent>",
+       "evl"
+      ]
+     },
+     {
+      "path": "callback_members/lifetime_protocols/evidence/summaries/<sha256>/flb_input_collector_start/requirements/*/object/fields/*",
+      "count": 12,
+      "example": [
+       "<absent>",
+       "event"
+      ]
+     }
+    ]
+   }
+  },
+  "corpus/resource-diagnostics.json": {
+   "bytes": [
+    86927164,
+    86912569
+   ],
+   "raw_identical": false,
+   "identical_after_substitution": false,
+   "substituted": {
+    "/home/cosmo/Documents/GitHub/qcore-c/build/cycle19": 278
+   },
+   "target_collisions": {},
+   "structural": {
+    "differing_leaves": 9632,
+    "pattern_count": 18,
+    "patterns": [
+     {
+      "path": "units/*/functions/*/hypothesis_context/build_identity",
+      "count": 4834,
+      "example": [
+       "bed423f521fb84714fe5ec3664a6475e9fce0d33361feb8e0a0352ceec0ad057",
+       "fe10a1ba0419b1235a8241506c46691f5f900426ef291ff7481d796793b6c7cc"
+      ]
+     },
+     {
+      "path": "units/*/functions/*/hypothesis_context/source_identity",
+      "count": 3408,
+      "example": [
+       "e8c77fdc6593289332c82ad8c8dfccf8ff64096c7ed00d466dea5ca598e7a261",
+       "b24efbad09170177eaf166d29f51dbaf2dca999a497cbe41b3cac29c3feca341"
+      ]
+     },
+     {
+      "path": "units/*/cross_unit_link_resolution/imported/*/home_preprocessed_source_sha256",
+      "count": 555,
+      "example": [
+       "a2744d7a75590da95d1f037c0c7794212d72d21b2cb9cff01477928a71332b54",
+       "ceb45191b8e8567722f427a0e1d63da6ef3fab134bd632abaa86254f9ffb957c"
+      ]
+     },
+     {
+      "path": "units/*/functions/*/diagnostics/*/description",
+      "count": 139,
+      "example": [
+       "call to `rd_kafka_op_destroy`: the callbacks stored in `rd_kafka_op_s.rko_op_cb` are not a closed set of functions (36 unit(s) of the run may name it but were not read (first: /media/Data/GitHub/quirin-lang/.claude/worktrees/agent-af4406ebe",
+       "call to `rd_kafka_op_destroy`: the callbacks stored in `rd_kafka_op_s.rko_op_cb` are not a closed set of functions (36 unit(s) of the run may name it but were not read (first: /media/Data/GitHub/quirin-lang/build/cycle19/c-gateway-wave-pin/"
+      ]
+     },
+     {
+      "path": "units/*/functions/*/reading_site_evidence/*/context/build_identity",
+      "count": 122,
+      "example": [
+       "a55d04cf63c03bb143780849f868f780c37d0e381716e229095c48864dff6afb",
+       "403c6d1f9be956791e2b15633105626f45ee51b1564f44b7e97b001ede841349"
+      ]
+     },
+     {
+      "path": "units/*/functions/*/reading_site_evidence/*/id",
+      "count": 122,
+      "example": [
+       "4d4be3d485568063b1aaa77fdd6bdf8cecbabb410a5450d8eae625c21f319a6d",
+       "7eae8db793bd31200380b33865913cac335b71c26155bf0e66ea5e63faae2919"
+      ]
+     },
+     {
+      "path": "units/*/functions/*/reading_site_evidence/*/observation/environment_sha256",
+      "count": 122,
+      "example": [
+       "ce6f30e09b95ed64e44345e6af6851ac1ac490d6e204d196f8c0eeae3ce4cf1a",
+       "abf2c7b4809037df5af3fd4c85463624473db7b17e38b0fccbf463d372ce3975"
+      ]
+     },
+     {
+      "path": "units/*/reading_site_environments/environments/<sha256>",
+      "count": 90,
+      "example": [
+       "{\"functions\":{\"LZ4_compress_HC\":{\"parameters\":[\"borrowed\",\"borrowed\",\"borrowed\",\"borrowed\",\"borrowed\"],\"result\":\"none\"},\"LZ4_compress_default\":{\"parameters\":[\"borrowed\",\"borrowed\",\"borrowed\",\"borrowed\"],\"result\":\"none\"},\"LZ4_decompress_gene",
+       "<absent>"
+      ]
+     },
+     {
+      "path": "units/*/functions/*/reading_site_evidence/*/observation/call/end",
+      "count": 24,
+      "example": [
+       "27372",
+       "27342"
+      ]
+     },
+     {
+      "path": "units/*/functions/*/reading_site_evidence/*/observation/call/start",
+      "count": 24,
+      "example": [
+       "27369",
+       "27339"
+      ]
+     },
+     {
+      "path": "units/*/functions/*/reading_site_evidence/*/observation/outer_argument/end",
+      "count": 24,
+      "example": [
+       "27373",
+       "27343"
+      ]
+     },
+     {
+      "path": "units/*/functions/*/reading_site_evidence/*/observation/outer_argument/start",
+      "count": 24,
+      "example": [
+       "27367",
+       "27337"
+      ]
+     },
+     {
+      "path": "units/*/functions/*/reading_site_evidence/*/observation/siblings/*/call/end",
+      "count": 24,
+      "example": [
+       "27372",
+       "27342"
+      ]
+     },
+     {
+      "path": "units/*/functions/*/reading_site_evidence/*/observation/siblings/*/call/start",
+      "count": 24,
+      "example": [
+       "27369",
+       "27339"
+      ]
+     },
+     {
+      "path": "units/*/functions/*/reading_site_evidence/*/observation/siblings/*/outer_argument/end",
+      "count": 24,
+      "example": [
+       "27373",
+       "27343"
+      ]
+     },
+     {
+      "path": "units/*/functions/*/reading_site_evidence/*/observation/siblings/*/outer_argument/start",
+      "count": 24,
+      "example": [
+       "27367",
+       "27337"
+      ]
+     },
+     {
+      "path": "units/*/functions/*/reading_site_evidence/*/observation/statement/end",
+      "count": 24,
+      "example": [
+       "27378",
+       "27348"
+      ]
+     },
+     {
+      "path": "units/*/functions/*/reading_site_evidence/*/observation/statement/start",
+      "count": 24,
+      "example": [
+       "27365",
+       "27335"
+      ]
+     }
+    ]
+   }
+  },
+  "corpus/resource-diagnostics.source-effects.json": {
+   "bytes": [
+    118505,
+    118505
+   ],
+   "raw_identical": false,
+   "identical_after_substitution": false,
+   "substituted": {},
+   "target_collisions": {},
+   "structural": {
+    "differing_leaves": 54,
+    "pattern_count": 14,
+    "patterns": [
+     {
+      "path": "results/*/bounds/resource_contracts:<id24>/max_operations",
+      "count": 6,
+      "example": [
+       "None",
+       "<absent>"
+      ]
+     },
+     {
+      "path": "results/*/bounds/resource_contracts:<id24>/observed_runs_only",
+      "count": 6,
+      "example": [
+       "False",
+       "<absent>"
+      ]
+     },
+     {
+      "path": "results/*/bounds/resource_contracts:<id24>/path_exploration/kind",
+      "count": 6,
+      "example": [
+       "bounded_paths",
+       "<absent>"
+      ]
+     },
+     {
+      "path": "results/*/bounds/resource_contracts:<id24>/path_exploration/paths",
+      "count": 6,
+      "example": [
+       "4",
+       "<absent>"
+      ]
+     },
+     {
+      "path": "results/*/bounds/resource_contracts:<id24>/schedules_explored",
+      "count": 6,
+      "example": [
+       "None",
+       "<absent>"
+      ]
+     },
+     {
+      "path": "results/*/evidence/coverage/*",
+      "count": 3,
+      "example": [
+       "resource_contracts:14193b8cde0c7d9ebda0d973",
+       "resource_contracts:b048a7b368d4b65bbf6b18db"
+      ]
+     },
+     {
+      "path": "results/*/evidence/unit/build_digest",
+      "count": 3,
+      "example": [
+       "d77771b8df824daad68ffd336d0e3d2b8e65b530d015f0a0fefe755ff0790d02",
+       "081007be44bcf654a62a25bdb701ce827781be18ebc91ba685254f18344d65c0"
+      ]
+     },
+     {
+      "path": "results/*/import_identity/configuration_digest",
+      "count": 3,
+      "example": [
+       "8592b29d42a44beade16cf77d08209945e1bb0ec7809ac8ada2d753ec19b2b24",
+       "fc6168174b5841a416c0f1c071590fea585238faf4f98cbc7fdcafb0caf620de"
+      ]
+     },
+     {
+      "path": "results/*/task/contract_sources/qcore:boolean-field-import:v1",
+      "count": 3,
+      "example": [
+       "d77771b8df824daad68ffd336d0e3d2b8e65b530d015f0a0fefe755ff0790d02",
+       "081007be44bcf654a62a25bdb701ce827781be18ebc91ba685254f18344d65c0"
+      ]
+     },
+     {
+      "path": "results/*/task/obligations/*/obligation_id",
+      "count": 3,
+      "example": [
+       "resource_contracts:14193b8cde0c7d9ebda0d973",
+       "resource_contracts:b048a7b368d4b65bbf6b18db"
+      ]
+     },
+     {
+      "path": "results/*/task/unit/build_digest",
+      "count": 3,
+      "example": [
+       "d77771b8df824daad68ffd336d0e3d2b8e65b530d015f0a0fefe755ff0790d02",
+       "081007be44bcf654a62a25bdb701ce827781be18ebc91ba685254f18344d65c0"
+      ]
+     },
+     {
+      "path": "results/*/witness/task_digest",
+      "count": 3,
+      "example": [
+       "4b135289afe5655d977d7f74f7f91f134e0b710c0ce70385b33342c52a6e3107",
+       "58a808931a1587a250840100a398fdb2c0c5c1930c974c15260a5e59229b22ba"
+      ]
+     },
+     {
+      "path": "results/*/import_identity/helpers/cio_error_reset/configuration_digest",
+      "count": 2,
+      "example": [
+       "8592b29d42a44beade16cf77d08209945e1bb0ec7809ac8ada2d753ec19b2b24",
+       "4c05862413d90c8ef9e5b3487bee09be41e05d419ca2751efee112b1a45a8f7a"
+      ]
+     },
+     {
+      "path": "results/*/import_identity/preprocessed_source_digest",
+      "count": 1,
+      "example": [
+       "95855d0d9908ceae69c69c881fb94b4e977ee7ec859ca9662b62cc16a3c39eca",
+       "024edb8fb825b99004276035010a1647197be45e4e373bb8b7d82b5d09e66981"
+      ]
+     }
+    ]
+   }
+  },
+  "stderr.log": {
+   "bytes": [
+    0,
+    0
+   ],
+   "raw_identical": true,
+   "identical_after_substitution": true,
+   "substituted": {},
+   "target_collisions": {}
+  }
+ },
+ "substitution_totals": {
+  "/home/cosmo/Documents/GitHub/qcore-c/build/cycle19/c-gateway-wave-pin/fluent-bit-clang-source": 352,
+  "/media/Data/GitHub/quirin-lang/build/cycle19/c-gateway-wave-pin/fluent-bit-clang-source": 2,
+  "/home/cosmo/Documents/GitHub/qcore-c/build/cycle19/c-gateway-wave-pin/monkey": 22,
+  "/media/Data/GitHub/quirin-lang/build/cycle19/c-gateway-wave-pin/monkey": 0,
+  "/media/Data/GitHub/quirin-lang/build/cycle19/provider-packages-wave20": 0,
+  "/home/cosmo/Documents/GitHub/qcore-c/build/cycle19": 362
+ },
+ "target_collisions_total": {
+  "/media/Data/GitHub/quirin-lang/.claude/worktrees/agent-af4406ebe7df9c0d1/private/acp/mirror/c-gateway-wave-pin/fluent-bit-clang-source": 0,
+  "/media/Data/GitHub/quirin-lang/.claude/worktrees/agent-af4406ebe7df9c0d1/private/acp/mirror/c-gateway-wave-pin/monkey": 0,
+  "/media/Data/GitHub/quirin-lang/.claude/worktrees/agent-af4406ebe7df9c0d1/private/acp/mirror/provider-packages-wave20": 0,
+  "/media/Data/GitHub/quirin-lang/build/cycle19": 2
+ },
+ "identical": false
+}

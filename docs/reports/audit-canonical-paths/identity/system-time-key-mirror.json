@@ -1,0 +1,26 @@
+{
+ "runs": 2,
+ "shared_keys": 1036,
+ "per_run": {
+  "/media/Data/GitHub/quirin-lang/.claude/worktrees/agent-af4406ebe7df9c0d1/private/acp/runs2/base-mirror/system/resource-diagnostics.contracts.json": {
+   "keys": 1037,
+   "unshared": [
+    "384bd5258aa5e5bacc5546e38816951ac2463f7fb04d25cb60141f085055e1e7"
+   ],
+   "unshared_values": [
+    {}
+   ]
+  },
+  "/media/Data/GitHub/quirin-lang/.claude/worktrees/agent-af4406ebe7df9c0d1/private/acp/runs2/tip-mirror/system/resource-diagnostics.contracts.json": {
+   "keys": 1037,
+   "unshared": [
+    "c3a3c4101e74d7ce4084d46f60af2dd6486f972b3c438b7524330b7fefb32ecc"
+   ],
+   "unshared_values": [
+    {}
+   ]
+  }
+ },
+ "unshared_pairwise_disjoint": true,
+ "shared_values_equal": true
+}

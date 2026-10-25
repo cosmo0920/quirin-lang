@@ -103,7 +103,166 @@ the spelling given to Clang and recorded in identities is untouched.
   - `input-path-alias` refusal, and one spelling repeated still counted once
     per command.
 
-IDENTITY_SECTION
+## Identity run
+
+[attempts.json](attempts.json) lists both attempts. Attempt 2 is the evidence.
+Its drivers are in [scripts/](scripts/), and every comparison is in
+[identity/](identity/).
+
+### Sides
+
+| Side | Binary | Inputs | Driver |
+|---|---|---|---|
+| base-mirror | BASE `fb5412930` | the re-spelled mirror (`mirror_inputs.py`) | the scheduler card's `measure.py`, unchanged |
+| tip-mirror | TIP `26a1acd2d` | the same mirror | the same |
+| tip-original | TIP | the ORIGINAL pinned inputs, unmirrored: the real `build/cycle19` and both prepared databases in place, all spelling `/home/cosmo/Documents/GitHub/qcore-c` | `scripts/measure.py --inputs original` |
+| base-namespace | BASE | the same original inputs, where that spelling is a read-only bind mount of the checkout rather than a symlink (`pin_run.sh OLD=yes`). This is the environment the inputs were prepared in, so BASE needs no mirror. | `scripts/measure.py --inputs namespace` |
+
+Each side has its own `git archive` snapshot, which carries the pinned libevent
+submodule. Every side is built and run in a private mount namespace, with its
+snapshot at `private/acp/snap` and its output at `private/acp/out`. So all
+sides spell analyzer, profiles, contracts and outputs the same way, and they
+differ only in how the inputs are spelled. The fixed-path builds are
+reproducible: both BASE snapshots give binary `74c984eb…` and both TIP
+snapshots `3b3606ab…`. Each route ran in a `gate_slot.py audit` slot with a
+7 GiB budget and `--jobs 3`; every artifact is the same at any job count.
+Corpus, system and slice use the scheduler card's route and link map.
+
+**BASE on the original inputs fails as run 4 did** (attempt 1,
+`base-original`):
+
+- corpus: `compile database contains no selected cmetrics sources`;
+- slice and system: `current audit rejected (Unknown): cross-unit home lies
+  outside checkout`.
+
+TIP on the same inputs runs every route to completion.
+
+### Why the corpus exited 1 on every side in attempt 1
+
+Every attempt-1 corpus side failed at the Monkey gate:
+
+```
+could not verify Cycle 18 Libevent source: Pin(SourceRevisionMismatch {
+  pin: "libevent", expected: "d82464a2…", actual: "660a11bc9…" })
+```
+
+- `git archive` leaves `third_party/libevent` empty.
+- The pinned route finds the submodule through the binary's compile-time
+  `CARGO_MANIFEST_DIR`.
+- So git answered with the enclosing card worktree's HEAD (`660a11bc9`).
+
+The earlier cards' snapshots carried the submodule. Canonicalisation played no
+part: TIP-original had already passed unit planning, as its pre-pass over all
+1,444 units shows. Attempt 2 clones the pinned submodule into each snapshot,
+and all four corpus sides then exit 0.
+
+The attempt-2 corpus drivers still report 101, with audit exit 0. The audit's
+own `git` refreshed `third_party/libevent/.git/index`, the stat cache of the
+fresh clone, during the route. That is the only snapshot file that changed on
+any side (`drivers` in each comparison).
+
+### Results
+
+Verdicts are identical on every side and route, row by row: every unit's
+status and reason code, every row's status, and every null-property row's
+custody, combined and null verdict, scope and check outcomes
+(`*-verdicts-*.json`).
+
+| Route | Units | Rows (Safe / Pending / Unknown / Unsafe) | Null rows (Safe / Unknown / Unsafe) |
+|---|---|---|---|
+| corpus | 185 | 1,009 / 0 / 3,816 / 9 | 2,549 / 2,355 / 17 |
+| slice | 16 | 57 / 4 / 342 / 1 | 190 / 216 / 0 |
+| system | 15 | 99 / 0 / 345 / 4 | 211 / 243 / 0 |
+
+**TIP-mirror against BASE-mirror** is byte-identical on every route, except
+one key per run. In all ten compared artifacts, the only difference is one
+key of the member pre-pass's lifetime-source summaries, appearing in both the
+evidence and the pre-pass sections. On each side it is one key with an empty
+summary. The key digests a unit's preprocessed text, and the Fluent Bit
+database compiles `lib/monkey/mk_bin/monkey.c`, whose `MONKEY_BUILT` is
+`__DATE__ " " __TIME__`. So that key changes with the clock: two runs share it
+only within the same second. The two original-spelling slice runs did fall in
+the same second, and their keys agree (`*-time-key-*.json`: 1,057, 1,038 and
+1,036 shared keys with equal values; at most one unshared key per run, never
+shared with another run). This is pre-existing, and BASE against BASE would
+show it too. It is a follow-on.
+
+**TIP-original against BASE-namespace** compares the same inputs in the same
+spelling. TIP resolves the inputs root to the real path, where BASE-namespace
+resolves it to the old spelling. So the check rewrites one prefix of TIP's
+output, `/media/Data/GitHub/quirin-lang/<prepared root>` to
+`/home/cosmo/Documents/GitHub/qcore-c/<prepared root>`: 21 occurrences
+(system), 22 (slice), 2 (corpus). The old spelling already occurs
+in TIP's output where the database spelled it, so the rewrite is many-to-one
+by construction and is reported as such (`target_collisions_total`).
+
+After the rewrite, the remaining differences fall into four classes, none of
+them a verdict:
+
+1. **Digests over a canonical path, which spells the resolved root.** The
+   rewrite cannot reach inside a digest.
+   - `inventory_sha256` of each configuration record (16 slice, 15 system):
+     the record carries the canonical `expected_source`.
+   - On the corpus, the ChunkIO frame-helper import's `configuration_digest`
+     and build digests: `source_contract.rs` rewrites the helper unit's file to
+     its canonical path. That gives two source-effects results, 34 leaves,
+     including their bounds re-keyed under the changed contract id.
+2. **The member pre-pass's evidence-file set.** The pre-pass joins generator
+   sources under the route's canonical root, while it lists dependencies in
+   the database's spelling.
+   - On TIP-original the two spellings differ. The same file is then read
+     under both (the admission record's third phase: 814 tasks against 676).
+   - Sorting by spelling changes which file the reason of a dropped unit cites
+     first (74 reasons, all `luajit` build-tool units). The dropping decisions
+     are equal.
+   - Code this card did not change does this (`member_prepass.rs`
+     `exclusion_files`, file reads). It is the same string-spelling coupling,
+     reached through the route's root rather than through unit selection.
+     Follow-on `MEMBER-PREPASS-MIXED-SPELLING`.
+3. **The clock-dependent key above** (system, corpus).
+
+On the corpus, the report (`resource-diagnostics.json`), the null and outer
+projections, `monkey-source.json`, the chunk-contracts sidecar and
+`audit.log` are byte-identical after the rewrite.
+
+The corpus namespace side used here is a rerun (`runs3/`,
+`rerun_namespace_corpus.sh`). The first namespace corpus mounted a tmpfs over
+`/home/cosmo/Documents/GitHub` and so hid `/home/cosmo/Documents/GitHub/monkey`.
+That is the repository in which the libevent provider's `contracts.lock`
+resolves a tip identity (C06.2), so its `mk_vhost_set` hold read
+`repository-missing` instead of `sites differ`. The status was the same (not in
+force), but the evidence differed. `pin_run.sh` now keeps every sibling
+visible, and the slice and system namespace sides already ran with that fix.
+
+**TIP-original against BASE-mirror**, the brief's comparison, cannot be
+byte-identical. The mirror spells the database differently from the original
+inputs, and Clang is given the database's spelling (constraint 11).
+
+- Beyond the textual rewrite (`*-base-mirror-vs-tip-original.json` lists every
+  substitution and count), every digest over the spelled compile record
+  differs: `build_identity`, `source_identity`, `preprocessed_source_sha256`,
+  `home_environment_sha256` and the pre-pass summary keys.
+- So does everything derived from header `__FILE__` literals, whose length
+  depends on the spelled include path. Examples: `char[160]` against
+  `char[119]` in `monkey-source.json`, and reading-site byte offsets shifted by
+  30.
+- So does the mirror's ordering: the mirror moves the source tree under the
+  card worktree, so "first unread unit" cites a different file.
+
+The namespace pair shows that these differences come from the spelling of the
+inputs, not from TIP. On identical spelling the only residue is classes 1–3,
+and the verdicts are identical everywhere.
+
+### Assessment
+
+Canonical unit selection makes the original inputs work. TIP on them
+reproduces BASE's verdicts on all three routes, row for row. On consistently
+spelled inputs (the mirror), TIP publishes the bytes BASE publishes, apart
+from the pre-existing clock-dependent key. The brief's stronger "byte-identical
+apart from a one-to-one path substitution" does not hold for TIP-original
+against BASE-mirror. The two read different spellings, and the spelling is
+bound into identities and preprocessed text by design. The report states
+exactly where they differ instead of claiming it.
 
 GATE_SECTION
 

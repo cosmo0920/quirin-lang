@@ -6,6 +6,7 @@
 #   mirror     base-mirror vs tip-mirror, no substitution
 #   original   base-mirror vs tip-original, TIP's input spellings rewritten to the mirror's
 #   namespace  base-namespace vs tip-original, TIP's resolved roots rewritten to the old spelling
+#   (NS_RUNS=runs3 takes the namespace side from the sibling-preserving rerun)
 set -u
 W=$1
 ROUTE=$2
@@ -44,7 +45,7 @@ for pair in ${3:-mirror original namespace}; do
     # shellcheck disable=SC2086
     original) python3 "$C" "$ROUTE" "$R/base-mirror/$ROUTE" "$R/tip-original/$ROUTE" "$OUT/$ROUTE-base-mirror-vs-tip-original.json" $TO_MIRROR ;;
     # shellcheck disable=SC2086
-    namespace) python3 "$C" "$ROUTE" "$R/base-namespace/$ROUTE" "$R/tip-original/$ROUTE" "$OUT/$ROUTE-base-namespace-vs-tip-original.json" $TO_OLD ;;
+    namespace) python3 "$C" "$ROUTE" "$A/${NS_RUNS:-runs2}/base-namespace/$ROUTE" "$R/tip-original/$ROUTE" "$OUT/$ROUTE-base-namespace-vs-tip-original.json" $TO_OLD ;;
   esac
   echo "$pair exit $?"
 done

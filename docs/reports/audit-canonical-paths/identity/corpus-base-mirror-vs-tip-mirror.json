@@ -91,37 +91,22 @@
    "identical_after_substitution": false,
    "structural": {
     "differing_leaves": 4,
+    "pattern_count": 2,
     "patterns": [
      {
-      "path": "callback_members/lifetime_protocols/evidence/summaries/968474d26f4955ab31803f88d8a41ddf10562054bf8d696b188ba2778e7a9716",
-      "count": 1,
+      "path": "callback_members/lifetime_protocols/evidence/summaries/<sha256>",
+      "count": 2,
       "example": [
        "{}",
        "<absent>"
       ]
      },
      {
-      "path": "callback_members/lifetime_protocols/evidence/summaries/e7137099c38c53f5f909437197b4fcef7e0417197345fd38565c3d16a6e4f78b",
-      "count": 1,
-      "example": [
-       "<absent>",
-       "{}"
-      ]
-     },
-     {
-      "path": "callback_members/prepass/lifetime_protocols/summaries/968474d26f4955ab31803f88d8a41ddf10562054bf8d696b188ba2778e7a9716",
-      "count": 1,
+      "path": "callback_members/prepass/lifetime_protocols/summaries/<sha256>",
+      "count": 2,
       "example": [
        "{}",
        "<absent>"
-      ]
-     },
-     {
-      "path": "callback_members/prepass/lifetime_protocols/summaries/e7137099c38c53f5f909437197b4fcef7e0417197345fd38565c3d16a6e4f78b",
-      "count": 1,
-      "example": [
-       "<absent>",
-       "{}"
       ]
      }
     ]

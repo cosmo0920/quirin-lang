@@ -18,8 +18,10 @@ occurred on the right, and how often each TO already occurred on the right
 before the rewrite (a collision would make the map ambiguous; it is reported,
 never hidden). Files still different after the rewrite get a structural
 summary: every differing JSON leaf path (list indices as `*`) with counts and
-examples. Read-only; exit 0 when every compared file is identical after the
-substitution, 1 otherwise.
+examples (digest-valued keys collapsed). Each side's driver record is
+summarised too: the audit's exit and, for a driver exit 101, the snapshot
+files that changed. Read-only; exit 0 when every compared file is identical
+after the substitution and both audits exited 0, 1 otherwise.
 """
 import argparse
 import collections
@@ -79,8 +81,21 @@ def leaves(value, path, out):
         out[path] = value
 
 
+HEX64 = re.compile(r'[0-9a-f]{64}')
+HEX24 = re.compile(r'\b[0-9a-f]{24}\b')
+
+
 def pattern(path):
-    return '/'.join('*' if isinstance(part, int) else part for part in path)
+    """List indices become `*`; digest-valued keys become `<sha256>` (or
+    `<id24>`), so a digest-keyed map is one pattern, not one per key."""
+    parts = []
+    for part in path:
+        if isinstance(part, int):
+            parts.append('*')
+        else:
+            part = HEX64.sub('<sha256>', part)
+            parts.append(HEX24.sub('<id24>', part))
+    return '/'.join(parts)
 
 
 def structural(left, right):
@@ -105,9 +120,9 @@ def structural(left, right):
                 patterns[key] += 1
                 examples.setdefault(key, [str(a.get(path, '<absent>'))[:240],
                                           str(b.get(path, '<absent>'))[:240]])
-    return {'differing_leaves': sum(patterns.values()),
+    return {'differing_leaves': sum(patterns.values()), 'pattern_count': len(patterns),
             'patterns': [{'path': key, 'count': count, 'example': examples[key]}
-                         for key, count in patterns.most_common()]}
+                         for key, count in patterns.most_common(300)]}
 
 
 def main():
