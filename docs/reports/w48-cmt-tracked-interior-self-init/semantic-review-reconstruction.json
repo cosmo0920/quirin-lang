@@ -1,0 +1,57 @@
+{
+  "routes": [
+    {
+      "route": "corpus",
+      "gains": [
+        [
+          "ctraces",
+          "ctraces.c",
+          "ctr_create",
+          0
+        ],
+        [
+          "monkey-libevent",
+          "mk_server/mk_stream.c",
+          "mk_channel_new",
+          0
+        ]
+      ],
+      "changed_resource_rows": 39,
+      "semantic_leaves": 139,
+      "exact_dependency_fold_reproduced": true,
+      "exact_diagnostic_counts_reproduced": true
+    },
+    {
+      "route": "system",
+      "gains": [
+        [
+          "fluent-bit-system",
+          "src/flb_task.c",
+          "flb_task_queue_create",
+          0
+        ],
+        [
+          "fluent-bit-system",
+          "src/flb_task.c",
+          "flb_task_queue_create",
+          1
+        ]
+      ],
+      "changed_resource_rows": 10,
+      "semantic_leaves": 73,
+      "exact_dependency_fold_reproduced": true,
+      "exact_diagnostic_counts_reproduced": true
+    },
+    {
+      "route": "slice",
+      "gains": [],
+      "changed_resource_rows": 6,
+      "semantic_leaves": 29,
+      "exact_dependency_fold_reproduced": true,
+      "exact_diagnostic_counts_reproduced": true
+    }
+  ],
+  "dependency_producer_source_equal_semantic_base": true,
+  "all_observed_leaf_kinds_explicitly_reviewed": true,
+  "no_unrecognized_leaf_admitted": true
+}

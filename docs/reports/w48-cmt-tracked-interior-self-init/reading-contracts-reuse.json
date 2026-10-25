@@ -1,0 +1,171 @@
+{
+  "base": "bb574e826490f403c84bd0d0e3fb2177c11f530d",
+  "new_scope": "canonical CFL declared-model initializer contract and corpus expectation",
+  "topic_text_reuse": "previous complete read per reading-reuse.json only where identical; contracts/providers current pertinent sections reread",
+  "new_packet_entries_not_identical_to_initial_packet": [
+    {
+      "path": "docs/agents/operations.md",
+      "start": 74,
+      "end": 112,
+      "bytes": 2280,
+      "sha256": "a9517492f124fa38a2c04615e528c2335de4c984af117a3eb463b1da621ae6b2",
+      "rule_ids": [],
+      "reasons": [
+        "every change"
+      ]
+    },
+    {
+      "path": "docs/agents/operations.md",
+      "start": 113,
+      "end": 143,
+      "bytes": 1797,
+      "sha256": "6010fc5bb5ad0cd7f47706497bf6d038dace0599defdbbe1e5677907f3b9ae64",
+      "rule_ids": [],
+      "reasons": [
+        "every change"
+      ]
+    },
+    {
+      "path": "docs/agents/operations.md",
+      "start": 144,
+      "end": 173,
+      "bytes": 1831,
+      "sha256": "12049284ea24980aff30982a1068cc0079702baab08bd28eab19e208d838e876",
+      "rule_ids": [],
+      "reasons": [
+        "every change"
+      ]
+    },
+    {
+      "path": "docs/agents/providers.md",
+      "start": 1,
+      "end": 460,
+      "bytes": 29882,
+      "sha256": "ed1c7e9d196a34822b3cf1090980a34584443ce10eb9b67a29f50d614ef0fc98",
+      "rule_ids": [
+        "constraint-16",
+        "constraint-17",
+        "constraint-18",
+        "constraint-19",
+        "constraint-20",
+        "constraint-26"
+      ],
+      "reasons": [
+        "providers: compiler/examples/alias_aggregate_probe.rs",
+        "providers: explicit task topic",
+        "providers: proof/AuditPointerStore.lean",
+        "providers: proof/QCore.lean",
+        "providers: proof/QCore/TrackedSelfInit.lean",
+        "providers: providers/quirin-provider-cfl/contracts/cfl/intrusive_list.qv"
+      ]
+    },
+    {
+      "path": "docs/agents/buffers-records.md",
+      "start": 1,
+      "end": 544,
+      "bytes": 37168,
+      "sha256": "1fd166105f9473011d6eee82d224efa61f0a80e6f1082882020b285af86c98b4",
+      "rule_ids": [
+        "constraint-15h",
+        "constraint-15k",
+        "constraint-15k-amendments"
+      ],
+      "reasons": [
+        "buffers: compiler/examples/alias_aggregate_probe.rs",
+        "buffers: proof/AuditPointerStore.lean",
+        "buffers: proof/QCore.lean",
+        "buffers: proof/QCore/TrackedSelfInit.lean",
+        "concurrency: compiler/examples/alias_aggregate_probe.rs",
+        "concurrency: proof/AuditPointerStore.lean",
+        "concurrency: proof/QCore.lean",
+        "concurrency: proof/QCore/TrackedSelfInit.lean"
+      ]
+    },
+    {
+      "path": "docs/agents/io.md",
+      "start": 1,
+      "end": 202,
+      "bytes": 13031,
+      "sha256": "ce9a1ff9c91e183f7c2256a2f8a39c8f1495df34694ea7c49dd44b8fad75876f",
+      "rule_ids": [
+        "constraint-15c",
+        "constraint-15d",
+        "constraint-15e",
+        "constraint-15f",
+        "constraint-15g",
+        "constraint-15i",
+        "constraint-15p"
+      ],
+      "reasons": [
+        "io: compiler/examples/alias_aggregate_probe.rs",
+        "io: proof/AuditPointerStore.lean",
+        "io: proof/QCore.lean",
+        "io: proof/QCore/TrackedSelfInit.lean"
+      ]
+    },
+    {
+      "path": "docs/agents/concurrency.md",
+      "start": 1,
+      "end": 211,
+      "bytes": 14504,
+      "sha256": "3a87ec049ada246bb70a579571cc3a80f0e04c7e0a372ea2d4c18f978815a3df",
+      "rule_ids": [
+        "constraint-15n",
+        "constraint-15o",
+        "constraint-27"
+      ],
+      "reasons": [
+        "concurrency: compiler/examples/alias_aggregate_probe.rs",
+        "concurrency: proof/AuditPointerStore.lean",
+        "concurrency: proof/QCore.lean",
+        "concurrency: proof/QCore/TrackedSelfInit.lean"
+      ]
+    },
+    {
+      "path": "docs/STATUS.md",
+      "start": 1,
+      "end": 497,
+      "bytes": 267401,
+      "sha256": "2db532cfc59c9c7272fd4cb5eed5fe03762c93a183a4de200996aa43c0f16524",
+      "rule_ids": [],
+      "reasons": [
+        "compiler/examples/alias_aggregate_probe.rs",
+        "proof/AuditPointerStore.lean",
+        "proof/QCore.lean",
+        "proof/QCore/TrackedSelfInit.lean"
+      ]
+    },
+    {
+      "path": "docs/reports/task-context-contract-bundle/operations-before.txt",
+      "start": 1,
+      "end": 338,
+      "bytes": 23862,
+      "sha256": "d6072c957b244bdf7af47bc0461845418a9fca61b3b7991078b1aee4439a9b0f",
+      "rule_ids": [],
+      "reasons": [
+        "rule changes require the preserved rationale; this is historical text"
+      ]
+    },
+    {
+      "path": "docs/development/increments/structure-checkpoints/agent-cycle-guidance.md",
+      "start": 1,
+      "end": 271,
+      "bytes": 16128,
+      "sha256": "244db66addae95941bb685ad336b1a85ddedacc702b45c7dfec5500c24c95c3b",
+      "rule_ids": [],
+      "reasons": [
+        "rule changes require the preserved rationale; this is historical text"
+      ]
+    }
+  ],
+  "contract_reads": [
+    "providers/quirin-provider-cfl/contracts/cfl/intrusive_list.qv",
+    "crates/qcore-contract/src/bounds_hypotheses.rs",
+    "crates/qcore-contract/tests/contract_lifecycle.rs",
+    "crates/qcore-contract/src/contract_lifecycle.rs",
+    "crates/qcore-frontend/src/contract_lifecycle.rs",
+    "docs/agents/providers.md#constraint-18",
+    "docs/agents/validation.md"
+  ],
+  "no_retrieval_cost_claim": true
+}

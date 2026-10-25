@@ -1,0 +1,1269 @@
+{
+  "targets": [
+    {
+      "function": "metric_prepare_storage",
+      "file": "cmt_map.c",
+      "base_status": "Unknown",
+      "tip_status": "Unknown",
+      "base_diagnostics": 6,
+      "tip_diagnostics": 6,
+      "removed_diagnostics": [],
+      "added_diagnostics": [],
+      "complete_base_row": {
+        "contract_dependencies": {
+          "declarations": [
+            "__errno_location",
+            "calloc"
+          ],
+          "hypothesis_dependencies": {
+            "__errno_location": [
+              "checked_reading_route",
+              "scalar_declaration",
+              "untracked_effects"
+            ]
+          }
+        },
+        "diagnostics": [
+          {
+            "category": "unknown_alias",
+            "description": "unresolved resource identity `histogram`",
+            "line": 5636,
+            "origin": "cmt_map.c:207"
+          },
+          {
+            "category": "unsupported",
+            "description": "indirect memory access is outside the resource projection",
+            "line": 5639,
+            "origin": "cmt_map.c:210"
+          },
+          {
+            "category": "unsupported",
+            "description": "indirect memory access is outside the resource projection",
+            "line": 5642,
+            "origin": "cmt_map.c:213"
+          },
+          {
+            "category": "unknown_alias",
+            "description": "unresolved resource identity `summary`",
+            "line": 5648,
+            "origin": "cmt_map.c:219"
+          },
+          {
+            "category": "unsupported",
+            "description": "indirect memory access is outside the resource projection",
+            "line": 5652,
+            "origin": "cmt_map.c:223"
+          },
+          {
+            "category": "unsupported",
+            "description": "indirect memory access is outside the resource projection",
+            "line": 5655,
+            "origin": "cmt_map.c:226"
+          }
+        ],
+        "function": "metric_prepare_storage",
+        "hypothesis_context": {
+          "artifact": "cmetrics/cmt_map.c#metric_prepare_storage",
+          "assumptions": "a9aabda5531193707d5939af2bfcbce51dbc1f13296d27e5199c715853767b73",
+          "bounds": "existing gateway budgets; no new hypothesis discharge",
+          "build_identity": "d2d39ed02dd3fc10794946ebb91c9eea19f66160fe0ba2c17ac4cacdd91aa4b8",
+          "evidence_version": "contract-hypothesis-graph.v1:bb574e826490f403c84bd0d0e3fb2177c11f530d",
+          "property": "resource-custody.v1",
+          "scope": "[\"cmt_map_create\",\"cmt_map_destroy\",\"cmt_map_metric_destroy\",\"cmt_map_metric_get\",\"cmt_map_metric_get_val\",\"cmt_map_metrics_expire\",\"destroy_label_list\",\"map_lock\",\"map_metric_create\",\"map_metric_destroy_unlocked\",\"map_metric_get_unlocked\",\"map_unlock\",\"metric_hash_lookup\",\"metric_index_add\",\"metric_index_resize\",\"metric_labels_match\",\"metric_prepare_storage\",\"metric_release_storage\"]",
+          "semantic_profile": "legacy-pinned-resource-profile",
+          "source_identity": "f71cf772033c3ebb229294270fa2912852fe5ff7442ff35e7d82743f4cb73be4"
+        },
+        "status": "Unknown"
+      },
+      "complete_tip_row": {
+        "contract_dependencies": {
+          "declarations": [
+            "__errno_location",
+            "calloc"
+          ],
+          "hypothesis_dependencies": {
+            "__errno_location": [
+              "checked_reading_route",
+              "scalar_declaration",
+              "untracked_effects"
+            ]
+          }
+        },
+        "diagnostics": [
+          {
+            "category": "unknown_alias",
+            "description": "unresolved resource identity `histogram`",
+            "line": 5636,
+            "origin": "cmt_map.c:207"
+          },
+          {
+            "category": "unsupported",
+            "description": "indirect memory access is outside the resource projection",
+            "line": 5639,
+            "origin": "cmt_map.c:210"
+          },
+          {
+            "category": "unsupported",
+            "description": "indirect memory access is outside the resource projection",
+            "line": 5642,
+            "origin": "cmt_map.c:213"
+          },
+          {
+            "category": "unknown_alias",
+            "description": "unresolved resource identity `summary`",
+            "line": 5648,
+            "origin": "cmt_map.c:219"
+          },
+          {
+            "category": "unsupported",
+            "description": "indirect memory access is outside the resource projection",
+            "line": 5652,
+            "origin": "cmt_map.c:223"
+          },
+          {
+            "category": "unsupported",
+            "description": "indirect memory access is outside the resource projection",
+            "line": 5655,
+            "origin": "cmt_map.c:226"
+          }
+        ],
+        "function": "metric_prepare_storage",
+        "hypothesis_context": {
+          "artifact": "cmetrics/cmt_map.c#metric_prepare_storage",
+          "assumptions": "a9aabda5531193707d5939af2bfcbce51dbc1f13296d27e5199c715853767b73",
+          "bounds": "existing gateway budgets; no new hypothesis discharge",
+          "build_identity": "d2d39ed02dd3fc10794946ebb91c9eea19f66160fe0ba2c17ac4cacdd91aa4b8",
+          "evidence_version": "contract-hypothesis-graph.v1:e92d8aef35a8bd14550e90219d19a56eb3b196e7",
+          "property": "resource-custody.v1",
+          "scope": "[\"cmt_map_create\",\"cmt_map_destroy\",\"cmt_map_metric_destroy\",\"cmt_map_metric_get\",\"cmt_map_metric_get_val\",\"cmt_map_metrics_expire\",\"destroy_label_list\",\"map_lock\",\"map_metric_create\",\"map_metric_destroy_unlocked\",\"map_metric_get_unlocked\",\"map_unlock\",\"metric_hash_lookup\",\"metric_index_add\",\"metric_index_resize\",\"metric_labels_match\",\"metric_prepare_storage\",\"metric_release_storage\"]",
+          "semantic_profile": "legacy-pinned-resource-profile",
+          "source_identity": "f71cf772033c3ebb229294270fa2912852fe5ff7442ff35e7d82743f4cb73be4"
+        },
+        "status": "Unknown"
+      }
+    },
+    {
+      "function": "metric_index_add",
+      "file": "cmt_map.c",
+      "base_status": "Unknown",
+      "tip_status": "Unknown",
+      "base_diagnostics": 4,
+      "tip_diagnostics": 4,
+      "removed_diagnostics": [],
+      "added_diagnostics": [],
+      "complete_base_row": {
+        "contract_dependencies": {
+          "declarations": [],
+          "hypothesis_dependencies": {}
+        },
+        "diagnostics": [
+          {
+            "category": "unsupported",
+            "description": "unmodeled call, aggregate or indirect access in branch condition",
+            "line": 5539,
+            "origin": "cmt_map.c:92"
+          },
+          {
+            "category": "unsupported",
+            "description": "call to uncontracted function `metric_index_resize`",
+            "line": 5545,
+            "origin": "cmt_map.c:99"
+          },
+          {
+            "category": "unsupported",
+            "description": "indirect memory access is outside the resource projection",
+            "line": 5547,
+            "origin": "cmt_map.c:102"
+          },
+          {
+            "category": "unsupported",
+            "description": "indirect memory access is outside the resource projection",
+            "line": 5550,
+            "origin": "cmt_map.c:105"
+          }
+        ],
+        "function": "metric_index_add",
+        "hypothesis_context": {
+          "artifact": "cmetrics/cmt_map.c#metric_index_add",
+          "assumptions": "a9aabda5531193707d5939af2bfcbce51dbc1f13296d27e5199c715853767b73",
+          "bounds": "existing gateway budgets; no new hypothesis discharge",
+          "build_identity": "d2d39ed02dd3fc10794946ebb91c9eea19f66160fe0ba2c17ac4cacdd91aa4b8",
+          "evidence_version": "contract-hypothesis-graph.v1:bb574e826490f403c84bd0d0e3fb2177c11f530d",
+          "property": "resource-custody.v1",
+          "scope": "[\"cmt_map_create\",\"cmt_map_destroy\",\"cmt_map_metric_destroy\",\"cmt_map_metric_get\",\"cmt_map_metric_get_val\",\"cmt_map_metrics_expire\",\"destroy_label_list\",\"map_lock\",\"map_metric_create\",\"map_metric_destroy_unlocked\",\"map_metric_get_unlocked\",\"map_unlock\",\"metric_hash_lookup\",\"metric_index_add\",\"metric_index_resize\",\"metric_labels_match\",\"metric_prepare_storage\",\"metric_release_storage\"]",
+          "semantic_profile": "legacy-pinned-resource-profile",
+          "source_identity": "f71cf772033c3ebb229294270fa2912852fe5ff7442ff35e7d82743f4cb73be4"
+        },
+        "status": "Unknown"
+      },
+      "complete_tip_row": {
+        "contract_dependencies": {
+          "declarations": [],
+          "hypothesis_dependencies": {}
+        },
+        "diagnostics": [
+          {
+            "category": "unsupported",
+            "description": "unmodeled call, aggregate or indirect access in branch condition",
+            "line": 5539,
+            "origin": "cmt_map.c:92"
+          },
+          {
+            "category": "unsupported",
+            "description": "call to uncontracted function `metric_index_resize`",
+            "line": 5545,
+            "origin": "cmt_map.c:99"
+          },
+          {
+            "category": "unsupported",
+            "description": "indirect memory access is outside the resource projection",
+            "line": 5547,
+            "origin": "cmt_map.c:102"
+          },
+          {
+            "category": "unsupported",
+            "description": "indirect memory access is outside the resource projection",
+            "line": 5550,
+            "origin": "cmt_map.c:105"
+          }
+        ],
+        "function": "metric_index_add",
+        "hypothesis_context": {
+          "artifact": "cmetrics/cmt_map.c#metric_index_add",
+          "assumptions": "a9aabda5531193707d5939af2bfcbce51dbc1f13296d27e5199c715853767b73",
+          "bounds": "existing gateway budgets; no new hypothesis discharge",
+          "build_identity": "d2d39ed02dd3fc10794946ebb91c9eea19f66160fe0ba2c17ac4cacdd91aa4b8",
+          "evidence_version": "contract-hypothesis-graph.v1:e92d8aef35a8bd14550e90219d19a56eb3b196e7",
+          "property": "resource-custody.v1",
+          "scope": "[\"cmt_map_create\",\"cmt_map_destroy\",\"cmt_map_metric_destroy\",\"cmt_map_metric_get\",\"cmt_map_metric_get_val\",\"cmt_map_metrics_expire\",\"destroy_label_list\",\"map_lock\",\"map_metric_create\",\"map_metric_destroy_unlocked\",\"map_metric_get_unlocked\",\"map_unlock\",\"metric_hash_lookup\",\"metric_index_add\",\"metric_index_resize\",\"metric_labels_match\",\"metric_prepare_storage\",\"metric_release_storage\"]",
+          "semantic_profile": "legacy-pinned-resource-profile",
+          "source_identity": "f71cf772033c3ebb229294270fa2912852fe5ff7442ff35e7d82743f4cb73be4"
+        },
+        "status": "Unknown"
+      }
+    },
+    {
+      "function": "map_metric_create",
+      "file": "cmt_map.c",
+      "base_status": "Unknown",
+      "tip_status": "Unknown",
+      "base_diagnostics": 18,
+      "tip_diagnostics": 14,
+      "removed_diagnostics": [
+        {
+          "category": "unsupported",
+          "description": "call to uncontracted function `cfl_list_init`",
+          "line": 5707,
+          "origin": "cmt_map.c:290"
+        },
+        {
+          "category": "unsupported",
+          "description": "call to uncontracted function `cfl_list_init`",
+          "line": 5708,
+          "origin": "cmt_map.c:291"
+        },
+        {
+          "category": "unknown_alias",
+          "description": "unresolved resource identity `metric`",
+          "line": 5710,
+          "origin": "cmt_map.c:293"
+        },
+        {
+          "category": "unknown_alias",
+          "description": "unresolved resource identity `metric`",
+          "line": 5711,
+          "origin": "cmt_map.c:294"
+        }
+      ],
+      "added_diagnostics": [],
+      "complete_base_row": {
+        "contract_dependencies": {
+          "declarations": [
+            "__errno_location",
+            "calloc",
+            "cmt_metric_set_double",
+            "free",
+            "malloc"
+          ],
+          "hypothesis_dependencies": {
+            "__errno_location": [
+              "checked_reading_route",
+              "scalar_declaration",
+              "untracked_effects"
+            ]
+          }
+        },
+        "diagnostics": [
+          {
+            "category": "unsupported",
+            "description": "indirect memory access is outside the resource projection",
+            "line": 5704,
+            "origin": "cmt_map.c:287"
+          },
+          {
+            "category": "unsupported",
+            "description": "call to uncontracted function `cfl_list_init`",
+            "line": 5707,
+            "origin": "cmt_map.c:290"
+          },
+          {
+            "category": "unsupported",
+            "description": "call to uncontracted function `cfl_list_init`",
+            "line": 5708,
+            "origin": "cmt_map.c:291"
+          },
+          {
+            "category": "unknown_alias",
+            "description": "unresolved resource identity `metric`",
+            "line": 5710,
+            "origin": "cmt_map.c:293"
+          },
+          {
+            "category": "unknown_alias",
+            "description": "unresolved resource identity `metric`",
+            "line": 5711,
+            "origin": "cmt_map.c:294"
+          },
+          {
+            "category": "unsupported",
+            "description": "loop re-acquisition: an earlier generation that may be live is still held",
+            "line": 5713,
+            "origin": "cmt_map.c:297"
+          },
+          {
+            "category": "unsupported",
+            "description": "indirect memory access is outside the resource projection",
+            "line": 5715,
+            "origin": "cmt_map.c:299"
+          },
+          {
+            "category": "unknown_alias",
+            "description": "unresolved resource identity `name`",
+            "line": 5719,
+            "origin": "cmt_map.c:304"
+          },
+          {
+            "category": "unsupported",
+            "description": "indirect memory access is outside the resource projection",
+            "line": 5720,
+            "origin": "cmt_map.c:305"
+          },
+          {
+            "category": "unsupported",
+            "description": "indirect memory access is outside the resource projection",
+            "line": 5723,
+            "origin": "cmt_map.c:308"
+          },
+          {
+            "category": "unknown_alias",
+            "description": "unresolved resource identity `label`",
+            "line": 5724,
+            "origin": "cmt_map.c:309"
+          },
+          {
+            "category": "unsupported",
+            "description": "indirect memory access is outside the resource projection",
+            "line": 5725,
+            "origin": "cmt_map.c:310"
+          },
+          {
+            "category": "unknown_alias",
+            "description": "unresolved resource identity `label`",
+            "line": 5726,
+            "origin": "cmt_map.c:311"
+          },
+          {
+            "category": "unsupported",
+            "description": "call to uncontracted function `cfl_list_add`",
+            "line": 5730,
+            "origin": "cmt_map.c:315"
+          },
+          {
+            "category": "unknown_alias",
+            "description": "unresolved resource identity `metric`",
+            "line": 5732,
+            "origin": "cmt_map.c:318"
+          },
+          {
+            "category": "unsupported",
+            "description": "nullable resource `metric` used by a non-null contract",
+            "line": 5732,
+            "origin": "cmt_map.c:318"
+          },
+          {
+            "category": "unsupported",
+            "description": "call to uncontracted function `destroy_label_list`",
+            "line": 5734,
+            "origin": "cmt_map.c:321"
+          },
+          {
+            "category": "unknown_alias",
+            "description": "unresolved resource identity `metric`",
+            "line": 5735,
+            "origin": "cmt_map.c:322"
+          }
+        ],
+        "function": "map_metric_create",
+        "hypothesis_context": {
+          "artifact": "cmetrics/cmt_map.c#map_metric_create",
+          "assumptions": "a9aabda5531193707d5939af2bfcbce51dbc1f13296d27e5199c715853767b73",
+          "bounds": "existing gateway budgets; no new hypothesis discharge",
+          "build_identity": "d2d39ed02dd3fc10794946ebb91c9eea19f66160fe0ba2c17ac4cacdd91aa4b8",
+          "evidence_version": "contract-hypothesis-graph.v1:bb574e826490f403c84bd0d0e3fb2177c11f530d",
+          "property": "resource-custody.v1",
+          "scope": "[\"cmt_map_create\",\"cmt_map_destroy\",\"cmt_map_metric_destroy\",\"cmt_map_metric_get\",\"cmt_map_metric_get_val\",\"cmt_map_metrics_expire\",\"destroy_label_list\",\"map_lock\",\"map_metric_create\",\"map_metric_destroy_unlocked\",\"map_metric_get_unlocked\",\"map_unlock\",\"metric_hash_lookup\",\"metric_index_add\",\"metric_index_resize\",\"metric_labels_match\",\"metric_prepare_storage\",\"metric_release_storage\"]",
+          "semantic_profile": "legacy-pinned-resource-profile",
+          "source_identity": "f71cf772033c3ebb229294270fa2912852fe5ff7442ff35e7d82743f4cb73be4"
+        },
+        "status": "Unknown"
+      },
+      "complete_tip_row": {
+        "contract_dependencies": {
+          "declarations": [
+            "__errno_location",
+            "calloc",
+            "cmt_metric_set_double",
+            "free",
+            "malloc"
+          ],
+          "hypothesis_dependencies": {
+            "__errno_location": [
+              "checked_reading_route",
+              "scalar_declaration",
+              "untracked_effects"
+            ]
+          }
+        },
+        "diagnostics": [
+          {
+            "category": "unsupported",
+            "description": "indirect memory access is outside the resource projection",
+            "line": 5704,
+            "origin": "cmt_map.c:287"
+          },
+          {
+            "category": "unsupported",
+            "description": "loop re-acquisition: an earlier generation that may be live is still held",
+            "line": 5713,
+            "origin": "cmt_map.c:297"
+          },
+          {
+            "category": "unsupported",
+            "description": "indirect memory access is outside the resource projection",
+            "line": 5715,
+            "origin": "cmt_map.c:299"
+          },
+          {
+            "category": "unknown_alias",
+            "description": "unresolved resource identity `name`",
+            "line": 5719,
+            "origin": "cmt_map.c:304"
+          },
+          {
+            "category": "unsupported",
+            "description": "indirect memory access is outside the resource projection",
+            "line": 5720,
+            "origin": "cmt_map.c:305"
+          },
+          {
+            "category": "unsupported",
+            "description": "indirect memory access is outside the resource projection",
+            "line": 5723,
+            "origin": "cmt_map.c:308"
+          },
+          {
+            "category": "unknown_alias",
+            "description": "unresolved resource identity `label`",
+            "line": 5724,
+            "origin": "cmt_map.c:309"
+          },
+          {
+            "category": "unsupported",
+            "description": "indirect memory access is outside the resource projection",
+            "line": 5725,
+            "origin": "cmt_map.c:310"
+          },
+          {
+            "category": "unknown_alias",
+            "description": "unresolved resource identity `label`",
+            "line": 5726,
+            "origin": "cmt_map.c:311"
+          },
+          {
+            "category": "unsupported",
+            "description": "call to uncontracted function `cfl_list_add`",
+            "line": 5730,
+            "origin": "cmt_map.c:315"
+          },
+          {
+            "category": "unknown_alias",
+            "description": "unresolved resource identity `metric`",
+            "line": 5732,
+            "origin": "cmt_map.c:318"
+          },
+          {
+            "category": "unsupported",
+            "description": "nullable resource `metric` used by a non-null contract",
+            "line": 5732,
+            "origin": "cmt_map.c:318"
+          },
+          {
+            "category": "unsupported",
+            "description": "call to uncontracted function `destroy_label_list`",
+            "line": 5734,
+            "origin": "cmt_map.c:321"
+          },
+          {
+            "category": "unknown_alias",
+            "description": "unresolved resource identity `metric`",
+            "line": 5735,
+            "origin": "cmt_map.c:322"
+          }
+        ],
+        "function": "map_metric_create",
+        "hypothesis_context": {
+          "artifact": "cmetrics/cmt_map.c#map_metric_create",
+          "assumptions": "a9aabda5531193707d5939af2bfcbce51dbc1f13296d27e5199c715853767b73",
+          "bounds": "existing gateway budgets; no new hypothesis discharge",
+          "build_identity": "d2d39ed02dd3fc10794946ebb91c9eea19f66160fe0ba2c17ac4cacdd91aa4b8",
+          "evidence_version": "contract-hypothesis-graph.v1:e92d8aef35a8bd14550e90219d19a56eb3b196e7",
+          "property": "resource-custody.v1",
+          "scope": "[\"cmt_map_create\",\"cmt_map_destroy\",\"cmt_map_metric_destroy\",\"cmt_map_metric_get\",\"cmt_map_metric_get_val\",\"cmt_map_metrics_expire\",\"destroy_label_list\",\"map_lock\",\"map_metric_create\",\"map_metric_destroy_unlocked\",\"map_metric_get_unlocked\",\"map_unlock\",\"metric_hash_lookup\",\"metric_index_add\",\"metric_index_resize\",\"metric_labels_match\",\"metric_prepare_storage\",\"metric_release_storage\"]",
+          "semantic_profile": "legacy-pinned-resource-profile",
+          "source_identity": "f71cf772033c3ebb229294270fa2912852fe5ff7442ff35e7d82743f4cb73be4"
+        },
+        "status": "Unknown"
+      }
+    },
+    {
+      "function": "map_metric_get_unlocked",
+      "file": "cmt_map.c",
+      "base_status": "Unknown",
+      "tip_status": "Unknown",
+      "base_diagnostics": 20,
+      "tip_diagnostics": 20,
+      "removed_diagnostics": [],
+      "added_diagnostics": [],
+      "complete_base_row": {
+        "contract_dependencies": {
+          "declarations": [
+            "cfl_sds_len",
+            "strlen"
+          ],
+          "hypothesis_dependencies": {}
+        },
+        "diagnostics": [
+          {
+            "category": "unsupported",
+            "description": "indirect memory access is outside the resource projection",
+            "line": 5795,
+            "origin": "cmt_map.c:405"
+          },
+          {
+            "category": "unsupported",
+            "description": "indirect memory access is outside the resource projection",
+            "line": 5798,
+            "origin": "cmt_map.c:408"
+          },
+          {
+            "category": "unknown_alias",
+            "description": "unresolved resource identity `map`",
+            "line": 5800,
+            "origin": "cmt_map.c:410"
+          },
+          {
+            "category": "unsupported",
+            "description": "call to uncontracted function `metric_prepare_storage`",
+            "line": 5803,
+            "origin": "cmt_map.c:415"
+          },
+          {
+            "category": "unsupported",
+            "description": "call to uncontracted function `XXH_INLINE_XXH3_64bits_reset`",
+            "line": 5805,
+            "origin": "cmt_map.c:419"
+          },
+          {
+            "category": "unsupported",
+            "description": "indirect memory access is outside the resource projection",
+            "line": 5806,
+            "origin": "cmt_map.c:420"
+          },
+          {
+            "category": "unknown_alias",
+            "description": "unresolved resource identity `labels_val`",
+            "line": 5808,
+            "origin": "cmt_map.c:422"
+          },
+          {
+            "category": "unknown_alias",
+            "description": "unresolved resource identity `ptr`",
+            "line": 5809,
+            "origin": "cmt_map.c:423"
+          },
+          {
+            "category": "unsupported",
+            "description": "call to uncontracted function `XXH_INLINE_XXH3_64bits_update`",
+            "line": 5810,
+            "origin": "cmt_map.c:424"
+          },
+          {
+            "category": "unsupported",
+            "description": "call to uncontracted function `XXH_INLINE_XXH3_64bits_update`",
+            "line": 5814,
+            "origin": "cmt_map.c:428"
+          },
+          {
+            "category": "unsupported",
+            "description": "call to uncontracted function `XXH_INLINE_XXH3_64bits_digest`",
+            "line": 5817,
+            "origin": "cmt_map.c:432"
+          },
+          {
+            "category": "unsupported",
+            "description": "call to uncontracted function `metric_hash_lookup`",
+            "line": 5818,
+            "origin": "cmt_map.c:433"
+          },
+          {
+            "category": "unknown_alias",
+            "description": "unresolved resource identity `metric`",
+            "line": 5819,
+            "origin": "cmt_map.c:435"
+          },
+          {
+            "category": "unsupported",
+            "description": "call to uncontracted function `metric_prepare_storage`",
+            "line": 5820,
+            "origin": "cmt_map.c:436"
+          },
+          {
+            "category": "unsupported",
+            "description": "call to uncontracted function `map_metric_create`",
+            "line": 5825,
+            "origin": "cmt_map.c:448"
+          },
+          {
+            "category": "unknown_alias",
+            "description": "unresolved resource identity `metric`",
+            "line": 5826,
+            "origin": "cmt_map.c:449"
+          },
+          {
+            "category": "unsupported",
+            "description": "call to uncontracted function `cfl_list_add`",
+            "line": 5829,
+            "origin": "cmt_map.c:452"
+          },
+          {
+            "category": "unsupported",
+            "description": "call to uncontracted function `metric_index_add`",
+            "line": 5830,
+            "origin": "cmt_map.c:453"
+          },
+          {
+            "category": "unsupported",
+            "description": "indirect memory access is outside the resource projection",
+            "line": 5831,
+            "origin": "cmt_map.c:454"
+          },
+          {
+            "category": "unsupported",
+            "description": "call to uncontracted function `metric_prepare_storage`",
+            "line": 5832,
+            "origin": "cmt_map.c:455"
+          }
+        ],
+        "function": "map_metric_get_unlocked",
+        "hypothesis_context": {
+          "artifact": "cmetrics/cmt_map.c#map_metric_get_unlocked",
+          "assumptions": "a9aabda5531193707d5939af2bfcbce51dbc1f13296d27e5199c715853767b73",
+          "bounds": "existing gateway budgets; no new hypothesis discharge",
+          "build_identity": "d2d39ed02dd3fc10794946ebb91c9eea19f66160fe0ba2c17ac4cacdd91aa4b8",
+          "evidence_version": "contract-hypothesis-graph.v1:bb574e826490f403c84bd0d0e3fb2177c11f530d",
+          "property": "resource-custody.v1",
+          "scope": "[\"cmt_map_create\",\"cmt_map_destroy\",\"cmt_map_metric_destroy\",\"cmt_map_metric_get\",\"cmt_map_metric_get_val\",\"cmt_map_metrics_expire\",\"destroy_label_list\",\"map_lock\",\"map_metric_create\",\"map_metric_destroy_unlocked\",\"map_metric_get_unlocked\",\"map_unlock\",\"metric_hash_lookup\",\"metric_index_add\",\"metric_index_resize\",\"metric_labels_match\",\"metric_prepare_storage\",\"metric_release_storage\"]",
+          "semantic_profile": "legacy-pinned-resource-profile",
+          "source_identity": "f71cf772033c3ebb229294270fa2912852fe5ff7442ff35e7d82743f4cb73be4"
+        },
+        "status": "Unknown"
+      },
+      "complete_tip_row": {
+        "contract_dependencies": {
+          "declarations": [
+            "cfl_sds_len",
+            "strlen"
+          ],
+          "hypothesis_dependencies": {}
+        },
+        "diagnostics": [
+          {
+            "category": "unsupported",
+            "description": "indirect memory access is outside the resource projection",
+            "line": 5795,
+            "origin": "cmt_map.c:405"
+          },
+          {
+            "category": "unsupported",
+            "description": "indirect memory access is outside the resource projection",
+            "line": 5798,
+            "origin": "cmt_map.c:408"
+          },
+          {
+            "category": "unknown_alias",
+            "description": "unresolved resource identity `map`",
+            "line": 5800,
+            "origin": "cmt_map.c:410"
+          },
+          {
+            "category": "unsupported",
+            "description": "call to uncontracted function `metric_prepare_storage`",
+            "line": 5803,
+            "origin": "cmt_map.c:415"
+          },
+          {
+            "category": "unsupported",
+            "description": "call to uncontracted function `XXH_INLINE_XXH3_64bits_reset`",
+            "line": 5805,
+            "origin": "cmt_map.c:419"
+          },
+          {
+            "category": "unsupported",
+            "description": "indirect memory access is outside the resource projection",
+            "line": 5806,
+            "origin": "cmt_map.c:420"
+          },
+          {
+            "category": "unknown_alias",
+            "description": "unresolved resource identity `labels_val`",
+            "line": 5808,
+            "origin": "cmt_map.c:422"
+          },
+          {
+            "category": "unknown_alias",
+            "description": "unresolved resource identity `ptr`",
+            "line": 5809,
+            "origin": "cmt_map.c:423"
+          },
+          {
+            "category": "unsupported",
+            "description": "call to uncontracted function `XXH_INLINE_XXH3_64bits_update`",
+            "line": 5810,
+            "origin": "cmt_map.c:424"
+          },
+          {
+            "category": "unsupported",
+            "description": "call to uncontracted function `XXH_INLINE_XXH3_64bits_update`",
+            "line": 5814,
+            "origin": "cmt_map.c:428"
+          },
+          {
+            "category": "unsupported",
+            "description": "call to uncontracted function `XXH_INLINE_XXH3_64bits_digest`",
+            "line": 5817,
+            "origin": "cmt_map.c:432"
+          },
+          {
+            "category": "unsupported",
+            "description": "call to uncontracted function `metric_hash_lookup`",
+            "line": 5818,
+            "origin": "cmt_map.c:433"
+          },
+          {
+            "category": "unknown_alias",
+            "description": "unresolved resource identity `metric`",
+            "line": 5819,
+            "origin": "cmt_map.c:435"
+          },
+          {
+            "category": "unsupported",
+            "description": "call to uncontracted function `metric_prepare_storage`",
+            "line": 5820,
+            "origin": "cmt_map.c:436"
+          },
+          {
+            "category": "unsupported",
+            "description": "call to uncontracted function `map_metric_create`",
+            "line": 5825,
+            "origin": "cmt_map.c:448"
+          },
+          {
+            "category": "unknown_alias",
+            "description": "unresolved resource identity `metric`",
+            "line": 5826,
+            "origin": "cmt_map.c:449"
+          },
+          {
+            "category": "unsupported",
+            "description": "call to uncontracted function `cfl_list_add`",
+            "line": 5829,
+            "origin": "cmt_map.c:452"
+          },
+          {
+            "category": "unsupported",
+            "description": "call to uncontracted function `metric_index_add`",
+            "line": 5830,
+            "origin": "cmt_map.c:453"
+          },
+          {
+            "category": "unsupported",
+            "description": "indirect memory access is outside the resource projection",
+            "line": 5831,
+            "origin": "cmt_map.c:454"
+          },
+          {
+            "category": "unsupported",
+            "description": "call to uncontracted function `metric_prepare_storage`",
+            "line": 5832,
+            "origin": "cmt_map.c:455"
+          }
+        ],
+        "function": "map_metric_get_unlocked",
+        "hypothesis_context": {
+          "artifact": "cmetrics/cmt_map.c#map_metric_get_unlocked",
+          "assumptions": "a9aabda5531193707d5939af2bfcbce51dbc1f13296d27e5199c715853767b73",
+          "bounds": "existing gateway budgets; no new hypothesis discharge",
+          "build_identity": "d2d39ed02dd3fc10794946ebb91c9eea19f66160fe0ba2c17ac4cacdd91aa4b8",
+          "evidence_version": "contract-hypothesis-graph.v1:e92d8aef35a8bd14550e90219d19a56eb3b196e7",
+          "property": "resource-custody.v1",
+          "scope": "[\"cmt_map_create\",\"cmt_map_destroy\",\"cmt_map_metric_destroy\",\"cmt_map_metric_get\",\"cmt_map_metric_get_val\",\"cmt_map_metrics_expire\",\"destroy_label_list\",\"map_lock\",\"map_metric_create\",\"map_metric_destroy_unlocked\",\"map_metric_get_unlocked\",\"map_unlock\",\"metric_hash_lookup\",\"metric_index_add\",\"metric_index_resize\",\"metric_labels_match\",\"metric_prepare_storage\",\"metric_release_storage\"]",
+          "semantic_profile": "legacy-pinned-resource-profile",
+          "source_identity": "f71cf772033c3ebb229294270fa2912852fe5ff7442ff35e7d82743f4cb73be4"
+        },
+        "status": "Unknown"
+      }
+    },
+    {
+      "function": "cmt_map_create",
+      "file": "cmt_map.c",
+      "base_status": "Unknown",
+      "tip_status": "Unknown",
+      "base_diagnostics": 21,
+      "tip_diagnostics": 21,
+      "removed_diagnostics": [
+        {
+          "category": "unsupported",
+          "description": "call to uncontracted function `cfl_list_init`",
+          "line": 5572,
+          "origin": "cmt_map.c:130"
+        },
+        {
+          "category": "unsupported",
+          "description": "call to uncontracted function `cfl_list_init`",
+          "line": 5573,
+          "origin": "cmt_map.c:131"
+        }
+      ],
+      "added_diagnostics": [
+        {
+          "category": "unsupported",
+          "description": "indirect memory access is outside the resource projection",
+          "line": 5572,
+          "origin": "cmt_map.c:130"
+        },
+        {
+          "category": "unsupported",
+          "description": "indirect memory access is outside the resource projection",
+          "line": 5573,
+          "origin": "cmt_map.c:131"
+        }
+      ],
+      "complete_base_row": {
+        "contract_dependencies": {
+          "declarations": [
+            "__errno_location",
+            "calloc",
+            "free",
+            "malloc"
+          ],
+          "hypothesis_dependencies": {
+            "__errno_location": [
+              "checked_reading_route",
+              "scalar_declaration",
+              "untracked_effects"
+            ]
+          }
+        },
+        "diagnostics": [
+          {
+            "category": "unsupported",
+            "description": "indirect memory access is outside the resource projection",
+            "line": 5565,
+            "origin": "cmt_map.c:123"
+          },
+          {
+            "category": "unsupported",
+            "description": "indirect memory access is outside the resource projection",
+            "line": 5570,
+            "origin": "cmt_map.c:128"
+          },
+          {
+            "category": "unknown_alias",
+            "description": "unresolved resource identity `map`",
+            "line": 5571,
+            "origin": "cmt_map.c:129"
+          },
+          {
+            "category": "unsupported",
+            "description": "call to uncontracted function `cfl_list_init`",
+            "line": 5572,
+            "origin": "cmt_map.c:130"
+          },
+          {
+            "category": "unsupported",
+            "description": "call to uncontracted function `cfl_list_init`",
+            "line": 5573,
+            "origin": "cmt_map.c:131"
+          },
+          {
+            "category": "unsupported",
+            "description": "indirect memory access is outside the resource projection",
+            "line": 5574,
+            "origin": "cmt_map.c:132"
+          },
+          {
+            "category": "unsupported",
+            "description": "unmodeled call, aggregate or indirect access in branch condition",
+            "line": 5575,
+            "origin": "cmt_map.c:134"
+          },
+          {
+            "category": "unsupported",
+            "description": "indirect memory access is outside the resource projection",
+            "line": 5577,
+            "origin": "cmt_map.c:136"
+          },
+          {
+            "category": "unsupported",
+            "description": "call to uncontracted function `cmt_map_destroy`",
+            "line": 5578,
+            "origin": "cmt_map.c:137"
+          },
+          {
+            "category": "unknown_alias",
+            "description": "unresolved resource identity `map`",
+            "line": 5582,
+            "origin": "cmt_map.c:142"
+          },
+          {
+            "category": "unsupported",
+            "description": "loop re-acquisition: an earlier generation that may be live is still held",
+            "line": 5585,
+            "origin": "cmt_map.c:146"
+          },
+          {
+            "category": "unsupported",
+            "description": "indirect memory access is outside the resource projection",
+            "line": 5587,
+            "origin": "cmt_map.c:148"
+          },
+          {
+            "category": "unknown_alias",
+            "description": "unresolved resource identity `labels`",
+            "line": 5590,
+            "origin": "cmt_map.c:152"
+          },
+          {
+            "category": "unsupported",
+            "description": "indirect memory access is outside the resource projection",
+            "line": 5591,
+            "origin": "cmt_map.c:153"
+          },
+          {
+            "category": "unknown_alias",
+            "description": "unresolved resource identity `label`",
+            "line": 5592,
+            "origin": "cmt_map.c:154"
+          },
+          {
+            "category": "unsupported",
+            "description": "indirect memory access is outside the resource projection",
+            "line": 5593,
+            "origin": "cmt_map.c:155"
+          },
+          {
+            "category": "unknown_alias",
+            "description": "unresolved resource identity `label`",
+            "line": 5594,
+            "origin": "cmt_map.c:156"
+          },
+          {
+            "category": "unsupported",
+            "description": "call to uncontracted function `cfl_list_add`",
+            "line": 5597,
+            "origin": "cmt_map.c:159"
+          },
+          {
+            "category": "unknown_alias",
+            "description": "unresolved resource identity `map`",
+            "line": 5599,
+            "origin": "cmt_map.c:162"
+          },
+          {
+            "category": "unsupported",
+            "description": "nullable resource `map` used by a non-null contract",
+            "line": 5599,
+            "origin": "cmt_map.c:162"
+          },
+          {
+            "category": "unsupported",
+            "description": "call to uncontracted function `cmt_map_destroy`",
+            "line": 5601,
+            "origin": "cmt_map.c:165"
+          }
+        ],
+        "function": "cmt_map_create",
+        "hypothesis_context": {
+          "artifact": "cmetrics/cmt_map.c#cmt_map_create",
+          "assumptions": "a9aabda5531193707d5939af2bfcbce51dbc1f13296d27e5199c715853767b73",
+          "bounds": "existing gateway budgets; no new hypothesis discharge",
+          "build_identity": "d2d39ed02dd3fc10794946ebb91c9eea19f66160fe0ba2c17ac4cacdd91aa4b8",
+          "evidence_version": "contract-hypothesis-graph.v1:bb574e826490f403c84bd0d0e3fb2177c11f530d",
+          "property": "resource-custody.v1",
+          "scope": "[\"cmt_map_create\",\"cmt_map_destroy\",\"cmt_map_metric_destroy\",\"cmt_map_metric_get\",\"cmt_map_metric_get_val\",\"cmt_map_metrics_expire\",\"destroy_label_list\",\"map_lock\",\"map_metric_create\",\"map_metric_destroy_unlocked\",\"map_metric_get_unlocked\",\"map_unlock\",\"metric_hash_lookup\",\"metric_index_add\",\"metric_index_resize\",\"metric_labels_match\",\"metric_prepare_storage\",\"metric_release_storage\"]",
+          "semantic_profile": "legacy-pinned-resource-profile",
+          "source_identity": "f71cf772033c3ebb229294270fa2912852fe5ff7442ff35e7d82743f4cb73be4"
+        },
+        "status": "Unknown"
+      },
+      "complete_tip_row": {
+        "contract_dependencies": {
+          "declarations": [
+            "__errno_location",
+            "calloc",
+            "free",
+            "malloc"
+          ],
+          "hypothesis_dependencies": {
+            "__errno_location": [
+              "checked_reading_route",
+              "scalar_declaration",
+              "untracked_effects"
+            ]
+          }
+        },
+        "diagnostics": [
+          {
+            "category": "unsupported",
+            "description": "indirect memory access is outside the resource projection",
+            "line": 5565,
+            "origin": "cmt_map.c:123"
+          },
+          {
+            "category": "unsupported",
+            "description": "indirect memory access is outside the resource projection",
+            "line": 5570,
+            "origin": "cmt_map.c:128"
+          },
+          {
+            "category": "unknown_alias",
+            "description": "unresolved resource identity `map`",
+            "line": 5571,
+            "origin": "cmt_map.c:129"
+          },
+          {
+            "category": "unsupported",
+            "description": "indirect memory access is outside the resource projection",
+            "line": 5572,
+            "origin": "cmt_map.c:130"
+          },
+          {
+            "category": "unsupported",
+            "description": "indirect memory access is outside the resource projection",
+            "line": 5573,
+            "origin": "cmt_map.c:131"
+          },
+          {
+            "category": "unsupported",
+            "description": "indirect memory access is outside the resource projection",
+            "line": 5574,
+            "origin": "cmt_map.c:132"
+          },
+          {
+            "category": "unsupported",
+            "description": "unmodeled call, aggregate or indirect access in branch condition",
+            "line": 5575,
+            "origin": "cmt_map.c:134"
+          },
+          {
+            "category": "unsupported",
+            "description": "indirect memory access is outside the resource projection",
+            "line": 5577,
+            "origin": "cmt_map.c:136"
+          },
+          {
+            "category": "unsupported",
+            "description": "call to uncontracted function `cmt_map_destroy`",
+            "line": 5578,
+            "origin": "cmt_map.c:137"
+          },
+          {
+            "category": "unknown_alias",
+            "description": "unresolved resource identity `map`",
+            "line": 5582,
+            "origin": "cmt_map.c:142"
+          },
+          {
+            "category": "unsupported",
+            "description": "loop re-acquisition: an earlier generation that may be live is still held",
+            "line": 5585,
+            "origin": "cmt_map.c:146"
+          },
+          {
+            "category": "unsupported",
+            "description": "indirect memory access is outside the resource projection",
+            "line": 5587,
+            "origin": "cmt_map.c:148"
+          },
+          {
+            "category": "unknown_alias",
+            "description": "unresolved resource identity `labels`",
+            "line": 5590,
+            "origin": "cmt_map.c:152"
+          },
+          {
+            "category": "unsupported",
+            "description": "indirect memory access is outside the resource projection",
+            "line": 5591,
+            "origin": "cmt_map.c:153"
+          },
+          {
+            "category": "unknown_alias",
+            "description": "unresolved resource identity `label`",
+            "line": 5592,
+            "origin": "cmt_map.c:154"
+          },
+          {
+            "category": "unsupported",
+            "description": "indirect memory access is outside the resource projection",
+            "line": 5593,
+            "origin": "cmt_map.c:155"
+          },
+          {
+            "category": "unknown_alias",
+            "description": "unresolved resource identity `label`",
+            "line": 5594,
+            "origin": "cmt_map.c:156"
+          },
+          {
+            "category": "unsupported",
+            "description": "call to uncontracted function `cfl_list_add`",
+            "line": 5597,
+            "origin": "cmt_map.c:159"
+          },
+          {
+            "category": "unknown_alias",
+            "description": "unresolved resource identity `map`",
+            "line": 5599,
+            "origin": "cmt_map.c:162"
+          },
+          {
+            "category": "unsupported",
+            "description": "nullable resource `map` used by a non-null contract",
+            "line": 5599,
+            "origin": "cmt_map.c:162"
+          },
+          {
+            "category": "unsupported",
+            "description": "call to uncontracted function `cmt_map_destroy`",
+            "line": 5601,
+            "origin": "cmt_map.c:165"
+          }
+        ],
+        "function": "cmt_map_create",
+        "hypothesis_context": {
+          "artifact": "cmetrics/cmt_map.c#cmt_map_create",
+          "assumptions": "a9aabda5531193707d5939af2bfcbce51dbc1f13296d27e5199c715853767b73",
+          "bounds": "existing gateway budgets; no new hypothesis discharge",
+          "build_identity": "d2d39ed02dd3fc10794946ebb91c9eea19f66160fe0ba2c17ac4cacdd91aa4b8",
+          "evidence_version": "contract-hypothesis-graph.v1:e92d8aef35a8bd14550e90219d19a56eb3b196e7",
+          "property": "resource-custody.v1",
+          "scope": "[\"cmt_map_create\",\"cmt_map_destroy\",\"cmt_map_metric_destroy\",\"cmt_map_metric_get\",\"cmt_map_metric_get_val\",\"cmt_map_metrics_expire\",\"destroy_label_list\",\"map_lock\",\"map_metric_create\",\"map_metric_destroy_unlocked\",\"map_metric_get_unlocked\",\"map_unlock\",\"metric_hash_lookup\",\"metric_index_add\",\"metric_index_resize\",\"metric_labels_match\",\"metric_prepare_storage\",\"metric_release_storage\"]",
+          "semantic_profile": "legacy-pinned-resource-profile",
+          "source_identity": "f71cf772033c3ebb229294270fa2912852fe5ff7442ff35e7d82743f4cb73be4"
+        },
+        "status": "Unknown"
+      }
+    },
+    {
+      "function": "cmt_map_metric_get",
+      "file": "cmt_map.c",
+      "base_status": "Unknown",
+      "tip_status": "Unknown",
+      "base_diagnostics": 1,
+      "tip_diagnostics": 1,
+      "removed_diagnostics": [],
+      "added_diagnostics": [],
+      "complete_base_row": {
+        "contract_dependencies": {
+          "declarations": [
+            "cmt_atomic_compare_exchange",
+            "cmt_atomic_store"
+          ],
+          "hypothesis_dependencies": {},
+          "summaries": [
+            "map_lock",
+            "map_unlock"
+          ]
+        },
+        "diagnostics": [
+          {
+            "category": "unsupported",
+            "description": "call to uncontracted function `map_metric_get_unlocked`",
+            "line": 5840,
+            "origin": "cmt_map.c:465"
+          }
+        ],
+        "function": "cmt_map_metric_get",
+        "hypothesis_context": {
+          "artifact": "cmetrics/cmt_map.c#cmt_map_metric_get",
+          "assumptions": "a9aabda5531193707d5939af2bfcbce51dbc1f13296d27e5199c715853767b73",
+          "bounds": "existing gateway budgets; no new hypothesis discharge",
+          "build_identity": "d2d39ed02dd3fc10794946ebb91c9eea19f66160fe0ba2c17ac4cacdd91aa4b8",
+          "evidence_version": "contract-hypothesis-graph.v1:bb574e826490f403c84bd0d0e3fb2177c11f530d",
+          "property": "resource-custody.v1",
+          "scope": "[\"cmt_map_create\",\"cmt_map_destroy\",\"cmt_map_metric_destroy\",\"cmt_map_metric_get\",\"cmt_map_metric_get_val\",\"cmt_map_metrics_expire\",\"destroy_label_list\",\"map_lock\",\"map_metric_create\",\"map_metric_destroy_unlocked\",\"map_metric_get_unlocked\",\"map_unlock\",\"metric_hash_lookup\",\"metric_index_add\",\"metric_index_resize\",\"metric_labels_match\",\"metric_prepare_storage\",\"metric_release_storage\"]",
+          "semantic_profile": "legacy-pinned-resource-profile",
+          "source_identity": "f71cf772033c3ebb229294270fa2912852fe5ff7442ff35e7d82743f4cb73be4"
+        },
+        "status": "Unknown"
+      },
+      "complete_tip_row": {
+        "contract_dependencies": {
+          "declarations": [
+            "cmt_atomic_compare_exchange",
+            "cmt_atomic_store"
+          ],
+          "hypothesis_dependencies": {},
+          "summaries": [
+            "map_lock",
+            "map_unlock"
+          ]
+        },
+        "diagnostics": [
+          {
+            "category": "unsupported",
+            "description": "call to uncontracted function `map_metric_get_unlocked`",
+            "line": 5840,
+            "origin": "cmt_map.c:465"
+          }
+        ],
+        "function": "cmt_map_metric_get",
+        "hypothesis_context": {
+          "artifact": "cmetrics/cmt_map.c#cmt_map_metric_get",
+          "assumptions": "a9aabda5531193707d5939af2bfcbce51dbc1f13296d27e5199c715853767b73",
+          "bounds": "existing gateway budgets; no new hypothesis discharge",
+          "build_identity": "d2d39ed02dd3fc10794946ebb91c9eea19f66160fe0ba2c17ac4cacdd91aa4b8",
+          "evidence_version": "contract-hypothesis-graph.v1:e92d8aef35a8bd14550e90219d19a56eb3b196e7",
+          "property": "resource-custody.v1",
+          "scope": "[\"cmt_map_create\",\"cmt_map_destroy\",\"cmt_map_metric_destroy\",\"cmt_map_metric_get\",\"cmt_map_metric_get_val\",\"cmt_map_metrics_expire\",\"destroy_label_list\",\"map_lock\",\"map_metric_create\",\"map_metric_destroy_unlocked\",\"map_metric_get_unlocked\",\"map_unlock\",\"metric_hash_lookup\",\"metric_index_add\",\"metric_index_resize\",\"metric_labels_match\",\"metric_prepare_storage\",\"metric_release_storage\"]",
+          "semantic_profile": "legacy-pinned-resource-profile",
+          "source_identity": "f71cf772033c3ebb229294270fa2912852fe5ff7442ff35e7d82743f4cb73be4"
+        },
+        "status": "Unknown"
+      }
+    }
+  ],
+  "getter_closure_gain": 0,
+  "complete_rows_retained": true
+}

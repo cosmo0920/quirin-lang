@@ -37,6 +37,40 @@
       "premises": {},
       "sha256": "0ac6d629272eea0c892f7b53527e051af73f3452b98f082f24e6ae0719a3d37c"
     },
+    "cmetrics/map_lifetime.qv": {
+      "clause_count": 71,
+      "declaration_count": 6,
+      "declarations": [
+        {
+          "clauses": 11,
+          "name": "cmt_map_create"
+        },
+        {
+          "clauses": 18,
+          "name": "cmt_map_metric_get"
+        },
+        {
+          "clauses": 9,
+          "name": "cmt_map_metric_get_val"
+        },
+        {
+          "clauses": 10,
+          "name": "cmt_map_metric_destroy"
+        },
+        {
+          "clauses": 11,
+          "name": "cmt_map_metrics_expire"
+        },
+        {
+          "clauses": 12,
+          "name": "cmt_map_destroy"
+        }
+      ],
+      "inherits": [],
+      "premise_bindings": [],
+      "premises": {},
+      "sha256": "ecc6aab9be74aa57ed0842ad79f16b33000b9d10dd2834344837da502ff32436"
+    },
     "cmetrics/metric_values.qv": {
       "clause_count": 85,
       "declaration_count": 24,
@@ -178,6 +212,24 @@
       "premise_bindings": [],
       "premises": {},
       "sha256": "4041672b8470b5553f70099da2f23fa2490cac2a7eba5801e847dccea861faf3"
+    },
+    "cmetrics/opts_lifetime.qv": {
+      "clause_count": 25,
+      "declaration_count": 2,
+      "declarations": [
+        {
+          "clauses": 15,
+          "name": "cmt_opts_init"
+        },
+        {
+          "clauses": 10,
+          "name": "cmt_opts_exit"
+        }
+      ],
+      "inherits": [],
+      "premise_bindings": [],
+      "premises": {},
+      "sha256": "4b9ad1d7bf2bc8f06e2749b0e6ab4407ddd000fbc7bafed9c93d5dbd24ce1852"
     }
   },
   "outer_view": [],

@@ -1,0 +1,3685 @@
+[
+  {
+    "leaf": {
+      "file": "resource-diagnostics.json",
+      "path": [
+        "diagnostic_counts",
+        "unknown_alias"
+      ],
+      "before": 10836,
+      "after": 10831
+    },
+    "reason": "Exact diagnostic category sum of the retained complete function rows; reconstructed on both sides, including all unchanged diagnostics.",
+    "evidence": [
+      "complete retained resource-diagnostics.json on both sides",
+      "semantic review diagnostic-count reconstruction"
+    ]
+  },
+  {
+    "leaf": {
+      "file": "resource-diagnostics.json",
+      "path": [
+        "diagnostic_counts",
+        "unsupported"
+      ],
+      "before": 27313,
+      "after": 27302
+    },
+    "reason": "Exact diagnostic category sum of the retained complete function rows; reconstructed on both sides, including all unchanged diagnostics.",
+    "evidence": [
+      "complete retained resource-diagnostics.json on both sides",
+      "semantic review diagnostic-count reconstruction"
+    ]
+  },
+  {
+    "leaf": {
+      "file": "resource-diagnostics.json",
+      "path": [
+        "units",
+        0,
+        "functions",
+        0,
+        "diagnostics",
+        13,
+        "description"
+      ],
+      "before": "call to uncontracted function `cfl_list_init`",
+      "after": "indirect memory access is outside the resource projection"
+    },
+    "reason": "Rule 36b source-checked initializer transport at ('cmetrics', 'cmetrics.c', 'cmt_create', 0): retained owner storage no longer receives an opaque initializer escape; actual before/after diagnostics are preserved in the full-row record. Its status is Unknown -> Unknown. Remaining indirect-access refusals stay Unknown. No API declared-model permission is used.",
+    "evidence": [
+      "full-row-movements.json.gz key ('cmetrics', 'cmetrics.c', 'cmt_create', 0)",
+      "crates/qcore-c-gateway/src/legacy_tracked_self_init.rs",
+      "crates/qcore-c-gateway/src/legacy_transfer.rs:TrackedSelfInit",
+      "steps/focus-rust-3.json",
+      "steps/focus-deep-2.json"
+    ]
+  },
+  {
+    "leaf": {
+      "file": "resource-diagnostics.json",
+      "path": [
+        "units",
+        0,
+        "functions",
+        0,
+        "diagnostics",
+        14,
+        "description"
+      ],
+      "before": "call to uncontracted function `cfl_list_init`",
+      "after": "indirect memory access is outside the resource projection"
+    },
+    "reason": "Rule 36b source-checked initializer transport at ('cmetrics', 'cmetrics.c', 'cmt_create', 0): retained owner storage no longer receives an opaque initializer escape; actual before/after diagnostics are preserved in the full-row record. Its status is Unknown -> Unknown. Remaining indirect-access refusals stay Unknown. No API declared-model permission is used.",
+    "evidence": [
+      "full-row-movements.json.gz key ('cmetrics', 'cmetrics.c', 'cmt_create', 0)",
+      "crates/qcore-c-gateway/src/legacy_tracked_self_init.rs",
+      "crates/qcore-c-gateway/src/legacy_transfer.rs:TrackedSelfInit",
+      "steps/focus-rust-3.json",
+      "steps/focus-deep-2.json"
+    ]
+  },
+  {
+    "leaf": {
+      "file": "resource-diagnostics.json",
+      "path": [
+        "units",
+        0,
+        "functions",
+        0,
+        "diagnostics",
+        15,
+        "description"
+      ],
+      "before": "call to uncontracted function `cfl_list_init`",
+      "after": "indirect memory access is outside the resource projection"
+    },
+    "reason": "Rule 36b source-checked initializer transport at ('cmetrics', 'cmetrics.c', 'cmt_create', 0): retained owner storage no longer receives an opaque initializer escape; actual before/after diagnostics are preserved in the full-row record. Its status is Unknown -> Unknown. Remaining indirect-access refusals stay Unknown. No API declared-model permission is used.",
+    "evidence": [
+      "full-row-movements.json.gz key ('cmetrics', 'cmetrics.c', 'cmt_create', 0)",
+      "crates/qcore-c-gateway/src/legacy_tracked_self_init.rs",
+      "crates/qcore-c-gateway/src/legacy_transfer.rs:TrackedSelfInit",
+      "steps/focus-rust-3.json",
+      "steps/focus-deep-2.json"
+    ]
+  },
+  {
+    "leaf": {
+      "file": "resource-diagnostics.json",
+      "path": [
+        "units",
+        0,
+        "functions",
+        0,
+        "diagnostics",
+        16,
+        "description"
+      ],
+      "before": "call to uncontracted function `cfl_list_init`",
+      "after": "indirect memory access is outside the resource projection"
+    },
+    "reason": "Rule 36b source-checked initializer transport at ('cmetrics', 'cmetrics.c', 'cmt_create', 0): retained owner storage no longer receives an opaque initializer escape; actual before/after diagnostics are preserved in the full-row record. Its status is Unknown -> Unknown. Remaining indirect-access refusals stay Unknown. No API declared-model permission is used.",
+    "evidence": [
+      "full-row-movements.json.gz key ('cmetrics', 'cmetrics.c', 'cmt_create', 0)",
+      "crates/qcore-c-gateway/src/legacy_tracked_self_init.rs",
+      "crates/qcore-c-gateway/src/legacy_transfer.rs:TrackedSelfInit",
+      "steps/focus-rust-3.json",
+      "steps/focus-deep-2.json"
+    ]
+  },
+  {
+    "leaf": {
+      "file": "resource-diagnostics.json",
+      "path": [
+        "units",
+        0,
+        "functions",
+        0,
+        "diagnostics",
+        17,
+        "description"
+      ],
+      "before": "call to uncontracted function `cfl_list_init`",
+      "after": "indirect memory access is outside the resource projection"
+    },
+    "reason": "Rule 36b source-checked initializer transport at ('cmetrics', 'cmetrics.c', 'cmt_create', 0): retained owner storage no longer receives an opaque initializer escape; actual before/after diagnostics are preserved in the full-row record. Its status is Unknown -> Unknown. Remaining indirect-access refusals stay Unknown. No API declared-model permission is used.",
+    "evidence": [
+      "full-row-movements.json.gz key ('cmetrics', 'cmetrics.c', 'cmt_create', 0)",
+      "crates/qcore-c-gateway/src/legacy_tracked_self_init.rs",
+      "crates/qcore-c-gateway/src/legacy_transfer.rs:TrackedSelfInit",
+      "steps/focus-rust-3.json",
+      "steps/focus-deep-2.json"
+    ]
+  },
+  {
+    "leaf": {
+      "file": "resource-diagnostics.json",
+      "path": [
+        "units",
+        0,
+        "functions",
+        0,
+        "diagnostics",
+        18,
+        "description"
+      ],
+      "before": "call to uncontracted function `cfl_list_init`",
+      "after": "indirect memory access is outside the resource projection"
+    },
+    "reason": "Rule 36b source-checked initializer transport at ('cmetrics', 'cmetrics.c', 'cmt_create', 0): retained owner storage no longer receives an opaque initializer escape; actual before/after diagnostics are preserved in the full-row record. Its status is Unknown -> Unknown. Remaining indirect-access refusals stay Unknown. No API declared-model permission is used.",
+    "evidence": [
+      "full-row-movements.json.gz key ('cmetrics', 'cmetrics.c', 'cmt_create', 0)",
+      "crates/qcore-c-gateway/src/legacy_tracked_self_init.rs",
+      "crates/qcore-c-gateway/src/legacy_transfer.rs:TrackedSelfInit",
+      "steps/focus-rust-3.json",
+      "steps/focus-deep-2.json"
+    ]
+  },
+  {
+    "leaf": {
+      "file": "resource-diagnostics.json",
+      "path": [
+        "units",
+        4,
+        "functions",
+        53,
+        "diagnostics",
+        11,
+        "description"
+      ],
+      "before": "call to uncontracted function `cfl_list_init`",
+      "after": "indirect memory access is outside the resource projection"
+    },
+    "reason": "Rule 36b source-checked initializer transport at ('cmetrics', 'cmt_decode_msgpack.c', 'unpack_metric', 0): retained owner storage no longer receives an opaque initializer escape; actual before/after diagnostics are preserved in the full-row record. Its status is Unknown -> Unknown. Remaining indirect-access refusals stay Unknown. No API declared-model permission is used.",
+    "evidence": [
+      "full-row-movements.json.gz key ('cmetrics', 'cmt_decode_msgpack.c', 'unpack_metric', 0)",
+      "crates/qcore-c-gateway/src/legacy_tracked_self_init.rs",
+      "crates/qcore-c-gateway/src/legacy_transfer.rs:TrackedSelfInit",
+      "steps/focus-rust-3.json",
+      "steps/focus-deep-2.json"
+    ]
+  },
+  {
+    "leaf": {
+      "file": "resource-diagnostics.json",
+      "path": [
+        "units",
+        5,
+        "diagnostic_counts",
+        "unsupported"
+      ],
+      "before": 230,
+      "after": 229
+    },
+    "reason": "Exact diagnostic category sum of the retained complete function rows; reconstructed on both sides, including all unchanged diagnostics.",
+    "evidence": [
+      "complete retained resource-diagnostics.json on both sides",
+      "semantic review diagnostic-count reconstruction"
+    ]
+  },
+  {
+    "leaf": {
+      "file": "resource-diagnostics.json",
+      "path": [
+        "units",
+        5,
+        "functions",
+        14,
+        "diagnostics",
+        2,
+        "description"
+      ],
+      "before": "call to uncontracted function `cfl_list_init`",
+      "after": "indirect memory access is outside the resource projection"
+    },
+    "reason": "Rule 36b source-checked initializer transport at ('cmetrics', 'cmt_decode_opentelemetry.c', 'decode_exponential_histogram_data_point', 0): retained owner storage no longer receives an opaque initializer escape; actual before/after diagnostics are preserved in the full-row record. Its status is Unknown -> Unknown. Remaining indirect-access refusals stay Unknown. No API declared-model permission is used.",
+    "evidence": [
+      "full-row-movements.json.gz key ('cmetrics', 'cmt_decode_opentelemetry.c', 'decode_exponential_histogram_data_point', 0)",
+      "crates/qcore-c-gateway/src/legacy_tracked_self_init.rs",
+      "crates/qcore-c-gateway/src/legacy_transfer.rs:TrackedSelfInit",
+      "steps/focus-rust-3.json",
+      "steps/focus-deep-2.json"
+    ]
+  },
+  {
+    "leaf": {
+      "file": "resource-diagnostics.json",
+      "path": [
+        "units",
+        5,
+        "functions",
+        18,
+        "diagnostics",
+        1,
+        "description"
+      ],
+      "before": "call to uncontracted function `cfl_list_init`",
+      "after": "indirect memory access is outside the resource projection"
+    },
+    "reason": "Rule 36b source-checked initializer transport at ('cmetrics', 'cmt_decode_opentelemetry.c', 'decode_histogram_data_point', 0): retained owner storage no longer receives an opaque initializer escape; actual before/after diagnostics are preserved in the full-row record. Its status is Unknown -> Unknown. Remaining indirect-access refusals stay Unknown. No API declared-model permission is used.",
+    "evidence": [
+      "full-row-movements.json.gz key ('cmetrics', 'cmt_decode_opentelemetry.c', 'decode_histogram_data_point', 0)",
+      "crates/qcore-c-gateway/src/legacy_tracked_self_init.rs",
+      "crates/qcore-c-gateway/src/legacy_transfer.rs:TrackedSelfInit",
+      "steps/focus-rust-3.json",
+      "steps/focus-deep-2.json"
+    ]
+  },
+  {
+    "leaf": {
+      "file": "resource-diagnostics.json",
+      "path": [
+        "units",
+        5,
+        "functions",
+        23,
+        "diagnostics"
+      ],
+      "before": [
+        {
+          "category": "unsupported",
+          "description": "call to uncontracted function `cfl_list_init`",
+          "line": 7613,
+          "origin": "cmt_decode_opentelemetry.c:751"
+        },
+        {
+          "category": "unsupported",
+          "description": "call to uncontracted function `decode_data_point_labels`",
+          "line": 7614,
+          "origin": "cmt_decode_opentelemetry.c:753"
+        },
+        {
+          "category": "unknown_alias",
+          "description": "unresolved resource identity `result`",
+          "line": 7619,
+          "origin": "cmt_decode_opentelemetry.c:759"
+        },
+        {
+          "category": "unsupported",
+          "description": "call to uncontracted function `destroy_label_list`",
+          "line": 7620,
+          "origin": "cmt_decode_opentelemetry.c:760"
+        },
+        {
+          "category": "unknown_alias",
+          "description": "unresolved resource identity `sample`",
+          "line": 7621,
+          "origin": "cmt_decode_opentelemetry.c:762"
+        },
+        {
+          "category": "unsupported",
+          "description": "call to uncontracted function `cfl_list_add`",
+          "line": 7624,
+          "origin": "cmt_decode_opentelemetry.c:765"
+        },
+        {
+          "category": "unsupported",
+          "description": "indirect memory access is outside the resource projection",
+          "line": 7628,
+          "origin": "cmt_decode_opentelemetry.c:769"
+        },
+        {
+          "category": "unknown_alias",
+          "description": "unresolved resource identity `map`",
+          "line": 7629,
+          "origin": "cmt_decode_opentelemetry.c:771"
+        },
+        {
+          "category": "unknown_alias",
+          "description": "unresolved resource identity `result`",
+          "line": 7631,
+          "origin": "cmt_decode_opentelemetry.c:774"
+        },
+        {
+          "category": "unsupported",
+          "description": "unmodeled call, aggregate or indirect access in branch condition",
+          "line": 7637,
+          "origin": "cmt_decode_opentelemetry.c:783"
+        },
+        {
+          "category": "unsupported",
+          "description": "call to uncontracted function `get_or_create_data_point_metadata_context`",
+          "line": 7653,
+          "origin": "cmt_decode_opentelemetry.c:800"
+        },
+        {
+          "category": "unsupported",
+          "description": "call to uncontracted function `cfl_kvlist_insert_uint64`",
+          "line": 7655,
+          "origin": "cmt_decode_opentelemetry.c:802"
+        },
+        {
+          "category": "unsupported",
+          "description": "call to uncontracted function `cfl_kvlist_insert_uint64`",
+          "line": 7656,
+          "origin": "cmt_decode_opentelemetry.c:803"
+        },
+        {
+          "category": "unsupported",
+          "description": "call to uncontracted function `clone_exemplars_to_kvlist`",
+          "line": 7663,
+          "origin": "cmt_decode_opentelemetry.c:810"
+        }
+      ],
+      "after": [
+        {
+          "category": "unsupported",
+          "description": "call to uncontracted function `decode_data_point_labels`",
+          "line": 7614,
+          "origin": "cmt_decode_opentelemetry.c:753"
+        },
+        {
+          "category": "unknown_alias",
+          "description": "unresolved resource identity `result`",
+          "line": 7619,
+          "origin": "cmt_decode_opentelemetry.c:759"
+        },
+        {
+          "category": "unsupported",
+          "description": "call to uncontracted function `destroy_label_list`",
+          "line": 7620,
+          "origin": "cmt_decode_opentelemetry.c:760"
+        },
+        {
+          "category": "unknown_alias",
+          "description": "unresolved resource identity `sample`",
+          "line": 7621,
+          "origin": "cmt_decode_opentelemetry.c:762"
+        },
+        {
+          "category": "unsupported",
+          "description": "call to uncontracted function `cfl_list_add`",
+          "line": 7624,
+          "origin": "cmt_decode_opentelemetry.c:765"
+        },
+        {
+          "category": "unsupported",
+          "description": "indirect memory access is outside the resource projection",
+          "line": 7628,
+          "origin": "cmt_decode_opentelemetry.c:769"
+        },
+        {
+          "category": "unknown_alias",
+          "description": "unresolved resource identity `map`",
+          "line": 7629,
+          "origin": "cmt_decode_opentelemetry.c:771"
+        },
+        {
+          "category": "unknown_alias",
+          "description": "unresolved resource identity `result`",
+          "line": 7631,
+          "origin": "cmt_decode_opentelemetry.c:774"
+        },
+        {
+          "category": "unsupported",
+          "description": "unmodeled call, aggregate or indirect access in branch condition",
+          "line": 7637,
+          "origin": "cmt_decode_opentelemetry.c:783"
+        },
+        {
+          "category": "unsupported",
+          "description": "call to uncontracted function `get_or_create_data_point_metadata_context`",
+          "line": 7653,
+          "origin": "cmt_decode_opentelemetry.c:800"
+        },
+        {
+          "category": "unsupported",
+          "description": "call to uncontracted function `cfl_kvlist_insert_uint64`",
+          "line": 7655,
+          "origin": "cmt_decode_opentelemetry.c:802"
+        },
+        {
+          "category": "unsupported",
+          "description": "call to uncontracted function `cfl_kvlist_insert_uint64`",
+          "line": 7656,
+          "origin": "cmt_decode_opentelemetry.c:803"
+        },
+        {
+          "category": "unsupported",
+          "description": "call to uncontracted function `clone_exemplars_to_kvlist`",
+          "line": 7663,
+          "origin": "cmt_decode_opentelemetry.c:810"
+        }
+      ]
+    },
+    "reason": "Rule 36b source-checked initializer transport at ('cmetrics', 'cmt_decode_opentelemetry.c', 'decode_numerical_data_point', 0): retained owner storage no longer receives an opaque initializer escape; actual before/after diagnostics are preserved in the full-row record. Its status is Unknown -> Unknown. Remaining indirect-access refusals stay Unknown. No API declared-model permission is used.",
+    "evidence": [
+      "full-row-movements.json.gz key ('cmetrics', 'cmt_decode_opentelemetry.c', 'decode_numerical_data_point', 0)",
+      "crates/qcore-c-gateway/src/legacy_tracked_self_init.rs",
+      "crates/qcore-c-gateway/src/legacy_transfer.rs:TrackedSelfInit",
+      "steps/focus-rust-3.json",
+      "steps/focus-deep-2.json"
+    ]
+  },
+  {
+    "leaf": {
+      "file": "resource-diagnostics.json",
+      "path": [
+        "units",
+        5,
+        "functions",
+        32,
+        "diagnostics",
+        2,
+        "description"
+      ],
+      "before": "call to uncontracted function `cfl_list_init`",
+      "after": "indirect memory access is outside the resource projection"
+    },
+    "reason": "Rule 36b source-checked initializer transport at ('cmetrics', 'cmt_decode_opentelemetry.c', 'decode_summary_data_point', 0): retained owner storage no longer receives an opaque initializer escape; actual before/after diagnostics are preserved in the full-row record. Its status is Unknown -> Unknown. Remaining indirect-access refusals stay Unknown. No API declared-model permission is used.",
+    "evidence": [
+      "full-row-movements.json.gz key ('cmetrics', 'cmt_decode_opentelemetry.c', 'decode_summary_data_point', 0)",
+      "crates/qcore-c-gateway/src/legacy_tracked_self_init.rs",
+      "crates/qcore-c-gateway/src/legacy_transfer.rs:TrackedSelfInit",
+      "steps/focus-rust-3.json",
+      "steps/focus-deep-2.json"
+    ]
+  },
+  {
+    "leaf": {
+      "file": "resource-diagnostics.json",
+      "path": [
+        "units",
+        5,
+        "reason"
+      ],
+      "before": "resource projection unresolved: 230 unsupported operation(s), 98 unresolved alias(es), 0 custody summary conflict(s)",
+      "after": "resource projection unresolved: 229 unsupported operation(s), 98 unresolved alias(es), 0 custody summary conflict(s)"
+    },
+    "reason": "Unit reason renders the exact reconstructed unsupported/alias/conflict counts; the unit remains unresolved.",
+    "evidence": [
+      "complete retained unit diagnostic_counts and reason",
+      "semantic review diagnostic-count reconstruction"
+    ]
+  },
+  {
+    "leaf": {
+      "file": "resource-diagnostics.json",
+      "path": [
+        "units",
+        6,
+        "diagnostic_counts",
+        "unsupported"
+      ],
+      "before": 70,
+      "after": 69
+    },
+    "reason": "Exact diagnostic category sum of the retained complete function rows; reconstructed on both sides, including all unchanged diagnostics.",
+    "evidence": [
+      "complete retained resource-diagnostics.json on both sides",
+      "semantic review diagnostic-count reconstruction"
+    ]
+  },
+  {
+    "leaf": {
+      "file": "resource-diagnostics.json",
+      "path": [
+        "units",
+        6,
+        "functions",
+        11,
+        "diagnostics",
+        4,
+        "description"
+      ],
+      "before": "call to uncontracted function `cfl_list_init`",
+      "after": "indirect memory access is outside the resource projection"
+    },
+    "reason": "Rule 36b source-checked initializer transport at ('cmetrics', 'cmt_decode_prometheus_remote_write.c', 'decode_histogram_points', 0): retained owner storage no longer receives an opaque initializer escape; actual before/after diagnostics are preserved in the full-row record. Its status is Unknown -> Unknown. Remaining indirect-access refusals stay Unknown. No API declared-model permission is used.",
+    "evidence": [
+      "full-row-movements.json.gz key ('cmetrics', 'cmt_decode_prometheus_remote_write.c', 'decode_histogram_points', 0)",
+      "crates/qcore-c-gateway/src/legacy_tracked_self_init.rs",
+      "crates/qcore-c-gateway/src/legacy_transfer.rs:TrackedSelfInit",
+      "steps/focus-rust-3.json",
+      "steps/focus-deep-2.json"
+    ]
+  },
+  {
+    "leaf": {
+      "file": "resource-diagnostics.json",
+      "path": [
+        "units",
+        6,
+        "functions",
+        15,
+        "diagnostics"
+      ],
+      "before": [
+        {
+          "category": "unsupported",
+          "description": "call to uncontracted function `cfl_list_init`",
+          "line": 6625,
+          "origin": "cmt_decode_prometheus_remote_write.c:276"
+        },
+        {
+          "category": "unsupported",
+          "description": "call to uncontracted function `decode_labels`",
+          "line": 6626,
+          "origin": "cmt_decode_prometheus_remote_write.c:278"
+        },
+        {
+          "category": "unknown_alias",
+          "description": "unresolved resource identity `result`",
+          "line": 6631,
+          "origin": "cmt_decode_prometheus_remote_write.c:284"
+        },
+        {
+          "category": "unsupported",
+          "description": "call to uncontracted function `destroy_label_list`",
+          "line": 6632,
+          "origin": "cmt_decode_prometheus_remote_write.c:285"
+        },
+        {
+          "category": "unknown_alias",
+          "description": "unresolved resource identity `metric`",
+          "line": 6633,
+          "origin": "cmt_decode_prometheus_remote_write.c:287"
+        },
+        {
+          "category": "unsupported",
+          "description": "call to uncontracted function `cfl_list_add`",
+          "line": 6636,
+          "origin": "cmt_decode_prometheus_remote_write.c:290"
+        },
+        {
+          "category": "unsupported",
+          "description": "indirect memory access is outside the resource projection",
+          "line": 6640,
+          "origin": "cmt_decode_prometheus_remote_write.c:294"
+        },
+        {
+          "category": "unknown_alias",
+          "description": "unresolved resource identity `map`",
+          "line": 6641,
+          "origin": "cmt_decode_prometheus_remote_write.c:296"
+        },
+        {
+          "category": "unknown_alias",
+          "description": "unresolved resource identity `result`",
+          "line": 6643,
+          "origin": "cmt_decode_prometheus_remote_write.c:299"
+        },
+        {
+          "category": "unsupported",
+          "description": "call to uncontracted function `cmt_metric_set`",
+          "line": 6644,
+          "origin": "cmt_decode_prometheus_remote_write.c:300"
+        }
+      ],
+      "after": [
+        {
+          "category": "unsupported",
+          "description": "call to uncontracted function `decode_labels`",
+          "line": 6626,
+          "origin": "cmt_decode_prometheus_remote_write.c:278"
+        },
+        {
+          "category": "unknown_alias",
+          "description": "unresolved resource identity `result`",
+          "line": 6631,
+          "origin": "cmt_decode_prometheus_remote_write.c:284"
+        },
+        {
+          "category": "unsupported",
+          "description": "call to uncontracted function `destroy_label_list`",
+          "line": 6632,
+          "origin": "cmt_decode_prometheus_remote_write.c:285"
+        },
+        {
+          "category": "unknown_alias",
+          "description": "unresolved resource identity `metric`",
+          "line": 6633,
+          "origin": "cmt_decode_prometheus_remote_write.c:287"
+        },
+        {
+          "category": "unsupported",
+          "description": "call to uncontracted function `cfl_list_add`",
+          "line": 6636,
+          "origin": "cmt_decode_prometheus_remote_write.c:290"
+        },
+        {
+          "category": "unsupported",
+          "description": "indirect memory access is outside the resource projection",
+          "line": 6640,
+          "origin": "cmt_decode_prometheus_remote_write.c:294"
+        },
+        {
+          "category": "unknown_alias",
+          "description": "unresolved resource identity `map`",
+          "line": 6641,
+          "origin": "cmt_decode_prometheus_remote_write.c:296"
+        },
+        {
+          "category": "unknown_alias",
+          "description": "unresolved resource identity `result`",
+          "line": 6643,
+          "origin": "cmt_decode_prometheus_remote_write.c:299"
+        },
+        {
+          "category": "unsupported",
+          "description": "call to uncontracted function `cmt_metric_set`",
+          "line": 6644,
+          "origin": "cmt_decode_prometheus_remote_write.c:300"
+        }
+      ]
+    },
+    "reason": "Rule 36b source-checked initializer transport at ('cmetrics', 'cmt_decode_prometheus_remote_write.c', 'decode_numerical_samples', 0): retained owner storage no longer receives an opaque initializer escape; actual before/after diagnostics are preserved in the full-row record. Its status is Unknown -> Unknown. Remaining indirect-access refusals stay Unknown. No API declared-model permission is used.",
+    "evidence": [
+      "full-row-movements.json.gz key ('cmetrics', 'cmt_decode_prometheus_remote_write.c', 'decode_numerical_samples', 0)",
+      "crates/qcore-c-gateway/src/legacy_tracked_self_init.rs",
+      "crates/qcore-c-gateway/src/legacy_transfer.rs:TrackedSelfInit",
+      "steps/focus-rust-3.json",
+      "steps/focus-deep-2.json"
+    ]
+  },
+  {
+    "leaf": {
+      "file": "resource-diagnostics.json",
+      "path": [
+        "units",
+        6,
+        "reason"
+      ],
+      "before": "resource projection unresolved: 70 unsupported operation(s), 48 unresolved alias(es), 0 custody summary conflict(s)",
+      "after": "resource projection unresolved: 69 unsupported operation(s), 48 unresolved alias(es), 0 custody summary conflict(s)"
+    },
+    "reason": "Unit reason renders the exact reconstructed unsupported/alias/conflict counts; the unit remains unresolved.",
+    "evidence": [
+      "complete retained unit diagnostic_counts and reason",
+      "semantic review diagnostic-count reconstruction"
+    ]
+  },
+  {
+    "leaf": {
+      "file": "resource-diagnostics.json",
+      "path": [
+        "units",
+        7,
+        "diagnostic_counts",
+        "unsupported"
+      ],
+      "before": 65,
+      "after": 64
+    },
+    "reason": "Exact diagnostic category sum of the retained complete function rows; reconstructed on both sides, including all unchanged diagnostics.",
+    "evidence": [
+      "complete retained resource-diagnostics.json on both sides",
+      "semantic review diagnostic-count reconstruction"
+    ]
+  },
+  {
+    "leaf": {
+      "file": "resource-diagnostics.json",
+      "path": [
+        "units",
+        7,
+        "functions",
+        10,
+        "diagnostics"
+      ],
+      "before": [
+        {
+          "category": "unsupported",
+          "description": "call to uncontracted function `cfl_list_init`",
+          "line": 5747,
+          "origin": "cmt_decode_statsd.c:287"
+        },
+        {
+          "category": "unsupported",
+          "description": "call to uncontracted function `decode_labels`",
+          "line": 5749,
+          "origin": "cmt_decode_statsd.c:291"
+        },
+        {
+          "category": "unknown_alias",
+          "description": "unresolved resource identity `result`",
+          "line": 5754,
+          "origin": "cmt_decode_statsd.c:297"
+        },
+        {
+          "category": "unsupported",
+          "description": "call to uncontracted function `destroy_label_list`",
+          "line": 5755,
+          "origin": "cmt_decode_statsd.c:298"
+        },
+        {
+          "category": "unknown_alias",
+          "description": "unresolved resource identity `metric`",
+          "line": 5756,
+          "origin": "cmt_decode_statsd.c:300"
+        },
+        {
+          "category": "unsupported",
+          "description": "call to uncontracted function `cfl_list_add`",
+          "line": 5759,
+          "origin": "cmt_decode_statsd.c:303"
+        },
+        {
+          "category": "unknown_alias",
+          "description": "unresolved resource identity `result`",
+          "line": 5761,
+          "origin": "cmt_decode_statsd.c:306"
+        },
+        {
+          "category": "unsupported",
+          "description": "indirect memory access is outside the resource projection",
+          "line": 5764,
+          "origin": "cmt_decode_statsd.c:309"
+        },
+        {
+          "category": "unsupported",
+          "description": "indirect memory access is outside the resource projection",
+          "line": 5767,
+          "origin": "cmt_decode_statsd.c:312"
+        }
+      ],
+      "after": [
+        {
+          "category": "unsupported",
+          "description": "call to uncontracted function `decode_labels`",
+          "line": 5749,
+          "origin": "cmt_decode_statsd.c:291"
+        },
+        {
+          "category": "unknown_alias",
+          "description": "unresolved resource identity `result`",
+          "line": 5754,
+          "origin": "cmt_decode_statsd.c:297"
+        },
+        {
+          "category": "unsupported",
+          "description": "call to uncontracted function `destroy_label_list`",
+          "line": 5755,
+          "origin": "cmt_decode_statsd.c:298"
+        },
+        {
+          "category": "unknown_alias",
+          "description": "unresolved resource identity `metric`",
+          "line": 5756,
+          "origin": "cmt_decode_statsd.c:300"
+        },
+        {
+          "category": "unsupported",
+          "description": "call to uncontracted function `cfl_list_add`",
+          "line": 5759,
+          "origin": "cmt_decode_statsd.c:303"
+        },
+        {
+          "category": "unknown_alias",
+          "description": "unresolved resource identity `result`",
+          "line": 5761,
+          "origin": "cmt_decode_statsd.c:306"
+        },
+        {
+          "category": "unsupported",
+          "description": "indirect memory access is outside the resource projection",
+          "line": 5764,
+          "origin": "cmt_decode_statsd.c:309"
+        },
+        {
+          "category": "unsupported",
+          "description": "indirect memory access is outside the resource projection",
+          "line": 5767,
+          "origin": "cmt_decode_statsd.c:312"
+        }
+      ]
+    },
+    "reason": "Rule 36b source-checked initializer transport at ('cmetrics', 'cmt_decode_statsd.c', 'decode_numerical_message', 0): retained owner storage no longer receives an opaque initializer escape; actual before/after diagnostics are preserved in the full-row record. Its status is Unknown -> Unknown. Remaining indirect-access refusals stay Unknown. No API declared-model permission is used.",
+    "evidence": [
+      "full-row-movements.json.gz key ('cmetrics', 'cmt_decode_statsd.c', 'decode_numerical_message', 0)",
+      "crates/qcore-c-gateway/src/legacy_tracked_self_init.rs",
+      "crates/qcore-c-gateway/src/legacy_transfer.rs:TrackedSelfInit",
+      "steps/focus-rust-3.json",
+      "steps/focus-deep-2.json"
+    ]
+  },
+  {
+    "leaf": {
+      "file": "resource-diagnostics.json",
+      "path": [
+        "units",
+        7,
+        "reason"
+      ],
+      "before": "resource projection unresolved: 65 unsupported operation(s), 49 unresolved alias(es), 0 custody summary conflict(s)",
+      "after": "resource projection unresolved: 64 unsupported operation(s), 49 unresolved alias(es), 0 custody summary conflict(s)"
+    },
+    "reason": "Unit reason renders the exact reconstructed unsupported/alias/conflict counts; the unit remains unresolved.",
+    "evidence": [
+      "complete retained unit diagnostic_counts and reason",
+      "semantic review diagnostic-count reconstruction"
+    ]
+  },
+  {
+    "leaf": {
+      "file": "resource-diagnostics.json",
+      "path": [
+        "units",
+        13,
+        "functions",
+        11,
+        "diagnostics",
+        0,
+        "description"
+      ],
+      "before": "call to uncontracted function `cfl_list_init`",
+      "after": "indirect memory access is outside the resource projection"
+    },
+    "reason": "Rule 36b source-checked initializer transport at ('cmetrics', 'cmt_encode_prometheus.c', 'initialize_temporary_metric', 0): retained owner storage no longer receives an opaque initializer escape; actual before/after diagnostics are preserved in the full-row record. Its status is Unknown -> Unknown. Remaining indirect-access refusals stay Unknown. No API declared-model permission is used.",
+    "evidence": [
+      "full-row-movements.json.gz key ('cmetrics', 'cmt_encode_prometheus.c', 'initialize_temporary_metric', 0)",
+      "crates/qcore-c-gateway/src/legacy_tracked_self_init.rs",
+      "crates/qcore-c-gateway/src/legacy_transfer.rs:TrackedSelfInit",
+      "steps/focus-rust-3.json",
+      "steps/focus-deep-2.json"
+    ]
+  },
+  {
+    "leaf": {
+      "file": "resource-diagnostics.json",
+      "path": [
+        "units",
+        15,
+        "functions",
+        18,
+        "diagnostics",
+        0,
+        "description"
+      ],
+      "before": "call to uncontracted function `cfl_list_init`",
+      "after": "indirect memory access is outside the resource projection"
+    },
+    "reason": "Rule 36b source-checked initializer transport at ('cmetrics', 'cmt_encode_splunk_hec.c', 'initialize_temporary_metric', 0): retained owner storage no longer receives an opaque initializer escape; actual before/after diagnostics are preserved in the full-row record. Its status is Unknown -> Unknown. Remaining indirect-access refusals stay Unknown. No API declared-model permission is used.",
+    "evidence": [
+      "full-row-movements.json.gz key ('cmetrics', 'cmt_encode_splunk_hec.c', 'initialize_temporary_metric', 0)",
+      "crates/qcore-c-gateway/src/legacy_tracked_self_init.rs",
+      "crates/qcore-c-gateway/src/legacy_transfer.rs:TrackedSelfInit",
+      "steps/focus-rust-3.json",
+      "steps/focus-deep-2.json"
+    ]
+  },
+  {
+    "leaf": {
+      "file": "resource-diagnostics.json",
+      "path": [
+        "units",
+        21,
+        "diagnostic_counts",
+        "unknown_alias"
+      ],
+      "before": 9,
+      "after": 8
+    },
+    "reason": "Exact diagnostic category sum of the retained complete function rows; reconstructed on both sides, including all unchanged diagnostics.",
+    "evidence": [
+      "complete retained resource-diagnostics.json on both sides",
+      "semantic review diagnostic-count reconstruction"
+    ]
+  },
+  {
+    "leaf": {
+      "file": "resource-diagnostics.json",
+      "path": [
+        "units",
+        21,
+        "diagnostic_counts",
+        "unsupported"
+      ],
+      "before": 10,
+      "after": 9
+    },
+    "reason": "Exact diagnostic category sum of the retained complete function rows; reconstructed on both sides, including all unchanged diagnostics.",
+    "evidence": [
+      "complete retained resource-diagnostics.json on both sides",
+      "semantic review diagnostic-count reconstruction"
+    ]
+  },
+  {
+    "leaf": {
+      "file": "resource-diagnostics.json",
+      "path": [
+        "units",
+        21,
+        "functions",
+        2,
+        "diagnostics"
+      ],
+      "before": [
+        {
+          "category": "unsupported",
+          "description": "indirect memory access is outside the resource projection",
+          "line": 5279,
+          "origin": "cmt_label.c:35"
+        },
+        {
+          "category": "unsupported",
+          "description": "call to uncontracted function `cfl_list_init`",
+          "line": 5282,
+          "origin": "cmt_label.c:38"
+        },
+        {
+          "category": "unknown_alias",
+          "description": "unresolved resource identity `l`",
+          "line": 5283,
+          "origin": "cmt_label.c:39"
+        }
+      ],
+      "after": [
+        {
+          "category": "unsupported",
+          "description": "indirect memory access is outside the resource projection",
+          "line": 5279,
+          "origin": "cmt_label.c:35"
+        }
+      ]
+    },
+    "reason": "Rule 36b source-checked initializer transport at ('cmetrics', 'cmt_label.c', 'cmt_labels_create', 0): retained owner storage no longer receives an opaque initializer escape; actual before/after diagnostics are preserved in the full-row record. Its status is Unknown -> Unknown. Remaining indirect-access refusals stay Unknown. No API declared-model permission is used.",
+    "evidence": [
+      "full-row-movements.json.gz key ('cmetrics', 'cmt_label.c', 'cmt_labels_create', 0)",
+      "crates/qcore-c-gateway/src/legacy_tracked_self_init.rs",
+      "crates/qcore-c-gateway/src/legacy_transfer.rs:TrackedSelfInit",
+      "steps/focus-rust-3.json",
+      "steps/focus-deep-2.json"
+    ]
+  },
+  {
+    "leaf": {
+      "file": "resource-diagnostics.json",
+      "path": [
+        "units",
+        21,
+        "reason"
+      ],
+      "before": "resource projection unresolved: 10 unsupported operation(s), 9 unresolved alias(es), 0 custody summary conflict(s)",
+      "after": "resource projection unresolved: 9 unsupported operation(s), 8 unresolved alias(es), 0 custody summary conflict(s)"
+    },
+    "reason": "Unit reason renders the exact reconstructed unsupported/alias/conflict counts; the unit remains unresolved.",
+    "evidence": [
+      "complete retained unit diagnostic_counts and reason",
+      "semantic review diagnostic-count reconstruction"
+    ]
+  },
+  {
+    "leaf": {
+      "file": "resource-diagnostics.json",
+      "path": [
+        "units",
+        23,
+        "diagnostic_counts",
+        "unknown_alias"
+      ],
+      "before": 35,
+      "after": 33
+    },
+    "reason": "Exact diagnostic category sum of the retained complete function rows; reconstructed on both sides, including all unchanged diagnostics.",
+    "evidence": [
+      "complete retained resource-diagnostics.json on both sides",
+      "semantic review diagnostic-count reconstruction"
+    ]
+  },
+  {
+    "leaf": {
+      "file": "resource-diagnostics.json",
+      "path": [
+        "units",
+        23,
+        "diagnostic_counts",
+        "unsupported"
+      ],
+      "before": 87,
+      "after": 85
+    },
+    "reason": "Exact diagnostic category sum of the retained complete function rows; reconstructed on both sides, including all unchanged diagnostics.",
+    "evidence": [
+      "complete retained resource-diagnostics.json on both sides",
+      "semantic review diagnostic-count reconstruction"
+    ]
+  },
+  {
+    "leaf": {
+      "file": "resource-diagnostics.json",
+      "path": [
+        "units",
+        23,
+        "functions",
+        0,
+        "diagnostics",
+        3,
+        "description"
+      ],
+      "before": "call to uncontracted function `cfl_list_init`",
+      "after": "indirect memory access is outside the resource projection"
+    },
+    "reason": "Rule 36b source-checked initializer transport at ('cmetrics', 'cmt_map.c', 'cmt_map_create', 0): retained owner storage no longer receives an opaque initializer escape; actual before/after diagnostics are preserved in the full-row record. Its status is Unknown -> Unknown. Remaining indirect-access refusals stay Unknown. No API declared-model permission is used.",
+    "evidence": [
+      "full-row-movements.json.gz key ('cmetrics', 'cmt_map.c', 'cmt_map_create', 0)",
+      "crates/qcore-c-gateway/src/legacy_tracked_self_init.rs",
+      "crates/qcore-c-gateway/src/legacy_transfer.rs:TrackedSelfInit",
+      "steps/focus-rust-3.json",
+      "steps/focus-deep-2.json"
+    ]
+  },
+  {
+    "leaf": {
+      "file": "resource-diagnostics.json",
+      "path": [
+        "units",
+        23,
+        "functions",
+        0,
+        "diagnostics",
+        4,
+        "description"
+      ],
+      "before": "call to uncontracted function `cfl_list_init`",
+      "after": "indirect memory access is outside the resource projection"
+    },
+    "reason": "Rule 36b source-checked initializer transport at ('cmetrics', 'cmt_map.c', 'cmt_map_create', 0): retained owner storage no longer receives an opaque initializer escape; actual before/after diagnostics are preserved in the full-row record. Its status is Unknown -> Unknown. Remaining indirect-access refusals stay Unknown. No API declared-model permission is used.",
+    "evidence": [
+      "full-row-movements.json.gz key ('cmetrics', 'cmt_map.c', 'cmt_map_create', 0)",
+      "crates/qcore-c-gateway/src/legacy_tracked_self_init.rs",
+      "crates/qcore-c-gateway/src/legacy_transfer.rs:TrackedSelfInit",
+      "steps/focus-rust-3.json",
+      "steps/focus-deep-2.json"
+    ]
+  },
+  {
+    "leaf": {
+      "file": "resource-diagnostics.json",
+      "path": [
+        "units",
+        23,
+        "functions",
+        5,
+        "diagnostics",
+        1,
+        "description"
+      ],
+      "before": "call to uncontracted function `cfl_list_init`",
+      "after": "indirect memory access is outside the resource projection"
+    },
+    "reason": "Rule 36b source-checked initializer transport at ('cmetrics', 'cmt_map.c', 'cmt_map_metrics_expire', 0): retained owner storage no longer receives an opaque initializer escape; actual before/after diagnostics are preserved in the full-row record. Its status is Unknown -> Unknown. Remaining indirect-access refusals stay Unknown. No API declared-model permission is used.",
+    "evidence": [
+      "full-row-movements.json.gz key ('cmetrics', 'cmt_map.c', 'cmt_map_metrics_expire', 0)",
+      "crates/qcore-c-gateway/src/legacy_tracked_self_init.rs",
+      "crates/qcore-c-gateway/src/legacy_transfer.rs:TrackedSelfInit",
+      "steps/focus-rust-3.json",
+      "steps/focus-deep-2.json"
+    ]
+  },
+  {
+    "leaf": {
+      "file": "resource-diagnostics.json",
+      "path": [
+        "units",
+        23,
+        "functions",
+        8,
+        "diagnostics"
+      ],
+      "before": [
+        {
+          "category": "unsupported",
+          "description": "indirect memory access is outside the resource projection",
+          "line": 5704,
+          "origin": "cmt_map.c:287"
+        },
+        {
+          "category": "unsupported",
+          "description": "call to uncontracted function `cfl_list_init`",
+          "line": 5707,
+          "origin": "cmt_map.c:290"
+        },
+        {
+          "category": "unsupported",
+          "description": "call to uncontracted function `cfl_list_init`",
+          "line": 5708,
+          "origin": "cmt_map.c:291"
+        },
+        {
+          "category": "unknown_alias",
+          "description": "unresolved resource identity `metric`",
+          "line": 5710,
+          "origin": "cmt_map.c:293"
+        },
+        {
+          "category": "unknown_alias",
+          "description": "unresolved resource identity `metric`",
+          "line": 5711,
+          "origin": "cmt_map.c:294"
+        },
+        {
+          "category": "unsupported",
+          "description": "loop re-acquisition: an earlier generation that may be live is still held",
+          "line": 5713,
+          "origin": "cmt_map.c:297"
+        },
+        {
+          "category": "unsupported",
+          "description": "indirect memory access is outside the resource projection",
+          "line": 5715,
+          "origin": "cmt_map.c:299"
+        },
+        {
+          "category": "unknown_alias",
+          "description": "unresolved resource identity `name`",
+          "line": 5719,
+          "origin": "cmt_map.c:304"
+        },
+        {
+          "category": "unsupported",
+          "description": "indirect memory access is outside the resource projection",
+          "line": 5720,
+          "origin": "cmt_map.c:305"
+        },
+        {
+          "category": "unsupported",
+          "description": "indirect memory access is outside the resource projection",
+          "line": 5723,
+          "origin": "cmt_map.c:308"
+        },
+        {
+          "category": "unknown_alias",
+          "description": "unresolved resource identity `label`",
+          "line": 5724,
+          "origin": "cmt_map.c:309"
+        },
+        {
+          "category": "unsupported",
+          "description": "indirect memory access is outside the resource projection",
+          "line": 5725,
+          "origin": "cmt_map.c:310"
+        },
+        {
+          "category": "unknown_alias",
+          "description": "unresolved resource identity `label`",
+          "line": 5726,
+          "origin": "cmt_map.c:311"
+        },
+        {
+          "category": "unsupported",
+          "description": "call to uncontracted function `cfl_list_add`",
+          "line": 5730,
+          "origin": "cmt_map.c:315"
+        },
+        {
+          "category": "unknown_alias",
+          "description": "unresolved resource identity `metric`",
+          "line": 5732,
+          "origin": "cmt_map.c:318"
+        },
+        {
+          "category": "unsupported",
+          "description": "nullable resource `metric` used by a non-null contract",
+          "line": 5732,
+          "origin": "cmt_map.c:318"
+        },
+        {
+          "category": "unsupported",
+          "description": "call to uncontracted function `destroy_label_list`",
+          "line": 5734,
+          "origin": "cmt_map.c:321"
+        },
+        {
+          "category": "unknown_alias",
+          "description": "unresolved resource identity `metric`",
+          "line": 5735,
+          "origin": "cmt_map.c:322"
+        }
+      ],
+      "after": [
+        {
+          "category": "unsupported",
+          "description": "indirect memory access is outside the resource projection",
+          "line": 5704,
+          "origin": "cmt_map.c:287"
+        },
+        {
+          "category": "unsupported",
+          "description": "loop re-acquisition: an earlier generation that may be live is still held",
+          "line": 5713,
+          "origin": "cmt_map.c:297"
+        },
+        {
+          "category": "unsupported",
+          "description": "indirect memory access is outside the resource projection",
+          "line": 5715,
+          "origin": "cmt_map.c:299"
+        },
+        {
+          "category": "unknown_alias",
+          "description": "unresolved resource identity `name`",
+          "line": 5719,
+          "origin": "cmt_map.c:304"
+        },
+        {
+          "category": "unsupported",
+          "description": "indirect memory access is outside the resource projection",
+          "line": 5720,
+          "origin": "cmt_map.c:305"
+        },
+        {
+          "category": "unsupported",
+          "description": "indirect memory access is outside the resource projection",
+          "line": 5723,
+          "origin": "cmt_map.c:308"
+        },
+        {
+          "category": "unknown_alias",
+          "description": "unresolved resource identity `label`",
+          "line": 5724,
+          "origin": "cmt_map.c:309"
+        },
+        {
+          "category": "unsupported",
+          "description": "indirect memory access is outside the resource projection",
+          "line": 5725,
+          "origin": "cmt_map.c:310"
+        },
+        {
+          "category": "unknown_alias",
+          "description": "unresolved resource identity `label`",
+          "line": 5726,
+          "origin": "cmt_map.c:311"
+        },
+        {
+          "category": "unsupported",
+          "description": "call to uncontracted function `cfl_list_add`",
+          "line": 5730,
+          "origin": "cmt_map.c:315"
+        },
+        {
+          "category": "unknown_alias",
+          "description": "unresolved resource identity `metric`",
+          "line": 5732,
+          "origin": "cmt_map.c:318"
+        },
+        {
+          "category": "unsupported",
+          "description": "nullable resource `metric` used by a non-null contract",
+          "line": 5732,
+          "origin": "cmt_map.c:318"
+        },
+        {
+          "category": "unsupported",
+          "description": "call to uncontracted function `destroy_label_list`",
+          "line": 5734,
+          "origin": "cmt_map.c:321"
+        },
+        {
+          "category": "unknown_alias",
+          "description": "unresolved resource identity `metric`",
+          "line": 5735,
+          "origin": "cmt_map.c:322"
+        }
+      ]
+    },
+    "reason": "Rule 36b source-checked initializer transport at ('cmetrics', 'cmt_map.c', 'map_metric_create', 0): retained owner storage no longer receives an opaque initializer escape; actual before/after diagnostics are preserved in the full-row record. Its status is Unknown -> Unknown. Remaining indirect-access refusals stay Unknown. No API declared-model permission is used.",
+    "evidence": [
+      "full-row-movements.json.gz key ('cmetrics', 'cmt_map.c', 'map_metric_create', 0)",
+      "crates/qcore-c-gateway/src/legacy_tracked_self_init.rs",
+      "crates/qcore-c-gateway/src/legacy_transfer.rs:TrackedSelfInit",
+      "steps/focus-rust-3.json",
+      "steps/focus-deep-2.json"
+    ]
+  },
+  {
+    "leaf": {
+      "file": "resource-diagnostics.json",
+      "path": [
+        "units",
+        23,
+        "reason"
+      ],
+      "before": "resource projection unresolved: 87 unsupported operation(s), 35 unresolved alias(es), 0 custody summary conflict(s)",
+      "after": "resource projection unresolved: 85 unsupported operation(s), 33 unresolved alias(es), 0 custody summary conflict(s)"
+    },
+    "reason": "Unit reason renders the exact reconstructed unsupported/alias/conflict counts; the unit remains unresolved.",
+    "evidence": [
+      "complete retained unit diagnostic_counts and reason",
+      "semantic review diagnostic-count reconstruction"
+    ]
+  },
+  {
+    "leaf": {
+      "file": "resource-diagnostics.json",
+      "path": [
+        "units",
+        33,
+        "functions",
+        15,
+        "diagnostics",
+        0,
+        "description"
+      ],
+      "before": "call to uncontracted function `cfl_list_init`",
+      "after": "indirect memory access is outside the resource projection"
+    },
+    "reason": "Rule 36b source-checked initializer transport at ('ctraces', 'ctr_decode_opentelemetry.c', 'span_set_events', 0): retained owner storage no longer receives an opaque initializer escape; actual before/after diagnostics are preserved in the full-row record. Its status is Unknown -> Unknown. Remaining indirect-access refusals stay Unknown. No API declared-model permission is used.",
+    "evidence": [
+      "full-row-movements.json.gz key ('ctraces', 'ctr_decode_opentelemetry.c', 'span_set_events', 0)",
+      "crates/qcore-c-gateway/src/legacy_tracked_self_init.rs",
+      "crates/qcore-c-gateway/src/legacy_transfer.rs:TrackedSelfInit",
+      "steps/focus-rust-3.json",
+      "steps/focus-deep-2.json"
+    ]
+  },
+  {
+    "leaf": {
+      "file": "resource-diagnostics.json",
+      "path": [
+        "units",
+        42,
+        "diagnostic_counts",
+        "unsupported"
+      ],
+      "before": 14,
+      "after": 13
+    },
+    "reason": "Exact diagnostic category sum of the retained complete function rows; reconstructed on both sides, including all unchanged diagnostics.",
+    "evidence": [
+      "complete retained resource-diagnostics.json on both sides",
+      "semantic review diagnostic-count reconstruction"
+    ]
+  },
+  {
+    "leaf": {
+      "file": "resource-diagnostics.json",
+      "path": [
+        "units",
+        42,
+        "functions",
+        5,
+        "diagnostics"
+      ],
+      "before": [
+        {
+          "category": "unsupported",
+          "description": "call to uncontracted function `cfl_list_init`",
+          "line": 6818,
+          "origin": "ctr_resource.c:102"
+        },
+        {
+          "category": "unsupported",
+          "description": "call to uncontracted function `cfl_list_add`",
+          "line": 6819,
+          "origin": "ctr_resource.c:105"
+        },
+        {
+          "category": "unsupported",
+          "description": "call to uncontracted function `ctr_resource_create`",
+          "line": 6820,
+          "origin": "ctr_resource.c:108"
+        },
+        {
+          "category": "unknown_alias",
+          "description": "unresolved resource identity `resource_span`",
+          "line": 6821,
+          "origin": "ctr_resource.c:109"
+        },
+        {
+          "category": "unknown_alias",
+          "description": "unresolved resource identity `resource_span`",
+          "line": 6822,
+          "origin": "ctr_resource.c:110"
+        },
+        {
+          "category": "unknown_alias",
+          "description": "unresolved resource identity `resource_span`",
+          "line": 6825,
+          "origin": "ctr_resource.c:114"
+        }
+      ],
+      "after": [
+        {
+          "category": "unsupported",
+          "description": "call to uncontracted function `cfl_list_add`",
+          "line": 6819,
+          "origin": "ctr_resource.c:105"
+        },
+        {
+          "category": "unsupported",
+          "description": "call to uncontracted function `ctr_resource_create`",
+          "line": 6820,
+          "origin": "ctr_resource.c:108"
+        },
+        {
+          "category": "unknown_alias",
+          "description": "unresolved resource identity `resource_span`",
+          "line": 6821,
+          "origin": "ctr_resource.c:109"
+        },
+        {
+          "category": "unknown_alias",
+          "description": "unresolved resource identity `resource_span`",
+          "line": 6822,
+          "origin": "ctr_resource.c:110"
+        },
+        {
+          "category": "unknown_alias",
+          "description": "unresolved resource identity `resource_span`",
+          "line": 6825,
+          "origin": "ctr_resource.c:114"
+        }
+      ]
+    },
+    "reason": "Rule 36b source-checked initializer transport at ('ctraces', 'ctr_resource.c', 'ctr_resource_span_create', 0): retained owner storage no longer receives an opaque initializer escape; actual before/after diagnostics are preserved in the full-row record. Its status is Unknown -> Unknown. Remaining indirect-access refusals stay Unknown. No API declared-model permission is used.",
+    "evidence": [
+      "full-row-movements.json.gz key ('ctraces', 'ctr_resource.c', 'ctr_resource_span_create', 0)",
+      "crates/qcore-c-gateway/src/legacy_tracked_self_init.rs",
+      "crates/qcore-c-gateway/src/legacy_transfer.rs:TrackedSelfInit",
+      "steps/focus-rust-3.json",
+      "steps/focus-deep-2.json"
+    ]
+  },
+  {
+    "leaf": {
+      "file": "resource-diagnostics.json",
+      "path": [
+        "units",
+        42,
+        "reason"
+      ],
+      "before": "resource projection unresolved: 14 unsupported operation(s), 9 unresolved alias(es), 0 custody summary conflict(s)",
+      "after": "resource projection unresolved: 13 unsupported operation(s), 9 unresolved alias(es), 0 custody summary conflict(s)"
+    },
+    "reason": "Unit reason renders the exact reconstructed unsupported/alias/conflict counts; the unit remains unresolved.",
+    "evidence": [
+      "complete retained unit diagnostic_counts and reason",
+      "semantic review diagnostic-count reconstruction"
+    ]
+  },
+  {
+    "leaf": {
+      "file": "resource-diagnostics.json",
+      "path": [
+        "units",
+        43,
+        "diagnostic_counts",
+        "unsupported"
+      ],
+      "before": 15,
+      "after": 14
+    },
+    "reason": "Exact diagnostic category sum of the retained complete function rows; reconstructed on both sides, including all unchanged diagnostics.",
+    "evidence": [
+      "complete retained resource-diagnostics.json on both sides",
+      "semantic review diagnostic-count reconstruction"
+    ]
+  },
+  {
+    "leaf": {
+      "file": "resource-diagnostics.json",
+      "path": [
+        "units",
+        43,
+        "functions",
+        2,
+        "diagnostics"
+      ],
+      "before": [
+        {
+          "category": "unsupported",
+          "description": "call to uncontracted function `cfl_list_init`",
+          "line": 6769,
+          "origin": "ctr_scope.c:31"
+        },
+        {
+          "category": "unsupported",
+          "description": "call to uncontracted function `cfl_list_add`",
+          "line": 6770,
+          "origin": "ctr_scope.c:32"
+        },
+        {
+          "category": "unknown_alias",
+          "description": "unresolved resource identity `scope_span`",
+          "line": 6771,
+          "origin": "ctr_scope.c:33"
+        },
+        {
+          "category": "unknown_alias",
+          "description": "unresolved resource identity `scope_span`",
+          "line": 6772,
+          "origin": "ctr_scope.c:35"
+        }
+      ],
+      "after": [
+        {
+          "category": "unsupported",
+          "description": "call to uncontracted function `cfl_list_add`",
+          "line": 6770,
+          "origin": "ctr_scope.c:32"
+        },
+        {
+          "category": "unknown_alias",
+          "description": "unresolved resource identity `scope_span`",
+          "line": 6771,
+          "origin": "ctr_scope.c:33"
+        },
+        {
+          "category": "unknown_alias",
+          "description": "unresolved resource identity `scope_span`",
+          "line": 6772,
+          "origin": "ctr_scope.c:35"
+        }
+      ]
+    },
+    "reason": "Rule 36b source-checked initializer transport at ('ctraces', 'ctr_scope.c', 'ctr_scope_span_create', 0): retained owner storage no longer receives an opaque initializer escape; actual before/after diagnostics are preserved in the full-row record. Its status is Unknown -> Unknown. Remaining indirect-access refusals stay Unknown. No API declared-model permission is used.",
+    "evidence": [
+      "full-row-movements.json.gz key ('ctraces', 'ctr_scope.c', 'ctr_scope_span_create', 0)",
+      "crates/qcore-c-gateway/src/legacy_tracked_self_init.rs",
+      "crates/qcore-c-gateway/src/legacy_transfer.rs:TrackedSelfInit",
+      "steps/focus-rust-3.json",
+      "steps/focus-deep-2.json"
+    ]
+  },
+  {
+    "leaf": {
+      "file": "resource-diagnostics.json",
+      "path": [
+        "units",
+        43,
+        "reason"
+      ],
+      "before": "resource projection unresolved: 15 unsupported operation(s), 6 unresolved alias(es), 0 custody summary conflict(s)",
+      "after": "resource projection unresolved: 14 unsupported operation(s), 6 unresolved alias(es), 0 custody summary conflict(s)"
+    },
+    "reason": "Unit reason renders the exact reconstructed unsupported/alias/conflict counts; the unit remains unresolved.",
+    "evidence": [
+      "complete retained unit diagnostic_counts and reason",
+      "semantic review diagnostic-count reconstruction"
+    ]
+  },
+  {
+    "leaf": {
+      "file": "resource-diagnostics.json",
+      "path": [
+        "units",
+        44,
+        "functions",
+        0,
+        "diagnostics",
+        7,
+        "description"
+      ],
+      "before": "call to uncontracted function `cfl_list_init`",
+      "after": "indirect memory access is outside the resource projection"
+    },
+    "reason": "Rule 36b source-checked initializer transport at ('ctraces', 'ctr_span.c', 'ctr_span_create', 0): retained owner storage no longer receives an opaque initializer escape; actual before/after diagnostics are preserved in the full-row record. Its status is Unknown -> Unknown. Remaining indirect-access refusals stay Unknown. No API declared-model permission is used.",
+    "evidence": [
+      "full-row-movements.json.gz key ('ctraces', 'ctr_span.c', 'ctr_span_create', 0)",
+      "crates/qcore-c-gateway/src/legacy_tracked_self_init.rs",
+      "crates/qcore-c-gateway/src/legacy_transfer.rs:TrackedSelfInit",
+      "steps/focus-rust-3.json",
+      "steps/focus-deep-2.json"
+    ]
+  },
+  {
+    "leaf": {
+      "file": "resource-diagnostics.json",
+      "path": [
+        "units",
+        44,
+        "functions",
+        0,
+        "diagnostics",
+        8,
+        "description"
+      ],
+      "before": "call to uncontracted function `cfl_list_init`",
+      "after": "indirect memory access is outside the resource projection"
+    },
+    "reason": "Rule 36b source-checked initializer transport at ('ctraces', 'ctr_span.c', 'ctr_span_create', 0): retained owner storage no longer receives an opaque initializer escape; actual before/after diagnostics are preserved in the full-row record. Its status is Unknown -> Unknown. Remaining indirect-access refusals stay Unknown. No API declared-model permission is used.",
+    "evidence": [
+      "full-row-movements.json.gz key ('ctraces', 'ctr_span.c', 'ctr_span_create', 0)",
+      "crates/qcore-c-gateway/src/legacy_tracked_self_init.rs",
+      "crates/qcore-c-gateway/src/legacy_transfer.rs:TrackedSelfInit",
+      "steps/focus-rust-3.json",
+      "steps/focus-deep-2.json"
+    ]
+  },
+  {
+    "leaf": {
+      "file": "resource-diagnostics.json",
+      "path": [
+        "units",
+        47,
+        "diagnostic_counts",
+        "unknown_alias"
+      ],
+      "before": 2,
+      "after": 1
+    },
+    "reason": "Exact diagnostic category sum of the retained complete function rows; reconstructed on both sides, including all unchanged diagnostics.",
+    "evidence": [
+      "complete retained resource-diagnostics.json on both sides",
+      "semantic review diagnostic-count reconstruction"
+    ]
+  },
+  {
+    "leaf": {
+      "file": "resource-diagnostics.json",
+      "path": [
+        "units",
+        47,
+        "diagnostic_counts",
+        "unsupported"
+      ],
+      "before": 3,
+      "after": 1
+    },
+    "reason": "Exact diagnostic category sum of the retained complete function rows; reconstructed on both sides, including all unchanged diagnostics.",
+    "evidence": [
+      "complete retained resource-diagnostics.json on both sides",
+      "semantic review diagnostic-count reconstruction"
+    ]
+  },
+  {
+    "leaf": {
+      "file": "resource-diagnostics.json",
+      "path": [
+        "units",
+        47,
+        "functions",
+        0,
+        "diagnostics"
+      ],
+      "before": [
+        {
+          "category": "unsupported",
+          "description": "call to uncontracted function `cfl_list_init`",
+          "line": 6785,
+          "origin": "ctraces.c:52"
+        },
+        {
+          "category": "unsupported",
+          "description": "call to uncontracted function `cfl_list_init`",
+          "line": 6786,
+          "origin": "ctraces.c:53"
+        },
+        {
+          "category": "unknown_alias",
+          "description": "unresolved resource identity `ctx`",
+          "line": 6787,
+          "origin": "ctraces.c:55"
+        }
+      ],
+      "after": []
+    },
+    "reason": "Rule 36b source-checked initializer transport at ('ctraces', 'ctraces.c', 'ctr_create', 0): retained owner storage no longer receives an opaque initializer escape; actual before/after diagnostics are preserved in the full-row record. Its status is Unknown -> Safe. Remaining indirect-access refusals stay Unknown. No API declared-model permission is used.",
+    "evidence": [
+      "full-row-movements.json.gz key ('ctraces', 'ctraces.c', 'ctr_create', 0)",
+      "crates/qcore-c-gateway/src/legacy_tracked_self_init.rs",
+      "crates/qcore-c-gateway/src/legacy_transfer.rs:TrackedSelfInit",
+      "steps/focus-rust-3.json",
+      "steps/focus-deep-2.json"
+    ]
+  },
+  {
+    "leaf": {
+      "file": "resource-diagnostics.json",
+      "path": [
+        "units",
+        47,
+        "functions",
+        0,
+        "status"
+      ],
+      "before": "Unknown",
+      "after": "Safe"
+    },
+    "reason": "Rule 36b source-checked initializer transport at ('ctraces', 'ctraces.c', 'ctr_create', 0): retained owner storage no longer receives an opaque initializer escape; actual before/after diagnostics are preserved in the full-row record. Its status is Unknown -> Safe. Remaining indirect-access refusals stay Unknown. No API declared-model permission is used.",
+    "evidence": [
+      "full-row-movements.json.gz key ('ctraces', 'ctraces.c', 'ctr_create', 0)",
+      "crates/qcore-c-gateway/src/legacy_tracked_self_init.rs",
+      "crates/qcore-c-gateway/src/legacy_transfer.rs:TrackedSelfInit",
+      "steps/focus-rust-3.json",
+      "steps/focus-deep-2.json"
+    ]
+  },
+  {
+    "leaf": {
+      "file": "resource-diagnostics.json",
+      "path": [
+        "units",
+        47,
+        "reason"
+      ],
+      "before": "resource projection unresolved: 3 unsupported operation(s), 2 unresolved alias(es), 0 custody summary conflict(s)",
+      "after": "resource projection unresolved: 1 unsupported operation(s), 1 unresolved alias(es), 0 custody summary conflict(s)"
+    },
+    "reason": "Unit reason renders the exact reconstructed unsupported/alias/conflict counts; the unit remains unresolved.",
+    "evidence": [
+      "complete retained unit diagnostic_counts and reason",
+      "semantic review diagnostic-count reconstruction"
+    ]
+  },
+  {
+    "leaf": {
+      "file": "resource-diagnostics.json",
+      "path": [
+        "units",
+        142,
+        "functions",
+        1,
+        "diagnostics",
+        2,
+        "description"
+      ],
+      "before": "call to uncontracted function `mk_list_init`",
+      "after": "indirect memory access is outside the resource projection"
+    },
+    "reason": "Rule 36b source-checked initializer transport at ('chunkio', 'chunkio.c', 'cio_create', 0): retained owner storage no longer receives an opaque initializer escape; actual before/after diagnostics are preserved in the full-row record. Its status is Unknown -> Unknown. Remaining indirect-access refusals stay Unknown. No API declared-model permission is used.",
+    "evidence": [
+      "full-row-movements.json.gz key ('chunkio', 'chunkio.c', 'cio_create', 0)",
+      "crates/qcore-c-gateway/src/legacy_tracked_self_init.rs",
+      "crates/qcore-c-gateway/src/legacy_transfer.rs:TrackedSelfInit",
+      "steps/focus-rust-3.json",
+      "steps/focus-deep-2.json"
+    ]
+  },
+  {
+    "leaf": {
+      "file": "resource-diagnostics.json",
+      "path": [
+        "units",
+        153,
+        "functions",
+        1,
+        "diagnostics",
+        9,
+        "description"
+      ],
+      "before": "call to uncontracted function `mk_list_init`",
+      "after": "indirect memory access is outside the resource projection"
+    },
+    "reason": "Rule 36b source-checked initializer transport at ('chunkio', 'cio_stream.c', 'cio_stream_create', 0): retained owner storage no longer receives an opaque initializer escape; actual before/after diagnostics are preserved in the full-row record. Its status is Unknown -> Unknown. Remaining indirect-access refusals stay Unknown. No API declared-model permission is used.",
+    "evidence": [
+      "full-row-movements.json.gz key ('chunkio', 'cio_stream.c', 'cio_stream_create', 0)",
+      "crates/qcore-c-gateway/src/legacy_tracked_self_init.rs",
+      "crates/qcore-c-gateway/src/legacy_transfer.rs:TrackedSelfInit",
+      "steps/focus-rust-3.json",
+      "steps/focus-deep-2.json"
+    ]
+  },
+  {
+    "leaf": {
+      "file": "resource-diagnostics.json",
+      "path": [
+        "units",
+        153,
+        "functions",
+        1,
+        "diagnostics",
+        10,
+        "description"
+      ],
+      "before": "call to uncontracted function `mk_list_init`",
+      "after": "indirect memory access is outside the resource projection"
+    },
+    "reason": "Rule 36b source-checked initializer transport at ('chunkio', 'cio_stream.c', 'cio_stream_create', 0): retained owner storage no longer receives an opaque initializer escape; actual before/after diagnostics are preserved in the full-row record. Its status is Unknown -> Unknown. Remaining indirect-access refusals stay Unknown. No API declared-model permission is used.",
+    "evidence": [
+      "full-row-movements.json.gz key ('chunkio', 'cio_stream.c', 'cio_stream_create', 0)",
+      "crates/qcore-c-gateway/src/legacy_tracked_self_init.rs",
+      "crates/qcore-c-gateway/src/legacy_transfer.rs:TrackedSelfInit",
+      "steps/focus-rust-3.json",
+      "steps/focus-deep-2.json"
+    ]
+  },
+  {
+    "leaf": {
+      "file": "resource-diagnostics.json",
+      "path": [
+        "units",
+        153,
+        "functions",
+        1,
+        "diagnostics",
+        11,
+        "description"
+      ],
+      "before": "call to uncontracted function `mk_list_init`",
+      "after": "indirect memory access is outside the resource projection"
+    },
+    "reason": "Rule 36b source-checked initializer transport at ('chunkio', 'cio_stream.c', 'cio_stream_create', 0): retained owner storage no longer receives an opaque initializer escape; actual before/after diagnostics are preserved in the full-row record. Its status is Unknown -> Unknown. Remaining indirect-access refusals stay Unknown. No API declared-model permission is used.",
+    "evidence": [
+      "full-row-movements.json.gz key ('chunkio', 'cio_stream.c', 'cio_stream_create', 0)",
+      "crates/qcore-c-gateway/src/legacy_tracked_self_init.rs",
+      "crates/qcore-c-gateway/src/legacy_transfer.rs:TrackedSelfInit",
+      "steps/focus-rust-3.json",
+      "steps/focus-deep-2.json"
+    ]
+  },
+  {
+    "leaf": {
+      "file": "resource-diagnostics.json",
+      "path": [
+        "units",
+        160,
+        "functions",
+        3,
+        "diagnostics",
+        1,
+        "description"
+      ],
+      "before": "call to uncontracted function `mk_list_init`",
+      "after": "indirect memory access is outside the resource projection"
+    },
+    "reason": "Rule 36b source-checked initializer transport at ('monkey-libevent', 'mk_core/mk_rconf.c', 'mk_rconf_create', 0): retained owner storage no longer receives an opaque initializer escape; actual before/after diagnostics are preserved in the full-row record. Its status is Unknown -> Unknown. Remaining indirect-access refusals stay Unknown. No API declared-model permission is used.",
+    "evidence": [
+      "full-row-movements.json.gz key ('monkey-libevent', 'mk_core/mk_rconf.c', 'mk_rconf_create', 0)",
+      "crates/qcore-c-gateway/src/legacy_tracked_self_init.rs",
+      "crates/qcore-c-gateway/src/legacy_transfer.rs:TrackedSelfInit",
+      "steps/focus-rust-3.json",
+      "steps/focus-deep-2.json"
+    ]
+  },
+  {
+    "leaf": {
+      "file": "resource-diagnostics.json",
+      "path": [
+        "units",
+        160,
+        "functions",
+        8,
+        "diagnostics",
+        2,
+        "description"
+      ],
+      "before": "call to uncontracted function `mk_list_init`",
+      "after": "indirect memory access is outside the resource projection"
+    },
+    "reason": "Rule 36b source-checked initializer transport at ('monkey-libevent', 'mk_core/mk_rconf.c', 'mk_rconf_open', 0): retained owner storage no longer receives an opaque initializer escape; actual before/after diagnostics are preserved in the full-row record. Its status is Unknown -> Unknown. Remaining indirect-access refusals stay Unknown. No API declared-model permission is used.",
+    "evidence": [
+      "full-row-movements.json.gz key ('monkey-libevent', 'mk_core/mk_rconf.c', 'mk_rconf_open', 0)",
+      "crates/qcore-c-gateway/src/legacy_tracked_self_init.rs",
+      "crates/qcore-c-gateway/src/legacy_transfer.rs:TrackedSelfInit",
+      "steps/focus-rust-3.json",
+      "steps/focus-deep-2.json"
+    ]
+  },
+  {
+    "leaf": {
+      "file": "resource-diagnostics.json",
+      "path": [
+        "units",
+        160,
+        "functions",
+        8,
+        "diagnostics",
+        3,
+        "description"
+      ],
+      "before": "call to uncontracted function `mk_list_init`",
+      "after": "indirect memory access is outside the resource projection"
+    },
+    "reason": "Rule 36b source-checked initializer transport at ('monkey-libevent', 'mk_core/mk_rconf.c', 'mk_rconf_open', 0): retained owner storage no longer receives an opaque initializer escape; actual before/after diagnostics are preserved in the full-row record. Its status is Unknown -> Unknown. Remaining indirect-access refusals stay Unknown. No API declared-model permission is used.",
+    "evidence": [
+      "full-row-movements.json.gz key ('monkey-libevent', 'mk_core/mk_rconf.c', 'mk_rconf_open', 0)",
+      "crates/qcore-c-gateway/src/legacy_tracked_self_init.rs",
+      "crates/qcore-c-gateway/src/legacy_transfer.rs:TrackedSelfInit",
+      "steps/focus-rust-3.json",
+      "steps/focus-deep-2.json"
+    ]
+  },
+  {
+    "leaf": {
+      "file": "resource-diagnostics.json",
+      "path": [
+        "units",
+        160,
+        "functions",
+        8,
+        "diagnostics",
+        4,
+        "description"
+      ],
+      "before": "call to uncontracted function `mk_list_init`",
+      "after": "indirect memory access is outside the resource projection"
+    },
+    "reason": "Rule 36b source-checked initializer transport at ('monkey-libevent', 'mk_core/mk_rconf.c', 'mk_rconf_open', 0): retained owner storage no longer receives an opaque initializer escape; actual before/after diagnostics are preserved in the full-row record. Its status is Unknown -> Unknown. Remaining indirect-access refusals stay Unknown. No API declared-model permission is used.",
+    "evidence": [
+      "full-row-movements.json.gz key ('monkey-libevent', 'mk_core/mk_rconf.c', 'mk_rconf_open', 0)",
+      "crates/qcore-c-gateway/src/legacy_tracked_self_init.rs",
+      "crates/qcore-c-gateway/src/legacy_transfer.rs:TrackedSelfInit",
+      "steps/focus-rust-3.json",
+      "steps/focus-deep-2.json"
+    ]
+  },
+  {
+    "leaf": {
+      "file": "resource-diagnostics.json",
+      "path": [
+        "units",
+        160,
+        "functions",
+        12,
+        "diagnostics",
+        0,
+        "description"
+      ],
+      "before": "call to uncontracted function `mk_list_init`",
+      "after": "indirect memory access is outside the resource projection"
+    },
+    "reason": "Rule 36b source-checked initializer transport at ('monkey-libevent', 'mk_core/mk_rconf.c', 'mk_rconf_section_add', 0): retained owner storage no longer receives an opaque initializer escape; actual before/after diagnostics are preserved in the full-row record. Its status is Unknown -> Unknown. Remaining indirect-access refusals stay Unknown. No API declared-model permission is used.",
+    "evidence": [
+      "full-row-movements.json.gz key ('monkey-libevent', 'mk_core/mk_rconf.c', 'mk_rconf_section_add', 0)",
+      "crates/qcore-c-gateway/src/legacy_tracked_self_init.rs",
+      "crates/qcore-c-gateway/src/legacy_transfer.rs:TrackedSelfInit",
+      "steps/focus-rust-3.json",
+      "steps/focus-deep-2.json"
+    ]
+  },
+  {
+    "leaf": {
+      "file": "resource-diagnostics.json",
+      "path": [
+        "units",
+        165,
+        "functions",
+        10,
+        "diagnostics",
+        0,
+        "description"
+      ],
+      "before": "call to uncontracted function `mk_list_init`",
+      "after": "indirect memory access is outside the resource projection"
+    },
+    "reason": "Rule 36b source-checked initializer transport at ('monkey-libevent', 'mk_server/mk_config.c', 'mk_config_set_init_values', 0): retained owner storage no longer receives an opaque initializer escape; actual before/after diagnostics are preserved in the full-row record. Its status is Unknown -> Unknown. Remaining indirect-access refusals stay Unknown. No API declared-model permission is used.",
+    "evidence": [
+      "full-row-movements.json.gz key ('monkey-libevent', 'mk_server/mk_config.c', 'mk_config_set_init_values', 0)",
+      "crates/qcore-c-gateway/src/legacy_tracked_self_init.rs",
+      "crates/qcore-c-gateway/src/legacy_transfer.rs:TrackedSelfInit",
+      "steps/focus-rust-3.json",
+      "steps/focus-deep-2.json"
+    ]
+  },
+  {
+    "leaf": {
+      "file": "resource-diagnostics.json",
+      "path": [
+        "units",
+        165,
+        "functions",
+        10,
+        "diagnostics",
+        1,
+        "description"
+      ],
+      "before": "call to uncontracted function `mk_list_init`",
+      "after": "indirect memory access is outside the resource projection"
+    },
+    "reason": "Rule 36b source-checked initializer transport at ('monkey-libevent', 'mk_server/mk_config.c', 'mk_config_set_init_values', 0): retained owner storage no longer receives an opaque initializer escape; actual before/after diagnostics are preserved in the full-row record. Its status is Unknown -> Unknown. Remaining indirect-access refusals stay Unknown. No API declared-model permission is used.",
+    "evidence": [
+      "full-row-movements.json.gz key ('monkey-libevent', 'mk_server/mk_config.c', 'mk_config_set_init_values', 0)",
+      "crates/qcore-c-gateway/src/legacy_tracked_self_init.rs",
+      "crates/qcore-c-gateway/src/legacy_transfer.rs:TrackedSelfInit",
+      "steps/focus-rust-3.json",
+      "steps/focus-deep-2.json"
+    ]
+  },
+  {
+    "leaf": {
+      "file": "resource-diagnostics.json",
+      "path": [
+        "units",
+        165,
+        "functions",
+        10,
+        "diagnostics",
+        2,
+        "description"
+      ],
+      "before": "call to uncontracted function `mk_list_init`",
+      "after": "indirect memory access is outside the resource projection"
+    },
+    "reason": "Rule 36b source-checked initializer transport at ('monkey-libevent', 'mk_server/mk_config.c', 'mk_config_set_init_values', 0): retained owner storage no longer receives an opaque initializer escape; actual before/after diagnostics are preserved in the full-row record. Its status is Unknown -> Unknown. Remaining indirect-access refusals stay Unknown. No API declared-model permission is used.",
+    "evidence": [
+      "full-row-movements.json.gz key ('monkey-libevent', 'mk_server/mk_config.c', 'mk_config_set_init_values', 0)",
+      "crates/qcore-c-gateway/src/legacy_tracked_self_init.rs",
+      "crates/qcore-c-gateway/src/legacy_transfer.rs:TrackedSelfInit",
+      "steps/focus-rust-3.json",
+      "steps/focus-deep-2.json"
+    ]
+  },
+  {
+    "leaf": {
+      "file": "resource-diagnostics.json",
+      "path": [
+        "units",
+        166,
+        "functions",
+        3,
+        "diagnostics",
+        1,
+        "description"
+      ],
+      "before": "call to uncontracted function `mk_list_init`",
+      "after": "indirect memory access is outside the resource projection"
+    },
+    "reason": "Rule 36b source-checked initializer transport at ('monkey-libevent', 'mk_server/mk_fifo.c', 'mk_fifo_create', 0): retained owner storage no longer receives an opaque initializer escape; actual before/after diagnostics are preserved in the full-row record. Its status is Unknown -> Unknown. Remaining indirect-access refusals stay Unknown. No API declared-model permission is used.",
+    "evidence": [
+      "full-row-movements.json.gz key ('monkey-libevent', 'mk_server/mk_fifo.c', 'mk_fifo_create', 0)",
+      "crates/qcore-c-gateway/src/legacy_tracked_self_init.rs",
+      "crates/qcore-c-gateway/src/legacy_transfer.rs:TrackedSelfInit",
+      "steps/focus-rust-3.json",
+      "steps/focus-deep-2.json"
+    ]
+  },
+  {
+    "leaf": {
+      "file": "resource-diagnostics.json",
+      "path": [
+        "units",
+        166,
+        "functions",
+        3,
+        "diagnostics",
+        2,
+        "description"
+      ],
+      "before": "call to uncontracted function `mk_list_init`",
+      "after": "indirect memory access is outside the resource projection"
+    },
+    "reason": "Rule 36b source-checked initializer transport at ('monkey-libevent', 'mk_server/mk_fifo.c', 'mk_fifo_create', 0): retained owner storage no longer receives an opaque initializer escape; actual before/after diagnostics are preserved in the full-row record. Its status is Unknown -> Unknown. Remaining indirect-access refusals stay Unknown. No API declared-model permission is used.",
+    "evidence": [
+      "full-row-movements.json.gz key ('monkey-libevent', 'mk_server/mk_fifo.c', 'mk_fifo_create', 0)",
+      "crates/qcore-c-gateway/src/legacy_tracked_self_init.rs",
+      "crates/qcore-c-gateway/src/legacy_transfer.rs:TrackedSelfInit",
+      "steps/focus-rust-3.json",
+      "steps/focus-deep-2.json"
+    ]
+  },
+  {
+    "leaf": {
+      "file": "resource-diagnostics.json",
+      "path": [
+        "units",
+        168,
+        "functions",
+        22,
+        "diagnostics",
+        5,
+        "description"
+      ],
+      "before": "call to uncontracted function `mk_list_init`",
+      "after": "indirect memory access is outside the resource projection"
+    },
+    "reason": "Rule 36b source-checked initializer transport at ('monkey-libevent', 'mk_server/mk_http.c', 'mk_http_session_init', 0): retained owner storage no longer receives an opaque initializer escape; actual before/after diagnostics are preserved in the full-row record. Its status is Unknown -> Unknown. Remaining indirect-access refusals stay Unknown. No API declared-model permission is used.",
+    "evidence": [
+      "full-row-movements.json.gz key ('monkey-libevent', 'mk_server/mk_http.c', 'mk_http_session_init', 0)",
+      "crates/qcore-c-gateway/src/legacy_tracked_self_init.rs",
+      "crates/qcore-c-gateway/src/legacy_transfer.rs:TrackedSelfInit",
+      "steps/focus-rust-3.json",
+      "steps/focus-deep-2.json"
+    ]
+  },
+  {
+    "leaf": {
+      "file": "resource-diagnostics.json",
+      "path": [
+        "units",
+        172,
+        "functions",
+        20,
+        "diagnostics",
+        1,
+        "description"
+      ],
+      "before": "call to uncontracted function `mk_list_init`",
+      "after": "indirect memory access is outside the resource projection"
+    },
+    "reason": "Rule 36b source-checked initializer transport at ('monkey-libevent', 'mk_server/mk_lib.c', 'mk_vhost_create', 0): retained owner storage no longer receives an opaque initializer escape; actual before/after diagnostics are preserved in the full-row record. Its status is Unknown -> Unknown. Remaining indirect-access refusals stay Unknown. No API declared-model permission is used.",
+    "evidence": [
+      "full-row-movements.json.gz key ('monkey-libevent', 'mk_server/mk_lib.c', 'mk_vhost_create', 0)",
+      "crates/qcore-c-gateway/src/legacy_tracked_self_init.rs",
+      "crates/qcore-c-gateway/src/legacy_transfer.rs:TrackedSelfInit",
+      "steps/focus-rust-3.json",
+      "steps/focus-deep-2.json"
+    ]
+  },
+  {
+    "leaf": {
+      "file": "resource-diagnostics.json",
+      "path": [
+        "units",
+        172,
+        "functions",
+        20,
+        "diagnostics",
+        2,
+        "description"
+      ],
+      "before": "call to uncontracted function `mk_list_init`",
+      "after": "indirect memory access is outside the resource projection"
+    },
+    "reason": "Rule 36b source-checked initializer transport at ('monkey-libevent', 'mk_server/mk_lib.c', 'mk_vhost_create', 0): retained owner storage no longer receives an opaque initializer escape; actual before/after diagnostics are preserved in the full-row record. Its status is Unknown -> Unknown. Remaining indirect-access refusals stay Unknown. No API declared-model permission is used.",
+    "evidence": [
+      "full-row-movements.json.gz key ('monkey-libevent', 'mk_server/mk_lib.c', 'mk_vhost_create', 0)",
+      "crates/qcore-c-gateway/src/legacy_tracked_self_init.rs",
+      "crates/qcore-c-gateway/src/legacy_transfer.rs:TrackedSelfInit",
+      "steps/focus-rust-3.json",
+      "steps/focus-deep-2.json"
+    ]
+  },
+  {
+    "leaf": {
+      "file": "resource-diagnostics.json",
+      "path": [
+        "units",
+        172,
+        "functions",
+        20,
+        "diagnostics",
+        3,
+        "description"
+      ],
+      "before": "call to uncontracted function `mk_list_init`",
+      "after": "indirect memory access is outside the resource projection"
+    },
+    "reason": "Rule 36b source-checked initializer transport at ('monkey-libevent', 'mk_server/mk_lib.c', 'mk_vhost_create', 0): retained owner storage no longer receives an opaque initializer escape; actual before/after diagnostics are preserved in the full-row record. Its status is Unknown -> Unknown. Remaining indirect-access refusals stay Unknown. No API declared-model permission is used.",
+    "evidence": [
+      "full-row-movements.json.gz key ('monkey-libevent', 'mk_server/mk_lib.c', 'mk_vhost_create', 0)",
+      "crates/qcore-c-gateway/src/legacy_tracked_self_init.rs",
+      "crates/qcore-c-gateway/src/legacy_transfer.rs:TrackedSelfInit",
+      "steps/focus-rust-3.json",
+      "steps/focus-deep-2.json"
+    ]
+  },
+  {
+    "leaf": {
+      "file": "resource-diagnostics.json",
+      "path": [
+        "units",
+        173,
+        "functions",
+        3,
+        "diagnostics",
+        0,
+        "description"
+      ],
+      "before": "call to uncontracted function `mk_list_init`",
+      "after": "indirect memory access is outside the resource projection"
+    },
+    "reason": "Rule 36b source-checked initializer transport at ('monkey-libevent', 'mk_server/mk_mimetype.c', 'mk_mimetype_init', 0): retained owner storage no longer receives an opaque initializer escape; actual before/after diagnostics are preserved in the full-row record. Its status is Unknown -> Unknown. Remaining indirect-access refusals stay Unknown. No API declared-model permission is used.",
+    "evidence": [
+      "full-row-movements.json.gz key ('monkey-libevent', 'mk_server/mk_mimetype.c', 'mk_mimetype_init', 0)",
+      "crates/qcore-c-gateway/src/legacy_tracked_self_init.rs",
+      "crates/qcore-c-gateway/src/legacy_transfer.rs:TrackedSelfInit",
+      "steps/focus-rust-3.json",
+      "steps/focus-deep-2.json"
+    ]
+  },
+  {
+    "leaf": {
+      "file": "resource-diagnostics.json",
+      "path": [
+        "units",
+        175,
+        "functions",
+        14,
+        "diagnostics",
+        14,
+        "description"
+      ],
+      "before": "call to uncontracted function `mk_list_init`",
+      "after": "indirect memory access is outside the resource projection"
+    },
+    "reason": "Rule 36b source-checked initializer transport at ('monkey-libevent', 'mk_server/mk_plugin.c', 'mk_plugin_load', 0): retained owner storage no longer receives an opaque initializer escape; actual before/after diagnostics are preserved in the full-row record. Its status is Unknown -> Unknown. Remaining indirect-access refusals stay Unknown. No API declared-model permission is used.",
+    "evidence": [
+      "full-row-movements.json.gz key ('monkey-libevent', 'mk_server/mk_plugin.c', 'mk_plugin_load', 0)",
+      "crates/qcore-c-gateway/src/legacy_tracked_self_init.rs",
+      "crates/qcore-c-gateway/src/legacy_transfer.rs:TrackedSelfInit",
+      "steps/focus-rust-3.json",
+      "steps/focus-deep-2.json"
+    ]
+  },
+  {
+    "leaf": {
+      "file": "resource-diagnostics.json",
+      "path": [
+        "units",
+        175,
+        "functions",
+        17,
+        "diagnostics",
+        0,
+        "description"
+      ],
+      "before": "call to uncontracted function `mk_list_init`",
+      "after": "indirect memory access is outside the resource projection"
+    },
+    "reason": "Rule 36b source-checked initializer transport at ('monkey-libevent', 'mk_server/mk_plugin.c', 'mk_plugin_load_static', 0): retained owner storage no longer receives an opaque initializer escape; actual before/after diagnostics are preserved in the full-row record. Its status is Unknown -> Unknown. Remaining indirect-access refusals stay Unknown. No API declared-model permission is used.",
+    "evidence": [
+      "full-row-movements.json.gz key ('monkey-libevent', 'mk_server/mk_plugin.c', 'mk_plugin_load_static', 0)",
+      "crates/qcore-c-gateway/src/legacy_tracked_self_init.rs",
+      "crates/qcore-c-gateway/src/legacy_transfer.rs:TrackedSelfInit",
+      "steps/focus-rust-3.json",
+      "steps/focus-deep-2.json"
+    ]
+  },
+  {
+    "leaf": {
+      "file": "resource-diagnostics.json",
+      "path": [
+        "units",
+        176,
+        "functions",
+        15,
+        "diagnostics",
+        12,
+        "description"
+      ],
+      "before": "call to uncontracted function `mk_list_init`",
+      "after": "indirect memory access is outside the resource projection"
+    },
+    "reason": "Rule 36b source-checked initializer transport at ('monkey-libevent', 'mk_server/mk_scheduler.c', 'mk_sched_launch_worker_loop', 0): retained owner storage no longer receives an opaque initializer escape; actual before/after diagnostics are preserved in the full-row record. Its status is Unknown -> Unknown. Remaining indirect-access refusals stay Unknown. No API declared-model permission is used.",
+    "evidence": [
+      "full-row-movements.json.gz key ('monkey-libevent', 'mk_server/mk_scheduler.c', 'mk_sched_launch_worker_loop', 0)",
+      "crates/qcore-c-gateway/src/legacy_tracked_self_init.rs",
+      "crates/qcore-c-gateway/src/legacy_transfer.rs:TrackedSelfInit",
+      "steps/focus-rust-3.json",
+      "steps/focus-deep-2.json"
+    ]
+  },
+  {
+    "leaf": {
+      "file": "resource-diagnostics.json",
+      "path": [
+        "units",
+        176,
+        "functions",
+        15,
+        "diagnostics",
+        13,
+        "description"
+      ],
+      "before": "call to uncontracted function `mk_list_init`",
+      "after": "indirect memory access is outside the resource projection"
+    },
+    "reason": "Rule 36b source-checked initializer transport at ('monkey-libevent', 'mk_server/mk_scheduler.c', 'mk_sched_launch_worker_loop', 0): retained owner storage no longer receives an opaque initializer escape; actual before/after diagnostics are preserved in the full-row record. Its status is Unknown -> Unknown. Remaining indirect-access refusals stay Unknown. No API declared-model permission is used.",
+    "evidence": [
+      "full-row-movements.json.gz key ('monkey-libevent', 'mk_server/mk_scheduler.c', 'mk_sched_launch_worker_loop', 0)",
+      "crates/qcore-c-gateway/src/legacy_tracked_self_init.rs",
+      "crates/qcore-c-gateway/src/legacy_transfer.rs:TrackedSelfInit",
+      "steps/focus-rust-3.json",
+      "steps/focus-deep-2.json"
+    ]
+  },
+  {
+    "leaf": {
+      "file": "resource-diagnostics.json",
+      "path": [
+        "units",
+        176,
+        "functions",
+        15,
+        "diagnostics",
+        14,
+        "description"
+      ],
+      "before": "call to uncontracted function `mk_list_init`",
+      "after": "indirect memory access is outside the resource projection"
+    },
+    "reason": "Rule 36b source-checked initializer transport at ('monkey-libevent', 'mk_server/mk_scheduler.c', 'mk_sched_launch_worker_loop', 0): retained owner storage no longer receives an opaque initializer escape; actual before/after diagnostics are preserved in the full-row record. Its status is Unknown -> Unknown. Remaining indirect-access refusals stay Unknown. No API declared-model permission is used.",
+    "evidence": [
+      "full-row-movements.json.gz key ('monkey-libevent', 'mk_server/mk_scheduler.c', 'mk_sched_launch_worker_loop', 0)",
+      "crates/qcore-c-gateway/src/legacy_tracked_self_init.rs",
+      "crates/qcore-c-gateway/src/legacy_transfer.rs:TrackedSelfInit",
+      "steps/focus-rust-3.json",
+      "steps/focus-deep-2.json"
+    ]
+  },
+  {
+    "leaf": {
+      "file": "resource-diagnostics.json",
+      "path": [
+        "units",
+        176,
+        "functions",
+        17,
+        "diagnostics",
+        3,
+        "description"
+      ],
+      "before": "call to uncontracted function `mk_list_init`",
+      "after": "indirect memory access is outside the resource projection"
+    },
+    "reason": "Rule 36b source-checked initializer transport at ('monkey-libevent', 'mk_server/mk_scheduler.c', 'mk_sched_register_thread', 0): retained owner storage no longer receives an opaque initializer escape; actual before/after diagnostics are preserved in the full-row record. Its status is Unknown -> Unknown. Remaining indirect-access refusals stay Unknown. No API declared-model permission is used.",
+    "evidence": [
+      "full-row-movements.json.gz key ('monkey-libevent', 'mk_server/mk_scheduler.c', 'mk_sched_register_thread', 0)",
+      "crates/qcore-c-gateway/src/legacy_tracked_self_init.rs",
+      "crates/qcore-c-gateway/src/legacy_transfer.rs:TrackedSelfInit",
+      "steps/focus-rust-3.json",
+      "steps/focus-deep-2.json"
+    ]
+  },
+  {
+    "leaf": {
+      "file": "resource-diagnostics.json",
+      "path": [
+        "units",
+        179,
+        "diagnostic_counts",
+        "unknown_alias"
+      ],
+      "before": 7,
+      "after": 6
+    },
+    "reason": "Exact diagnostic category sum of the retained complete function rows; reconstructed on both sides, including all unchanged diagnostics.",
+    "evidence": [
+      "complete retained resource-diagnostics.json on both sides",
+      "semantic review diagnostic-count reconstruction"
+    ]
+  },
+  {
+    "leaf": {
+      "file": "resource-diagnostics.json",
+      "path": [
+        "units",
+        179,
+        "diagnostic_counts",
+        "unsupported"
+      ],
+      "before": 33,
+      "after": 32
+    },
+    "reason": "Exact diagnostic category sum of the retained complete function rows; reconstructed on both sides, including all unchanged diagnostics.",
+    "evidence": [
+      "complete retained resource-diagnostics.json on both sides",
+      "semantic review diagnostic-count reconstruction"
+    ]
+  },
+  {
+    "leaf": {
+      "file": "resource-diagnostics.json",
+      "path": [
+        "units",
+        179,
+        "functions",
+        3,
+        "diagnostics"
+      ],
+      "before": [
+        {
+          "category": "unsupported",
+          "description": "call to uncontracted function `mk_list_init`",
+          "line": 5785,
+          "origin": "mk_server/mk_stream.c:37"
+        },
+        {
+          "category": "unknown_alias",
+          "description": "unresolved resource identity `channel`",
+          "line": 5786,
+          "origin": "mk_server/mk_stream.c:39"
+        }
+      ],
+      "after": []
+    },
+    "reason": "Rule 36b source-checked initializer transport at ('monkey-libevent', 'mk_server/mk_stream.c', 'mk_channel_new', 0): retained owner storage no longer receives an opaque initializer escape; actual before/after diagnostics are preserved in the full-row record. Its status is Unknown -> Safe. Remaining indirect-access refusals stay Unknown. No API declared-model permission is used.",
+    "evidence": [
+      "full-row-movements.json.gz key ('monkey-libevent', 'mk_server/mk_stream.c', 'mk_channel_new', 0)",
+      "crates/qcore-c-gateway/src/legacy_tracked_self_init.rs",
+      "crates/qcore-c-gateway/src/legacy_transfer.rs:TrackedSelfInit",
+      "steps/focus-rust-3.json",
+      "steps/focus-deep-2.json"
+    ]
+  },
+  {
+    "leaf": {
+      "file": "resource-diagnostics.json",
+      "path": [
+        "units",
+        179,
+        "functions",
+        3,
+        "status"
+      ],
+      "before": "Unknown",
+      "after": "Safe"
+    },
+    "reason": "Rule 36b source-checked initializer transport at ('monkey-libevent', 'mk_server/mk_stream.c', 'mk_channel_new', 0): retained owner storage no longer receives an opaque initializer escape; actual before/after diagnostics are preserved in the full-row record. Its status is Unknown -> Safe. Remaining indirect-access refusals stay Unknown. No API declared-model permission is used.",
+    "evidence": [
+      "full-row-movements.json.gz key ('monkey-libevent', 'mk_server/mk_stream.c', 'mk_channel_new', 0)",
+      "crates/qcore-c-gateway/src/legacy_tracked_self_init.rs",
+      "crates/qcore-c-gateway/src/legacy_transfer.rs:TrackedSelfInit",
+      "steps/focus-rust-3.json",
+      "steps/focus-deep-2.json"
+    ]
+  },
+  {
+    "leaf": {
+      "file": "resource-diagnostics.json",
+      "path": [
+        "units",
+        179,
+        "reason"
+      ],
+      "before": "resource projection unresolved: 33 unsupported operation(s), 7 unresolved alias(es), 0 custody summary conflict(s)",
+      "after": "resource projection unresolved: 32 unsupported operation(s), 6 unresolved alias(es), 0 custody summary conflict(s)"
+    },
+    "reason": "Unit reason renders the exact reconstructed unsupported/alias/conflict counts; the unit remains unresolved.",
+    "evidence": [
+      "complete retained unit diagnostic_counts and reason",
+      "semantic review diagnostic-count reconstruction"
+    ]
+  },
+  {
+    "leaf": {
+      "file": "resource-diagnostics.json",
+      "path": [
+        "units",
+        182,
+        "functions",
+        11,
+        "diagnostics",
+        5,
+        "description"
+      ],
+      "before": "call to uncontracted function `mk_list_init`",
+      "after": "indirect memory access is outside the resource projection"
+    },
+    "reason": "Rule 36b source-checked initializer transport at ('monkey-libevent', 'mk_server/mk_vhost.c', 'mk_vhost_handler_match', 0): retained owner storage no longer receives an opaque initializer escape; actual before/after diagnostics are preserved in the full-row record. Its status is Unknown -> Unknown. Remaining indirect-access refusals stay Unknown. No API declared-model permission is used.",
+    "evidence": [
+      "full-row-movements.json.gz key ('monkey-libevent', 'mk_server/mk_vhost.c', 'mk_vhost_handler_match', 0)",
+      "crates/qcore-c-gateway/src/legacy_tracked_self_init.rs",
+      "crates/qcore-c-gateway/src/legacy_transfer.rs:TrackedSelfInit",
+      "steps/focus-rust-3.json",
+      "steps/focus-deep-2.json"
+    ]
+  },
+  {
+    "leaf": {
+      "file": "resource-diagnostics.json",
+      "path": [
+        "units",
+        182,
+        "functions",
+        15,
+        "diagnostics",
+        4,
+        "description"
+      ],
+      "before": "call to uncontracted function `mk_list_init`",
+      "after": "indirect memory access is outside the resource projection"
+    },
+    "reason": "Rule 36b source-checked initializer transport at ('monkey-libevent', 'mk_server/mk_vhost.c', 'mk_vhost_read', 0): retained owner storage no longer receives an opaque initializer escape; actual before/after diagnostics are preserved in the full-row record. Its status is Unknown -> Unknown. Remaining indirect-access refusals stay Unknown. No API declared-model permission is used.",
+    "evidence": [
+      "full-row-movements.json.gz key ('monkey-libevent', 'mk_server/mk_vhost.c', 'mk_vhost_read', 0)",
+      "crates/qcore-c-gateway/src/legacy_tracked_self_init.rs",
+      "crates/qcore-c-gateway/src/legacy_transfer.rs:TrackedSelfInit",
+      "steps/focus-rust-3.json",
+      "steps/focus-deep-2.json"
+    ]
+  },
+  {
+    "leaf": {
+      "file": "resource-diagnostics.json",
+      "path": [
+        "units",
+        182,
+        "functions",
+        15,
+        "diagnostics",
+        5,
+        "description"
+      ],
+      "before": "call to uncontracted function `mk_list_init`",
+      "after": "indirect memory access is outside the resource projection"
+    },
+    "reason": "Rule 36b source-checked initializer transport at ('monkey-libevent', 'mk_server/mk_vhost.c', 'mk_vhost_read', 0): retained owner storage no longer receives an opaque initializer escape; actual before/after diagnostics are preserved in the full-row record. Its status is Unknown -> Unknown. Remaining indirect-access refusals stay Unknown. No API declared-model permission is used.",
+    "evidence": [
+      "full-row-movements.json.gz key ('monkey-libevent', 'mk_server/mk_vhost.c', 'mk_vhost_read', 0)",
+      "crates/qcore-c-gateway/src/legacy_tracked_self_init.rs",
+      "crates/qcore-c-gateway/src/legacy_transfer.rs:TrackedSelfInit",
+      "steps/focus-rust-3.json",
+      "steps/focus-deep-2.json"
+    ]
+  },
+  {
+    "leaf": {
+      "file": "resource-diagnostics.json",
+      "path": [
+        "units",
+        182,
+        "functions",
+        15,
+        "diagnostics",
+        6,
+        "description"
+      ],
+      "before": "call to uncontracted function `mk_list_init`",
+      "after": "indirect memory access is outside the resource projection"
+    },
+    "reason": "Rule 36b source-checked initializer transport at ('monkey-libevent', 'mk_server/mk_vhost.c', 'mk_vhost_read', 0): retained owner storage no longer receives an opaque initializer escape; actual before/after diagnostics are preserved in the full-row record. Its status is Unknown -> Unknown. Remaining indirect-access refusals stay Unknown. No API declared-model permission is used.",
+    "evidence": [
+      "full-row-movements.json.gz key ('monkey-libevent', 'mk_server/mk_vhost.c', 'mk_vhost_read', 0)",
+      "crates/qcore-c-gateway/src/legacy_tracked_self_init.rs",
+      "crates/qcore-c-gateway/src/legacy_transfer.rs:TrackedSelfInit",
+      "steps/focus-rust-3.json",
+      "steps/focus-deep-2.json"
+    ]
+  },
+  {
+    "leaf": {
+      "file": "resource-diagnostics.json",
+      "path": [
+        "units",
+        182,
+        "functions",
+        15,
+        "diagnostics",
+        48,
+        "description"
+      ],
+      "before": "call to uncontracted function `mk_list_init`",
+      "after": "indirect memory access is outside the resource projection"
+    },
+    "reason": "Rule 36b source-checked initializer transport at ('monkey-libevent', 'mk_server/mk_vhost.c', 'mk_vhost_read', 0): retained owner storage no longer receives an opaque initializer escape; actual before/after diagnostics are preserved in the full-row record. Its status is Unknown -> Unknown. Remaining indirect-access refusals stay Unknown. No API declared-model permission is used.",
+    "evidence": [
+      "full-row-movements.json.gz key ('monkey-libevent', 'mk_server/mk_vhost.c', 'mk_vhost_read', 0)",
+      "crates/qcore-c-gateway/src/legacy_tracked_self_init.rs",
+      "crates/qcore-c-gateway/src/legacy_transfer.rs:TrackedSelfInit",
+      "steps/focus-rust-3.json",
+      "steps/focus-deep-2.json"
+    ]
+  },
+  {
+    "leaf": {
+      "file": "resource-diagnostics.json",
+      "path": [
+        "units",
+        182,
+        "functions",
+        16,
+        "diagnostics",
+        0,
+        "description"
+      ],
+      "before": "call to uncontracted function `mk_list_init`",
+      "after": "indirect memory access is outside the resource projection"
+    },
+    "reason": "Rule 36b source-checked initializer transport at ('monkey-libevent', 'mk_server/mk_vhost.c', 'mk_vhost_set_single', 0): retained owner storage no longer receives an opaque initializer escape; actual before/after diagnostics are preserved in the full-row record. Its status is Unknown -> Unknown. Remaining indirect-access refusals stay Unknown. No API declared-model permission is used.",
+    "evidence": [
+      "full-row-movements.json.gz key ('monkey-libevent', 'mk_server/mk_vhost.c', 'mk_vhost_set_single', 0)",
+      "crates/qcore-c-gateway/src/legacy_tracked_self_init.rs",
+      "crates/qcore-c-gateway/src/legacy_transfer.rs:TrackedSelfInit",
+      "steps/focus-rust-3.json",
+      "steps/focus-deep-2.json"
+    ]
+  },
+  {
+    "leaf": {
+      "file": "resource-diagnostics.json",
+      "path": [
+        "units",
+        182,
+        "functions",
+        16,
+        "diagnostics",
+        1,
+        "description"
+      ],
+      "before": "call to uncontracted function `mk_list_init`",
+      "after": "indirect memory access is outside the resource projection"
+    },
+    "reason": "Rule 36b source-checked initializer transport at ('monkey-libevent', 'mk_server/mk_vhost.c', 'mk_vhost_set_single', 0): retained owner storage no longer receives an opaque initializer escape; actual before/after diagnostics are preserved in the full-row record. Its status is Unknown -> Unknown. Remaining indirect-access refusals stay Unknown. No API declared-model permission is used.",
+    "evidence": [
+      "full-row-movements.json.gz key ('monkey-libevent', 'mk_server/mk_vhost.c', 'mk_vhost_set_single', 0)",
+      "crates/qcore-c-gateway/src/legacy_tracked_self_init.rs",
+      "crates/qcore-c-gateway/src/legacy_transfer.rs:TrackedSelfInit",
+      "steps/focus-rust-3.json",
+      "steps/focus-deep-2.json"
+    ]
+  },
+  {
+    "leaf": {
+      "file": "resource-diagnostics.json",
+      "path": [
+        "units",
+        182,
+        "functions",
+        16,
+        "diagnostics",
+        9,
+        "description"
+      ],
+      "before": "call to uncontracted function `mk_list_init`",
+      "after": "indirect memory access is outside the resource projection"
+    },
+    "reason": "Rule 36b source-checked initializer transport at ('monkey-libevent', 'mk_server/mk_vhost.c', 'mk_vhost_set_single', 0): retained owner storage no longer receives an opaque initializer escape; actual before/after diagnostics are preserved in the full-row record. Its status is Unknown -> Unknown. Remaining indirect-access refusals stay Unknown. No API declared-model permission is used.",
+    "evidence": [
+      "full-row-movements.json.gz key ('monkey-libevent', 'mk_server/mk_vhost.c', 'mk_vhost_set_single', 0)",
+      "crates/qcore-c-gateway/src/legacy_tracked_self_init.rs",
+      "crates/qcore-c-gateway/src/legacy_transfer.rs:TrackedSelfInit",
+      "steps/focus-rust-3.json",
+      "steps/focus-deep-2.json"
+    ]
+  },
+  {
+    "leaf": {
+      "file": "resource-diagnostics.json",
+      "path": [
+        "units",
+        183,
+        "functions",
+        1,
+        "diagnostics",
+        19,
+        "description"
+      ],
+      "before": "call to uncontracted function `mk_list_init`",
+      "after": "indirect memory access is outside the resource projection"
+    },
+    "reason": "Rule 36b source-checked initializer transport at ('monkey-libevent', 'mk_server/monkey.c', 'mk_server_create', 0): retained owner storage no longer receives an opaque initializer escape; actual before/after diagnostics are preserved in the full-row record. Its status is Unknown -> Unknown. Remaining indirect-access refusals stay Unknown. No API declared-model permission is used.",
+    "evidence": [
+      "full-row-movements.json.gz key ('monkey-libevent', 'mk_server/monkey.c', 'mk_server_create', 0)",
+      "crates/qcore-c-gateway/src/legacy_tracked_self_init.rs",
+      "crates/qcore-c-gateway/src/legacy_transfer.rs:TrackedSelfInit",
+      "steps/focus-rust-3.json",
+      "steps/focus-deep-2.json"
+    ]
+  },
+  {
+    "leaf": {
+      "file": "resource-diagnostics.json",
+      "path": [
+        "units",
+        183,
+        "functions",
+        1,
+        "diagnostics",
+        20,
+        "description"
+      ],
+      "before": "call to uncontracted function `mk_list_init`",
+      "after": "indirect memory access is outside the resource projection"
+    },
+    "reason": "Rule 36b source-checked initializer transport at ('monkey-libevent', 'mk_server/monkey.c', 'mk_server_create', 0): retained owner storage no longer receives an opaque initializer escape; actual before/after diagnostics are preserved in the full-row record. Its status is Unknown -> Unknown. Remaining indirect-access refusals stay Unknown. No API declared-model permission is used.",
+    "evidence": [
+      "full-row-movements.json.gz key ('monkey-libevent', 'mk_server/monkey.c', 'mk_server_create', 0)",
+      "crates/qcore-c-gateway/src/legacy_tracked_self_init.rs",
+      "crates/qcore-c-gateway/src/legacy_transfer.rs:TrackedSelfInit",
+      "steps/focus-rust-3.json",
+      "steps/focus-deep-2.json"
+    ]
+  },
+  {
+    "leaf": {
+      "file": "resource-diagnostics.json",
+      "path": [
+        "units",
+        183,
+        "functions",
+        1,
+        "diagnostics",
+        21,
+        "description"
+      ],
+      "before": "call to uncontracted function `mk_list_init`",
+      "after": "indirect memory access is outside the resource projection"
+    },
+    "reason": "Rule 36b source-checked initializer transport at ('monkey-libevent', 'mk_server/monkey.c', 'mk_server_create', 0): retained owner storage no longer receives an opaque initializer escape; actual before/after diagnostics are preserved in the full-row record. Its status is Unknown -> Unknown. Remaining indirect-access refusals stay Unknown. No API declared-model permission is used.",
+    "evidence": [
+      "full-row-movements.json.gz key ('monkey-libevent', 'mk_server/monkey.c', 'mk_server_create', 0)",
+      "crates/qcore-c-gateway/src/legacy_tracked_self_init.rs",
+      "crates/qcore-c-gateway/src/legacy_transfer.rs:TrackedSelfInit",
+      "steps/focus-rust-3.json",
+      "steps/focus-deep-2.json"
+    ]
+  },
+  {
+    "leaf": {
+      "file": "resource-diagnostics.json",
+      "path": [
+        "units",
+        183,
+        "functions",
+        1,
+        "diagnostics",
+        22,
+        "description"
+      ],
+      "before": "call to uncontracted function `mk_list_init`",
+      "after": "indirect memory access is outside the resource projection"
+    },
+    "reason": "Rule 36b source-checked initializer transport at ('monkey-libevent', 'mk_server/monkey.c', 'mk_server_create', 0): retained owner storage no longer receives an opaque initializer escape; actual before/after diagnostics are preserved in the full-row record. Its status is Unknown -> Unknown. Remaining indirect-access refusals stay Unknown. No API declared-model permission is used.",
+    "evidence": [
+      "full-row-movements.json.gz key ('monkey-libevent', 'mk_server/monkey.c', 'mk_server_create', 0)",
+      "crates/qcore-c-gateway/src/legacy_tracked_self_init.rs",
+      "crates/qcore-c-gateway/src/legacy_transfer.rs:TrackedSelfInit",
+      "steps/focus-rust-3.json",
+      "steps/focus-deep-2.json"
+    ]
+  },
+  {
+    "leaf": {
+      "file": "resource-diagnostics.json",
+      "path": [
+        "units",
+        183,
+        "functions",
+        1,
+        "diagnostics",
+        23,
+        "description"
+      ],
+      "before": "call to uncontracted function `mk_list_init`",
+      "after": "indirect memory access is outside the resource projection"
+    },
+    "reason": "Rule 36b source-checked initializer transport at ('monkey-libevent', 'mk_server/monkey.c', 'mk_server_create', 0): retained owner storage no longer receives an opaque initializer escape; actual before/after diagnostics are preserved in the full-row record. Its status is Unknown -> Unknown. Remaining indirect-access refusals stay Unknown. No API declared-model permission is used.",
+    "evidence": [
+      "full-row-movements.json.gz key ('monkey-libevent', 'mk_server/monkey.c', 'mk_server_create', 0)",
+      "crates/qcore-c-gateway/src/legacy_tracked_self_init.rs",
+      "crates/qcore-c-gateway/src/legacy_transfer.rs:TrackedSelfInit",
+      "steps/focus-rust-3.json",
+      "steps/focus-deep-2.json"
+    ]
+  },
+  {
+    "leaf": {
+      "file": "resource-diagnostics.json",
+      "path": [
+        "units",
+        183,
+        "functions",
+        1,
+        "diagnostics",
+        24,
+        "description"
+      ],
+      "before": "call to uncontracted function `mk_list_init`",
+      "after": "indirect memory access is outside the resource projection"
+    },
+    "reason": "Rule 36b source-checked initializer transport at ('monkey-libevent', 'mk_server/monkey.c', 'mk_server_create', 0): retained owner storage no longer receives an opaque initializer escape; actual before/after diagnostics are preserved in the full-row record. Its status is Unknown -> Unknown. Remaining indirect-access refusals stay Unknown. No API declared-model permission is used.",
+    "evidence": [
+      "full-row-movements.json.gz key ('monkey-libevent', 'mk_server/monkey.c', 'mk_server_create', 0)",
+      "crates/qcore-c-gateway/src/legacy_tracked_self_init.rs",
+      "crates/qcore-c-gateway/src/legacy_transfer.rs:TrackedSelfInit",
+      "steps/focus-rust-3.json",
+      "steps/focus-deep-2.json"
+    ]
+  },
+  {
+    "leaf": {
+      "file": "resource-diagnostics.json",
+      "path": [
+        "units",
+        183,
+        "functions",
+        1,
+        "diagnostics",
+        25,
+        "description"
+      ],
+      "before": "call to uncontracted function `mk_list_init`",
+      "after": "indirect memory access is outside the resource projection"
+    },
+    "reason": "Rule 36b source-checked initializer transport at ('monkey-libevent', 'mk_server/monkey.c', 'mk_server_create', 0): retained owner storage no longer receives an opaque initializer escape; actual before/after diagnostics are preserved in the full-row record. Its status is Unknown -> Unknown. Remaining indirect-access refusals stay Unknown. No API declared-model permission is used.",
+    "evidence": [
+      "full-row-movements.json.gz key ('monkey-libevent', 'mk_server/monkey.c', 'mk_server_create', 0)",
+      "crates/qcore-c-gateway/src/legacy_tracked_self_init.rs",
+      "crates/qcore-c-gateway/src/legacy_transfer.rs:TrackedSelfInit",
+      "steps/focus-rust-3.json",
+      "steps/focus-deep-2.json"
+    ]
+  },
+  {
+    "leaf": {
+      "file": "resource-diagnostics.contracts.json",
+      "path": [
+        "contract_dependencies",
+        "declarations",
+        "__errno_location",
+        "hypothesis_evidence",
+        "dependent_safe_rows"
+      ],
+      "before": 12,
+      "after": 13
+    },
+    "reason": "Exact old-plus-new-Safe-rows dependency fold. Consulted declarations and standing remain unchanged. Each gained row increments its existing declarations; Safe roll-up categories are recomputed from their unchanged body standing, and top assumptions are sorted by count then name. The permutation of __errno_location/LZ4 or system assumptions is a ranking consequence, not a new premise or authority.",
+    "evidence": [
+      "full-row-movements.json.gz gained rows and unchanged contract_dependencies",
+      "crates/qcore-audit/src/contract_dependencies.rs:render",
+      "semantic review exact per-coordinate dependency reconstruction"
+    ]
+  },
+  {
+    "leaf": {
+      "file": "resource-diagnostics.contracts.json",
+      "path": [
+        "contract_dependencies",
+        "declarations",
+        "__errno_location",
+        "safe_rows"
+      ],
+      "before": 12,
+      "after": 13
+    },
+    "reason": "Exact old-plus-new-Safe-rows dependency fold. Consulted declarations and standing remain unchanged. Each gained row increments its existing declarations; Safe roll-up categories are recomputed from their unchanged body standing, and top assumptions are sorted by count then name. The permutation of __errno_location/LZ4 or system assumptions is a ranking consequence, not a new premise or authority.",
+    "evidence": [
+      "full-row-movements.json.gz gained rows and unchanged contract_dependencies",
+      "crates/qcore-audit/src/contract_dependencies.rs:render",
+      "semantic review exact per-coordinate dependency reconstruction"
+    ]
+  },
+  {
+    "leaf": {
+      "file": "resource-diagnostics.contracts.json",
+      "path": [
+        "contract_dependencies",
+        "declarations",
+        "calloc",
+        "hypothesis_evidence",
+        "dependent_safe_rows"
+      ],
+      "before": 13,
+      "after": 14
+    },
+    "reason": "Exact old-plus-new-Safe-rows dependency fold. Consulted declarations and standing remain unchanged. Each gained row increments its existing declarations; Safe roll-up categories are recomputed from their unchanged body standing, and top assumptions are sorted by count then name. The permutation of __errno_location/LZ4 or system assumptions is a ranking consequence, not a new premise or authority.",
+    "evidence": [
+      "full-row-movements.json.gz gained rows and unchanged contract_dependencies",
+      "crates/qcore-audit/src/contract_dependencies.rs:render",
+      "semantic review exact per-coordinate dependency reconstruction"
+    ]
+  },
+  {
+    "leaf": {
+      "file": "resource-diagnostics.contracts.json",
+      "path": [
+        "contract_dependencies",
+        "declarations",
+        "calloc",
+        "safe_rows"
+      ],
+      "before": 13,
+      "after": 14
+    },
+    "reason": "Exact old-plus-new-Safe-rows dependency fold. Consulted declarations and standing remain unchanged. Each gained row increments its existing declarations; Safe roll-up categories are recomputed from their unchanged body standing, and top assumptions are sorted by count then name. The permutation of __errno_location/LZ4 or system assumptions is a ranking consequence, not a new premise or authority.",
+    "evidence": [
+      "full-row-movements.json.gz gained rows and unchanged contract_dependencies",
+      "crates/qcore-audit/src/contract_dependencies.rs:render",
+      "semantic review exact per-coordinate dependency reconstruction"
+    ]
+  },
+  {
+    "leaf": {
+      "file": "resource-diagnostics.contracts.json",
+      "path": [
+        "contract_dependencies",
+        "declarations",
+        "ctr_errno_print",
+        "hypothesis_evidence",
+        "dependent_safe_rows"
+      ],
+      "before": 5,
+      "after": 6
+    },
+    "reason": "Exact old-plus-new-Safe-rows dependency fold. Consulted declarations and standing remain unchanged. Each gained row increments its existing declarations; Safe roll-up categories are recomputed from their unchanged body standing, and top assumptions are sorted by count then name. The permutation of __errno_location/LZ4 or system assumptions is a ranking consequence, not a new premise or authority.",
+    "evidence": [
+      "full-row-movements.json.gz gained rows and unchanged contract_dependencies",
+      "crates/qcore-audit/src/contract_dependencies.rs:render",
+      "semantic review exact per-coordinate dependency reconstruction"
+    ]
+  },
+  {
+    "leaf": {
+      "file": "resource-diagnostics.contracts.json",
+      "path": [
+        "contract_dependencies",
+        "declarations",
+        "ctr_errno_print",
+        "safe_rows"
+      ],
+      "before": 5,
+      "after": 6
+    },
+    "reason": "Exact old-plus-new-Safe-rows dependency fold. Consulted declarations and standing remain unchanged. Each gained row increments its existing declarations; Safe roll-up categories are recomputed from their unchanged body standing, and top assumptions are sorted by count then name. The permutation of __errno_location/LZ4 or system assumptions is a ranking consequence, not a new premise or authority.",
+    "evidence": [
+      "full-row-movements.json.gz gained rows and unchanged contract_dependencies",
+      "crates/qcore-audit/src/contract_dependencies.rs:render",
+      "semantic review exact per-coordinate dependency reconstruction"
+    ]
+  },
+  {
+    "leaf": {
+      "file": "resource-diagnostics.contracts.json",
+      "path": [
+        "contract_dependencies",
+        "declarations",
+        "mk_mem_alloc",
+        "hypothesis_evidence",
+        "dependent_safe_rows"
+      ],
+      "before": 4,
+      "after": 5
+    },
+    "reason": "Exact old-plus-new-Safe-rows dependency fold. Consulted declarations and standing remain unchanged. Each gained row increments its existing declarations; Safe roll-up categories are recomputed from their unchanged body standing, and top assumptions are sorted by count then name. The permutation of __errno_location/LZ4 or system assumptions is a ranking consequence, not a new premise or authority.",
+    "evidence": [
+      "full-row-movements.json.gz gained rows and unchanged contract_dependencies",
+      "crates/qcore-audit/src/contract_dependencies.rs:render",
+      "semantic review exact per-coordinate dependency reconstruction"
+    ]
+  },
+  {
+    "leaf": {
+      "file": "resource-diagnostics.contracts.json",
+      "path": [
+        "contract_dependencies",
+        "declarations",
+        "mk_mem_alloc",
+        "safe_rows"
+      ],
+      "before": 4,
+      "after": 5
+    },
+    "reason": "Exact old-plus-new-Safe-rows dependency fold. Consulted declarations and standing remain unchanged. Each gained row increments its existing declarations; Safe roll-up categories are recomputed from their unchanged body standing, and top assumptions are sorted by count then name. The permutation of __errno_location/LZ4 or system assumptions is a ranking consequence, not a new premise or authority.",
+    "evidence": [
+      "full-row-movements.json.gz gained rows and unchanged contract_dependencies",
+      "crates/qcore-audit/src/contract_dependencies.rs:render",
+      "semantic review exact per-coordinate dependency reconstruction"
+    ]
+  },
+  {
+    "leaf": {
+      "file": "resource-diagnostics.contracts.json",
+      "path": [
+        "contract_dependencies",
+        "safe_rollup",
+        "resting_on_a_declared_assumption"
+      ],
+      "before": 422,
+      "after": 423
+    },
+    "reason": "Exact old-plus-new-Safe-rows dependency fold. Consulted declarations and standing remain unchanged. Each gained row increments its existing declarations; Safe roll-up categories are recomputed from their unchanged body standing, and top assumptions are sorted by count then name. The permutation of __errno_location/LZ4 or system assumptions is a ranking consequence, not a new premise or authority.",
+    "evidence": [
+      "full-row-movements.json.gz gained rows and unchanged contract_dependencies",
+      "crates/qcore-audit/src/contract_dependencies.rs:render",
+      "semantic review exact per-coordinate dependency reconstruction"
+    ]
+  },
+  {
+    "leaf": {
+      "file": "resource-diagnostics.contracts.json",
+      "path": [
+        "contract_dependencies",
+        "safe_rollup",
+        "resting_only_on_validated_declarations"
+      ],
+      "before": 110,
+      "after": 111
+    },
+    "reason": "Exact old-plus-new-Safe-rows dependency fold. Consulted declarations and standing remain unchanged. Each gained row increments its existing declarations; Safe roll-up categories are recomputed from their unchanged body standing, and top assumptions are sorted by count then name. The permutation of __errno_location/LZ4 or system assumptions is a ranking consequence, not a new premise or authority.",
+    "evidence": [
+      "full-row-movements.json.gz gained rows and unchanged contract_dependencies",
+      "crates/qcore-audit/src/contract_dependencies.rs:render",
+      "semantic review exact per-coordinate dependency reconstruction"
+    ]
+  },
+  {
+    "leaf": {
+      "file": "resource-diagnostics.contracts.json",
+      "path": [
+        "contract_dependencies",
+        "safe_rollup",
+        "safe_rows"
+      ],
+      "before": 1009,
+      "after": 1011
+    },
+    "reason": "Exact old-plus-new-Safe-rows dependency fold. Consulted declarations and standing remain unchanged. Each gained row increments its existing declarations; Safe roll-up categories are recomputed from their unchanged body standing, and top assumptions are sorted by count then name. The permutation of __errno_location/LZ4 or system assumptions is a ranking consequence, not a new premise or authority.",
+    "evidence": [
+      "full-row-movements.json.gz gained rows and unchanged contract_dependencies",
+      "crates/qcore-audit/src/contract_dependencies.rs:render",
+      "semantic review exact per-coordinate dependency reconstruction"
+    ]
+  },
+  {
+    "leaf": {
+      "file": "resource-diagnostics.contracts.json",
+      "path": [
+        "contract_dependencies",
+        "safe_rollup",
+        "top_declared_assumptions",
+        7,
+        "safe_rows"
+      ],
+      "before": 13,
+      "after": 14
+    },
+    "reason": "Exact old-plus-new-Safe-rows dependency fold. Consulted declarations and standing remain unchanged. Each gained row increments its existing declarations; Safe roll-up categories are recomputed from their unchanged body standing, and top assumptions are sorted by count then name. The permutation of __errno_location/LZ4 or system assumptions is a ranking consequence, not a new premise or authority.",
+    "evidence": [
+      "full-row-movements.json.gz gained rows and unchanged contract_dependencies",
+      "crates/qcore-audit/src/contract_dependencies.rs:render",
+      "semantic review exact per-coordinate dependency reconstruction"
+    ]
+  },
+  {
+    "leaf": {
+      "file": "resource-diagnostics.contracts.json",
+      "path": [
+        "contract_dependencies",
+        "safe_rollup",
+        "top_declared_assumptions",
+        8,
+        "function"
+      ],
+      "before": "LZ4_decompress_generic",
+      "after": "__errno_location"
+    },
+    "reason": "Exact old-plus-new-Safe-rows dependency fold. Consulted declarations and standing remain unchanged. Each gained row increments its existing declarations; Safe roll-up categories are recomputed from their unchanged body standing, and top assumptions are sorted by count then name. The permutation of __errno_location/LZ4 or system assumptions is a ranking consequence, not a new premise or authority.",
+    "evidence": [
+      "full-row-movements.json.gz gained rows and unchanged contract_dependencies",
+      "crates/qcore-audit/src/contract_dependencies.rs:render",
+      "semantic review exact per-coordinate dependency reconstruction"
+    ]
+  },
+  {
+    "leaf": {
+      "file": "resource-diagnostics.contracts.json",
+      "path": [
+        "contract_dependencies",
+        "safe_rollup",
+        "top_declared_assumptions",
+        8,
+        "mode"
+      ],
+      "before": "pinned",
+      "after": "flexible"
+    },
+    "reason": "Exact old-plus-new-Safe-rows dependency fold. Consulted declarations and standing remain unchanged. Each gained row increments its existing declarations; Safe roll-up categories are recomputed from their unchanged body standing, and top assumptions are sorted by count then name. The permutation of __errno_location/LZ4 or system assumptions is a ranking consequence, not a new premise or authority.",
+    "evidence": [
+      "full-row-movements.json.gz gained rows and unchanged contract_dependencies",
+      "crates/qcore-audit/src/contract_dependencies.rs:render",
+      "semantic review exact per-coordinate dependency reconstruction"
+    ]
+  },
+  {
+    "leaf": {
+      "file": "resource-diagnostics.contracts.json",
+      "path": [
+        "contract_dependencies",
+        "safe_rollup",
+        "top_declared_assumptions",
+        8,
+        "premises"
+      ],
+      "before": [],
+      "after": [
+        {
+          "name": "nested_call_admission",
+          "origin": "declared",
+          "statement": "all(checked_reading_route,scalar_declaration,untracked_effects)"
+        }
+      ]
+    },
+    "reason": "Exact old-plus-new-Safe-rows dependency fold. Consulted declarations and standing remain unchanged. Each gained row increments its existing declarations; Safe roll-up categories are recomputed from their unchanged body standing, and top assumptions are sorted by count then name. The permutation of __errno_location/LZ4 or system assumptions is a ranking consequence, not a new premise or authority.",
+    "evidence": [
+      "full-row-movements.json.gz gained rows and unchanged contract_dependencies",
+      "crates/qcore-audit/src/contract_dependencies.rs:render",
+      "semantic review exact per-coordinate dependency reconstruction"
+    ]
+  },
+  {
+    "leaf": {
+      "file": "resource-diagnostics.contracts.json",
+      "path": [
+        "contract_dependencies",
+        "safe_rollup",
+        "top_declared_assumptions",
+        8,
+        "safe_rows"
+      ],
+      "before": 12,
+      "after": 13
+    },
+    "reason": "Exact old-plus-new-Safe-rows dependency fold. Consulted declarations and standing remain unchanged. Each gained row increments its existing declarations; Safe roll-up categories are recomputed from their unchanged body standing, and top assumptions are sorted by count then name. The permutation of __errno_location/LZ4 or system assumptions is a ranking consequence, not a new premise or authority.",
+    "evidence": [
+      "full-row-movements.json.gz gained rows and unchanged contract_dependencies",
+      "crates/qcore-audit/src/contract_dependencies.rs:render",
+      "semantic review exact per-coordinate dependency reconstruction"
+    ]
+  },
+  {
+    "leaf": {
+      "file": "resource-diagnostics.contracts.json",
+      "path": [
+        "contract_dependencies",
+        "safe_rollup",
+        "top_declared_assumptions",
+        8,
+        "status"
+      ],
+      "before": "pinned-in-force",
+      "after": "flexible-standing"
+    },
+    "reason": "Exact old-plus-new-Safe-rows dependency fold. Consulted declarations and standing remain unchanged. Each gained row increments its existing declarations; Safe roll-up categories are recomputed from their unchanged body standing, and top assumptions are sorted by count then name. The permutation of __errno_location/LZ4 or system assumptions is a ranking consequence, not a new premise or authority.",
+    "evidence": [
+      "full-row-movements.json.gz gained rows and unchanged contract_dependencies",
+      "crates/qcore-audit/src/contract_dependencies.rs:render",
+      "semantic review exact per-coordinate dependency reconstruction"
+    ]
+  },
+  {
+    "leaf": {
+      "file": "resource-diagnostics.contracts.json",
+      "path": [
+        "contract_dependencies",
+        "safe_rollup",
+        "top_declared_assumptions",
+        9,
+        "function"
+      ],
+      "before": "__errno_location",
+      "after": "LZ4_decompress_generic"
+    },
+    "reason": "Exact old-plus-new-Safe-rows dependency fold. Consulted declarations and standing remain unchanged. Each gained row increments its existing declarations; Safe roll-up categories are recomputed from their unchanged body standing, and top assumptions are sorted by count then name. The permutation of __errno_location/LZ4 or system assumptions is a ranking consequence, not a new premise or authority.",
+    "evidence": [
+      "full-row-movements.json.gz gained rows and unchanged contract_dependencies",
+      "crates/qcore-audit/src/contract_dependencies.rs:render",
+      "semantic review exact per-coordinate dependency reconstruction"
+    ]
+  },
+  {
+    "leaf": {
+      "file": "resource-diagnostics.contracts.json",
+      "path": [
+        "contract_dependencies",
+        "safe_rollup",
+        "top_declared_assumptions",
+        9,
+        "mode"
+      ],
+      "before": "flexible",
+      "after": "pinned"
+    },
+    "reason": "Exact old-plus-new-Safe-rows dependency fold. Consulted declarations and standing remain unchanged. Each gained row increments its existing declarations; Safe roll-up categories are recomputed from their unchanged body standing, and top assumptions are sorted by count then name. The permutation of __errno_location/LZ4 or system assumptions is a ranking consequence, not a new premise or authority.",
+    "evidence": [
+      "full-row-movements.json.gz gained rows and unchanged contract_dependencies",
+      "crates/qcore-audit/src/contract_dependencies.rs:render",
+      "semantic review exact per-coordinate dependency reconstruction"
+    ]
+  },
+  {
+    "leaf": {
+      "file": "resource-diagnostics.contracts.json",
+      "path": [
+        "contract_dependencies",
+        "safe_rollup",
+        "top_declared_assumptions",
+        9,
+        "premises"
+      ],
+      "before": [
+        {
+          "name": "nested_call_admission",
+          "origin": "declared",
+          "statement": "all(checked_reading_route,scalar_declaration,untracked_effects)"
+        }
+      ],
+      "after": []
+    },
+    "reason": "Exact old-plus-new-Safe-rows dependency fold. Consulted declarations and standing remain unchanged. Each gained row increments its existing declarations; Safe roll-up categories are recomputed from their unchanged body standing, and top assumptions are sorted by count then name. The permutation of __errno_location/LZ4 or system assumptions is a ranking consequence, not a new premise or authority.",
+    "evidence": [
+      "full-row-movements.json.gz gained rows and unchanged contract_dependencies",
+      "crates/qcore-audit/src/contract_dependencies.rs:render",
+      "semantic review exact per-coordinate dependency reconstruction"
+    ]
+  },
+  {
+    "leaf": {
+      "file": "resource-diagnostics.contracts.json",
+      "path": [
+        "contract_dependencies",
+        "safe_rollup",
+        "top_declared_assumptions",
+        9,
+        "status"
+      ],
+      "before": "flexible-standing",
+      "after": "pinned-in-force"
+    },
+    "reason": "Exact old-plus-new-Safe-rows dependency fold. Consulted declarations and standing remain unchanged. Each gained row increments its existing declarations; Safe roll-up categories are recomputed from their unchanged body standing, and top assumptions are sorted by count then name. The permutation of __errno_location/LZ4 or system assumptions is a ranking consequence, not a new premise or authority.",
+    "evidence": [
+      "full-row-movements.json.gz gained rows and unchanged contract_dependencies",
+      "crates/qcore-audit/src/contract_dependencies.rs:render",
+      "semantic review exact per-coordinate dependency reconstruction"
+    ]
+  },
+  {
+    "leaf": {
+      "file": "null.jsonl",
+      "path": [
+        809,
+        "combined"
+      ],
+      "before": "Unknown",
+      "after": "Safe"
+    },
+    "reason": "The same gained custody row feeds the pre-existing NULL-row custody field and the production four-value combined join. Independent NULL dictionaries are unchanged; both complete production joins are replayed.",
+    "evidence": [
+      "replay-v3/corpus-base-projection-proof.json",
+      "replay-v3/corpus-tip-projection-proof.json",
+      "full-null-movements.json.gz (independent NULL dictionary comparison)"
+    ]
+  },
+  {
+    "leaf": {
+      "file": "null.jsonl",
+      "path": [
+        809,
+        "custody"
+      ],
+      "before": "Unknown",
+      "after": "Safe"
+    },
+    "reason": "The same gained custody row feeds the pre-existing NULL-row custody field and the production four-value combined join. Independent NULL dictionaries are unchanged; both complete production joins are replayed.",
+    "evidence": [
+      "replay-v3/corpus-base-projection-proof.json",
+      "replay-v3/corpus-tip-projection-proof.json",
+      "full-null-movements.json.gz (independent NULL dictionary comparison)"
+    ]
+  },
+  {
+    "leaf": {
+      "file": "null.jsonl",
+      "path": [
+        4870,
+        "combined"
+      ],
+      "before": "Unknown",
+      "after": "Safe"
+    },
+    "reason": "The same gained custody row feeds the pre-existing NULL-row custody field and the production four-value combined join. Independent NULL dictionaries are unchanged; both complete production joins are replayed.",
+    "evidence": [
+      "replay-v3/corpus-base-projection-proof.json",
+      "replay-v3/corpus-tip-projection-proof.json",
+      "full-null-movements.json.gz (independent NULL dictionary comparison)"
+    ]
+  },
+  {
+    "leaf": {
+      "file": "null.jsonl",
+      "path": [
+        4870,
+        "custody"
+      ],
+      "before": "Unknown",
+      "after": "Safe"
+    },
+    "reason": "The same gained custody row feeds the pre-existing NULL-row custody field and the production four-value combined join. Independent NULL dictionaries are unchanged; both complete production joins are replayed.",
+    "evidence": [
+      "replay-v3/corpus-base-projection-proof.json",
+      "replay-v3/corpus-tip-projection-proof.json",
+      "full-null-movements.json.gz (independent NULL dictionary comparison)"
+    ]
+  },
+  {
+    "leaf": {
+      "file": "outer.json",
+      "path": [
+        "scenarios",
+        "all",
+        "combined",
+        "Safe"
+      ],
+      "before": 835,
+      "after": 837
+    },
+    "reason": "Exact production tally/join consequence of the enumerated gained custody rows. Full static and each loaded-plugin runtime projection is reproduced separately on both sides; source binding remains Open and truth transport is false.",
+    "evidence": [
+      "replay-v3/corpus-base-projection-proof.json",
+      "replay-v3/corpus-tip-projection-proof.json",
+      "full-row-movements.json.gz"
+    ]
+  },
+  {
+    "leaf": {
+      "file": "outer.json",
+      "path": [
+        "scenarios",
+        "all",
+        "combined",
+        "Unknown"
+      ],
+      "before": 4030,
+      "after": 4028
+    },
+    "reason": "Exact production tally/join consequence of the enumerated gained custody rows. Full static and each loaded-plugin runtime projection is reproduced separately on both sides; source binding remains Open and truth transport is false.",
+    "evidence": [
+      "replay-v3/corpus-base-projection-proof.json",
+      "replay-v3/corpus-tip-projection-proof.json",
+      "full-row-movements.json.gz"
+    ]
+  },
+  {
+    "leaf": {
+      "file": "outer.json",
+      "path": [
+        "scenarios",
+        "all",
+        "custody",
+        "Safe"
+      ],
+      "before": 968,
+      "after": 970
+    },
+    "reason": "Exact production tally/join consequence of the enumerated gained custody rows. Full static and each loaded-plugin runtime projection is reproduced separately on both sides; source binding remains Open and truth transport is false.",
+    "evidence": [
+      "replay-v3/corpus-base-projection-proof.json",
+      "replay-v3/corpus-tip-projection-proof.json",
+      "full-row-movements.json.gz"
+    ]
+  },
+  {
+    "leaf": {
+      "file": "outer.json",
+      "path": [
+        "scenarios",
+        "all",
+        "custody",
+        "Unknown"
+      ],
+      "before": 3827,
+      "after": 3825
+    },
+    "reason": "Exact production tally/join consequence of the enumerated gained custody rows. Full static and each loaded-plugin runtime projection is reproduced separately on both sides; source binding remains Open and truth transport is false.",
+    "evidence": [
+      "replay-v3/corpus-base-projection-proof.json",
+      "replay-v3/corpus-tip-projection-proof.json",
+      "full-row-movements.json.gz"
+    ]
+  },
+  {
+    "leaf": {
+      "file": "outer.json",
+      "path": [
+        "scenarios",
+        "flb_external_plugin",
+        "combined",
+        "Safe"
+      ],
+      "before": 835,
+      "after": 837
+    },
+    "reason": "Exact production tally/join consequence of the enumerated gained custody rows. Full static and each loaded-plugin runtime projection is reproduced separately on both sides; source binding remains Open and truth transport is false.",
+    "evidence": [
+      "replay-v3/corpus-base-projection-proof.json",
+      "replay-v3/corpus-tip-projection-proof.json",
+      "full-row-movements.json.gz"
+    ]
+  },
+  {
+    "leaf": {
+      "file": "outer.json",
+      "path": [
+        "scenarios",
+        "flb_external_plugin",
+        "combined",
+        "Unknown"
+      ],
+      "before": 4029,
+      "after": 4027
+    },
+    "reason": "Exact production tally/join consequence of the enumerated gained custody rows. Full static and each loaded-plugin runtime projection is reproduced separately on both sides; source binding remains Open and truth transport is false.",
+    "evidence": [
+      "replay-v3/corpus-base-projection-proof.json",
+      "replay-v3/corpus-tip-projection-proof.json",
+      "full-row-movements.json.gz"
+    ]
+  },
+  {
+    "leaf": {
+      "file": "outer.json",
+      "path": [
+        "scenarios",
+        "flb_external_plugin",
+        "custody",
+        "Safe"
+      ],
+      "before": 968,
+      "after": 970
+    },
+    "reason": "Exact production tally/join consequence of the enumerated gained custody rows. Full static and each loaded-plugin runtime projection is reproduced separately on both sides; source binding remains Open and truth transport is false.",
+    "evidence": [
+      "replay-v3/corpus-base-projection-proof.json",
+      "replay-v3/corpus-tip-projection-proof.json",
+      "full-row-movements.json.gz"
+    ]
+  },
+  {
+    "leaf": {
+      "file": "outer.json",
+      "path": [
+        "scenarios",
+        "flb_external_plugin",
+        "custody",
+        "Unknown"
+      ],
+      "before": 3827,
+      "after": 3825
+    },
+    "reason": "Exact production tally/join consequence of the enumerated gained custody rows. Full static and each loaded-plugin runtime projection is reproduced separately on both sides; source binding remains Open and truth transport is false.",
+    "evidence": [
+      "replay-v3/corpus-base-projection-proof.json",
+      "replay-v3/corpus-tip-projection-proof.json",
+      "full-row-movements.json.gz"
+    ]
+  },
+  {
+    "leaf": {
+      "file": "outer.json",
+      "path": [
+        "scenarios",
+        "rk_plugin_library",
+        "combined",
+        "Safe"
+      ],
+      "before": 835,
+      "after": 837
+    },
+    "reason": "Exact production tally/join consequence of the enumerated gained custody rows. Full static and each loaded-plugin runtime projection is reproduced separately on both sides; source binding remains Open and truth transport is false.",
+    "evidence": [
+      "replay-v3/corpus-base-projection-proof.json",
+      "replay-v3/corpus-tip-projection-proof.json",
+      "full-row-movements.json.gz"
+    ]
+  },
+  {
+    "leaf": {
+      "file": "outer.json",
+      "path": [
+        "scenarios",
+        "rk_plugin_library",
+        "combined",
+        "Unknown"
+      ],
+      "before": 4030,
+      "after": 4028
+    },
+    "reason": "Exact production tally/join consequence of the enumerated gained custody rows. Full static and each loaded-plugin runtime projection is reproduced separately on both sides; source binding remains Open and truth transport is false.",
+    "evidence": [
+      "replay-v3/corpus-base-projection-proof.json",
+      "replay-v3/corpus-tip-projection-proof.json",
+      "full-row-movements.json.gz"
+    ]
+  },
+  {
+    "leaf": {
+      "file": "outer.json",
+      "path": [
+        "scenarios",
+        "rk_plugin_library",
+        "custody",
+        "Safe"
+      ],
+      "before": 968,
+      "after": 970
+    },
+    "reason": "Exact production tally/join consequence of the enumerated gained custody rows. Full static and each loaded-plugin runtime projection is reproduced separately on both sides; source binding remains Open and truth transport is false.",
+    "evidence": [
+      "replay-v3/corpus-base-projection-proof.json",
+      "replay-v3/corpus-tip-projection-proof.json",
+      "full-row-movements.json.gz"
+    ]
+  },
+  {
+    "leaf": {
+      "file": "outer.json",
+      "path": [
+        "scenarios",
+        "rk_plugin_library",
+        "custody",
+        "Unknown"
+      ],
+      "before": 3827,
+      "after": 3825
+    },
+    "reason": "Exact production tally/join consequence of the enumerated gained custody rows. Full static and each loaded-plugin runtime projection is reproduced separately on both sides; source binding remains Open and truth transport is false.",
+    "evidence": [
+      "replay-v3/corpus-base-projection-proof.json",
+      "replay-v3/corpus-tip-projection-proof.json",
+      "full-row-movements.json.gz"
+    ]
+  },
+  {
+    "leaf": {
+      "file": "outer.json",
+      "path": [
+        "static",
+        "combined",
+        "Safe"
+      ],
+      "before": 869,
+      "after": 871
+    },
+    "reason": "Exact production tally/join consequence of the enumerated gained custody rows. Full static and each loaded-plugin runtime projection is reproduced separately on both sides; source binding remains Open and truth transport is false.",
+    "evidence": [
+      "replay-v3/corpus-base-projection-proof.json",
+      "replay-v3/corpus-tip-projection-proof.json",
+      "full-row-movements.json.gz"
+    ]
+  },
+  {
+    "leaf": {
+      "file": "outer.json",
+      "path": [
+        "static",
+        "combined",
+        "Unknown"
+      ],
+      "before": 4026,
+      "after": 4024
+    },
+    "reason": "Exact production tally/join consequence of the enumerated gained custody rows. Full static and each loaded-plugin runtime projection is reproduced separately on both sides; source binding remains Open and truth transport is false.",
+    "evidence": [
+      "replay-v3/corpus-base-projection-proof.json",
+      "replay-v3/corpus-tip-projection-proof.json",
+      "full-row-movements.json.gz"
+    ]
+  },
+  {
+    "leaf": {
+      "file": "outer.json",
+      "path": [
+        "static",
+        "custody",
+        "Safe"
+      ],
+      "before": 1009,
+      "after": 1011
+    },
+    "reason": "Exact production tally/join consequence of the enumerated gained custody rows. Full static and each loaded-plugin runtime projection is reproduced separately on both sides; source binding remains Open and truth transport is false.",
+    "evidence": [
+      "replay-v3/corpus-base-projection-proof.json",
+      "replay-v3/corpus-tip-projection-proof.json",
+      "full-row-movements.json.gz"
+    ]
+  },
+  {
+    "leaf": {
+      "file": "outer.json",
+      "path": [
+        "static",
+        "custody",
+        "Unknown"
+      ],
+      "before": 3816,
+      "after": 3814
+    },
+    "reason": "Exact production tally/join consequence of the enumerated gained custody rows. Full static and each loaded-plugin runtime projection is reproduced separately on both sides; source binding remains Open and truth transport is false.",
+    "evidence": [
+      "replay-v3/corpus-base-projection-proof.json",
+      "replay-v3/corpus-tip-projection-proof.json",
+      "full-row-movements.json.gz"
+    ]
+  },
+  {
+    "leaf": {
+      "file": "null.summary.json",
+      "path": [
+        "combined",
+        "Safe"
+      ],
+      "before": 869,
+      "after": 871
+    },
+    "reason": "Exact production tally/join consequence of the enumerated gained custody rows. Full static and each loaded-plugin runtime projection is reproduced separately on both sides; source binding remains Open and truth transport is false.",
+    "evidence": [
+      "replay-v3/corpus-base-projection-proof.json",
+      "replay-v3/corpus-tip-projection-proof.json",
+      "full-row-movements.json.gz"
+    ]
+  },
+  {
+    "leaf": {
+      "file": "null.summary.json",
+      "path": [
+        "combined",
+        "Unknown"
+      ],
+      "before": 4026,
+      "after": 4024
+    },
+    "reason": "Exact production tally/join consequence of the enumerated gained custody rows. Full static and each loaded-plugin runtime projection is reproduced separately on both sides; source binding remains Open and truth transport is false.",
+    "evidence": [
+      "replay-v3/corpus-base-projection-proof.json",
+      "replay-v3/corpus-tip-projection-proof.json",
+      "full-row-movements.json.gz"
+    ]
+  },
+  {
+    "leaf": {
+      "file": "null.summary.json",
+      "path": [
+        "custody",
+        "Safe"
+      ],
+      "before": 1009,
+      "after": 1011
+    },
+    "reason": "Exact production tally/join consequence of the enumerated gained custody rows. Full static and each loaded-plugin runtime projection is reproduced separately on both sides; source binding remains Open and truth transport is false.",
+    "evidence": [
+      "replay-v3/corpus-base-projection-proof.json",
+      "replay-v3/corpus-tip-projection-proof.json",
+      "full-row-movements.json.gz"
+    ]
+  },
+  {
+    "leaf": {
+      "file": "null.summary.json",
+      "path": [
+        "custody",
+        "Unknown"
+      ],
+      "before": 3816,
+      "after": 3814
+    },
+    "reason": "Exact production tally/join consequence of the enumerated gained custody rows. Full static and each loaded-plugin runtime projection is reproduced separately on both sides; source binding remains Open and truth transport is false.",
+    "evidence": [
+      "replay-v3/corpus-base-projection-proof.json",
+      "replay-v3/corpus-tip-projection-proof.json",
+      "full-row-movements.json.gz"
+    ]
+  }
+]

@@ -1,0 +1,153 @@
+{
+  "head": "2d0d85299b830aa24d7f200d63a308653582363f",
+  "steps": [
+    {
+      "name": "contracts-check",
+      "command": [
+        "python3",
+        "providers/contracts.py",
+        "check"
+      ],
+      "exit": 0,
+      "seconds": 25.972521292002057,
+      "log": "private/w48-cmt-tracked-interior/provider-api-gate/contracts-check.log"
+    },
+    {
+      "name": "tests",
+      "command": [
+        "cargo",
+        "test",
+        "--manifest-path",
+        "providers/Cargo.toml",
+        "--workspace",
+        "--locked",
+        "--offline"
+      ],
+      "exit": 0,
+      "seconds": 604.8476059289969,
+      "log": "private/w48-cmt-tracked-interior/provider-api-gate/tests.log"
+    },
+    {
+      "name": "fmt",
+      "command": [
+        "cargo",
+        "fmt",
+        "--manifest-path",
+        "providers/Cargo.toml",
+        "--all",
+        "--",
+        "--check"
+      ],
+      "exit": 0,
+      "seconds": 4.1938741720077815,
+      "log": "private/w48-cmt-tracked-interior/provider-api-gate/fmt.log"
+    },
+    {
+      "name": "clippy",
+      "command": [
+        "cargo",
+        "clippy",
+        "--manifest-path",
+        "providers/Cargo.toml",
+        "--workspace",
+        "--all-targets",
+        "--locked",
+        "--offline",
+        "--",
+        "-D",
+        "warnings"
+      ],
+      "exit": 0,
+      "seconds": 1.1587516669969773,
+      "log": "private/w48-cmt-tracked-interior/provider-api-gate/clippy.log"
+    },
+    {
+      "name": "python",
+      "command": [
+        "python3",
+        "-m",
+        "unittest",
+        "discover",
+        "-s",
+        "providers/tests"
+      ],
+      "exit": 0,
+      "seconds": 24.08668385000783,
+      "log": "private/w48-cmt-tracked-interior/provider-api-gate/python.log"
+    },
+    {
+      "name": "package-build",
+      "command": [
+        "python3",
+        "providers/package.py",
+        "build",
+        "--output",
+        "private/w48-cmt-tracked-interior/packages-api"
+      ],
+      "exit": 0,
+      "seconds": 27.391971337012365,
+      "log": "private/w48-cmt-tracked-interior/provider-api-gate/package-build.log"
+    },
+    {
+      "name": "verify-chunkio",
+      "command": [
+        "python3",
+        "providers/package.py",
+        "verify",
+        "private/w48-cmt-tracked-interior/packages-api/qcore.chunkio"
+      ],
+      "exit": 0,
+      "seconds": 0.10245622698857915,
+      "log": "private/w48-cmt-tracked-interior/provider-api-gate/verify-chunkio.log"
+    },
+    {
+      "name": "verify-cmetrics",
+      "command": [
+        "python3",
+        "providers/package.py",
+        "verify",
+        "private/w48-cmt-tracked-interior/packages-api/qcore.cmetrics"
+      ],
+      "exit": 0,
+      "seconds": 0.10112424199178349,
+      "log": "private/w48-cmt-tracked-interior/provider-api-gate/verify-cmetrics.log"
+    },
+    {
+      "name": "verify-ctraces",
+      "command": [
+        "python3",
+        "providers/package.py",
+        "verify",
+        "private/w48-cmt-tracked-interior/packages-api/qcore.ctraces"
+      ],
+      "exit": 0,
+      "seconds": 0.09548940599779598,
+      "log": "private/w48-cmt-tracked-interior/provider-api-gate/verify-ctraces.log"
+    },
+    {
+      "name": "verify-libevent",
+      "command": [
+        "python3",
+        "providers/package.py",
+        "verify",
+        "private/w48-cmt-tracked-interior/packages-api/qcore.libevent"
+      ],
+      "exit": 0,
+      "seconds": 0.09630851598922163,
+      "log": "private/w48-cmt-tracked-interior/provider-api-gate/verify-libevent.log"
+    },
+    {
+      "name": "verify-librdkafka",
+      "command": [
+        "python3",
+        "providers/package.py",
+        "verify",
+        "private/w48-cmt-tracked-interior/packages-api/qcore.librdkafka"
+      ],
+      "exit": 0,
+      "seconds": 0.13193628899171017,
+      "log": "private/w48-cmt-tracked-interior/provider-api-gate/verify-librdkafka.log"
+    }
+  ],
+  "exit": 0
+}

@@ -1,0 +1,408 @@
+   Compiling quirin-provider-cfl v0.1.0 (/home/cosmo/.codex/worktrees/808d/quirin-lang/providers/quirin-provider-cfl)
+   Compiling qcore-c-gateway v0.1.0 (/home/cosmo/.codex/worktrees/808d/quirin-lang/crates/qcore-c-gateway)
+   Compiling qcore-audit v0.1.0 (/home/cosmo/.codex/worktrees/808d/quirin-lang/crates/qcore-audit)
+   Compiling quirin-provider-shared v0.1.0 (/home/cosmo/.codex/worktrees/808d/quirin-lang/providers/quirin-provider-shared)
+   Compiling qcore-provider-conformance v0.1.0 (/home/cosmo/.codex/worktrees/808d/quirin-lang/providers/conformance)
+   Compiling quirin-provider-plugin v0.1.0 (/home/cosmo/.codex/worktrees/808d/quirin-lang/providers/quirin-provider-plugin)
+   Compiling qcore-provider-cmetrics v0.2.0 (/home/cosmo/.codex/worktrees/808d/quirin-lang/providers/qcore-provider-cmetrics)
+   Compiling qcore-provider-chunkio v0.5.0 (/home/cosmo/.codex/worktrees/808d/quirin-lang/providers/qcore-provider-chunkio)
+   Compiling qcore-provider-librdkafka v0.1.0 (/home/cosmo/.codex/worktrees/808d/quirin-lang/providers/qcore-provider-librdkafka)
+   Compiling qcore-provider-libevent v0.1.0 (/home/cosmo/.codex/worktrees/808d/quirin-lang/providers/qcore-provider-libevent)
+   Compiling qcore-provider-ctraces v0.1.0 (/home/cosmo/.codex/worktrees/808d/quirin-lang/providers/qcore-provider-ctraces)
+   Compiling qcore-verification v0.4.0 (/home/cosmo/.codex/worktrees/808d/quirin-lang/crates/qcore-verification)
+   Compiling quirin-source-analysis v0.1.0 (/home/cosmo/.codex/worktrees/808d/quirin-lang/crates/quirin-source-analysis)
+    Finished `test` profile [unoptimized + debuginfo] target(s) in 29.46s
+     Running unittests src/main.rs (providers/target/debug/deps/qcore_provider_chunkio-caaf90ca4ad67686)
+
+running 1 test
+test tests::namespace_is_derived_and_published_modules_are_owned ... ok
+
+test result: ok. 1 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+
+     Running unittests src/main.rs (providers/target/debug/deps/qcore_provider_cmetrics-12564eee9391c9b9)
+
+running 1 test
+test tests::namespace_is_derived_and_published_modules_are_owned ... ok
+
+test result: ok. 1 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+
+     Running unittests src/lib.rs (providers/target/debug/deps/qcore_provider_conformance-1e1a2ebc37f24117)
+
+running 0 tests
+
+test result: ok. 0 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+
+     Running unittests src/bin/callback_proposal_writer.rs (providers/target/debug/deps/callback_proposal_writer-d6cd15c6156d4dba)
+
+running 0 tests
+
+test result: ok. 0 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+
+     Running unittests src/bin/configured_audit_provider.rs (providers/target/debug/deps/configured_audit_provider-3b280209bfcdf3a1)
+
+running 0 tests
+
+test result: ok. 0 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+
+     Running unittests src/bin/sample_boolean_provider.rs (providers/target/debug/deps/sample_boolean_provider-6a40fff28bad16f9)
+
+running 0 tests
+
+test result: ok. 0 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+
+     Running tests/call_use_capability.rs (providers/target/debug/deps/call_use_capability-59aef29830d0c2e5)
+
+running 2 tests
+test the_provider_fixtures_are_the_live_projections ... ok
+test real_package_proposes_call_use_readings_without_admitting_false_contracts ... ok
+
+test result: ok. 2 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 38.26s
+
+     Running tests/cleanup_replay_capability.rs (providers/target/debug/deps/cleanup_replay_capability-b8ae8af500181b07)
+
+running 2 tests
+test the_provider_fixtures_are_the_live_projections ... ok
+test real_package_replays_cleanup_outcomes_without_admitting_false_contracts ... ok
+
+test result: ok. 2 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 29.25s
+
+     Running tests/cmetrics_unit.rs (providers/target/debug/deps/cmetrics_unit-cb9266d9935f11d7)
+
+running 1 test
+test cmetrics_process_checks_unit_paths_and_rejects_scalar_or_unbound_claims ... ok
+
+test result: ok. 1 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 26.88s
+
+     Running tests/composed_five_providers.rs (providers/target/debug/deps/composed_five_providers-a2242e586d76e7a1)
+
+running 2 tests
+test the_shipped_packages_declare_disjoint_libraries_and_no_observation_hook ... ok
+test the_five_package_registry_composes_only_what_its_packages_implement ... ok
+
+test result: ok. 2 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 53.44s
+
+     Running tests/composition_capability.rs (providers/target/debug/deps/composition_capability-52854dcab5cce218)
+
+running 2 tests
+test the_provider_fixture_is_the_live_projection ... ok
+test real_package_composes_without_admitting_false_contracts ... ok
+
+test result: ok. 2 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 29.88s
+
+     Running tests/configured_audit.rs (providers/target/debug/deps/configured_audit-de9742692fbf07a0)
+
+running 7 tests
+test a_failed_selected_process_stays_unknown_without_an_in_process_fallback ... ok
+test missing_or_conflicting_helper_compile_entry_rejects_before_publication ... ok
+test changed_main_or_helper_source_cannot_borrow_a_pinned_revision ... ok
+test configured_helper_is_imported_from_its_real_pinned_compile_entry ... ok
+test failed_contract_evidence_is_unknown_without_resource_verdict_promotion ... ok
+test pinned_second_codebase_runs_configured_process_checks_without_a_rust_import_adapter ... ok
+test missing_bindings_models_packages_and_escaping_roots_do_not_publish_a_report ... ok
+
+test result: ok. 7 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 21.49s
+
+     Running tests/configured_source_contract.rs (providers/target/debug/deps/configured_source_contract-fe6c46b31a8207eb)
+
+running 6 tests
+test process_package_rejects_an_installed_scope_wider_than_its_compiled_manifest ... ok
+test configured_helper_policy_source_and_compile_inventory_fail_closed ... ok
+test configured_separate_helper_reaches_real_process_frame_execution ... ok
+test configured_selection_and_source_support_fail_closed ... ok
+test configured_second_codebase_has_real_process_checked_source_evidence ... ok
+test pinned_bundle_and_legacy_path_have_identical_process_evidence ... ok
+
+test result: ok. 6 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 29.89s
+
+     Running tests/counter_effect.rs (providers/target/debug/deps/counter_effect-9dbd4134bd1b7cb6)
+
+running 1 test
+test real_package_proposes_counter_updates_without_admitting_false_contracts ... ok
+
+test result: ok. 1 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 29.27s
+
+     Running tests/file_close_composition_capability.rs (providers/target/debug/deps/file_close_composition_capability-3126ed795ae75beb)
+
+running 2 tests
+test the_provider_fixtures_are_the_live_projections ... ok
+test real_package_composes_two_levels_without_admitting_false_contracts ... ok
+
+test result: ok. 2 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 37.56s
+
+     Running tests/filesystem_chunk_close_composition_capability.rs (providers/target/debug/deps/filesystem_chunk_close_composition_capability-16ecc062d4d3c20f)
+
+running 2 tests
+test the_provider_fixture_is_the_live_projection ... ok
+test real_package_composes_two_derived_units_without_admitting_false_contracts ... ok
+
+test result: ok. 2 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 36.58s
+
+     Running tests/memory_close_composition_capability.rs (providers/target/debug/deps/memory_close_composition_capability-6e59ef7a85c5b22a)
+
+running 2 tests
+test the_provider_fixture_is_the_live_projection ... ok
+test real_package_composes_the_derived_question_without_admitting_false_contracts ... ok
+
+test result: ok. 2 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 30.52s
+
+     Running tests/packages.rs (providers/target/debug/deps/packages-51cfcd31fd07a5b4)
+
+running 6 tests
+test only_template_carrying_crates_are_packaged ... ok
+test artifact_dependencies_are_only_schemas_and_serialization ... ok
+test the_spawn_time_identity_recheck_is_measured_on_the_shipped_packages ... ok
+test real_packages_answer_identically_under_the_enforced_profile ... ok
+test real_packages_answer_identically_under_the_confined_profile ... ok
+test real_packages_preserve_unknown_and_reject_mutations has been running for over 60 seconds
+test real_packages_preserve_unknown_and_reject_mutations ... ok
+
+test result: ok. 6 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 78.68s
+
+     Running tests/reactor_callback_capability.rs (providers/target/debug/deps/reactor_callback_capability-c611bf6e67ceab42)
+
+running 2 tests
+test a_tampered_witness_from_a_fixture_process_is_refused_by_the_core ... ok
+test the_real_package_proposes_callback_inventories_without_granting_authority ... ok
+
+test result: ok. 2 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 28.14s
+
+     Running tests/reactor_callbacks.rs (providers/target/debug/deps/reactor_callbacks-43fcb1d429d5be9a)
+
+running 1 test
+test schema_only_process_cannot_grant_callback_authority ... ok
+
+test result: ok. 1 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.01s
+
+     Running tests/source_effect.rs (providers/target/debug/deps/source_effect-1b4c98723518098a)
+
+running 1 test
+test real_package_proposes_source_effects_without_admitting_false_contracts ... ok
+
+test result: ok. 1 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 32.56s
+
+     Running tests/teardown_capability.rs (providers/target/debug/deps/teardown_capability-6b72339dd49bb1ad)
+
+running 2 tests
+test the_provider_fixtures_are_the_live_projections ... ok
+test real_package_proposes_teardown_readings_without_admitting_false_contracts ... ok
+
+test result: ok. 2 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 29.94s
+
+     Running tests/unsupported_close_composition_capability.rs (providers/target/debug/deps/unsupported_close_composition_capability-2263ee1cf6b5a8aa)
+
+running 2 tests
+test the_provider_fixture_is_the_live_projection ... ok
+test real_package_classifies_the_symbolic_class_without_admitting_false_contracts ... ok
+
+test result: ok. 2 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 35.41s
+
+     Running unittests src/main.rs (providers/target/debug/deps/qcore_provider_ctraces-a2bce643a778e951)
+
+running 1 test
+test tests::namespace_is_derived_and_published_modules_are_owned ... ok
+
+test result: ok. 1 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+
+     Running unittests src/main.rs (providers/target/debug/deps/qcore_provider_libevent-9eec1b0266169b6d)
+
+running 2 tests
+test tests::namespace_is_derived_and_published_modules_are_owned ... ok
+test tests::every_include_names_a_published_libc_module ... ok
+
+test result: ok. 2 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.01s
+
+     Running unittests src/main.rs (providers/target/debug/deps/qcore_provider_librdkafka-d1ab1e567a04dfdb)
+
+running 2 tests
+test tests::namespace_is_derived_and_published_modules_are_owned ... ok
+test tests::every_include_names_a_published_libc_module ... ok
+
+test result: ok. 2 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.01s
+
+     Running unittests src/lib.rs (providers/target/debug/deps/quirin_provider_cfl-83bf0f2e392045f8)
+
+running 2 tests
+test tests::namespace_is_derived_and_published_modules_are_owned ... ok
+test tests::index_is_exactly_the_contract_tree ... ok
+
+test result: ok. 2 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+
+     Running unittests src/lib.rs (providers/target/debug/deps/quirin_provider_fluent_bit-680127a3bc7b2ea3)
+
+running 3 tests
+test tests::namespace_is_derived_and_published_modules_are_owned ... ok
+test tests::every_include_names_a_published_libc_module ... ok
+test tests::index_is_exactly_the_contract_tree ... ok
+
+test result: ok. 3 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+
+     Running unittests src/lib.rs (providers/target/debug/deps/quirin_provider_libc-8ab724577f02a925)
+
+running 2 tests
+test tests::namespace_is_derived_and_published_modules_are_owned ... ok
+test tests::index_is_exactly_the_contract_tree ... ok
+
+test result: ok. 2 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+
+     Running unittests src/lib.rs (providers/target/debug/deps/quirin_provider_mpack-1b5951c09e2bfa2b)
+
+running 2 tests
+test tests::namespace_is_derived_and_published_modules_are_owned ... ok
+test tests::index_is_exactly_the_contract_tree ... ok
+
+test result: ok. 2 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+
+     Running unittests src/lib.rs (providers/target/debug/deps/quirin_provider_msgpack-e4e2988d930b63fa)
+
+running 2 tests
+test tests::namespace_is_derived_and_published_modules_are_owned ... ok
+test tests::index_is_exactly_the_contract_tree ... ok
+
+test result: ok. 2 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+
+     Running unittests src/lib.rs (providers/target/debug/deps/quirin_provider_plugin-d6608985f8875ec8)
+
+running 4 tests
+test tests::namespaces_derive_like_the_load_path ... ok
+test package::tests::the_writer_installs_exactly_the_bytes_with_mode_0755 ... ok
+test package::tests::a_failed_writer_leaves_no_package_that_verifies ... ok
+test package::tests::every_writer_failure_is_an_error_naming_its_cause ... ok
+
+test result: ok. 4 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.01s
+
+     Running unittests src/main.rs (providers/target/debug/deps/quirin_plugin-e8cca2495a13502a)
+
+running 0 tests
+
+test result: ok. 0 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+
+     Running tests/sdk.rs (providers/target/debug/deps/sdk-83faf78242c0bd3b)
+
+running 5 tests
+test the_example_crate_reads_and_generates_its_user_load_path ... ok
+test a_new_crate_from_the_template_is_a_valid_crate_held_for_review ... ok
+test a_crate_outside_the_load_path_directory_or_malformed_is_refused ... ok
+test the_example_checker_packages_verifies_and_answers_a_claim ... ok
+test a_multi_threaded_caller_builds_and_executes_packages_while_siblings_spawn ... ok
+
+test result: ok. 5 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 19.89s
+
+     Running unittests src/lib.rs (providers/target/debug/deps/quirin_provider_shared-2e0654d21f7adbfe)
+
+running 63 tests
+test call_use_effect::tests::dropping_a_guard_changes_the_reading_instead_of_refusing_it ... ok
+test call_use_effect::tests::the_reading_is_a_pure_function_of_the_supplied_paths ... ok
+test call_use_effect::tests::the_native_reading_reports_a_stored_and_guarded_result_on_both_paths ... ok
+test call_use_effect::tests::the_request_gate_declines_every_other_profile_capability_and_dialect ... ok
+test call_use_effect::tests::the_wrapper_reading_reports_four_calls_whose_results_are_all_ignored ... ok
+test cleanup_replay_effect::tests::the_route_declines_every_request_that_is_not_its_own ... ok
+test composition_effect::tests::a_changed_probe_body_changes_the_reading_rather_than_being_ignored ... ok
+test cleanup_replay_effect::tests::dropping_a_field_reset_is_refused_rather_than_normalised ... ok
+test cleanup_replay_effect::tests::the_native_unmap_replay_resets_all_three_declared_fields_in_order ... ok
+test cleanup_replay_effect::tests::the_native_close_replay_covers_four_prestates_and_resets_one_field ... ok
+test cleanup_replay_effect::tests::the_guarded_delete_replay_covers_five_prestates_and_preserves_every_field ... ok
+test composition_effect::tests::degenerate_memory_close_questions_decline ... ok
+test cleanup_replay_effect::tests::path_shapes_outside_the_replay_rules_are_declined ... ok
+test composition_effect::tests::a_changed_prerequisite_body_changes_the_composed_reading ... ok
+test composition_effect::tests::degenerate_projections_decline_bounded ... ok
+test composition_effect::tests::degenerate_nested_questions_decline_bounded ... ok
+test composition_effect::tests::degenerate_file_close_questions_decline_bounded ... ok
+test cleanup_replay_effect::tests::a_falsified_profile_never_yields_a_reading_the_core_would_accept ... ok
+test call_use_effect::tests::every_degenerate_or_oversized_projection_is_declined_without_panicking ... ok
+test composition_effect::tests::degenerate_symbolic_questions_decline ... ok
+test cleanup_replay_effect::tests::the_guarded_delete_shape_rules_are_each_load_bearing ... ok
+test composition_effect::tests::the_nested_reading_is_recomputed_not_received ... ok
+test composition_effect::tests::the_memory_close_request_gate_is_exact ... ok
+test composition_effect::tests::the_producer_recomputes_the_whole_memory_close_reading ... ok
+test composition_effect::tests::the_producer_recomputes_the_whole_composed_reading ... ok
+test counter_effect::tests::every_departure_from_the_supported_path_refuses ... ok
+test cleanup_replay_effect::tests::degenerate_and_oversized_projections_decline_without_panicking ... ok
+test counter_effect::tests::reads_field_direction_and_storage_type_from_the_path ... ok
+test reactor_callbacks::tests::a_foreign_capability_or_profile_is_declined ... ok
+test reactor_callbacks::tests::every_departure_from_the_admitted_family_refuses ... ok
+test reactor_callbacks::tests::reads_registration_index_generation_and_authority_from_the_program ... ok
+test source_effect::tests::branches_use_c_truthiness_and_return_stops_later_effects ... ok
+test source_effect::tests::comparisons_negation_and_nested_blocks_preserve_integer_results ... ok
+test source_effect::tests::computes_both_prestates_with_ordered_writes_and_updated_field_reads ... ok
+test source_effect::tests::rejects_failure_on_either_prestate_and_never_emits_partial_paths ... ok
+test source_effect::tests::void_fallthrough_and_early_return_keep_unit_abi ... ok
+test source_effect::tests::wrong_result_forms_reject_even_when_unreachable ... ok
+test composition_effect::tests::the_producer_declines_every_split_of_the_symbolic_domain ... ok
+test teardown_effect::tests::a_changed_unlink_body_changes_the_reading_instead_of_being_ignored ... ok
+test composition_effect::tests::wrapper_bodies_outside_the_family_rules_decline ... ok
+test teardown_effect::tests::a_destructor_that_stops_releasing_a_field_is_read_as_such ... ok
+test teardown_effect::tests::a_field_the_body_never_releases_is_reported_as_unreleased ... ok
+test teardown_effect::tests::reads_both_alias_classes_of_the_unlink_from_the_paths ... ok
+test source_effect::tests::limits_cover_deep_expressions_and_unreachable_oversized_programs ... ok
+test teardown_effect::tests::reads_every_realizable_nullable_state_of_the_destructor ... ok
+test composition_effect::tests::the_honest_filesystem_question_is_answered_with_the_recomputed_reading ... ok
+test tests::bundle_is_disjoint_and_each_set_stays_in_its_library ... ok
+test tests::namespace_is_derived_and_published_modules_are_owned ... ok
+test teardown_effect::tests::every_departure_from_the_supported_unlink_refuses ... ok
+test composition_effect::tests::the_producer_recomputes_the_whole_three_level_filesystem_reading ... ok
+test tests::load_path_manifest_matches_the_linked_crates ... ok
+test composition_effect::tests::the_honest_symbolic_question_is_answered_with_the_recomputed_reading ... ok
+test teardown_effect::tests::every_departure_from_the_supported_destructor_refuses ... ok
+test composition_effect::tests::degenerate_filesystem_questions_decline ... ok
+test composition_effect::tests::a_changed_filesystem_probe_changes_the_reading_rather_than_being_ignored ... ok
+test composition_effect::tests::the_request_gate_declines_every_other_exchange ... ok
+test tests::own_index_is_exactly_the_contract_tree ... ok
+test composition_effect::tests::the_producer_recomputes_the_whole_symbolic_reading ... ok
+test composition_effect::tests::permuting_a_prerequisite_bodys_paths_is_invisible_to_this_level ... ok
+test composition_effect::tests::the_producer_recomputes_the_whole_two_level_reading ... ok
+test composition_effect::tests::the_file_close_request_gate_binds_family_to_profile ... ok
+test composition_effect::tests::the_filesystem_request_gate_is_exact ... ok
+test composition_effect::tests::the_symbolic_request_gate_is_exact ... ok
+
+test result: ok. 63 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.06s
+
+   Doc-tests qcore_provider_conformance
+
+running 0 tests
+
+test result: ok. 0 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+
+   Doc-tests quirin_provider_cfl
+
+running 0 tests
+
+test result: ok. 0 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+
+   Doc-tests quirin_provider_fluent_bit
+
+running 0 tests
+
+test result: ok. 0 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+
+   Doc-tests quirin_provider_libc
+
+running 0 tests
+
+test result: ok. 0 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+
+   Doc-tests quirin_provider_mpack
+
+running 0 tests
+
+test result: ok. 0 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+
+   Doc-tests quirin_provider_msgpack
+
+running 0 tests
+
+test result: ok. 0 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+
+   Doc-tests quirin_provider_plugin
+
+running 1 test
+test quirin-provider-plugin/src/checker.rs - checker (line 10) ... ignored
+
+test result: ok. 0 passed; 0 failed; 1 ignored; 0 measured; 0 filtered out; finished in 0.00s
+
+all doctests ran in 0.07s; merged doctests compilation took 0.07s
+   Doc-tests quirin_provider_shared
+
+running 0 tests
+
+test result: ok. 0 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+

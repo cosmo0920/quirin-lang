@@ -1,0 +1,45 @@
+{
+  "exact_bytes_equal": false,
+  "sha256": "c766b5b2fe4161b549c37a6ae4fbe2298e5087cdbbca50f860572d70a2c6e909",
+  "getter_closure_gain": 0,
+  "base_plan": {
+    "baseline_same": 6,
+    "baseline_cross": 6,
+    "ceiling": 384,
+    "ceiling_waits_on_bodies": {
+      "0": 6,
+      "1": 249,
+      "2": 95,
+      "3": 13,
+      "4": 5,
+      "5": 5,
+      "6": 5,
+      "7": 2,
+      "8": 1,
+      "9": 1,
+      "11": 1,
+      "13": 1
+    },
+    "bodies": 2192
+  },
+  "tip_plan": {
+    "baseline_same": 6,
+    "baseline_cross": 6,
+    "ceiling": 384,
+    "ceiling_waits_on_bodies": {
+      "0": 6,
+      "1": 249,
+      "2": 95,
+      "3": 13,
+      "4": 5,
+      "5": 5,
+      "6": 5,
+      "7": 2,
+      "8": 1,
+      "9": 1,
+      "11": 1,
+      "13": 1
+    },
+    "bodies": 2191
+  }
+}

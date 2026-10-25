@@ -856,6 +856,17 @@ pub enum LegacyInstruction {
         base: String,
         fallback: Box<LegacyInstruction>,
     },
+    /// Rule 36b: explicit checked self-writes into live owned storage.
+    /// `path` selects the embedded object; `writes` names its self fields.
+    /// Appended; never exported as an ordinary custody summary.
+    TrackedSelfInit {
+        function: String,
+        base: String,
+        path: Vec<String>,
+        writes: Vec<String>,
+        access: Box<LegacyInstruction>,
+        fallback: Box<LegacyInstruction>,
+    },
 }
 
 /// Card **W43-INDEX-TRAVERSAL**: what a pointer step does to the pointer's
@@ -5772,6 +5783,8 @@ pub(crate) use self::cfg_builder::*;
 pub(crate) mod exact_formal_return;
 #[path = "legacy_self_link_init.rs"]
 pub(crate) mod self_link_init;
+#[path = "legacy_tracked_self_init.rs"]
+pub(crate) mod tracked_self_init;
 
 #[path = "legacy_transfer.rs"]
 mod transfer;

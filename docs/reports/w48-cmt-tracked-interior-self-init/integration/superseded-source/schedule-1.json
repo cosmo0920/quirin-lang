@@ -1,0 +1,63 @@
+{
+  "head": "c6561aa8143097ad51834d7e83641b46295496a2",
+  "cwd": "/home/cosmo/.codex/worktrees/808d/quirin-lang",
+  "started": "2026-10-24T22:38:07.760660+00:00",
+  "environment_overrides": {
+    "CARGO_BUILD_JOBS": "6",
+    "QCORE_CLANG": "/usr/lib/llvm-21/bin/clang"
+  },
+  "steps": [
+    {
+      "name": "submodules",
+      "command": [
+        "git",
+        "submodule",
+        "update",
+        "--init",
+        "--recursive"
+      ],
+      "exit": 0,
+      "seconds": 0.04437332600355148,
+      "log": "/home/cosmo/.codex/worktrees/808d/quirin-lang/private/cmt-main-integration/landing-1/submodules.log"
+    },
+    {
+      "name": "clang-version",
+      "command": [
+        "/usr/lib/llvm-21/bin/clang",
+        "--version"
+      ],
+      "exit": 0,
+      "seconds": 0.025946112000383437,
+      "log": "/home/cosmo/.codex/worktrees/808d/quirin-lang/private/cmt-main-integration/landing-1/clang-version.txt"
+    },
+    {
+      "name": "fmt",
+      "command": [
+        "cargo",
+        "fmt",
+        "--all",
+        "--",
+        "--check"
+      ],
+      "exit": 0,
+      "seconds": 9.232251756009646,
+      "log": "/home/cosmo/.codex/worktrees/808d/quirin-lang/private/cmt-main-integration/landing-1/fmt.log"
+    },
+    {
+      "name": "clippy",
+      "command": [
+        "cargo",
+        "clippy",
+        "--all-targets",
+        "--",
+        "-D",
+        "warnings"
+      ],
+      "exit": 0,
+      "seconds": 7.0963620230031665,
+      "log": "/home/cosmo/.codex/worktrees/808d/quirin-lang/private/cmt-main-integration/landing-1/clippy.log"
+    }
+  ],
+  "scheduling_note": "Stopped only our waiting rust-suite slot child before tests launched; completed steps retained. Remaining commands resume in independent lanes using landing-2. No source changes.",
+  "stopped_at": "2026-10-24T22:40:15.730386+00:00"
+}

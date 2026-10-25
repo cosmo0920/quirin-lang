@@ -1,0 +1,19 @@
+{
+  "command": [
+    "env",
+    "CARGO_BUILD_JOBS=6",
+    "QCORE_AUDIT_BUILD_COMMIT=bb574e826490f403c84bd0d0e3fb2177c11f530d",
+    "cargo",
+    "build",
+    "--release",
+    "-p",
+    "qcore-audit",
+    "--bin",
+    "quirin-audit"
+  ],
+  "head": "e23b0797f2f32995e05dec60900e1025568ae8f7",
+  "semantic_base": "bb574e826490f403c84bd0d0e3fb2177c11f530d",
+  "started": "2026-10-24T11:21:56.503399+00:00",
+  "exit": 0,
+  "ended": "2026-10-24T11:23:35.626216+00:00"
+}

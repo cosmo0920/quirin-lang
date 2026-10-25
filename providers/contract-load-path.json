@@ -80,9 +80,11 @@
       "modules": [
         "cmetrics/context_lifetime.qv",
         "cmetrics/counter_reset.qv",
+        "cmetrics/map_lifetime.qv",
         "cmetrics/metric_values.qv",
         "cmetrics/mpack_utils.qv",
-        "cmetrics/null_deref.qv"
+        "cmetrics/null_deref.qv",
+        "cmetrics/opts_lifetime.qv"
       ],
       "published": {},
       "resource_view": [

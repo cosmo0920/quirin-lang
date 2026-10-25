@@ -1,0 +1,703 @@
+{
+  "route": "slice",
+  "all_semantic_leaves_accounted": true,
+  "unexplained_leaves": 0,
+  "leaves": [
+    {
+      "leaf": {
+        "file": "resource-diagnostics.json",
+        "path": [
+          "units",
+          0,
+          "functions",
+          43,
+          "diagnostics",
+          69,
+          "description"
+        ],
+        "before": "call to uncontracted function `cfl_list_init`",
+        "after": "indirect memory access is outside the resource projection"
+      },
+      "reason": "Rule 36b source-checked initializer transport at ('fluent-bit-tail-pause', 'src/flb_input.c', 'flb_input_new', 0): retained owner storage no longer receives an opaque initializer escape; actual before/after diagnostics are preserved in the full-row record. Its status is Unknown -> Unknown. Remaining indirect-access refusals stay Unknown. No API declared-model permission is used.",
+      "evidence": [
+        "full-row-movements.json.gz key ('fluent-bit-tail-pause', 'src/flb_input.c', 'flb_input_new', 0)",
+        "crates/qcore-c-gateway/src/legacy_tracked_self_init.rs",
+        "crates/qcore-c-gateway/src/legacy_transfer.rs:TrackedSelfInit",
+        "steps/focus-rust-3.json",
+        "steps/focus-deep-2.json"
+      ]
+    },
+    {
+      "leaf": {
+        "file": "resource-diagnostics.json",
+        "path": [
+          "units",
+          0,
+          "functions",
+          43,
+          "diagnostics",
+          70,
+          "description"
+        ],
+        "before": "call to uncontracted function `cfl_list_init`",
+        "after": "indirect memory access is outside the resource projection"
+      },
+      "reason": "Rule 36b source-checked initializer transport at ('fluent-bit-tail-pause', 'src/flb_input.c', 'flb_input_new', 0): retained owner storage no longer receives an opaque initializer escape; actual before/after diagnostics are preserved in the full-row record. Its status is Unknown -> Unknown. Remaining indirect-access refusals stay Unknown. No API declared-model permission is used.",
+      "evidence": [
+        "full-row-movements.json.gz key ('fluent-bit-tail-pause', 'src/flb_input.c', 'flb_input_new', 0)",
+        "crates/qcore-c-gateway/src/legacy_tracked_self_init.rs",
+        "crates/qcore-c-gateway/src/legacy_transfer.rs:TrackedSelfInit",
+        "steps/focus-rust-3.json",
+        "steps/focus-deep-2.json"
+      ]
+    },
+    {
+      "leaf": {
+        "file": "resource-diagnostics.json",
+        "path": [
+          "units",
+          0,
+          "functions",
+          43,
+          "diagnostics",
+          71,
+          "description"
+        ],
+        "before": "call to uncontracted function `mk_list_init`",
+        "after": "indirect memory access is outside the resource projection"
+      },
+      "reason": "Rule 36b source-checked initializer transport at ('fluent-bit-tail-pause', 'src/flb_input.c', 'flb_input_new', 0): retained owner storage no longer receives an opaque initializer escape; actual before/after diagnostics are preserved in the full-row record. Its status is Unknown -> Unknown. Remaining indirect-access refusals stay Unknown. No API declared-model permission is used.",
+      "evidence": [
+        "full-row-movements.json.gz key ('fluent-bit-tail-pause', 'src/flb_input.c', 'flb_input_new', 0)",
+        "crates/qcore-c-gateway/src/legacy_tracked_self_init.rs",
+        "crates/qcore-c-gateway/src/legacy_transfer.rs:TrackedSelfInit",
+        "steps/focus-rust-3.json",
+        "steps/focus-deep-2.json"
+      ]
+    },
+    {
+      "leaf": {
+        "file": "resource-diagnostics.json",
+        "path": [
+          "units",
+          0,
+          "functions",
+          43,
+          "diagnostics",
+          72,
+          "description"
+        ],
+        "before": "call to uncontracted function `mk_list_init`",
+        "after": "indirect memory access is outside the resource projection"
+      },
+      "reason": "Rule 36b source-checked initializer transport at ('fluent-bit-tail-pause', 'src/flb_input.c', 'flb_input_new', 0): retained owner storage no longer receives an opaque initializer escape; actual before/after diagnostics are preserved in the full-row record. Its status is Unknown -> Unknown. Remaining indirect-access refusals stay Unknown. No API declared-model permission is used.",
+      "evidence": [
+        "full-row-movements.json.gz key ('fluent-bit-tail-pause', 'src/flb_input.c', 'flb_input_new', 0)",
+        "crates/qcore-c-gateway/src/legacy_tracked_self_init.rs",
+        "crates/qcore-c-gateway/src/legacy_transfer.rs:TrackedSelfInit",
+        "steps/focus-rust-3.json",
+        "steps/focus-deep-2.json"
+      ]
+    },
+    {
+      "leaf": {
+        "file": "resource-diagnostics.json",
+        "path": [
+          "units",
+          0,
+          "functions",
+          43,
+          "diagnostics",
+          73,
+          "description"
+        ],
+        "before": "call to uncontracted function `mk_list_init`",
+        "after": "indirect memory access is outside the resource projection"
+      },
+      "reason": "Rule 36b source-checked initializer transport at ('fluent-bit-tail-pause', 'src/flb_input.c', 'flb_input_new', 0): retained owner storage no longer receives an opaque initializer escape; actual before/after diagnostics are preserved in the full-row record. Its status is Unknown -> Unknown. Remaining indirect-access refusals stay Unknown. No API declared-model permission is used.",
+      "evidence": [
+        "full-row-movements.json.gz key ('fluent-bit-tail-pause', 'src/flb_input.c', 'flb_input_new', 0)",
+        "crates/qcore-c-gateway/src/legacy_tracked_self_init.rs",
+        "crates/qcore-c-gateway/src/legacy_transfer.rs:TrackedSelfInit",
+        "steps/focus-rust-3.json",
+        "steps/focus-deep-2.json"
+      ]
+    },
+    {
+      "leaf": {
+        "file": "resource-diagnostics.json",
+        "path": [
+          "units",
+          0,
+          "functions",
+          43,
+          "diagnostics",
+          74,
+          "description"
+        ],
+        "before": "call to uncontracted function `mk_list_init`",
+        "after": "indirect memory access is outside the resource projection"
+      },
+      "reason": "Rule 36b source-checked initializer transport at ('fluent-bit-tail-pause', 'src/flb_input.c', 'flb_input_new', 0): retained owner storage no longer receives an opaque initializer escape; actual before/after diagnostics are preserved in the full-row record. Its status is Unknown -> Unknown. Remaining indirect-access refusals stay Unknown. No API declared-model permission is used.",
+      "evidence": [
+        "full-row-movements.json.gz key ('fluent-bit-tail-pause', 'src/flb_input.c', 'flb_input_new', 0)",
+        "crates/qcore-c-gateway/src/legacy_tracked_self_init.rs",
+        "crates/qcore-c-gateway/src/legacy_transfer.rs:TrackedSelfInit",
+        "steps/focus-rust-3.json",
+        "steps/focus-deep-2.json"
+      ]
+    },
+    {
+      "leaf": {
+        "file": "resource-diagnostics.json",
+        "path": [
+          "units",
+          0,
+          "functions",
+          43,
+          "diagnostics",
+          75,
+          "description"
+        ],
+        "before": "call to uncontracted function `mk_list_init`",
+        "after": "indirect memory access is outside the resource projection"
+      },
+      "reason": "Rule 36b source-checked initializer transport at ('fluent-bit-tail-pause', 'src/flb_input.c', 'flb_input_new', 0): retained owner storage no longer receives an opaque initializer escape; actual before/after diagnostics are preserved in the full-row record. Its status is Unknown -> Unknown. Remaining indirect-access refusals stay Unknown. No API declared-model permission is used.",
+      "evidence": [
+        "full-row-movements.json.gz key ('fluent-bit-tail-pause', 'src/flb_input.c', 'flb_input_new', 0)",
+        "crates/qcore-c-gateway/src/legacy_tracked_self_init.rs",
+        "crates/qcore-c-gateway/src/legacy_transfer.rs:TrackedSelfInit",
+        "steps/focus-rust-3.json",
+        "steps/focus-deep-2.json"
+      ]
+    },
+    {
+      "leaf": {
+        "file": "resource-diagnostics.json",
+        "path": [
+          "units",
+          0,
+          "functions",
+          43,
+          "diagnostics",
+          76,
+          "description"
+        ],
+        "before": "call to uncontracted function `mk_list_init`",
+        "after": "indirect memory access is outside the resource projection"
+      },
+      "reason": "Rule 36b source-checked initializer transport at ('fluent-bit-tail-pause', 'src/flb_input.c', 'flb_input_new', 0): retained owner storage no longer receives an opaque initializer escape; actual before/after diagnostics are preserved in the full-row record. Its status is Unknown -> Unknown. Remaining indirect-access refusals stay Unknown. No API declared-model permission is used.",
+      "evidence": [
+        "full-row-movements.json.gz key ('fluent-bit-tail-pause', 'src/flb_input.c', 'flb_input_new', 0)",
+        "crates/qcore-c-gateway/src/legacy_tracked_self_init.rs",
+        "crates/qcore-c-gateway/src/legacy_transfer.rs:TrackedSelfInit",
+        "steps/focus-rust-3.json",
+        "steps/focus-deep-2.json"
+      ]
+    },
+    {
+      "leaf": {
+        "file": "resource-diagnostics.json",
+        "path": [
+          "units",
+          0,
+          "functions",
+          43,
+          "diagnostics",
+          77,
+          "description"
+        ],
+        "before": "call to uncontracted function `mk_list_init`",
+        "after": "indirect memory access is outside the resource projection"
+      },
+      "reason": "Rule 36b source-checked initializer transport at ('fluent-bit-tail-pause', 'src/flb_input.c', 'flb_input_new', 0): retained owner storage no longer receives an opaque initializer escape; actual before/after diagnostics are preserved in the full-row record. Its status is Unknown -> Unknown. Remaining indirect-access refusals stay Unknown. No API declared-model permission is used.",
+      "evidence": [
+        "full-row-movements.json.gz key ('fluent-bit-tail-pause', 'src/flb_input.c', 'flb_input_new', 0)",
+        "crates/qcore-c-gateway/src/legacy_tracked_self_init.rs",
+        "crates/qcore-c-gateway/src/legacy_transfer.rs:TrackedSelfInit",
+        "steps/focus-rust-3.json",
+        "steps/focus-deep-2.json"
+      ]
+    },
+    {
+      "leaf": {
+        "file": "resource-diagnostics.json",
+        "path": [
+          "units",
+          0,
+          "functions",
+          43,
+          "diagnostics",
+          82,
+          "description"
+        ],
+        "before": "call to uncontracted function `mk_list_init`",
+        "after": "indirect memory access is outside the resource projection"
+      },
+      "reason": "Rule 36b source-checked initializer transport at ('fluent-bit-tail-pause', 'src/flb_input.c', 'flb_input_new', 0): retained owner storage no longer receives an opaque initializer escape; actual before/after diagnostics are preserved in the full-row record. Its status is Unknown -> Unknown. Remaining indirect-access refusals stay Unknown. No API declared-model permission is used.",
+      "evidence": [
+        "full-row-movements.json.gz key ('fluent-bit-tail-pause', 'src/flb_input.c', 'flb_input_new', 0)",
+        "crates/qcore-c-gateway/src/legacy_tracked_self_init.rs",
+        "crates/qcore-c-gateway/src/legacy_transfer.rs:TrackedSelfInit",
+        "steps/focus-rust-3.json",
+        "steps/focus-deep-2.json"
+      ]
+    },
+    {
+      "leaf": {
+        "file": "resource-diagnostics.json",
+        "path": [
+          "units",
+          1,
+          "functions",
+          43,
+          "diagnostics",
+          69,
+          "description"
+        ],
+        "before": "call to uncontracted function `cfl_list_init`",
+        "after": "indirect memory access is outside the resource projection"
+      },
+      "reason": "Rule 36b source-checked initializer transport at ('fluent-bit-tail-pause', 'src/flb_input.c', 'flb_input_new', 1): retained owner storage no longer receives an opaque initializer escape; actual before/after diagnostics are preserved in the full-row record. Its status is Unknown -> Unknown. Remaining indirect-access refusals stay Unknown. No API declared-model permission is used.",
+      "evidence": [
+        "full-row-movements.json.gz key ('fluent-bit-tail-pause', 'src/flb_input.c', 'flb_input_new', 1)",
+        "crates/qcore-c-gateway/src/legacy_tracked_self_init.rs",
+        "crates/qcore-c-gateway/src/legacy_transfer.rs:TrackedSelfInit",
+        "steps/focus-rust-3.json",
+        "steps/focus-deep-2.json"
+      ]
+    },
+    {
+      "leaf": {
+        "file": "resource-diagnostics.json",
+        "path": [
+          "units",
+          1,
+          "functions",
+          43,
+          "diagnostics",
+          70,
+          "description"
+        ],
+        "before": "call to uncontracted function `cfl_list_init`",
+        "after": "indirect memory access is outside the resource projection"
+      },
+      "reason": "Rule 36b source-checked initializer transport at ('fluent-bit-tail-pause', 'src/flb_input.c', 'flb_input_new', 1): retained owner storage no longer receives an opaque initializer escape; actual before/after diagnostics are preserved in the full-row record. Its status is Unknown -> Unknown. Remaining indirect-access refusals stay Unknown. No API declared-model permission is used.",
+      "evidence": [
+        "full-row-movements.json.gz key ('fluent-bit-tail-pause', 'src/flb_input.c', 'flb_input_new', 1)",
+        "crates/qcore-c-gateway/src/legacy_tracked_self_init.rs",
+        "crates/qcore-c-gateway/src/legacy_transfer.rs:TrackedSelfInit",
+        "steps/focus-rust-3.json",
+        "steps/focus-deep-2.json"
+      ]
+    },
+    {
+      "leaf": {
+        "file": "resource-diagnostics.json",
+        "path": [
+          "units",
+          1,
+          "functions",
+          43,
+          "diagnostics",
+          71,
+          "description"
+        ],
+        "before": "call to uncontracted function `mk_list_init`",
+        "after": "indirect memory access is outside the resource projection"
+      },
+      "reason": "Rule 36b source-checked initializer transport at ('fluent-bit-tail-pause', 'src/flb_input.c', 'flb_input_new', 1): retained owner storage no longer receives an opaque initializer escape; actual before/after diagnostics are preserved in the full-row record. Its status is Unknown -> Unknown. Remaining indirect-access refusals stay Unknown. No API declared-model permission is used.",
+      "evidence": [
+        "full-row-movements.json.gz key ('fluent-bit-tail-pause', 'src/flb_input.c', 'flb_input_new', 1)",
+        "crates/qcore-c-gateway/src/legacy_tracked_self_init.rs",
+        "crates/qcore-c-gateway/src/legacy_transfer.rs:TrackedSelfInit",
+        "steps/focus-rust-3.json",
+        "steps/focus-deep-2.json"
+      ]
+    },
+    {
+      "leaf": {
+        "file": "resource-diagnostics.json",
+        "path": [
+          "units",
+          1,
+          "functions",
+          43,
+          "diagnostics",
+          72,
+          "description"
+        ],
+        "before": "call to uncontracted function `mk_list_init`",
+        "after": "indirect memory access is outside the resource projection"
+      },
+      "reason": "Rule 36b source-checked initializer transport at ('fluent-bit-tail-pause', 'src/flb_input.c', 'flb_input_new', 1): retained owner storage no longer receives an opaque initializer escape; actual before/after diagnostics are preserved in the full-row record. Its status is Unknown -> Unknown. Remaining indirect-access refusals stay Unknown. No API declared-model permission is used.",
+      "evidence": [
+        "full-row-movements.json.gz key ('fluent-bit-tail-pause', 'src/flb_input.c', 'flb_input_new', 1)",
+        "crates/qcore-c-gateway/src/legacy_tracked_self_init.rs",
+        "crates/qcore-c-gateway/src/legacy_transfer.rs:TrackedSelfInit",
+        "steps/focus-rust-3.json",
+        "steps/focus-deep-2.json"
+      ]
+    },
+    {
+      "leaf": {
+        "file": "resource-diagnostics.json",
+        "path": [
+          "units",
+          1,
+          "functions",
+          43,
+          "diagnostics",
+          73,
+          "description"
+        ],
+        "before": "call to uncontracted function `mk_list_init`",
+        "after": "indirect memory access is outside the resource projection"
+      },
+      "reason": "Rule 36b source-checked initializer transport at ('fluent-bit-tail-pause', 'src/flb_input.c', 'flb_input_new', 1): retained owner storage no longer receives an opaque initializer escape; actual before/after diagnostics are preserved in the full-row record. Its status is Unknown -> Unknown. Remaining indirect-access refusals stay Unknown. No API declared-model permission is used.",
+      "evidence": [
+        "full-row-movements.json.gz key ('fluent-bit-tail-pause', 'src/flb_input.c', 'flb_input_new', 1)",
+        "crates/qcore-c-gateway/src/legacy_tracked_self_init.rs",
+        "crates/qcore-c-gateway/src/legacy_transfer.rs:TrackedSelfInit",
+        "steps/focus-rust-3.json",
+        "steps/focus-deep-2.json"
+      ]
+    },
+    {
+      "leaf": {
+        "file": "resource-diagnostics.json",
+        "path": [
+          "units",
+          1,
+          "functions",
+          43,
+          "diagnostics",
+          74,
+          "description"
+        ],
+        "before": "call to uncontracted function `mk_list_init`",
+        "after": "indirect memory access is outside the resource projection"
+      },
+      "reason": "Rule 36b source-checked initializer transport at ('fluent-bit-tail-pause', 'src/flb_input.c', 'flb_input_new', 1): retained owner storage no longer receives an opaque initializer escape; actual before/after diagnostics are preserved in the full-row record. Its status is Unknown -> Unknown. Remaining indirect-access refusals stay Unknown. No API declared-model permission is used.",
+      "evidence": [
+        "full-row-movements.json.gz key ('fluent-bit-tail-pause', 'src/flb_input.c', 'flb_input_new', 1)",
+        "crates/qcore-c-gateway/src/legacy_tracked_self_init.rs",
+        "crates/qcore-c-gateway/src/legacy_transfer.rs:TrackedSelfInit",
+        "steps/focus-rust-3.json",
+        "steps/focus-deep-2.json"
+      ]
+    },
+    {
+      "leaf": {
+        "file": "resource-diagnostics.json",
+        "path": [
+          "units",
+          1,
+          "functions",
+          43,
+          "diagnostics",
+          75,
+          "description"
+        ],
+        "before": "call to uncontracted function `mk_list_init`",
+        "after": "indirect memory access is outside the resource projection"
+      },
+      "reason": "Rule 36b source-checked initializer transport at ('fluent-bit-tail-pause', 'src/flb_input.c', 'flb_input_new', 1): retained owner storage no longer receives an opaque initializer escape; actual before/after diagnostics are preserved in the full-row record. Its status is Unknown -> Unknown. Remaining indirect-access refusals stay Unknown. No API declared-model permission is used.",
+      "evidence": [
+        "full-row-movements.json.gz key ('fluent-bit-tail-pause', 'src/flb_input.c', 'flb_input_new', 1)",
+        "crates/qcore-c-gateway/src/legacy_tracked_self_init.rs",
+        "crates/qcore-c-gateway/src/legacy_transfer.rs:TrackedSelfInit",
+        "steps/focus-rust-3.json",
+        "steps/focus-deep-2.json"
+      ]
+    },
+    {
+      "leaf": {
+        "file": "resource-diagnostics.json",
+        "path": [
+          "units",
+          1,
+          "functions",
+          43,
+          "diagnostics",
+          76,
+          "description"
+        ],
+        "before": "call to uncontracted function `mk_list_init`",
+        "after": "indirect memory access is outside the resource projection"
+      },
+      "reason": "Rule 36b source-checked initializer transport at ('fluent-bit-tail-pause', 'src/flb_input.c', 'flb_input_new', 1): retained owner storage no longer receives an opaque initializer escape; actual before/after diagnostics are preserved in the full-row record. Its status is Unknown -> Unknown. Remaining indirect-access refusals stay Unknown. No API declared-model permission is used.",
+      "evidence": [
+        "full-row-movements.json.gz key ('fluent-bit-tail-pause', 'src/flb_input.c', 'flb_input_new', 1)",
+        "crates/qcore-c-gateway/src/legacy_tracked_self_init.rs",
+        "crates/qcore-c-gateway/src/legacy_transfer.rs:TrackedSelfInit",
+        "steps/focus-rust-3.json",
+        "steps/focus-deep-2.json"
+      ]
+    },
+    {
+      "leaf": {
+        "file": "resource-diagnostics.json",
+        "path": [
+          "units",
+          1,
+          "functions",
+          43,
+          "diagnostics",
+          77,
+          "description"
+        ],
+        "before": "call to uncontracted function `mk_list_init`",
+        "after": "indirect memory access is outside the resource projection"
+      },
+      "reason": "Rule 36b source-checked initializer transport at ('fluent-bit-tail-pause', 'src/flb_input.c', 'flb_input_new', 1): retained owner storage no longer receives an opaque initializer escape; actual before/after diagnostics are preserved in the full-row record. Its status is Unknown -> Unknown. Remaining indirect-access refusals stay Unknown. No API declared-model permission is used.",
+      "evidence": [
+        "full-row-movements.json.gz key ('fluent-bit-tail-pause', 'src/flb_input.c', 'flb_input_new', 1)",
+        "crates/qcore-c-gateway/src/legacy_tracked_self_init.rs",
+        "crates/qcore-c-gateway/src/legacy_transfer.rs:TrackedSelfInit",
+        "steps/focus-rust-3.json",
+        "steps/focus-deep-2.json"
+      ]
+    },
+    {
+      "leaf": {
+        "file": "resource-diagnostics.json",
+        "path": [
+          "units",
+          1,
+          "functions",
+          43,
+          "diagnostics",
+          82,
+          "description"
+        ],
+        "before": "call to uncontracted function `mk_list_init`",
+        "after": "indirect memory access is outside the resource projection"
+      },
+      "reason": "Rule 36b source-checked initializer transport at ('fluent-bit-tail-pause', 'src/flb_input.c', 'flb_input_new', 1): retained owner storage no longer receives an opaque initializer escape; actual before/after diagnostics are preserved in the full-row record. Its status is Unknown -> Unknown. Remaining indirect-access refusals stay Unknown. No API declared-model permission is used.",
+      "evidence": [
+        "full-row-movements.json.gz key ('fluent-bit-tail-pause', 'src/flb_input.c', 'flb_input_new', 1)",
+        "crates/qcore-c-gateway/src/legacy_tracked_self_init.rs",
+        "crates/qcore-c-gateway/src/legacy_transfer.rs:TrackedSelfInit",
+        "steps/focus-rust-3.json",
+        "steps/focus-deep-2.json"
+      ]
+    },
+    {
+      "leaf": {
+        "file": "resource-diagnostics.json",
+        "path": [
+          "units",
+          2,
+          "functions",
+          15,
+          "diagnostics",
+          5,
+          "description"
+        ],
+        "before": "call to uncontracted function `mk_list_init`",
+        "after": "indirect memory access is outside the resource projection"
+      },
+      "reason": "Rule 36b source-checked initializer transport at ('fluent-bit-tail-pause', 'src/flb_input_thread.c', 'input_thread_instance_create', 0): retained owner storage no longer receives an opaque initializer escape; actual before/after diagnostics are preserved in the full-row record. Its status is Unknown -> Unknown. Remaining indirect-access refusals stay Unknown. No API declared-model permission is used.",
+      "evidence": [
+        "full-row-movements.json.gz key ('fluent-bit-tail-pause', 'src/flb_input_thread.c', 'input_thread_instance_create', 0)",
+        "crates/qcore-c-gateway/src/legacy_tracked_self_init.rs",
+        "crates/qcore-c-gateway/src/legacy_transfer.rs:TrackedSelfInit",
+        "steps/focus-rust-3.json",
+        "steps/focus-deep-2.json"
+      ]
+    },
+    {
+      "leaf": {
+        "file": "resource-diagnostics.json",
+        "path": [
+          "units",
+          2,
+          "functions",
+          15,
+          "diagnostics",
+          6,
+          "description"
+        ],
+        "before": "call to uncontracted function `mk_list_init`",
+        "after": "indirect memory access is outside the resource projection"
+      },
+      "reason": "Rule 36b source-checked initializer transport at ('fluent-bit-tail-pause', 'src/flb_input_thread.c', 'input_thread_instance_create', 0): retained owner storage no longer receives an opaque initializer escape; actual before/after diagnostics are preserved in the full-row record. Its status is Unknown -> Unknown. Remaining indirect-access refusals stay Unknown. No API declared-model permission is used.",
+      "evidence": [
+        "full-row-movements.json.gz key ('fluent-bit-tail-pause', 'src/flb_input_thread.c', 'input_thread_instance_create', 0)",
+        "crates/qcore-c-gateway/src/legacy_tracked_self_init.rs",
+        "crates/qcore-c-gateway/src/legacy_transfer.rs:TrackedSelfInit",
+        "steps/focus-rust-3.json",
+        "steps/focus-deep-2.json"
+      ]
+    },
+    {
+      "leaf": {
+        "file": "resource-diagnostics.json",
+        "path": [
+          "units",
+          3,
+          "functions",
+          15,
+          "diagnostics",
+          5,
+          "description"
+        ],
+        "before": "call to uncontracted function `mk_list_init`",
+        "after": "indirect memory access is outside the resource projection"
+      },
+      "reason": "Rule 36b source-checked initializer transport at ('fluent-bit-tail-pause', 'src/flb_input_thread.c', 'input_thread_instance_create', 1): retained owner storage no longer receives an opaque initializer escape; actual before/after diagnostics are preserved in the full-row record. Its status is Unknown -> Unknown. Remaining indirect-access refusals stay Unknown. No API declared-model permission is used.",
+      "evidence": [
+        "full-row-movements.json.gz key ('fluent-bit-tail-pause', 'src/flb_input_thread.c', 'input_thread_instance_create', 1)",
+        "crates/qcore-c-gateway/src/legacy_tracked_self_init.rs",
+        "crates/qcore-c-gateway/src/legacy_transfer.rs:TrackedSelfInit",
+        "steps/focus-rust-3.json",
+        "steps/focus-deep-2.json"
+      ]
+    },
+    {
+      "leaf": {
+        "file": "resource-diagnostics.json",
+        "path": [
+          "units",
+          3,
+          "functions",
+          15,
+          "diagnostics",
+          6,
+          "description"
+        ],
+        "before": "call to uncontracted function `mk_list_init`",
+        "after": "indirect memory access is outside the resource projection"
+      },
+      "reason": "Rule 36b source-checked initializer transport at ('fluent-bit-tail-pause', 'src/flb_input_thread.c', 'input_thread_instance_create', 1): retained owner storage no longer receives an opaque initializer escape; actual before/after diagnostics are preserved in the full-row record. Its status is Unknown -> Unknown. Remaining indirect-access refusals stay Unknown. No API declared-model permission is used.",
+      "evidence": [
+        "full-row-movements.json.gz key ('fluent-bit-tail-pause', 'src/flb_input_thread.c', 'input_thread_instance_create', 1)",
+        "crates/qcore-c-gateway/src/legacy_tracked_self_init.rs",
+        "crates/qcore-c-gateway/src/legacy_transfer.rs:TrackedSelfInit",
+        "steps/focus-rust-3.json",
+        "steps/focus-deep-2.json"
+      ]
+    },
+    {
+      "leaf": {
+        "file": "resource-diagnostics.json",
+        "path": [
+          "units",
+          7,
+          "functions",
+          1,
+          "diagnostics",
+          95,
+          "description"
+        ],
+        "before": "call to uncontracted function `mk_list_init`",
+        "after": "indirect memory access is outside the resource projection"
+      },
+      "reason": "Rule 36b source-checked initializer transport at ('fluent-bit-tail-pause', 'plugins/in_tail/tail_config.c', 'flb_tail_config_create', 0): retained owner storage no longer receives an opaque initializer escape; actual before/after diagnostics are preserved in the full-row record. Its status is Unknown -> Unknown. Remaining indirect-access refusals stay Unknown. No API declared-model permission is used.",
+      "evidence": [
+        "full-row-movements.json.gz key ('fluent-bit-tail-pause', 'plugins/in_tail/tail_config.c', 'flb_tail_config_create', 0)",
+        "crates/qcore-c-gateway/src/legacy_tracked_self_init.rs",
+        "crates/qcore-c-gateway/src/legacy_transfer.rs:TrackedSelfInit",
+        "steps/focus-rust-3.json",
+        "steps/focus-deep-2.json"
+      ]
+    },
+    {
+      "leaf": {
+        "file": "resource-diagnostics.json",
+        "path": [
+          "units",
+          7,
+          "functions",
+          1,
+          "diagnostics",
+          96,
+          "description"
+        ],
+        "before": "call to uncontracted function `mk_list_init`",
+        "after": "indirect memory access is outside the resource projection"
+      },
+      "reason": "Rule 36b source-checked initializer transport at ('fluent-bit-tail-pause', 'plugins/in_tail/tail_config.c', 'flb_tail_config_create', 0): retained owner storage no longer receives an opaque initializer escape; actual before/after diagnostics are preserved in the full-row record. Its status is Unknown -> Unknown. Remaining indirect-access refusals stay Unknown. No API declared-model permission is used.",
+      "evidence": [
+        "full-row-movements.json.gz key ('fluent-bit-tail-pause', 'plugins/in_tail/tail_config.c', 'flb_tail_config_create', 0)",
+        "crates/qcore-c-gateway/src/legacy_tracked_self_init.rs",
+        "crates/qcore-c-gateway/src/legacy_transfer.rs:TrackedSelfInit",
+        "steps/focus-rust-3.json",
+        "steps/focus-deep-2.json"
+      ]
+    },
+    {
+      "leaf": {
+        "file": "resource-diagnostics.json",
+        "path": [
+          "units",
+          7,
+          "functions",
+          1,
+          "diagnostics",
+          97,
+          "description"
+        ],
+        "before": "call to uncontracted function `mk_list_init`",
+        "after": "indirect memory access is outside the resource projection"
+      },
+      "reason": "Rule 36b source-checked initializer transport at ('fluent-bit-tail-pause', 'plugins/in_tail/tail_config.c', 'flb_tail_config_create', 0): retained owner storage no longer receives an opaque initializer escape; actual before/after diagnostics are preserved in the full-row record. Its status is Unknown -> Unknown. Remaining indirect-access refusals stay Unknown. No API declared-model permission is used.",
+      "evidence": [
+        "full-row-movements.json.gz key ('fluent-bit-tail-pause', 'plugins/in_tail/tail_config.c', 'flb_tail_config_create', 0)",
+        "crates/qcore-c-gateway/src/legacy_tracked_self_init.rs",
+        "crates/qcore-c-gateway/src/legacy_transfer.rs:TrackedSelfInit",
+        "steps/focus-rust-3.json",
+        "steps/focus-deep-2.json"
+      ]
+    },
+    {
+      "leaf": {
+        "file": "resource-diagnostics.json",
+        "path": [
+          "units",
+          7,
+          "functions",
+          1,
+          "diagnostics",
+          98,
+          "description"
+        ],
+        "before": "call to uncontracted function `mk_list_init`",
+        "after": "indirect memory access is outside the resource projection"
+      },
+      "reason": "Rule 36b source-checked initializer transport at ('fluent-bit-tail-pause', 'plugins/in_tail/tail_config.c', 'flb_tail_config_create', 0): retained owner storage no longer receives an opaque initializer escape; actual before/after diagnostics are preserved in the full-row record. Its status is Unknown -> Unknown. Remaining indirect-access refusals stay Unknown. No API declared-model permission is used.",
+      "evidence": [
+        "full-row-movements.json.gz key ('fluent-bit-tail-pause', 'plugins/in_tail/tail_config.c', 'flb_tail_config_create', 0)",
+        "crates/qcore-c-gateway/src/legacy_tracked_self_init.rs",
+        "crates/qcore-c-gateway/src/legacy_transfer.rs:TrackedSelfInit",
+        "steps/focus-rust-3.json",
+        "steps/focus-deep-2.json"
+      ]
+    },
+    {
+      "leaf": {
+        "file": "resource-diagnostics.json",
+        "path": [
+          "units",
+          14,
+          "functions",
+          2,
+          "diagnostics",
+          0,
+          "description"
+        ],
+        "before": "call to uncontracted function `mk_list_init`",
+        "after": "indirect memory access is outside the resource projection"
+      },
+      "reason": "Rule 36b source-checked initializer transport at ('fluent-bit-tail-pause', 'plugins/in_tail/tail_multiline.c', 'flb_tail_mult_create', 0): retained owner storage no longer receives an opaque initializer escape; actual before/after diagnostics are preserved in the full-row record. Its status is Unknown -> Unknown. Remaining indirect-access refusals stay Unknown. No API declared-model permission is used.",
+      "evidence": [
+        "full-row-movements.json.gz key ('fluent-bit-tail-pause', 'plugins/in_tail/tail_multiline.c', 'flb_tail_mult_create', 0)",
+        "crates/qcore-c-gateway/src/legacy_tracked_self_init.rs",
+        "crates/qcore-c-gateway/src/legacy_transfer.rs:TrackedSelfInit",
+        "steps/focus-rust-3.json",
+        "steps/focus-deep-2.json"
+      ]
+    }
+  ]
+}

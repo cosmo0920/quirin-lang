@@ -1,0 +1,15 @@
+{
+  "head": "e92d8aef35a8bd14550e90219d19a56eb3b196e7",
+  "base": "bb574e826490f403c84bd0d0e3fb2177c11f530d",
+  "prediction_commit": "f18d9606562627719ac41ce3986abf9c87791c12",
+  "contract_scope_prediction_commit": "08da23123aec69859150d9e94501509ffaa57bcb",
+  "created": "2026-10-24T14:17:45.367299+00:00",
+  "root_gate": {
+    "path": "/home/cosmo/.codex/worktrees/808d/quirin-lang/private/w48-cmt-tracked-interior/gate/20261024T135553Z",
+    "exit": 0,
+    "head": "e92d8aef35a8bd14550e90219d19a56eb3b196e7"
+  },
+  "provider_gate": "private/w48-cmt-tracked-interior/provider-gate/gate.json",
+  "canonical_qv_sha256": "0d58b3b52665e232bc096517fb9c7da990bbb4a851a5d4599a2e719ee1792038",
+  "native_inputs": "identical frozen BASE snapshot; canonical declared-model change independently validated, no interpreted view change"
+}

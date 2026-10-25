@@ -24,8 +24,8 @@
       "sha256": "17e5f22bb2b2ed10d1ed3f2baed212054cc13ebdb9551f8db7ac15ceb2f4d6f7"
     },
     "cfl/intrusive_list.qv": {
-      "clause_count": 9,
-      "declaration_count": 2,
+      "clause_count": 27,
+      "declaration_count": 3,
       "declarations": [
         {
           "clauses": 4,
@@ -34,12 +34,16 @@
         {
           "clauses": 5,
           "name": "cfl_list_del"
+        },
+        {
+          "clauses": 18,
+          "name": "cfl_list_init"
         }
       ],
       "inherits": [],
       "premise_bindings": [],
       "premises": {},
-      "sha256": "0e88afdb9a476a3da576bfed0dd0bb5de61bb59eb5eef1738d0bf65e5512cdec"
+      "sha256": "0d58b3b52665e232bc096517fb9c7da990bbb4a851a5d4599a2e719ee1792038"
     },
     "cfl/null_deref.qv": {
       "clause_count": 2,

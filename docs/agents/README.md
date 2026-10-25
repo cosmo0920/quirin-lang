@@ -248,6 +248,8 @@ the index below is navigation only. Backticked code paths throughout these pages
 | 35 | [gateway](gateway.md#constraint-35) | A `*` applied to a string literal that is only read is constant data to the lexical access gate (no store, increment or subscript; every other token unchanged); an array member decayed at an admissible call actual is rule 14c's `&PATH[0]` only for a one-dimensional array of builtin scalars, unqualified, with every root premise unchanged. |
 | 36 | [gateway](gateway.md#constraint-36) | A source-confirmed, unrebound original borrowed pointer formal may return an exact non-owning alias only over its own status-free site or known NULL; source/type/index/identity uncertainty and custody effects refuse, and all full-body and caller lifetime gates remain in force. |
 | 36a | [gateway](gateway.md#constraint-36a) | A source-checked self-initializer call is available only to its validated unit-local empty-frame row; CG11 stores remain authoritative, and no ordinary summary, callback or cross-unit effect loses that condition. |
+| 36b | [gateway](gateway.md#constraint-36b) | A tracked initializer transports writes without erasing ownership. |
+| 36c | [gateway](gateway.md#constraint-36c) | CMetrics API contracts preserve partial and transitive ownership. |
 | 37 | [gateway](gateway.md#constraint-37) | Only the typed non-VLA sizeof reader exempts constructor pointer mentions; unique live non-null owner, alias and child-obligation gates remain. Wrappers that assert allocation success need complete body checks, reviewed pins and the named abort premise; the null reader requires its own proof for checked resource results. |
 
 <!-- generated:router:end -->

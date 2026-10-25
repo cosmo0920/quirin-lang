@@ -8891,6 +8891,69 @@ safety claim and no validation of the detach representation premise.
     new readers must fit rule 13q's existing measured stack budget.
     [Design](../reports/w48-cmt-list-self-init/DESIGN.md).
 
+<a id="constraint-36b"></a>
+
+36b. **A tracked initializer transports writes without erasing ownership.**
+    A `TrackedSelfInit` may replace only the old refused direct-call or
+    indirect-access instruction after earlier modeled statements decline.
+    Reuse rule 36a's complete source/CG11 leaf validation, retaining the exact
+    declaration and self-write field set. The actual is a uniquely declared
+    depth-one struct pointer or the address of its embedded record through at
+    most three ordinary fields (one arrow followed by dots). Loaded pointer
+    members, arrays, casts, unions, bitfields, qualified or incomplete types,
+    descriptor/in-place effects and escaping callee designators decline.
+    The caller must hold one known, nonnull identity with exactly LIVE status
+    and no nullable-site fact; every custody field other than pointer bindings,
+    resource statuses and nullable sites must equal its default. No child,
+    containment, membership, publication, collection, retention, borrow,
+    callback or unresolved relation is discarded to satisfy that condition.
+    Existing rooted member facts may be empty or name only the same owner.
+    The existing indirect-access check must add no diagnostic or state change.
+    Admission forgets all owner-rooted member pointer facts through every alias,
+    preserving plain/derived aliases, every resource status and nullable fact.
+    It creates no identity or ownership link and exports no empty-list or
+    membership postcondition. Failure executes the exact old fallback;
+    structurally unreachable markers regain that fallback. The appended tag
+    never supplies an ordinary summary, callback permission or cross-unit
+    contract; the whole caller and its exits still decide its own result.
+    Full owned-list semantics and callers with nondefault custody frames stay
+    separate tracked obligations. The canonical CFL `cfl/intrusive_list.qv`
+    declares these preconditions/effects as a model, outside both interpreted
+    resource and bounds views; it grants no resource-v1 initializer contract.
+    `QCore.TrackedSelfInit`, registered in `AuditTrackedSelfInit`, models source
+    admission, invalidation, ledger preservation, finite composition and
+    embedding lifetime, with shared source/flow vectors. Faithful extraction,
+    parent embedding and Rust/model correspondence remain premise 28.
+    [Design](../reports/w48-cmt-tracked-interior-self-init/DESIGN.md).
+
+<a id="constraint-36c"></a>
+
+36c. **CMetrics API contracts preserve partial and transitive ownership.**
+    Canonical `cmetrics/map_lifetime.qv` and `cmetrics/opts_lifetime.qv` are
+    source-audited declared models, outside interpreted views. A model file or
+    successful parse supplies no executable contract permission. Map creation
+    copies label keys and retains nonowning opts/parent record views. A getter
+    returns a map-borrowed embedded or primary-owned metric, never fresh caller
+    custody; NULL can follow committed creation, and read lookup can mutate the
+    secondary index. Primary ownership, secondary/cache references and required
+    backpointers are distinct obligations. Retirement needs external user
+    coordination and invalidates affected borrows; lookup locking alone is not
+    a returned loan. Opts initialization retains committed SDS fields on
+    failure. Cleanup frees their contents without clearing pointer fields or
+    freeing the enclosing record, and is not generally idempotent. Opts string
+    retirement can precede map teardown when no later operation reads them.
+    Do not erase these effects into Borrowed/None or assume rollback, child
+    ownership or membership from a function name. Trusted adoption requires
+    checked source/effect, lifetime, alias, representation and synchronization
+    consumers under `CMT-MAP-OPTS-CONTRACT-ADOPTION`. Labeled hash-zero versus
+    embedded static-storage accounting remains separately Open under
+    `CMT-LABELED-HASH-ZERO-STATIC-STORAGE`, without an upstream defect claim.
+    `QCore.CmetricsApiContracts` is registered in `AuditCmetricsApiContracts`; shared
+    Rust/Lean lifecycle witnesses model these boundaries. Source extraction
+    and model correspondence remain premise 28. The actual model source gate
+    and any earlier native measurements retain their separate source/input
+    identities. [API specification](../reports/w48-cmt-tracked-interior-self-init/CMETRICS_APIS.md).
+
 <a id="constraint-37"></a>
 
 37. **Checked result constructors.** Aggregate field stores may ignore a

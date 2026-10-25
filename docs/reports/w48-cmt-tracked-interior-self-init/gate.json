@@ -1,0 +1,13 @@
+{
+  "note": "Fresh root and provider gates validate 2d0d85299b830aa24d7f200d63a308653582363f. All commands/exits/log paths in standing-gate.json and provider-gate/gate.json. Native comparisons use the identical frozen BASE inputs; the canonical .qv model delta is independently validated and grants no interpreted contract. Not a combined-main measurement.",
+  "workspace_tests": 8654,
+  "provider_tests": 133,
+  "python_evidence_validator_tests": 374,
+  "reevaluation_probe_exit": 0,
+  "reevaluation_followup_exit": 0,
+  "cargo_fmt": "clean",
+  "cargo_clippy": "clean",
+  "standing_gate": "complete on committed source 2d0d85299b830aa24d7f200d63a308653582363f",
+  "lean_audits": 370,
+  "clang": "present: Ubuntu clang version 21.1.8 (6ubuntu1)"
+}

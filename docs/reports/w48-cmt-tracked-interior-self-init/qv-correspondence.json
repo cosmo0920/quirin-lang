@@ -1,0 +1,167 @@
+{
+  "qv": "providers/quirin-provider-cfl/contracts/cfl/intrusive_list.qv",
+  "sha256": "0d58b3b52665e232bc096517fb9c7da990bbb4a851a5d4599a2e719ee1792038",
+  "kind": "declared model; no interpreted resource/bounds call permission",
+  "correspondence_status": "reviewed premise 28, not a generated C/Rust/Lean refinement proof",
+  "clauses": [
+    "requires complete_source_bound_cg11_self_store_leaf;",
+    "requires direct_call_matches_exact_function_declaration;",
+    "requires actual_is_root_or_address_of_embedded_record;",
+    "requires embedded_path_has_at_most_three_ordinary_fields;",
+    "requires no_loaded_pointer_array_cast_union_or_qualified_member;",
+    "requires unique_root_declaration_and_compatible_complete_layout;",
+    "requires root_has_one_known_identity_and_is_nonnull;",
+    "requires root_is_exactly_live_and_not_nullable;",
+    "requires no_child_containment_membership_collection_or_other_custody_frame;",
+    "requires existing_rooted_member_facts_are_empty_or_name_the_same_owner;",
+    "requires existing_indirect_access_check_has_no_diagnostic_or_state_change;",
+    "ensures normal instantiated_leaf_self_write_paths_are_recorded;",
+    "ensures normal all_owner_member_pointer_facts_are_forgotten_through_aliases;",
+    "ensures normal plain_and_derived_alias_bindings_are_preserved;",
+    "ensures normal all_resource_status_and_nullable_site_facts_are_preserved;",
+    "ensures normal no_resource_child_link_or_owning_alias_is_created;",
+    "ensures normal no_empty_list_membership_or_ordinary_summary_is_exported;",
+    "quant any live_resources == old(live_resources);"
+  ],
+  "review_map": [
+    {
+      "area": "source/target",
+      "clause_indices": [
+        0,
+        1,
+        2,
+        3,
+        4,
+        5
+      ],
+      "rust": [
+        "legacy_tracked_self_init::actual",
+        "Parser::tracked_self_init_call",
+        "legacy_self_link_init::checked_effect"
+      ],
+      "lean": [
+        "sourceAdmits",
+        "missing_source_fact_refuses",
+        "shared_source_target_vectors"
+      ]
+    },
+    {
+      "area": "owner/frame",
+      "clause_indices": [
+        6,
+        7,
+        8,
+        9
+      ],
+      "rust": [
+        "legacy_tracked_self_init::apply"
+      ],
+      "lean": [
+        "admits",
+        "no_child_or_membership_frame_is_erased",
+        "a_borrowed_name_only_site_refuses",
+        "shared_flow_vectors"
+      ]
+    },
+    {
+      "area": "ordinary access guard",
+      "clause_indices": [
+        10
+      ],
+      "rust": [
+        "legacy_transfer TrackedSelfInit arm"
+      ],
+      "lean": [
+        "sourceAdmits (reviewed Rust correspondence premise)"
+      ]
+    },
+    {
+      "area": "retained writes",
+      "clause_indices": [
+        11
+      ],
+      "rust": [
+        "LegacyInstruction::TrackedSelfInit path/writes",
+        "Parser::tracked_self_init_call"
+      ],
+      "lean": [
+        "instantiateWrites",
+        "every_leaf_write_is_retained"
+      ]
+    },
+    {
+      "area": "invalidation",
+      "clause_indices": [
+        12
+      ],
+      "rust": [
+        "legacy_tracked_self_init::apply"
+      ],
+      "lean": [
+        "transfer",
+        "admitted_effect_removes_stale_member_facts"
+      ]
+    },
+    {
+      "area": "preservation",
+      "clause_indices": [
+        13,
+        14,
+        15,
+        17
+      ],
+      "rust": [
+        "legacy_tracked_self_init::apply"
+      ],
+      "lean": [
+        "admitted_root_pointer_is_preserved",
+        "resource_ledger_is_preserved",
+        "nullable_facts_are_preserved",
+        "unaffected_facts_survive",
+        "finite_composition_keeps_every_obligation"
+      ]
+    },
+    {
+      "area": "export boundary",
+      "clause_indices": [
+        16
+      ],
+      "rust": [
+        "legacy_summary::observations_match_contract"
+      ],
+      "lean": [
+        "no_neutral_summary_transport",
+        "no_indirect_callback_transport",
+        "no_cross_unit_effect_privilege"
+      ]
+    }
+  ],
+  "actual_loader_controls": "steps/focus-contract-1.json",
+  "actual_parse_roundtrip_compile_controls": "steps/focus-corpus-1.json",
+  "source_flow_alias_lifetime_export_controls": "steps/focus-rust-3.json",
+  "deep_control": "steps/focus-deep-2.json",
+  "lean_control": "steps/focus-lean-2.json",
+  "final_canonical_loader_and_corpus_control": {
+    "source": "2d0d85299b830aa24d7f200d63a308653582363f",
+    "gate": "/home/cosmo/.codex/worktrees/808d/quirin-lang/private/w48-cmt-tracked-interior/gate/20261024T161812Z",
+    "units": [
+      "qcore-contract::test::tracked_self_init_model",
+      "qcore-contract::test::cmetrics_api_models",
+      "qcore-compiler::test::contract_loader",
+      "qcore-compiler::test::qcore_contract_corpus"
+    ],
+    "note": "Current source gate validates all canonical models; native initializer checkpoint is recorded independently."
+  },
+  "api_models": [
+    {
+      "path": "providers/qcore-provider-cmetrics/contracts/cmetrics/map_lifetime.qv",
+      "sha256": "ecc6aab9be74aa57ed0842ad79f16b33000b9d10dd2834344837da502ff32436"
+    },
+    {
+      "path": "providers/qcore-provider-cmetrics/contracts/cmetrics/opts_lifetime.qv",
+      "sha256": "4b9ad1d7bf2bc8f06e2749b0e6ab4407ddd000fbc7bafed9c93d5dbd24ce1852"
+    }
+  ],
+  "api_lean": "QCore.CmetricsApiContracts / AuditPointerStore",
+  "api_adoption": "Open"
+}

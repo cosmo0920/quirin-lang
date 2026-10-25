@@ -1,0 +1,1531 @@
+[
+  {
+    "leaf": {
+      "file": "null.jsonl",
+      "path": [
+        198,
+        "combined"
+      ],
+      "before": "Unknown",
+      "after": "Safe"
+    },
+    "reason": "The same gained custody row feeds the pre-existing NULL-row custody field and the production four-value combined join. Independent NULL dictionaries are unchanged; both complete production joins are replayed.",
+    "evidence": [
+      "replay-v3/system-base-projection-proof.json",
+      "replay-v3/system-tip-projection-proof.json",
+      "full-null-movements.json.gz (independent NULL dictionary comparison)"
+    ]
+  },
+  {
+    "leaf": {
+      "file": "null.jsonl",
+      "path": [
+        198,
+        "custody"
+      ],
+      "before": "Unknown",
+      "after": "Safe"
+    },
+    "reason": "The same gained custody row feeds the pre-existing NULL-row custody field and the production four-value combined join. Independent NULL dictionaries are unchanged; both complete production joins are replayed.",
+    "evidence": [
+      "replay-v3/system-base-projection-proof.json",
+      "replay-v3/system-tip-projection-proof.json",
+      "full-null-movements.json.gz (independent NULL dictionary comparison)"
+    ]
+  },
+  {
+    "leaf": {
+      "file": "null.jsonl",
+      "path": [
+        217,
+        "combined"
+      ],
+      "before": "Unknown",
+      "after": "Safe"
+    },
+    "reason": "The same gained custody row feeds the pre-existing NULL-row custody field and the production four-value combined join. Independent NULL dictionaries are unchanged; both complete production joins are replayed.",
+    "evidence": [
+      "replay-v3/system-base-projection-proof.json",
+      "replay-v3/system-tip-projection-proof.json",
+      "full-null-movements.json.gz (independent NULL dictionary comparison)"
+    ]
+  },
+  {
+    "leaf": {
+      "file": "null.jsonl",
+      "path": [
+        217,
+        "custody"
+      ],
+      "before": "Unknown",
+      "after": "Safe"
+    },
+    "reason": "The same gained custody row feeds the pre-existing NULL-row custody field and the production four-value combined join. Independent NULL dictionaries are unchanged; both complete production joins are replayed.",
+    "evidence": [
+      "replay-v3/system-base-projection-proof.json",
+      "replay-v3/system-tip-projection-proof.json",
+      "full-null-movements.json.gz (independent NULL dictionary comparison)"
+    ]
+  },
+  {
+    "leaf": {
+      "file": "resource-diagnostics.json",
+      "path": [
+        "diagnostic_counts",
+        "unknown_alias"
+      ],
+      "before": 948,
+      "after": 946
+    },
+    "reason": "Exact diagnostic category sum of the retained complete function rows; reconstructed on both sides, including all unchanged diagnostics.",
+    "evidence": [
+      "complete retained resource-diagnostics.json on both sides",
+      "semantic review diagnostic-count reconstruction"
+    ]
+  },
+  {
+    "leaf": {
+      "file": "resource-diagnostics.json",
+      "path": [
+        "diagnostic_counts",
+        "unsupported"
+      ],
+      "before": 2392,
+      "after": 2388
+    },
+    "reason": "Exact diagnostic category sum of the retained complete function rows; reconstructed on both sides, including all unchanged diagnostics.",
+    "evidence": [
+      "complete retained resource-diagnostics.json on both sides",
+      "semantic review diagnostic-count reconstruction"
+    ]
+  },
+  {
+    "leaf": {
+      "file": "resource-diagnostics.json",
+      "path": [
+        "units",
+        0,
+        "functions",
+        2,
+        "diagnostics",
+        3,
+        "description"
+      ],
+      "before": "call to uncontracted function `mk_list_init`",
+      "after": "indirect memory access is outside the resource projection"
+    },
+    "reason": "Rule 36b source-checked initializer transport at ('fluent-bit-system', 'plugins/in_storage_backlog/sb.c', 'cb_sb_init', 0): retained owner storage no longer receives an opaque initializer escape; actual before/after diagnostics are preserved in the full-row record. Its status is Unknown -> Unknown. Remaining indirect-access refusals stay Unknown. No API declared-model permission is used.",
+    "evidence": [
+      "full-row-movements.json.gz key ('fluent-bit-system', 'plugins/in_storage_backlog/sb.c', 'cb_sb_init', 0)",
+      "crates/qcore-c-gateway/src/legacy_tracked_self_init.rs",
+      "crates/qcore-c-gateway/src/legacy_transfer.rs:TrackedSelfInit",
+      "steps/focus-rust-3.json",
+      "steps/focus-deep-2.json"
+    ]
+  },
+  {
+    "leaf": {
+      "file": "resource-diagnostics.json",
+      "path": [
+        "units",
+        0,
+        "functions",
+        5,
+        "diagnostics",
+        4,
+        "description"
+      ],
+      "before": "call to uncontracted function `mk_list_init`",
+      "after": "indirect memory access is outside the resource projection"
+    },
+    "reason": "Rule 36b source-checked initializer transport at ('fluent-bit-system', 'plugins/in_storage_backlog/sb.c', 'sb_allocate_backlogs', 0): retained owner storage no longer receives an opaque initializer escape; actual before/after diagnostics are preserved in the full-row record. Its status is Unknown -> Unknown. Remaining indirect-access refusals stay Unknown. No API declared-model permission is used.",
+    "evidence": [
+      "full-row-movements.json.gz key ('fluent-bit-system', 'plugins/in_storage_backlog/sb.c', 'sb_allocate_backlogs', 0)",
+      "crates/qcore-c-gateway/src/legacy_tracked_self_init.rs",
+      "crates/qcore-c-gateway/src/legacy_transfer.rs:TrackedSelfInit",
+      "steps/focus-rust-3.json",
+      "steps/focus-deep-2.json"
+    ]
+  },
+  {
+    "leaf": {
+      "file": "resource-diagnostics.json",
+      "path": [
+        "units",
+        5,
+        "diagnostic_counts",
+        "unknown_alias"
+      ],
+      "before": 59,
+      "after": 58
+    },
+    "reason": "Exact diagnostic category sum of the retained complete function rows; reconstructed on both sides, including all unchanged diagnostics.",
+    "evidence": [
+      "complete retained resource-diagnostics.json on both sides",
+      "semantic review diagnostic-count reconstruction"
+    ]
+  },
+  {
+    "leaf": {
+      "file": "resource-diagnostics.json",
+      "path": [
+        "units",
+        5,
+        "diagnostic_counts",
+        "unsupported"
+      ],
+      "before": 103,
+      "after": 101
+    },
+    "reason": "Exact diagnostic category sum of the retained complete function rows; reconstructed on both sides, including all unchanged diagnostics.",
+    "evidence": [
+      "complete retained resource-diagnostics.json on both sides",
+      "semantic review diagnostic-count reconstruction"
+    ]
+  },
+  {
+    "leaf": {
+      "file": "resource-diagnostics.json",
+      "path": [
+        "units",
+        5,
+        "functions",
+        4,
+        "diagnostics"
+      ],
+      "before": [
+        {
+          "category": "unsupported",
+          "description": "call to uncontracted function `mk_list_init`",
+          "line": 17980,
+          "origin": "src/flb_task.c:957"
+        },
+        {
+          "category": "unsupported",
+          "description": "call to uncontracted function `mk_list_init`",
+          "line": 17981,
+          "origin": "src/flb_task.c:958"
+        },
+        {
+          "category": "unknown_alias",
+          "description": "unresolved resource identity `tq`",
+          "line": 17982,
+          "origin": "src/flb_task.c:959"
+        }
+      ],
+      "after": []
+    },
+    "reason": "Rule 36b source-checked initializer transport at ('fluent-bit-system', 'src/flb_task.c', 'flb_task_queue_create', 0): retained owner storage no longer receives an opaque initializer escape; actual before/after diagnostics are preserved in the full-row record. Its status is Unknown -> Safe. Remaining indirect-access refusals stay Unknown. No API declared-model permission is used.",
+    "evidence": [
+      "full-row-movements.json.gz key ('fluent-bit-system', 'src/flb_task.c', 'flb_task_queue_create', 0)",
+      "crates/qcore-c-gateway/src/legacy_tracked_self_init.rs",
+      "crates/qcore-c-gateway/src/legacy_transfer.rs:TrackedSelfInit",
+      "steps/focus-rust-3.json",
+      "steps/focus-deep-2.json"
+    ]
+  },
+  {
+    "leaf": {
+      "file": "resource-diagnostics.json",
+      "path": [
+        "units",
+        5,
+        "functions",
+        4,
+        "status"
+      ],
+      "before": "Unknown",
+      "after": "Safe"
+    },
+    "reason": "Rule 36b source-checked initializer transport at ('fluent-bit-system', 'src/flb_task.c', 'flb_task_queue_create', 0): retained owner storage no longer receives an opaque initializer escape; actual before/after diagnostics are preserved in the full-row record. Its status is Unknown -> Safe. Remaining indirect-access refusals stay Unknown. No API declared-model permission is used.",
+    "evidence": [
+      "full-row-movements.json.gz key ('fluent-bit-system', 'src/flb_task.c', 'flb_task_queue_create', 0)",
+      "crates/qcore-c-gateway/src/legacy_tracked_self_init.rs",
+      "crates/qcore-c-gateway/src/legacy_transfer.rs:TrackedSelfInit",
+      "steps/focus-rust-3.json",
+      "steps/focus-deep-2.json"
+    ]
+  },
+  {
+    "leaf": {
+      "file": "resource-diagnostics.json",
+      "path": [
+        "units",
+        5,
+        "functions",
+        17,
+        "diagnostics",
+        8,
+        "description"
+      ],
+      "before": "call to uncontracted function `mk_list_init`",
+      "after": "indirect memory access is outside the resource projection"
+    },
+    "reason": "Rule 36b source-checked initializer transport at ('fluent-bit-system', 'src/flb_task.c', 'task_alloc', 0): retained owner storage no longer receives an opaque initializer escape; actual before/after diagnostics are preserved in the full-row record. Its status is Unknown -> Unknown. Remaining indirect-access refusals stay Unknown. No API declared-model permission is used.",
+    "evidence": [
+      "full-row-movements.json.gz key ('fluent-bit-system', 'src/flb_task.c', 'task_alloc', 0)",
+      "crates/qcore-c-gateway/src/legacy_tracked_self_init.rs",
+      "crates/qcore-c-gateway/src/legacy_transfer.rs:TrackedSelfInit",
+      "steps/focus-rust-3.json",
+      "steps/focus-deep-2.json"
+    ]
+  },
+  {
+    "leaf": {
+      "file": "resource-diagnostics.json",
+      "path": [
+        "units",
+        5,
+        "functions",
+        17,
+        "diagnostics",
+        9,
+        "description"
+      ],
+      "before": "call to uncontracted function `mk_list_init`",
+      "after": "indirect memory access is outside the resource projection"
+    },
+    "reason": "Rule 36b source-checked initializer transport at ('fluent-bit-system', 'src/flb_task.c', 'task_alloc', 0): retained owner storage no longer receives an opaque initializer escape; actual before/after diagnostics are preserved in the full-row record. Its status is Unknown -> Unknown. Remaining indirect-access refusals stay Unknown. No API declared-model permission is used.",
+    "evidence": [
+      "full-row-movements.json.gz key ('fluent-bit-system', 'src/flb_task.c', 'task_alloc', 0)",
+      "crates/qcore-c-gateway/src/legacy_tracked_self_init.rs",
+      "crates/qcore-c-gateway/src/legacy_transfer.rs:TrackedSelfInit",
+      "steps/focus-rust-3.json",
+      "steps/focus-deep-2.json"
+    ]
+  },
+  {
+    "leaf": {
+      "file": "resource-diagnostics.json",
+      "path": [
+        "units",
+        5,
+        "reason"
+      ],
+      "before": "resource projection unresolved: 103 unsupported operation(s), 59 unresolved alias(es), 1 custody summary conflict(s)",
+      "after": "resource projection unresolved: 101 unsupported operation(s), 58 unresolved alias(es), 1 custody summary conflict(s)"
+    },
+    "reason": "Unit reason renders the exact reconstructed unsupported/alias/conflict counts; the unit remains unresolved.",
+    "evidence": [
+      "complete retained unit diagnostic_counts and reason",
+      "semantic review diagnostic-count reconstruction"
+    ]
+  },
+  {
+    "leaf": {
+      "file": "resource-diagnostics.json",
+      "path": [
+        "units",
+        6,
+        "diagnostic_counts",
+        "unknown_alias"
+      ],
+      "before": 59,
+      "after": 58
+    },
+    "reason": "Exact diagnostic category sum of the retained complete function rows; reconstructed on both sides, including all unchanged diagnostics.",
+    "evidence": [
+      "complete retained resource-diagnostics.json on both sides",
+      "semantic review diagnostic-count reconstruction"
+    ]
+  },
+  {
+    "leaf": {
+      "file": "resource-diagnostics.json",
+      "path": [
+        "units",
+        6,
+        "diagnostic_counts",
+        "unsupported"
+      ],
+      "before": 103,
+      "after": 101
+    },
+    "reason": "Exact diagnostic category sum of the retained complete function rows; reconstructed on both sides, including all unchanged diagnostics.",
+    "evidence": [
+      "complete retained resource-diagnostics.json on both sides",
+      "semantic review diagnostic-count reconstruction"
+    ]
+  },
+  {
+    "leaf": {
+      "file": "resource-diagnostics.json",
+      "path": [
+        "units",
+        6,
+        "functions",
+        4,
+        "diagnostics"
+      ],
+      "before": [
+        {
+          "category": "unsupported",
+          "description": "call to uncontracted function `mk_list_init`",
+          "line": 17980,
+          "origin": "src/flb_task.c:957"
+        },
+        {
+          "category": "unsupported",
+          "description": "call to uncontracted function `mk_list_init`",
+          "line": 17981,
+          "origin": "src/flb_task.c:958"
+        },
+        {
+          "category": "unknown_alias",
+          "description": "unresolved resource identity `tq`",
+          "line": 17982,
+          "origin": "src/flb_task.c:959"
+        }
+      ],
+      "after": []
+    },
+    "reason": "Rule 36b source-checked initializer transport at ('fluent-bit-system', 'src/flb_task.c', 'flb_task_queue_create', 1): retained owner storage no longer receives an opaque initializer escape; actual before/after diagnostics are preserved in the full-row record. Its status is Unknown -> Safe. Remaining indirect-access refusals stay Unknown. No API declared-model permission is used.",
+    "evidence": [
+      "full-row-movements.json.gz key ('fluent-bit-system', 'src/flb_task.c', 'flb_task_queue_create', 1)",
+      "crates/qcore-c-gateway/src/legacy_tracked_self_init.rs",
+      "crates/qcore-c-gateway/src/legacy_transfer.rs:TrackedSelfInit",
+      "steps/focus-rust-3.json",
+      "steps/focus-deep-2.json"
+    ]
+  },
+  {
+    "leaf": {
+      "file": "resource-diagnostics.json",
+      "path": [
+        "units",
+        6,
+        "functions",
+        4,
+        "status"
+      ],
+      "before": "Unknown",
+      "after": "Safe"
+    },
+    "reason": "Rule 36b source-checked initializer transport at ('fluent-bit-system', 'src/flb_task.c', 'flb_task_queue_create', 1): retained owner storage no longer receives an opaque initializer escape; actual before/after diagnostics are preserved in the full-row record. Its status is Unknown -> Safe. Remaining indirect-access refusals stay Unknown. No API declared-model permission is used.",
+    "evidence": [
+      "full-row-movements.json.gz key ('fluent-bit-system', 'src/flb_task.c', 'flb_task_queue_create', 1)",
+      "crates/qcore-c-gateway/src/legacy_tracked_self_init.rs",
+      "crates/qcore-c-gateway/src/legacy_transfer.rs:TrackedSelfInit",
+      "steps/focus-rust-3.json",
+      "steps/focus-deep-2.json"
+    ]
+  },
+  {
+    "leaf": {
+      "file": "resource-diagnostics.json",
+      "path": [
+        "units",
+        6,
+        "functions",
+        17,
+        "diagnostics",
+        8,
+        "description"
+      ],
+      "before": "call to uncontracted function `mk_list_init`",
+      "after": "indirect memory access is outside the resource projection"
+    },
+    "reason": "Rule 36b source-checked initializer transport at ('fluent-bit-system', 'src/flb_task.c', 'task_alloc', 1): retained owner storage no longer receives an opaque initializer escape; actual before/after diagnostics are preserved in the full-row record. Its status is Unknown -> Unknown. Remaining indirect-access refusals stay Unknown. No API declared-model permission is used.",
+    "evidence": [
+      "full-row-movements.json.gz key ('fluent-bit-system', 'src/flb_task.c', 'task_alloc', 1)",
+      "crates/qcore-c-gateway/src/legacy_tracked_self_init.rs",
+      "crates/qcore-c-gateway/src/legacy_transfer.rs:TrackedSelfInit",
+      "steps/focus-rust-3.json",
+      "steps/focus-deep-2.json"
+    ]
+  },
+  {
+    "leaf": {
+      "file": "resource-diagnostics.json",
+      "path": [
+        "units",
+        6,
+        "functions",
+        17,
+        "diagnostics",
+        9,
+        "description"
+      ],
+      "before": "call to uncontracted function `mk_list_init`",
+      "after": "indirect memory access is outside the resource projection"
+    },
+    "reason": "Rule 36b source-checked initializer transport at ('fluent-bit-system', 'src/flb_task.c', 'task_alloc', 1): retained owner storage no longer receives an opaque initializer escape; actual before/after diagnostics are preserved in the full-row record. Its status is Unknown -> Unknown. Remaining indirect-access refusals stay Unknown. No API declared-model permission is used.",
+    "evidence": [
+      "full-row-movements.json.gz key ('fluent-bit-system', 'src/flb_task.c', 'task_alloc', 1)",
+      "crates/qcore-c-gateway/src/legacy_tracked_self_init.rs",
+      "crates/qcore-c-gateway/src/legacy_transfer.rs:TrackedSelfInit",
+      "steps/focus-rust-3.json",
+      "steps/focus-deep-2.json"
+    ]
+  },
+  {
+    "leaf": {
+      "file": "resource-diagnostics.json",
+      "path": [
+        "units",
+        6,
+        "reason"
+      ],
+      "before": "resource projection unresolved: 103 unsupported operation(s), 59 unresolved alias(es), 1 custody summary conflict(s)",
+      "after": "resource projection unresolved: 101 unsupported operation(s), 58 unresolved alias(es), 1 custody summary conflict(s)"
+    },
+    "reason": "Unit reason renders the exact reconstructed unsupported/alias/conflict counts; the unit remains unresolved.",
+    "evidence": [
+      "complete retained unit diagnostic_counts and reason",
+      "semantic review diagnostic-count reconstruction"
+    ]
+  },
+  {
+    "leaf": {
+      "file": "resource-diagnostics.json",
+      "path": [
+        "units",
+        11,
+        "functions",
+        3,
+        "diagnostics",
+        5,
+        "description"
+      ],
+      "before": "call to uncontracted function `mk_list_init`",
+      "after": "indirect memory access is outside the resource projection"
+    },
+    "reason": "Rule 36b source-checked initializer transport at ('fluent-bit-system', 'src/flb_scheduler.c', 'flb_sched_create', 0): retained owner storage no longer receives an opaque initializer escape; actual before/after diagnostics are preserved in the full-row record. Its status is Unknown -> Unknown. Remaining indirect-access refusals stay Unknown. No API declared-model permission is used.",
+    "evidence": [
+      "full-row-movements.json.gz key ('fluent-bit-system', 'src/flb_scheduler.c', 'flb_sched_create', 0)",
+      "crates/qcore-c-gateway/src/legacy_tracked_self_init.rs",
+      "crates/qcore-c-gateway/src/legacy_transfer.rs:TrackedSelfInit",
+      "steps/focus-rust-3.json",
+      "steps/focus-deep-2.json"
+    ]
+  },
+  {
+    "leaf": {
+      "file": "resource-diagnostics.json",
+      "path": [
+        "units",
+        11,
+        "functions",
+        3,
+        "diagnostics",
+        6,
+        "description"
+      ],
+      "before": "call to uncontracted function `mk_list_init`",
+      "after": "indirect memory access is outside the resource projection"
+    },
+    "reason": "Rule 36b source-checked initializer transport at ('fluent-bit-system', 'src/flb_scheduler.c', 'flb_sched_create', 0): retained owner storage no longer receives an opaque initializer escape; actual before/after diagnostics are preserved in the full-row record. Its status is Unknown -> Unknown. Remaining indirect-access refusals stay Unknown. No API declared-model permission is used.",
+    "evidence": [
+      "full-row-movements.json.gz key ('fluent-bit-system', 'src/flb_scheduler.c', 'flb_sched_create', 0)",
+      "crates/qcore-c-gateway/src/legacy_tracked_self_init.rs",
+      "crates/qcore-c-gateway/src/legacy_transfer.rs:TrackedSelfInit",
+      "steps/focus-rust-3.json",
+      "steps/focus-deep-2.json"
+    ]
+  },
+  {
+    "leaf": {
+      "file": "resource-diagnostics.json",
+      "path": [
+        "units",
+        11,
+        "functions",
+        3,
+        "diagnostics",
+        7,
+        "description"
+      ],
+      "before": "call to uncontracted function `mk_list_init`",
+      "after": "indirect memory access is outside the resource projection"
+    },
+    "reason": "Rule 36b source-checked initializer transport at ('fluent-bit-system', 'src/flb_scheduler.c', 'flb_sched_create', 0): retained owner storage no longer receives an opaque initializer escape; actual before/after diagnostics are preserved in the full-row record. Its status is Unknown -> Unknown. Remaining indirect-access refusals stay Unknown. No API declared-model permission is used.",
+    "evidence": [
+      "full-row-movements.json.gz key ('fluent-bit-system', 'src/flb_scheduler.c', 'flb_sched_create', 0)",
+      "crates/qcore-c-gateway/src/legacy_tracked_self_init.rs",
+      "crates/qcore-c-gateway/src/legacy_transfer.rs:TrackedSelfInit",
+      "steps/focus-rust-3.json",
+      "steps/focus-deep-2.json"
+    ]
+  },
+  {
+    "leaf": {
+      "file": "resource-diagnostics.json",
+      "path": [
+        "units",
+        11,
+        "functions",
+        3,
+        "diagnostics",
+        8,
+        "description"
+      ],
+      "before": "call to uncontracted function `mk_list_init`",
+      "after": "indirect memory access is outside the resource projection"
+    },
+    "reason": "Rule 36b source-checked initializer transport at ('fluent-bit-system', 'src/flb_scheduler.c', 'flb_sched_create', 0): retained owner storage no longer receives an opaque initializer escape; actual before/after diagnostics are preserved in the full-row record. Its status is Unknown -> Unknown. Remaining indirect-access refusals stay Unknown. No API declared-model permission is used.",
+    "evidence": [
+      "full-row-movements.json.gz key ('fluent-bit-system', 'src/flb_scheduler.c', 'flb_sched_create', 0)",
+      "crates/qcore-c-gateway/src/legacy_tracked_self_init.rs",
+      "crates/qcore-c-gateway/src/legacy_transfer.rs:TrackedSelfInit",
+      "steps/focus-rust-3.json",
+      "steps/focus-deep-2.json"
+    ]
+  },
+  {
+    "leaf": {
+      "file": "resource-diagnostics.json",
+      "path": [
+        "units",
+        11,
+        "functions",
+        3,
+        "diagnostics",
+        9,
+        "description"
+      ],
+      "before": "call to uncontracted function `cfl_list_init`",
+      "after": "indirect memory access is outside the resource projection"
+    },
+    "reason": "Rule 36b source-checked initializer transport at ('fluent-bit-system', 'src/flb_scheduler.c', 'flb_sched_create', 0): retained owner storage no longer receives an opaque initializer escape; actual before/after diagnostics are preserved in the full-row record. Its status is Unknown -> Unknown. Remaining indirect-access refusals stay Unknown. No API declared-model permission is used.",
+    "evidence": [
+      "full-row-movements.json.gz key ('fluent-bit-system', 'src/flb_scheduler.c', 'flb_sched_create', 0)",
+      "crates/qcore-c-gateway/src/legacy_tracked_self_init.rs",
+      "crates/qcore-c-gateway/src/legacy_transfer.rs:TrackedSelfInit",
+      "steps/focus-rust-3.json",
+      "steps/focus-deep-2.json"
+    ]
+  },
+  {
+    "leaf": {
+      "file": "resource-diagnostics.json",
+      "path": [
+        "units",
+        11,
+        "functions",
+        3,
+        "diagnostics",
+        10,
+        "description"
+      ],
+      "before": "call to uncontracted function `cfl_list_init`",
+      "after": "indirect memory access is outside the resource projection"
+    },
+    "reason": "Rule 36b source-checked initializer transport at ('fluent-bit-system', 'src/flb_scheduler.c', 'flb_sched_create', 0): retained owner storage no longer receives an opaque initializer escape; actual before/after diagnostics are preserved in the full-row record. Its status is Unknown -> Unknown. Remaining indirect-access refusals stay Unknown. No API declared-model permission is used.",
+    "evidence": [
+      "full-row-movements.json.gz key ('fluent-bit-system', 'src/flb_scheduler.c', 'flb_sched_create', 0)",
+      "crates/qcore-c-gateway/src/legacy_tracked_self_init.rs",
+      "crates/qcore-c-gateway/src/legacy_transfer.rs:TrackedSelfInit",
+      "steps/focus-rust-3.json",
+      "steps/focus-deep-2.json"
+    ]
+  },
+  {
+    "leaf": {
+      "file": "resource-diagnostics.json",
+      "path": [
+        "units",
+        12,
+        "functions",
+        3,
+        "diagnostics",
+        5,
+        "description"
+      ],
+      "before": "call to uncontracted function `mk_list_init`",
+      "after": "indirect memory access is outside the resource projection"
+    },
+    "reason": "Rule 36b source-checked initializer transport at ('fluent-bit-system', 'src/flb_scheduler.c', 'flb_sched_create', 1): retained owner storage no longer receives an opaque initializer escape; actual before/after diagnostics are preserved in the full-row record. Its status is Unknown -> Unknown. Remaining indirect-access refusals stay Unknown. No API declared-model permission is used.",
+    "evidence": [
+      "full-row-movements.json.gz key ('fluent-bit-system', 'src/flb_scheduler.c', 'flb_sched_create', 1)",
+      "crates/qcore-c-gateway/src/legacy_tracked_self_init.rs",
+      "crates/qcore-c-gateway/src/legacy_transfer.rs:TrackedSelfInit",
+      "steps/focus-rust-3.json",
+      "steps/focus-deep-2.json"
+    ]
+  },
+  {
+    "leaf": {
+      "file": "resource-diagnostics.json",
+      "path": [
+        "units",
+        12,
+        "functions",
+        3,
+        "diagnostics",
+        6,
+        "description"
+      ],
+      "before": "call to uncontracted function `mk_list_init`",
+      "after": "indirect memory access is outside the resource projection"
+    },
+    "reason": "Rule 36b source-checked initializer transport at ('fluent-bit-system', 'src/flb_scheduler.c', 'flb_sched_create', 1): retained owner storage no longer receives an opaque initializer escape; actual before/after diagnostics are preserved in the full-row record. Its status is Unknown -> Unknown. Remaining indirect-access refusals stay Unknown. No API declared-model permission is used.",
+    "evidence": [
+      "full-row-movements.json.gz key ('fluent-bit-system', 'src/flb_scheduler.c', 'flb_sched_create', 1)",
+      "crates/qcore-c-gateway/src/legacy_tracked_self_init.rs",
+      "crates/qcore-c-gateway/src/legacy_transfer.rs:TrackedSelfInit",
+      "steps/focus-rust-3.json",
+      "steps/focus-deep-2.json"
+    ]
+  },
+  {
+    "leaf": {
+      "file": "resource-diagnostics.json",
+      "path": [
+        "units",
+        12,
+        "functions",
+        3,
+        "diagnostics",
+        7,
+        "description"
+      ],
+      "before": "call to uncontracted function `mk_list_init`",
+      "after": "indirect memory access is outside the resource projection"
+    },
+    "reason": "Rule 36b source-checked initializer transport at ('fluent-bit-system', 'src/flb_scheduler.c', 'flb_sched_create', 1): retained owner storage no longer receives an opaque initializer escape; actual before/after diagnostics are preserved in the full-row record. Its status is Unknown -> Unknown. Remaining indirect-access refusals stay Unknown. No API declared-model permission is used.",
+    "evidence": [
+      "full-row-movements.json.gz key ('fluent-bit-system', 'src/flb_scheduler.c', 'flb_sched_create', 1)",
+      "crates/qcore-c-gateway/src/legacy_tracked_self_init.rs",
+      "crates/qcore-c-gateway/src/legacy_transfer.rs:TrackedSelfInit",
+      "steps/focus-rust-3.json",
+      "steps/focus-deep-2.json"
+    ]
+  },
+  {
+    "leaf": {
+      "file": "resource-diagnostics.json",
+      "path": [
+        "units",
+        12,
+        "functions",
+        3,
+        "diagnostics",
+        8,
+        "description"
+      ],
+      "before": "call to uncontracted function `mk_list_init`",
+      "after": "indirect memory access is outside the resource projection"
+    },
+    "reason": "Rule 36b source-checked initializer transport at ('fluent-bit-system', 'src/flb_scheduler.c', 'flb_sched_create', 1): retained owner storage no longer receives an opaque initializer escape; actual before/after diagnostics are preserved in the full-row record. Its status is Unknown -> Unknown. Remaining indirect-access refusals stay Unknown. No API declared-model permission is used.",
+    "evidence": [
+      "full-row-movements.json.gz key ('fluent-bit-system', 'src/flb_scheduler.c', 'flb_sched_create', 1)",
+      "crates/qcore-c-gateway/src/legacy_tracked_self_init.rs",
+      "crates/qcore-c-gateway/src/legacy_transfer.rs:TrackedSelfInit",
+      "steps/focus-rust-3.json",
+      "steps/focus-deep-2.json"
+    ]
+  },
+  {
+    "leaf": {
+      "file": "resource-diagnostics.json",
+      "path": [
+        "units",
+        12,
+        "functions",
+        3,
+        "diagnostics",
+        9,
+        "description"
+      ],
+      "before": "call to uncontracted function `cfl_list_init`",
+      "after": "indirect memory access is outside the resource projection"
+    },
+    "reason": "Rule 36b source-checked initializer transport at ('fluent-bit-system', 'src/flb_scheduler.c', 'flb_sched_create', 1): retained owner storage no longer receives an opaque initializer escape; actual before/after diagnostics are preserved in the full-row record. Its status is Unknown -> Unknown. Remaining indirect-access refusals stay Unknown. No API declared-model permission is used.",
+    "evidence": [
+      "full-row-movements.json.gz key ('fluent-bit-system', 'src/flb_scheduler.c', 'flb_sched_create', 1)",
+      "crates/qcore-c-gateway/src/legacy_tracked_self_init.rs",
+      "crates/qcore-c-gateway/src/legacy_transfer.rs:TrackedSelfInit",
+      "steps/focus-rust-3.json",
+      "steps/focus-deep-2.json"
+    ]
+  },
+  {
+    "leaf": {
+      "file": "resource-diagnostics.json",
+      "path": [
+        "units",
+        12,
+        "functions",
+        3,
+        "diagnostics",
+        10,
+        "description"
+      ],
+      "before": "call to uncontracted function `cfl_list_init`",
+      "after": "indirect memory access is outside the resource projection"
+    },
+    "reason": "Rule 36b source-checked initializer transport at ('fluent-bit-system', 'src/flb_scheduler.c', 'flb_sched_create', 1): retained owner storage no longer receives an opaque initializer escape; actual before/after diagnostics are preserved in the full-row record. Its status is Unknown -> Unknown. Remaining indirect-access refusals stay Unknown. No API declared-model permission is used.",
+    "evidence": [
+      "full-row-movements.json.gz key ('fluent-bit-system', 'src/flb_scheduler.c', 'flb_sched_create', 1)",
+      "crates/qcore-c-gateway/src/legacy_tracked_self_init.rs",
+      "crates/qcore-c-gateway/src/legacy_transfer.rs:TrackedSelfInit",
+      "steps/focus-rust-3.json",
+      "steps/focus-deep-2.json"
+    ]
+  },
+  {
+    "leaf": {
+      "file": "resource-diagnostics.json",
+      "path": [
+        "units",
+        13,
+        "functions",
+        20,
+        "diagnostics",
+        86,
+        "description"
+      ],
+      "before": "call to uncontracted function `mk_list_init`",
+      "after": "indirect memory access is outside the resource projection"
+    },
+    "reason": "Rule 36b source-checked initializer transport at ('fluent-bit-system', 'src/flb_output.c', 'flb_output_new', 0): retained owner storage no longer receives an opaque initializer escape; actual before/after diagnostics are preserved in the full-row record. Its status is Unknown -> Unknown. Remaining indirect-access refusals stay Unknown. No API declared-model permission is used.",
+    "evidence": [
+      "full-row-movements.json.gz key ('fluent-bit-system', 'src/flb_output.c', 'flb_output_new', 0)",
+      "crates/qcore-c-gateway/src/legacy_tracked_self_init.rs",
+      "crates/qcore-c-gateway/src/legacy_transfer.rs:TrackedSelfInit",
+      "steps/focus-rust-3.json",
+      "steps/focus-deep-2.json"
+    ]
+  },
+  {
+    "leaf": {
+      "file": "resource-diagnostics.json",
+      "path": [
+        "units",
+        13,
+        "functions",
+        20,
+        "diagnostics",
+        87,
+        "description"
+      ],
+      "before": "call to uncontracted function `mk_list_init`",
+      "after": "indirect memory access is outside the resource projection"
+    },
+    "reason": "Rule 36b source-checked initializer transport at ('fluent-bit-system', 'src/flb_output.c', 'flb_output_new', 0): retained owner storage no longer receives an opaque initializer escape; actual before/after diagnostics are preserved in the full-row record. Its status is Unknown -> Unknown. Remaining indirect-access refusals stay Unknown. No API declared-model permission is used.",
+    "evidence": [
+      "full-row-movements.json.gz key ('fluent-bit-system', 'src/flb_output.c', 'flb_output_new', 0)",
+      "crates/qcore-c-gateway/src/legacy_tracked_self_init.rs",
+      "crates/qcore-c-gateway/src/legacy_transfer.rs:TrackedSelfInit",
+      "steps/focus-rust-3.json",
+      "steps/focus-deep-2.json"
+    ]
+  },
+  {
+    "leaf": {
+      "file": "resource-diagnostics.json",
+      "path": [
+        "units",
+        13,
+        "functions",
+        20,
+        "diagnostics",
+        88,
+        "description"
+      ],
+      "before": "call to uncontracted function `mk_list_init`",
+      "after": "indirect memory access is outside the resource projection"
+    },
+    "reason": "Rule 36b source-checked initializer transport at ('fluent-bit-system', 'src/flb_output.c', 'flb_output_new', 0): retained owner storage no longer receives an opaque initializer escape; actual before/after diagnostics are preserved in the full-row record. Its status is Unknown -> Unknown. Remaining indirect-access refusals stay Unknown. No API declared-model permission is used.",
+    "evidence": [
+      "full-row-movements.json.gz key ('fluent-bit-system', 'src/flb_output.c', 'flb_output_new', 0)",
+      "crates/qcore-c-gateway/src/legacy_tracked_self_init.rs",
+      "crates/qcore-c-gateway/src/legacy_transfer.rs:TrackedSelfInit",
+      "steps/focus-rust-3.json",
+      "steps/focus-deep-2.json"
+    ]
+  },
+  {
+    "leaf": {
+      "file": "resource-diagnostics.json",
+      "path": [
+        "units",
+        14,
+        "functions",
+        20,
+        "diagnostics",
+        86,
+        "description"
+      ],
+      "before": "call to uncontracted function `mk_list_init`",
+      "after": "indirect memory access is outside the resource projection"
+    },
+    "reason": "Rule 36b source-checked initializer transport at ('fluent-bit-system', 'src/flb_output.c', 'flb_output_new', 1): retained owner storage no longer receives an opaque initializer escape; actual before/after diagnostics are preserved in the full-row record. Its status is Unknown -> Unknown. Remaining indirect-access refusals stay Unknown. No API declared-model permission is used.",
+    "evidence": [
+      "full-row-movements.json.gz key ('fluent-bit-system', 'src/flb_output.c', 'flb_output_new', 1)",
+      "crates/qcore-c-gateway/src/legacy_tracked_self_init.rs",
+      "crates/qcore-c-gateway/src/legacy_transfer.rs:TrackedSelfInit",
+      "steps/focus-rust-3.json",
+      "steps/focus-deep-2.json"
+    ]
+  },
+  {
+    "leaf": {
+      "file": "resource-diagnostics.json",
+      "path": [
+        "units",
+        14,
+        "functions",
+        20,
+        "diagnostics",
+        87,
+        "description"
+      ],
+      "before": "call to uncontracted function `mk_list_init`",
+      "after": "indirect memory access is outside the resource projection"
+    },
+    "reason": "Rule 36b source-checked initializer transport at ('fluent-bit-system', 'src/flb_output.c', 'flb_output_new', 1): retained owner storage no longer receives an opaque initializer escape; actual before/after diagnostics are preserved in the full-row record. Its status is Unknown -> Unknown. Remaining indirect-access refusals stay Unknown. No API declared-model permission is used.",
+    "evidence": [
+      "full-row-movements.json.gz key ('fluent-bit-system', 'src/flb_output.c', 'flb_output_new', 1)",
+      "crates/qcore-c-gateway/src/legacy_tracked_self_init.rs",
+      "crates/qcore-c-gateway/src/legacy_transfer.rs:TrackedSelfInit",
+      "steps/focus-rust-3.json",
+      "steps/focus-deep-2.json"
+    ]
+  },
+  {
+    "leaf": {
+      "file": "resource-diagnostics.json",
+      "path": [
+        "units",
+        14,
+        "functions",
+        20,
+        "diagnostics",
+        88,
+        "description"
+      ],
+      "before": "call to uncontracted function `mk_list_init`",
+      "after": "indirect memory access is outside the resource projection"
+    },
+    "reason": "Rule 36b source-checked initializer transport at ('fluent-bit-system', 'src/flb_output.c', 'flb_output_new', 1): retained owner storage no longer receives an opaque initializer escape; actual before/after diagnostics are preserved in the full-row record. Its status is Unknown -> Unknown. Remaining indirect-access refusals stay Unknown. No API declared-model permission is used.",
+    "evidence": [
+      "full-row-movements.json.gz key ('fluent-bit-system', 'src/flb_output.c', 'flb_output_new', 1)",
+      "crates/qcore-c-gateway/src/legacy_tracked_self_init.rs",
+      "crates/qcore-c-gateway/src/legacy_transfer.rs:TrackedSelfInit",
+      "steps/focus-rust-3.json",
+      "steps/focus-deep-2.json"
+    ]
+  },
+  {
+    "leaf": {
+      "file": "null.summary.json",
+      "path": [
+        "combined",
+        "Safe"
+      ],
+      "before": 65,
+      "after": 67
+    },
+    "reason": "Exact production tally/join consequence of the enumerated gained custody rows. Full static and each loaded-plugin runtime projection is reproduced separately on both sides; source binding remains Open and truth transport is false.",
+    "evidence": [
+      "replay-v3/system-base-projection-proof.json",
+      "replay-v3/system-tip-projection-proof.json",
+      "full-row-movements.json.gz"
+    ]
+  },
+  {
+    "leaf": {
+      "file": "null.summary.json",
+      "path": [
+        "combined",
+        "Unknown"
+      ],
+      "before": 385,
+      "after": 383
+    },
+    "reason": "Exact production tally/join consequence of the enumerated gained custody rows. Full static and each loaded-plugin runtime projection is reproduced separately on both sides; source binding remains Open and truth transport is false.",
+    "evidence": [
+      "replay-v3/system-base-projection-proof.json",
+      "replay-v3/system-tip-projection-proof.json",
+      "full-row-movements.json.gz"
+    ]
+  },
+  {
+    "leaf": {
+      "file": "null.summary.json",
+      "path": [
+        "custody",
+        "Safe"
+      ],
+      "before": 99,
+      "after": 101
+    },
+    "reason": "Exact production tally/join consequence of the enumerated gained custody rows. Full static and each loaded-plugin runtime projection is reproduced separately on both sides; source binding remains Open and truth transport is false.",
+    "evidence": [
+      "replay-v3/system-base-projection-proof.json",
+      "replay-v3/system-tip-projection-proof.json",
+      "full-row-movements.json.gz"
+    ]
+  },
+  {
+    "leaf": {
+      "file": "null.summary.json",
+      "path": [
+        "custody",
+        "Unknown"
+      ],
+      "before": 345,
+      "after": 343
+    },
+    "reason": "Exact production tally/join consequence of the enumerated gained custody rows. Full static and each loaded-plugin runtime projection is reproduced separately on both sides; source binding remains Open and truth transport is false.",
+    "evidence": [
+      "replay-v3/system-base-projection-proof.json",
+      "replay-v3/system-tip-projection-proof.json",
+      "full-row-movements.json.gz"
+    ]
+  },
+  {
+    "leaf": {
+      "file": "outer.json",
+      "path": [
+        "scenarios",
+        "all",
+        "combined",
+        "Safe"
+      ],
+      "before": 63,
+      "after": 65
+    },
+    "reason": "Exact production tally/join consequence of the enumerated gained custody rows. Full static and each loaded-plugin runtime projection is reproduced separately on both sides; source binding remains Open and truth transport is false.",
+    "evidence": [
+      "replay-v3/system-base-projection-proof.json",
+      "replay-v3/system-tip-projection-proof.json",
+      "full-row-movements.json.gz"
+    ]
+  },
+  {
+    "leaf": {
+      "file": "outer.json",
+      "path": [
+        "scenarios",
+        "all",
+        "combined",
+        "Unknown"
+      ],
+      "before": 387,
+      "after": 385
+    },
+    "reason": "Exact production tally/join consequence of the enumerated gained custody rows. Full static and each loaded-plugin runtime projection is reproduced separately on both sides; source binding remains Open and truth transport is false.",
+    "evidence": [
+      "replay-v3/system-base-projection-proof.json",
+      "replay-v3/system-tip-projection-proof.json",
+      "full-row-movements.json.gz"
+    ]
+  },
+  {
+    "leaf": {
+      "file": "outer.json",
+      "path": [
+        "scenarios",
+        "all",
+        "custody",
+        "Safe"
+      ],
+      "before": 99,
+      "after": 101
+    },
+    "reason": "Exact production tally/join consequence of the enumerated gained custody rows. Full static and each loaded-plugin runtime projection is reproduced separately on both sides; source binding remains Open and truth transport is false.",
+    "evidence": [
+      "replay-v3/system-base-projection-proof.json",
+      "replay-v3/system-tip-projection-proof.json",
+      "full-row-movements.json.gz"
+    ]
+  },
+  {
+    "leaf": {
+      "file": "outer.json",
+      "path": [
+        "scenarios",
+        "all",
+        "custody",
+        "Unknown"
+      ],
+      "before": 345,
+      "after": 343
+    },
+    "reason": "Exact production tally/join consequence of the enumerated gained custody rows. Full static and each loaded-plugin runtime projection is reproduced separately on both sides; source binding remains Open and truth transport is false.",
+    "evidence": [
+      "replay-v3/system-base-projection-proof.json",
+      "replay-v3/system-tip-projection-proof.json",
+      "full-row-movements.json.gz"
+    ]
+  },
+  {
+    "leaf": {
+      "file": "outer.json",
+      "path": [
+        "scenarios",
+        "flb_external_plugin",
+        "combined",
+        "Safe"
+      ],
+      "before": 63,
+      "after": 65
+    },
+    "reason": "Exact production tally/join consequence of the enumerated gained custody rows. Full static and each loaded-plugin runtime projection is reproduced separately on both sides; source binding remains Open and truth transport is false.",
+    "evidence": [
+      "replay-v3/system-base-projection-proof.json",
+      "replay-v3/system-tip-projection-proof.json",
+      "full-row-movements.json.gz"
+    ]
+  },
+  {
+    "leaf": {
+      "file": "outer.json",
+      "path": [
+        "scenarios",
+        "flb_external_plugin",
+        "combined",
+        "Unknown"
+      ],
+      "before": 385,
+      "after": 383
+    },
+    "reason": "Exact production tally/join consequence of the enumerated gained custody rows. Full static and each loaded-plugin runtime projection is reproduced separately on both sides; source binding remains Open and truth transport is false.",
+    "evidence": [
+      "replay-v3/system-base-projection-proof.json",
+      "replay-v3/system-tip-projection-proof.json",
+      "full-row-movements.json.gz"
+    ]
+  },
+  {
+    "leaf": {
+      "file": "outer.json",
+      "path": [
+        "scenarios",
+        "flb_external_plugin",
+        "custody",
+        "Safe"
+      ],
+      "before": 99,
+      "after": 101
+    },
+    "reason": "Exact production tally/join consequence of the enumerated gained custody rows. Full static and each loaded-plugin runtime projection is reproduced separately on both sides; source binding remains Open and truth transport is false.",
+    "evidence": [
+      "replay-v3/system-base-projection-proof.json",
+      "replay-v3/system-tip-projection-proof.json",
+      "full-row-movements.json.gz"
+    ]
+  },
+  {
+    "leaf": {
+      "file": "outer.json",
+      "path": [
+        "scenarios",
+        "flb_external_plugin",
+        "custody",
+        "Unknown"
+      ],
+      "before": 345,
+      "after": 343
+    },
+    "reason": "Exact production tally/join consequence of the enumerated gained custody rows. Full static and each loaded-plugin runtime projection is reproduced separately on both sides; source binding remains Open and truth transport is false.",
+    "evidence": [
+      "replay-v3/system-base-projection-proof.json",
+      "replay-v3/system-tip-projection-proof.json",
+      "full-row-movements.json.gz"
+    ]
+  },
+  {
+    "leaf": {
+      "file": "outer.json",
+      "path": [
+        "scenarios",
+        "rk_plugin_library",
+        "combined",
+        "Safe"
+      ],
+      "before": 63,
+      "after": 65
+    },
+    "reason": "Exact production tally/join consequence of the enumerated gained custody rows. Full static and each loaded-plugin runtime projection is reproduced separately on both sides; source binding remains Open and truth transport is false.",
+    "evidence": [
+      "replay-v3/system-base-projection-proof.json",
+      "replay-v3/system-tip-projection-proof.json",
+      "full-row-movements.json.gz"
+    ]
+  },
+  {
+    "leaf": {
+      "file": "outer.json",
+      "path": [
+        "scenarios",
+        "rk_plugin_library",
+        "combined",
+        "Unknown"
+      ],
+      "before": 387,
+      "after": 385
+    },
+    "reason": "Exact production tally/join consequence of the enumerated gained custody rows. Full static and each loaded-plugin runtime projection is reproduced separately on both sides; source binding remains Open and truth transport is false.",
+    "evidence": [
+      "replay-v3/system-base-projection-proof.json",
+      "replay-v3/system-tip-projection-proof.json",
+      "full-row-movements.json.gz"
+    ]
+  },
+  {
+    "leaf": {
+      "file": "outer.json",
+      "path": [
+        "scenarios",
+        "rk_plugin_library",
+        "custody",
+        "Safe"
+      ],
+      "before": 99,
+      "after": 101
+    },
+    "reason": "Exact production tally/join consequence of the enumerated gained custody rows. Full static and each loaded-plugin runtime projection is reproduced separately on both sides; source binding remains Open and truth transport is false.",
+    "evidence": [
+      "replay-v3/system-base-projection-proof.json",
+      "replay-v3/system-tip-projection-proof.json",
+      "full-row-movements.json.gz"
+    ]
+  },
+  {
+    "leaf": {
+      "file": "outer.json",
+      "path": [
+        "scenarios",
+        "rk_plugin_library",
+        "custody",
+        "Unknown"
+      ],
+      "before": 345,
+      "after": 343
+    },
+    "reason": "Exact production tally/join consequence of the enumerated gained custody rows. Full static and each loaded-plugin runtime projection is reproduced separately on both sides; source binding remains Open and truth transport is false.",
+    "evidence": [
+      "replay-v3/system-base-projection-proof.json",
+      "replay-v3/system-tip-projection-proof.json",
+      "full-row-movements.json.gz"
+    ]
+  },
+  {
+    "leaf": {
+      "file": "outer.json",
+      "path": [
+        "static",
+        "combined",
+        "Safe"
+      ],
+      "before": 65,
+      "after": 67
+    },
+    "reason": "Exact production tally/join consequence of the enumerated gained custody rows. Full static and each loaded-plugin runtime projection is reproduced separately on both sides; source binding remains Open and truth transport is false.",
+    "evidence": [
+      "replay-v3/system-base-projection-proof.json",
+      "replay-v3/system-tip-projection-proof.json",
+      "full-row-movements.json.gz"
+    ]
+  },
+  {
+    "leaf": {
+      "file": "outer.json",
+      "path": [
+        "static",
+        "combined",
+        "Unknown"
+      ],
+      "before": 385,
+      "after": 383
+    },
+    "reason": "Exact production tally/join consequence of the enumerated gained custody rows. Full static and each loaded-plugin runtime projection is reproduced separately on both sides; source binding remains Open and truth transport is false.",
+    "evidence": [
+      "replay-v3/system-base-projection-proof.json",
+      "replay-v3/system-tip-projection-proof.json",
+      "full-row-movements.json.gz"
+    ]
+  },
+  {
+    "leaf": {
+      "file": "outer.json",
+      "path": [
+        "static",
+        "custody",
+        "Safe"
+      ],
+      "before": 99,
+      "after": 101
+    },
+    "reason": "Exact production tally/join consequence of the enumerated gained custody rows. Full static and each loaded-plugin runtime projection is reproduced separately on both sides; source binding remains Open and truth transport is false.",
+    "evidence": [
+      "replay-v3/system-base-projection-proof.json",
+      "replay-v3/system-tip-projection-proof.json",
+      "full-row-movements.json.gz"
+    ]
+  },
+  {
+    "leaf": {
+      "file": "outer.json",
+      "path": [
+        "static",
+        "custody",
+        "Unknown"
+      ],
+      "before": 345,
+      "after": 343
+    },
+    "reason": "Exact production tally/join consequence of the enumerated gained custody rows. Full static and each loaded-plugin runtime projection is reproduced separately on both sides; source binding remains Open and truth transport is false.",
+    "evidence": [
+      "replay-v3/system-base-projection-proof.json",
+      "replay-v3/system-tip-projection-proof.json",
+      "full-row-movements.json.gz"
+    ]
+  },
+  {
+    "leaf": {
+      "file": "resource-diagnostics.contracts.json",
+      "path": [
+        "contract_dependencies",
+        "declarations",
+        "__errno_location",
+        "hypothesis_evidence",
+        "dependent_safe_rows"
+      ],
+      "before": 6,
+      "after": 8
+    },
+    "reason": "Exact old-plus-new-Safe-rows dependency fold. Consulted declarations and standing remain unchanged. Each gained row increments its existing declarations; Safe roll-up categories are recomputed from their unchanged body standing, and top assumptions are sorted by count then name. The permutation of __errno_location/LZ4 or system assumptions is a ranking consequence, not a new premise or authority.",
+    "evidence": [
+      "full-row-movements.json.gz gained rows and unchanged contract_dependencies",
+      "crates/qcore-audit/src/contract_dependencies.rs:render",
+      "semantic review exact per-coordinate dependency reconstruction"
+    ]
+  },
+  {
+    "leaf": {
+      "file": "resource-diagnostics.contracts.json",
+      "path": [
+        "contract_dependencies",
+        "declarations",
+        "__errno_location",
+        "safe_rows"
+      ],
+      "before": 6,
+      "after": 8
+    },
+    "reason": "Exact old-plus-new-Safe-rows dependency fold. Consulted declarations and standing remain unchanged. Each gained row increments its existing declarations; Safe roll-up categories are recomputed from their unchanged body standing, and top assumptions are sorted by count then name. The permutation of __errno_location/LZ4 or system assumptions is a ranking consequence, not a new premise or authority.",
+    "evidence": [
+      "full-row-movements.json.gz gained rows and unchanged contract_dependencies",
+      "crates/qcore-audit/src/contract_dependencies.rs:render",
+      "semantic review exact per-coordinate dependency reconstruction"
+    ]
+  },
+  {
+    "leaf": {
+      "file": "resource-diagnostics.contracts.json",
+      "path": [
+        "contract_dependencies",
+        "declarations",
+        "flb_errno_print",
+        "hypothesis_evidence",
+        "dependent_safe_rows"
+      ],
+      "before": 6,
+      "after": 8
+    },
+    "reason": "Exact old-plus-new-Safe-rows dependency fold. Consulted declarations and standing remain unchanged. Each gained row increments its existing declarations; Safe roll-up categories are recomputed from their unchanged body standing, and top assumptions are sorted by count then name. The permutation of __errno_location/LZ4 or system assumptions is a ranking consequence, not a new premise or authority.",
+    "evidence": [
+      "full-row-movements.json.gz gained rows and unchanged contract_dependencies",
+      "crates/qcore-audit/src/contract_dependencies.rs:render",
+      "semantic review exact per-coordinate dependency reconstruction"
+    ]
+  },
+  {
+    "leaf": {
+      "file": "resource-diagnostics.contracts.json",
+      "path": [
+        "contract_dependencies",
+        "declarations",
+        "flb_errno_print",
+        "safe_rows"
+      ],
+      "before": 6,
+      "after": 8
+    },
+    "reason": "Exact old-plus-new-Safe-rows dependency fold. Consulted declarations and standing remain unchanged. Each gained row increments its existing declarations; Safe roll-up categories are recomputed from their unchanged body standing, and top assumptions are sorted by count then name. The permutation of __errno_location/LZ4 or system assumptions is a ranking consequence, not a new premise or authority.",
+    "evidence": [
+      "full-row-movements.json.gz gained rows and unchanged contract_dependencies",
+      "crates/qcore-audit/src/contract_dependencies.rs:render",
+      "semantic review exact per-coordinate dependency reconstruction"
+    ]
+  },
+  {
+    "leaf": {
+      "file": "resource-diagnostics.contracts.json",
+      "path": [
+        "contract_dependencies",
+        "declarations",
+        "flb_malloc",
+        "hypothesis_evidence",
+        "dependent_safe_rows"
+      ],
+      "before": 2,
+      "after": 4
+    },
+    "reason": "Exact old-plus-new-Safe-rows dependency fold. Consulted declarations and standing remain unchanged. Each gained row increments its existing declarations; Safe roll-up categories are recomputed from their unchanged body standing, and top assumptions are sorted by count then name. The permutation of __errno_location/LZ4 or system assumptions is a ranking consequence, not a new premise or authority.",
+    "evidence": [
+      "full-row-movements.json.gz gained rows and unchanged contract_dependencies",
+      "crates/qcore-audit/src/contract_dependencies.rs:render",
+      "semantic review exact per-coordinate dependency reconstruction"
+    ]
+  },
+  {
+    "leaf": {
+      "file": "resource-diagnostics.contracts.json",
+      "path": [
+        "contract_dependencies",
+        "declarations",
+        "flb_malloc",
+        "safe_rows"
+      ],
+      "before": 2,
+      "after": 4
+    },
+    "reason": "Exact old-plus-new-Safe-rows dependency fold. Consulted declarations and standing remain unchanged. Each gained row increments its existing declarations; Safe roll-up categories are recomputed from their unchanged body standing, and top assumptions are sorted by count then name. The permutation of __errno_location/LZ4 or system assumptions is a ranking consequence, not a new premise or authority.",
+    "evidence": [
+      "full-row-movements.json.gz gained rows and unchanged contract_dependencies",
+      "crates/qcore-audit/src/contract_dependencies.rs:render",
+      "semantic review exact per-coordinate dependency reconstruction"
+    ]
+  },
+  {
+    "leaf": {
+      "file": "resource-diagnostics.contracts.json",
+      "path": [
+        "contract_dependencies",
+        "safe_rollup",
+        "resting_on_a_declared_assumption"
+      ],
+      "before": 42,
+      "after": 44
+    },
+    "reason": "Exact old-plus-new-Safe-rows dependency fold. Consulted declarations and standing remain unchanged. Each gained row increments its existing declarations; Safe roll-up categories are recomputed from their unchanged body standing, and top assumptions are sorted by count then name. The permutation of __errno_location/LZ4 or system assumptions is a ranking consequence, not a new premise or authority.",
+    "evidence": [
+      "full-row-movements.json.gz gained rows and unchanged contract_dependencies",
+      "crates/qcore-audit/src/contract_dependencies.rs:render",
+      "semantic review exact per-coordinate dependency reconstruction"
+    ]
+  },
+  {
+    "leaf": {
+      "file": "resource-diagnostics.contracts.json",
+      "path": [
+        "contract_dependencies",
+        "safe_rollup",
+        "safe_rows"
+      ],
+      "before": 99,
+      "after": 101
+    },
+    "reason": "Exact old-plus-new-Safe-rows dependency fold. Consulted declarations and standing remain unchanged. Each gained row increments its existing declarations; Safe roll-up categories are recomputed from their unchanged body standing, and top assumptions are sorted by count then name. The permutation of __errno_location/LZ4 or system assumptions is a ranking consequence, not a new premise or authority.",
+    "evidence": [
+      "full-row-movements.json.gz gained rows and unchanged contract_dependencies",
+      "crates/qcore-audit/src/contract_dependencies.rs:render",
+      "semantic review exact per-coordinate dependency reconstruction"
+    ]
+  },
+  {
+    "leaf": {
+      "file": "resource-diagnostics.contracts.json",
+      "path": [
+        "contract_dependencies",
+        "safe_rollup",
+        "top_declared_assumptions",
+        0,
+        "safe_rows"
+      ],
+      "before": 6,
+      "after": 8
+    },
+    "reason": "Exact old-plus-new-Safe-rows dependency fold. Consulted declarations and standing remain unchanged. Each gained row increments its existing declarations; Safe roll-up categories are recomputed from their unchanged body standing, and top assumptions are sorted by count then name. The permutation of __errno_location/LZ4 or system assumptions is a ranking consequence, not a new premise or authority.",
+    "evidence": [
+      "full-row-movements.json.gz gained rows and unchanged contract_dependencies",
+      "crates/qcore-audit/src/contract_dependencies.rs:render",
+      "semantic review exact per-coordinate dependency reconstruction"
+    ]
+  },
+  {
+    "leaf": {
+      "file": "resource-diagnostics.contracts.json",
+      "path": [
+        "contract_dependencies",
+        "safe_rollup",
+        "top_declared_assumptions",
+        1,
+        "function"
+      ],
+      "before": "cio_chunk_down",
+      "after": "flb_errno_print"
+    },
+    "reason": "Exact old-plus-new-Safe-rows dependency fold. Consulted declarations and standing remain unchanged. Each gained row increments its existing declarations; Safe roll-up categories are recomputed from their unchanged body standing, and top assumptions are sorted by count then name. The permutation of __errno_location/LZ4 or system assumptions is a ranking consequence, not a new premise or authority.",
+    "evidence": [
+      "full-row-movements.json.gz gained rows and unchanged contract_dependencies",
+      "crates/qcore-audit/src/contract_dependencies.rs:render",
+      "semantic review exact per-coordinate dependency reconstruction"
+    ]
+  },
+  {
+    "leaf": {
+      "file": "resource-diagnostics.contracts.json",
+      "path": [
+        "contract_dependencies",
+        "safe_rollup",
+        "top_declared_assumptions",
+        1,
+        "safe_rows"
+      ],
+      "before": 6,
+      "after": 8
+    },
+    "reason": "Exact old-plus-new-Safe-rows dependency fold. Consulted declarations and standing remain unchanged. Each gained row increments its existing declarations; Safe roll-up categories are recomputed from their unchanged body standing, and top assumptions are sorted by count then name. The permutation of __errno_location/LZ4 or system assumptions is a ranking consequence, not a new premise or authority.",
+    "evidence": [
+      "full-row-movements.json.gz gained rows and unchanged contract_dependencies",
+      "crates/qcore-audit/src/contract_dependencies.rs:render",
+      "semantic review exact per-coordinate dependency reconstruction"
+    ]
+  },
+  {
+    "leaf": {
+      "file": "resource-diagnostics.contracts.json",
+      "path": [
+        "contract_dependencies",
+        "safe_rollup",
+        "top_declared_assumptions",
+        2,
+        "function"
+      ],
+      "before": "cio_chunk_is_up",
+      "after": "cio_chunk_down"
+    },
+    "reason": "Exact old-plus-new-Safe-rows dependency fold. Consulted declarations and standing remain unchanged. Each gained row increments its existing declarations; Safe roll-up categories are recomputed from their unchanged body standing, and top assumptions are sorted by count then name. The permutation of __errno_location/LZ4 or system assumptions is a ranking consequence, not a new premise or authority.",
+    "evidence": [
+      "full-row-movements.json.gz gained rows and unchanged contract_dependencies",
+      "crates/qcore-audit/src/contract_dependencies.rs:render",
+      "semantic review exact per-coordinate dependency reconstruction"
+    ]
+  },
+  {
+    "leaf": {
+      "file": "resource-diagnostics.contracts.json",
+      "path": [
+        "contract_dependencies",
+        "safe_rollup",
+        "top_declared_assumptions",
+        3,
+        "function"
+      ],
+      "before": "flb_errno_print",
+      "after": "cio_chunk_is_up"
+    },
+    "reason": "Exact old-plus-new-Safe-rows dependency fold. Consulted declarations and standing remain unchanged. Each gained row increments its existing declarations; Safe roll-up categories are recomputed from their unchanged body standing, and top assumptions are sorted by count then name. The permutation of __errno_location/LZ4 or system assumptions is a ranking consequence, not a new premise or authority.",
+    "evidence": [
+      "full-row-movements.json.gz gained rows and unchanged contract_dependencies",
+      "crates/qcore-audit/src/contract_dependencies.rs:render",
+      "semantic review exact per-coordinate dependency reconstruction"
+    ]
+  }
+]

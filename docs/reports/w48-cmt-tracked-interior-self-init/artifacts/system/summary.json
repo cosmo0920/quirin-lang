@@ -1,0 +1,47 @@
+{
+  "route": "system",
+  "resource_rows": 448,
+  "base_statuses": {
+    "Unknown": 345,
+    "Safe": 99,
+    "Unsafe": 4
+  },
+  "tip_statuses": {
+    "Unknown": 343,
+    "Safe": 101,
+    "Unsafe": 4
+  },
+  "resource_semantic_rows_changed": 10,
+  "safe_gains": [
+    [
+      "fluent-bit-system",
+      "src/flb_task.c",
+      "flb_task_queue_create",
+      0
+    ],
+    [
+      "fluent-bit-system",
+      "src/flb_task.c",
+      "flb_task_queue_create",
+      1
+    ]
+  ],
+  "safe_losses": [],
+  "null_rows": 454,
+  "complete_null_dictionary_changes": 0,
+  "raw_difference_counts": {
+    "resource-diagnostics.invocation.json": 2,
+    "invocation.json": 12,
+    "null.jsonl": 452,
+    "resource-diagnostics.chunk-contracts.json": 0,
+    "resource-diagnostics.json": 620,
+    "resource-diagnostics.source-effects.json": 0,
+    "null.summary.json": 4,
+    "outer.json": 16,
+    "resource-diagnostics.contracts.json": 1275,
+    "producer-invocation.json": 12
+  },
+  "all_raw_fields_retained": true,
+  "attribution": "complete; zero unexplained leaves; full raw fields retained",
+  "unsafe_qualification": "all Unsafe labels remain provisional, not upstream defect claims"
+}
