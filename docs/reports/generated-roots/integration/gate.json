@@ -1,0 +1,13 @@
+{
+  "note": "Integration of GENERATED-ROOTS: main fast-forwarded to card tip f864a7ecf, which contains main 1e3967b97 (merge 9caee67ba). The card's full standing gate ran ON THE MERGED TIP 9caee67ba through `scripts/gate_scope.py --base main --full` with gate slots (docs/reports/generated-roots/gate/gate.json): fmt, Clippy, Rust 8645 passed/0 failed/15 ignored (550 units/563 summaries), both reevaluation examples, 370 Lean audits (AuditAll over 102,367 declarations), 443 Python, all exit 0. f864a7ecf adds only the gate record; integration adds records only, with Python rerun against the committed matrix. providers/ unchanged: provider_tests 133 carried.",
+  "workspace_tests": 8645,
+  "provider_tests": 133,
+  "python_evidence_validator_tests": 443,
+  "reevaluation_probe_exit": 0,
+  "reevaluation_followup_exit": 0,
+  "cargo_fmt": "clean",
+  "cargo_clippy": "clean",
+  "standing_gate": "full gate on merged tip 9caee67ba",
+  "lean_audits": 370,
+  "clang": "present: Ubuntu clang version 21.1.8 (6ubuntu1)"
+}
