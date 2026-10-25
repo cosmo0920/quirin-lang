@@ -13,3 +13,5 @@ The card's original report and 8,654-test gate remain frozen. Its native counts 
 The first matrix publication refused extra source-identity keys in the strict gate schema. Those identities now live in [source-identity.json](source-identity.json); [publication-repair.json](publication-repair.json) retains the refusal. Validation results are unchanged.
 
 The post-regeneration confirmation passes all 445 Python tests on committed publication `4b49a7b116b63ab7ab3ab10743ef467010df2718`, with the matrix hash unchanged. [Post-matrix receipt](post-matrix-python.json) records the command, exit 0, private log hash and documentation-only source difference.
+
+Main landing merge `7081bf1dcecb4043a7d0390edef0224a717227d2` has the exact tree of the validated publication `52eb34725c4b39400a1b8656fa7c55db68995034`. [Landing receipt](main-landing.json) records ancestry, source equality and the unchanged confirmed matrix hash.
