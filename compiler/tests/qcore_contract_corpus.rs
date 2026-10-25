@@ -415,7 +415,7 @@ const EXPECTED_CONTRACTS: &[(&str, &str, usize)] = &[
     (
         "cmetrics/typed_setters.qv",
         "cmt_exp_histogram_set_default",
-        19,
+        20,
     ),
     ("ctraces/context_lifetime.qv", "ctr_destroy", 3),
     ("ctraces/context_lifetime.qv", "ctr_id_cmp", 4),

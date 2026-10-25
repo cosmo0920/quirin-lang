@@ -172,6 +172,7 @@ def counterSet (afterLookup : SetterState) (lookupOK allowReset : Bool)
   else ({ afterLookup with value := value, timestamp := timestamp }, 0)
 
 /-- Fresh/distinct replacement ownership and preparation cleanup are premises.
+External coordination excludes conflicting metric users through return.
 No new arrays escape on failure; successful replacement retires old aliases. -/
 def replaceArrays (afterLookup : SetterState) (prepared : Bool)
     (fresh : List Nat) (timestamp : Nat) : SetterState × Int :=

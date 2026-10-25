@@ -1,5 +1,9 @@
 module contract;
 
+// Complete-call exclusion covers the typed owner (if any), selected metric
+// and storage used by the call: conflicting writers/raw readers, replacement,
+// expiration and destruction. Internal locks do not supply this caller guard.
+
 // Source-audited declared models, no interpreted call permission.
 // Fluent Bit 66910c10a4d7eafa810b84229cf2dcf7b0f26f97:
 // cmt_{counter,gauge,untyped,histogram,summary,exp_histogram}.c and headers.
@@ -13,7 +17,7 @@ extern fn cmt_counter_set(counter: ptr<mut, u8>, timestamp: u64, val: f64,
 contract {
     requires counter_is_live_with_matching_opts_map_parent_and_counter_tag;
     requires map_and_lookup_inputs_meet_the_getter_representation_obligations;
-    requires retirement_and_conflicting_users_are_coordinated_through_value_write;
+    requires caller_excludes_retirement_and_conflicting_metric_users_for_the_complete_call;
     requires val_has_defined_C_double_to_int64_and_uint64_conversions;
     requires failure_logging_context_strings_and_backend_are_valid;
     ensures normal result_is_zero_or_minus_one;
@@ -31,7 +35,7 @@ extern fn cmt_gauge_set(gauge: ptr<mut, u8>, timestamp: u64, val: f64,
 contract {
     requires gauge_is_live_with_matching_opts_map_parent_and_gauge_tag;
     requires map_and_lookup_inputs_meet_the_getter_representation_obligations;
-    requires retirement_and_conflicting_users_are_coordinated_through_value_write;
+    requires caller_excludes_retirement_and_conflicting_metric_users_for_the_complete_call;
     requires val_has_defined_C_double_to_int64_and_uint64_conversions;
     requires failure_logging_context_strings_and_backend_are_valid;
     ensures normal result_is_zero_or_minus_one;
@@ -47,7 +51,7 @@ extern fn cmt_untyped_set(untyped: ptr<mut, u8>, timestamp: u64, val: f64,
 contract {
     requires untyped_is_live_with_matching_opts_map_parent_and_untyped_tag;
     requires map_and_lookup_inputs_meet_the_getter_representation_obligations;
-    requires retirement_and_conflicting_users_are_coordinated_through_value_write;
+    requires caller_excludes_retirement_and_conflicting_metric_users_for_the_complete_call;
     requires val_has_defined_C_double_to_int64_and_uint64_conversions;
     requires failure_logging_context_strings_and_backend_are_valid;
     ensures normal result_is_zero_or_minus_one;
@@ -69,7 +73,7 @@ contract {
     requires target_hist_buckets_is_null_or_owns_count_plus_one_writable_entries;
     requires converted_bucket_defaults_have_defined_double_to_uint64_conversion;
     requires input_arrays_are_disjoint_from_lookup_and_setter_mutation_footprints;
-    requires retirement_and_conflicting_users_are_coordinated_through_value_write;
+    requires caller_excludes_retirement_and_conflicting_metric_users_for_the_complete_call;
     requires failure_logging_context_strings_formats_and_backend_are_valid;
     ensures normal result_is_zero_or_minus_one;
     ensures normal minus_one_may_retain_lookup_or_storage_preparation_changes;
@@ -89,7 +93,7 @@ contract {
     requires present_quantile_values_has_quantiles_count_stable_readable_entries;
     requires existing_quantile_storage_has_valid_owned_extent_and_count;
     requires input_arrays_are_disjoint_from_lookup_and_setter_mutation_footprints;
-    requires retirement_and_conflicting_users_are_coordinated_through_value_write;
+    requires caller_excludes_retirement_and_conflicting_metric_users_for_the_complete_call;
     requires failure_logging_context_strings_and_backend_are_valid;
     ensures normal result_is_zero_or_minus_one;
     ensures normal minus_one_may_retain_lookup_or_storage_preparation_changes;
@@ -116,6 +120,7 @@ contract {
     requires old_positive_and_negative_arrays_are_distinct_exclusive_owned_or_null;
     requires input_arrays_are_disjoint_from_lookup_and_setter_mutation_footprints;
     requires all_old_array_borrowers_and_retirement_are_externally_coordinated;
+    requires caller_excludes_retirement_and_conflicting_metric_users_for_the_complete_call;
     requires exp_hist_lock_backend_and_failure_logging_are_valid;
     ensures normal result_is_zero_or_minus_one;
     ensures normal positive_count_with_null_input_returns_minus_one_after_possible_lookup_changes;
