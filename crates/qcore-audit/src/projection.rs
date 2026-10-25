@@ -1015,6 +1015,13 @@ struct ProjectionContext<'a> {
     hypothesis_context: qcore_schemas::hypothesis::Context,
 }
 
+enum ProjectionPublication {
+    Safe(usize),
+    Unsafe(usize),
+    Unknown { reason: String, projected: usize },
+    Error(LegacyCError),
+}
+
 fn record_projection(
     context: ProjectionContext<'_>,
     result: Result<UnrestrictedLegacyResult, LegacyCError>,
@@ -1083,6 +1090,26 @@ fn record_projection(
         // Card VERDICT-CONTRACT-DEPENDENCIES (rule 13f): the row fields, after
         // the verdict is settled; additive.
         crate::contract_dependencies::annotate_unit(row, dependencies, &result, contracts)?;
+    }
+    // All full-record consumers are finished; retain the publication account.
+    let publication = match result {
+        Ok(UnrestrictedLegacyResult::Safe(certificate)) => {
+            ProjectionPublication::Safe(certificate.checked_functions.len())
+        }
+        Ok(UnrestrictedLegacyResult::Unsafe(summary)) => {
+            ProjectionPublication::Unsafe(summary.functions.len())
+        }
+        Ok(UnrestrictedLegacyResult::Unknown {
+            reason, partial, ..
+        }) => ProjectionPublication::Unknown {
+            reason,
+            projected: partial
+                .as_ref()
+                .map_or(0, |summary| summary.functions.len()),
+        },
+        Err(error) => ProjectionPublication::Error(error),
+    };
+    if let Some(row) = report.last_unit_mut() {
         if !dependencies.reading_sites.is_empty() || !dependencies.reading_site_omissions.is_empty()
         {
             row["reading_site_domain"] = serde_json::json!({
@@ -1193,36 +1220,31 @@ fn record_projection(
     // the verdict its row publishes, which is the result's own verdict unless
     // a checker plugin's link joined it upwards.
     let published = report.last_unit_verdict();
-    match result {
-        Ok(UnrestrictedLegacyResult::Safe(certificate)) => {
+    match publication {
+        ProjectionPublication::Safe(projected) => {
             let verdict = published.unwrap_or(Verdict::Safe);
             tally(counts, verdict);
-            counts.projected_functions += certificate.checked_functions.len();
+            counts.projected_functions += projected;
             say!(
                 out,
                 "  {library}/{file}: {verdict} ({}/{})",
-                certificate.checked_functions.len(),
+                projected,
                 source_functions.len()
             );
         }
-        Ok(UnrestrictedLegacyResult::Unsafe(summary)) => {
+        ProjectionPublication::Unsafe(projected) => {
             tally(counts, Verdict::Unsafe);
-            counts.projected_functions += summary.functions.len();
+            counts.projected_functions += projected;
             say!(
                 out,
                 "  {library}/{file}: Unsafe ({}/{})",
-                summary.functions.len(),
+                projected,
                 source_functions.len()
             );
         }
-        Ok(UnrestrictedLegacyResult::Unknown {
-            reason, partial, ..
-        }) => {
+        ProjectionPublication::Unknown { reason, projected } => {
             let verdict = published.unwrap_or(Verdict::Unknown);
             tally(counts, verdict);
-            let projected = partial
-                .as_ref()
-                .map_or(0, |summary| summary.functions.len());
             counts.projected_functions += projected;
             say!(
                 out,
@@ -1230,7 +1252,7 @@ fn record_projection(
                 source_functions.len()
             );
         }
-        Err(error) => {
+        ProjectionPublication::Error(error) => {
             counts.gateway_failures += 1;
             say!(out, "  {library}/{file}: gateway failure: {error}");
         }
