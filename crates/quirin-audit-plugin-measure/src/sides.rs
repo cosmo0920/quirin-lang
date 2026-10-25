@@ -44,6 +44,10 @@ pub const RULES_OFF_VARIABLE: &str = "QCORE_GATEWAY_RULES_OFF";
 /// output and private measurement directories).
 pub const NOT_INPUTS: [&str; 3] = ["target", "private", "measure"];
 
+/// The `audit` slot budget every route takes (`gate_slot.py --memory-budget
+/// 7G`), in the audit's MiB planning units.
+pub const SLOT_BUDGET_MIB: u32 = 7168;
+
 /// A side's specification.
 #[derive(Clone, Debug, PartialEq, Eq)]
 pub enum SideSpec {
@@ -640,6 +644,20 @@ pub fn run_route(
             out.join("resource-diagnostics.json").display().to_string(),
         ],
     };
+    // Under a slot, `gate_slot.py` would insert `--memory-budget-mib=N`, a
+    // spelling `quirin-audit current` refuses; giving the slot's budget in
+    // the two-word form the CLI reads makes the slot accept it unchanged.
+    let mut command = command;
+    if context.slot_script.is_some() && matches!(route.kind, RouteKind::ConfiguredSelection { .. })
+    {
+        command.splice(
+            2..2,
+            [
+                "--memory-budget-mib".to_owned(),
+                SLOT_BUDGET_MIB.to_string(),
+            ],
+        );
+    }
     let mut binds = Vec::new();
     if side.snapshot {
         binds.push((side.source_real.clone(), side.source_run.clone()));
@@ -654,6 +672,8 @@ pub fn run_route(
             "python3".to_owned(),
             script.display().to_string(),
             "audit".into(),
+            "--memory-budget".into(),
+            "7G".into(),
             "--receipt".into(),
             receipt.display().to_string(),
             "--".into(),

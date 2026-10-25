@@ -1,0 +1,9 @@
+{
+  "schema": "quirin-amendments/1",
+  "card": "MEASURE-TOOL",
+  "base": "373e41ee8594db659f467dba66af8f2a80fbaf91",
+  "measured_tip": "MEASURED-TIP",
+  "increment_paragraph": "INCREMENT",
+  "status_paragraph": null,
+  "ledger": []
+}
