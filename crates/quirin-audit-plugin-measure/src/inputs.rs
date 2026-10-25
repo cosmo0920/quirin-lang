@@ -142,7 +142,10 @@ pub fn validate(routes: &[Route]) -> Result<(), String> {
     };
     for route in routes {
         if !plain(&route.name) || !names.insert(route.name.as_str()) {
-            return Err(format!("route name `{}` is not plain or is repeated", route.name));
+            return Err(format!(
+                "route name `{}` is not plain or is repeated",
+                route.name
+            ));
         }
         if !plain(&route.profile) || !profiles.insert(route.profile.as_str()) {
             return Err(format!(
@@ -193,7 +196,9 @@ pub fn validate(routes: &[Route]) -> Result<(), String> {
         for path in relative {
             if path.is_empty()
                 || Path::new(path).is_absolute()
-                || Path::new(path).components().any(|part| part.as_os_str() == "..")
+                || Path::new(path)
+                    .components()
+                    .any(|part| part.as_os_str() == "..")
             {
                 return Err(format!(
                     "route `{}`: `{path}` must be a relative path without `..`",
@@ -229,14 +234,18 @@ pub fn read_manifest(path: &Path) -> Result<Vec<Route>, String> {
             _ => &[],
         };
         let common = ["name", "profile", "kind", "link_map", "clang", "tracked"];
-        for key in route.as_object().into_iter().flat_map(|object| object.keys()) {
+        for key in route
+            .as_object()
+            .into_iter()
+            .flat_map(|object| object.keys())
+        {
             if !common.contains(&key.as_str()) && !allowed.contains(&key.as_str()) {
                 return Err(format!("{}: unknown route field `{key}`", path.display()));
             }
         }
     }
-    let manifest: Manifest = serde_json::from_value(value)
-        .map_err(|error| format!("{}: {error}", path.display()))?;
+    let manifest: Manifest =
+        serde_json::from_value(value).map_err(|error| format!("{}: {error}", path.display()))?;
     if manifest.schema != INPUTS_SCHEMA {
         return Err(format!(
             "{}: schema `{}` is not `{INPUTS_SCHEMA}`",
@@ -284,7 +293,11 @@ fn entries<'a>(record: &'a Value, list: &str) -> Vec<&'a Value> {
 fn by_role<'a>(record: &'a Value, list: &str, role: &str) -> Result<&'a Value, String> {
     let matches: Vec<_> = entries(record, list)
         .into_iter()
-        .filter(|entry| entry["role"].as_str().is_some_and(|text| text.contains(role)))
+        .filter(|entry| {
+            entry["role"]
+                .as_str()
+                .is_some_and(|text| text.contains(role))
+        })
         .collect();
     match matches.as_slice() {
         [only] => Ok(only),
@@ -404,8 +417,8 @@ pub fn read_profile(path: &Path) -> Result<Route, String> {
             }
         }
         Some("configured-selection") => {
-            let selection = path_of(by_role(&record, "tracked", "unit selection").map_err(at)?)
-                .map_err(at)?;
+            let selection =
+                path_of(by_role(&record, "tracked", "unit selection").map_err(at)?).map_err(at)?;
             let profile_json = tracked
                 .iter()
                 .find(|path| path.ends_with("/profile.json"))
@@ -478,14 +491,22 @@ mod tests {
             clang: "clang".into(),
             tracked: Vec::new(),
         };
-        assert!(validate(std::slice::from_ref(&route)).unwrap_err().contains("malformed"));
+        assert!(
+            validate(std::slice::from_ref(&route))
+                .unwrap_err()
+                .contains("malformed")
+        );
         let mut absolute = route.clone();
         absolute.link_map.sha256 = None;
         absolute.tracked.push("/etc/passwd".into());
         assert!(validate(&[absolute]).unwrap_err().contains("relative"));
         let mut good = route.clone();
         good.link_map.sha256 = None;
-        assert!(validate(&[good.clone(), good]).unwrap_err().contains("repeated"));
+        assert!(
+            validate(&[good.clone(), good])
+                .unwrap_err()
+                .contains("repeated")
+        );
         assert!(validate(&[]).is_err());
     }
 }

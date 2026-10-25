@@ -76,7 +76,10 @@ pub fn sidecar(units: &[Value], analyzer: &str, off: &[&str]) -> ComponentSideca
     let mut contribution = Contribution::new();
     let mut order = Vec::new();
     for row in units {
-        let (library, file) = (row["library"].as_str().unwrap(), row["file"].as_str().unwrap());
+        let (library, file) = (
+            row["library"].as_str().unwrap(),
+            row["file"].as_str().unwrap(),
+        );
         let key = row_key(library, file, 0);
         contribution.insert(Component {
             unit: key.unit.clone(),
@@ -85,7 +88,11 @@ pub fn sidecar(units: &[Value], analyzer: &str, off: &[&str]) -> ComponentSideca
             profile: key.profile.clone(),
             provenance: provenance(analyzer, off),
             verdict: VerdictTuple {
-                verdict: row["status"].as_str().unwrap().parse::<Verdict>().unwrap_or(Verdict::Unknown),
+                verdict: row["status"]
+                    .as_str()
+                    .unwrap()
+                    .parse::<Verdict>()
+                    .unwrap_or(Verdict::Unknown),
                 scope: "fixture".into(),
                 bounds: "fixture".into(),
                 assumptions: BTreeSet::new(),
@@ -174,7 +181,11 @@ pub fn inputs(base: &Path) {
     std::fs::create_dir_all(base.join("inputs/checkout")).unwrap();
     let database = json!([{"directory": base.join("inputs/checkout").display().to_string(),
                            "file": "a.c", "command": "cc -c a.c"}]);
-    std::fs::write(base.join("inputs/compile_commands.json"), database.to_string()).unwrap();
+    std::fs::write(
+        base.join("inputs/compile_commands.json"),
+        database.to_string(),
+    )
+    .unwrap();
     std::fs::write(base.join("link-map.json"), "{}\n").unwrap();
 }
 
@@ -186,9 +197,17 @@ pub fn stub_checkout(directory: &Path, report: &Path, advertise: bool) -> PathBu
     std::fs::create_dir_all(directory.join("scripts")).unwrap();
     std::fs::create_dir_all(directory.join("contract/profiles/fixture")).unwrap();
     std::fs::write(directory.join("scripts/run_pinned_audit.py"), "# stub\n").unwrap();
-    std::fs::write(directory.join("contract/profiles/fixture/selection.json"), "{}\n").unwrap();
+    std::fs::write(
+        directory.join("contract/profiles/fixture/selection.json"),
+        "{}\n",
+    )
+    .unwrap();
     let sidecar = report.with_extension("components.json");
-    let mention = if advertise { "# reads QCORE_GATEWAY_RULES_OFF\n" } else { "" };
+    let mention = if advertise {
+        "# reads QCORE_GATEWAY_RULES_OFF\n"
+    } else {
+        ""
+    };
     let script = format!(
         "#!/bin/sh\n{mention}out=\"\"\nwhile [ $# -gt 0 ]; do\n  if [ \"$1\" = --report ]; then out=$2; fi\n  \
          shift\ndone\ncp '{}' \"$out\"\ncp '{}' \"${{out%.json}}.components.json\"\n",
@@ -208,12 +227,25 @@ pub fn commit_all(directory: &Path) -> String {
             .current_dir(directory)
             .output()
             .unwrap();
-        assert!(output.status.success(), "{}", String::from_utf8_lossy(&output.stderr));
+        assert!(
+            output.status.success(),
+            "{}",
+            String::from_utf8_lossy(&output.stderr)
+        );
         String::from_utf8(output.stdout).unwrap()
     };
     git(&["init", "-q"]);
     git(&["add", "-A"]);
-    git(&["-c", "user.name=t", "-c", "user.email=t@t", "commit", "-q", "-m", "fixture"]);
+    git(&[
+        "-c",
+        "user.name=t",
+        "-c",
+        "user.email=t@t",
+        "commit",
+        "-q",
+        "-m",
+        "fixture",
+    ]);
     git(&["rev-parse", "HEAD"]).trim().to_owned()
 }
 

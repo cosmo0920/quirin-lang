@@ -63,7 +63,8 @@ pub fn normalize(value: &Value) -> Value {
         Value::Object(object) => {
             let mut out = serde_json::Map::new();
             for (key, item) in object {
-                let normalized = if ENVIRONMENT_DIGESTS.contains(&key.as_str()) && item.is_string() {
+                let normalized = if ENVIRONMENT_DIGESTS.contains(&key.as_str()) && item.is_string()
+                {
                     json!("ENV")
                 } else if key == "evidence_version"
                     && item.as_str().is_some_and(|text| text.starts_with(EVIDENCE))
@@ -151,7 +152,11 @@ pub fn rows(before: &Rows, after: &Rows) -> (Value, Vec<MeasuredMove>) {
     let mut content = Vec::new();
     let mut unmatched = Vec::new();
     let mut measured = Vec::new();
-    let keys: BTreeSet<&String> = before.functions.keys().chain(after.functions.keys()).collect();
+    let keys: BTreeSet<&String> = before
+        .functions
+        .keys()
+        .chain(after.functions.keys())
+        .collect();
     for key in keys {
         let (left, right) = (before.functions.get(key), after.functions.get(key));
         let (library, file, function) = {
@@ -161,7 +166,11 @@ pub fn rows(before: &Rows, after: &Rows) -> (Value, Vec<MeasuredMove>) {
                 (None, None) => continue,
             };
             let unit = &rows.units[row.unit].key.unit;
-            (unit.library.clone(), unit.file.clone(), row.function.clone())
+            (
+                unit.library.clone(),
+                unit.file.clone(),
+                row.function.clone(),
+            )
         };
         let status = |row: Option<&crate::rows::FunctionRow>| {
             row.map_or_else(|| "absent".to_owned(), |row| row.status().to_owned())
@@ -230,7 +239,11 @@ pub fn rows(before: &Rows, after: &Rows) -> (Value, Vec<MeasuredMove>) {
     };
     let (units_before, units_after) = (index(before), index(after));
     let mut unmatched_units = Vec::new();
-    for key in units_before.keys().chain(units_after.keys()).collect::<BTreeSet<_>>() {
+    for key in units_before
+        .keys()
+        .chain(units_after.keys())
+        .collect::<BTreeSet<_>>()
+    {
         match (units_before.get(key), units_after.get(key)) {
             (Some(&left), Some(&right)) => {
                 let (left, right) = (&before.units[left], &after.units[right]);
@@ -248,8 +261,7 @@ pub fn rows(before: &Rows, after: &Rows) -> (Value, Vec<MeasuredMove>) {
                 };
                 let (raw_left, raw_right) = (strip(&left.row), strip(&right.row));
                 if raw_left != raw_right {
-                    let fields =
-                        changed_fields(&normalize(&raw_left), &normalize(&raw_right), &[]);
+                    let fields = changed_fields(&normalize(&raw_left), &normalize(&raw_right), &[]);
                     if fields.is_empty() {
                         unit_environment_only += 1;
                     } else {
@@ -303,7 +315,13 @@ pub fn rows(before: &Rows, after: &Rows) -> (Value, Vec<MeasuredMove>) {
 /// two reports.
 #[must_use]
 pub fn deltas(before: &Rows, after: &Rows) -> BTreeMap<String, i64> {
-    let count = |rows: &Rows| tally(rows.functions.values().map(crate::rows::FunctionRow::status));
+    let count = |rows: &Rows| {
+        tally(
+            rows.functions
+                .values()
+                .map(crate::rows::FunctionRow::status),
+        )
+    };
     let (left, right) = (count(before), count(after));
     left.keys()
         .chain(right.keys())
@@ -336,7 +354,6 @@ fn lifetime_keys(document: &Value) -> BTreeSet<String> {
 /// its sorted map moves with its text): the check of card AUDIT-COMPOSITION's
 /// `compare_identity.py`, ported. Returns the named substitution, or why the
 /// file is not that.
-#[must_use]
 pub fn time_key(before: &[u8], after: &[u8]) -> Result<Value, Value> {
     let parse = |bytes: &[u8]| serde_json::from_slice::<Value>(bytes);
     let (Ok(left), Ok(right)) = (parse(before), parse(after)) else {
@@ -366,8 +383,10 @@ pub fn time_key(before: &[u8], after: &[u8]) -> Result<Value, Value> {
     lines_right.sort_unstable();
     let lines_equal = lines_left == lines_right;
     if !(json_equal && lines_equal) {
-        return Err(json!({"pair": [old, new], "json_equal_after_swap": json_equal,
-                          "lines_equal_after_swap": lines_equal}));
+        return Err(
+            json!({"pair": [old, new], "json_equal_after_swap": json_equal,
+                          "lines_equal_after_swap": lines_equal}),
+        );
     }
     Ok(json!({
         "substitution": "lifetime-source-time-key",
@@ -422,7 +441,10 @@ pub fn artifacts(before: &Path, after: &Path) -> Result<Value, String> {
         differing.push(json!({"file": name, "before": a, "after": b}));
     }
     let only = |a: &BTreeSet<String>, b: &BTreeSet<String>| -> Vec<String> {
-        a.difference(b).filter(|name| !is_record(name)).cloned().collect()
+        a.difference(b)
+            .filter(|name| !is_record(name))
+            .cloned()
+            .collect()
     };
     let only_before = only(&left, &right);
     let only_after = only(&right, &left);
@@ -542,13 +564,22 @@ mod tests {
         moved.insert(
             "r1".to_owned(),
             BTreeMap::from([
-                ("base->tip".to_owned(), ("Unknown".to_owned(), "Safe".to_owned())),
-                ("off->tip".to_owned(), ("Unknown".to_owned(), "Safe".to_owned())),
+                (
+                    "base->tip".to_owned(),
+                    ("Unknown".to_owned(), "Safe".to_owned()),
+                ),
+                (
+                    "off->tip".to_owned(),
+                    ("Unknown".to_owned(), "Safe".to_owned()),
+                ),
             ]),
         );
         moved.insert(
             "r2".to_owned(),
-            BTreeMap::from([("base->tip".to_owned(), ("Unknown".to_owned(), "Safe".to_owned()))]),
+            BTreeMap::from([(
+                "base->tip".to_owned(),
+                ("Unknown".to_owned(), "Safe".to_owned()),
+            )]),
         );
         let named = interactions(&moved);
         assert_eq!(named.as_array().unwrap().len(), 1);

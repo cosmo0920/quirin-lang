@@ -20,7 +20,14 @@ fn host() -> PathBuf {
     let host = directory.join("quirin-audit");
     if !host.is_file() {
         let mut command = Command::new(env!("CARGO"));
-        command.args(["build", "--offline", "-p", "qcore-audit", "--bin", "quirin-audit"]);
+        command.args([
+            "build",
+            "--offline",
+            "-p",
+            "qcore-audit",
+            "--bin",
+            "quirin-audit",
+        ]);
         if directory.file_name().is_some_and(|name| name == "release") {
             command.arg("--release");
         }
@@ -33,9 +40,19 @@ fn host() -> PathBuf {
     host
 }
 
-fn host_run(directory: &Path, output: &str, arguments: &[&str]) -> (std::process::Output, Value, Value) {
+fn host_run(
+    directory: &Path,
+    output: &str,
+    arguments: &[&str],
+) -> (std::process::Output, Value, Value) {
     let plugins = Path::new(PLUGIN).parent().unwrap().display().to_string();
-    let mut all = vec!["--plugin-path", plugins.as_str(), "--output", output, "measure"];
+    let mut all = vec![
+        "--plugin-path",
+        plugins.as_str(),
+        "--output",
+        output,
+        "measure",
+    ];
     all.extend_from_slice(arguments);
     let result = Command::new(host())
         .args(&all)
@@ -56,18 +73,44 @@ fn host_run(directory: &Path, output: &str, arguments: &[&str]) -> (std::process
 #[test]
 fn the_record_is_a_verified_artifact_and_the_tool_claims_no_verdict() {
     let directory = scratch("host-ok");
-    write_route(&directory.join("a"), "slice", &before_units(), Some("analyzer@1"));
-    write_route(&directory.join("b"), "slice", &after_units(), Some("analyzer@2"));
+    write_route(
+        &directory.join("a"),
+        "slice",
+        &before_units(),
+        Some("analyzer@1"),
+    );
+    write_route(
+        &directory.join("b"),
+        "slice",
+        &after_units(),
+        Some("analyzer@2"),
+    );
     let manifest = manifest(&directory).display().to_string();
     let (result, report, invocation) = host_run(
         &directory,
         "out",
-        &["--inputs", &manifest, "--side", "x=run:a", "--side", "y=run:b", "--no-slots"],
+        &[
+            "--inputs",
+            &manifest,
+            "--side",
+            "x=run:a",
+            "--side",
+            "y=run:b",
+            "--no-slots",
+        ],
     );
-    assert!(result.status.success(), "{}", String::from_utf8_lossy(&result.stdout));
+    assert!(
+        result.status.success(),
+        "{}",
+        String::from_utf8_lossy(&result.stdout)
+    );
     assert_eq!(report["run"]["outcome"], "completed");
     assert_eq!(report["claims"], Value::Array(Vec::new()));
-    assert_eq!(report["verdict"], Value::Null, "no claim, no host row: no verdict");
+    assert_eq!(
+        report["verdict"],
+        Value::Null,
+        "no claim, no host row: no verdict"
+    );
     let artifact = report["artifacts"]
         .as_array()
         .unwrap()
@@ -78,24 +121,49 @@ fn the_record_is_a_verified_artifact_and_the_tool_claims_no_verdict() {
     assert_eq!(artifact["sha256"], qcore_schemas::sha256_hex(&bytes));
     assert_eq!(invocation["outcome"], "completed");
     assert_eq!(invocation["environment"]["cleared"], true);
-    assert!(invocation["plugin"]["sha256"].as_str().is_some_and(|digest| digest.len() == 64));
+    assert!(
+        invocation["plugin"]["sha256"]
+            .as_str()
+            .is_some_and(|digest| digest.len() == 64)
+    );
 }
 
 #[test]
 fn a_failed_measurement_is_an_unknown_run_with_its_receipt() {
     let directory = scratch("host-failed");
-    write_route(&directory.join("a"), "slice", &before_units(), Some("analyzer@1"));
-    write_route(&directory.join("b"), "slice", &after_units(), Some("analyzer@2"));
+    write_route(
+        &directory.join("a"),
+        "slice",
+        &before_units(),
+        Some("analyzer@1"),
+    );
+    write_route(
+        &directory.join("b"),
+        "slice",
+        &after_units(),
+        Some("analyzer@2"),
+    );
     let manifest = manifest(&directory).display().to_string();
     let prediction = directory.join("PREDICTION.md");
-    std::fs::write(&prediction, "```measure-prediction\nroute slice\nnone\n```\n").unwrap();
+    std::fs::write(
+        &prediction,
+        "```measure-prediction\nroute slice\nnone\n```\n",
+    )
+    .unwrap();
     let prediction = prediction.display().to_string();
     let (result, report, invocation) = host_run(
         &directory,
         "out",
         &[
-            "--inputs", &manifest, "--side", "x=run:a", "--side", "y=run:b", "--no-slots",
-            "--declared", &prediction,
+            "--inputs",
+            &manifest,
+            "--side",
+            "x=run:a",
+            "--side",
+            "y=run:b",
+            "--no-slots",
+            "--declared",
+            &prediction,
         ],
     );
     assert_eq!(result.status.code(), Some(1));
@@ -107,7 +175,11 @@ fn a_failed_measurement_is_an_unknown_run_with_its_receipt() {
             .unwrap()
             .contains("declared-versus-measured mismatch")
     );
-    assert_eq!(report["artifacts"], Value::Array(Vec::new()), "a failed run's files are not accepted");
+    assert_eq!(
+        report["artifacts"],
+        Value::Array(Vec::new()),
+        "a failed run's files are not accepted"
+    );
     assert_eq!(invocation["outcome"], "failed");
     // The record is still on disk for the person, naming the unpredicted rows.
     let record: Value = serde_json::from_slice(
@@ -116,7 +188,10 @@ fn a_failed_measurement_is_an_unknown_run_with_its_receipt() {
     .unwrap();
     assert_eq!(record["declared"]["result"], "mismatch");
     assert_eq!(
-        record["declared"]["routes"]["slice"]["unpredicted"].as_array().unwrap().len(),
+        record["declared"]["routes"]["slice"]["unpredicted"]
+            .as_array()
+            .unwrap()
+            .len(),
         2
     );
 }

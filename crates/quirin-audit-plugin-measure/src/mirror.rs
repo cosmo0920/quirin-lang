@@ -51,7 +51,9 @@ impl std::str::FromStr for Mode {
             "auto" => Ok(Self::Auto),
             "always" => Ok(Self::Always),
             "never" => Ok(Self::Never),
-            other => Err(format!("--mirror takes auto, always or never, not `{other}`")),
+            other => Err(format!(
+                "--mirror takes auto, always or never, not `{other}`"
+            )),
         }
     }
 }
@@ -126,7 +128,9 @@ pub fn respell(text: &str, rules: &[(String, String)], spelled: &str) -> Result<
         text = text.replace(old.as_str(), new);
     }
     if text.contains(spelled) {
-        return Err(format!("the spelled prefix `{spelled}` is left after re-spelling"));
+        return Err(format!(
+            "the spelled prefix `{spelled}` is left after re-spelling"
+        ));
     }
     Ok(text)
 }
@@ -209,7 +213,10 @@ pub fn prepare(
                     inputs_root: Some(base.join(inputs_root)),
                     compile_database: None,
                     checkout: None,
-                    databases: databases(route, base).into_iter().map(|(path, _)| path).collect(),
+                    databases: databases(route, base)
+                        .into_iter()
+                        .map(|(path, _)| path)
+                        .collect(),
                 },
                 RouteKind::ConfiguredSelection {
                     checkout,
@@ -294,9 +301,9 @@ pub fn prepare(
                 }
                 let mut paths = Vec::new();
                 for (database, tree) in databases(route, base) {
-                    let relative = database
-                        .strip_prefix(&root)
-                        .map_err(|_| format!("{} is outside its inputs root", database.display()))?;
+                    let relative = database.strip_prefix(&root).map_err(|_| {
+                        format!("{} is outside its inputs root", database.display())
+                    })?;
                     let target = mirror.join(relative);
                     let canonical_root = root
                         .canonicalize()
@@ -382,8 +389,10 @@ fn write_respelled(
     rules: &[(String, String)],
     old: &str,
 ) -> Result<Value, String> {
-    let text = fs::read_to_string(source).map_err(|error| format!("{}: {error}", source.display()))?;
-    let text = respell(&text, rules, old).map_err(|error| format!("{}: {error}", source.display()))?;
+    let text =
+        fs::read_to_string(source).map_err(|error| format!("{}: {error}", source.display()))?;
+    let text =
+        respell(&text, rules, old).map_err(|error| format!("{}: {error}", source.display()))?;
     if let Some(parent) = target.parent() {
         fs::create_dir_all(parent).map_err(|error| format!("{}: {error}", parent.display()))?;
     }

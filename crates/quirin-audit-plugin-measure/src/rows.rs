@@ -86,7 +86,9 @@ pub fn function_key(key: &RowKey, function: &str, occurrence: usize) -> String {
 }
 
 fn legacy_key(row: &Value, seen: &mut BTreeMap<(String, String), usize>) -> Result<RowKey, String> {
-    let library = row["library"].as_str().ok_or("a unit row without a library")?;
+    let library = row["library"]
+        .as_str()
+        .ok_or("a unit row without a library")?;
     let file = row["file"].as_str().ok_or("a unit row without a file")?;
     let count = seen
         .entry((library.to_owned(), file.to_owned()))

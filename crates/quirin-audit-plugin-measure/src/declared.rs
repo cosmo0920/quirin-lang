@@ -85,7 +85,12 @@ pub fn parse(text: &str) -> Result<Declaration, String> {
     let lines = match blocks.as_slice() {
         [only] => only,
         [] => return Err(format!("no fenced `{TAG}` block")),
-        _ => return Err(format!("{} `{TAG}` blocks; exactly one is read", blocks.len())),
+        _ => {
+            return Err(format!(
+                "{} `{TAG}` blocks; exactly one is read",
+                blocks.len()
+            ));
+        }
     };
     let mut declaration = Declaration::new();
     let mut route: Option<String> = None;
@@ -104,7 +109,9 @@ pub fn parse(text: &str) -> Result<Declaration, String> {
                 route = Some((*name).to_owned());
             }
             [directive, ..] => {
-                let name = route.as_ref().ok_or_else(|| fail("no `route` line before"))?;
+                let name = route
+                    .as_ref()
+                    .ok_or_else(|| fail("no `route` line before"))?;
                 let entry = declaration.get_mut(name).expect("opened above");
                 match (*directive, &words[1..]) {
                     ("move", [selector, before, "->", after]) => {
@@ -256,9 +263,21 @@ mod tests {
     #[test]
     fn malformed_or_missing_blocks_refuse() {
         assert!(parse("no block").unwrap_err().contains("no fenced"));
-        assert!(parse("```measure-prediction\nmove a b -> c\n```").unwrap_err().contains("no `route`"));
-        assert!(parse("```measure-prediction\nroute a\nmove a b c\n```").unwrap_err().contains("malformed"));
-        assert!(parse("```measure-prediction\nroute a\n").unwrap_err().contains("not closed"));
+        assert!(
+            parse("```measure-prediction\nmove a b -> c\n```")
+                .unwrap_err()
+                .contains("no `route`")
+        );
+        assert!(
+            parse("```measure-prediction\nroute a\nmove a b c\n```")
+                .unwrap_err()
+                .contains("malformed")
+        );
+        assert!(
+            parse("```measure-prediction\nroute a\n")
+                .unwrap_err()
+                .contains("not closed")
+        );
         assert!(parse("```measure-prediction\nroute a\nnone\nmove x A -> B\n```").is_err());
     }
 
@@ -275,7 +294,10 @@ mod tests {
         let extra = [exact[0].clone(), movement("other", "Safe", "Unknown")];
         let result = check_route(declaration.get("corpus"), &extra, &BTreeMap::new());
         assert_eq!(result["result"], "mismatch");
-        assert_eq!(result["unpredicted"][0]["row"], "l::cJSON.c::unit#0::other#0");
+        assert_eq!(
+            result["unpredicted"][0]["row"],
+            "l::cJSON.c::unit#0::other#0"
+        );
         assert_eq!(result["missing"][0]["selector"], "l::cJSON.c::cJSON_Delete");
         assert_eq!(result["delta_mismatches"].as_array().unwrap().len(), 2);
         let undeclared = check_route(None, &exact[..1], &BTreeMap::new());

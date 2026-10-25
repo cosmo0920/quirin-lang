@@ -37,8 +37,8 @@ pub fn tree_files(root: &Path, skip_top: &[&str]) -> Result<Vec<PathBuf>, String
     let mut pending = vec![PathBuf::new()];
     while let Some(relative) = pending.pop() {
         let directory = root.join(&relative);
-        let entries =
-            fs::read_dir(&directory).map_err(|error| format!("{}: {error}", directory.display()))?;
+        let entries = fs::read_dir(&directory)
+            .map_err(|error| format!("{}: {error}", directory.display()))?;
         for entry in entries {
             let entry = entry.map_err(|error| format!("{}: {error}", directory.display()))?;
             let name = entry.file_name();
@@ -146,7 +146,11 @@ pub fn now() -> String {
 /// # Errors
 ///
 /// A spawn failure or a nonzero exit, with the command and its stderr.
-pub fn capture(program: &str, arguments: &[&str], directory: Option<&Path>) -> Result<String, String> {
+pub fn capture(
+    program: &str,
+    arguments: &[&str],
+    directory: Option<&Path>,
+) -> Result<String, String> {
     let mut command = Command::new(program);
     command.args(arguments).stdin(Stdio::null());
     if let Some(directory) = directory {
@@ -172,10 +176,7 @@ pub fn capture(program: &str, arguments: &[&str], directory: Option<&Path>) -> R
 /// # Errors
 ///
 /// A spawn failure or an unopenable log.
-pub fn logged(
-    command: &mut Command,
-    log: &Path,
-) -> Result<i32, String> {
+pub fn logged(command: &mut Command, log: &Path) -> Result<i32, String> {
     let file = fs::OpenOptions::new()
         .create(true)
         .append(true)
@@ -239,7 +240,9 @@ mod tests {
 
     #[test]
     fn vcs_metadata_is_any_git_component() {
-        assert!(is_vcs_metadata(Path::new("third_party/libevent/.git/index")));
+        assert!(is_vcs_metadata(Path::new(
+            "third_party/libevent/.git/index"
+        )));
         assert!(is_vcs_metadata(Path::new(".git")));
         assert!(!is_vcs_metadata(Path::new("src/git.c")));
     }
@@ -253,7 +256,10 @@ mod tests {
             ),
             Some((PathBuf::from("/home/u/old"), PathBuf::from("/media/d/new")))
         );
-        assert_eq!(differing_prefixes(Path::new("/a/b"), Path::new("/a/b")), None);
+        assert_eq!(
+            differing_prefixes(Path::new("/a/b"), Path::new("/a/b")),
+            None
+        );
     }
 
     #[test]

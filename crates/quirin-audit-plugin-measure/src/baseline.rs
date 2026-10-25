@@ -28,8 +28,7 @@ use serde_json::{Value, json};
 use crate::inputs::Route;
 use crate::sides::bundle_of;
 use crate::util::{
-    identity_digest, is_full_revision, is_sha256, now, read_json, sha_file, tree_files,
-    write_json,
+    identity_digest, is_full_revision, is_sha256, now, read_json, sha_file, tree_files, write_json,
 };
 
 /// The manifest's schema.
@@ -45,10 +44,21 @@ pub const MANIFEST: &str = "baseline.json";
 /// # Errors
 ///
 /// A failing git command or a truncated blob stream.
-pub fn git_bundle_digests(repository: &Path, revision: &str) -> Result<BTreeMap<String, String>, String> {
+pub fn git_bundle_digests(
+    repository: &Path,
+    revision: &str,
+) -> Result<BTreeMap<String, String>, String> {
     let listing = crate::util::capture(
         "git",
-        &["ls-tree", "-r", "--full-tree", revision, "--", "providers", "contract"],
+        &[
+            "ls-tree",
+            "-r",
+            "--full-tree",
+            revision,
+            "--",
+            "providers",
+            "contract",
+        ],
         Some(repository),
     )?;
     let mut files = Vec::new();
@@ -62,7 +72,8 @@ pub fn git_bundle_digests(repository: &Path, revision: &str) -> Result<BTreeMap<
             && matches!(mode, Some("100644" | "100755"))
             && let (Some(object), Some(bundle)) = (object, bundle_of(path))
         {
-            files.push((bundle, path[bundle_of(path).map_or(0, |b| b.len() + 1)..].to_owned(), object.to_owned()));
+            let inner = path[bundle.len() + 1..].to_owned();
+            files.push((bundle, inner, object.to_owned()));
         }
     }
     let mut child = Command::new("git")
@@ -91,10 +102,14 @@ pub fn git_bundle_digests(repository: &Path, revision: &str) -> Result<BTreeMap<
             .map_err(|error| format!("git cat-file: {error}"))?;
         let fields: Vec<&str> = header.split_whitespace().collect();
         let size: usize = match fields.as_slice() {
-            [name, "blob", size] if name == object => {
-                size.parse().map_err(|_| format!("git cat-file: bad header `{header}`"))?
+            [name, "blob", size] if name == object => size
+                .parse()
+                .map_err(|_| format!("git cat-file: bad header `{header}`"))?,
+            _ => {
+                return Err(format!(
+                    "git cat-file: unexpected header `{header}` for {object}"
+                ));
             }
-            _ => return Err(format!("git cat-file: unexpected header `{header}` for {object}")),
         };
         let mut bytes = vec![0; size + 1];
         reader
@@ -116,7 +131,11 @@ pub fn git_bundle_digests(repository: &Path, revision: &str) -> Result<BTreeMap<
 
 /// The inputs a measurement records for a route and compares on reuse.
 #[must_use]
-pub fn inputs_record(route: &Route, spelling: &Value, databases: &BTreeMap<String, String>) -> Value {
+pub fn inputs_record(
+    route: &Route,
+    spelling: &Value,
+    databases: &BTreeMap<String, String>,
+) -> Value {
     json!({
         "route_digest": route.digest(),
         "spelling": spelling["spelling"],
@@ -135,7 +154,10 @@ pub fn inputs_record(route: &Route, spelling: &Value, databases: &BTreeMap<Strin
 pub fn publish(side: &Path, output: &Path, only: &[String]) -> Result<Vec<PathBuf>, String> {
     let run = read_json(&side.join("run.json"))?;
     if run["schema"] != json!(crate::RUN_SCHEMA) {
-        return Err(format!("{}: not a measure run record", side.join("run.json").display()));
+        return Err(format!(
+            "{}: not a measure run record",
+            side.join("run.json").display()
+        ));
     }
     let revision = run["revision"]
         .as_str()
@@ -160,7 +182,9 @@ pub fn publish(side: &Path, output: &Path, only: &[String]) -> Result<Vec<PathBu
         if !only.is_empty() && !only.contains(name) {
             continue;
         }
-        let profile = route_run["profile"].as_str().ok_or("a route without a profile")?;
+        let profile = route_run["profile"]
+            .as_str()
+            .ok_or("a route without a profile")?;
         if route_run["exit"] != json!(0) || route_run["stable"] != json!(true) {
             return Err(format!(
                 "route {name}: exit {} stable {}; a failed or unstable run is never published",
@@ -243,7 +267,10 @@ pub fn verify(
         ));
     }
     if manifest["route"] != json!(route.name) {
-        return refuse(format!("records route {}, not {}", manifest["route"], route.name));
+        return refuse(format!(
+            "records route {}, not {}",
+            manifest["route"], route.name
+        ));
     }
     let recorded: BTreeMap<String, String> = manifest["files"]
         .as_object()
@@ -265,7 +292,9 @@ pub fn verify(
             .chain(present.keys())
             .filter(|path| recorded.get(*path) != present.get(*path))
             .collect();
-        return refuse(format!("published files differ from the manifest: {differing:?}"));
+        return refuse(format!(
+            "published files differ from the manifest: {differing:?}"
+        ));
     }
     if !manifest["binary_sha256"].as_str().is_some_and(is_sha256) {
         return refuse("no binary digest".into());

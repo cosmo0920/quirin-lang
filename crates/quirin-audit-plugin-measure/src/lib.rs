@@ -117,7 +117,9 @@ fn plain_id(text: &str) -> bool {
 pub fn parse_rules_off(text: &str) -> Result<Vec<String>, String> {
     let ids: Vec<String> = text.split(',').map(str::trim).map(str::to_owned).collect();
     if ids.iter().any(|id| !plain_id(id)) {
-        return Err(format!("--rules-off `{text}`: a comma list of rule ids (`33,35`)"));
+        return Err(format!(
+            "--rules-off `{text}`: a comma list of rule ids (`33,35`)"
+        ));
     }
     Ok(ids)
 }
@@ -164,8 +166,7 @@ pub fn parse(arguments: &[String]) -> Result<Options, String> {
                         let (name, spec) = value
                             .split_once('=')
                             .ok_or_else(|| format!("--side `{value}`: NAME=SPEC"))?;
-                        if !plain_id(name) || options.sides.iter().any(|(known, _)| known == name)
-                        {
+                        if !plain_id(name) || options.sides.iter().any(|(known, _)| known == name) {
                             return Err(format!("--side name `{name}` is not plain or repeated"));
                         }
                         options.sides.push((name.into(), spec.into()));
@@ -217,7 +218,9 @@ pub fn parse(arguments: &[String]) -> Result<Options, String> {
     }
     if options.publish {
         if options.publish_from.is_none() || !options.sides.is_empty() {
-            return Err(format!("publish takes --from SIDE_DIRECTORY and no --side\n{USAGE}"));
+            return Err(format!(
+                "publish takes --from SIDE_DIRECTORY and no --side\n{USAGE}"
+            ));
         }
         return Ok(options);
     }
@@ -225,10 +228,14 @@ pub fn parse(arguments: &[String]) -> Result<Options, String> {
         return Err("--from belongs to `measure publish`".into());
     }
     if options.profiles.is_empty() == options.inputs.is_none() {
-        return Err(format!("give --profile NAME or --inputs FILE (one of them)\n{USAGE}"));
+        return Err(format!(
+            "give --profile NAME or --inputs FILE (one of them)\n{USAGE}"
+        ));
     }
     if options.sides.len() < 2 {
-        return Err(format!("a measurement compares two or more --side NAME=SPEC\n{USAGE}"));
+        return Err(format!(
+            "a measurement compares two or more --side NAME=SPEC\n{USAGE}"
+        ));
     }
     for (before, after) in &options.compare {
         for name in [before, after] {
@@ -237,7 +244,9 @@ pub fn parse(arguments: &[String]) -> Result<Options, String> {
             }
         }
         if before == after {
-            return Err(format!("--compare {before} {after} compares a side with itself"));
+            return Err(format!(
+                "--compare {before} {after} compares a side with itself"
+            ));
         }
     }
     Ok(options)
@@ -267,12 +276,19 @@ pub fn answer(request: &Request) -> Result<Response, String> {
 
 fn publish(request: &Request, options: &Options) -> Result<Response, String> {
     let output = canonical(&request.output_directory())?;
-    let from = canonical(&absolute(request, options.publish_from.as_deref().unwrap_or("")))?;
+    let from = canonical(&absolute(
+        request,
+        options.publish_from.as_deref().unwrap_or(""),
+    ))?;
     let written = baseline::publish(&from, &output, &options.routes)?;
     let mut response = Response::completed();
     for directory in written {
         let relative = directory.strip_prefix(&output).unwrap_or(&directory);
-        response.push_artifact(&output, &relative.join(baseline::MANIFEST), "measure-baseline")?;
+        response.push_artifact(
+            &output,
+            &relative.join(baseline::MANIFEST),
+            "measure-baseline",
+        )?;
         response.push_artifact(&output, &relative.join("run.json"), "measure-run")?;
         response.push_diagnostic(
             Severity::Info,
@@ -316,7 +332,11 @@ fn measure(request: &Request, options: &Options) -> Result<Response, String> {
             .iter()
             .map(|name| {
                 let path = inputs::profile_record(&repository, name);
-                let path = if path.is_absolute() { path } else { absolute(request, &path.display().to_string()) };
+                let path = if path.is_absolute() {
+                    path
+                } else {
+                    absolute(request, &path.display().to_string())
+                };
                 if !path.is_file() {
                     return Err(format!(
                         "no evaluation-profile record {} (card EVALUATION-PROFILES has not \
@@ -331,7 +351,9 @@ fn measure(request: &Request, options: &Options) -> Result<Response, String> {
     if !options.routes.is_empty() {
         for name in &options.routes {
             if !routes.iter().any(|route| &route.name == name) {
-                return Err(format!("--routes names `{name}`, which the inputs do not define"));
+                return Err(format!(
+                    "--routes names `{name}`, which the inputs do not define"
+                ));
             }
         }
         routes.retain(|route| options.routes.contains(&route.name));
@@ -358,7 +380,12 @@ fn measure(request: &Request, options: &Options) -> Result<Response, String> {
     let specs: Vec<(String, SideSpec)> = options
         .sides
         .iter()
-        .map(|(name, text)| Ok((name.clone(), SideSpec::parse(text, Path::new(&request.invocation_directory))?)))
+        .map(|(name, text)| {
+            Ok((
+                name.clone(),
+                SideSpec::parse(text, Path::new(&request.invocation_directory))?,
+            ))
+        })
         .collect::<Result<_, String>>()?;
     let comparisons: Vec<(String, String)> = if options.compare.is_empty() {
         vec![(specs[0].0.clone(), specs[1].0.clone())]
@@ -370,9 +397,11 @@ fn measure(request: &Request, options: &Options) -> Result<Response, String> {
             let path = absolute(request, path);
             let text = std::fs::read_to_string(&path)
                 .map_err(|error| format!("{}: {error}", path.display()))?;
-            Some((path.clone(), sha_file(&path)?, declared::parse(&text).map_err(|error| {
-                format!("{}: {error}", path.display())
-            })?))
+            Some((
+                path.clone(),
+                sha_file(&path)?,
+                declared::parse(&text).map_err(|error| format!("{}: {error}", path.display()))?,
+            ))
         }
         None => None,
     };
@@ -396,7 +425,11 @@ fn measure(request: &Request, options: &Options) -> Result<Response, String> {
         None
     } else {
         let tip = &comparisons[0].1;
-        let spec = &specs.iter().find(|(name, _)| name == tip).expect("checked").1;
+        let spec = &specs
+            .iter()
+            .find(|(name, _)| name == tip)
+            .expect("checked")
+            .1;
         if !spec.runs() {
             return Err(format!(
                 "--rules-off measures the first comparison's after side `{tip}` with the rules \
@@ -421,7 +454,10 @@ fn measure(request: &Request, options: &Options) -> Result<Response, String> {
             mode,
         )?
     } else {
-        (BTreeMap::new(), json!({"spelling": "not prepared (no side runs or reuses a baseline)"}))
+        (
+            BTreeMap::new(),
+            json!({"spelling": "not prepared (no side runs or reuses a baseline)"}),
+        )
     };
     let mirror_binding = (spelling["spelling"] == json!("mirror"))
         .then(|| (output.join("mirror"), mount_root.join("mirror")));
@@ -460,12 +496,20 @@ fn measure(request: &Request, options: &Options) -> Result<Response, String> {
             .collect();
         handles
             .into_iter()
-            .map(|handle| handle.join().unwrap_or_else(|_| Err("a side's build panicked".into())))
+            .map(|handle| {
+                handle
+                    .join()
+                    .unwrap_or_else(|_| Err("a side's build panicked".into()))
+            })
             .collect()
     });
     let mut built: Vec<Built> = built.into_iter().collect::<Result<_, _>>()?;
     if let Some(tip) = &switched {
-        let base = built.iter().find(|side| &side.name == tip).expect("built").clone();
+        let base = built
+            .iter()
+            .find(|side| &side.name == tip)
+            .expect("built")
+            .clone();
         if !sides::advertises_rule_switch(&base.binary_real)? {
             return Err(format!(
                 "--rules-off {}: not yet supported. The binary of side `{tip}` ({}) does not \
@@ -499,7 +543,9 @@ fn measure(request: &Request, options: &Options) -> Result<Response, String> {
                 let rules_off = &rules_off;
                 scope.spawn(move || {
                     let mut context = context.clone();
-                    if built[side].name.ends_with("-off") && built[side].record["rules_off"].is_array() {
+                    if built[side].name.ends_with("-off")
+                        && built[side].record["rules_off"].is_array()
+                    {
                         context.rules_off.clone_from(rules_off);
                     }
                     eprintln!("measure: side {} route {}", built[side].name, route.name);
@@ -507,7 +553,9 @@ fn measure(request: &Request, options: &Options) -> Result<Response, String> {
                         &built[side],
                         route,
                         &spelled[&route.name],
-                        mirror_binding.as_ref().map(|(real, fixed)| (real.as_path(), fixed.as_path())),
+                        mirror_binding
+                            .as_ref()
+                            .map(|(real, fixed)| (real.as_path(), fixed.as_path())),
                         &context,
                     );
                     (side, route.name.clone(), result)
@@ -521,10 +569,14 @@ fn measure(request: &Request, options: &Options) -> Result<Response, String> {
     });
     let mut failures = Vec::new();
     for (side, route_name, result) in results {
-        let route = routes.iter().find(|route| route.name == route_name).expect("known");
+        let route = routes
+            .iter()
+            .find(|route| route.name == route_name)
+            .expect("known");
         let entry = match result {
             Ok(mut record) => {
-                record["route_definition"] = serde_json::to_value(route).map_err(|e| e.to_string())?;
+                record["route_definition"] =
+                    serde_json::to_value(route).map_err(|e| e.to_string())?;
                 record["inputs"] = inputs_of(route)?;
                 let report = built[side].directory.join(&route.name).join(route.report());
                 record["report_sha256"] = json!(sha_file(&report).ok());
@@ -539,7 +591,10 @@ fn measure(request: &Request, options: &Options) -> Result<Response, String> {
                 record
             }
             Err(error) => {
-                failures.push(format!("side {} route {}: {error}", built[side].name, route.name));
+                failures.push(format!(
+                    "side {} route {}: {error}",
+                    built[side].name, route.name
+                ));
                 json!({"profile": route.profile, "error": error, "exit": null, "stable": false})
             }
         };
@@ -563,7 +618,10 @@ fn measure(request: &Request, options: &Options) -> Result<Response, String> {
                     .sides
                     .iter()
                     .find(|(name, _)| *name == side.name)
-                    .map_or_else(|| format!("{} with --rules-off", side.spec.kind()), |(_, spec)| spec.clone()),
+                    .map_or_else(
+                        || format!("{} with --rules-off", side.spec.kind()),
+                        |(_, spec)| spec.clone(),
+                    ),
                 kind: side.spec.kind(),
                 directory: side.directory.clone(),
                 record: side.record.clone(),
@@ -574,12 +632,18 @@ fn measure(request: &Request, options: &Options) -> Result<Response, String> {
             },
         );
     }
-    let baselines_root = options
-        .baselines
-        .as_deref()
-        .map_or_else(|| repository.join("private/baselines"), |root| absolute(request, root));
+    let baselines_root = options.baselines.as_deref().map_or_else(
+        || repository.join("private/baselines"),
+        |root| absolute(request, root),
+    );
     for (name, spec) in &specs {
-        let text = options.sides.iter().find(|(known, _)| known == name).expect("known").1.clone();
+        let text = options
+            .sides
+            .iter()
+            .find(|(known, _)| known == name)
+            .expect("known")
+            .1
+            .clone();
         match spec {
             SideSpec::Baseline(sha) => {
                 let full = sides::resolve_revision(&repository, sha)?;
@@ -588,17 +652,25 @@ fn measure(request: &Request, options: &Options) -> Result<Response, String> {
                 let mut route_records = BTreeMap::new();
                 let mut manifests = BTreeMap::new();
                 for route in &routes {
-                    match baseline::verify(&repository, &baselines_root, &full, route, &inputs_of(route)?) {
+                    match baseline::verify(
+                        &repository,
+                        &baselines_root,
+                        &full,
+                        route,
+                        &inputs_of(route)?,
+                    ) {
                         Ok((directory, manifest)) => {
                             let run = read_json(&directory.join("run.json"))?;
                             let mut route_record = run["routes"][&route.name].clone();
-                            route_record["baseline_directory"] = json!(directory.display().to_string());
+                            route_record["baseline_directory"] =
+                                json!(directory.display().to_string());
                             route_records.insert(route.name.clone(), route_record);
                             manifests.insert(route.name.clone(), manifest);
                         }
                         Err(error) => {
                             failures.push(error.clone());
-                            route_records.insert(route.name.clone(), json!({"error": error, "exit": null}));
+                            route_records
+                                .insert(route.name.clone(), json!({"error": error, "exit": null}));
                         }
                     }
                 }
@@ -606,13 +678,16 @@ fn measure(request: &Request, options: &Options) -> Result<Response, String> {
                     "revision": full, "baselines": baselines_root.display().to_string(),
                     "manifests": manifests, "routes": route_records, "tool": tool()});
                 write_json(&staging.join("run.json"), &record)?;
-                resolved.insert(name.clone(), Resolved {
-                    spec: text,
-                    kind: "baseline",
-                    directory: baselines_root.join(&full),
-                    record,
-                    routes: route_records,
-                });
+                resolved.insert(
+                    name.clone(),
+                    Resolved {
+                        spec: text,
+                        kind: "baseline",
+                        directory: baselines_root.join(&full),
+                        record,
+                        routes: route_records,
+                    },
+                );
             }
             SideSpec::Run(directory) => {
                 let directory = canonical(directory)?;
@@ -623,13 +698,16 @@ fn measure(request: &Request, options: &Options) -> Result<Response, String> {
                     .as_object()
                     .map(|routes| routes.iter().map(|(k, v)| (k.clone(), v.clone())).collect())
                     .unwrap_or_default();
-                resolved.insert(name.clone(), Resolved {
-                    spec: text,
-                    kind: "run",
-                    directory,
-                    record,
-                    routes: routes_recorded,
-                });
+                resolved.insert(
+                    name.clone(),
+                    Resolved {
+                        spec: text,
+                        kind: "run",
+                        directory,
+                        record,
+                        routes: routes_recorded,
+                    },
+                );
             }
             _ => {}
         }
@@ -650,7 +728,10 @@ fn measure(request: &Request, options: &Options) -> Result<Response, String> {
             let side_route = |side: &Resolved| -> Result<PathBuf, String> {
                 if let Some(recorded) = side.routes.get(&route.name) {
                     if recorded["exit"] != json!(0) {
-                        return Err(format!("the route did not complete (exit {})", recorded["exit"]));
+                        return Err(format!(
+                            "the route did not complete (exit {})",
+                            recorded["exit"]
+                        ));
                     }
                     if let Some(directory) = recorded["baseline_directory"].as_str() {
                         return Ok(PathBuf::from(directory).join(&route.name));
@@ -672,7 +753,9 @@ fn measure(request: &Request, options: &Options) -> Result<Response, String> {
                         if union["conflicts"].as_array().is_some_and(|c| !c.is_empty()) {
                             record["status"] = json!("incomplete");
                             if let Some(reasons) = record["incomplete_because"].as_array_mut() {
-                                reasons.push(json!("composition-conflict in the union of the two sides (named)"));
+                                reasons.push(json!(
+                                    "composition-conflict in the union of the two sides (named)"
+                                ));
                             }
                         }
                         union
@@ -685,15 +768,19 @@ fn measure(request: &Request, options: &Options) -> Result<Response, String> {
                     }
                 }
                 for movement in &measured {
-                    moved.entry(format!("{}::{}", route.name, movement.key)).or_default().insert(
-                        label.clone(),
-                        (movement.before.clone(), movement.after.clone()),
-                    );
+                    moved
+                        .entry(format!("{}::{}", route.name, movement.key))
+                        .or_default()
+                        .insert(
+                            label.clone(),
+                            (movement.before.clone(), movement.after.clone()),
+                        );
                 }
                 if position == 0
                     && let Some((_, _, declaration)) = &declaration
                 {
-                    let check = declared::check_route(declaration.get(&route.name), &measured, &deltas);
+                    let check =
+                        declared::check_route(declaration.get(&route.name), &measured, &deltas);
                     declared_ok &= check["result"] == json!("match");
                     declared_routes.insert(route.name.clone(), check);
                 }
@@ -707,20 +794,27 @@ fn measure(request: &Request, options: &Options) -> Result<Response, String> {
                 failures.push(format!("comparison {label} route {}: {error}", route.name));
                 if position == 0 && declaration.is_some() {
                     declared_ok = false;
-                    declared_routes.insert(route.name.clone(), json!({"result": "not-compared", "why": error}));
+                    declared_routes.insert(
+                        route.name.clone(),
+                        json!({"result": "not-compared", "why": error}),
+                    );
                 }
                 json!({"status": "not-compared", "why": error})
             });
             per_route.insert(route.name.clone(), entry);
         }
-        records.push(json!({"comparison": label, "before": before, "after": after, "routes": per_route}));
+        records.push(
+            json!({"comparison": label, "before": before, "after": after, "routes": per_route}),
+        );
     }
-    let declared_record = declaration.as_ref().map_or(Value::Null, |(path, digest, _)| {
-        json!({"path": path.display().to_string(), "sha256": digest,
+    let declared_record = declaration
+        .as_ref()
+        .map_or(Value::Null, |(path, digest, _)| {
+            json!({"path": path.display().to_string(), "sha256": digest,
                "comparison": format!("{}->{}", comparisons[0].0, comparisons[0].1),
                "result": if declared_ok { "match" } else { "mismatch" },
                "routes": declared_routes})
-    });
+        });
     let sides_record: BTreeMap<String, Value> = resolved
         .iter()
         .map(|(name, side)| {
@@ -768,12 +862,20 @@ fn measure(request: &Request, options: &Options) -> Result<Response, String> {
     let record_path = output.join("native-comparison.json");
     write_json(&record_path, &record)?;
     let mut response = Response::completed();
-    response.push_artifact(&output, Path::new("native-comparison.json"), "native-comparison")?;
+    response.push_artifact(
+        &output,
+        Path::new("native-comparison.json"),
+        "native-comparison",
+    )?;
     for side in &built {
         response.push_artifact(&output, &side.directory.join("run.json"), "measure-run")?;
     }
     if spelling["spelling"] == json!("mirror") {
-        response.push_artifact(&output, Path::new("mirror/manifest.json"), "measure-mirror-manifest")?;
+        response.push_artifact(
+            &output,
+            Path::new("mirror/manifest.json"),
+            "measure-mirror-manifest",
+        )?;
     }
     for comparison in records.iter() {
         for (route, entry) in comparison["routes"].as_object().into_iter().flatten() {
@@ -781,7 +883,10 @@ fn measure(request: &Request, options: &Options) -> Result<Response, String> {
                 response.push_diagnostic(
                     Severity::Warning,
                     "comparison-incomplete",
-                    format!("{} route {route}: {}", comparison["comparison"], entry["incomplete_because"]),
+                    format!(
+                        "{} route {route}: {}",
+                        comparison["comparison"], entry["incomplete_because"]
+                    ),
                 );
             }
         }

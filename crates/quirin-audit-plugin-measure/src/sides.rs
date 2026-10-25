@@ -141,11 +141,17 @@ pub struct Built {
 /// A revision git does not resolve to a commit.
 pub fn resolve_revision(repository: &Path, revision: &str) -> Result<String, String> {
     let spelled = format!("{revision}^{{commit}}");
-    let full = capture("git", &["rev-parse", "--verify", "--quiet", &spelled], Some(repository))
-        .map_err(|_| format!("`{revision}` is not a commit of {}", repository.display()))?;
+    let full = capture(
+        "git",
+        &["rev-parse", "--verify", "--quiet", &spelled],
+        Some(repository),
+    )
+    .map_err(|_| format!("`{revision}` is not a commit of {}", repository.display()))?;
     let full = full.trim().to_owned();
     if !is_full_revision(&full) {
-        return Err(format!("`{revision}` resolved to `{full}`, not a commit name"));
+        return Err(format!(
+            "`{revision}` resolved to `{full}`, not a commit name"
+        ));
     }
     Ok(full)
 }
@@ -187,7 +193,9 @@ pub fn namespaced(binds: &[(PathBuf, PathBuf)], work: &Path, command: &[String])
         arguments.push(fixed.display().to_string());
     }
     let work_index = 2 * binds.len() + 1;
-    script.push_str(&format!("cd \"${work_index}\"\nshift {work_index}\nexec \"$@\"\n"));
+    script.push_str(&format!(
+        "cd \"${work_index}\"\nshift {work_index}\nexec \"$@\"\n"
+    ));
     arguments.push(work.display().to_string());
     let mut wrapped = vec![
         "unshare".to_owned(),
@@ -208,7 +216,11 @@ pub fn namespaced(binds: &[(PathBuf, PathBuf)], work: &Path, command: &[String])
 pub fn base_environment() -> BTreeMap<String, String> {
     quirin_audit_plugin::ENVIRONMENT_ALLOW_LIST
         .iter()
-        .filter_map(|name| std::env::var(name).ok().map(|value| ((*name).to_owned(), value)))
+        .filter_map(|name| {
+            std::env::var(name)
+                .ok()
+                .map(|value| ((*name).to_owned(), value))
+        })
         .collect()
 }
 
@@ -238,12 +250,23 @@ pub fn build(name: &str, spec: &SideSpec, context: &Context) -> Result<Built, St
             let tar = directory.join("src.tar");
             capture(
                 "git",
-                &["archive", "--format=tar", "-o", &tar.display().to_string(), &full],
+                &[
+                    "archive",
+                    "--format=tar",
+                    "-o",
+                    &tar.display().to_string(),
+                    &full,
+                ],
                 Some(&context.repository),
             )?;
             capture(
                 "tar",
-                &["-xf", &tar.display().to_string(), "-C", &source.display().to_string()],
+                &[
+                    "-xf",
+                    &tar.display().to_string(),
+                    "-C",
+                    &source.display().to_string(),
+                ],
                 None,
             )?;
             fs::remove_file(&tar).map_err(|error| format!("{}: {error}", tar.display()))?;
@@ -340,7 +363,13 @@ pub fn build(name: &str, spec: &SideSpec, context: &Context) -> Result<Built, St
                 environment.insert("QCORE_AUDIT_BUILD_COMMIT".into(), commit.clone());
             }
             let argv: Vec<String> = [
-                "cargo", "build", "--release", "--locked", "-p", "qcore-audit", "--bin",
+                "cargo",
+                "build",
+                "--release",
+                "--locked",
+                "-p",
+                "qcore-audit",
+                "--bin",
                 "quirin-audit",
             ]
             .map(str::to_owned)
@@ -440,11 +469,19 @@ pub fn checkout_revision(checkout: &Path) -> (Option<String>, Option<String>) {
     if top.as_deref() != checkout.canonicalize().ok().as_deref() {
         return (None, None);
     }
-    let head = capture("git", &["rev-parse", "--verify", "HEAD^{commit}"], Some(checkout))
-        .ok()
-        .map(|text| text.trim().to_owned());
-    let clean = capture("git", &["status", "--porcelain", "--untracked-files=no"], Some(checkout))
-        .is_ok_and(|text| text.trim().is_empty());
+    let head = capture(
+        "git",
+        &["rev-parse", "--verify", "HEAD^{commit}"],
+        Some(checkout),
+    )
+    .ok()
+    .map(|text| text.trim().to_owned());
+    let clean = capture(
+        "git",
+        &["status", "--porcelain", "--untracked-files=no"],
+        Some(checkout),
+    )
+    .is_ok_and(|text| text.trim().is_empty());
     (head.clone().filter(|_| clean), head)
 }
 
@@ -516,24 +553,35 @@ pub fn run_route(
     context: &Context,
 ) -> Result<Value, String> {
     let out = side.directory.join(&route.name);
-    fs::create_dir(&out).map_err(|error| format!("{}: {error} (every run gets fresh paths)", out.display()))?;
+    fs::create_dir(&out)
+        .map_err(|error| format!("{}: {error} (every run gets fresh paths)", out.display()))?;
     let work = side.directory.join(format!("work-{}", route.name));
     fs::create_dir_all(&work).map_err(|error| format!("{}: {error}", work.display()))?;
     let link_map = context.repository.join(&route.link_map.path);
     let mut environment = base_environment();
     environment.insert(
         "QCORE_PROFILES".into(),
-        side.source_run.join("contract/profiles").display().to_string(),
+        side.source_run
+            .join("contract/profiles")
+            .display()
+            .to_string(),
     );
-    environment.insert("QCORE_CROSS_UNIT_LINK_MAP".into(), link_map.display().to_string());
+    environment.insert(
+        "QCORE_CROSS_UNIT_LINK_MAP".into(),
+        link_map.display().to_string(),
+    );
     environment.insert("QCORE_CLANG".into(), route.clang.clone());
     environment.insert(
         "QCORE_NULL_PROPERTY".into(),
-        out.join(format!("{}-null.jsonl", route.name)).display().to_string(),
+        out.join(format!("{}-null.jsonl", route.name))
+            .display()
+            .to_string(),
     );
     environment.insert(
         "QCORE_OUTER_PROJECTION".into(),
-        out.join(format!("{}-outer.json", route.name)).display().to_string(),
+        out.join(format!("{}-outer.json", route.name))
+            .display()
+            .to_string(),
     );
     if !context.rules_off.is_empty() {
         environment.insert(RULES_OFF_VARIABLE.into(), context.rules_off.join(","));
@@ -542,7 +590,10 @@ pub fn run_route(
     let command: Vec<String> = match &route.kind {
         RouteKind::PinnedCorpus { source_commit, .. } => vec![
             "python3".into(),
-            side.source_run.join("scripts/run_pinned_audit.py").display().to_string(),
+            side.source_run
+                .join("scripts/run_pinned_audit.py")
+                .display()
+                .to_string(),
             out.join("corpus").display().to_string(),
             source_commit.clone(),
             "--inputs-root".into(),
@@ -570,7 +621,10 @@ pub fn run_route(
                 .display()
                 .to_string(),
             "--profile-directory".into(),
-            side.source_run.join(profile_directory).display().to_string(),
+            side.source_run
+                .join(profile_directory)
+                .display()
+                .to_string(),
             "--compile-database".into(),
             spelled
                 .compile_database
@@ -657,15 +711,18 @@ pub fn run_route(
     let externals_after = digests(&externals)?;
     let binary_after = sha_file(&side.binary_real)?;
     let stable = identity_after == identity_before
-        && externals_after == record["externals_before"]
-            .as_object()
-            .map(|object| {
-                object
-                    .iter()
-                    .map(|(key, value)| (key.clone(), value.as_str().unwrap_or_default().to_owned()))
-                    .collect::<BTreeMap<_, _>>()
-            })
-            .unwrap_or_default()
+        && externals_after
+            == record["externals_before"]
+                .as_object()
+                .map(|object| {
+                    object
+                        .iter()
+                        .map(|(key, value)| {
+                            (key.clone(), value.as_str().unwrap_or_default().to_owned())
+                        })
+                        .collect::<BTreeMap<_, _>>()
+                })
+                .unwrap_or_default()
         && record["binary_sha256"] == json!(binary_after);
     record["ended"] = json!(now());
     record["exit"] = json!(code);
@@ -690,8 +747,11 @@ pub fn run_route(
         record["slot_receipt"] = json!(receipt.display().to_string());
     }
     write_json(&out.join("invocation.json"), &record)?;
-    fs::write(out.join(format!("{}.exit", route.name)), format!("{code}\n"))
-        .map_err(|error| error.to_string())?;
+    fs::write(
+        out.join(format!("{}.exit", route.name)),
+        format!("{code}\n"),
+    )
+    .map_err(|error| error.to_string())?;
     Ok(record)
 }
 
@@ -735,7 +795,10 @@ mod tests {
             bundle_of("providers/quirin-provider-libc/contracts/stdio.qv").as_deref(),
             Some("providers/quirin-provider-libc/contracts")
         );
-        assert_eq!(bundle_of("contract/profiles/x.json").as_deref(), Some("contract"));
+        assert_eq!(
+            bundle_of("contract/profiles/x.json").as_deref(),
+            Some("contract")
+        );
         assert_eq!(bundle_of("providers/quirin-provider-libc/src/lib.rs"), None);
         assert_eq!(bundle_of("contract"), None);
     }
@@ -750,7 +813,17 @@ mod tests {
         assert_eq!(&argv[..4], ["unshare", "-rm", "sh", "-c"]);
         assert!(argv[4].contains("mount --bind \"$1\" \"$2\""));
         assert!(argv[4].contains("cd \"$3\"\nshift 3"));
-        assert_eq!(&argv[5..], ["quirin-measure-ns", "/r/src", "/fixed/src", "/w", "tool", "a b"]);
+        assert_eq!(
+            &argv[5..],
+            [
+                "quirin-measure-ns",
+                "/r/src",
+                "/fixed/src",
+                "/w",
+                "tool",
+                "a b"
+            ]
+        );
         assert_eq!(
             namespaced(&[], Path::new("/w"), &["tool".into()]),
             vec!["tool".to_owned()]

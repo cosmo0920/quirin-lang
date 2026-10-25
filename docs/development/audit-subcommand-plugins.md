@@ -170,3 +170,89 @@ them. It refuses an output inside `build/cycle19` or `third_party`, and
 `--write-profile` writes the regenerated audited-file table to
 `libevent-clang-build/profile.json` for a person to review and copy, rather
 than editing the committed profile. It claims no verdict.
+
+## The measure plugin
+
+`quirin-audit measure` (crate
+[`quirin-audit-plugin-measure`](../../crates/quirin-audit-plugin-measure/src/lib.rs),
+card [MEASURE-TOOL](../reports/measure-tool/README.md)) measures audit routes
+on two or more sides and compares them row by row. It replaces the
+`measure.py`, `compare.py`, `mirror_inputs.py` and `gate_job.sh` copies in the
+report directories ([registry](../reports/measure-tool/superseded-scripts.json)).
+It claims no verdict; a failed side, a refused baseline, a route that cannot be
+compared or a declared-versus-measured mismatch fails the run (exit 1,
+`Unknown`). Measurements take hours, so raise the host's wall-time quota, and
+do not wrap the command in `gate_slot.py`: each route takes its own `audit`
+slot.
+
+```sh
+cargo build --release -p qcore-audit -p quirin-audit-plugin-measure
+target/release/quirin-audit --plugin-path target/release --output ../measure/card-x \
+  --timeout-ms 36000000 measure \
+  --inputs crates/quirin-audit-plugin-measure/inputs/live.json \
+  --inputs-base /media/Data/GitHub/quirin-lang \
+  --side base=baseline:<sha> --side tip=rev:HEAD \
+  --declared docs/reports/<card>/PREDICTION.md
+```
+
+| Option | Meaning |
+|---|---|
+| `--side NAME=SPEC` | Two or more. `rev:<rev>`: a `git archive` snapshot with every submodule cloned at its pinned commit, built (`cargo build --release --locked -p qcore-audit`, `QCORE_AUDIT_BUILD_COMMIT` = the revision) and run in a private mount namespace at one fixed path; a directory: that checkout, built in place; a file: a `quirin-audit` binary at `<checkout>/target/release/`; `baseline:<sha>`: a published baseline; `run:<dir>`: a side directory an earlier measurement wrote |
+| `--compare A B` | The comparisons, repeatable (default: the first two sides) |
+| `--inputs FILE`, `--routes R,...` | The explicit inputs (`quirin-measure-inputs/1`): per route a compile database (or the pinned corpus inputs root) and a unit list; [`inputs/live.json`](../../crates/quirin-audit-plugin-measure/inputs/live.json) holds the three live routes |
+| `--profile NAME` | An evaluation profile's `contract/profiles/<NAME>/evaluation.json` (card EVALUATION-PROFILES), read by one adapter; a frozen profile is refused |
+| `--declared FILE` | Check the measured moves of the first comparison against the file's `measure-prediction` block (below) |
+| `--rules-off IDS` | Also measure the first comparison's after side with `QCORE_GATEWAY_RULES_OFF=IDS` and compare it with that side (the per-rule contribution). Refused, "not yet supported", unless the binary advertises the switch (card RULE-SWITCHES); after the run the components must record exactly that off-list |
+| `--repository DIR`, `--inputs-base DIR` | The repository (revisions, link map, `scripts/gate_slot.py`) and the root of the untracked prepared inputs (default: the repository) |
+| `--mirror auto\|always\|never` | Re-spell the compile databases into a digest-manifested mirror when they spell a non-canonical path (default `auto`); needed for analyzers built before AUDIT-CANONICAL-PATHS |
+| `--legacy-rows` | Read reports without a component sidecar (written before AUDIT-COMPOSITION) by their unit rows |
+| `--jobs N`, `--build-jobs N`, `--no-slots`, `--mount-root DIR`, `--build-commit TEXT`, `--baselines DIR` | Audit workers (3, the 7 GiB slot's cap), build jobs (6), run without slots, the fixed path (`/tmp/quirin-measure`), an explicit build commit for identity runs, the baseline root (`<repository>/private/baselines`) |
+
+**What it writes.** Under the output: `sides/<name>/` (the snapshot `src/`,
+`build.log`, `run.json` and one directory per route in the copied drivers'
+layout, with `invocation.json`, the inputs digests before and after, and exit
+101 when an input or the binary changed), `mirror/manifest.json`, and
+`native-comparison.json`. Per comparison and route that record holds the totals
+counted from each side's own report, every moved, content-changed,
+environment-only and unmatched function row keyed by its unit's composition
+component (`library::file::unit#n::property::profile::function#k`), the unit
+rows' derived verdicts, the union of the two sides' components with any
+`composition-conflict` named, and the byte comparison of the report artifacts,
+where the contract sidecar's one clock-dependent lifetime-source key (Monkey's
+`__DATE__`/`__TIME__`) is accepted only as a checked one-key substitution. Rows
+moved in more than one comparison are listed as named interactions; nothing is
+summed. An unmatched row stays in its side's denominator and marks the route
+incomplete.
+
+**The prediction block.** One fenced block in `PREDICTION.md`:
+
+````text
+```measure-prediction
+route corpus
+move cJSON_DetachItemFromArray Unknown -> Safe
+move librdkafka::cJSON.c::cJSON_DeleteItemFromArray Unknown -> Safe
+delta Safe +2
+route system
+none
+```
+````
+
+A selector is `function`, `file::function` or `library::file::function`; a
+status may be `*` or `absent`. Every measured move no line covers is named as
+unpredicted and every declared move that did not happen as missing.
+
+**Publishing a baseline** (the integrator's landing gate, after measuring the
+landed revision `<sha>` with a `rev:<sha>` side named `tip`):
+
+```sh
+target/release/quirin-audit --plugin-path target/release \
+  --output private/baselines/<sha> measure publish --from <measure-output>/sides/tip
+```
+
+It writes `private/baselines/<sha>/<profile>/` (the route's reports, the
+side's `run.json` and `baseline.json` with the binary, inputs and
+contract-bundle digests and the SHA-256 of every file), refuses a failed or
+unstable route, a side without a revision and an existing profile directory.
+`--side base=baseline:<sha>` reuses it only after verifying every file digest,
+the route definition, the inputs as this measurement spells them, and the
+contract-bundle digests recomputed from `<sha>`'s git tree.

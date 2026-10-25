@@ -67,10 +67,15 @@ fn moved_checkout(directory: &Path) -> (PathBuf, PathBuf) {
     let real = directory.join("real");
     let old = directory.join("old");
     let pin = real.join("build/cycle19/c-gateway-wave-pin");
-    for tree in ["fluent-bit-clang-source/build", "monkey/monkey-build", "fluent-bit-clang-production"] {
+    for tree in [
+        "fluent-bit-clang-source/build",
+        "monkey/monkey-build",
+        "fluent-bit-clang-production",
+    ] {
         std::fs::create_dir_all(pin.join(tree)).unwrap();
     }
-    std::fs::create_dir_all(real.join("build/cycle19/provider-packages-wave20/qcore.chunkio")).unwrap();
+    std::fs::create_dir_all(real.join("build/cycle19/provider-packages-wave20/qcore.chunkio"))
+        .unwrap();
     std::fs::write(pin.join("fluent-bit-clang-source/a.c"), "int a;\n").unwrap();
     std::os::unix::fs::symlink(&real, &old).unwrap();
     let spelled = |relative: &str| old.join("build/cycle19/c-gateway-wave-pin").join(relative);
@@ -115,7 +120,10 @@ fn the_mirror_respells_exactly_as_mirror_inputs_did() {
     assert_eq!(record["spelling"], "mirror");
     assert_eq!(record["spelled_prefix"], old.display().to_string());
     assert_eq!(record["canonical_prefix"], real.display().to_string());
-    assert_eq!(spelled["corpus"].inputs_root.as_deref(), Some(fixed.as_path()));
+    assert_eq!(
+        spelled["corpus"].inputs_root.as_deref(),
+        Some(fixed.as_path())
+    );
     // mirror_inputs.py's rules: the database's own tree names the mirror copy,
     // every other spelled path the real checkout.
     let fluent = std::fs::read_to_string(
@@ -126,7 +134,9 @@ fn the_mirror_respells_exactly_as_mirror_inputs_did() {
     let real_text = real.display().to_string();
     assert!(!fluent.contains(&old_text));
     assert!(fluent.contains("/fixed/mirror/c-gateway-wave-pin/fluent-bit-clang-source/a.c"));
-    assert!(fluent.contains(&format!("{real_text}/build/cycle19/c-gateway-wave-pin/monkey/include")));
+    assert!(fluent.contains(&format!(
+        "{real_text}/build/cycle19/c-gateway-wave-pin/monkey/include"
+    )));
     assert!(fluent.contains(&format!(
         "{real_text}/build/cycle19/c-gateway-wave-pin/fluent-bit-clang-production/x"
     )));
@@ -158,21 +168,35 @@ fn the_mirror_respells_exactly_as_mirror_inputs_did() {
     )
     .unwrap();
     assert_eq!(record["spelling"], "original");
-    assert_eq!(spelled["corpus"].inputs_root, Some(real.join("build/cycle19")));
+    assert_eq!(
+        spelled["corpus"].inputs_root,
+        Some(real.join("build/cycle19"))
+    );
     assert!(!directory.join("unused").exists());
     let mut stale = corpus_route();
-    if let RouteKind::PinnedCorpus { compile_databases, .. } = &mut stale.kind {
+    if let RouteKind::PinnedCorpus {
+        compile_databases, ..
+    } = &mut stale.kind
+    {
         compile_databases[0].sha256 = Some("0".repeat(64));
     }
-    let error = mirror::prepare(&[stale], &real, &directory.join("x"), &fixed, mirror::Mode::Auto)
-        .unwrap_err();
+    let error = mirror::prepare(
+        &[stale],
+        &real,
+        &directory.join("x"),
+        &fixed,
+        mirror::Mode::Auto,
+    )
+    .unwrap_err();
     assert!(error.contains("not the pinned"), "{error}");
 }
 
 // ---- the profile adapter ---------------------------------------------------
 
 fn fixture(name: &str) -> PathBuf {
-    Path::new(env!("CARGO_MANIFEST_DIR")).join("tests/fixtures").join(name)
+    Path::new(env!("CARGO_MANIFEST_DIR"))
+        .join("tests/fixtures")
+        .join(name)
 }
 
 fn live(name: &str) -> Route {
@@ -187,7 +211,10 @@ fn live(name: &str) -> Route {
 fn the_profile_adapter_reads_evaluation_profiles_draft_records() {
     let corpus = inputs::read_profile(&fixture("evaluation-eight-home.json")).unwrap();
     let expected = live("corpus");
-    assert_eq!((corpus.name.as_str(), corpus.profile.as_str()), ("corpus", "eight-home"));
+    assert_eq!(
+        (corpus.name.as_str(), corpus.profile.as_str()),
+        ("corpus", "eight-home")
+    );
     assert_eq!(corpus.link_map.sha256, expected.link_map.sha256);
     match (&corpus.kind, &expected.kind) {
         (
@@ -206,15 +233,23 @@ fn the_profile_adapter_reads_evaluation_profiles_draft_records() {
         ) => {
             assert_eq!(source_commit, live_commit);
             assert_eq!(inputs_root, live_root);
-            assert_eq!(compile_databases, live_databases, "same databases and digests");
-            assert!(mirror_trees.contains(&"c-gateway-wave-pin/fluent-bit-clang-source".to_owned()));
+            assert_eq!(
+                compile_databases, live_databases,
+                "same databases and digests"
+            );
+            assert!(
+                mirror_trees.contains(&"c-gateway-wave-pin/fluent-bit-clang-source".to_owned())
+            );
         }
         other => panic!("{other:?}"),
     }
     let system = inputs::read_profile(&fixture("evaluation-fluent-bit-system.json")).unwrap();
     let expected = live("system");
     assert_eq!(system.name, "system");
-    assert_eq!(system.kind, expected.kind, "the adapter places every configured input");
+    assert_eq!(
+        system.kind, expected.kind,
+        "the adapter places every configured input"
+    );
     let error = inputs::read_profile(&fixture("evaluation-cycle-19-fluent-bit.json")).unwrap_err();
     assert!(error.contains("frozen"), "{error}");
 }
@@ -245,7 +280,11 @@ fn bundle_digests_of_a_snapshot_equal_those_read_from_its_git_tree() {
     let from_files = sides::bundle_digests(&directory).unwrap();
     let from_git = baseline::git_bundle_digests(&repository, "HEAD").unwrap();
     assert!(from_files.contains_key("contract"));
-    assert!(from_files.keys().any(|bundle| bundle.starts_with("providers/")));
+    assert!(
+        from_files
+            .keys()
+            .any(|bundle| bundle.starts_with("providers/"))
+    );
     assert_eq!(from_files, from_git);
 }
 
@@ -257,7 +296,11 @@ const LEAN: &str = include_str!("../../../proof/QCore/AuditComposition.lean");
 fn lean_component(text: &str) -> Component {
     let inner = text.trim().trim_start_matches('⟨').trim_end_matches('⟩');
     let (head, assumptions) = inner.split_once('[').unwrap();
-    let fields: Vec<&str> = head.split(',').map(str::trim).filter(|f| !f.is_empty()).collect();
+    let fields: Vec<&str> = head
+        .split(',')
+        .map(str::trim)
+        .filter(|f| !f.is_empty())
+        .collect();
     let number = |text: &str| text.parse::<u64>().unwrap();
     let verdict = match fields[3] {
         ".safe" => Verdict::Safe,
@@ -332,7 +375,9 @@ fn vector(line: &str) -> (Vec<Component>, u64, Option<Verdict>, bool) {
             '⟩' => {
                 depth -= 1;
                 if depth == 0 {
-                    literals.push(lean_component(&components[start.unwrap()..index + ch.len_utf8()]));
+                    literals.push(lean_component(
+                        &components[start.unwrap()..index + ch.len_utf8()],
+                    ));
                 }
             }
             _ => {}
@@ -364,7 +409,10 @@ fn the_shared_composition_vectors_hold_through_the_tools_union() {
     let start = LEAN.find(header).unwrap() + header.len();
     let body = &LEAN[start..];
     let body = &body[..body.find("\n]").unwrap()];
-    let lines: Vec<&str> = body.lines().filter(|line| !line.trim().is_empty()).collect();
+    let lines: Vec<&str> = body
+        .lines()
+        .filter(|line| !line.trim().is_empty())
+        .collect();
     assert_eq!(lines.len(), 14, "every shared vector is read");
     for (index, line) in lines.iter().enumerate() {
         let (components, row, expected, conflict) = vector(line);
@@ -379,18 +427,26 @@ fn the_shared_composition_vectors_hold_through_the_tools_union() {
             }
             let (union, record) = compare::union(&before, &after);
             let derived = union.derive(&vector_row(row));
-            assert_eq!(derived.as_ref().map(|d| d.verdict), expected, "vector {index}");
+            assert_eq!(
+                derived.as_ref().map(|d| d.verdict),
+                expected,
+                "vector {index}"
+            );
             assert_eq!(
                 derived.as_ref().is_some_and(|d| d.is_conflicted()),
                 conflict,
                 "vector {index}"
             );
-            let named = record["conflicts"]
-                .as_array()
-                .unwrap()
-                .iter()
-                .any(|entry| entry["row"].as_str().unwrap().starts_with(&format!("l::f{row}.c::")));
-            assert_eq!(named, conflict, "vector {index}: a conflict is named in the record");
+            let named = record["conflicts"].as_array().unwrap().iter().any(|entry| {
+                entry["row"]
+                    .as_str()
+                    .unwrap()
+                    .starts_with(&format!("l::f{row}.c::"))
+            });
+            assert_eq!(
+                named, conflict,
+                "vector {index}: a conflict is named in the record"
+            );
         }
     }
 }
@@ -415,6 +471,9 @@ fn superseded_scripts_are_listed_and_frozen() {
             qcore_schemas::sha256_hex(&bytes),
             "{relative} was edited after it was superseded"
         );
-        assert!(!script["superseded_by"].as_str().unwrap().is_empty(), "{relative}");
+        assert!(
+            !script["superseded_by"].as_str().unwrap().is_empty(),
+            "{relative}"
+        );
     }
 }
