@@ -1,0 +1,13 @@
+{
+  "command": [
+    "python3",
+    "/home/cosmo/.codex/worktrees/808d/quirin-lang/private/w48-cmt-tracked-interior/time_identity.py",
+    "system",
+    "--artifacts-root",
+    "/home/cosmo/.codex/worktrees/808d/quirin-lang/private/w48-cmt-tracked-interior/replay-v3/time"
+  ],
+  "started": "2026-10-24T16:06:05.186597+00:00",
+  "log": "/home/cosmo/.codex/worktrees/808d/quirin-lang/private/w48-cmt-tracked-interior/replay-v3/system-time.log",
+  "exit": 0,
+  "ended": "2026-10-24T16:06:05.487887+00:00"
+}

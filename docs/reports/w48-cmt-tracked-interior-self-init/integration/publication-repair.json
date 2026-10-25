@@ -1,0 +1,11 @@
+{
+  "exit": 1,
+  "command": [
+    "python3",
+    "docs/reports/remaining-d02/build_matrix.py",
+    ".",
+    "--gate",
+    "docs/reports/w48-cmt-tracked-interior-self-init/integration/gate.json"
+  ],
+  "reason": "First publication rejected measured_tip and merge_sha as unsupported gate keys. Those identities are now in source-identity.json; the gate retains only its documented schema keys. Validation source and results are unchanged."
+}

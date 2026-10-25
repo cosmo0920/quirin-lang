@@ -1,0 +1,5 @@
+{
+  "exit": 1,
+  "reason": "Retired coordinator source guard rejects attributing the redirected f350d8c5d full attempt to its original 7045d9d98 source. Actual final checks and the separate Lean retry are retained independently.",
+  "output": "Traceback (most recent call last):\n  File \"/home/cosmo/.codex/worktrees/808d/quirin-lang/private/cmt-main-integration/current_gate.py\", line 48, in <module>\n    cmd=['python3','scripts/gate_slot.py','rust-suite','--receipt',str(out/'rust-slot.json'),'--','python3',str(Path(__file__).resolve()),'--rust-worker']\n                                                                       ^^^^^^^^^^^^^^^^^^^^^^^^^\nAssertionError\n"
+}

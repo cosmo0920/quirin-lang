@@ -1,0 +1,5 @@
+Traceback (most recent call last):
+  File "/home/cosmo/.codex/worktrees/808d/quirin-lang/private/w48-cmt-tracked-interior/time_identity.py", line 90, in <module>
+    assert set(found) == {old, new}, (found, {old, new})
+           ^^^^^^^^^^^^^^^^^^^^^^^^
+AssertionError: ({}, {'b5240d5b7951fd7710ce84fb4fae5c9e46c7b0c7cc1fc3dcf5d9f70595af6cfa', '24272967295c0c3ef809246ad378b3c71891c312683b5e1e22675a0a3b3ab6ae'})

@@ -1,0 +1,116 @@
+{
+  "base": {
+    "audit.log": {
+      "source": "/home/cosmo/.codex/worktrees/808d/quirin-lang/private/w48-cmt-tracked-interior/base-corpus/audit.log",
+      "sha256": "bbcdde3ff2b4e83c352576c21e323101f1039dfc71901060383cfc176269ece2",
+      "bytes": 135959
+    },
+    "monkey-source.json": {
+      "source": "/home/cosmo/.codex/worktrees/808d/quirin-lang/private/w48-cmt-tracked-interior/base-corpus/monkey-source.json",
+      "sha256": "57acfc58c4f7dddf2623efb3c9dc3e8f2dc276835e15cd18a157414696bb2f11",
+      "bytes": 1665950
+    },
+    "run.json": {
+      "source": "/home/cosmo/.codex/worktrees/808d/quirin-lang/private/w48-cmt-tracked-interior/base-corpus/run.json",
+      "sha256": "abd50024ed9386e576565311ad8c9a4db7bc96137acf6fb340bea0c6d82390ad",
+      "bytes": 1188
+    },
+    "resource-diagnostics.chunk-contracts.json": {
+      "source": "/home/cosmo/.codex/worktrees/808d/quirin-lang/private/w48-cmt-tracked-interior/base-corpus/resource-diagnostics.chunk-contracts.json",
+      "sha256": "cbbcfd9c176005146c1946d5fcd4dc83cc9ec041a3397b10b1f0ab16ae6c0484",
+      "bytes": 4186178
+    },
+    "resource-diagnostics.json": {
+      "source": "/home/cosmo/.codex/worktrees/808d/quirin-lang/private/w48-cmt-tracked-interior/base-corpus/resource-diagnostics.json",
+      "sha256": "6bd183e1686d3053ea2563064866e0c0a6ee7b37775d6803f9ceb13d3c1b708b",
+      "bytes": 86901409
+    },
+    "resource-diagnostics.source-effects.json": {
+      "source": "/home/cosmo/.codex/worktrees/808d/quirin-lang/private/w48-cmt-tracked-interior/base-corpus/resource-diagnostics.source-effects.json",
+      "sha256": "94603d0fa0700cf1e7fea2135e17f2e04958ef576519483cee7757dc53589766",
+      "bytes": 118505
+    },
+    "resource-diagnostics.contracts.json": {
+      "source": "/home/cosmo/.codex/worktrees/808d/quirin-lang/private/w48-cmt-tracked-interior/base-corpus/resource-diagnostics.contracts.json",
+      "sha256": "140887bc2c6d62c2828f1a458c8612c2781c61d7f5da78450f4dd388690e4b2b",
+      "bytes": 42764994
+    },
+    "producer-invocation.json": {
+      "source": "/home/cosmo/.codex/worktrees/808d/quirin-lang/private/w48-cmt-tracked-interior/base-corpus-invocation.json",
+      "sha256": "15481db32490a681e1ca369cb68002f721676a357c5cf611c3079d7c11a86c40",
+      "bytes": 90038
+    },
+    "null.jsonl": {
+      "source": "/home/cosmo/.codex/worktrees/808d/quirin-lang/private/w48-cmt-tracked-interior/base-corpus-null.jsonl",
+      "sha256": "075ddeeccd6a580d8b081430b123228fe8c1448c48c52d1e3aa8d4282075522a",
+      "bytes": 29206615
+    },
+    "outer.json": {
+      "source": "/home/cosmo/.codex/worktrees/808d/quirin-lang/private/w48-cmt-tracked-interior/base-corpus-outer.json",
+      "sha256": "38f081352a4c671fbfc2cf4acc01f6c154e328d4619dace0005f07e981d512c4",
+      "bytes": 711706
+    },
+    "null.summary.json": {
+      "source": "/home/cosmo/.codex/worktrees/808d/quirin-lang/private/w48-cmt-tracked-interior/base-corpus-null.summary.json",
+      "sha256": "55da060fb0715d7335c58c31bb6fc90a52c7dbc10905fc63cbb3e023de740250",
+      "bytes": 64900
+    }
+  },
+  "tip": {
+    "audit.log": {
+      "source": "/home/cosmo/.codex/worktrees/808d/quirin-lang/private/w48-cmt-tracked-interior/tip-corpus/audit.log",
+      "sha256": "c8786e700f0aa8b9d4de254b1b6ea0f7444f371935985950f09f20534d4184d9",
+      "bytes": 135838
+    },
+    "monkey-source.json": {
+      "source": "/home/cosmo/.codex/worktrees/808d/quirin-lang/private/w48-cmt-tracked-interior/tip-corpus/monkey-source.json",
+      "sha256": "57acfc58c4f7dddf2623efb3c9dc3e8f2dc276835e15cd18a157414696bb2f11",
+      "bytes": 1665950
+    },
+    "run.json": {
+      "source": "/home/cosmo/.codex/worktrees/808d/quirin-lang/private/w48-cmt-tracked-interior/tip-corpus/run.json",
+      "sha256": "e4b02f98917784b968a442a6ce8758666254ba00357259a581c6178398b049d9",
+      "bytes": 1185
+    },
+    "resource-diagnostics.chunk-contracts.json": {
+      "source": "/home/cosmo/.codex/worktrees/808d/quirin-lang/private/w48-cmt-tracked-interior/tip-corpus/resource-diagnostics.chunk-contracts.json",
+      "sha256": "cbbcfd9c176005146c1946d5fcd4dc83cc9ec041a3397b10b1f0ab16ae6c0484",
+      "bytes": 4186178
+    },
+    "resource-diagnostics.json": {
+      "source": "/home/cosmo/.codex/worktrees/808d/quirin-lang/private/w48-cmt-tracked-interior/tip-corpus/resource-diagnostics.json",
+      "sha256": "4f2f12f292cabe5ef5f9814659751775a5f9890b82f2ab4ddec8bb33883a15ea",
+      "bytes": 86898630
+    },
+    "resource-diagnostics.source-effects.json": {
+      "source": "/home/cosmo/.codex/worktrees/808d/quirin-lang/private/w48-cmt-tracked-interior/tip-corpus/resource-diagnostics.source-effects.json",
+      "sha256": "94603d0fa0700cf1e7fea2135e17f2e04958ef576519483cee7757dc53589766",
+      "bytes": 118505
+    },
+    "resource-diagnostics.contracts.json": {
+      "source": "/home/cosmo/.codex/worktrees/808d/quirin-lang/private/w48-cmt-tracked-interior/tip-corpus/resource-diagnostics.contracts.json",
+      "sha256": "1004f70cb75ff83c5235e91b889883cbc502e7c87184513450fc2068a11d5df9",
+      "bytes": 42764994
+    },
+    "producer-invocation.json": {
+      "source": "/home/cosmo/.codex/worktrees/808d/quirin-lang/private/w48-cmt-tracked-interior/tip-corpus-invocation.json",
+      "sha256": "f1996f3bfcc76c436650aa90e2f9aef2ebcd9bcf62cf8d2e3048c6af0f3b17cb",
+      "bytes": 90034
+    },
+    "null.jsonl": {
+      "source": "/home/cosmo/.codex/worktrees/808d/quirin-lang/private/w48-cmt-tracked-interior/tip-corpus-null.jsonl",
+      "sha256": "76ce60fefb01e4a81b71aef1c38d2c0c569c5e794e910f604e61822c11a5a880",
+      "bytes": 29206603
+    },
+    "outer.json": {
+      "source": "/home/cosmo/.codex/worktrees/808d/quirin-lang/private/w48-cmt-tracked-interior/tip-corpus-outer.json",
+      "sha256": "c1d84bec3e8c6195d22a73656b0805055547a4fc9e82f36a51d5ad3e1513ad14",
+      "bytes": 711706
+    },
+    "null.summary.json": {
+      "source": "/home/cosmo/.codex/worktrees/808d/quirin-lang/private/w48-cmt-tracked-interior/tip-corpus-null.summary.json",
+      "sha256": "61f9d201081a18d3992c55e5b64a37da8e1129cddfabf82e758bab9cc5001f0d",
+      "bytes": 64900
+    }
+  }
+}

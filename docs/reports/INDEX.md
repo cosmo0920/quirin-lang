@@ -1371,6 +1371,8 @@ Regenerate with `python3 scripts/build_docs_index.py`; validate with `--check`.
 
 | [w48-cmt-list-self-init](w48-cmt-list-self-init/README.md) | W48-CMT-LIST-SELF-INIT: checked calls to self-link initializers |
 
+| [w48-cmt-tracked-interior-self-init](w48-cmt-tracked-interior-self-init/README.md) | Tracked/interior initializer effect transport |
+
 | [w48-impl-round1-halt](w48-impl-round1-halt/README.md) | W48 implementation round 1: halt record |
 
 | [w48-pointer-return-readonly](w48-pointer-return-readonly/README.md) | W48 pointer return through a read-only call actual |

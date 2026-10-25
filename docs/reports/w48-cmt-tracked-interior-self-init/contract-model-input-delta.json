@@ -1,0 +1,50 @@
+{
+  "snapshot_entries": 310,
+  "intended_canonical_deltas": [
+    {
+      "path": "contract/profiles/cmetrics-counter/source-contracts.json",
+      "frozen_base_sha256": "b7569cd24dcfd9186c732be7fd8f81e58a69d73120235081de4d441a9104fa69",
+      "canonical_tip_sha256": "d672738dd1069b3d46b30ee9b2aeb08e566e9f6acb3e51fdf98aa924e6a86156"
+    },
+    {
+      "path": "providers/contract-load-path.json",
+      "frozen_base_sha256": "2cb0a56238a840e867156e93ddd44f3cf2ec5e0f27fc3fc4f15eeb83d2fc7043",
+      "canonical_tip_sha256": "f016276e540414126ba442c21507a3a0a6818ff4997a725d963f80030dcd32db"
+    },
+    {
+      "path": "providers/qcore-provider-cmetrics/contracts.json",
+      "frozen_base_sha256": "39db29d6eb160062b3faad9e446c6ff6d842b726e4901537523ce19ea095c441",
+      "canonical_tip_sha256": "2ce1cb25c13a08ab521523e3e0c827ed87848918a686a007f5ac278876a2ec27"
+    },
+    {
+      "path": "providers/quirin-provider-cfl/contracts/cfl/intrusive_list.qv",
+      "frozen_base_sha256": "0e88afdb9a476a3da576bfed0dd0bb5de61bb59eb5eef1738d0bf65e5512cdec",
+      "canonical_tip_sha256": "0d58b3b52665e232bc096517fb9c7da990bbb4a851a5d4599a2e719ee1792038"
+    }
+  ],
+  "new_canonical_models": [
+    {
+      "path": "providers/qcore-provider-cmetrics/contracts/cmetrics/map_lifetime.qv",
+      "sha256": "ecc6aab9be74aa57ed0842ad79f16b33000b9d10dd2834344837da502ff32436"
+    },
+    {
+      "path": "providers/qcore-provider-cmetrics/contracts/cmetrics/opts_lifetime.qv",
+      "sha256": "4b9ad1d7bf2bc8f06e2749b0e6ab4407ddd000fbc7bafed9c93d5dbd24ce1852"
+    }
+  ],
+  "native_pair_uses_same_frozen_snapshot": true,
+  "resource_bounds_outer_views_unchanged": true,
+  "basis": "Frozen native invocations; runtime source equality; full current-source root/provider gates and actual loader refusal controls",
+  "new_model_declarations": [
+    "cfl_list_init",
+    "cmt_map_create",
+    "cmt_map_metric_get",
+    "cmt_map_metric_get_val",
+    "cmt_map_metric_destroy",
+    "cmt_map_metrics_expire",
+    "cmt_map_destroy",
+    "cmt_opts_init",
+    "cmt_opts_exit"
+  ],
+  "no_new_source_pin_or_trusted_call_permission": true
+}

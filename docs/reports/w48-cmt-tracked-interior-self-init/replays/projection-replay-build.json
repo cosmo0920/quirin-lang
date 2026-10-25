@@ -1,0 +1,19 @@
+{
+  "command": [
+    "python3",
+    "docs/reports/plugin-premise-decomposition/scripts/build_replay.py",
+    "/home/cosmo/.codex/worktrees/808d/quirin-lang/private/w48-cmt-tracked-interior/projection_replay.rs",
+    "/home/cosmo/.codex/worktrees/808d/quirin-lang/private/w48-cmt-tracked-interior/replay-v3/projection-replay",
+    "--binary",
+    "target/release/quirin-audit",
+    "--extern",
+    "qcore_audit",
+    "qcore_c_gateway",
+    "qcore_schemas",
+    "serde_json"
+  ],
+  "started": "2026-10-24T16:05:54.060765+00:00",
+  "log": "/home/cosmo/.codex/worktrees/808d/quirin-lang/private/w48-cmt-tracked-interior/replay-v3/projection-replay-build.log",
+  "exit": 0,
+  "ended": "2026-10-24T16:05:54.525757+00:00"
+}

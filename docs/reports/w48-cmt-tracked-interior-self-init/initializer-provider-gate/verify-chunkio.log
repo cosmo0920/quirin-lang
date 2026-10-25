@@ -1,0 +1,80 @@
+{
+  "plugin_id": "qcore.chunkio",
+  "package_version": "0.13.0",
+  "protocol_versions": [
+    1
+  ],
+  "evidence_versions": [
+    1,
+    2
+  ],
+  "entrypoint": {
+    "kind": "executable",
+    "path": "provider"
+  },
+  "package_digest": "afd444de7353f905417032a377e91bbc9b838e1834304e4cff01033006d03d03",
+  "targets": [
+    {
+      "library": "chunkio",
+      "revisions": [
+        "*"
+      ],
+      "profiles": [
+        "*"
+      ],
+      "dialects": [
+        "c11",
+        "gnu11",
+        "gnu17",
+        "gnu99",
+        "qcore"
+      ],
+      "platforms": [
+        "*"
+      ],
+      "backends": [
+        "*"
+      ]
+    },
+    {
+      "library": "fluent_bit",
+      "revisions": [
+        "*"
+      ],
+      "profiles": [
+        "qcore.c_boolean_field_contract.v2",
+        "qcore.c_boolean_field_contract.v3",
+        "qcore.c_counter_contract.v1"
+      ],
+      "dialects": [
+        "c11",
+        "gnu11",
+        "gnu17",
+        "gnu99"
+      ],
+      "platforms": [
+        "*"
+      ],
+      "backends": [
+        "*"
+      ]
+    }
+  ],
+  "capabilities": [
+    "resource_contracts",
+    "chunk_lifecycle",
+    "translation_unit_projection"
+  ],
+  "required_foreign_summaries": [],
+  "required_observation_hooks": [],
+  "filesystem_inputs": [],
+  "network_access": false,
+  "limits": {
+    "timeout_ms": 5000,
+    "memory_bytes": 268435456,
+    "output_bytes": 4194304
+  },
+  "trust_class": "first_party",
+  "certificate_checker": "qcore.boolean_field_contract.v2",
+  "lean_theorem_family": "QCore.ChunkSource"
+}

@@ -1,0 +1,11 @@
+{
+  "command": [
+    "/home/cosmo/.codex/worktrees/808d/quirin-lang/private/w48-cmt-tracked-interior/replay-v3/projection-replay",
+    "/home/cosmo/.codex/worktrees/808d/quirin-lang/private/w48-cmt-tracked-interior/replay-v3/slice-base-projection-spec.json",
+    "/home/cosmo/.codex/worktrees/808d/quirin-lang/private/w48-cmt-tracked-interior/replay-v3/slice-base-projection-proof.json"
+  ],
+  "started": "2026-10-24T16:06:10.622473+00:00",
+  "log": "/home/cosmo/.codex/worktrees/808d/quirin-lang/private/w48-cmt-tracked-interior/replay-v3/slice-base-projection.log",
+  "exit": 0,
+  "ended": "2026-10-24T16:06:12.842036+00:00"
+}
