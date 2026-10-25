@@ -1,0 +1,66 @@
+{
+  "mutations": [
+    {
+      "mutation": "contract-comment",
+      "path": "providers/quirin-provider-cfl/contracts/cfl/time.qv",
+      "test_exit": 101,
+      "test_log": "docs/reports/contract-locks/mutations/contract-comment.test.log",
+      "check_exit": 1,
+      "check_log": "docs/reports/contract-locks/mutations/contract-comment.check.log",
+      "killed": true
+    },
+    {
+      "mutation": "contract-clause",
+      "path": "providers/quirin-provider-msgpack/contracts/msgpack/packer.qv",
+      "test_exit": 101,
+      "test_log": "docs/reports/contract-locks/mutations/contract-clause.test.log",
+      "check_exit": 1,
+      "check_log": "docs/reports/contract-locks/mutations/contract-clause.check.log",
+      "killed": true
+    },
+    {
+      "mutation": "lock-clause-count",
+      "path": "providers/quirin-provider-cfl/contract-inventory.lock",
+      "test_exit": 101,
+      "test_log": "docs/reports/contract-locks/mutations/lock-clause-count.test.log",
+      "check_exit": 1,
+      "check_log": "docs/reports/contract-locks/mutations/lock-clause-count.check.log",
+      "killed": true
+    },
+    {
+      "mutation": "lock-inherit-edge",
+      "path": "providers/quirin-provider-fluent-bit/contract-inventory.lock",
+      "test_exit": 101,
+      "test_log": "docs/reports/contract-locks/mutations/lock-inherit-edge.test.log",
+      "check_exit": 1,
+      "check_log": "docs/reports/contract-locks/mutations/lock-inherit-edge.check.log",
+      "killed": true
+    },
+    {
+      "mutation": "lock-premise-name",
+      "path": "providers/qcore-provider-librdkafka/contract-inventory.lock",
+      "test_exit": 101,
+      "test_log": "docs/reports/contract-locks/mutations/lock-premise-name.test.log",
+      "check_exit": 1,
+      "check_log": "docs/reports/contract-locks/mutations/lock-premise-name.check.log",
+      "killed": true
+    },
+    {
+      "mutation": "lock-resource-view",
+      "path": "providers/quirin-provider-msgpack/contract-inventory.lock",
+      "test_exit": 101,
+      "test_log": "docs/reports/contract-locks/mutations/lock-resource-view.test.log",
+      "check_exit": 1,
+      "check_log": "docs/reports/contract-locks/mutations/lock-resource-view.check.log",
+      "killed": true
+    }
+  ],
+  "baseline": {
+    "test_exit": 0,
+    "test_log": "docs/reports/contract-locks/mutations/baseline.test.log",
+    "check_exit": 0,
+    "check_log": "docs/reports/contract-locks/mutations/baseline.check.log"
+  },
+  "killed": 6,
+  "total": 6
+}

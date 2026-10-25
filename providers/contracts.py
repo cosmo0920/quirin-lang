@@ -426,18 +426,18 @@ def maintain_inventory_locks(root=ROOT, load_path=None, sync=False, probe=None):
         if lock.is_symlink():
             raise ValueError(f"symbolic-link contract inventory lock: {lock}")
         if sync:
-            lock.write_text(text)
+            lock.write_bytes(text.encode())
         elif not lock.is_file():
             raise ValueError(f"missing contract inventory lock: {lock}; review the contracts, "
                              "then run `python3 providers/contracts.py sync`")
-        elif lock.read_text() != text:
+        elif lock.read_bytes() != text.encode():
             raise ValueError(f"stale contract inventory lock: {lock}; "
                              f"{'; '.join(lock_difference(lock, document)) or 'byte form differs'}; "
                              "review the contracts, then run `python3 providers/contracts.py sync`")
-        files_ = document["files"].values()
+        entries = document["files"].values()
         rows.append({"crate": record["name"], "files": len(document["files"]),
-                     "declarations": sum(f["declaration_count"] for f in files_),
-                     "clauses": sum(f["clause_count"] for f in files_),
+                     "declarations": sum(f["declaration_count"] for f in entries),
+                     "clauses": sum(f["clause_count"] for f in entries),
                      "inventory_lock_sha256": hashlib.sha256(text.encode()).hexdigest()})
     return rows
 

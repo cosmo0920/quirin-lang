@@ -1,0 +1,285 @@
+{
+  "locks": [
+    "pin: qcore-provider-chunkio: lock lists every declaration (10 pinned, 0 flexible)",
+    "pin: qcore-provider-cmetrics: lock lists every declaration (29 pinned, 0 flexible)",
+    "pin: qcore-provider-ctraces: lock lists every declaration (19 pinned, 0 flexible)",
+    "pin: qcore-provider-libevent: lock lists every declaration (27 pinned, 1 of them tracking the tip of an unreleased branch, 0 flexible)",
+    "  notice [info]: the contract for `mk_vhost_set` targets a future, unreleased release (a release candidate), not a released version: it tracks the tip of `refs/heads/cosmo0920-missing-va_end-on-null` in repository `monkey` (https://github.com/cosmo0920/monkey) (release: Monkey release after the va_end fix (release candidate)), resolved to commit 21a2c1908b42596317717436e5ce0420805bd523; in force only where the audited source's sites equal the tip's",
+    "pin: qcore-provider-librdkafka: lock lists every declaration (172 pinned, 0 flexible)",
+    "pin: quirin-provider-cfl: lock lists every declaration (13 pinned, 0 flexible)",
+    "pin: quirin-provider-fluent-bit: lock lists every declaration (85 pinned, 0 flexible)",
+    "pin: quirin-provider-libc: lock lists every declaration (0 pinned, 132 flexible)",
+    "pin: quirin-provider-mpack: lock lists every declaration (9 pinned, 0 flexible)",
+    "pin: quirin-provider-msgpack: lock lists every declaration (1 pinned, 0 flexible)",
+    "pin: qcore-provider-chunkio (bounds): lock lists every declaration (5 pinned, 0 flexible)",
+    "pin: qcore-provider-cmetrics (bounds): lock lists every declaration (1 pinned, 0 flexible)",
+    "pin: qcore-provider-librdkafka (bounds): lock lists every declaration (86 pinned, 0 flexible)",
+    "pin: quirin-provider-cfl (bounds): lock lists every declaration (1 pinned, 0 flexible)",
+    "pin: quirin-provider-fluent-bit (bounds): lock lists every declaration (19 pinned, 0 flexible)",
+    "pin: qcore-provider-librdkafka (outer): lock lists every declaration (1 pinned, 0 flexible)",
+    "pin: quirin-provider-fluent-bit (outer): lock lists every declaration (2 pinned, 0 flexible)"
+  ],
+  "inventory_locks": [
+    {
+      "crate": "qcore-provider-chunkio",
+      "files": 46,
+      "declarations": 67,
+      "clauses": 709,
+      "inventory_lock_sha256": "14af475d7d4aa782fd792bf80883dfe090a4e577c33690aa66b4d4e75667aeaf"
+    },
+    {
+      "crate": "qcore-provider-cmetrics",
+      "files": 5,
+      "declarations": 31,
+      "clauses": 112,
+      "inventory_lock_sha256": "393c9b205f45f3c565997ce839faa15a894485ee0811fd85b0496bc75db475fd"
+    },
+    {
+      "crate": "qcore-provider-ctraces",
+      "files": 1,
+      "declarations": 19,
+      "clauses": 88,
+      "inventory_lock_sha256": "17444678218d96915647129991a672da04d343ac27184f4219869c4e33b0d323"
+    },
+    {
+      "crate": "qcore-provider-libevent",
+      "files": 19,
+      "declarations": 130,
+      "clauses": 792,
+      "inventory_lock_sha256": "7a09662a3f22fffa0d1dd158a92f31ba28203d9b3a7d2fd3a01478555624acd9"
+    },
+    {
+      "crate": "qcore-provider-librdkafka",
+      "files": 13,
+      "declarations": 265,
+      "clauses": 4356,
+      "inventory_lock_sha256": "7f3faec4a7d78555b11f3bcea7162ffced0e78befb82d3bfd6ff62959f867a4b"
+    },
+    {
+      "crate": "quirin-provider-cfl",
+      "files": 5,
+      "declarations": 18,
+      "clauses": 78,
+      "inventory_lock_sha256": "b65412d59c98ef6bdf573d939bb04f8c78152565c334eb33d52a56219d18bc06"
+    },
+    {
+      "crate": "quirin-provider-fluent-bit",
+      "files": 26,
+      "declarations": 111,
+      "clauses": 656,
+      "inventory_lock_sha256": "330f8ef9c11d02434e8e1fa7ab6e76afb2975c7ef5c004a04ed5f849666e0b6b"
+    },
+    {
+      "crate": "quirin-provider-libc",
+      "files": 17,
+      "declarations": 132,
+      "clauses": 707,
+      "inventory_lock_sha256": "2b67395a25c9e3d682421c007ce3688265fa496ec5976b45818a5bc361b79bde"
+    },
+    {
+      "crate": "quirin-provider-mpack",
+      "files": 1,
+      "declarations": 9,
+      "clauses": 34,
+      "inventory_lock_sha256": "1f37253956e51075eeaaccd41fbf1df2b2a27c721d89ce3b85f835f433df0028"
+    },
+    {
+      "crate": "quirin-provider-msgpack",
+      "files": 1,
+      "declarations": 1,
+      "clauses": 7,
+      "inventory_lock_sha256": "24a519a0980c03c31577fe7794f2a4f7bf5ffbcc294ecac55cc28f3ce05f3a2a"
+    },
+    {
+      "crate": "quirin-provider-shared",
+      "files": 4,
+      "declarations": 26,
+      "clauses": 68,
+      "inventory_lock_sha256": "ce9a414411f73c0958c2bcc787958d18b47390c5cecd98d4e53afc317d37aeb9"
+    }
+  ],
+  "providers": [
+    {
+      "provider": "qcore.chunkio",
+      "crate": "qcore-provider-chunkio",
+      "contracts": 46,
+      "includes": 0,
+      "inventory_sha256": "192a6393327138fa5cfc1efd1d965f9173e0e1e197c93575d79f0f65bc32c111"
+    },
+    {
+      "provider": "qcore.cmetrics",
+      "crate": "qcore-provider-cmetrics",
+      "contracts": 5,
+      "includes": 0,
+      "inventory_sha256": "39db29d6eb160062b3faad9e446c6ff6d842b726e4901537523ce19ea095c441"
+    },
+    {
+      "provider": "qcore.ctraces",
+      "crate": "qcore-provider-ctraces",
+      "contracts": 1,
+      "includes": 0,
+      "inventory_sha256": "586d457d2f6b9c33baaf4071d1234ae7775a0eee760df1a52a9cde866c53fb14"
+    },
+    {
+      "provider": "qcore.libevent",
+      "crate": "qcore-provider-libevent",
+      "contracts": 19,
+      "includes": 1,
+      "inventory_sha256": "e3c29c5b7692b88c2335d2cee5a2e86ad4276cd7014a1004d85de663f0d17c00"
+    },
+    {
+      "provider": "qcore.librdkafka",
+      "crate": "qcore-provider-librdkafka",
+      "contracts": 13,
+      "includes": 2,
+      "inventory_sha256": "af2e50ffe6f946ea4c21ce1b26de4a6e0510609ffa0e3453d9cf627d66aaccf9"
+    }
+  ],
+  "total_contracts": 84,
+  "load_path": [
+    {
+      "crate": "qcore-provider-chunkio",
+      "namespace": "chunkio",
+      "version": "0.5.0",
+      "dependencies": [
+        "quirin-provider-shared"
+      ],
+      "modules": 46,
+      "published": [],
+      "resource_view": 3,
+      "bounds_view": 2,
+      "outer_view": 0
+    },
+    {
+      "crate": "qcore-provider-cmetrics",
+      "namespace": "cmetrics",
+      "version": "0.2.0",
+      "dependencies": [
+        "quirin-provider-shared"
+      ],
+      "modules": 5,
+      "published": [],
+      "resource_view": 3,
+      "bounds_view": 1,
+      "outer_view": 0
+    },
+    {
+      "crate": "qcore-provider-ctraces",
+      "namespace": "ctraces",
+      "version": "0.1.0",
+      "dependencies": [
+        "quirin-provider-shared"
+      ],
+      "modules": 1,
+      "published": [],
+      "resource_view": 1,
+      "bounds_view": 0,
+      "outer_view": 0
+    },
+    {
+      "crate": "qcore-provider-libevent",
+      "namespace": "libevent",
+      "version": "0.1.0",
+      "dependencies": [
+        "quirin-provider-libc",
+        "quirin-provider-shared"
+      ],
+      "modules": 19,
+      "published": [],
+      "resource_view": 7,
+      "bounds_view": 0,
+      "outer_view": 0
+    },
+    {
+      "crate": "qcore-provider-librdkafka",
+      "namespace": "librdkafka",
+      "version": "0.1.0",
+      "dependencies": [
+        "quirin-provider-libc",
+        "quirin-provider-shared"
+      ],
+      "modules": 13,
+      "published": [],
+      "resource_view": 8,
+      "bounds_view": 1,
+      "outer_view": 1
+    },
+    {
+      "crate": "quirin-provider-cfl",
+      "namespace": "cfl",
+      "version": "0.1.0",
+      "dependencies": [],
+      "modules": 5,
+      "published": [],
+      "resource_view": 2,
+      "bounds_view": 1,
+      "outer_view": 0
+    },
+    {
+      "crate": "quirin-provider-fluent-bit",
+      "namespace": "fluent_bit",
+      "version": "0.1.0",
+      "dependencies": [
+        "quirin-provider-libc"
+      ],
+      "modules": 26,
+      "published": [],
+      "resource_view": 23,
+      "bounds_view": 1,
+      "outer_view": 1
+    },
+    {
+      "crate": "quirin-provider-libc",
+      "namespace": "libc",
+      "version": "0.1.0",
+      "dependencies": [],
+      "modules": 17,
+      "published": [
+        "libc/memory.qv",
+        "libc/string.qv"
+      ],
+      "resource_view": 17,
+      "bounds_view": 0,
+      "outer_view": 0
+    },
+    {
+      "crate": "quirin-provider-mpack",
+      "namespace": "mpack",
+      "version": "0.1.0",
+      "dependencies": [],
+      "modules": 1,
+      "published": [],
+      "resource_view": 1,
+      "bounds_view": 0,
+      "outer_view": 0
+    },
+    {
+      "crate": "quirin-provider-msgpack",
+      "namespace": "msgpack",
+      "version": "0.1.0",
+      "dependencies": [],
+      "modules": 1,
+      "published": [],
+      "resource_view": 1,
+      "bounds_view": 0,
+      "outer_view": 0
+    },
+    {
+      "crate": "quirin-provider-shared",
+      "namespace": "shared",
+      "version": "0.1.0",
+      "dependencies": [
+        "quirin-provider-cfl",
+        "quirin-provider-fluent-bit",
+        "quirin-provider-libc",
+        "quirin-provider-mpack",
+        "quirin-provider-msgpack"
+      ],
+      "modules": 4,
+      "published": [],
+      "resource_view": 0,
+      "bounds_view": 0,
+      "outer_view": 0
+    }
+  ]
+}
