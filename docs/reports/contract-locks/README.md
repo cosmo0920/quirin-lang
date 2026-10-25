@@ -1,8 +1,9 @@
 # CONTRACT-LOCKS: contract pins as generated lock files
 
 Refactoring round 1, pluggable-cards seam A, first bullet; user decision 1 of
-2026-10-24 ([plan](../../plans/pluggable-cards/README.md#6-decisions)). Base
-`6c4855745` (origin/main). No analyzer, contract text, verdict or Lean change,
+2026-10-24 ([plan](../../plans/pluggable-cards/README.md#6-decisions)). Card
+base `6c4855745`; merged with origin/main `d5d041264` before the final gate
+(see the merged-base paragraph below). No analyzer, contract text, verdict or Lean change,
 so no corpus identity run is due.
 
 ## What changed
@@ -80,7 +81,18 @@ Before = the literal in the base revision's tests; after = the committed locks
 | resource-view modules, summed (Python) | 66 | 66 |
 | `quirin-provider-libc` resource view (Python) | 17 | 17 |
 
-Per crate (files / declarations / clauses): chunkio 46 / 67 / 709, cmetrics
+**Merged base.** origin/main moved to `d5d041264` during the gate: the CMetrics
+landing added literal rows (`cfl_list_init`, six `cmt_map_*`, two
+`cmt_opts_*`) and moved the module count 138 → 140. Merge `d3e911777` keeps
+this branch's readers, regenerates the cmetrics and cfl locks with `sync`,
+and reproduces every one of main's literals
+([`compare_pins.py`](compare_pins.py) `. d5d041264`, output in
+[`compare_pins-d5d041264.txt`](compare_pins-d5d041264.txt)): 140 modules,
+818 declarations, 7,721 clauses (row for row, in order), 140 modules with a
+declaration, 0 per-module mismatches, 11 inheritance edges (row for row),
+71 premised, 66 resource-view modules, 17 in libc.
+
+Per crate at `6c4855745` (files / declarations / clauses): chunkio 46 / 67 / 709, cmetrics
 5 / 31 / 112, ctraces 1 / 19 / 88, libevent 19 / 130 / 792, librdkafka
 13 / 265 / 4,356, cfl 5 / 18 / 78, fluent-bit 26 / 111 / 656, libc
 17 / 132 / 707, mpack 1 / 9 / 34, msgpack 1 / 1 / 7, shared 4 / 26 / 68.
