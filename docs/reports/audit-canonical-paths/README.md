@@ -264,7 +264,25 @@ against BASE-mirror. The two read different spellings, and the spelling is
 bound into identities and preprocessed text by design. The report states
 exactly where they differ instead of claiming it.
 
-GATE_SECTION
+## Gate
+
+This is the scoped card gate (`python3 scripts/gate_scope.py --base 4753bfe62`,
+docs/agents/validation.md as of GATE-ELASTIC). It ran on `abee04be9`, the
+card merged with main `4753bfe62`, and exited 0 with 7 of 7 steps passing
+([gate.json](gate.json); logs under `private/gate-scope/acp-final/`).
+
+- submodules: 0 problems;
+- fmt: exit 0;
+- Clippy on the five affected root crates: exit 0;
+- Rust suite (`run_test_binaries.py --packages qcore-audit,qcore-compiler,qcore-verification,qcorec,quirin-source-analysis`):
+  exit 0, 248 units, 251 summaries, 3,254 passed, 0 failed, 5 ignored;
+- both reevaluation examples: exit 0;
+- Python suite: exit 0, 443 tests.
+
+Lean and the provider gate were not selected: no `proof/` or `providers/`
+change. Clang is recorded beside this file
+([clang-version.txt](clang-version.txt)). This commit adds only the gate
+record and this section.
 
 ## Boundaries and follow-ons
 
