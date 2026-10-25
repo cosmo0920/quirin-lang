@@ -32,7 +32,7 @@ use qcore_c_gateway::legacy_c::{
     C11TranslationUnit, CrossUnitHomeEvidence, LegacyFunctionScope, ResourceContracts,
     enumerate_source_definitions, prepare_translation_unit,
 };
-use qcore_contract::contract_loader::load_resource_contract_manifest;
+use qcore_contract::contract_loader::load_resource_contract_manifest_stamped;
 use qcore_contract::profile_loader::{LoadedProfile, load_audited_bundle, verify_pin};
 use qcore_verification::external_source::derive_library_summary_profile;
 use quirin_source_analysis::chunk_contract::check_chunk_source_contract;
@@ -132,17 +132,19 @@ pub fn run(
     let contract_manifest = contract_manifest
         .or(default_manifest.as_deref())
         .ok_or("source-set profile supplies no resource contracts")?;
-    let mut contracts = load_resource_contract_manifest(contract_manifest)?;
+    let owners = crate::contract_revision::ModuleOwners::for_manifest(
+        contract_manifest,
+        &fs::read_to_string(contract_manifest).map_err(|e| e.to_string())?,
+    )?;
+    // Card CONTRACT-SUPERSESSION: a function two selected modules declare is
+    // decided by the pin stamps of their locks (contract spec C06.6).
+    let mut contracts = load_resource_contract_manifest_stamped(
+        contract_manifest,
+        &crate::contract_revision::LockStamps::new(&owners),
+    )?;
     // Card W45-CONTRACT-REVISION-MODE: every pinned contract is compared with
     // its lock over the audited Fluent Bit source before any unit is analysed.
-    let pins = crate::contract_revision::apply_pins(
-        &mut contracts,
-        &crate::contract_revision::ModuleOwners::for_manifest(
-            contract_manifest,
-            &fs::read_to_string(contract_manifest).map_err(|e| e.to_string())?,
-        )?,
-        &root,
-    )?;
+    let pins = crate::contract_revision::apply_pins(&mut contracts, &owners, &root)?;
     // Card CHUNKIO-META-LEN-BOUNDS-CONTRACTS: with the bounds property
     // selected, the bounds views of the manifest's load path, pinned over the
     // audited source, before any unit is analysed.

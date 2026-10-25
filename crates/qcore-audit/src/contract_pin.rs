@@ -50,6 +50,23 @@
 //! [`crate::outer_selection`]), exactly as `--bounds` selects the bounds
 //! locks; each entry pins a loader declaration to the loader's body.
 //! `--verify-contracts` verifies all three kinds of lock.
+//!
+//! Card **CONTRACT-SUPERSESSION** (contract spec §C06.6, user decision 9a):
+//! every lock is written in format version 4, and every entry a run adds or
+//! changes carries the run's **pin stamp** `pinned_at` (`--pinned-at STAMP`,
+//! `YYYY-MM-DDTHH:MM:SSZ`; by default the clock at the run). A re-pin carries
+//! a later stamp than the entry it replaces: an explicit stamp that is not
+//! later refuses, and a default stamp that is not later (two runs in one
+//! second, or a clock behind the lock) is moved to one second after the
+//! replaced stamp. An entry a run leaves unchanged keeps its stamp.
+//! `--stamp-only` (with `--source-root`) is the one-time migration: it stamps
+//! every unstamped entry whose contract text is current, changes no identity,
+//! and ties each lock to the checkout's `HEAD` (`fluent_bit_revision`).
+//! `--verify-contracts` also requires version 4, a valid stamp on every entry
+//! and a revision tie, and checks the lock-set window ([`crate::pin_window`])
+//! when its manifest exists. `--window-create REV`, `--window-add REV`,
+//! `--window-rotate REV`, `--window-retire` and `--window-check` maintain the
+//! window of at most three lock sets.
 
 use std::collections::{BTreeMap, BTreeSet};
 use std::fs;
@@ -77,8 +94,11 @@ DIR] [--crate NAME]... [--function NAME]... [--regenerate | --check [--revision 
 --drop-revision REV [--load-path FILE | --modules DIR] [--crate NAME]... [--function NAME]... | \
 pin --verify-contracts [--load-path FILE] [--crate NAME]... | pin --source-root DIR --function \
 NAME... --track-tip REF [--repository-name NAME] [--repository-url URL] [--release-label TEXT] | \
-pin --source-root DIR --function NAME... --untrack-tip (`--bounds` or `--outer` with a pin, \
---check, --regenerate or --drop-revision selects the bounds or the outer locks)";
+pin --source-root DIR --function NAME... --untrack-tip | pin --source-root DIR --stamp-only \
+[--pinned-at STAMP] | pin --window-create REV | --window-add REV | --window-rotate REV | \
+--window-retire | --window-check [--load-path FILE] (`--bounds` or `--outer` with a pin, \
+--check, --regenerate, --stamp-only or --drop-revision selects the bounds or the outer locks; \
+`--pinned-at STAMP` sets the review stamp of a pin)";
 
 /// The lock's generated-by line.
 pub const GENERATED_BY: &str = "quirin-audit pin";
@@ -112,6 +132,22 @@ struct Arguments {
     bounds: bool,
     /// Card OUTER-CONTRACT: act on the outer contract locks.
     outer: bool,
+    /// Card CONTRACT-SUPERSESSION: the review stamp of this run.
+    pinned_at: Option<String>,
+    /// Card CONTRACT-SUPERSESSION: stamp unstamped entries, nothing else.
+    stamp_only: bool,
+    /// Card CONTRACT-SUPERSESSION: one window operation.
+    window: Option<WindowOperation>,
+}
+
+/// Card CONTRACT-SUPERSESSION: a lock-set window operation.
+#[derive(Clone, Debug, PartialEq, Eq)]
+enum WindowOperation {
+    Create(String),
+    Add(String),
+    Rotate(String),
+    Retire,
+    Check,
 }
 
 fn parse(arguments: Vec<String>) -> Result<Arguments, String> {
@@ -139,8 +175,60 @@ fn parse(arguments: Vec<String>) -> Result<Arguments, String> {
             "--release-label" => parsed.release_label = Some(value("--release-label")?),
             "--bounds" => parsed.bounds = true,
             "--outer" => parsed.outer = true,
+            "--pinned-at" => parsed.pinned_at = Some(value("--pinned-at")?),
+            "--stamp-only" => parsed.stamp_only = true,
+            "--window-create" | "--window-add" | "--window-rotate" | "--window-retire"
+            | "--window-check" => {
+                if parsed.window.is_some() {
+                    return Err("one window operation at a time".into());
+                }
+                parsed.window = Some(match argument.as_str() {
+                    "--window-create" => WindowOperation::Create(value("--window-create")?),
+                    "--window-add" => WindowOperation::Add(value("--window-add")?),
+                    "--window-rotate" => WindowOperation::Rotate(value("--window-rotate")?),
+                    "--window-retire" => WindowOperation::Retire,
+                    _ => WindowOperation::Check,
+                });
+            }
             other => return Err(format!("unknown argument `{other}`")),
         }
+    }
+    if let Some(stamp) = &parsed.pinned_at {
+        qcore_schemas::contract_supersession::validate_stamp(stamp)?;
+    }
+    if parsed.window.is_some() {
+        let only_load_path = Arguments {
+            load_path: None,
+            window: None,
+            ..Arguments::default()
+        };
+        let rest = Arguments {
+            load_path: None,
+            window: None,
+            ..clone_arguments(&parsed)
+        };
+        if !arguments_equal(&rest, &only_load_path) {
+            return Err("a window operation takes only --load-path".into());
+        }
+        return Ok(parsed);
+    }
+    if parsed.stamp_only
+        && (parsed.source_root.is_none()
+            || parsed.check
+            || parsed.regenerate
+            || parsed.revision.is_some()
+            || parsed.verify_contracts
+            || parsed.drop_revision.is_some()
+            || parsed.track_tip.is_some()
+            || parsed.untrack_tip
+            || !parsed.functions.is_empty())
+    {
+        return Err(
+            "--stamp-only takes --source-root (the revision it ties the locks to) and no \
+             --check, --regenerate, --revision, --verify-contracts, --drop-revision, \
+             --track-tip, --untrack-tip or --function"
+                .into(),
+        );
     }
     let tip_details = parsed.repository_name.is_some()
         || parsed.repository_url.is_some()
@@ -215,6 +303,141 @@ fn parse(arguments: Vec<String>) -> Result<Arguments, String> {
         );
     }
     Ok(parsed)
+}
+
+fn clone_arguments(a: &Arguments) -> Arguments {
+    Arguments {
+        source_root: a.source_root.clone(),
+        load_path: a.load_path.clone(),
+        modules: a.modules.clone(),
+        crates: a.crates.clone(),
+        functions: a.functions.clone(),
+        check: a.check,
+        verify_contracts: a.verify_contracts,
+        regenerate: a.regenerate,
+        drop_revision: a.drop_revision.clone(),
+        revision: a.revision.clone(),
+        track_tip: a.track_tip.clone(),
+        untrack_tip: a.untrack_tip,
+        repository_name: a.repository_name.clone(),
+        repository_url: a.repository_url.clone(),
+        release_label: a.release_label.clone(),
+        bounds: a.bounds,
+        outer: a.outer,
+        pinned_at: a.pinned_at.clone(),
+        stamp_only: a.stamp_only,
+        window: a.window.clone(),
+    }
+}
+
+fn arguments_equal(a: &Arguments, b: &Arguments) -> bool {
+    a.source_root == b.source_root
+        && a.load_path == b.load_path
+        && a.modules == b.modules
+        && a.crates == b.crates
+        && a.functions == b.functions
+        && a.check == b.check
+        && a.verify_contracts == b.verify_contracts
+        && a.regenerate == b.regenerate
+        && a.drop_revision == b.drop_revision
+        && a.revision == b.revision
+        && a.track_tip == b.track_tip
+        && a.untrack_tip == b.untrack_tip
+        && a.repository_name == b.repository_name
+        && a.repository_url == b.repository_url
+        && a.release_label == b.release_label
+        && a.bounds == b.bounds
+        && a.outer == b.outer
+        && a.pinned_at == b.pinned_at
+        && a.stamp_only == b.stamp_only
+        && a.window == b.window
+}
+
+/// Card CONTRACT-SUPERSESSION: the stamp a run writes into each entry it adds
+/// or changes.
+struct Stamper {
+    stamp: String,
+    explicit: bool,
+}
+
+impl Stamper {
+    fn new(explicit: Option<&str>) -> Self {
+        match explicit {
+            Some(stamp) => Self {
+                stamp: stamp.to_owned(),
+                explicit: true,
+            },
+            None => Self {
+                stamp: epoch_stamp(
+                    std::time::SystemTime::now()
+                        .duration_since(std::time::UNIX_EPOCH)
+                        .map_or(0, |elapsed| i64::try_from(elapsed.as_secs()).unwrap_or(0)),
+                ),
+                explicit: false,
+            },
+        }
+    }
+
+    /// The stamp of an entry that replaces one stamped `old`: later than it.
+    fn replacing(&self, function: &str, old: Option<&str>) -> Result<String, String> {
+        let Some(old) = old.filter(|old| {
+            qcore_schemas::contract_supersession::validate_stamp(old).is_ok()
+        }) else {
+            return Ok(self.stamp.clone());
+        };
+        if self.stamp.as_str() > old {
+            return Ok(self.stamp.clone());
+        }
+        if self.explicit {
+            return Err(format!(
+                "`{function}`: a re-pin must carry a later stamp than the entry it replaces \
+                 ({old}); --pinned-at {} is not later",
+                self.stamp
+            ));
+        }
+        Ok(epoch_stamp(stamp_epoch(old) + 1))
+    }
+}
+
+/// Seconds since the Unix epoch of a valid stamp.
+fn stamp_epoch(stamp: &str) -> i64 {
+    let field = |range: std::ops::Range<usize>| stamp[range].parse::<i64>().unwrap_or(0);
+    let (year, month, day) = (field(0..4), field(5..7), field(8..10));
+    // Days from civil (H. Hinnant's algorithm).
+    let year = if month <= 2 { year - 1 } else { year };
+    let era = year.div_euclid(400);
+    let year_of_era = year - era * 400;
+    let day_of_year = (153 * (month + if month > 2 { -3 } else { 9 }) + 2) / 5 + day - 1;
+    let day_of_era = year_of_era * 365 + year_of_era / 4 - year_of_era / 100 + day_of_year;
+    let days = era * 146_097 + day_of_era - 719_468;
+    days * 86_400 + field(11..13) * 3_600 + field(14..16) * 60 + field(17..19)
+}
+
+/// The stamp of a time in seconds since the Unix epoch.
+fn epoch_stamp(seconds: i64) -> String {
+    let days = seconds.div_euclid(86_400);
+    let rest = seconds.rem_euclid(86_400);
+    // Civil from days (H. Hinnant's algorithm).
+    let shifted = days + 719_468;
+    let era = shifted.div_euclid(146_097);
+    let day_of_era = shifted - era * 146_097;
+    let year_of_era =
+        (day_of_era - day_of_era / 1_460 + day_of_era / 36_524 - day_of_era / 146_096) / 365;
+    let day_of_year = day_of_era - (365 * year_of_era + year_of_era / 4 - year_of_era / 100);
+    let month_index = (5 * day_of_year + 2) / 153;
+    let day = day_of_year - (153 * month_index + 2) / 5 + 1;
+    let month = if month_index < 10 {
+        month_index + 3
+    } else {
+        month_index - 9
+    };
+    let year = year_of_era + era * 400 + i64::from(month <= 2);
+    format!(
+        "{year:04}-{month:02}-{day:02}T{:02}:{:02}:{:02}Z",
+        rest / 3_600,
+        rest % 3_600 / 60,
+        rest % 60
+    )
 }
 
 /// One lock target: the declarations to pin and where its lock lives.
@@ -536,6 +759,7 @@ fn empty_lock(target: &Target) -> ContractLock {
         note: NOTE.into(),
         owner: target.owner.clone(),
         normalisation: NORMALISATION.into(),
+        fluent_bit_revision: None,
         pinned: Vec::new(),
         flexible: Vec::new(),
         tip: Vec::new(),
@@ -553,6 +777,7 @@ fn update(
     tree: &SourceTree,
     functions: &BTreeSet<String>,
     untrack: bool,
+    stamper: &Stamper,
 ) -> Result<(ContractLock, Vec<String>), String> {
     let declared = declarations(target)?;
     let known = declared
@@ -594,6 +819,7 @@ fn update(
     let mut lock = ContractLock {
         pinned: Vec::new(),
         flexible: Vec::new(),
+        fluent_bit_revision: old.fluent_bit_revision.clone(),
         ..empty_lock(target)
     };
     let mut lines = Vec::new();
@@ -656,10 +882,12 @@ fn update(
                             function: name.clone(),
                             module: module.clone(),
                             contract_sha256: digest.clone(),
+                            pinned_at: None,
                             identities: Vec::new(),
                         }
                     }
                 };
+                let unchanged = old_pinned(name).cloned();
                 let before = entry.identities.clone();
                 entry.module.clone_from(module);
                 entry.contract_sha256.clone_from(digest);
@@ -693,16 +921,42 @@ fn update(
                         )
                     });
                 }
+                // Card CONTRACT-SUPERSESSION: an entry this run adds or
+                // changes carries the run's stamp, later than the replaced
+                // one; an unchanged entry keeps its own.
+                let same = unchanged.as_ref().is_some_and(|old| {
+                    old.module == entry.module
+                        && old.contract_sha256 == entry.contract_sha256
+                        && old.identities == entry.identities
+                });
+                if !same || entry.pinned_at.is_none() {
+                    entry.pinned_at = Some(stamper.replacing(
+                        name,
+                        unchanged.as_ref().and_then(|old| old.pinned_at.as_deref()),
+                    )?);
+                }
                 lock.pinned.push(entry);
             }
             RevisionMode::Flexible => {
-                let entry = FlexibleEntry {
+                let previous = old_flexible(name);
+                let mut entry = FlexibleEntry {
                     function: name.clone(),
                     module: module.clone(),
                     contract_sha256: digest.clone(),
+                    pinned_at: previous.and_then(|old| old.pinned_at.clone()),
                 };
-                if old_flexible(name) != Some(&entry) {
+                if previous != Some(&entry) {
                     lines.push(format!("~ {name}: flexible"));
+                }
+                // Card CONTRACT-SUPERSESSION: as for a pinned entry.
+                let same = previous.is_some_and(|old| {
+                    old.module == entry.module && old.contract_sha256 == entry.contract_sha256
+                });
+                if !same || entry.pinned_at.is_none() {
+                    entry.pinned_at = Some(stamper.replacing(
+                        name,
+                        previous.and_then(|old| old.pinned_at.as_deref()),
+                    )?);
                 }
                 lock.flexible.push(entry);
             }
@@ -750,6 +1004,7 @@ fn track(
     target: &Target,
     root: &Path,
     arguments: &Arguments,
+    stamper: &Stamper,
 ) -> Result<(ContractLock, Vec<String>, Vec<TipEntry>), String> {
     let reference = arguments.track_tip.as_deref().expect("parsed");
     let functions = &arguments.functions;
@@ -828,6 +1083,20 @@ fn track(
             ));
         }
         let (module, digest, _) = &declared[function];
+        // Card CONTRACT-SUPERSESSION: a tip entry records a review; its stamp
+        // is later than the entry it replaces.
+        let replaced_stamp = lock
+            .pinned
+            .iter()
+            .find(|e| &e.function == function)
+            .and_then(|e| e.pinned_at.clone())
+            .or_else(|| {
+                lock.tip
+                    .iter()
+                    .find(|e| &e.function == function)
+                    .and_then(|e| e.pinned_at.clone())
+            });
+        let pinned_at = stamper.replacing(function, replaced_stamp.as_deref())?;
         if let Some(position) = lock.pinned.iter().position(|e| &e.function == function) {
             let dropped = lock.pinned.remove(position);
             lines.push(format!(
@@ -847,6 +1116,7 @@ fn track(
             function: function.clone(),
             module: module.clone(),
             contract_sha256: digest.clone(),
+            pinned_at: Some(pinned_at),
             repository: TipRepository {
                 name: name.clone(),
                 url: url.clone(),
@@ -1105,7 +1375,171 @@ fn read_existing(target: &Target) -> Result<Option<ContractLock>, String> {
     }
 }
 
+/// The provider tree of a run: the directory of its load path.
+fn provider_root(arguments: &Arguments) -> PathBuf {
+    let load_path = arguments
+        .load_path
+        .as_deref()
+        .unwrap_or_else(|| Path::new(DEFAULT_LOAD_PATH));
+    load_path
+        .parent()
+        .filter(|parent| !parent.as_os_str().is_empty())
+        .map_or_else(|| PathBuf::from("."), Path::to_path_buf)
+}
+
+/// Card CONTRACT-SUPERSESSION: what `--verify-contracts` requires of a lock
+/// beyond its declarations: version 4, a valid stamp on every entry and a
+/// revision tie.
+fn stamp_problems(lock: &ContractLock) -> Vec<String> {
+    use qcore_schemas::contract_supersession::validate_stamp;
+    let mut problems = Vec::new();
+    if lock.lock_version < LOCK_VERSION {
+        problems.push(format!(
+            "lock version {} carries no pin stamps (run `pin --stamp-only` after review)",
+            lock.lock_version
+        ));
+        return problems;
+    }
+    if lock.fluent_bit_revision.is_none() {
+        problems.push("the lock is tied to no Fluent Bit revision".into());
+    }
+    let entries = lock
+        .pinned
+        .iter()
+        .map(|e| (&e.function, &e.pinned_at))
+        .chain(lock.flexible.iter().map(|e| (&e.function, &e.pinned_at)))
+        .chain(lock.tip.iter().map(|e| (&e.function, &e.pinned_at)));
+    for (function, stamp) in entries {
+        match stamp {
+            None => problems.push(format!("`{function}` carries no pin stamp")),
+            Some(stamp) if validate_stamp(stamp).is_err() => {
+                problems.push(format!("`{function}`'s pin stamp `{stamp}` is malformed"));
+            }
+            Some(_) => {}
+        }
+    }
+    problems
+}
+
+/// Card CONTRACT-SUPERSESSION: `--window-*`.
+fn run_window(arguments: &Arguments, operation: &WindowOperation) -> Result<bool, String> {
+    let root = provider_root(arguments);
+    match operation {
+        WindowOperation::Check => {
+            let problems = crate::pin_window::check(&root)?;
+            for problem in &problems {
+                println!("pin: lock-set window: {problem}");
+            }
+            if problems.is_empty() {
+                let window =
+                    crate::pin_window::PinLockWindow::read(&crate::pin_window::manifest_path(&root))?;
+                println!(
+                    "pin: lock-set window: {} of {} set(s), live set tied to {}",
+                    window.sets.len(),
+                    window.capacity,
+                    window.latest()
+                );
+            }
+            Ok(problems.is_empty())
+        }
+        WindowOperation::Create(revision) => {
+            crate::pin_window::create(&root, revision)?;
+            println!("pin: lock-set window created; live set tied to {revision}");
+            Ok(true)
+        }
+        WindowOperation::Add(revision) | WindowOperation::Rotate(revision) => {
+            let rotate = matches!(operation, WindowOperation::Rotate(_));
+            let (window, retired) = crate::pin_window::add(&root, revision, rotate)?;
+            if let Some(set) = retired {
+                println!(
+                    "pin: lock-set window: retired the set of {}",
+                    set.fluent_bit_revision
+                );
+            }
+            println!(
+                "pin: lock-set window: {} of {} set(s); live set now tied to {revision} (re-pin \
+                 the declarations whose sites changed at it)",
+                window.sets.len(),
+                window.capacity
+            );
+            Ok(true)
+        }
+        WindowOperation::Retire => {
+            let set = crate::pin_window::retire(&root)?;
+            println!(
+                "pin: lock-set window: retired the set of {}",
+                set.fluent_bit_revision
+            );
+            Ok(true)
+        }
+    }
+}
+
+/// Card CONTRACT-SUPERSESSION: `--stamp-only`, the one-time migration. Every
+/// unstamped entry whose contract text is current gets the run's stamp, no
+/// identity changes, and the lock is tied to the checkout's `HEAD`. A lock
+/// whose declarations differ from its entries refuses: a stamp records the
+/// review of the current text, and a stale entry was not reviewed.
+fn stamp_only(
+    target: &Target,
+    root: &Path,
+    stamper: &Stamper,
+) -> Result<(ContractLock, usize), String> {
+    let Some(mut lock) = read_existing(target)? else {
+        return Err(format!("{}: no lock to stamp", target.label));
+    };
+    let problems = contracts_agree(&lock, &declarations(target)?);
+    if !problems.is_empty() {
+        return Err(format!(
+            "{}: the lock is stale ({}); pin it after review instead",
+            target.label,
+            problems.join("; ")
+        ));
+    }
+    let root = root
+        .canonicalize()
+        .map_err(|error| format!("{}: {error}", root.display()))?;
+    if !is_repository(&root) {
+        return Err(format!(
+            "{} is not the top of a Git repository",
+            root.display()
+        ));
+    }
+    let revision = match git_output(&root, &["rev-parse", "--verify", "HEAD^{commit}"])? {
+        (0, revision) if revision.len() == 40 => revision,
+        _ => return Err(format!("{} has no HEAD commit", root.display())),
+    };
+    match &lock.fluent_bit_revision {
+        Some(tied) if *tied != revision => {
+            return Err(format!(
+                "{}: the lock is tied to {tied}, not {revision}; move the lock set with \
+                 `pin --window-add`",
+                target.label
+            ));
+        }
+        _ => lock.fluent_bit_revision = Some(revision),
+    }
+    let mut stamped = 0;
+    for stamp in lock
+        .pinned
+        .iter_mut()
+        .map(|e| &mut e.pinned_at)
+        .chain(lock.flexible.iter_mut().map(|e| &mut e.pinned_at))
+        .chain(lock.tip.iter_mut().map(|e| &mut e.pinned_at))
+    {
+        if stamp.is_none() {
+            *stamp = Some(stamper.stamp.clone());
+            stamped += 1;
+        }
+    }
+    Ok((lock, stamped))
+}
+
 fn run(arguments: Arguments) -> Result<bool, String> {
+    if let Some(operation) = &arguments.window {
+        return run_window(&arguments, operation);
+    }
+    let stamper = Stamper::new(arguments.pinned_at.as_deref());
     let targets = match &arguments.modules {
         Some(directory) => module_targets(directory)?,
         None => {
@@ -1137,7 +1571,11 @@ fn run(arguments: Arguments) -> Result<bool, String> {
             let declared = declarations(target)?;
             let existing = read_existing(target)?;
             let problems = match &existing {
-                Some(lock) => contracts_agree(lock, &declared),
+                Some(lock) => {
+                    let mut problems = contracts_agree(lock, &declared);
+                    problems.extend(stamp_problems(lock));
+                    problems
+                }
                 None => vec![format!(
                     "no {}",
                     target
@@ -1180,6 +1618,29 @@ fn run(arguments: Arguments) -> Result<bool, String> {
                 clean = false;
                 for problem in problems {
                     println!("pin: {}: stale lock: {problem}", target.label);
+                }
+            }
+        }
+        // Card CONTRACT-SUPERSESSION: the lock-set window, when it exists.
+        if arguments.modules.is_none() {
+            let provider_root = provider_root(&arguments);
+            if crate::pin_window::manifest_path(&provider_root).is_file() {
+                let problems = crate::pin_window::check(&provider_root)?;
+                if problems.is_empty() {
+                    let window = crate::pin_window::PinLockWindow::read(
+                        &crate::pin_window::manifest_path(&provider_root),
+                    )?;
+                    println!(
+                        "pin: lock-set window: {} of {} set(s), live set tied to {}",
+                        window.sets.len(),
+                        window.capacity,
+                        window.latest()
+                    );
+                } else {
+                    clean = false;
+                    for problem in problems {
+                        println!("pin: lock-set window: {problem}");
+                    }
                 }
             }
         }
@@ -1230,6 +1691,24 @@ fn run(arguments: Arguments) -> Result<bool, String> {
         return Ok(true);
     }
     let root = arguments.source_root.as_deref().expect("parsed");
+    if arguments.stamp_only {
+        let mut written = Vec::new();
+        for target in &targets {
+            written.push((target, stamp_only(target, root, &stamper)?));
+        }
+        for (target, (lock, stamped)) in written {
+            fs::write(&target.lock, lock.to_text()?)
+                .map_err(|error| format!("{}: {error}", target.lock.display()))?;
+            println!(
+                "pin: {}: stamped {stamped} entr(ies) at {}; tied to {}; wrote {}",
+                target.label,
+                stamper.stamp,
+                lock.fluent_bit_revision.as_deref().unwrap_or_default(),
+                target.lock.display()
+            );
+        }
+        return Ok(true);
+    }
     if arguments.track_tip.is_some() {
         // Card CONTRACT-PIN-TIP-MODE: record tip entries for the named
         // functions, which some selected crate must declare.
@@ -1241,7 +1720,8 @@ fn run(arguments: Arguments) -> Result<bool, String> {
                 continue;
             }
             let existing = read_existing(target)?;
-            let (lock, lines, recorded) = track(existing.as_ref(), target, root, &arguments)?;
+            let (lock, lines, recorded) =
+                track(existing.as_ref(), target, root, &arguments, &stamper)?;
             fs::write(&target.lock, lock.to_text()?)
                 .map_err(|error| format!("{}: {error}", target.lock.display()))?;
             println!(
@@ -1314,13 +1794,26 @@ fn run(arguments: Arguments) -> Result<bool, String> {
             tip: kept_tips,
             ..empty_lock(target)
         });
-        let (lock, mut lines) = update(
+        let (mut lock, mut lines) = update(
             existing.as_ref().or(regenerated_from.as_ref()),
             target,
             &tree,
             &arguments.functions,
             arguments.untrack_tip,
+            &stamper,
         )?;
+        // Card CONTRACT-SUPERSESSION: a new lock of the provider tree joins
+        // the live lock set, tied to the window's latest revision.
+        if lock.fluent_bit_revision.is_none() && arguments.modules.is_none() {
+            let manifest = crate::pin_window::manifest_path(&provider_root(&arguments));
+            if manifest.is_file() {
+                lock.fluent_bit_revision = Some(
+                    crate::pin_window::PinLockWindow::read(&manifest)?
+                        .latest()
+                        .to_owned(),
+                );
+            }
+        }
         if let Some(replaced) = replaced {
             lines.insert(0, format!("! {replaced}"));
         }
@@ -1359,5 +1852,45 @@ pub fn main(arguments: Vec<String>) -> ExitCode {
             eprintln!("pin refused: {error}");
             ExitCode::from(2)
         }
+    }
+}
+
+#[cfg(test)]
+mod stamp_tests {
+    #[test]
+    fn stamps_round_trip_through_epoch_seconds() {
+        for stamp in [
+            "1970-01-01T00:00:00Z",
+            "2000-02-29T12:34:56Z",
+            "2026-10-26T23:59:59Z",
+            "2100-03-01T00:00:00Z",
+        ] {
+            assert_eq!(super::epoch_stamp(super::stamp_epoch(stamp)), stamp);
+        }
+        assert_eq!(super::stamp_epoch("1970-01-02T00:00:01Z"), 86_401);
+        assert_eq!(
+            super::epoch_stamp(super::stamp_epoch("2026-12-31T23:59:59Z") + 1),
+            "2027-01-01T00:00:00Z"
+        );
+    }
+
+    #[test]
+    fn a_re_pin_carries_a_later_stamp() {
+        let explicit = super::Stamper::new(Some("2026-10-26T00:00:00Z"));
+        assert_eq!(
+            explicit.replacing("f", Some("2026-10-25T00:00:00Z")).unwrap(),
+            "2026-10-26T00:00:00Z"
+        );
+        assert!(explicit.replacing("f", Some("2026-10-26T00:00:00Z")).is_err());
+        assert!(explicit.replacing("f", Some("2026-10-27T00:00:00Z")).is_err());
+        assert_eq!(explicit.replacing("f", None).unwrap(), "2026-10-26T00:00:00Z");
+        let clock = super::Stamper {
+            stamp: "2026-10-26T00:00:00Z".into(),
+            explicit: false,
+        };
+        assert_eq!(
+            clock.replacing("f", Some("2026-10-26T00:00:00Z")).unwrap(),
+            "2026-10-26T00:00:01Z"
+        );
     }
 }

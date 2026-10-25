@@ -116,13 +116,23 @@ pub enum ReasonCategory {
     /// provisional `Unsafe`; it is not human-resolvable, because no single
     /// named act decides which producer's account is right.
     CompositionConflict,
+    /// Card CONTRACT-SUPERSESSION (contract spec §C06.6): more than one
+    /// contract bundle declares the function a call relies on and their pin
+    /// stamps do not decide which is in force (equal stamps on different
+    /// texts, or a missing, malformed or stale stamp, or an unpinned
+    /// declaration), so no declaration is in force and every candidate is
+    /// recorded. Subject: the analyser — the row says nothing about the
+    /// analysed source and never contributes to a provisional `Unsafe`; it is
+    /// not human-resolvable as such, because which bundle should win is not
+    /// one named act on this row.
+    ContractConflict,
 }
 
 impl ReasonCategory {
     /// Every category, in declaration order. The vocabulary is closed: adding a
     /// member is a compatibility event, and the totality tests enumerate this
     /// array rather than a hand-written list.
-    pub const ALL: [Self; 12] = [
+    pub const ALL: [Self; 13] = [
         Self::UnsupportedSyntax,
         Self::MissingPremise,
         Self::IncompleteObligationCoverage,
@@ -135,6 +145,7 @@ impl ReasonCategory {
         Self::PluginClaimUncertified,
         Self::OuterContract,
         Self::CompositionConflict,
+        Self::ContractConflict,
     ];
 
     /// The spec spelling, identical to the serde representation.
@@ -153,6 +164,7 @@ impl ReasonCategory {
             Self::PluginClaimUncertified => "plugin-claim-uncertified",
             Self::OuterContract => "outer-contract",
             Self::CompositionConflict => "composition-conflict",
+            Self::ContractConflict => "contract-conflict",
         }
     }
 
@@ -169,7 +181,8 @@ impl ReasonCategory {
             | Self::ContractPinMismatch
             | Self::PluginClaimUncertified
             | Self::OuterContract
-            | Self::CompositionConflict => ReasonSubject::Analyser,
+            | Self::CompositionConflict
+            | Self::ContractConflict => ReasonSubject::Analyser,
             Self::EnvironmentUnavailable => ReasonSubject::Environment,
         }
     }
@@ -539,6 +552,16 @@ const REASON_RULES: &[(&str, ReasonCategory)] = &[
     (
         "composition-conflict: ",
         ReasonCategory::CompositionConflict,
+    ),
+    // ---- contract conflict (card CONTRACT-SUPERSESSION, contract spec
+    // C06.6): the declarations of a called function's bundles are not
+    // decided by their pin stamps, so none is in force. Matched before every
+    // source-subject rule: the phrase names the contract environment, never
+    // the analysed source. Site: `qcore_c_gateway::legacy_c`'s held-call
+    // statement.
+    (
+        "whose contract bundles conflict",
+        ReasonCategory::ContractConflict,
     ),
     // ---- missing premise: a declared assumption or trusted contract input
     // the analysis requires was refused or is unusable. The subject is the

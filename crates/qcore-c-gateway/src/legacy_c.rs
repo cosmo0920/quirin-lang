@@ -94,6 +94,12 @@ pub mod refuted_contract;
 #[path = "legacy_caller_frame_hold.rs"]
 pub mod caller_frame_hold;
 
+// Card CONTRACT-SUPERSESSION (contract spec C06.6): a function whose
+// contract bundles' pin stamps do not decide which declaration is in force;
+// its call sites are held (`contract-conflict`, never `Pending`).
+#[path = "legacy_conflict_hold.rs"]
+pub mod conflict_hold;
+
 // Card W45-SR5-SOUNDNESS: the reserved rewrite prefixes, escaped where the
 // source spells them, so a held or withdrawn call is only ever tool-minted.
 #[path = "legacy_reserved_spelling.rs"]
@@ -2375,6 +2381,9 @@ fn analyze_legacy_c_tokens_under_holds(
     // Card W48-RK-LOG-CALLER-FRAME (rule 32a): a caller frame's own calls.
     let frame_held_tokens = caller_frame_hold::hold_call_sites(tokens, contracts);
     let tokens = frame_held_tokens.as_deref().unwrap_or(tokens);
+    // Card CONTRACT-SUPERSESSION: a function whose bundles conflict.
+    let conflict_held_tokens = conflict_hold::hold_call_sites(tokens, contracts);
+    let tokens = conflict_held_tokens.as_deref().unwrap_or(tokens);
     let agreement = declared_abi::AbiAgreement::read(tokens, contracts);
     let withdrawn_environment = agreement.withdraw_environment(contracts);
     let mut settled_environment = withdrawn_environment.map_or(
@@ -3090,6 +3099,8 @@ pub(crate) fn recursive_component_census(
     let tokens = pin_hold::hold_call_sites(&tokens, contracts).unwrap_or(tokens);
     // Card W48-RK-LOG-CALLER-FRAME (rule 32a): a caller frame's own calls.
     let tokens = caller_frame_hold::hold_call_sites(&tokens, contracts).unwrap_or(tokens);
+    // Card CONTRACT-SUPERSESSION: a function whose bundles conflict.
+    let tokens = conflict_hold::hold_call_sites(&tokens, contracts).unwrap_or(tokens);
     let agreement = declared_abi::AbiAgreement::read(&tokens, contracts);
     let withdrawn_environment = agreement.withdraw_environment(contracts);
     let mut settled_environment = withdrawn_environment.map_or(
@@ -3263,6 +3274,8 @@ fn analyze_translation_unit_under_holds(
     let tokens = pin_hold::hold_call_sites(&tokens, contracts).unwrap_or(tokens);
     // Card W48-RK-LOG-CALLER-FRAME (rule 32a): a caller frame's own calls.
     let tokens = caller_frame_hold::hold_call_sites(&tokens, contracts).unwrap_or(tokens);
+    // Card CONTRACT-SUPERSESSION: a function whose bundles conflict.
+    let tokens = conflict_hold::hold_call_sites(&tokens, contracts).unwrap_or(tokens);
     // Card W45-REFUTED-CONTRACT-WITHDRAWAL: the audit's refutation table, read
     // here because the ABI gate below rebuilds the environment without it.
     let refuted_table = contracts
