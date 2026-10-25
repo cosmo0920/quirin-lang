@@ -1,0 +1,786 @@
+{
+  "bounds_view": [
+    "fluent_bit/null_deref.qv"
+  ],
+  "contracts": "quirin-provider-fluent-bit/contracts",
+  "crate": "quirin-provider-fluent-bit",
+  "files": {
+    "fluent_bit/hash_table_publication.qv": {
+      "clause_count": 12,
+      "declaration_count": 2,
+      "declarations": [
+        {
+          "clauses": 8,
+          "name": "flb_hash_table_add"
+        },
+        {
+          "clauses": 4,
+          "name": "flb_hash_table_del"
+        }
+      ],
+      "inherits": [],
+      "premise_bindings": [],
+      "premises": {},
+      "sha256": "209d0491da15604e7c31bb7e961fe97f3ad6dba73e5696024bc4190c5a81ae41"
+    },
+    "fluent_bit/input_chunk_destroy.qv": {
+      "clause_count": 4,
+      "declaration_count": 1,
+      "declarations": [
+        {
+          "clauses": 4,
+          "name": "flb_input_chunk_destroy"
+        }
+      ],
+      "inherits": [],
+      "premise_bindings": [],
+      "premises": {},
+      "sha256": "073c9206df21e37d18775bcd50bd0c57b0d8c70f2f0ee5ec50a5579f5eaff897"
+    },
+    "fluent_bit/input_chunk_destroy_direct_routes.qv": {
+      "clause_count": 4,
+      "declaration_count": 1,
+      "declarations": [
+        {
+          "clauses": 4,
+          "name": "flb_input_chunk_destroy_direct_routes"
+        }
+      ],
+      "inherits": [],
+      "premise_bindings": [],
+      "premises": {},
+      "sha256": "2ce152d343357466fe9ec5979362be28145f8fa707c20746ae49bc0599703974"
+    },
+    "fluent_bit/input_chunk_helpers.qv": {
+      "clause_count": 22,
+      "declaration_count": 3,
+      "declarations": [
+        {
+          "clauses": 5,
+          "name": "generate_chunk_name"
+        },
+        {
+          "clauses": 6,
+          "name": "input_chunk_write_header"
+        },
+        {
+          "clauses": 11,
+          "name": "append_to_ring_buffer"
+        }
+      ],
+      "inherits": [],
+      "premise_bindings": [],
+      "premises": {},
+      "sha256": "be6f7f270596ec192b8798f69adfc88d34e4369a3ab336d0f9c0e1349cc8f44b"
+    },
+    "fluent_bit/input_chunk_is_up.qv": {
+      "clause_count": 17,
+      "declaration_count": 4,
+      "declarations": [
+        {
+          "clauses": 4,
+          "name": "flb_input_chunk_is_up"
+        },
+        {
+          "clauses": 5,
+          "name": "input_chunk_has_magic_bytes"
+        },
+        {
+          "clauses": 4,
+          "name": "flb_input_chunk_is_mem_overlimit"
+        },
+        {
+          "clauses": 4,
+          "name": "flb_input_chunk_is_storage_overlimit"
+        }
+      ],
+      "inherits": [],
+      "premise_bindings": [],
+      "premises": {},
+      "sha256": "5812a21ab91cd7e636bfa25df35a5141e96e0c017b27e153987db498e1c2b761"
+    },
+    "fluent_bit/input_chunk_name.qv": {
+      "clause_count": 4,
+      "declaration_count": 1,
+      "declarations": [
+        {
+          "clauses": 4,
+          "name": "flb_input_chunk_get_name"
+        }
+      ],
+      "inherits": [],
+      "premise_bindings": [],
+      "premises": {
+        "flb_input_chunk_get_name": [
+          {
+            "name": "untracked_handback",
+            "origin": "declared"
+          }
+        ]
+      },
+      "sha256": "8cdde48b065cf97d30b708637a7f93933e12338d03d468c6d0240ed925b47f41"
+    },
+    "fluent_bit/input_chunk_sizes.qv": {
+      "clause_count": 6,
+      "declaration_count": 2,
+      "declarations": [
+        {
+          "clauses": 3,
+          "name": "flb_input_chunk_get_size"
+        },
+        {
+          "clauses": 3,
+          "name": "flb_input_chunk_get_real_size"
+        }
+      ],
+      "inherits": [],
+      "premise_bindings": [],
+      "premises": {},
+      "sha256": "ba8db67de28e9ee480165c21ca2c03f398433699d5af0dd57f4c225d0d74d0f8"
+    },
+    "fluent_bit/input_chunk_total_size.qv": {
+      "clause_count": 3,
+      "declaration_count": 1,
+      "declarations": [
+        {
+          "clauses": 3,
+          "name": "flb_input_chunk_total_size"
+        }
+      ],
+      "inherits": [],
+      "premise_bindings": [],
+      "premises": {},
+      "sha256": "f8a1ab9dcf7637174ae83849b2ebf3c2d11374842c5ef5e517280b22691392d8"
+    },
+    "fluent_bit/input_collector_registration.qv": {
+      "clause_count": 23,
+      "declaration_count": 3,
+      "declarations": [
+        {
+          "clauses": 9,
+          "name": "flb_input_set_collector_time"
+        },
+        {
+          "clauses": 7,
+          "name": "flb_input_set_collector_event"
+        },
+        {
+          "clauses": 7,
+          "name": "flb_input_set_collector_socket"
+        }
+      ],
+      "inherits": [],
+      "premise_bindings": [],
+      "premises": {},
+      "sha256": "4cdabeffd70e4d5fdf3edd3a273b03e2ba6484375734a4fa34a8e10ecaf197a4"
+    },
+    "fluent_bit/input_instance.qv": {
+      "clause_count": 22,
+      "declaration_count": 5,
+      "declarations": [
+        {
+          "clauses": 2,
+          "name": "flb_create"
+        },
+        {
+          "clauses": 5,
+          "name": "flb_input"
+        },
+        {
+          "clauses": 6,
+          "name": "flb_input_new"
+        },
+        {
+          "clauses": 4,
+          "name": "flb_service_set"
+        },
+        {
+          "clauses": 5,
+          "name": "flb_config_set_property"
+        }
+      ],
+      "inherits": [],
+      "premise_bindings": [],
+      "premises": {},
+      "sha256": "95ed00f8b44a8d751b1ecc06ee576f1845563dfb45e4ef3ab81962cbf92c2fac"
+    },
+    "fluent_bit/lib_engine_thread.qv": {
+      "clause_count": 27,
+      "declaration_count": 6,
+      "declarations": [
+        {
+          "clauses": 5,
+          "name": "flb_start"
+        },
+        {
+          "clauses": 5,
+          "name": "flb_stop"
+        },
+        {
+          "clauses": 5,
+          "name": "flb_destroy"
+        },
+        {
+          "clauses": 4,
+          "name": "flb_input_thread_instance_exit"
+        },
+        {
+          "clauses": 4,
+          "name": "flb_output_thread_pool_destroy"
+        },
+        {
+          "clauses": 4,
+          "name": "flb_downstream_worker_runtime_stop"
+        }
+      ],
+      "inherits": [],
+      "premise_bindings": [],
+      "premises": {},
+      "sha256": "154ad0b2815f4207f690da1c1f04ee3c5adf0bc14f44bfdb89b41a5bef1e46aa"
+    },
+    "fluent_bit/logging.qv": {
+      "clause_count": 15,
+      "declaration_count": 3,
+      "declarations": [
+        {
+          "clauses": 3,
+          "name": "flb_log_check"
+        },
+        {
+          "clauses": 5,
+          "name": "flb_errno_print"
+        },
+        {
+          "clauses": 7,
+          "name": "flb_log_print"
+        }
+      ],
+      "inherits": [],
+      "premise_bindings": [],
+      "premises": {},
+      "sha256": "ac2b2522628425c05469dc184cfcdc4526abec7a9ee36b73f84991d69da9132c"
+    },
+    "fluent_bit/loop_owner.qv": {
+      "clause_count": 25,
+      "declaration_count": 4,
+      "declarations": [
+        {
+          "clauses": 6,
+          "name": "flb_input_collector_running"
+        },
+        {
+          "clauses": 6,
+          "name": "flb_input_collector_pause"
+        },
+        {
+          "clauses": 7,
+          "name": "flb_input_collector_resume"
+        },
+        {
+          "clauses": 6,
+          "name": "flb_input_collector_delete"
+        }
+      ],
+      "inherits": [],
+      "premise_bindings": [],
+      "premises": {
+        "flb_input_collector_resume": [
+          {
+            "name": "ingestion_active",
+            "origin": "declared"
+          }
+        ]
+      },
+      "sha256": "cc4ff75530269aa85f1e754024590a56aefe2f85f21df7adcf1472e8c6f774aa"
+    },
+    "fluent_bit/memory.qv": {
+      "clause_count": 39,
+      "declaration_count": 5,
+      "declarations": [
+        {
+          "clauses": 6,
+          "name": "flb_malloc"
+        },
+        {
+          "clauses": 7,
+          "name": "flb_calloc"
+        },
+        {
+          "clauses": 9,
+          "name": "flb_realloc"
+        },
+        {
+          "clauses": 12,
+          "name": "flb_realloc_z"
+        },
+        {
+          "clauses": 5,
+          "name": "flb_free"
+        }
+      ],
+      "inherits": [],
+      "premise_bindings": [],
+      "premises": {},
+      "sha256": "b1c44c632efe193f75737be13058b30498bd471dd47c65dc5e431fcb02645aad"
+    },
+    "fluent_bit/null_deref.qv": {
+      "clause_count": 38,
+      "declaration_count": 19,
+      "declarations": [
+        {
+          "clauses": 2,
+          "name": "flb_output_set_context"
+        },
+        {
+          "clauses": 2,
+          "name": "flb_output_net_default"
+        },
+        {
+          "clauses": 2,
+          "name": "flb_output_name"
+        },
+        {
+          "clauses": 2,
+          "name": "flb_output_set_property"
+        },
+        {
+          "clauses": 2,
+          "name": "flb_input_chunk_get_name"
+        },
+        {
+          "clauses": 2,
+          "name": "flb_input_new"
+        },
+        {
+          "clauses": 2,
+          "name": "flb_output_new"
+        },
+        {
+          "clauses": 2,
+          "name": "flb_filter_new"
+        },
+        {
+          "clauses": 2,
+          "name": "flb_processor_instance_create"
+        },
+        {
+          "clauses": 2,
+          "name": "flb_input_plugin_pause"
+        },
+        {
+          "clauses": 2,
+          "name": "flb_input_plugin_resume"
+        },
+        {
+          "clauses": 2,
+          "name": "flb_input_pause"
+        },
+        {
+          "clauses": 2,
+          "name": "flb_input_resume"
+        },
+        {
+          "clauses": 2,
+          "name": "flb_input_instance_pre_run"
+        },
+        {
+          "clauses": 2,
+          "name": "flb_input_instance_exit"
+        },
+        {
+          "clauses": 2,
+          "name": "flb_input_thread_instance_pre_run"
+        },
+        {
+          "clauses": 2,
+          "name": "flb_input_thread_instance_pause"
+        },
+        {
+          "clauses": 2,
+          "name": "flb_input_thread_instance_resume"
+        },
+        {
+          "clauses": 2,
+          "name": "flb_input_thread_instance_exit"
+        }
+      ],
+      "inherits": [],
+      "premise_bindings": [],
+      "premises": {},
+      "sha256": "af4ba997339e36d60a19539a8373fed5bf1f552ebf8680b50064dc865b6a55ed"
+    },
+    "fluent_bit/outer.qv": {
+      "clause_count": 88,
+      "declaration_count": 2,
+      "declarations": [
+        {
+          "clauses": 85,
+          "name": "flb_plugin_load"
+        },
+        {
+          "clauses": 3,
+          "name": "flb_plugin_proxy_create"
+        }
+      ],
+      "inherits": [],
+      "premise_bindings": [],
+      "premises": {},
+      "sha256": "282408a08e6fc19b6f87d3cde8d2c12d2ab0627b002b2f2e2a914bb8460c133d"
+    },
+    "fluent_bit/output_flush_id.qv": {
+      "clause_count": 4,
+      "declaration_count": 1,
+      "declarations": [
+        {
+          "clauses": 4,
+          "name": "flb_output_flush_id_get"
+        }
+      ],
+      "inherits": [],
+      "premise_bindings": [],
+      "premises": {},
+      "sha256": "5161dfc52e7b06caaf41fcb3c00c8135f903101e11d9c262312e7f1893e425d3"
+    },
+    "fluent_bit/output_singleplex.qv": {
+      "clause_count": 17,
+      "declaration_count": 2,
+      "declarations": [
+        {
+          "clauses": 10,
+          "name": "flb_output_task_singleplex_enqueue"
+        },
+        {
+          "clauses": 7,
+          "name": "flb_output_task_flush"
+        }
+      ],
+      "inherits": [],
+      "premise_bindings": [],
+      "premises": {
+        "flb_output_task_singleplex_enqueue": [
+          {
+            "name": "synchronous_output_reachability",
+            "origin": "declared"
+          }
+        ]
+      },
+      "sha256": "1493fe2a92a6240b565de872572d3ba04fe3da7db636159fa4fa75902f853818"
+    },
+    "fluent_bit/resource_memory.qv": {
+      "clause_count": 17,
+      "declaration_count": 5,
+      "declarations": [
+        {
+          "clauses": 3,
+          "name": "flb_malloc"
+        },
+        {
+          "clauses": 4,
+          "name": "flb_calloc"
+        },
+        {
+          "clauses": 3,
+          "name": "flb_free"
+        },
+        {
+          "clauses": 4,
+          "name": "flb_sds_create_len"
+        },
+        {
+          "clauses": 3,
+          "name": "flb_sds_destroy"
+        }
+      ],
+      "inherits": [
+        {
+          "child": "flb_malloc",
+          "parent": "libc::malloc"
+        },
+        {
+          "child": "flb_calloc",
+          "parent": "libc::calloc"
+        },
+        {
+          "child": "flb_free",
+          "parent": "libc::free"
+        }
+      ],
+      "premise_bindings": [],
+      "premises": {},
+      "sha256": "f92199433b85460cecb19378502bde580905cbd78ece9cf3e77358038fd02731"
+    },
+    "fluent_bit/resource_string.qv": {
+      "clause_count": 7,
+      "declaration_count": 2,
+      "declarations": [
+        {
+          "clauses": 3,
+          "name": "flb_strdup"
+        },
+        {
+          "clauses": 4,
+          "name": "flb_strndup"
+        }
+      ],
+      "inherits": [
+        {
+          "child": "flb_strdup",
+          "parent": "libc::strdup"
+        },
+        {
+          "child": "flb_strndup",
+          "parent": "libc::strndup"
+        }
+      ],
+      "premise_bindings": [],
+      "premises": {},
+      "sha256": "96b8a3d7d096007699ea1d5970d19779b35c5c8f89a6cea67354725e90530ee1"
+    },
+    "fluent_bit/routes_mask.qv": {
+      "clause_count": 18,
+      "declaration_count": 4,
+      "declarations": [
+        {
+          "clauses": 6,
+          "name": "flb_routes_mask_set_by_tag"
+        },
+        {
+          "clauses": 3,
+          "name": "flb_routes_mask_get_size"
+        },
+        {
+          "clauses": 4,
+          "name": "flb_routes_mask_get_slots"
+        },
+        {
+          "clauses": 5,
+          "name": "flb_routes_mask_is_empty"
+        }
+      ],
+      "inherits": [],
+      "premise_bindings": [],
+      "premises": {},
+      "sha256": "3ea37c31e5fcf8d38aa7721312cfc333630fc8852f8dbcfad772c0726b82bc03"
+    },
+    "fluent_bit/storage_backlog.qv": {
+      "clause_count": 62,
+      "declaration_count": 12,
+      "declarations": [
+        {
+          "clauses": 6,
+          "name": "sb_allocate_chunk"
+        },
+        {
+          "clauses": 4,
+          "name": "sb_destroy_chunk"
+        },
+        {
+          "clauses": 5,
+          "name": "sb_destroy_backlog"
+        },
+        {
+          "clauses": 4,
+          "name": "sb_allocate_backlogs"
+        },
+        {
+          "clauses": 4,
+          "name": "sb_destroy_backlogs"
+        },
+        {
+          "clauses": 6,
+          "name": "sb_remove_chunk_from_segregated_backlog"
+        },
+        {
+          "clauses": 5,
+          "name": "sb_remove_chunk_from_segregated_backlogs"
+        },
+        {
+          "clauses": 7,
+          "name": "sb_append_chunk_to_segregated_backlog"
+        },
+        {
+          "clauses": 6,
+          "name": "sb_append_chunk_to_segregated_backlogs"
+        },
+        {
+          "clauses": 4,
+          "name": "sb_segregate_chunks"
+        },
+        {
+          "clauses": 5,
+          "name": "sb_release_output_queue_space"
+        },
+        {
+          "clauses": 6,
+          "name": "cb_queue_chunks"
+        }
+      ],
+      "inherits": [],
+      "premise_bindings": [],
+      "premises": {},
+      "sha256": "8bea72df56e4397c09c3bb21f71b579f069f8bd031cc4c3a0950532aa1691d83"
+    },
+    "fluent_bit/task_route_queries.qv": {
+      "clause_count": 20,
+      "declaration_count": 4,
+      "declarations": [
+        {
+          "clauses": 5,
+          "name": "flb_task_get_route_status"
+        },
+        {
+          "clauses": 6,
+          "name": "flb_task_set_route_status"
+        },
+        {
+          "clauses": 5,
+          "name": "flb_task_retry_count"
+        },
+        {
+          "clauses": 4,
+          "name": "flb_task_running_count"
+        }
+      ],
+      "inherits": [],
+      "premise_bindings": [],
+      "premises": {},
+      "sha256": "2ccd2ecece939836971e60168720e45e16bc1955820c10cff33b53dd605b1ca0"
+    },
+    "fluent_bit/task_users.qv": {
+      "clause_count": 20,
+      "declaration_count": 4,
+      "declarations": [
+        {
+          "clauses": 4,
+          "name": "flb_task_users_inc"
+        },
+        {
+          "clauses": 6,
+          "name": "flb_task_users_dec"
+        },
+        {
+          "clauses": 4,
+          "name": "flb_task_retry_destroy"
+        },
+        {
+          "clauses": 6,
+          "name": "flb_output_thread_pool_flush"
+        }
+      ],
+      "inherits": [],
+      "premise_bindings": [],
+      "premises": {},
+      "sha256": "cc07429255f69df182831ae2cf0246bafd71c3f6038173cbfcd194ea51da9f18"
+    },
+    "fluent_bit/teardown_destroy.qv": {
+      "clause_count": 140,
+      "declaration_count": 14,
+      "declarations": [
+        {
+          "clauses": 3,
+          "name": "flb_sched_timer_destroy"
+        },
+        {
+          "clauses": 4,
+          "name": "flb_sched_request_destroy"
+        },
+        {
+          "clauses": 6,
+          "name": "flb_task_destroy"
+        },
+        {
+          "clauses": 3,
+          "name": "flb_task_queue_destroy"
+        },
+        {
+          "clauses": 4,
+          "name": "flb_event_chunk_destroy"
+        },
+        {
+          "clauses": 4,
+          "name": "flb_output_flush_destroy"
+        },
+        {
+          "clauses": 4,
+          "name": "flb_coro_destroy"
+        },
+        {
+          "clauses": 4,
+          "name": "flb_input_chunk_release_route"
+        },
+        {
+          "clauses": 34,
+          "name": "flb_output_instance_destroy"
+        },
+        {
+          "clauses": 34,
+          "name": "flb_input_instance_destroy"
+        },
+        {
+          "clauses": 4,
+          "name": "flb_input_coro_destroy"
+        },
+        {
+          "clauses": 3,
+          "name": "flb_input_collector_destroy"
+        },
+        {
+          "clauses": 15,
+          "name": "flb_tail_file_remove"
+        },
+        {
+          "clauses": 18,
+          "name": "flb_tail_config_destroy"
+        }
+      ],
+      "inherits": [],
+      "premise_bindings": [],
+      "premises": {},
+      "sha256": "8eb681b2a3f3a43c4d87b4ab9359716e52d6dafe67f8b25f8edb36412b47ab1c"
+    },
+    "fluent_bit/time.qv": {
+      "clause_count": 2,
+      "declaration_count": 1,
+      "declarations": [
+        {
+          "clauses": 2,
+          "name": "flb_time_now"
+        }
+      ],
+      "inherits": [],
+      "premise_bindings": [],
+      "premises": {},
+      "sha256": "e81170f7f36f50f1c93ed0d2a69b2a7f3e3e26714f6627ca3e9326fb87c10784"
+    }
+  },
+  "outer_view": [
+    "fluent_bit/outer.qv"
+  ],
+  "regenerate": "python3 providers/contracts.py sync",
+  "resource_view": [
+    "fluent_bit/hash_table_publication.qv",
+    "fluent_bit/input_chunk_destroy.qv",
+    "fluent_bit/input_chunk_destroy_direct_routes.qv",
+    "fluent_bit/input_chunk_helpers.qv",
+    "fluent_bit/input_chunk_is_up.qv",
+    "fluent_bit/input_chunk_name.qv",
+    "fluent_bit/input_chunk_sizes.qv",
+    "fluent_bit/input_chunk_total_size.qv",
+    "fluent_bit/input_collector_registration.qv",
+    "fluent_bit/input_instance.qv",
+    "fluent_bit/lib_engine_thread.qv",
+    "fluent_bit/logging.qv",
+    "fluent_bit/loop_owner.qv",
+    "fluent_bit/output_flush_id.qv",
+    "fluent_bit/output_singleplex.qv",
+    "fluent_bit/resource_memory.qv",
+    "fluent_bit/resource_string.qv",
+    "fluent_bit/routes_mask.qv",
+    "fluent_bit/storage_backlog.qv",
+    "fluent_bit/task_route_queries.qv",
+    "fluent_bit/task_users.qv",
+    "fluent_bit/teardown_destroy.qv",
+    "fluent_bit/time.qv"
+  ],
+  "schema_version": 1
+}

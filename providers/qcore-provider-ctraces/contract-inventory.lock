@@ -1,0 +1,99 @@
+{
+  "bounds_view": [],
+  "contracts": "qcore-provider-ctraces/contracts",
+  "crate": "qcore-provider-ctraces",
+  "files": {
+    "ctraces/context_lifetime.qv": {
+      "clause_count": 88,
+      "declaration_count": 19,
+      "declarations": [
+        {
+          "clauses": 3,
+          "name": "ctr_destroy"
+        },
+        {
+          "clauses": 4,
+          "name": "ctr_id_cmp"
+        },
+        {
+          "clauses": 3,
+          "name": "ctr_id_get_len"
+        },
+        {
+          "clauses": 4,
+          "name": "ctr_span_set_flags"
+        },
+        {
+          "clauses": 4,
+          "name": "ctr_span_set_dropped_events_count"
+        },
+        {
+          "clauses": 4,
+          "name": "ctr_span_set_dropped_links_count"
+        },
+        {
+          "clauses": 4,
+          "name": "ctr_span_set_dropped_attributes_count"
+        },
+        {
+          "clauses": 4,
+          "name": "ctr_mpack_consume_uint_tag"
+        },
+        {
+          "clauses": 4,
+          "name": "ctr_mpack_consume_int_tag"
+        },
+        {
+          "clauses": 5,
+          "name": "ctr_attributes_set_string"
+        },
+        {
+          "clauses": 5,
+          "name": "ctr_attributes_set_bool"
+        },
+        {
+          "clauses": 5,
+          "name": "ctr_attributes_set_int64"
+        },
+        {
+          "clauses": 5,
+          "name": "ctr_attributes_set_double"
+        },
+        {
+          "clauses": 6,
+          "name": "ctr_attributes_set_array"
+        },
+        {
+          "clauses": 6,
+          "name": "ctr_attributes_set_kvlist"
+        },
+        {
+          "clauses": 5,
+          "name": "sds_cat_safe"
+        },
+        {
+          "clauses": 5,
+          "name": "ctr_errno_print"
+        },
+        {
+          "clauses": 6,
+          "name": "ctr_mpack_unpack_array"
+        },
+        {
+          "clauses": 6,
+          "name": "ctr_mpack_unpack_map"
+        }
+      ],
+      "inherits": [],
+      "premise_bindings": [],
+      "premises": {},
+      "sha256": "9fd62aa72fb062548298bf9725dfff048c261a5d7f019fd0e8c524b6417a15f1"
+    }
+  },
+  "outer_view": [],
+  "regenerate": "python3 providers/contracts.py sync",
+  "resource_view": [
+    "ctraces/context_lifetime.qv"
+  ],
+  "schema_version": 1
+}

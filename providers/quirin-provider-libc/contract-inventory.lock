@@ -1,0 +1,740 @@
+{
+  "bounds_view": [],
+  "contracts": "quirin-provider-libc/contracts",
+  "crate": "quirin-provider-libc",
+  "files": {
+    "libc/dirent.qv": {
+      "clause_count": 10,
+      "declaration_count": 2,
+      "declarations": [
+        {
+          "clauses": 5,
+          "name": "opendir"
+        },
+        {
+          "clauses": 5,
+          "name": "closedir"
+        }
+      ],
+      "inherits": [],
+      "premise_bindings": [],
+      "premises": {},
+      "sha256": "f8fecf64f3670ea86d300791789e66d941fbb67c2ffd235e3bc98b1c324d3fa9"
+    },
+    "libc/dlfcn.qv": {
+      "clause_count": 19,
+      "declaration_count": 4,
+      "declarations": [
+        {
+          "clauses": 3,
+          "name": "dlerror"
+        },
+        {
+          "clauses": 5,
+          "name": "dlsym"
+        },
+        {
+          "clauses": 6,
+          "name": "dlopen"
+        },
+        {
+          "clauses": 5,
+          "name": "dlclose"
+        }
+      ],
+      "inherits": [],
+      "premise_bindings": [],
+      "premises": {},
+      "sha256": "27ffa658847c32fa4bdc59a0d66420ae37ba70efe5a5e5999c066c1dadfb7671"
+    },
+    "libc/errno.qv": {
+      "clause_count": 27,
+      "declaration_count": 2,
+      "declarations": [
+        {
+          "clauses": 11,
+          "name": "__errno_location"
+        },
+        {
+          "clauses": 16,
+          "name": "strerror"
+        }
+      ],
+      "inherits": [],
+      "premise_bindings": [],
+      "premises": {
+        "__errno_location": [
+          {
+            "name": "nested_call_admission",
+            "origin": "declared"
+          }
+        ],
+        "strerror": [
+          {
+            "name": "nested_call_admission",
+            "origin": "declared"
+          }
+        ]
+      },
+      "sha256": "676c4ff84ddd784a35e5cb196ecf62fbef75f18a118f1aac925477b39dc37bfb"
+    },
+    "libc/math.qv": {
+      "clause_count": 17,
+      "declaration_count": 4,
+      "declarations": [
+        {
+          "clauses": 4,
+          "name": "ceil"
+        },
+        {
+          "clauses": 4,
+          "name": "floor"
+        },
+        {
+          "clauses": 4,
+          "name": "fabs"
+        },
+        {
+          "clauses": 5,
+          "name": "pow"
+        }
+      ],
+      "inherits": [],
+      "premise_bindings": [],
+      "premises": {},
+      "sha256": "4015f9b71721b861129cde42e64fa4335518e0ecdd33ee953f2ab1fa8ddf2214"
+    },
+    "libc/memory.qv": {
+      "clause_count": 13,
+      "declaration_count": 3,
+      "declarations": [
+        {
+          "clauses": 4,
+          "name": "malloc"
+        },
+        {
+          "clauses": 5,
+          "name": "calloc"
+        },
+        {
+          "clauses": 4,
+          "name": "free"
+        }
+      ],
+      "inherits": [],
+      "premise_bindings": [],
+      "premises": {},
+      "sha256": "dec99ab65e1abe68f8344e6a2fc45e31221f9015a5ed0285bae2ff384f2db34f"
+    },
+    "libc/process.qv": {
+      "clause_count": 16,
+      "declaration_count": 3,
+      "declarations": [
+        {
+          "clauses": 6,
+          "name": "prctl"
+        },
+        {
+          "clauses": 5,
+          "name": "getrlimit"
+        },
+        {
+          "clauses": 5,
+          "name": "setrlimit"
+        }
+      ],
+      "inherits": [],
+      "premise_bindings": [],
+      "premises": {},
+      "sha256": "654a9058c95960eb49324a731d26edb307f0e76e386d2dae9016f36e078d6555"
+    },
+    "libc/pthread_mutex.qv": {
+      "clause_count": 8,
+      "declaration_count": 2,
+      "declarations": [
+        {
+          "clauses": 4,
+          "name": "pthread_mutex_lock"
+        },
+        {
+          "clauses": 4,
+          "name": "pthread_mutex_unlock"
+        }
+      ],
+      "inherits": [],
+      "premise_bindings": [],
+      "premises": {},
+      "sha256": "fb55d21dac8ae878a69b77df04f2cd5c920d58266cc9ecd6a54eec0a9bce6679"
+    },
+    "libc/pthread_sync.qv": {
+      "clause_count": 36,
+      "declaration_count": 6,
+      "declarations": [
+        {
+          "clauses": 6,
+          "name": "pthread_cond_init"
+        },
+        {
+          "clauses": 5,
+          "name": "pthread_cond_destroy"
+        },
+        {
+          "clauses": 5,
+          "name": "pthread_cond_signal"
+        },
+        {
+          "clauses": 6,
+          "name": "pthread_cond_wait"
+        },
+        {
+          "clauses": 7,
+          "name": "pthread_cond_timedwait"
+        },
+        {
+          "clauses": 7,
+          "name": "pthread_join"
+        }
+      ],
+      "inherits": [],
+      "premise_bindings": [],
+      "premises": {},
+      "sha256": "c1a2bbf313fa7010c5e06e9dff7307cb5d684a7696ae8ce43799703736a72909"
+    },
+    "libc/regex.qv": {
+      "clause_count": 29,
+      "declaration_count": 4,
+      "declarations": [
+        {
+          "clauses": 9,
+          "name": "regexec"
+        },
+        {
+          "clauses": 8,
+          "name": "regerror"
+        },
+        {
+          "clauses": 7,
+          "name": "regcomp"
+        },
+        {
+          "clauses": 5,
+          "name": "regfree"
+        }
+      ],
+      "inherits": [],
+      "premise_bindings": [],
+      "premises": {},
+      "sha256": "3e98107559c67866747fd39f6d68d56fa6efe2378de3382a6209c220816180fa"
+    },
+    "libc/socket.qv": {
+      "clause_count": 67,
+      "declaration_count": 11,
+      "declarations": [
+        {
+          "clauses": 8,
+          "name": "setsockopt"
+        },
+        {
+          "clauses": 7,
+          "name": "send"
+        },
+        {
+          "clauses": 7,
+          "name": "recv"
+        },
+        {
+          "clauses": 5,
+          "name": "listen"
+        },
+        {
+          "clauses": 7,
+          "name": "sendfile"
+        },
+        {
+          "clauses": 4,
+          "name": "htonl"
+        },
+        {
+          "clauses": 4,
+          "name": "ntohl"
+        },
+        {
+          "clauses": 4,
+          "name": "gai_strerror"
+        },
+        {
+          "clauses": 8,
+          "name": "getsockopt"
+        },
+        {
+          "clauses": 6,
+          "name": "getpeername"
+        },
+        {
+          "clauses": 7,
+          "name": "socket"
+        }
+      ],
+      "inherits": [],
+      "premise_bindings": [],
+      "premises": {},
+      "sha256": "00e22e461721db5669d15336fff0e3cbc0385d9045d31dfa1e8975b095bb2eea"
+    },
+    "libc/stdio.qv": {
+      "clause_count": 63,
+      "declaration_count": 12,
+      "declarations": [
+        {
+          "clauses": 4,
+          "name": "perror"
+        },
+        {
+          "clauses": 4,
+          "name": "fflush"
+        },
+        {
+          "clauses": 4,
+          "name": "remove"
+        },
+        {
+          "clauses": 5,
+          "name": "printf"
+        },
+        {
+          "clauses": 6,
+          "name": "fprintf"
+        },
+        {
+          "clauses": 7,
+          "name": "snprintf"
+        },
+        {
+          "clauses": 6,
+          "name": "sprintf"
+        },
+        {
+          "clauses": 6,
+          "name": "fopen"
+        },
+        {
+          "clauses": 5,
+          "name": "fclose"
+        },
+        {
+          "clauses": 4,
+          "name": "fileno"
+        },
+        {
+          "clauses": 7,
+          "name": "vsnprintf"
+        },
+        {
+          "clauses": 5,
+          "name": "vprintf"
+        }
+      ],
+      "inherits": [],
+      "premise_bindings": [],
+      "premises": {},
+      "sha256": "6e772eb0890e5a0a63414576d963a859bec451f1286f7ed52504dc5cbac5dbf8"
+    },
+    "libc/stdlib.qv": {
+      "clause_count": 84,
+      "declaration_count": 14,
+      "declarations": [
+        {
+          "clauses": 4,
+          "name": "atoi"
+        },
+        {
+          "clauses": 4,
+          "name": "srand"
+        },
+        {
+          "clauses": 4,
+          "name": "rand_r"
+        },
+        {
+          "clauses": 4,
+          "name": "system"
+        },
+        {
+          "clauses": 4,
+          "name": "abort"
+        },
+        {
+          "clauses": 5,
+          "name": "exit"
+        },
+        {
+          "clauses": 8,
+          "name": "__assert_fail"
+        },
+        {
+          "clauses": 7,
+          "name": "strtol"
+        },
+        {
+          "clauses": 7,
+          "name": "strtoll"
+        },
+        {
+          "clauses": 7,
+          "name": "strtoul"
+        },
+        {
+          "clauses": 7,
+          "name": "strtoull"
+        },
+        {
+          "clauses": 6,
+          "name": "strtod"
+        },
+        {
+          "clauses": 9,
+          "name": "bsearch"
+        },
+        {
+          "clauses": 8,
+          "name": "qsort"
+        }
+      ],
+      "inherits": [],
+      "premise_bindings": [],
+      "premises": {},
+      "sha256": "111503b7e38a3e5abdf6e3c17876cb8946470b7120858ca3af579e786d9f4293"
+    },
+    "libc/string.qv": {
+      "clause_count": 107,
+      "declaration_count": 20,
+      "declarations": [
+        {
+          "clauses": 5,
+          "name": "strcmp"
+        },
+        {
+          "clauses": 4,
+          "name": "strlen"
+        },
+        {
+          "clauses": 6,
+          "name": "memcmp"
+        },
+        {
+          "clauses": 6,
+          "name": "strncmp"
+        },
+        {
+          "clauses": 5,
+          "name": "strnlen"
+        },
+        {
+          "clauses": 5,
+          "name": "strcasecmp"
+        },
+        {
+          "clauses": 4,
+          "name": "strdup"
+        },
+        {
+          "clauses": 6,
+          "name": "strerror_r"
+        },
+        {
+          "clauses": 5,
+          "name": "strcpy"
+        },
+        {
+          "clauses": 6,
+          "name": "strncpy"
+        },
+        {
+          "clauses": 6,
+          "name": "memcpy"
+        },
+        {
+          "clauses": 6,
+          "name": "memmove"
+        },
+        {
+          "clauses": 6,
+          "name": "memset"
+        },
+        {
+          "clauses": 5,
+          "name": "strchr"
+        },
+        {
+          "clauses": 5,
+          "name": "strrchr"
+        },
+        {
+          "clauses": 5,
+          "name": "strstr"
+        },
+        {
+          "clauses": 5,
+          "name": "strcasestr"
+        },
+        {
+          "clauses": 6,
+          "name": "memchr"
+        },
+        {
+          "clauses": 6,
+          "name": "memrchr"
+        },
+        {
+          "clauses": 5,
+          "name": "strndup"
+        }
+      ],
+      "inherits": [],
+      "premise_bindings": [],
+      "premises": {},
+      "sha256": "6c59574468efc24ccd5fbc1fe4570d225087ec4f43c9818f678d74a75c89cc7f"
+    },
+    "libc/sys_stat.qv": {
+      "clause_count": 24,
+      "declaration_count": 5,
+      "declarations": [
+        {
+          "clauses": 5,
+          "name": "fstat"
+        },
+        {
+          "clauses": 5,
+          "name": "mkdir"
+        },
+        {
+          "clauses": 4,
+          "name": "umask"
+        },
+        {
+          "clauses": 5,
+          "name": "stat"
+        },
+        {
+          "clauses": 5,
+          "name": "lstat"
+        }
+      ],
+      "inherits": [],
+      "premise_bindings": [],
+      "premises": {},
+      "sha256": "f11ab5fddc48c3ca44ff4ce588bf7f43816f32c4f70fa630d1c2c52c0e87c261"
+    },
+    "libc/threads.qv": {
+      "clause_count": 82,
+      "declaration_count": 18,
+      "declarations": [
+        {
+          "clauses": 4,
+          "name": "mtx_lock"
+        },
+        {
+          "clauses": 4,
+          "name": "mtx_unlock"
+        },
+        {
+          "clauses": 5,
+          "name": "cnd_wait"
+        },
+        {
+          "clauses": 4,
+          "name": "pthread_rwlock_rdlock"
+        },
+        {
+          "clauses": 4,
+          "name": "pthread_rwlock_wrlock"
+        },
+        {
+          "clauses": 4,
+          "name": "pthread_rwlock_unlock"
+        },
+        {
+          "clauses": 3,
+          "name": "pthread_self"
+        },
+        {
+          "clauses": 5,
+          "name": "pthread_kill"
+        },
+        {
+          "clauses": 5,
+          "name": "pthread_setcancelstate"
+        },
+        {
+          "clauses": 5,
+          "name": "pthread_setcanceltype"
+        },
+        {
+          "clauses": 5,
+          "name": "pthread_attr_setdetachstate"
+        },
+        {
+          "clauses": 4,
+          "name": "sigemptyset"
+        },
+        {
+          "clauses": 4,
+          "name": "sigfillset"
+        },
+        {
+          "clauses": 5,
+          "name": "sigaddset"
+        },
+        {
+          "clauses": 6,
+          "name": "cnd_timedwait"
+        },
+        {
+          "clauses": 6,
+          "name": "pthread_sigmask"
+        },
+        {
+          "clauses": 6,
+          "name": "pthread_once"
+        },
+        {
+          "clauses": 3,
+          "name": "thrd_current"
+        }
+      ],
+      "inherits": [],
+      "premise_bindings": [],
+      "premises": {},
+      "sha256": "febd75c6f2877ca7f4bccdf932d52d91c016a39a85d0d6602a54928f9a4e8da8"
+    },
+    "libc/time.qv": {
+      "clause_count": 35,
+      "declaration_count": 7,
+      "declarations": [
+        {
+          "clauses": 4,
+          "name": "time"
+        },
+        {
+          "clauses": 4,
+          "name": "timegm"
+        },
+        {
+          "clauses": 5,
+          "name": "gmtime_r"
+        },
+        {
+          "clauses": 5,
+          "name": "localtime_r"
+        },
+        {
+          "clauses": 7,
+          "name": "strftime"
+        },
+        {
+          "clauses": 5,
+          "name": "gettimeofday"
+        },
+        {
+          "clauses": 5,
+          "name": "clock_gettime"
+        }
+      ],
+      "inherits": [],
+      "premise_bindings": [],
+      "premises": {},
+      "sha256": "cd8b5188b82d239d12b15bf1ebf81fdf0dc679a71605e43223f665cf58bfc986"
+    },
+    "libc/unistd.qv": {
+      "clause_count": 70,
+      "declaration_count": 15,
+      "declarations": [
+        {
+          "clauses": 4,
+          "name": "sleep"
+        },
+        {
+          "clauses": 4,
+          "name": "usleep"
+        },
+        {
+          "clauses": 4,
+          "name": "sysconf"
+        },
+        {
+          "clauses": 3,
+          "name": "getpagesize"
+        },
+        {
+          "clauses": 3,
+          "name": "geteuid"
+        },
+        {
+          "clauses": 3,
+          "name": "getegid"
+        },
+        {
+          "clauses": 3,
+          "name": "setsid"
+        },
+        {
+          "clauses": 5,
+          "name": "access"
+        },
+        {
+          "clauses": 4,
+          "name": "unlink"
+        },
+        {
+          "clauses": 6,
+          "name": "read"
+        },
+        {
+          "clauses": 6,
+          "name": "write"
+        },
+        {
+          "clauses": 7,
+          "name": "open"
+        },
+        {
+          "clauses": 5,
+          "name": "close"
+        },
+        {
+          "clauses": 7,
+          "name": "fcntl"
+        },
+        {
+          "clauses": 6,
+          "name": "writev"
+        }
+      ],
+      "inherits": [],
+      "premise_bindings": [],
+      "premises": {},
+      "sha256": "2d7606f2235d324105952f5fbc123995da6589b327b931ac012eb6ad7083f3c5"
+    }
+  },
+  "outer_view": [],
+  "regenerate": "python3 providers/contracts.py sync",
+  "resource_view": [
+    "libc/dirent.qv",
+    "libc/dlfcn.qv",
+    "libc/errno.qv",
+    "libc/math.qv",
+    "libc/memory.qv",
+    "libc/process.qv",
+    "libc/pthread_mutex.qv",
+    "libc/pthread_sync.qv",
+    "libc/regex.qv",
+    "libc/socket.qv",
+    "libc/stdio.qv",
+    "libc/stdlib.qv",
+    "libc/string.qv",
+    "libc/sys_stat.qv",
+    "libc/threads.qv",
+    "libc/time.qv",
+    "libc/unistd.qv"
+  ],
+  "schema_version": 1
+}

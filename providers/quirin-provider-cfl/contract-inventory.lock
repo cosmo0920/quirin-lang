@@ -1,0 +1,138 @@
+{
+  "bounds_view": [
+    "cfl/null_deref.qv"
+  ],
+  "contracts": "quirin-provider-cfl/contracts",
+  "crate": "quirin-provider-cfl",
+  "files": {
+    "cfl/arena_lifetime.qv": {
+      "clause_count": 10,
+      "declaration_count": 2,
+      "declarations": [
+        {
+          "clauses": 5,
+          "name": "cfl_arena_create_with_options"
+        },
+        {
+          "clauses": 5,
+          "name": "cfl_arena_destroy"
+        }
+      ],
+      "inherits": [],
+      "premise_bindings": [],
+      "premises": {},
+      "sha256": "17e5f22bb2b2ed10d1ed3f2baed212054cc13ebdb9551f8db7ac15ceb2f4d6f7"
+    },
+    "cfl/intrusive_list.qv": {
+      "clause_count": 9,
+      "declaration_count": 2,
+      "declarations": [
+        {
+          "clauses": 4,
+          "name": "cfl_list_add"
+        },
+        {
+          "clauses": 5,
+          "name": "cfl_list_del"
+        }
+      ],
+      "inherits": [],
+      "premise_bindings": [],
+      "premises": {},
+      "sha256": "0e88afdb9a476a3da576bfed0dd0bb5de61bb59eb5eef1738d0bf65e5512cdec"
+    },
+    "cfl/null_deref.qv": {
+      "clause_count": 2,
+      "declaration_count": 1,
+      "declarations": [
+        {
+          "clauses": 2,
+          "name": "cfl_list_size"
+        }
+      ],
+      "inherits": [],
+      "premise_bindings": [],
+      "premises": {},
+      "sha256": "c68e18526615780b6ae38587b813ae06393b77387d96ced45b5454da87747d2e"
+    },
+    "cfl/sds_lifetime.qv": {
+      "clause_count": 55,
+      "declaration_count": 12,
+      "declarations": [
+        {
+          "clauses": 3,
+          "name": "cfl_sds_destroy"
+        },
+        {
+          "clauses": 3,
+          "name": "cfl_sds_len"
+        },
+        {
+          "clauses": 5,
+          "name": "cfl_arena_calloc"
+        },
+        {
+          "clauses": 3,
+          "name": "cfl_kvlist_count"
+        },
+        {
+          "clauses": 5,
+          "name": "cfl_kvlist_insert_string"
+        },
+        {
+          "clauses": 5,
+          "name": "cfl_kvlist_insert_bool"
+        },
+        {
+          "clauses": 5,
+          "name": "cfl_kvlist_insert_int64"
+        },
+        {
+          "clauses": 5,
+          "name": "cfl_kvlist_insert_double"
+        },
+        {
+          "clauses": 6,
+          "name": "cfl_kvlist_insert_array"
+        },
+        {
+          "clauses": 6,
+          "name": "cfl_kvlist_insert_kvlist"
+        },
+        {
+          "clauses": 6,
+          "name": "cfl_sds_cat_safe"
+        },
+        {
+          "clauses": 3,
+          "name": "cfl_list_size"
+        }
+      ],
+      "inherits": [],
+      "premise_bindings": [],
+      "premises": {},
+      "sha256": "a3684cfe27ec6d829b825e939f2574c67754fd3505a406143215a05ba44ebc56"
+    },
+    "cfl/time.qv": {
+      "clause_count": 2,
+      "declaration_count": 1,
+      "declarations": [
+        {
+          "clauses": 2,
+          "name": "cfl_time_now"
+        }
+      ],
+      "inherits": [],
+      "premise_bindings": [],
+      "premises": {},
+      "sha256": "1696e45592e854e29d6e0117ab9c037f46158c33c4a340027739558e9b137bb6"
+    }
+  },
+  "outer_view": [],
+  "regenerate": "python3 providers/contracts.py sync",
+  "resource_view": [
+    "cfl/sds_lifetime.qv",
+    "cfl/time.qv"
+  ],
+  "schema_version": 1
+}

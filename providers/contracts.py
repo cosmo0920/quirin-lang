@@ -23,6 +23,12 @@ Card OUTER-CONTRACT: each record also carries its `outer_view`, the owned
 modules the outer contract v1 loader accepts (disjoint from both other views),
 computed by the same probe; the runtime projection loads every outer view
 (`QCORE_OUTER_PROJECTION`), and `quirin-audit pin --outer` pins them.
+Card CONTRACT-LOCKS: both also maintain each load-path crate's
+`contract-inventory.lock` (per-file SHA-256, declarations with their
+elaborated clause counts, inheritance edges as written, the premise manifest
+and the three views), computed with the loaders' own parser by `cargo run -p
+qcore-contract --example contract_inventory`; the corpus tests read these locks
+instead of literal tables, so a contract change is a reviewed lock diff.
 The retired ``contract/qcore`` compatibility tree is refused so it cannot
 silently become a second source of provider contracts again.
 """
@@ -319,6 +325,146 @@ def verify_locks(root, load_path_file):
     return completed.stdout.strip().splitlines()
 
 
+# Card CONTRACT-LOCKS (user decision 1 of 2026-10-24): every load-path crate
+# keeps a generated `contract-inventory.lock` beside its Cargo.toml. It is the
+# contract pin the tests read instead of literal tables: per module its
+# SHA-256, its `extern fn` declarations in source order with their elaborated
+# clause counts (and the per-file totals), its `contract inherit` edges as
+# written, its premise manifest (the premises each function reads, and the
+# `qcore-premise-binding-manifest-v1` pins) and the crate's three loader views
+# as the load path records them. `sync` writes it; `check` refuses a lock that
+# differs by one byte. It is not the `contracts.lock` above, which `quirin-audit
+# pin` writes and whose format this card does not touch.
+INVENTORY_LOCK = "contract-inventory.lock"
+INVENTORY_SCHEMA = 1
+
+
+def probe_inventories(root, load_path_file):
+    """The parse-derived facts of every module on `load_path_file`: `{crate:
+    {module: {"declarations", "inherits", "premises", "premise_bindings"}}}`,
+    from the probe example in the repository workspace, which parses,
+    elaborates and reads premises with the loaders' own code. Any failure of
+    the probe is an error, never an empty inventory."""
+    workspace = Path(root).resolve().parent / "Cargo.toml"
+    command = ["cargo", "run", "--quiet", "--offline", "--locked", "--manifest-path",
+               str(workspace), "-p", "qcore-contract", "--example", "contract_inventory",
+               "--", str(Path(load_path_file).resolve())]
+    completed = subprocess.run(command, capture_output=True, text=True)
+    if completed.returncode != 0:
+        raise ValueError(f"contract inventory probe failed (exit {completed.returncode}): "
+                         f"{completed.stderr.strip()}")
+    probe = json.loads(completed.stdout)
+    if probe.get("schema_version") != 1:
+        raise ValueError("contract inventory probe: unsupported schema")
+    return {name: record["modules"] for name, record in probe["crates"].items()}
+
+
+def inventory_lock(root, record, facts):
+    """One crate's lock document from its load-path `record` (views included)
+    and the probe's `facts` for it. The probe must describe exactly the
+    crate's contract files; the digests are computed here, independently."""
+    modules = files(Path(root) / record["contracts"])
+    if set(facts) != set(modules):
+        raise ValueError(f"{record['name']}: inventory probe describes {sorted(facts)}, "
+                         f"not the contract files {sorted(modules)}")
+    entries = {}
+    for name, path in modules.items():
+        fact = facts[name]
+        declarations = [{"name": d["name"], "clauses": d["clauses"]} for d in fact["declarations"]]
+        entries[name] = {
+            "sha256": sha256(path),
+            "declaration_count": len(declarations),
+            "clause_count": sum(d["clauses"] for d in declarations),
+            "declarations": declarations,
+            "inherits": [{"child": i["child"], "parent": i["parent"]} for i in fact["inherits"]],
+            "premises": {function: [{"name": p["name"], "origin": p["origin"]} for p in premises]
+                         for function, premises in fact["premises"].items()},
+            "premise_bindings": [{"declaration": b["declaration"], "premise": b["premise"],
+                                  "sha256": b["sha256"]} for b in fact["premise_bindings"]],
+        }
+    return {
+        "schema_version": INVENTORY_SCHEMA,
+        "crate": record["name"],
+        "contracts": record["contracts"],
+        "regenerate": "python3 providers/contracts.py sync",
+        "files": entries,
+        RESOURCE_VIEW: record[RESOURCE_VIEW],
+        BOUNDS_VIEW: record[BOUNDS_VIEW],
+        OUTER_VIEW: record[OUTER_VIEW],
+    }
+
+
+def canonical(document):
+    """The one byte form of a lock: sorted keys, two-space indent, ASCII,
+    final newline. Lists keep their order, which is sorted or source order."""
+    return json.dumps(document, indent=2, sort_keys=True, ensure_ascii=True) + "\n"
+
+
+def maintain_inventory_locks(root=ROOT, load_path=None, sync=False, probe=None):
+    """Write (`sync`) or compare (`check`) every load-path crate's
+    `contract-inventory.lock`. `load_path` is the current manifest with its
+    views (`maintain_load_path`'s result); `probe(root, load_path_file)`
+    computes the parse-derived facts (default `probe_inventories`). A stale,
+    missing or symbolic-link lock, or a lock in a directory that is no
+    load-path crate, is an error. Returns one summary row per crate."""
+    root = Path(root)
+    probe = probe_inventories if probe is None else probe
+    load_path = maintain_load_path(root) if load_path is None else load_path
+    facts = probe(root, root / LOAD_PATH)
+    crates = {record["name"] for record in load_path["crates"]}
+    if set(facts) != crates:
+        raise ValueError(f"inventory probe names crates {sorted(facts)}, "
+                         f"not the load path's {sorted(crates)}")
+    for stray in sorted(root.glob(f"*/{INVENTORY_LOCK}")):
+        if stray.parent.name not in crates:
+            raise ValueError(f"contract inventory lock outside a load-path crate: {stray}")
+    rows = []
+    for record in load_path["crates"]:
+        document = inventory_lock(root, record, facts[record["name"]])
+        text = canonical(document)
+        lock = root / record["name"] / INVENTORY_LOCK
+        if lock.is_symlink():
+            raise ValueError(f"symbolic-link contract inventory lock: {lock}")
+        if sync:
+            lock.write_text(text)
+        elif not lock.is_file():
+            raise ValueError(f"missing contract inventory lock: {lock}; review the contracts, "
+                             "then run `python3 providers/contracts.py sync`")
+        elif lock.read_text() != text:
+            raise ValueError(f"stale contract inventory lock: {lock}; "
+                             f"{'; '.join(lock_difference(lock, document)) or 'byte form differs'}; "
+                             "review the contracts, then run `python3 providers/contracts.py sync`")
+        files_ = document["files"].values()
+        rows.append({"crate": record["name"], "files": len(document["files"]),
+                     "declarations": sum(f["declaration_count"] for f in files_),
+                     "clauses": sum(f["clause_count"] for f in files_),
+                     "inventory_lock_sha256": hashlib.sha256(text.encode()).hexdigest()})
+    return rows
+
+
+def lock_difference(lock, document):
+    """Which modules and top-level fields of a committed lock differ from the
+    tree's document, for the refusal message."""
+    try:
+        declared = json.loads(lock.read_text())
+    except ValueError:
+        return ["unparsable lock"]
+    reasons = []
+    old, new = declared.get("files", {}), document["files"]
+    for name in sorted(set(old) | set(new)):
+        if name not in new:
+            reasons.append(f"{name} is locked but not in the tree")
+        elif name not in old:
+            reasons.append(f"{name} is in the tree but not locked")
+        elif old[name] != new[name]:
+            fields = sorted(k for k in set(old[name]) | set(new[name])
+                            if old[name].get(k) != new[name].get(k))
+            reasons.append(f"{name} differs in {fields}")
+    reasons.extend(f"{key} differs" for key in sorted(set(declared) | set(document))
+                   if key != "files" and declared.get(key) != document.get(key))
+    return reasons
+
+
 def with_resource_views(load_path, views):
     """`load_path` with each crate's `resource_view`, `bounds_view` and
     `outer_view` from `views`, validated: one of each per crate, sorted,
@@ -469,6 +615,7 @@ def main():
     args = parser.parse_args()
     try:
         load_path = maintain_load_path(sync=args.action == "sync")
+        inventory = maintain_inventory_locks(load_path=load_path, sync=args.action == "sync")
         rows = maintain(sync=args.action == "sync", load_path=load_path)
         locks = verify_locks(ROOT, ROOT / LOAD_PATH)
         legacy_sources = {}
@@ -484,6 +631,7 @@ def main():
         parser.exit(1, f"provider contracts: {error}\n")
     print(json.dumps({
         "locks": locks,
+        "inventory_locks": inventory,
         "providers": rows,
         "total_contracts": sum(r["contracts"] for r in rows),
         "load_path": [{"crate": c["name"], "namespace": c["namespace"], "version": c["version"],
