@@ -1,0 +1,121 @@
+{
+ "route": "corpus",
+ "left": "/media/Data/GitHub/quirin-lang/private/cfg-release/runs1/base/corpus",
+ "right": "/media/Data/GitHub/quirin-lang/private/cfg-release/runs1/tip/corpus",
+ "substitution": [],
+ "exits": {
+  "left": "101",
+  "right": "101"
+ },
+ "drivers": {
+  "left": {
+   "exit": 101,
+   "audit_exit": 0,
+   "identity_error": "an input or the binary changed during the route",
+   "snapshot_files_changed": [
+    "third_party/libevent/.git/index"
+   ],
+   "externals_stable": true,
+   "binary_stable": true,
+   "binary_sha256": "947b81bca41a8b03eeec81b5557fbb467415eb3eb7838a282db715a3d058b44b"
+  },
+  "right": {
+   "exit": 101,
+   "audit_exit": 0,
+   "identity_error": "an input or the binary changed during the route",
+   "snapshot_files_changed": [
+    "third_party/libevent/.git/index"
+   ],
+   "externals_stable": true,
+   "binary_stable": true,
+   "binary_sha256": "5cc9c97c3989967f4bc630151005de16eef10d52398e444dc1ad804d18135889"
+  }
+ },
+ "only_left": [],
+ "only_right": [],
+ "files": {
+  "corpus-null.jsonl": {
+   "bytes": [
+    29206591,
+    29206591
+   ],
+   "raw_identical": true,
+   "identical_after_substitution": true
+  },
+  "corpus-null.summary.json": {
+   "bytes": [
+    64900,
+    64900
+   ],
+   "raw_identical": true,
+   "identical_after_substitution": true
+  },
+  "corpus-outer.json": {
+   "bytes": [
+    711726,
+    711726
+   ],
+   "raw_identical": true,
+   "identical_after_substitution": true
+  },
+  "corpus/audit.log": {
+   "bytes": [
+    135978,
+    135978
+   ],
+   "raw_identical": true,
+   "identical_after_substitution": true
+  },
+  "corpus/monkey-source.json": {
+   "bytes": [
+    1665950,
+    1665950
+   ],
+   "raw_identical": true,
+   "identical_after_substitution": true
+  },
+  "corpus/resource-diagnostics.chunk-contracts.json": {
+   "bytes": [
+    4186178,
+    4186178
+   ],
+   "raw_identical": true,
+   "identical_after_substitution": true
+  },
+  "corpus/resource-diagnostics.contracts.json": {
+   "bytes": [
+    42781350,
+    42781350
+   ],
+   "raw_identical": true,
+   "identical_after_substitution": true
+  },
+  "corpus/resource-diagnostics.json": {
+   "bytes": [
+    87009047,
+    87009047
+   ],
+   "raw_identical": true,
+   "identical_after_substitution": true
+  },
+  "corpus/resource-diagnostics.source-effects.json": {
+   "bytes": [
+    118505,
+    118505
+   ],
+   "raw_identical": true,
+   "identical_after_substitution": true
+  },
+  "stderr.log": {
+   "bytes": [
+    0,
+    0
+   ],
+   "raw_identical": true,
+   "identical_after_substitution": true
+  }
+ },
+ "substitution_totals": {},
+ "target_collisions_total": {},
+ "identical": true
+}

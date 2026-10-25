@@ -1,0 +1,74 @@
+{
+ "units": [
+  185,
+  185
+ ],
+ "functions": [
+  4834,
+  4834
+ ],
+ "null_rows": [
+  4921,
+  4921
+ ],
+ "unit_status_tally": [
+  {
+   "Unknown": 166,
+   "Safe": 8,
+   "Unsafe": 7,
+   "data_only": 4
+  },
+  {
+   "Unknown": 166,
+   "Safe": 8,
+   "Unsafe": 7,
+   "data_only": 4
+  }
+ ],
+ "function_status_tally": [
+  {
+   "Unknown": 3812,
+   "Safe": 1013,
+   "Unsafe": 9
+  },
+  {
+   "Unknown": 3812,
+   "Safe": 1013,
+   "Unsafe": 9
+  }
+ ],
+ "null_verdict_tally": [
+  {
+   "Unknown": 2355,
+   "Safe": 2549,
+   "Unsafe": 17
+  },
+  {
+   "Unknown": 2355,
+   "Safe": 2549,
+   "Unsafe": 17
+  }
+ ],
+ "custody_combined_tally": [
+  {
+   "Unknown/Unknown": 3795,
+   "Safe/Safe": 873,
+   "Safe/Unknown": 140,
+   "None/Unknown": 87,
+   "Unknown/Unsafe": 17,
+   "Unsafe/Unsafe": 9
+  },
+  {
+   "Unknown/Unknown": 3795,
+   "Safe/Safe": 873,
+   "Safe/Unknown": 140,
+   "None/Unknown": 87,
+   "Unknown/Unsafe": 17,
+   "Unsafe/Unsafe": 9
+  }
+ ],
+ "unit_differences": [],
+ "function_differences": [],
+ "null_differences": [],
+ "equal": true
+}

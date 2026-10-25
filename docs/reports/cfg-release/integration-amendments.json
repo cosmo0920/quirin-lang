@@ -1,0 +1,30 @@
+{
+ "schema": "quirin-amendments/1",
+ "card": "CFG-RELEASE",
+ "base": "710021bd713b90037e803d4a1f87d95eba6476c9",
+ "measured_tip": "3d358f76e9ea02f5537961af2065441842e685de",
+ "increment_paragraph": "**CFG-RELEASE.** The [card](../../reports/cfg-release/README.md) applies the user-approved projection-result release that [AUDIT-IR-RETAINED-PRODUCTS](../../reports/audit-ir-retained-products/README.md) archived unapplied. `git apply -p0` applied it cleanly on `710021bd7`; the only other change is rustfmt layout. In `record_projection`, the tally and console now read a precomputed `ProjectionPublication` (projected count, Unknown reason, gateway error). The owned result, with every function's CFG, is consumed right after `contract_dependencies::annotate_unit`, its last full-record consumer, instead of at the end of the function. The published verdict still comes from `report.last_unit_verdict()`. The parent's fixture parity passes: four units and twelve rows, BASE at one worker against TIP at one and two, with `report.json` and `report.assumptions.json` byte-identical. For the identity run, BASE and TIP were built and run from per-side snapshots at one fixed path, under the fixed build label `710021bd7`, in `gate_slot.py` audit slots at `--jobs 3`, on the original pinned inputs, with `SOURCE_DATE_EPOCH` fixed on both sides. Every published artifact of the corpus, slice and system routes is raw byte-identical (ten files per route), so no environment-digest substitution was needed. Verdicts are equal row for row: corpus 1,013 Safe / 3,812 Unknown / 9 provisional Unsafe, slice 57/4/342/1, system 101/343/4. Memory, one concurrent observation per side, no limit: the corpus quirin-audit process peaks at 10,129,997,824 bytes on BASE and 10,042,564,608 on TIP (−0.86 %); the slice moves −0.60 % and the system +0.22 %. There are no memory events, no swap, and negligible pressure. No material reduction is demonstrated: the release shortens one unit's tail lifetime and removes nothing that accumulates across units.",
+ "status_paragraph": null,
+ "ledger": [
+  {
+   "id": "PREPASS-CLOCK-DEPENDENT-KEY",
+   "operation": "append",
+   "text": "CFG-RELEASE observation: with SOURCE_DATE_EPOCH=1761004800 set in the caller's environment, corpus, slice and system route outputs of two independently built sides are raw byte-identical and share every pre-pass summary key (1,058 / 1,039 / 1,037). Clang honours the variable for __DATE__/__TIME__, and the audit's Clang invocations inherit the environment. The entry stays open: the audit itself neither fixes nor records the epoch.",
+   "source": "docs/reports/cfg-release/README.md"
+  },
+  {
+   "id": "MEASURE-SNAPSHOT-HAZARDS",
+   "operation": "append",
+   "text": "CFG-RELEASE observation: item 3 recurs even after `git update-index --refresh` on the fresh libevent clone before the run. Both corpus drivers exit 101 with audit exit 0 and only third_party/libevent/.git/index changed.",
+   "source": "docs/reports/cfg-release/README.md"
+  },
+  {
+   "id": "CORPUS-PEAK-ABOVE-AUDIT-SLOT-BUDGET",
+   "operation": "register",
+   "title": "The pinned corpus process peaks above its 7 GiB audit-slot budget",
+   "text": "Found by CFG-RELEASE's memory observation. Under scripts/gate_slot.py audit --memory-budget 7G and --jobs 3, the pinned corpus route's quirin-audit process reached a maximum RSS of 10,129,997,824 bytes (BASE 710021bd7) and 10,042,564,608 (TIP); the systemd scope peaked at about 10.6-10.9 GB including page cache. The pinned route receives the slot budget only as QCORE_AUDIT_JOBS (a worker cap), not as a memory plan, so slot admission (floor(MemAvailable / 7 GiB)) can admit more corpus runs than the host's memory holds. No OOM, memory event or swap was observed on the 60 GB host. DISCHARGE: either the pinned route plans its workers against the slot budget (as `quirin-audit current --memory-budget-mib` does) and a measured corpus peak stays within it, or gate_slot.py budgets the corpus class at its measured peak; evidence: a corpus run whose process peak is at or below its slot's budget.",
+   "source": "docs/reports/cfg-release/README.md",
+   "recorded_by": "CFG-RELEASE"
+  }
+ ]
+}
