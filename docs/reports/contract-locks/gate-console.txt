@@ -1,3 +1,4 @@
+gate_scope: failed steps: python
 mode: full
   full because the diff reaches qcore-contract
 affected crates (20):
@@ -28,28 +29,27 @@ python suite: always
 [submodules] $ git -C /media/Data/GitHub/quirin-lang/.claude/worktrees/agent-ab7ec0d74a33f2d6d submodule status --recursive
 [submodules] exit 0 in 0.0s {"submodules": 1, "not_checked_out_or_moved": []}
 [fmt] $ cargo fmt --all -- --check
-[fmt] exit 0 in 5.8s 
+[fmt] exit 0 in 5.4s 
 [clippy] $ cargo clippy --all-targets -- -D warnings
-[clippy] exit 0 in 47.9s 
-[rust-suite] $ /usr/bin/python3 /media/Data/GitHub/quirin-lang/.claude/worktrees/agent-ab7ec0d74a33f2d6d/scripts/gate_slot.py rust-suite --receipt /media/Data/GitHub/quirin-lang/.claude/worktrees/agent-ab7ec0d74a33f2d6d/private/gate-scope/20261025T025407Z-254444/slots/rust-suite.json -- /usr/bin/python3 /media/Data/GitHub/quirin-lang/.claude/worktrees/agent-ab7ec0d74a33f2d6d/scripts/run_test_binaries.py --log-dir /media/Data/GitHub/quirin-lang/.claude/worktrees/agent-ab7ec0d74a33f2d6d/private/gate-scope/20261025T025407Z-254444/rust-suite
-[rust-suite] exit 0 in 9399.1s {"units": 550, "passed": 8646, "failed": 0, "ignored": 15, "measured": 0, "filtered": 0, "summaries": 563, "packages": null, "summary": "/media/Data/GitHub/quirin-lang/.claude/worktrees/agent-ab7ec0d74a33f2d6d/private/gate-scope/20261025T025407Z-254444/rust-suite/summary.json", "ok": true}
+[clippy] exit 0 in 10.1s 
+[rust-suite] $ /usr/bin/python3 /media/Data/GitHub/quirin-lang/.claude/worktrees/agent-ab7ec0d74a33f2d6d/scripts/gate_slot.py rust-suite --receipt /media/Data/GitHub/quirin-lang/.claude/worktrees/agent-ab7ec0d74a33f2d6d/private/gate-scope/20261025T074258Z-1282415/slots/rust-suite.json -- /usr/bin/python3 /media/Data/GitHub/quirin-lang/.claude/worktrees/agent-ab7ec0d74a33f2d6d/scripts/run_test_binaries.py --log-dir /media/Data/GitHub/quirin-lang/.claude/worktrees/agent-ab7ec0d74a33f2d6d/private/gate-scope/20261025T074258Z-1282415/rust-suite
+[rust-suite] exit 0 in 2744.8s {"units": 553, "passed": 8672, "failed": 0, "ignored": 15, "measured": 0, "filtered": 0, "summaries": 566, "packages": null, "summary": "/media/Data/GitHub/quirin-lang/.claude/worktrees/agent-ab7ec0d74a33f2d6d/private/gate-scope/20261025T074258Z-1282415/rust-suite/summary.json", "ok": true}
 [probe-reevaluation_probe] $ cargo run -p qcore-compiler --example reevaluation_probe
 [probe-reevaluation_probe] exit 0 in 0.1s 
 [probe-reevaluation_followup] $ cargo run -p qcore-compiler --example reevaluation_followup
 [probe-reevaluation_followup] exit 0 in 0.5s 
 [python] $ /usr/bin/python3 -m unittest discover -s scripts/tests
-[python] exit 0 in 78.2s {"tests": 445, "skipped": 0, "ok": true}
-[provider-package-build] $ /usr/bin/python3 providers/package.py build --output /media/Data/GitHub/quirin-lang/.claude/worktrees/agent-ab7ec0d74a33f2d6d/private/gate-scope/20261025T025407Z-254444/provider-packages
-[provider-package-build] exit 0 in 138.3s 
-[provider-package-verify-all] $ /usr/bin/python3 /media/Data/GitHub/quirin-lang/.claude/worktrees/agent-ab7ec0d74a33f2d6d/scripts/gate_scope.py --verify-packages /media/Data/GitHub/quirin-lang/.claude/worktrees/agent-ab7ec0d74a33f2d6d/private/gate-scope/20261025T025407Z-254444/provider-packages
-[provider-package-verify-all] exit 0 in 2.1s 
-[provider-package-verify] $ /usr/bin/python3 providers/package.py verify /media/Data/GitHub/quirin-lang/.claude/worktrees/agent-ab7ec0d74a33f2d6d/private/gate-scope/20261025T025407Z-254444/provider-packages/qcore.libevent
-[provider-package-verify] exit 0 in 0.5s 
-[provider-test] $ /usr/bin/python3 /media/Data/GitHub/quirin-lang/.claude/worktrees/agent-ab7ec0d74a33f2d6d/scripts/gate_slot.py rust-suite --receipt /media/Data/GitHub/quirin-lang/.claude/worktrees/agent-ab7ec0d74a33f2d6d/private/gate-scope/20261025T025407Z-254444/slots/provider-test.json -- cargo test --manifest-path providers/Cargo.toml --workspace --locked --offline
-[provider-test] exit 0 in 7090.9s {"summaries": 43, "passed": 133, "failed": 0, "ignored": 1, "measured": 0, "filtered": 0}
+[python] exit 1 in 39.3s {"tests": 445, "skipped": 0, "ok": false}
+[provider-package-build] $ /usr/bin/python3 providers/package.py build --output /media/Data/GitHub/quirin-lang/.claude/worktrees/agent-ab7ec0d74a33f2d6d/private/gate-scope/20261025T074258Z-1282415/provider-packages
+[provider-package-build] exit 0 in 52.7s 
+[provider-package-verify-all] $ /usr/bin/python3 /media/Data/GitHub/quirin-lang/.claude/worktrees/agent-ab7ec0d74a33f2d6d/scripts/gate_scope.py --verify-packages /media/Data/GitHub/quirin-lang/.claude/worktrees/agent-ab7ec0d74a33f2d6d/private/gate-scope/20261025T074258Z-1282415/provider-packages
+[provider-package-verify-all] exit 0 in 0.6s 
+[provider-package-verify] $ /usr/bin/python3 providers/package.py verify /media/Data/GitHub/quirin-lang/.claude/worktrees/agent-ab7ec0d74a33f2d6d/private/gate-scope/20261025T074258Z-1282415/provider-packages/qcore.libevent
+[provider-package-verify] exit 0 in 0.1s 
+[provider-test] $ /usr/bin/python3 /media/Data/GitHub/quirin-lang/.claude/worktrees/agent-ab7ec0d74a33f2d6d/scripts/gate_slot.py rust-suite --receipt /media/Data/GitHub/quirin-lang/.claude/worktrees/agent-ab7ec0d74a33f2d6d/private/gate-scope/20261025T074258Z-1282415/slots/provider-test.json -- cargo test --manifest-path providers/Cargo.toml --workspace --locked --offline
+[provider-test] exit 0 in 2958.8s {"summaries": 43, "passed": 133, "failed": 0, "ignored": 1, "measured": 0, "filtered": 0}
 [provider-fmt] $ cargo fmt --manifest-path providers/Cargo.toml --all -- --check
-[provider-fmt] exit 0 in 7.2s 
+[provider-fmt] exit 0 in 6.5s 
 [provider-clippy] $ cargo clippy --manifest-path providers/Cargo.toml --workspace --all-targets --locked --offline -- -D warnings
-[provider-clippy] exit 0 in 45.1s 
-gate.json: /media/Data/GitHub/quirin-lang/.claude/worktrees/agent-ab7ec0d74a33f2d6d/private/gate-scope/20261025T025407Z-254444/gate.json
-gate_scope: 13 steps passed
+[provider-clippy] exit 0 in 24.7s 
+gate.json: /media/Data/GitHub/quirin-lang/.claude/worktrees/agent-ab7ec0d74a33f2d6d/private/gate-scope/20261025T074258Z-1282415/gate.json

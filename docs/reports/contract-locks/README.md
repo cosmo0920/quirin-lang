@@ -148,33 +148,51 @@ true: that test still pins the corpus, through the locks.
 
 ## Gate
 
-Scoped card gate, `python3 scripts/gate_scope.py --base 6c4855745`, on
-`9b6cfe14f`: mode **full**, because the diff reaches `qcore-contract`, with the
-provider gate and no Lean, since nothing under `proof/` changed. 13 steps,
-all exit 0 ([`gate.json`](gate.json), [console](gate-console.txt); logs in the
-worktree's `private/gate-scope/20261025T025407Z-254444/`):
+**Final scoped card gate**: `python3 scripts/gate_scope.py --base c3d8ad3d4`
+on `7d7841603`, the merge of main. Mode **full**, because the diff reaches
+`qcore-contract`, with the provider gate and no Lean, since nothing under
+`proof/` changed. Files: [`gate.json`](gate.json), [console](gate-console.txt);
+logs are in the worktree's `private/gate-scope/20261025T074258Z-1282415/`.
 
 | Step | Exit | Counts |
 |---|---|---|
 | submodules | 0 | 1 checked out |
 | `cargo fmt --all -- --check` | 0 | |
 | `cargo clippy --all-targets -- -D warnings` | 0 | |
-| Rust suite (`run_test_binaries.py` under the `rust-suite` slot) | 0 | 550 units, 563 summaries; 8,646 passed; 0 failed; 15 ignored |
+| Rust suite (`run_test_binaries.py` under the `rust-suite` slot) | 0 | 553 units, 566 summaries; 8,672 passed; 0 failed; 15 ignored |
 | `reevaluation_probe`, `reevaluation_followup` | 0, 0 | |
-| `python3 -m unittest discover -s scripts/tests` | 0 | 445 tests |
+| `python3 -m unittest discover -s scripts/tests` | **1** | 445 tests, 1 failure (below) |
 | `providers/package.py build` (five packages) | 0 | chunkio, cmetrics, ctraces, libevent, librdkafka |
 | verify every built package, then `qcore.libevent` | 0, 0 | 5 + 1 |
 | provider `cargo test --workspace --locked --offline` | 0 | 43 summaries; 133 passed; 0 failed; 1 ignored |
 | provider fmt, provider Clippy | 0, 0 | |
 
-The Rust suite and provider-test wall times (9,399 s and 7,091 s) are mostly
-waits for the shared `rust-suite` and `audit` slots that other cards held. The
-suite's own run phase took 491 s.
+The one failure is main's, not this card's.
+`CommittedMatrixIsSelfConsistent.test_each_derived_dimension_matches_the_section_it_counts`
+failed with `830 != 832`: main `c3d8ad3d4` committed two ledger entries without
+regenerating the matrix's dimensions. This branch changes neither the matrix
+nor `scripts/`. Main's next commit, `710021bd7`, regenerates the matrix and
+touches only records. Merge `99a664a9b` brings it in. On that tip the Python
+suite exits 0 with 445 tests ([log](python-final.log)). No other gate step reads
+the files that merge changes, so no other step was rerun.
 
-Beside the gate, on the same tree:
+The Rust suite and provider-test wall times (2,745 s and 2,959 s) are mostly
+waits for the shared `rust-suite` and `audit` slots that other cards held.
+
+**Earlier gate, before main moved**: the same command with `--base 6c4855745`
+on `9b6cfe14f`. All 13 steps exited 0: Rust suite 550 units, 8,646 passed,
+0 failed, 15 ignored; Python 445; provider test 133 passed
+([`gate-9b6cfe14f.json`](gate-9b6cfe14f.json),
+[console](gate-9b6cfe14f-console.txt)). A second attempt with `--base
+d5d041264` was stopped before its Rust suite ran, because local main had moved
+again.
+
+Beside the gate, on the merged tree:
 - `python3 providers/contracts.py check`: exit 0; 18 pin locks verified, 11
-  inventory locks, 138 files, 809 declarations, 7,607 clauses, 84 provider
+  inventory locks, 140 files, 818 declarations, 7,721 clauses, 86 provider
   inventory contracts.
+- `python3 scripts/gen_rule_docs.py --check`: exit 0 (213 rule files).
 - `python3 -m unittest discover -s providers/tests`: exit 0, 26 tests.
-- `python3 scripts/gen_rule_docs.py --check`: exit 0 (211 rule files).
+
+Before the merges:
 - [`mutations.py`](mutations.py): 6 of 6 mutations killed, baseline green.
