@@ -1,4 +1,4 @@
-# qcore-schemas 19.0.0
+# qcore-schemas 21.0.0
 
 The published, versioned schema surface of the QCore verifier ecosystem
 (layer L0 of `docs/GENERALIZATION_PLAN.md` §3.1). This crate holds the data
@@ -537,3 +537,37 @@ the new `removed` variant, and an older resource loader rejects the new
 Plugin protocol 1 and evidence versions 1 and 2 are unchanged. All workspace
 consumers and standalone providers update their schema dependency; all five
 provider packages must be rebuilt and verified under constraint 18.
+
+## The integration semigroup across results (21.0.0)
+
+Card AUDIT-COMPOSITION (`docs/plans/pluggable-cards/README.md` seam G; user
+decision of 2026-10-24: results and contracts integrate only through a
+semigroup that never contaminates an audited unit's result; language
+specification §L21.2, "Composition across results").
+
+| Addition | Kind |
+|---|---|
+| `ReasonCategory::CompositionConflict` (`composition-conflict`, subject: analyser, not human-resolvable) | new variant on an exhaustively matched enum; the closed vocabulary grows from eleven to twelve |
+| module `composition`: `UnitRef`, `RowKey`, `RuleSet`, `CheckerIdentity`, `Provenance`, `ProvenanceKey`, `VerdictTuple`, `ReasonLeaf`, `Component`, `Contribution`, `RowDerivation`, `ComponentSidecar`, `COMPOSITION_SCHEMA_VERSION` | new types and pure functions |
+
+A component is `(unit, row key, property, profile, provenance, verdict tuple,
+reason leaves)` plus the producer's opaque `detail`; provenance is the analyzer
+revision, the rule set with its off-list (empty until a run-time switch list
+exists), the contract-bundle digests and an optional external-checker
+identity. `Contribution::union` is the provenance-keyed union; a row is derived
+by `Contribution::derive` as the `Verdict::join` over its components, carrying
+the union of their assumptions and reasons. Two components under one
+provenance key with different bytes are both kept, and the row gains `Unknown`
+and a `composition-conflict` leaf. `Contribution::remove` is the re-join
+without a contribution. A row with no component derives nothing (`None`), never
+the join's identity `Safe`. `Contribution` deserializes through the union, so a
+stored contribution cannot carry a state `⊕` would not have built.
+
+Major bump by the exhaustive-variant precedent (17.0.0, 18.0.0). **Existing wire
+bytes are unchanged**: no existing reason text classifies differently (the new
+marker, `composition-conflict: `, is spelled by no earlier site), no task digest
+moves, and the new module is additive. Plugin protocol 1 and evidence versions 1
+and 2 are unchanged. All workspace consumers and standalone providers update
+their schema dependency; all five provider packages are rebuilt and verified
+under constraint 18. The laws are tested in `tests/audit_composition.rs` and
+proved in `proof/QCore/AuditComposition.lean`; the two share one vector list.

@@ -670,6 +670,8 @@ pub fn run(
         fs::write(&sidecar, bytes).map_err(|e| format!("{}: {e}", sidecar.display()))?;
     }
     if let Some(path) = diagnostic_report {
+        // Card AUDIT-COMPOSITION: the contract bundle the components rest on.
+        report.record_contract_bundle(&contracts);
         report.write_with_revision_key(path, "fluent_bit_revision")?;
         report.write_bounds_selection()?;
         let null_rows = report.write_null_selection()?;

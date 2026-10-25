@@ -124,6 +124,8 @@ enum ReportField<'a> {
     Text(&'a str),
     Counts(&'a BTreeMap<String, usize>),
     Units(&'a [Value]),
+    /// Card AUDIT-COMPOSITION: the unit rows derived from their components.
+    DerivedUnits(&'a [std::borrow::Cow<'a, Value>]),
     Json(&'a Value),
 }
 
@@ -168,6 +170,11 @@ pub struct AuditReport {
         std::sync::Arc<qcore_c_gateway::member_run_facts::RunMemberFacts>,
         Value,
     )>,
+    /// Card AUDIT-COMPOSITION: the digests of the contract bundles this run's
+    /// rows rest on, for the components' provenance; `Err` when a digest
+    /// could not be taken, which refuses every component (the rows are then
+    /// `Unknown`). Whole-report data, like the evidence record.
+    contract_bundles: Result<BTreeMap<String, String>, String>,
 }
 
 impl AuditReport {
@@ -185,6 +192,7 @@ impl AuditReport {
             null_evidence: Vec::new(),
             callback_members: Vec::new(),
             member_prepass: None,
+            contract_bundles: Ok(BTreeMap::new()),
         }
     }
 
@@ -567,6 +575,7 @@ impl AuditReport {
             null_evidence,
             callback_members,
             member_prepass: _,
+            contract_bundles: _,
         } = fragment;
         if revision != self.revision {
             return Err(format!(
@@ -611,6 +620,26 @@ impl AuditReport {
     #[must_use]
     pub fn last_unit_verdict(&self) -> Option<qcore_schemas::verdict::Verdict> {
         self.units.last()?["status"].as_str()?.parse().ok()
+    }
+
+    /// Card AUDIT-COMPOSITION: record the digest of the resource-contract
+    /// environment this run's rows rest on, as a contract bundle of the
+    /// components' provenance. A digest that cannot be taken refuses every
+    /// component, so the rows are `Unknown`, never published unprovenanced.
+    pub(crate) fn record_contract_bundle(&mut self, contracts: &ResourceContracts) {
+        match (
+            &mut self.contract_bundles,
+            crate::report_components::contracts_digest(contracts),
+        ) {
+            (Ok(bundles), Ok(digest)) => {
+                bundles.insert(
+                    crate::report_components::RESOURCE_CONTRACTS_BUNDLE.into(),
+                    digest,
+                );
+            }
+            (bundles, Err(error)) => *bundles = Err(error),
+            (Err(_), Ok(_)) => {}
+        }
     }
 
     pub(crate) fn set_source_contracts(&mut self, evidence: Value) {
@@ -921,30 +950,65 @@ impl AuditReport {
     }
 
     /// Compatibility with an existing report schema; verdict contents are unchanged.
+    ///
+    /// Card AUDIT-COMPOSITION: every unit row becomes a component of the
+    /// integration semigroup, written to the sidecar
+    /// [`crate::report_components::sidecar_path`] first; the report's `units`
+    /// are then rendered from that sidecar, never written from the rows
+    /// directly ([`crate::report_components`]).
     pub fn write_with_revision_key(&self, path: &Path, revision_key: &str) -> Result<(), String> {
+        let provenance = self
+            .contract_bundles
+            .clone()
+            .map(crate::report_components::provenance);
+        let sidecar = crate::report_components::sidecar(&self.units, &provenance);
+        let sidecar_path = crate::report_components::sidecar_path(path);
+        let written = fs::File::create(&sidecar_path).and_then(|file| {
+            let mut writer = BufWriter::new(file);
+            serde_json::to_writer(&mut writer, &sidecar)?;
+            writer.write_all(b"\n")?;
+            writer.flush()
+        });
+        written.map_err(|error| format!("could not write {}: {error}", sidecar_path.display()))?;
+        let rows = crate::report_components::render(&sidecar);
         let file = fs::File::create(path)
             .map_err(|error| format!("could not write {}: {error}", path.display()))?;
         let mut writer = BufWriter::new(file);
-        self.write_document(&mut writer, revision_key)
-            .map_err(|error| format!("could not write {}: {error}", path.display()))
+        self.write_fields(
+            &mut writer,
+            self.borrowed_document(revision_key, ReportField::DerivedUnits(&rows)),
+        )
+        .map_err(|error| format!("could not write {}: {error}", path.display()))
     }
 
+    #[cfg(test)]
     fn write_document(&self, writer: &mut impl Write, revision_key: &str) -> Result<(), String> {
-        serde_json::to_writer_pretty(&mut *writer, &self.borrowed_document(revision_key))
-            .map_err(|error| error.to_string())?;
+        self.write_fields(
+            writer,
+            self.borrowed_document(revision_key, ReportField::Units(&self.units)),
+        )
+    }
+
+    fn write_fields(
+        &self,
+        writer: &mut impl Write,
+        fields: BTreeMap<&str, ReportField<'_>>,
+    ) -> Result<(), String> {
+        serde_json::to_writer_pretty(&mut *writer, &fields).map_err(|error| error.to_string())?;
         writer.write_all(b"\n").map_err(|error| error.to_string())?;
         writer.flush().map_err(|error| error.to_string())
     }
 
     /// Materialize only for callers that require an owned checkpoint document.
     pub(crate) fn document(&self, revision_key: &str) -> Value {
-        serde_json::to_value(self.borrowed_document(revision_key))
+        serde_json::to_value(self.borrowed_document(revision_key, ReportField::Units(&self.units)))
             .expect("report fields are JSON values")
     }
 
     fn borrowed_document<'a>(
         &'a self,
         revision_key: &'a str,
+        units: ReportField<'a>,
     ) -> BTreeMap<&'a str, ReportField<'a>> {
         let mut fields = BTreeMap::new();
         fields.insert("schema_version", ReportField::Version(1));
@@ -959,7 +1023,7 @@ impl AuditReport {
             "diagnostic_counts",
             ReportField::Counts(&self.diagnostic_counts),
         );
-        fields.insert("units", ReportField::Units(&self.units));
+        fields.insert("units", units);
         if let Some(value) = &self.source_contracts {
             fields.insert("source_contracts", ReportField::Json(value));
         }
@@ -990,6 +1054,7 @@ impl AuditReport {
             null_evidence: Vec::new(),
             callback_members: Vec::new(),
             member_prepass: None,
+            contract_bundles: Ok(BTreeMap::new()),
         }
     }
 
