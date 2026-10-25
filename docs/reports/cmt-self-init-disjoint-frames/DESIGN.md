@@ -36,6 +36,9 @@ band.
 The first subset also declines addresses of pointer-valued slots and declared
 Out/Stored/Removed parameter effects anywhere in the caller, so hidden rebinding
 cannot evade the assignment/type seal. Ordinary declared releases remain allowed.
+Every other call must have an ordinary contract in force; the exact checked
+initializer declaration is the sole body-checked exception. Indirect, guarded,
+missing and other interface forms decline this optional frame classification.
 
 All current identity aliases of the owner must have compatible source types.
 Only already recorded protected direct-slot pointer facts through those aliases

@@ -64,3 +64,12 @@ attribution; and the prescribed increment/status/tracking amendment. Neither
 the broader disjoint-frame follow-up nor the CMetrics getter chain closes.
 Clang extraction, C embedding/bounds/no-undefined-behaviour and Rust/model
 correspondence remain declared trust boundaries, not a C refinement proof.
+
+## Source-closure clarification before implementation
+
+To keep hidden effects outside this first subset, every call other than the
+exact checked initializer declaration must have an ordinary contract in force.
+Indirect, guarded, missing and other interface forms decline the optional frame
+proof. Out/Stored/Removed parameter effects remain excluded. This is a narrower
+source boundary; the forecasts above remain unchanged. No semantic implementation
+precedes this clarification.
