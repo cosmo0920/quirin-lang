@@ -218,7 +218,27 @@ merged tip. The landing gate is the arbiter.
 
 ## Gate
 
-GATE-PLACEHOLDER
+The scoped card gate ran on `ef25f7d57`, the report commit after the merge of
+main `c3d8ad3d4`: `scripts/gate_scope.py --base c3d8ad3d4`, under slots. It
+selected full mode, because the diff reaches `qcore-schemas` and a lockfile,
+with Lean all (a root changed) and the provider gate (`providers/` changed).
+Record: [gate.json](gate.json); logs in the card worktree's
+`private/ac/gate-1/`. Clang recorded beside it ([clang-version.txt](clang-version.txt)).
+
+| Step | Exit | Count |
+|---|---|---|
+| submodules | 0 | 1 checked out at its pin |
+| `cargo fmt --all -- --check` | 0 | |
+| `cargo clippy --all-targets -- -D warnings` | 0 | |
+| Rust suite (`run_test_binaries.py`, rust-suite slot) | 0 | 554 units, 567 summaries; 8,684 passed, 0 failed, 15 ignored |
+| `reevaluation_probe`, `reevaluation_followup` | 0, 0 | |
+| `check_lean_audits.py` (lean slot) | 0 | 373 audits |
+| `python3 -m unittest discover -s scripts/tests` | 0 | 445 tests |
+| `providers/package.py build`, then verify of all five packages and of `qcore.libevent` | 0, 0, 0 | 5 packages |
+| provider `cargo test --workspace --locked --offline` (rust-suite slot) | 0 | 133 passed, 0 failed, 1 ignored |
+| provider fmt, provider Clippy | 0, 0 | |
+
+POST-MERGE-PLACEHOLDER
 
 ## Boundaries
 
