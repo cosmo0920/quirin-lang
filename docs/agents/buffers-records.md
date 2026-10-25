@@ -3,6 +3,8 @@
 Current rule text, routed by the [rule router](README.md), which says what to
 read. Rule numbers and anchors are stable; backticked paths are repository-relative.
 
+<!-- generated:rules:start — edit docs/agents/rules/<id>.md, then run python3 scripts/gen_rule_docs.py -->
+
 <a id="constraint-15h"></a>
 
 <!-- preserved:constraint-15h:start -->
@@ -299,6 +301,8 @@ read. Rule numbers and anchors are stable; backticked paths are repository-relat
     the argument stands) — measured at 80 emitting programs byte-identical at
     wave 27 and re-measured at wave 39. `aggregates-v1`, `aggregate-owned-field`.
 <!-- preserved:constraint-15k:end -->
+
+<!-- generated:rules:end -->
 
 <a id="amendments-after-the-migration-checkpoint"></a>
 

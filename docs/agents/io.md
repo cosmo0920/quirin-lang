@@ -3,6 +3,8 @@
 Current rule text, routed by the [rule router](README.md), which says what to
 read. Rule numbers and anchors are stable; backticked paths are repository-relative.
 
+<!-- generated:rules:start — edit docs/agents/rules/<id>.md, then run python3 scripts/gen_rule_docs.py -->
+
 <a id="constraint-15c"></a>
 
 <!-- preserved:constraint-15c:start -->
@@ -200,3 +202,5 @@ read. Rule numbers and anchors are stable; backticked paths are repository-relat
     `ct42-protocol-cell`, `stability-reeval-3`.
 
 <!-- preserved:constraint-15p:end -->
+
+<!-- generated:rules:end -->

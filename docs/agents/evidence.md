@@ -3,6 +3,8 @@
 Current rule text, routed by the [rule router](README.md), which says what to
 read. Rule numbers and anchors are stable; backticked paths are repository-relative.
 
+<!-- generated:rules:start — edit docs/agents/rules/<id>.md, then run python3 scripts/gen_rule_docs.py -->
+
 <a id="constraint-21"></a>
 
 <!-- preserved:constraint-21:start -->
@@ -112,6 +114,8 @@ read. Rule numbers and anchors are stable; backticked paths are repository-relat
     `remaining-p04`, `c-gateway-wave`, `stability-reeval-1` §3.2.
 
 <!-- preserved:constraint-28:end -->
+
+<!-- generated:rules:end -->
 
 ## CT41 negative synchronization attribution
 
