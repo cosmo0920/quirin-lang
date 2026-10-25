@@ -6858,8 +6858,8 @@
   "note": "providers/ is a separate Cargo workspace, excluded from the core workspace; P01 verified empirically that the core workspace builds and passes its full suite with providers/ moved out of the tree."
  },
  "validation": {
-  "note": "Integration of AMENDMENTS-SCHEMA: merge abdbfb526 of card tip 6585dc7b8 onto main 710021bd7; records commit ab57c2242 written by scripts/apply_amendments.py itself (2 registers + increment paragraph). Full standing gate ON ab57c2242 through `scripts/gate_scope.py --base 710021bd7 --full` with gate slots (private log /media/Data/GitHub/quirin-lang/private/landing-as/console.log): submodules, fmt, Clippy, Rust 8671 passed/0 failed/15 ignored (553 units/566 summaries), both reevaluation examples, all exit 0. Python 460 ran with 1 failure, the stale dimensions.named_followups predating regeneration; after `build_matrix.py --gate` on this record, Python was rerun on the committed matrix. providers/ unchanged: provider_tests 133 carried from the AUDIT-CANONICAL-PATHS landing. No proof/ change: lean_audits 372 carried.",
-  "workspace_tests": 8671,
+  "note": "Integration of CONTRACT-LOCKS (landing-race policy: disjoint, already-gated commits). Merge of card tip 8a65129a7 onto main 51d103d60 (AMENDMENTS-SCHEMA, scripts/docs only, gated full), records commit d25e91367 written by `scripts/apply_amendments.py --legacy`. The card's own full gate ran on 7d7841603 (= local main c3d8ad3d4 + card): Rust 8672 passed/0 failed/15 ignored (553 units/566 summaries), provider tests 133/0/1, provider fmt/clippy, package builds and verifies, both reevaluation examples, all exit 0 (docs/reports/contract-locks/gate.json); its Python 445 passed after merging 710021bd7. TARGETED CHECK on d25e91367 (private logs /media/Data/GitHub/quirin-lang/private/landing-cl): cargo fmt --check 0; providers/contracts.py check 0 (18 pin locks, 11 inventory locks); gen_rule_docs.py --check 0; gen_lean_roots.py --check 0; provider Python 26 OK; qcore_contract_corpus + contract_view_census 8 passed/0 failed; provider cargo test --workspace 133 passed/0 failed/1 ignored; Python suite rerun on the committed regenerated matrix. workspace_tests carried from the card's full gate; no proof/ change: lean_audits 372 carried.",
+  "workspace_tests": 8672,
   "provider_tests": 133,
   "python_evidence_validator_tests": 460,
   "lean_audits": 372,
@@ -7241,9 +7241,9 @@
   "reevaluation_followup_exit": 0,
   "cargo_fmt": "clean",
   "cargo_clippy": "clean",
-  "standing_gate": "full gate on integration tip ab57c2242",
+  "standing_gate": "card full gate on 7d7841603 + targeted landing check on d25e91367",
   "full_language_conformance": false,
-  "measurement_provenance": "integrator_supplied (docs/reports/amendments-schema/integration/gate.json)"
+  "measurement_provenance": "integrator_supplied (docs/reports/contract-locks/integration/gate.json)"
  },
  "named_followups": [
   {

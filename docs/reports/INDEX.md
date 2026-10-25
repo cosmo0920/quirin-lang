@@ -209,6 +209,8 @@ Regenerate with `python3 scripts/build_docs_index.py`; validate with `--check`.
 
 | [contract-lifecycle-symbols](contract-lifecycle-symbols/README.md) | CONTRACT-LIFECYCLE-SYMBOLS |
 
+| [contract-locks](contract-locks/README.md) | CONTRACT-LOCKS: contract pins as generated lock files |
+
 | [contract-noreturn-and-borrowed-tails](contract-noreturn-and-borrowed-tails/README.md) | CONTRACT-NORETURN-AND-BORROWED-TAILS |
 
 | [contract-pin-tip-mode](contract-pin-tip-mode/README.md) | CONTRACT-PIN-TIP-MODE: contracts that track the tip of a fix branch |

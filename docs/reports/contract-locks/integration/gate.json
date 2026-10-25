@@ -1,0 +1,13 @@
+{
+  "note": "Integration of CONTRACT-LOCKS (landing-race policy: disjoint, already-gated commits). Merge of card tip 8a65129a7 onto main 51d103d60 (AMENDMENTS-SCHEMA, scripts/docs only, gated full), records commit d25e91367 written by `scripts/apply_amendments.py --legacy`. The card's own full gate ran on 7d7841603 (= local main c3d8ad3d4 + card): Rust 8672 passed/0 failed/15 ignored (553 units/566 summaries), provider tests 133/0/1, provider fmt/clippy, package builds and verifies, both reevaluation examples, all exit 0 (docs/reports/contract-locks/gate.json); its Python 445 passed after merging 710021bd7. TARGETED CHECK on d25e91367 (private logs /media/Data/GitHub/quirin-lang/private/landing-cl): cargo fmt --check 0; providers/contracts.py check 0 (18 pin locks, 11 inventory locks); gen_rule_docs.py --check 0; gen_lean_roots.py --check 0; provider Python 26 OK; qcore_contract_corpus + contract_view_census 8 passed/0 failed; provider cargo test --workspace 133 passed/0 failed/1 ignored; Python suite rerun on the committed regenerated matrix. workspace_tests carried from the card's full gate; no proof/ change: lean_audits 372 carried.",
+  "workspace_tests": 8672,
+  "provider_tests": 133,
+  "python_evidence_validator_tests": 460,
+  "reevaluation_probe_exit": 0,
+  "reevaluation_followup_exit": 0,
+  "cargo_fmt": "clean",
+  "cargo_clippy": "clean",
+  "standing_gate": "card full gate on 7d7841603 + targeted landing check on d25e91367",
+  "lean_audits": 372,
+  "clang": "present: Ubuntu clang version 21.1.8 (6ubuntu1)"
+}
