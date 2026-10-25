@@ -1,0 +1,39 @@
+{
+ "argv_requested": [
+  "python3",
+  "scripts/check_lean_audits.py",
+  "--jobs",
+  "6"
+ ],
+ "argv_run": [
+  "python3",
+  "scripts/check_lean_audits.py",
+  "--jobs",
+  "6"
+ ],
+ "class": "lean",
+ "cwd": "/home/cosmo/.codex/worktrees/808d/quirin-lang",
+ "exit": 0,
+ "finished": "2026-10-25T04:57:25+00:00",
+ "pid": 533030,
+ "schema": "quirin-gate-slot/1",
+ "slot_record": {
+  "audit_slot_ceiling": 15,
+  "class": "lean",
+  "gate_dir": "/tmp/quirin-gate",
+  "held": [
+   "legacy",
+   "lean/0"
+  ],
+  "legacy_lock": {
+   "mode": "shared",
+   "path": "/tmp/qcore-c-card-validation-20261022.lock"
+  },
+  "mem_available_kib": 54274712,
+  "mem_total_kib": 63615012,
+  "slot": 0,
+  "slot_count": 2,
+  "waited_seconds": 0.001
+ },
+ "started": "2026-10-25T04:57:09+00:00"
+}

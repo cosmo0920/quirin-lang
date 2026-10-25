@@ -1,0 +1,332 @@
+{
+  "head": "f350d8c5de1585b127d8ce45d0641cb5db37690f",
+  "cwd": "/home/cosmo/.codex/worktrees/808d/quirin-lang",
+  "started": "2026-10-25T04:45:59.576887+00:00",
+  "environment_overrides": {
+    "CARGO_BUILD_JOBS": "6",
+    "QCORE_CLANG": "/usr/lib/llvm-21/bin/clang"
+  },
+  "held_rust_slot_pid": 4126295,
+  "superseded_source": "7045d9d98",
+  "steps": [
+    {
+      "name": "submodules",
+      "command": [
+        "git",
+        "submodule",
+        "update",
+        "--init",
+        "--recursive"
+      ],
+      "exit": 0,
+      "seconds": 0.02071714701014571,
+      "log": "/home/cosmo/.codex/worktrees/808d/quirin-lang/private/cmt-main-integration/landing-current-2/submodules.log",
+      "log_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "name": "clang-version",
+      "command": [
+        "/usr/lib/llvm-21/bin/clang",
+        "--version"
+      ],
+      "exit": 0,
+      "seconds": 0.011110335995908827,
+      "log": "/home/cosmo/.codex/worktrees/808d/quirin-lang/private/cmt-main-integration/landing-current-2/clang-version.txt",
+      "log_sha256": "77467400b91c4cebb6c3e29d8a611af518a2f4078c22baf276b0a1373e996bf5"
+    },
+    {
+      "name": "fmt",
+      "command": [
+        "cargo",
+        "fmt",
+        "--all",
+        "--",
+        "--check"
+      ],
+      "exit": 0,
+      "seconds": 3.8011562949977815,
+      "log": "/home/cosmo/.codex/worktrees/808d/quirin-lang/private/cmt-main-integration/landing-current-2/fmt.log",
+      "log_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "name": "clippy",
+      "command": [
+        "cargo",
+        "clippy",
+        "--all-targets",
+        "--",
+        "-D",
+        "warnings"
+      ],
+      "exit": 0,
+      "seconds": 3.3412887460144702,
+      "log": "/home/cosmo/.codex/worktrees/808d/quirin-lang/private/cmt-main-integration/landing-current-2/clippy.log",
+      "log_sha256": "6c7d9fbf90d2144fdae5809186ad58fcab8cfe6b546cc6d8099411ebc0e5055f"
+    },
+    {
+      "name": "rust-tests",
+      "command": [
+        "python3",
+        "scripts/run_test_binaries.py",
+        "--jobs",
+        "6",
+        "--log-dir",
+        "/home/cosmo/.codex/worktrees/808d/quirin-lang/private/cmt-main-integration/landing-current-2/rust-binaries"
+      ],
+      "exit": 0,
+      "seconds": 535.4350381680124,
+      "log": "/home/cosmo/.codex/worktrees/808d/quirin-lang/private/cmt-main-integration/landing-current-2/rust-tests.log",
+      "log_sha256": "cae3c219cc07437586a88341c0877b7f48030445e4657299bcd07cea0f2c3dff"
+    },
+    {
+      "name": "reevaluation-probe",
+      "command": [
+        "cargo",
+        "run",
+        "-p",
+        "qcore-compiler",
+        "--example",
+        "reevaluation_probe"
+      ],
+      "exit": 0,
+      "seconds": 0.05794851700193249,
+      "log": "/home/cosmo/.codex/worktrees/808d/quirin-lang/private/cmt-main-integration/landing-current-2/reevaluation-probe.log",
+      "log_sha256": "6761b9176ba3c990d63121bbfa5227e9d2fba6eceb11c3277d3211d70ac749b4"
+    },
+    {
+      "name": "reevaluation-followup",
+      "command": [
+        "cargo",
+        "run",
+        "-p",
+        "qcore-compiler",
+        "--example",
+        "reevaluation_followup"
+      ],
+      "exit": 0,
+      "seconds": 0.44967414598795585,
+      "log": "/home/cosmo/.codex/worktrees/808d/quirin-lang/private/cmt-main-integration/landing-current-2/reevaluation-followup.log",
+      "log_sha256": "4a043b446cd662875393029787bcf3b90290beb909fbc1b562d2e67b6b22cd20"
+    },
+    {
+      "name": "lean-audits",
+      "command": [
+        "python3",
+        "scripts/gate_slot.py",
+        "lean",
+        "--receipt",
+        "private/cmt-main-integration/lean-retry-1/slot.json",
+        "--",
+        "python3",
+        "scripts/check_lean_audits.py",
+        "--jobs",
+        "6"
+      ],
+      "exit": 0,
+      "seconds": 16.263958802010166,
+      "log": "/home/cosmo/.codex/worktrees/808d/quirin-lang/private/cmt-main-integration/lean-retry-1/lean.log",
+      "log_sha256": "a9a76804b52cbcacf5ab4fd2a6e610c713f080f0a771a35ba4da25d4558d6ce9"
+    },
+    {
+      "name": "python-tests",
+      "command": [
+        "python3",
+        "-m",
+        "unittest",
+        "discover",
+        "-s",
+        "scripts/tests"
+      ],
+      "exit": 0,
+      "seconds": 37.90146841001115,
+      "log": "/home/cosmo/.codex/worktrees/808d/quirin-lang/private/cmt-main-integration/landing-current-2/python-tests.log",
+      "log_sha256": "bdcb100d875e370efc5c2e9fd6c1777a91b02345eae034570dfe95cc133af3a9"
+    },
+    {
+      "name": "contracts-check",
+      "command": [
+        "python3",
+        "providers/contracts.py",
+        "check"
+      ],
+      "exit": 0,
+      "seconds": 25.651826867979253,
+      "log": "/home/cosmo/.codex/worktrees/808d/quirin-lang/private/cmt-main-integration/landing-current-2/contracts-check.log",
+      "log_sha256": "a5cb1c96a7a3f41fa17a30222bc14c3963f5cca5bd19c82b10139563ad7d762b"
+    },
+    {
+      "name": "provider-tests",
+      "command": [
+        "cargo",
+        "test",
+        "--manifest-path",
+        "providers/Cargo.toml",
+        "--workspace",
+        "--locked",
+        "--offline"
+      ],
+      "exit": 0,
+      "seconds": 607.7077823939908,
+      "log": "/home/cosmo/.codex/worktrees/808d/quirin-lang/private/cmt-main-integration/landing-current-2/provider-tests.log",
+      "log_sha256": "5d7f90a255150f65fc5cc42b706fbc34a28357d556e2fa01a2d5cf4a98b03668"
+    },
+    {
+      "name": "provider-fmt",
+      "command": [
+        "cargo",
+        "fmt",
+        "--manifest-path",
+        "providers/Cargo.toml",
+        "--all",
+        "--",
+        "--check"
+      ],
+      "exit": 0,
+      "seconds": 4.060463398025604,
+      "log": "/home/cosmo/.codex/worktrees/808d/quirin-lang/private/cmt-main-integration/landing-current-2/provider-fmt.log",
+      "log_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "name": "provider-clippy",
+      "command": [
+        "cargo",
+        "clippy",
+        "--manifest-path",
+        "providers/Cargo.toml",
+        "--workspace",
+        "--all-targets",
+        "--locked",
+        "--offline",
+        "--",
+        "-D",
+        "warnings"
+      ],
+      "exit": 0,
+      "seconds": 1.1950639259885065,
+      "log": "/home/cosmo/.codex/worktrees/808d/quirin-lang/private/cmt-main-integration/landing-current-2/provider-clippy.log",
+      "log_sha256": "5e997b507592a0be1216f8fd3f27678c683bd6cc18dbce2cb938c433af00f03a"
+    },
+    {
+      "name": "provider-python",
+      "command": [
+        "python3",
+        "-m",
+        "unittest",
+        "discover",
+        "-s",
+        "providers/tests"
+      ],
+      "exit": 0,
+      "seconds": 23.947023360000458,
+      "log": "/home/cosmo/.codex/worktrees/808d/quirin-lang/private/cmt-main-integration/landing-current-2/provider-python.log",
+      "log_sha256": "1d47729c29cca46377d5fd55a68dbe43c3f9f1a72d4f8ba69ae374a0a7ba8a86"
+    },
+    {
+      "name": "package-build",
+      "command": [
+        "python3",
+        "providers/package.py",
+        "build",
+        "--output",
+        "/home/cosmo/.codex/worktrees/808d/quirin-lang/private/cmt-main-integration/landing-current-2/packages"
+      ],
+      "exit": 0,
+      "seconds": 27.06440332098282,
+      "log": "/home/cosmo/.codex/worktrees/808d/quirin-lang/private/cmt-main-integration/landing-current-2/package-build.log",
+      "log_sha256": "37234951c1a872b24a4fd10dd60752598db371551e92c48a206d040527a69edb"
+    },
+    {
+      "name": "verify-chunkio",
+      "command": [
+        "python3",
+        "providers/package.py",
+        "verify",
+        "/home/cosmo/.codex/worktrees/808d/quirin-lang/private/cmt-main-integration/landing-current-2/packages/qcore.chunkio"
+      ],
+      "exit": 0,
+      "seconds": 0.09977843999513425,
+      "log": "/home/cosmo/.codex/worktrees/808d/quirin-lang/private/cmt-main-integration/landing-current-2/verify-chunkio.log",
+      "log_sha256": "f7ce231c27393556ca7f82fb47f1ee1e115bd817fdb01e017e4cd48aa7128a48"
+    },
+    {
+      "name": "verify-cmetrics",
+      "command": [
+        "python3",
+        "providers/package.py",
+        "verify",
+        "/home/cosmo/.codex/worktrees/808d/quirin-lang/private/cmt-main-integration/landing-current-2/packages/qcore.cmetrics"
+      ],
+      "exit": 0,
+      "seconds": 0.10143438298837282,
+      "log": "/home/cosmo/.codex/worktrees/808d/quirin-lang/private/cmt-main-integration/landing-current-2/verify-cmetrics.log",
+      "log_sha256": "470f13eb19e2de6722edea0a0b8631cb3071c293c39b6233e503bece0c5e448b"
+    },
+    {
+      "name": "verify-ctraces",
+      "command": [
+        "python3",
+        "providers/package.py",
+        "verify",
+        "/home/cosmo/.codex/worktrees/808d/quirin-lang/private/cmt-main-integration/landing-current-2/packages/qcore.ctraces"
+      ],
+      "exit": 0,
+      "seconds": 0.09159280001767911,
+      "log": "/home/cosmo/.codex/worktrees/808d/quirin-lang/private/cmt-main-integration/landing-current-2/verify-ctraces.log",
+      "log_sha256": "7a6e6ccf803d0f62747b8cb927a6229206cb4c094ba639e27674854bd29774f5"
+    },
+    {
+      "name": "verify-libevent",
+      "command": [
+        "python3",
+        "providers/package.py",
+        "verify",
+        "/home/cosmo/.codex/worktrees/808d/quirin-lang/private/cmt-main-integration/landing-current-2/packages/qcore.libevent"
+      ],
+      "exit": 0,
+      "seconds": 0.10794499298208393,
+      "log": "/home/cosmo/.codex/worktrees/808d/quirin-lang/private/cmt-main-integration/landing-current-2/verify-libevent.log",
+      "log_sha256": "d0ba24a5989b6ccd922b95646fae11dbf05bb0041b4d48cca8e708a341c1d6bd"
+    },
+    {
+      "name": "verify-librdkafka",
+      "command": [
+        "python3",
+        "providers/package.py",
+        "verify",
+        "/home/cosmo/.codex/worktrees/808d/quirin-lang/private/cmt-main-integration/landing-current-2/packages/qcore.librdkafka"
+      ],
+      "exit": 0,
+      "seconds": 0.13679834897629917,
+      "log": "/home/cosmo/.codex/worktrees/808d/quirin-lang/private/cmt-main-integration/landing-current-2/verify-librdkafka.log",
+      "log_sha256": "37d1a62873f4a1f0835cfe1dd1c52f8f6aca5f77c670449669d0d51a07d1ee75"
+    }
+  ],
+  "head_after": "f350d8c5de1585b127d8ce45d0641cb5db37690f",
+  "clean_after": true,
+  "finished": "2026-10-25T05:07:11.582068+00:00",
+  "exit": 0,
+  "initial_attempt": {
+    "receipt": "/home/cosmo/.codex/worktrees/808d/quirin-lang/private/cmt-main-integration/landing-current-2/receipt.json",
+    "exit": 1,
+    "refused_step": {
+      "name": "lean-audits",
+      "command": [
+        "python3",
+        "scripts/gate_slot.py",
+        "lean",
+        "--",
+        "python3",
+        "scripts/check_lean_audits.py",
+        "--jobs",
+        "6"
+      ],
+      "exit": 2,
+      "seconds": 0.03292642399901524,
+      "log": "/home/cosmo/.codex/worktrees/808d/quirin-lang/private/cmt-main-integration/landing-current-2/lean-audits.log"
+    },
+    "ground": "The scheduler refused nested Lean before any Lean check ran. All other 19 checks passed. The required Lean checks were run from a separate process in the proper Lean slot on identical source."
+  },
+  "retry_receipt": "/home/cosmo/.codex/worktrees/808d/quirin-lang/private/cmt-main-integration/lean-retry-1/receipt.json",
+  "accepted_at": "2026-10-25T05:08:05.165701+00:00",
+  "reservation_exit": 1
+}
