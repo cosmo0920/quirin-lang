@@ -1,0 +1,13 @@
+{
+  "note": "Integration of CFG-RELEASE (user-approved private CFG release patch): merge of card tip 06553a8bc onto main e37e6703d, records commit ff0d1fa5b written by scripts/apply_amendments.py. Full standing gate ON ff0d1fa5b through `scripts/gate_scope.py --base e37e6703d --full` with gate slots (private log /media/Data/GitHub/quirin-lang/private/landing-cfg/console.log): submodules, fmt, Clippy, Rust 8688 passed/0 failed/15 ignored (555 units/568 summaries), both reevaluation examples, all exit 0. Python 460 ran with 1 failure, the stale dimensions.named_followups predating regeneration; after `build_matrix.py --gate` on this record Python was rerun on the committed matrix. Provider workspace `cargo test --workspace --no-fail-fast` (qcore-provider-conformance depends on qcore-audit) via gate_slot rust-suite: 133 passed/0 failed/1 ignored, exit 0 (provider-rust.log beside the console). No proof/ change: lean_audits 373 carried from the e37e6703d landing gate. Report parity (fixture, corpus, slice, system byte-identical BASE 710021bd7 vs TIP 3d358f76e) is the card's own evidence in docs/reports/cfg-release/.",
+  "workspace_tests": 8688,
+  "provider_tests": 133,
+  "python_evidence_validator_tests": 460,
+  "reevaluation_probe_exit": 0,
+  "reevaluation_followup_exit": 0,
+  "cargo_fmt": "clean",
+  "cargo_clippy": "clean",
+  "standing_gate": "full gate on integration tip ff0d1fa5b",
+  "lean_audits": 373,
+  "clang": "present: Ubuntu clang version 21.1.8 (6ubuntu1)"
+}
