@@ -1,6 +1,6 @@
 {
   "schema": "quirin-measure-inputs/1",
-  "description": "The three live routes every W48 card measured as BASE and TIP (the pinned eight-home corpus, the system selection and the tail-pause slice), with the inputs of the copied drivers (docs/reports/w48-bu-single-leaf-bodies/scripts/measure.py and docs/reports/audit-canonical-paths/scripts/measure.py): untracked prepared inputs relative to --inputs-base (the primary checkout holding build/cycle19 and the private preparations), the eight-home link map relative to --repository, selections and source-set profiles from each side's own tree. Interim: the explicit inputs until EVALUATION-PROFILES' evaluation.json records land (follow-up MEASURE-TOOL-PROFILE-ADAPTER).",
+  "description": "The three live routes every W48 card measured as BASE and TIP (the pinned eight-home corpus, the system selection and the tail-pause slice), with the inputs of the copied drivers (docs/reports/w48-bu-single-leaf-bodies/scripts/measure.py and docs/reports/audit-canonical-paths/scripts/measure.py): untracked prepared inputs relative to --inputs-base (the primary checkout holding build/cycle19 and the private preparations), the eight-home link map relative to --repository, selections and source-set profiles from each side's own tree. The same inputs as the live evaluation profiles in contract/evaluations/ (prefer --profile); kept for explicit route selection and for revisions older than those records.",
   "routes": [
     {
       "name": "corpus",

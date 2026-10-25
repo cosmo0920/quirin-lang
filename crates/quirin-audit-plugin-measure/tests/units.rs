@@ -58,6 +58,7 @@ fn corpus_route() -> Route {
         },
         clang: "clang".into(),
         tracked: Vec::new(),
+        required_inputs: Vec::new(),
     }
 }
 
@@ -193,10 +194,12 @@ fn the_mirror_respells_exactly_as_mirror_inputs_did() {
 
 // ---- the profile adapter ---------------------------------------------------
 
-fn fixture(name: &str) -> PathBuf {
-    Path::new(env!("CARGO_MANIFEST_DIR"))
-        .join("tests/fixtures")
+/// A committed evaluation-profile record (card EVALUATION-PROFILES).
+fn record(name: &str) -> PathBuf {
+    repository()
+        .join("contract/evaluations")
         .join(name)
+        .join("evaluation.json")
 }
 
 fn live(name: &str) -> Route {
@@ -208,14 +211,23 @@ fn live(name: &str) -> Route {
 }
 
 #[test]
-fn the_profile_adapter_reads_evaluation_profiles_draft_records() {
-    let corpus = inputs::read_profile(&fixture("evaluation-eight-home.json")).unwrap();
+fn the_profile_adapter_reads_the_committed_evaluation_profiles() {
+    let corpus = inputs::read_profile(&record("eight-home")).unwrap();
     let expected = live("corpus");
     assert_eq!(
         (corpus.name.as_str(), corpus.profile.as_str()),
         ("corpus", "eight-home")
     );
     assert_eq!(corpus.link_map.sha256, expected.link_map.sha256);
+    assert_eq!(
+        corpus.link_map.path,
+        "contract/evaluations/eight-home/link-map.json"
+    );
+    assert!(
+        corpus
+            .required_inputs
+            .contains(&"build/cycle19/c-gateway-wave-pin/fluent-bit-clang-source".to_owned())
+    );
     match (&corpus.kind, &expected.kind) {
         (
             RouteKind::PinnedCorpus {
@@ -243,14 +255,14 @@ fn the_profile_adapter_reads_evaluation_profiles_draft_records() {
         }
         other => panic!("{other:?}"),
     }
-    let system = inputs::read_profile(&fixture("evaluation-fluent-bit-system.json")).unwrap();
+    let system = inputs::read_profile(&record("fluent-bit-system")).unwrap();
     let expected = live("system");
     assert_eq!(system.name, "system");
     assert_eq!(
         system.kind, expected.kind,
         "the adapter places every configured input"
     );
-    let error = inputs::read_profile(&fixture("evaluation-cycle-19-fluent-bit.json")).unwrap_err();
+    let error = inputs::read_profile(&record("cycle-19-fluent-bit")).unwrap_err();
     assert!(error.contains("frozen"), "{error}");
 }
 

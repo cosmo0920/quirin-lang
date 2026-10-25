@@ -347,8 +347,8 @@ fn measure(request: &Request, options: &Options) -> Result<Response, String> {
                 };
                 if !path.is_file() {
                     return Err(format!(
-                        "no evaluation-profile record {} (card EVALUATION-PROFILES has not \
-                         landed here); pass --inputs FILE",
+                        "no evaluation-profile record {} (contract/evaluations/<name>/evaluation.json, \
+                         card EVALUATION-PROFILES); pass --inputs FILE",
                         path.display()
                     ));
                 }
@@ -804,6 +804,18 @@ fn measure(request: &Request, options: &Options) -> Result<Response, String> {
                     declared_routes.insert(route.name.clone(), check);
                 }
                 drop((left_rows, right_rows));
+                let mut figures = serde_json::Map::new();
+                let mut against = serde_json::Map::new();
+                for (label, directory) in [("before", &left_dir), ("after", &right_dir)] {
+                    if let Some((summary, baseline)) =
+                        profile_figures(&repository, route, directory)?
+                    {
+                        figures.insert(label.into(), summary);
+                        against.insert(label.into(), baseline);
+                    }
+                }
+                record["figures"] = Value::Object(figures);
+                record["profile_baseline"] = Value::Object(against);
                 record["artifacts"] = compare::artifacts(&left_dir, &right_dir)?;
                 record["before_directory"] = json!(left_dir.display().to_string());
                 record["after_directory"] = json!(right_dir.display().to_string());
@@ -925,6 +937,66 @@ fn measure(request: &Request, options: &Options) -> Result<Response, String> {
         )));
     }
     Ok(response)
+}
+
+/// A route directory's figures as `scripts/evaluation_profiles.py summarize`
+/// computes them (the one authority for the figures; card EVALUATION-PROFILES),
+/// and, when the route's profile has a committed record, `compare`'s verdict
+/// against its baseline (exit 0: reproduced, 1: moved, 2: frozen) with its
+/// lines. `None` when the repository has no such script (an older tree).
+///
+/// # Errors
+///
+/// The script fails to summarize an existing report: the figures are then not
+/// known, so the route is not compared.
+fn profile_figures(
+    repository: &Path,
+    route: &Route,
+    directory: &Path,
+) -> Result<Option<(Value, Value)>, String> {
+    let script = repository.join("scripts/evaluation_profiles.py");
+    if !script.is_file() {
+        return Ok(None);
+    }
+    let report = directory.join(route.report());
+    let null = directory.join(format!("{}-null.jsonl", route.name));
+    let run = |arguments: &[&str]| {
+        std::process::Command::new("python3")
+            .arg(&script)
+            .args(arguments)
+            .arg("--report")
+            .arg(&report)
+            .arg("--null")
+            .arg(&null)
+            .current_dir(repository)
+            .output()
+            .map_err(|error| format!("python3 {}: {error}", script.display()))
+    };
+    let summary = run(&["summarize"])?;
+    if !summary.status.success() {
+        return Err(format!(
+            "evaluation_profiles.py summarize failed on {}: {}",
+            report.display(),
+            String::from_utf8_lossy(&summary.stderr).trim()
+        ));
+    }
+    let figures: Value = serde_json::from_slice(&summary.stdout)
+        .map_err(|error| format!("evaluation_profiles.py summarize: {error}"))?;
+    let record = repository
+        .join("contract/evaluations")
+        .join(&route.profile)
+        .join("evaluation.json");
+    let baseline = if record.is_file() {
+        let compared = run(&["compare", &route.profile])?;
+        json!({
+            "profile": route.profile,
+            "exit": compared.status.code(),
+            "lines": String::from_utf8_lossy(&compared.stdout).lines().collect::<Vec<_>>(),
+        })
+    } else {
+        json!({"profile": route.profile, "record": "none committed"})
+    };
+    Ok(Some((figures, baseline)))
 }
 
 /// After a rule-switched run, every component of the switched side must

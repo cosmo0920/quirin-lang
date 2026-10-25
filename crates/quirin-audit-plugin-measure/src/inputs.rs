@@ -8,10 +8,11 @@
 //!   root and databases) and a unit list (the pinned `audit.json` selection or
 //!   an explicit `--selection` file) per route.
 //! * [`read_profile`], the **adapter** to card EVALUATION-PROFILES' record
-//!   `contract/profiles/<name>/evaluation.json` (schema
-//!   [`PROFILE_SCHEMA`]), written against that card's draft format. It is the
-//!   one place that format is read; binding it to the landed format is
-//!   follow-up `MEASURE-TOOL-PROFILE-ADAPTER`.
+//!   `contract/evaluations/<name>/evaluation.json` (schema
+//!   [`PROFILE_SCHEMA`], specified by `scripts/evaluation_profiles.py`). It is
+//!   the one place that format is read: every untracked input with a digest is
+//!   verified before a run, and every one without (a prepared directory) must
+//!   exist.
 //!
 //! Paths have three bases, named per field: the **repository** the tool runs
 //! for (`--repository`, the link map), the **inputs base** holding untracked
@@ -30,7 +31,7 @@ use crate::util::{is_sha256, read_json};
 /// The explicit inputs manifest's schema.
 pub const INPUTS_SCHEMA: &str = "quirin-measure-inputs/1";
 
-/// EVALUATION-PROFILES' draft evaluation-profile schema.
+/// EVALUATION-PROFILES' evaluation-profile schema.
 pub const PROFILE_SCHEMA: &str = "quirin-evaluation-profile/1";
 
 /// A file with an optional expected SHA-256 (verified when given).
@@ -91,6 +92,10 @@ pub struct Route {
     /// recorded per side and compared.
     #[serde(default)]
     pub tracked: Vec<String>,
+    /// Untracked prepared inputs without a digest (directories), relative to
+    /// the inputs base: each must exist before anything runs.
+    #[serde(default, skip_serializing_if = "Vec::is_empty")]
+    pub required_inputs: Vec<String>,
 }
 
 impl Route {
@@ -154,7 +159,12 @@ pub fn validate(routes: &[Route]) -> Result<(), String> {
             ));
         }
         let mut pinned = vec![&route.link_map];
-        let mut relative: Vec<&str> = route.tracked.iter().map(String::as_str).collect();
+        let mut relative: Vec<&str> = route
+            .tracked
+            .iter()
+            .chain(&route.required_inputs)
+            .map(String::as_str)
+            .collect();
         match &route.kind {
             RouteKind::PinnedCorpus {
                 inputs_root,
@@ -233,7 +243,15 @@ pub fn read_manifest(path: &Path) -> Result<Vec<Route>, String> {
             ],
             _ => &[],
         };
-        let common = ["name", "profile", "kind", "link_map", "clang", "tracked"];
+        let common = [
+            "name",
+            "profile",
+            "kind",
+            "link_map",
+            "clang",
+            "tracked",
+            "required_inputs",
+        ];
         for key in route
             .as_object()
             .into_iter()
@@ -270,14 +288,16 @@ pub fn route_label(profile: &str) -> String {
 }
 
 /// Where a profile's record lies: a path given directly, else
-/// `<repository>/contract/profiles/<name>/evaluation.json`.
+/// `<repository>/contract/evaluations/<name>/evaluation.json` (card
+/// EVALUATION-PROFILES; `scripts/evaluation_profiles.py` is the schema's
+/// authority).
 #[must_use]
 pub fn profile_record(repository: &Path, name: &str) -> PathBuf {
     if name.ends_with(".json") || name.contains('/') {
         PathBuf::from(name)
     } else {
         repository
-            .join("contract/profiles")
+            .join("contract/evaluations")
             .join(name)
             .join("evaluation.json")
     }
@@ -346,7 +366,7 @@ fn common_directory(paths: &[String]) -> String {
     first[..length].join("/")
 }
 
-/// The adapter: read EVALUATION-PROFILES' draft `evaluation.json` record into
+/// The adapter: read EVALUATION-PROFILES' `evaluation.json` record into
 /// a route. A frozen profile is refused: its figures describe the analyzer at
 /// its frozen revision and are never re-measured (plan seam A).
 ///
@@ -441,6 +461,12 @@ pub fn read_profile(path: &Path) -> Result<Route, String> {
         }
         other => return Err(at(format!("route kind {other:?} has no adapter"))),
     };
+    let required_inputs = entries(&record, "untracked")
+        .into_iter()
+        .filter(|entry| entry["sha256"].is_null())
+        .map(path_of)
+        .collect::<Result<_, _>>()
+        .map_err(at)?;
     let route = Route {
         name: route_label(&name),
         profile: name,
@@ -448,6 +474,7 @@ pub fn read_profile(path: &Path) -> Result<Route, String> {
         link_map,
         clang,
         tracked,
+        required_inputs,
     };
     validate(std::slice::from_ref(&route))?;
     Ok(route)
@@ -490,6 +517,7 @@ mod tests {
             },
             clang: "clang".into(),
             tracked: Vec::new(),
+            required_inputs: Vec::new(),
         };
         assert!(
             validate(std::slice::from_ref(&route))

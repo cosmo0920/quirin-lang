@@ -151,6 +151,15 @@ pub fn prepare(
 ) -> Result<(BTreeMap<String, Spelled>, Value), String> {
     // Every pinned digest first: a stale input refuses the measurement.
     for route in routes {
+        for required in &route.required_inputs {
+            if !base.join(required).exists() {
+                return Err(format!(
+                    "route `{}`: the prepared input {} is missing",
+                    route.name,
+                    base.join(required).display()
+                ));
+            }
+        }
         let pinned = match &route.kind {
             RouteKind::PinnedCorpus {
                 inputs_root,
