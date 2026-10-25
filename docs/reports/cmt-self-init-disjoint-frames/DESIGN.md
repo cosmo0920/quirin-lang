@@ -48,6 +48,12 @@ child leaks and later lifetime violations. Independent source/certificate replay
 must reject forged protection metadata. The initializer marker continues to block
 ordinary and cross-unit summary export.
 
+Alias preservation is a flow obligation, not a promise of new source admission:
+the existing aggregate-store classifier rejects an owner copied into another
+declared pointer. Retain that source refusal and exercise compatible-alias fact
+preservation with explicit flow states. No aggregate-store rule is relaxed by
+this initializer feature.
+
 The matching Lean module and audit must cover admission, layout separation,
 complete ledger/graph preservation, conservative invalidation, partial links,
 refusals and finite composition, with Rust/shared-vector and source controls.
