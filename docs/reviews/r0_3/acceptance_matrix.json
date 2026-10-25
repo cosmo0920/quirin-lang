@@ -195,7 +195,7 @@
   "ct_stage_names": 20,
   "ct_cells": 1000,
   "unverified_spec_items": 10,
-  "named_followups": 841
+  "named_followups": 846
  },
  "derivation": {
   "rule": "no count in a section this file marks `derived` is hand-copied from a status ledger; each is read from the manifest or validated run record named beside it. Sections marked `hand_maintained` are recorded analysis carried verbatim from the previous matrix, and `integrator_supplied` numbers name whether they were measured for this run or carried - see section_ownership.",
@@ -6858,10 +6858,10 @@
   "note": "providers/ is a separate Cargo workspace, excluded from the core workspace; P01 verified empirically that the core workspace builds and passes its full suite with providers/ moved out of the tree."
  },
  "validation": {
-  "note": "Integration of CFG-RELEASE (user-approved private CFG release patch): merge of card tip 06553a8bc onto main e37e6703d, records commit ff0d1fa5b written by scripts/apply_amendments.py. Full standing gate ON ff0d1fa5b through `scripts/gate_scope.py --base e37e6703d --full` with gate slots (private log /media/Data/GitHub/quirin-lang/private/landing-cfg/console.log): submodules, fmt, Clippy, Rust 8688 passed/0 failed/15 ignored (555 units/568 summaries), both reevaluation examples, all exit 0. Python 460 ran with 1 failure, the stale dimensions.named_followups predating regeneration; after `build_matrix.py --gate` on this record Python was rerun on the committed matrix. Provider workspace `cargo test --workspace --no-fail-fast` (qcore-provider-conformance depends on qcore-audit) via gate_slot rust-suite: 133 passed/0 failed/1 ignored, exit 0 (provider-rust.log beside the console). No proof/ change: lean_audits 373 carried from the e37e6703d landing gate. Report parity (fixture, corpus, slice, system byte-identical BASE 710021bd7 vs TIP 3d358f76e) is the card's own evidence in docs/reports/cfg-release/.",
+  "note": "Integration of EVALUATION-PROFILES: merge of card tip 8223b5461 (base 710021bd7) onto main bc1888f29; records commit 05d11438b written by scripts/apply_amendments.py, plus the plan's record path corrected to contract/evaluations/ (the card's finding: a contract/profiles/ directory without profile.json empties the first-party provider registry). `scripts/evaluation_profiles.py check --history` on the merge: 3 live, 6 frozen, bindings and policy ok. Full standing gate ON 05d11438b through `scripts/gate_scope.py --base bc1888f29 --full` with gate slots (private log /media/Data/GitHub/quirin-lang/private/landing-ep/console.log): submodules, fmt, Clippy, Rust 8688 passed/0 failed/15 ignored (555 units/568 summaries), both reevaluation examples, all exit 0. Python 492 ran with 1 failure, the stale dimensions.named_followups predating regeneration; after `build_matrix.py --gate` on this record Python was rerun on the committed matrix. providers/ and proof/ unchanged: provider_tests 133 and lean_audits 373 carried from bc1888f29's gate. The live baselines were measured at 710021bd7; the landings since (AUDIT-COMPOSITION, CFG-RELEASE: byte-identical identity runs; CONTRACT-LOCKS: no analyzer change; CMetrics setter contracts: executable adoption Open) are recorded as non-moving by their own evidence, not re-measured here.",
   "workspace_tests": 8688,
   "provider_tests": 133,
-  "python_evidence_validator_tests": 460,
+  "python_evidence_validator_tests": 492,
   "lean_audits": 373,
   "lean_audit_files": [
    "AuditAbiEnumConstPointer.lean",
@@ -7242,9 +7242,9 @@
   "reevaluation_followup_exit": 0,
   "cargo_fmt": "clean",
   "cargo_clippy": "clean",
-  "standing_gate": "full gate on integration tip ff0d1fa5b",
+  "standing_gate": "full gate on integration tip 05d11438b",
   "full_language_conformance": false,
-  "measurement_provenance": "integrator_supplied (docs/reports/cfg-release/integration/gate.json)"
+  "measurement_provenance": "integrator_supplied (docs/reports/evaluation-profiles/integration/gate.json)"
  },
  "named_followups": [
   {
