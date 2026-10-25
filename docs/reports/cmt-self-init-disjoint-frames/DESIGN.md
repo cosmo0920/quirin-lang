@@ -13,6 +13,8 @@ conservative footprint. A field name difference supplies no proof. Different
 resource IDs supply no cross-allocation separation or allocator-freshness premise.
 
 The existing empty-frame route remains available with its original guards.
+When the optional source/frame classification declines, restore its reading and
+contract-consultation state before retaining the old tracked instruction.
 The proposed alternative admits only exact LIVE, nonnullable, precise Heap owner
 and child identities, with child field links rooted at that owner. Every linked
 slot must have the source/layout proof. Partial-link markers must be a subset of
