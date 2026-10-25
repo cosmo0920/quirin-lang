@@ -1,0 +1,13 @@
+{
+  "note": "Fresh complete standing/provider landing gate on merge 17b15ec24990f53690f0311be0ddb8dcf46f3c75, combining CMetrics setter models and current local main including AUDIT-CANONICAL-PATHS and AMENDMENTS-SCHEMA. All 20 commands exit zero on this final source, including the committed regenerated matrix. The earlier 18-check source attempt and its Python failure are retained in superseded-attempt.json. The ordinary Rust reservation was queued on the earlier source but launches both suites only after the updated main merge was frozen, recorded in reservation-source.json. Actual command/log hashes and private paths are in command-receipt.json; Rust suites share one standard reservation and Lean is separately slotted. No native measurement or executable setter adoption is claimed. Historical card measurements are unchanged.",
+  "workspace_tests": 8674,
+  "provider_tests": 133,
+  "python_evidence_validator_tests": 460,
+  "lean_audits": 372,
+  "reevaluation_probe_exit": 0,
+  "reevaluation_followup_exit": 0,
+  "cargo_fmt": "clean",
+  "cargo_clippy": "clean",
+  "standing_gate": "all 20 required landing checks exit 0",
+  "clang": "present: Ubuntu clang version 21.1.8 (6ubuntu1)"
+}

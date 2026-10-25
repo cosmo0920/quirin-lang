@@ -6858,8 +6858,8 @@
   "note": "providers/ is a separate Cargo workspace, excluded from the core workspace; P01 verified empirically that the core workspace builds and passes its full suite with providers/ moved out of the tree."
  },
  "validation": {
-  "note": "Integration of AMENDMENTS-SCHEMA: merge abdbfb526 of card tip 6585dc7b8 onto main 710021bd7; records commit ab57c2242 written by scripts/apply_amendments.py itself (2 registers + increment paragraph). Full standing gate ON ab57c2242 through `scripts/gate_scope.py --base 710021bd7 --full` with gate slots (private log /media/Data/GitHub/quirin-lang/private/landing-as/console.log): submodules, fmt, Clippy, Rust 8671 passed/0 failed/15 ignored (553 units/566 summaries), both reevaluation examples, all exit 0. Python 460 ran with 1 failure, the stale dimensions.named_followups predating regeneration; after `build_matrix.py --gate` on this record, Python was rerun on the committed matrix. providers/ unchanged: provider_tests 133 carried from the AUDIT-CANONICAL-PATHS landing. No proof/ change: lean_audits 372 carried.",
-  "workspace_tests": 8671,
+  "note": "Fresh complete standing/provider landing gate on merge 17b15ec24990f53690f0311be0ddb8dcf46f3c75, combining CMetrics setter models and current local main including AUDIT-CANONICAL-PATHS and AMENDMENTS-SCHEMA. All 20 commands exit zero on this final source, including the committed regenerated matrix. The earlier 18-check source attempt and its Python failure are retained in superseded-attempt.json. The ordinary Rust reservation was queued on the earlier source but launches both suites only after the updated main merge was frozen, recorded in reservation-source.json. Actual command/log hashes and private paths are in command-receipt.json; Rust suites share one standard reservation and Lean is separately slotted. No native measurement or executable setter adoption is claimed. Historical card measurements are unchanged.",
+  "workspace_tests": 8674,
   "provider_tests": 133,
   "python_evidence_validator_tests": 460,
   "lean_audits": 372,
@@ -7241,9 +7241,9 @@
   "reevaluation_followup_exit": 0,
   "cargo_fmt": "clean",
   "cargo_clippy": "clean",
-  "standing_gate": "full gate on integration tip ab57c2242",
+  "standing_gate": "all 20 required landing checks exit 0",
   "full_language_conformance": false,
-  "measurement_provenance": "carried_from_previous_matrix: these numbers were NOT measured for this regeneration; pass --gate PATH with the standing-gate results of this checkpoint to replace them"
+  "measurement_provenance": "integrator_supplied (/home/cosmo/.codex/worktrees/808d/quirin-lang/docs/reports/cmetrics-setter-contracts/integration/gate.json)"
  },
  "named_followups": [
   {
