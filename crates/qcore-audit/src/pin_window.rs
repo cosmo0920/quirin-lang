@@ -548,7 +548,7 @@ mod tests {
     }
 
     fn files(tag: &str) -> BTreeMap<String, String> {
-        BTreeMap::from([(format!("crate/contracts.lock"), tag.repeat(64))])
+        BTreeMap::from([("crate/contracts.lock".to_owned(), tag.repeat(64))])
     }
 
     #[test]
