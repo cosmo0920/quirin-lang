@@ -101,6 +101,8 @@ Regenerate with `python3 scripts/build_docs_index.py`; validate with `--check`.
 
 | [certificate-context-binding](certificate-context-binding/README.md) | Certificate context binding |
 
+| [cfg-release](cfg-release/README.md) | CFG-RELEASE: release the projection result after its last full-record consumer |
+
 | [cg00-clang-gap-baseline](cg00-clang-gap-baseline/README.md) | CG00-CLANG-GAP-BASELINE: executed BEFORE controls for the Clang gap entries, and their corpus attribution |
 
 | [cg01-t-operator-closure](cg01-t-operator-closure/README.md) | CG01-T-OPERATOR-CLOSURE: route T's operators and literals, admitted per consumer |
@@ -446,6 +448,8 @@ Regenerate with `python3 scripts/build_docs_index.py`; validate with `--check`.
 
 | Card directory | Original report title |
 |---|---|
+
+| [evaluation-profiles](evaluation-profiles/README.md) | EVALUATION-PROFILES: profile records, cycle bindings, frozen/live policy |
 
 | [examples-aggregates](examples-aggregates/README.md) | EXAMPLES-AGGREGATES — the published records family (wave 28) |
 

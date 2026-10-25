@@ -98,11 +98,13 @@ when* and *what a card must re-measure*.
   loader like every other clause, so the rule consumes contract data instead
   of embedding it. Each such move is a card with a parity run.
 - **Evaluation profiles as data.** A cycle's figures bind to a profile:
-  `contract/profiles/<name>/evaluation.json` = route (inputs manifest digest,
+  `contract/evaluations/<name>/` = route (inputs manifest digest,
   link map, property files), contract bundle digests, and a policy
-  `frozen@<analyzer revision>` or `live`. The existing `profile.json` per
-  source set is the base; the evaluation record adds the digests and the
-  policy. A frozen profile's figures never move; a live one is recomputed by
+  `frozen@<analyzer revision>` or `live`, with cycle bindings in
+  `contract/evaluations/bindings.json` (card EVALUATION-PROFILES: a directory
+  under `contract/profiles/` without `profile.json` empties the first-party
+  provider registry, so evaluation records live beside, not inside, the
+  source-set profiles; `scripts/evaluation_profiles.py` is the authority). A frozen profile's figures never move; a live one is recomputed by
   the integrator from published baselines. `docs/cycles/CYCLE_*` and the
   matrix's requirement rows name their profile and policy, so an
   implementation change can no longer silently re-date a cycle's claim.

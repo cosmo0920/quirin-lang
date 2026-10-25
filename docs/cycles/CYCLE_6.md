@@ -2,6 +2,8 @@
 
 **Status: Done**
 
+Evaluation profile: none (a language and model cycle: its acceptance is the standing gate's Rust tests and Lean audits; it claims no audit measurement over a pinned source set).
+
 Cycle 6 implements Stage 6 of the prototype roadmap. It extends the Cycle 5
 typed-error exit maps with path-specific, sealed cleanup evidence. Cleanup-CFG
 lowering and C emission remain Cycle 7 work.

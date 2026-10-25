@@ -1,0 +1,31 @@
+{
+  "card": "EVALUATION-PROFILES",
+  "base": "710021bd713b90037e803d4a1f87d95eba6476c9",
+  "attempts": [
+    {
+      "id": 1,
+      "tip": "a1aafd5b0 (superseded; records under contract/profiles/, before decision 9a)",
+      "outcome": "stopped by the card (captured task) when user decision 9a arrived and the frozen records had to change; no step result is used",
+      "log": "/media/Data/GitHub/quirin-lang/private/evaluation-profiles/gate-1.log"
+    },
+    {
+      "id": 2,
+      "tip": "ab623584c (superseded)",
+      "outcome": "exit 1 before any step: --out private/gate already existed from attempt 1 (gate_scope.py refuses an existing output directory)",
+      "log": "/media/Data/GitHub/quirin-lang/private/evaluation-profiles/gate-2.log"
+    },
+    {
+      "id": 3,
+      "tip": "ab623584c (superseded; records under contract/profiles/)",
+      "outcome": "exit 1: rust-suite 3,219 passed / 35 failed in 6 units, both reevaluation probes 101; fmt, Clippy and the Python suite (476) passed. Cause: first-party provider discovery reads every contract/profiles directory (attempt-3-summary.json). The records moved to contract/evaluations/.",
+      "record": "attempt-3-records-under-contract-profiles.gate.json",
+      "log": "/media/Data/GitHub/quirin-lang/private/evaluation-profiles/gate-3.log"
+    },
+    {
+      "id": 4,
+      "tip": "572489ae7",
+      "outcome": "the card's gate; see ../gate.json",
+      "log": "/media/Data/GitHub/quirin-lang/private/evaluation-profiles/gate-4.log"
+    }
+  ]
+}

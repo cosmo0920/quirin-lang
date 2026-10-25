@@ -2,6 +2,8 @@
 
 **Status: Done**
 
+Evaluation profile: none (a language and model cycle: its acceptance is the standing gate's Rust tests and Lean audits; it claims no audit measurement over a pinned source set).
+
 Cycle 13 adds an independent source/CFG/C11 translation validator and hardens
 the conservative legacy-C analyzer without widening its safety claims.
 

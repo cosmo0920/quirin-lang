@@ -1,0 +1,31 @@
+{
+  "schema": "quirin-evaluation-baseline/1",
+  "profile": "eight-home",
+  "measured_revision": "710021bd713b90037e803d4a1f87d95eba6476c9",
+  "source": "docs/reports/evaluation-profiles/README.md",
+  "figures": {
+    "units": 185,
+    "unit_statuses": {
+      "Safe": 8,
+      "Unknown": 166,
+      "Unsafe": 7,
+      "data_only": 4
+    },
+    "unit_verdicts_sha256": "1d405041fde21d8b2028879c6b95cee7b3784b045b5632d310a61b2bd833c3e2",
+    "rows": 4834,
+    "row_statuses": {
+      "Safe": 1013,
+      "Unknown": 3812,
+      "Unsafe": 9
+    },
+    "row_verdicts_sha256": "7145778055e0c7b56f9b5ff434151696e3c28402f7b947da8bf6523f243fcc78",
+    "null_rows": 4921,
+    "null_verdicts": {
+      "Safe": 2549,
+      "Unknown": 2355,
+      "Unsafe": 17
+    },
+    "null_verdicts_sha256": "c4e8644bac151ab51e4c887e27083ee0186447d5a42ebbd71270ce404863518c"
+  },
+  "artifacts": []
+}

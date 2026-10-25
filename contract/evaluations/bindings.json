@@ -1,0 +1,38 @@
+{
+  "schema": "quirin-evaluation-bindings/1",
+  "matrix": {
+    "contract_modules": {
+      "none": "a contract-inventory pin (CONTRACT-LOCKS), not an evaluation result"
+    },
+    "contract_modules_pinned_by": {
+      "none": "a contract-inventory pin (CONTRACT-LOCKS), not an evaluation result"
+    },
+    "contract_clause_pin": {
+      "none": "a contract-inventory pin (CONTRACT-LOCKS), not an evaluation result"
+    },
+    "contract_modules_per_directory": {
+      "none": "a contract-inventory pin (CONTRACT-LOCKS), not an evaluation result"
+    },
+    "libevent_submodule_pin": {
+      "none": "the Cycle 18 submodule identity pin, checked by compiler/tests/libevent_submodule.rs; an input of cycle-18-libevent, not a result"
+    },
+    "cycle19_raw_units": "cycle-19-fluent-bit",
+    "configured_cmetrics_audit": "cmetrics-counter-configured",
+    "configured_chunkio_core_audit": "chunkio-core-configured",
+    "cycle19_monkey_callback_coverage": "cycle-19-monkey-callbacks",
+    "conditional_eight_home_cycle3": {
+      "split": {
+        "routes/corpus": "eight-home",
+        "routes/system": "fluent-bit-system",
+        "routes/slice": "fluent-bit-tail-pause"
+      }
+    }
+  },
+  "pinned_cycle_documents": {
+    "docs/cycles/CYCLE_18_LIBEVENT_VALIDATION.md": {
+      "profile": "cycle-18-libevent",
+      "reason": "its LF bytes are the historical_validation digest pinned by providers/qcore-provider-libevent/contracts/monkey/native_platform_matrix.qv, so the binding lives here, not in the document"
+    }
+  },
+  "frozen_amendments": []
+}

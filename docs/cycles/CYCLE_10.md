@@ -2,6 +2,8 @@
 
 **Status: Done**
 
+Evaluation profile: none (a language and model cycle: its acceptance is the standing gate's Rust tests and Lean audits; it claims no audit measurement over a pinned source set).
+
 Cycle 10 implements the source-front-end prerequisite in the post-Cycle-9
 roadmap. It preserves the checked IR APIs from Cycles 1–9 while adding one
 canonical, source-located boundary for later whole-program integration.

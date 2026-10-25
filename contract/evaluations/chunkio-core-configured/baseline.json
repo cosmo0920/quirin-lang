@@ -1,0 +1,25 @@
+{
+  "schema": "quirin-evaluation-baseline/1",
+  "profile": "chunkio-core-configured",
+  "measured_revision": "60eef72ac8572a6ffee99f442d57b975dcb2f9b2",
+  "source": "docs/reports/remaining-g03/README.md",
+  "figures": {
+    "units": 13,
+    "safe": 0,
+    "provisional_unsafe": 2,
+    "unknown": 11,
+    "data_only": 0,
+    "gateway_failures": 0,
+    "source": "docs/reports/remaining-g03/README.md"
+  },
+  "artifacts": [
+    {
+      "path": "docs/reports/remaining-g03/audit/chunkio-core-audit.json.gz",
+      "sha256": "5f2ac432347f099df2aee08ea0ea134fcb524c4d2dbd5cc20f3f7d733514368e"
+    },
+    {
+      "path": "docs/reports/remaining-g03/audit/chunkio-core-audit.assumptions.json",
+      "sha256": "1c2d385cb55f110549787bd12cc39e0f232873444f4c02266401b9c27fd017a3"
+    }
+  ]
+}
