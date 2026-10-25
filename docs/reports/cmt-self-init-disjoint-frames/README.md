@@ -112,8 +112,12 @@ hold a genuine `rust-suite` reservation; Lean runs separately in its own slot.
 Root Rust: 554 units, 567 summaries, 8,686 passed, 0 failed, 15 ignored.
 Provider Rust: 133 passed, 0 failed, 1 ignored. Lean: 373 audits passed under
 pinned 4.35.0. Root Python: 460 tests; provider Python: 25. All five packages
-build and verify. Root Python ran after the structural matrix commit; the final
-publication confirmation will be recorded after the final matrix/index update.
+build and verify. Root Python ran after the structural matrix commit. A fresh final confirmation
+ran `python3 -m unittest discover -s scripts/tests` on committed publication
+`6280e080d`, after the final matrix/index updates: 460 tests, exit 0. The
+[confirmation receipt](publication/confirmation/receipt.json) retains the exact
+command, head, environment, private log path and hash; the full output is retained
+beside it. Intentional negative-fixture messages are followed by the final OK.
 
 [preliminary-attempts.json](gate/preliminary-attempts.json) retains the earlier
 nonzero Lean and focused Rust attempts and their corrections. Lean failures
