@@ -18,6 +18,7 @@ sys.path.insert(0, str(Path(__file__).resolve().parent))
 sys.path.insert(0, str(ROOT / "scripts"))
 from tracked_files import tracked_files  # noqa: E402
 import apply_amendments as tool  # noqa: E402
+from test_evaluation_profiles import Fixture as ProfileFixture, commit  # noqa: E402
 
 NOTICE = "> Counts and observations describe their recorded checkpoints."
 RECORD = "# Wave 99, first record\n\n[History index](README.md)\n\n" + NOTICE + "\n\n**OLD.** Older paragraph.\n"
@@ -108,7 +109,7 @@ class ApplyTests(unittest.TestCase):
         self.assertEqual(followups[1], {"id": "NEW-ONE", "title": "New", "why": "Why new.",
                                         "source": "docs/reports/test-card/README.md"})
         self.assertEqual(matrix["updated"], "x")
-        self.assertIn("build_matrix.py --gate", out)
+        self.assertIn("build_matrix.py . --gate", out)
         self.assertIn("build_docs_index.py", out)
 
     def test_null_status_leaves_status_untouched(self):
@@ -169,13 +170,32 @@ class ApplyTests(unittest.TestCase):
             expected.pop(self.root / "amendments.json", None)
             self.assertEqual(current, expected)
 
-    def test_reserved_fields_are_validated_and_not_applied(self):
-        document = dict(DOCUMENT, ledger=[], status_paragraph=None,
-                        profiles=["eight-home", "system"], contribution={"rows": []})
+    def test_contribution_is_validated_and_not_applied(self):
+        document = dict(DOCUMENT, ledger=[], status_paragraph=None, profiles=[],
+                        contribution={"rows": []})
         code, out, err = run(self.root, document)
         self.assertEqual(code, 0, err)
-        self.assertIn("reserved: profiles validated, not applied", out)
+        self.assertNotIn("reserved: profiles", out)
         self.assertIn("reserved: contribution validated, not applied", out)
+
+    def test_profiles_in_a_tree_without_evaluation_profiles_are_refused(self):
+        before = snapshot(self.root)
+        document = dict(DOCUMENT, ledger=[], status_paragraph=None, profiles=["eight-home"])
+        code, _, err = run(self.root, document, "--check")
+        self.assertEqual(code, 1)
+        self.assertIn("contract/evaluations does not exist", err)
+        code, _, err = run(self.root, document)
+        self.assertEqual(code, 1)
+        self.assertIn("nothing was written", err)
+        current = snapshot(self.root)
+        current.pop(self.root / "amendments.json", None)
+        self.assertEqual(current, before)
+
+    def test_the_post_gate_sequence_is_printed_after_a_write(self):
+        code, out, _ = run(self.root, DOCUMENT)
+        self.assertEqual(code, 0)
+        self.assertIn("build_matrix.py . --gate", out)
+        self.assertIn("python3 scripts/land.py check", out)
 
     def test_second_application_is_refused(self):
         self.assertEqual(run(self.root, DOCUMENT)[0], 0)
@@ -272,6 +292,102 @@ def git_show(revision, path):
             f"the parity replay reads {revision}:{path} from git objects, which are unavailable "
             f"(a shallow clone or an export): {result.stderr.decode(errors='replace')}")
     return result.stdout
+
+
+class ProfilesCheck(unittest.TestCase):
+    """Card RECORDS-TOOLING (EVALUATION-PROFILES-AMENDMENTS-CHECK): every run
+    checks `profiles[]` through evaluation_profiles.check_amendments against
+    the document's base, fail-closed, in the evaluation-profiles fixture
+    repository (one live profile `demo`, one frozen profile `old`)."""
+
+    def setUp(self):
+        self.directory = tempfile.TemporaryDirectory()
+        self.fixture = ProfileFixture(self.directory.name)
+        self.root = self.fixture.root
+        self.base = self.fixture.head
+        increments = self.root / "docs/development/increments"
+        increments.mkdir(parents=True)
+        (increments / "README.md").write_text("Current record file: [wave-99.md](wave-99.md)\n")
+        (increments / "wave-99.md").write_text(RECORD)
+        (self.root / "docs/STATUS.md").write_text(STATUS)
+
+    def tearDown(self):
+        self.directory.cleanup()
+
+    def document(self, profiles=None, base=None):
+        document = dict(DOCUMENT, base=base or self.base, ledger=[], status_paragraph=None)
+        if profiles is not None:
+            document["profiles"] = profiles
+        return document
+
+    def move_demo(self):
+        self.fixture.write_live({"units": 2, "rows": 2}, "moved",
+                                history=self.fixture.record("demo")["baseline_history"])
+
+    def assert_refused(self, document, needle, *flags):
+        for mode in (("--check",), ("--dry-run",), ()):
+            before = snapshot(self.root)
+            before.pop(self.root / "amendments.json", None)
+            code, _, err = run(self.root, document, *flags, *mode)
+            self.assertEqual(code, 1, (mode, err))
+            self.assertIn(needle, err)
+            self.assertIn("nothing was written", err)
+            current = snapshot(self.root)
+            current.pop(self.root / "amendments.json", None)
+            self.assertEqual(current, before, mode)
+
+    def test_unmoved_tree_passes_with_an_absent_or_empty_list(self):
+        for document in (self.document(), self.document([])):
+            code, out, err = run(self.root, document, "--check")
+            self.assertEqual(code, 0, err)
+            self.assertIn(f"profiles: [] checked against {self.base}", out)
+
+    def test_a_moved_live_profile_that_is_listed_passes(self):
+        self.move_demo()
+        code, out, err = run(self.root, self.document(["demo"]), "--check")
+        self.assertEqual(code, 0, err)
+        self.assertIn("profiles: ['demo'] checked", out)
+
+    def test_an_unknown_profile_is_refused(self):
+        self.assert_refused(self.document(["absent"]), "unknown evaluation profile 'absent'")
+
+    def test_a_frozen_profile_is_refused(self):
+        self.assert_refused(self.document(["old"]), "frozen profile 'old'")
+
+    def test_an_unlisted_moved_profile_is_refused(self):
+        self.move_demo()
+        self.assert_refused(self.document(), "baseline changed since")
+        self.assert_refused(self.document([]), "baseline changed since")
+
+    def test_a_listed_unmoved_profile_is_refused(self):
+        self.assert_refused(self.document(["demo"]), "baseline changed since")
+
+    def test_a_base_outside_the_object_store_is_refused(self):
+        self.assert_refused(self.document(base="f" * 40), "not in this checkout's object store")
+
+    def test_profiles_base_overrides_the_document_base(self):
+        self.move_demo()
+        moved = commit(self.root, "demo moved by another card")
+        document = self.document(["demo"])
+        self.assertEqual(run(self.root, document, "--check")[0], 0)
+        self.assert_refused(document, "baseline changed since", "--profiles-base", moved)
+        code, _, err = run(self.root, self.document([]), "--check", "--profiles-base", moved)
+        self.assertEqual(code, 0, err)
+
+    def test_a_legacy_document_without_base_needs_profiles_base(self):
+        document = self.document()
+        document["base"] = None
+        with self.assertRaisesRegex(tool.AmendmentError, "--profiles-base"):
+            tool.check_profiles(document, self.root)
+        self.assertEqual(tool.check_profiles(document, self.root, self.base), [])
+
+    def test_python_isolated_mode_finds_the_sibling_module(self):
+        path = self.root / "amendments.json"
+        path.write_text(json.dumps(self.document()))
+        result = subprocess.run([sys.executable, "-I", str(ROOT / "scripts/apply_amendments.py"),
+                                 str(path), "--root", str(self.root), "--check"],
+                                capture_output=True, text=True)
+        self.assertEqual(result.returncode, 0, result.stderr)
 
 
 class ParityTests(unittest.TestCase):
