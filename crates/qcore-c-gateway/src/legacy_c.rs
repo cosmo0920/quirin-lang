@@ -864,6 +864,10 @@ pub enum LegacyInstruction {
         base: String,
         path: Vec<String>,
         writes: Vec<String>,
+        #[serde(default, skip_serializing_if = "Vec::is_empty")]
+        protected_fields: Vec<String>,
+        #[serde(default, skip_serializing_if = "Vec::is_empty")]
+        compatible_roots: Vec<String>,
         access: Box<LegacyInstruction>,
         fallback: Box<LegacyInstruction>,
     },
