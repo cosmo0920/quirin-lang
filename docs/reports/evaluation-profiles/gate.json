@@ -1,0 +1,590 @@
+{
+ "schema": "quirin-gate-scope/1",
+ "source": "git diff",
+ "base": "710021bd713b90037e803d4a1f87d95eba6476c9",
+ "head": "572489ae76c25f4beb2add5477fc0cb36e77575e",
+ "committed": [
+  "contract/evaluations/bindings.json",
+  "contract/evaluations/chunkio-core-configured/baseline.json",
+  "contract/evaluations/chunkio-core-configured/evaluation.json",
+  "contract/evaluations/cmetrics-counter-configured/baseline.json",
+  "contract/evaluations/cmetrics-counter-configured/evaluation.json",
+  "contract/evaluations/cycle-17-cfl/baseline.json",
+  "contract/evaluations/cycle-17-cfl/evaluation.json",
+  "contract/evaluations/cycle-18-libevent/baseline.json",
+  "contract/evaluations/cycle-18-libevent/evaluation.json",
+  "contract/evaluations/cycle-19-fluent-bit/baseline.json",
+  "contract/evaluations/cycle-19-fluent-bit/evaluation.json",
+  "contract/evaluations/cycle-19-monkey-callbacks/baseline.json",
+  "contract/evaluations/cycle-19-monkey-callbacks/evaluation.json",
+  "contract/evaluations/eight-home/baseline.json",
+  "contract/evaluations/eight-home/evaluation.json",
+  "contract/evaluations/eight-home/link-map.json",
+  "contract/evaluations/fluent-bit-system/baseline.json",
+  "contract/evaluations/fluent-bit-system/evaluation.json",
+  "contract/evaluations/fluent-bit-tail-pause/baseline.json",
+  "contract/evaluations/fluent-bit-tail-pause/evaluation.json",
+  "docs/agents/validation.md",
+  "docs/cycles/CYCLE_10.md",
+  "docs/cycles/CYCLE_11.md",
+  "docs/cycles/CYCLE_12.md",
+  "docs/cycles/CYCLE_13.md",
+  "docs/cycles/CYCLE_14.md",
+  "docs/cycles/CYCLE_15.md",
+  "docs/cycles/CYCLE_16.md",
+  "docs/cycles/CYCLE_17.md",
+  "docs/cycles/CYCLE_17_CFL_VALIDATION.md",
+  "docs/cycles/CYCLE_18.md",
+  "docs/cycles/CYCLE_19.md",
+  "docs/cycles/CYCLE_19_FLUENT_BIT_LIBRARIES_VALIDATION.md",
+  "docs/cycles/CYCLE_2.md",
+  "docs/cycles/CYCLE_20.md",
+  "docs/cycles/CYCLE_3.md",
+  "docs/cycles/CYCLE_4.md",
+  "docs/cycles/CYCLE_5.md",
+  "docs/cycles/CYCLE_6.md",
+  "docs/cycles/CYCLE_7.md",
+  "docs/cycles/CYCLE_7_5.md",
+  "docs/cycles/CYCLE_8.md",
+  "docs/cycles/CYCLE_9.md",
+  "docs/reports/evaluation-profiles/README.md",
+  "docs/reports/evaluation-profiles/baseline/corpus-invocation.json",
+  "docs/reports/evaluation-profiles/baseline/corpus-slot.json",
+  "docs/reports/evaluation-profiles/baseline/corpus.exit",
+  "docs/reports/evaluation-profiles/baseline/slice-invocation.json",
+  "docs/reports/evaluation-profiles/baseline/slice-slot.json",
+  "docs/reports/evaluation-profiles/baseline/slice.exit",
+  "docs/reports/evaluation-profiles/baseline/system-invocation.json",
+  "docs/reports/evaluation-profiles/baseline/system-slot.json",
+  "docs/reports/evaluation-profiles/baseline/system.exit",
+  "docs/reports/evaluation-profiles/integration-amendments.json",
+  "docs/reports/evaluation-profiles/scripts/archive_runs.py",
+  "docs/reports/evaluation-profiles/scripts/baseline.sh",
+  "docs/reports/evaluation-profiles/scripts/build_profiles.py",
+  "scripts/evaluation_profiles.py",
+  "scripts/tests/test_evaluation_profiles.py"
+ ],
+ "uncommitted": [],
+ "scope": {
+  "paths": [
+   "contract/evaluations/bindings.json",
+   "contract/evaluations/chunkio-core-configured/baseline.json",
+   "contract/evaluations/chunkio-core-configured/evaluation.json",
+   "contract/evaluations/cmetrics-counter-configured/baseline.json",
+   "contract/evaluations/cmetrics-counter-configured/evaluation.json",
+   "contract/evaluations/cycle-17-cfl/baseline.json",
+   "contract/evaluations/cycle-17-cfl/evaluation.json",
+   "contract/evaluations/cycle-18-libevent/baseline.json",
+   "contract/evaluations/cycle-18-libevent/evaluation.json",
+   "contract/evaluations/cycle-19-fluent-bit/baseline.json",
+   "contract/evaluations/cycle-19-fluent-bit/evaluation.json",
+   "contract/evaluations/cycle-19-monkey-callbacks/baseline.json",
+   "contract/evaluations/cycle-19-monkey-callbacks/evaluation.json",
+   "contract/evaluations/eight-home/baseline.json",
+   "contract/evaluations/eight-home/evaluation.json",
+   "contract/evaluations/eight-home/link-map.json",
+   "contract/evaluations/fluent-bit-system/baseline.json",
+   "contract/evaluations/fluent-bit-system/evaluation.json",
+   "contract/evaluations/fluent-bit-tail-pause/baseline.json",
+   "contract/evaluations/fluent-bit-tail-pause/evaluation.json",
+   "docs/agents/validation.md",
+   "docs/cycles/CYCLE_10.md",
+   "docs/cycles/CYCLE_11.md",
+   "docs/cycles/CYCLE_12.md",
+   "docs/cycles/CYCLE_13.md",
+   "docs/cycles/CYCLE_14.md",
+   "docs/cycles/CYCLE_15.md",
+   "docs/cycles/CYCLE_16.md",
+   "docs/cycles/CYCLE_17.md",
+   "docs/cycles/CYCLE_17_CFL_VALIDATION.md",
+   "docs/cycles/CYCLE_18.md",
+   "docs/cycles/CYCLE_19.md",
+   "docs/cycles/CYCLE_19_FLUENT_BIT_LIBRARIES_VALIDATION.md",
+   "docs/cycles/CYCLE_2.md",
+   "docs/cycles/CYCLE_20.md",
+   "docs/cycles/CYCLE_3.md",
+   "docs/cycles/CYCLE_4.md",
+   "docs/cycles/CYCLE_5.md",
+   "docs/cycles/CYCLE_6.md",
+   "docs/cycles/CYCLE_7.md",
+   "docs/cycles/CYCLE_7_5.md",
+   "docs/cycles/CYCLE_8.md",
+   "docs/cycles/CYCLE_9.md",
+   "docs/reports/evaluation-profiles/README.md",
+   "docs/reports/evaluation-profiles/baseline/corpus-invocation.json",
+   "docs/reports/evaluation-profiles/baseline/corpus-slot.json",
+   "docs/reports/evaluation-profiles/baseline/corpus.exit",
+   "docs/reports/evaluation-profiles/baseline/slice-invocation.json",
+   "docs/reports/evaluation-profiles/baseline/slice-slot.json",
+   "docs/reports/evaluation-profiles/baseline/slice.exit",
+   "docs/reports/evaluation-profiles/baseline/system-invocation.json",
+   "docs/reports/evaluation-profiles/baseline/system-slot.json",
+   "docs/reports/evaluation-profiles/baseline/system.exit",
+   "docs/reports/evaluation-profiles/integration-amendments.json",
+   "docs/reports/evaluation-profiles/scripts/archive_runs.py",
+   "docs/reports/evaluation-profiles/scripts/baseline.sh",
+   "docs/reports/evaluation-profiles/scripts/build_profiles.py",
+   "scripts/evaluation_profiles.py",
+   "scripts/tests/test_evaluation_profiles.py"
+  ],
+  "attribution": {
+   "contract/evaluations/bindings.json": [
+    "unattributed"
+   ],
+   "contract/evaluations/chunkio-core-configured/baseline.json": [
+    "unattributed"
+   ],
+   "contract/evaluations/chunkio-core-configured/evaluation.json": [
+    "unattributed"
+   ],
+   "contract/evaluations/cmetrics-counter-configured/baseline.json": [
+    "unattributed"
+   ],
+   "contract/evaluations/cmetrics-counter-configured/evaluation.json": [
+    "unattributed"
+   ],
+   "contract/evaluations/cycle-17-cfl/baseline.json": [
+    "unattributed"
+   ],
+   "contract/evaluations/cycle-17-cfl/evaluation.json": [
+    "unattributed"
+   ],
+   "contract/evaluations/cycle-18-libevent/baseline.json": [
+    "unattributed"
+   ],
+   "contract/evaluations/cycle-18-libevent/evaluation.json": [
+    "unattributed"
+   ],
+   "contract/evaluations/cycle-19-fluent-bit/baseline.json": [
+    "unattributed"
+   ],
+   "contract/evaluations/cycle-19-fluent-bit/evaluation.json": [
+    "unattributed"
+   ],
+   "contract/evaluations/cycle-19-monkey-callbacks/baseline.json": [
+    "unattributed"
+   ],
+   "contract/evaluations/cycle-19-monkey-callbacks/evaluation.json": [
+    "unattributed"
+   ],
+   "contract/evaluations/eight-home/baseline.json": [
+    "unattributed"
+   ],
+   "contract/evaluations/eight-home/evaluation.json": [
+    "unattributed"
+   ],
+   "contract/evaluations/eight-home/link-map.json": [
+    "unattributed"
+   ],
+   "contract/evaluations/fluent-bit-system/baseline.json": [
+    "unattributed"
+   ],
+   "contract/evaluations/fluent-bit-system/evaluation.json": [
+    "unattributed"
+   ],
+   "contract/evaluations/fluent-bit-tail-pause/baseline.json": [
+    "unattributed"
+   ],
+   "contract/evaluations/fluent-bit-tail-pause/evaluation.json": [
+    "unattributed"
+   ],
+   "docs/agents/validation.md": [
+    "class prose"
+   ],
+   "docs/cycles/CYCLE_10.md": [
+    "class prose"
+   ],
+   "docs/cycles/CYCLE_11.md": [
+    "class prose"
+   ],
+   "docs/cycles/CYCLE_12.md": [
+    "class prose"
+   ],
+   "docs/cycles/CYCLE_13.md": [
+    "class prose"
+   ],
+   "docs/cycles/CYCLE_14.md": [
+    "class prose"
+   ],
+   "docs/cycles/CYCLE_15.md": [
+    "class prose"
+   ],
+   "docs/cycles/CYCLE_16.md": [
+    "class prose"
+   ],
+   "docs/cycles/CYCLE_17.md": [
+    "class prose"
+   ],
+   "docs/cycles/CYCLE_17_CFL_VALIDATION.md": [
+    "class prose"
+   ],
+   "docs/cycles/CYCLE_18.md": [
+    "class prose"
+   ],
+   "docs/cycles/CYCLE_19.md": [
+    "class prose"
+   ],
+   "docs/cycles/CYCLE_19_FLUENT_BIT_LIBRARIES_VALIDATION.md": [
+    "class prose"
+   ],
+   "docs/cycles/CYCLE_2.md": [
+    "class prose"
+   ],
+   "docs/cycles/CYCLE_20.md": [
+    "class prose"
+   ],
+   "docs/cycles/CYCLE_3.md": [
+    "class prose"
+   ],
+   "docs/cycles/CYCLE_4.md": [
+    "class prose"
+   ],
+   "docs/cycles/CYCLE_5.md": [
+    "class prose"
+   ],
+   "docs/cycles/CYCLE_6.md": [
+    "class prose"
+   ],
+   "docs/cycles/CYCLE_7.md": [
+    "class prose"
+   ],
+   "docs/cycles/CYCLE_7_5.md": [
+    "class prose"
+   ],
+   "docs/cycles/CYCLE_8.md": [
+    "class prose"
+   ],
+   "docs/cycles/CYCLE_9.md": [
+    "class prose"
+   ],
+   "docs/reports/evaluation-profiles/README.md": [
+    "class prose"
+   ],
+   "docs/reports/evaluation-profiles/baseline/corpus-invocation.json": [
+    "class prose"
+   ],
+   "docs/reports/evaluation-profiles/baseline/corpus-slot.json": [
+    "class prose"
+   ],
+   "docs/reports/evaluation-profiles/baseline/corpus.exit": [
+    "class prose"
+   ],
+   "docs/reports/evaluation-profiles/baseline/slice-invocation.json": [
+    "class prose"
+   ],
+   "docs/reports/evaluation-profiles/baseline/slice-slot.json": [
+    "class prose"
+   ],
+   "docs/reports/evaluation-profiles/baseline/slice.exit": [
+    "class prose"
+   ],
+   "docs/reports/evaluation-profiles/baseline/system-invocation.json": [
+    "class prose"
+   ],
+   "docs/reports/evaluation-profiles/baseline/system-slot.json": [
+    "class prose"
+   ],
+   "docs/reports/evaluation-profiles/baseline/system.exit": [
+    "class prose"
+   ],
+   "docs/reports/evaluation-profiles/integration-amendments.json": [
+    "class prose"
+   ],
+   "docs/reports/evaluation-profiles/scripts/archive_runs.py": [
+    "class prose"
+   ],
+   "docs/reports/evaluation-profiles/scripts/baseline.sh": [
+    "class prose"
+   ],
+   "docs/reports/evaluation-profiles/scripts/build_profiles.py": [
+    "class prose"
+   ],
+   "scripts/evaluation_profiles.py": [
+    "class python"
+   ],
+   "scripts/tests/test_evaluation_profiles.py": [
+    "class python"
+   ]
+  },
+  "affected": {},
+  "mode": "full",
+  "full_reasons": [
+   "contract/evaluations/bindings.json: no crate owns or reads it and it is not prose, Python, Lean or provider tooling (fail-closed)",
+   "contract/evaluations/chunkio-core-configured/baseline.json: no crate owns or reads it and it is not prose, Python, Lean or provider tooling (fail-closed)",
+   "contract/evaluations/chunkio-core-configured/evaluation.json: no crate owns or reads it and it is not prose, Python, Lean or provider tooling (fail-closed)",
+   "contract/evaluations/cmetrics-counter-configured/baseline.json: no crate owns or reads it and it is not prose, Python, Lean or provider tooling (fail-closed)",
+   "contract/evaluations/cmetrics-counter-configured/evaluation.json: no crate owns or reads it and it is not prose, Python, Lean or provider tooling (fail-closed)",
+   "contract/evaluations/cycle-17-cfl/baseline.json: no crate owns or reads it and it is not prose, Python, Lean or provider tooling (fail-closed)",
+   "contract/evaluations/cycle-17-cfl/evaluation.json: no crate owns or reads it and it is not prose, Python, Lean or provider tooling (fail-closed)",
+   "contract/evaluations/cycle-18-libevent/baseline.json: no crate owns or reads it and it is not prose, Python, Lean or provider tooling (fail-closed)",
+   "contract/evaluations/cycle-18-libevent/evaluation.json: no crate owns or reads it and it is not prose, Python, Lean or provider tooling (fail-closed)",
+   "contract/evaluations/cycle-19-fluent-bit/baseline.json: no crate owns or reads it and it is not prose, Python, Lean or provider tooling (fail-closed)",
+   "contract/evaluations/cycle-19-fluent-bit/evaluation.json: no crate owns or reads it and it is not prose, Python, Lean or provider tooling (fail-closed)",
+   "contract/evaluations/cycle-19-monkey-callbacks/baseline.json: no crate owns or reads it and it is not prose, Python, Lean or provider tooling (fail-closed)",
+   "contract/evaluations/cycle-19-monkey-callbacks/evaluation.json: no crate owns or reads it and it is not prose, Python, Lean or provider tooling (fail-closed)",
+   "contract/evaluations/eight-home/baseline.json: no crate owns or reads it and it is not prose, Python, Lean or provider tooling (fail-closed)",
+   "contract/evaluations/eight-home/evaluation.json: no crate owns or reads it and it is not prose, Python, Lean or provider tooling (fail-closed)",
+   "contract/evaluations/eight-home/link-map.json: no crate owns or reads it and it is not prose, Python, Lean or provider tooling (fail-closed)",
+   "contract/evaluations/fluent-bit-system/baseline.json: no crate owns or reads it and it is not prose, Python, Lean or provider tooling (fail-closed)",
+   "contract/evaluations/fluent-bit-system/evaluation.json: no crate owns or reads it and it is not prose, Python, Lean or provider tooling (fail-closed)",
+   "contract/evaluations/fluent-bit-tail-pause/baseline.json: no crate owns or reads it and it is not prose, Python, Lean or provider tooling (fail-closed)",
+   "contract/evaluations/fluent-bit-tail-pause/evaluation.json: no crate owns or reads it and it is not prose, Python, Lean or provider tooling (fail-closed)"
+  ],
+  "rust_packages": [
+   "qcore-audit",
+   "qcore-c-gateway",
+   "qcore-compiler",
+   "qcore-contract",
+   "qcore-core",
+   "qcore-frontend",
+   "qcore-schemas",
+   "qcore-verification",
+   "qcore-verifier-host",
+   "qcorec",
+   "quirin-audit-plugin",
+   "quirin-audit-plugin-libevent",
+   "quirin-source-analysis"
+  ],
+  "probes": true,
+  "lean": {
+   "mode": "none",
+   "reasons": [],
+   "modules": [],
+   "audits": []
+  },
+  "python_reasons": [
+   "docs/reports/evaluation-profiles/scripts/archive_runs.py: Python",
+   "docs/reports/evaluation-profiles/scripts/build_profiles.py: Python",
+   "scripts/evaluation_profiles.py: Python",
+   "scripts/tests/test_evaluation_profiles.py: Python"
+  ],
+  "provider_gate": false,
+  "provider_reasons": [],
+  "provider_members_reached_without_providers_change": [],
+  "unresolved_includes": [
+   {
+    "crate": "qcore-compiler",
+    "source": "compiler/tests/ct_corpus.rs:8069",
+    "literal": "include_str!(\\\"fixtures/ct/{id}/case.qr\\\")\");",
+    "why": "argument is not a string literal (or the macro is inside a string)"
+   }
+  ]
+ },
+ "planned_steps": [
+  {
+   "name": "submodules",
+   "argv": [
+    "git",
+    "-C",
+    "/media/Data/GitHub/quirin-lang/.claude/worktrees/agent-aab8b9fd1a9023c58",
+    "submodule",
+    "status",
+    "--recursive"
+   ],
+   "slot": null
+  },
+  {
+   "name": "fmt",
+   "argv": [
+    "cargo",
+    "fmt",
+    "--all",
+    "--",
+    "--check"
+   ],
+   "slot": null
+  },
+  {
+   "name": "clippy",
+   "argv": [
+    "cargo",
+    "clippy",
+    "--all-targets",
+    "--",
+    "-D",
+    "warnings"
+   ],
+   "slot": null
+  },
+  {
+   "name": "rust-suite",
+   "argv": [
+    "/usr/bin/python3",
+    "/media/Data/GitHub/quirin-lang/.claude/worktrees/agent-aab8b9fd1a9023c58/scripts/run_test_binaries.py",
+    "--log-dir",
+    "/media/Data/GitHub/quirin-lang/.claude/worktrees/agent-aab8b9fd1a9023c58/private/gate-4/rust-suite"
+   ],
+   "slot": "rust-suite"
+  },
+  {
+   "name": "probe-reevaluation_probe",
+   "argv": [
+    "cargo",
+    "run",
+    "-p",
+    "qcore-compiler",
+    "--example",
+    "reevaluation_probe"
+   ],
+   "slot": null
+  },
+  {
+   "name": "probe-reevaluation_followup",
+   "argv": [
+    "cargo",
+    "run",
+    "-p",
+    "qcore-compiler",
+    "--example",
+    "reevaluation_followup"
+   ],
+   "slot": null
+  },
+  {
+   "name": "python",
+   "argv": [
+    "/usr/bin/python3",
+    "-m",
+    "unittest",
+    "discover",
+    "-s",
+    "scripts/tests"
+   ],
+   "slot": null
+  }
+ ],
+ "slots": true,
+ "started": "20261025T172436Z",
+ "ran": true,
+ "steps": [
+  {
+   "name": "submodules",
+   "argv": [
+    "git",
+    "-C",
+    "/media/Data/GitHub/quirin-lang/.claude/worktrees/agent-aab8b9fd1a9023c58",
+    "submodule",
+    "status",
+    "--recursive"
+   ],
+   "exit": 0,
+   "seconds": 0.0,
+   "log": "/media/Data/GitHub/quirin-lang/.claude/worktrees/agent-aab8b9fd1a9023c58/private/gate-4/submodules.log",
+   "counts": {
+    "submodules": 1,
+    "not_checked_out_or_moved": []
+   }
+  },
+  {
+   "name": "fmt",
+   "argv": [
+    "cargo",
+    "fmt",
+    "--all",
+    "--",
+    "--check"
+   ],
+   "exit": 0,
+   "seconds": 6.9,
+   "log": "/media/Data/GitHub/quirin-lang/.claude/worktrees/agent-aab8b9fd1a9023c58/private/gate-4/fmt.log",
+   "counts": {}
+  },
+  {
+   "name": "clippy",
+   "argv": [
+    "cargo",
+    "clippy",
+    "--all-targets",
+    "--",
+    "-D",
+    "warnings"
+   ],
+   "exit": 0,
+   "seconds": 32.2,
+   "log": "/media/Data/GitHub/quirin-lang/.claude/worktrees/agent-aab8b9fd1a9023c58/private/gate-4/clippy.log",
+   "counts": {}
+  },
+  {
+   "name": "rust-suite",
+   "argv": [
+    "/usr/bin/python3",
+    "/media/Data/GitHub/quirin-lang/.claude/worktrees/agent-aab8b9fd1a9023c58/scripts/gate_slot.py",
+    "rust-suite",
+    "--receipt",
+    "/media/Data/GitHub/quirin-lang/.claude/worktrees/agent-aab8b9fd1a9023c58/private/gate-4/slots/rust-suite.json",
+    "--",
+    "/usr/bin/python3",
+    "/media/Data/GitHub/quirin-lang/.claude/worktrees/agent-aab8b9fd1a9023c58/scripts/run_test_binaries.py",
+    "--log-dir",
+    "/media/Data/GitHub/quirin-lang/.claude/worktrees/agent-aab8b9fd1a9023c58/private/gate-4/rust-suite"
+   ],
+   "exit": 0,
+   "seconds": 19342.2,
+   "log": "/media/Data/GitHub/quirin-lang/.claude/worktrees/agent-aab8b9fd1a9023c58/private/gate-4/rust-suite.log",
+   "counts": {
+    "units": 553,
+    "passed": 8671,
+    "failed": 0,
+    "ignored": 15,
+    "measured": 0,
+    "filtered": 0,
+    "summaries": 566,
+    "packages": null,
+    "summary": "/media/Data/GitHub/quirin-lang/.claude/worktrees/agent-aab8b9fd1a9023c58/private/gate-4/rust-suite/summary.json",
+    "ok": true
+   },
+   "slot_receipt": "/media/Data/GitHub/quirin-lang/.claude/worktrees/agent-aab8b9fd1a9023c58/private/gate-4/slots/rust-suite.json"
+  },
+  {
+   "name": "probe-reevaluation_probe",
+   "argv": [
+    "cargo",
+    "run",
+    "-p",
+    "qcore-compiler",
+    "--example",
+    "reevaluation_probe"
+   ],
+   "exit": 0,
+   "seconds": 0.0,
+   "log": "/media/Data/GitHub/quirin-lang/.claude/worktrees/agent-aab8b9fd1a9023c58/private/gate-4/probe-reevaluation_probe.log",
+   "counts": {}
+  },
+  {
+   "name": "probe-reevaluation_followup",
+   "argv": [
+    "cargo",
+    "run",
+    "-p",
+    "qcore-compiler",
+    "--example",
+    "reevaluation_followup"
+   ],
+   "exit": 0,
+   "seconds": 0.4,
+   "log": "/media/Data/GitHub/quirin-lang/.claude/worktrees/agent-aab8b9fd1a9023c58/private/gate-4/probe-reevaluation_followup.log",
+   "counts": {}
+  },
+  {
+   "name": "python",
+   "argv": [
+    "/usr/bin/python3",
+    "-m",
+    "unittest",
+    "discover",
+    "-s",
+    "scripts/tests"
+   ],
+   "exit": 0,
+   "seconds": 42.9,
+   "log": "/media/Data/GitHub/quirin-lang/.claude/worktrees/agent-aab8b9fd1a9023c58/private/gate-4/python.log",
+   "counts": {
+    "tests": 477,
+    "skipped": 0,
+    "ok": true
+   }
+  }
+ ],
+ "ok": true,
+ "finished": "20261025T224821Z"
+}

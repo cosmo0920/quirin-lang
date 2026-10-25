@@ -177,8 +177,45 @@ figures are the profiles' first baseline, not a claim about any rule.
 - The history check needs the full object store: a shallow clone or an export
   fails it, closed, with the reason. CI does not run the Python suite.
 
+## Gate
+
+`python3 scripts/gate_scope.py --base 710021bd7 --out private/gate-4` on
+measured tip `572489ae7` exited 0 ([gate.json](gate.json); Clang recorded
+beside it). It ran in **full** mode. `gate_scope.py` cannot classify
+`contract/evaluations/**`: no crate owns or reads it, and it is not prose,
+Python, Lean or provider tooling. So the scoper fails closed to the whole Rust
+suite (follow-up `GATE-SCOPE-EVALUATION-RECORDS`).
+
+| Step | Exit | Counts |
+|---|---|---|
+| submodules | 0 | 1 submodule checked out |
+| `cargo fmt --all -- --check` | 0 | |
+| Clippy, `-D warnings` | 0 | |
+| Rust suite (`run_test_binaries.py`, rust-suite slot) | 0 | 553 units, 566 summaries; 8,671 passed, 0 failed, 15 ignored |
+| `reevaluation_probe`, `reevaluation_followup` | 0, 0 | |
+| Python suite | 0 | 477 tests |
+
+Lean did not run, because `proof/` is untouched. The provider gate did not
+run, because `providers/` is untouched. Earlier attempts are in
+[gate-attempts/](gate-attempts/attempts.json):
+
+- attempt 1 was stopped when decision 9a arrived;
+- attempt 2 refused an existing output directory;
+- attempt 3 failed with the records under `contract/profiles/`: 35 failed
+  tests in six first-party-provider units, and both probes 101.
+
+The commit after the measured tip adds only this report's records.
+
 ## Follow-ups
 
-`EVALUATION-PROFILES-AMENDMENTS-CHECK`, `EVALUATION-PROFILES-MEASURE-READER`,
-`EVALUATION-PROFILES-MATRIX-ROWS`, `REBASE-CORPUS` (registered in
-[integration-amendments.json](integration-amendments.json)).
+Registered in [integration-amendments.json](integration-amendments.json):
+
+- `EVALUATION-PROFILES-AMENDMENTS-CHECK`
+- `EVALUATION-PROFILES-MEASURE-READER`
+- `EVALUATION-PROFILES-MATRIX-ROWS`
+- `GATE-SCOPE-EVALUATION-RECORDS`
+- `REBASE-CORPUS`
+
+Not registered: the plan's §3 A spells the record location
+`contract/profiles/<name>/evaluation.json`. Correcting that wording to
+`contract/evaluations/` is an integrator edit of the plan.
