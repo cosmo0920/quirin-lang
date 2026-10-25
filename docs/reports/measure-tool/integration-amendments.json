@@ -1,9 +1,62 @@
 {
   "schema": "quirin-amendments/1",
   "card": "MEASURE-TOOL",
-  "base": "373e41ee8594db659f467dba66af8f2a80fbaf91",
+  "base": "e37e6703d",
   "measured_tip": "MEASURED-TIP",
   "increment_paragraph": "INCREMENT",
-  "status_paragraph": null,
-  "ledger": []
+  "status_paragraph": "Measurement tool (card MEASURE-TOOL, 2026-10-26): corpus, system and slice comparisons are measured with `quirin-audit measure` (crate quirin-audit-plugin-measure, a subcommand plugin behind the C11.2 firewall), which writes one native-comparison record keyed by composition components, checks a PREDICTION.md `measure-prediction` block and publishes and verifies baselines under private/baselines/<sha>/<profile>/; the copied measure/compare/mirror scripts are superseded (docs/reports/measure-tool/superseded-scripts.json). `--rules-off` is refused until RULE-SWITCHES; `--profile` reads EVALUATION-PROFILES' draft records through one adapter.",
+  "ledger": [
+    {
+      "id": "MEASURE-SNAPSHOT-HAZARDS",
+      "operation": "retire",
+      "why": "DISCHARGE (card MEASURE-TOOL): quirin-audit measure prepares rev: sides as git-archive snapshots with every gitlink cloned at its pinned commit (item 1), runs every route in a private working directory sides/<name>/work-<route> (item 2), excludes VCS metadata and target/private/measure from the before/after input identity (item 3), sets QCORE_AUDIT_BUILD_COMMIT to the measured revision or --build-commit (item 4), and builds and runs each snapshot in a private mount namespace bound at one fixed path /tmp/quirin-measure/src (with the mirror at /tmp/quirin-measure/mirror) (item 5). Evidence: the rule-33 parity replay (both corpus routes exit 0 with unchanged input identity, 25,496 and 25,506 files, the libevent clone's index refresh no longer failing the route) and the live system/slice runs, where two routes of one side ran concurrently on one snapshot without tripping each other's identity check (docs/reports/measure-tool/README.md).",
+      "source": "docs/reports/measure-tool/README.md"
+    },
+    {
+      "id": "MEASURE-TOOL-COMPOSITION-CONSUMER",
+      "operation": "retire",
+      "why": "DISCHARGE (card MEASURE-TOOL): quirin-audit measure reads both sides' component sidecars (ComponentSidecar::validate, every unit row derived by Contribution::derive and checked equal to the report's row, a disagreement refusing the route), composes the two sides with Contribution::union and names every composition-conflict (one provenance, two results for a row) as an incomplete comparison, reports per-row derivation changes keyed by component RowKey in its native-comparison record, and its test the_shared_composition_vectors_hold_through_the_tools_union runs the 14 shared vectors of proof/QCore/AuditComposition.lean through the tool's union, split between two sides in both orders. Published baselines store the sidecars; a rule's contribution as removal waits for RULE-SWITCHES (follow-up MEASURE-TOOL-RULES-OFF-LIVE).",
+      "source": "docs/reports/measure-tool/README.md"
+    },
+    {
+      "id": "LIFETIME-SOURCE-IDENTITY-TIME-MACROS",
+      "operation": "amend",
+      "text": "AMENDED by MEASURE-TOOL: every route of every side quirin-audit measure runs gets one fixed SOURCE_DATE_EPOCH (default 1767225600, --source-date-epoch, recorded in run.json and in a baseline's inputs), which CFG-RELEASE measured removes the key difference; for sides measured without it the tool accepts a differing contracts sidecar only by the checked one-key substitution of AUDIT-COMPOSITION's compare_identity.py (compare::time_key: exactly one lifetime-source summary key differs, no collision, equal as JSON and as a line multiset after the swap) and names it in the record. The analyzer itself still hashes the clock-dependent text outside the tool; the DISCHARGE (fixed or normalised time macros in loop_lifetime_source::read_unit, with its test) stays open.",
+      "source": "docs/reports/measure-tool/README.md"
+    },
+    {
+      "id": "PREPASS-CLOCK-DEPENDENT-KEY",
+      "operation": "amend",
+      "text": "AMENDED by MEASURE-TOOL: quirin-audit measure preprocesses every side's routes under one fixed, recorded SOURCE_DATE_EPOCH and otherwise accepts the one differing pre-pass key only by a checked, named substitution (see LIFETIME-SOURCE-IDENTITY-TIME-MACROS); runs outside the tool (the gate, a person's quirin-audit) still vary until the analyzer fixes or normalises the time macros.",
+      "source": "docs/reports/measure-tool/README.md"
+    },
+    {
+      "id": "MEASURE-TOOL-PROFILE-ADAPTER",
+      "operation": "register",
+      "title": "Bind quirin-audit measure's profile adapter to the landed evaluation-profile format",
+      "text": "Card MEASURE-TOOL reads contract/profiles/<name>/evaluation.json through one adapter (crates/quirin-audit-plugin-measure/src/inputs.rs read_profile) written against EVALUATION-PROFILES' unlanded draft (schema quirin-evaluation-profile/1: route.kind pinned-corpus or configured-selection, inputs placed by their role text, the link map by its tracked role); until then the interim explicit inputs are crates/quirin-audit-plugin-measure/inputs/live.json. The adapter takes Clang from a constant, derives the corpus mirror trees from the untracked paths and the source commit from source.revision. DISCHARGE: once EVALUATION-PROFILES lands, the adapter reads the landed schema (or the profile records name route inputs explicitly), its test reads the committed records instead of tests/fixtures copies, live.json is retired or generated from the records, and `measure --profile eight-home` reproduces the inputs digests live.json gives. May be merged with EVALUATION-PROFILES-MEASURE-READER if that card registers it.",
+      "source": "docs/reports/measure-tool/README.md"
+    },
+    {
+      "id": "MEASURE-TOOL-RULES-OFF-LIVE",
+      "operation": "register",
+      "title": "Exercise quirin-audit measure --rules-off and the contribution slot against a real rule switch",
+      "text": "Card MEASURE-TOOL parses --rules-off, builds the <tip>-off side from the same binary with QCORE_GATEWAY_RULES_OFF, compares it with <tip>, and after the run requires every component of the switched side to record exactly the requested off-list (and every other side none); until a binary advertises the switch the option is refused before any route runs ('not yet supported'). Both paths are tested only with stub analyzers, and the native-comparison record's `contribution` slot is reserved, not filled. DISCHARGE: after RULE-SWITCHES lands (and CONTRIBUTION-LEDGERS defines the ledger), one real --rules-off measurement on a migrated rule whose contribution equals that rule card's measured delta, with the slot filled from the <tip>-off -> <tip> comparison and interactions named, never summed.",
+      "source": "docs/reports/measure-tool/README.md"
+    },
+    {
+      "id": "MEASURE-TOOL-LANDING-PUBLISH",
+      "operation": "register",
+      "title": "Wire baseline publication into the integrator's landing gate",
+      "text": "Card MEASURE-TOOL implemented `quirin-audit measure publish --from <out>/sides/<name>` (output private/baselines/<sha>, one immutable <profile>/ per route with baseline.json digests) and identity-verified reuse by --side NAME=baseline:<sha>; the exact landing commands are in docs/reports/measure-tool/README.md. No landing has published a baseline yet. DISCHARGE: the integrator's per-landing full gate measures the landed revision with a rev:<sha> side on the live routes and publishes it, and the next card reuses it as BASE after verification instead of rebuilding BASE.",
+      "source": "docs/reports/measure-tool/README.md"
+    },
+    {
+      "id": "GATE-SLOT-CURRENT-BUDGET-SPELLING",
+      "operation": "register",
+      "title": "gate_slot.py inserts --memory-budget-mib=N, which quirin-audit current refuses",
+      "text": "Found by MEASURE-TOOL (live run 1): scripts/gate_slot.py apply_budget inserts `--memory-budget-mib=7168` after `quirin-audit current`, but current_cli.rs reads only the two-word form `--memory-budget-mib N`, so any `current` route run directly under an audit slot exits 1 ('unknown argument'). Earlier cards never hit it because their slot command was a Python driver, which takes the QCORE_AUDIT_JOBS mechanism instead. quirin-audit measure passes the two-word form itself, which the slot accepts unchanged. DISCHARGE: gate_slot.py inserts the two-word form (or current_cli.rs accepts `=`), with a test that runs a stub `quirin-audit current` under the slot.",
+      "source": "docs/reports/measure-tool/README.md"
+    }
+  ]
 }

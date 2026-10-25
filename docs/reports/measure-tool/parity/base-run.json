@@ -1,0 +1,187 @@
+{
+  "binary": {
+    "path": "/media/Data/GitHub/quirin-lang/private/measure-tool/parity-1/sides/base/src/target/release/quirin-audit",
+    "path_as_run": "/tmp/quirin-measure/src/target/release/quirin-audit",
+    "sha256": "62bee07ceb69d970452d697185e5b729c567f755046f8a6a8fc090a914f9e334"
+  },
+  "build_command": [
+    "unshare",
+    "-rm",
+    "sh",
+    "-c",
+    "set -e\nmount --bind \"$1\" \"$2\"\ncd \"$3\"\nshift 3\nexec \"$@\"\n",
+    "quirin-measure-ns",
+    "/media/Data/GitHub/quirin-lang/private/measure-tool/parity-1/sides/base/src",
+    "/tmp/quirin-measure/src",
+    "/tmp/quirin-measure/src",
+    "cargo",
+    "build",
+    "--release",
+    "--locked",
+    "-p",
+    "qcore-audit",
+    "--bin",
+    "quirin-audit"
+  ],
+  "build_commit": "e282aaccc7763da989cf6f3c8f3c51cdd3c8de3c",
+  "build_ended": "2026-10-25T16:06:39Z",
+  "build_exit": 0,
+  "build_started": "2026-10-25T16:03:01Z",
+  "bundles": {
+    "contract": "fc0dee77a724e548b05604c6f439ba7d2c17de95ecf471668c8a41f7d0c4a1ff",
+    "providers/qcore-provider-chunkio/contracts": "41e1ef343aca95f6ab279fb5a6079e0c6d3a8ff3bb83314bfbe62932baadade5",
+    "providers/qcore-provider-cmetrics/contracts": "63b854f0117f34b2080b420f1a42c7fc97c5e143252a5654bd3268dd0150099a",
+    "providers/qcore-provider-ctraces/contracts": "e90eb34adf062a1a118226488ce68614d27a986d4dd12627d7458048974a80d1",
+    "providers/qcore-provider-libevent/contracts": "97bd8703721322da03da919ce0a24526f439930a614479f1511d0d050957d278",
+    "providers/qcore-provider-librdkafka/contracts": "fe4e70f799c4b84be53c89f02599b2f85d56c17aa058407f88545a1f0672aa9e",
+    "providers/quirin-provider-cfl/contracts": "da1e6f465ee60c7f314e80ff74cff9a4840d9a366ca11cc49ad028c76e8e066b",
+    "providers/quirin-provider-fluent-bit/contracts": "43dc9e8a3a5930bc08e8d0f914fdd955c7398bf54f3be0b225997e6b7379ca98",
+    "providers/quirin-provider-libc/contracts": "f0f20c02fe9a6dfffd8b63b4229c0c0cbbd077c40c3fc9ff9bd54819713d1eb8",
+    "providers/quirin-provider-mpack/contracts": "14223b7f3b473e35df3b6468ef81ae4b3a074fe83d2d7f0d189301b28b0bdc10",
+    "providers/quirin-provider-msgpack/contracts": "e73fe57fc0d34045b4ee3eea73fa6838c15f08d0f1922b359e0682e30dfc15db",
+    "providers/quirin-provider-shared/contracts": "a4d40318b88bf388c0a7b38f7d83aa7f1dd38d5b9323056658b146cee14e4ba9"
+  },
+  "inputs_base": "/media/Data/GitHub/quirin-lang",
+  "kind": "rev",
+  "mirror": {
+    "canonical_prefix": "/media/Data/GitHub/quirin-lang",
+    "manifest": "/media/Data/GitHub/quirin-lang/private/measure-tool/parity-1/mirror/manifest.json",
+    "manifest_sha256": "a5bcc755e0ae7fa3b85c8d7eb5b56e02673e9de862a4b1581bd3072c975e12b9",
+    "mode": "auto",
+    "spelled_prefix": "/home/cosmo/Documents/GitHub/qcore-c",
+    "spelling": "mirror"
+  },
+  "repository": "/media/Data/GitHub/quirin-lang/.claude/worktrees/agent-a909b7578f8f907c7",
+  "revision": "e282aaccc7763da989cf6f3c8f3c51cdd3c8de3c",
+  "routes": {
+    "corpus": {
+      "binary_sha256": "62bee07ceb69d970452d697185e5b729c567f755046f8a6a8fc090a914f9e334",
+      "binary_sha256_after": "62bee07ceb69d970452d697185e5b729c567f755046f8a6a8fc090a914f9e334",
+      "command": [
+        "python3",
+        "/media/Data/GitHub/quirin-lang/.claude/worktrees/agent-a909b7578f8f907c7/scripts/gate_slot.py",
+        "audit",
+        "--receipt",
+        "/media/Data/GitHub/quirin-lang/private/measure-tool/parity-1/sides/base/corpus.slot.json",
+        "--",
+        "unshare",
+        "-rm",
+        "sh",
+        "-c",
+        "set -e\nmount --bind \"$1\" \"$2\"\nmount --bind \"$3\" \"$4\"\ncd \"$5\"\nshift 5\nexec \"$@\"\n",
+        "quirin-measure-ns",
+        "/media/Data/GitHub/quirin-lang/private/measure-tool/parity-1/sides/base/src",
+        "/tmp/quirin-measure/src",
+        "/media/Data/GitHub/quirin-lang/private/measure-tool/parity-1/mirror",
+        "/tmp/quirin-measure/mirror",
+        "/media/Data/GitHub/quirin-lang/private/measure-tool/parity-1/sides/base/work-corpus",
+        "python3",
+        "/tmp/quirin-measure/src/scripts/run_pinned_audit.py",
+        "/media/Data/GitHub/quirin-lang/private/measure-tool/parity-1/sides/base/corpus/corpus",
+        "66910c10",
+        "--inputs-root",
+        "/tmp/quirin-measure/mirror",
+        "--jobs",
+        "3"
+      ],
+      "ended": "2026-10-25T19:08:57Z",
+      "environment": {
+        "QCORE_CLANG": "/usr/lib/llvm-21/bin/clang",
+        "QCORE_CROSS_UNIT_LINK_MAP": "/media/Data/GitHub/quirin-lang/.claude/worktrees/agent-a909b7578f8f907c7/docs/reports/w48-bu-single-leaf-bodies/link-map.corpus.json",
+        "QCORE_NULL_PROPERTY": "/media/Data/GitHub/quirin-lang/private/measure-tool/parity-1/sides/base/corpus/corpus-null.jsonl",
+        "QCORE_OUTER_PROJECTION": "/media/Data/GitHub/quirin-lang/private/measure-tool/parity-1/sides/base/corpus/corpus-outer.json",
+        "QCORE_PROFILES": "/tmp/quirin-measure/src/contract/profiles"
+      },
+      "exit": 0,
+      "externals_after": {
+        "/media/Data/GitHub/quirin-lang/.claude/worktrees/agent-a909b7578f8f907c7/docs/reports/w48-bu-single-leaf-bodies/link-map.corpus.json": "98a4db761ace9fd4846b000c4c98defdc2e39ce6f95684c67c30f9b8b6f38ad3",
+        "/media/Data/GitHub/quirin-lang/private/measure-tool/parity-1/mirror/c-gateway-wave-pin/fluent-bit-clang-source/build/compile_commands.json": "162f27214282bb550851a4c72d4a05ad8773d5f08226ea6eacd55bdf3ef2476c",
+        "/media/Data/GitHub/quirin-lang/private/measure-tool/parity-1/mirror/c-gateway-wave-pin/monkey/monkey-build/compile_commands.json": "cc5f2e6b519f2e4b52c8b8a6e035fffcf541594180feaba50743f3e8b793d821"
+      },
+      "externals_before": {
+        "/media/Data/GitHub/quirin-lang/.claude/worktrees/agent-a909b7578f8f907c7/docs/reports/w48-bu-single-leaf-bodies/link-map.corpus.json": "98a4db761ace9fd4846b000c4c98defdc2e39ce6f95684c67c30f9b8b6f38ad3",
+        "/media/Data/GitHub/quirin-lang/private/measure-tool/parity-1/mirror/c-gateway-wave-pin/fluent-bit-clang-source/build/compile_commands.json": "162f27214282bb550851a4c72d4a05ad8773d5f08226ea6eacd55bdf3ef2476c",
+        "/media/Data/GitHub/quirin-lang/private/measure-tool/parity-1/mirror/c-gateway-wave-pin/monkey/monkey-build/compile_commands.json": "cc5f2e6b519f2e4b52c8b8a6e035fffcf541594180feaba50743f3e8b793d821"
+      },
+      "inputs": {
+        "canonical_prefix": "/media/Data/GitHub/quirin-lang",
+        "databases_as_spelled": {
+          "mirror/c-gateway-wave-pin/fluent-bit-clang-source/build/compile_commands.json": "162f27214282bb550851a4c72d4a05ad8773d5f08226ea6eacd55bdf3ef2476c",
+          "mirror/c-gateway-wave-pin/monkey/monkey-build/compile_commands.json": "cc5f2e6b519f2e4b52c8b8a6e035fffcf541594180feaba50743f3e8b793d821"
+        },
+        "route_digest": "7eb1e7ec179f8625ea54e2d3b3fb84c15fbf0cde7f3a28800a86cb064d0757ff",
+        "spelled_prefix": "/home/cosmo/Documents/GitHub/qcore-c",
+        "spelling": "mirror"
+      },
+      "inputs_after": {
+        "digest": "e24c218a20832cd54f28eafffaa5674cb1241c2fb79a2d60c686361f5f23a5f4",
+        "files": 25496
+      },
+      "inputs_before": {
+        "digest": "e24c218a20832cd54f28eafffaa5674cb1241c2fb79a2d60c686361f5f23a5f4",
+        "files": 25496
+      },
+      "jobs": 3,
+      "link_map": "/media/Data/GitHub/quirin-lang/.claude/worktrees/agent-a909b7578f8f907c7/docs/reports/w48-bu-single-leaf-bodies/link-map.corpus.json",
+      "profile": "eight-home",
+      "report_sha256": "31c2ce70bb2ca5b0eaff2a80208ae4e64f579c2503adfe0ec51c5f107abf1f65",
+      "route": "corpus",
+      "route_definition": {
+        "clang": "/usr/lib/llvm-21/bin/clang",
+        "compile_databases": [
+          {
+            "path": "c-gateway-wave-pin/fluent-bit-clang-source/build/compile_commands.json",
+            "sha256": "5e6868d9af26eaec97bc8020ed5f23496f2490abf44532443239bd4d365f7e78"
+          },
+          {
+            "path": "c-gateway-wave-pin/monkey/monkey-build/compile_commands.json",
+            "sha256": "85cc996712bbd35675340b8b863b6ebc716cb94552253f2a6ad0288db920f331"
+          }
+        ],
+        "inputs_root": "build/cycle19",
+        "kind": "pinned-corpus",
+        "link_map": {
+          "path": "docs/reports/w48-bu-single-leaf-bodies/link-map.corpus.json",
+          "sha256": "98a4db761ace9fd4846b000c4c98defdc2e39ce6f95684c67c30f9b8b6f38ad3"
+        },
+        "mirror_trees": [
+          "c-gateway-wave-pin/fluent-bit-clang-source",
+          "c-gateway-wave-pin/monkey",
+          "provider-packages-wave20"
+        ],
+        "name": "corpus",
+        "profile": "eight-home",
+        "source_commit": "66910c10",
+        "tracked": [
+          "contract/profiles/fluent-bit/audit.json",
+          "contract/profiles/fluent-bit/profile.json",
+          "contract/profiles/fluent-bit/member-facts-scope.json"
+        ]
+      },
+      "route_digest": "7eb1e7ec179f8625ea54e2d3b3fb84c15fbf0cde7f3a28800a86cb064d0757ff",
+      "sidecar_sha256": null,
+      "slot_receipt": "/media/Data/GitHub/quirin-lang/private/measure-tool/parity-1/sides/base/corpus.slot.json",
+      "stable": true,
+      "started": "2026-10-25T16:07:26Z",
+      "tracked_inputs": {
+        "contract/profiles/fluent-bit/audit.json": "27a19bc283fb215421c003bd4dce2a4db6932f3a7a8e6edfd4979cb439e97315",
+        "contract/profiles/fluent-bit/member-facts-scope.json": "9e15544cd294a8316c94a6cd1359da4be6487b64bb2c8b0037d0bb67fedfca17",
+        "contract/profiles/fluent-bit/profile.json": "37309028f4fa1d50682829be2cbca880931a1a65d57b47d1fccb78a9b74965f3"
+      },
+      "working_directory": "/media/Data/GitHub/quirin-lang/private/measure-tool/parity-1/sides/base/work-corpus"
+    }
+  },
+  "schema": "quirin-measure-run/1",
+  "side": "base",
+  "snapshot_at_fixed_path": true,
+  "source": "/media/Data/GitHub/quirin-lang/private/measure-tool/parity-1/sides/base/src",
+  "source_as_run": "/tmp/quirin-measure/src",
+  "submodules": {
+    "third_party/libevent": "d82464a277d0f42703702c4dfd9af6af38595a83"
+  },
+  "tool": {
+    "name": "quirin-audit-measure",
+    "sha256": null,
+    "version": "0.1.0"
+  }
+}

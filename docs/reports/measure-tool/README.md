@@ -100,7 +100,43 @@ record their own digests; the crate's test checks every digest.
 
 ## Parity
 
-PARITY-PLACEHOLDER
+**Result: the tool reproduces rule 33's recorded verdict moves exactly.**
+Rule 33's DETACH comparison (card DETACH-RESULT-WRAPPER-COMPOSITION, pinned
+corpus, BASE `e282aaccc`, TIP `9ecc941d5`) was replayed end to end through the
+host: both sides built by the tool from their revisions (`rev:` sides, release
+builds of 3.5 minutes each at `/tmp/quirin-measure/src`), the pinned inputs
+re-spelled into the mirror (both revisions predate AUDIT-CANONICAL-PATHS), each
+corpus route under an `audit` slot with `--jobs 3`, the pre-composition reports
+read with `--legacy-rows`, and the declared moves of
+[parity/PREDICTION.md](parity/PREDICTION.md) (rule 33's recorded outcome,
+transcribed before the replay). Script: [scripts/parity.sh](scripts/parity.sh);
+records: [parity/](parity/) (`native-comparison.json`, both `run.json`, the
+mirror manifest and the host report); run directory
+`/media/Data/GitHub/quirin-lang/private/measure-tool/parity-1/`.
+
+| | Recorded (rule 33) | Replayed by the tool |
+|---|---|---|
+| BASE Safe / Unknown / prov. Unsafe | 975 / 3,850 / 9 | 975 / 3,850 / 9 |
+| TIP | 977 / 3,848 / 9 | 977 / 3,848 / 9 |
+| Rows changing status | `cJSON_DetachItemFromArray`, `cJSON_DeleteItemFromArray`, Unknown → Safe | the same two, Unknown → Safe; 0 unmatched |
+| Leaf trade | each loses its single refusal leaf (nested `get_array_item`, nested `cJSON_DetachItemFromArray`) | the same leaves (`cJSON.c:2286`, `cJSON.c:2291`), nothing added |
+| `cJSON_DeleteItemFromArray` dependencies | declarations `cJSON_Delete`, `cJSON_DetachItemViaPointer` (the `detach_*` hypotheses), summary `get_array_item`, null premise `null-deref:get_array_item:2770:current_child` | the same |
+| Document `diagnostic_counts` | `unsupported` 27,710 → 27,708, others equal | the same |
+| cJSON unit fields | `cross_unit_link_resolution`, `diagnostic_counts`, `reason` | `diagnostic_counts`, `reason` |
+| Declared-versus-measured | (prose) | `match`: no unpredicted, no missing row, deltas Safe +2, Unknown −2, Unsafe 0 |
+
+The one difference is expected and explained: the recorded run measured its
+two snapshots at two directories, so `cross_unit_link_resolution` and the
+environment digests of all 185 units differed by a path substitution its field
+review had to prove. The tool binds both sides at one fixed path, so no unit
+field moves beyond the cJSON unit's two, and the other 4,832 rows differ only
+in environment digests (the two sides' build commits enter every evidence
+version), which the tool classifies as `environment_only`. Both routes exited
+0 and their input identity was unchanged before and after (25,496 and 25,506
+files; the libevent clone's `.git` is excluded, so the audit's own index
+refresh no longer fails the route as it did for AUDIT-COMPOSITION's run).
+
+**Live routes.** LIVE-PLACEHOLDER
 
 ## Tests
 
