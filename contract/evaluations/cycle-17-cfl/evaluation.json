@@ -1,0 +1,52 @@
+{
+  "schema": "quirin-evaluation-profile/1",
+  "name": "cycle-17-cfl",
+  "description": "Cycle 17's unrestricted-C importer probe of the adjacent CFL checkout: src/cfl_atomic_generic.c entry cfl_atomic_initialize, and src/cfl.c.",
+  "policy": {
+    "kind": "frozen",
+    "revision": "b26b4aa35a17508f2cdb7af1ac147913a33696c8"
+  },
+  "route": {
+    "kind": "unrestricted-import-probe",
+    "command": "cargo run -p qcore-compiler --example cycle17_legacy_audit -- ../cfl/src/cfl_atomic_generic.c cfl_atomic_initialize ../cfl/include"
+  },
+  "source": {
+    "repository": "cfl",
+    "revision": "6e35cca",
+    "submodules": {},
+    "note": "the adjacent CFL checkout (../cfl from the QCore-C root), recorded by its abbreviated revision only"
+  },
+  "inputs": {
+    "tracked": [
+      {
+        "path": "compiler/examples/cycle17_legacy_audit.rs",
+        "revision": "b26b4aa35a17508f2cdb7af1ac147913a33696c8",
+        "sha256": "5bb90650851d4cba984d450a9734aa09df2811ccdc3f6ed261a2b8fb22722eb2",
+        "role": "probe driver"
+      },
+      {
+        "path": "docs/cycles/CYCLE_17_CFL_VALIDATION.md",
+        "revision": "b26b4aa35a17508f2cdb7af1ac147913a33696c8",
+        "sha256": "68f86bb1c13f33737cc62424b8d9f9adf66aba572b80c1505d819c855d5c665a",
+        "role": "the record that published the result"
+      }
+    ],
+    "untracked": []
+  },
+  "contract_set": {
+    "lock_set": {
+      "state": "retired",
+      "evidence_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "references": [],
+    "note": "frozen: the importer had no external contracts for CFL; the analyzer at the frozen revision defines the result; no pin-lock set was retained for this revision (it predates the lock-set window of decision 9a), so the contract set is identified by its evidence digest at the frozen revision"
+  },
+  "baseline": {
+    "path": "contract/evaluations/cycle-17-cfl/baseline.json",
+    "sha256": "0c28d824d22aa853b65ae6473785cd03eb9214028981189b7dcefc879eb3df22"
+  },
+  "evidence_version": {
+    "analyzer_revision": "b26b4aa35a17508f2cdb7af1ac147913a33696c8",
+    "semantic_evidence": "unrecorded at this revision (before the acceptance matrix)"
+  }
+}

@@ -1,0 +1,25 @@
+{
+  "schema": "quirin-evaluation-baseline/1",
+  "profile": "cycle-18-libevent",
+  "measured_revision": "bb76178d5ecdc309667863238c75e611f3ff25f4",
+  "source": "docs/cycles/CYCLE_18_LIBEVENT_VALIDATION.md",
+  "figures": {
+    "verified": "Libevent release-2.2.2-alpha-11-gd82464a2 at d82464a277d0f42703702c4dfd9af6af38595a83",
+    "checked": [
+      "include/event2/event.h",
+      "event.c",
+      "bufferevent.c",
+      "include/event2/thread.h",
+      "include/event2/util.h",
+      "evutil.c",
+      "epoll.c",
+      "kqueue.c",
+      "win32select.c",
+      "event_iocp.c",
+      "buffer_iocp.c",
+      "bufferevent_async.c"
+    ],
+    "scope": "a reproducible source-contract audit, not a proof of the upstream C implementation"
+  },
+  "artifacts": []
+}

@@ -1,0 +1,58 @@
+{
+  "schema": "quirin-evaluation-baseline/1",
+  "profile": "cycle-19-fluent-bit",
+  "measured_revision": "b92688d220e1e62cffdcdb6ccc46476df0f406fd",
+  "source": "docs/reports/detach-lookup-membership/README.md",
+  "figures": {
+    "note": "DETACH-LOOKUP-MEMBERSHIP,2026-10-19, semantic source b92688d22 on completed alias base f35b5cf4b. Exact get_array_item frame and bounded source-replayed assigned lookup membership; exactly two conditional Safe promotions, no Safe regression. All six detach/delete wrappers remain Unknown; source/model/native/runtime limits are explicit in the report.",
+    "units": 185,
+    "safe": 8,
+    "provisional_unsafe": 7,
+    "unknown": 166,
+    "data_only": 4,
+    "projected_functions": 4834,
+    "leak_diagnostics": 40,
+    "process_sidecar": "3 checked function contracts / 93 Unknown",
+    "baseline": "docs/reports/detach-lookup-membership/artifacts/corpus/after/",
+    "source": "docs/reports/detach-lookup-membership/README.md",
+    "unknown_alias_diagnostics": 11052,
+    "unsupported_diagnostics": 27796,
+    "double_release_diagnostics": 0,
+    "function_statuses": {
+      "safe": 963,
+      "provisional_unsafe": 9,
+      "unknown": 3862
+    },
+    "source_definitions": 4921,
+    "unprojected_definitions": 87,
+    "unit_reason_codes": {
+      "unsupported-syntax": 165,
+      "none": 19,
+      "incomplete-obligation-coverage": 1
+    },
+    "unprojected_classification": "87 positively verified pinned historical-build exclusions across24 full-path units (23 basenames);0 enumerator false positives,0 established projection defects,0 unresolved. docs/reports/w42-unprojected-definitions/artifacts/census.json",
+    "summary_conflict_diagnostics": 2
+  },
+  "artifacts": [
+    {
+      "path": "docs/reports/detach-lookup-membership/artifacts/corpus/after/chunk-contracts.json.gz",
+      "sha256": "f0568583a78a62741104d890e33c7dd84ccbb67d9a692f051aa21cc3b8e01703"
+    },
+    {
+      "path": "docs/reports/detach-lookup-membership/artifacts/corpus/after/contracts.json.gz",
+      "sha256": "82315fe9beec404380f0d6f04a25fda9ea61a04dab9ec2bf05d667e863228de2"
+    },
+    {
+      "path": "docs/reports/detach-lookup-membership/artifacts/corpus/after/corpus-null.jsonl.gz",
+      "sha256": "7214afd07ab5164b7605fa234694ae94b95891224b126ce745e81e5ddae9937c"
+    },
+    {
+      "path": "docs/reports/detach-lookup-membership/artifacts/corpus/after/corpus-null.summary.json.gz",
+      "sha256": "8ef75cce68378ebbc307f0bda622811ec16d8dac6e505c66fd3895e413d371bd"
+    },
+    {
+      "path": "docs/reports/detach-lookup-membership/artifacts/corpus/after/corpus-outer.json.gz",
+      "sha256": "63afb6b421cf0133bb68f5e91cf689f27b8f734f48afbfa8988b19464c9568ce"
+    }
+  ]
+}

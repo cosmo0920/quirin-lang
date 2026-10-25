@@ -1,0 +1,22 @@
+{
+  "schema": "quirin-evaluation-baseline/1",
+  "profile": "cycle-19-monkey-callbacks",
+  "measured_revision": "016df072c89b8d9439da45293fd5b9f8374b2020",
+  "source": "docs/reports/w42-priority-integration/README.md",
+  "figures": {
+    "selected_callbacks": 3,
+    "selected_paths": 8,
+    "ordinary_audit_checked_native_paths": 0,
+    "optional_focused_replay_checked_native_paths": 8,
+    "cycle18_composed": 0,
+    "cycle18_unknown": 3,
+    "source": "docs/reports/w42-priority-integration/attribution.json; docs/reports/w42-monkey-callback-coverage/README.md",
+    "note": "Total profile-selected accounting is not event composition; native paths are observations, not a universal certificate."
+  },
+  "artifacts": [
+    {
+      "path": "docs/reports/w42-priority-integration/attribution.json",
+      "sha256": "6efc6a1b036fda8b8a04f37f02fcd5ba1a61783ad3d3d775cb878cea8cbcfe45"
+    }
+  ]
+}

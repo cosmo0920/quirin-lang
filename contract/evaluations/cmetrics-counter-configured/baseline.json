@@ -1,0 +1,19 @@
+{
+  "schema": "quirin-evaluation-baseline/1",
+  "profile": "cmetrics-counter-configured",
+  "measured_revision": "55145be4f17aeace12734032dfb1b24a201d36ee",
+  "source": "docs/reports/remaining-c02/README.md",
+  "figures": {
+    "checked_function_contracts": 1,
+    "unknown_functions": 6,
+    "raw_unit_verdict": "provisional Unsafe (unpromoted)",
+    "resource_diagnostics": "leak=2, unknown_alias=2, unsupported=35 (was 36 before C02)",
+    "source": "docs/reports/remaining-c02/README.md"
+  },
+  "artifacts": [
+    {
+      "path": "docs/reports/remaining-c02/cmetrics-after.json",
+      "sha256": "c32fa0474cbaa4a22f04d145d05e32d36b46632e14255f4df41a6a468db7d55f"
+    }
+  ]
+}

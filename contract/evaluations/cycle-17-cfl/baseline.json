@@ -1,0 +1,17 @@
+{
+  "schema": "quirin-evaluation-baseline/1",
+  "profile": "cycle-17-cfl",
+  "measured_revision": "b26b4aa35a17508f2cdb7af1ac147913a33696c8",
+  "source": "docs/cycles/CYCLE_17_CFL_VALIDATION.md",
+  "figures": {
+    "src/cfl_atomic_generic.c": {
+      "verdict": "Unknown",
+      "diagnostic": "the conservative C11 projection contains an unsupported operation; 5 partially analyzed function(s)"
+    },
+    "src/cfl.c": {
+      "verdict": "Unknown",
+      "diagnostic": "umbrella-header xxHash inline functions exceed the conservative projection before a partial program summary"
+    }
+  },
+  "artifacts": []
+}

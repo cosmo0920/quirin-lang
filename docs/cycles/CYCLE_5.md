@@ -2,6 +2,8 @@
 
 **Status: Done**
 
+Evaluation profile: none (a language and model cycle: its acceptance is the standing gate's Rust tests and Lean audits; it claims no audit measurement over a pinned source set).
+
 Cycle 5 implements Stage 5 of the prototype roadmap. It intentionally permits
 cleanup-free catches only; sealed cleanup packs and `quant open` belong to
 cycle 6.

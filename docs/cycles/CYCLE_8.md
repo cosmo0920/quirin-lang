@@ -2,6 +2,8 @@
 
 **Status: Done**
 
+Evaluation profile: none (a language and model cycle: its acceptance is the standing gate's Rust tests and Lean audits; it claims no audit measurement over a pinned source set).
+
 Cycle 8 implements Stage 8 of the prototype roadmap. It integrates the earlier
 semantic slices in a deliberately reduced, executable small-step machine shared
 conceptually by Rust and Lean. It does not expand the unfinished surface

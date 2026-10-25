@@ -2,6 +2,8 @@
 
 **Status: Done**
 
+Evaluation profile: none (a language and model cycle: its acceptance is the standing gate's Rust tests and Lean audits; it claims no audit measurement over a pinned source set).
+
 This is the historical Cycle 16 closure record. Cycle 17 subsequently promoted
 the six boundaries described here; the current open/promoted lists therefore
 differ from the Cycle 16 snapshot.

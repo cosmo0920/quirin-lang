@@ -2,6 +2,8 @@
 
 **Status: Done**
 
+Evaluation profile: none (a language and model cycle: its acceptance is the standing gate's Rust tests and Lean audits; it claims no audit measurement over a pinned source set).
+
 Cycle 14 implements the specification's restricted first-order concurrency
 core as an explicit checked event IR. It does not infer concurrency safety from
 ordinary usage grades or resource-count vectors.

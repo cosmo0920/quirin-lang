@@ -2,6 +2,8 @@
 
 **Status: Done**
 
+Evaluation profile: none (a language and model cycle: its acceptance is the standing gate's Rust tests and Lean audits; it claims no audit measurement over a pinned source set).
+
 Cycle 2 implements Stage 2 of the prototype roadmap. A cycle is complete only
 when its executable Rust behavior and corresponding Lean model both pass their
 builds.
