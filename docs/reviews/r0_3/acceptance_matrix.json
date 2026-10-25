@@ -195,7 +195,7 @@
   "ct_stage_names": 20,
   "ct_cells": 1000,
   "unverified_spec_items": 10,
-  "named_followups": 828
+  "named_followups": 832
  },
  "derivation": {
   "rule": "no count in a section this file marks `derived` is hand-copied from a status ledger; each is read from the manifest or validated run record named beside it. Sections marked `hand_maintained` are recorded analysis carried verbatim from the previous matrix, and `integrator_supplied` numbers name whether they were measured for this run or carried - see section_ownership.",
@@ -6626,7 +6626,7 @@
   ]
  },
  "corpus": {
-  "contract_modules": 138,
+  "contract_modules": 140,
   "contract_modules_pinned_by": "compiler/tests/qcore_contract_corpus.rs",
   "contract_clause_pin": {
    "const": "EXPECTED_CONTRACTS",
@@ -6858,11 +6858,11 @@
   "note": "providers/ is a separate Cargo workspace, excluded from the core workspace; P01 verified empirically that the core workspace builds and passes its full suite with providers/ moved out of the tree."
  },
  "validation": {
-  "note": "Integration of GENERATED-ROOTS: main fast-forwarded to card tip f864a7ecf, which contains main 1e3967b97 (merge 9caee67ba). The card's full standing gate ran ON THE MERGED TIP 9caee67ba through `scripts/gate_scope.py --base main --full` with gate slots (docs/reports/generated-roots/gate/gate.json): fmt, Clippy, Rust 8645 passed/0 failed/15 ignored (550 units/563 summaries), both reevaluation examples, 370 Lean audits (AuditAll over 102,367 declarations), 443 Python, all exit 0. f864a7ecf adds only the gate record; integration adds records only, with Python rerun against the committed matrix. providers/ unchanged: provider_tests 133 carried.",
-  "workspace_tests": 8645,
+  "note": "Fresh full combined landing gate on f350d8c5de1585b127d8ce45d0641cb5db37690f, integrating card c8cb7bd4b with main 6c4855745. All 20 final required checks exit 0 after the standalone Lean retry; exact commands, private paths and log hashes are in command-receipt.json. Every check ran freshly on the current-main merge; the Rust suites used the retained rust-suite reservation and the successful Lean check used an independent Lean reservation. Earlier schedules completed 18 checks on c6561aa81 and 18 on 7045d9d98 before main advanced. No Rust tests launched on either superseded source. The retained reservation redirected its unlaunched worker to this fresh full gate; the older coordinator source guard rejects attributing the new source to its old head. Earlier partial receipts are retained separately and are not the final gate. Historical card-native measurements remain isolated; no merged native count is inferred.",
+  "workspace_tests": 8660,
   "provider_tests": 133,
-  "python_evidence_validator_tests": 443,
-  "lean_audits": 371,
+  "python_evidence_validator_tests": 445,
+  "lean_audits": 373,
   "lean_audit_files": [
    "AuditAbiEnumConstPointer.lean",
    "AuditAggregateOwnedField.lean",
@@ -6915,6 +6915,7 @@
    "AuditCleanupReplayAgreement.lean",
    "AuditCleanupVocabulary.lean",
    "AuditClosures.lean",
+   "AuditCmetricsApiContracts.lean",
    "AuditComposeEventLines.lean",
    "AuditComposedStdIo.lean",
    "AuditComposedTasks.lean",
@@ -7205,6 +7206,7 @@
    "AuditTaskTraceRelation.lean",
    "AuditTeardownAdmission.lean",
    "AuditTimeoutTeardown.lean",
+   "AuditTrackedSelfInit.lean",
    "AuditTransferability.lean",
    "AuditTwoDerivationAdmission.lean",
    "AuditTypedAccessPathPositionResiduals.lean",
@@ -7240,7 +7242,7 @@
   "reevaluation_followup_exit": 0,
   "cargo_fmt": "clean",
   "cargo_clippy": "clean",
-  "standing_gate": "full gate on merged tip 9caee67ba",
+  "standing_gate": "all required landing checks pass on unchanged source after separate Lean scheduling retry",
   "full_language_conformance": false,
   "measurement_provenance": "carried_from_previous_matrix: these numbers were NOT measured for this regeneration; pass --gate PATH with the standing-gate results of this checkpoint to replace them"
  },
@@ -12883,12 +12885,6 @@
    "source": "docs/reports/w48-bu-single-leaf-bodies/README.md"
   },
   {
-   "id": "PINNED-INPUTS-PATH-AFTER-MIGRATION",
-   "title": "Pinned and configured routes fail on path spelling after the checkout move",
-   "why": "Measured by W48-BU-SINGLE-LEAF-BODIES run 4 (retained failed attempt). /home/cosmo/Documents/GitHub/qcore-c is now a symlink to /media/Data/GitHub/quirin-lang, and the pinned compile databases spell the old prefix. run_pinned_audit.py resolves its inputs root to the real path, and the audit selects units by path string (pinned_route.rs plan_library, current.rs export_cross_unit_home). The corpus fails with 'compile database contains no selected cmetrics sources' and the configured routes with 'cross-unit home lies outside checkout'. Interim: docs/reports/w48-bu-single-leaf-bodies/scripts/mirror_inputs.py copies the inputs byte for byte and re-spells only the database path prefixes, with digests; its BASE reproduces 977 Safe. DISCHARGE: regenerate the pinned inputs under the real path, or compare canonical paths in the audit, with its own gate and BASE parity.",
-   "source": "docs/reports/w48-bu-single-leaf-bodies/README.md"
-  },
-  {
    "id": "SCHED-CLEANUP-CALLER-DRAIN",
    "title": "A body that destroys every element of a caller's list publishes no summary, so mk_sched_threads_purge and mk_sched_threads_destroy_all stay Unknown",
    "why": "Card W48-SCHED-CLEANUP-PRODUCTION (gateway rule 34) makes sched_thread_cleanup custody Safe, conditional on mk_http_thread_destroy's eight named premises, but its two planner callers keep exactly their BASE leaves: mk_sched_threads_purge `call to uncontracted function sched_thread_cleanup` at mk_server/mk_scheduler.c:637, mk_sched_threads_destroy_all the same leaf at :645 and :646 (null property Safe on both). sched_thread_cleanup lowers a foreign unlink (rule 34 applies rule 10f(2)'s unlink of each element before the release), so rule 10f(3)'s gate (has_foreign_unlink in observations_match_contract) publishes no summary: a summary would read the list formal Borrowed although every element it held was ended, and a caller's own published objects in that list would keep being restored. Rules 10f and 34 forbid dropping the gate without a caller-side rule that forgets the published sites the call may release, and no summary clause states 'releases every element of the container at #k' (resource_elements_dropped is registry-only, W44-CALLEE-DESTRUCTOR-SUMMARY). DISCHARGE: a container-drain summary effect derived only from a body whose every container effect on formal #k is an admitted destroyer of an element of a safe iteration over it, its caller application (the actual rooted as rule 10f(2) requires; every site the caller published on the path is forgotten as released or the call refuses), the schema change, matching audited Lean, and a fresh BASE/TIP corpus measurement naming the two callers.",
@@ -12924,7 +12920,7 @@
   {
    "id": "CMT-MAP-METRIC-GET-OWNERSHIP-CHAIN",
    "title": "Close the CMetrics map getter ownership chain",
-   "why": "Open after the human narrowed W48-BU-CMT-MAP-METRIC-GET to exact borrowed-formal returns. Remaining: caller-supplied metric member allocation and storage lifetime; nullable metric results owning nested label/SDS lists; primary owned membership versus secondary hash indexing and cached pointers; returning a checked borrow from the map; source-checked CFL list effects and truthful vendored XXH3 effects. DISCHARGE: generic Rust with matching audited Lean (no placeholders or project axioms), truthful and pinned contracts with provider gates if changed, full-body and all-exit validation without self-assumed contracts, and fresh BASE/TIP attribution of resource, null and outer/runtime results. A conditional planner caller ceiling is not a gain. W48-CMT-LIST-SELF-INIT adds only a checked initializer-leaf call inside a simple unit-local empty-custody caller frame, with no ordinary summary or production getter gain. CG11 literal self-stores were already supported. Tracked/interior caller effect transport remains Open under W48-CMT-TRACKED-INTERIOR-SELF-INIT; all other parent obligations remain Open.",
+   "why": "Open after the human narrowed W48-BU-CMT-MAP-METRIC-GET to exact borrowed-formal returns. Remaining: caller-supplied metric member allocation and storage lifetime; nullable metric results owning nested label/SDS lists; primary owned membership versus secondary hash indexing and cached pointers; returning a checked borrow from the map; source-checked CFL list effects and truthful vendored XXH3 effects. DISCHARGE: generic Rust with matching audited Lean (no placeholders or project axioms), truthful and pinned contracts with provider gates if changed, full-body and all-exit validation without self-assumed contracts, and fresh BASE/TIP attribution of resource, null and outer/runtime results. A conditional planner caller ceiling is not a gain. W48-CMT-LIST-SELF-INIT adds only a checked initializer-leaf call inside a simple unit-local empty-custody caller frame, with no ordinary summary or production getter gain. CG11 literal self-stores were already supported. Rule 36b closes bounded tracked/interior initializer transport with retained self writes, alias member-fact invalidation, ledger preservation and a canonical CFL .qv declared model that grants no interpreted call summary. Existing nondefault custody frames are refused; disjoint-frame transport remains Open under W48-CMT-SELF-INIT-DISJOINT-FRAMES. Declared models now specify all six public map and both opts APIs; checked executable adoption remains Open under CMT-MAP-OPTS-CONTRACT-ADOPTION and labeled zero-hash static-storage accounting under CMT-LABELED-HASH-ZERO-STATIC-STORAGE. All other parent obligations remain Open.",
    "source": "docs/reports/w48-bu-cmt-map-metric-get/README.md"
   },
   {
@@ -12932,12 +12928,6 @@
    "title": "Recover ignored-derived-call NULL witness precision without false infeasibility",
    "why": "The exact borrowed-formal return controls exposed a NULL witness bug that could turn an unresolved nonnullable-derived base into path-search infeasible. The fail-closed repair cuts unresolved bases and preserves known NULL for an exact alias. Fresh native mk_http_directory_redirect_check consequently loses a provisional allocation-failure finding at memcpy/location and remains Unknown. DISCHARGE: checked generic witness transport for ignored derived results and/or allocation-base splitting, matching audited Lean with no placeholders or project axioms, both ignored-result precision and used-result false-Safe negative controls, and fresh complete resource/NULL/runtime native attribution. Until then retain Unknown; this is neither a C fix nor an upstream defect claim.",
    "source": "docs/reports/w48-bu-cmt-map-metric-get/README.md"
-  },
-  {
-   "id": "W48-CMT-TRACKED-INTERIOR-SELF-INIT",
-   "title": "Transport checked self-initializer effects to tracked or embedded caller objects",
-   "why": "Open after W48-CMT-LIST-SELF-INIT. Its private empty-frame call admits no tracked owner, interior/member-address actual or member-place alias and exports no ordinary summary. DISCHARGE: generic checked shape/effect transport for an exact live caller-owned object or embedded member, preserving actual CG11 writes, derived/member alias invalidation, custody and list-membership obligations; matching audited Rust/Lean without placeholders or project axioms, complete source/ABI/full-body/all-exit checks, wrong-owner/layout/alias and callback/export refusal controls, and fresh BASE/planner then committed prediction then implementation with complete resource/NULL/runtime native attribution. Never erase initializer writes into a neutral summary.",
-   "source": "docs/reports/w48-cmt-list-self-init/README.md"
   },
   {
    "id": "GATE-SCOPE-RUNTIME-READS-HEURISTIC",
@@ -12982,11 +12972,47 @@
    "source": "docs/reports/gate-elastic/README.md"
   },
   {
+   "id": "CMT-MAP-OPTS-CONTRACT-ADOPTION",
+   "title": "Discharge checked consumers for CMetrics map and opts API contracts",
+   "why": "Open after adding source-audited declared-model cmetrics/map_lifetime.qv and cmetrics/opts_lifetime.qv for six map and two opts APIs. They grant no interpreted resource/bounds/outer call permission. DISCHARGE: generic checked consumers with matching audited Rust/Lean for copied versus retained inputs, transitive map ownership, primary versus secondary/cache/backpointer relations, embedded versus dynamic metric borrows, getter NULL after committed mutation, expiration/destructor invalidation and external coordination, and opts partial initialization plus cleanup without clearing fields. Opts contents can retire before teardown-only map destruction. Prove source/ABI/body coverage and all representation/alias/lifetime obligations, use truthful reviewed pins for any eventual interpreted declaration, retain Unknown on missing proof, and own fresh prediction/native attribution for actual adoption. Never replace these effects by an ordinary neutral summary.",
+   "source": "docs/reports/w48-cmt-tracked-interior-self-init/CMETRICS_APIS.md"
+  },
+  {
+   "id": "CMT-LABELED-HASH-ZERO-STATIC-STORAGE",
+   "title": "Account for labeled zero-hash results reaching embedded metric storage",
+   "why": "Open source obligation, not a validated upstream defect: cmt_map.c metric_hash_lookup returns the embedded metric for hash zero even from labeled lookup; metric_prepare_storage may allocate embedded value storage, while destruction/expiration uses metric_static_set to decide embedded cleanup. DISCHARGE: establish that the labeled zero-hash case is unreachable under the audited hash/input profile, or model and validate its complete static-storage lifecycle, flag/accounting and alias obligations. Do not claim reachability or a defect without a validated witness, and do not assume collision exclusion from a function name. The declared map API model explicitly requires zero-hash exclusion or independently established embedded accounting.",
+   "source": "docs/reports/w48-cmt-tracked-interior-self-init/CMETRICS_APIS.md"
+  },
+  {
+   "id": "W48-CMT-SELF-INIT-DISJOINT-FRAMES",
+   "title": "Preserve disjoint custody relations across a checked self-initializer",
+   "why": "Open after rule 36b closes bounded tracked/interior transport. Its source-checked effect preserves the ledger and refuses every nondefault custody frame. DISCHARGE: a generic path/alias-sensitive frame rule admitting independently proved disjoint child, containment, membership or other relations while preserving every obligation and invalidating every affected pointer fact; existing obligations in the initialized list must never be erased. Unresolved effects still require their own discharge. Matching audited Rust/Lean, actual source/flow/lifetime/refusal/export controls, truthful .qv reflection without a neutral summary, and fresh BASE/planner then prediction then implementation and complete native attribution. Full list operations and the other getter-chain obligations remain in the parent entry.",
+   "source": "docs/reports/w48-cmt-tracked-interior-self-init/README.md"
+  },
+  {
    "id": "RULE-AMENDMENTS-OUTSIDE-RULE-FILES",
    "title": "Rule amendments still live outside their rule files",
    "why": "After GENERATED-ROOTS each router-indexed constraint is one docs/agents/rules/<id>.md, but amendment sections that qualify a rule remain hand-edited topic-page text outside the generated section: buffers-records.md and source-routes.md (constraint-15k-amendments, constraint-14-amendments and post-migration sections), effects.md's amendment to 15m, diagnostics.md's namespace and amendment sections, providers.md's CONTRACT-INHERIT amendment, and the trailing sections of concurrency.md, evidence.md, source-identity.md and validation.md. DISCHARGE: each is folded into its rule file or registered as its own rule, so the rule file is the rule's whole authority.",
    "source": "docs/reports/generated-roots/README.md"
+  },
+  {
+   "id": "MEMBER-PREPASS-MIXED-SPELLING",
+   "title": "Member pre-pass mixes the route root's canonical spelling with the database's",
+   "why": "Found by AUDIT-CANONICAL-PATHS's identity run on the original inputs after the checkout move. member_prepass.rs exclusion_files joins a TokensAbsent exclusion's generator sources under the route's canonical source root, but takes the unit and its dependencies in the compile database's spelling. When the two differ (a moved or symlinked checkout), the evidence-file set holds one file under two spellings. Each is read twice (slice/system admission phase 3: 814 tasks against 676), and the sorted order changes which file a dropped unit's reason cites first (74 reasons, all luajit build-tool units). No dropping decision, verdict or count changes. DISCHARGE: dedupe and order the pre-pass's evidence files by located path (crates/qcore-audit/src/input_paths.rs), keeping the spelled path for publication. Evidence: an identity run on the original inputs whose slice and system sidecars equal the namespace control's apart from root-prefix digests.",
+   "source": "docs/reports/audit-canonical-paths/README.md"
+  },
+  {
+   "id": "PREPASS-CLOCK-DEPENDENT-KEY",
+   "title": "One pre-pass summary key changes with the clock, so route sidecars are not reproducible",
+   "why": "Found by AUDIT-CANONICAL-PATHS. The Fluent Bit compile database compiles lib/monkey/mk_bin/monkey.c, whose MONKEY_BUILT is `__DATE__ \" \" __TIME__`. The member pre-pass keys each unit's lifetime-source summary by a digest over its preprocessed text, so that unit's key (an empty summary) differs between any two runs not in the same second. It shows in both the evidence and pre-pass sections of the .contracts.json sidecar on the corpus, system and slice routes. Verdicts are unaffected, but no two runs of a route are byte-identical, which every identity run must then explain. DISCHARGE: preprocess under a fixed, recorded SOURCE_DATE_EPOCH (Clang honours it for __DATE__ and __TIME__), or refuse or normalise the time macros in the identity. Evidence: two runs of one route byte-identical.",
+   "source": "docs/reports/audit-canonical-paths/README.md"
+  },
+  {
+   "id": "MEASURE-SNAPSHOT-HAZARDS",
+   "title": "Measurement snapshots: missing submodule, shared working directory, git index refresh, build stamp",
+   "why": "Found by AUDIT-CANONICAL-PATHS while measuring from git-archive snapshots, for the MEASURE-TOOL card (seam F). (1) git archive omits third_party/libevent. The pinned route reads it through the binary's compile-time CARGO_MANIFEST_DIR, so the corpus fails at the Monkey gate with the enclosing worktree's HEAD. (2) The audit writes transient retained products under its working directory (private/audit-retained-products/), so two routes sharing a snapshot trip each other's input-identity check (driver exit 101). (3) The audit's git refreshes a fresh clone's .git/index during the route, also exit 101. (4) QCORE_AUDIT_BUILD_COMMIT (evidence_version) is the HEAD of whatever repository encloses the build directory, not the measured revision. (5) The snapshot directory reaches the contract-source paths the reports digest, so sides at different paths can never be byte-compared. scripts/pin_run.sh and run_pinned_paths.sh in the report show one workaround. DISCHARGE: quirin-audit measure prepares snapshots with submodules at one fixed path per side, runs each with a private working directory, excludes VCS metadata from the identity check and records the measured revision explicitly.",
+   "source": "docs/reports/audit-canonical-paths/README.md"
   }
  ],
- "updated": "Completed plugin premise integration; exact hand-maintained union retains810followups, borrowed measured-source8419Rust/354Lean/freshcard133provider, exact source equivalence checked; authoritative root committed-matrix Python confirmation in integration receipt."
+ "updated": "Completed plugin premise integration; exact hand-maintained union retains810followups, borrowed measured-source8419Rust/354Lean/freshcard133provider, exact source equivalence checked; authoritative root committed-matrix Python confirmation in integration receipt. CMetrics map/opts API model specifications added at the explicit user request. Eight declared-model API contracts remain outside interpreted views, with CMT-MAP-OPTS-CONTRACT-ADOPTION and CMT-LABELED-HASH-ZERO-STATIC-STORAGE Open. No trusted API coverage is claimed; the source gate is recorded by this card alongside its separate initializer native checkpoint. W48-CMT-TRACKED-INTERIOR-SELF-INIT implements rule 36b's checked initializer effect transport for an exact live owned root or embedded record, retaining actual self writes, invalidating aliased member facts and preserving resource obligations; nondefault custody frames refuse and no ordinary summary is exported. The canonical CFL intrusive_list.qv declares matching audit preconditions/effects; two CMetrics .qv modules add six map and two opts lifecycle models, including transitive ownership, partial failure, borrowed results and uncleared cleanup fields. All remain outside interpreted views; checked API adoption and labeled zero-hash storage accounting have named Open follow-ups. Fresh BASE/planner precedes prediction f18d96065 and implementation; the later contract amendment 08da23123 precedes .qv edits. Native corpus BASE/TIP Safe/Unknown/Pending/provisional-Unsafe: 1009 / 3816 / 0 / 9 to 1011 / 3814 / 0 / 9; full system/slice, 5781 NULL dictionaries and runtime projections are compared, 241 semantic leaves accounted, zero unexplained leaves and no prior Safe loss. Gate 8654 Rust / 370 Lean / 374 Python, provider 133 Rust / 25 Python and all five package verifies pass. The actual deep source reader uses 328 KiB below 1 MiB. Full getter closure remains Open; W48-CMT-SELF-INIT-DISJOINT-FRAMES tracks the next bounded frame extension, and W48-EXACT-RETURN-WITNESS-PRECISION is unchanged. Native evidence is isolated to measured e92d8aef35a8bd14550e90219d19a56eb3b196e7; later source gate 2d0d85299b830aa24d7f200d63a308653582363f validates the added declared API models separately; see docs/reports/w48-cmt-tracked-interior-self-init/README.md."
 }

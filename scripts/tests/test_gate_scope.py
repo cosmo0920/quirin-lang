@@ -316,14 +316,36 @@ class RealRepository(unittest.TestCase):
         self.assertLessEqual({"qcore-c-gateway", "qcore-compiler", "qcore-provider-conformance"},
                              readers)
         # CT-FIXTURE-EXTERNAL-READERS' own example: write_lend.rs reads CT07.
-        sources = {r.source.split(":")[0] for r in self.model.readers_of(
-            "compiler/tests/fixtures/ct/CT07/case.qr") if r.kind == "include_str"}
-        self.assertIn("compiler/tests/write_lend.rs", sources)
+        # File granularity (the default since 2026-10-25) claims exactly the
+        # file the macro compiles in; directory granularity claims its siblings.
+        def write_lend_reads(model, path):
+            return "compiler/tests/write_lend.rs" in {
+                r.source.split(":")[0] for r in model.readers_of(path)
+                if r.kind == "include_str"}
+        read = "compiler/tests/fixtures/ct/CT07/sequential_write_halves.qr"
+        sibling = "compiler/tests/fixtures/ct/CT07/case.qr"
+        self.assertTrue(write_lend_reads(self.model, read))
+        self.assertFalse(write_lend_reads(self.model, sibling))
+        by_directory = Model(scope_mod.load_crates(), scope_mod.tracked_files(),
+                             granularity="directory")
+        self.assertTrue(write_lend_reads(by_directory, sibling))
 
     def test_the_census_is_json(self):
         census = scope_mod.cross_crate_readers(self.model)
         self.assertTrue(census["reads"])
         json.dumps(census)
+
+
+class DefaultGranularityTests(unittest.TestCase):
+    """User decision 2026-10-25: a compile-time read claims only the file read."""
+
+    def test_the_model_default_is_file(self):
+        model = scope_mod.Model([], [], read_text=lambda path: "")
+        self.assertEqual(model.granularity, "file")
+
+    def test_the_cli_default_is_file(self):
+        import inspect
+        self.assertIn('default="file"', inspect.getsource(scope_mod.main))
 
 
 if __name__ == "__main__":

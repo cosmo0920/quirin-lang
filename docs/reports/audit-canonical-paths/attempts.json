@@ -1,0 +1,30 @@
+{
+ "card": "AUDIT-CANONICAL-PATHS",
+ "base": "fb5412930fd7c0a98586fd445029e1da4607074c",
+ "measured_source": "26a1acd2d5ada1d976ed9a342bbf7485e013bd21",
+ "evidence": "attempt-2",
+ "attempts": [
+  {
+   "id": "attempt-1",
+   "date": "2026-10-24",
+   "what": "five sides (base-mirror, tip-mirror, tip-original, base-namespace, base-original) x corpus, slice, system, under the legacy flock; two git-archive snapshots (BASE, TIP) shared by the sides of each revision; private/acp/runs/",
+   "outcome": "every corpus route exits 1 at the Monkey gate: `could not verify Cycle 18 Libevent source: Pin(SourceRevisionMismatch { pin: \"libevent\", expected: \"d82464a2...\", actual: \"660a11bc9...\" })`. git archive leaves third_party/libevent empty, and the pinned route finds the submodule through the binary's compile-time CARGO_MANIFEST_DIR, so git resolved the enclosing card worktree's HEAD. The scheduler card's snapshots carried the submodule. Slice and system routes exit 0 on the four comparable sides, but their sidecars differ between sides by the snapshot directory, which reaches the contract-source paths the reports digest (resource_contract_sources, assumptions, build_identity). base-original reproduces run 4 of W48-BU-SINGLE-LEAF-BODIES exactly: corpus `compile database contains no selected cmetrics sources` (exit 1); slice and system `current audit rejected (Unknown): cross-unit home lies outside checkout` (audit exit 1; the driver reports 101 because the audit's transient retained products, written under its working directory, appeared in the shared BASE snapshot). Retained under private/acp/runs/.",
+   "evidence": false,
+   "kept_as": "reproduction of the run-4 failure on BASE (base-original)"
+  },
+  {
+   "id": "attempt-2",
+   "date": "2026-10-24/25",
+   "what": "four sides, each with its own git-archive snapshot carrying the pinned libevent submodule (d82464a2), built and run in a private mount namespace where the snapshot is bound at private/acp/snap and its output root at private/acp/out (pin_run.sh), so every side spells analyzer, profiles, contracts and outputs the same way; each route in an audit slot of scripts/gate_slot.py (7 GiB, --jobs 3) after GATE-ELASTIC landed; private/acp/runs2/",
+   "outcome": "all twelve routes audit exit 0; see README. The drivers report 101 on the corpus because the audit's `git` refreshed third_party/libevent/.git/index (the stat cache of the fresh clone) during the route; no content file changed. The base-namespace corpus hid /home/cosmo/Documents/GitHub/monkey (the libevent lock's tip repository) behind the namespace tmpfs; it is retained but superseded by attempt 2b. Slice and system namespace sides ran with the corrected pin_run.sh.",
+   "evidence": true
+  },
+  {
+   "id": "attempt-2b",
+   "date": "2026-10-25",
+   "what": "base-namespace corpus only, rerun with pin_run.sh keeping every sibling of qcore-c visible (rerun_namespace_corpus.sh); private/acp/runs3/",
+   "outcome": "audit and driver exit 0; it is the namespace side of the corpus comparison",
+   "evidence": true
+  }
+ ]
+}

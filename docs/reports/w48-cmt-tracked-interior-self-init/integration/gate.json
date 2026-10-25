@@ -1,0 +1,13 @@
+{
+  "note": "Fresh full combined landing gate on f350d8c5de1585b127d8ce45d0641cb5db37690f, integrating card c8cb7bd4b with main 6c4855745. All 20 final required checks exit 0 after the standalone Lean retry; exact commands, private paths and log hashes are in command-receipt.json. Every check ran freshly on the current-main merge; the Rust suites used the retained rust-suite reservation and the successful Lean check used an independent Lean reservation. Earlier schedules completed 18 checks on c6561aa81 and 18 on 7045d9d98 before main advanced. No Rust tests launched on either superseded source. The retained reservation redirected its unlaunched worker to this fresh full gate; the older coordinator source guard rejects attributing the new source to its old head. Earlier partial receipts are retained separately and are not the final gate. Historical card-native measurements remain isolated; no merged native count is inferred.",
+  "workspace_tests": 8660,
+  "provider_tests": 133,
+  "python_evidence_validator_tests": 445,
+  "lean_audits": 372,
+  "reevaluation_probe_exit": 0,
+  "reevaluation_followup_exit": 0,
+  "cargo_fmt": "clean",
+  "cargo_clippy": "clean",
+  "standing_gate": "all required landing checks pass on unchanged source after separate Lean scheduling retry",
+  "clang": "present: Ubuntu clang version 21.1.8 (6ubuntu1)"
+}

@@ -89,6 +89,9 @@ pub mod user_plugins;
 // (`quirin-audit-NAME` on a declared search path), through the plugin firewall.
 pub mod subcommand_plugins;
 pub mod wait_failures;
+// Card AUDIT-CANONICAL-PATHS: unit selection compares located (canonical)
+// paths, never path strings, so a moved or symlinked checkout keeps working.
+pub mod input_paths;
 pub use source_audit::{SourceContractAuditConfig, SourceContractLibrary};
 
 use std::collections::{BTreeMap, BTreeSet};
@@ -203,37 +206,56 @@ pub fn select_profile_units(
     checkout: &Path,
     library: &LibraryProfile,
 ) -> Result<Vec<CompileEntry>, String> {
-    let mut selected = BTreeMap::<PathBuf, CompileEntry>::new();
+    // Card AUDIT-CANONICAL-PATHS: records match by located path and keep
+    // their spelling; a record spelled under a root that resolves outside it
+    // is refused, and two spellings of one file with `input-path-alias`.
+    use input_paths::{Placement, locate, place, select_exact, select_under};
+    let is_c = |entry: &CompileEntry| {
+        locate(&entry.file)
+            .path()
+            .extension()
+            .is_some_and(|extension| extension == "c")
+    };
+    let outside = |entry: &CompileEntry| {
+        format!("source outside selected checkout: {}", entry.file.display())
+    };
+    let mut matched = Vec::new();
     for root in &library.source_roots {
-        let declared_root = qcore_contract::profile_loader::source_root_path(checkout, &root.root);
-        let source_root = declared_root
-            .canonicalize()
-            .unwrap_or_else(|_| declared_root.clone());
-        for entry in entries {
-            let entry_file = entry
-                .file
-                .canonicalize()
-                .unwrap_or_else(|_| entry.file.clone());
-            let matches = match &root.selection {
-                UnitSelection::TopLevel => entry_file.parent() == Some(source_root.as_path()),
-                UnitSelection::Recursive => entry_file.starts_with(&source_root),
-                UnitSelection::Exact { file } => entry_file == checkout.join(file),
-            } && entry_file
-                .extension()
-                .is_some_and(|extension| extension == "c");
-            if !matches {
-                continue;
+        let source_root = qcore_contract::profile_loader::source_root_path(checkout, &root.root);
+        matched.extend(match &root.selection {
+            UnitSelection::TopLevel => select_under(
+                entries,
+                &source_root,
+                |entry, relative| relative.components().count() == 1 && is_c(entry),
+                outside,
+            )?,
+            UnitSelection::Recursive => {
+                select_under(entries, &source_root, |entry, _| is_c(entry), outside)?
             }
-            if let Some(prior) = selected.get(&entry.file)
-                && !compile_db::same_configuration(prior, entry)
-            {
-                return Err(format!(
-                    "conflicting compilation commands for {}",
-                    entry.file.display()
-                ));
+            UnitSelection::Exact { file } => {
+                let target = checkout.join(file);
+                if place(&target, checkout) == Placement::Escapes {
+                    return Err(format!("source outside selected checkout: {file}"));
+                }
+                select_exact(entries, &target)?
+                    .into_iter()
+                    .filter(|entry| is_c(entry))
+                    .collect()
             }
-            selected.insert(entry.file.clone(), entry.clone());
+        });
+    }
+    input_paths::refuse_aliases(matched.iter().copied())?;
+    let mut selected = BTreeMap::<PathBuf, CompileEntry>::new();
+    for entry in matched {
+        if let Some(prior) = selected.get(&entry.file)
+            && !compile_db::same_configuration(prior, entry)
+        {
+            return Err(format!(
+                "conflicting compilation commands for {}",
+                entry.file.display()
+            ));
         }
+        selected.insert(entry.file.clone(), entry.clone());
     }
     Ok(selected.into_values().collect())
 }

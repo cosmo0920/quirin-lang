@@ -1,0 +1,66 @@
+{
+ "units": [
+  15,
+  15
+ ],
+ "functions": [
+  448,
+  448
+ ],
+ "null_rows": [
+  454,
+  454
+ ],
+ "unit_status_tally": [
+  {
+   "Unknown": 13,
+   "Unsafe": 2
+  },
+  {
+   "Unknown": 13,
+   "Unsafe": 2
+  }
+ ],
+ "function_status_tally": [
+  {
+   "Unknown": 345,
+   "Safe": 99,
+   "Unsafe": 4
+  },
+  {
+   "Unknown": 345,
+   "Safe": 99,
+   "Unsafe": 4
+  }
+ ],
+ "null_verdict_tally": [
+  {
+   "Unknown": 243,
+   "Safe": 211
+  },
+  {
+   "Unknown": 243,
+   "Safe": 211
+  }
+ ],
+ "custody_combined_tally": [
+  {
+   "Unknown/Unknown": 345,
+   "Safe/Safe": 65,
+   "Safe/Unknown": 34,
+   "None/Unknown": 6,
+   "Unsafe/Unsafe": 4
+  },
+  {
+   "Unknown/Unknown": 345,
+   "Safe/Safe": 65,
+   "Safe/Unknown": 34,
+   "None/Unknown": 6,
+   "Unsafe/Unsafe": 4
+  }
+ ],
+ "unit_differences": [],
+ "function_differences": [],
+ "null_differences": [],
+ "equal": true
+}

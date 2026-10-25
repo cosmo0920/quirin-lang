@@ -1,0 +1,116 @@
+module contract;
+
+// Source-audited declared model, not resource_contract_v1. No interpreted
+// resource/bounds call permission is granted by this file. Full body/effect
+// consumers must establish these obligations before production adoption.
+// Read cmt_map.h/cmt_map.c at Fluent Bit 66910c10a4d7eafa810b84229cf2dcf7b0f26f97.
+// Primary metrics own their labels/storage; buckets and last_metric are
+// secondary non-owning references. The embedded metric is never heap-freed.
+// Internal lookup locking does not protect a returned borrow from later expiry.
+resource type CmtMap {
+    repr: ptr<mut, u8>;
+    footprint: { map_roots = 1 };
+    destructor: cmt_map_destroy noexcept;
+    copy: forbidden;
+    move: allowed;
+}
+
+extern fn cmt_map_create(metric_type: i32, opts: ptr<mut, u8>, count: i32,
+                         labels: ptr<mut, ptr<mut, u8>>, parent: ptr<mut, u8>) -> ptr<mut, u8>
+contract {
+    requires positive_count_has_readable_label_pointer_array;
+    requires nonnull_label_strings_are_stable_readable_and_terminated;
+    requires retained_opts_and_parent_record_storage_outlive_map_uses;
+    requires allocation_sizes_and_list_cardinalities_fit_the_C_types;
+    ensures normal result_is_null_or_fresh_exclusively_owned_map;
+    ensures normal negative_count_returns_null_without_allocation;
+    ensures normal present_result_owns_label_key_nodes_copied_sds_and_index_storage;
+    ensures normal opts_and_parent_are_retained_nonowning_record_views;
+    ensures normal input_label_array_and_strings_are_not_retained;
+    ensures normal null_result_leaves_no_new_map_or_child_obligation;
+    ensures normal no_existing_input_resource_is_consumed;
+};
+
+extern fn cmt_map_metric_get(opts: ptr<mut, u8>, map: ptr<mut, u8>,
+                             labels_count: i32, labels_val: ptr<mut, ptr<mut, u8>>,
+                             write_op: i32) -> ptr<mut, u8>
+contract {
+    requires map_is_nonnull_live_with_valid_primary_child_ownership;
+    requires secondary_index_cache_and_backpointers_match_live_primary_ownership;
+    requires label_count_is_nonnegative_and_array_extent_is_valid;
+    requires nonnull_label_values_and_required_opts_fqname_are_live_stable_strings;
+    requires tagged_histogram_or_summary_parent_and_storage_layout_are_valid;
+    requires bucket_sizes_counts_and_string_lengths_fit_the_C_types;
+    requires labeled_hash_zero_is_excluded_or_embedded_storage_is_accounted;
+    requires embedded_static_metric_label_list_has_no_owned_nodes;
+    requires users_coordinate_returned_metric_uses_against_expiration_and_destroy;
+    ensures normal result_is_null_or_borrowed_metric_from_map;
+    ensures normal present_result_is_embedded_metric_or_map_owned_dynamic_child;
+    ensures normal result_creates_no_caller_release_obligation;
+    ensures normal created_metric_labels_and_storage_remain_map_owned;
+    ensures normal read_lookup_may_allocate_or_mutate_secondary_index;
+    ensures normal null_result_may_follow_committed_metric_or_storage_changes;
+    ensures normal primary_ownership_secondary_links_and_cache_remain_consistent;
+    ensures normal internal_lock_is_released_before_result_is_exposed;
+    ensures normal no_ordinary_neutral_summary_is_established;
+};
+
+extern fn cmt_map_metric_get_val(opts: ptr<mut, u8>, map: ptr<mut, u8>,
+                                 labels_count: i32, labels_val: ptr<mut, ptr<mut, u8>>,
+                                 out_val: ptr<mut, f64>) -> i32
+contract {
+    requires map_and_lookup_inputs_meet_the_getter_representation_obligations;
+    requires out_val_is_writable_double_storage;
+    requires out_val_is_disjoint_from_lookup_mutation_and_retirement_footprints;
+    requires no_retirement_races_between_lookup_unlock_and_value_read;
+    ensures normal result_is_zero_or_minus_one;
+    ensures normal zero_result_writes_metric_value_to_out_val;
+    ensures normal minus_one_result_preserves_out_val;
+    ensures normal no_metric_pointer_or_caller_ownership_escapes;
+    ensures normal read_lookup_can_still_change_secondary_index_storage;
+};
+
+extern fn cmt_map_metric_destroy(metric: ptr<mut, u8>) -> unit
+contract {
+    requires metric_is_nonnull_live_dynamic_primary_list_member;
+    requires metric_is_not_the_embedded_static_metric;
+    requires exact_owner_links_cache_and_required_map_backpointer_are_consistent;
+    requires no_concurrent_or_later_user_of_retired_metric_or_owned_storage;
+    ensures normal metric_label_nodes_sds_and_value_storage_are_discharged;
+    ensures normal primary_and_secondary_memberships_are_removed_before_free;
+    ensures normal matching_owner_cache_is_cleared_and_index_count_is_updated;
+    ensures normal dynamic_metric_is_released_exactly_once;
+    ensures normal every_alias_to_retired_metric_and_storage_is_invalidated;
+    ensures normal owner_map_and_unrelated_children_are_not_released;
+};
+
+extern fn cmt_map_metrics_expire(map: ptr<mut, u8>, expiration: u64) -> unit
+contract {
+    requires map_is_nonnull_live_with_valid_primary_child_ownership;
+    requires secondary_index_cache_and_backpointers_match_live_primary_ownership;
+    requires external_coordination_excludes_users_of_retiring_metrics;
+    requires static_storage_accounting_matches_metric_static_set;
+    requires embedded_static_metric_label_list_has_no_owned_nodes;
+    ensures normal older_dynamic_metrics_are_unlinked_and_discharged;
+    ensures normal older_enabled_static_metric_storage_is_released_and_record_reset;
+    ensures normal embedded_static_metric_record_itself_is_not_freed;
+    ensures normal retired_or_reset_metric_borrows_are_invalidated;
+    ensures normal remaining_children_and_map_root_keep_their_ownership;
+    ensures normal this_is_a_mutating_retirement_operation_not_a_neutral_borrow;
+};
+
+extern fn cmt_map_destroy(map: ptr<mut, u8>) -> unit
+contract {
+    requires map_is_nonnull_live_and_exclusively_owned_for_teardown;
+    requires primary_secondary_cache_and_backpointer_representation_is_valid;
+    requires every_owned_label_metric_unit_and_bucket_has_one_valid_owner;
+    requires static_storage_accounting_matches_metric_static_set;
+    requires embedded_static_metric_label_list_has_no_owned_nodes;
+    requires no_concurrent_or_later_map_metric_or_child_user;
+    ensures normal label_key_nodes_and_sds_are_discharged;
+    ensures normal dynamic_metrics_and_their_nested_owned_resources_are_discharged;
+    ensures normal enabled_static_metric_storage_unit_and_bucket_array_are_discharged;
+    ensures normal map_root_is_released_exactly_once;
+    ensures normal all_map_and_descendant_borrows_are_invalidated;
+    ensures normal retained_opts_and_parent_records_are_not_released;
+};

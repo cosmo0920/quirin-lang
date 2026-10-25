@@ -64,6 +64,7 @@ import QCore.CleanupReplayAgreement
 import QCore.CleanupTaskComposition
 import QCore.CleanupVocabulary
 import QCore.Closures
+import QCore.CmetricsApiContracts
 import QCore.Compiler
 import QCore.ComposeEventLines
 import QCore.ComposedStdIo
@@ -388,6 +389,7 @@ import QCore.TaskTraceWrites
 import QCore.TeardownAdmission
 import QCore.TeardownTraversal
 import QCore.TimeoutTeardown
+import QCore.TrackedSelfInit
 import QCore.Transferability
 import QCore.TranslationValidation
 import QCore.TwoDerivationAdmission

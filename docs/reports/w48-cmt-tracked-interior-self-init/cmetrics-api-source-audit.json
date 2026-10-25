@@ -1,0 +1,32 @@
+{
+  "reviewed_source_revision": "66910c10a4d7eafa810b84229cf2dcf7b0f26f97",
+  "source_files": {
+    "lib/cmetrics/include/cmetrics/cmt_map.h": "722be8ad636f1ef0ada23b55e3989ab7609794cd7b7b17ee47efb7b02abbb2cc",
+    "lib/cmetrics/src/cmt_map.c": "a02cdda1b17d6b7fbe70a8dfa5cd329261ce575960e58af369cf058e1fa12517",
+    "lib/cmetrics/include/cmetrics/cmt_opts.h": "604b60bee2de9461983a2656cb6122e19d9f3dcf4c7011a407a348e9ad026c09",
+    "lib/cmetrics/src/cmt_opts.c": "0ce2593cf82686be46cda383e6ede07c7aa644ff5343a5eca6fb167c2b42c578",
+    "lib/cmetrics/src/cmt_counter.c": "e507481702ceea626ea71e1043b7534ae98b7c2f5d71366ee916c47e25ce88f0",
+    "lib/cfl/src/cfl_sds.c": "da8e297179e7ad0c991975be3664aea2f671f08382af747aea163b580f080052"
+  },
+  "observations": [
+    "map create copies label keys; retains opts/parent records; null construction cleans its own partial graph",
+    "getter returns embedded or primary-owned metric borrow; NULL can follow an attached child; read lookup can reindex",
+    "primary list owns metrics; hash buckets/cache are nonowning; indexed/cached backpointers must match owner",
+    "retirement requires external user coordination despite internal lookup lock",
+    "opts init may retain partial field allocations on -1; tmp append failure preserves old fqname",
+    "opts exit does not free enclosing record or clear pointer fields; empty cleanup can repeat, nonempty cleanup cannot generally repeat",
+    "counter teardown exits opts before map destroy; teardown does not read retired opts strings",
+    "labeled hash==0 reaches embedded metric; static-storage accounting is an explicit unresolved obligation, not an upstream defect claim"
+  ],
+  "truth_status": "source inspection and declared models; no C extraction or body-effect discharge claimed",
+  "formatting_edit": {
+    "command": [
+      "rustfmt",
+      "--edition",
+      "2024",
+      "crates/qcore-contract/tests/cmetrics_api_models.rs"
+    ],
+    "exit": 0,
+    "not_a_validation_gate": true
+  }
+}

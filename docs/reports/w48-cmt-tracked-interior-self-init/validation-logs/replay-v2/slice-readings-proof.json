@@ -1,0 +1,364 @@
+{
+  "canonical_captures_validated": 1,
+  "input_sha256": {
+    "/home/cosmo/.codex/worktrees/808d/quirin-lang/private/w48-cmt-tracked-interior/base-slice/resource-diagnostics.contracts.json": "4d31df387d7796df2175884660154b48da9c71f68911d53523de5879aeb79756",
+    "/home/cosmo/.codex/worktrees/808d/quirin-lang/private/w48-cmt-tracked-interior/base-slice/resource-diagnostics.json": "29500774d32666cbfc02387bd8d142169474ff0086931e4092d6d18a5a3f1348",
+    "/home/cosmo/.codex/worktrees/808d/quirin-lang/private/w48-cmt-tracked-interior/tip-slice/resource-diagnostics.contracts.json": "253a6075a71f16eefca58363a2c6d537bdd720c3428ce4b305e5deda16b567fd",
+    "/home/cosmo/.codex/worktrees/808d/quirin-lang/private/w48-cmt-tracked-interior/tip-slice/resource-diagnostics.json": "d8e5a77094d38d993726706cf2540e94f04263cb5b8fe96812c77f4c308d3b60"
+  },
+  "meaning": "Complete production binding replay, only actual evidence build version differs; every observation/capture/graph retained and equal",
+  "records": [
+    {
+      "actual_bindings_reproduced": true,
+      "base_id": "ad45e21b5475f1e21fcbe074098ef89b26ad1728fb635f51eee50a5987d9f144",
+      "base_receipt": {
+        "atom_sha256": {
+          "checked_reading_route": "9de3bbee7fab2661314039f4794f49f1e96d5536c5c167d0beb05b4eee25866e",
+          "scalar_declaration": "99737707a21572cf28c8260ed4f3089d4396bf1289cda57ecad2b0c879b9bc23",
+          "untracked_effects": "b9c06e86bd3bd518ca2c5f673fc4274ca30f9694b4b52813eee91f5961851a84"
+        },
+        "binding_manifest_sha256": "7ca8f2c1f0835b48a4152d87d5dc7014aef2953a71f69e971fa6e3b2db86167f",
+        "claim": "accepted-local-checker-fragment",
+        "context": {
+          "artifact": "fluent-bit-tail-pause/plugins/in_tail/tail_file_budget.c#configured_limit",
+          "assumptions": "a9aabda5531193707d5939af2bfcbce51dbc1f13296d27e5199c715853767b73",
+          "bounds": "existing gateway budgets; no new hypothesis discharge",
+          "build_identity": "e0febb75d4c5f844d227a55dfcfe57032b94dae94da16afe6fc06b93d4d72851",
+          "evidence_version": "contract-hypothesis-graph.v1:bb574e826490f403c84bd0d0e3fb2177c11f530d",
+          "property": "resource-custody.v1",
+          "scope": "[\"configured_limit\",\"flb_tail_file_budget_create\",\"flb_tail_file_budget_destroy\",\"flb_tail_file_budget_pressure\",\"flb_tail_file_budget_release\",\"flb_tail_file_budget_reserve\"]",
+          "semantic_profile": "37309028f4fa1d50682829be2cbca880931a1a65d57b47d1fccb78a9b74965f3",
+          "source_identity": "6f63f90d8e7eae986ebd166c77c06374a9ac51d69afae146883ca2fa6c0a0770"
+        },
+        "coverage": "selected-observations-only",
+        "graph_sha256": "3e0af9b843db3bccdcdacfc5c2f6b46622a9b61a03f16bbebf736fd6cbd9a41f",
+        "id": "ad45e21b5475f1e21fcbe074098ef89b26ad1728fb635f51eee50a5987d9f144",
+        "observation": {
+          "call": {
+            "end": 148067,
+            "start": 148064
+          },
+          "checked_predicates": {
+            "declared-empty-parameters": true,
+            "declared-no-result-or-container-effect": true,
+            "exact-zero-argument-scalar-condition": true,
+            "external-no-local-body": true,
+            "instantiated-identity-call": true,
+            "ordinary-instantiation-succeeded": true,
+            "single-level-scalar-pointer-declaration": true
+          },
+          "contract": {
+            "parameters": [],
+            "result": "none"
+          },
+          "declaration": "__errno_location",
+          "environment_sha256": "7aa475377e97ad1cb87d31511d2c54494efbe898900c1c3e2f07b4fb468eae9b",
+          "function": "configured_limit",
+          "model_ids": [
+            "QCore.ScalarAccessorCondition.admission_needs_every_fact",
+            "QCore.LibcReadingPremises"
+          ],
+          "outer_argument": null,
+          "prerequisite_ids": [
+            "C02.declaration-completeness",
+            "C02-P.alias-and-actual-closure",
+            "boundary28.source-extraction",
+            "boundary28.rust-lean-correspondence",
+            "loaded-contract-mode-truth"
+          ],
+          "primary_source_sha256": "6f63f90d8e7eae986ebd166c77c06374a9ac51d69afae146883ca2fa6c0a0770",
+          "route": "scalar-condition",
+          "schema": "libc-reading-site-evidence.v1",
+          "siblings": [],
+          "statement": {
+            "end": 148071,
+            "start": 148062
+          },
+          "token_stream_sha256": "53f4009daa107f1e6f6c551dc4ea3cd508e3f362fd3c8a24f892b3a95ace03a3"
+        },
+        "proposition_ids": {
+          "checked_reading_route": "libc.__errno_location.nested_call_admission.checked_reading_route.v1",
+          "scalar_declaration": "libc.__errno_location.nested_call_admission.scalar_declaration.v1",
+          "untracked_effects": "libc.__errno_location.nested_call_admission.untracked_effects.v1"
+        },
+        "schema": "libc-reading-site-evidence.v1",
+        "universal_disposition": "open"
+      },
+      "exact_environment_unchanged": true,
+      "exact_observation_unchanged": true,
+      "file": "plugins/in_tail/tail_file_budget.c",
+      "function": "configured_limit",
+      "library": "fluent-bit-tail-pause",
+      "tip_id": "e000e8ff09e07c79b302b21e6b5d1d17e8e1c45abcfb0624d3051fb61672a5b8",
+      "tip_receipt": {
+        "atom_sha256": {
+          "checked_reading_route": "9de3bbee7fab2661314039f4794f49f1e96d5536c5c167d0beb05b4eee25866e",
+          "scalar_declaration": "99737707a21572cf28c8260ed4f3089d4396bf1289cda57ecad2b0c879b9bc23",
+          "untracked_effects": "b9c06e86bd3bd518ca2c5f673fc4274ca30f9694b4b52813eee91f5961851a84"
+        },
+        "binding_manifest_sha256": "7ca8f2c1f0835b48a4152d87d5dc7014aef2953a71f69e971fa6e3b2db86167f",
+        "claim": "accepted-local-checker-fragment",
+        "context": {
+          "artifact": "fluent-bit-tail-pause/plugins/in_tail/tail_file_budget.c#configured_limit",
+          "assumptions": "a9aabda5531193707d5939af2bfcbce51dbc1f13296d27e5199c715853767b73",
+          "bounds": "existing gateway budgets; no new hypothesis discharge",
+          "build_identity": "e0febb75d4c5f844d227a55dfcfe57032b94dae94da16afe6fc06b93d4d72851",
+          "evidence_version": "contract-hypothesis-graph.v1:e92d8aef35a8bd14550e90219d19a56eb3b196e7",
+          "property": "resource-custody.v1",
+          "scope": "[\"configured_limit\",\"flb_tail_file_budget_create\",\"flb_tail_file_budget_destroy\",\"flb_tail_file_budget_pressure\",\"flb_tail_file_budget_release\",\"flb_tail_file_budget_reserve\"]",
+          "semantic_profile": "37309028f4fa1d50682829be2cbca880931a1a65d57b47d1fccb78a9b74965f3",
+          "source_identity": "6f63f90d8e7eae986ebd166c77c06374a9ac51d69afae146883ca2fa6c0a0770"
+        },
+        "coverage": "selected-observations-only",
+        "graph_sha256": "3e0af9b843db3bccdcdacfc5c2f6b46622a9b61a03f16bbebf736fd6cbd9a41f",
+        "id": "e000e8ff09e07c79b302b21e6b5d1d17e8e1c45abcfb0624d3051fb61672a5b8",
+        "observation": {
+          "call": {
+            "end": 148067,
+            "start": 148064
+          },
+          "checked_predicates": {
+            "declared-empty-parameters": true,
+            "declared-no-result-or-container-effect": true,
+            "exact-zero-argument-scalar-condition": true,
+            "external-no-local-body": true,
+            "instantiated-identity-call": true,
+            "ordinary-instantiation-succeeded": true,
+            "single-level-scalar-pointer-declaration": true
+          },
+          "contract": {
+            "parameters": [],
+            "result": "none"
+          },
+          "declaration": "__errno_location",
+          "environment_sha256": "7aa475377e97ad1cb87d31511d2c54494efbe898900c1c3e2f07b4fb468eae9b",
+          "function": "configured_limit",
+          "model_ids": [
+            "QCore.ScalarAccessorCondition.admission_needs_every_fact",
+            "QCore.LibcReadingPremises"
+          ],
+          "outer_argument": null,
+          "prerequisite_ids": [
+            "C02.declaration-completeness",
+            "C02-P.alias-and-actual-closure",
+            "boundary28.source-extraction",
+            "boundary28.rust-lean-correspondence",
+            "loaded-contract-mode-truth"
+          ],
+          "primary_source_sha256": "6f63f90d8e7eae986ebd166c77c06374a9ac51d69afae146883ca2fa6c0a0770",
+          "route": "scalar-condition",
+          "schema": "libc-reading-site-evidence.v1",
+          "siblings": [],
+          "statement": {
+            "end": 148071,
+            "start": 148062
+          },
+          "token_stream_sha256": "53f4009daa107f1e6f6c551dc4ea3cd508e3f362fd3c8a24f892b3a95ace03a3"
+        },
+        "proposition_ids": {
+          "checked_reading_route": "libc.__errno_location.nested_call_admission.checked_reading_route.v1",
+          "scalar_declaration": "libc.__errno_location.nested_call_admission.scalar_declaration.v1",
+          "untracked_effects": "libc.__errno_location.nested_call_admission.untracked_effects.v1"
+        },
+        "schema": "libc-reading-site-evidence.v1",
+        "universal_disposition": "open"
+      }
+    },
+    {
+      "actual_bindings_reproduced": true,
+      "base_id": "d6e10951dfa8952b06d2b46128f585ae1036fb3f5b1bad23df13f727cf2976ad",
+      "base_receipt": {
+        "atom_sha256": {
+          "checked_reading_route": "9de3bbee7fab2661314039f4794f49f1e96d5536c5c167d0beb05b4eee25866e",
+          "scalar_declaration": "99737707a21572cf28c8260ed4f3089d4396bf1289cda57ecad2b0c879b9bc23",
+          "untracked_effects": "b9c06e86bd3bd518ca2c5f673fc4274ca30f9694b4b52813eee91f5961851a84"
+        },
+        "binding_manifest_sha256": "7ca8f2c1f0835b48a4152d87d5dc7014aef2953a71f69e971fa6e3b2db86167f",
+        "claim": "accepted-local-checker-fragment",
+        "context": {
+          "artifact": "fluent-bit-tail-pause/plugins/in_tail/tail_file_budget.c#flb_tail_file_budget_create",
+          "assumptions": "a9aabda5531193707d5939af2bfcbce51dbc1f13296d27e5199c715853767b73",
+          "bounds": "existing gateway budgets; no new hypothesis discharge",
+          "build_identity": "e0febb75d4c5f844d227a55dfcfe57032b94dae94da16afe6fc06b93d4d72851",
+          "evidence_version": "contract-hypothesis-graph.v1:bb574e826490f403c84bd0d0e3fb2177c11f530d",
+          "property": "resource-custody.v1",
+          "scope": "[\"configured_limit\",\"flb_tail_file_budget_create\",\"flb_tail_file_budget_destroy\",\"flb_tail_file_budget_pressure\",\"flb_tail_file_budget_release\",\"flb_tail_file_budget_reserve\"]",
+          "semantic_profile": "37309028f4fa1d50682829be2cbca880931a1a65d57b47d1fccb78a9b74965f3",
+          "source_identity": "6f63f90d8e7eae986ebd166c77c06374a9ac51d69afae146883ca2fa6c0a0770"
+        },
+        "coverage": "selected-observations-only",
+        "graph_sha256": "3e0af9b843db3bccdcdacfc5c2f6b46622a9b61a03f16bbebf736fd6cbd9a41f",
+        "id": "d6e10951dfa8952b06d2b46128f585ae1036fb3f5b1bad23df13f727cf2976ad",
+        "observation": {
+          "call": {
+            "end": 148497,
+            "start": 148494
+          },
+          "checked_predicates": {
+            "all-sibling-nested-sites-accepted": true,
+            "declared-all-parameters-borrowed-no-container-effect": true,
+            "declared-no-custody-result": true,
+            "enclosing-call-final-local-checks-accepted": true,
+            "in-force-loaded-contract": true,
+            "inner-arity-and-data-actuals-accepted": true,
+            "one-level-no-inner-call": true,
+            "outer-position-borrowed-or-declared-tail": true,
+            "whole-argument-or-checked-dereference": true
+          },
+          "contract": {
+            "parameters": [],
+            "result": "none"
+          },
+          "declaration": "__errno_location",
+          "environment_sha256": "7aa475377e97ad1cb87d31511d2c54494efbe898900c1c3e2f07b4fb468eae9b",
+          "function": "flb_tail_file_budget_create",
+          "model_ids": [
+            "QCore.VariadicNested.an_admitted_nested_slot_is_data",
+            "QCore.LibcReadingPremises"
+          ],
+          "outer_argument": {
+            "end": 148498,
+            "start": 148492
+          },
+          "prerequisite_ids": [
+            "C02.declaration-completeness",
+            "C02-P.alias-and-actual-closure",
+            "boundary28.source-extraction",
+            "boundary28.rust-lean-correspondence",
+            "loaded-contract-mode-truth"
+          ],
+          "primary_source_sha256": "6f63f90d8e7eae986ebd166c77c06374a9ac51d69afae146883ca2fa6c0a0770",
+          "route": "nested-argument",
+          "schema": "libc-reading-site-evidence.v1",
+          "siblings": [
+            {
+              "argument": 0,
+              "call": {
+                "end": 148497,
+                "start": 148494
+              },
+              "dereferenced": true,
+              "function": "__errno_location",
+              "outer_argument": {
+                "end": 148498,
+                "start": 148492
+              }
+            }
+          ],
+          "statement": {
+            "end": 148503,
+            "start": 148490
+          },
+          "token_stream_sha256": "53f4009daa107f1e6f6c551dc4ea3cd508e3f362fd3c8a24f892b3a95ace03a3"
+        },
+        "proposition_ids": {
+          "checked_reading_route": "libc.__errno_location.nested_call_admission.checked_reading_route.v1",
+          "scalar_declaration": "libc.__errno_location.nested_call_admission.scalar_declaration.v1",
+          "untracked_effects": "libc.__errno_location.nested_call_admission.untracked_effects.v1"
+        },
+        "schema": "libc-reading-site-evidence.v1",
+        "universal_disposition": "open"
+      },
+      "exact_environment_unchanged": true,
+      "exact_observation_unchanged": true,
+      "file": "plugins/in_tail/tail_file_budget.c",
+      "function": "flb_tail_file_budget_create",
+      "library": "fluent-bit-tail-pause",
+      "tip_id": "64eb5ccac9f8aa9815f17daadc24bf4b315f94014d0fe28caf3446be914ca1cf",
+      "tip_receipt": {
+        "atom_sha256": {
+          "checked_reading_route": "9de3bbee7fab2661314039f4794f49f1e96d5536c5c167d0beb05b4eee25866e",
+          "scalar_declaration": "99737707a21572cf28c8260ed4f3089d4396bf1289cda57ecad2b0c879b9bc23",
+          "untracked_effects": "b9c06e86bd3bd518ca2c5f673fc4274ca30f9694b4b52813eee91f5961851a84"
+        },
+        "binding_manifest_sha256": "7ca8f2c1f0835b48a4152d87d5dc7014aef2953a71f69e971fa6e3b2db86167f",
+        "claim": "accepted-local-checker-fragment",
+        "context": {
+          "artifact": "fluent-bit-tail-pause/plugins/in_tail/tail_file_budget.c#flb_tail_file_budget_create",
+          "assumptions": "a9aabda5531193707d5939af2bfcbce51dbc1f13296d27e5199c715853767b73",
+          "bounds": "existing gateway budgets; no new hypothesis discharge",
+          "build_identity": "e0febb75d4c5f844d227a55dfcfe57032b94dae94da16afe6fc06b93d4d72851",
+          "evidence_version": "contract-hypothesis-graph.v1:e92d8aef35a8bd14550e90219d19a56eb3b196e7",
+          "property": "resource-custody.v1",
+          "scope": "[\"configured_limit\",\"flb_tail_file_budget_create\",\"flb_tail_file_budget_destroy\",\"flb_tail_file_budget_pressure\",\"flb_tail_file_budget_release\",\"flb_tail_file_budget_reserve\"]",
+          "semantic_profile": "37309028f4fa1d50682829be2cbca880931a1a65d57b47d1fccb78a9b74965f3",
+          "source_identity": "6f63f90d8e7eae986ebd166c77c06374a9ac51d69afae146883ca2fa6c0a0770"
+        },
+        "coverage": "selected-observations-only",
+        "graph_sha256": "3e0af9b843db3bccdcdacfc5c2f6b46622a9b61a03f16bbebf736fd6cbd9a41f",
+        "id": "64eb5ccac9f8aa9815f17daadc24bf4b315f94014d0fe28caf3446be914ca1cf",
+        "observation": {
+          "call": {
+            "end": 148497,
+            "start": 148494
+          },
+          "checked_predicates": {
+            "all-sibling-nested-sites-accepted": true,
+            "declared-all-parameters-borrowed-no-container-effect": true,
+            "declared-no-custody-result": true,
+            "enclosing-call-final-local-checks-accepted": true,
+            "in-force-loaded-contract": true,
+            "inner-arity-and-data-actuals-accepted": true,
+            "one-level-no-inner-call": true,
+            "outer-position-borrowed-or-declared-tail": true,
+            "whole-argument-or-checked-dereference": true
+          },
+          "contract": {
+            "parameters": [],
+            "result": "none"
+          },
+          "declaration": "__errno_location",
+          "environment_sha256": "7aa475377e97ad1cb87d31511d2c54494efbe898900c1c3e2f07b4fb468eae9b",
+          "function": "flb_tail_file_budget_create",
+          "model_ids": [
+            "QCore.VariadicNested.an_admitted_nested_slot_is_data",
+            "QCore.LibcReadingPremises"
+          ],
+          "outer_argument": {
+            "end": 148498,
+            "start": 148492
+          },
+          "prerequisite_ids": [
+            "C02.declaration-completeness",
+            "C02-P.alias-and-actual-closure",
+            "boundary28.source-extraction",
+            "boundary28.rust-lean-correspondence",
+            "loaded-contract-mode-truth"
+          ],
+          "primary_source_sha256": "6f63f90d8e7eae986ebd166c77c06374a9ac51d69afae146883ca2fa6c0a0770",
+          "route": "nested-argument",
+          "schema": "libc-reading-site-evidence.v1",
+          "siblings": [
+            {
+              "argument": 0,
+              "call": {
+                "end": 148497,
+                "start": 148494
+              },
+              "dereferenced": true,
+              "function": "__errno_location",
+              "outer_argument": {
+                "end": 148498,
+                "start": 148492
+              }
+            }
+          ],
+          "statement": {
+            "end": 148503,
+            "start": 148490
+          },
+          "token_stream_sha256": "53f4009daa107f1e6f6c551dc4ea3cd508e3f362fd3c8a24f892b3a95ace03a3"
+        },
+        "proposition_ids": {
+          "checked_reading_route": "libc.__errno_location.nested_call_admission.checked_reading_route.v1",
+          "scalar_declaration": "libc.__errno_location.nested_call_admission.scalar_declaration.v1",
+          "untracked_effects": "libc.__errno_location.nested_call_admission.untracked_effects.v1"
+        },
+        "schema": "libc-reading-site-evidence.v1",
+        "universal_disposition": "open"
+      }
+    }
+  ],
+  "source_binding": "Open",
+  "truth_transport": false
+}

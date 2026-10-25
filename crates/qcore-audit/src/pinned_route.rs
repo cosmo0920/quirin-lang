@@ -9,6 +9,7 @@ use crate::compile_db::{
 use crate::current_route::{
     is_monkey_unit, monkey_source_root, source_weight, verify_monkey_source_copy,
 };
+use crate::input_paths::{Placement, place, relative_within, select_exact, select_under};
 use crate::parallel::run_ordered;
 use crate::projection::{AuditCounts, project_unit_into_with_cross_unit};
 use crate::report::AuditReport;
@@ -90,6 +91,14 @@ pub fn run(
             .map_err(|error| format!("invalid Monkey compile database {}: {error}", path.display()))?;
         let source_root = monkey_source_root(&entries)
             .map_err(|error| format!("Monkey compile database {}: {error}", path.display()))?;
+        // Card AUDIT-CANONICAL-PATHS: two spellings of one Monkey unit are
+        // refused before any audit, never merged by the dedup below.
+        crate::input_paths::refuse_aliases(
+            entries
+                .iter()
+                .filter(|entry| is_monkey_unit(&source_root, &entry.file)),
+        )
+        .map_err(|error| format!("Monkey compile database {}: {error}", path.display()))?;
         Ok::<_, String>((entries, source_root))
     }).transpose()?;
     let root = root
@@ -426,11 +435,9 @@ pub fn run(
         let mut census_complete = true;
         for plan in &plans {
             for entry in &plan.selected {
-                let file = entry
-                    .file
-                    .strip_prefix(&plan.source_root)
-                    .map_err(|_| "cross-unit home outside library root")?
-                    .to_string_lossy();
+                let file = relative_within(&entry.file, &plan.source_root)
+                    .ok_or("cross-unit home outside library root")?;
+                let file = file.to_string_lossy();
                 let key = format!("{}/{file}", plan.library);
                 let requested = links.names_for(&key);
                 let source = fs::read_to_string(&entry.file).map_err(|error| error.to_string())?;
@@ -729,30 +736,78 @@ fn audit_library_summary_profiles(
     Ok(())
 }
 
-fn select_recursive_units(entries: &[CompileEntry], source_root: &Path) -> Vec<CompileEntry> {
-    let mut selected = entries
-        .iter()
-        .filter(|entry| {
-            entry.file.starts_with(source_root)
-                && entry
-                    .file
-                    .extension()
-                    .is_some_and(|extension| extension == "c")
-        })
-        .cloned()
-        .collect::<Vec<_>>();
-    selected.sort_by(|left, right| left.file.cmp(&right.file));
-    selected.dedup_by(|left, right| left.file == right.file);
-    selected
+/// Card AUDIT-CANONICAL-PATHS: the route's existing outside-root diagnostic,
+/// now also for a record spelled under the root that resolves outside it.
+fn outside_audit_root(entry: &CompileEntry) -> String {
+    format!("source is outside audit root: {}", entry.file.display())
 }
 
-fn select_exact_unit(entries: &[CompileEntry], source: &Path) -> Vec<CompileEntry> {
-    entries
-        .iter()
-        .find(|entry| entry.file == source)
+fn is_c_unit(entry: &CompileEntry) -> bool {
+    entry
+        .file
+        .extension()
+        .is_some_and(|extension| extension == "c")
+}
+
+/// Membership by located path (card AUDIT-CANONICAL-PATHS,
+/// [`crate::input_paths`]); every selected record keeps its spelling, and the
+/// order and the merge of repeated spellings are as before.
+fn select_recursive_units(
+    entries: &[CompileEntry],
+    source_root: &Path,
+) -> Result<Vec<CompileEntry>, String> {
+    let mut selected = select_under(
+        entries,
+        source_root,
+        |entry, _| is_c_unit(entry),
+        outside_audit_root,
+    )?
+    .into_iter()
+    .cloned()
+    .collect::<Vec<_>>();
+    selected.sort_by(|left, right| left.file.cmp(&right.file));
+    selected.dedup_by(|left, right| left.file == right.file);
+    Ok(selected)
+}
+
+/// The C records directly in the source root, sorted, repeated spellings kept
+/// as before.
+fn select_top_level_units(
+    entries: &[CompileEntry],
+    source_root: &Path,
+) -> Result<Vec<CompileEntry>, String> {
+    let mut selected = select_under(
+        entries,
+        source_root,
+        |entry, relative| relative.components().count() == 1 && is_c_unit(entry),
+        outside_audit_root,
+    )?
+    .into_iter()
+    .cloned()
+    .collect::<Vec<_>>();
+    selected.sort_by(|left, right| left.file.cmp(&right.file));
+    Ok(selected)
+}
+
+/// The first record of the exact file, as before; the file must locate under
+/// the inputs root, and two spellings of it are refused.
+fn select_exact_unit(
+    entries: &[CompileEntry],
+    root: &Path,
+    source: &Path,
+) -> Result<Vec<CompileEntry>, String> {
+    if place(source, root) == Placement::Escapes {
+        return Err(format!(
+            "source is outside audit root: {}",
+            source.display()
+        ));
+    }
+    Ok(select_exact(entries, source)?
+        .into_iter()
+        .next()
         .cloned()
         .into_iter()
-        .collect()
+        .collect())
 }
 
 /// One selected library, planned before any of its units is analysed.
@@ -783,25 +838,13 @@ fn plan_library(
     let source_root = qcore_contract::profile_loader::source_root_path(root, &selection.root);
     let selected = match &selection.selection {
         qcore_schemas::profile::UnitSelection::TopLevel => {
-            let mut selected = entries
-                .iter()
-                .filter(|entry| {
-                    entry.file.parent() == Some(source_root.as_path())
-                        && entry
-                            .file
-                            .extension()
-                            .is_some_and(|extension| extension == "c")
-                })
-                .cloned()
-                .collect::<Vec<_>>();
-            selected.sort_by(|left, right| left.file.cmp(&right.file));
-            selected
+            select_top_level_units(entries, &source_root)?
         }
         qcore_schemas::profile::UnitSelection::Recursive => {
-            select_recursive_units(entries, &source_root)
+            select_recursive_units(entries, &source_root)?
         }
         qcore_schemas::profile::UnitSelection::Exact { file } => {
-            select_exact_unit(entries, &root.join(file))
+            select_exact_unit(entries, root, &root.join(file))?
         }
     };
     let library = selected_library
@@ -1142,11 +1185,9 @@ fn audit_unit_unscoped(
     let mut filesystem_chunk = None;
     let source = fs::read_to_string(&entry.file)
         .map_err(|error| format!("could not read {}: {error}", entry.file.display()))?;
-    let file = entry
-        .file
-        .strip_prefix(source_root)
-        .map_err(|_| format!("source is outside audit root: {}", entry.file.display()))?
-        .to_string_lossy();
+    let file =
+        relative_within(&entry.file, source_root).ok_or_else(|| outside_audit_root(entry))?;
+    let file = file.to_string_lossy();
     let options = compiler_options(entry)?;
     let unit = C11TranslationUnit {
         source: &source,
@@ -1949,4 +1990,141 @@ fn prefixed_call_symbols(source: &str) -> Vec<String> {
     symbols.sort();
     symbols.dedup();
     symbols
+}
+
+/// Card AUDIT-CANONICAL-PATHS: the pinned route's unit selection over a
+/// database spelled through a symlink to a moved inputs root (run 4 of
+/// W48-BU-SINGLE-LEAF-BODIES selected no unit and failed before analysis).
+#[cfg(all(test, unix))]
+mod canonical_selection_tests {
+    use super::*;
+    use std::os::unix::fs::symlink;
+
+    struct Scratch(PathBuf);
+
+    impl Scratch {
+        fn new(name: &str) -> Self {
+            let path = std::env::temp_dir().join(format!(
+                "qcore-pinned-selection-{name}-{}",
+                std::process::id()
+            ));
+            let _ = fs::remove_dir_all(&path);
+            fs::create_dir_all(path.join("real/src/sub")).unwrap();
+            for file in ["src/a.c", "src/b.c", "src/sub/c.c", "src/notes.txt"] {
+                fs::write(path.join("real").join(file), "int x;\n").unwrap();
+            }
+            symlink(path.join("real"), path.join("old")).unwrap();
+            Self(path.canonicalize().unwrap())
+        }
+
+        fn real(&self) -> PathBuf {
+            self.0.join("real")
+        }
+
+        fn old(&self) -> PathBuf {
+            self.0.join("old")
+        }
+    }
+
+    impl Drop for Scratch {
+        fn drop(&mut self) {
+            let _ = fs::remove_dir_all(&self.0);
+        }
+    }
+
+    fn entry(directory: &Path, file: &Path) -> CompileEntry {
+        CompileEntry {
+            directory: directory.to_path_buf(),
+            command: format!("clang -c {}", file.display()),
+            file: file.to_path_buf(),
+        }
+    }
+
+    fn files(selected: &[CompileEntry]) -> Vec<PathBuf> {
+        selected.iter().map(|entry| entry.file.clone()).collect()
+    }
+
+    #[test]
+    fn the_old_spelling_selects_the_units_of_the_real_root_and_keeps_its_spelling() {
+        let scratch = Scratch::new("old");
+        let (real, old) = (scratch.real(), scratch.old());
+        let spelled = [
+            "src/b.c",
+            "src/a.c",
+            "src/sub/c.c",
+            "src/notes.txt",
+            "src/a.c",
+        ]
+        .map(|file| entry(&old, &old.join(file)));
+        let root = real.join("src");
+        assert_eq!(
+            files(&select_top_level_units(&spelled, &root).unwrap()),
+            [
+                old.join("src/a.c"),
+                old.join("src/a.c"),
+                old.join("src/b.c")
+            ]
+        );
+        assert_eq!(
+            files(&select_recursive_units(&spelled, &root).unwrap()),
+            [
+                old.join("src/a.c"),
+                old.join("src/b.c"),
+                old.join("src/sub/c.c")
+            ]
+        );
+        assert_eq!(
+            files(&select_exact_unit(&spelled, &real, &real.join("src/sub/c.c")).unwrap()),
+            [old.join("src/sub/c.c")]
+        );
+        // The published relative path is the one the real spelling gives.
+        assert_eq!(
+            relative_within(&old.join("src/sub/c.c"), &root),
+            Some(PathBuf::from("sub/c.c"))
+        );
+    }
+
+    #[test]
+    fn escaping_dangling_and_aliased_records_are_refused() {
+        let scratch = Scratch::new("refuse");
+        let (real, old) = (scratch.real(), scratch.old());
+        let root = real.join("src");
+        fs::create_dir_all(scratch.0.join("outside")).unwrap();
+        fs::write(scratch.0.join("outside/evil.c"), "int x;\n").unwrap();
+        symlink(scratch.0.join("outside/evil.c"), real.join("src/evil.c")).unwrap();
+        let escaping = [entry(&old, &old.join("src/evil.c"))];
+        let error = select_top_level_units(&escaping, &root).unwrap_err();
+        assert!(
+            error.starts_with("source is outside audit root: "),
+            "{error}"
+        );
+        assert!(select_recursive_units(&escaping, &root).is_err());
+        assert!(select_exact_unit(&escaping, &real, &real.join("src/evil.c")).is_err());
+        // A dangling record under the root is selected, so it stays in the
+        // denominator; the unit is refused when it is read.
+        let dangling = [entry(&old, &old.join("src/missing.c"))];
+        assert_eq!(
+            files(&select_recursive_units(&dangling, &root).unwrap()),
+            [old.join("src/missing.c")]
+        );
+        assert_eq!(
+            relative_within(&old.join("src/missing.c"), &root),
+            Some(PathBuf::from("missing.c"))
+        );
+        // Two spellings of one unit: refused, never merged by the dedup.
+        let aliased = [
+            entry(&real, &real.join("src/a.c")),
+            entry(&real, &old.join("src/a.c")),
+        ];
+        for error in [
+            select_top_level_units(&aliased, &root).unwrap_err(),
+            select_recursive_units(&aliased, &root).unwrap_err(),
+            select_exact_unit(&aliased, &real, &real.join("src/a.c")).unwrap_err(),
+        ] {
+            assert!(
+                error.starts_with(crate::input_paths::ALIAS_DIAGNOSTIC),
+                "{error}"
+            );
+        }
+    }
 }

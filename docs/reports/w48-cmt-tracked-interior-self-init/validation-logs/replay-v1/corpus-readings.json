@@ -1,0 +1,16 @@
+{
+  "command": [
+    "/home/cosmo/.codex/worktrees/808d/quirin-lang/private/w48-cmt-tracked-interior/replay-v1/rebind-readings",
+    "/home/cosmo/.codex/worktrees/808d/quirin-lang/private/w48-cmt-tracked-interior/base-corpus/resource-diagnostics.json",
+    "/home/cosmo/.codex/worktrees/808d/quirin-lang/private/w48-cmt-tracked-interior/tip-corpus/resource-diagnostics.json",
+    "/home/cosmo/.codex/worktrees/808d/quirin-lang/private/w48-cmt-tracked-interior/base-corpus/resource-diagnostics.contracts.json",
+    "/home/cosmo/.codex/worktrees/808d/quirin-lang/private/w48-cmt-tracked-interior/tip-corpus/resource-diagnostics.contracts.json",
+    "bb574e826490f403c84bd0d0e3fb2177c11f530d",
+    "e92d8aef35a8bd14550e90219d19a56eb3b196e7",
+    "/home/cosmo/.codex/worktrees/808d/quirin-lang/private/w48-cmt-tracked-interior/replay-v1/corpus-readings-proof.json"
+  ],
+  "started": "2026-10-24T16:02:36.192713+00:00",
+  "log": "/home/cosmo/.codex/worktrees/808d/quirin-lang/private/w48-cmt-tracked-interior/replay-v1/corpus-readings.log",
+  "exit": 0,
+  "ended": "2026-10-24T16:02:37.937787+00:00"
+}

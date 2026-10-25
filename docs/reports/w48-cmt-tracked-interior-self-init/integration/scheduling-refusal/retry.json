@@ -1,0 +1,23 @@
+{
+  "head": "f350d8c5de1585b127d8ce45d0641cb5db37690f",
+  "name": "lean-audits",
+  "command": [
+    "python3",
+    "scripts/gate_slot.py",
+    "lean",
+    "--receipt",
+    "private/cmt-main-integration/lean-retry-1/slot.json",
+    "--",
+    "python3",
+    "scripts/check_lean_audits.py",
+    "--jobs",
+    "6"
+  ],
+  "exit": 0,
+  "seconds": 16.263958802010166,
+  "log": "/home/cosmo/.codex/worktrees/808d/quirin-lang/private/cmt-main-integration/lean-retry-1/lean.log",
+  "log_sha256": "a9a76804b52cbcacf5ab4fd2a6e610c713f080f0a771a35ba4da25d4558d6ce9",
+  "head_after": "f350d8c5de1585b127d8ce45d0641cb5db37690f",
+  "clean_after": true,
+  "reason": "Initial nested lean scheduling was refused before any Lean check ran; this separate process takes the required Lean slot on identical source."
+}

@@ -12,6 +12,8 @@ const EXPECTED_CONTRACTS: &[(&str, &str, usize)] = &[
     ("cfl/arena_lifetime.qv", "cfl_arena_destroy", 5),
     ("cfl/intrusive_list.qv", "cfl_list_add", 4),
     ("cfl/intrusive_list.qv", "cfl_list_del", 5),
+    // Rule 36b: declared-model initializer effects, no resource-v1 authority.
+    ("cfl/intrusive_list.qv", "cfl_list_init", 18),
     // Card NULL-TRIAGE-UNRESOLVED-PATHS: `cfl_list_size`'s integer result
     // range (bounds contract v1, the crate's new bounds view, read only by
     // the null property): selector and one range. Read from
@@ -291,6 +293,13 @@ const EXPECTED_CONTRACTS: &[(&str, &str, usize)] = &[
     // the declarations are the neutral element, which a faithful summary of a
     // body that releases nothing cannot contradict. Read from
     // `lib/cmetrics/src/cmt_metric.c:244-251` and `:71-81`.
+    // Source-audited CMetrics API models; no interpreted call permission.
+    ("cmetrics/map_lifetime.qv", "cmt_map_create", 11),
+    ("cmetrics/map_lifetime.qv", "cmt_map_metric_get", 18),
+    ("cmetrics/map_lifetime.qv", "cmt_map_metric_get_val", 9),
+    ("cmetrics/map_lifetime.qv", "cmt_map_metric_destroy", 10),
+    ("cmetrics/map_lifetime.qv", "cmt_map_metrics_expire", 11),
+    ("cmetrics/map_lifetime.qv", "cmt_map_destroy", 12),
     ("cmetrics/metric_values.qv", "cmt_metric_get_timestamp", 3),
     ("cmetrics/metric_values.qv", "cmt_metric_set_double", 5),
     // W46-METRIC-TRACE-CONTRACT-GAPS: scalar-only reads, writes, and
@@ -379,6 +388,8 @@ const EXPECTED_CONTRACTS: &[(&str, &str, usize)] = &[
     // Card W36-CORPUS-CONTRACTS-3: `cmt_destroy`'s exact sibling one library
     // over, read from `lib/ctraces/src/ctraces.c:58-71`, `nonnull` on the same
     // ground. This is the corpus's first `ctraces` contract module.
+    ("cmetrics/opts_lifetime.qv", "cmt_opts_init", 15),
+    ("cmetrics/opts_lifetime.qv", "cmt_opts_exit", 10),
     ("ctraces/context_lifetime.qv", "ctr_destroy", 3),
     ("ctraces/context_lifetime.qv", "ctr_id_cmp", 4),
     ("ctraces/context_lifetime.qv", "ctr_id_get_len", 3),
@@ -2447,7 +2458,8 @@ fn every_qcore_contract_source_parses_round_trips_and_compiles() {
     // 135 -> 136 by RK-PLUGIN-LIBRARY-OUTER-ENVELOPE's librdkafka/outer.qv.
     // Callback placement adds librdkafka/logging.qv; declarations and clauses are unchanged.
     // 137 -> 138 by card W48-RK-LOG-CALLER-FRAME's librdkafka/log_caller_frame.qv.
-    assert_eq!(sources.len(), 138, "unexpected contract corpus size");
+    // Map and opts lifecycle models deliberately add two canonical modules.
+    assert_eq!(sources.len(), 140, "unexpected contract corpus size");
 
     for (logical, path) in &sources {
         let written = fs::read_to_string(path).expect("contract source is readable");

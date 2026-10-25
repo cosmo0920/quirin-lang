@@ -1,0 +1,2790 @@
+{
+ "route": "system",
+ "left": "/media/Data/GitHub/quirin-lang/.claude/worktrees/agent-af4406ebe7df9c0d1/private/acp/runs2/base-mirror/system",
+ "right": "/media/Data/GitHub/quirin-lang/.claude/worktrees/agent-af4406ebe7df9c0d1/private/acp/runs2/tip-original/system",
+ "substitution": [
+  {
+   "from": "/media/Data/GitHub/quirin-lang/private/w45-fb/w46-external-callee-contracts/attempt-1/fluent-bit-clang-production/compile_commands.json",
+   "to": "/media/Data/GitHub/quirin-lang/.claude/worktrees/agent-af4406ebe7df9c0d1/private/acp/mirror/system-compile_commands.json"
+  },
+  {
+   "from": "/home/cosmo/Documents/GitHub/qcore-c/private/w45-fb/w46-external-callee-contracts/attempt-1",
+   "to": "/media/Data/GitHub/quirin-lang/private/w45-fb/w46-external-callee-contracts/attempt-1"
+  }
+ ],
+ "exits": {
+  "left": "0",
+  "right": "0"
+ },
+ "drivers": {
+  "left": {
+   "exit": 0,
+   "audit_exit": 0,
+   "identity_error": null,
+   "snapshot_files_changed": [],
+   "externals_stable": true,
+   "binary_stable": true,
+   "binary_sha256": "74c984ebf6dde780ed11839fd5359eb3a7b5f120b5c4e933b6e4969a7cfdd0f5"
+  },
+  "right": {
+   "exit": 0,
+   "audit_exit": 0,
+   "identity_error": null,
+   "snapshot_files_changed": [],
+   "externals_stable": true,
+   "binary_stable": true,
+   "binary_sha256": "3b3606ab493c25237569870e2632bdacaa60cec2aab5a523d3fd98e4aa0a0d35"
+  }
+ },
+ "only_left": [],
+ "only_right": [],
+ "files": {
+  "console.log": {
+   "bytes": [
+    13280,
+    13280
+   ],
+   "raw_identical": true,
+   "identical_after_substitution": true,
+   "substituted": {},
+   "target_collisions": {}
+  },
+  "resource-diagnostics.chunk-contracts.json": {
+   "bytes": [
+    385,
+    385
+   ],
+   "raw_identical": true,
+   "identical_after_substitution": true,
+   "substituted": {},
+   "target_collisions": {}
+  },
+  "resource-diagnostics.contracts.json": {
+   "bytes": [
+    10864591,
+    10866718
+   ],
+   "raw_identical": false,
+   "identical_after_substitution": false,
+   "substituted": {
+    "/home/cosmo/Documents/GitHub/qcore-c/private/w45-fb/w46-external-callee-contracts/attempt-1": 428
+   },
+   "target_collisions": {
+    "/media/Data/GitHub/quirin-lang/private/w45-fb/w46-external-callee-contracts/attempt-1": 2
+   },
+   "structural": {
+    "differing_leaves": 49284,
+    "pattern_count": 852,
+    "patterns": [
+     {
+      "path": "callback_members/lifetime_protocols/evidence/summaries/<sha256>/flb_input_coro_collect/open/*",
+      "count": 9408,
+      "example": [
+       "<absent>",
+       "member stores prevent holder snapshot stability"
+      ]
+     },
+     {
+      "path": "callback_members/prepass/lifetime_protocols/summaries/<sha256>/flb_input_coro_collect/open/*",
+      "count": 9408,
+      "example": [
+       "<absent>",
+       "member stores prevent holder snapshot stability"
+      ]
+     },
+     {
+      "path": "callback_members/lifetime_protocols/evidence/summaries/<sha256>/flb_input_coro_collect/may_poison",
+      "count": 1176,
+      "example": [
+       "<absent>",
+       "[]"
+      ]
+     },
+     {
+      "path": "callback_members/lifetime_protocols/evidence/summaries/<sha256>/flb_input_coro_collect/may_register",
+      "count": 1176,
+      "example": [
+       "<absent>",
+       "[]"
+      ]
+     },
+     {
+      "path": "callback_members/lifetime_protocols/evidence/summaries/<sha256>/flb_input_coro_collect/may_release",
+      "count": 1176,
+      "example": [
+       "<absent>",
+       "[]"
+      ]
+     },
+     {
+      "path": "callback_members/lifetime_protocols/evidence/summaries/<sha256>/flb_input_coro_collect/must_end",
+      "count": 1176,
+      "example": [
+       "<absent>",
+       "[]"
+      ]
+     },
+     {
+      "path": "callback_members/lifetime_protocols/evidence/summaries/<sha256>/flb_input_coro_collect/poison_all",
+      "count": 1176,
+      "example": [
+       "<absent>",
+       "False"
+      ]
+     },
+     {
+      "path": "callback_members/lifetime_protocols/evidence/summaries/<sha256>/flb_input_coro_collect/requirements",
+      "count": 1176,
+      "example": [
+       "<absent>",
+       "[]"
+      ]
+     },
+     {
+      "path": "callback_members/prepass/lifetime_protocols/summaries/<sha256>/flb_input_coro_collect/may_poison",
+      "count": 1176,
+      "example": [
+       "<absent>",
+       "[]"
+      ]
+     },
+     {
+      "path": "callback_members/prepass/lifetime_protocols/summaries/<sha256>/flb_input_coro_collect/may_register",
+      "count": 1176,
+      "example": [
+       "<absent>",
+       "[]"
+      ]
+     },
+     {
+      "path": "callback_members/prepass/lifetime_protocols/summaries/<sha256>/flb_input_coro_collect/may_release",
+      "count": 1176,
+      "example": [
+       "<absent>",
+       "[]"
+      ]
+     },
+     {
+      "path": "callback_members/prepass/lifetime_protocols/summaries/<sha256>/flb_input_coro_collect/must_end",
+      "count": 1176,
+      "example": [
+       "<absent>",
+       "[]"
+      ]
+     },
+     {
+      "path": "callback_members/prepass/lifetime_protocols/summaries/<sha256>/flb_input_coro_collect/poison_all",
+      "count": 1176,
+      "example": [
+       "<absent>",
+       "False"
+      ]
+     },
+     {
+      "path": "callback_members/prepass/lifetime_protocols/summaries/<sha256>/flb_input_coro_collect/requirements",
+      "count": 1176,
+      "example": [
+       "<absent>",
+       "[]"
+      ]
+     },
+     {
+      "path": "callback_members/lifetime_protocols/evidence/summaries/<sha256>",
+      "count": 712,
+      "example": [
+       "{}",
+       "<absent>"
+      ]
+     },
+     {
+      "path": "callback_members/prepass/lifetime_protocols/summaries/<sha256>",
+      "count": 712,
+      "example": [
+       "{}",
+       "<absent>"
+      ]
+     },
+     {
+      "path": "callback_members/lifetime_protocols/evidence/refused/*",
+      "count": 640,
+      "example": [
+       "01bde55c23015f79f723a0aae2d2d9187dc5b5c5aeae35d48a3e75a51ac3a4ce:flb_input_coro_collect",
+       "0040b6898e5463f100bbe2ce06584c8c9260a8f29ba79a4aa15f2691d55a0f37:flb_input_coro_collect"
+      ]
+     },
+     {
+      "path": "callback_members/prepass/lifetime_protocols/refused/*",
+      "count": 640,
+      "example": [
+       "01bde55c23015f79f723a0aae2d2d9187dc5b5c5aeae35d48a3e75a51ac3a4ce:flb_input_coro_collect",
+       "0040b6898e5463f100bbe2ce06584c8c9260a8f29ba79a4aa15f2691d55a0f37:flb_input_coro_collect"
+      ]
+     },
+     {
+      "path": "callback_members/lifetime_protocols/evidence/summaries/<sha256>/flb_input_init_all/open/*",
+      "count": 248,
+      "example": [
+       "<absent>",
+       "indirect call has no lifetime summary"
+      ]
+     },
+     {
+      "path": "callback_members/prepass/lifetime_protocols/summaries/<sha256>/flb_input_init_all/open/*",
+      "count": 248,
+      "example": [
+       "<absent>",
+       "indirect call has no lifetime summary"
+      ]
+     },
+     {
+      "path": "callback_members/lifetime_protocols/evidence/summaries/<sha256>/flb_input_instance_init/open/*",
+      "count": 232,
+      "example": [
+       "<absent>",
+       "indirect call has no lifetime summary"
+      ]
+     },
+     {
+      "path": "callback_members/prepass/lifetime_protocols/summaries/<sha256>/flb_input_instance_init/open/*",
+      "count": 232,
+      "example": [
+       "<absent>",
+       "indirect call has no lifetime summary"
+      ]
+     },
+     {
+      "path": "callback_members/lifetime_protocols/evidence/summaries/<sha256>/input_thread/open/*",
+      "count": 220,
+      "example": [
+       "<absent>",
+       "indirect call has no lifetime summary"
+      ]
+     },
+     {
+      "path": "callback_members/prepass/lifetime_protocols/summaries/<sha256>/input_thread/open/*",
+      "count": 220,
+      "example": [
+       "<absent>",
+       "indirect call has no lifetime summary"
+      ]
+     },
+     {
+      "path": "callback_members/lifetime_protocols/evidence/summaries/<sha256>/flb_input_init_all/may_release/*/object/fields/*",
+      "count": 160,
+      "example": [
+       "<absent>",
+       "alias"
+      ]
+     },
+     {
+      "path": "callback_members/prepass/lifetime_protocols/summaries/<sha256>/flb_input_init_all/may_release/*/object/fields/*",
+      "count": 160,
+      "example": [
+       "<absent>",
+       "alias"
+      ]
+     },
+     {
+      "path": "callback_members/lifetime_protocols/evidence/summaries/<sha256>/flb_input_init_all/may_release/*/destroyed_before",
+      "count": 144,
+      "example": [
+       "<absent>",
+       "[]"
+      ]
+     },
+     {
+      "path": "callback_members/lifetime_protocols/evidence/summaries/<sha256>/flb_input_init_all/may_release/*/object/root/Formal/index",
+      "count": 144,
+      "example": [
+       "<absent>",
+       "0"
+      ]
+     },
+     {
+      "path": "callback_members/lifetime_protocols/evidence/summaries/<sha256>/flb_input_init_all/may_release/*/object/root/Formal/scope",
+      "count": 144,
+      "example": [
+       "<absent>",
+       "5b473145137cc772edebbb237bb4b36338f1deec0019195727ea5dcb15080c3b:flb_input_instance_destroy"
+      ]
+     },
+     {
+      "path": "callback_members/prepass/lifetime_protocols/summaries/<sha256>/flb_input_init_all/may_release/*/destroyed_before",
+      "count": 144,
+      "example": [
+       "<absent>",
+       "[]"
+      ]
+     },
+     {
+      "path": "callback_members/prepass/lifetime_protocols/summaries/<sha256>/flb_input_init_all/may_release/*/object/root/Formal/index",
+      "count": 144,
+      "example": [
+       "<absent>",
+       "0"
+      ]
+     },
+     {
+      "path": "callback_members/prepass/lifetime_protocols/summaries/<sha256>/flb_input_init_all/may_release/*/object/root/Formal/scope",
+      "count": 144,
+      "example": [
+       "<absent>",
+       "5b473145137cc772edebbb237bb4b36338f1deec0019195727ea5dcb15080c3b:flb_input_instance_destroy"
+      ]
+     },
+     {
+      "path": "contract_dependencies/declarations/flb_log_print/hypothesis_evidence/contexts/*/build_identity",
+      "count": 135,
+      "example": [
+       "d6913727b0a90de2ff130d3e625ffcd399e450f2c8f43aca64be734f6652eeff",
+       "cbec17c44fd7ba3b7f8e8012257462b50f9997e7f184b18f28b639a35f5efc91"
+      ]
+     },
+     {
+      "path": "contract_dependencies/declarations/flb_log_print/hypothesis_evidence/contexts/*/source_identity",
+      "count": 135,
+      "example": [
+       "57eb85216111c083f5d7befa61ed12aaa91f0203498d42450f70d05704bd1e87",
+       "00b3c1bc2b89ee327c8ea5ca2dcc9e72631e052fb0ac76a322a4067045a34d48"
+      ]
+     },
+     {
+      "path": "contract_dependencies/declarations/flb_log_check/hypothesis_evidence/contexts/*/build_identity",
+      "count": 126,
+      "example": [
+       "d6913727b0a90de2ff130d3e625ffcd399e450f2c8f43aca64be734f6652eeff",
+       "cbec17c44fd7ba3b7f8e8012257462b50f9997e7f184b18f28b639a35f5efc91"
+      ]
+     },
+     {
+      "path": "contract_dependencies/declarations/flb_log_check/hypothesis_evidence/contexts/*/source_identity",
+      "count": 126,
+      "example": [
+       "57eb85216111c083f5d7befa61ed12aaa91f0203498d42450f70d05704bd1e87",
+       "00b3c1bc2b89ee327c8ea5ca2dcc9e72631e052fb0ac76a322a4067045a34d48"
+      ]
+     },
+     {
+      "path": "callback_members/lifetime_protocols/evidence/summaries/<sha256>/flb_input_plugin_property_check/open/*",
+      "count": 112,
+      "example": [
+       "<absent>",
+       "member stores prevent holder snapshot stability"
+      ]
+     },
+     {
+      "path": "callback_members/prepass/lifetime_protocols/summaries/<sha256>/flb_input_plugin_property_check/open/*",
+      "count": 112,
+      "example": [
+       "<absent>",
+       "member stores prevent holder snapshot stability"
+      ]
+     },
+     {
+      "path": "callback_members/lifetime_protocols/evidence/summaries/<sha256>/flb_input_net_property_check/open/*",
+      "count": 104,
+      "example": [
+       "<absent>",
+       "member stores prevent holder snapshot stability"
+      ]
+     },
+     {
+      "path": "callback_members/prepass/lifetime_protocols/summaries/<sha256>/flb_input_net_property_check/open/*",
+      "count": 104,
+      "example": [
+       "<absent>",
+       "member stores prevent holder snapshot stability"
+      ]
+     },
+     {
+      "path": "callback_members/lifetime_protocols/evidence/summaries/<sha256>/flb_input_http_server_property_check/open/*",
+      "count": 100,
+      "example": [
+       "<absent>",
+       "member stores prevent holder snapshot stability"
+      ]
+     },
+     {
+      "path": "callback_members/lifetime_protocols/evidence/summaries/<sha256>/flb_input_oauth2_jwt_property_check/open/*",
+      "count": 100,
+      "example": [
+       "<absent>",
+       "member stores prevent holder snapshot stability"
+      ]
+     },
+     {
+      "path": "callback_members/prepass/lifetime_protocols/summaries/<sha256>/flb_input_http_server_property_check/open/*",
+      "count": 100,
+      "example": [
+       "<absent>",
+       "member stores prevent holder snapshot stability"
+      ]
+     },
+     {
+      "path": "callback_members/prepass/lifetime_protocols/summaries/<sha256>/flb_input_oauth2_jwt_property_check/open/*",
+      "count": 100,
+      "example": [
+       "<absent>",
+       "member stores prevent holder snapshot stability"
+      ]
+     },
+     {
+      "path": "callback_members/lifetime_protocols/evidence/summaries/<sha256>/flb_input_exit_all/open/*",
+      "count": 92,
+      "example": [
+       "<absent>",
+       "member stores prevent holder snapshot stability"
+      ]
+     },
+     {
+      "path": "callback_members/prepass/lifetime_protocols/summaries/<sha256>/flb_input_exit_all/open/*",
+      "count": 92,
+      "example": [
+       "<absent>",
+       "member stores prevent holder snapshot stability"
+      ]
+     },
+     {
+      "path": "callback_members/lifetime_protocols/evidence/summaries/<sha256>/flb_input_instance_destroy/open/*",
+      "count": 84,
+      "example": [
+       "<absent>",
+       "member stores prevent holder snapshot stability"
+      ]
+     },
+     {
+      "path": "callback_members/prepass/lifetime_protocols/summaries/<sha256>/flb_input_instance_destroy/open/*",
+      "count": 84,
+      "example": [
+       "<absent>",
+       "member stores prevent holder snapshot stability"
+      ]
+     },
+     {
+      "path": "callback_members/lifetime_protocols/evidence/summaries/<sha256>/flb_input_exit_all/may_release/*/object/fields/*",
+      "count": 80,
+      "example": [
+       "<absent>",
+       "alias"
+      ]
+     },
+     {
+      "path": "callback_members/lifetime_protocols/evidence/summaries/<sha256>/flb_input_http_server_property_check/may_release/*/object/fields/*",
+      "count": 80,
+      "example": [
+       "<absent>",
+       "alias"
+      ]
+     },
+     {
+      "path": "callback_members/lifetime_protocols/evidence/summaries/<sha256>/flb_input_instance_destroy/may_release/*/object/fields/*",
+      "count": 80,
+      "example": [
+       "<absent>",
+       "alias"
+      ]
+     },
+     {
+      "path": "callback_members/lifetime_protocols/evidence/summaries/<sha256>/flb_input_instance_init/may_release/*/object/fields/*",
+      "count": 80,
+      "example": [
+       "<absent>",
+       "alias"
+      ]
+     },
+     {
+      "path": "callback_members/lifetime_protocols/evidence/summaries/<sha256>/flb_input_net_property_check/may_release/*/object/fields/*",
+      "count": 80,
+      "example": [
+       "<absent>",
+       "alias"
+      ]
+     },
+     {
+      "path": "callback_members/lifetime_protocols/evidence/summaries/<sha256>/flb_input_oauth2_jwt_property_check/may_release/*/object/fields/*",
+      "count": 80,
+      "example": [
+       "<absent>",
+       "alias"
+      ]
+     },
+     {
+      "path": "callback_members/lifetime_protocols/evidence/summaries/<sha256>/flb_input_plugin_property_check/may_release/*/object/fields/*",
+      "count": 80,
+      "example": [
+       "<absent>",
+       "alias"
+      ]
+     },
+     {
+      "path": "callback_members/prepass/lifetime_protocols/summaries/<sha256>/flb_input_exit_all/may_release/*/object/fields/*",
+      "count": 80,
+      "example": [
+       "<absent>",
+       "alias"
+      ]
+     },
+     {
+      "path": "callback_members/prepass/lifetime_protocols/summaries/<sha256>/flb_input_http_server_property_check/may_release/*/object/fields/*",
+      "count": 80,
+      "example": [
+       "<absent>",
+       "alias"
+      ]
+     },
+     {
+      "path": "callback_members/prepass/lifetime_protocols/summaries/<sha256>/flb_input_instance_destroy/may_release/*/object/fields/*",
+      "count": 80,
+      "example": [
+       "<absent>",
+       "alias"
+      ]
+     },
+     {
+      "path": "callback_members/prepass/lifetime_protocols/summaries/<sha256>/flb_input_instance_init/may_release/*/object/fields/*",
+      "count": 80,
+      "example": [
+       "<absent>",
+       "alias"
+      ]
+     },
+     {
+      "path": "callback_members/prepass/lifetime_protocols/summaries/<sha256>/flb_input_net_property_check/may_release/*/object/fields/*",
+      "count": 80,
+      "example": [
+       "<absent>",
+       "alias"
+      ]
+     },
+     {
+      "path": "callback_members/prepass/lifetime_protocols/summaries/<sha256>/flb_input_oauth2_jwt_property_check/may_release/*/object/fields/*",
+      "count": 80,
+      "example": [
+       "<absent>",
+       "alias"
+      ]
+     },
+     {
+      "path": "callback_members/prepass/lifetime_protocols/summaries/<sha256>/flb_input_plugin_property_check/may_release/*/object/fields/*",
+      "count": 80,
+      "example": [
+       "<absent>",
+       "alias"
+      ]
+     },
+     {
+      "path": "contract_dependencies/declarations/flb_free/hypothesis_evidence/contexts/*/build_identity",
+      "count": 78,
+      "example": [
+       "d6913727b0a90de2ff130d3e625ffcd399e450f2c8f43aca64be734f6652eeff",
+       "cbec17c44fd7ba3b7f8e8012257462b50f9997e7f184b18f28b639a35f5efc91"
+      ]
+     },
+     {
+      "path": "contract_dependencies/declarations/flb_free/hypothesis_evidence/contexts/*/source_identity",
+      "count": 78,
+      "example": [
+       "57eb85216111c083f5d7befa61ed12aaa91f0203498d42450f70d05704bd1e87",
+       "00b3c1bc2b89ee327c8ea5ca2dcc9e72631e052fb0ac76a322a4067045a34d48"
+      ]
+     },
+     {
+      "path": "callback_members/lifetime_protocols/evidence/summaries/<sha256>/flb_input_exit_all/may_release/*/destroyed_before",
+      "count": 72,
+      "example": [
+       "<absent>",
+       "[]"
+      ]
+     },
+     {
+      "path": "callback_members/lifetime_protocols/evidence/summaries/<sha256>/flb_input_exit_all/may_release/*/object/root/Formal/index",
+      "count": 72,
+      "example": [
+       "<absent>",
+       "0"
+      ]
+     },
+     {
+      "path": "callback_members/lifetime_protocols/evidence/summaries/<sha256>/flb_input_exit_all/may_release/*/object/root/Formal/scope",
+      "count": 72,
+      "example": [
+       "<absent>",
+       "5b473145137cc772edebbb237bb4b36338f1deec0019195727ea5dcb15080c3b:flb_input_instance_destroy"
+      ]
+     },
+     {
+      "path": "callback_members/lifetime_protocols/evidence/summaries/<sha256>/flb_input_http_server_property_check/may_release/*/destroyed_before",
+      "count": 72,
+      "example": [
+       "<absent>",
+       "[]"
+      ]
+     },
+     {
+      "path": "callback_members/lifetime_protocols/evidence/summaries/<sha256>/flb_input_http_server_property_check/may_release/*/object/root/Formal/index",
+      "count": 72,
+      "example": [
+       "<absent>",
+       "0"
+      ]
+     },
+     {
+      "path": "callback_members/lifetime_protocols/evidence/summaries/<sha256>/flb_input_http_server_property_check/may_release/*/object/root/Formal/scope",
+      "count": 72,
+      "example": [
+       "<absent>",
+       "5b473145137cc772edebbb237bb4b36338f1deec0019195727ea5dcb15080c3b:flb_input_http_server_property_check"
+      ]
+     },
+     {
+      "path": "callback_members/lifetime_protocols/evidence/summaries/<sha256>/flb_input_instance_destroy/may_release/*/destroyed_before",
+      "count": 72,
+      "example": [
+       "<absent>",
+       "[]"
+      ]
+     },
+     {
+      "path": "callback_members/lifetime_protocols/evidence/summaries/<sha256>/flb_input_instance_destroy/may_release/*/object/root/Formal/index",
+      "count": 72,
+      "example": [
+       "<absent>",
+       "0"
+      ]
+     },
+     {
+      "path": "callback_members/lifetime_protocols/evidence/summaries/<sha256>/flb_input_instance_destroy/may_release/*/object/root/Formal/scope",
+      "count": 72,
+      "example": [
+       "<absent>",
+       "5b473145137cc772edebbb237bb4b36338f1deec0019195727ea5dcb15080c3b:flb_input_instance_destroy"
+      ]
+     },
+     {
+      "path": "callback_members/lifetime_protocols/evidence/summaries/<sha256>/flb_input_instance_init/may_release/*/destroyed_before",
+      "count": 72,
+      "example": [
+       "<absent>",
+       "[]"
+      ]
+     },
+     {
+      "path": "callback_members/lifetime_protocols/evidence/summaries/<sha256>/flb_input_instance_init/may_release/*/object/root/Formal/index",
+      "count": 72,
+      "example": [
+       "<absent>",
+       "0"
+      ]
+     },
+     {
+      "path": "callback_members/lifetime_protocols/evidence/summaries/<sha256>/flb_input_instance_init/may_release/*/object/root/Formal/scope",
+      "count": 72,
+      "example": [
+       "<absent>",
+       "5b473145137cc772edebbb237bb4b36338f1deec0019195727ea5dcb15080c3b:flb_input_instance_init"
+      ]
+     },
+     {
+      "path": "callback_members/lifetime_protocols/evidence/summaries/<sha256>/flb_input_net_property_check/may_release/*/destroyed_before",
+      "count": 72,
+      "example": [
+       "<absent>",
+       "[]"
+      ]
+     },
+     {
+      "path": "callback_members/lifetime_protocols/evidence/summaries/<sha256>/flb_input_net_property_check/may_release/*/object/root/Formal/index",
+      "count": 72,
+      "example": [
+       "<absent>",
+       "0"
+      ]
+     },
+     {
+      "path": "callback_members/lifetime_protocols/evidence/summaries/<sha256>/flb_input_net_property_check/may_release/*/object/root/Formal/scope",
+      "count": 72,
+      "example": [
+       "<absent>",
+       "5b473145137cc772edebbb237bb4b36338f1deec0019195727ea5dcb15080c3b:flb_input_net_property_check"
+      ]
+     },
+     {
+      "path": "callback_members/lifetime_protocols/evidence/summaries/<sha256>/flb_input_oauth2_jwt_property_check/may_release/*/destroyed_before",
+      "count": 72,
+      "example": [
+       "<absent>",
+       "[]"
+      ]
+     },
+     {
+      "path": "callback_members/lifetime_protocols/evidence/summaries/<sha256>/flb_input_oauth2_jwt_property_check/may_release/*/object/root/Formal/index",
+      "count": 72,
+      "example": [
+       "<absent>",
+       "0"
+      ]
+     },
+     {
+      "path": "callback_members/lifetime_protocols/evidence/summaries/<sha256>/flb_input_oauth2_jwt_property_check/may_release/*/object/root/Formal/scope",
+      "count": 72,
+      "example": [
+       "<absent>",
+       "5b473145137cc772edebbb237bb4b36338f1deec0019195727ea5dcb15080c3b:flb_input_oauth2_jwt_property_check"
+      ]
+     },
+     {
+      "path": "callback_members/lifetime_protocols/evidence/summaries/<sha256>/flb_input_plugin_property_check/may_release/*/destroyed_before",
+      "count": 72,
+      "example": [
+       "<absent>",
+       "[]"
+      ]
+     },
+     {
+      "path": "callback_members/lifetime_protocols/evidence/summaries/<sha256>/flb_input_plugin_property_check/may_release/*/object/root/Formal/index",
+      "count": 72,
+      "example": [
+       "<absent>",
+       "0"
+      ]
+     },
+     {
+      "path": "callback_members/lifetime_protocols/evidence/summaries/<sha256>/flb_input_plugin_property_check/may_release/*/object/root/Formal/scope",
+      "count": 72,
+      "example": [
+       "<absent>",
+       "5b473145137cc772edebbb237bb4b36338f1deec0019195727ea5dcb15080c3b:flb_input_plugin_property_check"
+      ]
+     },
+     {
+      "path": "callback_members/prepass/lifetime_protocols/summaries/<sha256>/flb_input_exit_all/may_release/*/destroyed_before",
+      "count": 72,
+      "example": [
+       "<absent>",
+       "[]"
+      ]
+     },
+     {
+      "path": "callback_members/prepass/lifetime_protocols/summaries/<sha256>/flb_input_exit_all/may_release/*/object/root/Formal/index",
+      "count": 72,
+      "example": [
+       "<absent>",
+       "0"
+      ]
+     },
+     {
+      "path": "callback_members/prepass/lifetime_protocols/summaries/<sha256>/flb_input_exit_all/may_release/*/object/root/Formal/scope",
+      "count": 72,
+      "example": [
+       "<absent>",
+       "5b473145137cc772edebbb237bb4b36338f1deec0019195727ea5dcb15080c3b:flb_input_instance_destroy"
+      ]
+     },
+     {
+      "path": "callback_members/prepass/lifetime_protocols/summaries/<sha256>/flb_input_http_server_property_check/may_release/*/destroyed_before",
+      "count": 72,
+      "example": [
+       "<absent>",
+       "[]"
+      ]
+     },
+     {
+      "path": "callback_members/prepass/lifetime_protocols/summaries/<sha256>/flb_input_http_server_property_check/may_release/*/object/root/Formal/index",
+      "count": 72,
+      "example": [
+       "<absent>",
+       "0"
+      ]
+     },
+     {
+      "path": "callback_members/prepass/lifetime_protocols/summaries/<sha256>/flb_input_http_server_property_check/may_release/*/object/root/Formal/scope",
+      "count": 72,
+      "example": [
+       "<absent>",
+       "5b473145137cc772edebbb237bb4b36338f1deec0019195727ea5dcb15080c3b:flb_input_http_server_property_check"
+      ]
+     },
+     {
+      "path": "callback_members/prepass/lifetime_protocols/summaries/<sha256>/flb_input_instance_destroy/may_release/*/destroyed_before",
+      "count": 72,
+      "example": [
+       "<absent>",
+       "[]"
+      ]
+     },
+     {
+      "path": "callback_members/prepass/lifetime_protocols/summaries/<sha256>/flb_input_instance_destroy/may_release/*/object/root/Formal/index",
+      "count": 72,
+      "example": [
+       "<absent>",
+       "0"
+      ]
+     },
+     {
+      "path": "callback_members/prepass/lifetime_protocols/summaries/<sha256>/flb_input_instance_destroy/may_release/*/object/root/Formal/scope",
+      "count": 72,
+      "example": [
+       "<absent>",
+       "5b473145137cc772edebbb237bb4b36338f1deec0019195727ea5dcb15080c3b:flb_input_instance_destroy"
+      ]
+     },
+     {
+      "path": "callback_members/prepass/lifetime_protocols/summaries/<sha256>/flb_input_instance_init/may_release/*/destroyed_before",
+      "count": 72,
+      "example": [
+       "<absent>",
+       "[]"
+      ]
+     },
+     {
+      "path": "callback_members/prepass/lifetime_protocols/summaries/<sha256>/flb_input_instance_init/may_release/*/object/root/Formal/index",
+      "count": 72,
+      "example": [
+       "<absent>",
+       "0"
+      ]
+     },
+     {
+      "path": "callback_members/prepass/lifetime_protocols/summaries/<sha256>/flb_input_instance_init/may_release/*/object/root/Formal/scope",
+      "count": 72,
+      "example": [
+       "<absent>",
+       "5b473145137cc772edebbb237bb4b36338f1deec0019195727ea5dcb15080c3b:flb_input_instance_init"
+      ]
+     },
+     {
+      "path": "callback_members/prepass/lifetime_protocols/summaries/<sha256>/flb_input_net_property_check/may_release/*/destroyed_before",
+      "count": 72,
+      "example": [
+       "<absent>",
+       "[]"
+      ]
+     },
+     {
+      "path": "callback_members/prepass/lifetime_protocols/summaries/<sha256>/flb_input_net_property_check/may_release/*/object/root/Formal/index",
+      "count": 72,
+      "example": [
+       "<absent>",
+       "0"
+      ]
+     },
+     {
+      "path": "callback_members/prepass/lifetime_protocols/summaries/<sha256>/flb_input_net_property_check/may_release/*/object/root/Formal/scope",
+      "count": 72,
+      "example": [
+       "<absent>",
+       "5b473145137cc772edebbb237bb4b36338f1deec0019195727ea5dcb15080c3b:flb_input_net_property_check"
+      ]
+     },
+     {
+      "path": "callback_members/prepass/lifetime_protocols/summaries/<sha256>/flb_input_oauth2_jwt_property_check/may_release/*/destroyed_before",
+      "count": 72,
+      "example": [
+       "<absent>",
+       "[]"
+      ]
+     },
+     {
+      "path": "callback_members/prepass/lifetime_protocols/summaries/<sha256>/flb_input_oauth2_jwt_property_check/may_release/*/object/root/Formal/index",
+      "count": 72,
+      "example": [
+       "<absent>",
+       "0"
+      ]
+     },
+     {
+      "path": "callback_members/prepass/lifetime_protocols/summaries/<sha256>/flb_input_oauth2_jwt_property_check/may_release/*/object/root/Formal/scope",
+      "count": 72,
+      "example": [
+       "<absent>",
+       "5b473145137cc772edebbb237bb4b36338f1deec0019195727ea5dcb15080c3b:flb_input_oauth2_jwt_property_check"
+      ]
+     },
+     {
+      "path": "callback_members/prepass/lifetime_protocols/summaries/<sha256>/flb_input_plugin_property_check/may_release/*/destroyed_before",
+      "count": 72,
+      "example": [
+       "<absent>",
+       "[]"
+      ]
+     },
+     {
+      "path": "callback_members/prepass/lifetime_protocols/summaries/<sha256>/flb_input_plugin_property_check/may_release/*/object/root/Formal/index",
+      "count": 72,
+      "example": [
+       "<absent>",
+       "0"
+      ]
+     },
+     {
+      "path": "callback_members/prepass/lifetime_protocols/summaries/<sha256>/flb_input_plugin_property_check/may_release/*/object/root/Formal/scope",
+      "count": 72,
+      "example": [
+       "<absent>",
+       "5b473145137cc772edebbb237bb4b36338f1deec0019195727ea5dcb15080c3b:flb_input_plugin_property_check"
+      ]
+     },
+     {
+      "path": "contract_dependencies/declarations/__errno_location/hypothesis_evidence/contexts/*/build_identity",
+      "count": 68,
+      "example": [
+       "d6913727b0a90de2ff130d3e625ffcd399e450f2c8f43aca64be734f6652eeff",
+       "cbec17c44fd7ba3b7f8e8012257462b50f9997e7f184b18f28b639a35f5efc91"
+      ]
+     },
+     {
+      "path": "contract_dependencies/declarations/__errno_location/hypothesis_evidence/contexts/*/source_identity",
+      "count": 68,
+      "example": [
+       "57eb85216111c083f5d7befa61ed12aaa91f0203498d42450f70d05704bd1e87",
+       "00b3c1bc2b89ee327c8ea5ca2dcc9e72631e052fb0ac76a322a4067045a34d48"
+      ]
+     },
+     {
+      "path": "contract_dependencies/declarations/flb_errno_print/hypothesis_evidence/contexts/*/build_identity",
+      "count": 68,
+      "example": [
+       "d6913727b0a90de2ff130d3e625ffcd399e450f2c8f43aca64be734f6652eeff",
+       "cbec17c44fd7ba3b7f8e8012257462b50f9997e7f184b18f28b639a35f5efc91"
+      ]
+     },
+     {
+      "path": "contract_dependencies/declarations/flb_errno_print/hypothesis_evidence/contexts/*/source_identity",
+      "count": 68,
+      "example": [
+       "57eb85216111c083f5d7befa61ed12aaa91f0203498d42450f70d05704bd1e87",
+       "00b3c1bc2b89ee327c8ea5ca2dcc9e72631e052fb0ac76a322a4067045a34d48"
+      ]
+     },
+     {
+      "path": "callback_members/lifetime_protocols/evidence/summaries/<sha256>/engine_handle_event/open/*",
+      "count": 44,
+      "example": [
+       "<absent>",
+       "indirect call has no lifetime summary"
+      ]
+     },
+     {
+      "path": "callback_members/lifetime_protocols/evidence/summaries/<sha256>/input_collector_fd/open/*",
+      "count": 44,
+      "example": [
+       "<absent>",
+       "indirect call has no lifetime summary"
+      ]
+     },
+     {
+      "path": "callback_members/lifetime_protocols/evidence/summaries/<sha256>/flb_input_collector_fd/open/*",
+      "count": 44,
+      "example": [
+       "<absent>",
+       "indirect call has no lifetime summary"
+      ]
+     },
+     {
+      "path": "callback_members/prepass/lifetime_protocols/summaries/<sha256>/engine_handle_event/open/*",
+      "count": 44,
+      "example": [
+       "<absent>",
+       "indirect call has no lifetime summary"
+      ]
+     },
+     {
+      "path": "callback_members/prepass/lifetime_protocols/summaries/<sha256>/input_collector_fd/open/*",
+      "count": 44,
+      "example": [
+       "<absent>",
+       "indirect call has no lifetime summary"
+      ]
+     },
+     {
+      "path": "callback_members/prepass/lifetime_protocols/summaries/<sha256>/flb_input_collector_fd/open/*",
+      "count": 44,
+      "example": [
+       "<absent>",
+       "indirect call has no lifetime summary"
+      ]
+     },
+     {
+      "path": "callback_members/lifetime_protocols/evidence/summaries/<sha256>/flb_input_collectors_start/open/*",
+      "count": 40,
+      "example": [
+       "<absent>",
+       "member stores prevent holder snapshot stability"
+      ]
+     },
+     {
+      "path": "callback_members/prepass/lifetime_protocols/summaries/<sha256>/flb_input_collectors_start/open/*",
+      "count": 40,
+      "example": [
+       "<absent>",
+       "member stores prevent holder snapshot stability"
+      ]
+     },
+     {
+      "path": "callback_members/lifetime_protocols/evidence/summaries/<sha256>/collector_create/open/*",
+      "count": 36,
+      "example": [
+       "<absent>",
+       "member stores prevent holder snapshot stability"
+      ]
+     },
+     {
+      "path": "callback_members/lifetime_protocols/evidence/summaries/<sha256>/flb_input_collector_delete/open/*",
+      "count": 36,
+      "example": [
+       "<absent>",
+       "member stores prevent holder snapshot stability"
+      ]
+     },
+     {
+      "path": "callback_members/lifetime_protocols/evidence/summaries/<sha256>/flb_input_collectors_signal_start/open/*",
+      "count": 36,
+      "example": [
+       "<absent>",
+       "member stores prevent holder snapshot stability"
+      ]
+     },
+     {
+      "path": "callback_members/lifetime_protocols/evidence/summaries/<sha256>/flb_input_set_collector_event/open/*",
+      "count": 36,
+      "example": [
+       "<absent>",
+       "member stores prevent holder snapshot stability"
+      ]
+     },
+     {
+      "path": "callback_members/lifetime_protocols/evidence/summaries/<sha256>/flb_input_set_collector_socket/open/*",
+      "count": 36,
+      "example": [
+       "<absent>",
+       "member stores prevent holder snapshot stability"
+      ]
+     },
+     {
+      "path": "callback_members/lifetime_protocols/evidence/summaries/<sha256>/flb_input_set_collector_time/open/*",
+      "count": 36,
+      "example": [
+       "<absent>",
+       "member stores prevent holder snapshot stability"
+      ]
+     },
+     {
+      "path": "callback_members/prepass/lifetime_protocols/summaries/<sha256>/collector_create/open/*",
+      "count": 36,
+      "example": [
+       "<absent>",
+       "member stores prevent holder snapshot stability"
+      ]
+     },
+     {
+      "path": "callback_members/prepass/lifetime_protocols/summaries/<sha256>/flb_input_collector_delete/open/*",
+      "count": 36,
+      "example": [
+       "<absent>",
+       "member stores prevent holder snapshot stability"
+      ]
+     },
+     {
+      "path": "callback_members/prepass/lifetime_protocols/summaries/<sha256>/flb_input_collectors_signal_start/open/*",
+      "count": 36,
+      "example": [
+       "<absent>",
+       "member stores prevent holder snapshot stability"
+      ]
+     },
+     {
+      "path": "callback_members/prepass/lifetime_protocols/summaries/<sha256>/flb_input_set_collector_event/open/*",
+      "count": 36,
+      "example": [
+       "<absent>",
+       "member stores prevent holder snapshot stability"
+      ]
+     },
+     {
+      "path": "callback_members/prepass/lifetime_protocols/summaries/<sha256>/flb_input_set_collector_socket/open/*",
+      "count": 36,
+      "example": [
+       "<absent>",
+       "member stores prevent holder snapshot stability"
+      ]
+     },
+     {
+      "path": "callback_members/prepass/lifetime_protocols/summaries/<sha256>/flb_input_set_collector_time/open/*",
+      "count": 36,
+      "example": [
+       "<absent>",
+       "member stores prevent holder snapshot stability"
+      ]
+     },
+     {
+      "path": "contract_dependencies/declarations/mk_list_add/hypothesis_evidence/contexts/*/build_identity",
+      "count": 36,
+      "example": [
+       "d6913727b0a90de2ff130d3e625ffcd399e450f2c8f43aca64be734f6652eeff",
+       "cbec17c44fd7ba3b7f8e8012257462b50f9997e7f184b18f28b639a35f5efc91"
+      ]
+     },
+     {
+      "path": "contract_dependencies/declarations/mk_list_add/hypothesis_evidence/contexts/*/source_identity",
+      "count": 36,
+      "example": [
+       "57eb85216111c083f5d7befa61ed12aaa91f0203498d42450f70d05704bd1e87",
+       "00b3c1bc2b89ee327c8ea5ca2dcc9e72631e052fb0ac76a322a4067045a34d48"
+      ]
+     },
+     {
+      "path": "contract_dependencies/declarations/flb_calloc/hypothesis_evidence/contexts/*/build_identity",
+      "count": 33,
+      "example": [
+       "d6913727b0a90de2ff130d3e625ffcd399e450f2c8f43aca64be734f6652eeff",
+       "cbec17c44fd7ba3b7f8e8012257462b50f9997e7f184b18f28b639a35f5efc91"
+      ]
+     },
+     {
+      "path": "contract_dependencies/declarations/flb_calloc/hypothesis_evidence/contexts/*/source_identity",
+      "count": 33,
+      "example": [
+       "57eb85216111c083f5d7befa61ed12aaa91f0203498d42450f70d05704bd1e87",
+       "00b3c1bc2b89ee327c8ea5ca2dcc9e72631e052fb0ac76a322a4067045a34d48"
+      ]
+     },
+     {
+      "path": "contract_dependencies/declarations/mk_list_del/hypothesis_evidence/contexts/*/build_identity",
+      "count": 32,
+      "example": [
+       "d6913727b0a90de2ff130d3e625ffcd399e450f2c8f43aca64be734f6652eeff",
+       "cbec17c44fd7ba3b7f8e8012257462b50f9997e7f184b18f28b639a35f5efc91"
+      ]
+     },
+     {
+      "path": "contract_dependencies/declarations/mk_list_del/hypothesis_evidence/contexts/*/source_identity",
+      "count": 32,
+      "example": [
+       "57eb85216111c083f5d7befa61ed12aaa91f0203498d42450f70d05704bd1e87",
+       "00b3c1bc2b89ee327c8ea5ca2dcc9e72631e052fb0ac76a322a4067045a34d48"
+      ]
+     },
+     {
+      "path": "callback_members/lifetime_protocols/evidence/summaries/<sha256>/flb_input_collector_start/open/*",
+      "count": 28,
+      "example": [
+       "<absent>",
+       "member stores prevent holder snapshot stability"
+      ]
+     },
+     {
+      "path": "callback_members/prepass/lifetime_protocols/summaries/<sha256>/flb_input_collector_start/open/*",
+      "count": 28,
+      "example": [
+       "<absent>",
+       "member stores prevent holder snapshot stability"
+      ]
+     },
+     {
+      "path": "contract_dependencies/declarations/strlen/hypothesis_evidence/contexts/*/build_identity",
+      "count": 26,
+      "example": [
+       "2339c979448cdf3f76a55de15540c17bd404c7f2668d8c5bfcb6ec83945edaa2",
+       "2e98b3c1da751ea0222f08517c4e5308f14c262f2c852b1724ad9182dc7cc775"
+      ]
+     },
+     {
+      "path": "contract_dependencies/declarations/strlen/hypothesis_evidence/contexts/*/source_identity",
+      "count": 26,
+      "example": [
+       "e922e22e005013037a152b68374e8df5b4e531e38a164d1417edf4e943210382",
+       "4fce97f43c687bfa82e771cff913ae89a52809da103281f2c63274549a366f52"
+      ]
+     },
+     {
+      "path": "callback_members/lifetime_protocols/evidence/callers/<sha256>:flb_input_instance_destroy/*",
+      "count": 24,
+      "example": [
+       "<absent>",
+       "5b473145137cc772edebbb237bb4b36338f1deec0019195727ea5dcb15080c3b:flb_input_exit_all"
+      ]
+     },
+     {
+      "path": "callback_members/lifetime_protocols/evidence/summaries/<sha256>/flb_input_collector_resume/open/*",
+      "count": 24,
+      "example": [
+       "<absent>",
+       "member stores prevent holder snapshot stability"
+      ]
+     },
+     {
+      "path": "callback_members/prepass/lifetime_protocols/callers/<sha256>:flb_input_instance_destroy/*",
+      "count": 24,
+      "example": [
+       "<absent>",
+       "5b473145137cc772edebbb237bb4b36338f1deec0019195727ea5dcb15080c3b:flb_input_exit_all"
+      ]
+     },
+     {
+      "path": "callback_members/prepass/lifetime_protocols/summaries/<sha256>/flb_input_collector_resume/open/*",
+      "count": 24,
+      "example": [
+       "<absent>",
+       "member stores prevent holder snapshot stability"
+      ]
+     },
+     {
+      "path": "contract_dependencies/declarations/cio_chunk_is_up/hypothesis_evidence/contexts/*/build_identity",
+      "count": 24,
+      "example": [
+       "d6913727b0a90de2ff130d3e625ffcd399e450f2c8f43aca64be734f6652eeff",
+       "cbec17c44fd7ba3b7f8e8012257462b50f9997e7f184b18f28b639a35f5efc91"
+      ]
+     },
+     {
+      "path": "contract_dependencies/declarations/cio_chunk_is_up/hypothesis_evidence/contexts/*/source_identity",
+      "count": 24,
+      "example": [
+       "57eb85216111c083f5d7befa61ed12aaa91f0203498d42450f70d05704bd1e87",
+       "00b3c1bc2b89ee327c8ea5ca2dcc9e72631e052fb0ac76a322a4067045a34d48"
+      ]
+     },
+     {
+      "path": "contract_dependencies/declarations/flb_input_chunk_get_name/hypothesis_evidence/contexts/*/build_identity",
+      "count": 24,
+      "example": [
+       "7a597922e78bad8261557f6de322eecab97f71ed25f31f12849decd467e26215",
+       "ca0e77746e4c0b75eebaffe78f21b1d9e37faec2475d5d3a3b46b6371297a107"
+      ]
+     },
+     {
+      "path": "contract_dependencies/declarations/flb_input_chunk_get_name/hypothesis_evidence/contexts/*/source_identity",
+      "count": 24,
+      "example": [
+       "0fd5e7c8e1485eadcdc352b95aed65237108ed6837bce37dd25843fd0d10d87c",
+       "ed189908acdcb659026dd27ab2d879fa88e03149b29df2dcf0c0255528ab2b27"
+      ]
+     },
+     {
+      "path": "contract_dependencies/declarations/cfl_time_now/hypothesis_evidence/contexts/*/build_identity",
+      "count": 22,
+      "example": [
+       "7a597922e78bad8261557f6de322eecab97f71ed25f31f12849decd467e26215",
+       "ca0e77746e4c0b75eebaffe78f21b1d9e37faec2475d5d3a3b46b6371297a107"
+      ]
+     },
+     {
+      "path": "contract_dependencies/declarations/cfl_time_now/hypothesis_evidence/contexts/*/source_identity",
+      "count": 22,
+      "example": [
+       "0fd5e7c8e1485eadcdc352b95aed65237108ed6837bce37dd25843fd0d10d87c",
+       "ed189908acdcb659026dd27ab2d879fa88e03149b29df2dcf0c0255528ab2b27"
+      ]
+     },
+     {
+      "path": "contract_dependencies/declarations/flb_input_chunk_get_real_size/hypothesis_evidence/contexts/*/build_identity",
+      "count": 22,
+      "example": [
+       "2339c979448cdf3f76a55de15540c17bd404c7f2668d8c5bfcb6ec83945edaa2",
+       "2e98b3c1da751ea0222f08517c4e5308f14c262f2c852b1724ad9182dc7cc775"
+      ]
+     },
+     {
+      "path": "contract_dependencies/declarations/flb_input_chunk_get_real_size/hypothesis_evidence/contexts/*/source_identity",
+      "count": 22,
+      "example": [
+       "e922e22e005013037a152b68374e8df5b4e531e38a164d1417edf4e943210382",
+       "4fce97f43c687bfa82e771cff913ae89a52809da103281f2c63274549a366f52"
+      ]
+     },
+     {
+      "path": "contract_dependencies/declarations/pthread_mutex_lock/hypothesis_evidence/contexts/*/build_identity",
+      "count": 22,
+      "example": [
+       "7a597922e78bad8261557f6de322eecab97f71ed25f31f12849decd467e26215",
+       "ca0e77746e4c0b75eebaffe78f21b1d9e37faec2475d5d3a3b46b6371297a107"
+      ]
+     },
+     {
+      "path": "contract_dependencies/declarations/pthread_mutex_lock/hypothesis_evidence/contexts/*/source_identity",
+      "count": 22,
+      "example": [
+       "0fd5e7c8e1485eadcdc352b95aed65237108ed6837bce37dd25843fd0d10d87c",
+       "ed189908acdcb659026dd27ab2d879fa88e03149b29df2dcf0c0255528ab2b27"
+      ]
+     },
+     {
+      "path": "contract_dependencies/declarations/pthread_mutex_unlock/hypothesis_evidence/contexts/*/build_identity",
+      "count": 22,
+      "example": [
+       "7a597922e78bad8261557f6de322eecab97f71ed25f31f12849decd467e26215",
+       "ca0e77746e4c0b75eebaffe78f21b1d9e37faec2475d5d3a3b46b6371297a107"
+      ]
+     },
+     {
+      "path": "contract_dependencies/declarations/pthread_mutex_unlock/hypothesis_evidence/contexts/*/source_identity",
+      "count": 22,
+      "example": [
+       "0fd5e7c8e1485eadcdc352b95aed65237108ed6837bce37dd25843fd0d10d87c",
+       "ed189908acdcb659026dd27ab2d879fa88e03149b29df2dcf0c0255528ab2b27"
+      ]
+     },
+     {
+      "path": "callback_members/lifetime_protocols/evidence/summaries/<sha256>/flb_input_collector_pause/open/*",
+      "count": 20,
+      "example": [
+       "<absent>",
+       "member stores prevent holder snapshot stability"
+      ]
+     },
+     {
+      "path": "callback_members/prepass/lifetime_protocols/summaries/<sha256>/flb_input_collector_pause/open/*",
+      "count": 20,
+      "example": [
+       "<absent>",
+       "member stores prevent holder snapshot stability"
+      ]
+     },
+     {
+      "path": "contract_dependencies/declarations/flb_malloc/hypothesis_evidence/contexts/*/build_identity",
+      "count": 20,
+      "example": [
+       "2339c979448cdf3f76a55de15540c17bd404c7f2668d8c5bfcb6ec83945edaa2",
+       "2e98b3c1da751ea0222f08517c4e5308f14c262f2c852b1724ad9182dc7cc775"
+      ]
+     },
+     {
+      "path": "contract_dependencies/declarations/flb_malloc/hypothesis_evidence/contexts/*/source_identity",
+      "count": 20,
+      "example": [
+       "e922e22e005013037a152b68374e8df5b4e531e38a164d1417edf4e943210382",
+       "4fce97f43c687bfa82e771cff913ae89a52809da103281f2c63274549a366f52"
+      ]
+     },
+     {
+      "path": "contract_dependencies/declarations/flb_task_retry_destroy/hypothesis_evidence/contexts/*/build_identity",
+      "count": 20,
+      "example": [
+       "7a597922e78bad8261557f6de322eecab97f71ed25f31f12849decd467e26215",
+       "ca0e77746e4c0b75eebaffe78f21b1d9e37faec2475d5d3a3b46b6371297a107"
+      ]
+     },
+     {
+      "path": "contract_dependencies/declarations/flb_task_retry_destroy/hypothesis_evidence/contexts/*/source_identity",
+      "count": 20,
+      "example": [
+       "0fd5e7c8e1485eadcdc352b95aed65237108ed6837bce37dd25843fd0d10d87c",
+       "ed189908acdcb659026dd27ab2d879fa88e03149b29df2dcf0c0255528ab2b27"
+      ]
+     },
+     {
+      "path": "contract_dependencies/declarations/cio_chunk_down/hypothesis_evidence/contexts/*/build_identity",
+      "count": 18,
+      "example": [
+       "d6913727b0a90de2ff130d3e625ffcd399e450f2c8f43aca64be734f6652eeff",
+       "cbec17c44fd7ba3b7f8e8012257462b50f9997e7f184b18f28b639a35f5efc91"
+      ]
+     },
+     {
+      "path": "contract_dependencies/declarations/cio_chunk_down/hypothesis_evidence/contexts/*/source_identity",
+      "count": 18,
+      "example": [
+       "57eb85216111c083f5d7befa61ed12aaa91f0203498d42450f70d05704bd1e87",
+       "00b3c1bc2b89ee327c8ea5ca2dcc9e72631e052fb0ac76a322a4067045a34d48"
+      ]
+     },
+     {
+      "path": "contract_dependencies/declarations/flb_sched_timer_destroy/hypothesis_evidence/contexts/*/build_identity",
+      "count": 18,
+      "example": [
+       "26b093556c90e4dc54036e79589de827af8a3fd36d0c0ef4b2a638ba2c0ba17c",
+       "e066ce0fddef9b8c4b3f434d668c16c7f3365d4ec35641168401f4febbd603e0"
+      ]
+     },
+     {
+      "path": "contract_dependencies/declarations/flb_sched_timer_destroy/hypothesis_evidence/contexts/*/source_identity",
+      "count": 18,
+      "example": [
+       "9869b9e7a4e45503b2536ec13d1cadfc93d3b977c71dbf003161e4e309744a3a",
+       "c9f3ae6b20c6ea2be1e8a83352438732f09896439cf9fab994a479c59a844204"
+      ]
+     },
+     {
+      "path": "callback_members/lifetime_protocols/evidence/summaries/<sha256>/collector_start/open/*",
+      "count": 16,
+      "example": [
+       "<absent>",
+       "member stores prevent holder snapshot stability"
+      ]
+     },
+     {
+      "path": "callback_members/prepass/lifetime_protocols/summaries/<sha256>/collector_start/open/*",
+      "count": 16,
+      "example": [
+       "<absent>",
+       "member stores prevent holder snapshot stability"
+      ]
+     },
+     {
+      "path": "contract_dependencies/declarations/read/hypothesis_evidence/contexts/*/build_identity",
+      "count": 16,
+      "example": [
+       "7a597922e78bad8261557f6de322eecab97f71ed25f31f12849decd467e26215",
+       "ca0e77746e4c0b75eebaffe78f21b1d9e37faec2475d5d3a3b46b6371297a107"
+      ]
+     },
+     {
+      "path": "contract_dependencies/declarations/read/hypothesis_evidence/contexts/*/source_identity",
+      "count": 16,
+      "example": [
+       "0fd5e7c8e1485eadcdc352b95aed65237108ed6837bce37dd25843fd0d10d87c",
+       "ed189908acdcb659026dd27ab2d879fa88e03149b29df2dcf0c0255528ab2b27"
+      ]
+     },
+     {
+      "path": "contract_dependencies/declarations/cio_chunk_get_content_size/hypothesis_evidence/contexts/*/build_identity",
+      "count": 14,
+      "example": [
+       "d6913727b0a90de2ff130d3e625ffcd399e450f2c8f43aca64be734f6652eeff",
+       "cbec17c44fd7ba3b7f8e8012257462b50f9997e7f184b18f28b639a35f5efc91"
+      ]
+     },
+     {
+      "path": "contract_dependencies/declarations/cio_chunk_get_content_size/hypothesis_evidence/contexts/*/source_identity",
+      "count": 14,
+      "example": [
+       "57eb85216111c083f5d7befa61ed12aaa91f0203498d42450f70d05704bd1e87",
+       "00b3c1bc2b89ee327c8ea5ca2dcc9e72631e052fb0ac76a322a4067045a34d48"
+      ]
+     },
+     {
+      "path": "contract_dependencies/declarations/cio_chunk_up_force/hypothesis_evidence/contexts/*/build_identity",
+      "count": 14,
+      "example": [
+       "d6913727b0a90de2ff130d3e625ffcd399e450f2c8f43aca64be734f6652eeff",
+       "cbec17c44fd7ba3b7f8e8012257462b50f9997e7f184b18f28b639a35f5efc91"
+      ]
+     },
+     {
+      "path": "contract_dependencies/declarations/cio_chunk_up_force/hypothesis_evidence/contexts/*/source_identity",
+      "count": 14,
+      "example": [
+       "57eb85216111c083f5d7befa61ed12aaa91f0203498d42450f70d05704bd1e87",
+       "00b3c1bc2b89ee327c8ea5ca2dcc9e72631e052fb0ac76a322a4067045a34d48"
+      ]
+     },
+     {
+      "path": "contract_dependencies/declarations/flb_input_chunk_destroy/hypothesis_evidence/contexts/*/build_identity",
+      "count": 14,
+      "example": [
+       "2339c979448cdf3f76a55de15540c17bd404c7f2668d8c5bfcb6ec83945edaa2",
+       "2e98b3c1da751ea0222f08517c4e5308f14c262f2c852b1724ad9182dc7cc775"
+      ]
+     },
+     {
+      "path": "contract_dependencies/declarations/flb_input_chunk_destroy/hypothesis_evidence/contexts/*/source_identity",
+      "count": 14,
+      "example": [
+       "e922e22e005013037a152b68374e8df5b4e531e38a164d1417edf4e943210382",
+       "4fce97f43c687bfa82e771cff913ae89a52809da103281f2c63274549a366f52"
+      ]
+     },
+     {
+      "path": "contract_dependencies/declarations/flb_sds_destroy/hypothesis_evidence/contexts/*/build_identity",
+      "count": 14,
+      "example": [
+       "7a597922e78bad8261557f6de322eecab97f71ed25f31f12849decd467e26215",
+       "ca0e77746e4c0b75eebaffe78f21b1d9e37faec2475d5d3a3b46b6371297a107"
+      ]
+     },
+     {
+      "path": "contract_dependencies/declarations/flb_sds_destroy/hypothesis_evidence/contexts/*/source_identity",
+      "count": 14,
+      "example": [
+       "0fd5e7c8e1485eadcdc352b95aed65237108ed6837bce37dd25843fd0d10d87c",
+       "ed189908acdcb659026dd27ab2d879fa88e03149b29df2dcf0c0255528ab2b27"
+      ]
+     },
+     {
+      "path": "contract_dependencies/declarations/flb_task_destroy/hypothesis_evidence/contexts/*/build_identity",
+      "count": 14,
+      "example": [
+       "7a597922e78bad8261557f6de322eecab97f71ed25f31f12849decd467e26215",
+       "ca0e77746e4c0b75eebaffe78f21b1d9e37faec2475d5d3a3b46b6371297a107"
+      ]
+     },
+     {
+      "path": "contract_dependencies/declarations/flb_task_destroy/hypothesis_evidence/contexts/*/source_identity",
+      "count": 14,
+      "example": [
+       "0fd5e7c8e1485eadcdc352b95aed65237108ed6837bce37dd25843fd0d10d87c",
+       "ed189908acdcb659026dd27ab2d879fa88e03149b29df2dcf0c0255528ab2b27"
+      ]
+     },
+     {
+      "path": "contract_dependencies/declarations/mk_event_timeout_destroy/hypothesis_evidence/contexts/*/build_identity",
+      "count": 14,
+      "example": [
+       "7a597922e78bad8261557f6de322eecab97f71ed25f31f12849decd467e26215",
+       "ca0e77746e4c0b75eebaffe78f21b1d9e37faec2475d5d3a3b46b6371297a107"
+      ]
+     },
+     {
+      "path": "contract_dependencies/declarations/mk_event_timeout_destroy/hypothesis_evidence/contexts/*/source_identity",
+      "count": 14,
+      "example": [
+       "0fd5e7c8e1485eadcdc352b95aed65237108ed6837bce37dd25843fd0d10d87c",
+       "ed189908acdcb659026dd27ab2d879fa88e03149b29df2dcf0c0255528ab2b27"
+      ]
+     },
+     {
+      "path": "contract_dependencies/declarations/write/hypothesis_evidence/contexts/*/build_identity",
+      "count": 14,
+      "example": [
+       "7a597922e78bad8261557f6de322eecab97f71ed25f31f12849decd467e26215",
+       "ca0e77746e4c0b75eebaffe78f21b1d9e37faec2475d5d3a3b46b6371297a107"
+      ]
+     },
+     {
+      "path": "contract_dependencies/declarations/write/hypothesis_evidence/contexts/*/source_identity",
+      "count": 14,
+      "example": [
+       "0fd5e7c8e1485eadcdc352b95aed65237108ed6837bce37dd25843fd0d10d87c",
+       "ed189908acdcb659026dd27ab2d879fa88e03149b29df2dcf0c0255528ab2b27"
+      ]
+     },
+     {
+      "path": "contract_dependencies/declarations/cio_chunk_close/hypothesis_evidence/contexts/*/build_identity",
+      "count": 13,
+      "example": [
+       "d6913727b0a90de2ff130d3e625ffcd399e450f2c8f43aca64be734f6652eeff",
+       "cbec17c44fd7ba3b7f8e8012257462b50f9997e7f184b18f28b639a35f5efc91"
+      ]
+     },
+     {
+      "path": "contract_dependencies/declarations/cio_chunk_close/hypothesis_evidence/contexts/*/source_identity",
+      "count": 13,
+      "example": [
+       "57eb85216111c083f5d7befa61ed12aaa91f0203498d42450f70d05704bd1e87",
+       "00b3c1bc2b89ee327c8ea5ca2dcc9e72631e052fb0ac76a322a4067045a34d48"
+      ]
+     },
+     {
+      "path": "callback_members/lifetime_protocols/evidence/callers/<sha256>:collector_create/*",
+      "count": 12,
+      "example": [
+       "<absent>",
+       "5b473145137cc772edebbb237bb4b36338f1deec0019195727ea5dcb15080c3b:flb_input_set_collector_event"
+      ]
+     },
+     {
+      "path": "callback_members/lifetime_protocols/evidence/summaries/<sha256>/flb_utils_print_setup/open/*",
+      "count": 12,
+      "example": [
+       "unproved holder frame across call: flb_log_check",
+       "<absent>"
+      ]
+     },
+     {
+      "path": "callback_members/lifetime_protocols/evidence/summaries/<sha256>/collector_start/requirements/*/holder/fields/*",
+      "count": 12,
+      "example": [
+       "<absent>",
+       "evl"
+      ]
+     },
+     {
+      "path": "callback_members/lifetime_protocols/evidence/summaries/<sha256>/collector_start/requirements/*/object/fields/*",
+      "count": 12,
+      "example": [
+       "<absent>",
+       "event"
+      ]
+     },
+     {
+      "path": "callback_members/lifetime_protocols/evidence/summaries/<sha256>/flb_input_collector_start/requirements/*/holder/fields/*",
+      "count": 12,
+      "example": [
+       "<absent>",
+       "evl"
+      ]
+     },
+     {
+      "path": "callback_members/lifetime_protocols/evidence/summaries/<sha256>/flb_input_collector_start/requirements/*/object/fields/*",
+      "count": 12,
+      "example": [
+       "<absent>",
+       "event"
+      ]
+     },
+     {
+      "path": "callback_members/lifetime_protocols/evidence/summaries/<sha256>/flb_input_collectors_signal_start/requirements/*/holder/fields/*",
+      "count": 12,
+      "example": [
+       "<absent>",
+       "evl"
+      ]
+     },
+     {
+      "path": "callback_members/lifetime_protocols/evidence/summaries/<sha256>/flb_input_collectors_signal_start/requirements/*/object/fields/*",
+      "count": 12,
+      "example": [
+       "<absent>",
+       "event"
+      ]
+     },
+     {
+      "path": "callback_members/lifetime_protocols/evidence/summaries/<sha256>/flb_input_collectors_start/requirements/*/holder/fields/*",
+      "count": 12,
+      "example": [
+       "<absent>",
+       "evl"
+      ]
+     },
+     {
+      "path": "callback_members/lifetime_protocols/evidence/summaries/<sha256>/flb_input_collectors_start/requirements/*/object/fields/*",
+      "count": 12,
+      "example": [
+       "<absent>",
+       "event"
+      ]
+     },
+     {
+      "path": "callback_members/prepass/lifetime_protocols/callers/<sha256>:collector_create/*",
+      "count": 12,
+      "example": [
+       "<absent>",
+       "5b473145137cc772edebbb237bb4b36338f1deec0019195727ea5dcb15080c3b:flb_input_set_collector_event"
+      ]
+     },
+     {
+      "path": "callback_members/prepass/lifetime_protocols/summaries/<sha256>/flb_utils_print_setup/open/*",
+      "count": 12,
+      "example": [
+       "unproved holder frame across call: flb_log_check",
+       "<absent>"
+      ]
+     },
+     {
+      "path": "callback_members/prepass/lifetime_protocols/summaries/<sha256>/collector_start/requirements/*/holder/fields/*",
+      "count": 12,
+      "example": [
+       "<absent>",
+       "evl"
+      ]
+     },
+     {
+      "path": "callback_members/prepass/lifetime_protocols/summaries/<sha256>/collector_start/requirements/*/object/fields/*",
+      "count": 12,
+      "example": [
+       "<absent>",
+       "event"
+      ]
+     },
+     {
+      "path": "callback_members/prepass/lifetime_protocols/summaries/<sha256>/flb_input_collector_start/requirements/*/holder/fields/*",
+      "count": 12,
+      "example": [
+       "<absent>",
+       "evl"
+      ]
+     },
+     {
+      "path": "callback_members/prepass/lifetime_protocols/summaries/<sha256>/flb_input_collector_start/requirements/*/object/fields/*",
+      "count": 12,
+      "example": [
+       "<absent>",
+       "event"
+      ]
+     },
+     {
+      "path": "callback_members/prepass/lifetime_protocols/summaries/<sha256>/flb_input_collectors_signal_start/requirements/*/holder/fields/*",
+      "count": 12,
+      "example": [
+       "<absent>",
+       "evl"
+      ]
+     },
+     {
+      "path": "callback_members/prepass/lifetime_protocols/summaries/<sha256>/flb_input_collectors_signal_start/requirements/*/object/fields/*",
+      "count": 12,
+      "example": [
+       "<absent>",
+       "event"
+      ]
+     },
+     {
+      "path": "callback_members/prepass/lifetime_protocols/summaries/<sha256>/flb_input_collectors_start/requirements/*/holder/fields/*",
+      "count": 12,
+      "example": [
+       "<absent>",
+       "evl"
+      ]
+     },
+     {
+      "path": "callback_members/prepass/lifetime_protocols/summaries/<sha256>/flb_input_collectors_start/requirements/*/object/fields/*",
+      "count": 12,
+      "example": [
+       "<absent>",
+       "event"
+      ]
+     },
+     {
+      "path": "contract_dependencies/declarations/memcpy/hypothesis_evidence/contexts/*/build_identity",
+      "count": 12,
+      "example": [
+       "2339c979448cdf3f76a55de15540c17bd404c7f2668d8c5bfcb6ec83945edaa2",
+       "2e98b3c1da751ea0222f08517c4e5308f14c262f2c852b1724ad9182dc7cc775"
+      ]
+     },
+     {
+      "path": "contract_dependencies/declarations/memcpy/hypothesis_evidence/contexts/*/source_identity",
+      "count": 12,
+      "example": [
+       "e922e22e005013037a152b68374e8df5b4e531e38a164d1417edf4e943210382",
+       "4fce97f43c687bfa82e771cff913ae89a52809da103281f2c63274549a366f52"
+      ]
+     },
+     {
+      "path": "contract_dependencies/declarations/flb_input_chunk_is_mem_overlimit/hypothesis_evidence/contexts/*/build_identity",
+      "count": 10,
+      "example": [
+       "2339c979448cdf3f76a55de15540c17bd404c7f2668d8c5bfcb6ec83945edaa2",
+       "2e98b3c1da751ea0222f08517c4e5308f14c262f2c852b1724ad9182dc7cc775"
+      ]
+     },
+     {
+      "path": "contract_dependencies/declarations/flb_input_chunk_is_mem_overlimit/hypothesis_evidence/contexts/*/source_identity",
+      "count": 10,
+      "example": [
+       "e922e22e005013037a152b68374e8df5b4e531e38a164d1417edf4e943210382",
+       "4fce97f43c687bfa82e771cff913ae89a52809da103281f2c63274549a366f52"
+      ]
+     },
+     {
+      "path": "contract_dependencies/declarations/flb_output_instance_destroy/hypothesis_evidence/contexts/*/build_identity",
+      "count": 10,
+      "example": [
+       "65e1dd5e2d74546fc1b07e481d75a905d1a8dda8b24972361ca4193e95dcb17e",
+       "f6d096037c11f619413bdd5cb83c0caae41c77e03fdce6801902a177917758ee"
+      ]
+     },
+     {
+      "path": "contract_dependencies/declarations/flb_output_instance_destroy/hypothesis_evidence/contexts/*/source_identity",
+      "count": 10,
+      "example": [
+       "9ff5c8193dd41eb093f416deb824bc06f1c32fa37ea7d24a8a13e3e9d88c1531",
+       "8c1ecd767d5ce4d81ae538504e9169b5428f61850141d0fabedd658c3e2465de"
+      ]
+     },
+     {
+      "path": "contract_dependencies/declarations/mk_event_timeout_create/hypothesis_evidence/contexts/*/build_identity",
+      "count": 10,
+      "example": [
+       "7a597922e78bad8261557f6de322eecab97f71ed25f31f12849decd467e26215",
+       "ca0e77746e4c0b75eebaffe78f21b1d9e37faec2475d5d3a3b46b6371297a107"
+      ]
+     },
+     {
+      "path": "contract_dependencies/declarations/mk_event_timeout_create/hypothesis_evidence/contexts/*/source_identity",
+      "count": 10,
+      "example": [
+       "0fd5e7c8e1485eadcdc352b95aed65237108ed6837bce37dd25843fd0d10d87c",
+       "ed189908acdcb659026dd27ab2d879fa88e03149b29df2dcf0c0255528ab2b27"
+      ]
+     },
+     {
+      "path": "callback_members/lifetime_protocols/evidence/callers/<sha256>:flb_input_coro_collect/*",
+      "count": 8,
+      "example": [
+       "<absent>",
+       "0566b5cd65bb2220c61b7a7119536288325afff01a6286cbc6916f6d6bf1bae6:input_collector_fd"
+      ]
+     },
+     {
+      "path": "callback_members/lifetime_protocols/evidence/summaries/<sha256>/flb_input_thread_collectors_start/open/*",
+      "count": 8,
+      "example": [
+       "<absent>",
+       "unproved holder frame across call: flb_input_collector_start"
+      ]
+     },
+     {
+      "path": "callback_members/lifetime_protocols/evidence/summaries/<sha256>/collector_start/requirements/*/holder/root/Formal/index",
+      "count": 8,
+      "example": [
+       "<absent>",
+       "0"
+      ]
+     },
+     {
+      "path": "callback_members/lifetime_protocols/evidence/summaries/<sha256>/collector_start/requirements/*/holder/root/Formal/scope",
+      "count": 8,
+      "example": [
+       "<absent>",
+       "5b473145137cc772edebbb237bb4b36338f1deec0019195727ea5dcb15080c3b:collector_start"
+      ]
+     },
+     {
+      "path": "callback_members/lifetime_protocols/evidence/summaries/<sha256>/collector_start/requirements/*/object/root/Formal/index",
+      "count": 8,
+      "example": [
+       "<absent>",
+       "0"
+      ]
+     },
+     {
+      "path": "callback_members/lifetime_protocols/evidence/summaries/<sha256>/collector_start/requirements/*/object/root/Formal/scope",
+      "count": 8,
+      "example": [
+       "<absent>",
+       "5b473145137cc772edebbb237bb4b36338f1deec0019195727ea5dcb15080c3b:collector_start"
+      ]
+     },
+     {
+      "path": "callback_members/lifetime_protocols/evidence/summaries/<sha256>/collector_start/requirements/*/reason",
+      "count": 8,
+      "example": [
+       "<absent>",
+       "lifetime-precondition-undischarged"
+      ]
+     },
+     {
+      "path": "callback_members/lifetime_protocols/evidence/summaries/<sha256>/flb_input_collector_start/requirements/*/holder/root/Formal/index",
+      "count": 8,
+      "example": [
+       "<absent>",
+       "0"
+      ]
+     },
+     {
+      "path": "callback_members/lifetime_protocols/evidence/summaries/<sha256>/flb_input_collector_start/requirements/*/holder/root/Formal/scope",
+      "count": 8,
+      "example": [
+       "<absent>",
+       "5b473145137cc772edebbb237bb4b36338f1deec0019195727ea5dcb15080c3b:collector_start"
+      ]
+     },
+     {
+      "path": "callback_members/lifetime_protocols/evidence/summaries/<sha256>/flb_input_collector_start/requirements/*/object/root/Formal/index",
+      "count": 8,
+      "example": [
+       "<absent>",
+       "0"
+      ]
+     },
+     {
+      "path": "callback_members/lifetime_protocols/evidence/summaries/<sha256>/flb_input_collector_start/requirements/*/object/root/Formal/scope",
+      "count": 8,
+      "example": [
+       "<absent>",
+       "5b473145137cc772edebbb237bb4b36338f1deec0019195727ea5dcb15080c3b:collector_start"
+      ]
+     },
+     {
+      "path": "callback_members/lifetime_protocols/evidence/summaries/<sha256>/flb_input_collector_start/requirements/*/reason",
+      "count": 8,
+      "example": [
+       "<absent>",
+       "lifetime-precondition-undischarged"
+      ]
+     },
+     {
+      "path": "callback_members/lifetime_protocols/evidence/summaries/<sha256>/flb_input_collectors_signal_start/requirements/*/holder/root/Formal/index",
+      "count": 8,
+      "example": [
+       "<absent>",
+       "0"
+      ]
+     },
+     {
+      "path": "callback_members/lifetime_protocols/evidence/summaries/<sha256>/flb_input_collectors_signal_start/requirements/*/holder/root/Formal/scope",
+      "count": 8,
+      "example": [
+       "<absent>",
+       "5b473145137cc772edebbb237bb4b36338f1deec0019195727ea5dcb15080c3b:collector_start"
+      ]
+     },
+     {
+      "path": "callback_members/lifetime_protocols/evidence/summaries/<sha256>/flb_input_collectors_signal_start/requirements/*/object/root/Formal/index",
+      "count": 8,
+      "example": [
+       "<absent>",
+       "0"
+      ]
+     },
+     {
+      "path": "callback_members/lifetime_protocols/evidence/summaries/<sha256>/flb_input_collectors_signal_start/requirements/*/object/root/Formal/scope",
+      "count": 8,
+      "example": [
+       "<absent>",
+       "5b473145137cc772edebbb237bb4b36338f1deec0019195727ea5dcb15080c3b:collector_start"
+      ]
+     },
+     {
+      "path": "callback_members/lifetime_protocols/evidence/summaries/<sha256>/flb_input_collectors_signal_start/requirements/*/reason",
+      "count": 8,
+      "example": [
+       "<absent>",
+       "lifetime-precondition-undischarged"
+      ]
+     },
+     {
+      "path": "callback_members/lifetime_protocols/evidence/summaries/<sha256>/flb_input_collectors_start/requirements/*/holder/root/Formal/index",
+      "count": 8,
+      "example": [
+       "<absent>",
+       "0"
+      ]
+     },
+     {
+      "path": "callback_members/lifetime_protocols/evidence/summaries/<sha256>/flb_input_collectors_start/requirements/*/holder/root/Formal/scope",
+      "count": 8,
+      "example": [
+       "<absent>",
+       "5b473145137cc772edebbb237bb4b36338f1deec0019195727ea5dcb15080c3b:collector_start"
+      ]
+     },
+     {
+      "path": "callback_members/lifetime_protocols/evidence/summaries/<sha256>/flb_input_collectors_start/requirements/*/object/root/Formal/index",
+      "count": 8,
+      "example": [
+       "<absent>",
+       "0"
+      ]
+     },
+     {
+      "path": "callback_members/lifetime_protocols/evidence/summaries/<sha256>/flb_input_collectors_start/requirements/*/object/root/Formal/scope",
+      "count": 8,
+      "example": [
+       "<absent>",
+       "5b473145137cc772edebbb237bb4b36338f1deec0019195727ea5dcb15080c3b:collector_start"
+      ]
+     },
+     {
+      "path": "callback_members/lifetime_protocols/evidence/summaries/<sha256>/flb_input_collectors_start/requirements/*/reason",
+      "count": 8,
+      "example": [
+       "<absent>",
+       "lifetime-precondition-undischarged"
+      ]
+     },
+     {
+      "path": "callback_members/lifetime_protocols/evidence/summaries/<sha256>/flb_input_init_all/may_release/*/object/fields",
+      "count": 8,
+      "example": [
+       "<absent>",
+       "[]"
+      ]
+     },
+     {
+      "path": "callback_members/prepass/lifetime_protocols/callers/<sha256>:flb_input_coro_collect/*",
+      "count": 8,
+      "example": [
+       "<absent>",
+       "0566b5cd65bb2220c61b7a7119536288325afff01a6286cbc6916f6d6bf1bae6:input_collector_fd"
+      ]
+     },
+     {
+      "path": "callback_members/prepass/lifetime_protocols/summaries/<sha256>/flb_input_thread_collectors_start/open/*",
+      "count": 8,
+      "example": [
+       "<absent>",
+       "unproved holder frame across call: flb_input_collector_start"
+      ]
+     },
+     {
+      "path": "callback_members/prepass/lifetime_protocols/summaries/<sha256>/collector_start/requirements/*/holder/root/Formal/index",
+      "count": 8,
+      "example": [
+       "<absent>",
+       "0"
+      ]
+     },
+     {
+      "path": "callback_members/prepass/lifetime_protocols/summaries/<sha256>/collector_start/requirements/*/holder/root/Formal/scope",
+      "count": 8,
+      "example": [
+       "<absent>",
+       "5b473145137cc772edebbb237bb4b36338f1deec0019195727ea5dcb15080c3b:collector_start"
+      ]
+     },
+     {
+      "path": "callback_members/prepass/lifetime_protocols/summaries/<sha256>/collector_start/requirements/*/object/root/Formal/index",
+      "count": 8,
+      "example": [
+       "<absent>",
+       "0"
+      ]
+     },
+     {
+      "path": "callback_members/prepass/lifetime_protocols/summaries/<sha256>/collector_start/requirements/*/object/root/Formal/scope",
+      "count": 8,
+      "example": [
+       "<absent>",
+       "5b473145137cc772edebbb237bb4b36338f1deec0019195727ea5dcb15080c3b:collector_start"
+      ]
+     },
+     {
+      "path": "callback_members/prepass/lifetime_protocols/summaries/<sha256>/collector_start/requirements/*/reason",
+      "count": 8,
+      "example": [
+       "<absent>",
+       "lifetime-precondition-undischarged"
+      ]
+     },
+     {
+      "path": "callback_members/prepass/lifetime_protocols/summaries/<sha256>/flb_input_collector_start/requirements/*/holder/root/Formal/index",
+      "count": 8,
+      "example": [
+       "<absent>",
+       "0"
+      ]
+     },
+     {
+      "path": "callback_members/prepass/lifetime_protocols/summaries/<sha256>/flb_input_collector_start/requirements/*/holder/root/Formal/scope",
+      "count": 8,
+      "example": [
+       "<absent>",
+       "5b473145137cc772edebbb237bb4b36338f1deec0019195727ea5dcb15080c3b:collector_start"
+      ]
+     },
+     {
+      "path": "callback_members/prepass/lifetime_protocols/summaries/<sha256>/flb_input_collector_start/requirements/*/object/root/Formal/index",
+      "count": 8,
+      "example": [
+       "<absent>",
+       "0"
+      ]
+     },
+     {
+      "path": "callback_members/prepass/lifetime_protocols/summaries/<sha256>/flb_input_collector_start/requirements/*/object/root/Formal/scope",
+      "count": 8,
+      "example": [
+       "<absent>",
+       "5b473145137cc772edebbb237bb4b36338f1deec0019195727ea5dcb15080c3b:collector_start"
+      ]
+     },
+     {
+      "path": "callback_members/prepass/lifetime_protocols/summaries/<sha256>/flb_input_collector_start/requirements/*/reason",
+      "count": 8,
+      "example": [
+       "<absent>",
+       "lifetime-precondition-undischarged"
+      ]
+     },
+     {
+      "path": "callback_members/prepass/lifetime_protocols/summaries/<sha256>/flb_input_collectors_signal_start/requirements/*/holder/root/Formal/index",
+      "count": 8,
+      "example": [
+       "<absent>",
+       "0"
+      ]
+     },
+     {
+      "path": "callback_members/prepass/lifetime_protocols/summaries/<sha256>/flb_input_collectors_signal_start/requirements/*/holder/root/Formal/scope",
+      "count": 8,
+      "example": [
+       "<absent>",
+       "5b473145137cc772edebbb237bb4b36338f1deec0019195727ea5dcb15080c3b:collector_start"
+      ]
+     },
+     {
+      "path": "callback_members/prepass/lifetime_protocols/summaries/<sha256>/flb_input_collectors_signal_start/requirements/*/object/root/Formal/index",
+      "count": 8,
+      "example": [
+       "<absent>",
+       "0"
+      ]
+     },
+     {
+      "path": "callback_members/prepass/lifetime_protocols/summaries/<sha256>/flb_input_collectors_signal_start/requirements/*/object/root/Formal/scope",
+      "count": 8,
+      "example": [
+       "<absent>",
+       "5b473145137cc772edebbb237bb4b36338f1deec0019195727ea5dcb15080c3b:collector_start"
+      ]
+     },
+     {
+      "path": "callback_members/prepass/lifetime_protocols/summaries/<sha256>/flb_input_collectors_signal_start/requirements/*/reason",
+      "count": 8,
+      "example": [
+       "<absent>",
+       "lifetime-precondition-undischarged"
+      ]
+     },
+     {
+      "path": "callback_members/prepass/lifetime_protocols/summaries/<sha256>/flb_input_collectors_start/requirements/*/holder/root/Formal/index",
+      "count": 8,
+      "example": [
+       "<absent>",
+       "0"
+      ]
+     },
+     {
+      "path": "callback_members/prepass/lifetime_protocols/summaries/<sha256>/flb_input_collectors_start/requirements/*/holder/root/Formal/scope",
+      "count": 8,
+      "example": [
+       "<absent>",
+       "5b473145137cc772edebbb237bb4b36338f1deec0019195727ea5dcb15080c3b:collector_start"
+      ]
+     },
+     {
+      "path": "callback_members/prepass/lifetime_protocols/summaries/<sha256>/flb_input_collectors_start/requirements/*/object/root/Formal/index",
+      "count": 8,
+      "example": [
+       "<absent>",
+       "0"
+      ]
+     },
+     {
+      "path": "callback_members/prepass/lifetime_protocols/summaries/<sha256>/flb_input_collectors_start/requirements/*/object/root/Formal/scope",
+      "count": 8,
+      "example": [
+       "<absent>",
+       "5b473145137cc772edebbb237bb4b36338f1deec0019195727ea5dcb15080c3b:collector_start"
+      ]
+     },
+     {
+      "path": "callback_members/prepass/lifetime_protocols/summaries/<sha256>/flb_input_collectors_start/requirements/*/reason",
+      "count": 8,
+      "example": [
+       "<absent>",
+       "lifetime-precondition-undischarged"
+      ]
+     },
+     {
+      "path": "callback_members/prepass/lifetime_protocols/summaries/<sha256>/flb_input_init_all/may_release/*/object/fields",
+      "count": 8,
+      "example": [
+       "<absent>",
+       "[]"
+      ]
+     },
+     {
+      "path": "contract_dependencies/declarations/append_to_ring_buffer/hypothesis_evidence/contexts/*/build_identity",
+      "count": 8,
+      "example": [
+       "2339c979448cdf3f76a55de15540c17bd404c7f2668d8c5bfcb6ec83945edaa2",
+       "2e98b3c1da751ea0222f08517c4e5308f14c262f2c852b1724ad9182dc7cc775"
+      ]
+     },
+     {
+      "path": "contract_dependencies/declarations/append_to_ring_buffer/hypothesis_evidence/contexts/*/source_identity",
+      "count": 8,
+      "example": [
+       "e922e22e005013037a152b68374e8df5b4e531e38a164d1417edf4e943210382",
+       "4fce97f43c687bfa82e771cff913ae89a52809da103281f2c63274549a366f52"
+      ]
+     },
+     {
+      "path": "contract_dependencies/declarations/flb_input_chunk_destroy_direct_routes/hypothesis_evidence/contexts/*/build_identity",
+      "count": 8,
+      "example": [
+       "2339c979448cdf3f76a55de15540c17bd404c7f2668d8c5bfcb6ec83945edaa2",
+       "2e98b3c1da751ea0222f08517c4e5308f14c262f2c852b1724ad9182dc7cc775"
+      ]
+     },
+     {
+      "path": "contract_dependencies/declarations/flb_input_chunk_destroy_direct_routes/hypothesis_evidence/contexts/*/source_identity",
+      "count": 8,
+      "example": [
+       "e922e22e005013037a152b68374e8df5b4e531e38a164d1417edf4e943210382",
+       "4fce97f43c687bfa82e771cff913ae89a52809da103281f2c63274549a366f52"
+      ]
+     },
+     {
+      "path": "contract_dependencies/declarations/flb_input_chunk_get_size/hypothesis_evidence/contexts/*/build_identity",
+      "count": 8,
+      "example": [
+       "2339c979448cdf3f76a55de15540c17bd404c7f2668d8c5bfcb6ec83945edaa2",
+       "2e98b3c1da751ea0222f08517c4e5308f14c262f2c852b1724ad9182dc7cc775"
+      ]
+     },
+     {
+      "path": "contract_dependencies/declarations/flb_input_chunk_get_size/hypothesis_evidence/contexts/*/source_identity",
+      "count": 8,
+      "example": [
+       "e922e22e005013037a152b68374e8df5b4e531e38a164d1417edf4e943210382",
+       "4fce97f43c687bfa82e771cff913ae89a52809da103281f2c63274549a366f52"
+      ]
+     },
+     {
+      "path": "contract_dependencies/declarations/flb_sched_request_destroy/hypothesis_evidence/contexts/*/build_identity",
+      "count": 8,
+      "example": [
+       "26b093556c90e4dc54036e79589de827af8a3fd36d0c0ef4b2a638ba2c0ba17c",
+       "e066ce0fddef9b8c4b3f434d668c16c7f3365d4ec35641168401f4febbd603e0"
+      ]
+     },
+     {
+      "path": "contract_dependencies/declarations/flb_sched_request_destroy/hypothesis_evidence/contexts/*/source_identity",
+      "count": 8,
+      "example": [
+       "9869b9e7a4e45503b2536ec13d1cadfc93d3b977c71dbf003161e4e309744a3a",
+       "c9f3ae6b20c6ea2be1e8a83352438732f09896439cf9fab994a479c59a844204"
+      ]
+     },
+     {
+      "path": "contract_dependencies/declarations/snprintf/hypothesis_evidence/contexts/*/build_identity",
+      "count": 8,
+      "example": [
+       "2339c979448cdf3f76a55de15540c17bd404c7f2668d8c5bfcb6ec83945edaa2",
+       "2e98b3c1da751ea0222f08517c4e5308f14c262f2c852b1724ad9182dc7cc775"
+      ]
+     },
+     {
+      "path": "contract_dependencies/declarations/snprintf/hypothesis_evidence/contexts/*/source_identity",
+      "count": 8,
+      "example": [
+       "e922e22e005013037a152b68374e8df5b4e531e38a164d1417edf4e943210382",
+       "4fce97f43c687bfa82e771cff913ae89a52809da103281f2c63274549a366f52"
+      ]
+     },
+     {
+      "path": "contract_dependencies/declarations/time/hypothesis_evidence/contexts/*/build_identity",
+      "count": 8,
+      "example": [
+       "26b093556c90e4dc54036e79589de827af8a3fd36d0c0ef4b2a638ba2c0ba17c",
+       "e066ce0fddef9b8c4b3f434d668c16c7f3365d4ec35641168401f4febbd603e0"
+      ]
+     },
+     {
+      "path": "contract_dependencies/declarations/time/hypothesis_evidence/contexts/*/source_identity",
+      "count": 8,
+      "example": [
+       "9869b9e7a4e45503b2536ec13d1cadfc93d3b977c71dbf003161e4e309744a3a",
+       "c9f3ae6b20c6ea2be1e8a83352438732f09896439cf9fab994a479c59a844204"
+      ]
+     },
+     {
+      "path": "contract_dependencies/declarations/flb_input_chunk_total_size/hypothesis_evidence/contexts/*/build_identity",
+      "count": 7,
+      "example": [
+       "d6913727b0a90de2ff130d3e625ffcd399e450f2c8f43aca64be734f6652eeff",
+       "cbec17c44fd7ba3b7f8e8012257462b50f9997e7f184b18f28b639a35f5efc91"
+      ]
+     },
+     {
+      "path": "contract_dependencies/declarations/flb_input_chunk_total_size/hypothesis_evidence/contexts/*/source_identity",
+      "count": 7,
+      "example": [
+       "57eb85216111c083f5d7befa61ed12aaa91f0203498d42450f70d05704bd1e87",
+       "00b3c1bc2b89ee327c8ea5ca2dcc9e72631e052fb0ac76a322a4067045a34d48"
+      ]
+     },
+     {
+      "path": "contract_dependencies/declarations/memset/hypothesis_evidence/contexts/*/build_identity",
+      "count": 7,
+      "example": [
+       "d6913727b0a90de2ff130d3e625ffcd399e450f2c8f43aca64be734f6652eeff",
+       "cbec17c44fd7ba3b7f8e8012257462b50f9997e7f184b18f28b639a35f5efc91"
+      ]
+     },
+     {
+      "path": "contract_dependencies/declarations/memset/hypothesis_evidence/contexts/*/source_identity",
+      "count": 7,
+      "example": [
+       "57eb85216111c083f5d7befa61ed12aaa91f0203498d42450f70d05704bd1e87",
+       "00b3c1bc2b89ee327c8ea5ca2dcc9e72631e052fb0ac76a322a4067045a34d48"
+      ]
+     },
+     {
+      "path": "contract_dependencies/declarations/strcmp/hypothesis_evidence/contexts/*/build_identity",
+      "count": 7,
+      "example": [
+       "d6913727b0a90de2ff130d3e625ffcd399e450f2c8f43aca64be734f6652eeff",
+       "cbec17c44fd7ba3b7f8e8012257462b50f9997e7f184b18f28b639a35f5efc91"
+      ]
+     },
+     {
+      "path": "contract_dependencies/declarations/strcmp/hypothesis_evidence/contexts/*/source_identity",
+      "count": 7,
+      "example": [
+       "57eb85216111c083f5d7befa61ed12aaa91f0203498d42450f70d05704bd1e87",
+       "00b3c1bc2b89ee327c8ea5ca2dcc9e72631e052fb0ac76a322a4067045a34d48"
+      ]
+     },
+     {
+      "path": "contract_dependencies/declarations/flb_input_chunk_is_storage_overlimit/hypothesis_evidence/contexts/*/build_identity",
+      "count": 6,
+      "example": [
+       "2339c979448cdf3f76a55de15540c17bd404c7f2668d8c5bfcb6ec83945edaa2",
+       "2e98b3c1da751ea0222f08517c4e5308f14c262f2c852b1724ad9182dc7cc775"
+      ]
+     },
+     {
+      "path": "contract_dependencies/declarations/flb_input_chunk_is_storage_overlimit/hypothesis_evidence/contexts/*/source_identity",
+      "count": 6,
+      "example": [
+       "e922e22e005013037a152b68374e8df5b4e531e38a164d1417edf4e943210382",
+       "4fce97f43c687bfa82e771cff913ae89a52809da103281f2c63274549a366f52"
+      ]
+     },
+     {
+      "path": "contract_dependencies/declarations/flb_input_chunk_is_up/hypothesis_evidence/contexts/*/build_identity",
+      "count": 6,
+      "example": [
+       "2339c979448cdf3f76a55de15540c17bd404c7f2668d8c5bfcb6ec83945edaa2",
+       "2e98b3c1da751ea0222f08517c4e5308f14c262f2c852b1724ad9182dc7cc775"
+      ]
+     },
+     {
+      "path": "contract_dependencies/declarations/flb_input_chunk_is_up/hypothesis_evidence/contexts/*/source_identity",
+      "count": 6,
+      "example": [
+       "e922e22e005013037a152b68374e8df5b4e531e38a164d1417edf4e943210382",
+       "4fce97f43c687bfa82e771cff913ae89a52809da103281f2c63274549a366f52"
+      ]
+     },
+     {
+      "path": "contract_dependencies/declarations/flb_routes_mask_is_empty/hypothesis_evidence/contexts/*/build_identity",
+      "count": 6,
+      "example": [
+       "2339c979448cdf3f76a55de15540c17bd404c7f2668d8c5bfcb6ec83945edaa2",
+       "2e98b3c1da751ea0222f08517c4e5308f14c262f2c852b1724ad9182dc7cc775"
+      ]
+     },
+     {
+      "path": "contract_dependencies/declarations/flb_routes_mask_is_empty/hypothesis_evidence/contexts/*/source_identity",
+      "count": 6,
+      "example": [
+       "e922e22e005013037a152b68374e8df5b4e531e38a164d1417edf4e943210382",
+       "4fce97f43c687bfa82e771cff913ae89a52809da103281f2c63274549a366f52"
+      ]
+     },
+     {
+      "path": "contract_dependencies/declarations/flb_sds_create_len/hypothesis_evidence/contexts/*/build_identity",
+      "count": 6,
+      "example": [
+       "7a597922e78bad8261557f6de322eecab97f71ed25f31f12849decd467e26215",
+       "ca0e77746e4c0b75eebaffe78f21b1d9e37faec2475d5d3a3b46b6371297a107"
+      ]
+     },
+     {
+      "path": "contract_dependencies/declarations/flb_sds_create_len/hypothesis_evidence/contexts/*/source_identity",
+      "count": 6,
+      "example": [
+       "0fd5e7c8e1485eadcdc352b95aed65237108ed6837bce37dd25843fd0d10d87c",
+       "ed189908acdcb659026dd27ab2d879fa88e03149b29df2dcf0c0255528ab2b27"
+      ]
+     },
+     {
+      "path": "contract_dependencies/declarations/flb_task_queue_destroy/hypothesis_evidence/contexts/*/build_identity",
+      "count": 6,
+      "example": [
+       "65e1dd5e2d74546fc1b07e481d75a905d1a8dda8b24972361ca4193e95dcb17e",
+       "f6d096037c11f619413bdd5cb83c0caae41c77e03fdce6801902a177917758ee"
+      ]
+     },
+     {
+      "path": "contract_dependencies/declarations/flb_task_queue_destroy/hypothesis_evidence/contexts/*/source_identity",
+      "count": 6,
+      "example": [
+       "9ff5c8193dd41eb093f416deb824bc06f1c32fa37ea7d24a8a13e3e9d88c1531",
+       "8c1ecd767d5ce4d81ae538504e9169b5428f61850141d0fabedd658c3e2465de"
+      ]
+     },
+     {
+      "path": "contract_dependencies/declarations/flb_task_set_route_status/hypothesis_evidence/contexts/*/build_identity",
+      "count": 6,
+      "example": [
+       "2339c979448cdf3f76a55de15540c17bd404c7f2668d8c5bfcb6ec83945edaa2",
+       "2e98b3c1da751ea0222f08517c4e5308f14c262f2c852b1724ad9182dc7cc775"
+      ]
+     },
+     {
+      "path": "contract_dependencies/declarations/flb_task_set_route_status/hypothesis_evidence/contexts/*/source_identity",
+      "count": 6,
+      "example": [
+       "e922e22e005013037a152b68374e8df5b4e531e38a164d1417edf4e943210382",
+       "4fce97f43c687bfa82e771cff913ae89a52809da103281f2c63274549a366f52"
+      ]
+     },
+     {
+      "path": "contract_dependencies/declarations/flb_task_users_dec/hypothesis_evidence/contexts/*/build_identity",
+      "count": 6,
+      "example": [
+       "7a597922e78bad8261557f6de322eecab97f71ed25f31f12849decd467e26215",
+       "ca0e77746e4c0b75eebaffe78f21b1d9e37faec2475d5d3a3b46b6371297a107"
+      ]
+     },
+     {
+      "path": "contract_dependencies/declarations/flb_task_users_dec/hypothesis_evidence/contexts/*/source_identity",
+      "count": 6,
+      "example": [
+       "0fd5e7c8e1485eadcdc352b95aed65237108ed6837bce37dd25843fd0d10d87c",
+       "ed189908acdcb659026dd27ab2d879fa88e03149b29df2dcf0c0255528ab2b27"
+      ]
+     },
+     {
+      "path": "contract_dependencies/declarations/input_chunk_has_magic_bytes/hypothesis_evidence/contexts/*/build_identity",
+      "count": 6,
+      "example": [
+       "2339c979448cdf3f76a55de15540c17bd404c7f2668d8c5bfcb6ec83945edaa2",
+       "2e98b3c1da751ea0222f08517c4e5308f14c262f2c852b1724ad9182dc7cc775"
+      ]
+     },
+     {
+      "path": "contract_dependencies/declarations/input_chunk_has_magic_bytes/hypothesis_evidence/contexts/*/source_identity",
+      "count": 6,
+      "example": [
+       "e922e22e005013037a152b68374e8df5b4e531e38a164d1417edf4e943210382",
+       "4fce97f43c687bfa82e771cff913ae89a52809da103281f2c63274549a366f52"
+      ]
+     },
+     {
+      "path": "contract_dependencies/declarations/memchr/hypothesis_evidence/contexts/*/build_identity",
+      "count": 6,
+      "example": [
+       "2339c979448cdf3f76a55de15540c17bd404c7f2668d8c5bfcb6ec83945edaa2",
+       "2e98b3c1da751ea0222f08517c4e5308f14c262f2c852b1724ad9182dc7cc775"
+      ]
+     },
+     {
+      "path": "contract_dependencies/declarations/memchr/hypothesis_evidence/contexts/*/source_identity",
+      "count": 6,
+      "example": [
+       "e922e22e005013037a152b68374e8df5b4e531e38a164d1417edf4e943210382",
+       "4fce97f43c687bfa82e771cff913ae89a52809da103281f2c63274549a366f52"
+      ]
+     },
+     {
+      "path": "contract_dependencies/declarations/mk_event_channel_create/hypothesis_evidence/contexts/*/build_identity",
+      "count": 6,
+      "example": [
+       "7a597922e78bad8261557f6de322eecab97f71ed25f31f12849decd467e26215",
+       "ca0e77746e4c0b75eebaffe78f21b1d9e37faec2475d5d3a3b46b6371297a107"
+      ]
+     },
+     {
+      "path": "contract_dependencies/declarations/mk_event_channel_create/hypothesis_evidence/contexts/*/source_identity",
+      "count": 6,
+      "example": [
+       "0fd5e7c8e1485eadcdc352b95aed65237108ed6837bce37dd25843fd0d10d87c",
+       "ed189908acdcb659026dd27ab2d879fa88e03149b29df2dcf0c0255528ab2b27"
+      ]
+     },
+     {
+      "path": "contract_dependencies/declarations/msgpack_packer_init/hypothesis_evidence/contexts/*/build_identity",
+      "count": 6,
+      "example": [
+       "2339c979448cdf3f76a55de15540c17bd404c7f2668d8c5bfcb6ec83945edaa2",
+       "2e98b3c1da751ea0222f08517c4e5308f14c262f2c852b1724ad9182dc7cc775"
+      ]
+     },
+     {
+      "path": "contract_dependencies/declarations/msgpack_packer_init/hypothesis_evidence/contexts/*/source_identity",
+      "count": 6,
+      "example": [
+       "e922e22e005013037a152b68374e8df5b4e531e38a164d1417edf4e943210382",
+       "4fce97f43c687bfa82e771cff913ae89a52809da103281f2c63274549a366f52"
+      ]
+     }
+    ]
+   }
+  },
+  "resource-diagnostics.invocation.json": {
+   "bytes": [
+    6245,
+    6275
+   ],
+   "raw_identical": false,
+   "identical_after_substitution": false,
+   "substituted": {
+    "/media/Data/GitHub/quirin-lang/private/w45-fb/w46-external-callee-contracts/attempt-1/fluent-bit-clang-production/compile_commands.json": 2
+   },
+   "target_collisions": {
+    "/media/Data/GitHub/quirin-lang/private/w45-fb/w46-external-callee-contracts/attempt-1": 4
+   },
+   "structural": {
+    "differing_leaves": 2,
+    "pattern_count": 2,
+    "patterns": [
+     {
+      "path": "compile_database_sha256",
+      "count": 1,
+      "example": [
+       "fab8cadc9540a2cb1a674437558cecab5b437a64a50d490a8f7c3f54e2d950a9",
+       "2475e6374b14152538463f35a3457ffa98fbe30b2639d5df916ef9a216cb6876"
+      ]
+     },
+     {
+      "path": "memory_admission/phases/*/tasks",
+      "count": 1,
+      "example": [
+       "676",
+       "814"
+      ]
+     }
+    ]
+   }
+  },
+  "resource-diagnostics.json": {
+   "bytes": [
+    7580281,
+    7594771
+   ],
+   "raw_identical": false,
+   "identical_after_substitution": false,
+   "substituted": {
+    "/home/cosmo/Documents/GitHub/qcore-c/private/w45-fb/w46-external-callee-contracts/attempt-1": 2415
+   },
+   "target_collisions": {
+    "/media/Data/GitHub/quirin-lang/private/w45-fb/w46-external-callee-contracts/attempt-1": 15
+   },
+   "structural": {
+    "differing_leaves": 1136,
+    "pattern_count": 19,
+    "patterns": [
+     {
+      "path": "units/*/functions/*/hypothesis_context/build_identity",
+      "count": 448,
+      "example": [
+       "d6913727b0a90de2ff130d3e625ffcd399e450f2c8f43aca64be734f6652eeff",
+       "cbec17c44fd7ba3b7f8e8012257462b50f9997e7f184b18f28b639a35f5efc91"
+      ]
+     },
+     {
+      "path": "units/*/functions/*/hypothesis_context/source_identity",
+      "count": 448,
+      "example": [
+       "57eb85216111c083f5d7befa61ed12aaa91f0203498d42450f70d05704bd1e87",
+       "00b3c1bc2b89ee327c8ea5ca2dcc9e72631e052fb0ac76a322a4067045a34d48"
+      ]
+     },
+     {
+      "path": "units/*/functions/*/reading_site_evidence/*/context/build_identity",
+      "count": 24,
+      "example": [
+       "4c715b8b3ee4adaf526794fcba8a65619e00f155edc9ffd3a006cd197caac8f1",
+       "f173029354e28b97a323c2dfccb64654e9289e8c0de1e11cc33bb82dc0a7a72e"
+      ]
+     },
+     {
+      "path": "units/*/functions/*/reading_site_evidence/*/context/source_identity",
+      "count": 24,
+      "example": [
+       "fd7e80d85e40eb329d0be40aa3284a012afb16831aa14b9c99cf3b3e20c30a73",
+       "836398727589a7cd8951fd8663a940f4b2ecb99faa1778fa791ed89e85e13312"
+      ]
+     },
+     {
+      "path": "units/*/functions/*/reading_site_evidence/*/id",
+      "count": 24,
+      "example": [
+       "1e5637e29267ab6fbcf5723f87787229362767be01753aed3622d031f1b57541",
+       "01a8a0cd8f81695a8756d750aff4887e72c96555099962014f7dd3aa1b2d98d2"
+      ]
+     },
+     {
+      "path": "units/*/functions/*/reading_site_evidence/*/observation/primary_source_sha256",
+      "count": 24,
+      "example": [
+       "fd7e80d85e40eb329d0be40aa3284a012afb16831aa14b9c99cf3b3e20c30a73",
+       "836398727589a7cd8951fd8663a940f4b2ecb99faa1778fa791ed89e85e13312"
+      ]
+     },
+     {
+      "path": "units/*/compile_configuration/compile_task_identity/preprocessed_source_sha256",
+      "count": 15,
+      "example": [
+       "57eb85216111c083f5d7befa61ed12aaa91f0203498d42450f70d05704bd1e87",
+       "00b3c1bc2b89ee327c8ea5ca2dcc9e72631e052fb0ac76a322a4067045a34d48"
+      ]
+     },
+     {
+      "path": "units/*/compile_configuration/inventory_sha256",
+      "count": 15,
+      "example": [
+       "12624508beae93b4d2d79770afdf96d4a1d50697787a70cd9f321c6ed227b149",
+       "ea3331c085ddf65168ab251f8c283ccddbca799dd559e153c2c42b0f0699b242"
+      ]
+     },
+     {
+      "path": "units/*/functions/*/reading_site_evidence/*/observation/environment_sha256",
+      "count": 14,
+      "example": [
+       "9dd6554bc7f4094a375e73543327f8a57639210a7a22ed78a9c352ccd7dd654c",
+       "01f593c3811a5da9d8934f546e5602dcb8f6bf6ec965ea4cd5c5a3b21eaea90c"
+      ]
+     },
+     {
+      "path": "units/*/functions/*/reading_site_evidence/*/observation/call/end",
+      "count": 10,
+      "example": [
+       "141435",
+       "140449"
+      ]
+     },
+     {
+      "path": "units/*/functions/*/reading_site_evidence/*/observation/call/start",
+      "count": 10,
+      "example": [
+       "141432",
+       "140446"
+      ]
+     },
+     {
+      "path": "units/*/functions/*/reading_site_evidence/*/observation/outer_argument/end",
+      "count": 10,
+      "example": [
+       "141436",
+       "140450"
+      ]
+     },
+     {
+      "path": "units/*/functions/*/reading_site_evidence/*/observation/outer_argument/start",
+      "count": 10,
+      "example": [
+       "141430",
+       "140444"
+      ]
+     },
+     {
+      "path": "units/*/functions/*/reading_site_evidence/*/observation/siblings/*/call/end",
+      "count": 10,
+      "example": [
+       "141435",
+       "140449"
+      ]
+     },
+     {
+      "path": "units/*/functions/*/reading_site_evidence/*/observation/siblings/*/call/start",
+      "count": 10,
+      "example": [
+       "141432",
+       "140446"
+      ]
+     },
+     {
+      "path": "units/*/functions/*/reading_site_evidence/*/observation/siblings/*/outer_argument/end",
+      "count": 10,
+      "example": [
+       "141436",
+       "140450"
+      ]
+     },
+     {
+      "path": "units/*/functions/*/reading_site_evidence/*/observation/siblings/*/outer_argument/start",
+      "count": 10,
+      "example": [
+       "141430",
+       "140444"
+      ]
+     },
+     {
+      "path": "units/*/functions/*/reading_site_evidence/*/observation/statement/end",
+      "count": 10,
+      "example": [
+       "141441",
+       "140455"
+      ]
+     },
+     {
+      "path": "units/*/functions/*/reading_site_evidence/*/observation/statement/start",
+      "count": 10,
+      "example": [
+       "141428",
+       "140442"
+      ]
+     }
+    ]
+   }
+  },
+  "resource-diagnostics.source-effects.json": {
+   "bytes": [
+    385,
+    385
+   ],
+   "raw_identical": true,
+   "identical_after_substitution": true,
+   "substituted": {},
+   "target_collisions": {}
+  },
+  "stderr.log": {
+   "bytes": [
+    0,
+    0
+   ],
+   "raw_identical": true,
+   "identical_after_substitution": true,
+   "substituted": {},
+   "target_collisions": {}
+  },
+  "system-null.jsonl": {
+   "bytes": [
+    1873239,
+    1873239
+   ],
+   "raw_identical": false,
+   "identical_after_substitution": false,
+   "substituted": {},
+   "target_collisions": {},
+   "structural": {
+    "differing_leaves": 1798,
+    "pattern_count": 4,
+    "patterns": [
+     {
+      "path": "identity/source_sha256",
+      "count": 454,
+      "example": [
+       "57eb85216111c083f5d7befa61ed12aaa91f0203498d42450f70d05704bd1e87",
+       "00b3c1bc2b89ee327c8ea5ca2dcc9e72631e052fb0ac76a322a4067045a34d48"
+      ]
+     },
+     {
+      "path": "hypothesis_context/assumptions",
+      "count": 448,
+      "example": [
+       "7b6df9996719f2e7093c6ebbe814617bc344339b4f15d47d3407dea07ebc234b",
+       "401342123e78d4d05c2a07e476d88b8cbbe1dd2705800bca1b45a25b179a152a"
+      ]
+     },
+     {
+      "path": "hypothesis_context/build_identity",
+      "count": 448,
+      "example": [
+       "d6913727b0a90de2ff130d3e625ffcd399e450f2c8f43aca64be734f6652eeff",
+       "cbec17c44fd7ba3b7f8e8012257462b50f9997e7f184b18f28b639a35f5efc91"
+      ]
+     },
+     {
+      "path": "hypothesis_context/source_identity",
+      "count": 448,
+      "example": [
+       "57eb85216111c083f5d7befa61ed12aaa91f0203498d42450f70d05704bd1e87",
+       "00b3c1bc2b89ee327c8ea5ca2dcc9e72631e052fb0ac76a322a4067045a34d48"
+      ]
+     }
+    ]
+   }
+  },
+  "system-null.summary.json": {
+   "bytes": [
+    64384,
+    64384
+   ],
+   "raw_identical": true,
+   "identical_after_substitution": true,
+   "substituted": {},
+   "target_collisions": {}
+  },
+  "system-outer.json": {
+   "bytes": [
+    67494,
+    67524
+   ],
+   "raw_identical": false,
+   "identical_after_substitution": true,
+   "substituted": {
+    "/home/cosmo/Documents/GitHub/qcore-c/private/w45-fb/w46-external-callee-contracts/attempt-1": 5
+   },
+   "target_collisions": {}
+  }
+ },
+ "substitution_totals": {
+  "/media/Data/GitHub/quirin-lang/private/w45-fb/w46-external-callee-contracts/attempt-1/fluent-bit-clang-production/compile_commands.json": 2,
+  "/home/cosmo/Documents/GitHub/qcore-c/private/w45-fb/w46-external-callee-contracts/attempt-1": 2848
+ },
+ "target_collisions_total": {
+  "/media/Data/GitHub/quirin-lang/.claude/worktrees/agent-af4406ebe7df9c0d1/private/acp/mirror/system-compile_commands.json": 0,
+  "/media/Data/GitHub/quirin-lang/private/w45-fb/w46-external-callee-contracts/attempt-1": 21
+ },
+ "identical": false
+}

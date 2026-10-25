@@ -21,6 +21,8 @@ Regenerate with `python3 scripts/build_docs_index.py`; validate with `--check`.
 
 | [aom-destroy-siblings](aom-destroy-siblings/README.md) | AOM-DESTROY-SIBLINGS — the two undeclared sibling destructors, decided differently — 2026-09-11 |
 
+| [audit-canonical-paths](audit-canonical-paths/README.md) | AUDIT-CANONICAL-PATHS: unit selection by canonical path |
+
 | [audit-checkpoint-files](audit-checkpoint-files/README.md) | Per-configuration audit checkpoints |
 
 | [audit-checkpoint-inspector](audit-checkpoint-inspector/README.md) | Binary checkpoint inspector |
@@ -1370,6 +1372,8 @@ Regenerate with `python3 scripts/build_docs_index.py`; validate with `--check`.
 | [w48-callee-closure-r3](w48-callee-closure-r3/README.md) | W48-CALLEE-CLOSURE-R3: every blocking callee ranked, two libc facts declared |
 
 | [w48-cmt-list-self-init](w48-cmt-list-self-init/README.md) | W48-CMT-LIST-SELF-INIT: checked calls to self-link initializers |
+
+| [w48-cmt-tracked-interior-self-init](w48-cmt-tracked-interior-self-init/README.md) | Tracked/interior initializer effect transport |
 
 | [w48-impl-round1-halt](w48-impl-round1-halt/README.md) | W48 implementation round 1: halt record |
 

@@ -1,0 +1,43 @@
+{
+  "head": "4b49a7b116b63ab7ab3ab10743ef467010df2718",
+  "measured_source": "f350d8c5de1585b127d8ce45d0641cb5db37690f",
+  "changes_since_full_gate": [
+    "docs/STATUS.md",
+    "docs/reports/w48-cmt-tracked-interior-self-init/integration/README.md",
+    "docs/reports/w48-cmt-tracked-interior-self-init/integration/clang-version.exit",
+    "docs/reports/w48-cmt-tracked-interior-self-init/integration/clang-version.txt",
+    "docs/reports/w48-cmt-tracked-interior-self-init/integration/command-receipt.json",
+    "docs/reports/w48-cmt-tracked-interior-self-init/integration/counts.json",
+    "docs/reports/w48-cmt-tracked-interior-self-init/integration/gate.json",
+    "docs/reports/w48-cmt-tracked-interior-self-init/integration/publication-repair.json",
+    "docs/reports/w48-cmt-tracked-interior-self-init/integration/reservation-receipt.json",
+    "docs/reports/w48-cmt-tracked-interior-self-init/integration/scheduling-refusal/initial-full-attempt.json",
+    "docs/reports/w48-cmt-tracked-interior-self-init/integration/scheduling-refusal/lean-refusal.log",
+    "docs/reports/w48-cmt-tracked-interior-self-init/integration/scheduling-refusal/retry-slot.json",
+    "docs/reports/w48-cmt-tracked-interior-self-init/integration/scheduling-refusal/retry.json",
+    "docs/reports/w48-cmt-tracked-interior-self-init/integration/source-identity.json",
+    "docs/reports/w48-cmt-tracked-interior-self-init/integration/source-redirect.json",
+    "docs/reports/w48-cmt-tracked-interior-self-init/integration/superseded-source/coordinator-exit.json",
+    "docs/reports/w48-cmt-tracked-interior-self-init/integration/superseded-source/generated-roots-source.json",
+    "docs/reports/w48-cmt-tracked-interior-self-init/integration/superseded-source/queued-schedule-3.json",
+    "docs/reports/w48-cmt-tracked-interior-self-init/integration/superseded-source/schedule-1.json",
+    "docs/reports/w48-cmt-tracked-interior-self-init/integration/superseded-source/schedule-2.json",
+    "docs/reports/w48-cmt-tracked-interior-self-init/integration/superseded-source/source-guard-redirect.json",
+    "docs/reviews/r0_3/acceptance_matrix.json"
+  ],
+  "production_source_contract_proof_changes": [],
+  "command": [
+    "python3",
+    "-m",
+    "unittest",
+    "discover",
+    "-s",
+    "scripts/tests"
+  ],
+  "exit": 0,
+  "seconds": 62.21457506599836,
+  "log": "/home/cosmo/.codex/worktrees/808d/quirin-lang/private/cmt-main-integration/post-matrix-1/python.log",
+  "log_sha256": "c288c9f382a4ad36f8f865a0b454f15252c07c92bee3d834ddd8e8c787b5997d",
+  "matrix_sha256": "d4931620ba4501d2ffbdcfac86225c7b00c7866db69aa230c26e5c778fe6ae63",
+  "matrix_unchanged": true
+}

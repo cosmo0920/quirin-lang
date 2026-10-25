@@ -245,7 +245,7 @@ class Model:
     def __init__(self, crates: Sequence[Crate], files: Sequence[str],
                  read_text=lambda path: (REPO_ROOT / path).read_text(encoding="utf-8",
                                                                      errors="replace"),
-                 granularity: str = "directory"):
+                 granularity: str = "file"):
         if granularity not in GRANULARITIES:
             raise ScopeError(f"reader granularity must be one of {GRANULARITIES}")
         self.granularity = granularity
@@ -778,9 +778,10 @@ def main(argv: Optional[Sequence[str]] = None) -> int:
                         help="do not take gate_slot.py slots (the caller holds a lock)")
     parser.add_argument("--out", type=Path, help="log directory "
                         "(default private/gate-scope/<stamp>-<pid>)")
-    parser.add_argument("--reader-granularity", choices=GRANULARITIES, default="directory",
-                        help="a compile-time read claims the read file's whole directory "
-                             "(default, CT-FIXTURE-EXTERNAL-READERS) or the file only")
+    parser.add_argument("--reader-granularity", choices=GRANULARITIES, default="file",
+                        help="a compile-time read claims only the file the macro compiles in "
+                             "(default, user decision 2026-10-25) or the read file's whole "
+                             "directory (CT-FIXTURE-EXTERNAL-READERS, more conservative)")
     parser.add_argument("--readers", action="store_true",
                         help="print the cross-crate compile-time readers found and exit")
     parser.add_argument("--verify-packages", type=Path, help=argparse.SUPPRESS)

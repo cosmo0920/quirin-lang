@@ -1,0 +1,17 @@
+{
+  "route": "system",
+  "all_recorded_before_after_inputs_stable": true,
+  "paired_equal_keys": [
+    "manifest",
+    "inputs",
+    "source",
+    "database",
+    "link_map",
+    "namespace_wrapper",
+    "selection",
+    "driver"
+  ],
+  "identical_actual_clang_banner": "Ubuntu clang version 21.1.8 (6ubuntu1)",
+  "binary_source_separate_from_working_head": true,
+  "all_measurement_invocations_retained": true
+}

@@ -48,7 +48,7 @@ fn owner_class(state: &super::AbstractState, store: &PointerStore) -> OwnerClass
 }
 
 /// Whether `place` is a place (not the plain name) rooted at `root`.
-fn rooted_at(place: &str, root: &str) -> bool {
+pub(super) fn rooted_at(place: &str, root: &str) -> bool {
     if place == root {
         return false;
     }

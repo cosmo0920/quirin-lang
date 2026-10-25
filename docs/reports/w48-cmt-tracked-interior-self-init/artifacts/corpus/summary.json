@@ -1,0 +1,47 @@
+{
+  "route": "corpus",
+  "resource_rows": 4834,
+  "base_statuses": {
+    "Unknown": 3816,
+    "Safe": 1009,
+    "Unsafe": 9
+  },
+  "tip_statuses": {
+    "Unknown": 3814,
+    "Safe": 1011,
+    "Unsafe": 9
+  },
+  "resource_semantic_rows_changed": 39,
+  "safe_gains": [
+    [
+      "ctraces",
+      "ctraces.c",
+      "ctr_create",
+      0
+    ],
+    [
+      "monkey-libevent",
+      "mk_server/mk_stream.c",
+      "mk_channel_new",
+      0
+    ]
+  ],
+  "safe_losses": [],
+  "null_rows": 4921,
+  "complete_null_dictionary_changes": 0,
+  "raw_difference_counts": {
+    "monkey-source.json": 0,
+    "run.json": 7,
+    "resource-diagnostics.chunk-contracts.json": 0,
+    "resource-diagnostics.json": 5449,
+    "resource-diagnostics.source-effects.json": 0,
+    "resource-diagnostics.contracts.json": 9208,
+    "producer-invocation.json": 13,
+    "null.jsonl": 4838,
+    "outer.json": 16,
+    "null.summary.json": 4
+  },
+  "all_raw_fields_retained": true,
+  "attribution": "complete; zero unexplained leaves; full raw fields retained",
+  "unsafe_qualification": "all Unsafe labels remain provisional, not upstream defect claims"
+}

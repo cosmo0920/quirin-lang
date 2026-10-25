@@ -1760,7 +1760,8 @@ fn every_corpus_module_outside_the_v1_vocabulary_is_rejected_not_skipped() {
     // 135 -> 136: RK-PLUGIN-LIBRARY-OUTER-ENVELOPE adds
     // `librdkafka/outer.qv` (one outer-only loader declaration).
     // 137 -> 138 by card W48-RK-LOG-CALLER-FRAME: `librdkafka/log_caller_frame.qv`.
-    assert_eq!(modules.len(), 138, "corpus module count");
+    // Two additional declared CMetrics map/opts lifecycle model modules.
+    assert_eq!(modules.len(), 140, "corpus module count");
 
     let mut selected = 0;
     let mut v1_declarations = 0;
@@ -2114,11 +2115,13 @@ fn every_corpus_module_outside_the_v1_vocabulary_is_rejected_not_skipped() {
     // W48-RK-LOG-CALLER-FRAME: `librdkafka/log_caller_frame.qv`, plain
     // caller-frame declarations `rd_kafka_log_buf` and `rd_kafka_log0`.
     // Rejected declarations unchanged.
-    // 495 -> 497 by W48-BU-EXTERNAL-CALLEE-CONTRACTS: writev and thrd_current
-    // in existing libc modules; selected modules and rejected declarations unchanged.
+    // W48-CMT-TRACKED-INTERIOR-SELF-INIT adds cfl_list_init as a declared
+    // model only: 331 -> 332 rejected; interpreted modules/declarations stay fixed.
+    // Eight API functions plus two resource type declarations: 332 -> 342 non-v1.
+    // Main adds interpreted writev and thrd_current: 495 -> 497.
     assert_eq!(
         (selected, v1_declarations, rejected_declarations),
-        (66, 497, 331)
+        (66, 497, 342)
     );
     // A declaration held for human review is loaded and withheld from the
     // function map (contract spec C06.1): the map plus the held set is every

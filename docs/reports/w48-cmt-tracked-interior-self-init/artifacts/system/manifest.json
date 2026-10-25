@@ -1,0 +1,136 @@
+{
+  "base": {
+    "resource-diagnostics.invocation.json": {
+      "source": "/home/cosmo/.codex/worktrees/808d/quirin-lang/private/w48-cmt-tracked-interior/base-system/resource-diagnostics.invocation.json",
+      "sha256": "b723b1a83a27e81360d8842c88d563405513b8aaf8e30643370d84a06230917c",
+      "bytes": 6226
+    },
+    "exit": {
+      "source": "/home/cosmo/.codex/worktrees/808d/quirin-lang/private/w48-cmt-tracked-interior/base-system/exit",
+      "sha256": "9a271f2a916b0b6ee6cecb2426f0b3206ef074578be55d9bc94f6f3fe3ab86aa",
+      "bytes": 2
+    },
+    "invocation.json": {
+      "source": "/home/cosmo/.codex/worktrees/808d/quirin-lang/private/w48-cmt-tracked-interior/base-system/invocation.json",
+      "sha256": "e8548a3ac80735d0ffc9ebdd9d7a9e42b3e35bd6d04fb883bc097803bf7c373b",
+      "bytes": 90162
+    },
+    "null.jsonl": {
+      "source": "/home/cosmo/.codex/worktrees/808d/quirin-lang/private/w48-cmt-tracked-interior/base-system/null.jsonl",
+      "sha256": "b88715918c5c8787463f6cc6eb87142a49ebecec10b01fc6bdddc3699740997d",
+      "bytes": 1873239
+    },
+    "console.log": {
+      "source": "/home/cosmo/.codex/worktrees/808d/quirin-lang/private/w48-cmt-tracked-interior/base-system/console.log",
+      "sha256": "76c64852fcef8591fa9fb0a5aee1e32b23773840727b9a9f5fc136784b062ed7",
+      "bytes": 13211
+    },
+    "stderr.log": {
+      "source": "/home/cosmo/.codex/worktrees/808d/quirin-lang/private/w48-cmt-tracked-interior/base-system/stderr.log",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "bytes": 0
+    },
+    "resource-diagnostics.chunk-contracts.json": {
+      "source": "/home/cosmo/.codex/worktrees/808d/quirin-lang/private/w48-cmt-tracked-interior/base-system/resource-diagnostics.chunk-contracts.json",
+      "sha256": "e7e0d254d9e7ee199672b981e3fc764b702b35a1757bb0f4570a9438e6b87922",
+      "bytes": 385
+    },
+    "resource-diagnostics.json": {
+      "source": "/home/cosmo/.codex/worktrees/808d/quirin-lang/private/w48-cmt-tracked-interior/base-system/resource-diagnostics.json",
+      "sha256": "c00490ce9a3bcd11283fd9b96d81752bdf44d7c65a56630ba4fb2b58708f85cd",
+      "bytes": 7593837
+    },
+    "resource-diagnostics.source-effects.json": {
+      "source": "/home/cosmo/.codex/worktrees/808d/quirin-lang/private/w48-cmt-tracked-interior/base-system/resource-diagnostics.source-effects.json",
+      "sha256": "e7e0d254d9e7ee199672b981e3fc764b702b35a1757bb0f4570a9438e6b87922",
+      "bytes": 385
+    },
+    "null.summary.json": {
+      "source": "/home/cosmo/.codex/worktrees/808d/quirin-lang/private/w48-cmt-tracked-interior/base-system/null.summary.json",
+      "sha256": "1d9ad9e838a54923bd90b3d984c324c8eb6892fa0903827be98b5f9401a3ea5c",
+      "bytes": 64384
+    },
+    "outer.json": {
+      "source": "/home/cosmo/.codex/worktrees/808d/quirin-lang/private/w48-cmt-tracked-interior/base-system/outer.json",
+      "sha256": "0795659b476e8a022d5754def90d0aa4bb50089b20b470f3c20ab6c2034a5d1f",
+      "bytes": 67504
+    },
+    "resource-diagnostics.contracts.json": {
+      "source": "/home/cosmo/.codex/worktrees/808d/quirin-lang/private/w48-cmt-tracked-interior/base-system/resource-diagnostics.contracts.json",
+      "sha256": "9ecc5fdf80c704df8f7643def08e0c39be1a699f6d80f86ec0e0548e4d9e33ad",
+      "bytes": 10860416
+    },
+    "producer-invocation.json": {
+      "source": "/home/cosmo/.codex/worktrees/808d/quirin-lang/private/w48-cmt-tracked-interior/base-system/invocation.json",
+      "sha256": "e8548a3ac80735d0ffc9ebdd9d7a9e42b3e35bd6d04fb883bc097803bf7c373b",
+      "bytes": 90162
+    }
+  },
+  "tip": {
+    "resource-diagnostics.invocation.json": {
+      "source": "/home/cosmo/.codex/worktrees/808d/quirin-lang/private/w48-cmt-tracked-interior/tip-system/resource-diagnostics.invocation.json",
+      "sha256": "becf95b54bf7ca6e5f766215ba6e99723d3cb6ece91dc07433eae5892db8b844",
+      "bytes": 6224
+    },
+    "exit": {
+      "source": "/home/cosmo/.codex/worktrees/808d/quirin-lang/private/w48-cmt-tracked-interior/tip-system/exit",
+      "sha256": "9a271f2a916b0b6ee6cecb2426f0b3206ef074578be55d9bc94f6f3fe3ab86aa",
+      "bytes": 2
+    },
+    "invocation.json": {
+      "source": "/home/cosmo/.codex/worktrees/808d/quirin-lang/private/w48-cmt-tracked-interior/tip-system/invocation.json",
+      "sha256": "33b47d0e0a59016b5f6f19b49aa572aa1fd73f63b1166932dbe228f143e55dd6",
+      "bytes": 90158
+    },
+    "null.jsonl": {
+      "source": "/home/cosmo/.codex/worktrees/808d/quirin-lang/private/w48-cmt-tracked-interior/tip-system/null.jsonl",
+      "sha256": "117d3a024b6317aab5ca2f54e2de956032f22ceffe882a467e8417030b2f7473",
+      "bytes": 1873227
+    },
+    "console.log": {
+      "source": "/home/cosmo/.codex/worktrees/808d/quirin-lang/private/w48-cmt-tracked-interior/tip-system/console.log",
+      "sha256": "ecf1e4dfb4a056ab714537c74d59db51d3168cef913afcf3276cd2ccb740f563",
+      "bytes": 13214
+    },
+    "stderr.log": {
+      "source": "/home/cosmo/.codex/worktrees/808d/quirin-lang/private/w48-cmt-tracked-interior/tip-system/stderr.log",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "bytes": 0
+    },
+    "resource-diagnostics.chunk-contracts.json": {
+      "source": "/home/cosmo/.codex/worktrees/808d/quirin-lang/private/w48-cmt-tracked-interior/tip-system/resource-diagnostics.chunk-contracts.json",
+      "sha256": "e7e0d254d9e7ee199672b981e3fc764b702b35a1757bb0f4570a9438e6b87922",
+      "bytes": 385
+    },
+    "resource-diagnostics.json": {
+      "source": "/home/cosmo/.codex/worktrees/808d/quirin-lang/private/w48-cmt-tracked-interior/tip-system/resource-diagnostics.json",
+      "sha256": "89fb4290578b16f21c1b49843dec204045c13e1739de92b7f5568d4865a6d4a6",
+      "bytes": 7592811
+    },
+    "resource-diagnostics.source-effects.json": {
+      "source": "/home/cosmo/.codex/worktrees/808d/quirin-lang/private/w48-cmt-tracked-interior/tip-system/resource-diagnostics.source-effects.json",
+      "sha256": "e7e0d254d9e7ee199672b981e3fc764b702b35a1757bb0f4570a9438e6b87922",
+      "bytes": 385
+    },
+    "null.summary.json": {
+      "source": "/home/cosmo/.codex/worktrees/808d/quirin-lang/private/w48-cmt-tracked-interior/tip-system/null.summary.json",
+      "sha256": "572117bd3758532c0ad224a8b40db30dc6793a36d0cec55c54a0c817a905d1e2",
+      "bytes": 64385
+    },
+    "outer.json": {
+      "source": "/home/cosmo/.codex/worktrees/808d/quirin-lang/private/w48-cmt-tracked-interior/tip-system/outer.json",
+      "sha256": "74fc994ae15f90da0891b6918ab5ad56c4248b814d821f32f71786ca56cf7ba8",
+      "bytes": 67508
+    },
+    "resource-diagnostics.contracts.json": {
+      "source": "/home/cosmo/.codex/worktrees/808d/quirin-lang/private/w48-cmt-tracked-interior/tip-system/resource-diagnostics.contracts.json",
+      "sha256": "ba7a3b9927288d3ab646d259bc4fd262bc100a8dd4f38bbb3751fd43b18451e0",
+      "bytes": 10860417
+    },
+    "producer-invocation.json": {
+      "source": "/home/cosmo/.codex/worktrees/808d/quirin-lang/private/w48-cmt-tracked-interior/tip-system/invocation.json",
+      "sha256": "33b47d0e0a59016b5f6f19b49aa572aa1fd73f63b1166932dbe228f143e55dd6",
+      "bytes": 90158
+    }
+  }
+}
