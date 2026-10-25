@@ -1,0 +1,26 @@
+{
+ "schema": "quirin-amendments/1",
+ "card": "AMENDMENTS-SCHEMA",
+ "base": "710021bd713b90037e803d4a1f87d95eba6476c9",
+ "measured_tip": "92171cda8",
+ "increment_paragraph": "**AMENDMENTS-SCHEMA (pluggable-cards seam D, phase P1).** The [card](../../reports/amendments-schema/README.md) makes `integration-amendments.json` a checked schema, `quirin-amendments/1`, defined and applied by `scripts/apply_amendments.py`. A document carries `schema`, `card`, `base`, `measured_tip`, one increment paragraph, a status paragraph or `null`, and `ledger` edits of `named_followups`: `register` (id, title, text, source, optional `recorded_by`), `amend`/`append` (id, text, source; both append to `why` and add the source) and `retire` (id, why, source; removes the entry). `profiles` and `contribution` are reserved for EVALUATION-PROFILES and CONTRIBUTION-LEDGERS: their shape is checked and nothing is applied. Validation is fail-closed: an unknown key, operation or field, a missing field, registering an existing id, or editing or retiring an absent id exits 1 before anything is written. The tool prepends the increment paragraph below the current record's checkpoint notice and the status paragraph below STATUS.md's title. It writes the matrix as `build_matrix.py` does (indent 1, UTF-8), never regenerates it, and prints the follow-up commands. The 17 pre-schema files on main use six shapes. `--legacy` reads 16 of them through one explicit adapter per shape and lists every derived value. It refuses one, W48-BU-RK-RESULT-CONSTRUCTORS, as proposal-only: its increment paragraph is null and its tracking entries are conditional. Historical files are not rewritten. Parity: replaying AUDIT-CANONICAL-PATHS's amendments onto c3d8ad3d4's parent reproduces that commit's increment record, STATUS.md and acceptance matrix byte for byte, in both the legacy form and the schema form. Replays of five earlier landings (66aa16683, 4753bfe62, 722a1d0e9, 3353e1c63, a7e5ed4cc) reproduce every `named_followups` list and increment record. Three of their STATUS.md edits were placed by hand elsewhere, so those differ.",
+ "status_paragraph": null,
+ "ledger": [
+  {
+   "id": "AMENDMENTS-RESERVED-FIELDS-UNAPPLIED",
+   "operation": "register",
+   "title": "The amendments schema's profiles and contribution fields are validated but applied nowhere",
+   "text": "scripts/apply_amendments.py (card AMENDMENTS-SCHEMA) accepts `profiles` (distinct profile names) and `contribution` (null or an object) in quirin-amendments/1, checks only that shape, and prints that neither is applied, because their producers are later cards. DISCHARGE: EVALUATION-PROFILES defines the profile record and CONTRIBUTION-LEDGERS the contribution record. Each card narrows the field's schema in apply_amendments.py and applies it (profile bindings, a contribution ledger written beside the profile), or refuses it, with tests. A schema bump to quirin-amendments/2 is needed if an existing valid document's meaning would change.",
+   "source": "docs/reports/amendments-schema/README.md",
+   "recorded_by": "AMENDMENTS-SCHEMA"
+  },
+  {
+   "id": "CARD-BRIEF-AMENDMENTS-SHAPE",
+   "operation": "register",
+   "title": "Card briefs still ask for the pre-schema integration-amendments.json shape",
+   "text": "The refactoring-round common brief (private/integrator-briefs/refactor-r1-common.md) and earlier briefs describe integration-amendments.json without the `schema` key, with `text`|`why` interchangeable and no per-operation field set. A card following them writes a file that apply_amendments.py reads only with --legacy. DISCHARGE: the P3 card-brief template asks for quirin-amendments/1 and for `python3 scripts/apply_amendments.py <file> --check` in the card's completion checklist. Evidence: the first card landed on that template carries a file that validates without --legacy.",
+   "source": "docs/reports/amendments-schema/README.md",
+   "recorded_by": "AMENDMENTS-SCHEMA"
+  }
+ ]
+}
