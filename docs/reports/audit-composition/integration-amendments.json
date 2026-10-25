@@ -1,0 +1,52 @@
+{
+ "schema": "quirin-amendments/1",
+ "card": "AUDIT-COMPOSITION",
+ "base": "52c8dd71bf8c606f3910d17f0a6a7863227ff161",
+ "measured_tip": "26be252f7fbd8e2f5b38d70d41a759e43d8cf495",
+ "increment_paragraph": "**AUDIT-COMPOSITION (seam G, results half; user decision 2026-10-24).** Results now integrate through one semigroup that never contaminates an audited unit's result. qcore-schemas::composition (crate 21.0.0) defines a component (unit, row key, property, profile, provenance = analyzer revision, rule set with its off-list, contract-bundle digests and optional external checker, verdict tuple, reason leaves, opaque detail), a contribution as a set of components, `⊕` as provenance-keyed union, and the published row as Contribution::derive, the Verdict::join over the row's components carrying every component's assumptions and reasons; two components under one provenance key with different bytes are both kept and the row gains Unknown with the new reason category composition-conflict (analyser subject, not human-resolvable; the closed vocabulary grows to twelve; spec L21.1 row and an L21.2 paragraph 'Composition across results'); removal is a re-join; a row with no component derives nothing, never Safe. The laws (associativity, commutativity, identity, idempotence on identical components, the join never lowers, adding never removes an assumption, conflict keeps both and is at least Unknown, exactly Unknown without Unsafe, removal restores the prior derivation, absence is refusal) are tested on generated vectors in crates/qcore-schemas/tests/audit_composition.rs and proved in proof/QCore/AuditComposition.lean (AuditAuditComposition.lean, 35 audited theorems, standard axioms), which share 14 vectors parsed from the Lean file. The audit report emitter (AuditReport::write_with_revision_key: pinned, current, configured and contracts-only routes) writes every unit row as a component to <report>.components.json and renders the report's units from it; an unbuildable component or an unavailable contract digest makes the row Unknown. Identity run (BASE 52c8dd71b, TIP 26be252f7, each side built and run at one bound path with one explicit build commit): every report artifact of the eight-home corpus, the tail-pause slice and the system selection is byte-identical except one lifetime-source unit identity per contract sidecar that depends on the minute monkey.c was preprocessed (__DATE__/__TIME__, checked swap); the only new outputs are the three sidecars, and all 185 + 16 + 15 unit rows re-derive from them. Scoped gate (full mode) on ef25f7d57: 554 units, 567 summaries, 8,684 passed, 0 failed, 15 ignored; 373 Lean audits; 445 Python; fmt, Clippy, both probes, the five provider packages built and verified, provider tests 133 passed, provider fmt and Clippy, all exit 0. No verdict, route or analysis changed.",
+ "status_paragraph": "Integration semigroup (card AUDIT-COMPOSITION, 2026-10-25): every audit unit report written through AuditReport::write_with_revision_key now has a component sidecar (<report>.components.json, qcore_schemas::composition, crate 21.0.0), and its unit rows are a derived view over it, byte-identical to before (identity run over corpus, slice and system). The reason vocabulary has twelve categories (composition-conflict added). Property rows, checkpoint-composed reports, the checker-plugin firewall and the contract loader are not yet on the interface (named follow-ups).",
+ "ledger": [
+  {
+   "id": "COMPOSITION-PLUGIN-FIREWALL-WIRING",
+   "operation": "register",
+   "title": "The checker-plugin firewall still folds plugin answers into the host's unit row instead of contributing external-checker components",
+   "text": "Card AUDIT-COMPOSITION published the integration semigroup (qcore_schemas::composition; spec L21.2 'Composition across results') and made the audit report's unit rows a derived view over per-row components, but only host components exist: user_plugins::fold_unit and qcore_verifier_host::plugin_firewall still join a plugin's answer into the host row before it is recorded, so a checker's contribution cannot be removed or audited apart from the host's. DISCHARGE: the firewall emits one Component per plugin answer with Provenance.external_checker set (plugin id, version, binary digest), the host row stays the host's component, the published row is Contribution::derive over both, and an identity run shows every report without plugin bindings byte-identical while a plugin-bound fixture derives the same status it publishes today.",
+   "source": "docs/reports/audit-composition/README.md"
+  },
+  {
+   "id": "COMPOSITION-CONTRACT-LOADER-WIRING",
+   "operation": "register",
+   "title": "The contract loader unions bundles outside the composition interface",
+   "text": "Seam G makes the semigroup the only integration path for results and contracts. Card AUDIT-COMPOSITION built the results half; contract bundles still enter the environment through the loader's own union with a hard duplicate error, and the components' provenance records one 'resource-contracts' digest of the loaded environment rather than per-bundle digests. Supersession by pin stamp is the separate card CONTRACT-SUPERSESSION. DISCHARGE: the loader records one digest per provider bundle and the report's components carry them in Provenance.contract_bundles (so withdrawing a bundle is a removal over components), landed with or after CONTRACT-SUPERSESSION, with an identity run.",
+   "source": "docs/reports/audit-composition/README.md"
+  },
+  {
+   "id": "MEASURE-TOOL-COMPOSITION-CONSUMER",
+   "operation": "register",
+   "title": "MEASURE-TOOL must compose and compare through qcore_schemas::composition, as a quirin-audit subcommand",
+   "text": "Seam F's measurement tool (user decision 8: a quirin-audit subcommand plugin) is the intended consumer of the component sidecars card AUDIT-COMPOSITION writes beside every unit report (<report>.components.json, ComponentSidecar). Published baselines should store these components, a profile total is a derivation over them, and a rule's contribution is attribution by Contribution::remove, never a summed total. DISCHARGE: quirin-audit measure reads both sides' sidecars, composes a baseline with a TIP contribution through Contribution::union, reports conflicts (composition-conflict) and per-row derivation changes as its native-comparison record, and its tests reuse the shared vectors of proof/QCore/AuditComposition.lean.",
+   "source": "docs/reports/audit-composition/README.md"
+  },
+  {
+   "id": "COMPOSITION-PROPERTY-AND-CHECKPOINT-ROWS",
+   "operation": "register",
+   "title": "Property rows (null, bounds, outer projection) and checkpoint-composed reports carry no components",
+   "text": "Card AUDIT-COMPOSITION componentizes the unit rows written through AuditReport::write_with_revision_key (pinned, current, configured and contracts-only routes). The checkpoint-composed report (compose.rs, streamed from .qo checkpoints) writes no sidecar, and the null/bounds/outer-projection rows and their summaries are written directly. DISCHARGE: each of these writers derives its rows from a ComponentSidecar as the unit report does, each with an identity run, the checkpoint route's sidecar byte-equal to the uncheckpointed route's.",
+   "source": "docs/reports/audit-composition/README.md"
+  },
+  {
+   "id": "LIFETIME-SOURCE-IDENTITY-TIME-MACROS",
+   "operation": "register",
+   "title": "The contract sidecar's lifetime-source unit identities depend on the minute Monkey's monkey.c was preprocessed",
+   "text": "qcore_c_gateway::loop_lifetime_source::read_unit names a unit by the SHA-256 of its preprocessing options and preprocessed text, and Fluent Bit's lib/monkey/mk_bin/monkey.c expands __DATE__ and __TIME__. Card AUDIT-COMPOSITION's identity runs measured it: in resource-diagnostics.contracts.json (callback_members/lifetime_protocols/evidence/summaries and the prepass copy) exactly one key changes between any two runs of the same binary (runs 2 and 3 of the same BASE code disagree; BASE and TIP started together agree), on the corpus, slice and system routes alike. Every identity run must therefore special-case this key, and a published digest carries the wall clock. DISCHARGE: preprocess the lifetime-source read with fixed __DATE__/__TIME__ (or hash the text with those expansions normalised), so two runs of one binary write byte-identical contract sidecars, with a test that preprocesses a unit using both macros twice.",
+   "source": "docs/reports/audit-composition/README.md"
+  },
+  {
+   "id": "COMPOSITION-ANALYZER-IDENTITY",
+   "operation": "register",
+   "title": "A component's analyzer revision is package@version plus an optional build commit, not the binary digest",
+   "text": "report_components::analyzer_revision (card AUDIT-COMPOSITION) spells qcore-audit@<version>:<QCORE_AUDIT_BUILD_COMMIT or unrecorded-build>. Two different builds without a recorded commit share a provenance key, so joining their contributions surfaces as composition-conflict (fail-closed) rather than as two producers. DISCHARGE: put the analyzer binary's SHA-256 (as checkpoint_run::run_identity takes it) or a mandatory build commit into Provenance, with a test that two differing binaries never share a provenance key.",
+   "source": "docs/reports/audit-composition/README.md"
+  }
+ ]
+}

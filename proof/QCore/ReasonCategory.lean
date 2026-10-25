@@ -2,7 +2,7 @@
 obligations (`docs/QCORE_SPEC_r0_3.md` §L21.1).
 
 This models the *classification relation* of
-`crates/qcore-schemas/src/reason.rs`: the eleven closed categories, the
+`crates/qcore-schemas/src/reason.rs`: the twelve closed categories, the
 three-way subject partition, and the fail-closed mapping from the free-text
 reason families this workspace really emits.
 
@@ -36,7 +36,7 @@ inductive Subject where
   | environment
   deriving DecidableEq, Repr
 
-/-- The closed eleven-category vocabulary. `awaitingHumanReview` was added by
+/-- The closed twelve-category vocabulary. `awaitingHumanReview` was added by
 card W45-CONTRACT-DEFERRED-REVIEW: a declared contract the row depends on is
 marked as awaiting human review. `contractPinMismatch` was added by card
 W45-CONTRACT-REVISION-MODE: a pinned contract the row depends on is not in
@@ -45,7 +45,9 @@ force, because the audited source does not match its lock.
 plugin claimed `Safe` or `Unsafe` without a certificate or witness the audit
 checks independently. `outerContract` was added by card OUTER-CONTRACT: in the
 runtime projection, a closed-world fact the row rests on is vouched for by an
-outer contract (gateway rule 31). -/
+outer contract (gateway rule 31). `compositionConflict` was added by card
+AUDIT-COMPOSITION: two components of one row under one provenance key differ,
+so both are kept and the row is at least `Unknown` (`QCore.AuditComposition`). -/
 inductive Category where
   | unsupportedSyntax
   | missingPremise
@@ -58,6 +60,7 @@ inductive Category where
   | contractPinMismatch
   | pluginClaimUncertified
   | outerContract
+  | compositionConflict
   deriving DecidableEq, Repr
 
 namespace Category
@@ -67,7 +70,7 @@ def all : List Category :=
   [ .unsupportedSyntax, .missingPremise, .incompleteObligationCoverage,
     .staleEvidence, .providerFailure, .residualCustody, .environmentUnavailable,
     .awaitingHumanReview, .contractPinMismatch, .pluginClaimUncertified,
-    .outerContract ]
+    .outerContract, .compositionConflict ]
 
 /-- The spec spelling, identical to the Rust serde representation. -/
 def spelling : Category → String
@@ -82,6 +85,7 @@ def spelling : Category → String
   | .contractPinMismatch => "contract-pin-mismatch"
   | .pluginClaimUncertified => "plugin-claim-uncertified"
   | .outerContract => "outer-contract"
+  | .compositionConflict => "composition-conflict"
 
 /-- The subject partition, mirroring `ReasonCategory::subject`. -/
 def subject : Category → Subject
@@ -95,6 +99,7 @@ def subject : Category → Subject
   | .contractPinMismatch => .analyser
   | .pluginClaimUncertified => .analyser
   | .outerContract => .analyser
+  | .compositionConflict => .analyser
   | .environmentUnavailable => .environment
 
 def describesAnalysedSource (c : Category) : Bool := subject c == .analysedSource
@@ -123,11 +128,11 @@ open Category
 theorem all_is_complete (c : Category) : c ∈ all := by
   cases c <;> simp [all]
 
-theorem all_has_no_duplicates : all.length = 11 ∧ all.eraseDups.length = 11 := by
+theorem all_has_no_duplicates : all.length = 12 ∧ all.eraseDups.length = 12 := by
   constructor <;> rfl
 
 theorem spellings_are_pairwise_distinct :
-    (all.map spelling).eraseDups.length = 11 := by decide
+    (all.map spelling).eraseDups.length = 12 := by decide
 
 /-- Every human-resolvable category speaks about the analyser, so none can
 support a provisional `Unsafe`. -/
@@ -223,6 +228,8 @@ inductive Family where
   | pluginClaimUncertified
   -- OUTER-CONTRACT: the runtime projection's covered closed-world fact
   | outerContractCovered
+  -- AUDIT-COMPOSITION: the conflict leaf of a composed row
+  | compositionConflictLeaf
   deriving DecidableEq, Repr
 
 namespace Family
@@ -244,7 +251,7 @@ def all : List Family :=
     .absentFromTypedImport, .sourceContractConfiguration,
     .projectionHeldAwaitingHumanReview, .heldCallAwaitingHumanReview,
     .projectionHeldContractPinMismatch, .heldCallContractPinMismatch,
-    .pluginClaimUncertified, .outerContractCovered ]
+    .pluginClaimUncertified, .outerContractCovered, .compositionConflictLeaf ]
 
 theorem all_is_complete (f : Family) : f ∈ all := by
   cases f <;> simp [all]
@@ -294,6 +301,7 @@ def categoryOf : Family → Category
   | .heldCallContractPinMismatch => .contractPinMismatch
   | .pluginClaimUncertified => .pluginClaimUncertified
   | .outerContractCovered => .outerContract
+  | .compositionConflictLeaf => .compositionConflict
 
 /-- Totality: every enumerated family receives a category of the closed set. -/
 theorem the_mapping_is_total (f : Family) : categoryOf f ∈ Category.all :=
@@ -315,6 +323,7 @@ theorem every_category_is_reached (c : Category) :
   · exact ⟨.projectionHeldContractPinMismatch, rfl⟩
   · exact ⟨.pluginClaimUncertified, rfl⟩
   · exact ⟨.outerContractCovered, rfl⟩
+  · exact ⟨.compositionConflictLeaf, rfl⟩
 
 /-- The families whose subject really is the environment: a missing or
 mismatched tool, checkout or compile command. -/

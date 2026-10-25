@@ -37,10 +37,11 @@ use qcore_schemas::reason::{ReasonCategory, ReasonSubject, UnclassifiedReason};
 /// * `crates/qcore-audit/src/current_route.rs` — the two overrides.
 fn reason_corpus() -> Vec<(&'static str, ReasonCategory)> {
     use ReasonCategory::{
-        AwaitingHumanReview as Review, ContractPinMismatch as Pin, EnvironmentUnavailable as Env,
-        IncompleteObligationCoverage as Coverage, MissingPremise as Premise,
-        OuterContract as Outer, PluginClaimUncertified as Plugin, ProviderFailure as Provider,
-        ResidualCustody as Custody, StaleEvidence as Stale, UnsupportedSyntax as Syntax,
+        AwaitingHumanReview as Review, CompositionConflict as Conflict, ContractPinMismatch as Pin,
+        EnvironmentUnavailable as Env, IncompleteObligationCoverage as Coverage,
+        MissingPremise as Premise, OuterContract as Outer, PluginClaimUncertified as Plugin,
+        ProviderFailure as Provider, ResidualCustody as Custody, StaleEvidence as Stale,
+        UnsupportedSyntax as Syntax,
     };
     vec![
         // -- qcore-verification: obligation derivation ------------------------
@@ -229,6 +230,14 @@ fn reason_corpus() -> Vec<(&'static str, ReasonCategory)> {
             "rests on outer contract `flb_external_plugin@0123abcd` through \
              stable:flb_output_instance.p (runtime projection, rule 31)",
             Outer,
+        ),
+        // Card AUDIT-COMPOSITION: the conflict leaf
+        // (`qcore_schemas::composition`).
+        (
+            "composition-conflict: components of row `unit#0` under one provenance \
+             (analyzer `qcore-audit@0.1.0:unrecorded-build`) differ; all are kept and none \
+             is chosen",
+            Conflict,
         ),
         (
             "`k_close`'s declared contract in k.qcore awaits human review \

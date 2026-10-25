@@ -1,0 +1,27 @@
+{
+ "card": "AUDIT-COMPOSITION",
+ "evidence": "run-3",
+ "attempts": [
+  {
+   "id": "run-1",
+   "date": "2026-10-24/25",
+   "what": "BASE 52c8dd71b / TIP f7ef34d7a, git-archive snapshots at separate paths (private/ac/{base,tip}-src) without third_party/libevent, corpus then slice then system",
+   "outcome": "corpus exit 1 on both sides before any report was written: the pinned route verifies the libevent checkout and, finding none, `git rev-parse` resolved the enclosing worktree's HEAD (SourceRevisionMismatch); slice ran after libevent was cloned into the snapshots; the system phase was stopped while still queued for audit slots (captured PIDs 2761859, 4146816, 4146817, 4146820, 4146821)",
+   "evidence": false
+  },
+  {
+   "id": "run-2",
+   "date": "2026-10-25",
+   "what": "corpus only, BASE 52c8dd71b / TIP f7ef34d7a, snapshots at separate paths with libevent cloned at d82464a2, each binary with the build commit its build.rs resolved",
+   "outcome": "both exit 0; resource-diagnostics.json and three other artifacts differed only in digests over the snapshot path (assumptions, build_identity, home_environment_sha256, hypothesis ids, contract-module paths) and in evidence_version's embedded build commit; monkey-source.json and chunk-contracts identical. Not checkable by textual substitution, so run 3 removed both causes at the source",
+   "evidence": false
+  },
+  {
+   "id": "run-3",
+   "date": "2026-10-25",
+   "what": "BASE 52c8dd71b / TIP 26be252f7, each built and run in its own mount namespace with its snapshot bound at private/ac/side-src and QCORE_AUDIT_BUILD_COMMIT=audit-composition-identity; corpus 02:16-04:45Z, slice 04:45-05:55Z, system 05:55-07:50Z",
+   "outcome": "every report artifact byte-identical except one time-dependent lifetime-source key per contract sidecar (checked swap); only new outputs are the three component sidecars; all rows re-derive (identity.json). Corpus driver exit 101 on both sides from the libevent clone's .git/index stat refresh, audit_exit 0",
+   "evidence": true
+  }
+ ]
+}
