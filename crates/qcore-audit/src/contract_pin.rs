@@ -380,9 +380,9 @@ impl Stamper {
 
     /// The stamp of an entry that replaces one stamped `old`: later than it.
     fn replacing(&self, function: &str, old: Option<&str>) -> Result<String, String> {
-        let Some(old) = old.filter(|old| {
-            qcore_schemas::contract_supersession::validate_stamp(old).is_ok()
-        }) else {
+        let Some(old) =
+            old.filter(|old| qcore_schemas::contract_supersession::validate_stamp(old).is_ok())
+        else {
             return Ok(self.stamp.clone());
         };
         if self.stamp.as_str() > old {
@@ -953,10 +953,10 @@ fn update(
                     old.module == entry.module && old.contract_sha256 == entry.contract_sha256
                 });
                 if !same || entry.pinned_at.is_none() {
-                    entry.pinned_at = Some(stamper.replacing(
-                        name,
-                        previous.and_then(|old| old.pinned_at.as_deref()),
-                    )?);
+                    entry.pinned_at = Some(
+                        stamper
+                            .replacing(name, previous.and_then(|old| old.pinned_at.as_deref()))?,
+                    );
                 }
                 lock.flexible.push(entry);
             }
@@ -1431,8 +1431,9 @@ fn run_window(arguments: &Arguments, operation: &WindowOperation) -> Result<bool
                 println!("pin: lock-set window: {problem}");
             }
             if problems.is_empty() {
-                let window =
-                    crate::pin_window::PinLockWindow::read(&crate::pin_window::manifest_path(&root))?;
+                let window = crate::pin_window::PinLockWindow::read(
+                    &crate::pin_window::manifest_path(&root),
+                )?;
                 println!(
                     "pin: lock-set window: {} of {} set(s), live set tied to {}",
                     window.sets.len(),
@@ -1878,12 +1879,25 @@ mod stamp_tests {
     fn a_re_pin_carries_a_later_stamp() {
         let explicit = super::Stamper::new(Some("2026-10-26T00:00:00Z"));
         assert_eq!(
-            explicit.replacing("f", Some("2026-10-25T00:00:00Z")).unwrap(),
+            explicit
+                .replacing("f", Some("2026-10-25T00:00:00Z"))
+                .unwrap(),
             "2026-10-26T00:00:00Z"
         );
-        assert!(explicit.replacing("f", Some("2026-10-26T00:00:00Z")).is_err());
-        assert!(explicit.replacing("f", Some("2026-10-27T00:00:00Z")).is_err());
-        assert_eq!(explicit.replacing("f", None).unwrap(), "2026-10-26T00:00:00Z");
+        assert!(
+            explicit
+                .replacing("f", Some("2026-10-26T00:00:00Z"))
+                .is_err()
+        );
+        assert!(
+            explicit
+                .replacing("f", Some("2026-10-27T00:00:00Z"))
+                .is_err()
+        );
+        assert_eq!(
+            explicit.replacing("f", None).unwrap(),
+            "2026-10-26T00:00:00Z"
+        );
         let clock = super::Stamper {
             stamp: "2026-10-26T00:00:00Z".into(),
             explicit: false,

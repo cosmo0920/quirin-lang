@@ -87,6 +87,7 @@ import QCore.ContractDependencies
 import QCore.ContractInherit
 import QCore.ContractLifecycle
 import QCore.ContractRevisionMode
+import QCore.ContractSupersession
 import QCore.ContractTipMode
 import QCore.ContractViewProjection
 import QCore.ControlFlow

@@ -187,11 +187,19 @@ impl PinLockWindow {
     ///
     /// A full window, a revision already retained, an empty archive or a
     /// malformed revision.
-    pub fn add(&mut self, revision: &str, archived: BTreeMap<String, String>) -> Result<(), String> {
+    pub fn add(
+        &mut self,
+        revision: &str,
+        archived: BTreeMap<String, String>,
+    ) -> Result<(), String> {
         if !full_revision(revision) {
             return Err(format!("`{revision}` is not a full Git revision"));
         }
-        if self.sets.iter().any(|set| set.fluent_bit_revision == revision) {
+        if self
+            .sets
+            .iter()
+            .any(|set| set.fluent_bit_revision == revision)
+        {
             return Err(format!("`{revision}` already has a lock set in the window"));
         }
         if self.sets.len() >= CAPACITY {
@@ -547,7 +555,10 @@ mod tests {
     fn the_window_adds_retires_and_refuses_a_fourth() {
         let mut window = PinLockWindow::new(&revision(1)).unwrap();
         window.validate().unwrap();
-        assert!(window.retire_oldest().is_err(), "the live set is never retired");
+        assert!(
+            window.retire_oldest().is_err(),
+            "the live set is never retired"
+        );
         window.add(&revision(2), files("a")).unwrap();
         window.add(&revision(3), files("b")).unwrap();
         window.validate().unwrap();
@@ -557,7 +568,10 @@ mod tests {
         let error = window.add(&revision(4), files("c")).unwrap_err();
         assert!(error.contains("retire the oldest"), "{error}");
         assert_eq!(window, full, "a refused add changes nothing");
-        assert!(window.add(&revision(2), files("c")).is_err(), "no revision twice");
+        assert!(
+            window.add(&revision(2), files("c")).is_err(),
+            "no revision twice"
+        );
         let retired = window.rotate(&revision(4), files("c")).unwrap().unwrap();
         assert_eq!(retired.fluent_bit_revision, revision(1));
         window.validate().unwrap();

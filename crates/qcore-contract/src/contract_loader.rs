@@ -894,10 +894,16 @@ pub fn load_resource_contract_sources_stamped(
         Ok(contracts) => Ok(contracts),
         Err(_) => {
             let supersession = crate::contract_supersession::supersede_sources(sources, stamps)?;
-            let mut contracts = load_resource_contract_sources_strict(&supersession.sources)?
-                .map_err(|context| {
-                    format!("{context}: duplicate function contract after supersession")
-                })?;
+            // Every selected module may lose its every declaration (one
+            // conflicted function declared alone in each): the environment
+            // is then empty but for the record.
+            let mut contracts = if supersession.sources.is_empty() {
+                ResourceContracts::default()
+            } else {
+                load_resource_contract_sources_strict(&supersession.sources)?.map_err(
+                    |context| format!("{context}: duplicate function contract after supersession"),
+                )?
+            };
             contracts.set_supersession(supersession.superseded, supersession.conflicts);
             Ok(contracts)
         }

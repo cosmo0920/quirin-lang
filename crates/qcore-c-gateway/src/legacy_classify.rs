@@ -1235,8 +1235,8 @@ impl Parser<'_> {
         }
         // Card CONTRACT-SUPERSESSION: likewise for a function whose contract
         // bundles conflict.
-        if let Some(callee) = find_call(&texts)
-            .and_then(|(_, function)| super::conflict_hold::held_callee(function))
+        if let Some(callee) =
+            find_call(&texts).and_then(|(_, function)| super::conflict_hold::held_callee(function))
         {
             return LegacyInstruction::Unknown {
                 description: super::conflict_hold::hold_description(callee),

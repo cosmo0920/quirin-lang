@@ -206,7 +206,9 @@ fn a_pin_holds_until_the_source_changes_and_the_change_report_says_why() {
     succeeded(&tree.pin(&[]));
     let lock = tree.read("contracts/contracts.lock");
     assert_eq!(lock["owner"], "contracts");
-    assert_eq!(lock["lock_version"], 2);
+    // Card CONTRACT-SUPERSESSION: version 4, every entry stamped.
+    assert_eq!(lock["lock_version"], 4);
+    assert!(lock["pinned"][0]["pinned_at"].is_string());
     assert_eq!(
         lock["pinned"][0]["identities"][0]["reviewed_at"],
         serde_json::json!([{"kind": "directory"}])

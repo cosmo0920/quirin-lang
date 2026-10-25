@@ -296,7 +296,10 @@ mod tests {
     fn the_newest_stamp_wins_in_any_order() {
         let old = stamped("a.qv", "1", "2026-01-01T00:00:00Z");
         let new = stamped("b.qv", "2", "2026-02-01T00:00:00Z");
-        for order in [vec![old.clone(), new.clone()], vec![new.clone(), old.clone()]] {
+        for order in [
+            vec![old.clone(), new.clone()],
+            vec![new.clone(), old.clone()],
+        ] {
             assert_eq!(decide(&order), Decision::InForce(new.clone()));
         }
     }
@@ -315,7 +318,10 @@ mod tests {
     fn identical_texts_are_idempotent() {
         let a = stamped("b.qv", "1", "2026-01-01T00:00:00Z");
         let b = stamped("a.qv", "1", "2026-01-01T00:00:00Z");
-        assert_eq!(decide(&[a.clone(), b.clone()]), Decision::InForce(b.clone()));
+        assert_eq!(
+            decide(&[a.clone(), b.clone()]),
+            Decision::InForce(b.clone())
+        );
         assert_eq!(decide(&[b.clone(), a, b.clone()]), Decision::InForce(b));
     }
 

@@ -62,8 +62,8 @@ pub mod cross_unit_links;
 // pre-pass of the pinned route.
 pub mod contract_dependencies;
 pub mod contract_tip;
-pub mod pin_window;
 pub mod member_prepass;
+pub mod pin_window;
 pub mod prepare;
 mod prepare_json;
 pub mod projection;
