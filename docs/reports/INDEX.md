@@ -29,6 +29,8 @@ Regenerate with `python3 scripts/build_docs_index.py`; validate with `--check`.
 
 | [audit-checkpoint-inspector](audit-checkpoint-inspector/README.md) | Binary checkpoint inspector |
 
+| [audit-composition](audit-composition/README.md) | AUDIT-COMPOSITION |
+
 | [audit-ir-admission](audit-ir-admission/README.md) | AUDIT-IR-ADMISSION: borrow certificate bodies during audit admission |
 
 | [audit-ir-clang-transport](audit-ir-clang-transport/README.md) | AUDIT-IR-CLANG-TRANSPORT |
@@ -189,6 +191,8 @@ Regenerate with `python3 scripts/build_docs_index.py`; validate with `--check`.
 
 | [cjson-detach-same-item](cjson-detach-same-item/README.md) | Checked same-item detach |
 
+| [cmetrics-setter-contracts](cmetrics-setter-contracts/README.md) | CMetrics map, metric and typed setter contracts |
+
 | [compose-event-lines](compose-event-lines/README.md) | COMPOSE-EVENT-LINES — source lines in an event program, and why the comparison stays strict (wave 23) |
 
 | [composed-window-reach](composed-window-reach/README.md) | `COMPOSED-WINDOW-REACH` (wave 41) — the composed route's window function, measured |
@@ -208,6 +212,8 @@ Regenerate with `python3 scripts/build_docs_index.py`; validate with `--check`.
 | [contract-inherit-qcore-provider-naming](contract-inherit-qcore-provider-naming/README.md) | CONTRACT-INHERIT-QCORE-PROVIDER-NAMING: the executable provider crates on the contract load path |
 
 | [contract-lifecycle-symbols](contract-lifecycle-symbols/README.md) | CONTRACT-LIFECYCLE-SYMBOLS |
+
+| [contract-locks](contract-locks/README.md) | CONTRACT-LOCKS: contract pins as generated lock files |
 
 | [contract-noreturn-and-borrowed-tails](contract-noreturn-and-borrowed-tails/README.md) | CONTRACT-NORETURN-AND-BORROWED-TAILS |
 

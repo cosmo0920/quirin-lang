@@ -1,0 +1,323 @@
+{
+  "bounds_view": [
+    "cmetrics/null_deref.qv"
+  ],
+  "contracts": "qcore-provider-cmetrics/contracts",
+  "crate": "qcore-provider-cmetrics",
+  "files": {
+    "cmetrics/context_lifetime.qv": {
+      "clause_count": 5,
+      "declaration_count": 2,
+      "declarations": [
+        {
+          "clauses": 3,
+          "name": "cmt_destroy"
+        },
+        {
+          "clauses": 2,
+          "name": "cmt_atomic_initialize"
+        }
+      ],
+      "inherits": [],
+      "premise_bindings": [],
+      "premises": {},
+      "sha256": "1ba76df850e122ae7a37a529594f94ad2257c31de5383e0fe106e063c2731014"
+    },
+    "cmetrics/counter_reset.qv": {
+      "clause_count": 4,
+      "declaration_count": 1,
+      "declarations": [
+        {
+          "clauses": 4,
+          "name": "cmt_counter_allow_reset"
+        }
+      ],
+      "inherits": [],
+      "premise_bindings": [],
+      "premises": {},
+      "sha256": "0ac6d629272eea0c892f7b53527e051af73f3452b98f082f24e6ae0719a3d37c"
+    },
+    "cmetrics/map_lifetime.qv": {
+      "clause_count": 71,
+      "declaration_count": 6,
+      "declarations": [
+        {
+          "clauses": 11,
+          "name": "cmt_map_create"
+        },
+        {
+          "clauses": 18,
+          "name": "cmt_map_metric_get"
+        },
+        {
+          "clauses": 9,
+          "name": "cmt_map_metric_get_val"
+        },
+        {
+          "clauses": 10,
+          "name": "cmt_map_metric_destroy"
+        },
+        {
+          "clauses": 11,
+          "name": "cmt_map_metrics_expire"
+        },
+        {
+          "clauses": 12,
+          "name": "cmt_map_destroy"
+        }
+      ],
+      "inherits": [],
+      "premise_bindings": [],
+      "premises": {},
+      "sha256": "ecc6aab9be74aa57ed0842ad79f16b33000b9d10dd2834344837da502ff32436"
+    },
+    "cmetrics/metric_setters.qv": {
+      "clause_count": 52,
+      "declaration_count": 9,
+      "declarations": [
+        {
+          "clauses": 8,
+          "name": "cmt_metric_set"
+        },
+        {
+          "clauses": 4,
+          "name": "cmt_metric_set_exp_hist_count"
+        },
+        {
+          "clauses": 6,
+          "name": "cmt_metric_set_exp_hist_sum"
+        },
+        {
+          "clauses": 5,
+          "name": "cmt_metric_hist_count_set"
+        },
+        {
+          "clauses": 5,
+          "name": "cmt_metric_hist_sum_set"
+        },
+        {
+          "clauses": 7,
+          "name": "cmt_metric_hist_set"
+        },
+        {
+          "clauses": 7,
+          "name": "cmt_summary_quantile_set"
+        },
+        {
+          "clauses": 5,
+          "name": "cmt_summary_sum_set"
+        },
+        {
+          "clauses": 5,
+          "name": "cmt_summary_count_set"
+        }
+      ],
+      "inherits": [],
+      "premise_bindings": [],
+      "premises": {},
+      "sha256": "1cbd66b5d9599148fbfa3278343ae2736329a58cf7b6d19e78d7c6d8e959af7e"
+    },
+    "cmetrics/metric_values.qv": {
+      "clause_count": 85,
+      "declaration_count": 24,
+      "declarations": [
+        {
+          "clauses": 3,
+          "name": "cmt_metric_get_timestamp"
+        },
+        {
+          "clauses": 5,
+          "name": "cmt_metric_set_double"
+        },
+        {
+          "clauses": 3,
+          "name": "cmt_metric_get_value"
+        },
+        {
+          "clauses": 3,
+          "name": "cmt_metric_get_value_type"
+        },
+        {
+          "clauses": 3,
+          "name": "cmt_metric_get_int64_value"
+        },
+        {
+          "clauses": 3,
+          "name": "cmt_metric_get_uint64_value"
+        },
+        {
+          "clauses": 5,
+          "name": "cmt_metric_set_int64"
+        },
+        {
+          "clauses": 5,
+          "name": "cmt_metric_set_uint64"
+        },
+        {
+          "clauses": 4,
+          "name": "cmt_metric_set_timestamp"
+        },
+        {
+          "clauses": 4,
+          "name": "cmt_metric_set_start_timestamp"
+        },
+        {
+          "clauses": 3,
+          "name": "cmt_metric_unset_start_timestamp"
+        },
+        {
+          "clauses": 3,
+          "name": "cmt_metric_has_start_timestamp"
+        },
+        {
+          "clauses": 3,
+          "name": "cmt_metric_get_start_timestamp"
+        },
+        {
+          "clauses": 3,
+          "name": "cmt_math_d64_to_uint64"
+        },
+        {
+          "clauses": 3,
+          "name": "cmt_math_uint64_to_d64"
+        },
+        {
+          "clauses": 4,
+          "name": "cmt_metric_hist_get_value"
+        },
+        {
+          "clauses": 3,
+          "name": "cmt_metric_hist_get_count_value"
+        },
+        {
+          "clauses": 3,
+          "name": "cmt_metric_hist_get_sum_value"
+        },
+        {
+          "clauses": 4,
+          "name": "cmt_summary_quantile_get_value"
+        },
+        {
+          "clauses": 3,
+          "name": "cmt_summary_get_sum_value"
+        },
+        {
+          "clauses": 3,
+          "name": "cmt_summary_get_count_value"
+        },
+        {
+          "clauses": 3,
+          "name": "cmt_atomic_load"
+        },
+        {
+          "clauses": 4,
+          "name": "cmt_atomic_store"
+        },
+        {
+          "clauses": 5,
+          "name": "cmt_atomic_compare_exchange"
+        }
+      ],
+      "inherits": [],
+      "premise_bindings": [],
+      "premises": {},
+      "sha256": "c3db21d15d98e12fdf11fe6ffe3de98f674c94625256a94b3270f9db73be1a43"
+    },
+    "cmetrics/mpack_utils.qv": {
+      "clause_count": 16,
+      "declaration_count": 3,
+      "declarations": [
+        {
+          "clauses": 4,
+          "name": "cmt_mpack_consume_uint_tag"
+        },
+        {
+          "clauses": 6,
+          "name": "cmt_mpack_unpack_array"
+        },
+        {
+          "clauses": 6,
+          "name": "cmt_mpack_unpack_map"
+        }
+      ],
+      "inherits": [],
+      "premise_bindings": [],
+      "premises": {},
+      "sha256": "c0c2c64b6b569303a24ecffd7c257641668747417851f2d12825aa13d13a93a2"
+    },
+    "cmetrics/null_deref.qv": {
+      "clause_count": 2,
+      "declaration_count": 1,
+      "declarations": [
+        {
+          "clauses": 2,
+          "name": "cmt_destroy"
+        }
+      ],
+      "inherits": [],
+      "premise_bindings": [],
+      "premises": {},
+      "sha256": "4041672b8470b5553f70099da2f23fa2490cac2a7eba5801e847dccea861faf3"
+    },
+    "cmetrics/opts_lifetime.qv": {
+      "clause_count": 25,
+      "declaration_count": 2,
+      "declarations": [
+        {
+          "clauses": 15,
+          "name": "cmt_opts_init"
+        },
+        {
+          "clauses": 10,
+          "name": "cmt_opts_exit"
+        }
+      ],
+      "inherits": [],
+      "premise_bindings": [],
+      "premises": {},
+      "sha256": "4b9ad1d7bf2bc8f06e2749b0e6ab4407ddd000fbc7bafed9c93d5dbd24ce1852"
+    },
+    "cmetrics/typed_setters.qv": {
+      "clause_count": 85,
+      "declaration_count": 6,
+      "declarations": [
+        {
+          "clauses": 13,
+          "name": "cmt_counter_set"
+        },
+        {
+          "clauses": 11,
+          "name": "cmt_gauge_set"
+        },
+        {
+          "clauses": 11,
+          "name": "cmt_untyped_set"
+        },
+        {
+          "clauses": 15,
+          "name": "cmt_histogram_set_default"
+        },
+        {
+          "clauses": 15,
+          "name": "cmt_summary_set_default"
+        },
+        {
+          "clauses": 20,
+          "name": "cmt_exp_histogram_set_default"
+        }
+      ],
+      "inherits": [],
+      "premise_bindings": [],
+      "premises": {},
+      "sha256": "dd8e873ac560cd67855d8582609b2242be7c86913d7977e6686a63a680206327"
+    }
+  },
+  "outer_view": [],
+  "regenerate": "python3 providers/contracts.py sync",
+  "resource_view": [
+    "cmetrics/context_lifetime.qv",
+    "cmetrics/metric_values.qv",
+    "cmetrics/mpack_utils.qv"
+  ],
+  "schema_version": 1
+}

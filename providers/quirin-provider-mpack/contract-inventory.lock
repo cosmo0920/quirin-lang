@@ -1,0 +1,59 @@
+{
+  "bounds_view": [],
+  "contracts": "quirin-provider-mpack/contracts",
+  "crate": "quirin-provider-mpack",
+  "files": {
+    "mpack/writer.qv": {
+      "clause_count": 34,
+      "declaration_count": 9,
+      "declarations": [
+        {
+          "clauses": 4,
+          "name": "mpack_write_cstr"
+        },
+        {
+          "clauses": 5,
+          "name": "mpack_write_str"
+        },
+        {
+          "clauses": 4,
+          "name": "mpack_write_i64"
+        },
+        {
+          "clauses": 4,
+          "name": "mpack_write_double"
+        },
+        {
+          "clauses": 3,
+          "name": "mpack_finish_map"
+        },
+        {
+          "clauses": 3,
+          "name": "mpack_finish_array"
+        },
+        {
+          "clauses": 3,
+          "name": "mpack_write_true"
+        },
+        {
+          "clauses": 3,
+          "name": "mpack_write_false"
+        },
+        {
+          "clauses": 5,
+          "name": "mpack_write_bin"
+        }
+      ],
+      "inherits": [],
+      "premise_bindings": [],
+      "premises": {},
+      "sha256": "b85a05457c61d4be42f34882e9c2a9e2a5348e46ec055e3ca5a7f83a5bbf2c16"
+    }
+  },
+  "outer_view": [],
+  "regenerate": "python3 providers/contracts.py sync",
+  "resource_view": [
+    "mpack/writer.qv"
+  ],
+  "schema_version": 1
+}

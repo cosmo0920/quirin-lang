@@ -195,7 +195,7 @@
   "ct_stage_names": 20,
   "ct_cells": 1000,
   "unverified_spec_items": 10,
-  "named_followups": 834
+  "named_followups": 840
  },
  "derivation": {
   "rule": "no count in a section this file marks `derived` is hand-copied from a status ledger; each is read from the manifest or validated run record named beside it. Sections marked `hand_maintained` are recorded analysis carried verbatim from the previous matrix, and `integrator_supplied` numbers name whether they were measured for this run or carried - see section_ownership.",
@@ -6858,8 +6858,8 @@
   "note": "providers/ is a separate Cargo workspace, excluded from the core workspace; P01 verified empirically that the core workspace builds and passes its full suite with providers/ moved out of the tree."
  },
  "validation": {
-  "note": "Fresh complete standing/provider landing gate on merge 17b15ec24990f53690f0311be0ddb8dcf46f3c75, combining CMetrics setter models and current local main including AUDIT-CANONICAL-PATHS and AMENDMENTS-SCHEMA. All 20 commands exit zero on this final source, including the committed regenerated matrix. The earlier 18-check source attempt and its Python failure are retained in superseded-attempt.json. The ordinary Rust reservation was queued on the earlier source but launches both suites only after the updated main merge was frozen, recorded in reservation-source.json. Actual command/log hashes and private paths are in command-receipt.json; Rust suites share one standard reservation and Lean is separately slotted. No native measurement or executable setter adoption is claimed. Historical card measurements are unchanged.",
-  "workspace_tests": 8674,
+  "note": "Combined landing of CONTRACT-LOCKS and AUDIT-COMPOSITION on integrate/amendments-schema. CONTRACT-LOCKS merged onto 51d103d60 (d25e91367); origin/main 47fc52a32 (CMetrics setter contracts) merged in 0926ef10a with the corpus test kept as the lock reader and the 15 setter declarations regenerated into qcore-provider-cmetrics/contract-inventory.lock by `providers/contracts.py sync` (identical to the retired literal rows); the user's main merge of card/audit-composition (373e41ee8, cc9f2cb35) merged cleanly, amendments applied by apply_amendments.py (1638e581a). An earlier full gate on 0926ef10a was stopped mid-run at the user's request when AUDIT-COMPOSITION was merged. FULL standing gate ON 1638e581a: `scripts/gate_scope.py --base 47fc52a32 --full` with gate slots (private log /media/Data/GitHub/quirin-lang/private/landing-cl/console3.log): submodules, fmt, Clippy, Rust 8688 passed/0 failed/15 ignored (555 units/568 summaries), both reevaluation examples, Lean 373 audits, provider package build and verifies, provider tests 133 passed/0 failed/1 ignored, provider fmt and Clippy, all exit 0. Python 460 ran with 1 failure, the stale dimensions.named_followups predating regeneration; after `build_matrix.py --gate` on this record Python was rerun on the committed matrix. The earlier targeted check on d25e91367 (contracts.py check, gen_rule_docs/gen_lean_roots --check, provider Python 26, corpus+census tests) is in private/landing-cl/exits.txt. Plan §6 decision 9a (user, 2026-10-26) recorded in the same records commit.",
+  "workspace_tests": 8688,
   "provider_tests": 133,
   "python_evidence_validator_tests": 460,
   "lean_audits": 373,
@@ -7242,9 +7242,9 @@
   "reevaluation_followup_exit": 0,
   "cargo_fmt": "clean",
   "cargo_clippy": "clean",
-  "standing_gate": "all 20 required landing checks exit 0",
+  "standing_gate": "full gate on combined integration tip 1638e581a",
   "full_language_conformance": false,
-  "measurement_provenance": "carried_from_previous_matrix: these numbers were NOT measured for this regeneration; pass --gate PATH with the standing-gate results of this checkpoint to replace them"
+  "measurement_provenance": "integrator_supplied (docs/reports/contract-locks/integration/gate.json)"
  },
  "named_followups": [
   {
@@ -12950,8 +12950,8 @@
   {
    "id": "PROVIDER-PYTHON-TESTS-UNGATED",
    "title": "providers/tests/*.py (25 tests) are run by no gate step",
-   "why": "The standing gate runs python3 -m unittest discover -s scripts/tests; providers/README.md's provider gate runs package.py, cargo test, fmt and Clippy. providers/tests/test_contract_load_path.py and test_package_contracts.py (25 tests, measured passing in 81.9 s by card GATE-ELASTIC on its tip) are in neither, although the pluggable-cards plan names the first as part of the provider suite that stayed red for a day. DISCHARGE: add python3 -m unittest discover -s providers/tests to the provider gate block (and the scoped gate's mirror), or record why it stays out.",
-   "source": "docs/reports/gate-elastic/README.md"
+   "why": "The standing gate runs python3 -m unittest discover -s scripts/tests; providers/README.md's provider gate runs package.py, cargo test, fmt and Clippy. providers/tests/test_contract_load_path.py and test_package_contracts.py (25 tests, measured passing in 81.9 s by card GATE-ELASTIC on its tip) are in neither, although the pluggable-cards plan names the first as part of the provider suite that stayed red for a day. DISCHARGE: add python3 -m unittest discover -s providers/tests to the provider gate block (and the scoped gate's mirror), or record why it stays out. CONTRACT-LOCKS adds one test (now 26), test_inventory_locks_are_generated_by_sync_and_checked, and moves the real-workspace test's view counts onto the inventory locks. The tree-equals-lock check itself is also in the standing gate through compiler/tests/qcore_contract_corpus.rs, byte form included; providers/contracts.py check is likewise run by no gate step. DISCHARGE (unchanged).",
+   "source": "docs/reports/gate-elastic/README.md, docs/reports/contract-locks/README.md"
   },
   {
    "id": "TASK-CONTEXT-GATE-ROLES",
@@ -13026,6 +13026,42 @@
    "why": "The refactoring-round common brief (private/integrator-briefs/refactor-r1-common.md) and earlier briefs describe integration-amendments.json without the `schema` key, with `text`|`why` interchangeable and no per-operation field set. A card following them writes a file that apply_amendments.py reads only with --legacy. DISCHARGE: the P3 card-brief template asks for quirin-amendments/1 and for `python3 scripts/apply_amendments.py <file> --check` in the card's completion checklist. Evidence: the first card landed on that template carries a file that validates without --legacy.",
    "source": "docs/reports/amendments-schema/README.md",
    "recorded_by": "AMENDMENTS-SCHEMA"
+  },
+  {
+   "id": "COMPOSITION-PLUGIN-FIREWALL-WIRING",
+   "title": "The checker-plugin firewall still folds plugin answers into the host's unit row instead of contributing external-checker components",
+   "why": "Card AUDIT-COMPOSITION published the integration semigroup (qcore_schemas::composition; spec L21.2 'Composition across results') and made the audit report's unit rows a derived view over per-row components, but only host components exist: user_plugins::fold_unit and qcore_verifier_host::plugin_firewall still join a plugin's answer into the host row before it is recorded, so a checker's contribution cannot be removed or audited apart from the host's. DISCHARGE: the firewall emits one Component per plugin answer with Provenance.external_checker set (plugin id, version, binary digest), the host row stays the host's component, the published row is Contribution::derive over both, and an identity run shows every report without plugin bindings byte-identical while a plugin-bound fixture derives the same status it publishes today.",
+   "source": "docs/reports/audit-composition/README.md"
+  },
+  {
+   "id": "COMPOSITION-CONTRACT-LOADER-WIRING",
+   "title": "The contract loader unions bundles outside the composition interface",
+   "why": "Seam G makes the semigroup the only integration path for results and contracts. Card AUDIT-COMPOSITION built the results half; contract bundles still enter the environment through the loader's own union with a hard duplicate error, and the components' provenance records one 'resource-contracts' digest of the loaded environment rather than per-bundle digests. Supersession by pin stamp is the separate card CONTRACT-SUPERSESSION. DISCHARGE: the loader records one digest per provider bundle and the report's components carry them in Provenance.contract_bundles (so withdrawing a bundle is a removal over components), landed with or after CONTRACT-SUPERSESSION, with an identity run.",
+   "source": "docs/reports/audit-composition/README.md"
+  },
+  {
+   "id": "MEASURE-TOOL-COMPOSITION-CONSUMER",
+   "title": "MEASURE-TOOL must compose and compare through qcore_schemas::composition, as a quirin-audit subcommand",
+   "why": "Seam F's measurement tool (user decision 8: a quirin-audit subcommand plugin) is the intended consumer of the component sidecars card AUDIT-COMPOSITION writes beside every unit report (<report>.components.json, ComponentSidecar). Published baselines should store these components, a profile total is a derivation over them, and a rule's contribution is attribution by Contribution::remove, never a summed total. DISCHARGE: quirin-audit measure reads both sides' sidecars, composes a baseline with a TIP contribution through Contribution::union, reports conflicts (composition-conflict) and per-row derivation changes as its native-comparison record, and its tests reuse the shared vectors of proof/QCore/AuditComposition.lean.",
+   "source": "docs/reports/audit-composition/README.md"
+  },
+  {
+   "id": "COMPOSITION-PROPERTY-AND-CHECKPOINT-ROWS",
+   "title": "Property rows (null, bounds, outer projection) and checkpoint-composed reports carry no components",
+   "why": "Card AUDIT-COMPOSITION componentizes the unit rows written through AuditReport::write_with_revision_key (pinned, current, configured and contracts-only routes). The checkpoint-composed report (compose.rs, streamed from .qo checkpoints) writes no sidecar, and the null/bounds/outer-projection rows and their summaries are written directly. DISCHARGE: each of these writers derives its rows from a ComponentSidecar as the unit report does, each with an identity run, the checkpoint route's sidecar byte-equal to the uncheckpointed route's.",
+   "source": "docs/reports/audit-composition/README.md"
+  },
+  {
+   "id": "LIFETIME-SOURCE-IDENTITY-TIME-MACROS",
+   "title": "The contract sidecar's lifetime-source unit identities depend on the minute Monkey's monkey.c was preprocessed",
+   "why": "qcore_c_gateway::loop_lifetime_source::read_unit names a unit by the SHA-256 of its preprocessing options and preprocessed text, and Fluent Bit's lib/monkey/mk_bin/monkey.c expands __DATE__ and __TIME__. Card AUDIT-COMPOSITION's identity runs measured it: in resource-diagnostics.contracts.json (callback_members/lifetime_protocols/evidence/summaries and the prepass copy) exactly one key changes between any two runs of the same binary (runs 2 and 3 of the same BASE code disagree; BASE and TIP started together agree), on the corpus, slice and system routes alike. Every identity run must therefore special-case this key, and a published digest carries the wall clock. DISCHARGE: preprocess the lifetime-source read with fixed __DATE__/__TIME__ (or hash the text with those expansions normalised), so two runs of one binary write byte-identical contract sidecars, with a test that preprocesses a unit using both macros twice.",
+   "source": "docs/reports/audit-composition/README.md"
+  },
+  {
+   "id": "COMPOSITION-ANALYZER-IDENTITY",
+   "title": "A component's analyzer revision is package@version plus an optional build commit, not the binary digest",
+   "why": "report_components::analyzer_revision (card AUDIT-COMPOSITION) spells qcore-audit@<version>:<QCORE_AUDIT_BUILD_COMMIT or unrecorded-build>. Two different builds without a recorded commit share a provenance key, so joining their contributions surfaces as composition-conflict (fail-closed) rather than as two producers. DISCHARGE: put the analyzer binary's SHA-256 (as checkpoint_run::run_identity takes it) or a mandatory build commit into Provenance, with a test that two differing binaries never share a provenance key.",
+   "source": "docs/reports/audit-composition/README.md"
   }
  ],
  "updated": "Completed plugin premise integration; exact hand-maintained union retains810followups, borrowed measured-source8419Rust/354Lean/freshcard133provider, exact source equivalence checked; authoritative root committed-matrix Python confirmation in integration receipt. CMetrics map/opts API model specifications added at the explicit user request. Eight declared-model API contracts remain outside interpreted views, with CMT-MAP-OPTS-CONTRACT-ADOPTION and CMT-LABELED-HASH-ZERO-STATIC-STORAGE Open. No trusted API coverage is claimed; the source gate is recorded by this card alongside its separate initializer native checkpoint. W48-CMT-TRACKED-INTERIOR-SELF-INIT implements rule 36b's checked initializer effect transport for an exact live owned root or embedded record, retaining actual self writes, invalidating aliased member facts and preserving resource obligations; nondefault custody frames refuse and no ordinary summary is exported. The canonical CFL intrusive_list.qv declares matching audit preconditions/effects; two CMetrics .qv modules add six map and two opts lifecycle models, including transitive ownership, partial failure, borrowed results and uncleared cleanup fields. All remain outside interpreted views; checked API adoption and labeled zero-hash storage accounting have named Open follow-ups. Fresh BASE/planner precedes prediction f18d96065 and implementation; the later contract amendment 08da23123 precedes .qv edits. Native corpus BASE/TIP Safe/Unknown/Pending/provisional-Unsafe: 1009 / 3816 / 0 / 9 to 1011 / 3814 / 0 / 9; full system/slice, 5781 NULL dictionaries and runtime projections are compared, 241 semantic leaves accounted, zero unexplained leaves and no prior Safe loss. Gate 8654 Rust / 370 Lean / 374 Python, provider 133 Rust / 25 Python and all five package verifies pass. The actual deep source reader uses 328 KiB below 1 MiB. Full getter closure remains Open; W48-CMT-SELF-INIT-DISJOINT-FRAMES tracks the next bounded frame extension, and W48-EXACT-RETURN-WITNESS-PRECISION is unchanged. Native evidence is isolated to measured e92d8aef35a8bd14550e90219d19a56eb3b196e7; later source gate 2d0d85299b830aa24d7f200d63a308653582363f validates the added declared API models separately; see docs/reports/w48-cmt-tracked-interior-self-init/README.md."

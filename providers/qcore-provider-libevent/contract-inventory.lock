@@ -1,0 +1,802 @@
+{
+  "bounds_view": [],
+  "contracts": "qcore-provider-libevent/contracts",
+  "crate": "qcore-provider-libevent",
+  "files": {
+    "monkey/callback_binding.qv": {
+      "clause_count": 37,
+      "declaration_count": 15,
+      "declarations": [
+        {
+          "clauses": 8,
+          "name": "binding_scope"
+        },
+        {
+          "clauses": 3,
+          "name": "binding_memory"
+        },
+        {
+          "clauses": 3,
+          "name": "binding_execution"
+        },
+        {
+          "clauses": 1,
+          "name": "binding_select_path"
+        },
+        {
+          "clauses": 4,
+          "name": "binding_send"
+        },
+        {
+          "clauses": 2,
+          "name": "binding_errno_location"
+        },
+        {
+          "clauses": 1,
+          "name": "binding_perror"
+        },
+        {
+          "clauses": 1,
+          "name": "binding_evutil_closesocket"
+        },
+        {
+          "clauses": 1,
+          "name": "binding_event_del"
+        },
+        {
+          "clauses": 1,
+          "name": "binding_event_free"
+        },
+        {
+          "clauses": 3,
+          "name": "binding_mk_mem_free"
+        },
+        {
+          "clauses": 2,
+          "name": "binding_symbol"
+        },
+        {
+          "clauses": 2,
+          "name": "binding_call_arguments"
+        },
+        {
+          "clauses": 3,
+          "name": "binding_call_interval"
+        },
+        {
+          "clauses": 2,
+          "name": "binding_runtime_effect"
+        }
+      ],
+      "inherits": [],
+      "premise_bindings": [],
+      "premises": {},
+      "sha256": "9c2dd85ccf4a993506fee37d4cab717788d9b06fb9ea9d6735e74159bf6d13d6"
+    },
+    "monkey/callback_task_handoff.qv": {
+      "clause_count": 66,
+      "declaration_count": 12,
+      "declarations": [
+        {
+          "clauses": 4,
+          "name": "selected_callbacks"
+        },
+        {
+          "clauses": 6,
+          "name": "selected_callback_identity"
+        },
+        {
+          "clauses": 3,
+          "name": "effect_errno_location"
+        },
+        {
+          "clauses": 3,
+          "name": "effect_event_del"
+        },
+        {
+          "clauses": 3,
+          "name": "effect_event_free"
+        },
+        {
+          "clauses": 3,
+          "name": "effect_evutil_closesocket"
+        },
+        {
+          "clauses": 3,
+          "name": "effect_mk_mem_free"
+        },
+        {
+          "clauses": 3,
+          "name": "effect_perror"
+        },
+        {
+          "clauses": 3,
+          "name": "effect_send"
+        },
+        {
+          "clauses": 7,
+          "name": "bounded_no_task_observation"
+        },
+        {
+          "clauses": 16,
+          "name": "taskful_fixture_source"
+        },
+        {
+          "clauses": 12,
+          "name": "taskful_fixture_primitives"
+        }
+      ],
+      "inherits": [],
+      "premise_bindings": [],
+      "premises": {},
+      "sha256": "be5964f3d8f390516bd53209ec3132503a65d3bf7833d5183f0e5eb13c2d663e"
+    },
+    "monkey/composition.qv": {
+      "clause_count": 35,
+      "declaration_count": 7,
+      "declarations": [
+        {
+          "clauses": 3,
+          "name": "evutil_socketpair"
+        },
+        {
+          "clauses": 2,
+          "name": "evutil_socket_geterror"
+        },
+        {
+          "clauses": 8,
+          "name": "evutil_closesocket"
+        },
+        {
+          "clauses": 3,
+          "name": "cb_event"
+        },
+        {
+          "clauses": 4,
+          "name": "cb_timeout"
+        },
+        {
+          "clauses": 2,
+          "name": "cb_wait_2_timeout"
+        },
+        {
+          "clauses": 13,
+          "name": "check_monkey_composition"
+        }
+      ],
+      "inherits": [],
+      "premise_bindings": [],
+      "premises": {},
+      "sha256": "ee16fa5d7b8bd36f355397045a7c12545db28392eaad113b454f862096215e73"
+    },
+    "monkey/cycle18_composition.qv": {
+      "clause_count": 86,
+      "declaration_count": 6,
+      "declarations": [
+        {
+          "clauses": 18,
+          "name": "callback_inventory"
+        },
+        {
+          "clauses": 6,
+          "name": "context_identity_join"
+        },
+        {
+          "clauses": 2,
+          "name": "wait_failure_source_join"
+        },
+        {
+          "clauses": 41,
+          "name": "evidence_join"
+        },
+        {
+          "clauses": 8,
+          "name": "caller_size_bound"
+        },
+        {
+          "clauses": 11,
+          "name": "aggregate_acceptance"
+        }
+      ],
+      "inherits": [],
+      "premise_bindings": [],
+      "premises": {},
+      "sha256": "76a4fc17604702c7b3fc012d75011f0d2e4abefb57f1a77406843b0c6f13e97b"
+    },
+    "monkey/descriptor_observation.qv": {
+      "clause_count": 19,
+      "declaration_count": 5,
+      "declarations": [
+        {
+          "clauses": 4,
+          "name": "observation_socketpair"
+        },
+        {
+          "clauses": 4,
+          "name": "observation_acquire"
+        },
+        {
+          "clauses": 1,
+          "name": "observation_use"
+        },
+        {
+          "clauses": 2,
+          "name": "observation_close"
+        },
+        {
+          "clauses": 8,
+          "name": "observation_complete"
+        }
+      ],
+      "inherits": [],
+      "premise_bindings": [],
+      "premises": {},
+      "sha256": "89ffc2dfaae320c37341f4f6465b8b32c66a85134fff795bcd43364aec13c091"
+    },
+    "monkey/event_loop.qv": {
+      "clause_count": 51,
+      "declaration_count": 9,
+      "declarations": [
+        {
+          "clauses": 8,
+          "name": "mk_event_add"
+        },
+        {
+          "clauses": 8,
+          "name": "mk_event_timeout_create"
+        },
+        {
+          "clauses": 8,
+          "name": "mk_event_channel_create"
+        },
+        {
+          "clauses": 5,
+          "name": "mk_event_del"
+        },
+        {
+          "clauses": 6,
+          "name": "mk_event_timeout_destroy"
+        },
+        {
+          "clauses": 7,
+          "name": "mk_event_channel_destroy"
+        },
+        {
+          "clauses": 3,
+          "name": "mk_event_wait"
+        },
+        {
+          "clauses": 3,
+          "name": "mk_event_loop_create"
+        },
+        {
+          "clauses": 3,
+          "name": "mk_event_loop_destroy"
+        }
+      ],
+      "inherits": [],
+      "premise_bindings": [],
+      "premises": {
+        "mk_event_channel_create": [
+          {
+            "name": "mk_event_descriptors",
+            "origin": "declared"
+          }
+        ],
+        "mk_event_channel_destroy": [
+          {
+            "name": "mk_event_descriptors",
+            "origin": "declared"
+          }
+        ],
+        "mk_event_timeout_create": [
+          {
+            "name": "mk_event_descriptors",
+            "origin": "declared"
+          }
+        ],
+        "mk_event_timeout_destroy": [
+          {
+            "name": "mk_event_descriptors",
+            "origin": "declared"
+          }
+        ]
+      },
+      "sha256": "bcd64a750c1830c44b501d0fc13cd19268c40751aa909789ca1598ca11085e15"
+    },
+    "monkey/event_payload.qv": {
+      "clause_count": 47,
+      "declaration_count": 5,
+      "declarations": [
+        {
+          "clauses": 12,
+          "name": "cb_event_source_projection"
+        },
+        {
+          "clauses": 1,
+          "name": "contextual_payload_boundary"
+        },
+        {
+          "clauses": 13,
+          "name": "contextual_authority"
+        },
+        {
+          "clauses": 8,
+          "name": "native_allocation"
+        },
+        {
+          "clauses": 13,
+          "name": "contextual_payload_access"
+        }
+      ],
+      "inherits": [],
+      "premise_bindings": [],
+      "premises": {},
+      "sha256": "560c499d6f968a30bd7253340eeabac6604daa0cece08928be289f2ce0e2047a"
+    },
+    "monkey/intrusive_list.qv": {
+      "clause_count": 25,
+      "declaration_count": 4,
+      "declarations": [
+        {
+          "clauses": 5,
+          "name": "mk_list_add"
+        },
+        {
+          "clauses": 4,
+          "name": "mk_list_del"
+        },
+        {
+          "clauses": 4,
+          "name": "mk_fifo_queue_destroy"
+        },
+        {
+          "clauses": 12,
+          "name": "mk_http_thread_destroy"
+        }
+      ],
+      "inherits": [],
+      "premise_bindings": [],
+      "premises": {
+        "mk_http_thread_destroy": [
+          {
+            "name": "scheduler_exact_parent_embedding",
+            "origin": "declared"
+          },
+          {
+            "name": "scheduler_callback_footprint",
+            "origin": "declared"
+          },
+          {
+            "name": "scheduler_tls_params_owned",
+            "origin": "declared"
+          },
+          {
+            "name": "scheduler_callee_live",
+            "origin": "declared"
+          },
+          {
+            "name": "scheduler_borrowed_chain_live",
+            "origin": "declared"
+          },
+          {
+            "name": "scheduler_valid_membership",
+            "origin": "declared"
+          },
+          {
+            "name": "scheduler_no_later_alias_use",
+            "origin": "declared"
+          },
+          {
+            "name": "scheduler_valgrind_request_neutral",
+            "origin": "declared"
+          }
+        ]
+      },
+      "sha256": "0c17d2fb756bed2580c62e3a94eef659e6ede10690854c9af179b09d7a181e3a"
+    },
+    "monkey/logging.qv": {
+      "clause_count": 10,
+      "declaration_count": 2,
+      "declarations": [
+        {
+          "clauses": 5,
+          "name": "mk_print"
+        },
+        {
+          "clauses": 5,
+          "name": "mk_utils_libc_error"
+        }
+      ],
+      "inherits": [],
+      "premise_bindings": [],
+      "premises": {},
+      "sha256": "c9fdea74a8d0227836c3ed6260c413f2ee43a82bf6856b312ce49babd516e15b"
+    },
+    "monkey/memory.qv": {
+      "clause_count": 9,
+      "declaration_count": 3,
+      "declarations": [
+        {
+          "clauses": 3,
+          "name": "mk_mem_alloc"
+        },
+        {
+          "clauses": 3,
+          "name": "mk_mem_alloc_z"
+        },
+        {
+          "clauses": 3,
+          "name": "mk_mem_free"
+        }
+      ],
+      "inherits": [
+        {
+          "child": "mk_mem_alloc",
+          "parent": "libc::malloc"
+        },
+        {
+          "child": "mk_mem_alloc_z",
+          "parent": "libc::malloc"
+        },
+        {
+          "child": "mk_mem_free",
+          "parent": "libc::free"
+        }
+      ],
+      "premise_bindings": [],
+      "premises": {},
+      "sha256": "d042af2e4a9302d8a207d782e5c3850ae8614daf611d439881a0f7b4cfe93dd6"
+    },
+    "monkey/native_platform_matrix.qv": {
+      "clause_count": 70,
+      "declaration_count": 10,
+      "declarations": [
+        {
+          "clauses": 3,
+          "name": "native_platform_source_identity"
+        },
+        {
+          "clauses": 7,
+          "name": "linux_epoll_asan_profile"
+        },
+        {
+          "clauses": 7,
+          "name": "linux_poll_asan_profile"
+        },
+        {
+          "clauses": 7,
+          "name": "linux_select_asan_profile"
+        },
+        {
+          "clauses": 7,
+          "name": "macos_kqueue_asan_profile"
+        },
+        {
+          "clauses": 7,
+          "name": "windows_win32_asan_profile"
+        },
+        {
+          "clauses": 7,
+          "name": "windows_iocp_asan_profile"
+        },
+        {
+          "clauses": 7,
+          "name": "linux_epoll_tsan_profile"
+        },
+        {
+          "clauses": 14,
+          "name": "observed_row"
+        },
+        {
+          "clauses": 4,
+          "name": "unknown_row"
+        }
+      ],
+      "inherits": [],
+      "premise_bindings": [],
+      "premises": {},
+      "sha256": "0525b020bca19c28e2b59b57d55f6816f578aea39749cf0b5c7fe04bee2b81a2"
+    },
+    "monkey/scalar_observation.qv": {
+      "clause_count": 26,
+      "declaration_count": 7,
+      "declarations": [
+        {
+          "clauses": 6,
+          "name": "_mk_string_search"
+        },
+        {
+          "clauses": 5,
+          "name": "mk_string_char_search"
+        },
+        {
+          "clauses": 5,
+          "name": "mk_string_char_search_r"
+        },
+        {
+          "clauses": 3,
+          "name": "MK_EVENT_NEW"
+        },
+        {
+          "clauses": 3,
+          "name": "event_base_get_features"
+        },
+        {
+          "clauses": 2,
+          "name": "event_get_struct_event_size"
+        },
+        {
+          "clauses": 2,
+          "name": "event_get_version_number"
+        }
+      ],
+      "inherits": [],
+      "premise_bindings": [],
+      "premises": {},
+      "sha256": "8f400380f17d656598422a0e8430dcf154d96893bba664e620d4e6a60c5e1def"
+    },
+    "monkey/string.qv": {
+      "clause_count": 3,
+      "declaration_count": 1,
+      "declarations": [
+        {
+          "clauses": 3,
+          "name": "mk_string_dup"
+        }
+      ],
+      "inherits": [],
+      "premise_bindings": [],
+      "premises": {},
+      "sha256": "53f9c3f6baa72f6acf2c7bdb2582b6a6392c67a9c17a1c5785413a1efc943f44"
+    },
+    "monkey/timeout_teardown.qv": {
+      "clause_count": 34,
+      "declaration_count": 4,
+      "declarations": [
+        {
+          "clauses": 7,
+          "name": "cb_timeout_source"
+        },
+        {
+          "clauses": 1,
+          "name": "cb_timeout_teardown_path"
+        },
+        {
+          "clauses": 5,
+          "name": "libevent_self_teardown"
+        },
+        {
+          "clauses": 21,
+          "name": "teardown_obligations"
+        }
+      ],
+      "inherits": [],
+      "premise_bindings": [],
+      "premises": {},
+      "sha256": "dfbc9a41a0066b1a53913703c3c80100f1536fc4cb9fc3a6488b257538808c7b"
+    },
+    "monkey/vhost_set.qv": {
+      "clause_count": 5,
+      "declaration_count": 1,
+      "declarations": [
+        {
+          "clauses": 5,
+          "name": "mk_vhost_set"
+        }
+      ],
+      "inherits": [],
+      "premise_bindings": [],
+      "premises": {},
+      "sha256": "640187a5674cd86f7782bf9815e6d72b1082aef66e811f45b2def3e9f757fb34"
+    },
+    "monkey/wait_failure_policy.qv": {
+      "clause_count": 66,
+      "declaration_count": 8,
+      "declarations": [
+        {
+          "clauses": 6,
+          "name": "loop_init_failure"
+        },
+        {
+          "clauses": 7,
+          "name": "context_allocation_failure"
+        },
+        {
+          "clauses": 8,
+          "name": "base_creation_failure"
+        },
+        {
+          "clauses": 10,
+          "name": "fired_allocation_failure"
+        },
+        {
+          "clauses": 9,
+          "name": "timer_creation_failure"
+        },
+        {
+          "clauses": 10,
+          "name": "timer_registration_failure"
+        },
+        {
+          "clauses": 10,
+          "name": "success_observation"
+        },
+        {
+          "clauses": 6,
+          "name": "loop_size_bounds"
+        }
+      ],
+      "inherits": [],
+      "premise_bindings": [],
+      "premises": {},
+      "sha256": "29aab57c753498539d92140ed08c02694d264394c31b2702232c3dbba6971d64"
+    },
+    "monkey/wait_identity_policy.qv": {
+      "clause_count": 29,
+      "declaration_count": 3,
+      "declarations": [
+        {
+          "clauses": 23,
+          "name": "wait_identity_context"
+        },
+        {
+          "clauses": 1,
+          "name": "wait_identity_entry"
+        },
+        {
+          "clauses": 5,
+          "name": "wait_observed_profile"
+        }
+      ],
+      "inherits": [],
+      "premise_bindings": [],
+      "premises": {},
+      "sha256": "131694dd932954d26cb085224bd6d25edfc02867e88863ca46de6f6c7572c1c3"
+    },
+    "monkey/wait_source_policy.qv": {
+      "clause_count": 102,
+      "declaration_count": 13,
+      "declarations": [
+        {
+          "clauses": 4,
+          "name": "source_identity"
+        },
+        {
+          "clauses": 4,
+          "name": "wait_projection_identity"
+        },
+        {
+          "clauses": 9,
+          "name": "cb_wait_2_timeout"
+        },
+        {
+          "clauses": 9,
+          "name": "contract_cb_wait_2_timeout"
+        },
+        {
+          "clauses": 9,
+          "name": "_mk_event_loop_create"
+        },
+        {
+          "clauses": 9,
+          "name": "contract__mk_event_loop_create"
+        },
+        {
+          "clauses": 9,
+          "name": "_mk_event_wait_with_flags"
+        },
+        {
+          "clauses": 9,
+          "name": "contract__mk_event_wait_with_flags"
+        },
+        {
+          "clauses": 9,
+          "name": "_mk_event_wait_2"
+        },
+        {
+          "clauses": 9,
+          "name": "contract__mk_event_wait_2"
+        },
+        {
+          "clauses": 9,
+          "name": "_mk_event_loop_destroy"
+        },
+        {
+          "clauses": 9,
+          "name": "contract__mk_event_loop_destroy"
+        },
+        {
+          "clauses": 4,
+          "name": "artifact_set"
+        }
+      ],
+      "inherits": [],
+      "premise_bindings": [],
+      "premises": {},
+      "sha256": "b78d56857a059c96d0d748e8dd6a4c3ee9bbf527c21e17f3ce9ebcad4fe0c393"
+    },
+    "monkey/wrapper_paths.qv": {
+      "clause_count": 72,
+      "declaration_count": 15,
+      "declarations": [
+        {
+          "clauses": 3,
+          "name": "mk_event_libevent_socketpair"
+        },
+        {
+          "clauses": 3,
+          "name": "_mk_event_init"
+        },
+        {
+          "clauses": 5,
+          "name": "_mk_event_loop_create"
+        },
+        {
+          "clauses": 4,
+          "name": "_mk_event_loop_destroy"
+        },
+        {
+          "clauses": 5,
+          "name": "_mk_event_update"
+        },
+        {
+          "clauses": 7,
+          "name": "_mk_event_add"
+        },
+        {
+          "clauses": 7,
+          "name": "_mk_event_del"
+        },
+        {
+          "clauses": 7,
+          "name": "_mk_event_timeout_create"
+        },
+        {
+          "clauses": 4,
+          "name": "_mk_event_timeout_destroy"
+        },
+        {
+          "clauses": 5,
+          "name": "_mk_event_channel_create"
+        },
+        {
+          "clauses": 4,
+          "name": "_mk_event_channel_destroy"
+        },
+        {
+          "clauses": 6,
+          "name": "_mk_event_inject"
+        },
+        {
+          "clauses": 4,
+          "name": "_mk_event_wait_with_flags"
+        },
+        {
+          "clauses": 5,
+          "name": "_mk_event_wait_2"
+        },
+        {
+          "clauses": 3,
+          "name": "_mk_event_backend"
+        }
+      ],
+      "inherits": [],
+      "premise_bindings": [],
+      "premises": {},
+      "sha256": "c5c51240aafc42b293f715113c76706e656ac51548b1be065536c83f6167bdb0"
+    }
+  },
+  "outer_view": [],
+  "regenerate": "python3 providers/contracts.py sync",
+  "resource_view": [
+    "monkey/event_loop.qv",
+    "monkey/intrusive_list.qv",
+    "monkey/logging.qv",
+    "monkey/memory.qv",
+    "monkey/scalar_observation.qv",
+    "monkey/string.qv",
+    "monkey/vhost_set.qv"
+  ],
+  "schema_version": 1
+}

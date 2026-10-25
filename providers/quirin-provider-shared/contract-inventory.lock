@@ -1,0 +1,155 @@
+{
+  "bounds_view": [],
+  "contracts": "quirin-provider-shared/contracts",
+  "crate": "quirin-provider-shared",
+  "files": {
+    "language/quantified_indices.qv": {
+      "clause_count": 2,
+      "declaration_count": 1,
+      "declarations": [
+        {
+          "clauses": 2,
+          "name": "preserve_five_chunk_credits"
+        }
+      ],
+      "inherits": [],
+      "premise_bindings": [],
+      "premises": {},
+      "sha256": "f1a4a6d8a4113bfa94700f9aab35b6326394bca3f7bc40bdd1dcd13e224da8be"
+    },
+    "library/custody_evidence.qv": {
+      "clause_count": 28,
+      "declaration_count": 5,
+      "declarations": [
+        {
+          "clauses": 6,
+          "name": "publish_library_resource"
+        },
+        {
+          "clauses": 6,
+          "name": "handoff_library_resource"
+        },
+        {
+          "clauses": 6,
+          "name": "reclaim_library_resource"
+        },
+        {
+          "clauses": 7,
+          "name": "check_imported_library_custody"
+        },
+        {
+          "clauses": 3,
+          "name": "release_library_resource"
+        }
+      ],
+      "inherits": [],
+      "premise_bindings": [],
+      "premises": {},
+      "sha256": "630e28d65a6c11d3e7a32aeaa2d3ba6657fd0476fe6f8d86b120915bbc656b4f"
+    },
+    "library/descriptor_native_observation.qv": {
+      "clause_count": 21,
+      "declaration_count": 10,
+      "declarations": [
+        {
+          "clauses": 3,
+          "name": "descriptor_generation_fresh"
+        },
+        {
+          "clauses": 3,
+          "name": "descriptor_counted_reference"
+        },
+        {
+          "clauses": 5,
+          "name": "descriptor_sentinel_validity"
+        },
+        {
+          "clauses": 1,
+          "name": "descriptor_release_at_most_once"
+        },
+        {
+          "clauses": 2,
+          "name": "descriptor_release_matches_kind"
+        },
+        {
+          "clauses": 1,
+          "name": "descriptor_no_use_after_release"
+        },
+        {
+          "clauses": 1,
+          "name": "descriptor_operand_identity_valid"
+        },
+        {
+          "clauses": 1,
+          "name": "descriptor_relation_holds"
+        },
+        {
+          "clauses": 1,
+          "name": "descriptor_mapping_extent"
+        },
+        {
+          "clauses": 3,
+          "name": "descriptor_leak_set_well_defined"
+        }
+      ],
+      "inherits": [],
+      "premise_bindings": [],
+      "premises": {},
+      "sha256": "f08202feb0590dd4b1d288c24d13d47cdd179a22fc32ac806b8c41cc82dcf625"
+    },
+    "library/source_projection.qv": {
+      "clause_count": 17,
+      "declaration_count": 10,
+      "declarations": [
+        {
+          "clauses": 2,
+          "name": "source_enum_value"
+        },
+        {
+          "clauses": 3,
+          "name": "source_scan_effects"
+        },
+        {
+          "clauses": 2,
+          "name": "source_scan_initial"
+        },
+        {
+          "clauses": 1,
+          "name": "source_type_match"
+        },
+        {
+          "clauses": 1,
+          "name": "source_symbol"
+        },
+        {
+          "clauses": 1,
+          "name": "source_loop_index"
+        },
+        {
+          "clauses": 1,
+          "name": "source_scan_region"
+        },
+        {
+          "clauses": 2,
+          "name": "frame_write"
+        },
+        {
+          "clauses": 2,
+          "name": "frame_declaration"
+        },
+        {
+          "clauses": 2,
+          "name": "frame_dependency"
+        }
+      ],
+      "inherits": [],
+      "premise_bindings": [],
+      "premises": {},
+      "sha256": "47246f3e2e782f5d334fcf235e0bb6b542aa3af019053b2a5865ae78dbe26e23"
+    }
+  },
+  "outer_view": [],
+  "regenerate": "python3 providers/contracts.py sync",
+  "resource_view": [],
+  "schema_version": 1
+}

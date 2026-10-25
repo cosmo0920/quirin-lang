@@ -1,0 +1,13 @@
+{
+  "note": "Combined landing of CONTRACT-LOCKS and AUDIT-COMPOSITION on integrate/amendments-schema. CONTRACT-LOCKS merged onto 51d103d60 (d25e91367); origin/main 47fc52a32 (CMetrics setter contracts) merged in 0926ef10a with the corpus test kept as the lock reader and the 15 setter declarations regenerated into qcore-provider-cmetrics/contract-inventory.lock by `providers/contracts.py sync` (identical to the retired literal rows); the user's main merge of card/audit-composition (373e41ee8, cc9f2cb35) merged cleanly, amendments applied by apply_amendments.py (1638e581a). An earlier full gate on 0926ef10a was stopped mid-run at the user's request when AUDIT-COMPOSITION was merged. FULL standing gate ON 1638e581a: `scripts/gate_scope.py --base 47fc52a32 --full` with gate slots (private log /media/Data/GitHub/quirin-lang/private/landing-cl/console3.log): submodules, fmt, Clippy, Rust 8688 passed/0 failed/15 ignored (555 units/568 summaries), both reevaluation examples, Lean 373 audits, provider package build and verifies, provider tests 133 passed/0 failed/1 ignored, provider fmt and Clippy, all exit 0. Python 460 ran with 1 failure, the stale dimensions.named_followups predating regeneration; after `build_matrix.py --gate` on this record Python was rerun on the committed matrix. The earlier targeted check on d25e91367 (contracts.py check, gen_rule_docs/gen_lean_roots --check, provider Python 26, corpus+census tests) is in private/landing-cl/exits.txt. Plan §6 decision 9a (user, 2026-10-26) recorded in the same records commit.",
+  "workspace_tests": 8688,
+  "provider_tests": 133,
+  "python_evidence_validator_tests": 460,
+  "reevaluation_probe_exit": 0,
+  "reevaluation_followup_exit": 0,
+  "cargo_fmt": "clean",
+  "cargo_clippy": "clean",
+  "standing_gate": "full gate on combined integration tip 1638e581a",
+  "lean_audits": 373,
+  "clang": "present: Ubuntu clang version 21.1.8 (6ubuntu1)"
+}

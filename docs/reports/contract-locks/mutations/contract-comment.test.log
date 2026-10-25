@@ -1,0 +1,28 @@
+   Compiling qcore-audit v0.1.0 (/media/Data/GitHub/quirin-lang/.claude/worktrees/agent-ab7ec0d74a33f2d6d/crates/qcore-audit)
+   Compiling qcore-compiler v0.4.0 (/media/Data/GitHub/quirin-lang/.claude/worktrees/agent-ab7ec0d74a33f2d6d/compiler)
+    Finished `test` profile [unoptimized + debuginfo] target(s) in 16.98s
+     Running tests/qcore_contract_corpus.rs (target/debug/deps/qcore_contract_corpus-c2a76e5b8c42dbc2)
+
+running 6 tests
+test the_closesocket_error_arm_states_an_unresolved_endpoint ... ok
+test contract_surface_is_pinned_as_structured_clauses ... ok
+test inherited_contracts_are_pinned_in_their_written_form ... ok
+test every_module_reads_its_premises_and_the_model_contract_names_the_plugin_premise ... ok
+test every_contract_inventory_lock_equals_its_tree ... FAILED
+test every_qcore_contract_source_parses_round_trips_and_compiles ... ok
+
+failures:
+
+---- every_contract_inventory_lock_equals_its_tree stdout ----
+
+thread 'every_contract_inventory_lock_equals_its_tree' (247060) panicked at compiler/tests/qcore_contract_corpus.rs:235:13:
+quirin-provider-cfl: contract-inventory.lock differs from the tree (modules ["cfl/time.qv"]); review the contract change, then run `python3 providers/contracts.py sync`
+note: run with `RUST_BACKTRACE=1` environment variable to display a backtrace
+
+
+failures:
+    every_contract_inventory_lock_equals_its_tree
+
+test result: FAILED. 5 passed; 1 failed; 0 ignored; 0 measured; 0 filtered out; finished in 3.17s
+
+error: test failed, to rerun pass `-p qcore-compiler --test qcore_contract_corpus`

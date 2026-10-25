@@ -62,7 +62,14 @@ python3 providers/contracts.py check
 cargo test -p qcore-compiler --test qcore_contract_corpus
 ```
 
-`sync` updates each provider's `contracts.json` and `contract-load-path.json`;
+`sync` updates each provider's `contracts.json` and `contract-load-path.json`,
+and each load-path crate's `contract-inventory.lock` (card CONTRACT-LOCKS):
+per module its SHA-256, its `extern fn` declarations with their elaborated
+clause counts, its `contract inherit` edges and its premise manifest, plus
+the crate's views, computed by `cargo run -p qcore-contract --example
+contract_inventory`. The corpus tests read these locks instead of literal
+tables, so a contract change commits its regenerated lock beside it and the
+review reads the lock diff. `check` refuses a lock that differs by a byte.
 `check` compares its exact path and SHA-256 inventory with the canonical
 `contracts/` tree, and the load path with its sources. Each load-path crate
 record carries a `resource_view`: the owned modules the resource-contract

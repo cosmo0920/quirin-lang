@@ -1,0 +1,34 @@
+    Finished `test` profile [unoptimized + debuginfo] target(s) in 0.01s
+     Running tests/qcore_contract_corpus.rs (target/debug/deps/qcore_contract_corpus-c2a76e5b8c42dbc2)
+
+running 6 tests
+test the_closesocket_error_arm_states_an_unresolved_endpoint ... ok
+test inherited_contracts_are_pinned_in_their_written_form ... FAILED
+test contract_surface_is_pinned_as_structured_clauses ... ok
+test every_module_reads_its_premises_and_the_model_contract_names_the_plugin_premise ... ok
+test every_contract_inventory_lock_equals_its_tree ... FAILED
+test every_qcore_contract_source_parses_round_trips_and_compiles ... ok
+
+failures:
+
+---- inherited_contracts_are_pinned_in_their_written_form stdout ----
+
+thread 'inherited_contracts_are_pinned_in_their_written_form' (248019) panicked at compiler/tests/qcore_contract_corpus.rs:629:5:
+assertion `left == right` failed
+  left: [("fluent_bit/resource_memory.qv", "flb_malloc", "libc::malloc"), ("fluent_bit/resource_memory.qv", "flb_calloc", "libc::calloc"), ("fluent_bit/resource_memory.qv", "flb_free", "libc::free"), ("fluent_bit/resource_string.qv", "flb_strdup", "libc::strdup"), ("fluent_bit/resource_string.qv", "flb_strndup", "libc::strndup"), ("librdkafka/memory.qv", "rd_malloc", "libc::malloc"), ("librdkafka/memory.qv", "rd_strndup", "libc::strndup"), ("librdkafka/memory.qv", "rd_free", "libc::free"), ("monkey/memory.qv", "mk_mem_alloc", "libc::malloc"), ("monkey/memory.qv", "mk_mem_alloc_z", "libc::malloc"), ("monkey/memory.qv", "mk_mem_free", "libc::free")]
+ right: [("fluent_bit/resource_memory.qv", "flb_malloc", "libc::malloc"), ("fluent_bit/resource_memory.qv", "flb_calloc", "libc::calloc"), ("fluent_bit/resource_memory.qv", "flb_free", "libc::malloc"), ("fluent_bit/resource_string.qv", "flb_strdup", "libc::strdup"), ("fluent_bit/resource_string.qv", "flb_strndup", "libc::strndup"), ("librdkafka/memory.qv", "rd_malloc", "libc::malloc"), ("librdkafka/memory.qv", "rd_strndup", "libc::strndup"), ("librdkafka/memory.qv", "rd_free", "libc::free"), ("monkey/memory.qv", "mk_mem_alloc", "libc::malloc"), ("monkey/memory.qv", "mk_mem_alloc_z", "libc::malloc"), ("monkey/memory.qv", "mk_mem_free", "libc::free")]
+note: run with `RUST_BACKTRACE=1` environment variable to display a backtrace
+
+---- every_contract_inventory_lock_equals_its_tree stdout ----
+
+thread 'every_contract_inventory_lock_equals_its_tree' (248016) panicked at compiler/tests/qcore_contract_corpus.rs:235:13:
+quirin-provider-fluent-bit: contract-inventory.lock differs from the tree (modules ["fluent_bit/resource_memory.qv"]); review the contract change, then run `python3 providers/contracts.py sync`
+
+
+failures:
+    every_contract_inventory_lock_equals_its_tree
+    inherited_contracts_are_pinned_in_their_written_form
+
+test result: FAILED. 4 passed; 2 failed; 0 ignored; 0 measured; 0 filtered out; finished in 2.29s
+
+error: test failed, to rerun pass `-p qcore-compiler --test qcore_contract_corpus`

@@ -64,10 +64,11 @@ byte counts are not token billing. A smaller index alone proves no task-cost gai
 4. **Gate ordering** (`docs/REEVALUATION_SPEC.md` §9): certificate
    containment (G1) before provider expansion; Cycle 19 routes stay until
    G4 parity.
-5. **Pinned expectations are intentional.** `qcore_contract_corpus.rs` pins
-   per-file contract/clause counts (editing provider-owned contracts or
-   the shared `providers/quirin-provider-*/contracts` requires updating
-   its tables); a test asserts the `third_party/libevent` submodule revision; pinned commit hashes are load-bearing identity checks.
+5. **Pinned expectations are intentional.** Each provider crate's generated
+   `contract-inventory.lock` pins per-file contract/clause counts, read by
+   `qcore_contract_corpus.rs` (editing provider-owned contracts or the shared
+   `providers/quirin-provider-*/contracts` requires `providers/contracts.py
+   sync` and the reviewed lock diff in the same commit); a test asserts the `third_party/libevent` submodule revision; pinned commit hashes are load-bearing identity checks.
 6. **Lean parity.** Semantic changes need matching Lean definitions/theorems;
    audits must stay placeholder-free with no project axioms.
 

@@ -1,0 +1,1 @@
+provider contracts: stale contract inventory lock: /media/Data/GitHub/quirin-lang/.claude/worktrees/agent-ab7ec0d74a33f2d6d/providers/qcore-provider-librdkafka/contract-inventory.lock; librdkafka/queue_destructor.qv differs in ['premises']; review the contracts, then run `python3 providers/contracts.py sync`

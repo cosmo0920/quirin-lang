@@ -1,0 +1,55 @@
+gate_scope: failed steps: python
+mode: full
+  full because the diff reaches qcore-contract
+affected crates (20):
+  qcore-audit: names providers in a string literal: providers/README.md (crates/qcore-audit/tests/current_cli.rs:138); names providers in a string literal: providers/README.md (crates/qcore-audit/tests/dependency_graph.rs:92); names providers in a string literal: providers/README.md (crates/qcore-audit/tests/provider_selection.rs:620); ... 42 more
+  qcore-c-gateway: depends on qcore-contract
+  qcore-compiler: owns compiler/tests/qcore_contract_corpus.rs; names crates/qcore-contract in a string literal: crates/qcore-contract/examples/contract_inventory.rs (compiler/tests/workspace_layering.rs:15); names providers in a string literal: providers/README.md (compiler/tests/contract_inherit_qcore_provider.rs:406); ... 56 more
+  qcore-contract: owns crates/qcore-contract/examples/contract_inventory.rs; names providers in a string literal: providers/README.md (crates/qcore-contract/tests/event_loop_clauses.rs:211); names providers in a string literal: providers/README.md (crates/qcore-contract/tests/production_symbolic_adoption.rs:340); ... 26 more
+  qcore-provider-chunkio: owns providers/qcore-provider-chunkio/contract-inventory.lock
+  qcore-provider-cmetrics: owns providers/qcore-provider-cmetrics/contract-inventory.lock
+  qcore-provider-conformance: names providers in a string literal: providers/README.md (providers/conformance/tests/composed_five_providers.rs:132); names providers in a string literal: providers/README.md (providers/conformance/tests/packages.rs:373); names providers in a string literal: providers/contracts.py (providers/conformance/tests/composed_five_providers.rs:132); ... 25 more
+  qcore-provider-ctraces: owns providers/qcore-provider-ctraces/contract-inventory.lock
+  qcore-provider-libevent: owns providers/qcore-provider-libevent/contract-inventory.lock
+  qcore-provider-librdkafka: owns providers/qcore-provider-librdkafka/contract-inventory.lock
+  qcore-verification: names crates in a string literal: crates/qcore-contract/examples/contract_inventory.rs (crates/qcore-verification/tests/composition_bounds.rs:288)
+  qcorec: depends on qcore-compiler
+  quirin-provider-cfl: owns providers/quirin-provider-cfl/contract-inventory.lock
+  quirin-provider-fluent-bit: owns providers/quirin-provider-fluent-bit/contract-inventory.lock
+  quirin-provider-libc: owns providers/quirin-provider-libc/contract-inventory.lock
+  quirin-provider-mpack: owns providers/quirin-provider-mpack/contract-inventory.lock
+  quirin-provider-msgpack: owns providers/quirin-provider-msgpack/contract-inventory.lock
+  quirin-provider-plugin: depends on quirin-provider-shared
+  quirin-provider-shared: owns providers/quirin-provider-shared/contract-inventory.lock
+  quirin-source-analysis: depends on qcore-contract
+rust suite packages: qcore-audit, qcore-c-gateway, qcore-compiler, qcore-contract, qcore-core, qcore-frontend, qcore-schemas, qcore-verification, qcore-verifier-host, qcorec, quirin-audit-plugin, quirin-audit-plugin-libevent, quirin-source-analysis
+lean: none
+provider gate: yes
+python suite: always
+[submodules] $ git -C /media/Data/GitHub/quirin-lang/.claude/worktrees/agent-ab7ec0d74a33f2d6d submodule status --recursive
+[submodules] exit 0 in 0.0s {"submodules": 1, "not_checked_out_or_moved": []}
+[fmt] $ cargo fmt --all -- --check
+[fmt] exit 0 in 5.4s 
+[clippy] $ cargo clippy --all-targets -- -D warnings
+[clippy] exit 0 in 10.1s 
+[rust-suite] $ /usr/bin/python3 /media/Data/GitHub/quirin-lang/.claude/worktrees/agent-ab7ec0d74a33f2d6d/scripts/gate_slot.py rust-suite --receipt /media/Data/GitHub/quirin-lang/.claude/worktrees/agent-ab7ec0d74a33f2d6d/private/gate-scope/20261025T074258Z-1282415/slots/rust-suite.json -- /usr/bin/python3 /media/Data/GitHub/quirin-lang/.claude/worktrees/agent-ab7ec0d74a33f2d6d/scripts/run_test_binaries.py --log-dir /media/Data/GitHub/quirin-lang/.claude/worktrees/agent-ab7ec0d74a33f2d6d/private/gate-scope/20261025T074258Z-1282415/rust-suite
+[rust-suite] exit 0 in 2744.8s {"units": 553, "passed": 8672, "failed": 0, "ignored": 15, "measured": 0, "filtered": 0, "summaries": 566, "packages": null, "summary": "/media/Data/GitHub/quirin-lang/.claude/worktrees/agent-ab7ec0d74a33f2d6d/private/gate-scope/20261025T074258Z-1282415/rust-suite/summary.json", "ok": true}
+[probe-reevaluation_probe] $ cargo run -p qcore-compiler --example reevaluation_probe
+[probe-reevaluation_probe] exit 0 in 0.1s 
+[probe-reevaluation_followup] $ cargo run -p qcore-compiler --example reevaluation_followup
+[probe-reevaluation_followup] exit 0 in 0.5s 
+[python] $ /usr/bin/python3 -m unittest discover -s scripts/tests
+[python] exit 1 in 39.3s {"tests": 445, "skipped": 0, "ok": false}
+[provider-package-build] $ /usr/bin/python3 providers/package.py build --output /media/Data/GitHub/quirin-lang/.claude/worktrees/agent-ab7ec0d74a33f2d6d/private/gate-scope/20261025T074258Z-1282415/provider-packages
+[provider-package-build] exit 0 in 52.7s 
+[provider-package-verify-all] $ /usr/bin/python3 /media/Data/GitHub/quirin-lang/.claude/worktrees/agent-ab7ec0d74a33f2d6d/scripts/gate_scope.py --verify-packages /media/Data/GitHub/quirin-lang/.claude/worktrees/agent-ab7ec0d74a33f2d6d/private/gate-scope/20261025T074258Z-1282415/provider-packages
+[provider-package-verify-all] exit 0 in 0.6s 
+[provider-package-verify] $ /usr/bin/python3 providers/package.py verify /media/Data/GitHub/quirin-lang/.claude/worktrees/agent-ab7ec0d74a33f2d6d/private/gate-scope/20261025T074258Z-1282415/provider-packages/qcore.libevent
+[provider-package-verify] exit 0 in 0.1s 
+[provider-test] $ /usr/bin/python3 /media/Data/GitHub/quirin-lang/.claude/worktrees/agent-ab7ec0d74a33f2d6d/scripts/gate_slot.py rust-suite --receipt /media/Data/GitHub/quirin-lang/.claude/worktrees/agent-ab7ec0d74a33f2d6d/private/gate-scope/20261025T074258Z-1282415/slots/provider-test.json -- cargo test --manifest-path providers/Cargo.toml --workspace --locked --offline
+[provider-test] exit 0 in 2958.8s {"summaries": 43, "passed": 133, "failed": 0, "ignored": 1, "measured": 0, "filtered": 0}
+[provider-fmt] $ cargo fmt --manifest-path providers/Cargo.toml --all -- --check
+[provider-fmt] exit 0 in 6.5s 
+[provider-clippy] $ cargo clippy --manifest-path providers/Cargo.toml --workspace --all-targets --locked --offline -- -D warnings
+[provider-clippy] exit 0 in 24.7s 
+gate.json: /media/Data/GitHub/quirin-lang/.claude/worktrees/agent-ab7ec0d74a33f2d6d/private/gate-scope/20261025T074258Z-1282415/gate.json
