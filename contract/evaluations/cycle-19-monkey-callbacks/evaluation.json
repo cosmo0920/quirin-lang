@@ -1,0 +1,54 @@
+{
+  "schema": "quirin-evaluation-profile/1",
+  "name": "cycle-19-monkey-callbacks",
+  "description": "Cycle 19's profile-selected Monkey callback coverage (acceptance matrix corpus.cycle19_monkey_callback_coverage): three selected callbacks, eight paths.",
+  "policy": {
+    "kind": "frozen",
+    "revision": "016df072c89b8d9439da45293fd5b9f8374b2020"
+  },
+  "route": {
+    "kind": "callback-coverage",
+    "command": "the pinned corpus route with the Monkey callback selection and the focused replay (docs/reports/w42-monkey-callback-coverage/README.md)"
+  },
+  "source": {
+    "repository": "fluent-bit",
+    "revision": "66910c10a4d7eafa810b84229cf2dcf7b0f26f97",
+    "submodules": {
+      "third_party/libevent": "d82464a277d0f42703702c4dfd9af6af38595a83"
+    },
+    "note": "Fluent Bit v5.1.1-127-g66910c10a; Monkey in-tree under lib/monkey"
+  },
+  "inputs": {
+    "tracked": [
+      {
+        "path": "contract/profiles/fluent-bit/profile.json",
+        "revision": "016df072c89b8d9439da45293fd5b9f8374b2020",
+        "sha256": "5507e9f605522ac8ffbe8cc6dbe541f096169d531a3a6276c50344bf8a05f035",
+        "role": "source-set pins and audited files"
+      },
+      {
+        "path": "contract/profiles/fluent-bit/audit.json",
+        "revision": "016df072c89b8d9439da45293fd5b9f8374b2020",
+        "sha256": "27a19bc283fb215421c003bd4dce2a4db6932f3a7a8e6edfd4979cb439e97315",
+        "role": "unit selection"
+      }
+    ],
+    "untracked": []
+  },
+  "contract_set": {
+    "lock_set": {
+      "state": "retired",
+      "evidence_sha256": "48b2c9d762c8624af61ffc2bb5df78c9c9b11528372fb3bf4e86be56cc2d0037"
+    },
+    "references": [],
+    "note": "frozen: the provider contracts of the tree at the frozen revision; no pin-lock set was retained for this revision (it predates the lock-set window of decision 9a), so the contract set is identified by its evidence digest at the frozen revision"
+  },
+  "baseline": {
+    "path": "contract/evaluations/cycle-19-monkey-callbacks/baseline.json",
+    "sha256": "8069fcd3a1995198c0d922ab83624b8a202a28c54fab900fddcfae79a4cf02e9"
+  },
+  "evidence_version": {
+    "analyzer_revision": "016df072c89b8d9439da45293fd5b9f8374b2020",
+    "semantic_evidence": "v2 (unchanged)"
+  }
+}

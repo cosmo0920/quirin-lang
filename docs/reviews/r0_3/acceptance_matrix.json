@@ -195,7 +195,7 @@
   "ct_stage_names": 20,
   "ct_cells": 1000,
   "unverified_spec_items": 10,
-  "named_followups": 840
+  "named_followups": 846
  },
  "derivation": {
   "rule": "no count in a section this file marks `derived` is hand-copied from a status ledger; each is read from the manifest or validated run record named beside it. Sections marked `hand_maintained` are recorded analysis carried verbatim from the previous matrix, and `integrator_supplied` numbers name whether they were measured for this run or carried - see section_ownership.",
@@ -6858,10 +6858,10 @@
   "note": "providers/ is a separate Cargo workspace, excluded from the core workspace; P01 verified empirically that the core workspace builds and passes its full suite with providers/ moved out of the tree."
  },
  "validation": {
-  "note": "Combined landing of CONTRACT-LOCKS and AUDIT-COMPOSITION on integrate/amendments-schema. CONTRACT-LOCKS merged onto 51d103d60 (d25e91367); origin/main 47fc52a32 (CMetrics setter contracts) merged in 0926ef10a with the corpus test kept as the lock reader and the 15 setter declarations regenerated into qcore-provider-cmetrics/contract-inventory.lock by `providers/contracts.py sync` (identical to the retired literal rows); the user's main merge of card/audit-composition (373e41ee8, cc9f2cb35) merged cleanly, amendments applied by apply_amendments.py (1638e581a). An earlier full gate on 0926ef10a was stopped mid-run at the user's request when AUDIT-COMPOSITION was merged. FULL standing gate ON 1638e581a: `scripts/gate_scope.py --base 47fc52a32 --full` with gate slots (private log /media/Data/GitHub/quirin-lang/private/landing-cl/console3.log): submodules, fmt, Clippy, Rust 8688 passed/0 failed/15 ignored (555 units/568 summaries), both reevaluation examples, Lean 373 audits, provider package build and verifies, provider tests 133 passed/0 failed/1 ignored, provider fmt and Clippy, all exit 0. Python 460 ran with 1 failure, the stale dimensions.named_followups predating regeneration; after `build_matrix.py --gate` on this record Python was rerun on the committed matrix. The earlier targeted check on d25e91367 (contracts.py check, gen_rule_docs/gen_lean_roots --check, provider Python 26, corpus+census tests) is in private/landing-cl/exits.txt. Plan §6 decision 9a (user, 2026-10-26) recorded in the same records commit.",
+  "note": "Integration of EVALUATION-PROFILES: merge of card tip 8223b5461 (base 710021bd7) onto main bc1888f29; records commit 05d11438b written by scripts/apply_amendments.py, plus the plan's record path corrected to contract/evaluations/ (the card's finding: a contract/profiles/ directory without profile.json empties the first-party provider registry). `scripts/evaluation_profiles.py check --history` on the merge: 3 live, 6 frozen, bindings and policy ok. Full standing gate ON 05d11438b through `scripts/gate_scope.py --base bc1888f29 --full` with gate slots (private log /media/Data/GitHub/quirin-lang/private/landing-ep/console.log): submodules, fmt, Clippy, Rust 8688 passed/0 failed/15 ignored (555 units/568 summaries), both reevaluation examples, all exit 0. Python 492 ran with 1 failure, the stale dimensions.named_followups predating regeneration; after `build_matrix.py --gate` on this record Python was rerun on the committed matrix. providers/ and proof/ unchanged: provider_tests 133 and lean_audits 373 carried from bc1888f29's gate. The live baselines were measured at 710021bd7; the landings since (AUDIT-COMPOSITION, CFG-RELEASE: byte-identical identity runs; CONTRACT-LOCKS: no analyzer change; CMetrics setter contracts: executable adoption Open) are recorded as non-moving by their own evidence, not re-measured here.",
   "workspace_tests": 8688,
   "provider_tests": 133,
-  "python_evidence_validator_tests": 460,
+  "python_evidence_validator_tests": 492,
   "lean_audits": 374,
   "lean_audit_files": [
    "AuditAbiEnumConstPointer.lean",
@@ -7243,9 +7243,9 @@
   "reevaluation_followup_exit": 0,
   "cargo_fmt": "clean",
   "cargo_clippy": "clean",
-  "standing_gate": "full gate on combined integration tip 1638e581a",
+  "standing_gate": "full gate on integration tip 05d11438b",
   "full_language_conformance": false,
-  "measurement_provenance": "integrator_supplied (docs/reports/contract-locks/integration/gate.json)"
+  "measurement_provenance": "carried_from_previous_matrix: these numbers were NOT measured for this regeneration; pass --gate PATH with the standing-gate results of this checkpoint to replace them"
  },
  "named_followups": [
   {
@@ -13005,14 +13005,14 @@
   {
    "id": "PREPASS-CLOCK-DEPENDENT-KEY",
    "title": "One pre-pass summary key changes with the clock, so route sidecars are not reproducible",
-   "why": "Found by AUDIT-CANONICAL-PATHS. The Fluent Bit compile database compiles lib/monkey/mk_bin/monkey.c, whose MONKEY_BUILT is `__DATE__ \" \" __TIME__`. The member pre-pass keys each unit's lifetime-source summary by a digest over its preprocessed text, so that unit's key (an empty summary) differs between any two runs not in the same second. It shows in both the evidence and pre-pass sections of the .contracts.json sidecar on the corpus, system and slice routes. Verdicts are unaffected, but no two runs of a route are byte-identical, which every identity run must then explain. DISCHARGE: preprocess under a fixed, recorded SOURCE_DATE_EPOCH (Clang honours it for __DATE__ and __TIME__), or refuse or normalise the time macros in the identity. Evidence: two runs of one route byte-identical.",
-   "source": "docs/reports/audit-canonical-paths/README.md"
+   "why": "Found by AUDIT-CANONICAL-PATHS. The Fluent Bit compile database compiles lib/monkey/mk_bin/monkey.c, whose MONKEY_BUILT is `__DATE__ \" \" __TIME__`. The member pre-pass keys each unit's lifetime-source summary by a digest over its preprocessed text, so that unit's key (an empty summary) differs between any two runs not in the same second. It shows in both the evidence and pre-pass sections of the .contracts.json sidecar on the corpus, system and slice routes. Verdicts are unaffected, but no two runs of a route are byte-identical, which every identity run must then explain. DISCHARGE: preprocess under a fixed, recorded SOURCE_DATE_EPOCH (Clang honours it for __DATE__ and __TIME__), or refuse or normalise the time macros in the identity. Evidence: two runs of one route byte-identical. CFG-RELEASE observation: with SOURCE_DATE_EPOCH=1761004800 set in the caller's environment, corpus, slice and system route outputs of two independently built sides are raw byte-identical and share every pre-pass summary key (1,058 / 1,039 / 1,037). Clang honours the variable for __DATE__/__TIME__, and the audit's Clang invocations inherit the environment. The entry stays open: the audit itself neither fixes nor records the epoch.",
+   "source": "docs/reports/audit-canonical-paths/README.md, docs/reports/cfg-release/README.md"
   },
   {
    "id": "MEASURE-SNAPSHOT-HAZARDS",
    "title": "Measurement snapshots: missing submodule, shared working directory, git index refresh, build stamp",
-   "why": "Found by AUDIT-CANONICAL-PATHS while measuring from git-archive snapshots, for the MEASURE-TOOL card (seam F). (1) git archive omits third_party/libevent. The pinned route reads it through the binary's compile-time CARGO_MANIFEST_DIR, so the corpus fails at the Monkey gate with the enclosing worktree's HEAD. (2) The audit writes transient retained products under its working directory (private/audit-retained-products/), so two routes sharing a snapshot trip each other's input-identity check (driver exit 101). (3) The audit's git refreshes a fresh clone's .git/index during the route, also exit 101. (4) QCORE_AUDIT_BUILD_COMMIT (evidence_version) is the HEAD of whatever repository encloses the build directory, not the measured revision. (5) The snapshot directory reaches the contract-source paths the reports digest, so sides at different paths can never be byte-compared. scripts/pin_run.sh and run_pinned_paths.sh in the report show one workaround. DISCHARGE: quirin-audit measure prepares snapshots with submodules at one fixed path per side, runs each with a private working directory, excludes VCS metadata from the identity check and records the measured revision explicitly.",
-   "source": "docs/reports/audit-canonical-paths/README.md"
+   "why": "Found by AUDIT-CANONICAL-PATHS while measuring from git-archive snapshots, for the MEASURE-TOOL card (seam F). (1) git archive omits third_party/libevent. The pinned route reads it through the binary's compile-time CARGO_MANIFEST_DIR, so the corpus fails at the Monkey gate with the enclosing worktree's HEAD. (2) The audit writes transient retained products under its working directory (private/audit-retained-products/), so two routes sharing a snapshot trip each other's input-identity check (driver exit 101). (3) The audit's git refreshes a fresh clone's .git/index during the route, also exit 101. (4) QCORE_AUDIT_BUILD_COMMIT (evidence_version) is the HEAD of whatever repository encloses the build directory, not the measured revision. (5) The snapshot directory reaches the contract-source paths the reports digest, so sides at different paths can never be byte-compared. scripts/pin_run.sh and run_pinned_paths.sh in the report show one workaround. DISCHARGE: quirin-audit measure prepares snapshots with submodules at one fixed path per side, runs each with a private working directory, excludes VCS metadata from the identity check and records the measured revision explicitly. CFG-RELEASE observation: item 3 recurs even after `git update-index --refresh` on the fresh libevent clone before the run. Both corpus drivers exit 101 with audit exit 0 and only third_party/libevent/.git/index changed.",
+   "source": "docs/reports/audit-canonical-paths/README.md, docs/reports/cfg-release/README.md"
   },
   {
    "id": "AMENDMENTS-RESERVED-FIELDS-UNAPPLIED",
@@ -13063,6 +13063,48 @@
    "title": "A component's analyzer revision is package@version plus an optional build commit, not the binary digest",
    "why": "report_components::analyzer_revision (card AUDIT-COMPOSITION) spells qcore-audit@<version>:<QCORE_AUDIT_BUILD_COMMIT or unrecorded-build>. Two different builds without a recorded commit share a provenance key, so joining their contributions surfaces as composition-conflict (fail-closed) rather than as two producers. DISCHARGE: put the analyzer binary's SHA-256 (as checkpoint_run::run_identity takes it) or a mandatory build commit into Provenance, with a test that two differing binaries never share a provenance key.",
    "source": "docs/reports/audit-composition/README.md"
+  },
+  {
+   "id": "CORPUS-PEAK-ABOVE-AUDIT-SLOT-BUDGET",
+   "title": "The pinned corpus process peaks above its 7 GiB audit-slot budget",
+   "why": "Found by CFG-RELEASE's memory observation. Under scripts/gate_slot.py audit --memory-budget 7G and --jobs 3, the pinned corpus route's quirin-audit process reached a maximum RSS of 10,129,997,824 bytes (BASE 710021bd7) and 10,042,564,608 (TIP); the systemd scope peaked at about 10.6-10.9 GB including page cache. The pinned route receives the slot budget only as QCORE_AUDIT_JOBS (a worker cap), not as a memory plan, so slot admission (floor(MemAvailable / 7 GiB)) can admit more corpus runs than the host's memory holds. No OOM, memory event or swap was observed on the 60 GB host. DISCHARGE: either the pinned route plans its workers against the slot budget (as `quirin-audit current --memory-budget-mib` does) and a measured corpus peak stays within it, or gate_slot.py budgets the corpus class at its measured peak; evidence: a corpus run whose process peak is at or below its slot's budget.",
+   "source": "docs/reports/cfg-release/README.md",
+   "recorded_by": "CFG-RELEASE"
+  },
+  {
+   "id": "EVALUATION-PROFILES-AMENDMENTS-CHECK",
+   "title": "apply_amendments.py validates profiles[] only by shape",
+   "why": "Found by EVALUATION-PROFILES, which defines the reserved amendments field profiles[]: the live evaluation profiles whose baseline the card's measured tip records. Every name must be a profile, none may be frozen, and against the card base the list must equal the live profiles whose baseline changed (scripts/evaluation_profiles.py amendments <file> --base <rev>). apply_amendments.py, owned by AMENDMENTS-SCHEMA, still checks only the name shape, so an integrator applying a card's amendments does not run this check. DISCHARGE: apply_amendments.py --check calls evaluation_profiles.check_amendments with the document's base, with a refusal test for an unknown, a frozen and an unlisted moved profile.",
+   "source": "docs/reports/evaluation-profiles/README.md",
+   "recorded_by": "EVALUATION-PROFILES"
+  },
+  {
+   "id": "EVALUATION-PROFILES-MEASURE-READER",
+   "title": "Measurement drivers do not read the evaluation-profile records",
+   "why": "Found by EVALUATION-PROFILES. The live profiles eight-home, fluent-bit-system and fluent-bit-tail-pause now record their route, tracked inputs (with digests), untracked prepared compile databases (with digests) and link map, but every card still measures with a copied report driver (docs/reports/audit-canonical-paths/scripts/measure.py) that hard-codes the same inputs, and nothing verifies the untracked digests before a run. DISCHARGE: quirin-audit measure --profile <name> (MEASURE-TOOL) reads contract/evaluations/<name>/evaluation.json, refuses a run whose untracked inputs differ from the recorded digests, and emits figures equal to evaluation_profiles.py summarize, so compare and record consume its output directly.",
+   "source": "docs/reports/evaluation-profiles/README.md",
+   "recorded_by": "EVALUATION-PROFILES"
+  },
+  {
+   "id": "EVALUATION-PROFILES-MATRIX-ROWS",
+   "title": "Matrix corpus rows are bound to profiles but not derived from them",
+   "why": "Found by EVALUATION-PROFILES. contract/evaluations/bindings.json classifies every key of the acceptance matrix corpus section, and a test refuses an unbound key, but the rows themselves stay hand-maintained: conditional_eight_home_cycle3, bound route by route to the three live profiles, still shows the W48 batch-5 figures (corpus 975 Safe) while the live baselines record BASE 710021bd7. DISCHARGE: build_matrix.py emits each bound row's profile name and policy and, for a live profile, the figures of its current baseline.json, so the row cannot drift from the profile.",
+   "source": "docs/reports/evaluation-profiles/README.md",
+   "recorded_by": "EVALUATION-PROFILES"
+  },
+  {
+   "id": "REBASE-CORPUS",
+   "title": "Re-base the live evaluation profiles onto a newer Fluent Bit revision every one to two months",
+   "why": "User decision 2 of 2026-10-24 (docs/plans/pluggable-cards/README.md section 3 A, corpus cadence): the live profiles eight-home, fluent-bit-system and fluent-bit-tail-pause follow the Fluent Bit repository, best effort every one to two months. EVALUATION-PROFILES recorded their first baselines on BASE 710021bd7 over Fluent Bit 66910c10a (corpus), 046accf6a (system) and 34155955e (tail-pause slice). The policy check treats a change of a live profile's tracked inputs as a re-base that must record the newly measured baseline, with its reason, in the same commit; the previous baseline stays in baseline_history. Frozen cycle profiles are never moved. DISCHARGE: recurring; each firing is a card that prepares the newer revision's inputs, re-reviews the pins whose sites changed (pin --check, C06.2), records the new baselines through evaluation_profiles.py record and names the date of the next firing.",
+   "source": "docs/reports/evaluation-profiles/README.md",
+   "recorded_by": "EVALUATION-PROFILES"
+  },
+  {
+   "id": "GATE-SCOPE-EVALUATION-RECORDS",
+   "title": "The scoped gate falls back to the full suite for any evaluation-record change",
+   "why": "Found by EVALUATION-PROFILES. scripts/gate_scope.py classifies contract/evaluations/** as owned and read by no crate and not prose, Python, Lean or provider tooling, so it fails closed to the full Rust suite (the card's gate ran 553 units for JSON records only scripts/evaluation_profiles.py reads). Every future live-baseline record (each rule card, each REBASE-CORPUS firing) would pay the same. DISCHARGE: gate_scope.py treats contract/evaluations/** as Python-suite data (no Rust crate reads it: a string-literal census proves it), with a test that a record-only diff selects no Rust package and still runs the Python suite.",
+   "source": "docs/reports/evaluation-profiles/README.md",
+   "recorded_by": "EVALUATION-PROFILES"
   }
  ],
  "updated": "Completed plugin premise integration; exact hand-maintained union retains810followups, borrowed measured-source8419Rust/354Lean/freshcard133provider, exact source equivalence checked; authoritative root committed-matrix Python confirmation in integration receipt. CMetrics map/opts API model specifications added at the explicit user request. Eight declared-model API contracts remain outside interpreted views, with CMT-MAP-OPTS-CONTRACT-ADOPTION and CMT-LABELED-HASH-ZERO-STATIC-STORAGE Open. No trusted API coverage is claimed; the source gate is recorded by this card alongside its separate initializer native checkpoint. W48-CMT-TRACKED-INTERIOR-SELF-INIT implements rule 36b's checked initializer effect transport for an exact live owned root or embedded record, retaining actual self writes, invalidating aliased member facts and preserving resource obligations; nondefault custody frames refuse and no ordinary summary is exported. The canonical CFL intrusive_list.qv declares matching audit preconditions/effects; two CMetrics .qv modules add six map and two opts lifecycle models, including transitive ownership, partial failure, borrowed results and uncleared cleanup fields. All remain outside interpreted views; checked API adoption and labeled zero-hash storage accounting have named Open follow-ups. Fresh BASE/planner precedes prediction f18d96065 and implementation; the later contract amendment 08da23123 precedes .qv edits. Native corpus BASE/TIP Safe/Unknown/Pending/provisional-Unsafe: 1009 / 3816 / 0 / 9 to 1011 / 3814 / 0 / 9; full system/slice, 5781 NULL dictionaries and runtime projections are compared, 241 semantic leaves accounted, zero unexplained leaves and no prior Safe loss. Gate 8654 Rust / 370 Lean / 374 Python, provider 133 Rust / 25 Python and all five package verifies pass. The actual deep source reader uses 328 KiB below 1 MiB. Full getter closure remains Open; W48-CMT-SELF-INIT-DISJOINT-FRAMES tracks the next bounded frame extension, and W48-EXACT-RETURN-WITNESS-PRECISION is unchanged. Native evidence is isolated to measured e92d8aef35a8bd14550e90219d19a56eb3b196e7; later source gate 2d0d85299b830aa24d7f200d63a308653582363f validates the added declared API models separately; see docs/reports/w48-cmt-tracked-interior-self-init/README.md."

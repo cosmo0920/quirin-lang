@@ -1,0 +1,21 @@
+{
+  "attempt": 3,
+  "tip": "ab623584c (records under contract/profiles/, rewritten as 572489ae7)",
+  "totals": {
+    "passed": 3219,
+    "failed": 35,
+    "ignored": 5,
+    "measured": 0,
+    "filtered": 0,
+    "summaries": 251
+  },
+  "units_failed": [
+    "qcore-compiler::test::composed_five_providers",
+    "qcore-compiler::test::cycle20_verifier_plugins",
+    "qcore-compiler::test::first_party_discovery",
+    "qcore-compiler::test::std_string",
+    "qcore-compiler::test::w3_evidence_v2",
+    "qcorec::test::plugin_packages"
+  ],
+  "diagnosis": "compiler/src/first_party.rs packages() loads every directory under contract/profiles as a source-set profile; the evaluation-record directories lack profile.json, so first_party_registry()/first_party_manifests() return empty and every first-party provider is absent (Unknown); both reevaluation probes panic on the missing qcore.libevent manifest. Fixed by moving the records to contract/evaluations/."
+}

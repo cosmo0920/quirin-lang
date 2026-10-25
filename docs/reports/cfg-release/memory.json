@@ -1,0 +1,275 @@
+{
+ "base/corpus": {
+  "driver_exit": 101,
+  "audit_exit": 0,
+  "binary_sha256": "947b81bca41a8b03eeec81b5557fbb467415eb3eb7838a282db715a3d058b44b",
+  "jobs": 3,
+  "max_rss_kib": 9892576,
+  "max_rss_bytes": 10129997824,
+  "elapsed_seconds": 7654.0,
+  "time_exit_status": 101,
+  "exit": 101,
+  "cgroup": "/user.slice/user-1000.slice/user@1000.service/app.slice/cfr-base-corpus-2838508.scope",
+  "memory_peak_bytes": 10647760896,
+  "memory_swap_peak_bytes": 0,
+  "memory_max": "max",
+  "memory_events": {
+   "low": 0,
+   "high": 0,
+   "max": 0,
+   "oom": 0,
+   "oom_kill": 0,
+   "oom_group_kill": 0,
+   "sock_throttled": 0
+  },
+  "memory_pressure": {
+   "some": {
+    "avg10": "0.00",
+    "avg60": "0.00",
+    "avg300": "0.00",
+    "total": "329"
+   },
+   "full": {
+    "avg10": "0.00",
+    "avg60": "0.00",
+    "avg300": "0.00",
+    "total": "329"
+   }
+  },
+  "memory_stat_at_end": {
+   "anon": 1474560,
+   "file": 1452158976,
+   "kernel": 39481344
+  }
+ },
+ "tip/corpus": {
+  "driver_exit": 101,
+  "audit_exit": 0,
+  "binary_sha256": "5cc9c97c3989967f4bc630151005de16eef10d52398e444dc1ad804d18135889",
+  "jobs": 3,
+  "max_rss_kib": 9807192,
+  "max_rss_bytes": 10042564608,
+  "elapsed_seconds": 7645.0,
+  "time_exit_status": 101,
+  "exit": 101,
+  "cgroup": "/user.slice/user-1000.slice/user@1000.service/app.slice/cfr-tip-corpus-2838508.scope",
+  "memory_peak_bytes": 10870808576,
+  "memory_swap_peak_bytes": 0,
+  "memory_max": "max",
+  "memory_events": {
+   "low": 0,
+   "high": 0,
+   "max": 0,
+   "oom": 0,
+   "oom_kill": 0,
+   "oom_group_kill": 0,
+   "sock_throttled": 0
+  },
+  "memory_pressure": {
+   "some": {
+    "avg10": "0.00",
+    "avg60": "0.00",
+    "avg300": "0.00",
+    "total": "515"
+   },
+   "full": {
+    "avg10": "0.00",
+    "avg60": "0.00",
+    "avg300": "0.00",
+    "total": "515"
+   }
+  },
+  "memory_stat_at_end": {
+   "anon": 1474560,
+   "file": 1483816960,
+   "kernel": 38150144
+  }
+ },
+ "delta/corpus": {
+  "max_rss_bytes_tip_minus_base": -87433216,
+  "max_rss_relative": -0.008631118932015281,
+  "memory_peak_bytes_tip_minus_base": 223047680
+ },
+ "base/slice": {
+  "driver_exit": 0,
+  "audit_exit": 0,
+  "binary_sha256": "947b81bca41a8b03eeec81b5557fbb467415eb3eb7838a282db715a3d058b44b",
+  "jobs": 3,
+  "max_rss_kib": 6655908,
+  "max_rss_bytes": 6815649792,
+  "elapsed_seconds": 813.13,
+  "time_exit_status": 0,
+  "exit": 0,
+  "cgroup": "/user.slice/user-1000.slice/user@1000.service/app.slice/cfr-base-slice-2838508.scope",
+  "memory_peak_bytes": 7766237184,
+  "memory_swap_peak_bytes": 0,
+  "memory_max": "max",
+  "memory_events": {
+   "low": 0,
+   "high": 0,
+   "max": 0,
+   "oom": 0,
+   "oom_kill": 0,
+   "oom_group_kill": 0,
+   "sock_throttled": 0
+  },
+  "memory_pressure": {
+   "some": {
+    "avg10": "0.00",
+    "avg60": "0.00",
+    "avg300": "0.00",
+    "total": "251"
+   },
+   "full": {
+    "avg10": "0.00",
+    "avg60": "0.00",
+    "avg300": "0.00",
+    "total": "251"
+   }
+  },
+  "memory_stat_at_end": {
+   "anon": 1474560,
+   "file": 1274953728,
+   "kernel": 2088960
+  }
+ },
+ "tip/slice": {
+  "driver_exit": 0,
+  "audit_exit": 0,
+  "binary_sha256": "5cc9c97c3989967f4bc630151005de16eef10d52398e444dc1ad804d18135889",
+  "jobs": 3,
+  "max_rss_kib": 6615908,
+  "max_rss_bytes": 6774689792,
+  "elapsed_seconds": 811.4,
+  "time_exit_status": 0,
+  "exit": 0,
+  "cgroup": "/user.slice/user-1000.slice/user@1000.service/app.slice/cfr-tip-slice-2838508.scope",
+  "memory_peak_bytes": 7685464064,
+  "memory_swap_peak_bytes": 0,
+  "memory_max": "max",
+  "memory_events": {
+   "low": 0,
+   "high": 0,
+   "max": 0,
+   "oom": 0,
+   "oom_kill": 0,
+   "oom_group_kill": 0,
+   "sock_throttled": 0
+  },
+  "memory_pressure": {
+   "some": {
+    "avg10": "0.00",
+    "avg60": "0.00",
+    "avg300": "0.00",
+    "total": "69"
+   },
+   "full": {
+    "avg10": "0.00",
+    "avg60": "0.00",
+    "avg300": "0.00",
+    "total": "69"
+   }
+  },
+  "memory_stat_at_end": {
+   "anon": 1478656,
+   "file": 1368838144,
+   "kernel": 6193152
+  }
+ },
+ "delta/slice": {
+  "max_rss_bytes_tip_minus_base": -40960000,
+  "max_rss_relative": -0.006009698451360806,
+  "memory_peak_bytes_tip_minus_base": -80773120
+ },
+ "base/system": {
+  "driver_exit": 0,
+  "audit_exit": 0,
+  "binary_sha256": "947b81bca41a8b03eeec81b5557fbb467415eb3eb7838a282db715a3d058b44b",
+  "jobs": 3,
+  "max_rss_kib": 6611488,
+  "max_rss_bytes": 6770163712,
+  "elapsed_seconds": 754.72,
+  "time_exit_status": 0,
+  "exit": 0,
+  "cgroup": "/user.slice/user-1000.slice/user@1000.service/app.slice/cfr-base-system-2838508.scope",
+  "memory_peak_bytes": 7588831232,
+  "memory_swap_peak_bytes": 0,
+  "memory_max": "max",
+  "memory_events": {
+   "low": 0,
+   "high": 0,
+   "max": 0,
+   "oom": 0,
+   "oom_kill": 0,
+   "oom_group_kill": 0,
+   "sock_throttled": 0
+  },
+  "memory_pressure": {
+   "some": {
+    "avg10": "0.00",
+    "avg60": "0.00",
+    "avg300": "0.00",
+    "total": "8983"
+   },
+   "full": {
+    "avg10": "0.00",
+    "avg60": "0.00",
+    "avg300": "0.00",
+    "total": "8983"
+   }
+  },
+  "memory_stat_at_end": {
+   "anon": 1474560,
+   "file": 1348591616,
+   "kernel": 12021760
+  }
+ },
+ "tip/system": {
+  "driver_exit": 0,
+  "audit_exit": 0,
+  "binary_sha256": "5cc9c97c3989967f4bc630151005de16eef10d52398e444dc1ad804d18135889",
+  "jobs": 3,
+  "max_rss_kib": 6625952,
+  "max_rss_bytes": 6784974848,
+  "elapsed_seconds": 749.62,
+  "time_exit_status": 0,
+  "exit": 0,
+  "cgroup": "/user.slice/user-1000.slice/user@1000.service/app.slice/cfr-tip-system-2838508.scope",
+  "memory_peak_bytes": 7164059648,
+  "memory_swap_peak_bytes": 0,
+  "memory_max": "max",
+  "memory_events": {
+   "low": 0,
+   "high": 0,
+   "max": 0,
+   "oom": 0,
+   "oom_kill": 0,
+   "oom_group_kill": 0,
+   "sock_throttled": 0
+  },
+  "memory_pressure": {
+   "some": {
+    "avg10": "0.00",
+    "avg60": "0.00",
+    "avg300": "0.00",
+    "total": "4352"
+   },
+   "full": {
+    "avg10": "0.00",
+    "avg60": "0.00",
+    "avg300": "0.00",
+    "total": "4351"
+   }
+  },
+  "memory_stat_at_end": {
+   "anon": 1478656,
+   "file": 1379356672,
+   "kernel": 17551360
+  }
+ },
+ "delta/system": {
+  "max_rss_bytes_tip_minus_base": 14811136,
+  "max_rss_relative": 0.0021877072150777556,
+  "memory_peak_bytes_tip_minus_base": -424771584
+ }
+}

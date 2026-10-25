@@ -218,6 +218,14 @@ wait while slot jobs keep the lock shared.
 
 ## Corpus arbiter and its job count
 
+Every pinned corpus, system or slice figure belongs to one evaluation profile
+(`contract/evaluations/<name>/evaluation.json`, user decision 2 of 2026-10-24;
+`scripts/evaluation_profiles.py` is the authority and the Python suite checks
+it). Cycles are frozen and never re-measured; the live profiles `eight-home`,
+`fluent-bit-system` and `fluent-bit-tail-pause` move only with a new baseline
+recorded with its reason in the same commit, named in the card's amendments
+`profiles[]`.
+
 The pinned corpus arbiter is the release binary `quirin-audit pinned`
 (`cargo build --release -p qcore-audit --bin quirin-audit`), run through `scripts/run_pinned_audit.py OUT_DIR COMMIT [--inputs-root DIR]
 [--census] [--jobs N]`. It analyses translation units on `N` threads

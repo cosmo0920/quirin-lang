@@ -1,5 +1,7 @@
 # Cycle 19 Fluent Bit library and chunk validation
 
+Evaluation profile: `cycle-19-fluent-bit` (frozen at `b92688d22`; [record](../../contract/evaluations/cycle-19-fluent-bit/evaluation.json)).
+
 ## Scope and source identity
 
 This is a local verification run. It does not add, require, or modify a CI

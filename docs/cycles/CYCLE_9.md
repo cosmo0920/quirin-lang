@@ -2,6 +2,8 @@
 
 **Status: Done (archived)**
 
+Evaluation profile: none (a language and model cycle: its acceptance is the standing gate's Rust tests and Lean audits; it claims no audit measurement over a pinned source set).
+
 Cycle 9 implements Stage 9 of the prototype roadmap. It adds a conservative,
 path-sensitive resource analyzer for an explicitly supported annotated C
 subset. The analyzer reports `Unknown` whenever parsing or alias semantics

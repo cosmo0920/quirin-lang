@@ -1,0 +1,134 @@
+{
+  "after_source": "3d358f76e9ea02f5537961af2065441842e685de",
+  "fixed_build_identity": "710021bd713b90037e803d4a1f87d95eba6476c9",
+  "runs": [
+    {
+      "label": "before",
+      "argv": [
+        "/media/Data/GitHub/quirin-lang/.claude/worktrees/agent-aff1b549de05af6cc/private/cfr/snap-base/target/release/quirin-audit",
+        "/media/Data/GitHub/quirin-lang/.claude/worktrees/agent-aff1b549de05af6cc/private/cfr/fixture-parity/audit.json",
+        "--jobs",
+        "1"
+      ],
+      "exit": 0,
+      "binary_sha256": "947b81bca41a8b03eeec81b5557fbb467415eb3eb7838a282db715a3d058b44b"
+    },
+    {
+      "label": "after1",
+      "argv": [
+        "/media/Data/GitHub/quirin-lang/.claude/worktrees/agent-aff1b549de05af6cc/private/cfr/snap-tip/target/release/quirin-audit",
+        "/media/Data/GitHub/quirin-lang/.claude/worktrees/agent-aff1b549de05af6cc/private/cfr/fixture-parity/audit.json",
+        "--jobs",
+        "1"
+      ],
+      "exit": 0,
+      "binary_sha256": "5cc9c97c3989967f4bc630151005de16eef10d52398e444dc1ad804d18135889"
+    },
+    {
+      "label": "after2",
+      "argv": [
+        "/media/Data/GitHub/quirin-lang/.claude/worktrees/agent-aff1b549de05af6cc/private/cfr/snap-tip/target/release/quirin-audit",
+        "/media/Data/GitHub/quirin-lang/.claude/worktrees/agent-aff1b549de05af6cc/private/cfr/fixture-parity/audit.json",
+        "--jobs",
+        "2"
+      ],
+      "exit": 0,
+      "binary_sha256": "5cc9c97c3989967f4bc630151005de16eef10d52398e444dc1ad804d18135889"
+    }
+  ],
+  "comparisons": [
+    {
+      "scheduling_only": false,
+      "after": "after1",
+      "file": "report.assumptions.json",
+      "byte_equal": true,
+      "before_sha256": "7c02dc10e6a191edc0df0bb9003816012421af07ebfe3655b4c433b0b683dce5",
+      "after_sha256": "7c02dc10e6a191edc0df0bb9003816012421af07ebfe3655b4c433b0b683dce5"
+    },
+    {
+      "scheduling_only": false,
+      "after": "after1",
+      "file": "report.invocation.json",
+      "byte_equal": true,
+      "before_sha256": "df39fb984847410f83617fd9dba3389fb28ada83aa7b5ee082d8edd41131f09c",
+      "after_sha256": "df39fb984847410f83617fd9dba3389fb28ada83aa7b5ee082d8edd41131f09c"
+    },
+    {
+      "scheduling_only": false,
+      "after": "after1",
+      "file": "report.json",
+      "byte_equal": true,
+      "before_sha256": "fa9b0bff676185fb78db7040bf8575a7a257b1dc776b41d11bf316b7c5655d88",
+      "after_sha256": "fa9b0bff676185fb78db7040bf8575a7a257b1dc776b41d11bf316b7c5655d88"
+    },
+    {
+      "scheduling_only": false,
+      "after": "after2",
+      "file": "report.assumptions.json",
+      "byte_equal": true,
+      "before_sha256": "7c02dc10e6a191edc0df0bb9003816012421af07ebfe3655b4c433b0b683dce5",
+      "after_sha256": "7c02dc10e6a191edc0df0bb9003816012421af07ebfe3655b4c433b0b683dce5"
+    },
+    {
+      "scheduling_only": true,
+      "after": "after2",
+      "file": "report.invocation.json",
+      "byte_equal": false,
+      "before_sha256": "df39fb984847410f83617fd9dba3389fb28ada83aa7b5ee082d8edd41131f09c",
+      "after_sha256": "8c16f76d258e4b7ab0c3e5f8099cdab11455d44220d64d4c40dc4a241e16a340"
+    },
+    {
+      "scheduling_only": false,
+      "after": "after2",
+      "file": "report.json",
+      "byte_equal": true,
+      "before_sha256": "fa9b0bff676185fb78db7040bf8575a7a257b1dc776b41d11bf316b7c5655d88",
+      "after_sha256": "fa9b0bff676185fb78db7040bf8575a7a257b1dc776b41d11bf316b7c5655d88"
+    }
+  ],
+  "units": 4,
+  "functions": 12,
+  "refutations": {
+    "entries": [
+      {
+        "applied": true,
+        "function": "w_bad",
+        "held_call_sites": 1,
+        "held_functions": 1,
+        "refutations": [
+          {
+            "clause": "resource_user_exit(t, 0, added)",
+            "kind": "counted_user_clause",
+            "origin": "src/a_bodies.c:32",
+            "reason": "a path returning 0 has added 0 users of `t`",
+            "unit": "src/a_bodies.c"
+          }
+        ]
+      },
+      {
+        "applied": true,
+        "function": "w_keep",
+        "held_call_sites": 1,
+        "held_functions": 1,
+        "refutations": [
+          {
+            "clause": "mode-parameter-contradiction",
+            "kind": "custody_duty",
+            "origin": "src/a_bodies.c:35",
+            "reason": "a declared contract parameter's custody duty is contradicted by the validated summary derived from the function's own body in this translation unit",
+            "unit": "src/a_bodies.c"
+          }
+        ]
+      }
+    ],
+    "held_call_sites": 2,
+    "held_functions": 2,
+    "meaning": "declared contracts of functions whose bodies this run analysed, checked against those bodies (contract spec C06.4): a declaration is refuted when a counted-user clause of the function's own row is refuted, or the validated summary of the body contradicts a declared custody duty (a refinement inside one duty is not a refutation); a refuted declaration stays in force for its own body, whose row keeps the refutation, and every other call site is held with reason code `contract-refuted-by-body`, which is Unknown, never Pending or Safe; the table is the union of every unit's refutations from a first pass under the loaded contracts, and a second pass applies it to every unit when it is not empty; `held_functions` counts analysed functions with at least one recorded held call, `held_call_sites` the held-call refusals recorded, a lower bound on textual call sites",
+    "phases": 2,
+    "published_refutations_sha256": "445e98b3014e356bb87a9f3edd29553ed974a96dfe8c71adadf61e8bda4e28ef",
+    "reason_code": "contract-refuted-by-body",
+    "refuted_declarations": 2,
+    "table_sha256": "445e98b3014e356bb87a9f3edd29553ed974a96dfe8c71adadf61e8bda4e28ef"
+  },
+  "scope": "Same cwd and exact inputs; synthetic declared counted-user and custody refutations, cross-unit callers, Safe certificate replay, and data-only units. All report/assumptions bytes must match. Invocation metadata at jobs=2 may differ only in explicitly checked jobs and two phase observations; raw hashes retained. No timing normalization. Candidate built with QCORE_AUDIT_BUILD_COMMIT fixed to base for this control only."
+}

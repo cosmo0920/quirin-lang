@@ -2,6 +2,8 @@
 
 **Status: In progress — source-bound nested teardown, native QCore replay/identity rules and eight Monkey callback paths checked; native provenance, wider custody/lifecycle and full event composition remain**
 
+Evaluation profile: `cycle-19-fluent-bit` (frozen at `b92688d22`; [record](../../contract/evaluations/cycle-19-fluent-bit/evaluation.json)).
+
 Cycle 19 turns the pinned Fluent Bit library projection from Cycle 19's initial
 measurement into bounded resource and event certificates. It does not claim
 that a high parser-projection percentage is memory-safety coverage, and it does

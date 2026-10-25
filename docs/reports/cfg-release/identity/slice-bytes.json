@@ -1,0 +1,117 @@
+{
+ "route": "slice",
+ "left": "/media/Data/GitHub/quirin-lang/private/cfg-release/runs1/base/slice",
+ "right": "/media/Data/GitHub/quirin-lang/private/cfg-release/runs1/tip/slice",
+ "substitution": [],
+ "exits": {
+  "left": "0",
+  "right": "0"
+ },
+ "drivers": {
+  "left": {
+   "exit": 0,
+   "audit_exit": 0,
+   "identity_error": null,
+   "snapshot_files_changed": [],
+   "externals_stable": true,
+   "binary_stable": true,
+   "binary_sha256": "947b81bca41a8b03eeec81b5557fbb467415eb3eb7838a282db715a3d058b44b"
+  },
+  "right": {
+   "exit": 0,
+   "audit_exit": 0,
+   "identity_error": null,
+   "snapshot_files_changed": [],
+   "externals_stable": true,
+   "binary_stable": true,
+   "binary_sha256": "5cc9c97c3989967f4bc630151005de16eef10d52398e444dc1ad804d18135889"
+  }
+ },
+ "only_left": [],
+ "only_right": [],
+ "files": {
+  "console.log": {
+   "bytes": [
+    14172,
+    14172
+   ],
+   "raw_identical": true,
+   "identical_after_substitution": true
+  },
+  "resource-diagnostics.chunk-contracts.json": {
+   "bytes": [
+    385,
+    385
+   ],
+   "raw_identical": true,
+   "identical_after_substitution": true
+  },
+  "resource-diagnostics.contracts.json": {
+   "bytes": [
+    9681971,
+    9681971
+   ],
+   "raw_identical": true,
+   "identical_after_substitution": true
+  },
+  "resource-diagnostics.invocation.json": {
+   "bytes": [
+    6776,
+    6776
+   ],
+   "raw_identical": true,
+   "identical_after_substitution": true
+  },
+  "resource-diagnostics.json": {
+   "bytes": [
+    3774994,
+    3774994
+   ],
+   "raw_identical": true,
+   "identical_after_substitution": true
+  },
+  "resource-diagnostics.source-effects.json": {
+   "bytes": [
+    385,
+    385
+   ],
+   "raw_identical": true,
+   "identical_after_substitution": true
+  },
+  "slice-null.jsonl": {
+   "bytes": [
+    1853651,
+    1853651
+   ],
+   "raw_identical": true,
+   "identical_after_substitution": true
+  },
+  "slice-null.summary.json": {
+   "bytes": [
+    64487,
+    64487
+   ],
+   "raw_identical": true,
+   "identical_after_substitution": true
+  },
+  "slice-outer.json": {
+   "bytes": [
+    88999,
+    88999
+   ],
+   "raw_identical": true,
+   "identical_after_substitution": true
+  },
+  "stderr.log": {
+   "bytes": [
+    0,
+    0
+   ],
+   "raw_identical": true,
+   "identical_after_substitution": true
+  }
+ },
+ "substitution_totals": {},
+ "target_collisions_total": {},
+ "identical": true
+}
