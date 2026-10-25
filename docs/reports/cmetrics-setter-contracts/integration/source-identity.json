@@ -1,0 +1,9 @@
+{
+  "measured_source": "17b15ec24990f53690f0311be0ddb8dcf46f3c75",
+  "merge_sha": "17b15ec24990f53690f0311be0ddb8dcf46f3c75",
+  "feature_tip": "08e9d1a908cacaf05a4df26cecb93620c898ebc0",
+  "local_main_before_merge": "51d103d60d888e2816878393c7ae0eddecebd9d5",
+  "origin_main_before_merge": "d5d0412640f919dc2c02e43f9f6dd726ae006feb",
+  "conflicts": "Documentation conflicts resolved by retaining both complete records; matrix validation conflict takes current main measurements before regeneration, preserving setter adoption text and all follow-ups. Final matrix was regenerated and committed before the measured gate.",
+  "native_measurement": false
+}

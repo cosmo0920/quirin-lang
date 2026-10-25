@@ -1,0 +1,19 @@
+{
+  "root": {
+    "units": 554,
+    "passed": 8674,
+    "failed": 0,
+    "ignored": 15,
+    "measured": 0,
+    "filtered": 0,
+    "summaries": 567
+  },
+  "provider": {
+    "passed": 133,
+    "failed": 0,
+    "ignored": 1
+  },
+  "root_python": 460,
+  "provider_python": 25,
+  "lean": 372
+}

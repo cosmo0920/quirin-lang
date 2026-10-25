@@ -17,6 +17,8 @@ Regenerate with `python3 scripts/build_docs_index.py`; validate with `--check`.
 
 | [aggregates-v1](aggregates-v1/README.md) | AGGREGATES-V1 — the first source-level aggregate type (wave 27) |
 
+| [amendments-schema](amendments-schema/README.md) | AMENDMENTS-SCHEMA: a checked schema for integration amendments |
+
 | [aom-binding-poison](aom-binding-poison/README.md) | AOM-BINDING-POISON — a refused statement stops destroying what it cannot write — 2026-09-12 |
 
 | [aom-destroy-siblings](aom-destroy-siblings/README.md) | AOM-DESTROY-SIBLINGS — the two undeclared sibling destructors, decided differently — 2026-09-11 |

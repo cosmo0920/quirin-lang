@@ -1,0 +1,343 @@
+{
+  "head": "6d88782ab6f2d17af15fb7924956bb2e1ec5dd84",
+  "cwd": "/home/cosmo/.codex/worktrees/808d/quirin-lang",
+  "started": "2026-10-25T08:10:50.208492+00:00",
+  "environment_overrides": {
+    "CARGO_BUILD_JOBS": "6",
+    "QCORE_CLANG": "/usr/lib/llvm-21/bin/clang"
+  },
+  "steps": [
+    {
+      "name": "submodules",
+      "command": [
+        "git",
+        "submodule",
+        "update",
+        "--init",
+        "--recursive"
+      ],
+      "exit": 0,
+      "seconds": 0.023877482977695763,
+      "log": "/home/cosmo/.codex/worktrees/808d/quirin-lang/private/cmt-map-set-val/standing-3/submodules.log",
+      "log_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "name": "clang-version",
+      "command": [
+        "/usr/lib/llvm-21/bin/clang",
+        "--version"
+      ],
+      "exit": 0,
+      "seconds": 0.025056348997168243,
+      "log": "/home/cosmo/.codex/worktrees/808d/quirin-lang/private/cmt-map-set-val/standing-3/clang-version.txt",
+      "log_sha256": "77467400b91c4cebb6c3e29d8a611af518a2f4078c22baf276b0a1373e996bf5"
+    },
+    {
+      "name": "fmt",
+      "command": [
+        "cargo",
+        "fmt",
+        "--all",
+        "--",
+        "--check"
+      ],
+      "exit": 0,
+      "seconds": 4.2677987510105595,
+      "log": "/home/cosmo/.codex/worktrees/808d/quirin-lang/private/cmt-map-set-val/standing-3/fmt.log",
+      "log_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "name": "clippy",
+      "command": [
+        "cargo",
+        "clippy",
+        "--all-targets",
+        "--",
+        "-D",
+        "warnings"
+      ],
+      "exit": 0,
+      "seconds": 3.83699727000203,
+      "log": "/home/cosmo/.codex/worktrees/808d/quirin-lang/private/cmt-map-set-val/standing-3/clippy.log",
+      "log_sha256": "5b59ef653de9f0aa6d6e207e27ad4b028889442ecd0c606537d7e8785f61ba3c"
+    },
+    {
+      "name": "reevaluation-probe",
+      "command": [
+        "cargo",
+        "run",
+        "-p",
+        "qcore-compiler",
+        "--example",
+        "reevaluation_probe"
+      ],
+      "exit": 0,
+      "seconds": 9.525642832013546,
+      "log": "/home/cosmo/.codex/worktrees/808d/quirin-lang/private/cmt-map-set-val/standing-3/reevaluation-probe.log",
+      "log_sha256": "d8efd4015da4d786a9af84e5e0643849df5e4d501e1442fe1200e4b6608e4761"
+    },
+    {
+      "name": "reevaluation-followup",
+      "command": [
+        "cargo",
+        "run",
+        "-p",
+        "qcore-compiler",
+        "--example",
+        "reevaluation_followup"
+      ],
+      "exit": 0,
+      "seconds": 3.2929343529976904,
+      "log": "/home/cosmo/.codex/worktrees/808d/quirin-lang/private/cmt-map-set-val/standing-3/reevaluation-followup.log",
+      "log_sha256": "599fa5bdfb89d17174965874d6664fafb7adc1084832b6e03b5ede6e2dede6d1"
+    },
+    {
+      "name": "lean-audits",
+      "command": [
+        "python3",
+        "scripts/gate_slot.py",
+        "lean",
+        "--",
+        "python3",
+        "scripts/check_lean_audits.py",
+        "--jobs",
+        "6"
+      ],
+      "exit": 0,
+      "seconds": 33.88385714098695,
+      "log": "/home/cosmo/.codex/worktrees/808d/quirin-lang/private/cmt-map-set-val/standing-3/lean-audits.log",
+      "log_sha256": "30dddbe7d690f7e4201ab3ef7bff4fa0e42388d2dbc8646abfc145a66c39b1eb"
+    },
+    {
+      "name": "python-tests",
+      "command": [
+        "python3",
+        "-m",
+        "unittest",
+        "discover",
+        "-s",
+        "scripts/tests"
+      ],
+      "exit": 0,
+      "seconds": 103.603879864997,
+      "log": "/home/cosmo/.codex/worktrees/808d/quirin-lang/private/cmt-map-set-val/standing-3/python-tests.log",
+      "log_sha256": "fb4df148657b8e94dad564bc5331e304286a6b604bf208d079f6ec2effb3772b"
+    },
+    {
+      "name": "contracts-check",
+      "command": [
+        "python3",
+        "providers/contracts.py",
+        "check"
+      ],
+      "exit": 0,
+      "seconds": 100.31448330602143,
+      "log": "/home/cosmo/.codex/worktrees/808d/quirin-lang/private/cmt-map-set-val/standing-3/contracts-check.log",
+      "log_sha256": "a2cfffe12a0bacd36e74eda2d5a4607f26299340ef09a45cfdc54d993f9baa53"
+    },
+    {
+      "name": "provider-fmt",
+      "command": [
+        "cargo",
+        "fmt",
+        "--manifest-path",
+        "providers/Cargo.toml",
+        "--all",
+        "--",
+        "--check"
+      ],
+      "exit": 0,
+      "seconds": 13.562058062991127,
+      "log": "/home/cosmo/.codex/worktrees/808d/quirin-lang/private/cmt-map-set-val/standing-3/provider-fmt.log",
+      "log_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "name": "provider-clippy",
+      "command": [
+        "cargo",
+        "clippy",
+        "--manifest-path",
+        "providers/Cargo.toml",
+        "--workspace",
+        "--all-targets",
+        "--locked",
+        "--offline",
+        "--",
+        "-D",
+        "warnings"
+      ],
+      "exit": 0,
+      "seconds": 1.7268804040213581,
+      "log": "/home/cosmo/.codex/worktrees/808d/quirin-lang/private/cmt-map-set-val/standing-3/provider-clippy.log",
+      "log_sha256": "324b26426da9073710f79825f58a972f5c03f6c7da04634f07fabeb832d73dac"
+    },
+    {
+      "name": "provider-python",
+      "command": [
+        "python3",
+        "-m",
+        "unittest",
+        "discover",
+        "-s",
+        "providers/tests"
+      ],
+      "exit": 0,
+      "seconds": 25.05818759900285,
+      "log": "/home/cosmo/.codex/worktrees/808d/quirin-lang/private/cmt-map-set-val/standing-3/provider-python.log",
+      "log_sha256": "411408a2cc04fa82129e59f826ef8aad16a85e6e79e110ab29bda9191e8c0e5c"
+    },
+    {
+      "name": "package-build",
+      "command": [
+        "python3",
+        "providers/package.py",
+        "build",
+        "--output",
+        "/home/cosmo/.codex/worktrees/808d/quirin-lang/private/cmt-map-set-val/standing-3/packages"
+      ],
+      "exit": 0,
+      "seconds": 28.207850323000457,
+      "log": "/home/cosmo/.codex/worktrees/808d/quirin-lang/private/cmt-map-set-val/standing-3/package-build.log",
+      "log_sha256": "d8951027dbfe9ae06cde0caabbc023fee38e45bec9d7047591674723c840440b"
+    },
+    {
+      "name": "verify-chunkio",
+      "command": [
+        "python3",
+        "providers/package.py",
+        "verify",
+        "/home/cosmo/.codex/worktrees/808d/quirin-lang/private/cmt-map-set-val/standing-3/packages/qcore.chunkio"
+      ],
+      "exit": 0,
+      "seconds": 0.10021974600385875,
+      "log": "/home/cosmo/.codex/worktrees/808d/quirin-lang/private/cmt-map-set-val/standing-3/verify-chunkio.log",
+      "log_sha256": "f7ce231c27393556ca7f82fb47f1ee1e115bd817fdb01e017e4cd48aa7128a48"
+    },
+    {
+      "name": "verify-cmetrics",
+      "command": [
+        "python3",
+        "providers/package.py",
+        "verify",
+        "/home/cosmo/.codex/worktrees/808d/quirin-lang/private/cmt-map-set-val/standing-3/packages/qcore.cmetrics"
+      ],
+      "exit": 0,
+      "seconds": 0.09535141300875694,
+      "log": "/home/cosmo/.codex/worktrees/808d/quirin-lang/private/cmt-map-set-val/standing-3/verify-cmetrics.log",
+      "log_sha256": "5ff9a3b8ed272f4258e98a782e64f33f355de84d40adbc7e4c13f2c7077c4d36"
+    },
+    {
+      "name": "verify-ctraces",
+      "command": [
+        "python3",
+        "providers/package.py",
+        "verify",
+        "/home/cosmo/.codex/worktrees/808d/quirin-lang/private/cmt-map-set-val/standing-3/packages/qcore.ctraces"
+      ],
+      "exit": 0,
+      "seconds": 0.09418825601460412,
+      "log": "/home/cosmo/.codex/worktrees/808d/quirin-lang/private/cmt-map-set-val/standing-3/verify-ctraces.log",
+      "log_sha256": "7a6e6ccf803d0f62747b8cb927a6229206cb4c094ba639e27674854bd29774f5"
+    },
+    {
+      "name": "verify-libevent",
+      "command": [
+        "python3",
+        "providers/package.py",
+        "verify",
+        "/home/cosmo/.codex/worktrees/808d/quirin-lang/private/cmt-map-set-val/standing-3/packages/qcore.libevent"
+      ],
+      "exit": 0,
+      "seconds": 0.11368863901589066,
+      "log": "/home/cosmo/.codex/worktrees/808d/quirin-lang/private/cmt-map-set-val/standing-3/verify-libevent.log",
+      "log_sha256": "d0ba24a5989b6ccd922b95646fae11dbf05bb0041b4d48cca8e708a341c1d6bd"
+    },
+    {
+      "name": "verify-librdkafka",
+      "command": [
+        "python3",
+        "providers/package.py",
+        "verify",
+        "/home/cosmo/.codex/worktrees/808d/quirin-lang/private/cmt-map-set-val/standing-3/packages/qcore.librdkafka"
+      ],
+      "exit": 0,
+      "seconds": 0.14702384299016558,
+      "log": "/home/cosmo/.codex/worktrees/808d/quirin-lang/private/cmt-map-set-val/standing-3/verify-librdkafka.log",
+      "log_sha256": "37d1a62873f4a1f0835cfe1dd1c52f8f6aca5f77c670449669d0d51a07d1ee75"
+    },
+    {
+      "name": "rust-tests",
+      "command": [
+        "python3",
+        "scripts/run_test_binaries.py",
+        "--jobs",
+        "6",
+        "--log-dir",
+        "/home/cosmo/.codex/worktrees/808d/quirin-lang/private/cmt-map-set-val/standing-3/rust-binaries"
+      ],
+      "exit": 0,
+      "seconds": 534.745832029992,
+      "log": "/home/cosmo/.codex/worktrees/808d/quirin-lang/private/cmt-map-set-val/standing-3/rust-tests.log",
+      "held_slot_class": "rust-suite",
+      "log_sha256": "9152ab4d5ef805b31583a26a32af129ba251d1121bc0ce9a7b1a983546abf229"
+    },
+    {
+      "name": "provider-tests",
+      "command": [
+        "cargo",
+        "test",
+        "--manifest-path",
+        "providers/Cargo.toml",
+        "--workspace",
+        "--locked",
+        "--offline"
+      ],
+      "exit": 0,
+      "seconds": 601.4691824500042,
+      "log": "/home/cosmo/.codex/worktrees/808d/quirin-lang/private/cmt-map-set-val/standing-3/provider-tests.log",
+      "held_slot_class": "rust-suite",
+      "log_sha256": "1e0717c3db811e45f81e912a41ad5d163c53ddaf2663cd97d912640ed7a31b7f"
+    }
+  ],
+  "finished": "2026-10-25T08:49:14.491408+00:00",
+  "rust_slot": {
+    "head": "6d88782ab6f2d17af15fb7924956bb2e1ec5dd84",
+    "holder": {
+      "pid": 1491963,
+      "command": "python3 scripts/gate_slot.py rust-suite -- bash --noprofile --norc "
+    },
+    "class": "rust-suite",
+    "environment": {
+      "CARGO_BUILD_JOBS": "6",
+      "QCORE_CLANG": "/usr/lib/llvm-21/bin/clang",
+      "QUIRIN_GATE_CLASS": "rust-suite"
+    },
+    "exit": 0,
+    "receipt": "/home/cosmo/.codex/worktrees/808d/quirin-lang/private/gate-slot/20261025T080636Z-1491963-rust-suite.json",
+    "receipt_sha256": "f623d23b8bf6fb263a701cdf1beee51d01442ac3cb72358cd2cb5b8f8d295a57"
+  },
+  "earlier_attempt": {
+    "source": "e9ac124d12ad41ccc0012459fd2836e49e3aa73d",
+    "completed_commands": 18,
+    "rust_tests_launched": false,
+    "cancellation_exit": 143,
+    "path": "/home/cosmo/.codex/worktrees/808d/quirin-lang/private/cmt-map-set-val/standing-1/cancellation.json",
+    "reason": "Correct full-call coordination precondition before completing validation"
+  },
+  "failed_full_attempt": {
+    "source": "510ad599cb9dfaae13e15b6ace4d15662c71a356",
+    "gate_exit": 1,
+    "rust_tests_exit": 101,
+    "totals": {
+      "passed": 8662,
+      "failed": 1,
+      "ignored": 15,
+      "measured": 0,
+      "filtered": 0,
+      "summaries": 566
+    },
+    "reason": "Test used a resource-type-only replay API for function-only declarations; corrected to structural frontend with loader refusal retained"
+  },
+  "attempt_exit": 0,
+  "accepted_gate_exit": 0
+}

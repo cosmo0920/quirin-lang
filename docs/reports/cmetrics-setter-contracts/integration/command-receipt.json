@@ -1,0 +1,384 @@
+{
+  "head": "17b15ec24990f53690f0311be0ddb8dcf46f3c75",
+  "cwd": "/home/cosmo/.codex/worktrees/808d/quirin-lang",
+  "started": "2026-10-25T09:37:08.232425+00:00",
+  "environment_overrides": {
+    "CARGO_BUILD_JOBS": "6",
+    "QCORE_CLANG": "/usr/lib/llvm-21/bin/clang"
+  },
+  "steps": [
+    {
+      "name": "submodules",
+      "command": [
+        "git",
+        "submodule",
+        "update",
+        "--init",
+        "--recursive"
+      ],
+      "exit": 0,
+      "seconds": 0.02750437700888142,
+      "log": "/home/cosmo/.codex/worktrees/808d/quirin-lang/private/cmetrics-setter-integration/gate-2/submodules.log",
+      "log_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "name": "clang-version",
+      "command": [
+        "/usr/lib/llvm-21/bin/clang",
+        "--version"
+      ],
+      "exit": 0,
+      "seconds": 0.02280165598494932,
+      "log": "/home/cosmo/.codex/worktrees/808d/quirin-lang/private/cmetrics-setter-integration/gate-2/clang-version.txt",
+      "log_sha256": "77467400b91c4cebb6c3e29d8a611af518a2f4078c22baf276b0a1373e996bf5"
+    },
+    {
+      "name": "fmt",
+      "command": [
+        "cargo",
+        "fmt",
+        "--all",
+        "--",
+        "--check"
+      ],
+      "exit": 0,
+      "seconds": 7.688883587019518,
+      "log": "/home/cosmo/.codex/worktrees/808d/quirin-lang/private/cmetrics-setter-integration/gate-2/fmt.log",
+      "log_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "name": "clippy",
+      "command": [
+        "cargo",
+        "clippy",
+        "--all-targets",
+        "--",
+        "-D",
+        "warnings"
+      ],
+      "exit": 0,
+      "seconds": 6.4227170379890595,
+      "log": "/home/cosmo/.codex/worktrees/808d/quirin-lang/private/cmetrics-setter-integration/gate-2/clippy.log",
+      "log_sha256": "075f8acf1963460ffb98bebe5c892dbbd4ee2e72bcf929a901842a6528b6ff9d"
+    },
+    {
+      "name": "reevaluation-probe",
+      "command": [
+        "cargo",
+        "run",
+        "-p",
+        "qcore-compiler",
+        "--example",
+        "reevaluation_probe"
+      ],
+      "exit": 0,
+      "seconds": 4.215906245983206,
+      "log": "/home/cosmo/.codex/worktrees/808d/quirin-lang/private/cmetrics-setter-integration/gate-2/reevaluation-probe.log",
+      "log_sha256": "b409079ecb1c080639c0b1f8db2e8f1bd5d6dde7c3f7445b985e2c96dc205b2e"
+    },
+    {
+      "name": "reevaluation-followup",
+      "command": [
+        "cargo",
+        "run",
+        "-p",
+        "qcore-compiler",
+        "--example",
+        "reevaluation_followup"
+      ],
+      "exit": 0,
+      "seconds": 1.4098204530018847,
+      "log": "/home/cosmo/.codex/worktrees/808d/quirin-lang/private/cmetrics-setter-integration/gate-2/reevaluation-followup.log",
+      "log_sha256": "3ea65c66ca04dc85cd70f436909bcb13af0c8739f86d4c6045468f4bde807f79"
+    },
+    {
+      "name": "lean-audits",
+      "command": [
+        "python3",
+        "scripts/gate_slot.py",
+        "lean",
+        "--",
+        "python3",
+        "scripts/check_lean_audits.py",
+        "--jobs",
+        "6"
+      ],
+      "exit": 0,
+      "seconds": 26.27591060701525,
+      "log": "/home/cosmo/.codex/worktrees/808d/quirin-lang/private/cmetrics-setter-integration/gate-2/lean-audits.log",
+      "log_sha256": "34eff95027eaae781e7ec149c4814490200c32e511bebc81ab3b41c1dd81ab2a"
+    },
+    {
+      "name": "python-tests",
+      "command": [
+        "python3",
+        "-m",
+        "unittest",
+        "discover",
+        "-s",
+        "scripts/tests"
+      ],
+      "exit": 0,
+      "seconds": 53.43928578897612,
+      "log": "/home/cosmo/.codex/worktrees/808d/quirin-lang/private/cmetrics-setter-integration/gate-2/python-tests.log",
+      "log_sha256": "a2cdc32d76adc67f064ed941d15054b2803c4f83015a5a18780e5bb240502f8b"
+    },
+    {
+      "name": "contracts-check",
+      "command": [
+        "python3",
+        "providers/contracts.py",
+        "check"
+      ],
+      "exit": 0,
+      "seconds": 30.15302851499291,
+      "log": "/home/cosmo/.codex/worktrees/808d/quirin-lang/private/cmetrics-setter-integration/gate-2/contracts-check.log",
+      "log_sha256": "a2cfffe12a0bacd36e74eda2d5a4607f26299340ef09a45cfdc54d993f9baa53"
+    },
+    {
+      "name": "provider-fmt",
+      "command": [
+        "cargo",
+        "fmt",
+        "--manifest-path",
+        "providers/Cargo.toml",
+        "--all",
+        "--",
+        "--check"
+      ],
+      "exit": 0,
+      "seconds": 5.253389691002667,
+      "log": "/home/cosmo/.codex/worktrees/808d/quirin-lang/private/cmetrics-setter-integration/gate-2/provider-fmt.log",
+      "log_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "name": "provider-clippy",
+      "command": [
+        "cargo",
+        "clippy",
+        "--manifest-path",
+        "providers/Cargo.toml",
+        "--workspace",
+        "--all-targets",
+        "--locked",
+        "--offline",
+        "--",
+        "-D",
+        "warnings"
+      ],
+      "exit": 0,
+      "seconds": 1.597922788001597,
+      "log": "/home/cosmo/.codex/worktrees/808d/quirin-lang/private/cmetrics-setter-integration/gate-2/provider-clippy.log",
+      "log_sha256": "9be966088b201248bdec093d7b217b222701e16a50931efa0a985b3c0a30effe"
+    },
+    {
+      "name": "provider-python",
+      "command": [
+        "python3",
+        "-m",
+        "unittest",
+        "discover",
+        "-s",
+        "providers/tests"
+      ],
+      "exit": 0,
+      "seconds": 29.85893647497869,
+      "log": "/home/cosmo/.codex/worktrees/808d/quirin-lang/private/cmetrics-setter-integration/gate-2/provider-python.log",
+      "log_sha256": "85bae14231405447cf468748a05c7f235fa7f3982f224e0bbc1aca82678a473c"
+    },
+    {
+      "name": "package-build",
+      "command": [
+        "python3",
+        "providers/package.py",
+        "build",
+        "--output",
+        "/home/cosmo/.codex/worktrees/808d/quirin-lang/private/cmetrics-setter-integration/gate-2/packages"
+      ],
+      "exit": 0,
+      "seconds": 30.102476169005968,
+      "log": "/home/cosmo/.codex/worktrees/808d/quirin-lang/private/cmetrics-setter-integration/gate-2/package-build.log",
+      "log_sha256": "d8951027dbfe9ae06cde0caabbc023fee38e45bec9d7047591674723c840440b"
+    },
+    {
+      "name": "verify-chunkio",
+      "command": [
+        "python3",
+        "providers/package.py",
+        "verify",
+        "/home/cosmo/.codex/worktrees/808d/quirin-lang/private/cmetrics-setter-integration/gate-2/packages/qcore.chunkio"
+      ],
+      "exit": 0,
+      "seconds": 0.11336376899271272,
+      "log": "/home/cosmo/.codex/worktrees/808d/quirin-lang/private/cmetrics-setter-integration/gate-2/verify-chunkio.log",
+      "log_sha256": "f7ce231c27393556ca7f82fb47f1ee1e115bd817fdb01e017e4cd48aa7128a48"
+    },
+    {
+      "name": "verify-cmetrics",
+      "command": [
+        "python3",
+        "providers/package.py",
+        "verify",
+        "/home/cosmo/.codex/worktrees/808d/quirin-lang/private/cmetrics-setter-integration/gate-2/packages/qcore.cmetrics"
+      ],
+      "exit": 0,
+      "seconds": 0.11579195398371667,
+      "log": "/home/cosmo/.codex/worktrees/808d/quirin-lang/private/cmetrics-setter-integration/gate-2/verify-cmetrics.log",
+      "log_sha256": "5ff9a3b8ed272f4258e98a782e64f33f355de84d40adbc7e4c13f2c7077c4d36"
+    },
+    {
+      "name": "verify-ctraces",
+      "command": [
+        "python3",
+        "providers/package.py",
+        "verify",
+        "/home/cosmo/.codex/worktrees/808d/quirin-lang/private/cmetrics-setter-integration/gate-2/packages/qcore.ctraces"
+      ],
+      "exit": 0,
+      "seconds": 0.1074545799929183,
+      "log": "/home/cosmo/.codex/worktrees/808d/quirin-lang/private/cmetrics-setter-integration/gate-2/verify-ctraces.log",
+      "log_sha256": "7a6e6ccf803d0f62747b8cb927a6229206cb4c094ba639e27674854bd29774f5"
+    },
+    {
+      "name": "verify-libevent",
+      "command": [
+        "python3",
+        "providers/package.py",
+        "verify",
+        "/home/cosmo/.codex/worktrees/808d/quirin-lang/private/cmetrics-setter-integration/gate-2/packages/qcore.libevent"
+      ],
+      "exit": 0,
+      "seconds": 0.12578289600787684,
+      "log": "/home/cosmo/.codex/worktrees/808d/quirin-lang/private/cmetrics-setter-integration/gate-2/verify-libevent.log",
+      "log_sha256": "d0ba24a5989b6ccd922b95646fae11dbf05bb0041b4d48cca8e708a341c1d6bd"
+    },
+    {
+      "name": "verify-librdkafka",
+      "command": [
+        "python3",
+        "providers/package.py",
+        "verify",
+        "/home/cosmo/.codex/worktrees/808d/quirin-lang/private/cmetrics-setter-integration/gate-2/packages/qcore.librdkafka"
+      ],
+      "exit": 0,
+      "seconds": 0.15092584400554188,
+      "log": "/home/cosmo/.codex/worktrees/808d/quirin-lang/private/cmetrics-setter-integration/gate-2/verify-librdkafka.log",
+      "log_sha256": "37d1a62873f4a1f0835cfe1dd1c52f8f6aca5f77c670449669d0d51a07d1ee75"
+    },
+    {
+      "name": "rust-tests",
+      "command": [
+        "python3",
+        "scripts/run_test_binaries.py",
+        "--jobs",
+        "6",
+        "--log-dir",
+        "/home/cosmo/.codex/worktrees/808d/quirin-lang/private/cmetrics-setter-integration/gate-2/rust-binaries"
+      ],
+      "exit": 0,
+      "seconds": 533.9351732369978,
+      "log": "/home/cosmo/.codex/worktrees/808d/quirin-lang/private/cmetrics-setter-integration/gate-2/rust-tests.log",
+      "held_slot_class": "rust-suite",
+      "log_sha256": "6cef7d36808ab7428d87ff9084199997f7ab6271ea461f45a8c99ecfbcdaeb26"
+    },
+    {
+      "name": "provider-tests",
+      "command": [
+        "cargo",
+        "test",
+        "--manifest-path",
+        "providers/Cargo.toml",
+        "--workspace",
+        "--locked",
+        "--offline"
+      ],
+      "exit": 0,
+      "seconds": 606.4286530060053,
+      "log": "/home/cosmo/.codex/worktrees/808d/quirin-lang/private/cmetrics-setter-integration/gate-2/provider-tests.log",
+      "held_slot_class": "rust-suite",
+      "log_sha256": "ab07888ff2e89830bc80c86ecbcc5eb2584a7d3d58ccd4e040d84726aa87523e"
+    }
+  ],
+  "exit": 0,
+  "rust_slot": {
+    "argv_requested": [
+      "python3",
+      "private/cmetrics-setter-integration/rust_worker.py",
+      "/home/cosmo/.codex/worktrees/808d/quirin-lang/private/cmetrics-setter-integration/gate-1",
+      "247867054"
+    ],
+    "argv_run": [
+      "python3",
+      "private/cmetrics-setter-integration/rust_worker.py",
+      "/home/cosmo/.codex/worktrees/808d/quirin-lang/private/cmetrics-setter-integration/gate-1",
+      "247867054"
+    ],
+    "class": "rust-suite",
+    "cwd": "/home/cosmo/.codex/worktrees/808d/quirin-lang",
+    "exit": 0,
+    "finished": "2026-10-25T09:59:32+00:00",
+    "pid": 2274859,
+    "schema": "quirin-gate-slot/1",
+    "slot_record": {
+      "audit_slot_ceiling": 15,
+      "audit_slots_held": [
+        0,
+        1,
+        2,
+        3,
+        4,
+        5,
+        6,
+        7,
+        8,
+        9,
+        10,
+        11,
+        12,
+        13,
+        14
+      ],
+      "class": "rust-suite",
+      "gate_dir": "/tmp/quirin-gate",
+      "held": [
+        "legacy",
+        "rust-suite/0",
+        "audit/admission",
+        "audit/0",
+        "audit/1",
+        "audit/2",
+        "audit/3",
+        "audit/4",
+        "audit/5",
+        "audit/6",
+        "audit/7",
+        "audit/8",
+        "audit/9",
+        "audit/10",
+        "audit/11",
+        "audit/12",
+        "audit/13",
+        "audit/14"
+      ],
+      "legacy_lock": {
+        "mode": "shared",
+        "path": "/tmp/qcore-c-card-validation-20261022.lock"
+      },
+      "mem_available_kib": 56110832,
+      "mem_total_kib": 63615012,
+      "slot": 0,
+      "slot_count": 1,
+      "waited_seconds": 2804.466
+    },
+    "started": "2026-10-25T09:40:31+00:00"
+  },
+  "non_rust_finished": "2026-10-25T09:40:26.416262+00:00",
+  "finished": "2026-10-25T09:59:32+00:00",
+  "superseded_attempt": {
+    "head": "247867054789a3aad91f27853ebc4732bcc1bd16",
+    "exit": 1,
+    "completed_checks": 18,
+    "rust_suites_launched": false,
+    "reason": "Main advanced to include AMENDMENTS-SCHEMA while the Rust reservation waited. Earlier Python had a stale derived follow-up count, fixed by matrix regeneration before final source freeze. No earlier command was relabelled; fresh complete gate on final merged source."
+  }
+}

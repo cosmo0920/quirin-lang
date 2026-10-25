@@ -1,0 +1,13 @@
+{
+  "note": "Integration of AMENDMENTS-SCHEMA: merge abdbfb526 of card tip 6585dc7b8 onto main 710021bd7; records commit ab57c2242 written by scripts/apply_amendments.py itself (2 registers + increment paragraph). Full standing gate ON ab57c2242 through `scripts/gate_scope.py --base 710021bd7 --full` with gate slots (private log /media/Data/GitHub/quirin-lang/private/landing-as/console.log): submodules, fmt, Clippy, Rust 8671 passed/0 failed/15 ignored (553 units/566 summaries), both reevaluation examples, all exit 0. Python 460 ran with 1 failure, the stale dimensions.named_followups predating regeneration; after `build_matrix.py --gate` on this record, Python was rerun on the committed matrix. providers/ unchanged: provider_tests 133 carried from the AUDIT-CANONICAL-PATHS landing. No proof/ change: lean_audits 372 carried.",
+  "workspace_tests": 8671,
+  "provider_tests": 133,
+  "python_evidence_validator_tests": 460,
+  "reevaluation_probe_exit": 0,
+  "reevaluation_followup_exit": 0,
+  "cargo_fmt": "clean",
+  "cargo_clippy": "clean",
+  "standing_gate": "full gate on integration tip ab57c2242",
+  "lean_audits": 372,
+  "clang": "present: Ubuntu clang version 21.1.8 (6ubuntu1)"
+}

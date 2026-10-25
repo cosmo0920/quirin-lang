@@ -300,6 +300,23 @@ const EXPECTED_CONTRACTS: &[(&str, &str, usize)] = &[
     ("cmetrics/map_lifetime.qv", "cmt_map_metric_destroy", 10),
     ("cmetrics/map_lifetime.qv", "cmt_map_metrics_expire", 11),
     ("cmetrics/map_lifetime.qv", "cmt_map_destroy", 12),
+    ("cmetrics/metric_setters.qv", "cmt_metric_set", 8),
+    (
+        "cmetrics/metric_setters.qv",
+        "cmt_metric_set_exp_hist_count",
+        4,
+    ),
+    (
+        "cmetrics/metric_setters.qv",
+        "cmt_metric_set_exp_hist_sum",
+        6,
+    ),
+    ("cmetrics/metric_setters.qv", "cmt_metric_hist_count_set", 5),
+    ("cmetrics/metric_setters.qv", "cmt_metric_hist_sum_set", 5),
+    ("cmetrics/metric_setters.qv", "cmt_metric_hist_set", 7),
+    ("cmetrics/metric_setters.qv", "cmt_summary_quantile_set", 7),
+    ("cmetrics/metric_setters.qv", "cmt_summary_sum_set", 5),
+    ("cmetrics/metric_setters.qv", "cmt_summary_count_set", 5),
     ("cmetrics/metric_values.qv", "cmt_metric_get_timestamp", 3),
     ("cmetrics/metric_values.qv", "cmt_metric_set_double", 5),
     // W46-METRIC-TRACE-CONTRACT-GAPS: scalar-only reads, writes, and
@@ -390,6 +407,16 @@ const EXPECTED_CONTRACTS: &[(&str, &str, usize)] = &[
     // ground. This is the corpus's first `ctraces` contract module.
     ("cmetrics/opts_lifetime.qv", "cmt_opts_init", 15),
     ("cmetrics/opts_lifetime.qv", "cmt_opts_exit", 10),
+    ("cmetrics/typed_setters.qv", "cmt_counter_set", 13),
+    ("cmetrics/typed_setters.qv", "cmt_gauge_set", 11),
+    ("cmetrics/typed_setters.qv", "cmt_untyped_set", 11),
+    ("cmetrics/typed_setters.qv", "cmt_histogram_set_default", 15),
+    ("cmetrics/typed_setters.qv", "cmt_summary_set_default", 15),
+    (
+        "cmetrics/typed_setters.qv",
+        "cmt_exp_histogram_set_default",
+        20,
+    ),
     ("ctraces/context_lifetime.qv", "ctr_destroy", 3),
     ("ctraces/context_lifetime.qv", "ctr_id_cmp", 4),
     ("ctraces/context_lifetime.qv", "ctr_id_get_len", 3),
@@ -2459,7 +2486,7 @@ fn every_qcore_contract_source_parses_round_trips_and_compiles() {
     // Callback placement adds librdkafka/logging.qv; declarations and clauses are unchanged.
     // 137 -> 138 by card W48-RK-LOG-CALLER-FRAME's librdkafka/log_caller_frame.qv.
     // Map and opts lifecycle models deliberately add two canonical modules.
-    assert_eq!(sources.len(), 140, "unexpected contract corpus size");
+    assert_eq!(sources.len(), 142, "unexpected contract corpus size");
 
     for (logical, path) in &sources {
         let written = fs::read_to_string(path).expect("contract source is readable");

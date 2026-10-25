@@ -1,0 +1,251 @@
+{
+  "head": "e9ac124d12ad41ccc0012459fd2836e49e3aa73d",
+  "cwd": "/home/cosmo/.codex/worktrees/808d/quirin-lang",
+  "started": "2026-10-25T05:30:53.729207+00:00",
+  "environment_overrides": {
+    "CARGO_BUILD_JOBS": "6",
+    "QCORE_CLANG": "/usr/lib/llvm-21/bin/clang"
+  },
+  "steps": [
+    {
+      "name": "submodules",
+      "command": [
+        "git",
+        "submodule",
+        "update",
+        "--init",
+        "--recursive"
+      ],
+      "exit": 128,
+      "seconds": 0.022172062017489225,
+      "log": "/home/cosmo/.codex/worktrees/808d/quirin-lang/private/cmt-map-set-val/standing-1/submodules.log"
+    },
+    {
+      "name": "clang-version",
+      "command": [
+        "/usr/lib/llvm-21/bin/clang",
+        "--version"
+      ],
+      "exit": 0,
+      "seconds": 0.01775186200393364,
+      "log": "/home/cosmo/.codex/worktrees/808d/quirin-lang/private/cmt-map-set-val/standing-1/clang-version.txt"
+    },
+    {
+      "name": "fmt",
+      "command": [
+        "cargo",
+        "fmt",
+        "--all",
+        "--",
+        "--check"
+      ],
+      "exit": 0,
+      "seconds": 4.079041033983231,
+      "log": "/home/cosmo/.codex/worktrees/808d/quirin-lang/private/cmt-map-set-val/standing-1/fmt.log"
+    },
+    {
+      "name": "clippy",
+      "command": [
+        "cargo",
+        "clippy",
+        "--all-targets",
+        "--",
+        "-D",
+        "warnings"
+      ],
+      "exit": 0,
+      "seconds": 3.771119468990946,
+      "log": "/home/cosmo/.codex/worktrees/808d/quirin-lang/private/cmt-map-set-val/standing-1/clippy.log"
+    },
+    {
+      "name": "reevaluation-probe",
+      "command": [
+        "cargo",
+        "run",
+        "-p",
+        "qcore-compiler",
+        "--example",
+        "reevaluation_probe"
+      ],
+      "exit": 0,
+      "seconds": 2.006604722002521,
+      "log": "/home/cosmo/.codex/worktrees/808d/quirin-lang/private/cmt-map-set-val/standing-1/reevaluation-probe.log"
+    },
+    {
+      "name": "reevaluation-followup",
+      "command": [
+        "cargo",
+        "run",
+        "-p",
+        "qcore-compiler",
+        "--example",
+        "reevaluation_followup"
+      ],
+      "exit": 0,
+      "seconds": 0.8578265350079164,
+      "log": "/home/cosmo/.codex/worktrees/808d/quirin-lang/private/cmt-map-set-val/standing-1/reevaluation-followup.log"
+    },
+    {
+      "name": "lean-audits",
+      "command": [
+        "python3",
+        "scripts/gate_slot.py",
+        "lean",
+        "--",
+        "python3",
+        "scripts/check_lean_audits.py",
+        "--jobs",
+        "6"
+      ],
+      "exit": 0,
+      "seconds": 19.17441678699106,
+      "log": "/home/cosmo/.codex/worktrees/808d/quirin-lang/private/cmt-map-set-val/standing-1/lean-audits.log"
+    },
+    {
+      "name": "python-tests",
+      "command": [
+        "python3",
+        "-m",
+        "unittest",
+        "discover",
+        "-s",
+        "scripts/tests"
+      ],
+      "exit": 0,
+      "seconds": 49.13952307900763,
+      "log": "/home/cosmo/.codex/worktrees/808d/quirin-lang/private/cmt-map-set-val/standing-1/python-tests.log"
+    },
+    {
+      "name": "contracts-check",
+      "command": [
+        "python3",
+        "providers/contracts.py",
+        "check"
+      ],
+      "exit": 0,
+      "seconds": 67.8960923810082,
+      "log": "/home/cosmo/.codex/worktrees/808d/quirin-lang/private/cmt-map-set-val/standing-1/contracts-check.log"
+    },
+    {
+      "name": "provider-fmt",
+      "command": [
+        "cargo",
+        "fmt",
+        "--manifest-path",
+        "providers/Cargo.toml",
+        "--all",
+        "--",
+        "--check"
+      ],
+      "exit": 0,
+      "seconds": 12.96951814199565,
+      "log": "/home/cosmo/.codex/worktrees/808d/quirin-lang/private/cmt-map-set-val/standing-1/provider-fmt.log"
+    },
+    {
+      "name": "provider-clippy",
+      "command": [
+        "cargo",
+        "clippy",
+        "--manifest-path",
+        "providers/Cargo.toml",
+        "--workspace",
+        "--all-targets",
+        "--locked",
+        "--offline",
+        "--",
+        "-D",
+        "warnings"
+      ],
+      "exit": 0,
+      "seconds": 3.2350528849929105,
+      "log": "/home/cosmo/.codex/worktrees/808d/quirin-lang/private/cmt-map-set-val/standing-1/provider-clippy.log"
+    },
+    {
+      "name": "provider-python",
+      "command": [
+        "python3",
+        "-m",
+        "unittest",
+        "discover",
+        "-s",
+        "providers/tests"
+      ],
+      "exit": 0,
+      "seconds": 70.69004723598482,
+      "log": "/home/cosmo/.codex/worktrees/808d/quirin-lang/private/cmt-map-set-val/standing-1/provider-python.log"
+    },
+    {
+      "name": "package-build",
+      "command": [
+        "python3",
+        "providers/package.py",
+        "build",
+        "--output",
+        "/home/cosmo/.codex/worktrees/808d/quirin-lang/private/cmt-map-set-val/standing-1/packages"
+      ],
+      "exit": 0,
+      "seconds": 73.09299927801476,
+      "log": "/home/cosmo/.codex/worktrees/808d/quirin-lang/private/cmt-map-set-val/standing-1/package-build.log"
+    },
+    {
+      "name": "verify-chunkio",
+      "command": [
+        "python3",
+        "providers/package.py",
+        "verify",
+        "/home/cosmo/.codex/worktrees/808d/quirin-lang/private/cmt-map-set-val/standing-1/packages/qcore.chunkio"
+      ],
+      "exit": 0,
+      "seconds": 0.22934710897970945,
+      "log": "/home/cosmo/.codex/worktrees/808d/quirin-lang/private/cmt-map-set-val/standing-1/verify-chunkio.log"
+    },
+    {
+      "name": "verify-cmetrics",
+      "command": [
+        "python3",
+        "providers/package.py",
+        "verify",
+        "/home/cosmo/.codex/worktrees/808d/quirin-lang/private/cmt-map-set-val/standing-1/packages/qcore.cmetrics"
+      ],
+      "exit": 0,
+      "seconds": 0.20131515100365505,
+      "log": "/home/cosmo/.codex/worktrees/808d/quirin-lang/private/cmt-map-set-val/standing-1/verify-cmetrics.log"
+    },
+    {
+      "name": "verify-ctraces",
+      "command": [
+        "python3",
+        "providers/package.py",
+        "verify",
+        "/home/cosmo/.codex/worktrees/808d/quirin-lang/private/cmt-map-set-val/standing-1/packages/qcore.ctraces"
+      ],
+      "exit": 0,
+      "seconds": 0.19481882799300365,
+      "log": "/home/cosmo/.codex/worktrees/808d/quirin-lang/private/cmt-map-set-val/standing-1/verify-ctraces.log"
+    },
+    {
+      "name": "verify-libevent",
+      "command": [
+        "python3",
+        "providers/package.py",
+        "verify",
+        "/home/cosmo/.codex/worktrees/808d/quirin-lang/private/cmt-map-set-val/standing-1/packages/qcore.libevent"
+      ],
+      "exit": 0,
+      "seconds": 0.2075650909973774,
+      "log": "/home/cosmo/.codex/worktrees/808d/quirin-lang/private/cmt-map-set-val/standing-1/verify-libevent.log"
+    },
+    {
+      "name": "verify-librdkafka",
+      "command": [
+        "python3",
+        "providers/package.py",
+        "verify",
+        "/home/cosmo/.codex/worktrees/808d/quirin-lang/private/cmt-map-set-val/standing-1/packages/qcore.librdkafka"
+      ],
+      "exit": 0,
+      "seconds": 0.2811208220082335,
+      "log": "/home/cosmo/.codex/worktrees/808d/quirin-lang/private/cmt-map-set-val/standing-1/verify-librdkafka.log"
+    }
+  ]
+}

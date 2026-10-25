@@ -1,0 +1,33 @@
+{
+  "base": "d5d0412640f919dc2c02e43f9f6dd726ae006feb",
+  "source_revision": "66910c10a4d7eafa810b84229cf2dcf7b0f26f97",
+  "source_files": {
+    "lib/cmetrics/include/cmetrics/cmt_map.h": "722be8ad636f1ef0ada23b55e3989ab7609794cd7b7b17ee47efb7b02abbb2cc",
+    "lib/cmetrics/include/cmetrics/cmt_metric.h": "01436d880675c755ebba53d361273446b9745077b2cc2f9aa20ca8089e7e86a4",
+    "lib/cmetrics/include/cmetrics/cmt_counter.h": "69ed92f1ea46cb36cccf83ea5c282a5fc9203a7bb129353af5827b593dbbb9dd",
+    "lib/cmetrics/include/cmetrics/cmt_gauge.h": "0f204e58f6a335041c92cbbea8540fa33909902bb495726ec412091a8e1bd141",
+    "lib/cmetrics/include/cmetrics/cmt_untyped.h": "725ccf548e042be689ffe05adf8bdb690b8cbf311d9dd3404ad232cc2df179f4",
+    "lib/cmetrics/include/cmetrics/cmt_histogram.h": "508f6878c243a4d943542d254bffacbb4f961666d638160cd3020f8aac9036f8",
+    "lib/cmetrics/include/cmetrics/cmt_summary.h": "02c876a80304ea09e75473871dcde281ae7da27b440d73374453929a70e34ab8",
+    "lib/cmetrics/include/cmetrics/cmt_exp_histogram.h": "29a0f6ea1b44e234bdb6f1eccfe928471a9d0ffd19e04e073748adb7e2b85f07",
+    "lib/cmetrics/include/cmetrics/cmt_math.h": "cb0e00fc3e2b3f675b66e87c4bf280f36007df6a7c65a18e0dbc6cf0ca99819c",
+    "lib/cmetrics/include/cmetrics/cmt_atomic.h": "177104fdaf2fc1454ac329787b4faa5402b95a4693bc831692b810387a3e74e6",
+    "lib/cmetrics/src/cmt_map.c": "a02cdda1b17d6b7fbe70a8dfa5cd329261ce575960e58af369cf058e1fa12517",
+    "lib/cmetrics/src/cmt_metric.c": "43f5cffac5256bc2d9dfd83eec1dd301cc3f90e35337a34345e7cf78cbab1cb8",
+    "lib/cmetrics/src/cmt_metric_histogram.c": "c0188c906b1e56a1e0294dd2e9abf2183f159ca6d8403b0bd52f824c03117cc7",
+    "lib/cmetrics/src/cmt_counter.c": "e507481702ceea626ea71e1043b7534ae98b7c2f5d71366ee916c47e25ce88f0",
+    "lib/cmetrics/src/cmt_gauge.c": "4e6d77145b2bea6a45feaa14e927c849bcf5b8f0d6f0589412a5fd4a4d54ef41",
+    "lib/cmetrics/src/cmt_untyped.c": "16cbbdcae10eaf086c2505ef7819bf8c773d39089f0e59e13e7985add1a5101b",
+    "lib/cmetrics/src/cmt_histogram.c": "2d0dc2a2c37914b8baa936ac7f91be19198b65b85f463721db8dfd80356966f2",
+    "lib/cmetrics/src/cmt_summary.c": "fb3df5cd38613e844e2e37a5356cf3762f0d40a6d8ee96d5b1d7767fcc62925c",
+    "lib/cmetrics/src/cmt_exp_histogram.c": "bd6cc7f4f9b0e21f36e60b625e848d0a1071545ae3f1c3af0a51f0c524114e44"
+  },
+  "baseline": {
+    "canonical_modules": 140,
+    "resource_modules": 66,
+    "resource_declarations": 497,
+    "rejected_declarations": 342
+  },
+  "requested_nonexistent_symbol": "cmt_map_metric_set_val",
+  "scope": "Existing map metric contracts plus missing metric setters and six typed setter APIs; no invented API or interpreted permission"
+}

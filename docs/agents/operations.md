@@ -92,7 +92,9 @@ up front:
 4. Scope limits: what is in and out of scope; the card never merges or
    pushes main; findings outside scope become follow-ups.
 5. Completion condition and report: the checklist that makes the card done,
-   the report path, the increment paragraph and ledger entries, and the reply's
+   the report path, the increment paragraph and ledger entries (its
+   `integration-amendments.json`, in the schema `scripts/apply_amendments.py`
+   defines and checks with `--check`), and the reply's
    shape: branch tip and base, changes, gate commands with exits and counts,
    files likely to conflict, and follow-ups.
 6. Legitimate stops: stop and report only when nothing can advance without
@@ -125,6 +127,12 @@ background job still running is not complete.
 Read this section when merging, closing a wave, retiring tracking entries, or
 editing reconciliation tooling.
 
+- Apply a card's records with `python3 scripts/apply_amendments.py
+  docs/reports/<card>/integration-amendments.json` (`--dry-run` first;
+  `--legacy` for a pre-schema file). It refuses an invalid or inapplicable
+  file and writes nothing; otherwise it writes the increment paragraph, the
+  status paragraph and the `named_followups` edits, then prints the matrix and
+  report-index commands to run after the landing gate.
 - If a merged measurement differs from the card's own gate, publish
   `docs/reports/<card>/integration/gate.json`, identify the measured tip and the
   merge SHA, and state it in the merge message. Equal figures need no duplicate

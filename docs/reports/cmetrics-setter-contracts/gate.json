@@ -1,0 +1,13 @@
+{
+  "note": "Fresh full source gate on 6d88782ab6f2d17af15fb7924956bb2e1ec5dd84; all 20 commands exit zero. Declared setter models only, no native measurement or executable adoption. Prior source completed 18 commands before its unlaunched Rust waiter/coordinator were cancelled for a corrected exclusion precondition; cancellation exit 143 retained separately. Earlier Lean development failures and sandbox submodule failure/retry retained in development-attempts.json. The intermediate full source gate failed one Rust test due to the wrong replay API; its failed-gate receipt is retained separately. The corrected structural-parser control and fresh full gate pass. Private logs: private/cmt-map-set-val/standing-3/.",
+  "workspace_tests": 8663,
+  "provider_tests": 133,
+  "python_evidence_validator_tests": 445,
+  "lean_audits": 372,
+  "reevaluation_probe_exit": 0,
+  "reevaluation_followup_exit": 0,
+  "cargo_fmt": "clean",
+  "cargo_clippy": "clean",
+  "standing_gate": "all 20 required source checks pass on corrected source",
+  "clang": "present: Ubuntu clang version 21.1.8 (6ubuntu1)"
+}
