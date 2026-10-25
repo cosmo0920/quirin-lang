@@ -1,0 +1,20 @@
+
+running 3 tests
+test shared_setter_lifecycle_vectors_match_audited_lean ... ok
+test failure_after_lookup_does_not_rollback_parent_owned_children ... ok
+test setter_models_cover_existing_apis_and_refuse_interpreted_permissions ... FAILED
+
+failures:
+
+---- setter_models_cover_existing_apis_and_refuse_interpreted_permissions stdout ----
+
+thread 'setter_models_cover_existing_apis_and_refuse_interpreted_permissions' (1444713) panicked at crates/qcore-contract/tests/cmetrics_setter_models.rs:26:60:
+called `Result::unwrap()` on an `Err` value: "model hypothesis: expected a declared resource-type model source view"
+note: run with `RUST_BACKTRACE=1` environment variable to display a backtrace
+
+
+failures:
+    setter_models_cover_existing_apis_and_refuse_interpreted_permissions
+
+test result: FAILED. 2 passed; 1 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+

@@ -1,0 +1,23 @@
+{
+  "failed_lean_attempts": [
+    {
+      "log": "/home/cosmo/.codex/worktrees/808d/quirin-lang/private/cmt-map-set-val/lean-first.log",
+      "exit": 1,
+      "sha256": "81c39ef030a68f34bb9f3e5a297bb478b398b76107063e951c0b5264a851d0d9",
+      "reason": "Initial model syntax/typecheck errors"
+    },
+    {
+      "log": "/home/cosmo/.codex/worktrees/808d/quirin-lang/private/cmt-map-set-val/lean-repair.log",
+      "exit": 1,
+      "sha256": "a7cd67a439eb653a1ec55ba489508c1f4038a7b0999bb81d9e71cfef613646c6",
+      "reason": "Unused simp arguments rejected by warning-as-error policy"
+    }
+  ],
+  "successful_focused_lean": {
+    "log": "/home/cosmo/.codex/worktrees/808d/quirin-lang/private/cmt-map-set-val/lean-repair-2.log",
+    "exit": 0
+  },
+  "submodule_first_attempt_exit": 128,
+  "submodule_retry_exit": 0,
+  "not_hidden_or_relabelled": true
+}

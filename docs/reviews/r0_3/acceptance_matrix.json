@@ -6858,8 +6858,8 @@
   "note": "providers/ is a separate Cargo workspace, excluded from the core workspace; P01 verified empirically that the core workspace builds and passes its full suite with providers/ moved out of the tree."
  },
  "validation": {
-  "note": "Fresh full combined landing gate on f350d8c5de1585b127d8ce45d0641cb5db37690f, integrating card c8cb7bd4b with main 6c4855745. All 20 final required checks exit 0 after the standalone Lean retry; exact commands, private paths and log hashes are in command-receipt.json. Every check ran freshly on the current-main merge; the Rust suites used the retained rust-suite reservation and the successful Lean check used an independent Lean reservation. Earlier schedules completed 18 checks on c6561aa81 and 18 on 7045d9d98 before main advanced. No Rust tests launched on either superseded source. The retained reservation redirected its unlaunched worker to this fresh full gate; the older coordinator source guard rejects attributing the new source to its old head. Earlier partial receipts are retained separately and are not the final gate. Historical card-native measurements remain isolated; no merged native count is inferred.",
-  "workspace_tests": 8660,
+  "note": "Fresh full source gate on 6d88782ab6f2d17af15fb7924956bb2e1ec5dd84; all 20 commands exit zero. Declared setter models only, no native measurement or executable adoption. Prior source completed 18 commands before its unlaunched Rust waiter/coordinator were cancelled for a corrected exclusion precondition; cancellation exit 143 retained separately. Earlier Lean development failures and sandbox submodule failure/retry retained in development-attempts.json. The intermediate full source gate failed one Rust test due to the wrong replay API; its failed-gate receipt is retained separately. The corrected structural-parser control and fresh full gate pass. Private logs: private/cmt-map-set-val/standing-3/.",
+  "workspace_tests": 8663,
   "provider_tests": 133,
   "python_evidence_validator_tests": 445,
   "lean_audits": 372,
@@ -7241,9 +7241,9 @@
   "reevaluation_followup_exit": 0,
   "cargo_fmt": "clean",
   "cargo_clippy": "clean",
-  "standing_gate": "all required landing checks pass on unchanged source after separate Lean scheduling retry",
+  "standing_gate": "all 20 required source checks pass on corrected source",
   "full_language_conformance": false,
-  "measurement_provenance": "carried_from_previous_matrix: these numbers were NOT measured for this regeneration; pass --gate PATH with the standing-gate results of this checkpoint to replace them"
+  "measurement_provenance": "integrator_supplied (/home/cosmo/.codex/worktrees/808d/quirin-lang/docs/reports/cmetrics-setter-contracts/gate.json)"
  },
  "named_followups": [
   {
@@ -12979,7 +12979,7 @@
   {
    "id": "CMT-MAP-OPTS-CONTRACT-ADOPTION",
    "title": "Discharge checked consumers for CMetrics map and opts API contracts",
-   "why": "Open after adding source-audited declared-model cmetrics/map_lifetime.qv and cmetrics/opts_lifetime.qv for six map and two opts APIs. They grant no interpreted resource/bounds/outer call permission. DISCHARGE: generic checked consumers with matching audited Rust/Lean for copied versus retained inputs, transitive map ownership, primary versus secondary/cache/backpointer relations, embedded versus dynamic metric borrows, getter NULL after committed mutation, expiration/destructor invalidation and external coordination, and opts partial initialization plus cleanup without clearing fields. Opts contents can retire before teardown-only map destruction. Prove source/ABI/body coverage and all representation/alias/lifetime obligations, use truthful reviewed pins for any eventual interpreted declaration, retain Unknown on missing proof, and own fresh prediction/native attribution for actual adoption. Never replace these effects by an ordinary neutral summary. Setter audit models in cmetrics/metric_setters.qv and cmetrics/typed_setters.qv also require checked consumers: defined scalar conversions, counter rejection after lookup, aggregate input/target extents, summary nullable quantiles, partial preparation, exponential-histogram array replacement and old-alias invalidation. Their source audit is docs/reports/cmetrics-setter-contracts/README.md; parsing these declarations supplies no executable permission.",
+   "why": "Open after adding source-audited declared-model cmetrics/map_lifetime.qv and cmetrics/opts_lifetime.qv for six map and two opts APIs. They grant no interpreted resource/bounds/outer call permission. DISCHARGE: generic checked consumers with matching audited Rust/Lean for copied versus retained inputs, transitive map ownership, primary versus secondary/cache/backpointer relations, embedded versus dynamic metric borrows, getter NULL after committed mutation, expiration/destructor invalidation and external coordination, and opts partial initialization plus cleanup without clearing fields. Opts contents can retire before teardown-only map destruction. Prove source/ABI/body coverage and all representation/alias/lifetime obligations, use truthful reviewed pins for any eventual interpreted declaration, retain Unknown on missing proof, and own fresh prediction/native attribution for actual adoption. Never replace these effects by an ordinary neutral summary. Setter audit models in cmetrics/metric_setters.qv and cmetrics/typed_setters.qv also require checked consumers: defined scalar conversions, counter rejection after lookup, aggregate input/target extents, summary nullable quantiles, partial preparation, exponential-histogram array replacement and old-alias invalidation. Their source audit is docs/reports/cmetrics-setter-contracts/README.md; parsing these declarations supplies no executable permission. Histogram lookup failure logging must also establish validity of the map pointer supplied to its %s format argument under the selected backend; source inspection alone establishes no reachable defect.",
    "source": "docs/reports/w48-cmt-tracked-interior-self-init/CMETRICS_APIS.md"
   },
   {

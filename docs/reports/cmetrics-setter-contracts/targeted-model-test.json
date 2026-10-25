@@ -1,0 +1,14 @@
+{
+  "head": "6d88782ab6f2d17af15fb7924956bb2e1ec5dd84",
+  "command": [
+    "cargo",
+    "test",
+    "-p",
+    "qcore-contract",
+    "--test",
+    "cmetrics_setter_models",
+    "--no-fail-fast"
+  ],
+  "exit": 0,
+  "log": "/home/cosmo/.codex/worktrees/808d/quirin-lang/private/cmt-map-set-val/standing-3/targeted-model-test.log"
+}
