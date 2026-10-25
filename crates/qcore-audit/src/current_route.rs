@@ -13,6 +13,7 @@
 //! Unknown records so no older Checked evidence survives beside a new
 //! inventory.
 
+use std::collections::BTreeMap;
 use std::fs;
 use std::path::{Path, PathBuf};
 
@@ -159,8 +160,22 @@ pub fn run_current_route_with_checkpoints(
                 )
             })?;
             let mut selected = Vec::new();
+            // Card AUDIT-CANONICAL-PATHS: two selected files that locate to
+            // one source would analyse its records twice; refused, named.
+            let mut claimed = BTreeMap::<PathBuf, &str>::new();
             for file in &group.files {
-                let configurations = select_file_configurations(&entries, &root, file);
+                let configurations = select_file_configurations(&entries, &root, file)?;
+                if let Some(first) = configurations.first() {
+                    let located = crate::input_paths::locate(&first.file).path().to_path_buf();
+                    if let Some(prior) = claimed.insert(located.clone(), file.as_str()) {
+                        return Err(format!(
+                            "{}: selected files `{prior}` and `{file}` of group `{}` locate to one source file {}; the audit neither merges nor double-counts them",
+                            crate::input_paths::ALIAS_DIAGNOSTIC,
+                            group.label(),
+                            located.display()
+                        ));
+                    }
+                }
                 if configurations.is_empty() {
                     selected.push(Selected::Absent(file.as_str()));
                 }
@@ -177,7 +192,7 @@ pub fn run_current_route_with_checkpoints(
             let library = profile
                 .library(&selection.library)
                 .ok_or("selected library is absent from profile")?;
-            let selected = select_configurations(&entries, &root, library);
+            let selected = select_configurations(&entries, &root, library)?;
             if selected.is_empty() {
                 return Err(format!(
                     "compile database contains no selected {} sources",
@@ -202,6 +217,13 @@ pub fn run_current_route_with_checkpoints(
             let entries =
                 compile_entries(&fs::read_to_string(path).map_err(|error| error.to_string())?)?;
             let source_root = monkey_source_root(&entries)?;
+            // Card AUDIT-CANONICAL-PATHS: two spellings of one Monkey unit
+            // are refused, never two units.
+            crate::input_paths::refuse_aliases(
+                entries
+                    .iter()
+                    .filter(|entry| is_monkey_unit(&source_root, &entry.file)),
+            )?;
             let selected = distinct_configurations(
                 entries
                     .into_iter()
@@ -283,11 +305,9 @@ pub fn run_current_route_with_checkpoints(
             entries.len()
         ));
         for entry in entries {
-            let expected_source = entry
-                .file
-                .strip_prefix(source_root)
+            let expected_source = crate::input_paths::relative_within(&entry.file, source_root)
                 .map(|relative| root.join("lib/monkey").join(relative))
-                .map_err(|_| "Monkey source outside compiled root".to_owned());
+                .ok_or_else(|| "Monkey source outside compiled root".to_owned());
             tasks.push(ConfiguredTask {
                 group: headers.len() - 1,
                 library: "monkey-libevent",
@@ -634,25 +654,24 @@ pub fn historical_reference_revision_of(
 
 /// Every distinct configuration of one exact selected file (card
 /// W45-FB-SYSTEM-SELECTION): `select_configurations`' exact-file arm, with
-/// the static and shared variants kept as separate units.
+/// the static and shared variants kept as separate units. Card
+/// AUDIT-CANONICAL-PATHS: records match by located path, two spellings of the
+/// file are refused (`input-path-alias`), and a selected file that resolves
+/// outside the checkout is refused with the route's outside diagnostic.
 fn select_file_configurations(
     entries: &[CompileEntry],
     checkout: &Path,
     file: &str,
-) -> Vec<CompileEntry> {
+) -> Result<Vec<CompileEntry>, String> {
     let target = checkout.join(file);
-    crate::current::distinct_configurations(
-        entries
-            .iter()
-            .filter(|entry| {
-                entry
-                    .file
-                    .canonicalize()
-                    .unwrap_or_else(|_| entry.file.clone())
-                    == target
-            })
+    if crate::input_paths::place(&target, checkout) == crate::input_paths::Placement::Escapes {
+        return Err(format!("source outside current checkout: {file}"));
+    }
+    Ok(crate::current::distinct_configurations(
+        crate::input_paths::select_exact(entries, &target)?
+            .into_iter()
             .cloned(),
-    )
+    ))
 }
 
 /// A unit's scheduling weight: its source size in bytes, which ranks analysis
@@ -695,9 +714,15 @@ pub fn monkey_source_root(entries: &[CompileEntry]) -> Result<PathBuf, String> {
 /// Whether `file` is an audited Monkey unit under `source_root`.
 #[must_use]
 pub fn is_monkey_unit(source_root: &Path, file: &Path) -> bool {
-    let Ok(relative) = file.strip_prefix(source_root) else {
+    // Card AUDIT-CANONICAL-PATHS: membership by located path; the root is
+    // derived from the same database, so a consistent spelling places as
+    // before.
+    let crate::input_paths::Placement::Inside(placed) =
+        crate::input_paths::place(file, source_root)
+    else {
         return false;
     };
+    let relative = placed.canonical;
     if file.extension().is_none_or(|extension| extension != "c") {
         return false;
     }
@@ -715,11 +740,9 @@ pub fn verify_monkey_source_copy(
     entries: &[CompileEntry],
 ) -> Result<(), String> {
     for entry in entries {
-        let relative = entry
-            .file
-            .strip_prefix(compiled_root)
-            .map_err(|_| format!("source is outside Monkey root: {}", entry.file.display()))?;
-        let canonical = canonical_root.join(relative);
+        let relative = crate::input_paths::relative_within(&entry.file, compiled_root)
+            .ok_or_else(|| format!("source is outside Monkey root: {}", entry.file.display()))?;
+        let canonical = canonical_root.join(&relative);
         let compiled = fs::read(&entry.file)
             .map_err(|error| format!("could not read {}: {error}", entry.file.display()))?;
         let expected = fs::read(&canonical)

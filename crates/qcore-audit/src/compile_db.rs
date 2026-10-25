@@ -34,7 +34,10 @@ pub fn select_unique_configuration<'a>(
     file: &Path,
 ) -> Result<&'a CompileEntry, String> {
     let mut distinct = Vec::<&CompileEntry>::new();
-    for entry in entries.iter().filter(|entry| entry.file == file) {
+    // Card AUDIT-CANONICAL-PATHS: records match by located path, and two
+    // spellings of the file are refused (`input-path-alias`) rather than
+    // merged by `same_configuration` below.
+    for entry in crate::input_paths::select_exact(entries, file)? {
         if !distinct.iter().any(|kept| same_configuration(kept, entry)) {
             distinct.push(entry);
         }
@@ -378,7 +381,10 @@ fn resolve_path(directory: &Path, path: &str) -> String {
     }
 }
 
-fn same_existing_path(left: &Path, right: &Path) -> bool {
+/// Whether two spellings name one existing file: equal, or both resolving to
+/// one canonical path. Shared with the member pre-pass's own-input test (card
+/// AUDIT-CANONICAL-PATHS), so both find a unit's input word the same way.
+pub(crate) fn same_existing_path(left: &Path, right: &Path) -> bool {
     left == right
         || left
             .canonicalize()
