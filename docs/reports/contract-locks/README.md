@@ -2,9 +2,9 @@
 
 Refactoring round 1, pluggable-cards seam A, first bullet; user decision 1 of
 2026-10-24 ([plan](../../plans/pluggable-cards/README.md#6-decisions)). Card
-base `6c4855745`; merged with origin/main `d5d041264` before the final gate
-(see the merged-base paragraph below). No analyzer, contract text, verdict or Lean change,
-so no corpus identity run is due.
+base `6c4855745`; merged with main `c3d8ad3d4` before the final gate. No
+analyzer, contract text, verdict or Lean change, so no corpus identity run is
+due.
 
 ## What changed
 
@@ -21,7 +21,7 @@ so no corpus identity run is due.
   `contract_loader::module_premises` reads, function to names and origins);
   `premise_bindings` (the `// qcore-premise-binding-manifest-v1` pins). Per
   crate: `resource_view`, `bounds_view` and `outer_view` as
-  `contract-load-path.json` records them. 186,421 bytes in all.
+  `contract-load-path.json` records them. 187,749 bytes in all on the merged tree.
 - **Generation.** `providers/contracts.py sync` writes the locks and `check`
   compares them byte for byte, refusing a stale, missing or symbolic-link lock,
   a lock in a directory that is no load-path crate, and a probe that does not
@@ -34,9 +34,9 @@ so no corpus identity run is due.
   `bounds-contracts.lock` and `outer-contracts.lock` pin locks are untouched;
   `check` still verifies them through `quirin-audit pin --verify-contracts`.
 - **Readers.** `compiler/tests/qcore_contract_corpus.rs` loses
-  `EXPECTED_CONTRACTS` (809 rows), `EXPECTED_INHERITANCE` (11), the module
-  count literal (138) and the `librdkafka/null_deref.qv` premised count (71);
-  2,829 lines become 621. A new test,
+  `EXPECTED_CONTRACTS` (818 rows on the merged base, 809 at the card base), `EXPECTED_INHERITANCE` (11), the module
+  count literal (140; 138 at the card base) and the `librdkafka/null_deref.qv` premised count (71);
+  main's 2,841 lines become 630. A new test,
   `every_contract_inventory_lock_equals_its_tree`, recomputes each lock from
   the tracked tree with the test's own reading (digest via
   `qcore_schemas::digest::sha256_hex`, elaborated parse, inclusion scan,
@@ -63,39 +63,36 @@ report.
 
 ## Identity: every old pin, before and after
 
-Before = the literal in the base revision's tests; after = the committed locks
-([`compare_pins.py`](compare_pins.py), run as `python3 docs/reports/contract-locks/compare_pins.py . 6c4855745`, which parses the base literals with
-`git show 6c4855745:...` and reads the locks).
+Before = the literal in a revision's tests; after = this branch's committed
+locks. [`compare_pins.py`](compare_pins.py) parses the literals with `git show
+REV:...` and reads the locks (`python3 docs/reports/contract-locks/compare_pins.py
+. REV`). The merged base is main `c3d8ad3d4`: the CMetrics landing
+`d5d041264` added literal rows (`cfl_list_init`, six `cmt_map_*`, two
+`cmt_opts_*`) and moved the module count 138 → 140, and AUDIT-CANONICAL-PATHS
+changed no contract or corpus test. The merges keep this branch's readers and
+regenerate the cmetrics and cfl locks with `sync`. Outputs:
+[`compare_pins-c3d8ad3d4.txt`](compare_pins-c3d8ad3d4.txt) and, at the card
+base, [`compare_pins.txt`](compare_pins.txt).
 
-| Count the old literal asserted | Before (literal) | After (locks) |
-|---|---|---|
-| module count (`sources.len()`) | 138 | 138 |
-| `EXPECTED_CONTRACTS` declarations | 809 | 809 |
-| `EXPECTED_CONTRACTS` clauses, summed | 7,607 | 7,607 |
-| `EXPECTED_CONTRACTS` modules with a declaration | 138 | 138 |
-| `EXPECTED_CONTRACTS` rows (module, name, clauses), in order | 809 rows | equal, row for row |
-| per-module declaration and clause totals | 138 modules | 0 mismatches |
-| `EXPECTED_INHERITANCE` edges | 11 | 11 |
-| `EXPECTED_INHERITANCE` rows (module, child, parent), in order | 11 rows | equal, row for row |
-| `librdkafka/null_deref.qv` premised declarations | 71 | 71 |
-| resource-view modules, summed (Python) | 66 | 66 |
-| `quirin-provider-libc` resource view (Python) | 17 | 17 |
+| Count the old literal asserted | Merged base `c3d8ad3d4`: literal | locks | Card base `6c4855745`: literal | locks |
+|---|---|---|---|---|
+| module count (`sources.len()`) | 140 | 140 | 138 | 138 |
+| `EXPECTED_CONTRACTS` declarations | 818 | 818 | 809 | 809 |
+| `EXPECTED_CONTRACTS` clauses, summed | 7,721 | 7,721 | 7,607 | 7,607 |
+| `EXPECTED_CONTRACTS` modules with a declaration | 140 | 140 | 138 | 138 |
+| `EXPECTED_CONTRACTS` rows (module, name, clauses), in order | 818 rows | equal, row for row | 809 rows | equal, row for row |
+| per-module declaration and clause totals | 140 modules | 0 mismatches | 138 modules | 0 mismatches |
+| `EXPECTED_INHERITANCE` edges | 11 | 11 | 11 | 11 |
+| `EXPECTED_INHERITANCE` rows (module, child, parent), in order | 11 rows | equal, row for row | 11 rows | equal, row for row |
+| `librdkafka/null_deref.qv` premised declarations | 71 | 71 | 71 | 71 |
+| resource-view modules, summed (Python) | 66 | 66 | 66 | 66 |
+| `quirin-provider-libc` resource view (Python) | 17 | 17 | 17 | 17 |
 
-**Merged base.** origin/main moved to `d5d041264` during the gate: the CMetrics
-landing added literal rows (`cfl_list_init`, six `cmt_map_*`, two
-`cmt_opts_*`) and moved the module count 138 → 140. Merge `d3e911777` keeps
-this branch's readers, regenerates the cmetrics and cfl locks with `sync`,
-and reproduces every one of main's literals
-([`compare_pins.py`](compare_pins.py) `. d5d041264`, output in
-[`compare_pins-d5d041264.txt`](compare_pins-d5d041264.txt)): 140 modules,
-818 declarations, 7,721 clauses (row for row, in order), 140 modules with a
-declaration, 0 per-module mismatches, 11 inheritance edges (row for row),
-71 premised, 66 resource-view modules, 17 in libc.
-
-Per crate at `6c4855745` (files / declarations / clauses): chunkio 46 / 67 / 709, cmetrics
-5 / 31 / 112, ctraces 1 / 19 / 88, libevent 19 / 130 / 792, librdkafka
-13 / 265 / 4,356, cfl 5 / 18 / 78, fluent-bit 26 / 111 / 656, libc
-17 / 132 / 707, mpack 1 / 9 / 34, msgpack 1 / 1 / 7, shared 4 / 26 / 68.
+Per crate on the merged tree (files / declarations / clauses): chunkio
+46 / 67 / 709, cmetrics 7 / 39 / 208, ctraces 1 / 19 / 88, libevent
+19 / 130 / 792, librdkafka 13 / 265 / 4,356, cfl 5 / 19 / 96, fluent-bit
+26 / 111 / 656, libc 17 / 132 / 707, mpack 1 / 9 / 34, msgpack 1 / 1 / 7,
+shared 4 / 26 / 68.
 
 ## Strength
 
@@ -103,7 +100,7 @@ Per crate at `6c4855745` (files / declarations / clauses): chunkio 46 / 67 / 709
 corpus test binary and `providers/contracts.py check` on each, restores the
 bytes (round trip asserted) and ends with a green baseline; logs and
 `summary.json` are in [`mutations/`](mutations/). All six are killed by both
-commands, and the restored tree passes both:
+commands, and the restored tree passes both (measured once on the pre-merge tree of `d17306815`; the merges change no reader):
 
 | Mutation | Corpus test | `contracts.py check` |
 |---|---|---|
@@ -120,7 +117,7 @@ file change without any test edit as long as no count, name or edge moved.
 ## The matrix
 
 `docs/reports/remaining-d02/build_matrix.py` derives `corpus.contract_modules`
-from the corpus roots on disk (`scripts/contract_corpus.py`, unchanged at 138)
+from the corpus roots on disk (`scripts/contract_corpus.py`, 140 on the merged tree, by the same walk)
 and `contract_clause_pin` / `contract_modules_per_directory` from the B00
 ledger, which recorded the table at the B00 checkpoint (59 modules, 100
 entries) and is frozen evidence (constraint 21). None reads the retired
