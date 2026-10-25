@@ -1,0 +1,1564 @@
+{
+ "schema": "quirin-gate-scope/1",
+ "source": "git diff",
+ "base": "1e3967b97db2a656da6c2c6731f77dd7aaad77f9",
+ "head": "9caee67baf4e39074d288eb0861b95bc66130a48",
+ "committed": [
+  "docs/agents/README.md",
+  "docs/agents/buffers-records.md",
+  "docs/agents/concurrency.md",
+  "docs/agents/diagnostics.md",
+  "docs/agents/effects.md",
+  "docs/agents/evidence.md",
+  "docs/agents/gateway.md",
+  "docs/agents/io.md",
+  "docs/agents/operations.md",
+  "docs/agents/providers.md",
+  "docs/agents/rules/1.md",
+  "docs/agents/rules/10.md",
+  "docs/agents/rules/10a.md",
+  "docs/agents/rules/10b.md",
+  "docs/agents/rules/10c.md",
+  "docs/agents/rules/10d.md",
+  "docs/agents/rules/10e.md",
+  "docs/agents/rules/10f.md",
+  "docs/agents/rules/10g.md",
+  "docs/agents/rules/10h.md",
+  "docs/agents/rules/10i.md",
+  "docs/agents/rules/10j.md",
+  "docs/agents/rules/10k.md",
+  "docs/agents/rules/10l.md",
+  "docs/agents/rules/10m.md",
+  "docs/agents/rules/10n.md",
+  "docs/agents/rules/10o.md",
+  "docs/agents/rules/10p.md",
+  "docs/agents/rules/10q.md",
+  "docs/agents/rules/10r.md",
+  "docs/agents/rules/10s.md",
+  "docs/agents/rules/10t.md",
+  "docs/agents/rules/10u.md",
+  "docs/agents/rules/10v.md",
+  "docs/agents/rules/10w.md",
+  "docs/agents/rules/10x.md",
+  "docs/agents/rules/10y.md",
+  "docs/agents/rules/10z.md",
+  "docs/agents/rules/11-series.md",
+  "docs/agents/rules/11.md",
+  "docs/agents/rules/11a.md",
+  "docs/agents/rules/11b.md",
+  "docs/agents/rules/11c.md",
+  "docs/agents/rules/11d.md",
+  "docs/agents/rules/11e.md",
+  "docs/agents/rules/11f.md",
+  "docs/agents/rules/11g.md",
+  "docs/agents/rules/11h.md",
+  "docs/agents/rules/11i.md",
+  "docs/agents/rules/11j.md",
+  "docs/agents/rules/11k.md",
+  "docs/agents/rules/11l.md",
+  "docs/agents/rules/11m.md",
+  "docs/agents/rules/11n.md",
+  "docs/agents/rules/11o.md",
+  "docs/agents/rules/11p.md",
+  "docs/agents/rules/11q.md",
+  "docs/agents/rules/11r.md",
+  "docs/agents/rules/11s.md",
+  "docs/agents/rules/11t.md",
+  "docs/agents/rules/11u.md",
+  "docs/agents/rules/11v.md",
+  "docs/agents/rules/11w.md",
+  "docs/agents/rules/11x.md",
+  "docs/agents/rules/11y.md",
+  "docs/agents/rules/11z.md",
+  "docs/agents/rules/12.md",
+  "docs/agents/rules/12a.md",
+  "docs/agents/rules/12b.md",
+  "docs/agents/rules/12c.md",
+  "docs/agents/rules/12d.md",
+  "docs/agents/rules/12e.md",
+  "docs/agents/rules/12f.md",
+  "docs/agents/rules/12g.md",
+  "docs/agents/rules/12h.md",
+  "docs/agents/rules/12i.md",
+  "docs/agents/rules/12j.md",
+  "docs/agents/rules/12k.md",
+  "docs/agents/rules/12l.md",
+  "docs/agents/rules/12m.md",
+  "docs/agents/rules/12n.md",
+  "docs/agents/rules/12o.md",
+  "docs/agents/rules/12p.md",
+  "docs/agents/rules/12q.md",
+  "docs/agents/rules/12r.md",
+  "docs/agents/rules/12s.md",
+  "docs/agents/rules/12t.md",
+  "docs/agents/rules/12u.md",
+  "docs/agents/rules/12v.md",
+  "docs/agents/rules/12w.md",
+  "docs/agents/rules/12x.md",
+  "docs/agents/rules/12y.md",
+  "docs/agents/rules/12z.md",
+  "docs/agents/rules/13.md",
+  "docs/agents/rules/13a.md",
+  "docs/agents/rules/13b.md",
+  "docs/agents/rules/13c.md",
+  "docs/agents/rules/13d.md",
+  "docs/agents/rules/13e.md",
+  "docs/agents/rules/13f.md",
+  "docs/agents/rules/13g.md",
+  "docs/agents/rules/13h.md",
+  "docs/agents/rules/13i.md",
+  "docs/agents/rules/13j.md",
+  "docs/agents/rules/13k.md",
+  "docs/agents/rules/13l.md",
+  "docs/agents/rules/13m.md",
+  "docs/agents/rules/13n.md",
+  "docs/agents/rules/13o.md",
+  "docs/agents/rules/13p.md",
+  "docs/agents/rules/13q.md",
+  "docs/agents/rules/13r.md",
+  "docs/agents/rules/13s.md",
+  "docs/agents/rules/13t.md",
+  "docs/agents/rules/13u.md",
+  "docs/agents/rules/13v.md",
+  "docs/agents/rules/13w.md",
+  "docs/agents/rules/13x.md",
+  "docs/agents/rules/13y.md",
+  "docs/agents/rules/13z.md",
+  "docs/agents/rules/14.md",
+  "docs/agents/rules/14a.md",
+  "docs/agents/rules/14b.md",
+  "docs/agents/rules/14c.md",
+  "docs/agents/rules/14d.md",
+  "docs/agents/rules/14e.md",
+  "docs/agents/rules/14f.md",
+  "docs/agents/rules/14g.md",
+  "docs/agents/rules/14h.md",
+  "docs/agents/rules/14i.md",
+  "docs/agents/rules/14j.md",
+  "docs/agents/rules/14k.md",
+  "docs/agents/rules/14l.md",
+  "docs/agents/rules/14m.md",
+  "docs/agents/rules/14n.md",
+  "docs/agents/rules/14o.md",
+  "docs/agents/rules/14p.md",
+  "docs/agents/rules/14q.md",
+  "docs/agents/rules/14r.md",
+  "docs/agents/rules/14s.md",
+  "docs/agents/rules/14t.md",
+  "docs/agents/rules/14u.md",
+  "docs/agents/rules/14v.md",
+  "docs/agents/rules/14w.md",
+  "docs/agents/rules/14x.md",
+  "docs/agents/rules/14y.md",
+  "docs/agents/rules/14z.md",
+  "docs/agents/rules/15.md",
+  "docs/agents/rules/15a.md",
+  "docs/agents/rules/15b.md",
+  "docs/agents/rules/15c.md",
+  "docs/agents/rules/15d.md",
+  "docs/agents/rules/15e.md",
+  "docs/agents/rules/15f.md",
+  "docs/agents/rules/15g.md",
+  "docs/agents/rules/15h.md",
+  "docs/agents/rules/15i.md",
+  "docs/agents/rules/15j.md",
+  "docs/agents/rules/15k.md",
+  "docs/agents/rules/15l.md",
+  "docs/agents/rules/15m.md",
+  "docs/agents/rules/15n.md",
+  "docs/agents/rules/15o.md",
+  "docs/agents/rules/15p.md",
+  "docs/agents/rules/15q.md",
+  "docs/agents/rules/15r.md",
+  "docs/agents/rules/15s.md",
+  "docs/agents/rules/15t.md",
+  "docs/agents/rules/15u.md",
+  "docs/agents/rules/15v.md",
+  "docs/agents/rules/15w.md",
+  "docs/agents/rules/15x.md",
+  "docs/agents/rules/15y.md",
+  "docs/agents/rules/15z.md",
+  "docs/agents/rules/16.md",
+  "docs/agents/rules/17.md",
+  "docs/agents/rules/18.md",
+  "docs/agents/rules/19.md",
+  "docs/agents/rules/2.md",
+  "docs/agents/rules/20.md",
+  "docs/agents/rules/21.md",
+  "docs/agents/rules/22.md",
+  "docs/agents/rules/23.md",
+  "docs/agents/rules/24.md",
+  "docs/agents/rules/25.md",
+  "docs/agents/rules/26.md",
+  "docs/agents/rules/27.md",
+  "docs/agents/rules/28.md",
+  "docs/agents/rules/29.md",
+  "docs/agents/rules/3.md",
+  "docs/agents/rules/30.md",
+  "docs/agents/rules/31.md",
+  "docs/agents/rules/32.md",
+  "docs/agents/rules/32a.md",
+  "docs/agents/rules/33.md",
+  "docs/agents/rules/34.md",
+  "docs/agents/rules/35.md",
+  "docs/agents/rules/36.md",
+  "docs/agents/rules/36a.md",
+  "docs/agents/rules/37.md",
+  "docs/agents/rules/4.md",
+  "docs/agents/rules/4a.md",
+  "docs/agents/rules/4b.md",
+  "docs/agents/rules/4c.md",
+  "docs/agents/rules/5.md",
+  "docs/agents/rules/5a.md",
+  "docs/agents/rules/5b.md",
+  "docs/agents/rules/5c.md",
+  "docs/agents/rules/5d.md",
+  "docs/agents/rules/5e.md",
+  "docs/agents/rules/5f.md",
+  "docs/agents/rules/5g.md",
+  "docs/agents/rules/5h.md",
+  "docs/agents/rules/5i.md",
+  "docs/agents/rules/5j.md",
+  "docs/agents/rules/5k.md",
+  "docs/agents/rules/5l.md",
+  "docs/agents/rules/6.md",
+  "docs/agents/rules/7.md",
+  "docs/agents/rules/8.md",
+  "docs/agents/rules/9.md",
+  "docs/agents/rules/README.md",
+  "docs/agents/source-identity.md",
+  "docs/agents/source-routes.md",
+  "docs/agents/validation.md",
+  "docs/reports/generated-roots/README.md",
+  "docs/reports/generated-roots/integration-amendments.json",
+  "docs/reports/generated-roots/scripts/DumpDecls.lean",
+  "docs/reports/generated-roots/scripts/constraint_links.py",
+  "docs/reports/generated-roots/scripts/dump.sh",
+  "docs/reports/generated-roots/scripts/split_rule_docs.py",
+  "docs/reports/generated-roots/scripts/verify_split.py",
+  "proof/AuditAll.lean",
+  "proof/QCore.lean",
+  "scripts/gen_lean_roots.py",
+  "scripts/gen_rule_docs.py",
+  "scripts/listed_files.py",
+  "scripts/tests/test_generated_roots.py"
+ ],
+ "uncommitted": [],
+ "scope": {
+  "paths": [
+   "docs/agents/README.md",
+   "docs/agents/buffers-records.md",
+   "docs/agents/concurrency.md",
+   "docs/agents/diagnostics.md",
+   "docs/agents/effects.md",
+   "docs/agents/evidence.md",
+   "docs/agents/gateway.md",
+   "docs/agents/io.md",
+   "docs/agents/operations.md",
+   "docs/agents/providers.md",
+   "docs/agents/rules/1.md",
+   "docs/agents/rules/10.md",
+   "docs/agents/rules/10a.md",
+   "docs/agents/rules/10b.md",
+   "docs/agents/rules/10c.md",
+   "docs/agents/rules/10d.md",
+   "docs/agents/rules/10e.md",
+   "docs/agents/rules/10f.md",
+   "docs/agents/rules/10g.md",
+   "docs/agents/rules/10h.md",
+   "docs/agents/rules/10i.md",
+   "docs/agents/rules/10j.md",
+   "docs/agents/rules/10k.md",
+   "docs/agents/rules/10l.md",
+   "docs/agents/rules/10m.md",
+   "docs/agents/rules/10n.md",
+   "docs/agents/rules/10o.md",
+   "docs/agents/rules/10p.md",
+   "docs/agents/rules/10q.md",
+   "docs/agents/rules/10r.md",
+   "docs/agents/rules/10s.md",
+   "docs/agents/rules/10t.md",
+   "docs/agents/rules/10u.md",
+   "docs/agents/rules/10v.md",
+   "docs/agents/rules/10w.md",
+   "docs/agents/rules/10x.md",
+   "docs/agents/rules/10y.md",
+   "docs/agents/rules/10z.md",
+   "docs/agents/rules/11-series.md",
+   "docs/agents/rules/11.md",
+   "docs/agents/rules/11a.md",
+   "docs/agents/rules/11b.md",
+   "docs/agents/rules/11c.md",
+   "docs/agents/rules/11d.md",
+   "docs/agents/rules/11e.md",
+   "docs/agents/rules/11f.md",
+   "docs/agents/rules/11g.md",
+   "docs/agents/rules/11h.md",
+   "docs/agents/rules/11i.md",
+   "docs/agents/rules/11j.md",
+   "docs/agents/rules/11k.md",
+   "docs/agents/rules/11l.md",
+   "docs/agents/rules/11m.md",
+   "docs/agents/rules/11n.md",
+   "docs/agents/rules/11o.md",
+   "docs/agents/rules/11p.md",
+   "docs/agents/rules/11q.md",
+   "docs/agents/rules/11r.md",
+   "docs/agents/rules/11s.md",
+   "docs/agents/rules/11t.md",
+   "docs/agents/rules/11u.md",
+   "docs/agents/rules/11v.md",
+   "docs/agents/rules/11w.md",
+   "docs/agents/rules/11x.md",
+   "docs/agents/rules/11y.md",
+   "docs/agents/rules/11z.md",
+   "docs/agents/rules/12.md",
+   "docs/agents/rules/12a.md",
+   "docs/agents/rules/12b.md",
+   "docs/agents/rules/12c.md",
+   "docs/agents/rules/12d.md",
+   "docs/agents/rules/12e.md",
+   "docs/agents/rules/12f.md",
+   "docs/agents/rules/12g.md",
+   "docs/agents/rules/12h.md",
+   "docs/agents/rules/12i.md",
+   "docs/agents/rules/12j.md",
+   "docs/agents/rules/12k.md",
+   "docs/agents/rules/12l.md",
+   "docs/agents/rules/12m.md",
+   "docs/agents/rules/12n.md",
+   "docs/agents/rules/12o.md",
+   "docs/agents/rules/12p.md",
+   "docs/agents/rules/12q.md",
+   "docs/agents/rules/12r.md",
+   "docs/agents/rules/12s.md",
+   "docs/agents/rules/12t.md",
+   "docs/agents/rules/12u.md",
+   "docs/agents/rules/12v.md",
+   "docs/agents/rules/12w.md",
+   "docs/agents/rules/12x.md",
+   "docs/agents/rules/12y.md",
+   "docs/agents/rules/12z.md",
+   "docs/agents/rules/13.md",
+   "docs/agents/rules/13a.md",
+   "docs/agents/rules/13b.md",
+   "docs/agents/rules/13c.md",
+   "docs/agents/rules/13d.md",
+   "docs/agents/rules/13e.md",
+   "docs/agents/rules/13f.md",
+   "docs/agents/rules/13g.md",
+   "docs/agents/rules/13h.md",
+   "docs/agents/rules/13i.md",
+   "docs/agents/rules/13j.md",
+   "docs/agents/rules/13k.md",
+   "docs/agents/rules/13l.md",
+   "docs/agents/rules/13m.md",
+   "docs/agents/rules/13n.md",
+   "docs/agents/rules/13o.md",
+   "docs/agents/rules/13p.md",
+   "docs/agents/rules/13q.md",
+   "docs/agents/rules/13r.md",
+   "docs/agents/rules/13s.md",
+   "docs/agents/rules/13t.md",
+   "docs/agents/rules/13u.md",
+   "docs/agents/rules/13v.md",
+   "docs/agents/rules/13w.md",
+   "docs/agents/rules/13x.md",
+   "docs/agents/rules/13y.md",
+   "docs/agents/rules/13z.md",
+   "docs/agents/rules/14.md",
+   "docs/agents/rules/14a.md",
+   "docs/agents/rules/14b.md",
+   "docs/agents/rules/14c.md",
+   "docs/agents/rules/14d.md",
+   "docs/agents/rules/14e.md",
+   "docs/agents/rules/14f.md",
+   "docs/agents/rules/14g.md",
+   "docs/agents/rules/14h.md",
+   "docs/agents/rules/14i.md",
+   "docs/agents/rules/14j.md",
+   "docs/agents/rules/14k.md",
+   "docs/agents/rules/14l.md",
+   "docs/agents/rules/14m.md",
+   "docs/agents/rules/14n.md",
+   "docs/agents/rules/14o.md",
+   "docs/agents/rules/14p.md",
+   "docs/agents/rules/14q.md",
+   "docs/agents/rules/14r.md",
+   "docs/agents/rules/14s.md",
+   "docs/agents/rules/14t.md",
+   "docs/agents/rules/14u.md",
+   "docs/agents/rules/14v.md",
+   "docs/agents/rules/14w.md",
+   "docs/agents/rules/14x.md",
+   "docs/agents/rules/14y.md",
+   "docs/agents/rules/14z.md",
+   "docs/agents/rules/15.md",
+   "docs/agents/rules/15a.md",
+   "docs/agents/rules/15b.md",
+   "docs/agents/rules/15c.md",
+   "docs/agents/rules/15d.md",
+   "docs/agents/rules/15e.md",
+   "docs/agents/rules/15f.md",
+   "docs/agents/rules/15g.md",
+   "docs/agents/rules/15h.md",
+   "docs/agents/rules/15i.md",
+   "docs/agents/rules/15j.md",
+   "docs/agents/rules/15k.md",
+   "docs/agents/rules/15l.md",
+   "docs/agents/rules/15m.md",
+   "docs/agents/rules/15n.md",
+   "docs/agents/rules/15o.md",
+   "docs/agents/rules/15p.md",
+   "docs/agents/rules/15q.md",
+   "docs/agents/rules/15r.md",
+   "docs/agents/rules/15s.md",
+   "docs/agents/rules/15t.md",
+   "docs/agents/rules/15u.md",
+   "docs/agents/rules/15v.md",
+   "docs/agents/rules/15w.md",
+   "docs/agents/rules/15x.md",
+   "docs/agents/rules/15y.md",
+   "docs/agents/rules/15z.md",
+   "docs/agents/rules/16.md",
+   "docs/agents/rules/17.md",
+   "docs/agents/rules/18.md",
+   "docs/agents/rules/19.md",
+   "docs/agents/rules/2.md",
+   "docs/agents/rules/20.md",
+   "docs/agents/rules/21.md",
+   "docs/agents/rules/22.md",
+   "docs/agents/rules/23.md",
+   "docs/agents/rules/24.md",
+   "docs/agents/rules/25.md",
+   "docs/agents/rules/26.md",
+   "docs/agents/rules/27.md",
+   "docs/agents/rules/28.md",
+   "docs/agents/rules/29.md",
+   "docs/agents/rules/3.md",
+   "docs/agents/rules/30.md",
+   "docs/agents/rules/31.md",
+   "docs/agents/rules/32.md",
+   "docs/agents/rules/32a.md",
+   "docs/agents/rules/33.md",
+   "docs/agents/rules/34.md",
+   "docs/agents/rules/35.md",
+   "docs/agents/rules/36.md",
+   "docs/agents/rules/36a.md",
+   "docs/agents/rules/37.md",
+   "docs/agents/rules/4.md",
+   "docs/agents/rules/4a.md",
+   "docs/agents/rules/4b.md",
+   "docs/agents/rules/4c.md",
+   "docs/agents/rules/5.md",
+   "docs/agents/rules/5a.md",
+   "docs/agents/rules/5b.md",
+   "docs/agents/rules/5c.md",
+   "docs/agents/rules/5d.md",
+   "docs/agents/rules/5e.md",
+   "docs/agents/rules/5f.md",
+   "docs/agents/rules/5g.md",
+   "docs/agents/rules/5h.md",
+   "docs/agents/rules/5i.md",
+   "docs/agents/rules/5j.md",
+   "docs/agents/rules/5k.md",
+   "docs/agents/rules/5l.md",
+   "docs/agents/rules/6.md",
+   "docs/agents/rules/7.md",
+   "docs/agents/rules/8.md",
+   "docs/agents/rules/9.md",
+   "docs/agents/rules/README.md",
+   "docs/agents/source-identity.md",
+   "docs/agents/source-routes.md",
+   "docs/agents/validation.md",
+   "docs/reports/generated-roots/README.md",
+   "docs/reports/generated-roots/integration-amendments.json",
+   "docs/reports/generated-roots/scripts/DumpDecls.lean",
+   "docs/reports/generated-roots/scripts/constraint_links.py",
+   "docs/reports/generated-roots/scripts/dump.sh",
+   "docs/reports/generated-roots/scripts/split_rule_docs.py",
+   "docs/reports/generated-roots/scripts/verify_split.py",
+   "proof/AuditAll.lean",
+   "proof/QCore.lean",
+   "scripts/gen_lean_roots.py",
+   "scripts/gen_rule_docs.py",
+   "scripts/listed_files.py",
+   "scripts/tests/test_generated_roots.py"
+  ],
+  "attribution": {
+   "docs/agents/README.md": [
+    "class prose"
+   ],
+   "docs/agents/buffers-records.md": [
+    "class prose"
+   ],
+   "docs/agents/concurrency.md": [
+    "class prose"
+   ],
+   "docs/agents/diagnostics.md": [
+    "class prose"
+   ],
+   "docs/agents/effects.md": [
+    "class prose"
+   ],
+   "docs/agents/evidence.md": [
+    "class prose"
+   ],
+   "docs/agents/gateway.md": [
+    "class prose"
+   ],
+   "docs/agents/io.md": [
+    "class prose"
+   ],
+   "docs/agents/operations.md": [
+    "class prose"
+   ],
+   "docs/agents/providers.md": [
+    "class prose"
+   ],
+   "docs/agents/rules/1.md": [
+    "class prose"
+   ],
+   "docs/agents/rules/10.md": [
+    "class prose"
+   ],
+   "docs/agents/rules/10a.md": [
+    "class prose"
+   ],
+   "docs/agents/rules/10b.md": [
+    "class prose"
+   ],
+   "docs/agents/rules/10c.md": [
+    "class prose"
+   ],
+   "docs/agents/rules/10d.md": [
+    "class prose"
+   ],
+   "docs/agents/rules/10e.md": [
+    "class prose"
+   ],
+   "docs/agents/rules/10f.md": [
+    "class prose"
+   ],
+   "docs/agents/rules/10g.md": [
+    "class prose"
+   ],
+   "docs/agents/rules/10h.md": [
+    "class prose"
+   ],
+   "docs/agents/rules/10i.md": [
+    "class prose"
+   ],
+   "docs/agents/rules/10j.md": [
+    "class prose"
+   ],
+   "docs/agents/rules/10k.md": [
+    "class prose"
+   ],
+   "docs/agents/rules/10l.md": [
+    "class prose"
+   ],
+   "docs/agents/rules/10m.md": [
+    "class prose"
+   ],
+   "docs/agents/rules/10n.md": [
+    "class prose"
+   ],
+   "docs/agents/rules/10o.md": [
+    "class prose"
+   ],
+   "docs/agents/rules/10p.md": [
+    "class prose"
+   ],
+   "docs/agents/rules/10q.md": [
+    "class prose"
+   ],
+   "docs/agents/rules/10r.md": [
+    "class prose"
+   ],
+   "docs/agents/rules/10s.md": [
+    "class prose"
+   ],
+   "docs/agents/rules/10t.md": [
+    "class prose"
+   ],
+   "docs/agents/rules/10u.md": [
+    "class prose"
+   ],
+   "docs/agents/rules/10v.md": [
+    "class prose"
+   ],
+   "docs/agents/rules/10w.md": [
+    "class prose"
+   ],
+   "docs/agents/rules/10x.md": [
+    "class prose"
+   ],
+   "docs/agents/rules/10y.md": [
+    "class prose"
+   ],
+   "docs/agents/rules/10z.md": [
+    "class prose"
+   ],
+   "docs/agents/rules/11-series.md": [
+    "class prose"
+   ],
+   "docs/agents/rules/11.md": [
+    "class prose"
+   ],
+   "docs/agents/rules/11a.md": [
+    "class prose"
+   ],
+   "docs/agents/rules/11b.md": [
+    "class prose"
+   ],
+   "docs/agents/rules/11c.md": [
+    "class prose"
+   ],
+   "docs/agents/rules/11d.md": [
+    "class prose"
+   ],
+   "docs/agents/rules/11e.md": [
+    "class prose"
+   ],
+   "docs/agents/rules/11f.md": [
+    "class prose"
+   ],
+   "docs/agents/rules/11g.md": [
+    "class prose"
+   ],
+   "docs/agents/rules/11h.md": [
+    "class prose"
+   ],
+   "docs/agents/rules/11i.md": [
+    "class prose"
+   ],
+   "docs/agents/rules/11j.md": [
+    "class prose"
+   ],
+   "docs/agents/rules/11k.md": [
+    "class prose"
+   ],
+   "docs/agents/rules/11l.md": [
+    "class prose"
+   ],
+   "docs/agents/rules/11m.md": [
+    "class prose"
+   ],
+   "docs/agents/rules/11n.md": [
+    "class prose"
+   ],
+   "docs/agents/rules/11o.md": [
+    "class prose"
+   ],
+   "docs/agents/rules/11p.md": [
+    "class prose"
+   ],
+   "docs/agents/rules/11q.md": [
+    "class prose"
+   ],
+   "docs/agents/rules/11r.md": [
+    "class prose"
+   ],
+   "docs/agents/rules/11s.md": [
+    "class prose"
+   ],
+   "docs/agents/rules/11t.md": [
+    "class prose"
+   ],
+   "docs/agents/rules/11u.md": [
+    "class prose"
+   ],
+   "docs/agents/rules/11v.md": [
+    "class prose"
+   ],
+   "docs/agents/rules/11w.md": [
+    "class prose"
+   ],
+   "docs/agents/rules/11x.md": [
+    "class prose"
+   ],
+   "docs/agents/rules/11y.md": [
+    "class prose"
+   ],
+   "docs/agents/rules/11z.md": [
+    "class prose"
+   ],
+   "docs/agents/rules/12.md": [
+    "class prose"
+   ],
+   "docs/agents/rules/12a.md": [
+    "class prose"
+   ],
+   "docs/agents/rules/12b.md": [
+    "class prose"
+   ],
+   "docs/agents/rules/12c.md": [
+    "class prose"
+   ],
+   "docs/agents/rules/12d.md": [
+    "class prose"
+   ],
+   "docs/agents/rules/12e.md": [
+    "class prose"
+   ],
+   "docs/agents/rules/12f.md": [
+    "class prose"
+   ],
+   "docs/agents/rules/12g.md": [
+    "class prose"
+   ],
+   "docs/agents/rules/12h.md": [
+    "class prose"
+   ],
+   "docs/agents/rules/12i.md": [
+    "class prose"
+   ],
+   "docs/agents/rules/12j.md": [
+    "class prose"
+   ],
+   "docs/agents/rules/12k.md": [
+    "class prose"
+   ],
+   "docs/agents/rules/12l.md": [
+    "class prose"
+   ],
+   "docs/agents/rules/12m.md": [
+    "class prose"
+   ],
+   "docs/agents/rules/12n.md": [
+    "class prose"
+   ],
+   "docs/agents/rules/12o.md": [
+    "class prose"
+   ],
+   "docs/agents/rules/12p.md": [
+    "class prose"
+   ],
+   "docs/agents/rules/12q.md": [
+    "class prose"
+   ],
+   "docs/agents/rules/12r.md": [
+    "class prose"
+   ],
+   "docs/agents/rules/12s.md": [
+    "class prose"
+   ],
+   "docs/agents/rules/12t.md": [
+    "class prose"
+   ],
+   "docs/agents/rules/12u.md": [
+    "class prose"
+   ],
+   "docs/agents/rules/12v.md": [
+    "class prose"
+   ],
+   "docs/agents/rules/12w.md": [
+    "class prose"
+   ],
+   "docs/agents/rules/12x.md": [
+    "class prose"
+   ],
+   "docs/agents/rules/12y.md": [
+    "class prose"
+   ],
+   "docs/agents/rules/12z.md": [
+    "class prose"
+   ],
+   "docs/agents/rules/13.md": [
+    "class prose"
+   ],
+   "docs/agents/rules/13a.md": [
+    "class prose"
+   ],
+   "docs/agents/rules/13b.md": [
+    "class prose"
+   ],
+   "docs/agents/rules/13c.md": [
+    "class prose"
+   ],
+   "docs/agents/rules/13d.md": [
+    "class prose"
+   ],
+   "docs/agents/rules/13e.md": [
+    "class prose"
+   ],
+   "docs/agents/rules/13f.md": [
+    "class prose"
+   ],
+   "docs/agents/rules/13g.md": [
+    "class prose"
+   ],
+   "docs/agents/rules/13h.md": [
+    "class prose"
+   ],
+   "docs/agents/rules/13i.md": [
+    "class prose"
+   ],
+   "docs/agents/rules/13j.md": [
+    "class prose"
+   ],
+   "docs/agents/rules/13k.md": [
+    "class prose"
+   ],
+   "docs/agents/rules/13l.md": [
+    "class prose"
+   ],
+   "docs/agents/rules/13m.md": [
+    "class prose"
+   ],
+   "docs/agents/rules/13n.md": [
+    "class prose"
+   ],
+   "docs/agents/rules/13o.md": [
+    "class prose"
+   ],
+   "docs/agents/rules/13p.md": [
+    "class prose"
+   ],
+   "docs/agents/rules/13q.md": [
+    "class prose"
+   ],
+   "docs/agents/rules/13r.md": [
+    "class prose"
+   ],
+   "docs/agents/rules/13s.md": [
+    "class prose"
+   ],
+   "docs/agents/rules/13t.md": [
+    "class prose"
+   ],
+   "docs/agents/rules/13u.md": [
+    "class prose"
+   ],
+   "docs/agents/rules/13v.md": [
+    "class prose"
+   ],
+   "docs/agents/rules/13w.md": [
+    "class prose"
+   ],
+   "docs/agents/rules/13x.md": [
+    "class prose"
+   ],
+   "docs/agents/rules/13y.md": [
+    "class prose"
+   ],
+   "docs/agents/rules/13z.md": [
+    "class prose"
+   ],
+   "docs/agents/rules/14.md": [
+    "class prose"
+   ],
+   "docs/agents/rules/14a.md": [
+    "class prose"
+   ],
+   "docs/agents/rules/14b.md": [
+    "class prose"
+   ],
+   "docs/agents/rules/14c.md": [
+    "class prose"
+   ],
+   "docs/agents/rules/14d.md": [
+    "class prose"
+   ],
+   "docs/agents/rules/14e.md": [
+    "class prose"
+   ],
+   "docs/agents/rules/14f.md": [
+    "class prose"
+   ],
+   "docs/agents/rules/14g.md": [
+    "class prose"
+   ],
+   "docs/agents/rules/14h.md": [
+    "class prose"
+   ],
+   "docs/agents/rules/14i.md": [
+    "class prose"
+   ],
+   "docs/agents/rules/14j.md": [
+    "class prose"
+   ],
+   "docs/agents/rules/14k.md": [
+    "class prose"
+   ],
+   "docs/agents/rules/14l.md": [
+    "class prose"
+   ],
+   "docs/agents/rules/14m.md": [
+    "class prose"
+   ],
+   "docs/agents/rules/14n.md": [
+    "class prose"
+   ],
+   "docs/agents/rules/14o.md": [
+    "class prose"
+   ],
+   "docs/agents/rules/14p.md": [
+    "class prose"
+   ],
+   "docs/agents/rules/14q.md": [
+    "class prose"
+   ],
+   "docs/agents/rules/14r.md": [
+    "class prose"
+   ],
+   "docs/agents/rules/14s.md": [
+    "class prose"
+   ],
+   "docs/agents/rules/14t.md": [
+    "class prose"
+   ],
+   "docs/agents/rules/14u.md": [
+    "class prose"
+   ],
+   "docs/agents/rules/14v.md": [
+    "class prose"
+   ],
+   "docs/agents/rules/14w.md": [
+    "class prose"
+   ],
+   "docs/agents/rules/14x.md": [
+    "class prose"
+   ],
+   "docs/agents/rules/14y.md": [
+    "class prose"
+   ],
+   "docs/agents/rules/14z.md": [
+    "class prose"
+   ],
+   "docs/agents/rules/15.md": [
+    "class prose"
+   ],
+   "docs/agents/rules/15a.md": [
+    "class prose"
+   ],
+   "docs/agents/rules/15b.md": [
+    "class prose"
+   ],
+   "docs/agents/rules/15c.md": [
+    "class prose"
+   ],
+   "docs/agents/rules/15d.md": [
+    "class prose"
+   ],
+   "docs/agents/rules/15e.md": [
+    "class prose"
+   ],
+   "docs/agents/rules/15f.md": [
+    "class prose"
+   ],
+   "docs/agents/rules/15g.md": [
+    "class prose"
+   ],
+   "docs/agents/rules/15h.md": [
+    "class prose"
+   ],
+   "docs/agents/rules/15i.md": [
+    "class prose"
+   ],
+   "docs/agents/rules/15j.md": [
+    "class prose"
+   ],
+   "docs/agents/rules/15k.md": [
+    "class prose"
+   ],
+   "docs/agents/rules/15l.md": [
+    "class prose"
+   ],
+   "docs/agents/rules/15m.md": [
+    "class prose"
+   ],
+   "docs/agents/rules/15n.md": [
+    "class prose"
+   ],
+   "docs/agents/rules/15o.md": [
+    "class prose"
+   ],
+   "docs/agents/rules/15p.md": [
+    "class prose"
+   ],
+   "docs/agents/rules/15q.md": [
+    "class prose"
+   ],
+   "docs/agents/rules/15r.md": [
+    "class prose"
+   ],
+   "docs/agents/rules/15s.md": [
+    "class prose"
+   ],
+   "docs/agents/rules/15t.md": [
+    "class prose"
+   ],
+   "docs/agents/rules/15u.md": [
+    "class prose"
+   ],
+   "docs/agents/rules/15v.md": [
+    "class prose"
+   ],
+   "docs/agents/rules/15w.md": [
+    "class prose"
+   ],
+   "docs/agents/rules/15x.md": [
+    "class prose"
+   ],
+   "docs/agents/rules/15y.md": [
+    "class prose"
+   ],
+   "docs/agents/rules/15z.md": [
+    "class prose"
+   ],
+   "docs/agents/rules/16.md": [
+    "class prose"
+   ],
+   "docs/agents/rules/17.md": [
+    "class prose"
+   ],
+   "docs/agents/rules/18.md": [
+    "class prose"
+   ],
+   "docs/agents/rules/19.md": [
+    "class prose"
+   ],
+   "docs/agents/rules/2.md": [
+    "class prose"
+   ],
+   "docs/agents/rules/20.md": [
+    "class prose"
+   ],
+   "docs/agents/rules/21.md": [
+    "class prose"
+   ],
+   "docs/agents/rules/22.md": [
+    "class prose"
+   ],
+   "docs/agents/rules/23.md": [
+    "class prose"
+   ],
+   "docs/agents/rules/24.md": [
+    "class prose"
+   ],
+   "docs/agents/rules/25.md": [
+    "class prose"
+   ],
+   "docs/agents/rules/26.md": [
+    "class prose"
+   ],
+   "docs/agents/rules/27.md": [
+    "class prose"
+   ],
+   "docs/agents/rules/28.md": [
+    "class prose"
+   ],
+   "docs/agents/rules/29.md": [
+    "class prose"
+   ],
+   "docs/agents/rules/3.md": [
+    "class prose"
+   ],
+   "docs/agents/rules/30.md": [
+    "class prose"
+   ],
+   "docs/agents/rules/31.md": [
+    "class prose"
+   ],
+   "docs/agents/rules/32.md": [
+    "class prose"
+   ],
+   "docs/agents/rules/32a.md": [
+    "class prose"
+   ],
+   "docs/agents/rules/33.md": [
+    "class prose"
+   ],
+   "docs/agents/rules/34.md": [
+    "class prose"
+   ],
+   "docs/agents/rules/35.md": [
+    "class prose"
+   ],
+   "docs/agents/rules/36.md": [
+    "class prose"
+   ],
+   "docs/agents/rules/36a.md": [
+    "class prose"
+   ],
+   "docs/agents/rules/37.md": [
+    "class prose"
+   ],
+   "docs/agents/rules/4.md": [
+    "class prose"
+   ],
+   "docs/agents/rules/4a.md": [
+    "class prose"
+   ],
+   "docs/agents/rules/4b.md": [
+    "class prose"
+   ],
+   "docs/agents/rules/4c.md": [
+    "class prose"
+   ],
+   "docs/agents/rules/5.md": [
+    "class prose"
+   ],
+   "docs/agents/rules/5a.md": [
+    "class prose"
+   ],
+   "docs/agents/rules/5b.md": [
+    "class prose"
+   ],
+   "docs/agents/rules/5c.md": [
+    "class prose"
+   ],
+   "docs/agents/rules/5d.md": [
+    "class prose"
+   ],
+   "docs/agents/rules/5e.md": [
+    "class prose"
+   ],
+   "docs/agents/rules/5f.md": [
+    "class prose"
+   ],
+   "docs/agents/rules/5g.md": [
+    "class prose"
+   ],
+   "docs/agents/rules/5h.md": [
+    "class prose"
+   ],
+   "docs/agents/rules/5i.md": [
+    "class prose"
+   ],
+   "docs/agents/rules/5j.md": [
+    "class prose"
+   ],
+   "docs/agents/rules/5k.md": [
+    "class prose"
+   ],
+   "docs/agents/rules/5l.md": [
+    "class prose"
+   ],
+   "docs/agents/rules/6.md": [
+    "class prose"
+   ],
+   "docs/agents/rules/7.md": [
+    "class prose"
+   ],
+   "docs/agents/rules/8.md": [
+    "class prose"
+   ],
+   "docs/agents/rules/9.md": [
+    "class prose"
+   ],
+   "docs/agents/rules/README.md": [
+    "class prose"
+   ],
+   "docs/agents/source-identity.md": [
+    "class prose"
+   ],
+   "docs/agents/source-routes.md": [
+    "class prose"
+   ],
+   "docs/agents/validation.md": [
+    "class prose"
+   ],
+   "docs/reports/generated-roots/README.md": [
+    "class prose"
+   ],
+   "docs/reports/generated-roots/integration-amendments.json": [
+    "class prose"
+   ],
+   "docs/reports/generated-roots/scripts/DumpDecls.lean": [
+    "class prose"
+   ],
+   "docs/reports/generated-roots/scripts/constraint_links.py": [
+    "class prose"
+   ],
+   "docs/reports/generated-roots/scripts/dump.sh": [
+    "class prose"
+   ],
+   "docs/reports/generated-roots/scripts/split_rule_docs.py": [
+    "class prose"
+   ],
+   "docs/reports/generated-roots/scripts/verify_split.py": [
+    "class prose"
+   ],
+   "proof/AuditAll.lean": [
+    "read by qcore-audit (include_bytes, crates/qcore-audit/tests/contract_dependencies_report.rs:479)",
+    "read by qcore-audit (include_bytes, crates/qcore-audit/tests/contract_dependencies_report.rs:669)",
+    "read by qcore-contract (include_bytes, crates/qcore-contract/tests/hypothesis_bindings.rs:10)",
+    "read by qcore-c-gateway (include_bytes, crates/qcore-c-gateway/tests/premise_flow_dependencies.rs:14)",
+    "read by qcore-contract (include_bytes, crates/qcore-contract/tests/premise_flow.rs:11)",
+    "read by qcore-contract (include_bytes, crates/qcore-contract/tests/plugin_premise_decomposition.rs:204)",
+    "read by quirin-source-analysis (include_bytes, crates/quirin-source-analysis/src/cjson_local_binding.rs:650)",
+    "read by quirin-source-analysis (include_bytes, crates/quirin-source-analysis/src/plugin_source_witnesses.rs:14)",
+    "read by qcore-compiler (runtime, compiler/tests/float_ieee_vectors.rs:524)",
+    "read by qcore-compiler (runtime, compiler/tests/proof_leg_digests.rs:106)",
+    "class lean"
+   ],
+   "proof/QCore.lean": [
+    "read by qcore-audit (include_bytes, crates/qcore-audit/tests/contract_dependencies_report.rs:479)",
+    "read by qcore-audit (include_bytes, crates/qcore-audit/tests/contract_dependencies_report.rs:669)",
+    "read by qcore-contract (include_bytes, crates/qcore-contract/tests/hypothesis_bindings.rs:10)",
+    "read by qcore-c-gateway (include_bytes, crates/qcore-c-gateway/tests/premise_flow_dependencies.rs:14)",
+    "read by qcore-contract (include_bytes, crates/qcore-contract/tests/premise_flow.rs:11)",
+    "read by qcore-contract (include_bytes, crates/qcore-contract/tests/plugin_premise_decomposition.rs:204)",
+    "read by quirin-source-analysis (include_bytes, crates/quirin-source-analysis/src/cjson_local_binding.rs:650)",
+    "read by quirin-source-analysis (include_bytes, crates/quirin-source-analysis/src/plugin_source_witnesses.rs:14)",
+    "read by qcore-compiler (runtime, compiler/tests/float_ieee_vectors.rs:524)",
+    "read by qcore-compiler (runtime, compiler/tests/proof_leg_digests.rs:106)",
+    "class lean"
+   ],
+   "scripts/gen_lean_roots.py": [
+    "class python"
+   ],
+   "scripts/gen_rule_docs.py": [
+    "class python"
+   ],
+   "scripts/listed_files.py": [
+    "class python"
+   ],
+   "scripts/tests/test_generated_roots.py": [
+    "class python"
+   ]
+  },
+  "affected": {
+   "qcore-audit": [
+    "reads proof/AuditPremiseRefinement.lean in its directory with include_bytes!: proof/AuditAll.lean (crates/qcore-audit/tests/contract_dependencies_report.rs:479)",
+    "reads proof/AuditPremiseRefinement.lean in its directory with include_bytes!: proof/AuditAll.lean (crates/qcore-audit/tests/contract_dependencies_report.rs:669)",
+    "reads proof/AuditPremiseRefinement.lean in its directory with include_bytes!: proof/QCore.lean (crates/qcore-audit/tests/contract_dependencies_report.rs:479)",
+    "reads proof/AuditPremiseRefinement.lean in its directory with include_bytes!: proof/QCore.lean (crates/qcore-audit/tests/contract_dependencies_report.rs:669)"
+   ],
+   "qcore-c-gateway": [
+    "reads proof/AuditPremiseFlow.lean in its directory with include_bytes!: proof/AuditAll.lean (crates/qcore-c-gateway/tests/premise_flow_dependencies.rs:14)",
+    "reads proof/AuditPremiseFlow.lean in its directory with include_bytes!: proof/QCore.lean (crates/qcore-c-gateway/tests/premise_flow_dependencies.rs:14)"
+   ],
+   "qcore-compiler": [
+    "names proof in a string literal: proof/AuditAll.lean (compiler/tests/float_ieee_vectors.rs:524)",
+    "names proof in a string literal: proof/AuditAll.lean (compiler/tests/proof_leg_digests.rs:106)",
+    "names proof in a string literal: proof/QCore.lean (compiler/tests/float_ieee_vectors.rs:524)",
+    "names proof in a string literal: proof/QCore.lean (compiler/tests/proof_leg_digests.rs:106)"
+   ],
+   "qcore-contract": [
+    "reads proof/AuditPremiseRefinement.lean in its directory with include_bytes!: proof/AuditAll.lean (crates/qcore-contract/tests/hypothesis_bindings.rs:10)",
+    "reads proof/AuditPremiseFlow.lean in its directory with include_bytes!: proof/AuditAll.lean (crates/qcore-contract/tests/premise_flow.rs:11)",
+    "reads proof/AuditPluginPremiseDecomposition.lean in its directory with include_bytes!: proof/AuditAll.lean (crates/qcore-contract/tests/plugin_premise_decomposition.rs:204)",
+    "reads proof/AuditPremiseRefinement.lean in its directory with include_bytes!: proof/QCore.lean (crates/qcore-contract/tests/hypothesis_bindings.rs:10)",
+    "reads proof/AuditPremiseFlow.lean in its directory with include_bytes!: proof/QCore.lean (crates/qcore-contract/tests/premise_flow.rs:11)",
+    "reads proof/AuditPluginPremiseDecomposition.lean in its directory with include_bytes!: proof/QCore.lean (crates/qcore-contract/tests/plugin_premise_decomposition.rs:204)"
+   ],
+   "qcore-provider-conformance": [
+    "depends on qcore-audit"
+   ],
+   "qcore-verification": [
+    "depends on qcore-c-gateway"
+   ],
+   "qcorec": [
+    "depends on qcore-compiler"
+   ],
+   "quirin-source-analysis": [
+    "reads proof/AuditLocalSourceBindings.lean in its directory with include_bytes!: proof/AuditAll.lean (crates/quirin-source-analysis/src/cjson_local_binding.rs:650)",
+    "reads proof/AuditPluginSourceWitnesses.lean in its directory with include_bytes!: proof/AuditAll.lean (crates/quirin-source-analysis/src/plugin_source_witnesses.rs:14)",
+    "reads proof/AuditLocalSourceBindings.lean in its directory with include_bytes!: proof/QCore.lean (crates/quirin-source-analysis/src/cjson_local_binding.rs:650)",
+    "reads proof/AuditPluginSourceWitnesses.lean in its directory with include_bytes!: proof/QCore.lean (crates/quirin-source-analysis/src/plugin_source_witnesses.rs:14)"
+   ]
+  },
+  "mode": "full",
+  "full_reasons": [
+   "requested with --full",
+   "the diff reaches qcore-c-gateway",
+   "the diff reaches qcore-contract"
+  ],
+  "rust_packages": [
+   "qcore-audit",
+   "qcore-c-gateway",
+   "qcore-compiler",
+   "qcore-contract",
+   "qcore-core",
+   "qcore-frontend",
+   "qcore-schemas",
+   "qcore-verification",
+   "qcore-verifier-host",
+   "qcorec",
+   "quirin-audit-plugin",
+   "quirin-audit-plugin-libevent",
+   "quirin-source-analysis"
+  ],
+  "probes": true,
+  "lean": {
+   "mode": "all",
+   "reasons": [
+    "proof/AuditAll.lean: a proof root changed",
+    "proof/QCore.lean: a proof root changed"
+   ],
+   "modules": [],
+   "audits": []
+  },
+  "python_reasons": [
+   "docs/reports/generated-roots/scripts/constraint_links.py: Python",
+   "docs/reports/generated-roots/scripts/split_rule_docs.py: Python",
+   "docs/reports/generated-roots/scripts/verify_split.py: Python",
+   "scripts/gen_lean_roots.py: Python",
+   "scripts/gen_rule_docs.py: Python",
+   "scripts/listed_files.py: Python",
+   "scripts/tests/test_generated_roots.py: Python"
+  ],
+  "provider_gate": false,
+  "provider_reasons": [],
+  "provider_members_reached_without_providers_change": [
+   "qcore-provider-conformance"
+  ],
+  "unresolved_includes": [
+   {
+    "crate": "qcore-compiler",
+    "source": "compiler/tests/ct_corpus.rs:8069",
+    "literal": "include_str!(\\\"fixtures/ct/{id}/case.qr\\\")\");",
+    "why": "argument is not a string literal (or the macro is inside a string)"
+   }
+  ]
+ },
+ "planned_steps": [
+  {
+   "name": "submodules",
+   "argv": [
+    "git",
+    "-C",
+    "/media/Data/GitHub/quirin-lang/.claude/worktrees/agent-abeacbf88917e974c",
+    "submodule",
+    "status",
+    "--recursive"
+   ],
+   "slot": null
+  },
+  {
+   "name": "fmt",
+   "argv": [
+    "cargo",
+    "fmt",
+    "--all",
+    "--",
+    "--check"
+   ],
+   "slot": null
+  },
+  {
+   "name": "clippy",
+   "argv": [
+    "cargo",
+    "clippy",
+    "--all-targets",
+    "--",
+    "-D",
+    "warnings"
+   ],
+   "slot": null
+  },
+  {
+   "name": "rust-suite",
+   "argv": [
+    "/usr/bin/python3",
+    "/media/Data/GitHub/quirin-lang/.claude/worktrees/agent-abeacbf88917e974c/scripts/run_test_binaries.py",
+    "--log-dir",
+    "/media/Data/GitHub/quirin-lang/.claude/worktrees/agent-abeacbf88917e974c/private/generated-roots/gate-scope/rust-suite"
+   ],
+   "slot": "rust-suite"
+  },
+  {
+   "name": "probe-reevaluation_probe",
+   "argv": [
+    "cargo",
+    "run",
+    "-p",
+    "qcore-compiler",
+    "--example",
+    "reevaluation_probe"
+   ],
+   "slot": null
+  },
+  {
+   "name": "probe-reevaluation_followup",
+   "argv": [
+    "cargo",
+    "run",
+    "-p",
+    "qcore-compiler",
+    "--example",
+    "reevaluation_followup"
+   ],
+   "slot": null
+  },
+  {
+   "name": "lean",
+   "argv": [
+    "/usr/bin/python3",
+    "/media/Data/GitHub/quirin-lang/.claude/worktrees/agent-abeacbf88917e974c/scripts/check_lean_audits.py"
+   ],
+   "slot": "lean"
+  },
+  {
+   "name": "python",
+   "argv": [
+    "/usr/bin/python3",
+    "-m",
+    "unittest",
+    "discover",
+    "-s",
+    "scripts/tests"
+   ],
+   "slot": null
+  }
+ ],
+ "slots": true,
+ "started": "20261024T222914Z",
+ "ran": true,
+ "steps": [
+  {
+   "name": "submodules",
+   "argv": [
+    "git",
+    "-C",
+    "/media/Data/GitHub/quirin-lang/.claude/worktrees/agent-abeacbf88917e974c",
+    "submodule",
+    "status",
+    "--recursive"
+   ],
+   "exit": 0,
+   "seconds": 0.1,
+   "log": "/media/Data/GitHub/quirin-lang/.claude/worktrees/agent-abeacbf88917e974c/private/generated-roots/gate-scope/submodules.log",
+   "counts": {
+    "submodules": 1,
+    "not_checked_out_or_moved": []
+   }
+  },
+  {
+   "name": "fmt",
+   "argv": [
+    "cargo",
+    "fmt",
+    "--all",
+    "--",
+    "--check"
+   ],
+   "exit": 0,
+   "seconds": 9.4,
+   "log": "/media/Data/GitHub/quirin-lang/.claude/worktrees/agent-abeacbf88917e974c/private/generated-roots/gate-scope/fmt.log",
+   "counts": {}
+  },
+  {
+   "name": "clippy",
+   "argv": [
+    "cargo",
+    "clippy",
+    "--all-targets",
+    "--",
+    "-D",
+    "warnings"
+   ],
+   "exit": 0,
+   "seconds": 21.8,
+   "log": "/media/Data/GitHub/quirin-lang/.claude/worktrees/agent-abeacbf88917e974c/private/generated-roots/gate-scope/clippy.log",
+   "counts": {}
+  },
+  {
+   "name": "rust-suite",
+   "argv": [
+    "/usr/bin/python3",
+    "/media/Data/GitHub/quirin-lang/.claude/worktrees/agent-abeacbf88917e974c/scripts/gate_slot.py",
+    "rust-suite",
+    "--receipt",
+    "/media/Data/GitHub/quirin-lang/.claude/worktrees/agent-abeacbf88917e974c/private/generated-roots/gate-scope/slots/rust-suite.json",
+    "--",
+    "/usr/bin/python3",
+    "/media/Data/GitHub/quirin-lang/.claude/worktrees/agent-abeacbf88917e974c/scripts/run_test_binaries.py",
+    "--log-dir",
+    "/media/Data/GitHub/quirin-lang/.claude/worktrees/agent-abeacbf88917e974c/private/generated-roots/gate-scope/rust-suite"
+   ],
+   "exit": 0,
+   "seconds": 5342.6,
+   "log": "/media/Data/GitHub/quirin-lang/.claude/worktrees/agent-abeacbf88917e974c/private/generated-roots/gate-scope/rust-suite.log",
+   "counts": {
+    "units": 550,
+    "passed": 8645,
+    "failed": 0,
+    "ignored": 15,
+    "measured": 0,
+    "filtered": 0,
+    "summaries": 563,
+    "packages": null,
+    "summary": "/media/Data/GitHub/quirin-lang/.claude/worktrees/agent-abeacbf88917e974c/private/generated-roots/gate-scope/rust-suite/summary.json",
+    "ok": true
+   },
+   "slot_receipt": "/media/Data/GitHub/quirin-lang/.claude/worktrees/agent-abeacbf88917e974c/private/generated-roots/gate-scope/slots/rust-suite.json"
+  },
+  {
+   "name": "probe-reevaluation_probe",
+   "argv": [
+    "cargo",
+    "run",
+    "-p",
+    "qcore-compiler",
+    "--example",
+    "reevaluation_probe"
+   ],
+   "exit": 0,
+   "seconds": 0.0,
+   "log": "/media/Data/GitHub/quirin-lang/.claude/worktrees/agent-abeacbf88917e974c/private/generated-roots/gate-scope/probe-reevaluation_probe.log",
+   "counts": {}
+  },
+  {
+   "name": "probe-reevaluation_followup",
+   "argv": [
+    "cargo",
+    "run",
+    "-p",
+    "qcore-compiler",
+    "--example",
+    "reevaluation_followup"
+   ],
+   "exit": 0,
+   "seconds": 0.4,
+   "log": "/media/Data/GitHub/quirin-lang/.claude/worktrees/agent-abeacbf88917e974c/private/generated-roots/gate-scope/probe-reevaluation_followup.log",
+   "counts": {}
+  },
+  {
+   "name": "lean",
+   "argv": [
+    "/usr/bin/python3",
+    "/media/Data/GitHub/quirin-lang/.claude/worktrees/agent-abeacbf88917e974c/scripts/gate_slot.py",
+    "lean",
+    "--receipt",
+    "/media/Data/GitHub/quirin-lang/.claude/worktrees/agent-abeacbf88917e974c/private/generated-roots/gate-scope/slots/lean.json",
+    "--",
+    "/usr/bin/python3",
+    "/media/Data/GitHub/quirin-lang/.claude/worktrees/agent-abeacbf88917e974c/scripts/check_lean_audits.py"
+   ],
+   "exit": 0,
+   "seconds": 17.1,
+   "log": "/media/Data/GitHub/quirin-lang/.claude/worktrees/agent-abeacbf88917e974c/private/generated-roots/gate-scope/lean.log",
+   "counts": {
+    "audits": 370
+   },
+   "slot_receipt": "/media/Data/GitHub/quirin-lang/.claude/worktrees/agent-abeacbf88917e974c/private/generated-roots/gate-scope/slots/lean.json"
+  },
+  {
+   "name": "python",
+   "argv": [
+    "/usr/bin/python3",
+    "-m",
+    "unittest",
+    "discover",
+    "-s",
+    "scripts/tests"
+   ],
+   "exit": 0,
+   "seconds": 64.3,
+   "log": "/media/Data/GitHub/quirin-lang/.claude/worktrees/agent-abeacbf88917e974c/private/generated-roots/gate-scope/python.log",
+   "counts": {
+    "tests": 443,
+    "skipped": 0,
+    "ok": true
+   }
+  }
+ ],
+ "ok": true,
+ "finished": "20261025T000010Z"
+}

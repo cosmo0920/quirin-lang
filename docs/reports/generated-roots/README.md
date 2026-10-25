@@ -110,7 +110,35 @@ rerun the generator, which the integrator can do without reading either side.
 
 ## Gate
 
-GATE_PLACEHOLDER
+Measured tip `9caee67ba`: the card commit merged with `main` `1e3967b97`
+(GATE-ELASTIC landed meanwhile). The merge's only conflict was
+`docs/agents/validation.md`, where GATE-ELASTIC inserted the scoped-gate and
+slot sections before rule 29; resolved by taking `main`'s page and re-inserting
+the `generated:rules` markers around rule 29, whose text `main` did not change.
+`verify_split.py` against `main` then passes for every page except
+`operations.md`, which differs only by this card's note; links 623, 0
+unresolved. `main` added no module under `proof/QCore/`, so the roots stayed at
+426 modules.
+
+`python3 scripts/gate_scope.py --base main --full` (the whole suite; the scope
+itself was full, since the proof roots are read by gateway, contract and audit
+tests), [gate.json](gate/gate.json), all 8 steps exit 0:
+
+| Step | Exit | Counts |
+|---|---|---|
+| submodules | 0 | 1, none moved |
+| `cargo fmt --all -- --check` | 0 | |
+| `cargo clippy --all-targets -- -D warnings` | 0 | |
+| Rust suite (`run_test_binaries.py` under the `rust-suite` slot) | 0 | 550 units, 563 summaries; 8,645 passed; 0 failed; 15 ignored (5,343 s, most of it waiting for audit slots) |
+| `reevaluation_probe`, `reevaluation_followup` | 0, 0 | |
+| `check_lean_audits.py` (`lean` slot) | 0 | 370 audits; AuditAll: 102,367 declarations axiom-checked, 20,186 public theorems statement-checked |
+| `python3 -m unittest discover -s scripts/tests` | 0 | 443 tests |
+
+Logs: `private/generated-roots/gate-scope/` in the card worktree. Clang
+recording beside the gate file. An earlier full gate on the unmerged card
+commit `e5e031a17` was green through the reevaluation examples (549 units,
+8,639 passed, 0 failed) and was stopped before Lean when the merge was
+requested; it is not the evidence here.
 
 ## Follow-ups
 
