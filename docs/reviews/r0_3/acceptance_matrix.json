@@ -6858,8 +6858,8 @@
   "note": "providers/ is a separate Cargo workspace, excluded from the core workspace; P01 verified empirically that the core workspace builds and passes its full suite with providers/ moved out of the tree."
  },
  "validation": {
-  "note": "Fresh complete standing/provider landing gate on merge 17b15ec24990f53690f0311be0ddb8dcf46f3c75, combining CMetrics setter models and current local main including AUDIT-CANONICAL-PATHS and AMENDMENTS-SCHEMA. All 20 commands exit zero on this final source, including the committed regenerated matrix. The earlier 18-check source attempt and its Python failure are retained in superseded-attempt.json. The ordinary Rust reservation was queued on the earlier source but launches both suites only after the updated main merge was frozen, recorded in reservation-source.json. Actual command/log hashes and private paths are in command-receipt.json; Rust suites share one standard reservation and Lean is separately slotted. No native measurement or executable setter adoption is claimed. Historical card measurements are unchanged.",
-  "workspace_tests": 8674,
+  "note": "Fresh full standing/provider gate on semantic source 342ca74c4a2ffca611dbc1b6ff51e0fe53920490, with structural matrix commit ada2c5663 before the root Python suite. All 20 required commands exit 0. Rust suites shared a genuine standard reservation; Lean was separately slotted. Actual source/working heads, commands, exits, log hashes and private paths are retained in command-receipt.json. Failed preliminary attempts are retained separately. Clang was recorded in this worktree for this gate; no borrowed recording. Final native attribution remains separate.",
+  "workspace_tests": 8686,
   "provider_tests": 133,
   "python_evidence_validator_tests": 460,
   "lean_audits": 373,
@@ -7242,9 +7242,9 @@
   "reevaluation_followup_exit": 0,
   "cargo_fmt": "clean",
   "cargo_clippy": "clean",
-  "standing_gate": "all 20 required landing checks exit 0",
+  "standing_gate": "all 20 required checks exit 0",
   "full_language_conformance": false,
-  "measurement_provenance": "carried_from_previous_matrix: these numbers were NOT measured for this regeneration; pass --gate PATH with the standing-gate results of this checkpoint to replace them"
+  "measurement_provenance": "integrator_supplied (docs/reports/cmt-self-init-disjoint-frames/gate/gate.json)"
  },
  "named_followups": [
   {

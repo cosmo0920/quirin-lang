@@ -1,0 +1,13 @@
+{
+  "note": "Fresh full standing/provider gate on semantic source 342ca74c4a2ffca611dbc1b6ff51e0fe53920490, with structural matrix commit ada2c5663 before the root Python suite. All 20 required commands exit 0. Rust suites shared a genuine standard reservation; Lean was separately slotted. Actual source/working heads, commands, exits, log hashes and private paths are retained in command-receipt.json. Failed preliminary attempts are retained separately. Clang was recorded in this worktree for this gate; no borrowed recording. Final native attribution remains separate.",
+  "workspace_tests": 8686,
+  "provider_tests": 133,
+  "python_evidence_validator_tests": 460,
+  "lean_audits": 373,
+  "reevaluation_probe_exit": 0,
+  "reevaluation_followup_exit": 0,
+  "cargo_fmt": "clean",
+  "cargo_clippy": "clean",
+  "standing_gate": "all 20 required checks exit 0",
+  "clang": "present: Ubuntu clang version 21.1.8 (6ubuntu1)"
+}
