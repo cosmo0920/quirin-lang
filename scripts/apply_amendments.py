@@ -32,9 +32,24 @@ one JSON object with exactly these top-level keys:
     - `retire`: `id`, `why`, `source`. Removes the entry; refused when the id
       is absent. `why` is the DISCHARGE record and stays in the card's report
       and amendments file; it is not written to the matrix.
-- `profiles` (optional, reserved): a list of distinct evaluation-profile names
-  (`[a-z0-9][a-z0-9-]*`). Its producer is the EVALUATION-PROFILES card; this
-  version validates the shape and applies nothing.
+- `profiles` (optional): a list of distinct evaluation-profile names
+  (`[a-z0-9][a-z0-9-]*`), the live evaluation profiles whose baseline the
+  card's measured tip records (card EVALUATION-PROFILES defines the profile
+  records under `contract/evaluations/`; `scripts/evaluation_profiles.py` owns
+  their schema and this check). Absent means the empty list. Whenever the tree
+  holds `contract/evaluations/`, every run (`--check`, `--dry-run` and a write)
+  calls `evaluation_profiles.check_amendments` with the document's `base`, or
+  `--profiles-base REV` when given: every name is a profile, none is frozen,
+  and the list equals the set of live profiles whose baseline changed between
+  that revision and the working tree, so a card that moves a baseline without
+  listing it, or lists one it did not move, is refused. Run it on the card's
+  tree; on a merge with a newer main pass `--profiles-base` the main the card
+  was merged into, so other cards' baselines are not attributed to this one. A
+  revision absent from the object store, or a legacy document with no `base`
+  and no `--profiles-base`, is refused. In a tree without
+  `contract/evaluations/` there is no profile, so a non-empty list is refused
+  and an empty one passes. The field writes nothing: the baselines are in the
+  card's own commits.
 - `contribution` (optional, reserved): `null` or a JSON object. Its producer is
   the CONTRIBUTION-LEDGERS card; this version validates the shape and applies
   nothing.
@@ -49,14 +64,15 @@ Usage:
 
     python3 scripts/apply_amendments.py <amendments.json> [--check] [--dry-run]
                                         [--legacy] [--root DIR]
+                                        [--profiles-base REV]
 
 `--check` validates the document and its applicability to the tree and writes
 nothing; `--dry-run` also prints the diffs it would write. `--legacy` reads a
 pre-schema file (rules 32-35 and earlier cards shipped several shapes) through
 `normalise_legacy`, prints what it derived, then validates and applies the
 normalised document; historical files are never rewritten (each report owns its
-evidence). The script never regenerates the matrix: run the printed follow-up
-commands (`build_matrix.py --gate`, `build_docs_index.py`) after it.
+evidence). The script never regenerates the matrix: after a write it prints the
+post-gate landing sequence, whose authority is `scripts/land.py`.
 """
 from __future__ import annotations
 
@@ -92,10 +108,8 @@ NEW_ID_RE = re.compile(r"[A-Z0-9][A-Z0-9_.-]*")
 EXISTING_ID_RE = re.compile(r"[A-Za-z0-9][A-Za-z0-9_.+-]*")
 PROFILE_RE = re.compile(r"[a-z0-9][a-z0-9-]*")
 MIGRATED_START = "<!-- migrated-section:start -->"
-FOLLOW_UP_COMMANDS = (
-    "python3 docs/reports/remaining-d02/build_matrix.py --gate <landing gate.json>",
-    "python3 scripts/build_docs_index.py",
-)
+EVALUATIONS = Path("contract/evaluations")
+SCRIPTS = Path(__file__).resolve().parent
 
 
 class AmendmentError(Exception):
@@ -294,8 +308,38 @@ def apply_ledger(followups, ledger):
     return result, log
 
 
-def plan(document, root):
-    """Every file edit `document` makes, as {relative path: (old, new)}."""
+def _evaluation_profiles():
+    # Imported here so `python3 -I` (no script directory on sys.path) works.
+    if str(SCRIPTS) not in sys.path:
+        sys.path.insert(0, str(SCRIPTS))
+    import evaluation_profiles
+    return evaluation_profiles
+
+
+def check_profiles(document, root, profiles_base=None):
+    """Check `profiles[]` (module doc); return the checked names, or None
+    when the tree holds no evaluation profiles and the list is empty."""
+    listed = document.get("profiles", [])
+    if not (root / EVALUATIONS).is_dir():
+        if listed:
+            raise AmendmentError(f"profiles lists {listed}, but {EVALUATIONS} does not exist "
+                                 f"under {root}: there is no evaluation profile to name")
+        return None
+    against = profiles_base if profiles_base is not None else document["base"]
+    if against is None:
+        raise AmendmentError("the document records no base, which the profiles[] check needs; "
+                             "pass --profiles-base REV")
+    evaluation_profiles = _evaluation_profiles()
+    try:
+        return evaluation_profiles.check_amendments(root, document, against)
+    except evaluation_profiles.ProfileError as error:
+        raise AmendmentError(f"profiles[]: {error}") from error
+
+
+def plan(document, root, profiles_base=None):
+    """Every file edit `document` makes, as {relative path: (old, new)}, and
+    the log lines describing them."""
+    profiles = check_profiles(document, root, profiles_base)
     edits = {}
     record = current_increment_record(root)
     old = (root / record).read_text(encoding="utf-8")
@@ -303,14 +347,16 @@ def plan(document, root):
     if document["status_paragraph"] is not None:
         old = (root / STATUS).read_text(encoding="utf-8")
         edits[STATUS] = (old, prepend_status(old, document["status_paragraph"]))
-    log = []
+    log = [] if profiles is None else [f"profiles: {profiles} checked against "
+                                        f"{profiles_base or document['base']}"]
     if document["ledger"]:
         old = (root / MATRIX).read_text(encoding="utf-8")
         matrix = json.loads(old)
         followups = matrix.get("named_followups")
         if not isinstance(followups, list):
             raise AmendmentError(f"{MATRIX} has no named_followups list")
-        matrix["named_followups"], log = apply_ledger(followups, document["ledger"])
+        matrix["named_followups"], ledger_log = apply_ledger(followups, document["ledger"])
+        log += ledger_log
         edits[MATRIX] = (old, json.dumps(matrix, indent=1, ensure_ascii=False) + "\n")
     return edits, log
 
@@ -512,22 +558,24 @@ def main(argv=None):
                         help="read a pre-schema file through the normaliser")
     parser.add_argument("--root", type=Path, default=ROOT,
                         help="repository root to apply to (default: this checkout)")
+    parser.add_argument("--profiles-base", metavar="REV",
+                        help="check profiles[] against REV instead of the document's base "
+                             "(the main a card was merged into)")
     args = parser.parse_args(argv)
     root = args.root.resolve()
     try:
         document, notes = load(args.amendments, legacy=args.legacy)
         for note in notes:
             print(f"legacy: {note}")
-        edits, log = plan(document, root)
+        edits, log = plan(document, root, args.profiles_base)
     except AmendmentError as error:
         print(f"apply_amendments: refused: {error}", file=sys.stderr)
         print("apply_amendments: nothing was written", file=sys.stderr)
         return 1
     for line in log:
-        print(f"ledger: {line}")
-    for key in TOP_LEVEL_OPTIONAL:
-        if key in document:
-            print(f"reserved: {key} validated, not applied (its producer card has not landed)")
+        print(line if line.startswith("profiles: ") else f"ledger: {line}")
+    if "contribution" in document:
+        print("reserved: contribution validated, not applied (its producer card has not landed)")
     if args.dry_run:
         for path, (old, new) in edits.items():
             sys.stdout.writelines(difflib.unified_diff(
@@ -538,10 +586,17 @@ def main(argv=None):
         return 0
     write(edits, root)
     print(f"apply_amendments: {document['card']}: wrote {', '.join(str(p) for p in edits)}")
-    print("follow-up (not run by this tool):")
-    for command in FOLLOW_UP_COMMANDS:
-        print(f"  {command}")
+    print("follow-up (not run by this tool; scripts/land.py prints and checks it):")
+    for number, step in enumerate(_land().SEQUENCE, 1):
+        print(f"  {number}. {step}")
     return 0
+
+
+def _land():
+    if str(SCRIPTS) not in sys.path:
+        sys.path.insert(0, str(SCRIPTS))
+    import land
+    return land
 
 
 if __name__ == "__main__":

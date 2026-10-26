@@ -1,0 +1,73 @@
+{
+  "steps": [
+    {
+      "name": "amendments-check",
+      "command": [
+        "python3",
+        "scripts/apply_amendments.py",
+        "docs/reports/cmt-self-init-disjoint-frames/integration-amendments.json",
+        "--check"
+      ],
+      "started": "2026-10-25T22:22:45.480799+00:00",
+      "log": "private/cmt-disjoint-frames/publication-1/amendments-check.log",
+      "exit": 0,
+      "ended": "2026-10-25T22:22:45.624329+00:00",
+      "log_sha256": "60ef5338f2e985774e06ef501e8a4bbac44498bbae3793ac31f588b9b901cfb7"
+    },
+    {
+      "name": "amendments-dry-run",
+      "command": [
+        "python3",
+        "scripts/apply_amendments.py",
+        "docs/reports/cmt-self-init-disjoint-frames/integration-amendments.json",
+        "--dry-run"
+      ],
+      "started": "2026-10-25T22:22:45.624756+00:00",
+      "log": "private/cmt-disjoint-frames/publication-1/amendments-dry-run.log",
+      "exit": 0,
+      "ended": "2026-10-25T22:22:45.836995+00:00",
+      "log_sha256": "c5d7064b5317378354f64ec72f6434ffb19c6b64ebe8dc8e366ea846344c3dcf"
+    },
+    {
+      "name": "amendments-apply",
+      "command": [
+        "python3",
+        "scripts/apply_amendments.py",
+        "docs/reports/cmt-self-init-disjoint-frames/integration-amendments.json"
+      ],
+      "started": "2026-10-25T22:22:45.837883+00:00",
+      "log": "private/cmt-disjoint-frames/publication-1/amendments-apply.log",
+      "exit": 0,
+      "ended": "2026-10-25T22:22:45.980981+00:00",
+      "log_sha256": "54790c84587ae0aa5fb16ce3a60c100fa8cd1d5094c2613dcc6e93424ca5b62e"
+    },
+    {
+      "name": "matrix",
+      "command": [
+        "python3",
+        "docs/reports/remaining-d02/build_matrix.py",
+        ".",
+        "--gate",
+        "docs/reports/cmt-self-init-disjoint-frames/gate/gate.json"
+      ],
+      "started": "2026-10-25T22:22:45.981585+00:00",
+      "log": "private/cmt-disjoint-frames/publication-1/matrix.log",
+      "exit": 0,
+      "ended": "2026-10-25T22:22:46.262070+00:00",
+      "log_sha256": "d63a64afe5ff88c755d1ebe75846cf518fa46b2f7aa71e1e87cd6966dabb8025"
+    },
+    {
+      "name": "index",
+      "command": [
+        "python3",
+        "scripts/build_docs_index.py"
+      ],
+      "started": "2026-10-25T22:22:46.262687+00:00",
+      "log": "private/cmt-disjoint-frames/publication-1/index.log",
+      "exit": 0,
+      "ended": "2026-10-25T22:22:46.577313+00:00",
+      "log_sha256": "a1bdfd22cc5f5d32dc5f39cf9c2f164dfcb9fe2a772a130ff78e03e7b74acc39"
+    }
+  ],
+  "exit": 0
+}

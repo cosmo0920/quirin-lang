@@ -112,7 +112,10 @@ fn tokens(text: &str) -> Vec<Token> {
 
 /// A parser with no declaration facts and no Clang index (the typed index is
 /// already answered `None`, so no route launches Clang).
-fn bare<'a>(stream: &'a [Token], contracts: &'a ResourceContracts) -> Parser<'a> {
+pub(in crate::legacy_c) fn bare<'a>(
+    stream: &'a [Token],
+    contracts: &'a ResourceContracts,
+) -> Parser<'a> {
     Parser {
         tokens: stream,
         typed_path_index: std::cell::OnceCell::from(None),

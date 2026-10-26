@@ -281,4 +281,4 @@ impl Parser<'_> {
 
 #[cfg(test)]
 #[path = "../tests/unit/legacy_probe_state.rs"]
-mod tests;
+pub(super) mod tests;

@@ -1,0 +1,44 @@
+baseline closure (no body lifted): same-unit 6, cross-unit 8; the frees below exclude it
+ceiling (every in-corpus body Safe): 384; bodies waited on per caller: {0: 8, 1: 247, 2: 95, 3: 13, 4: 5, 5: 5, 6: 5, 7: 2, 8: 1, 9: 1, 11: 1, 13: 1}; candidate bodies: 2189
+cross same ceil ceil1  own  score  body
+    3    2    2     2    4   0.75  rdrand.c::rd_seed
+    3    3    3     3    9  0.333  cJSON.c::add_item_to_object
+    3    0    3     3   10    0.3  rdkafka_assignor.c::rd_kafka_assignor_add
+    3    3    2     2   11  0.273  cJSON.c::cJSON_ParseWithLengthOpts
+    2    2    1     1    1    2.0  rdkafka_admin.c::rd_kafka_ListOffsetsResultInfo_new
+    2    2    2     2    1    2.0  rdkafka_partition.c::rd_kafka_topic_partition_list_grow
+    2    1    2     1    1    2.0  rdkafka_partition.c::rd_kafka_topic_partition_new
+    2    2    1     1    2    1.0  rdkafka_aux.c::rd_kafka_topic_partition_result_new
+    2    1    1     1    3  0.667  rdxxhash.c::XXH32_endian_align
+    2    2    2     2    4    0.5  rdkafka_metadata.c::rd_kafka_metadata_new_topic_mockv_internal
+    2    2    1     1    5    0.4  rdkafka_admin.c::rd_kafka_ListConsumerGroupsResult_new
+    2    2    2     2    5    0.4  rdkafka_partition.c::rd_kafka_topic_partition_list_union0
+    2    2    4     2    6  0.333  cmt_decode_opentelemetry.c::get_or_create_external_metadata_kvlist
+    2    0    2     2    6  0.333  rdkafka_timer.c::rd_kafka_timer_start0
+    2    2    2     2    7  0.286  rdkafka_assignor.c::ut_init_member_internal
+    2    2    2     2    8   0.25  rdkafka_txnmgr.c::rd_kafka_txn_clear_partitions_flag
+    2    2    1     1    8   0.25  rdstring.c::rd_strtup_new0
+    2    2    2     2   12  0.167  rdkafka_partition.c::rd_kafka_topic_partition_list_difference0
+    2    2    2     2   12  0.167  rdkafka_partition.c::rd_kafka_topic_partition_list_intersection0
+    2    2    2     1   13  0.154  rdkafka_partition.c::rd_kafka_topic_partition_list_add0
+by score (freed per own leaf):
+   2.0   2/1   rdkafka_admin.c::rd_kafka_ListOffsetsResultInfo_new  calls[] 1x indirect memory access is outside the resource projection
+   2.0   2/1   rdkafka_partition.c::rd_kafka_topic_partition_list_grow  calls[] 1x indirect memory access is outside the resource projection
+   2.0   2/1   rdkafka_partition.c::rd_kafka_topic_partition_new  calls[] 1x indirect memory access is outside the resource projection
+   1.0   2/2   rdkafka_aux.c::rd_kafka_topic_partition_result_new  calls[] 1x indirect memory access is outside the resource projection; 1x unresolved resource identity `X`
+   1.0   1/1   cJSON.c::cJSON_DetachItemFromObject  calls[] 1x unmodeled call, aggregate or indirect access in return expre
+   1.0   1/1   cJSON.c::cJSON_DetachItemFromObjectCaseSensitive  calls[] 1x unmodeled call, aggregate or indirect access in return expre
+   1.0   1/1   cJSON.c::cJSON_ParseWithOpts  calls[cJSON_ParseWithLengthOpts] 
+   1.0   1/1   cmt_map.c::cmt_map_metric_get  calls[map_metric_get_unlocked] 
+   1.0   1/1   mk_core/mk_iov.c::mk_iov_free_marked  calls[] 1x indirect memory access is outside the resource projection
+   1.0   1/1   mk_server/mk_http_parser.c::mk_http_parser_read_chunked_content  calls[http_parser_transfer_encoding_chunked] 
+   1.0   1/1   rdkafka.c::rd_kafka_consume_batch0  calls[rd_kafka_q_serve_rkmessages] 
+   1.0   1/1   rdkafka.c::rd_kafka_oauthbearer_set_token  calls[rd_kafka_oauthbearer_set_token0] 
+   1.0   1/1   rdkafka_admin.c::rd_kafka_ElectLeaders_new  calls[] 1x indirect memory access is outside the resource projection
+   1.0   1/1   rdkafka_admin.c::rd_kafka_ListConsumerGroupsResult_copy  calls[rd_kafka_ListConsumerGroupsResult_new] 
+   1.0   1/1   rdkafka_admin.c::rd_kafka_ListOffsetsResultInfo_copy  calls[rd_kafka_ListOffsetsResultInfo_new] 
+   1.0   1/1   rdkafka_admin.c::rd_kafka_MemberDescription_copy  calls[] 1x indirect memory access is outside the resource projection
+   1.0   1/1   rdkafka_aux.c::rd_kafka_group_result_copy  calls[] 1x indirect memory access is outside the resource projection
+   1.0   1/1   rdkafka_aux.c::rd_kafka_topic_partition_result_copy  calls[rd_kafka_topic_partition_result_new] 
+   1.0   1/1   rdkafka_broker.c::rd_kafka_broker_ApiVersion_at_least  calls[] 1x unmodeled call, aggregate or indirect access in return expre
+   1.0   1/1   rdkafka_cgrp.c::rd_kafka_consumer_group_metadata_new_with_genid  calls[] 1x field-link escape: a linked child may still be live on a pat

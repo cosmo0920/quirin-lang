@@ -27,6 +27,7 @@ import QCore.BranchConditionCall
 import QCore.BranchJoin
 import QCore.BucketTally
 import QCore.CGatewayRefinements
+import QCore.CMetricsGetterOwnership
 import QCore.CNumeric
 import QCore.CProgram
 import QCore.CallArgumentAccess
@@ -390,6 +391,7 @@ import QCore.TeardownAdmission
 import QCore.TeardownTraversal
 import QCore.TimeoutTeardown
 import QCore.TrackedSelfInit
+import QCore.TrackedSelfInitDisjointFrame
 import QCore.Transferability
 import QCore.TranslationValidation
 import QCore.TwoDerivationAdmission

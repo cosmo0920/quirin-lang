@@ -1,0 +1,47 @@
+{
+  "published_files": 193,
+  "bytes": 36612416,
+  "rows": [
+    {
+      "route": "corpus",
+      "base": {
+        "Unknown": 3812,
+        "Safe": 1013,
+        "Unsafe": 9
+      },
+      "tip": {
+        "Unknown": 3812,
+        "Safe": 1013,
+        "Unsafe": 9
+      }
+    },
+    {
+      "route": "system",
+      "base": {
+        "Unknown": 343,
+        "Safe": 101,
+        "Unsafe": 4
+      },
+      "tip": {
+        "Unknown": 343,
+        "Safe": 101,
+        "Unsafe": 4
+      }
+    },
+    {
+      "route": "slice",
+      "base": {
+        "Unknown": 342,
+        "Safe": 57,
+        "Pending": 4,
+        "Unsafe": 1
+      },
+      "tip": {
+        "Unknown": 342,
+        "Safe": 57,
+        "Pending": 4,
+        "Unsafe": 1
+      }
+    }
+  ]
+}
