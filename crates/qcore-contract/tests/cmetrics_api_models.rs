@@ -83,11 +83,8 @@ fn source_audited_api_models_are_retained_without_interpreted_permissions() {
     assert_eq!(graph.version, 4);
     assert!(graph.requirements.iter().any(|id| id == "hash_nonzero"));
     let digest = clauses("cfl_hash_64bits_digest");
-    assert!(
-        digest
-            .iter()
-            .any(|c| c == "result_may_equal_zero_for_a_nonempty_nul_free_stream")
-    );
+    assert!(digest.iter().any(|c| c.starts_with("#digest_value(")));
+    assert!(s["cfl/hash_state.qv"].contains("42 d5 68 e1 38 d7 27 ff"));
     let init = clauses("cmt_opts_init");
     assert!(
         init.iter()
