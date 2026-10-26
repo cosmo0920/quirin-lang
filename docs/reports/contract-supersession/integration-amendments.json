@@ -1,9 +1,57 @@
 {
  "schema": "quirin-amendments/1",
  "card": "CONTRACT-SUPERSESSION",
- "base": "1638e581a003ef09f37828f016b454ffa2f391f0",
- "measured_tip": "53ace1277",
- "increment_paragraph": "PLACEHOLDER",
- "status_paragraph": "PLACEHOLDER",
- "ledger": []
+ "base": "8a015cd83",
+ "measured_tip": "53ace12773dcd50db3c904974198301665c394ab",
+ "increment_paragraph": "**CONTRACT-SUPERSESSION (seam G, contracts half; user decisions 9 and 9a).** Contract bundles now compose by newer-stamp supersession (contract spec C06.6). Pin locks are format version 4: every entry (pinned, flexible, tip) carries the `pinned_at` stamp `quirin-audit pin` writes when it reviews the entry's current text (YYYY-MM-DDTHH:MM:SSZ; a re-pin carries a later stamp, an explicit earlier one refuses), and every lock names the Fluent Bit revision its lock set is tied to; versions 1-3 are still read for history and never supersede. The plan's 'version 3' became 4 because CONTRACT-PIN-TIP-MODE already used 3. The resource loader's duplicate-declaration error is replaced: qcore_schemas::contract_supersession::decide keeps the greatest-stamped declaration in force and cuts every other one out of its module (bytes to spaces, lines kept), retaining it in ResourceContracts::superseded; equal newest stamps on different texts, or a missing, malformed, stale or unpinned stamp, withhold the function (ResourceContracts::contract_conflict, every text retained) and the legacy-C gateway holds each call under the new reason category contract-conflict (analyser subject, not human-resolvable, so Unknown, never Pending; qcore-schemas 22.0.0, thirteen categories, spec L21.1 row). Audit routes read stamps from the locks (LockStamps); other callers have none, so their duplicates are conflicts. A lock-set window (providers/pin-lock-window.json, pin --window-create/add/rotate/retire/check) retains at most three Fluent Bit revisions' lock sets, the live one plus two archived under providers/pin-lock-sets/<rev>/, refusing a fourth. One-time re-pin (pin --stamp-only --pinned-at 2026-10-25T18:10:00Z at the prepared 046accf6 checkout, Fluent Bit 5.1.3): all 17 pin locks (612 entries) changed only by stamps, the 046accf6 tie and the version (repin-review.json); the window holds one set; providers/contracts.py check passes. Lean: QCore.ContractSupersession (27 audited theorems: determinism over the candidate set, newest wins, ties and unusable stamps conflict, retention, a conflict is never Safe or Pending; 8 vectors parsed by the Rust test), QCore.ReasonCategory gains contractConflict. Identity run (BASE 1638e581a, TIP 53ace1277, SOURCE_DATE_EPOCH on both sides, AUDIT-COMPOSITION's bound-path method): every corpus, slice and system report artifact is byte-identical except resource-diagnostics.contracts.json, equal after the checked one-to-one substitution of the ten resource locks' digests; the Monkey time key did not vary. GATE-SENTENCE",
+ "status_paragraph": "Contract supersession (card CONTRACT-SUPERSESSION, 2026-10-26): pin locks are version 4 with a reviewed `pinned_at` per entry and a Fluent Bit revision tie; all 17 provider locks were re-pinned once (stamp 2026-10-25T18:10:00Z, tied to 046accf6) with no identity or digest change, and the lock-set window holds one set of at most three. A function declared by two selected modules is decided by stamp (newest wins, retained as superseded) or withheld as contract-conflict (Unknown); no pinned module declares a function twice, so every report is unchanged apart from the recorded lock digests. The reason vocabulary has thirteen categories; qcore-schemas is 22.0.0.",
+ "ledger": [
+  {
+   "id": "COMPOSITION-CONTRACT-LOADER-WIRING",
+   "operation": "amend",
+   "text": "Card CONTRACT-SUPERSESSION replaced the loader's hard duplicate error with newer-stamp supersession and the contract-conflict residue (contract spec C06.6); per-bundle digests in Provenance.contract_bundles remain open.",
+   "source": "docs/reports/contract-supersession/README.md"
+  },
+  {
+   "id": "LIFETIME-SOURCE-IDENTITY-TIME-MACROS",
+   "operation": "append",
+   "text": "Card CONTRACT-SUPERSESSION's identity run set SOURCE_DATE_EPOCH=1790357241 on both sides and the key did not vary on any of the three routes, so an identity run can neutralise it by the environment; the published digest still carries the wall clock when the variable is unset.",
+   "source": "docs/reports/contract-supersession/README.md"
+  },
+  {
+   "id": "SUPERSESSION-BOUNDS-OUTER-VIEWS",
+   "operation": "register",
+   "title": "Bounds and outer contract views keep their own duplicate refusals and never consult pin stamps",
+   "text": "Card CONTRACT-SUPERSESSION decides duplicate resource declarations by pin stamp (contract spec C06.6). The bounds view (bounds_selection) and the outer view (outer_selection) still refuse a function declared twice, and their locks' stamps are written and verified but read by no loader. DISCHARGE: both views decide duplicates through qcore_schemas::contract_supersession::decide over their own locks' stamps, retaining superseded declarations and withholding conflicts under contract-conflict, with tests and an identity run.",
+   "source": "docs/reports/contract-supersession/README.md"
+  },
+  {
+   "id": "SUPERSESSION-OTHER-CONSUMERS",
+   "operation": "register",
+   "title": "Only the legacy-C gateway names a contract conflict; other environment consumers see an uncontracted callee",
+   "text": "ResourceContracts::contract_conflict withholds a function from every table, so every consumer refuses its calls, but only the legacy-C gateway rewrites them to the contract-conflict hold. The checked extern-call route (qcore_verification::driver) and other API callers report an uncontracted callee, Unknown under a different reason. DISCHARGE: those routes name contract-conflict for a withheld callee (as they do for a pending review), with a test per route.",
+   "source": "docs/reports/contract-supersession/README.md"
+  },
+  {
+   "id": "SUPERSESSION-INCLUSION-MODULES",
+   "operation": "register",
+   "title": "A supersession inside a module elaborated through inclusion refuses the whole selection",
+   "text": "load_resource_contract_selection_stamped refuses when a superseded or conflicted declaration lies in a module carrying inclusion evidence, because the evidence replays the elaborated text byte for byte and a cut text would not replay. Fail-closed, but the duplicate is not decided. DISCHARGE: the cut is replayed by the evidence check (or applied before elaboration at the declaration's source module), so such a duplicate is decided like any other, with a test over an #include/inherit fixture.",
+   "source": "docs/reports/contract-supersession/README.md"
+  },
+  {
+   "id": "PIN-LOCK-ARCHIVED-SET-SELECTION",
+   "operation": "register",
+   "title": "Archived pin lock sets are records; no audit route can select one",
+   "text": "The lock-set window (providers/pin-lock-window.json, user decision 9a) archives up to two earlier lock sets byte for byte under providers/pin-lock-sets/<revision>/, but every audit reads the live locks in providers/<crate>/. Comparing a re-based profile row by row with the previous revision under that revision's own lock set therefore needs a route option. DISCHARGE: the audit routes (and quirin-audit measure) accept a retained lock set by revision, refuse a retired one, record the set's revision and digests in the contract_revision section, and a test audits a fixture under an archived set.",
+   "source": "docs/reports/contract-supersession/README.md"
+  },
+  {
+   "id": "PIN-CHECK-STAMP-HISTORY",
+   "operation": "register",
+   "title": "pin --check does not verify that a re-pin's stamp is later than the committed entry it replaced",
+   "text": "quirin-audit pin enforces the later-stamp rule when it writes a lock (an explicit stamp not later than the replaced entry refuses), but pin --check and pin --verify-contracts read only the working tree, so a hand edit or a merge that lowers a stamp is not detected. DISCHARGE: pin --check (or providers/contracts.py check) compares each entry's stamp with the same entry at a named base revision and refuses a changed entry whose stamp is not later, with a test.",
+   "source": "docs/reports/contract-supersession/README.md"
+  }
+ ]
 }

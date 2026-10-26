@@ -10,7 +10,9 @@ Bit revisions' lock sets. The governing text is contract spec
 
 Base: local main `373e41ee8` (AUDIT-COMPOSITION) merged with the integrator's
 CONTRACT-LOCKS landing branch `integrate/amendments-schema` at `1638e581a`
-(a fast-forward), which is this card's BASE. No verdict changes: no pinned
+(a fast-forward), which is the identity run's BASE. The branch later merged
+origin/main `e37e6703d` and `8a015cd83` (CFG-RELEASE, EVALUATION-PROFILES), and
+the card gate ran against `8a015cd83`. No verdict changes: no pinned
 module declares a function twice, and the identity run below shows every
 report unchanged apart from the lock digests the re-pin moves.
 
@@ -132,7 +134,63 @@ kept, so pins stay in force there.
 
 ## Identity run
 
-IDENTITY-PLACEHOLDER
+**Result: every report artifact of the pinned eight-home corpus, the
+tail-pause slice and the system selection is byte-identical between BASE
+`1638e581a` and TIP `53ace1277`, apart from one checked substitution.** In
+each route's `resource-diagnostics.contracts.json`, the SHA-256 the audit
+records for each pin lock it read (`contract_revision.locks`) moves from
+the BASE lock's digest to the re-pinned lock's. After that one-to-one
+substitution the file is equal byte for byte. The substitution map is
+computed from the two snapshots' 17 lock files and is injective. Ten resource
+locks occur, libevent, librdkafka and fluent-bit twice each; no bounds or
+outer lock digest reaches a report on these routes. Nothing else differs.
+The component sidecars are byte-identical, so the loaded environment's
+contract digest did not move. Both sides set `SOURCE_DATE_EPOCH`, so Monkey's
+`__DATE__`/`__TIME__` lifetime-source key matched exactly, with no swap.
+Record: [identity.json](identity.json) (`scripts/compare_identity.py`).
+
+| Route | Byte-identical | Identical after the lock-digest substitution | Window (UTC) |
+|---|---|---|---|
+| corpus | 8 (`resource-diagnostics.json`, `.components.json`, `.chunk-contracts.json`, `.source-effects.json`, `monkey-source.json`, `corpus-null.jsonl`, `corpus-null.summary.json`, `corpus-outer.json`) | `resource-diagnostics.contracts.json` (13 occurrences, 10 locks) | 19:18 (queued from 18:40) to 22:03 |
+| slice | 7 (same set without Monkey) | `resource-diagnostics.contracts.json` | 22:03 to 23:40 |
+| system | 7 | `resource-diagnostics.contracts.json` | 23:40 to 02:01 |
+
+The method is AUDIT-COMPOSITION's (`scripts/`). The steps were:
+
+1. `prepare_identity.sh` made the re-spelled inputs mirror
+   (`mirror_inputs.py`) and two snapshots, each a `git archive` with
+   `third_party/libevent` cloned at `d82464a2`.
+2. It built one release binary per side in its own mount namespace
+   (`ns_side.sh`, `unshare -rm`), with the side's snapshot bound at
+   `private/cs/side-src` and `QCORE_AUDIT_BUILD_COMMIT=contract-supersession-identity`.
+   Binaries: BASE `133c34c3…`, TIP `37427394…`.
+3. `run_identity.sh` ran the W48-BU-SINGLE-LEAF-BODIES driver per route,
+   BASE and TIP side by side, each under an `audit` slot (7 GiB, `--jobs 3`),
+   with `SOURCE_DATE_EPOCH=1790357241` on both sides.
+
+As in AUDIT-COMPOSITION, the corpus driver exited 101 on both sides
+(`identity_error`) with `audit_exit` 0. The only changed input is the libevent
+clone's `.git/index` stat cache, which the pinned route's own `git` call
+refreshed. Slice and system exited 0. Logs and driver records differ only in
+binary digests, times, the console's preparation timing line and the
+snapshot digests in `invocation.json`, all listed in identity.json. Console
+and driver logs are in
+`/media/Data/GitHub/quirin-lang/private/contract-supersession/identity-1/`;
+the route outputs are in the card worktree's `private/cs/identity-1/`.
+
+**Source equivalence after the run.** Measured TIP `53ace1277`. The branch
+then took four changes:
+
+- a fix to the test module of `pin_window.rs` (Clippy);
+- documentation;
+- origin/main `e37e6703d`, which holds records only;
+- origin/main `8a015cd83`, which holds CFG-RELEASE and EVALUATION-PROFILES.
+
+The only code file those merges change since the measured base is
+`crates/qcore-audit/src/projection.rs` (CFG-RELEASE). This card's diff does
+not touch it, and CFG-RELEASE carries its own parity evidence. The pin locks
+are byte-identical between `1638e581a` and both mains. No identity run was
+repeated on the merged tip; the landing gate is the arbiter.
 
 ## Gate
 
