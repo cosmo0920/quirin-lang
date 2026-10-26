@@ -64,3 +64,5 @@ pub mod source_scalar_calls;
 pub mod premise_flow;
 
 pub mod guarded_decomposition;
+
+pub mod quant_proposition;

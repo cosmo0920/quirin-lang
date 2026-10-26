@@ -23,8 +23,30 @@
       "premises": {},
       "sha256": "17e5f22bb2b2ed10d1ed3f2baed212054cc13ebdb9551f8db7ac15ceb2f4d6f7"
     },
+    "cfl/hash_state.qv": {
+      "clause_count": 16,
+      "declaration_count": 3,
+      "declarations": [
+        {
+          "clauses": 4,
+          "name": "cfl_hash_64bits_reset"
+        },
+        {
+          "clauses": 6,
+          "name": "cfl_hash_64bits_update"
+        },
+        {
+          "clauses": 6,
+          "name": "cfl_hash_64bits_digest"
+        }
+      ],
+      "inherits": [],
+      "premise_bindings": [],
+      "premises": {},
+      "sha256": "33951e05d93ef1e4d32770124154ba9198f129e60e7d90cb3fc70c08daa940bf"
+    },
     "cfl/intrusive_list.qv": {
-      "clause_count": 27,
+      "clause_count": 37,
       "declaration_count": 3,
       "declarations": [
         {
@@ -36,14 +58,14 @@
           "name": "cfl_list_del"
         },
         {
-          "clauses": 18,
+          "clauses": 28,
           "name": "cfl_list_init"
         }
       ],
       "inherits": [],
       "premise_bindings": [],
       "premises": {},
-      "sha256": "0d58b3b52665e232bc096517fb9c7da990bbb4a851a5d4599a2e719ee1792038"
+      "sha256": "1dc71a24ffaad7a6aadb24f999dcfd99cb0890155619c9f82304c59085b27da2"
     },
     "cfl/null_deref.qv": {
       "clause_count": 2,

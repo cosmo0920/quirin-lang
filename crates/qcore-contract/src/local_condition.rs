@@ -287,6 +287,7 @@ pub(crate) fn without_local(
                 SourceContractClauseKind::Requires => "requires",
                 SourceContractClauseKind::Ensures(E::Normal) => "ensures normal",
                 SourceContractClauseKind::QuantLive => "quant live",
+                SourceContractClauseKind::QuantProposition => "quant proposition",
                 SourceContractClauseKind::QuantConditionBinding if keep_local => "quant",
                 SourceContractClauseKind::QuantConditionBlock { negated, .. } if keep_local => {
                     if *negated {

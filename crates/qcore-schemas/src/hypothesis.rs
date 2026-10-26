@@ -5,8 +5,16 @@ use std::collections::BTreeMap;
 #[derive(Clone, Debug, PartialEq, Eq, Serialize, Deserialize)]
 #[serde(tag = "kind", rename_all = "kebab-case", deny_unknown_fields)]
 pub enum Proposition {
-    Opaque { statement: String },
-    Typed { subject: String, predicate: String },
+    Opaque {
+        statement: String,
+    },
+    Typed {
+        subject: String,
+        predicate: String,
+    },
+    Formula {
+        definition: crate::quant_proposition::Definition,
+    },
 }
 #[derive(Clone, Debug, PartialEq, Eq, Serialize, Deserialize)]
 #[serde(deny_unknown_fields)]

@@ -1815,6 +1815,13 @@ The extension distinguishes three judgments:
   and preserved frame. A state predicate is a prerequisite of an effect; it
   MUST NOT be treated as an assertion that the effect occurred.
 
+The first implemented source increment is `quant proposition` with explicit
+value and relation parameters and first-order formulas (G01p). It is a typed
+hypothesis representation; its relation interpretations and actual source
+binding remain obligations. Theorem application and effect clauses remain
+Proposed. Mathematical semantics are in `QCore.QuantProposition`; the matching
+libc model supplies conditional decomposition theorems, not C extraction.
+
 The intended contextual forms are `quant proposition`, `quant theorem` and
 `quant effect`; their exact bounded syntax and consumers MUST be registered in
 [implemented grammars](QCORE_IMPLEMENTED_GRAMMARS_r0_3.md) when implemented.

@@ -1,0 +1,7 @@
+import QCore.QuantProposition
+#print axioms QCore.QuantProposition.forall_conjunction_decomposition
+#print axioms QCore.QuantProposition.guarded_alternative_decomposition
+#print axioms QCore.QuantProposition.scalar_alternative_is_sufficient
+#print axioms QCore.QuantProposition.implication_does_not_establish_antecedent
+#print axioms QCore.QuantProposition.missing_evidence_allows_both_truth_values
+#print axioms QCore.QuantProposition.missing_evidence_is_not_refutation

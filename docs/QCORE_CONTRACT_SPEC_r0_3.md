@@ -75,8 +75,9 @@ The source parser rejects empty clauses and unknown clause introducers. It does 
 
 The [language requirement L19.1](QCORE_SPEC_r0_3.md#l191-formal-contract-hypotheses-and-quant-effects-required-extension)
 applies across all provider contract families. `quant proposition`,
-`quant theorem` and `quant effect` are intended extensions; this section does
-not add them to the currently implemented resource-v1 vocabulary.
+`quant theorem` and `quant effect` remain proposed. The initial implemented
+`quant proposition` form is defined in G01p and C04.18.7; it represents an
+explicit mathematical hypothesis and grants no truth authority.
 
 A migrated precondition MUST expose its typed mathematical predicate and
 explicit quantifier domain. A migrated theorem application MUST retain all
@@ -1001,6 +1002,34 @@ Every prior premise, including literal-argument metadata, elaborates to one opaq
 A graph instance binds artifact, property, semantic profile, scope, bounds, assumptions, source identity, build identity and evidence version by exact equality against independently held expected context. Disposition (`open`, `supported`, `refuted`) and warrant (`derived`, `observed`, `declared`, `human-reviewed`, `provider-proposed`) are separate fields. A warrant changes no disposition and grants no certificate authority. Reporting conjunction requires compatible context for every atom; a missing atom's evidence stays open. Relational propositions remain one atom and cannot be matched by separately named assertions.
 
 This version installs **no graph semantic consumer**. Opaque text and even supported/derived graph evidence discharge no safety obligation. All published atoms start open with declared warrant. Existing clause/body standing remains separate. Rule13f's actual declaration consultation closure, including validated summary inheritance and held/withdrawn names, lifts to per-row atom dependencies. Audit sidecars retain graph definitions, dependent contexts, row counts and Safe-row counts beside the old premise view. Erasing only graph additions reproduces the prior record. Rule31's pinned outer envelopes still cover legacy premise names and can only lower a runtime verdict; graphs add no envelope promise or static truth.
+
+### C04.18.7. Typed mathematical atoms (graph version 3)
+
+A resource or bounds declaration may replace an opaque hypothesis atom with
+`quant proposition #ID(PARAMETERS) = FORMULA;`, using the exact G01p grammar.
+The atom stores the complete typed definition rather than an English sentence.
+Parameters expose named value sorts and the signatures of relation inputs;
+quantifiers bind value variables, and every call/equality is type checked.
+A definition is a parameterized predicate, not a universally proved assertion
+about every possible relation interpretation. Its interpretation must be bound
+to the actual caller-held model/environment before its truth can be established.
+
+The existing group, flow and symbolic lifecycle metadata may reference its ID.
+A version-3 graph contains at least one formal atom and may retain opaque atoms
+and proposed refinements. Version-1/2 compatibility erasure and the new graph's
+structured premise names retain their existing meanings. Canonical source replay
+and wire validation check the entire formal AST, including unused alternatives.
+A syntactic type check creates no Supported/Refuted assignment, evidence warrant,
+legacy-premise implication, source-binding proof, C transition or safety verdict.
+Unsupported theorem/effect source clauses continue to refuse their selection.
+
+The first migration replaces the eight libc reading atoms in `libc/errno.qv`.
+`QCore.LibcReadingPremises` expresses their shared model environment;
+`QCore.QuantProposition` defines the formula semantics and proves quantifier/
+conjunction and guarded-alternative decomposition. Relation inputs such as the
+reading-route and declaration checks remain explicit open source obligations.
+The `nested_call_admission` premise name, modes and either-route alternative
+remain present. This increment does not complete the all-provider migration.
 
 ### C04.18.2. Neutral premise decomposition and explicit binding references (graph version 2)
 

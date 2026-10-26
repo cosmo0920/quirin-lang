@@ -279,6 +279,7 @@ import QCore.PublicationCustody
 import QCore.QrlibLinkage
 import QCore.Quant
 import QCore.QuantIndexBinding
+import QCore.QuantProposition
 import QCore.QuantRegionSource
 import QCore.RawDirectiveLexing
 import QCore.ReachGatePosition

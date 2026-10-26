@@ -22,18 +22,25 @@ fn migrated_production_graph_replays_and_keeps_the_runtime_premise_name() {
         assert!(
             g.atoms
                 .values()
-                .all(|a| matches!(a.proposition, Proposition::Opaque { .. }))
+                .all(|a| matches!(a.proposition, Proposition::Formula { .. }))
         );
         assert_eq!(erasure(g).unwrap()[0].name, "nested_call_admission");
         assert_eq!(decode(&serde_json::to_vec(g).unwrap()).unwrap(), *g);
     }
-    let Proposition::Opaque { statement } =
+    let Proposition::Formula { definition } =
         &graphs["__errno_location"].atoms["checked_reading_route"].proposition
     else {
         panic!()
     };
-    assert!(statement.contains("either the nested-call admission"));
-    assert!(statement.contains(", or W48-BOTTOM-UP-BATCH3"));
+    use qcore_schemas::quant_proposition::Formula as F;
+    let F::Forall { body, .. } = &definition.formula else {
+        panic!()
+    };
+    let F::Implies { right, .. } = body.as_ref() else {
+        panic!()
+    };
+    assert!(matches!(right.as_ref(), F::Or { .. }));
+    assert_eq!(graphs["__errno_location"].version, 3);
     assert!(
         !graphs["__errno_location"]
             .atoms
@@ -76,7 +83,10 @@ fn production_inheritance_and_stale_atom_controls_preserve_every_obligation() {
         .map(|(name, text)| {
             (
                 name.clone(),
-                text.replace("exactly one pointer level", "two pointer levels"),
+                text.replace(
+                    "#nested_route(#env, #s) || #scalar_route(#env, #s)",
+                    "#nested_route(#env, #s) && #scalar_route(#env, #s)",
+                ),
             )
         })
         .collect::<BTreeMap<_, _>>();

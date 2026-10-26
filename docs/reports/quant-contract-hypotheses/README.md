@@ -14,8 +14,43 @@ The scope includes the Quirin v0.3 normative language/contract specifications,
 formal source syntax, a typed representation in the proper schema/core/frontend/
 contract layers, matching Lean definitions and audits, and provider migration.
 The preimplementation prediction is in [PREDICTION.md](PREDICTION.md).
-The new specification requirements remain unimplemented until the corresponding
-consumer and migration gates have passed. No provider migration is claimed yet.
+The first source increment implements `quant proposition` (G01p) and graph
+version 3, replacing the eight opaque libc reading atoms with typed first-order
+formulas. The theorem/effect source interfaces and the remaining provider
+migration are still open. Parsing/type checking supplies no source truth.
+
+## Initial implementation
+
+Value and relation parameters, named quantifier domains, equality, negation,
+conjunction, disjunction and implication have a bounded AST and type checker.
+Free symbols, arity/type mismatches, duplicate parameters, active shadowing,
+unsupported syntax and excessive depth/nodes refuse. Graph-v1/v2 encodings stay
+unchanged; formal atoms require graph v3. Resource/bounds readers validate the
+whole graph and retain every ordinary semantic clause. Inheritance and view
+rendering preserve the new introducer. Unsupported theorem/effect forms reject.
+
+`libc/errno.qv` now expresses the guarded reading-route alternative and the
+remaining seven predicates mathematically, with explicit environment/site and
+relation arguments. Primitive relation interpretations remain open obligations.
+`QCore.QuantProposition` gives first-order semantics and six audited logical
+properties; existing `QCore.LibcReadingPremises` gives the concrete conditional
+libc decomposition. No Rust/Lean or imported-C refinement theorem is claimed.
+
+The official pin command refreshes only the two flexible libc declaration
+digests (`__errno_location`, `strerror`); it changes no reviewed C identity.
+`providers/contracts.py sync` also repaired preexisting stale inventories for
+CMetrics map source and CFL's initializer/hash model. The original main gate
+found five failures: those stale inventories, the stale CMetrics source-policy
+manifest digest, and the corpus test's missing CFL hash module/count. The live
+source-policy digest and deliberate non-v1 count are updated to the already
+tracked source. Historical reports and model source are unchanged.
+
+The first inventory sync refused stale libc pins; its parent wrapper's final
+exit did not capture that command separately. The refusal log is retained as
+`private/quant-contract-hypotheses/implementation-1/contracts-sync.log` and is
+not a successful gate. The retry after official pinning captured exit 0 for
+both commands. Compile check before the provider migration exited 0; the final
+standing/scoped/provider gate owns the complete implementation's evidence.
 
 ## Semantic requirements
 

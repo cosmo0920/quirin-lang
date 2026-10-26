@@ -1719,6 +1719,7 @@ fn load_function_in(
                 // Card OP-CONSTRUCTOR-DECLARATIONS (§C04.19.4): a result
                 // state, read below; every other `quant` form still rejects.
                 SourceContractClauseKind::QuantLive => "quant live",
+                SourceContractClauseKind::QuantProposition => "quant proposition",
                 _ => return Err("unsupported error, any-exit, or quantitative clause"),
             };
             Ok(format!("{prefix} {};", c.value.expression_source))
@@ -1818,6 +1819,11 @@ fn load_function_in(
     let mut path_retentions: Vec<retained_by::WrittenPath> = Vec::new();
     let mut removals: Vec<(String, String)> = Vec::new();
     for clause in clauses {
+        if clause.value.kind == SourceContractClauseKind::QuantProposition {
+            // The whole graph was type checked above; this is an explicit
+            // hypothesis representation, never an interpreted C effect.
+            continue;
+        }
         if clause.value.kind == SourceContractClauseKind::QuantLive {
             if retained_by::is_removal(&clause.value.expression_source) {
                 removals.push(retained_by::removal_clause(

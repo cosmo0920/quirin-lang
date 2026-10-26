@@ -273,6 +273,7 @@
 <contract-clause> ::= "requires" <constraint> ";"
                     | "ensures" <exit-selector> <constraint> ";"
                     | "quant" <exit-selector> <quant-relation> ";"
+                    | <formal-proposition-clause>
                     | <access-contract-clause>
 
 <exit-selector> ::= "normal"
@@ -630,3 +631,22 @@
 <tuple-expression> ::= "(" <expression> "," <expression> <tuple-expression-tail> ")"
 <tuple-expression-tail> ::= ε
                          | "," <expression> <tuple-expression-tail>
+
+# Typed proposition increment: exact implemented bounds and semantics are G01p/C04.18.7.
+<formal-proposition-clause> ::= "quant" "proposition" "#" <identifier>
+                               "(" <formal-parameters-opt> ")" "=" <formal-formula> ";"
+<formal-parameters-opt> ::= ε | <formal-parameters>
+<formal-parameters> ::= <formal-parameter> | <formal-parameter> "," <formal-parameters>
+<formal-parameter> ::= "#" <identifier> ":" <formal-sort>
+<formal-sort> ::= <identifier> | "predicate" "<" <formal-sorts-opt> ">"
+<formal-sorts-opt> ::= ε | <formal-sorts>
+<formal-sorts> ::= <identifier> | <identifier> "," <formal-sorts>
+<formal-arguments-opt> ::= ε | <formal-arguments>
+<formal-arguments> ::= "#" <identifier> | "#" <identifier> "," <formal-arguments>
+<formal-formula> ::= "#" <identifier> "(" <formal-arguments-opt> ")"
+                   | "#" <identifier> "==" "#" <identifier>
+                   | "!" <formal-formula>
+                   | "(" <formal-formula> <formal-connective> <formal-formula> ")"
+                   | <formal-quantifier> "(" "#" <identifier> ":" <identifier> ")" "{" <formal-formula> "}"
+<formal-connective> ::= "&&" | "||" | "=>"
+<formal-quantifier> ::= "forall" | "exists"

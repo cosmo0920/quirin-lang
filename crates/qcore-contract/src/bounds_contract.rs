@@ -1248,6 +1248,12 @@ fn load_function(path: &str, decl: &SourceDeclaration) -> Result<BoundsFunctionC
             )?;
             continue;
         }
+        if clause.kind == SourceContractClauseKind::QuantProposition {
+            // Whole-graph validation below checks the typed formula. Retain
+            // it in source identity; it adds no interpreted bounds fact.
+            normalised.push(format!("quant proposition {}", clause.expression_source));
+            continue;
+        }
         let requires = match &clause.kind {
             SourceContractClauseKind::Requires => true,
             SourceContractClauseKind::Ensures(SourceContractExitSelector::Normal) => false,

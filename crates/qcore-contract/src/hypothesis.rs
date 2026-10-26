@@ -44,6 +44,19 @@ pub fn declaration(decl: &SourceDeclaration, legacy: &[DeclaredPremise]) -> Resu
     let mut attachments = Vec::new();
     for clause in decl.function_contract.iter().flat_map(|c| &c.clauses) {
         let source = &clause.value.expression_source;
+        if clause.value.kind == SourceContractClauseKind::QuantProposition {
+            let definition = qcore_frontend::quant_proposition::parse(source)?;
+            let id = definition.id.clone();
+            let atom = Atom {
+                id: id.clone(),
+                proposition: Proposition::Formula { definition },
+            };
+            if graph.atoms.insert(id, atom).is_some() {
+                return Err("hypothesis: duplicate formal atom ID".into());
+            }
+            continue;
+        }
+
         if !is_clause(source) {
             continue;
         }
@@ -160,14 +173,27 @@ pub fn declaration(decl: &SourceDeclaration, legacy: &[DeclaredPremise]) -> Resu
             },
         );
     }
-    if !graph.refinements.is_empty() {
+    if graph
+        .atoms
+        .values()
+        .any(|a| matches!(a.proposition, Proposition::Formula { .. }))
+    {
+        graph.version = 3;
+    } else if !graph.refinements.is_empty() {
         graph.version = 2;
     }
     validate(&graph)?;
     Ok(graph)
 }
 pub fn validate(graph: &Graph) -> Result<(), String> {
-    if !matches!(graph.version, 1 | 2) || (graph.version == 1) != graph.refinements.is_empty() {
+    let formal = graph
+        .atoms
+        .values()
+        .any(|a| matches!(a.proposition, Proposition::Formula { .. }));
+    if !matches!(graph.version, 1 | 2 | 3)
+        || (graph.version == 3) != formal
+        || (!formal && (graph.version == 1) != graph.refinements.is_empty())
+    {
         return Err("hypothesis: unsupported graph version".into());
     }
     let mut used = BTreeSet::new();
@@ -177,6 +203,12 @@ pub fn validate(graph: &Graph) -> Result<(), String> {
         }
         match &atom.proposition {
             Proposition::Opaque { statement } if plain(statement) => (),
+            Proposition::Formula { definition } => {
+                if definition.id != *id {
+                    return Err("hypothesis: formal atom ID mismatch".into());
+                }
+                qcore_frontend::quant_proposition::validate(definition)?;
+            }
             Proposition::Typed { .. } => {
                 return Err("hypothesis: unknown typed predicate (registry is empty in v1)".into());
             }

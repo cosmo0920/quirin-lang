@@ -718,6 +718,7 @@ fn clauses_of(declaration: &SourceDeclaration) -> Vec<Clause> {
                         }
                         // Card QUANT-INDEX-CHECKS: rendered as written, so a
                         // re-rendered clause parses back to the same kind.
+                        SourceContractClauseKind::QuantProposition => "quant proposition".into(),
                         SourceContractClauseKind::QuantCheck => "quant checks".to_owned(),
                         // Card NULL-SAFETY-PROPERTY: likewise.
                         SourceContractClauseKind::QuantNullDeref => "quant null-deref".to_owned(),

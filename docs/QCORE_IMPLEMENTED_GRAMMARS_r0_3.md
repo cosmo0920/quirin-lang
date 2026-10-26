@@ -71,6 +71,53 @@ contract module's declarations through the separate `#include` directive of
 G05a, resolved by the contract loader against a published load path and never
 by this front end.
 
+### G01p. Typed contract propositions (graph version 3)
+
+`quant proposition` is contextual inside a function contract. The structural
+parser retains its kind, text and span. Resource and bounds hypothesis replay
+parse and type check its complete expression; it supplies no C fact or effect.
+`quant theorem` and `quant effect` remain proposed and are refused.
+
+```ebnf
+proposition = "quant", "proposition", "#", id, "(", [parameters], ")",
+              "=", formula, ";" ;
+parameters  = parameter, {",", parameter} ;
+parameter   = "#", id, ":", sort ;
+sort        = id | "predicate", "<", [id, {",", id}], ">" ;
+formula     = "#", id, "(", [arguments], ")"
+            | "#", id, "==", "#", id
+            | "!", formula
+            | "(", formula, ("&&" | "||" | "=>"), formula, ")"
+            | ("forall" | "exists"), "(", "#", id, ":", id, ")",
+              "{", formula, "}" ;
+arguments   = "#", id, {",", "#", id} ;
+```
+
+An `id` is 1–128 lowercase ASCII letters/digits/underscores beginning with a
+letter. `predicate` is a sort constructor, never a value sort. A value parameter
+has a named nominal sort. A relation parameter has the explicit ordered value
+sorts in `predicate<...>`; `predicate<>` is nullary. Only bound value parameters
+may be arguments or equality operands. Calls require a bound relation of exactly
+the declared arity and sorts. Equality requires equal value sorts. Free names,
+duplicate parameters, active binder shadowing, predicate quantification, prose
+strings, implicit predicates and unsupported operators refuse. Quantifier sorts
+are explicit and may denote empty domains; no finite or nonempty domain is
+inferred. Named sorts and relation interpretations remain supplied assumptions.
+
+Limits: 65,536 source bytes per definition; 64 parameters; 16 relation arguments;
+256 formula nodes and depth 32 (root depth zero). The same identifier, sort,
+arity, depth and node checks apply to schema/wire formulas. A source definition
+creates one graph atom whose ID is the `#` binder. IDs beginning `legacy_` are
+reserved, duplicate formal definitions refuse, and the existing conjunction,
+refinement and lifecycle rules require every referenced atom to exist. A graph
+containing a formal atom uses version 3; versions 1 and 2 retain their original
+encoding and refuse formal atoms. Exact serialized formula content participates
+in graph/atom digests and source replay. Interpretation and actual source binding
+are open; no theorem result or verdict authority is inferred from type checking.
+
+Implementation: `qcore_frontend::quant_proposition`,
+`qcore_schemas::quant_proposition`, `qcore_contract::hypothesis`.
+
 ### G01a. Runtime import bundle
 
 ```ebnf
