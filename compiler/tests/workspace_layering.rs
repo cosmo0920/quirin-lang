@@ -20,9 +20,21 @@ const ALLOWED: &[(&str, &[&str])] = &[
     // about bit-field storage units instead of re-deriving it. The edge points
     // down (L2 -> L1), and the gateway already depended on the kernel through
     // `qcore-contract`.
+    // Card GATEWAY-RULE-API (pluggable-cards seam B): the rule-package
+    // interface sits between the schema surface and the gateway; a rule
+    // package depends on it, never on the gateway or another rule package.
+    (
+        "crates/qcore-gateway-rule-api",
+        &["qcore-schemas", "qcore-contract"],
+    ),
     (
         "crates/qcore-c-gateway",
-        &["qcore-contract", "qcore-core", "qcore-schemas"],
+        &[
+            "qcore-contract",
+            "qcore-core",
+            "qcore-gateway-rule-api",
+            "qcore-schemas",
+        ],
     ),
     (
         "crates/qcore-verifier-host",
