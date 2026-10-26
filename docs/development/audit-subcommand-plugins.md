@@ -280,3 +280,14 @@ unstable route, a side without a revision and an existing profile directory.
 `--side base=baseline:<sha>` reuses it only after verifying every file digest,
 the route definition, the inputs as this measurement spells them, and the
 contract-bundle digests recomputed from `<sha>`'s git tree.
+
+The integrator runs `python3 scripts/land.py publish` after the full gate and
+the records commit. It finds the nearest published first-parent ancestor,
+compares that verified baseline with `rev:<landed-sha>` on all three live routes,
+and publishes the tip. The first publication uses `--bootstrap` to measure the
+previous revision as `rev:` because no baseline exists yet. Each attempt keeps
+its own `private/measure/landing-<sha>-<stamp>/` output; an existing immutable
+`private/baselines/<sha>/` refuses another publication. `--inputs-base DIR`
+selects the prepared input root, and `--previous SHA` selects a particular
+previous landing when needed. The command requires a clean checkout and the
+release audit host and `quirin-audit-measure` binary.
