@@ -32,8 +32,10 @@ per landing, run by the integrator).  Usage::
    a workspace manifest or lockfile, the test runner or this scoper, or any path
    that no crate owns or reads and that is not prose, Python, Lean or provider
    tooling, or a record the Python suite checks (``contract/evaluations/**``,
-   the evaluation-profile records ``scripts/evaluation_profiles.py`` validates;
-   a crate found reading one still claims it).  Otherwise it runs ``scripts/run_test_binaries.py --packages`` over
+   the evaluation-profile records ``scripts/evaluation_profiles.py`` validates,
+   and ``contract/contributions/**``, the per-rule contribution ledgers
+   ``scripts/contribution_ledgers.py`` validates; a crate found reading one
+   still claims it).  Otherwise it runs ``scripts/run_test_binaries.py --packages`` over
    the affected root-workspace members (its fail-closed ``EXCLUSIVE`` phase
    unchanged).
 4. **Steps**, every exit, count and log recorded in ``gate.json``: submodule
@@ -85,9 +87,11 @@ FULL_LEAN_TOOLS = ("scripts/check_lean_audits.py", "scripts/gate_lean.py")
 PROSE_PREFIXES = ("docs/", "editors/", ".github/")
 # Records no crate reads and the Python suite checks (card RECORDS-TOOLING:
 # scripts/tests/test_evaluation_profiles.py checks the committed evaluation
-# profiles; a string-literal census found no Rust reader).  A crate the scanner
-# finds reading one is still selected; only the fail-closed fallback is lifted.
-PYTHON_RECORD_PREFIXES = ("contract/evaluations/",)
+# profiles; a string-literal census found no Rust reader; card
+# CONTRIBUTION-LEDGERS adds the ledgers scripts/tests/test_contribution_ledgers.py
+# checks).  A crate the scanner finds reading one is still selected; only the
+# fail-closed fallback is lifted.
+PYTHON_RECORD_PREFIXES = ("contract/evaluations/", "contract/contributions/")
 LEAN_ROOT_FILES = ("proof/QCore.lean", "proof/AuditAll.lean")
 PROBES = ("reevaluation_probe", "reevaluation_followup")
 GRANULARITIES = ("directory", "file")

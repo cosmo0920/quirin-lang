@@ -54,6 +54,7 @@ class Land(unittest.TestCase):
         python = position["python3 -m unittest discover -s scripts/tests"]
         self.assertLess(position[land.MATRIX_COMMAND], python)
         self.assertLess(position[land.INDEX_COMMAND], python)
+        self.assertLess(position[land.CONTRIBUTIONS_COMMAND], position["python3 scripts/land.py check"])
         self.assertLess(position["python3 scripts/land.py check"], python)
 
     def test_fresh_records_pass(self):
@@ -75,6 +76,17 @@ class Land(unittest.TestCase):
         code, _, err = run("check", "--root", str(self.root))
         self.assertEqual(code, 1)
         self.assertIn(land.INDEX_COMMAND, err)
+
+    def test_a_stale_contributions_page_is_refused(self):
+        """Card CONTRIBUTION-LEDGERS: the page is checked when the tree has it."""
+        shutil.copy(ROOT / "scripts/contribution_ledgers.py", self.root / "scripts")
+        code, _, err = run("check", "--root", str(self.root))
+        self.assertEqual(code, 1)
+        self.assertIn(land.CONTRIBUTIONS_COMMAND, err)
+        subprocess.run([sys.executable, "-I", str(self.root / "scripts/contribution_ledgers.py"),
+                        "--root", str(self.root), "render"], check=True, capture_output=True)
+        code, _, err = run("check", "--root", str(self.root))
+        self.assertEqual(code, 0, err)
 
     def test_an_unreadable_matrix_is_refused(self):
         (self.root / land.MATRIX).write_text("{")

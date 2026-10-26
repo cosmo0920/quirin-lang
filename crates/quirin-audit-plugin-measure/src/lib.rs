@@ -9,7 +9,7 @@
 //! quirin-audit --plugin-path DIR --output OUT --timeout-ms MS measure \
 //!     (--profile NAME | --inputs FILE [--routes R,...]) \
 //!     --side NAME=SPEC --side NAME=SPEC [--side ...] [--compare A B]... \
-//!     [--declared PREDICTION.md] [--rules-off IDS] [--repository DIR] \
+//!     [--declared PREDICTION.md] [--rules-off IDS [--per-rule]] [--repository DIR] \
 //!     [--inputs-base DIR] [--jobs N] [--build-jobs N] [--mirror auto|always|never] \
 //!     [--mount-root DIR] [--no-slots] [--build-commit TEXT] \
 //!     [--source-date-epoch SECONDS|none] [--baselines DIR] \
@@ -26,8 +26,9 @@
 //! composition component, the unit rows' derived verdicts, the byte comparison
 //! of the report artifacts with the one named clock substitution; rows moved in
 //! more than one comparison (named interactions, never summed); the
-//! declared-versus-measured check; and the reserved per-rule `contribution`
-//! slot. The tool proposes no verdict: it claims nothing through the
+//! declared-versus-measured check; and the per-rule `contribution` slot: the
+//! contribution ledgers of every switched rule and named interaction
+//! ([`ledger`], card CONTRIBUTION-LEDGERS). The tool proposes no verdict: it claims nothing through the
 //! firewall, and a failed side, refused baseline, uncomparable route or
 //! declared-versus-measured mismatch fails the run (`Unknown` at the host).
 
@@ -41,6 +42,7 @@ pub mod baseline;
 pub mod compare;
 pub mod declared;
 pub mod inputs;
+pub mod ledger;
 pub mod mirror;
 pub mod rows;
 pub mod sides;
@@ -60,7 +62,7 @@ pub const RUN_SCHEMA: &str = "quirin-measure-run/1";
 /// Usage text.
 pub const USAGE: &str = "usage: quirin-audit --output OUT measure (--profile NAME | --inputs FILE \
 [--routes R,...]) --side NAME=SPEC --side NAME=SPEC [--compare A B]... [--declared FILE] \
-[--rules-off IDS] [--repository DIR] [--inputs-base DIR] [--jobs N] [--build-jobs N] \
+[--rules-off IDS [--per-rule]] [--repository DIR] [--inputs-base DIR] [--jobs N] [--build-jobs N] \
 [--mirror auto|always|never] [--mount-root DIR] [--no-slots] [--build-commit TEXT] \
 [--source-date-epoch SECONDS|none] [--baselines DIR] [--legacy-rows]\n       quirin-audit --output <baselines>/<sha> measure \
 publish --from OUT/sides/NAME [--routes R,...]\nSPEC: rev:<rev> | <directory> | <binary> | \
@@ -89,6 +91,7 @@ pub struct Options {
     pub compare: Vec<(String, String)>,
     pub declared: Option<String>,
     pub rules_off: Option<Vec<String>>,
+    pub per_rule: bool,
     pub repository: Option<String>,
     pub inputs_base: Option<String>,
     pub jobs: Option<u32>,
@@ -123,6 +126,10 @@ pub fn parse_rules_off(text: &str) -> Result<Vec<String>, String> {
             "--rules-off `{text}`: a comma list of rule ids (`33,35`)"
         ));
     }
+    let distinct: std::collections::BTreeSet<&String> = ids.iter().collect();
+    if distinct.len() != ids.len() {
+        return Err(format!("--rules-off `{text}` names a rule twice"));
+    }
     Ok(ids)
 }
 
@@ -153,6 +160,7 @@ pub fn parse(arguments: &[String]) -> Result<Options, String> {
         match flag {
             "--no-slots" => options.no_slots = true,
             "--legacy-rows" => options.legacy_rows = true,
+            "--per-rule" => options.per_rule = true,
             _ => {
                 let value = rest
                     .get(index + 1)
@@ -234,6 +242,11 @@ pub fn parse(arguments: &[String]) -> Result<Options, String> {
     }
     if options.publish_from.is_some() {
         return Err("--from belongs to `measure publish`".into());
+    }
+    if options.per_rule && options.rules_off.as_ref().is_none_or(|ids| ids.len() < 2) {
+        return Err(
+            "--per-rule separates two or more rules: give --rules-off with at least two ids".into(),
+        );
     }
     if options.profiles.is_empty() == options.inputs.is_none() {
         return Err(format!(
@@ -453,6 +466,39 @@ fn measure(request: &Request, options: &Options) -> Result<Response, String> {
         }
         Some(tip.clone())
     };
+    let switch = switched.as_ref().map(|tip| {
+        let mut ordered = rules_off.clone();
+        ordered.sort_by_key(|id| ledger::rule_order(id));
+        ledger::Switch {
+            tip: tip.clone(),
+            joint: format!("{tip}-off"),
+            per_rule: if options.per_rule {
+                ordered
+                    .iter()
+                    .map(|id| (id.clone(), format!("{tip}-off-{id}")))
+                    .collect()
+            } else {
+                Vec::new()
+            },
+            rules: ordered,
+        }
+    });
+    let switched_sides: BTreeMap<String, Vec<String>> = switch
+        .as_ref()
+        .map(|switch| {
+            let mut sides: BTreeMap<String, Vec<String>> = switch.sides().into_iter().collect();
+            // The joint side keeps the off-list as given.
+            sides.insert(switch.joint.clone(), rules_off.clone());
+            sides
+        })
+        .unwrap_or_default();
+    for name in switched_sides.keys() {
+        if options.sides.iter().any(|(known, _)| known == name) {
+            return Err(format!(
+                "--side {name} collides with the rule-switched side of that name"
+            ));
+        }
+    }
     let needs_inputs = specs
         .iter()
         .any(|(_, spec)| spec.runs() || matches!(spec, SideSpec::Baseline(_)));
@@ -539,13 +585,15 @@ fn measure(request: &Request, options: &Options) -> Result<Response, String> {
                 sides::RULES_OFF_VARIABLE
             ));
         }
-        let mut off = base;
-        off.name = format!("{tip}-off");
-        off.directory = output.join("sides").join(&off.name);
-        std::fs::create_dir_all(&off.directory).map_err(|error| error.to_string())?;
-        off.record["side"] = json!(off.name);
-        off.record["rules_off"] = json!(rules_off);
-        built.push(off);
+        for (name, off_list) in &switched_sides {
+            let mut off = base.clone();
+            off.name.clone_from(name);
+            off.directory = output.join("sides").join(&off.name);
+            std::fs::create_dir_all(&off.directory).map_err(|error| error.to_string())?;
+            off.record["side"] = json!(off.name);
+            off.record["rules_off"] = json!(off_list);
+            built.push(off);
+        }
     }
     // Run every route of every running side; the slots bound concurrency.
     let jobs: Vec<(usize, &Route)> = (0..built.len())
@@ -559,13 +607,13 @@ fn measure(request: &Request, options: &Options) -> Result<Response, String> {
                 let spelled = &spelled;
                 let context = &context;
                 let mirror_binding = &mirror_binding;
-                let rules_off = &rules_off;
+                let switched_sides = &switched_sides;
                 scope.spawn(move || {
                     let mut context = context.clone();
-                    if built[side].name.ends_with("-off")
+                    if let Some(off_list) = switched_sides.get(&built[side].name)
                         && built[side].record["rules_off"].is_array()
                     {
-                        context.rules_off.clone_from(rules_off);
+                        context.rules_off.clone_from(off_list);
                     }
                     eprintln!("measure: side {} route {}", built[side].name, route.name);
                     let result = sides::run_route(
@@ -638,7 +686,16 @@ fn measure(request: &Request, options: &Options) -> Result<Response, String> {
                     .iter()
                     .find(|(name, _)| *name == side.name)
                     .map_or_else(
-                        || format!("{} with --rules-off", side.spec.kind()),
+                        || {
+                            format!(
+                                "{} with --rules-off {}",
+                                side.spec.kind(),
+                                switched_sides
+                                    .get(&side.name)
+                                    .map(|ids| ids.join(","))
+                                    .unwrap_or_default()
+                            )
+                        },
                         |(_, spec)| spec.clone(),
                     ),
                 kind: side.spec.kind(),
@@ -732,8 +789,14 @@ fn measure(request: &Request, options: &Options) -> Result<Response, String> {
         }
     }
     let mut comparison_pairs = comparisons.clone();
-    if let Some(tip) = &switched {
-        comparison_pairs.push((format!("{tip}-off"), tip.clone()));
+    let mut per_rule_labels = std::collections::BTreeSet::new();
+    if let Some(switch) = &switch {
+        for (side, _) in switch.sides() {
+            if side != switch.joint {
+                per_rule_labels.insert(switch.label(&side));
+            }
+            comparison_pairs.push((side, switch.tip.clone()));
+        }
     }
     // Compare.
     let mut records = Vec::new();
@@ -782,11 +845,26 @@ fn measure(request: &Request, options: &Options) -> Result<Response, String> {
                     _ => json!({"union": "not formed: a side has no component sidecar"}),
                 };
                 for (rows, side) in [(&left_rows, before), (&right_rows, after)] {
-                    if let Some(off) = rules_off_mismatch(rows, side, &switched, &rules_off) {
+                    if let Some(off) = rules_off_mismatch(rows, side, &switched_sides) {
                         return Err(off);
                     }
                 }
-                for movement in &measured {
+                if switched_sides.contains_key(before.as_str()) {
+                    let contracts = right_dir
+                        .join(route.report())
+                        .with_extension("contracts.json");
+                    let contracts = contracts
+                        .is_file()
+                        .then(|| read_json(&contracts))
+                        .transpose()?;
+                    compare::annotate(&mut record, &right_rows, contracts.as_ref());
+                }
+                // A single-rule comparison's rows are attributed in the
+                // contribution slot; they are not comparison interactions.
+                for movement in measured
+                    .iter()
+                    .filter(|_| !per_rule_labels.contains(&label))
+                {
                     moved
                         .entry(format!("{}::{}", route.name, movement.key))
                         .or_default()
@@ -870,6 +948,38 @@ fn measure(request: &Request, options: &Options) -> Result<Response, String> {
             }))
         })
         .collect();
+    let route_profiles: Vec<(String, String)> = routes
+        .iter()
+        .map(|route| (route.name.clone(), route.profile.clone()))
+        .collect();
+    let contribution = switch.as_ref().map_or_else(
+        || ledger::slot(None, &records, &route_profiles, &Value::Null),
+        |switch| {
+            let tip = &sides_record[&switch.tip];
+            let measurement = json!({
+                "tool": tool(),
+                "tip_side": switch.tip,
+                "binary_sha256": tip["binary"]["sha256"],
+                "revision": tip["revision"],
+                "build_commit": tip["build_commit"],
+                "bundles": tip["bundles"],
+                "source_date_epoch": source_date_epoch,
+            });
+            if failures.is_empty() {
+                ledger::slot(Some(switch), &records, &route_profiles, &measurement)
+            } else {
+                Ok(
+                    json!({"schema": ledger::LEDGER_SCHEMA, "rules": switch.rules,
+                          "ledgers": [], "refused": "the measurement failed; no ledger is built"}),
+                )
+            }
+        },
+    );
+    let contribution = contribution.unwrap_or_else(|error| {
+        failures.push(format!("contribution ledgers: {error}"));
+        json!({"schema": ledger::LEDGER_SCHEMA, "rules": rules_off, "ledgers": [],
+               "refused": error})
+    });
     let complete = failures.is_empty();
     let record = json!({
         "schema": COMPARISON_SCHEMA,
@@ -885,11 +995,7 @@ fn measure(request: &Request, options: &Options) -> Result<Response, String> {
         "declared": declared_record,
         "rules_off": rules_off,
         "source_date_epoch": source_date_epoch,
-        "contribution": {
-            "reserved": "per-rule contribution (plan seam A): filled from the `<tip>-off -> <tip>` \
-                         comparison once RULE-SWITCHES lands; CONTRIBUTION-LEDGERS defines its ledger",
-            "rules": if switched.is_some() { json!(rules_off) } else { json!([]) },
-        },
+        "contribution": contribution,
     });
     let record_path = output.join("native-comparison.json");
     write_json(&record_path, &record)?;
@@ -999,18 +1105,14 @@ fn profile_figures(
     Ok(Some((figures, baseline)))
 }
 
-/// After a rule-switched run, every component of the switched side must
-/// record exactly the requested off-list; any other side must record none.
+/// After a rule-switched run, every component of a switched side must
+/// record exactly that side's off-list; any other side must record none.
 fn rules_off_mismatch(
     rows: &rows::Rows,
     side: &str,
-    switched: &Option<String>,
-    rules_off: &[String],
+    switched_sides: &BTreeMap<String, Vec<String>>,
 ) -> Option<String> {
-    let expected: Vec<String> = match switched {
-        Some(tip) if side == format!("{tip}-off") => rules_off.to_vec(),
-        _ => Vec::new(),
-    };
+    let expected: Vec<String> = switched_sides.get(side).cloned().unwrap_or_default();
     if rows.source != "sidecar" {
         return (!expected.is_empty())
             .then(|| format!("side {side}: no component sidecar records the rule off-list"));

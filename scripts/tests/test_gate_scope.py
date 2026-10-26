@@ -199,9 +199,20 @@ class PythonCheckedRecords(unittest.TestCase):
         self.assertEqual(scope["rust_packages"], ["delta"])
         self.assertIn(f"{self.RECORD}: a record the Python suite checks", scope["python_reasons"])
 
+    def test_contribution_ledgers_are_python_checked_records(self):
+        """Card CONTRIBUTION-LEDGERS: a ledger-only diff selects no crate."""
+        for ledger in ("contract/contributions/33/eight-home.json",
+                       "contract/contributions/interactions/33+35/eight-home.json"):
+            scope = plan([ledger], files={**FILES, ledger: "{}\n"})
+            self.assertEqual(scope["mode"], "scoped", ledger)
+            self.assertEqual(scope["rust_packages"], [], ledger)
+            self.assertIn(f"{ledger}: a record the Python suite checks", scope["python_reasons"])
+            self.assertIn("class records", scope["attribution"][ledger])
+
     def test_other_contract_paths_still_fail_closed(self):
         for path in ("contract/orphan.qv", "contract/evaluations.json",
-                     "contract/evaluationsX/a.json"):
+                     "contract/evaluationsX/a.json", "contract/contributions.json",
+                     "contract/contributionsX/a.json"):
             scope = plan([path], files={**FILES, path: ""})
             self.assertEqual(scope["mode"], "full", path)
             self.assertIn("fail-closed", scope["full_reasons"][0], path)

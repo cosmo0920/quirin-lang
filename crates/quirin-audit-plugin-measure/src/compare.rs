@@ -490,6 +490,83 @@ pub fn union(before: &Contribution, after: &Contribution) -> (Contribution, Valu
     (composed, record)
 }
 
+/// The named premises a TIP row rests on, as the rule-32 report's
+/// `premises.py` resolved them: the row's
+/// `contract_dependencies.hypothesis_dependencies` (declaration to hypothesis
+/// atoms) through the route's contract sidecar
+/// (`<report>.contracts.json`: `contract_dependencies.declarations.<name>.
+/// hypothesis_graph.premises.*`, each premise's `children` and
+/// `erasure.name`). A row without hypothesis dependencies rests on no named
+/// premise (`{"declarations": {}}`); without a sidecar the declarations are
+/// named and the premises stay `unresolved`, never guessed.
+#[must_use]
+pub fn premises(row: &Value, contracts: Option<&Value>) -> Value {
+    let Some(dependencies) = row["contract_dependencies"]["hypothesis_dependencies"].as_object()
+    else {
+        return json!({"declarations": {}});
+    };
+    let Some(contracts) = contracts else {
+        return json!({"declarations": dependencies.keys().collect::<Vec<_>>(),
+                      "unresolved": "no contract sidecar beside the report"});
+    };
+    let declarations = &contracts["contract_dependencies"]["declarations"];
+    let resolved: serde_json::Map<String, Value> = dependencies
+        .iter()
+        .map(|(name, atoms)| {
+            let atoms: BTreeSet<&str> = atoms
+                .as_array()
+                .into_iter()
+                .flatten()
+                .filter_map(Value::as_str)
+                .collect();
+            let names: BTreeSet<&str> = declarations[name]["hypothesis_graph"]["premises"]
+                .as_object()
+                .into_iter()
+                .flatten()
+                .filter(|(_, premise)| {
+                    premise["children"]
+                        .as_array()
+                        .into_iter()
+                        .flatten()
+                        .filter_map(Value::as_str)
+                        .any(|child| atoms.contains(child))
+                })
+                .filter_map(|(_, premise)| premise["erasure"]["name"].as_str())
+                .collect();
+            (name.clone(), json!(names))
+        })
+        .collect();
+    json!({"declarations": resolved})
+}
+
+/// Annotate a rule-switched comparison for its contribution ledgers
+/// ([`crate::ledger`]): every moved, unmatched-after and content-changed row
+/// gets the named premises its TIP row rests on, and a row Unknown on the TIP
+/// side gets its remaining reason leaves (`after_leaves`), the "why" of a row
+/// that stays Unknown.
+pub fn annotate(record: &mut Value, after: &Rows, contracts: Option<&Value>) {
+    for field in ["moves", "content_changes", "unmatched"] {
+        for entry in record[field].as_array_mut().into_iter().flatten() {
+            let Some(row) = entry["row"]
+                .as_str()
+                .and_then(|key| after.functions.get(key))
+            else {
+                continue;
+            };
+            entry["premises"] = premises(&row.row, contracts);
+            if row.status() == "Unknown" {
+                let mut remaining = Vec::new();
+                for (leaf, count) in leaves(&row.row) {
+                    for _ in 0..count {
+                        remaining.push(serde_json::from_str(&leaf).unwrap_or(Value::Null));
+                    }
+                }
+                entry["after_leaves"] = Value::Array(remaining);
+            }
+        }
+    }
+}
+
 /// Rows moved in more than one comparison: interactions, named row by row
 /// with every comparison that moved them, never summed into any total (plan
 /// §7).
@@ -556,6 +633,25 @@ mod tests {
         let changed = after.replace("\"x\": 1", "\"x\": 2");
         let refused = time_key(before.as_bytes(), changed.as_bytes()).unwrap_err();
         assert_eq!(refused["json_equal_after_swap"], false);
+    }
+
+    #[test]
+    fn premises_resolve_through_the_contract_sidecar() {
+        let row = json!({"contract_dependencies": {"hypothesis_dependencies":
+            {"rd_kafka_log0": ["a1", "a2"]}}});
+        let contracts = json!({"contract_dependencies": {"declarations": {"rd_kafka_log0":
+            {"hypothesis_graph": {"premises": {
+                "0": {"children": ["a1"], "erasure": {"name": "rk_plugin_callback_closure"}},
+                "1": {"children": ["zz"], "erasure": {"name": "unrelated"}}}}}}}});
+        assert_eq!(
+            premises(&row, Some(&contracts)),
+            json!({"declarations": {"rd_kafka_log0": ["rk_plugin_callback_closure"]}})
+        );
+        assert!(premises(&row, None).get("unresolved").is_some());
+        assert_eq!(
+            premises(&json!({"contract_dependencies": []}), None),
+            json!({"declarations": {}})
+        );
     }
 
     #[test]

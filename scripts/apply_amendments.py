@@ -50,9 +50,29 @@ one JSON object with exactly these top-level keys:
   `contract/evaluations/` there is no profile, so a non-empty list is refused
   and an empty one passes. The field writes nothing: the baselines are in the
   card's own commits.
-- `contribution` (optional, reserved): `null` or a JSON object. Its producer is
-  the CONTRIBUTION-LEDGERS card; this version validates the shape and applies
-  nothing.
+- `contribution` (optional): `null`, or `{"ledgers": [path, ...]}`, a
+  non-empty list of distinct repository paths of the per-rule contribution
+  ledgers the card commits (card CONTRIBUTION-LEDGERS;
+  `scripts/contribution_ledgers.py` owns the ledger schema, its layout
+  `contract/contributions/<rule-id>/<profile>.json` and
+  `contract/contributions/interactions/<key>/<profile>.json`, and this
+  check). Every run calls `contribution_ledgers.check_contribution`: each
+  ledger exists, is valid, matches the digest of the native-comparison record
+  it was written from and is an entry of that record's contribution slot;
+  each rule id it names is in `crates/gateway-rules/registry.toml` once that
+  registry exists, and until then has a rule document
+  `docs/agents/rules/<id>.md` with a router row; its profile is live; every
+  other ledger of the same measurement and profile is listed too, and the
+  listed group adds up (base plus deltas equals the TIP totals); and the tree passes
+  `contribution_ledgers.consistency` (every current group re-derives its
+  profile's real-run total; a disagreement is refused, never repaired). A ledger
+  measured on an older profile baseline than the tree's is noted, not
+  refused: the profile consistency check lists it as stale until it is
+  re-measured. Applying the field regenerates the contributions page
+  `docs/development/contributions.md` (`contribution_ledgers.py render`) when
+  it differs; the ledgers themselves are in the card's own commits. (Before
+  this card the field was reserved as any object; no committed document used
+  it, so no existing valid document changes meaning.)
 
 Every refusal is fail-closed: an unknown top-level key, a missing or mistyped
 field, an unknown operation, a field an operation does not take, registering
@@ -109,6 +129,7 @@ EXISTING_ID_RE = re.compile(r"[A-Za-z0-9][A-Za-z0-9_.+-]*")
 PROFILE_RE = re.compile(r"[a-z0-9][a-z0-9-]*")
 MIGRATED_START = "<!-- migrated-section:start -->"
 EVALUATIONS = Path("contract/evaluations")
+CONTRIBUTIONS_PREFIX = "contract/contributions/"
 SCRIPTS = Path(__file__).resolve().parent
 
 
@@ -213,8 +234,18 @@ def validate(document, *, legacy=False):
             raise AmendmentError("profiles lists a name twice")
     if "contribution" in document:
         contribution = document["contribution"]
-        if contribution is not None and not isinstance(contribution, dict):
-            raise AmendmentError("contribution must be null or a JSON object")
+        if contribution is not None:
+            if not isinstance(contribution, dict) or set(contribution) != {"ledgers"}:
+                raise AmendmentError(
+                    'contribution must be null or {"ledgers": [path, ...]}')
+            paths = contribution["ledgers"]
+            if (not isinstance(paths, list) or not paths
+                    or not all(isinstance(path, str) and path.startswith(CONTRIBUTIONS_PREFIX)
+                               and path.endswith(".json") for path in paths)
+                    or len(set(paths)) != len(paths)):
+                raise AmendmentError(
+                    f"contribution.ledgers must be a non-empty list of distinct ledger paths "
+                    f"under {CONTRIBUTIONS_PREFIX}")
 
 
 # --------------------------------------------------------------------------
@@ -336,10 +367,39 @@ def check_profiles(document, root, profiles_base=None):
         raise AmendmentError(f"profiles[]: {error}") from error
 
 
+def _contribution_ledgers():
+    if str(SCRIPTS) not in sys.path:
+        sys.path.insert(0, str(SCRIPTS))
+    import contribution_ledgers
+    return contribution_ledgers
+
+
+def check_contribution(document, root):
+    """Check `contribution` (module doc); return (log lines, page edit or
+    None)."""
+    if document.get("contribution") is None:
+        return [], None
+    ledgers = _contribution_ledgers()
+    try:
+        notes = ledgers.check_contribution(root, document["contribution"])
+        _, inconsistent = ledgers.consistency(root)
+        if inconsistent:
+            raise AmendmentError("the profile consistency check fails (reported, never "
+                                 "repaired): " + "; ".join(inconsistent))
+        page = ledgers.render(root)
+    except (ledgers.LedgerError, OSError, ValueError, KeyError, TypeError) as error:
+        raise AmendmentError(f"contribution: {error}") from error
+    path = Path(str(ledgers.PAGE))
+    old = (root / path).read_text(encoding="utf-8") if (root / path).is_file() else ""
+    return [f"contribution: {note}" for note in notes], (
+        None if old == page else (path, old, page))
+
+
 def plan(document, root, profiles_base=None):
     """Every file edit `document` makes, as {relative path: (old, new)}, and
     the log lines describing them."""
     profiles = check_profiles(document, root, profiles_base)
+    contribution_log, page = check_contribution(document, root)
     edits = {}
     record = current_increment_record(root)
     old = (root / record).read_text(encoding="utf-8")
@@ -358,12 +418,16 @@ def plan(document, root, profiles_base=None):
         matrix["named_followups"], ledger_log = apply_ledger(followups, document["ledger"])
         log += ledger_log
         edits[MATRIX] = (old, json.dumps(matrix, indent=1, ensure_ascii=False) + "\n")
+    log += contribution_log
+    if page is not None:
+        edits[page[0]] = (page[1], page[2])
     return edits, log
 
 
 def write(edits, root):
     for path, (_, new) in edits.items():
         target = root / path
+        target.parent.mkdir(parents=True, exist_ok=True)
         temporary = target.with_name(target.name + ".apply-amendments.tmp")
         temporary.write_text(new, encoding="utf-8")
         os.replace(temporary, target)
@@ -573,9 +637,7 @@ def main(argv=None):
         print("apply_amendments: nothing was written", file=sys.stderr)
         return 1
     for line in log:
-        print(line if line.startswith("profiles: ") else f"ledger: {line}")
-    if "contribution" in document:
-        print("reserved: contribution validated, not applied (its producer card has not landed)")
+        print(line if line.startswith(("profiles: ", "contribution: ")) else f"ledger: {line}")
     if args.dry_run:
         for path, (old, new) in edits.items():
             sys.stdout.writelines(difflib.unified_diff(
