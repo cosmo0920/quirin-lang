@@ -31,7 +31,9 @@ per landing, run by the integrator).  Usage::
    ``qcore-c-gateway``, ``qcore-core``, ``qcore-contract`` or ``qcore-schemas``,
    a workspace manifest or lockfile, the test runner or this scoper, or any path
    that no crate owns or reads and that is not prose, Python, Lean or provider
-   tooling.  Otherwise it runs ``scripts/run_test_binaries.py --packages`` over
+   tooling, or a record the Python suite checks (``contract/evaluations/**``,
+   the evaluation-profile records ``scripts/evaluation_profiles.py`` validates;
+   a crate found reading one still claims it).  Otherwise it runs ``scripts/run_test_binaries.py --packages`` over
    the affected root-workspace members (its fail-closed ``EXCLUSIVE`` phase
    unchanged).
 4. **Steps**, every exit, count and log recorded in ``gate.json``: submodule
@@ -81,6 +83,11 @@ FULL_LEAN_TOOLS = ("scripts/check_lean_audits.py", "scripts/gate_lean.py")
 # Prose and CI configuration: no gate step reads them unless a crate is found
 # reading them (and the Python suite, which always runs, may).
 PROSE_PREFIXES = ("docs/", "editors/", ".github/")
+# Records no crate reads and the Python suite checks (card RECORDS-TOOLING:
+# scripts/tests/test_evaluation_profiles.py checks the committed evaluation
+# profiles; a string-literal census found no Rust reader).  A crate the scanner
+# finds reading one is still selected; only the fail-closed fallback is lifted.
+PYTHON_RECORD_PREFIXES = ("contract/evaluations/",)
 LEAN_ROOT_FILES = ("proof/QCore.lean", "proof/AuditAll.lean")
 PROBES = ("reevaluation_probe", "reevaluation_followup")
 GRANULARITIES = ("directory", "file")
@@ -499,6 +506,8 @@ def classify(path: str) -> Optional[str]:
         return "prose"
     if path.startswith("scripts/") or path.endswith(".py"):
         return "python"
+    if path.startswith(PYTHON_RECORD_PREFIXES):
+        return "records"
     if path.startswith("proof/"):
         return "lean"
     if path.startswith("providers/"):
@@ -540,10 +549,13 @@ def plan(paths: Sequence[str], model: Model, *, force_full: bool = False,
             provider_reasons.append(f"{path}: providers/ changed")
         if cls == "python" or path.endswith(".py"):
             python_reasons.append(f"{path}: Python")
+        if path.startswith(PYTHON_RECORD_PREFIXES):
+            python_reasons.append(f"{path}: a record the Python suite checks")
         if owner is None and cls is None and not model.readers_of(path) \
                 and path not in WORKSPACE_FILES and not path.startswith(WORKSPACE_PREFIXES):
             full_reasons.append(f"{path}: no crate owns or reads it and it is not prose, "
-                                "Python, Lean or provider tooling (fail-closed)")
+                                "Python, Lean or provider tooling, or a Python-checked "
+                                "record (fail-closed)")
             notes.append("unattributed")
         if cls:
             notes.append(f"class {cls}")

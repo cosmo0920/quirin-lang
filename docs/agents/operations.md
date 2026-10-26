@@ -96,8 +96,10 @@ up front:
    pushes main; findings outside scope become follow-ups.
 5. Completion condition and report: the checklist that makes the card done,
    the report path, the increment paragraph and ledger entries (its
-   `integration-amendments.json`, in the schema `scripts/apply_amendments.py`
-   defines and checks with `--check`), and the reply's
+   `integration-amendments.json` in schema `quirin-amendments/1`, which
+   `scripts/apply_amendments.py` defines, with `python3
+   scripts/apply_amendments.py <file> --check` exiting 0 as a checklist item),
+   and the reply's
    shape: branch tip and base, changes, gate commands with exits and counts,
    files likely to conflict, and follow-ups.
 6. Legitimate stops: stop and report only when nothing can advance without
@@ -134,8 +136,11 @@ editing reconciliation tooling.
   docs/reports/<card>/integration-amendments.json` (`--dry-run` first;
   `--legacy` for a pre-schema file). It refuses an invalid or inapplicable
   file and writes nothing; otherwise it writes the increment paragraph, the
-  status paragraph and the `named_followups` edits, then prints the matrix and
-  report-index commands to run after the landing gate.
+  status paragraph and the `named_followups` edits, then prints the post-gate
+  sequence `scripts/land.py` owns. On a merge into a newer main, pass
+  `--profiles-base <that main>` so the `profiles[]` check attributes only this
+  card's baselines. Run `python3 scripts/land.py check` after regenerating the
+  matrix and report index and before the Python suite.
 - If a merged measurement differs from the card's own gate, publish
   `docs/reports/<card>/integration/gate.json`, identify the measured tip and the
   merge SHA, and state it in the merge message. Equal figures need no duplicate

@@ -115,10 +115,12 @@ when the results moved (record the new baseline in the same commit, with a
 reason, or the move is a defect), and 2 for a frozen profile: its results never
 move, and a run on another analyzer revision is not that profile. `record`
 writes a live baseline and its history entry. `amendments` checks the
-amendments field `profiles[]` (schema `quirin-amendments/1`, reserved there for
-this card): the live profiles whose results the card's measured tip moves.
-Every name is a profile; none is frozen; with `--base`, the listed set equals
-the set of live profiles whose baseline changed since the base.
+amendments field `profiles[]` (schema `quirin-amendments/1`): the live profiles
+whose results the card's measured tip moves. Every name is a profile; none is
+frozen; with `--base`, the listed set equals the set of live profiles whose
+baseline changed since the base. `scripts/apply_amendments.py` runs the same
+`check_amendments`, with the document's base, on every run (card
+RECORDS-TOOLING).
 """
 from __future__ import annotations
 
