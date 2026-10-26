@@ -436,11 +436,6 @@ fn schema_and_selection_refusals_fail_closed() {
             r#"{"schema_version":2,"load_path":"load-path.json","modules":["quirin-provider-app/contracts/app/wrap.qcore"]}"#,
             "QI013",
         ),
-        // One module selected twice, as a path and as a reference.
-        (
-            r#"{"schema_version":2,"load_path":"load-path.json","modules":["quirin-provider-demo/contracts/demo/heap.qcore","quirin-provider-demo:demo/heap.qcore"]}"#,
-            "duplicate function contract",
-        ),
         // A load path outside the manifest's directory.
         (
             r#"{"schema_version":2,"load_path":"../load-path.json","modules":["quirin-provider-app:app/wrap.qcore"]}"#,
@@ -452,6 +447,22 @@ fn schema_and_selection_refusals_fail_closed() {
             .to_string();
         assert!(error.contains(expected), "{text}: {error}");
     }
+}
+
+/// Card CONTRACT-SUPERSESSION (contract spec C06.6): one module selected
+/// twice, as a path and as a reference, declares every function twice under
+/// two keys. With no pin stamps each is withheld as a contract conflict: none
+/// is in force, never an optimistic choice.
+#[test]
+fn a_module_selected_twice_withholds_its_functions() {
+    let scratch = Scratch::new("twice");
+    let loaded = load_resource_contract_manifest(&scratch.manifest(
+        r#"{"schema_version":2,"load_path":"load-path.json","modules":["quirin-provider-demo/contracts/demo/heap.qcore","quirin-provider-demo:demo/heap.qcore"]}"#,
+    ))
+    .unwrap();
+    assert!(!loaded.contract_conflict().is_empty());
+    assert!(loaded.functions().is_empty());
+    check_source_assumptions(&loaded).unwrap();
 }
 
 #[test]

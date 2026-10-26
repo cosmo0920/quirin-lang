@@ -134,11 +134,11 @@ open Category
 theorem all_is_complete (c : Category) : c ∈ all := by
   cases c <;> simp [all]
 
-theorem all_has_no_duplicates : all.length = 12 ∧ all.eraseDups.length = 12 := by
+theorem all_has_no_duplicates : all.length = 13 ∧ all.eraseDups.length = 13 := by
   constructor <;> rfl
 
 theorem spellings_are_pairwise_distinct :
-    (all.map spelling).eraseDups.length = 12 := by decide
+    (all.map spelling).eraseDups.length = 13 := by decide
 
 /-- Every human-resolvable category speaks about the analyser, so none can
 support a provisional `Unsafe`. -/
