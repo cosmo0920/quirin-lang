@@ -738,6 +738,8 @@ Regenerate with `python3 scripts/build_docs_index.py`; validate with `--check`.
 
 | [rdhttp-header-summary-gap](rdhttp-header-summary-gap/README.md) | RDHTTP-HEADER-SUMMARY-GAP: the unit index of a unit nesting beyond the default JSON limit |
 
+| [records-tooling](records-tooling/README.md) | RECORDS-TOOLING: profiles check, evaluation records scope, landing check |
+
 | [refcount-family-blocking-callees](refcount-family-blocking-callees/README.md) | REFCOUNT-FAMILY-BLOCKING-CALLEES: the callees that break reference families |
 
 | [refcount-reference-returning-declarations](refcount-reference-returning-declarations/README.md) | REFCOUNT-REFERENCE-RETURNING-DECLARATIONS: returned references and result holders |
