@@ -1791,6 +1791,51 @@ A verifier scope selects provider configuration. It grants no ownership, access,
 
 Protocol v1 accepts no Safe proposal, including an empty or perfectly matching Boolean claim set. Unchecked Unsafe allegations become Unknown. W2 profile loading and bounded W3 evidence-v2/dispatch are now implemented and recorded in repository evidence, beyond the reviewed archive. V2 observation replay requires declared `observations_trusted = true` and observed-run bounds; explicit false is never overwritten. No first-party source safety is promoted.
 
+### L19.1. Formal contract hypotheses and quant effects (required extension)
+
+**User requirement, 2026-10-26; Proposed evidence level (L02).** Contract
+hypotheses across all providers MUST support decomposed mathematical
+representation. Extending the `quant` family for this purpose is a revision-0.3
+language change and MUST be specified together with its contract interpretation
+and exact consumer grammar. The requirements below do not claim that the
+current parser or provider corpus already implements the extension.
+
+The extension distinguishes three judgments:
+
+* A **proposition** denotes a typed predicate `P(s, x)` over an explicit state
+  and typed arguments. Quantifiers, domains, equality, membership, conjunction,
+  disjunction, implication and negation MUST retain their mathematical meaning.
+  A sentence-shaped identifier or an opaque string is not a decomposition.
+* A **theorem application** instantiates a registered audited theorem
+  `∀ x, H₁(x) → … → Hₙ(x) → C(x)`. Its obligations include every `Hᵢ(t)`
+  after capture-avoiding, type-correct substitution of `t` for `x`. A theorem
+  name, provider declaration or hash alone MUST NOT establish those premises.
+* An **effect** denotes a typed relation `R(s, s′, x)` between identified entry
+  and exit states. It MUST identify the applicable exit/guard, changed footprint
+  and preserved frame. A state predicate is a prerequisite of an effect; it
+  MUST NOT be treated as an assertion that the effect occurred.
+
+The intended contextual forms are `quant proposition`, `quant theorem` and
+`quant effect`; their exact bounded syntax and consumers MUST be registered in
+[implemented grammars](QCORE_IMPLEMENTED_GRAMMARS_r0_3.md) when implemented.
+These forms do not redefine the existing `quant live`, `quant deref`,
+`quant checks`, condition binding or outer-contract forms. Unsupported syntax
+MUST be rejected by its selected consumer rather than erased or trusted.
+
+Formalization MUST expose model primitives and their parameters, source and
+build identities, environmental assumptions and source-to-model correspondence
+obligations. A model theorem proves its conditional conclusion only. Unproved
+source facts remain open obligations and cannot create a Safe verdict. Missing
+facts do not prove negation; a bounded observation does not prove a universal
+quantifier. Existing evidence, trust and verdict rules in L20 remain mandatory.
+
+The all-provider migration MUST account for every previous hypothesis,
+including outer assumptions, and preserve its guards, alternatives, quantifier
+scope and effect ordering. Each replacement requires an explicit correspondence
+or a retained open correspondence obligation. Migration completeness is separate
+from proof completeness. The companion contract specification, C03.1, defines
+these requirements at the contract boundary.
+
 ## L20. Verdicts and claim boundaries
 
 Every verification claim MUST identify

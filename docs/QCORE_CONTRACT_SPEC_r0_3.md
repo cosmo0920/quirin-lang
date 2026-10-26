@@ -71,6 +71,34 @@ The shared envelopes are `requires expression;`, `ensures selector expression;`,
 
 The source parser rejects empty clauses and unknown clause introducers. It does not implement a general theorem prover for the retained expression text. Language-level effects, `own`, `borrow`, usage annotations, access requirements and task protocols need their specified source/model elaborators; the external resource loader is not a fallback elaborator for them.
 
+### C03.1. Required formal hypothesis migration (Proposed)
+
+The [language requirement L19.1](QCORE_SPEC_r0_3.md#l191-formal-contract-hypotheses-and-quant-effects-required-extension)
+applies across all provider contract families. `quant proposition`,
+`quant theorem` and `quant effect` are intended extensions; this section does
+not add them to the currently implemented resource-v1 vocabulary.
+
+A migrated precondition MUST expose its typed mathematical predicate and
+explicit quantifier domain. A migrated theorem application MUST retain all
+instantiated premises and the exact registered model/audit identity. A migrated
+effect MUST expose entry/exit states, guard, transition relation and frame.
+Existing prose statements may remain historical explanations, but cannot be
+the semantic representation of a completed migration.
+
+Each existing condition MUST have a recorded replacement and correspondence
+status. Proposed refinements in C04.18, symbolic lifecycle introductions and
+model theorem names are not evidence of equivalence to the old prose or of the
+new formula's truth for C. Open correspondence, source, environment, coverage
+or theorem-input obligations MUST remain visible. No new form may silently
+turn an evidence-only graph into a production discharge rule. A selected
+consumer that cannot interpret a relevant formal clause MUST reject the
+selection or return Unknown under C02.
+
+Provider inventory and pin changes require their existing review and generation
+steps. All-provider migration must retain each consumer's existing semantics
+until its replacement has demonstrated parity under the standing evidence
+rules; syntactic conversion alone establishes no safety coverage.
+
 ## C04. Resource-contract v1: total-or-reject loading
 
 The implementation is `crates/qcore-contract/src/contract_loader.rs`. The public entry points load file lists, an immutable map of source texts, or a versioned manifest. The result is a `ResourceContracts` environment from `qcore-schemas`.
