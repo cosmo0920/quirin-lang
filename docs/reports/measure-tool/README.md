@@ -8,7 +8,9 @@ other subcommand (contract specification C11.2). It replaces the copied
 `measure.py`, `compare.py`, `mirror_inputs.py` and `gate_job.sh` scripts. It
 changes no analyzer, contract, route or theorem, so it needs no identity run
 and adds no Lean (no new semantics). Base: local main `373e41ee8` (AUDIT-COMPOSITION
-merged, `qcore-schemas` 21.0.0).
+merged, `qcore-schemas` 21.0.0); the branch merged origin/main `e37e6703d`
+(CONTRACT-LOCKS, AUDIT-COMPOSITION) and `8a015cd83` (CFG-RELEASE,
+EVALUATION-PROFILES).
 
 ## What changed
 
@@ -24,7 +26,7 @@ through `qcore_schemas::composition`. Usage is documented once, in
 
 | Module | Role |
 |---|---|
-| `inputs` | Routes: the explicit manifest `quirin-measure-inputs/1` (`--inputs`; [`inputs/live.json`](../../../crates/quirin-audit-plugin-measure/inputs/live.json) holds the corpus, system and slice routes) and the one adapter to EVALUATION-PROFILES' draft `evaluation.json` (`--profile`; frozen profiles refused) |
+| `inputs` | Routes: the live evaluation profiles `contract/evaluations/<name>/evaluation.json` (`--profile`; every recorded untracked digest verified, every prepared directory required, frozen profiles refused) and the explicit manifest `quirin-measure-inputs/1` (`--inputs`; [`inputs/live.json`](../../../crates/quirin-audit-plugin-measure/inputs/live.json) holds the same three routes) |
 | `sides` | `--side NAME=SPEC`: `rev:` snapshots, checkouts, binaries, `baseline:<sha>`, `run:<dir>`; builds and route runs (the copied driver's environment and layout, inputs before and after, exit 101 on change), each route under a `gate_slot.py audit` slot |
 | `mirror` | The re-spelled, digest-manifested private mirror (`--mirror auto\|always\|never`) |
 | `rows` | A route's rows read through its component sidecar, validated, every unit row derived by `Contribution::derive` and checked equal to the report's row; `--legacy-rows` for pre-composition reports |
@@ -35,7 +37,9 @@ through `qcore_schemas::composition`. Usage is documented once, in
 **The record.** `native-comparison.json`, schema `quirin-native-comparison/1`:
 per side the run metadata (spec, revision, build commit, binary digest,
 contract-bundle digests, per-route inputs, its `run.json` with digest); per
-comparison and route the totals counted from each side's own report, every
+comparison and route the totals counted from each side's own report, each
+side's figures as `scripts/evaluation_profiles.py summarize` computes them
+and its `compare` verdict against the profile's baseline, every
 moved, content-changed and unmatched function row keyed by its unit's
 component key, environment-only and identical counts, unit-row verdict moves,
 the composition union, the artifact byte comparison; the named interactions
@@ -69,11 +73,15 @@ so sides differ only in source. A checkout counts as a revision only when it
 is its repository's top level and clean.
 
 **Clock key** (LIFETIME-SOURCE-IDENTITY-TIME-MACROS, PREPASS-CLOCK-DEPENDENT-KEY):
+every route of every side runs with one fixed `SOURCE_DATE_EPOCH` (default
+`1767225600`, `--source-date-epoch`, recorded and part of a baseline's
+inputs), as the coordinator relayed from CFG-RELEASE; live-4 below shows the
+contracts sidecar then byte-identical. For sides measured without it,
 `compare::time_key` ports AUDIT-COMPOSITION's check: a differing
 `*.contracts.json` is accepted only if exactly one lifetime-source summary key
 differs, neither key occurs in the other file, and swapping it turns one file
-into the other as JSON and as a line multiset. The analyzer still embeds the
-clock; the tool names the substitution.
+into the other as JSON and as a line multiset. Outside the tool the analyzer
+still embeds the clock.
 
 **Baselines.** `measure publish --from <out>/sides/<name>` with the output
 `private/baselines/<sha>` writes `<profile>/` (route reports, `run.json`,
@@ -136,7 +144,36 @@ version), which the tool classifies as `environment_only`. Both routes exited
 files; the libevent clone's `.git` is excluded, so the audit's own index
 refresh no longer fails the route as it did for AUDIT-COMPOSITION's run).
 
-**Live routes.** LIVE-PLACEHOLDER
+**Live routes.** Two further runs exercise the configured routes, the sidecars, the
+fixed `SOURCE_DATE_EPOCH`, publication and reuse on real data
+([scripts/live_identity.sh](scripts/live_identity.sh); records in [live/](live/)):
+
+- **live-4** (`BASE_REV=e37e6703d`, TIP `7d4aa36bc`, `--build-commit
+  measure-tool-identity`, system and slice): both sides built by the tool at
+  the fixed path produced the same binary (`1c86e628…`), and every report
+  artifact of both routes is **byte-identical**, the contracts sidecar
+  included: 404 and 448 function rows identical, 0 moved, the union of the two
+  sides' 16 and 15 components deduplicating to 16 and 15, no conflict. With one
+  fixed `SOURCE_DATE_EPOCH` the clock-dependent lifetime-source key no longer
+  differs at all. BASE was then published (`measure publish`, two immutable
+  profile directories) and reused as `--side base=baseline:e37e6703d` against
+  TIP's recorded run: identity verification passed and the comparison is again
+  byte-identical (`live/reuse-native-comparison.json`).
+- **live-2** (BASE `373e41ee8`, TIP `980bd2470`, each side's own build commit):
+  0 moved rows, every row `environment_only` (the build commits enter every
+  evidence version), totals system 101 / 0 / 343 / 4 and slice 57 / 4 / 342 / 1.
+  Re-read through the committed live profiles (`--profile fluent-bit-system
+  --profile fluent-bit-tail-pause`, [scripts/profile_figures.sh](scripts/profile_figures.sh)),
+  both sides' `evaluation_profiles.py summarize` figures reproduce the
+  published profile baselines: `compare` exits 0 for both profiles on both
+  sides (`live/profile-figures-native-comparison.json`). Two routes of one side
+  ran concurrently on one snapshot without tripping each other's input check;
+  the retained products landed in each route's `work-<route>/`.
+
+Retained, not evidence: live-1 (every `current` route exited 1 because
+`gate_slot.py` inserted `--memory-budget-mib=7168`, a spelling the CLI
+refuses; fixed in the tool, follow-up GATE-SLOT-CURRENT-BUDGET-SPELLING) and
+live-3 (stopped by its task handle when the epoch option superseded it).
 
 ## Tests
 
@@ -145,16 +182,39 @@ integration tests in `tests/measure.rs` (SDK harness), `tests/host.rs` (the
 real host: the record is a verified artifact, no claim and no verdict; a
 failed measurement is an `Unknown` run with its invocation receipt) and
 `tests/units.rs` (the mirror reproduces `mirror_inputs.py`'s re-spelling on a
-moved fixture checkout; the profile adapter reads EVALUATION-PROFILES' draft
-records into the same databases and digests as `live.json` and refuses a frozen
-profile; bundle digests of a `git archive` snapshot equal those read from the
+moved fixture checkout; the profile adapter reads the committed
+`contract/evaluations` records into the same databases and digests as
+`live.json` and refuses a frozen profile; bundle digests of a `git archive` snapshot equal those read from the
 git tree; the 14 shared vectors of `proof/QCore/AuditComposition.lean` hold
 through the tool's union, split between two sides in both orders; the
 superseded registry's digests).
 
 ## Gate
 
-GATE-PLACEHOLDER
+The scoped card gate ran on `934d6bc4e` (the code of this report; later
+commits add report text only), after merging origin/main `8a015cd83`:
+`python3 scripts/gate_scope.py --base 8a015cd83 --out private/gate-4` under
+slots ([gate.json](gate.json); logs in the card worktree's `private/gate-4/`,
+console `/media/Data/GitHub/quirin-lang/private/measure-tool/gate-4.console.log`;
+Clang recorded in [clang-version.txt](clang-version.txt)). It selected full
+mode: adding a workspace member changes `Cargo.toml` and `Cargo.lock`.
+
+| Step | Exit | Count |
+|---|---|---|
+| submodules | 0 | 1 at its pin |
+| `cargo fmt --all -- --check` | 0 | |
+| `cargo clippy --all-targets -- -D warnings` | 0 | |
+| Rust suite (`run_test_binaries.py`, rust-suite slot; 7,120 s including the slot wait) | 0 | 560 units, 574 summaries; 8,722 passed, 0 failed, 15 ignored |
+| `reevaluation_probe`, `reevaluation_followup` | 0, 0 | |
+| `python3 -m unittest discover -s scripts/tests` | 0 | 492 tests |
+| Lean, provider gate | not selected | no `proof/` or `providers/` change |
+
+Earlier attempts, retained and not evidence: `private/gate` (gate-1, base
+`373e41ee8`, stopped by its task handle to merge origin/main), gate-2 (refused:
+its output directory existed), and `private/gate-3` on `89466a641` (base
+`e37e6703d`): every step 0 (Rust 560 units, 8,722 passed, 0 failed, 15 ignored)
+except the Python suite, exit 1 on one test, because the committed
+`integration-amendments.json` was still a placeholder.
 
 ## Boundaries
 
@@ -168,7 +228,19 @@ GATE-PLACEHOLDER
 - A `binary` or checkout side runs at its own path, so its environment digests
   differ from a fixed-path side's; only `rev:` and `baseline:` sides are
   byte-comparable.
-- The profile adapter reads a draft format (follow-up
-  MEASURE-TOOL-PROFILE-ADAPTER); the contribution slot is reserved until
-  RULE-SWITCHES and CONTRIBUTION-LEDGERS land.
+- The contribution slot is reserved until RULE-SWITCHES and
+  CONTRIBUTION-LEDGERS land (MEASURE-TOOL-RULES-OFF-LIVE); no landing has
+  published a baseline yet (MEASURE-TOOL-LANDING-PUBLISH).
+- The corpus process peaks above the 7 GiB slot budget at `--jobs 3`
+  (CFG-RELEASE's CORPUS-PEAK-ABOVE-AUDIT-SLOT-BUDGET); the tool takes the
+  slot's default budget and does not resolve that.
 - The mount namespace needs unprivileged user namespaces (`unshare -rm`).
+
+## Follow-ups
+
+Registered in [integration-amendments.json](integration-amendments.json):
+MEASURE-TOOL-RULES-OFF-LIVE, MEASURE-TOOL-LANDING-PUBLISH,
+GATE-SLOT-CURRENT-BUDGET-SPELLING. Retired: MEASURE-SNAPSHOT-HAZARDS,
+MEASURE-TOOL-COMPOSITION-CONSUMER, EVALUATION-PROFILES-MEASURE-READER.
+Amended (the tool's side handled, the analyzer's root cause open):
+LIFETIME-SOURCE-IDENTITY-TIME-MACROS, PREPASS-CLOCK-DEPENDENT-KEY.

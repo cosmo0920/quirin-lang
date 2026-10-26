@@ -1,0 +1,615 @@
+{
+  "comparisons": [
+    {
+      "after": "tip",
+      "before": "base",
+      "comparison": "base->tip",
+      "routes": {
+        "slice": {
+          "after_directory": "/media/Data/GitHub/quirin-lang/private/measure-tool/live-2/measure/sides/tip/slice",
+          "artifacts": {
+            "byte_identical_except_named_substitutions": false,
+            "differing": [
+              {
+                "after": "e0e90a36664839f5fbfca2238e91d98d9e3294b4fbde47aed8be25c60ed7e49f",
+                "before": "4063d3e05cedcb72a403dc066140cf1d4acf4e83dc97af1b98f54c42a6e8067f",
+                "file": "resource-diagnostics.components.json"
+              },
+              {
+                "file": "resource-diagnostics.contracts.json",
+                "why": {
+                  "json_equal_after_swap": false,
+                  "lines_equal_after_swap": false,
+                  "pair": [
+                    "8d746f47cd4b5e3e750689d809f2dd933f41458fde543fe46573d2fe97f8e88d",
+                    "b6306c9681ca93b7d88df967d0ce4e86254222afdb33c09a8f34c173655ef9f0"
+                  ]
+                }
+              },
+              {
+                "after": "2660ec3debab6a3d434a0ddf38d255ac8cc899bd69fb54775a9a18b3b17f03dd",
+                "before": "2b7288685f168a5f36df9e567c4e8baf7eb6159a135d26b8a7bd325507cfd7d9",
+                "file": "resource-diagnostics.json"
+              },
+              {
+                "after": "e49b9b489f4e43844d85962f11ea6f61b988e8dc074663a5bdf9b272722cb6e1",
+                "before": "fd35c335e847839edea41557664b82d8fb96ecb9e9e0a4c97450fee8a386dffd",
+                "file": "slice-null.jsonl"
+              }
+            ],
+            "identical": [
+              {
+                "file": "resource-diagnostics.chunk-contracts.json",
+                "sha256": "a97259087e4ad89a4662edcb494b27c27e80f06c62e404a19076224bbc0a2bd8"
+              },
+              {
+                "file": "resource-diagnostics.source-effects.json",
+                "sha256": "a97259087e4ad89a4662edcb494b27c27e80f06c62e404a19076224bbc0a2bd8"
+              },
+              {
+                "file": "slice-null.summary.json",
+                "sha256": "df4be8b649b807ee4b83c0516250e7495e7e57355733c126c24a6b3828960c56"
+              },
+              {
+                "file": "slice-outer.json",
+                "sha256": "67f2948f869ad0e67eb006583c37a611f0248af0a262643ebdb1a12bb643f4dd"
+              }
+            ],
+            "identical_after_named_substitution": {},
+            "only_after": [],
+            "only_before": [],
+            "records_not_compared": [
+              "console.log",
+              "invocation.json",
+              "resource-diagnostics.invocation.json",
+              "slice.exit",
+              "stderr.log"
+            ]
+          },
+          "before_directory": "/media/Data/GitHub/quirin-lang/private/measure-tool/live-2/measure/sides/base/slice",
+          "composition": {
+            "components": {
+              "after": 16,
+              "before": 16,
+              "union": 32
+            },
+            "conflicts": [],
+            "rows": 16
+          },
+          "conflicts": {
+            "after": [],
+            "before": []
+          },
+          "content_changes": [],
+          "environment_digest_fields": [
+            "assumptions",
+            "build_identity",
+            "environment_sha256",
+            "resource_contracts_sha256",
+            "id"
+          ],
+          "figures": {
+            "after": {
+              "null_rows": 406,
+              "null_verdicts": {
+                "Safe": 190,
+                "Unknown": 216
+              },
+              "null_verdicts_sha256": "08e9b5da9fe871894264c1b276f846c4cd387a95be5e4704fb4ac49e1dac744b",
+              "row_statuses": {
+                "Pending": 4,
+                "Safe": 57,
+                "Unknown": 342,
+                "Unsafe": 1
+              },
+              "row_verdicts_sha256": "a84686d4fd6a52b090bac9ed9302c52f2d79c1439fc7dfbbf421589ff4dd8781",
+              "rows": 404,
+              "unit_statuses": {
+                "Unknown": 15,
+                "Unsafe": 1
+              },
+              "unit_verdicts_sha256": "54e95d5f88252a15b9dd02fb3878b6286b16eeea24a5a4cfd4fde8a08af830e5",
+              "units": 16
+            },
+            "before": {
+              "null_rows": 406,
+              "null_verdicts": {
+                "Safe": 190,
+                "Unknown": 216
+              },
+              "null_verdicts_sha256": "08e9b5da9fe871894264c1b276f846c4cd387a95be5e4704fb4ac49e1dac744b",
+              "row_statuses": {
+                "Pending": 4,
+                "Safe": 57,
+                "Unknown": 342,
+                "Unsafe": 1
+              },
+              "row_verdicts_sha256": "a84686d4fd6a52b090bac9ed9302c52f2d79c1439fc7dfbbf421589ff4dd8781",
+              "rows": 404,
+              "unit_statuses": {
+                "Unknown": 15,
+                "Unsafe": 1
+              },
+              "unit_verdicts_sha256": "54e95d5f88252a15b9dd02fb3878b6286b16eeea24a5a4cfd4fde8a08af830e5",
+              "units": 16
+            }
+          },
+          "function_rows": {
+            "content_changed": 0,
+            "environment_only": 404,
+            "identical": 0,
+            "moved": 0,
+            "unmatched": 0
+          },
+          "incomplete_because": [],
+          "moves": [],
+          "profile_baseline": {
+            "after": {
+              "exit": 0,
+              "lines": [
+                "fluent-bit-tail-pause: the run reproduces the baseline"
+              ],
+              "profile": "fluent-bit-tail-pause"
+            },
+            "before": {
+              "exit": 0,
+              "lines": [
+                "fluent-bit-tail-pause: the run reproduces the baseline"
+              ],
+              "profile": "fluent-bit-tail-pause"
+            }
+          },
+          "status": "complete",
+          "status_deltas": {
+            "Pending": 0,
+            "Safe": 0,
+            "Unknown": 0,
+            "Unsafe": 0
+          },
+          "totals": {
+            "after": {
+              "conflicted_unit_rows": 0,
+              "diagnostic_counts": {
+                "counted_user": 1,
+                "unknown_alias": 1088,
+                "unsupported": 2480
+              },
+              "function_rows": 404,
+              "function_status": {
+                "Pending": 4,
+                "Safe": 57,
+                "Unknown": 342,
+                "Unsafe": 1
+              },
+              "row_source": "sidecar",
+              "unit_rows": 16,
+              "unit_verdict": {
+                "Unknown": 15,
+                "Unsafe": 1
+              }
+            },
+            "before": {
+              "conflicted_unit_rows": 0,
+              "diagnostic_counts": {
+                "counted_user": 1,
+                "unknown_alias": 1088,
+                "unsupported": 2480
+              },
+              "function_rows": 404,
+              "function_status": {
+                "Pending": 4,
+                "Safe": 57,
+                "Unknown": 342,
+                "Unsafe": 1
+              },
+              "row_source": "sidecar",
+              "unit_rows": 16,
+              "unit_verdict": {
+                "Unknown": 15,
+                "Unsafe": 1
+              }
+            }
+          },
+          "unit_field_differences": {},
+          "unit_moves": [],
+          "unit_rows_environment_only": 0,
+          "unmatched": [],
+          "unmatched_units": []
+        },
+        "system": {
+          "after_directory": "/media/Data/GitHub/quirin-lang/private/measure-tool/live-2/measure/sides/tip/system",
+          "artifacts": {
+            "byte_identical_except_named_substitutions": false,
+            "differing": [
+              {
+                "after": "36bda4b1b34005ce6fb8198a9ace355c86cf4238a558154e2afce9ad4bdd849f",
+                "before": "19c9c15afb17fcabeb9a9b686f1db3fb52360c6492dfa3a28739431125266da0",
+                "file": "resource-diagnostics.components.json"
+              },
+              {
+                "file": "resource-diagnostics.contracts.json",
+                "why": {
+                  "json_equal_after_swap": false,
+                  "lines_equal_after_swap": false,
+                  "pair": [
+                    "360999dac71d73e27ba5b4f6d19956e05eb36fe5f9eea09f61d2f491ccc8285e",
+                    "56aed1e91e927d81ceb69030ec8ef0d249f4718e17e7f263f5fb3903578fc990"
+                  ]
+                }
+              },
+              {
+                "after": "2530d4582cbf635023ababf752b1e58e52695c570090ce45f3559c3b15a96ec9",
+                "before": "206fe53b28091f721757228d6ee1d62be5d23f33eaec5f3fe9420299cc6fd423",
+                "file": "resource-diagnostics.json"
+              },
+              {
+                "after": "45116ffc7be35e1f3692fa724247f0db79b813ae5a5db5060d068d71ff8fc469",
+                "before": "769c3a3f27c522b505a7e96cf08e4f56265357a800d92b4ceff479fd295901f3",
+                "file": "system-null.jsonl"
+              }
+            ],
+            "identical": [
+              {
+                "file": "resource-diagnostics.chunk-contracts.json",
+                "sha256": "e7e0d254d9e7ee199672b981e3fc764b702b35a1757bb0f4570a9438e6b87922"
+              },
+              {
+                "file": "resource-diagnostics.source-effects.json",
+                "sha256": "e7e0d254d9e7ee199672b981e3fc764b702b35a1757bb0f4570a9438e6b87922"
+              },
+              {
+                "file": "system-null.summary.json",
+                "sha256": "572117bd3758532c0ad224a8b40db30dc6793a36d0cec55c54a0c817a905d1e2"
+              },
+              {
+                "file": "system-outer.json",
+                "sha256": "a6bdc51a52344c885513a63d1f587b01b56b5b12c18da0861d00db8a601ddcba"
+              }
+            ],
+            "identical_after_named_substitution": {},
+            "only_after": [],
+            "only_before": [],
+            "records_not_compared": [
+              "console.log",
+              "invocation.json",
+              "resource-diagnostics.invocation.json",
+              "stderr.log",
+              "system.exit"
+            ]
+          },
+          "before_directory": "/media/Data/GitHub/quirin-lang/private/measure-tool/live-2/measure/sides/base/system",
+          "composition": {
+            "components": {
+              "after": 15,
+              "before": 15,
+              "union": 30
+            },
+            "conflicts": [],
+            "rows": 15
+          },
+          "conflicts": {
+            "after": [],
+            "before": []
+          },
+          "content_changes": [],
+          "environment_digest_fields": [
+            "assumptions",
+            "build_identity",
+            "environment_sha256",
+            "resource_contracts_sha256",
+            "id"
+          ],
+          "figures": {
+            "after": {
+              "null_rows": 454,
+              "null_verdicts": {
+                "Safe": 211,
+                "Unknown": 243
+              },
+              "null_verdicts_sha256": "18d3b6d0fee4bc3f929e5dac2474bfb88a2290f3163dc698dc2abc3ba94155b3",
+              "row_statuses": {
+                "Safe": 101,
+                "Unknown": 343,
+                "Unsafe": 4
+              },
+              "row_verdicts_sha256": "1d17077f4986f2ea53867a1a2854eb5d5c54c22d755520a7151c5a9c1c6f0003",
+              "rows": 448,
+              "unit_statuses": {
+                "Unknown": 13,
+                "Unsafe": 2
+              },
+              "unit_verdicts_sha256": "d326464ed189bac74776761057f9be31bd5197eea46563b8991137944ed2a01f",
+              "units": 15
+            },
+            "before": {
+              "null_rows": 454,
+              "null_verdicts": {
+                "Safe": 211,
+                "Unknown": 243
+              },
+              "null_verdicts_sha256": "18d3b6d0fee4bc3f929e5dac2474bfb88a2290f3163dc698dc2abc3ba94155b3",
+              "row_statuses": {
+                "Safe": 101,
+                "Unknown": 343,
+                "Unsafe": 4
+              },
+              "row_verdicts_sha256": "1d17077f4986f2ea53867a1a2854eb5d5c54c22d755520a7151c5a9c1c6f0003",
+              "rows": 448,
+              "unit_statuses": {
+                "Unknown": 13,
+                "Unsafe": 2
+              },
+              "unit_verdicts_sha256": "d326464ed189bac74776761057f9be31bd5197eea46563b8991137944ed2a01f",
+              "units": 15
+            }
+          },
+          "function_rows": {
+            "content_changed": 0,
+            "environment_only": 448,
+            "identical": 0,
+            "moved": 0,
+            "unmatched": 0
+          },
+          "incomplete_because": [],
+          "moves": [],
+          "profile_baseline": {
+            "after": {
+              "exit": 0,
+              "lines": [
+                "fluent-bit-system: the run reproduces the baseline"
+              ],
+              "profile": "fluent-bit-system"
+            },
+            "before": {
+              "exit": 0,
+              "lines": [
+                "fluent-bit-system: the run reproduces the baseline"
+              ],
+              "profile": "fluent-bit-system"
+            }
+          },
+          "status": "complete",
+          "status_deltas": {
+            "Safe": 0,
+            "Unknown": 0,
+            "Unsafe": 0
+          },
+          "totals": {
+            "after": {
+              "conflicted_unit_rows": 0,
+              "diagnostic_counts": {
+                "counted_user": 4,
+                "summary_conflict": 4,
+                "unknown_alias": 946,
+                "unsupported": 2388
+              },
+              "function_rows": 448,
+              "function_status": {
+                "Safe": 101,
+                "Unknown": 343,
+                "Unsafe": 4
+              },
+              "row_source": "sidecar",
+              "unit_rows": 15,
+              "unit_verdict": {
+                "Unknown": 13,
+                "Unsafe": 2
+              }
+            },
+            "before": {
+              "conflicted_unit_rows": 0,
+              "diagnostic_counts": {
+                "counted_user": 4,
+                "summary_conflict": 4,
+                "unknown_alias": 946,
+                "unsupported": 2388
+              },
+              "function_rows": 448,
+              "function_status": {
+                "Safe": 101,
+                "Unknown": 343,
+                "Unsafe": 4
+              },
+              "row_source": "sidecar",
+              "unit_rows": 15,
+              "unit_verdict": {
+                "Unknown": 13,
+                "Unsafe": 2
+              }
+            }
+          },
+          "unit_field_differences": {},
+          "unit_moves": [],
+          "unit_rows_environment_only": 0,
+          "unmatched": [],
+          "unmatched_units": []
+        }
+      }
+    }
+  ],
+  "contribution": {
+    "reserved": "per-rule contribution (plan seam A): filled from the `<tip>-off -> <tip>` comparison once RULE-SWITCHES lands; CONTRIBUTION-LEDGERS defines its ledger",
+    "rules": []
+  },
+  "declared": null,
+  "failures": [],
+  "inputs_spelling": {
+    "spelling": "not prepared (no side runs or reuses a baseline)"
+  },
+  "interactions": [],
+  "routes": [
+    {
+      "definition": {
+        "checkout": "private/w45-fb/w46-external-callee-contracts/attempt-1/fluent-bit-clang-source",
+        "clang": "/usr/lib/llvm-21/bin/clang",
+        "compile_database": {
+          "path": "private/w45-fb/w46-external-callee-contracts/attempt-1/fluent-bit-clang-production/compile_commands.json",
+          "sha256": "2475e6374b14152538463f35a3457ffa98fbe30b2639d5df916ef9a216cb6876"
+        },
+        "kind": "configured-selection",
+        "link_map": {
+          "path": "contract/evaluations/eight-home/link-map.json",
+          "sha256": "98a4db761ace9fd4846b000c4c98defdc2e39ce6f95684c67c30f9b8b6f38ad3"
+        },
+        "name": "system",
+        "profile": "fluent-bit-system",
+        "profile_directory": "contract/profiles/fluent-bit",
+        "required_inputs": [
+          "private/w45-fb/w46-external-callee-contracts/attempt-1/fluent-bit-clang-source"
+        ],
+        "selection": "contract/profiles/fluent-bit/system-selection.json",
+        "tracked": [
+          "contract/profiles/fluent-bit/system-selection.json",
+          "contract/profiles/fluent-bit/profile.json",
+          "contract/profiles/fluent-bit/member-facts-scope.json",
+          "contract/evaluations/eight-home/link-map.json"
+        ]
+      },
+      "digest": "dbe4a1743e77d0fa2b24b9733a3c0e02dbc887392cee23ec4383eb7080a5caa3",
+      "name": "system",
+      "profile": "fluent-bit-system"
+    },
+    {
+      "definition": {
+        "checkout": "private/w47-tail/attempt-1/prep/fluent-bit-clang-source",
+        "clang": "/usr/lib/llvm-21/bin/clang",
+        "compile_database": {
+          "path": "private/w47-tail/attempt-1/prep/fluent-bit-clang-production/compile_commands.json",
+          "sha256": "faf446759b31f892c9ffe03c76719875e9910682515cdd9acc908dc5142f8157"
+        },
+        "kind": "configured-selection",
+        "link_map": {
+          "path": "contract/evaluations/eight-home/link-map.json",
+          "sha256": "98a4db761ace9fd4846b000c4c98defdc2e39ce6f95684c67c30f9b8b6f38ad3"
+        },
+        "name": "slice",
+        "profile": "fluent-bit-tail-pause",
+        "profile_directory": "contract/profiles/fluent-bit",
+        "required_inputs": [
+          "private/w47-tail/attempt-1/prep/fluent-bit-clang-source"
+        ],
+        "selection": "contract/profiles/fluent-bit/tail-pause-selection.json",
+        "tracked": [
+          "contract/profiles/fluent-bit/tail-pause-selection.json",
+          "contract/profiles/fluent-bit/profile.json",
+          "contract/profiles/fluent-bit/member-facts-scope.json",
+          "contract/evaluations/eight-home/link-map.json"
+        ]
+      },
+      "digest": "eb04f605d314ba3d06d1722af589f6cfe483b6c098965bcd09b4cb72dfd71614",
+      "name": "slice",
+      "profile": "fluent-bit-tail-pause"
+    }
+  ],
+  "rules_off": [],
+  "schema": "quirin-native-comparison/1",
+  "sides": {
+    "base": {
+      "binary": {
+        "path": "/media/Data/GitHub/quirin-lang/private/measure-tool/live-2/measure/sides/base/src/target/release/quirin-audit",
+        "path_as_run": "/tmp/quirin-measure/src/target/release/quirin-audit",
+        "sha256": "9a19e4f73877b05fac1f70eeb4964d7e4698d1242676b189cbea6dc17cb80c95"
+      },
+      "build_commit": "373e41ee8594db659f467dba66af8f2a80fbaf91",
+      "bundles": {
+        "contract": "517c18d4757523148b4e6b50fdab712e6d598c0c7cde264fdd07120645b3d955",
+        "providers/qcore-provider-chunkio/contracts": "41e1ef343aca95f6ab279fb5a6079e0c6d3a8ff3bb83314bfbe62932baadade5",
+        "providers/qcore-provider-cmetrics/contracts": "4fc9015a8c32db6a44237aa3945d02e02b4198155553bfcafa61065b884bf36c",
+        "providers/qcore-provider-ctraces/contracts": "e90eb34adf062a1a118226488ce68614d27a986d4dd12627d7458048974a80d1",
+        "providers/qcore-provider-libevent/contracts": "2db0a1356298dd9a99c1bc0b5e50885ea48a28fede133590fb08657ae72e450e",
+        "providers/qcore-provider-librdkafka/contracts": "2fc906cd0d5145bb072e85e8405860968e65d409e8c31bf258354eabefa3def6",
+        "providers/quirin-provider-cfl/contracts": "6efccac1cca35ee95d927bdd03f5cc34cae6df58c85400242aa93a18da1d90db",
+        "providers/quirin-provider-fluent-bit/contracts": "43dc9e8a3a5930bc08e8d0f914fdd955c7398bf54f3be0b225997e6b7379ca98",
+        "providers/quirin-provider-libc/contracts": "988ea6596b4acbb4ee16c2c21dfdb7f2ecea9e5d0693e41b67705ca9ba1ecff8",
+        "providers/quirin-provider-mpack/contracts": "14223b7f3b473e35df3b6468ef81ae4b3a074fe83d2d7f0d189301b28b0bdc10",
+        "providers/quirin-provider-msgpack/contracts": "e73fe57fc0d34045b4ee3eea73fa6838c15f08d0f1922b359e0682e30dfc15db",
+        "providers/quirin-provider-shared/contracts": "a4d40318b88bf388c0a7b38f7d83aa7f1dd38d5b9323056658b146cee14e4ba9"
+      },
+      "directory": "/media/Data/GitHub/quirin-lang/private/measure-tool/live-2/measure/sides/base",
+      "inputs": {
+        "slice": {
+          "canonical_prefix": "/media/Data/GitHub/quirin-lang",
+          "databases_as_spelled": {
+            "mirror/slice-compile_commands.json": "30de8c85606675a324c4f218954bdbe9c0e36f84eb72483e17cad83a3ee5c318"
+          },
+          "route_digest": "361fcfcbdd52d4f735e9ae78a1244b8acf8e963818cd7992123623b975e6047a",
+          "spelled_prefix": "/home/cosmo/Documents/GitHub/qcore-c",
+          "spelling": "mirror"
+        },
+        "system": {
+          "canonical_prefix": "/media/Data/GitHub/quirin-lang",
+          "databases_as_spelled": {
+            "mirror/system-compile_commands.json": "fab8cadc9540a2cb1a674437558cecab5b437a64a50d490a8f7c3f54e2d950a9"
+          },
+          "route_digest": "062d37eec4d7a1b7db4eeb77fe1ddf22f8118fbe0fe9306df7ad68cf38bec6d5",
+          "spelled_prefix": "/home/cosmo/Documents/GitHub/qcore-c",
+          "spelling": "mirror"
+        }
+      },
+      "kind": "run",
+      "revision": "373e41ee8594db659f467dba66af8f2a80fbaf91",
+      "run_json": {
+        "path": "/media/Data/GitHub/quirin-lang/private/measure-tool/live-2/measure/sides/base/run.json",
+        "sha256": "2a146ea75eff867639a3b88f1c574cd7e021e17de2a8cd959648aa2b05c3fd17"
+      },
+      "spec": "run:/media/Data/GitHub/quirin-lang/private/measure-tool/live-2/measure/sides/base"
+    },
+    "tip": {
+      "binary": {
+        "path": "/media/Data/GitHub/quirin-lang/private/measure-tool/live-2/measure/sides/tip/src/target/release/quirin-audit",
+        "path_as_run": "/tmp/quirin-measure/src/target/release/quirin-audit",
+        "sha256": "f63d0ebc2e14d649ee61b60fa5560704550edd0ea2d7736154a276684bf35826"
+      },
+      "build_commit": "980bd2470ee5a99adf76a2e9707af2a36d39b52f",
+      "bundles": {
+        "contract": "517c18d4757523148b4e6b50fdab712e6d598c0c7cde264fdd07120645b3d955",
+        "providers/qcore-provider-chunkio/contracts": "41e1ef343aca95f6ab279fb5a6079e0c6d3a8ff3bb83314bfbe62932baadade5",
+        "providers/qcore-provider-cmetrics/contracts": "4fc9015a8c32db6a44237aa3945d02e02b4198155553bfcafa61065b884bf36c",
+        "providers/qcore-provider-ctraces/contracts": "e90eb34adf062a1a118226488ce68614d27a986d4dd12627d7458048974a80d1",
+        "providers/qcore-provider-libevent/contracts": "2db0a1356298dd9a99c1bc0b5e50885ea48a28fede133590fb08657ae72e450e",
+        "providers/qcore-provider-librdkafka/contracts": "2fc906cd0d5145bb072e85e8405860968e65d409e8c31bf258354eabefa3def6",
+        "providers/quirin-provider-cfl/contracts": "6efccac1cca35ee95d927bdd03f5cc34cae6df58c85400242aa93a18da1d90db",
+        "providers/quirin-provider-fluent-bit/contracts": "43dc9e8a3a5930bc08e8d0f914fdd955c7398bf54f3be0b225997e6b7379ca98",
+        "providers/quirin-provider-libc/contracts": "988ea6596b4acbb4ee16c2c21dfdb7f2ecea9e5d0693e41b67705ca9ba1ecff8",
+        "providers/quirin-provider-mpack/contracts": "14223b7f3b473e35df3b6468ef81ae4b3a074fe83d2d7f0d189301b28b0bdc10",
+        "providers/quirin-provider-msgpack/contracts": "e73fe57fc0d34045b4ee3eea73fa6838c15f08d0f1922b359e0682e30dfc15db",
+        "providers/quirin-provider-shared/contracts": "a4d40318b88bf388c0a7b38f7d83aa7f1dd38d5b9323056658b146cee14e4ba9"
+      },
+      "directory": "/media/Data/GitHub/quirin-lang/private/measure-tool/live-2/measure/sides/tip",
+      "inputs": {
+        "slice": {
+          "canonical_prefix": "/media/Data/GitHub/quirin-lang",
+          "databases_as_spelled": {
+            "mirror/slice-compile_commands.json": "30de8c85606675a324c4f218954bdbe9c0e36f84eb72483e17cad83a3ee5c318"
+          },
+          "route_digest": "361fcfcbdd52d4f735e9ae78a1244b8acf8e963818cd7992123623b975e6047a",
+          "spelled_prefix": "/home/cosmo/Documents/GitHub/qcore-c",
+          "spelling": "mirror"
+        },
+        "system": {
+          "canonical_prefix": "/media/Data/GitHub/quirin-lang",
+          "databases_as_spelled": {
+            "mirror/system-compile_commands.json": "fab8cadc9540a2cb1a674437558cecab5b437a64a50d490a8f7c3f54e2d950a9"
+          },
+          "route_digest": "062d37eec4d7a1b7db4eeb77fe1ddf22f8118fbe0fe9306df7ad68cf38bec6d5",
+          "spelled_prefix": "/home/cosmo/Documents/GitHub/qcore-c",
+          "spelling": "mirror"
+        }
+      },
+      "kind": "run",
+      "revision": "980bd2470ee5a99adf76a2e9707af2a36d39b52f",
+      "run_json": {
+        "path": "/media/Data/GitHub/quirin-lang/private/measure-tool/live-2/measure/sides/tip/run.json",
+        "sha256": "28b4dfc6c8b4f106cee8d635af586541fb8583563c2b2fbe7e6a102f09ed37e1"
+      },
+      "spec": "run:/media/Data/GitHub/quirin-lang/private/measure-tool/live-2/measure/sides/tip"
+    }
+  },
+  "source_date_epoch": 1767225600,
+  "status": "complete",
+  "tool": {
+    "name": "quirin-audit-measure",
+    "sha256": "19bc5ae3bcf94b4ed68a57067c3606b72424f7bcd47aef9584f7a1aa9f3bd7a4",
+    "version": "0.1.0"
+  }
+}
