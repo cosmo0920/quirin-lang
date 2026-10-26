@@ -69,8 +69,10 @@ class BudgetPassing(unittest.TestCase):
     def test_current_route_gets_the_flag(self):
         argv, env, record = slot_mod.apply_budget(
             ["target/release/quirin-audit", "current", "--jobs", "8", "cfg"], {}, 5120, self.cwd)
+        # The two-word form, the only one current_cli.rs reads (ledger
+        # GATE-SLOT-CURRENT-BUDGET-SPELLING).
         self.assertEqual(argv, ["target/release/quirin-audit", "current",
-                                "--memory-budget-mib=5120", "--jobs", "8", "cfg"])
+                                "--memory-budget-mib", "5120", "--jobs", "8", "cfg"])
         self.assertEqual(env["QUIRIN_GATE_MEMORY_BUDGET_MIB"], "5120")
         self.assertNotIn("QCORE_AUDIT_JOBS", env)
         self.assertEqual(record["jobs_cap"], 2)
@@ -82,6 +84,13 @@ class BudgetPassing(unittest.TestCase):
         argv, _, _ = slot_mod.apply_budget(
             ["quirin-audit", "current", "--memory-budget-mib", "4096"], {}, 4096, self.cwd)
         self.assertEqual(argv.count("--memory-budget-mib"), 1)
+        # An existing flag is read in either spelling and left as given.
+        with self.assertRaises(slot_mod.Refusal):
+            slot_mod.apply_budget(["quirin-audit", "current", "--memory-budget-mib=7168"],
+                                  {}, 4096, self.cwd)
+        argv, _, _ = slot_mod.apply_budget(
+            ["quirin-audit", "current", "--memory-budget-mib=4096"], {}, 4096, self.cwd)
+        self.assertEqual(argv, ["quirin-audit", "current", "--memory-budget-mib=4096"])
 
     def test_other_routes_get_a_lowered_job_variable(self):
         _, env, record = slot_mod.apply_budget(
@@ -112,6 +121,35 @@ class BudgetPassing(unittest.TestCase):
             config.write_text(json.dumps({"schema_version": 1, "memory_budget_mib": 4096}))
             with self.assertRaises(slot_mod.Refusal):
                 slot_mod.apply_budget(["quirin-audit", str(config)], {}, 7168, self.cwd)
+
+
+class RouteAdmission(unittest.TestCase):
+    """Ledger CORPUS-PEAK-ABOVE-AUDIT-SLOT-BUDGET: the pinned corpus is admitted
+    at its measured budget; its workers stay planned at the slot budget."""
+
+    def test_the_pinned_corpus_is_recognised_behind_wrappers(self):
+        wrapped = ["unshare", "-rm", "sh", "-c", "exec \"$@\"", "ns", "python3",
+                   "/tmp/quirin-measure/src/scripts/run_pinned_audit.py", "out", "66910c10",
+                   "--jobs", "3"]
+        self.assertEqual(slot_mod.route_class(wrapped), "pinned-corpus")
+        self.assertEqual(slot_mod.route_class(["target/release/quirin-audit", "pinned"]),
+                         "pinned-corpus")
+        for other in (["quirin-audit", "current", "--checkout", "x"],
+                      ["quirin-audit", "config.json"], ["python3", "-c", "pass"]):
+            self.assertIsNone(slot_mod.route_class(other), other)
+
+    def test_the_corpus_admission_budget_covers_its_measured_peak(self):
+        # CFG-RELEASE's measured process peak at --jobs 3, in bytes.
+        self.assertGreater(slot_mod.ROUTE_ADMISSION_MIB["pinned-corpus"] * 1024 * 1024,
+                           10_129_997_824)
+        corpus = ["python3", "scripts/run_pinned_audit.py", "o", "c"]
+        for budget in slot_mod.BUDGETS_MIB.values():
+            self.assertEqual(slot_mod.admission_budget(corpus, budget), (11264, "pinned-corpus"))
+            self.assertEqual(slot_mod.admission_budget(["quirin-audit", "current"], budget),
+                             (budget, None))
+        # The workers stay planned at the slot budget, not the admission budget.
+        _, env, _ = slot_mod.apply_budget(corpus, {}, 7168, Path("/"))
+        self.assertEqual(env["QCORE_AUDIT_JOBS"], "3")
 
 
 class Accounting(unittest.TestCase):
@@ -158,6 +196,15 @@ class Accounting(unittest.TestCase):
         third = self.gate(15).acquire("audit", 4096, timeout=1)
         self.assertEqual(third["slot_count"], 3)
         self.assertEqual(third["slot"], 2)
+
+    def test_a_corpus_admission_budget_admits_fewer(self):
+        # 23 GiB available: three 7 GiB audits, but only two 11 GiB corpus runs.
+        corpus = slot_mod.ROUTE_ADMISSION_MIB["pinned-corpus"]
+        first = self.gate(23).acquire("audit", corpus, timeout=1)
+        second = self.gate(23).acquire("audit", corpus, timeout=1)
+        self.assertEqual((first["slot_count"], second["slot_count"]), (2, 2))
+        self.blocked("audit", corpus, available_gib=23)
+        self.assertEqual(self.gate(23).acquire("audit", 7168, timeout=1)["slot"], 2)
 
     def test_at_least_one_audit_slot(self):
         self.assertEqual(self.gate(1).acquire("audit", 7168, timeout=1)["slot_count"], 1)
@@ -260,6 +307,61 @@ class CommandLine(unittest.TestCase):
             self.assertEqual(document["budget"]["label"], "5G")
             self.assertEqual(document["budget"]["memory_budget_mib"], 5120)
             self.assertEqual(document["slot_record"]["legacy_lock"]["mode"], "shared")
+
+    def test_a_stub_current_route_accepts_the_inserted_budget(self):
+        """A stub `quirin-audit current` that, like current_cli.rs, reads only
+        the two-word `--memory-budget-mib N` runs under the slot."""
+        with tempfile.TemporaryDirectory() as directory:
+            root = Path(directory)
+            stub = root / "quirin-audit"
+            stub.write_text(
+                "#!" + sys.executable + "\n"
+                "import sys\n"
+                "args = sys.argv[1:]\n"
+                "assert args[0] == 'current'\n"
+                "budget = None\n"
+                "rest = iter(args[1:])\n"
+                "for arg in rest:\n"
+                "    if arg == '--memory-budget-mib':\n"
+                "        budget = next(rest)\n"
+                "    elif arg == '--jobs':\n"
+                "        next(rest)\n"
+                "    else:\n"
+                "        print('unknown argument', arg, file=sys.stderr)\n"
+                "        sys.exit(1)\n"
+                "print(budget)\n")
+            stub.chmod(0o755)
+            receipt = root / "receipt.json"
+            completed = self.run_slot(root, "audit", "--receipt", str(receipt), "--",
+                                      str(stub), "current", "--jobs", "3")
+            self.assertEqual(completed.returncode, 0, completed.stderr)
+            self.assertEqual(completed.stdout.split(), ["7168"])
+            document = json.loads(receipt.read_text())
+            self.assertEqual(document["argv_run"][1:4], ["current", "--memory-budget-mib", "7168"])
+            self.assertEqual(document["budget"]["admission_mib"], 7168)
+            self.assertIsNone(document["budget"]["route_class"])
+
+    def test_the_receipt_records_admission_and_the_childs_peak(self):
+        with tempfile.TemporaryDirectory() as directory:
+            root = Path(directory)
+            scripts = root / "scripts"
+            scripts.mkdir()
+            corpus = scripts / "run_pinned_audit.py"
+            # Hold 64 MiB of touched memory, then report the job cap it got.
+            corpus.write_text("import os\nx = b'q' * (64 * 1024 * 1024)\n"
+                              "print(os.environ['QCORE_AUDIT_JOBS'], len(x))\n")
+            receipt = root / "receipt.json"
+            completed = self.run_slot(root, "audit", "--receipt", str(receipt), "--",
+                                      sys.executable, str(corpus), "out", "66910c10")
+            self.assertEqual(completed.returncode, 0, completed.stderr)
+            self.assertEqual(completed.stdout.split()[0], "3")
+            document = json.loads(receipt.read_text())
+            self.assertEqual(document["budget"]["memory_budget_mib"], 7168)
+            self.assertEqual(document["budget"]["admission_mib"], 11264)
+            self.assertEqual(document["budget"]["route_class"], "pinned-corpus")
+            self.assertEqual(document["slot_record"]["slot_count"], 2)  # 30 GiB / 11 GiB
+            self.assertGreaterEqual(document["max_rss_kib"], 64 * 1024)
+            self.assertTrue(document["max_rss_within_admission"])
 
     def test_refusals_run_nothing(self):
         with tempfile.TemporaryDirectory() as directory:

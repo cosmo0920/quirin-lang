@@ -18,7 +18,11 @@ dir ``/tmp/quirin-gate``).  Classes:
                 or 5G / 4G; it is passed to the audit's own MiB planning budget
                 (``--memory-budget-mib``, ``memory_budget_mib``; card
                 AUDIT-IR-WORKING-SET), so a smaller budget lowers that run's own
-                worker count instead of overrunning its slot.
+                worker count instead of overrunning its slot.  A route whose
+                measured peak exceeds that budget is admitted at its own
+                measured budget instead (``ROUTE_ADMISSION_MIB``: the pinned
+                corpus at 11 GiB) while its workers stay planned at the slot
+                budget (card LANDING-PUBLISH-COMPLETION).
 ``lean``        two slots.
 
 Transition interlock: every slot job holds the legacy lock
@@ -28,8 +32,8 @@ so a legacy job excludes every slot job and every slot job excludes a legacy
 job, while slot jobs share the legacy lock with one another.
 
 The command's exit code is this script's exit code (128 + N for a signal).
-A receipt (class, slots held, budget, memory reading, waits, argv as run, exit)
-is written to ``--receipt`` or ``private/gate-slot/<stamp>-<pid>-<class>.json``.
+A receipt (class, slots held, budget, admission budget, memory reading, waits,
+argv as run, exit, the child's peak resident set) is written to ``--receipt`` or ``private/gate-slot/<stamp>-<pid>-<class>.json``.
 Exit 2 is a refusal before anything ran (bad class or budget, a budget the
 command would override, a nested slot the parent does not cover).
 """
@@ -64,6 +68,15 @@ SMALLEST_BUDGET_MIB = min(BUDGETS_MIB.values())
 # coordinator reserve plus 2048 MiB per worker, refused below 3072 MiB.
 AUDIT_COORDINATOR_MIB = 1024
 AUDIT_WORKER_MIB = 2048
+
+# Routes admitted at a measured budget above the planning budget, in MiB.  The
+# pinned corpus route (`run_pinned_audit.py`, `quirin-audit pinned`) peaked at
+# 10,129,997,824 B process RSS (9,661 MiB) at --jobs 3 (CFG-RELEASE, BASE
+# 710021bd7; ledger CORPUS-PEAK-ABOVE-AUDIT-SLOT-BUDGET), above the 7 GiB slot
+# that plans its three workers.  It is admitted at 11 GiB, a documented measured
+# exception to user decision 5's 7 GiB default; its workers stay planned at the
+# slot budget.  The admission budget is never below the slot budget.
+ROUTE_ADMISSION_MIB = {"pinned-corpus": 11264}
 
 FIXED_SLOTS = {"rust-suite": 1, "lean": 2}
 CLASSES = ("rust-suite", "audit", "lean")
@@ -120,6 +133,25 @@ def audit_jobs_cap(budget_mib: int) -> int:
     return (budget_mib - AUDIT_COORDINATOR_MIB) // AUDIT_WORKER_MIB
 
 
+def route_class(argv: Sequence[str]) -> Optional[str]:
+    """The measured route class a command runs, or None: ``pinned-corpus`` for
+    ``scripts/run_pinned_audit.py`` or ``quirin-audit pinned`` anywhere in the
+    argv (a namespace or timing wrapper in front of it does not hide it)."""
+    for index, arg in enumerate(argv):
+        if Path(arg).name == "run_pinned_audit.py":
+            return "pinned-corpus"
+        if _is_quirin_audit(arg) and index + 1 < len(argv) and argv[index + 1] == "pinned":
+            return "pinned-corpus"
+    return None
+
+
+def admission_budget(argv: Sequence[str], budget_mib: int) -> tuple[int, Optional[str]]:
+    """(MiB the slot admission counts, route class): the larger of the slot
+    budget and the route's measured budget."""
+    route = route_class(argv)
+    return max(budget_mib, ROUTE_ADMISSION_MIB.get(route or "", 0)), route
+
+
 # --- passing the budget to the audit --------------------------------------------
 
 
@@ -140,8 +172,9 @@ def apply_budget(argv: Sequence[str], env: dict[str, str], budget_mib: int,
                  cwd: Path) -> tuple[list[str], dict[str, str], dict]:
     """Return (argv, env, record) carrying the budget into the audit.
 
-    * ``quirin-audit current``: ``--memory-budget-mib`` is added (or must
-      already equal the budget); the audit caps its own workers.
+    * ``quirin-audit current``: ``--memory-budget-mib N`` is added in the
+      two-word form ``current_cli.rs`` reads (an existing flag, in either
+      spelling, must already equal the budget); the audit caps its own workers.
     * ``quirin-audit CONFIG.json``: a configured ``memory_budget_mib`` must equal
       the budget; otherwise ``QCORE_AUDIT_JOBS`` carries the cap, refused when
       the configuration's ``jobs`` would override it with more workers.
@@ -166,7 +199,7 @@ def apply_budget(argv: Sequence[str], env: dict[str, str], budget_mib: int,
                     f"budget {budget_mib} MiB"
                 )
         else:
-            argv.insert(position + 2, f"--memory-budget-mib={budget_mib}")
+            argv[position + 2:position + 2] = ["--memory-budget-mib", str(budget_mib)]
         record["mechanism"] = "quirin-audit current --memory-budget-mib"
         return argv, env, record
     if route is not None and route.endswith(".json"):
@@ -407,24 +440,34 @@ def parse_held(text: Optional[str]) -> list[str]:
     return [item for item in (text or "").split(",") if item]
 
 
-def run_child(argv: Sequence[str], env: dict[str, str]) -> int:
+def run_child(argv: Sequence[str], env: dict[str, str]) -> tuple[int, int]:
+    """(exit code, peak resident set in KiB).  The peak is ``wait4``'s
+    ``ru_maxrss``: the largest single process among the child and every
+    descendant it waited for (for an audit route, the ``quirin-audit``
+    process), not their sum."""
     process = subprocess.Popen(list(argv), env=env)
     forwarded: dict[int, object] = {}
+    reaped = False
 
     def forward(signum, _frame):
+        if reaped:
+            return
         try:
-            process.send_signal(signum)
+            os.kill(process.pid, signum)  # not send_signal: its poll() could reap
         except ProcessLookupError:
             pass
 
     for signum in (signal.SIGINT, signal.SIGTERM, signal.SIGHUP):
         forwarded[signum] = signal.signal(signum, forward)
     try:
-        code = process.wait()
+        _, status, usage = os.wait4(process.pid, 0)
+        reaped = True
+        process.returncode = os.waitstatus_to_exitcode(status)
     finally:
         for signum, previous in forwarded.items():
             signal.signal(signum, previous)  # type: ignore[arg-type]
-    return 128 - code if code < 0 else code
+    code = process.returncode
+    return (128 - code if code < 0 else code), usage.ru_maxrss
 
 
 def default_receipt(cls: str) -> Path:
@@ -476,11 +519,14 @@ def main(argv: Optional[Sequence[str]] = None) -> int:
         if args.memory_budget is not None and args.cls != "audit":
             raise Refusal("--memory-budget applies to the audit class only")
         budget_mib = None
+        admission_mib = None
         if args.cls == "audit":
             label = (args.memory_budget or DEFAULT_BUDGET).upper()
             budget_mib = parse_budget(label)
             argv_run, env, budget = apply_budget(argv_run, env, budget_mib, Path.cwd())
-            receipt["budget"] = dict(budget, label=label)
+            admission_mib, route = admission_budget(argv_run, budget_mib)
+            receipt["budget"] = dict(budget, label=label, admission_mib=admission_mib,
+                                     route_class=route)
         held = parse_held(env.get(HELD_ENV))
         if held:
             parent = held[0].split("/", 1)[0]
@@ -499,9 +545,11 @@ def main(argv: Optional[Sequence[str]] = None) -> int:
         receipt["slot_record"] = {"class": args.cls, "covered_by_parent": True}
     else:
         try:
+            holder = {"argv": args.command[:6], "cwd": os.getcwd(), "since": utc_now()}
+            if admission_mib is not None:
+                holder["admission_mib"] = admission_mib
             receipt["slot_record"] = gate.acquire(
-                args.cls, budget_mib, args.wait_timeout,
-                holder={"argv": args.command[:6], "cwd": os.getcwd(), "since": utc_now()})
+                args.cls, admission_mib, args.wait_timeout, holder=holder)
         except TimeoutError as error:
             print(f"gate_slot: {error}", file=sys.stderr)
             return 75
@@ -517,10 +565,12 @@ def main(argv: Optional[Sequence[str]] = None) -> int:
     receipt["started"] = utc_now()
     slot = receipt["slot_record"].get("slot")
     print(f"gate_slot: {args.cls} slot {slot if slot is not None else '(parent)'}"
-          + (f", budget {receipt['budget']['memory_budget_mib']} MiB"
+          + (f", budget {receipt['budget']['memory_budget_mib']} MiB, admitted at "
+             f"{receipt['budget']['admission_mib']} MiB"
              if "budget" in receipt else ""), file=sys.stderr, flush=True)
+    peak_kib = None
     try:
-        code = run_child(argv_run, env)
+        code, peak_kib = run_child(argv_run, env)
     except OSError as error:
         print(f"gate_slot: cannot run {argv_run[0]}: {error}", file=sys.stderr)
         code = 127
@@ -528,6 +578,14 @@ def main(argv: Optional[Sequence[str]] = None) -> int:
         gate.release()
     receipt["finished"] = utc_now()
     receipt["exit"] = code
+    if peak_kib is not None:
+        receipt["max_rss_kib"] = peak_kib
+        if admission_mib is not None:
+            within = peak_kib <= admission_mib * 1024
+            receipt["max_rss_within_admission"] = within
+            if not within:
+                print(f"gate_slot: peak resident set {peak_kib} KiB exceeds the admission "
+                      f"budget {admission_mib} MiB", file=sys.stderr, flush=True)
     receipt_path.parent.mkdir(parents=True, exist_ok=True)
     receipt_path.write_text(json.dumps(receipt, indent=1, sort_keys=True) + "\n",
                             encoding="utf-8")
