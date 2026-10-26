@@ -9,7 +9,7 @@ fn atomic_backend_model_retains_typed_cases_without_installing_a_summary() {
     for declaration in parsed.declarations {
         for clause in &declaration.value.function_contract.unwrap().clauses {
             match &clause.value.kind {
-                K::QuantProposition => {
+                K::QuantCondition(qcore_schemas::quant_condition::Selector::Entry) => {
                     qcore_frontend::quant_proposition::parse(&clause.value.expression_source)
                         .unwrap();
                 }

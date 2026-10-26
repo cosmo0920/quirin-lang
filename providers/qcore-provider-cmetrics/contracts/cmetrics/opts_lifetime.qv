@@ -1,6 +1,6 @@
 module contract;
 
-// QUANT-CONTRACT-HYPOTHESES: each quant proposition is an entry obligation
+// QUANT-CONTRACT-HYPOTHESES: each explicit entry condition is an obligation
 // under the explicitly bound model environment and relation/function meanings.
 // Mathematical integers have no C wraparound; C ranges are stated separately.
 // The migration map records primitive meanings and open C/model correspondence.
@@ -23,7 +23,7 @@ extern fn cmt_opts_init(opts: ptr<mut, u8>, ns: ptr<mut, u8>,
                          subsystem: ptr<mut, u8>, name: ptr<mut, u8>,
                          description: ptr<mut, u8>) -> i32
 contract {
-    quant proposition #opts_storage(
+    quant condition entry #opts_storage(
         #caller: object,
         #env: environment,
         #live: predicate<environment, object>,
@@ -34,7 +34,7 @@ contract {
         #writable: predicate<environment, object, scalar_type>
     ) =
         (((!((#opts == #null)) && #live(#env,#opts)) && #owns(#env,#caller,#opts)) && #writable(#env,#opts,#opts_type));
-    quant proposition #null_sds_fields(
+    quant condition entry #null_sds_fields(
         #description_field: field,
         #env: environment,
         #field: predicate<environment, object, field, object>,
@@ -46,7 +46,7 @@ contract {
         #subsystem_field: field
     ) =
         ((((#field(#env,#opts,#ns_field,#null) && #field(#env,#opts,#subsystem_field,#null)) && #field(#env,#opts,#name_field,#null)) && #field(#env,#opts,#description_field,#null)) && #field(#env,#opts,#fqname_field,#null));
-    quant proposition #input_strings(
+    quant condition entry #input_strings(
         #call: activation,
         #env: environment,
         #live: predicate<environment, object>,
@@ -55,7 +55,7 @@ contract {
         #terminated: predicate<environment, object>
     ) =
         forall (#input: object) { ((#string_input(#call,#input) && !((#input == #null))) => (#live(#env,#input) && #terminated(#env,#input))) };
-    quant proposition #input_frame(
+    quant condition entry #input_frame(
         #call: activation,
         #description_field: field,
         #env: environment,
@@ -71,7 +71,7 @@ contract {
         #trace: trace
     ) =
         forall (#input: object) { ((#string_input(#call,#input) && !((#input == #null))) => (#stable(#trace,#call,#input) && forall (#f: field) { (((#f == #ns_field) || ((#f == #subsystem_field) || ((#f == #name_field) || ((#f == #description_field) || (#f == #fqname_field))))) => #field_disjoint(#env,#input,#opts,#f)) })) };
-    quant proposition #string_bounds(
+    quant condition entry #string_bounds(
         #allocation_size: predicate<environment, activation, integer>,
         #call: activation,
         #env: environment,
@@ -94,7 +94,7 @@ contract {
 
 extern fn cmt_opts_exit(opts: ptr<mut, u8>) -> unit
 contract {
-    quant proposition #opts_lifetime(
+    quant condition entry #opts_lifetime(
         #caller: object,
         #env: environment,
         #live: predicate<environment, object>,
@@ -103,7 +103,7 @@ contract {
         #owns: predicate<environment, object, object>
     ) =
         ((!((#opts == #null)) && #live(#env,#opts)) && #owns(#env,#caller,#opts));
-    quant proposition #sds_ownership(
+    quant condition entry #sds_ownership(
         #description_field: field,
         #env: environment,
         #field: predicate<environment, object, field, object>,
@@ -118,7 +118,7 @@ contract {
         #subsystem_field: field
     ) =
         (forall (#f: field) { forall (#handle: object) { (((((#f == #ns_field) || ((#f == #subsystem_field) || ((#f == #name_field) || ((#f == #description_field) || (#f == #fqname_field))))) && #field(#env,#opts,#f,#handle)) && !((#handle == #null))) => ((#live(#env,#handle) && #owns(#env,#opts,#handle)) && #sds_handle(#env,#handle))) } } && forall (#f: field) { forall (#g: field) { forall (#left: object) { forall (#right: object) { ((((((((#f == #ns_field) || ((#f == #subsystem_field) || ((#f == #name_field) || ((#f == #description_field) || (#f == #fqname_field))))) && #field(#env,#opts,#f,#left)) && (((#g == #ns_field) || ((#g == #subsystem_field) || ((#g == #name_field) || ((#g == #description_field) || (#g == #fqname_field))))) && #field(#env,#opts,#g,#right))) && !((#left == #null))) && !((#right == #null))) && !((#f == #g))) => !((#left == #right))) } } } });
-    quant proposition #initialization_state(
+    quant condition entry #initialization_state(
         #committed: predicate<environment, object, object>,
         #description_field: field,
         #env: environment,
@@ -132,7 +132,7 @@ contract {
         #subsystem_field: field
     ) =
         (forall (#handle: object) { (#committed(#env,#opts,#handle) => #owns(#env,#opts,#handle)) } && forall (#f: field) { forall (#handle: object) { (((((#f == #ns_field) || ((#f == #subsystem_field) || ((#f == #name_field) || ((#f == #description_field) || (#f == #fqname_field))))) && #field(#env,#opts,#f,#handle)) && !((#handle == #null))) => #committed(#env,#opts,#handle)) } });
-    quant proposition #sds_retirement(
+    quant condition entry #sds_retirement(
         #call: activation,
         #description_field: field,
         #env: environment,

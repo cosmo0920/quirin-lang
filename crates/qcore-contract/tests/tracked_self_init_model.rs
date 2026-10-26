@@ -24,7 +24,11 @@ fn canonical_initializer_model_records_effects_without_granting_a_call_summary()
     let mut formal = std::collections::BTreeMap::new();
     for clause in clauses {
         assert_ne!(clause.value.kind, SourceContractClauseKind::Requires);
-        if clause.value.kind == SourceContractClauseKind::QuantProposition {
+        if clause.value.kind
+            == SourceContractClauseKind::QuantCondition(
+                qcore_schemas::quant_condition::Selector::Entry,
+            )
+        {
             let definition =
                 qcore_frontend::quant_proposition::parse(&clause.value.expression_source).unwrap();
             assert!(formal.insert(definition.id.clone(), definition).is_none());

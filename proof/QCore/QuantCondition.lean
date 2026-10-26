@@ -56,4 +56,22 @@ def HasExit (execution : Execution State) : Prop := ∃ exit, execution.exitStat
 theorem exit_conditions_do_not_prove_termination (before : State) (predicate : State → Prop) :
     Satisfies .any predicate ⟨before, none⟩ ∧ ¬ HasExit (⟨before, none⟩ : Execution State) := by
   simp [Satisfies, HasExit]
+/-- Graph-v4 roots retain all explicit entry assertions. Group membership only
+controls standalone proposition metadata; it cannot discharge an entry root. -/
+def CanonicalRoots {Key : Type u} (entry formula grouped roots : Key → Prop) : Prop :=
+  ∀ key, roots key ↔ entry key ∨ (formula key ∧ ¬ grouped key)
+
+theorem every_explicit_entry_is_required {Key : Type u}
+    (entry formula grouped roots : Key → Prop)
+    (canonical : CanonicalRoots entry formula grouped roots) (key : Key)
+    (explicit : entry key) : roots key :=
+  (canonical key).mpr (Or.inl explicit)
+
+theorem regrouping_preserves_explicit_entry {Key : Type u}
+    (entry formula firstGroups nextGroups firstRoots nextRoots : Key → Prop)
+    (first : CanonicalRoots entry formula firstGroups firstRoots)
+    (next : CanonicalRoots entry formula nextGroups nextRoots) (key : Key)
+    (explicit : entry key) : firstRoots key ∧ nextRoots key :=
+  ⟨(first key).mpr (Or.inl explicit), (next key).mpr (Or.inl explicit)⟩
+
 end QCore.QuantCondition

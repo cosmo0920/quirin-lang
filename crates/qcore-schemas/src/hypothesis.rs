@@ -15,6 +15,10 @@ pub enum Proposition {
     Formula {
         definition: crate::quant_proposition::Definition,
     },
+    /// Always a required root, including when metadata groups reference it.
+    EntryCondition {
+        definition: crate::quant_proposition::Definition,
+    },
 }
 #[derive(Clone, Debug, PartialEq, Eq, Serialize, Deserialize)]
 #[serde(deny_unknown_fields)]
@@ -52,7 +56,7 @@ pub struct Graph {
     pub premises: BTreeMap<String, Conjunction>,
     #[serde(default, skip_serializing_if = "BTreeMap::is_empty")]
     pub refinements: BTreeMap<String, Refinement>,
-    /// Standalone formal entry obligations of a declared model. Interpreted
+    /// Ungrouped formulas and every explicit entry-condition atom. Interpreted
     /// resource/bounds summaries refuse these until an actual valuation is checked.
     #[serde(default, skip_serializing_if = "Vec::is_empty")]
     pub requirements: Vec<String>,

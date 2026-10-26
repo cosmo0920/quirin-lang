@@ -14,6 +14,7 @@ import QCore.AuditComposition
 import QCore.BitfieldSourceConcurrency
 import QCore.Bitwise
 import QCore.BodyClauseStanding
+import QCore.BooleanConditionProfile
 import QCore.BooleanFieldUnit
 import QCore.BorrowLiveness
 import QCore.BorrowedActual

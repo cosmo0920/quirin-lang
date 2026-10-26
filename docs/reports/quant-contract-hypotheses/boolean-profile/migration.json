@@ -1,0 +1,27 @@
+{
+  "schema": "quant-boolean-condition-migration/1",
+  "interpretation": "Exact bounded Boolean profile; live/exclusive conditions are assumed, not proven C facts. All mapped source objects must satisfy the predicates.",
+  "files": [
+    {
+      "path": "providers/qcore-provider-cmetrics/contracts/cmetrics/counter_reset.qv",
+      "before_sha256": "0ac6d629272eea0c892f7b53527e051af73f3452b98f082f24e6ae0719a3d37c",
+      "after_sha256": "68ddff8762494737f99a1d99ef9078211490e9f72047b2b5096fb0b2ba324194",
+      "entry_conditions": 3,
+      "normal_conditions": 1
+    },
+    {
+      "path": "providers/qcore-provider-chunkio/contracts/fluent_bit/busy_state.qv",
+      "before_sha256": "82b04f12624023cb4fdae7e5827a725fca8fbc12c76889ef187880c383d0ac57",
+      "after_sha256": "a758d76add7d07b50b636ab7873eeb773231c173d3f4d2b0879128b27221f77c",
+      "entry_conditions": 4,
+      "normal_conditions": 3
+    },
+    {
+      "path": "providers/qcore-provider-chunkio/contracts/chunkio/lock_state.qv",
+      "before_sha256": "f0ea9b0797b0c490a7a1321111b2c94f2822b78b2afadcc14619d7f6f3ba557d",
+      "after_sha256": "7ac90bd79bcd41857639eecc79e79d15353eb3e62302fa0f13c18f4327bc4fe6",
+      "entry_conditions": 8,
+      "normal_conditions": 7
+    }
+  ]
+}

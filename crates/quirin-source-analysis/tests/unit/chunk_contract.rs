@@ -68,9 +68,9 @@ fn changing_qcore_postconditions_changes_the_verdict() {
     }
     let busy = busy_summary();
     for contract in [
-        BUSY.replace("old_busy - 1", "old_busy"),
-        BUSY.replace("busy == 0", "busy == 1"),
-        BUSY.replace("lock == old_lock", "lock == 0"),
+        BUSY.replace("#old_busy - 1", "#old_busy"),
+        BUSY.replace("#busy == 0", "#busy == 1"),
+        BUSY.replace("#lock == #old_lock", "#lock == 0"),
     ] {
         assert!(
             check_chunk_source_contract(&busy, &contract)
@@ -95,14 +95,14 @@ fn missing_assumptions_unknown_predicates_and_wrong_types_fail_closed() {
     }
     let busy = busy_summary();
     for contract in [
-        BUSY.replace("requires exclusive_chunk_access;", ""),
-        BUSY.replace("requires busy_is_boolean;", "requires trusted_everything;"),
-        BUSY.replace("lock == old_lock", "arbitrary_predicate"),
-        BUSY.replace("ensures normal lock == old_lock;", ""),
+        without_condition(BUSY, "exclusive"),
+        BUSY.replace("#old_busy == 1", "#old_busy == 2"),
+        BUSY.replace("#lock == #old_lock", "arbitrary_predicate"),
+        without_condition(BUSY, "exit_3"),
         BUSY.replace("mut, InputChunk", "const, InputChunk"),
         BUSY.replace("mut, InputChunk", "mut, Chunk"),
         BUSY.replace("-> i32", "-> unit"),
-        BUSY.replace("ensures normal", "ensures any"),
+        BUSY.replace("quant condition normal", "quant condition any"),
         BUSY.replace("flb_input_chunk_release_lock", "different_function"),
     ] {
         assert!(
@@ -117,7 +117,7 @@ fn qcore_trivia_does_not_change_predicate_meaning() {
     if !crate::test_support::clang_available() {
         return;
     }
-    let contract = BUSY.replace("old_busy - 1", "(old_busy /* entry value */ - 1)");
+    let contract = BUSY.replace("#old_busy - 1", "(#old_busy /* entry value */ - 1)");
     check_chunk_source_contract(&busy_summary(), &contract).unwrap();
 }
 
@@ -134,4 +134,17 @@ fn const_contract_rejects_even_an_idempotent_c_write() {
             .unwrap_err()
             .contains("const QCore borrow")
     );
+}
+
+fn without_condition(source: &str, id: &str) -> String {
+    let marker = format!(" #{id}(");
+    assert_eq!(
+        source.lines().filter(|line| line.contains(&marker)).count(),
+        1
+    );
+    source
+        .lines()
+        .filter(|line| !line.contains(&marker))
+        .collect::<Vec<_>>()
+        .join("\n")
 }

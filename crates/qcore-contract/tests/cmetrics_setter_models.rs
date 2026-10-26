@@ -40,7 +40,11 @@ fn setter_models_cover_existing_apis_and_refuse_interpreted_permissions() {
                     "sentence-shaped prerequisite remains in {}",
                     declaration.value.name
                 );
-                if clause.value.kind == SourceContractClauseKind::QuantProposition {
+                if clause.value.kind
+                    == SourceContractClauseKind::QuantCondition(
+                        qcore_schemas::quant_condition::Selector::Entry,
+                    )
+                {
                     let definition =
                         qcore_frontend::quant_proposition::parse(&clause.value.expression_source)
                             .unwrap();

@@ -1047,6 +1047,29 @@ decomposition properties; they prove no actual C extraction or complete trace.
 Source/environment/ABI/backend and Rust/Lean correspondence remain open. The
 all-provider migration and theorem/effect consumers are still unfinished.
 
+### C04.18.8. Explicit entry condition roots (graph version 4)
+
+`quant condition entry` is a declared prerequisite, distinct from a named
+proposition used only in proposed metadata. Graph version 4 records its exact
+bounded formula as an `entry-condition` atom. All explicit entry atoms remain
+required roots regardless of group/refinement membership. Ungrouped proposition
+atoms retain v3's root rule. Canonical validation recomputes the complete sorted
+root list and refuses omitted/extra/duplicate roots, wrong versions, or malformed
+formulas. Versions 1–3 retain their existing encodings and root rules.
+
+Normal/error/any assertions are retained by the typed condition view and never
+become entry hypotheses. No condition is established by its declaration or a
+graph evidence label. Interpreted resource/bounds loaders reject unresolved
+roots and unsupported condition clauses before installing a summary; legacy
+erasure cannot authorize dropping an entry obligation. No runtime valuation or
+C permission consumer is added by graph inspection. The separately bounded
+Boolean source reader in G01c retains caller assumptions, binds exact typed
+entry identities, and evaluates supported mathematical normal assertions over
+its existing complete paths. `QCore.BooleanConditionProfile` establishes the
+finite integer-domain enumeration and conditional caller predicates; no C
+interpretation follows from these model theorems. `QCore.QuantCondition` models canonical roots
+and proves that regrouping preserves every explicit entry obligation.
+
 ### C04.18.2. Neutral premise decomposition and explicit binding references (graph version 2)
 
 `requires resource_premise_decomposition(NAME, ATOM[, ATOM]*);` attaches a proposed conjunction to exactly one existing declared `resource_premise(NAME, "ORIGINAL")`. The original clause, its name/text/origin, generated legacy singleton and opaque legacy atom remain unchanged. No additional `DeclaredPremise` is produced and no closed-world classifier exception is supplied. This is not an equivalence or implication edge between the original proposition and the proposed conjunction.

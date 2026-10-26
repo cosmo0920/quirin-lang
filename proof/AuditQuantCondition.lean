@@ -5,3 +5,5 @@ import QCore.QuantCondition
 #print axioms QCore.QuantCondition.normal_assertion_does_not_supply_entry
 #print axioms QCore.QuantCondition.entry_assertion_does_not_supply_normal
 #print axioms QCore.QuantCondition.exit_conditions_do_not_prove_termination
+#print axioms QCore.QuantCondition.every_explicit_entry_is_required
+#print axioms QCore.QuantCondition.regrouping_preserves_explicit_entry

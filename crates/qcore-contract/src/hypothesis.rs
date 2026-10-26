@@ -42,13 +42,35 @@ pub fn declaration(decl: &SourceDeclaration, legacy: &[DeclaredPremise]) -> Resu
             },
         )?;
     }
+    if decl
+        .function_contract
+        .iter()
+        .flat_map(|c| &c.clauses)
+        .any(|c| matches!(c.value.kind, SourceContractClauseKind::QuantCondition(_)))
+    {
+        crate::quant_condition::declaration(decl)?;
+    }
     let mut attachments = Vec::new();
     for clause in decl.function_contract.iter().flat_map(|c| &c.clauses) {
         let source = &clause.value.expression_source;
         if let SourceContractClauseKind::QuantCondition(selector) = &clause.value.kind {
             let condition = qcore_frontend::quant_condition::parse(selector.clone(), source)?;
             if condition.selector == qcore_schemas::quant_condition::Selector::Entry {
-                return Err("hypothesis: explicit entry conditions require the typed condition view; no graph valuation is installed".into());
+                let definition = condition.proposition;
+                let id = definition.id.clone();
+                if graph
+                    .atoms
+                    .insert(
+                        id.clone(),
+                        Atom {
+                            id,
+                            proposition: Proposition::EntryCondition { definition },
+                        },
+                    )
+                    .is_some()
+                {
+                    return Err("hypothesis: duplicate formal atom ID".into());
+                }
             }
             // Exit assertions are retained by quant_condition::declaration.
             // They never become hypotheses or acquire a truth assignment here.
@@ -193,32 +215,37 @@ pub fn declaration(decl: &SourceDeclaration, legacy: &[DeclaredPremise]) -> Resu
         .atoms
         .iter()
         .filter(|(id, a)| {
-            matches!(a.proposition, Proposition::Formula { .. }) && !grouped.contains(id)
+            matches!(a.proposition, Proposition::EntryCondition { .. })
+                || (matches!(a.proposition, Proposition::Formula { .. }) && !grouped.contains(id))
         })
         .map(|(id, _)| id.clone())
         .collect();
+    graph.version = expected_version(&graph);
+    validate(&graph)?;
+    Ok(graph)
+}
+fn expected_version(graph: &Graph) -> u32 {
     if graph
+        .atoms
+        .values()
+        .any(|a| matches!(a.proposition, Proposition::EntryCondition { .. }))
+    {
+        4
+    } else if graph
         .atoms
         .values()
         .any(|a| matches!(a.proposition, Proposition::Formula { .. }))
     {
-        graph.version = 3;
+        3
     } else if !graph.refinements.is_empty() {
-        graph.version = 2;
+        2
+    } else {
+        1
     }
-    validate(&graph)?;
-    Ok(graph)
 }
 pub fn validate(graph: &Graph) -> Result<(), String> {
-    let formal = graph
-        .atoms
-        .values()
-        .any(|a| matches!(a.proposition, Proposition::Formula { .. }));
-    if !matches!(graph.version, 1..=3)
-        || (graph.version == 3) != formal
-        || (!formal && (graph.version == 1) != graph.refinements.is_empty())
-    {
-        return Err("hypothesis: unsupported graph version".into());
+    if graph.version != expected_version(graph) {
+        return Err("hypothesis: unsupported or noncanonical graph version".into());
     }
     let mut used = BTreeSet::new();
     for (id, atom) in &graph.atoms {
@@ -227,7 +254,7 @@ pub fn validate(graph: &Graph) -> Result<(), String> {
         }
         match &atom.proposition {
             Proposition::Opaque { statement } if plain(statement) => (),
-            Proposition::Formula { definition } => {
+            Proposition::Formula { definition } | Proposition::EntryCondition { definition } => {
                 if definition.id != *id {
                     return Err("hypothesis: formal atom ID mismatch".into());
                 }
@@ -297,12 +324,13 @@ pub fn validate(graph: &Graph) -> Result<(), String> {
         .atoms
         .iter()
         .filter(|(id, a)| {
-            matches!(a.proposition, Proposition::Formula { .. }) && !used.contains(*id)
+            matches!(a.proposition, Proposition::EntryCondition { .. })
+                || (matches!(a.proposition, Proposition::Formula { .. }) && !used.contains(*id))
         })
         .map(|(id, _)| id.clone())
         .collect::<Vec<_>>();
     if graph.requirements != expected_requirements
-        || (graph.version != 3 && !graph.requirements.is_empty())
+        || (graph.version < 3 && !graph.requirements.is_empty())
     {
         return Err("hypothesis: noncanonical or missing formal entry obligations".into());
     }

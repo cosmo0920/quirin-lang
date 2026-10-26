@@ -15,7 +15,7 @@ extern fn cio_stream_destroy(
     stream: own<ChunkStream> use one
 ) -> unit
 contract {
-    quant proposition #r177(#env: environment, #live: predicate<environment, object>, #stream: object) = #live(#env,#stream);
+    quant condition entry #r177(#env: environment, #live: predicate<environment, object>, #stream: object) = #live(#env,#stream);
     ensures normal every_linked_chunk_is_closed;
     ensures normal stream_is_unlinked;
     ensures normal stream_name_is_released;
@@ -28,7 +28,7 @@ extern fn cio_stream_delete(
 ) -> i32
 effects { io }
 contract {
-    quant proposition #r177(#env: environment, #live: predicate<environment, object>, #stream: object) = #live(#env,#stream);
+    quant condition entry #r177(#env: environment, #live: predicate<environment, object>, #stream: object) = #live(#env,#stream);
     ensures normal backing_content_is_deleted;
     ensures normal stream_object_remains_live;
     ensures any delete_only_is_not_object_destruction;

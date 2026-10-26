@@ -11,28 +11,28 @@ module contract;
 
 extern fn cfl_atomic_initialize() -> i32
 contract {
-    quant proposition #backend(#selected: backend, #gcc: backend, #clang: backend) = ((#selected == #gcc) || (#selected == #clang));
+    quant condition entry #backend(#selected: backend, #gcc: backend, #clang: backend) = ((#selected == #gcc) || (#selected == #clang));
     quant effect normal #initialize(#before: state, #after: state, #result: integer, #value: function<state,object,integer>, #enabled: predicate<>) from #before to #after when #enabled() reads () writes () frame forall (#other: object) { #value(#after,#other) == #value(#before,#other) } = #result == 0;
 };
 
 extern fn cfl_atomic_store(storage: ptr<mut, u64>, new_value: u64) -> unit
 contract {
-    quant proposition #backend(#selected: backend, #gcc: backend, #clang: backend) = ((#selected == #gcc) || (#selected == #clang));
-    quant proposition #storage(#storage: object, #env: environment, #null: object, #live: predicate<environment, object>, #aligned_u64: predicate<environment, object>, #readable_u64: predicate<environment, object>, #writable_u64: predicate<environment, object>) = (((#storage != #null) && #live(#env,#storage)) && (#aligned_u64(#env,#storage) && (#readable_u64(#env,#storage) && #writable_u64(#env,#storage))));
+    quant condition entry #backend(#selected: backend, #gcc: backend, #clang: backend) = ((#selected == #gcc) || (#selected == #clang));
+    quant condition entry #storage(#storage: object, #env: environment, #null: object, #live: predicate<environment, object>, #aligned_u64: predicate<environment, object>, #readable_u64: predicate<environment, object>, #writable_u64: predicate<environment, object>) = (((#storage != #null) && #live(#env,#storage)) && (#aligned_u64(#env,#storage) && (#readable_u64(#env,#storage) && #writable_u64(#env,#storage))));
     quant effect normal #store(#before: state, #after: state, #storage: object, #event: event, #selected: backend, #event_backend: function<event,backend>, #value: function<state,object,integer>, #seq_cst: predicate<event>, #new_value: integer) from #before to #after when (#event_backend(#event) == #selected) reads (#storage) writes (#storage) frame forall (#other: object) { (#other != #storage => #value(#after,#other) == #value(#before,#other)) } = (#value(#after,#storage) == #new_value && #seq_cst(#event));
 };
 
 extern fn cfl_atomic_load(storage: ptr<mut, u64>) -> u64
 contract {
-    quant proposition #backend(#selected: backend, #gcc: backend, #clang: backend) = ((#selected == #gcc) || (#selected == #clang));
-    quant proposition #storage(#storage: object, #env: environment, #null: object, #live: predicate<environment, object>, #aligned_u64: predicate<environment, object>, #readable_u64: predicate<environment, object>, #writable_u64: predicate<environment, object>) = (((#storage != #null) && #live(#env,#storage)) && (#aligned_u64(#env,#storage) && (#readable_u64(#env,#storage) && #writable_u64(#env,#storage))));
+    quant condition entry #backend(#selected: backend, #gcc: backend, #clang: backend) = ((#selected == #gcc) || (#selected == #clang));
+    quant condition entry #storage(#storage: object, #env: environment, #null: object, #live: predicate<environment, object>, #aligned_u64: predicate<environment, object>, #readable_u64: predicate<environment, object>, #writable_u64: predicate<environment, object>) = (((#storage != #null) && #live(#env,#storage)) && (#aligned_u64(#env,#storage) && (#readable_u64(#env,#storage) && #writable_u64(#env,#storage))));
     quant effect normal #load(#before: state, #after: state, #storage: object, #event: event, #selected: backend, #event_backend: function<event,backend>, #value: function<state,object,integer>, #seq_cst: predicate<event>, #result: integer) from #before to #after when (#event_backend(#event) == #selected) reads (#storage) writes () frame forall (#other: object) { #value(#after,#other) == #value(#before,#other) } = (#result == #value(#before,#storage) && #seq_cst(#event));
 };
 
 extern fn cfl_atomic_compare_exchange(storage: ptr<mut, u64>, old_value: u64, new_value: u64) -> i32
 contract {
-    quant proposition #backend(#selected: backend, #gcc: backend, #clang: backend) = ((#selected == #gcc) || (#selected == #clang));
-    quant proposition #storage(#storage: object, #env: environment, #null: object, #live: predicate<environment, object>, #aligned_u64: predicate<environment, object>, #readable_u64: predicate<environment, object>, #writable_u64: predicate<environment, object>) = (((#storage != #null) && #live(#env,#storage)) && (#aligned_u64(#env,#storage) && (#readable_u64(#env,#storage) && #writable_u64(#env,#storage))));
+    quant condition entry #backend(#selected: backend, #gcc: backend, #clang: backend) = ((#selected == #gcc) || (#selected == #clang));
+    quant condition entry #storage(#storage: object, #env: environment, #null: object, #live: predicate<environment, object>, #aligned_u64: predicate<environment, object>, #readable_u64: predicate<environment, object>, #writable_u64: predicate<environment, object>) = (((#storage != #null) && #live(#env,#storage)) && (#aligned_u64(#env,#storage) && (#readable_u64(#env,#storage) && #writable_u64(#env,#storage))));
     quant effect normal #cas_success(#before: state, #after: state, #storage: object, #event: event, #selected: backend, #event_backend: function<event,backend>, #value: function<state,object,integer>, #seq_cst: predicate<event>, #old_value: integer, #new_value: integer, #result: integer) from #before to #after when (#event_backend(#event) == #selected && #value(#before,#storage) == #old_value) reads (#storage) writes (#storage) frame forall (#other: object) { (#other != #storage => #value(#after,#other) == #value(#before,#other)) } = ((#result == 1 && #value(#after,#storage) == #new_value) && #seq_cst(#event));
     quant effect normal #cas_failure(#before: state, #after: state, #storage: object, #event: event, #selected: backend, #event_backend: function<event,backend>, #value: function<state,object,integer>, #seq_cst: predicate<event>, #old_value: integer, #new_value: integer, #result: integer) from #before to #after when (#event_backend(#event) == #selected && #value(#before,#storage) != #old_value) reads (#storage) writes () frame forall (#other: object) { #value(#after,#other) == #value(#before,#other) } = (#result == 0 && #seq_cst(#event));
 };

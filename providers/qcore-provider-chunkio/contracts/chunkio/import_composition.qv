@@ -13,9 +13,9 @@ extern fn check_imported_chunk_program(
     imported_trace: borrow<'trace, const, ImportedChunkTrace> use one
 ) -> result<ChunkLifecycleCertificate, ChunkImportError>
 contract {
-    quant proposition #r174(#pinned_revision: revision, #source_revision: revision) = (#source_revision == #pinned_revision);
-    quant proposition #r117(#cfg: cfg, #imported: predicate<cfg, cfg_node>, #imported_edge: predicate<cfg, cfg_edge>, #reachable: predicate<source, cfg_node>, #reachable_edge: predicate<source, cfg_edge>, #source: source) = (forall (#node: cfg_node) { (#reachable(#source,#node) => #imported(#cfg,#node)) } && forall (#edge: cfg_edge) { (#reachable_edge(#source,#edge) => #imported_edge(#cfg,#edge)) });
-    quant proposition #r096(#checked_summary: predicate<environment, summary>, #env: environment, #trace: trace, #used: predicate<trace, operation>, #operation_summary: predicate<environment, operation, summary>) = forall (#op: operation) { (#used(#trace,#op) => exists (#summary: summary) { (#operation_summary(#env,#op,#summary) && #checked_summary(#env,#summary)) }) };
+    quant condition entry #r174(#pinned_revision: revision, #source_revision: revision) = (#source_revision == #pinned_revision);
+    quant condition entry #r117(#cfg: cfg, #imported: predicate<cfg, cfg_node>, #imported_edge: predicate<cfg, cfg_edge>, #reachable: predicate<source, cfg_node>, #reachable_edge: predicate<source, cfg_edge>, #source: source) = (forall (#node: cfg_node) { (#reachable(#source,#node) => #imported(#cfg,#node)) } && forall (#edge: cfg_edge) { (#reachable_edge(#source,#edge) => #imported_edge(#cfg,#edge)) });
+    quant condition entry #r096(#checked_summary: predicate<environment, summary>, #env: environment, #trace: trace, #used: predicate<trace, operation>, #operation_summary: predicate<environment, operation, summary>) = forall (#op: operation) { (#used(#trace,#op) => exists (#summary: summary) { (#operation_summary(#env,#op,#summary) && #checked_summary(#env,#summary)) }) };
     ensures normal lifecycle_trace_is_accepted;
     ensures normal nested_teardown_order_is_context_stream_chunk_backend;
     ensures normal no_live_owned_chunk_obligation;

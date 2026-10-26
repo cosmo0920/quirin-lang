@@ -172,10 +172,35 @@ artifact identities and theorem names alone establish none of these assertions.
 and rejects duplicate IDs across condition/proposition/effect/theorem clauses.
 Structural parsing and generic inclusion/views preserve selectors and bodies.
 Strict resource/bounds/local-condition consumers refuse the new clauses.
-Hypothesis-only graph inspection refuses an explicit entry condition until its
-entry valuation is supported; it validates exit conditions without treating
-those guarantees as antecedents. Whole-condition consumers must use the typed
+Hypothesis-only graph inspection retains explicit entry conditions as distinct
+`entry-condition` atoms in graph version 4. Every such atom is always present
+in canonical sorted `requirements`, even when metadata groups/refinements also
+reference it. Grouping cannot discharge an entry assertion. Versions 1–3 retain
+their prior bytes and rules; a v4 entry atom under an older version refuses.
+No graph inspection supplies the required valuation. Exit conditions are
+validated without treating those guarantees as antecedents. Whole-condition consumers must use the typed
 condition view. No interpreted C summary is installed by this interface.
+
+The bounded Boolean source-contract reader additionally accepts exact entry
+role definitions for modeled-object liveness, caller-exclusive modeled access,
+and `old_field` (unit) or `old_busy`/`old_lock` (i32) membership in `{0, 1}`.
+`qcore_contract::boolean_condition_profile` owns the exact typed signatures and
+formulas; matching an identifier alone is insufficient. Its `modeled(env,o)`
+interpretation includes every object mapped by the chosen source profile, and
+`during(env,e)` includes the selected call interval. Liveness and exclusivity
+are caller assumptions over that interpretation, not extracted C facts.
+
+For `normal` assertions this reader binds integer parameters only to its
+existing entry/exit ghosts (`old_*`, unprefixed fields, i32 `result`, and helper
+`field_*` writes). It accepts equality/inequality with integer literals,
+addition, subtraction and negation under checked i64 evaluation. Unsupported
+sorts, functions, operators, selectors or missing valuations refuse. Declaring
+an unused exit variable does not satisfy the existing requirement to constrain
+all exit fields/result/helper writes. Entry roles, signatures, both Boolean
+prestates, companion fields and complete source-path validation remain required.
+Every typed entry definition's canonical SHA-256 joins the task's explicit
+assumptions, alongside the entire source identity. This bounded consumer creates
+no generic graph support or ordinary C-call permission.
 
 The introducer and selectors are contextual ordinary words; no globally
 reserved word or lexer token is added. This form is distinct from the existing

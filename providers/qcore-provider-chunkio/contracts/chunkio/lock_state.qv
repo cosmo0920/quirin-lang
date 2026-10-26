@@ -8,13 +8,13 @@ extern fn cio_chunk_is_locked(
     chunk: borrow<'call, const, Chunk> use one
 ) -> i32
 contract {
-    requires chunk_is_live;
-    requires exclusive_chunk_access;
-    requires busy_is_boolean;
-    requires lock_is_boolean;
-    ensures normal result == old_lock;
-    ensures normal lock == old_lock;
-    ensures normal busy == old_busy;
+    quant condition entry #live(#env: environment, #modeled: predicate<environment,object>, #live: predicate<environment,object>) = forall (#o: object) { (#modeled(#env,#o) => #live(#env,#o)) };
+    quant condition entry #exclusive(#env: environment, #caller: actor, #modeled: predicate<environment,object>, #during: predicate<environment,event>, #access: predicate<environment,event,object>, #actor: function<event,actor>) = forall (#e: event) { forall (#o: object) { ((#modeled(#env,#o) && (#during(#env,#e) && #access(#env,#e,#o))) => #actor(#e) == #caller) } };
+    quant condition entry #old_busy_domain(#old_busy: integer) = ((#old_busy == 0) || (#old_busy == 1));
+    quant condition entry #old_lock_domain(#old_lock: integer) = ((#old_lock == 0) || (#old_lock == 1));
+    quant condition normal #exit_1(#result: integer, #old_lock: integer) = (#result == #old_lock);
+    quant condition normal #exit_2(#lock: integer, #old_lock: integer) = (#lock == #old_lock);
+    quant condition normal #exit_3(#busy: integer, #old_busy: integer) = (#busy == #old_busy);
 };
 
 // Source-validated cio_error_reset clears error_n before either unlock exit.
@@ -24,12 +24,12 @@ extern fn cio_chunk_unlock(
     chunk: borrow<'call, mut, Chunk> use one
 ) -> i32
 contract {
-    requires chunk_is_live;
-    requires exclusive_chunk_access;
-    requires busy_is_boolean;
-    requires lock_is_boolean;
-    ensures normal result == old_lock - 1;
-    ensures normal lock == 0;
-    ensures normal busy == old_busy;
-    ensures normal field_error_n == 0;
+    quant condition entry #live(#env: environment, #modeled: predicate<environment,object>, #live: predicate<environment,object>) = forall (#o: object) { (#modeled(#env,#o) => #live(#env,#o)) };
+    quant condition entry #exclusive(#env: environment, #caller: actor, #modeled: predicate<environment,object>, #during: predicate<environment,event>, #access: predicate<environment,event,object>, #actor: function<event,actor>) = forall (#e: event) { forall (#o: object) { ((#modeled(#env,#o) && (#during(#env,#e) && #access(#env,#e,#o))) => #actor(#e) == #caller) } };
+    quant condition entry #old_busy_domain(#old_busy: integer) = ((#old_busy == 0) || (#old_busy == 1));
+    quant condition entry #old_lock_domain(#old_lock: integer) = ((#old_lock == 0) || (#old_lock == 1));
+    quant condition normal #exit_4(#result: integer, #old_lock: integer) = (#result == #old_lock - 1);
+    quant condition normal #exit_5(#lock: integer) = (#lock == 0);
+    quant condition normal #exit_6(#busy: integer, #old_busy: integer) = (#busy == #old_busy);
+    quant condition normal #exit_7(#field_error_n: integer) = (#field_error_n == 0);
 };

@@ -1,0 +1,6 @@
+import QCore.BooleanConditionProfile
+#print axioms QCore.BooleanConditionProfile.domain_iff_boolean_encoding
+#print axioms QCore.BooleanConditionProfile.one_domain_exhaustive
+#print axioms QCore.BooleanConditionProfile.two_domains_exhaustive
+#print axioms QCore.BooleanConditionProfile.live_applies_only_under_modeled_membership
+#print axioms QCore.BooleanConditionProfile.exclusive_selects_modeled_access

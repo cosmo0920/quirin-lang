@@ -22,7 +22,7 @@
       "inherits": [],
       "premise_bindings": [],
       "premises": {},
-      "sha256": "25c42a055b7d408faa4bb6a686103c812d221e988d71b489526e2f7f6ce96ddb"
+      "sha256": "a72318d6e4c458c6a4dd3cdda71a3e40e68c0c0ee81d334a82b57bbe7190229b"
     },
     "chunkio/chunk_residency.qv": {
       "clause_count": 18,
@@ -102,7 +102,7 @@
       "inherits": [],
       "premise_bindings": [],
       "premises": {},
-      "sha256": "357c056e719924027589bf821ba9d8aa77284a48c6fa9d136fc3162078cc9e1a"
+      "sha256": "2ec940f37620dc69133f2ec80557610cc722514464603d686180119e9ad2401b"
     },
     "chunkio/counters.qv": {
       "clause_count": 40,
@@ -488,7 +488,7 @@
       "inherits": [],
       "premise_bindings": [],
       "premises": {},
-      "sha256": "79b45fd8cd059f934caecd4237411ec23e9a55f53850b8f92c9e9e48a031951f"
+      "sha256": "6db984f530c236f38736a41d82a9ea590030f69d05fcec3a04ae7451ab8005a0"
     },
     "chunkio/list_unlink.qv": {
       "clause_count": 18,
@@ -524,7 +524,7 @@
       "inherits": [],
       "premise_bindings": [],
       "premises": {},
-      "sha256": "f0ea9b0797b0c490a7a1321111b2c94f2822b78b2afadcc14619d7f6f3ba557d"
+      "sha256": "7ac90bd79bcd41857639eecc79e79d15353eb3e62302fa0f13c18f4327bc4fe6"
     },
     "chunkio/memory_backend.qv": {
       "clause_count": 22,
@@ -648,7 +648,7 @@
       "inherits": [],
       "premise_bindings": [],
       "premises": {},
-      "sha256": "0be0f1a8a64ffd5733bfc5b09c4c2bcde7d824450f2915f4c76e10d0a3024e18"
+      "sha256": "ea731fca038ec331f35a843c9292d26673708f856ea9aba9e36d9e483e252326"
     },
     "chunkio/teardown_observation.qv": {
       "clause_count": 11,
@@ -732,7 +732,7 @@
       "inherits": [],
       "premise_bindings": [],
       "premises": {},
-      "sha256": "82b04f12624023cb4fdae7e5827a725fca8fbc12c76889ef187880c383d0ac57"
+      "sha256": "a758d76add7d07b50b636ab7873eeb773231c173d3f4d2b0879128b27221f77c"
     }
   },
   "outer_view": [],

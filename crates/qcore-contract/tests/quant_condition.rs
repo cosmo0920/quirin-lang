@@ -74,7 +74,15 @@ fn unsupported_consumers_refuse_and_exit_assertions_never_become_hypotheses() {
         let parsed = parse_source_program(&source).unwrap();
         let graph = qcore_contract::hypothesis::declaration(&parsed.declarations[0].value, &[]);
         if selector == S::Entry {
-            assert!(graph.is_err());
+            let graph = graph.unwrap();
+            assert_eq!(graph.version, 4);
+            assert_eq!(graph.requirements, vec!["status"]);
+            let mut missing = graph.clone();
+            missing.requirements.clear();
+            assert!(qcore_contract::hypothesis::validate(&missing).is_err());
+            let mut old = graph;
+            old.version = 3;
+            assert!(qcore_contract::hypothesis::validate(&old).is_err());
         } else {
             let graph = graph.unwrap();
             assert!(graph.atoms.is_empty());
@@ -98,7 +106,11 @@ fn migrated_hash_postconditions_are_formulas_and_preserve_the_zero_digest_bounda
                 .iter()
                 .all(|c| !matches!(c.value.kind, K::Ensures(_)))
         );
-        let conditions = qcore_contract::quant_condition::declaration(&d.value).unwrap();
+        let all_conditions = qcore_contract::quant_condition::declaration(&d.value).unwrap();
+        let conditions = all_conditions
+            .iter()
+            .filter(|c| c.selector == S::Normal)
+            .collect::<Vec<_>>();
         assert_eq!(conditions.len(), 2);
         assert!(conditions.iter().all(|c| c.selector == S::Normal));
         let graph = qcore_contract::hypothesis::declaration(&d.value, &[]).unwrap();
@@ -111,4 +123,20 @@ fn migrated_hash_postconditions_are_formulas_and_preserve_the_zero_digest_bounda
     }
     assert_eq!(count, 6);
     assert!(source.contains("42 d5 68 e1 38 d7 27 ff"));
+}
+
+#[test]
+fn metadata_reference_cannot_hide_an_explicit_entry_root() {
+    let source = format!(
+        "module contract; extern fn f() -> unit contract {{ quant condition entry {STATUS}; requires resource_premise_all(group, status); }};"
+    );
+    let parsed = parse_source_program(&source).unwrap();
+    let graph =
+        qcore_contract::hypothesis::declaration(&parsed.declarations[0].value, &[]).unwrap();
+    assert_eq!(graph.version, 4);
+    assert_eq!(graph.requirements, vec!["status"]);
+    assert_eq!(graph.premises["group"].children, vec!["status"]);
+    let mut removed = graph;
+    removed.requirements.clear();
+    assert!(qcore_contract::hypothesis::validate(&removed).is_err());
 }

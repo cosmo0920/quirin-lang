@@ -80,7 +80,7 @@ fn source_audited_api_models_are_retained_without_interpreted_permissions() {
     );
     assert!(get.iter().any(|c| c.starts_with("#hash_nonzero(")));
     let graph = &graphs["cmt_map_metric_get"];
-    assert_eq!(graph.version, 3);
+    assert_eq!(graph.version, 4);
     assert!(graph.requirements.iter().any(|id| id == "hash_nonzero"));
     let digest = clauses("cfl_hash_64bits_digest");
     assert!(

@@ -1,6 +1,6 @@
 module contract;
 
-// QUANT-CONTRACT-HYPOTHESES: each quant proposition is an entry obligation
+// QUANT-CONTRACT-HYPOTHESES: each explicit entry condition is an obligation
 // under the explicitly bound model environment and relation/function meanings.
 // Mathematical integers have no C wraparound; C ranges are stated separately.
 // The migration map records primitive meanings and open C/model correspondence.
@@ -22,7 +22,7 @@ module contract;
 
 extern fn cmt_metric_set(metric: ptr<mut, u8>, timestamp: u64, val: f64) -> unit
 contract {
-    quant proposition #metric_storage(
+    quant condition entry #metric_storage(
         #atomic_backend: predicate<environment, object>,
         #atomic_cell: predicate<environment, object, object>,
         #env: environment,
@@ -34,14 +34,14 @@ contract {
         #writable: predicate<environment, object, scalar_type>
     ) =
         (((!((#metric == #null)) && #live(#env,#metric)) && #writable(#env,#metric,#metric_type)) && forall (#cell: object) { (#atomic_cell(#env,#metric,#cell) => (#writable(#env,#cell,#u64) && #atomic_backend(#env,#cell))) });
-    quant proposition #caller_exclusion(
+    quant condition entry #caller_exclusion(
         #affected: predicate<trace, activation, object>,
         #call: activation,
         #conflicts: predicate<trace, activation, event, object>,
         #trace: trace
     ) =
         forall (#target: object) { (#affected(#trace,#call,#target) => forall (#event: event) { !(#conflicts(#trace,#call,#event,#target)) }) };
-    quant proposition #scalar_conversions(
+    quant condition entry #scalar_conversions(
         #finite: predicate<floating>,
         #trunc: function<floating, integer>,
         #val: floating
@@ -56,7 +56,7 @@ contract {
 
 extern fn cmt_metric_set_exp_hist_count(metric: ptr<mut, u8>, count: u64) -> unit
 contract {
-    quant proposition #metric_storage(
+    quant condition entry #metric_storage(
         #atomic_backend: predicate<environment, object>,
         #atomic_cell: predicate<environment, object, object>,
         #env: environment,
@@ -68,7 +68,7 @@ contract {
         #writable: predicate<environment, object, scalar_type>
     ) =
         (((!((#metric == #null)) && #live(#env,#metric)) && #writable(#env,#metric,#metric_type)) && forall (#cell: object) { (#atomic_cell(#env,#metric,#cell) => (#writable(#env,#cell,#u64) && #atomic_backend(#env,#cell))) });
-    quant proposition #caller_exclusion(
+    quant condition entry #caller_exclusion(
         #affected: predicate<trace, activation, object>,
         #call: activation,
         #conflicts: predicate<trace, activation, event, object>,
@@ -81,7 +81,7 @@ contract {
 
 extern fn cmt_metric_set_exp_hist_sum(metric: ptr<mut, u8>, sum_set: i32, sum: f64) -> unit
 contract {
-    quant proposition #metric_storage(
+    quant condition entry #metric_storage(
         #atomic_backend: predicate<environment, object>,
         #atomic_cell: predicate<environment, object, object>,
         #env: environment,
@@ -93,7 +93,7 @@ contract {
         #writable: predicate<environment, object, scalar_type>
     ) =
         (((!((#metric == #null)) && #live(#env,#metric)) && #writable(#env,#metric,#metric_type)) && forall (#cell: object) { (#atomic_cell(#env,#metric,#cell) => (#writable(#env,#cell,#u64) && #atomic_backend(#env,#cell))) });
-    quant proposition #caller_exclusion(
+    quant condition entry #caller_exclusion(
         #affected: predicate<trace, activation, object>,
         #call: activation,
         #conflicts: predicate<trace, activation, event, object>,
@@ -108,7 +108,7 @@ contract {
 
 extern fn cmt_metric_hist_count_set(metric: ptr<mut, u8>, timestamp: u64, count: u64) -> unit
 contract {
-    quant proposition #metric_storage(
+    quant condition entry #metric_storage(
         #atomic_backend: predicate<environment, object>,
         #atomic_cell: predicate<environment, object, object>,
         #env: environment,
@@ -120,7 +120,7 @@ contract {
         #writable: predicate<environment, object, scalar_type>
     ) =
         (((!((#metric == #null)) && #live(#env,#metric)) && #writable(#env,#metric,#metric_type)) && forall (#cell: object) { (#atomic_cell(#env,#metric,#cell) => (#writable(#env,#cell,#u64) && #atomic_backend(#env,#cell))) });
-    quant proposition #caller_exclusion(
+    quant condition entry #caller_exclusion(
         #affected: predicate<trace, activation, object>,
         #call: activation,
         #conflicts: predicate<trace, activation, event, object>,
@@ -134,7 +134,7 @@ contract {
 
 extern fn cmt_metric_hist_sum_set(metric: ptr<mut, u8>, timestamp: u64, val: f64) -> unit
 contract {
-    quant proposition #metric_storage(
+    quant condition entry #metric_storage(
         #atomic_backend: predicate<environment, object>,
         #atomic_cell: predicate<environment, object, object>,
         #env: environment,
@@ -146,7 +146,7 @@ contract {
         #writable: predicate<environment, object, scalar_type>
     ) =
         (((!((#metric == #null)) && #live(#env,#metric)) && #writable(#env,#metric,#metric_type)) && forall (#cell: object) { (#atomic_cell(#env,#metric,#cell) => (#writable(#env,#cell,#u64) && #atomic_backend(#env,#cell))) });
-    quant proposition #caller_exclusion(
+    quant condition entry #caller_exclusion(
         #affected: predicate<trace, activation, object>,
         #call: activation,
         #conflicts: predicate<trace, activation, event, object>,
@@ -160,7 +160,7 @@ contract {
 
 extern fn cmt_metric_hist_set(metric: ptr<mut, u8>, timestamp: u64, bucket_id: i32, val: f64) -> unit
 contract {
-    quant proposition #metric_storage(
+    quant condition entry #metric_storage(
         #atomic_backend: predicate<environment, object>,
         #atomic_cell: predicate<environment, object, object>,
         #env: environment,
@@ -172,7 +172,7 @@ contract {
         #writable: predicate<environment, object, scalar_type>
     ) =
         (((!((#metric == #null)) && #live(#env,#metric)) && #writable(#env,#metric,#metric_type)) && forall (#cell: object) { (#atomic_cell(#env,#metric,#cell) => (#writable(#env,#cell,#u64) && #atomic_backend(#env,#cell))) });
-    quant proposition #bucket_extent(
+    quant condition entry #bucket_extent(
         #bucket_extent: integer,
         #bucket_id: integer,
         #env: environment,
@@ -185,13 +185,13 @@ contract {
         #u64: scalar_type
     ) =
         (((((0 <= #bucket_id) && (#bucket_id < #bucket_extent)) && #field(#env,#metric,#hist_buckets_field,#hist_buckets)) && #live(#env,#hist_buckets)) && #extent(#env,#hist_buckets,#bucket_extent,#u64));
-    quant proposition #unsigned_conversion(
+    quant condition entry #unsigned_conversion(
         #finite: predicate<floating>,
         #trunc: function<floating, integer>,
         #val: floating
     ) =
         (#finite(#val) && ((0 <= #trunc(#val)) && (#trunc(#val) <= 18446744073709551615)));
-    quant proposition #caller_exclusion(
+    quant condition entry #caller_exclusion(
         #affected: predicate<trace, activation, object>,
         #call: activation,
         #conflicts: predicate<trace, activation, event, object>,
@@ -205,7 +205,7 @@ contract {
 
 extern fn cmt_summary_quantile_set(metric: ptr<mut, u8>, timestamp: u64, quantile_id: i32, val: f64) -> unit
 contract {
-    quant proposition #quantile_representation(
+    quant condition entry #quantile_representation(
         #env: environment,
         #extent: predicate<environment, object, integer, scalar_type>,
         #field: predicate<environment, object, field, object>,
@@ -220,7 +220,7 @@ contract {
         #u64: scalar_type
     ) =
         (!((#metric == #null)) => (((#live(#env,#metric) && #field(#env,#metric,#quantiles_field,#quantiles)) && #integer_field(#env,#metric,#quantiles_count_field,#quantiles_count)) && (!((#quantiles == #null)) => (#live(#env,#quantiles) && #extent(#env,#quantiles,#quantiles_count,#u64)))));
-    quant proposition #quantile_storage(
+    quant condition entry #quantile_storage(
         #atomic_array: predicate<environment, object, integer>,
         #env: environment,
         #metric: object,
@@ -232,7 +232,7 @@ contract {
         #writable: predicate<environment, object, scalar_type>
     ) =
         (((!((#metric == #null)) && !((#quantiles == #null))) && ((0 <= #quantile_id) && (#quantile_id < #quantiles_count))) => (#writable(#env,#quantiles,#u64) && #atomic_array(#env,#quantiles,#quantile_id)));
-    quant proposition #caller_exclusion(
+    quant condition entry #caller_exclusion(
         #affected: predicate<trace, activation, object>,
         #call: activation,
         #conflicts: predicate<trace, activation, event, object>,
@@ -247,7 +247,7 @@ contract {
 
 extern fn cmt_summary_sum_set(metric: ptr<mut, u8>, timestamp: u64, val: f64) -> unit
 contract {
-    quant proposition #metric_storage(
+    quant condition entry #metric_storage(
         #atomic_backend: predicate<environment, object>,
         #atomic_cell: predicate<environment, object, object>,
         #env: environment,
@@ -259,7 +259,7 @@ contract {
         #writable: predicate<environment, object, scalar_type>
     ) =
         (((!((#metric == #null)) && #live(#env,#metric)) && #writable(#env,#metric,#metric_type)) && forall (#cell: object) { (#atomic_cell(#env,#metric,#cell) => (#writable(#env,#cell,#u64) && #atomic_backend(#env,#cell))) });
-    quant proposition #caller_exclusion(
+    quant condition entry #caller_exclusion(
         #affected: predicate<trace, activation, object>,
         #call: activation,
         #conflicts: predicate<trace, activation, event, object>,
@@ -273,7 +273,7 @@ contract {
 
 extern fn cmt_summary_count_set(metric: ptr<mut, u8>, timestamp: u64, count: u64) -> unit
 contract {
-    quant proposition #metric_storage(
+    quant condition entry #metric_storage(
         #atomic_backend: predicate<environment, object>,
         #atomic_cell: predicate<environment, object, object>,
         #env: environment,
@@ -285,7 +285,7 @@ contract {
         #writable: predicate<environment, object, scalar_type>
     ) =
         (((!((#metric == #null)) && #live(#env,#metric)) && #writable(#env,#metric,#metric_type)) && forall (#cell: object) { (#atomic_cell(#env,#metric,#cell) => (#writable(#env,#cell,#u64) && #atomic_backend(#env,#cell))) });
-    quant proposition #caller_exclusion(
+    quant condition entry #caller_exclusion(
         #affected: predicate<trace, activation, object>,
         #call: activation,
         #conflicts: predicate<trace, activation, event, object>,

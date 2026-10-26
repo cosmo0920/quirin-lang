@@ -8,9 +8,8 @@ The source kind retains the selector, expression and span. The schema wraps
 G01p's proposition AST with an explicit selector; the frontend reuses its full
 typed formula checks and limits. Typed condition inspection rejects duplicate
 formal IDs. Generic inclusion/views preserve the new introducer. Strict
-resource/bounds/local-condition consumers refuse it. Hypothesis-only inspection
-refuses an unsupported entry condition and never uses exit assertions as
-antecedents. No truth/evidence assignment or C summary is installed.
+resource/bounds/local-condition consumers refuse it. The initial checkpoint at 6ac91b855 refused an unsupported entry condition
+in hypothesis-only inspection and never used exit assertions as antecedents. No truth/evidence assignment or C summary is installed.
 
 CFL hash declarations replace nine sentence-shaped postcondition clauses with
 six mathematical normal-exit assertions. The three remaining statements describe
@@ -42,3 +41,18 @@ The postcondition census currently finds 396 remaining bare normal-postcondition
 occurrences in production provider sources, plus 11 conformance-fixture clauses
 (311 unique expressions across both sets). This is a lexical inventory, not a
 claim that each bare symbol has the same semantic role or that migration is done.
+
+## Explicit entry integration
+
+ENTRY-PREDICTION.md precedes graph-v4 implementation. A distinct entry-condition
+atom is always a required root, including when metadata groups reference it.
+Canonical validation refuses an omitted root or an old version carrying this
+new atom. Versions 1–3 retain prior encodings/rules. Interpreted C consumers
+continue refusing unresolved roots and unsupported conditions. Two additional
+Lean checks establish root preservation under regrouping; the targeted build
+and eight-check audit exited 0 in `entry-roots-lean-1/`.
+
+The 207 prepared standalone model prerequisites in twelve files now use explicit
+entry selectors. entry-migration.json records exact source identities; formula
+bodies, signatures and required IDs are unchanged. This does not convert grouped
+libc/plugin propositions into prerequisites or prove any source valuation.
