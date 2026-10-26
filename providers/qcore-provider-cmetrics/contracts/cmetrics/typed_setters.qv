@@ -154,14 +154,165 @@ contract {
         #trace: trace
     ) =
         (forall (#input: object) { (#logging_string(#env,#call,#input) => ((#live(#env,#input) && #terminated(#env,#input)) && #stable(#trace,#call,#input))) } && #logging_backend(#env,#call));
-    ensures normal result_is_zero_or_minus_one;
-    ensures normal lookup_is_called_with_write_op_true;
-    ensures normal minus_one_may_retain_committed_lookup_changes;
-    ensures normal lookup_failure_performs_no_following_scalar_set;
-    ensures normal decrease_with_allow_reset_zero_returns_minus_one_without_scalar_set;
-    ensures normal zero_result_sets_double_value_mirrors_type_and_timestamp;
-    ensures normal no_counter_map_or_metric_ownership_is_transferred;
-    ensures normal no_coherent_multi_field_snapshot_or_counter_compare_set_is_promised;
+
+    quant condition normal #result_domain(
+        #result: integer
+    ) =
+        ((#result == 0) || (#result == -1));
+    quant condition normal #lookup_write(
+        #call: activation,
+        #direct_event: predicate<trace,activation,event>,
+        #integer_arg: function<trace,event,integer,integer>,
+        #invoke: predicate<trace,event,declaration>,
+        #lookup_decl: declaration,
+        #lookup_event: event,
+        #metric: object,
+        #object_result: function<trace,event,object>,
+        #trace: trace
+    ) =
+        (((#direct_event(#trace,#call,#lookup_event) && #invoke(#trace,#lookup_event,#lookup_decl)) &&
+        #integer_arg(#trace,#lookup_event,4) == 1) && #object_result(#trace,#lookup_event) == #metric);
+    quant condition normal #lookup_failure(
+        #call: activation,
+        #direct_event: predicate<trace,activation,event>,
+        #invoke: predicate<trace,event,declaration>,
+        #metric: object,
+        #null: object,
+        #result: integer,
+        #scalar_decl: declaration,
+        #trace: trace
+    ) =
+        ((#metric == #null) => ((#result == -1) && forall (#e: event) { (#direct_event(#trace,#call,#e) =>
+        !#invoke(#trace,#e,#scalar_decl)) }));
+    quant condition normal #success_call(
+        #call: activation,
+        #direct_event: predicate<trace,activation,event>,
+        #floating_arg: function<trace,event,integer,floating>,
+        #integer_arg: function<trace,event,integer,integer>,
+        #invoke: predicate<trace,event,declaration>,
+        #lookup_event: event,
+        #metric: object,
+        #object_arg: function<trace,event,integer,object>,
+        #position: function<trace,event,integer>,
+        #result: integer,
+        #scalar_decl: declaration,
+        #timestamp: integer,
+        #trace: trace,
+        #val: floating
+    ) =
+        ((#result == 0) => exists (#e: event) { (((((#direct_event(#trace,#call,#e) &&
+        #invoke(#trace,#e,#scalar_decl)) && #object_arg(#trace,#e,0) == #metric) && #integer_arg(#trace,#e,1) ==
+        #timestamp) && #floating_arg(#trace,#e,2) == #val) && #position(#trace,#lookup_event) <
+        #position(#trace,#e)) });
+    quant condition normal #success_stores(
+        #call: activation,
+        #descendant: predicate<trace,event,event>,
+        #direct_event: predicate<trace,activation,event>,
+        #double_bits: function<floating,integer>,
+        #double_tag: integer,
+        #int64_field: field,
+        #invoke: predicate<trace,event,declaration>,
+        #metric: object,
+        #position: function<trace,event,integer>,
+        #result: integer,
+        #scalar_decl: declaration,
+        #store: predicate<trace,event,object,field,integer,integer>,
+        #timestamp: integer,
+        #timestamp_field: field,
+        #trace: trace,
+        #trunc: function<floating,integer>,
+        #type_field: field,
+        #uint64_field: field,
+        #val: floating,
+        #val_field: field
+    ) =
+        ((#result == 0) => forall (#s: event) { ((#direct_event(#trace,#call,#s) &&
+        #invoke(#trace,#s,#scalar_decl)) => exists (#e0: event) { exists (#e1: event) { exists (#e2: event) {
+        exists (#e3: event) { exists (#e4: event) { (((((((((#descendant(#trace,#s,#e0) &&
+        #store(#trace,#e0,#metric,#val_field,0,#double_bits(#val))) && (#descendant(#trace,#s,#e1) &&
+        #store(#trace,#e1,#metric,#int64_field,0,#trunc(#val)))) && (#descendant(#trace,#s,#e2) &&
+        #store(#trace,#e2,#metric,#uint64_field,0,#trunc(#val)))) && (#descendant(#trace,#s,#e3) &&
+        #store(#trace,#e3,#metric,#timestamp_field,0,#timestamp))) && (#descendant(#trace,#s,#e4) &&
+        #store(#trace,#e4,#metric,#type_field,0,#double_tag))) && #position(#trace,#e0) < #position(#trace,#e1))
+        && #position(#trace,#e1) < #position(#trace,#e2)) && #position(#trace,#e2) < #position(#trace,#e3)) &&
+        #position(#trace,#e3) < #position(#trace,#e4)) } } } } }) });
+    quant condition normal #root_custody(
+        #call: activation,
+        #escape: predicate<trace,event,object>,
+        #event_of: predicate<trace,activation,event>,
+        #map: object,
+        #release: predicate<trace,event,object>,
+        #root: object,
+        #trace: trace,
+        #transfer: predicate<trace,event,object>
+    ) =
+        forall (#o: object) { (((#o == #root) || (#o == #map)) => forall (#e: event) {
+        (#event_of(#trace,#call,#e) => ((!#release(#trace,#e,#o)) && ((!#transfer(#trace,#e,#o)) &&
+        (!#escape(#trace,#e,#o))))) }) };
+    quant condition normal #scalar_custody(
+        #after_lookup: state,
+        #call: activation,
+        #escape: predicate<trace,event,object>,
+        #event_of: predicate<trace,activation,event>,
+        #lookup_event: event,
+        #metric: object,
+        #nested: predicate<state,object,object>,
+        #null: object,
+        #position: function<trace,event,integer>,
+        #release: predicate<trace,event,object>,
+        #return_position: function<trace,event,integer>,
+        #trace: trace,
+        #transfer: predicate<trace,event,object>
+    ) =
+        ((!(#metric == #null)) => forall (#o: object) { (((#o == #metric) || #nested(#after_lookup,#metric,#o))
+        => forall (#e: event) { ((#event_of(#trace,#call,#e) && (#return_position(#trace,#lookup_event) <
+        #position(#trace,#e))) => ((!#release(#trace,#e,#o)) && ((!#transfer(#trace,#e,#o)) &&
+        (!#escape(#trace,#e,#o))))) }) });
+    quant condition normal #observed_value(
+        #call: activation,
+        #direct_event: predicate<trace,activation,event>,
+        #floating_result: function<trace,event,floating>,
+        #invoke: predicate<trace,event,declaration>,
+        #lookup_event: event,
+        #metric: object,
+        #null: object,
+        #object_arg: function<trace,event,integer,object>,
+        #old_value: floating,
+        #position: function<trace,event,integer>,
+        #read_decl: declaration,
+        #trace: trace
+    ) =
+        ((!(#metric == #null)) => exists (#e: event) { ((((#direct_event(#trace,#call,#e) &&
+        #invoke(#trace,#e,#read_decl)) && #object_arg(#trace,#e,0) == #metric) && #floating_result(#trace,#e) ==
+        #old_value) && #position(#trace,#lookup_event) < #position(#trace,#e)) });
+    quant condition normal #refused_decrease(
+        #allow_reset: integer,
+        #call: activation,
+        #direct_event: predicate<trace,activation,event>,
+        #invoke: predicate<trace,event,declaration>,
+        #less: predicate<floating,floating>,
+        #metric: object,
+        #null: object,
+        #old_value: floating,
+        #result: integer,
+        #scalar_decl: declaration,
+        #trace: trace,
+        #val: floating
+    ) =
+        ((!(#metric == #null) && ((#allow_reset == 0) && #less(#val,#old_value))) => ((#result == -1) && forall
+        (#e: event) { (#direct_event(#trace,#call,#e) => !#invoke(#trace,#e,#scalar_decl)) }));
+    quant condition normal #accepted_value(
+        #allow_reset: integer,
+        #less: predicate<floating,floating>,
+        #metric: object,
+        #null: object,
+        #old_value: floating,
+        #result: integer,
+        #val: floating
+    ) =
+        ((!(#metric == #null) && ((!(#allow_reset == 0)) || !#less(#val,#old_value))) => (#result == 0));
+    // Failure does not promise lookup rollback; scalar stores are separate atomic events.
+
 };
 
 extern fn cmt_gauge_set(gauge: ptr<mut, u8>, timestamp: u64, val: f64,
@@ -300,12 +451,128 @@ contract {
         #trace: trace
     ) =
         (forall (#input: object) { (#logging_string(#env,#call,#input) => ((#live(#env,#input) && #terminated(#env,#input)) && #stable(#trace,#call,#input))) } && #logging_backend(#env,#call));
-    ensures normal result_is_zero_or_minus_one;
-    ensures normal lookup_is_called_with_write_op_true;
-    ensures normal minus_one_may_retain_committed_lookup_changes_without_scalar_set;
-    ensures normal zero_result_sets_double_value_mirrors_type_and_timestamp;
-    ensures normal no_gauge_map_or_metric_ownership_is_transferred;
-    ensures normal no_coherent_multi_field_snapshot_is_promised;
+
+    quant condition normal #result_domain(
+        #result: integer
+    ) =
+        ((#result == 0) || (#result == -1));
+    quant condition normal #lookup_write(
+        #call: activation,
+        #direct_event: predicate<trace,activation,event>,
+        #integer_arg: function<trace,event,integer,integer>,
+        #invoke: predicate<trace,event,declaration>,
+        #lookup_decl: declaration,
+        #lookup_event: event,
+        #metric: object,
+        #object_result: function<trace,event,object>,
+        #trace: trace
+    ) =
+        (((#direct_event(#trace,#call,#lookup_event) && #invoke(#trace,#lookup_event,#lookup_decl)) &&
+        #integer_arg(#trace,#lookup_event,4) == 1) && #object_result(#trace,#lookup_event) == #metric);
+    quant condition normal #lookup_failure(
+        #call: activation,
+        #direct_event: predicate<trace,activation,event>,
+        #invoke: predicate<trace,event,declaration>,
+        #metric: object,
+        #null: object,
+        #result: integer,
+        #scalar_decl: declaration,
+        #trace: trace
+    ) =
+        ((#metric == #null) => ((#result == -1) && forall (#e: event) { (#direct_event(#trace,#call,#e) =>
+        !#invoke(#trace,#e,#scalar_decl)) }));
+    quant condition normal #success_call(
+        #call: activation,
+        #direct_event: predicate<trace,activation,event>,
+        #floating_arg: function<trace,event,integer,floating>,
+        #integer_arg: function<trace,event,integer,integer>,
+        #invoke: predicate<trace,event,declaration>,
+        #lookup_event: event,
+        #metric: object,
+        #object_arg: function<trace,event,integer,object>,
+        #position: function<trace,event,integer>,
+        #result: integer,
+        #scalar_decl: declaration,
+        #timestamp: integer,
+        #trace: trace,
+        #val: floating
+    ) =
+        ((#result == 0) => exists (#e: event) { (((((#direct_event(#trace,#call,#e) &&
+        #invoke(#trace,#e,#scalar_decl)) && #object_arg(#trace,#e,0) == #metric) && #integer_arg(#trace,#e,1) ==
+        #timestamp) && #floating_arg(#trace,#e,2) == #val) && #position(#trace,#lookup_event) <
+        #position(#trace,#e)) });
+    quant condition normal #success_stores(
+        #call: activation,
+        #descendant: predicate<trace,event,event>,
+        #direct_event: predicate<trace,activation,event>,
+        #double_bits: function<floating,integer>,
+        #double_tag: integer,
+        #int64_field: field,
+        #invoke: predicate<trace,event,declaration>,
+        #metric: object,
+        #position: function<trace,event,integer>,
+        #result: integer,
+        #scalar_decl: declaration,
+        #store: predicate<trace,event,object,field,integer,integer>,
+        #timestamp: integer,
+        #timestamp_field: field,
+        #trace: trace,
+        #trunc: function<floating,integer>,
+        #type_field: field,
+        #uint64_field: field,
+        #val: floating,
+        #val_field: field
+    ) =
+        ((#result == 0) => forall (#s: event) { ((#direct_event(#trace,#call,#s) &&
+        #invoke(#trace,#s,#scalar_decl)) => exists (#e0: event) { exists (#e1: event) { exists (#e2: event) {
+        exists (#e3: event) { exists (#e4: event) { (((((((((#descendant(#trace,#s,#e0) &&
+        #store(#trace,#e0,#metric,#val_field,0,#double_bits(#val))) && (#descendant(#trace,#s,#e1) &&
+        #store(#trace,#e1,#metric,#int64_field,0,#trunc(#val)))) && (#descendant(#trace,#s,#e2) &&
+        #store(#trace,#e2,#metric,#uint64_field,0,#trunc(#val)))) && (#descendant(#trace,#s,#e3) &&
+        #store(#trace,#e3,#metric,#timestamp_field,0,#timestamp))) && (#descendant(#trace,#s,#e4) &&
+        #store(#trace,#e4,#metric,#type_field,0,#double_tag))) && #position(#trace,#e0) < #position(#trace,#e1))
+        && #position(#trace,#e1) < #position(#trace,#e2)) && #position(#trace,#e2) < #position(#trace,#e3)) &&
+        #position(#trace,#e3) < #position(#trace,#e4)) } } } } }) });
+    quant condition normal #root_custody(
+        #call: activation,
+        #escape: predicate<trace,event,object>,
+        #event_of: predicate<trace,activation,event>,
+        #map: object,
+        #release: predicate<trace,event,object>,
+        #root: object,
+        #trace: trace,
+        #transfer: predicate<trace,event,object>
+    ) =
+        forall (#o: object) { (((#o == #root) || (#o == #map)) => forall (#e: event) {
+        (#event_of(#trace,#call,#e) => ((!#release(#trace,#e,#o)) && ((!#transfer(#trace,#e,#o)) &&
+        (!#escape(#trace,#e,#o))))) }) };
+    quant condition normal #scalar_custody(
+        #after_lookup: state,
+        #call: activation,
+        #escape: predicate<trace,event,object>,
+        #event_of: predicate<trace,activation,event>,
+        #lookup_event: event,
+        #metric: object,
+        #nested: predicate<state,object,object>,
+        #null: object,
+        #position: function<trace,event,integer>,
+        #release: predicate<trace,event,object>,
+        #return_position: function<trace,event,integer>,
+        #trace: trace,
+        #transfer: predicate<trace,event,object>
+    ) =
+        ((!(#metric == #null)) => forall (#o: object) { (((#o == #metric) || #nested(#after_lookup,#metric,#o))
+        => forall (#e: event) { ((#event_of(#trace,#call,#e) && (#return_position(#trace,#lookup_event) <
+        #position(#trace,#e))) => ((!#release(#trace,#e,#o)) && ((!#transfer(#trace,#e,#o)) &&
+        (!#escape(#trace,#e,#o))))) }) });
+    quant condition normal #present_success(
+        #metric: object,
+        #null: object,
+        #result: integer
+    ) =
+        ((!(#metric == #null)) => (#result == 0));
+    // Failure does not promise lookup rollback; scalar stores are separate atomic events.
+
 };
 
 extern fn cmt_untyped_set(untyped: ptr<mut, u8>, timestamp: u64, val: f64,
@@ -444,12 +711,128 @@ contract {
         #trace: trace
     ) =
         (forall (#input: object) { (#logging_string(#env,#call,#input) => ((#live(#env,#input) && #terminated(#env,#input)) && #stable(#trace,#call,#input))) } && #logging_backend(#env,#call));
-    ensures normal result_is_zero_or_minus_one;
-    ensures normal lookup_is_called_with_write_op_true;
-    ensures normal minus_one_may_retain_committed_lookup_changes_without_scalar_set;
-    ensures normal zero_result_sets_double_value_mirrors_type_and_timestamp;
-    ensures normal no_untyped_map_or_metric_ownership_is_transferred;
-    ensures normal no_coherent_multi_field_snapshot_is_promised;
+
+    quant condition normal #result_domain(
+        #result: integer
+    ) =
+        ((#result == 0) || (#result == -1));
+    quant condition normal #lookup_write(
+        #call: activation,
+        #direct_event: predicate<trace,activation,event>,
+        #integer_arg: function<trace,event,integer,integer>,
+        #invoke: predicate<trace,event,declaration>,
+        #lookup_decl: declaration,
+        #lookup_event: event,
+        #metric: object,
+        #object_result: function<trace,event,object>,
+        #trace: trace
+    ) =
+        (((#direct_event(#trace,#call,#lookup_event) && #invoke(#trace,#lookup_event,#lookup_decl)) &&
+        #integer_arg(#trace,#lookup_event,4) == 1) && #object_result(#trace,#lookup_event) == #metric);
+    quant condition normal #lookup_failure(
+        #call: activation,
+        #direct_event: predicate<trace,activation,event>,
+        #invoke: predicate<trace,event,declaration>,
+        #metric: object,
+        #null: object,
+        #result: integer,
+        #scalar_decl: declaration,
+        #trace: trace
+    ) =
+        ((#metric == #null) => ((#result == -1) && forall (#e: event) { (#direct_event(#trace,#call,#e) =>
+        !#invoke(#trace,#e,#scalar_decl)) }));
+    quant condition normal #success_call(
+        #call: activation,
+        #direct_event: predicate<trace,activation,event>,
+        #floating_arg: function<trace,event,integer,floating>,
+        #integer_arg: function<trace,event,integer,integer>,
+        #invoke: predicate<trace,event,declaration>,
+        #lookup_event: event,
+        #metric: object,
+        #object_arg: function<trace,event,integer,object>,
+        #position: function<trace,event,integer>,
+        #result: integer,
+        #scalar_decl: declaration,
+        #timestamp: integer,
+        #trace: trace,
+        #val: floating
+    ) =
+        ((#result == 0) => exists (#e: event) { (((((#direct_event(#trace,#call,#e) &&
+        #invoke(#trace,#e,#scalar_decl)) && #object_arg(#trace,#e,0) == #metric) && #integer_arg(#trace,#e,1) ==
+        #timestamp) && #floating_arg(#trace,#e,2) == #val) && #position(#trace,#lookup_event) <
+        #position(#trace,#e)) });
+    quant condition normal #success_stores(
+        #call: activation,
+        #descendant: predicate<trace,event,event>,
+        #direct_event: predicate<trace,activation,event>,
+        #double_bits: function<floating,integer>,
+        #double_tag: integer,
+        #int64_field: field,
+        #invoke: predicate<trace,event,declaration>,
+        #metric: object,
+        #position: function<trace,event,integer>,
+        #result: integer,
+        #scalar_decl: declaration,
+        #store: predicate<trace,event,object,field,integer,integer>,
+        #timestamp: integer,
+        #timestamp_field: field,
+        #trace: trace,
+        #trunc: function<floating,integer>,
+        #type_field: field,
+        #uint64_field: field,
+        #val: floating,
+        #val_field: field
+    ) =
+        ((#result == 0) => forall (#s: event) { ((#direct_event(#trace,#call,#s) &&
+        #invoke(#trace,#s,#scalar_decl)) => exists (#e0: event) { exists (#e1: event) { exists (#e2: event) {
+        exists (#e3: event) { exists (#e4: event) { (((((((((#descendant(#trace,#s,#e0) &&
+        #store(#trace,#e0,#metric,#val_field,0,#double_bits(#val))) && (#descendant(#trace,#s,#e1) &&
+        #store(#trace,#e1,#metric,#int64_field,0,#trunc(#val)))) && (#descendant(#trace,#s,#e2) &&
+        #store(#trace,#e2,#metric,#uint64_field,0,#trunc(#val)))) && (#descendant(#trace,#s,#e3) &&
+        #store(#trace,#e3,#metric,#timestamp_field,0,#timestamp))) && (#descendant(#trace,#s,#e4) &&
+        #store(#trace,#e4,#metric,#type_field,0,#double_tag))) && #position(#trace,#e0) < #position(#trace,#e1))
+        && #position(#trace,#e1) < #position(#trace,#e2)) && #position(#trace,#e2) < #position(#trace,#e3)) &&
+        #position(#trace,#e3) < #position(#trace,#e4)) } } } } }) });
+    quant condition normal #root_custody(
+        #call: activation,
+        #escape: predicate<trace,event,object>,
+        #event_of: predicate<trace,activation,event>,
+        #map: object,
+        #release: predicate<trace,event,object>,
+        #root: object,
+        #trace: trace,
+        #transfer: predicate<trace,event,object>
+    ) =
+        forall (#o: object) { (((#o == #root) || (#o == #map)) => forall (#e: event) {
+        (#event_of(#trace,#call,#e) => ((!#release(#trace,#e,#o)) && ((!#transfer(#trace,#e,#o)) &&
+        (!#escape(#trace,#e,#o))))) }) };
+    quant condition normal #scalar_custody(
+        #after_lookup: state,
+        #call: activation,
+        #escape: predicate<trace,event,object>,
+        #event_of: predicate<trace,activation,event>,
+        #lookup_event: event,
+        #metric: object,
+        #nested: predicate<state,object,object>,
+        #null: object,
+        #position: function<trace,event,integer>,
+        #release: predicate<trace,event,object>,
+        #return_position: function<trace,event,integer>,
+        #trace: trace,
+        #transfer: predicate<trace,event,object>
+    ) =
+        ((!(#metric == #null)) => forall (#o: object) { (((#o == #metric) || #nested(#after_lookup,#metric,#o))
+        => forall (#e: event) { ((#event_of(#trace,#call,#e) && (#return_position(#trace,#lookup_event) <
+        #position(#trace,#e))) => ((!#release(#trace,#e,#o)) && ((!#transfer(#trace,#e,#o)) &&
+        (!#escape(#trace,#e,#o))))) }) });
+    quant condition normal #present_success(
+        #metric: object,
+        #null: object,
+        #result: integer
+    ) =
+        ((!(#metric == #null)) => (#result == 0));
+    // Failure does not promise lookup rollback; scalar stores are separate atomic events.
+
 };
 
 extern fn cmt_histogram_set_default(histogram: ptr<mut, u8>, timestamp: u64,

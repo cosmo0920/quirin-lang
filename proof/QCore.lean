@@ -71,6 +71,7 @@ import QCore.CmetricsApiContracts
 import QCore.CmetricsHypotheses
 import QCore.CmetricsMetricConditions
 import QCore.CmetricsOptsConditions
+import QCore.CmetricsScalarWrapperConditions
 import QCore.Compiler
 import QCore.ComposeEventLines
 import QCore.ComposedStdIo

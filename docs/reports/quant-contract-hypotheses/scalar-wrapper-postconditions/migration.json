@@ -1,0 +1,84 @@
+{
+  "schema": "quant-scalar-wrapper-postcondition-migration/1",
+  "source": "providers/qcore-provider-cmetrics/contracts/cmetrics/typed_setters.qv",
+  "before_sha256": "4db3f16af6f6be1ad253a9c89b56783ee294c3c6615b9a41e0cc7b76ebc7b698",
+  "after_sha256": "16dae066f7b667098ceceafba2e11a4d1f06701a9eb41de5f2cd53c450afa2d2",
+  "declarations": [
+    {
+      "declaration": "cmt_counter_set",
+      "old_sentences": [
+        "result_is_zero_or_minus_one",
+        "lookup_is_called_with_write_op_true",
+        "minus_one_may_retain_committed_lookup_changes",
+        "lookup_failure_performs_no_following_scalar_set",
+        "decrease_with_allow_reset_zero_returns_minus_one_without_scalar_set",
+        "zero_result_sets_double_value_mirrors_type_and_timestamp",
+        "no_counter_map_or_metric_ownership_is_transferred",
+        "no_coherent_multi_field_snapshot_or_counter_compare_set_is_promised"
+      ],
+      "new_ids": [
+        "result_domain",
+        "lookup_write",
+        "lookup_failure",
+        "success_call",
+        "success_stores",
+        "root_custody",
+        "scalar_custody",
+        "observed_value",
+        "refused_decrease",
+        "accepted_value"
+      ]
+    },
+    {
+      "declaration": "cmt_gauge_set",
+      "old_sentences": [
+        "result_is_zero_or_minus_one",
+        "lookup_is_called_with_write_op_true",
+        "minus_one_may_retain_committed_lookup_changes_without_scalar_set",
+        "zero_result_sets_double_value_mirrors_type_and_timestamp",
+        "no_gauge_map_or_metric_ownership_is_transferred",
+        "no_coherent_multi_field_snapshot_is_promised"
+      ],
+      "new_ids": [
+        "result_domain",
+        "lookup_write",
+        "lookup_failure",
+        "success_call",
+        "success_stores",
+        "root_custody",
+        "scalar_custody",
+        "present_success"
+      ]
+    },
+    {
+      "declaration": "cmt_untyped_set",
+      "old_sentences": [
+        "result_is_zero_or_minus_one",
+        "lookup_is_called_with_write_op_true",
+        "minus_one_may_retain_committed_lookup_changes_without_scalar_set",
+        "zero_result_sets_double_value_mirrors_type_and_timestamp",
+        "no_untyped_map_or_metric_ownership_is_transferred",
+        "no_coherent_multi_field_snapshot_is_promised"
+      ],
+      "new_ids": [
+        "result_domain",
+        "lookup_write",
+        "lookup_failure",
+        "success_call",
+        "success_stores",
+        "root_custody",
+        "scalar_custody",
+        "present_success"
+      ]
+    }
+  ],
+  "open_bindings": [
+    "exact direct-wrapper and complete nested event domains",
+    "cmt_map_metric_get write-op argument index 4",
+    "actual observed C floating comparison, not integer/real order",
+    "pointer/value/field and source identity binding",
+    "conversion/backend and caller exclusion",
+    "Rust/Lean/source correspondence"
+  ],
+  "permission": "none"
+}

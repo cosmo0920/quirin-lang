@@ -278,19 +278,19 @@
       "sha256": "5b3106651397e95ec5fdd5dbaf6f44a63993e11dcb0f2af6bcedacb54b636950"
     },
     "cmetrics/typed_setters.qv": {
-      "clause_count": 133,
+      "clause_count": 139,
       "declaration_count": 6,
       "declarations": [
         {
-          "clauses": 21,
+          "clauses": 23,
           "name": "cmt_counter_set"
         },
         {
-          "clauses": 19,
+          "clauses": 21,
           "name": "cmt_gauge_set"
         },
         {
-          "clauses": 19,
+          "clauses": 21,
           "name": "cmt_untyped_set"
         },
         {
@@ -309,7 +309,7 @@
       "inherits": [],
       "premise_bindings": [],
       "premises": {},
-      "sha256": "4db3f16af6f6be1ad253a9c89b56783ee294c3c6615b9a41e0cc7b76ebc7b698"
+      "sha256": "16dae066f7b667098ceceafba2e11a4d1f06701a9eb41de5f2cd53c450afa2d2"
     }
   },
   "outer_view": [],

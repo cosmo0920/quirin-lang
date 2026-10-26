@@ -168,3 +168,9 @@ they do not close the all-provider card.
 sentence clauses across nine functions with twenty-two typed own-call conditions,
 retaining twenty-two prerequisite roots. The scalar, numeric bucket conversion,
 double-bit sum, guarded quantile and ordered CAS cases stay distinct.
+
+[Scalar wrapper postconditions](scalar-wrapper-postconditions/README.md) replace
+twenty counter/gauge/untyped sentence clauses with twenty-six typed normal
+conditions. Lookup side effects, observed C floating comparison, direct calls,
+scalar descendants and post-lookup custody stay distinct. The three typed
+histogram/summary default setters and map lifecycle guarantees are still open.
