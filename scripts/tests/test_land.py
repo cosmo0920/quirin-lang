@@ -55,6 +55,68 @@ class Land(unittest.TestCase):
         self.assertLess(position[land.MATRIX_COMMAND], python)
         self.assertLess(position[land.INDEX_COMMAND], python)
         self.assertLess(position["python3 scripts/land.py check"], python)
+        self.assertLess(python, position[land.SEQUENCE[-1]])
+
+    def test_publication_requires_a_previous_baseline_unless_bootstrapping(self):
+        subprocess.run(["git", "init", "-q", str(self.root)], check=True)
+        subprocess.run(["git", "-C", str(self.root), "-c", "user.name=Test",
+                        "-c", "user.email=test@example.invalid", "commit", "-qm",
+                        "initial", "--allow-empty"], check=True)
+        release = self.root / "target/release"
+        release.mkdir(parents=True)
+        (release / "quirin-audit").touch()
+        (release / "quirin-audit-measure").touch()
+        inputs = self.root / "inputs"
+        inputs.mkdir()
+        subprocess.run(["git", "-C", str(self.root), "add", "-A"], check=True)
+        subprocess.run(["git", "-C", str(self.root), "-c", "user.name=Test",
+                        "-c", "user.email=test@example.invalid", "commit", "-qm",
+                        "landing"], check=True)
+        with self.assertRaisesRegex(ValueError, "previous baseline is absent"):
+            land.publish(self.root, inputs_base=inputs)
+
+    def test_first_publication_then_verified_baseline_side(self):
+        subprocess.run(["git", "init", "-q", str(self.root)], check=True)
+        (self.root / ".gitignore").write_text("private/\n")
+        release = self.root / "target/release"
+        release.mkdir(parents=True)
+        host = release / "quirin-audit"
+        host.write_text("""#!/usr/bin/env python3
+import json, pathlib, sys
+args = sys.argv[1:]
+root = pathlib.Path.cwd()
+log = root / 'private/calls.jsonl'
+log.parent.mkdir(parents=True, exist_ok=True)
+with log.open('a') as stream:
+    stream.write(json.dumps(args) + '\\n')
+out = pathlib.Path(args[args.index('--output') + 1])
+if 'publish' in args:
+    for profile in ('eight-home', 'fluent-bit-system', 'fluent-bit-tail-pause'):
+        (out / profile).mkdir(parents=True)
+else:
+    (out / 'sides/tip').mkdir(parents=True)
+    (out / 'native-comparison.json').write_text('{}')
+""")
+        host.chmod(0o755)
+        (release / "quirin-audit-measure").touch()
+        inputs = self.root / "inputs"
+        inputs.mkdir()
+        def commit(message):
+            subprocess.run(["git", "-C", str(self.root), "add", "-A"], check=True)
+            subprocess.run(["git", "-C", str(self.root), "-c", "user.name=Test",
+                            "-c", "user.email=test@example.invalid", "commit", "-qm",
+                            message, "--allow-empty"], check=True)
+            return land.git_revision(self.root, "HEAD")
+        first = commit("first")
+        second = commit("landing one")
+        land.publish(self.root, inputs_base=inputs, bootstrap=True)
+        third = commit("landing two")
+        land.publish(self.root, inputs_base=inputs)
+        calls = [json.loads(line) for line in (self.root / "private/calls.jsonl").read_text().splitlines()]
+        self.assertIn(f"prev=rev:{first}", calls[0])
+        self.assertIn(f"tip=rev:{second}", calls[0])
+        self.assertIn(f"prev=baseline:{second}", calls[2])
+        self.assertIn(f"tip=rev:{third}", calls[2])
 
     def test_fresh_records_pass(self):
         code, out, err = run("check", "--root", str(self.root))
