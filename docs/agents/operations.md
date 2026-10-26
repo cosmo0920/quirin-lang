@@ -86,9 +86,12 @@ up front:
 3. Evidence: the [standing gate](validation.md) by reference, plus what the
    rules add for this card: the card-closing requirement in Working rules, the
    provider gate when `providers/` changes, and, for a card that can move corpus
-   figures, a prediction committed in its report before implementation and the
-   arbiter comparison. Do not restate the gate or add "verify your work" steps
-   beyond it.
+   figures, a prediction committed in its report before implementation (with
+   its `measure-prediction` block) and the arbiter comparison, measured by
+   `quirin-audit measure --declared`
+   ([usage](../development/audit-subcommand-plugins.md#the-measure-plugin)),
+   not by a copied script. Do not restate the gate or add "verify your work"
+   steps beyond it.
 4. Scope limits: what is in and out of scope; the card never merges or
    pushes main; findings outside scope become follow-ups.
 5. Completion condition and report: the checklist that makes the card done,

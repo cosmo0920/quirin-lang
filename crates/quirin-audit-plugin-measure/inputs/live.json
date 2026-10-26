@@ -1,0 +1,82 @@
+{
+  "schema": "quirin-measure-inputs/1",
+  "description": "The three live routes every W48 card measured as BASE and TIP (the pinned eight-home corpus, the system selection and the tail-pause slice), with the inputs of the copied drivers (docs/reports/w48-bu-single-leaf-bodies/scripts/measure.py and docs/reports/audit-canonical-paths/scripts/measure.py): untracked prepared inputs relative to --inputs-base (the primary checkout holding build/cycle19 and the private preparations), the eight-home link map relative to --repository, selections and source-set profiles from each side's own tree. The same inputs as the live evaluation profiles in contract/evaluations/ (prefer --profile); kept for explicit route selection and for revisions older than those records.",
+  "routes": [
+    {
+      "name": "corpus",
+      "profile": "eight-home",
+      "kind": "pinned-corpus",
+      "source_commit": "66910c10",
+      "inputs_root": "build/cycle19",
+      "compile_databases": [
+        {
+          "path": "c-gateway-wave-pin/fluent-bit-clang-source/build/compile_commands.json",
+          "sha256": "5e6868d9af26eaec97bc8020ed5f23496f2490abf44532443239bd4d365f7e78"
+        },
+        {
+          "path": "c-gateway-wave-pin/monkey/monkey-build/compile_commands.json",
+          "sha256": "85cc996712bbd35675340b8b863b6ebc716cb94552253f2a6ad0288db920f331"
+        }
+      ],
+      "mirror_trees": [
+        "c-gateway-wave-pin/fluent-bit-clang-source",
+        "c-gateway-wave-pin/monkey",
+        "provider-packages-wave20"
+      ],
+      "link_map": {
+        "path": "docs/reports/w48-bu-single-leaf-bodies/link-map.corpus.json",
+        "sha256": "98a4db761ace9fd4846b000c4c98defdc2e39ce6f95684c67c30f9b8b6f38ad3"
+      },
+      "clang": "/usr/lib/llvm-21/bin/clang",
+      "tracked": [
+        "contract/profiles/fluent-bit/audit.json",
+        "contract/profiles/fluent-bit/profile.json",
+        "contract/profiles/fluent-bit/member-facts-scope.json"
+      ]
+    },
+    {
+      "name": "system",
+      "profile": "fluent-bit-system",
+      "kind": "configured-selection",
+      "checkout": "private/w45-fb/w46-external-callee-contracts/attempt-1/fluent-bit-clang-source",
+      "compile_database": {
+        "path": "private/w45-fb/w46-external-callee-contracts/attempt-1/fluent-bit-clang-production/compile_commands.json",
+        "sha256": "2475e6374b14152538463f35a3457ffa98fbe30b2639d5df916ef9a216cb6876"
+      },
+      "selection": "contract/profiles/fluent-bit/system-selection.json",
+      "profile_directory": "contract/profiles/fluent-bit",
+      "link_map": {
+        "path": "docs/reports/w48-bu-single-leaf-bodies/link-map.corpus.json",
+        "sha256": "98a4db761ace9fd4846b000c4c98defdc2e39ce6f95684c67c30f9b8b6f38ad3"
+      },
+      "clang": "/usr/lib/llvm-21/bin/clang",
+      "tracked": [
+        "contract/profiles/fluent-bit/system-selection.json",
+        "contract/profiles/fluent-bit/profile.json",
+        "contract/profiles/fluent-bit/member-facts-scope.json"
+      ]
+    },
+    {
+      "name": "slice",
+      "profile": "fluent-bit-tail-pause",
+      "kind": "configured-selection",
+      "checkout": "private/w47-tail/attempt-1/prep/fluent-bit-clang-source",
+      "compile_database": {
+        "path": "private/w47-tail/attempt-1/prep/fluent-bit-clang-production/compile_commands.json",
+        "sha256": "faf446759b31f892c9ffe03c76719875e9910682515cdd9acc908dc5142f8157"
+      },
+      "selection": "contract/profiles/fluent-bit/tail-pause-selection.json",
+      "profile_directory": "contract/profiles/fluent-bit",
+      "link_map": {
+        "path": "docs/reports/w48-bu-single-leaf-bodies/link-map.corpus.json",
+        "sha256": "98a4db761ace9fd4846b000c4c98defdc2e39ce6f95684c67c30f9b8b6f38ad3"
+      },
+      "clang": "/usr/lib/llvm-21/bin/clang",
+      "tracked": [
+        "contract/profiles/fluent-bit/tail-pause-selection.json",
+        "contract/profiles/fluent-bit/profile.json",
+        "contract/profiles/fluent-bit/member-facts-scope.json"
+      ]
+    }
+  ]
+}

@@ -1,0 +1,61 @@
+{
+  "databases": {
+    "corpus:c-gateway-wave-pin/fluent-bit-clang-source/build/compile_commands.json": {
+      "original": "/media/Data/GitHub/quirin-lang/build/cycle19/c-gateway-wave-pin/fluent-bit-clang-source/build/compile_commands.json",
+      "original_sha256": "5e6868d9af26eaec97bc8020ed5f23496f2490abf44532443239bd4d365f7e78",
+      "rewritten": "/media/Data/GitHub/quirin-lang/private/measure-tool/parity-1/mirror/c-gateway-wave-pin/fluent-bit-clang-source/build/compile_commands.json",
+      "rewritten_sha256": "162f27214282bb550851a4c72d4a05ad8773d5f08226ea6eacd55bdf3ef2476c",
+      "rules": [
+        [
+          "/home/cosmo/Documents/GitHub/qcore-c/build/cycle19/c-gateway-wave-pin/fluent-bit-clang-source",
+          "/tmp/quirin-measure/mirror/c-gateway-wave-pin/fluent-bit-clang-source"
+        ],
+        [
+          "/home/cosmo/Documents/GitHub/qcore-c",
+          "/media/Data/GitHub/quirin-lang"
+        ]
+      ]
+    },
+    "corpus:c-gateway-wave-pin/monkey/monkey-build/compile_commands.json": {
+      "original": "/media/Data/GitHub/quirin-lang/build/cycle19/c-gateway-wave-pin/monkey/monkey-build/compile_commands.json",
+      "original_sha256": "85cc996712bbd35675340b8b863b6ebc716cb94552253f2a6ad0288db920f331",
+      "rewritten": "/media/Data/GitHub/quirin-lang/private/measure-tool/parity-1/mirror/c-gateway-wave-pin/monkey/monkey-build/compile_commands.json",
+      "rewritten_sha256": "cc5f2e6b519f2e4b52c8b8a6e035fffcf541594180feaba50743f3e8b793d821",
+      "rules": [
+        [
+          "/home/cosmo/Documents/GitHub/qcore-c/build/cycle19/c-gateway-wave-pin/monkey",
+          "/tmp/quirin-measure/mirror/c-gateway-wave-pin/monkey"
+        ],
+        [
+          "/home/cosmo/Documents/GitHub/qcore-c",
+          "/media/Data/GitHub/quirin-lang"
+        ]
+      ]
+    }
+  },
+  "mirror": "/media/Data/GitHub/quirin-lang/private/measure-tool/parity-1/mirror",
+  "mirror_as_run": "/tmp/quirin-measure/mirror",
+  "old_prefix": "/home/cosmo/Documents/GitHub/qcore-c",
+  "real_prefix": "/media/Data/GitHub/quirin-lang",
+  "schema": "quirin-measure-mirror/1",
+  "trees": {
+    "c-gateway-wave-pin/fluent-bit-clang-source": {
+      "copy": "/media/Data/GitHub/quirin-lang/private/measure-tool/parity-1/mirror/c-gateway-wave-pin/fluent-bit-clang-source",
+      "copy_digest": "1d1699b32a41776e0c71ce682333c9382aad843a51c2a9f06a26735d7e2b6cea",
+      "original": "/media/Data/GitHub/quirin-lang/build/cycle19/c-gateway-wave-pin/fluent-bit-clang-source",
+      "original_digest": "1d1699b32a41776e0c71ce682333c9382aad843a51c2a9f06a26735d7e2b6cea"
+    },
+    "c-gateway-wave-pin/monkey": {
+      "copy": "/media/Data/GitHub/quirin-lang/private/measure-tool/parity-1/mirror/c-gateway-wave-pin/monkey",
+      "copy_digest": "838eb85d9d5870061b9c257cb1d6ff79e1ff4a241fbf2bdd5b1dcf9ec9821cb2",
+      "original": "/media/Data/GitHub/quirin-lang/build/cycle19/c-gateway-wave-pin/monkey",
+      "original_digest": "838eb85d9d5870061b9c257cb1d6ff79e1ff4a241fbf2bdd5b1dcf9ec9821cb2"
+    },
+    "provider-packages-wave20": {
+      "copy": "/media/Data/GitHub/quirin-lang/private/measure-tool/parity-1/mirror/provider-packages-wave20",
+      "copy_digest": "df3d9ea7ff822c1cc8dfb4546655852a0ba5f9d949ebefaf3543a0d933146c74",
+      "original": "/media/Data/GitHub/quirin-lang/build/cycle19/provider-packages-wave20",
+      "original_digest": "df3d9ea7ff822c1cc8dfb4546655852a0ba5f9d949ebefaf3543a0d933146c74"
+    }
+  }
+}

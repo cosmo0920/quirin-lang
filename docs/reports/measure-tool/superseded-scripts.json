@@ -1,0 +1,26 @@
+{
+  "schema": "quirin-measure-superseded/1",
+  "note": "Card MEASURE-TOOL: the copied measurement scripts `quirin-audit measure` (crates/quirin-audit-plugin-measure) replaces. They are superseded, not retired: each report that ran one keeps it, byte for byte, as its own evidence (drivers record their own SHA-256 in their run records), so this registry marks them instead of editing them, and the crate's test `superseded_scripts_are_listed_and_frozen` checks every digest. New cards measure with the tool (docs/agents/operations.md, card briefs).",
+  "scripts": [
+    {"path": "docs/reports/w48-sched-cleanup-production/scripts/measure.py", "sha256": "c515e0cd357390b3006c9c32052784e0eeec0803456deea6f756cb89d2e8d2ca", "superseded_by": "sides::run_route (route environment, output layout, inputs before/after, exit 101)"},
+    {"path": "docs/reports/w48-sched-cleanup-production/scripts/gate_job.sh", "sha256": "4248672cbfbc5752d28b3b10586b9cde225f933b5382cdbf41b42467fe480c29", "superseded_by": "sides::run_route under scripts/gate_slot.py audit slots"},
+    {"path": "docs/reports/w48-sched-cleanup-production/scripts/mirror_inputs.py", "sha256": "42e6bfcb0b0f2cb49b1501881e24ac00ba6d3a8a7e83c022f1bb35cfc41f3366", "superseded_by": "mirror::prepare"},
+    {"path": "docs/reports/w48-sched-cleanup-production/scripts/compare.py", "sha256": "837ccc3c58ade11b1fa54edc4462febaaa4f9bf30b63ab4cf773b99fff1ce6d1", "superseded_by": "compare::rows"},
+    {"path": "docs/reports/w48-bu-single-leaf-bodies/scripts/measure.py", "sha256": "856fefa89d4902e2e290e44c910ae960eefd566081826a7ba0fccfd6b695a6ae", "superseded_by": "sides::run_route"},
+    {"path": "docs/reports/w48-bu-single-leaf-bodies/scripts/mirror_inputs.py", "sha256": "f79f7f61a2e9c33a999c69e3f81d65b87977a3b211ee9d06e66e9ddce6d9730d", "superseded_by": "mirror::prepare"},
+    {"path": "docs/reports/w48-bu-single-leaf-bodies/scripts/gate_job.sh", "sha256": "78b1580fbfc71cf17dbcfc684fd11b8fd78a9d4860589ae4e9cd3141b91fa135", "superseded_by": "sides::run_route under scripts/gate_slot.py audit slots"},
+    {"path": "docs/reports/w48-bu-single-leaf-bodies/scripts/native_compare.py", "sha256": "df11bcf073d0b711aac5fc71148ea417d291d8b47b27fb9f01d6daadad1b5385", "superseded_by": "compare::rows and compare::normalize"},
+    {"path": "docs/reports/w48-bu-single-leaf-bodies/scripts/compare.py", "sha256": "7265f63c4ca039231f197f7a6dc89dd8d92814bf675d6379a167bb2fb02ca66a", "superseded_by": "compare::rows (status changes, leaf trades, unit field differences); the rule-specific twelve-body and literal-arm reviews stay card work"},
+    {"path": "docs/reports/w48-bu-external-callee-contracts/scripts/mirror_inputs.py", "sha256": "0062cee322fbad19e9d0337897528821c010d81c5cf6775589506c4a33cfe5af", "superseded_by": "mirror::prepare"},
+    {"path": "docs/reports/w48-rk-log-caller-frame/scripts/mirror_inputs.py", "sha256": "44045ba956439c5609f1f411211384f04dfb6193c20383e595888a65abb5812a", "superseded_by": "mirror::prepare"},
+    {"path": "docs/reports/audit-canonical-paths/scripts/measure.py", "sha256": "a87521f9386bdd8cd86426ab22590db89b381cbd6224929f4c78fa4290ac5287", "superseded_by": "sides::run_route with --mirror never (original inputs)"},
+    {"path": "docs/reports/audit-canonical-paths/scripts/pin_run.sh", "sha256": "14175034177304c18ac413331a083eeaab9dc79bfcf174744f4cf63d9df5a6b3", "superseded_by": "sides::namespaced (fixed-path snapshot and mirror binding)"},
+    {"path": "docs/reports/audit-canonical-paths/scripts/time_key.py", "sha256": "bf3f82adf2f3cad7ecc08eb0482fc6bc8d635f77fdb7fd07c806175344a7fc8e", "superseded_by": "compare::time_key"},
+    {"path": "docs/reports/audit-composition/scripts/compare_identity.py", "sha256": "c110cc6ff7633d42cbcf8cfbd89470a273ad2a89d83af11962feb2e846a715da", "superseded_by": "compare::artifacts and compare::time_key"},
+    {"path": "docs/reports/audit-composition/scripts/ns_side.sh", "sha256": "6881e3d2950b961ead14ac926ec8276a81e50ad8706426367fbc54b517041070", "superseded_by": "sides::namespaced"},
+    {"path": "docs/reports/audit-composition/scripts/build_side.sh", "sha256": "2031cdd72848ccb2f470d57b2ae777458cdb3b85de1fca59d112fe81539b8a9e", "superseded_by": "sides::build (rev sides, explicit QCORE_AUDIT_BUILD_COMMIT)"},
+    {"path": "docs/reports/audit-composition/scripts/run_identity.sh", "sha256": "f8cb008550eae225a2ccbf5e1a5b2494de9b4b677428cefa19e9f11a55ad75a0", "superseded_by": "quirin-audit measure with rev sides and --build-commit"},
+    {"path": "docs/reports/detach-result-wrapper-composition/scripts/measure.py", "sha256": "f59af8101e8722a96a6b664ec9a0dd4052ed67533543cf6c484d29ec3e2fa205", "superseded_by": "sides::run_route (the parity replay of this card's comparison, docs/reports/measure-tool/README.md)"},
+    {"path": "docs/reports/detach-result-wrapper-composition/scripts/compare.py", "sha256": "b6f716709b31ba04656e159d6eefe95d2a5e1555c6020df346ec496a65930b95", "superseded_by": "compare::rows"}
+  ]
+}
