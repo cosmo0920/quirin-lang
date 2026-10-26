@@ -21,7 +21,19 @@ fn run() -> Result<(), String> {
                         qcore_frontend::quant_condition::parse(
                             selector.clone(),
                             &clause.value.expression_source,
-                        )?
+                        )
+                        .map_err(|error| {
+                            format!(
+                                "{path}:{}:{}: {error}",
+                                d.value.name,
+                                clause
+                                    .value
+                                    .expression_source
+                                    .split('(')
+                                    .next()
+                                    .unwrap_or("condition")
+                            )
+                        })?
                         .proposition
                         .id
                     }

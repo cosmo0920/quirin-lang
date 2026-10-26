@@ -9,7 +9,7 @@
     "contracts/cmetrics/metric_values.qv": "c3db21d15d98e12fdf11fe6ffe3de98f674c94625256a94b3270f9db73be1a43",
     "contracts/cmetrics/mpack_utils.qv": "c0c2c64b6b569303a24ecffd7c257641668747417851f2d12825aa13d13a93a2",
     "contracts/cmetrics/null_deref.qv": "4041672b8470b5553f70099da2f23fa2490cac2a7eba5801e847dccea861faf3",
-    "contracts/cmetrics/opts_lifetime.qv": "ff9f4ad7026db16e46769e12044f189809118b889250627010c9b5a90090fecb",
+    "contracts/cmetrics/opts_lifetime.qv": "5b3106651397e95ec5fdd5dbaf6f44a63993e11dcb0f2af6bcedacb54b636950",
     "contracts/cmetrics/typed_setters.qv": "4db3f16af6f6be1ad253a9c89b56783ee294c3c6615b9a41e0cc7b76ebc7b698"
   }
 }

@@ -1,0 +1,8 @@
+import QCore.CmetricsOptsConditions
+#print axioms QCore.CmetricsOptsConditions.cleanup_preserves_raw_representation
+#print axioms QCore.CmetricsOptsConditions.selected_contents_retire
+#print axioms QCore.CmetricsOptsConditions.old_alias_cannot_revive_from_unchanged_pointer_bytes
+#print axioms QCore.CmetricsOptsConditions.failed_append_has_no_field_commit
+#print axioms QCore.CmetricsOptsConditions.append_preserves_index_representation
+#print axioms QCore.CmetricsOptsConditions.nonempty_cleanup_needs_new_liveness
+#print axioms QCore.CmetricsOptsConditions.exact_release_event

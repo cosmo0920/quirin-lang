@@ -154,3 +154,12 @@ postcondition migrations, matching audited selector semantics and validation.
 [The plugin record](plugin/README.md) owns the 1,162 typed plugin atom replacements,
 166 refreshed open manifests and exact reviewed C identity preservation.
 The all-provider pre/postcondition migration and final landing remain open.
+
+The explicit-entry graph checkpoint retains 207 model prerequisites as graph-v4
+roots. [The bounded Boolean consumer](boolean-profile/README.md) migrates fifteen
+caller roles and eleven mathematical postconditions across four functions while
+retaining exact source assumptions and fail-closed evaluation. [CMetrics opts
+postconditions](opts-postconditions/README.md) separately decomposes lifecycle,
+release and representation guarantees with explicit physical frames. These
+records distinguish typed declarations/model properties from actual C bindings;
+they do not close the all-provider card.

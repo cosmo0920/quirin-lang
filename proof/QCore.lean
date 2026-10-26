@@ -69,6 +69,7 @@ import QCore.CleanupVocabulary
 import QCore.Closures
 import QCore.CmetricsApiContracts
 import QCore.CmetricsHypotheses
+import QCore.CmetricsOptsConditions
 import QCore.Compiler
 import QCore.ComposeEventLines
 import QCore.ComposedStdIo
