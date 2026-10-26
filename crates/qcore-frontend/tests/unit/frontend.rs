@@ -494,3 +494,19 @@ fn review_r04_preserves_quantitative_result_comparison_syntax() {
     assert_eq!(result.source, "quant<n where n := 4, n > 3>");
     assert_eq!(result.executable_type(), None);
 }
+
+#[test]
+fn retains_formal_proposition_kind_and_source_without_reserving_relation_names() {
+    let source = "module contract; extern fn proposition() -> unit contract { quant proposition #p(#r: predicate<>) = #r(); };";
+    let program = parse_source_program(source).unwrap();
+    let clause = &program.declarations[0]
+        .value
+        .function_contract
+        .as_ref()
+        .unwrap()
+        .clauses[0]
+        .value;
+    assert_eq!(clause.kind, SourceContractClauseKind::QuantProposition);
+    assert_eq!(clause.expression_source, "#p(#r: predicate<>) = #r()");
+    assert_eq!(program.to_string(), source);
+}

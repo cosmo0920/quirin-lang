@@ -1768,9 +1768,9 @@ fn every_corpus_module_outside_the_v1_vocabulary_is_rejected_not_skipped() {
     // `librdkafka/outer.qv` (one outer-only loader declaration).
     // 137 -> 138 by card W48-RK-LOG-CALLER-FRAME: `librdkafka/log_caller_frame.qv`.
     // Two additional declared CMetrics map/opts lifecycle model modules.
-    // 142 -> 143: cmt-getter-ownership-closure (9e42dc021) adds
-    // `cfl/hash_state.qv` (three cfl_hash_64bits_* declarations).
-    assert_eq!(modules.len(), 143, "corpus module count");
+    // The CFL hash model is already present on main; typed quant conditions
+    // preserve it, and cfl/atomic.qv adds one further model module.
+    assert_eq!(modules.len(), 144, "corpus module count");
 
     let mut selected = 0;
     let mut v1_declarations = 0;
@@ -2129,11 +2129,9 @@ fn every_corpus_module_outside_the_v1_vocabulary_is_rejected_not_skipped() {
     // Eight API functions plus two resource type declarations: 332 -> 342 non-v1.
     // Setter effect models add 15 non-v1 declarations: 342 -> 357.
     // Main adds interpreted writev and thrd_current: 495 -> 497.
-    // cmt-getter-ownership-closure (9e42dc021) adds the non-v1
-    // `cfl/hash_state.qv` (three functions and one type): 357 -> 361.
     assert_eq!(
         (selected, v1_declarations, rejected_declarations),
-        (66, 497, 361)
+        (66, 497, 365)
     );
     // A declaration held for human review is loaded and withheld from the
     // function map (contract spec C06.1): the map plus the held set is every

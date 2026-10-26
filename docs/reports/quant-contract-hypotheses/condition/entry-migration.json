@@ -1,0 +1,114 @@
+{
+  "files": [
+    {
+      "file": "providers/qcore-provider-chunkio/contracts/chunkio/chunk_destructor.qv",
+      "before_revision": "6ac91b855",
+      "before_sha256": "25c42a055b7d408faa4bb6a686103c812d221e988d71b489526e2f7f6ce96ddb",
+      "after_sha256": "a72318d6e4c458c6a4dd3cdda71a3e40e68c0c0ee81d334a82b57bbe7190229b",
+      "entry_conditions": 4,
+      "change": "introducer/selector only; signatures/formulas/required IDs unchanged",
+      "source_binding": "open"
+    },
+    {
+      "file": "providers/qcore-provider-chunkio/contracts/chunkio/context_destructor.qv",
+      "before_revision": "6ac91b855",
+      "before_sha256": "357c056e719924027589bf821ba9d8aa77284a48c6fa9d136fc3162078cc9e1a",
+      "after_sha256": "2ec940f37620dc69133f2ec80557610cc722514464603d686180119e9ad2401b",
+      "entry_conditions": 2,
+      "change": "introducer/selector only; signatures/formulas/required IDs unchanged",
+      "source_binding": "open"
+    },
+    {
+      "file": "providers/qcore-provider-chunkio/contracts/chunkio/import_composition.qv",
+      "before_revision": "6ac91b855",
+      "before_sha256": "79b45fd8cd059f934caecd4237411ec23e9a55f53850b8f92c9e9e48a031951f",
+      "after_sha256": "6db984f530c236f38736a41d82a9ea590030f69d05fcec3a04ae7451ab8005a0",
+      "entry_conditions": 3,
+      "change": "introducer/selector only; signatures/formulas/required IDs unchanged",
+      "source_binding": "open"
+    },
+    {
+      "file": "providers/qcore-provider-chunkio/contracts/chunkio/stream_destructor.qv",
+      "before_revision": "6ac91b855",
+      "before_sha256": "0be0f1a8a64ffd5733bfc5b09c4c2bcde7d824450f2915f4c76e10d0a3024e18",
+      "after_sha256": "ea731fca038ec331f35a843c9292d26673708f856ea9aba9e36d9e483e252326",
+      "entry_conditions": 2,
+      "change": "introducer/selector only; signatures/formulas/required IDs unchanged",
+      "source_binding": "open"
+    },
+    {
+      "file": "providers/qcore-provider-cmetrics/contracts/cmetrics/map_lifetime.qv",
+      "before_revision": "6ac91b855",
+      "before_sha256": "1170433ef4b062f4568500a5af68ddbe4544463d0f6ef4e3ecb7504a7f48d3d6",
+      "after_sha256": "d6554e97c353ad16154d972ee0ec637b3a227678013517e342ba6ba6c02be4d9",
+      "entry_conditions": 40,
+      "change": "introducer/selector only; signatures/formulas/required IDs unchanged",
+      "source_binding": "open"
+    },
+    {
+      "file": "providers/qcore-provider-cmetrics/contracts/cmetrics/metric_setters.qv",
+      "before_revision": "6ac91b855",
+      "before_sha256": "7342309c99a58531f634917c7c10bdf6a8ed2d7cb2639c193bd57fd41a6272e8",
+      "after_sha256": "7fdc0c8fbc48f9527e24eeb1bb04241ab0f2b706ced4a012dff33cc5e8f87a15",
+      "entry_conditions": 22,
+      "change": "introducer/selector only; signatures/formulas/required IDs unchanged",
+      "source_binding": "open"
+    },
+    {
+      "file": "providers/qcore-provider-cmetrics/contracts/cmetrics/opts_lifetime.qv",
+      "before_revision": "6ac91b855",
+      "before_sha256": "aa36db7f02c0b39ad1ec9205f1e32cd1c1747640238e04cd6a3e692d41973d11",
+      "after_sha256": "ff9f4ad7026db16e46769e12044f189809118b889250627010c9b5a90090fecb",
+      "entry_conditions": 9,
+      "change": "introducer/selector only; signatures/formulas/required IDs unchanged",
+      "source_binding": "open"
+    },
+    {
+      "file": "providers/qcore-provider-cmetrics/contracts/cmetrics/typed_setters.qv",
+      "before_revision": "6ac91b855",
+      "before_sha256": "3c03548fca116f5c86e52c080bd63816f54f092dec9093615a80c15f817c2718",
+      "after_sha256": "4db3f16af6f6be1ad253a9c89b56783ee294c3c6615b9a41e0cc7b76ebc7b698",
+      "entry_conditions": 90,
+      "change": "introducer/selector only; signatures/formulas/required IDs unchanged",
+      "source_binding": "open"
+    },
+    {
+      "file": "providers/quirin-provider-cfl/contracts/cfl/arena_lifetime.qv",
+      "before_revision": "6ac91b855",
+      "before_sha256": "3ad9467a22b7763451b9e8b6a24bd7d0aefdc74efcd146536bb51548ad91b7a3",
+      "after_sha256": "75c95f0aec8b7a753158ce33557bf69b956009f56c5cf8292804aa646e3c54ae",
+      "entry_conditions": 1,
+      "change": "introducer/selector only; signatures/formulas/required IDs unchanged",
+      "source_binding": "open"
+    },
+    {
+      "file": "providers/quirin-provider-cfl/contracts/cfl/atomic.qv",
+      "before_revision": "6ac91b855",
+      "before_sha256": "db382a07386cbfc89d6b530542868d5d9d277d7eaab8b0e8ec5182850e82d5a0",
+      "after_sha256": "7dc816d38dab8e3364c3a9f41d567db7a5c38c1eef939bcac3385c50213f9573",
+      "entry_conditions": 7,
+      "change": "introducer/selector only; signatures/formulas/required IDs unchanged",
+      "source_binding": "open"
+    },
+    {
+      "file": "providers/quirin-provider-cfl/contracts/cfl/hash_state.qv",
+      "before_revision": "6ac91b855",
+      "before_sha256": "44962b47a0f7f483a99079c83532f9bebf4eafc73a5478a5685a42afa90ee523",
+      "after_sha256": "bf69ba5ee465235cd5f244f03b0acbc28c039143cd11e4e14a2c5a9b828363b2",
+      "entry_conditions": 7,
+      "change": "introducer/selector only; signatures/formulas/required IDs unchanged",
+      "source_binding": "open"
+    },
+    {
+      "file": "providers/quirin-provider-cfl/contracts/cfl/intrusive_list.qv",
+      "before_revision": "6ac91b855",
+      "before_sha256": "e5e4f35f522ffdf5750da0799e1d74dbafba7a858b10cb4d0e9256cc1491514a",
+      "after_sha256": "589e2fad71318ab9bfbc8be00eb50db4ea02582717e333f889de995fed527b02",
+      "entry_conditions": 20,
+      "change": "introducer/selector only; signatures/formulas/required IDs unchanged",
+      "source_binding": "open"
+    }
+  ],
+  "entry_conditions": 207,
+  "new_graph_version": 4
+}

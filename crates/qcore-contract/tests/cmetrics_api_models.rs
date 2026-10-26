@@ -78,27 +78,43 @@ fn source_audited_api_models_are_retained_without_interpreted_permissions() {
         get.iter()
             .any(|c| c == "read_lookup_may_allocate_or_mutate_secondary_index")
     );
-    assert!(get.iter().any(|c| c == "labeled_hash_digest_is_nonzero"));
+    assert!(get.iter().any(|c| c.starts_with("#hash_nonzero(")));
+    let graph = &graphs["cmt_map_metric_get"];
+    assert_eq!(graph.version, 4);
+    assert!(graph.requirements.iter().any(|id| id == "hash_nonzero"));
     let digest = clauses("cfl_hash_64bits_digest");
-    assert!(
-        digest
-            .iter()
-            .any(|c| c == "result_may_equal_zero_for_a_nonempty_nul_free_stream")
-    );
+    assert!(digest.iter().any(|c| c.starts_with("#digest_value(")));
+    assert!(s["cfl/hash_state.qv"].contains("42 d5 68 e1 38 d7 27 ff"));
     let init = clauses("cmt_opts_init");
+    assert!(init.iter().any(|c| c.starts_with("#stored_contents(")));
     assert!(
-        init.iter()
-            .any(|c| c == "minus_one_result_may_retain_partial_initialization_obligations")
+        s["cmetrics/opts_lifetime.qv"]
+            .contains("A failed initializer may retain zero or more committed contents")
     );
     let exit = clauses("cmt_opts_exit");
+    assert!(exit.iter().any(|c| c.starts_with("#field_bytes(")));
+    assert!(exit.iter().any(|c| c.starts_with("#release_once(")));
+    for function in ["cmt_opts_init", "cmt_opts_exit"] {
+        let graph = &graphs[function];
+        assert_eq!(graph.version, 4);
+        assert!(graph.requirements.iter().any(|id| id == "call_exclusion"));
+        assert!(graph.requirements.iter().any(|id| id == "helper_frame"));
+    }
     assert!(
-        exit.iter()
-            .any(|c| c == "pointer_field_bytes_and_resource_index_are_not_cleared")
+        graphs["cmt_opts_exit"]
+            .requirements
+            .iter()
+            .any(|id| id == "sds_physical_frame")
     );
-    assert!(
-        exit.iter()
-            .any(|c| c == "maps_may_still_be_torn_down_without_reading_retired_opts_strings")
-    );
+    let parsed = parse_source_program(&s["cmetrics/opts_lifetime.qv"]).unwrap();
+    for declaration in parsed.declarations {
+        if let Some(contract) = declaration.value.function_contract {
+            assert!(contract.clauses.iter().all(|clause| matches!(
+                clause.value.kind,
+                qcore_frontend::frontend::SourceContractClauseKind::QuantCondition(_)
+            )));
+        }
+    }
 }
 
 #[test]

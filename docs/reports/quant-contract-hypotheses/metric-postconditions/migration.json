@@ -1,0 +1,132 @@
+{
+  "schema": "quant-metric-postcondition-migration/1",
+  "source": "providers/qcore-provider-cmetrics/contracts/cmetrics/metric_setters.qv",
+  "before_sha256": "7fdc0c8fbc48f9527e24eeb1bb04241ab0f2b706ced4a012dff33cc5e8f87a15",
+  "after_sha256": "43e5067e5c3134bf6921359c2cb4b64a36d282d5b7c92e9725e04bb77503043a",
+  "declarations": [
+    {
+      "declaration": "cmt_metric_set",
+      "old_sentences": [
+        "delegates_to_cmt_metric_set_double",
+        "scalar_value_mirrors_timestamp_and_double_type_tag_are_stored",
+        "no_whole_record_atomic_snapshot_is_promised",
+        "metric_and_nested_storage_ownership_are_preserved",
+        "no_pointer_or_ownership_escapes"
+      ],
+      "new_ids": [
+        "delegate",
+        "scalar_stores",
+        "custody_frame"
+      ]
+    },
+    {
+      "declaration": "cmt_metric_set_exp_hist_count",
+      "old_sentences": [
+        "exp_hist_count_is_stored_without_updating_timestamp",
+        "metric_and_nested_storage_ownership_are_preserved"
+      ],
+      "new_ids": [
+        "count_store",
+        "timestamp_frame",
+        "custody_frame"
+      ]
+    },
+    {
+      "declaration": "cmt_metric_set_exp_hist_sum",
+      "old_sentences": [
+        "exp_hist_sum_set_is_normalized_to_zero_or_one",
+        "enabled_sum_is_stored_as_double_bits_else_sum_bits_are_zero",
+        "timestamp_is_not_updated_and_pair_is_not_a_single_atomic_store",
+        "metric_and_nested_storage_ownership_are_preserved"
+      ],
+      "new_ids": [
+        "normalized_sum",
+        "timestamp_frame",
+        "custody_frame"
+      ]
+    },
+    {
+      "declaration": "cmt_metric_hist_count_set",
+      "old_sentences": [
+        "successful_CAS_stores_hist_count_then_timestamp",
+        "no_joint_atomicity_or_wait_free_progress_is_promised",
+        "metric_and_nested_storage_ownership_are_preserved"
+      ],
+      "new_ids": [
+        "cas_then_timestamp",
+        "custody_frame"
+      ]
+    },
+    {
+      "declaration": "cmt_metric_hist_sum_set",
+      "old_sentences": [
+        "successful_CAS_stores_hist_sum_double_bits_then_timestamp",
+        "no_joint_atomicity_or_wait_free_progress_is_promised",
+        "metric_and_nested_storage_ownership_are_preserved"
+      ],
+      "new_ids": [
+        "cas_then_timestamp",
+        "custody_frame"
+      ]
+    },
+    {
+      "declaration": "cmt_metric_hist_set",
+      "old_sentences": [
+        "successful_CAS_stores_converted_integer_bucket_count_then_timestamp",
+        "no_joint_atomicity_or_wait_free_progress_is_promised",
+        "metric_and_nested_storage_ownership_are_preserved"
+      ],
+      "new_ids": [
+        "cas_then_timestamp",
+        "custody_frame"
+      ]
+    },
+    {
+      "declaration": "cmt_summary_quantile_set",
+      "old_sentences": [
+        "null_metric_null_array_negative_or_out_of_range_id_is_a_noop",
+        "admitted_slot_CAS_stores_double_bits_then_timestamp",
+        "no_joint_atomicity_or_wait_free_progress_is_promised",
+        "metric_and_nested_storage_ownership_are_preserved"
+      ],
+      "new_ids": [
+        "guarded_stores",
+        "inactive_no_store",
+        "custody_frame"
+      ]
+    },
+    {
+      "declaration": "cmt_summary_sum_set",
+      "old_sentences": [
+        "successful_CAS_stores_summary_sum_double_bits_then_timestamp",
+        "no_joint_atomicity_or_wait_free_progress_is_promised",
+        "metric_and_nested_storage_ownership_are_preserved"
+      ],
+      "new_ids": [
+        "cas_then_timestamp",
+        "custody_frame"
+      ]
+    },
+    {
+      "declaration": "cmt_summary_count_set",
+      "old_sentences": [
+        "successful_CAS_stores_summary_count_then_timestamp",
+        "no_joint_atomicity_or_wait_free_progress_is_promised",
+        "metric_and_nested_storage_ownership_are_preserved"
+      ],
+      "new_ids": [
+        "cas_then_timestamp",
+        "custody_frame"
+      ]
+    }
+  ],
+  "open_bindings": [
+    "complete own-call and nested helper event trace",
+    "atomic backend and success classification",
+    "field/array layout and scalar indices",
+    "floating bit encoding and defined C conversions",
+    "physical storage/caller exclusion",
+    "Rust/Lean/source correspondence"
+  ],
+  "permission": "none"
+}

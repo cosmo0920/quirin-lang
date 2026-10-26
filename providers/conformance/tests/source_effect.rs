@@ -153,7 +153,7 @@ fn real_package_proposes_source_effects_without_admitting_false_contracts() {
 
     let false_contract = task(
         &summary,
-        &CONTRACT.replace("result == old_lock", "result == 7"),
+        &CONTRACT.replace("#result == #old_lock", "#result == 7"),
     );
     let rejection = registry.verify_v2(
         &false_contract.request(PluginId::new("qcore.chunkio").unwrap()),

@@ -105,6 +105,14 @@ impl ViewDeclaration {
                     SourceContractClauseKind::Quant(selector) => {
                         format!("quant {}", selector_name(selector))
                     }
+                    SourceContractClauseKind::QuantEffect(selector) => {
+                        format!("quant effect {}", selector_name(selector))
+                    }
+                    SourceContractClauseKind::QuantProposition => "quant proposition".into(),
+                    SourceContractClauseKind::QuantCondition(selector) => {
+                        format!("quant condition {selector}")
+                    }
+                    SourceContractClauseKind::QuantTheorem => "quant theorem".into(),
                     SourceContractClauseKind::QuantCheck => "quant checks".into(),
                     SourceContractClauseKind::QuantNullDeref => "quant null-deref".into(),
                     SourceContractClauseKind::QuantDeref => "quant deref".into(),

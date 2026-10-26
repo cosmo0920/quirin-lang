@@ -23,9 +23,9 @@ extern fn cio_chunk_close(
 ) -> unit
 effects { io }
 contract {
-    requires chunk_is_live;
-    requires chunk_is_not_busy;
-    requires chunk_has_no_task_or_route_custody;
+    quant condition entry #r024(#chunk: object, #env: environment, #live: predicate<environment, object>) = #live(#env,#chunk);
+    quant condition entry #r025(#busy_field: field, #chunk: object, #env: environment, #number: function<environment, object, field, integer>) = (#number(#env,#chunk,#busy_field) == 0);
+    quant condition entry #r023(#chunk: object, #env: environment, #owns: predicate<environment, object, object>, #route_custody: predicate<environment, object, object>, #task_object: predicate<environment, object>) = (forall (#task: object) { (#task_object(#env,#task) => !(#owns(#env,#chunk,#task))) } && forall (#route: object) { !(#route_custody(#env,#chunk,#route)) });
     ensures normal selected_backend_is_closed;
     ensures normal stream_link_is_removed;
     ensures normal context_link_is_removed;
@@ -40,7 +40,7 @@ extern fn cio_chunk_delete(
 ) -> i32
 effects { io }
 contract {
-    requires chunk_is_live;
+    quant condition entry #r024(#chunk: object, #env: environment, #live: predicate<environment, object>) = #live(#env,#chunk);
     ensures normal backing_content_is_deleted;
     ensures normal chunk_object_remains_live;
     ensures any delete_only_is_not_object_destruction;

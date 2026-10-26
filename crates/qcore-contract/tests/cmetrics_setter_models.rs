@@ -1,5 +1,5 @@
 use qcore_contract::{bounds_contract, contract_loader};
-use qcore_frontend::frontend::parse_source_program;
+use qcore_frontend::frontend::{SourceContractClauseKind, parse_source_program};
 use std::collections::BTreeMap;
 
 fn sources() -> BTreeMap<String, String> {
@@ -31,6 +31,44 @@ fn setter_models_cover_existing_apis_and_refuse_interpreted_permissions() {
         // declare and which their borrowed metric parameters do not imply.
         for declaration in parse_source_program(source).unwrap().declarations {
             assert!(declaration.value.function_contract.is_some());
+            let contract = declaration.value.function_contract.as_ref().unwrap();
+            let mut formal = std::collections::BTreeSet::new();
+            for clause in &contract.clauses {
+                assert_ne!(
+                    clause.value.kind,
+                    SourceContractClauseKind::Requires,
+                    "sentence-shaped prerequisite remains in {}",
+                    declaration.value.name
+                );
+                if clause.value.kind
+                    == SourceContractClauseKind::QuantCondition(
+                        qcore_schemas::quant_condition::Selector::Entry,
+                    )
+                {
+                    let definition =
+                        qcore_frontend::quant_proposition::parse(&clause.value.expression_source)
+                            .unwrap();
+                    assert!(formal.insert(definition.id));
+                }
+            }
+            let conditions =
+                qcore_contract::quant_condition::declaration(&declaration.value).unwrap();
+            if source.contains("#scalar_stores(")
+                || matches!(
+                    declaration.value.name.as_str(),
+                    "cmt_counter_set" | "cmt_gauge_set" | "cmt_untyped_set"
+                )
+            {
+                assert_eq!(conditions.len(), contract.clauses.len());
+                assert!(
+                    conditions
+                        .iter()
+                        .any(|c| c.selector == qcore_schemas::quant_condition::Selector::Normal)
+                );
+            }
+            assert!(!formal.is_empty());
+            let graph = qcore_contract::hypothesis::declaration(&declaration.value, &[]).unwrap();
+            assert_eq!(graph.requirements.len(), formal.len());
             names.push(declaration.value.name);
         }
     }
