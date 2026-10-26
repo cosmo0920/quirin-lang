@@ -3,7 +3,7 @@
 Pluggable-cards plan seam A, phase P2
 ([plan](../../plans/pluggable-cards/README.md) §3 A "Per-rule contribution
 ledgers" and "Impact declaration", §3 F, §4 steps 3 and 5, §7). Base
-`b2af78eaf` (main = origin/main); measured tip `b75be63fe`. The diff is the
+`b2af78eaf` (main = origin/main); measured tip `ed3710b18` (code at `b75be63fe`, report added). The diff is the
 measure plugin (`crates/quirin-audit-plugin-measure`), Python tooling and its
 tests, two documentation paragraphs, one generated page and this report. It
 changes no analyzer, contract, Lean module or verdict, and no live evaluation
@@ -188,7 +188,27 @@ follow-up `CONTRIBUTION-LEDGERS-REGISTRY-BINDING`.
   - `test_land.py` covers the stale page.
 - The gate is listed below.
 
-GATE_PLACEHOLDER
+**Gate.** `python3 scripts/gate_scope.py --base b2af78eaf --out private/gate`
+ran on `ed3710b18`, exit 0, in full mode because `scripts/gate_scope.py`
+changed. The record is [`gate.json`](gate.json) and the console log is
+`/media/Data/GitHub/quirin-lang/private/contribution-ledgers/gate-ed3710b18.log`.
+
+| Step | Exit | Result |
+|---|---|---|
+| submodules | 0 | 1 checked out |
+| `cargo fmt --all -- --check` | 0 | 4.8 s |
+| `cargo clippy --all-targets -- -D warnings` | 0 | 39.4 s |
+| Rust suite (`run_test_binaries.py` under `gate_slot.py rust-suite`) | 0 | 560 units, 574 summaries, 8,731 passed, 0 failed, 15 ignored |
+| `reevaluation_probe`, `reevaluation_followup` | 0, 0 | |
+| Python suite | 0 | 536 tests, 0 skipped |
+
+The Rust suite's recorded 16,690 s is mostly slot wait: it queued behind
+GATEWAY-RULE-API's corpus identity audits and its Rust suite. Its own phases
+were a 123 s build and a 511 s run. No Lean or provider step was needed,
+because the card does not touch `proof/` or `providers/`.
+
+The commit after `ed3710b18` adds only this gate record and the gate figures
+in this report and in the amendments.
 
 ## Boundaries
 
