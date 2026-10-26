@@ -1,0 +1,10 @@
+{
+  "schema": "quirin-amendments/1",
+  "card": "GATEWAY-RULE-API",
+  "base": "5813ddab9",
+  "measured_tip": "675f2440cbfdb33b7a5199d2bb1b03c093c21fd3",
+  "profiles": ["eight-home", "fluent-bit-system", "fluent-bit-tail-pause"],
+  "increment_paragraph": "INCREMENT",
+  "status_paragraph": "STATUS",
+  "ledger": []
+}

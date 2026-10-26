@@ -1,0 +1,107 @@
+"""Card GATEWAY-RULE-API: the gateway rule registry
+(`crates/gateway-rules/registry.toml`) generates the gateway's rule tables,
+the committed files equal the generated ones, and every ordered placement
+equals the frozen route map's row (same rule, same route, same order)."""
+import copy
+import sys
+import tempfile
+import unittest
+from pathlib import Path
+
+ROOT = Path(__file__).resolve().parents[2]
+sys.path.insert(0, str(ROOT / "scripts"))
+import gen_gateway_registry as gen  # noqa: E402
+
+
+class GatewayRegistryTests(unittest.TestCase):
+    def setUp(self):
+        self.registry = gen.load(ROOT)
+        self.rules = gen.validate(self.registry, ROOT)
+
+    def test_committed_tables_equal_generated(self):
+        self.assertEqual(gen.stale(ROOT), [], "run python3 scripts/gen_gateway_registry.py")
+
+    def test_every_ordered_placement_equals_the_frozen_route_map(self):
+        route_map = (ROOT / self.registry["route_map"]).read_text(encoding="utf-8")
+        frozen = gen.route_map_tables(route_map)
+        self.assertEqual(sorted(frozen), sorted(gen.TABLES))
+        for position, rows in frozen.items():
+            placed = [(rule["id"], placement["route"])
+                      for rule, placement in gen.ordered(self.rules, position)]
+            self.assertEqual(placed, rows, position)
+        self.assertEqual(len(frozen["statement-fallback"]), 15)
+        self.assertEqual(len(frozen["return-fallback"]), 8)
+
+    def test_every_ordered_route_has_its_ask_function(self):
+        table = (ROOT / gen.TABLE_RS).read_text(encoding="utf-8")
+        for position, (_, _, module, _, _) in gen.TABLES.items():
+            for _, placement in gen.ordered(self.rules, position):
+                self.assertIn(f"pub(super) fn {placement['route']}(", table, placement["route"])
+                self.assertIn(f"ask: {module}::{placement['route']} }}", table)
+
+    def test_replaced_arm_constants_are_gone(self):
+        sources = ROOT / "crates/qcore-c-gateway/src"
+        for name in ("LITERAL_ARM", "DECAY_ARM", "CONST_VALUE_ARM", "VOID_BIT_CAST_ARM",
+                     "ELEMENT_ARM"):
+            for path in ("literal_dereference.rs", "array_member_decay.rs",
+                         "typed_const_pointer_value.rs", "scalar_element_address.rs"):
+                self.assertNotIn(f"const {name}", (sources / path).read_text(encoding="utf-8"))
+
+    def broken(self, mutate):
+        registry = copy.deepcopy(self.registry)
+        mutate(registry)
+        with self.assertRaises(gen.RegistryError):
+            gen.validate(registry, ROOT)
+
+    def test_broken_registries_fail_closed(self):
+        def rule(registry, rule_id):
+            return next(r for r in registry["rule"] if r["id"] == rule_id)
+
+        self.broken(lambda r: r["rule"].append(copy.deepcopy(r["rule"][0])))
+        self.broken(lambda r: rule(r, "10s")["placements"][0].update(order=99))
+        self.broken(lambda r: rule(r, "10s")["placements"][0].update(arm="x"))
+        self.broken(lambda r: rule(r, "10s")["placements"][0].pop("clears_origins"))
+        self.broken(lambda r: rule(r, "10s")["placements"][1].update(clears_origins=True))
+        self.broken(lambda r: rule(r, "10s")["placements"][0].update(position="nowhere"))
+        self.broken(lambda r: rule(r, "10s").update(off="sometimes"))
+        self.broken(lambda r: rule(r, "10s").update(lean=["QCore.NoSuchModule"]))
+        self.broken(lambda r: rule(r, "10s").update(document="docs/agents/rules/none.md"))
+        self.broken(lambda r: rule(r, "10s").update(extra=1))
+        self.broken(lambda r: rule(r, "35")["placements"][0].update(position="token-hold"))
+        self.broken(lambda r: rule(r, "35")["placements"][0].update(route="decide"))
+        self.broken(lambda r: rule(r, "35")["placements"].append(
+            {"position": "condition", "order": 1, "route": "planned_condition"}))
+        self.broken(lambda r: r.update(schema="qcore-gateway-rules/0"))
+
+    def test_a_hold_must_be_registered_not_switchable(self):
+        registry = copy.deepcopy(self.registry)
+        hold = {"id": "32a", "crate": "qcore-c-gateway", "lean": [],
+                "document": "docs/agents/rules/32a.md", "off": "refuses",
+                "placements": [{"position": "token-hold", "arm": "caller-frame-hold",
+                                "route": "legacy_caller_frame_hold::hold"}]}
+        registry["rule"].append(hold)
+        with self.assertRaises(gen.RegistryError):
+            gen.validate(registry, ROOT)
+        hold["off"] = "not-switchable"
+        self.assertEqual(len(gen.validate(registry, ROOT)), len(self.rules) + 1)
+
+    def test_missing_markers_fail_closed(self):
+        with self.assertRaises(gen.RegistryError):
+            gen.splice("no markers here", "region")
+        with self.assertRaises(gen.RegistryError):
+            gen.splice(f"{gen.START}\n{gen.END}\n{gen.START}\n{gen.END}\n", "region")
+
+    def test_a_moved_route_map_row_is_detected(self):
+        route_map = (ROOT / self.registry["route_map"]).read_text(encoding="utf-8")
+        moved = route_map.replace("`connective_return`", "`moved_return`")
+        self.assertNotEqual(moved, route_map)
+        self.assertNotEqual(gen.route_map_tables(moved)["return-fallback"],
+                            gen.route_map_tables(route_map)["return-fallback"])
+        with tempfile.TemporaryDirectory() as directory:
+            Path(directory, "map.md").write_text("no tables", encoding="utf-8")
+            with self.assertRaises(gen.RegistryError):
+                gen.route_map_tables(Path(directory, "map.md").read_text(encoding="utf-8"))
+
+
+if __name__ == "__main__":
+    unittest.main()

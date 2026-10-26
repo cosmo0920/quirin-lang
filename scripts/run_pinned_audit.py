@@ -67,6 +67,8 @@ def main() -> int:
             "QCORE_SOURCE_CONTRACTS": "unset",
             "QCORE_RETURN_CENSUS": environment.get("QCORE_RETURN_CENSUS", "unset"),
             "QCORE_AUDIT_JOBS": str(args.jobs) if args.jobs is not None else environment.get("QCORE_AUDIT_JOBS", "unset"),
+            # Card GATEWAY-RULE-API: the rule switches the run had off.
+            "QCORE_GATEWAY_RULES_OFF": environment.get("QCORE_GATEWAY_RULES_OFF", "unset"),
         },
         "start": datetime.datetime.now(datetime.timezone.utc).isoformat(),
     }

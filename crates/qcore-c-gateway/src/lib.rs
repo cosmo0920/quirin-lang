@@ -139,6 +139,8 @@ mod indirect_chain_access;
 pub mod indirect_chain_census;
 pub mod legacy_c;
 pub mod legacy_census;
+// Card GATEWAY-RULE-API: the rule registry and its run-time switches.
+pub mod gateway_rules;
 mod legacy_condition_call;
 mod loop_generations;
 // Card B08-FIELD-LINK-JOIN-SILENT-UNRESOLVED (rule 11c): partial field links

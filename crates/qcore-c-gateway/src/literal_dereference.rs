@@ -44,9 +44,11 @@
 /// (`legacy_tokens::tokenize`).
 pub(crate) const LITERAL: &str = "__qcore_literal__";
 
-/// The rule's arm switch (measurement only: `false` restores the old
-/// predicate).
-pub(crate) const LITERAL_ARM: bool = true;
+/// The rule's arm switch: registry rule `35` (card GATEWAY-RULE-API, which
+/// replaced the compile-time `LITERAL_ARM`); off restores the old predicate.
+fn literal_arm() -> bool {
+    crate::gateway_rules::enabled("35")
+}
 
 /// What follows the literal run a `*` applies to.
 #[derive(Clone, Copy, Debug, PartialEq, Eq)]
@@ -81,7 +83,7 @@ impl Decision {
 
 /// `QCore.LiteralDecayReadings.decideLiteral`.
 pub(crate) fn decide(next_is_literal: bool, follow: Follow) -> Decision {
-    if !LITERAL_ARM || !next_is_literal {
+    if !next_is_literal || !literal_arm() {
         Decision::NotLiteral
     } else if follow == Follow::Store {
         Decision::Store

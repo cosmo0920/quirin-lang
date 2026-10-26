@@ -1,0 +1,13 @@
+[package]
+name = "qcore-gateway-rule-api"
+version = "0.1.0"
+edition = "2024"
+license = "MIT OR Apache-2.0"
+description = "The C gateway's rule-package interface: per-position traits, admit-with-obligations-or-refuse answers, first-answer-wins consultation, the reason-key reservation, the rule registry model and the run-time rule switches (QCORE_GATEWAY_RULES_OFF). No analysis logic."
+
+# Plan docs/plans/pluggable-cards/README.md seam B: this crate may depend on
+# qcore-schemas and qcore-contract only (a test holds the set; nothing here
+# reads qcore-contract yet), and every rule package depends on it, never on
+# qcore-c-gateway or on another rule package.
+[dependencies]
+qcore-schemas = { path = "../qcore-schemas", version = "21.0.0" }

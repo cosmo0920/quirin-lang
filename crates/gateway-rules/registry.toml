@@ -1,0 +1,217 @@
+# The C gateway rule registry (plan docs/plans/pluggable-cards/README.md,
+# seam B; card GATEWAY-RULE-API).
+#
+# One [[rule]] per rule package: its id (the rule id, or the card name where
+# the code names no rule), the crate holding its body, its placements at the
+# positions of the frozen route map (ROUTE-MAP.md below) with their
+# consultation order (or the host predicate an arm amends), its Lean modules,
+# its rule document, the reason keys it reserves, and what
+# QCORE_GATEWAY_RULES_OFF does to it ("refuses": listed, it is not asked and
+# falls through; "not-switchable": a hold, whose refusal would widen).
+#
+# This file is the source. Run `python3 scripts/gen_gateway_registry.py` after
+# editing it; it writes crates/qcore-c-gateway/src/gateway_rule_registry.rs and
+# the generated tables of crates/qcore-c-gateway/src/legacy_route_table.rs, and
+# the Python suite fails when either differs from what it generates. Every
+# ordered placement must equal the frozen route map's row (same rule, same
+# route, same order); moving a row is a semantic change with its own identity
+# run, never an edit here alone.
+#
+# The registry starts by describing today's routes: every body still lives in
+# qcore-c-gateway. Each rule's migration to crates/gateway-rules/rule-<id>-<name>
+# (32a, 33, 34, 35, 36, 37 first) is its own card.
+
+schema = "qcore-gateway-rules/1"
+route_map = "docs/reports/gateway-analysis-path-optimization/ROUTE-MAP.md"
+
+# --- Statement fallbacks (ROUTE-MAP §2.1 rows 7-21) and return fallbacks
+# --- (§4 step 3), in the order of their first placement.
+
+[[rule]]
+id = "W43-INDEX-TRAVERSAL"
+crate = "qcore-c-gateway"
+lean = ["QCore.IndexTraversal"]
+document = "docs/reports/w43-index-traversal/README.md"
+off = "refuses"
+placements = [
+  { position = "statement-fallback", order = 1, route = "stepped_access", clears_origins = false },
+]
+
+[[rule]]
+id = "W44-INDIRECT-CALL-ARGUMENT-ACCESS"
+crate = "qcore-c-gateway"
+lean = ["QCore.CallArgumentAccess"]
+document = "docs/reports/w44-indirect-call-argument-access/README.md"
+off = "refuses"
+placements = [
+  { position = "statement-fallback", order = 2, route = "call_argument_access", clears_origins = false },
+]
+
+[[rule]]
+id = "10s"
+crate = "qcore-c-gateway"
+lean = ["QCore.ElaborationCore"]
+document = "docs/agents/rules/10s.md"
+off = "refuses"
+placements = [
+  { position = "statement-fallback", order = 3, route = "elaborated_statement", clears_origins = true },
+  { position = "return-fallback", order = 1, route = "elaborated_return" },
+]
+
+[[rule]]
+id = "11b"
+crate = "qcore-c-gateway"
+lean = ["QCore.CastRepresentation"]
+document = "docs/agents/rules/11b.md"
+off = "refuses"
+placements = [
+  { position = "statement-fallback", order = 4, route = "uncast_pointer_statement", clears_origins = true },
+]
+
+[[rule]]
+id = "10u"
+crate = "qcore-c-gateway"
+lean = ["QCore.CallInstantiation"]
+document = "docs/agents/rules/10u.md"
+off = "refuses"
+placements = [
+  { position = "statement-fallback", order = 5, route = "substituted_call", clears_origins = true },
+  { position = "return-fallback", order = 2, route = "instantiated_return" },
+]
+
+[[rule]]
+id = "10y"
+crate = "qcore-c-gateway"
+lean = ["QCore.NestedCallEffects"]
+document = "docs/agents/rules/10y.md"
+off = "refuses"
+placements = [
+  { position = "statement-fallback", order = 6, route = "nested_call_statement", clears_origins = true },
+  { position = "return-fallback", order = 3, route = "nested_call_return" },
+]
+
+[[rule]]
+id = "10z"
+crate = "qcore-c-gateway"
+lean = ["QCore.ValueConnectives"]
+document = "docs/agents/rules/10z.md"
+off = "refuses"
+placements = [
+  { position = "statement-fallback", order = 7, route = "connective_statement", clears_origins = true },
+  { position = "return-fallback", order = 4, route = "connective_return" },
+]
+
+[[rule]]
+id = "11g"
+crate = "qcore-c-gateway"
+lean = ["QCore.StatementExpressions"]
+document = "docs/agents/rules/11g.md"
+off = "refuses"
+placements = [
+  { position = "statement-fallback", order = 8, route = "statement_expression_statement", clears_origins = true },
+  { position = "return-fallback", order = 5, route = "statement_expression_return" },
+]
+
+[[rule]]
+id = "11f"
+crate = "qcore-c-gateway"
+lean = ["QCore.AggregateValue"]
+document = "docs/agents/rules/11f.md"
+off = "refuses"
+placements = [
+  { position = "statement-fallback", order = 9, route = "aggregate_statement", clears_origins = true },
+]
+
+[[rule]]
+id = "11i"
+crate = "qcore-c-gateway"
+lean = ["QCore.AtomicSourceRoute"]
+document = "docs/agents/rules/11i.md"
+off = "refuses"
+placements = [
+  { position = "statement-fallback", order = 10, route = "atomic_routed_statement", clears_origins = true },
+  { position = "return-fallback", order = 6, route = "atomic_routed_return" },
+]
+
+[[rule]]
+id = "11u"
+crate = "qcore-c-gateway"
+lean = ["QCore.LayoutExtents"]
+document = "docs/agents/rules/11u.md"
+off = "refuses"
+placements = [
+  { position = "statement-fallback", order = 11, route = "vla_declaration_statement", clears_origins = true },
+  { position = "statement-fallback", order = 12, route = "container_of_statement", clears_origins = true },
+  { position = "return-fallback", order = 7, route = "container_of_return" },
+]
+
+[[rule]]
+id = "11w"
+crate = "qcore-c-gateway"
+lean = ["QCore.Variadics"]
+document = "docs/agents/rules/11w.md"
+off = "refuses"
+placements = [
+  { position = "statement-fallback", order = 13, route = "va_list_statement", clears_origins = true },
+  { position = "statement-fallback", order = 14, route = "variadic_tail_statement", clears_origins = true },
+]
+
+[[rule]]
+id = "12h"
+crate = "qcore-c-gateway"
+lean = ["QCore.CastSemantics"]
+document = "docs/agents/rules/12h.md"
+off = "refuses"
+placements = [
+  { position = "statement-fallback", order = 15, route = "uncast_value_statement", clears_origins = true },
+]
+
+[[rule]]
+id = "12f"
+crate = "qcore-c-gateway"
+lean = ["QCore.ScalarReturnValue"]
+document = "docs/agents/rules/12f.md"
+off = "refuses"
+placements = [
+  { position = "return-fallback", order = 8, route = "scalar_return_value" },
+]
+
+# --- Arms: rules that amend one predicate of a reader. They replace the
+# --- per-card compile-time arm constants (`LITERAL_ARM`, `DECAY_ARM`,
+# --- `CONST_VALUE_ARM`, `VOID_BIT_CAST_ARM`, `ELEMENT_ARM`), each of which
+# --- covered its whole rule and whose `false` was the old refusal, so the
+# --- switch is equivalent with nothing off and fail-closed when off. They
+# --- postdate the route map's base or sit inside a reader, so they have no
+# --- consultation order.
+
+[[rule]]
+id = "35"
+crate = "qcore-c-gateway"
+lean = ["QCore.LiteralDecayReadings"]
+document = "docs/agents/rules/35.md"
+off = "refuses"
+placements = [
+  { position = "classification", arm = "literal-read", route = "literal_dereference::decide" },
+  { position = "typed-reader", arm = "array-member-decay", route = "array_member_decay::decayed_operand" },
+]
+
+[[rule]]
+id = "10m"
+crate = "qcore-c-gateway"
+lean = ["QCore.TypedConstPointerValue"]
+document = "docs/agents/rules/10m.md"
+off = "refuses"
+placements = [
+  { position = "typed-reader", arm = "const-pointer-value", route = "typed_const_pointer_value::pointer_value" },
+  { position = "typed-reader", arm = "void-bit-cast", route = "typed_const_pointer_value::pointer_source" },
+]
+
+[[rule]]
+id = "14c"
+crate = "qcore-c-gateway"
+lean = ["QCore.ResidualAccessReadings"]
+document = "docs/agents/rules/14c.md"
+off = "refuses"
+placements = [
+  { position = "typed-reader", arm = "scalar-element-address", route = "scalar_element_address::shape_admitted" },
+]

@@ -18,7 +18,25 @@
 //! `expression_statement`: they are not fallbacks of a refusal. The full
 //! consultation order of every position is the card's route map
 //! (`ROUTE-MAP.md`).
+//!
+//! Card **GATEWAY-RULE-API** (plan `docs/plans/pluggable-cards/README.md`,
+//! seam B): the two tables are generated from the rule registry
+//! `crates/gateway-rules/registry.toml` by `python3
+//! scripts/gen_gateway_registry.py`, between the `generated:registry`
+//! markers below (the Python suite fails when they differ from what it
+//! generates, and when a row differs from the frozen route map). Each row is a
+//! `qcore_gateway_rule_api` package of its position, and the dispatchers
+//! compose the rows with `qcore_gateway_rule_api::consult`: the first answer
+//! wins, a row whose rule `QCORE_GATEWAY_RULES_OFF` lists is not asked and
+//! falls through, and the end of the table is the existing refusal. With no
+//! rule off every row is asked exactly as before. The routes' bodies are
+//! unchanged and stay in this crate; the `ask` functions below are the
+//! closures the hand-written tables held, named after the route they ask.
 
+use qcore_gateway_rule_api::traits::{self as package, Host, RulePackage};
+use qcore_gateway_rule_api::{Answer, consult};
+
+use super::condition_desugar::ConditionPlan;
 use super::{LegacyInstruction, Parser, Statement, Token, atomic_route, return_refused};
 
 /// One statement's question to the statement fallbacks.
@@ -29,16 +47,56 @@ pub(super) struct StatementQuery<'q> {
     pub(super) instruction: &'q LegacyInstruction,
 }
 
+/// The parser as the rule API's host: its tokens, instructions, statements,
+/// condition plans and Clang nodes are the vocabulary a package reads.
+impl Host for Parser<'_> {
+    type Token = Token;
+    type Decision = LegacyInstruction;
+    type Statement = Statement;
+    type Condition = Box<ConditionPlan>;
+    type Node = serde_json::Value;
+
+    fn token_text(token: &Token) -> &str {
+        &token.text
+    }
+
+    fn token_line(token: &Token) -> usize {
+        token.line
+    }
+
+    fn refusal(decision: &LegacyInstruction) -> Option<&str> {
+        refusal(decision)
+    }
+}
+
+/// The rule API's statement query over the parser.
+type StatementAsk<'q, 'p> = package::StatementQuery<'q, Parser<'p>>;
+
 /// One statement fallback: its rule (or card, where no rule is named) and
 /// whether an answer clears the statement's pending element origins (card
 /// W45-CONTAINER-ROOT-REACH: an answer that replaces the instruction keeps no
 /// element binding of the refused one).
 pub(super) struct StatementFallback {
-    /// Read by the order test and the `route-census` stream.
-    #[cfg_attr(not(any(test, feature = "route-census")), allow(dead_code))]
+    /// The registry id: the switch the row reads, and the name the order
+    /// test and the `route-census` stream use.
     pub(super) rule: &'static str,
+    /// The parser route the row asks (the registry's `route`).
+    #[cfg_attr(not(test), allow(dead_code))]
+    pub(super) route: &'static str,
     clears_origins: bool,
-    ask: for<'p, 'q> fn(&mut Parser<'p>, &StatementQuery<'q>) -> Option<Statement>,
+    ask: for<'p, 'q> fn(&mut Parser<'p>, &StatementAsk<'q, 'p>) -> Option<Statement>,
+}
+
+impl RulePackage for StatementFallback {
+    fn id(&self) -> &'static str {
+        self.rule
+    }
+}
+
+impl<'p> package::StatementFallback<Parser<'p>> for StatementFallback {
+    fn ask(&self, host: &mut Parser<'p>, query: &StatementAsk<'_, 'p>) -> Answer<Statement> {
+        Answer::from_option((self.ask)(host, query))
+    }
 }
 
 fn block(line: usize, instructions: Vec<LegacyInstruction>) -> Statement {
@@ -57,148 +115,149 @@ fn refusal(instruction: &LegacyInstruction) -> Option<&str> {
     }
 }
 
-/// The statement fallbacks of `expression_statement`, in consultation order.
-pub(super) const STATEMENT_FALLBACKS: &[StatementFallback] = &[
+/// The statement fallbacks' `ask` functions, named after the parser route
+/// each asks.
+mod statement {
+    use super::{Parser, Statement, StatementAsk, block, refusal};
+
+    type Ask<'q, 'p> = StatementAsk<'q, 'p>;
+
     // W43-INDEX-TRAVERSAL: a stepped access of a refused statement.
-    StatementFallback {
-        rule: "W43-INDEX-TRAVERSAL",
-        clears_origins: false,
-        ask: |parser, query| {
-            parser
-                .stepped_access(query.tokens, query.instruction)
-                .map(|sequence| block(query.line, sequence))
-        },
-    },
+    pub(super) fn stepped_access(
+        parser: &mut Parser<'_>,
+        query: &Ask<'_, '_>,
+    ) -> Option<Statement> {
+        parser
+            .stepped_access(query.tokens, query.decision)
+            .map(|sequence| block(query.line, sequence))
+    }
+
     // W44-INDIRECT-CALL-ARGUMENT-ACCESS: a call whose actuals the gate
     // refused, lowered to its actuals' reads and the call.
-    StatementFallback {
-        rule: "W44-INDIRECT-CALL-ARGUMENT-ACCESS",
-        clears_origins: false,
-        ask: |parser, query| {
-            parser
-                .call_argument_access(query.tokens, query.instruction)
-                .map(|sequence| block(query.line, sequence))
-        },
-    },
+    pub(super) fn call_argument_access(
+        parser: &mut Parser<'_>,
+        query: &Ask<'_, '_>,
+    ) -> Option<Statement> {
+        parser
+            .call_argument_access(query.tokens, query.decision)
+            .map(|sequence| block(query.line, sequence))
+    }
+
     // CG02-ELABORATION-CORE: only for a refusal.
-    StatementFallback {
-        rule: "10s",
-        clears_origins: true,
-        ask: |parser, query| {
-            let description = refusal(query.instruction)?;
-            parser.elaborated_statement(query.tokens, query.line, description)
-        },
-    },
+    pub(super) fn elaborated_statement(
+        parser: &mut Parser<'_>,
+        query: &Ask<'_, '_>,
+    ) -> Option<Statement> {
+        let description = refusal(query.decision)?;
+        parser.elaborated_statement(query.tokens, query.line, description)
+    }
+
     // CG08-CASTS-AND-TYPE-QUERIES (E15): after the elaborator.
-    StatementFallback {
-        rule: "11b",
-        clears_origins: true,
-        ask: |parser, query| {
-            parser.uncast_pointer_statement(query.tokens, query.line, query.instruction)
-        },
-    },
+    pub(super) fn uncast_pointer_statement(
+        parser: &mut Parser<'_>,
+        query: &Ask<'_, '_>,
+    ) -> Option<Statement> {
+        parser.uncast_pointer_statement(query.tokens, query.line, query.decision)
+    }
+
     // CG03-CALL-SUMMARY-INSTANTIATION: a call whose lexical substitution was
     // refused or incomplete.
-    StatementFallback {
-        rule: "10u",
-        clears_origins: true,
-        ask: |parser, query| {
-            parser
-                .substituted_call(query.tokens, query.line, query.instruction)
-                .map(|sequence| block(query.line, sequence))
-        },
-    },
+    pub(super) fn substituted_call(
+        parser: &mut Parser<'_>,
+        query: &Ask<'_, '_>,
+    ) -> Option<Statement> {
+        parser
+            .substituted_call(query.tokens, query.line, query.decision)
+            .map(|sequence| block(query.line, sequence))
+    }
+
     // CG05-NESTED-CALL-EFFECTS: the nested-call refusal.
-    StatementFallback {
-        rule: "10y",
-        clears_origins: true,
-        ask: |parser, query| {
-            parser
-                .nested_call_statement(query.tokens, query.line, query.instruction)
-                .map(|sequence| block(query.line, sequence))
-        },
-    },
+    pub(super) fn nested_call_statement(
+        parser: &mut Parser<'_>,
+        query: &Ask<'_, '_>,
+    ) -> Option<Statement> {
+        parser
+            .nested_call_statement(query.tokens, query.line, query.decision)
+            .map(|sequence| block(query.line, sequence))
+    }
+
     // CG06-VALUE-CONNECTIVES-AND-CONDITIONAL: only for a refusal.
-    StatementFallback {
-        rule: "10z",
-        clears_origins: true,
-        ask: |parser, query| {
-            let description = refusal(query.instruction)?;
-            parser.connective_statement(query.tokens, query.line, description)
-        },
-    },
+    pub(super) fn connective_statement(
+        parser: &mut Parser<'_>,
+        query: &Ask<'_, '_>,
+    ) -> Option<Statement> {
+        let description = refusal(query.decision)?;
+        parser.connective_statement(query.tokens, query.line, description)
+    }
+
     // CG07-GENERIC-AND-STATEMENT-EXPRESSIONS: only for a refusal.
-    StatementFallback {
-        rule: "11g",
-        clears_origins: true,
-        ask: |parser, query| {
-            let description = refusal(query.instruction)?;
-            parser.statement_expression_statement(
-                query.tokens,
-                query.line,
-                query.origin,
-                description,
-            )
-        },
-    },
+    pub(super) fn statement_expression_statement(
+        parser: &mut Parser<'_>,
+        query: &Ask<'_, '_>,
+    ) -> Option<Statement> {
+        let description = refusal(query.decision)?;
+        parser.statement_expression_statement(query.tokens, query.line, query.origin, description)
+    }
+
     // CG14-AGGREGATE-VALUES-AND-INITIALIZERS: only for a refusal.
-    StatementFallback {
-        rule: "11f",
-        clears_origins: true,
-        ask: |parser, query| {
-            parser.aggregate_statement(query.tokens, query.line, query.instruction)
-        },
-    },
+    pub(super) fn aggregate_statement(
+        parser: &mut Parser<'_>,
+        query: &Ask<'_, '_>,
+    ) -> Option<Statement> {
+        parser.aggregate_statement(query.tokens, query.line, query.decision)
+    }
+
     // CG19-ATOMIC-SOURCE-ROUTE: an uncontracted atomic builtin's refusal, or
     // an `_Atomic` store or read-modify-write statement's. A re-worded
     // refusal is an answer too, which ends the table (ROUTE-MAP finding 9).
-    StatementFallback {
-        rule: "11i",
-        clears_origins: true,
-        ask: |parser, query| {
-            parser.atomic_routed_statement(query.tokens, query.line, query.instruction)
-        },
-    },
+    pub(super) fn atomic_routed_statement(
+        parser: &mut Parser<'_>,
+        query: &Ask<'_, '_>,
+    ) -> Option<Statement> {
+        parser.atomic_routed_statement(query.tokens, query.line, query.decision)
+    }
+
     // CG17-LAYOUT-DERIVED-EXTENTS: a VLA declaration.
-    StatementFallback {
-        rule: "11u",
-        clears_origins: true,
-        ask: |parser, query| {
-            parser.vla_declaration_statement(query.tokens, query.line, query.instruction)
-        },
-    },
+    pub(super) fn vla_declaration_statement(
+        parser: &mut Parser<'_>,
+        query: &Ask<'_, '_>,
+    ) -> Option<Statement> {
+        parser.vla_declaration_statement(query.tokens, query.line, query.decision)
+    }
+
     // CG17-LAYOUT-DERIVED-EXTENTS: a `container_of` value.
-    StatementFallback {
-        rule: "11u",
-        clears_origins: true,
-        ask: |parser, query| {
-            parser.container_of_statement(query.tokens, query.line, query.instruction)
-        },
-    },
+    pub(super) fn container_of_statement(
+        parser: &mut Parser<'_>,
+        query: &Ask<'_, '_>,
+    ) -> Option<Statement> {
+        parser.container_of_statement(query.tokens, query.line, query.decision)
+    }
+
     // CG26-VARIADICS: an uncontracted `va_*` builtin's refusal.
-    StatementFallback {
-        rule: "11w",
-        clears_origins: true,
-        ask: |parser, query| parser.va_list_statement(query.tokens, query.line, query.instruction),
-    },
+    pub(super) fn va_list_statement(
+        parser: &mut Parser<'_>,
+        query: &Ask<'_, '_>,
+    ) -> Option<Statement> {
+        parser.va_list_statement(query.tokens, query.line, query.decision)
+    }
+
     // CG26-VARIADICS: the declared tail's refusal of a call statement.
-    StatementFallback {
-        rule: "11w",
-        clears_origins: true,
-        ask: |parser, query| {
-            parser.variadic_tail_statement(query.tokens, query.line, query.instruction)
-        },
-    },
+    pub(super) fn variadic_tail_statement(
+        parser: &mut Parser<'_>,
+        query: &Ask<'_, '_>,
+    ) -> Option<Statement> {
+        parser.variadic_tail_statement(query.tokens, query.line, query.decision)
+    }
+
     // CAST-FORMALIZATION: the uncast statement where the conversion table
     // removes a cast at a value position.
-    StatementFallback {
-        rule: "12h",
-        clears_origins: true,
-        ask: |parser, query| {
-            parser.uncast_value_statement(query.tokens, query.line, query.instruction)
-        },
-    },
-];
+    pub(super) fn uncast_value_statement(
+        parser: &mut Parser<'_>,
+        query: &Ask<'_, '_>,
+    ) -> Option<Statement> {
+        parser.uncast_value_statement(query.tokens, query.line, query.decision)
+    }
+}
 
 /// One refused return's question to the return fallbacks.
 pub(super) struct ReturnQuery<'q> {
@@ -210,128 +269,220 @@ pub(super) struct ReturnQuery<'q> {
     pub(super) statement: &'q Statement,
 }
 
+/// The rule API's return query over the parser.
+type ReturnAsk<'q, 'p> = package::ReturnQuery<'q, Parser<'p>>;
+
 /// One return fallback and its rule.
 pub(super) struct ReturnFallback {
-    /// Read by the order test and the `route-census` stream.
-    #[cfg_attr(not(any(test, feature = "route-census")), allow(dead_code))]
+    /// The registry id: the switch the row reads, and the name the order
+    /// test and the `route-census` stream use.
     pub(super) rule: &'static str,
-    ask: for<'p, 'q> fn(&mut Parser<'p>, &ReturnQuery<'q>) -> Option<Statement>,
+    /// The parser route the row asks (the registry's `route`).
+    #[cfg_attr(not(test), allow(dead_code))]
+    pub(super) route: &'static str,
+    ask: for<'p, 'q> fn(&mut Parser<'p>, &ReturnAsk<'q, 'p>) -> Option<Statement>,
 }
 
-/// The return fallbacks of the `return` arm, in consultation order. All but
-/// 10y and 11i are asked only for a refused return (`return_refused`).
-pub(super) const RETURN_FALLBACKS: &[ReturnFallback] = &[
+impl RulePackage for ReturnFallback {
+    fn id(&self) -> &'static str {
+        self.rule
+    }
+}
+
+impl<'p> package::ReturnFallback<Parser<'p>> for ReturnFallback {
+    fn ask(&self, host: &mut Parser<'p>, query: &ReturnAsk<'_, 'p>) -> Answer<Statement> {
+        Answer::from_option((self.ask)(host, query))
+    }
+}
+
+/// The return fallbacks' `ask` functions. All but 10y and 11i are asked only
+/// for a refused return (`return_refused`).
+mod returns {
+    use super::{Parser, ReturnAsk, Statement, atomic_route, return_refused};
+
+    type Ask<'q, 'p> = ReturnAsk<'q, 'p>;
+
     // CG02-ELABORATION-CORE.
-    ReturnFallback {
-        rule: "10s",
-        ask: |parser, query| {
-            return_refused(query.statement)
-                .then(|| parser.elaborated_return(query.expression, query.line))
-                .flatten()
-        },
-    },
+    pub(super) fn elaborated_return(
+        parser: &mut Parser<'_>,
+        query: &Ask<'_, '_>,
+    ) -> Option<Statement> {
+        return_refused(query.decided)
+            .then(|| parser.elaborated_return(query.expression, query.line))
+            .flatten()
+    }
+
     // CG03-CALL-SUMMARY-INSTANTIATION: after the elaborator.
-    ReturnFallback {
-        rule: "10u",
-        ask: |parser, query| {
-            return_refused(query.statement)
-                .then(|| parser.instantiated_return(query.expression, query.line))
-                .flatten()
-        },
-    },
+    pub(super) fn instantiated_return(
+        parser: &mut Parser<'_>,
+        query: &Ask<'_, '_>,
+    ) -> Option<Statement> {
+        return_refused(query.decided)
+            .then(|| parser.instantiated_return(query.expression, query.line))
+            .flatten()
+    }
+
     // CG05-NESTED-CALL-EFFECTS: a refused return or the nested-call refusal
     // (its own condition).
-    ReturnFallback {
-        rule: "10y",
-        ask: |parser, query| {
-            parser.nested_call_return(query.expression, query.line, query.statement)
-        },
-    },
+    pub(super) fn nested_call_return(
+        parser: &mut Parser<'_>,
+        query: &Ask<'_, '_>,
+    ) -> Option<Statement> {
+        parser.nested_call_return(query.expression, query.line, query.decided)
+    }
+
     // CG06-VALUE-CONNECTIVES-AND-CONDITIONAL.
-    ReturnFallback {
-        rule: "10z",
-        ask: |parser, query| {
-            return_refused(query.statement)
-                .then(|| parser.connective_return(query.expression, query.line))
-                .flatten()
-        },
-    },
+    pub(super) fn connective_return(
+        parser: &mut Parser<'_>,
+        query: &Ask<'_, '_>,
+    ) -> Option<Statement> {
+        return_refused(query.decided)
+            .then(|| parser.connective_return(query.expression, query.line))
+            .flatten()
+    }
+
     // CG07-GENERIC-AND-STATEMENT-EXPRESSIONS.
-    ReturnFallback {
-        rule: "11g",
-        ask: |parser, query| {
-            return_refused(query.statement)
-                .then(|| {
-                    parser.statement_expression_return(query.expression, query.line, query.origin)
-                })
-                .flatten()
-        },
-    },
+    pub(super) fn statement_expression_return(
+        parser: &mut Parser<'_>,
+        query: &Ask<'_, '_>,
+    ) -> Option<Statement> {
+        return_refused(query.decided)
+            .then(|| parser.statement_expression_return(query.expression, query.line, query.origin))
+            .flatten()
+    }
+
     // CG19-ATOMIC-SOURCE-ROUTE: a refused return or an uncontracted atomic
     // builtin's.
-    ReturnFallback {
-        rule: "11i",
-        ask: |parser, query| {
-            (return_refused(query.statement)
-                || atomic_route::refused_atomic_return(query.statement))
+    pub(super) fn atomic_routed_return(
+        parser: &mut Parser<'_>,
+        query: &Ask<'_, '_>,
+    ) -> Option<Statement> {
+        (return_refused(query.decided) || atomic_route::refused_atomic_return(query.decided))
             .then(|| parser.atomic_routed_return(query.expression, query.line))
             .flatten()
-        },
-    },
+    }
+
     // CG17-LAYOUT-DERIVED-EXTENTS.
-    ReturnFallback {
-        rule: "11u",
-        ask: |parser, query| {
-            return_refused(query.statement)
-                .then(|| parser.container_of_return(query.expression, query.line))
-                .flatten()
-        },
-    },
+    pub(super) fn container_of_return(
+        parser: &mut Parser<'_>,
+        query: &Ask<'_, '_>,
+    ) -> Option<Statement> {
+        return_refused(query.decided)
+            .then(|| parser.container_of_return(query.expression, query.line))
+            .flatten()
+    }
+
     // W48-BOTTOM-UP-CALLEE-BODIES.
-    ReturnFallback {
-        rule: "12f",
-        ask: |parser, query| {
-            return_refused(query.statement)
-                .then(|| parser.scalar_return_value(query.expression, query.line))
-                .flatten()
-        },
-    },
+    pub(super) fn scalar_return_value(
+        parser: &mut Parser<'_>,
+        query: &Ask<'_, '_>,
+    ) -> Option<Statement> {
+        return_refused(query.decided)
+            .then(|| parser.scalar_return_value(query.expression, query.line))
+            .flatten()
+    }
+}
+
+// generated:registry:start (from crates/gateway-rules/registry.toml by
+// `python3 scripts/gen_gateway_registry.py`; do not edit by hand)
+
+/// The statement fallbacks of `expression_statement`, in consultation
+/// order (the registry's `statement-fallback` placements).
+#[rustfmt::skip]
+pub(super) const STATEMENT_FALLBACKS: &[StatementFallback] = &[
+    StatementFallback { rule: "W43-INDEX-TRAVERSAL", route: "stepped_access", clears_origins: false, ask: statement::stepped_access },
+    StatementFallback { rule: "W44-INDIRECT-CALL-ARGUMENT-ACCESS", route: "call_argument_access", clears_origins: false, ask: statement::call_argument_access },
+    StatementFallback { rule: "10s", route: "elaborated_statement", clears_origins: true, ask: statement::elaborated_statement },
+    StatementFallback { rule: "11b", route: "uncast_pointer_statement", clears_origins: true, ask: statement::uncast_pointer_statement },
+    StatementFallback { rule: "10u", route: "substituted_call", clears_origins: true, ask: statement::substituted_call },
+    StatementFallback { rule: "10y", route: "nested_call_statement", clears_origins: true, ask: statement::nested_call_statement },
+    StatementFallback { rule: "10z", route: "connective_statement", clears_origins: true, ask: statement::connective_statement },
+    StatementFallback { rule: "11g", route: "statement_expression_statement", clears_origins: true, ask: statement::statement_expression_statement },
+    StatementFallback { rule: "11f", route: "aggregate_statement", clears_origins: true, ask: statement::aggregate_statement },
+    StatementFallback { rule: "11i", route: "atomic_routed_statement", clears_origins: true, ask: statement::atomic_routed_statement },
+    StatementFallback { rule: "11u", route: "vla_declaration_statement", clears_origins: true, ask: statement::vla_declaration_statement },
+    StatementFallback { rule: "11u", route: "container_of_statement", clears_origins: true, ask: statement::container_of_statement },
+    StatementFallback { rule: "11w", route: "va_list_statement", clears_origins: true, ask: statement::va_list_statement },
+    StatementFallback { rule: "11w", route: "variadic_tail_statement", clears_origins: true, ask: statement::variadic_tail_statement },
+    StatementFallback { rule: "12h", route: "uncast_value_statement", clears_origins: true, ask: statement::uncast_value_statement },
 ];
 
+/// The return fallbacks of the `return` arm, in consultation order (the
+/// registry's `return-fallback` placements).
+#[rustfmt::skip]
+pub(super) const RETURN_FALLBACKS: &[ReturnFallback] = &[
+    ReturnFallback { rule: "10s", route: "elaborated_return", ask: returns::elaborated_return },
+    ReturnFallback { rule: "10u", route: "instantiated_return", ask: returns::instantiated_return },
+    ReturnFallback { rule: "10y", route: "nested_call_return", ask: returns::nested_call_return },
+    ReturnFallback { rule: "10z", route: "connective_return", ask: returns::connective_return },
+    ReturnFallback { rule: "11g", route: "statement_expression_return", ask: returns::statement_expression_return },
+    ReturnFallback { rule: "11i", route: "atomic_routed_return", ask: returns::atomic_routed_return },
+    ReturnFallback { rule: "11u", route: "container_of_return", ask: returns::container_of_return },
+    ReturnFallback { rule: "12f", route: "scalar_return_value", ask: returns::scalar_return_value },
+];
+
+// generated:registry:end
+
 impl Parser<'_> {
-    /// Ask the statement fallbacks in table order; the first answer wins.
-    /// (The row index is the census row's position under `route-census`.)
-    #[allow(clippy::unused_enumerate_index)]
+    /// Ask the statement fallbacks in table order; the first answer wins and
+    /// a switched-off rule's row is not asked. (The row index is the census
+    /// row's position under `route-census`.)
     pub(super) fn ask_statement_fallbacks(
         &mut self,
         query: &StatementQuery<'_>,
     ) -> Option<Statement> {
-        for (_position, fallback) in STATEMENT_FALLBACKS.iter().enumerate() {
-            let answer = (fallback.ask)(self, query);
-            #[cfg(feature = "route-census")]
-            census::record("statement", _position, fallback.rule, answer.is_some());
-            if let Some(statement) = answer {
-                if fallback.clears_origins {
-                    self.element_origins.clear();
-                }
-                return Some(statement);
-            }
+        let query = StatementAsk {
+            tokens: query.tokens,
+            line: query.line,
+            origin: query.origin,
+            decision: query.instruction,
+        };
+        let decided = consult(
+            STATEMENT_FALLBACKS,
+            |fallback| crate::gateway_rules::enabled(fallback.rule),
+            |_position, fallback| {
+                let answer = package::StatementFallback::ask(fallback, self, &query);
+                #[cfg(feature = "route-census")]
+                census::record(
+                    "statement",
+                    _position,
+                    fallback.rule,
+                    matches!(answer, Answer::Admit(_)),
+                );
+                answer
+            },
+        )?;
+        if STATEMENT_FALLBACKS[decided.index].clears_origins {
+            self.element_origins.clear();
         }
-        None
+        Some(decided.admission.lowering)
     }
 
-    /// Ask the return fallbacks in table order; the first answer wins.
-    #[allow(clippy::unused_enumerate_index)]
+    /// Ask the return fallbacks in table order; the first answer wins and a
+    /// switched-off rule's row is not asked.
     pub(super) fn ask_return_fallbacks(&mut self, query: &ReturnQuery<'_>) -> Option<Statement> {
-        for (_position, fallback) in RETURN_FALLBACKS.iter().enumerate() {
-            let answer = (fallback.ask)(self, query);
-            #[cfg(feature = "route-census")]
-            census::record("return", _position, fallback.rule, answer.is_some());
-            if answer.is_some() {
-                return answer;
-            }
-        }
-        None
+        let query = ReturnAsk {
+            expression: query.expression,
+            line: query.line,
+            origin: query.origin,
+            decided: query.statement,
+        };
+        consult(
+            RETURN_FALLBACKS,
+            |fallback| crate::gateway_rules::enabled(fallback.rule),
+            |_position, fallback| {
+                let answer = package::ReturnFallback::ask(fallback, self, &query);
+                #[cfg(feature = "route-census")]
+                census::record(
+                    "return",
+                    _position,
+                    fallback.rule,
+                    matches!(answer, Answer::Admit(_)),
+                );
+                answer
+            },
+        )
+        .map(|decided| decided.admission.lowering)
     }
 }
 
@@ -372,6 +523,8 @@ mod census {
 #[cfg(test)]
 mod tests {
     use super::{RETURN_FALLBACKS, STATEMENT_FALLBACKS};
+    use crate::gateway_rules::REGISTRY;
+    use qcore_gateway_rule_api::{Position, check_registry, ordered_table};
 
     /// The tables' order is the rule order the route map documents; a moved
     /// or dropped row fails here before any corpus run.
@@ -408,6 +561,34 @@ mod tests {
         assert_eq!(
             returns,
             ["10s", "10u", "10y", "10z", "11g", "11i", "11u", "12f"]
+        );
+    }
+
+    /// Card GATEWAY-RULE-API: the compiled tables are the registry's ordered
+    /// placements, row for row (rule and route), and the registry keeps the
+    /// API's laws.
+    #[test]
+    fn the_tables_are_the_registry_placements() {
+        assert_eq!(check_registry(REGISTRY), Ok(()));
+        let placed = |position| {
+            ordered_table(REGISTRY, position)
+                .into_iter()
+                .map(|(entry, placement)| (entry.id, placement.route))
+                .collect::<Vec<_>>()
+        };
+        assert_eq!(
+            placed(Position::StatementFallback),
+            STATEMENT_FALLBACKS
+                .iter()
+                .map(|row| (row.rule, row.route))
+                .collect::<Vec<_>>()
+        );
+        assert_eq!(
+            placed(Position::ReturnFallback),
+            RETURN_FALLBACKS
+                .iter()
+                .map(|row| (row.rule, row.route))
+                .collect::<Vec<_>>()
         );
     }
 }

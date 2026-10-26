@@ -88,8 +88,8 @@ pub struct RowKey {
 
 /// The gateway rule set a producer ran, with the rules it switched off.
 ///
-/// No run-time switch list exists yet (`RULE-SWITCHES`); `off` is the data
-/// slot such a list fills, and is empty for every producer today.
+/// `off` is the run's `QCORE_GATEWAY_RULES_OFF` list as the gateway applied
+/// it (card GATEWAY-RULE-API), empty when no rule is switched off.
 #[derive(Clone, Debug, PartialEq, Eq, PartialOrd, Ord, Hash, Serialize, Deserialize)]
 #[serde(deny_unknown_fields)]
 pub struct RuleSet {
