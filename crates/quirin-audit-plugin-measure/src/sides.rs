@@ -661,9 +661,9 @@ pub fn run_route(
             out.join("resource-diagnostics.json").display().to_string(),
         ],
     };
-    // Under a slot, the route gives the slot's budget itself, in the two-word
-    // form `quirin-audit current` reads; `gate_slot.py` accepts an equal flag
-    // unchanged (and inserts that form when it is absent).
+    // Under a slot, `gate_slot.py` would insert `--memory-budget-mib=N`, a
+    // spelling `quirin-audit current` refuses; giving the slot's budget in
+    // the two-word form the CLI reads makes the slot accept it unchanged.
     let mut command = command;
     if context.slot_script.is_some() && matches!(route.kind, RouteKind::ConfiguredSelection { .. })
     {
