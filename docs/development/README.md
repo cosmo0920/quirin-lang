@@ -9,6 +9,7 @@ entry point and heading links.
 | Specifications and acceptance references | [Development references](references.md) |
 | Crates and compiler entry points | [Architecture](architecture.md) |
 | Measured status and its sources | [Current status](../STATUS.md) |
+| Per-rule contributions beside each live profile's total (generated) | [Contributions](contributions.md) |
 | Numbered constraints and operational policy | [Rule router](../agents/README.md) |
 | Historical cycle evidence | [Cycle status and recorded evidence](cycle-status.md) |
 | Build, Lean and Windows setup | [Build and test](build-and-test.md) |

@@ -136,8 +136,9 @@ editing reconciliation tooling.
   docs/reports/<card>/integration-amendments.json` (`--dry-run` first;
   `--legacy` for a pre-schema file). It refuses an invalid or inapplicable
   file and writes nothing; otherwise it writes the increment paragraph, the
-  status paragraph and the `named_followups` edits, then prints the post-gate
-  sequence `scripts/land.py` owns. On a merge into a newer main, pass
+  status paragraph, the `named_followups` edits and, when the card lists
+  contribution ledgers, the regenerated contributions page, then prints the
+  post-gate sequence `scripts/land.py` owns. On a merge into a newer main, pass
   `--profiles-base <that main>` so the `profiles[]` check attributes only this
   card's baselines. Run `python3 scripts/land.py check` after regenerating the
   matrix and report index and before the Python suite.
