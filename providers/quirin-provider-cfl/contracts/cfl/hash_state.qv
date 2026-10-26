@@ -1,0 +1,45 @@
+module contract;
+
+// Source-audited declared model for cfl_hash.h at Fluent Bit
+// 66910c10a4d7eafa810b84229cf2dcf7b0f26f97. The names are aliases of the
+// vendored XXH3 streaming API. This file has no resource_contract_v1 marker and
+// grants no interpreted call permission. In particular, digest is not assumed
+// nonzero: the NUL-free byte sequence 42 d5 68 e1 38 d7 27 ff hashes to zero
+// under the pinned default secret and short-input mixer.
+
+resource type CflHashState {
+    repr: ptr<mut, u8>;
+    footprint: { hash_states = 1 };
+    destructor: cfl_hash_state_retire noexcept;
+    copy: forbidden;
+    move: allowed;
+}
+
+extern fn cfl_hash_64bits_reset(state: borrow<'state, mut, CflHashState> use one) -> i32
+contract {
+    requires state_points_to_writable_live_cfl_hash_state;
+    ensures normal zero_result_initializes_the_default_secret_stream;
+    ensures normal nonzero_result_does_not_establish_initialized_state;
+    ensures normal no_input_buffer_or_caller_resource_is_consumed;
+};
+
+extern fn cfl_hash_64bits_update(state: borrow<'state, mut, CflHashState> use one,
+                                 input: ptr<const, u8>, len: usize) -> i32
+contract {
+    requires state_is_live_and_successfully_initialized;
+    requires input_is_readable_for_len_bytes_or_len_is_zero;
+    requires input_and_state_writable_storage_do_not_overlap;
+    ensures normal zero_result_commits_exactly_the_len_byte_stream_effect;
+    ensures normal nonzero_result_grants_no_digest_or_state_progress_claim;
+    ensures normal input_storage_and_caller_resources_are_not_consumed;
+};
+
+extern fn cfl_hash_64bits_digest(state: borrow<'state, const, CflHashState> use one) -> u64
+contract {
+    requires state_is_live_and_successfully_initialized;
+    requires every_successful_update_effect_is_in_stream_order;
+    requires pinned_default_secret_and_exact_xxh3_algorithm_identity;
+    ensures normal result_is_the_xxh3_64_digest_of_the_committed_stream;
+    ensures normal result_may_equal_zero_for_a_nonempty_nul_free_stream;
+    ensures normal state_storage_and_caller_resources_are_not_consumed;
+};

@@ -10,6 +10,9 @@ use qcore_compiler::{
 const EXPECTED_CONTRACTS: &[(&str, &str, usize)] = &[
     ("cfl/arena_lifetime.qv", "cfl_arena_create_with_options", 5),
     ("cfl/arena_lifetime.qv", "cfl_arena_destroy", 5),
+    ("cfl/hash_state.qv", "cfl_hash_64bits_reset", 4),
+    ("cfl/hash_state.qv", "cfl_hash_64bits_update", 6),
+    ("cfl/hash_state.qv", "cfl_hash_64bits_digest", 6),
     ("cfl/intrusive_list.qv", "cfl_list_add", 4),
     ("cfl/intrusive_list.qv", "cfl_list_del", 5),
     // Rule 36b: declared-model initializer effects, no resource-v1 authority.
@@ -2487,7 +2490,7 @@ fn every_qcore_contract_source_parses_round_trips_and_compiles() {
     // Callback placement adds librdkafka/logging.qv; declarations and clauses are unchanged.
     // 137 -> 138 by card W48-RK-LOG-CALLER-FRAME's librdkafka/log_caller_frame.qv.
     // Map and opts lifecycle models deliberately add two canonical modules.
-    assert_eq!(sources.len(), 142, "unexpected contract corpus size");
+    assert_eq!(sources.len(), 143, "unexpected contract corpus size");
 
     for (logical, path) in &sources {
         let written = fs::read_to_string(path).expect("contract source is readable");

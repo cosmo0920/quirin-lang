@@ -2,7 +2,7 @@
 
 Library crate `quirin-provider-cfl` (Rust library `quirin_provider_cfl`) in the separate
 `providers/` workspace. It owns the shared Quirin contract modules for
-the CFL support library (arena and SDS lifetimes, intrusive lists, time), under `contracts/cfl/` (4 modules). These are canonical
+the CFL support library (arena and SDS lifetimes, hash state, intrusive lists, time), under `contracts/cfl/` (6 modules). These are canonical
 sources, not copies: the [corpus index](../../contract/corpus.json) names this
 crate's `contracts/` as a root and rejects duplicate logical names. The crate is
 data only; it links no provider runtime and is not an executable package.
