@@ -228,6 +228,37 @@ fn converted_wrappers_elaborate_to_the_hand_written_contracts() {
             .collect::<Vec<_>>()
             .join("\n");
         assert_eq!(omitted, if krate == LIBRDKAFKA { 8 } else { 0 }, "{module}");
+        let legacy_text = if krate == LIBRDKAFKA {
+            // Restore only the seven independently archived opaque atoms for
+            // this frozen token comparison. Current typed loading is checked
+            // separately below; the checkpoint never supplies live truth.
+            let checkpoint = include_str!(
+                "../../docs/reports/quant-contract-hypotheses/plugin/before/providers/qcore-provider-librdkafka/contracts/librdkafka/memory.qv"
+            );
+            let mut restored = 0;
+            let text = legacy_text
+                .lines()
+                .map(|line| {
+                    if let Some(formal) = line.trim().strip_prefix("quant proposition #plugin_") {
+                        let id = format!("plugin_{}", formal.split('(').next().unwrap());
+                        let prefix = format!("requires resource_hypothesis({id},");
+                        let old = checkpoint
+                            .lines()
+                            .find(|l| l.trim().starts_with(&prefix))
+                            .expect("typed atom has no independent historical counterpart");
+                        restored += 1;
+                        old
+                    } else {
+                        line
+                    }
+                })
+                .collect::<Vec<_>>()
+                .join("\n");
+            assert_eq!(restored, 7);
+            text
+        } else {
+            legacy_text
+        };
         let after = parse_source_program(&legacy_text).unwrap();
         let hand_parsed = parse_source_program(&before).unwrap();
         let names = |parsed: &qcore_frontend::frontend::SourceProgram| {

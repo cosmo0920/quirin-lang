@@ -1,0 +1,118 @@
+{
+  "schema": "quant-default-setter-postcondition-migration/1",
+  "source": "providers/qcore-provider-cmetrics/contracts/cmetrics/typed_setters.qv",
+  "before_sha256": "16dae066f7b667098ceceafba2e11a4d1f06701a9eb41de5f2cd53c450afa2d2",
+  "after_sha256": "1ca57003973160606e19e980b35f96364b71c7b356ee9de3896f5aeeb669a55f",
+  "declarations": [
+    {
+      "declaration": "cmt_histogram_set_default",
+      "old_sentences": [
+        "result_is_zero_or_minus_one",
+        "minus_one_may_retain_lookup_or_storage_preparation_changes",
+        "zero_result_sets_all_count_plus_one_buckets_sum_count_and_timestamp",
+        "bucket_counts_follow_u64_to_double_to_u64_conversion_not_exact_copy",
+        "new_hist_bucket_storage_is_metric_owned_and_inputs_are_not_retained",
+        "no_whole_histogram_atomic_snapshot_is_promised"
+      ],
+      "new_ids": [
+        "result_domain",
+        "lookup",
+        "map_lookup_write",
+        "lookup_failure",
+        "root_custody",
+        "metric_custody",
+        "active_input_custody",
+        "present_success",
+        "bucket_values",
+        "sum_count_timestamp"
+      ]
+    },
+    {
+      "declaration": "cmt_summary_set_default",
+      "old_sentences": [
+        "result_is_zero_or_minus_one",
+        "minus_one_may_retain_lookup_or_storage_preparation_changes",
+        "zero_result_sets_sum_count_and_timestamp",
+        "present_input_sets_quantiles_flag_and_each_admitted_quantile_slot",
+        "null_input_preserves_quantile_values_and_set_flag_but_may_prepare_storage",
+        "new_quantile_storage_is_metric_owned_and_input_is_not_retained",
+        "no_whole_summary_atomic_snapshot_is_promised"
+      ],
+      "new_ids": [
+        "result_domain",
+        "lookup",
+        "map_lookup_write",
+        "lookup_failure",
+        "root_custody",
+        "metric_custody",
+        "active_input_custody",
+        "success_metric",
+        "sum_count_timestamp",
+        "present_quantile_flag",
+        "admitted_quantile_values",
+        "null_quantile_flag",
+        "null_quantile_no_call",
+        "existing_quantile_storage",
+        "null_input_existing_values",
+        "prepared_quantile_storage",
+        "null_input_new_values",
+        "failure_reason",
+        "present_complete",
+        "zero_parent_storage"
+      ]
+    },
+    {
+      "declaration": "cmt_exp_histogram_set_default",
+      "old_sentences": [
+        "result_is_zero_or_minus_one",
+        "positive_count_with_null_input_returns_minus_one_after_possible_lookup_changes",
+        "preparation_failure_preserves_old_arrays_and_frees_temporary_copies",
+        "minus_one_does_not_imply_lookup_rollback",
+        "zero_result_installs_fresh_owned_copies_or_null_for_zero_counts",
+        "zero_result_sets_scale_zero_fields_offsets_counts_sum_flag_sum_and_timestamp",
+        "old_arrays_are_freed_after_swap_and_unlock_and_old_aliases_are_invalidated",
+        "input_array_ownership_is_preserved_and_input_pointers_are_not_retained",
+        "map_metric_and_enclosing_histogram_ownership_are_preserved",
+        "internal_array_lock_does_not_supply_retirement_or_raw_alias_lifetime"
+      ],
+      "new_ids": [
+        "result_domain",
+        "lookup",
+        "map_lookup_write",
+        "lookup_failure",
+        "root_custody",
+        "metric_custody",
+        "active_input_custody",
+        "null_input_failure",
+        "success_metric",
+        "failed_preparation_fields",
+        "failed_copy_release",
+        "positive_copy",
+        "positive_fresh",
+        "positive_release",
+        "positive_swap_order",
+        "negative_copy",
+        "negative_fresh",
+        "negative_release",
+        "negative_swap_order",
+        "unlock",
+        "numeric_fields",
+        "threshold_write",
+        "sum_flag_bits",
+        "failure_reason",
+        "positive_aliases",
+        "negative_aliases"
+      ]
+    }
+  ],
+  "open_bindings": [
+    "lookup helper result versus nested map result",
+    "active input footprint includes only actually live/nonzero input arrays",
+    "complete direct/nested source events and return positions",
+    "before/after/after-lookup state and exact field/array interpretations",
+    "C floating conversion and abstract assignment event semantics",
+    "allocation epochs, byte ranges, physical separation and exact copies",
+    "source/helper/backend and Rust/Lean correspondence"
+  ],
+  "permission": "none"
+}

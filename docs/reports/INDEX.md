@@ -223,6 +223,8 @@ Regenerate with `python3 scripts/build_docs_index.py`; validate with `--check`.
 
 | [contract-pin-tip-mode](contract-pin-tip-mode/README.md) | CONTRACT-PIN-TIP-MODE: contracts that track the tip of a fix branch |
 
+| [contract-supersession](contract-supersession/README.md) | CONTRACT-SUPERSESSION |
+
 | [contract-view-projection-check](contract-view-projection-check/README.md) | CONTRACT-VIEW-PROJECTION-CHECK: checked relations between the views of one function |
 
 | [contribution-ledgers](contribution-ledgers/README.md) | CONTRIBUTION-LEDGERS: per-rule contribution ledgers |
@@ -517,6 +519,8 @@ Regenerate with `python3 scripts/build_docs_index.py`; validate with `--check`.
 
 | [gateway-c-location](gateway-c-location/README.md) | GATEWAY-C-LOCATION — a gateway diagnostic names the C a person wrote — 2026-09-12 |
 
+| [gateway-rule-api](gateway-rule-api/README.md) | GATEWAY-RULE-API: the gateway rule interface, registry and rule switches |
+
 | [generalization-integration-20260907](generalization-integration-20260907/README.md) | Generalization integration checkpoint — 2026-09-07 |
 
 | [generated-roots](generated-roots/README.md) | GENERATED-ROOTS: generated Lean roots and rule documents |
@@ -712,6 +716,8 @@ Regenerate with `python3 scripts/build_docs_index.py`; validate with `--check`.
 | [qr-lexical-selectors-declaration-names](qr-lexical-selectors-declaration-names/README.md) | QR-LEXICAL-SELECTORS-DECLARATION-NAMES: route selectors read no declaration name |
 
 | [qr-print-route-matches-declaration](qr-print-route-matches-declaration/README.md) | QR-PRINT-ROUTE-MATCHES-DECLARATION: the print-call route reads a call, not a name |
+
+| [quant-contract-hypotheses](quant-contract-hypotheses/README.md) | Quantified contract hypotheses across providers |
 
 | [quant-index-checks](quant-index-checks/README.md) | QUANT-INDEX-CHECKS |
 

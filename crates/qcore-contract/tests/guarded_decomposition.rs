@@ -28,6 +28,16 @@ fn application(
     let module = metadata["module"].as_str().unwrap().to_string();
     let declaration = metadata["declaration"].as_str().unwrap().to_string();
     let mut source = fs::read_to_string(root().join(&module)).unwrap();
+    if name == "plugin" {
+        // This application owns its opaque checkpoint. The typed migration
+        // preserves its exact source as an independent, hash-checked asset.
+        source = fs::read_to_string(
+            root()
+                .join("docs/reports/quant-contract-hypotheses/plugin/before")
+                .join(&module),
+        )
+        .unwrap();
+    }
     if name == "cjson" {
         // The frozen sidecar checkpoint retains its original source identity.
         // Recover that exact source only through the checked version-2 bridge.

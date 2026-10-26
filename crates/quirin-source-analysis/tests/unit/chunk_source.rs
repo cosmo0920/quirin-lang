@@ -299,10 +299,17 @@ fn validated_frame_helper_connects_unlock_to_identity_and_native_contract() {
     operations.push(ChunkOperation::DestroyContext { context: 3 });
     assert!(check_chunk_program(&ChunkProgram { operations }).is_ok());
     for changed in [
-        contract.replace("field_error_n == 0", "field_error_n == 1"),
-        contract.replace("ensures normal field_error_n == 0;", ""),
+        contract.replace("#field_error_n == 0", "#field_error_n == 1"),
+        contract.replace(
+            "quant condition normal #exit_7(#field_error_n: integer) = (#field_error_n == 0);",
+            "",
+        ),
         contract.replace("mut, Chunk", "const, Chunk"),
     ] {
+        assert_ne!(
+            changed, contract,
+            "mutation did not change the typed contract"
+        );
         assert!(crate::chunk_contract::check_chunk_source_contract(&summary, &changed).is_err());
     }
     let changed = frame_helper("void reset(struct cio_chunk *ch) { ch->error_n = 1; }").unwrap();

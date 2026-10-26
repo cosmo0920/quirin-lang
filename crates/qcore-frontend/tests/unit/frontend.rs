@@ -508,5 +508,5 @@ fn retains_formal_proposition_kind_and_source_without_reserving_relation_names()
         .value;
     assert_eq!(clause.kind, SourceContractClauseKind::QuantProposition);
     assert_eq!(clause.expression_source, "#p(#r: predicate<>) = #r()");
-    assert_eq!(program.to_string(), source);
+    assert_eq!(program.to_string(), format!("{source}\n"));
 }

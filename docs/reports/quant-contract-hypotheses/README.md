@@ -173,4 +173,23 @@ double-bit sum, guarded quantile and ordered CAS cases stay distinct.
 twenty counter/gauge/untyped sentence clauses with twenty-six typed normal
 conditions. Lookup side effects, observed C floating comparison, direct calls,
 scalar descendants and post-lookup custody stay distinct. The three typed
-histogram/summary default setters and map lifecycle guarantees are still open.
+histogram/summary default setters now have a
+[separate decomposition record](default-setter-postconditions/README.md):
+23 prose postconditions become 56 typed normal conditions, with sixteen audited
+conditional model properties. Final standing/provider validation is pending.
+[Integration repairs](integration-repairs/README.md) retain typed guards and
+canonical graph identities after the first failed merged gate.
+
+## Follow-ons retained by this card
+
+- Complete the remaining provider prerequisite and postcondition migration,
+  including CMetrics map lifecycle guarantees, without dropping interpreted
+  clauses or changing live verdicts without their own prediction and evidence.
+- Replace retained legacy plugin premise sentences only after the typed consumer
+  reproduces their pinned interpretation and the parity diff is archived.
+- Reconcile cJSON guarded-source identities and bound evidence before migrating
+  its remaining opaque atoms; do not rewrite frozen plans or checkpoints.
+- Bind theorem/effect requests to actual artifacts and C observations. Typed
+  declarations and conditional model proofs alone remain insufficient.
+- Finish full landing/provider validation and publish the final native comparison
+  and immutable baseline before declaring LANDING-PUBLISH complete.

@@ -943,7 +943,16 @@ fn quant_check_spans(program: &SourceProgram) -> Vec<Span> {
         .iter()
         .filter_map(|declaration| declaration.value.function_contract.as_ref())
         .flat_map(|contract| &contract.clauses)
-        .filter(|clause| clause.value.kind == SourceContractClauseKind::QuantCheck)
+        .filter(|clause| {
+            matches!(
+                clause.value.kind,
+                SourceContractClauseKind::QuantCheck
+                    | SourceContractClauseKind::QuantProposition
+                    | SourceContractClauseKind::QuantCondition(_)
+                    | SourceContractClauseKind::QuantEffect(_)
+                    | SourceContractClauseKind::QuantTheorem
+            )
+        })
         .map(|clause| clause.value.expression_span)
         .collect()
 }

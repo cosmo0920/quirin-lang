@@ -115,7 +115,8 @@ fn actual_resource_callback_contract_propagates_through_a_real_summary_without_c
         .lines()
         .filter(|line| {
             let line = line.trim();
-            !line.starts_with("requires resource_hypothesis(plugin_")
+            !line.starts_with("quant proposition #plugin_")
+                && !line.starts_with("requires resource_hypothesis(plugin_")
                 && !line.starts_with(
                     "requires resource_premise_decomposition(rk_plugin_callback_closure,",
                 )
@@ -187,7 +188,8 @@ fn actual_clang_member_reader_keeps_the_full_null_row_and_routes_its_real_premis
         .lines()
         .filter(|line| {
             let line = line.trim();
-            !line.starts_with("requires resource_hypothesis(plugin_")
+            !line.starts_with("quant proposition #plugin_")
+                && !line.starts_with("requires resource_hypothesis(plugin_")
                 && !line.starts_with(
                     "requires resource_premise_decomposition(rk_plugin_callback_closure,",
                 )

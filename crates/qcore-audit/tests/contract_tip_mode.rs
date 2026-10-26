@@ -484,7 +484,7 @@ fn a_tip_entry_is_in_force_at_its_tip_and_held_elsewhere() {
 }
 
 #[test]
-fn a_tip_entry_is_kept_written_and_read_as_version_three() {
+fn a_tip_entry_keeps_its_payload_and_version_four_review_stamps() {
     let (tree, _a, reviewed) = tracked_tree();
     // Every other pin run keeps the tip entry and prints its notice.
     let tip_lock = fs::read_to_string(tree.lock_path()).unwrap();
@@ -492,11 +492,23 @@ fn a_tip_entry_is_kept_written_and_read_as_version_three() {
     assert_eq!(fs::read_to_string(tree.lock_path()).unwrap(), tip_lock);
     assert_eq!(notice_lines(&again, "info"), 1, "{again}");
     succeeded(&tree.pin(&["--regenerate"]));
-    assert_eq!(fs::read_to_string(tree.lock_path()).unwrap(), tip_lock);
+    // Version 4 refreshes review stamps on regenerated reviewed entries; the
+    // source identities and the independently retained tip must remain exact.
+    let regenerated = fs::read_to_string(tree.lock_path()).unwrap();
+    let old_tip: serde_json::Value = serde_json::from_str(&tip_lock).unwrap();
+    let new_tip: serde_json::Value = serde_json::from_str(&regenerated).unwrap();
+    assert_eq!(
+        old_tip["tip"], new_tip["tip"],
+        "regeneration changed the retained tip"
+    );
+    assert_same_pin_payload_with_monotone_stamps(&tip_lock, &regenerated);
     // `--untrack-tip` turns it back into a reviewed identity at HEAD (A):
     // the lock is again the reviewed-only version-2 lock, byte for byte.
     succeeded(&tree.pin(&["--function", "box_drop", "--untrack-tip"]));
-    assert_eq!(fs::read_to_string(tree.lock_path()).unwrap(), reviewed);
+    assert_same_pin_payload_with_monotone_stamps(
+        &reviewed,
+        &fs::read_to_string(tree.lock_path()).unwrap(),
+    );
     let refused = tree.pin(&["--function", "box_drop", "--untrack-tip"]);
     assert_eq!(refused.status.code(), Some(2));
     // A flexible or unknown function, or a missing ref, cannot be tracked.
@@ -528,4 +540,26 @@ fn a_tip_entry_is_kept_written_and_read_as_version_three() {
         let stderr = String::from_utf8_lossy(&output.stderr);
         assert!(stderr.contains(expected), "{stderr}");
     }
+}
+
+fn assert_same_pin_payload_with_monotone_stamps(before: &str, after: &str) {
+    let before: serde_json::Value = serde_json::from_str(before).unwrap();
+    let mut after: serde_json::Value = serde_json::from_str(after).unwrap();
+    assert_eq!(before["lock_version"], 4);
+    assert_eq!(after["lock_version"], 4);
+    for section in ["pinned", "flexible", "tip"] {
+        let old = before[section].as_array().unwrap();
+        let new = after[section].as_array_mut().unwrap();
+        assert_eq!(old.len(), new.len());
+        for (a, b) in old.iter().zip(new) {
+            let old_stamp = a["pinned_at"].as_str().unwrap();
+            let new_stamp = b["pinned_at"].as_str().unwrap();
+            assert!(new_stamp >= old_stamp, "review stamp moved backwards");
+            b["pinned_at"] = a["pinned_at"].clone();
+        }
+    }
+    assert_eq!(
+        before, after,
+        "a pin payload changed beyond its review stamp"
+    );
 }

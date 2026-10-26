@@ -224,7 +224,9 @@ pub fn declaration(decl: &SourceDeclaration, legacy: &[DeclaredPremise]) -> Resu
     validate(&graph)?;
     Ok(graph)
 }
-fn expected_version(graph: &Graph) -> u32 {
+/// Canonical encoding version for the actual node forms. This does not
+/// validate roots, references, typing or erasure; callers must still validate.
+pub fn expected_version(graph: &Graph) -> u32 {
     if graph
         .atoms
         .values()

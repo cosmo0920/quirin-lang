@@ -137,6 +137,8 @@ crates/qcore-core             # L1: trusted semantic kernel
   weak memory, concurrency, custody algebra, library/container/reference-count custody
   and pure model checkers.
 crates/qcore-frontend         # L1: front end, elaboration + whole-program checking
+  Uses the L0 typed formal-contract ASTs; schemas remain portable data with no
+  workspace dependencies. No analysis logic moves into the schema leaf.
 crates/qcore-contract         # L1: .qcore contract parsing, loader,
   contract/observation interpreters (contract_observation, chunk_contract).
 crates/qcore-c-gateway        # L2: legacy_c, clang discovery, typed_c_ast,

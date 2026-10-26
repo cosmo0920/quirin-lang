@@ -27,7 +27,7 @@ fn preserves_explicit_selectors_and_formulas_in_source_and_wire() {
             serde_json::from_slice(&serde_json::to_vec(&expected).unwrap()).unwrap();
         quant_condition::validate(&decoded).unwrap();
         assert_eq!(expected, decoded);
-        assert_eq!(parsed.to_string(), source);
+        assert_eq!(parsed.to_string(), format!("{source}\n"));
     }
 }
 #[test]

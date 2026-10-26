@@ -15,7 +15,7 @@ mod fixture;
 use fixture::*;
 
 use qcore_c_gateway::boolean_source::{
-    ChunkFrameSummary, ChunkSourceResult, import_chunk_frame_helper,
+    ChunkFrameSummary, ChunkSourceResult, ChunkSourceSummary, import_chunk_frame_helper,
     import_chunk_source_with_profile,
 };
 use qcore_c_gateway::legacy_c::{
@@ -113,6 +113,24 @@ enum Expect {
     Unknown,
 }
 
+// Inventory fixtures name their source function `run`; the production template
+// declares `cio_chunk_is_locked`. Instantiate the template's symbol explicitly
+// before requesting an obligation. Production derivation must still refuse a
+// contract with no declaration for the requested symbol. These tests inspect
+// obligation completeness; they do not claim this getter postcondition holds
+// for every mutation of the source body.
+fn inventory_task(
+    summary: &ChunkSourceSummary,
+) -> qcore_verification::source_effect::BooleanFieldSourceTask {
+    assert_ne!(summary.function(), "cio_chunk_unlock");
+    let contract = CONTRACT.replacen(
+        "extern fn cio_chunk_is_locked(",
+        &format!("extern fn {}(", summary.function()),
+        1,
+    );
+    task(summary, &contract)
+}
+
 /// Derive the obligation inventory the way the audit does, and check the
 /// per-function obligation shape while collecting it.
 fn inventory(
@@ -123,7 +141,7 @@ fn inventory(
     for result in imports_with(unit, helpers).expect("import must not fail for these fixtures") {
         match result {
             ChunkSourceResult::Summary(summary) => {
-                let replay = task(&summary, CONTRACT);
+                let replay = inventory_task(&summary);
                 let obligations = &replay.task().obligations;
                 assert_eq!(
                     obligations.len(),
@@ -770,8 +788,8 @@ fn deleting_a_lifecycle_relevant_statement_changes_the_derived_obligation_set() 
 
     // A stale witness/task pair from before the deletion cannot be replayed
     // against the mutated import, and vice versa.
-    let original_replay = task(&original, CONTRACT);
-    let mutated_replay = task(&mutated, CONTRACT);
+    let original_replay = inventory_task(&original);
+    let mutated_replay = inventory_task(&mutated);
     assert_ne!(
         original_replay.task().task_digest(),
         mutated_replay.task().task_digest()

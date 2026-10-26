@@ -10,7 +10,9 @@ use std::path::PathBuf;
 const ALLOWED: &[(&str, &[&str])] = &[
     ("crates/qcore-schemas", &[]),
     ("crates/qcore-core", &[]),
-    ("crates/qcore-frontend", &["qcore-core"]),
+    // Formal contract ASTs are portable L0 data; frontend parsing points
+    // downward to the schema leaf, which still has no workspace dependencies.
+    ("crates/qcore-frontend", &["qcore-core", "qcore-schemas"]),
     (
         "crates/qcore-contract",
         &["qcore-core", "qcore-frontend", "qcore-schemas"],

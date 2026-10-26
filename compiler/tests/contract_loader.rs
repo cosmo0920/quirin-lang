@@ -2193,10 +2193,7 @@ fn every_corpus_module_outside_the_v1_vocabulary_is_rejected_not_skipped() {
     // declaration still rejects, because the rest of that declaration is
     // owned by the language front end.
     let lifecycle = std::fs::read_to_string(&modules["chunkio/chunk_destructor.qv"]).unwrap();
-    let marked = lifecycle.replace(
-        "requires chunk_is_live;",
-        "requires resource_contract_v1; requires chunk_is_live;",
-    );
+    let marked = lifecycle.replacen("contract {", "contract { requires resource_contract_v1;", 1);
     assert_ne!(marked, lifecycle);
     assert!(load(&marked).is_err());
 }

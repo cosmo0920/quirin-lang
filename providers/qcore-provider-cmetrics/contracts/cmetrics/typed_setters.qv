@@ -1026,12 +1026,126 @@ contract {
         #trace: trace
     ) =
         ((forall (#input: object) { (#logging_string(#env,#call,#input) => ((#live(#env,#input) && #terminated(#env,#input)) && #stable(#trace,#call,#input))) } && #logging_backend(#env,#call)) && #format_types(#env,#call));
-    ensures normal result_is_zero_or_minus_one;
-    ensures normal minus_one_may_retain_lookup_or_storage_preparation_changes;
-    ensures normal zero_result_sets_all_count_plus_one_buckets_sum_count_and_timestamp;
-    ensures normal bucket_counts_follow_u64_to_double_to_u64_conversion_not_exact_copy;
-    ensures normal new_hist_bucket_storage_is_metric_owned_and_inputs_are_not_retained;
-    ensures normal no_whole_histogram_atomic_snapshot_is_promised;
+
+    quant condition normal #result_domain(
+        #result: integer
+    ) =
+        ((#result == 0) || (#result == -1));
+    quant condition normal #lookup(
+        #call: activation,
+        #direct_event: predicate<trace,activation,event>,
+        #invoke: predicate<trace,event,declaration>,
+        #lookup_decl: declaration,
+        #lookup_event: event,
+        #metric: object,
+        #object_result: function<trace,event,object>,
+        #trace: trace
+    ) =
+        ((#direct_event(#trace,#call,#lookup_event) && #invoke(#trace,#lookup_event,#lookup_decl)) &&
+        #object_result(#trace,#lookup_event) == #metric);
+    quant condition normal #map_lookup_write(
+        #call: activation,
+        #event_of: predicate<trace,activation,event>,
+        #integer_arg: function<trace,event,integer,integer>,
+        #invoke: predicate<trace,event,declaration>,
+        #map_lookup_decl: declaration,
+        #trace: trace
+    ) =
+        exists (#e: event) { ((#event_of(#trace,#call,#e) && #invoke(#trace,#e,#map_lookup_decl)) &&
+        #integer_arg(#trace,#e,4) == 1) };
+    quant condition normal #lookup_failure(
+        #metric: object,
+        #null: object,
+        #result: integer
+    ) =
+        ((#metric == #null) => (#result == -1));
+    quant condition normal #root_custody(
+        #call: activation,
+        #escape: predicate<trace,event,object>,
+        #event_of: predicate<trace,activation,event>,
+        #map: object,
+        #release: predicate<trace,event,object>,
+        #root: object,
+        #trace: trace,
+        #transfer: predicate<trace,event,object>
+    ) =
+        forall (#o: object) { (((#o == #root) || (#o == #map)) => forall (#e: event) {
+        (#event_of(#trace,#call,#e) => ((!#release(#trace,#e,#o)) && ((!#transfer(#trace,#e,#o)) &&
+        (!#escape(#trace,#e,#o))))) }) };
+    quant condition normal #metric_custody(
+        #call: activation,
+        #escape: predicate<trace,event,object>,
+        #event_of: predicate<trace,activation,event>,
+        #lookup_event: event,
+        #metric: object,
+        #null: object,
+        #position: function<trace,event,integer>,
+        #release: predicate<trace,event,object>,
+        #return_position: function<trace,event,integer>,
+        #trace: trace,
+        #transfer: predicate<trace,event,object>
+    ) =
+        ((!(#metric == #null)) => forall (#e: event) { ((#event_of(#trace,#call,#e) &&
+        (#return_position(#trace,#lookup_event) < #position(#trace,#e))) => ((!#release(#trace,#e,#metric)) &&
+        ((!#transfer(#trace,#e,#metric)) && (!#escape(#trace,#e,#metric))))) });
+    quant condition normal #active_input_custody(
+        #active_input: predicate<trace,activation,object>,
+        #call: activation,
+        #escape: predicate<trace,event,object>,
+        #event_of: predicate<trace,activation,event>,
+        #release: predicate<trace,event,object>,
+        #trace: trace,
+        #transfer: predicate<trace,event,object>
+    ) =
+        forall (#o: object) { (#active_input(#trace,#call,#o) => forall (#e: event) {
+        (#event_of(#trace,#call,#e) => ((!#release(#trace,#e,#o)) && ((!#transfer(#trace,#e,#o)) &&
+        (!#escape(#trace,#e,#o))))) }) };
+    quant condition normal #present_success(
+        #metric: object,
+        #null: object,
+        #result: integer
+    ) =
+        ((!(#metric == #null)) => (#result == 0));
+    quant condition normal #bucket_values(
+        #after: state,
+        #before: state,
+        #bucket_array_field: field,
+        #bucket_count: integer,
+        #bucket_defaults: object,
+        #live: predicate<state,object>,
+        #metric: object,
+        #null: object,
+        #object_field: function<state,object,field,object>,
+        #owns: predicate<state,object,object>,
+        #read_u64: function<state,object,integer,integer>,
+        #result: integer,
+        #to_double: function<integer,floating>,
+        #trunc: function<floating,integer>
+    ) =
+        ((#result == 0) => (((!(#object_field(#after,#metric,#bucket_array_field) == #null) &&
+        #live(#after,#object_field(#after,#metric,#bucket_array_field))) &&
+        #owns(#after,#metric,#object_field(#after,#metric,#bucket_array_field))) && forall (#i: integer) { (((0
+        <= #i) && (#i < (#bucket_count + 1))) =>
+        #read_u64(#after,#object_field(#after,#metric,#bucket_array_field),#i) ==
+        #trunc(#to_double(#read_u64(#before,#bucket_defaults,#i)))) }));
+    quant condition normal #sum_count_timestamp(
+        #after: state,
+        #count: integer,
+        #count_field: field,
+        #double_bits: function<floating,integer>,
+        #int_field: function<state,object,field,integer>,
+        #metric: object,
+        #result: integer,
+        #sum: floating,
+        #sum_field: field,
+        #timestamp: integer,
+        #timestamp_field: field
+    ) =
+        ((#result == 0) => ((#int_field(#after,#metric,#sum_field) == #double_bits(#sum) &&
+        #int_field(#after,#metric,#count_field) == #count) && #int_field(#after,#metric,#timestamp_field) ==
+        #timestamp));
+    // Failure retains permitted lookup effects; separate stores grant no joint atomic snapshot.
+
 };
 
 extern fn cmt_summary_set_default(summary: ptr<mut, u8>, timestamp: u64,
@@ -1214,13 +1328,265 @@ contract {
         #trace: trace
     ) =
         (forall (#input: object) { (#logging_string(#env,#call,#input) => ((#live(#env,#input) && #terminated(#env,#input)) && #stable(#trace,#call,#input))) } && #logging_backend(#env,#call));
-    ensures normal result_is_zero_or_minus_one;
-    ensures normal minus_one_may_retain_lookup_or_storage_preparation_changes;
-    ensures normal zero_result_sets_sum_count_and_timestamp;
-    ensures normal present_input_sets_quantiles_flag_and_each_admitted_quantile_slot;
-    ensures normal null_input_preserves_quantile_values_and_set_flag_but_may_prepare_storage;
-    ensures normal new_quantile_storage_is_metric_owned_and_input_is_not_retained;
-    ensures normal no_whole_summary_atomic_snapshot_is_promised;
+
+    quant condition normal #result_domain(
+        #result: integer
+    ) =
+        ((#result == 0) || (#result == -1));
+    quant condition normal #lookup(
+        #call: activation,
+        #direct_event: predicate<trace,activation,event>,
+        #invoke: predicate<trace,event,declaration>,
+        #lookup_decl: declaration,
+        #lookup_event: event,
+        #metric: object,
+        #object_result: function<trace,event,object>,
+        #trace: trace
+    ) =
+        ((#direct_event(#trace,#call,#lookup_event) && #invoke(#trace,#lookup_event,#lookup_decl)) &&
+        #object_result(#trace,#lookup_event) == #metric);
+    quant condition normal #map_lookup_write(
+        #call: activation,
+        #event_of: predicate<trace,activation,event>,
+        #integer_arg: function<trace,event,integer,integer>,
+        #invoke: predicate<trace,event,declaration>,
+        #map_lookup_decl: declaration,
+        #trace: trace
+    ) =
+        exists (#e: event) { ((#event_of(#trace,#call,#e) && #invoke(#trace,#e,#map_lookup_decl)) &&
+        #integer_arg(#trace,#e,4) == 1) };
+    quant condition normal #lookup_failure(
+        #metric: object,
+        #null: object,
+        #result: integer
+    ) =
+        ((#metric == #null) => (#result == -1));
+    quant condition normal #root_custody(
+        #call: activation,
+        #escape: predicate<trace,event,object>,
+        #event_of: predicate<trace,activation,event>,
+        #map: object,
+        #release: predicate<trace,event,object>,
+        #root: object,
+        #trace: trace,
+        #transfer: predicate<trace,event,object>
+    ) =
+        forall (#o: object) { (((#o == #root) || (#o == #map)) => forall (#e: event) {
+        (#event_of(#trace,#call,#e) => ((!#release(#trace,#e,#o)) && ((!#transfer(#trace,#e,#o)) &&
+        (!#escape(#trace,#e,#o))))) }) };
+    quant condition normal #metric_custody(
+        #call: activation,
+        #escape: predicate<trace,event,object>,
+        #event_of: predicate<trace,activation,event>,
+        #lookup_event: event,
+        #metric: object,
+        #null: object,
+        #position: function<trace,event,integer>,
+        #release: predicate<trace,event,object>,
+        #return_position: function<trace,event,integer>,
+        #trace: trace,
+        #transfer: predicate<trace,event,object>
+    ) =
+        ((!(#metric == #null)) => forall (#e: event) { ((#event_of(#trace,#call,#e) &&
+        (#return_position(#trace,#lookup_event) < #position(#trace,#e))) => ((!#release(#trace,#e,#metric)) &&
+        ((!#transfer(#trace,#e,#metric)) && (!#escape(#trace,#e,#metric))))) });
+    quant condition normal #active_input_custody(
+        #active_input: predicate<trace,activation,object>,
+        #call: activation,
+        #escape: predicate<trace,event,object>,
+        #event_of: predicate<trace,activation,event>,
+        #release: predicate<trace,event,object>,
+        #trace: trace,
+        #transfer: predicate<trace,event,object>
+    ) =
+        forall (#o: object) { (#active_input(#trace,#call,#o) => forall (#e: event) {
+        (#event_of(#trace,#call,#e) => ((!#release(#trace,#e,#o)) && ((!#transfer(#trace,#e,#o)) &&
+        (!#escape(#trace,#e,#o))))) }) };
+    quant condition normal #success_metric(
+        #metric: object,
+        #null: object,
+        #result: integer
+    ) =
+        ((#result == 0) => !(#metric == #null));
+    quant condition normal #sum_count_timestamp(
+        #after: state,
+        #count: integer,
+        #count_field: field,
+        #double_bits: function<floating,integer>,
+        #int_field: function<state,object,field,integer>,
+        #metric: object,
+        #result: integer,
+        #sum: floating,
+        #sum_field: field,
+        #timestamp: integer,
+        #timestamp_field: field
+    ) =
+        ((#result == 0) => ((#int_field(#after,#metric,#sum_field) == #double_bits(#sum) &&
+        #int_field(#after,#metric,#count_field) == #count) && #int_field(#after,#metric,#timestamp_field) ==
+        #timestamp));
+    quant condition normal #present_quantile_flag(
+        #after: state,
+        #int_field: function<state,object,field,integer>,
+        #metric: object,
+        #null: object,
+        #quantile_flag_field: field,
+        #quantile_values: object,
+        #result: integer
+    ) =
+        ((#result == 0) => ((!(#quantile_values == #null)) => #int_field(#after,#metric,#quantile_flag_field) ==
+        1));
+    quant condition normal #admitted_quantile_values(
+        #after: state,
+        #before: state,
+        #double_bits: function<floating,integer>,
+        #int_field: function<state,object,field,integer>,
+        #metric: object,
+        #metric_count_field: field,
+        #null: object,
+        #object_field: function<state,object,field,object>,
+        #parent_count: integer,
+        #quantile_array_field: field,
+        #quantile_values: object,
+        #read_float: function<state,object,integer,floating>,
+        #read_u64: function<state,object,integer,integer>,
+        #result: integer
+    ) =
+        ((#result == 0) => ((!(#quantile_values == #null)) => forall (#i: integer) { (((0 <= #i) && ((#i <
+        #parent_count) && (#i < #int_field(#after,#metric,#metric_count_field)))) =>
+        #read_u64(#after,#object_field(#after,#metric,#quantile_array_field),#i) ==
+        #double_bits(#read_float(#before,#quantile_values,#i))) }));
+    quant condition normal #null_quantile_flag(
+        #after: state,
+        #after_lookup: state,
+        #int_field: function<state,object,field,integer>,
+        #metric: object,
+        #null: object,
+        #quantile_flag_field: field,
+        #quantile_values: object,
+        #result: integer
+    ) =
+        ((#result == 0) => ((#quantile_values == #null) => #int_field(#after,#metric,#quantile_flag_field) ==
+        #int_field(#after_lookup,#metric,#quantile_flag_field)));
+    quant condition normal #null_quantile_no_call(
+        #call: activation,
+        #direct_event: predicate<trace,activation,event>,
+        #invoke: predicate<trace,event,declaration>,
+        #null: object,
+        #quantile_decl: declaration,
+        #quantile_values: object,
+        #trace: trace
+    ) =
+        ((#quantile_values == #null) => forall (#e: event) { (#direct_event(#trace,#call,#e) =>
+        !#invoke(#trace,#e,#quantile_decl)) });
+    quant condition normal #existing_quantile_storage(
+        #after: state,
+        #after_lookup: state,
+        #int_field: function<state,object,field,integer>,
+        #metric: object,
+        #metric_count_field: field,
+        #null: object,
+        #object_field: function<state,object,field,object>,
+        #quantile_array_field: field,
+        #result: integer
+    ) =
+        ((#result == 0) => (!(#object_field(#after_lookup,#metric,#quantile_array_field) == #null) =>
+        (#object_field(#after,#metric,#quantile_array_field) ==
+        #object_field(#after_lookup,#metric,#quantile_array_field) &&
+        #int_field(#after,#metric,#metric_count_field) ==
+        #int_field(#after_lookup,#metric,#metric_count_field))));
+    quant condition normal #null_input_existing_values(
+        #after: state,
+        #after_lookup: state,
+        #int_field: function<state,object,field,integer>,
+        #metric: object,
+        #metric_count_field: field,
+        #null: object,
+        #object_field: function<state,object,field,object>,
+        #quantile_array_field: field,
+        #quantile_values: object,
+        #read_u64: function<state,object,integer,integer>,
+        #result: integer
+    ) =
+        ((#result == 0) => (((#quantile_values == #null) &&
+        !(#object_field(#after_lookup,#metric,#quantile_array_field) == #null)) => forall (#i: integer) { (((0
+        <= #i) && (#i < #int_field(#after_lookup,#metric,#metric_count_field))) =>
+        #read_u64(#after,#object_field(#after,#metric,#quantile_array_field),#i) ==
+        #read_u64(#after_lookup,#object_field(#after_lookup,#metric,#quantile_array_field),#i)) }));
+    quant condition normal #prepared_quantile_storage(
+        #after: state,
+        #after_lookup: state,
+        #int_field: function<state,object,field,integer>,
+        #live: predicate<state,object>,
+        #metric: object,
+        #metric_count_field: field,
+        #null: object,
+        #object_field: function<state,object,field,object>,
+        #owns: predicate<state,object,object>,
+        #parent_count: integer,
+        #quantile_array_field: field,
+        #result: integer
+    ) =
+        ((#result == 0) => (((#object_field(#after_lookup,#metric,#quantile_array_field) == #null) &&
+        (#parent_count > 0)) => (((!(#object_field(#after,#metric,#quantile_array_field) == #null) &&
+        #live(#after,#object_field(#after,#metric,#quantile_array_field))) &&
+        #owns(#after,#metric,#object_field(#after,#metric,#quantile_array_field))) &&
+        #int_field(#after,#metric,#metric_count_field) == #parent_count)));
+    quant condition normal #null_input_new_values(
+        #after: state,
+        #after_lookup: state,
+        #metric: object,
+        #null: object,
+        #object_field: function<state,object,field,object>,
+        #parent_count: integer,
+        #quantile_array_field: field,
+        #quantile_values: object,
+        #read_u64: function<state,object,integer,integer>,
+        #result: integer
+    ) =
+        ((#result == 0) => (((#quantile_values == #null) &&
+        ((#object_field(#after_lookup,#metric,#quantile_array_field) == #null) && (#parent_count > 0))) =>
+        forall (#i: integer) { (((0 <= #i) && (#i < #parent_count)) =>
+        #read_u64(#after,#object_field(#after,#metric,#quantile_array_field),#i) == 0) }));
+    quant condition normal #failure_reason(
+        #call: activation,
+        #calloc_decl: declaration,
+        #direct_event: predicate<trace,activation,event>,
+        #invoke: predicate<trace,event,declaration>,
+        #metric: object,
+        #null: object,
+        #object_result: function<trace,event,object>,
+        #result: integer,
+        #trace: trace
+    ) =
+        ((#result == -1) => ((#metric == #null) || exists (#e: event) { ((#direct_event(#trace,#call,#e) &&
+        #invoke(#trace,#e,#calloc_decl)) && #object_result(#trace,#e) == #null) }));
+    quant condition normal #present_complete(
+        #after: state,
+        #after_lookup: state,
+        #metric: object,
+        #null: object,
+        #object_field: function<state,object,field,object>,
+        #parent_count: integer,
+        #quantile_array_field: field,
+        #result: integer
+    ) =
+        ((!(#metric == #null) && ((!(#object_field(#after_lookup,#metric,#quantile_array_field) == #null) ||
+        (#parent_count == 0)) || !(#object_field(#after,#metric,#quantile_array_field) == #null))) => (#result
+        == 0));
+    quant condition normal #zero_parent_storage(
+        #after: state,
+        #after_lookup: state,
+        #metric: object,
+        #null: object,
+        #object_field: function<state,object,field,object>,
+        #parent_count: integer,
+        #quantile_array_field: field,
+        #result: integer
+    ) =
+        ((#result == 0) => (((#object_field(#after_lookup,#metric,#quantile_array_field) == #null) &&
+        (#parent_count == 0)) => (#object_field(#after,#metric,#quantile_array_field) == #null)));
+    // Failure retains permitted lookup effects; separate stores grant no joint atomic snapshot.
+
 };
 
 // LP64 projection: size_t is u64. This module grants no ABI or call permission.
@@ -1428,14 +1794,387 @@ contract {
         #trace: trace
     ) =
         ((forall (#input: object) { (#logging_string(#env,#call,#input) => ((#live(#env,#input) && #terminated(#env,#input)) && #stable(#trace,#call,#input))) } && #logging_backend(#env,#call)) && #lock_abi(#env,#metric));
-    ensures normal result_is_zero_or_minus_one;
-    ensures normal positive_count_with_null_input_returns_minus_one_after_possible_lookup_changes;
-    ensures normal preparation_failure_preserves_old_arrays_and_frees_temporary_copies;
-    ensures normal minus_one_does_not_imply_lookup_rollback;
-    ensures normal zero_result_installs_fresh_owned_copies_or_null_for_zero_counts;
-    ensures normal zero_result_sets_scale_zero_fields_offsets_counts_sum_flag_sum_and_timestamp;
-    ensures normal old_arrays_are_freed_after_swap_and_unlock_and_old_aliases_are_invalidated;
-    ensures normal input_array_ownership_is_preserved_and_input_pointers_are_not_retained;
-    ensures normal map_metric_and_enclosing_histogram_ownership_are_preserved;
-    ensures normal internal_array_lock_does_not_supply_retirement_or_raw_alias_lifetime;
+
+    quant condition normal #result_domain(
+        #result: integer
+    ) =
+        ((#result == 0) || (#result == -1));
+    quant condition normal #lookup(
+        #call: activation,
+        #direct_event: predicate<trace,activation,event>,
+        #invoke: predicate<trace,event,declaration>,
+        #lookup_decl: declaration,
+        #lookup_event: event,
+        #metric: object,
+        #object_result: function<trace,event,object>,
+        #trace: trace
+    ) =
+        ((#direct_event(#trace,#call,#lookup_event) && #invoke(#trace,#lookup_event,#lookup_decl)) &&
+        #object_result(#trace,#lookup_event) == #metric);
+    quant condition normal #map_lookup_write(
+        #call: activation,
+        #event_of: predicate<trace,activation,event>,
+        #integer_arg: function<trace,event,integer,integer>,
+        #invoke: predicate<trace,event,declaration>,
+        #map_lookup_decl: declaration,
+        #trace: trace
+    ) =
+        exists (#e: event) { ((#event_of(#trace,#call,#e) && #invoke(#trace,#e,#map_lookup_decl)) &&
+        #integer_arg(#trace,#e,4) == 1) };
+    quant condition normal #lookup_failure(
+        #metric: object,
+        #null: object,
+        #result: integer
+    ) =
+        ((#metric == #null) => (#result == -1));
+    quant condition normal #root_custody(
+        #call: activation,
+        #escape: predicate<trace,event,object>,
+        #event_of: predicate<trace,activation,event>,
+        #map: object,
+        #release: predicate<trace,event,object>,
+        #root: object,
+        #trace: trace,
+        #transfer: predicate<trace,event,object>
+    ) =
+        forall (#o: object) { (((#o == #root) || (#o == #map)) => forall (#e: event) {
+        (#event_of(#trace,#call,#e) => ((!#release(#trace,#e,#o)) && ((!#transfer(#trace,#e,#o)) &&
+        (!#escape(#trace,#e,#o))))) }) };
+    quant condition normal #metric_custody(
+        #call: activation,
+        #escape: predicate<trace,event,object>,
+        #event_of: predicate<trace,activation,event>,
+        #lookup_event: event,
+        #metric: object,
+        #null: object,
+        #position: function<trace,event,integer>,
+        #release: predicate<trace,event,object>,
+        #return_position: function<trace,event,integer>,
+        #trace: trace,
+        #transfer: predicate<trace,event,object>
+    ) =
+        ((!(#metric == #null)) => forall (#e: event) { ((#event_of(#trace,#call,#e) &&
+        (#return_position(#trace,#lookup_event) < #position(#trace,#e))) => ((!#release(#trace,#e,#metric)) &&
+        ((!#transfer(#trace,#e,#metric)) && (!#escape(#trace,#e,#metric))))) });
+    quant condition normal #active_input_custody(
+        #active_input: predicate<trace,activation,object>,
+        #call: activation,
+        #escape: predicate<trace,event,object>,
+        #event_of: predicate<trace,activation,event>,
+        #release: predicate<trace,event,object>,
+        #trace: trace,
+        #transfer: predicate<trace,event,object>
+    ) =
+        forall (#o: object) { (#active_input(#trace,#call,#o) => forall (#e: event) {
+        (#event_of(#trace,#call,#e) => ((!#release(#trace,#e,#o)) && ((!#transfer(#trace,#e,#o)) &&
+        (!#escape(#trace,#e,#o))))) }) };
+    quant condition normal #null_input_failure(
+        #negative_count: integer,
+        #negative_input: object,
+        #null: object,
+        #positive_count: integer,
+        #positive_input: object,
+        #result: integer
+    ) =
+        ((((#positive_count > 0) && (#positive_input == #null)) || ((#negative_count > 0) && (#negative_input ==
+        #null))) => (#result == -1));
+    quant condition normal #success_metric(
+        #metric: object,
+        #null: object,
+        #result: integer
+    ) =
+        ((#result == 0) => !(#metric == #null));
+    quant condition normal #failed_preparation_fields(
+        #after: state,
+        #after_lookup: state,
+        #metric: object,
+        #negative_field: field,
+        #null: object,
+        #object_field: function<state,object,field,object>,
+        #positive_field: field,
+        #result: integer
+    ) =
+        (((#result == -1) && !(#metric == #null)) => (#object_field(#after,#metric,#positive_field) ==
+        #object_field(#after_lookup,#metric,#positive_field) && #object_field(#after,#metric,#negative_field) ==
+        #object_field(#after_lookup,#metric,#negative_field)));
+    quant condition normal #failed_copy_release(
+        #call: activation,
+        #copy_alloc: predicate<trace,activation,object>,
+        #event_of: predicate<trace,activation,event>,
+        #release: predicate<trace,event,object>,
+        #result: integer,
+        #trace: trace
+    ) =
+        ((#result == -1) => forall (#o: object) { (#copy_alloc(#trace,#call,#o) => exists (#e: event) {
+        ((#event_of(#trace,#call,#e) && #release(#trace,#e,#o)) && forall (#other: event) {
+        ((#event_of(#trace,#call,#other) && #release(#trace,#other,#o)) => #other == #e) }) }) });
+    quant condition normal #positive_copy(
+        #after: state,
+        #before: state,
+        #live: predicate<state,object>,
+        #metric: object,
+        #null: object,
+        #object_field: function<state,object,field,object>,
+        #owns: predicate<state,object,object>,
+        #positive_count: integer,
+        #positive_field: field,
+        #positive_input: object,
+        #read_u64: function<state,object,integer,integer>,
+        #result: integer
+    ) =
+        ((#result == 0) => (((#positive_count == 0) => #object_field(#after,#metric,#positive_field) == #null)
+        && ((#positive_count > 0) => (((!(#object_field(#after,#metric,#positive_field) == #null) &&
+        #live(#after,#object_field(#after,#metric,#positive_field))) &&
+        #owns(#after,#metric,#object_field(#after,#metric,#positive_field))) && forall (#i: integer) { (((0 <=
+        #i) && (#i < #positive_count)) => #read_u64(#after,#object_field(#after,#metric,#positive_field),#i) ==
+        #read_u64(#before,#positive_input,#i)) }))));
+    quant condition normal #positive_fresh(
+        #after: state,
+        #after_lookup: state,
+        #metric: object,
+        #null: object,
+        #object_field: function<state,object,field,object>,
+        #positive_count: integer,
+        #positive_field: field,
+        #result: integer
+    ) =
+        ((#result == 0) => (((#positive_count > 0) && !(#object_field(#after_lookup,#metric,#positive_field) ==
+        #null)) => !(#object_field(#after,#metric,#positive_field) ==
+        #object_field(#after_lookup,#metric,#positive_field))));
+    quant condition normal #positive_release(
+        #after: state,
+        #after_lookup: state,
+        #call: activation,
+        #event_of: predicate<trace,activation,event>,
+        #live: predicate<state,object>,
+        #metric: object,
+        #null: object,
+        #object_field: function<state,object,field,object>,
+        #owns: predicate<state,object,object>,
+        #position: function<trace,event,integer>,
+        #positive_field: field,
+        #release: predicate<trace,event,object>,
+        #result: integer,
+        #trace: trace,
+        #unlock_event: event
+    ) =
+        ((#result == 0) => (!(#object_field(#after_lookup,#metric,#positive_field) == #null) => exists (#e:
+        event) { (((((#event_of(#trace,#call,#e) &&
+        #release(#trace,#e,#object_field(#after_lookup,#metric,#positive_field))) &&
+        #position(#trace,#unlock_event) < #position(#trace,#e)) && forall (#other: event) {
+        ((#event_of(#trace,#call,#other) &&
+        #release(#trace,#other,#object_field(#after_lookup,#metric,#positive_field))) => #other == #e) }) &&
+        !#live(#after,#object_field(#after_lookup,#metric,#positive_field))) &&
+        !#owns(#after,#metric,#object_field(#after_lookup,#metric,#positive_field))) }));
+    quant condition normal #positive_swap_order(
+        #after: state,
+        #call: activation,
+        #direct_event: predicate<trace,activation,event>,
+        #metric: object,
+        #object_field: function<state,object,field,object>,
+        #position: function<trace,event,integer>,
+        #positive_field: field,
+        #result: integer,
+        #trace: trace,
+        #unlock_event: event,
+        #write_object: predicate<trace,event,object,field,object>
+    ) =
+        ((#result == 0) => exists (#e: event) { ((#direct_event(#trace,#call,#e) &&
+        #write_object(#trace,#e,#metric,#positive_field,#object_field(#after,#metric,#positive_field))) &&
+        #position(#trace,#e) < #position(#trace,#unlock_event)) });
+    quant condition normal #negative_copy(
+        #after: state,
+        #before: state,
+        #live: predicate<state,object>,
+        #metric: object,
+        #negative_count: integer,
+        #negative_field: field,
+        #negative_input: object,
+        #null: object,
+        #object_field: function<state,object,field,object>,
+        #owns: predicate<state,object,object>,
+        #read_u64: function<state,object,integer,integer>,
+        #result: integer
+    ) =
+        ((#result == 0) => (((#negative_count == 0) => #object_field(#after,#metric,#negative_field) == #null)
+        && ((#negative_count > 0) => (((!(#object_field(#after,#metric,#negative_field) == #null) &&
+        #live(#after,#object_field(#after,#metric,#negative_field))) &&
+        #owns(#after,#metric,#object_field(#after,#metric,#negative_field))) && forall (#i: integer) { (((0 <=
+        #i) && (#i < #negative_count)) => #read_u64(#after,#object_field(#after,#metric,#negative_field),#i) ==
+        #read_u64(#before,#negative_input,#i)) }))));
+    quant condition normal #negative_fresh(
+        #after: state,
+        #after_lookup: state,
+        #metric: object,
+        #negative_count: integer,
+        #negative_field: field,
+        #null: object,
+        #object_field: function<state,object,field,object>,
+        #result: integer
+    ) =
+        ((#result == 0) => (((#negative_count > 0) && !(#object_field(#after_lookup,#metric,#negative_field) ==
+        #null)) => !(#object_field(#after,#metric,#negative_field) ==
+        #object_field(#after_lookup,#metric,#negative_field))));
+    quant condition normal #negative_release(
+        #after: state,
+        #after_lookup: state,
+        #call: activation,
+        #event_of: predicate<trace,activation,event>,
+        #live: predicate<state,object>,
+        #metric: object,
+        #negative_field: field,
+        #null: object,
+        #object_field: function<state,object,field,object>,
+        #owns: predicate<state,object,object>,
+        #position: function<trace,event,integer>,
+        #release: predicate<trace,event,object>,
+        #result: integer,
+        #trace: trace,
+        #unlock_event: event
+    ) =
+        ((#result == 0) => (!(#object_field(#after_lookup,#metric,#negative_field) == #null) => exists (#e:
+        event) { (((((#event_of(#trace,#call,#e) &&
+        #release(#trace,#e,#object_field(#after_lookup,#metric,#negative_field))) &&
+        #position(#trace,#unlock_event) < #position(#trace,#e)) && forall (#other: event) {
+        ((#event_of(#trace,#call,#other) &&
+        #release(#trace,#other,#object_field(#after_lookup,#metric,#negative_field))) => #other == #e) }) &&
+        !#live(#after,#object_field(#after_lookup,#metric,#negative_field))) &&
+        !#owns(#after,#metric,#object_field(#after_lookup,#metric,#negative_field))) }));
+    quant condition normal #negative_swap_order(
+        #after: state,
+        #call: activation,
+        #direct_event: predicate<trace,activation,event>,
+        #metric: object,
+        #negative_field: field,
+        #object_field: function<state,object,field,object>,
+        #position: function<trace,event,integer>,
+        #result: integer,
+        #trace: trace,
+        #unlock_event: event,
+        #write_object: predicate<trace,event,object,field,object>
+    ) =
+        ((#result == 0) => exists (#e: event) { ((#direct_event(#trace,#call,#e) &&
+        #write_object(#trace,#e,#metric,#negative_field,#object_field(#after,#metric,#negative_field))) &&
+        #position(#trace,#e) < #position(#trace,#unlock_event)) });
+    quant condition normal #unlock(
+        #call: activation,
+        #direct_event: predicate<trace,activation,event>,
+        #invoke: predicate<trace,event,declaration>,
+        #metric: object,
+        #object_arg: function<trace,event,integer,object>,
+        #result: integer,
+        #trace: trace,
+        #unlock_decl: declaration,
+        #unlock_event: event
+    ) =
+        ((#result == 0) => ((#direct_event(#trace,#call,#unlock_event) &&
+        #invoke(#trace,#unlock_event,#unlock_decl)) && #object_arg(#trace,#unlock_event,0) == #metric));
+    quant condition normal #numeric_fields(
+        #after: state,
+        #count: integer,
+        #exp_count_field: field,
+        #int_field: function<state,object,field,integer>,
+        #metric: object,
+        #negative_count: integer,
+        #negative_count_field: field,
+        #negative_offset: integer,
+        #negative_offset_field: field,
+        #positive_count: integer,
+        #positive_count_field: field,
+        #positive_offset: integer,
+        #positive_offset_field: field,
+        #result: integer,
+        #scale: integer,
+        #scale_field: field,
+        #timestamp: integer,
+        #timestamp_field: field,
+        #zero_count: integer,
+        #zero_count_field: field
+    ) =
+        ((#result == 0) => (((((((#int_field(#after,#metric,#positive_count_field) == #positive_count &&
+        #int_field(#after,#metric,#negative_count_field) == #negative_count) &&
+        #int_field(#after,#metric,#scale_field) == #scale) && #int_field(#after,#metric,#zero_count_field) ==
+        #zero_count) && #int_field(#after,#metric,#positive_offset_field) == #positive_offset) &&
+        #int_field(#after,#metric,#negative_offset_field) == #negative_offset) &&
+        #int_field(#after,#metric,#exp_count_field) == #count) && #int_field(#after,#metric,#timestamp_field) ==
+        #timestamp));
+    quant condition normal #threshold_write(
+        #call: activation,
+        #direct_event: predicate<trace,activation,event>,
+        #metric: object,
+        #position: function<trace,event,integer>,
+        #result: integer,
+        #threshold_field: field,
+        #trace: trace,
+        #unlock_event: event,
+        #write_float: predicate<trace,event,object,field,floating>,
+        #zero_threshold: floating
+    ) =
+        ((#result == 0) => exists (#e: event) { ((#direct_event(#trace,#call,#e) &&
+        #write_float(#trace,#e,#metric,#threshold_field,#zero_threshold)) && #position(#trace,#e) <
+        #position(#trace,#unlock_event)) });
+    quant condition normal #sum_flag_bits(
+        #after: state,
+        #double_bits: function<floating,integer>,
+        #exp_flag_field: field,
+        #exp_sum_field: field,
+        #int_field: function<state,object,field,integer>,
+        #metric: object,
+        #result: integer,
+        #sum: floating,
+        #sum_set: integer
+    ) =
+        ((#result == 0) => (((#sum_set == 0) => (#int_field(#after,#metric,#exp_flag_field) == 0 &&
+        #int_field(#after,#metric,#exp_sum_field) == 0)) && ((!(#sum_set == 0)) =>
+        (#int_field(#after,#metric,#exp_flag_field) == 1 && #int_field(#after,#metric,#exp_sum_field) ==
+        #double_bits(#sum)))));
+    quant condition normal #failure_reason(
+        #call: activation,
+        #calloc_decl: declaration,
+        #direct_event: predicate<trace,activation,event>,
+        #invoke: predicate<trace,event,declaration>,
+        #metric: object,
+        #negative_count: integer,
+        #negative_input: object,
+        #null: object,
+        #object_result: function<trace,event,object>,
+        #positive_count: integer,
+        #positive_input: object,
+        #result: integer,
+        #trace: trace
+    ) =
+        ((#result == -1) => ((#metric == #null) || ((((#positive_count > 0) && (#positive_input == #null)) ||
+        ((#negative_count > 0) && (#negative_input == #null))) || exists (#e: event) {
+        ((#direct_event(#trace,#call,#e) && #invoke(#trace,#e,#calloc_decl)) && #object_result(#trace,#e) ==
+        #null) })));
+    quant condition normal #positive_aliases(
+        #after: state,
+        #after_lookup: state,
+        #alias: predicate<state,object,object>,
+        #metric: object,
+        #null: object,
+        #object_field: function<state,object,field,object>,
+        #positive_field: field,
+        #result: integer,
+        #usable: predicate<state,object>
+    ) =
+        ((#result == 0) => (!(#object_field(#after_lookup,#metric,#positive_field) == #null) => forall (#a:
+        object) { (#alias(#after_lookup,#a,#object_field(#after_lookup,#metric,#positive_field)) =>
+        !#usable(#after,#a)) }));
+    quant condition normal #negative_aliases(
+        #after: state,
+        #after_lookup: state,
+        #alias: predicate<state,object,object>,
+        #metric: object,
+        #negative_field: field,
+        #null: object,
+        #object_field: function<state,object,field,object>,
+        #result: integer,
+        #usable: predicate<state,object>
+    ) =
+        ((#result == 0) => (!(#object_field(#after_lookup,#metric,#negative_field) == #null) => forall (#a:
+        object) { (#alias(#after_lookup,#a,#object_field(#after_lookup,#metric,#negative_field)) =>
+        !#usable(#after,#a)) }));
+    // Failure retains permitted lookup effects; separate stores grant no joint atomic snapshot.
+
 };

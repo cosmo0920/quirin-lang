@@ -68,6 +68,7 @@ import QCore.CleanupTaskComposition
 import QCore.CleanupVocabulary
 import QCore.Closures
 import QCore.CmetricsApiContracts
+import QCore.CmetricsDefaultSetterConditions
 import QCore.CmetricsHypotheses
 import QCore.CmetricsMetricConditions
 import QCore.CmetricsOptsConditions
@@ -288,6 +289,7 @@ import QCore.Quant
 import QCore.QuantCondition
 import QCore.QuantEffect
 import QCore.QuantIndexBinding
+import QCore.QuantIntegrationBoundaries
 import QCore.QuantProposition
 import QCore.QuantRegionSource
 import QCore.QuantTheorem

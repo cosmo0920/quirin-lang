@@ -278,7 +278,7 @@
       "sha256": "5b3106651397e95ec5fdd5dbaf6f44a63993e11dcb0f2af6bcedacb54b636950"
     },
     "cmetrics/typed_setters.qv": {
-      "clause_count": 139,
+      "clause_count": 172,
       "declaration_count": 6,
       "declarations": [
         {
@@ -294,22 +294,22 @@
           "name": "cmt_untyped_set"
         },
         {
-          "clauses": 23,
+          "clauses": 27,
           "name": "cmt_histogram_set_default"
         },
         {
-          "clauses": 23,
+          "clauses": 36,
           "name": "cmt_summary_set_default"
         },
         {
-          "clauses": 28,
+          "clauses": 44,
           "name": "cmt_exp_histogram_set_default"
         }
       ],
       "inherits": [],
       "premise_bindings": [],
       "premises": {},
-      "sha256": "16dae066f7b667098ceceafba2e11a4d1f06701a9eb41de5f2cd53c450afa2d2"
+      "sha256": "1ca57003973160606e19e980b35f96364b71c7b356ee9de3896f5aeeb669a55f"
     }
   },
   "outer_view": [],
