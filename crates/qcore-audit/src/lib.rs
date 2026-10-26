@@ -940,7 +940,9 @@ pub fn run_config_with_jobs(path: &Path, flag_jobs: Option<usize>) -> Result<Aud
             "environment": {
                 "QCORE_CLANG": std::env::var("QCORE_CLANG").ok(),
                 "QCORE_AUDIT_JOBS": std::env::var(parallel::JOBS_VARIABLE).ok(),
+                "QCORE_GATEWAY_RULES_OFF": std::env::var(qcore_c_gateway::gateway_rules::RULES_OFF_VARIABLE).ok(),
             },
+            "gateway_rules_off": qcore_c_gateway::gateway_rules::effective_off(),
             "clang": compiler,
             "scope": "invocation provenance of this run; not an input to any verdict",
         }),

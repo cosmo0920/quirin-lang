@@ -42,8 +42,11 @@ use serde_json::Value;
 
 use crate::typed_c_ast::{children, kind};
 
-/// The rule's arm switch (measurement only: `false` keeps the refusal).
-pub(crate) const DECAY_ARM: bool = true;
+/// The rule's arm switch: registry rule `35` (card GATEWAY-RULE-API, which
+/// replaced the compile-time `DECAY_ARM`); off keeps the refusal.
+fn decay_arm() -> bool {
+    crate::gateway_rules::enabled("35")
+}
 
 /// The element of the decayed array, read from the member's Clang type.
 #[derive(Clone, Copy, Debug, PartialEq, Eq)]
@@ -164,9 +167,9 @@ pub(crate) fn element_of(array_type: &str) -> Element {
 /// The member place a decayed actual converts, when `node` is an
 /// `ArrayToPointerDecay` cast (through parentheses); `None` otherwise.
 pub(crate) fn decayed_operand(node: &Value) -> Option<&Value> {
-    if !DECAY_ARM
-        || kind(node) != "ImplicitCastExpr"
+    if kind(node) != "ImplicitCastExpr"
         || node["castKind"].as_str() != Some("ArrayToPointerDecay")
+        || !decay_arm()
     {
         return None;
     }

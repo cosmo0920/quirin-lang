@@ -38,12 +38,14 @@ use serde_json::Value;
 use crate::typed_access_path::{is_pointer, is_pointer_type, qual, strip};
 use crate::typed_c_ast::{children, kind};
 
-/// Step 1: admit a pointer value whose only top-level qualifier is `const`.
-pub(crate) const CONST_VALUE_ARM: bool = true;
-
-/// Step 2: admit an implicit `void *` bit-cast at the top of a
-/// pointer-destination statement's value.
-pub(crate) const VOID_BIT_CAST_ARM: bool = true;
+/// The rule's switch, registry rule `10m` (card GATEWAY-RULE-API, which
+/// replaced the compile-time `CONST_VALUE_ARM` and `VOID_BIT_CAST_ARM`):
+/// step 1 admits a pointer value whose only top-level qualifier is `const`,
+/// step 2 an implicit `void *` bit-cast at the top of a pointer-destination
+/// statement's value; off keeps both refusals.
+pub(crate) fn rule_arm() -> bool {
+    crate::gateway_rules::enabled("10m")
+}
 
 /// Split Clang's printing of a pointer type into its unqualified type and
 /// its top-level qualifier words. Clang prints a pointer's own qualifiers
@@ -71,7 +73,7 @@ pub(crate) fn const_pointer_value(node: &Value) -> bool {
 /// The value check of a pointer read: the unchanged test, or (step 1) a
 /// `T *const` value.
 pub(crate) fn pointer_value(node: &Value) -> bool {
-    is_pointer(node) || (CONST_VALUE_ARM && const_pointer_value(node))
+    is_pointer(node) || (const_pointer_value(node) && rule_arm())
 }
 
 /// The pointee words of a pointer type, top-level qualifiers of the pointee
@@ -103,7 +105,7 @@ pub(crate) fn pointer_source<'a>(value: &'a Value, destination: &Value) -> Optio
     if let Some(source) = strip(value) {
         return Some(source);
     }
-    if !VOID_BIT_CAST_ARM {
+    if !rule_arm() {
         return None;
     }
     void_bit_cast(value, destination)
@@ -212,10 +214,7 @@ mod tests {
         let declared = json!({ "kind": "VarDecl", "type": { "qualType": "struct p *" } });
         assert!(void_bit_cast(&cast("BitCast", "struct p *", "void *"), &declared).is_some());
         // With the arm on, the statement source is the path under the cast.
-        assert_eq!(
-            pointer_source(&value, &destination).is_some(),
-            VOID_BIT_CAST_ARM
-        );
+        assert_eq!(pointer_source(&value, &destination).is_some(), rule_arm());
     }
 
     #[test]

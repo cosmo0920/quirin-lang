@@ -706,7 +706,9 @@ fn run(arguments: &[String]) -> Result<bool, String> {
             "environment": {
                 "QCORE_CLANG": std::env::var("QCORE_CLANG").ok(),
                 "QCORE_AUDIT_JOBS": std::env::var(crate::parallel::JOBS_VARIABLE).ok(),
+                "QCORE_GATEWAY_RULES_OFF": std::env::var(qcore_c_gateway::gateway_rules::RULES_OFF_VARIABLE).ok(),
             },
+            "gateway_rules_off": qcore_c_gateway::gateway_rules::effective_off(),
             "clang": qcore_c_gateway::ClangIdentity::capture()?,
             "gateway_failures": failures,
             "scope": "invocation provenance of this run; not an input to any verdict. Preparation (the Clang CMake build and the Monkey inputs, including the C++ compiler) is recorded by quirin-audit prepare beside its outputs (build-provenance.json, qcore-monkey-inputs.json and prepare.json); resource analysis does not establish GCC equivalence or whole-library safety",

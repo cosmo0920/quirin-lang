@@ -48,8 +48,10 @@ const SCOPE: &str = "selected-function-inventory; intraprocedural custody with v
 const BOUNDS: &str = "existing gateway budgets; no new hypothesis discharge";
 const EVIDENCE_VERSION: &str = "qcore-audit-report.v1";
 
-/// The gateway's built-in route table. No run-time switch exists yet
-/// (`RULE-SWITCHES`), so the off-list is always empty.
+/// The gateway's built-in route table, generated from its rule registry
+/// (`crates/gateway-rules/registry.toml`, card GATEWAY-RULE-API). The name is
+/// unchanged from before the registry, so a run with no rule off records the
+/// same provenance as before it.
 const RULE_REGISTRY: &str = "qcore-c-gateway:built-in-route-map";
 
 /// The bundle name of the loaded resource-contract environment.
@@ -90,12 +92,20 @@ pub fn contracts_digest(contracts: &ResourceContracts) -> Result<String, String>
 pub fn provenance(contract_bundles: BTreeMap<String, String>) -> Provenance {
     Provenance {
         analyzer_revision: analyzer_revision(),
-        rule_set: RuleSet {
-            registry: RULE_REGISTRY.into(),
-            off: BTreeSet::new(),
-        },
+        rule_set: rule_set(qcore_c_gateway::gateway_rules::effective_off()),
         contract_bundles,
         external_checker: None,
+    }
+}
+
+/// The rule set of a run that switched `off` off (`QCORE_GATEWAY_RULES_OFF`,
+/// as the gateway applied it: `quirin-audit measure --rules-off` checks every
+/// component against the list it asked for).
+#[must_use]
+pub fn rule_set(off: BTreeSet<String>) -> RuleSet {
+    RuleSet {
+        registry: RULE_REGISTRY.into(),
+        off,
     }
 }
 
@@ -506,6 +516,9 @@ mod tests {
             }]
         );
         assert_eq!(component.provenance.rule_set.off, BTreeSet::new());
+        let switched = super::rule_set(BTreeSet::from(["35".to_owned()]));
+        assert_eq!(switched.registry, component.provenance.rule_set.registry);
+        assert_eq!(switched.off, BTreeSet::from(["35".to_owned()]));
         assert!(
             component
                 .provenance
