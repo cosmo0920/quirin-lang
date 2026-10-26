@@ -1,0 +1,65 @@
+{
+  "semantic_source": "342ca74c4a2ffca611dbc1b6ff51e0fe53920490",
+  "working_head_after_build": "37825d1ce24f0eb1dfe138b6fa15ca21f73db2aa",
+  "semantic_delta_command": [
+    "git",
+    "diff",
+    "--name-only",
+    "342ca74c4a2ffca611dbc1b6ff51e0fe53920490",
+    "--",
+    "crates",
+    "compiler",
+    "proof",
+    "scripts",
+    "contract",
+    "providers"
+  ],
+  "semantic_delta_output": "",
+  "base": {
+    "source": "47fc52a32abe8b5e56d711ff4773343ac6537167",
+    "binary": "/home/cosmo/.codex/worktrees/808d/quirin-lang/private/cmt-disjoint-frames/base-runtime/target/release/quirin-audit",
+    "sha256": "077014346fe09d2127fd2c28ad48156fe5e467a63840f50afa932e1bcf477404",
+    "built": "2026-10-25T11:41:56.662913+00:00"
+  },
+  "tip": {
+    "head": "342ca74c4a2ffca611dbc1b6ff51e0fe53920490",
+    "working_head": "ada2c56634b6c0451ad3a36fb0e37598f92f0bab",
+    "binary": "/home/cosmo/.codex/worktrees/808d/quirin-lang/private/cmt-disjoint-frames/tip-runtime/target/release/quirin-audit",
+    "sha256": "fe0c5c50fa8e9df9e16897834f22fa75b0880f9f153842b8efed99314a060e57",
+    "frozen": "2026-10-25T17:05:17.501204+00:00",
+    "external_snapshot": "/home/cosmo/.codex/worktrees/808d/quirin-lang/private/cmt-disjoint-frames/inputs",
+    "snapshot_manifest_sha256": "6a27f3242c27fe29328e01d4eb1afddb4f8cb7ceafaba40a174d3f76b1242597",
+    "canonical_model_delta": {
+      "module": "cfl/intrusive_list.qv",
+      "base_snapshot_sha256": "0d58b3b52665e232bc096517fb9c7da990bbb4a851a5d4599a2e719ee1792038",
+      "tip_canonical_sha256": "1dc71a24ffaad7a6aadb24f999dcfd99cb0890155619c9f82304c59085b27da2",
+      "base_initializer_clauses": 18,
+      "tip_initializer_clauses": 28,
+      "interpreted_resource_or_bounds_permission_added": false,
+      "meaning": "Matched TIP source embeds the updated declared model; paired external snapshot remains unchanged. No Rust-only binary-isolation claim."
+    },
+    "gate_source": "342ca74c4a2ffca611dbc1b6ff51e0fe53920490"
+  },
+  "tip_build": {
+    "source": "342ca74c4a2ffca611dbc1b6ff51e0fe53920490",
+    "working_head": "ada2c56634b6c0451ad3a36fb0e37598f92f0bab",
+    "command": [
+      "cargo",
+      "build",
+      "--release",
+      "-p",
+      "qcore-audit",
+      "--bin",
+      "quirin-audit"
+    ],
+    "started": "2026-10-25T17:03:12.392557+00:00",
+    "environment": {
+      "CARGO_BUILD_JOBS": "6",
+      "QCORE_AUDIT_BUILD_COMMIT": "342ca74c4a2ffca611dbc1b6ff51e0fe53920490",
+      "QCORE_CLANG": "/usr/lib/llvm-21/bin/clang"
+    },
+    "exit": 0,
+    "ended": "2026-10-25T17:05:17.454654+00:00"
+  },
+  "recorded": "2026-10-25T17:07:26.383958+00:00"
+}

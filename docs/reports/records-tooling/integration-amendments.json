@@ -1,0 +1,35 @@
+{
+  "schema": "quirin-amendments/1",
+  "card": "RECORDS-TOOLING",
+  "base": "8a015cd8342eddf5ee1e65eb0c260ecb34dada54",
+  "measured_tip": "468fde2287248554934d6fdccf51743d0bf1a044",
+  "profiles": [],
+  "increment_paragraph": "RECORDS-TOOLING (refactoring round 1 tooling follow-ups; Python, tests and docs only, no analyzer, contract, Lean or verdict change) closes three integration-tooling gaps. scripts/apply_amendments.py now checks profiles[] on every run (--check, --dry-run and a write) through evaluation_profiles.check_amendments against the document's base, or --profiles-base REV on a merge into a newer main: unknown, frozen, unlisted-moved and listed-unmoved profiles, and a base outside the object store, are refused before anything is written; a tree without contract/evaluations accepts only an empty list; the schema docstring no longer calls profiles reserved, while contribution stays reserved for CONTRIBUTION-LEDGERS. scripts/gate_scope.py classifies contract/evaluations/** as records the Python suite checks, so a records-only diff selects no Rust package (a real-repository census test pins that no crate owns or reads those paths; a crate found reading one still claims it, and every other unclaimed path still fails closed to the full suite). New scripts/land.py is the single authority for the post-gate landing sequence (gate record, build_matrix.py . --gate, build_docs_index.py, land.py check, commit, Python rerun); land.py check refuses a stale dimensions.named_followups or dimensions.requirements count or report index before the Python suite runs, naming the regenerating command. apply_amendments.py prints that sequence after a write; its previous printed matrix command omitted build_matrix.py's required ROOT argument. The card-brief section of docs/agents/operations.md now names quirin-amendments/1 and the --check command as a checklist item. Report: docs/reports/records-tooling/README.md.",
+  "status_paragraph": null,
+  "ledger": [
+    {
+      "id": "EVALUATION-PROFILES-AMENDMENTS-CHECK",
+      "operation": "retire",
+      "why": "DISCHARGE (RECORDS-TOOLING): scripts/apply_amendments.py calls evaluation_profiles.check_amendments with the document's base (or --profiles-base) on --check, --dry-run and write, fail-closed; scripts/tests/test_apply_amendments.py ProfilesCheck refuses an unknown, a frozen, an unlisted moved and a listed unmoved profile and a base outside the object store, each writing nothing.",
+      "source": "docs/reports/records-tooling/README.md"
+    },
+    {
+      "id": "GATE-SCOPE-EVALUATION-RECORDS",
+      "operation": "retire",
+      "why": "DISCHARGE (RECORDS-TOOLING): scripts/gate_scope.py classifies contract/evaluations/** as Python-checked records; test_gate_scope.py PythonCheckedRecords shows a record-only diff selects no Rust package and still runs the Python suite, a reading crate still claims the records, and neighbouring contract paths stay fail-closed; RealRepository.test_no_crate_reads_the_evaluation_records is the census that no crate owns or reads them.",
+      "source": "docs/reports/records-tooling/README.md"
+    },
+    {
+      "id": "CARD-BRIEF-AMENDMENTS-SHAPE",
+      "operation": "amend",
+      "text": "RECORDS-TOOLING (2026-10-26): the card-brief section of docs/agents/operations.md, the tracked brief template, now asks for quirin-amendments/1 and for `python3 scripts/apply_amendments.py <file> --check` exiting 0 as a checklist item, and RECORDS-TOOLING's own file validates without --legacy. Still open: the untracked integrator scratch brief private/integrator-briefs/refactor-r1-common.md keeps the pre-schema shape (the card's worktree isolation refused the edit; the replacement text is in the card's report), and the entry retires when the first card briefed from the updated template lands a file that validates without --legacy.",
+      "source": "docs/reports/records-tooling/README.md"
+    },
+    {
+      "id": "AMENDMENTS-RESERVED-FIELDS-UNAPPLIED",
+      "operation": "amend",
+      "text": "RECORDS-TOOLING (2026-10-26) discharges the profiles half: apply_amendments.py checks profiles[] through evaluation_profiles.check_amendments on every run (it writes nothing, since the baselines are in the card's own commits), and no schema bump was needed because no existing valid document changes meaning except that a profiles list naming a non-profile or disagreeing with the moved baselines is now refused. Only contribution remains reserved; its DISCHARGE is CONTRIBUTION-LEDGERS as stated.",
+      "source": "docs/reports/records-tooling/README.md"
+    }
+  ]
+}

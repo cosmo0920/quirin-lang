@@ -85,6 +85,12 @@ const ALLOWED: &[(&str, &[&str])] = &[
         "crates/quirin-audit-plugin-libevent",
         &["quirin-audit-plugin", "qcore-schemas"],
     ),
+    // Card MEASURE-TOOL: the measurement plugin reads components through the
+    // schema crate's composition interface and links no analysis crate.
+    (
+        "crates/quirin-audit-plugin-measure",
+        &["quirin-audit-plugin", "qcore-schemas"],
+    ),
     ("crates/qcorec", &["qcore-compiler", "qcore-contract"]),
 ];
 

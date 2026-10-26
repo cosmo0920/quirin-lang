@@ -870,6 +870,10 @@ pub enum LegacyInstruction {
         base: String,
         path: Vec<String>,
         writes: Vec<String>,
+        #[serde(default, skip_serializing_if = "Vec::is_empty")]
+        protected_fields: Vec<String>,
+        #[serde(default, skip_serializing_if = "Vec::is_empty")]
+        compatible_roots: Vec<String>,
         access: Box<LegacyInstruction>,
         fallback: Box<LegacyInstruction>,
     },
@@ -3464,6 +3468,10 @@ fn analyze_translation_unit_under_holds(
             Err(error) => return Err(error),
         }
     }
+    // Card CMT-GETTER-OWNERSHIP-CLOSURE: source-validated conditional
+    // embedded storage. This can only append a witnessed violation to the
+    // public root; every ordinary diagnostic remains evidence.
+    legacy_conditional_embedded_storage::diagnose(&tokens, &mut functions);
     // Card W45-USER-CONTRACT-PLUGINS: the fold of the verdict semigroup,
     // which is the three-way decision this replaced on every status it had.
     let status = verdict::unit_status(functions.values(), !projection_failures.is_empty());
@@ -5749,6 +5757,9 @@ impl Parser<'_> {
 #[path = "legacy_tokens.rs"]
 mod tokens;
 pub use self::tokens::*;
+
+#[path = "legacy_conditional_embedded_storage.rs"]
+mod legacy_conditional_embedded_storage;
 
 // Card GATEWAY-ANALYSIS-PATH-OPTIMIZATION: the parser's measurement-only
 // census hooks (feature `indirect-census`).

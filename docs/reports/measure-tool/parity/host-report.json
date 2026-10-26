@@ -1,0 +1,100 @@
+{
+  "artifacts": [
+    {
+      "bytes": 16821,
+      "kind": "native-comparison",
+      "path": "/media/Data/GitHub/quirin-lang/private/measure-tool/parity-1/native-comparison.json",
+      "relative": "native-comparison.json",
+      "sha256": "596a76f59ac7779a35fd7857a638a2c8d9138485ebd41575cc275d457f99fd7a"
+    },
+    {
+      "bytes": 9990,
+      "kind": "measure-run",
+      "path": "/media/Data/GitHub/quirin-lang/private/measure-tool/parity-1/sides/base/run.json",
+      "relative": "sides/base/run.json",
+      "sha256": "fff35defe18430608ae12c372fc3e8cabe7301e92cbc9b5fc8eec4d07f6d904b"
+    },
+    {
+      "bytes": 9978,
+      "kind": "measure-run",
+      "path": "/media/Data/GitHub/quirin-lang/private/measure-tool/parity-1/sides/tip/run.json",
+      "relative": "sides/tip/run.json",
+      "sha256": "ddcc552a673568204530ba3706e4811caee3e5b798992ef090ec54a51bbd91c8"
+    },
+    {
+      "bytes": 3435,
+      "kind": "measure-mirror-manifest",
+      "path": "/media/Data/GitHub/quirin-lang/private/measure-tool/parity-1/mirror/manifest.json",
+      "relative": "mirror/manifest.json",
+      "sha256": "a5bcc755e0ae7fa3b85c8d7eb5b56e02673e9de862a4b1581bd3072c975e12b9"
+    }
+  ],
+  "claims": [],
+  "diagnostics": [],
+  "meaning": "an external quirin-audit subcommand (card W45-AUDIT-SUBCOMMAND-PLUGINS, contract spec C11.2): a quirin-audit-NAME executable found only on the declared plugin search path, run out of process with a cleared environment, its working directory the declared output, under wall-time and output quotas enforced by a process-group kill; its artifacts are accepted only inside the output with their declared SHA-256; each verdict claim is classified by the checker-plugin firewall (an uncertified Safe or Unsafe is Pending, plugin-claim-uncertified; an Unknown is Unknown) and a spawn failure, timeout, quota breach, nonzero exit, malformed response, protocol-version mismatch, reported failure or unverified artifact makes the run Unknown; each row is the join (Safe < Pending < Unknown < Unsafe) of the host's verdict from --audit-report, the run's and the claims about its artifact, and `verdict` is the join of every row and the run (null when a completed run has no row: no claim publishes no verdict)",
+  "plugin": {
+    "executable": "/media/Data/GitHub/quirin-lang/.claude/worktrees/agent-a909b7578f8f907c7/target/debug/quirin-audit-measure",
+    "label": "quirin-audit-measure@842e2102c20b02f0",
+    "name": "measure",
+    "sha256": "842e2102c20b02f0ea831b685a1f3cf5fe4c37e803214d58aaf940bf4ff8efd6"
+  },
+  "protocol_version": 1,
+  "reasons": null,
+  "request": {
+    "arguments": [
+      "--inputs",
+      "crates/quirin-audit-plugin-measure/inputs/live.json",
+      "--routes",
+      "corpus",
+      "--side",
+      "base=rev:e282aaccc",
+      "--side",
+      "tip=rev:9ecc941d5",
+      "--declared",
+      "docs/reports/measure-tool/parity/PREDICTION.md",
+      "--legacy-rows",
+      "--inputs-base",
+      "/media/Data/GitHub/quirin-lang",
+      "--repository",
+      "."
+    ],
+    "audit_report": null,
+    "checkpoints": [],
+    "identity": {
+      "contract_set_sha256": null,
+      "refuted_table_sha256": null,
+      "revision": null
+    },
+    "invocation_directory": "/media/Data/GitHub/quirin-lang/.claude/worktrees/agent-a909b7578f8f907c7",
+    "load_path": null,
+    "output": "/media/Data/GitHub/quirin-lang/private/measure-tool/parity-1",
+    "protocol": "quirin-audit-plugin",
+    "protocol_version": 1,
+    "providers": [],
+    "quotas": {
+      "stderr_bytes": 16777216,
+      "stdout_bytes": 16777216,
+      "wall_time_ms": 28800000
+    },
+    "report": "/media/Data/GitHub/quirin-lang/private/measure-tool/parity-1/quirin-audit-measure.report.json",
+    "subcommand": "measure"
+  },
+  "response_protocol_version": 1,
+  "route": "external-subcommand",
+  "rows": [],
+  "run": {
+    "code": null,
+    "exit_code": 0,
+    "outcome": "completed",
+    "reason": null,
+    "reasons": [],
+    "signal": null,
+    "stderr_bytes": 132,
+    "stderr_log": "/media/Data/GitHub/quirin-lang/private/measure-tool/parity-1/quirin-audit-measure.report.stderr.log",
+    "stdout_bytes": 654,
+    "verdict": "Safe",
+    "wall_time_ms": 20285377
+  },
+  "schema_version": 1,
+  "verdict": null
+}

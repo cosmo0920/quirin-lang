@@ -1,0 +1,16 @@
+{
+  "command": [
+    "/home/cosmo/.codex/worktrees/808d/quirin-lang/private/cmt-disjoint-frames/replay-v3/rebind-readings",
+    "/home/cosmo/.codex/worktrees/808d/quirin-lang/private/cmt-disjoint-frames/base-slice/resource-diagnostics.json",
+    "/home/cosmo/.codex/worktrees/808d/quirin-lang/private/cmt-disjoint-frames/tip-slice/resource-diagnostics.json",
+    "/home/cosmo/.codex/worktrees/808d/quirin-lang/private/cmt-disjoint-frames/base-slice/resource-diagnostics.contracts.json",
+    "/home/cosmo/.codex/worktrees/808d/quirin-lang/private/cmt-disjoint-frames/tip-slice/resource-diagnostics.contracts.json",
+    "47fc52a32abe8b5e56d711ff4773343ac6537167",
+    "342ca74c4a2ffca611dbc1b6ff51e0fe53920490",
+    "/home/cosmo/.codex/worktrees/808d/quirin-lang/private/cmt-disjoint-frames/replay-v3/slice-readings-proof.json"
+  ],
+  "started": "2026-10-25T22:21:18.971336+00:00",
+  "log": "/home/cosmo/.codex/worktrees/808d/quirin-lang/private/cmt-disjoint-frames/replay-v3/slice-readings.log",
+  "exit": 0,
+  "ended": "2026-10-25T22:21:19.195977+00:00"
+}

@@ -195,6 +195,8 @@ Regenerate with `python3 scripts/build_docs_index.py`; validate with `--check`.
 
 | [cmetrics-setter-contracts](cmetrics-setter-contracts/README.md) | CMetrics map, metric and typed setter contracts |
 
+| [cmt-self-init-disjoint-frames](cmt-self-init-disjoint-frames/README.md) | Checked initializer frames for same-owner child slots |
+
 | [compose-event-lines](compose-event-lines/README.md) | COMPOSE-EVENT-LINES — source lines in an event program, and why the comparison stays strict (wave 23) |
 
 | [composed-window-reach](composed-window-reach/README.md) | `COMPOSED-WINDOW-REACH` (wave 41) — the composed route's window function, measured |
@@ -587,6 +589,8 @@ Regenerate with `python3 scripts/build_docs_index.py`; validate with `--check`.
 
 | [main-guard-removal](main-guard-removal/README.md) | MAIN-GUARD-REMOVAL |
 
+| [measure-tool](measure-tool/README.md) | MEASURE-TOOL |
+
 | [member-path-unit-helpers](member-path-unit-helpers/README.md) | MEMBER-PATH-STATES-THROUGH-UNIT-HELPERS: rule 30's body check through the unit's helpers |
 
 | [member-prepass-other-routes](member-prepass-other-routes/README.md) | MEMBER-PREPASS-OTHER-ROUTES |
@@ -735,6 +739,8 @@ Regenerate with `python3 scripts/build_docs_index.py`; validate with `--check`.
 | [r03-loop-counts](r03-loop-counts/README.md) | Revision 0.3 R06: exact repetition and maximum counts |
 
 | [rdhttp-header-summary-gap](rdhttp-header-summary-gap/README.md) | RDHTTP-HEADER-SUMMARY-GAP: the unit index of a unit nesting beyond the default JSON limit |
+
+| [records-tooling](records-tooling/README.md) | RECORDS-TOOLING: profiles check, evaluation records scope, landing check |
 
 | [refcount-family-blocking-callees](refcount-family-blocking-callees/README.md) | REFCOUNT-FAMILY-BLOCKING-CALLEES: the callees that break reference families |
 

@@ -1,0 +1,13 @@
+{
+  "command": [
+    "python3",
+    "/home/cosmo/.codex/worktrees/808d/quirin-lang/private/cmt-disjoint-frames/time_identity_v2.py",
+    "corpus",
+    "--artifacts-root",
+    "/home/cosmo/.codex/worktrees/808d/quirin-lang/private/cmt-disjoint-frames/replay-v3/time"
+  ],
+  "started": "2026-10-25T22:20:54.055057+00:00",
+  "log": "/home/cosmo/.codex/worktrees/808d/quirin-lang/private/cmt-disjoint-frames/replay-v3/corpus-time.log",
+  "exit": 0,
+  "ended": "2026-10-25T22:20:57.666255+00:00"
+}

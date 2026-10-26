@@ -1,0 +1,19 @@
+{
+  "command": [
+    "python3",
+    "docs/reports/plugin-premise-decomposition/scripts/build_replay.py",
+    "/home/cosmo/.codex/worktrees/808d/quirin-lang/private/cmt-disjoint-frames/projection_replay.rs",
+    "/home/cosmo/.codex/worktrees/808d/quirin-lang/private/cmt-disjoint-frames/replay-v3/projection-replay",
+    "--binary",
+    "target/release/quirin-audit",
+    "--extern",
+    "qcore_audit",
+    "qcore_c_gateway",
+    "qcore_schemas",
+    "serde_json"
+  ],
+  "started": "2026-10-25T22:20:50.420165+00:00",
+  "log": "/home/cosmo/.codex/worktrees/808d/quirin-lang/private/cmt-disjoint-frames/replay-v3/projection-replay-build.log",
+  "exit": 0,
+  "ended": "2026-10-25T22:20:51.223929+00:00"
+}

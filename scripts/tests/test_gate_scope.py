@@ -173,6 +173,40 @@ class FullSuiteTriggers(unittest.TestCase):
         self.assertEqual(plan(["docs/agents/validation.md"], force_full=True)["mode"], "full")
 
 
+class PythonCheckedRecords(unittest.TestCase):
+    """Card RECORDS-TOOLING: contract/evaluations/** is Python-suite data."""
+
+    RECORD = "contract/evaluations/demo/baseline.json"
+
+    def test_a_record_only_diff_selects_no_crate_and_runs_python(self):
+        scope = plan([self.RECORD], files={**FILES, self.RECORD: "{}\n"})
+        self.assertEqual(scope["mode"], "scoped")
+        self.assertEqual(scope["full_reasons"], [])
+        self.assertEqual(scope["rust_packages"], [])
+        self.assertIn(f"{self.RECORD}: a record the Python suite checks", scope["python_reasons"])
+        self.assertIn("class records", scope["attribution"][self.RECORD])
+        steps = scope_mod.steps_for(scope, Path("/o"))
+        self.assertEqual([step.name for step in steps if step.slot == "rust-suite"], [])
+        self.assertEqual(steps[-1].name, "python")
+
+    def test_a_crate_reading_the_records_still_claims_them(self):
+        files = {**FILES, self.RECORD: "{}\n",
+                 "crates/delta/tests/reads_records.rs": (
+                     'fn records() -> std::path::PathBuf { std::path::PathBuf::from('
+                     'env!("CARGO_MANIFEST_DIR")).join("../../contract/evaluations") }\n')}
+        scope = plan([self.RECORD], files=files)
+        self.assertEqual(scope["mode"], "scoped")
+        self.assertEqual(scope["rust_packages"], ["delta"])
+        self.assertIn(f"{self.RECORD}: a record the Python suite checks", scope["python_reasons"])
+
+    def test_other_contract_paths_still_fail_closed(self):
+        for path in ("contract/orphan.qv", "contract/evaluations.json",
+                     "contract/evaluationsX/a.json"):
+            scope = plan([path], files={**FILES, path: ""})
+            self.assertEqual(scope["mode"], "full", path)
+            self.assertIn("fail-closed", scope["full_reasons"][0], path)
+
+
 class LeanPlanning(unittest.TestCase):
     def test_a_module_change_selects_its_importers_and_their_audits(self):
         lean = plan(["proof/QCore/A.lean"])["lean"]
@@ -329,6 +363,23 @@ class RealRepository(unittest.TestCase):
         by_directory = Model(scope_mod.load_crates(), scope_mod.tracked_files(),
                              granularity="directory")
         self.assertTrue(write_lend_reads(by_directory, sibling))
+
+    def test_evaluation_records_are_claimed_by_their_readers(self):
+        """GATE-SCOPE-EVALUATION-RECORDS: no crate owns a tracked
+        contract/evaluations path. A crate that reads one (MEASURE-TOOL's
+        quirin-audit-plugin-measure reads the profile records at run time) still
+        claims it, so a records-only diff runs that crate's tests as well as
+        the Python suite, and never the full suite on records alone."""
+        records = [path for path in scope_mod.tracked_files()
+                   if path.startswith(scope_mod.PYTHON_RECORD_PREFIXES)]
+        self.assertTrue(records)
+        for path in records:
+            self.assertIsNone(self.model.owner(path), path)
+            readers = sorted({reader.crate for reader in self.model.readers_of(path)})
+            result = scope_mod.plan([path], self.model)
+            self.assertEqual(result["mode"], "scoped", (path, result["full_reasons"]))
+            self.assertTrue(set(readers) <= set(result["rust_packages"]), (path, readers))
+            self.assertTrue(result["python_reasons"], path)
 
     def test_the_census_is_json(self):
         census = scope_mod.cross_crate_readers(self.model)

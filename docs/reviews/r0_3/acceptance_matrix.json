@@ -195,7 +195,7 @@
   "ct_stage_names": 20,
   "ct_cells": 1000,
   "unverified_spec_items": 10,
-  "named_followups": 846
+  "named_followups": 844
  },
  "derivation": {
   "rule": "no count in a section this file marks `derived` is hand-copied from a status ledger; each is read from the manifest or validated run record named beside it. Sections marked `hand_maintained` are recorded analysis carried verbatim from the previous matrix, and `integrator_supplied` numbers name whether they were measured for this run or carried - see section_ownership.",
@@ -6626,7 +6626,7 @@
   ]
  },
  "corpus": {
-  "contract_modules": 142,
+  "contract_modules": 143,
   "contract_modules_pinned_by": "compiler/tests/qcore_contract_corpus.rs",
   "contract_clause_pin": {
    "const": "EXPECTED_CONTRACTS",
@@ -6809,7 +6809,7 @@
   }
  },
  "workspace": {
-  "cargo_workspace_members": 13,
+  "cargo_workspace_members": 14,
   "cargo_workspace_member_paths": [
    "compiler",
    "crates/qcore-audit",
@@ -6823,6 +6823,7 @@
    "crates/qcorec",
    "crates/quirin-audit-plugin",
    "crates/quirin-audit-plugin-libevent",
+   "crates/quirin-audit-plugin-measure",
    "crates/quirin-source-analysis"
   ],
   "crates_directory_members": [
@@ -6837,6 +6838,7 @@
    "crates/qcorec",
    "crates/quirin-audit-plugin",
    "crates/quirin-audit-plugin-libevent",
+   "crates/quirin-audit-plugin-measure",
    "crates/quirin-source-analysis"
   ],
   "provider_workspace_members": 13,
@@ -6858,11 +6860,11 @@
   "note": "providers/ is a separate Cargo workspace, excluded from the core workspace; P01 verified empirically that the core workspace builds and passes its full suite with providers/ moved out of the tree."
  },
  "validation": {
-  "note": "Integration of EVALUATION-PROFILES: merge of card tip 8223b5461 (base 710021bd7) onto main bc1888f29; records commit 05d11438b written by scripts/apply_amendments.py, plus the plan's record path corrected to contract/evaluations/ (the card's finding: a contract/profiles/ directory without profile.json empties the first-party provider registry). `scripts/evaluation_profiles.py check --history` on the merge: 3 live, 6 frozen, bindings and policy ok. Full standing gate ON 05d11438b through `scripts/gate_scope.py --base bc1888f29 --full` with gate slots (private log /media/Data/GitHub/quirin-lang/private/landing-ep/console.log): submodules, fmt, Clippy, Rust 8688 passed/0 failed/15 ignored (555 units/568 summaries), both reevaluation examples, all exit 0. Python 492 ran with 1 failure, the stale dimensions.named_followups predating regeneration; after `build_matrix.py --gate` on this record Python was rerun on the committed matrix. providers/ and proof/ unchanged: provider_tests 133 and lean_audits 373 carried from bc1888f29's gate. The live baselines were measured at 710021bd7; the landings since (AUDIT-COMPOSITION, CFG-RELEASE: byte-identical identity runs; CONTRACT-LOCKS: no analyzer change; CMetrics setter contracts: executable adoption Open) are recorded as non-moving by their own evidence, not re-measured here.",
-  "workspace_tests": 8688,
+  "note": "Integration of RECORDS-TOOLING (landing-race policy: Python/docs-only card merged onto main 5813ddab9, which moved by MEASURE-TOOL since the card's base 8a015cd83). The card's full gate ran on 468fde228 (base 8a015cd83): submodules, fmt, Clippy, Rust 8688 passed/0 failed/15 ignored, both reevaluation examples, Python 513, all exit 0 (docs/reports/records-tooling/gate.json). On the merge, a first Python run (private log /media/Data/GitHub/quirin-lang/private/landing-rt/python-pre.log) failed 2 tests: the stale dimensions.named_followups, and test_no_crate_reads_the_evaluation_records, whose premise MEASURE-TOOL's run-time reads of contract/evaluations broke. The scoper already claims reader crates; the integration commit replaces that test with test_evaluation_records_are_claimed_by_their_readers (records-only diff stays scoped, runs Python, includes quirin-audit-plugin-measure). No Rust source changed by the integration: workspace_tests 8722 carried from MEASURE-TOOL's gate on 5813ddab9's tree; cargo fmt --check 0 on the merge; provider_tests 133 and lean_audits 373 carried. Python rerun on the committed regenerated matrix; scripts/land.py check 0.",
+  "workspace_tests": 8722,
   "provider_tests": 133,
-  "python_evidence_validator_tests": 492,
-  "lean_audits": 374,
+  "python_evidence_validator_tests": 513,
+  "lean_audits": 376,
   "lean_audit_files": [
    "AuditAbiEnumConstPointer.lean",
    "AuditAggregateOwnedField.lean",
@@ -6888,6 +6890,7 @@
    "AuditBranchJoin.lean",
    "AuditBucketTally.lean",
    "AuditCGatewayRefinements.lean",
+   "AuditCMetricsGetterOwnership.lean",
    "AuditCNumeric.lean",
    "AuditCProgram.lean",
    "AuditCallArgumentAccess.lean",
@@ -7208,6 +7211,7 @@
    "AuditTeardownAdmission.lean",
    "AuditTimeoutTeardown.lean",
    "AuditTrackedSelfInit.lean",
+   "AuditTrackedSelfInitDisjointFrame.lean",
    "AuditTransferability.lean",
    "AuditTwoDerivationAdmission.lean",
    "AuditTypedAccessPathPositionResiduals.lean",
@@ -7243,7 +7247,7 @@
   "reevaluation_followup_exit": 0,
   "cargo_fmt": "clean",
   "cargo_clippy": "clean",
-  "standing_gate": "full gate on integration tip 05d11438b",
+  "standing_gate": "card full gate on 468fde228 + Python targeted check on the merge",
   "full_language_conformance": false,
   "measurement_provenance": "carried_from_previous_matrix: these numbers were NOT measured for this regeneration; pass --gate PATH with the standing-gate results of this checkpoint to replace them"
  },
@@ -12921,8 +12925,8 @@
   {
    "id": "CMT-MAP-METRIC-GET-OWNERSHIP-CHAIN",
    "title": "Close the CMetrics map getter ownership chain",
-   "why": "Open after the human narrowed W48-BU-CMT-MAP-METRIC-GET to exact borrowed-formal returns. Remaining: caller-supplied metric member allocation and storage lifetime; nullable metric results owning nested label/SDS lists; primary owned membership versus secondary hash indexing and cached pointers; returning a checked borrow from the map; source-checked CFL list effects and truthful vendored XXH3 effects. DISCHARGE: generic Rust with matching audited Lean (no placeholders or project axioms), truthful and pinned contracts with provider gates if changed, full-body and all-exit validation without self-assumed contracts, and fresh BASE/TIP attribution of resource, null and outer/runtime results. A conditional planner caller ceiling is not a gain. W48-CMT-LIST-SELF-INIT adds only a checked initializer-leaf call inside a simple unit-local empty-custody caller frame, with no ordinary summary or production getter gain. CG11 literal self-stores were already supported. Rule 36b closes bounded tracked/interior initializer transport with retained self writes, alias member-fact invalidation, ledger preservation and a canonical CFL .qv declared model that grants no interpreted call summary. Existing nondefault custody frames are refused; disjoint-frame transport remains Open under W48-CMT-SELF-INIT-DISJOINT-FRAMES. Declared models now specify all six public map and both opts APIs; checked executable adoption remains Open under CMT-MAP-OPTS-CONTRACT-ADOPTION and labeled zero-hash static-storage accounting under CMT-LABELED-HASH-ZERO-STATIC-STORAGE. All other parent obligations remain Open.",
-   "source": "docs/reports/w48-bu-cmt-map-metric-get/README.md"
+   "why": "Open after the human narrowed W48-BU-CMT-MAP-METRIC-GET to exact borrowed-formal returns. Remaining: caller-supplied metric member allocation and storage lifetime; nullable metric results owning nested label/SDS lists; primary owned membership versus secondary hash indexing and cached pointers; returning a checked borrow from the map; source-checked CFL list effects and truthful vendored XXH3 effects. DISCHARGE: generic Rust with matching audited Lean (no placeholders or project axioms), truthful and pinned contracts with provider gates if changed, full-body and all-exit validation without self-assumed contracts, and fresh BASE/TIP attribution of resource, null and outer/runtime results. A conditional planner caller ceiling is not a gain. W48-CMT-LIST-SELF-INIT adds only a checked initializer-leaf call inside a simple unit-local empty-custody caller frame, with no ordinary summary or production getter gain. CG11 literal self-stores were already supported. Rule 36b closes bounded tracked/interior initializer transport with retained self writes, alias member-fact invalidation, ledger preservation and a canonical CFL .qv declared model that grants no interpreted call summary. Existing nondefault custody frames are refused; disjoint-frame transport remains Open under W48-CMT-SELF-INIT-DISJOINT-FRAMES. Declared models now specify all six public map and both opts APIs; checked executable adoption remains Open under CMT-MAP-OPTS-CONTRACT-ADOPTION and labeled zero-hash static-storage accounting under CMT-LABELED-HASH-ZERO-STATIC-STORAGE. All other parent obligations remain Open. The later bounded disjoint-frame card (semantic TIP 342ca74c4) admits same-owner child pointer slots separated from initializer writes by source-bound layout, qualifying the earlier all-nondefault refusal while preserving every ledger/field/partial obligation. Fresh BASE/planner -> committed prediction -> implementation, matching Rust/Lean/.qv and complete native attribution record zero production Safe gain/loss and zero getter closure gain; all six selected chain targets remain Unknown. The parent stays Open for the remaining frame/source forms and API adoption, ownership, hash/index/cache, labels/SDS and returned-borrow obligations.",
+   "source": "docs/reports/w48-bu-cmt-map-metric-get/README.md, docs/reports/cmt-self-init-disjoint-frames/README.md"
   },
   {
    "id": "W48-EXACT-RETURN-WITNESS-PRECISION",
@@ -12987,8 +12991,8 @@
   {
    "id": "W48-CMT-SELF-INIT-DISJOINT-FRAMES",
    "title": "Preserve disjoint custody relations across a checked self-initializer",
-   "why": "Open after rule 36b closes bounded tracked/interior transport. Its source-checked effect preserves the ledger and refuses every nondefault custody frame. DISCHARGE: a generic path/alias-sensitive frame rule admitting independently proved disjoint child, containment, membership or other relations while preserving every obligation and invalidating every affected pointer fact; existing obligations in the initialized list must never be erased. Unresolved effects still require their own discharge. Matching audited Rust/Lean, actual source/flow/lifetime/refusal/export controls, truthful .qv reflection without a neutral summary, and fresh BASE/planner then prediction then implementation and complete native attribution. Full list operations and the other getter-chain obligations remain in the parent entry.",
-   "source": "docs/reports/w48-cmt-tracked-interior-self-init/README.md"
+   "why": "Open after rule 36b closes bounded tracked/interior transport. Its source-checked effect preserves the ledger and refuses every nondefault custody frame. DISCHARGE: a generic path/alias-sensitive frame rule admitting independently proved disjoint child, containment, membership or other relations while preserving every obligation and invalidating every affected pointer fact; existing obligations in the initialized list must never be erased. Unresolved effects still require their own discharge. Matching audited Rust/Lean, actual source/flow/lifetime/refusal/export controls, truthful .qv reflection without a neutral summary, and fresh BASE/planner then prediction then implementation and complete native attribution. Full list operations and the other getter-chain obligations remain in the parent entry. W48-CMT-SELF-INIT-DISJOINT-FRAMES (semantic TIP 342ca74c4) qualifies the earlier all-nondefault refusal: checked same-owner direct child pointer slots now survive when source-bound Clang layout and the core footprint checker prove separation from every initializer write. Complete ledger, field and partial links survive; other possible member facts are invalidated conservatively. Matching audited Rust/Lean and the canonical 28-clause CFL .qv model grant no interpreted summary. Fresh paired corpus/system/slice have no Safe gain/loss or getter closure gain, and full resource/NULL/runtime attribution passes. The broad entry remains Open for foreign-owner, containment/member/collection and other custody relations, deeper/same-member footprints, unsupported source/rebinding forms and B08 source aliases; distinct allocation identities alone are not physical separation evidence.",
+   "source": "docs/reports/w48-cmt-tracked-interior-self-init/README.md, docs/reports/cmt-self-init-disjoint-frames/README.md"
   },
   {
    "id": "RULE-AMENDMENTS-OUTSIDE-RULE-FILES",
@@ -13005,27 +13009,21 @@
   {
    "id": "PREPASS-CLOCK-DEPENDENT-KEY",
    "title": "One pre-pass summary key changes with the clock, so route sidecars are not reproducible",
-   "why": "Found by AUDIT-CANONICAL-PATHS. The Fluent Bit compile database compiles lib/monkey/mk_bin/monkey.c, whose MONKEY_BUILT is `__DATE__ \" \" __TIME__`. The member pre-pass keys each unit's lifetime-source summary by a digest over its preprocessed text, so that unit's key (an empty summary) differs between any two runs not in the same second. It shows in both the evidence and pre-pass sections of the .contracts.json sidecar on the corpus, system and slice routes. Verdicts are unaffected, but no two runs of a route are byte-identical, which every identity run must then explain. DISCHARGE: preprocess under a fixed, recorded SOURCE_DATE_EPOCH (Clang honours it for __DATE__ and __TIME__), or refuse or normalise the time macros in the identity. Evidence: two runs of one route byte-identical. CFG-RELEASE observation: with SOURCE_DATE_EPOCH=1761004800 set in the caller's environment, corpus, slice and system route outputs of two independently built sides are raw byte-identical and share every pre-pass summary key (1,058 / 1,039 / 1,037). Clang honours the variable for __DATE__/__TIME__, and the audit's Clang invocations inherit the environment. The entry stays open: the audit itself neither fixes nor records the epoch.",
-   "source": "docs/reports/audit-canonical-paths/README.md, docs/reports/cfg-release/README.md"
-  },
-  {
-   "id": "MEASURE-SNAPSHOT-HAZARDS",
-   "title": "Measurement snapshots: missing submodule, shared working directory, git index refresh, build stamp",
-   "why": "Found by AUDIT-CANONICAL-PATHS while measuring from git-archive snapshots, for the MEASURE-TOOL card (seam F). (1) git archive omits third_party/libevent. The pinned route reads it through the binary's compile-time CARGO_MANIFEST_DIR, so the corpus fails at the Monkey gate with the enclosing worktree's HEAD. (2) The audit writes transient retained products under its working directory (private/audit-retained-products/), so two routes sharing a snapshot trip each other's input-identity check (driver exit 101). (3) The audit's git refreshes a fresh clone's .git/index during the route, also exit 101. (4) QCORE_AUDIT_BUILD_COMMIT (evidence_version) is the HEAD of whatever repository encloses the build directory, not the measured revision. (5) The snapshot directory reaches the contract-source paths the reports digest, so sides at different paths can never be byte-compared. scripts/pin_run.sh and run_pinned_paths.sh in the report show one workaround. DISCHARGE: quirin-audit measure prepares snapshots with submodules at one fixed path per side, runs each with a private working directory, excludes VCS metadata from the identity check and records the measured revision explicitly. CFG-RELEASE observation: item 3 recurs even after `git update-index --refresh` on the fresh libevent clone before the run. Both corpus drivers exit 101 with audit exit 0 and only third_party/libevent/.git/index changed.",
-   "source": "docs/reports/audit-canonical-paths/README.md, docs/reports/cfg-release/README.md"
+   "why": "Found by AUDIT-CANONICAL-PATHS. The Fluent Bit compile database compiles lib/monkey/mk_bin/monkey.c, whose MONKEY_BUILT is `__DATE__ \" \" __TIME__`. The member pre-pass keys each unit's lifetime-source summary by a digest over its preprocessed text, so that unit's key (an empty summary) differs between any two runs not in the same second. It shows in both the evidence and pre-pass sections of the .contracts.json sidecar on the corpus, system and slice routes. Verdicts are unaffected, but no two runs of a route are byte-identical, which every identity run must then explain. DISCHARGE: preprocess under a fixed, recorded SOURCE_DATE_EPOCH (Clang honours it for __DATE__ and __TIME__), or refuse or normalise the time macros in the identity. Evidence: two runs of one route byte-identical. CFG-RELEASE observation: with SOURCE_DATE_EPOCH=1761004800 set in the caller's environment, corpus, slice and system route outputs of two independently built sides are raw byte-identical and share every pre-pass summary key (1,058 / 1,039 / 1,037). Clang honours the variable for __DATE__/__TIME__, and the audit's Clang invocations inherit the environment. The entry stays open: the audit itself neither fixes nor records the epoch. AMENDED by MEASURE-TOOL: quirin-audit measure preprocesses every side's routes under one fixed, recorded SOURCE_DATE_EPOCH and otherwise accepts the one differing pre-pass key only by a checked, named substitution (see LIFETIME-SOURCE-IDENTITY-TIME-MACROS); its live-4 run shows two system and two slice runs byte-identical under it (docs/reports/measure-tool/live/); runs outside the tool (the gate, a person's quirin-audit) still vary until the analyzer fixes or normalises the time macros.",
+   "source": "docs/reports/audit-canonical-paths/README.md, docs/reports/cfg-release/README.md, docs/reports/measure-tool/README.md"
   },
   {
    "id": "AMENDMENTS-RESERVED-FIELDS-UNAPPLIED",
    "title": "The amendments schema's profiles and contribution fields are validated but applied nowhere",
-   "why": "scripts/apply_amendments.py (card AMENDMENTS-SCHEMA) accepts `profiles` (distinct profile names) and `contribution` (null or an object) in quirin-amendments/1, checks only that shape, and prints that neither is applied, because their producers are later cards. DISCHARGE: EVALUATION-PROFILES defines the profile record and CONTRIBUTION-LEDGERS the contribution record. Each card narrows the field's schema in apply_amendments.py and applies it (profile bindings, a contribution ledger written beside the profile), or refuses it, with tests. A schema bump to quirin-amendments/2 is needed if an existing valid document's meaning would change.",
-   "source": "docs/reports/amendments-schema/README.md",
+   "why": "scripts/apply_amendments.py (card AMENDMENTS-SCHEMA) accepts `profiles` (distinct profile names) and `contribution` (null or an object) in quirin-amendments/1, checks only that shape, and prints that neither is applied, because their producers are later cards. DISCHARGE: EVALUATION-PROFILES defines the profile record and CONTRIBUTION-LEDGERS the contribution record. Each card narrows the field's schema in apply_amendments.py and applies it (profile bindings, a contribution ledger written beside the profile), or refuses it, with tests. A schema bump to quirin-amendments/2 is needed if an existing valid document's meaning would change. RECORDS-TOOLING (2026-10-26) discharges the profiles half: apply_amendments.py checks profiles[] through evaluation_profiles.check_amendments on every run (it writes nothing, since the baselines are in the card's own commits), and no schema bump was needed because no existing valid document changes meaning except that a profiles list naming a non-profile or disagreeing with the moved baselines is now refused. Only contribution remains reserved; its DISCHARGE is CONTRIBUTION-LEDGERS as stated.",
+   "source": "docs/reports/amendments-schema/README.md, docs/reports/records-tooling/README.md",
    "recorded_by": "AMENDMENTS-SCHEMA"
   },
   {
    "id": "CARD-BRIEF-AMENDMENTS-SHAPE",
    "title": "Card briefs still ask for the pre-schema integration-amendments.json shape",
-   "why": "The refactoring-round common brief (private/integrator-briefs/refactor-r1-common.md) and earlier briefs describe integration-amendments.json without the `schema` key, with `text`|`why` interchangeable and no per-operation field set. A card following them writes a file that apply_amendments.py reads only with --legacy. DISCHARGE: the P3 card-brief template asks for quirin-amendments/1 and for `python3 scripts/apply_amendments.py <file> --check` in the card's completion checklist. Evidence: the first card landed on that template carries a file that validates without --legacy.",
-   "source": "docs/reports/amendments-schema/README.md",
+   "why": "The refactoring-round common brief (private/integrator-briefs/refactor-r1-common.md) and earlier briefs describe integration-amendments.json without the `schema` key, with `text`|`why` interchangeable and no per-operation field set. A card following them writes a file that apply_amendments.py reads only with --legacy. DISCHARGE: the P3 card-brief template asks for quirin-amendments/1 and for `python3 scripts/apply_amendments.py <file> --check` in the card's completion checklist. Evidence: the first card landed on that template carries a file that validates without --legacy. RECORDS-TOOLING (2026-10-26): the card-brief section of docs/agents/operations.md, the tracked brief template, now asks for quirin-amendments/1 and for `python3 scripts/apply_amendments.py <file> --check` exiting 0 as a checklist item, and RECORDS-TOOLING's own file validates without --legacy. Still open: the untracked integrator scratch brief private/integrator-briefs/refactor-r1-common.md keeps the pre-schema shape (the card's worktree isolation refused the edit; the replacement text is in the card's report), and the entry retires when the first card briefed from the updated template lands a file that validates without --legacy.",
+   "source": "docs/reports/amendments-schema/README.md, docs/reports/records-tooling/README.md",
    "recorded_by": "AMENDMENTS-SCHEMA"
   },
   {
@@ -13041,12 +13039,6 @@
    "source": "docs/reports/audit-composition/README.md"
   },
   {
-   "id": "MEASURE-TOOL-COMPOSITION-CONSUMER",
-   "title": "MEASURE-TOOL must compose and compare through qcore_schemas::composition, as a quirin-audit subcommand",
-   "why": "Seam F's measurement tool (user decision 8: a quirin-audit subcommand plugin) is the intended consumer of the component sidecars card AUDIT-COMPOSITION writes beside every unit report (<report>.components.json, ComponentSidecar). Published baselines should store these components, a profile total is a derivation over them, and a rule's contribution is attribution by Contribution::remove, never a summed total. DISCHARGE: quirin-audit measure reads both sides' sidecars, composes a baseline with a TIP contribution through Contribution::union, reports conflicts (composition-conflict) and per-row derivation changes as its native-comparison record, and its tests reuse the shared vectors of proof/QCore/AuditComposition.lean.",
-   "source": "docs/reports/audit-composition/README.md"
-  },
-  {
    "id": "COMPOSITION-PROPERTY-AND-CHECKPOINT-ROWS",
    "title": "Property rows (null, bounds, outer projection) and checkpoint-composed reports carry no components",
    "why": "Card AUDIT-COMPOSITION componentizes the unit rows written through AuditReport::write_with_revision_key (pinned, current, configured and contracts-only routes). The checkpoint-composed report (compose.rs, streamed from .qo checkpoints) writes no sidecar, and the null/bounds/outer-projection rows and their summaries are written directly. DISCHARGE: each of these writers derives its rows from a ComponentSidecar as the unit report does, each with an identity run, the checkpoint route's sidecar byte-equal to the uncheckpointed route's.",
@@ -13055,8 +13047,8 @@
   {
    "id": "LIFETIME-SOURCE-IDENTITY-TIME-MACROS",
    "title": "The contract sidecar's lifetime-source unit identities depend on the minute Monkey's monkey.c was preprocessed",
-   "why": "qcore_c_gateway::loop_lifetime_source::read_unit names a unit by the SHA-256 of its preprocessing options and preprocessed text, and Fluent Bit's lib/monkey/mk_bin/monkey.c expands __DATE__ and __TIME__. Card AUDIT-COMPOSITION's identity runs measured it: in resource-diagnostics.contracts.json (callback_members/lifetime_protocols/evidence/summaries and the prepass copy) exactly one key changes between any two runs of the same binary (runs 2 and 3 of the same BASE code disagree; BASE and TIP started together agree), on the corpus, slice and system routes alike. Every identity run must therefore special-case this key, and a published digest carries the wall clock. DISCHARGE: preprocess the lifetime-source read with fixed __DATE__/__TIME__ (or hash the text with those expansions normalised), so two runs of one binary write byte-identical contract sidecars, with a test that preprocesses a unit using both macros twice.",
-   "source": "docs/reports/audit-composition/README.md"
+   "why": "qcore_c_gateway::loop_lifetime_source::read_unit names a unit by the SHA-256 of its preprocessing options and preprocessed text, and Fluent Bit's lib/monkey/mk_bin/monkey.c expands __DATE__ and __TIME__. Card AUDIT-COMPOSITION's identity runs measured it: in resource-diagnostics.contracts.json (callback_members/lifetime_protocols/evidence/summaries and the prepass copy) exactly one key changes between any two runs of the same binary (runs 2 and 3 of the same BASE code disagree; BASE and TIP started together agree), on the corpus, slice and system routes alike. Every identity run must therefore special-case this key, and a published digest carries the wall clock. DISCHARGE: preprocess the lifetime-source read with fixed __DATE__/__TIME__ (or hash the text with those expansions normalised), so two runs of one binary write byte-identical contract sidecars, with a test that preprocesses a unit using both macros twice. AMENDED by MEASURE-TOOL: every route of every side quirin-audit measure runs gets one fixed SOURCE_DATE_EPOCH (default 1767225600, --source-date-epoch, recorded in run.json and in a baseline's inputs), which CFG-RELEASE measured removes the key difference and the tool's live-4 run confirms (system and slice contracts sidecars byte-identical between two sides); for sides measured without it the tool accepts a differing contracts sidecar only by the checked one-key substitution of AUDIT-COMPOSITION's compare_identity.py (compare::time_key: exactly one lifetime-source summary key differs, no collision, equal as JSON and as a line multiset after the swap) and names it in the record. The analyzer itself still hashes the clock-dependent text outside the tool; the DISCHARGE (fixed or normalised time macros in loop_lifetime_source::read_unit, with its test) stays open.",
+   "source": "docs/reports/audit-composition/README.md, docs/reports/measure-tool/README.md"
   },
   {
    "id": "COMPOSITION-ANALYZER-IDENTITY",
@@ -13070,20 +13062,6 @@
    "why": "Found by CFG-RELEASE's memory observation. Under scripts/gate_slot.py audit --memory-budget 7G and --jobs 3, the pinned corpus route's quirin-audit process reached a maximum RSS of 10,129,997,824 bytes (BASE 710021bd7) and 10,042,564,608 (TIP); the systemd scope peaked at about 10.6-10.9 GB including page cache. The pinned route receives the slot budget only as QCORE_AUDIT_JOBS (a worker cap), not as a memory plan, so slot admission (floor(MemAvailable / 7 GiB)) can admit more corpus runs than the host's memory holds. No OOM, memory event or swap was observed on the 60 GB host. DISCHARGE: either the pinned route plans its workers against the slot budget (as `quirin-audit current --memory-budget-mib` does) and a measured corpus peak stays within it, or gate_slot.py budgets the corpus class at its measured peak; evidence: a corpus run whose process peak is at or below its slot's budget.",
    "source": "docs/reports/cfg-release/README.md",
    "recorded_by": "CFG-RELEASE"
-  },
-  {
-   "id": "EVALUATION-PROFILES-AMENDMENTS-CHECK",
-   "title": "apply_amendments.py validates profiles[] only by shape",
-   "why": "Found by EVALUATION-PROFILES, which defines the reserved amendments field profiles[]: the live evaluation profiles whose baseline the card's measured tip records. Every name must be a profile, none may be frozen, and against the card base the list must equal the live profiles whose baseline changed (scripts/evaluation_profiles.py amendments <file> --base <rev>). apply_amendments.py, owned by AMENDMENTS-SCHEMA, still checks only the name shape, so an integrator applying a card's amendments does not run this check. DISCHARGE: apply_amendments.py --check calls evaluation_profiles.check_amendments with the document's base, with a refusal test for an unknown, a frozen and an unlisted moved profile.",
-   "source": "docs/reports/evaluation-profiles/README.md",
-   "recorded_by": "EVALUATION-PROFILES"
-  },
-  {
-   "id": "EVALUATION-PROFILES-MEASURE-READER",
-   "title": "Measurement drivers do not read the evaluation-profile records",
-   "why": "Found by EVALUATION-PROFILES. The live profiles eight-home, fluent-bit-system and fluent-bit-tail-pause now record their route, tracked inputs (with digests), untracked prepared compile databases (with digests) and link map, but every card still measures with a copied report driver (docs/reports/audit-canonical-paths/scripts/measure.py) that hard-codes the same inputs, and nothing verifies the untracked digests before a run. DISCHARGE: quirin-audit measure --profile <name> (MEASURE-TOOL) reads contract/evaluations/<name>/evaluation.json, refuses a run whose untracked inputs differ from the recorded digests, and emits figures equal to evaluation_profiles.py summarize, so compare and record consume its output directly.",
-   "source": "docs/reports/evaluation-profiles/README.md",
-   "recorded_by": "EVALUATION-PROFILES"
   },
   {
    "id": "EVALUATION-PROFILES-MATRIX-ROWS",
@@ -13100,11 +13078,22 @@
    "recorded_by": "EVALUATION-PROFILES"
   },
   {
-   "id": "GATE-SCOPE-EVALUATION-RECORDS",
-   "title": "The scoped gate falls back to the full suite for any evaluation-record change",
-   "why": "Found by EVALUATION-PROFILES. scripts/gate_scope.py classifies contract/evaluations/** as owned and read by no crate and not prose, Python, Lean or provider tooling, so it fails closed to the full Rust suite (the card's gate ran 553 units for JSON records only scripts/evaluation_profiles.py reads). Every future live-baseline record (each rule card, each REBASE-CORPUS firing) would pay the same. DISCHARGE: gate_scope.py treats contract/evaluations/** as Python-suite data (no Rust crate reads it: a string-literal census proves it), with a test that a record-only diff selects no Rust package and still runs the Python suite.",
-   "source": "docs/reports/evaluation-profiles/README.md",
-   "recorded_by": "EVALUATION-PROFILES"
+   "id": "MEASURE-TOOL-RULES-OFF-LIVE",
+   "title": "Exercise quirin-audit measure --rules-off and the contribution slot against a real rule switch",
+   "why": "Card MEASURE-TOOL parses --rules-off, builds the <tip>-off side from the same binary with QCORE_GATEWAY_RULES_OFF, compares it with <tip>, and after the run requires every component of the switched side to record exactly the requested off-list (and every other side none); until a binary advertises the switch the option is refused before any route runs ('not yet supported'). Both paths are tested only with stub analyzers, and the native-comparison record's `contribution` slot is reserved, not filled. DISCHARGE: after RULE-SWITCHES lands (and CONTRIBUTION-LEDGERS defines the ledger), one real --rules-off measurement on a migrated rule whose contribution equals that rule card's measured delta, with the slot filled from the <tip>-off -> <tip> comparison and interactions named, never summed.",
+   "source": "docs/reports/measure-tool/README.md"
+  },
+  {
+   "id": "MEASURE-TOOL-LANDING-PUBLISH",
+   "title": "Wire baseline publication into the integrator's landing gate",
+   "why": "Card MEASURE-TOOL implemented `quirin-audit measure publish --from <out>/sides/<name>` (output private/baselines/<sha>, one immutable <profile>/ per route with baseline.json digests) and identity-verified reuse by --side NAME=baseline:<sha>; the exact landing commands are in docs/reports/measure-tool/README.md. No landing has published a baseline yet. DISCHARGE: the integrator's per-landing full gate measures the landed revision with a rev:<sha> side on the live routes and publishes it, and the next card reuses it as BASE after verification instead of rebuilding BASE.",
+   "source": "docs/reports/measure-tool/README.md"
+  },
+  {
+   "id": "GATE-SLOT-CURRENT-BUDGET-SPELLING",
+   "title": "gate_slot.py inserts --memory-budget-mib=N, which quirin-audit current refuses",
+   "why": "Found by MEASURE-TOOL (live run 1): scripts/gate_slot.py apply_budget inserts `--memory-budget-mib=7168` after `quirin-audit current`, but current_cli.rs reads only the two-word form `--memory-budget-mib N`, so any `current` route run directly under an audit slot exits 1 ('unknown argument'). Earlier cards never hit it because their slot command was a Python driver, which takes the QCORE_AUDIT_JOBS mechanism instead. quirin-audit measure passes the two-word form itself, which the slot accepts unchanged. DISCHARGE: gate_slot.py inserts the two-word form (or current_cli.rs accepts `=`), with a test that runs a stub `quirin-audit current` under the slot.",
+   "source": "docs/reports/measure-tool/README.md"
   }
  ],
  "updated": "Completed plugin premise integration; exact hand-maintained union retains810followups, borrowed measured-source8419Rust/354Lean/freshcard133provider, exact source equivalence checked; authoritative root committed-matrix Python confirmation in integration receipt. CMetrics map/opts API model specifications added at the explicit user request. Eight declared-model API contracts remain outside interpreted views, with CMT-MAP-OPTS-CONTRACT-ADOPTION and CMT-LABELED-HASH-ZERO-STATIC-STORAGE Open. No trusted API coverage is claimed; the source gate is recorded by this card alongside its separate initializer native checkpoint. W48-CMT-TRACKED-INTERIOR-SELF-INIT implements rule 36b's checked initializer effect transport for an exact live owned root or embedded record, retaining actual self writes, invalidating aliased member facts and preserving resource obligations; nondefault custody frames refuse and no ordinary summary is exported. The canonical CFL intrusive_list.qv declares matching audit preconditions/effects; two CMetrics .qv modules add six map and two opts lifecycle models, including transitive ownership, partial failure, borrowed results and uncleared cleanup fields. All remain outside interpreted views; checked API adoption and labeled zero-hash storage accounting have named Open follow-ups. Fresh BASE/planner precedes prediction f18d96065 and implementation; the later contract amendment 08da23123 precedes .qv edits. Native corpus BASE/TIP Safe/Unknown/Pending/provisional-Unsafe: 1009 / 3816 / 0 / 9 to 1011 / 3814 / 0 / 9; full system/slice, 5781 NULL dictionaries and runtime projections are compared, 241 semantic leaves accounted, zero unexplained leaves and no prior Safe loss. Gate 8654 Rust / 370 Lean / 374 Python, provider 133 Rust / 25 Python and all five package verifies pass. The actual deep source reader uses 328 KiB below 1 MiB. Full getter closure remains Open; W48-CMT-SELF-INIT-DISJOINT-FRAMES tracks the next bounded frame extension, and W48-EXACT-RETURN-WITNESS-PRECISION is unchanged. Native evidence is isolated to measured e92d8aef35a8bd14550e90219d19a56eb3b196e7; later source gate 2d0d85299b830aa24d7f200d63a308653582363f validates the added declared API models separately; see docs/reports/w48-cmt-tracked-interior-self-init/README.md."

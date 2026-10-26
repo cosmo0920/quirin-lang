@@ -1,0 +1,10 @@
+import QCore.CMetricsGetterOwnership
+
+#print axioms QCore.CMetricsGetterOwnership.witness_bytes_are_nul_free
+#print axioms QCore.CMetricsGetterOwnership.pinned_secret_bitflip
+#print axioms QCore.CMetricsGetterOwnership.exact_short_hash_is_zero
+#print axioms QCore.CMetricsGetterOwnership.zero_hash_selects_embedded
+#print axioms QCore.CMetricsGetterOwnership.primary_secondary_state_is_preserved_by_embedded_prepare
+#print axioms QCore.CMetricsGetterOwnership.destroy_invalidates_borrow
+#print axioms QCore.CMetricsGetterOwnership.labeled_zero_path_reaches_destruction_leak
+#print axioms QCore.CMetricsGetterOwnership.parsed_contract_has_no_call_permission

@@ -1,0 +1,28 @@
+{
+  "root": {
+    "passed": 8686,
+    "failed": 0,
+    "ignored": 15,
+    "measured": 0,
+    "filtered": 0,
+    "summaries": 567
+  },
+  "root_units": 554,
+  "root_failed_units": [],
+  "provider": {
+    "passed": 133,
+    "failed": 0,
+    "ignored": 1,
+    "summaries": 43
+  },
+  "python": 460,
+  "provider_python": 25,
+  "lean_audits": 373,
+  "packages_verified": [
+    "qcore.chunkio",
+    "qcore.cmetrics",
+    "qcore.ctraces",
+    "qcore.libevent",
+    "qcore.librdkafka"
+  ]
+}

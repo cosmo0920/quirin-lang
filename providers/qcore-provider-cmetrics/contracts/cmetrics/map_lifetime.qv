@@ -41,7 +41,7 @@ contract {
     requires nonnull_label_values_and_required_opts_fqname_are_live_stable_strings;
     requires tagged_histogram_or_summary_parent_and_storage_layout_are_valid;
     requires bucket_sizes_counts_and_string_lengths_fit_the_C_types;
-    requires labeled_hash_zero_is_excluded_or_embedded_storage_is_accounted;
+    requires labeled_hash_digest_is_nonzero;
     requires embedded_static_metric_label_list_has_no_owned_nodes;
     requires users_coordinate_returned_metric_uses_against_expiration_and_destroy;
     ensures normal result_is_null_or_borrowed_metric_from_map;

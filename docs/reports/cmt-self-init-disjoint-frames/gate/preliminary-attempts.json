@@ -1,0 +1,137 @@
+{
+  "failed_preliminary_attempts": [
+    {
+      "name": "lean-focused-1",
+      "exit": 1,
+      "reason": "Initial Lean reserved field name/decidability and record syntax errors.",
+      "private_log": "/home/cosmo/.codex/worktrees/808d/quirin-lang/private/cmt-disjoint-frames/lean-focused-1.log",
+      "log_sha256": "7c35109abe90ae1bf8f75189bc0dd1ae35e8286564e635012421442c87b6b114"
+    },
+    {
+      "name": "lean-focused-2",
+      "exit": 1,
+      "reason": "Lean deprecated if_neg name and remaining record syntax corrected.",
+      "private_log": "/home/cosmo/.codex/worktrees/808d/quirin-lang/private/cmt-disjoint-frames/lean-focused-2.log",
+      "log_sha256": "91408a4bae985b4ada36bd097bef18fa6977e32cb49b9b96622880ad0d98a49f"
+    },
+    {
+      "name": "focused-1-tracked",
+      "exit": 101,
+      "reason": "20 passed, 2 test-setup failures: noncanonical conditional pointer-type spelling and unrelated whole-unit consultations.",
+      "private_log": "/home/cosmo/.codex/worktrees/808d/quirin-lang/private/cmt-disjoint-frames/focused-1/tracked.log",
+      "log_sha256": "cd99d7ad1a0ca877c261b92577190eac8b6e46980c94c8d02071819eff3385fe"
+    },
+    {
+      "name": "focused-2-tracked",
+      "exit": 101,
+      "reason": "Test helper used the wrong CCompilerDialect module path; compilation failed.",
+      "private_log": "/home/cosmo/.codex/worktrees/808d/quirin-lang/private/cmt-disjoint-frames/focused-2/tracked.log",
+      "log_sha256": "bbfe7a6773946680298bf28d5f0ff4fc68f736c738fa4cf8995a86a2ba2ec924"
+    }
+  ],
+  "successful_focused": [
+    {
+      "step": "tracked",
+      "command": [
+        "cargo",
+        "test",
+        "-p",
+        "qcore-c-gateway",
+        "--lib",
+        "tracked_self_init",
+        "--",
+        "--nocapture"
+      ],
+      "started": "2026-10-25T16:31:50.479598+00:00",
+      "exit": 0,
+      "ended": "2026-10-25T16:31:58.067899+00:00"
+    },
+    {
+      "step": "deep",
+      "command": [
+        "cargo",
+        "test",
+        "-p",
+        "qcore-c-gateway",
+        "--lib",
+        "initializer_child_slot_frame_readers",
+        "--",
+        "--nocapture"
+      ],
+      "started": "2026-10-25T16:31:58.068249+00:00",
+      "exit": 0,
+      "ended": "2026-10-25T16:32:00.139137+00:00"
+    },
+    {
+      "step": "model",
+      "command": [
+        "cargo",
+        "test",
+        "-p",
+        "qcore-contract",
+        "--test",
+        "tracked_self_init_model",
+        "--",
+        "--nocapture"
+      ],
+      "started": "2026-10-25T16:32:00.139436+00:00",
+      "exit": 0,
+      "ended": "2026-10-25T16:32:00.411835+00:00"
+    },
+    {
+      "step": "corpus",
+      "command": [
+        "cargo",
+        "test",
+        "-p",
+        "qcore-compiler",
+        "--test",
+        "qcore_contract_corpus",
+        "--",
+        "--nocapture"
+      ],
+      "started": "2026-10-25T16:32:00.412077+00:00",
+      "exit": 0,
+      "ended": "2026-10-25T16:32:08.550107+00:00"
+    }
+  ],
+  "own_lean_audit": {
+    "argv_requested": [
+      "bash",
+      "-c",
+      "cd proof && lake build QCore.TrackedSelfInitDisjointFrame && lake env lean AuditTrackedSelfInitDisjointFrame.lean"
+    ],
+    "argv_run": [
+      "bash",
+      "-c",
+      "cd proof && lake build QCore.TrackedSelfInitDisjointFrame && lake env lean AuditTrackedSelfInitDisjointFrame.lean"
+    ],
+    "class": "lean",
+    "cwd": "/home/cosmo/.codex/worktrees/808d/quirin-lang",
+    "exit": 0,
+    "finished": "2026-10-25T16:03:13+00:00",
+    "pid": 3671835,
+    "schema": "quirin-gate-slot/1",
+    "slot_record": {
+      "audit_slot_ceiling": 15,
+      "class": "lean",
+      "gate_dir": "/tmp/quirin-gate",
+      "held": [
+        "legacy",
+        "lean/0"
+      ],
+      "legacy_lock": {
+        "mode": "shared",
+        "path": "/tmp/qcore-c-card-validation-20261022.lock"
+      },
+      "mem_available_kib": 44995316,
+      "mem_total_kib": 63615012,
+      "slot": 0,
+      "slot_count": 2,
+      "waited_seconds": 0.001
+    },
+    "started": "2026-10-25T16:03:11+00:00"
+  },
+  "all_earlier_attempts_retained": true,
+  "no_audit_or_diagnostic_was_weakened": true
+}

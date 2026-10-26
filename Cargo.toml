@@ -14,6 +14,7 @@ members = [
     "crates/qcorec",
     "crates/quirin-audit-plugin",
     "crates/quirin-audit-plugin-libevent",
+    "crates/quirin-audit-plugin-measure",
 ]
 resolver = "2"
 
