@@ -146,13 +146,6 @@ dependencies = [
 ]
 
 [[package]]
-name = "qcore-gateway-rule-api"
-version = "0.1.0"
-dependencies = [
- "qcore-schemas",
-]
-
-[[package]]
 name = "qcore-provider-chunkio"
 version = "0.5.0"
 dependencies = [
