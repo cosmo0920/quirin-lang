@@ -1,0 +1,10 @@
+import QCore.CmetricsMetricConditions
+#print axioms QCore.CmetricsMetricConditions.returned_pair_orders_success_before_timestamp
+#print axioms QCore.CmetricsMetricConditions.disabled_sum_has_zero_flag_and_bits
+#print axioms QCore.CmetricsMetricConditions.enabled_sum_normalizes_flag
+#print axioms QCore.CmetricsMetricConditions.null_metric_has_no_stores
+#print axioms QCore.CmetricsMetricConditions.null_array_has_no_stores
+#print axioms QCore.CmetricsMetricConditions.invalid_index_has_no_stores
+#print axioms QCore.CmetricsMetricConditions.admitted_quantile_has_ordered_pair
+#print axioms QCore.CmetricsMetricConditions.stores_preserve_ownership
+#print axioms QCore.CmetricsMetricConditions.scalar_mirrors_use_the_same_defined_integer

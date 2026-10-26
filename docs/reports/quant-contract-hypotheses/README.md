@@ -163,3 +163,8 @@ postconditions](opts-postconditions/README.md) separately decomposes lifecycle,
 release and representation guarantees with explicit physical frames. These
 records distinguish typed declarations/model properties from actual C bindings;
 they do not close the all-provider card.
+
+[Low-level metric postconditions](metric-postconditions/README.md) replace thirty
+sentence clauses across nine functions with twenty-two typed own-call conditions,
+retaining twenty-two prerequisite roots. The scalar, numeric bucket conversion,
+double-bit sum, guarded quantile and ordered CAS cases stay distinct.

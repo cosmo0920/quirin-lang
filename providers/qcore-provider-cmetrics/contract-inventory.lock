@@ -72,50 +72,50 @@
       "sha256": "d6554e97c353ad16154d972ee0ec637b3a227678013517e342ba6ba6c02be4d9"
     },
     "cmetrics/metric_setters.qv": {
-      "clause_count": 52,
+      "clause_count": 44,
       "declaration_count": 9,
       "declarations": [
         {
-          "clauses": 8,
+          "clauses": 6,
           "name": "cmt_metric_set"
         },
         {
-          "clauses": 4,
+          "clauses": 5,
           "name": "cmt_metric_set_exp_hist_count"
         },
         {
-          "clauses": 6,
+          "clauses": 5,
           "name": "cmt_metric_set_exp_hist_sum"
         },
         {
-          "clauses": 5,
+          "clauses": 4,
           "name": "cmt_metric_hist_count_set"
         },
         {
-          "clauses": 5,
+          "clauses": 4,
           "name": "cmt_metric_hist_sum_set"
         },
         {
-          "clauses": 7,
+          "clauses": 6,
           "name": "cmt_metric_hist_set"
         },
         {
-          "clauses": 7,
+          "clauses": 6,
           "name": "cmt_summary_quantile_set"
         },
         {
-          "clauses": 5,
+          "clauses": 4,
           "name": "cmt_summary_sum_set"
         },
         {
-          "clauses": 5,
+          "clauses": 4,
           "name": "cmt_summary_count_set"
         }
       ],
       "inherits": [],
       "premise_bindings": [],
       "premises": {},
-      "sha256": "7fdc0c8fbc48f9527e24eeb1bb04241ab0f2b706ced4a012dff33cc5e8f87a15"
+      "sha256": "43e5067e5c3134bf6921359c2cb4b64a36d282d5b7c92e9725e04bb77503043a"
     },
     "cmetrics/metric_values.qv": {
       "clause_count": 85,
