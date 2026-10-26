@@ -155,10 +155,12 @@ fn the_reserved_spellings_are_unused_by_tracked_contracts() {
     let files = tracked_files::tracked_files(&root)
         .into_iter()
         .filter(|path| {
-            matches!(
-                path.extension().and_then(|e| e.to_str()),
-                Some("qv" | "qcore")
-            )
+            // Frozen report source snapshots are not production corpus modules.
+            path.starts_with(root.join("providers"))
+                && matches!(
+                    path.extension().and_then(|e| e.to_str()),
+                    Some("qv" | "qcore")
+                )
         })
         .collect::<Vec<_>>();
     assert!(!files.is_empty(), "no tracked contract modules");

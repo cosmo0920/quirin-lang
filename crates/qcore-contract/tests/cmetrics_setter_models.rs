@@ -53,19 +53,12 @@ fn setter_models_cover_existing_apis_and_refuse_interpreted_permissions() {
             }
             let conditions =
                 qcore_contract::quant_condition::declaration(&declaration.value).unwrap();
-            if source.contains("#scalar_stores(")
-                || matches!(
-                    declaration.value.name.as_str(),
-                    "cmt_counter_set" | "cmt_gauge_set" | "cmt_untyped_set"
-                )
-            {
-                assert_eq!(conditions.len(), contract.clauses.len());
-                assert!(
-                    conditions
-                        .iter()
-                        .any(|c| c.selector == qcore_schemas::quant_condition::Selector::Normal)
-                );
-            }
+            assert_eq!(conditions.len(), contract.clauses.len());
+            assert!(
+                conditions
+                    .iter()
+                    .any(|c| c.selector == qcore_schemas::quant_condition::Selector::Normal)
+            );
             assert!(!formal.is_empty());
             let graph = qcore_contract::hypothesis::declaration(&declaration.value, &[]).unwrap();
             assert_eq!(graph.requirements.len(), formal.len());

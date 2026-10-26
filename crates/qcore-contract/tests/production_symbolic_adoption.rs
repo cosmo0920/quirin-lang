@@ -500,7 +500,9 @@ fn every_actual_hypothesis_is_introduced_and_every_original_group_is_an_open_con
             declarations += 1;
             let name = d["declaration"].as_str().unwrap();
             let doc = &documents[name];
-            let g = &original[name];
+            // The compiled flow binds the current typed graph; the immutable
+            // historical graph was independently checked above.
+            let g = &replayed[name];
             let entries = &symbols[name].entries;
             assert_eq!(entries.len(), d["atoms"].as_array().unwrap().len());
             for atom in d["atoms"].as_array().unwrap() {
@@ -526,7 +528,7 @@ fn every_actual_hypothesis_is_introduced_and_every_original_group_is_an_open_con
                     semantic_profile: "existing-opaque-hypothesis-and-v1".into(),
                     scope: "exact original declaration-local premise children".into(),
                     bounds: "metadata only; no runtime claim".into(),
-                    assumptions: "original opaque universal atoms remain Open".into(),
+                    assumptions: "current formal atoms remain Open".into(),
                     source_identity: qcore_schemas::sha256_hex(after.as_bytes()),
                     build_identity: "production-symbolic-adoption-control-v1".into(),
                     evidence_version: "1".into(),

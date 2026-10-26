@@ -41,7 +41,7 @@ fn selector_retention_is_contextual_and_does_not_install_a_summary() {
             .value;
         assert_eq!(clause.kind, K::QuantEffect(expected));
         assert_eq!(clause.expression_source, EFFECT);
-        assert_eq!(parsed.to_string(), source);
+        assert_eq!(parsed.to_string(), format!("{source}\n"));
         parse(&clause.expression_source).unwrap();
     }
     for marker in ["resource_contract_v1", "bounds_contract_v1"] {

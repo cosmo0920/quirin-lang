@@ -55,3 +55,22 @@ fn a_connective_anywhere_else_in_a_contract_still_refuses() {
             .contains(&"Q038".to_owned())
     );
 }
+
+#[test]
+fn typed_quant_formulas_own_only_their_validated_connectives() {
+    for clause in [
+        "quant proposition #p(#x: integer) = ((#x == 0) || (#x == 1));",
+        "quant condition entry #p(#x: integer) = ((#x == 0) || (#x == 1));",
+        "quant condition normal #p(#x: integer) = ((#x == 0) && (#x == 0));",
+        "quant effect normal #e(#b: state, #a: state, #x: integer) from #b to #a when (#x == 0) reads () writes () frame (#x == 0) = ((#x == 0) && (#x == 0));",
+    ] {
+        assert!(codes(&module(clause)).is_empty(), "{clause}");
+    }
+    for clause in [
+        "quant proposition #p(#x: integer) = ((#x == 0) || (#missing == 1));",
+        "quant condition entry #p(#x: integer) = ((#x == 0) & (#x == 1));",
+        "quant condition normal #p(#x: integer) = ((#x == 0) || 7);",
+    ] {
+        assert!(!codes(&module(clause)).is_empty(), "{clause}");
+    }
+}

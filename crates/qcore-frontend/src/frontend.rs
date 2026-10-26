@@ -1433,14 +1433,33 @@ impl<'a> SourceParser<'a> {
                 self.premise_clause(&kind, expression_start, semicolon, &mut premise_names)?;
             }
             let expression_span = self.range_span(expression_start, semicolon);
+            let expression_source = self.source[expression_span.start..expression_span.end]
+                .trim()
+                .to_owned();
+            // Formal formulas own their operators only after their bounded,
+            // typed grammar accepts the complete clause. No C fact is inferred.
+            let formal = match &kind {
+                SourceContractClauseKind::QuantProposition => {
+                    crate::quant_proposition::parse(&expression_source).map(|_| ())
+                }
+                SourceContractClauseKind::QuantCondition(selector) => {
+                    crate::quant_condition::parse(selector.clone(), &expression_source).map(|_| ())
+                }
+                SourceContractClauseKind::QuantEffect(_) => {
+                    crate::quant_effect::parse(&expression_source).map(|_| ())
+                }
+                SourceContractClauseKind::QuantTheorem => {
+                    crate::quant_theorem::parse(&expression_source).map(|_| ())
+                }
+                _ => Ok(()),
+            };
+            formal.map_err(|error| self.error(expression_start, &error))?;
             clauses.push(Located {
                 span: self.range_span(clause_start, semicolon + 1),
                 value: SourceContractClause {
                     kind,
                     expression_span,
-                    expression_source: self.source[expression_span.start..expression_span.end]
-                        .trim()
-                        .to_owned(),
+                    expression_source,
                 },
             });
             cursor = semicolon + 1;

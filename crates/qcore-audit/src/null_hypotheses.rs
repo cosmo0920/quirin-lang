@@ -127,7 +127,7 @@ impl View {
                         graph.atoms.insert(id.clone(), atom.clone());
                     }
                     graph.refinements.insert(name.to_owned(), attached);
-                    graph.version = 2;
+                    graph.version = qcore_contract::hypothesis::expected_version(graph);
                     used.insert((declaration.clone(), name.to_owned()));
                 }
             }

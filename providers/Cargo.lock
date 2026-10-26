@@ -109,6 +109,7 @@ version = "0.1.0"
 dependencies = [
  "qcore-contract",
  "qcore-core",
+ "qcore-gateway-rule-api",
  "qcore-schemas",
  "serde",
  "serde_json",
@@ -134,6 +135,14 @@ name = "qcore-frontend"
 version = "0.1.0"
 dependencies = [
  "qcore-core",
+ "qcore-schemas",
+]
+
+[[package]]
+name = "qcore-gateway-rule-api"
+version = "0.1.0"
+dependencies = [
+ "qcore-schemas",
 ]
 
 [[package]]

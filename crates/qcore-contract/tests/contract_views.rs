@@ -433,9 +433,9 @@ fn null_resource_overlap_accepts_only_replayed_matching_neutral_metadata() {
     let start = source.find(&format!("extern fn {name}(")).unwrap();
     let end = start + source[start..].find("\n};").unwrap() + "\n};".len();
     let declaration = &source[start..end];
-    let atom = "For every reached loaded artifact, exact selected build/inventory, artifact identity and required symbol/address/ABI prerequisites hold.";
+    let atom = "#loader_enabled(#env,#family) == 1";
     for (from, to) in [
-        (atom, "unmatched proposed property statement"),
+        (atom, "#loader_enabled(#env,#family) == 0"),
         (
             "resource_premise_decomposition(rk_plugin_callback_closure,",
             "resource_premise_decomposition(missing_legacy_premise,",
@@ -616,7 +616,8 @@ fn resource_only_symbolic_metadata_cannot_bypass_matching_an_absent_null_map() {
         .split_inclusive('\n')
         .filter(|line| {
             let line = line.trim_start();
-            !(line.starts_with("requires resource_hypothesis(")
+            !(line.starts_with("quant proposition #plugin_")
+                || line.starts_with("requires resource_hypothesis(")
                 || line.starts_with("requires resource_premise_decomposition(")
                 || line.starts_with("requires resource_lifecycle_v1(")
                 || line.starts_with("requires resource_premise_flow_v1("))
@@ -761,4 +762,27 @@ err_case ->| err_post;
         }
     }
     qcore_contract::contract_views::check_relation(overlap_relation(name), &pair).unwrap();
+}
+
+#[test]
+fn typed_entry_assumptions_cannot_be_erased_or_changed_by_a_legacy_bridge() {
+    let report = check_registry(&modules(), REGISTERED_RELATIONS).unwrap();
+    let projection = report
+        .relations
+        .iter()
+        .find(|r| r.function == "cio_chunk_close" && r.relation == "projection")
+        .unwrap();
+    assert_eq!(projection.assumed_premises.len(), 3);
+    assert!(
+        projection
+            .assumed_premises
+            .iter()
+            .all(|p| p.starts_with("quant-condition-entry:"))
+    );
+    let changed = mutate(
+        "chunkio/chunk_destructor.qv",
+        "#number(#env,#chunk,#busy_field) == 0",
+        "#number(#env,#chunk,#busy_field) == 1",
+    );
+    assert!(check_registry(&changed, REGISTERED_RELATIONS).is_err());
 }

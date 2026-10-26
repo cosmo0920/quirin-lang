@@ -997,6 +997,7 @@ fn check_null_deref_only(
             && null_metadata.guarded.is_none()
             && declaration.clauses.iter().all(|clause| {
                 (clause.kind == "requires" && clause.expression == "bounds_contract_v1")
+                    || (has_metadata && clause.kind == "quant proposition")
                     || clause.kind == "quant null-deref"
             });
         if !independent_pure_null && null_metadata != resource_metadata {
@@ -1010,6 +1011,7 @@ fn check_null_deref_only(
                     && clause.kind == "requires"
                     && (crate::hypothesis::is_clause(&clause.expression)
                         || symbolic_metadata_head(&clause.expression)))
+                || (has_metadata && clause.kind == "quant proposition")
                 || clause.kind == "quant null-deref"
                 // Card NULL-CANDIDATE-TRIAGE: the null property's member and
                 // result declarations (G05e), which custody never reads; card
@@ -1373,9 +1375,16 @@ pub const REGISTERED_RELATIONS: &[RegisteredRelation] = &[
             bridge: &CHUNK_CLOSE_LANGUAGE_BRIDGE,
         },
         assumed_premises: &[
-            ("chunk_is_not_busy", PremiseClass::Environment),
             (
-                "chunk_has_no_task_or_route_custody",
+                "quant-condition-entry:r024:97600c83feb29b145764ac6d21cdd3c027eedb582c3a888b1e078fdb9a6a238a",
+                PremiseClass::Environment,
+            ),
+            (
+                "quant-condition-entry:r025:43d691a1c163627f640177bf3f2078be4b2cb6d4f0ccf5dec13f0a0d2f2b39b4",
+                PremiseClass::Environment,
+            ),
+            (
+                "quant-condition-entry:r023:d0f98b4fa015afc57a59a876970cadec48da5f33275141ef5cefd2a7024815ec",
                 PremiseClass::Environment,
             ),
         ],
@@ -1887,6 +1896,24 @@ fn check_projection(
             }
             _ => assumed.push((*requirement).to_owned()),
         }
+    }
+    // The arithmetic/legacy entailer has no valuation for typed relations.
+    // Keep every formal entry root explicitly assumed and pin its exact source
+    // identity. An old English role cannot discharge a new relation parameter.
+    for clause in detailed
+        .clauses
+        .iter()
+        .filter(|c| c.kind == "quant condition entry")
+    {
+        let definition = qcore_frontend::quant_condition::parse(
+            qcore_schemas::quant_condition::Selector::Entry,
+            &clause.expression,
+        )?;
+        assumed.push(format!(
+            "quant-condition-entry:{}:{}",
+            definition.proposition.id,
+            qcore_schemas::sha256_hex(clause.expression.as_bytes())
+        ));
     }
     for (clause, premise, obligation) in obligations {
         let mut premises: Vec<&str> = bridge.domains.to_vec();
