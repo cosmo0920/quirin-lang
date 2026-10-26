@@ -195,7 +195,7 @@
   "ct_stage_names": 20,
   "ct_cells": 1000,
   "unverified_spec_items": 10,
-  "named_followups": 844
+  "named_followups": 850
  },
  "derivation": {
   "rule": "no count in a section this file marks `derived` is hand-copied from a status ledger; each is read from the manifest or validated run record named beside it. Sections marked `hand_maintained` are recorded analysis carried verbatim from the previous matrix, and `integrator_supplied` numbers name whether they were measured for this run or carried - see section_ownership.",
@@ -6626,7 +6626,7 @@
   ]
  },
  "corpus": {
-  "contract_modules": 142,
+  "contract_modules": 143,
   "contract_modules_pinned_by": "compiler/tests/qcore_contract_corpus.rs",
   "contract_clause_pin": {
    "const": "EXPECTED_CONTRACTS",
@@ -6860,11 +6860,11 @@
   "note": "providers/ is a separate Cargo workspace, excluded from the core workspace; P01 verified empirically that the core workspace builds and passes its full suite with providers/ moved out of the tree."
  },
  "validation": {
-  "note": "Integration of RECORDS-TOOLING (landing-race policy: Python/docs-only card merged onto main 5813ddab9, which moved by MEASURE-TOOL since the card's base 8a015cd83). The card's full gate ran on 468fde228 (base 8a015cd83): submodules, fmt, Clippy, Rust 8688 passed/0 failed/15 ignored, both reevaluation examples, Python 513, all exit 0 (docs/reports/records-tooling/gate.json). On the merge, a first Python run (private log /media/Data/GitHub/quirin-lang/private/landing-rt/python-pre.log) failed 2 tests: the stale dimensions.named_followups, and test_no_crate_reads_the_evaluation_records, whose premise MEASURE-TOOL's run-time reads of contract/evaluations broke. The scoper already claims reader crates; the integration commit replaces that test with test_evaluation_records_are_claimed_by_their_readers (records-only diff stays scoped, runs Python, includes quirin-audit-plugin-measure). No Rust source changed by the integration: workspace_tests 8722 carried from MEASURE-TOOL's gate on 5813ddab9's tree; cargo fmt --check 0 on the merge; provider_tests 133 and lean_audits 373 carried. Python rerun on the committed regenerated matrix; scripts/land.py check 0.",
-  "workspace_tests": 8722,
+  "note": "Integration of CONTRIBUTION-LEDGERS (landing-race policy: main moved b2af78eaf -> 9c58892cf by Codex's gateway frame audit and CMetrics getter-ownership closure, disjoint from this card except scripts/tests/test_contract_corpus.py, which the card does not touch). The card's full gate ran on ed3710b18 (base b2af78eaf): submodules, fmt, Clippy, Rust 8731 passed/0 failed/15 ignored (560 units/574 summaries), both reevaluation examples, Python 536, all exit 0 (docs/reports/contribution-ledgers/gate.json). TARGETED CHECK on the merge (private logs /media/Data/GitHub/quirin-lang/private/landing-cldg): cargo fmt --check 0; quirin-audit-plugin-measure clippy -D warnings and tests (43 passed/0 failed) 0 under a rust-suite slot; contribution_ledgers.py check and evaluation_profiles.py check --history pass; land.py check and the Python suite on the committed regenerated matrix. workspace_tests carried from the card's full gate; provider_tests 133 carried; Lean: main's tree had 375 audit files against a last recorded Lean gate of 373 (Codex's cmt-getter-ownership-closure merged AuditCMetricsGetterOwnership.lean without a gate record), so scripts/check_lean_audits.py was run on the merge under a lean slot: Passed 375 Lean audits, exit 0 (lean.log beside the other logs).",
+  "workspace_tests": 8731,
   "provider_tests": 133,
-  "python_evidence_validator_tests": 513,
-  "lean_audits": 373,
+  "python_evidence_validator_tests": 536,
+  "lean_audits": 375,
   "lean_audit_files": [
    "AuditAbiEnumConstPointer.lean",
    "AuditAggregateOwnedField.lean",
@@ -6890,6 +6890,7 @@
    "AuditBranchJoin.lean",
    "AuditBucketTally.lean",
    "AuditCGatewayRefinements.lean",
+   "AuditCMetricsGetterOwnership.lean",
    "AuditCNumeric.lean",
    "AuditCProgram.lean",
    "AuditCallArgumentAccess.lean",
@@ -7209,6 +7210,7 @@
    "AuditTeardownAdmission.lean",
    "AuditTimeoutTeardown.lean",
    "AuditTrackedSelfInit.lean",
+   "AuditTrackedSelfInitDisjointFrame.lean",
    "AuditTransferability.lean",
    "AuditTwoDerivationAdmission.lean",
    "AuditTypedAccessPathPositionResiduals.lean",
@@ -7244,9 +7246,9 @@
   "reevaluation_followup_exit": 0,
   "cargo_fmt": "clean",
   "cargo_clippy": "clean",
-  "standing_gate": "card full gate on 468fde228 + Python targeted check on the merge",
+  "standing_gate": "card full gate on ed3710b18 + targeted landing check on the merge",
   "full_language_conformance": false,
-  "measurement_provenance": "integrator_supplied (docs/reports/records-tooling/integration/gate.json)"
+  "measurement_provenance": "integrator_supplied (docs/reports/contribution-ledgers/integration/gate.json)"
  },
  "named_followups": [
   {

@@ -1,0 +1,13 @@
+{
+  "note": "Integration of CONTRIBUTION-LEDGERS (landing-race policy: main moved b2af78eaf -> 9c58892cf by Codex's gateway frame audit and CMetrics getter-ownership closure, disjoint from this card except scripts/tests/test_contract_corpus.py, which the card does not touch). The card's full gate ran on ed3710b18 (base b2af78eaf): submodules, fmt, Clippy, Rust 8731 passed/0 failed/15 ignored (560 units/574 summaries), both reevaluation examples, Python 536, all exit 0 (docs/reports/contribution-ledgers/gate.json). TARGETED CHECK on the merge (private logs /media/Data/GitHub/quirin-lang/private/landing-cldg): cargo fmt --check 0; quirin-audit-plugin-measure clippy -D warnings and tests (43 passed/0 failed) 0 under a rust-suite slot; contribution_ledgers.py check and evaluation_profiles.py check --history pass; land.py check and the Python suite on the committed regenerated matrix. workspace_tests carried from the card's full gate; provider_tests 133 carried; Lean: main's tree had 375 audit files against a last recorded Lean gate of 373 (Codex's cmt-getter-ownership-closure merged AuditCMetricsGetterOwnership.lean without a gate record), so scripts/check_lean_audits.py was run on the merge under a lean slot: Passed 375 Lean audits, exit 0 (lean.log beside the other logs).",
+  "workspace_tests": 8731,
+  "provider_tests": 133,
+  "python_evidence_validator_tests": 536,
+  "reevaluation_probe_exit": 0,
+  "reevaluation_followup_exit": 0,
+  "cargo_fmt": "clean",
+  "cargo_clippy": "clean",
+  "standing_gate": "card full gate on ed3710b18 + targeted landing check on the merge",
+  "lean_audits": 375,
+  "clang": "present: Ubuntu clang version 21.1.8 (6ubuntu1)"
+}
