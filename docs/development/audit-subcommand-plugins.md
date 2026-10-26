@@ -202,7 +202,7 @@ target/release/quirin-audit --plugin-path target/release --output ../measure/car
 | `--inputs FILE`, `--routes R,...` | The explicit inputs (`quirin-measure-inputs/1`): per route a compile database (or the pinned corpus inputs root) and a unit list; [`inputs/live.json`](../../crates/quirin-audit-plugin-measure/inputs/live.json) holds the three live routes |
 | `--profile NAME` | A live evaluation profile, `contract/evaluations/<NAME>/evaluation.json` (`eight-home`, `fluent-bit-system`, `fluent-bit-tail-pause`; schema in `scripts/evaluation_profiles.py`), repeatable. Every untracked input digest it records is verified and every prepared directory must exist before anything runs; a frozen profile is refused. The record then carries each side's figures as `evaluation_profiles.py summarize` computes them and its `compare` verdict against the profile's baseline |
 | `--declared FILE` | Check the measured moves of the first comparison against the file's `measure-prediction` block (below) |
-| `--rules-off IDS` | Also measure the first comparison's after side `<tip>` with `QCORE_GATEWAY_RULES_OFF=IDS` as side `<tip>-off` and compare it with `<tip>` (the per-rule contribution, below). Ids are distinct. Refused, "not yet supported", unless the binary advertises the switch (card RULE-SWITCHES); after the run every switched side's components must record exactly its off-list |
+| `--rules-off IDS` | Also measure the first comparison's after side `<tip>` with `QCORE_GATEWAY_RULES_OFF=IDS` as side `<tip>-off` and compare it with `<tip>` (the per-rule contribution, below). Ids are distinct. Refused, "not yet supported", unless the binary advertises the switch (every `quirin-audit` built since card GATEWAY-RULE-API does); after the run every switched side's components must record exactly its off-list. The ids are those of `crates/gateway-rules/registry.toml`; the analyzer refuses to run under an unknown id, a hold or a malformed list |
 | `--per-rule` | With two or more `--rules-off` ids: also measure one side `<tip>-off-<id>` per id with only that rule off, so each rule's rows are separated from the rows the rules move together (named interactions) |
 | `--repository DIR`, `--inputs-base DIR` | The repository (revisions, link map, `scripts/gate_slot.py`) and the root of the untracked prepared inputs (default: the repository) |
 | `--mirror auto\|always\|never` | Re-spell the compile databases into a digest-manifested mirror when they spell a non-canonical path (default `auto`); needed for analyzers built before AUDIT-CANONICAL-PATHS |
@@ -280,3 +280,14 @@ unstable route, a side without a revision and an existing profile directory.
 `--side base=baseline:<sha>` reuses it only after verifying every file digest,
 the route definition, the inputs as this measurement spells them, and the
 contract-bundle digests recomputed from `<sha>`'s git tree.
+
+The integrator runs `python3 scripts/land.py publish` after the full gate and
+the records commit. It finds the nearest published first-parent ancestor,
+compares that verified baseline with `rev:<landed-sha>` on all three live routes,
+and publishes the tip. The first publication uses `--bootstrap` to measure the
+previous revision as `rev:` because no baseline exists yet. Each attempt keeps
+its own `private/measure/landing-<sha>-<stamp>/` output; an existing immutable
+`private/baselines/<sha>/` refuses another publication. `--inputs-base DIR`
+selects the prepared input root, and `--previous SHA` selects a particular
+previous landing when needed. The command requires a clean checkout and the
+release audit host and `quirin-audit-measure` binary.

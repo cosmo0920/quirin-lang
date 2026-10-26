@@ -1,0 +1,270 @@
+//! One trait per route-map position, and the queries packages read.
+//!
+//! A package is generic over the analysis host ([`Host`]): it reads the
+//! host's tokens, decisions and typed nodes through the host's own accessors
+//! and answers in the host's lowering vocabulary, so it depends on this crate
+//! and never on `qcore-c-gateway`. A migration card that needs a further
+//! reading adds it here as a host capability, not as a dependency on the
+//! gateway. Every trait answers [`Answer::Admit`] or [`Answer::Refuse`]; the
+//! host composes a position's packages with [`crate::consult`].
+
+use crate::answer::Answer;
+use crate::reason::ReasonKey;
+
+/// The analysis host's vocabulary.
+pub trait Host {
+    /// One token of the unit's stream.
+    type Token;
+    /// What the classifier decided for one statement: an instruction, which
+    /// is either an admission or a refusal.
+    type Decision;
+    /// A lowered statement (the answer of a statement or return route).
+    type Statement;
+    /// A condition's lowering (the answer of a condition route).
+    type Condition;
+    /// A node of the unit's typed (Clang) AST.
+    type Node;
+
+    /// A token's spelling.
+    fn token_text(token: &Self::Token) -> &str;
+    /// A token's source line.
+    fn token_line(token: &Self::Token) -> usize;
+    /// The refusal text of a decision, or `None` for an admission.
+    fn refusal(decision: &Self::Decision) -> Option<&str>;
+}
+
+/// The identity a package answers under: its registry id.
+pub trait RulePackage {
+    fn id(&self) -> &'static str;
+}
+
+/// A statement asked of a statement position (§2.1).
+pub struct StatementQuery<'q, H: Host + ?Sized> {
+    pub tokens: &'q [H::Token],
+    pub line: usize,
+    /// The statement's place in the unit's stream, when known.
+    pub origin: Option<usize>,
+    /// What the classifier decided (for a fallback, usually a refusal).
+    pub decision: &'q H::Decision,
+}
+
+/// A return asked of a return position (§4).
+pub struct ReturnQuery<'q, H: Host + ?Sized> {
+    pub expression: &'q [H::Token],
+    pub line: usize,
+    /// The expression's place in the unit's stream.
+    pub origin: usize,
+    /// What the return routes decided so far.
+    pub decided: &'q H::Statement,
+}
+
+/// The statement a condition belongs to (§3).
+#[derive(Clone, Copy, Debug, PartialEq, Eq)]
+pub enum ConditionStatement {
+    If,
+    While,
+    For,
+    Do,
+    Switch,
+    /// A `?:`, `&&` or `||` value.
+    Value,
+}
+
+/// A condition asked of a condition route (§3).
+pub struct ConditionQuery<'q, H: Host + ?Sized> {
+    pub condition: &'q [H::Token],
+    pub line: usize,
+    pub statement: ConditionStatement,
+}
+
+/// A call asked of a hold position (§1, §2.2, §6).
+pub struct HoldQuery<'q, H: Host + ?Sized> {
+    /// The function whose body holds the call.
+    pub caller: &'q str,
+    pub callee: &'q str,
+    /// The call's tokens, callee first.
+    pub call: &'q [H::Token],
+    pub line: usize,
+}
+
+/// A token position asked of a classification arm (§2.2): `at` indexes
+/// `tokens`.
+pub struct TokenQuery<'q, H: Host + ?Sized> {
+    pub tokens: &'q [H::Token],
+    pub at: usize,
+}
+
+/// An admitted hold: the call is held (spelled as held, deciding `Unknown`
+/// under the reserved reason key).
+#[derive(Clone, Copy, Debug, PartialEq, Eq)]
+pub struct Hold {
+    pub reason: ReasonKey,
+}
+
+/// §1: holds and rewrites of the token stream. Registered not switchable.
+pub trait TokenHold<H: Host + ?Sized>: RulePackage {
+    fn ask(&self, host: &H, query: &HoldQuery<'_, H>) -> Answer<Hold>;
+}
+
+/// §2.1 rows 1-3: asked before classification.
+pub trait StatementPre<H: Host + ?Sized>: RulePackage {
+    fn ask(&self, host: &mut H, query: &StatementQuery<'_, H>) -> Answer<H::Statement>;
+}
+
+/// §2.2: an arm amending one classification predicate (for example the
+/// lexical gate's access test). Admit means the arm's reading applies;
+/// refuse keeps the predicate's old answer.
+pub trait ClassificationArm<H: Host + ?Sized>: RulePackage {
+    fn ask(&self, host: &H, query: &TokenQuery<'_, H>) -> Answer<()>;
+}
+
+/// §2.2 and §6: the call holds before the gate. Registered not switchable.
+pub trait CallHold<H: Host + ?Sized>: RulePackage {
+    fn ask(&self, host: &H, query: &HoldQuery<'_, H>) -> Answer<Hold>;
+}
+
+/// §2.1 rows 5-6: replaces the classified instruction.
+pub trait StatementRewrite<H: Host + ?Sized>: RulePackage {
+    fn ask(&self, host: &mut H, query: &StatementQuery<'_, H>) -> Answer<H::Decision>;
+}
+
+/// §2.1 rows 7-21: a fallback of the classified statement.
+pub trait StatementFallback<H: Host + ?Sized>: RulePackage {
+    fn ask(&self, host: &mut H, query: &StatementQuery<'_, H>) -> Answer<H::Statement>;
+}
+
+/// §2.1 rows 22-23: attribution of a refusal. Its admission is a refusal
+/// re-worded (the host refuses an answer that is not a refusal).
+pub trait StatementAttribution<H: Host + ?Sized>: RulePackage {
+    fn ask(&self, host: &mut H, query: &StatementQuery<'_, H>) -> Answer<H::Decision>;
+}
+
+/// §3: a condition route.
+pub trait ConditionRoute<H: Host + ?Sized>: RulePackage {
+    fn ask(&self, host: &mut H, query: &ConditionQuery<'_, H>) -> Answer<H::Condition>;
+}
+
+/// §4 steps 1-2: a return route of `return_statement`.
+pub trait ReturnRoute<H: Host + ?Sized>: RulePackage {
+    fn ask(&self, host: &mut H, query: &ReturnQuery<'_, H>) -> Answer<H::Statement>;
+}
+
+/// §4 step 3: a fallback of a refused return.
+pub trait ReturnFallback<H: Host + ?Sized>: RulePackage {
+    fn ask(&self, host: &mut H, query: &ReturnQuery<'_, H>) -> Answer<H::Statement>;
+}
+
+/// §7: an arm of a typed reader. Admit means the arm's reading of `node`
+/// applies; refuse keeps the reader's old refusal.
+pub trait TypedReaderArm<H: Host + ?Sized>: RulePackage {
+    fn ask(&self, host: &H, node: &H::Node) -> Answer<()>;
+}
+
+#[cfg(test)]
+mod tests {
+    use super::{
+        Answer, Host, ReturnFallback, ReturnQuery, RulePackage, StatementFallback, StatementQuery,
+    };
+    use crate::answer::consult;
+
+    /// A host whose tokens are strings and whose decisions are `Err` for a
+    /// refusal, enough to drive packages through `consult`.
+    struct Toy;
+
+    impl Host for Toy {
+        type Token = &'static str;
+        type Decision = Result<(), &'static str>;
+        type Statement = String;
+        type Condition = ();
+        type Node = ();
+
+        fn token_text(token: &Self::Token) -> &str {
+            token
+        }
+        fn token_line(_: &Self::Token) -> usize {
+            1
+        }
+        fn refusal(decision: &Self::Decision) -> Option<&str> {
+            decision.as_ref().err().copied()
+        }
+    }
+
+    /// Admits a refused statement that spells `word`.
+    struct Spells(&'static str, &'static str);
+
+    impl RulePackage for Spells {
+        fn id(&self) -> &'static str {
+            self.0
+        }
+    }
+
+    impl StatementFallback<Toy> for Spells {
+        fn ask(&self, _: &mut Toy, query: &StatementQuery<'_, Toy>) -> Answer<String> {
+            let refused = Toy::refusal(query.decision).is_some();
+            let spelled = query.tokens.iter().any(|t| Toy::token_text(t) == self.1);
+            if refused && spelled {
+                Answer::admit(format!("{} at {}", self.0, query.line))
+            } else {
+                Answer::Refuse
+            }
+        }
+    }
+
+    impl ReturnFallback<Toy> for Spells {
+        fn ask(&self, _: &mut Toy, query: &ReturnQuery<'_, Toy>) -> Answer<String> {
+            Answer::from_option(
+                query
+                    .expression
+                    .contains(&self.1)
+                    .then(|| format!("{} returns", self.0)),
+            )
+        }
+    }
+
+    #[test]
+    fn packages_compose_through_the_host_vocabulary_alone() {
+        let packages = [Spells("10s", "x"), Spells("10u", "y")];
+        let mut host = Toy;
+        let tokens = ["y", "=", "f", "(", ")"];
+        let refused = Err("refused");
+        let query = StatementQuery::<Toy> {
+            tokens: &tokens,
+            line: 7,
+            origin: None,
+            decision: &refused,
+        };
+        let decided = consult(
+            &packages,
+            |_| true,
+            |_, package| StatementFallback::ask(package, &mut host, &query),
+        )
+        .expect("10u admits");
+        assert_eq!(decided.admission.lowering, "10u at 7");
+        let admitted = Ok(());
+        let query = StatementQuery::<Toy> {
+            decision: &admitted,
+            ..query
+        };
+        assert!(
+            consult(
+                &packages,
+                |_| true,
+                |_, package| { StatementFallback::ask(package, &mut host, &query) }
+            )
+            .is_none()
+        );
+        let decided_so_far = String::from("refused");
+        let returned = ReturnQuery::<Toy> {
+            expression: &tokens,
+            line: 7,
+            origin: 0,
+            decided: &decided_so_far,
+        };
+        let decided = consult(
+            &packages,
+            |package| package.id() != "10u",
+            |_, package| ReturnFallback::ask(package, &mut host, &returned),
+        );
+        assert!(decided.is_none(), "10u is off and 10s does not match");
+    }
+}

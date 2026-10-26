@@ -25,9 +25,12 @@ use serde_json::Value;
 
 use crate::typed_c_ast::kind;
 
-/// The rule's arm switch (measurement only: `false` restores rule 10n(1)'s
-/// member-only shape).
-pub(crate) const ELEMENT_ARM: bool = true;
+/// The rule's arm switch: registry rule `14c` (card GATEWAY-RULE-API, which
+/// replaced the compile-time `ELEMENT_ARM`); off restores rule 10n(1)'s
+/// member-only shape.
+fn element_arm() -> bool {
+    crate::gateway_rules::enabled("14c")
+}
 
 /// The decision table the Lean model mirrors (`decision_vectors_hold`): the
 /// place's kind, whether its type is a scalar, and whether rule 10n(1) or
@@ -56,7 +59,7 @@ pub(crate) fn admits(place: &Value, scalar: impl Fn(&Value) -> bool) -> bool {
 
 /// [`admits`] on the decision table's terms.
 pub(crate) fn shape_admitted(place_kind: &str, scalar: bool) -> bool {
-    place_kind == "MemberExpr" || (ELEMENT_ARM && place_kind == "ArraySubscriptExpr" && scalar)
+    place_kind == "MemberExpr" || (place_kind == "ArraySubscriptExpr" && scalar && element_arm())
 }
 
 #[cfg(test)]

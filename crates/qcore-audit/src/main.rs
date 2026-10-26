@@ -17,6 +17,12 @@ fn main() -> ExitCode {
         eprintln!("       {}", qcore_audit::atomic_publication::USAGE);
         return ExitCode::FAILURE;
     };
+    // Card GATEWAY-RULE-API: a rule-switch list naming an unknown id, a hold
+    // or a malformed element is refused before any route runs, never ignored.
+    if let Err(refusal) = qcore_c_gateway::gateway_rules::check() {
+        eprintln!("quirin-audit: {refusal}");
+        return ExitCode::FAILURE;
+    }
     if path == "pinned" {
         return qcore_audit::pinned_cli::main(arguments.collect());
     }

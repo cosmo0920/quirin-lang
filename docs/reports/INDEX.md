@@ -593,6 +593,8 @@ Regenerate with `python3 scripts/build_docs_index.py`; validate with `--check`.
 
 | [measure-tool](measure-tool/README.md) | MEASURE-TOOL |
 
+| [measure-tool-landing-publish](measure-tool-landing-publish/README.md) | MEASURE-TOOL-LANDING-PUBLISH |
+
 | [member-path-unit-helpers](member-path-unit-helpers/README.md) | MEMBER-PATH-STATES-THROUGH-UNIT-HELPERS: rule 30's body check through the unit's helpers |
 
 | [member-prepass-other-routes](member-prepass-other-routes/README.md) | MEMBER-PREPASS-OTHER-ROUTES |
