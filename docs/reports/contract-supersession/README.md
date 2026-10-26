@@ -10,9 +10,12 @@ Bit revisions' lock sets. The governing text is contract spec
 
 Base: local main `373e41ee8` (AUDIT-COMPOSITION) merged with the integrator's
 CONTRACT-LOCKS landing branch `integrate/amendments-schema` at `1638e581a`
-(a fast-forward), which is the identity run's BASE. The branch later merged
-origin/main `e37e6703d` and `8a015cd83` (CFG-RELEASE, EVALUATION-PROFILES), and
-the card gate ran against `8a015cd83`. No verdict changes: no pinned
+(a fast-forward), which is identity run 1's BASE. The branch later merged
+origin/main `e37e6703d`, `8a015cd83` (CFG-RELEASE, EVALUATION-PROFILES) and
+`9c58892cf` (MEASURE-TOOL, RECORDS-TOOLING, the CMetrics getter-ownership
+closure). The last merge moved `quirin-audit-plugin-measure` to qcore-schemas
+22.0.0 and regenerated the CFL and CMetrics `contract-inventory.lock` with
+`providers/contracts.py sync`. No verdict changes: no pinned
 module declares a function twice, and the identity run below shows every
 report unchanged apart from the lock digests the re-pin moves.
 
@@ -124,8 +127,13 @@ every lock passes these checks:
 - every lock is tied to `046accf6…` and is version 4;
 - no BASE lock had a stamp or tie.
 
-No clause, digest, module or identity changed. `providers/contracts.py check`
-exit: see the gate.
+No clause, digest, module or identity changed. After the merge of `9c58892cf`,
+`review_repin.py` was rerun against that base: 17 locks, 612 entries, ok. The
+BASE pin locks are byte-identical to `1638e581a`'s. `pin --verify-contracts`
+exits 0, and every lock lists every current declaration, including the CMetrics
+`map_lifetime.qv` change and CFL's new `hash_state.qv`. `providers/contracts.py
+check` exited 0 after the merge of `e37e6703d`. The `9c58892cf` merge
+regenerated the CFL and CMetrics inventory locks with `contracts.py sync`.
 
 The live eight-home corpus input is `66910c10`, while the lock set is tied to
 `046accf6` as decision 9a directs. Moving the live profiles' inputs is
@@ -147,7 +155,7 @@ outer lock digest reaches a report on these routes. Nothing else differs.
 The component sidecars are byte-identical, so the loaded environment's
 contract digest did not move. Both sides set `SOURCE_DATE_EPOCH`, so Monkey's
 `__DATE__`/`__TIME__` lifetime-source key matched exactly, with no swap.
-Record: [identity.json](identity.json) (`scripts/compare_identity.py`).
+Record: [identity-run1.json](identity-run1.json) (`scripts/compare_identity.py`).
 
 | Route | Byte-identical | Identical after the lock-digest substitution | Window (UTC) |
 |---|---|---|---|
@@ -178,7 +186,16 @@ and driver logs are in
 `/media/Data/GitHub/quirin-lang/private/contract-supersession/identity-1/`;
 the route outputs are in the card worktree's `private/cs/identity-1/`.
 
-**Source equivalence after the run.** Measured TIP `53ace1277`. The branch
+**Identity run 2 is incomplete and is not evidence.** After the merge of
+`9c58892cf`, the coordinator asked that BASE be the merged main. Run 2 (BASE
+`9c58892cf`, TIP `d301d757c`) prepared its snapshots and both release builds
+(exit 0). Its corpus route had started at 2026-10-26T07:15Z when the
+coordinator asked for the branch to land now, and it was stopped. Logs are in
+`/media/Data/GitHub/quirin-lang/private/contract-supersession/{prep-2,identity-2}/`.
+No route finished and no comparison was made. Run 1 is the only completed
+identity evidence. It measures this card's diff against `1638e581a`.
+
+**Source equivalence after run 1.** Measured TIP `53ace1277`. The branch
 then took four changes:
 
 - a fix to the test module of `pin_window.rs` (Clippy);
@@ -186,15 +203,72 @@ then took four changes:
 - origin/main `e37e6703d`, which holds records only;
 - origin/main `8a015cd83`, which holds CFG-RELEASE and EVALUATION-PROFILES.
 
-The only code file those merges change since the measured base is
-`crates/qcore-audit/src/projection.rs` (CFG-RELEASE). This card's diff does
-not touch it, and CFG-RELEASE carries its own parity evidence. The pin locks
-are byte-identical between `1638e581a` and both mains. No identity run was
-repeated on the merged tip; the landing gate is the arbiter.
+The branch also merged `9c58892cf`, and after the stopped gate it fixed the
+two defects that gate found (below). `8a015cd83` changed one code file,
+`crates/qcore-audit/src/projection.rs` (CFG-RELEASE). `9c58892cf` brought the
+MEASURE-TOOL crate, `crates/qcore-c-gateway` frame-audit changes and the CFL
+and CMetrics contracts. Each carries its own evidence. This card's analysis
+changes are those measured in run 1, plus the post-gate refusal of a function
+declared twice in one module, which restores the base behaviour for that case.
+The pin locks are byte-identical between `1638e581a` and `9c58892cf`. Because
+run 2 did not complete, identity on the merged tip is **not measured**; the
+landing gate and the integrator's measurement are the arbiter.
 
 ## Gate
 
-GATE-PLACEHOLDER
+The scoped card gate, `python3 scripts/gate_scope.py --base 8a015cd83 --out
+private/gate`, ran on `3a1f44a8e` in full mode, with Lean all and the provider
+gate. It was **stopped before completion** when origin/main moved to
+`9c58892cf`, so it is not a passing gate. Logs are in the card worktree's
+`private/gate/`.
+
+| Step | Exit | Count / note |
+|---|---|---|
+| submodules | 0 | libevent at `d82464a2` |
+| `cargo fmt --all -- --check` | 0 | |
+| `cargo clippy --all-targets -- -D warnings` | 0 | |
+| Rust suite (`run_test_binaries.py`, rust-suite slot) | 101 | 558 units; two failures, both fixed below |
+| `reevaluation_probe`, `reevaluation_followup` | 0, 0 | |
+| `check_lean_audits.py` (lean slot) | 1 | `QCore.ReasonCategory` still counted 12 categories; fixed below |
+| Python suite | 0 | |
+| `providers/package.py build`, verify all, verify `qcore.libevent` | 0, 0, 0 | 5 packages |
+| provider `cargo test` | 143 | stopped with the gate |
+
+The two Rust failures were the loader tests that pinned the old hard
+duplicate error: `compiler/tests/contract_loader.rs`
+`duplicate_functions_and_inputs_are_rejected_even_when_identical` and
+`contract_inherit_adoption.rs`'s "one module selected twice" refusal. Both now
+assert C06.6's behaviour. A function two modules declare is withheld as a
+conflict with both texts retained, and a module selected twice withholds its
+functions. The review also found that a function declared twice **in one
+module** had become a conflict. That is a malformed module, not a composition
+of bundles, so `supersede_sources` refuses it again ("declared twice in one
+module: duplicate function contract"), as before this card. The Lean count is
+13. These four fixes (`proof/QCore/ReasonCategory.lean`,
+`crates/qcore-contract/src/contract_supersession.rs`,
+`compiler/tests/contract_loader.rs`, `compiler/tests/contract_inherit_adoption.rs`)
+landed through the integrator's commit `007060bb0` on
+`integrate/amendments-schema`, taken verbatim from this worktree, and not
+through this branch.
+
+After the fixes, in this worktree:
+
+- the affected tests pass: `contract_inherit_adoption` 9/9, `qcore-contract`
+  and `contract_conflict_hold`;
+- `lake build` exits 0 (435 jobs);
+- `check_lean_audits.py` exits 0 (376 audits);
+- Clippy, fmt and the Python suite (513 tests) passed after the `9c58892cf`
+  merge;
+- `evaluation_profiles.py check` exits 0 (3 live, 6 frozen);
+- `apply_amendments.py --check` exits 0.
+
+`contract_loader` has one remaining failure:
+`every_corpus_module_outside_the_v1_vocabulary_is_rejected_not_skipped`
+(corpus module count 143, expected 142). It is **inherited from origin/main**:
+`9c58892cf` added `providers/quirin-provider-cfl/contracts/cfl/hash_state.qv`
+without updating that count. This card does not change it. Logs:
+`/media/Data/GitHub/quirin-lang/private/contract-supersession/{fix-tests,lean-full,lean-audits}.log`.
+The full gate was not rerun on the final tip.
 
 ## Boundaries
 
