@@ -121,6 +121,10 @@ pub struct TipEntry {
     pub function: String,
     pub module: String,
     pub contract_sha256: String,
+    /// Card CONTRACT-SUPERSESSION: when the entry's current text was last
+    /// reviewed (lock version 4 only).
+    #[serde(default, skip_serializing_if = "Option::is_none")]
+    pub pinned_at: Option<String>,
     pub repository: TipRepository,
     /// The full refname tracked (`refs/heads/BRANCH`).
     #[serde(rename = "ref")]

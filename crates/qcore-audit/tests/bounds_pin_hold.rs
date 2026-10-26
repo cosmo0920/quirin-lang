@@ -518,6 +518,7 @@ fn decision_vectors_match_lean() {
         function: function.into(),
         module: "alpha/meta.qv".into(),
         contract_sha256: digest(d),
+        pinned_at: None,
         identities: ids
             .iter()
             .enumerate()
@@ -536,6 +537,7 @@ fn decision_vectors_match_lean() {
         note: String::new(),
         owner: "quirin-provider-alpha".into(),
         normalisation: "c-tokens-v1".into(),
+        fluent_bit_revision: None,
         pinned: entries,
         flexible: Vec::new(),
         tip: Vec::new(),

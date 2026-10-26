@@ -571,3 +571,32 @@ and 2 are unchanged. All workspace consumers and standalone providers update
 their schema dependency; all five provider packages are rebuilt and verified
 under constraint 18. The laws are tested in `tests/audit_composition.rs` and
 proved in `proof/QCore/AuditComposition.lean`; the two share one vector list.
+
+## Contract supersession across bundles (22.0.0)
+
+Card CONTRACT-SUPERSESSION (`docs/plans/pluggable-cards/README.md` seam G; user
+decisions 9 and 9a; contract specification §C06.6).
+
+| Addition | Kind |
+|---|---|
+| `ReasonCategory::ContractConflict` (`contract-conflict`, subject: analyser, not human-resolvable) | new variant on an exhaustively matched enum; the closed vocabulary grows from twelve to thirteen |
+| module `contract_supersession`: `validate_stamp`, `StampStanding`, `ConflictReason`, `Candidate`, `Decision`, `decide`, `SupersededDeclaration`, `ConflictedDeclaration`, `ContractConflict` | new types and a pure decision |
+| `ResourceContracts::{superseded, contract_conflict, set_supersession}` | two new fields, `#[serde(default, skip_serializing_if = "BTreeMap::is_empty")]` |
+
+`decide` keeps in force the candidate with the greatest valid pin stamp
+(`YYYY-MM-DDTHH:MM:SSZ`, so lexicographic order is chronological) when every
+candidate is stamped and the newest agree on their text; otherwise it is a
+conflict, the reason the first of malformed, missing, stale and unpinned that
+some candidate has, else `equal-stamps`. It is a function of the set of
+candidates. A conflicted function is in no table of the environment.
+
+Major bump by the exhaustive-variant precedent (17.0.0, 18.0.0, 21.0.0).
+**Existing wire bytes are unchanged**: the new marker, `whose contract bundles
+conflict`, is spelled by no earlier site; an environment with no duplicate
+serialises exactly as before (both fields are skipped when empty), so no task
+digest and no contract-bundle digest moves. Plugin protocol 1 and evidence
+versions 1 and 2 are unchanged. All workspace consumers and standalone
+providers update their schema dependency; all five provider packages are
+rebuilt and verified under constraint 18. The decision is tested in
+`src/contract_supersession.rs` and `tests/contract_supersession.rs` (which
+parses the Lean vectors) and proved in `proof/QCore/ContractSupersession.lean`.

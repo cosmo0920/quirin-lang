@@ -1,0 +1,882 @@
+{
+ "run": "/media/Data/GitHub/quirin-lang/.claude/worktrees/agent-a3deda89370a8a498/private/cs/identity-1",
+ "lock_digest_substitution": {
+  "d0e29f626059e8244f934977b5a9697e8c4dca915124be6b395b25ef1e16c640": {
+   "tip": "fc4cc0a634c7cc0800f077916956f1c2e63e6fbef04b4552522f4f45a47b3d89",
+   "lock": "providers/qcore-provider-chunkio/bounds-contracts.lock"
+  },
+  "e4d425be4e48164a0d0f5a86cacfbfcb2284586f939e0f3c30664379d8c69e9d": {
+   "tip": "6bd9c2bfbb39707084edd51618038caa0c14fa6af12e8ec625f40bd7bdf9dac7",
+   "lock": "providers/qcore-provider-chunkio/contracts.lock"
+  },
+  "2403daac62ed5a77bc5d0750ff368aee523c1c49b4b337f006a8f023546ac9cc": {
+   "tip": "8af069bc6fd8291883328f21288e98280c0461c7f52b7e55a363aed44db586b3",
+   "lock": "providers/qcore-provider-cmetrics/bounds-contracts.lock"
+  },
+  "e54772f99294b483e96eb65ac9ff81ce0d6ddf22379e53a9d85926cd1ec8f206": {
+   "tip": "0cfd24a3c05dd337e04798e74d40da77fef7413565bce05bd28b7ce3e84555d4",
+   "lock": "providers/qcore-provider-cmetrics/contracts.lock"
+  },
+  "8ad52b0ec1fea99243597495d7588d5219a68da694ac5aa06a90c513a996758c": {
+   "tip": "f7d3d4d87294f0ca4fb129fbd3afcf77dcc37dfeeb976bae3398ed5af74493b6",
+   "lock": "providers/qcore-provider-ctraces/contracts.lock"
+  },
+  "8277b5266d54a482a9ee9fef6e4c60448b7221629c1ea6124a12ec3974e11e93": {
+   "tip": "8c6e21ea8b2cc8289477bd350e6637931641e770ab696bf5417835d0dc3dc7b7",
+   "lock": "providers/qcore-provider-libevent/contracts.lock"
+  },
+  "5900e38a1eee1d0fa9a657e0556a00c4b0e22b01f4045a1f09040e57f780abfa": {
+   "tip": "e72047210fb489cea0adc57b741bbfc3abb1cc0add7282b248ae5259f3938d27",
+   "lock": "providers/qcore-provider-librdkafka/bounds-contracts.lock"
+  },
+  "e5dedf11b74885ab58a0f6bf9a6616e5d6b3fc4f6067f8114ce680766999ddbb": {
+   "tip": "e8ff1fc08af979b3e49cc5ad77ac11b42e887ca6674021d31096d9616618f040",
+   "lock": "providers/qcore-provider-librdkafka/contracts.lock"
+  },
+  "a80f67f6b284e60ce3b7f4c8fd5d56726b4f584bdc85a3e8ed2dab2a07f7123b": {
+   "tip": "02ec04cecdc5dabe32bff9369e8824391f6ec2f6c578936c4ff1e056598884e2",
+   "lock": "providers/qcore-provider-librdkafka/outer-contracts.lock"
+  },
+  "f1cd680d2add9f52c02effa77d98d37fe8e17da70ec64dceb4bafe29473ac1ed": {
+   "tip": "a97db84ec5b1043e3f07e5fa5f8e5a39e43ce0902fd96b8de721907f695ed1f8",
+   "lock": "providers/quirin-provider-cfl/bounds-contracts.lock"
+  },
+  "597070fa1443633cf8b2efa4351af7560c9a5a8035ce12cf267f9ad0e267d238": {
+   "tip": "e49feb656a19f7bf5be2e1693e1d828ed4dd3f50276ff67f0b714f7362725b85",
+   "lock": "providers/quirin-provider-cfl/contracts.lock"
+  },
+  "13178b1ea72cf0e7cefb1890b622a55317ae5671396ee9d4f8c2a7e4cdf7047d": {
+   "tip": "fba0bb96273fe1bb93397561584e88149e46e7aa39ff1d4e1c129c4eed1f8c80",
+   "lock": "providers/quirin-provider-fluent-bit/bounds-contracts.lock"
+  },
+  "233a8bfdf37a411a4d908d6670ade4812810f35d3daff5aaf7ab3952a43fa392": {
+   "tip": "db82bd43516cb3b67e01876b941179aab10f6f072f2a2fe23d342ebc79b39433",
+   "lock": "providers/quirin-provider-fluent-bit/contracts.lock"
+  },
+  "6bdabe473897b6b5f15f30431725785d46c2c77ebcaf4851b44865afa12bc2db": {
+   "tip": "fdf876100ad79a666a27ca70be0093d097356b9f519bb7912856f773e43e406f",
+   "lock": "providers/quirin-provider-fluent-bit/outer-contracts.lock"
+  },
+  "45966d0d42253ce00b9bec11c993971968ec4757892e14461b2a4fd44dcff982": {
+   "tip": "d07f29c3e54975b4c8c137a5ec574abfae68c5a41c64bed100a998c0a989a65d",
+   "lock": "providers/quirin-provider-libc/contracts.lock"
+  },
+  "d460d92b4287ba68a42d0af69858e405983738e3fdf8d46c6d1dfd3eba197ffd": {
+   "tip": "7aad8496c42843b91646074f6fcaa1744366bfc2846376b4202842413ed12ca8",
+   "lock": "providers/quirin-provider-mpack/contracts.lock"
+  },
+  "4a5383178918740b9c865a9a77bd91e1e53f514612fbad744d5f911ad6fa4f24": {
+   "tip": "2707ec48869a2c29faa99d548b2f13d57fa708a4149dd6a77c0b752080dbdb33",
+   "lock": "providers/quirin-provider-msgpack/contracts.lock"
+  }
+ },
+ "routes": {
+  "corpus": {
+   "ok": true,
+   "base": "/media/Data/GitHub/quirin-lang/.claude/worktrees/agent-a3deda89370a8a498/private/cs/identity-1/base/corpus",
+   "tip": "/media/Data/GitHub/quirin-lang/.claude/worktrees/agent-a3deda89370a8a498/private/cs/identity-1/tip/corpus",
+   "directory_substitution": [
+    [
+     "/media/Data/GitHub/quirin-lang/.claude/worktrees/agent-a3deda89370a8a498/private/cs/identity-1/base",
+     "/media/Data/GitHub/quirin-lang/.claude/worktrees/agent-a3deda89370a8a498/private/cs/identity-1/tip"
+    ]
+   ],
+   "report_artifacts_identical": [
+    {
+     "file": "corpus-null.jsonl",
+     "sha256": "fb9739d3f6b41c5ee200b8321355d0fcc50bb8bfeb4cce14a4d2bfcd090d0d47"
+    },
+    {
+     "file": "corpus-null.summary.json",
+     "sha256": "bc7d5dc2b803367d79b9c8f9841cce2cf599dce502b2d0df1dd589db4d50af9a"
+    },
+    {
+     "file": "corpus-outer.json",
+     "sha256": "a0142315c8920d4196b50ef3e58145768b18e0cdf07e5a7f259928665f6a9d0e"
+    },
+    {
+     "file": "corpus/monkey-source.json",
+     "sha256": "42879cc3da7d449d307a6936f74ca41b1990f5ceb6ba3102c504b917c5079909"
+    },
+    {
+     "file": "corpus/resource-diagnostics.chunk-contracts.json",
+     "sha256": "cbbcfd9c176005146c1946d5fcd4dc83cc9ec041a3397b10b1f0ab16ae6c0484"
+    },
+    {
+     "file": "corpus/resource-diagnostics.components.json",
+     "sha256": "6f0744e2e6705d2902cf47a16b4772242484b2ca193fe89dbc46827d432d4294"
+    },
+    {
+     "file": "corpus/resource-diagnostics.json",
+     "sha256": "e3e6c19261512321ead60c58eb05248f7a36d13e490dd79f4c1f56174db7a9f4"
+    },
+    {
+     "file": "corpus/resource-diagnostics.source-effects.json",
+     "sha256": "281b8d8c49ce65ffea1815e63283fcb7f3ae4cf0ec0e362d4366fc6267645e03"
+    }
+   ],
+   "report_artifacts_identical_after_lock_digest_substitution": {
+    "corpus/resource-diagnostics.contracts.json": {
+     "substituted": {
+      "providers/qcore-provider-chunkio/contracts.lock": 1,
+      "providers/qcore-provider-cmetrics/contracts.lock": 1,
+      "providers/qcore-provider-ctraces/contracts.lock": 1,
+      "providers/qcore-provider-libevent/contracts.lock": 2,
+      "providers/qcore-provider-librdkafka/contracts.lock": 2,
+      "providers/quirin-provider-cfl/contracts.lock": 1,
+      "providers/quirin-provider-fluent-bit/contracts.lock": 2,
+      "providers/quirin-provider-libc/contracts.lock": 1,
+      "providers/quirin-provider-mpack/contracts.lock": 1,
+      "providers/quirin-provider-msgpack/contracts.lock": 1
+     },
+     "tip_sha256": "100783343e353da87b512f60f26c32243ec2509f6a83d76aad2ead095e2576b4"
+    }
+   },
+   "report_artifacts_differing": [],
+   "missing_on_tip": [],
+   "new_on_tip": [],
+   "logs": {
+    "console.log": {
+     "equal_after_substitution": false,
+     "differing_keys": [
+      "/binary_sha256",
+      "/end",
+      "/start"
+     ]
+    },
+    "corpus/audit.log": {
+     "equal_after_substitution": true
+    }
+   },
+   "driver_records": {
+    "corpus.exit": {
+     "equal_after_substitution": true
+    },
+    "corpus/run.json": {
+     "equal_after_substitution": false,
+     "differing_keys": [
+      "/binary_sha256",
+      "/end",
+      "/start"
+     ]
+    },
+    "invocation.json": {
+     "equal_after_substitution": false,
+     "differing_keys": [
+      "/analyzer_source",
+      "/binary_sha256",
+      "/binary_sha256_after",
+      "/ended",
+      "/free_bytes_after",
+      "/inputs_after/Cargo.lock",
+      "/inputs_after/compiler/Cargo.toml",
+      "/inputs_after/compiler/tests/fixtures/w3/provider/Cargo.lock",
+      "/inputs_after/compiler/tests/fixtures/w3/provider/Cargo.toml",
+      "/inputs_after/crates/qcore-audit/Cargo.toml",
+      "/inputs_after/crates/qcore-audit/src/contract_pin.rs",
+      "/inputs_after/crates/qcore-audit/src/contract_revision.rs",
+      "/inputs_after/crates/qcore-audit/src/contract_tip.rs",
+      "/inputs_after/crates/qcore-audit/src/lib.rs",
+      "/inputs_after/crates/qcore-audit/src/pin_window.rs",
+      "/inputs_after/crates/qcore-audit/src/pinned_route.rs",
+      "/inputs_after/crates/qcore-audit/src/providers.rs",
+      "/inputs_after/crates/qcore-audit/tests/bounds_pin_hold.rs",
+      "/inputs_after/crates/qcore-audit/tests/bounds_transport.rs",
+      "/inputs_after/crates/qcore-audit/tests/contract_revision_audit.rs",
+      "/inputs_after/crates/qcore-audit/tests/contract_revision_identities.rs",
+      "/inputs_after/crates/qcore-audit/tests/contract_supersession.rs",
+      "/inputs_after/crates/qcore-audit/tests/contract_tip_mode.rs",
+      "/inputs_after/crates/qcore-c-gateway/Cargo.toml",
+      "/inputs_after/crates/qcore-c-gateway/src/contract_dependencies.rs",
+      "/inputs_after/crates/qcore-c-gateway/src/legacy_c.rs",
+      "/inputs_after/crates/qcore-c-gateway/src/legacy_classify.rs",
+      "/inputs_after/crates/qcore-c-gateway/src/legacy_conflict_hold.rs",
+      "/inputs_after/crates/qcore-c-gateway/src/legacy_generic_selection.rs",
+      "/inputs_after/crates/qcore-c-gateway/src/legacy_reserved_spelling.rs",
+      "/inputs_after/crates/qcore-c-gateway/src/legacy_residual_access.rs",
+      "/inputs_after/crates/qcore-c-gateway/tests/contract_conflict_hold.rs",
+      "/inputs_after/crates/qcore-contract/Cargo.toml",
+      "/inputs_after/crates/qcore-contract/src/contract_loader.rs",
+      "/inputs_after/crates/qcore-contract/src/contract_revision.rs",
+      "/inputs_after/crates/qcore-contract/src/contract_supersession.rs",
+      "/inputs_after/crates/qcore-contract/src/lib.rs",
+      "/inputs_after/crates/qcore-schemas/Cargo.toml",
+      "/inputs_after/crates/qcore-schemas/src/contract.rs",
+      "/inputs_after/crates/qcore-schemas/src/contract_supersession.rs",
+      "/inputs_after/crates/qcore-schemas/src/lib.rs",
+      "/inputs_after/crates/qcore-schemas/src/reason.rs",
+      "/inputs_after/crates/qcore-schemas/tests/contract_supersession.rs",
+      "/inputs_after/crates/qcore-schemas/tests/reason_codes.rs",
+      "/inputs_after/crates/qcore-verification/Cargo.toml",
+      "/inputs_after/crates/qcore-verifier-host/Cargo.toml",
+      "/inputs_after/crates/quirin-audit-plugin-libevent/Cargo.toml",
+      "/inputs_after/crates/quirin-audit-plugin/Cargo.toml",
+      "/inputs_after/crates/quirin-source-analysis/Cargo.toml",
+      "/inputs_after/docs/QCORE_CONTRACT_SPEC_r0_3.md",
+      "/inputs_after/docs/QCORE_SPEC_r0_3.md",
+      "/inputs_after/docs/reports/contract-supersession/repin-review.json",
+      "/inputs_after/docs/reports/contract-supersession/scripts/build_side.sh",
+      "/inputs_after/docs/reports/contract-supersession/scripts/logged.sh",
+      "/inputs_after/docs/reports/contract-supersession/scripts/ns_side.sh",
+      "/inputs_after/docs/reports/contract-supersession/scripts/prepare_identity.sh",
+      "/inputs_after/docs/reports/contract-supersession/scripts/repin.sh",
+      "/inputs_after/docs/reports/contract-supersession/scripts/review_repin.py",
+      "/inputs_after/docs/reports/contract-supersession/scripts/run_identity.sh",
+      "/inputs_after/docs/reports/contract-supersession/scripts/snapshot.sh",
+      "/inputs_after/docs/reports/contract-supersession/scripts/targeted_tests.sh",
+      "/inputs_after/proof/AuditContractSupersession.lean",
+      "/inputs_after/proof/QCore.lean",
+      "/inputs_after/proof/QCore/ContractSupersession.lean",
+      "/inputs_after/proof/QCore/ReasonCategory.lean",
+      "/inputs_after/providers/Cargo.lock",
+      "/inputs_after/providers/Cargo.toml",
+      "/inputs_after/providers/pin-lock-window.json",
+      "/inputs_after/providers/qcore-provider-chunkio/bounds-contracts.lock",
+      "/inputs_after/providers/qcore-provider-chunkio/contracts.lock",
+      "/inputs_after/providers/qcore-provider-cmetrics/bounds-contracts.lock",
+      "/inputs_after/providers/qcore-provider-cmetrics/contracts.lock",
+      "/inputs_after/providers/qcore-provider-ctraces/contracts.lock",
+      "/inputs_after/providers/qcore-provider-libevent/contracts.lock",
+      "/inputs_after/providers/qcore-provider-librdkafka/bounds-contracts.lock",
+      "/inputs_after/providers/qcore-provider-librdkafka/contracts.lock",
+      "/inputs_after/providers/qcore-provider-librdkafka/outer-contracts.lock",
+      "/inputs_after/providers/quirin-provider-cfl/bounds-contracts.lock",
+      "/inputs_after/providers/quirin-provider-cfl/contracts.lock",
+      "/inputs_after/providers/quirin-provider-fluent-bit/bounds-contracts.lock",
+      "/inputs_after/providers/quirin-provider-fluent-bit/contracts.lock",
+      "/inputs_after/providers/quirin-provider-fluent-bit/outer-contracts.lock",
+      "/inputs_after/providers/quirin-provider-libc/contracts.lock",
+      "/inputs_after/providers/quirin-provider-mpack/contracts.lock",
+      "/inputs_after/providers/quirin-provider-msgpack/contracts.lock",
+      "/inputs_after/third_party/libevent/.git/index",
+      "/inputs_after/third_party/libevent/.git/logs/HEAD",
+      "/inputs_after/third_party/libevent/.git/logs/refs/heads/master",
+      "/inputs_after/third_party/libevent/.git/logs/refs/remotes/origin/HEAD",
+      "/inputs_before/Cargo.lock",
+      "/inputs_before/compiler/Cargo.toml",
+      "/inputs_before/compiler/tests/fixtures/w3/provider/Cargo.lock",
+      "/inputs_before/compiler/tests/fixtures/w3/provider/Cargo.toml",
+      "/inputs_before/crates/qcore-audit/Cargo.toml",
+      "/inputs_before/crates/qcore-audit/src/contract_pin.rs",
+      "/inputs_before/crates/qcore-audit/src/contract_revision.rs",
+      "/inputs_before/crates/qcore-audit/src/contract_tip.rs",
+      "/inputs_before/crates/qcore-audit/src/lib.rs",
+      "/inputs_before/crates/qcore-audit/src/pin_window.rs",
+      "/inputs_before/crates/qcore-audit/src/pinned_route.rs",
+      "/inputs_before/crates/qcore-audit/src/providers.rs",
+      "/inputs_before/crates/qcore-audit/tests/bounds_pin_hold.rs",
+      "/inputs_before/crates/qcore-audit/tests/bounds_transport.rs",
+      "/inputs_before/crates/qcore-audit/tests/contract_revision_audit.rs",
+      "/inputs_before/crates/qcore-audit/tests/contract_revision_identities.rs",
+      "/inputs_before/crates/qcore-audit/tests/contract_supersession.rs",
+      "/inputs_before/crates/qcore-audit/tests/contract_tip_mode.rs",
+      "/inputs_before/crates/qcore-c-gateway/Cargo.toml",
+      "/inputs_before/crates/qcore-c-gateway/src/contract_dependencies.rs",
+      "/inputs_before/crates/qcore-c-gateway/src/legacy_c.rs",
+      "/inputs_before/crates/qcore-c-gateway/src/legacy_classify.rs",
+      "/inputs_before/crates/qcore-c-gateway/src/legacy_conflict_hold.rs",
+      "/inputs_before/crates/qcore-c-gateway/src/legacy_generic_selection.rs",
+      "/inputs_before/crates/qcore-c-gateway/src/legacy_reserved_spelling.rs",
+      "/inputs_before/crates/qcore-c-gateway/src/legacy_residual_access.rs",
+      "/inputs_before/crates/qcore-c-gateway/tests/contract_conflict_hold.rs",
+      "/inputs_before/crates/qcore-contract/Cargo.toml",
+      "/inputs_before/crates/qcore-contract/src/contract_loader.rs",
+      "/inputs_before/crates/qcore-contract/src/contract_revision.rs",
+      "/inputs_before/crates/qcore-contract/src/contract_supersession.rs",
+      "/inputs_before/crates/qcore-contract/src/lib.rs",
+      "/inputs_before/crates/qcore-schemas/Cargo.toml",
+      "/inputs_before/crates/qcore-schemas/src/contract.rs",
+      "/inputs_before/crates/qcore-schemas/src/contract_supersession.rs",
+      "/inputs_before/crates/qcore-schemas/src/lib.rs",
+      "/inputs_before/crates/qcore-schemas/src/reason.rs",
+      "/inputs_before/crates/qcore-schemas/tests/contract_supersession.rs",
+      "/inputs_before/crates/qcore-schemas/tests/reason_codes.rs",
+      "/inputs_before/crates/qcore-verification/Cargo.toml",
+      "/inputs_before/crates/qcore-verifier-host/Cargo.toml",
+      "/inputs_before/crates/quirin-audit-plugin-libevent/Cargo.toml",
+      "/inputs_before/crates/quirin-audit-plugin/Cargo.toml",
+      "/inputs_before/crates/quirin-source-analysis/Cargo.toml",
+      "/inputs_before/docs/QCORE_CONTRACT_SPEC_r0_3.md",
+      "/inputs_before/docs/QCORE_SPEC_r0_3.md",
+      "/inputs_before/docs/reports/contract-supersession/repin-review.json",
+      "/inputs_before/docs/reports/contract-supersession/scripts/build_side.sh",
+      "/inputs_before/docs/reports/contract-supersession/scripts/logged.sh",
+      "/inputs_before/docs/reports/contract-supersession/scripts/ns_side.sh",
+      "/inputs_before/docs/reports/contract-supersession/scripts/prepare_identity.sh",
+      "/inputs_before/docs/reports/contract-supersession/scripts/repin.sh",
+      "/inputs_before/docs/reports/contract-supersession/scripts/review_repin.py",
+      "/inputs_before/docs/reports/contract-supersession/scripts/run_identity.sh",
+      "/inputs_before/docs/reports/contract-supersession/scripts/snapshot.sh",
+      "/inputs_before/docs/reports/contract-supersession/scripts/targeted_tests.sh",
+      "/inputs_before/proof/AuditContractSupersession.lean",
+      "/inputs_before/proof/QCore.lean",
+      "/inputs_before/proof/QCore/ContractSupersession.lean",
+      "/inputs_before/proof/QCore/ReasonCategory.lean",
+      "/inputs_before/providers/Cargo.lock",
+      "/inputs_before/providers/Cargo.toml",
+      "/inputs_before/providers/pin-lock-window.json",
+      "/inputs_before/providers/qcore-provider-chunkio/bounds-contracts.lock",
+      "/inputs_before/providers/qcore-provider-chunkio/contracts.lock",
+      "/inputs_before/providers/qcore-provider-cmetrics/bounds-contracts.lock",
+      "/inputs_before/providers/qcore-provider-cmetrics/contracts.lock",
+      "/inputs_before/providers/qcore-provider-ctraces/contracts.lock",
+      "/inputs_before/providers/qcore-provider-libevent/contracts.lock",
+      "/inputs_before/providers/qcore-provider-librdkafka/bounds-contracts.lock",
+      "/inputs_before/providers/qcore-provider-librdkafka/contracts.lock",
+      "/inputs_before/providers/qcore-provider-librdkafka/outer-contracts.lock",
+      "/inputs_before/providers/quirin-provider-cfl/bounds-contracts.lock",
+      "/inputs_before/providers/quirin-provider-cfl/contracts.lock",
+      "/inputs_before/providers/quirin-provider-fluent-bit/bounds-contracts.lock",
+      "/inputs_before/providers/quirin-provider-fluent-bit/contracts.lock",
+      "/inputs_before/providers/quirin-provider-fluent-bit/outer-contracts.lock",
+      "/inputs_before/providers/quirin-provider-libc/contracts.lock",
+      "/inputs_before/providers/quirin-provider-mpack/contracts.lock",
+      "/inputs_before/providers/quirin-provider-msgpack/contracts.lock",
+      "/inputs_before/third_party/libevent/.git/index",
+      "/inputs_before/third_party/libevent/.git/logs/HEAD",
+      "/inputs_before/third_party/libevent/.git/logs/refs/heads/master",
+      "/inputs_before/third_party/libevent/.git/logs/refs/remotes/origin/HEAD",
+      "/started"
+     ]
+    },
+    "stderr.log": {
+     "equal_after_substitution": true
+    }
+   }
+  },
+  "slice": {
+   "ok": true,
+   "base": "/media/Data/GitHub/quirin-lang/.claude/worktrees/agent-a3deda89370a8a498/private/cs/identity-1/base/slice",
+   "tip": "/media/Data/GitHub/quirin-lang/.claude/worktrees/agent-a3deda89370a8a498/private/cs/identity-1/tip/slice",
+   "directory_substitution": [
+    [
+     "/media/Data/GitHub/quirin-lang/.claude/worktrees/agent-a3deda89370a8a498/private/cs/identity-1/base",
+     "/media/Data/GitHub/quirin-lang/.claude/worktrees/agent-a3deda89370a8a498/private/cs/identity-1/tip"
+    ]
+   ],
+   "report_artifacts_identical": [
+    {
+     "file": "resource-diagnostics.chunk-contracts.json",
+     "sha256": "a97259087e4ad89a4662edcb494b27c27e80f06c62e404a19076224bbc0a2bd8"
+    },
+    {
+     "file": "resource-diagnostics.components.json",
+     "sha256": "f3ee13cc2f67364183f02e4e9a85ad47a8bed5e93227d56ebadbacf904dc7c48"
+    },
+    {
+     "file": "resource-diagnostics.json",
+     "sha256": "495b41e3ae817fe0f04557cbc7524f7d4e8e81746bfd6dfa20b16b93c3d1b741"
+    },
+    {
+     "file": "resource-diagnostics.source-effects.json",
+     "sha256": "a97259087e4ad89a4662edcb494b27c27e80f06c62e404a19076224bbc0a2bd8"
+    },
+    {
+     "file": "slice-null.jsonl",
+     "sha256": "6587413eca04ba49ba7ff4d20e9f0c197008fa2d13c0742926e313059162db07"
+    },
+    {
+     "file": "slice-null.summary.json",
+     "sha256": "df4be8b649b807ee4b83c0516250e7495e7e57355733c126c24a6b3828960c56"
+    },
+    {
+     "file": "slice-outer.json",
+     "sha256": "6fd57b03edd641ba541e15531c5da7ac2769ae1b4e20d9e1bf95ad729a2bde7f"
+    }
+   ],
+   "report_artifacts_identical_after_lock_digest_substitution": {
+    "resource-diagnostics.contracts.json": {
+     "substituted": {
+      "providers/qcore-provider-chunkio/contracts.lock": 1,
+      "providers/qcore-provider-cmetrics/contracts.lock": 1,
+      "providers/qcore-provider-ctraces/contracts.lock": 1,
+      "providers/qcore-provider-libevent/contracts.lock": 2,
+      "providers/qcore-provider-librdkafka/contracts.lock": 2,
+      "providers/quirin-provider-cfl/contracts.lock": 1,
+      "providers/quirin-provider-fluent-bit/contracts.lock": 2,
+      "providers/quirin-provider-libc/contracts.lock": 1,
+      "providers/quirin-provider-mpack/contracts.lock": 1,
+      "providers/quirin-provider-msgpack/contracts.lock": 1
+     },
+     "tip_sha256": "ceca996a0ad9e6c0b86510b394849c799e77aef4f57b3bb360a40bff07a23308"
+    }
+   },
+   "report_artifacts_differing": [],
+   "missing_on_tip": [],
+   "new_on_tip": [],
+   "logs": {
+    "console.log": {
+     "equal_after_substitution": false,
+     "differing_lines": [
+      [
+       "preparation: 16 unit(s), 48 Clang invocation(s); -E -P 1743556 us / syntax 3134187 us / line markers 1614968 us",
+       "preparation: 16 unit(s), 48 Clang invocation(s); -E -P 1541351 us / syntax 3116872 us / line markers 1377115 us"
+      ]
+     ],
+     "line_counts": [
+      116,
+      116
+     ]
+    }
+   },
+   "driver_records": {
+    "invocation.json": {
+     "equal_after_substitution": false,
+     "differing_keys": [
+      "/analyzer_source",
+      "/binary_sha256",
+      "/binary_sha256_after",
+      "/ended",
+      "/free_bytes_after",
+      "/free_bytes_before",
+      "/inputs_after/Cargo.lock",
+      "/inputs_after/compiler/Cargo.toml",
+      "/inputs_after/compiler/tests/fixtures/w3/provider/Cargo.lock",
+      "/inputs_after/compiler/tests/fixtures/w3/provider/Cargo.toml",
+      "/inputs_after/crates/qcore-audit/Cargo.toml",
+      "/inputs_after/crates/qcore-audit/src/contract_pin.rs",
+      "/inputs_after/crates/qcore-audit/src/contract_revision.rs",
+      "/inputs_after/crates/qcore-audit/src/contract_tip.rs",
+      "/inputs_after/crates/qcore-audit/src/lib.rs",
+      "/inputs_after/crates/qcore-audit/src/pin_window.rs",
+      "/inputs_after/crates/qcore-audit/src/pinned_route.rs",
+      "/inputs_after/crates/qcore-audit/src/providers.rs",
+      "/inputs_after/crates/qcore-audit/tests/bounds_pin_hold.rs",
+      "/inputs_after/crates/qcore-audit/tests/bounds_transport.rs",
+      "/inputs_after/crates/qcore-audit/tests/contract_revision_audit.rs",
+      "/inputs_after/crates/qcore-audit/tests/contract_revision_identities.rs",
+      "/inputs_after/crates/qcore-audit/tests/contract_supersession.rs",
+      "/inputs_after/crates/qcore-audit/tests/contract_tip_mode.rs",
+      "/inputs_after/crates/qcore-c-gateway/Cargo.toml",
+      "/inputs_after/crates/qcore-c-gateway/src/contract_dependencies.rs",
+      "/inputs_after/crates/qcore-c-gateway/src/legacy_c.rs",
+      "/inputs_after/crates/qcore-c-gateway/src/legacy_classify.rs",
+      "/inputs_after/crates/qcore-c-gateway/src/legacy_conflict_hold.rs",
+      "/inputs_after/crates/qcore-c-gateway/src/legacy_generic_selection.rs",
+      "/inputs_after/crates/qcore-c-gateway/src/legacy_reserved_spelling.rs",
+      "/inputs_after/crates/qcore-c-gateway/src/legacy_residual_access.rs",
+      "/inputs_after/crates/qcore-c-gateway/tests/contract_conflict_hold.rs",
+      "/inputs_after/crates/qcore-contract/Cargo.toml",
+      "/inputs_after/crates/qcore-contract/src/contract_loader.rs",
+      "/inputs_after/crates/qcore-contract/src/contract_revision.rs",
+      "/inputs_after/crates/qcore-contract/src/contract_supersession.rs",
+      "/inputs_after/crates/qcore-contract/src/lib.rs",
+      "/inputs_after/crates/qcore-schemas/Cargo.toml",
+      "/inputs_after/crates/qcore-schemas/src/contract.rs",
+      "/inputs_after/crates/qcore-schemas/src/contract_supersession.rs",
+      "/inputs_after/crates/qcore-schemas/src/lib.rs",
+      "/inputs_after/crates/qcore-schemas/src/reason.rs",
+      "/inputs_after/crates/qcore-schemas/tests/contract_supersession.rs",
+      "/inputs_after/crates/qcore-schemas/tests/reason_codes.rs",
+      "/inputs_after/crates/qcore-verification/Cargo.toml",
+      "/inputs_after/crates/qcore-verifier-host/Cargo.toml",
+      "/inputs_after/crates/quirin-audit-plugin-libevent/Cargo.toml",
+      "/inputs_after/crates/quirin-audit-plugin/Cargo.toml",
+      "/inputs_after/crates/quirin-source-analysis/Cargo.toml",
+      "/inputs_after/docs/QCORE_CONTRACT_SPEC_r0_3.md",
+      "/inputs_after/docs/QCORE_SPEC_r0_3.md",
+      "/inputs_after/docs/reports/contract-supersession/repin-review.json",
+      "/inputs_after/docs/reports/contract-supersession/scripts/build_side.sh",
+      "/inputs_after/docs/reports/contract-supersession/scripts/logged.sh",
+      "/inputs_after/docs/reports/contract-supersession/scripts/ns_side.sh",
+      "/inputs_after/docs/reports/contract-supersession/scripts/prepare_identity.sh",
+      "/inputs_after/docs/reports/contract-supersession/scripts/repin.sh",
+      "/inputs_after/docs/reports/contract-supersession/scripts/review_repin.py",
+      "/inputs_after/docs/reports/contract-supersession/scripts/run_identity.sh",
+      "/inputs_after/docs/reports/contract-supersession/scripts/snapshot.sh",
+      "/inputs_after/docs/reports/contract-supersession/scripts/targeted_tests.sh",
+      "/inputs_after/proof/AuditContractSupersession.lean",
+      "/inputs_after/proof/QCore.lean",
+      "/inputs_after/proof/QCore/ContractSupersession.lean",
+      "/inputs_after/proof/QCore/ReasonCategory.lean",
+      "/inputs_after/providers/Cargo.lock",
+      "/inputs_after/providers/Cargo.toml",
+      "/inputs_after/providers/pin-lock-window.json",
+      "/inputs_after/providers/qcore-provider-chunkio/bounds-contracts.lock",
+      "/inputs_after/providers/qcore-provider-chunkio/contracts.lock",
+      "/inputs_after/providers/qcore-provider-cmetrics/bounds-contracts.lock",
+      "/inputs_after/providers/qcore-provider-cmetrics/contracts.lock",
+      "/inputs_after/providers/qcore-provider-ctraces/contracts.lock",
+      "/inputs_after/providers/qcore-provider-libevent/contracts.lock",
+      "/inputs_after/providers/qcore-provider-librdkafka/bounds-contracts.lock",
+      "/inputs_after/providers/qcore-provider-librdkafka/contracts.lock",
+      "/inputs_after/providers/qcore-provider-librdkafka/outer-contracts.lock",
+      "/inputs_after/providers/quirin-provider-cfl/bounds-contracts.lock",
+      "/inputs_after/providers/quirin-provider-cfl/contracts.lock",
+      "/inputs_after/providers/quirin-provider-fluent-bit/bounds-contracts.lock",
+      "/inputs_after/providers/quirin-provider-fluent-bit/contracts.lock",
+      "/inputs_after/providers/quirin-provider-fluent-bit/outer-contracts.lock",
+      "/inputs_after/providers/quirin-provider-libc/contracts.lock",
+      "/inputs_after/providers/quirin-provider-mpack/contracts.lock",
+      "/inputs_after/providers/quirin-provider-msgpack/contracts.lock",
+      "/inputs_after/third_party/libevent/.git/index",
+      "/inputs_after/third_party/libevent/.git/logs/HEAD",
+      "/inputs_after/third_party/libevent/.git/logs/refs/heads/master",
+      "/inputs_after/third_party/libevent/.git/logs/refs/remotes/origin/HEAD",
+      "/inputs_before/Cargo.lock",
+      "/inputs_before/compiler/Cargo.toml",
+      "/inputs_before/compiler/tests/fixtures/w3/provider/Cargo.lock",
+      "/inputs_before/compiler/tests/fixtures/w3/provider/Cargo.toml",
+      "/inputs_before/crates/qcore-audit/Cargo.toml",
+      "/inputs_before/crates/qcore-audit/src/contract_pin.rs",
+      "/inputs_before/crates/qcore-audit/src/contract_revision.rs",
+      "/inputs_before/crates/qcore-audit/src/contract_tip.rs",
+      "/inputs_before/crates/qcore-audit/src/lib.rs",
+      "/inputs_before/crates/qcore-audit/src/pin_window.rs",
+      "/inputs_before/crates/qcore-audit/src/pinned_route.rs",
+      "/inputs_before/crates/qcore-audit/src/providers.rs",
+      "/inputs_before/crates/qcore-audit/tests/bounds_pin_hold.rs",
+      "/inputs_before/crates/qcore-audit/tests/bounds_transport.rs",
+      "/inputs_before/crates/qcore-audit/tests/contract_revision_audit.rs",
+      "/inputs_before/crates/qcore-audit/tests/contract_revision_identities.rs",
+      "/inputs_before/crates/qcore-audit/tests/contract_supersession.rs",
+      "/inputs_before/crates/qcore-audit/tests/contract_tip_mode.rs",
+      "/inputs_before/crates/qcore-c-gateway/Cargo.toml",
+      "/inputs_before/crates/qcore-c-gateway/src/contract_dependencies.rs",
+      "/inputs_before/crates/qcore-c-gateway/src/legacy_c.rs",
+      "/inputs_before/crates/qcore-c-gateway/src/legacy_classify.rs",
+      "/inputs_before/crates/qcore-c-gateway/src/legacy_conflict_hold.rs",
+      "/inputs_before/crates/qcore-c-gateway/src/legacy_generic_selection.rs",
+      "/inputs_before/crates/qcore-c-gateway/src/legacy_reserved_spelling.rs",
+      "/inputs_before/crates/qcore-c-gateway/src/legacy_residual_access.rs",
+      "/inputs_before/crates/qcore-c-gateway/tests/contract_conflict_hold.rs",
+      "/inputs_before/crates/qcore-contract/Cargo.toml",
+      "/inputs_before/crates/qcore-contract/src/contract_loader.rs",
+      "/inputs_before/crates/qcore-contract/src/contract_revision.rs",
+      "/inputs_before/crates/qcore-contract/src/contract_supersession.rs",
+      "/inputs_before/crates/qcore-contract/src/lib.rs",
+      "/inputs_before/crates/qcore-schemas/Cargo.toml",
+      "/inputs_before/crates/qcore-schemas/src/contract.rs",
+      "/inputs_before/crates/qcore-schemas/src/contract_supersession.rs",
+      "/inputs_before/crates/qcore-schemas/src/lib.rs",
+      "/inputs_before/crates/qcore-schemas/src/reason.rs",
+      "/inputs_before/crates/qcore-schemas/tests/contract_supersession.rs",
+      "/inputs_before/crates/qcore-schemas/tests/reason_codes.rs",
+      "/inputs_before/crates/qcore-verification/Cargo.toml",
+      "/inputs_before/crates/qcore-verifier-host/Cargo.toml",
+      "/inputs_before/crates/quirin-audit-plugin-libevent/Cargo.toml",
+      "/inputs_before/crates/quirin-audit-plugin/Cargo.toml",
+      "/inputs_before/crates/quirin-source-analysis/Cargo.toml",
+      "/inputs_before/docs/QCORE_CONTRACT_SPEC_r0_3.md",
+      "/inputs_before/docs/QCORE_SPEC_r0_3.md",
+      "/inputs_before/docs/reports/contract-supersession/repin-review.json",
+      "/inputs_before/docs/reports/contract-supersession/scripts/build_side.sh",
+      "/inputs_before/docs/reports/contract-supersession/scripts/logged.sh",
+      "/inputs_before/docs/reports/contract-supersession/scripts/ns_side.sh",
+      "/inputs_before/docs/reports/contract-supersession/scripts/prepare_identity.sh",
+      "/inputs_before/docs/reports/contract-supersession/scripts/repin.sh",
+      "/inputs_before/docs/reports/contract-supersession/scripts/review_repin.py",
+      "/inputs_before/docs/reports/contract-supersession/scripts/run_identity.sh",
+      "/inputs_before/docs/reports/contract-supersession/scripts/snapshot.sh",
+      "/inputs_before/docs/reports/contract-supersession/scripts/targeted_tests.sh",
+      "/inputs_before/proof/AuditContractSupersession.lean",
+      "/inputs_before/proof/QCore.lean",
+      "/inputs_before/proof/QCore/ContractSupersession.lean",
+      "/inputs_before/proof/QCore/ReasonCategory.lean",
+      "/inputs_before/providers/Cargo.lock",
+      "/inputs_before/providers/Cargo.toml",
+      "/inputs_before/providers/pin-lock-window.json",
+      "/inputs_before/providers/qcore-provider-chunkio/bounds-contracts.lock",
+      "/inputs_before/providers/qcore-provider-chunkio/contracts.lock",
+      "/inputs_before/providers/qcore-provider-cmetrics/bounds-contracts.lock",
+      "/inputs_before/providers/qcore-provider-cmetrics/contracts.lock",
+      "/inputs_before/providers/qcore-provider-ctraces/contracts.lock",
+      "/inputs_before/providers/qcore-provider-libevent/contracts.lock",
+      "/inputs_before/providers/qcore-provider-librdkafka/bounds-contracts.lock",
+      "/inputs_before/providers/qcore-provider-librdkafka/contracts.lock",
+      "/inputs_before/providers/qcore-provider-librdkafka/outer-contracts.lock",
+      "/inputs_before/providers/quirin-provider-cfl/bounds-contracts.lock",
+      "/inputs_before/providers/quirin-provider-cfl/contracts.lock",
+      "/inputs_before/providers/quirin-provider-fluent-bit/bounds-contracts.lock",
+      "/inputs_before/providers/quirin-provider-fluent-bit/contracts.lock",
+      "/inputs_before/providers/quirin-provider-fluent-bit/outer-contracts.lock",
+      "/inputs_before/providers/quirin-provider-libc/contracts.lock",
+      "/inputs_before/providers/quirin-provider-mpack/contracts.lock",
+      "/inputs_before/providers/quirin-provider-msgpack/contracts.lock",
+      "/inputs_before/third_party/libevent/.git/index",
+      "/inputs_before/third_party/libevent/.git/logs/HEAD",
+      "/inputs_before/third_party/libevent/.git/logs/refs/heads/master",
+      "/inputs_before/third_party/libevent/.git/logs/refs/remotes/origin/HEAD",
+      "/started"
+     ]
+    },
+    "resource-diagnostics.invocation.json": {
+     "equal_after_substitution": true
+    },
+    "slice.exit": {
+     "equal_after_substitution": true
+    },
+    "stderr.log": {
+     "equal_after_substitution": true
+    }
+   }
+  },
+  "system": {
+   "ok": true,
+   "base": "/media/Data/GitHub/quirin-lang/.claude/worktrees/agent-a3deda89370a8a498/private/cs/identity-1/base/system",
+   "tip": "/media/Data/GitHub/quirin-lang/.claude/worktrees/agent-a3deda89370a8a498/private/cs/identity-1/tip/system",
+   "directory_substitution": [
+    [
+     "/media/Data/GitHub/quirin-lang/.claude/worktrees/agent-a3deda89370a8a498/private/cs/identity-1/base",
+     "/media/Data/GitHub/quirin-lang/.claude/worktrees/agent-a3deda89370a8a498/private/cs/identity-1/tip"
+    ]
+   ],
+   "report_artifacts_identical": [
+    {
+     "file": "resource-diagnostics.chunk-contracts.json",
+     "sha256": "e7e0d254d9e7ee199672b981e3fc764b702b35a1757bb0f4570a9438e6b87922"
+    },
+    {
+     "file": "resource-diagnostics.components.json",
+     "sha256": "8f7f5be2b61114ff7424c821533856225bc34355dda2fd9245216fa8b743d174"
+    },
+    {
+     "file": "resource-diagnostics.json",
+     "sha256": "88b2092a65a2820a78ebca793a6fad35535dd6e15f68e8111c43f1789ba42544"
+    },
+    {
+     "file": "resource-diagnostics.source-effects.json",
+     "sha256": "e7e0d254d9e7ee199672b981e3fc764b702b35a1757bb0f4570a9438e6b87922"
+    },
+    {
+     "file": "system-null.jsonl",
+     "sha256": "0bb8e4888c01de28ed1815638c0e4118d3904bf9e2581fa7dd8d3588c0ca9e73"
+    },
+    {
+     "file": "system-null.summary.json",
+     "sha256": "572117bd3758532c0ad224a8b40db30dc6793a36d0cec55c54a0c817a905d1e2"
+    },
+    {
+     "file": "system-outer.json",
+     "sha256": "a8b796786ba309b12b0380d0639c22f6a0658777d616d49553bbc0949e862c2b"
+    }
+   ],
+   "report_artifacts_identical_after_lock_digest_substitution": {
+    "resource-diagnostics.contracts.json": {
+     "substituted": {
+      "providers/qcore-provider-chunkio/contracts.lock": 1,
+      "providers/qcore-provider-cmetrics/contracts.lock": 1,
+      "providers/qcore-provider-ctraces/contracts.lock": 1,
+      "providers/qcore-provider-libevent/contracts.lock": 2,
+      "providers/qcore-provider-librdkafka/contracts.lock": 2,
+      "providers/quirin-provider-cfl/contracts.lock": 1,
+      "providers/quirin-provider-fluent-bit/contracts.lock": 2,
+      "providers/quirin-provider-libc/contracts.lock": 1,
+      "providers/quirin-provider-mpack/contracts.lock": 1,
+      "providers/quirin-provider-msgpack/contracts.lock": 1
+     },
+     "tip_sha256": "01d549401c0a706d68172edcf30465d1ea7d5cc78f6dfb6df324d66a7de01c61"
+    }
+   },
+   "report_artifacts_differing": [],
+   "missing_on_tip": [],
+   "new_on_tip": [],
+   "logs": {
+    "console.log": {
+     "equal_after_substitution": false,
+     "differing_lines": [
+      [
+       "preparation: 15 unit(s), 45 Clang invocation(s); -E -P 1324463 us / syntax 2539361 us / line markers 1303253 us",
+       "preparation: 15 unit(s), 45 Clang invocation(s); -E -P 1280403 us / syntax 2455118 us / line markers 1296307 us"
+      ]
+     ],
+     "line_counts": [
+      109,
+      109
+     ]
+    }
+   },
+   "driver_records": {
+    "invocation.json": {
+     "equal_after_substitution": false,
+     "differing_keys": [
+      "/analyzer_source",
+      "/binary_sha256",
+      "/binary_sha256_after",
+      "/ended",
+      "/free_bytes_before",
+      "/inputs_after/Cargo.lock",
+      "/inputs_after/compiler/Cargo.toml",
+      "/inputs_after/compiler/tests/fixtures/w3/provider/Cargo.lock",
+      "/inputs_after/compiler/tests/fixtures/w3/provider/Cargo.toml",
+      "/inputs_after/crates/qcore-audit/Cargo.toml",
+      "/inputs_after/crates/qcore-audit/src/contract_pin.rs",
+      "/inputs_after/crates/qcore-audit/src/contract_revision.rs",
+      "/inputs_after/crates/qcore-audit/src/contract_tip.rs",
+      "/inputs_after/crates/qcore-audit/src/lib.rs",
+      "/inputs_after/crates/qcore-audit/src/pin_window.rs",
+      "/inputs_after/crates/qcore-audit/src/pinned_route.rs",
+      "/inputs_after/crates/qcore-audit/src/providers.rs",
+      "/inputs_after/crates/qcore-audit/tests/bounds_pin_hold.rs",
+      "/inputs_after/crates/qcore-audit/tests/bounds_transport.rs",
+      "/inputs_after/crates/qcore-audit/tests/contract_revision_audit.rs",
+      "/inputs_after/crates/qcore-audit/tests/contract_revision_identities.rs",
+      "/inputs_after/crates/qcore-audit/tests/contract_supersession.rs",
+      "/inputs_after/crates/qcore-audit/tests/contract_tip_mode.rs",
+      "/inputs_after/crates/qcore-c-gateway/Cargo.toml",
+      "/inputs_after/crates/qcore-c-gateway/src/contract_dependencies.rs",
+      "/inputs_after/crates/qcore-c-gateway/src/legacy_c.rs",
+      "/inputs_after/crates/qcore-c-gateway/src/legacy_classify.rs",
+      "/inputs_after/crates/qcore-c-gateway/src/legacy_conflict_hold.rs",
+      "/inputs_after/crates/qcore-c-gateway/src/legacy_generic_selection.rs",
+      "/inputs_after/crates/qcore-c-gateway/src/legacy_reserved_spelling.rs",
+      "/inputs_after/crates/qcore-c-gateway/src/legacy_residual_access.rs",
+      "/inputs_after/crates/qcore-c-gateway/tests/contract_conflict_hold.rs",
+      "/inputs_after/crates/qcore-contract/Cargo.toml",
+      "/inputs_after/crates/qcore-contract/src/contract_loader.rs",
+      "/inputs_after/crates/qcore-contract/src/contract_revision.rs",
+      "/inputs_after/crates/qcore-contract/src/contract_supersession.rs",
+      "/inputs_after/crates/qcore-contract/src/lib.rs",
+      "/inputs_after/crates/qcore-schemas/Cargo.toml",
+      "/inputs_after/crates/qcore-schemas/src/contract.rs",
+      "/inputs_after/crates/qcore-schemas/src/contract_supersession.rs",
+      "/inputs_after/crates/qcore-schemas/src/lib.rs",
+      "/inputs_after/crates/qcore-schemas/src/reason.rs",
+      "/inputs_after/crates/qcore-schemas/tests/contract_supersession.rs",
+      "/inputs_after/crates/qcore-schemas/tests/reason_codes.rs",
+      "/inputs_after/crates/qcore-verification/Cargo.toml",
+      "/inputs_after/crates/qcore-verifier-host/Cargo.toml",
+      "/inputs_after/crates/quirin-audit-plugin-libevent/Cargo.toml",
+      "/inputs_after/crates/quirin-audit-plugin/Cargo.toml",
+      "/inputs_after/crates/quirin-source-analysis/Cargo.toml",
+      "/inputs_after/docs/QCORE_CONTRACT_SPEC_r0_3.md",
+      "/inputs_after/docs/QCORE_SPEC_r0_3.md",
+      "/inputs_after/docs/reports/contract-supersession/repin-review.json",
+      "/inputs_after/docs/reports/contract-supersession/scripts/build_side.sh",
+      "/inputs_after/docs/reports/contract-supersession/scripts/logged.sh",
+      "/inputs_after/docs/reports/contract-supersession/scripts/ns_side.sh",
+      "/inputs_after/docs/reports/contract-supersession/scripts/prepare_identity.sh",
+      "/inputs_after/docs/reports/contract-supersession/scripts/repin.sh",
+      "/inputs_after/docs/reports/contract-supersession/scripts/review_repin.py",
+      "/inputs_after/docs/reports/contract-supersession/scripts/run_identity.sh",
+      "/inputs_after/docs/reports/contract-supersession/scripts/snapshot.sh",
+      "/inputs_after/docs/reports/contract-supersession/scripts/targeted_tests.sh",
+      "/inputs_after/proof/AuditContractSupersession.lean",
+      "/inputs_after/proof/QCore.lean",
+      "/inputs_after/proof/QCore/ContractSupersession.lean",
+      "/inputs_after/proof/QCore/ReasonCategory.lean",
+      "/inputs_after/providers/Cargo.lock",
+      "/inputs_after/providers/Cargo.toml",
+      "/inputs_after/providers/pin-lock-window.json",
+      "/inputs_after/providers/qcore-provider-chunkio/bounds-contracts.lock",
+      "/inputs_after/providers/qcore-provider-chunkio/contracts.lock",
+      "/inputs_after/providers/qcore-provider-cmetrics/bounds-contracts.lock",
+      "/inputs_after/providers/qcore-provider-cmetrics/contracts.lock",
+      "/inputs_after/providers/qcore-provider-ctraces/contracts.lock",
+      "/inputs_after/providers/qcore-provider-libevent/contracts.lock",
+      "/inputs_after/providers/qcore-provider-librdkafka/bounds-contracts.lock",
+      "/inputs_after/providers/qcore-provider-librdkafka/contracts.lock",
+      "/inputs_after/providers/qcore-provider-librdkafka/outer-contracts.lock",
+      "/inputs_after/providers/quirin-provider-cfl/bounds-contracts.lock",
+      "/inputs_after/providers/quirin-provider-cfl/contracts.lock",
+      "/inputs_after/providers/quirin-provider-fluent-bit/bounds-contracts.lock",
+      "/inputs_after/providers/quirin-provider-fluent-bit/contracts.lock",
+      "/inputs_after/providers/quirin-provider-fluent-bit/outer-contracts.lock",
+      "/inputs_after/providers/quirin-provider-libc/contracts.lock",
+      "/inputs_after/providers/quirin-provider-mpack/contracts.lock",
+      "/inputs_after/providers/quirin-provider-msgpack/contracts.lock",
+      "/inputs_after/third_party/libevent/.git/index",
+      "/inputs_after/third_party/libevent/.git/logs/HEAD",
+      "/inputs_after/third_party/libevent/.git/logs/refs/heads/master",
+      "/inputs_after/third_party/libevent/.git/logs/refs/remotes/origin/HEAD",
+      "/inputs_before/Cargo.lock",
+      "/inputs_before/compiler/Cargo.toml",
+      "/inputs_before/compiler/tests/fixtures/w3/provider/Cargo.lock",
+      "/inputs_before/compiler/tests/fixtures/w3/provider/Cargo.toml",
+      "/inputs_before/crates/qcore-audit/Cargo.toml",
+      "/inputs_before/crates/qcore-audit/src/contract_pin.rs",
+      "/inputs_before/crates/qcore-audit/src/contract_revision.rs",
+      "/inputs_before/crates/qcore-audit/src/contract_tip.rs",
+      "/inputs_before/crates/qcore-audit/src/lib.rs",
+      "/inputs_before/crates/qcore-audit/src/pin_window.rs",
+      "/inputs_before/crates/qcore-audit/src/pinned_route.rs",
+      "/inputs_before/crates/qcore-audit/src/providers.rs",
+      "/inputs_before/crates/qcore-audit/tests/bounds_pin_hold.rs",
+      "/inputs_before/crates/qcore-audit/tests/bounds_transport.rs",
+      "/inputs_before/crates/qcore-audit/tests/contract_revision_audit.rs",
+      "/inputs_before/crates/qcore-audit/tests/contract_revision_identities.rs",
+      "/inputs_before/crates/qcore-audit/tests/contract_supersession.rs",
+      "/inputs_before/crates/qcore-audit/tests/contract_tip_mode.rs",
+      "/inputs_before/crates/qcore-c-gateway/Cargo.toml",
+      "/inputs_before/crates/qcore-c-gateway/src/contract_dependencies.rs",
+      "/inputs_before/crates/qcore-c-gateway/src/legacy_c.rs",
+      "/inputs_before/crates/qcore-c-gateway/src/legacy_classify.rs",
+      "/inputs_before/crates/qcore-c-gateway/src/legacy_conflict_hold.rs",
+      "/inputs_before/crates/qcore-c-gateway/src/legacy_generic_selection.rs",
+      "/inputs_before/crates/qcore-c-gateway/src/legacy_reserved_spelling.rs",
+      "/inputs_before/crates/qcore-c-gateway/src/legacy_residual_access.rs",
+      "/inputs_before/crates/qcore-c-gateway/tests/contract_conflict_hold.rs",
+      "/inputs_before/crates/qcore-contract/Cargo.toml",
+      "/inputs_before/crates/qcore-contract/src/contract_loader.rs",
+      "/inputs_before/crates/qcore-contract/src/contract_revision.rs",
+      "/inputs_before/crates/qcore-contract/src/contract_supersession.rs",
+      "/inputs_before/crates/qcore-contract/src/lib.rs",
+      "/inputs_before/crates/qcore-schemas/Cargo.toml",
+      "/inputs_before/crates/qcore-schemas/src/contract.rs",
+      "/inputs_before/crates/qcore-schemas/src/contract_supersession.rs",
+      "/inputs_before/crates/qcore-schemas/src/lib.rs",
+      "/inputs_before/crates/qcore-schemas/src/reason.rs",
+      "/inputs_before/crates/qcore-schemas/tests/contract_supersession.rs",
+      "/inputs_before/crates/qcore-schemas/tests/reason_codes.rs",
+      "/inputs_before/crates/qcore-verification/Cargo.toml",
+      "/inputs_before/crates/qcore-verifier-host/Cargo.toml",
+      "/inputs_before/crates/quirin-audit-plugin-libevent/Cargo.toml",
+      "/inputs_before/crates/quirin-audit-plugin/Cargo.toml",
+      "/inputs_before/crates/quirin-source-analysis/Cargo.toml",
+      "/inputs_before/docs/QCORE_CONTRACT_SPEC_r0_3.md",
+      "/inputs_before/docs/QCORE_SPEC_r0_3.md",
+      "/inputs_before/docs/reports/contract-supersession/repin-review.json",
+      "/inputs_before/docs/reports/contract-supersession/scripts/build_side.sh",
+      "/inputs_before/docs/reports/contract-supersession/scripts/logged.sh",
+      "/inputs_before/docs/reports/contract-supersession/scripts/ns_side.sh",
+      "/inputs_before/docs/reports/contract-supersession/scripts/prepare_identity.sh",
+      "/inputs_before/docs/reports/contract-supersession/scripts/repin.sh",
+      "/inputs_before/docs/reports/contract-supersession/scripts/review_repin.py",
+      "/inputs_before/docs/reports/contract-supersession/scripts/run_identity.sh",
+      "/inputs_before/docs/reports/contract-supersession/scripts/snapshot.sh",
+      "/inputs_before/docs/reports/contract-supersession/scripts/targeted_tests.sh",
+      "/inputs_before/proof/AuditContractSupersession.lean",
+      "/inputs_before/proof/QCore.lean",
+      "/inputs_before/proof/QCore/ContractSupersession.lean",
+      "/inputs_before/proof/QCore/ReasonCategory.lean",
+      "/inputs_before/providers/Cargo.lock",
+      "/inputs_before/providers/Cargo.toml",
+      "/inputs_before/providers/pin-lock-window.json",
+      "/inputs_before/providers/qcore-provider-chunkio/bounds-contracts.lock",
+      "/inputs_before/providers/qcore-provider-chunkio/contracts.lock",
+      "/inputs_before/providers/qcore-provider-cmetrics/bounds-contracts.lock",
+      "/inputs_before/providers/qcore-provider-cmetrics/contracts.lock",
+      "/inputs_before/providers/qcore-provider-ctraces/contracts.lock",
+      "/inputs_before/providers/qcore-provider-libevent/contracts.lock",
+      "/inputs_before/providers/qcore-provider-librdkafka/bounds-contracts.lock",
+      "/inputs_before/providers/qcore-provider-librdkafka/contracts.lock",
+      "/inputs_before/providers/qcore-provider-librdkafka/outer-contracts.lock",
+      "/inputs_before/providers/quirin-provider-cfl/bounds-contracts.lock",
+      "/inputs_before/providers/quirin-provider-cfl/contracts.lock",
+      "/inputs_before/providers/quirin-provider-fluent-bit/bounds-contracts.lock",
+      "/inputs_before/providers/quirin-provider-fluent-bit/contracts.lock",
+      "/inputs_before/providers/quirin-provider-fluent-bit/outer-contracts.lock",
+      "/inputs_before/providers/quirin-provider-libc/contracts.lock",
+      "/inputs_before/providers/quirin-provider-mpack/contracts.lock",
+      "/inputs_before/providers/quirin-provider-msgpack/contracts.lock",
+      "/inputs_before/third_party/libevent/.git/index",
+      "/inputs_before/third_party/libevent/.git/logs/HEAD",
+      "/inputs_before/third_party/libevent/.git/logs/refs/heads/master",
+      "/inputs_before/third_party/libevent/.git/logs/refs/remotes/origin/HEAD",
+      "/started"
+     ]
+    },
+    "resource-diagnostics.invocation.json": {
+     "equal_after_substitution": true
+    },
+    "stderr.log": {
+     "equal_after_substitution": true
+    },
+    "system.exit": {
+     "equal_after_substitution": true
+    }
+   }
+  }
+ },
+ "ok": true
+}

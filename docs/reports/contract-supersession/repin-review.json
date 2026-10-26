@@ -1,0 +1,352 @@
+{
+  "card": "CONTRACT-SUPERSESSION",
+  "base": "1638e581a",
+  "stamp": "2026-10-25T18:10:00Z",
+  "fluent_bit_revision": "046accf6aded7906f66a1baf0202da349e521736",
+  "rule": "the only change allowed is the addition of pin stamps and the revision tie (with the format version 4 that expresses them); every clause, digest, module and identity is unchanged",
+  "locks": [
+    {
+      "lock": "providers/qcore-provider-chunkio/bounds-contracts.lock",
+      "base_sha256": "d0e29f626059e8244f934977b5a9697e8c4dca915124be6b395b25ef1e16c640",
+      "tip_sha256": "fc4cc0a634c7cc0800f077916956f1c2e63e6fbef04b4552522f4f45a47b3d89",
+      "base_version": 2,
+      "tip_version": 4,
+      "entries": {
+        "pinned": 5,
+        "flexible": 0,
+        "tip": 0
+      },
+      "content_equal_without_stamps_tie_and_version": true,
+      "entry_fields_unchanged_but_pinned_at": true,
+      "stamps": [
+        "2026-10-25T18:10:00Z"
+      ],
+      "fluent_bit_revision": "046accf6aded7906f66a1baf0202da349e521736",
+      "base_had_stamps_or_tie": false,
+      "ok": true
+    },
+    {
+      "lock": "providers/qcore-provider-chunkio/contracts.lock",
+      "base_sha256": "e4d425be4e48164a0d0f5a86cacfbfcb2284586f939e0f3c30664379d8c69e9d",
+      "tip_sha256": "6bd9c2bfbb39707084edd51618038caa0c14fa6af12e8ec625f40bd7bdf9dac7",
+      "base_version": 2,
+      "tip_version": 4,
+      "entries": {
+        "pinned": 10,
+        "flexible": 0,
+        "tip": 0
+      },
+      "content_equal_without_stamps_tie_and_version": true,
+      "entry_fields_unchanged_but_pinned_at": true,
+      "stamps": [
+        "2026-10-25T18:10:00Z"
+      ],
+      "fluent_bit_revision": "046accf6aded7906f66a1baf0202da349e521736",
+      "base_had_stamps_or_tie": false,
+      "ok": true
+    },
+    {
+      "lock": "providers/qcore-provider-cmetrics/bounds-contracts.lock",
+      "base_sha256": "2403daac62ed5a77bc5d0750ff368aee523c1c49b4b337f006a8f023546ac9cc",
+      "tip_sha256": "8af069bc6fd8291883328f21288e98280c0461c7f52b7e55a363aed44db586b3",
+      "base_version": 2,
+      "tip_version": 4,
+      "entries": {
+        "pinned": 1,
+        "flexible": 0,
+        "tip": 0
+      },
+      "content_equal_without_stamps_tie_and_version": true,
+      "entry_fields_unchanged_but_pinned_at": true,
+      "stamps": [
+        "2026-10-25T18:10:00Z"
+      ],
+      "fluent_bit_revision": "046accf6aded7906f66a1baf0202da349e521736",
+      "base_had_stamps_or_tie": false,
+      "ok": true
+    },
+    {
+      "lock": "providers/qcore-provider-cmetrics/contracts.lock",
+      "base_sha256": "e54772f99294b483e96eb65ac9ff81ce0d6ddf22379e53a9d85926cd1ec8f206",
+      "tip_sha256": "0cfd24a3c05dd337e04798e74d40da77fef7413565bce05bd28b7ce3e84555d4",
+      "base_version": 2,
+      "tip_version": 4,
+      "entries": {
+        "pinned": 29,
+        "flexible": 0,
+        "tip": 0
+      },
+      "content_equal_without_stamps_tie_and_version": true,
+      "entry_fields_unchanged_but_pinned_at": true,
+      "stamps": [
+        "2026-10-25T18:10:00Z"
+      ],
+      "fluent_bit_revision": "046accf6aded7906f66a1baf0202da349e521736",
+      "base_had_stamps_or_tie": false,
+      "ok": true
+    },
+    {
+      "lock": "providers/qcore-provider-ctraces/contracts.lock",
+      "base_sha256": "8ad52b0ec1fea99243597495d7588d5219a68da694ac5aa06a90c513a996758c",
+      "tip_sha256": "f7d3d4d87294f0ca4fb129fbd3afcf77dcc37dfeeb976bae3398ed5af74493b6",
+      "base_version": 2,
+      "tip_version": 4,
+      "entries": {
+        "pinned": 19,
+        "flexible": 0,
+        "tip": 0
+      },
+      "content_equal_without_stamps_tie_and_version": true,
+      "entry_fields_unchanged_but_pinned_at": true,
+      "stamps": [
+        "2026-10-25T18:10:00Z"
+      ],
+      "fluent_bit_revision": "046accf6aded7906f66a1baf0202da349e521736",
+      "base_had_stamps_or_tie": false,
+      "ok": true
+    },
+    {
+      "lock": "providers/qcore-provider-libevent/contracts.lock",
+      "base_sha256": "8277b5266d54a482a9ee9fef6e4c60448b7221629c1ea6124a12ec3974e11e93",
+      "tip_sha256": "8c6e21ea8b2cc8289477bd350e6637931641e770ab696bf5417835d0dc3dc7b7",
+      "base_version": 3,
+      "tip_version": 4,
+      "entries": {
+        "pinned": 26,
+        "flexible": 0,
+        "tip": 1
+      },
+      "content_equal_without_stamps_tie_and_version": true,
+      "entry_fields_unchanged_but_pinned_at": true,
+      "stamps": [
+        "2026-10-25T18:10:00Z"
+      ],
+      "fluent_bit_revision": "046accf6aded7906f66a1baf0202da349e521736",
+      "base_had_stamps_or_tie": false,
+      "ok": true
+    },
+    {
+      "lock": "providers/qcore-provider-librdkafka/bounds-contracts.lock",
+      "base_sha256": "5900e38a1eee1d0fa9a657e0556a00c4b0e22b01f4045a1f09040e57f780abfa",
+      "tip_sha256": "e72047210fb489cea0adc57b741bbfc3abb1cc0add7282b248ae5259f3938d27",
+      "base_version": 2,
+      "tip_version": 4,
+      "entries": {
+        "pinned": 86,
+        "flexible": 0,
+        "tip": 0
+      },
+      "content_equal_without_stamps_tie_and_version": true,
+      "entry_fields_unchanged_but_pinned_at": true,
+      "stamps": [
+        "2026-10-25T18:10:00Z"
+      ],
+      "fluent_bit_revision": "046accf6aded7906f66a1baf0202da349e521736",
+      "base_had_stamps_or_tie": false,
+      "ok": true
+    },
+    {
+      "lock": "providers/qcore-provider-librdkafka/contracts.lock",
+      "base_sha256": "e5dedf11b74885ab58a0f6bf9a6616e5d6b3fc4f6067f8114ce680766999ddbb",
+      "tip_sha256": "e8ff1fc08af979b3e49cc5ad77ac11b42e887ca6674021d31096d9616618f040",
+      "base_version": 2,
+      "tip_version": 4,
+      "entries": {
+        "pinned": 172,
+        "flexible": 0,
+        "tip": 0
+      },
+      "content_equal_without_stamps_tie_and_version": true,
+      "entry_fields_unchanged_but_pinned_at": true,
+      "stamps": [
+        "2026-10-25T18:10:00Z"
+      ],
+      "fluent_bit_revision": "046accf6aded7906f66a1baf0202da349e521736",
+      "base_had_stamps_or_tie": false,
+      "ok": true
+    },
+    {
+      "lock": "providers/qcore-provider-librdkafka/outer-contracts.lock",
+      "base_sha256": "a80f67f6b284e60ce3b7f4c8fd5d56726b4f584bdc85a3e8ed2dab2a07f7123b",
+      "tip_sha256": "02ec04cecdc5dabe32bff9369e8824391f6ec2f6c578936c4ff1e056598884e2",
+      "base_version": 2,
+      "tip_version": 4,
+      "entries": {
+        "pinned": 1,
+        "flexible": 0,
+        "tip": 0
+      },
+      "content_equal_without_stamps_tie_and_version": true,
+      "entry_fields_unchanged_but_pinned_at": true,
+      "stamps": [
+        "2026-10-25T18:10:00Z"
+      ],
+      "fluent_bit_revision": "046accf6aded7906f66a1baf0202da349e521736",
+      "base_had_stamps_or_tie": false,
+      "ok": true
+    },
+    {
+      "lock": "providers/quirin-provider-cfl/bounds-contracts.lock",
+      "base_sha256": "f1cd680d2add9f52c02effa77d98d37fe8e17da70ec64dceb4bafe29473ac1ed",
+      "tip_sha256": "a97db84ec5b1043e3f07e5fa5f8e5a39e43ce0902fd96b8de721907f695ed1f8",
+      "base_version": 2,
+      "tip_version": 4,
+      "entries": {
+        "pinned": 1,
+        "flexible": 0,
+        "tip": 0
+      },
+      "content_equal_without_stamps_tie_and_version": true,
+      "entry_fields_unchanged_but_pinned_at": true,
+      "stamps": [
+        "2026-10-25T18:10:00Z"
+      ],
+      "fluent_bit_revision": "046accf6aded7906f66a1baf0202da349e521736",
+      "base_had_stamps_or_tie": false,
+      "ok": true
+    },
+    {
+      "lock": "providers/quirin-provider-cfl/contracts.lock",
+      "base_sha256": "597070fa1443633cf8b2efa4351af7560c9a5a8035ce12cf267f9ad0e267d238",
+      "tip_sha256": "e49feb656a19f7bf5be2e1693e1d828ed4dd3f50276ff67f0b714f7362725b85",
+      "base_version": 2,
+      "tip_version": 4,
+      "entries": {
+        "pinned": 13,
+        "flexible": 0,
+        "tip": 0
+      },
+      "content_equal_without_stamps_tie_and_version": true,
+      "entry_fields_unchanged_but_pinned_at": true,
+      "stamps": [
+        "2026-10-25T18:10:00Z"
+      ],
+      "fluent_bit_revision": "046accf6aded7906f66a1baf0202da349e521736",
+      "base_had_stamps_or_tie": false,
+      "ok": true
+    },
+    {
+      "lock": "providers/quirin-provider-fluent-bit/bounds-contracts.lock",
+      "base_sha256": "13178b1ea72cf0e7cefb1890b622a55317ae5671396ee9d4f8c2a7e4cdf7047d",
+      "tip_sha256": "fba0bb96273fe1bb93397561584e88149e46e7aa39ff1d4e1c129c4eed1f8c80",
+      "base_version": 2,
+      "tip_version": 4,
+      "entries": {
+        "pinned": 19,
+        "flexible": 0,
+        "tip": 0
+      },
+      "content_equal_without_stamps_tie_and_version": true,
+      "entry_fields_unchanged_but_pinned_at": true,
+      "stamps": [
+        "2026-10-25T18:10:00Z"
+      ],
+      "fluent_bit_revision": "046accf6aded7906f66a1baf0202da349e521736",
+      "base_had_stamps_or_tie": false,
+      "ok": true
+    },
+    {
+      "lock": "providers/quirin-provider-fluent-bit/contracts.lock",
+      "base_sha256": "233a8bfdf37a411a4d908d6670ade4812810f35d3daff5aaf7ab3952a43fa392",
+      "tip_sha256": "db82bd43516cb3b67e01876b941179aab10f6f072f2a2fe23d342ebc79b39433",
+      "base_version": 2,
+      "tip_version": 4,
+      "entries": {
+        "pinned": 85,
+        "flexible": 0,
+        "tip": 0
+      },
+      "content_equal_without_stamps_tie_and_version": true,
+      "entry_fields_unchanged_but_pinned_at": true,
+      "stamps": [
+        "2026-10-25T18:10:00Z"
+      ],
+      "fluent_bit_revision": "046accf6aded7906f66a1baf0202da349e521736",
+      "base_had_stamps_or_tie": false,
+      "ok": true
+    },
+    {
+      "lock": "providers/quirin-provider-fluent-bit/outer-contracts.lock",
+      "base_sha256": "6bdabe473897b6b5f15f30431725785d46c2c77ebcaf4851b44865afa12bc2db",
+      "tip_sha256": "fdf876100ad79a666a27ca70be0093d097356b9f519bb7912856f773e43e406f",
+      "base_version": 2,
+      "tip_version": 4,
+      "entries": {
+        "pinned": 2,
+        "flexible": 0,
+        "tip": 0
+      },
+      "content_equal_without_stamps_tie_and_version": true,
+      "entry_fields_unchanged_but_pinned_at": true,
+      "stamps": [
+        "2026-10-25T18:10:00Z"
+      ],
+      "fluent_bit_revision": "046accf6aded7906f66a1baf0202da349e521736",
+      "base_had_stamps_or_tie": false,
+      "ok": true
+    },
+    {
+      "lock": "providers/quirin-provider-libc/contracts.lock",
+      "base_sha256": "45966d0d42253ce00b9bec11c993971968ec4757892e14461b2a4fd44dcff982",
+      "tip_sha256": "d07f29c3e54975b4c8c137a5ec574abfae68c5a41c64bed100a998c0a989a65d",
+      "base_version": 2,
+      "tip_version": 4,
+      "entries": {
+        "pinned": 0,
+        "flexible": 132,
+        "tip": 0
+      },
+      "content_equal_without_stamps_tie_and_version": true,
+      "entry_fields_unchanged_but_pinned_at": true,
+      "stamps": [
+        "2026-10-25T18:10:00Z"
+      ],
+      "fluent_bit_revision": "046accf6aded7906f66a1baf0202da349e521736",
+      "base_had_stamps_or_tie": false,
+      "ok": true
+    },
+    {
+      "lock": "providers/quirin-provider-mpack/contracts.lock",
+      "base_sha256": "d460d92b4287ba68a42d0af69858e405983738e3fdf8d46c6d1dfd3eba197ffd",
+      "tip_sha256": "7aad8496c42843b91646074f6fcaa1744366bfc2846376b4202842413ed12ca8",
+      "base_version": 2,
+      "tip_version": 4,
+      "entries": {
+        "pinned": 9,
+        "flexible": 0,
+        "tip": 0
+      },
+      "content_equal_without_stamps_tie_and_version": true,
+      "entry_fields_unchanged_but_pinned_at": true,
+      "stamps": [
+        "2026-10-25T18:10:00Z"
+      ],
+      "fluent_bit_revision": "046accf6aded7906f66a1baf0202da349e521736",
+      "base_had_stamps_or_tie": false,
+      "ok": true
+    },
+    {
+      "lock": "providers/quirin-provider-msgpack/contracts.lock",
+      "base_sha256": "4a5383178918740b9c865a9a77bd91e1e53f514612fbad744d5f911ad6fa4f24",
+      "tip_sha256": "2707ec48869a2c29faa99d548b2f13d57fa708a4149dd6a77c0b752080dbdb33",
+      "base_version": 2,
+      "tip_version": 4,
+      "entries": {
+        "pinned": 1,
+        "flexible": 0,
+        "tip": 0
+      },
+      "content_equal_without_stamps_tie_and_version": true,
+      "entry_fields_unchanged_but_pinned_at": true,
+      "stamps": [
+        "2026-10-25T18:10:00Z"
+      ],
+      "fluent_bit_revision": "046accf6aded7906f66a1baf0202da349e521736",
+      "base_had_stamps_or_tie": false,
+      "ok": true
+    }
+  ],
+  "lock_count": 17,
+  "entry_count": 612,
+  "ok": true
+}

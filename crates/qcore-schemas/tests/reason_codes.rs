@@ -37,11 +37,11 @@ use qcore_schemas::reason::{ReasonCategory, ReasonSubject, UnclassifiedReason};
 /// * `crates/qcore-audit/src/current_route.rs` — the two overrides.
 fn reason_corpus() -> Vec<(&'static str, ReasonCategory)> {
     use ReasonCategory::{
-        AwaitingHumanReview as Review, CompositionConflict as Conflict, ContractPinMismatch as Pin,
-        EnvironmentUnavailable as Env, IncompleteObligationCoverage as Coverage,
-        MissingPremise as Premise, OuterContract as Outer, PluginClaimUncertified as Plugin,
-        ProviderFailure as Provider, ResidualCustody as Custody, StaleEvidence as Stale,
-        UnsupportedSyntax as Syntax,
+        AwaitingHumanReview as Review, CompositionConflict as Conflict,
+        ContractConflict as Bundles, ContractPinMismatch as Pin, EnvironmentUnavailable as Env,
+        IncompleteObligationCoverage as Coverage, MissingPremise as Premise,
+        OuterContract as Outer, PluginClaimUncertified as Plugin, ProviderFailure as Provider,
+        ResidualCustody as Custody, StaleEvidence as Stale, UnsupportedSyntax as Syntax,
     };
     vec![
         // -- qcore-verification: obligation derivation ------------------------
@@ -238,6 +238,13 @@ fn reason_corpus() -> Vec<(&'static str, ReasonCategory)> {
              (analyzer `qcore-audit@0.1.0:unrecorded-build`) differ; all are kept and none \
              is chosen",
             Conflict,
+        ),
+        // Card CONTRACT-SUPERSESSION: the held call of a function whose
+        // bundles' pin stamps do not decide (`qcore_c_gateway::legacy_c`).
+        (
+            "call to `k_close` whose contract bundles conflict: their pin stamps do not decide \
+             which declaration is in force (contract-conflict)",
+            Bundles,
         ),
         (
             "`k_close`'s declared contract in k.qcore awaits human review \
