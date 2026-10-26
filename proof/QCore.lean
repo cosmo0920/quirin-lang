@@ -280,6 +280,7 @@ import QCore.ProviderSelection
 import QCore.PublicationCustody
 import QCore.QrlibLinkage
 import QCore.Quant
+import QCore.QuantCondition
 import QCore.QuantEffect
 import QCore.QuantIndexBinding
 import QCore.QuantProposition

@@ -145,3 +145,12 @@ exited 0 (`private/quant-contract-hypotheses/clippy-3/`). Provider inventory syn
 exited 0 in `provider-records-3/`; the reviewed changes include the new four-extern
 CFL atomic module and the model source digests. The corpus expectation deliberately
 becomes 144 modules / 365 non-v1 declarations, with resource/bounds counts unchanged.
+
+## Explicit condition selectors
+
+The additional user decision introduces `quant condition entry|normal|error(E)|any`
+(G01c). [The condition record](condition/README.md) owns the initial real
+postcondition migrations, matching audited selector semantics and validation.
+[The plugin record](plugin/README.md) owns the 1,162 typed plugin atom replacements,
+166 refreshed open manifests and exact reviewed C identity preservation.
+The all-provider pre/postcondition migration and final landing remain open.

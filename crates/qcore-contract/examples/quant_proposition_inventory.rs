@@ -17,6 +17,14 @@ fn run() -> Result<(), String> {
             let mut ids = BTreeSet::new();
             for clause in &contract.clauses {
                 let id = match &clause.value.kind {
+                    SourceContractClauseKind::QuantCondition(selector) => {
+                        qcore_frontend::quant_condition::parse(
+                            selector.clone(),
+                            &clause.value.expression_source,
+                        )?
+                        .proposition
+                        .id
+                    }
                     SourceContractClauseKind::QuantProposition => {
                         qcore_frontend::quant_proposition::parse(&clause.value.expression_source)?
                             .id
@@ -36,11 +44,14 @@ fn run() -> Result<(), String> {
             if !ids.is_empty() {
                 let graph = qcore_contract::hypothesis::declaration(&d.value, &[])
                     .map_err(|e| format!("{path}:{}: {e}", d.value.name))?;
-                records.push(json!({"file":path,"declaration":d.value.name,
+                let conditions = qcore_contract::quant_condition::declaration(&d.value)?;
+                records.push(
+                    json!({"conditions":conditions,"file":path,"declaration":d.value.name,
                     "source_sha256":qcore_schemas::sha256_hex(source.as_bytes()),
                     "graph_sha256":qcore_contract::hypothesis::digest(&graph)?,
                     "formal_ids":ids,"entry_requirements":graph.requirements,
-                    "source_binding":"open", "evidence":"typed representation only"}));
+                    "source_binding":"open", "evidence":"typed representation only"}),
+                );
             }
         }
     }

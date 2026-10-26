@@ -50,26 +50,26 @@
       "sha256": "db382a07386cbfc89d6b530542868d5d9d277d7eaab8b0e8ec5182850e82d5a0"
     },
     "cfl/hash_state.qv": {
-      "clause_count": 16,
+      "clause_count": 13,
       "declaration_count": 3,
       "declarations": [
         {
-          "clauses": 4,
+          "clauses": 3,
           "name": "cfl_hash_64bits_reset"
         },
         {
-          "clauses": 6,
+          "clauses": 5,
           "name": "cfl_hash_64bits_update"
         },
         {
-          "clauses": 6,
+          "clauses": 5,
           "name": "cfl_hash_64bits_digest"
         }
       ],
       "inherits": [],
       "premise_bindings": [],
       "premises": {},
-      "sha256": "3f56a431229eda33cf5f0b59414663bdf339d4057a520460000b467a820fe21e"
+      "sha256": "44962b47a0f7f483a99079c83532f9bebf4eafc73a5478a5685a42afa90ee523"
     },
     "cfl/intrusive_list.qv": {
       "clause_count": 37,

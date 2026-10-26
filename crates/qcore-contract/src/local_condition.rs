@@ -296,6 +296,11 @@ pub(crate) fn without_local(
                             .into(),
                     ),
                     SourceContractClauseKind::QuantProposition => "quant proposition",
+                    SourceContractClauseKind::QuantCondition(_) => {
+                        return Err(
+                            "quant conditions have no interpreted local-condition valuation".into(),
+                        );
+                    }
                     SourceContractClauseKind::QuantConditionBinding if keep_local => "quant",
                     SourceContractClauseKind::QuantConditionBlock { negated, .. } if keep_local => {
                         if *negated {

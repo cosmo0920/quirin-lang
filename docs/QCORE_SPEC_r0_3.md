@@ -1800,6 +1800,18 @@ language change and MUST be specified together with its contract interpretation
 and exact consumer grammar. The requirements below do not claim that the
 current parser or provider corpus already implements the extension.
 
+**Additional user decision, 2026-10-26.** Introduce `quant condition` with
+explicit `entry`, `normal`, `error(E)` and `any` selectors (G01c). Conditions
+are mathematical assertions at the selected position. Entry assertions are
+caller obligations; exit assertions must hold on every applicable terminating
+exit. An exit assertion supplies no entry fact and proves no termination.
+Sentence-shaped postconditions must be decomposed by meaning: pure assertions
+use conditions, state transitions and frames use effects, and conditional proof
+applications retain their theorem prerequisites. Epistemic statements such as
+"failure establishes no initialized-state guarantee" must not be turned into
+assertions that the state is uninitialized. Explanatory possibility statements
+belong in commentary or separately scoped witness claims.
+
 The extension distinguishes three judgments:
 
 * A **proposition** denotes a typed predicate `P(s, x)` over an explicit state

@@ -110,7 +110,7 @@ fn artifacts_and_models(
             "docs/reports/premise-evidence-contracts/binding-manifest.json".into()
         } else {
             format!(
-                "docs/reports/plugin-premise-decomposition/bindings/{}.json",
+                "docs/reports/quant-contract-hypotheses/plugin/bindings/{}.json",
                 r.manifest_sha256
             )
         };
@@ -141,7 +141,7 @@ fn artifacts_and_models(
     // Retain their original recorded proposition IDs and conditional model;
     // this explicit logical assignment model supplies no source truth.
     if s.values()
-        .any(|v| v.contains("resource_hypothesis(checked_reading_route,"))
+        .any(|v| v.contains("resource_lifecycle_v1(introduce_checked_reading_route,"))
     {
         let mapping: serde_json::Value = serde_json::from_str(include_str!(
             "../../../docs/reports/premise-decomposition-cycle1b/mapping.json"
@@ -269,7 +269,56 @@ fn current_semantic_checkpoint(path: &str, frozen: &str) -> String {
 // Only the historical byte-erasure seam uses this recovered checkpoint.
 // Every graph/loader/binding/flow/lifecycle check below still reads `after`,
 // the actual current source with its complete guarded metadata present.
+fn historical_typed_checkpoint(path: &str, current: &str) -> String {
+    let migration: serde_json::Value = serde_json::from_str(include_str!(
+        "../../../docs/reports/quant-contract-hypotheses/plugin/migration.json"
+    ))
+    .unwrap();
+    let physical = if path == FLB_LOGGING {
+        RK_LOGGING
+    } else {
+        path
+    };
+    let Some(record) = migration["files"]
+        .as_array()
+        .unwrap()
+        .iter()
+        .find(|r| r["file"].as_str() == Some(physical))
+    else {
+        return current.into();
+    };
+    let actual = fs::read(root().join(physical)).unwrap();
+    assert_eq!(
+        qcore_schemas::sha256_hex(&actual),
+        record["after_sha256"].as_str().unwrap(),
+        "unregistered source change {physical}"
+    );
+    let before = fs::read_to_string(root().join(record["before_asset"].as_str().unwrap())).unwrap();
+    assert_eq!(
+        qcore_schemas::sha256_hex(before.as_bytes()),
+        record["before_sha256"].as_str().unwrap()
+    );
+    if path != FLB_LOGGING {
+        return before;
+    }
+    let bindings = before
+        .split_inclusive('\n')
+        .filter(|line| line.starts_with("// qcore-premise-binding-manifest-v1 "))
+        .collect::<String>();
+    let card = &before[before
+        .find("// BEGIN OP-APP-RK-CALLBACKS-VIA-POLL-CB")
+        .unwrap()..];
+    let fluent = fs::read_to_string(root().join(FLB_LOGGING)).unwrap();
+    let restored = fluent.replacen(
+        "module contract;\n",
+        &format!("module contract;\n{bindings}"),
+        1,
+    );
+    format!("{}\n\n{card}", restored.trim_end_matches('\n'))
+}
 fn historical_symbolic_checkpoint(path: &str, current: &str) -> String {
+    let typed_checkpoint = historical_typed_checkpoint(path, current);
+    let current = typed_checkpoint.as_str();
     // Rule37's exact semantic replacement is separate from symbolic metadata.
     if path == RK_MEMORY {
         let (before, after) = rule37_checkpoint_prefixes();
@@ -343,7 +392,7 @@ fn every_actual_hypothesis_is_introduced_and_every_original_group_is_an_open_con
             p.extension().is_some_and(|e| e == "qv")
                 && fs::read_to_string(p)
                     .unwrap()
-                    .contains("requires resource_hypothesis(")
+                    .contains("requires resource_lifecycle_v1(introduce_")
         })
         .collect::<BTreeSet<_>>();
     assert_eq!(actual, expected_paths);
@@ -380,10 +429,22 @@ fn every_actual_hypothesis_is_introduced_and_every_original_group_is_an_open_con
         let new = sources(path, &after);
         let original = graphs(view, &old);
         let replayed = graphs(view, &new);
+        // Typed formulas deliberately change graph bytes and atom digests.
+        // Every prior group, legacy erasure and interpreted permission remains.
         assert_eq!(
-            serde_json::to_vec(&original).unwrap(),
-            serde_json::to_vec(&replayed).unwrap()
+            original.keys().collect::<Vec<_>>(),
+            replayed.keys().collect::<Vec<_>>()
         );
+        for (name, before_graph) in &original {
+            let after_graph = &replayed[name];
+            assert_eq!(
+                before_graph.atoms.keys().collect::<Vec<_>>(),
+                after_graph.atoms.keys().collect::<Vec<_>>()
+            );
+            assert_eq!(before_graph.premises, after_graph.premises);
+            assert_eq!(before_graph.refinements, after_graph.refinements);
+            assert_eq!(before_graph.requirements, after_graph.requirements);
+        }
         for (name, g) in &original {
             assert_eq!(
                 hypothesis::erasure(g).unwrap(),
@@ -418,9 +479,15 @@ fn every_actual_hypothesis_is_introduced_and_every_original_group_is_an_open_con
                 contract_loader::module_premises(&after).unwrap()
             ),
         }
+        let domain = |requirements: Vec<BindingRequirement>| {
+            requirements
+                .into_iter()
+                .map(|r| (r.declaration, r.premise))
+                .collect::<BTreeSet<_>>()
+        };
         assert_eq!(
-            hypothesis_bindings::requirements(&old, &original).unwrap(),
-            hypothesis_bindings::requirements(&new, &replayed).unwrap()
+            domain(hypothesis_bindings::requirements(&old, &original).unwrap()),
+            domain(hypothesis_bindings::requirements(&new, &replayed).unwrap())
         );
         let symbols = lifecycle::replay(view, &new).unwrap();
         assert!(lifecycle::replay(view, &old).unwrap().is_empty());

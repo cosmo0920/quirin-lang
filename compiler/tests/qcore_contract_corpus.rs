@@ -355,6 +355,13 @@ fn contract_surface_is_pinned_as_structured_clauses() {
                         | SourceContractClauseKind::QuantConditionBinding
                         | SourceContractClauseKind::QuantConditionBlock { .. }
                         | SourceContractClauseKind::QuantRegistered => {}
+                        SourceContractClauseKind::QuantCondition(selector) => {
+                            qcore_frontend::quant_condition::parse(
+                                selector.clone(),
+                                &clause.value.expression_source,
+                            )
+                            .unwrap();
+                        }
                         SourceContractClauseKind::QuantProposition => {
                             qcore_frontend::quant_proposition::parse(
                                 &clause.value.expression_source,

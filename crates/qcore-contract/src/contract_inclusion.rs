@@ -722,6 +722,9 @@ fn clauses_of(declaration: &SourceDeclaration) -> Vec<Clause> {
                             format!("quant effect {}", selector_text(selector))
                         }
                         SourceContractClauseKind::QuantProposition => "quant proposition".into(),
+                        SourceContractClauseKind::QuantCondition(selector) => {
+                            format!("quant condition {selector}")
+                        }
                         SourceContractClauseKind::QuantTheorem => "quant theorem".into(),
                         SourceContractClauseKind::QuantCheck => "quant checks".to_owned(),
                         // Card NULL-SAFETY-PROPERTY: likewise.

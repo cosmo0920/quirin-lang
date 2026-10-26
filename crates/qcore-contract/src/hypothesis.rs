@@ -45,6 +45,15 @@ pub fn declaration(decl: &SourceDeclaration, legacy: &[DeclaredPremise]) -> Resu
     let mut attachments = Vec::new();
     for clause in decl.function_contract.iter().flat_map(|c| &c.clauses) {
         let source = &clause.value.expression_source;
+        if let SourceContractClauseKind::QuantCondition(selector) = &clause.value.kind {
+            let condition = qcore_frontend::quant_condition::parse(selector.clone(), source)?;
+            if condition.selector == qcore_schemas::quant_condition::Selector::Entry {
+                return Err("hypothesis: explicit entry conditions require the typed condition view; no graph valuation is installed".into());
+            }
+            // Exit assertions are retained by quant_condition::declaration.
+            // They never become hypotheses or acquire a truth assignment here.
+            continue;
+        }
         if clause.value.kind == SourceContractClauseKind::QuantProposition {
             let definition = qcore_frontend::quant_proposition::parse(source)?;
             let id = definition.id.clone();

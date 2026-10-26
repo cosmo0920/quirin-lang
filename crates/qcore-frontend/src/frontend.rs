@@ -135,6 +135,8 @@ pub enum SourceContractClauseKind {
     QuantCheck,
     /// Typed, explicitly parameterized first-order hypothesis; no truth admission.
     QuantProposition,
+    /// Explicit entry prerequisite or exit assertion; never implicit evidence.
+    QuantCondition(qcore_schemas::quant_condition::Selector),
     /// Checked theorem application syntax; proof and source bindings stay open.
     QuantTheorem,
     /// Conditional own-operation model relation; never an installed call summary.
@@ -1342,6 +1344,22 @@ impl<'a> SourceParser<'a> {
             }
             let (kind, expression_start) = if self.word(cursor, "requires") {
                 (SourceContractClauseKind::Requires, cursor + 1)
+            } else if self.word(cursor, "quant") && self.word(cursor + 1, "condition") {
+                use qcore_schemas::quant_condition::Selector as C;
+                let (selector, next) = if self.word(cursor + 2, "entry") {
+                    (C::Entry, cursor + 3)
+                } else {
+                    let (exit, next) = self.contract_exit_selector(cursor + 2, close)?;
+                    (
+                        match exit {
+                            SourceContractExitSelector::Normal => C::Normal,
+                            SourceContractExitSelector::Any => C::Any,
+                            SourceContractExitSelector::Error(e) => C::Error(e),
+                        },
+                        next,
+                    )
+                };
+                (SourceContractClauseKind::QuantCondition(selector), next)
             } else if self.word(cursor, "quant") && self.word(cursor + 1, "effect") {
                 let (selector, next) = self.contract_exit_selector(cursor + 2, close)?;
                 (SourceContractClauseKind::QuantEffect(selector), next)

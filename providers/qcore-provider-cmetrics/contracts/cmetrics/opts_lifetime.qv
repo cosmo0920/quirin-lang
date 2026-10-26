@@ -80,7 +80,7 @@ contract {
         #size_max: integer
     ) =
         (forall (#amount: integer) { (#allocation_size(#env,#call,#amount) => ((0 <= #amount) && (#amount <= #size_max))) } && forall (#amount: integer) { (#int_argument(#env,#call,#amount) => ((0 <= #amount) && (#amount <= #int_max))) });
-    ensures normal result_is_zero_or_minus_one;
+    quant condition normal #result_domain(#result: integer) = ((#result == 0) || (#result == -1));
     ensures normal null_name_returns_minus_one_without_committing_a_field;
     ensures normal zero_result_owns_name_description_and_fqname_sds;
     ensures normal optional_namespace_and_subsystem_copies_are_owned_when_created;

@@ -71,14 +71,23 @@ The shared envelopes are `requires expression;`, `ensures selector expression;`,
 
 The source parser rejects empty clauses and unknown clause introducers. It does not implement a general theorem prover for the retained expression text. Language-level effects, `own`, `borrow`, usage annotations, access requirements and task protocols need their specified source/model elaborators; the external resource loader is not a fallback elaborator for them.
 
-### C03.1. Required formal hypothesis migration (Proposed)
+### C03.1. Formal contract hypotheses and conditions (migration in progress)
 
 The [language requirement L19.1](QCORE_SPEC_r0_3.md#l191-formal-contract-hypotheses-and-quant-effects-required-extension)
 applies across all provider contract families. The bounded mathematical
-representations `quant proposition`, `quant theorem` and `quant effect` are
-implemented in G01p/G01t/G01e. Production proof discharge and source effect
+representations `quant proposition`, `quant condition`, `quant theorem` and
+`quant effect` are implemented in G01p/G01c/G01t/G01e. Production proof discharge and source effect
 interpretation remain proposed. These forms retain obligations and grant no
 truth authority. The all-provider migration is in progress.
+
+The approved condition form is `quant condition SELECTOR #id(PARAMETERS) =
+FORMULA;` (G01c). `entry` is a prerequisite; `normal`, `error(E)` and `any` are
+exit assertions. A normal negative C return is still selected by `normal`.
+Exit conditions cover every matching terminating exit and assert no termination.
+Conditions are separate from the existing Boolean guard bindings/local blocks.
+Source/model interpretations of before/after/result/trace parameters remain
+explicit obligations. Unsupported consumers reject the clause; an entry
+condition is never dropped and an exit condition is never assumed at entry.
 
 A migrated precondition MUST expose its typed mathematical predicate and
 explicit quantifier domain. A migrated theorem application MUST retain all

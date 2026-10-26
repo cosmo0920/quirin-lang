@@ -670,3 +670,6 @@ quant-effect ::= "quant" "effect" exit-selector "#" id "(" parameters? ")"
                  "from" "#" id "to" "#" id "when" formula
                  "reads" "(" arguments? ")" "writes" "(" arguments? ")"
                  "frame" formula "=" formula ";" ;
+
+quant-condition ::= "quant" "condition" condition-selector "#" id "(" parameters? ")" "=" formula ";" ;
+condition-selector ::= "entry" | "normal" | "any" | "error" "(" error-type ")" ;

@@ -144,6 +144,46 @@ Implementation: `qcore_frontend::quant_proposition`,
 `quant_proposition_inventory` inspects specified model files and emits source/
 graph identities and entry requirements; it grants no C call permission.
 
+### G01c. Explicit entry and exit conditions
+
+User decision 2026-10-26: `quant condition` uses an explicit selector:
+
+```ebnf
+condition = "quant", "condition", condition-selector,
+            "#", id, "(", [parameters], ")", "=", formula, ";" ;
+condition-selector = "entry" | "normal" | "any"
+                   | "error", "(", error-type, ")" ;
+```
+
+Signatures, terms, formulas and their bounds are G01p's. The selected typed
+reader also bounds an error-type label to 1,024 bytes, nonblank and free of
+control characters. The structural selector retains the existing error-type
+source text; no error hierarchy or subtype matching is inferred.
+
+`entry` states a prerequisite at function entry. `normal` states an assertion at
+every normal return. `error(E)` selects exactly the matching typed error exit;
+`any` selects every terminating normal/error exit. None asserts termination.
+A negative C return code is a normal return. All before/after/result/trace
+projections are explicit typed parameters requiring actual source bindings.
+A missing condition interpretation is not negation evidence. Declarations,
+artifact identities and theorem names alone establish none of these assertions.
+
+`qcore_contract::quant_condition::declaration` inspects every typed condition
+and rejects duplicate IDs across condition/proposition/effect/theorem clauses.
+Structural parsing and generic inclusion/views preserve selectors and bodies.
+Strict resource/bounds/local-condition consumers refuse the new clauses.
+Hypothesis-only graph inspection refuses an explicit entry condition until its
+entry valuation is supported; it validates exit conditions without treating
+those guarantees as antecedents. Whole-condition consumers must use the typed
+condition view. No interpreted C summary is installed by this interface.
+
+The introducer and selectors are contextual ordinary words; no globally
+reserved word or lexer token is added. This form is distinct from the existing
+`quant #guard = [...]` bindings and
+local-condition blocks. Implementation: `qcore_schemas::quant_condition`,
+`qcore_frontend::quant_condition`, `qcore_contract::quant_condition`;
+semantics/audit: `QCore.QuantCondition` / `AuditQuantCondition.lean`.
+
 ### G01t. Typed theorem instantiation obligations
 
 Inside a function contract, the contextual form is:
