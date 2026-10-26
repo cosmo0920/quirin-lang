@@ -754,6 +754,16 @@ pub struct ResourceContracts {
     declared_guarded: BTreeSet<String>,
     #[serde(default, skip_serializing_if = "BTreeMap::is_empty")]
     inferred_lifetimes: BTreeMap<String, crate::loop_lifetime::InferredLifetimeSummary>,
+    /// Card CONTRACT-SUPERSESSION (contract spec §C06.6): per function, the
+    /// declarations a newer-stamped declaration superseded, retained with
+    /// their texts. The declaration in force is the function's ordinary entry.
+    #[serde(default, skip_serializing_if = "BTreeMap::is_empty")]
+    superseded: BTreeMap<String, Vec<crate::contract_supersession::SupersededDeclaration>>,
+    /// Card CONTRACT-SUPERSESSION: functions declared by more than one module
+    /// whose stamps do not decide between them. None of them is in force in
+    /// any table; every call relying on one is held (`contract-conflict`).
+    #[serde(default, skip_serializing_if = "BTreeMap::is_empty")]
+    contract_conflict: BTreeMap<String, crate::contract_supersession::ContractConflict>,
 }
 
 impl ResourceContracts {
@@ -778,7 +788,39 @@ impl ResourceContracts {
             guarded_retaining: BTreeMap::new(),
             declared_guarded: BTreeSet::new(),
             inferred_lifetimes: BTreeMap::new(),
+            superseded: BTreeMap::new(),
+            contract_conflict: BTreeMap::new(),
         }
+    }
+
+    /// Card CONTRACT-SUPERSESSION (contract spec §C06.6): the declarations
+    /// retained as superseded, per function.
+    #[must_use]
+    pub fn superseded(
+        &self,
+    ) -> &BTreeMap<String, Vec<crate::contract_supersession::SupersededDeclaration>> {
+        &self.superseded
+    }
+
+    /// Card CONTRACT-SUPERSESSION: the functions withheld because their
+    /// declarations' stamps do not decide between them.
+    #[must_use]
+    pub fn contract_conflict(
+        &self,
+    ) -> &BTreeMap<String, crate::contract_supersession::ContractConflict> {
+        &self.contract_conflict
+    }
+
+    /// Declares the environment's supersession record. The contract loader
+    /// sets it from the source transform and rechecks it (a withheld
+    /// function is in no table).
+    pub fn set_supersession(
+        &mut self,
+        superseded: BTreeMap<String, Vec<crate::contract_supersession::SupersededDeclaration>>,
+        conflicts: BTreeMap<String, crate::contract_supersession::ContractConflict>,
+    ) {
+        self.superseded = superseded;
+        self.contract_conflict = conflicts;
     }
 
     pub fn insert(&mut self, name: impl Into<String>, kind: ResourceApiKind) {

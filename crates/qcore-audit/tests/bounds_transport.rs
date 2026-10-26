@@ -449,6 +449,7 @@ fn tip_vectors_match_lean() {
             function: "hget".into(),
             module: "alpha/meta.qv".into(),
             contract_sha256: digest(if text { 7 } else { 8 }),
+            pinned_at: None,
             repository: TipRepository {
                 name: "tree".into(),
                 url: None,
@@ -466,11 +467,12 @@ fn tip_vectors_match_lean() {
             },
         };
         let lock = ContractLock {
-            lock_version: LOCK_VERSION + 1,
+            lock_version: LOCK_VERSION,
             generated_by: "quirin-audit pin".into(),
             note: String::new(),
             owner: "quirin-provider-alpha".into(),
             normalisation: "c-tokens-v1".into(),
+            fluent_bit_revision: None,
             pinned: Vec::new(),
             flexible: Vec::new(),
             tip: vec![entry],

@@ -193,6 +193,7 @@ impl PointerResults<'_> {
             .or_else(|| super::pin_hold::held_callee(callee))
             .or_else(|| super::refuted_contract::held_callee(callee))
             .or_else(|| super::caller_frame_hold::held_callee(callee))
+            .or_else(|| super::conflict_hold::held_callee(callee))
             .unwrap_or(callee);
         if let Some(answer) = self.read.get(name) {
             return *answer;

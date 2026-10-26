@@ -245,58 +245,91 @@ pub fn declaration_digests(
 ) -> Result<BTreeMap<String, (String, String)>, String> {
     let mut digests = BTreeMap::new();
     for (key, source) in sources {
-        let parsed = parse_source_program(source).map_err(|e| format!("{key}: {e}"))?;
-        if parsed.mode != SourceModuleMode::Contract {
-            return Err(format!("{key}: expected a module contract"));
-        }
-        // Card SUPPLIED-OWNED-RETURN-CODE-HANDOFF: an alias a declaration
-        // spells is part of its contract text, so a changed `alias #NAME =
-        // @C_NAME;` changes the digest of every declaration spelling `#NAME`
-        // (an alias never changes meaning under an unchanged pin).
-        let normalise = |text: &str| -> Result<(String, Vec<TokenKind>), String> {
-            let tokens = lex(text).map_err(|e| format!("{key}: {e}"))?;
-            let kinds = tokens.iter().map(|token| token.kind.clone()).collect();
-            Ok((
-                tokens
-                    .iter()
-                    .filter(|token| token.kind != TokenKind::Eof)
-                    .map(|token| &text[token.span.start..token.span.end])
-                    .collect::<Vec<_>>()
-                    .join(" "),
-                kinds,
-            ))
-        };
-        let aliases = parsed
-            .aliases()
-            .iter()
-            .map(|alias| {
-                normalise(&source[alias.span.start..alias.span.end])
-                    .map(|(text, _)| (alias.value.name.clone(), text))
-            })
-            .collect::<Result<BTreeMap<_, _>, _>>()?;
-        for declaration in parsed.declarations {
-            let text = &source[declaration.span.start..declaration.span.end];
-            let (mut normalised, kinds) = normalise(text)?;
-            for (name, alias) in &aliases {
-                let spelled = kinds.windows(2).any(|pair| {
-                    pair[0] == TokenKind::Symbol(qcore_frontend::lexer::Symbol::Hash)
-                        && pair[1] == TokenKind::Word(name.clone())
-                });
-                if spelled {
-                    normalised.push(' ');
-                    normalised.push_str(alias);
-                }
-            }
-            digests.insert(
-                declaration.value.name.clone(),
-                (
-                    key.clone(),
-                    qcore_schemas::sha256_hex(normalised.as_bytes()),
-                ),
-            );
+        for declaration in module_declaration_digests(key, source)? {
+            digests.insert(declaration.name, (key.clone(), declaration.contract_sha256));
         }
     }
     Ok(digests)
+}
+
+/// One declaration of a module with its normalised text digest (card
+/// **CONTRACT-SUPERSESSION**): the digest [`declaration_digests`] gives, the
+/// byte range of the declaration (from a `[| quant #c_ffi |]` marker before
+/// it, when it has one) and its text as written.
+#[derive(Clone, Debug, PartialEq, Eq)]
+pub struct ModuleDeclaration {
+    pub name: String,
+    pub start: usize,
+    pub end: usize,
+    pub contract_sha256: String,
+}
+
+/// Every declaration of one module, in source order, with the digest
+/// [`declaration_digests`] takes (card **CONTRACT-SUPERSESSION**). A module
+/// may declare a function twice; each declaration is listed.
+///
+/// # Errors
+///
+/// Refuses a source that does not parse as a contract module.
+pub fn module_declaration_digests(
+    key: &str,
+    source: &str,
+) -> Result<Vec<ModuleDeclaration>, String> {
+    let parsed = parse_source_program(source).map_err(|e| format!("{key}: {e}"))?;
+    if parsed.mode != SourceModuleMode::Contract {
+        return Err(format!("{key}: expected a module contract"));
+    }
+    // Card SUPPLIED-OWNED-RETURN-CODE-HANDOFF: an alias a declaration
+    // spells is part of its contract text, so a changed `alias #NAME =
+    // @C_NAME;` changes the digest of every declaration spelling `#NAME`
+    // (an alias never changes meaning under an unchanged pin).
+    let normalise = |text: &str| -> Result<(String, Vec<TokenKind>), String> {
+        let tokens = lex(text).map_err(|e| format!("{key}: {e}"))?;
+        let kinds = tokens.iter().map(|token| token.kind.clone()).collect();
+        Ok((
+            tokens
+                .iter()
+                .filter(|token| token.kind != TokenKind::Eof)
+                .map(|token| &text[token.span.start..token.span.end])
+                .collect::<Vec<_>>()
+                .join(" "),
+            kinds,
+        ))
+    };
+    let aliases = parsed
+        .aliases()
+        .iter()
+        .map(|alias| {
+            normalise(&source[alias.span.start..alias.span.end])
+                .map(|(text, _)| (alias.value.name.clone(), text))
+        })
+        .collect::<Result<BTreeMap<_, _>, _>>()?;
+    let mut declarations = Vec::new();
+    for declaration in parsed.declarations {
+        let text = &source[declaration.span.start..declaration.span.end];
+        let (mut normalised, kinds) = normalise(text)?;
+        for (name, alias) in &aliases {
+            let spelled = kinds.windows(2).any(|pair| {
+                pair[0] == TokenKind::Symbol(qcore_frontend::lexer::Symbol::Hash)
+                    && pair[1] == TokenKind::Word(name.clone())
+            });
+            if spelled {
+                normalised.push(' ');
+                normalised.push_str(alias);
+            }
+        }
+        let start = declaration
+            .value
+            .c_ffi
+            .map_or(declaration.span.start, |marker| marker.start);
+        declarations.push(ModuleDeclaration {
+            name: declaration.value.name.clone(),
+            start,
+            end: declaration.span.end,
+            contract_sha256: qcore_schemas::sha256_hex(normalised.as_bytes()),
+        });
+    }
+    Ok(declarations)
 }
 
 /// Card SUPPLIED-OWNED-RETURN-CODE-HANDOFF (rule 13l): the C names each

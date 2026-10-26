@@ -39,6 +39,17 @@
 //! ref (format version 3, [`crate::contract_tip`]); it is decided by the same
 //! [`pin_standing`], and the section records its resolution, notice and
 //! named assumption only when a run has one.
+//!
+//! Card **CONTRACT-SUPERSESSION** (contract spec §C06.6, user decision 9a):
+//! format **version 4** adds, per entry (pinned, flexible or tip), the
+//! **pin stamp** `pinned_at` — when `quirin-audit pin` recorded the review of
+//! the entry's current text — and, per lock, the **Fluent Bit revision the
+//! lock set is tied to** (`fluent_bit_revision`). Every lock `pin` writes is
+//! version 4. Versions 1 to 3 are still read, for history (a frozen report's
+//! inputs, a fixture), and carry no stamp: their declarations are in force
+//! exactly as before under C06.2, but never supersede another declaration
+//! ([`LockStamps`]). `pin --verify-contracts` requires every provider lock to
+//! be version 4 with every entry stamped.
 
 use std::collections::{BTreeMap, BTreeSet};
 use std::fs;
@@ -62,12 +73,16 @@ use crate::report::AuditReport;
 /// The lock's file name.
 pub const LOCK_FILE: &str = "contracts.lock";
 
-/// The lock format's version for a lock without a tip entry.
-pub const LOCK_VERSION: u32 = 2;
+/// Card CONTRACT-SUPERSESSION: the lock format's version, with pin stamps
+/// and the lock set's Fluent Bit revision. Every lock `pin` writes has it.
+pub const LOCK_VERSION: u32 = 4;
 
-/// Card CONTRACT-PIN-TIP-MODE: the lock format's version for a lock holding a
-/// tip entry. A lock is written in the lowest version that expresses it, so
-/// a lock without a tip entry stays version 2, byte for byte.
+/// The historical version of a lock without a tip entry and without stamps,
+/// still read.
+pub const LOCK_VERSION_UNSTAMPED: u32 = 2;
+
+/// Card CONTRACT-PIN-TIP-MODE: the historical version of a lock holding a tip
+/// entry, without stamps, still read.
 pub const LOCK_VERSION_TIP: u32 = 3;
 
 /// The provider crate whose flexible contracts form the one standing libc
@@ -83,7 +98,7 @@ pub const LIBC_STATEMENT: &str = "the C library behaves as the C standard and th
 /// What the section means, carried in the section itself.
 pub const MEANING: &str = "revision modes of the declared contracts (contract spec C06.2): a pinned contract (the default) is in force only where its contract text is the one pinned and the audited source matches one of the identities its lock records, each reviewed at a named revision, and every mismatch is withheld, so each call relying on it is held with reason code `contract-pin-mismatch`, and a function whose only unresolved diagnostics are held calls is Pending, never Safe; a flexible contract binds by name and declared signature only: on a function whose body this run analysed it is checked against that body as usual, and on a trusted function it is an explicit assumption of this run; every flexible libc contract without an analysed body is one standing assumption; held counts are recorded held-call refusals, a lower bound on textual call sites";
 
-/// One lock file (format version 2).
+/// One lock file (format version 4; versions 1 to 3 are read).
 #[derive(Clone, Debug, PartialEq, Eq, Serialize, Deserialize)]
 #[serde(deny_unknown_fields)]
 pub struct ContractLock {
@@ -94,6 +109,12 @@ pub struct ContractLock {
     pub owner: String,
     /// The normalisation of every digest ([`NORMALISATION`]).
     pub normalisation: String,
+    /// Card CONTRACT-SUPERSESSION: the Fluent Bit revision the lock set this
+    /// lock belongs to is tied to (user decision 9a; [`crate::pin_window`]).
+    /// Version 4 only; a module-set lock outside the provider tree may have
+    /// none.
+    #[serde(default, skip_serializing_if = "Option::is_none")]
+    pub fluent_bit_revision: Option<String>,
     /// Every pinned declaration, sorted by function.
     pub pinned: Vec<PinnedEntry>,
     /// Every flexible declaration, sorted by function: listed so that a
@@ -170,6 +191,10 @@ pub struct PinnedEntry {
     pub function: String,
     pub module: String,
     pub contract_sha256: String,
+    /// Card CONTRACT-SUPERSESSION: when the entry's current text was last
+    /// reviewed and pinned (`YYYY-MM-DDTHH:MM:SSZ`; version 4 only).
+    #[serde(default, skip_serializing_if = "Option::is_none")]
+    pub pinned_at: Option<String>,
     /// The reviewed identities, sorted by their first source; no source
     /// appears in two identities and no two identities have equal sites. An
     /// entry whose identities were all dropped has none and is never in force.
@@ -183,6 +208,10 @@ pub struct FlexibleEntry {
     pub function: String,
     pub module: String,
     pub contract_sha256: String,
+    /// Card CONTRACT-SUPERSESSION: when the entry's current text was last
+    /// reviewed (version 4 only).
+    #[serde(default, skip_serializing_if = "Option::is_none")]
+    pub pinned_at: Option<String>,
 }
 
 /// Lock format version 1 (one source per lock), read and migrated.
@@ -226,11 +255,12 @@ impl LockV1 {
         let source_kind = self.source.kind.clone();
         let source_revision = self.source.revision.clone();
         ContractLock {
-            lock_version: LOCK_VERSION,
+            lock_version: LOCK_VERSION_UNSTAMPED,
             generated_by: self.generated_by,
             note: self.note,
             owner: self.owner,
             normalisation: self.source.normalisation,
+            fluent_bit_revision: None,
             pinned: self
                 .pinned
                 .into_iter()
@@ -238,6 +268,7 @@ impl LockV1 {
                     function: entry.function,
                     module: entry.module,
                     contract_sha256: entry.contract_sha256,
+                    pinned_at: None,
                     identities: vec![ReviewedIdentity {
                         reviewed_at: vec![ReviewedSource {
                             kind: if entry.revision.is_some() {
@@ -443,7 +474,7 @@ impl ContractLock {
             Some(1) => serde_json::from_value::<LockV1>(value)
                 .map_err(|e| malformed(e.to_string()))?
                 .migrate(),
-            Some(2 | 3) => {
+            Some(2..=4) => {
                 serde_json::from_value::<Self>(value).map_err(|e| malformed(e.to_string()))?
             }
             other => return Err(malformed(format!("unsupported lock_version {other:?}"))),
@@ -454,14 +485,37 @@ impl ContractLock {
 
     fn validate(&self) -> Result<(), String> {
         match (self.lock_version, self.tip.is_empty()) {
-            (LOCK_VERSION, true) | (LOCK_VERSION_TIP, false) => {}
-            (LOCK_VERSION, false) => {
+            (LOCK_VERSION, _) | (LOCK_VERSION_UNSTAMPED, true) | (LOCK_VERSION_TIP, false) => {}
+            (LOCK_VERSION_UNSTAMPED, false) => {
                 return Err("a version-2 lock holds a tip entry (it needs version 3)".into());
             }
             (LOCK_VERSION_TIP, true) => {
                 return Err("a version-3 lock holds no tip entry (it is version 2)".into());
             }
             (other, _) => return Err(format!("unsupported lock_version {other}")),
+        }
+        // Card CONTRACT-SUPERSESSION: stamps and the revision tie exist from
+        // version 4 on. A stamp's spelling is not checked here: a malformed
+        // stamp is a supersession residue (C06.6), and `pin
+        // --verify-contracts` reports it.
+        if self.lock_version < LOCK_VERSION {
+            let stamped = self.pinned.iter().any(|e| e.pinned_at.is_some())
+                || self.flexible.iter().any(|e| e.pinned_at.is_some())
+                || self.tip.iter().any(|e| e.pinned_at.is_some());
+            if stamped || self.fluent_bit_revision.is_some() {
+                return Err(format!(
+                    "a version-{} lock carries a pin stamp or a Fluent Bit revision (they need \
+                     version 4)",
+                    self.lock_version
+                ));
+            }
+        }
+        if let Some(revision) = &self.fluent_bit_revision
+            && !(revision.len() == 40 && revision.bytes().all(|b| b.is_ascii_hexdigit()))
+        {
+            return Err(format!(
+                "fluent_bit_revision `{revision}` is not a full Git revision"
+            ));
         }
         if self.normalisation != NORMALISATION {
             return Err(format!(
@@ -568,11 +622,8 @@ impl ContractLock {
     /// Serialisation failure only.
     pub fn to_text(&self) -> Result<String, String> {
         let mut lock = self.clone();
-        lock.lock_version = if lock.tip.is_empty() {
-            LOCK_VERSION
-        } else {
-            LOCK_VERSION_TIP
-        };
+        // Card CONTRACT-SUPERSESSION: every lock `pin` writes is version 4.
+        lock.lock_version = LOCK_VERSION;
         serde_json::to_string_pretty(&lock)
             .map(|text| text + "\n")
             .map_err(|error| error.to_string())
@@ -711,6 +762,70 @@ impl ModuleOwners {
             directory = current.parent();
         }
         (None, owner)
+    }
+}
+
+/// Card **CONTRACT-SUPERSESSION** (contract spec §C06.6): the pin stamps of
+/// the declarations a loader meets, read from the `contracts.lock` covering
+/// each module ([`ModuleOwners::lock_for`]). A declaration with no lock, no
+/// entry, or an unreadable lock is unpinned; an entry taken for another text
+/// is stale; an entry of a lock older than version 4 has no stamp. Only a
+/// function declared by more than one module ever asks.
+pub struct LockStamps<'a> {
+    owners: &'a ModuleOwners,
+    locks: std::cell::RefCell<BTreeMap<PathBuf, Option<ContractLock>>>,
+}
+
+impl<'a> LockStamps<'a> {
+    #[must_use]
+    pub fn new(owners: &'a ModuleOwners) -> Self {
+        Self {
+            owners,
+            locks: std::cell::RefCell::new(BTreeMap::new()),
+        }
+    }
+}
+
+impl qcore_contract::contract_supersession::DeclarationStamps for LockStamps<'_> {
+    fn standing(
+        &self,
+        module: &str,
+        function: &str,
+        contract_sha256: &str,
+    ) -> qcore_schemas::contract_supersession::StampStanding {
+        use qcore_schemas::contract_supersession::StampStanding;
+        let (Some(path), _) = self.owners.lock_for(module) else {
+            return StampStanding::Unpinned;
+        };
+        let mut locks = self.locks.borrow_mut();
+        let Some(lock) = locks
+            .entry(path.clone())
+            .or_insert_with(|| ContractLock::read(&path).ok())
+        else {
+            return StampStanding::Unpinned;
+        };
+        let entry = lock
+            .pinned
+            .iter()
+            .find(|e| e.function == function)
+            .map(|e| (&e.contract_sha256, e.pinned_at.as_deref()))
+            .or_else(|| {
+                lock.flexible
+                    .iter()
+                    .find(|e| e.function == function)
+                    .map(|e| (&e.contract_sha256, e.pinned_at.as_deref()))
+            })
+            .or_else(|| {
+                lock.tip
+                    .iter()
+                    .find(|e| e.function == function)
+                    .map(|e| (&e.contract_sha256, e.pinned_at.as_deref()))
+            });
+        match entry {
+            None => StampStanding::Unpinned,
+            Some((digest, _)) if digest != contract_sha256 => StampStanding::Stale,
+            Some((_, pinned_at)) => StampStanding::of_entry(pinned_at),
+        }
     }
 }
 
@@ -970,6 +1085,11 @@ impl ReportFacts {
 pub struct SectionTemplate {
     pub source: Value,
     pub locks: Value,
+    /// Card CONTRACT-SUPERSESSION: the environment's superseded and
+    /// conflicted declarations, absent (and so byte-identical to before)
+    /// when there are none.
+    #[serde(default, skip_serializing_if = "Value::is_null")]
+    pub supersession: Value,
     /// Per pinned outcome, in evaluation order: its record without the
     /// report-dependent keys, and whether it is in force.
     pub pinned: Vec<PinnedTemplate>,
@@ -1126,11 +1246,29 @@ pub fn template(contracts: &ResourceContracts, evaluation: &PinEvaluation) -> Se
     SectionTemplate {
         source: json!({"kind": evaluation.source_kind, "revision": evaluation.source_revision}),
         locks: json!(evaluation.locks),
+        supersession: supersession_record(contracts),
         pinned,
         flexible,
         inventory,
     }
 }
+
+/// What the section says of supersession (contract spec §C06.6): `null` when
+/// no function is declared twice, so the section is unchanged.
+fn supersession_record(contracts: &ResourceContracts) -> Value {
+    if contracts.superseded().is_empty() && contracts.contract_conflict().is_empty() {
+        return Value::Null;
+    }
+    json!({
+        "meaning": SUPERSESSION_MEANING,
+        "reason_code": qcore_c_gateway::legacy_c::conflict_hold::CONTRACT_CONFLICT,
+        "superseded": contracts.superseded(),
+        "conflicts": contracts.contract_conflict(),
+    })
+}
+
+/// What the supersession part of the section means.
+pub const SUPERSESSION_MEANING: &str = "contract bundles compose by supersession (contract spec C06.6): where more than one module declares a function, the declaration whose lock entry carries the greatest pin stamp (`pinned_at`, written by `quirin-audit pin` when its current text was reviewed) is in force and every other declaration is retained here as superseded, with both digests and stamps; where the stamps do not decide (equal stamps on different texts, a missing, malformed or stale stamp, or an unpinned declaration) no declaration is in force, every candidate is retained under `conflicts`, and every call relying on the function is held under reason code `contract-conflict`, which is Unknown, never Safe, Unsafe or Pending";
 
 /// The section for `template` over the report facts `facts`.
 #[must_use]
@@ -1232,6 +1370,9 @@ pub fn render(template: &SectionTemplate, facts: &ReportFacts) -> Value {
         },
         "contracts": inventory,
     });
+    if !template.supersession.is_null() {
+        section["supersession"] = template.supersession.clone();
+    }
     add_tip_tracking(&mut section, template);
     section
 }

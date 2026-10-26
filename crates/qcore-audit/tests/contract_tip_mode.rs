@@ -271,7 +271,8 @@ fn a_tip_entry_is_in_force_at_its_tip_and_held_elsewhere() {
     }
     let (tree, a, reviewed) = tracked_tree();
     let lock = tree.lock();
-    assert_eq!(lock["lock_version"], 3);
+    // Card CONTRACT-SUPERSESSION: every lock is written in version 4.
+    assert_eq!(lock["lock_version"], 4);
     assert!(
         lock["pinned"]
             .as_array()
@@ -421,7 +422,7 @@ fn a_tip_entry_is_in_force_at_its_tip_and_held_elsewhere() {
     // An unresolvable tip decides exactly as a missing entry.
     let mut without = tree.lock();
     without["tip"] = serde_json::json!([]);
-    without["lock_version"] = serde_json::json!(2);
+    without["lock_version"] = serde_json::json!(4);
     let tip_lock = fs::read(tree.lock_path()).unwrap();
     fs::write(
         tree.lock_path(),
@@ -509,8 +510,10 @@ fn a_tip_entry_is_kept_written_and_read_as_version_three() {
     two["lock_version"] = serde_json::json!(2);
     let mut three = serde_json::from_str::<Value>(&reviewed).unwrap();
     three["lock_version"] = serde_json::json!(3);
+    // Card CONTRACT-SUPERSESSION: version 4 is the stamped format every
+    // lock is written in, so the unknown version is 5.
     let mut four = lock.clone();
-    four["lock_version"] = serde_json::json!(4);
+    four["lock_version"] = serde_json::json!(5);
     let mut relative = lock;
     relative["tip"][0]["repository"]["path"] = serde_json::json!("relative/src");
     for (bad, expected) in [

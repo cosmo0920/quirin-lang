@@ -506,6 +506,7 @@ fn read(spelling: &str, environment: &ResourceContracts) -> Spelling {
     let withdrawn = [
         refuted_contract::HELD_PREFIX,
         crate::legacy_c::caller_frame_hold::HELD_PREFIX,
+        crate::legacy_c::conflict_hold::HELD_PREFIX,
         declared_abi::WITHDRAWN_PREFIX,
         declared_modes::WITHDRAWN_PREFIX,
         literal_premise::UNMET_PREFIX,

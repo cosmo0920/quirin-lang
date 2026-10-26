@@ -47,7 +47,10 @@ checks independently. `outerContract` was added by card OUTER-CONTRACT: in the
 runtime projection, a closed-world fact the row rests on is vouched for by an
 outer contract (gateway rule 31). `compositionConflict` was added by card
 AUDIT-COMPOSITION: two components of one row under one provenance key differ,
-so both are kept and the row is at least `Unknown` (`QCore.AuditComposition`). -/
+so both are kept and the row is at least `Unknown` (`QCore.AuditComposition`).
+`contractConflict` was added by card CONTRACT-SUPERSESSION: the pin stamps of
+the bundles declaring a called function do not decide which declaration is in
+force, so none is (`QCore.ContractSupersession`). -/
 inductive Category where
   | unsupportedSyntax
   | missingPremise
@@ -61,6 +64,7 @@ inductive Category where
   | pluginClaimUncertified
   | outerContract
   | compositionConflict
+  | contractConflict
   deriving DecidableEq, Repr
 
 namespace Category
@@ -70,7 +74,7 @@ def all : List Category :=
   [ .unsupportedSyntax, .missingPremise, .incompleteObligationCoverage,
     .staleEvidence, .providerFailure, .residualCustody, .environmentUnavailable,
     .awaitingHumanReview, .contractPinMismatch, .pluginClaimUncertified,
-    .outerContract, .compositionConflict ]
+    .outerContract, .compositionConflict, .contractConflict ]
 
 /-- The spec spelling, identical to the Rust serde representation. -/
 def spelling : Category → String
@@ -86,6 +90,7 @@ def spelling : Category → String
   | .pluginClaimUncertified => "plugin-claim-uncertified"
   | .outerContract => "outer-contract"
   | .compositionConflict => "composition-conflict"
+  | .contractConflict => "contract-conflict"
 
 /-- The subject partition, mirroring `ReasonCategory::subject`. -/
 def subject : Category → Subject
@@ -100,6 +105,7 @@ def subject : Category → Subject
   | .pluginClaimUncertified => .analyser
   | .outerContract => .analyser
   | .compositionConflict => .analyser
+  | .contractConflict => .analyser
   | .environmentUnavailable => .environment
 
 def describesAnalysedSource (c : Category) : Bool := subject c == .analysedSource
@@ -230,6 +236,8 @@ inductive Family where
   | outerContractCovered
   -- AUDIT-COMPOSITION: the conflict leaf of a composed row
   | compositionConflictLeaf
+  -- CONTRACT-SUPERSESSION: the held call of a function whose bundles conflict
+  | heldCallContractConflict
   deriving DecidableEq, Repr
 
 namespace Family
@@ -251,7 +259,8 @@ def all : List Family :=
     .absentFromTypedImport, .sourceContractConfiguration,
     .projectionHeldAwaitingHumanReview, .heldCallAwaitingHumanReview,
     .projectionHeldContractPinMismatch, .heldCallContractPinMismatch,
-    .pluginClaimUncertified, .outerContractCovered, .compositionConflictLeaf ]
+    .pluginClaimUncertified, .outerContractCovered, .compositionConflictLeaf,
+    .heldCallContractConflict ]
 
 theorem all_is_complete (f : Family) : f ∈ all := by
   cases f <;> simp [all]
@@ -302,6 +311,7 @@ def categoryOf : Family → Category
   | .pluginClaimUncertified => .pluginClaimUncertified
   | .outerContractCovered => .outerContract
   | .compositionConflictLeaf => .compositionConflict
+  | .heldCallContractConflict => .contractConflict
 
 /-- Totality: every enumerated family receives a category of the closed set. -/
 theorem the_mapping_is_total (f : Family) : categoryOf f ∈ Category.all :=
@@ -324,6 +334,7 @@ theorem every_category_is_reached (c : Category) :
   · exact ⟨.pluginClaimUncertified, rfl⟩
   · exact ⟨.outerContractCovered, rfl⟩
   · exact ⟨.compositionConflictLeaf, rfl⟩
+  · exact ⟨.heldCallContractConflict, rfl⟩
 
 /-- The families whose subject really is the environment: a missing or
 mismatched tool, checkout or compile command. -/

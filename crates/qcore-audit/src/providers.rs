@@ -719,11 +719,21 @@ impl ContractInput {
         self.extension.as_ref()
     }
 
-    /// Load the environment with the unchanged manifest loader.
+    /// Load the environment with the unchanged manifest loader. Card
+    /// CONTRACT-SUPERSESSION (contract spec §C06.6): a function more than one
+    /// selected module declares is decided by the pin stamps of the locks
+    /// covering them ([`crate::contract_revision::LockStamps`]); with no
+    /// duplicate no stamp is read and the environment is the one loaded
+    /// before.
     pub fn load(&self) -> Result<qcore_schemas::contract::ResourceContracts, String> {
-        qcore_contract::contract_loader::load_resource_contract_manifest_text(
+        let owners = crate::contract_revision::ModuleOwners::for_manifest(
             &self.manifest_path,
             &self.manifest_text,
+        )?;
+        qcore_contract::contract_loader::load_resource_contract_manifest_text_stamped(
+            &self.manifest_path,
+            &self.manifest_text,
+            &crate::contract_revision::LockStamps::new(&owners),
         )
     }
 }

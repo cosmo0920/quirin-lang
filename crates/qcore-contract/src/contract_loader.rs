@@ -735,6 +735,31 @@ pub fn load_resource_contract_manifest_text(
     path: &Path,
     source: &str,
 ) -> Result<ResourceContracts, String> {
+    load_resource_contract_manifest_text_stamped(
+        path,
+        source,
+        &crate::contract_supersession::Unstamped,
+    )
+}
+
+/// [`load_resource_contract_manifest`] with pin stamps (card
+/// **CONTRACT-SUPERSESSION**).
+pub fn load_resource_contract_manifest_stamped(
+    path: &Path,
+    stamps: &dyn crate::contract_supersession::DeclarationStamps,
+) -> Result<ResourceContracts, String> {
+    let source = fs::read_to_string(path).map_err(|e| format!("{}: {e}", path.display()))?;
+    load_resource_contract_manifest_text_stamped(path, &source, stamps)
+}
+
+/// [`load_resource_contract_manifest_text`] with pin stamps (card
+/// **CONTRACT-SUPERSESSION**): the audit passes the stamps of its locks, so a
+/// function two selected modules declare is decided by them.
+pub fn load_resource_contract_manifest_text_stamped(
+    path: &Path,
+    source: &str,
+    stamps: &dyn crate::contract_supersession::DeclarationStamps,
+) -> Result<ResourceContracts, String> {
     #[derive(serde::Deserialize)]
     #[serde(deny_unknown_fields)]
     struct Manifest {
@@ -781,7 +806,10 @@ pub fn load_resource_contract_manifest_text(
         }
     }
     let Some(load_path) = manifest.load_path else {
-        return load_resource_contract_files(&paths);
+        return load_resource_contract_sources_stamped(
+            &read_resource_contract_files(&paths)?,
+            stamps,
+        );
     };
     let load_path = relative(&load_path)?;
     // Validated even when every entry is a path: a schema-2 manifest names a
@@ -789,9 +817,14 @@ pub fn load_resource_contract_manifest_text(
     let load_path = crate::load_path_manifest::load_contract_load_path_manifest(&load_path)?;
     let path_sources = read_resource_contract_files(&paths)?;
     if references.is_empty() {
-        return load_resource_contract_sources(&path_sources);
+        return load_resource_contract_sources_stamped(&path_sources, stamps);
     }
-    load_resource_contract_selection(&load_path.load_path, path_sources, &references)
+    load_resource_contract_selection_stamped(
+        &load_path.load_path,
+        path_sources,
+        &references,
+        stamps,
+    )
 }
 
 /// Parse a manifest's `crate:module` entry, with the `#include` target's
@@ -834,9 +867,54 @@ fn read_resource_contract_files(paths: &[PathBuf]) -> Result<BTreeMap<String, St
 }
 
 /// Load an immutable source snapshot, also used for certificate replay.
+///
+/// Card **CONTRACT-SUPERSESSION** (contract spec §C06.6): a function declared
+/// by more than one module is no longer refused. With no stamps every such
+/// function is withheld as a contract conflict
+/// ([`crate::contract_supersession`]); an audit passes the stamps of its
+/// locks through [`load_resource_contract_sources_stamped`].
 pub fn load_resource_contract_sources(
     sources: &BTreeMap<String, String>,
 ) -> Result<ResourceContracts, String> {
+    load_resource_contract_sources_stamped(sources, &crate::contract_supersession::Unstamped)
+}
+
+/// [`load_resource_contract_sources`] with the pin stamps of the selected
+/// declarations (card **CONTRACT-SUPERSESSION**). A snapshot in which no
+/// function is declared twice loads exactly as before, without reading a
+/// stamp. Otherwise the duplicates are decided from `stamps`
+/// ([`crate::contract_supersession::supersede_sources`]), the retained
+/// sources are the transformed ones, and the environment records every
+/// superseded and every conflicted declaration.
+pub fn load_resource_contract_sources_stamped(
+    sources: &BTreeMap<String, String>,
+    stamps: &dyn crate::contract_supersession::DeclarationStamps,
+) -> Result<ResourceContracts, String> {
+    match load_resource_contract_sources_strict(sources)? {
+        Ok(contracts) => Ok(contracts),
+        Err(_) => {
+            let supersession = crate::contract_supersession::supersede_sources(sources, stamps)?;
+            // Every selected module may lose its every declaration (one
+            // conflicted function declared alone in each): the environment
+            // is then empty but for the record.
+            let mut contracts = if supersession.sources.is_empty() {
+                ResourceContracts::default()
+            } else {
+                load_resource_contract_sources_strict(&supersession.sources)?.map_err(
+                    |context| format!("{context}: duplicate function contract after supersession"),
+                )?
+            };
+            contracts.set_supersession(supersession.superseded, supersession.conflicts);
+            Ok(contracts)
+        }
+    }
+}
+
+/// The loader proper: `Ok(Err(CONTEXT))` when a function is declared twice
+/// (the first repeated declaration's context), so the caller decides it.
+fn load_resource_contract_sources_strict(
+    sources: &BTreeMap<String, String>,
+) -> Result<Result<ResourceContracts, String>, String> {
     if sources.is_empty() {
         return Err("no resource contract inputs selected".into());
     }
@@ -874,7 +952,7 @@ pub fn load_resource_contract_sources(
                 || contracts.retaining().contains_key(&decl.name)
                 || contracts.guarded_retaining().contains_key(&decl.name)
             {
-                return Err(format!("{context}: duplicate function contract"));
+                return Ok(Err(context));
             }
             let loaded = load_function_in(decl, &aliases).map_err(|e| format!("{context}: {e}"))?;
             if let Some(revision) = loaded.revision {
@@ -919,7 +997,7 @@ pub fn load_resource_contract_sources(
     contracts.set_source_assumptions(sources.clone());
     contracts.set_pending_review(pending);
     contracts.set_declared_revisions(revisions);
-    Ok(contracts)
+    Ok(Ok(contracts))
 }
 
 /// Card **GATEWAY-ANALYSIS-PATH-OPTIMIZATION**: one declared module text as
@@ -1250,6 +1328,23 @@ pub fn declared_no_return_callees(
 /// Evidence for a module the environment does not retain is refused.
 pub fn check_source_assumptions(contracts: &ResourceContracts) -> Result<(), String> {
     contracts.validate_lifetime_partition()?;
+    // Card CONTRACT-SUPERSESSION: a function withheld as a contract conflict
+    // is in no table; a superseded function's declaration in force is the
+    // retained text's (the reload below).
+    for name in contracts.contract_conflict().keys() {
+        if contracts.functions().contains_key(name)
+            || contracts.relational().contains_key(name)
+            || contracts.retaining().contains_key(name)
+            || contracts.guarded_retaining().contains_key(name)
+            || contracts.pending_review().contains_key(name)
+            || contracts.pin_mismatch().contains_key(name)
+            || contracts.superseded().contains_key(name)
+        {
+            return Err(format!(
+                "`{name}` is both withheld as a contract conflict and declared"
+            ));
+        }
+    }
     for name in contracts.pin_mismatch().keys() {
         if contracts.functions().contains_key(name)
             || contracts.relational().contains_key(name)
@@ -1427,6 +1522,25 @@ pub fn load_resource_contract_selection(
     path_sources: BTreeMap<String, String>,
     selection: &[PublishedModuleRef],
 ) -> Result<ResourceContracts, String> {
+    load_resource_contract_selection_stamped(
+        load_path,
+        path_sources,
+        selection,
+        &crate::contract_supersession::Unstamped,
+    )
+}
+
+/// [`load_resource_contract_selection`] with pin stamps (card
+/// **CONTRACT-SUPERSESSION**). A supersession that would cut a declaration
+/// out of a module elaborated through inclusion refuses the whole selection:
+/// the module's inclusion evidence replays the elaborated text byte for byte,
+/// and a cut text would no longer replay.
+pub fn load_resource_contract_selection_stamped(
+    load_path: &ContractLoadPath,
+    path_sources: BTreeMap<String, String>,
+    selection: &[PublishedModuleRef],
+    stamps: &dyn crate::contract_supersession::DeclarationStamps,
+) -> Result<ResourceContracts, String> {
     if selection.is_empty() && path_sources.is_empty() {
         return Err("no resource contract inputs selected".into());
     }
@@ -1455,7 +1569,16 @@ pub fn load_resource_contract_selection(
     for elaborated in &elaborated_modules {
         inherited_declarations_agree(elaborated)?;
     }
-    let mut contracts = load_resource_contract_sources(&sources)?;
+    let mut contracts = load_resource_contract_sources_stamped(&sources, stamps)?;
+    if let Some(key) = evidence
+        .keys()
+        .find(|key| contracts.source_assumptions().get(*key) != sources.get(*key))
+    {
+        return Err(format!(
+            "{key}: a superseded or conflicting declaration lies in a module elaborated \
+             through inclusion, whose evidence would no longer replay"
+        ));
+    }
     contracts.set_inclusion_evidence(evidence);
     check_source_assumptions(&contracts)?;
     Ok(contracts)
