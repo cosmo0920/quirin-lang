@@ -2,9 +2,63 @@
   "schema": "quirin-amendments/1",
   "card": "GATEWAY-RULE-API",
   "base": "5813ddab9",
-  "measured_tip": "675f2440cbfdb33b7a5199d2bb1b03c093c21fd3",
-  "profiles": ["eight-home", "fluent-bit-system", "fluent-bit-tail-pause"],
-  "increment_paragraph": "INCREMENT",
-  "status_paragraph": "STATUS",
-  "ledger": []
+  "measured_tip": "caef07e7b",
+  "increment_paragraph": "**GATEWAY-RULE-API** (pluggable-cards seam B, phase P2; [report](../../reports/gateway-rule-api/README.md)) adds `crates/qcore-gateway-rule-api` (query/result types, reason-key reservation, one trait per ROUTE-MAP position; depends on qcore-schemas and qcore-contract only), `crates/gateway-rules/registry.toml` with 17 rule rows in consultation order, generated route tables under a committed-equals-generated test (`scripts/gen_gateway_registry.py`), and the run-time switch `QCORE_GATEWAY_RULES_OFF` (user decision 3): a listed rule refuses, an unknown id refuses the whole list fail-closed, and the off-list is recorded in each run's component rule set and advertised to `quirin-audit measure`. No rule body moved. Identity: system byte-identical; corpus equal up to a one-to-one build-identity substitution (0 rows moved over 4,834); slice not re-measured on the merged base. A real `measure --rules-off 35` shows rule 35 carrying 12 corpus functions (incomplete run, not a ledger). The user merged the card at caef07e7b; the integrator completed its report from the hand-back.",
+  "status_paragraph": "Gateway rules (2026-10-27, GATEWAY-RULE-API): consultation order now comes from `crates/gateway-rules/registry.toml` (17 rows) through generated tables, and `QCORE_GATEWAY_RULES_OFF` switches listed rules off at run time (unknown ids fail closed). No verdict changed; rule bodies still live in `qcore-c-gateway` until each pilot migration card moves one.",
+  "ledger": [
+    {
+      "id": "GATEWAY-RULE-API-HOLD-OFF",
+      "operation": "register",
+      "title": "Hold positions are not yet switchable",
+      "text": "GATEWAY-RULE-API made fallback positions switchable; hold positions (rule 32a's frame hold among them) need a decision on what 'off' means for a hold before rule 32a can migrate. DISCHARGE: a decision recorded in the plan and a switch with a test.",
+      "source": "docs/reports/gateway-rule-api/README.md"
+    },
+    {
+      "id": "GATEWAY-RULE-API-UNREPLACED-ARMS",
+      "operation": "register",
+      "title": "Compile-time arm constants remain",
+      "text": "The 10n and ENUM_ARM compile-time constants were not trivially equivalent to a run-time switch and remain. DISCHARGE: each replaced by its registry row's switch with an identity run, in the migration card for its rule.",
+      "source": "docs/reports/gateway-rule-api/README.md"
+    },
+    {
+      "id": "GATEWAY-RULE-API-PILOT-MIGRATIONS",
+      "operation": "register",
+      "title": "Pilot rule migrations",
+      "text": "Card-recommended order: 35, 37, 36, 33, 34 (needs a transfer position first), 32a (needs GATEWAY-RULE-API-HOLD-OFF). `known_rule` refuses ledgers for 32a/33/34/36/37 until each migration registers its rule. DISCHARGE: each pilot lands as its own card with an identity run and a switch-measured contribution ledger.",
+      "source": "docs/reports/gateway-rule-api/README.md"
+    },
+    {
+      "id": "GATEWAY-RULE-API-OTHER-ENTRY-POINTS",
+      "operation": "register",
+      "title": "Switch coverage of other entry points",
+      "text": "The switch is read on the audit entry points the card wired; other binaries that consult the gateway tables do not yet record the off-list. DISCHARGE: every entry point records the off-list, with a test.",
+      "source": "docs/reports/gateway-rule-api/README.md"
+    },
+    {
+      "id": "GATEWAY-RULE-API-SLICE-IDENTITY",
+      "operation": "register",
+      "title": "Slice identity not re-measured on the merged base",
+      "text": "Identity-2 timed out before base/slice ran; identity-1 (base 5813ddab9) showed slice byte-identical. DISCHARGE: a slice comparison of main against the pre-card base, or the next landing publication showing the tail-pause profile unchanged.",
+      "source": "docs/reports/gateway-rule-api/README.md"
+    },
+    {
+      "id": "MEASURE-CORPUS-SIDE-CWD-IN-BUILD-IDENTITY",
+      "operation": "register",
+      "title": "Corpus build identity digests the side's working directory",
+      "text": "Under `quirin-audit measure` each side's pinned corpus route runs in sides/<name>/work-corpus, and the unit build identity (projection.rs hypothesis_context) digests the working directory, so corpus artifacts are never byte-identical across sides and the tool reports composition-conflict for equal provenance. DISCHARGE: the tool runs every side's corpus at one fixed working directory, or the identity excludes it, with a byte-identity test.",
+      "source": "docs/reports/gateway-rule-api/README.md"
+    },
+    {
+      "id": "MEASURE-TOOL-RULES-OFF-LIVE",
+      "operation": "amend",
+      "text": "GATEWAY-RULE-API ran a real `measure --rules-off 35`: the advertisement check passed and tip-off components record off = [\"35\"], but the run hit the 10 h quota before the post-run off-list check; rule 35 moves 12 corpus functions Safe -> Unknown, 0 system, 0 slice.",
+      "source": "docs/reports/gateway-rule-api/README.md"
+    },
+    {
+      "id": "GAPO-DISPATCHER-COVERAGE",
+      "operation": "amend",
+      "text": "GATEWAY-RULE-API: consultation order is now generated from crates/gateway-rules/registry.toml (17 rows); W43-INDEX-TRAVERSAL and W44-INDIRECT-CALL-ARGUMENT-ACCESS are card names because no rule document exists for them.",
+      "source": "docs/reports/gateway-rule-api/README.md"
+    }
+  ]
 }

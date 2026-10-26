@@ -124,15 +124,15 @@ given off-list. Python: `test_gateway_registry.py` (8).
 
 ## 4. Identity run
 
-IDENTITY_RESULT
+(Sections 4–6 written by the integrator from the card's hand-back of 2026-10-27, after the user merged the card at caef07e7b; logs under /media/Data/GitHub/quirin-lang/private/gateway-rule-api/.) Identity-1 (base 5813ddab9, tip 675f2440c): slice and system byte-identical; corpus equal under the substitution below. Identity-2 (`quirin-audit measure`, base rev:9c58892cf, tip rev:4581b2e1c, fixed build commit, `--rules-off 35`) ended with exit 1 on the 10 h plugin quota under slot contention, so no `native-comparison.json` was written; 8 of 9 routes exited 0 and **base/slice never ran**. System: all 8 artifacts byte-identical. Corpus: four artifacts byte-identical; `corpus-null.jsonl` and the four `resource-diagnostics` files are equal once digests are blanked and lists read as multisets. Cause: each unit's build identity digests the working directory (`projection.rs` `hypothesis_context`) and the measure route runs in a side-specific `sides/<name>/work-corpus`, so derived digests, ids and id-sorted evidence order move. Build identities map one-to-one, one per unit (180 units, 4,834 rows); 0 rows moved; Safe/Unknown/Unsafe deltas 0. **Open:** slice not re-measured against the merged base (registered as GATEWAY-RULE-API-SLICE-IDENTITY); the working-directory dependence is MEASURE-CORPUS-SIDE-CWD-IN-BUILD-IDENTITY.
 
 ## 5. The rules-off proof
 
-RULES_OFF_RESULT
+A real `quirin-audit measure --rules-off 35` passed the advertisement check and built the `tip-off` side: tip-off components record `rule_set.off = ["35"]` on all three routes, tip components `[]`, and the invocation records `QCORE_GATEWAY_RULES_OFF: "35"`. The tool's own post-run off-list check did not complete (the run timed out). Rule 35's contribution, tip → tip-off: corpus 12 functions Safe → Unknown (11 librdkafka, e.g. `rd_kafka_log_print`, `rd_kafka_log_syslog`, `rd_kafka_set_logger`, the `rd_kafka_mock_cluster_io_*` family, and Monkey `mk_config_signature`); system 0; slice 0. These figures come from an incomplete run and are not a contribution ledger.
 
 ## 6. Gate
 
-GATE_RESULT
+Card gates (`gate_scope.py`): baaa16a9 pre-merge all green (562 units, 8,753 passed, 0 failed; Python 500; `gate-2.log`). 4581b2e1c and caef07e7b (merges of main 9c58892cf / da13b7d12): 8,772 passed and 5 failed, all inherited from main's stale CFL/CMetrics inventory locks (Codex 9e42dc021) — `qcore_contract_corpus` (3), `contract_loader` module count, `source_contract_config::shipped_cmetrics_selection_loads_canonical_policy`; Python 544 (`gate-4.log`). The landing gate is the integrator's full gate on the combined merge (with the lock fix d2dae5737) in docs/reports/gateway-rule-api/integration/.
 
 ## 7. Follow-ups and the pilot migration order
 
