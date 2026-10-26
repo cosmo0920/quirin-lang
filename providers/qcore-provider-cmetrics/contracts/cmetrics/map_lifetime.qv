@@ -1,5 +1,11 @@
 module contract;
 
+// QUANT-CONTRACT-HYPOTHESES: each explicit entry condition is an obligation
+// under the explicitly bound model environment and relation/function meanings.
+// Mathematical integers have no C wraparound; C ranges are stated separately.
+// The migration map records primitive meanings and open C/model correspondence.
+// These declared models install no interpreted resource/bounds/outer permission.
+
 // Source-audited declared model, not resource_contract_v1. No interpreted
 // resource/bounds call permission is granted by this file. Full body/effect
 // consumers must establish these obligations before production adoption.
@@ -18,10 +24,46 @@ resource type CmtMap {
 extern fn cmt_map_create(metric_type: i32, opts: ptr<mut, u8>, count: i32,
                          labels: ptr<mut, ptr<mut, u8>>, parent: ptr<mut, u8>) -> ptr<mut, u8>
 contract {
-    requires positive_count_has_readable_label_pointer_array;
-    requires nonnull_label_strings_are_stable_readable_and_terminated;
-    requires retained_opts_and_parent_record_storage_outlive_map_uses;
-    requires allocation_sizes_and_list_cardinalities_fit_the_C_types;
+    quant condition entry #label_array(
+        #count: integer,
+        #env: environment,
+        #extent: predicate<environment, object, integer, scalar_type>,
+        #labels: object,
+        #ptr_type: scalar_type,
+        #readable: predicate<environment, object, scalar_type>
+    ) =
+        ((0 < #count) => (#extent(#env,#labels,#count,#ptr_type) && #readable(#env,#labels,#ptr_type)));
+    quant condition entry #label_strings(
+        #call: activation,
+        #count: integer,
+        #element: predicate<environment, object, integer, object>,
+        #env: environment,
+        #labels: object,
+        #live: predicate<environment, object>,
+        #null: object,
+        #stable: predicate<trace, activation, object>,
+        #terminated: predicate<environment, object>,
+        #trace: trace
+    ) =
+        forall (#i: integer) { (((0 <= #i) && (#i < #count)) => forall (#label: object) { ((#element(#env,#labels,#i,#label) && !((#label == #null))) => ((#live(#env,#label) && #terminated(#env,#label)) && #stable(#trace,#call,#label))) }) };
+    quant condition entry #parent_lifetimes(
+        #live_at: predicate<trace, event, object>,
+        #map: object,
+        #map_use: predicate<trace, object, event>,
+        #opts: object,
+        #parent: object,
+        #trace: trace
+    ) =
+        forall (#event: event) { (#map_use(#trace,#map,#event) => (#live_at(#trace,#event,#opts) && #live_at(#trace,#event,#parent))) };
+    quant condition entry #allocation_bounds(
+        #allocation_size: predicate<environment, activation, integer>,
+        #call: activation,
+        #env: environment,
+        #int_argument: predicate<environment, activation, integer>,
+        #int_max: integer,
+        #size_max: integer
+    ) =
+        (forall (#amount: integer) { (#allocation_size(#env,#call,#amount) => ((0 <= #amount) && (#amount <= #size_max))) } && forall (#amount: integer) { (#int_argument(#env,#call,#amount) => ((0 <= #amount) && (#amount <= #int_max))) });
     ensures normal result_is_null_or_fresh_exclusively_owned_map;
     ensures normal negative_count_returns_null_without_allocation;
     ensures normal present_result_owns_label_key_nodes_copied_sds_and_index_storage;
@@ -35,15 +77,100 @@ extern fn cmt_map_metric_get(opts: ptr<mut, u8>, map: ptr<mut, u8>,
                              labels_count: i32, labels_val: ptr<mut, ptr<mut, u8>>,
                              write_op: i32) -> ptr<mut, u8>
 contract {
-    requires map_is_nonnull_live_with_valid_primary_child_ownership;
-    requires secondary_index_cache_and_backpointers_match_live_primary_ownership;
-    requires label_count_is_nonnegative_and_array_extent_is_valid;
-    requires nonnull_label_values_and_required_opts_fqname_are_live_stable_strings;
-    requires tagged_histogram_or_summary_parent_and_storage_layout_are_valid;
-    requires bucket_sizes_counts_and_string_lengths_fit_the_C_types;
-    requires labeled_hash_digest_is_nonzero;
-    requires embedded_static_metric_label_list_has_no_owned_nodes;
-    requires users_coordinate_returned_metric_uses_against_expiration_and_destroy;
+    quant condition entry #map_ownership(
+        #env: environment,
+        #field: predicate<environment, object, field, object>,
+        #live: predicate<environment, object>,
+        #map: object,
+        #null: object,
+        #owns: predicate<environment, object, object>,
+        #primary: predicate<environment, object, object>,
+        #static_field: field,
+        #static_metric: object
+    ) =
+        ((!((#map == #null)) && #live(#env,#map)) && (#field(#env,#map,#static_field,#static_metric) && forall (#child: object) { (#primary(#env,#map,#child) => ((!((#child == #static_metric)) && #live(#env,#child)) && #owns(#env,#map,#child))) }));
+    quant condition entry #index_links(
+        #cache_field: field,
+        #env: environment,
+        #field: predicate<environment, object, field, object>,
+        #map: object,
+        #map_field: field,
+        #null: object,
+        #primary: predicate<environment, object, object>,
+        #secondary: predicate<environment, object, object>
+    ) =
+        ((forall (#child: object) { (#secondary(#env,#map,#child) => #primary(#env,#map,#child)) } && forall (#child: object) { (#primary(#env,#map,#child) => #field(#env,#child,#map_field,#map)) }) && forall (#cached: object) { (#field(#env,#map,#cache_field,#cached) => ((#cached == #null) || #primary(#env,#map,#cached))) });
+    quant condition entry #label_extent(
+        #env: environment,
+        #extent: predicate<environment, object, integer, scalar_type>,
+        #labels_count: integer,
+        #labels_val: object,
+        #ptr_type: scalar_type,
+        #readable: predicate<environment, object, scalar_type>
+    ) =
+        ((0 <= #labels_count) && ((0 < #labels_count) => (#extent(#env,#labels_val,#labels_count,#ptr_type) && #readable(#env,#labels_val,#ptr_type))));
+    quant condition entry #lookup_strings(
+        #call: activation,
+        #element: predicate<environment, object, integer, object>,
+        #env: environment,
+        #field: predicate<environment, object, field, object>,
+        #fqname_field: field,
+        #fqname_read: predicate<environment, activation>,
+        #labels_count: integer,
+        #labels_val: object,
+        #live: predicate<environment, object>,
+        #null: object,
+        #opts: object,
+        #stable: predicate<trace, activation, object>,
+        #terminated: predicate<environment, object>,
+        #trace: trace
+    ) =
+        (forall (#i: integer) { (((0 <= #i) && (#i < #labels_count)) => forall (#label: object) { ((#element(#env,#labels_val,#i,#label) && !((#label == #null))) => ((#live(#env,#label) && #terminated(#env,#label)) && #stable(#trace,#call,#label))) }) } && forall (#fqname: object) { ((#field(#env,#opts,#fqname_field,#fqname) && #fqname_read(#env,#call)) => (!((#fqname == #null)) && ((#live(#env,#fqname) && #terminated(#env,#fqname)) && #stable(#trace,#call,#fqname)))) });
+    quant condition entry #parent_layout(
+        #env: environment,
+        #field: predicate<environment, object, field, object>,
+        #histogram: object,
+        #histogram_tag: tag,
+        #live: predicate<environment, object>,
+        #map: object,
+        #map_field: field,
+        #null: object,
+        #opts: object,
+        #opts_field: field,
+        #parent_field: field,
+        #summary: object,
+        #summary_tag: tag,
+        #tag: predicate<environment, object, tag>
+    ) =
+        ((#tag(#env,#map,#histogram_tag) => (((((((!((#histogram == #null)) && #live(#env,#histogram)) && #field(#env,#histogram,#opts_field,#opts)) && #field(#env,#histogram,#map_field,#map)) && #field(#env,#map,#parent_field,#histogram)) && #tag(#env,#map,#histogram_tag)) && #live(#env,#opts)) && #live(#env,#map))) && (#tag(#env,#map,#summary_tag) => (((((((!((#summary == #null)) && #live(#env,#summary)) && #field(#env,#summary,#opts_field,#opts)) && #field(#env,#summary,#map_field,#map)) && #field(#env,#map,#parent_field,#summary)) && #tag(#env,#map,#summary_tag)) && #live(#env,#opts)) && #live(#env,#map))));
+    quant condition entry #storage_bounds(
+        #allocation_size: predicate<environment, activation, integer>,
+        #call: activation,
+        #env: environment,
+        #int_argument: predicate<environment, activation, integer>,
+        #int_max: integer,
+        #size_max: integer
+    ) =
+        (forall (#amount: integer) { (#allocation_size(#env,#call,#amount) => ((0 <= #amount) && (#amount <= #size_max))) } && forall (#amount: integer) { (#int_argument(#env,#call,#amount) => ((0 <= #amount) && (#amount <= #int_max))) });
+    quant condition entry #hash_nonzero(
+        #digest: integer,
+        #labels_count: integer
+    ) =
+        ((0 < #labels_count) => !((#digest == 0)));
+    quant condition entry #static_labels(
+        #env: environment,
+        #map: object,
+        #static_label_node: predicate<environment, object, object>
+    ) =
+        forall (#child: object) { !(#static_label_node(#env,#map,#child)) };
+    quant condition entry #borrow_lifetime(
+        #borrow_use: predicate<trace, object, event>,
+        #live_at: predicate<trace, event, object>,
+        #map: object,
+        #retired_before: predicate<trace, object, event>,
+        #trace: trace
+    ) =
+        forall (#event: event) { (#borrow_use(#trace,#map,#event) => (#live_at(#trace,#event,#map) && !(#retired_before(#trace,#map,#event)))) };
     ensures normal result_is_null_or_borrowed_metric_from_map;
     ensures normal present_result_is_embedded_metric_or_map_owned_dynamic_child;
     ensures normal result_creates_no_caller_release_obligation;
@@ -59,10 +186,126 @@ extern fn cmt_map_metric_get_val(opts: ptr<mut, u8>, map: ptr<mut, u8>,
                                  labels_count: i32, labels_val: ptr<mut, ptr<mut, u8>>,
                                  out_val: ptr<mut, f64>) -> i32
 contract {
-    requires map_and_lookup_inputs_meet_the_getter_representation_obligations;
-    requires out_val_is_writable_double_storage;
-    requires out_val_is_disjoint_from_lookup_mutation_and_retirement_footprints;
-    requires no_retirement_races_between_lookup_unlock_and_value_read;
+    quant condition entry #lookup_map_ownership(
+        #env: environment,
+        #field: predicate<environment, object, field, object>,
+        #live: predicate<environment, object>,
+        #map: object,
+        #null: object,
+        #owns: predicate<environment, object, object>,
+        #primary: predicate<environment, object, object>,
+        #static_field: field,
+        #static_metric: object
+    ) =
+        ((!((#map == #null)) && #live(#env,#map)) && (#field(#env,#map,#static_field,#static_metric) && forall (#child: object) { (#primary(#env,#map,#child) => ((!((#child == #static_metric)) && #live(#env,#child)) && #owns(#env,#map,#child))) }));
+    quant condition entry #lookup_index_links(
+        #cache_field: field,
+        #env: environment,
+        #field: predicate<environment, object, field, object>,
+        #map: object,
+        #map_field: field,
+        #null: object,
+        #primary: predicate<environment, object, object>,
+        #secondary: predicate<environment, object, object>
+    ) =
+        ((forall (#child: object) { (#secondary(#env,#map,#child) => #primary(#env,#map,#child)) } && forall (#child: object) { (#primary(#env,#map,#child) => #field(#env,#child,#map_field,#map)) }) && forall (#cached: object) { (#field(#env,#map,#cache_field,#cached) => ((#cached == #null) || #primary(#env,#map,#cached))) });
+    quant condition entry #lookup_label_extent(
+        #env: environment,
+        #extent: predicate<environment, object, integer, scalar_type>,
+        #labels_count: integer,
+        #labels_val: object,
+        #ptr_type: scalar_type,
+        #readable: predicate<environment, object, scalar_type>
+    ) =
+        ((0 <= #labels_count) && ((0 < #labels_count) => (#extent(#env,#labels_val,#labels_count,#ptr_type) && #readable(#env,#labels_val,#ptr_type))));
+    quant condition entry #lookup_lookup_strings(
+        #call: activation,
+        #element: predicate<environment, object, integer, object>,
+        #env: environment,
+        #field: predicate<environment, object, field, object>,
+        #fqname_field: field,
+        #fqname_read: predicate<environment, activation>,
+        #labels_count: integer,
+        #labels_val: object,
+        #live: predicate<environment, object>,
+        #null: object,
+        #opts: object,
+        #stable: predicate<trace, activation, object>,
+        #terminated: predicate<environment, object>,
+        #trace: trace
+    ) =
+        (forall (#i: integer) { (((0 <= #i) && (#i < #labels_count)) => forall (#label: object) { ((#element(#env,#labels_val,#i,#label) && !((#label == #null))) => ((#live(#env,#label) && #terminated(#env,#label)) && #stable(#trace,#call,#label))) }) } && forall (#fqname: object) { ((#field(#env,#opts,#fqname_field,#fqname) && #fqname_read(#env,#call)) => (!((#fqname == #null)) && ((#live(#env,#fqname) && #terminated(#env,#fqname)) && #stable(#trace,#call,#fqname)))) });
+    quant condition entry #lookup_parent_layout(
+        #env: environment,
+        #field: predicate<environment, object, field, object>,
+        #histogram: object,
+        #histogram_tag: tag,
+        #live: predicate<environment, object>,
+        #map: object,
+        #map_field: field,
+        #null: object,
+        #opts: object,
+        #opts_field: field,
+        #parent_field: field,
+        #summary: object,
+        #summary_tag: tag,
+        #tag: predicate<environment, object, tag>
+    ) =
+        ((#tag(#env,#map,#histogram_tag) => (((((((!((#histogram == #null)) && #live(#env,#histogram)) && #field(#env,#histogram,#opts_field,#opts)) && #field(#env,#histogram,#map_field,#map)) && #field(#env,#map,#parent_field,#histogram)) && #tag(#env,#map,#histogram_tag)) && #live(#env,#opts)) && #live(#env,#map))) && (#tag(#env,#map,#summary_tag) => (((((((!((#summary == #null)) && #live(#env,#summary)) && #field(#env,#summary,#opts_field,#opts)) && #field(#env,#summary,#map_field,#map)) && #field(#env,#map,#parent_field,#summary)) && #tag(#env,#map,#summary_tag)) && #live(#env,#opts)) && #live(#env,#map))));
+    quant condition entry #lookup_storage_bounds(
+        #allocation_size: predicate<environment, activation, integer>,
+        #call: activation,
+        #env: environment,
+        #int_argument: predicate<environment, activation, integer>,
+        #int_max: integer,
+        #size_max: integer
+    ) =
+        (forall (#amount: integer) { (#allocation_size(#env,#call,#amount) => ((0 <= #amount) && (#amount <= #size_max))) } && forall (#amount: integer) { (#int_argument(#env,#call,#amount) => ((0 <= #amount) && (#amount <= #int_max))) });
+    quant condition entry #lookup_hash_nonzero(
+        #digest: integer,
+        #labels_count: integer
+    ) =
+        ((0 < #labels_count) => !((#digest == 0)));
+    quant condition entry #lookup_static_labels(
+        #env: environment,
+        #map: object,
+        #static_label_node: predicate<environment, object, object>
+    ) =
+        forall (#child: object) { !(#static_label_node(#env,#map,#child)) };
+    quant condition entry #lookup_borrow_lifetime(
+        #borrow_use: predicate<trace, object, event>,
+        #live_at: predicate<trace, event, object>,
+        #map: object,
+        #retired_before: predicate<trace, object, event>,
+        #trace: trace
+    ) =
+        forall (#event: event) { (#borrow_use(#trace,#map,#event) => (#live_at(#trace,#event,#map) && !(#retired_before(#trace,#map,#event)))) };
+    quant condition entry #output_storage(
+        #double_type: scalar_type,
+        #env: environment,
+        #live: predicate<environment, object>,
+        #null: object,
+        #out_val: object,
+        #writable: predicate<environment, object, scalar_type>
+    ) =
+        ((!((#out_val == #null)) && #live(#env,#out_val)) && #writable(#env,#out_val,#double_type));
+    quant condition entry #output_frame(
+        #affected: predicate<trace, activation, object>,
+        #call: activation,
+        #disjoint: predicate<environment, object, object>,
+        #env: environment,
+        #out_val: object,
+        #trace: trace
+    ) =
+        forall (#target: object) { (#affected(#trace,#call,#target) => #disjoint(#env,#out_val,#target)) };
+    quant condition entry #lookup_retirement(
+        #between_unlock_read: predicate<trace, activation, event>,
+        #call: activation,
+        #metric: object,
+        #retire: predicate<trace, event, object>,
+        #trace: trace
+    ) =
+        forall (#event: event) { (#between_unlock_read(#trace,#call,#event) => !(#retire(#trace,#event,#metric))) };
     ensures normal result_is_zero_or_minus_one;
     ensures normal zero_result_writes_metric_value_to_out_val;
     ensures normal minus_one_result_preserves_out_val;
@@ -72,10 +315,47 @@ contract {
 
 extern fn cmt_map_metric_destroy(metric: ptr<mut, u8>) -> unit
 contract {
-    requires metric_is_nonnull_live_dynamic_primary_list_member;
-    requires metric_is_not_the_embedded_static_metric;
-    requires exact_owner_links_cache_and_required_map_backpointer_are_consistent;
-    requires no_concurrent_or_later_user_of_retired_metric_or_owned_storage;
+    quant condition entry #dynamic_metric(
+        #env: environment,
+        #live: predicate<environment, object>,
+        #map: object,
+        #metric: object,
+        #null: object,
+        #owns: predicate<environment, object, object>,
+        #primary: predicate<environment, object, object>
+    ) =
+        (((!((#metric == #null)) && #live(#env,#metric)) && #primary(#env,#map,#metric)) && #owns(#env,#map,#metric));
+    quant condition entry #dynamic_identity(
+        #env: environment,
+        #field: predicate<environment, object, field, object>,
+        #map: object,
+        #metric: object,
+        #static_field: field,
+        #static_metric: object
+    ) =
+        (#field(#env,#map,#static_field,#static_metric) && !((#metric == #static_metric)));
+    quant condition entry #owner_links(
+        #cache_field: field,
+        #env: environment,
+        #field: predicate<environment, object, field, object>,
+        #map: object,
+        #map_field: field,
+        #metric: object,
+        #null: object,
+        #primary: predicate<environment, object, object>,
+        #secondary: predicate<environment, object, object>
+    ) =
+        ((#primary(#env,#map,#metric) && ((forall (#child: object) { (#secondary(#env,#map,#child) => #primary(#env,#map,#child)) } && forall (#child: object) { (#primary(#env,#map,#child) => #field(#env,#child,#map_field,#map)) }) && forall (#cached: object) { (#field(#env,#map,#cache_field,#cached) => ((#cached == #null) || #primary(#env,#map,#cached))) })) && #field(#env,#metric,#map_field,#map));
+    quant condition entry #retirement_exclusion(
+        #call: activation,
+        #conflicts: predicate<trace, activation, event, object>,
+        #env: environment,
+        #later_use: predicate<trace, activation, event, object>,
+        #metric: object,
+        #owns: predicate<environment, object, object>,
+        #trace: trace
+    ) =
+        forall (#target: object) { (((#target == #metric) || #owns(#env,#metric,#target)) => (forall (#event: event) { !(#conflicts(#trace,#call,#event,#target)) } && forall (#event: event) { !(#later_use(#trace,#call,#event,#target)) })) };
     ensures normal metric_label_nodes_sds_and_value_storage_are_discharged;
     ensures normal primary_and_secondary_memberships_are_removed_before_free;
     ensures normal matching_owner_cache_is_cleared_and_index_count_is_updated;
@@ -86,11 +366,53 @@ contract {
 
 extern fn cmt_map_metrics_expire(map: ptr<mut, u8>, expiration: u64) -> unit
 contract {
-    requires map_is_nonnull_live_with_valid_primary_child_ownership;
-    requires secondary_index_cache_and_backpointers_match_live_primary_ownership;
-    requires external_coordination_excludes_users_of_retiring_metrics;
-    requires static_storage_accounting_matches_metric_static_set;
-    requires embedded_static_metric_label_list_has_no_owned_nodes;
+    quant condition entry #map_ownership(
+        #env: environment,
+        #field: predicate<environment, object, field, object>,
+        #live: predicate<environment, object>,
+        #map: object,
+        #null: object,
+        #owns: predicate<environment, object, object>,
+        #primary: predicate<environment, object, object>,
+        #static_field: field,
+        #static_metric: object
+    ) =
+        ((!((#map == #null)) && #live(#env,#map)) && (#field(#env,#map,#static_field,#static_metric) && forall (#child: object) { (#primary(#env,#map,#child) => ((!((#child == #static_metric)) && #live(#env,#child)) && #owns(#env,#map,#child))) }));
+    quant condition entry #index_links(
+        #cache_field: field,
+        #env: environment,
+        #field: predicate<environment, object, field, object>,
+        #map: object,
+        #map_field: field,
+        #null: object,
+        #primary: predicate<environment, object, object>,
+        #secondary: predicate<environment, object, object>
+    ) =
+        ((forall (#child: object) { (#secondary(#env,#map,#child) => #primary(#env,#map,#child)) } && forall (#child: object) { (#primary(#env,#map,#child) => #field(#env,#child,#map_field,#map)) }) && forall (#cached: object) { (#field(#env,#map,#cache_field,#cached) => ((#cached == #null) || #primary(#env,#map,#cached))) });
+    quant condition entry #expiration_exclusion(
+        #call: activation,
+        #conflicts: predicate<trace, activation, event, object>,
+        #later_use: predicate<trace, activation, event, object>,
+        #selected_retirement: predicate<trace, activation, object>,
+        #trace: trace
+    ) =
+        forall (#target: object) { (#selected_retirement(#trace,#call,#target) => (forall (#event: event) { !(#conflicts(#trace,#call,#event,#target)) } && forall (#event: event) { !(#later_use(#trace,#call,#event,#target)) })) };
+    quant condition entry #static_ownership(
+        #env: environment,
+        #live: predicate<environment, object>,
+        #map: object,
+        #owns: predicate<environment, object, object>,
+        #static_metric: object,
+        #static_set: predicate<environment, object>,
+        #static_storage: predicate<environment, object, object>
+    ) =
+        forall (#child: object) { (#static_storage(#env,#map,#child) => ((#static_set(#env,#map) && #live(#env,#child)) && #owns(#env,#static_metric,#child))) };
+    quant condition entry #static_labels(
+        #env: environment,
+        #map: object,
+        #static_label_node: predicate<environment, object, object>
+    ) =
+        forall (#child: object) { !(#static_label_node(#env,#map,#child)) };
     ensures normal older_dynamic_metrics_are_unlinked_and_discharged;
     ensures normal older_enabled_static_metric_storage_is_released_and_record_reset;
     ensures normal embedded_static_metric_record_itself_is_not_freed;
@@ -101,12 +423,68 @@ contract {
 
 extern fn cmt_map_destroy(map: ptr<mut, u8>) -> unit
 contract {
-    requires map_is_nonnull_live_and_exclusively_owned_for_teardown;
-    requires primary_secondary_cache_and_backpointer_representation_is_valid;
-    requires every_owned_label_metric_unit_and_bucket_has_one_valid_owner;
-    requires static_storage_accounting_matches_metric_static_set;
-    requires embedded_static_metric_label_list_has_no_owned_nodes;
-    requires no_concurrent_or_later_map_metric_or_child_user;
+    quant condition entry #map_teardown(
+        #affected: predicate<trace, activation, object>,
+        #call: activation,
+        #caller: object,
+        #conflicts: predicate<trace, activation, event, object>,
+        #env: environment,
+        #live: predicate<environment, object>,
+        #map: object,
+        #null: object,
+        #owns: predicate<environment, object, object>,
+        #trace: trace
+    ) =
+        (((!((#map == #null)) && #live(#env,#map)) && #owns(#env,#caller,#map)) && forall (#target: object) { (#affected(#trace,#call,#target) => forall (#event: event) { !(#conflicts(#trace,#call,#event,#target)) }) });
+    quant condition entry #map_representation(
+        #cache_field: field,
+        #env: environment,
+        #field: predicate<environment, object, field, object>,
+        #live: predicate<environment, object>,
+        #map: object,
+        #map_field: field,
+        #null: object,
+        #owns: predicate<environment, object, object>,
+        #primary: predicate<environment, object, object>,
+        #secondary: predicate<environment, object, object>,
+        #static_field: field,
+        #static_metric: object
+    ) =
+        ((#field(#env,#map,#static_field,#static_metric) && forall (#child: object) { (#primary(#env,#map,#child) => ((!((#child == #static_metric)) && #live(#env,#child)) && #owns(#env,#map,#child))) }) && ((forall (#child: object) { (#secondary(#env,#map,#child) => #primary(#env,#map,#child)) } && forall (#child: object) { (#primary(#env,#map,#child) => #field(#env,#child,#map_field,#map)) }) && forall (#cached: object) { (#field(#env,#map,#cache_field,#cached) => ((#cached == #null) || #primary(#env,#map,#cached))) }));
+    quant condition entry #unique_child_owners(
+        #descendant: predicate<environment, object, object>,
+        #env: environment,
+        #live: predicate<environment, object>,
+        #map: object,
+        #owns: predicate<environment, object, object>
+    ) =
+        forall (#child: object) { (#descendant(#env,#map,#child) => (#live(#env,#child) && exists (#owner: object) { (#owns(#env,#owner,#child) && forall (#other: object) { (#owns(#env,#other,#child) => (#owner == #other)) }) })) };
+    quant condition entry #static_ownership(
+        #env: environment,
+        #live: predicate<environment, object>,
+        #map: object,
+        #owns: predicate<environment, object, object>,
+        #static_metric: object,
+        #static_set: predicate<environment, object>,
+        #static_storage: predicate<environment, object, object>
+    ) =
+        forall (#child: object) { (#static_storage(#env,#map,#child) => ((#static_set(#env,#map) && #live(#env,#child)) && #owns(#env,#static_metric,#child))) };
+    quant condition entry #static_labels(
+        #env: environment,
+        #map: object,
+        #static_label_node: predicate<environment, object, object>
+    ) =
+        forall (#child: object) { !(#static_label_node(#env,#map,#child)) };
+    quant condition entry #map_user_exclusion(
+        #call: activation,
+        #conflicts: predicate<trace, activation, event, object>,
+        #descendant: predicate<environment, object, object>,
+        #env: environment,
+        #later_use: predicate<trace, activation, event, object>,
+        #map: object,
+        #trace: trace
+    ) =
+        forall (#target: object) { (((#target == #map) || #descendant(#env,#map,#target)) => (forall (#event: event) { !(#conflicts(#trace,#call,#event,#target)) } && forall (#event: event) { !(#later_use(#trace,#call,#event,#target)) })) };
     ensures normal label_key_nodes_and_sds_are_discharged;
     ensures normal dynamic_metrics_and_their_nested_owned_resources_are_discharged;
     ensures normal enabled_static_metric_storage_unit_and_bucket_array_are_discharged;

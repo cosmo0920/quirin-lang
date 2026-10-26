@@ -1,0 +1,1789 @@
+{
+  "replacements": [
+    {
+      "file": "providers/quirin-provider-cfl/contracts/cfl/intrusive_list.qv",
+      "declaration": "cfl_list_init",
+      "original": "actual_is_root_or_address_of_embedded_record",
+      "formal_id": "r001",
+      "formula": "((#actual == #root) || #embedded(#env,#root,#path,#actual))",
+      "parameters": [
+        {
+          "name": "actual",
+          "sort": "object"
+        },
+        {
+          "name": "embedded",
+          "sort": "predicate<environment, object, path, object>"
+        },
+        {
+          "name": "env",
+          "sort": "environment"
+        },
+        {
+          "name": "path",
+          "sort": "path"
+        },
+        {
+          "name": "root",
+          "sort": "object"
+        }
+      ],
+      "model_anchors": [
+        {
+          "path": "proof/QCore/TrackedSelfInit.lean",
+          "symbol": "sourceAdmits",
+          "line": 19
+        },
+        {
+          "path": "proof/QCore/TrackedSelfInit.lean",
+          "symbol": "admits",
+          "line": 69
+        }
+      ],
+      "source_binding": "open",
+      "correspondence": "conditional decomposition; source/model equivalence open"
+    },
+    {
+      "file": "providers/quirin-provider-cfl/contracts/cfl/arena_lifetime.qv",
+      "declaration": "cfl_arena_destroy",
+      "original": "arena_is_live",
+      "formal_id": "r004",
+      "formula": "#live(#env,#arena)",
+      "parameters": [
+        {
+          "name": "arena",
+          "sort": "object"
+        },
+        {
+          "name": "env",
+          "sort": "environment"
+        },
+        {
+          "name": "live",
+          "sort": "predicate<environment, object>"
+        }
+      ],
+      "model_anchors": [],
+      "source_binding": "open",
+      "correspondence": "conditional decomposition; source/model equivalence open"
+    },
+    {
+      "file": "providers/qcore-provider-chunkio/contracts/chunkio/chunk_destructor.qv",
+      "declaration": "cio_chunk_close",
+      "original": "chunk_has_no_task_or_route_custody",
+      "formal_id": "r023",
+      "formula": "(forall (#task: object) { (#task_object(#env,#task) => !(#owns(#env,#chunk,#task))) } && forall (#route: object) { !(#route_custody(#env,#chunk,#route)) })",
+      "parameters": [
+        {
+          "name": "chunk",
+          "sort": "object"
+        },
+        {
+          "name": "env",
+          "sort": "environment"
+        },
+        {
+          "name": "owns",
+          "sort": "predicate<environment, object, object>"
+        },
+        {
+          "name": "route_custody",
+          "sort": "predicate<environment, object, object>"
+        },
+        {
+          "name": "task_object",
+          "sort": "predicate<environment, object>"
+        }
+      ],
+      "model_anchors": [
+        {
+          "path": "proof/QCore/ChunkLifecycle.lean",
+          "symbol": "Teardown",
+          "line": 160
+        },
+        {
+          "path": "proof/QCore/ChunkLifecycle.lean",
+          "symbol": "checkTeardown",
+          "line": 219
+        }
+      ],
+      "source_binding": "open",
+      "correspondence": "conditional decomposition; source/model equivalence open"
+    },
+    {
+      "file": "providers/qcore-provider-chunkio/contracts/chunkio/chunk_destructor.qv",
+      "declaration": "cio_chunk_close",
+      "original": "chunk_is_live",
+      "formal_id": "r024",
+      "formula": "#live(#env,#chunk)",
+      "parameters": [
+        {
+          "name": "chunk",
+          "sort": "object"
+        },
+        {
+          "name": "env",
+          "sort": "environment"
+        },
+        {
+          "name": "live",
+          "sort": "predicate<environment, object>"
+        }
+      ],
+      "model_anchors": [
+        {
+          "path": "proof/QCore/ChunkLifecycle.lean",
+          "symbol": "Teardown",
+          "line": 160
+        }
+      ],
+      "source_binding": "open",
+      "correspondence": "conditional decomposition; source/model equivalence open"
+    },
+    {
+      "file": "providers/qcore-provider-chunkio/contracts/chunkio/chunk_destructor.qv",
+      "declaration": "cio_chunk_delete",
+      "original": "chunk_is_live",
+      "formal_id": "r024",
+      "formula": "#live(#env,#chunk)",
+      "parameters": [
+        {
+          "name": "chunk",
+          "sort": "object"
+        },
+        {
+          "name": "env",
+          "sort": "environment"
+        },
+        {
+          "name": "live",
+          "sort": "predicate<environment, object>"
+        }
+      ],
+      "model_anchors": [
+        {
+          "path": "proof/QCore/ChunkLifecycle.lean",
+          "symbol": "Teardown",
+          "line": 160
+        }
+      ],
+      "source_binding": "open",
+      "correspondence": "conditional decomposition; source/model equivalence open"
+    },
+    {
+      "file": "providers/qcore-provider-chunkio/contracts/chunkio/chunk_destructor.qv",
+      "declaration": "cio_chunk_close",
+      "original": "chunk_is_not_busy",
+      "formal_id": "r025",
+      "formula": "(#number(#env,#chunk,#busy_field) == 0)",
+      "parameters": [
+        {
+          "name": "busy_field",
+          "sort": "field"
+        },
+        {
+          "name": "chunk",
+          "sort": "object"
+        },
+        {
+          "name": "env",
+          "sort": "environment"
+        },
+        {
+          "name": "number",
+          "sort": "function<environment, object, field, integer>"
+        }
+      ],
+      "model_anchors": [
+        {
+          "path": "proof/QCore/ChunkLifecycle.lean",
+          "symbol": "Teardown",
+          "line": 160
+        },
+        {
+          "path": "proof/QCore/ChunkLifecycle.lean",
+          "symbol": "checkTeardown",
+          "line": 219
+        }
+      ],
+      "source_binding": "open",
+      "correspondence": "conditional decomposition; source/model equivalence open"
+    },
+    {
+      "file": "providers/quirin-provider-cfl/contracts/cfl/intrusive_list.qv",
+      "declaration": "cfl_list_init",
+      "original": "complete_source_bound_cg11_self_store_leaf",
+      "formal_id": "r055",
+      "formula": "(#complete_body(#source,#decl) && forall (#op: operation) { (#body_op(#source,#decl,#op) => (#self_store(#source,#decl,#op) || #unit_exit(#source,#decl,#op))) })",
+      "parameters": [
+        {
+          "name": "body_op",
+          "sort": "predicate<source, declaration, operation>"
+        },
+        {
+          "name": "complete_body",
+          "sort": "predicate<source, declaration>"
+        },
+        {
+          "name": "decl",
+          "sort": "declaration"
+        },
+        {
+          "name": "self_store",
+          "sort": "predicate<source, declaration, operation>"
+        },
+        {
+          "name": "source",
+          "sort": "source"
+        },
+        {
+          "name": "unit_exit",
+          "sort": "predicate<source, declaration, operation>"
+        }
+      ],
+      "model_anchors": [
+        {
+          "path": "proof/QCore/TrackedSelfInit.lean",
+          "symbol": "sourceAdmits",
+          "line": 19
+        },
+        {
+          "path": "proof/QCore/TrackedSelfInit.lean",
+          "symbol": "admits",
+          "line": 69
+        }
+      ],
+      "source_binding": "open",
+      "correspondence": "conditional decomposition; source/model equivalence open"
+    },
+    {
+      "file": "providers/qcore-provider-chunkio/contracts/chunkio/context_destructor.qv",
+      "declaration": "cio_destroy",
+      "original": "context_is_live",
+      "formal_id": "r060",
+      "formula": "#live(#env,#context)",
+      "parameters": [
+        {
+          "name": "context",
+          "sort": "object"
+        },
+        {
+          "name": "env",
+          "sort": "environment"
+        },
+        {
+          "name": "live",
+          "sort": "predicate<environment, object>"
+        }
+      ],
+      "model_anchors": [
+        {
+          "path": "proof/QCore/ChunkLifecycle.lean",
+          "symbol": "Teardown",
+          "line": 160
+        }
+      ],
+      "source_binding": "open",
+      "correspondence": "conditional decomposition; source/model equivalence open"
+    },
+    {
+      "file": "providers/quirin-provider-cfl/contracts/cfl/intrusive_list.qv",
+      "declaration": "cfl_list_init",
+      "original": "custody_is_default_or_a_source_checked_disjoint_child_slot_frame",
+      "formal_id": "r072",
+      "formula": "((forall (#link: link) { !(#field_link(#env,#link)) } && forall (#place: place) { !(#caller_custody(#env,#place)) }) || (((((((#nondefault(#env) && (#nondefault(#env) => ((((#ledger(#env,#owner) == 1) && !(#nullable(#env,#owner))) && #precise_heap(#env,#owner)) && forall (#child: object) { (#linked_child(#env,#owner,#child) => (((!((#child == #owner)) && (#ledger(#env,#child) == 1)) && !(#nullable(#env,#child))) && #precise_heap(#env,#child))) }))) && (#nondefault(#env) => (forall (#link: link) { (#field_link(#env,#link) => (#link_owner(#link) == #owner)) } && forall (#link: link) { (#partial_link(#env,#link) => #field_link(#env,#link)) }))) && (#nondefault(#env) => forall (#place: place) { (#existing_place(#env,#place) => ((!(#caller_custody(#env,#place)) && !(#out_slot(#env,#place))) && #recognized(#env,#place))) })) && (#nondefault(#env) => forall (#op: operation) { (#body_op(#source,#decl,#op) => ((#assignment(#source,#op) => #typed_assignment(#source,#op)) && !(#slot_address(#source,#op)))) })) && (#nondefault(#env) => forall (#nested_call: activation) { (#body_call(#source,#decl,#nested_call) => (#ordinary_contract(#env,#nested_call) && forall (#effect: effect) { (#call_effect(#env,#nested_call,#effect) => !(#custody_change(#effect))) })) })) && (#nondefault(#env) => forall (#slot: interval) { (#protected_slot(#env,#slot) => ((#interval_start(#slot) < #interval_stop(#slot)) && forall (#write: interval) { (#instantiated_write(#source,#path,#write) => ((#interval_stop(#slot) <= #interval_start(#write)) || (#interval_stop(#write) <= #interval_start(#slot)))) })) })) && (#nondefault(#env) => forall (#alias: object) { (#target(#env,#alias,#owner) => (!(#unknown(#env,#alias)) && #type_compatible(#source,#alias,#owner))) })))",
+      "parameters": [
+        {
+          "name": "assignment",
+          "sort": "predicate<source, operation>"
+        },
+        {
+          "name": "body_op",
+          "sort": "predicate<source, declaration, operation>"
+        },
+        {
+          "name": "call_effect",
+          "sort": "predicate<environment, activation, effect>"
+        },
+        {
+          "name": "caller_custody",
+          "sort": "predicate<environment, place>"
+        },
+        {
+          "name": "custody_change",
+          "sort": "predicate<effect>"
+        },
+        {
+          "name": "decl",
+          "sort": "declaration"
+        },
+        {
+          "name": "env",
+          "sort": "environment"
+        },
+        {
+          "name": "instantiated_write",
+          "sort": "predicate<source, path, interval>"
+        },
+        {
+          "name": "interval_start",
+          "sort": "function<interval, integer>"
+        },
+        {
+          "name": "interval_stop",
+          "sort": "function<interval, integer>"
+        },
+        {
+          "name": "ledger",
+          "sort": "function<environment, object, integer>"
+        },
+        {
+          "name": "link_owner",
+          "sort": "function<link, object>"
+        },
+        {
+          "name": "linked_child",
+          "sort": "predicate<environment, object, object>"
+        },
+        {
+          "name": "nondefault",
+          "sort": "predicate<environment>"
+        },
+        {
+          "name": "nullable",
+          "sort": "predicate<environment, object>"
+        },
+        {
+          "name": "ordinary_contract",
+          "sort": "predicate<environment, activation>"
+        },
+        {
+          "name": "out_slot",
+          "sort": "predicate<environment, place>"
+        },
+        {
+          "name": "owner",
+          "sort": "object"
+        },
+        {
+          "name": "partial_link",
+          "sort": "predicate<environment, link>"
+        },
+        {
+          "name": "path",
+          "sort": "path"
+        },
+        {
+          "name": "precise_heap",
+          "sort": "predicate<environment, object>"
+        },
+        {
+          "name": "protected_slot",
+          "sort": "predicate<environment, interval>"
+        },
+        {
+          "name": "recognized",
+          "sort": "predicate<environment, place>"
+        },
+        {
+          "name": "slot_address",
+          "sort": "predicate<source, operation>"
+        },
+        {
+          "name": "source",
+          "sort": "source"
+        },
+        {
+          "name": "target",
+          "sort": "predicate<environment, object, object>"
+        },
+        {
+          "name": "type_compatible",
+          "sort": "predicate<source, object, object>"
+        },
+        {
+          "name": "typed_assignment",
+          "sort": "predicate<source, operation>"
+        },
+        {
+          "name": "unknown",
+          "sort": "predicate<environment, object>"
+        },
+        {
+          "name": "field_link",
+          "sort": "predicate<environment, link>"
+        },
+        {
+          "name": "existing_place",
+          "sort": "predicate<environment, place>"
+        },
+        {
+          "name": "body_call",
+          "sort": "predicate<source, declaration, activation>"
+        }
+      ],
+      "model_anchors": [
+        {
+          "path": "proof/QCore/TrackedSelfInit.lean",
+          "symbol": "sourceAdmits",
+          "line": 19
+        },
+        {
+          "path": "proof/QCore/TrackedSelfInit.lean",
+          "symbol": "admits",
+          "line": 69
+        },
+        {
+          "path": "proof/QCore/TrackedSelfInitDisjointFrame.lean",
+          "symbol": "sourceAdmits",
+          "line": 26
+        },
+        {
+          "path": "proof/QCore/TrackedSelfInitDisjointFrame.lean",
+          "symbol": "rootAccepted",
+          "line": 127
+        },
+        {
+          "path": "proof/QCore/TrackedSelfInitDisjointFrame.lean",
+          "symbol": "frameAccepted",
+          "line": 132
+        }
+      ],
+      "source_binding": "open",
+      "correspondence": "conditional decomposition; source/model equivalence open"
+    },
+    {
+      "file": "providers/quirin-provider-cfl/contracts/cfl/intrusive_list.qv",
+      "declaration": "cfl_list_init",
+      "original": "direct_call_matches_exact_function_declaration",
+      "formal_id": "r084",
+      "formula": "(((#callee_decl(#call) == #decl) && (#body_decl(#source) == #decl)) && (#call_signature(#call) == #decl_signature(#decl)))",
+      "parameters": [
+        {
+          "name": "body_decl",
+          "sort": "function<source, declaration>"
+        },
+        {
+          "name": "call",
+          "sort": "activation"
+        },
+        {
+          "name": "call_signature",
+          "sort": "function<activation, signature>"
+        },
+        {
+          "name": "callee_decl",
+          "sort": "function<activation, declaration>"
+        },
+        {
+          "name": "decl",
+          "sort": "declaration"
+        },
+        {
+          "name": "decl_signature",
+          "sort": "function<declaration, signature>"
+        },
+        {
+          "name": "source",
+          "sort": "source"
+        }
+      ],
+      "model_anchors": [
+        {
+          "path": "proof/QCore/TrackedSelfInit.lean",
+          "symbol": "sourceAdmits",
+          "line": 19
+        },
+        {
+          "path": "proof/QCore/TrackedSelfInit.lean",
+          "symbol": "admits",
+          "line": 69
+        }
+      ],
+      "source_binding": "open",
+      "correspondence": "conditional decomposition; source/model equivalence open"
+    },
+    {
+      "file": "providers/quirin-provider-cfl/contracts/cfl/intrusive_list.qv",
+      "declaration": "cfl_list_init",
+      "original": "embedded_path_has_at_most_three_ordinary_fields",
+      "formal_id": "r089",
+      "formula": "(((#path_length(#path) >= 0) && (#path_length(#path) <= 3)) && forall (#step: path_step) { (#path_step(#path,#step) => #ordinary_field(#source,#step)) })",
+      "parameters": [
+        {
+          "name": "ordinary_field",
+          "sort": "predicate<source, path_step>"
+        },
+        {
+          "name": "path",
+          "sort": "path"
+        },
+        {
+          "name": "path_length",
+          "sort": "function<path, integer>"
+        },
+        {
+          "name": "path_step",
+          "sort": "predicate<path, path_step>"
+        },
+        {
+          "name": "source",
+          "sort": "source"
+        }
+      ],
+      "model_anchors": [
+        {
+          "path": "proof/QCore/TrackedSelfInit.lean",
+          "symbol": "sourceAdmits",
+          "line": 19
+        },
+        {
+          "path": "proof/QCore/TrackedSelfInit.lean",
+          "symbol": "admits",
+          "line": 69
+        }
+      ],
+      "source_binding": "open",
+      "correspondence": "conditional decomposition; source/model equivalence open"
+    },
+    {
+      "file": "providers/quirin-provider-cfl/contracts/cfl/intrusive_list.qv",
+      "declaration": "cfl_list_del",
+      "original": "entry_has_list_custody",
+      "formal_id": "r090",
+      "formula": "exists (#list: object) { ((#member(#env,#list,#entry) && #owns(#env,#list,#entry)) && forall (#other: object) { (#member(#env,#other,#entry) => (#other == #list)) }) }",
+      "parameters": [
+        {
+          "name": "entry",
+          "sort": "object"
+        },
+        {
+          "name": "env",
+          "sort": "environment"
+        },
+        {
+          "name": "member",
+          "sort": "predicate<environment, object, object>"
+        },
+        {
+          "name": "owns",
+          "sort": "predicate<environment, object, object>"
+        }
+      ],
+      "model_anchors": [],
+      "source_binding": "open",
+      "correspondence": "conditional decomposition; source/model equivalence open"
+    },
+    {
+      "file": "providers/quirin-provider-cfl/contracts/cfl/intrusive_list.qv",
+      "declaration": "cfl_list_add",
+      "original": "entry_is_unlinked",
+      "formal_id": "r094",
+      "formula": "forall (#list: object) { !(#member(#env,#list,#entry)) }",
+      "parameters": [
+        {
+          "name": "entry",
+          "sort": "object"
+        },
+        {
+          "name": "env",
+          "sort": "environment"
+        },
+        {
+          "name": "member",
+          "sort": "predicate<environment, object, object>"
+        }
+      ],
+      "model_anchors": [],
+      "source_binding": "open",
+      "correspondence": "conditional decomposition; source/model equivalence open"
+    },
+    {
+      "file": "providers/quirin-provider-cfl/contracts/cfl/hash_state.qv",
+      "declaration": "cfl_hash_64bits_digest",
+      "original": "every_successful_update_effect_is_in_stream_order",
+      "formal_id": "r095",
+      "formula": "(forall (#left: event) { forall (#right: event) { (((#successful_update(#trace,#state,#left) && #successful_update(#trace,#state,#right)) && (#event_index(#trace,#left) < #event_index(#trace,#right))) => ((#stream_offset(#trace,#left) + #update_length(#trace,#left)) <= #stream_offset(#trace,#right))) } } && forall (#event: event) { (#successful_update(#trace,#state,#event) => (#stream_offset(#trace,#event) == #prior_successful_bytes(#trace,#state,#event))) })",
+      "parameters": [
+        {
+          "name": "event_index",
+          "sort": "function<trace, event, integer>"
+        },
+        {
+          "name": "prior_successful_bytes",
+          "sort": "function<trace, object, event, integer>"
+        },
+        {
+          "name": "state",
+          "sort": "object"
+        },
+        {
+          "name": "stream_offset",
+          "sort": "function<trace, event, integer>"
+        },
+        {
+          "name": "successful_update",
+          "sort": "predicate<trace, object, event>"
+        },
+        {
+          "name": "trace",
+          "sort": "trace"
+        },
+        {
+          "name": "update_length",
+          "sort": "function<trace, event, integer>"
+        }
+      ],
+      "model_anchors": [],
+      "source_binding": "open",
+      "correspondence": "conditional decomposition; source/model equivalence open"
+    },
+    {
+      "file": "providers/qcore-provider-chunkio/contracts/chunkio/import_composition.qv",
+      "declaration": "check_imported_chunk_program",
+      "original": "every_used_operation_has_exact_summary",
+      "formal_id": "r096",
+      "formula": "forall (#op: operation) { (#used(#trace,#op) => exists (#summary: summary) { (#operation_summary(#env,#op,#summary) && #checked_summary(#env,#summary)) }) }",
+      "parameters": [
+        {
+          "name": "checked_summary",
+          "sort": "predicate<environment, summary>"
+        },
+        {
+          "name": "env",
+          "sort": "environment"
+        },
+        {
+          "name": "trace",
+          "sort": "trace"
+        },
+        {
+          "name": "used",
+          "sort": "predicate<trace, operation>"
+        },
+        {
+          "name": "operation_summary",
+          "sort": "predicate<environment, operation, summary>"
+        }
+      ],
+      "model_anchors": [],
+      "source_binding": "open",
+      "correspondence": "conditional decomposition; source/model equivalence open"
+    },
+    {
+      "file": "providers/quirin-provider-cfl/contracts/cfl/intrusive_list.qv",
+      "declaration": "cfl_list_init",
+      "original": "existing_indirect_access_check_has_no_diagnostic_or_state_change",
+      "formal_id": "r112",
+      "formula": "((#diagnostic_count(#env,#call) == 0) && (#probe_state(#env,#call) == #entry_state(#env)))",
+      "parameters": [
+        {
+          "name": "call",
+          "sort": "activation"
+        },
+        {
+          "name": "diagnostic_count",
+          "sort": "function<environment, activation, integer>"
+        },
+        {
+          "name": "entry_state",
+          "sort": "function<environment, abstract_state>"
+        },
+        {
+          "name": "env",
+          "sort": "environment"
+        },
+        {
+          "name": "probe_state",
+          "sort": "function<environment, activation, abstract_state>"
+        }
+      ],
+      "model_anchors": [
+        {
+          "path": "proof/QCore/TrackedSelfInit.lean",
+          "symbol": "sourceAdmits",
+          "line": 19
+        },
+        {
+          "path": "proof/QCore/TrackedSelfInit.lean",
+          "symbol": "admits",
+          "line": 69
+        }
+      ],
+      "source_binding": "open",
+      "correspondence": "conditional decomposition; source/model equivalence open"
+    },
+    {
+      "file": "providers/qcore-provider-chunkio/contracts/chunkio/import_composition.qv",
+      "declaration": "check_imported_chunk_program",
+      "original": "imported_cfg_is_complete",
+      "formal_id": "r117",
+      "formula": "(forall (#node: cfg_node) { (#reachable(#source,#node) => #imported(#cfg,#node)) } && forall (#edge: cfg_edge) { (#reachable_edge(#source,#edge) => #imported_edge(#cfg,#edge)) })",
+      "parameters": [
+        {
+          "name": "cfg",
+          "sort": "cfg"
+        },
+        {
+          "name": "imported",
+          "sort": "predicate<cfg, cfg_node>"
+        },
+        {
+          "name": "imported_edge",
+          "sort": "predicate<cfg, cfg_edge>"
+        },
+        {
+          "name": "reachable",
+          "sort": "predicate<source, cfg_node>"
+        },
+        {
+          "name": "reachable_edge",
+          "sort": "predicate<source, cfg_edge>"
+        },
+        {
+          "name": "source",
+          "sort": "source"
+        }
+      ],
+      "model_anchors": [],
+      "source_binding": "open",
+      "correspondence": "conditional decomposition; source/model equivalence open"
+    },
+    {
+      "file": "providers/quirin-provider-cfl/contracts/cfl/hash_state.qv",
+      "declaration": "cfl_hash_64bits_update",
+      "original": "input_and_state_writable_storage_do_not_overlap",
+      "formal_id": "r119",
+      "formula": "((#stop(#env,#input) <= #start(#env,#state)) || (#stop(#env,#state) <= #start(#env,#input)))",
+      "parameters": [
+        {
+          "name": "env",
+          "sort": "environment"
+        },
+        {
+          "name": "input",
+          "sort": "object"
+        },
+        {
+          "name": "start",
+          "sort": "function<environment, object, integer>"
+        },
+        {
+          "name": "state",
+          "sort": "object"
+        },
+        {
+          "name": "stop",
+          "sort": "function<environment, object, integer>"
+        }
+      ],
+      "model_anchors": [],
+      "source_binding": "open",
+      "correspondence": "conditional decomposition; source/model equivalence open"
+    },
+    {
+      "file": "providers/quirin-provider-cfl/contracts/cfl/hash_state.qv",
+      "declaration": "cfl_hash_64bits_update",
+      "original": "input_is_readable_for_len_bytes_or_len_is_zero",
+      "formal_id": "r120",
+      "formula": "((#length == 0) || ((#length > 0) && forall (#i: integer) { (((#i >= 0) && (#i < #length)) => #readable_byte(#env,#input,#i)) }))",
+      "parameters": [
+        {
+          "name": "env",
+          "sort": "environment"
+        },
+        {
+          "name": "input",
+          "sort": "object"
+        },
+        {
+          "name": "length",
+          "sort": "integer"
+        },
+        {
+          "name": "readable_byte",
+          "sort": "predicate<environment, object, integer>"
+        }
+      ],
+      "model_anchors": [],
+      "source_binding": "open",
+      "correspondence": "conditional decomposition; source/model equivalence open"
+    },
+    {
+      "file": "providers/quirin-provider-cfl/contracts/cfl/intrusive_list.qv",
+      "declaration": "cfl_list_init",
+      "original": "no_loaded_pointer_array_cast_union_or_qualified_member",
+      "formal_id": "r130",
+      "formula": "forall (#step: path_step) { (#path_step(#path,#step) => ((((!(#pointer_load(#source,#step)) && !(#array_step(#source,#step))) && !(#cast_step(#source,#step))) && !(#union_step(#source,#step))) && !(#qualified_step(#source,#step)))) }",
+      "parameters": [
+        {
+          "name": "array_step",
+          "sort": "predicate<source, path_step>"
+        },
+        {
+          "name": "cast_step",
+          "sort": "predicate<source, path_step>"
+        },
+        {
+          "name": "path",
+          "sort": "path"
+        },
+        {
+          "name": "path_step",
+          "sort": "predicate<path, path_step>"
+        },
+        {
+          "name": "pointer_load",
+          "sort": "predicate<source, path_step>"
+        },
+        {
+          "name": "qualified_step",
+          "sort": "predicate<source, path_step>"
+        },
+        {
+          "name": "source",
+          "sort": "source"
+        },
+        {
+          "name": "union_step",
+          "sort": "predicate<source, path_step>"
+        }
+      ],
+      "model_anchors": [
+        {
+          "path": "proof/QCore/TrackedSelfInit.lean",
+          "symbol": "sourceAdmits",
+          "line": 19
+        },
+        {
+          "path": "proof/QCore/TrackedSelfInit.lean",
+          "symbol": "admits",
+          "line": 69
+        }
+      ],
+      "source_binding": "open",
+      "correspondence": "conditional decomposition; source/model equivalence open"
+    },
+    {
+      "file": "providers/quirin-provider-cfl/contracts/cfl/intrusive_list.qv",
+      "declaration": "cfl_list_init",
+      "original": "nondefault_frame_calls_have_ordinary_contracts_without_out_stored_removed_or_other_custody_effects",
+      "formal_id": "r132",
+      "formula": "(#nondefault(#env) => forall (#nested_call: activation) { (#body_call(#source,#decl,#nested_call) => (#ordinary_contract(#env,#nested_call) && forall (#effect: effect) { (#call_effect(#env,#nested_call,#effect) => !(#custody_change(#effect))) })) })",
+      "parameters": [
+        {
+          "name": "call_effect",
+          "sort": "predicate<environment, activation, effect>"
+        },
+        {
+          "name": "custody_change",
+          "sort": "predicate<effect>"
+        },
+        {
+          "name": "decl",
+          "sort": "declaration"
+        },
+        {
+          "name": "env",
+          "sort": "environment"
+        },
+        {
+          "name": "nondefault",
+          "sort": "predicate<environment>"
+        },
+        {
+          "name": "ordinary_contract",
+          "sort": "predicate<environment, activation>"
+        },
+        {
+          "name": "source",
+          "sort": "source"
+        },
+        {
+          "name": "body_call",
+          "sort": "predicate<source, declaration, activation>"
+        }
+      ],
+      "model_anchors": [
+        {
+          "path": "proof/QCore/TrackedSelfInitDisjointFrame.lean",
+          "symbol": "sourceAdmits",
+          "line": 26
+        },
+        {
+          "path": "proof/QCore/TrackedSelfInitDisjointFrame.lean",
+          "symbol": "rootAccepted",
+          "line": 127
+        },
+        {
+          "path": "proof/QCore/TrackedSelfInitDisjointFrame.lean",
+          "symbol": "frameAccepted",
+          "line": 132
+        }
+      ],
+      "source_binding": "open",
+      "correspondence": "conditional decomposition; source/model equivalence open"
+    },
+    {
+      "file": "providers/quirin-provider-cfl/contracts/cfl/intrusive_list.qv",
+      "declaration": "cfl_list_init",
+      "original": "nondefault_frame_has_closed_typed_assignments_and_no_pointer_slot_addresses",
+      "formal_id": "r133",
+      "formula": "(#nondefault(#env) => forall (#op: operation) { (#body_op(#source,#decl,#op) => ((#assignment(#source,#op) => #typed_assignment(#source,#op)) && !(#slot_address(#source,#op)))) })",
+      "parameters": [
+        {
+          "name": "assignment",
+          "sort": "predicate<source, operation>"
+        },
+        {
+          "name": "body_op",
+          "sort": "predicate<source, declaration, operation>"
+        },
+        {
+          "name": "decl",
+          "sort": "declaration"
+        },
+        {
+          "name": "env",
+          "sort": "environment"
+        },
+        {
+          "name": "nondefault",
+          "sort": "predicate<environment>"
+        },
+        {
+          "name": "slot_address",
+          "sort": "predicate<source, operation>"
+        },
+        {
+          "name": "source",
+          "sort": "source"
+        },
+        {
+          "name": "typed_assignment",
+          "sort": "predicate<source, operation>"
+        }
+      ],
+      "model_anchors": [
+        {
+          "path": "proof/QCore/TrackedSelfInitDisjointFrame.lean",
+          "symbol": "sourceAdmits",
+          "line": 26
+        },
+        {
+          "path": "proof/QCore/TrackedSelfInitDisjointFrame.lean",
+          "symbol": "rootAccepted",
+          "line": 127
+        },
+        {
+          "path": "proof/QCore/TrackedSelfInitDisjointFrame.lean",
+          "symbol": "frameAccepted",
+          "line": 132
+        }
+      ],
+      "source_binding": "open",
+      "correspondence": "conditional decomposition; source/model equivalence open"
+    },
+    {
+      "file": "providers/quirin-provider-cfl/contracts/cfl/intrusive_list.qv",
+      "declaration": "cfl_list_init",
+      "original": "nondefault_frame_has_exact_live_nonnullable_precise_heap_owner_and_children",
+      "formal_id": "r134",
+      "formula": "(#nondefault(#env) => ((((#ledger(#env,#owner) == 1) && !(#nullable(#env,#owner))) && #precise_heap(#env,#owner)) && forall (#child: object) { (#linked_child(#env,#owner,#child) => (((!((#child == #owner)) && (#ledger(#env,#child) == 1)) && !(#nullable(#env,#child))) && #precise_heap(#env,#child))) }))",
+      "parameters": [
+        {
+          "name": "env",
+          "sort": "environment"
+        },
+        {
+          "name": "ledger",
+          "sort": "function<environment, object, integer>"
+        },
+        {
+          "name": "linked_child",
+          "sort": "predicate<environment, object, object>"
+        },
+        {
+          "name": "nondefault",
+          "sort": "predicate<environment>"
+        },
+        {
+          "name": "nullable",
+          "sort": "predicate<environment, object>"
+        },
+        {
+          "name": "owner",
+          "sort": "object"
+        },
+        {
+          "name": "precise_heap",
+          "sort": "predicate<environment, object>"
+        }
+      ],
+      "model_anchors": [
+        {
+          "path": "proof/QCore/TrackedSelfInitDisjointFrame.lean",
+          "symbol": "sourceAdmits",
+          "line": 26
+        },
+        {
+          "path": "proof/QCore/TrackedSelfInitDisjointFrame.lean",
+          "symbol": "rootAccepted",
+          "line": 127
+        },
+        {
+          "path": "proof/QCore/TrackedSelfInitDisjointFrame.lean",
+          "symbol": "frameAccepted",
+          "line": 132
+        }
+      ],
+      "source_binding": "open",
+      "correspondence": "conditional decomposition; source/model equivalence open"
+    },
+    {
+      "file": "providers/quirin-provider-cfl/contracts/cfl/intrusive_list.qv",
+      "declaration": "cfl_list_init",
+      "original": "nondefault_frame_has_no_caller_custody_out_slots_or_unrecognized_places",
+      "formal_id": "r135",
+      "formula": "(#nondefault(#env) => forall (#place: place) { (#existing_place(#env,#place) => ((!(#caller_custody(#env,#place)) && !(#out_slot(#env,#place))) && #recognized(#env,#place))) })",
+      "parameters": [
+        {
+          "name": "caller_custody",
+          "sort": "predicate<environment, place>"
+        },
+        {
+          "name": "env",
+          "sort": "environment"
+        },
+        {
+          "name": "nondefault",
+          "sort": "predicate<environment>"
+        },
+        {
+          "name": "out_slot",
+          "sort": "predicate<environment, place>"
+        },
+        {
+          "name": "recognized",
+          "sort": "predicate<environment, place>"
+        },
+        {
+          "name": "existing_place",
+          "sort": "predicate<environment, place>"
+        }
+      ],
+      "model_anchors": [
+        {
+          "path": "proof/QCore/TrackedSelfInitDisjointFrame.lean",
+          "symbol": "sourceAdmits",
+          "line": 26
+        },
+        {
+          "path": "proof/QCore/TrackedSelfInitDisjointFrame.lean",
+          "symbol": "rootAccepted",
+          "line": 127
+        },
+        {
+          "path": "proof/QCore/TrackedSelfInitDisjointFrame.lean",
+          "symbol": "frameAccepted",
+          "line": 132
+        }
+      ],
+      "source_binding": "open",
+      "correspondence": "conditional decomposition; source/model equivalence open"
+    },
+    {
+      "file": "providers/quirin-provider-cfl/contracts/cfl/intrusive_list.qv",
+      "declaration": "cfl_list_init",
+      "original": "nondefault_frame_has_only_actual_owner_field_links_and_subset_partial_links",
+      "formal_id": "r136",
+      "formula": "(#nondefault(#env) => (forall (#link: link) { (#field_link(#env,#link) => (#link_owner(#link) == #owner)) } && forall (#link: link) { (#partial_link(#env,#link) => #field_link(#env,#link)) }))",
+      "parameters": [
+        {
+          "name": "env",
+          "sort": "environment"
+        },
+        {
+          "name": "link_owner",
+          "sort": "function<link, object>"
+        },
+        {
+          "name": "nondefault",
+          "sort": "predicate<environment>"
+        },
+        {
+          "name": "owner",
+          "sort": "object"
+        },
+        {
+          "name": "partial_link",
+          "sort": "predicate<environment, link>"
+        },
+        {
+          "name": "field_link",
+          "sort": "predicate<environment, link>"
+        }
+      ],
+      "model_anchors": [
+        {
+          "path": "proof/QCore/TrackedSelfInitDisjointFrame.lean",
+          "symbol": "sourceAdmits",
+          "line": 26
+        },
+        {
+          "path": "proof/QCore/TrackedSelfInitDisjointFrame.lean",
+          "symbol": "rootAccepted",
+          "line": 127
+        },
+        {
+          "path": "proof/QCore/TrackedSelfInitDisjointFrame.lean",
+          "symbol": "frameAccepted",
+          "line": 132
+        }
+      ],
+      "source_binding": "open",
+      "correspondence": "conditional decomposition; source/model equivalence open"
+    },
+    {
+      "file": "providers/quirin-provider-cfl/contracts/cfl/intrusive_list.qv",
+      "declaration": "cfl_list_init",
+      "original": "nondefault_frame_owner_identity_aliases_are_known_and_source_type_compatible",
+      "formal_id": "r137",
+      "formula": "(#nondefault(#env) => forall (#alias: object) { (#target(#env,#alias,#owner) => (!(#unknown(#env,#alias)) && #type_compatible(#source,#alias,#owner))) })",
+      "parameters": [
+        {
+          "name": "env",
+          "sort": "environment"
+        },
+        {
+          "name": "nondefault",
+          "sort": "predicate<environment>"
+        },
+        {
+          "name": "owner",
+          "sort": "object"
+        },
+        {
+          "name": "source",
+          "sort": "source"
+        },
+        {
+          "name": "target",
+          "sort": "predicate<environment, object, object>"
+        },
+        {
+          "name": "type_compatible",
+          "sort": "predicate<source, object, object>"
+        },
+        {
+          "name": "unknown",
+          "sort": "predicate<environment, object>"
+        }
+      ],
+      "model_anchors": [
+        {
+          "path": "proof/QCore/TrackedSelfInitDisjointFrame.lean",
+          "symbol": "sourceAdmits",
+          "line": 26
+        },
+        {
+          "path": "proof/QCore/TrackedSelfInitDisjointFrame.lean",
+          "symbol": "rootAccepted",
+          "line": 127
+        },
+        {
+          "path": "proof/QCore/TrackedSelfInitDisjointFrame.lean",
+          "symbol": "frameAccepted",
+          "line": 132
+        }
+      ],
+      "source_binding": "open",
+      "correspondence": "conditional decomposition; source/model equivalence open"
+    },
+    {
+      "file": "providers/quirin-provider-cfl/contracts/cfl/intrusive_list.qv",
+      "declaration": "cfl_list_init",
+      "original": "nondefault_frame_slots_are_core_proved_disjoint_from_all_instantiated_writes",
+      "formal_id": "r138",
+      "formula": "(#nondefault(#env) => forall (#slot: interval) { (#protected_slot(#env,#slot) => ((#interval_start(#slot) < #interval_stop(#slot)) && forall (#write: interval) { (#instantiated_write(#source,#path,#write) => ((#interval_stop(#slot) <= #interval_start(#write)) || (#interval_stop(#write) <= #interval_start(#slot)))) })) })",
+      "parameters": [
+        {
+          "name": "env",
+          "sort": "environment"
+        },
+        {
+          "name": "instantiated_write",
+          "sort": "predicate<source, path, interval>"
+        },
+        {
+          "name": "interval_start",
+          "sort": "function<interval, integer>"
+        },
+        {
+          "name": "interval_stop",
+          "sort": "function<interval, integer>"
+        },
+        {
+          "name": "nondefault",
+          "sort": "predicate<environment>"
+        },
+        {
+          "name": "path",
+          "sort": "path"
+        },
+        {
+          "name": "protected_slot",
+          "sort": "predicate<environment, interval>"
+        },
+        {
+          "name": "source",
+          "sort": "source"
+        }
+      ],
+      "model_anchors": [
+        {
+          "path": "proof/QCore/TrackedSelfInitDisjointFrame.lean",
+          "symbol": "sourceAdmits",
+          "line": 26
+        },
+        {
+          "path": "proof/QCore/TrackedSelfInitDisjointFrame.lean",
+          "symbol": "rootAccepted",
+          "line": 127
+        },
+        {
+          "path": "proof/QCore/TrackedSelfInitDisjointFrame.lean",
+          "symbol": "frameAccepted",
+          "line": 132
+        }
+      ],
+      "source_binding": "open",
+      "correspondence": "conditional decomposition; source/model equivalence open"
+    },
+    {
+      "file": "providers/quirin-provider-cfl/contracts/cfl/hash_state.qv",
+      "declaration": "cfl_hash_64bits_digest",
+      "original": "pinned_default_secret_and_exact_xxh3_algorithm_identity",
+      "formal_id": "r162",
+      "formula": "(((#algorithm(#env,#state) == #xxh3_64) && (#secret(#env,#state) == #default_secret)) && (#implementation_sha == #pinned_implementation_sha))",
+      "parameters": [
+        {
+          "name": "algorithm",
+          "sort": "function<environment, object, algorithm>"
+        },
+        {
+          "name": "default_secret",
+          "sort": "secret"
+        },
+        {
+          "name": "env",
+          "sort": "environment"
+        },
+        {
+          "name": "implementation_sha",
+          "sort": "digest"
+        },
+        {
+          "name": "pinned_implementation_sha",
+          "sort": "digest"
+        },
+        {
+          "name": "secret",
+          "sort": "function<environment, object, secret>"
+        },
+        {
+          "name": "state",
+          "sort": "object"
+        },
+        {
+          "name": "xxh3_64",
+          "sort": "algorithm"
+        }
+      ],
+      "model_anchors": [
+        {
+          "path": "proof/QCore/CMetricsGetterOwnership.lean",
+          "symbol": "exact_short_hash_is_zero",
+          "line": 66
+        }
+      ],
+      "source_binding": "open",
+      "correspondence": "conditional decomposition; source/model equivalence open"
+    },
+    {
+      "file": "providers/quirin-provider-cfl/contracts/cfl/intrusive_list.qv",
+      "declaration": "cfl_list_init",
+      "original": "root_has_one_known_identity_and_is_nonnull",
+      "formal_id": "r166",
+      "formula": "(((!(#unknown(#env,#root)) && !((#root == #null))) && #points_to(#env,#root,#owner)) && forall (#target: object) { (#points_to(#env,#root,#target) => (#target == #owner)) })",
+      "parameters": [
+        {
+          "name": "env",
+          "sort": "environment"
+        },
+        {
+          "name": "null",
+          "sort": "object"
+        },
+        {
+          "name": "owner",
+          "sort": "object"
+        },
+        {
+          "name": "root",
+          "sort": "object"
+        },
+        {
+          "name": "unknown",
+          "sort": "predicate<environment, object>"
+        },
+        {
+          "name": "points_to",
+          "sort": "predicate<environment, object, object>"
+        }
+      ],
+      "model_anchors": [
+        {
+          "path": "proof/QCore/TrackedSelfInit.lean",
+          "symbol": "sourceAdmits",
+          "line": 19
+        },
+        {
+          "path": "proof/QCore/TrackedSelfInit.lean",
+          "symbol": "admits",
+          "line": 69
+        }
+      ],
+      "source_binding": "open",
+      "correspondence": "conditional decomposition; source/model equivalence open"
+    },
+    {
+      "file": "providers/quirin-provider-cfl/contracts/cfl/intrusive_list.qv",
+      "declaration": "cfl_list_init",
+      "original": "root_is_exactly_live_and_not_nullable",
+      "formal_id": "r167",
+      "formula": "((#ledger(#env,#owner) == 1) && !(#nullable(#env,#owner)))",
+      "parameters": [
+        {
+          "name": "env",
+          "sort": "environment"
+        },
+        {
+          "name": "ledger",
+          "sort": "function<environment, object, integer>"
+        },
+        {
+          "name": "nullable",
+          "sort": "predicate<environment, object>"
+        },
+        {
+          "name": "owner",
+          "sort": "object"
+        }
+      ],
+      "model_anchors": [
+        {
+          "path": "proof/QCore/TrackedSelfInit.lean",
+          "symbol": "sourceAdmits",
+          "line": 19
+        },
+        {
+          "path": "proof/QCore/TrackedSelfInit.lean",
+          "symbol": "admits",
+          "line": 69
+        }
+      ],
+      "source_binding": "open",
+      "correspondence": "conditional decomposition; source/model equivalence open"
+    },
+    {
+      "file": "providers/qcore-provider-chunkio/contracts/chunkio/import_composition.qv",
+      "declaration": "check_imported_chunk_program",
+      "original": "source_revision_matches_pinned_revision",
+      "formal_id": "r174",
+      "formula": "(#source_revision == #pinned_revision)",
+      "parameters": [
+        {
+          "name": "pinned_revision",
+          "sort": "revision"
+        },
+        {
+          "name": "source_revision",
+          "sort": "revision"
+        }
+      ],
+      "model_anchors": [],
+      "source_binding": "open",
+      "correspondence": "conditional decomposition; source/model equivalence open"
+    },
+    {
+      "file": "providers/quirin-provider-cfl/contracts/cfl/hash_state.qv",
+      "declaration": "cfl_hash_64bits_update",
+      "original": "state_is_live_and_successfully_initialized",
+      "formal_id": "r175",
+      "formula": "(#live(#env,#state) && exists (#reset: event) { ((#reset_event(#trace,#state,#reset) && (#result(#trace,#reset) == 0)) && #latest_reset(#trace,#call,#state,#reset)) })",
+      "parameters": [
+        {
+          "name": "call",
+          "sort": "activation"
+        },
+        {
+          "name": "env",
+          "sort": "environment"
+        },
+        {
+          "name": "latest_reset",
+          "sort": "predicate<trace, activation, object, event>"
+        },
+        {
+          "name": "live",
+          "sort": "predicate<environment, object>"
+        },
+        {
+          "name": "reset_event",
+          "sort": "predicate<trace, object, event>"
+        },
+        {
+          "name": "result",
+          "sort": "function<trace, event, integer>"
+        },
+        {
+          "name": "state",
+          "sort": "object"
+        },
+        {
+          "name": "trace",
+          "sort": "trace"
+        }
+      ],
+      "model_anchors": [],
+      "source_binding": "open",
+      "correspondence": "conditional decomposition; source/model equivalence open"
+    },
+    {
+      "file": "providers/quirin-provider-cfl/contracts/cfl/hash_state.qv",
+      "declaration": "cfl_hash_64bits_digest",
+      "original": "state_is_live_and_successfully_initialized",
+      "formal_id": "r175",
+      "formula": "(#live(#env,#state) && exists (#reset: event) { ((#reset_event(#trace,#state,#reset) && (#result(#trace,#reset) == 0)) && #latest_reset(#trace,#call,#state,#reset)) })",
+      "parameters": [
+        {
+          "name": "call",
+          "sort": "activation"
+        },
+        {
+          "name": "env",
+          "sort": "environment"
+        },
+        {
+          "name": "latest_reset",
+          "sort": "predicate<trace, activation, object, event>"
+        },
+        {
+          "name": "live",
+          "sort": "predicate<environment, object>"
+        },
+        {
+          "name": "reset_event",
+          "sort": "predicate<trace, object, event>"
+        },
+        {
+          "name": "result",
+          "sort": "function<trace, event, integer>"
+        },
+        {
+          "name": "state",
+          "sort": "object"
+        },
+        {
+          "name": "trace",
+          "sort": "trace"
+        }
+      ],
+      "model_anchors": [],
+      "source_binding": "open",
+      "correspondence": "conditional decomposition; source/model equivalence open"
+    },
+    {
+      "file": "providers/quirin-provider-cfl/contracts/cfl/hash_state.qv",
+      "declaration": "cfl_hash_64bits_reset",
+      "original": "state_points_to_writable_live_cfl_hash_state",
+      "formal_id": "r176",
+      "formula": "((!((#state == #null)) && #live(#env,#state)) && #writable(#env,#state,#hash_state_type))",
+      "parameters": [
+        {
+          "name": "env",
+          "sort": "environment"
+        },
+        {
+          "name": "hash_state_type",
+          "sort": "type"
+        },
+        {
+          "name": "live",
+          "sort": "predicate<environment, object>"
+        },
+        {
+          "name": "null",
+          "sort": "object"
+        },
+        {
+          "name": "state",
+          "sort": "object"
+        },
+        {
+          "name": "writable",
+          "sort": "predicate<environment, object, type>"
+        }
+      ],
+      "model_anchors": [],
+      "source_binding": "open",
+      "correspondence": "conditional decomposition; source/model equivalence open"
+    },
+    {
+      "file": "providers/qcore-provider-chunkio/contracts/chunkio/stream_destructor.qv",
+      "declaration": "cio_stream_destroy",
+      "original": "stream_is_live",
+      "formal_id": "r177",
+      "formula": "#live(#env,#stream)",
+      "parameters": [
+        {
+          "name": "env",
+          "sort": "environment"
+        },
+        {
+          "name": "live",
+          "sort": "predicate<environment, object>"
+        },
+        {
+          "name": "stream",
+          "sort": "object"
+        }
+      ],
+      "model_anchors": [
+        {
+          "path": "proof/QCore/ChunkLifecycle.lean",
+          "symbol": "Teardown",
+          "line": 160
+        }
+      ],
+      "source_binding": "open",
+      "correspondence": "conditional decomposition; source/model equivalence open"
+    },
+    {
+      "file": "providers/qcore-provider-chunkio/contracts/chunkio/stream_destructor.qv",
+      "declaration": "cio_stream_delete",
+      "original": "stream_is_live",
+      "formal_id": "r177",
+      "formula": "#live(#env,#stream)",
+      "parameters": [
+        {
+          "name": "env",
+          "sort": "environment"
+        },
+        {
+          "name": "live",
+          "sort": "predicate<environment, object>"
+        },
+        {
+          "name": "stream",
+          "sort": "object"
+        }
+      ],
+      "model_anchors": [
+        {
+          "path": "proof/QCore/ChunkLifecycle.lean",
+          "symbol": "Teardown",
+          "line": 160
+        }
+      ],
+      "source_binding": "open",
+      "correspondence": "conditional decomposition; source/model equivalence open"
+    },
+    {
+      "file": "providers/quirin-provider-cfl/contracts/cfl/intrusive_list.qv",
+      "declaration": "cfl_list_init",
+      "original": "unique_root_declaration_and_compatible_complete_layout",
+      "formal_id": "r187",
+      "formula": "(((#root_decl(#source,#root,#root_declaration) && forall (#other_decl: declaration) { (#root_decl(#source,#root,#other_decl) => (#root_declaration == #other_decl)) }) && #complete_layout(#source,#root_declaration,#layout)) && #layout_compatible(#env,#root,#layout))",
+      "parameters": [
+        {
+          "name": "complete_layout",
+          "sort": "predicate<source, declaration, layout>"
+        },
+        {
+          "name": "env",
+          "sort": "environment"
+        },
+        {
+          "name": "layout",
+          "sort": "layout"
+        },
+        {
+          "name": "layout_compatible",
+          "sort": "predicate<environment, object, layout>"
+        },
+        {
+          "name": "root",
+          "sort": "object"
+        },
+        {
+          "name": "root_decl",
+          "sort": "predicate<source, object, declaration>"
+        },
+        {
+          "name": "source",
+          "sort": "source"
+        },
+        {
+          "name": "root_declaration",
+          "sort": "declaration"
+        }
+      ],
+      "model_anchors": [
+        {
+          "path": "proof/QCore/TrackedSelfInit.lean",
+          "symbol": "sourceAdmits",
+          "line": 19
+        },
+        {
+          "path": "proof/QCore/TrackedSelfInit.lean",
+          "symbol": "admits",
+          "line": 69
+        }
+      ],
+      "source_binding": "open",
+      "correspondence": "conditional decomposition; source/model equivalence open"
+    },
+    {
+      "file": "providers/quirin-provider-cfl/contracts/cfl/intrusive_list.qv",
+      "declaration": "cfl_list_init",
+      "original": "unprotected_owner_rooted_member_facts_are_empty_or_same_owner",
+      "formal_id": "r190",
+      "formula": "forall (#fact: fact) { (((#member_fact(#env,#fact) && #owner_rooted(#env,#fact,#owner)) && !(#protected(#env,#fact))) => (!(#fact_unknown(#env,#fact)) && forall (#target: object) { (#fact_target(#env,#fact,#target) => (#target == #owner)) })) }",
+      "parameters": [
+        {
+          "name": "env",
+          "sort": "environment"
+        },
+        {
+          "name": "fact_target",
+          "sort": "predicate<environment, fact, object>"
+        },
+        {
+          "name": "fact_unknown",
+          "sort": "predicate<environment, fact>"
+        },
+        {
+          "name": "owner",
+          "sort": "object"
+        },
+        {
+          "name": "owner_rooted",
+          "sort": "predicate<environment, fact, object>"
+        },
+        {
+          "name": "protected",
+          "sort": "predicate<environment, fact>"
+        },
+        {
+          "name": "member_fact",
+          "sort": "predicate<environment, fact>"
+        }
+      ],
+      "model_anchors": [
+        {
+          "path": "proof/QCore/TrackedSelfInit.lean",
+          "symbol": "sourceAdmits",
+          "line": 19
+        },
+        {
+          "path": "proof/QCore/TrackedSelfInit.lean",
+          "symbol": "admits",
+          "line": 69
+        },
+        {
+          "path": "proof/QCore/TrackedSelfInitDisjointFrame.lean",
+          "symbol": "sourceAdmits",
+          "line": 26
+        },
+        {
+          "path": "proof/QCore/TrackedSelfInitDisjointFrame.lean",
+          "symbol": "rootAccepted",
+          "line": 127
+        },
+        {
+          "path": "proof/QCore/TrackedSelfInitDisjointFrame.lean",
+          "symbol": "frameAccepted",
+          "line": 132
+        }
+      ],
+      "source_binding": "open",
+      "correspondence": "conditional decomposition; source/model equivalence open"
+    },
+    {
+      "file": "providers/qcore-provider-chunkio/contracts/chunkio/context_destructor.qv",
+      "declaration": "cio_destroy",
+      "original": "wrapper_obligations_are_discharged",
+      "formal_id": "r192",
+      "formula": "forall (#obligation: obligation) { (#wrapper_obligation(#env,#context,#obligation) => #discharged(#env,#obligation)) }",
+      "parameters": [
+        {
+          "name": "context",
+          "sort": "object"
+        },
+        {
+          "name": "discharged",
+          "sort": "predicate<environment, obligation>"
+        },
+        {
+          "name": "env",
+          "sort": "environment"
+        },
+        {
+          "name": "wrapper_obligation",
+          "sort": "predicate<environment, object, obligation>"
+        }
+      ],
+      "model_anchors": [
+        {
+          "path": "proof/QCore/ChunkLifecycle.lean",
+          "symbol": "accepted_wrapper_teardown_has_no_outstanding_custody",
+          "line": 253
+        }
+      ],
+      "source_binding": "open",
+      "correspondence": "conditional decomposition; source/model equivalence open"
+    }
+  ],
+  "files": [
+    {
+      "file": "providers/quirin-provider-cfl/contracts/cfl/intrusive_list.qv",
+      "sha256": "e5e4f35f522ffdf5750da0799e1d74dbafba7a858b10cb4d0e9256cc1491514a"
+    },
+    {
+      "file": "providers/quirin-provider-cfl/contracts/cfl/arena_lifetime.qv",
+      "sha256": "3ad9467a22b7763451b9e8b6a24bd7d0aefdc74efcd146536bb51548ad91b7a3"
+    },
+    {
+      "file": "providers/qcore-provider-chunkio/contracts/chunkio/chunk_destructor.qv",
+      "sha256": "25c42a055b7d408faa4bb6a686103c812d221e988d71b489526e2f7f6ce96ddb"
+    },
+    {
+      "file": "providers/qcore-provider-chunkio/contracts/chunkio/context_destructor.qv",
+      "sha256": "357c056e719924027589bf821ba9d8aa77284a48c6fa9d136fc3162078cc9e1a"
+    },
+    {
+      "file": "providers/quirin-provider-cfl/contracts/cfl/hash_state.qv",
+      "sha256": "3f56a431229eda33cf5f0b59414663bdf339d4057a520460000b467a820fe21e"
+    },
+    {
+      "file": "providers/qcore-provider-chunkio/contracts/chunkio/import_composition.qv",
+      "sha256": "79b45fd8cd059f934caecd4237411ec23e9a55f53850b8f92c9e9e48a031951f"
+    },
+    {
+      "file": "providers/qcore-provider-chunkio/contracts/chunkio/stream_destructor.qv",
+      "sha256": "0be0f1a8a64ffd5733bfc5b09c4c2bcde7d824450f2915f4c76e10d0a3024e18"
+    }
+  ]
+}

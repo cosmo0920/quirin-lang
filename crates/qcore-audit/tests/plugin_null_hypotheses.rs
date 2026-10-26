@@ -19,6 +19,7 @@ fn actual() -> (qcore_audit::null_hypotheses::View, Graph, serde_json::Value) {
         atoms: BTreeMap::new(),
         premises: BTreeMap::new(),
         refinements: BTreeMap::new(),
+        requirements: Vec::new(),
     };
     hypothesis::append_legacy(
         &mut graph,

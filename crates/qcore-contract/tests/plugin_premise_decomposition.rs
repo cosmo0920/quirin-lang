@@ -23,7 +23,8 @@ fn erase_plugin_metadata(text: &str) -> String {
     text.lines()
         .filter(|line| {
             let line = line.trim();
-            !(line.starts_with("requires resource_hypothesis(plugin_")
+            !(line.starts_with("quant proposition #plugin_")
+                || line.starts_with("requires resource_hypothesis(plugin_")
                 || line.starts_with(
                     "requires resource_premise_decomposition(rk_plugin_callback_closure,",
                 )

@@ -336,6 +336,7 @@ pub fn evaluate_chunk_source_contract(
         .function_contract
         .as_ref()
         .ok_or("missing QCore contract")?;
+    crate::quant_condition::declaration(declaration)?;
     let mut requirements = BTreeSet::new();
     let mut postconditions = Vec::new();
     let mut variables = BTreeSet::new();
@@ -348,6 +349,37 @@ pub fn evaluate_chunk_source_contract(
                 };
                 if !requirements.insert(name.clone()) {
                     return Err(format!("duplicate precondition {name}"));
+                }
+            }
+            SourceContractClauseKind::QuantCondition(selector) => {
+                use qcore_schemas::quant_condition::Selector as C;
+                let condition = qcore_frontend::quant_condition::parse(
+                    selector.clone(),
+                    &clause.value.expression_source,
+                )?;
+                match selector {
+                    C::Entry => {
+                        let role = crate::boolean_condition_profile::entry_requirement(
+                            &condition,
+                            summary.result_kind == BooleanFieldResult::Unit,
+                        )?;
+                        if !requirements.insert(role.into()) {
+                            return Err("duplicate Boolean source entry role".into());
+                        }
+                    }
+                    C::Normal => {
+                        let predicate = Predicate::from_condition(
+                            &condition.proposition,
+                            &mut variables,
+                            summary.result_kind == BooleanFieldResult::Unit,
+                        )?;
+                        postconditions.push((clause.value.expression_source.clone(), predicate));
+                    }
+                    _ => {
+                        return Err(
+                            "Boolean source profile supports entry/normal conditions only".into(),
+                        );
+                    }
                 }
             }
             SourceContractClauseKind::Ensures(SourceContractExitSelector::Normal) => {
@@ -410,6 +442,14 @@ pub fn evaluate_chunk_source_contract(
         }) || summary.paths.iter().any(|path| path.return_value != 0))
     {
         return Err("void source contracts cannot observe a scalar result".into());
+    }
+    if variables.iter().any(|name| {
+        !matches!(
+            name.as_str(),
+            "field" | "old_field" | "busy" | "old_busy" | "lock" | "old_lock" | "result"
+        ) && !name.starts_with("field_")
+    }) {
+        return Err("unsupported Boolean source condition parameter".into());
     }
     let constrained = if summary.result_kind == BooleanFieldResult::Unit {
         vec!["field"]
@@ -497,11 +537,98 @@ enum Predicate {
     Subtract(Box<Self>, Box<Self>),
     Equal(Box<Self>, Box<Self>),
     NotEqual(Box<Self>, Box<Self>),
+    BoundParameters(Vec<String>, Box<Self>),
 }
 
 impl Predicate {
+    fn from_condition(
+        definition: &qcore_schemas::quant_proposition::Definition,
+        variables: &mut BTreeSet<String>,
+        unit: bool,
+    ) -> Result<Self, String> {
+        use qcore_schemas::quant_proposition::{Formula, Sort, Term};
+        if definition.parameters.iter().any(|p| {
+            p.sort
+                != (Sort::Value {
+                    name: "integer".into(),
+                })
+                || (!matches!(
+                    p.name.as_str(),
+                    "field" | "old_field" | "busy" | "old_busy" | "lock" | "old_lock" | "result"
+                ) && !p.name.starts_with("field_"))
+                || (unit
+                    && matches!(
+                        p.name.as_str(),
+                        "busy" | "old_busy" | "lock" | "old_lock" | "result"
+                    ))
+                || (!unit && matches!(p.name.as_str(), "field" | "old_field"))
+        }) {
+            return Err("unsupported Boolean source condition parameter or sort".into());
+        }
+        fn term(value: &Term, variables: &mut BTreeSet<String>) -> Result<Predicate, String> {
+            Ok(match value {
+                Term::Variable { name } => {
+                    variables.insert(name.clone());
+                    Predicate::Variable(name.clone())
+                }
+                Term::Integer { decimal } => Predicate::Integer(
+                    decimal
+                        .parse()
+                        .map_err(|_| "Boolean predicate integer is outside i64")?,
+                ),
+                Term::Add { left, right } => Predicate::Add(
+                    Box::new(term(left, variables)?),
+                    Box::new(term(right, variables)?),
+                ),
+                Term::Sub { left, right } => Predicate::Subtract(
+                    Box::new(term(left, variables)?),
+                    Box::new(term(right, variables)?),
+                ),
+                Term::Neg { term: body } => Predicate::Subtract(
+                    Box::new(Predicate::Integer(0)),
+                    Box::new(term(body, variables)?),
+                ),
+                _ => return Err("unsupported Boolean source integer term".into()),
+            })
+        }
+        let body = match &definition.formula {
+            Formula::Equal { left, right } => Self::Equal(
+                Box::new(term(left, variables)?),
+                Box::new(term(right, variables)?),
+            ),
+            Formula::Not { body } => match body.as_ref() {
+                Formula::Equal { left, right } => Self::NotEqual(
+                    Box::new(term(left, variables)?),
+                    Box::new(term(right, variables)?),
+                ),
+                _ => return Err("unsupported Boolean source negated assertion".into()),
+            },
+            _ => {
+                return Err("Boolean source exit assertion requires equality or inequality".into());
+            }
+        };
+        // Declaring an unused output cannot satisfy the existing must-constrain
+        // rule. Every declared input still needs an actual profile valuation.
+        Ok(Self::BoundParameters(
+            definition
+                .parameters
+                .iter()
+                .map(|p| p.name.clone())
+                .collect(),
+            Box::new(body),
+        ))
+    }
     fn evaluate(&self, values: &BTreeMap<&str, i64>) -> Result<i64, String> {
         Ok(match self {
+            Self::BoundParameters(parameters, body) => {
+                if parameters
+                    .iter()
+                    .any(|name| !values.contains_key(name.as_str()))
+                {
+                    return Err("missing Boolean source condition parameter valuation".into());
+                }
+                body.evaluate(values)?
+            }
             Self::Integer(value) => *value,
             Self::Variable(name) => *values.get(name.as_str()).ok_or("unknown ghost variable")?,
             Self::Add(left, right) => left

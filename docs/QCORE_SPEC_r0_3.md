@@ -1791,6 +1791,92 @@ A verifier scope selects provider configuration. It grants no ownership, access,
 
 Protocol v1 accepts no Safe proposal, including an empty or perfectly matching Boolean claim set. Unchecked Unsafe allegations become Unknown. W2 profile loading and bounded W3 evidence-v2/dispatch are now implemented and recorded in repository evidence, beyond the reviewed archive. V2 observation replay requires declared `observations_trusted = true` and observed-run bounds; explicit false is never overwritten. No first-party source safety is promoted.
 
+### L19.1. Formal contract hypotheses and quant effects (required extension)
+
+**User requirement, 2026-10-26; Proposed evidence level (L02).** Contract
+hypotheses across all providers MUST support decomposed mathematical
+representation. Extending the `quant` family for this purpose is a revision-0.3
+language change and MUST be specified together with its contract interpretation
+and exact consumer grammar. The requirements below do not claim that the
+current parser or provider corpus already implements the extension.
+
+**Additional user decision, 2026-10-26.** Introduce `quant condition` with
+explicit `entry`, `normal`, `error(E)` and `any` selectors (G01c). Conditions
+are mathematical assertions at the selected position. Entry assertions are
+caller obligations; exit assertions must hold on every applicable terminating
+exit. An exit assertion supplies no entry fact and proves no termination.
+Sentence-shaped postconditions must be decomposed by meaning: pure assertions
+use conditions, state transitions and frames use effects, and conditional proof
+applications retain their theorem prerequisites. Epistemic statements such as
+"failure establishes no initialized-state guarantee" must not be turned into
+assertions that the state is uninitialized. Explanatory possibility statements
+belong in commentary or separately scoped witness claims.
+
+The extension distinguishes three judgments:
+
+* A **proposition** denotes a typed predicate `P(s, x)` over an explicit state
+  and typed arguments. Quantifiers, domains, equality, membership, conjunction,
+  disjunction, implication and negation MUST retain their mathematical meaning.
+  A sentence-shaped identifier or an opaque string is not a decomposition.
+* A **theorem application** instantiates a registered audited theorem
+  `∀ x, H₁(x) → … → Hₙ(x) → C(x)`. Its obligations include every `Hᵢ(t)`
+  after capture-avoiding, type-correct substitution of `t` for `x`. A theorem
+  name, provider declaration or hash alone MUST NOT establish those premises.
+* An **effect** denotes a typed relation `R(s, s′, x)` between identified entry
+  and exit states. It MUST identify the applicable exit/guard, changed footprint
+  and preserved frame. A state predicate is a prerequisite of an effect; it
+  MUST NOT be treated as an assertion that the effect occurred.
+
+The first implemented source increment is `quant proposition` with explicit
+value/relation/function parameters, mathematical integer terms and first-order
+formulas (G01p). It is a typed
+hypothesis representation; its relation interpretations and actual source
+binding remain obligations. Typed theorem application and effect clauses are implemented as bounded
+model representations (G01t/G01e); trusted proof verification and C effect
+interpretation remain Proposed. Mathematical semantics are in `QCore.QuantProposition`; the matching
+libc and CMetrics models supply conditional decomposition theorems, not C
+extraction. Standalone model prerequisites are retained explicitly and refused
+by interpreted C-summary loaders until their source valuation is supported.
+
+The intended contextual forms are `quant proposition`, `quant theorem` and
+`quant effect`; their exact bounded syntax and consumers MUST be registered in
+[implemented grammars](QCORE_IMPLEMENTED_GRAMMARS_r0_3.md) when implemented.
+These forms do not redefine the existing `quant live`, `quant deref`,
+`quant checks`, condition binding or outer-contract forms. Unsupported syntax
+MUST be rejected by its selected consumer rather than erased or trusted.
+
+Formalization MUST expose model primitives and their parameters, source and
+build identities, environmental assumptions and source-to-model correspondence
+obligations. A model theorem proves its conditional conclusion only. Unproved
+source facts remain open obligations and cannot create a Safe verdict. Missing
+facts do not prove negation; a bounded observation does not prove a universal
+quantifier. Existing evidence, trust and verdict rules in L20 remain mandatory.
+
+For plugin instantiation, a `quant theorem` application MUST identify the exact
+plugin, descriptor/interface, selected configuration and callback bindings.
+Input, output, filter, processor and custom interfaces require their own stated
+role obligations. Instantiation MUST retain ABI, lifecycle ordering, custody,
+permitted effects and environmental prerequisites; registration alone proves
+none of them. A custom interface requires an explicit contract rather than
+inheriting obligations from an unrelated built-in role.
+
+Atomic `quant effect` declarations MUST distinguish the selected backend,
+operation event, returned value, own read/write footprint and memory order.
+Compare-exchange success and failure are separate cases. Mutex-backed failures,
+initialization failure and platform-specific behavior MUST remain represented.
+An operation's own frame is not a claim that concurrent actors leave memory
+unchanged over the whole call. Atomicity alone establishes no synchronization.
+The structural interfaces retain these obligations. Their trusted production
+consumers remain Proposed; instantiation produces obligations with open model
+proof and source bindings.
+
+The all-provider migration MUST account for every previous hypothesis,
+including outer assumptions, and preserve its guards, alternatives, quantifier
+scope and effect ordering. Each replacement requires an explicit correspondence
+or a retained open correspondence obligation. Migration completeness is separate
+from proof completeness. The companion contract specification, C03.1, defines
+these requirements at the contract boundary.
+
 ## L20. Verdicts and claim boundaries
 
 Every verification claim MUST identify

@@ -14,6 +14,7 @@ import QCore.AuditComposition
 import QCore.BitfieldSourceConcurrency
 import QCore.Bitwise
 import QCore.BodyClauseStanding
+import QCore.BooleanConditionProfile
 import QCore.BooleanFieldUnit
 import QCore.BorrowLiveness
 import QCore.BorrowedActual
@@ -50,6 +51,7 @@ import QCore.CastRepresentation
 import QCore.CastReturnEscape
 import QCore.CastSemantics
 import QCore.CertificateScope
+import QCore.CflAtomicEffects
 import QCore.ChainedAccess
 import QCore.ChainedTailActual
 import QCore.CheckedSelfInitCall
@@ -66,6 +68,10 @@ import QCore.CleanupTaskComposition
 import QCore.CleanupVocabulary
 import QCore.Closures
 import QCore.CmetricsApiContracts
+import QCore.CmetricsHypotheses
+import QCore.CmetricsMetricConditions
+import QCore.CmetricsOptsConditions
+import QCore.CmetricsScalarWrapperConditions
 import QCore.Compiler
 import QCore.ComposeEventLines
 import QCore.ComposedStdIo
@@ -279,8 +285,12 @@ import QCore.ProviderSelection
 import QCore.PublicationCustody
 import QCore.QrlibLinkage
 import QCore.Quant
+import QCore.QuantCondition
+import QCore.QuantEffect
 import QCore.QuantIndexBinding
+import QCore.QuantProposition
 import QCore.QuantRegionSource
+import QCore.QuantTheorem
 import QCore.RawDirectiveLexing
 import QCore.ReachGatePosition
 import QCore.ReadLoan

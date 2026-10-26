@@ -111,6 +111,13 @@ impl BooleanFieldSourceTask {
             assumptions.remove("lock_is_boolean");
             assumptions.insert("field_is_boolean".into(), true);
         }
+        assumptions.extend(
+            qcore_contract::boolean_condition_profile::entry_assumptions(
+                contract_source,
+                summary.function.as_str(),
+                summary.result_kind == BooleanFieldResult::Unit,
+            )?,
+        );
         let bounds = TaskBounds {
             path_exploration: PathBounds::BoundedPaths {
                 paths: if summary.result_kind == BooleanFieldResult::Unit {

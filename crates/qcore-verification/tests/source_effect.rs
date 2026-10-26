@@ -44,7 +44,7 @@ fn real_c_prestates_and_contract_are_recomputed() {
             .unwrap(),
         replay.task().coverage_for(replay.capability())
     );
-    let false_contract = CONTRACT.replace("result == old_lock", "result == 7");
+    let false_contract = CONTRACT.replace("#result == #old_lock", "#result == 7");
     let rejected = task(&summary, &false_contract);
     assert!(
         rejected

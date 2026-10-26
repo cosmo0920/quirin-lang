@@ -21,26 +21,29 @@ fn canonical_initializer_model_records_effects_without_granting_a_call_summary()
         .find(|d| d.value.name == "cfl_list_init")
         .unwrap();
     let clauses = &init.value.function_contract.as_ref().unwrap().clauses;
-    let requires = clauses
-        .iter()
-        .filter(|c| c.value.kind == SourceContractClauseKind::Requires)
-        .map(|c| c.value.expression_source.as_str())
-        .collect::<Vec<_>>();
-    assert_eq!(requires.len(), 18);
-    assert!(requires.contains(&"root_is_exactly_live_and_not_nullable"));
-    for guard in [
-        "custody_is_default_or_a_source_checked_disjoint_child_slot_frame",
-        "unprotected_owner_rooted_member_facts_are_empty_or_same_owner",
-        "nondefault_frame_has_exact_live_nonnullable_precise_heap_owner_and_children",
-        "nondefault_frame_has_only_actual_owner_field_links_and_subset_partial_links",
-        "nondefault_frame_has_no_caller_custody_out_slots_or_unrecognized_places",
-        "nondefault_frame_has_closed_typed_assignments_and_no_pointer_slot_addresses",
-        "nondefault_frame_calls_have_ordinary_contracts_without_out_stored_removed_or_other_custody_effects",
-        "nondefault_frame_slots_are_core_proved_disjoint_from_all_instantiated_writes",
-        "nondefault_frame_owner_identity_aliases_are_known_and_source_type_compatible",
-    ] {
-        assert!(requires.contains(&guard), "{guard}");
+    let mut formal = std::collections::BTreeMap::new();
+    for clause in clauses {
+        assert_ne!(clause.value.kind, SourceContractClauseKind::Requires);
+        if clause.value.kind
+            == SourceContractClauseKind::QuantCondition(
+                qcore_schemas::quant_condition::Selector::Entry,
+            )
+        {
+            let definition =
+                qcore_frontend::quant_proposition::parse(&clause.value.expression_source).unwrap();
+            assert!(formal.insert(definition.id.clone(), definition).is_none());
+        }
     }
+    assert_eq!(formal.len(), 18);
+    // Quantified field/layout/identity guards remain independent obligations.
+    for id in [
+        "r055", "r084", "r001", "r089", "r130", "r187", "r166", "r167", "r072", "r190", "r134",
+        "r136", "r135", "r133", "r132", "r138", "r137", "r112",
+    ] {
+        assert!(formal.contains_key(id), "{id}");
+    }
+    let graph = qcore_contract::hypothesis::declaration(&init.value, &[]).unwrap();
+    assert_eq!(graph.requirements.len(), 18);
     let effects = clauses
         .iter()
         .filter(|c| matches!(c.value.kind, SourceContractClauseKind::Ensures(_)))

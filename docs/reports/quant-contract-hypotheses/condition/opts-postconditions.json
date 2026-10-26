@@ -1,0 +1,9 @@
+{
+  "file": "providers/qcore-provider-cmetrics/contracts/cmetrics/opts_lifetime.qv",
+  "before_revision": "6ecb5498d",
+  "before_sha256": "74cca7e45c90456a8590e4644b5889036ec7c3f0605aa9f52719ce33d0103955",
+  "after_sha256": "aa36db7f02c0b39ad1ec9205f1e32cd1c1747640238e04cd6a3e692d41973d11",
+  "original": "ensures normal result_is_zero_or_minus_one;",
+  "replacement": "quant condition normal #result_domain(#result: integer) = ((#result == 0) || (#result == -1));",
+  "source_binding": "open"
+}

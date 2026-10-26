@@ -35,10 +35,10 @@
       "inherits": [],
       "premise_bindings": [],
       "premises": {},
-      "sha256": "0ac6d629272eea0c892f7b53527e051af73f3452b98f082f24e6ae0719a3d37c"
+      "sha256": "68ddff8762494737f99a1d99ef9078211490e9f72047b2b5096fb0b2ba324194"
     },
     "cmetrics/map_lifetime.qv": {
-      "clause_count": 71,
+      "clause_count": 79,
       "declaration_count": 6,
       "declarations": [
         {
@@ -50,7 +50,7 @@
           "name": "cmt_map_metric_get"
         },
         {
-          "clauses": 9,
+          "clauses": 17,
           "name": "cmt_map_metric_get_val"
         },
         {
@@ -69,53 +69,53 @@
       "inherits": [],
       "premise_bindings": [],
       "premises": {},
-      "sha256": "b18c967e0be125a17c37b307dd5d926bd82673fc3e06116f7f9f059a58131186"
+      "sha256": "d6554e97c353ad16154d972ee0ec637b3a227678013517e342ba6ba6c02be4d9"
     },
     "cmetrics/metric_setters.qv": {
-      "clause_count": 52,
+      "clause_count": 44,
       "declaration_count": 9,
       "declarations": [
         {
-          "clauses": 8,
+          "clauses": 6,
           "name": "cmt_metric_set"
         },
         {
-          "clauses": 4,
+          "clauses": 5,
           "name": "cmt_metric_set_exp_hist_count"
         },
         {
-          "clauses": 6,
+          "clauses": 5,
           "name": "cmt_metric_set_exp_hist_sum"
         },
         {
-          "clauses": 5,
+          "clauses": 4,
           "name": "cmt_metric_hist_count_set"
         },
         {
-          "clauses": 5,
+          "clauses": 4,
           "name": "cmt_metric_hist_sum_set"
         },
         {
-          "clauses": 7,
+          "clauses": 6,
           "name": "cmt_metric_hist_set"
         },
         {
-          "clauses": 7,
+          "clauses": 6,
           "name": "cmt_summary_quantile_set"
         },
         {
-          "clauses": 5,
+          "clauses": 4,
           "name": "cmt_summary_sum_set"
         },
         {
-          "clauses": 5,
+          "clauses": 4,
           "name": "cmt_summary_count_set"
         }
       ],
       "inherits": [],
       "premise_bindings": [],
       "premises": {},
-      "sha256": "1cbd66b5d9599148fbfa3278343ae2736329a58cf7b6d19e78d7c6d8e959af7e"
+      "sha256": "43e5067e5c3134bf6921359c2cb4b64a36d282d5b7c92e9725e04bb77503043a"
     },
     "cmetrics/metric_values.qv": {
       "clause_count": 85,
@@ -260,7 +260,7 @@
       "sha256": "4041672b8470b5553f70099da2f23fa2490cac2a7eba5801e847dccea861faf3"
     },
     "cmetrics/opts_lifetime.qv": {
-      "clause_count": 25,
+      "clause_count": 28,
       "declaration_count": 2,
       "declarations": [
         {
@@ -268,48 +268,48 @@
           "name": "cmt_opts_init"
         },
         {
-          "clauses": 10,
+          "clauses": 13,
           "name": "cmt_opts_exit"
         }
       ],
       "inherits": [],
       "premise_bindings": [],
       "premises": {},
-      "sha256": "4b9ad1d7bf2bc8f06e2749b0e6ab4407ddd000fbc7bafed9c93d5dbd24ce1852"
+      "sha256": "5b3106651397e95ec5fdd5dbaf6f44a63993e11dcb0f2af6bcedacb54b636950"
     },
     "cmetrics/typed_setters.qv": {
-      "clause_count": 85,
+      "clause_count": 139,
       "declaration_count": 6,
       "declarations": [
         {
-          "clauses": 13,
+          "clauses": 23,
           "name": "cmt_counter_set"
         },
         {
-          "clauses": 11,
+          "clauses": 21,
           "name": "cmt_gauge_set"
         },
         {
-          "clauses": 11,
+          "clauses": 21,
           "name": "cmt_untyped_set"
         },
         {
-          "clauses": 15,
+          "clauses": 23,
           "name": "cmt_histogram_set_default"
         },
         {
-          "clauses": 15,
+          "clauses": 23,
           "name": "cmt_summary_set_default"
         },
         {
-          "clauses": 20,
+          "clauses": 28,
           "name": "cmt_exp_histogram_set_default"
         }
       ],
       "inherits": [],
       "premise_bindings": [],
       "premises": {},
-      "sha256": "dd8e873ac560cd67855d8582609b2242be7c86913d7977e6686a63a680206327"
+      "sha256": "16dae066f7b667098ceceafba2e11a4d1f06701a9eb41de5f2cd53c450afa2d2"
     }
   },
   "outer_view": [],

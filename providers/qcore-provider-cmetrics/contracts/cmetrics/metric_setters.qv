@@ -1,5 +1,11 @@
 module contract;
 
+// QUANT-CONTRACT-HYPOTHESES: each explicit entry condition is an obligation
+// under the explicitly bound model environment and relation/function meanings.
+// Mathematical integers have no C wraparound; C ranges are stated separately.
+// The migration map records primitive meanings and open C/model correspondence.
+// These declared models install no interpreted resource/bounds/outer permission.
+
 // Complete-call exclusion covers the typed owner (if any), selected metric
 // and storage used by the call: conflicting writers/raw readers, replacement,
 // expiration and destruction. Internal locks do not supply this caller guard.
@@ -16,88 +22,613 @@ module contract;
 
 extern fn cmt_metric_set(metric: ptr<mut, u8>, timestamp: u64, val: f64) -> unit
 contract {
-    requires metric_is_nonnull_live_writable_with_valid_atomic_field_layout;
-    requires caller_excludes_retirement_and_conflicting_metric_users_for_the_complete_call;
-    requires val_has_defined_C_double_to_int64_and_uint64_conversions;
-    ensures normal delegates_to_cmt_metric_set_double;
-    ensures normal scalar_value_mirrors_timestamp_and_double_type_tag_are_stored;
-    ensures normal no_whole_record_atomic_snapshot_is_promised;
-    ensures normal metric_and_nested_storage_ownership_are_preserved;
-    ensures normal no_pointer_or_ownership_escapes;
+    quant condition entry #metric_storage(
+        #atomic_backend: predicate<environment, object>,
+        #atomic_cell: predicate<environment, object, object>,
+        #env: environment,
+        #live: predicate<environment, object>,
+        #metric: object,
+        #metric_type: scalar_type,
+        #null: object,
+        #u64: scalar_type,
+        #writable: predicate<environment, object, scalar_type>
+    ) =
+        (((!((#metric == #null)) && #live(#env,#metric)) && #writable(#env,#metric,#metric_type)) && forall (#cell: object) { (#atomic_cell(#env,#metric,#cell) => (#writable(#env,#cell,#u64) && #atomic_backend(#env,#cell))) });
+    quant condition entry #caller_exclusion(
+        #affected: predicate<trace, activation, object>,
+        #call: activation,
+        #conflicts: predicate<trace, activation, event, object>,
+        #trace: trace
+    ) =
+        forall (#target: object) { (#affected(#trace,#call,#target) => forall (#event: event) { !(#conflicts(#trace,#call,#event,#target)) }) };
+    quant condition entry #scalar_conversions(
+        #finite: predicate<floating>,
+        #trunc: function<floating, integer>,
+        #val: floating
+    ) =
+        (#finite(#val) && (((-9223372036854775808 <= #trunc(#val)) && (#trunc(#val) <= 9223372036854775807)) && ((0 <= #trunc(#val)) && (#trunc(#val) <= 18446744073709551615))));
+
+    quant condition normal #delegate(
+        #call: activation,
+        #event_of: predicate<trace,activation,event>,
+        #invoke: predicate<trace,event,declaration>,
+        #set_double: declaration,
+        #trace: trace
+    ) =
+        exists (#e: event) { (#event_of(#trace,#call,#e) && #invoke(#trace,#e,#set_double)) };
+    quant condition normal #scalar_stores(
+        #call: activation,
+        #double_bits: function<floating,integer>,
+        #double_tag: integer,
+        #event_of: predicate<trace,activation,event>,
+        #int64_field: field,
+        #metric: object,
+        #position: function<trace,event,integer>,
+        #store: predicate<trace,event,object,field,integer,integer>,
+        #timestamp: integer,
+        #timestamp_field: field,
+        #trace: trace,
+        #trunc: function<floating,integer>,
+        #type_field: field,
+        #uint64_field: field,
+        #val: floating,
+        #val_field: field
+    ) =
+        exists (#e0: event) { exists (#e1: event) { exists (#e2: event) { exists (#e3: event) { exists (#e4:
+        event) { (((((((((#event_of(#trace,#call,#e0) &&
+        #store(#trace,#e0,#metric,#val_field,0,#double_bits(#val))) && (#event_of(#trace,#call,#e1) &&
+        #store(#trace,#e1,#metric,#int64_field,0,#trunc(#val)))) && (#event_of(#trace,#call,#e2) &&
+        #store(#trace,#e2,#metric,#uint64_field,0,#trunc(#val)))) && (#event_of(#trace,#call,#e3) &&
+        #store(#trace,#e3,#metric,#timestamp_field,0,#timestamp))) && (#event_of(#trace,#call,#e4) &&
+        #store(#trace,#e4,#metric,#type_field,0,#double_tag))) && #position(#trace,#e0) < #position(#trace,#e1))
+        && #position(#trace,#e1) < #position(#trace,#e2)) && #position(#trace,#e2) < #position(#trace,#e3)) &&
+        #position(#trace,#e3) < #position(#trace,#e4)) } } } } };
+    quant condition normal #custody_frame(
+        #before: state,
+        #call: activation,
+        #escape: predicate<trace,event,object>,
+        #event_of: predicate<trace,activation,event>,
+        #metric: object,
+        #nested: predicate<state,object,object>,
+        #release: predicate<trace,event,object>,
+        #trace: trace,
+        #transfer: predicate<trace,event,object>
+    ) =
+        forall (#o: object) { (((#o == #metric) || #nested(#before,#metric,#o)) => forall (#e: event) {
+        (#event_of(#trace,#call,#e) => ((!#release(#trace,#e,#o)) && ((!#transfer(#trace,#e,#o)) &&
+        (!#escape(#trace,#e,#o))))) }) };
+    // Separate atomic steps establish no joint snapshot or CAS-loop termination guarantee.
+
 };
 
 extern fn cmt_metric_set_exp_hist_count(metric: ptr<mut, u8>, count: u64) -> unit
 contract {
-    requires metric_is_nonnull_live_writable_with_valid_atomic_field_layout;
-    requires caller_excludes_retirement_and_conflicting_metric_users_for_the_complete_call;
-    ensures normal exp_hist_count_is_stored_without_updating_timestamp;
-    ensures normal metric_and_nested_storage_ownership_are_preserved;
+    quant condition entry #metric_storage(
+        #atomic_backend: predicate<environment, object>,
+        #atomic_cell: predicate<environment, object, object>,
+        #env: environment,
+        #live: predicate<environment, object>,
+        #metric: object,
+        #metric_type: scalar_type,
+        #null: object,
+        #u64: scalar_type,
+        #writable: predicate<environment, object, scalar_type>
+    ) =
+        (((!((#metric == #null)) && #live(#env,#metric)) && #writable(#env,#metric,#metric_type)) && forall (#cell: object) { (#atomic_cell(#env,#metric,#cell) => (#writable(#env,#cell,#u64) && #atomic_backend(#env,#cell))) });
+    quant condition entry #caller_exclusion(
+        #affected: predicate<trace, activation, object>,
+        #call: activation,
+        #conflicts: predicate<trace, activation, event, object>,
+        #trace: trace
+    ) =
+        forall (#target: object) { (#affected(#trace,#call,#target) => forall (#event: event) { !(#conflicts(#trace,#call,#event,#target)) }) };
+
+    quant condition normal #count_store(
+        #call: activation,
+        #count: integer,
+        #event_of: predicate<trace,activation,event>,
+        #exp_count_field: field,
+        #metric: object,
+        #store: predicate<trace,event,object,field,integer,integer>,
+        #trace: trace
+    ) =
+        exists (#e0: event) { (#event_of(#trace,#call,#e0) &&
+        #store(#trace,#e0,#metric,#exp_count_field,0,#count)) };
+    quant condition normal #timestamp_frame(
+        #call: activation,
+        #event_of: predicate<trace,activation,event>,
+        #metric: object,
+        #store: predicate<trace,event,object,field,integer,integer>,
+        #timestamp_field: field,
+        #trace: trace
+    ) =
+        forall (#e: event) { forall (#index: integer) { forall (#value: integer) { (#event_of(#trace,#call,#e)
+        => !#store(#trace,#e,#metric,#timestamp_field,#index,#value)) } } };
+    quant condition normal #custody_frame(
+        #before: state,
+        #call: activation,
+        #escape: predicate<trace,event,object>,
+        #event_of: predicate<trace,activation,event>,
+        #metric: object,
+        #nested: predicate<state,object,object>,
+        #release: predicate<trace,event,object>,
+        #trace: trace,
+        #transfer: predicate<trace,event,object>
+    ) =
+        forall (#o: object) { (((#o == #metric) || #nested(#before,#metric,#o)) => forall (#e: event) {
+        (#event_of(#trace,#call,#e) => ((!#release(#trace,#e,#o)) && ((!#transfer(#trace,#e,#o)) &&
+        (!#escape(#trace,#e,#o))))) }) };
+    // Separate atomic steps establish no joint snapshot or CAS-loop termination guarantee.
+
 };
 
 extern fn cmt_metric_set_exp_hist_sum(metric: ptr<mut, u8>, sum_set: i32, sum: f64) -> unit
 contract {
-    requires metric_is_nonnull_live_writable_with_valid_atomic_field_layout;
-    requires caller_excludes_retirement_and_conflicting_metric_users_for_the_complete_call;
-    ensures normal exp_hist_sum_set_is_normalized_to_zero_or_one;
-    ensures normal enabled_sum_is_stored_as_double_bits_else_sum_bits_are_zero;
-    ensures normal timestamp_is_not_updated_and_pair_is_not_a_single_atomic_store;
-    ensures normal metric_and_nested_storage_ownership_are_preserved;
+    quant condition entry #metric_storage(
+        #atomic_backend: predicate<environment, object>,
+        #atomic_cell: predicate<environment, object, object>,
+        #env: environment,
+        #live: predicate<environment, object>,
+        #metric: object,
+        #metric_type: scalar_type,
+        #null: object,
+        #u64: scalar_type,
+        #writable: predicate<environment, object, scalar_type>
+    ) =
+        (((!((#metric == #null)) && #live(#env,#metric)) && #writable(#env,#metric,#metric_type)) && forall (#cell: object) { (#atomic_cell(#env,#metric,#cell) => (#writable(#env,#cell,#u64) && #atomic_backend(#env,#cell))) });
+    quant condition entry #caller_exclusion(
+        #affected: predicate<trace, activation, object>,
+        #call: activation,
+        #conflicts: predicate<trace, activation, event, object>,
+        #trace: trace
+    ) =
+        forall (#target: object) { (#affected(#trace,#call,#target) => forall (#event: event) { !(#conflicts(#trace,#call,#event,#target)) }) };
+
+    quant condition normal #normalized_sum(
+        #call: activation,
+        #double_bits: function<floating,integer>,
+        #event_of: predicate<trace,activation,event>,
+        #exp_flag_field: field,
+        #exp_sum_field: field,
+        #metric: object,
+        #position: function<trace,event,integer>,
+        #store: predicate<trace,event,object,field,integer,integer>,
+        #sum: floating,
+        #sum_set: integer,
+        #trace: trace
+    ) =
+        (((#sum_set == 0) => exists (#e0: event) { exists (#e1: event) { (((#event_of(#trace,#call,#e0) &&
+        #store(#trace,#e0,#metric,#exp_flag_field,0,0)) && (#event_of(#trace,#call,#e1) &&
+        #store(#trace,#e1,#metric,#exp_sum_field,0,0))) && #position(#trace,#e0) < #position(#trace,#e1)) } })
+        && ((!(#sum_set == 0)) => exists (#e0: event) { exists (#e1: event) { (((#event_of(#trace,#call,#e0) &&
+        #store(#trace,#e0,#metric,#exp_flag_field,0,1)) && (#event_of(#trace,#call,#e1) &&
+        #store(#trace,#e1,#metric,#exp_sum_field,0,#double_bits(#sum)))) && #position(#trace,#e0) <
+        #position(#trace,#e1)) } }));
+    quant condition normal #timestamp_frame(
+        #call: activation,
+        #event_of: predicate<trace,activation,event>,
+        #metric: object,
+        #store: predicate<trace,event,object,field,integer,integer>,
+        #timestamp_field: field,
+        #trace: trace
+    ) =
+        forall (#e: event) { forall (#index: integer) { forall (#value: integer) { (#event_of(#trace,#call,#e)
+        => !#store(#trace,#e,#metric,#timestamp_field,#index,#value)) } } };
+    quant condition normal #custody_frame(
+        #before: state,
+        #call: activation,
+        #escape: predicate<trace,event,object>,
+        #event_of: predicate<trace,activation,event>,
+        #metric: object,
+        #nested: predicate<state,object,object>,
+        #release: predicate<trace,event,object>,
+        #trace: trace,
+        #transfer: predicate<trace,event,object>
+    ) =
+        forall (#o: object) { (((#o == #metric) || #nested(#before,#metric,#o)) => forall (#e: event) {
+        (#event_of(#trace,#call,#e) => ((!#release(#trace,#e,#o)) && ((!#transfer(#trace,#e,#o)) &&
+        (!#escape(#trace,#e,#o))))) }) };
+    // Separate atomic steps establish no joint snapshot or CAS-loop termination guarantee.
+
 };
 
 extern fn cmt_metric_hist_count_set(metric: ptr<mut, u8>, timestamp: u64, count: u64) -> unit
 contract {
-    requires metric_is_nonnull_live_writable_with_valid_atomic_field_layout;
-    requires caller_excludes_retirement_and_conflicting_metric_users_for_the_complete_call;
-    ensures normal successful_CAS_stores_hist_count_then_timestamp;
-    ensures normal no_joint_atomicity_or_wait_free_progress_is_promised;
-    ensures normal metric_and_nested_storage_ownership_are_preserved;
+    quant condition entry #metric_storage(
+        #atomic_backend: predicate<environment, object>,
+        #atomic_cell: predicate<environment, object, object>,
+        #env: environment,
+        #live: predicate<environment, object>,
+        #metric: object,
+        #metric_type: scalar_type,
+        #null: object,
+        #u64: scalar_type,
+        #writable: predicate<environment, object, scalar_type>
+    ) =
+        (((!((#metric == #null)) && #live(#env,#metric)) && #writable(#env,#metric,#metric_type)) && forall (#cell: object) { (#atomic_cell(#env,#metric,#cell) => (#writable(#env,#cell,#u64) && #atomic_backend(#env,#cell))) });
+    quant condition entry #caller_exclusion(
+        #affected: predicate<trace, activation, object>,
+        #call: activation,
+        #conflicts: predicate<trace, activation, event, object>,
+        #trace: trace
+    ) =
+        forall (#target: object) { (#affected(#trace,#call,#target) => forall (#event: event) { !(#conflicts(#trace,#call,#event,#target)) }) };
+
+    quant condition normal #cas_then_timestamp(
+        #call: activation,
+        #cas: predicate<trace,event>,
+        #count: integer,
+        #event_of: predicate<trace,activation,event>,
+        #hist_count_field: field,
+        #metric: object,
+        #position: function<trace,event,integer>,
+        #store: predicate<trace,event,object,field,integer,integer>,
+        #timestamp: integer,
+        #timestamp_field: field,
+        #trace: trace
+    ) =
+        exists (#e0: event) { exists (#e1: event) { ((((#event_of(#trace,#call,#e0) &&
+        #store(#trace,#e0,#metric,#hist_count_field,0,#count)) && #cas(#trace,#e0)) &&
+        (#event_of(#trace,#call,#e1) && #store(#trace,#e1,#metric,#timestamp_field,0,#timestamp))) &&
+        #position(#trace,#e0) < #position(#trace,#e1)) } };
+    quant condition normal #custody_frame(
+        #before: state,
+        #call: activation,
+        #escape: predicate<trace,event,object>,
+        #event_of: predicate<trace,activation,event>,
+        #metric: object,
+        #nested: predicate<state,object,object>,
+        #release: predicate<trace,event,object>,
+        #trace: trace,
+        #transfer: predicate<trace,event,object>
+    ) =
+        forall (#o: object) { (((#o == #metric) || #nested(#before,#metric,#o)) => forall (#e: event) {
+        (#event_of(#trace,#call,#e) => ((!#release(#trace,#e,#o)) && ((!#transfer(#trace,#e,#o)) &&
+        (!#escape(#trace,#e,#o))))) }) };
+    // Separate atomic steps establish no joint snapshot or CAS-loop termination guarantee.
+
 };
 
 extern fn cmt_metric_hist_sum_set(metric: ptr<mut, u8>, timestamp: u64, val: f64) -> unit
 contract {
-    requires metric_is_nonnull_live_writable_with_valid_atomic_field_layout;
-    requires caller_excludes_retirement_and_conflicting_metric_users_for_the_complete_call;
-    ensures normal successful_CAS_stores_hist_sum_double_bits_then_timestamp;
-    ensures normal no_joint_atomicity_or_wait_free_progress_is_promised;
-    ensures normal metric_and_nested_storage_ownership_are_preserved;
+    quant condition entry #metric_storage(
+        #atomic_backend: predicate<environment, object>,
+        #atomic_cell: predicate<environment, object, object>,
+        #env: environment,
+        #live: predicate<environment, object>,
+        #metric: object,
+        #metric_type: scalar_type,
+        #null: object,
+        #u64: scalar_type,
+        #writable: predicate<environment, object, scalar_type>
+    ) =
+        (((!((#metric == #null)) && #live(#env,#metric)) && #writable(#env,#metric,#metric_type)) && forall (#cell: object) { (#atomic_cell(#env,#metric,#cell) => (#writable(#env,#cell,#u64) && #atomic_backend(#env,#cell))) });
+    quant condition entry #caller_exclusion(
+        #affected: predicate<trace, activation, object>,
+        #call: activation,
+        #conflicts: predicate<trace, activation, event, object>,
+        #trace: trace
+    ) =
+        forall (#target: object) { (#affected(#trace,#call,#target) => forall (#event: event) { !(#conflicts(#trace,#call,#event,#target)) }) };
+
+    quant condition normal #cas_then_timestamp(
+        #call: activation,
+        #cas: predicate<trace,event>,
+        #double_bits: function<floating,integer>,
+        #event_of: predicate<trace,activation,event>,
+        #hist_sum_field: field,
+        #metric: object,
+        #position: function<trace,event,integer>,
+        #store: predicate<trace,event,object,field,integer,integer>,
+        #timestamp: integer,
+        #timestamp_field: field,
+        #trace: trace,
+        #val: floating
+    ) =
+        exists (#e0: event) { exists (#e1: event) { ((((#event_of(#trace,#call,#e0) &&
+        #store(#trace,#e0,#metric,#hist_sum_field,0,#double_bits(#val))) && #cas(#trace,#e0)) &&
+        (#event_of(#trace,#call,#e1) && #store(#trace,#e1,#metric,#timestamp_field,0,#timestamp))) &&
+        #position(#trace,#e0) < #position(#trace,#e1)) } };
+    quant condition normal #custody_frame(
+        #before: state,
+        #call: activation,
+        #escape: predicate<trace,event,object>,
+        #event_of: predicate<trace,activation,event>,
+        #metric: object,
+        #nested: predicate<state,object,object>,
+        #release: predicate<trace,event,object>,
+        #trace: trace,
+        #transfer: predicate<trace,event,object>
+    ) =
+        forall (#o: object) { (((#o == #metric) || #nested(#before,#metric,#o)) => forall (#e: event) {
+        (#event_of(#trace,#call,#e) => ((!#release(#trace,#e,#o)) && ((!#transfer(#trace,#e,#o)) &&
+        (!#escape(#trace,#e,#o))))) }) };
+    // Separate atomic steps establish no joint snapshot or CAS-loop termination guarantee.
+
 };
 
 extern fn cmt_metric_hist_set(metric: ptr<mut, u8>, timestamp: u64, bucket_id: i32, val: f64) -> unit
 contract {
-    requires metric_is_nonnull_live_writable_with_valid_atomic_field_layout;
-    requires bucket_id_is_nonnegative_and_within_live_hist_buckets_extent;
-    requires val_has_defined_C_double_to_uint64_conversion;
-    requires caller_excludes_retirement_and_conflicting_metric_users_for_the_complete_call;
-    ensures normal successful_CAS_stores_converted_integer_bucket_count_then_timestamp;
-    ensures normal no_joint_atomicity_or_wait_free_progress_is_promised;
-    ensures normal metric_and_nested_storage_ownership_are_preserved;
+    quant condition entry #metric_storage(
+        #atomic_backend: predicate<environment, object>,
+        #atomic_cell: predicate<environment, object, object>,
+        #env: environment,
+        #live: predicate<environment, object>,
+        #metric: object,
+        #metric_type: scalar_type,
+        #null: object,
+        #u64: scalar_type,
+        #writable: predicate<environment, object, scalar_type>
+    ) =
+        (((!((#metric == #null)) && #live(#env,#metric)) && #writable(#env,#metric,#metric_type)) && forall (#cell: object) { (#atomic_cell(#env,#metric,#cell) => (#writable(#env,#cell,#u64) && #atomic_backend(#env,#cell))) });
+    quant condition entry #bucket_extent(
+        #bucket_extent: integer,
+        #bucket_id: integer,
+        #env: environment,
+        #extent: predicate<environment, object, integer, scalar_type>,
+        #field: predicate<environment, object, field, object>,
+        #hist_buckets: object,
+        #hist_buckets_field: field,
+        #live: predicate<environment, object>,
+        #metric: object,
+        #u64: scalar_type
+    ) =
+        (((((0 <= #bucket_id) && (#bucket_id < #bucket_extent)) && #field(#env,#metric,#hist_buckets_field,#hist_buckets)) && #live(#env,#hist_buckets)) && #extent(#env,#hist_buckets,#bucket_extent,#u64));
+    quant condition entry #unsigned_conversion(
+        #finite: predicate<floating>,
+        #trunc: function<floating, integer>,
+        #val: floating
+    ) =
+        (#finite(#val) && ((0 <= #trunc(#val)) && (#trunc(#val) <= 18446744073709551615)));
+    quant condition entry #caller_exclusion(
+        #affected: predicate<trace, activation, object>,
+        #call: activation,
+        #conflicts: predicate<trace, activation, event, object>,
+        #trace: trace
+    ) =
+        forall (#target: object) { (#affected(#trace,#call,#target) => forall (#event: event) { !(#conflicts(#trace,#call,#event,#target)) }) };
+
+    quant condition normal #cas_then_timestamp(
+        #bucket_field: field,
+        #bucket_id: integer,
+        #call: activation,
+        #cas: predicate<trace,event>,
+        #event_of: predicate<trace,activation,event>,
+        #metric: object,
+        #position: function<trace,event,integer>,
+        #store: predicate<trace,event,object,field,integer,integer>,
+        #timestamp: integer,
+        #timestamp_field: field,
+        #trace: trace,
+        #trunc: function<floating,integer>,
+        #val: floating
+    ) =
+        exists (#e0: event) { exists (#e1: event) { ((((#event_of(#trace,#call,#e0) &&
+        #store(#trace,#e0,#metric,#bucket_field,#bucket_id,#trunc(#val))) && #cas(#trace,#e0)) &&
+        (#event_of(#trace,#call,#e1) && #store(#trace,#e1,#metric,#timestamp_field,0,#timestamp))) &&
+        #position(#trace,#e0) < #position(#trace,#e1)) } };
+    quant condition normal #custody_frame(
+        #before: state,
+        #call: activation,
+        #escape: predicate<trace,event,object>,
+        #event_of: predicate<trace,activation,event>,
+        #metric: object,
+        #nested: predicate<state,object,object>,
+        #release: predicate<trace,event,object>,
+        #trace: trace,
+        #transfer: predicate<trace,event,object>
+    ) =
+        forall (#o: object) { (((#o == #metric) || #nested(#before,#metric,#o)) => forall (#e: event) {
+        (#event_of(#trace,#call,#e) => ((!#release(#trace,#e,#o)) && ((!#transfer(#trace,#e,#o)) &&
+        (!#escape(#trace,#e,#o))))) }) };
+    // Separate atomic steps establish no joint snapshot or CAS-loop termination guarantee.
+
 };
 
 extern fn cmt_summary_quantile_set(metric: ptr<mut, u8>, timestamp: u64, quantile_id: i32, val: f64) -> unit
 contract {
-    requires nonnull_metric_is_live_and_has_valid_quantile_pointer_count_representation;
-    requires present_in_range_quantile_is_writable_with_valid_atomic_layout;
-    requires caller_excludes_retirement_and_conflicting_metric_users_for_the_complete_call;
-    ensures normal null_metric_null_array_negative_or_out_of_range_id_is_a_noop;
-    ensures normal admitted_slot_CAS_stores_double_bits_then_timestamp;
-    ensures normal no_joint_atomicity_or_wait_free_progress_is_promised;
-    ensures normal metric_and_nested_storage_ownership_are_preserved;
+    quant condition entry #quantile_representation(
+        #env: environment,
+        #extent: predicate<environment, object, integer, scalar_type>,
+        #field: predicate<environment, object, field, object>,
+        #integer_field: predicate<environment, object, field, integer>,
+        #live: predicate<environment, object>,
+        #metric: object,
+        #null: object,
+        #quantiles: object,
+        #quantiles_count: integer,
+        #quantiles_count_field: field,
+        #quantiles_field: field,
+        #u64: scalar_type
+    ) =
+        (!((#metric == #null)) => (((#live(#env,#metric) && #field(#env,#metric,#quantiles_field,#quantiles)) && #integer_field(#env,#metric,#quantiles_count_field,#quantiles_count)) && (!((#quantiles == #null)) => (#live(#env,#quantiles) && #extent(#env,#quantiles,#quantiles_count,#u64)))));
+    quant condition entry #quantile_storage(
+        #atomic_array: predicate<environment, object, integer>,
+        #env: environment,
+        #metric: object,
+        #null: object,
+        #quantile_id: integer,
+        #quantiles: object,
+        #quantiles_count: integer,
+        #u64: scalar_type,
+        #writable: predicate<environment, object, scalar_type>
+    ) =
+        (((!((#metric == #null)) && !((#quantiles == #null))) && ((0 <= #quantile_id) && (#quantile_id < #quantiles_count))) => (#writable(#env,#quantiles,#u64) && #atomic_array(#env,#quantiles,#quantile_id)));
+    quant condition entry #caller_exclusion(
+        #affected: predicate<trace, activation, object>,
+        #call: activation,
+        #conflicts: predicate<trace, activation, event, object>,
+        #trace: trace
+    ) =
+        forall (#target: object) { (#affected(#trace,#call,#target) => forall (#event: event) { !(#conflicts(#trace,#call,#event,#target)) }) };
+
+    quant condition normal #guarded_stores(
+        #call: activation,
+        #cas: predicate<trace,event>,
+        #double_bits: function<floating,integer>,
+        #event_of: predicate<trace,activation,event>,
+        #metric: object,
+        #null: object,
+        #position: function<trace,event,integer>,
+        #quantile_field: field,
+        #quantile_id: integer,
+        #quantiles: object,
+        #quantiles_count: integer,
+        #store: predicate<trace,event,object,field,integer,integer>,
+        #timestamp: integer,
+        #timestamp_field: field,
+        #trace: trace,
+        #val: floating
+    ) =
+        (((!(#metric == #null) && !(#quantiles == #null)) && ((0 <= #quantile_id) && (#quantile_id <
+        #quantiles_count))) => exists (#e0: event) { exists (#e1: event) { ((((#event_of(#trace,#call,#e0) &&
+        #store(#trace,#e0,#metric,#quantile_field,#quantile_id,#double_bits(#val))) && #cas(#trace,#e0)) &&
+        (#event_of(#trace,#call,#e1) && #store(#trace,#e1,#metric,#timestamp_field,0,#timestamp))) &&
+        #position(#trace,#e0) < #position(#trace,#e1)) } });
+    quant condition normal #inactive_no_store(
+        #call: activation,
+        #event_of: predicate<trace,activation,event>,
+        #metric: object,
+        #null: object,
+        #quantile_id: integer,
+        #quantiles: object,
+        #quantiles_count: integer,
+        #store: predicate<trace,event,object,field,integer,integer>,
+        #trace: trace
+    ) =
+        ((!((!(#metric == #null) && !(#quantiles == #null)) && ((0 <= #quantile_id) && (#quantile_id <
+        #quantiles_count)))) => forall (#e: event) { forall (#target: object) { forall (#field: field) { forall
+        (#index: integer) { forall (#value: integer) { (#event_of(#trace,#call,#e) =>
+        !#store(#trace,#e,#target,#field,#index,#value)) } } } } });
+    quant condition normal #custody_frame(
+        #before: state,
+        #call: activation,
+        #escape: predicate<trace,event,object>,
+        #event_of: predicate<trace,activation,event>,
+        #metric: object,
+        #nested: predicate<state,object,object>,
+        #release: predicate<trace,event,object>,
+        #trace: trace,
+        #transfer: predicate<trace,event,object>
+    ) =
+        forall (#o: object) { (((#o == #metric) || #nested(#before,#metric,#o)) => forall (#e: event) {
+        (#event_of(#trace,#call,#e) => ((!#release(#trace,#e,#o)) && ((!#transfer(#trace,#e,#o)) &&
+        (!#escape(#trace,#e,#o))))) }) };
+    // Separate atomic steps establish no joint snapshot or CAS-loop termination guarantee.
+
 };
 
 extern fn cmt_summary_sum_set(metric: ptr<mut, u8>, timestamp: u64, val: f64) -> unit
 contract {
-    requires metric_is_nonnull_live_writable_with_valid_atomic_field_layout;
-    requires caller_excludes_retirement_and_conflicting_metric_users_for_the_complete_call;
-    ensures normal successful_CAS_stores_summary_sum_double_bits_then_timestamp;
-    ensures normal no_joint_atomicity_or_wait_free_progress_is_promised;
-    ensures normal metric_and_nested_storage_ownership_are_preserved;
+    quant condition entry #metric_storage(
+        #atomic_backend: predicate<environment, object>,
+        #atomic_cell: predicate<environment, object, object>,
+        #env: environment,
+        #live: predicate<environment, object>,
+        #metric: object,
+        #metric_type: scalar_type,
+        #null: object,
+        #u64: scalar_type,
+        #writable: predicate<environment, object, scalar_type>
+    ) =
+        (((!((#metric == #null)) && #live(#env,#metric)) && #writable(#env,#metric,#metric_type)) && forall (#cell: object) { (#atomic_cell(#env,#metric,#cell) => (#writable(#env,#cell,#u64) && #atomic_backend(#env,#cell))) });
+    quant condition entry #caller_exclusion(
+        #affected: predicate<trace, activation, object>,
+        #call: activation,
+        #conflicts: predicate<trace, activation, event, object>,
+        #trace: trace
+    ) =
+        forall (#target: object) { (#affected(#trace,#call,#target) => forall (#event: event) { !(#conflicts(#trace,#call,#event,#target)) }) };
+
+    quant condition normal #cas_then_timestamp(
+        #call: activation,
+        #cas: predicate<trace,event>,
+        #double_bits: function<floating,integer>,
+        #event_of: predicate<trace,activation,event>,
+        #metric: object,
+        #position: function<trace,event,integer>,
+        #store: predicate<trace,event,object,field,integer,integer>,
+        #summary_sum_field: field,
+        #timestamp: integer,
+        #timestamp_field: field,
+        #trace: trace,
+        #val: floating
+    ) =
+        exists (#e0: event) { exists (#e1: event) { ((((#event_of(#trace,#call,#e0) &&
+        #store(#trace,#e0,#metric,#summary_sum_field,0,#double_bits(#val))) && #cas(#trace,#e0)) &&
+        (#event_of(#trace,#call,#e1) && #store(#trace,#e1,#metric,#timestamp_field,0,#timestamp))) &&
+        #position(#trace,#e0) < #position(#trace,#e1)) } };
+    quant condition normal #custody_frame(
+        #before: state,
+        #call: activation,
+        #escape: predicate<trace,event,object>,
+        #event_of: predicate<trace,activation,event>,
+        #metric: object,
+        #nested: predicate<state,object,object>,
+        #release: predicate<trace,event,object>,
+        #trace: trace,
+        #transfer: predicate<trace,event,object>
+    ) =
+        forall (#o: object) { (((#o == #metric) || #nested(#before,#metric,#o)) => forall (#e: event) {
+        (#event_of(#trace,#call,#e) => ((!#release(#trace,#e,#o)) && ((!#transfer(#trace,#e,#o)) &&
+        (!#escape(#trace,#e,#o))))) }) };
+    // Separate atomic steps establish no joint snapshot or CAS-loop termination guarantee.
+
 };
 
 extern fn cmt_summary_count_set(metric: ptr<mut, u8>, timestamp: u64, count: u64) -> unit
 contract {
-    requires metric_is_nonnull_live_writable_with_valid_atomic_field_layout;
-    requires caller_excludes_retirement_and_conflicting_metric_users_for_the_complete_call;
-    ensures normal successful_CAS_stores_summary_count_then_timestamp;
-    ensures normal no_joint_atomicity_or_wait_free_progress_is_promised;
-    ensures normal metric_and_nested_storage_ownership_are_preserved;
+    quant condition entry #metric_storage(
+        #atomic_backend: predicate<environment, object>,
+        #atomic_cell: predicate<environment, object, object>,
+        #env: environment,
+        #live: predicate<environment, object>,
+        #metric: object,
+        #metric_type: scalar_type,
+        #null: object,
+        #u64: scalar_type,
+        #writable: predicate<environment, object, scalar_type>
+    ) =
+        (((!((#metric == #null)) && #live(#env,#metric)) && #writable(#env,#metric,#metric_type)) && forall (#cell: object) { (#atomic_cell(#env,#metric,#cell) => (#writable(#env,#cell,#u64) && #atomic_backend(#env,#cell))) });
+    quant condition entry #caller_exclusion(
+        #affected: predicate<trace, activation, object>,
+        #call: activation,
+        #conflicts: predicate<trace, activation, event, object>,
+        #trace: trace
+    ) =
+        forall (#target: object) { (#affected(#trace,#call,#target) => forall (#event: event) { !(#conflicts(#trace,#call,#event,#target)) }) };
+
+    quant condition normal #cas_then_timestamp(
+        #call: activation,
+        #cas: predicate<trace,event>,
+        #count: integer,
+        #event_of: predicate<trace,activation,event>,
+        #metric: object,
+        #position: function<trace,event,integer>,
+        #store: predicate<trace,event,object,field,integer,integer>,
+        #summary_count_field: field,
+        #timestamp: integer,
+        #timestamp_field: field,
+        #trace: trace
+    ) =
+        exists (#e0: event) { exists (#e1: event) { ((((#event_of(#trace,#call,#e0) &&
+        #store(#trace,#e0,#metric,#summary_count_field,0,#count)) && #cas(#trace,#e0)) &&
+        (#event_of(#trace,#call,#e1) && #store(#trace,#e1,#metric,#timestamp_field,0,#timestamp))) &&
+        #position(#trace,#e0) < #position(#trace,#e1)) } };
+    quant condition normal #custody_frame(
+        #before: state,
+        #call: activation,
+        #escape: predicate<trace,event,object>,
+        #event_of: predicate<trace,activation,event>,
+        #metric: object,
+        #nested: predicate<state,object,object>,
+        #release: predicate<trace,event,object>,
+        #trace: trace,
+        #transfer: predicate<trace,event,object>
+    ) =
+        forall (#o: object) { (((#o == #metric) || #nested(#before,#metric,#o)) => forall (#e: event) {
+        (#event_of(#trace,#call,#e) => ((!#release(#trace,#e,#o)) && ((!#transfer(#trace,#e,#o)) &&
+        (!#escape(#trace,#e,#o))))) }) };
+    // Separate atomic steps establish no joint snapshot or CAS-loop termination guarantee.
+
 };

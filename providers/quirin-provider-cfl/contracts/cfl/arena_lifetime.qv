@@ -29,7 +29,7 @@ extern fn cfl_arena_destroy(
     arena: own<CflArena> use one
 ) -> unit
 contract {
-    requires arena_is_live;
+    quant condition entry #r004(#arena: object, #env: environment, #live: predicate<environment, object>) = #live(#env,#arena);
     ensures normal external_storage_is_released;
     ensures normal every_arena_chunk_is_released;
     ensures normal arena_is_discharged;
